@@ -17,9 +17,10 @@ pub(crate) fn make_temp_repo(test_case: &test_types::CheckRepoTestCase) -> path:
     repo_root
 }
 
-pub(crate) fn collect_violation_codes(repo_root: &path::Path) -> Vec<&'static str> {
+pub(crate) fn collect_source_violation_codes(repo_root: &path::Path) -> Vec<&'static str> {
     rules::check_repo(repo_root)
         .iter()
+        .filter(|violation| violation.code.starts_with("SQS"))
         .map(|violation| violation.code)
         .collect()
 }
