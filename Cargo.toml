@@ -1,0 +1,12 @@
+[workspace]
+members = [
+    "crates/sqlquack",
+    "crates/sqlquack-python",
+    "crates/sqlquack-structure-checker",
+]
+resolver = "2"
+
+[workspace.package]
+edition = "2021"
+license = "MIT"
+repository = "https://github.com/klonge/sqlquack"
