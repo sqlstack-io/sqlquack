@@ -13,8 +13,9 @@ const TEST_CASES: &[test_types::CheckRepoTestCase] = &[
     test_types::CheckRepoTestCase {
         description: "reports pub crate use reexport",
         repo_files: &[test_types::RepoFile {
-            path: "crates/sqlquack/src/analysis/mod.rs",
-            contents: "pub(crate) use models::AnalysisResult;\n",
+            path: "crates/sqlquack/src/analysis/models.rs",
+            contents:
+                "pub(crate) use crate::ast::models as ast_models;\npub struct AnalysisResult;\n",
         }],
         expected_violation_codes: &["SQS023"],
     },
