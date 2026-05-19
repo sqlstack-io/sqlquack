@@ -77,7 +77,7 @@ const TEST_CASES: &[test_types::CheckRepoTestCase] = &[
 fn given_source_role_files_when_checking_structure_then_reports_expected_violation_codes() {
     for test_case in TEST_CASES {
         let repo_root = helpers::make_temp_repo(test_case);
-        let actual_codes = helpers::collect_violation_codes(&repo_root);
+        let actual_codes = helpers::collect_source_violation_codes(&repo_root);
 
         assert_eq!(
             actual_codes.as_slice(),

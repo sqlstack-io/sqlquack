@@ -4,6 +4,9 @@ version = "0.1.0"
 edition.workspace = true
 license.workspace = true
 repository.workspace = true
+readme.workspace = true
+description = "Internal structure checker for SQLQuack development"
+publish = false
 
 [dependencies]
 proc-macro2 = { version = "1.0", features = ["span-locations"] }
