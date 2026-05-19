@@ -5,8 +5,8 @@ edition.workspace = true
 license.workspace = true
 repository.workspace = true
 readme.workspace = true
-description = "Rust SQL semantic analysis and fail-closed DuckDB transpilation engine"
-keywords = ["sql", "duckdb", "parser", "transpiler", "lineage"]
+description = "Warehouse SQL analysis and fail-closed DuckDB transpilation engine"
+keywords = ["sql", "duckdb", "parser", "analysis", "lineage"]
 categories = ["parser-implementations", "database"]
 
 [dependencies]
