@@ -49,6 +49,11 @@ pub const SPELLING_ONLY_FIELDS: &[SpellingOnlyField] = &[
         matching: FieldMatch::Exact,
         reason: "the node kind fixes the function; this keeps only the alias it was written with",
     },
+    SpellingOnlyField {
+        name: "integer_spelling",
+        matching: FieldMatch::Exact,
+        reason: "`INTEGER` and `INT` are the same type",
+    },
 ];
 
 /// Values rewritten to one spelling in both trees before comparison.
