@@ -1,2 +1,2 @@
 pub(crate) mod reading;
-pub(crate) mod types;
+pub(crate) mod type_names;

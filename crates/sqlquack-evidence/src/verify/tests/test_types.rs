@@ -1,3 +1,5 @@
+use std::path::Path;
+
 use crate::cases::models::LoadedCase;
 use crate::verify::models::Conversion;
 use crate::verify::types::CaseConverter;
@@ -11,21 +13,18 @@ impl CaseConverter for UnchangedSqlForTests {
     }
 }
 
-/// How a stand-in result is tampered with before verification.
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
-pub(crate) enum Tampering {
-    /// Left as recorded.
-    None,
-    /// A value changed and the metadata's Arrow hash updated to match.
-    ValueChanged,
-    /// A value changed without updating the metadata.
-    ArrowEdited,
-}
+/// Alters the stand-in result named by a hash in a results directory.
+pub(crate) type Tampering = fn(&Path, &str);
 
 pub(crate) struct RoundTripTestCase {
     pub(crate) description: &'static str,
     pub(crate) tampering: Tampering,
-    pub(crate) expected_pending_before: usize,
-    pub(crate) expected_pending_after: usize,
-    pub(crate) expected_verdicts: Vec<&'static str>,
+    pub(crate) expected_round_trip: RoundTrip,
+}
+
+#[derive(Debug, PartialEq, Eq)]
+pub(crate) struct RoundTrip {
+    pub(crate) pending_before: usize,
+    pub(crate) pending_after: usize,
+    pub(crate) verdicts: Vec<String>,
 }

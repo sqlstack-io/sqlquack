@@ -15,19 +15,11 @@ pub(crate) fn verify_command(
     stdout: &mut dyn Write,
     stderr: &mut dyn Write,
 ) -> ExitCode {
-    let Some(evidence) = load_evidence("verify", &arguments.paths, stderr) else {
-        return ExitCode::FAILURE;
-    };
     let _ = writeln!(
         stderr,
-        "sqlquack verify: replaying recorded cases on DuckDB…"
+        "sqlquack verify: loading cases and replaying recorded ones on DuckDB…"
     );
-    let report = match verify_cases(
-        &evidence.cases,
-        &arguments.paths.results,
-        &evidence.policy,
-        &PipelineConverter,
-    ) {
+    let report = match verify(arguments) {
         Ok(report) => report,
         Err(error) => {
             let _ = writeln!(stderr, "sqlquack verify: failed: {error}");
@@ -60,6 +52,17 @@ pub(crate) fn verify_command(
     }
 }
 
+fn verify(arguments: &VerifyArguments) -> Result<VerifyReport, String> {
+    let evidence = load_evidence(&arguments.paths)?;
+    verify_cases(
+        &evidence.cases,
+        &arguments.paths.results,
+        &evidence.policy,
+        &PipelineConverter,
+    )
+    .map_err(|error| error.to_string())
+}
+
 fn count(report: &VerifyReport, predicate: impl Fn(&Verdict) -> bool) -> usize {
     report
         .cases
@@ -69,30 +72,24 @@ fn count(report: &VerifyReport, predicate: impl Fn(&Verdict) -> bool) -> usize {
 }
 
 fn render(report: &VerifyReport) -> String {
-    let mut lines: Vec<String> = report
-        .cases
-        .iter()
-        .map(|case| {
-            let detail = match &case.verdict {
-                Verdict::Pending => "pending: no recorded result yet".to_owned(),
-                Verdict::Passed => "passed".to_owned(),
-                Verdict::Refused { reasons } => {
-                    format!(
-                        "refused: {} reasons, first: {}",
-                        reasons.len(),
-                        reasons.first().map_or("", String::as_str)
-                    )
-                }
-                Verdict::Failed { reason } => format!("FAILED: {reason}"),
-            };
-            format!("{}  {detail}", case.reference)
-        })
-        .collect();
-    lines.extend(
-        report
-            .unreferenced_results
-            .iter()
-            .map(|hash| format!("note: result {hash} is no longer named by any case")),
-    );
+    let mut lines: Vec<String> = Vec::new();
+    for case in &report.cases {
+        let detail = match &case.verdict {
+            Verdict::Pending => "pending: no recorded result yet".to_owned(),
+            Verdict::Passed => "passed".to_owned(),
+            Verdict::Refused { reasons } => format!(
+                "refused: {} reasons, first: {}",
+                reasons.len(),
+                reasons.first().map_or("", String::as_str)
+            ),
+            Verdict::Failed { reason } => format!("FAILED: {reason}"),
+        };
+        lines.push(format!("{}  {detail}", case.reference));
+    }
+    for hash in &report.unreferenced_results {
+        lines.push(format!(
+            "note: result {hash} is no longer named by any case"
+        ));
+    }
     lines.join("\n") + "\n"
 }

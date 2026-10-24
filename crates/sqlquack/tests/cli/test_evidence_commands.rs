@@ -7,7 +7,7 @@ fn given_repository_policy_and_cases_when_running_evidence_commands_then_they_lo
         CommandTestCase {
             description: "pending writes one file per seed case",
             arguments: &["pending"],
-            mention: "9 pending case files",
+            mention: "9 pending case files in",
             expected_outcome: CommandOutcome {
                 exit_code: Some(0),
                 pending_files: 9,

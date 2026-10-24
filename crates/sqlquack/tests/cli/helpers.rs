@@ -1,21 +1,24 @@
 use std::path::{Path, PathBuf};
 use std::process::Command;
 
+use walkdir::WalkDir;
+
 use crate::test_types::CommandOutcome;
 
 fn repository_root() -> PathBuf {
     Path::new(env!("CARGO_MANIFEST_DIR")).join("../..")
 }
 
-fn copy_tree(from: &Path, to: &Path) {
-    std::fs::create_dir_all(to).expect("directory created");
-    for entry in std::fs::read_dir(from).expect("directory listed").flatten() {
-        let target = to.join(entry.file_name());
-        if entry.path().is_dir() {
-            copy_tree(&entry.path(), &target);
-        } else {
-            std::fs::copy(entry.path(), &target).expect("file copied");
-        }
+fn copy_files(from: &Path, to: &Path) {
+    for entry in WalkDir::new(from)
+        .into_iter()
+        .flatten()
+        .filter(|entry| entry.file_type().is_file())
+    {
+        let target = to.join(entry.path().strip_prefix(from).expect("inside the tree"));
+        std::fs::create_dir_all(target.parent().expect("a parent directory"))
+            .expect("directory created");
+        std::fs::copy(entry.path(), &target).expect("file copied");
     }
 }
 
@@ -28,7 +31,7 @@ pub(crate) fn run_on_repository_cases(arguments: &[&str], mention: &str) -> Comm
         directory.path().join("sqlquack.toml"),
     )
     .expect("policy copied");
-    copy_tree(&root.join("cases"), &directory.path().join("cases"));
+    copy_files(&root.join("cases"), &directory.path().join("cases"));
     let output = Command::new(env!("CARGO_BIN_EXE_sqlquack"))
         .args(arguments)
         .current_dir(directory.path())
