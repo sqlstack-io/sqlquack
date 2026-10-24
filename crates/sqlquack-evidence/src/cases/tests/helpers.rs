@@ -1,6 +1,6 @@
 use std::path::Path;
 
-use sqlquack_policy::policy::main::parse_policy::parse_policy;
+use sqlquack_policy::policy::main::load_policy::load_policy;
 use sqlquack_policy::policy::models::Policy;
 
 use crate::cases::main::load_cases::load_cases;
@@ -62,8 +62,10 @@ order = "ordered"
 tags = []
 "#;
 
-fn policy() -> Policy {
-    parse_policy(POLICY).expect("the test policy is valid")
+fn policy(directory: &Path) -> Policy {
+    let path = directory.join("sqlquack.toml");
+    std::fs::write(&path, POLICY).expect("policy written");
+    load_policy(&path).expect("the test policy is valid")
 }
 
 pub(crate) fn load_variant(
@@ -78,7 +80,7 @@ pub(crate) fn load_variant(
         CASE_FILE.replacen(replace, with, 1),
     )
     .expect("case file written");
-    load_cases(&cases, &policy()).map_err(|error| error.to_string())
+    load_cases(&cases, &policy(directory)).map_err(|error| error.to_string())
 }
 
 pub(crate) fn hashes(replace: &str, with: &str) -> Vec<String> {

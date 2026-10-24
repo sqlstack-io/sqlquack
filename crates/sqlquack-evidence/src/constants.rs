@@ -29,3 +29,12 @@ pub const VALUE_COLUMN: &str = "value";
 
 /// The relation that holds the case input rows.
 pub const INPUT_RELATION: &str = "input";
+
+/// The extension of authored case files.
+pub const CASE_FILE_EXTENSION: &str = "toml";
+
+/// The extension of metadata and pending files.
+pub const METADATA_EXTENSION: &str = "json";
+
+/// The length of a case hash in hexadecimal digits.
+pub const CASE_HASH_LENGTH: usize = 64;

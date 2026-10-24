@@ -1,2 +1,2 @@
 pub mod load_result;
-pub mod snowflake_type;
+pub mod recorded_hashes;

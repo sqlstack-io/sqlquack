@@ -7,8 +7,8 @@ use sqlquack_policy::policy::models::Policy;
 
 use crate::cases::models::LoadedCase;
 use crate::errors::EvidenceError;
+use crate::results::main::recorded_hashes::recorded_hashes;
 use crate::verify::_helpers::judge::judge;
-use crate::verify::_helpers::listing::recorded_hashes;
 use crate::verify::models::{CaseVerdict, VerifyReport};
 use crate::verify::types::CaseConverter;
 
@@ -20,7 +20,7 @@ pub fn verify_cases(
     converter: &dyn CaseConverter,
 ) -> Result<VerifyReport, EvidenceError> {
     let referenced: BTreeSet<&str> = cases.iter().map(|case| case.hash.as_str()).collect();
-    let unreferenced_results = recorded_hashes(results)?
+    let unreferenced_results: Vec<String> = recorded_hashes(results)?
         .into_iter()
         .filter(|hash| !referenced.contains(hash.as_str()))
         .collect();

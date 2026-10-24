@@ -1,4 +1,3 @@
-//! Audits: re-record a sample of cases and compare with the stored results.
-
+pub(crate) mod _helpers;
 pub mod main;
 pub mod models;

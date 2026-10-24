@@ -2,8 +2,8 @@
 
 use arrow::array::{Array, AsArray};
 use arrow::datatypes::{
-    DataType, Date32Type, Date64Type, Decimal128Type, Float32Type, Float64Type, Int8Type,
-    Int16Type, Int32Type, Int64Type, Time32MillisecondType, Time32SecondType,
+    ArrowPrimitiveType, DataType, Date32Type, Date64Type, Decimal128Type, Float32Type, Float64Type,
+    Int8Type, Int16Type, Int32Type, Int64Type, Time32MillisecondType, Time32SecondType,
     Time64MicrosecondType, Time64NanosecondType, TimeUnit, TimestampMicrosecondType,
     TimestampMillisecondType, TimestampNanosecondType, TimestampSecondType, UInt8Type, UInt16Type,
     UInt32Type, UInt64Type,
@@ -12,78 +12,35 @@ use arrow::datatypes::{
 use crate::values::models::CanonicalValue;
 
 const MILLIS_PER_DAY: i64 = 86_400_000;
+const NANOS_PER_SECOND: i64 = 1_000_000_000;
+const NANOS_PER_MILLI: i64 = 1_000_000;
+const NANOS_PER_MICRO: i64 = 1_000;
 
 pub(crate) fn column_values(array: &dyn Array) -> Result<Vec<CanonicalValue>, String> {
-    let values: Vec<Option<CanonicalValue>> = match array.data_type() {
-        DataType::Null => vec![None; array.len()],
-        DataType::Boolean => array
-            .as_boolean()
-            .iter()
-            .map(|value| value.map(CanonicalValue::Boolean))
-            .collect(),
-        DataType::Int8 => integers(
-            array
-                .as_primitive::<Int8Type>()
-                .iter()
-                .map(|value| value.map(i128::from)),
-        ),
-        DataType::Int16 => integers(
-            array
-                .as_primitive::<Int16Type>()
-                .iter()
-                .map(|value| value.map(i128::from)),
-        ),
-        DataType::Int32 => integers(
-            array
-                .as_primitive::<Int32Type>()
-                .iter()
-                .map(|value| value.map(i128::from)),
-        ),
-        DataType::Int64 => integers(
-            array
-                .as_primitive::<Int64Type>()
-                .iter()
-                .map(|value| value.map(i128::from)),
-        ),
-        DataType::UInt8 => integers(
-            array
-                .as_primitive::<UInt8Type>()
-                .iter()
-                .map(|value| value.map(i128::from)),
-        ),
-        DataType::UInt16 => integers(
-            array
-                .as_primitive::<UInt16Type>()
-                .iter()
-                .map(|value| value.map(i128::from)),
-        ),
-        DataType::UInt32 => integers(
-            array
-                .as_primitive::<UInt32Type>()
-                .iter()
-                .map(|value| value.map(i128::from)),
-        ),
-        DataType::UInt64 => integers(
-            array
-                .as_primitive::<UInt64Type>()
-                .iter()
-                .map(|value| value.map(i128::from)),
-        ),
-        DataType::Decimal128(_, scale) => array
-            .as_primitive::<Decimal128Type>()
-            .iter()
-            .map(|value| value.map(|unscaled| number(unscaled, *scale)))
-            .collect(),
-        DataType::Float32 => array
-            .as_primitive::<Float32Type>()
-            .iter()
-            .map(|value| value.map(float32))
-            .collect(),
-        DataType::Float64 => array
-            .as_primitive::<Float64Type>()
-            .iter()
-            .map(|value| value.map(float64))
-            .collect(),
+    let zone: Option<String> = match array.data_type() {
+        DataType::Timestamp(_, zone) => zone.as_ref().map(ToString::to_string),
+        _ => None,
+    };
+    let instant = |ticks: i64, factor: i64| CanonicalValue::Timestamp {
+        nanos: i128::from(ticks) * i128::from(factor),
+        zone: zone.clone(),
+    };
+    Ok(match array.data_type() {
+        DataType::Null => vec![CanonicalValue::Null; array.len()],
+        DataType::Boolean => booleans(array),
+        DataType::Int8 => primitive::<Int8Type>(array, |value| number(i128::from(value), 0)),
+        DataType::Int16 => primitive::<Int16Type>(array, |value| number(i128::from(value), 0)),
+        DataType::Int32 => primitive::<Int32Type>(array, |value| number(i128::from(value), 0)),
+        DataType::Int64 => primitive::<Int64Type>(array, |value| number(i128::from(value), 0)),
+        DataType::UInt8 => primitive::<UInt8Type>(array, |value| number(i128::from(value), 0)),
+        DataType::UInt16 => primitive::<UInt16Type>(array, |value| number(i128::from(value), 0)),
+        DataType::UInt32 => primitive::<UInt32Type>(array, |value| number(i128::from(value), 0)),
+        DataType::UInt64 => primitive::<UInt64Type>(array, |value| number(i128::from(value), 0)),
+        DataType::Decimal128(_, scale) => {
+            primitive::<Decimal128Type>(array, |value| number(value, *scale))
+        }
+        DataType::Float32 => primitive::<Float32Type>(array, float32),
+        DataType::Float64 => primitive::<Float64Type>(array, float64),
         DataType::Utf8 => texts(array.as_string::<i32>().iter()),
         DataType::LargeUtf8 => texts(array.as_string::<i64>().iter()),
         DataType::Utf8View => texts(array.as_string_view().iter()),
@@ -91,86 +48,46 @@ pub(crate) fn column_values(array: &dyn Array) -> Result<Vec<CanonicalValue>, St
         DataType::LargeBinary => binaries(array.as_binary::<i64>().iter()),
         DataType::BinaryView => binaries(array.as_binary_view().iter()),
         DataType::FixedSizeBinary(_) => binaries(array.as_fixed_size_binary().iter()),
-        DataType::Date32 => array
-            .as_primitive::<Date32Type>()
-            .iter()
-            .map(|value| value.map(|days| CanonicalValue::Date(i64::from(days))))
-            .collect(),
-        DataType::Date64 => array
-            .as_primitive::<Date64Type>()
-            .iter()
-            .map(|value| {
-                value.map(|millis| CanonicalValue::Date(millis.div_euclid(MILLIS_PER_DAY)))
+        DataType::Date32 => {
+            primitive::<Date32Type>(array, |days| CanonicalValue::Date(i64::from(days)))
+        }
+        DataType::Date64 => primitive::<Date64Type>(array, |millis| {
+            CanonicalValue::Date(millis.div_euclid(MILLIS_PER_DAY))
+        }),
+        DataType::Time32(TimeUnit::Second) => primitive::<Time32SecondType>(array, |ticks| {
+            CanonicalValue::Time(i64::from(ticks) * NANOS_PER_SECOND)
+        }),
+        DataType::Time32(TimeUnit::Millisecond) => {
+            primitive::<Time32MillisecondType>(array, |ticks| {
+                CanonicalValue::Time(i64::from(ticks) * NANOS_PER_MILLI)
             })
-            .collect(),
-        DataType::Time32(TimeUnit::Second) => times(
-            array
-                .as_primitive::<Time32SecondType>()
-                .iter()
-                .map(|value| value.map(i64::from)),
-            1_000_000_000,
-        ),
-        DataType::Time32(TimeUnit::Millisecond) => times(
-            array
-                .as_primitive::<Time32MillisecondType>()
-                .iter()
-                .map(|value| value.map(i64::from)),
-            1_000_000,
-        ),
+        }
         DataType::Time64(TimeUnit::Microsecond) => {
-            times(array.as_primitive::<Time64MicrosecondType>().iter(), 1_000)
+            primitive::<Time64MicrosecondType>(array, |ticks| {
+                CanonicalValue::Time(ticks * NANOS_PER_MICRO)
+            })
         }
         DataType::Time64(TimeUnit::Nanosecond) => {
-            times(array.as_primitive::<Time64NanosecondType>().iter(), 1)
+            primitive::<Time64NanosecondType>(array, CanonicalValue::Time)
         }
-        DataType::Timestamp(unit, zone) => {
-            let zone = zone.as_ref().map(ToString::to_string);
-            let (raw, factor): (Vec<Option<i64>>, i128) = match unit {
-                TimeUnit::Second => (
-                    array.as_primitive::<TimestampSecondType>().iter().collect(),
-                    1_000_000_000,
-                ),
-                TimeUnit::Millisecond => (
-                    array
-                        .as_primitive::<TimestampMillisecondType>()
-                        .iter()
-                        .collect(),
-                    1_000_000,
-                ),
-                TimeUnit::Microsecond => (
-                    array
-                        .as_primitive::<TimestampMicrosecondType>()
-                        .iter()
-                        .collect(),
-                    1_000,
-                ),
-                TimeUnit::Nanosecond => (
-                    array
-                        .as_primitive::<TimestampNanosecondType>()
-                        .iter()
-                        .collect(),
-                    1,
-                ),
-            };
-            raw.into_iter()
-                .map(|value| {
-                    value.map(|ticks| CanonicalValue::Timestamp {
-                        nanos: i128::from(ticks) * factor,
-                        zone: zone.clone(),
-                    })
-                })
-                .collect()
+        DataType::Timestamp(TimeUnit::Second, _) => {
+            primitive::<TimestampSecondType>(array, |ticks| instant(ticks, NANOS_PER_SECOND))
+        }
+        DataType::Timestamp(TimeUnit::Millisecond, _) => {
+            primitive::<TimestampMillisecondType>(array, |ticks| instant(ticks, NANOS_PER_MILLI))
+        }
+        DataType::Timestamp(TimeUnit::Microsecond, _) => {
+            primitive::<TimestampMicrosecondType>(array, |ticks| instant(ticks, NANOS_PER_MICRO))
+        }
+        DataType::Timestamp(TimeUnit::Nanosecond, _) => {
+            primitive::<TimestampNanosecondType>(array, |ticks| instant(ticks, 1))
         }
         other => {
             return Err(format!(
                 "values of Arrow type {other} have no canonical form"
             ));
         }
-    };
-    Ok(values
-        .into_iter()
-        .map(|value| value.unwrap_or(CanonicalValue::Null))
-        .collect())
+    })
 }
 
 pub(crate) fn number(unscaled: i128, scale: i8) -> CanonicalValue {
@@ -192,10 +109,24 @@ pub(crate) fn number(unscaled: i128, scale: i8) -> CanonicalValue {
     CanonicalValue::Number { unscaled, scale }
 }
 
-fn integers(values: impl Iterator<Item = Option<i128>>) -> Vec<Option<CanonicalValue>> {
+fn primitive<T: ArrowPrimitiveType>(
+    array: &dyn Array,
+    convert: impl Fn(T::Native) -> CanonicalValue,
+) -> Vec<CanonicalValue> {
+    let typed = array.as_primitive::<T>();
+    let mut values: Vec<CanonicalValue> = Vec::with_capacity(typed.len());
+    for value in typed.iter() {
+        values.push(value.map_or(CanonicalValue::Null, &convert));
+    }
     values
-        .map(|value| value.map(|unscaled| number(unscaled, 0)))
-        .collect()
+}
+
+fn booleans(array: &dyn Array) -> Vec<CanonicalValue> {
+    let mut values: Vec<CanonicalValue> = Vec::with_capacity(array.len());
+    for value in array.as_boolean().iter() {
+        values.push(value.map_or(CanonicalValue::Null, CanonicalValue::Boolean));
+    }
+    values
 }
 
 fn float32(value: f32) -> CanonicalValue {
@@ -214,20 +145,22 @@ fn float64(value: f64) -> CanonicalValue {
     })
 }
 
-fn texts<'a>(values: impl Iterator<Item = Option<&'a str>>) -> Vec<Option<CanonicalValue>> {
-    values
-        .map(|value| value.map(|text| CanonicalValue::Text(text.to_owned())))
-        .collect()
+fn texts<'a>(values: impl Iterator<Item = Option<&'a str>>) -> Vec<CanonicalValue> {
+    let mut canonical: Vec<CanonicalValue> = Vec::new();
+    for value in values {
+        canonical.push(value.map_or(CanonicalValue::Null, |text| {
+            CanonicalValue::Text(text.to_owned())
+        }));
+    }
+    canonical
 }
 
-fn binaries<'a>(values: impl Iterator<Item = Option<&'a [u8]>>) -> Vec<Option<CanonicalValue>> {
-    values
-        .map(|value| value.map(|bytes| CanonicalValue::Binary(bytes.to_vec())))
-        .collect()
-}
-
-fn times(values: impl Iterator<Item = Option<i64>>, factor: i64) -> Vec<Option<CanonicalValue>> {
-    values
-        .map(|value| value.map(|ticks| CanonicalValue::Time(ticks * factor)))
-        .collect()
+fn binaries<'a>(values: impl Iterator<Item = Option<&'a [u8]>>) -> Vec<CanonicalValue> {
+    let mut canonical: Vec<CanonicalValue> = Vec::new();
+    for value in values {
+        canonical.push(value.map_or(CanonicalValue::Null, |bytes| {
+            CanonicalValue::Binary(bytes.to_vec())
+        }));
+    }
+    canonical
 }

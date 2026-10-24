@@ -2,7 +2,7 @@
 
 use std::collections::BTreeMap;
 
-use crate::policy::main::parse_type_pattern::parse_type_pattern;
+use crate::policy::_helpers::type_patterns::parse_type_pattern;
 use crate::policy::models::{PatternArgument, TypeEquality, TypePattern};
 
 /// The first declared equality whose patterns match `snowflake` and `duckdb` with one binding.
@@ -11,8 +11,10 @@ pub fn matching_type_equality<'a>(
     snowflake: &str,
     duckdb: &str,
 ) -> Option<&'a TypeEquality> {
-    let snowflake = parse_type_pattern(snowflake).ok()?;
-    let duckdb = parse_type_pattern(duckdb).ok()?;
+    let (Ok(snowflake), Ok(duckdb)) = (parse_type_pattern(snowflake), parse_type_pattern(duckdb))
+    else {
+        return None;
+    };
     equalities
         .iter()
         .find(|equality| admits(equality, &snowflake, &duckdb))
@@ -25,26 +27,34 @@ fn admits(equality: &TypeEquality, snowflake: &TypePattern, duckdb: &TypePattern
     ) else {
         return false;
     };
-    let mut bindings: BTreeMap<String, i64> = BTreeMap::new();
-    bind(&snowflake_pattern, snowflake, &mut bindings)
-        && bind(&duckdb_pattern, duckdb, &mut bindings)
+    let Some(bindings) = bind(&snowflake_pattern, snowflake, BTreeMap::new()) else {
+        return false;
+    };
+    bind(&duckdb_pattern, duckdb, bindings).is_some()
 }
 
-fn bind(pattern: &TypePattern, actual: &TypePattern, bindings: &mut BTreeMap<String, i64>) -> bool {
+fn bind(
+    pattern: &TypePattern,
+    actual: &TypePattern,
+    bindings: BTreeMap<String, i64>,
+) -> Option<BTreeMap<String, i64>> {
     if pattern.base != actual.base || pattern.arguments.len() != actual.arguments.len() {
-        return false;
+        return None;
     }
-    pattern
-        .arguments
-        .iter()
-        .zip(&actual.arguments)
-        .all(|(expected, found)| match (expected, found) {
+    let mut bound = bindings;
+    for (expected, found) in pattern.arguments.iter().zip(&actual.arguments) {
+        let consistent = match (expected, found) {
             (PatternArgument::Literal(expected), PatternArgument::Literal(found)) => {
                 expected == found
             }
             (PatternArgument::Variable(name), PatternArgument::Literal(found)) => {
-                *bindings.entry(name.clone()).or_insert(*found) == *found
+                *bound.entry(name.clone()).or_insert(*found) == *found
             }
             _ => false,
-        })
+        };
+        if !consistent {
+            return None;
+        }
+    }
+    Some(bound)
 }

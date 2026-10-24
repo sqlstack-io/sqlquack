@@ -1,9 +1,8 @@
-//! `snowflake_type`: a warehouse column description as a Snowflake type name.
+//! Warehouse column descriptions as Snowflake type names.
 
 use crate::results::models::WarehouseColumn;
 
-/// `NUMBER(38,0)`, `VARCHAR(16777216)`, `TIMESTAMP_NTZ(9)` and so on.
-pub fn snowflake_type(column: &WarehouseColumn) -> String {
+pub(crate) fn snowflake_type(column: &WarehouseColumn) -> String {
     let precision = column.precision.unwrap_or_default();
     let scale = column.scale.unwrap_or_default();
     let size = column.internal_size.unwrap_or_default();

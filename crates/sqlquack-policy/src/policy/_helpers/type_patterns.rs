@@ -1,9 +1,8 @@
-//! `parse_type_pattern`: `NUMBER(p,s)` and similar to a pattern.
+//! Parsing type patterns such as `NUMBER(p,s)`.
 
 use crate::policy::models::{PatternArgument, TypePattern};
 
-/// Parses a type name with optional parameters; lower-case parameters are variables.
-pub fn parse_type_pattern(text: &str) -> Result<TypePattern, String> {
+pub(crate) fn parse_type_pattern(text: &str) -> Result<TypePattern, String> {
     let text = text.trim();
     let (base, rest) = match text.split_once('(') {
         Some((base, rest)) => (base.trim(), Some(rest)),

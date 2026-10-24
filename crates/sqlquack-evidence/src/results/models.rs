@@ -37,7 +37,7 @@ pub struct ResultMetadata {
     /// SHA-256 of the Arrow IPC file, as lower-case hex.
     pub arrow_sha256: Option<String>,
     /// The warehouse error, for error outcomes.
-    pub error: Option<RecordedError>,
+    pub error: Option<RecordedFailure>,
 }
 
 /// Whether the warehouse returned rows or an error.
@@ -70,10 +70,10 @@ pub struct WarehouseColumn {
     pub nullable: Option<bool>,
 }
 
-/// A warehouse error.
+/// A warehouse error recorded as the case outcome.
 #[derive(Clone, Debug, PartialEq, Eq, Deserialize, Serialize)]
 #[serde(deny_unknown_fields)]
-pub struct RecordedError {
+pub struct RecordedFailure {
     /// The warehouse error number.
     pub errno: Option<i64>,
     /// The SQLSTATE.

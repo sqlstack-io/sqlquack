@@ -2,8 +2,8 @@
 
 use std::path::Path;
 
+use crate::policy::_helpers::parsing::parse_policy;
 use crate::policy::errors::PolicyError;
-use crate::policy::main::parse_policy::parse_policy;
 use crate::policy::models::Policy;
 
 /// Reads `path` and validates it against the schema and every policy rule.

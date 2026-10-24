@@ -20,6 +20,6 @@ pub fn replay_on_duckdb(sql: &str, settings: &ReplaySettings) -> Result<ResultSe
         .query_arrow([])
         .map_err(|error| error.to_string())?;
     let schema = arrow.get_schema();
-    let batches = arrow.collect();
+    let batches: Vec<arrow::record_batch::RecordBatch> = arrow.collect();
     Ok(ResultSet { schema, batches })
 }

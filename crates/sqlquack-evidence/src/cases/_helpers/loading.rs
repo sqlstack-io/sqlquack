@@ -5,8 +5,8 @@ use std::collections::BTreeSet;
 use sqlquack_compare::comparison::models::RowOrder;
 use sqlquack_policy::policy::models::Policy;
 
+use crate::cases::_helpers::hashing::case_hash;
 use crate::cases::_helpers::source_sql::source_sql;
-use crate::cases::main::case_hash::case_hash;
 use crate::cases::models::{CaseDefinition, CaseFile, HashedContent, LoadedCase, QueryOrder};
 use crate::constants::{EVIDENCE_FORMAT, ORDINAL_COLUMN, SOURCE_DIALECT, VALUE_COLUMN};
 

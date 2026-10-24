@@ -1,5 +1,5 @@
+use crate::policy::_helpers::parsing::parse_policy;
 use crate::policy::main::matching_type_equality::matching_type_equality;
-use crate::policy::main::parse_policy::parse_policy;
 use crate::policy::models::Policy;
 
 pub(crate) const VALID_POLICY: &str = r#"

@@ -1,10 +1,11 @@
-//! The hashes recorded in a results directory.
+//! `recorded_hashes`: the case hashes recorded in a results directory.
 
 use std::path::Path;
 
 use crate::errors::EvidenceError;
 
-pub(crate) fn recorded_hashes(results: &Path) -> Result<Vec<String>, EvidenceError> {
+/// Every hash with a metadata file in `results`, sorted; none when the directory is absent.
+pub fn recorded_hashes(results: &Path) -> Result<Vec<String>, EvidenceError> {
     if !results.exists() {
         return Ok(Vec::new());
     }

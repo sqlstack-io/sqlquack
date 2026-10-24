@@ -7,7 +7,7 @@ use arrow::array::{ArrayRef, Decimal128Array, RecordBatch};
 use arrow::datatypes::DataType;
 use arrow::ipc::writer::FileWriter;
 use sqlquack_compare::values::models::ResultSet;
-use sqlquack_policy::policy::main::parse_policy::parse_policy;
+use sqlquack_policy::policy::main::load_policy::load_policy;
 
 use crate::cases::main::load_cases::load_cases;
 use crate::pending::main::write_pending::write_pending;
@@ -209,7 +209,8 @@ pub(crate) fn round_trip(tampering: Tampering) -> RoundTrip {
     let results = root.join("results");
     let pending_dir = root.join("pending");
     std::fs::create_dir_all(&results).expect("results directory");
-    let policy = parse_policy(POLICY).expect("the test policy is valid");
+    std::fs::write(root.join("sqlquack.toml"), POLICY).expect("policy written");
+    let policy = load_policy(&root.join("sqlquack.toml")).expect("the test policy is valid");
     let cases = load_cases(&root.join("cases"), &policy).expect("cases load");
     let before = write_pending(&cases, &results, &pending_dir, "v2.0.0").expect("pending written");
     let mut pending: BTreeMap<String, PendingCase> = BTreeMap::new();

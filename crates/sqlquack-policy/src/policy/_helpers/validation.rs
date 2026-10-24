@@ -2,8 +2,8 @@
 
 use std::collections::BTreeSet;
 
+use crate::policy::_helpers::type_patterns::parse_type_pattern;
 use crate::policy::constants::SCHEMA_VERSION;
-use crate::policy::main::parse_type_pattern::parse_type_pattern;
 use crate::policy::models::{
     Divergence, EdgeCaseRequirement, PatternArgument, Policy, SessionProfile, TypeEquality,
     TypePattern,

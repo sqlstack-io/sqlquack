@@ -5,6 +5,7 @@ use std::path::Path;
 use walkdir::WalkDir;
 
 use crate::cases::models::CaseFile;
+use crate::constants::CASE_FILE_EXTENSION;
 use crate::errors::EvidenceError;
 
 pub(crate) fn read_case_files(directory: &Path) -> Result<Vec<(String, CaseFile)>, EvidenceError> {
@@ -14,7 +15,9 @@ pub(crate) fn read_case_files(directory: &Path) -> Result<Vec<(String, CaseFile)
         let entry = entry.map_err(|error| EvidenceError::Io(error.to_string()))?;
         let path = entry.path();
         if !entry.file_type().is_file()
-            || path.extension().is_none_or(|extension| extension != "toml")
+            || path
+                .extension()
+                .is_none_or(|extension| extension != CASE_FILE_EXTENSION)
         {
             continue;
         }

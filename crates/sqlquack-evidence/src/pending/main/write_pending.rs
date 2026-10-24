@@ -4,7 +4,7 @@ use std::collections::BTreeSet;
 use std::path::Path;
 
 use crate::cases::models::LoadedCase;
-use crate::constants::{EVIDENCE_FORMAT, SOURCE_DIALECT};
+use crate::constants::{CASE_HASH_LENGTH, EVIDENCE_FORMAT, METADATA_EXTENSION, SOURCE_DIALECT};
 use crate::errors::EvidenceError;
 use crate::pending::models::{PendingCase, PendingSummary};
 
@@ -51,11 +51,16 @@ fn remove_stale(out: &Path, wanted: &BTreeSet<String>) -> Result<usize, Evidence
     let mut removed = 0;
     for entry in entries.flatten() {
         let name = entry.file_name().to_string_lossy().into_owned();
-        let is_pending_file = name.len() == 69
-            && name.ends_with(".json")
-            && name[..64]
-                .chars()
-                .all(|character| character.is_ascii_hexdigit());
+        let path = entry.path();
+        let stem = path
+            .file_stem()
+            .map(|stem| stem.to_string_lossy().into_owned())
+            .unwrap_or_default();
+        let is_pending_file = path
+            .extension()
+            .is_some_and(|extension| extension == METADATA_EXTENSION)
+            && stem.len() == CASE_HASH_LENGTH
+            && stem.chars().all(|character| character.is_ascii_hexdigit());
         if is_pending_file && !wanted.contains(&name) {
             std::fs::remove_file(entry.path())
                 .map_err(|error| EvidenceError::Io(format!("{name}: {error}")))?;
