@@ -1,0 +1,15 @@
+[package]
+name = "sqlquack-compare"
+version.workspace = true
+description = "The strict result comparator for SQLQuack's recorded evidence."
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+homepage.workspace = true
+publish.workspace = true
+rust-version.workspace = true
+
+[dependencies]
+
+[lints]
+workspace = true

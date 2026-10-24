@@ -1,0 +1,16 @@
+[package]
+name = "sqlquack-rules"
+version.workspace = true
+description = "The SQLQuack rule catalogue: verified Snowflake-to-DuckDB rules and declared refusals."
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+homepage.workspace = true
+publish.workspace = true
+rust-version.workspace = true
+
+[dependencies]
+sqlquack-core.workspace = true
+
+[lints]
+workspace = true

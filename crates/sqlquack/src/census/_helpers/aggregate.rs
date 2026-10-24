@@ -1,0 +1,157 @@
+//! Folds per-file censuses into the report.
+
+use std::cmp::Reverse;
+use std::collections::{BTreeMap, BTreeSet};
+
+use sqlquack_core::classification::models::Construct;
+use sqlquack_core::parsing::models::SourceDialect;
+use sqlquack_core::refusals::models::RefusalCategory;
+
+use crate::census::_helpers::coverage::{CoverageInput, convertible_at, greedy_order};
+use crate::census::_helpers::inspect::{FidelityClass, FileCensus};
+use crate::census::models::{
+    CensusReport, CensusTotals, ConstructCount, CoveragePoint, FidelityTotals, RefusalTotals,
+};
+
+pub(crate) fn aggregate(
+    files: &[FileCensus],
+    dialect: SourceDialect,
+    coverage_points: &[usize],
+) -> CensusReport {
+    let mut usage: BTreeMap<&Construct, usize> = BTreeMap::new();
+    for file in files {
+        for construct in &file.constructs {
+            *usage.entry(construct).or_default() += 1;
+        }
+    }
+    let ids: BTreeMap<&Construct, usize> = usage
+        .keys()
+        .enumerate()
+        .map(|(id, construct)| (*construct, id))
+        .collect();
+    let mut ranked: Vec<(&Construct, usize)> = usage.iter().map(|(c, n)| (*c, *n)).collect();
+    ranked.sort_by_key(|(construct, count)| (Reverse(*count), *construct));
+    let frequency_order: Vec<usize> = ranked.iter().map(|(construct, _)| ids[construct]).collect();
+    let file_ids: Vec<Option<Vec<usize>>> =
+        files.iter().map(|file| construct_ids(file, &ids)).collect();
+    CensusReport {
+        dialect,
+        totals: totals(files, &usage),
+        fidelity: fidelity_totals(files),
+        refusals: refusal_totals(files),
+        constructs: ranked
+            .iter()
+            .map(|(construct, count)| ConstructCount {
+                construct: construct.key(),
+                files: *count,
+            })
+            .collect(),
+        coverage: coverage(&file_ids, &frequency_order, coverage_points),
+    }
+}
+
+fn totals(files: &[FileCensus], usage: &BTreeMap<&Construct, usize>) -> CensusTotals {
+    let mut constructs_by_family: BTreeMap<String, usize> = BTreeMap::new();
+    for construct in usage.keys() {
+        *constructs_by_family
+            .entry(construct.family.prefix().to_owned())
+            .or_default() += 1;
+    }
+    let parsed = files.iter().filter(|file| file.parsed).count();
+    CensusTotals {
+        files: files.len(),
+        parsed,
+        unparsed: files.len() - parsed,
+        empty: files
+            .iter()
+            .filter(|file| file.parsed && file.statements == 0)
+            .count(),
+        statements: files.iter().map(|file| file.statements).sum(),
+        distinct_constructs: usage.len(),
+        constructs_by_family,
+    }
+}
+
+fn fidelity_totals(files: &[FileCensus]) -> FidelityTotals {
+    let mut totals = FidelityTotals::default();
+    for file in files {
+        match file.fidelity {
+            Some(FidelityClass::Identical) => totals.identical += 1,
+            Some(FidelityClass::Canonicalised) => totals.canonicalised += 1,
+            Some(FidelityClass::Unstable) => totals.unstable += 1,
+            Some(FidelityClass::Failed) => totals.failed += 1,
+            None => {}
+        }
+    }
+    totals
+}
+
+fn refusal_totals(files: &[FileCensus]) -> RefusalTotals {
+    let count = |category: RefusalCategory| {
+        files
+            .iter()
+            .filter(|file| file.refusal_categories.contains(&category))
+            .count()
+    };
+    RefusalTotals {
+        missing_rule: count(RefusalCategory::MissingRule),
+        not_expressible: count(RefusalCategory::NotExpressible),
+        parse_fidelity: count(RefusalCategory::ParseFidelity),
+        convertible: files
+            .iter()
+            .filter(|file| file.refusal_categories.is_empty())
+            .count(),
+    }
+}
+
+fn coverage(
+    files: &[Option<Vec<usize>>],
+    frequency_order: &[usize],
+    coverage_points: &[usize],
+) -> Vec<CoveragePoint> {
+    let construct_count = frequency_order.len();
+    let mut points: BTreeSet<usize> = coverage_points
+        .iter()
+        .copied()
+        .filter(|point| *point < construct_count)
+        .collect();
+    points.insert(construct_count);
+    let points: Vec<usize> = points.into_iter().collect();
+    let input = CoverageInput {
+        files,
+        construct_count,
+        frequency_order,
+    };
+    let frequency = convertible_at(files, frequency_order, construct_count, &points);
+    let greedy = convertible_at(files, &greedy_order(&input), construct_count, &points);
+    let share = |count: usize| {
+        if files.is_empty() {
+            0.0
+        } else {
+            count as f64 / files.len() as f64
+        }
+    };
+    points
+        .iter()
+        .zip(frequency.iter().zip(&greedy))
+        .map(|(rules, (frequency, greedy))| CoveragePoint {
+            rules: *rules,
+            frequency_order: *frequency,
+            greedy_order: *greedy,
+            frequency_share: share(*frequency),
+            greedy_share: share(*greedy),
+        })
+        .collect()
+}
+
+fn construct_ids(file: &FileCensus, ids: &BTreeMap<&Construct, usize>) -> Option<Vec<usize>> {
+    if !file.parsed {
+        return None;
+    }
+    Some(
+        file.constructs
+            .iter()
+            .map(|construct| ids[construct])
+            .collect(),
+    )
+}
