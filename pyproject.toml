@@ -1,0 +1,20 @@
+[project]
+name = "sqlquack-workspace"
+version = "0.0.0"
+description = "Development tooling for the SQLQuack Rust workspace."
+requires-python = ">=3.12"
+dependencies = []
+
+[dependency-groups]
+dev = [
+  "fensu>=0.27.0",
+  "ruff>=0.12.0",
+  "ty>=0.0.1a19",
+]
+
+[tool.uv]
+package = false
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"

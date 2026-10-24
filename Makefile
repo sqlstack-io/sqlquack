@@ -1,20 +1,29 @@
-.PHONY: format check-format check-structure check-rust test-rust check verify
+SHELL := /bin/bash
+
+.PHONY: format rust-lint python-check fensu check-ci test census
 
 format:
-	cargo fmt
+	cargo fmt --all
+	uv run ruff format .
 
-check-format:
-	cargo fmt --check
+rust-lint:
+	cargo fmt --all --check
+	cargo clippy --workspace --all-targets --locked -- -D warnings
 
-check-structure:
-	cargo run -p sqlquack-structure-checker --quiet
+python-check:
+	uv run ruff format --check .
+	uv run ruff check .
+	uv run ty check
 
-check-rust:
-	cargo check --all
+fensu:
+	uv run fensu check
 
-test-rust:
-	cargo test --all
+# The static gate: CI and the pre-push verify hook run exactly this.
+check-ci: rust-lint python-check fensu
 
-check: check-format check-structure check-rust
+test:
+	cargo test --workspace --locked
 
-verify: check test-rust
+# Example: make census CENSUS_ARGS="path/to/sql --json"
+census:
+	cargo run --release --locked -p sqlquack -- census $(CENSUS_ARGS)
