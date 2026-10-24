@@ -75,9 +75,9 @@ tags = ["null"]
 [[case]]
 id = "sorted_bag"
 description = "Values compared as a bag."
-columns = [{ name = "price", type = "DECIMAL(10,2)" }]
+columns = [{ name = "amount", type = "DECIMAL(10,2)" }]
 rows = [["3.00"], ["1.00"]]
-query = "SELECT price FROM input"
+query = "SELECT amount FROM input"
 order = "bag"
 tags = []
 "#;
