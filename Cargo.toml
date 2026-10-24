@@ -4,7 +4,9 @@ members = [
     "crates/sqlquack-snowflake",
     "crates/sqlquack-rules",
     "crates/sqlquack-duckdb",
+    "crates/sqlquack-policy",
     "crates/sqlquack-compare",
+    "crates/sqlquack-evidence",
     "crates/sqlquack",
 ]
 resolver = "2"
@@ -20,7 +22,9 @@ publish = false
 rust-version = "1.88"
 
 [workspace.dependencies]
+arrow = { version = "60", default-features = false, features = ["ipc"] }
 clap = { version = "4.5", features = ["derive"] }
+duckdb = "=1.20000.0"
 polyglot-sql = { git = "https://github.com/chio-labs/polyglot.git", rev = "b18dc647e797e480d2faadf3af407077f8e063df", default-features = false, features = [
     "dialect-snowflake",
     "dialect-duckdb",
@@ -33,12 +37,16 @@ polyglot-sql = { git = "https://github.com/chio-labs/polyglot.git", rev = "b18dc
 rayon = "1"
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
+sha2 = "0.10"
 sqlquack-compare = { path = "crates/sqlquack-compare" }
 sqlquack-core = { path = "crates/sqlquack-core" }
 sqlquack-duckdb = { path = "crates/sqlquack-duckdb" }
+sqlquack-evidence = { path = "crates/sqlquack-evidence" }
+sqlquack-policy = { path = "crates/sqlquack-policy" }
 sqlquack-rules = { path = "crates/sqlquack-rules" }
 sqlquack-snowflake = { path = "crates/sqlquack-snowflake" }
 tempfile = "3"
+toml = { version = "0.9", default-features = false, features = ["parse", "serde"] }
 walkdir = "2"
 
 [workspace.lints.rust]

@@ -1,3 +1,10 @@
+[targets.python]
+analyzer = "python"
+roots = ["recorder/src/sqlquack_record"]
+tests = ["tests"]
+tooling = ["scripts"]
+select = ["FF"]
+
 [targets.rust]
 analyzer = "rust"
 roots = ["crates"]
