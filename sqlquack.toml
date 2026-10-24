@@ -1,0 +1,122 @@
+# SQLQuack evidence policy.
+#
+# This is the only place that holds settings which could be weakened to make a failing case pass.
+# No case, rule or command-line flag overrides it. Every change is reviewed on its own.
+# The schema lives in crates/sqlquack-policy; unknown keys are rejected.
+
+schema_version = 1
+
+[comparator]
+# Snowflake upper-cases unquoted result column names; DuckDB keeps them as written.
+column_names = "case_insensitive"
+# DuckDB's default_null_order during replay: Snowflake's default ordering (NULLs sort high).
+null_order = "nulls_last_on_asc_first_on_desc"
+# Zoned timestamps must denote the same instant.
+timestamp_tz = "instant"
+
+# Floats compare bitwise (every NaN is one value).
+[comparator.float_ulps]
+float32 = 0
+float64 = 0
+
+[[comparator.type_equality]]
+snowflake = "NUMBER(p,s)"
+duckdb = "DECIMAL(p,s)"
+reason = "Fixed-point numbers with the same precision and scale hold the same values."
+
+[[comparator.type_equality]]
+snowflake = "FLOAT"
+duckdb = "DOUBLE"
+reason = "Snowflake FLOAT is a 64-bit IEEE 754 double."
+
+[[comparator.type_equality]]
+snowflake = "VARCHAR(n)"
+duckdb = "VARCHAR"
+reason = "Text values compare bytewise; the declared Snowflake length does not change a value."
+
+[[comparator.type_equality]]
+snowflake = "BOOLEAN"
+duckdb = "BOOLEAN"
+reason = "Same type."
+
+[[comparator.type_equality]]
+snowflake = "DATE"
+duckdb = "DATE"
+reason = "Same type."
+
+[[comparator.type_equality]]
+snowflake = "TIME(p)"
+duckdb = "TIME"
+reason = "Times compare at nanoseconds, so a precision mismatch shows up as a value difference."
+
+[[comparator.type_equality]]
+snowflake = "TIMESTAMP_NTZ(p)"
+duckdb = "TIMESTAMP"
+reason = "Naive timestamps compare at nanoseconds, so a precision mismatch shows up as a value difference."
+
+[[comparator.type_equality]]
+snowflake = "TIMESTAMP_TZ(p)"
+duckdb = "TIMESTAMPTZ"
+reason = "Zoned timestamps compare as instants (see timestamp_tz)."
+
+[[comparator.type_equality]]
+snowflake = "TIMESTAMP_LTZ(p)"
+duckdb = "TIMESTAMPTZ"
+reason = "Local-zone timestamps compare as instants (see timestamp_tz)."
+
+[[comparator.type_equality]]
+snowflake = "BINARY(n)"
+duckdb = "BLOB"
+reason = "Binary values compare bytewise; the declared Snowflake length does not change a value."
+
+[session_profiles.utc-v1]
+description = "Snowflake defaults pinned explicitly, with the session in UTC."
+duckdb_time_zone = "UTC"
+
+[session_profiles.utc-v1.snowflake]
+TIMEZONE = "UTC"
+TIMESTAMP_TYPE_MAPPING = "TIMESTAMP_NTZ"
+WEEK_START = 0
+WEEK_OF_YEAR_POLICY = 0
+DEFAULT_NULL_ORDERING = "LAST"
+QUOTED_IDENTIFIERS_IGNORE_CASE = false
+USE_CACHED_RESULT = false
+
+[edge_cases.numeric]
+description = "Arithmetic, rounding and numeric conversion."
+required = ["null", "zero", "negative", "boundary"]
+
+[edge_cases.string]
+description = "String functions and operators."
+required = ["null", "empty", "whitespace", "unicode"]
+
+[edge_cases.ordering]
+description = "ORDER BY, NULL placement and ties."
+required = ["null", "ties"]
+
+# Known divergences: values differ from Snowflake but stay consistent within one run. Each still
+# needs recorded cases proving that consistency before a rule may use it.
+
+[divergences.hash]
+constructs = ["fn:HASH"]
+default = "warn"
+strict = "refuse"
+reason = "Hash values differ from Snowflake; equal inputs still hash equally within one run."
+
+[divergences.random]
+constructs = ["node:random"]
+default = "warn"
+strict = "refuse"
+reason = "Random values differ from Snowflake by nature."
+
+[divergences.uuid]
+constructs = ["fn:UUID_STRING"]
+default = "warn"
+strict = "refuse"
+reason = "Generated identifiers differ from Snowflake; each stays unique within one run."
+
+[divergences.sequences]
+constructs = ["fn:SEQ1", "fn:SEQ2", "fn:SEQ4", "fn:SEQ8"]
+default = "warn"
+strict = "refuse"
+reason = "Sequence values and gaps differ from Snowflake; values stay unique within one run."
