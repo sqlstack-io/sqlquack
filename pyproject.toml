@@ -1,20 +1,46 @@
 [project]
 name = "sqlquack-workspace"
 version = "0.0.0"
-description = "Development tooling for the SQLQuack Rust workspace."
+description = "Development tooling for SQLQuack: the recorder, repository checks and their tests."
 requires-python = ">=3.12"
 dependencies = []
 
 [dependency-groups]
 dev = [
   "fensu>=0.27.0",
+  "pytest>=8.4",
+  "pytest-xdist>=3.8",
   "ruff>=0.12.0",
   "ty>=0.0.1a19",
 ]
+# The Snowflake recorder. Maintainers install it locally; CI never builds or runs it.
+recorder = ["sqlquack-record"]
 
 [tool.uv]
 package = false
+default-groups = ["dev", "recorder"]
+
+[tool.uv.workspace]
+members = ["recorder"]
+
+[tool.uv.sources]
+sqlquack-record = { workspace = true }
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "--import-mode=importlib"
+pythonpath = ["."]
 
 [tool.ruff]
 line-length = 100
 target-version = "py312"
+
+[tool.ruff.lint]
+select = ["B", "E", "F", "I", "PLR0913", "PLR0915", "UP"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**/test_*.py" = ["E501"]
+"tests/**/helpers.py" = ["PLR0913"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["sqlquack_record", "scripts", "tests"]

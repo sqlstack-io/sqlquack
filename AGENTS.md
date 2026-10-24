@@ -25,6 +25,9 @@
 - Everything that could be weakened to make a failing case pass (comparator tolerances, required
   edge-case inputs, known divergences) lives in one reviewed policy file. There are no per-case or
   per-rule overrides elsewhere.
+- Tests that need a result use DuckDB stand-ins written to temporary directories and marked as
+  test fixtures. Never commit a stand-in under `evidence/results`; the evidence guard rejects any
+  result the recorder did not write.
 - When a case fails, either fix the rule or make it refuse. Never widen a rule to raise the
   conversion rate.
 

@@ -1,0 +1,30 @@
+category = "ordering"
+construct = "clause:order_by"
+session_profile = "utc-v1"
+
+[[case]]
+id = "ascending_default"
+description = "ORDER BY without NULLS FIRST or LAST, ascending."
+columns = [{ name = "quantity", type = "NUMBER(38,0)" }]
+rows = [["3"], ["NULL"], ["1"], ["3"]]
+query = "SELECT quantity FROM input ORDER BY quantity"
+order = "ordered"
+tags = ["null", "ties"]
+
+[[case]]
+id = "descending_default"
+description = "ORDER BY without NULLS FIRST or LAST, descending."
+columns = [{ name = "quantity", type = "NUMBER(38,0)" }]
+rows = [["3"], ["NULL"], ["1"], ["3"]]
+query = "SELECT quantity FROM input ORDER BY quantity DESC"
+order = "ordered"
+tags = ["null", "ties"]
+
+[[case]]
+id = "ascending_nulls_first"
+description = "An explicit NULLS FIRST, ascending."
+columns = [{ name = "quantity", type = "NUMBER(38,0)" }]
+rows = [["3"], ["NULL"], ["1"], ["3"]]
+query = "SELECT quantity FROM input ORDER BY quantity ASC NULLS FIRST"
+order = "ordered"
+tags = ["null", "ties"]

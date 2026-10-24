@@ -31,14 +31,34 @@ Each `.sql` file is one query, or one model compiled by
 [SQLBuild](https://github.com/chio-labs/sqlbuild); SQLBuild's reference calls are recognised. The
 report contains counts and construct names only, never SQL text or file names.
 
+## Evidence
+
+Every rule is verified against results recorded on Snowflake and replayed on DuckDB:
+
+```console
+$ cargo run -p sqlquack -- pending          # write pending case files
+$ uv run sqlquack-record                    # maintainers only: record them on Snowflake
+$ cargo run -p sqlquack -- verify           # replay recorded cases on DuckDB and compare
+```
+
+The recorder uses the Snowflake connector's own configuration: the connection named by
+`--connection` or `SQLQUACK_SNOWFLAKE_CONNECTION`, otherwise the connector's default connection
+in `~/.snowflake/connections.toml`. `SNOWFLAKE_ACCOUNT`, `SNOWFLAKE_USER`, `SNOWFLAKE_ROLE`,
+`SNOWFLAKE_AUTHENTICATOR` and `SNOWFLAKE_HOST` override it, and `--warehouse` or
+`SQLQUACK_SNOWFLAKE_WAREHOUSE` selects the warehouse. Tokens are cached, so an OAuth
+authorization-code login is interactive only when the cached token has expired.
+
+The policy that governs comparison lives in [sqlquack.toml](sqlquack.toml).
+
 ## How it works
 
 See [docs/architecture.md](docs/architecture.md).
 
 ## Development
 
-`make check-ci` runs every static gate (rustfmt, clippy, fensu, ruff and ty) and `make test` runs
-the tests. See [AGENTS.md](AGENTS.md) for the rules every change follows.
+`make check-ci` runs every static gate (rustfmt, clippy, fensu, ruff, ty and the append-only
+evidence guard) and `make test` runs the tests. CI runs both with `RECORDER=0`, which leaves the
+recorder out. See [AGENTS.md](AGENTS.md) for the rules every change follows.
 
 ## License
 

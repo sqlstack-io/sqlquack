@@ -21,8 +21,17 @@ jobs:
     env:
       CARGO_TERM_COLOR: always
       CARGO_INCREMENTAL: "0"
+      # The Snowflake recorder is never built or run in CI.
+      RECORDER: "0"
+      # `uv run` would otherwise sync the default groups, recorder included.
+      UV_NO_SYNC: "1"
+      # The append-only guard compares recorded results with the pull request base or the
+      # previous main commit.
+      EVIDENCE_BASE: ${{ github.event.pull_request.base.sha || github.event.before || 'origin/main' }}
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - uses: astral-sh/setup-uv@v5
         with:
           version: "0.12.3"
@@ -36,8 +45,8 @@ jobs:
           shared-key: verify
       - name: Install Python
         run: uv python install 3.12
-      - name: Install development tools
-        run: uv sync --locked
+      - name: Install development tools without the recorder
+        run: uv sync --locked --no-group recorder
       - name: Run static checks
         run: make check-ci
       - name: Run tests
