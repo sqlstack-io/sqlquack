@@ -1287,6 +1287,8 @@ dependencies = [
  "sqlquack-compare",
  "sqlquack-core",
  "sqlquack-duckdb",
+ "sqlquack-evidence",
+ "sqlquack-policy",
  "sqlquack-rules",
  "sqlquack-snowflake",
  "tempfile",

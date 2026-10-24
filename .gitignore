@@ -29,3 +29,7 @@ __pycache__/
 /.agents/skills/
 /.claude/skills/
 /.opencode/skills/
+
+# Derived evidence work files
+/evidence/pending/
+/evidence/audit/

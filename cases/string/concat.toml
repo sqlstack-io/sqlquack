@@ -1,0 +1,31 @@
+category = "string"
+construct = "fn:CONCAT"
+session_profile = "utc-v1"
+
+[[case]]
+id = "concat_function"
+description = "CONCAT with NULL, empty, whitespace and non-ASCII arguments."
+columns = [{ name = "a", type = "VARCHAR" }, { name = "b", type = "VARCHAR" }]
+rows = [
+  ["'gift'", "'wrap'"],
+  ["'gift'", "NULL"],
+  ["NULL", "NULL"],
+  ["''", "'wrap'"],
+  ["'  '", "'café'"],
+]
+expression = "CONCAT(a, b)"
+tags = ["null", "empty", "whitespace", "unicode"]
+
+[[case]]
+id = "concat_operator"
+description = "The || operator on the same inputs."
+columns = [{ name = "a", type = "VARCHAR" }, { name = "b", type = "VARCHAR" }]
+rows = [
+  ["'gift'", "'wrap'"],
+  ["'gift'", "NULL"],
+  ["NULL", "NULL"],
+  ["''", "'wrap'"],
+  ["'  '", "'café'"],
+]
+expression = "a || b"
+tags = ["null", "empty", "whitespace", "unicode"]

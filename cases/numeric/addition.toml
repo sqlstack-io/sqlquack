@@ -1,0 +1,25 @@
+category = "numeric"
+construct = "node:add"
+session_profile = "utc-v1"
+
+[[case]]
+id = "integers"
+description = "Integer addition, including NULL and the largest 38-digit result."
+columns = [{ name = "a", type = "NUMBER(38,0)" }, { name = "b", type = "NUMBER(38,0)" }]
+rows = [
+  ["1", "2"],
+  ["-5", "3"],
+  ["0", "0"],
+  ["NULL", "1"],
+  ["99999999999999999999999999999999999998", "1"],
+]
+expression = "a + b"
+tags = ["null", "zero", "negative", "boundary"]
+
+[[case]]
+id = "mixed_scales"
+description = "Adding numbers of different scales; the result scale is the larger one."
+columns = [{ name = "a", type = "NUMBER(10,2)" }, { name = "b", type = "NUMBER(12,4)" }]
+rows = [["1.25", "0.0001"], ["-0.01", "0"], ["NULL", "NULL"]]
+expression = "a + b"
+tags = ["null", "zero", "negative"]
