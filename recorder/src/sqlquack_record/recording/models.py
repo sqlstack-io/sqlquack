@@ -34,11 +34,10 @@ class ColumnDescription:
 
 @dataclass(frozen=True)
 class WarehouseFailure:
-    """A warehouse SQL error recorded as a case outcome."""
+    """A warehouse SQL error recorded as a case outcome; messages can name account objects."""
 
     errno: int | None
     sqlstate: str | None
-    message: str
 
 
 @dataclass(frozen=True)

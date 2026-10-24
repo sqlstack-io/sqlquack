@@ -14,9 +14,9 @@ from tests.unit.recorder.src.sqlquack_record.recording.helpers import record
 
 _UTC: tuple[tuple[str, bool | int | str], ...] = (("TIMEZONE", "UTC"),)
 _WEEKS: tuple[tuple[str, bool | int | str], ...] = (("TIMEZONE", "UTC"), ("WEEK_START", 1))
-_ROWS: RecordedFile = ("rows", True, True)
-_ERROR: RecordedFile = ("error", True, True)
-_EXISTING: RecordedFile = ("preexisting", True, True)
+_ROWS: RecordedFile = ("rows", True, True, True)
+_ERROR: RecordedFile = ("error", True, True, True)
+_EXISTING: RecordedFile = ("preexisting", False, True, True)
 
 
 @pytest.mark.parametrize(

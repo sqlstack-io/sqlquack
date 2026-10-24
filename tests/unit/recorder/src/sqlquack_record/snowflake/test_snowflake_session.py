@@ -49,6 +49,15 @@ _STATEMENTS: tuple[str, ...] = ("SELECT 1", "SELECT 1 / 0")
             expected_files_written=0,
         ),
         BatchRecordingTestCase(
+            description="a privilege error depends on the role, so it stops the run",
+            statements=_STATEMENTS,
+            batch_error=(100132, "P0000"),
+            statement_errors=(("SELECT 1 / 0", 3001, "42501"),),
+            expected_outcomes=None,
+            expected_single_runs=_STATEMENTS,
+            expected_files_written=0,
+        ),
+        BatchRecordingTestCase(
             description="a batch error that is not a case outcome stops the run at once",
             statements=_STATEMENTS,
             batch_error=(390114, "08001"),

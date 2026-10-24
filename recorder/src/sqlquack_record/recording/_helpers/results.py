@@ -37,7 +37,9 @@ def write_result(
         "outcome": ROWS_OUTCOME if result.table is not None else ERROR_OUTCOME,
         "recorder": f"{RECORDER_NAME} {RECORDER_VERSION}",
         "connector": context.connector,
-        "query_id": result.query_id,
+        "query_id_sha256": None
+        if result.query_id is None
+        else hashlib.sha256(result.query_id.encode("utf-8")).hexdigest(),
         "warehouse_version": context.warehouse_version,
         "duckdb_version": case.duckdb_version,
         "recorded_at": context.recorded_at,
@@ -61,7 +63,6 @@ def write_result(
         else {
             "errno": result.failure.errno,
             "sqlstate": result.failure.sqlstate,
-            "message": result.failure.message,
         },
     }
     _create_exclusively(

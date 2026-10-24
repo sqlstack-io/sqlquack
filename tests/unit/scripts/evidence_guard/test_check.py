@@ -8,7 +8,9 @@ import pytest
 
 from tests.unit.scripts.evidence_guard._test_types import GuardTestCase
 from tests.unit.scripts.evidence_guard.helpers import (
+    add_error_message,
     add_mismatched,
+    add_raw_query_id,
     add_stand_in,
     add_valid,
     delete_stored,
@@ -50,6 +52,18 @@ from tests.unit.scripts.evidence_guard.helpers import (
             change=add_mismatched,
             expected_return_code=1,
             expected_fragment="does not match arrow_sha256",
+        ),
+        GuardTestCase(
+            description="a raw query ID is rejected",
+            change=add_raw_query_id,
+            expected_return_code=1,
+            expected_fragment="query_id_sha256 must be a SHA-256 hex digest",
+        ),
+        GuardTestCase(
+            description="an error message is rejected",
+            change=add_error_message,
+            expected_return_code=1,
+            expected_fragment="an error records only errno and sqlstate",
         ),
         GuardTestCase(
             description="a result not written by the recorder is rejected",

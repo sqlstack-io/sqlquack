@@ -13,7 +13,7 @@ METADATA_KEYS: frozenset[str] = frozenset(
         "outcome",
         "recorder",
         "connector",
-        "query_id",
+        "query_id_sha256",
         "warehouse_version",
         "duckdb_version",
         "recorded_at",
@@ -25,6 +25,7 @@ METADATA_KEYS: frozenset[str] = frozenset(
     }
 )
 HASH_LENGTH: int = 64
+ERROR_KEYS: frozenset[str] = frozenset({"errno", "sqlstate"})
 ADDED_STATUS: str = "A"
 ARROW_SUFFIX: str = ".arrow"
 METADATA_SUFFIX: str = ".json"

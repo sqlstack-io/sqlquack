@@ -20,8 +20,8 @@ pub struct ResultMetadata {
     pub recorder: String,
     /// The warehouse client name and version.
     pub connector: String,
-    /// The warehouse query ID.
-    pub query_id: Option<String>,
+    /// SHA-256 of the warehouse query ID, as lower-case hex; the ID itself is never stored.
+    pub query_id_sha256: Option<String>,
     /// The warehouse version.
     pub warehouse_version: String,
     /// The DuckDB version the case was prepared against.
@@ -78,8 +78,6 @@ pub struct RecordedFailure {
     pub errno: Option<i64>,
     /// The SQLSTATE.
     pub sqlstate: Option<String>,
-    /// The message.
-    pub message: String,
 }
 
 /// A loaded, integrity-checked result.

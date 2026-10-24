@@ -180,7 +180,7 @@ fn record_stand_in(pending: &PendingCase, results: &Path) {
         outcome: RecordedOutcome::Rows,
         recorder: STAND_IN_RECORDER.to_owned(),
         connector: STAND_IN_RECORDER.to_owned(),
-        query_id: None,
+        query_id_sha256: None,
         warehouse_version: STAND_IN_RECORDER.to_owned(),
         duckdb_version: pending.duckdb_version.clone(),
         recorded_at: "1970-01-01T00:00:00Z".to_owned(),

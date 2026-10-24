@@ -4,9 +4,10 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
-# What was stored for one case: the outcome, whether the Arrow file matches the metadata hash,
-# and whether the stored rows equal the warehouse's Arrow table.
-type RecordedFile = tuple[str, bool, bool]
+# What was stored for one case: the outcome, whether only a hash of the query ID is stored,
+# whether the Arrow file matches the metadata hash, and whether the stored rows equal the
+# warehouse's Arrow table.
+type RecordedFile = tuple[str, bool, bool, bool]
 
 
 @dataclass(frozen=True)

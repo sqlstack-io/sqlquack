@@ -10,6 +10,7 @@ from snowflake.connector.errors import ProgrammingError
 from sqlquack_record.recording.constants import (
     MULTI_STATEMENT_FAILURE,
     RECORDABLE_SQLSTATE_CLASSES,
+    SESSION_DEPENDENT_SQLSTATES,
 )
 from sqlquack_record.recording.exceptions import RecorderError
 from sqlquack_record.recording.models import ColumnDescription, StatementResult
@@ -28,7 +29,7 @@ def fetch(cursor: Any) -> StatementResult:
 def require_recordable(error: ProgrammingError) -> None:
     """Raise unless `error` is a SQL error that belongs to the case rather than the session."""
     sqlstate: str = str(error.sqlstate or "")
-    if sqlstate[:2] not in RECORDABLE_SQLSTATE_CLASSES:
+    if sqlstate[:2] not in RECORDABLE_SQLSTATE_CLASSES or sqlstate in SESSION_DEPENDENT_SQLSTATES:
         raise RecorderError(
             f"Snowflake error {error.errno} (SQLSTATE {sqlstate or 'unknown'}) is not a case "
             f"outcome; nothing was recorded: {error.msg}"

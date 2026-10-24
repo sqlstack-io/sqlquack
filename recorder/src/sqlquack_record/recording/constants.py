@@ -19,6 +19,7 @@ CONNECTION_OVERRIDES: dict[str, str] = {
     "SNOWFLAKE_HOST": "host",
 }
 RECORDABLE_SQLSTATE_CLASSES: frozenset[str] = frozenset({"0A", "21", "22", "42"})
+SESSION_DEPENDENT_SQLSTATES: frozenset[str] = frozenset({"42501"})
 HASH_NAME_LENGTH: int = 64
 HEX_DIGITS: frozenset[str] = frozenset("0123456789abcdef")
 PENDING_KEYS: frozenset[str] = frozenset(

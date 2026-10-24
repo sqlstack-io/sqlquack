@@ -29,7 +29,7 @@ _FAILURE: StatementResult = StatementResult(
     query_id="fake-error-query",
     columns=(),
     table=None,
-    failure=WarehouseFailure(errno=100051, sqlstate="22012", message="Division by zero"),
+    failure=WarehouseFailure(errno=100051, sqlstate="22012"),
 )
 
 
@@ -96,15 +96,17 @@ def _pending_case(*, statement: str, parameters: SessionParameters) -> PendingCa
 
 
 def _recorded_file(*, results: Path, case: PendingCase) -> RecordedFile:
-    metadata: dict[str, object] = json.loads(
-        (results / f"{case.case_hash}.json").read_text(encoding="utf-8")
-    )
+    text: str = (results / f"{case.case_hash}.json").read_text(encoding="utf-8")
+    metadata: dict[str, object] = json.loads(text)
     arrow_files: list[bytes] = [
         path.read_bytes() for path in results.glob(f"{case.case_hash}.arrow")
     ]
     claimed: list[object] = [metadata.get("arrow_sha256")]
     return (
         str(metadata.get("outcome", "preexisting")),
+        "-query" not in text
+        and "query-" not in text
+        and len(str(metadata.get("query_id_sha256", ""))) == 64,
         [hashlib.sha256(data).hexdigest() for data in arrow_files] == list(filter(None, claimed)),
         all(
             pa.ipc.open_file(pa.BufferReader(data)).read_all().equals(fake_table(case.source_sql))

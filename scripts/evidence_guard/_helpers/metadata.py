@@ -9,6 +9,7 @@ from pathlib import Path, PurePosixPath
 from scripts.evidence_guard._helpers.git import blob
 from scripts.evidence_guard.constants import (
     ARROW_SUFFIX,
+    ERROR_KEYS,
     ERROR_OUTCOME,
     EVIDENCE_FORMAT,
     HASH_LENGTH,
@@ -47,6 +48,16 @@ def _metadata_problems(*, repository: Path, head: str, path: str, stem: str) -> 
     problems: list[str] = []
     if metadata["format"] != EVIDENCE_FORMAT or metadata["case_hash"] != stem:
         problems.append(f"{path}: wrong format or case hash")
+    query_hash: object = metadata["query_id_sha256"]
+    if query_hash is not None and (
+        not isinstance(query_hash, str)
+        or len(query_hash) != HASH_LENGTH
+        or not set(query_hash) <= HEX_DIGITS
+    ):
+        problems.append(f"{path}: query_id_sha256 must be a SHA-256 hex digest or null")
+    error: object = metadata["error"]
+    if error is not None and (not isinstance(error, dict) or set(error) != ERROR_KEYS):
+        problems.append(f"{path}: an error records only errno and sqlstate")
     if not str(metadata["recorder"]).startswith(RECORDER_PREFIX):
         problems.append(f"{path}: not written by sqlquack-record")
     arrow: bytes | None = blob(

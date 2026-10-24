@@ -57,12 +57,15 @@ fn replayed_verdict(
         (None, Err(_)) => Verdict::Passed,
         (None, Ok(_)) => Verdict::Failed {
             reason: format!(
-                "Snowflake raised an error ({}), but DuckDB returned rows",
-                stored
-                    .metadata
-                    .error
-                    .as_ref()
-                    .map_or("unknown", |error| error.message.as_str())
+                "Snowflake raised error {}, but DuckDB returned rows",
+                stored.metadata.error.as_ref().map_or_else(
+                    || "unknown".to_owned(),
+                    |error| format!(
+                        "{} (SQLSTATE {})",
+                        error.errno.unwrap_or_default(),
+                        error.sqlstate.as_deref().unwrap_or("unknown")
+                    )
+                )
             ),
         },
         (Some(_), Err(error)) => Verdict::Failed {

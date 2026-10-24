@@ -66,9 +66,7 @@ class SnowflakeSession:
                 query_id=error.sfqid,
                 columns=(),
                 table=None,
-                failure=WarehouseFailure(
-                    errno=error.errno, sqlstate=error.sqlstate, message=str(error.msg)
-                ),
+                failure=WarehouseFailure(errno=error.errno, sqlstate=error.sqlstate),
             )
         finally:
             cursor.close()

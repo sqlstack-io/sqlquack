@@ -23,7 +23,15 @@ def _git(repository: Path, *arguments: str) -> None:
     )
 
 
-def _write_result(*, results: Path, seed: str, recorder: str, arrow: bytes, claimed: bytes) -> str:
+def _write_result(
+    *,
+    results: Path,
+    seed: str,
+    recorder: str,
+    arrow: bytes,
+    claimed: bytes,
+    replaced: tuple[tuple[str, object], ...] = (),
+) -> str:
     case_hash: str = hashlib.sha256(seed.encode("utf-8")).hexdigest()
     (results / f"{case_hash}.arrow").write_bytes(arrow)
     metadata: dict[str, object] = {
@@ -32,7 +40,7 @@ def _write_result(*, results: Path, seed: str, recorder: str, arrow: bytes, clai
         "outcome": "rows",
         "recorder": recorder,
         "connector": "test",
-        "query_id": None,
+        "query_id_sha256": hashlib.sha256(b"01b2-fake-query").hexdigest(),
         "warehouse_version": "test",
         "duckdb_version": "v2.0.0",
         "recorded_at": "1970-01-01T00:00:00Z",
@@ -42,7 +50,9 @@ def _write_result(*, results: Path, seed: str, recorder: str, arrow: bytes, clai
         "arrow_sha256": hashlib.sha256(claimed).hexdigest(),
         "error": None,
     }
-    (results / f"{case_hash}.json").write_text(json.dumps(metadata), encoding="utf-8")
+    (results / f"{case_hash}.json").write_text(
+        json.dumps({**metadata, **dict(replaced)}), encoding="utf-8"
+    )
     return case_hash
 
 
@@ -74,6 +84,30 @@ def add_stand_in(results: Path, _: str) -> None:
     """Adds a result that the recorder did not write."""
     _write_result(
         results=results, seed="new", recorder="test fixture", arrow=b"new", claimed=b"new"
+    )
+
+
+def add_raw_query_id(results: Path, _: str) -> None:
+    """Adds a result that stores a raw query ID instead of its hash."""
+    _write_result(
+        results=results,
+        seed="new",
+        recorder=_RECORDER,
+        arrow=b"new",
+        claimed=b"new",
+        replaced=(("query_id_sha256", "01b2-fake-query"),),
+    )
+
+
+def add_error_message(results: Path, _: str) -> None:
+    """Adds an error result that keeps the warehouse's message."""
+    _write_result(
+        results=results,
+        seed="new",
+        recorder=_RECORDER,
+        arrow=b"new",
+        claimed=b"new",
+        replaced=(("error", {"errno": 2003, "sqlstate": "42S02", "message": "Object missing"}),),
     )
 
 

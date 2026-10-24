@@ -125,10 +125,11 @@ it becomes a new case with a new result.
 1. `sqlquack pending` writes `evidence/pending/<hash>.json` for every case without a result.
 2. The maintainer runs `sqlquack-record`, which runs the pending SQL in batches, one Snowflake
    session per set of session parameters, and writes `evidence/results/<hash>.arrow` (the
-   connector's Arrow result, unconverted) and `<hash>.json` (query ID, warehouse, connector and
-   DuckDB versions, recording time, column descriptions, row count and the Arrow file's SHA-256).
-   A SQL error is recorded as the outcome instead; session and connection errors stop the run
-   without writing anything. When any statement of a batch fails, Snowflake reports the whole
+   connector's Arrow result, unconverted) and `<hash>.json` (the SHA-256 of the query ID,
+   warehouse, connector and DuckDB versions, recording time, column descriptions, row count and
+   the Arrow file's SHA-256). A SQL error in SQLSTATE class 0A, 21, 22 or 42 is recorded as the
+   outcome instead, as its error number and SQLSTATE only; session, connection and privilege
+   (42501) errors stop the run without writing anything. When any statement of a batch fails, Snowflake reports the whole
    request as error 100132 (SQLSTATE P0000), so the batch's cases are rerun one at a time and each
    real error is classified on its own. Existing results are never overwritten.
 3. `sqlquack verify` converts each recorded case, replays it on DuckDB in a fresh in-memory
@@ -149,6 +150,13 @@ Audits compare two recordings and allow no tolerance at all.
 
 ### Integrity
 
+Results are public, so they hold nothing specific to the recording account. The raw query ID is
+replaced by its SHA-256, which the maintainer can match against query history by hashing.
+Snowflake error messages can name databases, schemas, roles and other objects, so they are not
+stored. Column names, session parameters and values all come from the case itself, and the
+warehouse version is Snowflake's release number.
+
 CI runs `make evidence-guard`: any modified or deleted file under `evidence/results` fails, and an
 added result must be named by a case hash, have exactly the recorder's metadata keys, name
-`sqlquack-record` as its recorder and carry an Arrow file matching its hash.
+`sqlquack-record` as its recorder and carry an Arrow file matching its hash. Its query ID must be
+a SHA-256 digest, and an error may hold only `errno` and `sqlstate`.
