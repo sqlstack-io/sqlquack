@@ -16,7 +16,7 @@ pub(crate) fn source_sql(case: &CaseDefinition) -> String {
     );
     match (&case.expression, &case.query) {
         (Some(expression), _) => format!(
-            "{input}SELECT {ORDINAL_COLUMN}, {expression} AS {VALUE_COLUMN}\nFROM {INPUT_RELATION}\nORDER BY {ORDINAL_COLUMN}"
+            "{input}SELECT {expression} AS {VALUE_COLUMN}\nFROM {INPUT_RELATION}\nORDER BY {ORDINAL_COLUMN}"
         ),
         (None, Some(query)) => format!("{input}{}", query.trim()),
         (None, None) => input,

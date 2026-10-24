@@ -79,7 +79,7 @@ fn given_case_when_expanding_then_inputs_become_typed_rows_before_the_case_sql()
                 SELECT 1 AS ordinal, CAST('gift' AS VARCHAR) AS a, CAST(NULL AS VARCHAR) AS b\n  \
                 UNION ALL\n  \
                 SELECT 2 AS ordinal, CAST('' AS VARCHAR) AS a, CAST('wrap' AS VARCHAR) AS b\n)\n\
-                SELECT ordinal, CONCAT(a, b) AS value\nFROM input\nORDER BY ordinal",
+                SELECT CONCAT(a, b) AS value\nFROM input\nORDER BY ordinal",
         },
         SourceSqlTestCase {
             description: "a query follows the input relation unchanged",

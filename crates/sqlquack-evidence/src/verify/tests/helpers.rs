@@ -43,11 +43,6 @@ duckdb = "DECIMAL(p,s)"
 reason = "same values"
 
 [[comparator.type_equality]]
-snowflake = "NUMBER(10,0)"
-duckdb = "INTEGER"
-reason = "test fixture: DuckDB stand-ins describe INTEGER as NUMBER(10,0)"
-
-[[comparator.type_equality]]
 snowflake = "VARCHAR(n)"
 duckdb = "VARCHAR"
 reason = "length does not change values"
@@ -88,9 +83,8 @@ tags = []
 "#;
 
 /// How DuckDB result types of the fixture cases are described as warehouse columns.
-fn fixture_column_types() -> [(DataType, (&'static str, i64, i64)); 3] {
+fn fixture_column_types() -> [(DataType, (&'static str, i64, i64)); 2] {
     [
-        (DataType::Int32, ("FIXED", 10, 0)),
         (DataType::Decimal128(10, 2), ("FIXED", 10, 2)),
         (DataType::Decimal128(11, 2), ("FIXED", 11, 2)),
     ]

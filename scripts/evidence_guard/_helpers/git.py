@@ -5,11 +5,11 @@ from __future__ import annotations
 import subprocess
 from pathlib import Path
 
-from scripts.evidence_guard.constants import RESULTS_DIR
+from scripts.evidence_guard.constants import GIT_FIELD_SEPARATOR, RESULTS_DIR
 from scripts.evidence_guard.models import ChangedPath
 
 
-def changed_results(repository: Path, base: str, head: str) -> list[ChangedPath]:
+def changed_results(*, repository: Path, base: str, head: str) -> list[ChangedPath]:
     """Every change under the results directory between the merge base of `base` and `head`."""
     output: str = subprocess.run(
         ("git", "diff", "--name-status", "--no-renames", f"{base}...{head}", "--", RESULTS_DIR),
@@ -18,14 +18,14 @@ def changed_results(repository: Path, base: str, head: str) -> list[ChangedPath]
         capture_output=True,
         text=True,
     ).stdout
-    return [
-        ChangedPath(status=line.split("\t", 1)[0], path=line.split("\t", 1)[1])
-        for line in output.splitlines()
-        if "\t" in line
-    ]
+    changes: list[ChangedPath] = []
+    for line in output.splitlines():
+        status, _, path = line.partition(GIT_FIELD_SEPARATOR)
+        changes.append(ChangedPath(status=status, path=path))
+    return changes
 
 
-def blob(repository: Path, head: str, path: str) -> bytes | None:
+def blob(*, repository: Path, head: str, path: str) -> bytes | None:
     """The bytes of `path` at `head`, absent when it does not exist there."""
     result: subprocess.CompletedProcess[bytes] = subprocess.run(
         ("git", "show", f"{head}:{path}"), cwd=repository, check=False, capture_output=True

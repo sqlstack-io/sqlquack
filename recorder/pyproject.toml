@@ -10,7 +10,7 @@ dependencies = [
 ]
 
 [project.scripts]
-sqlquack-record = "sqlquack_record.cli.main.run_recorder:main"
+sqlquack-record = "sqlquack_record.cli.main._run_recorder:main"
 
 [build-system]
 requires = ["hatchling"]

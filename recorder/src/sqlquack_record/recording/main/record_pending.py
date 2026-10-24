@@ -5,14 +5,20 @@ from __future__ import annotations
 from collections.abc import Callable, Sequence
 from pathlib import Path
 
-from sqlquack_record.errors import RecorderError
-from sqlquack_record.models import PendingCase, RecordingContext, RecordSummary, StatementResult
 from sqlquack_record.recording._helpers.batches import batches, by_session
-from sqlquack_record.results.main.write_result import write_result
-from sqlquack_record.types import SessionFactory, WarehouseSession
+from sqlquack_record.recording._helpers.results import write_result
+from sqlquack_record.recording._helpers.running import run_cases
+from sqlquack_record.recording.models import (
+    PendingCase,
+    RecordingContext,
+    RecordSummary,
+    StatementResult,
+)
+from sqlquack_record.recording.types import SessionFactory, WarehouseSession
 
 
 def record_pending(
+    *,
     cases: Sequence[PendingCase],
     results: Path,
     open_session: SessionFactory,
@@ -25,7 +31,7 @@ def record_pending(
         case for case in cases if not (results / f"{case.case_hash}.json").exists()
     ]
     recorded: int = 0
-    errors: int = 0
+    failures: int = 0
     for parameters, group in by_session(unrecorded).items():
         session: WarehouseSession = open_session(parameters)
         try:
@@ -34,26 +40,12 @@ def record_pending(
                 connector=session.connector(),
                 recorded_at=clock(),
             )
-            for batch in batches(group, batch_size):
-                outcomes: list[StatementResult] = _run(session, batch)
+            for batch in batches(cases=group, size=batch_size):
+                outcomes: list[StatementResult] = run_cases(session=session, batch=batch)
                 for case, outcome in zip(batch, outcomes, strict=True):
-                    write_result(results, case, outcome, context)
+                    write_result(directory=results, case=case, result=outcome, context=context)
                     recorded += 1
-                    errors += outcome.error is not None
+                    failures += outcome.failure is not None
         finally:
             session.close()
-    return RecordSummary(recorded=recorded, errors=errors)
-
-
-def _run(session: WarehouseSession, batch: Sequence[PendingCase]) -> list[StatementResult]:
-    statements: list[str] = [case.source_sql for case in batch]
-    batched: list[StatementResult] | None = (
-        session.run_batch(statements) if len(statements) > 1 else None
-    )
-    if batched is not None:
-        if len(batched) != len(statements):
-            raise RecorderError(
-                f"the warehouse returned {len(batched)} results for {len(statements)} statements"
-            )
-        return batched
-    return [session.run_one(statement) for statement in statements]
+    return RecordSummary(recorded=recorded, failures=failures)

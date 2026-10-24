@@ -1,7 +1,7 @@
 [targets.python]
 analyzer = "python"
 roots = ["recorder/src/sqlquack_record"]
-tests = ["recorder/tests", "tests"]
+tests = ["tests"]
 tooling = ["scripts"]
 select = ["FF"]
 

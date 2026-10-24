@@ -25,3 +25,10 @@ METADATA_KEYS: frozenset[str] = frozenset(
     }
 )
 HASH_LENGTH: int = 64
+ADDED_STATUS: str = "A"
+ARROW_SUFFIX: str = ".arrow"
+METADATA_SUFFIX: str = ".json"
+ROWS_OUTCOME: str = "rows"
+ERROR_OUTCOME: str = "error"
+HEX_DIGITS: frozenset[str] = frozenset("0123456789abcdef")
+GIT_FIELD_SEPARATOR: str = "\t"

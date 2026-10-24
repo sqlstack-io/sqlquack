@@ -21,10 +21,10 @@ pub const EVIDENCE_FORMAT: u32 = 1;
 /// The source dialect name recorded in hashes and pending files.
 pub const SOURCE_DIALECT: &str = "snowflake";
 
-/// The result column holding the input row number in expression cases.
+/// The input column holding the row number; expression results are ordered by it.
 pub const ORDINAL_COLUMN: &str = "ordinal";
 
-/// The result column holding the expression value in expression cases.
+/// The single result column of expression cases.
 pub const VALUE_COLUMN: &str = "value";
 
 /// The relation that holds the case input rows.
