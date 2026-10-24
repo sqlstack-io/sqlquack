@@ -1,0 +1,12 @@
+[targets.rust]
+analyzer = "rust"
+roots = ["crates"]
+tests = []
+tooling = []
+rule_packs = ["rust"]
+select = ["FPRS"]
+
+[[targets.rust.rule_exceptions]]
+rule = "FPRSL105"
+path = "crates/sqlquack-core/src/reparse/main/check_duckdb_print.rs"
+reason = "The DuckDB printer check is public library API; its first importer is the rule engine, which lands with the first rules."

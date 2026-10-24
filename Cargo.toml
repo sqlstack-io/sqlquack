@@ -1,13 +1,60 @@
 [workspace]
 members = [
+    "crates/sqlquack-core",
+    "crates/sqlquack-snowflake",
+    "crates/sqlquack-rules",
+    "crates/sqlquack-duckdb",
+    "crates/sqlquack-compare",
     "crates/sqlquack",
-    "crates/sqlquack-python",
-    "crates/sqlquack-structure-checker",
 ]
 resolver = "2"
 
 [workspace.package]
-edition = "2021"
-license = "MIT"
-repository = "https://github.com/klonge/sqlquack"
+version = "0.2.0"
+edition = "2024"
+license = "Apache-2.0"
+repository = "https://github.com/chio-labs/sqlquack"
+homepage = "https://github.com/chio-labs/sqlquack"
 readme = "README.md"
+publish = false
+rust-version = "1.88"
+
+[workspace.dependencies]
+clap = { version = "4.5", features = ["derive"] }
+polyglot-sql = { git = "https://github.com/chio-labs/polyglot.git", rev = "b18dc647e797e480d2faadf3af407077f8e063df", default-features = false, features = [
+    "dialect-snowflake",
+    "dialect-duckdb",
+    "dialect-bigquery",
+    "dialect-databricks",
+    "generate",
+    "semantic",
+    "stacker",
+] }
+rayon = "1"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+sqlquack-compare = { path = "crates/sqlquack-compare" }
+sqlquack-core = { path = "crates/sqlquack-core" }
+sqlquack-duckdb = { path = "crates/sqlquack-duckdb" }
+sqlquack-rules = { path = "crates/sqlquack-rules" }
+sqlquack-snowflake = { path = "crates/sqlquack-snowflake" }
+tempfile = "3"
+walkdir = "2"
+
+[workspace.lints.rust]
+unsafe_code = "forbid"
+unreachable_pub = "deny"
+unused_must_use = "deny"
+
+[workspace.lints.clippy]
+await_holding_lock = "deny"
+
+[profile.dev]
+debug = "line-tables-only"
+
+[profile.dev.package."*"]
+opt-level = 1
+debug = false
+
+[profile.release]
+strip = "symbols"
