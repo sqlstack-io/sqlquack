@@ -85,6 +85,15 @@ fn given_spellings_differing_only_in_a_declared_field_when_comparing_then_trees_
             expected_difference_path: None,
         },
         SpellingTestCase {
+            description: "INTEGER and INT",
+            field: "integer_spelling",
+            left: "SELECT quantity::INTEGER FROM inventory",
+            right: "SELECT quantity::INT FROM inventory",
+            expected_raw_trees_equal: false,
+            expected_field_present: true,
+            expected_difference_path: None,
+        },
+        SpellingTestCase {
             description: "the letter case of a generic function name",
             field: "name",
             left: "SELECT my_lookup(sku) FROM products",
@@ -142,6 +151,7 @@ fn given_declared_spelling_only_fields_when_listing_tests_then_each_field_has_on
             "use_inner_keyword",
             "use_outer_keyword",
             "original_name",
+            "integer_spelling",
         ],
         expected_untested_fields: Vec::new(),
     }];
