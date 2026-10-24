@@ -1,0 +1,15 @@
+[package]
+name = "sqlquack-duckdb"
+version.workspace = true
+description = "DuckDB building blocks shared by SQLQuack rules."
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+homepage.workspace = true
+publish.workspace = true
+rust-version.workspace = true
+
+[dependencies]
+
+[lints]
+workspace = true

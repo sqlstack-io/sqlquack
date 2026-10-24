@@ -1,0 +1,15 @@
+[package]
+name = "sqlquack-snowflake"
+version.workspace = true
+description = "The Snowflake typing layer: exact Snowflake result types for SQLQuack rules."
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+homepage.workspace = true
+publish.workspace = true
+rust-version.workspace = true
+
+[dependencies]
+
+[lints]
+workspace = true

@@ -1,12 +1,35 @@
 [package]
 name = "sqlquack"
-version = "0.1.0"
+version.workspace = true
+description = "Snowflake-to-DuckDB SQL conversion that refuses to guess."
 edition.workspace = true
 license.workspace = true
 repository.workspace = true
-readme.workspace = true
-description = "Warehouse SQL analysis and fail-closed DuckDB transpilation engine"
-keywords = ["sql", "duckdb", "parser", "analysis", "lineage"]
-categories = ["parser-implementations", "database"]
+homepage.workspace = true
+readme = "../../README.md"
+keywords = ["sql", "duckdb", "snowflake", "transpiler"]
+categories = ["database", "command-line-utilities"]
+publish.workspace = true
+rust-version.workspace = true
+
+[[bin]]
+name = "sqlquack"
+path = "src/bin/sqlquack.rs"
 
 [dependencies]
+clap.workspace = true
+rayon.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+sqlquack-compare.workspace = true
+sqlquack-core.workspace = true
+sqlquack-duckdb.workspace = true
+sqlquack-rules.workspace = true
+sqlquack-snowflake.workspace = true
+walkdir.workspace = true
+
+[dev-dependencies]
+tempfile.workspace = true
+
+[lints]
+workspace = true
