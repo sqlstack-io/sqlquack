@@ -1,0 +1,44 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  verify:
+    name: Verify
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    env:
+      CARGO_TERM_COLOR: always
+      CARGO_INCREMENTAL: "0"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+        with:
+          version: "0.12.3"
+          enable-cache: true
+          cache-dependency-glob: uv.lock
+      - name: Install the pinned Rust toolchain
+        run: rustup toolchain install
+      # Caches the dependency builds, polyglot above all, keyed by Cargo.lock and the toolchain.
+      - uses: Swatinem/rust-cache@v2
+        with:
+          shared-key: verify
+      - name: Install Python
+        run: uv python install 3.12
+      - name: Install development tools
+        run: uv sync --locked
+      - name: Run static checks
+        run: make check-ci
+      - name: Run tests
+        run: make test
