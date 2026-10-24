@@ -128,7 +128,9 @@ it becomes a new case with a new result.
    connector's Arrow result, unconverted) and `<hash>.json` (query ID, warehouse, connector and
    DuckDB versions, recording time, column descriptions, row count and the Arrow file's SHA-256).
    A SQL error is recorded as the outcome instead; session and connection errors stop the run
-   without writing anything. Existing results are never overwritten.
+   without writing anything. When any statement of a batch fails, Snowflake reports the whole
+   request as error 100132 (SQLSTATE P0000), so the batch's cases are rerun one at a time and each
+   real error is classified on its own. Existing results are never overwritten.
 3. `sqlquack verify` converts each recorded case, replays it on DuckDB in a fresh in-memory
    database under the profile's time zone and the policy's NULL order, and compares. A refusal is
    always acceptable; a difference fails.

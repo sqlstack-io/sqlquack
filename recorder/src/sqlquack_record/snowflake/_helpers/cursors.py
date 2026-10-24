@@ -7,7 +7,10 @@ from typing import Any
 from snowflake.connector.constants import FIELD_ID_TO_NAME
 from snowflake.connector.errors import ProgrammingError
 
-from sqlquack_record.recording.constants import RECORDABLE_SQLSTATE_CLASSES
+from sqlquack_record.recording.constants import (
+    MULTI_STATEMENT_FAILURE,
+    RECORDABLE_SQLSTATE_CLASSES,
+)
 from sqlquack_record.recording.exceptions import RecorderError
 from sqlquack_record.recording.models import ColumnDescription, StatementResult
 
@@ -30,6 +33,12 @@ def require_recordable(error: ProgrammingError) -> None:
             f"Snowflake error {error.errno} (SQLSTATE {sqlstate or 'unknown'}) is not a case "
             f"outcome; nothing was recorded: {error.msg}"
         ) from error
+
+
+def require_batch_recordable(error: ProgrammingError) -> None:
+    """Accept a multi-statement wrapper error as a batch failure; otherwise `require_recordable`."""
+    if (error.errno, error.sqlstate) != MULTI_STATEMENT_FAILURE:
+        require_recordable(error)
 
 
 def _describe(column: Any) -> ColumnDescription:

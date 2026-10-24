@@ -10,7 +10,11 @@ from snowflake.connector.errors import ProgrammingError
 
 from sqlquack_record.recording.exceptions import RecorderError
 from sqlquack_record.recording.models import StatementResult, WarehouseFailure
-from sqlquack_record.snowflake._helpers.cursors import fetch, require_recordable
+from sqlquack_record.snowflake._helpers.cursors import (
+    fetch,
+    require_batch_recordable,
+    require_recordable,
+)
 
 
 class SnowflakeSession:
@@ -44,7 +48,7 @@ class SnowflakeSession:
                     raise RecorderError("the warehouse returned fewer results than statements")
                 results.append(fetch(cursor))
         except ProgrammingError as error:
-            require_recordable(error)
+            require_batch_recordable(error)
             return None
         finally:
             cursor.close()

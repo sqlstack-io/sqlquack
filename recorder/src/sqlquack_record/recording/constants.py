@@ -41,3 +41,4 @@ CREDENTIAL_CACHE_DEFAULTS: dict[str, bool] = {
     "client_store_temporary_credential": True,
     "oauth_enable_refresh_tokens": True,
 }
+MULTI_STATEMENT_FAILURE: tuple[int, str] = (100132, "P0000")
