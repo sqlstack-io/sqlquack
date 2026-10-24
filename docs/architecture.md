@@ -29,8 +29,16 @@ a parameter of every entry point; Snowflake is the only one implemented.
 | `sqlquack-snowflake` | The Snowflake typing layer (empty). Polyglot leaves many Snowflake expressions untyped, so exact types (`NUMBER(p, s)`, timestamp kinds, semi-structured values) are computed here. |
 | `sqlquack-rules` | The rule catalogue and declared refusals (empty). |
 | `sqlquack-duckdb` | DuckDB building blocks shared by rules (empty). |
-| `sqlquack-compare` | The strict comparator for recorded results (stub). |
-| `sqlquack` | The `sqlquack` command line and the library entry points: the pipeline and the census. |
+| `sqlquack-policy` | The policy file `sqlquack.toml`: schema, validation and type-pattern matching. |
+| `sqlquack-compare` | The strict comparator between a recorded result and a DuckDB replay or a fresh recording. |
+| `sqlquack-evidence` | Cases, case hashes, pending files, stored results, DuckDB replay, verification and audits. |
+| `sqlquack` | The `sqlquack` command line and the library entry points: the pipeline, the census and the evidence commands. |
+
+DuckDB is pinned exactly (`duckdb = "=1.20000.0"`, DuckDB v2.0.0). Its build script downloads the
+matching prebuilt `libduckdb`, so binaries are run with `cargo run`, which sets the library path.
+
+The recorder, `sqlquack-record`, is a separate Python package under `recorder/`. Rust and Python
+share files only.
 
 Polyglot is pinned to one revision with `default-features = false`. Its `transpile` feature stays
 off: none of its own conversions are used.
@@ -92,3 +100,53 @@ placeholders before parsing. The report holds counts and construct keys only.
 Recorded warehouse results are the only arbiter of correctness. Recording runs outside CI, through
 the maintainer; results are append-only and named by the hash of their case, and everything that
 could be weakened to make a failing case pass lives in one reviewed policy file.
+
+### Cases
+
+Case files live under `cases/<category>/<construct>.toml`. Each file names an edge-case category
+from the policy, the construct it exercises and a session profile, then lists cases. A case has
+typed input columns, input rows written as source literals, and either an `expression` over the
+columns or a `query` over the `input` relation with a declared row order (`ordered` or `bag`).
+Every case carries tags, and between them a file's cases must cover every input its category
+requires.
+
+A case expands to one source statement: the input rows as a `WITH input AS (...)` of casts, then
+the expression (`SELECT <expression> AS value FROM input ORDER BY ordinal`) or the query.
+
+### Hashes
+
+The case hash is the SHA-256 of the canonical JSON of the evidence format version, the source
+dialect, the session profile's Snowflake parameters and the expanded source SQL. Descriptions,
+tags and file locations are not hashed. Any edit that can change the result changes the hash, so
+it becomes a new case with a new result.
+
+### Flow
+
+1. `sqlquack pending` writes `evidence/pending/<hash>.json` for every case without a result.
+2. The maintainer runs `sqlquack-record`, which runs the pending SQL in batches, one Snowflake
+   session per set of session parameters, and writes `evidence/results/<hash>.arrow` (the
+   connector's Arrow result, unconverted) and `<hash>.json` (query ID, warehouse, connector and
+   DuckDB versions, recording time, column descriptions, row count and the Arrow file's SHA-256).
+   A SQL error is recorded as the outcome instead; session and connection errors stop the run
+   without writing anything. Existing results are never overwritten.
+3. `sqlquack verify` converts each recorded case, replays it on DuckDB in a fresh in-memory
+   database under the profile's time zone and the policy's NULL order, and compares. A refusal is
+   always acceptable; a difference fails.
+4. `sqlquack audit --sample 10%` writes pending files for a reproducible sample of recorded cases
+   into `evidence/audit/pending`; once recorded into `evidence/audit/results`,
+   `sqlquack audit --compare` checks that the fresh results equal the stored ones exactly.
+
+### Comparison
+
+Values are decoded into one canonical form: exact decimals with trailing zeros removed, so an
+integer and a `DECIMAL(38,0)` with the same value are equal; floats bitwise, with every NaN one
+value; dates in days; times and timestamps in nanoseconds. NULL equals only NULL. Column names
+match case-insensitively by default, because Snowflake upper-cases unquoted names. A pair of
+column types must be admitted by a declared type equality, such as `NUMBER(p,s)` = `DECIMAL(p,s)`.
+Audits compare two recordings and allow no tolerance at all.
+
+### Integrity
+
+CI runs `make evidence-guard`: any modified or deleted file under `evidence/results` fails, and an
+added result must be named by a case hash, have exactly the recorder's metadata keys, name
+`sqlquack-record` as its recorder and carry an Arrow file matching its hash.
