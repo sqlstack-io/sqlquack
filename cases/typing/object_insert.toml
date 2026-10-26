@@ -1,0 +1,21 @@
+category = "semi-structured"
+construct = "fn:OBJECT_INSERT"
+session_profile = "utc-v1"
+evidence = "typing"
+
+[[case]]
+id = "object_insert_types"
+description = "OBJECT_INSERT into objects at present, nested and missing paths: its result types."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('{\"o\":{\"a\":1,\"b\":[1,2]},\"x\":\"s\",\"items\":[1,\"x\",null]}')"],
+  ["PARSE_JSON('{\"o\":{\"A\":1,\"a\":2},\"x\":null,\"items\":[]}')"],
+  ["PARSE_JSON('{\"o\":{\"n\":{\"m\":[{\"k\":1}]}},\"x\":[[1],[2]],\"items\":[[1,2],{\"k\":1}]}')"],
+  ["PARSE_JSON('{}')"],
+  ["PARSE_JSON('null')"],
+  ["NULL"],
+]
+query = "SELECT OBJECT_INSERT(OBJECT_CONSTRUCT('k', 1), 'v', v:x) AS added, OBJECT_INSERT(OBJECT_CONSTRUCT('A', 1), 'a', v:items[0]) AS cased, OBJECT_INSERT(OBJECT_CONSTRUCT('k', 1), 'k', 2, TRUE) AS updated FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "json-null", "missing-key", "nested", "array-index", "case-sensitive-key"]
+values = false

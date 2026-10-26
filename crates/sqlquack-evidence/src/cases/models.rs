@@ -16,6 +16,12 @@ pub struct CaseFile {
     pub construct: String,
     /// The session profile the cases are recorded and replayed under.
     pub session_profile: String,
+    /// The spelling pair the file proves; its cases then state a second, `canonical` spelling.
+    #[serde(default)]
+    pub equivalence: Option<String>,
+    /// What the file's cases are evidence for, unless a case says otherwise; `conversion` by default.
+    #[serde(default)]
+    pub evidence: Option<EvidenceKind>,
     /// The cases.
     #[serde(rename = "case")]
     pub cases: Vec<CaseDefinition>,
@@ -39,11 +45,61 @@ pub struct CaseDefinition {
     /// A query over the `input` relation.
     #[serde(default)]
     pub query: Option<String>,
+    /// In equivalence files: the canonical spelling of `expression` or `query`.
+    #[serde(default)]
+    pub canonical: Option<String>,
     /// For queries: `ordered` when the query fixes the row order, else `bag`.
     #[serde(default)]
     pub order: Option<QueryOrder>,
     /// The edge-case inputs the case covers.
     pub tags: Vec<String>,
+    /// Where an imported case comes from, such as a third-party test suite; never hashed.
+    #[serde(default)]
+    pub origin: Option<String>,
+    /// sqlglot's expected DuckDB spelling, kept for reference only; never hashed or asserted.
+    #[serde(default)]
+    pub sqlglot_duckdb: Option<String>,
+    /// A policy divergence the case demonstrates: Snowflake returns rows, DuckDB raises; never hashed.
+    #[serde(default)]
+    pub expected_divergence: Option<String>,
+    /// What the case is evidence for, overriding its file's `evidence`.
+    #[serde(default)]
+    pub evidence: Option<EvidenceKind>,
+    /// `false` records a typing case's column types and row count but no values; hashed when false.
+    #[serde(default)]
+    pub values: Option<bool>,
+    /// SQL project functions the query calls, created before it; their definitions are hashed.
+    #[serde(default, rename = "function")]
+    pub functions: Vec<CaseFunction>,
+}
+
+/// A SQL project function a case defines and calls.
+#[derive(Clone, Debug, PartialEq, Eq, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct CaseFunction {
+    /// The function name, a lower-case identifier.
+    pub name: String,
+    /// The parameters, in order.
+    #[serde(default)]
+    pub arguments: Vec<InputColumn>,
+    /// The scalar return type; exactly one of `returns` and `returns_table`.
+    #[serde(default)]
+    pub returns: Option<String>,
+    /// The columns of a table function.
+    #[serde(default)]
+    pub returns_table: Option<Vec<InputColumn>>,
+    /// The body: a scalar function's expression, or a table function's query.
+    pub body: String,
+}
+
+/// What a case is evidence for.
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub enum EvidenceKind {
+    /// Values: the conversion replays on DuckDB with the recorded result.
+    Conversion,
+    /// Types only: the recorded column types and nullability, never compared with DuckDB.
+    Typing,
 }
 
 /// An input column.
@@ -72,6 +128,8 @@ pub enum QueryOrder {
 pub struct LoadedCase {
     /// `<file>#<id>`, relative to the cases directory.
     pub reference: String,
+    /// What the case checks.
+    pub description: String,
     /// The category of its file.
     pub category: String,
     /// The construct of its file.
@@ -80,12 +138,54 @@ pub struct LoadedCase {
     pub session_profile: String,
     /// The Snowflake session parameters it records under.
     pub session_parameters: BTreeMap<String, SessionValue>,
+    /// Its profile's pinned parameters, set while recording but not hashed.
+    pub pinned_parameters: BTreeMap<String, SessionValue>,
     /// The full source SQL that is recorded.
     pub source_sql: String,
     /// How rows compare.
     pub order: RowOrder,
     /// The content hash naming its result.
     pub hash: String,
+    /// What the case proves.
+    pub role: CaseRole,
+    /// The policy divergence the case demonstrates, if any.
+    pub expected_divergence: Option<String>,
+    /// Whether the recording keeps the result's values, not only its column types and row count.
+    pub values: bool,
+    /// The project functions the query calls.
+    pub functions: Vec<CaseFunction>,
+    /// The Snowflake statements creating them, run before `source_sql` in a scratch schema.
+    pub setup_sql: Vec<String>,
+}
+
+/// What a loaded case proves.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub enum CaseRole {
+    /// Its conversion replays on DuckDB with the recorded result.
+    Conversion,
+    /// Its source spelling records the same result as its canonical spelling.
+    EquivalenceSource {
+        /// The equivalence id.
+        equivalence: String,
+        /// The hash of the canonical spelling's case.
+        canonical_hash: String,
+    },
+    /// The canonical spelling of an equivalence pair; judged with its source spelling.
+    EquivalenceCanonical {
+        /// The equivalence id.
+        equivalence: String,
+    },
+    /// Its recorded column types and nullability, which analysis checks; never converted.
+    Typing,
+}
+
+/// Which spelling of a case to expand.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum Spelling {
+    /// The `expression` or `query` as written.
+    Source,
+    /// The `canonical` spelling.
+    Canonical,
 }
 
 /// The hashed content of a case: everything that can change the recorded result.
@@ -99,4 +199,10 @@ pub struct HashedContent<'a> {
     pub session_parameters: &'a BTreeMap<String, SessionValue>,
     /// The source SQL.
     pub source_sql: &'a str,
+    /// `Some(false)` when the recording keeps no values; absent otherwise, so older hashes hold.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub values: Option<bool>,
+    /// The statements creating the case's functions; absent when there are none.
+    #[serde(skip_serializing_if = "<[String]>::is_empty")]
+    pub setup_sql: &'a [String],
 }

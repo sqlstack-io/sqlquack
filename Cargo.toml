@@ -1,5 +1,7 @@
 [workspace]
 members = [
+    "crates/sqlquack-syntax",
+    "crates/sqlquack-syntax-derive",
     "crates/sqlquack-core",
     "crates/sqlquack-snowflake",
     "crates/sqlquack-rules",
@@ -8,7 +10,9 @@ members = [
     "crates/sqlquack-compare",
     "crates/sqlquack-evidence",
     "crates/sqlquack",
+    "crates/sqlquack-polyglot-check",
 ]
+exclude = ["fuzz"]
 resolver = "2"
 
 [workspace.package]
@@ -25,7 +29,7 @@ rust-version = "1.88"
 arrow = { version = "60", default-features = false, features = ["ipc"] }
 clap = { version = "4.5", features = ["derive"] }
 duckdb = "=1.20000.0"
-polyglot-sql = { git = "https://github.com/chio-labs/polyglot.git", rev = "b18dc647e797e480d2faadf3af407077f8e063df", default-features = false, features = [
+polyglot-sql = { git = "https://github.com/chio-labs/polyglot.git", rev = "7d5fe2ccce7b3cbd1413a2823560f8dfc63ecc2e", default-features = false, features = [
     "dialect-snowflake",
     "dialect-duckdb",
     "dialect-bigquery",
@@ -34,10 +38,13 @@ polyglot-sql = { git = "https://github.com/chio-labs/polyglot.git", rev = "b18dc
     "semantic",
     "stacker",
 ] }
+proc-macro2 = "1"
+quote = "1"
 rayon = "1"
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 sha2 = "0.10"
+sqlquack = { path = "crates/sqlquack" }
 sqlquack-compare = { path = "crates/sqlquack-compare" }
 sqlquack-core = { path = "crates/sqlquack-core" }
 sqlquack-duckdb = { path = "crates/sqlquack-duckdb" }
@@ -45,8 +52,14 @@ sqlquack-evidence = { path = "crates/sqlquack-evidence" }
 sqlquack-policy = { path = "crates/sqlquack-policy" }
 sqlquack-rules = { path = "crates/sqlquack-rules" }
 sqlquack-snowflake = { path = "crates/sqlquack-snowflake" }
+sqlquack-syntax = { path = "crates/sqlquack-syntax" }
+sqlquack-syntax-derive = { path = "crates/sqlquack-syntax-derive" }
+stacker = "0.1"
+syn = { version = "2", features = ["full"] }
 tempfile = "3"
+thiserror = "1.0"
 toml = { version = "0.9", default-features = false, features = ["parse", "serde"] }
+unicode-segmentation = "1.10"
 walkdir = "2"
 
 [workspace.lints.rust]

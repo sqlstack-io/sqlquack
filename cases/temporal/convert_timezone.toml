@@ -1,0 +1,44 @@
+category = "temporal"
+construct = "fn:CONVERT_TIMEZONE"
+session_profile = "utc-v1"
+
+[[case]]
+id = "convert_timezone_naive"
+description = "CONVERT_TIMEZONE of naive timestamps from UTC, across daylight-saving changes."
+columns = [{ name = "t", type = "TIMESTAMP_NTZ(9)" }]
+rows = [
+  ["'2024-03-10 06:59:59'"],
+  ["'2024-03-10 07:00:00'"],
+  ["'2024-11-03 05:30:00'"],
+  ["'2024-11-03 06:30:00'"],
+  ["'2024-02-29 13:45:01.123456789'"],
+  ["NULL"],
+]
+expression = "CONVERT_TIMEZONE('UTC', 'America/New_York', t)"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "convert_timezone_into_utc"
+description = "CONVERT_TIMEZONE of local wall times into UTC, including gaps and repeats."
+columns = [{ name = "t", type = "TIMESTAMP_NTZ(9)" }]
+rows = [
+  ["'2024-03-31 01:30:00'"],
+  ["'2024-03-31 02:30:00'"],
+  ["'2024-10-27 02:30:00'"],
+  ["'2024-10-27 03:30:00'"],
+  ["NULL"],
+]
+expression = "CONVERT_TIMEZONE('Europe/Berlin', 'UTC', t)"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "convert_timezone_zoned"
+description = "Two-argument CONVERT_TIMEZONE of zoned timestamps, written as text."
+columns = [{ name = "t", type = "TIMESTAMP_TZ(9)" }]
+rows = [
+  ["'2024-02-29 13:45:01 +00:00'"],
+  ["'2024-07-01 00:00:00 +02:00'"],
+  ["NULL"],
+]
+expression = "TO_VARCHAR(CONVERT_TIMEZONE('America/New_York', t), 'YYYY-MM-DD HH24:MI:SS TZH:TZM')"
+tags = ["null", "boundary"]

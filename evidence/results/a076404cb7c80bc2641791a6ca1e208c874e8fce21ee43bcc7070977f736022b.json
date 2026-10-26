@@ -1,0 +1,97 @@
+{
+  "arrow_sha256": "4f3f03ddb8687a22f16ee7bdeb74905f7efea23c49aa6e58522750c92e4bbef5",
+  "case_hash": "a076404cb7c80bc2641791a6ca1e208c874e8fce21ee43bcc7070977f736022b",
+  "columns": [
+    {
+      "internal_size": null,
+      "name": "Y",
+      "nullable": true,
+      "precision": 4,
+      "scale": 0,
+      "type_code": 0,
+      "type_name": "FIXED"
+    },
+    {
+      "internal_size": null,
+      "name": "MO",
+      "nullable": true,
+      "precision": 2,
+      "scale": 0,
+      "type_code": 0,
+      "type_name": "FIXED"
+    },
+    {
+      "internal_size": null,
+      "name": "D",
+      "nullable": true,
+      "precision": 2,
+      "scale": 0,
+      "type_code": 0,
+      "type_name": "FIXED"
+    },
+    {
+      "internal_size": null,
+      "name": "H",
+      "nullable": true,
+      "precision": 2,
+      "scale": 0,
+      "type_code": 0,
+      "type_name": "FIXED"
+    },
+    {
+      "internal_size": null,
+      "name": "MI",
+      "nullable": true,
+      "precision": 2,
+      "scale": 0,
+      "type_code": 0,
+      "type_name": "FIXED"
+    },
+    {
+      "internal_size": null,
+      "name": "S",
+      "nullable": true,
+      "precision": 2,
+      "scale": 0,
+      "type_code": 0,
+      "type_name": "FIXED"
+    },
+    {
+      "internal_size": null,
+      "name": "DOW",
+      "nullable": true,
+      "precision": 2,
+      "scale": 0,
+      "type_code": 0,
+      "type_name": "FIXED"
+    },
+    {
+      "internal_size": null,
+      "name": "E",
+      "nullable": true,
+      "precision": 18,
+      "scale": 0,
+      "type_code": 0,
+      "type_name": "FIXED"
+    }
+  ],
+  "connector": "snowflake-connector-python 4.7.2",
+  "duckdb_version": "v2.0.0",
+  "error": null,
+  "format": 1,
+  "outcome": "rows",
+  "query_id_sha256": "ab03b6da556f37c386fb5bffcfe07891bb14bafdc6d8e4ee642d5afefa43a301",
+  "recorded_at": "2026-10-25T19:42:05Z",
+  "recorder": "sqlquack-record 0.1.0",
+  "row_count": 6,
+  "session_parameters": {
+    "DEFAULT_NULL_ORDERING": "LAST",
+    "QUOTED_IDENTIFIERS_IGNORE_CASE": false,
+    "TIMESTAMP_TYPE_MAPPING": "TIMESTAMP_NTZ",
+    "TIMEZONE": "UTC",
+    "USE_CACHED_RESULT": false,
+    "WEEK_OF_YEAR_POLICY": 0,
+    "WEEK_START": 0
+  },
+  "warehouse_version": "10.38.102"
+}

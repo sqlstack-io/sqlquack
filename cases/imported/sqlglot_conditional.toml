@@ -1,0 +1,194 @@
+category = "imported"
+construct = "node:if_func"
+session_profile = "utc-v1"
+
+[[case]]
+id = "iff_comparison"
+description = "IFF on a comparison with NULL input."
+columns = [{ name = "x", type = "NUMBER(38,0)" }]
+rows = [
+  ["1"],
+  ["5"],
+  ["6"],
+  ["NULL"],
+]
+expression = "IFF(x > 5, 10, 20)"
+tags = ["third-party"]
+origin = "sqlglot: tests/dialects/test_snowflake.py"
+sqlglot_duckdb = "SELECT CASE WHEN x > 5 THEN 10 ELSE 20 END"
+
+[[case]]
+id = "iff_is_null"
+description = "IFF replacing NULL."
+columns = [{ name = "col", type = "NUMBER(10,2)" }]
+rows = [
+  ["1.5"],
+  ["NULL"],
+  ["-2"],
+  ["0"],
+]
+expression = "IFF(col IS NULL, 0, col)"
+tags = ["third-party"]
+origin = "sqlglot: tests/dialects/test_snowflake.py"
+sqlglot_duckdb = "SELECT CASE WHEN col IS NULL THEN 0 ELSE col END"
+
+[[case]]
+id = "div0"
+description = "DIV0 returns zero for a zero divisor."
+columns = [{ name = "foo", type = "NUMBER(10,2)" }, { name = "bar", type = "NUMBER(10,2)" }]
+rows = [
+  ["1", "2"],
+  ["1", "0"],
+  ["NULL", "0"],
+  ["0", "0"],
+  ["-3", "4"],
+  ["5", "NULL"],
+]
+expression = "DIV0(foo, bar)"
+tags = ["third-party"]
+origin = "sqlglot: tests/dialects/test_snowflake.py"
+sqlglot_duckdb = "CASE WHEN bar = 0 AND NOT foo IS NULL THEN 0 ELSE foo / bar END"
+
+[[case]]
+id = "div0_expressions"
+description = "DIV0 of differences."
+columns = [{ name = "a", type = "NUMBER(38,0)" }, { name = "b", type = "NUMBER(38,0)" }, { name = "c", type = "NUMBER(38,0)" }, { name = "d", type = "NUMBER(38,0)" }]
+rows = [
+  ["5", "2", "4", "1"],
+  ["5", "2", "3", "3"],
+  ["NULL", "2", "3", "3"],
+  ["7", "7", "1", "0"],
+]
+expression = "DIV0(a - b, c - d)"
+tags = ["third-party"]
+origin = "sqlglot: tests/dialects/test_snowflake.py"
+sqlglot_duckdb = "CASE WHEN (c - d) = 0 AND NOT (a - b) IS NULL THEN 0 ELSE (a - b) / (c - d) END"
+
+[[case]]
+id = "div0null"
+description = "DIV0NULL returns zero for a zero or NULL divisor."
+columns = [{ name = "foo", type = "NUMBER(10,2)" }, { name = "bar", type = "NUMBER(10,2)" }]
+rows = [
+  ["1", "2"],
+  ["1", "0"],
+  ["NULL", "0"],
+  ["5", "NULL"],
+  ["NULL", "NULL"],
+  ["-3", "4"],
+]
+expression = "DIV0NULL(foo, bar)"
+tags = ["third-party"]
+origin = "sqlglot: tests/dialects/test_snowflake.py"
+sqlglot_duckdb = "CASE WHEN bar = 0 OR bar IS NULL THEN 0 ELSE foo / bar END"
+
+[[case]]
+id = "div0null_expressions"
+description = "DIV0NULL of differences."
+columns = [{ name = "a", type = "NUMBER(38,0)" }, { name = "b", type = "NUMBER(38,0)" }, { name = "c", type = "NUMBER(38,0)" }, { name = "d", type = "NUMBER(38,0)" }]
+rows = [
+  ["5", "2", "4", "1"],
+  ["5", "2", "3", "3"],
+  ["5", "2", "NULL", "3"],
+  ["NULL", "2", "4", "1"],
+]
+expression = "DIV0NULL(a - b, c - d)"
+tags = ["third-party"]
+origin = "sqlglot: tests/dialects/test_snowflake.py"
+sqlglot_duckdb = "CASE WHEN (c - d) = 0 OR (c - d) IS NULL THEN 0 ELSE (a - b) / (c - d) END"
+
+[[case]]
+id = "zeroifnull"
+description = "ZEROIFNULL keeps the argument's type."
+columns = [{ name = "foo", type = "NUMBER(10,2)" }]
+rows = [
+  ["1.25"],
+  ["NULL"],
+  ["0"],
+  ["-3"],
+]
+expression = "ZEROIFNULL(foo)"
+tags = ["third-party"]
+origin = "sqlglot: tests/dialects/test_snowflake.py"
+sqlglot_duckdb = "CASE WHEN foo IS NULL THEN 0 ELSE foo END"
+
+[[case]]
+id = "nullifzero"
+description = "NULLIFZERO turns zero into NULL."
+columns = [{ name = "foo", type = "NUMBER(10,2)" }]
+rows = [
+  ["1.25"],
+  ["NULL"],
+  ["0"],
+  ["-0.00"],
+]
+expression = "NULLIFZERO(foo)"
+tags = ["third-party"]
+origin = "sqlglot: tests/dialects/test_snowflake.py"
+sqlglot_duckdb = "CASE WHEN foo = 0 THEN NULL ELSE foo END"
+
+[[case]]
+id = "decode_pairs"
+description = "DECODE matches NULL search values and falls back to the default."
+columns = [{ name = "x", type = "NUMBER(38,0)" }, { name = "a", type = "NUMBER(38,0)" }, { name = "b", type = "VARCHAR" }, { name = "c", type = "NUMBER(38,0)" }, { name = "d", type = "VARCHAR" }, { name = "e", type = "VARCHAR" }]
+rows = [
+  ["1", "1", "'one'", "2", "'two'", "'other'"],
+  ["2", "1", "'one'", "2", "'two'", "'other'"],
+  ["3", "1", "'one'", "2", "'two'", "'other'"],
+  ["NULL", "NULL", "'null'", "2", "'two'", "'other'"],
+  ["NULL", "1", "'one'", "2", "'two'", "NULL"],
+]
+expression = "DECODE(x, a, b, c, d, e)"
+tags = ["third-party"]
+origin = "sqlglot: tests/dialects/test_snowflake.py"
+sqlglot_duckdb = "CASE WHEN x = a OR (x IS NULL AND a IS NULL) THEN b WHEN x = c OR (x IS NULL AND c IS NULL) THEN d ELSE e END"
+
+[[case]]
+id = "decode_true"
+description = "DECODE on TRUE against a comparison."
+columns = [{ name = "b", type = "VARCHAR" }]
+rows = [
+  ["'value'"],
+  ["'other'"],
+  ["NULL"],
+  ["'value'"],
+]
+query = "SELECT DECODE(TRUE, a.b = 'value', 'value') AS value FROM input AS a"
+order = "bag"
+tags = ["third-party"]
+origin = "sqlglot: tests/dialects/test_snowflake.py"
+sqlglot_duckdb = "CASE WHEN TRUE = (a.b = 'value') OR (TRUE IS NULL AND (a.b = 'value') IS NULL) THEN 'value' END"
+
+[[case]]
+id = "equal_null"
+description = "EQUAL_NULL treats two NULLs as equal."
+columns = [{ name = "a", type = "NUMBER(38,0)" }, { name = "b", type = "NUMBER(38,0)" }]
+rows = [
+  ["1", "1"],
+  ["1", "2"],
+  ["NULL", "1"],
+  ["NULL", "NULL"],
+]
+expression = "EQUAL_NULL(a, b)"
+tags = ["third-party"]
+origin = "sqlglot: tests/dialects/test_snowflake.py"
+sqlglot_duckdb = "a IS NOT DISTINCT FROM b"
+
+[[case]]
+id = "greatest_literals"
+description = "GREATEST of two integers."
+columns = []
+rows = [[]]
+expression = "GREATEST(1, 2)"
+tags = ["third-party"]
+origin = "sqlglot: tests/dialects/test_snowflake.py"
+sqlglot_duckdb = "SELECT CASE WHEN 1 IS NULL OR 2 IS NULL THEN NULL ELSE GREATEST(1, 2) END"
+
+[[case]]
+id = "least_literals"
+description = "LEAST of two integers."
+columns = []
+rows = [[]]
+expression = "LEAST(1, 2)"
+tags = ["third-party"]
+origin = "sqlglot: tests/dialects/test_snowflake.py"
+sqlglot_duckdb = "SELECT CASE WHEN 1 IS NULL OR 2 IS NULL THEN NULL ELSE LEAST(1, 2) END"

@@ -5,6 +5,10 @@ pub const CASES_DIR: &str = "cases";
 
 /// Recorded results: append-only, one `<hash>.json` and usually one `<hash>.arrow` per case.
 pub const RESULTS_DIR: &str = "evidence/results";
+/// The account's session defaults, beside the results directory.
+pub const SESSION_DEFAULTS_NAME: &str = "session_defaults.json";
+/// The session defaults file in the default layout.
+pub const SESSION_DEFAULTS_FILE: &str = "evidence/session_defaults.json";
 
 /// Pending case files for the recorder; derived, never committed.
 pub const PENDING_DIR: &str = "evidence/pending";
@@ -27,6 +31,9 @@ pub const ORDINAL_COLUMN: &str = "ordinal";
 /// The single result column of expression cases.
 pub const VALUE_COLUMN: &str = "value";
 
+/// Appended to an equivalence case's reference for its canonical spelling.
+pub const CANONICAL_SUFFIX: &str = "~canonical";
+
 /// The relation that holds the case input rows.
 pub const INPUT_RELATION: &str = "input";
 
@@ -38,3 +45,6 @@ pub const METADATA_EXTENSION: &str = "json";
 
 /// The length of a case hash in hexadecimal digits.
 pub const CASE_HASH_LENGTH: usize = 64;
+
+/// Quotes a project function's body in the Snowflake statement creating it.
+pub const FUNCTION_BODY_QUOTE: &str = "$$";

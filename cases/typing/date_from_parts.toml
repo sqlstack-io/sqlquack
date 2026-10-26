@@ -1,0 +1,13 @@
+category = "temporal"
+construct = "fn:DATE_FROM_PARTS"
+session_profile = "utc-v1"
+evidence = "typing"
+
+[[case]]
+id = "date_from_parts_numbers"
+description = "DATE_FROM_PARTS of integer parts, with month and day overflow: its result type."
+columns = [{ name = "y", type = "NUMBER(38,0)" }, { name = "m", type = "NUMBER(38,0)" }, { name = "d", type = "NUMBER(38,0)" }]
+rows = [["2024", "2", "29"], ["2024", "13", "1"], ["2024", "1", "0"], ["NULL", "1", "1"]]
+expression = "DATE_FROM_PARTS(y, m, d)"
+tags = ["null", "boundary"]
+values = false

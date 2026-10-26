@@ -1,0 +1,38 @@
+category = "conditional"
+construct = "fn:NVL"
+session_profile = "utc-v1"
+
+[[case]]
+id = "nvl_mixed_scales"
+description = "NVL over NUMBER(10,2) and NUMBER(12,4)."
+columns = [{ name = "a", type = "NUMBER(10,2)" }, { name = "b", type = "NUMBER(12,4)" }]
+rows = [
+  ["1.25", "2.0001"],
+  ["NULL", "2.0001"],
+  ["NULL", "NULL"],
+]
+expression = "NVL(a, b)"
+tags = ["null", "all-null", "mixed-types"]
+
+[[case]]
+id = "ifnull_text"
+description = "IFNULL on text."
+columns = [{ name = "a", type = "VARCHAR" }]
+rows = [
+  ["'x'"],
+  ["NULL"],
+  ["''"],
+]
+expression = "IFNULL(a, 'none')"
+tags = ["null"]
+
+[[case]]
+id = "nvl_text_and_number"
+description = "NVL mixing VARCHAR and NUMBER."
+columns = [{ name = "s", type = "VARCHAR" }, { name = "a", type = "NUMBER(38,0)" }]
+rows = [
+  ["'x'", "1"],
+  ["NULL", "1"],
+]
+expression = "NVL(s, a)"
+tags = ["null", "mixed-types"]

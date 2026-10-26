@@ -1,0 +1,51 @@
+category = "semi-structured"
+construct = "fn:ARRAY_TO_STRING"
+session_profile = "utc-v1"
+evidence = "typing"
+
+[[case]]
+id = "array_to_string_types"
+description = "ARRAY_TO_STRING of an array at a present path, and of SQL NULL: its result type."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('{\"o\":{\"a\":1,\"b\":[1,2]},\"x\":\"s\",\"items\":[1,\"x\",2.5]}')"],
+  ["NULL"],
+]
+query = "SELECT ARRAY_TO_STRING(v:items, ',') AS items FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]
+values = false
+
+[[case]]
+id = "array_to_string_first"
+description = "ARRAY_TO_STRING of an array built from a path's first element: its result type."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('{\"o\":{\"a\":1,\"b\":[1,2]},\"x\":\"s\",\"items\":[1,\"x\",null]}')"],
+  ["PARSE_JSON('{\"o\":{\"A\":1,\"a\":2},\"x\":null,\"items\":[]}')"],
+  ["PARSE_JSON('{\"o\":{\"n\":{\"m\":[{\"k\":1}]}},\"x\":[[1],[2]],\"items\":[[1,2],{\"k\":1}]}')"],
+  ["PARSE_JSON('{}')"],
+  ["PARSE_JSON('null')"],
+  ["NULL"],
+]
+query = "SELECT ARRAY_TO_STRING(ARRAY_CONSTRUCT(v:items[0]), ',') AS first FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "json-null", "missing-key", "nested", "array-index", "case-sensitive-key"]
+values = false
+
+[[case]]
+id = "array_to_string_cased"
+description = "ARRAY_TO_STRING of a key that differs only by case, so always missing: its result type."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('{\"o\":{\"a\":1,\"b\":[1,2]},\"x\":\"s\",\"items\":[1,\"x\",null]}')"],
+  ["PARSE_JSON('{\"o\":{\"A\":1,\"a\":2},\"x\":null,\"items\":[]}')"],
+  ["PARSE_JSON('{\"o\":{\"n\":{\"m\":[{\"k\":1}]}},\"x\":[[1],[2]],\"items\":[[1,2],{\"k\":1}]}')"],
+  ["PARSE_JSON('{}')"],
+  ["PARSE_JSON('null')"],
+  ["NULL"],
+]
+query = "SELECT ARRAY_TO_STRING(v:Items, ',') AS cased FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "json-null", "missing-key", "nested", "array-index", "case-sensitive-key"]
+values = false

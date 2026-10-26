@@ -5,22 +5,22 @@ use crate::test_types::{CommandOutcome, CommandTestCase};
 fn given_repository_policy_and_cases_when_running_evidence_commands_then_they_load_and_report() {
     let test_cases = [
         CommandTestCase {
-            description: "pending writes one file per seed case",
+            description: "pending writes pending case files",
             arguments: &["pending"],
-            mention: "9 pending case files in",
+            mention: "pending case files in",
             expected_outcome: CommandOutcome {
                 exit_code: Some(0),
-                pending_files: 9,
+                wrote_pending_files: true,
                 stderr_mentions: true,
             },
         },
         CommandTestCase {
             description: "verify validates the policy and cases and reports every case pending",
             arguments: &["verify"],
-            mention: "9 pending, 0 failed",
+            mention: " pending, 0 failed",
             expected_outcome: CommandOutcome {
                 exit_code: Some(0),
-                pending_files: 0,
+                wrote_pending_files: false,
                 stderr_mentions: true,
             },
         },
@@ -30,7 +30,7 @@ fn given_repository_policy_and_cases_when_running_evidence_commands_then_they_lo
             mention: "sampled 0 recorded cases",
             expected_outcome: CommandOutcome {
                 exit_code: Some(0),
-                pending_files: 0,
+                wrote_pending_files: false,
                 stderr_mentions: true,
             },
         },

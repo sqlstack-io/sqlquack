@@ -1,0 +1,173 @@
+category = "relational"
+construct = "clause:union_by_name"
+session_profile = "utc-v1"
+
+[[case]]
+id = "union_all_by_name_reordered"
+description = "UNION ALL BY NAME matches columns by name when the branches list them in different orders; the first branch's order names the result."
+columns = [{ name = "side", type = "VARCHAR" }, { name = "k", type = "NUMBER(38,0)" }, { name = "v", type = "VARCHAR" }, { name = "n", type = "NUMBER(10,2)" }]
+rows = [
+  ["'l'", "1", "'x'", "1.5"],
+  ["'l'", "2", "'y'", "NULL"],
+  ["'l'", "2", "'y'", "NULL"],
+  ["'l'", "NULL", "NULL", "0"],
+  ["'r'", "2", "'y'", "NULL"],
+  ["'r'", "3", "'z'", "-2"],
+  ["'r'", "NULL", "NULL", "0"],
+]
+query = "SELECT k, v FROM (SELECT * FROM input WHERE side = 'l') l UNION ALL BY NAME SELECT v, k FROM (SELECT * FROM input WHERE side = 'r') r"
+order = "bag"
+tags = ["null", "duplicates"]
+
+[[case]]
+id = "union_by_name_distinct"
+description = "UNION BY NAME removes duplicate rows, NULLs included."
+columns = [{ name = "side", type = "VARCHAR" }, { name = "k", type = "NUMBER(38,0)" }, { name = "v", type = "VARCHAR" }, { name = "n", type = "NUMBER(10,2)" }]
+rows = [
+  ["'l'", "1", "'x'", "1.5"],
+  ["'l'", "2", "'y'", "NULL"],
+  ["'l'", "2", "'y'", "NULL"],
+  ["'l'", "NULL", "NULL", "0"],
+  ["'r'", "2", "'y'", "NULL"],
+  ["'r'", "3", "'z'", "-2"],
+  ["'r'", "NULL", "NULL", "0"],
+]
+query = "SELECT k, v FROM (SELECT * FROM input WHERE side = 'l') l UNION BY NAME SELECT v, k FROM (SELECT * FROM input WHERE side = 'r') r"
+order = "bag"
+tags = ["null", "duplicates"]
+
+[[case]]
+id = "union_by_name_case_insensitive"
+description = "Unquoted names differing only by case match."
+columns = [{ name = "side", type = "VARCHAR" }, { name = "k", type = "NUMBER(38,0)" }, { name = "v", type = "VARCHAR" }, { name = "n", type = "NUMBER(10,2)" }]
+rows = [
+  ["'l'", "1", "'x'", "1.5"],
+  ["'l'", "2", "'y'", "NULL"],
+  ["'l'", "2", "'y'", "NULL"],
+  ["'l'", "NULL", "NULL", "0"],
+  ["'r'", "2", "'y'", "NULL"],
+  ["'r'", "3", "'z'", "-2"],
+  ["'r'", "NULL", "NULL", "0"],
+]
+query = "SELECT k AS Key_A, v FROM (SELECT * FROM input WHERE side = 'l') l UNION ALL BY NAME SELECT v, k AS key_a FROM (SELECT * FROM input WHERE side = 'r') r"
+order = "bag"
+tags = ["null", "duplicates"]
+
+[[case]]
+id = "union_by_name_types"
+description = "Matched columns of different types take a common type: NUMBER with NUMBER(10,2), VARCHAR with NUMBER text."
+columns = [{ name = "side", type = "VARCHAR" }, { name = "k", type = "NUMBER(38,0)" }, { name = "v", type = "VARCHAR" }, { name = "n", type = "NUMBER(10,2)" }]
+rows = [
+  ["'l'", "1", "'x'", "1.5"],
+  ["'l'", "2", "'y'", "NULL"],
+  ["'l'", "2", "'y'", "NULL"],
+  ["'l'", "NULL", "NULL", "0"],
+  ["'r'", "2", "'y'", "NULL"],
+  ["'r'", "3", "'z'", "-2"],
+  ["'r'", "NULL", "NULL", "0"],
+]
+query = "SELECT k AS a, n AS b FROM (SELECT * FROM input WHERE side = 'l') l UNION ALL BY NAME SELECT n AS a, k AS b FROM (SELECT * FROM input WHERE side = 'r') r"
+order = "bag"
+tags = ["null", "duplicates"]
+
+[[case]]
+id = "union_by_name_empty_branch"
+description = "One branch empty."
+columns = [{ name = "side", type = "VARCHAR" }, { name = "k", type = "NUMBER(38,0)" }, { name = "v", type = "VARCHAR" }, { name = "n", type = "NUMBER(10,2)" }]
+rows = [
+  ["'l'", "1", "'x'", "1.5"],
+  ["'l'", "2", "'y'", "NULL"],
+  ["'l'", "2", "'y'", "NULL"],
+  ["'l'", "NULL", "NULL", "0"],
+  ["'r'", "2", "'y'", "NULL"],
+  ["'r'", "3", "'z'", "-2"],
+  ["'r'", "NULL", "NULL", "0"],
+]
+query = "SELECT k, v FROM (SELECT * FROM input WHERE side = 'l') l UNION ALL BY NAME SELECT v, k FROM (SELECT * FROM input WHERE side = 'r') r WHERE FALSE"
+order = "bag"
+tags = ["null", "duplicates", "empty-input"]
+
+[[case]]
+id = "union_by_name_chain"
+description = "Three branches chained, each listing the columns in a different order."
+columns = [{ name = "side", type = "VARCHAR" }, { name = "k", type = "NUMBER(38,0)" }, { name = "v", type = "VARCHAR" }, { name = "n", type = "NUMBER(10,2)" }]
+rows = [
+  ["'l'", "1", "'x'", "1.5"],
+  ["'l'", "2", "'y'", "NULL"],
+  ["'l'", "2", "'y'", "NULL"],
+  ["'l'", "NULL", "NULL", "0"],
+  ["'r'", "2", "'y'", "NULL"],
+  ["'r'", "3", "'z'", "-2"],
+  ["'r'", "NULL", "NULL", "0"],
+]
+query = "SELECT k, v, n FROM (SELECT * FROM input WHERE side = 'l') l UNION ALL BY NAME SELECT n, k, v FROM (SELECT * FROM input WHERE side = 'r') r UNION ALL BY NAME SELECT v, n, k FROM (SELECT * FROM input WHERE side = 'l') l2"
+order = "bag"
+tags = ["null", "duplicates"]
+
+[[case]]
+id = "union_by_name_ordered"
+description = "UNION ALL BY NAME under ORDER BY on a matched column."
+columns = [{ name = "side", type = "VARCHAR" }, { name = "k", type = "NUMBER(38,0)" }, { name = "v", type = "VARCHAR" }, { name = "n", type = "NUMBER(10,2)" }]
+rows = [
+  ["'l'", "1", "'x'", "1.5"],
+  ["'l'", "2", "'y'", "NULL"],
+  ["'l'", "2", "'y'", "NULL"],
+  ["'l'", "NULL", "NULL", "0"],
+  ["'r'", "2", "'y'", "NULL"],
+  ["'r'", "3", "'z'", "-2"],
+  ["'r'", "NULL", "NULL", "0"],
+]
+query = "SELECT * FROM (SELECT k, v FROM (SELECT * FROM input WHERE side = 'l') l UNION ALL BY NAME SELECT v, k FROM (SELECT * FROM input WHERE side = 'r') r) ORDER BY k, v"
+order = "ordered"
+tags = ["null", "duplicates"]
+
+[[case]]
+id = "union_by_name_missing_column"
+description = "A column only one branch has: Snowflake fills NULL or raises."
+columns = [{ name = "side", type = "VARCHAR" }, { name = "k", type = "NUMBER(38,0)" }, { name = "v", type = "VARCHAR" }, { name = "n", type = "NUMBER(10,2)" }]
+rows = [
+  ["'l'", "1", "'x'", "1.5"],
+  ["'l'", "2", "'y'", "NULL"],
+  ["'l'", "2", "'y'", "NULL"],
+  ["'l'", "NULL", "NULL", "0"],
+  ["'r'", "2", "'y'", "NULL"],
+  ["'r'", "3", "'z'", "-2"],
+  ["'r'", "NULL", "NULL", "0"],
+]
+query = "SELECT k, v FROM (SELECT * FROM input WHERE side = 'l') l UNION ALL BY NAME SELECT k FROM (SELECT * FROM input WHERE side = 'r') r"
+order = "bag"
+tags = ["null", "empty-input"]
+
+[[case]]
+id = "union_by_name_quoted_case"
+description = "Quoted names differing only by case: matched or kept apart."
+columns = [{ name = "side", type = "VARCHAR" }, { name = "k", type = "NUMBER(38,0)" }, { name = "v", type = "VARCHAR" }, { name = "n", type = "NUMBER(10,2)" }]
+rows = [
+  ["'l'", "1", "'x'", "1.5"],
+  ["'l'", "2", "'y'", "NULL"],
+  ["'l'", "2", "'y'", "NULL"],
+  ["'l'", "NULL", "NULL", "0"],
+  ["'r'", "2", "'y'", "NULL"],
+  ["'r'", "3", "'z'", "-2"],
+  ["'r'", "NULL", "NULL", "0"],
+]
+query = "SELECT k AS \"Key\", v FROM (SELECT * FROM input WHERE side = 'l') l UNION ALL BY NAME SELECT v, k AS \"key\" FROM (SELECT * FROM input WHERE side = 'r') r"
+order = "bag"
+tags = ["null"]
+
+[[case]]
+id = "union_by_name_duplicate_name"
+description = "A branch naming one column twice raises or converts."
+columns = [{ name = "side", type = "VARCHAR" }, { name = "k", type = "NUMBER(38,0)" }, { name = "v", type = "VARCHAR" }, { name = "n", type = "NUMBER(10,2)" }]
+rows = [
+  ["'l'", "1", "'x'", "1.5"],
+  ["'l'", "2", "'y'", "NULL"],
+  ["'l'", "2", "'y'", "NULL"],
+  ["'l'", "NULL", "NULL", "0"],
+  ["'r'", "2", "'y'", "NULL"],
+  ["'r'", "3", "'z'", "-2"],
+  ["'r'", "NULL", "NULL", "0"],
+]
+query = "SELECT k, k AS K2, v FROM (SELECT * FROM input WHERE side = 'l') l UNION ALL BY NAME SELECT v, k, k AS K2 FROM (SELECT * FROM input WHERE side = 'r') r"
+order = "bag"
+tags = ["duplicates"]

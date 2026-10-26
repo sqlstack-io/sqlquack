@@ -8,9 +8,10 @@ use sqlquack_core::parsing::models::SourceDialect;
 use sqlquack_core::refusals::models::RefusalCategory;
 
 use crate::census::_helpers::coverage::{CoverageInput, convertible_at, greedy_order};
-use crate::census::_helpers::inspect::{FidelityClass, FileCensus};
+use crate::census::_helpers::inspect::FileCensus;
 use crate::census::models::{
-    CensusReport, CensusTotals, ConstructCount, CoveragePoint, FidelityTotals, RefusalTotals,
+    CensusReport, CensusTotals, ConstructCount, CoveragePoint, ProvenanceCounts, RefusalCount,
+    RefusalTotals,
 };
 
 pub(crate) fn aggregate(
@@ -37,7 +38,6 @@ pub(crate) fn aggregate(
     CensusReport {
         dialect,
         totals: totals(files, &usage),
-        fidelity: fidelity_totals(files),
         refusals: refusal_totals(files),
         constructs: ranked
             .iter()
@@ -47,6 +47,7 @@ pub(crate) fn aggregate(
             })
             .collect(),
         coverage: coverage(&file_ids, &frequency_order, coverage_points),
+        provenance: provenance_counts(files),
     }
 }
 
@@ -72,20 +73,6 @@ fn totals(files: &[FileCensus], usage: &BTreeMap<&Construct, usize>) -> CensusTo
     }
 }
 
-fn fidelity_totals(files: &[FileCensus]) -> FidelityTotals {
-    let mut totals = FidelityTotals::default();
-    for file in files {
-        match file.fidelity {
-            Some(FidelityClass::Identical) => totals.identical += 1,
-            Some(FidelityClass::Canonicalised) => totals.canonicalised += 1,
-            Some(FidelityClass::Unstable) => totals.unstable += 1,
-            Some(FidelityClass::Failed) => totals.failed += 1,
-            None => {}
-        }
-    }
-    totals
-}
-
 fn refusal_totals(files: &[FileCensus]) -> RefusalTotals {
     let count = |category: RefusalCategory| {
         files
@@ -97,11 +84,62 @@ fn refusal_totals(files: &[FileCensus]) -> RefusalTotals {
         missing_rule: count(RefusalCategory::MissingRule),
         not_expressible: count(RefusalCategory::NotExpressible),
         parse_fidelity: count(RefusalCategory::ParseFidelity),
+        type_condition: count(RefusalCategory::TypeCondition),
+        unresolved_name: count(RefusalCategory::UnresolvedName),
+        by_construct: refusal_counts(files),
         convertible: files
             .iter()
-            .filter(|file| file.refusal_categories.is_empty())
+            .filter(|file| file.parsed && file.refusal_categories.is_empty())
             .count(),
     }
+}
+
+fn provenance_counts(files: &[FileCensus]) -> ProvenanceCounts {
+    let mut counts = ProvenanceCounts::default();
+    for provenance in files.iter().filter_map(|file| file.provenance.as_ref()) {
+        for (target, ids) in [
+            (&mut counts.rules, &provenance.rules),
+            (&mut counts.building_blocks, &provenance.building_blocks),
+            (&mut counts.typing, &provenance.typing),
+        ] {
+            for id in ids {
+                *target.entry(id.clone()).or_default() += 1;
+            }
+        }
+        for (divergence, constructs) in &provenance.divergences {
+            for construct in constructs {
+                *counts
+                    .divergences
+                    .entry(format!("{divergence} at {construct}"))
+                    .or_default() += 1;
+            }
+        }
+    }
+    counts
+}
+
+fn refusal_counts(files: &[FileCensus]) -> Vec<RefusalCount> {
+    let mut counts: BTreeMap<(RefusalCategory, String), usize> = BTreeMap::new();
+    for file in files {
+        for key in &file.refusal_constructs {
+            *counts.entry(key.clone()).or_default() += 1;
+        }
+    }
+    let mut sorted: Vec<RefusalCount> = counts
+        .into_iter()
+        .map(|((category, construct), files)| RefusalCount {
+            category: category.label().to_owned(),
+            construct,
+            files,
+        })
+        .collect();
+    sorted.sort_by(|left, right| {
+        right
+            .files
+            .cmp(&left.files)
+            .then_with(|| left.construct.cmp(&right.construct))
+    });
+    sorted
 }
 
 fn coverage(

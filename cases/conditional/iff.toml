@@ -1,0 +1,39 @@
+category = "conditional"
+construct = "fn:IFF"
+session_profile = "utc-v1"
+
+[[case]]
+id = "mixed_scales"
+description = "IFF unifies its branches like CASE."
+columns = [{ name = "pick", type = "BOOLEAN" }, { name = "a", type = "NUMBER(10,2)" }, { name = "b", type = "NUMBER(12,4)" }]
+rows = [
+  ["TRUE", "1.25", "2.0001"],
+  ["FALSE", "1.25", "2.0001"],
+  ["NULL", "1.25", "2.0001"],
+  ["TRUE", "NULL", "1"],
+]
+expression = "IFF(pick, a, b)"
+tags = ["null", "mixed-types"]
+
+[[case]]
+id = "null_branch"
+description = "IFF with a NULL literal branch."
+columns = [{ name = "a", type = "NUMBER(38,0)" }]
+rows = [
+  ["1"],
+  ["0"],
+  ["NULL"],
+]
+expression = "IFF(a > 0, a, NULL)"
+tags = ["null", "all-null"]
+
+[[case]]
+id = "float_branch"
+description = "IFF mixing NUMBER and FLOAT."
+columns = [{ name = "a", type = "NUMBER(38,0)" }]
+rows = [
+  ["1"],
+  ["0"],
+]
+expression = "IFF(a > 0, a, 0.5::FLOAT)"
+tags = ["mixed-types"]

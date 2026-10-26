@@ -1,0 +1,300 @@
+category = "semi-structured"
+construct = "fn:TRY_PARSE_JSON"
+session_profile = "utc-v1"
+
+[[case]]
+id = "typeof_parsed"
+description = "The VARIANT type TRY_PARSE_JSON gives each JSON text, invalid text and SQL NULL."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'{\"a\":1}'"],
+  ["'[1,2]'"],
+  ["'\"x\"'"],
+  ["'12'"],
+  ["'-0'"],
+  ["'1.50'"],
+  ["'true'"],
+  ["'null'"],
+  ["''"],
+  ["' '"],
+  ["NULL"],
+  ["' {\"a\":1} '"],
+  ["'{\"a\":1,\"A\":2}'"],
+]
+expression = "TYPEOF(TRY_PARSE_JSON(s))"
+tags = ["null", "json-null", "invalid", "case-sensitive-key"]
+
+[[case]]
+id = "parsed_to_json"
+description = "Parsed JSON written back: key order, number spelling and nesting."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'{\"a\":1}'"],
+  ["'[1,2]'"],
+  ["'\"x\"'"],
+  ["'12'"],
+  ["'-0'"],
+  ["'1.50'"],
+  ["'true'"],
+  ["'null'"],
+  ["''"],
+  ["' '"],
+  ["NULL"],
+  ["' {\"a\":1} '"],
+]
+expression = "TO_JSON(TRY_PARSE_JSON(s))"
+tags = ["nested", "json-null", "array-index", "unicode"]
+
+[[case]]
+id = "parsed_to_varchar"
+description = "A parsed VARIANT cast to VARCHAR: strings unquoted, numbers, objects, JSON null."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'\"x\"'"],
+  ["'\"  padded \"'"],
+  ["'\"\"'"],
+  ["'12'"],
+  ["'1.50'"],
+  ["'-0'"],
+  ["'true'"],
+  ["'null'"],
+  ["NULL"],
+  ["'\"ü\"'"],
+]
+expression = "TRY_PARSE_JSON(s)::VARCHAR"
+tags = ["null", "json-null", "nested", "unicode", "empty"]
+
+[[case]]
+id = "parse_json_empty_and_null"
+description = "PARSE_JSON of empty and blank text and SQL NULL."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["''"],
+  ["' '"],
+  ["NULL"],
+]
+expression = "TYPEOF(PARSE_JSON(s))"
+tags = ["null", "empty", "whitespace"]
+
+[[case]]
+id = "parse_json_invalid"
+description = "PARSE_JSON of invalid text raises an error."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'{bad'"],
+]
+expression = "TYPEOF(PARSE_JSON(s))"
+tags = ["invalid"]
+
+[[case]]
+id = "parse_json_duplicate_key"
+description = "PARSE_JSON of an object with a duplicated key."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'{\"a\":1,\"a\":2}'"],
+]
+expression = "TYPEOF(PARSE_JSON(s))"
+tags = ["invalid"]
+
+[[case]]
+id = "parsed_path"
+description = "A path into parsed text: missing keys, JSON null, arrays and key case."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'{\"data\":{\"id\":\"x1\"}}'"],
+  ["'{\"data\":{\"ID\":\"x2\"}}'"],
+  ["'{\"data\":null}'"],
+  ["'{}'"],
+  ["'[{\"data\":1}]'"],
+  ["NULL"],
+  ["'{\"data\":{\"id\":7}}'"],
+]
+expression = "TRY_PARSE_JSON(s):data.id::VARCHAR"
+tags = ["missing-key", "case-sensitive-key", "json-null", "null", "nested", "array-index"]
+
+[[case]]
+id = "typeof_parsed_guard_1"
+description = "TYPEOF(TRY_PARSE_JSON(s)) of one text the JSON guard raises for: '1e3'"
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'1e3'"],
+]
+expression = "TYPEOF(TRY_PARSE_JSON(s))"
+expected_divergence = "json_fidelity"
+tags = ["invalid"]
+
+[[case]]
+id = "typeof_parsed_guard_2"
+description = "TYPEOF(TRY_PARSE_JSON(s)) of one text the JSON guard raises for: '12345678901234567890123456789012345678901'"
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'12345678901234567890123456789012345678901'"],
+]
+expression = "TYPEOF(TRY_PARSE_JSON(s))"
+expected_divergence = "json_fidelity"
+tags = ["invalid"]
+
+[[case]]
+id = "typeof_parsed_guard_3"
+description = "TYPEOF(TRY_PARSE_JSON(s)) of one text the JSON guard raises for: '{bad'"
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'{bad'"],
+]
+expression = "TYPEOF(TRY_PARSE_JSON(s))"
+expected_divergence = "json_fidelity"
+tags = ["invalid"]
+
+[[case]]
+id = "typeof_parsed_guard_4"
+description = "TYPEOF(TRY_PARSE_JSON(s)) of one text the JSON guard raises for: '{\"a\":1,\"a\":2}'"
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'{\"a\":1,\"a\":2}'"],
+]
+expression = "TYPEOF(TRY_PARSE_JSON(s))"
+expected_divergence = "json_fidelity"
+tags = ["invalid"]
+
+[[case]]
+id = "parsed_to_json_guard_1"
+description = "TO_JSON(TRY_PARSE_JSON(s)) of one text the JSON guard raises for: '1e3'"
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'1e3'"],
+]
+expression = "TO_JSON(TRY_PARSE_JSON(s))"
+expected_divergence = "json_fidelity"
+tags = ["invalid"]
+
+[[case]]
+id = "parsed_to_json_guard_2"
+description = "TO_JSON(TRY_PARSE_JSON(s)) of one text the JSON guard raises for: '12345678901234567890123456789012345678901'"
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'12345678901234567890123456789012345678901'"],
+]
+expression = "TO_JSON(TRY_PARSE_JSON(s))"
+expected_divergence = "json_fidelity"
+tags = ["invalid"]
+
+[[case]]
+id = "parsed_to_json_guard_3"
+description = "TO_JSON(TRY_PARSE_JSON(s)) of one text the JSON guard raises for: '{bad'"
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'{bad'"],
+]
+expression = "TO_JSON(TRY_PARSE_JSON(s))"
+expected_divergence = "json_fidelity"
+tags = ["invalid"]
+
+[[case]]
+id = "parsed_to_json_guard_4"
+description = "TO_JSON(TRY_PARSE_JSON(s)) of one text the JSON guard raises for: '{\"a\":1,\"a\":2}'"
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'{\"a\":1,\"a\":2}'"],
+]
+expression = "TO_JSON(TRY_PARSE_JSON(s))"
+expected_divergence = "json_fidelity"
+tags = ["invalid"]
+
+[[case]]
+id = "parsed_to_json_guard_5"
+description = "TO_JSON(TRY_PARSE_JSON(s)) of one text the JSON guard raises for: '{\"a\":1,\"A\":2}'"
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'{\"a\":1,\"A\":2}'"],
+]
+expression = "TO_JSON(TRY_PARSE_JSON(s))"
+expected_divergence = "json_fidelity"
+tags = ["invalid"]
+
+[[case]]
+id = "parsed_to_json_guard_6"
+description = "TO_JSON(TRY_PARSE_JSON(s)) of one text the JSON guard raises for: '{\"b\":1,\"a\":{\"d\":[1,{\"z\":null,\"y\":2}],\"c\":\"é\"}}'"
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'{\"b\":1,\"a\":{\"d\":[1,{\"z\":null,\"y\":2}],\"c\":\"é\"}}'"],
+]
+expression = "TO_JSON(TRY_PARSE_JSON(s))"
+expected_divergence = "json_fidelity"
+tags = ["invalid"]
+
+[[case]]
+id = "parsed_to_json_guard_7"
+description = "TO_JSON(TRY_PARSE_JSON(s)) of one text the JSON guard raises for: '{\"a\": 1.000}'"
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'{\"a\": 1.000}'"],
+]
+expression = "TO_JSON(TRY_PARSE_JSON(s))"
+expected_divergence = "json_fidelity"
+tags = ["invalid"]
+
+[[case]]
+id = "parsed_to_json_guard_8"
+description = "TO_JSON(TRY_PARSE_JSON(s)) of one text the JSON guard raises for: '[1.0, 2.50, -0.0, 1E2, 0.1]'"
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'[1.0, 2.50, -0.0, 1E2, 0.1]'"],
+]
+expression = "TO_JSON(TRY_PARSE_JSON(s))"
+expected_divergence = "json_fidelity"
+tags = ["invalid"]
+
+[[case]]
+id = "parsed_to_varchar_guard_1"
+description = "TRY_PARSE_JSON(s)::VARCHAR of one text the JSON guard raises for: '1e3'"
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'1e3'"],
+]
+expression = "TRY_PARSE_JSON(s)::VARCHAR"
+expected_divergence = "json_fidelity"
+tags = ["invalid"]
+
+[[case]]
+id = "parsed_to_varchar_guard_2"
+description = "TRY_PARSE_JSON(s)::VARCHAR of one text the JSON guard raises for: '{\"b\":1,\"a\":2}'"
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'{\"b\":1,\"a\":2}'"],
+]
+expression = "TRY_PARSE_JSON(s)::VARCHAR"
+expected_divergence = "json_fidelity"
+tags = ["invalid"]
+
+[[case]]
+id = "parsed_to_varchar_guard_3"
+description = "TRY_PARSE_JSON(s)::VARCHAR of one text the JSON guard raises for: '[1,\"x\",null]'"
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'[1,\"x\",null]'"],
+]
+expression = "TRY_PARSE_JSON(s)::VARCHAR"
+expected_divergence = "json_fidelity"
+tags = ["invalid"]
+
+[[case]]
+id = "parsed_to_varchar_guard_4"
+description = "TRY_PARSE_JSON(s)::VARCHAR of one text the JSON guard raises for: '{bad'"
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'{bad'"],
+]
+expression = "TRY_PARSE_JSON(s)::VARCHAR"
+expected_divergence = "json_fidelity"
+tags = ["invalid"]
+
+[[case]]
+id = "parsed_path_guard_1"
+description = "TRY_PARSE_JSON(s):data.id::VARCHAR of one text the JSON guard raises for: '{bad'"
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'{bad'"],
+]
+expression = "TRY_PARSE_JSON(s):data.id::VARCHAR"
+expected_divergence = "json_fidelity"
+tags = ["invalid"]

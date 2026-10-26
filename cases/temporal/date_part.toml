@@ -1,0 +1,288 @@
+category = "temporal"
+construct = "fn:DATE_PART"
+session_profile = "utc-v1"
+
+[[case]]
+id = "date_part_year"
+description = "DATE_PART YEAR of naive timestamps, around year ends and the epoch."
+columns = [{ name = "t", type = "TIMESTAMP_NTZ(9)" }]
+rows = [
+  ["'2024-02-29 13:45:01.123456789'"],
+  ["'2024-01-01 00:00:00'"],
+  ["'2023-12-31 23:59:59.999999999'"],
+  ["'1969-12-31 23:59:59.5'"],
+  ["'2021-01-03 12:00:00'"],
+  ["'2020-12-31 08:00:00'"],
+  ["NULL"],
+]
+expression = "DATE_PART(YEAR, t)"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "date_part_quarter"
+description = "DATE_PART QUARTER of naive timestamps, around year ends and the epoch."
+columns = [{ name = "t", type = "TIMESTAMP_NTZ(9)" }]
+rows = [
+  ["'2024-02-29 13:45:01.123456789'"],
+  ["'2024-01-01 00:00:00'"],
+  ["'2023-12-31 23:59:59.999999999'"],
+  ["'1969-12-31 23:59:59.5'"],
+  ["'2021-01-03 12:00:00'"],
+  ["'2020-12-31 08:00:00'"],
+  ["NULL"],
+]
+expression = "DATE_PART(QUARTER, t)"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "date_part_month"
+description = "DATE_PART MONTH of naive timestamps, around year ends and the epoch."
+columns = [{ name = "t", type = "TIMESTAMP_NTZ(9)" }]
+rows = [
+  ["'2024-02-29 13:45:01.123456789'"],
+  ["'2024-01-01 00:00:00'"],
+  ["'2023-12-31 23:59:59.999999999'"],
+  ["'1969-12-31 23:59:59.5'"],
+  ["'2021-01-03 12:00:00'"],
+  ["'2020-12-31 08:00:00'"],
+  ["NULL"],
+]
+expression = "DATE_PART(MONTH, t)"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "date_part_week"
+description = "DATE_PART WEEK of naive timestamps, around year ends and the epoch."
+columns = [{ name = "t", type = "TIMESTAMP_NTZ(9)" }]
+rows = [
+  ["'2024-02-29 13:45:01.123456789'"],
+  ["'2024-01-01 00:00:00'"],
+  ["'2023-12-31 23:59:59.999999999'"],
+  ["'1969-12-31 23:59:59.5'"],
+  ["'2021-01-03 12:00:00'"],
+  ["'2020-12-31 08:00:00'"],
+  ["NULL"],
+]
+expression = "DATE_PART(WEEK, t)"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "date_part_weekiso"
+description = "DATE_PART WEEKISO of naive timestamps, around year ends and the epoch."
+columns = [{ name = "t", type = "TIMESTAMP_NTZ(9)" }]
+rows = [
+  ["'2024-02-29 13:45:01.123456789'"],
+  ["'2024-01-01 00:00:00'"],
+  ["'2023-12-31 23:59:59.999999999'"],
+  ["'1969-12-31 23:59:59.5'"],
+  ["'2021-01-03 12:00:00'"],
+  ["'2020-12-31 08:00:00'"],
+  ["NULL"],
+]
+expression = "DATE_PART(WEEKISO, t)"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "date_part_day"
+description = "DATE_PART DAY of naive timestamps, around year ends and the epoch."
+columns = [{ name = "t", type = "TIMESTAMP_NTZ(9)" }]
+rows = [
+  ["'2024-02-29 13:45:01.123456789'"],
+  ["'2024-01-01 00:00:00'"],
+  ["'2023-12-31 23:59:59.999999999'"],
+  ["'1969-12-31 23:59:59.5'"],
+  ["'2021-01-03 12:00:00'"],
+  ["'2020-12-31 08:00:00'"],
+  ["NULL"],
+]
+expression = "DATE_PART(DAY, t)"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "date_part_dayofweek"
+description = "DATE_PART DAYOFWEEK of naive timestamps, around year ends and the epoch."
+columns = [{ name = "t", type = "TIMESTAMP_NTZ(9)" }]
+rows = [
+  ["'2024-02-29 13:45:01.123456789'"],
+  ["'2024-01-01 00:00:00'"],
+  ["'2023-12-31 23:59:59.999999999'"],
+  ["'1969-12-31 23:59:59.5'"],
+  ["'2021-01-03 12:00:00'"],
+  ["'2020-12-31 08:00:00'"],
+  ["NULL"],
+]
+expression = "DATE_PART(DAYOFWEEK, t)"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "date_part_dayofweekiso"
+description = "DATE_PART DAYOFWEEKISO of naive timestamps, around year ends and the epoch."
+columns = [{ name = "t", type = "TIMESTAMP_NTZ(9)" }]
+rows = [
+  ["'2024-02-29 13:45:01.123456789'"],
+  ["'2024-01-01 00:00:00'"],
+  ["'2023-12-31 23:59:59.999999999'"],
+  ["'1969-12-31 23:59:59.5'"],
+  ["'2021-01-03 12:00:00'"],
+  ["'2020-12-31 08:00:00'"],
+  ["NULL"],
+]
+expression = "DATE_PART(DAYOFWEEKISO, t)"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "date_part_dayofyear"
+description = "DATE_PART DAYOFYEAR of naive timestamps, around year ends and the epoch."
+columns = [{ name = "t", type = "TIMESTAMP_NTZ(9)" }]
+rows = [
+  ["'2024-02-29 13:45:01.123456789'"],
+  ["'2024-01-01 00:00:00'"],
+  ["'2023-12-31 23:59:59.999999999'"],
+  ["'1969-12-31 23:59:59.5'"],
+  ["'2021-01-03 12:00:00'"],
+  ["'2020-12-31 08:00:00'"],
+  ["NULL"],
+]
+expression = "DATE_PART(DAYOFYEAR, t)"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "date_part_hour"
+description = "DATE_PART HOUR of naive timestamps, around year ends and the epoch."
+columns = [{ name = "t", type = "TIMESTAMP_NTZ(9)" }]
+rows = [
+  ["'2024-02-29 13:45:01.123456789'"],
+  ["'2024-01-01 00:00:00'"],
+  ["'2023-12-31 23:59:59.999999999'"],
+  ["'1969-12-31 23:59:59.5'"],
+  ["'2021-01-03 12:00:00'"],
+  ["'2020-12-31 08:00:00'"],
+  ["NULL"],
+]
+expression = "DATE_PART(HOUR, t)"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "date_part_minute"
+description = "DATE_PART MINUTE of naive timestamps, around year ends and the epoch."
+columns = [{ name = "t", type = "TIMESTAMP_NTZ(9)" }]
+rows = [
+  ["'2024-02-29 13:45:01.123456789'"],
+  ["'2024-01-01 00:00:00'"],
+  ["'2023-12-31 23:59:59.999999999'"],
+  ["'1969-12-31 23:59:59.5'"],
+  ["'2021-01-03 12:00:00'"],
+  ["'2020-12-31 08:00:00'"],
+  ["NULL"],
+]
+expression = "DATE_PART(MINUTE, t)"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "date_part_second"
+description = "DATE_PART SECOND of naive timestamps, around year ends and the epoch."
+columns = [{ name = "t", type = "TIMESTAMP_NTZ(9)" }]
+rows = [
+  ["'2024-02-29 13:45:01.123456789'"],
+  ["'2024-01-01 00:00:00'"],
+  ["'2023-12-31 23:59:59.999999999'"],
+  ["'1969-12-31 23:59:59.5'"],
+  ["'2021-01-03 12:00:00'"],
+  ["'2020-12-31 08:00:00'"],
+  ["NULL"],
+]
+expression = "DATE_PART(SECOND, t)"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "date_part_nanosecond"
+description = "DATE_PART NANOSECOND of naive timestamps, around year ends and the epoch."
+columns = [{ name = "t", type = "TIMESTAMP_NTZ(9)" }]
+rows = [
+  ["'2024-02-29 13:45:01.123456789'"],
+  ["'2024-01-01 00:00:00'"],
+  ["'2023-12-31 23:59:59.999999999'"],
+  ["'1969-12-31 23:59:59.5'"],
+  ["'2021-01-03 12:00:00'"],
+  ["'2020-12-31 08:00:00'"],
+  ["NULL"],
+]
+expression = "DATE_PART(NANOSECOND, t)"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "date_part_epoch_second"
+description = "DATE_PART EPOCH_SECOND of naive timestamps, around year ends and the epoch."
+columns = [{ name = "t", type = "TIMESTAMP_NTZ(9)" }]
+rows = [
+  ["'2024-02-29 13:45:01.123456789'"],
+  ["'2024-01-01 00:00:00'"],
+  ["'2023-12-31 23:59:59.999999999'"],
+  ["'1969-12-31 23:59:59.5'"],
+  ["'2021-01-03 12:00:00'"],
+  ["'2020-12-31 08:00:00'"],
+  ["NULL"],
+]
+expression = "DATE_PART(EPOCH_SECOND, t)"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "date_part_epoch_millisecond"
+description = "DATE_PART EPOCH_MILLISECOND of naive timestamps, around year ends and the epoch."
+columns = [{ name = "t", type = "TIMESTAMP_NTZ(9)" }]
+rows = [
+  ["'2024-02-29 13:45:01.123456789'"],
+  ["'2024-01-01 00:00:00'"],
+  ["'2023-12-31 23:59:59.999999999'"],
+  ["'1969-12-31 23:59:59.5'"],
+  ["'2021-01-03 12:00:00'"],
+  ["'2020-12-31 08:00:00'"],
+  ["NULL"],
+]
+expression = "DATE_PART(EPOCH_MILLISECOND, t)"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "date_part_yearofweek"
+description = "DATE_PART YEAROFWEEK of naive timestamps, around year ends and the epoch."
+columns = [{ name = "t", type = "TIMESTAMP_NTZ(9)" }]
+rows = [
+  ["'2024-02-29 13:45:01.123456789'"],
+  ["'2024-01-01 00:00:00'"],
+  ["'2023-12-31 23:59:59.999999999'"],
+  ["'1969-12-31 23:59:59.5'"],
+  ["'2021-01-03 12:00:00'"],
+  ["'2020-12-31 08:00:00'"],
+  ["NULL"],
+]
+expression = "DATE_PART(YEAROFWEEK, t)"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "date_part_yearofweekiso"
+description = "DATE_PART YEAROFWEEKISO of naive timestamps, around year ends and the epoch."
+columns = [{ name = "t", type = "TIMESTAMP_NTZ(9)" }]
+rows = [
+  ["'2024-02-29 13:45:01.123456789'"],
+  ["'2024-01-01 00:00:00'"],
+  ["'2023-12-31 23:59:59.999999999'"],
+  ["'1969-12-31 23:59:59.5'"],
+  ["'2021-01-03 12:00:00'"],
+  ["'2020-12-31 08:00:00'"],
+  ["NULL"],
+]
+expression = "DATE_PART(YEAROFWEEKISO, t)"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "extract_from_date"
+description = "EXTRACT of year, month, day and day of week from dates."
+columns = [{ name = "d", type = "DATE" }]
+rows = [
+  ["'2024-02-29'"],
+  ["'2021-01-03'"],
+  ["'1969-12-31'"],
+  ["NULL"],
+]
+expression = "EXTRACT(YEAR FROM d) * 10000 + EXTRACT(MONTH FROM d) * 100 + EXTRACT(DAY FROM d) + EXTRACT(DAYOFWEEK FROM d) / 10"
+tags = ["null", "boundary"]

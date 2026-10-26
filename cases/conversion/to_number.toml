@@ -1,0 +1,178 @@
+category = "conversion"
+construct = "cast:NUMBER"
+session_profile = "utc-v1"
+
+[[case]]
+id = "text_to_integer"
+description = "Text to NUMBER(38,0) rounds and accepts surrounding spaces and signs."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'12'"],
+  ["'-3'"],
+  ["'1.5'"],
+  ["'2.5'"],
+  ["'-2.5'"],
+  ["NULL"],
+]
+expression = "CAST(s AS NUMBER(38,0))"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "text_to_integer_lenient"
+description = "Text spellings Snowflake may or may not accept as numbers."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["' 12 '"],
+  ["'+4'"],
+  ["'1e3'"],
+  ["'.5'"],
+  ["'5.'"],
+  ["'0x1A'"],
+  ["'1,000'"],
+  ["'١٢'"],
+]
+expression = "TRY_CAST(s AS NUMBER(38,0))"
+tags = ["boundary", "invalid"]
+
+[[case]]
+id = "text_invalid"
+description = "Text that is not a number."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'ten'"],
+]
+expression = "CAST(s AS NUMBER(38,0))"
+tags = ["invalid"]
+
+[[case]]
+id = "text_empty"
+description = "Empty text as a number."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["''"],
+]
+expression = "CAST(s AS NUMBER(38,0))"
+tags = ["invalid"]
+
+[[case]]
+id = "try_cast_text"
+description = "TRY_CAST returns NULL for invalid text."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'12'"],
+  ["'ten'"],
+  ["''"],
+  ["NULL"],
+  ["'1.25'"],
+]
+expression = "TRY_CAST(s AS NUMBER(10,2))"
+tags = ["null", "invalid"]
+
+[[case]]
+id = "text_too_large"
+description = "Text with more digits than the target precision."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'123456'"],
+]
+expression = "CAST(s AS NUMBER(5,2))"
+tags = ["boundary", "invalid"]
+
+[[case]]
+id = "rescale_rounding"
+description = "NUMBER(10,4) to NUMBER(10,2) rounds half away from zero."
+columns = [{ name = "a", type = "NUMBER(10,4)" }]
+rows = [
+  ["1.0050"],
+  ["-1.0050"],
+  ["1.0049"],
+  ["2.0050"],
+  ["0"],
+  ["NULL"],
+]
+expression = "CAST(a AS NUMBER(10,2))"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "float_to_number"
+description = "FLOAT to NUMBER rounds."
+columns = [{ name = "f", type = "FLOAT" }]
+rows = [
+  ["2.5"],
+  ["-2.5"],
+  ["0.49999"],
+  ["NULL"],
+  ["1e20"],
+]
+expression = "CAST(f AS NUMBER(38,0))"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "boolean_to_number"
+description = "BOOLEAN to NUMBER."
+columns = [{ name = "b", type = "BOOLEAN" }]
+rows = [
+  ["TRUE"],
+  ["FALSE"],
+  ["NULL"],
+]
+expression = "CAST(b AS NUMBER(38,0))"
+tags = ["null"]
+
+[[case]]
+id = "double_colon_int"
+description = "`::INT` is NUMBER(38,0)."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'7'"],
+  ["'7.5'"],
+  ["NULL"],
+]
+expression = "s::INT"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "default_number"
+description = "`NUMBER` without precision is NUMBER(38,0)."
+columns = [{ name = "a", type = "NUMBER(10,2)" }]
+rows = [
+  ["1.49"],
+  ["1.50"],
+  ["-1.50"],
+  ["NULL"],
+]
+expression = "a::NUMBER"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "text_whitespace_and_signs"
+description = "Whitespace other than spaces, signs and exponent spellings."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'\\t5'"],
+  ["'5\\n'"],
+  ["' 5'"],
+  ["'- 5'"],
+  ["'+.5'"],
+  ["'1E+2'"],
+  ["'1e'"],
+  ["'e3'"],
+  ["'1.5e-1'"],
+  ["'00012'"],
+  ["NULL"],
+]
+expression = "TRY_CAST(s AS NUMBER(10,2))"
+tags = ["null", "invalid", "boundary"]
+
+[[case]]
+id = "try_cast_text_overflow"
+description = "TRY_CAST of text too large for the target."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'123456'"],
+  ["'999.995'"],
+  ["'1e40'"],
+  ["NULL"],
+]
+expression = "TRY_CAST(s AS NUMBER(5,2))"
+tags = ["null", "invalid", "boundary"]

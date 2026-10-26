@@ -1,0 +1,156 @@
+category = "relational"
+construct = "node:exists"
+session_profile = "utc-v1"
+
+[[case]]
+id = "in_subquery"
+description = "IN with a subquery holding NULL."
+columns = [{ name = "side", type = "VARCHAR" }, { name = "k", type = "NUMBER(38,0)" }, { name = "v", type = "VARCHAR" }]
+rows = [
+  ["'l'", "1", "'l1'"],
+  ["'l'", "2", "'l2'"],
+  ["'l'", "NULL", "'ln'"],
+  ["'l'", "2", "'l2b'"],
+  ["'r'", "2", "'r2'"],
+  ["'r'", "3", "'r3'"],
+  ["'r'", "NULL", "'rn'"],
+]
+query = "SELECT v, k IN (SELECT k FROM (SELECT k, v FROM input WHERE side = 'r') r) AS found FROM (SELECT k, v FROM input WHERE side = 'l') l"
+order = "bag"
+tags = ["null", "duplicates"]
+
+[[case]]
+id = "not_in_subquery"
+description = "NOT IN with a subquery holding NULL is never true."
+columns = [{ name = "side", type = "VARCHAR" }, { name = "k", type = "NUMBER(38,0)" }, { name = "v", type = "VARCHAR" }]
+rows = [
+  ["'l'", "1", "'l1'"],
+  ["'l'", "2", "'l2'"],
+  ["'l'", "NULL", "'ln'"],
+  ["'l'", "2", "'l2b'"],
+  ["'r'", "2", "'r2'"],
+  ["'r'", "3", "'r3'"],
+  ["'r'", "NULL", "'rn'"],
+]
+query = "SELECT v, k NOT IN (SELECT k FROM (SELECT k, v FROM input WHERE side = 'r') r) AS missing FROM (SELECT k, v FROM input WHERE side = 'l') l"
+order = "bag"
+tags = ["null", "duplicates"]
+
+[[case]]
+id = "exists"
+description = "Correlated EXISTS and NOT EXISTS."
+columns = [{ name = "side", type = "VARCHAR" }, { name = "k", type = "NUMBER(38,0)" }, { name = "v", type = "VARCHAR" }]
+rows = [
+  ["'l'", "1", "'l1'"],
+  ["'l'", "2", "'l2'"],
+  ["'l'", "NULL", "'ln'"],
+  ["'l'", "2", "'l2b'"],
+  ["'r'", "2", "'r2'"],
+  ["'r'", "3", "'r3'"],
+  ["'r'", "NULL", "'rn'"],
+]
+query = "SELECT l.v, EXISTS (SELECT 1 FROM (SELECT k, v FROM input WHERE side = 'r') r WHERE r.k = l.k) AS found, NOT EXISTS (SELECT 1 FROM (SELECT k, v FROM input WHERE side = 'r') r WHERE r.k = l.k) AS missing FROM (SELECT k, v FROM input WHERE side = 'l') l"
+order = "bag"
+tags = ["null", "duplicates"]
+
+[[case]]
+id = "where_filters"
+description = "WHERE with AND, OR and IS NULL."
+columns = [{ name = "side", type = "VARCHAR" }, { name = "k", type = "NUMBER(38,0)" }, { name = "v", type = "VARCHAR" }]
+rows = [
+  ["'l'", "1", "'l1'"],
+  ["'l'", "2", "'l2'"],
+  ["'l'", "NULL", "'ln'"],
+  ["'l'", "2", "'l2b'"],
+  ["'r'", "2", "'r2'"],
+  ["'r'", "3", "'r3'"],
+  ["'r'", "NULL", "'rn'"],
+]
+query = "SELECT v FROM input WHERE (k > 1 AND side = 'l') OR k IS NULL"
+order = "bag"
+tags = ["null", "duplicates"]
+
+[[case]]
+id = "select_distinct"
+description = "SELECT DISTINCT treats NULLs as one value."
+columns = [{ name = "side", type = "VARCHAR" }, { name = "k", type = "NUMBER(38,0)" }, { name = "v", type = "VARCHAR" }]
+rows = [
+  ["'l'", "1", "'l1'"],
+  ["'l'", "2", "'l2'"],
+  ["'l'", "NULL", "'ln'"],
+  ["'l'", "2", "'l2b'"],
+  ["'r'", "2", "'r2'"],
+  ["'r'", "3", "'r3'"],
+  ["'r'", "NULL", "'rn'"],
+]
+query = "SELECT DISTINCT k FROM input"
+order = "bag"
+tags = ["null", "duplicates"]
+
+[[case]]
+id = "scalar_subquery_empty"
+description = "A scalar subquery with no rows is NULL."
+columns = [{ name = "side", type = "VARCHAR" }, { name = "k", type = "NUMBER(38,0)" }, { name = "v", type = "VARCHAR" }]
+rows = [
+  ["'l'", "1", "'l1'"],
+  ["'l'", "2", "'l2'"],
+  ["'l'", "NULL", "'ln'"],
+  ["'l'", "2", "'l2b'"],
+  ["'r'", "2", "'r2'"],
+  ["'r'", "3", "'r3'"],
+  ["'r'", "NULL", "'rn'"],
+]
+query = "SELECT (SELECT MAX(k) FROM input WHERE side = 'z') AS m"
+order = "ordered"
+tags = ["empty-input"]
+
+[[case]]
+id = "order_by_limit"
+description = "ORDER BY with explicit NULL placement and LIMIT."
+columns = [{ name = "side", type = "VARCHAR" }, { name = "k", type = "NUMBER(38,0)" }, { name = "v", type = "VARCHAR" }]
+rows = [
+  ["'l'", "1", "'l1'"],
+  ["'l'", "2", "'l2'"],
+  ["'l'", "NULL", "'ln'"],
+  ["'l'", "2", "'l2b'"],
+  ["'r'", "2", "'r2'"],
+  ["'r'", "3", "'r3'"],
+  ["'r'", "NULL", "'rn'"],
+]
+query = "SELECT v FROM input ORDER BY k DESC NULLS LAST, v LIMIT 3"
+order = "ordered"
+tags = ["null", "duplicates"]
+
+[[case]]
+id = "not_in_where_with_null"
+description = "NOT IN in WHERE against a subquery holding NULL keeps no rows."
+columns = [{ name = "side", type = "VARCHAR" }, { name = "k", type = "NUMBER(38,0)" }, { name = "v", type = "VARCHAR" }]
+rows = [
+  ["'l'", "1", "'l1'"],
+  ["'l'", "2", "'l2'"],
+  ["'l'", "NULL", "'ln'"],
+  ["'l'", "2", "'l2b'"],
+  ["'r'", "2", "'r2'"],
+  ["'r'", "3", "'r3'"],
+  ["'r'", "NULL", "'rn'"],
+]
+query = "SELECT v FROM input WHERE side = 'l' AND k NOT IN (SELECT k FROM input WHERE side = 'r')"
+order = "bag"
+tags = ["null", "duplicates", "empty-input"]
+
+[[case]]
+id = "not_in_where_without_null"
+description = "NOT IN in WHERE against a subquery without NULL drops matches and NULL keys."
+columns = [{ name = "side", type = "VARCHAR" }, { name = "k", type = "NUMBER(38,0)" }, { name = "v", type = "VARCHAR" }]
+rows = [
+  ["'l'", "1", "'l1'"],
+  ["'l'", "2", "'l2'"],
+  ["'l'", "NULL", "'ln'"],
+  ["'l'", "2", "'l2b'"],
+  ["'r'", "2", "'r2'"],
+  ["'r'", "3", "'r3'"],
+  ["'r'", "NULL", "'rn'"],
+]
+query = "SELECT v FROM input WHERE side = 'l' AND k NOT IN (SELECT k FROM input WHERE side = 'r' AND k IS NOT NULL)"
+order = "bag"
+tags = ["null", "duplicates"]

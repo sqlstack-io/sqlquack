@@ -34,6 +34,14 @@ pub fn load_result(directory: &Path, hash: &str) -> Result<Option<StoredResult>,
             }
             None
         }
+        RecordedOutcome::Types => {
+            if arrow_path.exists() || metadata.arrow_sha256.is_some() || metadata.error.is_some() {
+                return Err(EvidenceError::InvalidResult(format!(
+                    "{hash}: a types outcome has no Arrow file and no error"
+                )));
+            }
+            None
+        }
         RecordedOutcome::Rows => {
             let bytes = std::fs::read(&arrow_path).map_err(|error| {
                 EvidenceError::InvalidResult(format!("{hash}: cannot read the Arrow file: {error}"))

@@ -23,11 +23,23 @@ class WarehouseSession(Protocol):
         ...
 
     def run_batch(self, statements: Sequence[str]) -> list[StatementResult] | None:
-        """Run statements in one request; `None` when a statement raised a recordable SQL error."""
+        """Run statements in one request; `None` asks for a rerun one statement at a time."""
         ...
 
     def run_one(self, statement: str) -> StatementResult:
-        """Run one statement, returning a recordable SQL error as an error result."""
+        """Run one statement; a recordable SQL error or an unrecordable result is the result."""
+        ...
+
+    def execute(self, statement: str) -> None:
+        """Run a statement that is not a case, such as creating a case's function; errors raise."""
+        ...
+
+    def current_schema(self) -> str | None:
+        """`CURRENT_SCHEMA()`, absent when none is in use."""
+        ...
+
+    def session_parameters(self) -> dict[str, str]:
+        """Every parameter's value as `SHOW PARAMETERS IN SESSION` reports it, by name."""
         ...
 
     def close(self) -> None:

@@ -9,7 +9,7 @@ use crate::audit::models::{AuditEntry, AuditOutcome};
 use crate::cases::models::LoadedCase;
 use crate::errors::EvidenceError;
 use crate::results::main::load_result::load_result;
-use crate::results::models::StoredResult;
+use crate::results::models::{RecordedOutcome, StoredResult};
 
 pub(crate) fn audit_entry(
     cases: &[LoadedCase],
@@ -61,6 +61,19 @@ fn outcome(
                 Ok(()) => AuditOutcome::Matched,
                 Err(mismatch) => AuditOutcome::Differed {
                     detail: mismatch.to_string(),
+                },
+            }
+        }
+        (None, None)
+            if stored.metadata.outcome == RecordedOutcome::Types
+                && fresh.metadata.outcome == RecordedOutcome::Types =>
+        {
+            match (stored.metadata.columns == fresh.metadata.columns)
+                && (stored.metadata.row_count == fresh.metadata.row_count)
+            {
+                true => AuditOutcome::Matched,
+                false => AuditOutcome::Differed {
+                    detail: "the recorded column types or row count differ".to_owned(),
                 },
             }
         }

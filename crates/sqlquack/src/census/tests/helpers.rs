@@ -1,6 +1,7 @@
 use std::path::Path;
 
 use sqlquack_core::parsing::models::SourceDialect;
+use sqlquack_rules::conversion::models::{ConversionOptions, Schema};
 
 use crate::census::_helpers::coverage::{CoverageInput, greedy_order};
 use crate::census::main::render_census_text::render_census_text;
@@ -62,6 +63,7 @@ fn summarise(report: &CensusReport) -> CensusSummary {
         parsed: report.totals.parsed,
         unparsed: report.totals.unparsed,
         missing_rule: report.refusals.missing_rule,
+        unresolved_name: report.refusals.unresolved_name,
         parse_fidelity: report.refusals.parse_fidelity,
         convertible: report.refusals.convertible,
         most_used_files: report.constructs.first().map_or(0, |count| count.files),
@@ -83,6 +85,9 @@ pub(crate) fn census_summary(files: &[ShopFile]) -> Result<CensusSummary, String
         &CensusOptions {
             dialect: SourceDialect::Snowflake,
             coverage_points: vec![1, 5],
+            schema: Schema::default(),
+            chain_models: false,
+            conversion: ConversionOptions::default(),
         },
     )
     .map(|report| summarise(&report))

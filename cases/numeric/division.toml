@@ -23,3 +23,147 @@ columns = [{ name = "a", type = "NUMBER(38,0)" }, { name = "b", type = "NUMBER(3
 rows = [["1", "0"]]
 expression = "a / b"
 tags = ["zero"]
+
+[[case]]
+id = "integer_rounding"
+description = "Integer division rounds at scale 6: two thirds, minus two thirds and a half."
+columns = [{ name = "a", type = "NUMBER(38,0)" }, { name = "b", type = "NUMBER(38,0)" }]
+rows = [
+  ["2", "3"],
+  ["-2", "3"],
+  ["1", "2"],
+  ["1", "-3"],
+  ["0", "5"],
+  ["NULL", "2"],
+]
+expression = "a / b"
+tags = ["null", "zero", "negative"]
+
+[[case]]
+id = "half_way_rounding"
+description = "Quotients exactly half way at the result scale."
+columns = [{ name = "a", type = "NUMBER(38,0)" }, { name = "b", type = "NUMBER(38,0)" }]
+rows = [
+  ["1", "16000000"],
+  ["-1", "16000000"],
+  ["3", "16000000"],
+  ["5", "16000000"],
+]
+expression = "a / b"
+tags = ["negative"]
+
+[[case]]
+id = "high_scale_dividend"
+description = "A dividend of scale 10: the result keeps scale 12."
+columns = [{ name = "a", type = "NUMBER(20,10)" }, { name = "b", type = "NUMBER(5,2)" }]
+rows = [
+  ["1.0000000000", "3.00"],
+  ["-2.5000000001", "7.00"],
+  ["NULL", "1"],
+  ["0", "0.01"],
+]
+expression = "a / b"
+tags = ["null", "zero", "negative"]
+
+[[case]]
+id = "scale_above_twelve"
+description = "A dividend of scale 14 keeps its own scale."
+columns = [{ name = "a", type = "NUMBER(20,14)" }, { name = "b", type = "NUMBER(38,0)" }]
+rows = [
+  ["1.00000000000000", "3"],
+  ["-1", "7"],
+  ["NULL", "1"],
+]
+expression = "a / b"
+tags = ["null", "negative"]
+
+[[case]]
+id = "large_divisor_scale"
+description = "A divisor of scale 8 widens the leading digits of the result."
+columns = [{ name = "a", type = "NUMBER(10,2)" }, { name = "b", type = "NUMBER(12,8)" }]
+rows = [
+  ["10.00", "0.00000003"],
+  ["1.00", "3"],
+  ["-1.00", "0.5"],
+  ["NULL", "1"],
+]
+expression = "a / b"
+tags = ["null", "negative", "boundary"]
+
+[[case]]
+id = "capped_precision"
+description = "A quotient whose exact precision would exceed 38."
+columns = [{ name = "a", type = "NUMBER(38,0)" }, { name = "b", type = "NUMBER(38,10)" }]
+rows = [
+  ["1", "3"],
+  ["10", "0.0000000001"],
+  ["NULL", "1"],
+]
+expression = "a / b"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "float_division"
+description = "Dividing FLOATs, including by zero."
+columns = [{ name = "a", type = "FLOAT" }, { name = "b", type = "FLOAT" }]
+rows = [
+  ["1", "3"],
+  ["-1", "8"],
+  ["NULL", "1"],
+]
+expression = "a / b"
+tags = ["null", "negative"]
+
+[[case]]
+id = "float_division_by_zero"
+description = "FLOAT division by zero."
+columns = [{ name = "a", type = "FLOAT" }, { name = "b", type = "FLOAT" }]
+rows = [
+  ["1", "0"],
+]
+expression = "a / b"
+tags = ["zero"]
+
+[[case]]
+id = "literal_divisor"
+description = "Dividing by an integer literal."
+columns = [{ name = "a", type = "NUMBER(10,2)" }]
+rows = [
+  ["10.00"],
+  ["-1.00"],
+  ["0"],
+  ["NULL"],
+]
+expression = "a / 3"
+tags = ["null", "zero", "negative"]
+
+[[case]]
+id = "half_way_at_result_scale"
+description = "Quotients exactly half way at the sixth decimal tell half-up from half-even."
+columns = [{ name = "a", type = "NUMBER(10,0)" }, { name = "b", type = "NUMBER(10,0)" }]
+rows = [
+  ["1", "128"],
+  ["-1", "128"],
+  ["5", "128"],
+  ["3", "128"],
+  ["1", "-128"],
+  ["NULL", "128"],
+  ["0", "128"],
+]
+expression = "a / b"
+tags = ["null", "zero", "negative", "boundary"]
+
+[[case]]
+id = "wide_divisor"
+description = "Dividing NUMBER(38,0) by divisors with more than 32 digits."
+columns = [{ name = "a", type = "NUMBER(38,0)" }, { name = "b", type = "NUMBER(38,0)" }]
+rows = [
+  ["99999999999999999999999999999999999999", "100000000000000000000000000000000000"],
+  ["1", "33333333333333333333333333333333333333"],
+  ["-7", "300000000000000000000000000000000000"],
+  ["0", "99999999999999999999999999999999999999"],
+  ["NULL", "1"],
+]
+expression = "a / b"
+tags = ["null", "zero", "negative", "boundary"]
+expected_divergence = "numeric_range"

@@ -10,7 +10,12 @@ publish.workspace = true
 rust-version.workspace = true
 
 [dependencies]
+serde.workspace = true
+serde_json.workspace = true
 sqlquack-core.workspace = true
+sqlquack-duckdb.workspace = true
+sqlquack-snowflake.workspace = true
+sqlquack-syntax.workspace = true
 
 [lints]
 workspace = true

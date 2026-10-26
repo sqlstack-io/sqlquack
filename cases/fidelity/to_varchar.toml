@@ -1,0 +1,60 @@
+category = "conversion"
+construct = "fn:TO_VARCHAR"
+session_profile = "utc-v1"
+equivalence = "to_varchar_to_cast"
+
+[[case]]
+id = "to_varchar_numbers"
+description = "TO_VARCHAR of NUMBER values writes the text CAST to VARCHAR writes: scale kept, signs, zero."
+columns = [{ name = "n", type = "NUMBER(10,2)" }, { name = "i", type = "NUMBER(38,0)" }]
+rows = [["1.50", "12345678901234567890"], ["-0.01", "-7"], ["0", "0"], ["NULL", "NULL"]]
+query = "SELECT TO_VARCHAR(n) AS a, TO_VARCHAR(i) AS b FROM input ORDER BY ordinal"
+canonical = "SELECT CAST(n AS VARCHAR) AS a, CAST(i AS VARCHAR) AS b FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "to_varchar_text_and_boolean"
+description = "TO_VARCHAR of VARCHAR keeps the text; of BOOLEAN writes true or false."
+columns = [{ name = "s", type = "VARCHAR" }, { name = "b", type = "BOOLEAN" }]
+rows = [["'gift'", "TRUE"], ["''", "FALSE"], ["NULL", "NULL"]]
+query = "SELECT TO_VARCHAR(s) AS a, TO_CHAR(b) AS c FROM input ORDER BY ordinal"
+canonical = "SELECT CAST(s AS VARCHAR) AS a, CAST(b AS VARCHAR) AS c FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "to_varchar_dates"
+description = "TO_VARCHAR of DATE writes the session's date output format, as the cast does."
+columns = [{ name = "d", type = "DATE" }]
+rows = [["'2024-02-29'"], ["'0001-01-01'"], ["'9999-12-31'"], ["NULL"]]
+expression = "TO_VARCHAR(d)"
+canonical = "CAST(d AS VARCHAR)"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "to_varchar_timestamps"
+description = "TO_VARCHAR of TIMESTAMP_NTZ writes the session's timestamp output format, as the cast does."
+columns = [{ name = "t", type = "TIMESTAMP_NTZ" }]
+rows = [["'2024-02-29 13:45:01.123456789'"], ["'2024-07-04 00:00:00'"], ["NULL"]]
+expression = "TO_VARCHAR(t)"
+canonical = "CAST(t AS VARCHAR)"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "to_varchar_floats"
+description = "TO_VARCHAR of FLOAT writes the text the cast writes."
+columns = [{ name = "f", type = "FLOAT" }]
+rows = [["0.5"], ["1e20"], ["-3.25"], ["0.1"], ["NULL"]]
+expression = "TO_VARCHAR(f)"
+canonical = "CAST(f AS VARCHAR)"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "to_varchar_invalid"
+description = "TO_VARCHAR of NULL text, which neither spelling rejects."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [["NULL"]]
+expression = "TO_VARCHAR(s)"
+canonical = "CAST(s AS VARCHAR)"
+tags = ["invalid"]

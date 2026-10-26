@@ -1,0 +1,284 @@
+category = "semi-structured"
+construct = "fn:GET_PATH"
+session_profile = "utc-v1"
+
+[[case]]
+id = "variant_order"
+description = "ORDER BY a VARIANT path across JSON types, JSON null, missing keys and SQL NULL."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('{\"a\":1}')"],
+  ["PARSE_JSON('{\"a\":\"1\"}')"],
+  ["PARSE_JSON('{\"a\":2.5}')"],
+  ["PARSE_JSON('{\"a\":true}')"],
+  ["PARSE_JSON('{\"a\":false}')"],
+  ["PARSE_JSON('{\"a\":null}')"],
+  ["PARSE_JSON('{}')"],
+  ["PARSE_JSON('{\"a\":[1]}')"],
+  ["PARSE_JSON('{\"a\":{\"b\":1}}')"],
+  ["PARSE_JSON('{\"a\":\"B\"}')"],
+  ["PARSE_JSON('{\"a\":\"b\"}')"],
+  ["PARSE_JSON('{\"a\":-3}')"],
+  ["NULL"],
+]
+query = "SELECT TYPEOF(v:a) AS t, v:a::VARCHAR AS a FROM input ORDER BY v:a, ordinal"
+order = "ordered"
+tags = ["null", "json-null", "missing-key", "nested", "array-index", "case-sensitive-key"]
+
+[[case]]
+id = "variant_group"
+description = "GROUP BY a VARIANT path: JSON null, missing keys and SQL NULL groups."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('{\"a\":1}')"],
+  ["PARSE_JSON('{\"a\":\"1\"}')"],
+  ["PARSE_JSON('{\"a\":2.5}')"],
+  ["PARSE_JSON('{\"a\":true}')"],
+  ["PARSE_JSON('{\"a\":false}')"],
+  ["PARSE_JSON('{\"a\":null}')"],
+  ["PARSE_JSON('{}')"],
+  ["PARSE_JSON('{\"a\":[1]}')"],
+  ["PARSE_JSON('{\"a\":{\"b\":1}}')"],
+  ["PARSE_JSON('{\"a\":\"B\"}')"],
+  ["PARSE_JSON('{\"a\":\"b\"}')"],
+  ["PARSE_JSON('{\"a\":-3}')"],
+  ["NULL"],
+  ["PARSE_JSON('{\"a\":1}')"],
+  ["PARSE_JSON('{\"a\":null}')"],
+  ["PARSE_JSON('{}')"],
+]
+query = "SELECT TYPEOF(v:a) AS t, v:a::VARCHAR AS a, COUNT(*) AS n FROM input GROUP BY v:a ORDER BY t, a"
+order = "ordered"
+tags = ["null", "json-null", "missing-key"]
+
+[[case]]
+id = "variant_equals_number"
+description = "A VARIANT path compared with a number."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('{\"a\":1}')"],
+  ["PARSE_JSON('{\"a\":\"1\"}')"],
+  ["PARSE_JSON('{\"a\":2.5}')"],
+  ["PARSE_JSON('{\"a\":true}')"],
+  ["PARSE_JSON('{\"a\":false}')"],
+  ["PARSE_JSON('{\"a\":null}')"],
+  ["PARSE_JSON('{}')"],
+  ["PARSE_JSON('{\"a\":[1]}')"],
+  ["PARSE_JSON('{\"a\":{\"b\":1}}')"],
+  ["PARSE_JSON('{\"a\":\"B\"}')"],
+  ["PARSE_JSON('{\"a\":\"b\"}')"],
+  ["PARSE_JSON('{\"a\":-3}')"],
+  ["NULL"],
+]
+query = "SELECT v:a = 1 AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "json-null", "missing-key"]
+
+[[case]]
+id = "variant_equals_text"
+description = "A VARIANT path compared with text."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('{\"a\":1}')"],
+  ["PARSE_JSON('{\"a\":\"1\"}')"],
+  ["PARSE_JSON('{\"a\":2.5}')"],
+  ["PARSE_JSON('{\"a\":true}')"],
+  ["PARSE_JSON('{\"a\":false}')"],
+  ["PARSE_JSON('{\"a\":null}')"],
+  ["PARSE_JSON('{}')"],
+  ["PARSE_JSON('{\"a\":[1]}')"],
+  ["PARSE_JSON('{\"a\":{\"b\":1}}')"],
+  ["PARSE_JSON('{\"a\":\"B\"}')"],
+  ["PARSE_JSON('{\"a\":\"b\"}')"],
+  ["PARSE_JSON('{\"a\":-3}')"],
+  ["NULL"],
+]
+query = "SELECT v:a = 'b' AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "json-null", "missing-key"]
+
+[[case]]
+id = "variant_greater_number"
+description = "A VARIANT path ordered against a number: raises or converts."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('{\"a\":1}')"],
+  ["PARSE_JSON('{\"a\":\"1\"}')"],
+  ["PARSE_JSON('{\"a\":2.5}')"],
+  ["PARSE_JSON('{\"a\":true}')"],
+  ["PARSE_JSON('{\"a\":false}')"],
+  ["PARSE_JSON('{\"a\":null}')"],
+  ["PARSE_JSON('{}')"],
+  ["PARSE_JSON('{\"a\":[1]}')"],
+  ["PARSE_JSON('{\"a\":{\"b\":1}}')"],
+  ["PARSE_JSON('{\"a\":\"B\"}')"],
+  ["PARSE_JSON('{\"a\":\"b\"}')"],
+  ["PARSE_JSON('{\"a\":-3}')"],
+  ["NULL"],
+]
+query = "SELECT v:a > 0 AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "json-null", "missing-key"]
+
+[[case]]
+id = "variant_null_tests"
+description = "IS NULL, IS_NULL_VALUE and COALESCE over JSON null, missing keys and SQL NULL."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('{\"a\":1}')"],
+  ["PARSE_JSON('{\"a\":\"1\"}')"],
+  ["PARSE_JSON('{\"a\":2.5}')"],
+  ["PARSE_JSON('{\"a\":true}')"],
+  ["PARSE_JSON('{\"a\":false}')"],
+  ["PARSE_JSON('{\"a\":null}')"],
+  ["PARSE_JSON('{}')"],
+  ["PARSE_JSON('{\"a\":[1]}')"],
+  ["PARSE_JSON('{\"a\":{\"b\":1}}')"],
+  ["PARSE_JSON('{\"a\":\"B\"}')"],
+  ["PARSE_JSON('{\"a\":\"b\"}')"],
+  ["PARSE_JSON('{\"a\":-3}')"],
+  ["NULL"],
+]
+query = "SELECT v:a IS NULL AS is_null, IS_NULL_VALUE(v:a) AS is_json_null, COALESCE(v:a::VARCHAR, 'none') AS filled FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "json-null", "missing-key"]
+
+[[case]]
+id = "object_key_order"
+description = "TO_JSON and ::VARCHAR of objects whose keys are not in sorted order, nested and in arrays."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'{\"b\":1,\"a\":2}'"],
+  ["'{\"z\":{\"y\":1,\"x\":2},\"a\":[{\"d\":1,\"c\":2}]}'"],
+  ["'{\"aa\":1,\"a\":2,\"B\":3,\"_\":4,\"1\":5}'"],
+  ["'{\"é\":1,\"e\":2,\"f\":3}'"],
+  ["NULL"],
+]
+query = "SELECT TO_JSON(PARSE_JSON(s)) AS j, PARSE_JSON(s)::VARCHAR AS v FROM input ORDER BY ordinal"
+order = "ordered"
+expected_divergence = "json_fidelity"
+tags = ["null", "nested", "array-index", "case-sensitive-key"]
+
+[[case]]
+id = "string_escapes_out"
+description = "How TO_JSON and ::VARCHAR write strings with quotes, backslashes, control characters, slashes and non-ASCII."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'\"say \\\\\"hi\\\\\"\"'"],
+  ["'\"back\\\\\\\\slash\"'"],
+  ["'\"line\\\\nbreak\\\\ttab\"'"],
+  ["'\"\\\\u0001\"'"],
+  ["'\"a/b\"'"],
+  ["'\"\\\\u00e9\\\\u4e2d\"'"],
+  ["NULL"],
+]
+query = "SELECT TO_JSON(PARSE_JSON(s)) AS j, PARSE_JSON(s)::VARCHAR AS v, LENGTH(PARSE_JSON(s)::VARCHAR) AS n FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]
+
+[[case]]
+id = "get_functions"
+description = "GET by key and index, GET_IGNORE_CASE, and GET_PATH spelled as a function."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('{\"a\":1,\"A\":2,\"Ab\":3,\"c\":[10,20]}')"],
+  ["PARSE_JSON('{\"AB\":\"x\"}')"],
+  ["PARSE_JSON('{\"ab\":null}')"],
+  ["PARSE_JSON('[5,6]')"],
+  ["PARSE_JSON('{}')"],
+  ["NULL"],
+]
+query = "SELECT GET(v, 'a')::VARCHAR AS get_a, GET(v, 0)::VARCHAR AS get_0, GET_IGNORE_CASE(v, 'ab')::VARCHAR AS ignore_case, GET_PATH(v, 'c[1]')::VARCHAR AS path FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "json-null", "missing-key", "array-index", "case-sensitive-key"]
+
+[[case]]
+id = "get_ignore_case_ambiguous"
+description = "GET_IGNORE_CASE where several keys match ignoring case."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('{\"a\":1,\"A\":2}')"],
+  ["PARSE_JSON('{\"A\":2,\"a\":1}')"],
+  ["PARSE_JSON('{\"aB\":1,\"Ab\":2,\"ab\":3}')"],
+]
+query = "SELECT GET_IGNORE_CASE(v, 'ab')::VARCHAR AS ab, GET_IGNORE_CASE(v, 'A')::VARCHAR AS a FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["case-sensitive-key"]
+
+[[case]]
+id = "path_to_temporal"
+description = "Text in JSON cast to DATE and TIMESTAMP_NTZ, as staging models do."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('{\"d\":\"2024-02-29\",\"t\":\"2024-02-29 13:45:01.123\"}')"],
+  ["PARSE_JSON('{\"d\":\"2024-02-29T00:00:00Z\",\"t\":\"2024-02-29T13:45:01Z\"}')"],
+  ["PARSE_JSON('{\"d\":null,\"t\":null}')"],
+  ["PARSE_JSON('{}')"],
+  ["NULL"],
+]
+query = "SELECT v:d::DATE AS d, v:t::TIMESTAMP_NTZ AS t FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "json-null", "missing-key"]
+
+[[case]]
+id = "path_to_number_text"
+description = "Numbers held as JSON text cast to NUMBER and FLOAT."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('{\"n\":\"12\"}')"],
+  ["PARSE_JSON('{\"n\":\" 12 \"}')"],
+  ["PARSE_JSON('{\"n\":\"1.255\"}')"],
+  ["PARSE_JSON('{\"n\":\"-0\"}')"],
+  ["PARSE_JSON('{\"n\":\"1e3\"}')"],
+  ["PARSE_JSON('{\"n\":12}')"],
+  ["PARSE_JSON('{\"n\":null}')"],
+  ["PARSE_JSON('{}')"],
+  ["NULL"],
+]
+query = "SELECT v:n::NUMBER(10,2) AS n, v:n::FLOAT AS f FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "json-null", "missing-key"]
+
+[[case]]
+id = "nested_null_paths"
+description = "Paths through JSON null, through scalars and past array ends."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('{\"a\":null}')"],
+  ["PARSE_JSON('{\"a\":{\"b\":null}}')"],
+  ["PARSE_JSON('{\"a\":1}')"],
+  ["PARSE_JSON('{\"a\":[]}')"],
+  ["PARSE_JSON('{\"a\":[null]}')"],
+  ["PARSE_JSON('{\"a\":\"text\"}')"],
+  ["NULL"],
+]
+query = "SELECT v:a.b::VARCHAR AS ab, TYPEOF(v:a.b) AS ab_type, v:a[0]::VARCHAR AS a0, TYPEOF(v:a[0]) AS a0_type FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "json-null", "missing-key", "nested", "array-index"]
+
+[[case]]
+id = "object_key_order_sorted"
+description = "TO_JSON and ::VARCHAR of objects whose keys are already in byte order, nested and in arrays."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'{\"a\":2,\"b\":1}'"],
+  ["'{\"a\":[{\"c\":2,\"d\":1}],\"z\":{\"x\":2,\"y\":1}}'"],
+  ["'{\"1\":5,\"B\":3,\"_\":4,\"a\":2,\"aa\":1}'"],
+  ["'{\"e\":2,\"f\":3,\"é\":1}'"],
+  ["NULL"],
+]
+query = "SELECT TO_JSON(PARSE_JSON(s)) AS j, PARSE_JSON(s)::VARCHAR AS v FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "nested", "array-index", "case-sensitive-key"]
+
+[[case]]
+id = "string_escapes_surrogate_pair"
+description = "A surrogate-pair escape, which the JSON guard raises for."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'\"\\\\ud83d\\\\ude00\"'"],
+]
+query = "SELECT TO_JSON(PARSE_JSON(s)) AS j, PARSE_JSON(s)::VARCHAR AS v, LENGTH(PARSE_JSON(s)::VARCHAR) AS n FROM input ORDER BY ordinal"
+order = "ordered"
+expected_divergence = "json_fidelity"
+tags = ["null"]

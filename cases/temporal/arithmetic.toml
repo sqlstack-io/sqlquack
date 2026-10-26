@@ -1,0 +1,55 @@
+category = "temporal"
+construct = "fn:DATEADD"
+session_profile = "utc-v1"
+
+[[case]]
+id = "dateadd_units"
+description = "DATEADD of days, months and hours, across month ends and leap days."
+columns = [{ name = "t", type = "TIMESTAMP_NTZ(9)" }]
+rows = [
+  ["'2024-01-31 10:00:00'"],
+  ["'2024-02-29 23:30:00.5'"],
+  ["'2023-02-28 00:00:00'"],
+  ["NULL"],
+]
+expression = "DATEADD(MONTH, 1, t)::VARCHAR || '|' || DATEADD(DAY, 1, t)::VARCHAR || '|' || DATEADD(HOUR, 1, t)::VARCHAR"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "dateadd_years_leap"
+description = "DATEADD of a year from a leap day."
+columns = [{ name = "d", type = "DATE" }]
+rows = [
+  ["'2024-02-29'"],
+  ["'2023-03-01'"],
+  ["NULL"],
+]
+expression = "DATEADD(YEAR, 1, d)"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "datediff_units"
+description = "DATEDIFF counts unit boundaries crossed, not elapsed whole units."
+columns = [{ name = "a", type = "TIMESTAMP_NTZ(9)" }, { name = "b", type = "TIMESTAMP_NTZ(9)" }]
+rows = [
+  ["'2024-01-31 23:59:59'", "'2024-02-01 00:00:01'"],
+  ["'2023-12-31 23:00:00'", "'2024-01-01 01:00:00'"],
+  ["'2024-02-29 12:00:00'", "'2024-02-28 13:00:00'"],
+  ["NULL", "'2024-01-01 00:00:00'"],
+  ["'2024-01-01 00:00:00.999999999'", "'2024-01-01 00:00:01.000000001'"],
+]
+expression = "DATEDIFF(DAY, a, b)::VARCHAR || '|' || DATEDIFF(MONTH, a, b)::VARCHAR || '|' || DATEDIFF(HOUR, a, b)::VARCHAR || '|' || DATEDIFF(YEAR, a, b)::VARCHAR"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "datediff_seconds"
+description = "DATEDIFF in seconds and milliseconds with fractions."
+columns = [{ name = "a", type = "TIMESTAMP_NTZ(9)" }, { name = "b", type = "TIMESTAMP_NTZ(9)" }]
+rows = [
+  ["'2024-01-01 00:00:00.999'", "'2024-01-01 00:00:01.001'"],
+  ["'2024-01-01 00:00:01.5'", "'2024-01-01 00:00:00.5'"],
+  ["'1969-12-31 23:59:59.9'", "'1970-01-01 00:00:00.1'"],
+  ["NULL", "NULL"],
+]
+expression = "DATEDIFF(SECOND, a, b)::VARCHAR || '|' || DATEDIFF(MILLISECOND, a, b)::VARCHAR"
+tags = ["null", "boundary"]

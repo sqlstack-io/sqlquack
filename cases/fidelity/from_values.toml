@@ -1,0 +1,34 @@
+category = "relational"
+construct = "node:values"
+session_profile = "utc-v1"
+equivalence = "from_values_to_subquery"
+
+[[case]]
+id = "aliased_values"
+description = "FROM VALUES with a table and column alias, NULLs and duplicate rows."
+columns = []
+rows = [[]]
+query = "SELECT x, y FROM VALUES (1, 'a'), (2, NULL), (2, NULL) AS v(x, y)"
+canonical = "SELECT x, y FROM (VALUES (1, 'a'), (2, NULL), (2, NULL)) AS v(x, y)"
+order = "bag"
+tags = ["null", "duplicates"]
+
+[[case]]
+id = "unaliased_values"
+description = "FROM VALUES without aliases names its columns COLUMN1, COLUMN2."
+columns = []
+rows = [[]]
+query = "SELECT * FROM VALUES (1, 'a'), (NULL, 'b')"
+canonical = "SELECT * FROM (VALUES (1, 'a'), (NULL, 'b'))"
+order = "bag"
+tags = ["null"]
+
+[[case]]
+id = "filtered_to_nothing"
+description = "An aggregate over FROM VALUES filtered to no rows."
+columns = []
+rows = [[]]
+query = "SELECT COUNT(*) AS n FROM VALUES (1) AS v(x) WHERE x > 1"
+canonical = "SELECT COUNT(*) AS n FROM (VALUES (1)) AS v(x) WHERE x > 1"
+order = "ordered"
+tags = ["empty-input"]

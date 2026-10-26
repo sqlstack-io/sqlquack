@@ -1,0 +1,473 @@
+//! CAST, `::` and TRY_CAST.
+
+use serde_json::Value;
+use sqlquack_core::classification::models::Construct;
+use sqlquack_core::provenance::models::{ProvenanceLog, RuleScope};
+use sqlquack_core::refusals::models::Refusal;
+use sqlquack_duckdb::blocks::main::boolean_to_number::boolean_to_number;
+use sqlquack_duckdb::blocks::main::cast::cast;
+use sqlquack_duckdb::blocks::main::number_to_boolean::number_to_boolean;
+use sqlquack_duckdb::blocks::main::string_literal::string_literal;
+use sqlquack_duckdb::blocks::main::text_to_boolean::text_to_boolean;
+use sqlquack_duckdb::blocks::main::text_to_float::text_to_float;
+use sqlquack_duckdb::blocks::main::text_to_number::text_to_number;
+use sqlquack_duckdb::blocks::main::varchar_length_check::varchar_length_check;
+use sqlquack_duckdb::blocks::main::varchar_length_try::varchar_length_try;
+use sqlquack_duckdb::temporal::main::text_to_timestamp::text_to_timestamp;
+use sqlquack_duckdb::temporal::main::utc_wall_time::utc_wall_time;
+use sqlquack_duckdb::variants::main::json_kind_cast::json_kind_cast;
+use sqlquack_snowflake::typing::constants::CAST_TARGET;
+use sqlquack_snowflake::typing::main::cast_target::cast_target;
+use sqlquack_snowflake::typing::models::{CastTarget, SnowflakeType};
+
+use crate::conversion::_helpers::expressions::objects::as_json;
+use crate::conversion::_helpers::expressions::operators::is_iso_date;
+use crate::conversion::_helpers::expressions::scalar::convert_expression;
+use crate::conversion::_helpers::expressions::semi_structured::{variant_cast, variant_null};
+use crate::conversion::_helpers::expressions::temporal::{
+    is_temporal, temporal_cast, timestamp_literal,
+};
+use crate::conversion::_helpers::support::divergence::diverge;
+use crate::conversion::_helpers::support::failure::text_failure;
+use crate::conversion::_helpers::support::scope::{Context, Emitted, Literal};
+use crate::conversion::_helpers::support::site::Site;
+use crate::conversion::_helpers::support::tree::{
+    LITERAL_NUMBER, field, missing, node_construct, node_kind, outside_conditions, payload_object,
+    require_understood,
+};
+use crate::conversion::constants::{
+    CAST_BOOLEAN, CAST_NUMERIC, CAST_PARSED_TEXT, CAST_SAME_TYPE, CAST_TEMPORAL, CAST_TEXT_LITERAL,
+    CAST_TEXT_TIMESTAMP, CAST_TO_TEXT, CAST_UTC_ZONED, DATE_TEXT_SPELLING, KIND_CAST_TARGETS,
+    TEXT_TYPE_PAIR, TEXT_TYPE_SPELLINGS, TIMESTAMP_RANGE, TO_DOUBLE_PAIR, TO_NUMBER_PAIR,
+    TO_VARCHAR_PAIR, TO_VARIANT_RULE, VARIANT_KIND_CAST, VARIANT_NAME,
+};
+
+/// Text Snowflake and DuckDB both read as `true`.
+const TRUE_TEXT: &str = "true";
+/// Text Snowflake and DuckDB both read as `false`.
+const FALSE_TEXT: &str = "false";
+
+/// A cast to a Snowflake type, or a refusal when the conversion's semantics are unproven.
+pub(crate) fn convert_cast(
+    kind: &str,
+    payload: &Value,
+    site: Site<'_>,
+) -> Result<Emitted, Refusal> {
+    let construct = node_construct(kind);
+    let payload = payload_object(payload, &construct)?;
+    require_understood(payload, &["this", "to"], &construct)?;
+    let to = field(payload, "to", &construct)?;
+    if to
+        .get("data_type")
+        .and_then(Value::as_str)
+        .is_some_and(|written| TEXT_TYPE_SPELLINGS.contains(&written))
+    {
+        site.context.log.equivalence(TEXT_TYPE_PAIR);
+    }
+    let type_name = data_type_name(to).ok_or_else(|| {
+        missing(
+            construct.clone(),
+            "a cast target type has no name".to_owned(),
+        )
+    })?;
+    let log = site.context.log;
+    let refuse = |reason: String| outside_conditions(construct.clone(), reason);
+    let target = cast_target(&type_name, &ProvenanceLog::default()).map_err(refuse)?;
+    let operand_node = field(payload, "this", &construct)?;
+    if let Some(digits) = number_literal_text(operand_node)
+        && type_name != VARIANT_NAME
+    {
+        let _rule = cast_rule(CAST_NUMERIC, log);
+        let sql = number_literal_cast(&digits, target.data_type, log).map_err(refuse)?;
+        return Ok(Emitted::new(sql, target.data_type));
+    }
+    let operand = convert_expression(operand_node, site)?;
+    let trying = matches!(construct.name.as_str(), "try_cast");
+    if operand.data_type == SnowflakeType::Null && type_name == VARIANT_NAME {
+        let _rule = cast_rule(CAST_SAME_TYPE, log);
+        return Ok(Emitted::new(
+            variant_null(log),
+            SnowflakeType::SemiStructured,
+        ));
+    }
+    if let Some((_, kind)) = KIND_CAST_TARGETS
+        .iter()
+        .find(|(name, _)| *name == type_name)
+        .filter(|_| operand.data_type == SnowflakeType::SemiStructured && !trying)
+    {
+        let _rule = cast_rule(VARIANT_KIND_CAST, log);
+        return Ok(Emitted::new(
+            json_kind_cast(&operand.sql, kind, log),
+            SnowflakeType::SemiStructured,
+        ));
+    }
+    if type_name == VARIANT_NAME
+        && !trying
+        && matches!(
+            operand.data_type,
+            SnowflakeType::Varchar
+                | SnowflakeType::Boolean
+                | SnowflakeType::Number { scale: 0, .. }
+                | SnowflakeType::Date
+                | SnowflakeType::TimestampNtz { .. }
+                | SnowflakeType::TimestampLtz { .. }
+        )
+    {
+        let _rule = cast_rule(TO_VARIANT_RULE, log);
+        return Ok(Emitted::new(
+            as_json(operand, &construct, site.context)?,
+            SnowflakeType::SemiStructured,
+        ));
+    }
+    if operand.data_type == SnowflakeType::SemiStructured {
+        let sql = variant_cast(
+            &operand,
+            (&type_name, target),
+            trying,
+            (site.context, &construct),
+        )
+        .map_err(refuse)?;
+        return Ok(Emitted::new(sql, target.data_type));
+    }
+    let sql = cast_sql(&operand, target, trying, (site.context, &construct)).map_err(refuse)?;
+    Ok(Emitted::new(sql, target.data_type))
+}
+
+/// Activates a cast rule, which relies on the target type `cast_target` resolved.
+fn cast_rule<'a>(id: &str, log: &'a ProvenanceLog) -> RuleScope<'a> {
+    let scope = log.rule(id);
+    log.typing(CAST_TARGET);
+    scope
+}
+
+fn cast_sql(
+    operand: &Emitted,
+    target: CastTarget,
+    trying: bool,
+    (context, construct): (&Context<'_>, &Construct),
+) -> Result<String, String> {
+    let log = context.log;
+    let to = target.data_type;
+    match (operand.data_type, to, &operand.literal) {
+        (SnowflakeType::Null, _, _) => {
+            let _rule = cast_rule(CAST_SAME_TYPE, log);
+            Ok(bounded(cast("NULL", to, log)?, target, log))
+        }
+        (SnowflakeType::Varchar, SnowflakeType::Varchar, _) if trying => {
+            let _rule = cast_rule(CAST_SAME_TYPE, log);
+            Ok(match target.max_length {
+                Some(max_length) => varchar_length_try(&operand.sql, max_length, log),
+                None => operand.sql.clone(),
+            })
+        }
+        (SnowflakeType::Varchar, SnowflakeType::Varchar, _) => {
+            let _rule = cast_rule(CAST_SAME_TYPE, log);
+            Ok(bounded(operand.sql.clone(), target, log))
+        }
+        (SnowflakeType::Varchar, SnowflakeType::Number { .. }, _) => {
+            let _rule = cast_rule(CAST_PARSED_TEXT, log);
+            text_to_number(&operand.sql, to, text_failure(trying), log)
+        }
+        (SnowflakeType::Varchar, SnowflakeType::Float, _) => {
+            let _rule = cast_rule(CAST_PARSED_TEXT, log);
+            Ok(text_to_float(&operand.sql, text_failure(trying), log))
+        }
+        (SnowflakeType::Varchar, SnowflakeType::Boolean, _) => {
+            let _rule = cast_rule(CAST_PARSED_TEXT, log);
+            Ok(text_to_boolean(&operand.sql, text_failure(trying), log))
+        }
+        (SnowflakeType::Varchar, _, Some(Literal::Text(text)))
+            if is_temporal(to) && to != SnowflakeType::Date =>
+        {
+            let _rule = cast_rule(CAST_TEXT_LITERAL, log);
+            timestamp_literal(text, to, (context, construct))
+        }
+        (SnowflakeType::Varchar, _, Some(Literal::Text(text))) => {
+            let _rule = cast_rule(CAST_TEXT_LITERAL, log);
+            text_literal_cast(text, to, log)
+        }
+        (SnowflakeType::Varchar, SnowflakeType::Date, _) => {
+            let _rule = cast_rule(CAST_PARSED_TEXT, log);
+            diverge(context, DATE_TEXT_SPELLING, construct).map_err(|refusal| refusal.reason)?;
+            Ok(text_to_timestamp(
+                &operand.sql,
+                (text_failure(trying), true),
+                log,
+            ))
+        }
+        (SnowflakeType::Varchar, SnowflakeType::TimestampNtz { .. }, _) if !trying => {
+            let _rule = cast_rule(CAST_TEXT_TIMESTAMP, log);
+            diverge(context, TIMESTAMP_RANGE, construct).map_err(|refusal| refusal.reason)?;
+            diverge(context, DATE_TEXT_SPELLING, construct).map_err(|refusal| refusal.reason)?;
+            let parsed = text_to_timestamp(&operand.sql, (text_failure(false), false), log);
+            temporal_cast(
+                &parsed,
+                (SnowflakeType::TimestampNtz { precision: 9 }, to),
+                (context, construct),
+            )
+        }
+        (from, _, _) if trying => Err(format!(
+            "TRY_CAST of {from} to {to} has no proven conversion"
+        )),
+        (
+            SnowflakeType::TimestampTz { precision },
+            SnowflakeType::TimestampNtz { .. } | SnowflakeType::Date,
+            _,
+        ) if operand.utc_offset => {
+            let _rule = cast_rule(CAST_UTC_ZONED, log);
+            temporal_cast(
+                &utc_wall_time(&operand.sql, log),
+                (SnowflakeType::TimestampNtz { precision }, to),
+                (context, construct),
+            )
+        }
+        (from, _, _) if from != to && is_temporal(from) && is_temporal(to) => {
+            let _rule = cast_rule(CAST_TEMPORAL, log);
+            temporal_cast(&operand.sql, (from, to), (context, construct))
+        }
+        (from, _, _) => strict_cast(operand, from, target, log),
+    }
+}
+
+/// Text cut to a VARCHAR(n) target's length raises an error, as in Snowflake.
+fn bounded(sql: String, target: CastTarget, log: &ProvenanceLog) -> String {
+    match target.max_length {
+        Some(max_length) if target.data_type == SnowflakeType::Varchar => {
+            varchar_length_check(&sql, max_length, log)
+        }
+        _ => sql,
+    }
+}
+
+fn strict_cast(
+    operand: &Emitted,
+    from: SnowflakeType,
+    target: CastTarget,
+    log: &ProvenanceLog,
+) -> Result<String, String> {
+    let to = target.data_type;
+    match (from, to) {
+        (
+            SnowflakeType::Number { .. } | SnowflakeType::Boolean | SnowflakeType::Date,
+            SnowflakeType::Varchar,
+        ) => {
+            let _rule = cast_rule(CAST_TO_TEXT, log);
+            Ok(bounded(cast(&operand.sql, to, log)?, target, log))
+        }
+        _ if from == to => {
+            let _rule = cast_rule(CAST_SAME_TYPE, log);
+            cast(&operand.sql, to, log)
+        }
+        (SnowflakeType::Number { .. }, SnowflakeType::Number { .. } | SnowflakeType::Float)
+        | (SnowflakeType::Float, SnowflakeType::Number { scale: 0, .. }) => {
+            let _rule = cast_rule(CAST_NUMERIC, log);
+            cast(&operand.sql, to, log)
+        }
+        (SnowflakeType::Boolean, SnowflakeType::Number { .. }) => {
+            let _rule = cast_rule(CAST_BOOLEAN, log);
+            boolean_to_number(&operand.sql, to, log)
+        }
+        (SnowflakeType::Number { .. }, SnowflakeType::Boolean) => {
+            let _rule = cast_rule(CAST_BOOLEAN, log);
+            Ok(number_to_boolean(&operand.sql, log))
+        }
+        _ => Err(format!("casting {from} to {to} has no proven conversion")),
+    }
+}
+
+/// TO_NUMBER, TO_DECIMAL, TO_NUMERIC and their TRY_ forms of text, as CAST or TRY_CAST to NUMBER.
+pub(crate) fn to_number_call(
+    name: &str,
+    arguments: &[Value],
+    construct: &Construct,
+    site: Site<'_>,
+) -> Result<Emitted, Refusal> {
+    let refuse = |reason: String| outside_conditions(construct.clone(), reason);
+    let [value, sizes @ ..] = arguments else {
+        return Err(refuse(format!("{name} without an argument")));
+    };
+    let mut digits: Vec<String> = Vec::with_capacity(sizes.len());
+    for size in sizes {
+        match number_literal_text(size) {
+            Some(text) if is_unsigned_integer(&text) => digits.push(text),
+            _ => {
+                return Err(refuse(format!(
+                    "{name} with a format or a non-literal size"
+                )));
+            }
+        }
+    }
+    let type_name = match digits.as_slice() {
+        [] => "NUMBER(38,0)".to_owned(),
+        [precision] => format!("NUMBER({precision},0)"),
+        [precision, scale] => format!("NUMBER({precision},{scale})"),
+        _ => return Err(refuse(format!("{name} with these arguments"))),
+    };
+    let target = cast_target(&type_name, &ProvenanceLog::default()).map_err(refuse)?;
+    let operand = convert_expression(value, site)?;
+    if !matches!(
+        operand.data_type,
+        SnowflakeType::Varchar | SnowflakeType::Null
+    ) {
+        return Err(refuse(format!("{name} of {}", operand.data_type)));
+    }
+    site.context.log.equivalence(TO_NUMBER_PAIR);
+    let trying = name.starts_with("TRY_");
+    let sql = cast_sql(&operand, target, trying, (site.context, construct)).map_err(refuse)?;
+    Ok(Emitted::new(sql, target.data_type))
+}
+
+/// TO_DOUBLE and TRY_TO_DOUBLE of text, as CAST or TRY_CAST to FLOAT.
+pub(crate) fn to_double_call(
+    name: &str,
+    arguments: &[Value],
+    construct: &Construct,
+    site: Site<'_>,
+) -> Result<Emitted, Refusal> {
+    let refuse = |reason: String| outside_conditions(construct.clone(), reason);
+    let [value] = arguments else {
+        return Err(refuse(format!("{name} with a format or these arguments")));
+    };
+    let operand = convert_expression(value, site)?;
+    if !matches!(
+        operand.data_type,
+        SnowflakeType::Varchar | SnowflakeType::Null
+    ) {
+        return Err(refuse(format!("{name} of {}", operand.data_type)));
+    }
+    site.context.log.equivalence(TO_DOUBLE_PAIR);
+    let target = cast_target("FLOAT", &ProvenanceLog::default()).map_err(refuse)?;
+    let trying = name.starts_with("TRY_");
+    let sql = cast_sql(&operand, target, trying, (site.context, construct)).map_err(refuse)?;
+    Ok(Emitted::new(sql, SnowflakeType::Float))
+}
+
+/// TO_VARCHAR and TO_CHAR without a format, as CAST to VARCHAR, for operands other than VARIANT.
+pub(crate) fn to_varchar_call(
+    value: &Value,
+    construct: &Construct,
+    site: Site<'_>,
+) -> Result<Emitted, Refusal> {
+    let refuse = |reason: String| outside_conditions(construct.clone(), reason);
+    let operand = convert_expression(value, site)?;
+    if operand.data_type == SnowflakeType::SemiStructured {
+        return Err(refuse(
+            "TO_VARCHAR of a VARIANT, which writes JSON where a cast fails".to_owned(),
+        ));
+    }
+    site.context.log.equivalence(TO_VARCHAR_PAIR);
+    let target = cast_target("VARCHAR", &ProvenanceLog::default()).map_err(refuse)?;
+    let sql = cast_sql(&operand, target, false, (site.context, construct)).map_err(refuse)?;
+    Ok(Emitted::new(sql, SnowflakeType::Varchar))
+}
+
+fn is_unsigned_integer(text: &str) -> bool {
+    !text.is_empty() && text.bytes().all(|byte| byte.is_ascii_digit())
+}
+
+/// The digits of a number literal, with a leading minus when negated.
+pub(crate) fn number_literal_text(node: &Value) -> Option<String> {
+    let (kind, payload) = node_kind(node)?;
+    match kind {
+        "neg" => number_literal_text(payload.get("this")?).map(|digits| format!("-{digits}")),
+        "literal" => match payload.get("literal_type")?.as_str()? {
+            LITERAL_NUMBER => payload.get("value")?.as_str().map(str::to_owned),
+            _ => None,
+        },
+        _ => None,
+    }
+}
+
+fn is_plain_decimal(text: &str) -> bool {
+    let body = text.strip_prefix(['+', '-']).unwrap_or(text);
+    let (whole, fraction) = body.split_once('.').unwrap_or((body, ""));
+    (!whole.is_empty() || !fraction.is_empty())
+        && whole.bytes().all(|byte| byte.is_ascii_digit())
+        && fraction.bytes().all(|byte| byte.is_ascii_digit())
+}
+
+fn is_float_spelling(text: &str) -> bool {
+    let (mantissa, exponent) = text
+        .split_once(['e', 'E'])
+        .map_or((text, None), |(mantissa, exponent)| {
+            (mantissa, Some(exponent))
+        });
+    let exponent_ok = exponent.is_none_or(|exponent| {
+        let digits = exponent.strip_prefix(['+', '-']).unwrap_or(exponent);
+        !digits.is_empty() && digits.bytes().all(|byte| byte.is_ascii_digit())
+    });
+    is_plain_decimal(mantissa) && exponent_ok
+}
+
+fn with_leading_zero(text: &str) -> String {
+    let (sign, unsigned) = text
+        .strip_prefix('-')
+        .map_or(("", text), |unsigned| ("-", unsigned));
+    match unsigned.strip_prefix('.') {
+        Some(fraction) => format!("{sign}0.{fraction}"),
+        None => text.to_owned(),
+    }
+}
+
+fn number_literal_cast(
+    text: &str,
+    to: SnowflakeType,
+    log: &ProvenanceLog,
+) -> Result<String, String> {
+    match to {
+        SnowflakeType::Number { .. } if is_plain_decimal(text) => {
+            cast(&with_leading_zero(text), to, log)
+        }
+        SnowflakeType::Float if is_float_spelling(text) => cast(&with_leading_zero(text), to, log),
+        _ => Err(format!(
+            "casting the literal {text} to {to} has no proven conversion"
+        )),
+    }
+}
+
+fn text_literal_cast(text: &str, to: SnowflakeType, log: &ProvenanceLog) -> Result<String, String> {
+    let literal = string_literal(text, log);
+    match to {
+        SnowflakeType::Number { .. } if is_plain_decimal(text) => cast(&literal, to, log),
+        SnowflakeType::Float if is_float_spelling(text) => cast(&literal, to, log),
+        SnowflakeType::Boolean if text.eq_ignore_ascii_case(TRUE_TEXT) => Ok("TRUE".to_owned()),
+        SnowflakeType::Boolean if text.eq_ignore_ascii_case(FALSE_TEXT) => Ok("FALSE".to_owned()),
+        SnowflakeType::Date if is_iso_date(text) => cast(&literal, to, log),
+        other => Err(format!(
+            "casting the text '{text}' to {other} has no proven conversion"
+        )),
+    }
+}
+
+fn with_arguments(base: &str, arguments: &[Option<u64>]) -> String {
+    let present: Vec<String> = arguments.iter().flatten().map(u64::to_string).collect();
+    match present.is_empty() {
+        true => base.to_owned(),
+        false => format!("{base}({})", present.join(",")),
+    }
+}
+
+/// The Snowflake spelling of a serialised cast target type.
+fn data_type_name(data_type: &Value) -> Option<String> {
+    let object = data_type.as_object()?;
+    let number = |name: &str| object.get(name).and_then(Value::as_u64);
+    let zoned = object
+        .get("timezone")
+        .and_then(Value::as_bool)
+        .unwrap_or(false);
+    Some(match object.get("data_type")?.as_str()? {
+        "custom" => object.get("name")?.as_str()?.to_owned(),
+        "decimal" => with_arguments("NUMBER", &[number("precision"), number("scale")]),
+        "int" | "big_int" | "small_int" | "tiny_int" => "INT".to_owned(),
+        "float" | "double" => "FLOAT".to_owned(),
+        "var_char" | "string" => with_arguments("VARCHAR", &[number("length")]),
+        "text" => "VARCHAR".to_owned(),
+        "char" => with_arguments("CHAR", &[number("length")]),
+        "boolean" => "BOOLEAN".to_owned(),
+        "date" => "DATE".to_owned(),
+        "time" if !zoned => with_arguments("TIME", &[number("precision")]),
+        "timestamp" if zoned => with_arguments("TIMESTAMP_TZ", &[number("precision")]),
+        "timestamp" => with_arguments("TIMESTAMP", &[number("precision")]),
+        _ => return None,
+    })
+}

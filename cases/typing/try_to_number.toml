@@ -1,0 +1,40 @@
+category = "conversion"
+construct = "fn:TRY_TO_NUMBER"
+session_profile = "utc-v1"
+evidence = "typing"
+
+[[case]]
+id = "try_to_number_default"
+description = "TRY_TO_NUMBER of text without precision or scale: its result type."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [["'12'"], ["'-3.7'"], ["'x'"], ["''"], ["NULL"], ["'99999999999999999999999999999999999999'"]]
+expression = "TRY_TO_NUMBER(s)"
+tags = ["null", "invalid", "boundary"]
+values = false
+
+[[case]]
+id = "try_to_number_precision_scale"
+description = "TRY_TO_NUMBER(s, 10, 2): the declared precision and scale in the result type."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [["'1.235'"], ["'x'"], ["NULL"], ["'99999999.99'"], ["'999999999'"]]
+expression = "TRY_TO_NUMBER(s, 10, 2)"
+tags = ["null", "invalid", "boundary"]
+values = false
+
+[[case]]
+id = "try_to_number_precision"
+description = "TRY_TO_NUMBER(s, 5): a precision without a scale."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [["'12345'"], ["'123456'"], ["'1.5'"], ["NULL"]]
+expression = "TRY_TO_NUMBER(s, 5)"
+tags = ["null", "boundary"]
+values = false
+
+[[case]]
+id = "try_to_number_format"
+description = "TRY_TO_NUMBER with a format: the result type."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [["'1,234.50'"], ["'x'"], ["NULL"]]
+expression = "TRY_TO_NUMBER(s, '9,999.99', 6, 2)"
+tags = ["null", "invalid"]
+values = false

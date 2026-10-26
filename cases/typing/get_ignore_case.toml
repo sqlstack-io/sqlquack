@@ -1,0 +1,21 @@
+category = "semi-structured"
+construct = "fn:GET_IGNORE_CASE"
+session_profile = "utc-v1"
+evidence = "typing"
+
+[[case]]
+id = "get_ignore_case_types"
+description = "GET_IGNORE_CASE of keys differing in case, missing, nested and JSON null: its result types."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('{\"o\":{\"a\":1,\"b\":[1,2]},\"x\":\"s\",\"items\":[1,\"x\",null]}')"],
+  ["PARSE_JSON('{\"o\":{\"A\":1,\"a\":2},\"x\":null,\"items\":[]}')"],
+  ["PARSE_JSON('{\"o\":{\"n\":{\"m\":[{\"k\":1}]}},\"x\":[[1],[2]],\"items\":[[1,2],{\"k\":1}]}')"],
+  ["PARSE_JSON('{}')"],
+  ["PARSE_JSON('null')"],
+  ["NULL"],
+]
+query = "SELECT GET_IGNORE_CASE(OBJECT_CONSTRUCT('A', 1, 'n', v:o), 'a') AS cased, GET_IGNORE_CASE(OBJECT_CONSTRUCT('x', v:x, 'i', v:items[0]), 'X') AS path, GET_IGNORE_CASE(OBJECT_CONSTRUCT('k', 1), 'missing') AS missing FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "json-null", "missing-key", "nested", "array-index", "case-sensitive-key"]
+values = false

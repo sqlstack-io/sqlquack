@@ -1,0 +1,184 @@
+//! IS NULL, IN, BETWEEN and EXISTS.
+
+use serde_json::Value;
+use sqlquack_core::refusals::models::Refusal;
+use sqlquack_snowflake::typing::models::SnowflakeType;
+
+use crate::conversion::_helpers::expressions::operators::{comparable, same_family};
+use crate::conversion::_helpers::expressions::scalar::convert_expression;
+use crate::conversion::_helpers::queries::query::convert_query;
+use crate::conversion::_helpers::support::scope::Emitted;
+use crate::conversion::_helpers::support::site::Site;
+use crate::conversion::_helpers::support::tree::{
+    field, flag, list, missing, node_construct, node_kind, outside_conditions, payload_object,
+    require_understood,
+};
+use crate::conversion::constants::{
+    BETWEEN, EXISTS, IN_LIST, IN_SUBQUERY, IS_NULL, NOT_IN_SUBQUERY,
+};
+
+fn negated(payload: &serde_json::Map<String, Value>, keyword: &str) -> String {
+    match flag(payload, "not") {
+        true => format!("NOT {keyword}"),
+        false => keyword.to_owned(),
+    }
+}
+
+/// IS [NOT] NULL.
+pub(crate) fn null_test(payload: &Value, site: Site<'_>) -> Result<Emitted, Refusal> {
+    let construct = node_construct("is_null");
+    let _rule = site.context.log.rule(IS_NULL);
+    let payload = payload_object(payload, &construct)?;
+    require_understood(payload, &["this", "not"], &construct)?;
+    let inner = convert_expression(field(payload, "this", &construct)?, site)?;
+    let test = match flag(payload, "not") {
+        true => "IS NOT NULL",
+        false => "IS NULL",
+    };
+    Ok(Emitted::new(
+        format!("({} {test})", inner.sql),
+        SnowflakeType::Boolean,
+    ))
+}
+
+/// [NOT] BETWEEN.
+pub(crate) fn between(payload: &Value, site: Site<'_>) -> Result<Emitted, Refusal> {
+    let construct = node_construct("between");
+    let _rule = site.context.log.rule(BETWEEN);
+    let payload = payload_object(payload, &construct)?;
+    require_understood(payload, &["this", "low", "high", "not"], &construct)?;
+    let value = convert_expression(field(payload, "this", &construct)?, site)?;
+    let low = convert_expression(field(payload, "low", &construct)?, site)?;
+    let high = convert_expression(field(payload, "high", &construct)?, site)?;
+    same_family(value.data_type, low.data_type, &construct)?;
+    same_family(value.data_type, high.data_type, &construct)?;
+    Ok(Emitted::new(
+        format!(
+            "({} {} {} AND {})",
+            value.sql,
+            negated(payload, "BETWEEN"),
+            low.sql,
+            high.sql
+        ),
+        SnowflakeType::Boolean,
+    ))
+}
+
+/// [NOT] EXISTS.
+pub(crate) fn exists(payload: &Value, site: Site<'_>) -> Result<Emitted, Refusal> {
+    let construct = node_construct("exists");
+    let _rule = site.context.log.rule(EXISTS);
+    let payload = payload_object(payload, &construct)?;
+    require_understood(payload, &["this", "not"], &construct)?;
+    let (sql, _) = convert_query(
+        field(payload, "this", &construct)?,
+        Some(site.scope),
+        site.context,
+        false,
+    )?;
+    Ok(Emitted::new(
+        format!("({} ({sql}))", negated(payload, "EXISTS")),
+        SnowflakeType::Boolean,
+    ))
+}
+
+/// [NOT] IN with a list, or IN with a subquery.
+pub(crate) fn in_predicate(payload: &Value, site: Site<'_>) -> Result<Emitted, Refusal> {
+    let construct = node_construct("in");
+    let payload = payload_object(payload, &construct)?;
+    require_understood(
+        payload,
+        &["this", "expressions", "query", "not"],
+        &construct,
+    )?;
+    let value = convert_expression(field(payload, "this", &construct)?, site)?;
+    if let Some(query) = payload.get("query").filter(|query| !query.is_null()) {
+        return in_subquery(value, (query, flag(payload, "not")), site);
+    }
+    let _rule = site.context.log.rule(IN_LIST);
+    let mut items: Vec<String> = Vec::new();
+    for item in list(payload, "expressions") {
+        let item = convert_expression(item, site)?;
+        same_family(value.data_type, item.data_type, &construct)?;
+        items.push(item.sql);
+    }
+    if items.is_empty() {
+        return Err(missing(construct, "IN with no items".to_owned()));
+    }
+    Ok(Emitted::new(
+        format!(
+            "({} {} ({}))",
+            value.sql,
+            negated(payload, "IN"),
+            items.join(", ")
+        ),
+        SnowflakeType::Boolean,
+    ))
+}
+
+fn in_subquery(
+    value: Emitted,
+    (query, negated): (&Value, bool),
+    site: Site<'_>,
+) -> Result<Emitted, Refusal> {
+    let construct = node_construct("in");
+    let _rule = site.context.log.rule(IN_SUBQUERY);
+    if negated && !site.placement.filter {
+        return Err(outside_conditions(
+            construct,
+            "NOT IN with a subquery outside a WHERE condition, which Snowflake rejects (error 2031)"
+                .to_owned(),
+        ));
+    }
+    let _negated = negated.then(|| site.context.log.rule(NOT_IN_SUBQUERY));
+    let query = match node_kind(query) {
+        Some(("subquery", inner)) => inner.get("this").unwrap_or(query),
+        _ => query,
+    };
+    if negated && has_constant_branch(query) {
+        return Err(outside_conditions(
+            construct,
+            "NOT IN a set operation with a branch without FROM, which batches 9 and 10 recorded \
+             Snowflake answering as if its NULLs were absent"
+                .to_owned(),
+        ));
+    }
+    let (sql, columns) = convert_query(query, Some(site.scope), site.context, false)?;
+    let [column] = columns.as_slice() else {
+        return Err(outside_conditions(
+            construct,
+            "IN needs a one-column subquery".to_owned(),
+        ));
+    };
+    same_family(value.data_type, column.data_type, &construct)?;
+    let probe = Emitted::new(String::new(), column.data_type);
+    let (value, _) = comparable(value, probe, &construct, site.context)?;
+    Ok(Emitted::new(
+        format!(
+            "({} {} ({sql}))",
+            value.sql,
+            if negated { "NOT IN" } else { "IN" }
+        ),
+        SnowflakeType::Boolean,
+    ))
+}
+
+/// Whether `query` is a set operation with a branch selecting without FROM.
+fn has_constant_branch(query: &Value) -> bool {
+    match node_kind(query) {
+        Some(("union" | "intersect" | "except", payload)) => ["left", "right"]
+            .iter()
+            .filter_map(|side| payload.get(*side))
+            .any(|branch| has_constant_branch(branch) || is_constant_select(branch)),
+        _ => false,
+    }
+}
+
+/// Whether `branch` is a SELECT without FROM.
+fn is_constant_select(branch: &Value) -> bool {
+    match node_kind(branch) {
+        Some(("select", select)) => select.get("from").is_none_or(Value::is_null),
+        Some(("subquery", inner)) => inner.get("this").is_some_and(is_constant_select),
+        _ => false,
+    }
+}

@@ -1,0 +1,55 @@
+category = "temporal"
+construct = "node:cast"
+session_profile = "utc-v1"
+
+[[case]]
+id = "zoned_to_ntz"
+description = "CONVERT_TIMEZONE('UTC', zoned) cast to TIMESTAMP_NTZ: the UTC wall time, across offsets and dates."
+columns = [{ name = "t", type = "TIMESTAMP_TZ" }]
+rows = [
+  ["'2024-03-10 01:30:00 -08:00'"],
+  ["'2024-02-29 23:59:59.999999 +05:30'"],
+  ["'2024-01-01 00:00:00 +14:00'"],
+  ["'1999-12-31 23:00:00 -12:00'"],
+  ["'2024-07-04 12:00:00 +00:00'"],
+  ["NULL"],
+]
+expression = "CONVERT_TIMEZONE('UTC', t)::TIMESTAMP_NTZ"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "zoned_to_date"
+description = "CONVERT_TIMEZONE('UTC', zoned) cast to DATE: the UTC date, which an offset can move."
+columns = [{ name = "t", type = "TIMESTAMP_TZ" }]
+rows = [
+  ["'2024-03-01 01:30:00 +05:00'"],
+  ["'2024-02-28 20:00:00 -05:00'"],
+  ["'2024-12-31 23:59:59 -00:30'"],
+  ["NULL"],
+]
+expression = "CAST(CONVERT_TIMEZONE('UTC', t) AS DATE)"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "zoned_to_ntz_millis"
+description = "CONVERT_TIMEZONE('UTC', zoned) cast to TIMESTAMP_NTZ(3), which truncates."
+columns = [{ name = "t", type = "TIMESTAMP_TZ" }]
+rows = [["'2024-03-10 01:30:00.123999 -08:00'"], ["'2024-03-10 01:30:00.000001 +01:00'"], ["NULL"]]
+expression = "CONVERT_TIMEZONE('UTC', t)::TIMESTAMP_NTZ(3)"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "naive_to_ntz"
+description = "CONVERT_TIMEZONE('UTC', naive) reads the naive time in the UTC session; cast back it is unchanged."
+columns = [{ name = "t", type = "TIMESTAMP_NTZ" }]
+rows = [["'2024-03-10 01:30:00.5'"], ["'1970-01-01 00:00:00'"], ["'2262-04-11 00:00:00.999999'"], ["NULL"]]
+expression = "CONVERT_TIMEZONE('UTC', t)::TIMESTAMP_NTZ"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "local_to_ntz"
+description = "CONVERT_TIMEZONE('UTC', local-zone) cast to TIMESTAMP_NTZ, in the UTC session."
+columns = [{ name = "t", type = "TIMESTAMP_LTZ" }]
+rows = [["'2024-03-10 01:30:00 -08:00'"], ["'2024-06-01 00:00:00'"], ["NULL"]]
+expression = "CONVERT_TIMEZONE('UTC', t)::TIMESTAMP_NTZ"
+tags = ["null", "boundary"]

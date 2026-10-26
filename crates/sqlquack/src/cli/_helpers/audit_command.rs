@@ -10,6 +10,8 @@ use sqlquack_evidence::audit::models::{AuditEntry, AuditOutcome};
 use sqlquack_evidence::cases::models::LoadedCase;
 use sqlquack_evidence::pending::main::write_pending::write_pending;
 use sqlquack_evidence::replay::main::duckdb_version::duckdb_version;
+use sqlquack_evidence::results::main::load_result::load_result;
+use sqlquack_evidence::results::models::RecordedOutcome;
 
 use crate::cli::_helpers::evidence::{load_evidence, parse_percent};
 use crate::cli::models::AuditArguments;
@@ -85,6 +87,43 @@ pub(crate) fn audit_compare_command(
     } else {
         ExitCode::FAILURE
     }
+}
+
+pub(crate) fn audit_errors_command(arguments: &AuditArguments, stderr: &mut dyn Write) -> ExitCode {
+    let _ = writeln!(
+        stderr,
+        "sqlquack audit: selecting cases recorded as warehouse errors…"
+    );
+    match error_pending(arguments) {
+        Ok((chosen, written)) => {
+            let _ = writeln!(
+                stderr,
+                "sqlquack audit: done, {chosen} error cases; {written} pending case files in {}",
+                arguments.out.display()
+            );
+            ExitCode::SUCCESS
+        }
+        Err(error) => {
+            let _ = writeln!(stderr, "sqlquack audit: failed: {error}");
+            ExitCode::FAILURE
+        }
+    }
+}
+
+fn error_pending(arguments: &AuditArguments) -> Result<(usize, usize), String> {
+    let evidence = load_evidence(&arguments.paths)?;
+    let mut chosen: Vec<LoadedCase> = Vec::new();
+    for case in &evidence.cases {
+        let stored =
+            load_result(&arguments.paths.results, &case.hash).map_err(|error| error.to_string())?;
+        if stored.is_some_and(|stored| stored.metadata.outcome == RecordedOutcome::Error) {
+            chosen.push(case.clone());
+        }
+    }
+    let version = duckdb_version().map_err(|error| error.to_string())?;
+    let summary = write_pending(&chosen, &arguments.audit_results, &arguments.out, &version)
+        .map_err(|error| error.to_string())?;
+    Ok((chosen.len(), summary.written))
 }
 
 fn sample_pending(

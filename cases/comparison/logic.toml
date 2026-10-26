@@ -1,0 +1,59 @@
+category = "comparison"
+construct = "node:and"
+session_profile = "utc-v1"
+
+[[case]]
+id = "three_valued_and_or"
+description = "AND, OR and NOT with NULL."
+columns = [{ name = "a", type = "BOOLEAN" }, { name = "b", type = "BOOLEAN" }]
+rows = [
+  ["TRUE", "TRUE"],
+  ["TRUE", "FALSE"],
+  ["TRUE", "NULL"],
+  ["FALSE", "NULL"],
+  ["NULL", "NULL"],
+  ["FALSE", "FALSE"],
+]
+query = "SELECT a AND b AS conjunction, a OR b AS disjunction, NOT a AS negation FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "ties", "mixed-types"]
+
+[[case]]
+id = "is_null"
+description = "IS NULL and IS NOT NULL."
+columns = [{ name = "a", type = "NUMBER(38,0)" }]
+rows = [
+  ["1"],
+  ["NULL"],
+]
+query = "SELECT a IS NULL AS missing, a IS NOT NULL AS present FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]
+
+[[case]]
+id = "between"
+description = "BETWEEN includes both bounds; NULL bounds give NULL."
+columns = [{ name = "a", type = "NUMBER(10,2)" }, { name = "lo", type = "NUMBER(38,0)" }, { name = "hi", type = "NUMBER(38,0)" }]
+rows = [
+  ["1.00", "1", "2"],
+  ["2.00", "1", "2"],
+  ["2.01", "1", "2"],
+  ["1.50", "NULL", "2"],
+  ["3", "NULL", "2"],
+  ["NULL", "1", "2"],
+]
+expression = "a BETWEEN lo AND hi"
+tags = ["null", "ties"]
+
+[[case]]
+id = "in_list"
+description = "IN and NOT IN with a NULL in the list."
+columns = [{ name = "a", type = "NUMBER(38,0)" }]
+rows = [
+  ["1"],
+  ["3"],
+  ["NULL"],
+]
+query = "SELECT a IN (1, 2) AS in_plain, a IN (1, NULL) AS in_null, a NOT IN (1, NULL) AS not_in_null, a NOT IN (2, 4) AS not_in_plain FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]

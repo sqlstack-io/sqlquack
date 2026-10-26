@@ -1,0 +1,134 @@
+category = "temporal"
+construct = "fn:TO_TIMESTAMP"
+session_profile = "utc-v1"
+
+[[case]]
+id = "to_timestamp_text"
+description = "TO_TIMESTAMP of ISO text with T, zones, fractions and dates only."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'2024-02-29 13:45:01'"],
+  ["'2024-02-29T13:45:01Z'"],
+  ["'2024-02-29T13:45:01.123456789+02:00'"],
+  ["'2024-02-29'"],
+  ["' 2024-02-29 13:45:01 '"],
+  ["NULL"],
+]
+expression = "TO_TIMESTAMP(s)"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "to_timestamp_integer_text"
+description = "TO_TIMESTAMP of integer text: seconds, milliseconds and microseconds by magnitude."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'1709214301'"],
+  ["'1709214301123'"],
+  ["'1709214301123456'"],
+  ["'0'"],
+  ["'31535999999'"],
+]
+expression = "TO_TIMESTAMP(s)"
+tags = ["boundary"]
+expected_divergence = "timestamp_range"
+
+[[case]]
+id = "to_timestamp_number"
+description = "TO_TIMESTAMP of a NUMBER of seconds, and with a scale."
+columns = [{ name = "n", type = "NUMBER(18,0)" }]
+rows = [
+  ["'1709214301'"],
+  ["'0'"],
+  ["'-1'"],
+  ["NULL"],
+]
+expression = "TO_TIMESTAMP(n)"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "to_timestamp_number_scale"
+description = "TO_TIMESTAMP of a NUMBER with scale 3 (milliseconds)."
+columns = [{ name = "n", type = "NUMBER(18,0)" }]
+rows = [
+  ["'1709214301123'"],
+  ["'-1'"],
+]
+expression = "TO_TIMESTAMP(n, 3)"
+tags = ["boundary"]
+
+[[case]]
+id = "to_timestamp_format"
+description = "TO_TIMESTAMP with an explicit format."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'29/02/2024 13:45'"],
+  ["'01/01/1970 00:00'"],
+  ["NULL"],
+]
+expression = "TO_TIMESTAMP(s, 'DD/MM/YYYY HH24:MI')"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "to_timestamp_invalid"
+description = "TO_TIMESTAMP of text that is not a timestamp."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'not a time'"],
+]
+expression = "TO_TIMESTAMP(s)"
+tags = ["invalid"]
+
+[[case]]
+id = "try_to_timestamp"
+description = "TRY_TO_TIMESTAMP of valid and invalid text."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'2024-02-29 13:45:01'"],
+  ["'2024-02-30 00:00:00'"],
+  ["'x'"],
+  ["NULL"],
+]
+expression = "TRY_TO_TIMESTAMP(s)"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "to_timestamp_ntz_text"
+description = "TO_TIMESTAMP_NTZ drops a zone offset rather than converting."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'2024-02-29T13:45:01+02:00'"],
+  ["'2024-02-29 13:45:01'"],
+]
+expression = "TO_TIMESTAMP_NTZ(s)"
+tags = ["boundary"]
+
+[[case]]
+id = "to_date_text"
+description = "TO_DATE of ISO text and timestamps text."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'2024-02-29'"],
+  ["'2024-02-29 23:59:59'"],
+  ["'2024-02-29T13:45:01Z'"],
+  ["NULL"],
+]
+expression = "TO_DATE(s)"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "cast_text_beyond_nanosecond_range"
+description = "ISO text outside DuckDB's nanosecond range cast to TIMESTAMP_NTZ(9): Snowflake holds it, DuckDB raises timestamp_range."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [["'9999-01-01'"], ["'1600-03-01 10:00:00'"], ["'0001-01-01 00:00:00.5'"], ["'2262-04-12'"]]
+expression = "CAST(s AS TIMESTAMP_NTZ(9))"
+tags = ["boundary"]
+expected_divergence = "timestamp_range"
+
+[[case]]
+id = "to_timestamp_text_beyond_nanosecond_range"
+description = "TO_TIMESTAMP of ISO text outside DuckDB's nanosecond range."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [["'9999-12-31 23:59:59'"], ["'1677-09-21'"]]
+expression = "TO_TIMESTAMP(s)"
+tags = ["boundary"]
+expected_divergence = "timestamp_range"

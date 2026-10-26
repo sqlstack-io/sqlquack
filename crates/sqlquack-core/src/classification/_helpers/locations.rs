@@ -1,7 +1,7 @@
-//! Source positions for nodes, borrowed from neighbours when polyglot kept none.
+//! Source positions for nodes, borrowed from neighbours when the parser kept none.
 
-use polyglot_sql::Expression;
-use polyglot_sql::tokens::Span;
+use sqlquack_syntax::Expression;
+use sqlquack_syntax::tokens::Span;
 
 use crate::parsing::models::SourceLocation;
 

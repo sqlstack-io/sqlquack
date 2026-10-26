@@ -1,0 +1,67 @@
+category = "comparison"
+construct = "node:lt"
+session_profile = "utc-v1"
+
+[[case]]
+id = "bytewise_order"
+description = "Text compares by code point: upper case sorts before lower case."
+columns = [{ name = "a", type = "VARCHAR" }, { name = "b", type = "VARCHAR" }]
+rows = [
+  ["'a'", "'B'"],
+  ["'B'", "'a'"],
+  ["'a'", "'a'"],
+  ["''", "' '"],
+  ["'é'", "'z'"],
+  ["NULL", "'a'"],
+]
+expression = "a < b"
+tags = ["null", "ties", "mixed-types"]
+
+[[case]]
+id = "trailing_spaces"
+description = "Trailing spaces are significant in equality."
+columns = [{ name = "a", type = "VARCHAR" }, { name = "b", type = "VARCHAR" }]
+rows = [
+  ["'a'", "'a '"],
+  ["'a'", "'a'"],
+  ["''", "''"],
+  ["NULL", "NULL"],
+]
+expression = "a = b"
+tags = ["null", "ties"]
+
+[[case]]
+id = "boolean_order"
+description = "Booleans compare false before true."
+columns = [{ name = "a", type = "BOOLEAN" }, { name = "b", type = "BOOLEAN" }]
+rows = [
+  ["FALSE", "TRUE"],
+  ["TRUE", "TRUE"],
+  ["NULL", "TRUE"],
+]
+expression = "a < b"
+tags = ["null", "ties"]
+
+[[case]]
+id = "date_order"
+description = "Dates compare chronologically."
+columns = [{ name = "a", type = "DATE" }, { name = "b", type = "DATE" }]
+rows = [
+  ["'2024-01-31'", "'2024-02-01'"],
+  ["'2024-02-29'", "'2024-02-29'"],
+  ["NULL", "'2024-01-01'"],
+]
+expression = "a < b"
+tags = ["null", "ties"]
+
+[[case]]
+id = "date_and_text"
+description = "A DATE compared with text, which Snowflake converts to a date."
+columns = [{ name = "a", type = "DATE" }]
+rows = [
+  ["'2024-01-31'"],
+  ["'2024-02-01'"],
+  ["NULL"],
+]
+expression = "a = '2024-01-31'"
+tags = ["null", "mixed-types"]

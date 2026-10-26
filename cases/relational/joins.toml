@@ -1,0 +1,105 @@
+category = "relational"
+construct = "join:inner"
+session_profile = "utc-v1"
+
+[[case]]
+id = "inner_join"
+description = "INNER JOIN never matches NULL keys and repeats duplicates."
+columns = [{ name = "side", type = "VARCHAR" }, { name = "k", type = "NUMBER(38,0)" }, { name = "v", type = "VARCHAR" }]
+rows = [
+  ["'l'", "1", "'l1'"],
+  ["'l'", "2", "'l2'"],
+  ["'l'", "NULL", "'ln'"],
+  ["'l'", "2", "'l2b'"],
+  ["'r'", "2", "'r2'"],
+  ["'r'", "3", "'r3'"],
+  ["'r'", "NULL", "'rn'"],
+]
+query = "SELECT l.v AS lv, r.v AS rv FROM (SELECT k, v FROM input WHERE side = 'l') l INNER JOIN (SELECT k, v FROM input WHERE side = 'r') r ON l.k = r.k"
+order = "bag"
+tags = ["null", "duplicates"]
+
+[[case]]
+id = "left_join"
+description = "LEFT JOIN keeps unmatched left rows."
+columns = [{ name = "side", type = "VARCHAR" }, { name = "k", type = "NUMBER(38,0)" }, { name = "v", type = "VARCHAR" }]
+rows = [
+  ["'l'", "1", "'l1'"],
+  ["'l'", "2", "'l2'"],
+  ["'l'", "NULL", "'ln'"],
+  ["'l'", "2", "'l2b'"],
+  ["'r'", "2", "'r2'"],
+  ["'r'", "3", "'r3'"],
+  ["'r'", "NULL", "'rn'"],
+]
+query = "SELECT l.v AS lv, r.v AS rv FROM (SELECT k, v FROM input WHERE side = 'l') l LEFT JOIN (SELECT k, v FROM input WHERE side = 'r') r ON l.k = r.k"
+order = "bag"
+tags = ["null", "duplicates"]
+
+[[case]]
+id = "full_join"
+description = "FULL JOIN keeps unmatched rows from both sides."
+columns = [{ name = "side", type = "VARCHAR" }, { name = "k", type = "NUMBER(38,0)" }, { name = "v", type = "VARCHAR" }]
+rows = [
+  ["'l'", "1", "'l1'"],
+  ["'l'", "2", "'l2'"],
+  ["'l'", "NULL", "'ln'"],
+  ["'l'", "2", "'l2b'"],
+  ["'r'", "2", "'r2'"],
+  ["'r'", "3", "'r3'"],
+  ["'r'", "NULL", "'rn'"],
+]
+query = "SELECT l.v AS lv, r.v AS rv FROM (SELECT k, v FROM input WHERE side = 'l') l FULL OUTER JOIN (SELECT k, v FROM input WHERE side = 'r') r ON l.k = r.k"
+order = "bag"
+tags = ["null", "duplicates"]
+
+[[case]]
+id = "cross_join"
+description = "CROSS JOIN of two small sides."
+columns = [{ name = "side", type = "VARCHAR" }, { name = "k", type = "NUMBER(38,0)" }, { name = "v", type = "VARCHAR" }]
+rows = [
+  ["'l'", "1", "'l1'"],
+  ["'l'", "2", "'l2'"],
+  ["'l'", "NULL", "'ln'"],
+  ["'l'", "2", "'l2b'"],
+  ["'r'", "2", "'r2'"],
+  ["'r'", "3", "'r3'"],
+  ["'r'", "NULL", "'rn'"],
+]
+query = "SELECT l.v AS lv, r.v AS rv FROM (SELECT k, v FROM input WHERE side = 'l') l CROSS JOIN (SELECT k, v FROM input WHERE side = 'r') r WHERE l.k = 1"
+order = "bag"
+tags = ["null", "duplicates"]
+
+[[case]]
+id = "implicit_join"
+description = "A comma join filtered in WHERE."
+columns = [{ name = "side", type = "VARCHAR" }, { name = "k", type = "NUMBER(38,0)" }, { name = "v", type = "VARCHAR" }]
+rows = [
+  ["'l'", "1", "'l1'"],
+  ["'l'", "2", "'l2'"],
+  ["'l'", "NULL", "'ln'"],
+  ["'l'", "2", "'l2b'"],
+  ["'r'", "2", "'r2'"],
+  ["'r'", "3", "'r3'"],
+  ["'r'", "NULL", "'rn'"],
+]
+query = "SELECT l.v AS lv, r.v AS rv FROM (SELECT k, v FROM input WHERE side = 'l') l, (SELECT k, v FROM input WHERE side = 'r') r WHERE l.k = r.k"
+order = "bag"
+tags = ["null", "duplicates"]
+
+[[case]]
+id = "join_no_matches"
+description = "A join whose filter leaves no rows."
+columns = [{ name = "side", type = "VARCHAR" }, { name = "k", type = "NUMBER(38,0)" }, { name = "v", type = "VARCHAR" }]
+rows = [
+  ["'l'", "1", "'l1'"],
+  ["'l'", "2", "'l2'"],
+  ["'l'", "NULL", "'ln'"],
+  ["'l'", "2", "'l2b'"],
+  ["'r'", "2", "'r2'"],
+  ["'r'", "3", "'r3'"],
+  ["'r'", "NULL", "'rn'"],
+]
+query = "SELECT l.v AS lv, r.v AS rv FROM (SELECT k, v FROM input WHERE side = 'l') l INNER JOIN (SELECT k, v FROM input WHERE side = 'r') r ON l.k = r.k AND r.k > 99"
+order = "bag"
+tags = ["empty-input"]

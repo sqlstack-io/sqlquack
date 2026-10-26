@@ -1,0 +1,35 @@
+category = "imported"
+construct = "node:star"
+session_profile = "utc-v1"
+
+[[case]]
+id = "star_exclude_replace"
+description = "SELECT * with EXCLUDE and REPLACE."
+columns = [{ name = "a", type = "NUMBER(38,0)" }, { name = "b", type = "NUMBER(38,0)" }, { name = "c", type = "VARCHAR" }, { name = "d", type = "VARCHAR" }, { name = "e", type = "NUMBER(38,0)" }, { name = "f", type = "NUMBER(38,0)" }]
+rows = [
+  ["1", "2", "'x'", "'y'", "5", "6"],
+  ["NULL", "NULL", "NULL", "'z'", "NULL", "7"],
+]
+query = "SELECT * EXCLUDE (a, b) REPLACE (c AS d, E AS F) FROM input"
+order = "bag"
+tags = ["third-party"]
+origin = "sqlglot: tests/dialects/test_snowflake.py"
+sqlglot_duckdb = "SELECT * EXCLUDE (a, b) REPLACE (c AS d, E AS F) FROM xxx"
+
+[[case]]
+id = "order_by_mixed_nulls"
+description = "ORDER BY with explicit and default NULL placement."
+columns = [{ name = "fname", type = "VARCHAR" }, { name = "lname", type = "VARCHAR" }, { name = "age", type = "NUMBER(38,0)" }]
+rows = [
+  ["'ann'", "'lee'", "30"],
+  ["'bob'", "'kim'", "NULL"],
+  ["NULL", "'ray'", "30"],
+  ["'ann'", "'abe'", "30"],
+  ["'cat'", "NULL", "25"],
+  ["'cat'", "'day'", "25"],
+]
+query = "SELECT fname, lname, age FROM input ORDER BY age DESC NULLS FIRST, fname ASC NULLS LAST, lname"
+order = "ordered"
+tags = ["third-party"]
+origin = "sqlglot: tests/dialects/test_snowflake.py"
+sqlglot_duckdb = "SELECT fname, lname, age FROM person ORDER BY age DESC NULLS FIRST, fname ASC, lname"

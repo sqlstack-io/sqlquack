@@ -1,0 +1,29 @@
+category = "conditional"
+construct = "fn:NULLIF"
+session_profile = "utc-v1"
+
+[[case]]
+id = "numbers"
+description = "NULLIF across scales."
+columns = [{ name = "a", type = "NUMBER(10,2)" }, { name = "b", type = "NUMBER(38,0)" }]
+rows = [
+  ["1.00", "1"],
+  ["1.50", "1"],
+  ["NULL", "1"],
+  ["1", "NULL"],
+]
+expression = "NULLIF(a, b)"
+tags = ["null", "mixed-types"]
+
+[[case]]
+id = "text"
+description = "NULLIF on text, case-sensitive."
+columns = [{ name = "a", type = "VARCHAR" }]
+rows = [
+  ["''"],
+  ["'x'"],
+  ["'X'"],
+  ["NULL"],
+]
+expression = "NULLIF(a, '')"
+tags = ["null", "all-null"]

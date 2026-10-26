@@ -8,6 +8,6 @@ pub(crate) struct BinaryTestCase {
 pub(crate) struct BinaryOutcome {
     pub(crate) exit_code: Option<i32>,
     pub(crate) files: Option<u64>,
-    pub(crate) missing_rule: Option<u64>,
+    pub(crate) unresolved_name: Option<u64>,
     pub(crate) completion_reported: bool,
 }

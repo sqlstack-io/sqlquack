@@ -5,13 +5,14 @@ use crate::census::tests::test_types::{CensusSummary, CensusTestCase};
 fn given_sql_directory_when_running_census_then_counts_files_constructs_and_coverage() {
     let test_cases = [
         CensusTestCase {
-            description: "compiled shop models with one unparseable file and one non-SQL file",
+            description: "compiled shop models without a schema: their relations do not resolve",
             fixtures: SHOP,
             expected_summary: Ok(CensusSummary {
                 files: 4,
                 parsed: 3,
                 unparsed: 1,
-                missing_rule: 3,
+                missing_rule: 0,
+                unresolved_name: 3,
                 parse_fidelity: 1,
                 convertible: 0,
                 most_used_files: 3,

@@ -10,6 +10,8 @@ use crate::census::constants::COVERAGE_POINTS;
 use crate::census::main::render_census_text::render_census_text;
 use crate::census::main::run_census::run_census;
 use crate::census::models::CensusOptions;
+use crate::cli::_helpers::evidence::divergence_options;
+use crate::cli::_helpers::schema::load_schema;
 use crate::cli::models::CensusArguments;
 
 pub(crate) fn census_command(
@@ -25,9 +27,33 @@ pub(crate) fn census_command(
         );
         return ExitCode::from(2);
     };
+    let schema = match arguments.schema.as_deref().map(load_schema).transpose() {
+        Ok(schema) => schema.unwrap_or_default(),
+        Err(error) => {
+            let _ = writeln!(stderr, "sqlquack census: failed: {error}");
+            return ExitCode::FAILURE;
+        }
+    };
+    let conversion = match divergence_options(arguments.policy.as_deref(), arguments.strict) {
+        Ok((conversion, true)) => conversion,
+        Ok((conversion, false)) => {
+            let _ = writeln!(
+                stderr,
+                "sqlquack census: no policy file found; every known divergence is refused"
+            );
+            conversion
+        }
+        Err(error) => {
+            let _ = writeln!(stderr, "sqlquack census: failed: {error}");
+            return ExitCode::FAILURE;
+        }
+    };
     let options = CensusOptions {
         dialect,
         coverage_points: COVERAGE_POINTS.to_vec(),
+        schema,
+        chain_models: arguments.chain_models,
+        conversion,
     };
     let started = Instant::now();
     let _ = writeln!(stderr, "sqlquack census: reading SQL files…");

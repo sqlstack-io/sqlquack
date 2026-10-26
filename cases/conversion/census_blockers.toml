@@ -1,0 +1,286 @@
+category = "conversion"
+construct = "node:cast"
+session_profile = "utc-v1"
+
+[[case]]
+id = "date_part_tz"
+description = "DATE_PART fields of zoned timestamps: in the value's own offset or in the session zone."
+columns = [{ name = "t", type = "TIMESTAMP_TZ(9)" }]
+rows = [
+  ["'2024-02-29 13:45:01.123456 +05:30'"],
+  ["'2024-12-31 23:30:00 -08:00'"],
+  ["'2024-01-01 00:15:00 +01:00'"],
+  ["'1969-12-31 23:59:59.5 +00:00'"],
+  ["'2024-03-10 02:30:00 -05:00'"],
+  ["NULL"],
+]
+query = "SELECT DATE_PART(year, t) AS y, DATE_PART(month, t) AS mo, DATE_PART(day, t) AS d, DATE_PART(hour, t) AS h, DATE_PART(minute, t) AS mi, DATE_PART(second, t) AS s, DATE_PART(dayofweek, t) AS dow, DATE_PART(epoch_second, t) AS e FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "date_part_tz_offset"
+description = "DATE_PART timezone_hour and timezone_minute of zoned timestamps."
+columns = [{ name = "t", type = "TIMESTAMP_TZ(9)" }]
+rows = [
+  ["'2024-02-29 13:45:01.123456 +05:30'"],
+  ["'2024-12-31 23:30:00 -08:00'"],
+  ["'2024-01-01 00:15:00 +01:00'"],
+  ["'1969-12-31 23:59:59.5 +00:00'"],
+  ["'2024-03-10 02:30:00 -05:00'"],
+  ["NULL"],
+]
+query = "SELECT DATE_PART(timezone_hour, t) AS th, DATE_PART(timezone_minute, t) AS tm FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "date_trunc_tz"
+description = "DATE_TRUNC of zoned timestamps to day, hour and month, written with their offset."
+columns = [{ name = "t", type = "TIMESTAMP_TZ(9)" }]
+rows = [
+  ["'2024-02-29 13:45:01.123456 +05:30'"],
+  ["'2024-12-31 23:30:00 -08:00'"],
+  ["'2024-01-01 00:15:00 +01:00'"],
+  ["'1969-12-31 23:59:59.5 +00:00'"],
+  ["'2024-03-10 02:30:00 -05:00'"],
+  ["NULL"],
+]
+query = "SELECT TO_VARCHAR(DATE_TRUNC('day', t), 'YYYY-MM-DD HH24:MI:SS TZH:TZM') AS d, TO_VARCHAR(DATE_TRUNC('hour', t), 'YYYY-MM-DD HH24:MI:SS TZH:TZM') AS h, TO_VARCHAR(DATE_TRUNC('month', t), 'YYYY-MM-DD HH24:MI:SS TZH:TZM') AS m FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "tz_to_ntz"
+description = "Zoned timestamps cast to TIMESTAMP_NTZ: the local wall time kept, the offset dropped."
+columns = [{ name = "t", type = "TIMESTAMP_TZ(9)" }]
+rows = [
+  ["'2024-02-29 13:45:01.123456 +05:30'"],
+  ["'2024-12-31 23:30:00 -08:00'"],
+  ["'2024-01-01 00:15:00 +01:00'"],
+  ["'1969-12-31 23:59:59.5 +00:00'"],
+  ["'2024-03-10 02:30:00 -05:00'"],
+  ["NULL"],
+]
+expression = "t::TIMESTAMP_NTZ"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "tz_to_date"
+description = "Zoned timestamps cast to DATE."
+columns = [{ name = "t", type = "TIMESTAMP_TZ(9)" }]
+rows = [
+  ["'2024-02-29 13:45:01.123456 +05:30'"],
+  ["'2024-12-31 23:30:00 -08:00'"],
+  ["'2024-01-01 00:15:00 +01:00'"],
+  ["'1969-12-31 23:59:59.5 +00:00'"],
+  ["'2024-03-10 02:30:00 -05:00'"],
+  ["NULL"],
+]
+expression = "t::DATE"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "try_to_timestamp_tz_texts"
+description = "TRY_TO_TIMESTAMP_TZ of offset, Z, naive, date-only, invalid and empty text."
+columns = [{ name = "x", type = "VARCHAR" }]
+rows = [
+  ["'2024-02-29 13:45:01 +05:30'"],
+  ["'2024-02-29T13:45:01Z'"],
+  ["'2024-02-29 13:45:01'"],
+  ["'2024-02-29'"],
+  ["'not a time'"],
+  ["''"],
+  ["NULL"],
+]
+expression = "TO_VARCHAR(TRY_TO_TIMESTAMP_TZ(x), 'YYYY-MM-DD HH24:MI:SS TZH:TZM')"
+tags = ["null", "invalid", "empty"]
+
+[[case]]
+id = "variant_to_timestamp_tz"
+description = "JSON text values cast to TIMESTAMP_TZ."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('{\"t\":\"2024-02-29 13:45:01 +05:30\"}')"],
+  ["PARSE_JSON('{\"t\":\"2024-02-29T13:45:01Z\"}')"],
+  ["PARSE_JSON('{\"t\":\"2024-02-29 13:45:01\"}')"],
+  ["PARSE_JSON('{\"t\":null}')"],
+  ["PARSE_JSON('{}')"],
+  ["NULL"],
+]
+expression = "TO_VARCHAR(v:t::TIMESTAMP_TZ, 'YYYY-MM-DD HH24:MI:SS TZH:TZM')"
+tags = ["null", "json-null", "missing-key"]
+
+[[case]]
+id = "variant_to_bounded_varchar"
+description = "JSON values cast to VARCHAR(5): short, exact and overlong strings, numbers."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('{\"s\":\"abc\"}')"],
+  ["PARSE_JSON('{\"s\":\"abcde\"}')"],
+  ["PARSE_JSON('{\"s\":12}')"],
+  ["PARSE_JSON('{\"s\":null}')"],
+  ["NULL"],
+]
+expression = "v:s::VARCHAR(5)"
+tags = ["null", "json-null", "boundary"]
+
+[[case]]
+id = "variant_to_bounded_varchar_overlong"
+description = "A JSON string longer than VARCHAR(5): raises or converts."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('{\"s\":\"abcdef\"}')"],
+]
+expression = "v:s::VARCHAR(5)"
+tags = ["invalid"]
+
+[[case]]
+id = "float_to_varchar"
+description = "FLOAT cast to VARCHAR: integers, fractions, exponents, negative zero and specials."
+columns = [{ name = "f", type = "FLOAT" }]
+rows = [
+  ["0"],
+  ["-0.0"],
+  ["1.5"],
+  ["100"],
+  ["1e15"],
+  ["1e16"],
+  ["1.23456789012345e-7"],
+  ["0.1"],
+  ["'inf'::FLOAT"],
+  ["'nan'::FLOAT"],
+  ["NULL"],
+]
+expression = "f::VARCHAR"
+tags = ["null", "zero", "boundary"]
+
+[[case]]
+id = "to_varchar_numbers"
+description = "TO_VARCHAR of NUMBER and FLOAT without a format."
+columns = [{ name = "n", type = "NUMBER(10,2)" }, { name = "f", type = "FLOAT" }]
+rows = [
+  ["1.50", "1.5"],
+  ["-0.00", "-0.0"],
+  ["12345678.90", "123456789.0"],
+  ["NULL", "NULL"],
+]
+query = "SELECT TO_VARCHAR(n) AS n, TO_VARCHAR(f) AS f FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "zero"]
+
+[[case]]
+id = "try_to_number_texts"
+description = "TRY_TO_NUMBER of decimal, signed, spaced, exponent and invalid text."
+columns = [{ name = "x", type = "VARCHAR" }]
+rows = [
+  ["'12'"],
+  ["'-3.7'"],
+  ["' 5 '"],
+  ["'1e3'"],
+  ["'abc'"],
+  ["''"],
+  ["'12.5.1'"],
+  ["NULL"],
+]
+query = "SELECT TRY_TO_NUMBER(x) AS n, TRY_TO_NUMBER(x, 10, 2) AS n2 FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "invalid", "empty"]
+
+[[case]]
+id = "is_distinct_from"
+description = "IS DISTINCT FROM and IS NOT DISTINCT FROM with NULL on either side."
+columns = [{ name = "a", type = "NUMBER(10,0)" }, { name = "b", type = "NUMBER(10,0)" }]
+rows = [
+  ["1", "1"],
+  ["1", "2"],
+  ["NULL", "1"],
+  ["1", "NULL"],
+  ["NULL", "NULL"],
+]
+query = "SELECT a IS DISTINCT FROM b AS d, a IS NOT DISTINCT FROM b AS nd FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "all-null"]
+
+[[case]]
+id = "concat_ws_values"
+description = "CONCAT_WS with NULL arguments, an empty separator and a NULL separator."
+columns = [{ name = "a", type = "VARCHAR" }, { name = "b", type = "VARCHAR" }]
+rows = [
+  ["'x'", "'y'"],
+  ["'x'", "NULL"],
+  ["NULL", "NULL"],
+  ["''", "''"],
+]
+query = "SELECT CONCAT_WS(',', a, b) AS c, CONCAT_WS('', a, b) AS e, CONCAT_WS(NULL, a, b) AS n FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "empty", "all-null"]
+
+[[case]]
+id = "count_if_window"
+description = "COUNT_IF over a partition and over a running frame."
+columns = [{ name = "g", type = "VARCHAR" }, { name = "k", type = "NUMBER(10,0)" }, { name = "x", type = "NUMBER(10,0)" }]
+rows = [
+  ["'a'", "1", "5"],
+  ["'a'", "2", "NULL"],
+  ["'a'", "3", "-1"],
+  ["'b'", "1", "2"],
+]
+query = "SELECT g, k, COUNT_IF(x > 0) OVER (PARTITION BY g) AS p, COUNT_IF(x > 0) OVER (PARTITION BY g ORDER BY k) AS r FROM input ORDER BY g, k"
+order = "ordered"
+tags = ["null"]
+
+[[case]]
+id = "not_in_subquery_with_null"
+description = "WHERE NOT IN a subquery holding NULL keeps no row."
+columns = [{ name = "a", type = "NUMBER(10,0)" }, { name = "b", type = "NUMBER(10,0)" }]
+rows = [
+  ["1", "1"],
+  ["2", "NULL"],
+  ["3", "4"],
+  ["NULL", "5"],
+]
+query = "SELECT a FROM input WHERE a NOT IN (SELECT b FROM input) ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]
+
+[[case]]
+id = "not_in_subquery_without_null"
+description = "WHERE NOT IN a subquery without NULL keeps non-NULL rows absent from it."
+columns = [{ name = "a", type = "NUMBER(10,0)" }, { name = "b", type = "NUMBER(10,0)" }]
+rows = [
+  ["1", "1"],
+  ["2", "NULL"],
+  ["3", "4"],
+  ["NULL", "5"],
+]
+query = "SELECT a FROM input WHERE a NOT IN (SELECT b FROM input WHERE b IS NOT NULL) ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]
+
+[[case]]
+id = "regexp_replace_posix"
+description = "REGEXP_REPLACE with POSIX classes: digits, spaces, letters and punctuation."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'ab 12-cd'"],
+  ["'Ünï 3\\t4'"],
+  ["''"],
+  ["NULL"],
+]
+query = "SELECT REGEXP_REPLACE(s, '[[:digit:]]', '#') AS d, REGEXP_REPLACE(s, '[[:space:]]+', '_') AS w, REGEXP_REPLACE(s, '[^[:alpha:]]', '') AS a, REGEXP_REPLACE(s, '[[:punct:]]', '') AS p FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "empty", "unicode", "whitespace"]
+
+[[case]]
+id = "array_position_values"
+description = "ARRAY_POSITION of numbers, text and absent values."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('[1,\"x\",null,1]')"],
+  ["PARSE_JSON('[]')"],
+  ["NULL"],
+]
+query = "SELECT ARRAY_POSITION(1::VARIANT, v) AS one, ARRAY_POSITION('x'::VARIANT, v) AS x, ARRAY_POSITION(9::VARIANT, v) AS absent FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "json-null", "empty"]

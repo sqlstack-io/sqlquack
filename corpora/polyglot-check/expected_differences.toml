@@ -1,0 +1,739 @@
+# The call spellings SQLQuack keeps as written where polyglot lowers them into a cross-dialect
+# node, in Snowflake. The exact check (crates/sqlquack-polyglot-check) puts each kept call back
+# into polyglot's form by parsing the call's own text with polyglot's lowering; the result must
+# equal polyglot's tree, and every (name, node) pair it puts back must be listed here.
+#
+# Every entry changes spelling only: the kept call is the written name and arguments, covering
+# exactly the tokens polyglot's node covers. Where a note says polyglot merges spellings, keeping
+# the call is what stops a rule written for one spelling from silently converting another.
+# Calls in keyword syntax (EXTRACT(x FROM y), POSITION(a IN b), TRIM(BOTH ...)) stay typed.
+
+[[spelling]]
+name = "ABS"
+polyglot = ["abs"]
+note = "polyglot lowers it to node:abs"
+
+[[spelling]]
+name = "ACOS"
+polyglot = ["acos"]
+note = "polyglot lowers it to node:acos"
+
+[[spelling]]
+name = "ADD_MONTHS"
+polyglot = ["add_months"]
+note = "polyglot lowers it to node:add_months"
+
+[[spelling]]
+name = "ANY_VALUE"
+polyglot = ["any_value"]
+note = "polyglot lowers it to node:any_value"
+
+[[spelling]]
+name = "APPROX_COUNT_DISTINCT"
+polyglot = ["approx_count_distinct"]
+note = "polyglot lowers it to node:approx_count_distinct"
+
+[[spelling]]
+name = "ARRAY_AGG"
+polyglot = ["array_agg"]
+note = "polyglot lowers it to node:array_agg"
+
+[[spelling]]
+name = "ARRAY_APPEND"
+polyglot = ["array_append"]
+note = "polyglot lowers it to node:array_append"
+
+[[spelling]]
+name = "ARRAY_COMPACT"
+polyglot = ["array_compact"]
+note = "polyglot lowers it to node:array_compact"
+
+[[spelling]]
+name = "ARRAY_CONTAINS"
+polyglot = ["array_contains"]
+note = "polyglot lowers it to node:array_contains"
+
+[[spelling]]
+name = "ARRAY_DISTINCT"
+polyglot = ["array_distinct"]
+note = "polyglot lowers it to node:array_distinct"
+
+[[spelling]]
+name = "ARRAY_EXCEPT"
+polyglot = ["array_except"]
+note = "polyglot lowers it to node:array_except"
+
+[[spelling]]
+name = "ARRAY_INTERSECT"
+polyglot = ["array_intersect"]
+note = "polyglot lowers it to node:array_intersect"
+
+[[spelling]]
+name = "ARRAY_LENGTH"
+polyglot = ["array_length"]
+note = "polyglot lowers it to node:array_length"
+
+[[spelling]]
+name = "ARRAY_POSITION"
+polyglot = ["array_position"]
+note = "polyglot lowers it to node:array_position"
+
+[[spelling]]
+name = "ARRAY_PREPEND"
+polyglot = ["array_prepend"]
+note = "polyglot lowers it to node:array_prepend"
+
+[[spelling]]
+name = "ARRAY_REMOVE"
+polyglot = ["array_remove"]
+note = "polyglot lowers it to node:array_remove"
+
+[[spelling]]
+name = "ARRAY_REVERSE"
+polyglot = ["array_reverse"]
+note = "polyglot lowers it to node:array_reverse"
+
+[[spelling]]
+name = "ARRAY_SIZE"
+polyglot = ["array_size"]
+note = "polyglot lowers it to node:array_size"
+
+[[spelling]]
+name = "ASIN"
+polyglot = ["asin"]
+note = "polyglot lowers it to node:asin"
+
+[[spelling]]
+name = "ATAN"
+polyglot = ["atan"]
+note = "polyglot lowers it to node:atan"
+
+[[spelling]]
+name = "ATAN2"
+polyglot = ["atan2"]
+note = "polyglot lowers it to node:atan2"
+
+[[spelling]]
+name = "AVG"
+polyglot = ["avg"]
+note = "polyglot lowers it to node:avg"
+
+[[spelling]]
+name = "BOOL_AND"
+polyglot = ["logical_and"]
+note = "polyglot merges BOOL_AND and EVERY"
+
+[[spelling]]
+name = "BOOL_OR"
+polyglot = ["logical_or"]
+note = "polyglot lowers it to node:logical_or"
+
+[[spelling]]
+name = "CEIL"
+polyglot = ["ceil"]
+note = "polyglot lowers it to node:ceil"
+
+[[spelling]]
+name = "CEILING"
+polyglot = ["ceil"]
+note = "polyglot merges CEIL and CEILING"
+
+[[spelling]]
+name = "CHARACTER_LENGTH"
+polyglot = ["length"]
+note = "polyglot merges LEN, LENGTH, CHAR_LENGTH and CHARACTER_LENGTH"
+
+[[spelling]]
+name = "CHAR_LENGTH"
+polyglot = ["length"]
+note = "polyglot merges LEN, LENGTH, CHAR_LENGTH and CHARACTER_LENGTH"
+
+[[spelling]]
+name = "COALESCE"
+polyglot = ["coalesce"]
+note = "polyglot lowers it to node:coalesce"
+
+[[spelling]]
+name = "CONTAINS"
+polyglot = ["contains"]
+note = "polyglot lowers it to node:contains"
+
+[[spelling]]
+name = "COS"
+polyglot = ["cos"]
+note = "polyglot lowers it to node:cos"
+
+[[spelling]]
+name = "COUNT"
+polyglot = ["count"]
+note = "polyglot lowers it to node:count"
+
+[[spelling]]
+name = "COUNTIF"
+polyglot = ["count_if"]
+note = "polyglot merges COUNTIF and COUNT_IF"
+
+[[spelling]]
+name = "COUNT_IF"
+polyglot = ["count_if"]
+note = "polyglot lowers it to node:count_if"
+
+[[spelling]]
+name = "CUME_DIST"
+polyglot = ["cume_dist"]
+note = "polyglot lowers it to node:cume_dist"
+
+[[spelling]]
+name = "CURRENT_SCHEMAS"
+polyglot = ["current_schemas"]
+note = "polyglot lowers it to node:current_schemas"
+
+[[spelling]]
+name = "DATEDIFF"
+polyglot = ["date_diff"]
+note = "polyglot merges DATEDIFF, DATE_DIFF, TIMEDIFF and TIMESTAMPDIFF"
+
+[[spelling]]
+name = "DATEPART"
+polyglot = ["function"]
+note = "polyglot renames it DATE_PART"
+
+[[spelling]]
+name = "DATE_DIFF"
+polyglot = ["date_diff"]
+note = "polyglot merges DATEDIFF, DATE_DIFF, TIMEDIFF and TIMESTAMPDIFF"
+
+[[spelling]]
+name = "DAY"
+polyglot = ["day"]
+note = "polyglot lowers it to node:day"
+
+[[spelling]]
+name = "DAYOFMONTH"
+polyglot = ["day_of_month"]
+note = "polyglot lowers it to node:day_of_month"
+
+[[spelling]]
+name = "DAYOFWEEK"
+polyglot = ["day_of_week"]
+note = "polyglot lowers it to node:day_of_week"
+
+[[spelling]]
+name = "DAYOFYEAR"
+polyglot = ["day_of_year"]
+note = "polyglot lowers it to node:day_of_year"
+
+[[spelling]]
+name = "DAY_OF_MONTH"
+polyglot = ["day_of_month"]
+note = "polyglot lowers it to node:day_of_month"
+
+[[spelling]]
+name = "DAY_OF_WEEK"
+polyglot = ["day_of_week"]
+note = "polyglot lowers it to node:day_of_week"
+
+[[spelling]]
+name = "DAY_OF_YEAR"
+polyglot = ["day_of_year"]
+note = "polyglot lowers it to node:day_of_year"
+
+[[spelling]]
+name = "DEGREES"
+polyglot = ["degrees"]
+note = "polyglot lowers it to node:degrees"
+
+[[spelling]]
+name = "DENSE_RANK"
+polyglot = ["dense_rank"]
+note = "polyglot lowers it to node:dense_rank"
+
+[[spelling]]
+name = "ELEMENT_AT"
+polyglot = ["element_at"]
+note = "polyglot lowers it to node:element_at"
+
+[[spelling]]
+name = "ENDSWITH"
+polyglot = ["ends_with"]
+note = "polyglot lowers it to node:ends_with"
+
+[[spelling]]
+name = "ENDS_WITH"
+polyglot = ["ends_with"]
+note = "polyglot lowers it to node:ends_with"
+
+[[spelling]]
+name = "EPOCH"
+polyglot = ["epoch"]
+note = "polyglot lowers it to node:epoch"
+
+[[spelling]]
+name = "EPOCH_MS"
+polyglot = ["epoch_ms"]
+note = "polyglot lowers it to node:epoch_ms"
+
+[[spelling]]
+name = "EVERY"
+polyglot = ["logical_and"]
+note = "polyglot merges BOOL_AND and EVERY"
+
+[[spelling]]
+name = "EXP"
+polyglot = ["exp"]
+note = "polyglot lowers it to node:exp"
+
+[[spelling]]
+name = "EXPLODE"
+polyglot = ["explode"]
+note = "polyglot lowers it to node:explode"
+
+[[spelling]]
+name = "FIRST"
+polyglot = ["first"]
+note = "polyglot lowers it to node:first"
+
+[[spelling]]
+name = "FIRST_VALUE"
+polyglot = ["first_value"]
+note = "polyglot lowers it to node:first_value"
+
+[[spelling]]
+name = "FLOOR"
+polyglot = ["floor"]
+note = "polyglot lowers it to node:floor"
+
+[[spelling]]
+name = "GROUP_CONCAT"
+polyglot = ["group_concat"]
+note = "polyglot lowers it to node:group_concat"
+
+[[spelling]]
+name = "HOUR"
+polyglot = ["hour"]
+note = "polyglot lowers it to node:hour"
+
+[[spelling]]
+name = "IF"
+polyglot = ["if_func"]
+note = "polyglot merges IIF, IF and IFF into one node"
+
+[[spelling]]
+name = "IFF"
+polyglot = ["if_func"]
+note = "polyglot merges IIF, IF and IFF into one node"
+
+[[spelling]]
+name = "IFNULL"
+polyglot = ["coalesce"]
+note = "polyglot merges it into COALESCE"
+
+[[spelling]]
+name = "IIF"
+polyglot = ["if_func"]
+note = "polyglot merges IIF, IF and IFF into one node"
+
+[[spelling]]
+name = "INITCAP"
+polyglot = ["initcap"]
+note = "polyglot lowers it to node:initcap"
+
+[[spelling]]
+name = "JSON_ARRAY_LENGTH"
+polyglot = ["json_array_length"]
+note = "polyglot lowers it to node:json_array_length"
+
+[[spelling]]
+name = "JSON_EXTRACT"
+polyglot = ["json_extract"]
+note = "polyglot lowers it to node:json_extract"
+
+[[spelling]]
+name = "JSON_EXTRACT_SCALAR"
+polyglot = ["json_extract_scalar"]
+note = "polyglot lowers it to node:json_extract_scalar"
+
+[[spelling]]
+name = "JSON_KEYS"
+polyglot = ["json_keys"]
+note = "polyglot lowers it to node:json_keys"
+
+[[spelling]]
+name = "JSON_OBJECT"
+polyglot = ["json_object"]
+note = "polyglot lowers it to node:json_object"
+
+[[spelling]]
+name = "LAG"
+polyglot = ["lag"]
+note = "polyglot lowers it to node:lag"
+
+[[spelling]]
+name = "LAST_DAY"
+polyglot = ["last_day"]
+note = "polyglot lowers it to node:last_day"
+
+[[spelling]]
+name = "LAST_VALUE"
+polyglot = ["last_value"]
+note = "polyglot lowers it to node:last_value"
+
+[[spelling]]
+name = "LCASE"
+polyglot = ["lower"]
+note = "polyglot merges LCASE and LOWER"
+
+[[spelling]]
+name = "LEAD"
+polyglot = ["lead"]
+note = "polyglot lowers it to node:lead"
+
+[[spelling]]
+name = "LEN"
+polyglot = ["length"]
+note = "polyglot merges LEN, LENGTH, CHAR_LENGTH and CHARACTER_LENGTH"
+
+[[spelling]]
+name = "LENGTH"
+polyglot = ["length"]
+note = "polyglot merges LEN, LENGTH, CHAR_LENGTH and CHARACTER_LENGTH"
+
+[[spelling]]
+name = "LISTAGG"
+polyglot = ["list_agg"]
+note = "polyglot lowers it to node:list_agg"
+
+[[spelling]]
+name = "LN"
+polyglot = ["ln"]
+note = "polyglot lowers it to node:ln"
+
+[[spelling]]
+name = "LOCATE"
+polyglot = ["str_position"]
+note = "polyglot merges POSITION and LOCATE, reordering arguments"
+
+[[spelling]]
+name = "LOG"
+polyglot = ["log"]
+note = "polyglot lowers it to node:log"
+
+[[spelling]]
+name = "LOWER"
+polyglot = ["lower"]
+note = "polyglot lowers it to node:lower"
+
+[[spelling]]
+name = "MAP_CONTAINS_KEY"
+polyglot = ["map_contains_key"]
+note = "polyglot lowers it to node:map_contains_key"
+
+[[spelling]]
+name = "MAP_KEYS"
+polyglot = ["map_keys"]
+note = "polyglot lowers it to node:map_keys"
+
+[[spelling]]
+name = "MAP_VALUES"
+polyglot = ["map_values"]
+note = "polyglot lowers it to node:map_values"
+
+[[spelling]]
+name = "MAX"
+polyglot = ["max"]
+note = "polyglot lowers it to node:max"
+
+[[spelling]]
+name = "MEDIAN"
+polyglot = ["median"]
+note = "polyglot lowers it to node:median"
+
+[[spelling]]
+name = "MIN"
+polyglot = ["min"]
+note = "polyglot lowers it to node:min"
+
+[[spelling]]
+name = "MINUTE"
+polyglot = ["minute"]
+note = "polyglot lowers it to node:minute"
+
+[[spelling]]
+name = "MOD"
+polyglot = ["mod_func"]
+note = "polyglot lowers it to a modulo node, which prints as an operator"
+
+[[spelling]]
+name = "MODE"
+polyglot = ["mode"]
+note = "polyglot lowers it to node:mode"
+
+[[spelling]]
+name = "MONTH"
+polyglot = ["month"]
+note = "polyglot lowers it to node:month"
+
+[[spelling]]
+name = "MONTHS_BETWEEN"
+polyglot = ["months_between"]
+note = "polyglot lowers it to node:months_between"
+
+[[spelling]]
+name = "NEXT_DAY"
+polyglot = ["next_day"]
+note = "polyglot lowers it to node:next_day"
+
+[[spelling]]
+name = "NTH_VALUE"
+polyglot = ["nth_value"]
+note = "polyglot lowers it to node:nth_value"
+
+[[spelling]]
+name = "NTILE"
+polyglot = ["n_tile"]
+note = "polyglot lowers it to node:n_tile"
+
+[[spelling]]
+name = "NVL"
+polyglot = ["nvl"]
+note = "polyglot gives it a node shared with other dialects' NVL"
+
+[[spelling]]
+name = "NVL2"
+polyglot = ["nvl2"]
+note = "polyglot lowers it to node:nvl2"
+
+[[spelling]]
+name = "PARSE_JSON"
+polyglot = ["parse_json"]
+note = "polyglot lowers it to node:parse_json"
+
+[[spelling]]
+name = "PERCENT_RANK"
+polyglot = ["percent_rank"]
+note = "polyglot lowers it to node:percent_rank"
+
+[[spelling]]
+name = "PI"
+polyglot = ["pi"]
+note = "polyglot lowers it to node:pi"
+
+[[spelling]]
+name = "POSITION"
+polyglot = ["str_position"]
+note = "polyglot merges POSITION and LOCATE, reordering arguments"
+
+[[spelling]]
+name = "POW"
+polyglot = ["power"]
+note = "polyglot renames it POWER"
+
+[[spelling]]
+name = "QUARTER"
+polyglot = ["quarter"]
+note = "polyglot lowers it to node:quarter"
+
+[[spelling]]
+name = "RADIANS"
+polyglot = ["radians"]
+note = "polyglot lowers it to node:radians"
+
+[[spelling]]
+name = "RAND"
+polyglot = ["rand"]
+note = "polyglot lowers it to node:rand"
+
+[[spelling]]
+name = "RANDOM"
+polyglot = ["rand", "random"]
+note = "polyglot lowers it to RANDOM or RAND by arity"
+
+[[spelling]]
+name = "RANK"
+polyglot = ["rank"]
+note = "polyglot lowers it to node:rank"
+
+[[spelling]]
+name = "ROW_NUMBER"
+polyglot = ["row_number"]
+note = "polyglot lowers it to node:row_number"
+
+[[spelling]]
+name = "SECOND"
+polyglot = ["second"]
+note = "polyglot lowers it to node:second"
+
+[[spelling]]
+name = "SIN"
+polyglot = ["sin"]
+note = "polyglot lowers it to node:sin"
+
+[[spelling]]
+name = "SQRT"
+polyglot = ["sqrt"]
+note = "polyglot lowers it to node:sqrt"
+
+[[spelling]]
+name = "STARTSWITH"
+polyglot = ["starts_with"]
+note = "polyglot lowers it to node:starts_with"
+
+[[spelling]]
+name = "STARTS_WITH"
+polyglot = ["starts_with"]
+note = "polyglot lowers it to node:starts_with"
+
+[[spelling]]
+name = "STDDEV"
+polyglot = ["stddev"]
+note = "polyglot lowers it to node:stddev"
+
+[[spelling]]
+name = "STDDEV_POP"
+polyglot = ["stddev_pop"]
+note = "polyglot lowers it to node:stddev_pop"
+
+[[spelling]]
+name = "STDDEV_SAMP"
+polyglot = ["stddev_samp"]
+note = "polyglot lowers it to node:stddev_samp"
+
+[[spelling]]
+name = "STRING_AGG"
+polyglot = ["string_agg"]
+note = "polyglot lowers it to node:string_agg"
+
+[[spelling]]
+name = "SUBSTR"
+polyglot = ["substring"]
+note = "polyglot merges SUBSTR and SUBSTRING"
+
+[[spelling]]
+name = "SUBSTRING"
+polyglot = ["substring"]
+note = "polyglot merges SUBSTR and SUBSTRING"
+
+[[spelling]]
+name = "SUM"
+polyglot = ["sum"]
+note = "polyglot lowers it to node:sum"
+
+[[spelling]]
+name = "TAN"
+polyglot = ["tan"]
+note = "polyglot lowers it to node:tan"
+
+[[spelling]]
+name = "TIMEDIFF"
+polyglot = ["date_diff"]
+note = "polyglot merges DATEDIFF, DATE_DIFF, TIMEDIFF and TIMESTAMPDIFF"
+
+[[spelling]]
+name = "TIMESTAMPDIFF"
+polyglot = ["date_diff"]
+note = "polyglot merges DATEDIFF, DATE_DIFF, TIMEDIFF and TIMESTAMPDIFF"
+
+[[spelling]]
+name = "TIME_TO_TIME_STR"
+polyglot = ["cast"]
+note = "polyglot lowers it to a cast to text"
+
+[[spelling]]
+name = "TOTYPENAME"
+polyglot = ["typeof"]
+note = "polyglot merges TOTYPENAME and TYPEOF"
+
+[[spelling]]
+name = "TO_DECIMAL"
+polyglot = ["to_number"]
+note = "polyglot merges TO_DECIMAL, TO_NUMBER and TO_NUMERIC"
+
+[[spelling]]
+name = "TO_JSON"
+polyglot = ["to_json"]
+note = "polyglot lowers it to node:to_json"
+
+[[spelling]]
+name = "TO_NUMBER"
+polyglot = ["to_number"]
+note = "polyglot merges TO_DECIMAL, TO_NUMBER and TO_NUMERIC"
+
+[[spelling]]
+name = "TO_NUMERIC"
+polyglot = ["to_number"]
+note = "polyglot merges TO_DECIMAL, TO_NUMBER and TO_NUMERIC"
+
+[[spelling]]
+name = "TRIM"
+polyglot = ["trim"]
+note = "polyglot lowers it to node:trim"
+
+[[spelling]]
+name = "TRY_TO_DECIMAL"
+polyglot = ["to_number"]
+note = "polyglot merges TRY_ and non-TRY spellings into one node with a flag"
+
+[[spelling]]
+name = "TRY_TO_NUMBER"
+polyglot = ["to_number"]
+note = "polyglot merges TRY_ and non-TRY spellings into one node with a flag"
+
+[[spelling]]
+name = "TRY_TO_NUMERIC"
+polyglot = ["to_number"]
+note = "polyglot merges TRY_ and non-TRY spellings into one node with a flag"
+
+[[spelling]]
+name = "TYPEOF"
+polyglot = ["typeof"]
+note = "polyglot lowers it to node:typeof"
+
+[[spelling]]
+name = "UCASE"
+polyglot = ["upper"]
+note = "polyglot merges UCASE and UPPER"
+
+[[spelling]]
+name = "UPPER"
+polyglot = ["upper"]
+note = "polyglot lowers it to node:upper"
+
+[[spelling]]
+name = "VARIANCE"
+polyglot = ["variance"]
+note = "polyglot lowers it to node:variance"
+
+[[spelling]]
+name = "VAR_POP"
+polyglot = ["var_pop"]
+note = "polyglot lowers it to node:var_pop"
+
+[[spelling]]
+name = "VAR_SAMP"
+polyglot = ["var_samp"]
+note = "polyglot lowers it to node:var_samp"
+
+[[spelling]]
+name = "WEEKOFYEAR"
+polyglot = ["week_of_year"]
+note = "polyglot lowers it to node:week_of_year"
+
+[[spelling]]
+name = "WEEK_OF_YEAR"
+polyglot = ["week_of_year"]
+note = "polyglot lowers it to node:week_of_year"
+
+[[spelling]]
+name = "YEAR"
+polyglot = ["year"]
+note = "polyglot lowers it to node:year"
+
+# Valid Snowflake polyglot rejects and SQLQuack parses. The check counts an entry as fixed only
+# when polyglot's error contains one of `polyglot_errors` and the statement, without whitespace, contains
+# `marker`; crates/sqlquack-syntax/tests/fixes.rs pins SQLQuack's tree for each fix.
+
+[[fix]]
+id = "index_then_key_path"
+marker = "]:"
+polyglot_errors = ["Invalid expression / Unexpected token", "Expected RParen, got Colon (':')"]
+note = "v[3]:a is a key path on an array element; polyglot accepts a path only after a column, path or call"

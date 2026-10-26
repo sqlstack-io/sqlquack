@@ -8,17 +8,20 @@ differently, decimal division keeps a different scale. SQLQuack takes the opposi
 conversion either comes from a rule verified against recorded Snowflake results, or it is refused
 with a precise reason: the construct, where it is, and why.
 
-**Status: early.** No conversion rules exist yet, so SQLQuack currently refuses every construct. What
-works today:
+**Status: early.** A first set of rules converts the relational core, exact NUMBER arithmetic,
+comparisons, conditionals, casts, basic string functions, aggregates and window functions;
+everything else is refused. What works today:
 
-- parsing Snowflake SQL with [polyglot](https://github.com/chio-labs/polyglot) and classifying every
-  function, operator, type, cast, join and clause in it;
-- a structured refusal for each construct: *missing rule*, *not expressible in DuckDB*, or
-  *parse fidelity*;
-- two re-parse checks: printing the Snowflake tree back to Snowflake, and checking that DuckDB SQL
-  parses back to the tree it was printed from;
+- parsing Snowflake SQL with SQLQuack's own parser, derived from
+  [polyglot](https://github.com/chio-labs/polyglot), which keeps every call as written, and
+  classifying every function, operator, type, cast, join and clause in it;
+- a structured refusal for each construct: *missing rule*, *outside a rule's type conditions*,
+  *unresolved name*, *not expressible in DuckDB*, or *parse fidelity*;
+- DuckDB's own parse-and-bind check of every converted statement;
 - `sqlquack census`, which reports which constructs a body of SQL uses and how much of it would
-  convert as rules are added.
+  convert as rules are added;
+- `sqlquack index`, which maps every building block, typing function and rule to the cases and
+  SQL files whose conversions rely on it.
 
 ## Census
 
@@ -29,7 +32,23 @@ $ cargo run --release -p sqlquack -- census path/to/sql --json
 
 Each `.sql` file is one query, or one model compiled by
 [SQLBuild](https://github.com/chio-labs/sqlbuild); SQLBuild's reference calls are recognised. The
-report contains counts and construct names only, never SQL text or file names.
+report contains counts and construct names only, never SQL text or file names. Conversion needs the
+column types of the relations a file reads: `--schema` takes a JSON file mapping relation names to
+`[column, Snowflake type]` pairs, and `--chain-models` types each converted file as the relation
+its file name references, then converts again.
+
+## Index
+
+```console
+$ cargo run -p sqlquack -- index                       # the evidence cases
+$ cargo run -p sqlquack -- index path/to/sql --schema schema.json --json
+```
+
+Every conversion records the rules it applied and, per rule, the DuckDB building blocks and
+Snowflake typing functions it called. `sqlquack index` inverts those records: building block →
+rules → cases and files, and rule → cases and files, with refused constructs listed the same way.
+Every list is sorted, so the output of two revisions can be diffed to see which cases a change to
+one building block affects.
 
 ## Evidence
 
@@ -49,6 +68,11 @@ in `~/.snowflake/connections.toml`. `SNOWFLAKE_ACCOUNT`, `SNOWFLAKE_USER`, `SNOW
 authorization-code login is interactive only when the cached token has expired.
 
 The policy that governs comparison lives in [sqlquack.toml](sqlquack.toml).
+
+For human review, `cargo run -p sqlquack -- review --out review` writes one sqllogictest-style
+`.slt` file per case file: each case's description, verdict, rules and divergence warnings, the
+Snowflake SQL, the DuckDB SQL or the refusal, and the recorded result with its Snowflake column types
+and exact values. The export is for reading only; recorded Arrow results stay the evidence.
 
 ## How it works
 

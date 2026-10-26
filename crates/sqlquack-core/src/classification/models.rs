@@ -79,6 +79,6 @@ impl Serialize for Construct {
 pub struct Occurrence {
     /// The construct used.
     pub construct: Construct,
-    /// Where it is, when polyglot kept a position for the node or one of its neighbours.
+    /// Where it is, when the parser kept a position for the node or one of its neighbours.
     pub location: Option<SourceLocation>,
 }

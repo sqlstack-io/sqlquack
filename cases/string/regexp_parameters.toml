@@ -1,0 +1,21 @@
+category = "string"
+construct = "fn:REGEXP_LIKE"
+session_profile = "utc-v1"
+
+[[case]]
+id = "regexp_like_insensitive"
+description = "REGEXP_LIKE with 'i': ASCII and non-ASCII letters in other cases, and 'c' after 'i'."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [["'Gift Wrap'"], ["'GIFT wrap'"], ["'gift'"], ["'ÉCLAIR'"], ["'éclair'"], ["''"], ["'  '"], ["NULL"]]
+query = "SELECT REGEXP_LIKE(s, 'gift.*', 'i') AS a, REGEXP_LIKE(s, 'éclair', 'i') AS b, REGEXP_LIKE(s, 'gift.*', 'ic') AS c FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "empty", "whitespace", "unicode"]
+
+[[case]]
+id = "regexp_like_dot_all"
+description = "REGEXP_LIKE with and without 's' over text holding line feeds, tabs and carriage returns."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [["'a\nb'"], ["'a\tb'"], ["'a\r\nb'"], ["'ab'"], ["''"], ["NULL"], ["'ü\nü'"]]
+query = "SELECT REGEXP_LIKE(s, 'a.*b') AS plain, REGEXP_LIKE(s, 'a.*b', 's') AS dot_all, REGEXP_LIKE(s, 'A.*B', 'is') AS si FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "empty", "whitespace", "unicode"]

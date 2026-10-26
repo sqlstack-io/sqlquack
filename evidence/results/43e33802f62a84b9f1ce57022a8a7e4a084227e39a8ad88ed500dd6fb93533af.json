@@ -1,0 +1,28 @@
+{
+  "arrow_sha256": null,
+  "case_hash": "43e33802f62a84b9f1ce57022a8a7e4a084227e39a8ad88ed500dd6fb93533af",
+  "columns": [],
+  "connector": "snowflake-connector-python 4.7.2",
+  "duckdb_version": "v2.0.0",
+  "error": {
+    "errno": 1038,
+    "message": "SQL compilation error:\nCan not convert parameter 'INPUT.X' of type [BINARY(67108864)] into expected type [VARIANT]",
+    "sqlstate": "22023"
+  },
+  "format": 1,
+  "outcome": "error",
+  "query_id_sha256": "fbf7074b7d2149bccf7a739b2c51169b5efc36b3f1fd5460498a2d6f00ed9582",
+  "recorded_at": "2026-10-25T23:16:32Z",
+  "recorder": "sqlquack-record 0.1.0",
+  "row_count": null,
+  "session_parameters": {
+    "DEFAULT_NULL_ORDERING": "LAST",
+    "QUOTED_IDENTIFIERS_IGNORE_CASE": false,
+    "TIMESTAMP_TYPE_MAPPING": "TIMESTAMP_NTZ",
+    "TIMEZONE": "UTC",
+    "USE_CACHED_RESULT": false,
+    "WEEK_OF_YEAR_POLICY": 0,
+    "WEEK_START": 0
+  },
+  "warehouse_version": "10.38.102"
+}

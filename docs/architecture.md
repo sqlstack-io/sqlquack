@@ -1,5 +1,8 @@
 # Architecture
 
+The tokenizer, parser and syntax tree, and how they move from polyglot into SQLQuack, are
+designed in [syntax.md](syntax.md).
+
 ## Principle
 
 SQLQuack never passes a construct through unconverted. Identical syntax in two dialects is not
@@ -9,13 +12,12 @@ against recorded Snowflake results, under stated type conditions. Anything else 
 ## Pipeline
 
 ```
-source SQL ─ parse (polyglot, source dialect) ─▶ tree
-  ├─ fidelity: print back in the source dialect, re-parse, compare    (else refuse: parse fidelity)
+source SQL ─ parse (sqlquack-syntax, source dialect, calls as written) ─▶ tree   (else refuse: parse fidelity)
   ├─ classify: every node, function, cast type, join kind and clause  (one construct each)
   ├─ convert:  each construct must be claimed by a rule               (else refuse: missing rule,
   │                                                                     or not expressible)
-  ├─ print:    polyglot's DuckDB printer
-  └─ check:    re-parse the DuckDB SQL and compare with the intended tree (else refuse: printer)
+  ├─ print:    SQLQuack's DuckDB building blocks
+  └─ check:    DuckDB parses and binds the printed SQL
 ```
 
 Today the rule catalogue is empty, so the convert step refuses every construct. The source dialect is
@@ -25,14 +27,17 @@ a parameter of every entry point; Snowflake is the only one implemented.
 
 | Crate | Role |
 |---|---|
-| `sqlquack-core` | Parsing with complexity guards, construct classification, refusals, the tree comparator and both re-parse checks. |
-| `sqlquack-snowflake` | The Snowflake typing layer (empty). Polyglot leaves many Snowflake expressions untyped, so exact types (`NUMBER(p, s)`, timestamp kinds, semi-structured values) are computed here. |
-| `sqlquack-rules` | The rule catalogue and declared refusals (empty). |
-| `sqlquack-duckdb` | DuckDB building blocks shared by rules (empty). |
+| `sqlquack-syntax` | The tokenizer with lossless tokens, the parser with strict and tolerant modes, and the syntax tree, for Snowflake and DuckDB. Derived from polyglot; see [syntax.md](syntax.md). Every parse in the pipeline goes through it. |
+| `sqlquack-syntax-derive` | The derive that generates the tree's child traversal. |
+| `sqlquack-polyglot-check` | Development only: proves `sqlquack-syntax` parses exactly as polyglot does, on every corpus. |
+| `sqlquack-core` | Parsing with complexity guards, construct classification, refusals and provenance. |
+| `sqlquack-snowflake` | The Snowflake typing layer. Polyglot leaves many Snowflake expressions untyped, so exact types (`NUMBER(p, s)`, timestamp kinds, semi-structured values) are computed here. |
+| `sqlquack-rules` | The conversion rules, their type conditions, and declared refusals. |
+| `sqlquack-duckdb` | DuckDB building blocks shared by rules, and DuckDB's own parse-and-bind check of every converted statement. |
 | `sqlquack-policy` | The policy file `sqlquack.toml`: schema, validation and type-pattern matching. |
 | `sqlquack-compare` | The strict comparator between a recorded result and a DuckDB replay or a fresh recording. |
 | `sqlquack-evidence` | Cases, case hashes, pending files, stored results, DuckDB replay, verification and audits. |
-| `sqlquack` | The `sqlquack` command line and the library entry points: the pipeline, the census and the evidence commands. |
+| `sqlquack` | The `sqlquack` command line and the library entry points: the pipeline, the census, the index and the evidence commands. |
 
 DuckDB is pinned exactly (`duckdb = "=1.20000.0"`, DuckDB v2.0.0). Its build script downloads the
 matching prebuilt `libduckdb`, so binaries are run with `cargo run`, which sets the library path.
@@ -47,9 +52,10 @@ off: none of its own conversions are used.
 
 A construct is a key `<family>:<name>`:
 
-- `node:<kind>`: a polyglot AST node kind, such as `node:select`, `node:eq` or `node:coalesce`;
-- `fn:<NAME>`: a function polyglot keeps as a generic call, by upper-case name; calls to project
-  functions are one construct, `fn:<udf>`;
+- `node:<kind>`: a syntax tree node kind, such as `node:select`, `node:eq` or `node:extract`;
+- `fn:<NAME>`: a call, by its upper-case name as written; the tree keeps every Snowflake call as
+  written (see `docs/syntax.md`, step 5), so `fn:IFNULL` and `fn:COALESCE` are distinct; calls to
+  project functions are one construct, `fn:<udf>`;
 - `cast:<TYPE>`: the base target type of a cast, as polyglot prints it in the source dialect;
 - `join:<kind>`: a join kind;
 - `clause:<name>`: a query clause or set-operation form, such as `clause:qualify` or
@@ -70,22 +76,176 @@ a reason:
 
 - **missing rule**: no verified rule converts the construct yet;
 - **not expressible in DuckDB**: declared in the catalogue with a reason and evidence;
-- **parse fidelity**: the SQL does not parse, or printing it back changes its tree.
+- **parse fidelity**: the SQL does not parse.
 
-## Tree comparison
+## Spelling pairs
 
-Both re-parse checks compare trees as JSON after removing a declared list of spelling-only fields
-(source positions, comments, `::` versus `CAST`, optional keywords and similar) and applying a
-declared list of normalisations (function-name case, dollar-quoted strings, comment wrappers). Each
-entry weakens the checks, so each has a reason and a test showing that two spellings parse to trees
-that differ only there. A mismatch reports the first differing JSON path.
+The tree keeps every call as written, so each spelling reaches a rule only through its own entry in
+`CALL_SPELLINGS`, backed by recorded cases that use it. Where two spellings mean the same thing,
+recorded pairs prove it: a case file under `cases/fidelity/` declares `equivalence = "<id>"`, one of
+the pairs in `SPELLING_PAIRS` (`sqlquack-rules`), and gives every case a second, `canonical`
+spelling. Both are recorded, and `sqlquack verify` requires the two results to be identical. A rule
+that converts both spellings of a pair cites the pair in its provenance.
 
-## Source fidelity
+| Id | Spelling | Second spelling |
+|---|---|---|
+| `variant_path_to_get_path` | `v:a.b[0]` | `GET_PATH(v, 'a.b[0]')` |
+| `text_type_to_varchar` | `TEXT`, `STRING`, `STRING(n)` | `VARCHAR`, `VARCHAR(n)` |
+| `position_to_charindex` | `POSITION(s, t [, n])`, `POSITION(s IN t)` | `CHARINDEX(s, t [, n])` |
+| `rlike_to_regexp_like` | `t RLIKE p` | `REGEXP_LIKE(t, p)` |
+| `mod_function_to_operator` | `MOD(a, b)` | `a % b` |
+| `from_values_to_subquery` | `FROM VALUES (...) AS v(c)` | `FROM (VALUES (...)) AS v(c)` |
+| `len_to_length` | `LEN(s)` | `LENGTH(s)` |
+| `to_number_to_cast` | `TO_NUMBER(s [, p [, s]])`, `TO_DECIMAL`, `TO_NUMERIC` and their `TRY_` forms | `CAST(s AS NUMBER(p, s))`, `TRY_CAST(...)` |
+| `to_varchar_to_cast` | `TO_VARCHAR(x)`, `TO_CHAR(x)` | `CAST(x AS VARCHAR)` |
+| `to_double_to_cast` | `TO_DOUBLE(s)`, `TRY_TO_DOUBLE(s)` | `CAST(s AS FLOAT)`, `TRY_CAST(s AS FLOAT)` |
+| `timediff_to_datediff` | `TIMEDIFF(unit, a, b)` | `DATEDIFF(unit, a, b)` |
+| `timestampdiff_to_datediff` | `TIMESTAMPDIFF(unit, a, b)` | `DATEDIFF(unit, a, b)` |
+| `part_functions_to_date_part` | `YEAR(x)`, `QUARTER(x)`, `MONTH(x)`, `DAY(x)`, `HOUR(x)`, `MINUTE(x)`, `SECOND(x)` | `DATE_PART(unit, x)` |
 
-A statement is printed back in its own dialect and re-parsed. If the tree is unchanged it is
-faithful. If it changes once and then settles, the change is a canonicalisation (for example `TOP`
-becoming `LIMIT`); canonicalisations are refused until a recorded case proves both forms agree on
-Snowflake. A tree that keeps changing is refused as unstable.
+Spellings other engines accept that are not in Snowflake's function reference
+(`NOT_SNOWFLAKE_FUNCTIONS`, such as `CHAR_LENGTH`, `IF` or `STARTS_WITH`) are refused with the
+reason "not in Snowflake's function reference". The refusal claims only that absence; no
+recording shows Snowflake rejecting them.
+
+The parser stores `v:"a.b"` and `v:a.b` as the same path although they name different keys, so a
+rule for `:` paths must read the path from the source tokens.
+
+## Conversion
+
+Conversion works on the parsed tree, statement by statement, in three layers:
+
+- **Typing** (`sqlquack-snowflake`): exact Snowflake result types, each function derived from
+  recorded results, such as `NUMBER(p,s)` for `+ - * /`, the unification of CASE, COALESCE, IFF,
+  NVL and set operation branches, and cast targets.
+- **Building blocks** (`sqlquack-duckdb`): DuckDB fragments with Snowflake semantics, such as exact
+  decimal division rounding half away from zero, NULL-propagating concatenation, explicit NULL
+  ordering, or text conversions that accept only spellings Snowflake is recorded to read.
+- **Rules** (`sqlquack-rules`): one rule per construct family, each stating the type conditions it
+  needs and refusing outside them. Names resolve against a schema of typed relations and the
+  statement's CTEs; anything unresolved is refused.
+
+DuckDB parses and binds the emitted SQL as a final check.
+
+### Schema interface
+
+SQLBuild hands SQLQuack one neutral schema: typed relations and the signatures of project
+functions, keyed by the names statements use once resolved (unquoted names upper-cased):
+
+```json
+{
+  "relations": {"ORDERS": [["ORDER_ID", "NUMBER(38,0)"], ["NOTE", "VARCHAR"]]},
+  "functions": {
+    "IS_GIFT": {"language": "python", "arguments": [["NOTE", "VARCHAR"]], "returns": "BOOLEAN"},
+    "OPEN_ORDERS": {
+      "language": "sql",
+      "arguments": [["MINIMUM", "NUMBER(10,2)"]],
+      "returns": {"table": [["ORDER_ID", "NUMBER(38,0)"]]}
+    }
+  }
+}
+```
+
+A file holding only the relations map, the earlier form, still loads. A relation or function using
+a type SQLQuack does not know is left out, so statements using it are refused.
+
+- A scalar call is typed by its signature (`rule.project_function_call`): as many arguments as
+  parameters, each of the parameter's type, NULL, or a NUMBER widened to a NUMBER or FLOAT
+  parameter; the emitted call `"NAME"(...)` is cast to the declared return type. Python functions
+  are opaque calls and take and return only VARCHAR, NUMBER, FLOAT and BOOLEAN until recordings
+  prove how other values cross into and out of Snowflake.
+- `TABLE(f(...))` of a table function is a relation of the declared columns, each cast to its
+  type (`rule.project_table_function`); its arguments may not read columns.
+- A SQL function's body converts through the same rules as a model (`analyze_function`): a scalar
+  body becomes `CAST((body) AS type)`, a table body a query, with the parameters a relation in
+  the outer scope. The result is a DuckDB macro body over parameters `p1`, `p2`, ...: the
+  parameters, cast to their types, joined LATERAL to the converted body. SQLBuild creates the
+  macro under the name calls use.
+- DuckDB's check of a statement defines a stand-in macro of each called function's shape.
+
+The census rewrites `__udf("name")` and `__table_fn("name")` to `__sqlquack_udf__name` and
+`__sqlquack_table_fn__name`, so a schema can declare them; calls are classified as `fn:<udf>`.
+Until SQLBuild writes the `functions` section itself, the census-only script
+`scripts/add_census_functions.py` reads the `CREATE FUNCTION` headers SQLBuild compiles under
+`target/compiled/functions` and adds them under those names; it is not part of the crates.
+
+### Known divergences
+
+The policy lists known divergences, each with the constructs it covers and a treatment in the
+default and in strict mode. A rule that may diverge asks the policy first: allowed, the conversion
+records the divergence and its construct, and reports carry a warning naming both; otherwise the
+construct is refused. `numeric_range` covers SUM and AVG totals beyond 38 digits, `+`, `-` and `*` whose
+capped result type may hold a 39-digit value (Snowflake keeps up to 128 bits under NUMBER(38)), and
+divisions whose exact intermediate exceeds 128 bits, where DuckDB raises an error and Snowflake
+returns a value. For `*`, the generated `*_range_edge` cases (products between 10^38 and 2^127)
+recorded Snowflake returning rows where DuckDB raises. A
+divergence never covers DuckDB returning a different value. `timestamp_range` covers TIMESTAMP_NTZ(7-9) values
+outside DuckDB's nanosecond range (1677-2262), and `timestamp_tz_submicro` covers TIMESTAMP_TZ and
+TIMESTAMP_LTZ(7-9) values with a non-zero sub-microsecond part, which DuckDB's microsecond
+TIMESTAMPTZ cannot hold; both raise at run time. Naive timestamps pair by precision: 0-6 with
+TIMESTAMP, 7-9 with TIMESTAMP_NS. Lowering a timestamp's precision truncates toward the past, as
+Snowflake does, rather than using DuckDB's rounding casts. CONVERT_TIMEZONE from a zone other than UTC
+reads a repeated wall time as its earlier instant and a skipped one with the offset before the
+transition, as Snowflake does; DuckDB alone takes the later instant, so `duckdb.zone_to_zone`
+tries the offset in effect a day earlier first. `json_fidelity` covers semi-structured values, held as DuckDB `JSON`
+(decision 3). DuckDB keeps non-integer numbers as doubles, reads a different set of lenient
+spellings, accepts repeated keys and keeps keys in input order; Snowflake keeps exact decimals,
+reads single quotes, NaN and undefined, rejects repeated keys and writes keys sorted. So
+`duckdb.json_guarded` raises for any text DuckDB might read differently: text DuckDB does not
+read as JSON, numbers with an exponent, an all-zero fraction, six leading fraction zeros, more
+than 15 decimal digits or 39 integer digits, letters and trailing commas outside strings,
+surrogate escapes and repeated keys at any depth. PARSE_JSON and TRY_PARSE_JSON raise alike, so
+TRY_PARSE_JSON never returns NULL on one side and a value on the other. VARIANT columns of base
+tables pass the same guard; writing an object as text raises when its keys are out of byte
+order. Documents the guard passes convert exactly. VARIANT result columns convert (user decision
+of 2026-10-25, superseding that part of decision 3): `duckdb.json_output` writes them as DuckDB
+`JSON`, raising for objects whose keys are out of byte order, and verify compares them with
+Snowflake's JSON text without whitespace outside strings. OBJECT_CONSTRUCT, OBJECT_INSERT and
+OBJECT_DELETE rebuild objects with keys in byte order, as Snowflake keeps them; keys are matched
+exactly and never read as paths. Values Snowflake keeps typed inside a VARIANT (dates,
+timestamps, times, binary, floats, decimals) are refused until recordings prove how they read
+back. VARIANT keys in ORDER BY, GROUP BY and PARTITION BY are refused.
+
+`variant_typed_values` covers DATE, TIMESTAMP_NTZ and TIMESTAMP_LTZ values put in a VARIANT (by
+TO_VARIANT, `::VARIANT` or an object constructor): DuckDB stores the JSON string Snowflake writes
+for them (batch 8 recorded `YYYY-MM-DD`, `YYYY-MM-DD HH:MI:SS.FFF` and an LTZ suffix ` Z` in UTC),
+so text output, paths and casts back match, and raises where that text drops sub-millisecond
+digits or a non-UTC offset. TYPEOF and IS_DATE-style checks of a string in such a text raise
+instead of answering VARCHAR or false. TIMESTAMP_TZ (DuckDB keeps no offset), TIME and BINARY (its
+upper-case hex text is indistinguishable from ordinary strings, `''` included) stay refused.
+IS_OBJECT, IS_ARRAY and IS_BOOLEAN test the JSON kind; OBJECT_KEYS, OBJECT_PICK, ARRAY_CONSTRUCT
+(a SQL NULL element, undefined in Snowflake, raises) and ARRAY_EXCEPT of string arrays keep keys
+in byte order; `::OBJECT` and `::ARRAY` of a VARIANT raise for another kind. LATERAL FLATTEN becomes a lateral subquery over
+`json_each` (`duckdb.json_flatten`); its PATH raises for object keys that are not plain names
+until their spelling is recorded. `percentile_interpolation` covers PERCENTILE_CONT between two different values:
+Snowflake's interpolated results carry rounding error in the last digits that no exact or double
+formula reproduces, so the converted SQL returns a value only where the fraction lands on a row
+(or between equal values) and raises otherwise. `date_text_spelling` covers TRY_TO_DATE and
+TRY_CAST to DATE of text in a spelling no recording shows.
+
+`hash` is the one divergence that returns a different value, by user decision (CHI-836): HASH
+converts to DuckDB's 64-bit hash shifted into the signed range, NUMBER(19,0), which is
+deterministic and equal for equal arguments in the same order within one run but never
+Snowflake's value. Integer NUMBERs hash by value whatever their precision, and a VARIANT by its
+JSON text with keys in byte order (raising under `json_fidelity` where DuckDB keeps another order);
+NUMBERs with a scale, FLOAT and timestamps are refused until recordings show which of their values
+Snowflake hashes alike. Its evidence records only these properties (determinism, equality,
+argument order, NULL handling and the result type), never the values. The warning names what
+breaks: literal hash values in expected output, hashes compared with Snowflake-computed ones,
+`HASH(x) % n` bucketing and ordering by a hash. RANDOM, UUID_STRING and sequences are to follow
+the same pattern.
+
+`sqlquack census --strict` and
+`sqlquack index --strict` refuse what strict mode refuses.
+
+### Provenance
+
+`ProvenanceLog::rule` returns a scope; while it is held, every building block and typing function
+called is attributed to that rule. A conversion's provenance holds the equivalences, rules,
+building blocks and typing functions it used, plus each rule's own uses, all sorted. A refusal
+records the refused construct. `sqlquack verify --json` reports both per case, the census reports
+how many converted files use each identifier, and `sqlquack index` inverts the records into
+identifier → rules → cases and files.
 
 ## Census
 
@@ -93,7 +253,44 @@ Snowflake. A tree that keeps changing is refused as unstable.
 use it, plus how many files would convert as the top N constructs get rules, in frequency order and
 in greedy order (each next rule is the one that completes the most files). SQLBuild reference calls
 (`__ref`, `__source`, `__seed`, `__udf`, `__table_fn`, cursor bounds) are replaced with neutral
-placeholders before parsing. The report holds counts and construct keys only.
+placeholders before parsing; each model, source or seed reference becomes a relation named after its
+arguments, so a `--schema` file can type it. The report holds counts and construct keys only.
+With `SQLQUACK_GUARDS_DIR` set, census also writes each converted file's known divergences there.
+
+### Guards in conditions
+
+A guard raises where DuckDB cannot reproduce Snowflake's value. In a WHERE, HAVING, QUALIFY or join
+condition, conjuncts holding a raise are written as `free AND CASE WHEN free THEN guarded ELSE FALSE
+END`, so a guard is evaluated only for rows the other conjuncts keep, whatever order DuckDB's
+optimizer chooses; the free conjuncts stay plain so filters still push down. A guard inside an OR
+or a single guarded condition is evaluated for every row reaching it, which may raise for a row
+whose value Snowflake would not need: a loud failure, never a different value.
+
+### Guard measurement
+
+`scripts/measure_guards.py` estimates how often known-divergence guards would raise on real rows.
+Its sources file lists probes: a guarded Snowflake expression rewritten over one relation's columns
+`x1`..`xn`, with its divergence, construct, whether the result is semi-structured, and whether it
+aggregates. `--samples` holds `<relation>.parquet` per relation, VARIANT values as JSON text, and
+optionally `<relation>.types.json` with Snowflake types for columns the sources file marks UNKNOWN.
+
+Each probe becomes the body of a table function `SELECT (<expression>) IS NULL AS r FROM
+guard_sample` (a semi-structured result is wrapped in `TO_JSON`, as output writes it) and is
+converted by `sqlquack function` with the policy's divergences, so the measured SQL is exactly what
+SQLQuack emits. It runs over the sample's distinct value tuples in one pass: every raise site
+(`CAST(CAST('<message>' AS INTEGER) AS "NULL")`) is replaced by a call to a Python hook that
+records the tuple and message and returns NULL, so each raising tuple and the first raise it reaches
+are known exactly, with common-subexpression elimination off so guards stay inside their CASE. When
+DuckDB raises an error of its own, which no hook sees, the count falls back to one pass of
+`TRY(<expression>)`, still exact, and reasons come from at most `--examples` raising tuples run
+alone, their shares scaled to the exact count and marked estimated. A body of an unexpected shape is
+bisected within `--query-limit` queries, a lower bound when the budget runs out. A progress line per
+relation gives its worst raising share and top reason. A guard's raise counts against its
+divergence, a deliberate Snowflake error against `snowflake_error`, and DuckDB's own error against
+the probed divergence. The JSON report and text summary give, per probe, divergence and source
+column, the rows checked, rows raising, share and top reasons, with at most three redacted shapes
+(digits as `9`, letters as `a`), never a sampled value. Filters in the model are not applied, so
+shares are over the relation's rows, not the model's.
 
 ## Evidence
 
@@ -110,15 +307,98 @@ columns or a `query` over the `input` relation with a declared row order (`order
 Every case carries tags, and between them a file's cases must cover every input its category
 requires.
 
+Cases imported from a third-party test suite live under `cases/imported/` and name their source in
+`origin`. Only the source-dialect SQL becomes the case; the answer is still recorded on Snowflake.
+A reference translation, such as sqlglot's expected DuckDB SQL in `sqlglot_duckdb`, is kept as side
+data: it is never asserted and is not hashed. See [THIRD_PARTY_NOTICES](../THIRD_PARTY_NOTICES).
+
+### Generated cases
+
+Combinatorial grids are written by deterministic generators in `scripts/case_generators/`
+(`make generate-cases`) into `cases/generated/<generator>/`. A generated case is an ordinary case:
+it is hashed, recorded and verified like any other, and its `origin` names the generator and its
+version, such as `generated: casts@1` (not hashed). The same version always writes the same files,
+and `make generated-cases`, part of `make check-ci`, fails when a generated file differs from its
+generator's output, so generated files are never edited by hand. Changing a generator's output
+bumps its version; cases whose SQL changes get new hashes and need recording again.
+
+The grids cover NUMBER and FLOAT operand pairs for arithmetic and comparison, casts between every
+pair of scalar types, CONVERT_TIMEZONE across zone pairs and DST transitions, NULL in every
+argument position of n-ary functions, and paths and JSON text over a fixed set of documents. Rows
+that may raise, such as results beyond the documented result type or invalid text, go into their
+own cases, so one raising row never hides the others. Cases that need judgement, such as JSON
+null handling, ordering and unusual formats, stay hand-written.
+
+### Typing-only cases
+
+Some constructs cannot convert yet, but analysis still needs their exact result types. A typing
+case is evidence for those types only. It is a normal case with `evidence = "typing"`, set on the
+file or on the case, so it has the same Snowflake SQL over typed input rows. Its recording keeps
+Snowflake's result metadata: each column's type with its precision, scale or length, and its
+nullability. With `values = false` the recorder stores only that metadata and the row count, as
+outcome `types`, with no Arrow file. `values = false` is hashed, and is omitted from the hash when
+absent, so existing hashes still hold. Without it, the values are kept, but nothing compares them.
+
+A typing case is never converted or replayed on DuckDB. Verify reports it as `typed`, the index
+counts no rule for it, and an audit compares re-recorded column metadata and row counts. A typing
+case cannot hold an equivalence or an expected divergence. Only a typing case may set
+`values = false`; a conversion case recorded without values fails.
+
+Each construct's evidence status is therefore `converted` (a passing conversion case),
+`typed` (only typing cases) or `unknown` (neither). The census and the analysis API report it
+once the typing cases exist (P1 Part B).
+
+A case may declare `expected_divergence = "<id>"` (not hashed). Verify then accepts it only when the
+conversion relies on that divergence, Snowflake returned rows and DuckDB raised that divergence's
+error: its guard's tagged raise, or a DuckDB error matching one of the divergence's `native_errors`
+patterns (`numeric_range` and `timestamp_range` overflows). Another DuckDB error, a match, a
+different value or a Snowflake error fails it, and the verdict names what matched. Such cases do
+not count toward verifying a claim.
+
 A case expands to one source statement: the input rows as a `WITH input AS (...)` of casts, then
-the expression (`SELECT <expression> AS value FROM input ORDER BY ordinal`) or the query.
+the expression (`SELECT <expression> AS value FROM input ORDER BY ordinal`) or the query. In an
+equivalence file each case expands twice, once per spelling; the canonical one is referenced as
+`<file>#<id>~canonical`.
+
+### Project function cases
+
+A case may define SQL project functions its expression or query calls, as `[[case.function]]`
+tables: a lower-case `name`, `arguments` (name and Snowflake type, like input columns), exactly
+one of `returns` (a scalar type) and `returns_table` (columns), and the `body`, a scalar function's
+expression or a table function's query. Later functions may call earlier ones.
+
+- Recording: the pending file carries `setup_sql`, one `CREATE FUNCTION ... AS $$ body $$` per
+  function. The recorder runs such a case on its own in the session's schema (set
+  `SNOWFLAKE_SCHEMA` to a scratch schema; the recorder never creates one): it renames each
+  function `<name>__sqlquack_<first 16 hash digits>_<run nonce>` in the setup and case SQL,
+  creates them, runs the case and drops them again, also when the case fails. A failing `CREATE FUNCTION` stops the
+  run; it is a case-file error, not an outcome.
+- Replay: verify types the functions into the conversion's schema, converts each body with
+  `analyze_function`, and creates its macro, `CREATE MACRO "NAME"(p1, ...) AS ...`, before the
+  converted query. A body that does not convert refuses the case, and the rules each body used
+  count toward the case's provenance.
+- Python functions are not case functions yet.
 
 ### Hashes
 
 The case hash is the SHA-256 of the canonical JSON of the evidence format version, the source
-dialect, the session profile's Snowflake parameters and the expanded source SQL. Descriptions,
+dialect, the session profile's Snowflake parameters and the expanded source SQL, plus any
+`setup_sql` (omitted when empty, so existing hashes hold). Descriptions,
 tags and file locations are not hashed. Any edit that can change the result changes the hash, so
 it becomes a new case with a new result.
+
+### Pinned session parameters
+
+A profile's `pinned` parameters (date, time, timestamp and binary input and output formats,
+`TWO_DIGIT_CENTURY_START`, JSON output settings) are set in every recording session alongside its
+hashed parameters, but are not hashed. The recorder stores each set and pinned parameter's value as
+`SHOW PARAMETERS IN SESSION` reports it (`effective_parameters`) and the SHA-256 of every reported
+parameter (`parameters_sha256`). Verify fails a result whose recorded value differs from the
+profile's. Results recorded before pinning have no effective values; they are vouched for by
+`evidence/session_defaults.json`, which `sqlquack-record --session-defaults` writes from a session
+that sets no parameters; it keeps only the parameters pending cases set or pin, so no other account
+setting reaches the repository. A pinned parameter whose account default differs fails those results, and
+`verify --require-verified` fails while no defaults are recorded.
 
 ### Flow
 
@@ -128,14 +408,32 @@ it becomes a new case with a new result.
    connector's Arrow result, unconverted) and `<hash>.json` (the SHA-256 of the query ID,
    warehouse, connector and DuckDB versions, recording time, column descriptions, row count and
    the Arrow file's SHA-256). A SQL error in SQLSTATE class 0A, 21, 22 or 42 is recorded as the
-   outcome instead, as its error number and SQLSTATE only; session, connection and privilege
+   outcome instead, as its error number and SQLSTATE, plus the message of a data exception (class
+   22) without its query ID; session, connection and privilege
    (42501) errors stop the run without writing anything. When any statement of a batch fails, Snowflake reports the whole
    request as error 100132 (SQLSTATE P0000), so the batch's cases are rerun one at a time and each
    real error is classified on its own. Existing results are never overwritten.
 3. `sqlquack verify` converts each recorded case, replays it on DuckDB in a fresh in-memory
    database under the profile's time zone and the policy's NULL order, and compares. A refusal is
-   always acceptable; a difference fails.
-4. `sqlquack audit --sample 10%` writes pending files for a reproducible sample of recorded cases
+   always acceptable; a difference fails. Equivalence pairs are compared with each other instead.
+   Every proven equivalence and every rule is a claim; a claim is verified once at least one
+   passed case relies on it (for rules, through the conversion's provenance). The input fixture
+   (the outermost `input` CTE and an `ORDER BY ordinal` that only keeps rows in input order) is
+   converted with provenance muted, so its casts, literals and set operation count neither toward
+   claims nor toward the error check's declared failures; a query's own CTEs follow the fixture's
+   in the same `WITH` and do count. The pre-push gate
+   (`make gate`) runs `verify --require-verified`, which fails while any claim is unverified.
+   Where Snowflake and DuckDB both raised, verify also checks the errors (see Error checks).
+4. `sqlquack review` writes every case as a sqllogictest-style record (`source snowflake`,
+   `converted duckdb` or `refused`, then `query snowflake nosort|rowsort` with the column names and
+   Snowflake types as comments and one tab-separated line per row). Values are exact: decimals at
+   the declared scale, timestamps to the nanosecond, text with tabs and line breaks escaped. The
+   format is for review only, because sqllogictest's own typing is too lossy to be evidence.
+5. `sqlquack audit --errors` writes pending files for every case recorded as a warehouse error,
+   to re-record it with its message into `evidence/audit/results`.
+   Verify reads those messages (`--audit-results`) for stored errors kept without one, when the
+   re-recording raised the same errno and SQLSTATE, so stored results stay append-only.
+   `sqlquack audit --sample 10%` writes pending files for a reproducible sample of recorded cases
    into `evidence/audit/pending`; once recorded into `evidence/audit/results`,
    `sqlquack audit --compare` checks that the fresh results equal the stored ones exactly.
 
@@ -152,11 +450,34 @@ Audits compare two recordings and allow no tolerance at all.
 
 Results are public, so they hold nothing specific to the recording account. The raw query ID is
 replaced by its SHA-256, which the maintainer can match against query history by hashing.
-Snowflake error messages can name databases, schemas, roles and other objects, so they are not
-stored. Column names, session parameters and values all come from the case itself, and the
+Compilation and other error messages can name databases, schemas, roles and other objects, so
+only data exceptions (SQLSTATE class 22) keep their message, whose values come from the case. Column names, session parameters and values all come from the case itself, and the
 warehouse version is Snowflake's release number.
 
 CI runs `make evidence-guard`: any modified or deleted file under `evidence/results` fails, and an
 added result must be named by a case hash, have exactly the recorder's metadata keys, name
 `sqlquack-record` as its recorder and carry an Arrow file matching its hash. Its query ID must be
-a SHA-256 digest, and an error may hold only `errno` and `sqlstate`.
+a SHA-256 digest, and an error may hold only `errno`, `sqlstate` and a text `message`.
+
+### Error checks
+
+A raised error passes only as the same failure. `sqlquack-core`'s `failures` module maps each
+recorded Snowflake error (errno and SQLSTATE) to a kind (numeric overflow, number text, date
+text, division by zero, JSON parse, VARIANT cast, string too long, …) and DuckDB messages to
+kinds. Building blocks raise tagged errors, `sqlquack:<errno>: <message>`, naming the exact
+Snowflake error they stand for; a text conversion raises text's error for a cast of text and
+Snowflake's VARIANT-cast error (100071) for a cast of a VARIANT string. Each rule declares its
+failure modes: a kind and the Snowflake errors meaning it.
+
+Converted SQL raises with `duckdb.raised`, `CAST(CAST('<message>' AS INTEGER) AS "NULL")`, not
+DuckDB's `error()`: `error()` is volatile, which window PARTITION BY and ORDER BY keys refuse, while
+a failing cast of a constant is left in place by constant folding and raises only when evaluated.
+DuckDB reports it as `Conversion Error: Could not convert string '<message>' to INT32`; the tag
+or divergence name inside the message is what verify reads.
+
+For a passed case where both raised, verify reports `agrees` (same kind, and a rule the
+conversion used declares the recorded error), `divergence_raise` (DuckDB raised a known
+divergence's guard), or a finding: `errno_mismatch` (a block tagged another errno),
+`kind_mismatch`, `undeclared` or `unknown_snowflake_error`. Findings are reported and counted;
+`verify --strict-errors` fails on them. The gate does not pass that flag until the existing
+error cases are re-recorded with their messages.

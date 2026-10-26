@@ -2,7 +2,7 @@
 
 use std::fmt::Write;
 
-use crate::census::models::CensusReport;
+use crate::census::models::{CensusReport, RefusalCount};
 
 /// The report as text, listing at most `limit` constructs.
 pub fn render_census_text(report: &CensusReport, limit: usize) -> String {
@@ -30,21 +30,25 @@ pub fn render_census_text(report: &CensusReport, limit: usize) -> String {
         totals.distinct_constructs,
         families.join(", ")
     );
-    let fidelity = &report.fidelity;
-    let _ = writeln!(
-        text,
-        "  print-back: identical {}, canonicalised {}, unstable {}, failed {}",
-        fidelity.identical, fidelity.canonicalised, fidelity.unstable, fidelity.failed
-    );
     let refusals = &report.refusals;
     let _ = writeln!(
         text,
-        "  files refused: missing rule {}, not expressible {}, parse fidelity {}; convertible {}",
+        "  files refused: missing rule {}, outside type conditions {}, unresolved name {}, \
+         not expressible {}, parse fidelity {}; convertible {}",
         refusals.missing_rule,
+        refusals.type_condition,
+        refusals.unresolved_name,
         refusals.not_expressible,
         refusals.parse_fidelity,
         refusals.convertible
     );
+    for (divergence, files) in &report.provenance.divergences {
+        let _ = writeln!(
+            text,
+            "  converted with a known divergence: {divergence} in {files} files"
+        );
+    }
+    render_refusals(&mut text, &refusals.by_construct, limit);
     let _ = writeln!(text);
     let _ = writeln!(text, "Convertible files as the top constructs get rules");
     let _ = writeln!(
@@ -80,4 +84,16 @@ pub fn render_census_text(report: &CensusReport, limit: usize) -> String {
         );
     }
     text
+}
+
+fn render_refusals(text: &mut String, counts: &[RefusalCount], limit: usize) {
+    let _ = writeln!(text);
+    let _ = writeln!(text, "Refusals by category and construct (top {limit})");
+    for count in counts.iter().take(limit) {
+        let _ = writeln!(
+            text,
+            "  {:>6}  {}: {}",
+            count.files, count.category, count.construct
+        );
+    }
 }

@@ -36,6 +36,7 @@ pub(crate) struct CensusSummary {
     pub(crate) parsed: usize,
     pub(crate) unparsed: usize,
     pub(crate) missing_rule: usize,
+    pub(crate) unresolved_name: usize,
     pub(crate) parse_fidelity: usize,
     pub(crate) convertible: usize,
     pub(crate) most_used_files: usize,

@@ -1,0 +1,31 @@
+category = "semi-structured-array"
+construct = "fn:ARRAY_CONSTRUCT_COMPACT"
+session_profile = "utc-v1"
+
+[[case]]
+id = "compact_values"
+description = "ARRAY_CONSTRUCT_COMPACT drops SQL NULLs, keeping text, numbers and booleans in order."
+columns = [{ name = "a", type = "VARCHAR" }, { name = "n", type = "NUMBER(10,0)" }, { name = "f", type = "BOOLEAN" }]
+rows = [["'x'", "1", "TRUE"], ["NULL", "2", "NULL"], ["NULL", "NULL", "NULL"], ["''", "0", "FALSE"]]
+query = "SELECT TO_JSON(ARRAY_CONSTRUCT_COMPACT(a, n, f)) AS j, ARRAY_SIZE(ARRAY_CONSTRUCT_COMPACT(a, n, f)) AS k FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "empty"]
+
+[[case]]
+id = "compact_duplicates_and_empty"
+description = "ARRAY_CONSTRUCT_COMPACT keeps duplicates, and with no argument or all NULL is an empty ARRAY."
+columns = [{ name = "a", type = "VARCHAR" }]
+rows = [["'x'"], ["NULL"]]
+query = "SELECT TO_JSON(ARRAY_CONSTRUCT_COMPACT(a, a, 'x')) AS d, TO_JSON(ARRAY_CONSTRUCT_COMPACT()) AS e, TO_JSON(ARRAY_CONSTRUCT_COMPACT(NULL, a)) AS n FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "duplicates", "empty"]
+
+[[case]]
+id = "compact_json_null"
+description = "ARRAY_CONSTRUCT_COMPACT of a JSON null: dropped or kept, which the conversion raises on."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [["PARSE_JSON('{\"a\":null,\"b\":2}')"]]
+query = "SELECT TO_JSON(ARRAY_CONSTRUCT_COMPACT(v:a, v:b, v:c)) AS j FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["invalid"]
+expected_divergence = "json_fidelity"

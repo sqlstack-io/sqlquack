@@ -15,8 +15,12 @@ pub enum RefusalCategory {
     MissingRule,
     /// DuckDB cannot express the construct's source meaning.
     NotExpressible,
-    /// The SQL did not parse, or printing it back in its own dialect changed the tree.
+    /// The SQL did not parse.
     ParseFidelity,
+    /// A rule covers the construct, but the operand types fall outside its proven conditions.
+    TypeCondition,
+    /// A relation or column name does not resolve, or resolves ambiguously.
+    UnresolvedName,
 }
 
 impl RefusalCategory {
@@ -26,6 +30,8 @@ impl RefusalCategory {
             Self::MissingRule => "missing rule",
             Self::NotExpressible => "not expressible in DuckDB",
             Self::ParseFidelity => "parse fidelity",
+            Self::TypeCondition => "outside a rule's type conditions",
+            Self::UnresolvedName => "unresolved name",
         }
     }
 }

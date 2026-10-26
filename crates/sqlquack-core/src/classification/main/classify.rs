@@ -1,7 +1,7 @@
 //! `classify`: every construct a statement uses, with its position.
 
-use polyglot_sql::Expression;
-use polyglot_sql::traversal::ExpressionWalk;
+use sqlquack_syntax::Expression;
+use sqlquack_syntax::ExpressionWalk;
 
 use crate::classification::_helpers::clauses::clause_constructs;
 use crate::classification::_helpers::identity::node_constructs;
@@ -28,7 +28,7 @@ pub fn classify(statement: &Expression, source: &str, dialect: SourceDialect) ->
     let locations = resolve_locations(&nodes, &parents, &LineIndex::new(source));
     let mut occurrences: Vec<Occurrence> = Vec::new();
     for (node, location) in nodes.iter().zip(locations) {
-        let constructs = node_constructs(node, dialect.polyglot())
+        let constructs = node_constructs(node, dialect)
             .into_iter()
             .chain(clause_constructs(node));
         occurrences.extend(constructs.map(|construct| Occurrence {

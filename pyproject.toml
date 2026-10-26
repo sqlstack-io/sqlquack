@@ -7,6 +7,10 @@ dependencies = []
 
 [dependency-groups]
 dev = [
+  # The DuckDB release the Rust crates embed, for running emitted SQL in repository scripts.
+  "duckdb==2.0.0",
+  # DuckDB's Python functions need numpy; the guard measurement's raise hook is one.
+  "numpy==2.5.4",
   "fensu>=0.27.0",
   "pytest>=8.4",
   "pytest-xdist>=3.8",

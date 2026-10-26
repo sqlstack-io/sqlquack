@@ -5,21 +5,22 @@ use crate::census::tests::test_types::RewriteTestCase;
 fn given_sqlbuild_compiled_sql_when_rewriting_then_references_become_parseable_sql() {
     let test_cases = [
         RewriteTestCase {
-            description: "model, source and seed references become one relation",
+            description: "model, source and seed references become relations named after them",
             sql: "SELECT * FROM __ref(\"orders\") o JOIN __source(\"shop\", \"customers\") c \
                   ON TRUE JOIN __seed( \"regions\" ) r ON TRUE",
-            expected_sql: "SELECT * FROM __sqlquack_relation o JOIN __sqlquack_relation c \
-                       ON TRUE JOIN __sqlquack_relation r ON TRUE",
+            expected_sql: "SELECT * FROM __sqlquack_relation__orders o JOIN \
+                           __sqlquack_relation__shop__customers c \
+                       ON TRUE JOIN __sqlquack_relation__regions r ON TRUE",
         },
         RewriteTestCase {
-            description: "project functions keep their argument list",
+            description: "project functions are named after their reference and keep their arguments",
             sql: "SELECT __udf(\"is_gift\")(o.note) FROM t",
-            expected_sql: "SELECT __sqlquack_udf(o.note) FROM t",
+            expected_sql: "SELECT __sqlquack_udf__is_gift(o.note) FROM t",
         },
         RewriteTestCase {
-            description: "table functions keep their argument list",
+            description: "table functions are named after their reference and keep their arguments",
             sql: "SELECT * FROM TABLE(__table_fn(\"open_orders\")(1))",
-            expected_sql: "SELECT * FROM TABLE(__sqlquack_table_fn(1))",
+            expected_sql: "SELECT * FROM TABLE(__sqlquack_table_fn__open_orders(1))",
         },
         RewriteTestCase {
             description: "cursor bounds become a column",
@@ -39,7 +40,7 @@ fn given_sqlbuild_compiled_sql_when_rewriting_then_references_become_parseable_s
         RewriteTestCase {
             description: "a parenthesis inside a reference string does not end the call",
             sql: "SELECT * FROM __ref(\"odd)name\")",
-            expected_sql: "SELECT * FROM __sqlquack_relation",
+            expected_sql: "SELECT * FROM __sqlquack_relation__odd_name",
         },
     ];
     for test_case in test_cases {

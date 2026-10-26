@@ -1,7 +1,7 @@
 //! Clauses, join kinds and set-operation forms, from exhaustively destructured query nodes.
 
-use polyglot_sql::Expression;
-use polyglot_sql::expressions::{Except, Intersect, Join, Select, Union};
+use sqlquack_syntax::Expression;
+use sqlquack_syntax::expressions::{Except, Intersect, Join, Select, Union};
 
 use crate::classification::_helpers::names::snake_case;
 use crate::classification::models::{Construct, ConstructFamily};
@@ -72,6 +72,12 @@ fn select_clauses(select: &Select) -> Vec<String> {
         qualify_after_window: _,
         option,
         exclude,
+        vertica,
+        result_serialization,
+        query_collation,
+        query_hints,
+        total_rowcount,
+        source_dialect: _,
     } = select;
     present(&[
         (with.is_some(), "with"),
@@ -106,6 +112,11 @@ fn select_clauses(select: &Select) -> Vec<String> {
         (!operation_modifiers.is_empty(), "operation_modifier"),
         (option.is_some(), "option"),
         (exclude.is_some(), "exclude"),
+        (vertica.is_some(), "vertica"),
+        (result_serialization.is_some(), "result_serialization"),
+        (query_collation.is_some(), "query_collation"),
+        (!query_hints.is_empty(), "query_hint"),
+        (*total_rowcount, "total_rowcount"),
     ])
 }
 

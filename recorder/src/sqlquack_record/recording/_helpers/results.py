@@ -15,6 +15,7 @@ from sqlquack_record.recording.constants import (
     RECORDER_NAME,
     RECORDER_VERSION,
     ROWS_OUTCOME,
+    TYPES_OUTCOME,
 )
 from sqlquack_record.recording.exceptions import RecorderError
 from sqlquack_record.recording.models import PendingCase, RecordingContext, StatementResult
@@ -23,18 +24,23 @@ from sqlquack_record.recording.models import PendingCase, RecordingContext, Stat
 def write_result(
     *, directory: Path, case: PendingCase, result: StatementResult, context: RecordingContext
 ) -> None:
-    """Store `result` for `case` without converting a single value."""
+    """Store `result` for `case` without converting a single value; a typing case keeps none."""
     arrow_sha256: str | None = None
     row_count: int | None = None
-    if result.table is not None:
+    outcome: str = ERROR_OUTCOME
+    if result.table is not None and not case.values:
+        row_count = result.table.num_rows
+        outcome = TYPES_OUTCOME
+    elif result.table is not None:
         arrow_bytes: bytes = _ipc_file(result.table)
         _create_exclusively(path=directory / f"{case.case_hash}.arrow", content=arrow_bytes)
         arrow_sha256 = hashlib.sha256(arrow_bytes).hexdigest()
         row_count = result.table.num_rows
+        outcome = ROWS_OUTCOME
     metadata: dict[str, object] = {
         "format": EVIDENCE_FORMAT,
         "case_hash": case.case_hash,
-        "outcome": ROWS_OUTCOME if result.table is not None else ERROR_OUTCOME,
+        "outcome": outcome,
         "recorder": f"{RECORDER_NAME} {RECORDER_VERSION}",
         "connector": context.connector,
         "query_id_sha256": None
@@ -44,6 +50,8 @@ def write_result(
         "duckdb_version": case.duckdb_version,
         "recorded_at": context.recorded_at,
         "session_parameters": dict(case.session_parameters),
+        "effective_parameters": effective_parameters(case=case, context=context),
+        "parameters_sha256": parameters_sha256(dict(context.session_parameters)),
         "columns": [
             {
                 "name": column.name,
@@ -63,12 +71,25 @@ def write_result(
         else {
             "errno": result.failure.errno,
             "sqlstate": result.failure.sqlstate,
+            "message": result.failure.message,
         },
     }
     _create_exclusively(
         path=directory / f"{case.case_hash}.json",
         content=(json.dumps(metadata, indent=2, sort_keys=True) + "\n").encode("utf-8"),
     )
+
+
+def effective_parameters(*, case: PendingCase, context: RecordingContext) -> dict[str, str | None]:
+    """Each set and pinned parameter's reported value; None for one the session did not report."""
+    reported: dict[str, str] = dict(context.session_parameters)
+    return {name: reported.get(name) for name, _ in case.recording_parameters()}
+
+
+def parameters_sha256(parameters: dict[str, str]) -> str:
+    """SHA-256 of every parameter as sorted `KEY=value` lines."""
+    lines: str = "".join(f"{name}={value}\n" for name, value in sorted(parameters.items()))
+    return hashlib.sha256(lines.encode("utf-8")).hexdigest()
 
 
 def _ipc_file(table: pa.Table) -> bytes:

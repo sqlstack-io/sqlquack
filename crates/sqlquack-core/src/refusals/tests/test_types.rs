@@ -1,7 +1,6 @@
 use crate::classification::models::Construct;
 use crate::refusals::models::{Disposition, RefusalCategory};
 use crate::refusals::types::ConstructPolicy;
-use crate::reparse::models::FidelityOutcome;
 
 /// A catalogue declaring the listed constructs inexpressible and nothing else.
 pub(crate) struct DeclaringPolicy {
@@ -35,10 +34,4 @@ pub(crate) struct UnparsedTestCase {
     pub(crate) sql: &'static str,
     pub(crate) expected_category: RefusalCategory,
     pub(crate) expected_located: bool,
-}
-
-pub(crate) struct InfidelityTestCase {
-    pub(crate) description: &'static str,
-    pub(crate) outcome: FidelityOutcome,
-    pub(crate) expected_category: Option<RefusalCategory>,
 }

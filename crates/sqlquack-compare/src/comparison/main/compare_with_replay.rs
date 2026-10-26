@@ -7,6 +7,7 @@ use sqlquack_policy::policy::models::{
 
 use crate::comparison::_helpers::rows::{RowRules, compare_rows};
 use crate::comparison::_helpers::type_names::duckdb_type_name;
+use crate::comparison::constants::SEMI_STRUCTURED_TYPES;
 use crate::comparison::models::{Mismatch, MismatchKind, RecordedResult, RowOrder};
 use crate::values::models::ResultSet;
 
@@ -68,6 +69,11 @@ pub fn compare_with_replay(
             float32_ulps: comparator.float_ulps.float32,
             float64_ulps: comparator.float_ulps.float64,
             ignore_zone_labels: comparator.timestamp_tz == TimestampTzComparison::Instant,
+            json_columns: recorded
+                .columns
+                .iter()
+                .map(|column| SEMI_STRUCTURED_TYPES.contains(&column.snowflake_type.as_str()))
+                .collect(),
         },
     )
 }

@@ -8,8 +8,10 @@ from snowflake.connector.config_manager import CONFIG_MANAGER
 
 from sqlquack_record.recording.constants import (
     ACCOUNT_ARGUMENT,
+    ARROW_RESULT_FORMAT,
     CREDENTIAL_CACHE_DEFAULTS,
     QUERY_TAG,
+    RESULT_FORMAT_PARAMETER,
     SESSION_PARAMETERS_ARGUMENT,
     WAREHOUSE_ARGUMENT,
 )
@@ -29,6 +31,7 @@ def connect_arguments(
         **dict(named.get(SESSION_PARAMETERS_ARGUMENT) or {}),
         **dict(parameters),
         "QUERY_TAG": QUERY_TAG,
+        RESULT_FORMAT_PARAMETER: ARROW_RESULT_FORMAT,
     }
     if settings.warehouse is not None:
         arguments[WAREHOUSE_ARGUMENT] = settings.warehouse

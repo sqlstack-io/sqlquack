@@ -113,6 +113,9 @@ pub struct SessionProfile {
     pub description: String,
     /// Snowflake session parameters set while recording; part of every case hash.
     pub snowflake: BTreeMap<String, SessionValue>,
+    /// Parsing and formatting parameters set while recording and checked, but not hashed.
+    #[serde(default)]
+    pub pinned: BTreeMap<String, SessionValue>,
     /// DuckDB's `TimeZone` during replay.
     pub duckdb_time_zone: String,
 }
@@ -151,6 +154,9 @@ pub struct Divergence {
     pub strict: DivergenceMode,
     /// Why values differ and what stays consistent.
     pub reason: String,
+    /// DuckDB's own errors that are this divergence's failure, as `*` patterns over a first line.
+    #[serde(default)]
+    pub native_errors: Vec<String>,
 }
 
 /// How a mode treats a known divergence.

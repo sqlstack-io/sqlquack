@@ -1,0 +1,28 @@
+{
+  "arrow_sha256": null,
+  "case_hash": "bf63ab9a0d31623bdd07a3dbb3d86446f370b1d48562bdb9083c1d83230ceedf",
+  "columns": [],
+  "connector": "snowflake-connector-python 4.7.2",
+  "duckdb_version": "v2.0.0",
+  "error": {
+    "errno": 100096,
+    "message": "Can't parse '2023-02-29T00:00:00.000' as timestamp with format 'YYYY-MM-DD\"T\"HH24:MI:SS.FF3'",
+    "sqlstate": "22007"
+  },
+  "format": 1,
+  "outcome": "error",
+  "query_id_sha256": "2e4242ec1955928bab273e2f1ab974b1e43b0cfda896d4cb7b93fe00d243cef9",
+  "recorded_at": "2026-10-25T23:17:22Z",
+  "recorder": "sqlquack-record 0.1.0",
+  "row_count": null,
+  "session_parameters": {
+    "DEFAULT_NULL_ORDERING": "LAST",
+    "QUOTED_IDENTIFIERS_IGNORE_CASE": false,
+    "TIMESTAMP_TYPE_MAPPING": "TIMESTAMP_NTZ",
+    "TIMEZONE": "UTC",
+    "USE_CACHED_RESULT": false,
+    "WEEK_OF_YEAR_POLICY": 0,
+    "WEEK_START": 0
+  },
+  "warehouse_version": "10.38.102"
+}

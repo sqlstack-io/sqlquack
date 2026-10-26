@@ -1,0 +1,77 @@
+# Which a name means in ORDER BY, HAVING and QUALIFY expressions when it is both a select alias and
+# a FROM column. SQLQuack refuses these until the recorded resolution is known.
+category = "relational"
+construct = "node:ordered"
+session_profile = "utc-v1"
+
+[[case]]
+id = "order_by_expression_alias_shadows_column"
+description = "ORDER BY an expression over a name that is an alias of -a and the column a."
+columns = [{ name = "k", type = "VARCHAR" }, { name = "a", type = "NUMBER(10,0)" }]
+rows = [["'x'", "1"], ["'y'", "3"], ["'z'", "2"], ["'n'", "NULL"]]
+query = "SELECT k, -a AS a FROM input ORDER BY a + 0 NULLS LAST"
+order = "ordered"
+tags = ["duplicates", "null"]
+
+[[case]]
+id = "order_by_function_alias_shadows_column"
+description = "ORDER BY a function of a name that is an alias of 10 - a and the column a."
+columns = [{ name = "k", type = "VARCHAR" }, { name = "a", type = "NUMBER(10,0)" }]
+rows = [["'x'", "1"], ["'y'", "3"], ["'z'", "2"]]
+query = "SELECT k, 10 - a AS a FROM input ORDER BY ABS(a - 9)"
+order = "ordered"
+tags = ["duplicates"]
+
+[[case]]
+id = "order_by_bare_alias_shadows_column"
+description = "ORDER BY a bare name that is an alias of -a and the column a."
+columns = [{ name = "k", type = "VARCHAR" }, { name = "a", type = "NUMBER(10,0)" }]
+rows = [["'x'", "1"], ["'y'", "3"], ["'z'", "2"]]
+query = "SELECT k, -a AS a FROM input ORDER BY a"
+order = "ordered"
+tags = ["duplicates"]
+
+[[case]]
+id = "having_bare_alias_shadows_column"
+description = "HAVING over a name that is an alias of SUM(a) and the column a."
+columns = [{ name = "k", type = "VARCHAR" }, { name = "a", type = "NUMBER(10,0)" }]
+rows = [["'x'", "1"], ["'x'", "4"], ["'y'", "3"], ["'z'", "2"], ["'z'", "2"]]
+query = "SELECT k, SUM(a) AS a FROM input GROUP BY k HAVING a > 3 ORDER BY k"
+order = "ordered"
+tags = ["duplicates"]
+
+[[case]]
+id = "having_aggregate_alias_shadows_column"
+description = "HAVING MAX over a name that is an alias of SUM(a) and the column a."
+columns = [{ name = "k", type = "VARCHAR" }, { name = "a", type = "NUMBER(10,0)" }]
+rows = [["'x'", "1"], ["'x'", "4"], ["'y'", "3"], ["'z'", "2"], ["'z'", "2"]]
+query = "SELECT k, SUM(a) AS a FROM input GROUP BY k HAVING MAX(a) > 2 ORDER BY k"
+order = "ordered"
+tags = ["duplicates"]
+
+[[case]]
+id = "qualify_alias_shadows_column"
+description = "QUALIFY ordering a window by a name that is an alias of -a and the column a."
+columns = [{ name = "k", type = "VARCHAR" }, { name = "a", type = "NUMBER(10,0)" }]
+rows = [["'x'", "1"], ["'x'", "4"], ["'y'", "3"], ["'y'", "5"]]
+query = "SELECT k, -a AS a FROM input QUALIFY ROW_NUMBER() OVER (PARTITION BY k ORDER BY a) = 1 ORDER BY k"
+order = "ordered"
+tags = ["duplicates"]
+
+[[case]]
+id = "qualify_filter_alias_shadows_column"
+description = "QUALIFY filtering on a name that is an alias of a window rank and the column a."
+columns = [{ name = "k", type = "VARCHAR" }, { name = "a", type = "NUMBER(10,0)" }]
+rows = [["'x'", "1"], ["'x'", "4"], ["'y'", "3"], ["'y'", "5"]]
+query = "SELECT k, ROW_NUMBER() OVER (PARTITION BY k ORDER BY a DESC) AS a FROM input QUALIFY a = 1 ORDER BY k"
+order = "ordered"
+tags = ["duplicates"]
+
+[[case]]
+id = "having_alias_shadows_column_empty"
+description = "HAVING over a shadowing alias when the filter leaves no rows."
+columns = [{ name = "k", type = "VARCHAR" }, { name = "a", type = "NUMBER(10,0)" }]
+rows = [["'x'", "1"], ["'y'", "3"]]
+query = "SELECT k, SUM(a) AS a FROM input WHERE a > 99 GROUP BY k HAVING a > 0 ORDER BY k"
+order = "ordered"
+tags = ["empty-input"]

@@ -1,0 +1,66 @@
+category = "comparison"
+construct = "node:eq"
+session_profile = "utc-v1"
+
+[[case]]
+id = "equal_across_scales"
+description = "1.50 equals 1.5 across scales; NULL compares to nothing."
+columns = [{ name = "a", type = "NUMBER(10,2)" }, { name = "b", type = "NUMBER(12,4)" }]
+rows = [
+  ["1.50", "1.5000"],
+  ["1.50", "1.5001"],
+  ["NULL", "1"],
+  ["NULL", "NULL"],
+  ["-0", "0"],
+]
+expression = "a = b"
+tags = ["null", "ties", "mixed-types"]
+
+[[case]]
+id = "ordering_operators"
+description = "Less-than, greater-or-equal and not-equal across scales."
+columns = [{ name = "a", type = "NUMBER(10,2)" }, { name = "b", type = "NUMBER(38,0)" }]
+rows = [
+  ["1.50", "2"],
+  ["2.00", "2"],
+  ["-1", "0"],
+  ["NULL", "0"],
+]
+query = "SELECT a < b AS lt, a >= b AS ge, a <> b AS ne, a != b AS ne2, a <= b AS le, a > b AS gt FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "ties"]
+
+[[case]]
+id = "number_and_float"
+description = "A NUMBER compared with a FLOAT."
+columns = [{ name = "a", type = "NUMBER(10,2)" }, { name = "f", type = "FLOAT" }]
+rows = [
+  ["0.10", "0.1"],
+  ["0.30", "0.30000000000000004"],
+  ["NULL", "1"],
+]
+expression = "a = f"
+tags = ["null", "mixed-types", "ties"]
+
+[[case]]
+id = "number_and_text"
+description = "A NUMBER compared with VARCHAR, which Snowflake converts to a number."
+columns = [{ name = "a", type = "NUMBER(38,0)" }, { name = "s", type = "VARCHAR" }]
+rows = [
+  ["10", "'9'"],
+  ["10", "'10'"],
+  ["10", "'10.0'"],
+  ["NULL", "'1'"],
+]
+expression = "a > s"
+tags = ["null", "mixed-types", "ties"]
+
+[[case]]
+id = "number_and_text_invalid"
+description = "A NUMBER compared with text that is not a number."
+columns = [{ name = "a", type = "NUMBER(38,0)" }, { name = "s", type = "VARCHAR" }]
+rows = [
+  ["10", "'ten'"],
+]
+expression = "a = s"
+tags = ["mixed-types"]

@@ -1,0 +1,82 @@
+category = "conversion"
+construct = "fn:TO_NUMBER"
+session_profile = "utc-v1"
+equivalence = "to_number_to_cast"
+
+[[case]]
+id = "try_to_number_text"
+description = "TRY_TO_NUMBER of text reads as TRY_CAST to NUMBER(38,0): rounding, signs, spaces and text it rejects."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'12'"],
+  ["'-3'"],
+  ["'1.5'"],
+  ["'-2.5'"],
+  ["' 7 '"],
+  ["'+4'"],
+  ["'1e3'"],
+  ["'.5'"],
+  ["'1,000'"],
+  ["'abc'"],
+  ["''"],
+  ["'99999999999999999999999999999999999999'"],
+  ["'999999999999999999999999999999999999999'"],
+  ["NULL"],
+]
+expression = "TRY_TO_NUMBER(s)"
+canonical = "TRY_CAST(s AS NUMBER(38,0))"
+tags = ["null", "invalid", "boundary"]
+
+[[case]]
+id = "try_to_number_scale"
+description = "TRY_TO_NUMBER with a precision and scale reads as TRY_CAST to NUMBER(p,s): rounding and overflow."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'1.005'"],
+  ["'-1.005'"],
+  ["'12345678901234.995'"],
+  ["'1234567890123456'"],
+  ["'0'"],
+  ["'x'"],
+  ["NULL"],
+]
+expression = "TRY_TO_NUMBER(s, 15, 2)"
+canonical = "TRY_CAST(s AS NUMBER(15,2))"
+tags = ["null", "invalid", "boundary"]
+
+[[case]]
+id = "try_to_number_precision"
+description = "TRY_TO_NUMBER with a precision alone has scale 0."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [["'42'"], ["'-99'"], ["'100'"], ["'9.5'"], ["NULL"]]
+expression = "TRY_TO_NUMBER(s, 2)"
+canonical = "TRY_CAST(s AS NUMBER(2,0))"
+tags = ["null", "invalid", "boundary"]
+
+[[case]]
+id = "try_to_decimal_wide_scale"
+description = "TRY_TO_DECIMAL with scale 5 and TRY_TO_NUMERIC with scale 13 read as TRY_CAST."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [["'3.141592653589793'"], ["'-0.000005'"], ["'1e-6'"], ["NULL"]]
+query = "SELECT TRY_TO_DECIMAL(s, 38, 5) AS d, TRY_TO_NUMERIC(s, 38, 13) AS n FROM input ORDER BY ordinal"
+canonical = "SELECT TRY_CAST(s AS NUMBER(38,5)) AS d, TRY_CAST(s AS NUMBER(38,13)) AS n FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "to_number_text"
+description = "TO_NUMBER of readable text reads as CAST to NUMBER(38,0)."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [["'12'"], ["' -3.5 '"], ["'0'"], ["NULL"]]
+expression = "TO_NUMBER(s)"
+canonical = "CAST(s AS NUMBER(38,0))"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "to_number_invalid"
+description = "TO_NUMBER of text that is not a number raises as CAST does."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [["'abc'"]]
+expression = "TO_NUMBER(s)"
+canonical = "CAST(s AS NUMBER(38,0))"
+tags = ["invalid"]

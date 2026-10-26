@@ -1,0 +1,48 @@
+category = "numeric"
+construct = "node:mod_func"
+session_profile = "utc-v1"
+equivalence = "mod_function_to_operator"
+
+[[case]]
+id = "mod_integers"
+description = "MOD on integers with negative operands, zero and the largest values."
+columns = [{ name = "a", type = "NUMBER(38,0)" }, { name = "b", type = "NUMBER(38,0)" }]
+rows = [
+  ["7", "3"],
+  ["-7", "3"],
+  ["7", "-3"],
+  ["0", "5"],
+  ["NULL", "2"],
+  ["2", "NULL"],
+  ["99999999999999999999999999999999999999", "7"],
+]
+expression = "MOD(a, b)"
+canonical = "a % b"
+tags = ["null", "zero", "negative", "boundary"]
+
+[[case]]
+id = "mod_by_zero"
+description = "MOD by zero."
+columns = [{ name = "a", type = "NUMBER(38,0)" }, { name = "b", type = "NUMBER(38,0)" }]
+rows = [["7", "0"]]
+expression = "MOD(a, b)"
+canonical = "a % b"
+tags = ["zero"]
+
+[[case]]
+id = "mod_decimals"
+description = "MOD on decimals of different scales."
+columns = [{ name = "a", type = "NUMBER(10,2)" }, { name = "b", type = "NUMBER(12,4)" }]
+rows = [["7.50", "2.0001"], ["-7.50", "2"], ["0", "0.5"], ["NULL", "1"]]
+expression = "MOD(a, b)"
+canonical = "a % b"
+tags = ["null", "zero", "negative"]
+
+[[case]]
+id = "mod_floats"
+description = "MOD on floats."
+columns = [{ name = "a", type = "FLOAT" }, { name = "b", type = "FLOAT" }]
+rows = [["7.5", "2"], ["-7.5", "2"], ["0.1", "0.03"], ["NULL", "1"]]
+expression = "MOD(a, b)"
+canonical = "a % b"
+tags = ["null", "negative"]

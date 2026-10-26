@@ -28,9 +28,11 @@ sqlquack-evidence.workspace = true
 sqlquack-policy.workspace = true
 sqlquack-rules.workspace = true
 sqlquack-snowflake.workspace = true
+sqlquack-syntax.workspace = true
 walkdir.workspace = true
 
 [dev-dependencies]
+duckdb.workspace = true
 tempfile.workspace = true
 
 [lints]

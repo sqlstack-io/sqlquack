@@ -39,6 +39,20 @@ from tests.unit.recorder.src.sqlquack_record.pending.helpers import (
             expected_references=None,
         ),
         LoadPendingTestCase(
+            description="a typing case may ask for no values",
+            file_name=f"{CASE_HASH}.json",
+            replace='"format": 1,',
+            with_text='"format": 1, "values": false,',
+            expected_references=("numeric/addition.toml#mixed_scales",),
+        ),
+        LoadPendingTestCase(
+            description="values must be a boolean",
+            file_name=f"{CASE_HASH}.json",
+            replace='"format": 1,',
+            with_text='"format": 1, "values": "no",',
+            expected_references=None,
+        ),
+        LoadPendingTestCase(
             description="an unknown key is rejected",
             file_name=f"{CASE_HASH}.json",
             replace='"format": 1,',

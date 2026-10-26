@@ -1,0 +1,457 @@
+category = "semi-structured"
+construct = "fn:OBJECT_CONSTRUCT"
+session_profile = "utc-v1"
+
+[[case]]
+id = "object_construct_values"
+description = "OBJECT_CONSTRUCT of literals, paths, JSON null and NULL, written as JSON and typed."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('{\"a\":1,\"b\":\"x\",\"n\":null,\"o\":{\"k\":[1,2]},\"arr\":[1,\"x\",null,{\"k\":1},[2]],\"s\":\"t\"}')"],
+  ["PARSE_JSON('{\"a\":2.5,\"arr\":[],\"o\":{}}')"],
+  ["PARSE_JSON('{\"A\":3,\"arr\":[null],\"b\":true}')"],
+  ["PARSE_JSON('{}')"],
+  ["PARSE_JSON('null')"],
+  ["NULL"],
+]
+query = "SELECT TO_JSON(OBJECT_CONSTRUCT('z', 1, 'a', v:a, 'b', v:b, 'n', v:n, 'o', v:o)) AS j, TYPEOF(OBJECT_CONSTRUCT('a', v:a)) AS t FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "json-null", "missing-key", "nested"]
+
+[[case]]
+id = "object_construct_keep_null_values"
+description = "OBJECT_CONSTRUCT_KEEP_NULL keeping SQL NULL and JSON null values."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('{\"a\":1,\"b\":\"x\",\"n\":null,\"o\":{\"k\":[1,2]},\"arr\":[1,\"x\",null,{\"k\":1},[2]],\"s\":\"t\"}')"],
+  ["PARSE_JSON('{\"a\":2.5,\"arr\":[],\"o\":{}}')"],
+  ["PARSE_JSON('{\"A\":3,\"arr\":[null],\"b\":true}')"],
+  ["PARSE_JSON('{}')"],
+  ["PARSE_JSON('null')"],
+  ["NULL"],
+]
+query = "SELECT TO_JSON(OBJECT_CONSTRUCT_KEEP_NULL('z', 1, 'a', v:a, 'n', v:n, 'm', v:missing)) AS j FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "json-null", "missing-key"]
+
+[[case]]
+id = "object_construct_scalars"
+description = "OBJECT_CONSTRUCT of typed column values: numbers, text, booleans, dates and NULL."
+columns = [{ name = "n", type = "NUMBER(10,2)" }, { name = "s", type = "VARCHAR" }, { name = "b", type = "BOOLEAN" }, { name = "d", type = "DATE" }]
+rows = [
+  ["1.50", "'x'", "TRUE", "'2024-02-29'"],
+  ["-0.00", "''", "FALSE", "NULL"],
+  ["NULL", "NULL", "NULL", "'0001-01-01'"],
+  ["12345678.90", "'say \"hi\"'", "TRUE", "'9999-12-31'"],
+]
+query = "SELECT TO_JSON(OBJECT_CONSTRUCT('n', n, 's', s, 'b', b, 'd', d)) AS j FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "empty", "boundary"]
+
+[[case]]
+id = "object_construct_number_types"
+description = "OBJECT_CONSTRUCT values from integers and FLOAT, read back by TYPEOF."
+columns = [{ name = "i", type = "NUMBER(38,0)" }, { name = "f", type = "FLOAT" }]
+rows = [
+  ["0", "0.5"],
+  ["-7", "1e300"],
+  ["99999999999999999999999999999999999999", "-0.0"],
+  ["NULL", "NULL"],
+]
+query = "SELECT TYPEOF(OBJECT_CONSTRUCT('i', i):i) AS ti, TYPEOF(OBJECT_CONSTRUCT('f', f):f) AS tf, TO_JSON(OBJECT_CONSTRUCT('i', i, 'f', f)) AS j FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "object_construct_empty"
+description = "OBJECT_CONSTRUCT with no arguments and with only NULL values."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["NULL"],
+]
+query = "SELECT TO_JSON(OBJECT_CONSTRUCT()) AS e, TO_JSON(OBJECT_CONSTRUCT('a', NULL)) AS n, TO_JSON(OBJECT_CONSTRUCT_KEEP_NULL('a', NULL)) AS k FROM input"
+order = "ordered"
+tags = ["null"]
+
+[[case]]
+id = "object_construct_duplicate_key"
+description = "OBJECT_CONSTRUCT naming a key twice: raises or converts."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["NULL"],
+]
+query = "SELECT TO_JSON(OBJECT_CONSTRUCT('a', 1, 'a', 2)) AS j FROM input"
+order = "ordered"
+tags = ["invalid"]
+
+[[case]]
+id = "object_construct_null_key"
+description = "OBJECT_CONSTRUCT with a NULL key: raises or converts."
+columns = [{ name = "k", type = "VARCHAR" }]
+rows = [
+  ["NULL"],
+]
+query = "SELECT TO_JSON(OBJECT_CONSTRUCT(k, 1)) AS j FROM input"
+order = "ordered"
+tags = ["invalid"]
+
+[[case]]
+id = "object_delete_values"
+description = "OBJECT_DELETE of present, missing, case-differing and repeated keys."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('{\"a\":1,\"b\":\"x\",\"n\":null,\"o\":{\"k\":[1,2]},\"arr\":[1,\"x\",null,{\"k\":1},[2]],\"s\":\"t\"}')"],
+  ["PARSE_JSON('{\"a\":2.5,\"arr\":[],\"o\":{}}')"],
+  ["PARSE_JSON('{\"A\":3,\"arr\":[null],\"b\":true}')"],
+  ["PARSE_JSON('{}')"],
+  ["PARSE_JSON('null')"],
+  ["NULL"],
+]
+query = "SELECT TO_JSON(OBJECT_DELETE(v, 'a')) AS one, TO_JSON(OBJECT_DELETE(v, 'a', 'b', 'missing')) AS several, TO_JSON(OBJECT_DELETE(v, 'A')) AS cased FROM input WHERE ordinal <= 4 ORDER BY ordinal"
+order = "ordered"
+tags = ["missing-key", "case-sensitive-key", "nested"]
+
+[[case]]
+id = "object_delete_null"
+description = "OBJECT_DELETE of JSON null and SQL NULL objects."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('null')"],
+  ["NULL"],
+]
+query = "SELECT TO_JSON(OBJECT_DELETE(v, 'a')) AS j FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "json-null"]
+
+[[case]]
+id = "object_delete_not_object"
+description = "OBJECT_DELETE of an array: raises or converts."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('[1,2]')"],
+]
+query = "SELECT TO_JSON(OBJECT_DELETE(v, 'a')) AS j FROM input"
+order = "ordered"
+tags = ["invalid"]
+
+[[case]]
+id = "object_delete_path"
+description = "OBJECT_DELETE of an object at a path, then read back by path."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('{\"a\":1,\"b\":\"x\",\"n\":null,\"o\":{\"k\":[1,2]},\"arr\":[1,\"x\",null,{\"k\":1},[2]],\"s\":\"t\"}')"],
+  ["PARSE_JSON('{\"a\":2.5,\"arr\":[],\"o\":{}}')"],
+  ["PARSE_JSON('{\"A\":3,\"arr\":[null],\"b\":true}')"],
+  ["PARSE_JSON('{}')"],
+  ["PARSE_JSON('null')"],
+  ["NULL"],
+]
+query = "SELECT TO_JSON(OBJECT_DELETE(v:o, 'k')) AS j, OBJECT_DELETE(v, 'b'):a::VARCHAR AS a FROM input WHERE ordinal IN (1, 2, 4) ORDER BY ordinal"
+order = "ordered"
+tags = ["missing-key", "nested"]
+
+[[case]]
+id = "object_insert_values"
+description = "OBJECT_INSERT of new keys, JSON null and NULL values."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('{\"a\":1,\"b\":\"x\",\"n\":null,\"o\":{\"k\":[1,2]},\"arr\":[1,\"x\",null,{\"k\":1},[2]],\"s\":\"t\"}')"],
+  ["PARSE_JSON('{\"a\":2.5,\"arr\":[],\"o\":{}}')"],
+  ["PARSE_JSON('{\"A\":3,\"arr\":[null],\"b\":true}')"],
+  ["PARSE_JSON('{}')"],
+]
+query = "SELECT TO_JSON(OBJECT_INSERT(v, 'new', 1)) AS added, TO_JSON(OBJECT_INSERT(v, 'nv', v:n)) AS json_null, TO_JSON(OBJECT_INSERT(v, 'sv', NULL)) AS sql_null FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["json-null", "null", "missing-key"]
+
+[[case]]
+id = "object_insert_update"
+description = "OBJECT_INSERT replacing a key with the update flag."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('{\"a\":1,\"b\":\"x\",\"n\":null,\"o\":{\"k\":[1,2]},\"arr\":[1,\"x\",null,{\"k\":1},[2]],\"s\":\"t\"}')"],
+  ["PARSE_JSON('{\"a\":2.5,\"arr\":[],\"o\":{}}')"],
+  ["PARSE_JSON('{\"A\":3,\"arr\":[null],\"b\":true}')"],
+]
+query = "SELECT TO_JSON(OBJECT_INSERT(v, 'a', 'replaced', TRUE)) AS j FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["missing-key"]
+
+[[case]]
+id = "object_insert_existing"
+description = "OBJECT_INSERT of a key that exists, without the update flag: raises or converts."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('{\"a\":1}')"],
+]
+query = "SELECT TO_JSON(OBJECT_INSERT(v, 'a', 2)) AS j FROM input"
+order = "ordered"
+tags = ["invalid"]
+
+[[case]]
+id = "array_construct_values"
+description = "ARRAY_CONSTRUCT with missing paths, which Snowflake keeps as undefined: raises."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('{\"a\":1,\"b\":\"x\",\"n\":null,\"o\":{\"k\":[1,2]},\"arr\":[1,\"x\",null,{\"k\":1},[2]],\"s\":\"t\"}')"],
+  ["PARSE_JSON('{\"a\":2.5,\"arr\":[],\"o\":{}}')"],
+  ["PARSE_JSON('{\"A\":3,\"arr\":[null],\"b\":true}')"],
+  ["PARSE_JSON('{}')"],
+  ["PARSE_JSON('null')"],
+  ["NULL"],
+]
+query = "SELECT TO_JSON(ARRAY_CONSTRUCT(1, 'x', v:a, v:n, v:missing, v:o)) AS j, TYPEOF(ARRAY_CONSTRUCT()) AS t, TO_JSON(ARRAY_CONSTRUCT()) AS e FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "json-null", "missing-key", "nested"]
+expected_divergence = "json_fidelity"
+
+[[case]]
+id = "array_construct_present_values"
+description = "ARRAY_CONSTRUCT of literals, present paths, JSON null values and nested objects."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('{\"a\":1,\"n\":null,\"o\":{\"k\":[1,2]}}')"],
+  ["PARSE_JSON('{\"a\":\"x\",\"n\":null,\"o\":{}}')"],
+  ["PARSE_JSON('{\"a\":true,\"n\":null,\"o\":[]}')"],
+]
+query = "SELECT TO_JSON(ARRAY_CONSTRUCT(1, 'x', v:a, v:n, v:o)) AS j, ARRAY_CONSTRUCT(v:a, v:o) AS arr, TYPEOF(ARRAY_CONSTRUCT()) AS t FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["json-null", "nested"]
+
+[[case]]
+id = "array_construct_scalars"
+description = "ARRAY_CONSTRUCT of typed column values."
+columns = [{ name = "n", type = "NUMBER(10,2)" }, { name = "s", type = "VARCHAR" }, { name = "d", type = "DATE" }]
+rows = [
+  ["1.50", "'x'", "'2024-02-29'"],
+  ["NULL", "NULL", "NULL"],
+  ["-3.00", "'a,b'", "'1999-12-31'"],
+]
+query = "SELECT TO_JSON(ARRAY_CONSTRUCT(n, s, d)) AS j, ARRAY_SIZE(ARRAY_CONSTRUCT(n, s, d)) AS size FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "array_size_values"
+description = "ARRAY_SIZE of arrays, objects, scalars, JSON null and missing paths."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('{\"a\":1,\"b\":\"x\",\"n\":null,\"o\":{\"k\":[1,2]},\"arr\":[1,\"x\",null,{\"k\":1},[2]],\"s\":\"t\"}')"],
+  ["PARSE_JSON('{\"a\":2.5,\"arr\":[],\"o\":{}}')"],
+  ["PARSE_JSON('{\"A\":3,\"arr\":[null],\"b\":true}')"],
+  ["PARSE_JSON('{}')"],
+  ["PARSE_JSON('null')"],
+  ["NULL"],
+]
+query = "SELECT ARRAY_SIZE(v:arr) AS arr, ARRAY_SIZE(v:o) AS obj, ARRAY_SIZE(v:a) AS scalar, ARRAY_SIZE(v:n) AS json_null, ARRAY_SIZE(v:missing) AS missing, ARRAY_SIZE(v:arr[4]) AS nested FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "json-null", "missing-key", "nested", "array-index"]
+
+[[case]]
+id = "array_to_string_path_nested"
+description = "ARRAY_TO_STRING at a path of an array mixing numbers, text, objects and arrays."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('{\"a\":1,\"arr\":[1,\"x\",{\"k\":1},[2],2.5]}')"],
+]
+query = "SELECT ARRAY_TO_STRING(v:arr, ',') AS joined, ARRAY_TO_STRING(v:arr, '') AS bare FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["nested"]
+
+[[case]]
+id = "array_to_string_path_json_null"
+description = "ARRAY_TO_STRING at a path of an array holding JSON null: raises or converts."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('{\"arr\":[1,null,\"x\"]}')"],
+]
+query = "SELECT ARRAY_TO_STRING(v:arr, ',') AS joined, ARRAY_TO_STRING(v:arr, '') AS bare FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["json-null"]
+
+[[case]]
+id = "array_to_string_path_absent"
+description = "ARRAY_TO_STRING at a path that is missing, empty, or under JSON null or SQL NULL."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('{\"arr\":[]}')"],
+  ["PARSE_JSON('{}')"],
+  ["PARSE_JSON('null')"],
+  ["NULL"],
+]
+query = "SELECT ARRAY_TO_STRING(v:arr, ',') AS joined, ARRAY_TO_STRING(v:arr, '') AS bare FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "json-null", "missing-key", "empty"]
+
+[[case]]
+id = "array_to_string_scalars"
+description = "ARRAY_TO_STRING of an array of decimals, an exponent, a boolean and a date as text."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'[1.50,2,-0.5,1e2,true,\"2024-02-29\"]'"],
+]
+expression = "ARRAY_TO_STRING(PARSE_JSON(s), '|')"
+tags = ["boundary"]
+expected_divergence = "json_fidelity"
+
+[[case]]
+id = "array_to_string_empty_array"
+description = "ARRAY_TO_STRING of an empty array."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'[]'"],
+]
+expression = "ARRAY_TO_STRING(PARSE_JSON(s), '|')"
+tags = ["empty"]
+
+[[case]]
+id = "array_to_string_json_nulls"
+description = "ARRAY_TO_STRING of an array of JSON nulls: raises or converts."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'[null,null]'"],
+]
+expression = "ARRAY_TO_STRING(PARSE_JSON(s), '|')"
+tags = ["json-null"]
+
+[[case]]
+id = "array_to_string_sql_null"
+description = "ARRAY_TO_STRING of SQL NULL."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["NULL"],
+]
+expression = "ARRAY_TO_STRING(PARSE_JSON(s), '|')"
+tags = ["null"]
+
+[[case]]
+id = "array_to_string_not_array"
+description = "ARRAY_TO_STRING of an object: raises or converts."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('{\"a\":1}')"],
+]
+query = "SELECT ARRAY_TO_STRING(v, ',') AS joined FROM input"
+order = "ordered"
+tags = ["invalid"]
+
+[[case]]
+id = "array_agg_values"
+description = "ARRAY_AGG within groups, ordered, skipping NULL, written as JSON."
+columns = [{ name = "g", type = "VARCHAR" }, { name = "k", type = "NUMBER(38,0)" }, { name = "s", type = "VARCHAR" }]
+rows = [
+  ["'a'", "3", "'c'"],
+  ["'a'", "1", "NULL"],
+  ["'a'", "2", "'b'"],
+  ["'b'", "1", "NULL"],
+  ["'c'", "NULL", "'z'"],
+  ["'c'", "5", "'y'"],
+]
+query = "SELECT g, TO_JSON(ARRAY_AGG(s) WITHIN GROUP (ORDER BY k)) AS ss, TO_JSON(ARRAY_AGG(k) WITHIN GROUP (ORDER BY k DESC)) AS ks, ARRAY_SIZE(ARRAY_AGG(s) WITHIN GROUP (ORDER BY k)) AS n FROM input GROUP BY g ORDER BY g"
+order = "ordered"
+tags = ["null", "all-null"]
+
+[[case]]
+id = "array_agg_distinct"
+description = "ARRAY_AGG(DISTINCT) ordered by the value."
+columns = [{ name = "g", type = "VARCHAR" }, { name = "s", type = "VARCHAR" }]
+rows = [
+  ["'a'", "'x'"],
+  ["'a'", "'x'"],
+  ["'a'", "'w'"],
+  ["'b'", "NULL"],
+]
+query = "SELECT g, TO_JSON(ARRAY_AGG(DISTINCT s) WITHIN GROUP (ORDER BY s)) AS ss FROM input GROUP BY g ORDER BY g"
+order = "ordered"
+tags = ["null", "duplicates"]
+
+[[case]]
+id = "array_agg_variant"
+description = "ARRAY_AGG of VARIANT values, JSON null included."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('{\"a\":1,\"b\":\"x\",\"n\":null,\"o\":{\"k\":[1,2]},\"arr\":[1,\"x\",null,{\"k\":1},[2]],\"s\":\"t\"}')"],
+  ["PARSE_JSON('{\"a\":2.5,\"arr\":[],\"o\":{}}')"],
+  ["PARSE_JSON('{\"A\":3,\"arr\":[null],\"b\":true}')"],
+  ["PARSE_JSON('{}')"],
+  ["PARSE_JSON('null')"],
+  ["NULL"],
+]
+query = "SELECT TO_JSON(ARRAY_AGG(v:a) WITHIN GROUP (ORDER BY ordinal)) AS a_values, TO_JSON(ARRAY_AGG(v:n) WITHIN GROUP (ORDER BY ordinal)) AS nulls FROM input"
+order = "ordered"
+tags = ["null", "json-null", "missing-key"]
+
+[[case]]
+id = "array_agg_empty"
+description = "ARRAY_AGG over no rows."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'x'"],
+]
+query = "SELECT TO_JSON(ARRAY_AGG(s) WITHIN GROUP (ORDER BY s)) AS j, ARRAY_SIZE(ARRAY_AGG(s) WITHIN GROUP (ORDER BY s)) AS n FROM input WHERE s = 'none'"
+order = "ordered"
+tags = ["empty-input"]
+
+[[case]]
+id = "array_contains_values"
+description = "ARRAY_CONTAINS of numbers, text and JSON null in arrays."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('{\"a\":1,\"b\":\"x\",\"n\":null,\"o\":{\"k\":[1,2]},\"arr\":[1,\"x\",null,{\"k\":1},[2]],\"s\":\"t\"}')"],
+  ["PARSE_JSON('{\"a\":2.5,\"arr\":[],\"o\":{}}')"],
+  ["PARSE_JSON('{\"A\":3,\"arr\":[null],\"b\":true}')"],
+  ["PARSE_JSON('{}')"],
+  ["PARSE_JSON('null')"],
+  ["NULL"],
+]
+query = "SELECT ARRAY_CONTAINS(1::VARIANT, v:arr) AS has_one, ARRAY_CONTAINS('x'::VARIANT, v:arr) AS has_x, ARRAY_CONTAINS(PARSE_JSON('null'), v:arr) AS has_null FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "json-null", "missing-key"]
+
+[[case]]
+id = "coalesce_variants"
+description = "COALESCE of VARIANT paths: JSON null is a value, not NULL."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('{\"a\":1,\"b\":\"x\",\"n\":null,\"o\":{\"k\":[1,2]},\"arr\":[1,\"x\",null,{\"k\":1},[2]],\"s\":\"t\"}')"],
+  ["PARSE_JSON('{\"a\":2.5,\"arr\":[],\"o\":{}}')"],
+  ["PARSE_JSON('{\"A\":3,\"arr\":[null],\"b\":true}')"],
+  ["PARSE_JSON('{}')"],
+  ["PARSE_JSON('null')"],
+  ["NULL"],
+]
+query = "SELECT TO_JSON(COALESCE(v:missing, v:n, v:a)) AS j, COALESCE(v:missing, v:b, v:a)::VARCHAR AS t FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "json-null", "missing-key"]
+
+[[case]]
+id = "variant_equals_varchar"
+description = "A VARIANT path compared with text: string values, numbers and JSON null."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('{\"a\":1,\"b\":\"x\",\"n\":null,\"o\":{\"k\":[1,2]},\"arr\":[1,\"x\",null,{\"k\":1},[2]],\"s\":\"t\"}')"],
+  ["PARSE_JSON('{\"a\":2.5,\"arr\":[],\"o\":{}}')"],
+  ["PARSE_JSON('{\"A\":3,\"arr\":[null],\"b\":true}')"],
+  ["PARSE_JSON('{}')"],
+  ["PARSE_JSON('null')"],
+  ["NULL"],
+]
+query = "SELECT v:b = 'x' AS b_is_x, v:a = '1' AS a_is_text_one, v:n = 'null' AS n_is_text FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "json-null", "missing-key"]
+
+[[case]]
+id = "union_all_variants"
+description = "UNION ALL of VARIANT paths, then read through TO_JSON."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('{\"a\":1,\"b\":\"x\",\"n\":null,\"o\":{\"k\":[1,2]},\"arr\":[1,\"x\",null,{\"k\":1},[2]],\"s\":\"t\"}')"],
+  ["PARSE_JSON('{\"a\":2.5,\"arr\":[],\"o\":{}}')"],
+  ["PARSE_JSON('{\"A\":3,\"arr\":[null],\"b\":true}')"],
+  ["PARSE_JSON('{}')"],
+  ["PARSE_JSON('null')"],
+  ["NULL"],
+]
+query = "SELECT TO_JSON(x) AS j FROM (SELECT v:a AS x, ordinal FROM input UNION ALL SELECT v:o AS x, ordinal + 10 FROM input) u ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "json-null", "missing-key"]

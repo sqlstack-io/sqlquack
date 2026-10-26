@@ -1,0 +1,21 @@
+category = "semi-structured"
+construct = "fn:TYPEOF"
+session_profile = "utc-v1"
+evidence = "typing"
+
+[[case]]
+id = "typeof_types"
+description = "TYPEOF of present, missing, JSON-null, nested and case-differing paths: its result types."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('{\"o\":{\"a\":1,\"b\":[1,2]},\"x\":\"s\",\"items\":[1,\"x\",null]}')"],
+  ["PARSE_JSON('{\"o\":{\"A\":1,\"a\":2},\"x\":null,\"items\":[]}')"],
+  ["PARSE_JSON('{\"o\":{\"n\":{\"m\":[{\"k\":1}]}},\"x\":[[1],[2]],\"items\":[[1,2],{\"k\":1}]}')"],
+  ["PARSE_JSON('{}')"],
+  ["PARSE_JSON('null')"],
+  ["NULL"],
+]
+query = "SELECT TYPEOF(v:x) AS x, TYPEOF(v:items[0]) AS first, TYPEOF(v:o:A) AS cased, TYPEOF(v:missing) AS missing, TYPEOF(v) AS whole FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "json-null", "missing-key", "nested", "array-index", "case-sensitive-key"]
+values = false

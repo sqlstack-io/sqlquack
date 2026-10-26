@@ -1,0 +1,89 @@
+category = "semi-structured"
+construct = "node:j_s_o_n_extract"
+session_profile = "utc-v1"
+equivalence = "variant_path_to_get_path"
+
+[[case]]
+id = "nested_key"
+description = "A nested key path, on objects, a JSON null, a top-level array, a scalar and SQL NULL."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('{\"a\":{\"b\":1,\"B\":2},\"k\":null}')"],
+  ["PARSE_JSON('{\"a\":null}')"],
+  ["PARSE_JSON('{\"a\":{\"b\":{\"c\":true}}}')"],
+  ["PARSE_JSON('[1,2]')"],
+  ["PARSE_JSON('\"text\"')"],
+  ["NULL"],
+]
+expression = "v:a.b"
+canonical = "GET_PATH(v, 'a.b')"
+tags = ["null", "json-null", "missing-key", "nested"]
+
+[[case]]
+id = "json_null_value"
+description = "A key whose value is JSON null, a missing key and SQL NULL."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [["PARSE_JSON('{\"k\":null}')"], ["PARSE_JSON('{}')"], ["NULL"]]
+expression = "v:k"
+canonical = "GET_PATH(v, 'k')"
+tags = ["json-null", "missing-key", "null"]
+
+[[case]]
+id = "array_index"
+description = "Array elements by index inside an object, including an index past the end."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('{\"arr\":[10,{\"c\":\"x\"}]}')"],
+  ["PARSE_JSON('{\"arr\":[10]}')"],
+  ["PARSE_JSON('{\"arr\":{\"1\":{\"c\":\"y\"}}}')"],
+]
+expression = "v:arr[1].c"
+canonical = "GET_PATH(v, 'arr[1].c')"
+tags = ["array-index", "nested", "missing-key"]
+
+[[case]]
+id = "upper_case_key"
+description = "Keys differing only in case: an unquoted key is still case-sensitive."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('{\"A\":\"upper\",\"a\":\"lower\"}')"],
+  ["PARSE_JSON('{\"a\":\"lower\"}')"],
+]
+expression = "v:A"
+canonical = "GET_PATH(v, 'A')"
+tags = ["case-sensitive-key"]
+
+[[case]]
+id = "quoted_key"
+description = "A double-quoted key is the same key as the unquoted spelling."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('{\"A\":\"upper\",\"a\":\"lower\"}')"],
+  ["PARSE_JSON('{\"a\":\"lower\"}')"],
+]
+expression = "v:\"A\""
+canonical = "GET_PATH(v, 'A')"
+tags = ["case-sensitive-key"]
+
+[[case]]
+id = "key_with_space"
+description = "A quoted key holding a space becomes a bracketed path element."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [["PARSE_JSON('{\"sp ace\":2}')"], ["PARSE_JSON('{\"sp\":1}')"]]
+expression = "v:\"sp ace\""
+canonical = "GET_PATH(v, '[\"sp ace\"]')"
+tags = ["missing-key"]
+
+[[case]]
+id = "cast_after_path"
+description = "A path followed by a cast to text."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('{\"a\":{\"b\":\"x\"}}')"],
+  ["PARSE_JSON('{\"a\":{\"b\":12.50}}')"],
+  ["PARSE_JSON('{\"a\":{\"b\":null}}')"],
+  ["PARSE_JSON('{}')"],
+]
+expression = "v:a.b::VARCHAR"
+canonical = "GET_PATH(v, 'a.b')::VARCHAR"
+tags = ["json-null", "missing-key", "nested"]

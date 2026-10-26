@@ -1,5 +1,7 @@
-//! The conversion pipeline. With no rules yet, it refuses every construct.
+//! The conversion pipeline: parse, convert with the rules, or refuse.
 
+pub(crate) mod _helpers;
+pub mod constants;
 pub mod main;
 pub mod models;
 

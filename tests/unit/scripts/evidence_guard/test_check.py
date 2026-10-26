@@ -8,12 +8,19 @@ import pytest
 
 from tests.unit.scripts.evidence_guard._test_types import GuardTestCase
 from tests.unit.scripts.evidence_guard.helpers import (
+    add_audit_valid,
     add_error_message,
+    add_error_number_message,
     add_mismatched,
+    add_pinned,
+    add_raw_parameters_hash,
     add_raw_query_id,
     add_stand_in,
+    add_types,
+    add_types_with_arrow,
     add_valid,
     delete_stored,
+    edit_audit,
     edit_stored,
     guard_after,
     unchanged,
@@ -36,6 +43,18 @@ from tests.unit.scripts.evidence_guard.helpers import (
             expected_fragment="passed, 2 added",
         ),
         GuardTestCase(
+            description="a new re-recorded audit result passes",
+            change=add_audit_valid,
+            expected_return_code=0,
+            expected_fragment="passed, 2 added",
+        ),
+        GuardTestCase(
+            description="an edited re-recorded audit result is rejected",
+            change=edit_audit,
+            expected_return_code=1,
+            expected_fragment="append-only (status M)",
+        ),
+        GuardTestCase(
             description="an edited result is rejected",
             change=edit_stored,
             expected_return_code=1,
@@ -54,16 +73,46 @@ from tests.unit.scripts.evidence_guard.helpers import (
             expected_fragment="does not match arrow_sha256",
         ),
         GuardTestCase(
+            description="a new result with its effective session parameters passes",
+            change=add_pinned,
+            expected_return_code=0,
+            expected_fragment="passed, 2 added",
+        ),
+        GuardTestCase(
+            description="a parameter snapshot that is not a digest is rejected",
+            change=add_raw_parameters_hash,
+            expected_return_code=1,
+            expected_fragment="parameters_sha256 must be a SHA-256 hex digest",
+        ),
+        GuardTestCase(
             description="a raw query ID is rejected",
             change=add_raw_query_id,
             expected_return_code=1,
             expected_fragment="query_id_sha256 must be a SHA-256 hex digest",
         ),
         GuardTestCase(
-            description="an error message is rejected",
+            description="an error keeping its text message passes",
             change=add_error_message,
+            expected_return_code=0,
+            expected_fragment="passed, 2 added",
+        ),
+        GuardTestCase(
+            description="an error message that is not text is rejected",
+            change=add_error_number_message,
             expected_return_code=1,
-            expected_fragment="an error records only errno and sqlstate",
+            expected_fragment="an error records errno, sqlstate and at most a text message",
+        ),
+        GuardTestCase(
+            description="a typing case's types-only result passes",
+            change=add_types,
+            expected_return_code=0,
+            expected_fragment="passed, 1 added",
+        ),
+        GuardTestCase(
+            description="a types outcome with an Arrow file is rejected",
+            change=add_types_with_arrow,
+            expected_return_code=1,
+            expected_fragment="a types outcome keeps no Arrow file",
         ),
         GuardTestCase(
             description="a result not written by the recorder is rejected",

@@ -1,15 +1,23 @@
 use std::path::Path;
 
+use sqlquack_core::provenance::models::Provenance;
+
 use crate::cases::models::LoadedCase;
+use crate::results::models::SessionDefaults;
 use crate::verify::models::Conversion;
 use crate::verify::types::CaseConverter;
 
 /// Test-only converter: replays the source SQL unchanged, valid only for SQL both dialects share.
+#[derive(Debug)]
 pub(crate) struct UnchangedSqlForTests;
 
 impl CaseConverter for UnchangedSqlForTests {
     fn convert(&self, case: &LoadedCase) -> Conversion {
-        Conversion::Converted(case.source_sql.clone())
+        Conversion::Converted {
+            sql: case.source_sql.clone(),
+            setup: Vec::new(),
+            provenance: Provenance::default(),
+        }
     }
 }
 
@@ -18,6 +26,7 @@ pub(crate) type Tampering = fn(&Path, &str);
 
 pub(crate) struct RoundTripTestCase {
     pub(crate) description: &'static str,
+    pub(crate) tampered: &'static str,
     pub(crate) tampering: Tampering,
     pub(crate) expected_round_trip: RoundTrip,
 }
@@ -26,5 +35,19 @@ pub(crate) struct RoundTripTestCase {
 pub(crate) struct RoundTrip {
     pub(crate) pending_before: usize,
     pub(crate) pending_after: usize,
+    pub(crate) unproven_sessions: usize,
     pub(crate) verdicts: Vec<String>,
+}
+
+pub(crate) struct SessionTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) tampering: Tampering,
+    pub(crate) defaults: Option<SessionDefaults>,
+    pub(crate) expected_round_trip: RoundTrip,
+}
+
+pub(crate) struct DivergenceErrorTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) error: &'static str,
+    pub(crate) expected_matched: Option<&'static str>,
 }

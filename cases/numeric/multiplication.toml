@@ -1,0 +1,96 @@
+category = "numeric"
+construct = "node:mul"
+session_profile = "utc-v1"
+
+[[case]]
+id = "decimals"
+description = "Multiplying two NUMBER(10,2) values; the scales add."
+columns = [{ name = "a", type = "NUMBER(10,2)" }, { name = "b", type = "NUMBER(10,2)" }]
+rows = [
+  ["1.25", "2.50"],
+  ["-0.01", "0.01"],
+  ["0", "5"],
+  ["NULL", "1"],
+  ["99999999.99", "99999999.99"],
+]
+expression = "a * b"
+tags = ["null", "zero", "negative", "boundary"]
+
+[[case]]
+id = "scale_capped_at_twelve"
+description = "Multiplying NUMBER(20,8) values, whose summed scale exceeds 12."
+columns = [{ name = "a", type = "NUMBER(20,8)" }, { name = "b", type = "NUMBER(20,8)" }]
+rows = [
+  ["1.23456789", "1.23456789"],
+  ["-0.00000001", "0.00000005"],
+  ["0.00000001", "0.00000001"],
+  ["0.00000005", "0.00000001"],
+  ["NULL", "1"],
+]
+expression = "a * b"
+tags = ["null", "negative", "boundary"]
+
+[[case]]
+id = "rounding_of_dropped_digits"
+description = "Products whose dropped digits are exactly half, positive and negative."
+columns = [{ name = "a", type = "NUMBER(20,8)" }, { name = "b", type = "NUMBER(20,8)" }]
+rows = [
+  ["0.00000005", "0.00000005"],
+  ["-0.00000005", "0.00000005"],
+  ["0.00000015", "0.00000005"],
+  ["0.00000025", "0.00000005"],
+  ["0", "0.00000001"],
+]
+expression = "a * b"
+tags = ["zero", "negative"]
+
+[[case]]
+id = "integers_overflow"
+description = "An integer product beyond 38 digits."
+columns = [{ name = "a", type = "NUMBER(38,0)" }, { name = "b", type = "NUMBER(38,0)" }]
+rows = [
+  ["99999999999999999999", "99999999999999999999"],
+]
+expression = "a * b"
+tags = ["boundary"]
+
+[[case]]
+id = "integers"
+description = "Integer products, including NULL and zero."
+columns = [{ name = "a", type = "NUMBER(38,0)" }, { name = "b", type = "NUMBER(38,0)" }]
+rows = [
+  ["3", "4"],
+  ["-3", "4"],
+  ["0", "7"],
+  ["NULL", "2"],
+]
+expression = "a * b"
+tags = ["null", "zero", "negative"]
+
+[[case]]
+id = "integer_literal"
+description = "Multiplying a decimal by an integer literal."
+columns = [{ name = "a", type = "NUMBER(10,2)" }]
+rows = [
+  ["1.25"],
+  ["-3.00"],
+  ["0"],
+  ["NULL"],
+]
+expression = "a * 3"
+tags = ["null", "zero", "negative"]
+
+[[case]]
+id = "half_way_at_result_scale"
+description = "Products exactly half way at the twelfth decimal tell half-up from half-even."
+columns = [{ name = "a", type = "NUMBER(12,8)" }, { name = "b", type = "NUMBER(12,8)" }]
+rows = [
+  ["0.00000125", "0.00000040"],
+  ["-0.00000125", "0.00000040"],
+  ["0.00000375", "0.00000040"],
+  ["0.00000125", "0.00000120"],
+  ["0", "0.00000040"],
+  ["NULL", "1"],
+]
+expression = "a * b"
+tags = ["null", "zero", "negative", "boundary"]

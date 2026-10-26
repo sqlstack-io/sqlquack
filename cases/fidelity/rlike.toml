@@ -1,0 +1,32 @@
+category = "string"
+construct = "node:regexp_like"
+session_profile = "utc-v1"
+equivalence = "rlike_to_regexp_like"
+
+[[case]]
+id = "rlike"
+description = "RLIKE matches the whole text, like REGEXP_LIKE."
+columns = [{ name = "s", type = "VARCHAR" }, { name = "p", type = "VARCHAR" }]
+rows = [
+  ["'abc'", "'a.*'"],
+  ["'abc'", "'b'"],
+  ["'abc'", "'.*b.*'"],
+  ["'ABC'", "'abc'"],
+  ["''", "''"],
+  ["' '", "'\\\\s'"],
+  ["'café'", "'caf.'"],
+  ["NULL", "'a'"],
+  ["'a'", "NULL"],
+]
+expression = "s RLIKE p"
+canonical = "REGEXP_LIKE(s, p)"
+tags = ["null", "empty", "whitespace", "unicode"]
+
+[[case]]
+id = "not_rlike"
+description = "NOT RLIKE."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [["'abc'"], ["'xyz'"], ["NULL"]]
+expression = "s NOT RLIKE 'a.*'"
+canonical = "NOT REGEXP_LIKE(s, 'a.*')"
+tags = ["null"]

@@ -10,7 +10,7 @@ fn given_sql_directory_when_running_census_binary_then_reports_on_the_right_stre
             expected_outcome: BinaryOutcome {
                 exit_code: Some(0),
                 files: Some(2),
-                missing_rule: Some(2),
+                unresolved_name: Some(2),
                 completion_reported: true,
             },
         },
@@ -20,7 +20,7 @@ fn given_sql_directory_when_running_census_binary_then_reports_on_the_right_stre
             expected_outcome: BinaryOutcome {
                 exit_code: Some(2),
                 files: None,
-                missing_rule: None,
+                unresolved_name: None,
                 completion_reported: false,
             },
         },

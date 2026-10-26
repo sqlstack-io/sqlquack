@@ -6,7 +6,7 @@ use serde::Serialize;
 
 use crate::parsing::models::SourceLocation;
 
-/// SQL that polyglot could not parse, with the parser's message and position.
+/// SQL that could not be parsed, with the parser's message and position.
 #[derive(Clone, Debug, PartialEq, Eq, Serialize)]
 pub struct ParseFailure {
     /// The parser's message.

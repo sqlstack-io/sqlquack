@@ -1,9 +1,9 @@
-//! Parsing, construct classification, refusals and re-parse checks for SQLQuack.
+//! Parsing, construct classification, refusals and provenance for SQLQuack.
 
 #![forbid(unsafe_code)]
 
 pub mod classification;
-pub mod comparison;
+pub mod failures;
 pub mod parsing;
+pub mod provenance;
 pub mod refusals;
-pub mod reparse;

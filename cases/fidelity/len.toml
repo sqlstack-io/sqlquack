@@ -1,0 +1,30 @@
+category = "string"
+construct = "fn:LEN"
+session_profile = "utc-v1"
+equivalence = "len_to_length"
+
+[[case]]
+id = "len_text"
+description = "LEN counts characters as LENGTH does: empty, blank, accented and NULL text."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'gift'"],
+  ["''"],
+  ["'   '"],
+  ["' padded '"],
+  ["'café'"],
+  ["'ünïcödé'"],
+  ["NULL"],
+]
+expression = "LEN(s)"
+canonical = "LENGTH(s)"
+tags = ["null", "empty", "whitespace", "unicode"]
+
+[[case]]
+id = "len_in_arithmetic"
+description = "LEN in arithmetic keeps LENGTH's result type."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [["'abc'"], ["''"], ["NULL"]]
+expression = "LEN(s) + 1"
+canonical = "LENGTH(s) + 1"
+tags = ["null", "empty"]

@@ -1,0 +1,13 @@
+category = "string"
+construct = "fn:SPLIT"
+session_profile = "utc-v1"
+evidence = "typing"
+
+[[case]]
+id = "split_text"
+description = "SPLIT of empty, blank, accented and NULL text: its result type."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [["'a,b,,c'"], ["''"], ["' , '"], ["'é,ü'"], ["NULL"]]
+expression = "SPLIT(s, ',')"
+tags = ["null", "empty", "whitespace", "unicode"]
+values = false

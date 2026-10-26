@@ -1,7 +1,7 @@
 //! Dialects and source positions of parsed SQL.
 
-use polyglot_sql::DialectType;
 use serde::Serialize;
+use sqlquack_syntax::Dialect;
 /// A dialect SQLQuack converts from. Every entry point takes it as a parameter.
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, Serialize)]
 #[serde(rename_all = "snake_case")]
@@ -12,9 +12,9 @@ pub enum SourceDialect {
 
 impl SourceDialect {
     /// The parser and printer dialect for this source.
-    pub fn polyglot(self) -> DialectType {
+    pub fn syntax(self) -> Dialect {
         match self {
-            Self::Snowflake => DialectType::Snowflake,
+            Self::Snowflake => Dialect::Snowflake,
         }
     }
 

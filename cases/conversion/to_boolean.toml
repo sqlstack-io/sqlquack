@@ -1,0 +1,93 @@
+category = "conversion"
+construct = "cast:BOOLEAN"
+session_profile = "utc-v1"
+
+[[case]]
+id = "text_to_boolean"
+description = "Text spellings Snowflake accepts as booleans."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'true'"],
+  ["'FALSE'"],
+  ["'false'"],
+  ["'TRUE'"],
+  ["NULL"],
+]
+expression = "CAST(s AS BOOLEAN)"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "text_to_boolean_lenient"
+description = "Other text spellings of booleans."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'t'"],
+  ["'f'"],
+  ["'yes'"],
+  ["'no'"],
+  ["'y'"],
+  ["'n'"],
+  ["'on'"],
+  ["'off'"],
+  ["'1'"],
+  ["'0'"],
+  ["' true '"],
+  ["'True'"],
+  ["'2'"],
+]
+expression = "TRY_CAST(s AS BOOLEAN)"
+tags = ["boundary", "invalid"]
+
+[[case]]
+id = "text_to_boolean_invalid"
+description = "Text that is not a boolean."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'maybe'"],
+]
+expression = "CAST(s AS BOOLEAN)"
+tags = ["invalid"]
+
+[[case]]
+id = "number_to_boolean"
+description = "Numbers to BOOLEAN: zero is false."
+columns = [{ name = "a", type = "NUMBER(10,2)" }]
+rows = [
+  ["0"],
+  ["1"],
+  ["-0.01"],
+  ["NULL"],
+]
+expression = "CAST(a AS BOOLEAN)"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "try_cast_boolean"
+description = "TRY_CAST to BOOLEAN."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'yes'"],
+  ["'maybe'"],
+  ["NULL"],
+]
+expression = "TRY_CAST(s AS BOOLEAN)"
+tags = ["null", "invalid"]
+
+[[case]]
+id = "text_boolean_spellings"
+description = "Boolean words in other cases and with other whitespace."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'TRUE '"],
+  ["'Yes'"],
+  ["'ON'"],
+  ["'T'"],
+  ["'\\ttrue'"],
+  ["'true\\n'"],
+  ["'01'"],
+  ["'-1'"],
+  ["''"],
+  ["NULL"],
+]
+expression = "TRY_CAST(s AS BOOLEAN)"
+tags = ["null", "invalid", "boundary"]

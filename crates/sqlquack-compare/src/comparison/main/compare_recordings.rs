@@ -27,6 +27,7 @@ pub fn compare_recordings(
             float32_ulps: 0,
             float64_ulps: 0,
             ignore_zone_labels: false,
+            json_columns: Vec::new(),
         },
     )
 }

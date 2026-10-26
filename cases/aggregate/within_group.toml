@@ -1,0 +1,185 @@
+category = "aggregate"
+construct = "node:within_group"
+session_profile = "utc-v1"
+
+[[case]]
+id = "listagg_within_group"
+description = "LISTAGG ordered within each group: NULL values skipped, ties broken by a second key."
+columns = [{ name = "g", type = "VARCHAR" }, { name = "k", type = "NUMBER(38,0)" }, { name = "s", type = "VARCHAR" }, { name = "x", type = "NUMBER(10,2)" }]
+rows = [
+  ["'a'", "3", "'c'", "1.50"],
+  ["'a'", "1", "'a'", "2.00"],
+  ["'a'", "2", "NULL", "NULL"],
+  ["'a'", "2", "'b'", "4.25"],
+  ["'b'", "1", "'z'", "-1.00"],
+  ["'b'", "NULL", "'y'", "0.00"],
+  ["'c'", "1", "NULL", "NULL"],
+  ["NULL", "5", "'n'", "7.00"],
+]
+query = "SELECT g, LISTAGG(s, ',') WITHIN GROUP (ORDER BY k, s) AS joined FROM input GROUP BY g ORDER BY g"
+order = "ordered"
+tags = ["null", "duplicates"]
+
+[[case]]
+id = "listagg_within_group_desc"
+description = "LISTAGG ordered descending, NULL keys placed by the session's default."
+columns = [{ name = "g", type = "VARCHAR" }, { name = "k", type = "NUMBER(38,0)" }, { name = "s", type = "VARCHAR" }, { name = "x", type = "NUMBER(10,2)" }]
+rows = [
+  ["'a'", "3", "'c'", "1.50"],
+  ["'a'", "1", "'a'", "2.00"],
+  ["'a'", "2", "NULL", "NULL"],
+  ["'a'", "2", "'b'", "4.25"],
+  ["'b'", "1", "'z'", "-1.00"],
+  ["'b'", "NULL", "'y'", "0.00"],
+  ["'c'", "1", "NULL", "NULL"],
+  ["NULL", "5", "'n'", "7.00"],
+]
+query = "SELECT g, LISTAGG(s, '|') WITHIN GROUP (ORDER BY k DESC, s) AS joined FROM input GROUP BY g ORDER BY g"
+order = "ordered"
+tags = ["null", "duplicates"]
+
+[[case]]
+id = "listagg_distinct_within_group"
+description = "LISTAGG DISTINCT ordered by the aggregated value."
+columns = [{ name = "g", type = "VARCHAR" }, { name = "k", type = "NUMBER(38,0)" }, { name = "s", type = "VARCHAR" }, { name = "x", type = "NUMBER(10,2)" }]
+rows = [
+  ["'a'", "3", "'c'", "1.50"],
+  ["'a'", "1", "'a'", "2.00"],
+  ["'a'", "2", "NULL", "NULL"],
+  ["'a'", "2", "'b'", "4.25"],
+  ["'b'", "1", "'z'", "-1.00"],
+  ["'b'", "NULL", "'y'", "0.00"],
+  ["'c'", "1", "NULL", "NULL"],
+  ["NULL", "5", "'n'", "7.00"],
+]
+query = "SELECT g, LISTAGG(DISTINCT s, ',') WITHIN GROUP (ORDER BY s) AS joined FROM input GROUP BY g ORDER BY g"
+order = "ordered"
+tags = ["null", "duplicates"]
+
+[[case]]
+id = "listagg_empty"
+description = "LISTAGG over no rows, and over a group of only NULL values."
+columns = [{ name = "g", type = "VARCHAR" }, { name = "k", type = "NUMBER(38,0)" }, { name = "s", type = "VARCHAR" }, { name = "x", type = "NUMBER(10,2)" }]
+rows = [
+  ["'a'", "3", "'c'", "1.50"],
+  ["'a'", "1", "'a'", "2.00"],
+  ["'a'", "2", "NULL", "NULL"],
+  ["'a'", "2", "'b'", "4.25"],
+  ["'b'", "1", "'z'", "-1.00"],
+  ["'b'", "NULL", "'y'", "0.00"],
+  ["'c'", "1", "NULL", "NULL"],
+  ["NULL", "5", "'n'", "7.00"],
+]
+query = "SELECT LISTAGG(s, ',') WITHIN GROUP (ORDER BY k) AS joined FROM input WHERE g = 'none'"
+order = "ordered"
+tags = ["empty-input"]
+
+[[case]]
+id = "listagg_null_group"
+description = "LISTAGG for a group whose values are all NULL."
+columns = [{ name = "g", type = "VARCHAR" }, { name = "k", type = "NUMBER(38,0)" }, { name = "s", type = "VARCHAR" }, { name = "x", type = "NUMBER(10,2)" }]
+rows = [
+  ["'a'", "3", "'c'", "1.50"],
+  ["'a'", "1", "'a'", "2.00"],
+  ["'a'", "2", "NULL", "NULL"],
+  ["'a'", "2", "'b'", "4.25"],
+  ["'b'", "1", "'z'", "-1.00"],
+  ["'b'", "NULL", "'y'", "0.00"],
+  ["'c'", "1", "NULL", "NULL"],
+  ["NULL", "5", "'n'", "7.00"],
+]
+query = "SELECT LISTAGG(s, ',') WITHIN GROUP (ORDER BY k) AS joined FROM input WHERE g = 'c'"
+order = "ordered"
+tags = ["null"]
+
+[[case]]
+id = "percentile_cont"
+description = "PERCENTILE_CONT at 0.5 and 0.25 within each group, interpolating between values."
+columns = [{ name = "g", type = "VARCHAR" }, { name = "k", type = "NUMBER(38,0)" }, { name = "s", type = "VARCHAR" }, { name = "x", type = "NUMBER(10,2)" }]
+rows = [
+  ["'a'", "3", "'c'", "1.50"],
+  ["'a'", "1", "'a'", "2.00"],
+  ["'a'", "2", "NULL", "NULL"],
+  ["'a'", "2", "'b'", "4.25"],
+  ["'b'", "1", "'z'", "-1.00"],
+  ["'b'", "NULL", "'y'", "0.00"],
+  ["'c'", "1", "NULL", "NULL"],
+  ["NULL", "5", "'n'", "7.00"],
+]
+query = "SELECT g, PERCENTILE_CONT(0.5) WITHIN GROUP (ORDER BY x) AS median, PERCENTILE_CONT(0.25) WITHIN GROUP (ORDER BY x) AS q1 FROM input GROUP BY g ORDER BY g"
+order = "ordered"
+tags = ["null", "duplicates"]
+expected_divergence = "percentile_interpolation"
+
+[[case]]
+id = "percentile_disc"
+description = "PERCENTILE_DISC at 0.5 within each group."
+columns = [{ name = "g", type = "VARCHAR" }, { name = "k", type = "NUMBER(38,0)" }, { name = "s", type = "VARCHAR" }, { name = "x", type = "NUMBER(10,2)" }]
+rows = [
+  ["'a'", "3", "'c'", "1.50"],
+  ["'a'", "1", "'a'", "2.00"],
+  ["'a'", "2", "NULL", "NULL"],
+  ["'a'", "2", "'b'", "4.25"],
+  ["'b'", "1", "'z'", "-1.00"],
+  ["'b'", "NULL", "'y'", "0.00"],
+  ["'c'", "1", "NULL", "NULL"],
+  ["NULL", "5", "'n'", "7.00"],
+]
+query = "SELECT g, PERCENTILE_DISC(0.5) WITHIN GROUP (ORDER BY x) AS median FROM input GROUP BY g ORDER BY g"
+order = "ordered"
+tags = ["null", "duplicates"]
+
+[[case]]
+id = "percentile_cont_desc"
+description = "PERCENTILE_CONT ordered descending."
+columns = [{ name = "g", type = "VARCHAR" }, { name = "k", type = "NUMBER(38,0)" }, { name = "s", type = "VARCHAR" }, { name = "x", type = "NUMBER(10,2)" }]
+rows = [
+  ["'a'", "3", "'c'", "1.50"],
+  ["'a'", "1", "'a'", "2.00"],
+  ["'a'", "2", "NULL", "NULL"],
+  ["'a'", "2", "'b'", "4.25"],
+  ["'b'", "1", "'z'", "-1.00"],
+  ["'b'", "NULL", "'y'", "0.00"],
+  ["'c'", "1", "NULL", "NULL"],
+  ["NULL", "5", "'n'", "7.00"],
+]
+query = "SELECT g, PERCENTILE_CONT(0.25) WITHIN GROUP (ORDER BY x DESC) AS q FROM input GROUP BY g ORDER BY g"
+order = "ordered"
+tags = ["null", "duplicates"]
+expected_divergence = "percentile_interpolation"
+
+[[case]]
+id = "array_agg_within_group"
+description = "ARRAY_AGG ordered within each group, as text."
+columns = [{ name = "g", type = "VARCHAR" }, { name = "k", type = "NUMBER(38,0)" }, { name = "s", type = "VARCHAR" }, { name = "x", type = "NUMBER(10,2)" }]
+rows = [
+  ["'a'", "3", "'c'", "1.50"],
+  ["'a'", "1", "'a'", "2.00"],
+  ["'a'", "2", "NULL", "NULL"],
+  ["'a'", "2", "'b'", "4.25"],
+  ["'b'", "1", "'z'", "-1.00"],
+  ["'b'", "NULL", "'y'", "0.00"],
+  ["'c'", "1", "NULL", "NULL"],
+  ["NULL", "5", "'n'", "7.00"],
+]
+query = "SELECT g, ARRAY_TO_STRING(ARRAY_AGG(k) WITHIN GROUP (ORDER BY k DESC), ',') AS ks FROM input GROUP BY g ORDER BY g"
+order = "ordered"
+tags = ["null", "duplicates"]
+
+[[case]]
+id = "listagg_window"
+description = "LISTAGG WITHIN GROUP as a window over each group."
+columns = [{ name = "g", type = "VARCHAR" }, { name = "k", type = "NUMBER(38,0)" }, { name = "s", type = "VARCHAR" }, { name = "x", type = "NUMBER(10,2)" }]
+rows = [
+  ["'a'", "3", "'c'", "1.50"],
+  ["'a'", "1", "'a'", "2.00"],
+  ["'a'", "2", "NULL", "NULL"],
+  ["'a'", "2", "'b'", "4.25"],
+  ["'b'", "1", "'z'", "-1.00"],
+  ["'b'", "NULL", "'y'", "0.00"],
+  ["'c'", "1", "NULL", "NULL"],
+  ["NULL", "5", "'n'", "7.00"],
+]
+query = "SELECT g, k, LISTAGG(s, ',') WITHIN GROUP (ORDER BY k, s) OVER (PARTITION BY g) AS joined FROM input ORDER BY g, k, s"
+order = "ordered"
+tags = ["null", "duplicates"]

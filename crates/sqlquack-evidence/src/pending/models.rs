@@ -19,10 +19,19 @@ pub struct PendingCase {
     pub source_dialect: String,
     /// Session parameters to set before running the SQL.
     pub session_parameters: BTreeMap<String, SessionValue>,
+    /// Pinned parameters to set as well; the recorder stores their effective values.
+    #[serde(default, skip_serializing_if = "BTreeMap::is_empty")]
+    pub pinned_parameters: BTreeMap<String, SessionValue>,
     /// The SQL to run.
     pub source_sql: String,
     /// The DuckDB version the case is prepared against.
     pub duckdb_version: String,
+    /// `Some(false)` for a typing case that records column types and the row count, no values.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub values: Option<bool>,
+    /// Statements creating the case's project functions, run first in a scratch schema.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub setup_sql: Vec<String>,
 }
 
 /// What `write_pending` did.

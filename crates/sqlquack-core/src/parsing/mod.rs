@@ -1,4 +1,4 @@
-//! Guarded parsing of source and target SQL with polyglot.
+//! Guarded parsing of source and target SQL with `sqlquack-syntax`.
 
 pub(crate) mod _helpers;
 pub mod constants;

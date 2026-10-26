@@ -1,0 +1,4250 @@
+//! Token types and the tokenizer that turns SQL text into tokens.
+
+use crate::error::{Error, Result};
+use crate::guard::TokenGuardStats;
+use serde::{Deserialize, Serialize};
+use std::collections::HashMap;
+use std::fmt;
+use std::ops::Deref;
+use std::sync::{Arc, LazyLock};
+
+/// Splits a DollarString token's text at '\x00' into tag and content.
+pub fn parse_dollar_string_token(text: &str) -> (Option<String>, String) {
+    if let Some(pos) = text.find('\x00') {
+        let tag = &text[..pos];
+        let content = &text[pos + 1..];
+        (Some(tag.to_string()), content.to_string())
+    } else {
+        (None, text.to_string())
+    }
+}
+
+/// Represents a position in the source SQL
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Default, Serialize, Deserialize)]
+pub struct Span {
+    /// Starting Unicode character offset (not a UTF-8 byte or UTF-16 code-unit offset).
+    pub start: usize,
+    /// Ending Unicode character offset (exclusive).
+    pub end: usize,
+    /// Cursor line after consuming the token (1-based).
+    pub line: usize,
+    /// Cursor column after consuming the token (1-based, in Unicode characters).
+    pub column: usize,
+}
+
+impl Span {
+    /// Cover two source ranges, retaining the ending range's cursor location.
+    pub(crate) fn through(self, end: Self) -> Self {
+        Self {
+            start: self.start,
+            ..end
+        }
+    }
+
+    pub fn new(start: usize, end: usize, line: usize, column: usize) -> Self {
+        Self {
+            start,
+            end,
+            line,
+            column,
+        }
+    }
+}
+
+/// A token in the SQL token stream
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct Token {
+    /// The type of token
+    pub token_type: TokenType,
+    /// The raw text of the token
+    pub text: String,
+    /// Position information
+    pub span: Span,
+    /// Leading comments (comments that appeared before this token)
+    #[serde(default)]
+    pub comments: Vec<String>,
+    /// Trailing comments (comments that appeared after this token, before the next one)
+    #[serde(default)]
+    pub trailing_comments: Vec<String>,
+}
+
+impl Token {
+    /// Create a new token
+    pub fn new(token_type: TokenType, text: impl Into<String>, span: Span) -> Self {
+        Self {
+            token_type,
+            text: text.into(),
+            span,
+            comments: Vec::new(),
+            trailing_comments: Vec::new(),
+        }
+    }
+
+    /// Create a NUMBER token
+    pub fn number(n: i64) -> Self {
+        Self::new(TokenType::Number, n.to_string(), Span::default())
+    }
+
+    /// Create a STRING token
+    pub fn string(s: impl Into<String>) -> Self {
+        Self::new(TokenType::String, s, Span::default())
+    }
+
+    /// Create an IDENTIFIER token
+    pub fn identifier(s: impl Into<String>) -> Self {
+        Self::new(TokenType::Identifier, s, Span::default())
+    }
+
+    /// Create a VAR token
+    pub fn var(s: impl Into<String>) -> Self {
+        Self::new(TokenType::Var, s, Span::default())
+    }
+
+    /// Add a comment to this token
+    pub fn with_comment(mut self, comment: impl Into<String>) -> Self {
+        self.comments.push(comment.into());
+        self
+    }
+}
+
+#[derive(Debug, Clone)]
+pub(crate) enum ParserTokenText {
+    Source {
+        source: Arc<str>,
+        start: usize,
+        end: usize,
+    },
+    Owned(String),
+}
+
+impl Deref for ParserTokenText {
+    type Target = str;
+
+    fn deref(&self) -> &Self::Target {
+        match self {
+            Self::Source { source, start, end } => &source[*start..*end],
+            Self::Owned(text) => text,
+        }
+    }
+}
+
+impl fmt::Display for ParserTokenText {
+    fn fmt(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
+        formatter.write_str(self)
+    }
+}
+
+impl PartialEq<str> for ParserTokenText {
+    fn eq(&self, other: &str) -> bool {
+        self.deref() == other
+    }
+}
+
+impl PartialEq<&str> for ParserTokenText {
+    fn eq(&self, other: &&str) -> bool {
+        self.deref() == *other
+    }
+}
+
+#[derive(Debug, Clone)]
+pub(crate) struct ParserToken {
+    pub token_type: TokenType,
+    pub span: Span,
+    pub comments: Vec<String>,
+    pub trailing_comments: Vec<String>,
+    pub(crate) text: ParserTokenText,
+}
+
+impl ParserToken {
+    pub(crate) fn text(&self) -> &str {
+        &self.text
+    }
+
+    pub(crate) fn text_owned(&self) -> String {
+        self.text.to_string()
+    }
+}
+
+impl From<Token> for ParserToken {
+    fn from(token: Token) -> Self {
+        Self {
+            token_type: token.token_type,
+            span: token.span,
+            comments: token.comments,
+            trailing_comments: token.trailing_comments,
+            text: ParserTokenText::Owned(token.text),
+        }
+    }
+}
+
+trait TokenOutput: Sized {
+    fn from_source(
+        token_type: TokenType,
+        source: &str,
+        text_start: usize,
+        text_end: usize,
+        span: Span,
+        shared_source: Option<&Arc<str>>,
+    ) -> Self;
+    fn from_owned(token_type: TokenType, text: String, span: Span) -> Self;
+    fn token_type(&self) -> TokenType;
+    fn text<'a>(&'a self, source: &'a str) -> &'a str;
+    fn comments_mut(&mut self) -> &mut Vec<String>;
+    fn trailing_comments_mut(&mut self) -> &mut Vec<String>;
+}
+
+impl TokenOutput for Token {
+    fn from_source(
+        token_type: TokenType,
+        source: &str,
+        text_start: usize,
+        text_end: usize,
+        span: Span,
+        _shared_source: Option<&Arc<str>>,
+    ) -> Self {
+        Self::new(token_type, &source[text_start..text_end], span)
+    }
+
+    fn from_owned(token_type: TokenType, text: String, span: Span) -> Self {
+        Self::new(token_type, text, span)
+    }
+
+    fn token_type(&self) -> TokenType {
+        self.token_type
+    }
+
+    fn text<'a>(&'a self, _source: &'a str) -> &'a str {
+        &self.text
+    }
+
+    fn comments_mut(&mut self) -> &mut Vec<String> {
+        &mut self.comments
+    }
+
+    fn trailing_comments_mut(&mut self) -> &mut Vec<String> {
+        &mut self.trailing_comments
+    }
+}
+
+impl TokenOutput for ParserToken {
+    fn from_source(
+        token_type: TokenType,
+        _source: &str,
+        text_start: usize,
+        text_end: usize,
+        span: Span,
+        shared_source: Option<&Arc<str>>,
+    ) -> Self {
+        Self {
+            token_type,
+            span,
+            comments: Vec::new(),
+            trailing_comments: Vec::new(),
+            text: ParserTokenText::Source {
+                source: Arc::clone(shared_source.expect("parser tokenization requires source SQL")),
+                start: text_start,
+                end: text_end,
+            },
+        }
+    }
+
+    fn from_owned(token_type: TokenType, text: String, span: Span) -> Self {
+        Self {
+            token_type,
+            span,
+            comments: Vec::new(),
+            trailing_comments: Vec::new(),
+            text: ParserTokenText::Owned(text),
+        }
+    }
+
+    fn token_type(&self) -> TokenType {
+        self.token_type
+    }
+
+    fn text<'a>(&'a self, _source: &'a str) -> &'a str {
+        self.text()
+    }
+
+    fn comments_mut(&mut self) -> &mut Vec<String> {
+        &mut self.comments
+    }
+
+    fn trailing_comments_mut(&mut self) -> &mut Vec<String> {
+        &mut self.trailing_comments
+    }
+}
+
+impl fmt::Display for Token {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "{:?}({})", self.token_type, self.text)
+    }
+}
+
+/// All possible token types in SQL
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
+#[serde(rename_all = "SCREAMING_SNAKE_CASE")]
+#[repr(u16)]
+pub enum TokenType {
+    // Punctuation
+    LParen,
+    RParen,
+    LBracket,
+    RBracket,
+    LBrace,
+    RBrace,
+    Comma,
+    Dot,
+    Dash,
+    Plus,
+    Colon,
+    DotColon,
+    DColon,
+    DColonDollar,
+    DColonPercent,
+    DColonQMark,
+    DQMark,
+    Semicolon,
+    Star,
+    Backslash,
+    Slash,
+    Lt,
+    Lte,
+    Gt,
+    Gte,
+    Not,
+    Eq,
+    Neq,
+    NullsafeEq,
+    ColonEq,
+    ColonGt,
+    NColonGt,
+    And,
+    Or,
+    Amp,
+    DPipe,
+    PipeGt,
+    Pipe,
+    PipeSlash,
+    DPipeSlash,
+    Caret,
+    CaretAt,
+    LtLt, // <<
+    GtGt, // >>
+    Tilde,
+    Arrow,
+    DArrow,
+    FArrow,
+    Hash,
+    HashArrow,
+    DHashArrow,
+    LrArrow,
+    DAt,
+    AtAt,
+    AtQMark,
+    LtAt,
+    AtGt,
+    Dollar,
+    Parameter,
+    Session,
+    SessionParameter,
+    SessionUser,
+    DAmp,
+    AmpLt,
+    AmpGt,
+    Adjacent,
+    Xor,
+    DStar,
+    QMarkAmp,
+    QMarkPipe,
+    HashDash,
+    Exclamation,
+
+    UriStart,
+    BlockStart,
+    BlockEnd,
+    Space,
+    Break,
+
+    // Comments (emitted as tokens for round-trip fidelity)
+    BlockComment, // /* ... */
+    LineComment,  // -- ...
+
+    // Literals
+    String,
+    DollarString,             // $$...$$
+    TripleDoubleQuotedString, // """..."""
+    TripleSingleQuotedString, // '''...'''
+    Number,
+    Identifier,
+    QuotedIdentifier,
+    Database,
+    Column,
+    ColumnDef,
+    Schema,
+    Table,
+    Warehouse,
+    Stage,
+    Streamlit,
+    Var,
+    BitString,
+    HexString,
+    /// Hex number: 0xA, 0xFF (BigQuery, SQLite style) - represents an integer in hex notation
+    HexNumber,
+    ByteString,
+    NationalString,
+    EscapeString, // PostgreSQL E'...' escape string
+    RawString,
+    HeredocString,
+    HeredocStringAlternative,
+    UnicodeString,
+
+    // Data Types
+    Bit,
+    Boolean,
+    TinyInt,
+    UTinyInt,
+    SmallInt,
+    USmallInt,
+    MediumInt,
+    UMediumInt,
+    Int,
+    UInt,
+    BigInt,
+    UBigInt,
+    BigNum,
+    Int128,
+    UInt128,
+    Int256,
+    UInt256,
+    Float,
+    Double,
+    UDouble,
+    Decimal,
+    Decimal32,
+    Decimal64,
+    Decimal128,
+    Decimal256,
+    DecFloat,
+    UDecimal,
+    BigDecimal,
+    Char,
+    NChar,
+    VarChar,
+    NVarChar,
+    BpChar,
+    Text,
+    MediumText,
+    LongText,
+    Blob,
+    MediumBlob,
+    LongBlob,
+    TinyBlob,
+    TinyText,
+    Name,
+    Binary,
+    VarBinary,
+    Json,
+    JsonB,
+    Time,
+    TimeTz,
+    TimeNs,
+    Timestamp,
+    TimestampTz,
+    TimestampLtz,
+    TimestampNtz,
+    TimestampS,
+    TimestampMs,
+    TimestampNs,
+    DateTime,
+    DateTime2,
+    DateTime64,
+    SmallDateTime,
+    Date,
+    Date32,
+    Int4Range,
+    Int4MultiRange,
+    Int8Range,
+    Int8MultiRange,
+    NumRange,
+    NumMultiRange,
+    TsRange,
+    TsMultiRange,
+    TsTzRange,
+    TsTzMultiRange,
+    DateRange,
+    DateMultiRange,
+    Uuid,
+    Geography,
+    GeographyPoint,
+    Nullable,
+    Geometry,
+    Point,
+    Ring,
+    LineString,
+    LocalTime,
+    LocalTimestamp,
+    SysTimestamp,
+    MultiLineString,
+    Polygon,
+    MultiPolygon,
+    HllSketch,
+    HStore,
+    Super,
+    Serial,
+    SmallSerial,
+    BigSerial,
+    Xml,
+    Year,
+    UserDefined,
+    Money,
+    SmallMoney,
+    RowVersion,
+    Image,
+    Variant,
+    Object,
+    Inet,
+    IpAddress,
+    IpPrefix,
+    Ipv4,
+    Ipv6,
+    Enum,
+    Enum8,
+    Enum16,
+    FixedString,
+    LowCardinality,
+    Nested,
+    AggregateFunction,
+    SimpleAggregateFunction,
+    TDigest,
+    Unknown,
+    Vector,
+    Dynamic,
+    Void,
+
+    // Keywords
+    Add,
+    Alias,
+    Alter,
+    All,
+    Anti,
+    Any,
+    Apply,
+    Array,
+    Asc,
+    AsOf,
+    Attach,
+    AutoIncrement,
+    Begin,
+    Between,
+    BulkCollectInto,
+    Cache,
+    Cascade,
+    Case,
+    CharacterSet,
+    Cluster,
+    ClusterBy,
+    Collate,
+    Command,
+    Comment,
+    Commit,
+    Prepare,
+    Preserve,
+    Connect,
+    ConnectBy,
+    Constraint,
+    Copy,
+    Create,
+    Cross,
+    Cube,
+    CurrentDate,
+    CurrentDateTime,
+    CurrentSchema,
+    CurrentTime,
+    CurrentTimestamp,
+    CurrentUser,
+    CurrentRole,
+    CurrentCatalog,
+    Declare,
+    Default,
+    Delete,
+    Desc,
+    Describe,
+    Detach,
+    Dictionary,
+    Distinct,
+    Distribute,
+    DistributeBy,
+    Div,
+    Drop,
+    Else,
+    End,
+    Escape,
+    Except,
+    Execute,
+    Exists,
+    False,
+    Fetch,
+    File,
+    FileFormat,
+    Filter,
+    Final,
+    First,
+    For,
+    Force,
+    ForeignKey,
+    Format,
+    From,
+    Full,
+    Function,
+    Get,
+    Glob,
+    Global,
+    Grant,
+    GroupBy,
+    GroupingSets,
+    Having,
+    Hint,
+    Ignore,
+    ILike,
+    In,
+    Index,
+    IndexedBy,
+    Inner,
+    Input,
+    Insert,
+    Install,
+    Intersect,
+    Interval,
+    Into,
+    Inpath,
+    InputFormat,
+    Introducer,
+    IRLike,
+    Is,
+    IsNull,
+    Join,
+    JoinMarker,
+    Keep,
+    Key,
+    Kill,
+    Lambda,
+    Language,
+    Lateral,
+    Left,
+    Like,
+    NotLike,   // !~~ operator (PostgreSQL)
+    NotILike,  // !~~* operator (PostgreSQL)
+    NotRLike,  // !~ operator (PostgreSQL)
+    NotIRLike, // !~* operator (PostgreSQL)
+    Limit,
+    List,
+    Load,
+    Local,
+    Lock,
+    Map,
+    Match,
+    MatchCondition,
+    MatchRecognize,
+    MemberOf,
+    Materialized,
+    Merge,
+    Mod,
+    Model,
+    Natural,
+    Next,
+    NoAction,
+    Nothing,
+    NotNull,
+    Null,
+    ObjectIdentifier,
+    Offset,
+    On,
+    Only,
+    Operator,
+    OrderBy,
+    OrderSiblingsBy,
+    Ordered,
+    Ordinality,
+    Out,
+    Outer,
+    Output,
+    Over,
+    Overlaps,
+    Overwrite,
+    Partition,
+    PartitionBy,
+    Percent,
+    Pivot,
+    Placeholder,
+    Positional,
+    Pragma,
+    Prewhere,
+    PrimaryKey,
+    Procedure,
+    Properties,
+    PseudoType,
+    Put,
+    Qualify,
+    Quote,
+    QDColon,
+    Range,
+    Recursive,
+    Refresh,
+    Rename,
+    Replace,
+    Returning,
+    Revoke,
+    References,
+    Restrict,
+    Right,
+    RLike,
+    Rollback,
+    Rollup,
+    Row,
+    Rows,
+    Select,
+    Semi,
+    Savepoint,
+    Separator,
+    Sequence,
+    Serde,
+    SerdeProperties,
+    Set,
+    Settings,
+    Show,
+    Siblings,
+    SimilarTo,
+    Some,
+    Sort,
+    SortBy,
+    SoundsLike,
+    StartWith,
+    StorageIntegration,
+    StraightJoin,
+    Struct,
+    Summarize,
+    TableSample,
+    Sample,
+    Bernoulli,
+    System,
+    Block,
+    Seed,
+    Repeatable,
+    Tag,
+    Temporary,
+    Transaction,
+    To,
+    Top,
+    Then,
+    True,
+    Truncate,
+    Uncache,
+    Union,
+    Unnest,
+    Unpivot,
+    Update,
+    Use,
+    Using,
+    Values,
+    View,
+    SemanticView,
+    Volatile,
+    When,
+    Where,
+    Window,
+    With,
+    Ties,
+    Exclude,
+    No,
+    Others,
+    Unique,
+    UtcDate,
+    UtcTime,
+    UtcTimestamp,
+    VersionSnapshot,
+    TimestampSnapshot,
+    Option,
+    Sink,
+    Source,
+    Analyze,
+    Namespace,
+    Export,
+    As,
+    By,
+    Nulls,
+    Respect,
+    Last,
+    If,
+    Cast,
+    TryCast,
+    SafeCast,
+    Count,
+    Extract,
+    Substring,
+    Trim,
+    Leading,
+    Trailing,
+    Both,
+    Position,
+    Overlaying,
+    Placing,
+    Treat,
+    Within,
+    Group,
+    Order,
+
+    // Window function keywords
+    Unbounded,
+    Preceding,
+    Following,
+    Current,
+    Groups,
+
+    // DDL-specific keywords (Phase 4)
+    Trigger,
+    Type,
+    Domain,
+    Returns,
+    Body,
+    Increment,
+    Minvalue,
+    Maxvalue,
+    Start,
+    Cycle,
+    NoCycle,
+    Prior,
+    Generated,
+    Identity,
+    Always,
+    // MATCH_RECOGNIZE tokens
+    Measures,
+    Pattern,
+    Define,
+    Running,
+    Owned,
+    After,
+    Before,
+    Instead,
+    Each,
+    Statement,
+    Referencing,
+    Old,
+    New,
+    Of,
+    Check,
+    Authorization,
+    Restart,
+
+    // Special
+    /// Never produced by [`Tokenizer`]; a caller-supplied one marks the end of input.
+    Eof,
+}
+
+impl TokenType {
+    /// Check if this token type is a keyword that can be used as an identifier in certain contexts
+    pub fn is_keyword(&self) -> bool {
+        matches!(
+            self,
+            TokenType::Select
+                | TokenType::From
+                | TokenType::Where
+                | TokenType::And
+                | TokenType::Or
+                | TokenType::Not
+                | TokenType::In
+                | TokenType::Is
+                | TokenType::Null
+                | TokenType::True
+                | TokenType::False
+                | TokenType::As
+                | TokenType::On
+                | TokenType::Join
+                | TokenType::Left
+                | TokenType::Right
+                | TokenType::Inner
+                | TokenType::Outer
+                | TokenType::Full
+                | TokenType::Cross
+                | TokenType::Semi
+                | TokenType::Anti
+                | TokenType::Union
+                | TokenType::Except
+                | TokenType::Intersect
+                | TokenType::GroupBy
+                | TokenType::OrderBy
+                | TokenType::Having
+                | TokenType::Limit
+                | TokenType::Offset
+                | TokenType::Case
+                | TokenType::When
+                | TokenType::Then
+                | TokenType::Else
+                | TokenType::End
+                | TokenType::Create
+                | TokenType::Drop
+                | TokenType::Alter
+                | TokenType::Insert
+                | TokenType::Update
+                | TokenType::Delete
+                | TokenType::Into
+                | TokenType::Values
+                | TokenType::Set
+                | TokenType::With
+                | TokenType::Distinct
+                | TokenType::All
+                | TokenType::Exists
+                | TokenType::Between
+                | TokenType::Like
+                | TokenType::ILike
+                // Additional keywords that can be used as identifiers
+                | TokenType::Filter
+                | TokenType::Date
+                | TokenType::Timestamp
+                | TokenType::TimestampTz
+                | TokenType::Interval
+                | TokenType::Time
+                | TokenType::Table
+                | TokenType::Index
+                | TokenType::Column
+                | TokenType::Database
+                | TokenType::Schema
+                | TokenType::View
+                | TokenType::Function
+                | TokenType::Procedure
+                | TokenType::Trigger
+                | TokenType::Sequence
+                | TokenType::Over
+                | TokenType::Partition
+                | TokenType::Window
+                | TokenType::Rows
+                | TokenType::Range
+                | TokenType::First
+                | TokenType::Last
+                | TokenType::Preceding
+                | TokenType::Following
+                | TokenType::Current
+                | TokenType::Row
+                | TokenType::Unbounded
+                | TokenType::Array
+                | TokenType::Struct
+                | TokenType::Map
+                | TokenType::PrimaryKey
+                | TokenType::Key
+                | TokenType::ForeignKey
+                | TokenType::References
+                | TokenType::Unique
+                | TokenType::Check
+                | TokenType::Default
+                | TokenType::Constraint
+                | TokenType::Comment
+                | TokenType::Rollup
+                | TokenType::Cube
+                | TokenType::Grant
+                | TokenType::Revoke
+                | TokenType::Type
+                | TokenType::Use
+                | TokenType::Cache
+                | TokenType::Uncache
+                | TokenType::Load
+                | TokenType::Any
+                | TokenType::Some
+                | TokenType::Asc
+                | TokenType::Desc
+                | TokenType::Nulls
+                | TokenType::Lateral
+                | TokenType::Natural
+                | TokenType::Escape
+                | TokenType::Glob
+                | TokenType::Match
+                | TokenType::Recursive
+                | TokenType::Replace
+                | TokenType::Returns
+                | TokenType::If
+                | TokenType::Pivot
+                | TokenType::Unpivot
+                | TokenType::Json
+                | TokenType::Blob
+                | TokenType::Text
+                | TokenType::Int
+                | TokenType::BigInt
+                | TokenType::SmallInt
+                | TokenType::TinyInt
+                | TokenType::Int128
+                | TokenType::UInt128
+                | TokenType::Int256
+                | TokenType::UInt256
+                | TokenType::UInt
+                | TokenType::UBigInt
+                | TokenType::Float
+                | TokenType::Double
+                | TokenType::Decimal
+                | TokenType::Boolean
+                | TokenType::VarChar
+                | TokenType::Char
+                | TokenType::Binary
+                | TokenType::VarBinary
+                | TokenType::No
+                | TokenType::DateTime
+                | TokenType::Truncate
+                | TokenType::Execute
+                | TokenType::Merge
+                | TokenType::Top
+                | TokenType::Begin
+                | TokenType::Generated
+                | TokenType::Identity
+                | TokenType::Always
+                | TokenType::Extract
+                // Keywords that can be identifiers in certain contexts
+                | TokenType::AsOf
+                | TokenType::Prior
+                | TokenType::After
+                | TokenType::Restrict
+                | TokenType::Cascade
+                | TokenType::Local
+                | TokenType::Rename
+                | TokenType::Enum
+                | TokenType::Within
+                | TokenType::Format
+                | TokenType::Final
+                | TokenType::FileFormat
+                | TokenType::Input
+                | TokenType::InputFormat
+                | TokenType::Copy
+                | TokenType::Put
+                | TokenType::Get
+                | TokenType::Show
+                | TokenType::Serde
+                | TokenType::Sample
+                | TokenType::Sort
+                | TokenType::Collate
+                | TokenType::Ties
+                | TokenType::IsNull
+                | TokenType::NotNull
+                | TokenType::Exclude
+                | TokenType::Temporary
+                | TokenType::Add
+                | TokenType::Ordinality
+                | TokenType::Overlaps
+                | TokenType::Block
+                | TokenType::Pattern
+                | TokenType::Group
+                | TokenType::Cluster
+                | TokenType::Repeatable
+                | TokenType::Groups
+                | TokenType::Commit
+                | TokenType::Warehouse
+                | TokenType::System
+                | TokenType::By
+                | TokenType::To
+                | TokenType::Fetch
+                | TokenType::For
+                | TokenType::Only
+                | TokenType::Next
+                | TokenType::Lock
+                | TokenType::Refresh
+                | TokenType::Settings
+                | TokenType::Operator
+                | TokenType::Overwrite
+                | TokenType::StraightJoin
+                | TokenType::Start
+                // Additional keywords registered in tokenizer but previously missing from is_keyword()
+                | TokenType::Ignore
+                | TokenType::Domain
+                | TokenType::Apply
+                | TokenType::Respect
+                | TokenType::Materialized
+                | TokenType::Prewhere
+                | TokenType::Old
+                | TokenType::New
+                | TokenType::Cast
+                | TokenType::TryCast
+                | TokenType::SafeCast
+                | TokenType::Transaction
+                | TokenType::Describe
+                | TokenType::Kill
+                | TokenType::Lambda
+                | TokenType::Declare
+                | TokenType::Keep
+                | TokenType::Output
+                | TokenType::Percent
+                | TokenType::Qualify
+                | TokenType::Returning
+                | TokenType::Language
+                | TokenType::Prepare
+                | TokenType::Preserve
+                | TokenType::Savepoint
+                | TokenType::Rollback
+                | TokenType::Body
+                | TokenType::Increment
+                | TokenType::Minvalue
+                | TokenType::Maxvalue
+                | TokenType::Cycle
+                | TokenType::NoCycle
+                | TokenType::Seed
+                | TokenType::Namespace
+                | TokenType::Authorization
+                | TokenType::Order
+                | TokenType::Restart
+                | TokenType::Before
+                | TokenType::Instead
+                | TokenType::Each
+                | TokenType::Statement
+                | TokenType::Referencing
+                | TokenType::Of
+                | TokenType::Separator
+                | TokenType::Others
+                | TokenType::Placing
+                | TokenType::Owned
+                | TokenType::Running
+                | TokenType::Define
+                | TokenType::Measures
+                | TokenType::MatchRecognize
+                | TokenType::AutoIncrement
+                | TokenType::Connect
+                | TokenType::Distribute
+                | TokenType::Bernoulli
+                | TokenType::TableSample
+                | TokenType::Inpath
+                | TokenType::Pragma
+                | TokenType::Siblings
+                | TokenType::SerdeProperties
+                | TokenType::RLike
+        )
+    }
+
+    /// Check if this token type is a comparison operator
+    pub fn is_comparison(&self) -> bool {
+        matches!(
+            self,
+            TokenType::Eq
+                | TokenType::Neq
+                | TokenType::Lt
+                | TokenType::Lte
+                | TokenType::Gt
+                | TokenType::Gte
+                | TokenType::NullsafeEq
+        )
+    }
+
+    /// Check if this token type is an arithmetic operator
+    pub fn is_arithmetic(&self) -> bool {
+        matches!(
+            self,
+            TokenType::Plus
+                | TokenType::Dash
+                | TokenType::Star
+                | TokenType::Slash
+                | TokenType::Percent
+                | TokenType::Mod
+                | TokenType::Div
+        )
+    }
+}
+
+impl fmt::Display for TokenType {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "{:?}", self)
+    }
+}
+
+// ── Cached default maps for TokenizerConfig ─────────────────────────────────
+
+static DEFAULT_KEYWORDS: LazyLock<HashMap<String, TokenType>> = LazyLock::new(|| {
+    let mut keywords = HashMap::with_capacity(300);
+    // Add basic SQL keywords
+    keywords.insert("SELECT".to_string(), TokenType::Select);
+    keywords.insert("FROM".to_string(), TokenType::From);
+    keywords.insert("WHERE".to_string(), TokenType::Where);
+    keywords.insert("AND".to_string(), TokenType::And);
+    keywords.insert("OR".to_string(), TokenType::Or);
+    keywords.insert("NOT".to_string(), TokenType::Not);
+    keywords.insert("AS".to_string(), TokenType::As);
+    keywords.insert("ON".to_string(), TokenType::On);
+    keywords.insert("JOIN".to_string(), TokenType::Join);
+    keywords.insert("LEFT".to_string(), TokenType::Left);
+    keywords.insert("RIGHT".to_string(), TokenType::Right);
+    keywords.insert("INNER".to_string(), TokenType::Inner);
+    keywords.insert("OUTER".to_string(), TokenType::Outer);
+    keywords.insert("OUTPUT".to_string(), TokenType::Output);
+    keywords.insert("FULL".to_string(), TokenType::Full);
+    keywords.insert("CROSS".to_string(), TokenType::Cross);
+    keywords.insert("SEMI".to_string(), TokenType::Semi);
+    keywords.insert("ANTI".to_string(), TokenType::Anti);
+    keywords.insert("STRAIGHT_JOIN".to_string(), TokenType::StraightJoin);
+    keywords.insert("UNION".to_string(), TokenType::Union);
+    keywords.insert("EXCEPT".to_string(), TokenType::Except);
+    keywords.insert("MINUS".to_string(), TokenType::Except); // Oracle/Redshift alias for EXCEPT
+    keywords.insert("INTERSECT".to_string(), TokenType::Intersect);
+    keywords.insert("GROUP".to_string(), TokenType::Group);
+    keywords.insert("CUBE".to_string(), TokenType::Cube);
+    keywords.insert("ROLLUP".to_string(), TokenType::Rollup);
+    keywords.insert("WITHIN".to_string(), TokenType::Within);
+    keywords.insert("ORDER".to_string(), TokenType::Order);
+    keywords.insert("BY".to_string(), TokenType::By);
+    keywords.insert("HAVING".to_string(), TokenType::Having);
+    keywords.insert("LIMIT".to_string(), TokenType::Limit);
+    keywords.insert("OFFSET".to_string(), TokenType::Offset);
+    keywords.insert("ORDINALITY".to_string(), TokenType::Ordinality);
+    keywords.insert("FETCH".to_string(), TokenType::Fetch);
+    keywords.insert("FIRST".to_string(), TokenType::First);
+    keywords.insert("NEXT".to_string(), TokenType::Next);
+    keywords.insert("ONLY".to_string(), TokenType::Only);
+    keywords.insert("KEEP".to_string(), TokenType::Keep);
+    keywords.insert("IGNORE".to_string(), TokenType::Ignore);
+    keywords.insert("INPUT".to_string(), TokenType::Input);
+    keywords.insert("CASE".to_string(), TokenType::Case);
+    keywords.insert("WHEN".to_string(), TokenType::When);
+    keywords.insert("THEN".to_string(), TokenType::Then);
+    keywords.insert("ELSE".to_string(), TokenType::Else);
+    keywords.insert("END".to_string(), TokenType::End);
+    keywords.insert("ENDIF".to_string(), TokenType::End); // Exasol alias for END
+    keywords.insert("NULL".to_string(), TokenType::Null);
+    keywords.insert("TRUE".to_string(), TokenType::True);
+    keywords.insert("FALSE".to_string(), TokenType::False);
+    keywords.insert("IS".to_string(), TokenType::Is);
+    keywords.insert("IN".to_string(), TokenType::In);
+    keywords.insert("BETWEEN".to_string(), TokenType::Between);
+    keywords.insert("OVERLAPS".to_string(), TokenType::Overlaps);
+    keywords.insert("LIKE".to_string(), TokenType::Like);
+    keywords.insert("ILIKE".to_string(), TokenType::ILike);
+    keywords.insert("RLIKE".to_string(), TokenType::RLike);
+    keywords.insert("REGEXP".to_string(), TokenType::RLike);
+    keywords.insert("ESCAPE".to_string(), TokenType::Escape);
+    keywords.insert("EXISTS".to_string(), TokenType::Exists);
+    keywords.insert("DISTINCT".to_string(), TokenType::Distinct);
+    keywords.insert("ALL".to_string(), TokenType::All);
+    keywords.insert("WITH".to_string(), TokenType::With);
+    keywords.insert("CREATE".to_string(), TokenType::Create);
+    keywords.insert("DROP".to_string(), TokenType::Drop);
+    keywords.insert("ALTER".to_string(), TokenType::Alter);
+    keywords.insert("TRUNCATE".to_string(), TokenType::Truncate);
+    keywords.insert("TABLE".to_string(), TokenType::Table);
+    keywords.insert("VIEW".to_string(), TokenType::View);
+    keywords.insert("INDEX".to_string(), TokenType::Index);
+    keywords.insert("COLUMN".to_string(), TokenType::Column);
+    keywords.insert("CONSTRAINT".to_string(), TokenType::Constraint);
+    keywords.insert("ADD".to_string(), TokenType::Add);
+    keywords.insert("CASCADE".to_string(), TokenType::Cascade);
+    keywords.insert("RESTRICT".to_string(), TokenType::Restrict);
+    keywords.insert("RENAME".to_string(), TokenType::Rename);
+    keywords.insert("TEMPORARY".to_string(), TokenType::Temporary);
+    keywords.insert("TEMP".to_string(), TokenType::Temporary);
+    keywords.insert("UNIQUE".to_string(), TokenType::Unique);
+    keywords.insert("PRIMARY".to_string(), TokenType::PrimaryKey);
+    keywords.insert("FOREIGN".to_string(), TokenType::ForeignKey);
+    keywords.insert("KEY".to_string(), TokenType::Key);
+    keywords.insert("KILL".to_string(), TokenType::Kill);
+    keywords.insert("REFERENCES".to_string(), TokenType::References);
+    keywords.insert("DEFAULT".to_string(), TokenType::Default);
+    keywords.insert("DECLARE".to_string(), TokenType::Declare);
+    keywords.insert("AUTO_INCREMENT".to_string(), TokenType::AutoIncrement);
+    keywords.insert("AUTOINCREMENT".to_string(), TokenType::AutoIncrement); // Snowflake style
+    keywords.insert("MATERIALIZED".to_string(), TokenType::Materialized);
+    keywords.insert("REPLACE".to_string(), TokenType::Replace);
+    keywords.insert("TO".to_string(), TokenType::To);
+    keywords.insert("INSERT".to_string(), TokenType::Insert);
+    keywords.insert("OVERWRITE".to_string(), TokenType::Overwrite);
+    keywords.insert("UPDATE".to_string(), TokenType::Update);
+    keywords.insert("USE".to_string(), TokenType::Use);
+    keywords.insert("WAREHOUSE".to_string(), TokenType::Warehouse);
+    keywords.insert("GLOB".to_string(), TokenType::Glob);
+    keywords.insert("DELETE".to_string(), TokenType::Delete);
+    keywords.insert("MERGE".to_string(), TokenType::Merge);
+    keywords.insert("CACHE".to_string(), TokenType::Cache);
+    keywords.insert("UNCACHE".to_string(), TokenType::Uncache);
+    keywords.insert("REFRESH".to_string(), TokenType::Refresh);
+    keywords.insert("GRANT".to_string(), TokenType::Grant);
+    keywords.insert("REVOKE".to_string(), TokenType::Revoke);
+    keywords.insert("COMMENT".to_string(), TokenType::Comment);
+    keywords.insert("COLLATE".to_string(), TokenType::Collate);
+    keywords.insert("INTO".to_string(), TokenType::Into);
+    keywords.insert("VALUES".to_string(), TokenType::Values);
+    keywords.insert("SET".to_string(), TokenType::Set);
+    keywords.insert("SETTINGS".to_string(), TokenType::Settings);
+    keywords.insert("SEPARATOR".to_string(), TokenType::Separator);
+    keywords.insert("ASC".to_string(), TokenType::Asc);
+    keywords.insert("DESC".to_string(), TokenType::Desc);
+    keywords.insert("NULLS".to_string(), TokenType::Nulls);
+    keywords.insert("RESPECT".to_string(), TokenType::Respect);
+    keywords.insert("FIRST".to_string(), TokenType::First);
+    keywords.insert("LAST".to_string(), TokenType::Last);
+    keywords.insert("IF".to_string(), TokenType::If);
+    keywords.insert("CAST".to_string(), TokenType::Cast);
+    keywords.insert("TRY_CAST".to_string(), TokenType::TryCast);
+    keywords.insert("SAFE_CAST".to_string(), TokenType::SafeCast);
+    keywords.insert("OVER".to_string(), TokenType::Over);
+    keywords.insert("PARTITION".to_string(), TokenType::Partition);
+    keywords.insert("PLACING".to_string(), TokenType::Placing);
+    keywords.insert("WINDOW".to_string(), TokenType::Window);
+    keywords.insert("ROWS".to_string(), TokenType::Rows);
+    keywords.insert("RANGE".to_string(), TokenType::Range);
+    keywords.insert("FILTER".to_string(), TokenType::Filter);
+    keywords.insert("NATURAL".to_string(), TokenType::Natural);
+    keywords.insert("USING".to_string(), TokenType::Using);
+    keywords.insert("UNBOUNDED".to_string(), TokenType::Unbounded);
+    keywords.insert("PRECEDING".to_string(), TokenType::Preceding);
+    keywords.insert("FOLLOWING".to_string(), TokenType::Following);
+    keywords.insert("CURRENT".to_string(), TokenType::Current);
+    keywords.insert("ROW".to_string(), TokenType::Row);
+    keywords.insert("GROUPS".to_string(), TokenType::Groups);
+    keywords.insert("RECURSIVE".to_string(), TokenType::Recursive);
+    // TRIM function position keywords
+    keywords.insert("BOTH".to_string(), TokenType::Both);
+    keywords.insert("LEADING".to_string(), TokenType::Leading);
+    keywords.insert("TRAILING".to_string(), TokenType::Trailing);
+    keywords.insert("INTERVAL".to_string(), TokenType::Interval);
+    // Phase 3: Additional keywords
+    keywords.insert("TOP".to_string(), TokenType::Top);
+    keywords.insert("QUALIFY".to_string(), TokenType::Qualify);
+    keywords.insert("SAMPLE".to_string(), TokenType::Sample);
+    keywords.insert("TABLESAMPLE".to_string(), TokenType::TableSample);
+    keywords.insert("BERNOULLI".to_string(), TokenType::Bernoulli);
+    keywords.insert("SYSTEM".to_string(), TokenType::System);
+    keywords.insert("BLOCK".to_string(), TokenType::Block);
+    keywords.insert("TIES".to_string(), TokenType::Ties);
+    keywords.insert("LATERAL".to_string(), TokenType::Lateral);
+    keywords.insert("LAMBDA".to_string(), TokenType::Lambda);
+    keywords.insert("APPLY".to_string(), TokenType::Apply);
+    // Oracle CONNECT BY keywords
+    keywords.insert("CONNECT".to_string(), TokenType::Connect);
+    // Hive/Spark specific keywords
+    keywords.insert("CLUSTER".to_string(), TokenType::Cluster);
+    keywords.insert("DISTRIBUTE".to_string(), TokenType::Distribute);
+    keywords.insert("SORT".to_string(), TokenType::Sort);
+    keywords.insert("PIVOT".to_string(), TokenType::Pivot);
+    keywords.insert("PREWHERE".to_string(), TokenType::Prewhere);
+    keywords.insert("UNPIVOT".to_string(), TokenType::Unpivot);
+    keywords.insert("FOR".to_string(), TokenType::For);
+    keywords.insert("ANY".to_string(), TokenType::Any);
+    keywords.insert("SOME".to_string(), TokenType::Some);
+    keywords.insert("ASOF".to_string(), TokenType::AsOf);
+    keywords.insert("PERCENT".to_string(), TokenType::Percent);
+    keywords.insert("EXCLUDE".to_string(), TokenType::Exclude);
+    keywords.insert("NO".to_string(), TokenType::No);
+    keywords.insert("OTHERS".to_string(), TokenType::Others);
+    // PostgreSQL OPERATOR() syntax for schema-qualified operators
+    keywords.insert("OPERATOR".to_string(), TokenType::Operator);
+    // Phase 4: DDL keywords
+    keywords.insert("SCHEMA".to_string(), TokenType::Schema);
+    keywords.insert("NAMESPACE".to_string(), TokenType::Namespace);
+    keywords.insert("DATABASE".to_string(), TokenType::Database);
+    keywords.insert("FUNCTION".to_string(), TokenType::Function);
+    keywords.insert("PROCEDURE".to_string(), TokenType::Procedure);
+    keywords.insert("PROC".to_string(), TokenType::Procedure);
+    keywords.insert("SEQUENCE".to_string(), TokenType::Sequence);
+    keywords.insert("TRIGGER".to_string(), TokenType::Trigger);
+    keywords.insert("TYPE".to_string(), TokenType::Type);
+    keywords.insert("DOMAIN".to_string(), TokenType::Domain);
+    keywords.insert("RETURNS".to_string(), TokenType::Returns);
+    keywords.insert("RETURNING".to_string(), TokenType::Returning);
+    keywords.insert("LANGUAGE".to_string(), TokenType::Language);
+    keywords.insert("ROLLBACK".to_string(), TokenType::Rollback);
+    keywords.insert("COMMIT".to_string(), TokenType::Commit);
+    keywords.insert("BEGIN".to_string(), TokenType::Begin);
+    keywords.insert("DESCRIBE".to_string(), TokenType::Describe);
+    keywords.insert("PREPARE".to_string(), TokenType::Prepare);
+    keywords.insert("PRESERVE".to_string(), TokenType::Preserve);
+    keywords.insert("TRANSACTION".to_string(), TokenType::Transaction);
+    keywords.insert("SAVEPOINT".to_string(), TokenType::Savepoint);
+    keywords.insert("BODY".to_string(), TokenType::Body);
+    keywords.insert("INCREMENT".to_string(), TokenType::Increment);
+    keywords.insert("MINVALUE".to_string(), TokenType::Minvalue);
+    keywords.insert("MAXVALUE".to_string(), TokenType::Maxvalue);
+    keywords.insert("CYCLE".to_string(), TokenType::Cycle);
+    keywords.insert("NOCYCLE".to_string(), TokenType::NoCycle);
+    keywords.insert("PRIOR".to_string(), TokenType::Prior);
+    // MATCH_RECOGNIZE keywords
+    keywords.insert("MATCH".to_string(), TokenType::Match);
+    keywords.insert("MATCH_RECOGNIZE".to_string(), TokenType::MatchRecognize);
+    keywords.insert("MEASURES".to_string(), TokenType::Measures);
+    keywords.insert("PATTERN".to_string(), TokenType::Pattern);
+    keywords.insert("DEFINE".to_string(), TokenType::Define);
+    keywords.insert("RUNNING".to_string(), TokenType::Running);
+    keywords.insert("FINAL".to_string(), TokenType::Final);
+    keywords.insert("OWNED".to_string(), TokenType::Owned);
+    keywords.insert("AFTER".to_string(), TokenType::After);
+    keywords.insert("BEFORE".to_string(), TokenType::Before);
+    keywords.insert("INSTEAD".to_string(), TokenType::Instead);
+    keywords.insert("EACH".to_string(), TokenType::Each);
+    keywords.insert("STATEMENT".to_string(), TokenType::Statement);
+    keywords.insert("REFERENCING".to_string(), TokenType::Referencing);
+    keywords.insert("OLD".to_string(), TokenType::Old);
+    keywords.insert("NEW".to_string(), TokenType::New);
+    keywords.insert("OF".to_string(), TokenType::Of);
+    keywords.insert("CHECK".to_string(), TokenType::Check);
+    keywords.insert("START".to_string(), TokenType::Start);
+    keywords.insert("ENUM".to_string(), TokenType::Enum);
+    keywords.insert("AUTHORIZATION".to_string(), TokenType::Authorization);
+    keywords.insert("RESTART".to_string(), TokenType::Restart);
+    // Date/time literal keywords
+    keywords.insert("DATE".to_string(), TokenType::Date);
+    keywords.insert("TIME".to_string(), TokenType::Time);
+    keywords.insert("TIMESTAMP".to_string(), TokenType::Timestamp);
+    keywords.insert("DATETIME".to_string(), TokenType::DateTime);
+    keywords.insert("GENERATED".to_string(), TokenType::Generated);
+    keywords.insert("IDENTITY".to_string(), TokenType::Identity);
+    keywords.insert("ALWAYS".to_string(), TokenType::Always);
+    // LOAD DATA keywords
+    keywords.insert("LOAD".to_string(), TokenType::Load);
+    keywords.insert("LOCAL".to_string(), TokenType::Local);
+    keywords.insert("INPATH".to_string(), TokenType::Inpath);
+    keywords.insert("INPUTFORMAT".to_string(), TokenType::InputFormat);
+    keywords.insert("SERDE".to_string(), TokenType::Serde);
+    keywords.insert("SERDEPROPERTIES".to_string(), TokenType::SerdeProperties);
+    keywords.insert("FORMAT".to_string(), TokenType::Format);
+    // SQLite
+    keywords.insert("PRAGMA".to_string(), TokenType::Pragma);
+    // SHOW statement
+    keywords.insert("SHOW".to_string(), TokenType::Show);
+    // Oracle ORDER SIBLINGS BY (hierarchical queries)
+    keywords.insert("SIBLINGS".to_string(), TokenType::Siblings);
+    // COPY and PUT statements (Snowflake, PostgreSQL)
+    keywords.insert("COPY".to_string(), TokenType::Copy);
+    keywords.insert("PUT".to_string(), TokenType::Put);
+    keywords.insert("GET".to_string(), TokenType::Get);
+    // EXEC/EXECUTE statement (TSQL, etc.)
+    keywords.insert("EXEC".to_string(), TokenType::Execute);
+    keywords.insert("EXECUTE".to_string(), TokenType::Execute);
+    // Postfix null check operators (PostgreSQL/SQLite)
+    keywords.insert("ISNULL".to_string(), TokenType::IsNull);
+    keywords.insert("NOTNULL".to_string(), TokenType::NotNull);
+    keywords
+});
+
+static DEFAULT_SINGLE_TOKENS: LazyLock<HashMap<char, TokenType>> = LazyLock::new(|| {
+    let mut single_tokens = HashMap::with_capacity(30);
+    single_tokens.insert('(', TokenType::LParen);
+    single_tokens.insert(')', TokenType::RParen);
+    single_tokens.insert('[', TokenType::LBracket);
+    single_tokens.insert(']', TokenType::RBracket);
+    single_tokens.insert('{', TokenType::LBrace);
+    single_tokens.insert('}', TokenType::RBrace);
+    single_tokens.insert(',', TokenType::Comma);
+    single_tokens.insert('.', TokenType::Dot);
+    single_tokens.insert(';', TokenType::Semicolon);
+    single_tokens.insert('+', TokenType::Plus);
+    single_tokens.insert('-', TokenType::Dash);
+    single_tokens.insert('*', TokenType::Star);
+    single_tokens.insert('/', TokenType::Slash);
+    single_tokens.insert('%', TokenType::Percent);
+    single_tokens.insert('&', TokenType::Amp);
+    single_tokens.insert('|', TokenType::Pipe);
+    single_tokens.insert('^', TokenType::Caret);
+    single_tokens.insert('~', TokenType::Tilde);
+    single_tokens.insert('<', TokenType::Lt);
+    single_tokens.insert('>', TokenType::Gt);
+    single_tokens.insert('=', TokenType::Eq);
+    single_tokens.insert('!', TokenType::Exclamation);
+    single_tokens.insert(':', TokenType::Colon);
+    single_tokens.insert('@', TokenType::DAt);
+    single_tokens.insert('#', TokenType::Hash);
+    single_tokens.insert('$', TokenType::Dollar);
+    single_tokens.insert('?', TokenType::Parameter);
+    single_tokens
+});
+
+static DEFAULT_QUOTES: LazyLock<HashMap<String, String>> = LazyLock::new(|| {
+    let mut quotes = HashMap::with_capacity(4);
+    quotes.insert("'".to_string(), "'".to_string());
+    // Triple-quoted strings (e.g., """x""")
+    quotes.insert("\"\"\"".to_string(), "\"\"\"".to_string());
+    quotes
+});
+
+static DEFAULT_IDENTIFIERS: LazyLock<HashMap<char, char>> = LazyLock::new(|| {
+    let mut identifiers = HashMap::with_capacity(4);
+    identifiers.insert('"', '"');
+    identifiers.insert('`', '`');
+    // Note: TSQL bracket-quoted identifiers [name] are handled in the parser
+    // because [ is also used for arrays and subscripts
+    identifiers
+});
+
+static DEFAULT_COMMENTS: LazyLock<HashMap<String, Option<String>>> = LazyLock::new(|| {
+    let mut comments = HashMap::with_capacity(4);
+    comments.insert("--".to_string(), None);
+    comments.insert("/*".to_string(), Some("*/".to_string()));
+    comments
+});
+
+/// Tokenizer configuration for a dialect
+#[derive(Debug, Clone)]
+pub struct TokenizerConfig {
+    /// Keywords mapping (uppercase keyword -> token type)
+    pub keywords: HashMap<String, TokenType>,
+    /// Single character tokens
+    pub single_tokens: HashMap<char, TokenType>,
+    /// Quote characters (start -> end)
+    pub quotes: HashMap<String, String>,
+    /// Identifier quote characters (start -> end)
+    pub identifiers: HashMap<char, char>,
+    /// Whether quoted identifiers use string-style backslash escapes (BigQuery/ClickHouse).
+    pub identifier_backslash_escapes: bool,
+    /// Comment definitions (start -> optional end)
+    pub comments: HashMap<String, Option<String>>,
+    /// String escape characters
+    pub string_escapes: Vec<char>,
+    /// Whether to support nested comments
+    pub nested_comments: bool,
+    /// Characters a backslash escapes (MySQL); otherwise the backslash is dropped.
+    pub escape_follow_chars: Vec<char>,
+    /// Whether b'...' is a byte string (BigQuery) rather than a bit string (the default).
+    pub b_prefix_is_byte_string: bool,
+    /// Numeric literal suffixes and their types, such as `L` for BIGINT (Hive, Spark).
+    pub numeric_literals: HashMap<String, String>,
+    /// Whether unquoted identifiers may start with a digit, as `1a` (Hive, Spark, MySQL).
+    pub identifiers_can_start_with_digit: bool,
+    /// Whether a 0x prefix starts a hex literal (BigQuery, SQLite, Teradata).
+    pub hex_number_strings: bool,
+    /// Whether 0x literals are integers (BigQuery) rather than binary strings.
+    pub hex_string_is_integer_type: bool,
+    /// Whether an empty `0x` is an empty binary string (TSQL).
+    pub allow_empty_hex_string: bool,
+    /// Whether escapes such as \' work in raw strings (BigQuery) or not (Spark).
+    pub string_escapes_allowed_in_raw_strings: bool,
+    /// Whether # starts a single-line comment (ClickHouse, MySQL)
+    pub hash_comments: bool,
+    /// Whether `$` can start or continue an identifier (ClickHouse).
+    pub dollar_sign_is_identifier: bool,
+    /// Whether data after INSERT ... FORMAT name is raw up to a blank line (ClickHouse).
+    pub insert_format_raw_data: bool,
+    /// Whether numbers may use `_` digit separators, as `1_000` (ClickHouse, DuckDB).
+    pub numbers_can_be_underscore_separated: bool,
+    /// Recovers `'a\' or 1=1` by closing at the escaped quote when no later quote exists.
+    pub recover_terminal_backslash_quote: bool,
+    /// Recovers an unterminated final single-quoted string at end of input (ClickHouse).
+    pub recover_unterminated_string: bool,
+    /// Whether `//` is the integer-division operator (Vertica).
+    pub double_slash_int_div: bool,
+}
+
+impl Default for TokenizerConfig {
+    fn default() -> Self {
+        Self {
+            keywords: DEFAULT_KEYWORDS.clone(),
+            single_tokens: DEFAULT_SINGLE_TOKENS.clone(),
+            quotes: DEFAULT_QUOTES.clone(),
+            identifiers: DEFAULT_IDENTIFIERS.clone(),
+            identifier_backslash_escapes: false,
+            comments: DEFAULT_COMMENTS.clone(),
+            // Standard SQL: only '' (doubled quote) escapes a quote
+            // Backslash escapes are dialect-specific (MySQL, etc.)
+            string_escapes: vec!['\''],
+            nested_comments: true,
+            // By default, no escape_follow_chars means preserve backslash for unrecognized escapes
+            escape_follow_chars: vec![],
+            // Default: b'...' is bit string (standard SQL), not byte string (BigQuery)
+            b_prefix_is_byte_string: false,
+            numeric_literals: HashMap::new(),
+            identifiers_can_start_with_digit: false,
+            hex_number_strings: false,
+            hex_string_is_integer_type: false,
+            allow_empty_hex_string: false,
+            // Default: backslash escapes ARE allowed in raw strings (sqlglot default)
+            // Spark/Databricks set this to false
+            string_escapes_allowed_in_raw_strings: true,
+            hash_comments: false,
+            dollar_sign_is_identifier: false,
+            insert_format_raw_data: false,
+            numbers_can_be_underscore_separated: false,
+            recover_terminal_backslash_quote: false,
+            recover_unterminated_string: false,
+            double_slash_int_div: false,
+        }
+    }
+}
+
+/// SQL Tokenizer
+pub struct Tokenizer {
+    config: Arc<TokenizerConfig>,
+}
+
+impl Tokenizer {
+    /// Create a new tokenizer with the given configuration
+    pub fn new(config: TokenizerConfig) -> Self {
+        Self {
+            config: Arc::new(config),
+        }
+    }
+
+    pub(crate) fn from_shared_config(config: Arc<TokenizerConfig>) -> Self {
+        Self { config }
+    }
+
+    /// Create a tokenizer with default configuration
+    pub fn default_config() -> Self {
+        Self::new(TokenizerConfig::default())
+    }
+
+    /// Tokenize a SQL string
+    pub fn tokenize(&self, sql: &str) -> Result<Vec<Token>> {
+        if sql.is_ascii() {
+            TokenizerState::<_, Token>::new(sql, &self.config, AsciiCursor(sql.as_bytes()))
+                .tokenize()
+        } else {
+            TokenizerState::<_, Token>::new(sql, &self.config, UnicodeCursor::new(sql)).tokenize()
+        }
+    }
+
+    pub(crate) fn tokenize_for_parser(
+        &self,
+        sql: &Arc<str>,
+    ) -> Result<(Vec<ParserToken>, TokenGuardStats)> {
+        if sql.is_ascii() {
+            let mut state = TokenizerState::<_, ParserToken>::new_shared(
+                sql,
+                Arc::clone(sql),
+                &self.config,
+                AsciiCursor(sql.as_bytes()),
+            );
+            let tokens = state.tokenize()?;
+            Ok((tokens, state.guard_stats.take().unwrap_or_default()))
+        } else {
+            let mut state = TokenizerState::<_, ParserToken>::new_shared(
+                sql,
+                Arc::clone(sql),
+                &self.config,
+                UnicodeCursor::new(sql),
+            );
+            let tokens = state.tokenize()?;
+            Ok((tokens, state.guard_stats.take().unwrap_or_default()))
+        }
+    }
+
+    #[cfg(test)]
+    fn tokenize_without_ascii_fast_path(&self, sql: &str) -> Result<Vec<Token>> {
+        TokenizerState::new(sql, &self.config, UnicodeCursor::new(sql)).tokenize()
+    }
+}
+
+impl Default for Tokenizer {
+    fn default() -> Self {
+        Self::default_config()
+    }
+}
+
+trait TokenizerCursor {
+    fn len(&self) -> usize;
+    fn char_at(&self, index: usize) -> char;
+    fn text_from_range(&self, source: &str, start: usize, end: usize) -> String;
+
+    fn source_range<'a>(&self, _source: &'a str, _start: usize, _end: usize) -> Option<&'a str> {
+        None
+    }
+
+    fn range_contains(&self, start: usize, needle: char) -> bool {
+        (start..self.len()).any(|index| self.char_at(index) == needle)
+    }
+}
+
+struct AsciiCursor<'a>(&'a [u8]);
+
+impl TokenizerCursor for AsciiCursor<'_> {
+    #[inline]
+    fn len(&self) -> usize {
+        self.0.len()
+    }
+
+    #[inline]
+    fn char_at(&self, index: usize) -> char {
+        self.0[index] as char
+    }
+
+    #[inline]
+    fn text_from_range(&self, source: &str, start: usize, end: usize) -> String {
+        source[start..end].to_string()
+    }
+
+    #[inline]
+    fn source_range<'a>(&self, source: &'a str, start: usize, end: usize) -> Option<&'a str> {
+        Some(&source[start..end])
+    }
+}
+
+struct UnicodeCursor(Vec<char>);
+
+impl UnicodeCursor {
+    fn new(source: &str) -> Self {
+        Self(source.chars().collect())
+    }
+}
+
+impl TokenizerCursor for UnicodeCursor {
+    #[inline]
+    fn len(&self) -> usize {
+        self.0.len()
+    }
+
+    #[inline]
+    fn char_at(&self, index: usize) -> char {
+        self.0[index]
+    }
+
+    #[inline]
+    fn text_from_range(&self, _source: &str, start: usize, end: usize) -> String {
+        self.0[start..end].iter().collect()
+    }
+}
+
+/// Internal state for tokenization
+struct TokenizerState<'a, C, T> {
+    source: &'a str,
+    shared_source: Option<Arc<str>>,
+    cursor: C,
+    size: usize,
+    tokens: Vec<T>,
+    start: usize,
+    current: usize,
+    line: usize,
+    column: usize,
+    comments: Vec<String>,
+    guard_stats: Option<TokenGuardStats>,
+    config: &'a TokenizerConfig,
+}
+
+impl<'a, C: TokenizerCursor, T: TokenOutput> TokenizerState<'a, C, T> {
+    fn new(sql: &'a str, config: &'a TokenizerConfig, cursor: C) -> Self {
+        let size = cursor.len();
+        Self {
+            source: sql,
+            shared_source: None,
+            cursor,
+            size,
+            tokens: Vec::new(),
+            start: 0,
+            current: 0,
+            line: 1,
+            column: 1,
+            comments: Vec::new(),
+            guard_stats: None,
+            config,
+        }
+    }
+
+    fn new_shared(sql: &'a str, source: Arc<str>, config: &'a TokenizerConfig, cursor: C) -> Self {
+        let size = cursor.len();
+        Self {
+            source: sql,
+            shared_source: Some(source),
+            cursor,
+            size,
+            tokens: Vec::new(),
+            start: 0,
+            current: 0,
+            line: 1,
+            column: 1,
+            comments: Vec::new(),
+            guard_stats: Some(TokenGuardStats::default()),
+            config,
+        }
+    }
+
+    fn tokenize(&mut self) -> Result<Vec<T>> {
+        while !self.is_at_end() {
+            self.skip_whitespace();
+            if self.is_at_end() {
+                break;
+            }
+
+            self.start = self.current;
+            self.scan_token()?;
+
+            // ClickHouse: After INSERT ... FORMAT <name> (where name != VALUES),
+            // the rest until the next blank line or end of input is raw data.
+            if self.config.insert_format_raw_data {
+                if let Some(raw) = self.try_scan_insert_format_raw_data() {
+                    if !raw.is_empty() {
+                        self.start = self.current;
+                        self.add_token_with_text(TokenType::Var, raw);
+                    }
+                }
+            }
+        }
+
+        // Handle leftover leading comments at end of input.
+        // These are comments on a new line after the last token that couldn't be attached
+        // as leading comments to a subsequent token (because there is none).
+        // Attach them as trailing comments on the last token so they're preserved.
+        if !self.comments.is_empty() {
+            if let Some(last) = self.tokens.last_mut() {
+                last.trailing_comments_mut().append(&mut self.comments);
+            }
+        }
+
+        Ok(std::mem::take(&mut self.tokens))
+    }
+
+    #[inline]
+    fn is_at_end(&self) -> bool {
+        self.current >= self.size
+    }
+
+    #[inline]
+    fn text_from_range(&self, start: usize, end: usize) -> String {
+        self.cursor.text_from_range(self.source, start, end)
+    }
+
+    #[inline]
+    fn char_at(&self, index: usize) -> char {
+        self.cursor.char_at(index)
+    }
+
+    #[inline]
+    fn range_contains(&self, start: usize, needle: char) -> bool {
+        self.cursor.range_contains(start, needle)
+    }
+
+    #[inline]
+    fn peek(&self) -> char {
+        if self.is_at_end() {
+            '\0'
+        } else {
+            self.char_at(self.current)
+        }
+    }
+
+    #[inline]
+    fn peek_next(&self) -> char {
+        if self.current + 1 >= self.size {
+            '\0'
+        } else {
+            self.char_at(self.current + 1)
+        }
+    }
+
+    #[inline]
+    fn advance(&mut self) -> char {
+        let c = self.peek();
+        self.current += 1;
+        if c == '\n' {
+            self.line += 1;
+            self.column = 1;
+        } else {
+            self.column += 1;
+        }
+        c
+    }
+
+    #[inline]
+    fn advance_ascii_to(&mut self, end: usize) -> bool {
+        let Some(text) = self.cursor.source_range(self.source, self.current, end) else {
+            return false;
+        };
+
+        let newline_count = text
+            .as_bytes()
+            .iter()
+            .filter(|&&byte| byte == b'\n')
+            .count();
+        if newline_count == 0 {
+            self.column += end - self.current;
+        } else {
+            self.line += newline_count;
+            let last_newline = text
+                .as_bytes()
+                .iter()
+                .rposition(|&byte| byte == b'\n')
+                .expect("newline count is non-zero");
+            self.column = text.len() - last_newline;
+        }
+        self.current = end;
+        true
+    }
+
+    #[inline]
+    fn advance_ascii_digits(&mut self) -> bool {
+        let Some(rest) = self
+            .cursor
+            .source_range(self.source, self.current, self.size)
+        else {
+            return false;
+        };
+        let bytes = rest.as_bytes();
+        let mut length = 0;
+        while length < bytes.len() {
+            match bytes[length] {
+                b'0'..=b'9' => length += 1,
+                b'_' if bytes.get(length + 1).is_some_and(u8::is_ascii_digit) => length += 1,
+                _ => break,
+            }
+        }
+        self.current += length;
+        self.column += length;
+        true
+    }
+
+    #[inline]
+    fn advance_ascii_hex_digits(&mut self) -> bool {
+        let Some(rest) = self
+            .cursor
+            .source_range(self.source, self.current, self.size)
+        else {
+            return false;
+        };
+        let bytes = rest.as_bytes();
+        let mut length = 0;
+        while length < bytes.len() {
+            match bytes[length] {
+                byte if byte.is_ascii_hexdigit() => length += 1,
+                b'_' if bytes.get(length + 1).is_some_and(u8::is_ascii_hexdigit) => length += 1,
+                _ => break,
+            }
+        }
+        self.current += length;
+        self.column += length;
+        true
+    }
+
+    #[inline]
+    fn advance_ascii_identifier(&mut self) -> bool {
+        let Some(rest) = self
+            .cursor
+            .source_range(self.source, self.current, self.size)
+        else {
+            return false;
+        };
+        let bytes = rest.as_bytes();
+        let mut length = 0;
+        while length < bytes.len() {
+            let byte = bytes[length];
+            if byte == b'#' && matches!(bytes.get(length + 1), Some(b'>') | Some(b'-')) {
+                break;
+            }
+            if byte.is_ascii_alphanumeric() || matches!(byte, b'_' | b'$' | b'#' | b'@') {
+                length += 1;
+            } else {
+                break;
+            }
+        }
+        self.current += length;
+        self.column += length;
+        true
+    }
+
+    fn try_scan_simple_quoted_content(
+        &mut self,
+        quote: char,
+        backslash_is_escape: bool,
+    ) -> Option<(usize, usize)> {
+        let content_start = self.current;
+        let rest = self
+            .cursor
+            .source_range(self.source, content_start, self.size)?;
+        let quote_offset = rest.find(quote)?;
+        let content_end = content_start + quote_offset;
+
+        if (content_end + 1 < self.size && self.char_at(content_end + 1) == quote)
+            || (backslash_is_escape && rest[..quote_offset].contains('\\'))
+        {
+            return None;
+        }
+
+        self.advance_ascii_to(content_end);
+        self.advance();
+        Some((content_start, content_end))
+    }
+
+    fn skip_whitespace(&mut self) {
+        // Track whether we've seen a newline since the last token.
+        // Comments on a new line (after a newline) are leading comments on the next token,
+        // while comments on the same line are trailing comments on the previous token.
+        // This matches Python sqlglot's behavior.
+        let mut saw_newline = false;
+        while !self.is_at_end() {
+            let c = self.peek();
+            match c {
+                ' ' | '\t' | '\r' => {
+                    self.advance();
+                }
+                '\n' => {
+                    saw_newline = true;
+                    self.advance();
+                }
+                '\u{00A0}' // non-breaking space
+                | '\u{2000}'..='\u{200B}' // various Unicode spaces + zero-width space
+                | '\u{3000}' // ideographic (full-width) space
+                | '\u{FEFF}' // BOM / zero-width no-break space
+                => {
+                    self.advance();
+                }
+                '-' if self.peek_next() == '-' => {
+                    self.scan_line_comment(saw_newline);
+                    // After a line comment, we're always on a new line
+                    saw_newline = true;
+                }
+                '/' if self.peek_next() == '/' && self.config.hash_comments => {
+                    // ClickHouse: // single-line comments (same dialects that support # comments)
+                    self.scan_double_slash_comment();
+                }
+                '/' if self.peek_next() == '*' => {
+                    // Check if this is a hint comment /*+ ... */
+                    if self.current + 2 < self.size && self.char_at(self.current + 2) == '+' {
+                        // This is a hint comment, handle it as a token instead of skipping
+                        break;
+                    }
+                    if self.scan_block_comment(saw_newline).is_err() {
+                        return;
+                    }
+                    // Don't reset saw_newline - it carries forward
+                }
+                '/' if self.peek_next() == '/' && self.config.comments.contains_key("//") => {
+                    // Dialect-specific // line comment (e.g., Snowflake)
+                    // But NOT inside URIs like file:// or paths with consecutive slashes
+                    // Check that previous non-whitespace char is not ':' or '/'
+                    let prev_non_ws = if self.current > 0 {
+                        let mut i = self.current - 1;
+                        while i > 0 && (self.char_at(i) == ' ' || self.char_at(i) == '\t') {
+                            i -= 1;
+                        }
+                        self.char_at(i)
+                    } else {
+                        '\0'
+                    };
+                    if prev_non_ws == ':' || prev_non_ws == '/' {
+                        // This is likely a URI (file://, http://) or path, not a comment
+                        break;
+                    }
+                    self.scan_line_comment(saw_newline);
+                    // After a line comment, we're always on a new line
+                    saw_newline = true;
+                }
+                '#' if self.config.hash_comments => {
+                    self.scan_hash_line_comment();
+                }
+                _ => break,
+            }
+        }
+    }
+
+    fn scan_hash_line_comment(&mut self) {
+        self.advance(); // #
+        let start = self.current;
+        while !self.is_at_end() && self.peek() != '\n' {
+            self.advance();
+        }
+        let comment = self.text_from_range(start, self.current);
+        let comment_text = comment.trim().to_string();
+        if let Some(last) = self.tokens.last_mut() {
+            last.trailing_comments_mut().push(comment_text);
+        } else {
+            self.comments.push(comment_text);
+        }
+    }
+
+    fn scan_double_slash_comment(&mut self) {
+        self.advance(); // /
+        self.advance(); // /
+        let start = self.current;
+        while !self.is_at_end() && self.peek() != '\n' {
+            self.advance();
+        }
+        let comment = self.text_from_range(start, self.current);
+        let comment_text = comment.trim().to_string();
+        if let Some(last) = self.tokens.last_mut() {
+            last.trailing_comments_mut().push(comment_text);
+        } else {
+            self.comments.push(comment_text);
+        }
+    }
+
+    fn scan_line_comment(&mut self, after_newline: bool) {
+        self.advance(); // -
+        self.advance(); // -
+        let start = self.current;
+        while !self.is_at_end() && self.peek() != '\n' {
+            self.advance();
+        }
+        let comment_text = self.text_from_range(start, self.current);
+
+        // If the comment starts on a new line (after_newline), it's a leading comment
+        // on the next token. Otherwise, it's a trailing comment on the previous token.
+        if after_newline || self.tokens.is_empty() {
+            self.comments.push(comment_text);
+        } else if let Some(last) = self.tokens.last_mut() {
+            last.trailing_comments_mut().push(comment_text);
+        }
+    }
+
+    fn scan_block_comment(&mut self, after_newline: bool) -> Result<()> {
+        self.advance(); // /
+        self.advance(); // *
+        let content_start = self.current;
+        let mut depth = 1;
+
+        while !self.is_at_end() && depth > 0 {
+            if self.peek() == '/' && self.peek_next() == '*' && self.config.nested_comments {
+                self.advance();
+                self.advance();
+                depth += 1;
+            } else if self.peek() == '*' && self.peek_next() == '/' {
+                depth -= 1;
+                if depth > 0 {
+                    self.advance();
+                    self.advance();
+                }
+            } else {
+                self.advance();
+            }
+        }
+
+        if depth > 0 {
+            return Err(Error::tokenize(
+                "Unterminated block comment",
+                self.line,
+                self.column,
+                self.start,
+                self.current,
+            ));
+        }
+
+        // Get the content between /* and */ (preserving internal whitespace for nested comments)
+        let content = self.text_from_range(content_start, self.current);
+        self.advance(); // *
+        self.advance(); // /
+
+        // For round-trip fidelity, preserve the exact comment content including nested comments
+        let comment_text = format!("/*{}*/", content);
+
+        // If the comment starts on a new line (after_newline), it's a leading comment
+        // on the next token. Otherwise, it's a trailing comment on the previous token.
+        if after_newline || self.tokens.is_empty() {
+            self.comments.push(comment_text);
+        } else if let Some(last) = self.tokens.last_mut() {
+            last.trailing_comments_mut().push(comment_text);
+        }
+
+        Ok(())
+    }
+
+    /// Scan a hint comment /*+ ... */ and return it as a Hint token
+    fn scan_hint(&mut self) -> Result<()> {
+        self.advance(); // /
+        self.advance(); // *
+        self.advance(); // +
+        let hint_start = self.current;
+
+        // Scan until we find */
+        while !self.is_at_end() {
+            if self.peek() == '*' && self.peek_next() == '/' {
+                break;
+            }
+            self.advance();
+        }
+
+        if self.is_at_end() {
+            return Err(Error::tokenize(
+                "Unterminated hint comment",
+                self.line,
+                self.column,
+                self.start,
+                self.current,
+            ));
+        }
+
+        let hint_text = self.text_from_range(hint_start, self.current);
+        self.advance(); // *
+        self.advance(); // /
+
+        self.add_token_with_text(TokenType::Hint, hint_text.trim().to_string());
+
+        Ok(())
+    }
+
+    /// Scan a positional parameter: $1, $2, etc.
+    fn scan_positional_parameter(&mut self) -> Result<()> {
+        self.advance(); // consume $
+        let start = self.current;
+
+        while !self.is_at_end() && self.peek().is_ascii_digit() {
+            self.advance();
+        }
+
+        let number = self.text_from_range(start, self.current);
+        self.add_token_with_text(TokenType::Parameter, number);
+        Ok(())
+    }
+
+    /// Scans `$tag$content$tag$`, stored as "tag\x00content", or `None`.
+    fn try_scan_tagged_dollar_string(&mut self) -> Result<Option<()>> {
+        let saved_pos = self.current;
+
+        // We're at '$', next char is alphabetic
+        self.advance(); // consume opening $
+
+        // Scan the tag (identifier: alphanumeric + underscore, including Unicode)
+        // Tags can contain Unicode characters like emojis (e.g., $🦆$)
+        let tag_start = self.current;
+        while !self.is_at_end()
+            && (self.peek().is_alphanumeric() || self.peek() == '_' || !self.peek().is_ascii())
+        {
+            self.advance();
+        }
+        let tag = self.text_from_range(tag_start, self.current);
+
+        // Must have a closing $ after the tag
+        if self.is_at_end() || self.peek() != '$' {
+            // Not a tagged dollar string - restore position
+            self.current = saved_pos;
+            return Ok(None);
+        }
+        self.advance(); // consume closing $ of opening tag
+
+        // Now scan content until we find $tag$
+        let content_start = self.current;
+        let closing_tag = format!("${}$", tag);
+        let closing_chars: Vec<char> = closing_tag.chars().collect();
+
+        loop {
+            if self.is_at_end() {
+                // Unterminated - restore and fall through
+                self.current = saved_pos;
+                return Ok(None);
+            }
+
+            // Check if we've reached the closing tag
+            if self.peek() == '$' && self.current + closing_chars.len() <= self.size {
+                let matches = closing_chars.iter().enumerate().all(|(j, &ch)| {
+                    self.current + j < self.size && self.char_at(self.current + j) == ch
+                });
+                if matches {
+                    let content = self.text_from_range(content_start, self.current);
+                    // Consume closing tag
+                    for _ in 0..closing_chars.len() {
+                        self.advance();
+                    }
+                    // Store as "tag\x00content" to preserve the tag
+                    let token_text = format!("{}\x00{}", tag, content);
+                    self.add_token_with_text(TokenType::DollarString, token_text);
+                    return Ok(Some(()));
+                }
+            }
+            self.advance();
+        }
+    }
+
+    /// Scans a dollar-quoted string, `$$content$$` or tagged.
+    fn scan_dollar_quoted_string(&mut self) -> Result<()> {
+        self.advance(); // consume first $
+        self.advance(); // consume second $
+
+        // For $$...$$ (no tag), just scan until closing $$
+        let start = self.current;
+        while !self.is_at_end() {
+            if self.peek() == '$'
+                && self.current + 1 < self.size
+                && self.char_at(self.current + 1) == '$'
+            {
+                break;
+            }
+            self.advance();
+        }
+
+        let content = self.text_from_range(start, self.current);
+
+        if !self.is_at_end() {
+            self.advance(); // consume first $
+            self.advance(); // consume second $
+        }
+
+        self.add_token_with_text(TokenType::DollarString, content);
+        Ok(())
+    }
+
+    fn scan_token(&mut self) -> Result<()> {
+        let c = self.peek();
+
+        // Check for string literal
+        if c == '\'' {
+            // Check for triple-quoted string '''...''' if configured
+            if self.config.quotes.contains_key("'''")
+                && self.peek_next() == '\''
+                && self.current + 2 < self.size
+                && self.char_at(self.current + 2) == '\''
+            {
+                return self.scan_triple_quoted_string('\'');
+            }
+            return self.scan_string();
+        }
+
+        // Check for triple-quoted string """...""" if configured
+        if c == '"'
+            && self.config.quotes.contains_key("\"\"\"")
+            && self.peek_next() == '"'
+            && self.current + 2 < self.size
+            && self.char_at(self.current + 2) == '"'
+        {
+            return self.scan_triple_quoted_string('"');
+        }
+
+        // Check for double-quoted strings when dialect supports them (e.g., BigQuery)
+        // This must come before identifier quotes check
+        if c == '"'
+            && self.config.quotes.contains_key("\"")
+            && !self.config.identifiers.contains_key(&'"')
+        {
+            return self.scan_double_quoted_string();
+        }
+
+        // Check for identifier quotes
+        if let Some(&end_quote) = self.config.identifiers.get(&c) {
+            return self.scan_quoted_identifier(end_quote);
+        }
+
+        // Check for numbers (including numbers starting with a dot like .25)
+        if c.is_ascii_digit() {
+            return self.scan_number();
+        }
+
+        // Check for numbers starting with a dot (e.g., .25, .5)
+        // This must come before single character token handling
+        // Don't treat as a number if:
+        // - Previous char was also a dot (e.g., 1..2 should be 1, ., ., 2)
+        // - Previous char is an identifier character (e.g., foo.25 should be foo, ., 25)
+        //   This handles BigQuery numeric table parts like project.dataset.25
+        if c == '.' && self.peek_next().is_ascii_digit() {
+            let prev_char = if self.current > 0 {
+                self.char_at(self.current - 1)
+            } else {
+                '\0'
+            };
+            let is_after_ident = prev_char.is_alphanumeric()
+                || prev_char == '_'
+                || prev_char == '`'
+                || prev_char == '"'
+                || prev_char == ']'
+                || prev_char == ')';
+            if prev_char != '.' && !is_after_ident {
+                return self.scan_number_starting_with_dot();
+            }
+        }
+
+        // Check for hint comment /*+ ... */
+        if c == '/'
+            && self.peek_next() == '*'
+            && self.current + 2 < self.size
+            && self.char_at(self.current + 2) == '+'
+        {
+            return self.scan_hint();
+        }
+
+        // Check for multi-character operators first
+        if let Some(token_type) = self.try_scan_multi_char_operator() {
+            self.add_token(token_type);
+            return Ok(());
+        }
+
+        // Check for tagged dollar-quoted strings: $tag$content$tag$
+        // Tags can contain Unicode characters (including emojis like 🦆) and digits (e.g., $1$)
+        if c == '$'
+            && (self.peek_next().is_alphanumeric()
+                || self.peek_next() == '_'
+                || !self.peek_next().is_ascii())
+        {
+            if let Some(()) = self.try_scan_tagged_dollar_string()? {
+                return Ok(());
+            }
+            // If tagged dollar string didn't match and dollar_sign_is_identifier is set,
+            // treat the $ and following chars as an identifier (e.g., ClickHouse $alias$name$).
+            if self.config.dollar_sign_is_identifier {
+                return self.scan_dollar_identifier();
+            }
+        }
+
+        // Check for dollar-quoted strings: $$...$$
+        if c == '$' && self.peek_next() == '$' {
+            return self.scan_dollar_quoted_string();
+        }
+
+        // Check for positional parameters: $1, $2, etc.
+        if c == '$' && self.peek_next().is_ascii_digit() {
+            return self.scan_positional_parameter();
+        }
+
+        // ClickHouse: bare $ (not followed by alphanumeric/underscore) as identifier
+        if c == '$' && self.config.dollar_sign_is_identifier {
+            return self.scan_dollar_identifier();
+        }
+
+        // TSQL: Check for identifiers starting with # (temp tables) or @ (variables)
+        // e.g., #temp, ##global_temp, @variable
+        if (c == '#' || c == '@')
+            && (self.peek_next().is_alphanumeric()
+                || self.peek_next() == '_'
+                || self.peek_next() == '#')
+        {
+            return self.scan_tsql_identifier();
+        }
+
+        // Check for single character tokens
+        if let Some(&token_type) = self.config.single_tokens.get(&c) {
+            self.advance();
+            self.add_token(token_type);
+            return Ok(());
+        }
+
+        // Unicode minus (U+2212) → treat as regular minus
+        if c == '\u{2212}' {
+            self.advance();
+            self.add_token(TokenType::Dash);
+            return Ok(());
+        }
+
+        // Unicode fraction slash (U+2044) → treat as regular slash
+        if c == '\u{2044}' {
+            self.advance();
+            self.add_token(TokenType::Slash);
+            return Ok(());
+        }
+
+        // Unicode curly/smart quotes → treat as regular string quotes
+        if c == '\u{2018}' || c == '\u{2019}' {
+            // Left/right single quotation marks → scan as string with matching end
+            return self.scan_unicode_quoted_string();
+        }
+        if c == '\u{201C}' || c == '\u{201D}' {
+            // Left/right double quotation marks → scan as quoted identifier
+            return self.scan_unicode_quoted_identifier();
+        }
+
+        // Must be an identifier or keyword
+        self.scan_identifier_or_keyword()
+    }
+
+    fn try_scan_multi_char_operator(&mut self) -> Option<TokenType> {
+        let c = self.peek();
+        let next = self.peek_next();
+        let third = if self.current + 2 < self.size {
+            self.char_at(self.current + 2)
+        } else {
+            '\0'
+        };
+
+        // Check for three-character operators first
+        // -|- (Adjacent - PostgreSQL range adjacency)
+        if c == '-' && next == '|' && third == '-' {
+            self.advance();
+            self.advance();
+            self.advance();
+            return Some(TokenType::Adjacent);
+        }
+
+        // ||/ (Cube root - PostgreSQL)
+        if c == '|' && next == '|' && third == '/' {
+            self.advance();
+            self.advance();
+            self.advance();
+            return Some(TokenType::DPipeSlash);
+        }
+
+        // #>> (JSONB path text extraction - PostgreSQL)
+        if c == '#' && next == '>' && third == '>' {
+            self.advance();
+            self.advance();
+            self.advance();
+            return Some(TokenType::DHashArrow);
+        }
+
+        // ->> (JSON text extraction - PostgreSQL/MySQL)
+        if c == '-' && next == '>' && third == '>' {
+            self.advance();
+            self.advance();
+            self.advance();
+            return Some(TokenType::DArrow);
+        }
+
+        // <=> (NULL-safe equality - MySQL)
+        if c == '<' && next == '=' && third == '>' {
+            self.advance();
+            self.advance();
+            self.advance();
+            return Some(TokenType::NullsafeEq);
+        }
+
+        // <-> (Distance operator - PostgreSQL)
+        if c == '<' && next == '-' && third == '>' {
+            self.advance();
+            self.advance();
+            self.advance();
+            return Some(TokenType::LrArrow);
+        }
+
+        // <@ (Contained by - PostgreSQL)
+        if c == '<' && next == '@' {
+            self.advance();
+            self.advance();
+            return Some(TokenType::LtAt);
+        }
+
+        // @> (Contains - PostgreSQL)
+        if c == '@' && next == '>' {
+            self.advance();
+            self.advance();
+            return Some(TokenType::AtGt);
+        }
+
+        // ~~~ (Glob - PostgreSQL)
+        if c == '~' && next == '~' && third == '~' {
+            self.advance();
+            self.advance();
+            self.advance();
+            return Some(TokenType::Glob);
+        }
+
+        // ~~* (ILike - PostgreSQL)
+        if c == '~' && next == '~' && third == '*' {
+            self.advance();
+            self.advance();
+            self.advance();
+            return Some(TokenType::ILike);
+        }
+
+        // !~~* (Not ILike - PostgreSQL)
+        let fourth = if self.current + 3 < self.size {
+            self.char_at(self.current + 3)
+        } else {
+            '\0'
+        };
+        if c == '!' && next == '~' && third == '~' && fourth == '*' {
+            self.advance();
+            self.advance();
+            self.advance();
+            self.advance();
+            return Some(TokenType::NotILike);
+        }
+
+        // !~~ (Not Like - PostgreSQL)
+        if c == '!' && next == '~' && third == '~' {
+            self.advance();
+            self.advance();
+            self.advance();
+            return Some(TokenType::NotLike);
+        }
+
+        // !~* (Not Regexp ILike - PostgreSQL)
+        if c == '!' && next == '~' && third == '*' {
+            self.advance();
+            self.advance();
+            self.advance();
+            return Some(TokenType::NotIRLike);
+        }
+
+        // !:> (Not cast / Try cast - SingleStore)
+        if c == '!' && next == ':' && third == '>' {
+            self.advance();
+            self.advance();
+            self.advance();
+            return Some(TokenType::NColonGt);
+        }
+
+        // ?:: (TRY_CAST shorthand - Databricks)
+        if c == '?' && next == ':' && third == ':' {
+            self.advance();
+            self.advance();
+            self.advance();
+            return Some(TokenType::QDColon);
+        }
+
+        // !~ (Not Regexp - PostgreSQL)
+        if c == '!' && next == '~' {
+            self.advance();
+            self.advance();
+            return Some(TokenType::NotRLike);
+        }
+
+        // ~~ (Like - PostgreSQL)
+        if c == '~' && next == '~' {
+            self.advance();
+            self.advance();
+            return Some(TokenType::Like);
+        }
+
+        // ~* (Regexp ILike - PostgreSQL)
+        if c == '~' && next == '*' {
+            self.advance();
+            self.advance();
+            return Some(TokenType::IRLike);
+        }
+
+        // SingleStore three-character JSON path operators (must be checked before :: two-char)
+        // ::$ (JSON extract string), ::% (JSON extract double), ::? (JSON match)
+        if c == ':' && next == ':' && third == '$' {
+            self.advance();
+            self.advance();
+            self.advance();
+            return Some(TokenType::DColonDollar);
+        }
+        if c == ':' && next == ':' && third == '%' {
+            self.advance();
+            self.advance();
+            self.advance();
+            return Some(TokenType::DColonPercent);
+        }
+        if c == ':' && next == ':' && third == '?' {
+            self.advance();
+            self.advance();
+            self.advance();
+            return Some(TokenType::DColonQMark);
+        }
+
+        // Two-character operators
+        let token_type = match (c, next) {
+            ('.', ':') => Some(TokenType::DotColon),
+            ('=', '=') => Some(TokenType::Eq), // Hive/Spark == equality operator
+            ('<', '=') => Some(TokenType::Lte),
+            ('>', '=') => Some(TokenType::Gte),
+            ('!', '=') => Some(TokenType::Neq),
+            ('<', '>') => Some(TokenType::Neq),
+            ('^', '=') => Some(TokenType::Neq),
+            ('<', '<') => Some(TokenType::LtLt),
+            ('>', '>') => Some(TokenType::GtGt),
+            ('|', '|') => Some(TokenType::DPipe),
+            ('|', '/') => Some(TokenType::PipeSlash), // Square root - PostgreSQL
+            ('/', '/') if self.config.double_slash_int_div => Some(TokenType::Div), // Vertica
+            (':', ':') => Some(TokenType::DColon),
+            (':', '=') => Some(TokenType::ColonEq), // := (assignment, named args)
+            (':', '>') => Some(TokenType::ColonGt), // ::> (TSQL)
+            ('-', '>') => Some(TokenType::Arrow),   // JSON object access
+            ('=', '>') => Some(TokenType::FArrow),  // Fat arrow (lambda)
+            ('&', '&') => Some(TokenType::DAmp),
+            ('&', '<') => Some(TokenType::AmpLt), // PostgreSQL range operator
+            ('&', '>') => Some(TokenType::AmpGt), // PostgreSQL range operator
+            ('@', '@') => Some(TokenType::AtAt),  // Text search match
+            ('@', '?') => Some(TokenType::AtQMark), // JSON path exists - PostgreSQL
+            ('?', '|') => Some(TokenType::QMarkPipe), // JSONB contains any key
+            ('?', '&') => Some(TokenType::QMarkAmp), // JSONB contains all keys
+            ('?', '?') => Some(TokenType::DQMark), // Double question mark
+            ('#', '>') => Some(TokenType::HashArrow), // JSONB path extraction
+            ('#', '-') => Some(TokenType::HashDash), // JSONB delete
+            ('^', '@') => Some(TokenType::CaretAt), // PostgreSQL starts-with operator
+            ('*', '*') => Some(TokenType::DStar), // Power operator
+            ('|', '>') => Some(TokenType::PipeGt), // Pipe-greater (some dialects)
+            _ => None,
+        };
+
+        if token_type.is_some() {
+            self.advance();
+            self.advance();
+        }
+
+        token_type
+    }
+
+    fn scan_string(&mut self) -> Result<()> {
+        self.advance(); // Opening quote
+        if let Some((text_start, text_end)) =
+            self.try_scan_simple_quoted_content('\'', self.config.string_escapes.contains(&'\\'))
+        {
+            self.add_token_from_source(TokenType::String, text_start, text_end);
+            return Ok(());
+        }
+        let mut value = String::new();
+
+        while !self.is_at_end() {
+            let c = self.peek();
+            if c == '\'' {
+                if self.peek_next() == '\'' {
+                    // Escaped quote
+                    value.push('\'');
+                    self.advance();
+                    self.advance();
+                } else {
+                    break;
+                }
+            } else if c == '\\' && self.config.string_escapes.contains(&'\\') {
+                if self.config.recover_terminal_backslash_quote
+                    && self.peek_next() == '\''
+                    && !self.range_contains(self.current + 2, '\'')
+                {
+                    value.push(self.advance());
+                    break;
+                }
+
+                self.scan_backslash_escape(&mut value);
+            } else {
+                value.push(self.advance());
+            }
+        }
+
+        if self.is_at_end() {
+            if self.config.recover_unterminated_string {
+                self.add_token_with_text(TokenType::String, value);
+                return Ok(());
+            }
+
+            return Err(Error::tokenize(
+                "Unterminated string",
+                self.line,
+                self.column,
+                self.start,
+                self.current,
+            ));
+        }
+
+        self.advance(); // Closing quote
+        self.add_token_with_text(TokenType::String, value);
+        Ok(())
+    }
+
+    /// Scan a double-quoted string (for dialects like BigQuery where " is a string delimiter)
+    fn scan_double_quoted_string(&mut self) -> Result<()> {
+        self.advance(); // Opening quote
+        let mut value = String::new();
+
+        while !self.is_at_end() {
+            let c = self.peek();
+            if c == '"' {
+                if self.peek_next() == '"' {
+                    // Escaped quote
+                    value.push('"');
+                    self.advance();
+                    self.advance();
+                } else {
+                    break;
+                }
+            } else if c == '\\' && self.config.string_escapes.contains(&'\\') {
+                self.scan_backslash_escape(&mut value);
+            } else {
+                value.push(self.advance());
+            }
+        }
+
+        if self.is_at_end() {
+            return Err(Error::tokenize(
+                "Unterminated double-quoted string",
+                self.line,
+                self.column,
+                self.start,
+                self.current,
+            ));
+        }
+
+        self.advance(); // Closing quote
+        self.add_token_with_text(TokenType::String, value);
+        Ok(())
+    }
+
+    fn scan_backslash_escape(&mut self, value: &mut String) {
+        self.advance(); // Backslash
+        if self.is_at_end() {
+            value.push('\\');
+            return;
+        }
+
+        let escaped = self.advance();
+        let restricted = !self.config.escape_follow_chars.is_empty();
+        let always_allowed = matches!(escaped, '\\' | '\'' | '"');
+        if restricted && !always_allowed && !self.config.escape_follow_chars.contains(&escaped) {
+            value.push(escaped);
+            return;
+        }
+
+        let supports_octal =
+            restricted && ('1'..='7').any(|digit| self.config.escape_follow_chars.contains(&digit));
+        if supports_octal && escaped.is_digit(8) {
+            if let Some(codepoint) = self.peek_radix_digits(2, 8).and_then(|suffix| {
+                let first = escaped.to_digit(8)?;
+                first.checked_mul(64)?.checked_add(suffix)
+            }) {
+                if let Ok(byte) = u8::try_from(codepoint) {
+                    self.advance_count(2);
+                    value.push(byte as char);
+                    return;
+                }
+            }
+
+            if escaped == '0' {
+                value.push('\0');
+            } else {
+                value.push(escaped);
+            }
+            return;
+        }
+
+        match escaped {
+            'n' => value.push('\n'),
+            'r' => value.push('\r'),
+            't' => value.push('\t'),
+            '0' => value.push('\0'),
+            'Z' => value.push('\x1A'),
+            'a' => value.push('\x07'),
+            'b' => value.push('\x08'),
+            'f' => value.push('\x0C'),
+            'v' => value.push('\x0B'),
+            'x' => {
+                if let Some(codepoint) = self.peek_radix_digits(2, 16) {
+                    self.advance_count(2);
+                    value.push(codepoint as u8 as char);
+                } else if restricted {
+                    // Invalid Snowflake numeric escapes are ordinary unknown escapes.
+                    value.push('x');
+                } else {
+                    // Preserve the existing permissive behavior for dialects without
+                    // an explicit escape-follow policy.
+                    value.push('\\');
+                    value.push('x');
+                    for _ in 0..2 {
+                        if !self.is_at_end() && self.peek().is_ascii_hexdigit() {
+                            value.push(self.advance());
+                        }
+                    }
+                }
+            }
+            'u' if restricted && self.config.escape_follow_chars.contains(&'u') => {
+                if let Some(codepoint) = self.peek_radix_digits(4, 16).and_then(char::from_u32) {
+                    self.advance_count(4);
+                    value.push(codepoint);
+                } else {
+                    value.push('u');
+                }
+            }
+            '\\' => value.push('\\'),
+            '\'' => value.push('\''),
+            '"' => value.push('"'),
+            '%' => value.push('%'),
+            '_' => value.push('_'),
+            _ if restricted => value.push(escaped),
+            _ => {
+                value.push('\\');
+                value.push(escaped);
+            }
+        }
+    }
+
+    fn peek_radix_digits(&self, count: usize, radix: u32) -> Option<u32> {
+        if self.current + count > self.size {
+            return None;
+        }
+
+        let mut value = 0_u32;
+        for offset in 0..count {
+            value = value
+                .checked_mul(radix)?
+                .checked_add(self.char_at(self.current + offset).to_digit(radix)?)?;
+        }
+        Some(value)
+    }
+
+    fn advance_count(&mut self, count: usize) {
+        for _ in 0..count {
+            self.advance();
+        }
+    }
+
+    fn scan_triple_quoted_string(&mut self, quote_char: char) -> Result<()> {
+        // Advance past the three opening quotes
+        self.advance();
+        self.advance();
+        self.advance();
+        let mut value = String::new();
+
+        while !self.is_at_end() {
+            // Check for closing triple quote
+            if self.peek() == quote_char
+                && self.current + 1 < self.size
+                && self.char_at(self.current + 1) == quote_char
+                && self.current + 2 < self.size
+                && self.char_at(self.current + 2) == quote_char
+            {
+                // Found closing """
+                break;
+            }
+            if self.peek() == '\\' && self.config.string_escapes.contains(&'\\') {
+                self.scan_backslash_escape(&mut value);
+            } else {
+                value.push(self.advance());
+            }
+        }
+
+        if self.is_at_end() {
+            return Err(Error::tokenize(
+                "Unterminated triple-quoted string",
+                self.line,
+                self.column,
+                self.start,
+                self.current,
+            ));
+        }
+
+        // Advance past the three closing quotes
+        self.advance();
+        self.advance();
+        self.advance();
+        let token_type = if quote_char == '"' {
+            TokenType::TripleDoubleQuotedString
+        } else {
+            TokenType::TripleSingleQuotedString
+        };
+        self.add_token_with_text(token_type, value);
+        Ok(())
+    }
+
+    fn scan_quoted_identifier(&mut self, end_quote: char) -> Result<()> {
+        self.advance(); // Opening quote
+        let mut value = String::new();
+
+        loop {
+            if self.is_at_end() {
+                return Err(Error::tokenize(
+                    "Unterminated identifier",
+                    self.line,
+                    self.column,
+                    self.start,
+                    self.current,
+                ));
+            }
+            if self.config.identifier_backslash_escapes && self.peek() == '\\' {
+                if self.peek_next() == end_quote {
+                    value.push(end_quote);
+                    self.advance_count(2);
+                } else {
+                    self.scan_backslash_escape(&mut value);
+                }
+                continue;
+            }
+            if self.peek() == end_quote {
+                if self.peek_next() == end_quote {
+                    // Escaped quote (e.g., "" inside "x""y") -> store single quote
+                    value.push(end_quote);
+                    self.advance(); // skip first quote
+                    self.advance(); // skip second quote
+                } else {
+                    // End of identifier
+                    break;
+                }
+            } else {
+                value.push(self.peek());
+                self.advance();
+            }
+        }
+
+        self.advance(); // Closing quote
+        self.add_token_with_text(TokenType::QuotedIdentifier, value);
+        Ok(())
+    }
+
+    /// Scans a string in curly single quotes, literal and closed by its matching quote.
+    fn scan_unicode_quoted_string(&mut self) -> Result<()> {
+        self.advance(); // Opening curly quote
+        let start = self.current;
+        // Determine closing quote: left opens -> right closes; right opens -> right closes
+        let close_quote = '\u{2019}';
+        while !self.is_at_end() && self.peek() != close_quote {
+            self.advance();
+        }
+        let value = self.text_from_range(start, self.current);
+        if !self.is_at_end() {
+            self.advance(); // Closing quote
+        }
+        self.add_token_with_text(TokenType::String, value);
+        Ok(())
+    }
+
+    /// Scans an identifier in curly double quotes, closed by its matching quote.
+    fn scan_unicode_quoted_identifier(&mut self) -> Result<()> {
+        self.advance(); // Opening curly quote
+        let start = self.current;
+        let close_quote = '\u{201D}';
+        while !self.is_at_end() && self.peek() != close_quote && self.peek() != '"' {
+            self.advance();
+        }
+        let value = self.text_from_range(start, self.current);
+        if !self.is_at_end() {
+            self.advance(); // Closing quote
+        }
+        self.add_token_with_text(TokenType::QuotedIdentifier, value);
+        Ok(())
+    }
+
+    fn starts_numeric_exponent(&self) -> bool {
+        if !matches!(self.peek(), 'e' | 'E') {
+            return false;
+        }
+        let digits = self.current + 1 + usize::from(matches!(self.peek_next(), '+' | '-'));
+        digits < self.size && self.char_at(digits).is_ascii_digit()
+    }
+
+    fn scan_number(&mut self) -> Result<()> {
+        // Check for 0x/0X hex number prefix (SQLite-style)
+        if self.config.hex_number_strings && self.peek() == '0' && !self.is_at_end() {
+            let next = if self.current + 1 < self.size {
+                self.char_at(self.current + 1)
+            } else {
+                '\0'
+            };
+            if next == 'x' || next == 'X' {
+                // Advance past '0' and 'x'/'X'
+                self.advance();
+                self.advance();
+                // Collect hex digits (allow underscores as separators, e.g., 0xbad_cafe)
+                let hex_start = self.current;
+                if !self.advance_ascii_hex_digits() {
+                    while !self.is_at_end()
+                        && (self.peek().is_ascii_hexdigit() || self.peek() == '_')
+                    {
+                        if self.peek() == '_' && !self.peek_next().is_ascii_hexdigit() {
+                            break;
+                        }
+                        self.advance();
+                    }
+                }
+                let has_hex_digits = self.current > hex_start;
+                let next_is_identifier_part = {
+                    let next = self.peek();
+                    next.is_alphanumeric() || matches!(next, '_' | '$' | '#' | '@')
+                };
+                let is_empty_hex_string = self.config.allow_empty_hex_string
+                    && !self.config.hex_string_is_integer_type
+                    && !next_is_identifier_part;
+                if has_hex_digits || is_empty_hex_string {
+                    // Check for hex float: 0xABC.DEFpEXP or 0xABCpEXP
+                    let mut is_hex_float = false;
+                    // Optional fractional part: .hexdigits
+                    if has_hex_digits && !self.is_at_end() && self.peek() == '.' {
+                        let after_dot = if self.current + 1 < self.size {
+                            self.char_at(self.current + 1)
+                        } else {
+                            '\0'
+                        };
+                        if after_dot.is_ascii_hexdigit() {
+                            is_hex_float = true;
+                            self.advance(); // consume '.'
+                            if !self.advance_ascii_hex_digits() {
+                                while !self.is_at_end() && self.peek().is_ascii_hexdigit() {
+                                    self.advance();
+                                }
+                            }
+                        }
+                    }
+                    // Optional binary exponent: p/P [+/-] digits
+                    if has_hex_digits
+                        && !self.is_at_end()
+                        && (self.peek() == 'p' || self.peek() == 'P')
+                    {
+                        is_hex_float = true;
+                        self.advance(); // consume p/P
+                        if !self.is_at_end() && (self.peek() == '+' || self.peek() == '-') {
+                            self.advance();
+                        }
+                        if !self.advance_ascii_digits() {
+                            while !self.is_at_end() && self.peek().is_ascii_digit() {
+                                self.advance();
+                            }
+                        }
+                    }
+                    if is_hex_float {
+                        // Hex float literal — emit as regular Number token with full text
+                        let raw_text = self.text_from_range(self.start, self.current);
+                        let full_text = if self.config.numbers_can_be_underscore_separated
+                            && raw_text.contains('_')
+                        {
+                            raw_text.replace('_', "")
+                        } else {
+                            raw_text
+                        };
+                        self.add_token_with_text(TokenType::Number, full_text);
+                    } else if self.config.hex_string_is_integer_type {
+                        // BigQuery/ClickHouse: 0xA represents an integer in hex notation
+                        let raw_value = self.text_from_range(hex_start, self.current);
+                        let hex_value = if self.config.numbers_can_be_underscore_separated
+                            && raw_value.contains('_')
+                        {
+                            raw_value.replace('_', "")
+                        } else {
+                            raw_value
+                        };
+                        self.add_token_with_text(TokenType::HexNumber, hex_value);
+                    } else {
+                        // SQLite/Teradata: 0xCC represents a binary/blob hex string
+                        let raw_value = self.text_from_range(hex_start, self.current);
+                        let hex_value = if self.config.numbers_can_be_underscore_separated
+                            && raw_value.contains('_')
+                        {
+                            raw_value.replace('_', "")
+                        } else {
+                            raw_value
+                        };
+                        self.add_token_with_text(TokenType::HexString, hex_value);
+                    }
+                    return Ok(());
+                }
+                // No hex digits after 0x - fall through to normal number parsing
+                // (reset current back to after '0')
+                self.current = self.start + 1;
+            }
+        }
+
+        // Allow underscores as digit separators (e.g., 20_000, 1_000_000)
+        if !self.advance_ascii_digits() {
+            while !self.is_at_end() && (self.peek().is_ascii_digit() || self.peek() == '_') {
+                // Don't allow underscore at the end (must be followed by digit)
+                if self.peek() == '_' && (self.is_at_end() || !self.peek_next().is_ascii_digit()) {
+                    break;
+                }
+                self.advance();
+            }
+        }
+
+        // Look for decimal part - allow trailing dot (e.g., "1.")
+        // In PostgreSQL (and sqlglot), "1.x" parses as float "1." with alias "x"
+        // So we always consume the dot as part of the number, even if followed by an identifier
+        if self.peek() == '.' {
+            let next = self.peek_next();
+            // Only consume the dot if:
+            // 1. Followed by a digit (normal decimal like 1.5)
+            // 2. Followed by an identifier start (like 1.x -> becomes 1. with alias x)
+            // 3. End of input or other non-dot character (trailing decimal like "1.")
+            // Do NOT consume if it's a double dot (..) which is a range operator
+            if next != '.' {
+                self.advance(); // consume the .
+                                // Only consume digits after the decimal point (not identifiers)
+                if !self.advance_ascii_digits() {
+                    while !self.is_at_end() && (self.peek().is_ascii_digit() || self.peek() == '_')
+                    {
+                        if self.peek() == '_' && !self.peek_next().is_ascii_digit() {
+                            break;
+                        }
+                        self.advance();
+                    }
+                }
+            }
+        }
+
+        // Look for exponent
+        if self.starts_numeric_exponent() {
+            self.advance();
+            if self.peek() == '+' || self.peek() == '-' {
+                self.advance();
+            }
+            if !self.advance_ascii_digits() {
+                while !self.is_at_end() && (self.peek().is_ascii_digit() || self.peek() == '_') {
+                    if self.peek() == '_' && !self.peek_next().is_ascii_digit() {
+                        break;
+                    }
+                    self.advance();
+                }
+            }
+        }
+
+        let source_text = self
+            .cursor
+            .source_range(self.source, self.start, self.current);
+        let raw_owned = source_text
+            .is_none()
+            .then(|| self.text_from_range(self.start, self.current));
+        let raw_text = source_text.unwrap_or_else(|| {
+            raw_owned
+                .as_deref()
+                .expect("non-ASCII numbers own their text")
+        });
+        // Strip underscore digit separators (e.g., 20_000 -> 20000, 1_2E+1_0 -> 12E+10)
+        // Only for dialects that support this (ClickHouse, DuckDB)
+        let normalized = (self.config.numbers_can_be_underscore_separated
+            && raw_text.contains('_'))
+        .then(|| raw_text.replace('_', ""));
+        let text = normalized.as_deref().unwrap_or(raw_text);
+
+        // Check for numeric literal suffixes (e.g., 1L -> BIGINT, 1s -> SMALLINT in Hive/Spark)
+        if !self.config.numeric_literals.is_empty() && !self.is_at_end() {
+            let next_char: String = self.peek().to_ascii_uppercase().to_string();
+            // Try 2-char suffix first (e.g., "BD"), then 1-char
+            let suffix_match = if self.current + 1 < self.size {
+                let two_char: String = [
+                    self.char_at(self.current).to_ascii_uppercase(),
+                    self.char_at(self.current + 1).to_ascii_uppercase(),
+                ]
+                .iter()
+                .collect();
+                if self.config.numeric_literals.contains_key(&two_char) {
+                    // Make sure the 2-char suffix is not followed by more identifier chars
+                    let after_suffix = if self.current + 2 < self.size {
+                        self.char_at(self.current + 2)
+                    } else {
+                        ' '
+                    };
+                    if !after_suffix.is_alphanumeric() && after_suffix != '_' {
+                        Some((two_char, 2))
+                    } else {
+                        None
+                    }
+                } else if self.config.numeric_literals.contains_key(&next_char) {
+                    // 1-char suffix - make sure not followed by more identifier chars
+                    let after_suffix = if self.current + 1 < self.size {
+                        self.char_at(self.current + 1)
+                    } else {
+                        ' '
+                    };
+                    if !after_suffix.is_alphanumeric() && after_suffix != '_' {
+                        Some((next_char, 1))
+                    } else {
+                        None
+                    }
+                } else {
+                    None
+                }
+            } else if self.config.numeric_literals.contains_key(&next_char) {
+                // At end of input, 1-char suffix
+                Some((next_char, 1))
+            } else {
+                None
+            };
+
+            if let Some((suffix, len)) = suffix_match {
+                // Consume the suffix characters
+                for _ in 0..len {
+                    self.advance();
+                }
+                // Emit as a special number-with-suffix token
+                // We'll encode as "number::TYPE" so the parser can split it
+                let type_name = self
+                    .config
+                    .numeric_literals
+                    .get(&suffix)
+                    .expect("suffix verified by contains_key above")
+                    .clone();
+                let combined = format!("{}::{}", text, type_name);
+                self.add_token_with_text(TokenType::Number, combined);
+                return Ok(());
+            }
+        }
+
+        // Check for identifiers that start with a digit (e.g., 1a, 1_a, 1a_1a)
+        // In Hive/Spark/MySQL/ClickHouse, these are valid unquoted identifiers
+        if self.config.identifiers_can_start_with_digit && !self.is_at_end() {
+            let next = self.peek();
+            if next.is_alphabetic() || next == '_' {
+                // Continue scanning as an identifier
+                if !self.advance_ascii_identifier() {
+                    while !self.is_at_end() {
+                        let ch = self.peek();
+                        if ch.is_alphanumeric() || ch == '_' {
+                            self.advance();
+                        } else {
+                            break;
+                        }
+                    }
+                }
+                self.add_token(TokenType::Identifier);
+                return Ok(());
+            }
+        }
+
+        if let Some(text) = normalized.or(raw_owned) {
+            self.add_token_with_text(TokenType::Number, text);
+        } else {
+            self.add_token(TokenType::Number);
+        }
+        Ok(())
+    }
+
+    /// Scan a number that starts with a dot (e.g., .25, .5, .123e10)
+    fn scan_number_starting_with_dot(&mut self) -> Result<()> {
+        // Consume the leading dot
+        self.advance();
+
+        // Consume the fractional digits
+        if !self.advance_ascii_digits() {
+            while !self.is_at_end() && (self.peek().is_ascii_digit() || self.peek() == '_') {
+                if self.peek() == '_' && !self.peek_next().is_ascii_digit() {
+                    break;
+                }
+                self.advance();
+            }
+        }
+
+        // Look for exponent
+        if self.starts_numeric_exponent() {
+            self.advance();
+            if self.peek() == '+' || self.peek() == '-' {
+                self.advance();
+            }
+            if !self.advance_ascii_digits() {
+                while !self.is_at_end() && (self.peek().is_ascii_digit() || self.peek() == '_') {
+                    if self.peek() == '_' && !self.peek_next().is_ascii_digit() {
+                        break;
+                    }
+                    self.advance();
+                }
+            }
+        }
+
+        let source_text = self
+            .cursor
+            .source_range(self.source, self.start, self.current);
+        let raw_owned = source_text
+            .is_none()
+            .then(|| self.text_from_range(self.start, self.current));
+        let raw_text = source_text.unwrap_or_else(|| {
+            raw_owned
+                .as_deref()
+                .expect("non-ASCII numbers own their text")
+        });
+        // Strip underscore digit separators (e.g., .1_5 -> .15)
+        // Only for dialects that support this (ClickHouse, DuckDB)
+        let normalized = (self.config.numbers_can_be_underscore_separated
+            && raw_text.contains('_'))
+        .then(|| raw_text.replace('_', ""));
+        if let Some(text) = normalized.or(raw_owned) {
+            self.add_token_with_text(TokenType::Number, text);
+        } else {
+            self.add_token(TokenType::Number);
+        }
+        Ok(())
+    }
+
+    /// Looks up a keyword, upper-casing ASCII on the stack; long texts are `Var`.
+    #[inline]
+    fn lookup_keyword_ascii(keywords: &HashMap<String, TokenType>, text: &str) -> TokenType {
+        if text.len() > 128 {
+            return TokenType::Var;
+        }
+        let mut buf = [0u8; 128];
+        for (i, b) in text.bytes().enumerate() {
+            buf[i] = b.to_ascii_uppercase();
+        }
+        if let Ok(upper) = std::str::from_utf8(&buf[..text.len()]) {
+            keywords.get(upper).copied().unwrap_or(TokenType::Var)
+        } else {
+            TokenType::Var
+        }
+    }
+
+    fn scan_identifier_or_keyword(&mut self) -> Result<()> {
+        // Guard against unrecognized characters that could cause infinite loops
+        let first_char = self.peek();
+        if !first_char.is_alphanumeric() && first_char != '_' {
+            // Unknown character - skip it and return an error
+            let c = self.advance();
+            return Err(Error::tokenize(
+                format!("Unexpected character: '{}'", c),
+                self.line,
+                self.column,
+                self.start,
+                self.current,
+            ));
+        }
+
+        if !self.advance_ascii_identifier() {
+            while !self.is_at_end() {
+                let c = self.peek();
+                // Allow alphanumeric, underscore, $, # and @ in identifiers
+                // PostgreSQL allows $, TSQL allows # and @
+                // But stop consuming # if followed by > or >> (PostgreSQL #> and #>> operators)
+                if c == '#' {
+                    let next_c = if self.current + 1 < self.size {
+                        self.char_at(self.current + 1)
+                    } else {
+                        '\0'
+                    };
+                    if next_c == '>' || next_c == '-' {
+                        break; // Don't consume # — it's part of #>, #>>, or #- operator
+                    }
+                    self.advance();
+                } else if c.is_alphanumeric() || c == '_' || c == '$' || c == '@' {
+                    self.advance();
+                } else {
+                    break;
+                }
+            }
+        }
+
+        let source_text = self
+            .cursor
+            .source_range(self.source, self.start, self.current);
+        let owned_text = source_text
+            .is_none()
+            .then(|| self.text_from_range(self.start, self.current));
+        let text = source_text.unwrap_or_else(|| {
+            owned_text
+                .as_deref()
+                .expect("non-ASCII identifiers own their text")
+        });
+
+        // Special-case NOT= (Teradata and other dialects)
+        if text.eq_ignore_ascii_case("NOT") && self.peek() == '=' {
+            self.advance(); // consume '='
+            self.add_token(TokenType::Neq);
+            return Ok(());
+        }
+
+        // Check for special string prefixes like N'...', X'...', B'...', U&'...', r'...', b'...'
+        // Also handle double-quoted variants for dialects that support them (e.g., BigQuery)
+        let next_char = self.peek();
+        let is_single_quote = next_char == '\'';
+        let is_double_quote = next_char == '"' && self.config.quotes.contains_key("\"");
+        // For raw strings (r"..." or r'...'), we allow double quotes even if " is not in quotes config
+        // because raw strings are a special case used in Spark/Databricks where " is for identifiers
+        let is_double_quote_for_raw = next_char == '"';
+
+        // Handle raw strings first - they're special because they work with both ' and "
+        // even in dialects where " is normally an identifier delimiter (like Databricks)
+        if text.eq_ignore_ascii_case("R") && (is_single_quote || is_double_quote_for_raw) {
+            // Raw string r'...' or r"..." or r'''...''' or r"""...""" (BigQuery style)
+            // In raw strings, backslashes are treated literally (no escape processing)
+            let quote_char = if is_single_quote { '\'' } else { '"' };
+            self.advance(); // consume the first opening quote
+
+            // Check for triple-quoted raw string (r"""...""" or r'''...''')
+            if self.peek() == quote_char && self.peek_next() == quote_char {
+                // Triple-quoted raw string
+                self.advance(); // consume second quote
+                self.advance(); // consume third quote
+                let string_value = self.scan_raw_triple_quoted_content(quote_char)?;
+                self.add_token_with_text(TokenType::RawString, string_value);
+            } else {
+                let string_value = self.scan_raw_string_content(quote_char)?;
+                self.add_token_with_text(TokenType::RawString, string_value);
+            }
+            return Ok(());
+        }
+
+        if is_single_quote || is_double_quote {
+            if text.eq_ignore_ascii_case("N") {
+                // National string N'...'
+                self.advance(); // consume the opening quote
+                let string_value = if is_single_quote {
+                    self.scan_string_content()?
+                } else {
+                    self.scan_double_quoted_string_content()?
+                };
+                self.add_token_with_text(TokenType::NationalString, string_value);
+                return Ok(());
+            } else if text.eq_ignore_ascii_case("E") {
+                // PostgreSQL escape string E'...' or e'...'
+                // Preserve the case by prefixing with "e:" or "E:"
+                // Always use backslash escapes for escape strings (e.g., \' is an escaped quote)
+                let lowercase = text == "e";
+                let prefix = if lowercase { "e:" } else { "E:" };
+                self.advance(); // consume the opening quote
+                let string_value = self.scan_string_content_with_escapes(true)?;
+                self.add_token_with_text(
+                    TokenType::EscapeString,
+                    format!("{}{}", prefix, string_value),
+                );
+                return Ok(());
+            } else if text.eq_ignore_ascii_case("X") {
+                // Hex string X'...'
+                self.advance(); // consume the opening quote
+                let string_value = if is_single_quote {
+                    self.scan_string_content()?
+                } else {
+                    self.scan_double_quoted_string_content()?
+                };
+                self.add_token_with_text(TokenType::HexString, string_value);
+                return Ok(());
+            } else if text.eq_ignore_ascii_case("B") && is_double_quote {
+                // Byte string b"..." (BigQuery style) - MUST check before single quote B'...'
+                self.advance(); // consume the opening quote
+                let string_value = self.scan_double_quoted_string_content()?;
+                self.add_token_with_text(TokenType::ByteString, string_value);
+                return Ok(());
+            } else if text.eq_ignore_ascii_case("B") && is_single_quote {
+                // For BigQuery: b'...' is a byte string (bytes data)
+                // For standard SQL: B'...' is a bit string (binary digits)
+                self.advance(); // consume the opening quote
+                let string_value = self.scan_string_content()?;
+                if self.config.b_prefix_is_byte_string {
+                    self.add_token_with_text(TokenType::ByteString, string_value);
+                } else {
+                    self.add_token_with_text(TokenType::BitString, string_value);
+                }
+                return Ok(());
+            }
+        }
+
+        // Check for U&'...' Unicode string syntax (SQL standard)
+        if text.eq_ignore_ascii_case("U")
+            && self.peek() == '&'
+            && self.current + 1 < self.size
+            && self.char_at(self.current + 1) == '\''
+        {
+            self.advance(); // consume '&'
+            self.advance(); // consume opening quote
+            let string_value = self.scan_string_content()?;
+            self.add_token_with_text(TokenType::UnicodeString, string_value);
+            return Ok(());
+        }
+
+        let token_type = Self::lookup_keyword_ascii(&self.config.keywords, text);
+
+        if let Some(text) = owned_text {
+            self.add_token_with_text(token_type, text);
+        } else {
+            self.add_token_from_source(token_type, self.start, self.current);
+        }
+        Ok(())
+    }
+
+    /// Scans string content; `force_backslash_escapes` serves PostgreSQL E'...' strings.
+    fn scan_string_content_with_escapes(
+        &mut self,
+        force_backslash_escapes: bool,
+    ) -> Result<String> {
+        let use_backslash_escapes =
+            force_backslash_escapes || self.config.string_escapes.contains(&'\\');
+        if let Some((start, end)) = self.try_scan_simple_quoted_content('\'', use_backslash_escapes)
+        {
+            return Ok(self.text_from_range(start, end));
+        }
+        let mut value = String::new();
+
+        while !self.is_at_end() {
+            let c = self.peek();
+            if c == '\'' {
+                if self.peek_next() == '\'' {
+                    // Escaped quote ''
+                    value.push('\'');
+                    self.advance();
+                    self.advance();
+                } else {
+                    break;
+                }
+            } else if c == '\\' && use_backslash_escapes {
+                // Preserve escape sequences literally (including \' for escape strings)
+                value.push(self.advance());
+                if !self.is_at_end() {
+                    value.push(self.advance());
+                }
+            } else {
+                value.push(self.advance());
+            }
+        }
+
+        if self.is_at_end() {
+            return Err(Error::tokenize(
+                "Unterminated string",
+                self.line,
+                self.column,
+                self.start,
+                self.current,
+            ));
+        }
+
+        self.advance(); // Closing quote
+        Ok(value)
+    }
+
+    /// Scan string content (everything between quotes)
+    fn scan_string_content(&mut self) -> Result<String> {
+        self.scan_string_content_with_escapes(false)
+    }
+
+    /// Scans double-quoted string content, for prefixed strings like b"..." or N"...".
+    fn scan_double_quoted_string_content(&mut self) -> Result<String> {
+        let use_backslash_escapes = self.config.string_escapes.contains(&'\\');
+        if let Some((start, end)) = self.try_scan_simple_quoted_content('"', use_backslash_escapes)
+        {
+            return Ok(self.text_from_range(start, end));
+        }
+        let mut value = String::new();
+
+        while !self.is_at_end() {
+            let c = self.peek();
+            if c == '"' {
+                if self.peek_next() == '"' {
+                    // Escaped quote ""
+                    value.push('"');
+                    self.advance();
+                    self.advance();
+                } else {
+                    break;
+                }
+            } else if c == '\\' && use_backslash_escapes {
+                // Handle escape sequences
+                self.advance(); // Consume backslash
+                if !self.is_at_end() {
+                    let escaped = self.advance();
+                    match escaped {
+                        'n' => value.push('\n'),
+                        'r' => value.push('\r'),
+                        't' => value.push('\t'),
+                        '0' => value.push('\0'),
+                        '\\' => value.push('\\'),
+                        '"' => value.push('"'),
+                        '\'' => value.push('\''),
+                        'x' => {
+                            // Hex escape \xNN - collect hex digits
+                            let mut hex = String::new();
+                            for _ in 0..2 {
+                                if !self.is_at_end() && self.peek().is_ascii_hexdigit() {
+                                    hex.push(self.advance());
+                                }
+                            }
+                            if let Ok(byte) = u8::from_str_radix(&hex, 16) {
+                                value.push(byte as char);
+                            } else {
+                                // Invalid hex escape, keep it literal
+                                value.push('\\');
+                                value.push('x');
+                                value.push_str(&hex);
+                            }
+                        }
+                        _ => {
+                            // For unrecognized escapes, preserve backslash + char
+                            value.push('\\');
+                            value.push(escaped);
+                        }
+                    }
+                }
+            } else {
+                value.push(self.advance());
+            }
+        }
+
+        if self.is_at_end() {
+            return Err(Error::tokenize(
+                "Unterminated double-quoted string",
+                self.line,
+                self.column,
+                self.start,
+                self.current,
+            ));
+        }
+
+        self.advance(); // Closing quote
+        Ok(value)
+    }
+
+    /// Scans BigQuery raw string content, where only escaped quotes are processed.
+    fn scan_raw_string_content(&mut self, quote_char: char) -> Result<String> {
+        if let Some((start, end)) = self.try_scan_simple_quoted_content(
+            quote_char,
+            self.config.string_escapes_allowed_in_raw_strings,
+        ) {
+            return Ok(self.text_from_range(start, end));
+        }
+        let mut value = String::new();
+
+        while !self.is_at_end() {
+            let c = self.peek();
+            if c == quote_char {
+                if self.peek_next() == quote_char {
+                    // Escaped quote (doubled) - e.g., '' inside r'...'
+                    value.push(quote_char);
+                    self.advance();
+                    self.advance();
+                } else {
+                    break;
+                }
+            } else if c == '\\'
+                && self.peek_next() == quote_char
+                && self.config.string_escapes_allowed_in_raw_strings
+            {
+                // The quote does not terminate the raw string, but both characters
+                // remain literal content.
+                value.push('\\');
+                value.push(quote_char);
+                self.advance(); // consume backslash
+                self.advance(); // consume quote
+            } else {
+                // In raw strings, everything including backslashes is literal
+                value.push(self.advance());
+            }
+        }
+
+        if self.is_at_end() {
+            return Err(Error::tokenize(
+                "Unterminated raw string",
+                self.line,
+                self.column,
+                self.start,
+                self.current,
+            ));
+        }
+
+        self.advance(); // Closing quote
+        Ok(value)
+    }
+
+    /// Scans raw triple-quoted string content up to three closing quotes.
+    fn scan_raw_triple_quoted_content(&mut self, quote_char: char) -> Result<String> {
+        let mut value = String::new();
+
+        while !self.is_at_end() {
+            if self.peek() == quote_char {
+                let mut quote_count = 0;
+                while self.current + quote_count < self.size
+                    && self.char_at(self.current + quote_count) == quote_char
+                {
+                    quote_count += 1;
+                }
+                if quote_count >= 3 {
+                    // When more than three quotes occur, the leading quotes are content
+                    // and the final three terminate the raw triple-quoted string.
+                    for _ in 0..quote_count - 3 {
+                        value.push(quote_char);
+                    }
+                    for _ in 0..quote_count {
+                        self.advance();
+                    }
+                    return Ok(value);
+                }
+            }
+            // In raw strings, everything including backslashes is literal
+            let ch = self.advance();
+            value.push(ch);
+        }
+
+        Err(Error::tokenize(
+            "Unterminated raw triple-quoted string",
+            self.line,
+            self.column,
+            self.start,
+            self.current,
+        ))
+    }
+
+    /// Scans an identifier starting with `$` (ClickHouse).
+    fn scan_dollar_identifier(&mut self) -> Result<()> {
+        // Consume the leading $
+        self.advance();
+
+        // Consume alphanumeric, _, and $ continuation chars
+        while !self.is_at_end() {
+            let c = self.peek();
+            if c.is_alphanumeric() || c == '_' || c == '$' {
+                self.advance();
+            } else {
+                break;
+            }
+        }
+
+        self.add_token(TokenType::Var);
+        Ok(())
+    }
+
+    fn scan_tsql_identifier(&mut self) -> Result<()> {
+        // Consume the leading # or @ (or ##)
+        let first = self.advance();
+
+        // For ##, consume the second #
+        if first == '#' && self.peek() == '#' {
+            self.advance();
+        }
+
+        // Now scan the rest of the identifier
+        if !self.advance_ascii_identifier() {
+            while !self.is_at_end() {
+                let c = self.peek();
+                if c.is_alphanumeric() || c == '_' || c == '$' || c == '#' || c == '@' {
+                    self.advance();
+                } else {
+                    break;
+                }
+            }
+        }
+
+        // These are always identifiers (variables or temp table names), never keywords
+        self.add_token(TokenType::Var);
+        Ok(())
+    }
+
+    /// Consumes raw data after INSERT ... FORMAT name up to a blank line or the end.
+    fn try_scan_insert_format_raw_data(&mut self) -> Option<String> {
+        let len = self.tokens.len();
+        if len < 3 {
+            return None;
+        }
+
+        // Last token should be the format name (Identifier or Var, not VALUES)
+        let last = &self.tokens[len - 1];
+        if last.text(self.source).eq_ignore_ascii_case("VALUES") {
+            return None;
+        }
+        if !matches!(last.token_type(), TokenType::Var | TokenType::Identifier) {
+            return None;
+        }
+
+        // Second-to-last should be FORMAT
+        let format_tok = &self.tokens[len - 2];
+        if !format_tok.text(self.source).eq_ignore_ascii_case("FORMAT") {
+            return None;
+        }
+
+        // Check that there's an INSERT somewhere earlier in the tokens
+        let has_insert = self.tokens[..len - 2]
+            .iter()
+            .rev()
+            .take(20)
+            .any(|t| t.token_type() == TokenType::Insert);
+        if !has_insert {
+            return None;
+        }
+
+        // We're in INSERT ... FORMAT <name> context. Consume everything until:
+        // - A blank line (two consecutive newlines, possibly with whitespace between)
+        // - End of input
+        let raw_start = self.current;
+        while !self.is_at_end() {
+            let c = self.peek();
+            if c == '\n' {
+                // Check for blank line: \n followed by optional \r and \n
+                let saved = self.current;
+                self.advance(); // consume first \n
+                                // Skip \r if present
+                while !self.is_at_end() && self.peek() == '\r' {
+                    self.advance();
+                }
+                if self.is_at_end() || self.peek() == '\n' {
+                    // Found blank line or end of input - stop here
+                    // Don't consume the second \n so subsequent SQL can be tokenized
+                    let raw = self.text_from_range(raw_start, saved);
+                    return Some(raw.trim().to_string());
+                }
+                // Not a blank line, continue scanning
+            } else {
+                self.advance();
+            }
+        }
+
+        // Reached end of input
+        let raw = self.text_from_range(raw_start, self.current);
+        let trimmed = raw.trim().to_string();
+        if trimmed.is_empty() {
+            None
+        } else {
+            Some(trimmed)
+        }
+    }
+
+    fn add_token(&mut self, token_type: TokenType) {
+        self.add_token_from_source(token_type, self.start, self.current);
+    }
+
+    fn add_token_from_source(&mut self, token_type: TokenType, text_start: usize, text_end: usize) {
+        let span = Span::new(self.start, self.current, self.line, self.column);
+        if let Some(stats) = &mut self.guard_stats {
+            stats.observe(token_type, span);
+        }
+        let mut token = if self
+            .cursor
+            .source_range(self.source, text_start, text_end)
+            .is_some()
+        {
+            T::from_source(
+                token_type,
+                self.source,
+                text_start,
+                text_end,
+                span,
+                self.shared_source.as_ref(),
+            )
+        } else {
+            T::from_owned(
+                token_type,
+                self.cursor
+                    .text_from_range(self.source, text_start, text_end),
+                span,
+            )
+        };
+        token.comments_mut().append(&mut self.comments);
+        self.tokens.push(token);
+    }
+
+    fn add_token_with_text(&mut self, token_type: TokenType, text: String) {
+        let span = Span::new(self.start, self.current, self.line, self.column);
+        if let Some(stats) = &mut self.guard_stats {
+            stats.observe(token_type, span);
+        }
+        let mut token = T::from_owned(token_type, text, span);
+        token.comments_mut().append(&mut self.comments);
+        self.tokens.push(token);
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn ascii_fast_path_matches_character_buffer_path() {
+        let tokenizer = Tokenizer::default();
+        let inputs = [
+            "SELECT a, b FROM t WHERE id IN (1, 2, 3)",
+            "SELECT 'it''s', \"quoted\", $1 /* comment */ FROM schema.table",
+            "INSERT INTO t VALUES (1, 'a'), (2, 'b'); UPDATE t SET value = 'c'",
+            "SELECT $$body$$, $tag$content$tag$, 0xFF, 1.25e-2",
+        ];
+
+        for sql in inputs {
+            assert_eq!(
+                tokenizer.tokenize(sql).unwrap(),
+                tokenizer.tokenize_without_ascii_fast_path(sql).unwrap(),
+                "tokenization differs for {sql}"
+            );
+        }
+    }
+
+    #[test]
+    fn parser_tokens_match_public_tokens() {
+        let tokenizer = Tokenizer::default();
+        let inputs = [
+            "SELECT alpha, 123, 'plain' FROM schema.table WHERE id = 42",
+            "SELECT 'it''s', $$body$$, $tag$content$tag$ /* comment */",
+            "SELECT cafe, 'naive' FROM t\nWHERE value >= 1.25e-2",
+            "SELECT cafe, 'caf\u{e9}', \u{3b4}elta FROM donn\u{e9}es",
+        ];
+
+        for sql in inputs {
+            let public = tokenizer.tokenize(sql).unwrap();
+            let source: Arc<str> = Arc::from(sql);
+            let (parser, stats) = tokenizer.tokenize_for_parser(&source).unwrap();
+            let materialized = parser
+                .iter()
+                .map(|token| Token {
+                    token_type: token.token_type,
+                    text: token.text_owned(),
+                    span: token.span,
+                    comments: token.comments.clone(),
+                    trailing_comments: token.trailing_comments.clone(),
+                })
+                .collect::<Vec<_>>();
+
+            assert_eq!(
+                materialized, public,
+                "parser tokenization differs for {sql}"
+            );
+            assert_eq!(stats.token_count, public.len());
+        }
+    }
+
+    #[test]
+    fn parser_tokens_borrow_unchanged_ascii_text() {
+        let tokenizer = Tokenizer::default();
+        let source: Arc<str> = Arc::from("SELECT alpha, 123, 'plain'");
+        let (tokens, _) = tokenizer.tokenize_for_parser(&source).unwrap();
+
+        assert!(tokens
+            .iter()
+            .all(|token| matches!(&token.text, ParserTokenText::Source { .. })));
+    }
+
+    #[test]
+    fn test_simple_select() {
+        let tokenizer = Tokenizer::default();
+        let tokens = tokenizer.tokenize("SELECT 1").unwrap();
+
+        assert_eq!(tokens.len(), 2);
+        assert_eq!(tokens[0].token_type, TokenType::Select);
+        assert_eq!(tokens[1].token_type, TokenType::Number);
+        assert_eq!(tokens[1].text, "1");
+    }
+
+    #[test]
+    fn test_select_with_identifier() {
+        let tokenizer = Tokenizer::default();
+        let tokens = tokenizer.tokenize("SELECT a, b FROM t").unwrap();
+
+        assert_eq!(tokens.len(), 6);
+        assert_eq!(tokens[0].token_type, TokenType::Select);
+        assert_eq!(tokens[1].token_type, TokenType::Var);
+        assert_eq!(tokens[1].text, "a");
+        assert_eq!(tokens[2].token_type, TokenType::Comma);
+        assert_eq!(tokens[3].token_type, TokenType::Var);
+        assert_eq!(tokens[3].text, "b");
+        assert_eq!(tokens[4].token_type, TokenType::From);
+        assert_eq!(tokens[5].token_type, TokenType::Var);
+        assert_eq!(tokens[5].text, "t");
+    }
+
+    #[test]
+    fn test_string_literal() {
+        let tokenizer = Tokenizer::default();
+        let tokens = tokenizer.tokenize("SELECT 'hello'").unwrap();
+
+        assert_eq!(tokens.len(), 2);
+        assert_eq!(tokens[1].token_type, TokenType::String);
+        assert_eq!(tokens[1].text, "hello");
+    }
+
+    #[test]
+    fn test_escaped_string() {
+        let tokenizer = Tokenizer::default();
+        let tokens = tokenizer.tokenize("SELECT 'it''s'").unwrap();
+
+        assert_eq!(tokens.len(), 2);
+        assert_eq!(tokens[1].token_type, TokenType::String);
+        assert_eq!(tokens[1].text, "it's");
+    }
+
+    #[test]
+    fn test_escape_follow_chars_gate_builtin_decoding() {
+        let mut config = TokenizerConfig::default();
+        config.string_escapes.push('\\');
+        config.escape_follow_chars = vec!['n'];
+        let tokenizer = Tokenizer::new(config);
+        let tokens = tokenizer.tokenize(r"SELECT '\n\a\f\Z\x21'").unwrap();
+
+        assert_eq!(tokens[1].text, "\nafZx21");
+    }
+
+    #[test]
+    fn test_configured_numeric_escapes_require_complete_sequences() {
+        let mut config = TokenizerConfig::default();
+        config.string_escapes.push('\\');
+        config.escape_follow_chars = vec!['0', '1', '2', '3', '4', '5', '6', '7', 'x', 'u'];
+        let tokenizer = Tokenizer::new(config);
+        let tokens = tokenizer
+            .tokenize(r"SELECT '\041\x21\u26c4-\777\x2\u26c'")
+            .unwrap();
+
+        assert_eq!(tokens[1].text, "!!\u{26c4}-777x2u26c");
+    }
+
+    #[test]
+    fn test_terminal_backslash_quote_recovery() {
+        let mut config = TokenizerConfig::default();
+        config.string_escapes.push('\\');
+        config.recover_terminal_backslash_quote = true;
+        let tokenizer = Tokenizer::new(config);
+        let tokens = tokenizer
+            .tokenize("SHOW FUNCTIONS LIKE 'a\\' OR 1=1")
+            .unwrap();
+
+        assert_eq!(tokens.len(), 8);
+        assert_eq!(tokens[3].token_type, TokenType::String);
+        assert_eq!(tokens[3].text, "a\\");
+        assert_eq!(tokens[4].token_type, TokenType::Or);
+    }
+
+    #[test]
+    fn test_comments() {
+        let tokenizer = Tokenizer::default();
+        let tokens = tokenizer.tokenize("SELECT -- comment\n1").unwrap();
+
+        assert_eq!(tokens.len(), 2);
+        // Comments are attached to the PREVIOUS token as trailing_comments
+        // This is better for round-trip fidelity (e.g., SELECT c /* comment */ FROM)
+        assert_eq!(tokens[0].trailing_comments.len(), 1);
+        assert_eq!(tokens[0].trailing_comments[0], " comment");
+    }
+
+    #[test]
+    fn test_operators() {
+        let tokenizer = Tokenizer::default();
+        let tokens = tokenizer.tokenize("1 + 2 * 3").unwrap();
+
+        assert_eq!(tokens.len(), 5);
+        assert_eq!(tokens[0].token_type, TokenType::Number);
+        assert_eq!(tokens[1].token_type, TokenType::Plus);
+        assert_eq!(tokens[2].token_type, TokenType::Number);
+        assert_eq!(tokens[3].token_type, TokenType::Star);
+        assert_eq!(tokens[4].token_type, TokenType::Number);
+    }
+
+    #[test]
+    fn test_comparison_operators() {
+        let tokenizer = Tokenizer::default();
+        let tokens = tokenizer.tokenize("a <= b >= c != d").unwrap();
+
+        assert_eq!(tokens[1].token_type, TokenType::Lte);
+        assert_eq!(tokens[3].token_type, TokenType::Gte);
+        assert_eq!(tokens[5].token_type, TokenType::Neq);
+    }
+
+    #[test]
+    fn test_national_string() {
+        let tokenizer = Tokenizer::default();
+        let tokens = tokenizer.tokenize("N'abc'").unwrap();
+
+        assert_eq!(
+            tokens.len(),
+            1,
+            "Expected 1 token for N'abc', got {:?}",
+            tokens
+        );
+        assert_eq!(tokens[0].token_type, TokenType::NationalString);
+        assert_eq!(tokens[0].text, "abc");
+    }
+
+    #[test]
+    fn test_hex_string() {
+        let tokenizer = Tokenizer::default();
+        let tokens = tokenizer.tokenize("X'ABCD'").unwrap();
+
+        assert_eq!(
+            tokens.len(),
+            1,
+            "Expected 1 token for X'ABCD', got {:?}",
+            tokens
+        );
+        assert_eq!(tokens[0].token_type, TokenType::HexString);
+        assert_eq!(tokens[0].text, "ABCD");
+    }
+
+    #[test]
+    fn test_bit_string() {
+        let tokenizer = Tokenizer::default();
+        let tokens = tokenizer.tokenize("B'01010'").unwrap();
+
+        assert_eq!(
+            tokens.len(),
+            1,
+            "Expected 1 token for B'01010', got {:?}",
+            tokens
+        );
+        assert_eq!(tokens[0].token_type, TokenType::BitString);
+        assert_eq!(tokens[0].text, "01010");
+    }
+
+    #[test]
+    fn test_trailing_dot_number() {
+        let tokenizer = Tokenizer::default();
+
+        // Test trailing dot
+        let tokens = tokenizer.tokenize("SELECT 1.").unwrap();
+        assert_eq!(
+            tokens.len(),
+            2,
+            "Expected 2 tokens for 'SELECT 1.', got {:?}",
+            tokens
+        );
+        assert_eq!(tokens[1].token_type, TokenType::Number);
+        assert_eq!(tokens[1].text, "1.");
+
+        // Test normal decimal
+        let tokens = tokenizer.tokenize("SELECT 1.5").unwrap();
+        assert_eq!(tokens[1].text, "1.5");
+
+        // Test number followed by dot and identifier
+        // In PostgreSQL (and sqlglot), "1.x" parses as float "1." with alias "x"
+        let tokens = tokenizer.tokenize("SELECT 1.a").unwrap();
+        assert_eq!(
+            tokens.len(),
+            3,
+            "Expected 3 tokens for 'SELECT 1.a', got {:?}",
+            tokens
+        );
+        assert_eq!(tokens[1].token_type, TokenType::Number);
+        assert_eq!(tokens[1].text, "1.");
+        assert_eq!(tokens[2].token_type, TokenType::Var);
+
+        // Test two dots (range operator) - dot is NOT consumed when followed by another dot
+        let tokens = tokenizer.tokenize("SELECT 1..2").unwrap();
+        assert_eq!(tokens[1].token_type, TokenType::Number);
+        assert_eq!(tokens[1].text, "1");
+        assert_eq!(tokens[2].token_type, TokenType::Dot);
+        assert_eq!(tokens[3].token_type, TokenType::Dot);
+        assert_eq!(tokens[4].token_type, TokenType::Number);
+        assert_eq!(tokens[4].text, "2");
+    }
+
+    #[test]
+    fn test_leading_dot_number() {
+        let tokenizer = Tokenizer::default();
+
+        // Test leading dot number (e.g., .25 for 0.25)
+        let tokens = tokenizer.tokenize(".25").unwrap();
+        assert_eq!(
+            tokens.len(),
+            1,
+            "Expected 1 token for '.25', got {:?}",
+            tokens
+        );
+        assert_eq!(tokens[0].token_type, TokenType::Number);
+        assert_eq!(tokens[0].text, ".25");
+
+        // Test leading dot in context (Oracle SAMPLE clause)
+        let tokens = tokenizer.tokenize("SAMPLE (.25)").unwrap();
+        assert_eq!(
+            tokens.len(),
+            4,
+            "Expected 4 tokens for 'SAMPLE (.25)', got {:?}",
+            tokens
+        );
+        assert_eq!(tokens[0].token_type, TokenType::Sample);
+        assert_eq!(tokens[1].token_type, TokenType::LParen);
+        assert_eq!(tokens[2].token_type, TokenType::Number);
+        assert_eq!(tokens[2].text, ".25");
+        assert_eq!(tokens[3].token_type, TokenType::RParen);
+
+        // Test leading dot with exponent
+        let tokens = tokenizer.tokenize(".5e10").unwrap();
+        assert_eq!(
+            tokens.len(),
+            1,
+            "Expected 1 token for '.5e10', got {:?}",
+            tokens
+        );
+        assert_eq!(tokens[0].token_type, TokenType::Number);
+        assert_eq!(tokens[0].text, ".5e10");
+
+        // Test that plain dot is still a Dot token
+        let tokens = tokenizer.tokenize("a.b").unwrap();
+        assert_eq!(
+            tokens.len(),
+            3,
+            "Expected 3 tokens for 'a.b', got {:?}",
+            tokens
+        );
+        assert_eq!(tokens[1].token_type, TokenType::Dot);
+    }
+
+    #[test]
+    fn test_unrecognized_character() {
+        let tokenizer = Tokenizer::default();
+
+        // Unicode curly quotes are now handled as string delimiters
+        let result = tokenizer.tokenize("SELECT \u{2018}hello\u{2019}");
+        assert!(
+            result.is_ok(),
+            "Curly quotes should be tokenized as strings"
+        );
+
+        // Unicode bullet character should still error
+        let result = tokenizer.tokenize("SELECT • FROM t");
+        assert!(result.is_err());
+    }
+
+    #[test]
+    fn test_colon_eq_tokenization() {
+        let tokenizer = Tokenizer::default();
+
+        // := should be a single ColonEq token
+        let tokens = tokenizer.tokenize("a := 1").unwrap();
+        assert_eq!(tokens.len(), 3);
+        assert_eq!(tokens[0].token_type, TokenType::Var);
+        assert_eq!(tokens[1].token_type, TokenType::ColonEq);
+        assert_eq!(tokens[2].token_type, TokenType::Number);
+
+        // : followed by non-= should still be Colon
+        let tokens = tokenizer.tokenize("a:b").unwrap();
+        assert!(tokens.iter().any(|t| t.token_type == TokenType::Colon));
+        assert!(!tokens.iter().any(|t| t.token_type == TokenType::ColonEq));
+
+        // :: should still be DColon
+        let tokens = tokenizer.tokenize("a::INT").unwrap();
+        assert!(tokens.iter().any(|t| t.token_type == TokenType::DColon));
+    }
+
+    #[test]
+    fn test_numeric_underscore_stripping() {
+        // Underscore stripping only happens when numbers_can_be_underscore_separated is true
+        let config = TokenizerConfig {
+            numbers_can_be_underscore_separated: true,
+            ..TokenizerConfig::default()
+        };
+        let tokenizer = Tokenizer::new(config);
+
+        // Simple integer with underscores
+        let tokens = tokenizer.tokenize("SELECT 1_2_3_4_5").unwrap();
+        assert_eq!(tokens[1].token_type, TokenType::Number);
+        assert_eq!(tokens[1].text, "12345");
+
+        // Thousands separator
+        let tokens = tokenizer.tokenize("SELECT 20_000").unwrap();
+        assert_eq!(tokens[1].token_type, TokenType::Number);
+        assert_eq!(tokens[1].text, "20000");
+
+        // Scientific notation with underscores
+        let tokens = tokenizer.tokenize("SELECT 1_2E+1_0").unwrap();
+        assert_eq!(tokens[1].token_type, TokenType::Number);
+        assert_eq!(tokens[1].text, "12E+10");
+
+        // Default tokenizer should NOT strip underscores
+        let default_tokenizer = Tokenizer::default();
+        let tokens = default_tokenizer.tokenize("SELECT 1_2_3_4_5").unwrap();
+        assert_eq!(tokens[1].token_type, TokenType::Number);
+        assert_eq!(tokens[1].text, "1_2_3_4_5");
+    }
+}
