@@ -1,0 +1,180 @@
+category = "temporal"
+construct = "fn:YEAR"
+session_profile = "utc-v1"
+equivalence = "part_functions_to_date_part"
+
+[[case]]
+id = "year_of_timestamps"
+description = "YEAR(t) of naive timestamps is DATE_PART(YEAR, t), around year ends and the epoch."
+columns = [{ name = "t", type = "TIMESTAMP_NTZ(9)" }]
+rows = [
+  ["'2024-02-29 13:45:01.123456789'"],
+  ["'2024-01-01 00:00:00'"],
+  ["'2023-12-31 23:59:59.999999999'"],
+  ["'1969-12-31 23:59:59.5'"],
+  ["'2021-01-03 12:00:00'"],
+  ["NULL"],
+]
+expression = "YEAR(t)"
+canonical = "DATE_PART(YEAR, t)"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "year_of_dates"
+description = "YEAR(d) of dates is DATE_PART(YEAR, d), including a leap day and year one."
+columns = [{ name = "d", type = "DATE" }]
+rows = [
+  ["'2024-02-29'"],
+  ["'2024-01-01'"],
+  ["'2023-12-31'"],
+  ["'1969-12-31'"],
+  ["'0001-01-01'"],
+  ["NULL"],
+]
+expression = "YEAR(d)"
+canonical = "DATE_PART(YEAR, d)"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "quarter_of_timestamps"
+description = "QUARTER(t) of naive timestamps is DATE_PART(QUARTER, t), around year ends and the epoch."
+columns = [{ name = "t", type = "TIMESTAMP_NTZ(9)" }]
+rows = [
+  ["'2024-02-29 13:45:01.123456789'"],
+  ["'2024-01-01 00:00:00'"],
+  ["'2023-12-31 23:59:59.999999999'"],
+  ["'1969-12-31 23:59:59.5'"],
+  ["'2021-01-03 12:00:00'"],
+  ["NULL"],
+]
+expression = "QUARTER(t)"
+canonical = "DATE_PART(QUARTER, t)"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "quarter_of_dates"
+description = "QUARTER(d) of dates is DATE_PART(QUARTER, d), including a leap day and year one."
+columns = [{ name = "d", type = "DATE" }]
+rows = [
+  ["'2024-02-29'"],
+  ["'2024-01-01'"],
+  ["'2023-12-31'"],
+  ["'1969-12-31'"],
+  ["'0001-01-01'"],
+  ["NULL"],
+]
+expression = "QUARTER(d)"
+canonical = "DATE_PART(QUARTER, d)"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "month_of_timestamps"
+description = "MONTH(t) of naive timestamps is DATE_PART(MONTH, t), around year ends and the epoch."
+columns = [{ name = "t", type = "TIMESTAMP_NTZ(9)" }]
+rows = [
+  ["'2024-02-29 13:45:01.123456789'"],
+  ["'2024-01-01 00:00:00'"],
+  ["'2023-12-31 23:59:59.999999999'"],
+  ["'1969-12-31 23:59:59.5'"],
+  ["'2021-01-03 12:00:00'"],
+  ["NULL"],
+]
+expression = "MONTH(t)"
+canonical = "DATE_PART(MONTH, t)"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "month_of_dates"
+description = "MONTH(d) of dates is DATE_PART(MONTH, d), including a leap day and year one."
+columns = [{ name = "d", type = "DATE" }]
+rows = [
+  ["'2024-02-29'"],
+  ["'2024-01-01'"],
+  ["'2023-12-31'"],
+  ["'1969-12-31'"],
+  ["'0001-01-01'"],
+  ["NULL"],
+]
+expression = "MONTH(d)"
+canonical = "DATE_PART(MONTH, d)"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "day_of_timestamps"
+description = "DAY(t) of naive timestamps is DATE_PART(DAY, t), around year ends and the epoch."
+columns = [{ name = "t", type = "TIMESTAMP_NTZ(9)" }]
+rows = [
+  ["'2024-02-29 13:45:01.123456789'"],
+  ["'2024-01-01 00:00:00'"],
+  ["'2023-12-31 23:59:59.999999999'"],
+  ["'1969-12-31 23:59:59.5'"],
+  ["'2021-01-03 12:00:00'"],
+  ["NULL"],
+]
+expression = "DAY(t)"
+canonical = "DATE_PART(DAY, t)"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "day_of_dates"
+description = "DAY(d) of dates is DATE_PART(DAY, d), including a leap day and year one."
+columns = [{ name = "d", type = "DATE" }]
+rows = [
+  ["'2024-02-29'"],
+  ["'2024-01-01'"],
+  ["'2023-12-31'"],
+  ["'1969-12-31'"],
+  ["'0001-01-01'"],
+  ["NULL"],
+]
+expression = "DAY(d)"
+canonical = "DATE_PART(DAY, d)"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "hour_of_timestamps"
+description = "HOUR(t) of naive timestamps is DATE_PART(HOUR, t), around year ends and the epoch."
+columns = [{ name = "t", type = "TIMESTAMP_NTZ(9)" }]
+rows = [
+  ["'2024-02-29 13:45:01.123456789'"],
+  ["'2024-01-01 00:00:00'"],
+  ["'2023-12-31 23:59:59.999999999'"],
+  ["'1969-12-31 23:59:59.5'"],
+  ["'2021-01-03 12:00:00'"],
+  ["NULL"],
+]
+expression = "HOUR(t)"
+canonical = "DATE_PART(HOUR, t)"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "minute_of_timestamps"
+description = "MINUTE(t) of naive timestamps is DATE_PART(MINUTE, t), around year ends and the epoch."
+columns = [{ name = "t", type = "TIMESTAMP_NTZ(9)" }]
+rows = [
+  ["'2024-02-29 13:45:01.123456789'"],
+  ["'2024-01-01 00:00:00'"],
+  ["'2023-12-31 23:59:59.999999999'"],
+  ["'1969-12-31 23:59:59.5'"],
+  ["'2021-01-03 12:00:00'"],
+  ["NULL"],
+]
+expression = "MINUTE(t)"
+canonical = "DATE_PART(MINUTE, t)"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "second_of_timestamps"
+description = "SECOND(t) of naive timestamps is DATE_PART(SECOND, t), around year ends and the epoch."
+columns = [{ name = "t", type = "TIMESTAMP_NTZ(9)" }]
+rows = [
+  ["'2024-02-29 13:45:01.123456789'"],
+  ["'2024-01-01 00:00:00'"],
+  ["'2023-12-31 23:59:59.999999999'"],
+  ["'1969-12-31 23:59:59.5'"],
+  ["'2021-01-03 12:00:00'"],
+  ["NULL"],
+]
+expression = "SECOND(t)"
+canonical = "DATE_PART(SECOND, t)"
+tags = ["null", "boundary"]

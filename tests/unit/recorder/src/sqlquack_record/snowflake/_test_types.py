@@ -20,6 +20,17 @@ class BatchRecordingTestCase:
     statements: tuple[str, ...]
     batch_error: tuple[int, str] | None
     statement_errors: tuple[tuple[str, int, str], ...]
+    json_results: frozenset[str]
     expected_outcomes: tuple[str, ...] | None
     expected_single_runs: tuple[str, ...]
     expected_files_written: int
+    expected_message: str
+
+
+@dataclass(frozen=True)
+class ErrorMessageTestCase:
+    description: str
+    message: str
+    sqlstate: str
+    query_id: str | None
+    expected_message: str | None

@@ -1,0 +1,168 @@
+category = "project-function"
+construct = "fn:<udf>"
+session_profile = "utc-v1"
+
+[[case]]
+id = "scalar_numeric"
+description = "A scalar SQL function multiplying two NUMBER parameters, its result rounded to the declared scale."
+columns = [{ name = "qty", type = "NUMBER(10,0)" }, { name = "price", type = "NUMBER(10,2)" }]
+rows = [["3", "2.50"], ["0", "9.99"], ["7", "0.01"], ["NULL", "1.00"], ["2", "NULL"]]
+expression = "order_total(qty, price)"
+tags = ["null"]
+
+[[case.function]]
+name = "order_total"
+arguments = [{ name = "qty", type = "NUMBER(10,0)" }, { name = "price", type = "NUMBER(10,2)" }]
+returns = "NUMBER(12,2)"
+body = "qty * price"
+
+[[case]]
+id = "scalar_null_argument"
+description = "A literal NULL passed to a NUMBER parameter."
+columns = [{ name = "price", type = "NUMBER(10,2)" }]
+rows = [["2.50"], ["NULL"]]
+expression = "order_total(NULL, price)"
+tags = ["null"]
+
+[[case.function]]
+name = "order_total"
+arguments = [{ name = "qty", type = "NUMBER(10,0)" }, { name = "price", type = "NUMBER(10,2)" }]
+returns = "NUMBER(12,2)"
+body = "qty * price"
+
+[[case]]
+id = "scalar_number_to_float"
+description = "A NUMBER argument passed to a FLOAT parameter."
+columns = [{ name = "qty", type = "NUMBER(10,0)" }]
+rows = [["3"], ["-4"], ["0"], ["NULL"]]
+expression = "half_quantity(qty)"
+tags = ["null", "numeric-coercion"]
+
+[[case.function]]
+name = "half_quantity"
+arguments = [{ name = "quantity", type = "FLOAT" }]
+returns = "FLOAT"
+body = "quantity / 2"
+
+[[case]]
+id = "scalar_narrower_number"
+description = "A NUMBER(4,1) argument passed to a NUMBER(10,2) parameter, and the result narrowed to NUMBER(6,1)."
+columns = [{ name = "weight", type = "NUMBER(4,1)" }]
+rows = [["1.5"], ["-2.4"], ["999.9"], ["NULL"]]
+expression = "packed_weight(weight)"
+tags = ["null", "numeric-coercion"]
+
+[[case.function]]
+name = "packed_weight"
+arguments = [{ name = "weight", type = "NUMBER(10,2)" }]
+returns = "NUMBER(6,1)"
+body = "weight + 0.25"
+
+[[case]]
+id = "scalar_text"
+description = "A scalar SQL function over VARCHAR returning VARCHAR."
+columns = [{ name = "sku", type = "VARCHAR" }]
+rows = [["'ab-1'"], ["''"], ["'Zz'"], ["NULL"]]
+expression = "sku_label(sku)"
+tags = ["null"]
+
+[[case.function]]
+name = "sku_label"
+arguments = [{ name = "sku", type = "VARCHAR" }]
+returns = "VARCHAR"
+body = "UPPER(sku) || '#'"
+
+[[case]]
+id = "scalar_nested_call"
+description = "A function body calling another project function."
+columns = [{ name = "price", type = "NUMBER(10,2)" }]
+rows = [["2.50"], ["0.01"], ["NULL"]]
+expression = "with_handling(price)"
+tags = ["null", "numeric-coercion"]
+
+[[case.function]]
+name = "order_total"
+arguments = [{ name = "qty", type = "NUMBER(10,0)" }, { name = "price", type = "NUMBER(10,2)" }]
+returns = "NUMBER(12,2)"
+body = "qty * price"
+
+[[case.function]]
+name = "with_handling"
+arguments = [{ name = "price", type = "NUMBER(10,2)" }]
+returns = "NUMBER(14,2)"
+body = "order_total(2, price) + 1.50"
+
+[[case]]
+id = "table_function_rows"
+description = "A SQL table function filtering fixed rows by its parameter."
+columns = []
+rows = [[]]
+query = "SELECT order_id, amount FROM TABLE(open_orders(10)) ORDER BY order_id"
+order = "ordered"
+tags = ["numeric-coercion"]
+
+[[case.function]]
+name = "open_orders"
+arguments = [{ name = "minimum", type = "NUMBER(10,2)" }]
+returns_table = [{ name = "order_id", type = "NUMBER(10,0)" }, { name = "amount", type = "NUMBER(10,2)" }]
+body = "SELECT CAST(order_id AS NUMBER(10,0)) AS order_id, CAST(amount AS NUMBER(10,2)) AS amount FROM (SELECT 1 AS order_id, 5 AS amount UNION ALL SELECT 2, 13 UNION ALL SELECT 3, NULL UNION ALL SELECT 4, 10) AS o WHERE amount >= minimum"
+
+[[case]]
+id = "table_function_empty"
+description = "A SQL table function whose filter keeps no row, and one passed NULL."
+columns = []
+rows = [[]]
+query = "SELECT COUNT(*) AS n FROM TABLE(open_orders(100)) UNION ALL SELECT COUNT(*) FROM TABLE(open_orders(NULL))"
+order = "bag"
+tags = ["null"]
+
+[[case.function]]
+name = "open_orders"
+arguments = [{ name = "minimum", type = "NUMBER(10,2)" }]
+returns_table = [{ name = "order_id", type = "NUMBER(10,0)" }, { name = "amount", type = "NUMBER(10,2)" }]
+body = "SELECT CAST(order_id AS NUMBER(10,0)) AS order_id, CAST(amount AS NUMBER(10,2)) AS amount FROM (SELECT 1 AS order_id, 5 AS amount UNION ALL SELECT 2, 13 UNION ALL SELECT 3, NULL UNION ALL SELECT 4, 10) AS o WHERE amount >= minimum"
+
+[[case]]
+id = "table_function_cast_argument"
+description = "A SQL table function called with its argument cast to the declared type."
+columns = []
+rows = [[]]
+query = "SELECT order_id, amount FROM TABLE(open_orders(CAST(10 AS NUMBER(10,2)))) ORDER BY order_id"
+order = "ordered"
+tags = ["numeric-coercion"]
+
+[[case.function]]
+name = "open_orders"
+arguments = [{ name = "minimum", type = "NUMBER(10,2)" }]
+returns_table = [{ name = "order_id", type = "NUMBER(10,0)" }, { name = "amount", type = "NUMBER(10,2)" }]
+body = "SELECT CAST(order_id AS NUMBER(10,0)) AS order_id, CAST(amount AS NUMBER(10,2)) AS amount FROM (SELECT 1 AS order_id, 5 AS amount UNION ALL SELECT 2, 13 UNION ALL SELECT 3, NULL UNION ALL SELECT 4, 10) AS o WHERE amount >= minimum"
+
+[[case]]
+id = "table_function_without_parameters"
+description = "A SQL table function without parameters over fixed rows."
+columns = []
+rows = [[]]
+query = "SELECT sku FROM TABLE(listed_skus()) ORDER BY sku"
+order = "ordered"
+tags = ["basic"]
+
+[[case.function]]
+name = "listed_skus"
+arguments = []
+returns_table = [{ name = "sku", type = "VARCHAR" }]
+body = "SELECT CAST(sku AS VARCHAR) AS sku FROM (SELECT 'a-1' AS sku UNION ALL SELECT 'b-2') AS s"
+
+[[case]]
+id = "table_function_text_parameter"
+description = "A SQL table function filtering by a VARCHAR parameter."
+columns = []
+rows = [[]]
+query = "SELECT sku FROM TABLE(skus_like('a%')) ORDER BY sku"
+order = "ordered"
+tags = ["basic"]
+
+[[case.function]]
+name = "skus_like"
+arguments = [{ name = "pattern", type = "VARCHAR" }]
+returns_table = [{ name = "sku", type = "VARCHAR" }]
+body = "SELECT CAST(sku AS VARCHAR) AS sku FROM (SELECT 'a-1' AS sku UNION ALL SELECT 'b-2') AS s WHERE sku LIKE pattern"

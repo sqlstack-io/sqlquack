@@ -1,9 +1,13 @@
 //! Census options and reports.
 
 use std::collections::BTreeMap;
+use std::path::PathBuf;
 
 use serde::Serialize;
+
 use sqlquack_core::parsing::models::SourceDialect;
+use sqlquack_core::provenance::models::Provenance;
+use sqlquack_rules::conversion::models::{ConversionOptions, Schema};
 
 /// What a census reads and reports.
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -12,6 +16,12 @@ pub struct CensusOptions {
     pub dialect: SourceDialect,
     /// Rule counts at which the convertible share is reported.
     pub coverage_points: Vec<usize>,
+    /// Typed columns of the relations the files read.
+    pub schema: Schema,
+    /// Type each converted file as the relation its name references, and convert again.
+    pub chain_models: bool,
+    /// The known divergences conversion may rely on.
+    pub conversion: ConversionOptions,
 }
 
 /// A census report: counts and construct keys only, never SQL text or file names.
@@ -21,14 +31,27 @@ pub struct CensusReport {
     pub dialect: SourceDialect,
     /// File and construct totals.
     pub totals: CensusTotals,
-    /// Files by the source print-back check's worst statement.
-    pub fidelity: FidelityTotals,
     /// Files with at least one refusal of each category.
     pub refusals: RefusalTotals,
     /// Every construct, by the number of files using it, most used first.
     pub constructs: Vec<ConstructCount>,
     /// Files that would convert as the top constructs get rules.
     pub coverage: Vec<CoveragePoint>,
+    /// Converted files by the rules, building blocks and typing functions they relied on.
+    pub provenance: ProvenanceCounts,
+}
+
+/// Converted files per rule, building block and typing function, each sorted by identifier.
+#[derive(Clone, Debug, Default, PartialEq, Eq, Serialize)]
+pub struct ProvenanceCounts {
+    /// Files per rule.
+    pub rules: BTreeMap<String, usize>,
+    /// Files per DuckDB building block.
+    pub building_blocks: BTreeMap<String, usize>,
+    /// Files per Snowflake typing function.
+    pub typing: BTreeMap<String, usize>,
+    /// Files per known divergence, by `<divergence> at <construct>`.
+    pub divergences: BTreeMap<String, usize>,
 }
 
 /// File and construct totals.
@@ -50,19 +73,6 @@ pub struct CensusTotals {
     pub constructs_by_family: BTreeMap<String, usize>,
 }
 
-/// Files by their worst source print-back outcome.
-#[derive(Clone, Debug, Default, PartialEq, Eq, Serialize)]
-pub struct FidelityTotals {
-    /// Every statement printed back to the same tree.
-    pub identical: usize,
-    /// A print-back canonicalised the tree once, then settled.
-    pub canonicalised: usize,
-    /// A print-back kept changing the tree.
-    pub unstable: usize,
-    /// A tree did not print, or its print did not parse.
-    pub failed: usize,
-}
-
 /// Files with at least one refusal of each category.
 #[derive(Clone, Debug, Default, PartialEq, Eq, Serialize)]
 pub struct RefusalTotals {
@@ -70,8 +80,14 @@ pub struct RefusalTotals {
     pub missing_rule: usize,
     /// Files with a construct DuckDB cannot express.
     pub not_expressible: usize,
-    /// Files that did not parse or did not print back faithfully.
+    /// Files that did not parse.
     pub parse_fidelity: usize,
+    /// Files where a rule refused the operand types.
+    pub type_condition: usize,
+    /// Files with a relation or column name that does not resolve.
+    pub unresolved_name: usize,
+    /// Refusals by category and construct, counting each file once per pair, most frequent first.
+    pub by_construct: Vec<RefusalCount>,
     /// Files with no refusal at all.
     pub convertible: usize,
 }
@@ -98,4 +114,26 @@ pub struct CoveragePoint {
     pub frequency_share: f64,
     /// `greedy_order` as a share of all files.
     pub greedy_share: f64,
+}
+
+/// Files refused for one category and construct.
+#[derive(Clone, Debug, PartialEq, Eq, Serialize)]
+pub struct RefusalCount {
+    /// The refusal category.
+    pub category: String,
+    /// The construct key, or `statement` when the refusal names none.
+    pub construct: String,
+    /// Files with such a refusal.
+    pub files: usize,
+}
+
+/// One corpus file: what its conversion relied on, or the constructs refused in it.
+#[derive(Clone, Debug, PartialEq, Eq, Serialize)]
+pub struct CorpusFile {
+    /// The file, as found under the given paths.
+    pub path: PathBuf,
+    /// For a file that converts: everything its conversion relied on.
+    pub provenance: Option<Provenance>,
+    /// The refused construct keys, sorted; empty when the file converts.
+    pub refused_constructs: Vec<String>,
 }

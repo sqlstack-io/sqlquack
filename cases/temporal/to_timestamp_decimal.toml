@@ -1,0 +1,37 @@
+category = "temporal"
+construct = "fn:TO_TIMESTAMP"
+session_profile = "utc-v1"
+
+[[case]]
+id = "micros_fraction"
+description = "TO_TIMESTAMP of a NUMBER(38,6): seconds since the epoch with a fraction, kept to the microsecond."
+columns = [{ name = "n", type = "NUMBER(38,6)" }]
+rows = [["1700000000.123456"], ["0.000001"], ["-1.5"], ["0"], ["31535999.999999"], ["NULL"]]
+query = "SELECT TO_TIMESTAMP(n) AS a, TO_TIMESTAMP_NTZ(n) AS b FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "small_scales"
+description = "TO_TIMESTAMP of NUMBER(12,2) and NUMBER(13,3), the result scale inherited."
+columns = [{ name = "c", type = "NUMBER(12,2)" }, { name = "m", type = "NUMBER(13,3)" }]
+rows = [["1262304000.25", "1262304000.456"], ["-0.01", "-0.001"], ["NULL", "NULL"]]
+query = "SELECT TO_TIMESTAMP(c) AS a, TO_TIMESTAMP_NTZ(m) AS b FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "nanos_fraction"
+description = "TO_TIMESTAMP of a NUMBER(20,9): nanosecond fractions."
+columns = [{ name = "n", type = "NUMBER(20,9)" }]
+rows = [["1700000000.123456789"], ["0.000000001"], ["NULL"]]
+expression = "TO_TIMESTAMP(n)"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "computed_seconds"
+description = "TO_TIMESTAMP of a division result, as the census computes seconds from milliseconds."
+columns = [{ name = "ms", type = "NUMBER(38,0)" }]
+rows = [["1700000000123"], ["1"], ["NULL"]]
+expression = "TO_TIMESTAMP(ms / 1000)"
+tags = ["null", "boundary"]

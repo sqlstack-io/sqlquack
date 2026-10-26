@@ -32,7 +32,7 @@ pub(crate) fn rewrite_placeholders(sql: &str) -> String {
             let name = sql[position..name_end].to_ascii_lowercase();
             if let Some((replacement, end)) = replacement(bytes, &name, name_end) {
                 rewritten.push_str(&sql[copied..position]);
-                rewritten.push_str(replacement);
+                rewritten.push_str(&replacement);
                 position = end;
                 copied = end;
                 continue;
@@ -46,7 +46,7 @@ pub(crate) fn rewrite_placeholders(sql: &str) -> String {
     rewritten
 }
 
-fn replacement(bytes: &[u8], name: &str, name_end: usize) -> Option<(&'static str, usize)> {
+fn replacement(bytes: &[u8], name: &str, name_end: usize) -> Option<(String, usize)> {
     let open = skip_whitespace(bytes, name_end);
     let call_end = if bytes.get(open) == Some(&b'(') {
         Some(matching_paren(bytes, open)?)
@@ -54,16 +54,54 @@ fn replacement(bytes: &[u8], name: &str, name_end: usize) -> Option<(&'static st
         None
     };
     if RELATION_CALLS.contains(&name) {
-        return Some((RELATION_PLACEHOLDER, call_end?));
+        let end = call_end?;
+        return Some((relation_name(&bytes[open + 1..end - 1]), end));
     }
     if CURSOR_CALLS.contains(&name) {
-        return Some((CURSOR_PLACEHOLDER, call_end.unwrap_or(name_end)));
+        return Some((CURSOR_PLACEHOLDER.to_owned(), call_end.unwrap_or(name_end)));
     }
     match name {
-        PROJECT_FUNCTION_CALL => Some((PROJECT_FUNCTION_PLACEHOLDER, call_end?)),
-        TABLE_FUNCTION_CALL => Some((TABLE_FUNCTION_PLACEHOLDER, call_end?)),
+        PROJECT_FUNCTION_CALL => Some((
+            placeholder_name(
+                PROJECT_FUNCTION_PLACEHOLDER,
+                &bytes[open + 1..call_end? - 1],
+            ),
+            call_end?,
+        )),
+        TABLE_FUNCTION_CALL => Some((
+            placeholder_name(TABLE_FUNCTION_PLACEHOLDER, &bytes[open + 1..call_end? - 1]),
+            call_end?,
+        )),
         _ => None,
     }
+}
+
+/// The placeholder relation a reference becomes: its arguments joined by `__`, so schemas name it.
+pub(crate) fn relation_name(arguments: &[u8]) -> String {
+    placeholder_name(RELATION_PLACEHOLDER, arguments)
+}
+
+/// `prefix` and each argument, cleaned to identifier characters, joined by `__`.
+fn placeholder_name(prefix: &str, arguments: &[u8]) -> String {
+    let text = String::from_utf8_lossy(arguments);
+    let mut name = prefix.to_owned();
+    for argument in text.split(',') {
+        let cleaned: String = argument
+            .trim()
+            .trim_matches(['"', '\''])
+            .chars()
+            .map(|character| {
+                if character.is_ascii_alphanumeric() {
+                    character
+                } else {
+                    '_'
+                }
+            })
+            .collect();
+        name.push_str("__");
+        name.push_str(&cleaned);
+    }
+    name
 }
 
 fn is_identifier_byte(byte: u8) -> bool {

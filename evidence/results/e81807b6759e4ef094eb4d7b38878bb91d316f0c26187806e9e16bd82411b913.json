@@ -1,0 +1,115 @@
+{
+  "arrow_sha256": "53c443201fb193885f8cbae5545a53432bd88bbd48bfd7cce6c05c013f29cd4a",
+  "case_hash": "e81807b6759e4ef094eb4d7b38878bb91d316f0c26187806e9e16bd82411b913",
+  "columns": [
+    {
+      "internal_size": 134217728,
+      "name": "G",
+      "nullable": false,
+      "precision": null,
+      "scale": null,
+      "type_code": 2,
+      "type_name": "TEXT"
+    },
+    {
+      "internal_size": null,
+      "name": "P0",
+      "nullable": true,
+      "precision": 21,
+      "scale": 9,
+      "type_code": 0,
+      "type_name": "FIXED"
+    },
+    {
+      "internal_size": null,
+      "name": "P1",
+      "nullable": true,
+      "precision": 21,
+      "scale": 9,
+      "type_code": 0,
+      "type_name": "FIXED"
+    },
+    {
+      "internal_size": null,
+      "name": "P2",
+      "nullable": true,
+      "precision": 21,
+      "scale": 9,
+      "type_code": 0,
+      "type_name": "FIXED"
+    },
+    {
+      "internal_size": null,
+      "name": "P3",
+      "nullable": true,
+      "precision": 21,
+      "scale": 9,
+      "type_code": 0,
+      "type_name": "FIXED"
+    },
+    {
+      "internal_size": null,
+      "name": "P4",
+      "nullable": true,
+      "precision": 21,
+      "scale": 9,
+      "type_code": 0,
+      "type_name": "FIXED"
+    },
+    {
+      "internal_size": null,
+      "name": "P5",
+      "nullable": true,
+      "precision": 21,
+      "scale": 9,
+      "type_code": 0,
+      "type_name": "FIXED"
+    },
+    {
+      "internal_size": null,
+      "name": "P6",
+      "nullable": true,
+      "precision": 21,
+      "scale": 9,
+      "type_code": 0,
+      "type_name": "FIXED"
+    },
+    {
+      "internal_size": null,
+      "name": "P7",
+      "nullable": true,
+      "precision": 21,
+      "scale": 9,
+      "type_code": 0,
+      "type_name": "FIXED"
+    },
+    {
+      "internal_size": null,
+      "name": "P8",
+      "nullable": true,
+      "precision": 21,
+      "scale": 9,
+      "type_code": 0,
+      "type_name": "FIXED"
+    }
+  ],
+  "connector": "snowflake-connector-python 4.7.2",
+  "duckdb_version": "v2.0.0",
+  "error": null,
+  "format": 1,
+  "outcome": "rows",
+  "query_id_sha256": "be2de16031611675ba287b29765c4d96e044aba68bd34cf39273946cec9f3dbe",
+  "recorded_at": "2026-10-25T19:42:05Z",
+  "recorder": "sqlquack-record 0.1.0",
+  "row_count": 5,
+  "session_parameters": {
+    "DEFAULT_NULL_ORDERING": "LAST",
+    "QUOTED_IDENTIFIERS_IGNORE_CASE": false,
+    "TIMESTAMP_TYPE_MAPPING": "TIMESTAMP_NTZ",
+    "TIMEZONE": "UTC",
+    "USE_CACHED_RESULT": false,
+    "WEEK_OF_YEAR_POLICY": 0,
+    "WEEK_START": 0
+  },
+  "warehouse_version": "10.38.102"
+}

@@ -30,8 +30,11 @@ pub fn write_pending(
             case_reference: case.reference.clone(),
             source_dialect: SOURCE_DIALECT.to_owned(),
             session_parameters: case.session_parameters.clone(),
+            pinned_parameters: case.pinned_parameters.clone(),
             source_sql: case.source_sql.clone(),
             duckdb_version: duckdb_version.to_owned(),
+            values: (!case.values).then_some(false),
+            setup_sql: case.setup_sql.clone(),
         };
         let name = format!("{}.json", case.hash);
         let text = serde_json::to_string_pretty(&pending)

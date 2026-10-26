@@ -1,0 +1,28 @@
+{
+  "arrow_sha256": null,
+  "case_hash": "e115b8387d0d4db22444def15184c6869b408c7056e42e9f1b5b722c048b4085",
+  "columns": [],
+  "connector": "snowflake-connector-python 4.7.2",
+  "duckdb_version": "v2.0.0",
+  "error": {
+    "errno": 100069,
+    "message": "Error parsing JSON: hex digit is expected in \\u???? escape sequence, pos 6",
+    "sqlstate": "22P02"
+  },
+  "format": 1,
+  "outcome": "error",
+  "query_id_sha256": "e0c251b3089debd6656c14de32d4bae63c20207f917c1496bfb210f8e9b15b38",
+  "recorded_at": "2026-10-25T23:17:22Z",
+  "recorder": "sqlquack-record 0.1.0",
+  "row_count": null,
+  "session_parameters": {
+    "DEFAULT_NULL_ORDERING": "LAST",
+    "QUOTED_IDENTIFIERS_IGNORE_CASE": false,
+    "TIMESTAMP_TYPE_MAPPING": "TIMESTAMP_NTZ",
+    "TIMEZONE": "UTC",
+    "USE_CACHED_RESULT": false,
+    "WEEK_OF_YEAR_POLICY": 0,
+    "WEEK_START": 0
+  },
+  "warehouse_version": "10.38.102"
+}

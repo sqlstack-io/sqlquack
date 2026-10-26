@@ -1,0 +1,44 @@
+category = "relational"
+construct = "node:star"
+session_profile = "utc-v1"
+
+[[case]]
+id = "select_star"
+description = "SELECT * returns every input column, ordinal included."
+columns = [{ name = "customer", type = "VARCHAR" }, { name = "amount", type = "NUMBER(10,2)" }]
+rows = [
+  ["'a'", "1.50"],
+  ["'b'", "NULL"],
+  ["NULL", "-2"],
+  ["'a'", "1.50"],
+]
+query = "SELECT * FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "duplicates"]
+
+[[case]]
+id = "qualified_star_join"
+description = "t.* from one side of a join."
+columns = [{ name = "side", type = "VARCHAR" }, { name = "k", type = "NUMBER(10,0)" }, { name = "v", type = "VARCHAR" }]
+rows = [
+  ["'l'", "1", "'l1'"],
+  ["'l'", "2", "'l2'"],
+  ["'r'", "1", "'r1'"],
+  ["'r'", "1", "'r1b'"],
+  ["'r'", "NULL", "'rn'"],
+]
+query = "SELECT l.*, r.v AS rv FROM (SELECT k, v FROM input WHERE side = 'l') l LEFT JOIN (SELECT k, v FROM input WHERE side = 'r') r ON l.k = r.k"
+order = "bag"
+tags = ["null", "duplicates"]
+
+[[case]]
+id = "star_empty_input"
+description = "SELECT * over a filter that keeps nothing."
+columns = [{ name = "k", type = "NUMBER(10,0)" }]
+rows = [
+  ["1"],
+  ["NULL"],
+]
+query = "SELECT * FROM input WHERE k > 5"
+order = "bag"
+tags = ["null", "empty-input"]

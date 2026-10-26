@@ -9,7 +9,11 @@ from tests.unit.recorder.src.sqlquack_record.snowflake._test_types import (
 )
 from tests.unit.recorder.src.sqlquack_record.snowflake.helpers import arguments_for
 
-_CASE_SESSION: dict[str, object] = {"TIMEZONE": "UTC", "QUERY_TAG": "sqlquack-record"}
+_CASE_SESSION: dict[str, object] = {
+    "TIMEZONE": "UTC",
+    "QUERY_TAG": "sqlquack-record",
+    "PYTHON_CONNECTOR_QUERY_RESULT_FORMAT": "ARROW",
+}
 
 
 @pytest.mark.parametrize(

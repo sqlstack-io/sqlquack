@@ -1,0 +1,57 @@
+category = "string"
+construct = "node:trim"
+session_profile = "utc-v1"
+
+[[case]]
+id = "trim_default"
+description = "TRIM without characters: which whitespace it removes."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'  a  '"],
+  ["'\\ta\\n'"],
+  ["' a'"],
+  ["''"],
+  ["'   '"],
+  ["'é '"],
+  ["NULL"],
+]
+expression = "TRIM(s)"
+tags = ["null", "empty", "whitespace", "unicode"]
+
+[[case]]
+id = "ltrim_rtrim"
+description = "LTRIM and RTRIM."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'  a  '"],
+  ["'\\ta\\t'"],
+  ["''"],
+  ["NULL"],
+]
+expression = "LTRIM(s) || '|' || RTRIM(s)"
+tags = ["null", "empty", "whitespace"]
+
+[[case]]
+id = "trim_characters"
+description = "TRIM with a set of characters."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'xxayx'"],
+  ["'yx'"],
+  ["''"],
+  ["'éaé'"],
+  ["NULL"],
+]
+expression = "TRIM(s, 'xy')"
+tags = ["null", "empty", "unicode"]
+
+[[case]]
+id = "trim_characters_unicode"
+description = "TRIM with a non-ASCII character set, and LTRIM/RTRIM with characters."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'éaé'"],
+  ["'  a'"],
+]
+expression = "TRIM(s, 'é') || '|' || LTRIM(s, ' ') || '|' || RTRIM(s, 'é')"
+tags = ["unicode", "whitespace"]

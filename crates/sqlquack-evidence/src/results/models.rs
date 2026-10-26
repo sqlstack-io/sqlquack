@@ -30,6 +30,12 @@ pub struct ResultMetadata {
     pub recorded_at: String,
     /// The session parameters the result was recorded under.
     pub session_parameters: BTreeMap<String, SessionValue>,
+    /// Each set and pinned parameter as the session reported it; absent before pinning.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub effective_parameters: Option<BTreeMap<String, Option<String>>>,
+    /// SHA-256 of every session parameter as sorted `KEY=value` lines.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub parameters_sha256: Option<String>,
     /// The result columns as the warehouse described them.
     pub columns: Vec<WarehouseColumn>,
     /// Rows returned.
@@ -48,6 +54,8 @@ pub enum RecordedOutcome {
     Rows,
     /// An error; there is no Arrow file.
     Error,
+    /// Rows whose values were not kept: column types and the row count only, no Arrow file.
+    Types,
 }
 
 /// One result column as the Snowflake connector describes it.
@@ -78,6 +86,9 @@ pub struct RecordedFailure {
     pub errno: Option<i64>,
     /// The SQLSTATE.
     pub sqlstate: Option<String>,
+    /// The warehouse's message without its query ID; absent from results recorded before it was kept.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub message: Option<String>,
 }
 
 /// A loaded, integrity-checked result.
@@ -85,6 +96,22 @@ pub struct RecordedFailure {
 pub struct StoredResult {
     /// Its metadata.
     pub metadata: ResultMetadata,
-    /// Its rows, absent for error outcomes.
+    /// Its rows, absent for error and types outcomes.
     pub rows: Option<RecordedResult>,
+}
+
+/// The account's default session parameters, read from a session that sets none.
+#[derive(Clone, Debug, PartialEq, Eq, Deserialize, Serialize)]
+#[serde(deny_unknown_fields)]
+pub struct SessionDefaults {
+    /// The evidence format.
+    pub format: u32,
+    /// The recorder name and version.
+    pub recorder: String,
+    /// When the defaults were read, in UTC, RFC 3339.
+    pub recorded_at: String,
+    /// Every session parameter's default value, by upper-case name.
+    pub parameters: BTreeMap<String, String>,
+    /// SHA-256 of `parameters` as sorted `KEY=value` lines.
+    pub parameters_sha256: String,
 }

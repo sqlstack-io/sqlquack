@@ -1,0 +1,214 @@
+category = "imported"
+construct = "fn:ROUND"
+session_profile = "utc-v1"
+
+[[case]]
+id = "square"
+description = "SQUARE of a NUMBER."
+columns = [{ name = "x", type = "NUMBER(10,2)" }]
+rows = [
+  ["1.5"],
+  ["-2"],
+  ["0"],
+  ["NULL"],
+]
+expression = "SQUARE(x)"
+tags = ["third-party"]
+origin = "sqlglot: tests/dialects/test_snowflake.py"
+sqlglot_duckdb = "POWER(x, 2)"
+
+[[case]]
+id = "trunc_scale_two"
+description = "TRUNC to two decimals."
+columns = []
+rows = [[]]
+expression = "TRUNC(3.14159, 2)"
+tags = ["third-party"]
+origin = "sqlglot: tests/dialects/test_snowflake.py"
+sqlglot_duckdb = "TRUNC(3.14159, 2)"
+
+[[case]]
+id = "trunc_scale_two_up"
+description = "TRUNC does not round up."
+columns = []
+rows = [[]]
+expression = "TRUNC(4.603, 2)"
+tags = ["third-party"]
+origin = "sqlglot: tests/dialects/test_snowflake.py"
+sqlglot_duckdb = "TRUNC(4.603, 2)"
+
+[[case]]
+id = "trunc_number_arguments"
+description = "TRUNC of NUMBER(38,0) arguments."
+columns = []
+rows = [[]]
+expression = "TRUNC(CAST(4.603 AS DECIMAL(38, 0)), CAST(2 AS DECIMAL(38, 0)))"
+tags = ["third-party"]
+origin = "sqlglot: tests/dialects/test_snowflake.py"
+sqlglot_duckdb = "TRUNC(CAST(4.603 AS DECIMAL(38, 0)), CAST(CAST(2 AS DECIMAL(38, 0)) AS INT))"
+
+[[case]]
+id = "round_default"
+description = "ROUND to an integer."
+columns = []
+rows = [[]]
+query = "SELECT ROUND(2.25) AS value"
+order = "bag"
+tags = ["third-party"]
+origin = "sqlglot: tests/dialects/test_snowflake.py"
+sqlglot_duckdb = "SELECT ROUND(2.25) AS value"
+
+[[case]]
+id = "round_one_place"
+description = "ROUND half way at one decimal."
+columns = []
+rows = [[]]
+query = "SELECT ROUND(2.25, 1) AS value"
+order = "bag"
+tags = ["third-party"]
+origin = "sqlglot: tests/dialects/test_snowflake.py"
+sqlglot_duckdb = "SELECT ROUND(2.25, 1) AS value"
+
+[[case]]
+id = "round_half_away"
+description = "ROUND with HALF_AWAY_FROM_ZERO."
+columns = []
+rows = [[]]
+query = "SELECT ROUND(2.25, 1, 'HALF_AWAY_FROM_ZERO') AS value"
+order = "bag"
+tags = ["third-party"]
+origin = "sqlglot: tests/dialects/test_snowflake.py"
+sqlglot_duckdb = "SELECT ROUND(2.25, 1) AS value"
+
+[[case]]
+id = "round_half_even"
+description = "ROUND with HALF_TO_EVEN."
+columns = []
+rows = [[]]
+query = "SELECT ROUND(2.25, 1, 'HALF_TO_EVEN') AS value"
+order = "bag"
+tags = ["third-party"]
+origin = "sqlglot: tests/dialects/test_snowflake.py"
+sqlglot_duckdb = "SELECT ROUND_EVEN(2.25, 1) AS value"
+
+[[case]]
+id = "round_fractional_scale"
+description = "ROUND with a fractional scale argument."
+columns = []
+rows = [[]]
+query = "SELECT ROUND(2.256, 1.8) AS value"
+order = "bag"
+tags = ["third-party"]
+origin = "sqlglot: tests/dialects/test_snowflake.py"
+sqlglot_duckdb = "SELECT ROUND(2.256, CAST(1.8 AS INT)) AS value"
+
+[[case]]
+id = "round_number_scale"
+description = "ROUND with a NUMBER(38,0) scale argument."
+columns = []
+rows = [[]]
+query = "SELECT ROUND(2.256, CAST(1.8 AS DECIMAL(38, 0))) AS value"
+order = "bag"
+tags = ["third-party"]
+origin = "sqlglot: tests/dialects/test_snowflake.py"
+sqlglot_duckdb = "SELECT ROUND(2.256, CAST(CAST(1.8 AS DECIMAL(38, 0)) AS INT)) AS value"
+
+[[case]]
+id = "floor_two_places"
+description = "FLOOR to two decimals."
+columns = []
+rows = [[]]
+expression = "FLOOR(1.753, 2)"
+tags = ["third-party"]
+origin = "sqlglot: tests/dialects/test_snowflake.py"
+sqlglot_duckdb = "SELECT ROUND(FLOOR(1.753 * POWER(10, 2)) / POWER(10, 2), 2)"
+
+[[case]]
+id = "floor_negative_scale"
+description = "FLOOR to tens."
+columns = []
+rows = [[]]
+expression = "FLOOR(123.45, -1)"
+tags = ["third-party"]
+origin = "sqlglot: tests/dialects/test_snowflake.py"
+sqlglot_duckdb = "SELECT ROUND(FLOOR(123.45 * POWER(10, -1)) / POWER(10, -1), -1)"
+
+[[case]]
+id = "floor_expression"
+description = "FLOOR of a sum to two decimals."
+columns = [{ name = "a", type = "NUMBER(10,3)" }, { name = "b", type = "NUMBER(10,3)" }]
+rows = [
+  ["1.001", "0.754"],
+  ["-1.001", "-0.754"],
+  ["NULL", "1"],
+  ["0", "0"],
+]
+expression = "FLOOR(a + b, 2)"
+tags = ["third-party"]
+origin = "sqlglot: tests/dialects/test_snowflake.py"
+sqlglot_duckdb = "SELECT ROUND(FLOOR((a + b) * POWER(10, 2)) / POWER(10, 2), 2)"
+
+[[case]]
+id = "floor_fractional_scale"
+description = "FLOOR with a fractional scale argument."
+columns = []
+rows = [[]]
+expression = "FLOOR(1.234, 1.5)"
+tags = ["third-party"]
+origin = "sqlglot: tests/dialects/test_snowflake.py"
+sqlglot_duckdb = "SELECT ROUND(FLOOR(1.234 * POWER(10, CAST(1.5 AS INT))) / POWER(10, CAST(1.5 AS INT)), CAST(1.5 AS INT))"
+
+[[case]]
+id = "ceil_two_places"
+description = "CEIL to two decimals."
+columns = []
+rows = [[]]
+expression = "CEIL(1.753, 2)"
+tags = ["third-party"]
+origin = "sqlglot: tests/dialects/test_snowflake.py"
+sqlglot_duckdb = "SELECT ROUND(CEIL(1.753 * POWER(10, 2)) / POWER(10, 2), 2)"
+
+[[case]]
+id = "ceil_negative_scale"
+description = "CEIL to tens."
+columns = []
+rows = [[]]
+expression = "CEIL(123.45, -1)"
+tags = ["third-party"]
+origin = "sqlglot: tests/dialects/test_snowflake.py"
+sqlglot_duckdb = "SELECT ROUND(CEIL(123.45 * POWER(10, -1)) / POWER(10, -1), -1)"
+
+[[case]]
+id = "ceil_expression"
+description = "CEIL of a sum to two decimals."
+columns = [{ name = "a", type = "NUMBER(10,3)" }, { name = "b", type = "NUMBER(10,3)" }]
+rows = [
+  ["1.001", "0.754"],
+  ["-1.001", "-0.754"],
+  ["NULL", "1"],
+  ["0", "0"],
+]
+expression = "CEIL(a + b, 2)"
+tags = ["third-party"]
+origin = "sqlglot: tests/dialects/test_snowflake.py"
+sqlglot_duckdb = "SELECT ROUND(CEIL((a + b) * POWER(10, 2)) / POWER(10, 2), 2)"
+
+[[case]]
+id = "ceil_fractional_scale"
+description = "CEIL with a fractional scale argument."
+columns = []
+rows = [[]]
+expression = "CEIL(1.234, 1.5)"
+tags = ["third-party"]
+origin = "sqlglot: tests/dialects/test_snowflake.py"
+sqlglot_duckdb = "SELECT ROUND(CEIL(1.234 * POWER(10, CAST(1.5 AS INT))) / POWER(10, CAST(1.5 AS INT)), CAST(1.5 AS INT))"
+
+[[case]]
+id = "cast_literal_to_float"
+description = "CAST of a decimal literal to FLOAT."
+columns = []
+rows = [[]]
+expression = "CAST(6.43 AS FLOAT)"
+tags = ["third-party"]
+origin = "sqlglot: tests/dialects/test_snowflake.py"
+sqlglot_duckdb = "CAST(6.43 AS DOUBLE)"

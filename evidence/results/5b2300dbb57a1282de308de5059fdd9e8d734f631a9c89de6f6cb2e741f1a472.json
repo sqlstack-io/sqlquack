@@ -1,0 +1,61 @@
+{
+  "arrow_sha256": "69422db0d752d7dbc67ade57deae527b577429e58cc9ef61327bbf7e43c5b962",
+  "case_hash": "5b2300dbb57a1282de308de5059fdd9e8d734f631a9c89de6f6cb2e741f1a472",
+  "columns": [
+    {
+      "internal_size": null,
+      "name": "V",
+      "nullable": true,
+      "precision": null,
+      "scale": null,
+      "type_code": 5,
+      "type_name": "VARIANT"
+    },
+    {
+      "internal_size": null,
+      "name": "A",
+      "nullable": true,
+      "precision": null,
+      "scale": null,
+      "type_code": 5,
+      "type_name": "VARIANT"
+    },
+    {
+      "internal_size": null,
+      "name": "C",
+      "nullable": true,
+      "precision": null,
+      "scale": null,
+      "type_code": 5,
+      "type_name": "VARIANT"
+    },
+    {
+      "internal_size": null,
+      "name": "FIRST",
+      "nullable": true,
+      "precision": null,
+      "scale": null,
+      "type_code": 5,
+      "type_name": "VARIANT"
+    }
+  ],
+  "connector": "snowflake-connector-python 4.7.2",
+  "duckdb_version": "v2.0.0",
+  "error": null,
+  "format": 1,
+  "outcome": "rows",
+  "query_id_sha256": "2c869c2b51dc9e4227b3bdcb13c71081a1a44687a0690885bfce94c01695de5d",
+  "recorded_at": "2026-10-25T23:16:32Z",
+  "recorder": "sqlquack-record 0.1.0",
+  "row_count": 13,
+  "session_parameters": {
+    "DEFAULT_NULL_ORDERING": "LAST",
+    "QUOTED_IDENTIFIERS_IGNORE_CASE": false,
+    "TIMESTAMP_TYPE_MAPPING": "TIMESTAMP_NTZ",
+    "TIMEZONE": "UTC",
+    "USE_CACHED_RESULT": false,
+    "WEEK_OF_YEAR_POLICY": 0,
+    "WEEK_START": 0
+  },
+  "warehouse_version": "10.38.102"
+}

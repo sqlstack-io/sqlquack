@@ -1,0 +1,24 @@
+category = "aggregate"
+construct = "fn:COUNT_IF"
+session_profile = "utc-v1"
+evidence = "typing"
+
+[[case]]
+id = "count_if_grouped"
+description = "COUNT_IF over a group with duplicates and NULLs: its result type."
+columns = [{ name = "g", type = "NUMBER(38,0)" }, { name = "b", type = "BOOLEAN" }]
+rows = [["1", "TRUE"], ["1", "TRUE"], ["1", "NULL"], ["2", "FALSE"]]
+query = "SELECT g, COUNT_IF(b) AS c FROM input GROUP BY g ORDER BY g"
+order = "ordered"
+tags = ["null", "duplicates"]
+values = false
+
+[[case]]
+id = "count_if_empty"
+description = "COUNT_IF over no rows."
+columns = [{ name = "b", type = "BOOLEAN" }]
+rows = [["TRUE"]]
+query = "SELECT COUNT_IF(b) AS c FROM input WHERE FALSE"
+order = "bag"
+tags = ["empty-input"]
+values = false

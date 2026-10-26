@@ -1,0 +1,44 @@
+category = "conversion"
+construct = "fn:TRY_TO_DOUBLE"
+session_profile = "utc-v1"
+equivalence = "to_double_to_cast"
+
+[[case]]
+id = "try_to_double_text"
+description = "TRY_TO_DOUBLE of text reads as TRY_CAST to FLOAT: decimals, exponents, special values and rejected text."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'1.5'"],
+  ["' -2e3 '"],
+  ["'.25'"],
+  ["'1e309'"],
+  ["'nan'"],
+  ["'-inf'"],
+  ["'Infinity'"],
+  ["'0x10'"],
+  ["'1,5'"],
+  ["''"],
+  ["'abc'"],
+  ["NULL"],
+]
+expression = "TRY_TO_DOUBLE(s)"
+canonical = "TRY_CAST(s AS FLOAT)"
+tags = ["null", "invalid", "boundary"]
+
+[[case]]
+id = "to_double_text"
+description = "TO_DOUBLE of readable text reads as CAST to FLOAT."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [["'3.25'"], ["'-0'"], ["'1e-320'"], ["NULL"]]
+expression = "TO_DOUBLE(s)"
+canonical = "CAST(s AS FLOAT)"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "to_double_invalid"
+description = "TO_DOUBLE of text that is not a number raises as CAST does."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [["'x1'"]]
+expression = "TO_DOUBLE(s)"
+canonical = "CAST(s AS FLOAT)"
+tags = ["invalid"]

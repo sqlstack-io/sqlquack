@@ -1,0 +1,21 @@
+category = "temporal"
+construct = "fn:TO_VARCHAR"
+session_profile = "utc-v1"
+
+[[case]]
+id = "date_formats"
+description = "TO_VARCHAR of DATE with the census formats, zero-padded years, months and days."
+columns = [{ name = "d", type = "DATE" }]
+rows = [["'2024-02-29'"], ["'0001-01-01'"], ["'0099-03-04'"], ["'9999-12-31'"], ["NULL"]]
+query = "SELECT TO_VARCHAR(d, 'YYYY-MM-DD') AS a, TO_VARCHAR(d, 'YYYYMMDD') AS b, TO_VARCHAR(d, 'YYYY_MM_DD') AS c, TO_VARCHAR(d, 'YYYY-MM') AS e, TO_CHAR(d, 'DD/MM/YYYY') AS f, TO_VARCHAR(d, 'yyyy/mm/dd') AS g FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "timestamp_formats"
+description = "TO_VARCHAR of TIMESTAMP_NTZ with date and clock fields; fractions are dropped."
+columns = [{ name = "t", type = "TIMESTAMP_NTZ" }]
+rows = [["'2024-02-29 13:45:01.999999999'"], ["'2024-07-04 00:00:00'"], ["'1970-01-01 09:05:07'"], ["NULL"]]
+query = "SELECT TO_VARCHAR(t, 'YYYY-MM-DD HH24:MI:SS') AS a, TO_VARCHAR(t, 'HH24:MI') AS b, TO_VARCHAR(t, 'YYYYMMDD') AS c FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "boundary"]

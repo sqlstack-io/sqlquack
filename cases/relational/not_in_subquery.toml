@@ -1,0 +1,102 @@
+category = "relational"
+construct = "node:in"
+session_profile = "utc-v1"
+
+[[case]]
+id = "not_in_values"
+description = "WHERE NOT IN a subquery without NULLs: matching and NULL operands are filtered out."
+columns = [{ name = "x", type = "NUMBER(10,0)" }]
+rows = [["1"], ["2"], ["3"], ["3"], ["4"], ["NULL"]]
+query = "SELECT x FROM input WHERE x NOT IN (SELECT 1 AS v UNION ALL SELECT 3) ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "duplicates"]
+
+[[case]]
+id = "not_in_with_null"
+description = "WHERE NOT IN a subquery holding a NULL keeps no row."
+columns = [{ name = "x", type = "NUMBER(10,0)" }]
+rows = [["1"], ["2"], ["NULL"]]
+query = "SELECT x FROM input WHERE x NOT IN (SELECT 1 AS v UNION ALL SELECT NULL AS v) ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]
+
+[[case]]
+id = "not_in_empty"
+description = "WHERE NOT IN an empty subquery keeps every row, a NULL operand included."
+columns = [{ name = "x", type = "NUMBER(10,0)" }]
+rows = [["1"], ["NULL"]]
+query = "SELECT x FROM input WHERE x NOT IN (SELECT 1 AS v WHERE 1 = 0) ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "empty-input"]
+
+[[case]]
+id = "not_in_filter"
+description = "WHERE NOT IN against another part of the input, the census form."
+columns = [{ name = "k", type = "VARCHAR" }, { name = "excluded", type = "BOOLEAN" }]
+rows = [["'a'", "FALSE"], ["'b'", "TRUE"], ["'c'", "FALSE"], ["'b'", "FALSE"], ["NULL", "FALSE"]]
+query = "SELECT k FROM input WHERE k NOT IN (SELECT k FROM input WHERE excluded) ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "duplicates"]
+
+[[case]]
+id = "not_in_disjunction"
+description = "WHERE NOT IN under OR and AND with other conditions."
+columns = [{ name = "x", type = "NUMBER(10,0)" }]
+rows = [["1"], ["2"], ["3"], ["NULL"]]
+query = "SELECT x FROM input WHERE (x NOT IN (SELECT 1 AS v UNION ALL SELECT 2) OR x IS NULL) AND ordinal > 0 ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]
+
+[[case]]
+id = "not_in_null_first"
+description = "WHERE NOT IN a UNION ALL whose first branch is NULL."
+columns = [{ name = "x", type = "NUMBER(10,0)" }]
+rows = [["1"], ["2"], ["NULL"]]
+query = "SELECT x FROM input WHERE x NOT IN (SELECT NULL AS v UNION ALL SELECT 1 AS v) ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]
+
+[[case]]
+id = "not_in_typed_null_branch"
+description = "WHERE NOT IN a UNION ALL with a NULL cast to the column's type."
+columns = [{ name = "x", type = "NUMBER(10,0)" }]
+rows = [["1"], ["2"], ["NULL"]]
+query = "SELECT x FROM input WHERE x NOT IN (SELECT CAST(1 AS NUMBER(10,0)) AS v UNION ALL SELECT CAST(NULL AS NUMBER(10,0)) AS v) ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]
+
+[[case]]
+id = "not_in_union_distinct"
+description = "WHERE NOT IN a UNION (distinct) holding a NULL."
+columns = [{ name = "x", type = "NUMBER(10,0)" }]
+rows = [["1"], ["2"], ["NULL"]]
+query = "SELECT x FROM input WHERE x NOT IN (SELECT 1 AS v UNION SELECT NULL AS v) ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]
+
+[[case]]
+id = "not_in_derived_union"
+description = "WHERE NOT IN a select from a derived UNION ALL holding a NULL."
+columns = [{ name = "x", type = "NUMBER(10,0)" }]
+rows = [["1"], ["2"], ["NULL"]]
+query = "SELECT x FROM input WHERE x NOT IN (SELECT v FROM (SELECT 1 AS v UNION ALL SELECT NULL AS v) AS u) ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]
+
+[[case]]
+id = "not_in_single_null"
+description = "WHERE NOT IN a subquery returning only NULL."
+columns = [{ name = "x", type = "NUMBER(10,0)" }]
+rows = [["1"], ["2"], ["NULL"]]
+query = "SELECT x FROM input WHERE x NOT IN (SELECT NULL AS v) ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]
+
+[[case]]
+id = "not_in_union_of_columns"
+description = "WHERE NOT IN a UNION ALL of input columns where one branch yields NULL."
+columns = [{ name = "x", type = "NUMBER(10,0)" }]
+rows = [["1"], ["2"], ["NULL"]]
+query = "SELECT x FROM input WHERE x NOT IN (SELECT x FROM input WHERE x = 1 UNION ALL SELECT x FROM input WHERE x IS NULL) ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]

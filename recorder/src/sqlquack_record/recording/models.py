@@ -17,6 +17,15 @@ class PendingCase:
     session_parameters: tuple[tuple[str, bool | int | str], ...]
     source_sql: str
     duckdb_version: str
+    values: bool = True
+    setup_sql: tuple[str, ...] = ()
+    pinned_parameters: tuple[tuple[str, bool | int | str], ...] = ()
+
+    def recording_parameters(self) -> tuple[tuple[str, bool | int | str], ...]:
+        """The pinned and case parameters the recording session sets, sorted by name."""
+        return tuple(
+            sorted({**dict(self.pinned_parameters), **dict(self.session_parameters)}.items())
+        )
 
 
 @dataclass(frozen=True)
@@ -34,10 +43,11 @@ class ColumnDescription:
 
 @dataclass(frozen=True)
 class WarehouseFailure:
-    """A warehouse SQL error recorded as a case outcome; messages can name account objects."""
+    """A warehouse SQL error recorded as a case outcome, its message without the query ID."""
 
     errno: int | None
     sqlstate: str | None
+    message: str | None = None
 
 
 @dataclass(frozen=True)
@@ -48,6 +58,7 @@ class StatementResult:
     columns: tuple[ColumnDescription, ...]
     table: pa.Table | None
     failure: WarehouseFailure | None
+    refusal: str | None = None
 
 
 @dataclass(frozen=True)
@@ -57,6 +68,7 @@ class RecordingContext:
     warehouse_version: str
     connector: str
     recorded_at: str
+    session_parameters: tuple[tuple[str, str], ...] = ()
 
 
 @dataclass(frozen=True)
@@ -65,3 +77,13 @@ class RecordSummary:
 
     recorded: int
     failures: int
+    refused: tuple[tuple[str, str], ...] = ()
+
+
+@dataclass(frozen=True)
+class ScratchFunctions:
+    """A case's functions renamed for its run, and the statements dropping them afterwards."""
+
+    setup_sql: tuple[str, ...]
+    source_sql: str
+    drop_sql: tuple[str, ...]

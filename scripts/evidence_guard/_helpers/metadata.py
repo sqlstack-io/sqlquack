@@ -10,15 +10,17 @@ from scripts.evidence_guard._helpers.git import blob
 from scripts.evidence_guard.constants import (
     ARROW_SUFFIX,
     ERROR_KEYS,
+    ERROR_MESSAGE_KEY,
     ERROR_OUTCOME,
     EVIDENCE_FORMAT,
     HASH_LENGTH,
     HEX_DIGITS,
     METADATA_KEYS,
     METADATA_SUFFIX,
+    OPTIONAL_METADATA_KEYS,
     RECORDER_PREFIX,
-    RESULTS_DIR,
     ROWS_OUTCOME,
+    TYPES_OUTCOME,
 )
 
 
@@ -28,7 +30,7 @@ def added_result_problems(*, repository: Path, head: str, path: str) -> list[str
     stem: str = name.stem
     if len(stem) != HASH_LENGTH or not set(stem) <= HEX_DIGITS:
         return [f"{path}: result files are named by a lower-case SHA-256 case hash"]
-    sibling: str = f"{RESULTS_DIR}/{stem}{METADATA_SUFFIX}"
+    sibling: str = f"{name.parent}/{stem}{METADATA_SUFFIX}"
     if name.suffix == ARROW_SUFFIX:
         present: bool = blob(repository=repository, head=head, path=sibling) is not None
         return [] if present else [f"{path}: an Arrow file needs its metadata file"]
@@ -43,9 +45,18 @@ def _metadata_problems(*, repository: Path, head: str, path: str, stem: str) -> 
         metadata: object = json.loads(content or b"")
     except json.JSONDecodeError:
         return [f"{path}: metadata is not JSON"]
-    if not isinstance(metadata, dict) or set(metadata) != METADATA_KEYS:
+    if not isinstance(metadata, dict) or not (
+        METADATA_KEYS <= set(metadata) <= METADATA_KEYS | OPTIONAL_METADATA_KEYS
+    ):
         return [f"{path}: metadata keys differ from the recorder's format"]
     problems: list[str] = []
+    snapshot: object = metadata.get("parameters_sha256")
+    if snapshot is not None and (
+        not isinstance(snapshot, str)
+        or len(snapshot) != HASH_LENGTH
+        or not set(snapshot) <= HEX_DIGITS
+    ):
+        problems.append(f"{path}: parameters_sha256 must be a SHA-256 hex digest")
     if metadata["format"] != EVIDENCE_FORMAT or metadata["case_hash"] != stem:
         problems.append(f"{path}: wrong format or case hash")
     query_hash: object = metadata["query_id_sha256"]
@@ -56,16 +67,34 @@ def _metadata_problems(*, repository: Path, head: str, path: str, stem: str) -> 
     ):
         problems.append(f"{path}: query_id_sha256 must be a SHA-256 hex digest or null")
     error: object = metadata["error"]
-    if error is not None and (not isinstance(error, dict) or set(error) != ERROR_KEYS):
-        problems.append(f"{path}: an error records only errno and sqlstate")
+    if error is not None and not valid_error(error):
+        problems.append(f"{path}: an error records errno, sqlstate and at most a text message")
     if not str(metadata["recorder"]).startswith(RECORDER_PREFIX):
         problems.append(f"{path}: not written by sqlquack-record")
     arrow: bytes | None = blob(
-        repository=repository, head=head, path=f"{RESULTS_DIR}/{stem}{ARROW_SUFFIX}"
+        repository=repository, head=head, path=f"{PurePosixPath(path).parent}/{stem}{ARROW_SUFFIX}"
     )
     if metadata["outcome"] == ROWS_OUTCOME:
         if arrow is None or metadata["arrow_sha256"] != hashlib.sha256(arrow).hexdigest():
             problems.append(f"{path}: the Arrow file is missing or does not match arrow_sha256")
+    elif metadata["outcome"] == TYPES_OUTCOME:
+        if arrow is not None or metadata["arrow_sha256"] is not None or metadata["error"]:
+            problems.append(f"{path}: a types outcome keeps no Arrow file and no error")
+        if not isinstance(metadata["row_count"], int):
+            problems.append(f"{path}: a types outcome records its row count")
     elif metadata["outcome"] != ERROR_OUTCOME or arrow is not None or metadata["error"] is None:
         problems.append(f"{path}: an error outcome needs an error and no Arrow file")
     return problems
+
+
+def valid_error(error: object) -> bool:
+    """Whether a recorded error holds errno and sqlstate, and optionally a text message."""
+    if not isinstance(error, dict):
+        return False
+    keys: set[str] = set(error)
+    if keys == ERROR_KEYS:
+        return True
+    message: object = error.get(ERROR_MESSAGE_KEY)
+    return keys == ERROR_KEYS | {ERROR_MESSAGE_KEY} and (
+        message is None or isinstance(message, str)
+    )

@@ -1,0 +1,61 @@
+category = "string"
+construct = "fn:REGEXP_REPLACE"
+session_profile = "utc-v1"
+
+[[case]]
+id = "posix_space_collapse"
+description = "REGEXP_REPLACE collapsing [[:space:]]+ to one space: ASCII whitespace kinds, and non-ASCII spaces it may leave."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'a  b'"],
+  ["'a\tb\nc'"],
+  ["'a\r\nb'"],
+  ["' lead and trail '"],
+  ["'a　b'"],
+  ["'a b'"],
+  ["'a b'"],
+  ["''"],
+  ["'   '"],
+  ["NULL"],
+  ["'ünï cødé'"],
+]
+expression = "REGEXP_REPLACE(s, '[[:space:]]+', ' ')"
+tags = ["null", "empty", "whitespace", "unicode"]
+
+[[case]]
+id = "posix_space_removal"
+description = "REGEXP_REPLACE removing [[:space:]] together with listed characters, in one bracket expression."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'12 %'"],
+  ["'1\t2％'"],
+  ["'a　b'"],
+  ["''"],
+  ["NULL"],
+]
+expression = "REGEXP_REPLACE(s, '[[:space:]　%％]', '')"
+tags = ["null", "empty", "whitespace", "unicode"]
+
+[[case]]
+id = "posix_space_trim"
+description = "REGEXP_REPLACE trimming [[:space:]] and the ideographic space at both ends with an alternation."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'  gift  '"],
+  ["'　gift　'"],
+  ["'\tgift\n'"],
+  ["'gift'"],
+  ["'   '"],
+  ["NULL"],
+]
+expression = "REGEXP_REPLACE(s, '^[[:space:]　]+|[[:space:]　]+$', '')"
+tags = ["null", "empty", "whitespace", "unicode"]
+
+[[case]]
+id = "posix_space_like"
+description = "REGEXP_LIKE and REGEXP_SUBSTR with [[:space:]] and [^[:space:]]."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [["'gift wrap'"], ["'gift\twrap'"], ["'giftwrap'"], ["'gift　wrap'"], ["''"], ["NULL"]]
+query = "SELECT REGEXP_LIKE(s, '[^[:space:]]+[[:space:]][^[:space:]]+') AS l, REGEXP_SUBSTR(s, '[^[:space:]]+$') AS t FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "empty", "whitespace", "unicode"]

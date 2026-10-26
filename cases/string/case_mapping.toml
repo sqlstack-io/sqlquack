@@ -1,0 +1,33 @@
+category = "string"
+construct = "node:upper"
+session_profile = "utc-v1"
+
+[[case]]
+id = "upper"
+description = "UPPER on ASCII, non-ASCII and special letters."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'gift'"],
+  ["'café'"],
+  ["'straße'"],
+  ["''"],
+  ["' a '"],
+  ["NULL"],
+]
+expression = "UPPER(s)"
+tags = ["null", "empty", "whitespace", "unicode"]
+
+[[case]]
+id = "lower"
+description = "LOWER on ASCII, non-ASCII and special letters."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'GIFT'"],
+  ["'CAFÉ'"],
+  ["'İ'"],
+  ["''"],
+  ["' A '"],
+  ["NULL"],
+]
+expression = "LOWER(s)"
+tags = ["null", "empty", "whitespace", "unicode"]

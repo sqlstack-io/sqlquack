@@ -1,0 +1,58 @@
+category = "string"
+construct = "cast:TEXT"
+session_profile = "utc-v1"
+equivalence = "text_type_to_varchar"
+
+[[case]]
+id = "text_from_text"
+description = "TEXT is VARCHAR for text inputs."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [["'gift'"], ["NULL"], ["''"], ["'  '"], ["'café'"]]
+expression = "CAST(s AS TEXT)"
+canonical = "CAST(s AS VARCHAR)"
+tags = ["null", "empty", "whitespace", "unicode"]
+
+[[case]]
+id = "string_from_number"
+description = "STRING is VARCHAR when formatting fixed-point numbers."
+columns = [{ name = "n", type = "NUMBER(10,2)" }]
+rows = [["1.50"], ["-0.01"], ["0"], ["NULL"], ["99999999.99"]]
+expression = "n::STRING"
+canonical = "n::VARCHAR"
+tags = ["null"]
+
+[[case]]
+id = "string_from_date"
+description = "STRING is VARCHAR when formatting dates."
+columns = [{ name = "d", type = "DATE" }]
+rows = [["'2024-02-29'"], ["'1970-01-01'"], ["NULL"]]
+expression = "CAST(d AS STRING)"
+canonical = "CAST(d AS VARCHAR)"
+tags = ["null"]
+
+[[case]]
+id = "string_with_length"
+description = "STRING(n) is VARCHAR(n)."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [["'abc'"], ["'ab'"], ["''"], ["NULL"]]
+expression = "CAST(s AS STRING(3))"
+canonical = "CAST(s AS VARCHAR(3))"
+tags = ["empty", "null"]
+
+[[case]]
+id = "string_with_length_too_short"
+description = "STRING(n) and VARCHAR(n) treat a longer value the same way."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [["'abcd'"]]
+expression = "CAST(s AS STRING(3))"
+canonical = "CAST(s AS VARCHAR(3))"
+tags = []
+
+[[case]]
+id = "try_cast_text"
+description = "TRY_CAST to TEXT is TRY_CAST to VARCHAR."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [["'x'"], ["NULL"]]
+expression = "TRY_CAST(s AS TEXT)"
+canonical = "TRY_CAST(s AS VARCHAR)"
+tags = ["null"]

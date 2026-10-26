@@ -1,0 +1,194 @@
+category = "aggregate"
+construct = "clause:group_by"
+session_profile = "utc-v1"
+
+[[case]]
+id = "count_forms"
+description = "COUNT(*), COUNT(x) and COUNT(DISTINCT x) per group, including a NULL group."
+columns = [{ name = "grp", type = "VARCHAR" }, { name = "x", type = "NUMBER(10,2)" }]
+rows = [
+  ["'a'", "1.25"],
+  ["'a'", "2.50"],
+  ["'a'", "NULL"],
+  ["'b'", "NULL"],
+  ["'c'", "3.00"],
+  ["'c'", "3.00"],
+  ["NULL", "4.00"],
+]
+query = "SELECT grp, COUNT(*) AS n, COUNT(x) AS nx, COUNT(DISTINCT x) AS dx FROM input GROUP BY grp"
+order = "bag"
+tags = ["null", "duplicates"]
+
+[[case]]
+id = "sum_min_max"
+description = "SUM, MIN and MAX keep NUMBER types; an all-NULL group gives NULL."
+columns = [{ name = "grp", type = "VARCHAR" }, { name = "x", type = "NUMBER(10,2)" }]
+rows = [
+  ["'a'", "1.25"],
+  ["'a'", "2.50"],
+  ["'a'", "NULL"],
+  ["'b'", "NULL"],
+  ["'c'", "3.00"],
+  ["'c'", "3.00"],
+  ["NULL", "4.00"],
+]
+query = "SELECT grp, SUM(x) AS s, MIN(x) AS lo, MAX(x) AS hi FROM input GROUP BY grp"
+order = "bag"
+tags = ["null", "duplicates"]
+
+[[case]]
+id = "avg"
+description = "AVG of NUMBER(10,2) values: its result type and rounding."
+columns = [{ name = "grp", type = "VARCHAR" }, { name = "x", type = "NUMBER(10,2)" }]
+rows = [
+  ["'a'", "1.25"],
+  ["'a'", "2.50"],
+  ["'a'", "NULL"],
+  ["'b'", "NULL"],
+  ["'c'", "3.00"],
+  ["'c'", "3.00"],
+  ["NULL", "4.00"],
+  ["'d'", "1.00"],
+  ["'d'", "2.00"],
+  ["'d'", "2.00"],
+]
+query = "SELECT grp, AVG(x) AS mean FROM input GROUP BY grp"
+order = "bag"
+tags = ["null", "duplicates"]
+
+[[case]]
+id = "avg_integers"
+description = "AVG of integers."
+columns = [{ name = "x", type = "NUMBER(38,0)" }]
+rows = [
+  ["1"],
+  ["2"],
+  ["2"],
+  ["NULL"],
+]
+query = "SELECT AVG(x) AS mean FROM input"
+order = "ordered"
+tags = ["null", "duplicates"]
+
+[[case]]
+id = "empty_input"
+description = "Aggregates over no rows return one row; COUNT is 0."
+columns = [{ name = "grp", type = "VARCHAR" }, { name = "x", type = "NUMBER(10,2)" }]
+rows = [
+  ["'a'", "1.25"],
+  ["'a'", "2.50"],
+  ["'a'", "NULL"],
+  ["'b'", "NULL"],
+  ["'c'", "3.00"],
+  ["'c'", "3.00"],
+  ["NULL", "4.00"],
+]
+query = "SELECT COUNT(*) AS n, COUNT(x) AS nx, SUM(x) AS s, AVG(x) AS mean, MIN(x) AS lo FROM input WHERE grp = 'z'"
+order = "ordered"
+tags = ["empty-input"]
+
+[[case]]
+id = "grouped_empty_input"
+description = "A grouped aggregate over no rows returns no rows."
+columns = [{ name = "grp", type = "VARCHAR" }, { name = "x", type = "NUMBER(10,2)" }]
+rows = [
+  ["'a'", "1.25"],
+  ["'a'", "2.50"],
+  ["'a'", "NULL"],
+  ["'b'", "NULL"],
+  ["'c'", "3.00"],
+  ["'c'", "3.00"],
+  ["NULL", "4.00"],
+]
+query = "SELECT grp, COUNT(*) AS n FROM input WHERE grp = 'z' GROUP BY grp"
+order = "bag"
+tags = ["empty-input"]
+
+[[case]]
+id = "text_min_max"
+description = "MIN and MAX on text compare by code point."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'b'"],
+  ["'B'"],
+  ["'a'"],
+  ["''"],
+  ["NULL"],
+]
+query = "SELECT MIN(s) AS lo, MAX(s) AS hi, COUNT(DISTINCT s) AS d FROM input"
+order = "ordered"
+tags = ["null", "duplicates"]
+
+[[case]]
+id = "sum_float"
+description = "SUM of FLOAT values."
+columns = [{ name = "f", type = "FLOAT" }]
+rows = [
+  ["0.1"],
+  ["0.2"],
+  ["NULL"],
+]
+query = "SELECT SUM(f) AS s, AVG(f) AS mean FROM input"
+order = "ordered"
+tags = ["null", "duplicates"]
+
+[[case]]
+id = "sum_overflow"
+description = "SUM of integers beyond 38 digits."
+columns = [{ name = "x", type = "NUMBER(38,0)" }]
+rows = [
+  ["99999999999999999999999999999999999999"],
+  ["1"],
+]
+query = "SELECT SUM(x) AS s FROM input"
+order = "ordered"
+tags = ["duplicates", "null"]
+expected_divergence = "numeric_range"
+
+[[case]]
+id = "having"
+description = "HAVING filters groups."
+columns = [{ name = "grp", type = "VARCHAR" }, { name = "x", type = "NUMBER(10,2)" }]
+rows = [
+  ["'a'", "1.25"],
+  ["'a'", "2.50"],
+  ["'a'", "NULL"],
+  ["'b'", "NULL"],
+  ["'c'", "3.00"],
+  ["'c'", "3.00"],
+  ["NULL", "4.00"],
+]
+query = "SELECT grp, COUNT(*) AS n FROM input GROUP BY grp HAVING COUNT(*) > 1"
+order = "bag"
+tags = ["null", "duplicates"]
+
+[[case]]
+id = "group_by_position"
+description = "GROUP BY an expression by position."
+columns = [{ name = "grp", type = "VARCHAR" }, { name = "x", type = "NUMBER(10,2)" }]
+rows = [
+  ["'a'", "1.25"],
+  ["'a'", "2.50"],
+  ["'a'", "NULL"],
+  ["'b'", "NULL"],
+  ["'c'", "3.00"],
+  ["'c'", "3.00"],
+  ["NULL", "4.00"],
+]
+query = "SELECT UPPER(grp) AS g, COUNT(*) AS n FROM input GROUP BY 1"
+order = "bag"
+tags = ["null", "duplicates"]
+
+[[case]]
+id = "sum_wide_in_range"
+description = "SUM of NUMBER(38,2) whose total stays within 38 digits keeps the type."
+columns = [{ name = "x", type = "NUMBER(38,2)" }]
+rows = [
+  ["1.25"],
+  ["-0.50"],
+  ["NULL"],
+  ["1.25"],
+]
+query = "SELECT SUM(x) AS s, COUNT(x) AS n FROM input"
+order = "bag"
+tags = ["null", "duplicates"]

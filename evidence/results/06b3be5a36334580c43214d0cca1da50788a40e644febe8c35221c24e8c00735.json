@@ -1,0 +1,28 @@
+{
+  "arrow_sha256": null,
+  "case_hash": "06b3be5a36334580c43214d0cca1da50788a40e644febe8c35221c24e8c00735",
+  "columns": [],
+  "connector": "snowflake-connector-python 4.7.2",
+  "duckdb_version": "v2.0.0",
+  "error": {
+    "errno": 100071,
+    "message": "Failed to cast variant value \"text\" to OBJECT",
+    "sqlstate": "22000"
+  },
+  "format": 1,
+  "outcome": "error",
+  "query_id_sha256": "45b71a119c71156aba99ebadb8baa46233ca9ceb8546645691b00c681eb07187",
+  "recorded_at": "2026-10-26T07:49:01Z",
+  "recorder": "sqlquack-record 0.1.0",
+  "row_count": null,
+  "session_parameters": {
+    "DEFAULT_NULL_ORDERING": "LAST",
+    "QUOTED_IDENTIFIERS_IGNORE_CASE": false,
+    "TIMESTAMP_TYPE_MAPPING": "TIMESTAMP_NTZ",
+    "TIMEZONE": "UTC",
+    "USE_CACHED_RESULT": false,
+    "WEEK_OF_YEAR_POLICY": 0,
+    "WEEK_START": 0
+  },
+  "warehouse_version": "10.38.102"
+}

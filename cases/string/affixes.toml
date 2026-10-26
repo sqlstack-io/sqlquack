@@ -1,0 +1,101 @@
+category = "string"
+construct = "node:starts_with"
+session_profile = "utc-v1"
+
+[[case]]
+id = "starts_with"
+description = "STARTSWITH with matching, empty, case-different and NULL prefixes."
+columns = [{ name = "s", type = "VARCHAR" }, { name = "p", type = "VARCHAR" }]
+rows = [
+  ["'apple'", "'app'"],
+  ["'apple'", "''"],
+  ["'apple'", "'App'"],
+  ["NULL", "'a'"],
+  ["'a'", "NULL"],
+  ["' a'", "' '"],
+  ["'ünï'", "'ü'"],
+  ["''", "''"],
+]
+expression = "STARTSWITH(s, p)"
+tags = ["null", "empty", "whitespace", "unicode"]
+
+[[case]]
+id = "ends_with"
+description = "ENDSWITH with matching, empty, case-different and NULL suffixes."
+columns = [{ name = "s", type = "VARCHAR" }, { name = "p", type = "VARCHAR" }]
+rows = [
+  ["'apple'", "'ple'"],
+  ["'apple'", "''"],
+  ["'apple'", "'PLE'"],
+  ["NULL", "'a'"],
+  ["'a'", "NULL"],
+  ["'a '", "' '"],
+  ["'ünï'", "'ï'"],
+  ["''", "''"],
+]
+expression = "ENDSWITH(s, p)"
+tags = ["null", "empty", "whitespace", "unicode"]
+
+[[case]]
+id = "left_right"
+description = "LEFT and RIGHT with zero, past-the-end and multi-byte characters."
+columns = [{ name = "s", type = "VARCHAR" }, { name = "n", type = "NUMBER(10,0)" }]
+rows = [
+  ["'abcdef'", "2"],
+  ["'abc'", "0"],
+  ["'abc'", "10"],
+  ["'ünïcødé'", "3"],
+  ["''", "1"],
+  ["NULL", "1"],
+  ["'abc'", "NULL"],
+  ["' a '", "2"],
+  ["'abc'", "-1"],
+]
+expression = "LEFT(s, n) || '|' || RIGHT(s, n)"
+tags = ["null", "empty", "unicode", "whitespace"]
+
+[[case]]
+id = "substr"
+description = "SUBSTR with positive, zero and negative starts and lengths."
+columns = [{ name = "s", type = "VARCHAR" }, { name = "n", type = "NUMBER(10,0)" }]
+rows = [
+  ["'abcdef'", "2"],
+  ["'abcdef'", "0"],
+  ["'abcdef'", "-2"],
+  ["'abcdef'", "10"],
+  ["'ünïcødé'", "2"],
+  ["''", "1"],
+  ["NULL", "1"],
+  ["'  x'", "1"],
+]
+expression = "COALESCE(SUBSTR(s, n, 2), 'null') || '|' || COALESCE(SUBSTR(s, n), 'null')"
+tags = ["null", "empty", "unicode", "whitespace"]
+
+[[case]]
+id = "replace"
+description = "REPLACE with an empty search string, an omitted replacement and NULL."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'banana'"],
+  ["''"],
+  ["' a '"],
+  ["NULL"],
+  ["'äaä'"],
+]
+expression = "REPLACE(s, 'a', 'o') || '|' || REPLACE(s, 'a') || '|' || REPLACE(s, '', 'x')"
+tags = ["null", "empty", "whitespace", "unicode"]
+
+[[case]]
+id = "length"
+description = "LENGTH counts characters."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'abc'"],
+  ["''"],
+  ["'  '"],
+  ["NULL"],
+  ["'ünï'"],
+  ["'😀'"],
+]
+expression = "LENGTH(s)"
+tags = ["null", "empty", "whitespace", "unicode"]

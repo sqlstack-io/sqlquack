@@ -2,5 +2,15 @@
 mod helpers;
 #[path = "tests/test_analyze.rs"]
 mod test_analyze;
+#[path = "tests/test_analyze_function.rs"]
+mod test_analyze_function;
+#[path = "tests/test_case_provenance.rs"]
+mod test_case_provenance;
+#[path = "tests/test_divergence_modes.rs"]
+mod test_divergence_modes;
+#[path = "tests/test_equivalence_cases.rs"]
+mod test_equivalence_cases;
+#[path = "tests/test_guarded_conditions.rs"]
+mod test_guarded_conditions;
 #[path = "tests/test_types.rs"]
 mod test_types;

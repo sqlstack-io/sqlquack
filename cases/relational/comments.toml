@@ -1,0 +1,40 @@
+category = "relational"
+construct = "node:annotated"
+session_profile = "utc-v1"
+
+[[case]]
+id = "comments_in_projection"
+description = "Comments after select items and inside expressions change nothing."
+columns = [{ name = "x", type = "NUMBER(10,0)" }]
+rows = [
+  ["1"],
+  ["1"],
+  ["NULL"],
+]
+query = "SELECT x /* the input */ + 1 AS y, -- trailing comment\n  x AS z -- last item\nFROM input -- source\nORDER BY ordinal"
+order = "ordered"
+tags = ["null", "duplicates"]
+
+[[case]]
+id = "comments_on_empty_input"
+description = "Comments in a query over no rows."
+columns = [{ name = "x", type = "NUMBER(10,0)" }]
+rows = [
+  ["1"],
+]
+query = "SELECT COUNT(x) /* counted */ AS n -- total\nFROM input -- source\nWHERE x > 5"
+order = "ordered"
+tags = ["empty-input"]
+
+[[case]]
+id = "comments_before_items"
+description = "Full-line comments before select items, as in formatted models."
+columns = [{ name = "x", type = "NUMBER(10,0)" }]
+rows = [
+  ["1"],
+  ["1"],
+  ["NULL"],
+]
+query = "SELECT\n  -- the first item\n  x + 1 AS y,\n  -- the second item\n  x\nFROM input\nORDER BY ordinal"
+order = "ordered"
+tags = ["null", "duplicates"]

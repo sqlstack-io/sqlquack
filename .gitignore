@@ -32,4 +32,5 @@ __pycache__/
 
 # Derived evidence work files
 /evidence/pending/
-/evidence/audit/
+/evidence/audit/pending/
+/review/

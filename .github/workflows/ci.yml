@@ -51,3 +51,81 @@ jobs:
         run: make check-ci
       - name: Run tests
         run: make test
+      - name: Replay recorded cases on DuckDB
+        run: cargo run --locked -p sqlquack -- verify --require-verified
+
+  polyglot-check:
+    name: Exact parser check on DuckShop
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    env:
+      CARGO_TERM_COLOR: always
+      CARGO_INCREMENTAL: "0"
+      # The DuckShop benchmarks and the SQLBuild release that compiles them, pinned together.
+      SQLBUILD_REF: 3dc8d7f6ac8caac6c601d2ca4f8df548a004f35d
+      SQLBUILD_VERSION: 0.176.0
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with:
+          repository: chio-labs/sqlbuild
+          ref: ${{ env.SQLBUILD_REF }}
+          path: sqlbuild
+          sparse-checkout: benchmarks
+      - uses: astral-sh/setup-uv@v5
+        with:
+          version: "0.12.3"
+      - name: Install the pinned Rust toolchain
+        run: rustup toolchain install
+      - uses: Swatinem/rust-cache@v2
+        with:
+          shared-key: verify
+          save-if: false
+      - name: Compile DuckShop and DuckShop 10K
+        run: |
+          uv venv -p 3.12 "$RUNNER_TEMP/sqlbuild"
+          VIRTUAL_ENV="$RUNNER_TEMP/sqlbuild" uv pip install "sqlbuild==$SQLBUILD_VERSION"
+          python3 sqlbuild/benchmarks/duckshop-10k/generate.py --out "$RUNNER_TEMP/duckshop-10k"
+          (cd sqlbuild/benchmarks/duckshop/project && "$RUNNER_TEMP/sqlbuild/bin/sqb" compile)
+          (cd "$RUNNER_TEMP/duckshop-10k" && "$RUNNER_TEMP/sqlbuild/bin/sqb" compile)
+      - name: Compare with polyglot
+        run: |
+          cargo run --locked --release -p sqlquack-polyglot-check -- \
+            directory sqlbuild/benchmarks/duckshop/project/target/compiled --dialect snowflake
+          cargo run --locked --release -p sqlquack-polyglot-check -- \
+            directory "$RUNNER_TEMP/duckshop-10k/target/compiled" --dialect snowflake
+
+  fuzz:
+    name: Fuzz tolerant parsing
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    env:
+      CARGO_TERM_COLOR: always
+      # Seconds of fuzzing after the build.
+      FUZZ_SECONDS: "90"
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install nightly Rust
+        run: rustup toolchain install nightly --profile minimal
+      - uses: taiki-e/install-action@v2
+        with:
+          tool: cargo-fuzz
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: fuzz
+          shared-key: fuzz
+      - name: Seed the corpus with the exact check's statements
+        run: python3 -m scripts.seed_fuzz_corpus --out fuzz/corpus/tolerant
+      - name: Fuzz
+        working-directory: fuzz
+        # The prebuilt cargo-fuzz is a musl binary and would default to its own target.
+        run: >-
+          cargo +nightly fuzz run --target x86_64-unknown-linux-gnu tolerant corpus/tolerant --
+          -max_total_time="$FUZZ_SECONDS" -max_len=4096 -timeout=10 -rss_limit_mb=2048
+      - name: Keep any failing input
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: fuzz-artifacts
+          path: fuzz/artifacts
+          if-no-files-found: ignore

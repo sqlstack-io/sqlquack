@@ -1,0 +1,30 @@
+[package]
+name = "sqlquack-polyglot-check"
+version.workspace = true
+description = "Development check that SQLQuack's parser gives exactly polyglot's results; never a runtime dependency."
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+homepage.workspace = true
+publish = false
+rust-version.workspace = true
+
+[[bin]]
+name = "sqlquack-polyglot-check"
+path = "src/bin/sqlquack-polyglot-check.rs"
+
+[dependencies]
+clap.workspace = true
+polyglot-sql.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+sqlquack.workspace = true
+sqlquack-core.workspace = true
+sqlquack-evidence.workspace = true
+sqlquack-policy.workspace = true
+sqlquack-syntax.workspace = true
+toml.workspace = true
+walkdir.workspace = true
+
+[lints]
+workspace = true

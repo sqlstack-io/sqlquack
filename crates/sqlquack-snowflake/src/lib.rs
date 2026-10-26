@@ -1,3 +1,5 @@
-//! The Snowflake typing layer for exact result types; empty until the relational core lands.
+//! The Snowflake typing layer: exact Snowflake result types for SQLQuack rules.
 
 #![forbid(unsafe_code)]
+
+pub mod typing;

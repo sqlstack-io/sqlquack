@@ -1,0 +1,106 @@
+category = "window"
+construct = "fn:LAG"
+session_profile = "utc-v1"
+
+[[case]]
+id = "lag_lead"
+description = "LAG and LEAD with and without offsets and defaults."
+columns = [{ name = "grp", type = "VARCHAR" }, { name = "x", type = "NUMBER(38,0)" }, { name = "y", type = "VARCHAR" }]
+rows = [
+  ["'a'", "3", "'p'"],
+  ["'a'", "NULL", "'q'"],
+  ["'a'", "1", "'r'"],
+  ["'a'", "3", "'s'"],
+  ["'b'", "5", "NULL"],
+  ["'b'", "NULL", "'t'"],
+  ["'c'", "7", "'u'"],
+]
+query = "SELECT y, LAG(x) OVER (PARTITION BY grp ORDER BY y) AS prev, LEAD(x, 1, 0) OVER (PARTITION BY grp ORDER BY y) AS nxt, LAG(y, 2) OVER (PARTITION BY grp ORDER BY y) AS prev2 FROM input"
+order = "bag"
+tags = ["null", "ties", "single-row-partition"]
+
+[[case]]
+id = "first_last_value"
+description = "FIRST_VALUE and LAST_VALUE over a whole partition."
+columns = [{ name = "grp", type = "VARCHAR" }, { name = "x", type = "NUMBER(38,0)" }, { name = "y", type = "VARCHAR" }]
+rows = [
+  ["'a'", "3", "'p'"],
+  ["'a'", "NULL", "'q'"],
+  ["'a'", "1", "'r'"],
+  ["'a'", "3", "'s'"],
+  ["'b'", "5", "NULL"],
+  ["'b'", "NULL", "'t'"],
+  ["'c'", "7", "'u'"],
+]
+query = "SELECT y, FIRST_VALUE(x) OVER (PARTITION BY grp ORDER BY y ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING) AS f, LAST_VALUE(x) OVER (PARTITION BY grp ORDER BY y ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING) AS l FROM input"
+order = "bag"
+tags = ["null", "ties", "single-row-partition"]
+
+[[case]]
+id = "first_value_default_frame"
+description = "FIRST_VALUE and LAST_VALUE with the default frame."
+columns = [{ name = "grp", type = "VARCHAR" }, { name = "x", type = "NUMBER(38,0)" }, { name = "y", type = "VARCHAR" }]
+rows = [
+  ["'a'", "3", "'p'"],
+  ["'a'", "NULL", "'q'"],
+  ["'a'", "1", "'r'"],
+  ["'a'", "3", "'s'"],
+  ["'b'", "5", "NULL"],
+  ["'b'", "NULL", "'t'"],
+  ["'c'", "7", "'u'"],
+]
+query = "SELECT y, FIRST_VALUE(x) OVER (PARTITION BY grp ORDER BY y) AS f, LAST_VALUE(x) OVER (PARTITION BY grp ORDER BY y) AS l FROM input"
+order = "bag"
+tags = ["null", "ties", "single-row-partition"]
+
+[[case]]
+id = "first_value_ignore_nulls"
+description = "FIRST_VALUE IGNORE NULLS."
+columns = [{ name = "grp", type = "VARCHAR" }, { name = "x", type = "NUMBER(38,0)" }, { name = "y", type = "VARCHAR" }]
+rows = [
+  ["'a'", "3", "'p'"],
+  ["'a'", "NULL", "'q'"],
+  ["'a'", "1", "'r'"],
+  ["'a'", "3", "'s'"],
+  ["'b'", "5", "NULL"],
+  ["'b'", "NULL", "'t'"],
+  ["'c'", "7", "'u'"],
+]
+query = "SELECT y, FIRST_VALUE(x) IGNORE NULLS OVER (PARTITION BY grp ORDER BY y ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING) AS f FROM input"
+order = "bag"
+tags = ["null", "ties", "single-row-partition"]
+
+[[case]]
+id = "windowed_aggregates"
+description = "SUM and COUNT over a partition and a running frame."
+columns = [{ name = "grp", type = "VARCHAR" }, { name = "x", type = "NUMBER(38,0)" }, { name = "y", type = "VARCHAR" }]
+rows = [
+  ["'a'", "3", "'p'"],
+  ["'a'", "NULL", "'q'"],
+  ["'a'", "1", "'r'"],
+  ["'a'", "3", "'s'"],
+  ["'b'", "5", "NULL"],
+  ["'b'", "NULL", "'t'"],
+  ["'c'", "7", "'u'"],
+]
+query = "SELECT y, SUM(x) OVER (PARTITION BY grp) AS total, COUNT(x) OVER (PARTITION BY grp ORDER BY y) AS running FROM input"
+order = "bag"
+tags = ["null", "ties", "single-row-partition"]
+
+[[case]]
+id = "windowed_aggregates_narrow"
+description = "SUM, COUNT, MIN and MAX over partitions and running frames with tied order keys."
+columns = [{ name = "grp", type = "VARCHAR" }, { name = "x", type = "NUMBER(10,2)" }, { name = "y", type = "NUMBER(10,0)" }]
+rows = [
+  ["'a'", "3", "1"],
+  ["'a'", "NULL", "2"],
+  ["'a'", "1.50", "2"],
+  ["'a'", "3", "3"],
+  ["'b'", "5", "NULL"],
+  ["'b'", "NULL", "1"],
+  ["'c'", "7", "1"],
+  ["NULL", "-1", "1"],
+]
+query = "SELECT grp, y, x, SUM(x) OVER (PARTITION BY grp) AS total, COUNT(x) OVER (PARTITION BY grp ORDER BY y) AS running, MIN(x) OVER (PARTITION BY grp ORDER BY y) AS running_min, MAX(x) OVER (PARTITION BY grp ORDER BY y DESC) AS running_max, SUM(x) OVER (PARTITION BY grp ORDER BY y, x ROWS BETWEEN 1 PRECEDING AND CURRENT ROW) AS pair_sum FROM input"
+order = "bag"
+tags = ["null", "ties", "single-row-partition"]

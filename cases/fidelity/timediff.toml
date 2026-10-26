@@ -1,0 +1,47 @@
+category = "temporal"
+construct = "fn:TIMEDIFF"
+session_profile = "utc-v1"
+equivalence = "timediff_to_datediff"
+
+[[case]]
+id = "timediff_timestamp_units"
+description = "TIMEDIFF counts unit boundaries between naive timestamps, as DATEDIFF does."
+columns = [{ name = "a", type = "TIMESTAMP_NTZ(9)" }, { name = "b", type = "TIMESTAMP_NTZ(9)" }]
+rows = [
+  ["'2024-01-31 23:59:59'", "'2024-02-01 00:00:01'"],
+  ["'2023-12-31 23:00:00'", "'2024-01-01 01:00:00'"],
+  ["'2024-02-29 12:00:00'", "'2024-02-28 13:00:00'"],
+  ["NULL", "'2024-01-01 00:00:00'"],
+  ["'2024-01-01 00:00:00.999999999'", "'2024-01-01 00:00:01.000000001'"],
+]
+expression = "TIMEDIFF(DAY, a, b)::VARCHAR || '|' || TIMEDIFF(MONTH, a, b)::VARCHAR || '|' || TIMEDIFF(HOUR, a, b)::VARCHAR || '|' || TIMEDIFF(YEAR, a, b)::VARCHAR"
+canonical = "DATEDIFF(DAY, a, b)::VARCHAR || '|' || DATEDIFF(MONTH, a, b)::VARCHAR || '|' || DATEDIFF(HOUR, a, b)::VARCHAR || '|' || DATEDIFF(YEAR, a, b)::VARCHAR"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "timediff_seconds"
+description = "TIMEDIFF in seconds and milliseconds across fractions and the epoch."
+columns = [{ name = "a", type = "TIMESTAMP_NTZ(9)" }, { name = "b", type = "TIMESTAMP_NTZ(9)" }]
+rows = [
+  ["'2024-01-01 00:00:00.999'", "'2024-01-01 00:00:01.001'"],
+  ["'2024-01-01 00:00:01.5'", "'2024-01-01 00:00:00.5'"],
+  ["'1969-12-31 23:59:59.9'", "'1970-01-01 00:00:00.1'"],
+  ["NULL", "NULL"],
+]
+expression = "TIMEDIFF(SECOND, a, b)::VARCHAR || '|' || TIMEDIFF(MILLISECOND, a, b)::VARCHAR"
+canonical = "DATEDIFF(SECOND, a, b)::VARCHAR || '|' || DATEDIFF(MILLISECOND, a, b)::VARCHAR"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "timediff_dates"
+description = "TIMEDIFF between dates, over month ends and leap days, and the result type."
+columns = [{ name = "a", type = "DATE" }, { name = "b", type = "DATE" }]
+rows = [
+  ["'2024-01-31'", "'2024-02-01'"],
+  ["'2024-02-29'", "'2025-02-28'"],
+  ["'2024-03-01'", "'2023-03-01'"],
+  ["'2024-01-01'", "NULL"],
+]
+expression = "TIMEDIFF(DAY, a, b)"
+canonical = "DATEDIFF(DAY, a, b)"
+tags = ["null", "boundary"]

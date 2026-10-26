@@ -1,0 +1,21 @@
+category = "semi-structured"
+construct = "fn:OBJECT_CONSTRUCT_KEEP_NULL"
+session_profile = "utc-v1"
+evidence = "typing"
+
+[[case]]
+id = "object_construct_keep_null_types"
+description = "OBJECT_CONSTRUCT_KEEP_NULL of literals and VARIANT paths, some missing or JSON null: its result types."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('{\"o\":{\"a\":1,\"b\":[1,2]},\"x\":\"s\",\"items\":[1,\"x\",null]}')"],
+  ["PARSE_JSON('{\"o\":{\"A\":1,\"a\":2},\"x\":null,\"items\":[]}')"],
+  ["PARSE_JSON('{\"o\":{\"n\":{\"m\":[{\"k\":1}]}},\"x\":[[1],[2]],\"items\":[[1,2],{\"k\":1}]}')"],
+  ["PARSE_JSON('{}')"],
+  ["PARSE_JSON('null')"],
+  ["NULL"],
+]
+query = "SELECT OBJECT_CONSTRUCT_KEEP_NULL('a', 1, 'b', v:x, 'c', v:items[0]) AS o, OBJECT_CONSTRUCT_KEEP_NULL('A', v:o:A, 'a', v:o:a, 'n', NULL) AS cased FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "json-null", "missing-key", "nested", "array-index", "case-sensitive-key"]
+values = false

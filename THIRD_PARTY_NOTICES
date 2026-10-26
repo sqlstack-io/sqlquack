@@ -1,0 +1,74 @@
+Third-party notices
+===================
+
+sqlglot test suite
+------------------
+
+Case files under cases/imported/ whose `origin` field names sqlglot are derived from the test
+suite of sqlglot (https://github.com/tobymao/sqlglot), file tests/dialects/test_snowflake.py.
+Only the Snowflake SQL of each fixture is used as case input; SQLQuack records the expected
+answer from Snowflake itself. sqlglot's expected DuckDB output is kept in the `sqlglot_duckdb`
+field as reference side data only: it is never asserted, does not count toward verification and
+is not part of the case hash.
+
+The exact-check corpus corpora/polyglot-check/sqlglot.json holds the SQL of sqlglot's test
+fixtures at v30.14.0 (tests/fixtures/identity.sql, tests/test_parser.py and tests/dialects/),
+as extracted by polyglot's fixture tooling. polyglot, below, is itself inspired by sqlglot and
+ships sqlglot's licence.
+
+sqlglot is distributed under the following licence:
+
+MIT License
+
+Copyright (c) 2026 Toby Mao
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+
+polyglot
+--------
+
+Parts of SQLQuack's tokenizer and parser, in crates/sqlquack-syntax and
+crates/sqlquack-syntax-derive, are derived from polyglot (https://github.com/tobilg/polyglot),
+as forked at https://github.com/chio-labs/polyglot. The exact-check corpus
+corpora/polyglot-check/polyglot_tests.json holds the SQL inputs of polyglot's tests.
+
+polyglot is distributed under the following licence:
+
+MIT License
+
+Copyright (c) 2026 TobiLG <github@tobilg.com>
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.

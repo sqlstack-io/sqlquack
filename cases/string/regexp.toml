@@ -1,0 +1,145 @@
+category = "string"
+construct = "fn:REGEXP_REPLACE"
+session_profile = "utc-v1"
+
+[[case]]
+id = "regexp_replace_basic"
+description = "REGEXP_REPLACE of a repeated letter, with empty, blank, unicode and NULL text."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'aaa-b-aa'"],
+  ["'bbb'"],
+  ["'abc'"],
+  ["''"],
+  ["'  '"],
+  ["NULL"],
+  ["'ünïcødé'"],
+  ["'a\tb'"],
+]
+expression = "REGEXP_REPLACE(s, 'a+', 'X')"
+tags = ["null", "empty", "whitespace", "unicode"]
+
+[[case]]
+id = "regexp_replace_removal"
+description = "REGEXP_REPLACE with two arguments removes matches."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'a1b22c333'"],
+  ["''"],
+  ["NULL"],
+  ["'ü1'"],
+]
+expression = "REGEXP_REPLACE(s, '[0-9]')"
+tags = ["null", "empty", "unicode"]
+
+[[case]]
+id = "regexp_replace_backreference"
+description = "Back-references in the replacement."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'2024-02-29'"],
+  ["'x-y'"],
+  ["''"],
+  ["NULL"],
+]
+expression = "REGEXP_REPLACE(s, '([0-9]+)-([0-9]+)-([0-9]+)', '\\\\3/\\\\2/\\\\1')"
+tags = ["null", "empty"]
+
+[[case]]
+id = "regexp_replace_classes"
+description = "Shorthand classes: \\d, \\s and \\w, and anchors."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'a 1\tb_2'"],
+  ["'  lead'"],
+  ["''"],
+  ["NULL"],
+  ["'é1'"],
+]
+expression = "REGEXP_REPLACE(REGEXP_REPLACE(s, '\\\\s+', '_'), '^\\\\w', '#')"
+tags = ["whitespace", "null", "empty", "unicode"]
+
+[[case]]
+id = "regexp_replace_dot"
+description = "The dot does not match a line break by default."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'a\nb'"],
+  ["'ab'"],
+]
+expression = "REGEXP_REPLACE(s, 'a.b', 'X')"
+tags = ["whitespace"]
+
+[[case]]
+id = "regexp_replace_position_occurrence"
+description = "REGEXP_REPLACE from a position and of one occurrence."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'aXaXaX'"],
+  ["'a'"],
+  ["''"],
+]
+expression = "REGEXP_REPLACE(s, 'a', '-', 2, 2)"
+tags = ["empty", "boundary"]
+
+[[case]]
+id = "regexp_replace_case_insensitive"
+description = "The 'i' parameter makes matching case-insensitive."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'AaA'"],
+  ["'b'"],
+]
+expression = "REGEXP_REPLACE(s, 'a', '-', 1, 0, 'i')"
+tags = ["boundary"]
+
+[[case]]
+id = "regexp_replace_special_replacement"
+description = "Dollar signs and a literal backslash in the replacement."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'price'"],
+  ["'aa'"],
+]
+expression = "REGEXP_REPLACE(s, 'a', '$1\\\\\\\\')"
+tags = ["boundary"]
+
+[[case]]
+id = "regexp_substr_basic"
+description = "REGEXP_SUBSTR returns the first match or NULL."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'id=42;id=7'"],
+  ["'none'"],
+  ["''"],
+  ["NULL"],
+  ["'ü=9'"],
+]
+expression = "REGEXP_SUBSTR(s, '[0-9]+')"
+tags = ["null", "empty", "unicode"]
+
+[[case]]
+id = "regexp_substr_group"
+description = "REGEXP_SUBSTR with a capture group."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'id=42;id=7'"],
+  ["'none'"],
+  ["NULL"],
+]
+expression = "REGEXP_SUBSTR(s, 'id=([0-9]+)', 1, 2, 'e', 1)"
+tags = ["null"]
+
+[[case]]
+id = "regexp_like"
+description = "REGEXP_LIKE matches the whole text."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'abc'"],
+  ["'xabcx'"],
+  ["''"],
+  ["NULL"],
+  ["'ABC'"],
+]
+expression = "REGEXP_LIKE(s, 'abc')"
+tags = ["null", "empty"]

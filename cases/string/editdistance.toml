@@ -1,0 +1,51 @@
+category = "string"
+construct = "fn:EDITDISTANCE"
+session_profile = "utc-v1"
+
+[[case]]
+id = "editdistance_values"
+description = "EDITDISTANCE of equal, empty, case-differing, whitespace and non-ASCII texts, and NULL."
+columns = [{ name = "a", type = "VARCHAR" }, { name = "b", type = "VARCHAR" }]
+rows = [
+  ["'kitten'", "'sitting'"],
+  ["'gift'", "'gift'"],
+  ["''", "'abc'"],
+  ["'abc'", "''"],
+  ["'Gift'", "'gift'"],
+  ["'a b'", "'ab'"],
+  ["'café'", "'cafe'"],
+  ["'日本'", "'日本語'"],
+  ["NULL", "'x'"],
+]
+expression = "EDITDISTANCE(a, b)"
+tags = ["null", "empty", "whitespace", "unicode"]
+
+[[case]]
+id = "editdistance_characters"
+description = "EDITDISTANCE counting characters outside the BMP, combining marks, transpositions and long texts."
+columns = [{ name = "a", type = "VARCHAR" }, { name = "b", type = "VARCHAR" }]
+rows = [
+  ["'😀a'", "'a'"],
+  ["'a😀b'", "'ab'"],
+  ["'e\u0301'", "'é'"],
+  ["'ab'", "'ba'"],
+  ["'abcdefghijabcdefghijabcdefghij'", "'jihgfedcbajihgfedcbajihgfedcba'"],
+  ["'ß'", "'ss'"],
+  ["''", "''"],
+]
+expression = "EDITDISTANCE(a, b)"
+tags = ["unicode", "empty"]
+
+[[case]]
+id = "editdistance_maximum"
+description = "EDITDISTANCE with a maximum distance below, at and above the distance, and NULL."
+columns = [{ name = "a", type = "VARCHAR" }, { name = "b", type = "VARCHAR" }, { name = "m", type = "NUMBER(10,0)" }]
+rows = [
+  ["'kitten'", "'sitting'", "2"],
+  ["'kitten'", "'sitting'", "3"],
+  ["'kitten'", "'sitting'", "10"],
+  ["'kitten'", "'sitting'", "0"],
+  ["'kitten'", "'sitting'", "NULL"],
+]
+expression = "EDITDISTANCE(a, b, m)"
+tags = ["null", "empty"]

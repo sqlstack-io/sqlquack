@@ -1,14 +1,11 @@
 use crate::classification::main::classify::classify;
 use crate::classification::models::Occurrence;
-use crate::comparison::models::TreeDifference;
 use crate::parsing::main::parse_source::parse_source;
 use crate::parsing::models::SourceDialect;
 use crate::refusals::main::refuse_constructs::refuse_constructs;
-use crate::refusals::main::refuse_infidelity::refuse_infidelity;
 use crate::refusals::main::refuse_unparsed::refuse_unparsed;
 use crate::refusals::models::{Refusal, RefusalCategory};
 use crate::refusals::tests::test_types::DeclaringPolicy;
-use crate::reparse::models::FidelityOutcome;
 
 fn occurrences(sql: &str) -> Vec<Occurrence> {
     parse_source(sql, SourceDialect::Snowflake)
@@ -50,16 +47,4 @@ pub(crate) fn unparsed_refusal(sql: &str) -> Refusal {
     refuse_unparsed(
         &parse_source(sql, SourceDialect::Snowflake).expect_err("test SQL does not parse"),
     )
-}
-
-pub(crate) fn infidelity_category(outcome: &FidelityOutcome) -> Option<RefusalCategory> {
-    refuse_infidelity(outcome).map(|refusal| refusal.category)
-}
-
-pub(crate) fn difference() -> TreeDifference {
-    TreeDifference {
-        path: ".select.limit".to_owned(),
-        expected: "1".to_owned(),
-        actual: "2".to_owned(),
-    }
 }

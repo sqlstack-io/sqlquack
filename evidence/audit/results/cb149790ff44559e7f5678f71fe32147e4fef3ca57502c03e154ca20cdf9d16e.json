@@ -1,0 +1,28 @@
+{
+  "arrow_sha256": null,
+  "case_hash": "cb149790ff44559e7f5678f71fe32147e4fef3ca57502c03e154ca20cdf9d16e",
+  "columns": [],
+  "connector": "snowflake-connector-python 4.7.2",
+  "duckdb_version": "v2.0.0",
+  "error": {
+    "errno": 1007,
+    "message": "SQL compilation error:\ninvalid type [CAST(INPUT.X AS TIME(9))] for parameter 'TO_TIME'",
+    "sqlstate": "22023"
+  },
+  "format": 1,
+  "outcome": "error",
+  "query_id_sha256": "abbfb9b17ef7c21e74bfd638fa6e20e0bf38fd8f1142bf54a224f183ddc7b63f",
+  "recorded_at": "2026-10-25T23:17:22Z",
+  "recorder": "sqlquack-record 0.1.0",
+  "row_count": null,
+  "session_parameters": {
+    "DEFAULT_NULL_ORDERING": "LAST",
+    "QUOTED_IDENTIFIERS_IGNORE_CASE": false,
+    "TIMESTAMP_TYPE_MAPPING": "TIMESTAMP_NTZ",
+    "TIMEZONE": "UTC",
+    "USE_CACHED_RESULT": false,
+    "WEEK_OF_YEAR_POLICY": 0,
+    "WEEK_START": 0
+  },
+  "warehouse_version": "10.38.102"
+}

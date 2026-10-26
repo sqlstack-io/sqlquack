@@ -8,6 +8,7 @@ use arrow::datatypes::DataType;
 use arrow::ipc::writer::FileWriter;
 use sqlquack_compare::values::models::ResultSet;
 use sqlquack_policy::policy::main::load_policy::load_policy;
+use sqlquack_policy::policy::models::Policy;
 
 use crate::cases::main::load_cases::load_cases;
 use crate::pending::main::write_pending::write_pending;
@@ -15,15 +16,44 @@ use crate::pending::models::PendingCase;
 use crate::replay::main::replay_on_duckdb::replay_on_duckdb;
 use crate::replay::models::ReplaySettings;
 use crate::results::_helpers::reading::sha256_hex;
-use crate::results::models::{RecordedOutcome, ResultMetadata, WarehouseColumn};
+use crate::results::models::{
+    RecordedFailure, RecordedOutcome, ResultMetadata, SessionDefaults, WarehouseColumn,
+};
+use crate::verify::_helpers::session::parameter_text;
 use crate::verify::main::verify_cases::verify_cases;
+use crate::verify::models::VerifyInputs;
 use crate::verify::tests::test_types::{RoundTrip, Tampering, UnchangedSqlForTests};
+use crate::verify::types::FailureModes;
 
 /// Marks every stand-in result: produced by DuckDB in a test, never warehouse evidence.
 const STAND_IN_RECORDER: &str = "test fixture: DuckDB stand-in, not evidence";
+const STAND_IN_PARAMETERS_SHA256: &str =
+    "0000000000000000000000000000000000000000000000000000000000000000";
 
 /// The case whose stand-in result the tampering functions alter.
-const TAMPERED_CASE: &str = "numeric/addition.toml#decimal_addition";
+pub(crate) const TAMPERED_CASE: &str = "numeric/addition.toml#decimal_addition";
+
+/// The typing case.
+pub(crate) const TAMPERED_TYPING: &str = "numeric/addition.toml#typed_sum";
+
+/// The canonical spelling of the equivalence case.
+pub(crate) const TAMPERED_CANONICAL: &str = "numeric/remainder.toml#remainder~canonical";
+
+const EQUIVALENCE_FILE: &str = r#"
+category = "numeric"
+construct = "node:mod_func"
+session_profile = "utc-v1"
+equivalence = "mod_function_to_operator"
+
+[[case]]
+id = "remainder"
+description = "MOD and % agree."
+columns = [{ name = "a", type = "DECIMAL(10,2)" }, { name = "b", type = "DECIMAL(10,2)" }]
+rows = [["7.50", "2.00"], ["NULL", "1.00"]]
+expression = "MOD(a, b)"
+canonical = "a % b"
+tags = ["null"]
+"#;
 
 const POLICY: &str = r#"
 schema_version = 1
@@ -54,6 +84,16 @@ duckdb_time_zone = "UTC"
 [session_profiles.utc-v1.snowflake]
 TIMEZONE = "UTC"
 
+[session_profiles.utc-v1.pinned]
+DATE_OUTPUT_FORMAT = "YYYY-MM-DD"
+
+[divergences.timestamp_range]
+constructs = ["node:cast"]
+default = "warn"
+strict = "refuse"
+reason = "DuckDB nanosecond timestamps span a shorter range."
+native_errors = ["Conversion Error: Could not convert string '*' to INT64*"]
+
 [edge_cases.numeric]
 description = "numbers"
 required = ["null"]
@@ -80,6 +120,16 @@ rows = [["3.00"], ["1.00"]]
 query = "SELECT amount FROM input"
 order = "bag"
 tags = []
+
+[[case]]
+id = "typed_sum"
+description = "The type of a decimal sum, recorded without values."
+columns = [{ name = "a", type = "DECIMAL(10,2)" }]
+rows = [["1.25"], ["NULL"]]
+expression = "a + a"
+tags = ["null"]
+evidence = "typing"
+values = false
 "#;
 
 /// How DuckDB result types of the fixture cases are described as warehouse columns.
@@ -162,6 +212,88 @@ pub(crate) fn value_changed(results: &Path, hash: &str) {
     .expect("metadata written");
 }
 
+/// Drops the values: removes the Arrow file and records a types outcome instead.
+pub(crate) fn values_dropped(results: &Path, hash: &str) {
+    std::fs::remove_file(results.join(format!("{hash}.arrow"))).expect("arrow file removed");
+    let metadata_path = results.join(format!("{hash}.json"));
+    let mut metadata: ResultMetadata =
+        serde_json::from_str(&std::fs::read_to_string(&metadata_path).expect("metadata read"))
+            .expect("metadata parses");
+    metadata.outcome = RecordedOutcome::Types;
+    metadata.arrow_sha256 = None;
+    std::fs::write(
+        &metadata_path,
+        serde_json::to_string_pretty(&metadata).expect("metadata serialises"),
+    )
+    .expect("metadata written");
+}
+
+/// Records a warehouse error in place of the result.
+pub(crate) fn errored(results: &Path, hash: &str) {
+    let metadata_path = results.join(format!("{hash}.json"));
+    let mut metadata: ResultMetadata =
+        serde_json::from_str(&std::fs::read_to_string(&metadata_path).expect("metadata read"))
+            .expect("metadata parses");
+    metadata.outcome = RecordedOutcome::Error;
+    metadata.columns = Vec::new();
+    metadata.row_count = None;
+    metadata.error = Some(RecordedFailure {
+        errno: Some(100_071),
+        sqlstate: Some("22000".to_owned()),
+        message: None,
+    });
+    std::fs::write(
+        &metadata_path,
+        serde_json::to_string_pretty(&metadata).expect("metadata serialises"),
+    )
+    .expect("metadata written");
+}
+
+/// Records a pinned parameter with another effective value than the profile pins.
+pub(crate) fn pinned_value_changed(results: &Path, hash: &str) {
+    edit_metadata(results, hash, |metadata| {
+        metadata
+            .effective_parameters
+            .get_or_insert_with(BTreeMap::new)
+            .insert(
+                "DATE_OUTPUT_FORMAT".to_owned(),
+                Some("DD/MM/YYYY".to_owned()),
+            );
+    });
+}
+
+/// Drops the effective parameters, as in a result recorded before pinning.
+pub(crate) fn recorded_before_pinning(results: &Path, hash: &str) {
+    edit_metadata(results, hash, |metadata| {
+        metadata.effective_parameters = None;
+        metadata.parameters_sha256 = None;
+    });
+}
+
+/// Account defaults with `DATE_OUTPUT_FORMAT` set to `value`.
+pub(crate) fn defaults_with_date_format(value: &str) -> SessionDefaults {
+    SessionDefaults {
+        format: 1,
+        recorder: STAND_IN_RECORDER.to_owned(),
+        recorded_at: "1970-01-01T00:00:00Z".to_owned(),
+        parameters: BTreeMap::from([("DATE_OUTPUT_FORMAT".to_owned(), value.to_owned())]),
+        parameters_sha256: STAND_IN_PARAMETERS_SHA256.to_owned(),
+    }
+}
+
+fn edit_metadata(results: &Path, hash: &str, change: impl Fn(&mut ResultMetadata)) {
+    let metadata_path = results.join(format!("{hash}.json"));
+    let mut metadata: ResultMetadata =
+        serde_json::from_str(&std::fs::read_to_string(&metadata_path).expect("metadata read"))
+            .expect("metadata parses");
+    change(&mut metadata);
+    std::fs::write(
+        &metadata_path,
+        serde_json::to_string_pretty(&metadata).expect("metadata serialises"),
+    )
+    .expect("metadata written");
+}
+
 /// Changes a value without touching the metadata.
 pub(crate) fn arrow_edited(results: &Path, hash: &str) {
     rewrite_last_column(results, hash);
@@ -172,12 +304,15 @@ fn record_stand_in(pending: &PendingCase, results: &Path) {
         time_zone: "UTC".to_owned(),
         null_order: "nulls_last_on_asc_first_on_desc".to_owned(),
     };
-    let rows = replay_on_duckdb(&pending.source_sql, &settings).expect("DuckDB runs the case");
-    let bytes = write_arrow(&results.join(format!("{}.arrow", pending.case_hash)), &rows);
+    let rows =
+        replay_on_duckdb((&[], &pending.source_sql), &settings).expect("DuckDB runs the case");
+    let keeps_values = pending.values != Some(false);
+    let arrow_path = results.join(format!("{}.arrow", pending.case_hash));
+    let arrow_sha256 = keeps_values.then(|| sha256_hex(&write_arrow(&arrow_path, &rows)));
     let metadata = ResultMetadata {
         format: 1,
         case_hash: pending.case_hash.clone(),
-        outcome: RecordedOutcome::Rows,
+        outcome: [RecordedOutcome::Types, RecordedOutcome::Rows][usize::from(keeps_values)],
         recorder: STAND_IN_RECORDER.to_owned(),
         connector: STAND_IN_RECORDER.to_owned(),
         query_id_sha256: None,
@@ -185,6 +320,15 @@ fn record_stand_in(pending: &PendingCase, results: &Path) {
         duckdb_version: pending.duckdb_version.clone(),
         recorded_at: "1970-01-01T00:00:00Z".to_owned(),
         session_parameters: pending.session_parameters.clone(),
+        effective_parameters: Some(
+            pending
+                .session_parameters
+                .iter()
+                .chain(&pending.pinned_parameters)
+                .map(|(key, value)| (key.clone(), Some(parameter_text(value))))
+                .collect(),
+        ),
+        parameters_sha256: Some(STAND_IN_PARAMETERS_SHA256.to_owned()),
         columns: rows
             .schema
             .fields()
@@ -197,7 +341,7 @@ fn record_stand_in(pending: &PendingCase, results: &Path) {
                 .map(RecordBatch::num_rows)
                 .sum::<usize>() as u64,
         ),
-        arrow_sha256: Some(sha256_hex(&bytes)),
+        arrow_sha256,
         error: None,
     };
     std::fs::write(
@@ -208,12 +352,21 @@ fn record_stand_in(pending: &PendingCase, results: &Path) {
 }
 
 /// Writes pending files, records DuckDB stand-ins for them, tampers with one, and verifies.
-pub(crate) fn round_trip(tampering: Tampering) -> RoundTrip {
+pub(crate) fn round_trip(tampering: Tampering, tampered: &str) -> RoundTrip {
+    round_trip_with_defaults((tampering, tampered), None)
+}
+
+/// As `round_trip`, with the account's session defaults recorded as `defaults`.
+pub(crate) fn round_trip_with_defaults(
+    (tampering, tampered): (Tampering, &str),
+    defaults: Option<SessionDefaults>,
+) -> RoundTrip {
     let directory = tempfile::tempdir().expect("temporary directory");
     let root = directory.path();
     let cases_dir = root.join("cases").join("numeric");
     std::fs::create_dir_all(&cases_dir).expect("cases directory");
     std::fs::write(cases_dir.join("addition.toml"), CASE_FILE).expect("case file");
+    std::fs::write(cases_dir.join("remainder.toml"), EQUIVALENCE_FILE).expect("case file");
     std::fs::write(root.join("sqlquack.toml"), POLICY).expect("policy written");
     let results = root.join("results");
     let pending_dir = root.join("pending");
@@ -233,13 +386,23 @@ pub(crate) fn round_trip(tampering: Tampering) -> RoundTrip {
     for case in pending.values() {
         record_stand_in(case, &results);
     }
-    tampering(&results, &pending[TAMPERED_CASE].case_hash);
+    tampering(&results, &pending[tampered].case_hash);
     let after = write_pending(&cases, &results, &pending_dir, "v2.0.0").expect("pending rewritten");
-    let report =
-        verify_cases(&cases, &results, &policy, &UnchangedSqlForTests).expect("verify runs");
+    let report = verify_cases(VerifyInputs {
+        cases: &cases,
+        results: &results,
+        policy: &policy,
+        converter: &UnchangedSqlForTests,
+        claims: &[],
+        failure_modes: &FailureModes::new(),
+        audit_results: None,
+        session_defaults: defaults.as_ref(),
+    })
+    .expect("verify runs");
     RoundTrip {
         pending_before: before.written,
         pending_after: after.written,
+        unproven_sessions: report.unproven_sessions,
         verdicts: report
             .cases
             .iter()
@@ -251,4 +414,18 @@ pub(crate) fn round_trip(tampering: Tampering) -> RoundTrip {
             })
             .collect(),
     }
+}
+
+/// The test policy.
+pub(crate) fn test_policy() -> Policy {
+    let directory = tempfile::tempdir().expect("temporary directory");
+    let path = directory.path().join("sqlquack.toml");
+    std::fs::write(&path, POLICY).expect("policy written");
+    load_policy(&path).expect("the test policy is valid")
+}
+
+/// The repository's own policy.
+pub(crate) fn repository_policy() -> Policy {
+    let path = Path::new(env!("CARGO_MANIFEST_DIR")).join("../../sqlquack.toml");
+    load_policy(&path).expect("the repository policy is valid")
 }

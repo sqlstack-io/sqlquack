@@ -1,0 +1,88 @@
+category = "window"
+construct = "fn:ROW_NUMBER"
+session_profile = "utc-v1"
+
+[[case]]
+id = "row_number_asc_default_nulls"
+description = "ROW_NUMBER ordered ascending without NULLS FIRST/LAST."
+columns = [{ name = "grp", type = "VARCHAR" }, { name = "x", type = "NUMBER(38,0)" }, { name = "y", type = "VARCHAR" }]
+rows = [
+  ["'a'", "3", "'p'"],
+  ["'a'", "NULL", "'q'"],
+  ["'a'", "1", "'r'"],
+  ["'a'", "3", "'s'"],
+  ["'b'", "5", "NULL"],
+  ["'b'", "NULL", "'t'"],
+  ["'c'", "7", "'u'"],
+]
+query = "SELECT y, ROW_NUMBER() OVER (PARTITION BY grp ORDER BY x, y) AS rn FROM input"
+order = "bag"
+tags = ["null", "ties", "single-row-partition"]
+
+[[case]]
+id = "row_number_desc_default_nulls"
+description = "ROW_NUMBER ordered descending without NULLS FIRST/LAST."
+columns = [{ name = "grp", type = "VARCHAR" }, { name = "x", type = "NUMBER(38,0)" }, { name = "y", type = "VARCHAR" }]
+rows = [
+  ["'a'", "3", "'p'"],
+  ["'a'", "NULL", "'q'"],
+  ["'a'", "1", "'r'"],
+  ["'a'", "3", "'s'"],
+  ["'b'", "5", "NULL"],
+  ["'b'", "NULL", "'t'"],
+  ["'c'", "7", "'u'"],
+]
+query = "SELECT y, ROW_NUMBER() OVER (PARTITION BY grp ORDER BY x DESC, y) AS rn FROM input"
+order = "bag"
+tags = ["null", "ties", "single-row-partition"]
+
+[[case]]
+id = "rank_dense_rank"
+description = "RANK and DENSE_RANK with ties and NULLs."
+columns = [{ name = "grp", type = "VARCHAR" }, { name = "x", type = "NUMBER(38,0)" }, { name = "y", type = "VARCHAR" }]
+rows = [
+  ["'a'", "3", "'p'"],
+  ["'a'", "NULL", "'q'"],
+  ["'a'", "1", "'r'"],
+  ["'a'", "3", "'s'"],
+  ["'b'", "5", "NULL"],
+  ["'b'", "NULL", "'t'"],
+  ["'c'", "7", "'u'"],
+]
+query = "SELECT y, RANK() OVER (PARTITION BY grp ORDER BY x) AS r, DENSE_RANK() OVER (PARTITION BY grp ORDER BY x) AS dr FROM input"
+order = "bag"
+tags = ["null", "ties", "single-row-partition"]
+
+[[case]]
+id = "row_number_no_partition"
+description = "ROW_NUMBER over the whole input with explicit NULLS FIRST."
+columns = [{ name = "grp", type = "VARCHAR" }, { name = "x", type = "NUMBER(38,0)" }, { name = "y", type = "VARCHAR" }]
+rows = [
+  ["'a'", "3", "'p'"],
+  ["'a'", "NULL", "'q'"],
+  ["'a'", "1", "'r'"],
+  ["'a'", "3", "'s'"],
+  ["'b'", "5", "NULL"],
+  ["'b'", "NULL", "'t'"],
+  ["'c'", "7", "'u'"],
+]
+query = "SELECT y, ROW_NUMBER() OVER (ORDER BY x NULLS FIRST, y) AS rn FROM input"
+order = "bag"
+tags = ["null", "ties", "single-row-partition"]
+
+[[case]]
+id = "qualify_latest"
+description = "QUALIFY keeps the first row per group, ordered descending."
+columns = [{ name = "grp", type = "VARCHAR" }, { name = "x", type = "NUMBER(38,0)" }, { name = "y", type = "VARCHAR" }]
+rows = [
+  ["'a'", "3", "'p'"],
+  ["'a'", "NULL", "'q'"],
+  ["'a'", "1", "'r'"],
+  ["'a'", "3", "'s'"],
+  ["'b'", "5", "NULL"],
+  ["'b'", "NULL", "'t'"],
+  ["'c'", "7", "'u'"],
+]
+query = "SELECT grp, x, y FROM input QUALIFY ROW_NUMBER() OVER (PARTITION BY grp ORDER BY x DESC, y) = 1"
+order = "bag"
+tags = ["null", "ties", "single-row-partition"]

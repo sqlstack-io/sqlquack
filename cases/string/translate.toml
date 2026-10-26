@@ -1,0 +1,70 @@
+category = "string"
+construct = "fn:TRANSLATE"
+session_profile = "utc-v1"
+
+[[case]]
+id = "translate"
+description = "TRANSLATE replacing, deleting where the target is shorter, with repeated source characters, and over empty, whitespace, unicode and NULL arguments."
+columns = [{ name = "s", type = "VARCHAR" }, { name = "f", type = "VARCHAR" }, { name = "t", type = "VARCHAR" }]
+rows = [
+  ["'abc'", "'ab'", "'xy'"],
+  ["'abcabc'", "'abc'", "'x'"],
+  ["'aabbcc'", "'ab'", "''"],
+  ["'Hello World'", "'lo'", "'LO'"],
+  ["'a b  c'", "' '", "'_'"],
+  ["'ü-ö-ß'", "'üöß'", "'uos'"],
+  ["''", "'a'", "'b'"],
+  ["'ABC'", "'abc'", "'xyz'"],
+  ["NULL", "'a'", "'b'"],
+  ["'abc'", "NULL", "'b'"],
+  ["'abc'", "'a'", "NULL"],
+]
+expression = "TRANSLATE(s, f, t)"
+tags = ["null", "empty", "whitespace", "unicode"]
+
+[[case]]
+id = "translate_column_spellings"
+description = "TRANSLATE stripping punctuation and digits from codes, as cleaning SQL does."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'AB-12/3'"],
+  ["'(555) 010-0199'"],
+  ["'no-change'"],
+  ["''"],
+  ["' '"],
+  ["'é.1'"],
+  ["NULL"],
+]
+query = "SELECT TRANSLATE(s, '-/() ', '') AS stripped, TRANSLATE(s, '0123456789', '##########') AS masked FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "empty", "whitespace", "unicode"]
+
+[[case]]
+id = "translate_repeated_source"
+description = "TRANSLATE with a source character repeated: raises or converts."
+columns = [{ name = "s", type = "VARCHAR" }, { name = "f", type = "VARCHAR" }, { name = "t", type = "VARCHAR" }]
+rows = [
+  ["'abc'", "'aa'", "'xy'"],
+]
+expression = "TRANSLATE(s, f, t)"
+tags = ["invalid"]
+
+[[case]]
+id = "translate_longer_target"
+description = "TRANSLATE with a target longer than the source: raises or converts."
+columns = [{ name = "s", type = "VARCHAR" }, { name = "f", type = "VARCHAR" }, { name = "t", type = "VARCHAR" }]
+rows = [
+  ["'abc'", "'a'", "'xyz'"],
+]
+expression = "TRANSLATE(s, f, t)"
+tags = ["invalid"]
+
+[[case]]
+id = "translate_empty_source"
+description = "TRANSLATE with an empty source: raises or converts."
+columns = [{ name = "s", type = "VARCHAR" }, { name = "f", type = "VARCHAR" }, { name = "t", type = "VARCHAR" }]
+rows = [
+  ["'abc'", "''", "'x'"],
+]
+expression = "TRANSLATE(s, f, t)"
+tags = ["invalid"]

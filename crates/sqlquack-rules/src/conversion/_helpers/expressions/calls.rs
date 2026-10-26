@@ -1,0 +1,407 @@
+//! Generic function calls and aggregates.
+
+use serde_json::Value;
+use sqlquack_core::classification::models::Construct;
+use sqlquack_core::refusals::models::Refusal;
+use sqlquack_duckdb::blocks::main::cast::cast;
+use sqlquack_duckdb::blocks::main::exact_decimal_divide::exact_decimal_divide;
+use sqlquack_snowflake::typing::constants::{COUNT_PRECISION, MAX_PRECISION, SUM_EXTRA_DIGITS};
+use sqlquack_snowflake::typing::main::average::average;
+use sqlquack_snowflake::typing::main::count::count;
+use sqlquack_snowflake::typing::main::sum::sum;
+use sqlquack_snowflake::typing::models::SnowflakeType;
+
+use crate::conversion::_helpers::expressions::casts::{
+    to_double_call, to_number_call, to_varchar_call,
+};
+use crate::conversion::_helpers::expressions::conditionals::unified;
+use crate::conversion::_helpers::expressions::conditionals::{decode, zero_if_null};
+use crate::conversion::_helpers::expressions::hashing::hash_call;
+use crate::conversion::_helpers::expressions::numeric_functions::{
+    absolute, bitwise, rounding, sign,
+};
+use crate::conversion::_helpers::expressions::objects::{
+    object_construct, object_delete, object_insert,
+};
+use crate::conversion::_helpers::expressions::operators::{comparable, equal_null};
+use crate::conversion::_helpers::expressions::project_functions::project_call;
+use crate::conversion::_helpers::expressions::scalar::convert_expression;
+use crate::conversion::_helpers::expressions::semi_structured::{
+    parse_json, variant_get, variant_inspect,
+};
+use crate::conversion::_helpers::expressions::strings::{
+    concatenate, concatenate_with_separator, edit_distance, text_contains, text_operand, trim_call,
+};
+use crate::conversion::_helpers::expressions::temporal_functions::{
+    convert_timezone, date_add, date_part, date_trunc, temporal_text, to_timestamp,
+};
+use crate::conversion::_helpers::expressions::text_functions::{
+    left_right, pad, regexp, replace, split_part, translate,
+};
+use crate::conversion::_helpers::expressions::variants::variant_function;
+use crate::conversion::_helpers::support::divergence::diverge;
+use crate::conversion::_helpers::support::scope::{Context, Emitted};
+use crate::conversion::_helpers::support::site::{Placement, Site};
+use crate::conversion::_helpers::support::tree::{
+    Payload, field, flag, function_construct, list, missing, node_construct, outside_conditions,
+    payload_object, require_understood,
+};
+use crate::conversion::constants::{
+    AVERAGE, AVG_NAME, COUNT, LEAST_GREATEST, MIN_MAX, MIN_MAX_FLOAT, NOT_SNOWFLAKE_FUNCTIONS,
+    NULLIF, NUMERIC_RANGE, SUM, TO_DATE_NAME, TRIM,
+};
+
+/// NULLIF, LTRIM, RTRIM and CONCAT, which the parser keeps as generic calls.
+pub(crate) fn convert_function(payload: &Value, site: Site<'_>) -> Result<Emitted, Refusal> {
+    let payload = payload_object(payload, &node_construct("function"))?;
+    let name = payload
+        .get("name")
+        .and_then(Value::as_str)
+        .unwrap_or_default()
+        .to_ascii_uppercase();
+    let construct = function_construct(&name);
+    if let Some((resolved, spec)) = site.context.schema.functions.get_key_value(&name) {
+        require_understood(payload, &["name", "args"], &construct)?;
+        return project_call((resolved, spec), list(payload, "args"), &construct, site);
+    }
+    if NOT_SNOWFLAKE_FUNCTIONS.contains(&name.as_str()) {
+        return Err(missing(
+            construct,
+            format!("not in Snowflake's function reference: {name}"),
+        ));
+    }
+    require_understood(payload, &["name", "args"], &construct)?;
+    let arguments = list(payload, "args");
+    match (name.as_str(), arguments) {
+        ("NULLIF", [left, right]) => nullif(left, right, site),
+        ("LTRIM" | "RTRIM", [text, rest @ ..]) if rest.len() <= 1 => {
+            let _rule = site.context.log.rule(TRIM);
+            let text = text_operand(text, &construct, site)?;
+            let characters = match rest.first() {
+                Some(characters) => Some(text_operand(characters, &construct, site)?),
+                None => None,
+            };
+            Ok(Emitted::new(
+                trim_call(&name.to_ascii_lowercase(), &text, characters.as_deref()),
+                SnowflakeType::Varchar,
+            ))
+        }
+        ("CONCAT", parts) if !parts.is_empty() => concatenate(parts, &construct, site),
+        ("CONCAT_WS", parts) => concatenate_with_separator(parts, &construct, site),
+        ("CONTAINS", parts) => text_contains(parts, &construct, site),
+        ("EDITDISTANCE", parts) => edit_distance(parts, &construct, site),
+        (
+            "TO_NUMBER" | "TO_DECIMAL" | "TO_NUMERIC" | "TRY_TO_NUMBER" | "TRY_TO_DECIMAL"
+            | "TRY_TO_NUMERIC",
+            parts,
+        ) => to_number_call(&name, parts, &construct, site),
+        ("TO_DOUBLE" | "TRY_TO_DOUBLE", parts) => to_double_call(&name, parts, &construct, site),
+        ("TO_VARCHAR" | "TO_CHAR", [value]) => to_varchar_call(value, &construct, site),
+        ("TO_VARCHAR" | "TO_CHAR", [value, format]) => {
+            temporal_text((value, format), &construct, site)
+        }
+        ("LPAD" | "RPAD", parts) => pad(&name, parts, &construct, site),
+        ("ABS", parts) => absolute(parts, &construct, site),
+        ("SIGN", parts) => sign(parts, &construct, site),
+        ("DECODE", parts) => decode(parts, &construct, site),
+        ("HASH", parts) => hash_call(parts, &construct, site),
+        ("ZEROIFNULL", parts) => zero_if_null(parts, &construct, site),
+        ("EQUAL_NULL", parts) => equal_null(parts, &construct, site),
+        ("ROUND" | "CEIL" | "FLOOR" | "TRUNC" | "TRUNCATE", parts) => {
+            rounding(&name, parts, &construct, site)
+        }
+        ("BITAND" | "BITOR" | "BITXOR", parts) => bitwise(&name, parts, &construct, site),
+        ("LEFT" | "RIGHT", [text, length]) => left_right(&name, (text, length), &construct, site),
+        ("REPLACE", parts) if (2..=3).contains(&parts.len()) => replace(parts, &construct, site),
+        ("TRANSLATE", parts) => translate(parts, &construct, site),
+        ("SPLIT_PART", parts) => split_part(parts, &construct, site),
+        ("REGEXP_LIKE" | "REGEXP_REPLACE" | "REGEXP_SUBSTR", parts) => {
+            regexp(&name, parts, &construct, site)
+        }
+        ("DATE_PART", [unit, value]) => date_part(unit, value, &construct, site),
+        ("DATE_TRUNC", [unit, value]) => date_trunc(unit, value, &construct, site),
+        ("DATEADD" | "TIMESTAMPADD", [unit, amount, value]) => {
+            date_add((unit, amount, value), &construct, site)
+        }
+        ("CONVERT_TIMEZONE", parts) => convert_timezone(parts, &construct, site),
+        ("PARSE_JSON" | "TRY_PARSE_JSON", parts) => parse_json(parts, &construct, site),
+        ("GET" | "GET_PATH" | "GET_IGNORE_CASE", parts) => {
+            variant_get(&name, parts, &construct, site)
+        }
+        ("OBJECT_DELETE", parts) => object_delete(parts, &construct, site),
+        (
+            "OBJECT_PICK"
+            | "OBJECT_KEYS"
+            | "ARRAY_CONSTRUCT"
+            | "ARRAY_EXCEPT"
+            | "ARRAY_SIZE"
+            | "ARRAY_CONTAINS"
+            | "ARRAY_CONSTRUCT_COMPACT"
+            | "ARRAY_TO_STRING"
+            | "SPLIT"
+            | "TO_VARIANT"
+            | "IS_OBJECT"
+            | "IS_ARRAY"
+            | "IS_BOOLEAN"
+            | "IS_DATE"
+            | "IS_TIME"
+            | "IS_TIMESTAMP_NTZ"
+            | "IS_TIMESTAMP_LTZ"
+            | "IS_TIMESTAMP_TZ"
+            | "IS_BINARY",
+            parts,
+        ) => variant_function(&name, parts, &construct, site),
+        ("OBJECT_INSERT", parts) => object_insert(parts, &construct, site),
+        ("OBJECT_CONSTRUCT" | "OBJECT_CONSTRUCT_KEEP_NULL", parts) => {
+            object_construct(&name, parts, &construct, site)
+        }
+        ("TYPEOF" | "IS_NULL_VALUE" | "TO_JSON", parts) => {
+            variant_inspect(&name, parts, &construct, site)
+        }
+        (
+            "TO_TIMESTAMP"
+            | "TO_TIMESTAMP_NTZ"
+            | "TRY_TO_TIMESTAMP"
+            | "TRY_TO_TIMESTAMP_NTZ"
+            | "TO_DATE"
+            | "TRY_TO_DATE",
+            parts,
+        ) => to_timestamp(&name, parts, &construct, site),
+        ("DATE", parts) => to_timestamp(TO_DATE_NAME, parts, &construct, site),
+        ("LEAST" | "GREATEST", parts) if !parts.is_empty() => {
+            least_greatest(&name, parts, &construct, site)
+        }
+        _ => Err(missing(construct, format!("no rule converts fn:{name}"))),
+    }
+}
+
+/// LEAST or GREATEST, NULL when any argument is NULL, as in Snowflake.
+fn least_greatest(
+    name: &str,
+    arguments: &[Value],
+    construct: &Construct,
+    site: Site<'_>,
+) -> Result<Emitted, Refusal> {
+    let _rule = site.context.log.rule(LEAST_GREATEST);
+    let mut converted: Vec<Emitted> = Vec::with_capacity(arguments.len());
+    for argument in arguments {
+        converted.push(convert_expression(argument, site)?);
+    }
+    for other in converted.iter().skip(1) {
+        comparable(converted[0].clone(), other.clone(), construct, site.context)?;
+    }
+    let (branches, target) = unified(&converted, construct, site.context)?;
+    let any_null: Vec<String> = branches
+        .iter()
+        .map(|branch| format!("{branch} IS NULL"))
+        .collect();
+    Ok(Emitted::new(
+        format!(
+            "(CASE WHEN {} THEN NULL ELSE {}({}) END)",
+            any_null.join(" OR "),
+            name.to_ascii_lowercase(),
+            branches.join(", ")
+        ),
+        target,
+    ))
+}
+
+fn nullif(left: &Value, right: &Value, site: Site<'_>) -> Result<Emitted, Refusal> {
+    let construct = function_construct("NULLIF");
+    let _rule = site.context.log.rule(NULLIF);
+    let left = convert_expression(left, site)?;
+    let right = convert_expression(right, site)?;
+    comparable(left.clone(), right.clone(), &construct, site.context)?;
+    let (branches, target) = unified(&[left, right], &construct, site.context)?;
+    Ok(Emitted::new(
+        format!("NULLIF({}, {})", branches[0], branches[1]),
+        target,
+    ))
+}
+
+/// COUNT, SUM, AVG, MIN and MAX; `window` is the OVER clause when used as a window function.
+pub(crate) fn convert_aggregate(
+    kind: &str,
+    payload: &Value,
+    site: Site<'_>,
+    window: Option<&str>,
+) -> Result<Emitted, Refusal> {
+    let construct = node_construct(kind);
+    let payload = payload_object(payload, &construct)?;
+    require_understood(payload, &["this", "star", "distinct", "name"], &construct)?;
+    let call = AggregateCall {
+        payload,
+        site: site.placed(Placement::ROW),
+        over: window.map_or_else(String::new, |window| format!(" OVER ({window})")),
+    };
+    match kind {
+        "count" => call.count(),
+        "sum" => call.sum(),
+        "avg" => call.average(window.is_some()),
+        _ => call.min_max(kind),
+    }
+}
+
+struct AggregateCall<'a> {
+    payload: &'a Payload,
+    site: Site<'a>,
+    over: String,
+}
+
+impl AggregateCall<'_> {
+    fn distinct(&self) -> &'static str {
+        match flag(self.payload, "distinct") {
+            true => "DISTINCT ",
+            false => "",
+        }
+    }
+
+    fn argument(&self, kind: &str) -> Result<Emitted, Refusal> {
+        convert_expression(
+            field(self.payload, "this", &node_construct(kind))?,
+            self.site,
+        )
+    }
+
+    fn count(&self) -> Result<Emitted, Refusal> {
+        let log = self.site.context.log;
+        let _rule = log.rule(COUNT);
+        let inner = match flag(self.payload, "star") {
+            true => "*".to_owned(),
+            false => {
+                let argument = self.argument("count")?;
+                match argument.data_type {
+                    SnowflakeType::SemiStructured if flag(self.payload, "distinct") => {
+                        return Err(outside_conditions(
+                            node_construct("count"),
+                            "COUNT(DISTINCT) of a VARIANT".to_owned(),
+                        ));
+                    }
+                    SnowflakeType::SemiStructured => {
+                        format!("CASE WHEN json_type({}) <> 'NULL' THEN 1 END", argument.sql)
+                    }
+                    _ => format!("{}{}", self.distinct(), argument.sql),
+                }
+            }
+        };
+        let data_type = count(log);
+        let sql = cast(&format!("count({inner}){}", self.over), data_type, log)
+            .map_err(|reason| outside_conditions(node_construct("count"), reason))?;
+        Ok(Emitted::new(sql, data_type))
+    }
+
+    fn sum(&self) -> Result<Emitted, Refusal> {
+        let log = self.site.context.log;
+        let _rule = log.rule(SUM);
+        let refuse = |reason: String| outside_conditions(node_construct("sum"), reason);
+        let argument = self.argument("sum")?;
+        let data_type = sum_type(argument.data_type, self.site.context, "sum").map_err(refuse)?;
+        let sql = cast(
+            &format!("sum({}{}){}", self.distinct(), argument.sql, self.over),
+            data_type,
+            log,
+        )
+        .map_err(refuse)?;
+        Ok(Emitted::new(sql, data_type))
+    }
+
+    fn average(&self, windowed: bool) -> Result<Emitted, Refusal> {
+        let log = self.site.context.log;
+        let _rule = log.rule(AVERAGE);
+        let refuse = |reason: String| outside_conditions(node_construct("avg"), reason);
+        if windowed {
+            return Err(refuse("AVG over a window".to_owned()));
+        }
+        let argument = self.argument("avg")?;
+        let total = sum_type(argument.data_type, self.site.context, "avg").map_err(refuse)?;
+        let data_type = average(argument.data_type, log).map_err(refuse)?;
+        let SnowflakeType::Number { precision, scale } = total else {
+            return Err(refuse(format!(
+                "AVG of {} has no exact conversion",
+                argument.data_type
+            )));
+        };
+        let distinct = self.distinct();
+        let counted = cast(
+            &format!("count({distinct}{})", argument.sql),
+            count(log),
+            log,
+        )
+        .map_err(refuse)?;
+        let total_sql =
+            cast(&format!("sum({distinct}{})", argument.sql), total, log).map_err(refuse)?;
+        let (divided, guarded) = exact_decimal_divide(
+            (&total_sql, precision, scale),
+            (&counted, COUNT_PRECISION, 0),
+            data_type,
+            log,
+        )
+        .map_err(refuse)?;
+        if guarded {
+            diverge(
+                self.site.context,
+                NUMERIC_RANGE,
+                &function_construct(AVG_NAME),
+            )?;
+        }
+        Ok(Emitted::new(
+            format!("(CASE WHEN {counted} = 0 THEN NULL ELSE {divided} END)"),
+            data_type,
+        ))
+    }
+
+    fn min_max(&self, kind: &str) -> Result<Emitted, Refusal> {
+        let _rule = self.site.context.log.rule(MIN_MAX);
+        let argument = self.argument(kind)?;
+        match argument.data_type {
+            SnowflakeType::Number { .. }
+            | SnowflakeType::Varchar
+            | SnowflakeType::Boolean
+            | SnowflakeType::Date
+            | SnowflakeType::TimestampNtz { .. }
+            | SnowflakeType::TimestampTz { .. }
+            | SnowflakeType::TimestampLtz { .. } => Ok(Emitted::new(
+                format!("{kind}({}{}){}", self.distinct(), argument.sql, self.over),
+                argument.data_type,
+            )),
+            SnowflakeType::Float => {
+                let _float = self.site.context.log.rule(MIN_MAX_FLOAT);
+                Ok(Emitted::new(
+                    format!("{kind}({}{}){}", self.distinct(), argument.sql, self.over),
+                    SnowflakeType::Float,
+                ))
+            }
+            other => Err(outside_conditions(
+                node_construct(kind),
+                format!("{} of {other}", kind.to_ascii_uppercase()),
+            )),
+        }
+    }
+}
+
+/// The SUM type; above precision 26 a total may exceed 38 digits, which relies on `numeric_range`.
+fn sum_type(
+    argument: SnowflakeType,
+    context: &Context<'_>,
+    kind: &str,
+) -> Result<SnowflakeType, String> {
+    let safe_precision = MAX_PRECISION - SUM_EXTRA_DIGITS;
+    match argument {
+        SnowflakeType::Number { precision, .. } if precision <= safe_precision => {
+            sum(argument, context.log)
+        }
+        SnowflakeType::Number { .. } => {
+            diverge(
+                context,
+                NUMERIC_RANGE,
+                &function_construct(&kind.to_ascii_uppercase()),
+            )
+            .map_err(|refusal| refusal.reason)?;
+            sum(argument, context.log)
+        }
+        SnowflakeType::Float => Err(
+            "SUM of FLOAT depends on summation order, which the engines do not share".to_owned(),
+        ),
+        other => sum(other, context.log),
+    }
+}

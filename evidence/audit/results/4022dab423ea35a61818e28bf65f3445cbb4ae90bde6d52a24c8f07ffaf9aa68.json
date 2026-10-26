@@ -1,0 +1,28 @@
+{
+  "arrow_sha256": null,
+  "case_hash": "4022dab423ea35a61818e28bf65f3445cbb4ae90bde6d52a24c8f07ffaf9aa68",
+  "columns": [],
+  "connector": "snowflake-connector-python 4.7.2",
+  "duckdb_version": "v2.0.0",
+  "error": {
+    "errno": 100046,
+    "message": "Number out of representable range: type FIXED[SB16](10,2){not null}, value 99999999999999999999999999999999999999",
+    "sqlstate": "22003"
+  },
+  "format": 1,
+  "outcome": "error",
+  "query_id_sha256": "f00463b5bc1ee0f4b351b721705b1024ebe5dd8c0c2ca9a2d68dd05adf52b172",
+  "recorded_at": "2026-10-25T23:17:22Z",
+  "recorder": "sqlquack-record 0.1.0",
+  "row_count": null,
+  "session_parameters": {
+    "DEFAULT_NULL_ORDERING": "LAST",
+    "QUOTED_IDENTIFIERS_IGNORE_CASE": false,
+    "TIMESTAMP_TYPE_MAPPING": "TIMESTAMP_NTZ",
+    "TIMEZONE": "UTC",
+    "USE_CACHED_RESULT": false,
+    "WEEK_OF_YEAR_POLICY": 0,
+    "WEEK_START": 0
+  },
+  "warehouse_version": "10.38.102"
+}

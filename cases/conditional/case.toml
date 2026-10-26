@@ -1,0 +1,73 @@
+category = "conditional"
+construct = "node:case"
+session_profile = "utc-v1"
+
+[[case]]
+id = "mixed_scale_branches"
+description = "CASE branches of NUMBER(10,2) and NUMBER(12,4) unify to one type."
+columns = [{ name = "a", type = "NUMBER(10,2)" }, { name = "b", type = "NUMBER(12,4)" }, { name = "pick", type = "BOOLEAN" }]
+rows = [
+  ["1.25", "2.0001", "TRUE"],
+  ["1.25", "2.0001", "FALSE"],
+  ["NULL", "2", "TRUE"],
+  ["1", "2", "NULL"],
+]
+expression = "CASE WHEN pick THEN a ELSE b END"
+tags = ["null", "mixed-types"]
+
+[[case]]
+id = "no_else"
+description = "CASE without ELSE yields NULL when nothing matches."
+columns = [{ name = "a", type = "NUMBER(38,0)" }]
+rows = [
+  ["1"],
+  ["2"],
+  ["NULL"],
+]
+expression = "CASE WHEN a = 1 THEN 'one' WHEN a > 1 THEN 'many' END"
+tags = ["null", "all-null"]
+
+[[case]]
+id = "simple_case"
+description = "Simple CASE compares with equality, so NULL never matches."
+columns = [{ name = "a", type = "NUMBER(38,0)" }]
+rows = [
+  ["1"],
+  ["2"],
+  ["NULL"],
+]
+expression = "CASE a WHEN 1 THEN 'one' WHEN NULL THEN 'null' ELSE 'other' END"
+tags = ["null"]
+
+[[case]]
+id = "integer_and_float_branches"
+description = "CASE mixing NUMBER and FLOAT branches."
+columns = [{ name = "a", type = "NUMBER(38,0)" }, { name = "f", type = "FLOAT" }]
+rows = [
+  ["1", "0.5"],
+  ["NULL", "0.5"],
+]
+expression = "CASE WHEN a IS NULL THEN f ELSE a END"
+tags = ["null", "mixed-types"]
+
+[[case]]
+id = "text_branches"
+description = "CASE with text branches of different lengths."
+columns = [{ name = "a", type = "NUMBER(38,0)" }]
+rows = [
+  ["1"],
+  ["2"],
+]
+expression = "CASE WHEN a = 1 THEN 'ab' ELSE 'abcdef' END"
+tags = ["mixed-types"]
+
+[[case]]
+id = "number_and_text_branches"
+description = "CASE mixing NUMBER and VARCHAR branches."
+columns = [{ name = "a", type = "NUMBER(38,0)" }]
+rows = [
+  ["1"],
+  ["2"],
+]
+expression = "CASE WHEN a = 1 THEN a ELSE '7' END"
+tags = ["mixed-types"]

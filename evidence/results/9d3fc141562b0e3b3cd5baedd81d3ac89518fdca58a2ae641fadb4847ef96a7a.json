@@ -1,0 +1,34 @@
+{
+  "arrow_sha256": "b7b1141b541f34656c5ecabd34e0101dd4bd69c539df328c7a3ab54092fd508f",
+  "case_hash": "9d3fc141562b0e3b3cd5baedd81d3ac89518fdca58a2ae641fadb4847ef96a7a",
+  "columns": [
+    {
+      "internal_size": null,
+      "name": "VALUE",
+      "nullable": true,
+      "precision": 0,
+      "scale": 9,
+      "type_code": 8,
+      "type_name": "TIMESTAMP_NTZ"
+    }
+  ],
+  "connector": "snowflake-connector-python 4.7.2",
+  "duckdb_version": "v2.0.0",
+  "error": null,
+  "format": 1,
+  "outcome": "rows",
+  "query_id_sha256": "eb4ac3f09fd458ef77241d2fd6b7c748b429518364991df617e027407f256fb4",
+  "recorded_at": "2026-10-26T07:53:30Z",
+  "recorder": "sqlquack-record 0.1.0",
+  "row_count": 3,
+  "session_parameters": {
+    "DEFAULT_NULL_ORDERING": "LAST",
+    "QUOTED_IDENTIFIERS_IGNORE_CASE": false,
+    "TIMESTAMP_TYPE_MAPPING": "TIMESTAMP_NTZ",
+    "TIMEZONE": "UTC",
+    "USE_CACHED_RESULT": false,
+    "WEEK_OF_YEAR_POLICY": 0,
+    "WEEK_START": 0
+  },
+  "warehouse_version": "10.38.102"
+}

@@ -1,0 +1,24 @@
+category = "aggregate"
+construct = "fn:ARRAY_AGG"
+session_profile = "utc-v1"
+evidence = "typing"
+
+[[case]]
+id = "array_agg_ordered"
+description = "ARRAY_AGG with duplicates and NULLs, ordered within the group: its result type."
+columns = [{ name = "n", type = "NUMBER(10,2)" }]
+rows = [["1.50"], ["1.50"], ["NULL"], ["-2"]]
+query = "SELECT ARRAY_AGG(n) WITHIN GROUP (ORDER BY ordinal) AS a FROM input"
+order = "bag"
+tags = ["null", "duplicates"]
+values = false
+
+[[case]]
+id = "array_agg_empty"
+description = "ARRAY_AGG over no rows."
+columns = [{ name = "n", type = "NUMBER(10,2)" }]
+rows = [["1"]]
+query = "SELECT ARRAY_AGG(n) AS a FROM input WHERE FALSE"
+order = "bag"
+tags = ["empty-input"]
+values = false

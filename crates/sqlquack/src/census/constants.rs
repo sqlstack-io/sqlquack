@@ -29,3 +29,6 @@ pub const RELATION_CALLS: &[&str] = &[
 
 /// sqlbuild cursor intrinsics replaced by a column.
 pub const CURSOR_CALLS: &[&str] = &["__cursor_start", "__cursor_end"];
+
+/// When set, census writes each converted file's known divergences there as `<path>.json`.
+pub const GUARDS_DIR_VARIABLE: &str = "SQLQUACK_GUARDS_DIR";

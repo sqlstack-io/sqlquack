@@ -1,0 +1,27 @@
+[package]
+name = "sqlquack-syntax"
+description = "SQLQuack's tokenizer, parser and syntax tree for Snowflake and DuckDB"
+version.workspace = true
+edition = "2021"
+license.workspace = true
+repository.workspace = true
+homepage.workspace = true
+readme.workspace = true
+publish.workspace = true
+rust-version.workspace = true
+
+# Snowflake and DuckDB are always on; stack growth is the only feature.
+[features]
+default = ["stacker"]
+stacker = ["dep:stacker"]
+
+[dependencies]
+serde.workspace = true
+serde_json.workspace = true
+sqlquack-syntax-derive.workspace = true
+stacker = { workspace = true, optional = true }
+thiserror.workspace = true
+unicode-segmentation.workspace = true
+
+[lints]
+workspace = true

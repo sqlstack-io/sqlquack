@@ -1,0 +1,22 @@
+category = "string"
+construct = "fn:CONTAINS"
+session_profile = "utc-v1"
+
+[[case]]
+id = "contains_values"
+description = "CONTAINS with empty, whitespace, case-differing and non-ASCII parts, and NULLs."
+columns = [{ name = "s", type = "VARCHAR" }, { name = "p", type = "VARCHAR" }]
+rows = [
+  ["'gift wrap'", "'wrap'"],
+  ["'gift wrap'", "'Wrap'"],
+  ["'gift'", "''"],
+  ["''", "''"],
+  ["''", "'a'"],
+  ["'a  b'", "'  '"],
+  ["'café'", "'é'"],
+  ["'cafe'", "'é'"],
+  ["NULL", "'a'"],
+  ["'a'", "NULL"],
+]
+expression = "CONTAINS(s, p)"
+tags = ["null", "empty", "whitespace", "unicode"]

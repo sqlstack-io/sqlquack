@@ -1,0 +1,51 @@
+category = "conditional"
+construct = "node:coalesce"
+session_profile = "utc-v1"
+
+[[case]]
+id = "mixed_scales"
+description = "COALESCE over NUMBER(10,2) and NUMBER(5,0)."
+columns = [{ name = "a", type = "NUMBER(10,2)" }, { name = "b", type = "NUMBER(5,0)" }]
+rows = [
+  ["1.25", "2"],
+  ["NULL", "2"],
+  ["NULL", "NULL"],
+]
+expression = "COALESCE(a, b)"
+tags = ["null", "all-null", "mixed-types"]
+
+[[case]]
+id = "three_arguments"
+description = "COALESCE with a literal fallback."
+columns = [{ name = "a", type = "VARCHAR" }, { name = "b", type = "VARCHAR" }]
+rows = [
+  ["'x'", "'y'"],
+  ["NULL", "'y'"],
+  ["NULL", "NULL"],
+  ["''", "'y'"],
+]
+expression = "COALESCE(a, b, 'none')"
+tags = ["null", "all-null"]
+
+[[case]]
+id = "number_and_float"
+description = "COALESCE mixing NUMBER and FLOAT."
+columns = [{ name = "a", type = "NUMBER(10,2)" }, { name = "f", type = "FLOAT" }]
+rows = [
+  ["1.25", "0.5"],
+  ["NULL", "0.5"],
+]
+expression = "COALESCE(a, f)"
+tags = ["null", "mixed-types"]
+
+[[case]]
+id = "number_and_text"
+description = "COALESCE mixing NUMBER and VARCHAR."
+columns = [{ name = "a", type = "NUMBER(38,0)" }, { name = "s", type = "VARCHAR" }]
+rows = [
+  ["1", "'2'"],
+  ["NULL", "'2'"],
+  ["NULL", "'x'"],
+]
+expression = "COALESCE(a, s)"
+tags = ["null", "mixed-types"]

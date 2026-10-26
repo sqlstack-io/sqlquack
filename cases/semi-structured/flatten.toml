@@ -1,0 +1,222 @@
+category = "semi-structured"
+construct = "node:lateral"
+session_profile = "utc-v1"
+
+[[case]]
+id = "flatten_array"
+description = "LATERAL FLATTEN over arrays, empty arrays, JSON null, objects and scalars."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('{\"items\":[1,\"x\",null,{\"k\":1}]}')"],
+  ["PARSE_JSON('{\"items\":[]}')"],
+  ["PARSE_JSON('{\"items\":null}')"],
+  ["PARSE_JSON('{}')"],
+  ["PARSE_JSON('{\"items\":{\"b\":1,\"a\":2}}')"],
+  ["NULL"],
+  ["PARSE_JSON('{\"items\":[[1,2]]}')"],
+]
+query = "SELECT i.ordinal, f.index, f.key, f.path, f.value::VARCHAR AS value, TYPEOF(f.value) AS value_type FROM input i, LATERAL FLATTEN(input => i.v:items) f ORDER BY i.ordinal, f.index, f.key"
+order = "ordered"
+tags = ["array-index", "json-null", "missing-key", "null", "nested"]
+
+[[case]]
+id = "flatten_scalar"
+description = "FLATTEN over a scalar value."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('{\"items\":\"scalar\"}')"],
+]
+query = "SELECT f.index, f.value::VARCHAR AS value FROM input i, LATERAL FLATTEN(input => i.v:items) f"
+order = "bag"
+tags = ["missing-key"]
+
+[[case]]
+id = "flatten_outer"
+description = "FLATTEN with OUTER => TRUE keeps rows with nothing to flatten."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('{\"items\":[1,\"x\",null,{\"k\":1}]}')"],
+  ["PARSE_JSON('{\"items\":[]}')"],
+  ["PARSE_JSON('{\"items\":null}')"],
+  ["PARSE_JSON('{}')"],
+  ["PARSE_JSON('{\"items\":{\"b\":1,\"a\":2}}')"],
+  ["NULL"],
+  ["PARSE_JSON('{\"items\":[[1,2]]}')"],
+]
+query = "SELECT i.ordinal, f.index, f.value::VARCHAR AS value FROM input i, LATERAL FLATTEN(input => i.v:items, OUTER => TRUE) f ORDER BY i.ordinal, f.index, f.key"
+order = "ordered"
+tags = ["array-index", "json-null", "missing-key", "null"]
+
+[[case]]
+id = "flatten_object"
+description = "FLATTEN over an object yields its keys."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('{\"o\":{\"b\":1,\"a\":\"x\",\"C\":null}}')"],
+  ["PARSE_JSON('{\"o\":{}}')"],
+]
+query = "SELECT i.ordinal, f.key, f.index, f.value::VARCHAR AS value FROM input i, LATERAL FLATTEN(input => i.v:o) f ORDER BY i.ordinal, f.key"
+order = "ordered"
+tags = ["case-sensitive-key", "json-null"]
+
+[[case]]
+id = "flatten_nested"
+description = "Two FLATTENs: elements of arrays inside array elements."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('{\"g\":[{\"n\":\"a\",\"xs\":[1,2]},{\"n\":\"b\",\"xs\":[]},{\"n\":\"c\"}]}')"],
+]
+query = "SELECT i.ordinal, o.index AS outer_index, o.value:n::VARCHAR AS name, x.index AS inner_index, x.value::NUMBER(10,0) AS x FROM input i, LATERAL FLATTEN(input => i.v:g) o, LATERAL FLATTEN(input => o.value:xs) x ORDER BY outer_index, inner_index"
+order = "ordered"
+tags = ["nested", "array-index", "missing-key"]
+
+[[case]]
+id = "flatten_parsed_text"
+description = "FLATTEN over a path of parsed text, as a staging model does."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'{\"data\":[{\"id\":\"a\"},{\"id\":\"b\"}]}'"],
+  ["'{\"data\":[]}'"],
+  ["NULL"],
+]
+query = "SELECT p.ordinal, e.index, e.value:id::VARCHAR AS id FROM (SELECT ordinal, TRY_PARSE_JSON(s) AS payload FROM input) p, LATERAL FLATTEN(input => p.payload:data) e ORDER BY p.ordinal, e.index"
+order = "ordered"
+tags = ["nested", "null", "array-index"]
+
+[[case]]
+id = "flatten_count"
+description = "Counting flattened elements per row, rows without elements included."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('{\"items\":[1,\"x\",null,{\"k\":1}]}')"],
+  ["PARSE_JSON('{\"items\":[]}')"],
+  ["PARSE_JSON('{\"items\":null}')"],
+  ["PARSE_JSON('{}')"],
+  ["PARSE_JSON('{\"items\":{\"b\":1,\"a\":2}}')"],
+  ["NULL"],
+  ["PARSE_JSON('{\"items\":[[1,2]]}')"],
+]
+query = "SELECT i.ordinal, COUNT(f.value) AS n FROM input i, LATERAL FLATTEN(input => i.v:items, OUTER => TRUE) f GROUP BY i.ordinal ORDER BY i.ordinal"
+order = "ordered"
+tags = ["json-null", "null", "array-index", "missing-key"]
+
+[[case]]
+id = "flatten_typeof_array_filter"
+description = "Filtering on TYPEOF of a flattened value."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('{\"d\":[{\"b\":[1]},{\"b\":\"x\"},{\"b\":null},{}]}')"],
+]
+query = "SELECT f.index, ARRAY_SIZE(f.value:b) AS n FROM input i, LATERAL FLATTEN(input => i.v:d) f WHERE TYPEOF(f.value:b) = 'ARRAY' ORDER BY f.index"
+order = "ordered"
+tags = ["json-null", "missing-key", "array-index", "case-sensitive-key"]
+
+[[case]]
+id = "flatten_parsed_text_invalid"
+description = "FLATTEN over TRY_PARSE_JSON of text Snowflake rejects, which the JSON guard raises for."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'{bad'"],
+]
+query = "SELECT p.ordinal, e.index, e.value:id::VARCHAR AS id FROM (SELECT ordinal, TRY_PARSE_JSON(s) AS payload FROM input) p, LATERAL FLATTEN(input => p.payload:data) e ORDER BY p.ordinal, e.index"
+order = "ordered"
+expected_divergence = "json_fidelity"
+tags = ["invalid"]
+
+[[case]]
+id = "flatten_key_paths"
+description = "FLATTEN's KEY and PATH for keys with spaces, digits, dots and accents, whose PATH the guard raises for."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('{\"o\":{\"1\":1,\"A b\":2,\"a.b\":3,\"_x\":4,\"é\":5,\"Z9\":6}}')"],
+]
+query = "SELECT f.key, f.path, f.value::NUMBER(10,0) AS n FROM input i, LATERAL FLATTEN(input => i.v:o) f ORDER BY f.key"
+order = "ordered"
+expected_divergence = "json_fidelity"
+tags = ["unicode", "case-sensitive-key"]
+
+[[case]]
+id = "flatten_plain_key_paths"
+description = "FLATTEN's PATH for keys that are plain names."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('{\"o\":{\"_x\":4,\"Z9\":6,\"a\":1}}')"],
+]
+query = "SELECT f.key, f.path, f.value::NUMBER(10,0) AS n FROM input i, LATERAL FLATTEN(input => i.v:o) f ORDER BY f.key"
+order = "ordered"
+tags = ["case-sensitive-key"]
+
+[[case]]
+id = "flatten_outer_scalar"
+description = "FLATTEN with OUTER => TRUE of a string and a number."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('{\"items\":\"scalar\"}')"],
+  ["PARSE_JSON('{\"items\":5}')"],
+  ["PARSE_JSON('{\"items\":true}')"],
+]
+query = "SELECT i.ordinal, f.index, f.key, f.value::VARCHAR AS value FROM input i, LATERAL FLATTEN(input => i.v:items, OUTER => TRUE) f ORDER BY i.ordinal"
+order = "ordered"
+tags = ["boundary"]
+
+[[case]]
+id = "flatten_positional_input"
+description = "FLATTEN with its input given positionally, and the THIS column."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('[3,1,2]')"],
+  ["PARSE_JSON('[]')"],
+  ["NULL"],
+]
+query = "SELECT i.ordinal, f.index, f.value::NUMBER(10,0) AS n, TO_JSON(f.this) AS this FROM input i, LATERAL FLATTEN(i.v) f ORDER BY i.ordinal, f.index"
+order = "ordered"
+tags = ["null", "empty", "array-index"]
+
+[[case]]
+id = "flatten_filtered"
+description = "FLATTEN rows filtered on their value and joined back to the outer row's columns."
+columns = [{ name = "id", type = "NUMBER(10,0)" }, { name = "v", type = "VARIANT" }]
+rows = [
+  ["1", "PARSE_JSON('{\"tags\":[{\"k\":\"a\",\"n\":1},{\"k\":\"b\",\"n\":2}]}')"],
+  ["2", "PARSE_JSON('{\"tags\":[{\"k\":\"a\",\"n\":3},{\"n\":4},{\"k\":null,\"n\":5}]}')"],
+  ["3", "PARSE_JSON('{\"tags\":[]}')"],
+]
+query = "SELECT i.id, t.value:n::NUMBER(10,0) AS n FROM input i, LATERAL FLATTEN(input => i.v:tags) t WHERE t.value:k::VARCHAR = 'a' ORDER BY i.id"
+order = "ordered"
+tags = ["json-null", "missing-key"]
+
+[[case]]
+id = "flatten_after_two_sources"
+description = "FLATTEN over the first of two comma-joined sources."
+columns = [{ name = "id", type = "NUMBER(10,0)" }, { name = "v", type = "VARIANT" }]
+rows = [
+  ["1", "PARSE_JSON('{\"xs\":[10,20]}')"],
+  ["2", "PARSE_JSON('{\"xs\":[30]}')"],
+]
+query = "SELECT a.id AS a_id, b.id AS b_id, f.value::NUMBER(10,0) AS x FROM input a, input b, LATERAL FLATTEN(input => a.v:xs) f ORDER BY a_id, b_id, x"
+order = "ordered"
+tags = ["duplicates"]
+
+[[case]]
+id = "flatten_grouped"
+description = "FLATTEN elements summed and counted per outer row, JSON null elements included."
+columns = [{ name = "id", type = "NUMBER(10,0)" }, { name = "v", type = "VARIANT" }]
+rows = [
+  ["1", "PARSE_JSON('{\"xs\":[1,2,null,4]}')"],
+  ["2", "PARSE_JSON('{\"xs\":[null]}')"],
+  ["3", "PARSE_JSON('{\"xs\":[]}')"],
+]
+query = "SELECT i.id, COUNT(f.value) AS n, COUNT(*) AS r, SUM(f.value::NUMBER(10,0)) AS total FROM input i, LATERAL FLATTEN(input => i.v:xs, OUTER => TRUE) f GROUP BY i.id ORDER BY i.id"
+order = "ordered"
+tags = ["json-null", "empty", "null"]
+
+[[case]]
+id = "flatten_nested_arrays"
+description = "FLATTEN of an array of arrays: each inner array as a value, and its size."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('[[1,2],[],[[3]],null,\"x\"]')"],
+]
+query = "SELECT f.index, TO_JSON(f.value) AS value, TYPEOF(f.value) AS kind FROM input i, LATERAL FLATTEN(input => i.v) f ORDER BY f.index"
+order = "ordered"
+tags = ["nested", "json-null", "array-index"]

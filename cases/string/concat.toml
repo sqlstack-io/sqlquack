@@ -29,3 +29,38 @@ rows = [
 ]
 expression = "a || b"
 tags = ["null", "empty", "whitespace", "unicode"]
+
+[[case]]
+id = "concat_three"
+description = "CONCAT of three arguments with one NULL."
+columns = [{ name = "a", type = "VARCHAR" }, { name = "b", type = "VARCHAR" }, { name = "c", type = "VARCHAR" }]
+rows = [
+  ["'a'", "'b'", "'c'"],
+  ["'a'", "NULL", "'c'"],
+  ["''", "''", "''"],
+]
+expression = "CONCAT(a, b, c)"
+tags = ["null", "empty"]
+
+[[case]]
+id = "concat_number"
+description = "|| with a NUMBER operand converts it to text."
+columns = [{ name = "s", type = "VARCHAR" }, { name = "a", type = "NUMBER(10,2)" }]
+rows = [
+  ["'n='", "1.50"],
+  ["'n='", "NULL"],
+  ["''", "0"],
+]
+expression = "s || a"
+tags = ["null", "empty"]
+
+[[case]]
+id = "concat_ws_absent"
+description = "|| with whitespace and non-ASCII text."
+columns = [{ name = "a", type = "VARCHAR" }]
+rows = [
+  ["' '"],
+  ["'é'"],
+]
+expression = "a || a"
+tags = ["whitespace", "unicode"]

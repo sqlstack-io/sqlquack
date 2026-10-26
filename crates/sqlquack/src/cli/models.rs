@@ -31,6 +31,42 @@ pub enum Command {
     Verify(VerifyArguments),
     /// Sample recorded cases for re-recording, or compare re-recorded results with stored ones.
     Audit(AuditArguments),
+    /// Map building blocks, typing functions and rules to the cases and files relying on them.
+    Index(IndexArguments),
+    /// Write every case, its conversion and its recorded result as sqllogictest-style text.
+    Review(ReviewArguments),
+    /// Convert a SQL project function's body into a DuckDB macro body, printed as JSON.
+    Function(FunctionArguments),
+}
+
+/// Arguments of `sqlquack function`.
+#[derive(Debug, Args)]
+pub struct FunctionArguments {
+    /// The file holding the function's body: a scalar's expression, or a table function's query.
+    pub body: PathBuf,
+    /// The function's name, as the schema declares it.
+    #[arg(long)]
+    pub name: String,
+    /// The schema file declaring the function and the relations its body reads.
+    #[arg(long)]
+    pub schema: PathBuf,
+    /// The policy file whose known divergences conversion may rely on.
+    #[arg(long, default_value = POLICY_FILE_NAME)]
+    pub policy: PathBuf,
+    /// Refuse every known divergence the policy refuses in strict mode.
+    #[arg(long)]
+    pub strict: bool,
+}
+
+/// Arguments of `sqlquack review`.
+#[derive(Debug, Args)]
+pub struct ReviewArguments {
+    /// Where evidence lives.
+    #[command(flatten)]
+    pub paths: EvidencePaths,
+    /// The directory the review files are written to.
+    #[arg(long, default_value = "review")]
+    pub out: PathBuf,
 }
 
 /// Where evidence lives.
@@ -67,6 +103,15 @@ pub struct VerifyArguments {
     /// Print the report as JSON on standard output.
     #[arg(long)]
     pub json: bool,
+    /// Fail unless every equivalence and rule is relied on by at least one passed case.
+    #[arg(long)]
+    pub require_verified: bool,
+    /// Fail when DuckDB's error differs in kind from Snowflake's, or no rule used declares it.
+    #[arg(long)]
+    pub strict_errors: bool,
+    /// Re-recorded results, read for the messages of errors stored without one.
+    #[arg(long, default_value = AUDIT_RESULTS_DIR)]
+    pub audit_results: PathBuf,
 }
 
 /// Arguments of `sqlquack audit`.
@@ -76,8 +121,15 @@ pub struct AuditArguments {
     #[command(flatten)]
     pub paths: EvidencePaths,
     /// The share of recorded cases to re-record, such as `10%`.
-    #[arg(long, conflicts_with = "compare", required_unless_present = "compare")]
+    #[arg(
+        long,
+        conflicts_with_all = ["compare", "errors"],
+        required_unless_present_any = ["compare", "errors"]
+    )]
     pub sample: Option<String>,
+    /// Re-record every case whose stored outcome is a warehouse error, to keep its message.
+    #[arg(long, conflicts_with = "compare")]
+    pub errors: bool,
     /// The sampling seed; the current time when absent, and always printed.
     #[arg(long)]
     pub seed: Option<u64>,
@@ -95,6 +147,28 @@ pub struct AuditArguments {
     pub json: bool,
 }
 
+/// Arguments of `sqlquack index`.
+#[derive(Debug, Args)]
+pub struct IndexArguments {
+    /// Case directories (holding `.toml` case files) and SQL files or directories; default `cases`.
+    pub paths: Vec<PathBuf>,
+    /// The policy file, which case loading checks cases against.
+    #[arg(long, default_value = POLICY_FILE_NAME)]
+    pub policy: PathBuf,
+    /// Refuse every known divergence the policy refuses in strict mode.
+    #[arg(long)]
+    pub strict: bool,
+    /// Print the index as JSON on standard output.
+    #[arg(long)]
+    pub json: bool,
+    /// A JSON file mapping relation names to `[column, Snowflake type]` pairs, for SQL files.
+    #[arg(long)]
+    pub schema: Option<PathBuf>,
+    /// Treat each converted SQL file as the relation its file name references, and convert again.
+    #[arg(long)]
+    pub chain_models: bool,
+}
+
 /// Arguments of `sqlquack census`.
 #[derive(Debug, Args)]
 pub struct CensusArguments {
@@ -110,4 +184,16 @@ pub struct CensusArguments {
     /// Constructs listed in the text report.
     #[arg(long, default_value_t = DEFAULT_TEXT_LIMIT)]
     pub limit: usize,
+    /// A JSON file mapping relation names to `[column, Snowflake type]` pairs.
+    #[arg(long)]
+    pub schema: Option<PathBuf>,
+    /// Treat each converted file as the relation its file name references, and convert again.
+    #[arg(long)]
+    pub chain_models: bool,
+    /// The policy file whose known divergences conversion may rely on; default `sqlquack.toml`.
+    #[arg(long)]
+    pub policy: Option<PathBuf>,
+    /// Refuse every known divergence the policy refuses in strict mode.
+    #[arg(long)]
+    pub strict: bool,
 }

@@ -9,11 +9,11 @@ select = ["FF"]
 analyzer = "rust"
 roots = ["crates"]
 tests = []
-tooling = []
+tooling = ["crates/sqlquack-polyglot-check"]
 rule_packs = ["rust"]
 select = ["FPRS"]
 
-[[targets.rust.rule_exceptions]]
-rule = "FPRSL105"
-path = "crates/sqlquack-core/src/reparse/main/check_duckdb_print.rs"
-reason = "The DuckDB printer check is public library API; its first importer is the rule engine, which lands with the first rules."
+# The tokenizer, parser and tree copied from polyglot keep polyglot's layout until the split step
+# makes them fensu-clean under the exact check (docs/syntax.md).
+[targets.rust.evaluation]
+exclude = ["crates/sqlquack-syntax/**", "crates/sqlquack-syntax-derive/**"]

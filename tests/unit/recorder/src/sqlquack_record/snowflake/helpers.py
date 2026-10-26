@@ -13,11 +13,11 @@ from typing import Any
 
 import pyarrow as pa
 import pytest
-from snowflake.connector.errors import ProgrammingError
+from snowflake.connector.errors import NotSupportedError, ProgrammingError
 
 from sqlquack_record.recording.exceptions import RecorderError
 from sqlquack_record.recording.main.record_pending import record_pending
-from sqlquack_record.recording.models import PendingCase
+from sqlquack_record.recording.models import PendingCase, RecordSummary
 from sqlquack_record.recording.types import SessionParameters, WarehouseSession
 from sqlquack_record.snowflake._helpers import connections
 from sqlquack_record.snowflake._helpers.connections import connect_arguments
@@ -71,28 +71,58 @@ def _raise(error: ProgrammingError) -> None:
     raise error
 
 
-class FakeCursor:
-    """Runs each statement by its scripted behaviour and logs it."""
+def _arrow_table() -> pa.Table:
+    return pa.table({"VALUE": pa.array([1], type=pa.int64())})
 
-    def __init__(self, *, behaviours: dict[str, Callable[[], None]], log: list[str]) -> None:
+
+def _json_result() -> pa.Table:
+    raise NotSupportedError
+
+
+_FETCHES: dict[bool, Callable[[], pa.Table]] = {False: _arrow_table, True: _json_result}
+
+
+_PARAMETER_DESCRIPTIONS: dict[str, tuple[SimpleNamespace, ...]] = {
+    "SHOW PARAMETERS IN SESSION": (SimpleNamespace(name="key"), SimpleNamespace(name="value")),
+}
+
+
+class FakeCursor:
+    """Runs each statement by its scripted behaviour and logs it; some answer in JSON."""
+
+    def __init__(
+        self,
+        *,
+        behaviours: dict[str, Callable[[], None]],
+        json_results: frozenset[str],
+        log: list[str],
+    ) -> None:
         self._behaviours: dict[str, Callable[[], None]] = behaviours
+        self._json_results: frozenset[str] = json_results
         self._log: list[str] = log
+        self._results: list[str] = []
         self.sfqid: str = "fake-query"
         self.description: tuple[SimpleNamespace, ...] = _DESCRIPTION
 
     def execute(self, statement: str, num_statements: int = 1) -> FakeCursor:
         self._log.append(f"{num_statements}:{statement}")
         self._behaviours[statement]()
+        self._results = statement.split(";\n")
+        self.description = _PARAMETER_DESCRIPTIONS.get(statement, _DESCRIPTION)
         return self
+
+    def fetchall(self) -> list[tuple[str, str]]:
+        return [("TIMEZONE", "UTC")]
 
     def fetchone(self) -> tuple[str]:
         return ("0.0.0-fake",)
 
     def fetch_arrow_all(self, force_return_table: bool) -> pa.Table:
-        return pa.table({"VALUE": pa.array([1], type=pa.int64())})
+        return _FETCHES[self._results[0] in self._json_results]()
 
     def nextset(self) -> bool:
-        return True
+        self._results = self._results[1:]
+        return bool(self._results)
 
     def close(self) -> None:
         """Nothing to release."""
@@ -101,12 +131,21 @@ class FakeCursor:
 class FakeConnection:
     """Hands out cursors that share one script and one log."""
 
-    def __init__(self, *, behaviours: dict[str, Callable[[], None]], log: list[str]) -> None:
+    def __init__(
+        self,
+        *,
+        behaviours: dict[str, Callable[[], None]],
+        json_results: frozenset[str],
+        log: list[str],
+    ) -> None:
         self._behaviours: dict[str, Callable[[], None]] = behaviours
+        self._json_results: frozenset[str] = json_results
         self._log: list[str] = log
 
     def cursor(self) -> FakeCursor:
-        return FakeCursor(behaviours=self._behaviours, log=self._log)
+        return FakeCursor(
+            behaviours=self._behaviours, json_results=self._json_results, log=self._log
+        )
 
     def close(self) -> None:
         """Nothing to release."""
@@ -122,8 +161,9 @@ def record_with_fake_connection(
     statements: Sequence[str],
     batch_error: tuple[int, str] | None,
     statement_errors: Sequence[tuple[str, int, str]],
-) -> tuple[tuple[str, ...] | None, tuple[str, ...], int]:
-    """Recorded outcomes (`None` when the run stopped), single-statement runs and files written."""
+    json_results: frozenset[str],
+) -> tuple[tuple[str, ...] | None, tuple[str, ...], int, str]:
+    """Outcomes (`None` when the run stopped), single runs, files written and the report."""
     behaviours: defaultdict[str, Callable[[], None]] = defaultdict(lambda: _succeed)
     behaviours.update(
         {
@@ -140,7 +180,9 @@ def record_with_fake_connection(
     log: list[str] = []
 
     def open_session(_: SessionParameters) -> WarehouseSession:
-        return SnowflakeSession(FakeConnection(behaviours=behaviours, log=log))
+        return SnowflakeSession(
+            FakeConnection(behaviours=behaviours, json_results=json_results, log=log)
+        )
 
     cases: list[PendingCase] = [
         PendingCase(
@@ -155,23 +197,38 @@ def record_with_fake_connection(
     ]
     results: Path = directory / "results"
     outcomes: tuple[str, ...] | None = None
+    message: str = ""
     try:
-        record_pending(
+        summary: RecordSummary = record_pending(
             cases=cases,
             results=results,
             open_session=open_session,
-            batch_size=10,
+            batch_size=2,
             clock=lambda: "2026-01-01T00:00:00Z",
         )
-        outcomes = tuple(
-            str(json.loads((results / f"{case.case_hash}.json").read_text("utf-8"))["outcome"])
-            for case in cases
-        )
-    except RecorderError:
-        pass
+        outcomes = tuple(_outcome(results / f"{case.case_hash}.json") for case in cases)
+        message = "; ".join(f"{reference}: {reason}" for reference, reason in summary.refused)
+    except RecorderError as error:
+        message = str(error)
     single_runs: frozenset[str] = frozenset(f"1:{statement}" for statement in statements)
     return (
         outcomes,
         tuple(entry.removeprefix("1:") for entry in filter(single_runs.__contains__, log)),
         len(list(results.iterdir())),
+        message,
     )
+
+
+def _stored_outcome(path: Path) -> str:
+    return str(json.loads(path.read_text("utf-8"))["outcome"])
+
+
+def _refused(_: Path) -> str:
+    return "refused"
+
+
+_OUTCOMES: dict[bool, Callable[[Path], str]] = {True: _stored_outcome, False: _refused}
+
+
+def _outcome(path: Path) -> str:
+    return _OUTCOMES[path.exists()](path)

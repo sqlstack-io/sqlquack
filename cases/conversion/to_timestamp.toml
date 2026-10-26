@@ -1,0 +1,74 @@
+category = "conversion"
+construct = "cast:TIMESTAMP_NTZ"
+session_profile = "utc-v1"
+
+[[case]]
+id = "text_to_timestamp_ntz"
+description = "Text to TIMESTAMP_NTZ."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'2024-02-29 13:45:01'"],
+  ["'2024-02-29 13:45:01.123456789'"],
+  ["'2024-02-29'"],
+  ["NULL"],
+]
+expression = "CAST(s AS TIMESTAMP_NTZ)"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "text_to_timestamp_lenient"
+description = "Other timestamp spellings."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'2024-02-29T13:45:01'"],
+  ["'2024-02-29 13:45'"],
+  ["'2024-02-29 13:45:01Z'"],
+  ["'02/29/2024 13:45:01'"],
+  ["'1709214301'"],
+]
+expression = "TRY_CAST(s AS TIMESTAMP_NTZ)"
+tags = ["boundary", "invalid"]
+
+[[case]]
+id = "text_to_timestamp_invalid"
+description = "Text that is not a timestamp."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'2024-02-29 25:00:00'"],
+]
+expression = "CAST(s AS TIMESTAMP_NTZ)"
+tags = ["invalid"]
+
+[[case]]
+id = "date_to_timestamp"
+description = "DATE to TIMESTAMP_NTZ is midnight."
+columns = [{ name = "d", type = "DATE" }]
+rows = [
+  ["'2024-02-29'"],
+  ["NULL"],
+]
+expression = "d::TIMESTAMP_NTZ"
+tags = ["null"]
+
+[[case]]
+id = "plain_timestamp"
+description = "TIMESTAMP follows TIMESTAMP_TYPE_MAPPING, here TIMESTAMP_NTZ."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'2024-02-29 13:45:01'"],
+  ["NULL"],
+]
+expression = "s::TIMESTAMP"
+tags = ["null"]
+
+[[case]]
+id = "timestamp_tz_from_text"
+description = "Text with an offset to TIMESTAMP_TZ."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'2024-02-29 13:45:01 +02:00'"],
+  ["'2024-02-29 13:45:01'"],
+  ["NULL"],
+]
+expression = "s::TIMESTAMP_TZ"
+tags = ["null", "boundary"]

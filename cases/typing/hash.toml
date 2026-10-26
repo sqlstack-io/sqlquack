@@ -1,0 +1,22 @@
+category = "numeric"
+construct = "fn:HASH"
+session_profile = "utc-v1"
+evidence = "typing"
+
+[[case]]
+id = "hash_number"
+description = "HASH of one fixed-point column: its result type."
+columns = [{ name = "n", type = "NUMBER(38,0)" }]
+rows = [["0"], ["-1"], ["99999999999999999999999999999999999999"], ["NULL"]]
+expression = "HASH(n)"
+tags = ["null", "zero", "negative", "boundary"]
+values = false
+
+[[case]]
+id = "hash_columns"
+description = "HASH of several columns of different types."
+columns = [{ name = "n", type = "NUMBER(10,2)" }, { name = "s", type = "VARCHAR" }]
+rows = [["1.50", "'a'"], ["NULL", "NULL"], ["-0.01", "''"]]
+expression = "HASH(n, s)"
+tags = ["null", "negative"]
+values = false

@@ -1,7 +1,7 @@
 use std::collections::BTreeSet;
 
-use polyglot_sql::Expression;
-use polyglot_sql::traversal::ExpressionWalk;
+use sqlquack_syntax::Expression;
+use sqlquack_syntax::ExpressionWalk;
 
 use crate::classification::main::classify::classify;
 use crate::classification::models::{ConstructFamily, Occurrence};

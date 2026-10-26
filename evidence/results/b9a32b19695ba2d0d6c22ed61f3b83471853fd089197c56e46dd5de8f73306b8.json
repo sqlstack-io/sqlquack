@@ -1,0 +1,28 @@
+{
+  "arrow_sha256": null,
+  "case_hash": "b9a32b19695ba2d0d6c22ed61f3b83471853fd089197c56e46dd5de8f73306b8",
+  "columns": [],
+  "connector": "snowflake-connector-python 4.7.2",
+  "duckdb_version": "v2.0.0",
+  "error": {
+    "errno": 100038,
+    "message": "Numeric value 'x1' is not recognized",
+    "sqlstate": "22018"
+  },
+  "format": 1,
+  "outcome": "error",
+  "query_id_sha256": "2f9b1bdc0e1721d9040f8667196b0e02be3059dada9f8b79cf24972363793578",
+  "recorded_at": "2026-10-26T07:49:01Z",
+  "recorder": "sqlquack-record 0.1.0",
+  "row_count": null,
+  "session_parameters": {
+    "DEFAULT_NULL_ORDERING": "LAST",
+    "QUOTED_IDENTIFIERS_IGNORE_CASE": false,
+    "TIMESTAMP_TYPE_MAPPING": "TIMESTAMP_NTZ",
+    "TIMEZONE": "UTC",
+    "USE_CACHED_RESULT": false,
+    "WEEK_OF_YEAR_POLICY": 0,
+    "WEEK_START": 0
+  },
+  "warehouse_version": "10.38.102"
+}

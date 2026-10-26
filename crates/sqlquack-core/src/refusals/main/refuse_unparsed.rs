@@ -3,7 +3,7 @@
 use crate::parsing::errors::ParseFailure;
 use crate::refusals::models::{Refusal, RefusalCategory};
 
-/// Refuses a whole input that polyglot could not parse.
+/// Refuses a whole input that could not be parsed.
 pub fn refuse_unparsed(failure: &ParseFailure) -> Refusal {
     Refusal {
         construct: None,

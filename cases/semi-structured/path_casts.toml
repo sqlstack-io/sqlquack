@@ -1,0 +1,454 @@
+category = "semi-structured"
+construct = "fn:GET_PATH"
+session_profile = "utc-v1"
+
+[[case]]
+id = "path_to_varchar"
+description = "A key's value cast to VARCHAR for each JSON type, a missing key and JSON null."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('{\"a\":\"x\"}')"],
+  ["PARSE_JSON('{\"a\":12}')"],
+  ["PARSE_JSON('{\"a\":1.50}')"],
+  ["PARSE_JSON('{\"a\":true}')"],
+  ["PARSE_JSON('{\"a\":null}')"],
+  ["PARSE_JSON('{}')"],
+  ["PARSE_JSON('{\"a\":{\"b\":1}}')"],
+  ["PARSE_JSON('{\"a\":[1,2]}')"],
+  ["PARSE_JSON('{\"A\":\"upper\"}')"],
+  ["NULL"],
+  ["PARSE_JSON('{\"a\":\"ü\"}')"],
+  ["PARSE_JSON('{\"a\":\"\"}')"],
+  ["PARSE_JSON('{\"a\":12345678901234567890}')"],
+  ["PARSE_JSON('{\"a\":0.1}')"],
+]
+expression = "v:a::VARCHAR"
+tags = ["null", "json-null", "missing-key", "nested", "case-sensitive-key", "unicode"]
+
+[[case]]
+id = "path_to_number"
+description = "A key's value cast to NUMBER(10,2): numbers round, numeric strings convert."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('{\"a\":12}')"],
+  ["PARSE_JSON('{\"a\":1.005}')"],
+  ["PARSE_JSON('{\"a\":-1.005}')"],
+  ["PARSE_JSON('{\"a\":\"12.345\"}')"],
+  ["PARSE_JSON('{\"a\":\" 7 \"}')"],
+  ["PARSE_JSON('{\"a\":null}')"],
+  ["PARSE_JSON('{}')"],
+  ["PARSE_JSON('{\"a\":-0.005}')"],
+  ["NULL"],
+  ["PARSE_JSON('{\"a\":\"1e1\"}')"],
+]
+expression = "v:a::NUMBER(10,2)"
+tags = ["null", "json-null", "missing-key", "boundary"]
+
+[[case]]
+id = "path_to_number_invalid_1"
+description = "A key holding {\"a\":\"x\"} raises or converts."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('{\"a\":\"x\"}')"],
+]
+expression = "v:a::NUMBER(10,2)"
+tags = ["invalid"]
+
+[[case]]
+id = "path_to_number_invalid_2"
+description = "A key holding {\"a\":true} raises or converts."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('{\"a\":true}')"],
+]
+expression = "v:a::NUMBER(10,2)"
+tags = ["invalid"]
+
+[[case]]
+id = "path_to_number_invalid_3"
+description = "A key holding {\"a\":{\"b\":1}} raises or converts."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('{\"a\":{\"b\":1}}')"],
+]
+expression = "v:a::NUMBER(10,2)"
+tags = ["invalid"]
+
+[[case]]
+id = "path_to_number_invalid_4"
+description = "A key holding {\"a\":[1]} raises or converts."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('{\"a\":[1]}')"],
+]
+expression = "v:a::NUMBER(10,2)"
+tags = ["invalid"]
+
+[[case]]
+id = "path_to_number_invalid_5"
+description = "A key holding {\"a\":123456789012} raises or converts."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('{\"a\":123456789012}')"],
+]
+expression = "v:a::NUMBER(10,2)"
+tags = ["invalid"]
+
+[[case]]
+id = "path_to_integer"
+description = "A key's value cast to INTEGER: halves round away from zero."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('{\"a\":2.5}')"],
+  ["PARSE_JSON('{\"a\":-2.5}')"],
+  ["PARSE_JSON('{\"a\":\"3.5\"}')"],
+  ["PARSE_JSON('{\"a\":12345678901234567890123}')"],
+  ["PARSE_JSON('{\"a\":0}')"],
+  ["PARSE_JSON('{\"a\":null}')"],
+]
+expression = "v:a::INTEGER"
+tags = ["json-null", "boundary"]
+
+[[case]]
+id = "path_to_float"
+description = "A key's value cast to FLOAT."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('{\"a\":1.5}')"],
+  ["PARSE_JSON('{\"a\":12}')"],
+  ["PARSE_JSON('{\"a\":\"2.5\"}')"],
+  ["PARSE_JSON('{\"a\":12345678901234567890123}')"],
+  ["PARSE_JSON('{\"a\":null}')"],
+  ["PARSE_JSON('{}')"],
+  ["PARSE_JSON('{\"a\":\"NaN\"}')"],
+  ["PARSE_JSON('{\"a\":\"-inf\"}')"],
+]
+expression = "v:a::FLOAT"
+tags = ["json-null", "missing-key", "boundary"]
+
+[[case]]
+id = "path_to_boolean"
+description = "A key's value cast to BOOLEAN from booleans, numbers and strings."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('{\"a\":true}')"],
+  ["PARSE_JSON('{\"a\":false}')"],
+  ["PARSE_JSON('{\"a\":\"true\"}')"],
+  ["PARSE_JSON('{\"a\":\"no\"}')"],
+  ["PARSE_JSON('{\"a\":1}')"],
+  ["PARSE_JSON('{\"a\":0}')"],
+  ["PARSE_JSON('{\"a\":0.5}')"],
+  ["PARSE_JSON('{\"a\":null}')"],
+  ["PARSE_JSON('{}')"],
+]
+expression = "v:a::BOOLEAN"
+tags = ["json-null", "missing-key"]
+
+[[case]]
+id = "path_to_boolean_invalid_1"
+description = "A key holding {\"a\":\"maybe\"} raises or converts."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('{\"a\":\"maybe\"}')"],
+]
+expression = "v:a::BOOLEAN"
+tags = ["invalid"]
+
+[[case]]
+id = "path_to_boolean_invalid_2"
+description = "A key holding {\"a\":[true]} raises or converts."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('{\"a\":[true]}')"],
+]
+expression = "v:a::BOOLEAN"
+tags = ["invalid"]
+
+[[case]]
+id = "path_to_date"
+description = "A key's value cast to DATE from ISO text."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('{\"a\":\"2024-02-29\"}')"],
+  ["PARSE_JSON('{\"a\":\"2024-02-29T13:45:01\"}')"],
+  ["PARSE_JSON('{\"a\":\"2024-02-29 13:45:01.5\"}')"],
+  ["PARSE_JSON('{\"a\":null}')"],
+  ["PARSE_JSON('{}')"],
+]
+expression = "v:a::DATE"
+tags = ["json-null", "missing-key", "boundary"]
+
+[[case]]
+id = "path_to_timestamp"
+description = "A key's value cast to TIMESTAMP_NTZ from ISO text with and without zones."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('{\"a\":\"2024-02-29T13:45:01.123456789Z\"}')"],
+  ["PARSE_JSON('{\"a\":\"2024-02-29 13:45:01\"}')"],
+  ["PARSE_JSON('{\"a\":\"2024-02-29T13:45:01+02:00\"}')"],
+  ["PARSE_JSON('{\"a\":\"2024-02-29\"}')"],
+  ["PARSE_JSON('{\"a\":null}')"],
+  ["PARSE_JSON('{}')"],
+]
+expression = "v:a::TIMESTAMP_NTZ"
+tags = ["json-null", "missing-key", "boundary"]
+
+[[case]]
+id = "path_number_to_timestamp"
+description = "A key holding an integer cast to TIMESTAMP_NTZ."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('{\"a\":1709214301}')"],
+  ["PARSE_JSON('{\"a\":0}')"],
+]
+expression = "v:a::TIMESTAMP_NTZ"
+tags = ["boundary"]
+
+[[case]]
+id = "path_number_to_timestamp_beyond_range"
+description = "A key holding an integer Snowflake reads as epoch seconds past DuckDB's nanosecond range."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('{\"a\":1709214301123}')"],
+]
+expression = "v:a::TIMESTAMP_NTZ"
+expected_divergence = "timestamp_range"
+tags = ["boundary"]
+
+[[case]]
+id = "nested_array_path"
+description = "A nested path through an array index, past the end and on non-arrays."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('{\"a\":{\"b\":[{\"c\":\"x\"},{\"c\":\"y\"}]}}')"],
+  ["PARSE_JSON('{\"a\":{\"b\":[]}}')"],
+  ["PARSE_JSON('{\"a\":{\"b\":{\"0\":{\"c\":\"z\"}}}}')"],
+  ["PARSE_JSON('{\"a\":{\"b\":[{\"C\":\"upper\"}]}}')"],
+  ["PARSE_JSON('{\"a\":null}')"],
+  ["NULL"],
+]
+expression = "v:a.b[0].c::VARCHAR"
+tags = ["array-index", "nested", "missing-key", "case-sensitive-key", "null"]
+
+[[case]]
+id = "bracket_path"
+description = "Bracket access by key and by index."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('{\"a\":{\"b\":\"x\"}}')"],
+  ["PARSE_JSON('{\"a\":[\"p\",\"q\"]}')"],
+  ["PARSE_JSON('{\"A\":{\"b\":\"upper\"}}')"],
+  ["PARSE_JSON('[1,2]')"],
+  ["NULL"],
+]
+expression = "COALESCE(v['a']['b']::VARCHAR, v['a'][1]::VARCHAR, v[0]::VARCHAR)"
+tags = ["array-index", "nested", "case-sensitive-key", "null"]
+
+[[case]]
+id = "quoted_and_special_keys"
+description = "Quoted keys, keys with spaces and keys containing dots."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('{\"A\":\"upper\",\"a\":\"lower\"}')"],
+  ["PARSE_JSON('{\"a b\":\"space\"}')"],
+  ["PARSE_JSON('{\"a.b\":\"dotted\",\"a\":{\"b\":\"nested\"}}')"],
+  ["PARSE_JSON('{}')"],
+]
+expression = "COALESCE(v:\"A\"::VARCHAR, '-') || '|' || COALESCE(v:\"a b\"::VARCHAR, '-') || '|' || COALESCE(v:\"a.b\"::VARCHAR, '-') || '|' || COALESCE(v:a.b::VARCHAR, '-')"
+tags = ["case-sensitive-key", "missing-key", "nested"]
+
+[[case]]
+id = "get_path_and_get"
+description = "GET_PATH and GET with keys and indexes."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('{\"a\":{\"b\":[10,20]}}')"],
+  ["PARSE_JSON('{\"a\":{\"b\":[]}}')"],
+  ["PARSE_JSON('{\"a\":null}')"],
+  ["PARSE_JSON('[5]')"],
+  ["NULL"],
+]
+expression = "COALESCE(GET_PATH(v, 'a.b[1]')::VARCHAR, GET(v, 'a')::VARCHAR, GET(v, 0)::VARCHAR)"
+tags = ["array-index", "nested", "json-null", "null"]
+
+[[case]]
+id = "get_ignore_case"
+description = "GET_IGNORE_CASE with keys in different cases and duplicates by case."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('{\"A\":1}')"],
+  ["PARSE_JSON('{\"a\":2}')"],
+  ["PARSE_JSON('{\"a\":3,\"A\":4}')"],
+  ["PARSE_JSON('{\"b\":5}')"],
+  ["PARSE_JSON('{\"a\":null}')"],
+  ["NULL"],
+]
+expression = "GET_IGNORE_CASE(v, 'a')::VARCHAR"
+tags = ["case-sensitive-key", "missing-key", "json-null", "null"]
+
+[[case]]
+id = "path_is_null"
+description = "IS NULL on a path: JSON null, a missing key and SQL NULL."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('{\"a\":null}')"],
+  ["PARSE_JSON('{}')"],
+  ["PARSE_JSON('{\"a\":1}')"],
+  ["NULL"],
+]
+expression = "v:a IS NULL"
+tags = ["json-null", "missing-key", "null"]
+
+[[case]]
+id = "is_null_value"
+description = "IS_NULL_VALUE on a path: JSON null, a missing key and SQL NULL."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('{\"a\":null}')"],
+  ["PARSE_JSON('{}')"],
+  ["PARSE_JSON('{\"a\":1}')"],
+  ["NULL"],
+]
+expression = "IS_NULL_VALUE(v:a)"
+tags = ["json-null", "missing-key", "null"]
+
+[[case]]
+id = "typeof_path"
+description = "TYPEOF of a path's value."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('{\"a\":\"x\"}')"],
+  ["PARSE_JSON('{\"a\":12}')"],
+  ["PARSE_JSON('{\"a\":1.5}')"],
+  ["PARSE_JSON('{\"a\":true}')"],
+  ["PARSE_JSON('{\"a\":null}')"],
+  ["PARSE_JSON('{}')"],
+  ["PARSE_JSON('{\"a\":{}}')"],
+  ["PARSE_JSON('{\"a\":[]}')"],
+  ["NULL"],
+]
+expression = "TYPEOF(v:a)"
+tags = ["json-null", "missing-key", "null", "nested"]
+
+[[case]]
+id = "array_size_path"
+description = "ARRAY_SIZE of arrays, an empty array, objects, scalars and JSON null."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('{\"a\":[1,2,3]}')"],
+  ["PARSE_JSON('{\"a\":[]}')"],
+  ["PARSE_JSON('{\"a\":{\"b\":1}}')"],
+  ["PARSE_JSON('{\"a\":\"x\"}')"],
+  ["PARSE_JSON('{\"a\":null}')"],
+  ["PARSE_JSON('{}')"],
+  ["NULL"],
+  ["PARSE_JSON('{\"a\":[[1,2],[3]]}')"],
+]
+expression = "ARRAY_SIZE(v:a)"
+tags = ["array-index", "json-null", "missing-key", "null"]
+
+[[case]]
+id = "path_equals_text"
+description = "A path compared with text without a cast."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('{\"a\":\"x\"}')"],
+  ["PARSE_JSON('{\"a\":\"X\"}')"],
+  ["PARSE_JSON('{\"a\":1}')"],
+  ["PARSE_JSON('{\"a\":null}')"],
+  ["PARSE_JSON('{}')"],
+]
+expression = "v:a = 'x'"
+tags = ["json-null", "missing-key", "case-sensitive-key"]
+
+[[case]]
+id = "path_equals_number"
+description = "A path compared with a number without a cast."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('{\"a\":1}')"],
+  ["PARSE_JSON('{\"a\":1.0}')"],
+  ["PARSE_JSON('{\"a\":\"1\"}')"],
+  ["PARSE_JSON('{\"a\":2}')"],
+  ["PARSE_JSON('{\"a\":null}')"],
+]
+expression = "v:a = 1"
+tags = ["json-null", "boundary"]
+
+[[case]]
+id = "path_to_json"
+description = "TO_JSON of a path's value."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('{\"a\":\"x\"}')"],
+  ["PARSE_JSON('{\"a\":null}')"],
+  ["PARSE_JSON('{}')"],
+]
+expression = "TO_JSON(v:a)"
+tags = ["nested", "json-null", "missing-key"]
+
+[[case]]
+id = "path_to_varchar_guard_1"
+description = "path to varchar of one document the JSON guard raises for."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('{\"a\":1e2}')"],
+]
+expression = "v:a::VARCHAR"
+expected_divergence = "json_fidelity"
+tags = ["boundary"]
+
+[[case]]
+id = "path_to_varchar_guard_2"
+description = "path to varchar of one document the JSON guard raises for."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('{\"a\":-0.0}')"],
+]
+expression = "v:a::VARCHAR"
+expected_divergence = "json_fidelity"
+tags = ["boundary"]
+
+[[case]]
+id = "path_to_number_guard_1"
+description = "path to number of one document the JSON guard raises for."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('{\"a\":1e2}')"],
+]
+expression = "v:a::NUMBER(10,2)"
+expected_divergence = "json_fidelity"
+tags = ["boundary"]
+
+[[case]]
+id = "path_to_float_guard_1"
+description = "path to float of one document the JSON guard raises for."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('{\"a\":1e308}')"],
+]
+expression = "v:a::FLOAT"
+expected_divergence = "json_fidelity"
+tags = ["boundary"]
+
+[[case]]
+id = "typeof_path_guard_1"
+description = "typeof path of one document the JSON guard raises for."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('{\"a\":1e3}')"],
+]
+expression = "TYPEOF(v:a)"
+expected_divergence = "json_fidelity"
+tags = ["boundary"]
+
+[[case]]
+id = "path_to_json_guard_1"
+description = "path to json of one document the JSON guard raises for."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('{\"a\":{\"z\":1,\"y\":[true,null]}}')"],
+]
+expression = "TO_JSON(v:a)"
+expected_divergence = "json_fidelity"
+tags = ["boundary"]

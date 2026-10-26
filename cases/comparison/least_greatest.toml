@@ -1,0 +1,42 @@
+category = "comparison"
+construct = "fn:LEAST"
+session_profile = "utc-v1"
+
+[[case]]
+id = "least_greatest_numbers"
+description = "LEAST and GREATEST of numbers with different scales and NULL."
+columns = [{ name = "a", type = "NUMBER(10,2)" }, { name = "b", type = "NUMBER(10,0)" }]
+rows = [
+  ["1.50", "2"],
+  ["2.00", "2"],
+  ["-1.00", "-2"],
+  ["NULL", "1"],
+  ["1.00", "NULL"],
+]
+expression = "LEAST(a, b)::VARCHAR || '|' || GREATEST(a, b)::VARCHAR"
+tags = ["null", "ties", "mixed-types"]
+
+[[case]]
+id = "least_text"
+description = "LEAST and GREATEST of text compare bytewise."
+columns = [{ name = "s", type = "VARCHAR" }, { name = "t", type = "VARCHAR" }]
+rows = [
+  ["'a'", "'B'"],
+  ["'é'", "'z'"],
+  ["''", "' '"],
+  ["NULL", "'x'"],
+]
+expression = "COALESCE(LEAST(s, t), 'null') || '|' || COALESCE(GREATEST(s, t), 'null')"
+tags = ["null", "ties"]
+
+[[case]]
+id = "least_three"
+description = "LEAST of three arguments with a NULL among them."
+columns = [{ name = "a", type = "NUMBER(10,0)" }, { name = "b", type = "NUMBER(10,0)" }, { name = "c", type = "NUMBER(10,0)" }]
+rows = [
+  ["3", "1", "2"],
+  ["3", "NULL", "2"],
+  ["1", "1", "1"],
+]
+expression = "LEAST(a, b, c)"
+tags = ["null", "ties"]

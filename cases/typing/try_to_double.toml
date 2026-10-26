@@ -1,0 +1,13 @@
+category = "conversion"
+construct = "fn:TRY_TO_DOUBLE"
+session_profile = "utc-v1"
+evidence = "typing"
+
+[[case]]
+id = "try_to_double_text"
+description = "TRY_TO_DOUBLE of text, including overflow and invalid text: its result type."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [["'1.5'"], ["'1e308'"], ["'1e309'"], ["'NaN'"], ["'x'"], ["NULL"]]
+expression = "TRY_TO_DOUBLE(s)"
+tags = ["null", "invalid", "boundary"]
+values = false

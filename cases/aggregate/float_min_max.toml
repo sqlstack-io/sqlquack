@@ -1,0 +1,41 @@
+category = "aggregate"
+construct = "fn:MAX"
+session_profile = "utc-v1"
+
+[[case]]
+id = "float_min_max_groups"
+description = "MIN and MAX of FLOAT per group: infinities, NaN, signed zeros, all-NULL and one-value groups."
+columns = [{ name = "g", type = "VARCHAR" }, { name = "f", type = "FLOAT" }]
+rows = [
+  ["'a'", "1.5"],
+  ["'a'", "-2.25"],
+  ["'a'", "NULL"],
+  ["'b'", "'inf'::FLOAT"],
+  ["'b'", "'-inf'::FLOAT"],
+  ["'b'", "0"],
+  ["'c'", "'nan'::FLOAT"],
+  ["'c'", "1e300"],
+  ["'d'", "NULL"],
+  ["'e'", "-0.5"],
+]
+query = "SELECT g, MIN(f) AS lo, MAX(f) AS hi FROM input GROUP BY g ORDER BY g"
+order = "ordered"
+tags = ["null", "duplicates"]
+
+[[case]]
+id = "float_max_window"
+description = "MAX of FLOAT over a window partition."
+columns = [{ name = "g", type = "VARCHAR" }, { name = "f", type = "FLOAT" }]
+rows = [["'a'", "0.1"], ["'a'", "0.2"], ["'b'", "NULL"], ["'b'", "-1e-300"]]
+query = "SELECT g, f, MAX(f) OVER (PARTITION BY g) AS hi FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "duplicates"]
+
+[[case]]
+id = "float_min_max_empty"
+description = "MIN and MAX of FLOAT over no rows are NULL."
+columns = [{ name = "f", type = "FLOAT" }]
+rows = [["1.0"]]
+query = "SELECT MIN(f) AS lo, MAX(f) AS hi FROM input WHERE f > 2"
+order = "ordered"
+tags = ["empty-input"]

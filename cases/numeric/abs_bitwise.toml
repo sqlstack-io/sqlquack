@@ -1,0 +1,45 @@
+category = "numeric"
+construct = "fn:ABS"
+session_profile = "utc-v1"
+
+[[case]]
+id = "abs_numbers"
+description = "ABS of NUMBER and FLOAT values keeps their types: zero, negatives and the largest values."
+columns = [{ name = "n", type = "NUMBER(10,2)" }, { name = "i", type = "NUMBER(38,0)" }, { name = "f", type = "FLOAT" }]
+rows = [
+  ["-1.50", "-99999999999999999999999999999999999999", "-0.5"],
+  ["0", "0", "0"],
+  ["2.25", "7", "1e300"],
+  ["-0.01", "-1", "-0.0"],
+  ["NULL", "NULL", "NULL"],
+]
+query = "SELECT ABS(n) AS a, ABS(i) AS b, ABS(f) AS c FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "zero", "negative", "boundary"]
+
+[[case]]
+id = "bitwise_integers"
+description = "BITAND, BITOR and BITXOR of integers, negatives in two's complement."
+columns = [{ name = "a", type = "NUMBER(10,0)" }, { name = "b", type = "NUMBER(10,0)" }]
+rows = [["12", "10"], ["-1", "255"], ["0", "7"], ["-8", "-3"], ["2147483647", "1"], ["NULL", "1"]]
+query = "SELECT BITAND(a, b) AS x, BITOR(a, b) AS y, BITXOR(a, b) AS z FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "zero", "negative", "boundary"]
+
+[[case]]
+id = "bitand_flags"
+description = "BITAND testing flag bits, as the census does, compared with zero."
+columns = [{ name = "flags", type = "NUMBER(38,0)" }]
+rows = [["5"], ["2"], ["0"], ["NULL"]]
+query = "SELECT BITAND(flags, 4) > 0 AS has_four, BITAND(flags, 1) AS one FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "zero"]
+
+[[case]]
+id = "bitwise_mixed_precision"
+description = "BITAND and BITOR of a NUMBER(5,0) and a NUMBER(12,0): the result's precision."
+columns = [{ name = "a", type = "NUMBER(5,0)" }, { name = "b", type = "NUMBER(12,0)" }]
+rows = [["99999", "123456789012"], ["-1", "65536"], ["NULL", "NULL"]]
+query = "SELECT BITAND(a, b) AS x, BITOR(a, b) AS y FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "negative", "boundary"]

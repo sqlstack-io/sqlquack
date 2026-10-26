@@ -1,0 +1,20 @@
+category = "comparison"
+construct = "node:null_safe_neq"
+session_profile = "utc-v1"
+
+[[case]]
+id = "distinct_from_values"
+description = "IS DISTINCT FROM and IS NOT DISTINCT FROM with NULLs, ties and mixed NUMBER types."
+columns = [{ name = "a", type = "NUMBER(10,2)" }, { name = "b", type = "NUMBER(38,0)" }]
+rows = [["1.00", "1"], ["1.50", "1"], ["NULL", "1"], ["1.00", "NULL"], ["NULL", "NULL"]]
+query = "SELECT a IS DISTINCT FROM b AS d, a IS NOT DISTINCT FROM b AS s FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "ties", "mixed-types"]
+
+[[case]]
+id = "distinct_from_text"
+description = "IS DISTINCT FROM on text: case and trailing spaces matter, NULL equals NULL."
+columns = [{ name = "a", type = "VARCHAR" }, { name = "b", type = "VARCHAR" }]
+rows = [["'gift'", "'gift'"], ["'gift'", "'Gift'"], ["'gift'", "'gift '"], ["NULL", "NULL"], ["''", "NULL"]]
+expression = "a IS DISTINCT FROM b"
+tags = ["null", "ties"]

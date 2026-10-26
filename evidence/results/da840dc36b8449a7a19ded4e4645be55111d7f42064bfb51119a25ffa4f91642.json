@@ -1,0 +1,28 @@
+{
+  "arrow_sha256": null,
+  "case_hash": "da840dc36b8449a7a19ded4e4645be55111d7f42064bfb51119a25ffa4f91642",
+  "columns": [],
+  "connector": "snowflake-connector-python 4.7.2",
+  "duckdb_version": "v2.0.0",
+  "error": {
+    "errno": 100097,
+    "message": "Can't parse '29-02-23' as date with format 'DD-MM-YY'",
+    "sqlstate": "22007"
+  },
+  "format": 1,
+  "outcome": "error",
+  "query_id_sha256": "9b17fc52baeb995818e4cb8a4740d0b8728ef17e4be189f8eb8e6f52a262a66b",
+  "recorded_at": "2026-10-26T07:49:01Z",
+  "recorder": "sqlquack-record 0.1.0",
+  "row_count": null,
+  "session_parameters": {
+    "DEFAULT_NULL_ORDERING": "LAST",
+    "QUOTED_IDENTIFIERS_IGNORE_CASE": false,
+    "TIMESTAMP_TYPE_MAPPING": "TIMESTAMP_NTZ",
+    "TIMEZONE": "UTC",
+    "USE_CACHED_RESULT": false,
+    "WEEK_OF_YEAR_POLICY": 0,
+    "WEEK_START": 0
+  },
+  "warehouse_version": "10.38.102"
+}

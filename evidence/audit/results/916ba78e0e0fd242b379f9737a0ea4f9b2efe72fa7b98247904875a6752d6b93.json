@@ -1,0 +1,28 @@
+{
+  "arrow_sha256": null,
+  "case_hash": "916ba78e0e0fd242b379f9737a0ea4f9b2efe72fa7b98247904875a6752d6b93",
+  "columns": [],
+  "connector": "snowflake-connector-python 4.7.2",
+  "duckdb_version": "v2.0.0",
+  "error": {
+    "errno": 100069,
+    "message": "Error parsing JSON: missing comma, pos 5",
+    "sqlstate": "22P02"
+  },
+  "format": 1,
+  "outcome": "error",
+  "query_id_sha256": "de7fcb9f5f4e65600c7d719e0b2ff89f3884aac83dcb9b49e793246d7c7ef91a",
+  "recorded_at": "2026-10-25T23:17:22Z",
+  "recorder": "sqlquack-record 0.1.0",
+  "row_count": null,
+  "session_parameters": {
+    "DEFAULT_NULL_ORDERING": "LAST",
+    "QUOTED_IDENTIFIERS_IGNORE_CASE": false,
+    "TIMESTAMP_TYPE_MAPPING": "TIMESTAMP_NTZ",
+    "TIMEZONE": "UTC",
+    "USE_CACHED_RESULT": false,
+    "WEEK_OF_YEAR_POLICY": 0,
+    "WEEK_START": 0
+  },
+  "warehouse_version": "10.38.102"
+}

@@ -1,0 +1,28 @@
+{
+  "arrow_sha256": null,
+  "case_hash": "e102a4a2cbecf9eb099c4ee17fae1e1b6e8b7ff92ee330f869b66df4d4458b0a",
+  "columns": [],
+  "connector": "snowflake-connector-python 4.7.2",
+  "duckdb_version": "v2.0.0",
+  "error": {
+    "errno": 100040,
+    "message": "Date '2024/02/29' is not recognized",
+    "sqlstate": "22007"
+  },
+  "format": 1,
+  "outcome": "error",
+  "query_id_sha256": "b48c0974838828624dbbd9848fe8c782aeb3c85c6595217397dac97e1ba0d069",
+  "recorded_at": "2026-10-25T23:17:22Z",
+  "recorder": "sqlquack-record 0.1.0",
+  "row_count": null,
+  "session_parameters": {
+    "DEFAULT_NULL_ORDERING": "LAST",
+    "QUOTED_IDENTIFIERS_IGNORE_CASE": false,
+    "TIMESTAMP_TYPE_MAPPING": "TIMESTAMP_NTZ",
+    "TIMEZONE": "UTC",
+    "USE_CACHED_RESULT": false,
+    "WEEK_OF_YEAR_POLICY": 0,
+    "WEEK_START": 0
+  },
+  "warehouse_version": "10.38.102"
+}

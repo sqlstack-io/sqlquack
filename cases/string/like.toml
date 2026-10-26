@@ -1,0 +1,67 @@
+category = "string"
+construct = "node:like"
+session_profile = "utc-v1"
+
+[[case]]
+id = "like_patterns"
+description = "LIKE with %, _, case, escaped wildcards, trailing spaces and line breaks."
+columns = [{ name = "s", type = "VARCHAR" }, { name = "p", type = "VARCHAR" }]
+rows = [
+  ["'abc'", "'a%'"],
+  ["'abc'", "'a_c'"],
+  ["'abc'", "'A%'"],
+  ["'a%c'", "'a\\\\%c'"],
+  ["'abc'", "'a\\\\%c'"],
+  ["'ab '", "'ab'"],
+  ["''", "'%'"],
+  ["NULL", "'%'"],
+  ["'ünï'", "'_n_'"],
+  ["'a\nb'", "'a_b'"],
+]
+expression = "s LIKE p"
+tags = ["null", "empty", "whitespace", "unicode"]
+
+[[case]]
+id = "ilike_patterns"
+description = "ILIKE ignores case."
+columns = [{ name = "s", type = "VARCHAR" }, { name = "p", type = "VARCHAR" }]
+rows = [
+  ["'abc'", "'a%'"],
+  ["'abc'", "'a_c'"],
+  ["'abc'", "'A%'"],
+  ["'a%c'", "'a\\\\%c'"],
+  ["'abc'", "'a\\\\%c'"],
+  ["'ab '", "'ab'"],
+  ["''", "'%'"],
+  ["NULL", "'%'"],
+  ["'ünï'", "'_n_'"],
+  ["'a\nb'", "'a_b'"],
+]
+expression = "s ILIKE p"
+tags = ["null", "empty", "whitespace", "unicode"]
+
+[[case]]
+id = "like_escape_clause"
+description = "LIKE with an ESCAPE character."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'50%'"],
+  ["'50x'"],
+  ["'5_0'"],
+  ["NULL"],
+]
+expression = "s LIKE '50!%' ESCAPE '!'"
+tags = ["null"]
+
+[[case]]
+id = "not_like"
+description = "NOT LIKE with NULL."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'abc'"],
+  ["'xbc'"],
+  ["NULL"],
+  ["''"],
+]
+expression = "s NOT LIKE 'a%'"
+tags = ["null", "empty"]

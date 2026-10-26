@@ -1,0 +1,23 @@
+[package]
+name = "sqlquack-syntax-fuzz"
+version = "0.0.0"
+publish = false
+edition = "2021"
+
+[package.metadata]
+cargo-fuzz = true
+
+[dependencies]
+libfuzzer-sys = "0.4"
+sqlquack-syntax = { path = "../crates/sqlquack-syntax" }
+
+# Kept out of the SQLQuack workspace; run with `cargo +nightly fuzz run tolerant`.
+[workspace]
+members = ["."]
+
+[[bin]]
+name = "tolerant"
+path = "fuzz_targets/tolerant.rs"
+test = false
+doc = false
+bench = false

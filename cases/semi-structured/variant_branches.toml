@@ -1,0 +1,87 @@
+category = "semi-structured"
+construct = "fn:COALESCE"
+session_profile = "utc-v1"
+
+[[case]]
+id = "coalesce_paths"
+description = "COALESCE of two VARIANT paths: SQL NULL for a missing key falls through, a JSON null does not."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('{\"a\":1,\"b\":2}')"],
+  ["PARSE_JSON('{\"b\":\"x\"}')"],
+  ["PARSE_JSON('{\"a\":null,\"b\":2}')"],
+  ["PARSE_JSON('{\"a\":{\"k\":[1]},\"b\":true}')"],
+  ["PARSE_JSON('{}')"],
+  ["NULL"],
+]
+query = "SELECT TO_JSON(COALESCE(v:a, v:b)) AS j, TYPEOF(COALESCE(v:a, v:b)) AS t FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "json-null", "missing-key", "nested"]
+
+[[case]]
+id = "coalesce_variant_result"
+description = "COALESCE of VARIANT paths returned as a VARIANT column, strings and numbers alike."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('{\"a\":\"gift\"}')"],
+  ["PARSE_JSON('{\"b\":2.5}')"],
+  ["PARSE_JSON('{\"c\":[1,2]}')"],
+  ["PARSE_JSON('{\"a\":null}')"],
+  ["NULL"],
+]
+query = "SELECT COALESCE(v:a, v:b, v:c) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "json-null", "missing-key", "nested"]
+
+[[case]]
+id = "union_variant_columns"
+description = "UNION ALL of two VARIANT columns keeps each value, JSON null included."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('{\"a\":1,\"b\":\"x\"}')"],
+  ["PARSE_JSON('{\"a\":null,\"b\":{\"k\":1}}')"],
+  ["PARSE_JSON('{}')"],
+]
+query = "SELECT n, side, r FROM (SELECT ordinal AS n, 1 AS side, v:a AS r FROM input UNION ALL SELECT ordinal, 2, v:b FROM input) AS u ORDER BY n, side"
+order = "ordered"
+tags = ["null", "json-null", "missing-key", "nested"]
+
+[[case]]
+id = "iff_variant_branches"
+description = "IFF choosing between two VARIANT paths."
+columns = [{ name = "v", type = "VARIANT" }, { name = "f", type = "BOOLEAN" }]
+rows = [
+  ["PARSE_JSON('{\"a\":1,\"b\":[2]}')", "TRUE"],
+  ["PARSE_JSON('{\"a\":1,\"b\":[2]}')", "FALSE"],
+  ["PARSE_JSON('{\"a\":null}')", "TRUE"],
+  ["PARSE_JSON('{\"a\":1}')", "NULL"],
+]
+query = "SELECT TO_JSON(IFF(f, v:a, v:b)) AS j FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "json-null", "missing-key", "nested"]
+
+[[case]]
+id = "coalesce_case_and_index"
+description = "COALESCE of a key differing only in case, then an array element: keys match case-sensitively."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('{\"A\":1,\"a\":2,\"arr\":[3,4]}')"],
+  ["PARSE_JSON('{\"a\":2,\"arr\":[3,4]}')"],
+  ["PARSE_JSON('{\"arr\":[3,4]}')"],
+  ["PARSE_JSON('{\"arr\":[3]}')"],
+]
+query = "SELECT TO_JSON(COALESCE(v:A, v:arr[1], v:arr[0])) AS j FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["array-index", "case-sensitive-key", "missing-key"]
+
+[[case]]
+id = "union_all_by_name_variants"
+description = "UNION ALL BY NAME of VARIANT columns, one missing from a branch, JSON null kept."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('{\"a\":1,\"b\":\"x\"}')"],
+  ["PARSE_JSON('{\"a\":null,\"b\":{\"k\":1}}')"],
+]
+query = "SELECT n, side, TO_JSON(a) AS a, TO_JSON(b) AS b FROM (SELECT ordinal AS n, 1 AS side, v:a AS a, v:b AS b FROM input UNION ALL BY NAME SELECT 2 AS side, v:b AS b, ordinal AS n FROM input) AS u ORDER BY n, side"
+order = "ordered"
+tags = ["json-null", "missing-key", "nested"]

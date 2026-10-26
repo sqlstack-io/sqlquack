@@ -1,0 +1,92 @@
+category = "conversion"
+construct = "cast:VARCHAR"
+session_profile = "utc-v1"
+
+[[case]]
+id = "number_to_text"
+description = "NUMBER to text keeps the scale's trailing zeros."
+columns = [{ name = "a", type = "NUMBER(10,2)" }]
+rows = [
+  ["1.50"],
+  ["-0.01"],
+  ["0"],
+  ["NULL"],
+  ["99999999.99"],
+]
+expression = "a::VARCHAR"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "integer_to_text"
+description = "NUMBER(38,0) to text."
+columns = [{ name = "a", type = "NUMBER(38,0)" }]
+rows = [
+  ["0"],
+  ["-7"],
+  ["99999999999999999999999999999999999999"],
+  ["NULL"],
+]
+expression = "a::VARCHAR"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "float_to_text"
+description = "FLOAT to text."
+columns = [{ name = "f", type = "FLOAT" }]
+rows = [
+  ["1.5"],
+  ["0.1"],
+  ["1e20"],
+  ["1e-7"],
+  ["-0"],
+  ["123456789012345680"],
+  ["NULL"],
+]
+expression = "f::VARCHAR"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "boolean_to_text"
+description = "BOOLEAN to text."
+columns = [{ name = "b", type = "BOOLEAN" }]
+rows = [
+  ["TRUE"],
+  ["FALSE"],
+  ["NULL"],
+]
+expression = "b::VARCHAR"
+tags = ["null"]
+
+[[case]]
+id = "date_to_text"
+description = "DATE to text."
+columns = [{ name = "d", type = "DATE" }]
+rows = [
+  ["'2024-02-29'"],
+  ["'0001-01-01'"],
+  ["NULL"],
+]
+expression = "d::VARCHAR"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "timestamp_to_text"
+description = "TIMESTAMP_NTZ to text."
+columns = [{ name = "t", type = "TIMESTAMP_NTZ(9)" }]
+rows = [
+  ["'2024-02-29 13:45:01.123456789'"],
+  ["'2024-01-01 00:00:00'"],
+  ["NULL"],
+]
+expression = "t::VARCHAR"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "varchar_length_too_short"
+description = "Casting to a shorter VARCHAR."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'abcdef'"],
+]
+expression = "s::VARCHAR(3)"
+tags = ["invalid"]

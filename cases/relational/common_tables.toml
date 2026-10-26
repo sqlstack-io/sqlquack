@@ -1,0 +1,31 @@
+# A query's own CTEs, which follow the input fixture's in the expanded WITH.
+category = "relational"
+construct = "node:with"
+session_profile = "utc-v1"
+
+[[case]]
+id = "cte_filters_and_aggregates"
+description = "A CTE filtering the input, then an aggregate over it."
+columns = [{ name = "k", type = "VARCHAR" }, { name = "v", type = "NUMBER(10,0)" }]
+rows = [["'a'", "1"], ["'a'", "2"], ["'b'", "5"], ["'b'", "NULL"]]
+query = "WITH kept AS (SELECT k, v FROM input WHERE v IS NOT NULL) SELECT k, SUM(v) AS total FROM kept GROUP BY k ORDER BY k"
+order = "ordered"
+tags = ["null", "duplicates"]
+
+[[case]]
+id = "chained_ctes"
+description = "Two CTEs, the second reading the first."
+columns = [{ name = "k", type = "VARCHAR" }, { name = "v", type = "NUMBER(10,0)" }]
+rows = [["'a'", "1"], ["'b'", "2"], ["'c'", "3"]]
+query = "WITH doubled AS (SELECT k, v * 2 AS w FROM input), large AS (SELECT k, w FROM doubled WHERE w > 2) SELECT k, w FROM large ORDER BY k"
+order = "ordered"
+tags = ["duplicates"]
+
+[[case]]
+id = "cte_over_empty_input"
+description = "A CTE whose filter keeps no rows."
+columns = [{ name = "k", type = "VARCHAR" }, { name = "v", type = "NUMBER(10,0)" }]
+rows = [["'a'", "1"]]
+query = "WITH none AS (SELECT k, v FROM input WHERE v > 99) SELECT COUNT(*) AS n FROM none"
+order = "ordered"
+tags = ["empty-input"]

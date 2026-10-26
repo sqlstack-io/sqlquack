@@ -1,0 +1,179 @@
+category = "temporal"
+construct = "cast:TIMESTAMP"
+session_profile = "utc-v1"
+
+[[case]]
+id = "ntz9_values"
+description = "TIMESTAMP_NTZ(9) values within DuckDB's nanosecond range."
+columns = [{ name = "t", type = "TIMESTAMP_NTZ(9)" }]
+rows = [
+  ["'2024-02-29 13:45:01.123456789'"],
+  ["'1970-01-01 00:00:00'"],
+  ["'1969-12-31 23:59:59.999999999'"],
+  ["'1677-09-22 00:00:00.000000001'"],
+  ["'2262-04-11 23:47:16.854775807'"],
+  ["NULL"],
+]
+expression = "t"
+tags = ["null", "boundary"]
+expected_divergence = "timestamp_range"
+
+[[case]]
+id = "ntz9_outside_nanosecond_range"
+description = "TIMESTAMP_NTZ(9) values outside a 64-bit nanosecond count."
+columns = [{ name = "t", type = "TIMESTAMP_NTZ(9)" }]
+rows = [
+  ["'0001-01-01 00:00:00'"],
+  ["'1600-06-15 12:00:00.5'"],
+  ["'9999-12-31 23:59:59.999999999'"],
+  ["NULL"],
+]
+expression = "t"
+tags = ["null", "boundary"]
+expected_divergence = "timestamp_range"
+
+[[case]]
+id = "ntz_to_precision_6"
+description = "TIMESTAMP_NTZ(9) to TIMESTAMP_NTZ(6): rounding or truncation of nanoseconds."
+columns = [{ name = "t", type = "TIMESTAMP_NTZ(9)" }]
+rows = [
+  ["'2024-02-29 13:45:01.123456789'"],
+  ["'2024-02-29 13:45:01.123456499'"],
+  ["'2024-02-29 23:59:59.9999995'"],
+  ["'1969-12-31 23:59:59.9999995'"],
+  ["NULL"],
+]
+expression = "CAST(t AS TIMESTAMP_NTZ(6))"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "ntz_to_precision_3"
+description = "TIMESTAMP_NTZ(9) to TIMESTAMP_NTZ(3)."
+columns = [{ name = "t", type = "TIMESTAMP_NTZ(9)" }]
+rows = [
+  ["'2024-02-29 13:45:01.123456789'"],
+  ["'2024-02-29 13:45:01.1235'"],
+  ["'2024-02-29 23:59:59.9995'"],
+  ["NULL"],
+]
+expression = "CAST(t AS TIMESTAMP_NTZ(3))"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "ntz_to_precision_0"
+description = "TIMESTAMP_NTZ(9) to TIMESTAMP_NTZ(0)."
+columns = [{ name = "t", type = "TIMESTAMP_NTZ(9)" }]
+rows = [
+  ["'2024-02-29 13:45:01.5'"],
+  ["'2024-02-29 13:45:01.499999999'"],
+  ["'2024-12-31 23:59:59.5'"],
+  ["NULL"],
+]
+expression = "CAST(t AS TIMESTAMP_NTZ(0))"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "tz9_values"
+description = "TIMESTAMP_TZ(9) values with offsets."
+columns = [{ name = "t", type = "TIMESTAMP_TZ(9)" }]
+rows = [
+  ["'2024-02-29 13:45:01.123456789 +02:00'"],
+  ["'2024-02-29 13:45:01.123456789 -05:30'"],
+  ["'2024-02-29 00:00:00 +00:00'"],
+  ["NULL"],
+]
+expression = "t"
+tags = ["null", "boundary"]
+expected_divergence = "timestamp_tz_submicro"
+
+[[case]]
+id = "ltz9_values"
+description = "TIMESTAMP_LTZ(9) values."
+columns = [{ name = "t", type = "TIMESTAMP_LTZ(9)" }]
+rows = [
+  ["'2024-02-29 13:45:01.123456789 +02:00'"],
+  ["'2024-02-29 13:45:01.000000001'"],
+  ["NULL"],
+]
+expression = "t"
+tags = ["null", "boundary"]
+expected_divergence = "timestamp_tz_submicro"
+
+[[case]]
+id = "ntz9_min_max"
+description = "MIN and MAX of TIMESTAMP_NTZ(9) differing only in nanoseconds."
+columns = [{ name = "t", type = "TIMESTAMP_NTZ(9)" }]
+rows = [
+  ["'2024-02-29 13:45:01.000000001'"],
+  ["'2024-02-29 13:45:01.000000002'"],
+  ["NULL"],
+  ["'2024-02-29 13:45:01.000000001'"],
+]
+query = "SELECT MIN(t) AS lo, MAX(t) AS hi, COUNT(DISTINCT t) AS n FROM input"
+order = "bag"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "tz9_min_max"
+description = "MIN and MAX of TIMESTAMP_TZ(9) with equal instants at different offsets."
+columns = [{ name = "t", type = "TIMESTAMP_TZ(9)" }]
+rows = [
+  ["'2024-01-01 10:00:00 +00:00'"],
+  ["'2024-01-01 12:00:00 +02:00'"],
+  ["'2024-01-01 09:00:00.000000001 +00:00'"],
+  ["NULL"],
+]
+query = "SELECT MIN(t) AS lo, MAX(t) AS hi FROM input"
+order = "bag"
+tags = ["null", "boundary"]
+expected_divergence = "timestamp_tz_submicro"
+
+[[case]]
+id = "ntz9_comparison"
+description = "Comparing TIMESTAMP_NTZ(9) values one nanosecond apart."
+columns = [{ name = "a", type = "TIMESTAMP_NTZ(9)" }, { name = "b", type = "TIMESTAMP_NTZ(9)" }]
+rows = [
+  ["'2024-02-29 13:45:01.000000001'", "'2024-02-29 13:45:01.000000002'"],
+  ["'2024-02-29 13:45:01'", "'2024-02-29 13:45:01'"],
+  ["NULL", "'2024-02-29 13:45:01'"],
+]
+expression = "a < b"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "ntz9_to_date"
+description = "TIMESTAMP_NTZ(9) to DATE, before and after the epoch."
+columns = [{ name = "t", type = "TIMESTAMP_NTZ(9)" }]
+rows = [
+  ["'2024-02-29 23:59:59.999999999'"],
+  ["'1969-12-31 23:59:59.999999999'"],
+  ["'1970-01-01 00:00:00'"],
+  ["NULL"],
+]
+expression = "CAST(t AS DATE)"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "ntz9_to_tz"
+description = "TIMESTAMP_NTZ(9) to TIMESTAMP_TZ in a UTC session."
+columns = [{ name = "t", type = "TIMESTAMP_NTZ(9)" }]
+rows = [
+  ["'2024-02-29 13:45:01.123456789'"],
+  ["'2024-03-31 01:30:00'"],
+  ["NULL"],
+]
+expression = "CAST(t AS TIMESTAMP_TZ)"
+tags = ["null", "boundary"]
+expected_divergence = "timestamp_tz_submicro"
+
+[[case]]
+id = "date_to_tz"
+description = "DATE to TIMESTAMP_TZ in a UTC session."
+columns = [{ name = "d", type = "DATE" }]
+rows = [
+  ["'2024-02-29'"],
+  ["'1969-12-31'"],
+  ["NULL"],
+]
+expression = "CAST(d AS TIMESTAMP_TZ)"
+tags = ["null", "boundary"]

@@ -1,0 +1,49 @@
+//! Typing function identifiers, as conversion provenance records them, and type limits.
+
+use crate::typing::models::SnowflakeType;
+
+/// Snowflake's largest NUMBER precision.
+pub const MAX_PRECISION: u8 = 38;
+/// The scale `*` and `/` stop raising at, unless an operand already has more.
+pub const SCALE_CAP: u8 = 12;
+/// The digits `/` and AVG add to the dividend's scale.
+pub const DIVISION_EXTRA_SCALE: u8 = 6;
+/// The leading digits SUM adds to its argument.
+pub const SUM_EXTRA_DIGITS: u8 = 12;
+/// The leading digits AVG adds to its argument.
+pub const AVERAGE_EXTRA_DIGITS: u8 = 12;
+/// Precision of COUNT and of the ranking window functions.
+pub const COUNT_PRECISION: u8 = 18;
+/// Precision of timestamps and times without a declared precision.
+pub const DEFAULT_FRACTIONAL_PRECISION: u8 = 9;
+
+/// `NUMBER(38,0)`, which integer type names denote.
+pub const NUMBER_38_0: SnowflakeType = SnowflakeType::Number {
+    precision: MAX_PRECISION,
+    scale: 0,
+};
+
+/// Type names and casts: `snowflake.cast_target`.
+pub const CAST_TARGET: &str = "snowflake.cast_target";
+/// Numeric literals: `snowflake.number_literal`.
+pub const NUMBER_LITERAL: &str = "snowflake.number_literal";
+/// `+` and `-`: `snowflake.numeric_add_subtract`.
+pub const NUMERIC_ADD_SUBTRACT: &str = "snowflake.numeric_add_subtract";
+/// `*`: `snowflake.numeric_multiply`.
+pub const NUMERIC_MULTIPLY: &str = "snowflake.numeric_multiply";
+/// `/`: `snowflake.numeric_divide`.
+pub const NUMERIC_DIVIDE: &str = "snowflake.numeric_divide";
+/// One result type for CASE, COALESCE, IFF, NVL, NULLIF and set operations: `snowflake.unify`.
+pub const UNIFY: &str = "snowflake.unify";
+/// The rule a conversion relies on when semi-structured branches unify as VARIANT.
+pub const VARIANT_COMMON_TYPE: &str = "rule.variant_common_type";
+/// Operands a comparison accepts without an implicit conversion: `snowflake.comparison`.
+pub const COMPARISON: &str = "snowflake.comparison";
+/// COUNT: `snowflake.count`.
+pub const COUNT: &str = "snowflake.count";
+/// SUM: `snowflake.sum`.
+pub const SUM: &str = "snowflake.sum";
+/// AVG: `snowflake.average`.
+pub const AVERAGE: &str = "snowflake.average";
+/// ROW_NUMBER, RANK and DENSE_RANK: `snowflake.ranking`.
+pub const RANKING: &str = "snowflake.ranking";

@@ -1,13 +1,15 @@
 //! The constructs a single node stands for, apart from its clauses.
 
-use polyglot_sql::expressions::{Cast, DataType};
-use polyglot_sql::{DialectType, Expression};
+use sqlquack_syntax::Expression;
+use sqlquack_syntax::expressions::{Cast, DataType};
 
-use crate::classification::_helpers::names::base_type_name;
+use crate::classification::main::cast_type_name::cast_type_name;
+use crate::parsing::models::SourceDialect;
+
 use crate::classification::constants::{PROJECT_FUNCTION_CONSTRUCT, PROJECT_FUNCTION_PLACEHOLDER};
 use crate::classification::models::{Construct, ConstructFamily};
 
-pub(crate) fn node_constructs(node: &Expression, dialect: DialectType) -> Vec<Construct> {
+pub(crate) fn node_constructs(node: &Expression, dialect: SourceDialect) -> Vec<Construct> {
     match node {
         Expression::Function(function) => vec![function_construct(&function.name)],
         Expression::AggregateFunction(function) => vec![function_construct(&function.name)],
@@ -19,13 +21,16 @@ pub(crate) fn node_constructs(node: &Expression, dialect: DialectType) -> Vec<Co
 }
 
 fn function_construct(name: &str) -> Construct {
-    if name.eq_ignore_ascii_case(PROJECT_FUNCTION_PLACEHOLDER) {
+    if name
+        .to_ascii_lowercase()
+        .starts_with(PROJECT_FUNCTION_PLACEHOLDER)
+    {
         return Construct::new(ConstructFamily::Function, PROJECT_FUNCTION_CONSTRUCT);
     }
     Construct::new(ConstructFamily::Function, name.to_ascii_uppercase())
 }
 
-fn cast_constructs(variant: &str, cast: &Cast, dialect: DialectType) -> Vec<Construct> {
+fn cast_constructs(variant: &str, cast: &Cast, dialect: SourceDialect) -> Vec<Construct> {
     let mut constructs = vec![
         Construct::new(ConstructFamily::Node, variant),
         Construct::new(ConstructFamily::Cast, type_name(&cast.to, dialect)),
@@ -36,9 +41,8 @@ fn cast_constructs(variant: &str, cast: &Cast, dialect: DialectType) -> Vec<Cons
     constructs
 }
 
-fn type_name(data_type: &DataType, dialect: DialectType) -> String {
-    match polyglot_sql::generate_data_type(data_type, dialect) {
-        Ok(rendered) => base_type_name(&rendered),
-        Err(_) => "<unprintable>".to_owned(),
+fn type_name(data_type: &DataType, dialect: SourceDialect) -> String {
+    match dialect {
+        SourceDialect::Snowflake => cast_type_name(data_type),
     }
 }

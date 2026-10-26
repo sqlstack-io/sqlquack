@@ -35,6 +35,21 @@ duckdb = "VARCHAR"
 reason = "Text values compare bytewise; the declared Snowflake length does not change a value."
 
 [[comparator.type_equality]]
+snowflake = "VARIANT"
+duckdb = "VARCHAR"
+reason = "User decision 2026-10-25: a VARIANT result column is DuckDB JSON, which DuckDB exports as text, and compares as Snowflake's JSON text without whitespace outside strings; objects are written with keys in byte order or raise."
+
+[[comparator.type_equality]]
+snowflake = "OBJECT"
+duckdb = "VARCHAR"
+reason = "User decision 2026-10-25: a VARIANT result column is DuckDB JSON, which DuckDB exports as text, and compares as Snowflake's JSON text without whitespace outside strings; objects are written with keys in byte order or raise."
+
+[[comparator.type_equality]]
+snowflake = "ARRAY"
+duckdb = "VARCHAR"
+reason = "User decision 2026-10-25: a VARIANT result column is DuckDB JSON, which DuckDB exports as text, and compares as Snowflake's JSON text without whitespace outside strings; objects are written with keys in byte order or raise."
+
+[[comparator.type_equality]]
 snowflake = "BOOLEAN"
 duckdb = "BOOLEAN"
 reason = "Same type."
@@ -49,20 +64,66 @@ snowflake = "TIME(p)"
 duckdb = "TIME"
 reason = "Times compare at nanoseconds, so a precision mismatch shows up as a value difference."
 
+# Naive timestamps pair by precision (decision 2026-10-24): 0-6 with TIMESTAMP, 7-9 with TIMESTAMP_NS.
 [[comparator.type_equality]]
-snowflake = "TIMESTAMP_NTZ(p)"
+snowflake = "TIMESTAMP_NTZ(0)"
 duckdb = "TIMESTAMP"
-reason = "Naive timestamps compare at nanoseconds, so a precision mismatch shows up as a value difference."
+reason = "Microsecond DuckDB timestamps hold every value of this precision; values compare at nanoseconds."
+
+[[comparator.type_equality]]
+snowflake = "TIMESTAMP_NTZ(1)"
+duckdb = "TIMESTAMP"
+reason = "Microsecond DuckDB timestamps hold every value of this precision; values compare at nanoseconds."
+
+[[comparator.type_equality]]
+snowflake = "TIMESTAMP_NTZ(2)"
+duckdb = "TIMESTAMP"
+reason = "Microsecond DuckDB timestamps hold every value of this precision; values compare at nanoseconds."
+
+[[comparator.type_equality]]
+snowflake = "TIMESTAMP_NTZ(3)"
+duckdb = "TIMESTAMP"
+reason = "Microsecond DuckDB timestamps hold every value of this precision; values compare at nanoseconds."
+
+[[comparator.type_equality]]
+snowflake = "TIMESTAMP_NTZ(4)"
+duckdb = "TIMESTAMP"
+reason = "Microsecond DuckDB timestamps hold every value of this precision; values compare at nanoseconds."
+
+[[comparator.type_equality]]
+snowflake = "TIMESTAMP_NTZ(5)"
+duckdb = "TIMESTAMP"
+reason = "Microsecond DuckDB timestamps hold every value of this precision; values compare at nanoseconds."
+
+[[comparator.type_equality]]
+snowflake = "TIMESTAMP_NTZ(6)"
+duckdb = "TIMESTAMP"
+reason = "Microsecond DuckDB timestamps hold every value of this precision; values compare at nanoseconds."
+
+[[comparator.type_equality]]
+snowflake = "TIMESTAMP_NTZ(7)"
+duckdb = "TIMESTAMP_NS"
+reason = "Nanosecond DuckDB timestamps hold sub-microsecond digits; outside 1677-2262 DuckDB raises (divergence timestamp_range)."
+
+[[comparator.type_equality]]
+snowflake = "TIMESTAMP_NTZ(8)"
+duckdb = "TIMESTAMP_NS"
+reason = "Nanosecond DuckDB timestamps hold sub-microsecond digits; outside 1677-2262 DuckDB raises (divergence timestamp_range)."
+
+[[comparator.type_equality]]
+snowflake = "TIMESTAMP_NTZ(9)"
+duckdb = "TIMESTAMP_NS"
+reason = "Nanosecond DuckDB timestamps hold sub-microsecond digits; outside 1677-2262 DuckDB raises (divergence timestamp_range)."
 
 [[comparator.type_equality]]
 snowflake = "TIMESTAMP_TZ(p)"
 duckdb = "TIMESTAMPTZ"
-reason = "Zoned timestamps compare as instants (see timestamp_tz)."
+reason = "Zoned timestamps compare as instants (see timestamp_tz); at precision 7-9 a non-zero sub-microsecond part raises (divergence timestamp_tz_submicro)."
 
 [[comparator.type_equality]]
 snowflake = "TIMESTAMP_LTZ(p)"
 duckdb = "TIMESTAMPTZ"
-reason = "Local-zone timestamps compare as instants (see timestamp_tz)."
+reason = "Local-zone timestamps compare as instants (see timestamp_tz); at precision 7-9 a non-zero sub-microsecond part raises (divergence timestamp_tz_submicro)."
 
 [[comparator.type_equality]]
 snowflake = "BINARY(n)"
@@ -82,6 +143,28 @@ DEFAULT_NULL_ORDERING = "LAST"
 QUOTED_IDENTIFIERS_IGNORE_CASE = false
 USE_CACHED_RESULT = false
 
+# Parameters that change how text is parsed or written, at Snowflake's documented defaults. Set in
+# every recording session and checked against each result's recorded effective values; not part of
+# the case hash, so adding one does not invalidate recorded results.
+[session_profiles.utc-v1.pinned]
+DATE_INPUT_FORMAT = "AUTO"
+DATE_OUTPUT_FORMAT = "YYYY-MM-DD"
+TIME_INPUT_FORMAT = "AUTO"
+TIME_OUTPUT_FORMAT = "HH24:MI:SS"
+TIMESTAMP_INPUT_FORMAT = "AUTO"
+TIMESTAMP_OUTPUT_FORMAT = "YYYY-MM-DD HH24:MI:SS.FF3 TZHTZM"
+TIMESTAMP_NTZ_OUTPUT_FORMAT = "YYYY-MM-DD HH24:MI:SS.FF3"
+TIMESTAMP_LTZ_OUTPUT_FORMAT = ""
+TIMESTAMP_TZ_OUTPUT_FORMAT = ""
+TWO_DIGIT_CENTURY_START = 1970
+BINARY_INPUT_FORMAT = "HEX"
+BINARY_OUTPUT_FORMAT = "HEX"
+TIMESTAMP_DAY_IS_ALWAYS_24H = false
+JSON_INDENT = 2
+STRICT_JSON_OUTPUT = false
+GEOGRAPHY_OUTPUT_FORMAT = "GeoJSON"
+GEOMETRY_OUTPUT_FORMAT = "GeoJSON"
+
 [edge_cases.numeric]
 description = "Arithmetic, rounding and numeric conversion."
 required = ["null", "zero", "negative", "boundary"]
@@ -94,17 +177,135 @@ required = ["null", "empty", "whitespace", "unicode"]
 description = "ORDER BY, NULL placement and ties."
 required = ["null", "ties"]
 
-# Known divergences: values differ from Snowflake but stay consistent within one run. Each still
-# needs recorded cases proving that consistency before a rule may use it.
+[edge_cases.semi-structured]
+description = "VARIANT paths and semi-structured access."
+required = ["null", "json-null", "missing-key", "nested", "array-index", "case-sensitive-key"]
+
+[edge_cases.semi-structured-object]
+description = "Objects built or changed: OBJECT_CONSTRUCT, OBJECT_INSERT and OBJECT_DELETE."
+required = ["null", "json-null", "missing-key", "invalid"]
+
+[edge_cases.semi-structured-typed]
+description = "Values of SQL types put into a VARIANT and read back."
+required = ["null", "boundary"]
+
+[edge_cases.semi-structured-output]
+description = "VARIANT result columns, compared as Snowflake's JSON text."
+required = ["null", "json-null", "nested"]
+
+[edge_cases.semi-structured-check]
+description = "IS_OBJECT, IS_ARRAY and IS_BOOLEAN of VARIANTs."
+required = ["null", "json-null", "missing-key"]
+
+[edge_cases.semi-structured-array]
+description = "Arrays built or compared: ARRAY_CONSTRUCT and ARRAY_EXCEPT."
+required = ["null", "duplicates", "empty", "invalid"]
+
+[edge_cases.semi-structured-cast]
+description = "Casts to VARIANT, TO_VARIANT, and VARIANT casts to OBJECT and ARRAY."
+required = ["null", "json-null", "invalid"]
+
+[edge_cases.json-text]
+description = "JSON text a strict parser rejects or reads differently: lenient spellings and invalid text."
+required = ["null", "invalid"]
+
+[edge_cases.json-number]
+description = "How parsed JSON keeps number tokens: integers, decimals, exponents and their limits."
+required = ["null", "json-null", "missing-key", "boundary"]
+
+[edge_cases.conditional]
+description = "CASE, COALESCE, IFF, NULLIF, NVL and their result types."
+required = ["null", "all-null", "mixed-types"]
+
+[edge_cases.conversion]
+description = "Casts between scalar types."
+required = ["null", "invalid", "boundary"]
+
+[edge_cases.comparison]
+description = "Comparison operators and their implicit coercions."
+required = ["null", "ties", "mixed-types"]
+
+[edge_cases.aggregate]
+description = "Aggregate functions and grouping."
+required = ["null", "empty-input", "duplicates"]
+
+[edge_cases.window]
+description = "Window functions, frames and QUALIFY."
+required = ["null", "ties", "single-row-partition"]
+
+[edge_cases.temporal]
+description = "Dates, times and timestamps: precision, ranges, offsets and conversions."
+required = ["null", "boundary"]
+
+[edge_cases.project-function]
+description = "SQL project functions the case defines: argument coercion, NULL arguments, nested calls and table functions."
+required = ["null", "numeric-coercion"]
+
+[edge_cases.imported]
+description = "Third-party fixtures imported as candidate cases, each tagged with its origin; authored cases still carry the edge-case requirements."
+required = ["third-party"]
+
+[edge_cases.relational]
+description = "Row sources, joins, filters, grouping and set operations."
+required = ["null", "duplicates", "empty-input"]
+
+# Known divergences: either values differ from Snowflake but stay consistent within one run, or
+# DuckDB fails loudly where Snowflake returns a value. Each needs recorded cases proving that
+# property before a rule may use it. A conversion relying on one names it and the construct; strict
+# mode refuses it. A divergence never covers DuckDB returning a different value.
+
+[divergences.numeric_range]
+constructs = ["fn:SUM", "fn:AVG", "node:add", "node:sub", "node:mul", "node:div", "node:eq", "node:neq", "node:lt", "node:lte", "node:gt", "node:gte", "node:null_safe_eq", "node:null_safe_neq", "node:in", "fn:EQUAL_NULL", "fn:NULLIF", "node:union", "node:except", "node:intersect", "node:case", "fn:COALESCE", "node:coalesce", "fn:DECODE", "fn:GREATEST", "fn:LEAST", "node:nvl", "fn:NVL2", "fn:IFF", "fn:IFNULL", "fn:ZEROIFNULL"]
+default = "warn"
+strict = "refuse"
+reason = "DuckDB raises an error where Snowflake returns a value DuckDB cannot represent: a SUM or AVG total, or a sum, difference or product, beyond 38 digits (Snowflake keeps up to 128 bits under a NUMBER(38) type), or a division whose exact intermediate exceeds 128 bits. The failure is loud, never a wrong value. NUMBERs compared or unified as one DECIMAL needing more than 38 digits (such as NUMBER(38,0) with NUMBER(10,5)) are cast to it in DuckDB, which raises for values beyond its range."
+native_errors = ["Out of Range Error: Overflow in *"]
+
+[divergences.json_fidelity]
+constructs = ["fn:PARSE_JSON", "fn:TRY_PARSE_JSON", "node:column", "node:cast", "fn:TO_JSON", "fn:GET_IGNORE_CASE", "fn:FLATTEN", "fn:OBJECT_CONSTRUCT", "fn:OBJECT_CONSTRUCT_KEEP_NULL", "fn:OBJECT_INSERT", "fn:OBJECT_PICK", "fn:ARRAY_CONSTRUCT", "fn:ARRAY_EXCEPT", "fn:TO_VARIANT", "fn:ARRAY_AGG", "fn:ARRAY_TO_STRING", "fn:ARRAY_CONTAINS", "fn:ARRAY_CONSTRUCT_COMPACT"]
+default = "warn"
+strict = "refuse"
+reason = "DuckDB's JSON keeps non-integer numbers as doubles, reads a different set of lenient spellings, accepts repeated keys and keeps keys in input order, where Snowflake keeps exact decimals, reads single quotes, NaN and undefined, rejects repeated keys and writes keys sorted. The converted SQL raises for any document DuckDB might read differently, PARSE_JSON and TRY_PARSE_JSON alike, for objects written as text with keys out of order, and for FLATTEN paths through keys that are not plain names. The failure is loud, never a wrong value."
+
+[divergences.percentile_interpolation]
+constructs = ["fn:PERCENTILE_CONT"]
+default = "warn"
+strict = "refuse"
+reason = "Snowflake's PERCENTILE_CONT interpolates between two different values with rounding error in the last digits that recordings do not reproduce from any exact or double formula. The converted SQL returns the value where the fraction lands on a row, or between equal values, and raises where it would interpolate; the failure is loud, never a wrong value."
+
+[divergences.date_text_spelling]
+constructs = ["fn:TRY_TO_DATE", "fn:TO_DATE", "node:try_cast", "node:cast", "fn:TO_TIMESTAMP", "fn:TO_TIMESTAMP_NTZ", "fn:DATE"]
+default = "warn"
+strict = "refuse"
+reason = "TRY_TO_DATE and TRY_CAST to DATE return NULL in Snowflake for text it cannot read, but Snowflake's AUTO detection reads more spellings than the recordings show. The converted SQL returns NULL only for empty text, impossible values in recorded spellings, and the spellings recorded returning NULL; any other spelling raises rather than return NULL where Snowflake might return a date. With a literal format, recordings show Snowflake also reading unpadded fields and, for some formats, surrounding spaces, so only text spelled exactly in the format's digits and separators converts and other text raises. The failure is loud, never a wrong value. Non-TRY casts and TO_DATE, TO_TIMESTAMP and TO_TIMESTAMP_NTZ of text in a spelling no recording shows raise this divergence rather than claim Snowflake's error, since Snowflake may read the text."
+
+[divergences.variant_typed_values]
+constructs = ["fn:TO_VARIANT", "node:cast", "fn:OBJECT_CONSTRUCT", "fn:OBJECT_CONSTRUCT_KEEP_NULL", "fn:OBJECT_INSERT", "fn:ARRAY_CONSTRUCT", "fn:TYPEOF", "fn:IS_DATE", "fn:IS_TIME", "fn:IS_TIMESTAMP_NTZ", "fn:IS_TIMESTAMP_LTZ", "fn:IS_TIMESTAMP_TZ", "fn:IS_BINARY"]
+default = "warn"
+strict = "refuse"
+reason = "User decision 2026-10-25: a DATE, TIMESTAMP or TIME inside a VARIANT keeps its type in Snowflake, which DuckDB JSON cannot. The converted SQL stores the JSON string Snowflake writes for the value (batch 8 recorded YYYY-MM-DD, YYYY-MM-DD HH:MI:SS.FFF and a ' Z' suffix for TIMESTAMP_LTZ in UTC), raising where that text drops digits or an offset. TYPEOF and IS_DATE-style reads of a string in such a text raise rather than answer VARCHAR or false. TIMESTAMP_TZ (its offset is not kept), TIME and BINARY (its hex text is indistinguishable from plain strings) stay refused."
+
+[divergences.timestamp_range]
+constructs = ["node:cast", "node:try_cast", "fn:DATEADD", "fn:TIMESTAMPADD", "fn:CONVERT_TIMEZONE", "fn:TO_TIMESTAMP", "fn:TO_TIMESTAMP_NTZ", "fn:TRY_TO_TIMESTAMP", "fn:TRY_TO_TIMESTAMP_NTZ"]
+default = "warn"
+strict = "refuse"
+reason = "DuckDB nanosecond timestamps span 1677-09-21 to 2262-04-11; outside it DuckDB raises an error where Snowflake returns the TIMESTAMP_NTZ(7-9) value. The failure is loud, never a wrong value."
+native_errors = ["Out of Range Error: Overflow in multiplication of INT64*", "Conversion Error: Type INT32 with value * can't be cast to the destination type INT64*", "Conversion Error: Could not convert Timestamp to higher precision*", "Conversion Error: Could not convert string '*-*-* *:*:*' to INT64"]
+
+[divergences.timestamp_tz_submicro]
+constructs = ["node:cast", "node:try_cast", "fn:CONVERT_TIMEZONE"]
+default = "warn"
+strict = "refuse"
+reason = "DuckDB zoned timestamps hold microseconds; a TIMESTAMP_TZ or TIMESTAMP_LTZ(7-9) value with a non-zero sub-microsecond part raises an error instead of being rounded. The failure is loud, never a wrong value."
 
 [divergences.hash]
 constructs = ["fn:HASH"]
 default = "warn"
 strict = "refuse"
-reason = "Hash values differ from Snowflake; equal inputs still hash equally within one run."
+reason = "User decision CHI-836: HASH converts to a DuckDB 64-bit hash, NUMBER(19,0) signed, that is deterministic and equal for equal inputs within one run, but never Snowflake's value. Joins, grouping, deduplication and change detection by hash keep working; anything that depends on the value itself does not: literal hash values in expected test output, hashes stored and compared with Snowflake-computed ones, HASH(x) % n bucketing or sampling, and ordering by a hash."
 
 [divergences.random]
-constructs = ["node:random"]
+constructs = ["fn:RANDOM"]
 default = "warn"
 strict = "refuse"
 reason = "Random values differ from Snowflake by nature."

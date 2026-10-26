@@ -1,0 +1,28 @@
+{
+  "arrow_sha256": null,
+  "case_hash": "55fc5707b36f953000212d08b7e5c87d60bf26b7667a90afdf708688d64be26f",
+  "columns": [],
+  "connector": "snowflake-connector-python 4.7.2",
+  "duckdb_version": "v2.0.0",
+  "error": {
+    "errno": 100069,
+    "message": "Error parsing JSON: more than one document in the input",
+    "sqlstate": "22P02"
+  },
+  "format": 1,
+  "outcome": "error",
+  "query_id_sha256": "4f0645bef730a65bac2ec346ebeeccfe62f315aeada5335dd6b5d1658095358e",
+  "recorded_at": "2026-10-25T23:17:22Z",
+  "recorder": "sqlquack-record 0.1.0",
+  "row_count": null,
+  "session_parameters": {
+    "DEFAULT_NULL_ORDERING": "LAST",
+    "QUOTED_IDENTIFIERS_IGNORE_CASE": false,
+    "TIMESTAMP_TYPE_MAPPING": "TIMESTAMP_NTZ",
+    "TIMEZONE": "UTC",
+    "USE_CACHED_RESULT": false,
+    "WEEK_OF_YEAR_POLICY": 0,
+    "WEEK_START": 0
+  },
+  "warehouse_version": "10.38.102"
+}

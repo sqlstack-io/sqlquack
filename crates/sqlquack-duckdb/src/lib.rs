@@ -1,3 +1,11 @@
-//! DuckDB building blocks shared by rules; empty until the first rules land.
+//! DuckDB building blocks shared by SQLQuack rules.
 
 #![forbid(unsafe_code)]
+
+pub mod blocks;
+pub mod checking;
+pub mod hashing;
+pub mod semi_structured;
+pub mod temporal;
+pub mod text;
+pub mod variants;

@@ -1,0 +1,56 @@
+category = "string"
+construct = "fn:LPAD"
+session_profile = "utc-v1"
+
+[[case]]
+id = "lpad_values"
+description = "LPAD padding, cutting, multi-character and empty pads, non-ASCII text and NULLs."
+columns = [{ name = "s", type = "VARCHAR" }, { name = "n", type = "NUMBER(10,0)" }, { name = "p", type = "VARCHAR" }]
+rows = [
+  ["'7'", "3", "'0'"],
+  ["'abc'", "6", "'xy'"],
+  ["'abcdef'", "3", "'0'"],
+  ["'abc'", "5", "''"],
+  ["'abc'", "0", "'x'"],
+  ["'abc'", "-2", "'x'"],
+  ["'é'", "3", "'ü'"],
+  ["''", "2", "' '"],
+  ["NULL", "3", "'0'"],
+  ["'abc'", "NULL", "'0'"],
+  ["'abc'", "5", "NULL"],
+]
+expression = "LPAD(s, n, p)"
+tags = ["null", "empty", "whitespace", "unicode"]
+
+[[case]]
+id = "rpad_values"
+description = "RPAD padding, cutting, multi-character and empty pads, non-ASCII text and NULLs."
+columns = [{ name = "s", type = "VARCHAR" }, { name = "n", type = "NUMBER(10,0)" }, { name = "p", type = "VARCHAR" }]
+rows = [
+  ["'7'", "3", "'0'"],
+  ["'abc'", "6", "'xy'"],
+  ["'abcdef'", "3", "'0'"],
+  ["'abc'", "5", "''"],
+  ["'abc'", "-1", "'x'"],
+  ["'日本'", "4", "'語'"],
+  ["NULL", "3", "'0'"],
+]
+expression = "RPAD(s, n, p)"
+tags = ["null", "empty", "unicode", "whitespace"]
+
+[[case]]
+id = "pad_default"
+description = "LPAD and RPAD without a pad use a space."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [["'ab'"], ["'abcd'"], ["''"], ["NULL"]]
+query = "SELECT LPAD(s, 3) AS l, RPAD(s, 3) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "empty", "whitespace"]
+
+[[case]]
+id = "lpad_number_text"
+description = "LPAD of an integer cast to text, as the census zero-pads identifiers."
+columns = [{ name = "i", type = "NUMBER(10,0)" }]
+rows = [["7"], ["1234"], ["-5"], ["NULL"]]
+expression = "LPAD(CAST(i AS VARCHAR), 4, '0')"
+tags = ["null"]

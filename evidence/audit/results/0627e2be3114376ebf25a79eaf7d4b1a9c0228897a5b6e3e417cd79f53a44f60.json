@@ -1,0 +1,28 @@
+{
+  "arrow_sha256": null,
+  "case_hash": "0627e2be3114376ebf25a79eaf7d4b1a9c0228897a5b6e3e417cd79f53a44f60",
+  "columns": [],
+  "connector": "snowflake-connector-python 4.7.2",
+  "duckdb_version": "v2.0.0",
+  "error": {
+    "errno": 1007,
+    "message": "SQL compilation error:\ninvalid type [CAST(INPUT.X AS TIMESTAMP_NTZ(9))] for parameter 'TO_TIMESTAMP_NTZ'",
+    "sqlstate": "22023"
+  },
+  "format": 1,
+  "outcome": "error",
+  "query_id_sha256": "12ecae31fa9ec9abc614c84c5bb74b45b75ebbe6b206d8d98ed7e339ce94006d",
+  "recorded_at": "2026-10-25T23:17:22Z",
+  "recorder": "sqlquack-record 0.1.0",
+  "row_count": null,
+  "session_parameters": {
+    "DEFAULT_NULL_ORDERING": "LAST",
+    "QUOTED_IDENTIFIERS_IGNORE_CASE": false,
+    "TIMESTAMP_TYPE_MAPPING": "TIMESTAMP_NTZ",
+    "TIMEZONE": "UTC",
+    "USE_CACHED_RESULT": false,
+    "WEEK_OF_YEAR_POLICY": 0,
+    "WEEK_START": 0
+  },
+  "warehouse_version": "10.38.102"
+}

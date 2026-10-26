@@ -1,0 +1,54 @@
+category = "conversion"
+construct = "cast:DATE"
+session_profile = "utc-v1"
+
+[[case]]
+id = "text_to_date"
+description = "Text to DATE in ISO form."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'2024-02-29'"],
+  ["'0001-01-01'"],
+  ["'9999-12-31'"],
+  ["NULL"],
+]
+expression = "CAST(s AS DATE)"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "text_to_date_other_formats"
+description = "Text to DATE in non-ISO forms Snowflake detects."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'01/31/2024'"],
+  ["'31-JAN-2024'"],
+  ["'2024-01-31 10:00:00'"],
+  ["'2024-01-31T10:00:00Z'"],
+  ["' 2024-01-31 '"],
+  ["'2024-1-5'"],
+  ["'20240131'"],
+]
+expression = "TRY_CAST(s AS DATE)"
+tags = ["boundary"]
+
+[[case]]
+id = "text_to_date_invalid"
+description = "Text that is not a date."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'2024-02-30'"],
+]
+expression = "CAST(s AS DATE)"
+tags = ["invalid"]
+
+[[case]]
+id = "timestamp_to_date"
+description = "TIMESTAMP_NTZ to DATE drops the time."
+columns = [{ name = "t", type = "TIMESTAMP_NTZ(9)" }]
+rows = [
+  ["'2024-02-29 23:59:59.999'"],
+  ["'1969-12-31 12:00:00'"],
+  ["NULL"],
+]
+expression = "t::DATE"
+tags = ["null", "boundary"]

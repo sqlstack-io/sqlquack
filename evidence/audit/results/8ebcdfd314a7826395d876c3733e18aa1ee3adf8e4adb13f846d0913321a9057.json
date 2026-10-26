@@ -1,0 +1,28 @@
+{
+  "arrow_sha256": null,
+  "case_hash": "8ebcdfd314a7826395d876c3733e18aa1ee3adf8e4adb13f846d0913321a9057",
+  "columns": [],
+  "connector": "snowflake-connector-python 4.7.2",
+  "duckdb_version": "v2.0.0",
+  "error": {
+    "errno": 1007,
+    "message": "SQL compilation error:\ninvalid type [CAST(INPUT.X AS NUMBER(5,2))] for parameter 'TO_NUMBER'",
+    "sqlstate": "22023"
+  },
+  "format": 1,
+  "outcome": "error",
+  "query_id_sha256": "1f9e6606c9eda1deb87ddcf448ff92c7df22d8274018fdce06836a11d309a735",
+  "recorded_at": "2026-10-25T23:17:22Z",
+  "recorder": "sqlquack-record 0.1.0",
+  "row_count": null,
+  "session_parameters": {
+    "DEFAULT_NULL_ORDERING": "LAST",
+    "QUOTED_IDENTIFIERS_IGNORE_CASE": false,
+    "TIMESTAMP_TYPE_MAPPING": "TIMESTAMP_NTZ",
+    "TIMEZONE": "UTC",
+    "USE_CACHED_RESULT": false,
+    "WEEK_OF_YEAR_POLICY": 0,
+    "WEEK_START": 0
+  },
+  "warehouse_version": "10.38.102"
+}

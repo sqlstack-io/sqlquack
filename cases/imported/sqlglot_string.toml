@@ -1,0 +1,129 @@
+category = "imported"
+construct = "node:function"
+session_profile = "utc-v1"
+
+[[case]]
+id = "rpad_with_pattern"
+description = "RPAD repeats a multi-character pad pattern."
+columns = []
+rows = [[]]
+expression = "RPAD('test', 10, 'ab')"
+tags = ["third-party"]
+origin = "sqlglot: tests/dialects/test_snowflake.py"
+sqlglot_duckdb = "SELECT RPAD('test', 10, 'ab')"
+
+[[case]]
+id = "rpad_default_pad"
+description = "RPAD pads with spaces by default."
+columns = []
+rows = [[]]
+expression = "RPAD('data', 8)"
+tags = ["third-party"]
+origin = "sqlglot: tests/dialects/test_snowflake.py"
+sqlglot_duckdb = "SELECT RPAD('data', 8, ' ')"
+
+[[case]]
+id = "rpad_exact_length"
+description = "RPAD of text already at the length."
+columns = []
+rows = [[]]
+expression = "RPAD('exact', 5, '*')"
+tags = ["third-party"]
+origin = "sqlglot: tests/dialects/test_snowflake.py"
+sqlglot_duckdb = "SELECT RPAD('exact', 5, '*')"
+
+[[case]]
+id = "split_part_middle"
+description = "SPLIT_PART picks the second part."
+columns = []
+rows = [[]]
+expression = "SPLIT_PART('11.22.33', '.', 2)"
+tags = ["third-party"]
+origin = "sqlglot: tests/dialects/test_snowflake.py"
+sqlglot_duckdb = "SELECT CASE WHEN '.' = '' THEN (CASE WHEN (CASE WHEN 2 = 0 THEN 1 ELSE 2 END) = 1 OR (CASE WHEN 2 = 0 THEN 1 ELSE 2 END) = -1 THEN '11.22.33' ELSE '' END) ELSE SPLIT_PART('11.22.33', '.', (CASE WHEN 2 = 0 THEN 1 ELSE 2 END)) END"
+
+[[case]]
+id = "ltrim_rtrim"
+description = "LTRIM of RTRIM without characters."
+columns = [{ name = "col", type = "VARCHAR" }]
+rows = [
+  ["'  a  '"],
+  ["'b'"],
+  ["NULL"],
+  ["''"],
+  ["'   '"],
+]
+expression = "LTRIM(RTRIM(col))"
+tags = ["third-party"]
+origin = "sqlglot: tests/dialects/test_snowflake.py"
+sqlglot_duckdb = "SELECT LTRIM(RTRIM(col)) FROM t1"
+
+[[case]]
+id = "endswith_literal"
+description = "ENDSWITH on literals."
+columns = []
+rows = [[]]
+expression = "ENDSWITH('abc', 'c')"
+tags = ["third-party"]
+origin = "sqlglot: tests/dialects/test_snowflake.py"
+sqlglot_duckdb = "ENDS_WITH('abc', 'c')"
+
+[[case]]
+id = "replace_without_replacement"
+description = "REPLACE with two arguments removes the pattern."
+columns = [{ name = "subject", type = "VARCHAR" }, { name = "pattern", type = "VARCHAR" }]
+rows = [
+  ["'banana'", "'an'"],
+  ["'banana'", "''"],
+  ["NULL", "'a'"],
+  ["'abc'", "NULL"],
+  ["'aaa'", "'aa'"],
+]
+expression = "REPLACE(subject, pattern)"
+tags = ["third-party"]
+origin = "sqlglot: tests/dialects/test_snowflake.py"
+sqlglot_duckdb = "REPLACE(subject, pattern, '')"
+
+[[case]]
+id = "replace_with_replacement"
+description = "REPLACE with a replacement."
+columns = [{ name = "subject", type = "VARCHAR" }, { name = "pattern", type = "VARCHAR" }, { name = "replacement", type = "VARCHAR" }]
+rows = [
+  ["'banana'", "'an'", "'AN'"],
+  ["'banana'", "''", "'x'"],
+  ["'abc'", "'b'", "NULL"],
+  ["NULL", "'a'", "'b'"],
+  ["'aaa'", "'aa'", "'b'"],
+]
+expression = "REPLACE(subject, pattern, replacement)"
+tags = ["third-party"]
+origin = "sqlglot: tests/dialects/test_snowflake.py"
+sqlglot_duckdb = "REPLACE(subject, pattern, replacement)"
+
+[[case]]
+id = "charindex_negative_start"
+description = "CHARINDEX with a negative start position."
+columns = []
+rows = [[]]
+expression = "CHARINDEX('sub', 'testsubstring', -1)"
+tags = ["third-party"]
+origin = "sqlglot: tests/dialects/test_snowflake.py"
+sqlglot_duckdb = "SELECT CASE WHEN STRPOS(SUBSTRING('testsubstring', CASE WHEN -1 <= 0 THEN 1 ELSE -1 END), 'sub') = 0 THEN 0 ELSE STRPOS(SUBSTRING('testsubstring', CASE WHEN -1 <= 0 THEN 1 ELSE -1 END), 'sub') + CASE WHEN -1 <= 0 THEN 1 ELSE -1 END - 1 END"
+
+[[case]]
+id = "charindex_column_start"
+description = "CHARINDEX with start positions from a column."
+columns = [{ name = "p", type = "NUMBER(38,0)" }]
+rows = [
+  ["-1"],
+  ["0"],
+  ["1"],
+  ["5"],
+  ["6"],
+  ["100"],
+  ["NULL"],
+]
+expression = "CHARINDEX('sub', 'testsubstring', p)"
+tags = ["third-party"]
+origin = "sqlglot: tests/dialects/test_snowflake.py"
+sqlglot_duckdb = "SELECT CASE WHEN STRPOS(SUBSTRING('testsubstring', CASE WHEN p <= 0 THEN 1 ELSE p END), 'sub') = 0 THEN 0 ELSE STRPOS(SUBSTRING('testsubstring', CASE WHEN p <= 0 THEN 1 ELSE p END), 'sub') + CASE WHEN p <= 0 THEN 1 ELSE p END - 1 END"

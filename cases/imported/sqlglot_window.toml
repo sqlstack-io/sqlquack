@@ -1,0 +1,56 @@
+category = "imported"
+construct = "node:lag"
+session_profile = "utc-v1"
+
+[[case]]
+id = "lag_basic"
+description = "LAG over an ordering."
+columns = [{ name = "amount", type = "NUMBER(10,2)" }, { name = "seq", type = "NUMBER(38,0)" }]
+rows = [
+  ["10", "1"],
+  ["NULL", "2"],
+  ["30", "3"],
+  ["40", "4"],
+]
+query = "SELECT LAG(amount) OVER (ORDER BY seq) AS basic_lag FROM input"
+order = "bag"
+tags = ["third-party"]
+origin = "sqlglot: tests/dialects/test_snowflake.py"
+sqlglot_duckdb = "SELECT LAG(amount) OVER (ORDER BY seq) AS basic_lag"
+
+[[case]]
+id = "lag_offset_ignore_nulls"
+description = "LAG by two, ignoring NULLs, per category."
+columns = [{ name = "category", type = "VARCHAR" }, { name = "amount", type = "NUMBER(10,2)" }, { name = "seq", type = "NUMBER(38,0)" }]
+rows = [
+  ["'a'", "10", "1"],
+  ["'a'", "NULL", "2"],
+  ["'a'", "30", "3"],
+  ["'a'", "40", "4"],
+  ["'a'", "50", "5"],
+  ["'b'", "60", "1"],
+  ["NULL", "70", "1"],
+]
+query = "SELECT LAG(amount, 2) IGNORE NULLS OVER (PARTITION BY category ORDER BY seq) AS lag_offset_ignore_nulls FROM input"
+order = "bag"
+tags = ["third-party"]
+origin = "sqlglot: tests/dialects/test_snowflake.py"
+sqlglot_duckdb = "SELECT LAG(amount, 2 IGNORE NULLS) OVER (PARTITION BY category ORDER BY seq) AS lag_offset_ignore_nulls"
+
+[[case]]
+id = "lag_full_respect_nulls"
+description = "LAG by two with a default, respecting NULLs."
+columns = [{ name = "category", type = "VARCHAR" }, { name = "amount", type = "NUMBER(10,2)" }, { name = "seq", type = "NUMBER(38,0)" }]
+rows = [
+  ["'a'", "10", "1"],
+  ["'a'", "NULL", "2"],
+  ["'a'", "30", "3"],
+  ["'a'", "40", "4"],
+  ["'b'", "60", "1"],
+  ["NULL", "70", "1"],
+]
+query = "SELECT LAG(amount, 2, -777) RESPECT NULLS OVER (PARTITION BY category ORDER BY seq ASC) AS lag_full_ignore_nulls FROM input"
+order = "bag"
+tags = ["third-party"]
+origin = "sqlglot: tests/dialects/test_snowflake.py"
+sqlglot_duckdb = "SELECT LAG(amount, 2, -777 RESPECT NULLS) OVER (PARTITION BY category ORDER BY seq ASC) AS lag_full_ignore_nulls"

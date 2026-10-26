@@ -9,10 +9,10 @@ from sqlquack_record.recording.types import SessionParameters
 
 
 def by_session(cases: Sequence[PendingCase]) -> dict[SessionParameters, list[PendingCase]]:
-    """Cases grouped by their session parameters, in first-seen order."""
+    """Cases grouped by the pinned and case parameters their session sets, in first-seen order."""
     groups: dict[SessionParameters, list[PendingCase]] = {}
     for case in cases:
-        groups.setdefault(case.session_parameters, []).append(case)
+        groups.setdefault(case.recording_parameters(), []).append(case)
     return groups
 
 

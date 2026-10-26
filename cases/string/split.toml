@@ -1,0 +1,66 @@
+category = "string"
+construct = "fn:SPLIT_PART"
+session_profile = "utc-v1"
+
+[[case]]
+id = "split_part_positions"
+description = "SPLIT_PART by positive, last and past-the-end positions."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'a,b,c'"],
+  ["'a'"],
+  ["''"],
+  ["',,'"],
+  ["NULL"],
+  ["'ü,ø'"],
+]
+expression = "SPLIT_PART(s, ',', 1) || '|' || SPLIT_PART(s, ',', 2) || '|' || SPLIT_PART(s, ',', -1) || '|' || SPLIT_PART(s, ',', 9)"
+tags = ["null", "empty", "unicode"]
+
+[[case]]
+id = "split_part_zero"
+description = "SPLIT_PART with position zero."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'a,b'"],
+]
+expression = "SPLIT_PART(s, ',', 0)"
+tags = ["boundary"]
+
+[[case]]
+id = "split_part_delimiters"
+description = "SPLIT_PART with a multi-character, empty and whitespace delimiter."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'a::b::c'"],
+  ["'a b'"],
+  ["' '"],
+]
+expression = "SPLIT_PART(s, '::', 2) || '|' || SPLIT_PART(s, '', 1) || '|' || SPLIT_PART(s, ' ', 2)"
+tags = ["whitespace", "empty"]
+
+[[case]]
+id = "split_index"
+description = "SPLIT returns an array; its size and first element."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'a,b,c'"],
+  ["''"],
+  ["','"],
+  ["NULL"],
+  ["'ü'"],
+]
+expression = "ARRAY_SIZE(SPLIT(s, ',')) || ':' || SPLIT(s, ',')[0]::VARCHAR"
+tags = ["null", "empty", "unicode"]
+
+[[case]]
+id = "array_to_string_split"
+description = "ARRAY_TO_STRING over SPLIT."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'a,b,,c'"],
+  ["''"],
+  ["NULL"],
+]
+expression = "ARRAY_TO_STRING(SPLIT(s, ','), '|')"
+tags = ["null", "empty"]

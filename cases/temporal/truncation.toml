@@ -1,0 +1,159 @@
+category = "temporal"
+construct = "fn:DATE_TRUNC"
+session_profile = "utc-v1"
+
+[[case]]
+id = "date_trunc_year"
+description = "DATE_TRUNC to YEAR of naive timestamps."
+columns = [{ name = "t", type = "TIMESTAMP_NTZ(9)" }]
+rows = [
+  ["'2024-02-29 13:45:01.123456789'"],
+  ["'2024-01-01 00:00:00'"],
+  ["'2023-12-31 23:59:59.999999999'"],
+  ["'1969-12-31 23:59:59.5'"],
+  ["'2021-01-03 12:00:00'"],
+  ["'2020-12-31 08:00:00'"],
+  ["NULL"],
+]
+expression = "DATE_TRUNC('YEAR', t)"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "date_trunc_quarter"
+description = "DATE_TRUNC to QUARTER of naive timestamps."
+columns = [{ name = "t", type = "TIMESTAMP_NTZ(9)" }]
+rows = [
+  ["'2024-02-29 13:45:01.123456789'"],
+  ["'2024-01-01 00:00:00'"],
+  ["'2023-12-31 23:59:59.999999999'"],
+  ["'1969-12-31 23:59:59.5'"],
+  ["'2021-01-03 12:00:00'"],
+  ["'2020-12-31 08:00:00'"],
+  ["NULL"],
+]
+expression = "DATE_TRUNC('QUARTER', t)"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "date_trunc_month"
+description = "DATE_TRUNC to MONTH of naive timestamps."
+columns = [{ name = "t", type = "TIMESTAMP_NTZ(9)" }]
+rows = [
+  ["'2024-02-29 13:45:01.123456789'"],
+  ["'2024-01-01 00:00:00'"],
+  ["'2023-12-31 23:59:59.999999999'"],
+  ["'1969-12-31 23:59:59.5'"],
+  ["'2021-01-03 12:00:00'"],
+  ["'2020-12-31 08:00:00'"],
+  ["NULL"],
+]
+expression = "DATE_TRUNC('MONTH', t)"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "date_trunc_week"
+description = "DATE_TRUNC to WEEK of naive timestamps."
+columns = [{ name = "t", type = "TIMESTAMP_NTZ(9)" }]
+rows = [
+  ["'2024-02-29 13:45:01.123456789'"],
+  ["'2024-01-01 00:00:00'"],
+  ["'2023-12-31 23:59:59.999999999'"],
+  ["'1969-12-31 23:59:59.5'"],
+  ["'2021-01-03 12:00:00'"],
+  ["'2020-12-31 08:00:00'"],
+  ["NULL"],
+]
+expression = "DATE_TRUNC('WEEK', t)"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "date_trunc_day"
+description = "DATE_TRUNC to DAY of naive timestamps."
+columns = [{ name = "t", type = "TIMESTAMP_NTZ(9)" }]
+rows = [
+  ["'2024-02-29 13:45:01.123456789'"],
+  ["'2024-01-01 00:00:00'"],
+  ["'2023-12-31 23:59:59.999999999'"],
+  ["'1969-12-31 23:59:59.5'"],
+  ["'2021-01-03 12:00:00'"],
+  ["'2020-12-31 08:00:00'"],
+  ["NULL"],
+]
+expression = "DATE_TRUNC('DAY', t)"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "date_trunc_hour"
+description = "DATE_TRUNC to HOUR of naive timestamps."
+columns = [{ name = "t", type = "TIMESTAMP_NTZ(9)" }]
+rows = [
+  ["'2024-02-29 13:45:01.123456789'"],
+  ["'2024-01-01 00:00:00'"],
+  ["'2023-12-31 23:59:59.999999999'"],
+  ["'1969-12-31 23:59:59.5'"],
+  ["'2021-01-03 12:00:00'"],
+  ["'2020-12-31 08:00:00'"],
+  ["NULL"],
+]
+expression = "DATE_TRUNC('HOUR', t)"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "date_trunc_minute"
+description = "DATE_TRUNC to MINUTE of naive timestamps."
+columns = [{ name = "t", type = "TIMESTAMP_NTZ(9)" }]
+rows = [
+  ["'2024-02-29 13:45:01.123456789'"],
+  ["'2024-01-01 00:00:00'"],
+  ["'2023-12-31 23:59:59.999999999'"],
+  ["'1969-12-31 23:59:59.5'"],
+  ["'2021-01-03 12:00:00'"],
+  ["'2020-12-31 08:00:00'"],
+  ["NULL"],
+]
+expression = "DATE_TRUNC('MINUTE', t)"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "date_trunc_second"
+description = "DATE_TRUNC to SECOND of naive timestamps."
+columns = [{ name = "t", type = "TIMESTAMP_NTZ(9)" }]
+rows = [
+  ["'2024-02-29 13:45:01.123456789'"],
+  ["'2024-01-01 00:00:00'"],
+  ["'2023-12-31 23:59:59.999999999'"],
+  ["'1969-12-31 23:59:59.5'"],
+  ["'2021-01-03 12:00:00'"],
+  ["'2020-12-31 08:00:00'"],
+  ["NULL"],
+]
+expression = "DATE_TRUNC('SECOND', t)"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "date_trunc_date"
+description = "DATE_TRUNC of dates to month and week."
+columns = [{ name = "d", type = "DATE" }]
+rows = [
+  ["'2024-02-29'"],
+  ["'2021-01-03'"],
+  ["NULL"],
+]
+expression = "DATE_TRUNC('MONTH', d)::VARCHAR || '|' || DATE_TRUNC('WEEK', d)::VARCHAR"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "timestamp_to_date"
+description = "Casting naive timestamps to DATE."
+columns = [{ name = "t", type = "TIMESTAMP_NTZ(9)" }]
+rows = [
+  ["'2024-02-29 13:45:01.123456789'"],
+  ["'2024-01-01 00:00:00'"],
+  ["'2023-12-31 23:59:59.999999999'"],
+  ["'1969-12-31 23:59:59.5'"],
+  ["'2021-01-03 12:00:00'"],
+  ["'2020-12-31 08:00:00'"],
+  ["NULL"],
+]
+expression = "t::DATE"
+tags = ["null", "boundary"]

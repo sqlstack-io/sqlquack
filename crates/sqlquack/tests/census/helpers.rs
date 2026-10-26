@@ -20,7 +20,7 @@ pub(crate) fn run_on_shop(arguments: &[&str]) -> BinaryOutcome {
     BinaryOutcome {
         exit_code: output.status.code(),
         files: report["totals"]["files"].as_u64(),
-        missing_rule: report["refusals"]["missing_rule"].as_u64(),
+        unresolved_name: report["refusals"]["unresolved_name"].as_u64(),
         completion_reported: String::from_utf8_lossy(&output.stderr)
             .contains("sqlquack census: done, 2 files"),
     }

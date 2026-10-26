@@ -30,6 +30,24 @@ fn given_case_edit_when_hashing_then_only_result_changing_edits_change_the_hash(
             expected_same_hash: false,
         },
         HashTestCase {
+            description: "marking a case as typing evidence keeps the hash",
+            replace: "tags = [\"null\", \"empty\"]",
+            with: "tags = [\"null\", \"empty\"]\nevidence = \"typing\"\nvalues = true",
+            expected_same_hash: true,
+        },
+        HashTestCase {
+            description: "recording no values changes the hash",
+            replace: "tags = [\"null\", \"empty\"]",
+            with: "tags = [\"null\", \"empty\"]\nevidence = \"typing\"\nvalues = false",
+            expected_same_hash: false,
+        },
+        HashTestCase {
+            description: "a project function the case defines changes the hash",
+            replace: "tags = [\"null\", \"empty\"]",
+            with: "tags = [\"null\", \"empty\"]\n\n[[case.function]]\nname = \"wrapped\"\narguments = [{ name = \"t\", type = \"VARCHAR\" }]\nreturns = \"VARCHAR\"\nbody = \"t\"",
+            expected_same_hash: false,
+        },
+        HashTestCase {
             description: "another session profile changes the hash",
             replace: "session_profile = \"utc-v1\"",
             with: "session_profile = \"utc-v2\"",

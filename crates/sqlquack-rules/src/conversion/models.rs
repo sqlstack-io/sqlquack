@@ -1,0 +1,176 @@
+//! Conversion inputs and results.
+
+use std::collections::BTreeMap;
+
+use serde::Serialize;
+use sqlquack_core::failures::models::FailureMode;
+use sqlquack_core::provenance::models::Provenance;
+use sqlquack_snowflake::typing::models::SnowflakeType;
+
+/// One column of a relation: its Snowflake name, as resolved, and type.
+#[derive(Clone, Debug, PartialEq, Eq, Serialize)]
+pub struct ColumnSpec {
+    /// The resolved name: upper case for unquoted identifiers, as written for quoted ones.
+    pub name: String,
+    /// The Snowflake type.
+    pub data_type: SnowflakeType,
+}
+
+/// The relations and project functions a statement may use, keyed by resolved name.
+#[derive(Clone, Debug, Default, PartialEq, Eq, Serialize)]
+pub struct Schema {
+    /// Relation name to columns, in order.
+    pub relations: BTreeMap<String, Vec<ColumnSpec>>,
+    /// Project function name, as statements call it once resolved, to its signature.
+    pub functions: BTreeMap<String, FunctionSpec>,
+}
+
+/// A project function's signature, which a call is typed by.
+#[derive(Clone, Debug, PartialEq, Eq, Serialize)]
+pub struct FunctionSpec {
+    /// The language of its body.
+    pub language: FunctionLanguage,
+    /// The parameters, in order: a name and a Snowflake type each.
+    pub arguments: Vec<ColumnSpec>,
+    /// A scalar type, or the columns of a table function.
+    pub returns: FunctionReturns,
+}
+
+/// The language a project function is written in.
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize)]
+pub enum FunctionLanguage {
+    /// A SQL body, which SQLQuack converts like a model.
+    Sql,
+    /// A Python handler, called opaquely with the declared types.
+    Python,
+}
+
+/// What a project function returns.
+#[derive(Clone, Debug, PartialEq, Eq, Serialize)]
+pub enum FunctionReturns {
+    /// One value of this type.
+    Scalar(SnowflakeType),
+    /// Rows of these columns.
+    Table(Vec<ColumnSpec>),
+}
+
+/// A known divergence the policy allows in the current mode.
+#[derive(Clone, Debug, PartialEq, Eq, Serialize)]
+pub struct AllowedDivergence {
+    /// The construct keys it may apply to.
+    pub constructs: Vec<String>,
+    /// Why it is acceptable.
+    pub reason: String,
+}
+
+/// How conversion treats the policy's known divergences.
+#[derive(Clone, Debug, Default, PartialEq, Eq, Serialize)]
+pub struct ConversionOptions {
+    /// Divergence id to its allowance; any divergence not listed is refused.
+    pub divergences: BTreeMap<String, AllowedDivergence>,
+    /// A case's input fixture, whose conversion is plumbing rather than evidence for rules.
+    pub fixture: Option<Fixture>,
+}
+
+/// The outermost CTE holding a case's input rows, and the column ordering them.
+#[derive(Clone, Debug, PartialEq, Eq, Serialize)]
+pub struct Fixture {
+    /// The CTE name.
+    pub relation: String,
+    /// The column a trailing ORDER BY uses to keep rows in input order.
+    pub ordering_column: String,
+}
+
+/// A converted statement.
+#[derive(Clone, Debug, PartialEq, Eq, Serialize)]
+pub struct Converted {
+    /// The DuckDB SQL.
+    pub sql: String,
+    /// The result columns and their Snowflake types.
+    pub columns: Vec<ColumnSpec>,
+    /// The rules, building blocks and typing functions used.
+    pub provenance: Provenance,
+}
+
+/// A converted SQL function: the DuckDB macro's parameters, in order, and its body.
+#[derive(Clone, Debug, PartialEq, Eq, Serialize)]
+pub struct ConvertedFunction {
+    /// The macro's parameter names, one per declared parameter.
+    pub parameters: Vec<String>,
+    /// The body after `AS`: a scalar subquery, or `TABLE` and a query.
+    pub body: String,
+    /// The rules, building blocks and typing functions used.
+    pub provenance: Provenance,
+}
+
+/// A rule: what it converts and the conditions outside which it refuses.
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize)]
+pub struct RuleSpec {
+    /// The stable identifier, such as `rule.comparison`.
+    pub id: &'static str,
+    /// The construct keys the rule converts.
+    pub constructs: &'static [&'static str],
+    /// The type conditions it requires.
+    pub conditions: &'static str,
+    /// The ways its converted SQL may fail, each with the Snowflake errors meaning the same failure.
+    pub failures: &'static [FailureMode],
+}
+
+/// How a kept call's arguments map onto the payload its rule reads.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum CallShape {
+    /// One or more arguments, as `expressions`.
+    Expressions,
+    /// One or more arguments, as `expressions`, keeping the written name.
+    Renamed,
+    /// `(this, expression)`, keeping the written name.
+    Fallback,
+    /// `(condition, true_value, false_value)`.
+    Conditional,
+    /// `(this)`.
+    Unary,
+    /// `(this [, characters])`, trimming both ends.
+    Trim,
+    /// `(this, expression)`.
+    Affix,
+    /// `(this, start [, length])`.
+    Substring,
+    /// `(unit, start, end)`.
+    Difference,
+    /// `(*)` or `([DISTINCT] this)`.
+    Count,
+    /// `([DISTINCT] this)`.
+    Aggregate,
+    /// `()`, a ranking window function.
+    Ranking,
+    /// `(this [, offset [, default]])`, an offset window function.
+    Offset,
+    /// `(this)`, optionally `IGNORE NULLS`.
+    FirstLast,
+}
+
+/// A call spelling with recorded evidence, and the rule node it is converted as.
+#[derive(Clone, Copy, Debug)]
+pub struct SpellingRule {
+    /// The upper-case spelling.
+    pub name: &'static str,
+    /// The node kind of the rule that converts it.
+    pub node: &'static str,
+    /// How its arguments are read.
+    pub shape: CallShape,
+    /// The recorded spelling pair that proves it means what the rule's own spelling means.
+    pub pair: Option<&'static str>,
+}
+
+/// Two spellings Snowflake evaluates identically, as recorded pairs of results show.
+#[derive(Clone, Copy, Debug)]
+pub struct SpellingPair {
+    /// The stable identifier the case file declares as its `equivalence`.
+    pub id: &'static str,
+    /// The first spelling, as the cases write it.
+    pub source: &'static str,
+    /// The second spelling, recorded as each case's `canonical`.
+    pub canonical: &'static str,
+    /// The case file, relative to the cases directory, holding the recorded pairs.
+    pub cases: &'static str,
+}

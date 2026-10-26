@@ -1,22 +1,19 @@
-//! One guarded polyglot parse for any dialect.
+//! One guarded parse for any dialect.
 
-use polyglot_sql::{ComplexityGuardOptions, DialectType, Error, Expression, ParseOptions};
+use sqlquack_syntax::{ComplexityGuardOptions, Dialect, Error, Expression, ParseOptions};
 
 use crate::parsing::constants::MAX_FUNCTION_CALL_DEPTH;
 use crate::parsing::errors::ParseFailure;
 use crate::parsing::models::SourceLocation;
 
-pub(crate) fn parse_guarded(
-    sql: &str,
-    dialect: DialectType,
-) -> Result<Vec<Expression>, ParseFailure> {
+pub(crate) fn parse_guarded(sql: &str, dialect: Dialect) -> Result<Vec<Expression>, ParseFailure> {
     let options = ParseOptions {
         complexity_guard: Some(ComplexityGuardOptions {
             max_function_call_depth: Some(MAX_FUNCTION_CALL_DEPTH),
             ..ComplexityGuardOptions::default()
         }),
     };
-    polyglot_sql::parse_with_options(sql, dialect, &options).map_err(|error| failure(&error))
+    sqlquack_syntax::parse_statements(sql, dialect, &options).map_err(|error| failure(&error))
 }
 
 fn failure(error: &Error) -> ParseFailure {

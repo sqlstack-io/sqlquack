@@ -1,0 +1,30 @@
+category = "string"
+construct = "fn:SPLIT"
+session_profile = "utc-v1"
+
+[[case]]
+id = "split_values"
+description = "SPLIT into an ARRAY: empty parts, an empty text, a missing separator, non-ASCII and NULL."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [["'a,b,c'"], ["'a,,b,'"], ["''"], ["'abc'"], ["' x , y '"], ["'é,日'"], ["NULL"]]
+query = "SELECT SPLIT(s, ',') AS parts, ARRAY_SIZE(SPLIT(s, ',')) AS n FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "empty", "whitespace", "unicode"]
+
+[[case]]
+id = "split_separators"
+description = "SPLIT with a multi-character, an empty and a NULL separator."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [["'a::b::c'"], ["'a:b'"], ["''"]]
+query = "SELECT SPLIT(s, '::') AS m, SPLIT(s, '') AS e, SPLIT(s, NULL) AS n FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["empty", "null"]
+
+[[case]]
+id = "split_escapes"
+description = "SPLIT of text holding quotes, a backslash and a tab, written back as JSON strings."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [["'say \"hi\"|a\\\\b|t\tx'"]]
+query = "SELECT TO_JSON(SPLIT(s, '|')) AS j FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["whitespace", "unicode"]

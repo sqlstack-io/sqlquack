@@ -113,6 +113,17 @@ fn profile_problems(name: &str, profile: &SessionProfile) -> Vec<String> {
             .filter(|key| !is_parameter_name(key))
             .map(|key| format!("session profile `{name}` has an invalid parameter name `{key}`")),
     );
+    found.extend(
+        profile
+            .pinned
+            .keys()
+            .filter(|key| !is_parameter_name(key) || profile.snowflake.contains_key(*key))
+            .map(|key| {
+                format!(
+                    "session profile `{name}` pins `{key}`, invalid or already a case parameter"
+                )
+            }),
+    );
     found
 }
 

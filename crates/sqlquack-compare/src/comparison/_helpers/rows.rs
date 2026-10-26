@@ -9,6 +9,8 @@ pub(crate) struct RowRules {
     pub(crate) float32_ulps: u32,
     pub(crate) float64_ulps: u32,
     pub(crate) ignore_zone_labels: bool,
+    /// Columns holding VARIANT text, compared without the whitespace outside JSON strings.
+    pub(crate) json_columns: Vec<bool>,
 }
 
 pub(crate) fn compare_rows(
@@ -54,13 +56,46 @@ fn decoded(result: &ResultSet, rules: &RowRules) -> Result<Vec<Vec<CanonicalValu
         kind: MismatchKind::Unsupported,
         detail,
     })?;
-    if !rules.ignore_zone_labels {
-        return Ok(rows);
+    let mut normalised_rows: Vec<Vec<CanonicalValue>> = Vec::with_capacity(rows.len());
+    for row in rows {
+        normalised_rows.push(normalised_row(row, rules));
     }
-    Ok(rows
-        .into_iter()
-        .map(|row| row.into_iter().map(without_zone_label).collect())
-        .collect())
+    Ok(normalised_rows)
+}
+
+fn normalised_row(row: Vec<CanonicalValue>, rules: &RowRules) -> Vec<CanonicalValue> {
+    row.into_iter()
+        .enumerate()
+        .map(|(index, value)| normalised(value, index, rules))
+        .collect()
+}
+
+fn normalised(value: CanonicalValue, index: usize, rules: &RowRules) -> CanonicalValue {
+    match value {
+        CanonicalValue::Text(text) if rules.json_columns.get(index).copied().unwrap_or(false) => {
+            CanonicalValue::Text(compact_json(&text))
+        }
+        timestamp if rules.ignore_zone_labels => without_zone_label(timestamp),
+        other => other,
+    }
+}
+
+/// JSON text without the whitespace outside strings.
+fn compact_json(text: &str) -> String {
+    let mut compact = String::with_capacity(text.len());
+    let mut in_string = false;
+    let mut escaped = false;
+    for character in text.chars() {
+        match (in_string, escaped, character) {
+            (true, true, _) => escaped = false,
+            (true, false, '\\') => escaped = true,
+            (true, false, '"') | (false, _, '"') => in_string = !in_string,
+            (false, _, ' ' | '\n' | '\r' | '\t') => continue,
+            _ => {}
+        }
+        compact.push(character);
+    }
+    compact
 }
 
 fn without_zone_label(value: CanonicalValue) -> CanonicalValue {

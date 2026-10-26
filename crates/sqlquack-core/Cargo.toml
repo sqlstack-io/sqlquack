@@ -1,7 +1,7 @@
 [package]
 name = "sqlquack-core"
 version.workspace = true
-description = "Parsing, construct classification, refusals and re-parse checks for SQLQuack."
+description = "Parsing, construct classification, refusals and provenance for SQLQuack."
 edition.workspace = true
 license.workspace = true
 repository.workspace = true
@@ -10,9 +10,9 @@ publish.workspace = true
 rust-version.workspace = true
 
 [dependencies]
-polyglot-sql.workspace = true
 serde.workspace = true
 serde_json.workspace = true
+sqlquack-syntax.workspace = true
 
 [lints]
 workspace = true

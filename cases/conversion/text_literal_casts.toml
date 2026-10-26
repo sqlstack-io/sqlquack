@@ -1,0 +1,22 @@
+# Casts of string literals in the case's own expression, outside the input fixture.
+category = "conversion"
+construct = "node:cast"
+session_profile = "utc-v1"
+
+[[case]]
+id = "text_literal_casts"
+description = "String literals cast to NUMBER, FLOAT, BOOLEAN, DATE and TIMESTAMP_NTZ beside an input column."
+columns = [{ name = "x", type = "NUMBER(10,0)" }]
+rows = [["1"], ["NULL"]]
+query = "SELECT x, CAST('12.50' AS NUMBER(10,2)) AS n, CAST('-0.0' AS NUMBER(10,1)) AS z, CAST('1.5e3' AS FLOAT) AS f, CAST('true' AS BOOLEAN) AS b, CAST('2024-01-05' AS DATE) AS d, CAST('2024-01-05 10:11:12.5' AS TIMESTAMP_NTZ) AS t FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "zero", "boundary", "negative"]
+
+[[case]]
+id = "text_literal_cast_invalid"
+description = "A string literal that is not a number cast to NUMBER."
+columns = [{ name = "x", type = "NUMBER(10,0)" }]
+rows = [["1"]]
+query = "SELECT CAST('twelve' AS NUMBER(10,0)) AS n FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["invalid"]
