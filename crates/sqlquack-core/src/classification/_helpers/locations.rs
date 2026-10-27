@@ -1,7 +1,7 @@
 //! Source positions for nodes, borrowed from neighbours when the parser kept none.
 
 use sqlquack_syntax::Expression;
-use sqlquack_syntax::tokens::Span;
+use sqlquack_syntax::tokens::models::Span;
 
 use crate::parsing::models::SourceLocation;
 

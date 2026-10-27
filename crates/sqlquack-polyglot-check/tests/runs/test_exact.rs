@@ -1,5 +1,7 @@
 //! The exact check on every corpus committed with SQLQuack: zero differences, lossless tokens.
 
+use std::collections::BTreeMap;
+
 use sqlquack_polyglot_check::corpora::main::case_corpus::case_corpus;
 use sqlquack_polyglot_check::corpora::main::load_corpus::load_corpus;
 
@@ -16,6 +18,7 @@ fn given_committed_corpora_when_parsed_by_both_parsers_then_results_are_identica
             entries: load_corpus(&corpora.join("polyglot_tests.json")),
             expected_outcome: ExactOutcome {
                 loaded: true,
+                rejected: BTreeMap::from([("malformed_typed_type_text".to_owned(), 2)]),
                 differences: Vec::new(),
                 tokens_lost: Vec::new(),
                 type_names: Vec::new(),
@@ -28,6 +31,7 @@ fn given_committed_corpora_when_parsed_by_both_parsers_then_results_are_identica
             entries: load_corpus(&corpora.join("sqlglot.json")),
             expected_outcome: ExactOutcome {
                 loaded: true,
+                rejected: BTreeMap::new(),
                 differences: Vec::new(),
                 tokens_lost: Vec::new(),
                 type_names: Vec::new(),
@@ -40,6 +44,7 @@ fn given_committed_corpora_when_parsed_by_both_parsers_then_results_are_identica
             entries: load_corpus(&corpora.join("snowflake_types.json")),
             expected_outcome: ExactOutcome {
                 loaded: true,
+                rejected: BTreeMap::new(),
                 differences: Vec::new(),
                 tokens_lost: Vec::new(),
                 type_names: Vec::new(),
@@ -52,6 +57,7 @@ fn given_committed_corpora_when_parsed_by_both_parsers_then_results_are_identica
             entries: case_corpus(&root.join("cases"), &root.join("sqlquack.toml")),
             expected_outcome: ExactOutcome {
                 loaded: true,
+                rejected: BTreeMap::new(),
                 differences: Vec::new(),
                 tokens_lost: Vec::new(),
                 type_names: Vec::new(),

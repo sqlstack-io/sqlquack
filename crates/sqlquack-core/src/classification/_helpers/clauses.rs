@@ -1,7 +1,11 @@
 //! Clauses, join kinds and set-operation forms, from exhaustively destructured query nodes.
 
 use sqlquack_syntax::Expression;
-use sqlquack_syntax::expressions::{Except, Intersect, Join, Select, Union};
+use sqlquack_syntax::expressions::queries::models::Except;
+use sqlquack_syntax::expressions::queries::models::Intersect;
+use sqlquack_syntax::expressions::queries::models::Join;
+use sqlquack_syntax::expressions::queries::models::Select;
+use sqlquack_syntax::expressions::queries::models::Union;
 
 use crate::classification::_helpers::names::snake_case;
 use crate::classification::models::{Construct, ConstructFamily};

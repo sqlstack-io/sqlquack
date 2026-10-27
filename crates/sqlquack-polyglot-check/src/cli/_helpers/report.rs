@@ -24,7 +24,7 @@ pub(crate) fn report(label: &str, summary: &RunSummary, counts_only: bool) -> St
     }
     let _ = writeln!(
         text,
-        "{label}: {} entries, {} same trees, {} same errors, {} fixed, {} differences, {} without lossless \
+        "{label}: {} entries, {} same trees, {} same errors, {} fixed, {} rejected, {} differences, {} without lossless \
          tokens, {} cast type names unlike polyglot's, {} faithful calls kept, {} unlisted, {} \
          unexplained; parse time polyglot {:.1} ms, sqlquack \
          {:.1} ms",
@@ -32,6 +32,7 @@ pub(crate) fn report(label: &str, summary: &RunSummary, counts_only: bool) -> St
         summary.same_trees,
         summary.same_errors,
         summary.fixed.values().sum::<usize>(),
+        summary.rejected.values().sum::<usize>(),
         summary.differences.len(),
         summary.tokens_lost.len(),
         summary.type_names.len(),

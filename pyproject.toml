@@ -11,7 +11,7 @@ dev = [
   "duckdb==2.0.0",
   # DuckDB's Python functions need numpy; the guard measurement's raise hook is one.
   "numpy==2.5.4",
-  "fensu>=0.27.0",
+  "fensu>=0.28.0",
   "pytest>=8.4",
   "pytest-xdist>=3.8",
   "ruff>=0.12.0",

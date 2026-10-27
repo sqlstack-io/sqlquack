@@ -1,6 +1,6 @@
 //! Expected differences.
 
-use crate::expected::constants::ERROR_PREFIX;
+use crate::expected::constants::{ERROR_PREFIX, OK_PREFIX};
 use std::collections::{BTreeMap, BTreeSet};
 
 use serde::Deserialize;
@@ -15,6 +15,25 @@ pub struct ExpectedFile {
     /// One entry per reviewed parser fix.
     #[serde(default, rename = "fix")]
     pub fixes: Vec<ParserFix>,
+    /// One entry per reviewed statement SQLQuack rejects where polyglot parses it.
+    #[serde(default, rename = "rejection")]
+    pub rejections: Vec<ParserRejection>,
+}
+
+/// A statement SQLQuack rejects and polyglot parses, recognised by its exact text and dialect.
+#[derive(Clone, Debug, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct ParserRejection {
+    /// A lower-case identifier.
+    pub id: String,
+    /// The exact statement.
+    pub sql: String,
+    /// The dialects it is rejected in, such as `DuckDB`.
+    pub dialects: Vec<String>,
+    /// Text SQLQuack's error contains.
+    pub sqlquack_error: String,
+    /// Why SQLQuack's error is right; a test in sqlquack-syntax pins it.
+    pub note: String,
 }
 
 /// Valid Snowflake polyglot rejects and SQLQuack parses, recognised by its text and polyglot's error.
@@ -50,6 +69,8 @@ pub struct ExpectedDifferences {
     pub allowed: BTreeMap<String, BTreeSet<String>>,
     /// The reviewed parser fixes.
     pub fixes: Vec<ParserFix>,
+    /// The reviewed rejections.
+    pub rejections: Vec<ParserRejection>,
 }
 
 impl ParserFix {
@@ -72,6 +93,23 @@ impl ExpectedDifferences {
             polyglot.starts_with(ERROR_PREFIX)
                 && fix.names_error(polyglot)
                 && compact.contains(&fix.marker)
+        })
+    }
+
+    /// The rejection explaining SQLQuack's error `sqlquack` on `sql` in `dialect` where polyglot parsed it.
+    pub fn rejection_for(
+        &self,
+        sql: &str,
+        dialect: &str,
+        polyglot: &str,
+        sqlquack: &str,
+    ) -> Option<&ParserRejection> {
+        self.rejections.iter().find(|rejection| {
+            polyglot.starts_with(OK_PREFIX)
+                && sqlquack.starts_with(ERROR_PREFIX)
+                && sqlquack.contains(&rejection.sqlquack_error)
+                && rejection.sql == sql
+                && rejection.dialects.contains(&dialect.to_owned())
         })
     }
 
