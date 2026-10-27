@@ -173,6 +173,16 @@ one only as `corpora/polyglot-check/expected_differences.toml` allows:
 Inside a lowered call the check compares the whole call through polyglot's own parse of its text,
 not argument by argument; arguments are parsed by the same code in both modes.
 
+SQLQuack's pipeline parses in a third mode, `CallMode::FaithfulLocated`: the faithful parse that
+also records each node's source range, so refusals and runtime raises can say where they come
+from. Ranges live in `span` fields of type `SourceSpan` on the node payloads that carry one
+(operators, casts, CASE, predicates, aliases, subqueries, queries, joins and CTEs, besides the
+names and calls that had spans already); the parser fills them at the expression levels, select
+items, table expressions and statements. A `SourceSpan` is left out of serialised trees when
+absent and is ignored by equality, and a located parse never changes the spans the parser keeps
+on names, so the located tree equals the faithful one. The check proves it on every corpus: each
+entry's located parse, without `span` fields, must equal its faithful parse.
+
 SQLQuack also fixes valid Snowflake that polyglot rejects. Each fix is a `[[fix]]` entry in the
 same file: an id, a marker the statement contains (whitespace removed) and polyglot's errors on it.
 The check counts a statement as fixed, not different, only when SQLQuack parses it, polyglot's

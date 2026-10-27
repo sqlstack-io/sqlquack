@@ -11,6 +11,12 @@ fn given_a_duckdb_error_when_a_divergence_is_expected_then_only_its_own_errors_c
             expected_matched: Some("the timestamp_range guard's raise"),
         },
         DivergenceErrorTestCase {
+            description: "the guard's raise with its raise ID counts",
+            error: "Conversion Error: Could not convert string \
+                    'timestamp_range#0123456789ab: beyond' to INT32",
+            expected_matched: Some("the timestamp_range guard's raise"),
+        },
+        DivergenceErrorTestCase {
             description: "a declared native error counts",
             error: "Conversion Error: Could not convert string '0001-01-01' to INT64\nLINE 1",
             expected_matched: Some(

@@ -82,6 +82,7 @@ fn select_clauses(select: &Select) -> Vec<String> {
         query_hints,
         total_rowcount,
         source_dialect: _,
+        span: _,
     } = select;
     present(&[
         (with.is_some(), "with"),
@@ -145,6 +146,7 @@ macro_rules! set_operation_clauses {
                 corresponding,
                 strict,
                 on_columns,
+                span: _,
             } = operation;
             present(&[
                 (*all, concat!($prefix, "_all")),
@@ -186,6 +188,7 @@ fn join_constructs(join: &Join) -> Vec<Construct> {
         comments: _,
         nesting_group: _,
         directed,
+        span: _,
     } = join;
     let mut constructs = vec![Construct::new(
         ConstructFamily::Join,

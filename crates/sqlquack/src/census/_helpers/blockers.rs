@@ -51,6 +51,7 @@ pub(crate) fn blockers(
                 false => Vec::new(),
             },
             roots: roots[index].iter().cloned().collect(),
+            placed: censuses[index].placed.clone(),
         });
     }
     BlockerReport {

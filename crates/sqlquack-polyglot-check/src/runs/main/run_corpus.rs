@@ -1,6 +1,7 @@
 //! `run_corpus`: every entry of a corpus compared.
 
 use crate::comparison::main::compare_faithful::compare_faithful;
+use crate::comparison::main::compare_located::compare_located;
 use crate::comparison::main::compare_parse::compare_parse;
 use crate::comparison::main::compare_type_names::compare_type_names;
 use crate::comparison::models::Outcome;
@@ -32,6 +33,12 @@ pub fn run_corpus(entries: &[CorpusEntry], expected: &ExpectedDifferences) -> Ru
         }
         if let Some(detail) = faithful.unexplained {
             summary.unexplained.push(Finding {
+                from: from.clone(),
+                detail,
+            });
+        }
+        if let Some(detail) = compare_located(&entry.sql, entry.dialect) {
+            summary.located.push(Finding {
                 from: from.clone(),
                 detail,
             });

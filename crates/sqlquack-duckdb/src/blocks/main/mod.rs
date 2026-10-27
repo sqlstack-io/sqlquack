@@ -10,7 +10,6 @@ pub mod full_case_upper;
 pub mod null_propagating_concat;
 pub mod number_to_boolean;
 pub mod quoted_identifier;
-pub mod raised;
 pub mod string_literal;
 pub mod text_to_boolean;
 pub mod text_to_float;

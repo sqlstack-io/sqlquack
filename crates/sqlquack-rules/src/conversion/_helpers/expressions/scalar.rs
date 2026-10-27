@@ -31,8 +31,15 @@ use crate::conversion::_helpers::support::tree::{
 };
 use crate::conversion::constants::{CALL_KIND, RLIKE_PAIR};
 
-/// Converts one scalar expression.
+/// Converts one scalar expression; refusals and raises inside it name their innermost node.
 pub(crate) fn convert_expression(node: &Value, site: Site<'_>) -> Result<Emitted, Refusal> {
+    let locator = site.context.locator;
+    let mut emitted = convert_kind(node, site).map_err(|refusal| locator.placed(refusal, node))?;
+    emitted.sql = locator.identified(&emitted.sql, node);
+    Ok(emitted)
+}
+
+fn convert_kind(node: &Value, site: Site<'_>) -> Result<Emitted, Refusal> {
     let Some((kind, payload)) = node_kind(node) else {
         return Err(missing(
             node_construct("unknown"),
@@ -90,6 +97,11 @@ pub(crate) fn convert_expression(node: &Value, site: Site<'_>) -> Result<Emitted
                 if let Some(pair) = spelling.pair {
                     site.context.log.equivalence(pair);
                 }
+                let arguments = payload.get("args").and_then(Value::as_array);
+                let _adoption = site
+                    .context
+                    .locator
+                    .adopt(&typed, arguments.map_or(&[], Vec::as_slice));
                 convert_expression(&typed, site).map_err(|refusal| as_written(refusal, spelling))
             }
             None if kind == CALL_KIND => convert_function(payload, site),

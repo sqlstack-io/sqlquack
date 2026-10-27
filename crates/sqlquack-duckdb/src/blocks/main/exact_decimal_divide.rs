@@ -7,7 +7,7 @@ use sqlquack_snowflake::typing::models::SnowflakeType;
 use crate::blocks::_helpers::text::tagged_error;
 use crate::blocks::constants::{EXACT_DECIMAL_DIVIDE, MAX_DECIMAL_PRECISION};
 use crate::blocks::main::cast::cast;
-use crate::blocks::main::raised::raised;
+use crate::raises::main::raised::raised;
 
 /// Exact division rounding half away from zero, and whether it raises beyond 128-bit intermediates.
 pub fn exact_decimal_divide(

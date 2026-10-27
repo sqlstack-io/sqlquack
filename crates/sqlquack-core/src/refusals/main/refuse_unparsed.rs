@@ -1,13 +1,18 @@
 //! `refuse_unparsed`: the refusal for SQL that does not parse.
 
 use crate::parsing::errors::ParseFailure;
+use crate::parsing::models::SourceLines;
 use crate::refusals::models::{Refusal, RefusalCategory};
 
-/// Refuses a whole input that could not be parsed.
-pub fn refuse_unparsed(failure: &ParseFailure) -> Refusal {
+/// Refuses a whole input that could not be parsed, at the failure or else the whole source.
+pub fn refuse_unparsed(failure: &ParseFailure, lines: &SourceLines) -> Refusal {
+    let location = match failure.location {
+        Some(location) => lines.location(location.start, location.end),
+        None => lines.whole(),
+    };
     Refusal {
         construct: None,
-        location: failure.location,
+        location: Some(location),
         category: RefusalCategory::ParseFidelity,
         reason: format!("the SQL does not parse: {}", failure.message),
     }

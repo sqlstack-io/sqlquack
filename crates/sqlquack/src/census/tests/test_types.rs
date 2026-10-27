@@ -63,3 +63,10 @@ pub(crate) struct BlockerTestCase {
     pub(crate) names: bool,
     pub(crate) expected_summary: BlockerSummary,
 }
+
+pub(crate) struct PlacedTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) fixtures: &'static [ShopFile],
+    pub(crate) names: bool,
+    pub(crate) expected_placed: (Vec<(String, Vec<String>)>, Vec<String>),
+}

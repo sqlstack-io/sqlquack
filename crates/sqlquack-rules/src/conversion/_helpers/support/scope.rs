@@ -5,6 +5,7 @@ use sqlquack_core::refusals::models::Refusal;
 use sqlquack_duckdb::blocks::main::quoted_identifier::quoted_identifier;
 use sqlquack_snowflake::typing::models::SnowflakeType;
 
+use crate::conversion::_helpers::support::locations::Locator;
 use crate::conversion::_helpers::support::tree::unresolved;
 use crate::conversion::constants::{UNKNOWN_RELATION_PREFIX, UNKNOWN_RELATION_SUFFIX};
 use crate::conversion::models::{ColumnSpec, ConversionOptions, Schema};
@@ -157,6 +158,7 @@ pub(crate) struct Context<'a> {
     pub(crate) schema: &'a Schema,
     pub(crate) options: &'a ConversionOptions,
     pub(crate) ctes: Vec<(String, Vec<ColumnSpec>)>,
+    pub(crate) locator: &'a Locator<'a>,
 }
 
 impl Context<'_> {

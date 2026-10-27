@@ -53,3 +53,6 @@ pub const UPSTREAM_MODEL_ROOT: &str = "upstream model";
 
 /// A `relation:` root without its name, when names are not asked for.
 pub const UNKNOWN_RELATION_ROOT: &str = "unknown relation";
+
+/// How many of a file's refusals the text report places before counting the rest.
+pub const PLACED_PER_FILE: usize = 5;

@@ -16,9 +16,10 @@ use sqlquack_core::provenance::models::Provenance;
 
 use crate::analysis::main::analyze::analyze;
 use crate::analysis::main::refused_construct::refused_construct;
-use crate::census::_helpers::placeholders::rewrite_with_references;
+use crate::census::_helpers::placeholders::{original_location, rewrite_with_references};
 use crate::census::constants::GUARDS_DIR_VARIABLE;
 use crate::census::errors::CensusError;
+use crate::census::models::PlacedRefusal;
 
 pub(crate) struct FileCensus {
     pub(crate) parsed: bool,
@@ -35,6 +36,8 @@ pub(crate) struct FileCensus {
     pub(crate) references: BTreeSet<String>,
     /// Relations a refusal found without known columns.
     pub(crate) unknown_relations: BTreeSet<String>,
+    /// Every refusal with its position, in source order.
+    pub(crate) placed: Vec<PlacedRefusal>,
 }
 
 pub(crate) fn inspect_file(
@@ -48,8 +51,9 @@ pub(crate) fn inspect_file(
         path: path.to_path_buf(),
         message: error.to_string(),
     })?;
-    let (sql, references) = rewrite_with_references(&String::from_utf8_lossy(&bytes));
-    let analysis = analyze(&sql, dialect, policy, (schema, options));
+    let original = String::from_utf8_lossy(&bytes);
+    let rewritten = rewrite_with_references(&original);
+    let analysis = analyze(&rewritten.sql, dialect, policy, (schema, options));
     let outputs = match (
         analysis.refusals.is_empty(),
         analysis.conversions.as_slice(),
@@ -93,9 +97,23 @@ pub(crate) fn inspect_file(
         .filter(|refusal| unknown_relation(&refusal.reason).is_none())
         .map(|refusal| (refusal.category, refused_construct(refusal)))
         .collect();
+    let mut placed: Vec<PlacedRefusal> = Vec::new();
+    for refusal in &analysis.refusals {
+        let location = refusal
+            .location
+            .map(|location| original_location(&rewritten, &original, location));
+        placed.push(PlacedRefusal {
+            line: location.map(|location| location.line),
+            column: location.map(|location| location.column),
+            category: refusal.category.label().to_owned(),
+            construct: refused_construct(refusal),
+        });
+    }
+    placed.sort();
     Ok(FileCensus {
+        placed,
         elapsed: started.elapsed(),
-        references,
+        references: rewritten.references,
         unknown_relations,
         root_constructs,
         outputs,

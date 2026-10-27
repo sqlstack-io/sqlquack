@@ -41,6 +41,7 @@ use crate::expressions::tables::models::QueryOption;
 use crate::expressions::tree::models::Expression;
 use crate::expressions::types::models::Tuple;
 use crate::parser::models::Parser;
+use crate::tokens::models::SourceSpan;
 use crate::tokens::models::TokenType;
 use crate::tokens::types::Result;
 
@@ -129,7 +130,7 @@ impl Parser {
                         use_bracket_syntax: false,
                         no_parens: false,
                         quoted: false,
-                        span: None,
+                        span: SourceSpan::default(),
                         inferred_type: None,
                     }))
                 } else if self.match_token(TokenType::Cube) {
@@ -148,7 +149,7 @@ impl Parser {
                         use_bracket_syntax: false,
                         no_parens: false,
                         quoted: false,
-                        span: None,
+                        span: SourceSpan::default(),
                         inferred_type: None,
                     }))
                 } else if self.match_token(TokenType::Rollup) {
@@ -167,7 +168,7 @@ impl Parser {
                         use_bracket_syntax: false,
                         no_parens: false,
                         quoted: false,
-                        span: None,
+                        span: SourceSpan::default(),
                         inferred_type: None,
                     }))
                 } else {
@@ -264,7 +265,7 @@ impl Parser {
                         use_bracket_syntax: false,
                         no_parens: false,
                         quoted: false,
-                        span: None,
+                        span: SourceSpan::default(),
                         inferred_type: None,
                     }))
                 } else if self.match_token(TokenType::Cube) {
@@ -283,7 +284,7 @@ impl Parser {
                         use_bracket_syntax: false,
                         no_parens: false,
                         quoted: false,
-                        span: None,
+                        span: SourceSpan::default(),
                         inferred_type: None,
                     }))
                 } else if self.match_token(TokenType::Rollup) {
@@ -302,7 +303,7 @@ impl Parser {
                         use_bracket_syntax: false,
                         no_parens: false,
                         quoted: false,
-                        span: None,
+                        span: SourceSpan::default(),
                         inferred_type: None,
                     }))
                 } else if self.check(TokenType::LParen) {
@@ -423,6 +424,7 @@ impl Parser {
                                     pre_alias_comments: Vec::new(),
                                     trailing_comments: Vec::new(),
                                     inferred_type: None,
+                                    span: SourceSpan::default(),
                                 }))
                             } else {
                                 Expression::Identifier(name_id)
@@ -643,6 +645,7 @@ impl Parser {
                     modifiers_inside: false,
                     trailing_comments: Vec::new(),
                     inferred_type: None,
+                    span: SourceSpan::default(),
                 },
             };
             subquery
@@ -695,6 +698,7 @@ impl Parser {
                     modifiers_inside: false,
                     trailing_comments: Vec::new(),
                     inferred_type: None,
+                    span: SourceSpan::default(),
                 })))
             } else {
                 Ok(Expression::Subquery(Box::new(Subquery {
@@ -713,6 +717,7 @@ impl Parser {
                     modifiers_inside: false,
                     trailing_comments: Vec::new(),
                     inferred_type: None,
+                    span: SourceSpan::default(),
                 })))
             }
         } else {

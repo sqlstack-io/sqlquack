@@ -39,3 +39,10 @@ class CountTestCase:
     options: tuple[str, ...]
     expected_count: tuple[int, bool, bool]
     expected_progress: str
+
+
+@dataclass(frozen=True)
+class ClassifyTestCase:
+    description: str
+    message: str
+    expected_classification: tuple[str, str]

@@ -45,3 +45,24 @@ pub(crate) fn projection_at(sql: &str, pointer: &str) -> Value {
         .cloned()
         .unwrap_or_default()
 }
+
+/// The source text a located parse records for the node at `pointer`, or why there is none.
+pub(crate) fn located_text(sql: &str, pointer: &str) -> Result<String, String> {
+    let tree = statements(sql, Dialect::Snowflake, CallMode::FaithfulLocated);
+    let node = tree.pointer(pointer).ok_or("no node at the pointer")?;
+    let span = node
+        .as_object()
+        .and_then(|object| object.values().next())
+        .and_then(|payload| payload.get("span"))
+        .or_else(|| node.get("span"))
+        .ok_or("the node has no span")?;
+    let start = span["start"].as_u64().ok_or("no start")? as usize;
+    let end = span["end"].as_u64().ok_or("no end")? as usize;
+    Ok(sql.chars().skip(start).take(end - start).collect())
+}
+
+/// Whether a located parse equals the faithful parse, spans aside.
+pub(crate) fn located_matches_faithful(sql: &str, dialect: Dialect) -> bool {
+    let parse = |mode| parse_statements_with(sql, dialect, &ParseOptions::default(), mode).ok();
+    parse(CallMode::FaithfulLocated) == parse(CallMode::Faithful)
+}

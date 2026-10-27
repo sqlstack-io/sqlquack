@@ -33,6 +33,7 @@ use crate::parser::constants::PYFORMAT_PARAMETER_SUFFIX;
 use crate::parser::constants::SECOND_PREVIOUS_OFFSET;
 use crate::parser::constants::STRUCT;
 use crate::parser::models::Parser;
+use crate::tokens::models::SourceSpan;
 use crate::tokens::models::TokenType;
 use crate::tokens::types::Result;
 
@@ -357,6 +358,7 @@ impl Parser {
                 format: None,
                 default: None,
                 inferred_type: None,
+                span: SourceSpan::default(),
             })));
         }
 
@@ -457,7 +459,7 @@ impl Parser {
                 use_bracket_syntax: false,
                 no_parens: false,
                 quoted: false,
-                span: None,
+                span: SourceSpan::default(),
                 inferred_type: None,
             }));
 
@@ -597,6 +599,7 @@ impl Parser {
                     self.skip();
                     let pattern = self.parse_expression()?;
                     Expression::ILike(Box::new(LikeOp {
+                        span: SourceSpan::default(),
                         negated: false,
                         left: Expression::Star(Star {
                             table: None,
@@ -674,6 +677,7 @@ impl Parser {
             return Ok(Expression::Exists(Box::new(Exists {
                 this: query,
                 not: false,
+                span: SourceSpan::default(),
             })));
         }
 
@@ -693,7 +697,7 @@ impl Parser {
             use_bracket_syntax: false,
             no_parens: false,
             quoted: false,
-            span: None,
+            span: SourceSpan::default(),
             inferred_type: None,
         })))
     }
@@ -712,6 +716,7 @@ impl Parser {
                     format: None,
                     default: None,
                     inferred_type: None,
+                    span: SourceSpan::default(),
                 })));
             }
             return Ok(Expression::Literal(Box::new(Literal::Date(str_token.text))));
@@ -762,6 +767,7 @@ impl Parser {
                 format: None,
                 default: None,
                 inferred_type: None,
+                span: SourceSpan::default(),
             })));
         }
 
@@ -792,6 +798,7 @@ impl Parser {
                     format: None,
                     default: None,
                     inferred_type: None,
+                    span: SourceSpan::default(),
                 })));
             }
             return Ok(Expression::Literal(Box::new(Literal::Timestamp(
@@ -857,6 +864,7 @@ impl Parser {
                         format: None,
                         default: None,
                         inferred_type: None,
+                        span: SourceSpan::default(),
                     })));
                 }
 
@@ -912,6 +920,7 @@ impl Parser {
                     format: None,
                     default: None,
                     inferred_type: None,
+                    span: SourceSpan::default(),
                 })));
             }
 
@@ -971,7 +980,7 @@ impl Parser {
             use_bracket_syntax: false,
             no_parens: false,
             quoted: false,
-            span: None,
+            span: SourceSpan::default(),
             inferred_type: None,
         }));
         self.maybe_parse_over(func_expr)
@@ -1008,6 +1017,7 @@ impl Parser {
                 },
             };
             Expression::Cast(Box::new(crate::expressions::operators::models::Cast {
+                span: SourceSpan::default(),
                 this: num_expr,
                 to: data_type,
                 trailing_comments: Vec::new(),
@@ -1136,6 +1146,7 @@ impl Parser {
                         format: None,
                         default: None,
                         inferred_type: None,
+                        span: SourceSpan::default(),
                     }));
                     return (self.maybe_parse_subscript(cast_expr)).map(Some);
                 } else if name_upper == ARRAY {
@@ -1162,6 +1173,7 @@ impl Parser {
                         format: None,
                         default: None,
                         inferred_type: None,
+                        span: SourceSpan::default(),
                     }));
                     return (self.maybe_parse_subscript(cast_expr)).map(Some);
                 }
@@ -1184,6 +1196,7 @@ impl Parser {
                     format: None,
                     default: None,
                     inferred_type: None,
+                    span: SourceSpan::default(),
                 }));
                 return (self.maybe_parse_subscript(cast_expr)).map(Some);
             }
@@ -1287,6 +1300,7 @@ impl Parser {
                 format: None,
                 default: None,
                 inferred_type: None,
+                span: SourceSpan::default(),
             }))));
         }
 
@@ -1314,7 +1328,7 @@ impl Parser {
             use_bracket_syntax: false,
             no_parens: false,
             quoted: false,
-            span: None,
+            span: SourceSpan::default(),
             inferred_type: None,
         }));
         self.maybe_parse_over(func)
@@ -1341,7 +1355,7 @@ impl Parser {
             use_bracket_syntax: false,
             no_parens: false,
             quoted: false,
-            span: None,
+            span: SourceSpan::default(),
             inferred_type: None,
         }));
         self.maybe_parse_over(func)
@@ -1390,7 +1404,7 @@ impl Parser {
                 use_bracket_syntax: false,
                 no_parens: false,
                 quoted: false,
-                span: None,
+                span: SourceSpan::default(),
                 inferred_type: None,
             }));
             self.maybe_parse_subscript(func)
@@ -1408,7 +1422,7 @@ impl Parser {
                 use_bracket_syntax: false,
                 no_parens: true,
                 quoted: false,
-                span: None,
+                span: SourceSpan::default(),
                 inferred_type: None,
             }));
             self.maybe_parse_subscript(func)
@@ -1438,6 +1452,7 @@ impl Parser {
             };
             return Ok(Some(Expression::Cast(Box::new(
                 crate::expressions::operators::models::Cast {
+                    span: SourceSpan::default(),
                     this: Expression::Literal(Box::new(Literal::String(str_token.text))),
                     to: data_type,
                     trailing_comments: Vec::new(),
@@ -1812,7 +1827,7 @@ impl Parser {
             use_bracket_syntax: false,
             no_parens: false,
             quoted: false,
-            span: None,
+            span: SourceSpan::default(),
             inferred_type: None,
         })))
     }

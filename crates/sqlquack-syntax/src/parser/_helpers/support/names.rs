@@ -47,6 +47,7 @@ use crate::parser::constants::ORDER;
 use crate::parser::constants::QUOTED_TEXT_MIN_LEN;
 use crate::parser::constants::SCHEDULE;
 use crate::parser::models::Parser;
+use crate::tokens::models::SourceSpan;
 use crate::tokens::models::TokenType;
 use crate::tokens::types::Result;
 
@@ -130,6 +131,7 @@ impl Parser {
                 escape,
                 quantifier: None,
                 inferred_type: None,
+                span: SourceSpan::default(),
             }));
             this = Some(like);
             return Ok(this);
@@ -150,6 +152,7 @@ impl Parser {
                 escape,
                 quantifier: None,
                 inferred_type: None,
+                span: SourceSpan::default(),
             }));
             this = Some(ilike);
             return Ok(this);
@@ -161,6 +164,7 @@ impl Parser {
                 Some(Expression::Not(Box::new(UnaryOp {
                     this: in_expr,
                     inferred_type: None,
+                    span: SourceSpan::default(),
                 })))
             } else {
                 Some(in_expr)
@@ -183,10 +187,12 @@ impl Parser {
                     operator_comments: Vec::new(),
                     trailing_comments: Vec::new(),
                     inferred_type: None,
+                    span: SourceSpan::default(),
                 }));
                 return Ok(Some(Expression::Not(Box::new(UnaryOp {
                     this: is_null,
                     inferred_type: None,
+                    span: SourceSpan::default(),
                 }))));
             }
         }
@@ -231,6 +237,7 @@ impl Parser {
             high,
             not: negate,
             symmetric,
+            span: SourceSpan::default(),
         })))
     }
 
@@ -254,6 +261,7 @@ impl Parser {
                 global: false,
                 unnest: Some(Box::new(unnest_expr)),
                 is_field: false,
+                span: SourceSpan::default(),
             })));
         }
 
@@ -267,6 +275,7 @@ impl Parser {
                     global: false,
                     unnest: None,
                     is_field: true,
+                    span: SourceSpan::default(),
                 })));
             }
             return Err(self.parse_error("Expected expression or parenthesized list after IN"));
@@ -283,6 +292,7 @@ impl Parser {
                 global: false,
                 unnest: None,
                 is_field: false,
+                span: SourceSpan::default(),
             })));
         }
 
@@ -302,6 +312,7 @@ impl Parser {
             global: false,
             unnest: None,
             is_field: false,
+            span: SourceSpan::default(),
         })))
     }
 
@@ -322,11 +333,13 @@ impl Parser {
                 operator_comments: Vec::new(),
                 trailing_comments: Vec::new(),
                 inferred_type: None,
+                span: SourceSpan::default(),
             }));
             return if negate {
                 Ok(Expression::Not(Box::new(UnaryOp {
                     this: is_null,
                     inferred_type: None,
+                    span: SourceSpan::default(),
                 })))
             } else {
                 Ok(is_null)
@@ -341,11 +354,13 @@ impl Parser {
                 operator_comments: Vec::new(),
                 trailing_comments: Vec::new(),
                 inferred_type: None,
+                span: SourceSpan::default(),
             }));
             return if negate {
                 Ok(Expression::Not(Box::new(UnaryOp {
                     this: is_true,
                     inferred_type: None,
+                    span: SourceSpan::default(),
                 })))
             } else {
                 Ok(is_true)
@@ -360,11 +375,13 @@ impl Parser {
                 operator_comments: Vec::new(),
                 trailing_comments: Vec::new(),
                 inferred_type: None,
+                span: SourceSpan::default(),
             }));
             return if negate {
                 Ok(Expression::Not(Box::new(UnaryOp {
                     this: is_false,
                     inferred_type: None,
+                    span: SourceSpan::default(),
                 })))
             } else {
                 Ok(is_false)
@@ -413,6 +430,7 @@ impl Parser {
                         operator_comments: Vec::new(),
                         trailing_comments: Vec::new(),
                         inferred_type: None,
+                        span: SourceSpan::default(),
                     }))
                 } else {
                     Expression::NullSafeNeq(Box::new(BinaryOp {
@@ -422,6 +440,7 @@ impl Parser {
                         operator_comments: Vec::new(),
                         trailing_comments: Vec::new(),
                         inferred_type: None,
+                        span: SourceSpan::default(),
                     }))
                 };
                 return Ok(expr);
@@ -710,6 +729,7 @@ impl Parser {
                     pre_alias_comments: Vec::new(),
                     trailing_comments: Vec::new(),
                     inferred_type: None,
+                    span: SourceSpan::default(),
                 }))
             } else {
                 expr
@@ -1026,6 +1046,7 @@ impl Parser {
                     sort_by: None,
                     cluster_by: None,
                     inferred_type: None,
+                    span: SourceSpan::default(),
                 })))
             } else {
                 self.current -= 1;
@@ -1069,6 +1090,7 @@ impl Parser {
                             global: false,
                             unnest: None,
                             is_field: false,
+                            span: SourceSpan::default(),
                         }));
                     }
                 } else if self.match_token(TokenType::As) {
@@ -1108,6 +1130,7 @@ impl Parser {
                         format: None,
                         default: None,
                         inferred_type: None,
+                        span: SourceSpan::default(),
                     }))
                 } else {
                     func
@@ -1348,6 +1371,7 @@ impl Parser {
                         pre_alias_comments: Vec::new(),
                         trailing_comments: Vec::new(),
                         inferred_type: None,
+                        span: SourceSpan::default(),
                     });
                 } else {
                     break;
@@ -1532,7 +1556,7 @@ impl Parser {
             use_bracket_syntax: false,
             no_parens: false,
             quoted: false,
-            span: None,
+            span: SourceSpan::default(),
             inferred_type: None,
         }));
 

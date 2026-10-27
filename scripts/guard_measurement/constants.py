@@ -19,8 +19,8 @@ SQL_LANGUAGE: str = "sql"
 BOOLEAN_TYPE: str = "BOOLEAN"
 REFUSED_FALLBACK: str = "refused"
 
-GUARD_RAISE: re.Pattern[str] = re.compile(r"'([a-z_]+): ([^']+)'")
-SNOWFLAKE_RAISE: re.Pattern[str] = re.compile(r"'sqlquack:([0-9]+): ([^']+)'")
+GUARD_RAISE: re.Pattern[str] = re.compile(r"'([a-z_]+)(?:#[0-9a-f?]+)?: ([^']+)'")
+SNOWFLAKE_RAISE: re.Pattern[str] = re.compile(r"'sqlquack:([0-9]+)(?:#[0-9a-f?]+)?: ([^']+)'")
 QUOTED_VALUE: re.Pattern[str] = re.compile(r"'[^']*'|\"[^\"]*\"")
 EXPONENT_MARKER: re.Pattern[str] = re.compile(r"[eE]")
 DECIMAL_POINT: str = "."

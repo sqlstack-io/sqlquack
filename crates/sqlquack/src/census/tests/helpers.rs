@@ -70,6 +70,22 @@ pub(crate) const CHAIN: &[ShopFile] = &[
     },
 ];
 
+pub(crate) const PLACED: &[ShopFile] = &[
+    ShopFile {
+        path: "a.sql",
+        contents: "SELECT customer_id\nFROM __source(\"shop\", \"customers\") WHERE INITCAP(name) = 'A'",
+    },
+    ShopFile {
+        path: "b.sql",
+        contents: "SELECT customer_id FROM __source(\"shop\", \"customers\")",
+    },
+];
+
+pub(crate) const MANY_PLACED: &[ShopFile] = &[ShopFile {
+    path: "a.sql",
+    contents: "SELECT INITCAP(name) AS n FROM __source(\"shop\", \"customers\");\nSELECT INITCAP(name) AS n FROM __source(\"shop\", \"customers\");\nSELECT INITCAP(name) AS n FROM __source(\"shop\", \"customers\");\nSELECT INITCAP(name) AS n FROM __source(\"shop\", \"customers\");\nSELECT INITCAP(name) AS n FROM __source(\"shop\", \"customers\");\nSELECT INITCAP(name) AS n FROM __source(\"shop\", \"customers\");\nSELECT INITCAP(name) AS n FROM __source(\"shop\", \"customers\");\n",
+}];
+
 pub(crate) const UNRESOLVED_COLUMN_AND_RELATION: &[ShopFile] = &[ShopFile {
     path: "a.sql",
     contents: "SELECT c.nickname, r.amount FROM __source(\"shop\", \"customers\") AS c \
@@ -239,4 +255,74 @@ pub(crate) fn blocker_summary(files: &[ShopFile], names: bool) -> BlockerSummary
 
 pub(crate) fn owned(models: &[&str]) -> Vec<String> {
     models.iter().map(|model| (*model).to_owned()).collect()
+}
+
+/// Each refused file's placed refusals as text, and the report text's refusal position lines.
+pub(crate) fn placed_refusals(
+    files: &[ShopFile],
+    names: bool,
+) -> (Vec<(String, Vec<String>)>, Vec<String>) {
+    let directory = tempfile::tempdir().expect("temporary directory");
+    write_files(directory.path(), files);
+    let mut schema = Schema::default();
+    schema.relations.insert(
+        "__SQLQUACK_RELATION__SHOP__CUSTOMERS".to_owned(),
+        vec![
+            ColumnSpec {
+                name: "CUSTOMER_ID".to_owned(),
+                data_type: SnowflakeType::Number {
+                    precision: 38,
+                    scale: 0,
+                },
+            },
+            ColumnSpec {
+                name: "NAME".to_owned(),
+                data_type: SnowflakeType::Varchar,
+            },
+        ],
+    );
+    let run = run_census_timed(
+        &[directory.path().to_path_buf()],
+        &CensusOptions {
+            dialect: SourceDialect::Snowflake,
+            coverage_points: vec![1],
+            schema,
+            chain_models: false,
+            conversion: ConversionOptions::default(),
+            names,
+        },
+        &CensusProgress::default(),
+    )
+    .expect("the census runs");
+    let placed = run
+        .report
+        .blockers
+        .files
+        .iter()
+        .map(|file| {
+            let refusals = file
+                .placed
+                .iter()
+                .map(|refusal| {
+                    format!(
+                        "{}:{} {}: {}",
+                        refusal.line.unwrap_or_default(),
+                        refusal.column.unwrap_or_default(),
+                        refusal.category,
+                        refusal.construct
+                    )
+                })
+                .collect();
+            (file.model.clone(), refusals)
+        })
+        .collect();
+    let text = render_census_text(&run.report, 5);
+    let lines = text
+        .lines()
+        .skip_while(|line| !line.starts_with("Refusal positions"))
+        .skip(1)
+        .take_while(|line| !line.is_empty())
+        .map(str::to_owned)
+        .collect();
+    (placed, lines)
 }

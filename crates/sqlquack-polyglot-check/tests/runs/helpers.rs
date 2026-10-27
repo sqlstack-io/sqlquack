@@ -37,6 +37,7 @@ pub(crate) fn exact_outcome(entries: &Result<Vec<CorpusEntry>, String>) -> Exact
             type_names: Vec::new(),
             unlisted: Vec::new(),
             unexplained: Vec::new(),
+            located: Vec::new(),
         };
     };
     let summary = summary_of(entries);
@@ -55,5 +56,6 @@ pub(crate) fn exact_outcome(entries: &Result<Vec<CorpusEntry>, String>) -> Exact
         type_names: shown(&summary.type_names),
         unlisted: shown(&summary.unlisted),
         unexplained: shown(&summary.unexplained),
+        located: shown(&summary.located),
     }
 }

@@ -75,3 +75,41 @@ pub(crate) struct BudgetTestCase {
     pub(crate) expected_category: Option<RefusalCategory>,
     pub(crate) expected_reason_fragment: &'static str,
 }
+
+pub(crate) struct LocationTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) sql: &'static str,
+    pub(crate) declared: Option<&'static str>,
+    pub(crate) budget: Option<ConversionBudget>,
+    pub(crate) expected_places: Vec<(RefusalCategory, &'static str, [usize; 2])>,
+}
+
+pub(crate) struct FunctionLocationTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) body: &'static str,
+    pub(crate) expected_places: Vec<(RefusalCategory, &'static str, [usize; 2])>,
+}
+
+pub(crate) struct RowCountTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) sql: &'static str,
+    pub(crate) expected_rows: Result<usize, Vec<String>>,
+}
+
+pub(crate) struct RaisePlacesTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) sql: &'static str,
+    pub(crate) expected_places: Result<Vec<Vec<[usize; 2]>>, Vec<String>>,
+}
+
+pub(crate) struct RaisedPlacesTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) sql: &'static str,
+    pub(crate) expected_places: Result<Vec<[usize; 2]>, Vec<String>>,
+}
+
+pub(crate) struct ReformattedTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) texts: &'static [&'static str],
+    pub(crate) expected_identical: Result<bool, Vec<String>>,
+}

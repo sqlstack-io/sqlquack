@@ -3,8 +3,8 @@
 use serde_json::Value;
 use sqlquack_core::refusals::models::Refusal;
 use sqlquack_duckdb::blocks::main::cast::cast;
-use sqlquack_duckdb::blocks::main::raised::raised;
 use sqlquack_duckdb::blocks::main::string_literal::string_literal;
+use sqlquack_duckdb::raises::main::raised::raised;
 use sqlquack_snowflake::typing::models::SnowflakeType;
 
 use crate::conversion::_helpers::expressions::objects::as_json;

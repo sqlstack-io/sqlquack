@@ -6,7 +6,7 @@ use sqlquack_syntax::ExpressionWalk;
 use crate::classification::main::classify::classify;
 use crate::classification::models::{ConstructFamily, Occurrence};
 use crate::parsing::main::parse_source::parse_source;
-use crate::parsing::models::SourceDialect;
+use crate::parsing::models::{SourceDialect, SourceLines};
 
 pub(crate) fn parse_one(sql: &str) -> Expression {
     let mut statements = parse_source(sql, SourceDialect::Snowflake).expect("test SQL parses");
@@ -15,7 +15,11 @@ pub(crate) fn parse_one(sql: &str) -> Expression {
 }
 
 fn occurrences(sql: &str) -> Vec<Occurrence> {
-    classify(&parse_one(sql), sql, SourceDialect::Snowflake)
+    classify(
+        &parse_one(sql),
+        &SourceLines::new(sql),
+        SourceDialect::Snowflake,
+    )
 }
 
 pub(crate) fn missing_keys(sql: &str, expected: &[&str]) -> Vec<String> {

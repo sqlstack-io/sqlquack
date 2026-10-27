@@ -1,5 +1,6 @@
 //! Parser statements: entry.
 
+use crate::tokens::models::SourceSpan;
 use std::collections::HashMap;
 use std::collections::HashSet;
 use std::sync::atomic::Ordering;
@@ -267,7 +268,9 @@ impl Parser {
         let mut statements: Vec<Expression> = Vec::new();
 
         while !self.is_at_end() {
+            let start = self.current;
             let mut stmt = self.parse_statement()?;
+            stmt = self.spanned(start, stmt);
 
             if self.check(TokenType::Semicolon) {
                 let semi_comments = self.current_leading_comments().to_vec();
@@ -761,6 +764,7 @@ impl Parser {
                 modifiers_inside: false,
                 trailing_comments: Vec::new(),
                 inferred_type: None,
+                span: SourceSpan::default(),
             }));
             let result = self.parse_set_operation(subquery)?;
             self.parse_query_modifiers(result)
@@ -785,6 +789,7 @@ impl Parser {
                 modifiers_inside: false,
                 trailing_comments: Vec::new(),
                 inferred_type: None,
+                span: SourceSpan::default(),
             }));
             let result = self.parse_set_operation(subquery)?;
             let pre_alias_comments = self.previous_trailing_comments().to_vec();
@@ -806,6 +811,7 @@ impl Parser {
                     pre_alias_comments,
                     trailing_comments,
                     inferred_type: None,
+                    span: SourceSpan::default(),
                 })))
             } else {
                 self.parse_query_modifiers(result)
@@ -840,6 +846,7 @@ impl Parser {
                         pre_alias_comments,
                         trailing_comments,
                         inferred_type: None,
+                        span: SourceSpan::default(),
                     })))
                 } else {
                     let alias = self.expect_identifier_or_keyword_with_quoted()?;
@@ -853,6 +860,7 @@ impl Parser {
                         pre_alias_comments,
                         trailing_comments,
                         inferred_type: None,
+                        span: SourceSpan::default(),
                     })))
                 }
             } else {
@@ -894,6 +902,7 @@ impl Parser {
                     pre_alias_comments,
                     trailing_comments,
                     inferred_type: None,
+                    span: SourceSpan::default(),
                 })))
             } else {
                 let alias = self.expect_identifier_or_keyword_with_quoted()?;
@@ -908,6 +917,7 @@ impl Parser {
                     pre_alias_comments,
                     trailing_comments,
                     inferred_type: None,
+                    span: SourceSpan::default(),
                 })))
             }
         } else if self.check(TokenType::Var) && !self.check_keyword()
@@ -924,6 +934,7 @@ impl Parser {
                 pre_alias_comments,
                 trailing_comments,
                 inferred_type: None,
+                span: SourceSpan::default(),
             })))
         } else if !pre_alias_comments.is_empty() {
             match &expr {
@@ -1015,6 +1026,7 @@ impl Parser {
                 modifiers_inside: false,
                 trailing_comments: Vec::new(),
                 inferred_type: None,
+                span: SourceSpan::default(),
             }));
             let result = self.parse_set_operation(subquery)?;
             self.parse_query_modifiers(result)
@@ -1039,6 +1051,7 @@ impl Parser {
                 modifiers_inside: false,
                 trailing_comments: Vec::new(),
                 inferred_type: None,
+                span: SourceSpan::default(),
             }));
             let result = self.parse_set_operation(subquery)?;
             let pre_alias_comments = self.previous_trailing_comments().to_vec();
@@ -1054,6 +1067,7 @@ impl Parser {
                     pre_alias_comments,
                     trailing_comments,
                     inferred_type: None,
+                    span: SourceSpan::default(),
                 })))
             } else {
                 self.parse_query_modifiers(result)
@@ -1082,6 +1096,7 @@ impl Parser {
                         pre_alias_comments,
                         trailing_comments,
                         inferred_type: None,
+                        span: SourceSpan::default(),
                     })))
                 } else {
                     let alias = self.expect_identifier_or_keyword_with_quoted()?;
@@ -1095,6 +1110,7 @@ impl Parser {
                         pre_alias_comments,
                         trailing_comments,
                         inferred_type: None,
+                        span: SourceSpan::default(),
                     })))
                 }
             } else {
@@ -1256,6 +1272,7 @@ impl Parser {
                             modifiers_inside: false,
                             trailing_comments: Vec::new(),
                             inferred_type: None,
+                            span: SourceSpan::default(),
                         }))
                     } else {
                         self.parse_expression()?
@@ -1305,6 +1322,7 @@ impl Parser {
                             modifiers_inside: false,
                             trailing_comments: Vec::new(),
                             inferred_type: None,
+                            span: SourceSpan::default(),
                         }))
                     } else {
                         self.parse_expression()?
@@ -1495,6 +1513,7 @@ impl Parser {
             qualify_after_window,
             option,
             exclude,
+            span: SourceSpan::default(),
         };
 
         Ok(Expression::Select(Box::new(select)))
@@ -1769,6 +1788,7 @@ impl Parser {
         let mut ctes: Vec<Cte> = Vec::new();
 
         loop {
+            let cte_start = self.current;
             let name = self.expect_identifier_or_alias_keyword_with_quoted()?;
 
             let columns = if self.check(TokenType::LParen) && !self.check_next(TokenType::Select) {
@@ -1805,7 +1825,9 @@ impl Parser {
             };
 
             self.expect_token(TokenType::LParen)?;
+            let query_start = self.current;
             let query = self.parse_statement()?;
+            let query = self.spanned(query_start, query);
             self.expect_token(TokenType::RParen)?;
 
             ctes.push(Cte {
@@ -1816,6 +1838,7 @@ impl Parser {
                 key_expressions,
                 alias_first: true,
                 comments: cte_comments,
+                span: self.source_range(cte_start),
             });
 
             if !self.match_token(TokenType::Comma) {

@@ -37,6 +37,8 @@ pub struct RunSummary {
     pub spellings: BTreeMap<Spelling, usize>,
     /// Kept spellings the expected-differences list does not allow.
     pub unlisted: Vec<Finding>,
+    /// Located parses that differ from the faithful parse beyond their spans.
+    pub located: Vec<Finding>,
     /// Faithful parses that differ from the lowered parse beyond their kept spellings.
     pub unexplained: Vec<Finding>,
     /// polyglot's total parse time.
@@ -53,6 +55,7 @@ impl RunSummary {
             && self.type_names.is_empty()
             && self.unlisted.is_empty()
             && self.unexplained.is_empty()
+            && self.located.is_empty()
     }
 }
 

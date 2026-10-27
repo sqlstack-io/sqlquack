@@ -1,7 +1,8 @@
 use crate::census::tests::helpers::{
-    CHAIN, CYCLE, QUOTED_LOWER_CASE, UNRESOLVED_COLUMN_AND_RELATION, blocker_summary, owned,
+    CHAIN, CYCLE, MANY_PLACED, PLACED, QUOTED_LOWER_CASE, UNRESOLVED_COLUMN_AND_RELATION,
+    blocker_summary, owned, placed_refusals,
 };
-use crate::census::tests::test_types::{BlockerSummary, BlockerTestCase};
+use crate::census::tests::test_types::{BlockerSummary, BlockerTestCase, PlacedTestCase};
 
 #[test]
 fn given_chained_models_when_tracing_refusals_then_each_root_counts_the_files_it_blocks() {
@@ -99,6 +100,72 @@ fn given_chained_models_when_tracing_refusals_then_each_root_counts_the_files_it
         assert_eq!(
             blocker_summary(test_case.fixtures, test_case.names),
             test_case.expected_summary,
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_refused_files_when_reporting_then_each_refusal_has_its_line_and_column() {
+    let test_cases = [
+        PlacedTestCase {
+            description: "a refusal after a reference call is placed in the file as written",
+            fixtures: PLACED,
+            names: true,
+            expected_placed: (
+                vec![(
+                    "a".to_owned(),
+                    vec!["2:42 missing rule: fn:INITCAP".to_owned()],
+                )],
+                vec!["  a  2:42  missing rule: fn:INITCAP".to_owned()],
+            ),
+        },
+        PlacedTestCase {
+            description: "without names, files are numbered and keep their positions",
+            fixtures: PLACED,
+            names: false,
+            expected_placed: (
+                vec![(
+                    "#1".to_owned(),
+                    vec!["2:42 missing rule: fn:INITCAP".to_owned()],
+                )],
+                vec!["  #1  2:42  missing rule: fn:INITCAP".to_owned()],
+            ),
+        },
+        PlacedTestCase {
+            description: "the text report places a file's first refusals and counts the rest",
+            fixtures: MANY_PLACED,
+            names: true,
+            expected_placed: (
+                vec![(
+                    "a".to_owned(),
+                    vec![
+                        "1:8 missing rule: fn:INITCAP".to_owned(),
+                        "2:8 missing rule: fn:INITCAP".to_owned(),
+                        "3:8 missing rule: fn:INITCAP".to_owned(),
+                        "4:8 missing rule: fn:INITCAP".to_owned(),
+                        "5:8 missing rule: fn:INITCAP".to_owned(),
+                        "6:8 missing rule: fn:INITCAP".to_owned(),
+                        "7:8 missing rule: fn:INITCAP".to_owned(),
+                    ],
+                )],
+                vec![
+                    "  a  1:8  missing rule: fn:INITCAP".to_owned(),
+                    "  a  2:8  missing rule: fn:INITCAP".to_owned(),
+                    "  a  3:8  missing rule: fn:INITCAP".to_owned(),
+                    "  a  4:8  missing rule: fn:INITCAP".to_owned(),
+                    "  a  5:8  missing rule: fn:INITCAP".to_owned(),
+                    "  a  +2 more".to_owned(),
+                ],
+            ),
+        },
+    ];
+
+    for test_case in test_cases {
+        assert_eq!(
+            placed_refusals(test_case.fixtures, test_case.names),
+            test_case.expected_placed,
             "{}",
             test_case.description
         );

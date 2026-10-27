@@ -1,5 +1,6 @@
 //! How DuckDB's error compares with the recorded Snowflake error.
 
+use sqlquack_core::failures::constants::RAISE_ID_MARKER;
 use sqlquack_core::failures::main::duckdb_failure::duckdb_failure;
 use sqlquack_core::failures::main::snowflake_kind::snowflake_kind;
 use sqlquack_core::failures::models::{ErrorKind, FailureMode};
@@ -22,11 +23,10 @@ pub(crate) fn error_check(
     let Some(kind) = snowflake_kind(errno, sqlstate) else {
         return unknown(recorded);
     };
-    if let Some(divergence) = policy
-        .divergences
-        .keys()
-        .find(|divergence| error.contains(&format!("{divergence}:")))
-    {
+    if let Some(divergence) = policy.divergences.keys().find(|divergence| {
+        error.contains(&format!("{divergence}:"))
+            || error.contains(&format!("{divergence}{RAISE_ID_MARKER}"))
+    }) {
         return ErrorCheck::DivergenceRaise {
             divergence: divergence.clone(),
         };

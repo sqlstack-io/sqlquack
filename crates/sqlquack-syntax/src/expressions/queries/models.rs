@@ -1,5 +1,6 @@
 //! Data models of expressions queries.
 
+use crate::tokens::models::SourceSpan;
 use serde::Deserialize;
 use serde::Serialize;
 
@@ -101,6 +102,10 @@ pub struct Select {
     /// Redshift-style EXCLUDE at the end of the projection list: `SELECT *, 4 AS c EXCLUDE (a)`.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub exclude: Option<Vec<Expression>>,
+    /// SQLQuack: the node's source range, recorded by a located parse.
+    #[serde(default, skip_serializing_if = "SourceSpan::is_absent")]
+    #[ast(skip)]
+    pub span: SourceSpan,
 }
 
 impl Select {
@@ -150,6 +155,7 @@ impl Select {
             qualify_after_window: false,
             option: None,
             exclude: None,
+            span: SourceSpan::default(),
         }
     }
 
@@ -268,6 +274,10 @@ pub struct Union {
     /// BigQuery: BY (columns) after CORRESPONDING
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub on_columns: Vec<Expression>,
+    /// SQLQuack: the node's source range, recorded by a located parse.
+    #[serde(default, skip_serializing_if = "SourceSpan::is_absent")]
+    #[ast(skip)]
+    pub span: SourceSpan,
 }
 
 /// Flattens the left-recursive chain iteratively so dropping deep set operations cannot overflow.
@@ -328,6 +338,10 @@ pub struct Intersect {
     /// BigQuery: BY (columns) after CORRESPONDING
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub on_columns: Vec<Expression>,
+    /// SQLQuack: the node's source range, recorded by a located parse.
+    #[serde(default, skip_serializing_if = "SourceSpan::is_absent")]
+    #[ast(skip)]
+    pub span: SourceSpan,
 }
 
 impl Drop for Intersect {
@@ -387,6 +401,10 @@ pub struct Except {
     /// BigQuery: BY (columns) after CORRESPONDING
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub on_columns: Vec<Expression>,
+    /// SQLQuack: the node's source range, recorded by a located parse.
+    #[serde(default, skip_serializing_if = "SourceSpan::is_absent")]
+    #[ast(skip)]
+    pub span: SourceSpan,
 }
 
 impl Drop for Except {
@@ -461,6 +479,10 @@ pub struct Subquery {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     #[ast(skip)]
     pub inferred_type: Option<DataType>,
+    /// SQLQuack: the node's source range, recorded by a located parse.
+    #[serde(default, skip_serializing_if = "SourceSpan::is_absent")]
+    #[ast(skip)]
+    pub span: SourceSpan,
 }
 
 /// Pipe syntax step `query |> transform` (BigQuery, DataFusion).
@@ -635,6 +657,10 @@ pub struct Join {
     /// Snowflake: DIRECTED keyword in JOIN (e.g., CROSS DIRECTED JOIN)
     #[serde(default)]
     pub directed: bool,
+    /// SQLQuack: the node's source range, recorded by a located parse.
+    #[serde(default, skip_serializing_if = "SourceSpan::is_absent")]
+    #[ast(skip)]
+    pub span: SourceSpan,
 }
 
 /// Every join type, standard and dialect-specific (SEMI/ANTI, APPLY, ASOF, ARRAY, ...).
@@ -1158,6 +1184,10 @@ pub struct Cte {
     /// Comments associated with this CTE (placed after alias name, before AS)
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub comments: Vec<String>,
+    /// SQLQuack: the node's source range, recorded by a located parse.
+    #[serde(default, skip_serializing_if = "SourceSpan::is_absent")]
+    #[ast(skip)]
+    pub span: SourceSpan,
 }
 
 /// Window specification

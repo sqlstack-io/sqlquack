@@ -18,6 +18,7 @@ use crate::parser::constants::BINARY_ARITY;
 use crate::parser::constants::TERNARY_ARITY;
 use crate::parser::models::FunctionCallNames;
 use crate::parser::models::Parser;
+use crate::tokens::models::SourceSpan;
 use crate::tokens::models::TokenType;
 use crate::tokens::types::Result;
 
@@ -392,7 +393,7 @@ impl Parser {
                     use_bracket_syntax: false,
                     no_parens: false,
                     quoted: false,
-                    span: None,
+                    span: SourceSpan::default(),
                     inferred_type: None,
                 }))))
             }
@@ -485,7 +486,7 @@ impl Parser {
                         use_bracket_syntax: false,
                         no_parens: false,
                         quoted: false,
-                        span: None,
+                        span: SourceSpan::default(),
                         inferred_type: None,
                     }))))
                 }
@@ -506,7 +507,7 @@ impl Parser {
                         use_bracket_syntax: false,
                         no_parens: false,
                         quoted: false,
-                        span: None,
+                        span: SourceSpan::default(),
                         inferred_type: None,
                     }))))
                 } else if args.len() == BINARY_ARITY {
@@ -531,7 +532,7 @@ impl Parser {
                         use_bracket_syntax: false,
                         no_parens: false,
                         quoted: false,
-                        span: None,
+                        span: SourceSpan::default(),
                         inferred_type: None,
                     }))))
                 }
@@ -561,7 +562,7 @@ impl Parser {
                         use_bracket_syntax: false,
                         no_parens: false,
                         quoted: false,
-                        span: None,
+                        span: SourceSpan::default(),
                         inferred_type: None,
                     }))))
                 }
@@ -588,7 +589,7 @@ impl Parser {
                     use_bracket_syntax: false,
                     no_parens: false,
                     quoted: false,
-                    span: None,
+                    span: SourceSpan::default(),
                     inferred_type: None,
                 }))))
             }
@@ -627,7 +628,7 @@ impl Parser {
                         use_bracket_syntax: false,
                         no_parens: false,
                         quoted: false,
-                        span: None,
+                        span: SourceSpan::default(),
                         inferred_type: None,
                     }))))
                 }
@@ -654,7 +655,7 @@ impl Parser {
                     use_bracket_syntax: false,
                     no_parens: false,
                     quoted: false,
-                    span: None,
+                    span: SourceSpan::default(),
                     inferred_type: None,
                 }))))
             }
@@ -705,7 +706,7 @@ impl Parser {
                     use_bracket_syntax: false,
                     no_parens: false,
                     quoted: false,
-                    span: None,
+                    span: SourceSpan::default(),
                     inferred_type: None,
                 }))))
             }
@@ -722,6 +723,7 @@ impl Parser {
                     format: None,
                     default: None,
                     inferred_type: None,
+                    span: SourceSpan::default(),
                 }))))
             }
             (crate::functions::typed::models::TypedParseKind::Conditional, "IF") => {
@@ -774,7 +776,7 @@ impl Parser {
             limit: None,
             ignore_nulls: None,
             inferred_type: None,
-            span: None,
+            span: SourceSpan::default(),
         }))
     }
 }

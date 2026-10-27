@@ -7,8 +7,10 @@ from pathlib import Path
 
 import pytest
 
-from scripts.guard_measurement._helpers.reasons import number_detail
+from scripts.guard_measurement._helpers.reasons import classify, number_detail
+from scripts.guard_measurement.types import Origin
 from tests.unit.scripts.guard_measurement._test_types import (
+    ClassifyTestCase,
     CountTestCase,
     MeasureTestCase,
     NumberDetailTestCase,
@@ -209,3 +211,42 @@ def test_given_many_raising_tuples_when_measuring_then_the_count_is_exact_and_re
         (probe["raising_rows"], probe["exact"], probe["reasons_estimated"]),
         test_case.expected_progress in progress_line,
     ) == (test_case.expected_count, True)
+
+
+@pytest.mark.parametrize(
+    "test_case",
+    (
+        ClassifyTestCase(
+            description="a Snowflake error tag without a raise ID",
+            message="Conversion Error: Could not convert string "
+            "'sqlquack:100035: Timestamp is not recognized' to INT32",
+            expected_classification=(
+                Origin.SNOWFLAKE_ERROR,
+                "Snowflake error 100035: Timestamp is not recognized",
+            ),
+        ),
+        ClassifyTestCase(
+            description="a Snowflake error tag with a raise ID reads the same",
+            message="Conversion Error: Could not convert string "
+            "'sqlquack:100035#0123456789ab: Timestamp is not recognized' to INT32",
+            expected_classification=(
+                Origin.SNOWFLAKE_ERROR,
+                "Snowflake error 100035: Timestamp is not recognized",
+            ),
+        ),
+        ClassifyTestCase(
+            description="a divergence guard with a raise ID reads as without one",
+            message="Conversion Error: Could not convert string "
+            "'json_fidelity#0123456789ab: a value DuckDB may read differently' to INT32",
+            expected_classification=(
+                Origin.DIVERGENCE,
+                "json_fidelity: a value DuckDB may read differently",
+            ),
+        ),
+    ),
+    ids=lambda case: case.description,
+)
+def test_given_a_raised_message_when_classifying_then_the_raise_id_does_not_change_it(
+    test_case: ClassifyTestCase,
+) -> None:
+    assert classify(message=test_case.message) == test_case.expected_classification

@@ -1,9 +1,11 @@
 //! Verification outcomes.
 
+use std::collections::BTreeMap;
 use std::path::Path;
 
 use serde::Serialize;
 use sqlquack_core::failures::models::ErrorKind;
+use sqlquack_core::parsing::models::SourceLocation;
 use sqlquack_core::provenance::models::Provenance;
 use sqlquack_policy::policy::models::Policy;
 
@@ -22,6 +24,8 @@ pub enum Conversion {
         setup: Vec<String>,
         /// The equivalences, rules, building blocks and typing functions used.
         provenance: Provenance,
+        /// Where each raise ID in the SQL comes from in the case's source SQL.
+        raises: BTreeMap<String, Vec<SourceLocation>>,
     },
     /// The converter refused.
     Refused {

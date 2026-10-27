@@ -1,6 +1,6 @@
 //! Census options and reports.
 
-use std::collections::BTreeMap;
+use std::collections::{BTreeMap, BTreeSet};
 use std::path::PathBuf;
 use std::sync::atomic::AtomicUsize;
 use std::time::Duration;
@@ -71,6 +71,21 @@ pub struct BlockedFile {
     pub unknown_relations: Vec<String>,
     /// Every root refusal blocking the file, its own and its upstream models'.
     pub roots: Vec<RootKey>,
+    /// The file's refusals in source order, each with where in the file it is.
+    pub placed: Vec<PlacedRefusal>,
+}
+
+/// A refusal of one file and its line and column in the file, when it has a position.
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Serialize)]
+pub struct PlacedRefusal {
+    /// One-based line.
+    pub line: Option<usize>,
+    /// One-based column.
+    pub column: Option<usize>,
+    /// The refusal category.
+    pub category: String,
+    /// The construct, or `statement`.
+    pub construct: String,
 }
 
 /// A refused model a file reads, and the root refusals behind it.
@@ -227,4 +242,24 @@ pub struct CensusRun {
     pub report: CensusReport,
     /// Each file with the time spent converting it over every pass, slowest first.
     pub timings: Vec<(PathBuf, Duration)>,
+}
+
+/// SQL with its sqlbuild reference calls replaced, and what was replaced.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub(crate) struct Rewritten {
+    /// The parseable SQL.
+    pub(crate) sql: String,
+    /// The placeholder relation each reference call became, in upper case.
+    pub(crate) references: BTreeSet<String>,
+    /// Each replacement, in order.
+    pub(crate) replacements: Vec<Replacement>,
+}
+
+/// One reference call replaced: its bytes in the rewritten and in the original SQL.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub(crate) struct Replacement {
+    /// The replacement's bytes in the rewritten SQL.
+    pub(crate) rewritten: std::ops::Range<usize>,
+    /// The call's bytes in the original SQL.
+    pub(crate) original: std::ops::Range<usize>,
 }

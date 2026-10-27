@@ -212,21 +212,21 @@ pub(crate) fn integer_literal(node: &Value) -> Option<u64> {
 }
 
 /// The tree without positions and comments, which no rule reads.
-pub(crate) fn strip_positions(value: Value) -> Value {
+pub(crate) fn strip_positions(value: &Value) -> Value {
     match value {
         Value::Object(fields) => Value::Object(
             fields
-                .into_iter()
+                .iter()
                 .filter(|(field, _)| {
                     !matches!(
                         field.as_str(),
                         "span" | "trailing_comments" | "leading_comments" | "inferred_type"
                     )
                 })
-                .map(|(field, child)| (field, strip_positions(child)))
+                .map(|(field, child)| (field.clone(), strip_positions(child)))
                 .collect(),
         ),
-        Value::Array(items) => Value::Array(items.into_iter().map(strip_positions).collect()),
-        other => other,
+        Value::Array(items) => Value::Array(items.iter().map(strip_positions).collect()),
+        other => other.clone(),
     }
 }

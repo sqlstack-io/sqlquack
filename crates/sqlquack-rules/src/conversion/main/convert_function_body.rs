@@ -1,5 +1,6 @@
 //! `convert_function_body`: DuckDB macro bodies for a SQL project function, converted like models.
 
+use sqlquack_core::parsing::models::SourceLines;
 use sqlquack_core::provenance::models::ProvenanceLog;
 use sqlquack_core::refusals::models::Refusal;
 use sqlquack_syntax::Expression;
@@ -8,6 +9,7 @@ use crate::conversion::_helpers::queries::function_body::{
     check_body, held_types, parameters_joined, refused, require_declared_types, selected_columns,
 };
 use crate::conversion::_helpers::queries::query::convert_query;
+use crate::conversion::_helpers::support::locations::Locator;
 use crate::conversion::_helpers::support::scope::{Context, Scope, ScopeRelation};
 use crate::conversion::_helpers::support::tree::strip_positions;
 use crate::conversion::constants::PARAMETERS_RELATION;
@@ -19,20 +21,22 @@ use crate::conversion::models::{
 pub fn convert_function_body(
     query: &Expression,
     spec: &FunctionSpec,
-    (schema, options): (&Schema, &ConversionOptions),
+    (schema, options, lines): (&Schema, &ConversionOptions, &SourceLines),
     log: ProvenanceLog,
 ) -> Result<ConvertedFunction, Refusal> {
     if spec.language != FunctionLanguage::Sql {
         return Err(refused("only SQL function bodies convert"));
     }
-    let tree = serde_json::to_value(query)
-        .map(strip_positions)
+    let positioned = serde_json::to_value(query)
         .map_err(|error| refused(&format!("the tree does not serialise: {error}")))?;
+    let tree = strip_positions(&positioned);
+    let locator = Locator::new(&tree, &positioned, lines);
     let context = Context {
         log: &log,
         schema,
         options,
         ctes: Vec::new(),
+        locator: &locator,
     };
     let parameters = Scope::new(
         vec![ScopeRelation {
@@ -41,7 +45,8 @@ pub fn convert_function_body(
         }],
         None,
     );
-    let (sql, columns) = convert_query(&tree, Some(&parameters), &context, true)?;
+    let (sql, columns) = convert_query(&tree, Some(&parameters), &context, true)
+        .map_err(|refusal| locator.placed(refusal, &tree))?;
     require_declared_types(&columns, &spec.returns)?;
     let names: Vec<String> = (1..=spec.arguments.len())
         .map(|index| format!("p{index}"))
@@ -61,7 +66,9 @@ pub fn convert_function_body(
         FunctionReturns::Scalar(_) => format!("(SELECT {selected} FROM {})", joined(&names)),
         FunctionReturns::Table(_) => format!("TABLE SELECT {selected} FROM {}", joined(&names)),
     };
+    let (body, raises) = locator.finished(&body, &tree);
     Ok(ConvertedFunction {
+        raises,
         parameters: names,
         body,
         provenance: log.finish(),

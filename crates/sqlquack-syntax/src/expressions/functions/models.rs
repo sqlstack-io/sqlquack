@@ -1,5 +1,6 @@
 //! Data models of expressions functions.
 
+use crate::tokens::models::SourceSpan;
 use serde::Deserialize;
 use serde::Serialize;
 
@@ -10,7 +11,6 @@ use crate::expressions::queries::models::Ordered;
 use crate::expressions::queries::models::Over;
 use crate::expressions::tree::models::Expression;
 use crate::expressions::types::models::DataType;
-use crate::tokens::models::Span;
 
 /// A scalar function call not recognized as a dedicated `Expression` variant.
 #[derive(
@@ -46,8 +46,9 @@ pub struct Function {
     #[serde(default)]
     pub quoted: bool,
     /// Source position span
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub span: Option<Span>,
+    #[serde(default, skip_serializing_if = "SourceSpan::is_absent")]
+    #[ast(skip)]
+    pub span: SourceSpan,
     /// Inferred data type from type annotation
     #[serde(default, skip_serializing_if = "Option::is_none")]
     #[ast(skip)]
@@ -80,7 +81,7 @@ impl Function {
             use_bracket_syntax: false,
             no_parens: false,
             quoted: false,
-            span: None,
+            span: SourceSpan::default(),
             inferred_type: None,
         }
     }
@@ -118,9 +119,9 @@ pub struct AggregateFunction {
     #[ast(skip)]
     pub inferred_type: Option<DataType>,
     /// SQLQuack: the source span of a call parsed faithfully, when spans are recorded.
-    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[serde(default, skip_serializing_if = "SourceSpan::is_absent")]
     #[ast(skip)]
-    pub span: Option<crate::tokens::models::Span>,
+    pub span: SourceSpan,
 }
 
 /// A window function call; `over` holds PARTITION BY, ORDER BY and the frame.
@@ -137,6 +138,10 @@ pub struct WindowFunction {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     #[ast(skip)]
     pub inferred_type: Option<DataType>,
+    /// SQLQuack: the node's source range, recorded by a located parse.
+    #[serde(default, skip_serializing_if = "SourceSpan::is_absent")]
+    #[ast(skip)]
+    pub span: SourceSpan,
 }
 
 /// Oracle KEEP (DENSE_RANK FIRST|LAST ORDER BY ...) clause of an aggregate.

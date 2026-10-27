@@ -2,7 +2,7 @@
 
 use sqlquack_core::provenance::models::ProvenanceLog;
 
-use crate::blocks::main::raised::raised;
+use crate::raises::main::raised::raised;
 use crate::semi_structured::constants::{JSON_TYPED_TEXT, VARIANT_TYPED_VALUES};
 use crate::semi_structured::models::TypedSource;
 use crate::variants::_helpers::objects::bound;

@@ -16,6 +16,7 @@ use crate::tokens::_helpers::defaults::DEFAULT_QUOTES;
 use crate::tokens::_helpers::defaults::DEFAULT_SINGLE_TOKENS;
 use crate::tokens::errors::ValidationError;
 use crate::tokens::types::Result;
+use crate::tokens::types::SpanField;
 use crate::tokens::types::TokenOutput;
 use crate::tokens::types::TokenizerCursor;
 
@@ -46,6 +47,8 @@ pub enum CallMode {
     FaithfulWithSpans,
     /// polyglot's lowering of calls into cross-dialect nodes (for the exact check only).
     Lowered,
+    /// As [`CallMode::Faithful`], recording each node's source range (for refusal locations).
+    FaithfulLocated,
 }
 
 /// Every supported SQL dialect; `Generic` is standard SQL and the default.
@@ -230,6 +233,42 @@ impl Span {
             line,
             column,
         }
+    }
+}
+
+/// SQLQuack: a node's source range, recorded only by a located parse and ignored by equality.
+#[derive(Debug, Clone, Copy, Default, Serialize, Deserialize)]
+#[serde(transparent)]
+pub struct SourceSpan(pub Option<Span>);
+
+impl SourceSpan {
+    /// Whether no range was recorded, so the field is left out of serialised trees.
+    pub fn is_absent(&self) -> bool {
+        self.0.is_none()
+    }
+}
+
+impl PartialEq for SourceSpan {
+    fn eq(&self, _other: &Self) -> bool {
+        true
+    }
+}
+
+impl SpanField for Option<Span> {
+    fn recorded(&self) -> Option<Span> {
+        *self
+    }
+
+    fn fill(&mut self, _span: Span) {}
+}
+
+impl SpanField for SourceSpan {
+    fn recorded(&self) -> Option<Span> {
+        self.0
+    }
+
+    fn fill(&mut self, span: Span) {
+        self.0.get_or_insert(span);
     }
 }
 

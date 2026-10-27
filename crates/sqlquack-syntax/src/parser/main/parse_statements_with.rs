@@ -13,10 +13,5 @@ pub fn parse_statements_with(
     options: &ParseOptions,
     mode: CallMode,
 ) -> Result<Vec<Expression>> {
-    let flags = match mode {
-        CallMode::Faithful => (true, false),
-        CallMode::FaithfulWithSpans => (true, true),
-        CallMode::Lowered => (false, false),
-    };
-    crate::parser::models::Dialect::get(dialect.dialect_type()).parse_with_mode(sql, options, flags)
+    crate::parser::models::Dialect::get(dialect.dialect_type()).parse_with_mode(sql, options, mode)
 }

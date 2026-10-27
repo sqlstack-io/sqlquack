@@ -1,7 +1,7 @@
 use crate::classification::main::classify::classify;
 use crate::classification::models::Occurrence;
 use crate::parsing::main::parse_source::parse_source;
-use crate::parsing::models::SourceDialect;
+use crate::parsing::models::{SourceDialect, SourceLines};
 use crate::refusals::main::refuse_constructs::refuse_constructs;
 use crate::refusals::main::refuse_unparsed::refuse_unparsed;
 use crate::refusals::models::{Refusal, RefusalCategory};
@@ -11,7 +11,7 @@ fn occurrences(sql: &str) -> Vec<Occurrence> {
     parse_source(sql, SourceDialect::Snowflake)
         .expect("test SQL parses")
         .iter()
-        .flat_map(|statement| classify(statement, sql, SourceDialect::Snowflake))
+        .flat_map(|statement| classify(statement, &SourceLines::new(sql), SourceDialect::Snowflake))
         .collect()
 }
 
@@ -46,5 +46,6 @@ pub(crate) fn not_expressible_reasons(
 pub(crate) fn unparsed_refusal(sql: &str) -> Refusal {
     refuse_unparsed(
         &parse_source(sql, SourceDialect::Snowflake).expect_err("test SQL does not parse"),
+        &SourceLines::new(sql),
     )
 }

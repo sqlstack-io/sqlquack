@@ -2,6 +2,7 @@ use crate::expressions::names::models::TableRef;
 use crate::expressions::operators::models::LikeOp;
 use crate::expressions::tree::models::Expression;
 use crate::parser::models::Parser;
+use crate::tokens::models::SourceSpan;
 use crate::traversal::main::_for_each_child_untracked::for_each_child_untracked;
 use crate::traversal::main::for_each_child::for_each_child;
 use crate::traversal::models::ChildPathSegment;
@@ -27,6 +28,7 @@ pub(crate) fn like_with_escape() -> Expression {
         escape: Some(Expression::string("!")),
         quantifier: None,
         inferred_type: None,
+        span: SourceSpan::default(),
     }))
 }
 

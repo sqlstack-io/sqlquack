@@ -1,9 +1,13 @@
 //! The verdict for one case.
 
+use std::collections::BTreeMap;
 use std::path::Path;
 
 use sqlquack_compare::comparison::main::compare_recordings::compare_recordings;
 use sqlquack_compare::comparison::main::compare_with_replay::compare_with_replay;
+use sqlquack_core::failures::constants::RAISE_ID_MARKER;
+use sqlquack_core::failures::main::raise_id::raise_id;
+use sqlquack_core::parsing::models::SourceLocation;
 use sqlquack_core::provenance::models::Provenance;
 use sqlquack_policy::policy::models::Policy;
 
@@ -84,12 +88,13 @@ fn judge_stored(
             None,
         );
     }
-    let (duckdb_sql, setup, provenance) = match converter.convert(case) {
+    let (duckdb_sql, setup, provenance, raises) = match converter.convert(case) {
         Conversion::Converted {
             sql,
             setup,
             provenance,
-        } => (sql, setup, provenance),
+            raises,
+        } => (sql, setup, provenance, raises),
         Conversion::Refused {
             reasons,
             constructs,
@@ -114,10 +119,13 @@ fn judge_stored(
     let replayed = replay_on_duckdb((&setup, &duckdb_sql), &settings);
     let duckdb_error = replayed.as_ref().err().cloned();
     let verdict = match &case.expected_divergence {
-        Some(divergence) => {
-            divergence_verdict(case, (&stored, replayed), policy, (divergence, &provenance))
-        }
-        None => replayed_verdict(case, &stored, replayed, policy),
+        Some(divergence) => divergence_verdict(
+            case,
+            (&stored, replayed),
+            policy,
+            (divergence, &provenance, &raises),
+        ),
+        None => replayed_verdict(case, (&stored, replayed), policy, &raises),
     };
     let error_check = match (&verdict, &stored.metadata.error, duckdb_error) {
         (Verdict::Passed, Some(recorded), Some(error)) => Some(error_check(
@@ -135,7 +143,7 @@ fn divergence_verdict(
     case: &LoadedCase,
     (stored, replayed): (&StoredResult, Replayed),
     policy: &Policy,
-    (divergence, provenance): (&str, &Provenance),
+    (divergence, provenance, raises): (&str, &Provenance, &BTreeMap<String, Vec<SourceLocation>>),
 ) -> Verdict {
     if !provenance.divergences.contains_key(divergence) {
         return Verdict::Failed {
@@ -163,7 +171,7 @@ fn divergence_verdict(
                 "the case expects divergence `{divergence}`, but Snowflake raised an error"
             ),
         },
-        (Some(_), replayed) => match replayed_verdict(case, stored, replayed, policy) {
+        (Some(_), replayed) => match replayed_verdict(case, (stored, replayed), policy, raises) {
             Verdict::Passed => Verdict::Failed {
                 reason: format!(
                     "the case expects divergence `{divergence}`, but DuckDB matched Snowflake"
@@ -176,7 +184,9 @@ fn divergence_verdict(
 
 /// How `error` is `divergence`'s failure: its guard's tag, or a declared native error pattern.
 pub(crate) fn divergence_error(error: &str, divergence: &str, policy: &Policy) -> Option<String> {
-    if error.contains(&format!("'{divergence}: ")) {
+    if error.contains(&format!("'{divergence}: "))
+        || error.contains(&format!("'{divergence}{RAISE_ID_MARKER}"))
+    {
         return Some(format!("the {divergence} guard's raise"));
     }
     let first_line = error.lines().next().unwrap_or_default();
@@ -246,9 +256,9 @@ fn error_key(result: &StoredResult) -> Option<(Option<i64>, Option<String>)> {
 
 fn replayed_verdict(
     case: &LoadedCase,
-    stored: &StoredResult,
-    replayed: Result<sqlquack_compare::values::models::ResultSet, String>,
+    (stored, replayed): (&StoredResult, Replayed),
     policy: &Policy,
+    raises: &BTreeMap<String, Vec<SourceLocation>>,
 ) -> Verdict {
     match (&stored.rows, replayed) {
         (None, Err(_)) => Verdict::Passed,
@@ -266,7 +276,10 @@ fn replayed_verdict(
             ),
         },
         (Some(_), Err(error)) => Verdict::Failed {
-            reason: format!("Snowflake returned rows, but DuckDB failed: {error}"),
+            reason: format!(
+                "Snowflake returned rows, but DuckDB failed{}: {error}",
+                raised_at(&error, raises)
+            ),
         },
         (Some(recorded), Ok(replayed)) => {
             match compare_with_replay(recorded, &replayed, case.order, &policy.comparator) {
@@ -277,4 +290,16 @@ fn replayed_verdict(
             }
         }
     }
+}
+
+/// ` at <line>:<column>, …` for the source expressions whose raise `error` is, if it names one.
+fn raised_at(error: &str, raises: &BTreeMap<String, Vec<SourceLocation>>) -> String {
+    let Some(locations) = raise_id(error).and_then(|id| raises.get(id)) else {
+        return String::new();
+    };
+    let places: Vec<String> = locations
+        .iter()
+        .map(|location| format!("{}:{}", location.line, location.column))
+        .collect();
+    format!(" at {} of the source", places.join(", "))
 }

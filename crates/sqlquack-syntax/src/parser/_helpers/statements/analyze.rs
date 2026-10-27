@@ -1,5 +1,6 @@
 //! Parser statements: analyze.
 
+use crate::tokens::models::SourceSpan;
 #[cfg(test)]
 use std::sync::Arc;
 
@@ -768,6 +769,7 @@ impl Parser {
                         pre_alias_comments: Vec::new(),
                         trailing_comments: Vec::new(),
                         inferred_type: None,
+                        span: SourceSpan::default(),
                     }));
                     {
                         alias_expr
@@ -1235,6 +1237,7 @@ impl Parser {
                     pre_alias_comments: Vec::new(),
                     trailing_comments: Vec::new(),
                     inferred_type: None,
+                    span: SourceSpan::default(),
                 }))));
             }
         }
@@ -1253,6 +1256,7 @@ impl Parser {
                 pre_alias_comments: Vec::new(),
                 trailing_comments: Vec::new(),
                 inferred_type: None,
+                span: SourceSpan::default(),
             }))));
         }
 

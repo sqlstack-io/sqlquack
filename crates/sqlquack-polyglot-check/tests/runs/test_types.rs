@@ -18,6 +18,7 @@ pub(crate) struct ExactOutcome {
     pub(crate) type_names: Vec<String>,
     pub(crate) unlisted: Vec<String>,
     pub(crate) unexplained: Vec<String>,
+    pub(crate) located: Vec<String>,
 }
 
 pub(crate) struct RejectionTestCase {

@@ -37,6 +37,7 @@ use crate::parser::constants::TERNARY_ARITY;
 use crate::parser::constants::TRY_CONVERT;
 use crate::parser::constants::TRY_TO_NUMBER;
 use crate::parser::models::Parser;
+use crate::tokens::models::SourceSpan;
 use crate::tokens::models::TokenType;
 use crate::tokens::types::Result;
 
@@ -182,7 +183,7 @@ impl Parser {
                 use_bracket_syntax: false,
                 no_parens: false,
                 quoted: false,
-                span: None,
+                span: SourceSpan::default(),
                 inferred_type: None,
             }))))
         } else {
@@ -249,7 +250,7 @@ impl Parser {
                 use_bracket_syntax: false,
                 no_parens: false,
                 quoted: false,
-                span: None,
+                span: SourceSpan::default(),
                 inferred_type: None,
             }))));
         }
@@ -383,7 +384,7 @@ impl Parser {
                 use_bracket_syntax: false,
                 no_parens: false,
                 quoted: false,
-                span: None,
+                span: SourceSpan::default(),
                 inferred_type: None,
             }))))
         }
@@ -420,7 +421,7 @@ impl Parser {
             use_bracket_syntax: false,
             no_parens: false,
             quoted: false,
-            span: None,
+            span: SourceSpan::default(),
             inferred_type: None,
         }))))
     }
@@ -459,7 +460,7 @@ impl Parser {
                 use_bracket_syntax: false,
                 no_parens: false,
                 quoted: false,
-                span: None,
+                span: SourceSpan::default(),
                 inferred_type: None,
             }))))
         } else {
@@ -476,7 +477,7 @@ impl Parser {
                 use_bracket_syntax: false,
                 no_parens: false,
                 quoted: false,
-                span: None,
+                span: SourceSpan::default(),
                 inferred_type: None,
             }))))
         }
@@ -526,7 +527,7 @@ impl Parser {
             use_bracket_syntax: false,
             no_parens: false,
             quoted: false,
-            span: None,
+            span: SourceSpan::default(),
             inferred_type: None,
         }))))
     }
@@ -589,7 +590,7 @@ impl Parser {
                 use_bracket_syntax: false,
                 no_parens: false,
                 quoted: false,
-                span: None,
+                span: SourceSpan::default(),
                 inferred_type: None,
             }))));
         }
@@ -608,7 +609,7 @@ impl Parser {
                 use_bracket_syntax: false,
                 no_parens: false,
                 quoted: false,
-                span: None,
+                span: SourceSpan::default(),
                 inferred_type: None,
             }))));
         }
@@ -697,7 +698,7 @@ impl Parser {
                 use_bracket_syntax: false,
                 no_parens: false,
                 quoted: false,
-                span: None,
+                span: SourceSpan::default(),
                 inferred_type: None,
             }))));
         }
@@ -750,7 +751,7 @@ impl Parser {
                 use_bracket_syntax: false,
                 no_parens: false,
                 quoted: false,
-                span: None,
+                span: SourceSpan::default(),
                 inferred_type: None,
             }))));
         }
@@ -798,7 +799,7 @@ impl Parser {
                 use_bracket_syntax: false,
                 no_parens: false,
                 quoted: false,
-                span: None,
+                span: SourceSpan::default(),
                 inferred_type: None,
             }))))
         }
@@ -834,7 +835,7 @@ impl Parser {
                 use_bracket_syntax: false,
                 no_parens: false,
                 quoted: false,
-                span: None,
+                span: SourceSpan::default(),
                 inferred_type: None,
             }))))
         }
@@ -879,6 +880,7 @@ impl Parser {
                         pre_alias_comments: Vec::new(),
                         trailing_comments: Vec::new(),
                         inferred_type: None,
+                        span: SourceSpan::default(),
                     })));
                 } else {
                     attrs.push(expr);
@@ -901,7 +903,7 @@ impl Parser {
             use_bracket_syntax: false,
             no_parens: false,
             quoted: false,
-            span: None,
+            span: SourceSpan::default(),
             inferred_type: None,
         }))))
     }
@@ -932,7 +934,7 @@ impl Parser {
                 use_bracket_syntax: false,
                 no_parens: false,
                 quoted: false,
-                span: None,
+                span: SourceSpan::default(),
                 inferred_type: None,
             }))));
         }
@@ -1038,7 +1040,7 @@ impl Parser {
                 use_bracket_syntax: false,
                 no_parens: false,
                 quoted,
-                span: None,
+                span: SourceSpan::default(),
                 inferred_type: None,
             }))))
         }
@@ -1064,6 +1066,7 @@ impl Parser {
                 format: None,
                 default: None,
                 inferred_type: None,
+                span: SourceSpan::default(),
             }))))
         } else if self.match_token(TokenType::Comma) {
             let mut args = vec![this];
@@ -1085,7 +1088,7 @@ impl Parser {
                 use_bracket_syntax: false,
                 no_parens: false,
                 quoted: false,
-                span: None,
+                span: SourceSpan::default(),
                 inferred_type: None,
             }))))
         } else {
@@ -1103,7 +1106,7 @@ impl Parser {
                 use_bracket_syntax: false,
                 no_parens: false,
                 quoted: false,
-                span: None,
+                span: SourceSpan::default(),
                 inferred_type: None,
             }))))
         }
@@ -1248,7 +1251,7 @@ impl Parser {
                     use_bracket_syntax: false,
                     no_parens: false,
                     quoted: false,
-                    span: None,
+                    span: SourceSpan::default(),
                     inferred_type: None,
                 }))))
             }
@@ -1266,7 +1269,7 @@ impl Parser {
                 use_bracket_syntax: false,
                 no_parens: false,
                 quoted: false,
-                span: None,
+                span: SourceSpan::default(),
                 inferred_type: None,
             }))))
         }
@@ -1311,7 +1314,7 @@ impl Parser {
                 use_bracket_syntax: false,
                 no_parens: false,
                 quoted: false,
-                span: None,
+                span: SourceSpan::default(),
                 inferred_type: None,
             }))));
         }

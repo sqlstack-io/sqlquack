@@ -3,7 +3,7 @@
 use sqlquack_core::provenance::models::ProvenanceLog;
 
 use crate::blocks::constants::{SUBMICRO_CHECK, SUBMICRO_MESSAGE};
-use crate::blocks::main::raised::raised;
+use crate::raises::main::raised::raised;
 
 /// The nanosecond timestamp, or an error when its sub-microsecond part is not zero.
 pub fn submicro_check(sql: &str, log: &ProvenanceLog) -> String {

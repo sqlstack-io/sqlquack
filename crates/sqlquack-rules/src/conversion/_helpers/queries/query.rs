@@ -58,6 +58,17 @@ pub(crate) fn convert_query(
     context: &Context<'_>,
     named: bool,
 ) -> Result<ConvertedQuery, Refusal> {
+    let (sql, columns) = convert_query_kind(node, outer, context, named)
+        .map_err(|refusal| context.locator.placed(refusal, node))?;
+    Ok((context.locator.identified(&sql, node), columns))
+}
+
+fn convert_query_kind(
+    node: &Value,
+    outer: Option<&Scope<'_>>,
+    context: &Context<'_>,
+    named: bool,
+) -> Result<ConvertedQuery, Refusal> {
     let Some((kind, payload)) = node_kind(node) else {
         return Err(missing(
             node_construct("unknown"),

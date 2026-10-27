@@ -22,6 +22,7 @@ use crate::parser::constants::STRUCT;
 use crate::parser::models::Parser;
 use crate::tokens::errors::Error;
 use crate::tokens::models::ParserToken;
+use crate::tokens::models::SourceSpan;
 use crate::tokens::models::Span;
 use crate::tokens::models::Token;
 use crate::tokens::models::TokenType;
@@ -1070,6 +1071,7 @@ impl Parser {
                 modifiers_inside: false,
                 trailing_comments: Vec::new(),
                 inferred_type: None,
+                span: SourceSpan::default(),
             }))
         } else {
             inner

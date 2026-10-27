@@ -1,8 +1,15 @@
 //! Expressions: api.
 
 use crate::expressions::tree::models::Expression;
+use crate::tokens::models::Span;
+use crate::traversal::types::AstNode;
 
 impl Expression {
+    /// The node's own source range: a located parse's, or the one the parser keeps on names.
+    pub fn source_span(&self) -> Option<Span> {
+        self.recorded_span()
+    }
+
     /// The snake_case variant name serde uses, without serializing.
     pub fn variant_name(&self) -> &'static str {
         match self {

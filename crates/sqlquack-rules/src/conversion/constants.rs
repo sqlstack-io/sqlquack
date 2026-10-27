@@ -1720,3 +1720,10 @@ pub const DEFAULT_BUDGET_MINIMUM_BYTES: u64 = 4 * 1024 * 1024;
 pub const UNKNOWN_RELATION_PREFIX: &str = "relation `";
 /// How it ends, after the name.
 pub const UNKNOWN_RELATION_SUFFIX: &str = "` has no known columns";
+
+/// The field a located parse records a node's source range in.
+pub const SPAN_FIELD: &str = "span";
+/// A source range's first character.
+pub const SPAN_START: &str = "start";
+/// A source range's end, one past its last character.
+pub const SPAN_END: &str = "end";

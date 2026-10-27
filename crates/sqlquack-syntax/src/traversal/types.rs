@@ -2,6 +2,7 @@
 
 use crate::expressions::tree::models::Expression;
 use crate::expressions::types::models::DataType;
+use crate::tokens::models::Span;
 use crate::traversal::models::BfsIter;
 use crate::traversal::models::ChildPathSegment;
 use crate::traversal::models::DfsIter;
@@ -16,6 +17,14 @@ pub(crate) trait AstNode {
     fn visit_expressions<'ast, F>(&'ast self, path: &mut Vec<ChildPathSegment>, visitor: &mut F)
     where
         F: FnMut(&[ChildPathSegment], &'ast Expression);
+
+    /// SQLQuack: the node's own recorded source range, when it has a `span` field holding one.
+    fn recorded_span(&self) -> Option<Span> {
+        None
+    }
+
+    /// SQLQuack: records the node's source range in its `span` field unless one is recorded.
+    fn fill_span(&mut self, _span: Span) {}
 }
 
 /// Traversal and search methods on [`Expression`].
