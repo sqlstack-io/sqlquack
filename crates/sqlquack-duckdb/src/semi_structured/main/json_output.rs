@@ -2,11 +2,11 @@
 
 use sqlquack_core::provenance::models::ProvenanceLog;
 
-use crate::semi_structured::_helpers::guards::{bound_with_order, written_value};
+use crate::semi_structured::_helpers::writing::{Root, sorted_text};
 use crate::semi_structured::constants::JSON_OUTPUT;
 
-/// The VARIANT as DuckDB `JSON`, raising for objects whose keys Snowflake would reorder.
+/// The VARIANT as DuckDB `JSON`, with keys in byte order at every depth.
 pub fn json_output(sql: &str, log: &ProvenanceLog) -> String {
     log.building_block(JSON_OUTPUT);
-    format!("CAST({} AS JSON)", bound_with_order(sql, &written_value()))
+    format!("CAST({} AS JSON)", sorted_text(sql, Root::Json))
 }

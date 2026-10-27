@@ -79,9 +79,19 @@ pub const JSON_WORD_PATTERN: &str = r"\b(?:true|false|null)\b";
 /// Outside strings: a letter, a trailing comma, a zero fraction, six leading zeros or 39 digits.
 pub const JSON_UNSAFE_TOKEN_PATTERN: &str =
     r"[A-Za-z]|,\s*[\]}]|[0-9]\.0*(?:[^0-9]|$)|\.0{6}|[0-9]{39}";
+/// A JSON number without an exponent, outside strings.
+pub const JSON_NUMBER_PATTERN: &str = r"-?[0-9]+(?:\.[0-9]+)?";
 /// A UTF-16 surrogate escape, which Snowflake may write as invalid UTF-8.
 pub const JSON_SURROGATE_PATTERN: &str = r"\\u[dD][89abAB]";
-/// Significant digits a JSON decimal keeps exactly through DuckDB's double.
+/// A `\u00` control escape after an even run of backslashes, before its last hex digit.
+pub const JSON_CONTROL_ESCAPE_PREFIX_PATTERN: &str = r"((?:^|[^\\])(?:\\\\)*)\\u00([01])";
+/// The replacement keeping that run and escape start, for the digit in lower case after it.
+pub const JSON_CONTROL_ESCAPE_PREFIX: &str = r"\1\\u00\2";
+/// The hex digits DuckDB writes in upper case and Snowflake in lower case.
+pub const JSON_ESCAPE_HEX_LETTERS: &str = "ABCDEF";
+/// Any JSON number, exponent included.
+pub const JSON_ANY_NUMBER_PATTERN: &str = r"-?[0-9]+(?:\.[0-9]+)?(?:[eE][+-]?[0-9]+)?";
+/// Digits beyond which a JSON decimal is kept only when DuckDB's double writes it back as written.
 pub const JSON_DECIMAL_DIGITS: usize = 15;
 /// Nanoseconds in a second, for integers read as epoch seconds.
 pub const NANOS_PER_SECOND: i64 = 1_000_000_000;

@@ -6,7 +6,7 @@ use std::path::PathBuf;
 use crate::census::_helpers::corpus::inspect_files;
 use crate::census::_helpers::files::collect_sql_files;
 use crate::census::errors::CensusError;
-use crate::census::models::{CensusOptions, CorpusFile};
+use crate::census::models::{CensusOptions, CensusProgress, CorpusFile};
 
 /// Each `.sql` file under `paths`, in path order, with its provenance or refused constructs.
 pub fn inspect_corpus(
@@ -14,7 +14,7 @@ pub fn inspect_corpus(
     options: &CensusOptions,
 ) -> Result<Vec<CorpusFile>, CensusError> {
     let files = collect_sql_files(paths)?;
-    let censuses = inspect_files(&files, options)?;
+    let censuses = inspect_files(&files, options, &CensusProgress::default())?;
     let mut corpus: Vec<CorpusFile> = Vec::with_capacity(files.len());
     for (path, census) in files.into_iter().zip(censuses) {
         let constructs: BTreeSet<String> = census

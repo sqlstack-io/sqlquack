@@ -37,6 +37,21 @@ tags = ["null", "boundary"]
 origin = "generated: variant_typed@2"
 
 [[case]]
+id = "typed_date_to_variant_to_varchar"
+description = "TO_VARCHAR(TO_VARIANT(x)) of DATE values."
+columns = [{ name = "x", type = "DATE" }]
+rows = [
+  ["'2024-02-29'"],
+  ["'0001-01-01'"],
+  ["'9999-12-31'"],
+  ["NULL"],
+]
+query = "SELECT TO_VARCHAR(TO_VARIANT(x)) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "boundary"]
+origin = "generated: variant_typed@2"
+
+[[case]]
 id = "typed_date_to_variant_to_json"
 description = "TO_JSON(TO_VARIANT(x)) of DATE values."
 columns = [{ name = "x", type = "DATE" }]
@@ -139,6 +154,21 @@ rows = [
   ["NULL"],
 ]
 query = "SELECT x::VARIANT::VARCHAR AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "boundary"]
+origin = "generated: variant_typed@2"
+
+[[case]]
+id = "typed_date_cast_to_varchar"
+description = "TO_VARCHAR(x::VARIANT) of DATE values."
+columns = [{ name = "x", type = "DATE" }]
+rows = [
+  ["'2024-02-29'"],
+  ["'0001-01-01'"],
+  ["'9999-12-31'"],
+  ["NULL"],
+]
+query = "SELECT TO_VARCHAR(x::VARIANT) AS r FROM input ORDER BY ordinal"
 order = "ordered"
 tags = ["null", "boundary"]
 origin = "generated: variant_typed@2"
@@ -251,6 +281,21 @@ tags = ["null", "boundary"]
 origin = "generated: variant_typed@2"
 
 [[case]]
+id = "typed_date_object_to_varchar"
+description = "TO_VARCHAR(OBJECT_CONSTRUCT('k', x):k) of DATE values."
+columns = [{ name = "x", type = "DATE" }]
+rows = [
+  ["'2024-02-29'"],
+  ["'0001-01-01'"],
+  ["'9999-12-31'"],
+  ["NULL"],
+]
+query = "SELECT TO_VARCHAR(OBJECT_CONSTRUCT('k', x):k) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "boundary"]
+origin = "generated: variant_typed@2"
+
+[[case]]
 id = "typed_date_object_to_json"
 description = "TO_JSON(OBJECT_CONSTRUCT('k', x):k) of DATE values."
 columns = [{ name = "x", type = "DATE" }]
@@ -356,6 +401,20 @@ tags = ["boundary"]
 origin = "generated: variant_typed@2"
 
 [[case]]
+id = "typed_date_round_trip_to_varchar"
+description = "TO_VARCHAR(v) of a VARIANT column written from DATE."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["TO_VARIANT(CAST('2024-02-29' AS DATE))"],
+  ["TO_VARIANT(CAST('0001-01-01' AS DATE))"],
+  ["TO_VARIANT(CAST('9999-12-31' AS DATE))"],
+]
+query = "SELECT TO_VARCHAR(v) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["boundary"]
+origin = "generated: variant_typed@2"
+
+[[case]]
 id = "typed_date_round_trip_to_json"
 description = "TO_JSON(v) of a VARIANT column written from DATE."
 columns = [{ name = "v", type = "VARIANT" }]
@@ -423,6 +482,20 @@ rows = [
   ["NULL"],
 ]
 query = "SELECT TO_VARIANT(x)::VARCHAR AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "boundary"]
+origin = "generated: variant_typed@2"
+
+[[case]]
+id = "typed_ntz9_to_variant_to_varchar"
+description = "TO_VARCHAR(TO_VARIANT(x)) of TIMESTAMP_NTZ(9) values."
+columns = [{ name = "x", type = "TIMESTAMP_NTZ(9)" }]
+rows = [
+  ["'2024-02-29 13:45:01.123'"],
+  ["'1970-01-01 00:00:00'"],
+  ["NULL"],
+]
+query = "SELECT TO_VARCHAR(TO_VARIANT(x)) AS r FROM input ORDER BY ordinal"
 order = "ordered"
 tags = ["null", "boundary"]
 origin = "generated: variant_typed@2"
@@ -528,6 +601,20 @@ tags = ["null", "boundary"]
 origin = "generated: variant_typed@2"
 
 [[case]]
+id = "typed_ntz9_cast_to_varchar"
+description = "TO_VARCHAR(x::VARIANT) of TIMESTAMP_NTZ(9) values."
+columns = [{ name = "x", type = "TIMESTAMP_NTZ(9)" }]
+rows = [
+  ["'2024-02-29 13:45:01.123'"],
+  ["'1970-01-01 00:00:00'"],
+  ["NULL"],
+]
+query = "SELECT TO_VARCHAR(x::VARIANT) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "boundary"]
+origin = "generated: variant_typed@2"
+
+[[case]]
 id = "typed_ntz9_cast_to_json"
 description = "TO_JSON(x::VARIANT) of TIMESTAMP_NTZ(9) values."
 columns = [{ name = "x", type = "TIMESTAMP_NTZ(9)" }]
@@ -623,6 +710,20 @@ rows = [
   ["NULL"],
 ]
 query = "SELECT OBJECT_CONSTRUCT('k', x):k::VARCHAR AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "boundary"]
+origin = "generated: variant_typed@2"
+
+[[case]]
+id = "typed_ntz9_object_to_varchar"
+description = "TO_VARCHAR(OBJECT_CONSTRUCT('k', x):k) of TIMESTAMP_NTZ(9) values."
+columns = [{ name = "x", type = "TIMESTAMP_NTZ(9)" }]
+rows = [
+  ["'2024-02-29 13:45:01.123'"],
+  ["'1970-01-01 00:00:00'"],
+  ["NULL"],
+]
+query = "SELECT TO_VARCHAR(OBJECT_CONSTRUCT('k', x):k) AS r FROM input ORDER BY ordinal"
 order = "ordered"
 tags = ["null", "boundary"]
 origin = "generated: variant_typed@2"
@@ -726,6 +827,19 @@ tags = ["boundary"]
 origin = "generated: variant_typed@2"
 
 [[case]]
+id = "typed_ntz9_round_trip_to_varchar"
+description = "TO_VARCHAR(v) of a VARIANT column written from TIMESTAMP_NTZ(9)."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["TO_VARIANT(CAST('2024-02-29 13:45:01.123' AS TIMESTAMP_NTZ(9)))"],
+  ["TO_VARIANT(CAST('1970-01-01 00:00:00' AS TIMESTAMP_NTZ(9)))"],
+]
+query = "SELECT TO_VARCHAR(v) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["boundary"]
+origin = "generated: variant_typed@2"
+
+[[case]]
 id = "typed_ntz9_round_trip_to_json"
 description = "TO_JSON(v) of a VARIANT column written from TIMESTAMP_NTZ(9)."
 columns = [{ name = "v", type = "VARIANT" }]
@@ -788,6 +902,20 @@ rows = [
   ["NULL"],
 ]
 query = "SELECT TO_VARIANT(x)::VARCHAR AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "boundary"]
+origin = "generated: variant_typed@2"
+expected_divergence = "variant_typed_values"
+
+[[case]]
+id = "typed_ntz9_submilli_to_variant_to_varchar"
+description = "TO_VARCHAR(TO_VARIANT(x)) of TIMESTAMP_NTZ(9) values."
+columns = [{ name = "x", type = "TIMESTAMP_NTZ(9)" }]
+rows = [
+  ["'2024-02-29 13:45:01.123456789'"],
+  ["NULL"],
+]
+query = "SELECT TO_VARCHAR(TO_VARIANT(x)) AS r FROM input ORDER BY ordinal"
 order = "ordered"
 tags = ["null", "boundary"]
 origin = "generated: variant_typed@2"
@@ -892,6 +1020,20 @@ origin = "generated: variant_typed@2"
 expected_divergence = "variant_typed_values"
 
 [[case]]
+id = "typed_ntz9_submilli_cast_to_varchar"
+description = "TO_VARCHAR(x::VARIANT) of TIMESTAMP_NTZ(9) values."
+columns = [{ name = "x", type = "TIMESTAMP_NTZ(9)" }]
+rows = [
+  ["'2024-02-29 13:45:01.123456789'"],
+  ["NULL"],
+]
+query = "SELECT TO_VARCHAR(x::VARIANT) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "boundary"]
+origin = "generated: variant_typed@2"
+expected_divergence = "variant_typed_values"
+
+[[case]]
 id = "typed_ntz9_submilli_cast_to_json"
 description = "TO_JSON(x::VARIANT) of TIMESTAMP_NTZ(9) values."
 columns = [{ name = "x", type = "TIMESTAMP_NTZ(9)" }]
@@ -984,6 +1126,20 @@ rows = [
   ["NULL"],
 ]
 query = "SELECT OBJECT_CONSTRUCT('k', x):k::VARCHAR AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "boundary"]
+origin = "generated: variant_typed@2"
+expected_divergence = "variant_typed_values"
+
+[[case]]
+id = "typed_ntz9_submilli_object_to_varchar"
+description = "TO_VARCHAR(OBJECT_CONSTRUCT('k', x):k) of TIMESTAMP_NTZ(9) values."
+columns = [{ name = "x", type = "TIMESTAMP_NTZ(9)" }]
+rows = [
+  ["'2024-02-29 13:45:01.123456789'"],
+  ["NULL"],
+]
+query = "SELECT TO_VARCHAR(OBJECT_CONSTRUCT('k', x):k) AS r FROM input ORDER BY ordinal"
 order = "ordered"
 tags = ["null", "boundary"]
 origin = "generated: variant_typed@2"
@@ -1086,6 +1242,19 @@ origin = "generated: variant_typed@2"
 expected_divergence = "variant_typed_values"
 
 [[case]]
+id = "typed_ntz9_submilli_round_trip_to_varchar"
+description = "TO_VARCHAR(v) of a VARIANT column written from TIMESTAMP_NTZ(9)."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["TO_VARIANT(CAST('2024-02-29 13:45:01.123456789' AS TIMESTAMP_NTZ(9)))"],
+]
+query = "SELECT TO_VARCHAR(v) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["boundary"]
+origin = "generated: variant_typed@2"
+expected_divergence = "variant_typed_values"
+
+[[case]]
 id = "typed_ntz9_submilli_round_trip_to_json"
 description = "TO_JSON(v) of a VARIANT column written from TIMESTAMP_NTZ(9)."
 columns = [{ name = "v", type = "VARIANT" }]
@@ -1147,6 +1316,19 @@ rows = [
   ["NULL"],
 ]
 query = "SELECT TO_VARIANT(x)::VARCHAR AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "boundary"]
+origin = "generated: variant_typed@2"
+
+[[case]]
+id = "typed_ntz0_to_variant_to_varchar"
+description = "TO_VARCHAR(TO_VARIANT(x)) of TIMESTAMP_NTZ(0) values."
+columns = [{ name = "x", type = "TIMESTAMP_NTZ(0)" }]
+rows = [
+  ["'2024-02-29 13:45:01'"],
+  ["NULL"],
+]
+query = "SELECT TO_VARCHAR(TO_VARIANT(x)) AS r FROM input ORDER BY ordinal"
 order = "ordered"
 tags = ["null", "boundary"]
 origin = "generated: variant_typed@2"
@@ -1245,6 +1427,19 @@ tags = ["null", "boundary"]
 origin = "generated: variant_typed@2"
 
 [[case]]
+id = "typed_ntz0_cast_to_varchar"
+description = "TO_VARCHAR(x::VARIANT) of TIMESTAMP_NTZ(0) values."
+columns = [{ name = "x", type = "TIMESTAMP_NTZ(0)" }]
+rows = [
+  ["'2024-02-29 13:45:01'"],
+  ["NULL"],
+]
+query = "SELECT TO_VARCHAR(x::VARIANT) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "boundary"]
+origin = "generated: variant_typed@2"
+
+[[case]]
 id = "typed_ntz0_cast_to_json"
 description = "TO_JSON(x::VARIANT) of TIMESTAMP_NTZ(0) values."
 columns = [{ name = "x", type = "TIMESTAMP_NTZ(0)" }]
@@ -1333,6 +1528,19 @@ rows = [
   ["NULL"],
 ]
 query = "SELECT OBJECT_CONSTRUCT('k', x):k::VARCHAR AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "boundary"]
+origin = "generated: variant_typed@2"
+
+[[case]]
+id = "typed_ntz0_object_to_varchar"
+description = "TO_VARCHAR(OBJECT_CONSTRUCT('k', x):k) of TIMESTAMP_NTZ(0) values."
+columns = [{ name = "x", type = "TIMESTAMP_NTZ(0)" }]
+rows = [
+  ["'2024-02-29 13:45:01'"],
+  ["NULL"],
+]
+query = "SELECT TO_VARCHAR(OBJECT_CONSTRUCT('k', x):k) AS r FROM input ORDER BY ordinal"
 order = "ordered"
 tags = ["null", "boundary"]
 origin = "generated: variant_typed@2"
@@ -1429,6 +1637,18 @@ tags = ["boundary"]
 origin = "generated: variant_typed@2"
 
 [[case]]
+id = "typed_ntz0_round_trip_to_varchar"
+description = "TO_VARCHAR(v) of a VARIANT column written from TIMESTAMP_NTZ(0)."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["TO_VARIANT(CAST('2024-02-29 13:45:01' AS TIMESTAMP_NTZ(0)))"],
+]
+query = "SELECT TO_VARCHAR(v) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["boundary"]
+origin = "generated: variant_typed@2"
+
+[[case]]
 id = "typed_ntz0_round_trip_to_json"
 description = "TO_JSON(v) of a VARIANT column written from TIMESTAMP_NTZ(0)."
 columns = [{ name = "v", type = "VARIANT" }]
@@ -1487,6 +1707,19 @@ rows = [
   ["NULL"],
 ]
 query = "SELECT TO_VARIANT(x)::VARCHAR AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "boundary"]
+origin = "generated: variant_typed@2"
+
+[[case]]
+id = "typed_tz9_to_variant_to_varchar"
+description = "TO_VARCHAR(TO_VARIANT(x)) of TIMESTAMP_TZ(9) values."
+columns = [{ name = "x", type = "TIMESTAMP_TZ(9)" }]
+rows = [
+  ["'2024-02-29 13:45:01.5 +01:00'"],
+  ["NULL"],
+]
+query = "SELECT TO_VARCHAR(TO_VARIANT(x)) AS r FROM input ORDER BY ordinal"
 order = "ordered"
 tags = ["null", "boundary"]
 origin = "generated: variant_typed@2"
@@ -1583,6 +1816,19 @@ tags = ["null", "boundary"]
 origin = "generated: variant_typed@2"
 
 [[case]]
+id = "typed_tz9_cast_to_varchar"
+description = "TO_VARCHAR(x::VARIANT) of TIMESTAMP_TZ(9) values."
+columns = [{ name = "x", type = "TIMESTAMP_TZ(9)" }]
+rows = [
+  ["'2024-02-29 13:45:01.5 +01:00'"],
+  ["NULL"],
+]
+query = "SELECT TO_VARCHAR(x::VARIANT) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "boundary"]
+origin = "generated: variant_typed@2"
+
+[[case]]
 id = "typed_tz9_cast_to_json"
 description = "TO_JSON(x::VARIANT) of TIMESTAMP_TZ(9) values."
 columns = [{ name = "x", type = "TIMESTAMP_TZ(9)" }]
@@ -1669,6 +1915,19 @@ rows = [
   ["NULL"],
 ]
 query = "SELECT OBJECT_CONSTRUCT('k', x):k::VARCHAR AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "boundary"]
+origin = "generated: variant_typed@2"
+
+[[case]]
+id = "typed_tz9_object_to_varchar"
+description = "TO_VARCHAR(OBJECT_CONSTRUCT('k', x):k) of TIMESTAMP_TZ(9) values."
+columns = [{ name = "x", type = "TIMESTAMP_TZ(9)" }]
+rows = [
+  ["'2024-02-29 13:45:01.5 +01:00'"],
+  ["NULL"],
+]
+query = "SELECT TO_VARCHAR(OBJECT_CONSTRUCT('k', x):k) AS r FROM input ORDER BY ordinal"
 order = "ordered"
 tags = ["null", "boundary"]
 origin = "generated: variant_typed@2"
@@ -1763,6 +2022,18 @@ tags = ["boundary"]
 origin = "generated: variant_typed@2"
 
 [[case]]
+id = "typed_tz9_round_trip_to_varchar"
+description = "TO_VARCHAR(v) of a VARIANT column written from TIMESTAMP_TZ(9)."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["TO_VARIANT(CAST('2024-02-29 13:45:01.5 +01:00' AS TIMESTAMP_TZ(9)))"],
+]
+query = "SELECT TO_VARCHAR(v) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["boundary"]
+origin = "generated: variant_typed@2"
+
+[[case]]
 id = "typed_tz9_round_trip_to_json"
 description = "TO_JSON(v) of a VARIANT column written from TIMESTAMP_TZ(9)."
 columns = [{ name = "v", type = "VARIANT" }]
@@ -1821,6 +2092,19 @@ rows = [
   ["NULL"],
 ]
 query = "SELECT TO_VARIANT(x)::VARCHAR AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "boundary"]
+origin = "generated: variant_typed@2"
+
+[[case]]
+id = "typed_ltz9_to_variant_to_varchar"
+description = "TO_VARCHAR(TO_VARIANT(x)) of TIMESTAMP_LTZ(9) values."
+columns = [{ name = "x", type = "TIMESTAMP_LTZ(9)" }]
+rows = [
+  ["'2024-02-29 13:45:01.5 +01:00'"],
+  ["NULL"],
+]
+query = "SELECT TO_VARCHAR(TO_VARIANT(x)) AS r FROM input ORDER BY ordinal"
 order = "ordered"
 tags = ["null", "boundary"]
 origin = "generated: variant_typed@2"
@@ -1919,6 +2203,19 @@ tags = ["null", "boundary"]
 origin = "generated: variant_typed@2"
 
 [[case]]
+id = "typed_ltz9_cast_to_varchar"
+description = "TO_VARCHAR(x::VARIANT) of TIMESTAMP_LTZ(9) values."
+columns = [{ name = "x", type = "TIMESTAMP_LTZ(9)" }]
+rows = [
+  ["'2024-02-29 13:45:01.5 +01:00'"],
+  ["NULL"],
+]
+query = "SELECT TO_VARCHAR(x::VARIANT) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "boundary"]
+origin = "generated: variant_typed@2"
+
+[[case]]
 id = "typed_ltz9_cast_to_json"
 description = "TO_JSON(x::VARIANT) of TIMESTAMP_LTZ(9) values."
 columns = [{ name = "x", type = "TIMESTAMP_LTZ(9)" }]
@@ -2007,6 +2304,19 @@ rows = [
   ["NULL"],
 ]
 query = "SELECT OBJECT_CONSTRUCT('k', x):k::VARCHAR AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "boundary"]
+origin = "generated: variant_typed@2"
+
+[[case]]
+id = "typed_ltz9_object_to_varchar"
+description = "TO_VARCHAR(OBJECT_CONSTRUCT('k', x):k) of TIMESTAMP_LTZ(9) values."
+columns = [{ name = "x", type = "TIMESTAMP_LTZ(9)" }]
+rows = [
+  ["'2024-02-29 13:45:01.5 +01:00'"],
+  ["NULL"],
+]
+query = "SELECT TO_VARCHAR(OBJECT_CONSTRUCT('k', x):k) AS r FROM input ORDER BY ordinal"
 order = "ordered"
 tags = ["null", "boundary"]
 origin = "generated: variant_typed@2"
@@ -2103,6 +2413,18 @@ tags = ["boundary"]
 origin = "generated: variant_typed@2"
 
 [[case]]
+id = "typed_ltz9_round_trip_to_varchar"
+description = "TO_VARCHAR(v) of a VARIANT column written from TIMESTAMP_LTZ(9)."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["TO_VARIANT(CAST('2024-02-29 13:45:01.5 +01:00' AS TIMESTAMP_LTZ(9)))"],
+]
+query = "SELECT TO_VARCHAR(v) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["boundary"]
+origin = "generated: variant_typed@2"
+
+[[case]]
 id = "typed_ltz9_round_trip_to_json"
 description = "TO_JSON(v) of a VARIANT column written from TIMESTAMP_LTZ(9)."
 columns = [{ name = "v", type = "VARIANT" }]
@@ -2163,6 +2485,20 @@ rows = [
   ["NULL"],
 ]
 query = "SELECT TO_VARIANT(x)::VARCHAR AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "boundary"]
+origin = "generated: variant_typed@2"
+
+[[case]]
+id = "typed_time9_to_variant_to_varchar"
+description = "TO_VARCHAR(TO_VARIANT(x)) of TIME(9) values."
+columns = [{ name = "x", type = "TIME(9)" }]
+rows = [
+  ["'13:45:01.123456789'"],
+  ["'00:00:00'"],
+  ["NULL"],
+]
+query = "SELECT TO_VARCHAR(TO_VARIANT(x)) AS r FROM input ORDER BY ordinal"
 order = "ordered"
 tags = ["null", "boundary"]
 origin = "generated: variant_typed@2"
@@ -2266,6 +2602,20 @@ tags = ["null", "boundary"]
 origin = "generated: variant_typed@2"
 
 [[case]]
+id = "typed_time9_cast_to_varchar"
+description = "TO_VARCHAR(x::VARIANT) of TIME(9) values."
+columns = [{ name = "x", type = "TIME(9)" }]
+rows = [
+  ["'13:45:01.123456789'"],
+  ["'00:00:00'"],
+  ["NULL"],
+]
+query = "SELECT TO_VARCHAR(x::VARIANT) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "boundary"]
+origin = "generated: variant_typed@2"
+
+[[case]]
 id = "typed_time9_cast_to_json"
 description = "TO_JSON(x::VARIANT) of TIME(9) values."
 columns = [{ name = "x", type = "TIME(9)" }]
@@ -2359,6 +2709,20 @@ rows = [
   ["NULL"],
 ]
 query = "SELECT OBJECT_CONSTRUCT('k', x):k::VARCHAR AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "boundary"]
+origin = "generated: variant_typed@2"
+
+[[case]]
+id = "typed_time9_object_to_varchar"
+description = "TO_VARCHAR(OBJECT_CONSTRUCT('k', x):k) of TIME(9) values."
+columns = [{ name = "x", type = "TIME(9)" }]
+rows = [
+  ["'13:45:01.123456789'"],
+  ["'00:00:00'"],
+  ["NULL"],
+]
+query = "SELECT TO_VARCHAR(OBJECT_CONSTRUCT('k', x):k) AS r FROM input ORDER BY ordinal"
 order = "ordered"
 tags = ["null", "boundary"]
 origin = "generated: variant_typed@2"
@@ -2460,6 +2824,19 @@ tags = ["boundary"]
 origin = "generated: variant_typed@2"
 
 [[case]]
+id = "typed_time9_round_trip_to_varchar"
+description = "TO_VARCHAR(v) of a VARIANT column written from TIME(9)."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["TO_VARIANT(CAST('13:45:01.123456789' AS TIME(9)))"],
+  ["TO_VARIANT(CAST('00:00:00' AS TIME(9)))"],
+]
+query = "SELECT TO_VARCHAR(v) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["boundary"]
+origin = "generated: variant_typed@2"
+
+[[case]]
 id = "typed_time9_round_trip_to_json"
 description = "TO_JSON(v) of a VARIANT column written from TIME(9)."
 columns = [{ name = "v", type = "VARIANT" }]
@@ -2522,6 +2899,20 @@ rows = [
   ["NULL"],
 ]
 query = "SELECT TO_VARIANT(x)::VARCHAR AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "boundary"]
+origin = "generated: variant_typed@2"
+
+[[case]]
+id = "typed_binary_to_variant_to_varchar"
+description = "TO_VARCHAR(TO_VARIANT(x)) of BINARY values."
+columns = [{ name = "x", type = "BINARY" }]
+rows = [
+  ["'48656C6C6F'"],
+  ["''"],
+  ["NULL"],
+]
+query = "SELECT TO_VARCHAR(TO_VARIANT(x)) AS r FROM input ORDER BY ordinal"
 order = "ordered"
 tags = ["null", "boundary"]
 origin = "generated: variant_typed@2"
@@ -2625,6 +3016,20 @@ tags = ["null", "boundary"]
 origin = "generated: variant_typed@2"
 
 [[case]]
+id = "typed_binary_cast_to_varchar"
+description = "TO_VARCHAR(x::VARIANT) of BINARY values."
+columns = [{ name = "x", type = "BINARY" }]
+rows = [
+  ["'48656C6C6F'"],
+  ["''"],
+  ["NULL"],
+]
+query = "SELECT TO_VARCHAR(x::VARIANT) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "boundary"]
+origin = "generated: variant_typed@2"
+
+[[case]]
 id = "typed_binary_cast_to_json"
 description = "TO_JSON(x::VARIANT) of BINARY values."
 columns = [{ name = "x", type = "BINARY" }]
@@ -2718,6 +3123,20 @@ rows = [
   ["NULL"],
 ]
 query = "SELECT OBJECT_CONSTRUCT('k', x):k::VARCHAR AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "boundary"]
+origin = "generated: variant_typed@2"
+
+[[case]]
+id = "typed_binary_object_to_varchar"
+description = "TO_VARCHAR(OBJECT_CONSTRUCT('k', x):k) of BINARY values."
+columns = [{ name = "x", type = "BINARY" }]
+rows = [
+  ["'48656C6C6F'"],
+  ["''"],
+  ["NULL"],
+]
+query = "SELECT TO_VARCHAR(OBJECT_CONSTRUCT('k', x):k) AS r FROM input ORDER BY ordinal"
 order = "ordered"
 tags = ["null", "boundary"]
 origin = "generated: variant_typed@2"
@@ -2819,6 +3238,19 @@ tags = ["boundary"]
 origin = "generated: variant_typed@2"
 
 [[case]]
+id = "typed_binary_round_trip_to_varchar"
+description = "TO_VARCHAR(v) of a VARIANT column written from BINARY."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["TO_VARIANT(CAST('48656C6C6F' AS BINARY))"],
+  ["TO_VARIANT(CAST('' AS BINARY))"],
+]
+query = "SELECT TO_VARCHAR(v) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["boundary"]
+origin = "generated: variant_typed@2"
+
+[[case]]
 id = "typed_binary_round_trip_to_json"
 description = "TO_JSON(v) of a VARIANT column written from BINARY."
 columns = [{ name = "v", type = "VARIANT" }]
@@ -2881,6 +3313,20 @@ rows = [
   ["NULL"],
 ]
 query = "SELECT TO_VARIANT(x)::VARCHAR AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "boundary"]
+origin = "generated: variant_typed@2"
+
+[[case]]
+id = "typed_float_to_variant_to_varchar"
+description = "TO_VARCHAR(TO_VARIANT(x)) of FLOAT values."
+columns = [{ name = "x", type = "FLOAT" }]
+rows = [
+  ["0.5"],
+  ["1e300"],
+  ["NULL"],
+]
+query = "SELECT TO_VARCHAR(TO_VARIANT(x)) AS r FROM input ORDER BY ordinal"
 order = "ordered"
 tags = ["null", "boundary"]
 origin = "generated: variant_typed@2"
@@ -2984,6 +3430,20 @@ tags = ["null", "boundary"]
 origin = "generated: variant_typed@2"
 
 [[case]]
+id = "typed_float_cast_to_varchar"
+description = "TO_VARCHAR(x::VARIANT) of FLOAT values."
+columns = [{ name = "x", type = "FLOAT" }]
+rows = [
+  ["0.5"],
+  ["1e300"],
+  ["NULL"],
+]
+query = "SELECT TO_VARCHAR(x::VARIANT) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "boundary"]
+origin = "generated: variant_typed@2"
+
+[[case]]
 id = "typed_float_cast_to_json"
 description = "TO_JSON(x::VARIANT) of FLOAT values."
 columns = [{ name = "x", type = "FLOAT" }]
@@ -3077,6 +3537,20 @@ rows = [
   ["NULL"],
 ]
 query = "SELECT OBJECT_CONSTRUCT('k', x):k::VARCHAR AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "boundary"]
+origin = "generated: variant_typed@2"
+
+[[case]]
+id = "typed_float_object_to_varchar"
+description = "TO_VARCHAR(OBJECT_CONSTRUCT('k', x):k) of FLOAT values."
+columns = [{ name = "x", type = "FLOAT" }]
+rows = [
+  ["0.5"],
+  ["1e300"],
+  ["NULL"],
+]
+query = "SELECT TO_VARCHAR(OBJECT_CONSTRUCT('k', x):k) AS r FROM input ORDER BY ordinal"
 order = "ordered"
 tags = ["null", "boundary"]
 origin = "generated: variant_typed@2"
@@ -3178,6 +3652,19 @@ tags = ["boundary"]
 origin = "generated: variant_typed@2"
 
 [[case]]
+id = "typed_float_round_trip_to_varchar"
+description = "TO_VARCHAR(v) of a VARIANT column written from FLOAT."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["TO_VARIANT(CAST(0.5 AS FLOAT))"],
+  ["TO_VARIANT(CAST(1e300 AS FLOAT))"],
+]
+query = "SELECT TO_VARCHAR(v) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["boundary"]
+origin = "generated: variant_typed@2"
+
+[[case]]
 id = "typed_float_round_trip_to_json"
 description = "TO_JSON(v) of a VARIANT column written from FLOAT."
 columns = [{ name = "v", type = "VARIANT" }]
@@ -3240,6 +3727,20 @@ rows = [
   ["NULL"],
 ]
 query = "SELECT TO_VARIANT(x)::VARCHAR AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "boundary"]
+origin = "generated: variant_typed@2"
+
+[[case]]
+id = "typed_decimal_to_variant_to_varchar"
+description = "TO_VARCHAR(TO_VARIANT(x)) of NUMBER(10,2) values."
+columns = [{ name = "x", type = "NUMBER(10,2)" }]
+rows = [
+  ["1.50"],
+  ["0.00"],
+  ["NULL"],
+]
+query = "SELECT TO_VARCHAR(TO_VARIANT(x)) AS r FROM input ORDER BY ordinal"
 order = "ordered"
 tags = ["null", "boundary"]
 origin = "generated: variant_typed@2"
@@ -3343,6 +3844,20 @@ tags = ["null", "boundary"]
 origin = "generated: variant_typed@2"
 
 [[case]]
+id = "typed_decimal_cast_to_varchar"
+description = "TO_VARCHAR(x::VARIANT) of NUMBER(10,2) values."
+columns = [{ name = "x", type = "NUMBER(10,2)" }]
+rows = [
+  ["1.50"],
+  ["0.00"],
+  ["NULL"],
+]
+query = "SELECT TO_VARCHAR(x::VARIANT) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "boundary"]
+origin = "generated: variant_typed@2"
+
+[[case]]
 id = "typed_decimal_cast_to_json"
 description = "TO_JSON(x::VARIANT) of NUMBER(10,2) values."
 columns = [{ name = "x", type = "NUMBER(10,2)" }]
@@ -3441,6 +3956,20 @@ tags = ["null", "boundary"]
 origin = "generated: variant_typed@2"
 
 [[case]]
+id = "typed_decimal_object_to_varchar"
+description = "TO_VARCHAR(OBJECT_CONSTRUCT('k', x):k) of NUMBER(10,2) values."
+columns = [{ name = "x", type = "NUMBER(10,2)" }]
+rows = [
+  ["1.50"],
+  ["0.00"],
+  ["NULL"],
+]
+query = "SELECT TO_VARCHAR(OBJECT_CONSTRUCT('k', x):k) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "boundary"]
+origin = "generated: variant_typed@2"
+
+[[case]]
 id = "typed_decimal_object_to_json"
 description = "TO_JSON(OBJECT_CONSTRUCT('k', x):k) of NUMBER(10,2) values."
 columns = [{ name = "x", type = "NUMBER(10,2)" }]
@@ -3532,6 +4061,19 @@ rows = [
   ["TO_VARIANT(CAST(0.00 AS NUMBER(10,2)))"],
 ]
 query = "SELECT v::VARCHAR AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["boundary"]
+origin = "generated: variant_typed@2"
+
+[[case]]
+id = "typed_decimal_round_trip_to_varchar"
+description = "TO_VARCHAR(v) of a VARIANT column written from NUMBER(10,2)."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["TO_VARIANT(CAST(1.50 AS NUMBER(10,2)))"],
+  ["TO_VARIANT(CAST(0.00 AS NUMBER(10,2)))"],
+]
+query = "SELECT TO_VARCHAR(v) AS r FROM input ORDER BY ordinal"
 order = "ordered"
 tags = ["boundary"]
 origin = "generated: variant_typed@2"

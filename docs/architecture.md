@@ -76,7 +76,10 @@ a reason:
 
 - **missing rule**: no verified rule converts the construct yet;
 - **not expressible in DuckDB**: declared in the catalogue with a reason and evidence;
-- **parse fidelity**: the SQL does not parse.
+- **parse fidelity**: the SQL does not parse;
+- **conversion budget exceeded**: converting the statement took longer, or emitted more DuckDB SQL
+  relative to its source, than the `[conversion_budget]` in `sqlquack.toml` allows. The reason gives
+  the measured time or size. A conversion that grows pathologically is refused, never kept.
 
 ## Spelling pairs
 
@@ -196,11 +199,19 @@ read as JSON, numbers with an exponent, an all-zero fraction, six leading fracti
 than 15 decimal digits or 39 integer digits, letters and trailing commas outside strings,
 surrogate escapes and repeated keys at any depth. PARSE_JSON and TRY_PARSE_JSON raise alike, so
 TRY_PARSE_JSON never returns NULL on one side and a value on the other. VARIANT columns of base
-tables pass the same guard; writing an object as text raises when its keys are out of byte
-order. Documents the guard passes convert exactly. VARIANT result columns convert (user decision
-of 2026-10-25, superseding that part of decision 3): `duckdb.json_output` writes them as DuckDB
-`JSON`, raising for objects whose keys are out of byte order, and verify compares them with
-Snowflake's JSON text without whitespace outside strings. OBJECT_CONSTRUCT, OBJECT_INSERT and
+tables pass the same guard. Documents the guard passes convert exactly. Snowflake writes a
+VARIANT as text with every object's keys in UTF-8 byte order, at every depth, and array elements
+in order (batch 12 recorded mixed case, non-ASCII and supplementary-plane keys, prefixes, empty
+containers, escaped keys and thirteen levels of nesting). The writer behind `::VARCHAR`, TO_VARCHAR,
+TO_JSON, HASH and VARIANT result columns keeps DuckDB's text for sorted documents and resorts
+others through DuckDB's `VARIANT`, which keeps every object's keys in byte order; it raises when
+that would rewrite a number, such as an integer beyond 64 bits. Its SQL is one expression whose
+size does not depend on nesting, so composed VARIANT expressions grow linearly. Strings take the recorded
+escapes: `\"`, `\\`, `\b`, `\t`, `\n`, `\f` and `\r`, and `\u00xx` in lower case for every other
+control character and DEL; `/` and U+2028 are written as they are. VARIANT
+result columns convert (user decision of 2026-10-25, superseding that part of decision 3):
+`duckdb.json_output` writes them as DuckDB `JSON` text written this way, and verify compares them
+with Snowflake's JSON text without whitespace outside strings. OBJECT_CONSTRUCT, OBJECT_INSERT and
 OBJECT_DELETE rebuild objects with keys in byte order, as Snowflake keeps them; keys are matched
 exactly and never read as paths. Values Snowflake keeps typed inside a VARIANT (dates,
 timestamps, times, binary, floats, decimals) are refused until recordings prove how they read
@@ -254,8 +265,22 @@ use it, plus how many files would convert as the top N constructs get rules, in 
 in greedy order (each next rule is the one that completes the most files). SQLBuild reference calls
 (`__ref`, `__source`, `__seed`, `__udf`, `__table_fn`, cursor bounds) are replaced with neutral
 placeholders before parsing; each model, source or seed reference becomes a relation named after its
-arguments, so a `--schema` file can type it. The report holds counts and construct keys only.
-With `SQLQUACK_GUARDS_DIR` set, census also writes each converted file's known divergences there.
+arguments, so a `--schema` file can type it. The report holds counts and construct keys only. With
+`SQLQUACK_GUARDS_DIR` set, census also writes each converted file's known divergences there.
+Progress goes to stderr every few seconds, and the conversion times of the slowest files, over every
+pass, are listed there at the end. `--names` adds file, model and relation names: the slowest
+files' paths, the blockers' model names and the relation in each `model:` and `relation:` root.
+
+The `blockers` section traces each refused file through the models it references. A file's own
+refusals are its roots, except an unresolved relation that is a refused model of the project, which
+contributes that model's roots instead; a relation that is neither a model nor in the schema is
+the root `relation:<name>`. Relation and model names match in upper case, as Snowflake folds
+unquoted identifiers, and a file's other refusals stay roots next to its relations'. Models refused
+only because they read each other share the root `cycle`. Each root reports the files it refuses
+directly, the files downstream of those, their total and the files it alone blocks; a file blocked
+by several roots counts towards each. `single_root_files` counts the refused files one fix would unblock. Without `--names`, files
+are numbered in name order, their unknown relations are left out, and `model:` and `relation:`
+roots fold into `upstream model` and `unknown relation`.
 
 ### Guards in conditions
 

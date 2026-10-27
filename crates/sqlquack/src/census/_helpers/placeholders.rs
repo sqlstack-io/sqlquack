@@ -1,5 +1,7 @@
 //! Replaces sqlbuild reference calls outside comments and quoted text with parseable SQL.
 
+use std::collections::BTreeSet;
+
 use sqlquack_core::classification::constants::PROJECT_FUNCTION_PLACEHOLDER;
 
 use crate::census::constants::{
@@ -10,9 +12,11 @@ use crate::census::constants::{
 const PROJECT_FUNCTION_CALL: &str = "__udf";
 const TABLE_FUNCTION_CALL: &str = "__table_fn";
 
-pub(crate) fn rewrite_placeholders(sql: &str) -> String {
+/// The rewritten SQL, and the placeholder relation each reference call became, in upper case.
+pub(crate) fn rewrite_with_references(sql: &str) -> (String, BTreeSet<String>) {
+    let mut references: BTreeSet<String> = BTreeSet::new();
     if !sql.contains("__") {
-        return sql.to_owned();
+        return (sql.to_owned(), references);
     }
     let bytes = sql.as_bytes();
     let mut rewritten = String::with_capacity(sql.len());
@@ -31,6 +35,9 @@ pub(crate) fn rewrite_placeholders(sql: &str) -> String {
             let name_end = identifier_end(bytes, position);
             let name = sql[position..name_end].to_ascii_lowercase();
             if let Some((replacement, end)) = replacement(bytes, &name, name_end) {
+                if RELATION_CALLS.contains(&name.as_str()) {
+                    references.insert(replacement.to_ascii_uppercase());
+                }
                 rewritten.push_str(&sql[copied..position]);
                 rewritten.push_str(&replacement);
                 position = end;
@@ -43,7 +50,7 @@ pub(crate) fn rewrite_placeholders(sql: &str) -> String {
         position += 1;
     }
     rewritten.push_str(&sql[copied..]);
-    rewritten
+    (rewritten, references)
 }
 
 fn replacement(bytes: &[u8], name: &str, name_end: usize) -> Option<(String, usize)> {

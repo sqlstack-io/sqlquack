@@ -30,7 +30,8 @@ use crate::conversion::_helpers::expressions::semi_structured::{
     parse_json, variant_get, variant_inspect,
 };
 use crate::conversion::_helpers::expressions::strings::{
-    concatenate, concatenate_with_separator, edit_distance, text_contains, text_operand, trim_call,
+    concatenate, concatenate_with_separator, edit_distance, text_contains, text_md5, text_operand,
+    trim_call,
 };
 use crate::conversion::_helpers::expressions::temporal_functions::{
     convert_timezone, date_add, date_part, date_trunc, temporal_text, to_timestamp,
@@ -90,13 +91,14 @@ pub(crate) fn convert_function(payload: &Value, site: Site<'_>) -> Result<Emitte
         ("CONCAT_WS", parts) => concatenate_with_separator(parts, &construct, site),
         ("CONTAINS", parts) => text_contains(parts, &construct, site),
         ("EDITDISTANCE", parts) => edit_distance(parts, &construct, site),
+        ("MD5", parts) => text_md5(parts, &construct, site),
         (
             "TO_NUMBER" | "TO_DECIMAL" | "TO_NUMERIC" | "TRY_TO_NUMBER" | "TRY_TO_DECIMAL"
             | "TRY_TO_NUMERIC",
             parts,
         ) => to_number_call(&name, parts, &construct, site),
         ("TO_DOUBLE" | "TRY_TO_DOUBLE", parts) => to_double_call(&name, parts, &construct, site),
-        ("TO_VARCHAR" | "TO_CHAR", [value]) => to_varchar_call(value, &construct, site),
+        ("TO_VARCHAR" | "TO_CHAR", [value]) => to_varchar_call(&name, value, &construct, site),
         ("TO_VARCHAR" | "TO_CHAR", [value, format]) => {
             temporal_text((value, format), &construct, site)
         }

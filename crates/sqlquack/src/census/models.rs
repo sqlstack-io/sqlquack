@@ -2,6 +2,8 @@
 
 use std::collections::BTreeMap;
 use std::path::PathBuf;
+use std::sync::atomic::AtomicUsize;
+use std::time::Duration;
 
 use serde::Serialize;
 
@@ -22,9 +24,11 @@ pub struct CensusOptions {
     pub chain_models: bool,
     /// The known divergences conversion may rely on.
     pub conversion: ConversionOptions,
+    /// Name models and relations in the blockers; without it they are numbered or folded.
+    pub names: bool,
 }
 
-/// A census report: counts and construct keys only, never SQL text or file names.
+/// A census report: counts and construct keys, and model names in blockers only when asked.
 #[derive(Clone, Debug, PartialEq, Serialize)]
 pub struct CensusReport {
     /// The source dialect.
@@ -39,6 +43,69 @@ pub struct CensusReport {
     pub coverage: Vec<CoveragePoint>,
     /// Converted files by the rules, building blocks and typing functions they relied on.
     pub provenance: ProvenanceCounts,
+    /// What keeps each refused file from converting, traced through the models it reads.
+    pub blockers: BlockerReport,
+}
+
+/// Refused files traced to the refusals at the root of the models they read.
+#[derive(Clone, Debug, Default, PartialEq, Eq, Serialize)]
+pub struct BlockerReport {
+    /// Each refused file, by model name, or by number when names are not asked for.
+    pub files: Vec<BlockedFile>,
+    /// Each root refusal and the files it keeps from converting, most files first.
+    pub roots: Vec<RootBlocker>,
+    /// Refused files with exactly one root refusal, which one fix would unblock.
+    pub single_root_files: usize,
+}
+
+/// One refused file and what blocks it.
+#[derive(Clone, Debug, PartialEq, Eq, Serialize)]
+pub struct BlockedFile {
+    /// The model the file defines: its file name without extension.
+    pub model: String,
+    /// The file's own refusals, not caused by a refused model it reads.
+    pub own: Vec<RootKey>,
+    /// Refused models the file reads, each with its root refusals.
+    pub upstream: Vec<UpstreamBlock>,
+    /// Relations the file reads that are neither a model of the project nor in the schema.
+    pub unknown_relations: Vec<String>,
+    /// Every root refusal blocking the file, its own and its upstream models'.
+    pub roots: Vec<RootKey>,
+}
+
+/// A refused model a file reads, and the root refusals behind it.
+#[derive(Clone, Debug, PartialEq, Eq, Serialize)]
+pub struct UpstreamBlock {
+    /// The model's name.
+    pub model: String,
+    /// Its root refusals.
+    pub roots: Vec<RootKey>,
+}
+
+/// A refusal as a category and the construct it names.
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Serialize)]
+pub struct RootKey {
+    /// The refusal category.
+    pub category: String,
+    /// The construct, `statement`, or `relation:<name>` for an unknown relation.
+    pub construct: String,
+}
+
+/// One root refusal and the files fixing it would help.
+#[derive(Clone, Debug, PartialEq, Eq, Serialize)]
+pub struct RootBlocker {
+    /// The refusal category.
+    pub category: String,
+    /// The construct.
+    pub construct: String,
+    /// Files it refuses directly.
+    pub direct: usize,
+    /// Files downstream of those, through the models they read.
+    pub downstream: usize,
+    /// `direct` and `downstream` together.
+    pub total: usize,
+    /// Files whose only root refusal it is.
+    pub sole: usize,
 }
 
 /// Converted files per rule, building block and typing function, each sorted by identifier.
@@ -86,6 +153,8 @@ pub struct RefusalTotals {
     pub type_condition: usize,
     /// Files with a relation or column name that does not resolve.
     pub unresolved_name: usize,
+    /// Files with a statement whose conversion took too long or emitted too much SQL.
+    pub conversion_budget: usize,
     /// Refusals by category and construct, counting each file once per pair, most frequent first.
     pub by_construct: Vec<RefusalCount>,
     /// Files with no refusal at all.
@@ -136,4 +205,26 @@ pub struct CorpusFile {
     pub provenance: Option<Provenance>,
     /// The refused construct keys, sorted; empty when the file converts.
     pub refused_constructs: Vec<String>,
+}
+
+/// Files inspected so far in the current pass, shared with whoever reports progress.
+#[derive(Debug, Default)]
+pub struct CensusProgress {
+    /// The pass: 1 for the first, one more for each retry of chained models.
+    pub pass: AtomicUsize,
+    /// Files inspected in this pass.
+    pub done: AtomicUsize,
+    /// Files this pass inspects.
+    pub total: AtomicUsize,
+    /// Files inspected over every pass.
+    pub inspected: AtomicUsize,
+}
+
+/// A census and the time each file took, which the report itself never names.
+#[derive(Clone, Debug, PartialEq)]
+pub struct CensusRun {
+    /// The report.
+    pub report: CensusReport,
+    /// Each file with the time spent converting it over every pass, slowest first.
+    pub timings: Vec<(PathBuf, Duration)>,
 }

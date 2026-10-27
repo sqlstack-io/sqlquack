@@ -202,24 +202,22 @@ tags = ["invalid"]
 
 [[case]]
 id = "parsed_to_json_guard_5"
-description = "TO_JSON(TRY_PARSE_JSON(s)) of one text the JSON guard raises for: '{\"a\":1,\"A\":2}'"
+description = "TO_JSON(TRY_PARSE_JSON(s)) of one text whose keys Snowflake writes sorted: '{\"a\":1,\"A\":2}'"
 columns = [{ name = "s", type = "VARCHAR" }]
 rows = [
   ["'{\"a\":1,\"A\":2}'"],
 ]
 expression = "TO_JSON(TRY_PARSE_JSON(s))"
-expected_divergence = "json_fidelity"
 tags = ["invalid"]
 
 [[case]]
 id = "parsed_to_json_guard_6"
-description = "TO_JSON(TRY_PARSE_JSON(s)) of one text the JSON guard raises for: '{\"b\":1,\"a\":{\"d\":[1,{\"z\":null,\"y\":2}],\"c\":\"é\"}}'"
+description = "TO_JSON(TRY_PARSE_JSON(s)) of one text whose keys Snowflake writes sorted: '{\"b\":1,\"a\":{\"d\":[1,{\"z\":null,\"y\":2}],\"c\":\"é\"}}'"
 columns = [{ name = "s", type = "VARCHAR" }]
 rows = [
   ["'{\"b\":1,\"a\":{\"d\":[1,{\"z\":null,\"y\":2}],\"c\":\"é\"}}'"],
 ]
 expression = "TO_JSON(TRY_PARSE_JSON(s))"
-expected_divergence = "json_fidelity"
 tags = ["invalid"]
 
 [[case]]
@@ -257,13 +255,12 @@ tags = ["invalid"]
 
 [[case]]
 id = "parsed_to_varchar_guard_2"
-description = "TRY_PARSE_JSON(s)::VARCHAR of one text the JSON guard raises for: '{\"b\":1,\"a\":2}'"
+description = "TRY_PARSE_JSON(s)::VARCHAR of one text whose keys Snowflake writes sorted: '{\"b\":1,\"a\":2}'"
 columns = [{ name = "s", type = "VARCHAR" }]
 rows = [
   ["'{\"b\":1,\"a\":2}'"],
 ]
 expression = "TRY_PARSE_JSON(s)::VARCHAR"
-expected_divergence = "json_fidelity"
 tags = ["invalid"]
 
 [[case]]

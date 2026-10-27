@@ -21,6 +21,8 @@ pub enum RefusalCategory {
     TypeCondition,
     /// A relation or column name does not resolve, or resolves ambiguously.
     UnresolvedName,
+    /// Converting the statement took longer, or emitted more SQL, than the conversion budget.
+    ConversionBudget,
 }
 
 impl RefusalCategory {
@@ -32,6 +34,7 @@ impl RefusalCategory {
             Self::ParseFidelity => "parse fidelity",
             Self::TypeCondition => "outside a rule's type conditions",
             Self::UnresolvedName => "unresolved name",
+            Self::ConversionBudget => "conversion budget exceeded",
         }
     }
 }

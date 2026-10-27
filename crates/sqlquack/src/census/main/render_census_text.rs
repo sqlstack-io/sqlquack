@@ -2,7 +2,7 @@
 
 use std::fmt::Write;
 
-use crate::census::models::{CensusReport, RefusalCount};
+use crate::census::models::{BlockerReport, CensusReport, RefusalCount};
 
 /// The report as text, listing at most `limit` constructs.
 pub fn render_census_text(report: &CensusReport, limit: usize) -> String {
@@ -34,12 +34,13 @@ pub fn render_census_text(report: &CensusReport, limit: usize) -> String {
     let _ = writeln!(
         text,
         "  files refused: missing rule {}, outside type conditions {}, unresolved name {}, \
-         not expressible {}, parse fidelity {}; convertible {}",
+         not expressible {}, parse fidelity {}, conversion budget {}; convertible {}",
         refusals.missing_rule,
         refusals.type_condition,
         refusals.unresolved_name,
         refusals.not_expressible,
         refusals.parse_fidelity,
+        refusals.conversion_budget,
         refusals.convertible
     );
     for (divergence, files) in &report.provenance.divergences {
@@ -49,6 +50,7 @@ pub fn render_census_text(report: &CensusReport, limit: usize) -> String {
         );
     }
     render_refusals(&mut text, &refusals.by_construct, limit);
+    render_blockers(&mut text, &report.blockers, limit);
     let _ = writeln!(text);
     let _ = writeln!(text, "Convertible files as the top constructs get rules");
     let _ = writeln!(
@@ -94,6 +96,28 @@ fn render_refusals(text: &mut String, counts: &[RefusalCount], limit: usize) {
             text,
             "  {:>6}  {}: {}",
             count.files, count.category, count.construct
+        );
+    }
+}
+
+fn render_blockers(text: &mut String, blockers: &BlockerReport, limit: usize) {
+    let _ = writeln!(text);
+    let _ = writeln!(
+        text,
+        "Root blockers through the model graph (top {limit}; {} of {} refused files have one root)",
+        blockers.single_root_files,
+        blockers.files.len()
+    );
+    let _ = writeln!(
+        text,
+        "  {:>6}  {:>6}  {:>10}  {:>6}  root",
+        "total", "direct", "downstream", "sole"
+    );
+    for root in blockers.roots.iter().take(limit) {
+        let _ = writeln!(
+            text,
+            "  {:>6}  {:>6}  {:>10}  {:>6}  {}: {}",
+            root.total, root.direct, root.downstream, root.sole, root.category, root.construct
         );
     }
 }

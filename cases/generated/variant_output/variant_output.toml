@@ -31,7 +31,7 @@ origin = "generated: variant_output@1"
 
 [[case]]
 id = "variant_output_unsorted_1"
-description = "The object {\"b\":1,\"a\":2}, whose keys Snowflake reorders, as a result."
+description = "The object {\"b\":1,\"a\":2}, whose keys Snowflake sorts, as a result."
 columns = [{ name = "v", type = "VARIANT" }]
 rows = [
   ["PARSE_JSON('{\"b\":1,\"a\":2}')"],
@@ -40,11 +40,10 @@ query = "SELECT v FROM input"
 order = "ordered"
 tags = ["boundary"]
 origin = "generated: variant_output@1"
-expected_divergence = "json_fidelity"
 
 [[case]]
 id = "variant_output_unsorted_2"
-description = "The object {\"a\":{\"z\":1,\"y\":2}}, whose keys Snowflake reorders, as a result."
+description = "The object {\"a\":{\"z\":1,\"y\":2}}, whose keys Snowflake sorts, as a result."
 columns = [{ name = "v", type = "VARIANT" }]
 rows = [
   ["PARSE_JSON('{\"a\":{\"z\":1,\"y\":2}}')"],
@@ -53,11 +52,10 @@ query = "SELECT v FROM input"
 order = "ordered"
 tags = ["boundary"]
 origin = "generated: variant_output@1"
-expected_divergence = "json_fidelity"
 
 [[case]]
 id = "variant_output_unsorted_3"
-description = "The object [{\"b\":1,\"a\":2}], whose keys Snowflake reorders, as a result."
+description = "The object [{\"b\":1,\"a\":2}], whose keys Snowflake sorts, as a result."
 columns = [{ name = "v", type = "VARIANT" }]
 rows = [
   ["PARSE_JSON('[{\"b\":1,\"a\":2}]')"],
@@ -66,4 +64,3 @@ query = "SELECT v FROM input"
 order = "ordered"
 tags = ["boundary"]
 origin = "generated: variant_output@1"
-expected_divergence = "json_fidelity"

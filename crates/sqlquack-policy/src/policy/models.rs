@@ -19,6 +19,21 @@ pub struct Policy {
     /// Constructs whose source values DuckDB cannot reproduce but whose behaviour is consistent.
     #[serde(default)]
     pub divergences: BTreeMap<String, Divergence>,
+    /// Limits on converting one statement; absent, the built-in defaults apply.
+    #[serde(default)]
+    pub conversion_budget: Option<ConversionBudgetPolicy>,
+}
+
+/// How long converting one statement may take and how much SQL it may emit, before it is refused.
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct ConversionBudgetPolicy {
+    /// Wall time for converting one statement, in milliseconds.
+    pub milliseconds: u64,
+    /// Emitted SQL may be this many times the source text the statement came from.
+    pub size_ratio: u64,
+    /// Emitted SQL up to this many bytes is always within budget.
+    pub minimum_bytes: u64,
 }
 
 /// Comparator settings.

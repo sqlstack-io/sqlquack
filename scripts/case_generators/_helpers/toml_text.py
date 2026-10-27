@@ -2,14 +2,28 @@
 
 from __future__ import annotations
 
-from scripts.case_generators.constants import GENERATED_NOTICE, GENERATED_ORIGIN_PREFIX
+from scripts.case_generators.constants import (
+    CONTROL_LIMIT,
+    DELETE_CHARACTER,
+    GENERATED_NOTICE,
+    GENERATED_ORIGIN_PREFIX,
+    TOML_TAB,
+)
 from scripts.case_generators.models import Case, CaseFile
 
 
 def quoted(text: str) -> str:
-    """A TOML basic string."""
+    """A TOML basic string, control characters escaped."""
     escaped: str = text.replace("\\", "\\\\").replace('"', '\\"').replace("\n", "\\n")
-    return f'"{escaped}"'
+    return '"' + "".join(map(_visible, escaped)) + '"'
+
+
+def _visible(character: str) -> str:
+    """A control character TOML forbids as an escape; other characters unchanged."""
+    control: bool = (ord(character) < CONTROL_LIMIT and character != TOML_TAB) or ord(
+        character
+    ) == DELETE_CHARACTER
+    return f"\\u{ord(character):04x}" if control else character
 
 
 def string_list(items: tuple[str, ...]) -> str:

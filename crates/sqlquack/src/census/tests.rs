@@ -1,5 +1,7 @@
 #[path = "tests/helpers.rs"]
 mod helpers;
+#[path = "tests/test_blockers.rs"]
+mod test_blockers;
 #[path = "tests/test_coverage.rs"]
 mod test_coverage;
 #[path = "tests/test_placeholders.rs"]

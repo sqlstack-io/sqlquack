@@ -19,7 +19,7 @@ PYTHON_TYPED := scripts tests/unit/scripts
 PYTHON_TESTS := tests/unit/scripts
 endif
 
-.PHONY: format rust-lint python-check fensu evidence-guard polyglot-guard generate-cases generated-cases check-ci test verify-recorded polyglot-duckshop fuzz-smoke gate census
+.PHONY: format rust-lint python-check fensu evidence-guard polyglot-guard generate-cases generated-cases check-ci test verify-recorded polyglot-duckshop census-duckshop fuzz-smoke gate census
 
 format:
 	cargo fmt --all
@@ -74,15 +74,29 @@ polyglot-duckshop:
 	  cargo run --locked --release -p sqlquack-polyglot-check -- directory "$$compiled" --dialect snowflake || exit 1; \
 	done
 
+# Converting each compiled DuckShop project, with chained models, must finish within
+# DUCKSHOP_CENSUS_SECONDS. DuckShop 10K takes about 25 s on a development machine; 300 s is about
+# twelve times that, room for slower CI runners, so only a pathological slowdown fails the gate.
+DUCKSHOP_CENSUS_SECONDS ?= 300
+
+census-duckshop:
+	@test -n "$(DUCKSHOP_COMPILED)" || { echo "census-duckshop: set DUCKSHOP_COMPILED" >&2; exit 1; }
+	cargo build --locked --release -p sqlquack
+	for compiled in $(DUCKSHOP_COMPILED); do \
+	  timeout $(DUCKSHOP_CENSUS_SECONDS) cargo run --locked --release -q -p sqlquack -- \
+	    census --chain-models --json "$$compiled" > /dev/null \
+	    || { echo "census-duckshop: converting $$compiled failed or took over $(DUCKSHOP_CENSUS_SECONDS) s" >&2; exit 1; }; \
+	done
+
 # Fuzzes tolerant parsing from the exact check's statements for FUZZ_SECONDS.
 fuzz-smoke:
 	uv run python -m scripts.seed_fuzz_corpus --out $(FUZZ_CORPUS)
 	cd fuzz && $(FUZZ_CARGO) run --target x86_64-unknown-linux-gnu tolerant $(abspath $(FUZZ_CORPUS)) -- \
 	  -max_total_time=$(FUZZ_SECONDS) -max_len=4096 -timeout=10 -rss_limit_mb=2048
 
-# Everything CI runs: the static gate, the tests, the recorded-case replay, the exact check on
-# DuckShop and the fuzz smoke. The pre-push verify hook runs this.
-gate: check-ci test verify-recorded polyglot-duckshop fuzz-smoke
+# Everything CI runs: the static gate, the tests, the recorded-case replay, the exact check and the
+# timed conversion on DuckShop, and the fuzz smoke. The pre-push verify hook runs this.
+gate: check-ci test verify-recorded polyglot-duckshop census-duckshop fuzz-smoke
 
 # Example: make census CENSUS_ARGS="path/to/sql --json"
 census:

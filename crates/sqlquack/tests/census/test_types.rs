@@ -10,4 +10,6 @@ pub(crate) struct BinaryOutcome {
     pub(crate) files: Option<u64>,
     pub(crate) unresolved_name: Option<u64>,
     pub(crate) completion_reported: bool,
+    pub(crate) slowest_reported: bool,
+    pub(crate) names_printed: bool,
 }

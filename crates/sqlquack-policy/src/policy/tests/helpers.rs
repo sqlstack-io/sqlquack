@@ -36,6 +36,11 @@ WEEK_START = 0
 description = "numbers"
 required = ["null", "zero"]
 
+[conversion_budget]
+milliseconds = 120000
+size_ratio = 2000
+minimum_bytes = 4194304
+
 [divergences.hash]
 constructs = ["fn:HASH"]
 default = "warn"

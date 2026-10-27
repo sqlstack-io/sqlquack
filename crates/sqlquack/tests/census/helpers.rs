@@ -23,5 +23,11 @@ pub(crate) fn run_on_shop(arguments: &[&str]) -> BinaryOutcome {
         unresolved_name: report["refusals"]["unresolved_name"].as_u64(),
         completion_reported: String::from_utf8_lossy(&output.stderr)
             .contains("sqlquack census: done, 2 files"),
+        slowest_reported: String::from_utf8_lossy(&output.stderr)
+            .contains("sqlquack census: slowest files:\n  "),
+        names_printed: [&output.stdout, &output.stderr].iter().any(|stream| {
+            let text = String::from_utf8_lossy(stream).to_ascii_lowercase();
+            text.contains("orders") || text.contains("products")
+        }),
     }
 }

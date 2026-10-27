@@ -156,7 +156,6 @@ rows = [
 ]
 query = "SELECT TO_JSON(PARSE_JSON(s)) AS j, PARSE_JSON(s)::VARCHAR AS v FROM input ORDER BY ordinal"
 order = "ordered"
-expected_divergence = "json_fidelity"
 tags = ["null", "nested", "array-index", "case-sensitive-key"]
 
 [[case]]

@@ -1,0 +1,117 @@
+# ARRAY_TO_STRING of arrays whose elements are written as JSON text.
+category = "semi-structured-output"
+construct = "fn:ARRAY_TO_STRING"
+session_profile = "utc-v1"
+
+[[case]]
+id = "array_to_string_sorted_elements"
+description = "Objects and arrays with keys already sorted, and a JSON null, which is not an array and raises."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'[{\"a\":1,\"b\":[1,2]},{\"c\":\"x\"},[3,[4]],\"y\"]'"],
+  ["'[{}, [], {\"a\":{}}]'"],
+  ["'null'"],
+  ["NULL"],
+]
+query = "SELECT ARRAY_TO_STRING(PARSE_JSON(s), '|') AS joined FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "json-null", "nested"]
+
+[[case]]
+id = "array_to_string_unsorted_object"
+description = "An object element whose keys Snowflake sorts."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'[{\"b\":1,\"a\":2},\"x\"]'"],
+]
+query = "SELECT ARRAY_TO_STRING(PARSE_JSON(s), '|') AS joined FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["nested"]
+
+[[case]]
+id = "array_to_string_unsorted_nested"
+description = "Arrays and objects nested in elements, with unsorted keys inside."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'[[{\"d\":1,\"c\":2}],{\"z\":{\"y\":1,\"x\":2},\"a\":[{\"q\":1,\"p\":2}]}]'"],
+]
+query = "SELECT ARRAY_TO_STRING(PARSE_JSON(s), '|') AS joined FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["nested"]
+
+[[case]]
+id = "array_to_string_unsorted_keys_mixed"
+description = "Mixed-case and non-ASCII keys in an element."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'[{\"b\":1,\"B\":2,\"é\":3,\"a\":4,\"😀\":5}]'"],
+]
+query = "SELECT ARRAY_TO_STRING(PARSE_JSON(s), '|') AS joined FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["nested"]
+
+[[case]]
+id = "array_to_string_control_object"
+description = "Control characters and DEL in an object element's string."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'[{\"a\":\"\\\\u001f\\\\u007f\"},\"x\"]'"],
+]
+query = "SELECT ARRAY_TO_STRING(PARSE_JSON(s), '|') AS joined FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["nested"]
+
+[[case]]
+id = "array_to_string_control_array"
+description = "Backspace, tab, line feed and other controls in an array element's strings."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'[[\"\\\\b\",\"\\\\t\",\"\\\\n\",\"\\\\u0001\",\"\\\\u000b\"],1]'"],
+]
+query = "SELECT ARRAY_TO_STRING(PARSE_JSON(s), '|') AS joined FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["nested"]
+
+[[case]]
+id = "array_to_string_control_strings"
+description = "Control characters in string elements, which join as their text."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'[\"a\\\\u001fb\",\"\\\\u007f\",\"tab\\\\there\"]'"],
+]
+query = "SELECT ARRAY_TO_STRING(PARSE_JSON(s), '|') AS joined FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["nested"]
+
+[[case]]
+id = "array_to_string_numbers"
+description = "Numbers and booleans: integers, decimals, a long decimal, a 38-digit integer."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'[1,-2.5,0.25,100,true,false,12345678901234567890123456789012345678]'"],
+]
+query = "SELECT ARRAY_TO_STRING(PARSE_JSON(s), '|') AS joined FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["nested"]
+
+[[case]]
+id = "array_to_string_long_decimal"
+description = "A 17-digit decimal element."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'[0.30000000000000004,1.5]'"],
+]
+query = "SELECT ARRAY_TO_STRING(PARSE_JSON(s), '|') AS joined FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["nested"]
+
+[[case]]
+id = "array_to_string_numbers_in_objects"
+description = "Numbers inside object and array elements."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'[{\"n\":0.30000000000000004},[1.25,-7]]'"],
+]
+query = "SELECT ARRAY_TO_STRING(PARSE_JSON(s), '|') AS joined FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["nested"]

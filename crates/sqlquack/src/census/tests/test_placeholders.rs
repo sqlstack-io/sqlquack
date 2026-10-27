@@ -1,4 +1,4 @@
-use crate::census::_helpers::placeholders::rewrite_placeholders;
+use crate::census::_helpers::placeholders::rewrite_with_references;
 use crate::census::tests::test_types::RewriteTestCase;
 
 #[test]
@@ -45,7 +45,7 @@ fn given_sqlbuild_compiled_sql_when_rewriting_then_references_become_parseable_s
     ];
     for test_case in test_cases {
         assert_eq!(
-            rewrite_placeholders(test_case.sql),
+            rewrite_with_references(test_case.sql).0,
             test_case.expected_sql,
             "{}",
             test_case.description

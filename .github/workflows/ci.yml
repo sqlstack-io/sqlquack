@@ -94,6 +94,9 @@ jobs:
             directory sqlbuild/benchmarks/duckshop/project/target/compiled --dialect snowflake
           cargo run --locked --release -p sqlquack-polyglot-check -- \
             directory "$RUNNER_TEMP/duckshop-10k/target/compiled" --dialect snowflake
+      - name: Convert DuckShop within the time budget
+        run: |
+          make census-duckshop DUCKSHOP_COMPILED="sqlbuild/benchmarks/duckshop/project/target/compiled $RUNNER_TEMP/duckshop-10k/target/compiled"
 
   fuzz:
     name: Fuzz tolerant parsing

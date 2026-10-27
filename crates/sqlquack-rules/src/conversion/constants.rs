@@ -139,6 +139,10 @@ pub const VARIANT_TYPE_NAME: &str = "rule.variant_typeof";
 pub const VARIANT_INSPECT: &str = "rule.variant_inspect";
 /// Casts of a VARIANT to scalar types.
 pub const VARIANT_CAST: &str = "rule.variant_cast";
+/// TO_VARCHAR of a VARIANT.
+pub const VARIANT_TO_VARCHAR: &str = "rule.variant_to_varchar";
+/// The one text function recordings show writing a VARIANT.
+pub const VARIANT_TEXT_FUNCTION: &str = "TO_VARCHAR";
 /// The alias of the query whose VARIANT result columns are written for output.
 pub const OUTPUT_ALIAS: &str = "\"_sqlquack_output\"";
 /// The object constructor that keeps NULL values as JSON null.
@@ -307,6 +311,8 @@ pub const LEAST_GREATEST: &str = "rule.least_greatest";
 pub const TEXT_AFFIX: &str = "rule.text_affix";
 /// CONTAINS.
 pub const TEXT_CONTAINS: &str = "rule.contains";
+/// MD5 of a text.
+pub const TEXT_MD5: &str = "rule.md5";
 /// EDITDISTANCE of two texts.
 pub const EDIT_DISTANCE: &str = "rule.editdistance";
 /// Casts between DATE and timestamp types.
@@ -830,7 +836,7 @@ pub const RULES: &[RuleSpec] = &[
     RuleSpec {
         id: VARIANT_INSPECT,
         constructs: &["fn:IS_NULL_VALUE", "fn:TO_JSON"],
-        conditions: "A VARIANT. TO_JSON of an object whose keys are not in byte order raises, relying on json_fidelity.",
+        conditions: "A VARIANT. TO_JSON writes object keys in byte order at every depth; an object DuckDB could sort only by rewriting a number raises, relying on json_fidelity.",
         failures: &[],
     },
     RuleSpec {
@@ -890,7 +896,7 @@ pub const RULES: &[RuleSpec] = &[
     RuleSpec {
         id: ARRAY_TO_STRING_RULE,
         constructs: &["fn:ARRAY_TO_STRING"],
-        conditions: "A VARIANT or ARRAY and a VARCHAR separator: strings joined as their text, numbers, booleans, objects and arrays as JSON; an empty array gives empty text, SQL NULL and JSON null give NULL; a JSON null element raises 100071 and a value other than an array 100098, as recorded; objects with keys out of byte order raise, relying on json_fidelity.",
+        conditions: "A VARIANT or ARRAY and a VARCHAR separator: strings joined as their text, numbers, booleans, objects and arrays as Snowflake writes JSON, keys in byte order and its escapes, as recorded; an empty array gives empty text and SQL NULL gives NULL; a JSON null element raises 100071, and a JSON null or another value that is not an array 100098, as recorded; an object whose keys DuckDB could sort only by rewriting a number raises, relying on json_fidelity.",
         failures: &[
             FailureMode {
                 kind: ErrorKind::VariantCast,
@@ -988,9 +994,15 @@ pub const RULES: &[RuleSpec] = &[
         }],
     },
     RuleSpec {
+        id: VARIANT_TO_VARCHAR,
+        constructs: &["fn:TO_VARCHAR"],
+        conditions: "A VARIANT and no format: the text ::VARCHAR writes, strings unquoted, JSON null and SQL NULL as NULL, other values as JSON with object keys in byte order at every depth; an object DuckDB could sort only by rewriting a number raises, relying on json_fidelity. TO_CHAR of a VARIANT is refused.",
+        failures: &[],
+    },
+    RuleSpec {
         id: VARIANT_CAST,
         constructs: &["node:cast"],
-        conditions: "A VARIANT to VARIANT, VARCHAR, VARCHAR(n), NUMBER, FLOAT, BOOLEAN, DATE or TIMESTAMP_NTZ(9): strings and numbers read as their text, text longer than VARCHAR(n) raises, JSON null is NULL; objects, arrays and other kinds raise, as do objects written as text with keys out of byte order, relying on json_fidelity.",
+        conditions: "A VARIANT to VARIANT, VARCHAR, VARCHAR(n), NUMBER, FLOAT, BOOLEAN, DATE or TIMESTAMP_NTZ(9): strings and numbers read as their text, text longer than VARCHAR(n) raises, JSON null is NULL; objects, arrays and other kinds raise; written as text, object keys are in byte order at every depth and an object DuckDB could sort only by rewriting a number raises, relying on json_fidelity.",
         failures: &[
             FailureMode {
                 kind: ErrorKind::VariantCast,
@@ -1033,7 +1045,7 @@ pub const RULES: &[RuleSpec] = &[
     RuleSpec {
         id: HASH_RULE,
         constructs: &["fn:HASH"],
-        conditions: "One or more VARCHAR, integer NUMBER, BOOLEAN, DATE or VARIANT values, or NULL, relying on the known divergence hash: a signed 64-bit NUMBER(19,0) that is deterministic and equal for equal arguments in the same order within one run, never Snowflake's value. Integer NUMBERs hash by value whatever their precision; a VARIANT hashes by its JSON text with keys in byte order, raising where DuckDB keeps another order (json_fidelity). NUMBERs with a scale, FLOAT and timestamps are refused.",
+        conditions: "One or more VARCHAR, integer NUMBER, BOOLEAN, DATE or VARIANT values, or NULL, relying on the known divergence hash: a signed 64-bit NUMBER(19,0) that is deterministic and equal for equal arguments in the same order within one run, never Snowflake's value. Integer NUMBERs hash by value whatever their precision; a VARIANT hashes by its JSON text with keys in byte order at every depth (json_fidelity). NUMBERs with a scale, FLOAT and timestamps are refused.",
         failures: &[],
     },
     RuleSpec {
@@ -1187,6 +1199,12 @@ pub const RULES: &[RuleSpec] = &[
         id: TEXT_CONTAINS,
         constructs: &["fn:CONTAINS"],
         conditions: "VARCHAR operands, compared bytewise; empty text is contained in any text; NULL when either operand is NULL.",
+        failures: &[],
+    },
+    RuleSpec {
+        id: TEXT_MD5,
+        constructs: &["fn:MD5"],
+        conditions: "One VARCHAR operand: the MD5 digest of its UTF-8 bytes as 32 lower-case hex digits; NULL for NULL. BINARY operands are refused.",
         failures: &[],
     },
     RuleSpec {
@@ -1690,3 +1708,15 @@ pub const SPELLING_PAIRS: &[SpellingPair] = &[
         cases: "fidelity/part_functions.toml",
     },
 ];
+
+/// Default wall time for converting one statement: far beyond any conversion seen so far.
+pub const DEFAULT_BUDGET_MILLISECONDS: u64 = 120_000;
+/// Default bound on emitted SQL as a multiple of the source text.
+pub const DEFAULT_BUDGET_SIZE_RATIO: u64 = 2_000;
+/// Emitted SQL up to this size is within budget whatever the source's size.
+pub const DEFAULT_BUDGET_MINIMUM_BYTES: u64 = 4 * 1024 * 1024;
+
+/// How a refusal for a relation without known columns begins, before the relation's name.
+pub const UNKNOWN_RELATION_PREFIX: &str = "relation `";
+/// How it ends, after the name.
+pub const UNKNOWN_RELATION_SUFFIX: &str = "` has no known columns";

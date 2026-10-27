@@ -16,7 +16,7 @@ use crate::conversion::_helpers::support::tree::{
     field, missing, node_construct, outside_conditions, payload_object, require_understood,
 };
 use crate::conversion::constants::{
-    CASE_MAPPING, CONCAT, CONCAT_WS, EDIT_DISTANCE, TEXT_AFFIX, TEXT_CONTAINS, TRIM,
+    CASE_MAPPING, CONCAT, CONCAT_WS, EDIT_DISTANCE, TEXT_AFFIX, TEXT_CONTAINS, TEXT_MD5, TRIM,
 };
 
 /// What TRIM removes without a character list: spaces only, as in Snowflake.
@@ -79,6 +79,23 @@ pub(crate) fn text_contains(
         format!("contains({text}, {part})"),
         SnowflakeType::Boolean,
     ))
+}
+
+/// MD5(text): the lower-case hex MD5 digest of the text's UTF-8 bytes.
+pub(crate) fn text_md5(
+    arguments: &[Value],
+    construct: &Construct,
+    site: Site<'_>,
+) -> Result<Emitted, Refusal> {
+    let _rule = site.context.log.rule(TEXT_MD5);
+    let [text] = arguments else {
+        return Err(outside_conditions(
+            construct.clone(),
+            "MD5 takes one argument".to_owned(),
+        ));
+    };
+    let text = text_operand(text, construct, site)?;
+    Ok(Emitted::new(format!("md5({text})"), SnowflakeType::Varchar))
 }
 
 /// EDITDISTANCE(a, b): Levenshtein distance in characters, as Snowflake's NUMBER(9,0).

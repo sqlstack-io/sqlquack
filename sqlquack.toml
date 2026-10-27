@@ -249,6 +249,15 @@ required = ["third-party"]
 description = "Row sources, joins, filters, grouping and set operations."
 required = ["null", "duplicates", "empty-input"]
 
+# Converting one statement is refused, as "conversion budget exceeded" with the measured value,
+# when it takes longer than `milliseconds` or emits more than `size_ratio` times its source text
+# (and more than `minimum_bytes`). The defaults are several times the slowest and largest
+# conversion in the census and DuckShop runs, so only a pathological statement trips them.
+[conversion_budget]
+milliseconds = 120000
+size_ratio = 2000
+minimum_bytes = 4194304
+
 # Known divergences: either values differ from Snowflake but stay consistent within one run, or
 # DuckDB fails loudly where Snowflake returns a value. Each needs recorded cases proving that
 # property before a rule may use it. A conversion relying on one names it and the construct; strict
@@ -262,10 +271,10 @@ reason = "DuckDB raises an error where Snowflake returns a value DuckDB cannot r
 native_errors = ["Out of Range Error: Overflow in *"]
 
 [divergences.json_fidelity]
-constructs = ["fn:PARSE_JSON", "fn:TRY_PARSE_JSON", "node:column", "node:cast", "fn:TO_JSON", "fn:GET_IGNORE_CASE", "fn:FLATTEN", "fn:OBJECT_CONSTRUCT", "fn:OBJECT_CONSTRUCT_KEEP_NULL", "fn:OBJECT_INSERT", "fn:OBJECT_PICK", "fn:ARRAY_CONSTRUCT", "fn:ARRAY_EXCEPT", "fn:TO_VARIANT", "fn:ARRAY_AGG", "fn:ARRAY_TO_STRING", "fn:ARRAY_CONTAINS", "fn:ARRAY_CONSTRUCT_COMPACT"]
+constructs = ["fn:PARSE_JSON", "fn:TRY_PARSE_JSON", "node:column", "node:cast", "fn:TO_JSON", "fn:TO_VARCHAR", "fn:GET_IGNORE_CASE", "fn:FLATTEN", "fn:OBJECT_CONSTRUCT", "fn:OBJECT_CONSTRUCT_KEEP_NULL", "fn:OBJECT_INSERT", "fn:OBJECT_PICK", "fn:ARRAY_CONSTRUCT", "fn:ARRAY_EXCEPT", "fn:TO_VARIANT", "fn:ARRAY_AGG", "fn:ARRAY_TO_STRING", "fn:ARRAY_CONTAINS", "fn:ARRAY_CONSTRUCT_COMPACT"]
 default = "warn"
 strict = "refuse"
-reason = "DuckDB's JSON keeps non-integer numbers as doubles, reads a different set of lenient spellings, accepts repeated keys and keeps keys in input order, where Snowflake keeps exact decimals, reads single quotes, NaN and undefined, rejects repeated keys and writes keys sorted. The converted SQL raises for any document DuckDB might read differently, PARSE_JSON and TRY_PARSE_JSON alike, for objects written as text with keys out of order, and for FLATTEN paths through keys that are not plain names. The failure is loud, never a wrong value."
+reason = "DuckDB's JSON keeps non-integer numbers as doubles, reads a different set of lenient spellings, accepts repeated keys and keeps keys in input order, where Snowflake keeps exact decimals, reads single quotes, NaN and undefined, rejects repeated keys and writes keys sorted. The converted SQL raises for any document DuckDB might read differently, PARSE_JSON and TRY_PARSE_JSON alike, writes objects as text with keys sorted and strings escaped as Snowflake does, raises where sorting would rewrite a number, and raises for FLATTEN paths through keys that are not plain names. The failure is loud, never a wrong value."
 
 [divergences.percentile_interpolation]
 constructs = ["fn:PERCENTILE_CONT"]

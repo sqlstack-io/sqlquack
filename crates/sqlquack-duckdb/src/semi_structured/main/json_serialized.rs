@@ -2,11 +2,11 @@
 
 use sqlquack_core::provenance::models::ProvenanceLog;
 
-use crate::semi_structured::_helpers::guards::{bound_with_order, written_value};
+use crate::semi_structured::_helpers::writing::{Root, sorted_text};
 use crate::semi_structured::constants::JSON_TEXT;
 
-/// The VARIANT as JSON text, strings quoted and JSON null as `null`.
+/// The VARIANT as JSON text with keys in byte order, strings quoted and JSON null as `null`.
 pub fn json_serialized(sql: &str, log: &ProvenanceLog) -> String {
     log.building_block(JSON_TEXT);
-    bound_with_order(sql, &written_value())
+    sorted_text(sql, Root::Json)
 }
