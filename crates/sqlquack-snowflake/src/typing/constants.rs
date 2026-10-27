@@ -47,3 +47,8 @@ pub const SUM: &str = "snowflake.sum";
 pub const AVERAGE: &str = "snowflake.average";
 /// ROW_NUMBER, RANK and DENSE_RANK: `snowflake.ranking`.
 pub const RANKING: &str = "snowflake.ranking";
+
+/// Base names of Snowflake's structured types, which take element, field or key types.
+pub const STRUCTURED_TYPES: &[&str] = &["ARRAY", "OBJECT", "MAP"];
+/// Why a structured type is refused until rules for it have evidence.
+pub const STRUCTURED_UNSUPPORTED: &str = "is not supported yet";

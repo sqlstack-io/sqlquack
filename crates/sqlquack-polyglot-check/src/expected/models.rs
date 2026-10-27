@@ -42,7 +42,7 @@ pub struct ParserRejection {
 pub struct ParserFix {
     /// A lower-case identifier.
     pub id: String,
-    /// Text the statement contains, with whitespace removed, such as `]:`.
+    /// Text the statement contains, with whitespace removed and ignoring case, such as `]:`.
     pub marker: String,
     /// Polyglot's errors on it; its error contains one of them.
     pub polyglot_errors: Vec<String>,
@@ -88,11 +88,12 @@ impl ExpectedDifferences {
         let compact: String = sql
             .chars()
             .filter(|character| !character.is_whitespace())
+            .map(|character| character.to_ascii_uppercase())
             .collect();
         self.fixes.iter().find(|fix| {
             polyglot.starts_with(ERROR_PREFIX)
                 && fix.names_error(polyglot)
-                && compact.contains(&fix.marker)
+                && compact.contains(&fix.marker.to_ascii_uppercase())
         })
     }
 

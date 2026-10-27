@@ -979,7 +979,8 @@ impl Parser {
         }
     }
 
-    fn parse_object_data_type(&mut self) -> Result<DataType> {
+    /// Snowflake `OBJECT(<name> <type> [NOT NULL], ...)`, or `OBJECT` alone as a named type.
+    pub(crate) fn parse_object_data_type(&mut self) -> Result<DataType> {
         if self.match_token(TokenType::LParen) {
             let mut fields: Vec<(String, DataType, bool)> = Vec::new();
             if !self.check(TokenType::RParen) {

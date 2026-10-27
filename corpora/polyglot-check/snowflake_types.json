@@ -1245,6 +1245,96 @@
    "dialect": "snowflake",
    "sql": "SELECT x::INT2",
    "from": "type INT2"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT CAST(x AS OBJECT(a VARCHAR NOT NULL, b NUMBER(10,2)))",
+   "from": "type OBJECT(a VARCHAR NOT NULL, b NUMBER(10,2))"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT TRY_CAST(x AS OBJECT(a VARCHAR NOT NULL, b NUMBER(10,2)))",
+   "from": "type OBJECT(a VARCHAR NOT NULL, b NUMBER(10,2))"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT x::OBJECT(a VARCHAR NOT NULL, b NUMBER(10,2))",
+   "from": "type OBJECT(a VARCHAR NOT NULL, b NUMBER(10,2))"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT CAST(x AS ARRAY(OBJECT(k ARRAY(INT))))",
+   "from": "type ARRAY(OBJECT(k ARRAY(INT)))"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT TRY_CAST(x AS ARRAY(OBJECT(k ARRAY(INT))))",
+   "from": "type ARRAY(OBJECT(k ARRAY(INT)))"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT x::ARRAY(OBJECT(k ARRAY(INT)))",
+   "from": "type ARRAY(OBJECT(k ARRAY(INT)))"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT CAST(x AS MAP(VARCHAR, OBJECT(z NUMBER(10,2) NOT NULL)))",
+   "from": "type MAP(VARCHAR, OBJECT(z NUMBER(10,2) NOT NULL))"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT TRY_CAST(x AS MAP(VARCHAR, OBJECT(z NUMBER(10,2) NOT NULL)))",
+   "from": "type MAP(VARCHAR, OBJECT(z NUMBER(10,2) NOT NULL))"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT x::MAP(VARCHAR, OBJECT(z NUMBER(10,2) NOT NULL))",
+   "from": "type MAP(VARCHAR, OBJECT(z NUMBER(10,2) NOT NULL))"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT CAST(x AS MAP(VARCHAR, ARRAY(VARCHAR)))",
+   "from": "type MAP(VARCHAR, ARRAY(VARCHAR))"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT TRY_CAST(x AS MAP(VARCHAR, ARRAY(VARCHAR)))",
+   "from": "type MAP(VARCHAR, ARRAY(VARCHAR))"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT x::MAP(VARCHAR, ARRAY(VARCHAR))",
+   "from": "type MAP(VARCHAR, ARRAY(VARCHAR))"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT CAST(x AS ARRAY(MAP(VARCHAR, INT)))",
+   "from": "type ARRAY(MAP(VARCHAR, INT))"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT TRY_CAST(x AS ARRAY(MAP(VARCHAR, INT)))",
+   "from": "type ARRAY(MAP(VARCHAR, INT))"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT x::ARRAY(MAP(VARCHAR, INT))",
+   "from": "type ARRAY(MAP(VARCHAR, INT))"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT CAST(x AS object(a int, b varchar))",
+   "from": "type object(a int, b varchar)"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT TRY_CAST(x AS object(a int, b varchar))",
+   "from": "type object(a int, b varchar)"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT x::object(a int, b varchar)",
+   "from": "type object(a int, b varchar)"
   }
  ]
 }

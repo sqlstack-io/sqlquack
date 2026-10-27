@@ -66,3 +66,12 @@ pub(crate) fn located_matches_faithful(sql: &str, dialect: Dialect) -> bool {
     let parse = |mode| parse_statements_with(sql, dialect, &ParseOptions::default(), mode).ok();
     parse(CallMode::FaithfulLocated) == parse(CallMode::Faithful)
 }
+
+/// The cast target types of `SELECT x::<type>` and `SELECT CAST(x AS <type>)`.
+pub(crate) fn cast_targets(type_text: &str) -> (Value, Value) {
+    let target = |sql: String| first_projection(&sql, CallMode::Faithful)["cast"]["to"].clone();
+    (
+        target(format!("SELECT x::{type_text}")),
+        target(format!("SELECT CAST(x AS {type_text})")),
+    )
+}

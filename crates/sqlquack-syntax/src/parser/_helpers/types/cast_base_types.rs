@@ -101,6 +101,7 @@ impl Parser {
                 }
             }
             "VECTOR" => self.parse_cast_vector_type()?,
+            "OBJECT" => self.parse_object_data_type()?,
             _ => {
                 let base = self.convert_name_to_type(&name)?;
                 {

@@ -34,3 +34,9 @@ pub(crate) struct LocatedAgreementTestCase {
     pub(crate) dialect: Dialect,
     pub(crate) expected_same: bool,
 }
+
+pub(crate) struct CastTargetTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) type_text: &'static str,
+    pub(crate) expected_same: bool,
+}

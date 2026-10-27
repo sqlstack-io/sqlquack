@@ -113,3 +113,9 @@ pub(crate) struct ReformattedTestCase {
     pub(crate) texts: &'static [&'static str],
     pub(crate) expected_identical: Result<bool, Vec<String>>,
 }
+
+pub(crate) struct StructuredTypeTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) sql: &'static str,
+    pub(crate) expected_refusal: Result<usize, Vec<String>>,
+}
