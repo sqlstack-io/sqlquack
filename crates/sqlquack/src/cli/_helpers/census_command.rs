@@ -6,9 +6,9 @@ use std::time::Instant;
 
 use sqlquack_core::parsing::models::SourceDialect;
 
-use crate::census::constants::COVERAGE_POINTS;
+use crate::census::constants::{COVERAGE_POINTS, SLOWEST_FILES};
+use crate::census::main::census_with_progress::census_with_progress;
 use crate::census::main::render_census_text::render_census_text;
-use crate::census::main::run_census::run_census;
 use crate::census::models::CensusOptions;
 use crate::cli::_helpers::evidence::divergence_options;
 use crate::cli::_helpers::schema::load_schema;
@@ -54,16 +54,20 @@ pub(crate) fn census_command(
         schema,
         chain_models: arguments.chain_models,
         conversion,
+        names: arguments.names,
     };
     let started = Instant::now();
     let _ = writeln!(stderr, "sqlquack census: reading SQL files…");
-    let report = match run_census(&arguments.paths, &options) {
-        Ok(report) => report,
+    let run = match census_with_progress(&arguments.paths, &options, &mut |line| {
+        let _ = writeln!(stderr, "{line}");
+    }) {
+        Ok(run) => run,
         Err(error) => {
             let _ = writeln!(stderr, "sqlquack census: failed: {error}");
             return ExitCode::FAILURE;
         }
     };
+    let report = run.report;
     let rendered = if arguments.json {
         match serde_json::to_string_pretty(&report) {
             Ok(json) => json + "\n",
@@ -77,6 +81,14 @@ pub(crate) fn census_command(
     };
     if stdout.write_all(rendered.as_bytes()).is_err() {
         return ExitCode::FAILURE;
+    }
+    let _ = writeln!(stderr, "sqlquack census: slowest files:");
+    for (path, elapsed) in run.timings.iter().take(SLOWEST_FILES) {
+        let seconds = elapsed.as_secs_f64();
+        let _ = match arguments.names {
+            true => writeln!(stderr, "  {seconds:>8.2} s  {}", path.display()),
+            false => writeln!(stderr, "  {seconds:>8.2} s"),
+        };
     }
     let _ = writeln!(
         stderr,

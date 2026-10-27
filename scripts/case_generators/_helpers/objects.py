@@ -269,7 +269,7 @@ def typed_divergence(*, source: str, read: str) -> str | None:
 
 
 def output_cases() -> list[Case]:
-    """VARIANT result columns: clean documents together, unsorted objects alone."""
+    """VARIANT result columns: documents together, objects with unsorted keys alone."""
     cases: list[Case] = [
         Case(
             id="variant_output_documents",
@@ -284,13 +284,12 @@ def output_cases() -> list[Case]:
     cases.extend(
         Case(
             id=f"variant_output_unsorted_{index + 1}",
-            description=f"The object {document}, whose keys Snowflake reorders, as a result.",
+            description=f"The object {document}, whose keys Snowflake sorts, as a result.",
             columns=variant_column(),
             rows=((parsed(document),),),
             query="SELECT v FROM input",
             order="ordered",
             tags=("boundary",),
-            expected_divergence=JSON_FIDELITY,
         )
         for index, document in enumerate(UNSORTED_OUTPUT_DOCUMENTS)
     )

@@ -32,3 +32,24 @@ pub const CURSOR_CALLS: &[&str] = &["__cursor_start", "__cursor_end"];
 
 /// When set, census writes each converted file's known divergences there as `<path>.json`.
 pub const GUARDS_DIR_VARIABLE: &str = "SQLQUACK_GUARDS_DIR";
+
+/// How often census reports progress on stderr.
+pub const PROGRESS_INTERVAL_SECONDS: u64 = 5;
+
+/// Files the census lists, slowest first, when it finishes.
+pub const SLOWEST_FILES: usize = 10;
+
+/// How a blocker names an unresolved relation that is neither a model nor in the schema.
+pub const RELATION_ROOT_PREFIX: &str = "relation:";
+
+/// How a blocker names a model that converts but was read before chaining typed it.
+pub const MODEL_ROOT_PREFIX: &str = "model:";
+
+/// The root of models refused only because they read each other.
+pub const CYCLE_ROOT: &str = "cycle";
+
+/// A `model:` root without its name, when names are not asked for.
+pub const UPSTREAM_MODEL_ROOT: &str = "upstream model";
+
+/// A `relation:` root without its name, when names are not asked for.
+pub const UNKNOWN_RELATION_ROOT: &str = "unknown relation";

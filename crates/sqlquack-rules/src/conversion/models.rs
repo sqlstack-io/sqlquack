@@ -1,5 +1,8 @@
 //! Conversion inputs and results.
 
+use crate::conversion::constants::{
+    DEFAULT_BUDGET_MILLISECONDS, DEFAULT_BUDGET_MINIMUM_BYTES, DEFAULT_BUDGET_SIZE_RATIO,
+};
 use std::collections::BTreeMap;
 
 use serde::Serialize;
@@ -70,6 +73,29 @@ pub struct ConversionOptions {
     pub divergences: BTreeMap<String, AllowedDivergence>,
     /// A case's input fixture, whose conversion is plumbing rather than evidence for rules.
     pub fixture: Option<Fixture>,
+    /// Limits beyond which converting one statement is refused rather than kept.
+    pub budget: ConversionBudget,
+}
+
+/// How long converting one statement may take, and how large its DuckDB SQL may grow.
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize)]
+pub struct ConversionBudget {
+    /// Wall time for converting one statement, in milliseconds.
+    pub milliseconds: u64,
+    /// The emitted SQL may be this many times the source text, beyond `minimum_bytes`.
+    pub size_ratio: u64,
+    /// Emitted SQL up to this size is always within budget.
+    pub minimum_bytes: u64,
+}
+
+impl Default for ConversionBudget {
+    fn default() -> Self {
+        Self {
+            milliseconds: DEFAULT_BUDGET_MILLISECONDS,
+            size_ratio: DEFAULT_BUDGET_SIZE_RATIO,
+            minimum_bytes: DEFAULT_BUDGET_MINIMUM_BYTES,
+        }
+    }
 }
 
 /// The outermost CTE holding a case's input rows, and the column ordering them.

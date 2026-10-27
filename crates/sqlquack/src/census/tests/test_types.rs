@@ -45,3 +45,21 @@ pub(crate) struct CensusSummary {
     pub(crate) all_rules_convertible: usize,
     pub(crate) text_mentions_sql: bool,
 }
+
+/// Each root's construct with its direct, downstream, total and sole file counts.
+pub(crate) type RootCounts = (String, [usize; 4]);
+
+#[derive(Debug, PartialEq, Eq)]
+pub(crate) struct BlockerSummary {
+    pub(crate) roots: Vec<RootCounts>,
+    pub(crate) single_root_files: usize,
+    /// Each refused model, the refused models it reads and its unknown relations.
+    pub(crate) files: Vec<(String, Vec<String>, usize)>,
+}
+
+pub(crate) struct BlockerTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) fixtures: &'static [ShopFile],
+    pub(crate) names: bool,
+    pub(crate) expected_summary: BlockerSummary,
+}

@@ -6,6 +6,7 @@ use sqlquack_duckdb::blocks::main::quoted_identifier::quoted_identifier;
 use sqlquack_snowflake::typing::models::SnowflakeType;
 
 use crate::conversion::_helpers::support::tree::unresolved;
+use crate::conversion::constants::{UNKNOWN_RELATION_PREFIX, UNKNOWN_RELATION_SUFFIX};
 use crate::conversion::models::{ColumnSpec, ConversionOptions, Schema};
 
 /// A converted scalar: DuckDB SQL whose type is the DuckDB pairing of `data_type`.
@@ -179,7 +180,7 @@ impl Context<'_> {
             )));
         }
         Err(unresolved(format!(
-            "relation `{name}` has no known columns"
+            "{UNKNOWN_RELATION_PREFIX}{name}{UNKNOWN_RELATION_SUFFIX}"
         )))
     }
 }

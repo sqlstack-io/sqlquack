@@ -84,7 +84,6 @@ rows = [
 expression = "v:n::VARCHAR"
 tags = ["boundary"]
 origin = "generated: json_numbers@2"
-expected_divergence = "json_fidelity"
 
 [[case]]
 id = "guard_number_6"
@@ -216,7 +215,6 @@ rows = [
 expression = "v:n::VARCHAR"
 tags = ["boundary"]
 origin = "generated: json_numbers@2"
-expected_divergence = "json_fidelity"
 
 [[case]]
 id = "guard_number_17"
@@ -240,7 +238,6 @@ rows = [
 expression = "TO_JSON(v)"
 tags = ["boundary"]
 origin = "generated: json_numbers@2"
-expected_divergence = "json_fidelity"
 
 [[case]]
 id = "guard_document_2"
@@ -252,7 +249,6 @@ rows = [
 expression = "TO_JSON(v)"
 tags = ["boundary"]
 origin = "generated: json_numbers@2"
-expected_divergence = "json_fidelity"
 
 [[case]]
 id = "guard_document_3"
@@ -264,7 +260,6 @@ rows = [
 expression = "TO_JSON(v)"
 tags = ["boundary"]
 origin = "generated: json_numbers@2"
-expected_divergence = "json_fidelity"
 
 [[case]]
 id = "guard_document_4"

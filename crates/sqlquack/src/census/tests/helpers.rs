@@ -1,13 +1,15 @@
 use std::path::Path;
 
 use sqlquack_core::parsing::models::SourceDialect;
-use sqlquack_rules::conversion::models::{ConversionOptions, Schema};
+use sqlquack_rules::conversion::models::{ColumnSpec, ConversionOptions, Schema};
+use sqlquack_snowflake::typing::models::SnowflakeType;
 
 use crate::census::_helpers::coverage::{CoverageInput, greedy_order};
+use crate::census::_helpers::timed::run_census_timed;
 use crate::census::main::render_census_text::render_census_text;
-use crate::census::main::run_census::run_census;
+use crate::census::models::CensusProgress;
 use crate::census::models::{CensusOptions, CensusReport};
-use crate::census::tests::test_types::{CensusSummary, ShopFile};
+use crate::census::tests::test_types::{BlockerSummary, CensusSummary, ShopFile};
 
 pub(crate) const SHOP: &[ShopFile] = &[
     ShopFile {
@@ -31,6 +33,73 @@ pub(crate) const SHOP: &[ShopFile] = &[
     ShopFile {
         path: "staging/notes.txt",
         contents: "not SQL",
+    },
+];
+
+/// Roots `a` and `e`; `b`, `c` read `a`; `d` reads `c`, `e`; `f` reads an unknown relation.
+pub(crate) const CHAIN: &[ShopFile] = &[
+    ShopFile {
+        path: "a.sql",
+        contents: "SELECT JAROWINKLER_SIMILARITY(name, 'gift') AS score, customer_id \
+                   FROM __source(\"shop\", \"customers\")",
+    },
+    ShopFile {
+        path: "b.sql",
+        contents: "SELECT score FROM __ref(\"a\")",
+    },
+    ShopFile {
+        path: "c.sql",
+        contents: "SELECT customer_id, score FROM __ref(\"a\")",
+    },
+    ShopFile {
+        path: "d.sql",
+        contents: "SELECT c.customer_id, e.label FROM __ref(\"c\") AS c \
+                   JOIN __ref(\"e\") AS e ON c.customer_id = e.customer_id",
+    },
+    ShopFile {
+        path: "e.sql",
+        contents: "SELECT customer_id, INITCAP(name) AS label FROM __source(\"shop\", \"customers\")",
+    },
+    ShopFile {
+        path: "f.sql",
+        contents: "SELECT * FROM __source(\"shop\", \"returns\")",
+    },
+    ShopFile {
+        path: "g.sql",
+        contents: "SELECT customer_id, name FROM __source(\"shop\", \"customers\")",
+    },
+];
+
+pub(crate) const UNRESOLVED_COLUMN_AND_RELATION: &[ShopFile] = &[ShopFile {
+    path: "a.sql",
+    contents: "SELECT c.nickname, r.amount FROM __source(\"shop\", \"customers\") AS c \
+               JOIN __source(\"shop\", \"returns\") AS r ON c.customer_id = r.customer_id; \
+               SELECT nickname FROM __source(\"shop\", \"customers\")",
+}];
+
+pub(crate) const QUOTED_LOWER_CASE: &[ShopFile] = &[
+    ShopFile {
+        path: "a.sql",
+        contents: "SELECT INITCAP(name) AS label FROM __source(\"shop\", \"customers\")",
+    },
+    ShopFile {
+        path: "b.sql",
+        contents: "SELECT label FROM \"__sqlquack_relation__a\"",
+    },
+];
+
+pub(crate) const CYCLE: &[ShopFile] = &[
+    ShopFile {
+        path: "a.sql",
+        contents: "SELECT customer_id FROM __ref(\"b\")",
+    },
+    ShopFile {
+        path: "b.sql",
+        contents: "SELECT customer_id FROM __ref(\"a\")",
+    },
+    ShopFile {
+        path: "c.sql",
+        contents: "SELECT customer_id FROM __ref(\"a\")",
     },
 ];
 
@@ -80,7 +149,7 @@ fn summarise(report: &CensusReport) -> CensusSummary {
 pub(crate) fn census_summary(files: &[ShopFile]) -> Result<CensusSummary, String> {
     let directory = tempfile::tempdir().expect("temporary directory");
     write_files(directory.path(), files);
-    run_census(
+    run_census_timed(
         &[directory.path().to_path_buf()],
         &CensusOptions {
             dialect: SourceDialect::Snowflake,
@@ -88,9 +157,11 @@ pub(crate) fn census_summary(files: &[ShopFile]) -> Result<CensusSummary, String
             schema: Schema::default(),
             chain_models: false,
             conversion: ConversionOptions::default(),
+            names: false,
         },
+        &CensusProgress::default(),
     )
-    .map(|report| summarise(&report))
+    .map(|run| summarise(&run.report))
     .map_err(|error| error.to_string())
 }
 
@@ -100,4 +171,72 @@ pub(crate) fn greedy(files: &[Option<Vec<usize>>], frequency_order: &[usize]) ->
         construct_count: frequency_order.len(),
         frequency_order,
     })
+}
+
+/// The blockers of `files` run with chained models over a schema holding the shop's customers.
+pub(crate) fn blocker_summary(files: &[ShopFile], names: bool) -> BlockerSummary {
+    let directory = tempfile::tempdir().expect("temporary directory");
+    write_files(directory.path(), files);
+    let mut schema = Schema::default();
+    schema.relations.insert(
+        "__SQLQUACK_RELATION__SHOP__CUSTOMERS".to_owned(),
+        vec![
+            ColumnSpec {
+                name: "CUSTOMER_ID".to_owned(),
+                data_type: SnowflakeType::Number {
+                    precision: 38,
+                    scale: 0,
+                },
+            },
+            ColumnSpec {
+                name: "NAME".to_owned(),
+                data_type: SnowflakeType::Varchar,
+            },
+        ],
+    );
+    let run = run_census_timed(
+        &[directory.path().to_path_buf()],
+        &CensusOptions {
+            dialect: SourceDialect::Snowflake,
+            coverage_points: vec![1],
+            schema,
+            chain_models: true,
+            conversion: ConversionOptions::default(),
+            names,
+        },
+        &CensusProgress::default(),
+    )
+    .expect("the census runs");
+    let blockers = run.report.blockers;
+    BlockerSummary {
+        roots: blockers
+            .roots
+            .iter()
+            .map(|root| {
+                (
+                    root.construct.clone(),
+                    [root.direct, root.downstream, root.total, root.sole],
+                )
+            })
+            .collect(),
+        single_root_files: blockers.single_root_files,
+        files: blockers
+            .files
+            .iter()
+            .map(|file| {
+                (
+                    file.model.clone(),
+                    file.upstream
+                        .iter()
+                        .map(|upstream| upstream.model.clone())
+                        .collect(),
+                    file.unknown_relations.len(),
+                )
+            })
+            .collect(),
+    }
+}
+
+pub(crate) fn owned(models: &[&str]) -> Vec<String> {
+    models.iter().map(|model| (*model).to_owned()).collect()
 }

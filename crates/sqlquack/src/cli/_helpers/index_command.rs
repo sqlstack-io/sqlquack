@@ -86,6 +86,7 @@ fn index(arguments: &IndexArguments) -> Result<ProvenanceIndex, String> {
             schema,
             chain_models: arguments.chain_models,
             conversion,
+            names: false,
         };
         let files = inspect_corpus(&corpus, &options).map_err(|error| error.to_string())?;
         records.extend(corpus_records(files));

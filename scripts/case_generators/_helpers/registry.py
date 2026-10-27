@@ -17,7 +17,10 @@ from scripts.case_generators._helpers.casts import (
 )
 from scripts.case_generators._helpers.json_paths import parse_files, path_files
 from scripts.case_generators._helpers.json_texts import (
+    composed_files,
+    double_files,
     json_temporal_files,
+    key_order_files,
     lenience_files,
     number_files,
 )
@@ -53,6 +56,9 @@ def generators() -> tuple[Callable[[], list[CaseFile]], ...]:
         conversion_function_files,
         text_search_files,
         hash_files,
+        key_order_files,
+        double_files,
+        composed_files,
     )
 
 

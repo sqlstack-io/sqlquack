@@ -1,4 +1,5 @@
 use sqlquack_core::refusals::models::RefusalCategory;
+use sqlquack_rules::conversion::models::ConversionBudget;
 
 pub(crate) struct AnalyzeTestCase {
     pub(crate) description: &'static str,
@@ -59,4 +60,18 @@ pub(crate) struct GuardedConditionTestCase {
     pub(crate) description: &'static str,
     pub(crate) sql: &'static str,
     pub(crate) expected_gated: bool,
+}
+
+pub(crate) struct CompositionTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) columns: usize,
+    pub(crate) depths: [usize; 3],
+    pub(crate) expected_budget_seconds: u64,
+}
+
+pub(crate) struct BudgetTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) budget: ConversionBudget,
+    pub(crate) expected_category: Option<RefusalCategory>,
+    pub(crate) expected_reason_fragment: &'static str,
 }

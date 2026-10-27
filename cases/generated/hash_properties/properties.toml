@@ -111,7 +111,6 @@ query = "SELECT HASH(PARSE_JSON(a)) = HASH(PARSE_JSON(b)) AS same, HASH(PARSE_JS
 order = "ordered"
 tags = ["json", "equality"]
 origin = "generated: hash_properties@1"
-expected_divergence = "json_fidelity"
 
 [[case]]
 id = "hash_argument_order"

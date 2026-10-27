@@ -16,7 +16,8 @@ everything else is refused. What works today:
   [polyglot](https://github.com/chio-labs/polyglot), which keeps every call as written, and
   classifying every function, operator, type, cast, join and clause in it;
 - a structured refusal for each construct: *missing rule*, *outside a rule's type conditions*,
-  *unresolved name*, *not expressible in DuckDB*, or *parse fidelity*;
+  *unresolved name*, *not expressible in DuckDB*, *parse fidelity*, or *conversion budget
+  exceeded*;
 - DuckDB's own parse-and-bind check of every converted statement;
 - `sqlquack census`, which reports which constructs a body of SQL uses and how much of it would
   convert as rules are added;
@@ -32,7 +33,8 @@ $ cargo run --release -p sqlquack -- census path/to/sql --json
 
 Each `.sql` file is one query, or one model compiled by
 [SQLBuild](https://github.com/chio-labs/sqlbuild); SQLBuild's reference calls are recognised. The
-report contains counts and construct names only, never SQL text or file names. Conversion needs the
+report contains counts and construct names only, never SQL text or file names; `--names` adds
+file, model and relation names to the slowest files and the blockers. Conversion needs the
 column types of the relations a file reads: `--schema` takes a JSON file mapping relation names to
 `[column, Snowflake type]` pairs, and `--chain-models` types each converted file as the relation
 its file name references, then converts again.

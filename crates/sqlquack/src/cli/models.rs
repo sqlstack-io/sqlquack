@@ -196,4 +196,7 @@ pub struct CensusArguments {
     /// Refuse every known divergence the policy refuses in strict mode.
     #[arg(long)]
     pub strict: bool,
+    /// Print file, model and relation names in the slowest files and the blockers.
+    #[arg(long)]
+    pub names: bool,
 }

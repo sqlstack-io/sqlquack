@@ -10,8 +10,8 @@ use sqlquack_core::refusals::models::RefusalCategory;
 use crate::census::_helpers::coverage::{CoverageInput, convertible_at, greedy_order};
 use crate::census::_helpers::inspect::FileCensus;
 use crate::census::models::{
-    CensusReport, CensusTotals, ConstructCount, CoveragePoint, ProvenanceCounts, RefusalCount,
-    RefusalTotals,
+    BlockerReport, CensusReport, CensusTotals, ConstructCount, CoveragePoint, ProvenanceCounts,
+    RefusalCount, RefusalTotals,
 };
 
 pub(crate) fn aggregate(
@@ -48,6 +48,7 @@ pub(crate) fn aggregate(
             .collect(),
         coverage: coverage(&file_ids, &frequency_order, coverage_points),
         provenance: provenance_counts(files),
+        blockers: BlockerReport::default(),
     }
 }
 
@@ -86,6 +87,7 @@ fn refusal_totals(files: &[FileCensus]) -> RefusalTotals {
         parse_fidelity: count(RefusalCategory::ParseFidelity),
         type_condition: count(RefusalCategory::TypeCondition),
         unresolved_name: count(RefusalCategory::UnresolvedName),
+        conversion_budget: count(RefusalCategory::ConversionBudget),
         by_construct: refusal_counts(files),
         convertible: files
             .iter()

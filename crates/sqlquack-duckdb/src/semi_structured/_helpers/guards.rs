@@ -30,34 +30,17 @@ pub(crate) fn keys_repeated(sql: &str) -> String {
 
 /// Whether `test` holds for an object `o` at any depth of `sql`, without a slow subquery.
 fn any_object(sql: &str, test: &str) -> String {
-    format!(
-        "coalesce(len(list_filter(list_prepend(CAST({sql} AS JSON), json_extract({sql}, '$..*')), \
-         lambda o: json_type(o) = 'OBJECT' AND {test})) > 0, false)"
+    bound(
+        &format!("CAST({sql} AS JSON)"),
+        "json_root",
+        &format!(
+            "coalesce(len(list_filter(list_prepend(json_root, json_extract(json_root, '$..*')), \
+             lambda o: json_type(o) = 'OBJECT' AND {test})) > 0, false)"
+        ),
     )
 }
 
 /// `body` over `value` evaluated once, as the lambda parameter `name`.
 pub(crate) fn bound(value: &str, name: &str, body: &str) -> String {
     format!("list_transform([{value}], lambda {name}: {body})[1]")
-}
-
-/// `body` over the VARIANT `sql` as `r.j`, with `r.unsorted` saying whether its keys need sorting.
-pub(crate) fn bound_with_order(sql: &str, body: &str) -> String {
-    bound(
-        &format!(
-            "struct_pack(j := {sql}, unsorted := {})",
-            keys_unsorted(sql)
-        ),
-        "r",
-        body,
-    )
-}
-
-/// The JSON text of `r.j`, raising for objects whose keys Snowflake would reorder.
-pub(crate) fn written_value() -> String {
-    format!(
-        "(CASE WHEN json_type(r['j']) IN ('OBJECT', 'ARRAY') AND r['unsorted'] THEN CAST({} AS VARCHAR) \
-         ELSE CAST(r['j'] AS VARCHAR) END)",
-        fidelity_error("an object whose keys Snowflake writes in another order")
-    )
 }

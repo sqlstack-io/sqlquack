@@ -11,7 +11,8 @@ use sqlquack_policy::policy::constants::POLICY_FILE_NAME;
 use sqlquack_policy::policy::main::load_policy::load_policy;
 use sqlquack_rules::catalogue::main::builtin_catalogue::builtin_catalogue;
 use sqlquack_rules::conversion::models::{
-    ColumnSpec, ConversionOptions, FunctionLanguage, FunctionReturns, FunctionSpec, Schema,
+    ColumnSpec, ConversionBudget, ConversionOptions, FunctionLanguage, FunctionReturns,
+    FunctionSpec, Schema,
 };
 use sqlquack_snowflake::typing::models::SnowflakeType;
 
@@ -313,4 +314,68 @@ pub(crate) fn guards_gated(sql: &str) -> bool {
         panic!("the statement converts: {:?}", analysis.refusals);
     };
     converted.sql.contains(" ELSE FALSE END")
+}
+
+/// The DuckDB SQL `sql` converts to against the shop schema, and how long conversion took.
+pub(crate) fn timed_conversion(sql: &str) -> (Option<String>, std::time::Duration) {
+    let policy =
+        load_policy(&repository_root().join(POLICY_FILE_NAME)).expect("repository policy loads");
+    let started = std::time::Instant::now();
+    let analysis = analyze(
+        sql,
+        SourceDialect::Snowflake,
+        &builtin_catalogue(),
+        (&shop_schema(), &conversion_options(&policy, false)),
+    );
+    let elapsed = started.elapsed();
+    let converted = analysis
+        .conversions
+        .first()
+        .filter(|_| analysis.conversions.len() == 1)
+        .map(|converted| converted.sql.clone());
+    (converted, elapsed)
+}
+
+/// Flattened VARIANT elements unpacked into `columns` texts, each nested `depth` times in PARSE_JSON.
+pub(crate) fn unpacking_query(columns: usize, depth: usize) -> String {
+    let written = |key: usize| {
+        (0..depth).fold(format!("f.value:k{key}"), |inner, _| {
+            format!("PARSE_JSON(TO_VARCHAR({inner}))")
+        })
+    };
+    let projections: Vec<String> = (0..columns)
+        .map(|key| {
+            format!(
+                "CAST(COALESCE(TO_VARCHAR({}), 'none') AS VARCHAR(16777216)) AS c{key}",
+                written(key)
+            )
+        })
+        .collect();
+    format!(
+        "SELECT {}, TRY_TO_DATE(f.value:d::STRING) AS d FROM events AS e, \
+         LATERAL FLATTEN(input => e.payload, outer => TRUE) AS f \
+         WHERE f.value IS NULL OR f.value:k0::STRING = 'a'",
+        projections.join(", ")
+    )
+}
+
+/// The category and reason refusing `sql` under `budget`, or `None` when it converts.
+pub(crate) fn budget_refusal(
+    sql: &str,
+    budget: ConversionBudget,
+) -> Option<(RefusalCategory, String)> {
+    let policy =
+        load_policy(&repository_root().join(POLICY_FILE_NAME)).expect("repository policy loads");
+    let mut options = conversion_options(&policy, false);
+    options.budget = budget;
+    let analysis = analyze(
+        sql,
+        SourceDialect::Snowflake,
+        &builtin_catalogue(),
+        (&shop_schema(), &options),
+    );
+    analysis
+        .refusals
+        .first()
+        .map(|refusal| (refusal.category, refusal.reason.clone()))
 }

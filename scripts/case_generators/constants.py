@@ -731,6 +731,7 @@ JSON_WORD_PATTERN: re.Pattern[str] = re.compile(r"\b(?:true|false|null)\b")
 JSON_UNSAFE_PATTERN: re.Pattern[str] = re.compile(
     r"[A-Za-z]|,\s*[\]}]|[0-9]\.0*(?:[^0-9]|$)|\.0{6}|[0-9]{39}"
 )
+JSON_NUMBER_PATTERN: re.Pattern[str] = re.compile(r"-?[0-9]+(?:\.[0-9]+)?")
 JSON_LONG_DECIMAL_PATTERN: re.Pattern[str] = re.compile(
     "|".join(
         [
@@ -962,6 +963,7 @@ TYPED_WRAPPERS: tuple[tuple[str, str], ...] = (
 TYPED_READS: tuple[tuple[str, str], ...] = (
     ("typeof", "TYPEOF({e})"),
     ("as_varchar", "{e}::VARCHAR"),
+    ("to_varchar", "TO_VARCHAR({e})"),
     ("to_json", "TO_JSON({e})"),
     ("is_type", "{is_type}({e})"),
     ("as_type", "{e}::{type}"),
@@ -1207,4 +1209,264 @@ HASH_UNSORTED_JSON_PAIRS: tuple[tuple[str, str], ...] = (
 HASH_PROPERTY_COLUMNS: str = (
     "HASH(a) = HASH(b) AS same, HASH(a) = HASH(a) AS stable, HASH(a) IS NULL AS null_hash, "
     "HASH(a) BETWEEN -9223372036854775808 AND 9223372036854775807 AS in_range"
+)
+
+CONTROL_LIMIT: int = 0x20
+DELETE_CHARACTER: int = 0x7F
+TOML_TAB: str = "\t"
+JSON_KEY_ORDER: str = "json_key_order@1"
+JSON_DOUBLES: str = "json_doubles@1"
+KEY_ORDER_PROJECTIONS: str = (
+    "SELECT TO_VARCHAR(v) AS t, v::VARCHAR AS c, TO_JSON(v) AS j, MD5(TO_JSON(v)) AS m, v AS raw "
+    "FROM input ORDER BY ordinal"
+)
+NESTED_LEVELS: int = 12
+WIDE_KEYS: int = 40
+KEY_ORDER_DOCUMENTS: tuple[tuple[str, str], ...] = (
+    ("two_keys", '{"b":1,"a":2}'),
+    ("nested_object", '{"z":{"y":1,"x":2},"a":0}'),
+    ("objects_in_array", '[{"b":1,"a":2},{"d":[{"f":1,"e":2}],"c":3}]'),
+    ("arrays_in_objects", '{"b":[3,1,2],"a":[{"y":1,"x":[{"q":1,"p":2}]}]}'),
+    ("array_order_kept", '[3,1,2,{"b":[2,1],"a":"z"}]'),
+    (
+        "mixed_case",
+        '{"b":1,"B":2,"a":3,"A":4,"_":5,"1":6,"10":7,"2":8," ":9,"~":10,"Z":11,"z":12}',
+    ),
+    ("non_ascii", '{"z":1,"é":2,"e":3,"É":4,"ä":5,"日":6,"😀":7,"ｚ":8,"ß":9}'),
+    ("beyond_bmp", '{"ｚ":1,"😀":2,"\U00010000":3,"\uffff":4}'),
+    ("prefixes", '{"abc":1,"ab":2,"a":3,"a_":4,"a b":5,"a-":6,"aa":7,"":8}'),
+    ("numeric_keys", '{"10":1,"9":2,"1":3,"01":4,"-1":5}'),
+    ("duplicate_keys", '{"b":1,"a":2,"b":3}'),
+    ("duplicate_nested_keys", '{"a":{"y":1,"y":2},"b":0}'),
+    ("empty_containers", '{"b":{},"a":[]}'),
+    ("empty_nested", '[{},[],{"a":{}},{"b":[[],[{}]]}]'),
+    ("empty_object", "{}"),
+    ("empty_array", "[]"),
+    (
+        "escaped_keys",
+        '{"\\n":1,"\\t":2,"\\"":3,"\\\\":4,"/":5,"\\u0001":6,"\\u001f":7,"a":8,"\\u007f":9}',
+    ),
+    ("escaped_slash_key", '{"\\/b":1,"/a":2}'),
+    ("escaped_letter_keys", '{"\\u0062":1,"\\u00e9":2,"a":3,"e":4}'),
+    ("escaped_values", '{"b":"\\u0001\\u007f\\u2028 \\/","a":"tab\\there"}'),
+    ("spaced_text", '{ "b" : 1 , "a" : [ 1 , 2 ] , "c" : { "e" : true , "d" : false } }'),
+    ("line_breaks", '{\n\t"b": 1,\r\n  "a": 2\n}'),
+    ("decimals", '{"b":1.5,"a":-2.25,"c":10,"d":-7,"e":0}'),
+    ("json_nulls", '{"b":null,"a":1}'),
+    ("null_members", '[null,{"b":null,"a":null},[null]]'),
+    ("booleans", '{"t":true,"f":false,"n":null}'),
+    ("object_like_string", '{"b":"{\\"d\\":1,\\"c\\":2}","a":"[2,1]"}'),
+    ("scalar_string", '"{\\"b\\":1,\\"a\\":2}"'),
+    ("sorted_already", '{"a":1,"b":{"c":2,"d":[{"e":3,"f":4}]}}'),
+    (
+        "control_values",
+        '{"v":"\\u0002\\u0003\\u0004\\u0005\\u0006\\u0007\\b\\u000b\\f\\r\\u000e\\u000f'
+        "\\u0010\\u0011\\u0012\\u0013\\u0014\\u0015\\u0016\\u0017\\u0018\\u0019\\u001a"
+        '\\u001b\\u001c\\u001d\\u001e"}',
+    ),
+    (
+        "control_keys",
+        '{"\\u0002":0,"\\u0003":1,"\\u0004":2,"\\u0005":3,"\\u0006":4,"\\u0007":5,"\\b":6,'
+        '"\\u000b":7,"\\f":8,"\\r":9,"\\u000e":10,"\\u000f":11,"\\u0010":12,"\\u0011":13,'
+        '"\\u0012":14,"\\u0013":15,"\\u0014":16,"\\u0015":17,"\\u0016":18,"\\u0017":19,'
+        '"\\u0018":20,"\\u0019":21,"\\u001a":22,"\\u001b":23,"\\u001c":24,"\\u001d":25,'
+        '"\\u001e":26}',
+    ),
+    ("c1_values", '{"a":"x\\u0085y","b":"\\u0080\\u009f"}'),
+    ("c1_keys", '{"\\u0085":1,"\\u009f":2,"a":3}'),
+    ("c1_unsorted", '{"b":"\\u0085","a":[{"d":"\\u0080","c":1}]}'),
+    ("separator_values", '{"a":"\\u2029","b":"x\\ufeffy"}'),
+    ("separator_keys", '{"\\u2029":1,"\\ufeff":2,"a":3}'),
+    ("separator_unsorted", '{"b":"\\u2029\\ufeff","a":[{"d":"\\ufeff","c":1}]}'),
+    ("nul_value", '{"v": "a\\u0000b"}'),
+    ("nul_key", '{"\\u0000": 1, "a": 2}'),
+)
+KEY_ORDER_CONSTRUCTED: tuple[tuple[str, str], ...] = (
+    ("object_construct", "OBJECT_CONSTRUCT('b', 1, 'a', 2, 'B', 3, 'é', 4)"),
+    ("object_construct_nested", "OBJECT_CONSTRUCT('z', OBJECT_CONSTRUCT('y', 1, 'x', 2), 'a', 0)"),
+    ("object_construct_keep_null", "OBJECT_CONSTRUCT_KEEP_NULL('b', NULL, 'a', 1)"),
+    ("object_insert", "OBJECT_INSERT(PARSE_JSON('{\"b\":1}'), 'a', 2)"),
+    (
+        "array_of_objects",
+        "ARRAY_CONSTRUCT(OBJECT_CONSTRUCT('b', 1, 'a', 2), PARSE_JSON('{\"d\":1,\"c\":2}'))",
+    ),
+)
+KEY_ORDER_COMPARISONS: tuple[tuple[str, str], ...] = (
+    (
+        "equal_variants",
+        'PARSE_JSON(\'{"b":1,"a":2}\') = PARSE_JSON(\'{"a":2,"b":1}\') AS same_object, '
+        "PARSE_JSON('[1,2]') = PARSE_JSON('[2,1]') AS same_array, "
+        'PARSE_JSON(\'{"a":{"y":1,"x":2}}\') = PARSE_JSON(\'{"a":{"x":2,"y":1}}\') '
+        "AS same_nested",
+    ),
+    (
+        "equal_texts",
+        'TO_JSON(PARSE_JSON(\'{"b":1,"a":2}\')) = \'{"a":2,"b":1}\' AS sorted_text, '
+        'PARSE_JSON(\'{"b":1,"a":2}\')::VARCHAR = TO_JSON(PARSE_JSON(\'{"a":2,"b":1}\')) '
+        "AS same_text",
+    ),
+    (
+        "equal_hashes",
+        'HASH(PARSE_JSON(\'{"b":1,"a":2}\')) = HASH(PARSE_JSON(\'{"a":2,"b":1}\')) '
+        'AS same_hash, MD5(TO_JSON(PARSE_JSON(\'{"b":1,"a":2}\'))) = '
+        'MD5(\'{"a":2,"b":1}\') AS same_md5',
+    ),
+)
+DOUBLE_TOKENS: tuple[tuple[str, str], ...] = (
+    ("seventeen_digits", "3.0000000000000004e-1"),
+    ("shortest_tenth", "1e-1"),
+    ("shortest_fifth", "2e-1"),
+    ("third", "3.3333333333333335e-1"),
+    ("above_one", "1.0000000000000002e0"),
+    ("exponent_small", "1e-7"),
+    ("exponent_mantissa", "1.7e-5"),
+    ("exponent_upper", "2.5E-3"),
+    ("exponent_whole", "1.5e3"),
+    ("exponent_scaled", "123.456e2"),
+    ("exponent_one", "0.1e1"),
+    ("exponent_fifteen", "1e15"),
+    ("exponent_sixteen", "1e16"),
+    ("exponent_seventeen", "1e17"),
+    ("exponent_twenty_one", "1e21"),
+    ("exponent_twenty_two", "1e22"),
+    ("exponent_twenty_three", "1e23"),
+    ("exponent_hundred", "1e100"),
+    ("avogadro", "6.02214076e23"),
+    ("below_max", "9.999999999999999e22"),
+    ("above_2_53", "9007199254740993e0"),
+    ("integer_18_digits", "123456789012345678e0"),
+    ("integer_2_64", "18446744073709551616e0"),
+    ("negative_zero", "-0e0"),
+    ("positive_zero", "0e0"),
+    ("negative_zero_fraction", "-0.0e0"),
+    ("negative_small", "-1.5e-10"),
+    ("smallest_subnormal", "5e-324"),
+    ("smallest_normal", "2.2250738585072014e-308"),
+    ("largest", "1.7976931348623157e308"),
+    ("seventeen_digit_integer", "1.2345678901234568e17"),
+    ("halfway_digits", "0.1234567890123456789e0"),
+)
+DECIMAL_TOKENS: tuple[tuple[str, str], ...] = (
+    ("integer_above_2_53", "9007199254740993"),
+    ("integer_above_2_55", "36028797018963971"),
+    ("integer_38_digits", "12345678901234567890123456789012345678"),
+    ("integer_39_digits", "123456789012345678901234567890123456789"),
+    ("integer_41_digits", "10000000000000000000000000000000000000000"),
+    ("decimal_18_digits", "0.123456789012345678"),
+    ("decimal_21_digits", "3.14159265358979323846"),
+    ("decimal_36_digits", "3.14159265358979323846264338327950288"),
+    ("decimal_38_digits", "12345678901234567890.123456789012345678"),
+    ("decimal_39_digits", "1.23456789012345678901234567890123456789"),
+    ("decimal_deep_scale", "0.000000000000000000000000000000000001"),
+    ("decimal_beyond_scale", "0.0000000000000000000000000000000000000001"),
+    ("decimal_trailing_zero", "1.10"),
+    ("decimal_zero_fraction", "100.0"),
+    ("decimal_small", "0.0000001"),
+    ("decimal_negative_long", "-98765432109876543.21"),
+)
+DOUBLE_PROJECTIONS: str = (
+    "SELECT TYPEOF(v:n) AS ty, v:n::VARCHAR AS s, TO_JSON(v:n) AS j, TO_JSON(v) AS d, "
+    "v::VARCHAR AS c, TO_JSON(w) AS nested, v:n::FLOAT AS f FROM input ORDER BY ordinal"
+)
+FLOAT_VARIANT_PROJECTIONS: str = (
+    "SELECT TO_JSON(TO_VARIANT(x)) AS j, TO_VARIANT(x)::VARCHAR AS c, "
+    "TO_JSON(OBJECT_CONSTRUCT('n', x)) AS d, TO_JSON(ARRAY_CONSTRUCT(x, 1)) AS a "
+    "FROM input ORDER BY ordinal"
+)
+ROUND_TRIP_TOKENS: tuple[tuple[str, str], ...] = (
+    ("tenth_sum", "0.30000000000000004"),
+    ("sixteen_digits", "0.1234567890123456"),
+    ("millions", "1234567.8901234567"),
+    ("hundred_trillions", "123456789012345.67"),
+    ("negative_two", "-2.0000000000000004"),
+    ("thousands", "12345.678901234567"),
+    ("hundredth", "0.012345678901234567"),
+    ("thousandth", "0.0012345678901234567"),
+    ("ten_thousandth", "0.0001234567890123456"),
+    ("above_one", "1.0000000000000002"),
+    ("below_hundred", "99.99999999999999"),
+    ("tie_at_sixteen", "0.12345678901234565"),
+    ("two_thirds", "0.6666666666666666"),
+    ("largest_mantissa", "1.7976931348623157"),
+    ("negative_thousands", "-1234.5678901234567"),
+    ("rewritten_tenth", "0.10000000000000001"),
+    ("rewritten_quadrillions", "1234567890123456.7"),
+    ("rewritten_trillions", "9007199254740.993"),
+    ("rewritten_small", "0.00001234567890123456"),
+)
+ROUND_TRIP_PROJECTIONS: str = (
+    "SELECT TYPEOF(v:n) AS ty, v:n::VARCHAR AS s, TO_JSON(v:n) AS j, TO_JSON(v) AS d, "
+    "v::VARCHAR AS c, TO_JSON(w) AS nested, v:n::FLOAT AS f, v:n::NUMBER(38,2) AS n2, "
+    "v:n::NUMBER(38,16) AS n16, v:n::NUMBER(38,20) AS n20 FROM input ORDER BY ordinal"
+)
+MIXED_NUMBER_DOCUMENTS: tuple[tuple[str, str], ...] = (
+    (
+        "written_back",
+        '{"b":0.30000000000000004,"a":[1.5,12,-0.0001234567890123456,{"d":7,"c":0.25}]}',
+    ),
+    ("trailing_zero", '{"b":0.30000000000000004,"a":1.10}'),
+    ("rewritten", '{"b":0.30000000000000004,"a":0.10000000000000001}'),
+)
+DECIMAL_POINT: str = "."
+JSON_COMPOSED: str = "json_composed@1"
+INT64_MIN: int = -(2**63)
+UINT64_MAX: int = 2**64 - 1
+COMPOSED_ORDER_DOCUMENTS: tuple[str, ...] = (
+    '{"status":"shipped","order_id":1017,"items":[{"sku":"B-20","qty":1,"price":4.25},'
+    '{"sku":"A-10","qty":3,"price":0.30000000000000004}],'
+    '"customer":{"name":"Zoë","City":"Lyon","Tier":null},"notes":""}',
+    '{"order_id":1018,"status":"open","items":[],"customer":{}}',
+    '[{"sku":"C-30","qty":2},{"qty":5,"sku":"A-10"}]',
+    '"order 1019"',
+    "1020",
+)
+COMPOSED_DEPTHS: tuple[int, ...] = (2, 3, 4)
+COMPOSED_RESORT_DOCUMENTS: tuple[tuple[str, str], ...] = (
+    (
+        "resort_keys_in_arrays",
+        '[{"zone":1,"Zone":2,"ZONE":3,"zoë":4,"😀":[{"ｚ":1,"𐀀":2,"￿":3,"é":4}]},'
+        '{"é":{"É":1,"e":2,"ß":3},"Ä":[{"b":1,"a":2}]}]',
+    ),
+    (
+        "resort_keys_in_objects",
+        '{"日本":{"中":{"z":1,"A":2},"a":[{"𐀀":1,"😀":2}]},"Order":{"sku":"A-10","Qty":2},'
+        '"order":[{"sku":"B-20","Sku":"b"}]}',
+    ),
+    (
+        "mixed_sorted_and_unsorted",
+        '{"a":{"x":1,"y":{"q":2,"p":1}},"b":[{"c":1,"d":2},{"f":1,"e":2}],"c":{"m":1,"n":[]}}',
+    ),
+    (
+        "sorted_outside_unsorted_inside",
+        '{"a":[{"a":1,"b":2},[{"d":1,"c":2}]],"b":{"a":{"b":{"d":0,"c":1}}}}',
+    ),
+    (
+        "unsorted_outside_sorted_inside",
+        '{"z":{"a":1,"b":{"c":2,"d":3}},"a":[{"a":1,"b":2}]}',
+    ),
+    (
+        "resort_exact_numbers",
+        '{"total":1.5,"tax":0.30000000000000004,"rebate":-0.0001234567890123456,'
+        '"count":12,"big":9223372036854775807,"low":-9223372036854775808,'
+        '"top":18446744073709551615,"amount":12345.678901234567}',
+    ),
+    ("resort_beyond_uint64", '{"qty":1,"batch":18446744073709551616}'),
+    ("resort_below_int64", '{"qty":1,"batch":-9223372036854775809}'),
+    ("resort_long_integer", '{"qty":1,"batch":12345678901234567890123456789012345678}'),
+    ("resort_nested_long_integer", '{"lines":[{"qty":1,"id":123456789012345678901234567890}]}'),
+    ("sorted_long_integer", '{"batch":12345678901234567890123456789012345678,"qty":1}'),
+    ("sorted_beyond_uint64", '{"batch":18446744073709551616,"qty":1}'),
+)
+COMPOSED_UNPACK_QUERY: str = (
+    "SELECT v:order_id::NUMBER(10,0) AS order_id, v:status::VARCHAR AS status, "
+    "CAST(COALESCE(TO_VARCHAR(v:customer), 'none') AS VARCHAR(16777216)) AS customer, "
+    "TO_JSON(v:items) AS items, v:customer:name::STRING AS name, "
+    "TO_VARCHAR(v:items[0]) AS first_item, MD5(TO_JSON(v)) AS digest, "
+    "CAST(COALESCE(f.value:sku::STRING, 'none') AS VARCHAR(16777216)) AS sku, "
+    "f.value:qty::NUMBER(10,0) AS qty, TO_VARCHAR(f.value) AS line, f.value::VARCHAR AS line_text, "
+    "TO_JSON(OBJECT_CONSTRUCT('sku', f.value:sku, 'Order', v:order_id)) AS built, "
+    "CAST(f.index AS NUMBER(38,0)) AS line_index "
+    "FROM input, LATERAL FLATTEN(input => input.v:items, outer => TRUE) AS f "
+    "WHERE f.value IS NULL OR f.value:sku::STRING <> 'C-30' "
+    "ORDER BY ordinal, line_index"
 )

@@ -18,7 +18,6 @@ from scripts.case_generators.constants import (
     HASH_TEXT_PAIRS,
     HASH_UNSORTED_JSON_PAIRS,
     INTEGER_TYPES,
-    JSON_FIDELITY,
     LARGE_SAMPLE,
     NULL_CELL,
     NUMERIC_FUNCTIONS,
@@ -393,7 +392,7 @@ def pair_cases() -> tuple[Case, ...]:
         )
         for slug, pairs, divergence in (
             ("sorted", HASH_SORTED_JSON_PAIRS, None),
-            ("unsorted", HASH_UNSORTED_JSON_PAIRS, JSON_FIDELITY),
+            ("unsorted", HASH_UNSORTED_JSON_PAIRS, None),
         )
     )
     return tuple(cases)

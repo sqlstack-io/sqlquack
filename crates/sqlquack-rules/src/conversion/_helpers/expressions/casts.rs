@@ -13,6 +13,8 @@ use sqlquack_duckdb::blocks::main::text_to_float::text_to_float;
 use sqlquack_duckdb::blocks::main::text_to_number::text_to_number;
 use sqlquack_duckdb::blocks::main::varchar_length_check::varchar_length_check;
 use sqlquack_duckdb::blocks::main::varchar_length_try::varchar_length_try;
+use sqlquack_duckdb::semi_structured::constants::JSON_FIDELITY;
+use sqlquack_duckdb::semi_structured::main::json_text::json_text;
 use sqlquack_duckdb::temporal::main::text_to_timestamp::text_to_timestamp;
 use sqlquack_duckdb::temporal::main::utc_wall_time::utc_wall_time;
 use sqlquack_duckdb::variants::main::json_kind_cast::json_kind_cast;
@@ -39,7 +41,8 @@ use crate::conversion::constants::{
     CAST_BOOLEAN, CAST_NUMERIC, CAST_PARSED_TEXT, CAST_SAME_TYPE, CAST_TEMPORAL, CAST_TEXT_LITERAL,
     CAST_TEXT_TIMESTAMP, CAST_TO_TEXT, CAST_UTC_ZONED, DATE_TEXT_SPELLING, KIND_CAST_TARGETS,
     TEXT_TYPE_PAIR, TEXT_TYPE_SPELLINGS, TIMESTAMP_RANGE, TO_DOUBLE_PAIR, TO_NUMBER_PAIR,
-    TO_VARCHAR_PAIR, TO_VARIANT_RULE, VARIANT_KIND_CAST, VARIANT_NAME,
+    TO_VARCHAR_PAIR, TO_VARIANT_RULE, VARIANT_KIND_CAST, VARIANT_NAME, VARIANT_TEXT_FUNCTION,
+    VARIANT_TO_VARCHAR,
 };
 
 /// Text Snowflake and DuckDB both read as `true`.
@@ -342,8 +345,9 @@ pub(crate) fn to_double_call(
     Ok(Emitted::new(sql, SnowflakeType::Float))
 }
 
-/// TO_VARCHAR and TO_CHAR without a format, as CAST to VARCHAR, for operands other than VARIANT.
+/// TO_VARCHAR and TO_CHAR without a format, as CAST to VARCHAR; TO_VARCHAR of a VARIANT as its text.
 pub(crate) fn to_varchar_call(
+    name: &str,
     value: &Value,
     construct: &Construct,
     site: Site<'_>,
@@ -351,8 +355,14 @@ pub(crate) fn to_varchar_call(
     let refuse = |reason: String| outside_conditions(construct.clone(), reason);
     let operand = convert_expression(value, site)?;
     if operand.data_type == SnowflakeType::SemiStructured {
-        return Err(refuse(
-            "TO_VARCHAR of a VARIANT, which writes JSON where a cast fails".to_owned(),
+        if name != VARIANT_TEXT_FUNCTION {
+            return Err(refuse(format!("{name} of a VARIANT has no recording")));
+        }
+        let _rule = site.context.log.rule(VARIANT_TO_VARCHAR);
+        diverge(site.context, JSON_FIDELITY, construct)?;
+        return Ok(Emitted::new(
+            json_text(&operand.sql, site.context.log),
+            SnowflakeType::Varchar,
         ));
     }
     site.context.log.equivalence(TO_VARCHAR_PAIR);

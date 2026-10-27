@@ -8,10 +8,12 @@ from decimal import Decimal, InvalidOperation
 from scripts.case_generators.constants import (
     BOOLEAN_TEXTS,
     CONVERTIBLE_LIMIT,
+    DECIMAL_POINT,
     DOCUMENTS,
     INVALID_JSON_TEXTS,
     JSON_FIDELITY,
     JSON_LONG_DECIMAL_PATTERN,
+    JSON_NUMBER_PATTERN,
     JSON_PATHS,
     JSON_STRING_PATTERN,
     JSON_SURROGATE_PATTERN,
@@ -47,6 +49,16 @@ def reject_constant(name: str) -> object:
 
 def fidelity_trigger(text: str | None) -> bool:
     """Whether converted PARSE_JSON raises json_fidelity for `text`, as duckdb.json_guarded does."""
+    return guard_trigger(text=text, written_back=True)
+
+
+def pattern_trigger(text: str | None) -> bool:
+    """Whether `text` holds a pattern the guard checks, a long decimal written back or not."""
+    return guard_trigger(text=text, written_back=False)
+
+
+def guard_trigger(*, text: str | None, written_back: bool) -> bool:
+    """Whether the guard raises for `text`; long decimals pass when `written_back` and unchanged."""
     if text is None or not text.strip(" "):
         return False
     try:
@@ -54,23 +66,22 @@ def fidelity_trigger(text: str | None) -> bool:
     except ValueError:
         return True
     tokens: str = JSON_WORD_PATTERN.sub("", JSON_STRING_PATTERN.sub('""', text))
+    long_decimal: bool = JSON_LONG_DECIMAL_PATTERN.search(tokens) is not None
     return any(
         (
             JSON_UNSAFE_PATTERN.search(tokens),
-            JSON_LONG_DECIMAL_PATTERN.search(tokens),
+            long_decimal and not (written_back and numbers_written_back(tokens)),
             JSON_SURROGATE_PATTERN.search(text),
         )
     )
 
 
-def keys_unsorted(value: object) -> bool:
-    """Whether some object within `value` lists its keys out of UTF-8 byte order."""
-    if isinstance(value, dict):
-        keys: list[bytes] = [key.encode() for key in value]
-        return keys != sorted(keys) or any(keys_unsorted(child) for child in value.values())
-    if isinstance(value, list):
-        return any(keys_unsorted(child) for child in value)
-    return False
+def numbers_written_back(tokens: str) -> bool:
+    """Whether DuckDB writes each number in `tokens` as written: shortest digits, positional."""
+    return all(
+        DECIMAL_POINT not in token or format(Decimal(repr(float(token))), "f") == token
+        for token in JSON_NUMBER_PATTERN.findall(tokens)
+    )
 
 
 def divergence_for(*, text: str, accepted: bool) -> str | None:
@@ -191,10 +202,8 @@ def literal(text: str) -> str:
 
 def parse_cases(projection: Projection) -> tuple[Case, Case]:
     """TRY_PARSE_JSON and PARSE_JSON under a projection, over the texts the guard passes."""
-    clean: tuple[str, ...] = tuple(text for text in JSON_TEXTS if not fidelity_trigger(text))
-    blank: tuple[str, ...] = tuple(
-        text for text in INVALID_JSON_TEXTS if not fidelity_trigger(text)
-    )
+    clean: tuple[str, ...] = tuple(text for text in JSON_TEXTS if not pattern_trigger(text))
+    blank: tuple[str, ...] = tuple(text for text in INVALID_JSON_TEXTS if not pattern_trigger(text))
     valid_rows: tuple[Row, ...] = (*((literal(text),) for text in clean), (NULL_CELL,))
     attempt: str = projection.template.format(path="TRY_PARSE_JSON(x)")
     parse: str = projection.template.format(path="PARSE_JSON(x)")
@@ -220,7 +229,7 @@ def parse_cases(projection: Projection) -> tuple[Case, Case]:
 
 def guarded_cases(*, function: str, texts: tuple[str, ...], accepted: bool) -> list[Case]:
     """TYPEOF of `function` over each text the guard raises for, alone."""
-    triggered: list[str] = [text for text in texts if fidelity_trigger(text)]
+    triggered: list[str] = [text for text in texts if pattern_trigger(text)]
     return [
         Case(
             id=f"{function.lower()}_guard_{index + 1}",

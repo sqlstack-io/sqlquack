@@ -23,6 +23,12 @@ fn given_policy_text_when_parsing_then_schema_and_rules_are_enforced() {
             expected_error: Some("unknown field `float_tolerance`"),
         },
         PolicyTestCase {
+            description: "an unknown conversion budget key is rejected",
+            replace: "size_ratio = 2000",
+            with: "size_ratio = 2000\nseconds = 120",
+            expected_error: Some("unknown field `seconds`"),
+        },
+        PolicyTestCase {
             description: "an unknown enumeration value is rejected",
             replace: "column_names = \"case_insensitive\"",
             with: "column_names = \"loose\"",
