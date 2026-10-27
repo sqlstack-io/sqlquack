@@ -3,7 +3,7 @@
 use sqlquack_core::failures::main::tagged_message::tagged_message;
 use sqlquack_core::failures::models::SnowflakeCode;
 
-use crate::blocks::main::raised::raised;
+use crate::raises::main::raised::raised;
 use crate::semi_structured::constants::{JSON_FIDELITY, TYPED_TEXT_PATTERN};
 
 /// `body` over `value` evaluated once, as the lambda parameter `name`.

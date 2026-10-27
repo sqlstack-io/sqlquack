@@ -24,6 +24,7 @@ fn given_committed_corpora_when_parsed_by_both_parsers_then_results_are_identica
                 type_names: Vec::new(),
                 unlisted: Vec::new(),
                 unexplained: Vec::new(),
+                located: Vec::new(),
             },
         },
         CorpusTestCase {
@@ -37,6 +38,7 @@ fn given_committed_corpora_when_parsed_by_both_parsers_then_results_are_identica
                 type_names: Vec::new(),
                 unlisted: Vec::new(),
                 unexplained: Vec::new(),
+                located: Vec::new(),
             },
         },
         CorpusTestCase {
@@ -50,6 +52,7 @@ fn given_committed_corpora_when_parsed_by_both_parsers_then_results_are_identica
                 type_names: Vec::new(),
                 unlisted: Vec::new(),
                 unexplained: Vec::new(),
+                located: Vec::new(),
             },
         },
         CorpusTestCase {
@@ -63,6 +66,7 @@ fn given_committed_corpora_when_parsed_by_both_parsers_then_results_are_identica
                 type_names: Vec::new(),
                 unlisted: Vec::new(),
                 unexplained: Vec::new(),
+                located: Vec::new(),
             },
         },
     ];

@@ -9,8 +9,8 @@ use crate::blocks::constants::{
     MONTH_FIRST_TIMESTAMP_PATTERN, NULL_DATE_TEXT_PATTERN, RFC_UTC_TIMESTAMP_PATTERN,
     SECONDS_PER_DAY, TEXT_TO_TIMESTAMP, TIMESTAMP_RANGE, UNPADDED_TIMESTAMP_PATTERN,
 };
-use crate::blocks::main::raised::raised;
 use crate::blocks::models::TextFailure;
+use crate::raises::main::raised::raised;
 use crate::temporal::_helpers::text::{checked, parse_failure, whitespace_trimmed};
 
 /// The AUTO spellings batch 6 recorded, or epoch integer text; others raise or are NULL.

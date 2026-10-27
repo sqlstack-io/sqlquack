@@ -24,6 +24,7 @@ use crate::expressions::types::models::Tuple;
 use crate::parser::constants::IDENTIFIER;
 use crate::parser::constants::USER;
 use crate::parser::models::Parser;
+use crate::tokens::models::SourceSpan;
 use crate::tokens::models::TokenType;
 use crate::tokens::types::Result;
 
@@ -639,6 +640,7 @@ impl Parser {
         self.maybe_parse_over(Expression::Paren(Box::new(Paren {
             this: first_expr,
             trailing_comments: paren_comments,
+            span: SourceSpan::default(),
         })))
     }
 
@@ -679,6 +681,7 @@ impl Parser {
             modifiers_inside: false,
             trailing_comments: self.previous_trailing_comments().to_vec(),
             inferred_type: None,
+            span: SourceSpan::default(),
         })))
     }
 
@@ -730,6 +733,7 @@ impl Parser {
                 modifiers_inside: true,
                 trailing_comments: self.previous_trailing_comments().to_vec(),
                 inferred_type: None,
+                span: SourceSpan::default(),
             }))
         } else {
             Expression::Subquery(Box::new(Subquery {
@@ -748,6 +752,7 @@ impl Parser {
                 modifiers_inside: false,
                 trailing_comments: self.previous_trailing_comments().to_vec(),
                 inferred_type: None,
+                span: SourceSpan::default(),
             }))
         };
 
@@ -804,6 +809,7 @@ impl Parser {
                     sort_by: None,
                     cluster_by: None,
                     inferred_type: None,
+                    span: SourceSpan::default(),
                 }))
             } else {
                 set_result
@@ -905,12 +911,14 @@ impl Parser {
                     sort_by: None,
                     cluster_by: None,
                     inferred_type: None,
+                    span: SourceSpan::default(),
                 })));
             }
         }
         self.maybe_parse_over(Expression::Paren(Box::new(Paren {
             this: result,
             trailing_comments: nested_paren_comments,
+            span: SourceSpan::default(),
         })))
     }
 
@@ -1029,7 +1037,7 @@ impl Parser {
                 use_bracket_syntax: false,
                 no_parens: true,
                 quoted: false,
-                span: None,
+                span: SourceSpan::default(),
                 inferred_type: None,
             }));
             return self.maybe_parse_subscript(func);
@@ -1068,7 +1076,7 @@ impl Parser {
                     use_bracket_syntax: false,
                     no_parens: false,
                     quoted: false,
-                    span: None,
+                    span: SourceSpan::default(),
                     inferred_type: None,
                 })));
             }
@@ -1196,7 +1204,9 @@ impl Parser {
     /// Parse primary expressions
     #[inline(always)]
     pub(crate) fn parse_primary(&mut self) -> Result<Expression> {
-        self.with_parser_depth(|parser| parser.parse_primary_inner())
+        let start = self.current;
+        let expr = self.with_parser_depth(|parser| parser.parse_primary_inner())?;
+        Ok(self.spanned(start, expr))
     }
 
     #[inline(never)]

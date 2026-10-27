@@ -1,5 +1,6 @@
 //! Data models of expressions statements.
 
+use crate::tokens::models::SourceSpan;
 use serde::Deserialize;
 use serde::Serialize;
 
@@ -780,6 +781,10 @@ pub struct Paren {
     pub this: Expression,
     #[serde(default)]
     pub trailing_comments: Vec<String>,
+    /// SQLQuack: the node's source range, recorded by a located parse.
+    #[serde(default, skip_serializing_if = "SourceSpan::is_absent")]
+    #[ast(skip)]
+    pub span: SourceSpan,
 }
 
 /// Expression annotated with trailing comments (for round-trip preservation)

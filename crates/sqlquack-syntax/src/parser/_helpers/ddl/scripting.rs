@@ -24,6 +24,7 @@ use crate::parser::constants::REPRODUCTION;
 use crate::parser::constants::SECOND_PREVIOUS_OFFSET;
 use crate::parser::constants::STATUS;
 use crate::parser::models::Parser;
+use crate::tokens::models::SourceSpan;
 use crate::tokens::models::Token;
 use crate::tokens::models::TokenType;
 use crate::tokens::types::Result;
@@ -1085,6 +1086,7 @@ impl Parser {
                         if self.match_token(TokenType::Eq) {
                             let nested_value = self.parse_copy_param_value()?;
                             values.push(Expression::Eq(Box::new(BinaryOp {
+                                span: SourceSpan::default(),
                                 left: Self::parsed_column(Column {
                                     name: Identifier::new(nested_key),
                                     table: None,
@@ -1139,6 +1141,7 @@ impl Parser {
                                     operator_comments: Vec::new(),
                                     trailing_comments: Vec::new(),
                                     inferred_type: None,
+                                    span: SourceSpan::default(),
                                 })));
                             } else {
                                 values.push(Expression::Literal(Box::new(Literal::String(key))));
@@ -1151,6 +1154,7 @@ impl Parser {
                             if self.match_token(TokenType::Eq) {
                                 let val = self.parse_copy_param_value()?;
                                 values.push(Expression::Eq(Box::new(BinaryOp {
+                                    span: SourceSpan::default(),
                                     left: Self::parsed_column(Column {
                                         name: Identifier::new(key),
                                         table: None,

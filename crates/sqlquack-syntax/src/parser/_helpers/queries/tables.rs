@@ -19,6 +19,7 @@ use crate::expressions::tree::models::Expression;
 use crate::expressions::typed_functions::models::DateTimeField;
 use crate::expressions::types::models::Tuple;
 use crate::parser::models::Parser;
+use crate::tokens::models::SourceSpan;
 use crate::tokens::models::TokenType;
 use crate::tokens::types::Result;
 
@@ -558,6 +559,7 @@ impl Parser {
                     pre_alias_comments: Vec::new(),
                     trailing_comments: Vec::new(),
                     inferred_type: None,
+                    span: SourceSpan::default(),
                 }));
             } else {
                 expr = self.parse_table_explicit_alias_name(alias_keyword, expr)?;
@@ -639,6 +641,7 @@ impl Parser {
                         pre_alias_comments: Vec::new(),
                         trailing_comments: Vec::new(),
                         inferred_type: None,
+                        span: SourceSpan::default(),
                     })),
                     _ => Expression::Alias(Box::new(Alias {
                         this: expr,
@@ -649,6 +652,7 @@ impl Parser {
                         pre_alias_comments: Vec::new(),
                         trailing_comments: Vec::new(),
                         inferred_type: None,
+                        span: SourceSpan::default(),
                     })),
                 };
             }
@@ -707,6 +711,7 @@ impl Parser {
                 pre_alias_comments: Vec::new(),
                 trailing_comments: Vec::new(),
                 inferred_type: None,
+                span: SourceSpan::default(),
             })),
         };
 
@@ -808,6 +813,7 @@ impl Parser {
                     pre_alias_comments: Vec::new(),
                     trailing_comments: Vec::new(),
                     inferred_type: None,
+                    span: SourceSpan::default(),
                 }))
             }
             Expression::JoinedTable(mut jt) => {
@@ -823,6 +829,7 @@ impl Parser {
                 pre_alias_comments: Vec::new(),
                 trailing_comments: Vec::new(),
                 inferred_type: None,
+                span: SourceSpan::default(),
             })),
         };
         Ok(expr)
@@ -887,6 +894,7 @@ impl Parser {
 
                     if let Some(alias) = t.alias {
                         Expression::Alias(Box::new(Alias {
+                            span: SourceSpan::default(),
                             this: Self::parsed_column(Column {
                                 name: Identifier::new(&col_name),
                                 table: None,
@@ -1116,6 +1124,7 @@ impl Parser {
                 global: false,
                 unnest: None,
                 is_field: false,
+                span: SourceSpan::default(),
             })))
         } else {
             let field_id = self.parse_id_var()?.unwrap_or(Expression::Null(Null));
@@ -1127,6 +1136,7 @@ impl Parser {
                 global: false,
                 unnest: None,
                 is_field: true,
+                span: SourceSpan::default(),
             })))
         }
     }
@@ -1333,7 +1343,7 @@ impl Parser {
                     use_bracket_syntax: false,
                     no_parens: false,
                     quoted: false,
-                    span: None,
+                    span: SourceSpan::default(),
                     inferred_type: None,
                 }));
             return Ok(TableRef {

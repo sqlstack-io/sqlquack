@@ -1,5 +1,6 @@
 //! Data models of expressions operators.
 
+use crate::tokens::models::SourceSpan;
 use serde::Deserialize;
 use serde::Serialize;
 
@@ -35,6 +36,10 @@ pub struct Alias {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     #[ast(skip)]
     pub inferred_type: Option<DataType>,
+    /// SQLQuack: the node's source range, recorded by a located parse.
+    #[serde(default, skip_serializing_if = "SourceSpan::is_absent")]
+    #[ast(skip)]
+    pub span: SourceSpan,
 }
 
 impl Alias {
@@ -49,6 +54,7 @@ impl Alias {
             pre_alias_comments: Vec::new(),
             trailing_comments: Vec::new(),
             inferred_type: None,
+            span: SourceSpan::default(),
         }
     }
 
@@ -63,6 +69,7 @@ impl Alias {
             pre_alias_comments: Vec::new(),
             trailing_comments: Vec::new(),
             inferred_type: None,
+            span: SourceSpan::default(),
         }
     }
 }
@@ -89,6 +96,10 @@ pub struct Cast {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     #[ast(skip)]
     pub inferred_type: Option<DataType>,
+    /// SQLQuack: the node's source range, recorded by a located parse.
+    #[serde(default, skip_serializing_if = "SourceSpan::is_absent")]
+    #[ast(skip)]
+    pub span: SourceSpan,
 }
 
 #[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
@@ -120,6 +131,10 @@ pub struct Case {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     #[ast(skip)]
     pub inferred_type: Option<DataType>,
+    /// SQLQuack: the node's source range, recorded by a located parse.
+    #[serde(default, skip_serializing_if = "SourceSpan::is_absent")]
+    #[ast(skip)]
+    pub span: SourceSpan,
 }
 
 /// The payload of every binary operator variant: arithmetic, comparison, logical, bitwise.
@@ -140,6 +155,10 @@ pub struct BinaryOp {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     #[ast(skip)]
     pub inferred_type: Option<DataType>,
+    /// SQLQuack: the node's source range, recorded by a located parse.
+    #[serde(default, skip_serializing_if = "SourceSpan::is_absent")]
+    #[ast(skip)]
+    pub span: SourceSpan,
 }
 
 impl BinaryOp {
@@ -151,6 +170,7 @@ impl BinaryOp {
             operator_comments: Vec::new(),
             trailing_comments: Vec::new(),
             inferred_type: None,
+            span: SourceSpan::default(),
         }
     }
 }
@@ -173,6 +193,10 @@ pub struct LikeOp {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     #[ast(skip)]
     pub inferred_type: Option<DataType>,
+    /// SQLQuack: the node's source range, recorded by a located parse.
+    #[serde(default, skip_serializing_if = "SourceSpan::is_absent")]
+    #[ast(skip)]
+    pub span: SourceSpan,
 }
 
 impl LikeOp {
@@ -184,6 +208,7 @@ impl LikeOp {
             escape: None,
             quantifier: None,
             inferred_type: None,
+            span: SourceSpan::default(),
         }
     }
 
@@ -195,6 +220,7 @@ impl LikeOp {
             escape: Some(escape),
             quantifier: None,
             inferred_type: None,
+            span: SourceSpan::default(),
         }
     }
 }
@@ -208,6 +234,10 @@ pub struct UnaryOp {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     #[ast(skip)]
     pub inferred_type: Option<DataType>,
+    /// SQLQuack: the node's source range, recorded by a located parse.
+    #[serde(default, skip_serializing_if = "SourceSpan::is_absent")]
+    #[ast(skip)]
+    pub span: SourceSpan,
 }
 
 impl UnaryOp {
@@ -215,6 +245,7 @@ impl UnaryOp {
         Self {
             this,
             inferred_type: None,
+            span: SourceSpan::default(),
         }
     }
 }
@@ -238,6 +269,10 @@ pub struct In {
     /// Whether the right side is a bare reference without parentheses: `a IN subquery1`.
     #[serde(default, skip_serializing_if = "std::ops::Not::not")]
     pub is_field: bool,
+    /// SQLQuack: the node's source range, recorded by a located parse.
+    #[serde(default, skip_serializing_if = "SourceSpan::is_absent")]
+    #[ast(skip)]
+    pub span: SourceSpan,
 }
 
 /// Represent a BETWEEN predicate (`x BETWEEN low AND high`).
@@ -254,6 +289,10 @@ pub struct Between {
     /// SYMMETRIC/ASYMMETRIC qualifier: None = regular, Some(true) = SYMMETRIC, Some(false) = ASYMMETRIC
     #[serde(default)]
     pub symmetric: Option<bool>,
+    /// SQLQuack: the node's source range, recorded by a located parse.
+    #[serde(default, skip_serializing_if = "SourceSpan::is_absent")]
+    #[ast(skip)]
+    pub span: SourceSpan,
 }
 
 /// IS NULL predicate
@@ -264,6 +303,10 @@ pub struct IsNull {
     /// Whether this was the postfix form (ISNULL/NOTNULL) vs standard (IS NULL/IS NOT NULL)
     #[serde(default)]
     pub postfix_form: bool,
+    /// SQLQuack: the node's source range, recorded by a located parse.
+    #[serde(default, skip_serializing_if = "SourceSpan::is_absent")]
+    #[ast(skip)]
+    pub span: SourceSpan,
 }
 
 /// IS TRUE / IS FALSE predicate
@@ -303,6 +346,10 @@ pub struct Exists {
     pub this: Expression,
     /// Whether this is NOT EXISTS.
     pub not: bool,
+    /// SQLQuack: the node's source range, recorded by a located parse.
+    #[serde(default, skip_serializing_if = "SourceSpan::is_absent")]
+    #[ast(skip)]
+    pub span: SourceSpan,
 }
 
 #[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
@@ -940,6 +987,10 @@ pub struct Lateral {
     /// Quoting of each column alias, parallel to `column_aliases`.
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub column_aliases_quoted: Vec<bool>,
+    /// SQLQuack: the node's source range, recorded by a located parse.
+    #[serde(default, skip_serializing_if = "SourceSpan::is_absent")]
+    #[ast(skip)]
+    pub span: SourceSpan,
 }
 
 /// TableFromRows

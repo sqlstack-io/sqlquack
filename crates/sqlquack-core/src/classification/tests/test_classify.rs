@@ -108,10 +108,10 @@ fn given_multi_line_query_when_classifying_then_locations_point_into_the_source(
             expected_line_and_column: Some([2, 3]),
         },
         LocationTestCase {
-            description: "a call without a position of its own takes its first argument's",
+            description: "a call is placed at its name",
             sql: "SELECT\n  o.order_id,\n  ZEROIFNULL(o.amount) AS amount\nFROM orders o",
             key: "fn:ZEROIFNULL",
-            expected_line_and_column: Some([3, 14]),
+            expected_line_and_column: Some([3, 3]),
         },
     ];
 

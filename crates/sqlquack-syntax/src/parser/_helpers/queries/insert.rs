@@ -14,6 +14,7 @@ use crate::expressions::tree::models::Expression;
 use crate::parser::models::InsertPrefix;
 use crate::parser::models::Parser;
 use crate::parser::types::InsertPartition;
+use crate::tokens::models::SourceSpan;
 use crate::tokens::models::TokenType;
 use crate::tokens::types::Result;
 
@@ -393,7 +394,7 @@ impl Parser {
                 use_bracket_syntax: false,
                 no_parens: false,
                 quoted: false,
-                span: None,
+                span: SourceSpan::default(),
                 inferred_type: None,
             }))));
         }
@@ -620,6 +621,7 @@ impl Parser {
                         operator_comments: Vec::new(),
                         trailing_comments: Vec::new(),
                         inferred_type: None,
+                        span: SourceSpan::default(),
                     })));
                     if !self.match_token(TokenType::Comma) {
                         break;

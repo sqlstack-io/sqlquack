@@ -52,6 +52,7 @@ use crate::parser::constants::QUALIFIED_NAME_PARTS;
 use crate::parser::constants::TERNARY_ARITY;
 use crate::parser::models::Parser;
 use crate::parser::models::ParserDepthScope;
+use crate::tokens::models::SourceSpan;
 use crate::tokens::models::TokenType;
 use crate::tokens::types::Result;
 
@@ -232,7 +233,7 @@ impl Parser {
                     use_bracket_syntax: false,
                     no_parens: false,
                     quoted: false,
-                    span: None,
+                    span: SourceSpan::default(),
                     inferred_type: None,
                 }))));
             }
@@ -268,7 +269,7 @@ impl Parser {
                     use_bracket_syntax: false,
                     no_parens: false,
                     quoted: false,
-                    span: None,
+                    span: SourceSpan::default(),
                     inferred_type: None,
                 }))));
             } else {
@@ -480,6 +481,7 @@ impl Parser {
                     expression = Expression::Paren(Box::new(Paren {
                         this: expression,
                         trailing_comments: comments,
+                        span: SourceSpan::default(),
                     }));
                 }
                 return Ok(Some(expression));
@@ -594,6 +596,7 @@ impl Parser {
                     pre_alias_comments: Vec::new(),
                     trailing_comments: Vec::new(),
                     inferred_type: None,
+                    span: SourceSpan::default(),
                 }));
             }
         }
@@ -622,6 +625,7 @@ impl Parser {
                 modifiers_inside: false,
                 trailing_comments: trailing,
                 inferred_type: None,
+                span: SourceSpan::default(),
             };
             if self.match_token(TokenType::As)
                 || self.is_identifier_token()
@@ -662,6 +666,7 @@ impl Parser {
                     pre_alias_comments: Vec::new(),
                     trailing_comments: Vec::new(),
                     inferred_type: None,
+                    span: SourceSpan::default(),
                 }));
             }
         }
@@ -986,6 +991,7 @@ impl Parser {
                                     operator_comments: Vec::new(),
                                     trailing_comments: Vec::new(),
                                     inferred_type: None,
+                                    span: SourceSpan::default(),
                                 }));
                                 assignments.push(assignment);
                             }
@@ -1267,6 +1273,7 @@ impl Parser {
                 };
                 return Ok(Some(Expression::TryCast(Box::new(
                     crate::expressions::operators::models::Cast {
+                        span: SourceSpan::default(),
                         this: num_expr,
                         to: data_type,
                         trailing_comments: Vec::new(),

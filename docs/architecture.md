@@ -65,14 +65,21 @@ A construct is a key `<family>:<name>`:
 Clause classification destructures polyglot's query structs field by field, so a polyglot upgrade
 that adds a clause fails to compile until the clause is classified.
 
-Each construct carries a source position. Polyglot keeps positions only on identifiers, columns,
-tables, stars and some calls; any other node takes the first position inside it, or else its
-parent's.
+Each construct carries a source position. Source SQL is parsed located (`CallMode::FaithfulLocated`,
+see `docs/syntax.md`), so operators, casts, calls, predicates, aliases, subqueries, queries, joins,
+CTEs and statements carry their own source range besides the names polyglot positions; any other
+node takes the first position inside it, or else its parent's.
 
 ## Refusals
 
 Every refusal has a category, a construct (absent when a whole statement is refused), a position and
-a reason:
+a reason. The position is the source range of the construct refused: conversion places a refusal
+at the innermost expression, FROM source, join or query being converted when it arose, so a call
+inside a CTE or subquery is placed at the call. Positions come from the converted tree's own
+nodes; a node a rule builds from the tree, as a call converted through its typed spelling, places
+its copies of tree nodes as their originals. A refusal of the whole statement, such as one beyond
+the conversion budget, is placed at the statement, and SQL that does not parse at the failure or
+else at the whole input.
 
 - **missing rule**: no verified rule converts the construct yet;
 - **not expressible in DuckDB**: declared in the catalogue with a reason and evidence;
@@ -281,6 +288,12 @@ directly, the files downstream of those, their total and the files it alone bloc
 by several roots counts towards each. `single_root_files` counts the refused files one fix would unblock. Without `--names`, files
 are numbered in name order, their unknown relations are left out, and `model:` and `relation:`
 roots fold into `upstream model` and `unknown relation`.
+
+Each refused file also lists its refusals in source order under `placed`, each with its category,
+construct and the line and column it is at in the file as written: positions after a replaced
+reference call are mapped back through the replacement. The text report prints them for the first
+refused files, at most five per file and then a count of the rest. `sqlquack review` writes each
+refusal as `<category> at <line>:<column>: <reason>`.
 
 ### Guards in conditions
 
@@ -493,6 +506,22 @@ kinds. Building blocks raise tagged errors, `sqlquack:<errno>: <message>`, namin
 Snowflake error they stand for; a text conversion raises text's error for a cast of text and
 Snowflake's VARIANT-cast error (100071) for a cast of a VARIANT string. Each rule declares its
 failure modes: a kind and the Snowflake errors meaning it.
+
+Every raise carries an ID naming the expression it guards: `sqlquack:<errno>#<id>: <message>` for
+a Snowflake error and `<divergence>#<id>: <message>` for a guard. A raise is emitted waiting for
+its ID (`#?`); when the expression, query or FROM source holding it is converted, the ID becomes
+twelve hexadecimal digits of a hash of that converted SQL, without any raise ID, and the raise's
+tag. The ID depends only on content, so the same expression prints the same SQL wherever it
+appears (DuckDB matches a select expression to a GROUP BY key by its text, constants included),
+and reformatting the source never changes the converted SQL. Positions stay out of the SQL: the
+conversion result's `raises` maps each ID to every source location of its expression, and
+`Converted::raise_locations` resolves an error message through it. Error matching compares only
+what it compared before: the errno before the ID, and a guard's divergence name followed by `:` or
+`#`. A replay that raises where Snowflake returned rows names the locations in its failure, and
+`sqlquack review` lists each raise ID with its locations.
+
+The located parse keeps the positioned tree beside the stripped one conversion reads, so a
+statement's tree is held twice while it converts; this is a known cost.
 
 Converted SQL raises with `duckdb.raised`, `CAST(CAST('<message>' AS INTEGER) AS "NULL")`, not
 DuckDB's `error()`: `error()` is volatile, which window PARTITION BY and ORDER BY keys refuse, while

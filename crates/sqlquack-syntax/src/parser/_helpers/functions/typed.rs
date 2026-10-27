@@ -48,6 +48,7 @@ use crate::parser::constants::HASH_AGG;
 use crate::parser::constants::LEAD;
 use crate::parser::constants::TIME_TO_TIME_STR;
 use crate::parser::models::Parser;
+use crate::tokens::models::SourceSpan;
 use crate::tokens::models::Span;
 use crate::tokens::models::TokenType;
 use crate::tokens::types::Result;
@@ -218,6 +219,7 @@ impl Parser {
                 format: None,
                 default: None,
                 inferred_type: None,
+                span: SourceSpan::default(),
             })));
         }
 
@@ -360,8 +362,8 @@ impl Parser {
             column: 0,
         };
         match expr {
-            Expression::Function(function) => function.span = Some(span),
-            Expression::AggregateFunction(function) => function.span = Some(span),
+            Expression::Function(function) => function.span = SourceSpan(Some(span)),
+            Expression::AggregateFunction(function) => function.span = SourceSpan(Some(span)),
             _ => {}
         }
     }
@@ -431,7 +433,7 @@ impl Parser {
                     use_bracket_syntax: false,
                     no_parens: false,
                     quoted: false,
-                    span: None,
+                    span: SourceSpan::default(),
                     inferred_type: None,
                 })))
             }
@@ -594,7 +596,7 @@ impl Parser {
                 limit,
                 ignore_nulls: None,
                 inferred_type: None,
-                span: None,
+                span: SourceSpan::default(),
             })))
         } else {
             Ok(Expression::Function(Box::new(Function {
@@ -609,7 +611,7 @@ impl Parser {
                 use_bracket_syntax: false,
                 no_parens: false,
                 quoted: false,
-                span: None,
+                span: SourceSpan::default(),
                 inferred_type: None,
             })))
         }
@@ -631,7 +633,7 @@ impl Parser {
                 use_bracket_syntax: false,
                 no_parens: false,
                 quoted: false,
-                span: None,
+                span: SourceSpan::default(),
                 inferred_type: None,
             })));
         }
@@ -685,6 +687,7 @@ impl Parser {
                     sort_by: None,
                     cluster_by: None,
                     inferred_type: None,
+                    span: SourceSpan::default(),
                 }));
 
                 return Ok(Expression::Function(Box::new(Function {
@@ -699,7 +702,7 @@ impl Parser {
                     use_bracket_syntax: false,
                     no_parens: false,
                     quoted: false,
-                    span: None,
+                    span: SourceSpan::default(),
                     inferred_type: None,
                 })));
             } else {
@@ -724,7 +727,7 @@ impl Parser {
             use_bracket_syntax: false,
             no_parens: false,
             quoted: false,
-            span: None,
+            span: SourceSpan::default(),
             inferred_type: None,
         })))
     }
@@ -831,7 +834,7 @@ impl Parser {
                     limit: None,
                     ignore_nulls: None,
                     inferred_type: None,
-                    span: None,
+                    span: SourceSpan::default(),
                 })))
             } else {
                 Ok(Expression::Function(Box::new(Function {
@@ -846,7 +849,7 @@ impl Parser {
                     use_bracket_syntax: false,
                     no_parens: false,
                     quoted: false,
-                    span: None,
+                    span: SourceSpan::default(),
                     inferred_type: None,
                 })))
             }
@@ -1183,7 +1186,7 @@ impl Parser {
                         use_bracket_syntax: false,
                         no_parens: false,
                         quoted: false,
-                        span: None,
+                        span: SourceSpan::default(),
                         inferred_type: None,
                     })))
                 }
@@ -1483,7 +1486,7 @@ impl Parser {
                 use_bracket_syntax: false,
                 no_parens: false,
                 quoted: false,
-                span: None,
+                span: SourceSpan::default(),
                 inferred_type: None,
             }));
 
@@ -1590,7 +1593,7 @@ impl Parser {
                 use_bracket_syntax: false,
                 no_parens: false,
                 quoted: false,
-                span: None,
+                span: SourceSpan::default(),
                 inferred_type: None,
             })))
         } else {

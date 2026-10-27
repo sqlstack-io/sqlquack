@@ -17,6 +17,7 @@ impl CaseConverter for UnchangedSqlForTests {
             sql: case.source_sql.clone(),
             setup: Vec::new(),
             provenance: Provenance::default(),
+            raises: std::collections::BTreeMap::new(),
         }
     }
 }

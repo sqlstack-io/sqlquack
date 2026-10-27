@@ -80,13 +80,20 @@ impl CaseConverter for PipelineConverter {
         let reasons: BTreeSet<String> = analysis
             .refusals
             .iter()
-            .map(|refusal| format!("{}: {}", refusal.category, refusal.reason))
+            .map(|refusal| match refusal.location {
+                Some(location) => format!(
+                    "{} at {}:{}: {}",
+                    refusal.category, location.line, location.column, refusal.reason
+                ),
+                None => format!("{}: {}", refusal.category, refusal.reason),
+            })
             .collect();
         let constructs: BTreeSet<String> =
             analysis.refusals.iter().map(refused_construct).collect();
         match (reasons.is_empty(), analysis.conversions.as_slice()) {
             (true, [converted]) => Conversion::Converted {
                 sql: converted.sql.clone(),
+                raises: converted.raises.clone(),
                 setup: functions.setup,
                 provenance: merge_provenance(
                     std::iter::once(&converted.provenance).chain(&functions.provenance),

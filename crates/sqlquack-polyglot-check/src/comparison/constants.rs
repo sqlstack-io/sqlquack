@@ -14,3 +14,6 @@ pub const ANNOTATED_KEY: &str = "annotated";
 pub const JSON_EXTRACT_KEY: &str = "j_s_o_n_extract";
 /// The suffix of every field holding comments.
 pub const COMMENTS_SUFFIX: &str = "comments";
+
+/// The field a located parse records a node's source range in.
+pub const SPAN_FIELD: &str = "span";

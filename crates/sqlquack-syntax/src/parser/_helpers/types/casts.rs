@@ -15,6 +15,7 @@ use crate::parser::constants::NVARCHAR;
 use crate::parser::constants::REAL;
 use crate::parser::models::Parser;
 use crate::parser::models::ParserDepthScope;
+use crate::tokens::models::SourceSpan;
 use crate::tokens::models::TokenType;
 use crate::tokens::types::Result;
 
@@ -86,6 +87,7 @@ impl Parser {
             else_,
             comments: case_comments,
             inferred_type: None,
+            span: SourceSpan::default(),
         })))
     }
 
@@ -162,6 +164,7 @@ impl Parser {
             format,
             default,
             inferred_type: None,
+            span: SourceSpan::default(),
         })))
     }
 
@@ -190,6 +193,7 @@ impl Parser {
             format,
             default: None,
             inferred_type: None,
+            span: SourceSpan::default(),
         })))
     }
 
@@ -218,6 +222,7 @@ impl Parser {
             format,
             default: None,
             inferred_type: None,
+            span: SourceSpan::default(),
         })))
     }
 

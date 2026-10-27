@@ -3,8 +3,8 @@
 use sqlquack_core::classification::models::Construct;
 use sqlquack_duckdb::blocks::constants::SUBMICRO_MESSAGE;
 use sqlquack_duckdb::blocks::main::cast::cast;
-use sqlquack_duckdb::blocks::main::raised::raised;
 use sqlquack_duckdb::blocks::main::string_literal::string_literal;
+use sqlquack_duckdb::raises::main::raised::raised;
 use sqlquack_duckdb::temporal::main::submicro_check::submicro_check;
 use sqlquack_duckdb::temporal::main::truncate_timestamp::truncate_timestamp;
 use sqlquack_duckdb::temporal::main::truncate_timestamp_to_date::truncate_timestamp_to_date;

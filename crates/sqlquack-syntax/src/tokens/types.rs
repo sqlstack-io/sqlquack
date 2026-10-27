@@ -37,3 +37,10 @@ pub(crate) trait TokenizerCursor {
         (start..self.len()).any(|index| self.char_at(index) == needle)
     }
 }
+
+/// SQLQuack: a node field holding its source range, read and filled by located parses.
+pub(crate) trait SpanField {
+    fn recorded(&self) -> Option<Span>;
+    /// Records `span` unless one is recorded; the parser's own name spans are never changed.
+    fn fill(&mut self, span: Span);
+}

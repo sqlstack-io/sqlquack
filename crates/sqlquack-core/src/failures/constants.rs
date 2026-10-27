@@ -4,6 +4,14 @@ use crate::failures::models::{ErrorKind, SnowflakeCode};
 
 /// The prefix building blocks put before a Snowflake error number in the errors they raise.
 pub const ERROR_TAG_PREFIX: &str = "sqlquack:";
+/// What separates a raised error's tag from the ID of the expression raising it.
+pub const RAISE_ID_MARKER: char = '#';
+/// The ID a raise carries until the expression it guards is converted and identifies it.
+pub const UNIDENTIFIED_RAISE: &str = "?";
+/// How many hexadecimal digits a raise ID has.
+pub const RAISE_ID_DIGITS: usize = 12;
+/// What ends a raised error's tag, before its message.
+pub const TAG_END: &str = ": ";
 
 /// Numeric value out of representable range.
 pub const NUMBER_OUT_OF_RANGE: SnowflakeCode = SnowflakeCode {

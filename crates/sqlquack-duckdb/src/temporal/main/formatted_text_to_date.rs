@@ -7,7 +7,7 @@ use sqlquack_core::provenance::models::ProvenanceLog;
 use crate::blocks::constants::{
     DATE_TEXT_SPELLING, FORMATTED_TEXT_TO_DATE, TWO_DIGIT_CENTURY_START, UNPARSED_DATE_MESSAGE,
 };
-use crate::blocks::main::raised::raised;
+use crate::raises::main::raised::raised;
 use crate::temporal::models::DateFormat;
 
 /// The date `sql` spells exactly in `format`; impossible dates are NULL when `trying`, else raise.

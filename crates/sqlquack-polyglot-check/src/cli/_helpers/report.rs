@@ -16,6 +16,7 @@ pub(crate) fn report(label: &str, summary: &RunSummary, counts_only: bool) -> St
             .chain(&summary.type_names)
             .chain(&summary.unlisted)
             .chain(&summary.unexplained)
+            .chain(&summary.located)
             .take(SHOWN_FINDINGS)
         {
             let detail: String = finding.detail.chars().take(SHOWN_DETAIL).collect();
@@ -26,7 +27,7 @@ pub(crate) fn report(label: &str, summary: &RunSummary, counts_only: bool) -> St
         text,
         "{label}: {} entries, {} same trees, {} same errors, {} fixed, {} rejected, {} differences, {} without lossless \
          tokens, {} cast type names unlike polyglot's, {} faithful calls kept, {} unlisted, {} \
-         unexplained; parse time polyglot {:.1} ms, sqlquack \
+         unexplained, {} located parses unlike faithful; parse time polyglot {:.1} ms, sqlquack \
          {:.1} ms",
         summary.entries,
         summary.same_trees,
@@ -39,6 +40,7 @@ pub(crate) fn report(label: &str, summary: &RunSummary, counts_only: bool) -> St
         summary.spellings.values().sum::<usize>(),
         summary.unlisted.len(),
         summary.unexplained.len(),
+        summary.located.len(),
         summary.polyglot.as_secs_f64() * MILLISECONDS,
         summary.sqlquack.as_secs_f64() * MILLISECONDS,
     );

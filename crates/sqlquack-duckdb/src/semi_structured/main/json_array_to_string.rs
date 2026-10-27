@@ -4,7 +4,7 @@ use sqlquack_core::failures::constants::{NOT_AN_ARRAY_ARGUMENT, VARIANT_NOT_CAST
 use sqlquack_core::failures::main::tagged_message::tagged_message;
 use sqlquack_core::provenance::models::ProvenanceLog;
 
-use crate::blocks::main::raised::raised;
+use crate::raises::main::raised::raised;
 use crate::semi_structured::_helpers::guards::bound;
 use crate::semi_structured::_helpers::writing::{Root, sorted_text};
 use crate::semi_structured::constants::{

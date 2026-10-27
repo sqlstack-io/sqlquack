@@ -48,6 +48,7 @@ use crate::parser::constants::ARRAY;
 use crate::parser::constants::BINARY_ARITY;
 use crate::parser::constants::LIST;
 use crate::parser::models::Parser;
+use crate::tokens::models::SourceSpan;
 use crate::tokens::models::TokenType;
 use crate::tokens::types::Result;
 
@@ -143,7 +144,7 @@ impl Parser {
                 limit: None,
                 ignore_nulls: None,
                 inferred_type: None,
-                span: None,
+                span: SourceSpan::default(),
             }));
 
             let within = Expression::WithinGroup(Box::new(WithinGroup {
@@ -164,7 +165,7 @@ impl Parser {
                     limit: None,
                     ignore_nulls: None,
                     inferred_type: None,
-                    span: None,
+                    span: SourceSpan::default(),
                 })));
             }
 
@@ -195,7 +196,7 @@ impl Parser {
                 limit: agg_limit,
                 ignore_nulls,
                 inferred_type: None,
-                span: None,
+                span: SourceSpan::default(),
             })))
         } else {
             if !distinct
@@ -545,6 +546,7 @@ impl Parser {
                     pre_alias_comments: Vec::new(),
                     trailing_comments: Vec::new(),
                     inferred_type: None,
+                    span: SourceSpan::default(),
                 })));
             } else {
                 args.push(expr);
@@ -609,6 +611,7 @@ impl Parser {
                 over,
                 keep,
                 inferred_type: None,
+                span: SourceSpan::default(),
             })))
         } else if keep.is_some() {
             Ok(Expression::WindowFunction(Box::new(WindowFunction {
@@ -622,6 +625,7 @@ impl Parser {
                 },
                 keep,
                 inferred_type: None,
+                span: SourceSpan::default(),
             })))
         } else {
             Ok(expr)
@@ -672,6 +676,7 @@ impl Parser {
                 return Ok(Expression::Neg(Box::new(UnaryOp {
                     this: Expression::Literal(Box::new(Literal::Number(token.text))),
                     inferred_type: None,
+                    span: SourceSpan::default(),
                 })));
             }
             self.current = dash_pos;
@@ -712,6 +717,7 @@ impl Parser {
                 };
                 return Ok(Expression::TryCast(Box::new(
                     crate::expressions::operators::models::Cast {
+                        span: SourceSpan::default(),
                         this: num_expr,
                         to: data_type,
                         trailing_comments: Vec::new(),
@@ -736,6 +742,7 @@ impl Parser {
             return Ok(Expression::Paren(Box::new(Paren {
                 this: expr,
                 trailing_comments: Vec::new(),
+                span: SourceSpan::default(),
             })));
         }
 
@@ -919,6 +926,7 @@ impl Parser {
                         format: None,
                         default: None,
                         inferred_type: None,
+                        span: SourceSpan::default(),
                     }));
                 }
             } else if self.match_token(TokenType::ColonGt) {
@@ -931,6 +939,7 @@ impl Parser {
                     format: None,
                     default: None,
                     inferred_type: None,
+                    span: SourceSpan::default(),
                 }));
             } else if self.match_token(TokenType::NColonGt) {
                 let data_type = self.parse_data_type_for_cast()?;
@@ -942,6 +951,7 @@ impl Parser {
                     format: None,
                     default: None,
                     inferred_type: None,
+                    span: SourceSpan::default(),
                 }));
             } else if self.match_token(TokenType::QDColon) {
                 let data_type = self.parse_data_type_for_cast()?;
@@ -953,6 +963,7 @@ impl Parser {
                     format: None,
                     default: None,
                     inferred_type: None,
+                    span: SourceSpan::default(),
                 }));
             } else if self.check(TokenType::Arrow)
                 && !matches!(
@@ -1079,7 +1090,7 @@ impl Parser {
             use_bracket_syntax: true,
             no_parens: false,
             quoted: false,
-            span: None,
+            span: SourceSpan::default(),
             inferred_type: None,
         }));
         Ok(expr)

@@ -6,7 +6,9 @@ use crate::conversion::constants::{
 use std::collections::BTreeMap;
 
 use serde::Serialize;
+use sqlquack_core::failures::main::raise_id::raise_id;
 use sqlquack_core::failures::models::FailureMode;
+use sqlquack_core::parsing::models::SourceLocation;
 use sqlquack_core::provenance::models::Provenance;
 use sqlquack_snowflake::typing::models::SnowflakeType;
 
@@ -116,6 +118,17 @@ pub struct Converted {
     pub columns: Vec<ColumnSpec>,
     /// The rules, building blocks and typing functions used.
     pub provenance: Provenance,
+    /// Where each raise ID in the SQL comes from: every source location of its expression.
+    pub raises: BTreeMap<String, Vec<SourceLocation>>,
+}
+
+impl Converted {
+    /// The source locations of the expression whose raise produced the error `message`.
+    pub fn raise_locations(&self, message: &str) -> &[SourceLocation] {
+        raise_id(message)
+            .and_then(|id| self.raises.get(id))
+            .map_or(&[], Vec::as_slice)
+    }
 }
 
 /// A converted SQL function: the DuckDB macro's parameters, in order, and its body.
@@ -127,6 +140,8 @@ pub struct ConvertedFunction {
     pub body: String,
     /// The rules, building blocks and typing functions used.
     pub provenance: Provenance,
+    /// Where each raise ID in the body comes from: every source location of its expression.
+    pub raises: BTreeMap<String, Vec<SourceLocation>>,
 }
 
 /// A rule: what it converts and the conditions outside which it refuses.

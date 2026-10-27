@@ -2,9 +2,11 @@
 
 use sqlquack_core::classification::main::classify::classify;
 use sqlquack_core::parsing::main::parse_source::parse_source;
+use sqlquack_syntax::Expression;
 use std::time::{Duration, Instant};
 
-use sqlquack_core::parsing::models::SourceDialect;
+use sqlquack_core::parsing::main::node_location::node_location;
+use sqlquack_core::parsing::models::{SourceDialect, SourceLines};
 use sqlquack_core::refusals::main::refuse_constructs::refuse_constructs;
 use sqlquack_core::refusals::main::refuse_unparsed::refuse_unparsed;
 use sqlquack_core::refusals::types::ConstructPolicy;
@@ -23,14 +25,16 @@ pub fn analyze(
     policy: &dyn ConstructPolicy,
     (schema, options): (&Schema, &ConversionOptions),
 ) -> Analysis {
+    let lines = SourceLines::new(sql);
     let statements = match parse_source(sql, dialect) {
         Ok(statements) => statements,
         Err(failure) => {
+            let refusal = refuse_unparsed(&failure, &lines);
             return Analysis {
                 parsed: false,
                 statements: 0,
                 occurrences: Vec::new(),
-                refusals: vec![refuse_unparsed(&failure)],
+                refusals: vec![refusal],
                 conversions: Vec::new(),
             };
         }
@@ -43,7 +47,7 @@ pub fn analyze(
         conversions: Vec::new(),
     };
     for statement in &statements {
-        let occurrences = classify(statement, sql, dialect);
+        let occurrences = classify(statement, &lines, dialect);
         let declared: Vec<Refusal> = refuse_constructs(&occurrences, policy)
             .into_iter()
             .filter(|refusal| refusal.category == RefusalCategory::NotExpressible)
@@ -52,18 +56,36 @@ pub fn analyze(
         analysis.refusals.extend(declared);
         analysis.occurrences.extend(occurrences);
         if !refused {
-            let started = Instant::now();
-            let converted =
-                convert_statement(statement, (schema, options), ProvenanceLog::default());
-            let elapsed = started.elapsed();
-            match converted.and_then(|converted| within_budget(converted, (sql, elapsed), options))
-            {
+            match convert_within_budget(statement, sql, (schema, options, &lines)) {
                 Ok(converted) => analysis.conversions.push(converted),
                 Err(refusal) => analysis.refusals.push(refusal),
             }
         }
     }
     analysis
+}
+
+/// The statement converted within the budget, or its refusal placed at least at the statement.
+fn convert_within_budget(
+    statement: &Expression,
+    sql: &str,
+    (schema, options, lines): (&Schema, &ConversionOptions, &SourceLines),
+) -> Result<Converted, Refusal> {
+    let started = Instant::now();
+    let converted = convert_statement(
+        statement,
+        (schema, options, lines),
+        ProvenanceLog::default(),
+    );
+    let elapsed = started.elapsed();
+    converted
+        .and_then(|converted| within_budget(converted, (sql, elapsed), options))
+        .map_err(|mut refusal| {
+            if refusal.location.is_none() {
+                refusal.location = node_location(statement, lines);
+            }
+            refusal
+        })
 }
 
 /// `converted`, or a refusal when converting it outran the time or size budget.

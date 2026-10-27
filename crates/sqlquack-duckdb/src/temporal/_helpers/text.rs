@@ -5,8 +5,8 @@ use sqlquack_core::failures::main::tagged_message::tagged_message;
 use sqlquack_core::failures::models::SnowflakeCode;
 
 use crate::blocks::constants::{CONVERSION_WHITESPACE, VARIANT_CAST_MESSAGE};
-use crate::blocks::main::raised::raised;
 use crate::blocks::models::TextFailure;
+use crate::raises::main::raised::raised;
 
 /// `NULL` when trying, else an expression raising text's Snowflake error `code` or a VARIANT's.
 pub(crate) fn parse_failure(

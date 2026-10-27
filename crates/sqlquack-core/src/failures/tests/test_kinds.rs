@@ -24,6 +24,16 @@ fn given_duckdb_message_when_classifying_then_tag_or_fragment_gives_kind() {
             }),
         },
         DuckdbMessageTestCase {
+            description: "a tagged message with a raise ID names the same Snowflake error",
+            message: "Conversion Error: Could not convert string \
+                      'sqlquack:100051#0123456789ab: Division by zero' to INT32"
+                .to_owned(),
+            expected_failure: Some(DuckdbFailure {
+                kind: ErrorKind::DivisionByZero,
+                snowflake: Some(DIVISION_BY_ZERO),
+            }),
+        },
+        DuckdbMessageTestCase {
             description: "a tag with an unknown number has no kind",
             message: "Invalid Input Error: sqlquack:1: unknown".to_owned(),
             expected_failure: None,

@@ -15,6 +15,7 @@ use crate::parser::constants::DEFINER;
 use crate::parser::constants::SQL;
 use crate::parser::models::Parser;
 use crate::parser::models::ViewModifiers;
+use crate::tokens::models::SourceSpan;
 use crate::tokens::models::TokenType;
 use crate::tokens::types::Result;
 
@@ -201,6 +202,7 @@ impl Parser {
                         Expression::Paren(Box::new(Paren {
                             this: values,
                             trailing_comments: Vec::new(),
+                            span: SourceSpan::default(),
                         }))
                     } else {
                         self.parse_primary()?

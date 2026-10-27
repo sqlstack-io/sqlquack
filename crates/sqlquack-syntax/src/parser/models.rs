@@ -26,6 +26,7 @@ use crate::guard::models::TokenGuardStats;
 use crate::parser::_helpers::support::dialects::configs_for_dialect_type;
 use crate::parser::types::DialectImpl;
 use crate::tokens::errors::Error;
+use crate::tokens::models::CallMode;
 use crate::tokens::models::DialectType;
 use crate::tokens::models::ParserToken;
 use crate::tokens::models::Span;
@@ -90,12 +91,12 @@ impl Dialect {
         &self,
         sql: &str,
         options: &ParseOptions,
-        (faithful_calls, record_call_spans): (bool, bool),
+        mode: CallMode,
     ) -> Result<Vec<Expression>> {
         let complexity_guard = options
             .complexity_guard
             .unwrap_or_else(|| self.default_complexity_guard());
-        self.parse_with_config(sql, complexity_guard, (faithful_calls, record_call_spans))
+        self.parse_with_config(sql, complexity_guard, mode)
     }
 
     #[cfg(test)]
@@ -104,14 +105,14 @@ impl Dialect {
         sql: &str,
         complexity_guard: ComplexityGuardOptions,
     ) -> Result<Vec<Expression>> {
-        self.parse_with_config(sql, complexity_guard, (false, false))
+        self.parse_with_config(sql, complexity_guard, CallMode::Lowered)
     }
 
     pub(crate) fn parse_with_config(
         &self,
         sql: &str,
         complexity_guard: ComplexityGuardOptions,
-        (faithful_calls, record_call_spans): (bool, bool),
+        mode: CallMode,
     ) -> Result<Vec<Expression>> {
         enforce_input(sql, &complexity_guard)?;
         let source: Arc<str> = Arc::from(sql);
@@ -119,8 +120,9 @@ impl Dialect {
         let config = crate::parser::models::ParserConfig {
             dialect: Some(self.dialect_type),
             complexity_guard,
-            faithful_calls,
-            record_call_spans,
+            faithful_calls: mode != CallMode::Lowered,
+            record_call_spans: mode == CallMode::FaithfulWithSpans,
+            record_node_spans: mode == CallMode::FaithfulLocated,
             ..Default::default()
         };
         let mut parser = Parser::with_parser_tokens(tokens, token_guard_stats, config, source);
@@ -376,6 +378,8 @@ pub(crate) struct ParserConfig {
     pub faithful_calls: bool,
     /// SQLQuack: record the source span of every call parsed faithfully (for the exact check).
     pub record_call_spans: bool,
+    /// SQLQuack: record each expression and statement node's source range (for locations).
+    pub record_node_spans: bool,
 }
 
 #[derive(Debug)]

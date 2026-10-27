@@ -2,6 +2,7 @@
 
 use crate::expressions::functions::models::Function;
 use crate::expressions::tree::models::Expression;
+use crate::tokens::models::SourceSpan;
 
 pub(crate) fn make_unquoted_function(name: &str, args: Vec<Expression>) -> Expression {
     Expression::Function(Box::new(Function {
@@ -16,7 +17,7 @@ pub(crate) fn make_unquoted_function(name: &str, args: Vec<Expression>) -> Expre
         use_bracket_syntax: false,
         no_parens: false,
         quoted: false,
-        span: None,
+        span: SourceSpan::default(),
         inferred_type: None,
     }))
 }

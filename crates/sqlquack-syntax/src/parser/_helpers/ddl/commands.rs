@@ -43,6 +43,7 @@ use crate::parser::constants::QUALIFIED_NAME_PARTS;
 use crate::parser::constants::VAR;
 use crate::parser::constants::VARIABLE;
 use crate::parser::models::Parser;
+use crate::tokens::models::SourceSpan;
 use crate::tokens::models::TokenType;
 use crate::tokens::types::Result;
 
@@ -164,6 +165,7 @@ impl Parser {
                 .unwrap_or(Expression::Null(crate::expressions::names::models::Null));
             self.expect_token(TokenType::RParen)?;
             Expression::Paren(Box::new(crate::expressions::statements::models::Paren {
+                span: SourceSpan::default(),
                 this: expr,
                 trailing_comments: Vec::new(),
             }))

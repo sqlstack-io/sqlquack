@@ -2,21 +2,29 @@
 
 use std::collections::BTreeSet;
 
+use sqlquack_core::parsing::models::{SourceLines, SourceLocation};
+
 use sqlquack_core::classification::constants::PROJECT_FUNCTION_PLACEHOLDER;
 
 use crate::census::constants::{
     CURSOR_CALLS, CURSOR_PLACEHOLDER, RELATION_CALLS, RELATION_PLACEHOLDER,
     TABLE_FUNCTION_PLACEHOLDER,
 };
+use crate::census::models::{Replacement, Rewritten};
 
 const PROJECT_FUNCTION_CALL: &str = "__udf";
 const TABLE_FUNCTION_CALL: &str = "__table_fn";
 
-/// The rewritten SQL, and the placeholder relation each reference call became, in upper case.
-pub(crate) fn rewrite_with_references(sql: &str) -> (String, BTreeSet<String>) {
+/// The rewritten SQL, the placeholder relation each reference call became and the replacements.
+pub(crate) fn rewrite_with_references(sql: &str) -> Rewritten {
     let mut references: BTreeSet<String> = BTreeSet::new();
+    let mut replacements: Vec<Replacement> = Vec::new();
     if !sql.contains("__") {
-        return (sql.to_owned(), references);
+        return Rewritten {
+            sql: sql.to_owned(),
+            references,
+            replacements,
+        };
     }
     let bytes = sql.as_bytes();
     let mut rewritten = String::with_capacity(sql.len());
@@ -39,6 +47,10 @@ pub(crate) fn rewrite_with_references(sql: &str) -> (String, BTreeSet<String>) {
                     references.insert(replacement.to_ascii_uppercase());
                 }
                 rewritten.push_str(&sql[copied..position]);
+                replacements.push(Replacement {
+                    rewritten: rewritten.len()..rewritten.len() + replacement.len(),
+                    original: position..end,
+                });
                 rewritten.push_str(&replacement);
                 position = end;
                 copied = end;
@@ -50,7 +62,40 @@ pub(crate) fn rewrite_with_references(sql: &str) -> (String, BTreeSet<String>) {
         position += 1;
     }
     rewritten.push_str(&sql[copied..]);
-    (rewritten, references)
+    Rewritten {
+        sql: rewritten,
+        references,
+        replacements,
+    }
+}
+
+/// The location in the original SQL of `location`, a location in the rewritten SQL.
+pub(crate) fn original_location(
+    rewritten: &Rewritten,
+    original: &str,
+    location: SourceLocation,
+) -> SourceLocation {
+    let original_char = |rewritten_char: usize| {
+        let byte = byte_offset(&rewritten.sql, rewritten_char);
+        let mut shifted = byte;
+        for replacement in &rewritten.replacements {
+            if byte < replacement.rewritten.start {
+                break;
+            }
+            shifted = match byte < replacement.rewritten.end {
+                true => replacement.original.start,
+                false => byte - replacement.rewritten.end + replacement.original.end,
+            };
+        }
+        original[..shifted.min(original.len())].chars().count()
+    };
+    SourceLines::new(original).location(original_char(location.start), original_char(location.end))
+}
+
+fn byte_offset(text: &str, characters: usize) -> usize {
+    text.char_indices()
+        .nth(characters)
+        .map_or(text.len(), |(index, _)| index)
 }
 
 fn replacement(bytes: &[u8], name: &str, name_end: usize) -> Option<(String, usize)> {

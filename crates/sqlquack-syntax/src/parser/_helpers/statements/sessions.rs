@@ -50,6 +50,7 @@ use crate::expressions::types::models::Struct;
 use crate::expressions::types::models::Tuple;
 use crate::guard::main::is_guard_error::is_guard_error;
 use crate::parser::models::Parser;
+use crate::tokens::models::SourceSpan;
 use crate::tokens::models::TokenType;
 use crate::tokens::types::Result;
 
@@ -77,6 +78,7 @@ impl Parser {
                 pre_alias_comments: Vec::new(),
                 trailing_comments: Vec::new(),
                 inferred_type: None,
+                span: SourceSpan::default(),
             }))
         } else {
             this_expr
@@ -322,6 +324,7 @@ impl Parser {
                         operator_comments: Vec::new(),
                         trailing_comments: Vec::new(),
                         inferred_type: None,
+                        span: SourceSpan::default(),
                     })));
                 } else {
                     this = Some(left);
@@ -924,6 +927,7 @@ impl Parser {
                         format: None,
                         default: None,
                         inferred_type: None,
+                        span: SourceSpan::default(),
                     })));
                 }
             }
@@ -1692,6 +1696,7 @@ impl Parser {
                         };
                         args.push(Expression::Alias(Box::new(
                             crate::expressions::operators::models::Alias {
+                                span: SourceSpan::default(),
                                 this: expr,
                                 alias: alias_name,
                                 column_aliases: Vec::new(),
@@ -1741,7 +1746,7 @@ impl Parser {
                 use_bracket_syntax: false,
                 no_parens: true,
                 quoted: false,
-                span: None,
+                span: SourceSpan::default(),
                 inferred_type: None,
             }))));
         }
@@ -1787,7 +1792,7 @@ impl Parser {
             use_bracket_syntax: false,
             no_parens: false,
             quoted: false,
-            span: None,
+            span: SourceSpan::default(),
             inferred_type: None,
         }));
 
@@ -1872,6 +1877,7 @@ impl Parser {
             let alias = self.expect_identifier_or_keyword_with_quoted()?;
             Ok(Expression::Alias(Box::new(
                 crate::expressions::operators::models::Alias {
+                    span: SourceSpan::default(),
                     this: expr,
                     alias,
                     column_aliases: Vec::new(),

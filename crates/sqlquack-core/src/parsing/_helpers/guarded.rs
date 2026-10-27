@@ -1,6 +1,6 @@
 //! One guarded parse for any dialect.
 
-use sqlquack_syntax::{ComplexityGuardOptions, Dialect, Error, Expression, ParseOptions};
+use sqlquack_syntax::{CallMode, ComplexityGuardOptions, Dialect, Error, Expression, ParseOptions};
 
 use crate::parsing::constants::MAX_FUNCTION_CALL_DEPTH;
 use crate::parsing::errors::ParseFailure;
@@ -13,7 +13,8 @@ pub(crate) fn parse_guarded(sql: &str, dialect: Dialect) -> Result<Vec<Expressio
             ..ComplexityGuardOptions::default()
         }),
     };
-    sqlquack_syntax::parse_statements(sql, dialect, &options).map_err(|error| failure(&error))
+    sqlquack_syntax::parse_statements_with(sql, dialect, &options, CallMode::FaithfulLocated)
+        .map_err(|error| failure(&error))
 }
 
 fn failure(error: &Error) -> ParseFailure {

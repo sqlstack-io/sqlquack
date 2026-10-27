@@ -34,6 +34,7 @@ use crate::expressions::typed_functions::models::UnaryFunc;
 use crate::expressions::types::models::DataType;
 use crate::parser::constants::INTEGER;
 use crate::parser::models::Parser;
+use crate::tokens::models::SourceSpan;
 use crate::tokens::models::TokenType;
 use crate::tokens::types::Result;
 
@@ -112,6 +113,7 @@ impl Parser {
                         operator_comments: Vec::new(),
                         trailing_comments,
                         inferred_type: None,
+                        span: SourceSpan::default(),
                     }))
                 } else if self.check_identifier("SOUNDS") && self.check_next(TokenType::Like) {
                     self.parse_sounds_like_comparison(left)?
@@ -262,12 +264,14 @@ impl Parser {
                 this: left,
                 not: false,
                 postfix_form: true,
+                span: SourceSpan::default(),
             }))
         } else if self.match_token(TokenType::NotNull) {
             Expression::IsNull(Box::new(IsNull {
                 this: left,
                 not: true,
                 postfix_form: true,
+                span: SourceSpan::default(),
             }))
         } else if self.match_token(TokenType::AtAt) {
             let right = self.parse_bitwise_or()?;
@@ -377,6 +381,7 @@ impl Parser {
                 escape,
                 quantifier,
                 inferred_type: None,
+                span: SourceSpan::default(),
             }))
         })
     }
@@ -405,6 +410,7 @@ impl Parser {
                 escape,
                 quantifier,
                 inferred_type: None,
+                span: SourceSpan::default(),
             }))
         })
     }
@@ -477,6 +483,7 @@ impl Parser {
                 escape,
                 quantifier: None,
                 inferred_type: None,
+                span: SourceSpan::default(),
             }))
         })
     }
@@ -497,6 +504,7 @@ impl Parser {
                 escape,
                 quantifier: None,
                 inferred_type: None,
+                span: SourceSpan::default(),
             }))
         })
     }
@@ -509,6 +517,7 @@ impl Parser {
                     this: left,
                     not,
                     postfix_form: false,
+                    span: SourceSpan::default(),
                 }));
                 {
                     expr
@@ -530,6 +539,7 @@ impl Parser {
                     this: left,
                     not,
                     postfix_form: false,
+                    span: SourceSpan::default(),
                 }))
             } else if self.match_texts(&["JSON"]) {
                 let json_type = if self.match_texts(&["VALUE"]) {
@@ -587,6 +597,7 @@ impl Parser {
                     global: global_in,
                     unnest: Some(Box::new(unnest_expr)),
                     is_field: false,
+                    span: SourceSpan::default(),
                 }))
             } else if self.match_token(TokenType::LParen) {
                 if self.check(TokenType::Select) || self.check(TokenType::With) {
@@ -600,6 +611,7 @@ impl Parser {
                         global: global_in,
                         unnest: None,
                         is_field: false,
+                        span: SourceSpan::default(),
                     }))
                 } else if self.check(TokenType::RParen) {
                     self.skip();
@@ -611,6 +623,7 @@ impl Parser {
                         global: global_in,
                         unnest: None,
                         is_field: false,
+                        span: SourceSpan::default(),
                     }))
                 } else {
                     let expressions =
@@ -624,6 +637,7 @@ impl Parser {
                         global: global_in,
                         unnest: None,
                         is_field: false,
+                        span: SourceSpan::default(),
                     }))
                 }
             } else {
@@ -636,6 +650,7 @@ impl Parser {
                     global: global_in,
                     unnest: None,
                     is_field: true,
+                    span: SourceSpan::default(),
                 }))
             }
         })
@@ -659,6 +674,7 @@ impl Parser {
                 high,
                 not: true,
                 symmetric,
+                span: SourceSpan::default(),
             }))
         })
     }
@@ -688,6 +704,7 @@ impl Parser {
                 escape,
                 quantifier,
                 inferred_type: None,
+                span: SourceSpan::default(),
             }))
         })
     }
@@ -717,6 +734,7 @@ impl Parser {
                 escape,
                 quantifier,
                 inferred_type: None,
+                span: SourceSpan::default(),
             }))
         })
     }
@@ -736,6 +754,7 @@ impl Parser {
                     global: global_in,
                     unnest: Some(Box::new(unnest_expr)),
                     is_field: false,
+                    span: SourceSpan::default(),
                 }))
             } else if self.match_token(TokenType::LParen) {
                 if self.check(TokenType::Select) || self.check(TokenType::With) {
@@ -749,6 +768,7 @@ impl Parser {
                         global: global_in,
                         unnest: None,
                         is_field: false,
+                        span: SourceSpan::default(),
                     }))
                 } else if self.check(TokenType::RParen) {
                     self.skip();
@@ -760,6 +780,7 @@ impl Parser {
                         global: global_in,
                         unnest: None,
                         is_field: false,
+                        span: SourceSpan::default(),
                     }))
                 } else {
                     let expressions =
@@ -773,6 +794,7 @@ impl Parser {
                         global: global_in,
                         unnest: None,
                         is_field: false,
+                        span: SourceSpan::default(),
                     }))
                 }
             } else {
@@ -785,6 +807,7 @@ impl Parser {
                     global: global_in,
                     unnest: None,
                     is_field: true,
+                    span: SourceSpan::default(),
                 }))
             }
         })
@@ -808,6 +831,7 @@ impl Parser {
                 high,
                 not: false,
                 symmetric,
+                span: SourceSpan::default(),
             }))
         })
     }
@@ -885,6 +909,7 @@ impl Parser {
                     operator_comments: Vec::new(),
                     trailing_comments,
                     inferred_type: None,
+                    span: SourceSpan::default(),
                 }))
             }
         })
@@ -893,8 +918,10 @@ impl Parser {
     /// Parse bitwise OR expressions (|)
     #[inline(always)]
     pub(crate) fn parse_bitwise_or(&mut self) -> Result<Expression> {
+        let start = self.current;
         let left = self.parse_bitwise_xor()?;
-        self.parse_bitwise_or_tail(left)
+        let expr = self.parse_bitwise_or_tail(left)?;
+        Ok(self.spanned(start, expr))
     }
 
     #[inline(never)]
@@ -1007,6 +1034,7 @@ impl Parser {
                     operator_comments,
                     trailing_comments,
                     inferred_type: None,
+                    span: SourceSpan::default(),
                 }))
             } else if self.match_token(TokenType::Dash) {
                 let operator_comments = self.previous_trailing_comments().to_vec();
@@ -1019,6 +1047,7 @@ impl Parser {
                     operator_comments,
                     trailing_comments,
                     inferred_type: None,
+                    span: SourceSpan::default(),
                 }))
             } else if (self.config.dialect != Some(crate::tokens::models::DialectType::DuckDB))
                 && self.match_token(TokenType::DPipe)
@@ -1033,6 +1062,7 @@ impl Parser {
                     operator_comments,
                     trailing_comments,
                     inferred_type: None,
+                    span: SourceSpan::default(),
                 }))
             } else if self.match_token(TokenType::DQMark) {
                 let right = self.parse_at_time_zone()?;
@@ -1114,8 +1144,10 @@ impl Parser {
     }
 
     pub(crate) fn parse_duckdb_concat(&mut self) -> Result<Expression> {
+        let start = self.current;
         let left = self.parse_addition()?;
-        self.parse_duckdb_concat_tail(left)
+        let expr = self.parse_duckdb_concat_tail(left)?;
+        Ok(self.spanned(start, expr))
     }
 
     pub(crate) fn parse_duckdb_concat_tail(&mut self, mut left: Expression) -> Result<Expression> {
@@ -1154,6 +1186,7 @@ impl Parser {
                     operator_comments,
                     trailing_comments,
                     inferred_type: None,
+                    span: SourceSpan::default(),
                 }));
             } else {
                 return Ok(left);
@@ -1164,8 +1197,10 @@ impl Parser {
     /// Parse addition/subtraction
     #[inline(always)]
     pub(crate) fn parse_addition(&mut self) -> Result<Expression> {
+        let start = self.current;
         let left = self.parse_at_time_zone()?;
-        self.parse_addition_tail(left)
+        let expr = self.parse_addition_tail(left)?;
+        Ok(self.spanned(start, expr))
     }
 
     #[inline(never)]
@@ -1184,6 +1219,7 @@ impl Parser {
                     operator_comments,
                     trailing_comments,
                     inferred_type: None,
+                    span: SourceSpan::default(),
                 }))
             } else if self.match_token(TokenType::Dash) {
                 let operator_comments = self.previous_trailing_comments().to_vec();
@@ -1196,6 +1232,7 @@ impl Parser {
                     operator_comments,
                     trailing_comments,
                     inferred_type: None,
+                    span: SourceSpan::default(),
                 }))
             } else if (self.config.dialect != Some(crate::tokens::models::DialectType::DuckDB))
                 && self.match_token(TokenType::DPipe)
@@ -1210,6 +1247,7 @@ impl Parser {
                     operator_comments,
                     trailing_comments,
                     inferred_type: None,
+                    span: SourceSpan::default(),
                 }))
             } else if self.match_token(TokenType::DQMark) {
                 let right = self.parse_at_time_zone()?;
@@ -1282,8 +1320,10 @@ impl Parser {
     /// Parse multiplication/division
     #[inline(always)]
     pub(crate) fn parse_multiplication(&mut self) -> Result<Expression> {
+        let start = self.current;
         let left = self.parse_multiplicative_operand()?;
-        self.parse_multiplication_tail(left)
+        let expr = self.parse_multiplication_tail(left)?;
+        Ok(self.spanned(start, expr))
     }
 
     #[inline(always)]
@@ -1475,6 +1515,7 @@ impl Parser {
             format: None,
             default: None,
             inferred_type: None,
+            span: SourceSpan::default(),
         }))))
     }
 
@@ -1573,11 +1614,13 @@ impl Parser {
             format: None,
             default: None,
             inferred_type: None,
+            span: SourceSpan::default(),
         }))))
     }
 
     /// Parse unary expressions
     pub(crate) fn parse_unary(&mut self) -> Result<Expression> {
+        let start = self.current;
         let mut prefixes: Vec<TokenType> = Vec::new();
         while !self.is_at_end() {
             let token = self.peek().token_type;
@@ -1598,7 +1641,8 @@ impl Parser {
         }
         let _scope = self.enter_parser_depth(prefixes.len())?;
         let expr = self.parse_unary_operand()?;
-        Self::apply_unary_prefixes(expr, prefixes)
+        let expr = Self::apply_unary_prefixes(expr, prefixes)?;
+        Ok(self.spanned(start, expr))
     }
 
     #[inline(never)]
@@ -1745,6 +1789,7 @@ impl Parser {
                 format: None,
                 default: None,
                 inferred_type: None,
+                span: SourceSpan::default(),
             }));
         }
 

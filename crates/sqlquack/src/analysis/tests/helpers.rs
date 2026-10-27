@@ -1,8 +1,8 @@
 use std::collections::BTreeSet;
 
-use sqlquack_core::parsing::models::SourceDialect;
+use sqlquack_core::parsing::models::{SourceDialect, SourceLocation};
 use sqlquack_core::provenance::main::merge_provenance::merge_provenance;
-use sqlquack_core::refusals::models::RefusalCategory;
+use sqlquack_core::refusals::models::{Refusal, RefusalCategory};
 use sqlquack_evidence::cases::main::load_cases::load_cases;
 use sqlquack_evidence::constants::CASES_DIR;
 use sqlquack_evidence::verify::models::Conversion;
@@ -10,8 +10,9 @@ use sqlquack_evidence::verify::types::CaseConverter;
 use sqlquack_policy::policy::constants::POLICY_FILE_NAME;
 use sqlquack_policy::policy::main::load_policy::load_policy;
 use sqlquack_rules::catalogue::main::builtin_catalogue::builtin_catalogue;
+use sqlquack_rules::catalogue::models::{NotExpressibleDeclaration, RuleCatalogue};
 use sqlquack_rules::conversion::models::{
-    ColumnSpec, ConversionBudget, ConversionOptions, FunctionLanguage, FunctionReturns,
+    ColumnSpec, ConversionBudget, ConversionOptions, Converted, FunctionLanguage, FunctionReturns,
     FunctionSpec, Schema,
 };
 use sqlquack_snowflake::typing::models::SnowflakeType;
@@ -378,4 +379,174 @@ pub(crate) fn budget_refusal(
         .refusals
         .first()
         .map(|refusal| (refusal.category, refusal.reason.clone()))
+}
+
+/// Each refusal of `sql`, with `declared` not expressible and `budget`: category, text and place.
+pub(crate) fn refusal_places<'s>(
+    sql: &'s str,
+    (declared, budget): (Option<&'static str>, Option<ConversionBudget>),
+) -> Vec<(RefusalCategory, &'s str, [usize; 2])> {
+    let policy =
+        load_policy(&repository_root().join(POLICY_FILE_NAME)).expect("repository policy loads");
+    let mut options = conversion_options(&policy, false);
+    options.budget = budget.unwrap_or(options.budget);
+    let catalogue = RuleCatalogue {
+        not_expressible: declared
+            .map(|construct| NotExpressibleDeclaration {
+                construct,
+                reason: "declared for the test",
+            })
+            .into_iter()
+            .collect(),
+    };
+    let analysis = analyze(
+        sql,
+        SourceDialect::Snowflake,
+        &catalogue,
+        (&shop_schema(), &options),
+    );
+    analysis
+        .refusals
+        .iter()
+        .map(|refusal| placed(sql, refusal))
+        .collect()
+}
+
+/// Each refusal of a NUMBER scalar function's `body`, placed in the body as `refusal_places` does.
+pub(crate) fn function_refusal_places(body: &str) -> Vec<(RefusalCategory, &str, [usize; 2])> {
+    let amount = SnowflakeType::Number {
+        precision: 10,
+        scale: 2,
+    };
+    let spec = FunctionSpec {
+        language: FunctionLanguage::Sql,
+        arguments: vec![ColumnSpec {
+            name: "AMOUNT".to_owned(),
+            data_type: amount,
+        }],
+        returns: FunctionReturns::Scalar(amount),
+    };
+    let refusals = analyze_function(
+        (body, &spec),
+        SourceDialect::Snowflake,
+        &builtin_catalogue(),
+        (&shop_schema(), &ConversionOptions::default()),
+    )
+    .err()
+    .unwrap_or_default();
+    refusals
+        .iter()
+        .map(|refusal| placed(body, refusal))
+        .collect()
+}
+
+/// A refusal's category, the text of `source` at its location, and its line and column.
+fn placed<'s>(source: &'s str, refusal: &Refusal) -> (RefusalCategory, &'s str, [usize; 2]) {
+    let location = refusal.location.unwrap_or(SourceLocation {
+        start: 0,
+        end: 0,
+        line: 0,
+        column: 0,
+    });
+    let byte = |offset: usize| {
+        source
+            .char_indices()
+            .nth(offset)
+            .map_or(source.len(), |(index, _)| index)
+    };
+    (
+        refusal.category,
+        &source[byte(location.start)..byte(location.end)],
+        [location.line, location.column],
+    )
+}
+
+/// Tables of the shop schema with a few rows, for running converted SQL in DuckDB.
+const SHOP_ROWS: &str = "CREATE TABLE \"CUSTOMERS\" (\"CUSTOMER_ID\" DECIMAL(38, 0), \"NOTE\" VARCHAR); \
+     INSERT INTO \"CUSTOMERS\" VALUES (1, '1'), (2, '7'); \
+     CREATE TABLE \"ORDERS\" (\"CUSTOMER_ID\" DECIMAL(38, 0), \"AMOUNT\" DECIMAL(10, 2)); \
+     INSERT INTO \"ORDERS\" VALUES (1, 5.00), (2, 7.50), (2, 2.50); \
+     CREATE TABLE \"EVENTS\" (\"PAYLOAD\" JSON); \
+     INSERT INTO \"EVENTS\" VALUES ('{\"k\": \"a\"}'), ('{\"k\": \"b\"}')";
+
+/// `sql` converted over the shop schema under the repository policy, or its refusals' reasons.
+pub(crate) fn shop_conversion(sql: &str) -> Result<Converted, Vec<String>> {
+    let policy =
+        load_policy(&repository_root().join(POLICY_FILE_NAME)).expect("repository policy loads");
+    let analysis = analyze(
+        sql,
+        SourceDialect::Snowflake,
+        &builtin_catalogue(),
+        (&shop_schema(), &conversion_options(&policy, false)),
+    );
+    let reasons: Vec<String> = analysis
+        .refusals
+        .iter()
+        .map(|refusal| refusal.reason.clone())
+        .collect();
+    let single = reasons.is_empty() && analysis.conversions.len() == 1;
+    analysis
+        .conversions
+        .into_iter()
+        .next()
+        .filter(|_| single)
+        .ok_or(reasons)
+}
+
+/// How many rows `sql` returns when converted and run on the shop rows, or why it does not.
+pub(crate) fn shop_row_count(sql: &str) -> Result<usize, Vec<String>> {
+    let converted = shop_conversion(sql)?;
+    let connection = duckdb::Connection::open_in_memory().expect("DuckDB opens");
+    connection
+        .execute_batch(SHOP_ROWS)
+        .expect("the shop tables are created");
+    connection
+        .query_row(
+            &format!("SELECT COUNT(*) FROM ({}) AS t", converted.sql),
+            [],
+            |row| row.get::<_, usize>(0),
+        )
+        .map_err(|error| vec![error.to_string()])
+}
+
+/// The lines and columns of each raise ID's locations in the conversion of `sql`, sorted.
+pub(crate) fn raise_places(sql: &str) -> Result<Vec<Vec<[usize; 2]>>, Vec<String>> {
+    let mut raises: Vec<Vec<[usize; 2]>> = shop_conversion(sql)?
+        .raises
+        .values()
+        .map(|locations| places(locations))
+        .collect();
+    raises.sort();
+    Ok(raises)
+}
+
+/// Where the error raised running the conversion of `sql` on the shop rows comes from.
+pub(crate) fn raised_places(sql: &str) -> Result<Vec<[usize; 2]>, Vec<String>> {
+    let converted = shop_conversion(sql)?;
+    let connection = duckdb::Connection::open_in_memory().expect("DuckDB opens");
+    connection
+        .execute_batch(SHOP_ROWS)
+        .expect("the shop tables are created");
+    let error = connection
+        .execute_batch(&converted.sql)
+        .err()
+        .map(|error| error.to_string())
+        .unwrap_or_default();
+    Ok(places(converted.raise_locations(&error)))
+}
+
+fn places(locations: &[SourceLocation]) -> Vec<[usize; 2]> {
+    locations
+        .iter()
+        .map(|location| [location.line, location.column])
+        .collect()
+}
+
+/// Whether every SQL text converts to the same DuckDB SQL, byte for byte.
+pub(crate) fn converts_identically(texts: &[&str]) -> Result<bool, Vec<String>> {
+    let converted: Vec<String> = texts
+        .iter()
+        .map(|sql| shop_conversion(sql).map(|converted| converted.sql))
+        .collect::<Result<_, _>>()?;
+    Ok(converted.windows(2).all(|pair| pair[0] == pair[1]))
 }

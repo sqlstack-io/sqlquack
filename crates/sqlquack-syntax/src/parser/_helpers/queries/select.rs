@@ -24,6 +24,7 @@ use crate::expressions::statements::models::Var;
 use crate::expressions::tree::models::Expression;
 use crate::parser::constants::SECOND_PREVIOUS_OFFSET;
 use crate::parser::models::Parser;
+use crate::tokens::models::SourceSpan;
 use crate::tokens::models::TokenType;
 use crate::tokens::types::Result;
 
@@ -50,6 +51,7 @@ impl Parser {
                 break;
             }
 
+            let item_start = self.current;
             if self.check(TokenType::Star) {
                 let star_expr = if let Some(star_like) = self.parse_clickhouse_bare_star_like()? {
                     star_like
@@ -61,7 +63,7 @@ impl Parser {
                     Expression::Star(star)
                 };
 
-                expressions.push(star_expr);
+                expressions.push(self.spanned(item_start, star_expr));
             } else {
                 let leading_comments = self.current_leading_comments().to_vec();
                 let expr = self.parse_expression()?;
@@ -103,6 +105,7 @@ impl Parser {
                         pre_alias_comments,
                         trailing_comments,
                         inferred_type: None,
+                        span: SourceSpan::default(),
                     }))
                 } else if !pre_alias_comments.is_empty() {
                     self.parse_select_item_comment_alias(expr, pre_alias_comments)
@@ -117,7 +120,7 @@ impl Parser {
                     expr
                 };
 
-                expressions.push(expr);
+                expressions.push(self.spanned(item_start, expr));
             }
 
             if !self.match_token(TokenType::Comma) {
@@ -183,6 +186,7 @@ impl Parser {
                     pre_alias_comments: Vec::new(),
                     trailing_comments: all_trailing,
                     inferred_type: None,
+                    span: SourceSpan::default(),
                 }))
             } else {
                 expr
@@ -231,6 +235,7 @@ impl Parser {
                     pre_alias_comments,
                     trailing_comments,
                     inferred_type: None,
+                    span: SourceSpan::default(),
                 }))
             } else {
                 let duckdb_string_alias = self.config.dialect
@@ -276,6 +281,7 @@ impl Parser {
                         pre_alias_comments,
                         trailing_comments,
                         inferred_type: None,
+                        span: SourceSpan::default(),
                     }))
                 }
             }
@@ -459,6 +465,7 @@ impl Parser {
             qualify_after_window: false,
             option: None,
             exclude: None,
+            span: SourceSpan::default(),
         };
 
         let result = Expression::Select(Box::new(select));
@@ -532,7 +539,9 @@ impl Parser {
 
     /// Parse a table expression (table name, subquery, etc.)
     pub(crate) fn parse_table_expression(&mut self) -> Result<Expression> {
-        self.with_parser_depth(|parser| parser.parse_table_expression_inner())
+        let start = self.current;
+        let expr = self.with_parser_depth(|parser| parser.parse_table_expression_inner())?;
+        Ok(self.spanned(start, expr))
     }
 
     #[inline(never)]
@@ -574,6 +583,7 @@ impl Parser {
                 modifiers_inside: false,
                 trailing_comments: self.previous_trailing_comments().to_vec(),
                 inferred_type: None,
+                span: SourceSpan::default(),
             }))
         } else {
             self.parse_table_expression_primary()?
@@ -700,6 +710,7 @@ impl Parser {
                     pre_alias_comments: all_comments,
                     trailing_comments: Vec::new(),
                     inferred_type: None,
+                    span: SourceSpan::default(),
                 })));
             }
             _ => {
@@ -712,6 +723,7 @@ impl Parser {
                     pre_alias_comments: all_comments,
                     trailing_comments: Vec::new(),
                     inferred_type: None,
+                    span: SourceSpan::default(),
                 })));
             }
         }
@@ -805,7 +817,7 @@ impl Parser {
                             use_bracket_syntax: false,
                             no_parens: false,
                             quoted: false,
-                            span: None,
+                            span: SourceSpan::default(),
                             inferred_type: None,
                         }))
                     } else {
@@ -856,7 +868,7 @@ impl Parser {
                         use_bracket_syntax: false,
                         no_parens: false,
                         quoted: false,
-                        span: None,
+                        span: SourceSpan::default(),
                         inferred_type: None,
                     }))
                 } else {
@@ -995,7 +1007,7 @@ impl Parser {
                             use_bracket_syntax: false,
                             no_parens: false,
                             quoted: false,
-                            span: None,
+                            span: SourceSpan::default(),
                             inferred_type: None,
                         }))
                     } else {
@@ -1047,7 +1059,7 @@ impl Parser {
                                 use_bracket_syntax: false,
                                 no_parens: false,
                                 quoted: false,
-                                span: None,
+                                span: SourceSpan::default(),
                                 inferred_type: None,
                             };
                             let func_expr = Expression::Function(Box::new(func));
@@ -1165,6 +1177,7 @@ impl Parser {
                         sort_by: None,
                         cluster_by: None,
                         inferred_type: None,
+                        span: SourceSpan::default(),
                     }))
                 } else {
                     let table_expr = self.parse_table_expression()?;
@@ -1185,6 +1198,7 @@ impl Parser {
                         sort_by: None,
                         cluster_by: None,
                         inferred_type: None,
+                        span: SourceSpan::default(),
                     }))
                 }
             } else {
@@ -1228,7 +1242,7 @@ impl Parser {
                         use_bracket_syntax: false,
                         no_parens: false,
                         quoted: false,
-                        span: None,
+                        span: SourceSpan::default(),
                         inferred_type: None,
                     }))
                 };
@@ -1316,6 +1330,7 @@ impl Parser {
                     ordinality,
                     column_aliases,
                     column_aliases_quoted,
+                    span: SourceSpan::default(),
                 }))
             }
         })
@@ -1349,6 +1364,7 @@ impl Parser {
                     modifiers_inside: false,
                     trailing_comments: self.previous_trailing_comments().to_vec(),
                     inferred_type: None,
+                    span: SourceSpan::default(),
                 }))
             } else if self.check(TokenType::Select)
                 || self.check(TokenType::With)
@@ -1384,6 +1400,7 @@ impl Parser {
                         sort_by: None,
                         cluster_by: None,
                         inferred_type: None,
+                        span: SourceSpan::default(),
                     }));
                     self.parse_set_operation(left)?
                 } else {
@@ -1405,6 +1422,7 @@ impl Parser {
                     modifiers_inside: false,
                     trailing_comments: trailing,
                     inferred_type: None,
+                    span: SourceSpan::default(),
                 }))
             } else if self.check(TokenType::LParen) {
                 let inner = self.parse_table_expression()?;
@@ -1498,6 +1516,7 @@ impl Parser {
                         modifiers_inside: true,
                         trailing_comments: Vec::new(),
                         inferred_type: None,
+                        span: SourceSpan::default(),
                     }))
                 } else if self.check(TokenType::Limit) || self.check(TokenType::Offset) {
                     let limit = if self.match_token(TokenType::Limit) {
@@ -1533,6 +1552,7 @@ impl Parser {
                         modifiers_inside: true,
                         trailing_comments: Vec::new(),
                         inferred_type: None,
+                        span: SourceSpan::default(),
                     }))
                 } else {
                     result
@@ -1547,6 +1567,7 @@ impl Parser {
                     Expression::Paren(Box::new(Paren {
                         this: result,
                         trailing_comments: Vec::new(),
+                        span: SourceSpan::default(),
                     }))
                 }
             } else if self.is_identifier_token()
@@ -1560,6 +1581,7 @@ impl Parser {
                     Expression::Paren(Box::new(Paren {
                         this: left,
                         trailing_comments: Vec::new(),
+                        span: SourceSpan::default(),
                     }))
                 } else {
                     Expression::JoinedTable(Box::new(JoinedTable {
@@ -1588,6 +1610,7 @@ impl Parser {
                     modifiers_inside: false,
                     trailing_comments: self.previous_trailing_comments().to_vec(),
                     inferred_type: None,
+                    span: SourceSpan::default(),
                 }))
             }
         })

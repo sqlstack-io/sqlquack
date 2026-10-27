@@ -1,6 +1,6 @@
 //! Run-time checks that raise where DuckDB's JSON could differ from Snowflake's VARIANT.
 
-use crate::blocks::main::raised::raised;
+use crate::raises::main::raised::raised;
 use crate::semi_structured::constants::{JSON_DECIMAL_DIGITS, JSON_FIDELITY};
 
 /// An expression raising the json_fidelity error, naming `what`.

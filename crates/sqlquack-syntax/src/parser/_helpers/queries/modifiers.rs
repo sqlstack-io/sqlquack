@@ -27,6 +27,7 @@ use crate::parser::constants::PERCENT_SIGN;
 use crate::parser::models::JoinKindParts;
 use crate::parser::models::Parser;
 use crate::parser::models::SetOperationCorresponding;
+use crate::tokens::models::SourceSpan;
 use crate::tokens::models::TokenType;
 use crate::tokens::types::Result;
 
@@ -408,6 +409,7 @@ impl Parser {
                     corresponding,
                     strict,
                     on_columns,
+                    span: SourceSpan::default(),
                 }));
                 found_set_op = true;
             } else if self.check_set_operation_start(TokenType::Intersect) {
@@ -453,6 +455,7 @@ impl Parser {
                     corresponding,
                     strict,
                     on_columns,
+                    span: SourceSpan::default(),
                 }));
                 if self.config.dialect == Some(crate::tokens::models::DialectType::Snowflake) {
                     result = Self::snowflake_intersect_precedence(result);
@@ -501,6 +504,7 @@ impl Parser {
                     corresponding,
                     strict,
                     on_columns,
+                    span: SourceSpan::default(),
                 }));
                 found_set_op = true;
             } else if side.is_some() || kind.is_some() {
@@ -789,6 +793,7 @@ impl Parser {
                     sort_by: None,
                     cluster_by: None,
                     inferred_type: None,
+                    span: SourceSpan::default(),
                 })))
             } else if self.check(TokenType::LParen) {
                 let inner = self.parse_select_or_paren_select()?;
@@ -815,6 +820,7 @@ impl Parser {
                     sort_by: None,
                     cluster_by: None,
                     inferred_type: None,
+                    span: SourceSpan::default(),
                 })))
             } else {
                 Err(self.parse_error("Expected SELECT, VALUES, or ( after ("))
@@ -901,6 +907,7 @@ impl Parser {
                     operator_comments: Vec::new(),
                     trailing_comments: Vec::new(),
                     inferred_type: None,
+                    span: SourceSpan::default(),
                 })));
                 if !self.match_token(TokenType::Comma) {
                     break;
@@ -951,7 +958,7 @@ impl Parser {
                 use_bracket_syntax: false,
                 no_parens: false,
                 quoted: false,
-                span: None,
+                span: SourceSpan::default(),
                 inferred_type: None,
             })));
         }
@@ -1324,6 +1331,7 @@ impl Parser {
                 comments: Vec::new(),
                 nesting_group: 0,
                 directed: false,
+                span: SourceSpan::default(),
             });
         }
         Ok(table_joins)

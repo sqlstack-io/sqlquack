@@ -56,7 +56,8 @@ pub(crate) fn convert_from(
                     "LATERAL as the first FROM source".to_owned(),
                 ));
             }
-            let flattened = lateral_flatten(lateral, &relations, outer, context)?;
+            let flattened = lateral_flatten(lateral, &relations, outer, context)
+                .map_err(|refusal| context.locator.placed(refusal, source))?;
             sql.push_str(&flattened.sql);
             relations.push(flattened.relation);
             continue;
@@ -69,7 +70,8 @@ pub(crate) fn convert_from(
         relations.push(relation);
     }
     for join in list(select, "joins") {
-        let (join_sql, relation) = convert_join(join, &relations, outer, context)?;
+        let (join_sql, relation) = convert_join(join, &relations, outer, context)
+            .map_err(|refusal| context.locator.placed(refusal, join))?;
         sql.push_str(&join_sql);
         relations.push(relation);
     }
@@ -140,6 +142,15 @@ fn convert_join(
 }
 
 fn convert_source(
+    source: &Value,
+    context: &Context<'_>,
+) -> Result<(String, ScopeRelation), Refusal> {
+    let (sql, relation) = convert_source_kind(source, context)
+        .map_err(|refusal| context.locator.placed(refusal, source))?;
+    Ok((context.locator.identified(&sql, source), relation))
+}
+
+fn convert_source_kind(
     source: &Value,
     context: &Context<'_>,
 ) -> Result<(String, ScopeRelation), Refusal> {

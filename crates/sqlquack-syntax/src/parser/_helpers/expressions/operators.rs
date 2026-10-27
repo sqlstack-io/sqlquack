@@ -42,6 +42,7 @@ use crate::expressions::tree::models::Expression;
 use crate::expressions::typed_functions::models::JsonExtractFunc;
 use crate::expressions::types::models::DataType;
 use crate::parser::models::Parser;
+use crate::tokens::models::SourceSpan;
 use crate::tokens::models::TokenType;
 use crate::tokens::types::Result;
 
@@ -1085,6 +1086,7 @@ impl Parser {
                         this: Expression::Identifier(Identifier::new("VALUE")),
                         not: true,
                         postfix_form: false,
+                        span: SourceSpan::default(),
                     })),
                 });
             } else {
@@ -1428,10 +1430,11 @@ impl Parser {
 
     /// Parses an expression; assignment (:=) binds looser than OR.
     pub(crate) fn parse_expression(&mut self) -> Result<Expression> {
+        let start = self.current;
         let outer_path = std::mem::take(&mut self.parsing_duckdb_json_path);
         let result = self.with_recursive_stack(|parser| parser.parse_expression_inner());
         self.parsing_duckdb_json_path = outer_path;
-        result
+        Ok(self.spanned(start, result?))
     }
 
     pub(crate) fn parse_expression_inner(&mut self) -> Result<Expression> {
@@ -1484,8 +1487,10 @@ impl Parser {
     /// Parse OR expressions
     #[inline(always)]
     pub(crate) fn parse_or(&mut self) -> Result<Expression> {
+        let start = self.current;
         let left = self.parse_xor()?;
-        self.parse_or_tail(left)
+        let expr = self.parse_or_tail(left)?;
+        Ok(self.spanned(start, expr))
     }
 
     #[inline(never)]
@@ -1525,6 +1530,7 @@ impl Parser {
                 operator_comments,
                 trailing_comments: Vec::new(),
                 inferred_type: None,
+                span: SourceSpan::default(),
             }));
         }
 
@@ -1555,8 +1561,10 @@ impl Parser {
     /// Parse AND expressions
     #[inline(always)]
     pub(crate) fn parse_and(&mut self) -> Result<Expression> {
+        let start = self.current;
         let left = self.parse_not()?;
-        self.parse_and_tail(left)
+        let expr = self.parse_and_tail(left)?;
+        Ok(self.spanned(start, expr))
     }
 
     #[inline(never)]
@@ -1596,6 +1604,7 @@ impl Parser {
                 operator_comments,
                 trailing_comments: Vec::new(),
                 inferred_type: None,
+                span: SourceSpan::default(),
             }));
         }
 
@@ -1608,7 +1617,9 @@ impl Parser {
             return self.parse_comparison();
         }
 
-        self.parse_not_prefixes()
+        let start = self.current;
+        let expr = self.parse_not_prefixes()?;
+        Ok(self.spanned(start, expr))
     }
 
     #[inline(never)]
@@ -1630,8 +1641,10 @@ impl Parser {
     /// Parse comparison expressions
     #[inline(always)]
     pub(crate) fn parse_comparison(&mut self) -> Result<Expression> {
+        let start = self.current;
         let pre_left_comments = self.current_leading_comments().to_vec();
         let left = self.parse_bitwise_or()?;
-        self.parse_comparison_tail(left, pre_left_comments)
+        let expr = self.parse_comparison_tail(left, pre_left_comments)?;
+        Ok(self.spanned(start, expr))
     }
 }

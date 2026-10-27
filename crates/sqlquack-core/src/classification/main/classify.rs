@@ -5,12 +5,16 @@ use sqlquack_syntax::ExpressionWalk;
 
 use crate::classification::_helpers::clauses::clause_constructs;
 use crate::classification::_helpers::identity::node_constructs;
-use crate::classification::_helpers::locations::{LineIndex, resolve_locations};
+use crate::classification::_helpers::locations::resolve_locations;
 use crate::classification::models::Occurrence;
-use crate::parsing::models::SourceDialect;
+use crate::parsing::models::{SourceDialect, SourceLines};
 
-/// Every construct in `statement`, in source order, positioned against the `source` it came from.
-pub fn classify(statement: &Expression, source: &str, dialect: SourceDialect) -> Vec<Occurrence> {
+/// Every construct in `statement`, in source order, positioned in the source whose `lines` are given.
+pub fn classify(
+    statement: &Expression,
+    lines: &SourceLines,
+    dialect: SourceDialect,
+) -> Vec<Occurrence> {
     let mut nodes: Vec<&Expression> = Vec::new();
     let mut parents: Vec<Option<usize>> = Vec::new();
     let mut pending: Vec<(&Expression, Option<usize>)> = vec![(statement, None)];
@@ -25,7 +29,7 @@ pub fn classify(statement: &Expression, source: &str, dialect: SourceDialect) ->
                 .map(|child| (child, Some(position))),
         );
     }
-    let locations = resolve_locations(&nodes, &parents, &LineIndex::new(source));
+    let locations = resolve_locations(&nodes, &parents, lines);
     let mut occurrences: Vec<Occurrence> = Vec::new();
     for (node, location) in nodes.iter().zip(locations) {
         let constructs = node_constructs(node, dialect)

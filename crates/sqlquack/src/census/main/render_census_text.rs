@@ -2,7 +2,8 @@
 
 use std::fmt::Write;
 
-use crate::census::models::{BlockerReport, CensusReport, RefusalCount};
+use crate::census::constants::PLACED_PER_FILE;
+use crate::census::models::{BlockedFile, BlockerReport, CensusReport, RefusalCount};
 
 /// The report as text, listing at most `limit` constructs.
 pub fn render_census_text(report: &CensusReport, limit: usize) -> String {
@@ -119,5 +120,37 @@ fn render_blockers(text: &mut String, blockers: &BlockerReport, limit: usize) {
             "  {:>6}  {:>6}  {:>10}  {:>6}  {}: {}",
             root.total, root.direct, root.downstream, root.sole, root.category, root.construct
         );
+    }
+    let placed: Vec<&BlockedFile> = blockers
+        .files
+        .iter()
+        .filter(|file| !file.placed.is_empty())
+        .take(limit)
+        .collect();
+    if placed.is_empty() {
+        return;
+    }
+    let _ = writeln!(text);
+    let _ = writeln!(text, "Refusal positions (first {limit} refused files)");
+    for file in placed {
+        for refusal in file.placed.iter().take(PLACED_PER_FILE) {
+            let position = match (refusal.line, refusal.column) {
+                (Some(line), Some(column)) => format!("{line}:{column}"),
+                _ => "-".to_owned(),
+            };
+            let _ = writeln!(
+                text,
+                "  {}  {position}  {}: {}",
+                file.model, refusal.category, refusal.construct
+            );
+        }
+        if file.placed.len() > PLACED_PER_FILE {
+            let _ = writeln!(
+                text,
+                "  {}  +{} more",
+                file.model,
+                file.placed.len() - PLACED_PER_FILE
+            );
+        }
     }
 }

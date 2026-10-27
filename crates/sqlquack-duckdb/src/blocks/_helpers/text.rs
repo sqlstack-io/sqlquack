@@ -8,9 +8,9 @@ use sqlquack_core::failures::models::SnowflakeCode;
 use sqlquack_core::provenance::models::ProvenanceLog;
 
 use crate::blocks::constants::{CONVERSION_WHITESPACE, NUMBER_RANGE_MESSAGE, VARIANT_CAST_MESSAGE};
-use crate::blocks::main::raised::raised;
 use crate::blocks::main::string_literal::string_literal;
 use crate::blocks::models::TextFailure;
+use crate::raises::main::raised::raised;
 
 pub(crate) fn expanded(sql: &str, expansions: &[(&str, &str)], log: &ProvenanceLog) -> String {
     let mut text = sql.to_owned();

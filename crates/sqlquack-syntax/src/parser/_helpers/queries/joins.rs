@@ -8,6 +8,7 @@ use crate::expressions::tree::models::Expression;
 use crate::expressions::types::models::Tuple;
 use crate::parser::models::JoinKindParts;
 use crate::parser::models::Parser;
+use crate::tokens::models::SourceSpan;
 use crate::tokens::models::TokenType;
 use crate::tokens::types::Result;
 
@@ -118,6 +119,7 @@ impl Parser {
                     comments: join_comments,
                     nesting_group,
                     directed,
+                    span: self.source_range(pos_before_join_kind),
                 });
             }
 
@@ -156,6 +158,7 @@ impl Parser {
                             pre_alias_comments: Vec::new(),
                             trailing_comments: Vec::new(),
                             inferred_type: None,
+                            span: SourceSpan::default(),
                         }))
                     } else {
                         expr
@@ -207,6 +210,7 @@ impl Parser {
                     pre_alias_comments: Vec::new(),
                     trailing_comments: Vec::new(),
                     inferred_type: None,
+                    span: SourceSpan::default(),
                 }))
             } else {
                 table

@@ -1,7 +1,10 @@
 //! One case as a sqllogictest-style review record.
 
+use std::collections::BTreeMap;
+
 use sqlquack_compare::comparison::models::RowOrder;
 use sqlquack_compare::values::main::canonical_rows::canonical_rows;
+use sqlquack_core::parsing::models::SourceLocation;
 use sqlquack_core::provenance::models::Provenance;
 use sqlquack_evidence::cases::models::LoadedCase;
 use sqlquack_evidence::results::main::column_type::column_type;
@@ -44,13 +47,16 @@ pub(crate) fn render_case(review: &CaseReview<'_>) -> String {
         case.source_sql.trim()
     ));
     text.push_str(&match &review.conversion {
-        Conversion::Converted { sql, setup, .. } => format!(
-            "converted duckdb\n{}\n\n",
+        Conversion::Converted {
+            sql, setup, raises, ..
+        } => format!(
+            "converted duckdb\n{}\n{}\n",
             setup
                 .iter()
                 .map(|statement| format!("{statement};\n"))
                 .chain([sql.clone()])
-                .collect::<String>()
+                .collect::<String>(),
+            raise_lines(raises)
         ),
         Conversion::Refused { reasons, .. } => {
             let lines: String = reasons
@@ -194,4 +200,17 @@ fn recorded_types(stored: &StoredResult) -> String {
         ));
     }
     text
+}
+
+/// One `# raise <id> at <line>:<column>, …` comment per raise ID of a conversion.
+fn raise_lines(raises: &BTreeMap<String, Vec<SourceLocation>>) -> String {
+    let mut lines = String::new();
+    for (id, locations) in raises {
+        let places: Vec<String> = locations
+            .iter()
+            .map(|location| format!("{}:{}", location.line, location.column))
+            .collect();
+        lines.push_str(&format!("# raise {id} at {}\n", places.join(", ")));
+    }
+    lines
 }
