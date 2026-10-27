@@ -737,3 +737,14 @@ id = "index_then_key_path"
 marker = "]:"
 polyglot_errors = ["Invalid expression / Unexpected token", "Expected RParen, got Colon (':')"]
 note = "v[3]:a is a key path on an array element; polyglot accepts a path only after a column, path or call"
+
+# Statements SQLQuack rejects where polyglot parses them. The check counts an entry as rejected only
+# for this exact statement in a listed dialect when SQLQuack's error contains `sqlquack_error`;
+# crates/sqlquack-syntax/src/parser/tests/test_typed_expressions.rs pins the error.
+
+[[rejection]]
+id = "malformed_typed_type_text"
+sql = "SELECT __polyglot_typed(amount, 'NOT A TYPE (') FROM orders"
+dialects = ["Snowflake", "DuckDB"]
+sqlquack_error = "Unexpected token after data type"
+note = "malformed typed-expression type text errors instead of degrading to an ordinary call"

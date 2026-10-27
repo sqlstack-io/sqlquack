@@ -12,6 +12,7 @@ pub fn load_expected(path: &Path) -> Result<ExpectedDifferences, String> {
         .map_err(|error| format!("cannot parse {}: {error}", path.display()))?;
     let mut expected = ExpectedDifferences {
         fixes: file.fixes,
+        rejections: file.rejections,
         ..ExpectedDifferences::default()
     };
     for spelling in file.spellings {

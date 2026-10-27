@@ -1,7 +1,8 @@
 //! The constructs a single node stands for, apart from its clauses.
 
 use sqlquack_syntax::Expression;
-use sqlquack_syntax::expressions::{Cast, DataType};
+use sqlquack_syntax::expressions::operators::models::Cast;
+use sqlquack_syntax::expressions::types::models::DataType;
 
 use crate::classification::main::cast_type_name::cast_type_name;
 use crate::parsing::models::SourceDialect;

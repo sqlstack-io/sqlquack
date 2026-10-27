@@ -12,8 +12,3 @@ tests = []
 tooling = ["crates/sqlquack-polyglot-check"]
 rule_packs = ["rust"]
 select = ["FPRS"]
-
-# The tokenizer, parser and tree copied from polyglot keep polyglot's layout until the split step
-# makes them fensu-clean under the exact check (docs/syntax.md).
-[targets.rust.evaluation]
-exclude = ["crates/sqlquack-syntax/**", "crates/sqlquack-syntax-derive/**"]

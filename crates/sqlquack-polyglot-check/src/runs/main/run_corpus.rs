@@ -49,9 +49,14 @@ pub fn run_corpus(entries: &[CorpusEntry], expected: &ExpectedDifferences) -> Ru
                 let fix = expected
                     .fix_for(&entry.sql, &polyglot)
                     .filter(|_| sqlquack.starts_with(OK_PREFIX));
-                match fix {
-                    Some(fix) => *summary.fixed.entry(fix.id.clone()).or_default() += 1,
-                    None => summary.differences.push(Finding {
+                let dialect = format!("{:?}", entry.dialect);
+                let rejection = expected.rejection_for(&entry.sql, &dialect, &polyglot, &sqlquack);
+                match (fix, rejection) {
+                    (Some(fix), _) => *summary.fixed.entry(fix.id.clone()).or_default() += 1,
+                    (None, Some(rejection)) => {
+                        *summary.rejected.entry(rejection.id.clone()).or_default() += 1;
+                    }
+                    (None, None) => summary.differences.push(Finding {
                         from,
                         detail: format!("polyglot: {polyglot}\nsqlquack: {sqlquack}"),
                     }),

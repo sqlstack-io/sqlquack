@@ -25,6 +25,8 @@ pub struct RunSummary {
     pub same_errors: usize,
     /// Entries polyglot rejects and SQLQuack parses, as a reviewed fix explains.
     pub fixed: BTreeMap<String, usize>,
+    /// Entries SQLQuack rejects and polyglot parses, as a reviewed rejection explains.
+    pub rejected: BTreeMap<String, usize>,
     /// Entries whose results differ.
     pub differences: Vec<Finding>,
     /// Entries whose lossless tokens do not reproduce the input.

@@ -32,6 +32,20 @@ they then become ours. Snowflake and DuckDB are the first analysis dialects.
 | `sqlquack-core` | parsing entry points re-pointed at `sqlquack-syntax`, plus classification, refusals and provenance as today | removed in step 5 |
 | `sqlquack-duckdb` | building blocks, the DuckDB printer and DuckDB's own check of the printed SQL (step 4) | never |
 
+Inside `sqlquack-syntax` the copied files are split into fensu's domain layout, by
+`scripts/fensu_split_modules.py` following the placements in `scripts/fensu/constants.py`: `tokens`
+(the tokenizer, its errors and the `Dialect` and `CallMode` settings), `lossless`, `modes`, `guard`,
+`parser` (the parser, split by statement family under `_helpers/`, and the dialect settings it
+parses with), `functions` (polyglot's function registry), `traversal` and `expressions` (the tree,
+see below). The split moves items without editing them and re-points every path;
+`scripts/fensu_prune_imports.py` then drops the imports no build needs.
+
+The tree's node types are about 12,000 lines, more than fensu's 2,000-line limit for one file, so
+`scripts/fensu_split_models.py` splits them into one `expressions` subdomain per area, following
+`MODEL_PLACEMENTS`: `tree` (the `Expression` node), `names`, `queries`, `operators`, `functions`,
+`typed_functions`, `types`, `tables`, `columns`, `schema_objects` and `statements`. Each area's
+`main/` holds a function the parser calls that builds or reshapes that area's nodes.
+
 No runtime crate depends on `sqlquack-polyglot-check`. `make polyglot-guard`, part of `check-ci`,
 reads Cargo's resolved graph and fails if a workspace crate outside an allowed set reaches polyglot
 through normal (not dev or build) dependencies. Since step 5 the allowed set
@@ -63,9 +77,9 @@ The copied files are byte-for-byte polyglot's except for these edits:
 
 Polyglot's other feature gates stay as written and are never enabled. `parser.rs` still holds
 branches for other dialects; they stay, unreachable, until the strip step deletes them under the
-exact check. Until the strip and split steps the copied modules allow polyglot's lint level and
-dead code on their declarations in `lib.rs`, and fensu skips both copied crates; SQLQuack's own
-modules (`lossless.rs`, `modes.rs`) are linted as usual.
+exact check. Until the strip and split steps the copied modules allowed polyglot's lint level and
+dead code on their declarations in `lib.rs`, and fensu skipped both copied crates; since the split
+fensu checks them like the rest of the workspace.
 
 **Licensing.** `THIRD_PARTY_NOTICES` holds polyglot's MIT text and copyright line next to
 sqlglot's, and says that parts of the tokenizer and parser are derived from polyglot. There are no
@@ -164,6 +178,12 @@ same file: an id, a marker the statement contains (whitespace removed) and polyg
 The check counts a statement as fixed, not different, only when SQLQuack parses it, polyglot's
 error is one listed, and the marker appears; `crates/sqlquack-syntax/tests/fixes.rs` pins the tree
 each fix produces. The first fix: `v[3]:a`, a key path on an array element.
+
+The opposite case, a statement SQLQuack rejects and polyglot parses, is a `[[rejection]]` entry:
+an id, the exact statement, its dialects and text of SQLQuack's error. The check counts it as
+rejected, not different, only for that statement in a listed dialect with that error. The only
+rejection: `__polyglot_typed(amount, 'NOT A TYPE (')`, a generated typed-expression marker whose
+type text is malformed, errors instead of becoming an ordinary call.
 
 The faithful parse also keeps a quoted variant path key that holds `.`, `[`, `]`, `"` or `:` in
 brackets (`v:a."x.y"` is the path `a["x.y"]`), where polyglot joins it with dots (`a.x.y`), which
