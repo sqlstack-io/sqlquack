@@ -20,5 +20,7 @@ mod test_guarded_conditions;
 mod test_locations;
 #[path = "tests/test_raises.rs"]
 mod test_raises;
+#[path = "tests/test_structured_types.rs"]
+mod test_structured_types;
 #[path = "tests/test_types.rs"]
 mod test_types;

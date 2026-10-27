@@ -19,6 +19,7 @@ use sqlquack_duckdb::temporal::main::text_to_timestamp::text_to_timestamp;
 use sqlquack_duckdb::temporal::main::utc_wall_time::utc_wall_time;
 use sqlquack_duckdb::variants::main::json_kind_cast::json_kind_cast;
 use sqlquack_snowflake::typing::constants::CAST_TARGET;
+use sqlquack_snowflake::typing::constants::STRUCTURED_UNSUPPORTED;
 use sqlquack_snowflake::typing::main::cast_target::cast_target;
 use sqlquack_snowflake::typing::models::{CastTarget, SnowflakeType};
 
@@ -45,6 +46,8 @@ use crate::conversion::constants::{
     VARIANT_TO_VARCHAR,
 };
 
+/// Serialised kinds of Snowflake's structured types.
+const STRUCTURED_KINDS: &[&str] = &["array", "object", "map"];
 /// Text Snowflake and DuckDB both read as `true`.
 const TRUE_TEXT: &str = "true";
 /// Text Snowflake and DuckDB both read as `false`.
@@ -73,6 +76,12 @@ pub(crate) fn convert_cast(
             "a cast target type has no name".to_owned(),
         )
     })?;
+    if is_structured(to) {
+        return Err(missing(
+            construct,
+            format!("casting to the structured type {type_name} {STRUCTURED_UNSUPPORTED}"),
+        ));
+    }
     let log = site.context.log;
     let refuse = |reason: String| outside_conditions(construct.clone(), reason);
     let target = cast_target(&type_name, &ProvenanceLog::default()).map_err(refuse)?;
@@ -457,6 +466,34 @@ fn with_arguments(base: &str, arguments: &[Option<u64>]) -> String {
     }
 }
 
+/// Whether a serialised type is a structured ARRAY, OBJECT or MAP, with element or field types.
+fn is_structured(data_type: &Value) -> bool {
+    data_type
+        .get("data_type")
+        .and_then(Value::as_str)
+        .is_some_and(|kind| STRUCTURED_KINDS.contains(&kind))
+}
+
+/// The Snowflake spelling of a structured type's fields, `<name> <type> [NOT NULL]`.
+fn field_names(fields: &[Value]) -> Option<Vec<String>> {
+    let mut names: Vec<String> = Vec::new();
+    for field in fields {
+        let [name, data_type, not_null] = field.as_array()?.as_slice() else {
+            return None;
+        };
+        let suffix = match not_null.as_bool()? {
+            true => " NOT NULL",
+            false => "",
+        };
+        names.push(format!(
+            "{} {}{suffix}",
+            name.as_str()?,
+            data_type_name(data_type)?
+        ));
+    }
+    Some(names)
+}
+
 /// The Snowflake spelling of a serialised cast target type.
 fn data_type_name(data_type: &Value) -> Option<String> {
     let object = data_type.as_object()?;
@@ -478,6 +515,16 @@ fn data_type_name(data_type: &Value) -> Option<String> {
         "time" if !zoned => with_arguments("TIME", &[number("precision")]),
         "timestamp" if zoned => with_arguments("TIMESTAMP_TZ", &[number("precision")]),
         "timestamp" => with_arguments("TIMESTAMP", &[number("precision")]),
+        "array" => format!("ARRAY({})", data_type_name(object.get("element_type")?)?),
+        "map" => format!(
+            "MAP({}, {})",
+            data_type_name(object.get("key_type")?)?,
+            data_type_name(object.get("value_type")?)?
+        ),
+        "object" => format!(
+            "OBJECT({})",
+            field_names(object.get("fields")?.as_array()?)?.join(", ")
+        ),
         _ => return None,
     })
 }

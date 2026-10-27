@@ -15,6 +15,13 @@ fn given_refused_sql_when_analyzing_then_each_refusal_is_placed_at_its_construct
             expected_places: vec![(RefusalCategory::MissingRule, "NOSUCHFN(amount)", [2, 3])],
         },
         LocationTestCase {
+            description: "a cast to a structured type is a missing rule placed at the cast",
+            sql: "SELECT customer_id,\n  note::ARRAY(VARCHAR) AS a\nFROM customers",
+            declared: None,
+            budget: None,
+            expected_places: vec![(RefusalCategory::MissingRule, "note::ARRAY(VARCHAR)", [2, 3])],
+        },
+        LocationTestCase {
             description: "non-ASCII text before a construct counts in characters",
             sql: "SELECT 'héllo wörld' AS g,\n  'ünï' AS h, NOSUCHFN(amount) AS x\nFROM orders",
             declared: None,

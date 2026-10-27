@@ -729,14 +729,33 @@ polyglot = ["year"]
 note = "polyglot lowers it to node:year"
 
 # Valid Snowflake polyglot rejects and SQLQuack parses. The check counts an entry as fixed only
-# when polyglot's error contains one of `polyglot_errors` and the statement, without whitespace, contains
-# `marker`; crates/sqlquack-syntax/tests/fixes.rs pins SQLQuack's tree for each fix.
+# when polyglot's error contains one of `polyglot_errors` and the statement, without whitespace and
+# ignoring case, contains `marker`; crates/sqlquack-syntax/tests/parser/test_fixes.rs pins
+# SQLQuack's tree for each fix.
 
 [[fix]]
 id = "index_then_key_path"
 marker = "]:"
 polyglot_errors = ["Invalid expression / Unexpected token", "Expected RParen, got Colon (':')"]
 note = "v[3]:a is a key path on an array element; polyglot accepts a path only after a column, path or call"
+
+[[fix]]
+id = "double_colon_object_type"
+marker = "::OBJECT("
+polyglot_errors = ["Invalid expression / Unexpected token"]
+note = "x::OBJECT(a INT) is the structured OBJECT type CAST(x AS OBJECT(a INT)) parses; polyglot's :: types stop at OBJECT"
+
+[[fix]]
+id = "nested_object_type_in_array"
+marker = "(OBJECT("
+polyglot_errors = ["Expected RParen, got LParen ('(')"]
+note = "x::ARRAY(OBJECT(k INT)) nests a structured OBJECT as CAST(x AS ARRAY(OBJECT(k INT))) does"
+
+[[fix]]
+id = "nested_object_type_in_map"
+marker = ",OBJECT("
+polyglot_errors = ["Expected RParen, got LParen ('(')"]
+note = "x::MAP(VARCHAR, OBJECT(k INT)) nests a structured OBJECT as the CAST form does"
 
 # Statements SQLQuack rejects where polyglot parses them. The check counts an entry as rejected only
 # for this exact statement in a listed dialect when SQLQuack's error contains `sqlquack_error`;

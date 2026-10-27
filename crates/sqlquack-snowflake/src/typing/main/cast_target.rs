@@ -3,7 +3,9 @@
 use sqlquack_core::provenance::models::ProvenanceLog;
 
 use crate::typing::_helpers::targets::{fractional, number_target, parse_arguments, text_target};
-use crate::typing::constants::{CAST_TARGET, NUMBER_38_0};
+use crate::typing::constants::{
+    CAST_TARGET, NUMBER_38_0, STRUCTURED_TYPES, STRUCTURED_UNSUPPORTED,
+};
 use crate::typing::models::{CastTarget, SnowflakeType};
 
 /// The type a Snowflake type name denotes, under `TIMESTAMP_TYPE_MAPPING = TIMESTAMP_NTZ`.
@@ -14,6 +16,15 @@ pub fn cast_target(name: &str, log: &ProvenanceLog) -> Result<CastTarget, String
         .filter(|character| !character.is_whitespace())
         .collect::<String>()
         .to_ascii_uppercase();
+    let structured = match compact.split_once('(') {
+        Some((base, _)) => STRUCTURED_TYPES.contains(&base),
+        None => compact == STRUCTURED_TYPES[2],
+    };
+    if structured {
+        return Err(format!(
+            "the structured type `{name}` {STRUCTURED_UNSUPPORTED}"
+        ));
+    }
     let (base, arguments) = match compact.split_once('(') {
         Some((base, rest)) => (base.to_owned(), parse_arguments(rest, name)?),
         None => (compact.clone(), Vec::new()),
