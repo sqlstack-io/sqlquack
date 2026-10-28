@@ -7,10 +7,14 @@ use sqlquack_duckdb::blocks::main::cast::cast;
 use sqlquack_duckdb::blocks::main::decimal_arithmetic::decimal_arithmetic;
 use sqlquack_duckdb::blocks::main::double_arithmetic::double_arithmetic;
 use sqlquack_duckdb::blocks::main::exact_decimal_divide::exact_decimal_divide;
+use sqlquack_duckdb::semi_structured::constants::JSON_FIDELITY;
+use sqlquack_duckdb::semi_structured::main::json_number_equal::json_number_equal;
+use sqlquack_duckdb::semi_structured::main::json_text::json_text;
 use sqlquack_snowflake::typing::constants::MAX_PRECISION;
 use sqlquack_snowflake::typing::main::comparison::comparison;
 use sqlquack_snowflake::typing::main::numeric_add_subtract::numeric_add_subtract;
 use sqlquack_snowflake::typing::main::numeric_divide::numeric_divide;
+use sqlquack_snowflake::typing::main::numeric_modulo::numeric_modulo;
 use sqlquack_snowflake::typing::main::numeric_multiply::numeric_multiply;
 use sqlquack_snowflake::typing::models::SnowflakeType;
 
@@ -22,8 +26,9 @@ use crate::conversion::_helpers::support::tree::{
     field, node_construct, outside_conditions, payload_object, require_understood,
 };
 use crate::conversion::constants::{
-    COMPARISON, DATE_LITERAL_COMPARISON, DECIMAL_ARITHMETIC, DECIMAL_DIVISION, FLOAT_ARITHMETIC,
-    LOGIC, NULL_SAFE_COMPARISON, NUMERIC_RANGE,
+    COMPARISON, DATE_LITERAL_COMPARISON, DECIMAL_ARITHMETIC, DECIMAL_DIVISION, DECIMAL_MODULO,
+    FLOAT_ARITHMETIC, FLOAT_MODULO, LOGIC, MOD_PAIR, NULL_SAFE_COMPARISON, NUMERIC_RANGE,
+    VARIANT_EQUALITY,
 };
 
 /// Characters in a `YYYY-MM-DD` date.
@@ -119,6 +124,72 @@ pub(crate) fn arithmetic(kind: &str, payload: &Value, site: Site<'_>) -> Result<
     }
 }
 
+/// `a % b` of two NUMBERs; a zero divisor fails as DuckDB's division by zero does.
+pub(crate) fn modulo(payload: &Value, site: Site<'_>) -> Result<Emitted, Refusal> {
+    let (left, right) = operands("mod", payload, site)?;
+    modulo_of((left, right), &node_construct("mod"), site)
+}
+
+/// MOD(a, b), spelled as `a % b`.
+pub(crate) fn mod_call(
+    arguments: &[Value],
+    construct: &Construct,
+    site: Site<'_>,
+) -> Result<Emitted, Refusal> {
+    let [left, right] = arguments else {
+        return Err(outside_conditions(
+            construct.clone(),
+            "MOD takes two arguments".to_owned(),
+        ));
+    };
+    site.context.log.equivalence(MOD_PAIR);
+    let operands = (
+        convert_expression(left, site)?,
+        convert_expression(right, site)?,
+    );
+    modulo_of(operands, construct, site)
+}
+
+fn modulo_of(
+    (left, right): (Emitted, Emitted),
+    construct: &Construct,
+    site: Site<'_>,
+) -> Result<Emitted, Refusal> {
+    let log = site.context.log;
+    let _rule = log.rule(DECIMAL_MODULO);
+    let refuse = |reason: String| outside_conditions(construct.clone(), reason);
+    let result = numeric_modulo(left.data_type, right.data_type, log).map_err(refuse)?;
+    let nonzero_literal = matches!(
+        &right.literal,
+        Some(Literal::Number(digits)) if digits.bytes().any(|byte| byte.is_ascii_digit() && byte != b'0')
+    );
+    if result == SnowflakeType::Float && nonzero_literal {
+        let _float = log.rule(FLOAT_MODULO);
+        return Ok(Emitted::new(
+            format!(
+                "(CAST({} AS DOUBLE) % CAST({} AS DOUBLE))",
+                left.sql, right.sql
+            ),
+            SnowflakeType::Float,
+        ));
+    }
+    if !matches!(
+        (left.data_type, right.data_type, result),
+        (
+            SnowflakeType::Number { .. },
+            SnowflakeType::Number { .. },
+            SnowflakeType::Number { .. }
+        )
+    ) {
+        return Err(refuse(format!(
+            "`%` of {} and {}, which no recording covers",
+            left.data_type, right.data_type
+        )));
+    }
+    let sql = cast(&format!("({} % {})", left.sql, right.sql), result, log).map_err(refuse)?;
+    Ok(Emitted::new(sql, result))
+}
+
 fn exact_arithmetic(
     operator: Arithmetic,
     (left, right): (&Emitted, &Emitted),
@@ -196,6 +267,11 @@ pub(crate) fn comparison_predicate(
 ) -> Result<Emitted, Refusal> {
     let construct = node_construct(kind);
     let (left, right) = operands(kind, payload, site)?;
+    if matches!(kind, "eq" | "neq")
+        && let Some(compared) = variant_equality(kind, (&left, &right), &construct, site.context)?
+    {
+        return Ok(compared);
+    }
     let (left, right) = comparable(left, right, &construct, site.context)?;
     let symbol = match kind {
         "eq" => "=",
@@ -209,6 +285,39 @@ pub(crate) fn comparison_predicate(
         format!("({} {symbol} {})", left.sql, right.sql),
         SnowflakeType::Boolean,
     ))
+}
+
+/// `=` or `<>` of a VARIANT and a VARCHAR or integer NUMBER; None for other operands.
+fn variant_equality(
+    kind: &str,
+    (left, right): (&Emitted, &Emitted),
+    construct: &Construct,
+    context: &Context<'_>,
+) -> Result<Option<Emitted>, Refusal> {
+    let (variant, other) = match (left.data_type, right.data_type) {
+        (SnowflakeType::SemiStructured, _) => (left, right),
+        (_, SnowflakeType::SemiStructured) => (right, left),
+        _ => return Ok(None),
+    };
+    let negation = match kind {
+        "neq" => "NOT ",
+        _ => "",
+    };
+    let compared = match other.data_type {
+        SnowflakeType::Varchar => {
+            format!("({} = {})", json_text(&variant.sql, context.log), other.sql)
+        }
+        SnowflakeType::Number { scale: 0, .. } => {
+            json_number_equal((&variant.sql, &other.sql), context.log)
+        }
+        _ => return Ok(None),
+    };
+    let _rule = context.log.rule(VARIANT_EQUALITY);
+    diverge(context, JSON_FIDELITY, construct)?;
+    Ok(Some(Emitted::new(
+        format!("({negation}{compared})"),
+        SnowflakeType::Boolean,
+    )))
 }
 
 /// EQUAL_NULL(a, b): `a IS NOT DISTINCT FROM b`.

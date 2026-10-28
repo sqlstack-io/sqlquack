@@ -2,11 +2,14 @@
 
 use serde_json::Value;
 use sqlquack_core::refusals::models::Refusal;
+use sqlquack_duckdb::semi_structured::constants::JSON_FIDELITY;
+use sqlquack_duckdb::semi_structured::main::json_text::json_text;
 use sqlquack_snowflake::typing::models::SnowflakeType;
 
 use crate::conversion::_helpers::expressions::operators::{comparable, same_family};
 use crate::conversion::_helpers::expressions::scalar::convert_expression;
 use crate::conversion::_helpers::queries::query::convert_query;
+use crate::conversion::_helpers::support::divergence::diverge;
 use crate::conversion::_helpers::support::scope::Emitted;
 use crate::conversion::_helpers::support::site::Site;
 use crate::conversion::_helpers::support::tree::{
@@ -14,7 +17,7 @@ use crate::conversion::_helpers::support::tree::{
     require_understood,
 };
 use crate::conversion::constants::{
-    BETWEEN, EXISTS, IN_LIST, IN_SUBQUERY, IS_NULL, NOT_IN_SUBQUERY,
+    BETWEEN, EXISTS, IN_LIST, IN_SUBQUERY, IS_NULL, NOT_IN_SUBQUERY, VARIANT_EQUALITY,
 };
 
 fn negated(payload: &serde_json::Map<String, Value>, keyword: &str) -> String {
@@ -50,8 +53,17 @@ pub(crate) fn between(payload: &Value, site: Site<'_>) -> Result<Emitted, Refusa
     let value = convert_expression(field(payload, "this", &construct)?, site)?;
     let low = convert_expression(field(payload, "low", &construct)?, site)?;
     let high = convert_expression(field(payload, "high", &construct)?, site)?;
-    same_family(value.data_type, low.data_type, &construct)?;
-    same_family(value.data_type, high.data_type, &construct)?;
+    let (value, low, high) = match (
+        same_family(value.data_type, low.data_type, &construct),
+        same_family(value.data_type, high.data_type, &construct),
+    ) {
+        (Ok(()), Ok(())) => (value, low, high),
+        _ => {
+            let (compared, low) = comparable(value.clone(), low, &construct, site.context)?;
+            let (_, high) = comparable(value, high, &construct, site.context)?;
+            (compared, low, high)
+        }
+    };
     Ok(Emitted::new(
         format!(
             "({} {} {} AND {})",
@@ -96,12 +108,32 @@ pub(crate) fn in_predicate(payload: &Value, site: Site<'_>) -> Result<Emitted, R
         return in_subquery(value, (query, flag(payload, "not")), site);
     }
     let _rule = site.context.log.rule(IN_LIST);
-    let mut items: Vec<String> = Vec::new();
-    for item in list(payload, "expressions") {
-        let item = convert_expression(item, site)?;
+    let items: Vec<Emitted> = list(payload, "expressions")
+        .iter()
+        .map(|item| convert_expression(item, site))
+        .collect::<Result<_, _>>()?;
+    let value = match value.data_type {
+        SnowflakeType::SemiStructured
+            if !items.is_empty()
+                && items
+                    .iter()
+                    .all(|item| item.data_type == SnowflakeType::Varchar) =>
+        {
+            let _variant = site.context.log.rule(VARIANT_EQUALITY);
+            diverge(site.context, JSON_FIDELITY, &construct)?;
+            Emitted::new(
+                json_text(&value.sql, site.context.log),
+                SnowflakeType::Varchar,
+            )
+        }
+        _ => value,
+    };
+    let mut items_sql: Vec<String> = Vec::new();
+    for item in items {
         same_family(value.data_type, item.data_type, &construct)?;
-        items.push(item.sql);
+        items_sql.push(item.sql);
     }
+    let items = items_sql;
     if items.is_empty() {
         return Err(missing(construct, "IN with no items".to_owned()));
     }

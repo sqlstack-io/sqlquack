@@ -1,3 +1,4 @@
+pub(crate) mod collecting;
 pub(crate) mod divergence;
 pub(crate) mod failure;
 pub(crate) mod locations;

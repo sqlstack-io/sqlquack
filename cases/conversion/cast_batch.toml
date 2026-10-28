@@ -1,0 +1,454 @@
+# Casts models use: FLOAT to text and numbers, zoned timestamps, and VARIANT text to TIMESTAMP_TZ.
+category = "conversion"
+construct = "node:cast"
+session_profile = "utc-v1"
+
+[[case]]
+id = "float_varchar_integers"
+description = "FLOAT cast to VARCHAR: integers."
+columns = [{ name = "x", type = "FLOAT" }]
+rows = [
+  ["0"],
+  ["1"],
+  ["-1"],
+  ["42"],
+  ["100"],
+  ["123456789"],
+  ["-0"],
+  ["NULL"],
+]
+expression = "x::VARCHAR"
+tags = ["null", "boundary", "invalid"]
+
+[[case]]
+id = "float_to_varchar_integers"
+description = "TO_VARCHAR of FLOAT: integers."
+columns = [{ name = "x", type = "FLOAT" }]
+rows = [
+  ["0"],
+  ["1"],
+  ["-1"],
+  ["42"],
+  ["100"],
+  ["123456789"],
+  ["-0"],
+  ["NULL"],
+]
+expression = "TO_VARCHAR(x)"
+tags = ["null", "boundary", "invalid"]
+
+[[case]]
+id = "float_varchar_fractions"
+description = "FLOAT cast to VARCHAR: fractions."
+columns = [{ name = "x", type = "FLOAT" }]
+rows = [
+  ["1.5"],
+  ["-2.25"],
+  ["0.1"],
+  ["0.3"],
+  ["1/3"],
+  ["2/3"],
+  ["123.456"],
+  ["3.14159"],
+  ["NULL"],
+]
+expression = "x::VARCHAR"
+tags = ["null", "boundary", "invalid"]
+
+[[case]]
+id = "float_to_varchar_fractions"
+description = "TO_VARCHAR of FLOAT: fractions."
+columns = [{ name = "x", type = "FLOAT" }]
+rows = [
+  ["1.5"],
+  ["-2.25"],
+  ["0.1"],
+  ["0.3"],
+  ["1/3"],
+  ["2/3"],
+  ["123.456"],
+  ["3.14159"],
+  ["NULL"],
+]
+expression = "TO_VARCHAR(x)"
+tags = ["null", "boundary", "invalid"]
+
+[[case]]
+id = "float_varchar_large"
+description = "FLOAT cast to VARCHAR: large."
+columns = [{ name = "x", type = "FLOAT" }]
+rows = [
+  ["1E15"],
+  ["1E16"],
+  ["123456789012345678"],
+  ["1E20"],
+  ["-1E21"],
+  ["9007199254740993"],
+  ["1.7976931348623157E308"],
+]
+expression = "x::VARCHAR"
+tags = ["null", "boundary", "invalid"]
+
+[[case]]
+id = "float_to_varchar_large"
+description = "TO_VARCHAR of FLOAT: large."
+columns = [{ name = "x", type = "FLOAT" }]
+rows = [
+  ["1E15"],
+  ["1E16"],
+  ["123456789012345678"],
+  ["1E20"],
+  ["-1E21"],
+  ["9007199254740993"],
+  ["1.7976931348623157E308"],
+]
+expression = "TO_VARCHAR(x)"
+tags = ["null", "boundary", "invalid"]
+
+[[case]]
+id = "float_varchar_small"
+description = "FLOAT cast to VARCHAR: small."
+columns = [{ name = "x", type = "FLOAT" }]
+rows = [
+  ["0.001"],
+  ["0.0001"],
+  ["1E-5"],
+  ["1.5E-7"],
+  ["-2.5E-10"],
+  ["5E-324"],
+]
+expression = "x::VARCHAR"
+tags = ["null", "boundary", "invalid"]
+expected_divergence = "float_text"
+
+[[case]]
+id = "float_to_varchar_small"
+description = "TO_VARCHAR of FLOAT: small."
+columns = [{ name = "x", type = "FLOAT" }]
+rows = [
+  ["0.001"],
+  ["0.0001"],
+  ["1E-5"],
+  ["1.5E-7"],
+  ["-2.5E-10"],
+  ["5E-324"],
+]
+expression = "TO_VARCHAR(x)"
+tags = ["null", "boundary", "invalid"]
+expected_divergence = "float_text"
+
+[[case]]
+id = "float_varchar_special"
+description = "FLOAT cast to VARCHAR: special."
+columns = [{ name = "x", type = "FLOAT" }]
+rows = [
+  ["'NaN'"],
+  ["'inf'"],
+  ["'-inf'"],
+]
+expression = "x::VARCHAR"
+tags = ["null", "boundary", "invalid"]
+
+[[case]]
+id = "float_to_varchar_special"
+description = "TO_VARCHAR of FLOAT: special."
+columns = [{ name = "x", type = "FLOAT" }]
+rows = [
+  ["'NaN'"],
+  ["'inf'"],
+  ["'-inf'"],
+]
+expression = "TO_VARCHAR(x)"
+tags = ["null", "boundary", "invalid"]
+
+[[case]]
+id = "float_number_10_2"
+description = "FLOAT cast to NUMBER(10,2): rounding at the scale, halves and negatives."
+columns = [{ name = "x", type = "FLOAT" }]
+rows = [
+  ["0"],
+  ["1.5"],
+  ["-1.5"],
+  ["0.125"],
+  ["0.135"],
+  ["2.675"],
+  ["-2.675"],
+  ["1/3"],
+  ["1E-7"],
+  ["0.000005"],
+  ["NULL"],
+]
+expression = "x::NUMBER(10,2)"
+tags = ["null", "boundary", "invalid"]
+
+[[case]]
+id = "float_number_7_6"
+description = "FLOAT cast to NUMBER(7,6): rounding at the scale, halves and negatives."
+columns = [{ name = "x", type = "FLOAT" }]
+rows = [
+  ["0"],
+  ["1.5"],
+  ["-1.5"],
+  ["0.125"],
+  ["0.135"],
+  ["2.675"],
+  ["-2.675"],
+  ["1/3"],
+  ["1E-7"],
+  ["0.000005"],
+  ["NULL"],
+]
+expression = "x::NUMBER(7,6)"
+tags = ["null", "boundary", "invalid"]
+
+[[case]]
+id = "float_number_12_8"
+description = "FLOAT cast to NUMBER(12,8): rounding at the scale, halves and negatives."
+columns = [{ name = "x", type = "FLOAT" }]
+rows = [
+  ["0"],
+  ["1.5"],
+  ["-1.5"],
+  ["0.125"],
+  ["0.135"],
+  ["2.675"],
+  ["-2.675"],
+  ["1/3"],
+  ["1E-7"],
+  ["0.000005"],
+  ["NULL"],
+]
+expression = "x::NUMBER(12,8)"
+tags = ["null", "boundary", "invalid"]
+
+[[case]]
+id = "float_number_38_6"
+description = "FLOAT cast to NUMBER(38,6): rounding at the scale, halves and negatives."
+columns = [{ name = "x", type = "FLOAT" }]
+rows = [
+  ["0"],
+  ["1.5"],
+  ["-1.5"],
+  ["0.125"],
+  ["0.135"],
+  ["2.675"],
+  ["-2.675"],
+  ["1/3"],
+  ["1E-7"],
+  ["0.000005"],
+  ["NULL"],
+]
+expression = "x::NUMBER(38,6)"
+tags = ["null", "boundary", "invalid"]
+
+[[case]]
+id = "float_number_10_2_overflow"
+description = "FLOAT cast to NUMBER(10,2) beyond its precision raises."
+columns = [{ name = "x", type = "FLOAT" }]
+rows = [
+  ["123456789.5"],
+]
+expression = "x::NUMBER(10,2)"
+tags = ["null", "boundary", "invalid"]
+
+[[case]]
+id = "float_number_7_6_overflow"
+description = "FLOAT cast to NUMBER(7,6) beyond its precision raises."
+columns = [{ name = "x", type = "FLOAT" }]
+rows = [
+  ["12.5"],
+]
+expression = "x::NUMBER(7,6)"
+tags = ["null", "boundary", "invalid"]
+
+[[case]]
+id = "float_number_nan"
+description = "FLOAT NaN cast to NUMBER(10,2) raises."
+columns = [{ name = "x", type = "FLOAT" }]
+rows = [
+  ["'NaN'"],
+]
+expression = "x::NUMBER(10,2)"
+tags = ["null", "boundary", "invalid"]
+
+[[case]]
+id = "tz_to_ntz_direct"
+description = "TIMESTAMP_TZ cast directly to TIMESTAMP_NTZ: the wall time at its own offset."
+columns = [{ name = "t", type = "TIMESTAMP_TZ(9)" }]
+rows = [
+  ["'2024-03-10 02:30:00 -05:00'"],
+  ["'2024-06-01 12:00:00.5 +05:30'"],
+  ["'2024-12-31 23:59:59.999999999 -08:00'"],
+  ["'2024-01-01 00:30:00 +14:00'"],
+  ["'1970-01-01 00:00:00 +00:00'"],
+  ["NULL"],
+]
+expression = "t::TIMESTAMP_NTZ"
+tags = ["null", "boundary", "invalid"]
+
+[[case]]
+id = "tz_to_ntz_cast_syntax"
+description = "CAST(t AS TIMESTAMP) of a TIMESTAMP_TZ, then CAST AS TIMESTAMP_NTZ."
+columns = [{ name = "t", type = "TIMESTAMP_TZ(9)" }]
+rows = [
+  ["'2024-03-10 02:30:00 -05:00'"],
+  ["'2024-06-01 12:00:00.5 +05:30'"],
+  ["'2024-12-31 23:59:59.999999999 -08:00'"],
+  ["'2024-01-01 00:30:00 +14:00'"],
+  ["'1970-01-01 00:00:00 +00:00'"],
+  ["NULL"],
+]
+expression = "CAST(CAST(t AS TIMESTAMP) AS TIMESTAMP_NTZ)"
+tags = ["null", "boundary", "invalid"]
+
+[[case]]
+id = "tz_to_date_direct"
+description = "TIMESTAMP_TZ cast directly to DATE: the date at its own offset."
+columns = [{ name = "t", type = "TIMESTAMP_TZ(9)" }]
+rows = [
+  ["'2024-03-10 02:30:00 -05:00'"],
+  ["'2024-06-01 12:00:00.5 +05:30'"],
+  ["'2024-12-31 23:59:59.999999999 -08:00'"],
+  ["'2024-01-01 00:30:00 +14:00'"],
+  ["'1970-01-01 00:00:00 +00:00'"],
+  ["NULL"],
+]
+expression = "t::DATE"
+tags = ["null", "boundary", "invalid"]
+
+[[case]]
+id = "tz_coalesce_ntz"
+description = "COALESCE of a TIMESTAMP_TZ cast to TIMESTAMP_NTZ with an NTZ fallback."
+columns = [{ name = "t", type = "TIMESTAMP_TZ(9)" }, { name = "n", type = "TIMESTAMP_NTZ(9)" }]
+rows = [
+  ["'2024-03-10 02:30:00 -05:00'", "'2024-01-01 00:00:00'"],
+  ["NULL", "'2024-01-01 00:00:00'"],
+  ["NULL", "NULL"],
+]
+expression = "COALESCE(t::TIMESTAMP_NTZ, n)"
+tags = ["null", "boundary", "invalid"]
+
+[[case]]
+id = "ntz_to_varchar"
+description = "TIMESTAMP_NTZ cast to VARCHAR: fractions, midnight and edge years."
+columns = [{ name = "n", type = "TIMESTAMP_NTZ(9)" }]
+rows = [
+  ["'2024-02-29 13:45:01'"],
+  ["'2024-02-29 13:45:01.5'"],
+  ["'2024-02-29 13:45:01.123456789'"],
+  ["'2024-02-29 00:00:00'"],
+  ["'0001-01-01 00:00:00'"],
+  ["NULL"],
+]
+expression = "n::VARCHAR"
+tags = ["null", "boundary", "invalid"]
+expected_divergence = "timestamp_range"
+
+[[case]]
+id = "ltz_to_ntz"
+description = "TIMESTAMP_LTZ cast to TIMESTAMP_NTZ in a UTC session."
+columns = [{ name = "l", type = "TIMESTAMP_LTZ(9)" }]
+rows = [
+  ["'2024-03-10 02:30:00 -05:00'"],
+  ["'2024-06-01 12:00:00.5 +05:30'"],
+  ["'2024-01-01 00:00:00 +00:00'"],
+  ["NULL"],
+]
+expression = "l::TIMESTAMP_NTZ"
+tags = ["null", "boundary", "invalid"]
+
+[[case]]
+id = "variant_to_tz"
+description = "A VARIANT string cast to TIMESTAMP_TZ: Z, offsets and no offset; JSON null and missing keys."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('{\"t\":\"2024-02-29T13:45:01Z\"}')"],
+  ["PARSE_JSON('{\"t\":\"2024-02-29T13:45:01.123456+02:00\"}')"],
+  ["PARSE_JSON('{\"t\":\"2024-02-29 13:45:01\"}')"],
+  ["PARSE_JSON('{\"t\":\"2024-02-29T13:45:01.5-05:30\"}')"],
+  ["PARSE_JSON('{\"t\":null}')"],
+  ["PARSE_JSON('{}')"],
+  ["NULL"],
+]
+expression = "v:t::TIMESTAMP_TZ"
+tags = ["null", "boundary", "invalid"]
+
+[[case]]
+id = "variant_to_tz_lower"
+description = "The same cast spelled timestamp_tz, read back in UTC."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('{\"t\":\"2024-02-29T13:45:01Z\"}')"],
+  ["PARSE_JSON('{\"t\":\"2024-02-29T13:45:01.123456+02:00\"}')"],
+  ["PARSE_JSON('{\"t\":\"2024-02-29 13:45:01\"}')"],
+  ["PARSE_JSON('{\"t\":\"2024-02-29T13:45:01.5-05:30\"}')"],
+  ["PARSE_JSON('{\"t\":null}')"],
+  ["PARSE_JSON('{}')"],
+]
+expression = "CONVERT_TIMEZONE('UTC', v:t::timestamp_tz)::TIMESTAMP_NTZ"
+tags = ["null", "boundary", "invalid"]
+
+[[case]]
+id = "variant_to_tz_invalid_1"
+description = "A VARIANT {\"t\":\"not a date\"} cast to TIMESTAMP_TZ: raises or converts."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('{\"t\":\"not a date\"}')"],
+]
+expression = "v:t::TIMESTAMP_TZ"
+tags = ["null", "boundary", "invalid"]
+
+[[case]]
+id = "variant_to_tz_invalid_2"
+description = "A VARIANT {\"t\":\"\"} cast to TIMESTAMP_TZ: raises or converts."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('{\"t\":\"\"}')"],
+]
+expression = "v:t::TIMESTAMP_TZ"
+tags = ["null", "boundary", "invalid"]
+
+[[case]]
+id = "variant_to_tz_invalid_3"
+description = "A VARIANT {\"t\":1709214301} cast to TIMESTAMP_TZ: raises or converts."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('{\"t\":1709214301}')"],
+]
+expression = "v:t::TIMESTAMP_TZ"
+tags = ["null", "boundary", "invalid"]
+
+[[case]]
+id = "variant_to_tz_invalid_4"
+description = "A VARIANT {\"t\":\"2024-02-30T10:00:00Z\"} cast to TIMESTAMP_TZ: raises or converts."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('{\"t\":\"2024-02-30T10:00:00Z\"}')"],
+]
+expression = "v:t::TIMESTAMP_TZ"
+tags = ["null", "boundary", "invalid"]
+
+[[case]]
+id = "variant_to_tz_invalid_5"
+description = "A VARIANT {\"t\":{\"a\":1}} cast to TIMESTAMP_TZ: raises or converts."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('{\"t\":{\"a\":1}}')"],
+]
+expression = "v:t::TIMESTAMP_TZ"
+tags = ["null", "boundary", "invalid"]
+
+[[case]]
+id = "ntz_to_varchar_rounding"
+description = "TIMESTAMP_NTZ(9) cast to VARCHAR where truncating and rounding to milliseconds differ."
+columns = [{ name = "n", type = "TIMESTAMP_NTZ(9)" }]
+rows = [
+  ["'2024-02-29 13:45:01.9996'"],
+  ["'2024-02-29 13:45:01.9999999'"],
+  ["'2024-02-29 23:59:59.9995'"],
+  ["'2024-02-29 13:45:01.1235'"],
+  ["NULL"],
+]
+expression = "n::VARCHAR"
+tags = ["null", "boundary", "invalid"]
+expected_divergence = "timestamp_text_rounding"

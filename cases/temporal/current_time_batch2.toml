@@ -1,0 +1,94 @@
+# CURRENT_DATE and CURRENT_TIMESTAMP in deterministic expressions.
+category = "temporal"
+construct = "fn:CURRENT_DATE"
+session_profile = "utc-v1"
+
+[[case]]
+id = "current_1"
+description = "A deterministic use of the current time: the type of CURRENT_DATE."
+columns = [{ name = "k", type = "NUMBER(2,0)" }]
+rows = [
+  ["1"],
+]
+expression = "SYSTEM$TYPEOF(CURRENT_DATE())"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "current_2"
+description = "A deterministic use of the current time: the type of CURRENT_TIMESTAMP."
+columns = [{ name = "k", type = "NUMBER(2,0)" }]
+rows = [
+  ["1"],
+]
+expression = "SYSTEM$TYPEOF(CURRENT_TIMESTAMP())"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "current_3"
+description = "A deterministic use of the current time: the type of CURRENT_DATE without parentheses."
+columns = [{ name = "k", type = "NUMBER(2,0)" }]
+rows = [
+  ["1"],
+]
+expression = "SYSTEM$TYPEOF(CURRENT_DATE)"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "current_4"
+description = "A deterministic use of the current time: CURRENT_DATE equals the date of CURRENT_TIMESTAMP in a UTC session."
+columns = [{ name = "k", type = "NUMBER(2,0)" }]
+rows = [
+  ["1"],
+]
+expression = "CURRENT_DATE() = CAST(CURRENT_TIMESTAMP() AS DATE)"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "current_5"
+description = "A deterministic use of the current time: DATEDIFF from a past date to CURRENT_DATE is positive."
+columns = [{ name = "k", type = "NUMBER(2,0)" }]
+rows = [
+  ["1"],
+]
+expression = "DATEDIFF('day', '2020-01-01', CURRENT_DATE) > 0"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "current_6"
+description = "A deterministic use of the current time: the year of CURRENT_DATE."
+columns = [{ name = "k", type = "NUMBER(2,0)" }]
+rows = [
+  ["1"],
+]
+expression = "YEAR(CURRENT_DATE()) >= 2024"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "current_7"
+description = "A deterministic use of the current time: CURRENT_TIMESTAMP after a past instant."
+columns = [{ name = "k", type = "NUMBER(2,0)" }]
+rows = [
+  ["1"],
+]
+expression = "CURRENT_TIMESTAMP() >= '2024-01-01'::TIMESTAMP_LTZ"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "current_8"
+description = "A deterministic use of the current time: CURRENT_TIMESTAMP as NTZ before tomorrow."
+columns = [{ name = "k", type = "NUMBER(2,0)" }]
+rows = [
+  ["1"],
+]
+expression = "CURRENT_TIMESTAMP()::TIMESTAMP_NTZ <= DATEADD('day', 1, CURRENT_DATE()::TIMESTAMP_NTZ)"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "current_9"
+description = "A deterministic use of the current time: date arithmetic on CURRENT_DATE."
+columns = [{ name = "k", type = "NUMBER(2,0)" }]
+rows = [
+  ["1"],
+]
+expression = "CURRENT_DATE() - 1 < CURRENT_DATE()"
+tags = ["null", "boundary"]

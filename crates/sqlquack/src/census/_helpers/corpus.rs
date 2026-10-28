@@ -6,9 +6,12 @@ use std::sync::atomic::Ordering;
 use rayon::ThreadPoolBuilder;
 use rayon::iter::{IntoParallelRefIterator, ParallelIterator};
 use sqlquack_rules::catalogue::main::builtin_catalogue::builtin_catalogue;
+use std::collections::BTreeSet;
+
 use sqlquack_rules::conversion::models::Schema;
 
-use crate::census::_helpers::inspect::{FileCensus, inspect_file};
+use crate::census::_helpers::completion::{Completed, complete_in_waves};
+use crate::census::_helpers::inspect::{FileCensus, complete_refusals, inspect_file};
 use crate::census::_helpers::placeholders::relation_name;
 use crate::census::constants::WORKER_STACK_BYTES;
 use crate::census::errors::CensusError;
@@ -73,6 +76,26 @@ pub(crate) fn inspect_files(
             censuses[*index] = census;
         }
     }
+    let complete = |wave: &BTreeSet<usize>, schema: &Schema, censuses: &[FileCensus]| {
+        progress.pass.fetch_add(1, Ordering::Relaxed);
+        progress.done.store(0, Ordering::Relaxed);
+        progress.total.store(wave.len(), Ordering::Relaxed);
+        workers.install(|| {
+            wave.par_iter()
+                .map(|index| {
+                    let (census, columns) = complete_refusals(
+                        (&censuses[*index], &files[*index]),
+                        options.dialect,
+                        &catalogue,
+                        (schema, &options.conversion),
+                    )?;
+                    progress.done.fetch_add(1, Ordering::Relaxed);
+                    Ok((*index, census, columns))
+                })
+                .collect::<Result<Vec<Completed>, CensusError>>()
+        })
+    };
+    let censuses = complete_in_waves(files, censuses, (&schema, options.chain_models), &complete)?;
     Ok(censuses)
 }
 

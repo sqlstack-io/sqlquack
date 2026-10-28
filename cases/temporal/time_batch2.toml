@@ -1,0 +1,770 @@
+# TIME at precisions 0, 3, 6 and 9: values, text, arithmetic and comparison.
+category = "temporal"
+construct = "node:cast"
+session_profile = "utc-v1"
+
+[[case]]
+id = "time0_value"
+description = "TIME(0) values at midnight, the last instant of the day and fractions."
+columns = [{ name = "t", type = "TIME(0)" }]
+rows = [
+  ["'00:00:00'"],
+  ["'23:59:59'"],
+  ["'12:34:56'"],
+  ["'09:05:00'"],
+  ["NULL"],
+]
+expression = "t"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "time0_text"
+description = "TIME(0) cast to VARCHAR."
+columns = [{ name = "t", type = "TIME(0)" }]
+rows = [
+  ["'00:00:00'"],
+  ["'23:59:59'"],
+  ["'12:34:56'"],
+  ["'09:05:00'"],
+  ["NULL"],
+]
+expression = "t::VARCHAR"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "time0_to_varchar"
+description = "TO_VARCHAR of TIME(0)."
+columns = [{ name = "t", type = "TIME(0)" }]
+rows = [
+  ["'00:00:00'"],
+  ["'23:59:59'"],
+  ["'12:34:56'"],
+  ["'09:05:00'"],
+  ["NULL"],
+]
+expression = "TO_VARCHAR(t)"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "time0_parts"
+description = "HOUR, MINUTE and SECOND of TIME(0)."
+columns = [{ name = "t", type = "TIME(0)" }]
+rows = [
+  ["'00:00:00'"],
+  ["'23:59:59'"],
+  ["'12:34:56'"],
+  ["'09:05:00'"],
+  ["NULL"],
+]
+query = "SELECT HOUR(t) AS h, MINUTE(t) AS m, SECOND(t) AS s FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "time0_add_minutes"
+description = "DATEADD of 30 minutes to TIME(0), wrapping past midnight."
+columns = [{ name = "t", type = "TIME(0)" }]
+rows = [
+  ["'00:00:00'"],
+  ["'23:59:59'"],
+  ["'12:34:56'"],
+  ["'09:05:00'"],
+  ["NULL"],
+]
+expression = "DATEADD('minute', 30, t)"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "time0_add_hours"
+description = "TIMEADD of -10 hours to TIME(0), wrapping before midnight."
+columns = [{ name = "t", type = "TIME(0)" }]
+rows = [
+  ["'00:00:00'"],
+  ["'23:59:59'"],
+  ["'12:34:56'"],
+  ["'09:05:00'"],
+  ["NULL"],
+]
+expression = "TIMEADD('hour', -10, t)"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "time0_compare_noon"
+description = "TIME(0) compared with noon."
+columns = [{ name = "t", type = "TIME(0)" }]
+rows = [
+  ["'00:00:00'"],
+  ["'23:59:59'"],
+  ["'12:34:56'"],
+  ["'09:05:00'"],
+  ["NULL"],
+]
+expression = "t < '12:00:00'::TIME"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "time0_order"
+description = "TIME(0) values ordered, NULL included."
+columns = [{ name = "t", type = "TIME(0)" }]
+rows = [
+  ["'00:00:00'"],
+  ["'23:59:59'"],
+  ["'12:34:56'"],
+  ["'09:05:00'"],
+  ["NULL"],
+]
+query = "SELECT t FROM input ORDER BY t NULLS LAST"
+order = "ordered"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "time0_diff_seconds"
+description = "DATEDIFF in seconds from midnight to TIME(0)."
+columns = [{ name = "t", type = "TIME(0)" }]
+rows = [
+  ["'00:00:00'"],
+  ["'23:59:59'"],
+  ["'12:34:56'"],
+  ["'09:05:00'"],
+  ["NULL"],
+]
+expression = "DATEDIFF('second', '00:00:00'::TIME, t)"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "time0_diff_ms"
+description = "DATEDIFF in milliseconds between TIME(0) and 12:00."
+columns = [{ name = "t", type = "TIME(0)" }]
+rows = [
+  ["'00:00:00'"],
+  ["'23:59:59'"],
+  ["'12:34:56'"],
+  ["'09:05:00'"],
+  ["NULL"],
+]
+expression = "DATEDIFF('millisecond', t, '12:00:00'::TIME)"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "time3_value"
+description = "TIME(3) values at midnight, the last instant of the day and fractions."
+columns = [{ name = "t", type = "TIME(3)" }]
+rows = [
+  ["'00:00:00.000'"],
+  ["'23:59:59.999'"],
+  ["'12:34:56.123'"],
+  ["'09:05:00.5'"],
+  ["NULL"],
+]
+expression = "t"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "time3_text"
+description = "TIME(3) cast to VARCHAR."
+columns = [{ name = "t", type = "TIME(3)" }]
+rows = [
+  ["'00:00:00.000'"],
+  ["'23:59:59.999'"],
+  ["'12:34:56.123'"],
+  ["'09:05:00.5'"],
+  ["NULL"],
+]
+expression = "t::VARCHAR"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "time3_to_varchar"
+description = "TO_VARCHAR of TIME(3)."
+columns = [{ name = "t", type = "TIME(3)" }]
+rows = [
+  ["'00:00:00.000'"],
+  ["'23:59:59.999'"],
+  ["'12:34:56.123'"],
+  ["'09:05:00.5'"],
+  ["NULL"],
+]
+expression = "TO_VARCHAR(t)"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "time3_parts"
+description = "HOUR, MINUTE and SECOND of TIME(3)."
+columns = [{ name = "t", type = "TIME(3)" }]
+rows = [
+  ["'00:00:00.000'"],
+  ["'23:59:59.999'"],
+  ["'12:34:56.123'"],
+  ["'09:05:00.5'"],
+  ["NULL"],
+]
+query = "SELECT HOUR(t) AS h, MINUTE(t) AS m, SECOND(t) AS s FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "time3_add_minutes"
+description = "DATEADD of 30 minutes to TIME(3), wrapping past midnight."
+columns = [{ name = "t", type = "TIME(3)" }]
+rows = [
+  ["'00:00:00.000'"],
+  ["'23:59:59.999'"],
+  ["'12:34:56.123'"],
+  ["'09:05:00.5'"],
+  ["NULL"],
+]
+expression = "DATEADD('minute', 30, t)"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "time3_add_hours"
+description = "TIMEADD of -10 hours to TIME(3), wrapping before midnight."
+columns = [{ name = "t", type = "TIME(3)" }]
+rows = [
+  ["'00:00:00.000'"],
+  ["'23:59:59.999'"],
+  ["'12:34:56.123'"],
+  ["'09:05:00.5'"],
+  ["NULL"],
+]
+expression = "TIMEADD('hour', -10, t)"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "time3_compare_noon"
+description = "TIME(3) compared with noon."
+columns = [{ name = "t", type = "TIME(3)" }]
+rows = [
+  ["'00:00:00.000'"],
+  ["'23:59:59.999'"],
+  ["'12:34:56.123'"],
+  ["'09:05:00.5'"],
+  ["NULL"],
+]
+expression = "t < '12:00:00'::TIME"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "time3_order"
+description = "TIME(3) values ordered, NULL included."
+columns = [{ name = "t", type = "TIME(3)" }]
+rows = [
+  ["'00:00:00.000'"],
+  ["'23:59:59.999'"],
+  ["'12:34:56.123'"],
+  ["'09:05:00.5'"],
+  ["NULL"],
+]
+query = "SELECT t FROM input ORDER BY t NULLS LAST"
+order = "ordered"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "time3_diff_seconds"
+description = "DATEDIFF in seconds from midnight to TIME(3)."
+columns = [{ name = "t", type = "TIME(3)" }]
+rows = [
+  ["'00:00:00.000'"],
+  ["'23:59:59.999'"],
+  ["'12:34:56.123'"],
+  ["'09:05:00.5'"],
+  ["NULL"],
+]
+expression = "DATEDIFF('second', '00:00:00'::TIME, t)"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "time3_diff_ms"
+description = "DATEDIFF in milliseconds between TIME(3) and 12:00."
+columns = [{ name = "t", type = "TIME(3)" }]
+rows = [
+  ["'00:00:00.000'"],
+  ["'23:59:59.999'"],
+  ["'12:34:56.123'"],
+  ["'09:05:00.5'"],
+  ["NULL"],
+]
+expression = "DATEDIFF('millisecond', t, '12:00:00'::TIME)"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "time6_value"
+description = "TIME(6) values at midnight, the last instant of the day and fractions."
+columns = [{ name = "t", type = "TIME(6)" }]
+rows = [
+  ["'00:00:00'"],
+  ["'23:59:59.999999'"],
+  ["'12:34:56.123456'"],
+  ["'09:05:00.000001'"],
+  ["NULL"],
+]
+expression = "t"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "time6_text"
+description = "TIME(6) cast to VARCHAR."
+columns = [{ name = "t", type = "TIME(6)" }]
+rows = [
+  ["'00:00:00'"],
+  ["'23:59:59.999999'"],
+  ["'12:34:56.123456'"],
+  ["'09:05:00.000001'"],
+  ["NULL"],
+]
+expression = "t::VARCHAR"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "time6_to_varchar"
+description = "TO_VARCHAR of TIME(6)."
+columns = [{ name = "t", type = "TIME(6)" }]
+rows = [
+  ["'00:00:00'"],
+  ["'23:59:59.999999'"],
+  ["'12:34:56.123456'"],
+  ["'09:05:00.000001'"],
+  ["NULL"],
+]
+expression = "TO_VARCHAR(t)"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "time6_parts"
+description = "HOUR, MINUTE and SECOND of TIME(6)."
+columns = [{ name = "t", type = "TIME(6)" }]
+rows = [
+  ["'00:00:00'"],
+  ["'23:59:59.999999'"],
+  ["'12:34:56.123456'"],
+  ["'09:05:00.000001'"],
+  ["NULL"],
+]
+query = "SELECT HOUR(t) AS h, MINUTE(t) AS m, SECOND(t) AS s FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "time6_add_minutes"
+description = "DATEADD of 30 minutes to TIME(6), wrapping past midnight."
+columns = [{ name = "t", type = "TIME(6)" }]
+rows = [
+  ["'00:00:00'"],
+  ["'23:59:59.999999'"],
+  ["'12:34:56.123456'"],
+  ["'09:05:00.000001'"],
+  ["NULL"],
+]
+expression = "DATEADD('minute', 30, t)"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "time6_add_hours"
+description = "TIMEADD of -10 hours to TIME(6), wrapping before midnight."
+columns = [{ name = "t", type = "TIME(6)" }]
+rows = [
+  ["'00:00:00'"],
+  ["'23:59:59.999999'"],
+  ["'12:34:56.123456'"],
+  ["'09:05:00.000001'"],
+  ["NULL"],
+]
+expression = "TIMEADD('hour', -10, t)"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "time6_compare_noon"
+description = "TIME(6) compared with noon."
+columns = [{ name = "t", type = "TIME(6)" }]
+rows = [
+  ["'00:00:00'"],
+  ["'23:59:59.999999'"],
+  ["'12:34:56.123456'"],
+  ["'09:05:00.000001'"],
+  ["NULL"],
+]
+expression = "t < '12:00:00'::TIME"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "time6_order"
+description = "TIME(6) values ordered, NULL included."
+columns = [{ name = "t", type = "TIME(6)" }]
+rows = [
+  ["'00:00:00'"],
+  ["'23:59:59.999999'"],
+  ["'12:34:56.123456'"],
+  ["'09:05:00.000001'"],
+  ["NULL"],
+]
+query = "SELECT t FROM input ORDER BY t NULLS LAST"
+order = "ordered"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "time6_diff_seconds"
+description = "DATEDIFF in seconds from midnight to TIME(6)."
+columns = [{ name = "t", type = "TIME(6)" }]
+rows = [
+  ["'00:00:00'"],
+  ["'23:59:59.999999'"],
+  ["'12:34:56.123456'"],
+  ["'09:05:00.000001'"],
+  ["NULL"],
+]
+expression = "DATEDIFF('second', '00:00:00'::TIME, t)"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "time6_diff_ms"
+description = "DATEDIFF in milliseconds between TIME(6) and 12:00."
+columns = [{ name = "t", type = "TIME(6)" }]
+rows = [
+  ["'00:00:00'"],
+  ["'23:59:59.999999'"],
+  ["'12:34:56.123456'"],
+  ["'09:05:00.000001'"],
+  ["NULL"],
+]
+expression = "DATEDIFF('millisecond', t, '12:00:00'::TIME)"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "time9_value"
+description = "TIME(9) values at midnight, the last instant of the day and fractions."
+columns = [{ name = "t", type = "TIME(9)" }]
+rows = [
+  ["'00:00:00'"],
+  ["'23:59:59.999999999'"],
+  ["'12:34:56.123456789'"],
+  ["'09:05:00.000000001'"],
+  ["'09:05:00.5'"],
+  ["NULL"],
+]
+expression = "t"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "time9_text"
+description = "TIME(9) cast to VARCHAR."
+columns = [{ name = "t", type = "TIME(9)" }]
+rows = [
+  ["'00:00:00'"],
+  ["'23:59:59.999999999'"],
+  ["'12:34:56.123456789'"],
+  ["'09:05:00.000000001'"],
+  ["'09:05:00.5'"],
+  ["NULL"],
+]
+expression = "t::VARCHAR"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "time9_to_varchar"
+description = "TO_VARCHAR of TIME(9)."
+columns = [{ name = "t", type = "TIME(9)" }]
+rows = [
+  ["'00:00:00'"],
+  ["'23:59:59.999999999'"],
+  ["'12:34:56.123456789'"],
+  ["'09:05:00.000000001'"],
+  ["'09:05:00.5'"],
+  ["NULL"],
+]
+expression = "TO_VARCHAR(t)"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "time9_parts"
+description = "HOUR, MINUTE and SECOND of TIME(9)."
+columns = [{ name = "t", type = "TIME(9)" }]
+rows = [
+  ["'00:00:00'"],
+  ["'23:59:59.999999999'"],
+  ["'12:34:56.123456789'"],
+  ["'09:05:00.000000001'"],
+  ["'09:05:00.5'"],
+  ["NULL"],
+]
+query = "SELECT HOUR(t) AS h, MINUTE(t) AS m, SECOND(t) AS s FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "time9_add_minutes"
+description = "DATEADD of 30 minutes to TIME(9), wrapping past midnight."
+columns = [{ name = "t", type = "TIME(9)" }]
+rows = [
+  ["'00:00:00'"],
+  ["'23:59:59.999999999'"],
+  ["'12:34:56.123456789'"],
+  ["'09:05:00.000000001'"],
+  ["'09:05:00.5'"],
+  ["NULL"],
+]
+expression = "DATEADD('minute', 30, t)"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "time9_add_hours"
+description = "TIMEADD of -10 hours to TIME(9), wrapping before midnight."
+columns = [{ name = "t", type = "TIME(9)" }]
+rows = [
+  ["'00:00:00'"],
+  ["'23:59:59.999999999'"],
+  ["'12:34:56.123456789'"],
+  ["'09:05:00.000000001'"],
+  ["'09:05:00.5'"],
+  ["NULL"],
+]
+expression = "TIMEADD('hour', -10, t)"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "time9_compare_noon"
+description = "TIME(9) compared with noon."
+columns = [{ name = "t", type = "TIME(9)" }]
+rows = [
+  ["'00:00:00'"],
+  ["'23:59:59.999999999'"],
+  ["'12:34:56.123456789'"],
+  ["'09:05:00.000000001'"],
+  ["'09:05:00.5'"],
+  ["NULL"],
+]
+expression = "t < '12:00:00'::TIME"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "time9_order"
+description = "TIME(9) values ordered, NULL included."
+columns = [{ name = "t", type = "TIME(9)" }]
+rows = [
+  ["'00:00:00'"],
+  ["'23:59:59.999999999'"],
+  ["'12:34:56.123456789'"],
+  ["'09:05:00.000000001'"],
+  ["'09:05:00.5'"],
+  ["NULL"],
+]
+query = "SELECT t FROM input ORDER BY t NULLS LAST"
+order = "ordered"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "time9_diff_seconds"
+description = "DATEDIFF in seconds from midnight to TIME(9)."
+columns = [{ name = "t", type = "TIME(9)" }]
+rows = [
+  ["'00:00:00'"],
+  ["'23:59:59.999999999'"],
+  ["'12:34:56.123456789'"],
+  ["'09:05:00.000000001'"],
+  ["'09:05:00.5'"],
+  ["NULL"],
+]
+expression = "DATEDIFF('second', '00:00:00'::TIME, t)"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "time9_diff_ms"
+description = "DATEDIFF in milliseconds between TIME(9) and 12:00."
+columns = [{ name = "t", type = "TIME(9)" }]
+rows = [
+  ["'00:00:00'"],
+  ["'23:59:59.999999999'"],
+  ["'12:34:56.123456789'"],
+  ["'09:05:00.000000001'"],
+  ["'09:05:00.5'"],
+  ["NULL"],
+]
+expression = "DATEDIFF('millisecond', t, '12:00:00'::TIME)"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "time9_as_time3"
+description = "TIME(9) cast to TIME(3): truncated or rounded."
+columns = [{ name = "t", type = "TIME(9)" }]
+rows = [
+  ["'12:34:56.123456789'"],
+  ["'12:34:56.999999999'"],
+  ["'23:59:59.999999999'"],
+  ["'00:00:00.5'"],
+  ["NULL"],
+]
+expression = "t::TIME(3)"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "time9_as_time0"
+description = "TIME(9) cast to TIME(0): truncated or rounded."
+columns = [{ name = "t", type = "TIME(9)" }]
+rows = [
+  ["'12:34:56.123456789'"],
+  ["'12:34:56.999999999'"],
+  ["'23:59:59.999999999'"],
+  ["'00:00:00.5'"],
+  ["NULL"],
+]
+expression = "t::TIME(0)"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "time9_as_time6"
+description = "TIME(9) cast to TIME(6): truncated or rounded."
+columns = [{ name = "t", type = "TIME(9)" }]
+rows = [
+  ["'12:34:56.123456789'"],
+  ["'12:34:56.999999999'"],
+  ["'23:59:59.999999999'"],
+  ["'00:00:00.5'"],
+  ["NULL"],
+]
+expression = "t::TIME(6)"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "time3_as_time0"
+description = "TIME(3) cast to TIME(0): truncated or rounded."
+columns = [{ name = "t", type = "TIME(3)" }]
+rows = [
+  ["'12:34:56.123456789'"],
+  ["'12:34:56.999999999'"],
+  ["'23:59:59.999999999'"],
+  ["'00:00:00.5'"],
+  ["NULL"],
+]
+expression = "t::TIME(0)"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "time6_as_time3"
+description = "TIME(6) cast to TIME(3): truncated or rounded."
+columns = [{ name = "t", type = "TIME(6)" }]
+rows = [
+  ["'12:34:56.123456789'"],
+  ["'12:34:56.999999999'"],
+  ["'23:59:59.999999999'"],
+  ["'00:00:00.5'"],
+  ["NULL"],
+]
+expression = "t::TIME(3)"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "time_text_cast"
+description = "Text cast to TIME: padded, unpadded, fractions and no seconds."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'13:45:01'"],
+  ["'13:45'"],
+  ["'9:05:07'"],
+  ["'09:05:07.123456789'"],
+  ["' 13:45:01 '"],
+  ["NULL"],
+]
+expression = "s::TIME"
+tags = ["null", "boundary"]
+expected_divergence = "time_submicro"
+
+[[case]]
+id = "time_text_cast_invalid_1"
+description = "The text '24:00:00' cast to TIME: raises or converts."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'24:00:00'"],
+]
+expression = "s::TIME"
+tags = ["boundary"]
+
+[[case]]
+id = "time_text_cast_invalid_2"
+description = "The text '12:60:00' cast to TIME: raises or converts."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'12:60:00'"],
+]
+expression = "s::TIME"
+tags = ["boundary"]
+
+[[case]]
+id = "time_text_cast_invalid_3"
+description = "The text 'noon' cast to TIME: raises or converts."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'noon'"],
+]
+expression = "s::TIME"
+tags = ["boundary"]
+
+[[case]]
+id = "time_text_cast_invalid_4"
+description = "The text '' cast to TIME: raises or converts."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["''"],
+]
+expression = "s::TIME"
+tags = ["boundary"]
+
+[[case]]
+id = "time_text_cast_invalid_5"
+description = "The text '13-45-01' cast to TIME: raises or converts."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'13-45-01'"],
+]
+expression = "s::TIME"
+tags = ["boundary"]
+
+[[case]]
+id = "time_try_cast"
+description = "TRY_CAST of text to TIME."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'13:45:01'"],
+  ["'24:00:00'"],
+  ["'noon'"],
+  ["''"],
+  ["NULL"],
+]
+expression = "TRY_CAST(s AS TIME)"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "time_equal_precisions"
+description = "TIME(9) equal to TIME(3) at the same instant and not when nanoseconds differ."
+columns = [{ name = "a", type = "TIME(9)" }, { name = "b", type = "TIME(3)" }]
+rows = [
+  ["'12:00:00.123'", "'12:00:00.123'"],
+  ["'12:00:00.123000001'", "'12:00:00.123'"],
+  ["NULL", "'00:00:00'"],
+]
+expression = "a = b"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "time_minmax"
+description = "MIN and MAX of TIME(9) values."
+columns = [{ name = "t", type = "TIME(9)" }]
+rows = [
+  ["'00:00:00'"],
+  ["'23:59:59.999999999'"],
+  ["'12:34:56.123456789'"],
+  ["'09:05:00.000000001'"],
+  ["'09:05:00.5'"],
+  ["NULL"],
+]
+query = "SELECT MIN(t) AS lo, MAX(t) AS hi FROM input"
+order = "ordered"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "time_typeof"
+description = "SYSTEM$TYPEOF of a TIME cast."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'13:45:01'"],
+]
+expression = "SYSTEM$TYPEOF(s::TIME)"
+tags = ["null", "boundary"]

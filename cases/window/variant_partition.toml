@@ -1,0 +1,37 @@
+# Windows partitioned by VARIANT paths, and by expressions over them.
+category = "window"
+construct = "node:window_function"
+session_profile = "utc-v1"
+
+[[case]]
+id = "row_number_variant_partition"
+description = "ROW_NUMBER partitioned by a VARIANT path holding integers, text, decimals, JSON null and missing keys."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('{\"k\":1}')"],
+  ["PARSE_JSON('{\"k\":\"1\"}')"],
+  ["PARSE_JSON('{\"k\":1}')"],
+  ["PARSE_JSON('{\"k\":null}')"],
+  ["PARSE_JSON('{}')"],
+  ["PARSE_JSON('{\"k\":null}')"],
+  ["PARSE_JSON('{\"k\":{\"a\":1}}')"],
+  ["PARSE_JSON('{\"k\":{\"a\":1}}')"],
+  ["NULL"],
+]
+query = "SELECT ordinal, ROW_NUMBER() OVER (PARTITION BY v:k ORDER BY ordinal) AS n FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "ties", "single-row-partition"]
+
+[[case]]
+id = "row_number_variant_text_partition"
+description = "ROW_NUMBER partitioned by a VARIANT path and COALESCE of its text, ordered descending."
+columns = [{ name = "v", type = "VARIANT" }, { name = "s", type = "VARCHAR" }]
+rows = [
+  ["PARSE_JSON('{\"id\":7}')", "'x'"],
+  ["PARSE_JSON('{\"id\":7}')", "''"],
+  ["PARSE_JSON('{\"id\":8}')", "NULL"],
+  ["PARSE_JSON('{\"id\":7}')", "'y'"],
+]
+query = "SELECT ordinal, ROW_NUMBER() OVER (PARTITION BY v:id, COALESCE(NULLIF(s, ''), 'none') ORDER BY ordinal DESC) AS n FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "ties", "single-row-partition"]

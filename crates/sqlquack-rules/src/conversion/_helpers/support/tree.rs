@@ -1,5 +1,6 @@
 //! Reading the serialised source tree: node kinds, payload fields and refusals.
 
+use crate::conversion::_helpers::support::collecting::{collecting, events, record, skipped};
 use serde_json::{Map, Value};
 use sqlquack_core::classification::constants::{
     PROJECT_FUNCTION_CONSTRUCT, PROJECT_FUNCTION_PLACEHOLDER,
@@ -86,14 +87,20 @@ pub(crate) fn require_understood(
     if unexpected.is_empty() {
         return Ok(());
     }
-    Err(missing(
+    let refusal = missing(
         construct.clone(),
         format!(
             "no rule handles `{}` set on {}",
             unexpected.join("`, `"),
             construct.key()
         ),
-    ))
+    );
+    if collecting() {
+        record(refusal, events());
+        skipped();
+        return Ok(());
+    }
+    Err(refusal)
 }
 
 /// A payload as an object, or a refusal naming the construct.

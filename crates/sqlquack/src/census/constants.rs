@@ -39,6 +39,21 @@ pub const PROGRESS_INTERVAL_SECONDS: u64 = 5;
 /// Files the census lists, slowest first, when it finishes.
 pub const SLOWEST_FILES: usize = 10;
 
+/// The fewest roots a combination holds.
+pub const PAIR: usize = 2;
+
+/// The most roots a combination holds.
+pub const LARGEST_COMBINATION: usize = 3;
+
+/// Root combinations reported for each size, pairs and triples.
+pub const COMBINATIONS_PER_SIZE: usize = 15;
+
+/// The roots with most sole files, paired with each other as combination candidates.
+pub const COMBINATION_SEED_PAIRS: usize = 20;
+
+/// The roots with most sole files, added to each two-root file's pair as triple candidates.
+pub const COMBINATION_SEED_TRIPLES: usize = 12;
+
 /// How a blocker names an unresolved relation that is neither a model nor in the schema.
 pub const RELATION_ROOT_PREFIX: &str = "relation:";
 

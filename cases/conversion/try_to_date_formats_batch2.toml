@@ -1,0 +1,188 @@
+# TRY_TO_DATE and TO_DATE with the formats models use.
+category = "conversion"
+construct = "fn:TRY_TO_DATE"
+session_profile = "utc-v1"
+
+[[case]]
+id = "try_to_date_dd_mm_yyyy_1"
+description = "TRY_TO_DATE with the format DD-MM-YYYY."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'29-02-2024'"],
+  ["'1-2-2024'"],
+  ["'31-04-2024'"],
+  ["'2024-02-29'"],
+  ["' 29-02-2024'"],
+  ["''"],
+  ["NULL"],
+]
+expression = "TRY_TO_DATE(s, 'DD-MM-YYYY')"
+tags = ["null", "invalid", "boundary"]
+expected_divergence = "date_text_spelling"
+
+[[case]]
+id = "to_date_dd_mm_yyyy_1"
+description = "TO_DATE with the format DD-MM-YYYY over text spelled in it."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'29-02-2024'"],
+  ["NULL"],
+]
+expression = "TO_DATE(s, 'DD-MM-YYYY')"
+tags = ["null", "invalid", "boundary"]
+
+[[case]]
+id = "try_to_date_ddp_mmp_yyyy_2"
+description = "TRY_TO_DATE with the format DD. MM. YYYY."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'29. 02. 2024'"],
+  ["'29.02.2024'"],
+  ["'1. 2. 2024'"],
+  ["'29. 02 2024'"],
+  ["''"],
+  ["NULL"],
+]
+expression = "TRY_TO_DATE(s, 'DD. MM. YYYY')"
+tags = ["null", "invalid", "boundary"]
+expected_divergence = "date_text_spelling"
+
+[[case]]
+id = "to_date_ddp_mmp_yyyy_2"
+description = "TO_DATE with the format DD. MM. YYYY over text spelled in it."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'29. 02. 2024'"],
+  ["NULL"],
+]
+expression = "TO_DATE(s, 'DD. MM. YYYY')"
+tags = ["null", "invalid", "boundary"]
+
+[[case]]
+id = "try_to_date_dd_mon_yyyy_3"
+description = "TRY_TO_DATE with the format DD MON YYYY."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'29 FEB 2024'"],
+  ["'29 Feb 2024'"],
+  ["'29 feb 2024'"],
+  ["'1 JAN 2024'"],
+  ["'29 February 2024'"],
+  ["''"],
+  ["NULL"],
+]
+expression = "TRY_TO_DATE(s, 'DD MON YYYY')"
+tags = ["null", "invalid", "boundary"]
+
+[[case]]
+id = "to_date_dd_mon_yyyy_3"
+description = "TO_DATE with the format DD MON YYYY over text spelled in it."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'29 FEB 2024'"],
+  ["NULL"],
+]
+expression = "TO_DATE(s, 'DD MON YYYY')"
+tags = ["null", "invalid", "boundary"]
+
+[[case]]
+id = "try_to_date_dd_mon_yyyy_4"
+description = "TRY_TO_DATE with the format DD Mon YYYY."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'29 Feb 2024'"],
+  ["'29 FEB 2024'"],
+  ["'31 Apr 2024'"],
+  ["''"],
+  ["NULL"],
+]
+expression = "TRY_TO_DATE(s, 'DD Mon YYYY')"
+tags = ["null", "invalid", "boundary"]
+
+[[case]]
+id = "to_date_dd_mon_yyyy_4"
+description = "TO_DATE with the format DD Mon YYYY over text spelled in it."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'29 Feb 2024'"],
+  ["NULL"],
+]
+expression = "TO_DATE(s, 'DD Mon YYYY')"
+tags = ["null", "invalid", "boundary"]
+
+[[case]]
+id = "try_to_date_yyyypmmpdd_5"
+description = "TRY_TO_DATE with the format YYYY.MM.DD."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'2024.02.29'"],
+  ["'2024.2.9'"],
+  ["'2023.02.29'"],
+  ["'2024-02-29'"],
+  ["''"],
+  ["NULL"],
+]
+expression = "TRY_TO_DATE(s, 'YYYY.MM.DD')"
+tags = ["null", "invalid", "boundary"]
+expected_divergence = "date_text_spelling"
+
+[[case]]
+id = "to_date_yyyypmmpdd_5"
+description = "TO_DATE with the format YYYY.MM.DD over text spelled in it."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'2024.02.29'"],
+  ["NULL"],
+]
+expression = "TO_DATE(s, 'YYYY.MM.DD')"
+tags = ["null", "invalid", "boundary"]
+
+[[case]]
+id = "try_to_date_mmmm_dd_yyyy_6"
+description = "TRY_TO_DATE with the format MMMM DD YYYY."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'February 29 2024'"],
+  ["'FEBRUARY 29 2024'"],
+  ["'Feb 29 2024'"],
+  ["'May 1 2024'"],
+  ["''"],
+  ["NULL"],
+]
+expression = "TRY_TO_DATE(s, 'MMMM DD YYYY')"
+tags = ["null", "invalid", "boundary"]
+
+[[case]]
+id = "to_date_mmmm_dd_yyyy_6"
+description = "TO_DATE with the format MMMM DD YYYY over text spelled in it."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'February 29 2024'"],
+  ["NULL"],
+]
+expression = "TO_DATE(s, 'MMMM DD YYYY')"
+tags = ["null", "invalid", "boundary"]
+
+[[case]]
+id = "try_to_date_ddsmmsyyyy_7"
+description = "TRY_TO_DATE with the format DD/MM/YYYY."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'29/02/2024'"],
+  ["'1/2/2024'"],
+  ["''"],
+  ["NULL"],
+]
+expression = "TRY_TO_DATE(s, 'DD/MM/YYYY')"
+tags = ["null", "invalid", "boundary"]
+
+[[case]]
+id = "to_date_ddsmmsyyyy_7"
+description = "TO_DATE with the format DD/MM/YYYY over text spelled in it."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'29/02/2024'"],
+  ["NULL"],
+]
+expression = "TO_DATE(s, 'DD/MM/YYYY')"
+tags = ["null", "invalid", "boundary"]

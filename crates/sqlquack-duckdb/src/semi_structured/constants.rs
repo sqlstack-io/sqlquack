@@ -12,6 +12,8 @@ pub const JSON_TEXT: &str = "duckdb.json_text";
 pub const JSON_TYPE_NAME: &str = "duckdb.json_type_name";
 /// A VARIANT cast to a scalar Snowflake type: `duckdb.json_scalar`.
 pub const JSON_SCALAR: &str = "duckdb.json_scalar";
+/// A VARIANT cast to TIMESTAMP_TZ as a UTC wall time: `duckdb.json_zoned_wall`.
+pub const JSON_ZONED_WALL: &str = "duckdb.json_zoned_wall";
 /// A key matched without regard to ASCII case: `duckdb.json_get_ignore_case`.
 pub const JSON_GET_IGNORE_CASE: &str = "duckdb.json_get_ignore_case";
 /// SQL NULL as a VARIANT: `duckdb.json_null`.
@@ -95,3 +97,28 @@ pub const JSON_ANY_NUMBER_PATTERN: &str = r"-?[0-9]+(?:\.[0-9]+)?(?:[eE][+-]?[0-
 pub const JSON_DECIMAL_DIGITS: usize = 15;
 /// Nanoseconds in a second, for integers read as epoch seconds.
 pub const NANOS_PER_SECOND: i64 = 1_000_000_000;
+
+/// OBJECT_AGG: `duckdb.json_object_agg`.
+pub const JSON_OBJECT_AGG: &str = "duckdb.json_object_agg";
+/// ARRAY_POSITION: `duckdb.json_array_position`.
+pub const JSON_ARRAY_POSITION: &str = "duckdb.json_array_position";
+/// ARRAY_CAT: `duckdb.json_array_cat`.
+pub const JSON_ARRAY_CAT: &str = "duckdb.json_array_cat";
+/// ARRAY_COMPACT: `duckdb.json_array_compact`.
+pub const JSON_ARRAY_COMPACT: &str = "duckdb.json_array_compact";
+/// The message of the error ARRAY_CAT raises for a first argument other than an array.
+pub const ARRAY_CAT_LEFT_MESSAGE: &str = "Left argument of ARRAY_CAT is not an array";
+/// The message of the error ARRAY_CAT raises for a second argument other than an array.
+pub const ARRAY_CAT_RIGHT_MESSAGE: &str = "Right argument of ARRAY_CAT is not an array";
+/// The message of the error ARRAY_COMPACT raises for an argument other than an array.
+pub const ARRAY_COMPACT_MESSAGE: &str = "First argument of ARRAY_COMPACT is not an array";
+/// GET with a computed index or key: `duckdb.json_get_computed`.
+pub const JSON_GET_COMPUTED: &str = "duckdb.json_get_computed";
+/// FILTER: `duckdb.json_filter`.
+pub const JSON_FILTER: &str = "duckdb.json_filter";
+/// TRANSFORM: `duckdb.json_transform`.
+pub const JSON_TRANSFORM: &str = "duckdb.json_transform";
+/// A VARIANT equal to an integer NUMBER: `duckdb.json_number_equal`.
+pub const JSON_NUMBER_EQUAL: &str = "duckdb.json_number_equal";
+/// Object keys a quoted JSON path cannot name exactly: the empty key and the wildcard.
+pub const PATH_READ_KEYS: &[&str] = &["", "*"];

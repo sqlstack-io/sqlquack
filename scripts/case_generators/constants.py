@@ -33,6 +33,7 @@ CASTS: str = "casts@2"
 NUMERIC_RANGE: str = "numeric_range"
 TIMESTAMP_RANGE: str = "timestamp_range"
 TIMESTAMP_TZ_SUBMICRO: str = "timestamp_tz_submicro"
+TIME_SUBMICRO: str = "time_submicro"
 TIME_ZONES: str = "time_zones@1"
 NULL_POSITIONS: str = "null_positions@1"
 JSON_PATHS: str = "json_paths@2"
@@ -41,6 +42,8 @@ JSON_LENIENCE: str = "json_lenience@3"
 JSON_NUMBERS: str = "json_numbers@2"
 TEMPORAL_TEXTS: str = "temporal_texts@4"
 DATE_TEXT_SPELLING: str = "date_text_spelling"
+TIMESTAMP_TZ_SUBMICRO: str = "timestamp_tz_submicro"
+TIME_SUBMICRO: str = "time_submicro"
 UNSPELLED_DATE_TEXTS: frozenset[str] = frozenset({"not a date"})
 JSON_TEMPORAL: str = "json_temporal@1"
 CONVERSION_FUNCTIONS: str = "conversion_functions@1"
@@ -708,6 +711,7 @@ JSON_TEMPORAL_CASTS: tuple[Projection, ...] = (
         "try_to_timestamp_ntz", "TRY_TO_TIMESTAMP_NTZ(v:t::VARCHAR)", "fn:TRY_TO_TIMESTAMP_NTZ"
     ),
 )
+JSON_TEMPORAL_DIVERGENCES: dict[str, str] = {"as_timestamp_tz": TIMESTAMP_TZ_SUBMICRO}
 JSON_EPOCH_DOCUMENT: str = '{"t":1709164800}'
 JSON_TEMPORAL_DOCUMENTS: tuple[str, ...] = (
     '{"t":null}',

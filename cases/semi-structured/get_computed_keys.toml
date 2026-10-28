@@ -1,0 +1,65 @@
+# GET with a key computed per row: keys a JSON path would read as a path.
+category = "semi-structured-array"
+construct = "fn:GET"
+session_profile = "utc-v1"
+
+[[case]]
+id = "get_key_path_like"
+description = "GET by a key column naming keys that look like JSON paths, dotted or bracketed."
+columns = [{ name = "v", type = "VARIANT" }, { name = "k", type = "VARCHAR" }]
+rows = [
+  ["PARSE_JSON('{\"a\":{\"b\":1},\"$.a\":3}')", "'$.a'"],
+  ["PARSE_JSON('{\"a\":1,\"/a\":4}')", "'/a'"],
+  ["PARSE_JSON('{\"x\":{\"y\":[9]},\"x.y[0]\":6}')", "'x.y[0]'"],
+  ["PARSE_JSON('{\"x.y\":2,\"x\":{\"y\":5}}')", "'x.y'"],
+  ["PARSE_JSON('{\"a\":1}')", "'$.b'"],
+  ["PARSE_JSON('{\"a\":1}')", "NULL"],
+]
+expression = "GET(v, k)"
+tags = ["null", "duplicates", "empty", "invalid"]
+
+[[case]]
+id = "get_key_unicode"
+description = "GET by a key column with a non-ASCII key and a key differing only in case."
+columns = [{ name = "v", type = "VARIANT" }, { name = "k", type = "VARCHAR" }]
+rows = [
+  ["PARSE_JSON('{\"é\":7,\"E\":1}')", "'é'"],
+  ["PARSE_JSON('{\"Größe\":\"L\"}')", "'Größe'"],
+  ["PARSE_JSON('{\"Größe\":\"L\"}')", "'größe'"],
+]
+expression = "GET(v, k)"
+tags = ["null", "duplicates", "empty", "invalid"]
+
+[[case]]
+id = "get_key_empty"
+description = "GET by a key column holding the empty key."
+columns = [{ name = "v", type = "VARIANT" }, { name = "k", type = "VARCHAR" }]
+rows = [
+  ["PARSE_JSON('{\"\":5,\"a\":1}')", "''"],
+]
+expression = "GET(v, k)"
+tags = ["null", "duplicates", "empty", "invalid"]
+expected_divergence = "json_fidelity"
+
+[[case]]
+id = "get_key_star"
+description = "GET by a key column holding the key *."
+columns = [{ name = "v", type = "VARIANT" }, { name = "k", type = "VARCHAR" }]
+rows = [
+  ["PARSE_JSON('{\"*\":8,\"a\":1}')", "'*'"],
+]
+expression = "GET(v, k)"
+tags = ["null", "duplicates", "empty", "invalid"]
+expected_divergence = "json_fidelity"
+
+[[case]]
+id = "get_key_quotes_backslashes"
+description = "GET by a key column naming keys that hold double quotes, backslashes and a closing bracket."
+columns = [{ name = "v", type = "VARIANT" }, { name = "k", type = "VARCHAR" }]
+rows = [
+  ["PARSE_JSON('{\"q\\\\\"x\":1,\"q\":2}')", "'q\"x'"],
+  ["PARSE_JSON('{\"b\\\\\\\\\":3,\"b\":4}')", "'b\\\\'"],
+  ["PARSE_JSON('{\"a\\\\\"]\":5,\"a\":6}')", "'a\"]'"],
+]
+expression = "GET(v, k)"
+tags = ["null", "duplicates", "empty", "invalid"]

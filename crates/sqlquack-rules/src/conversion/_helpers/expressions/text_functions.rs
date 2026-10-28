@@ -11,12 +11,20 @@ use crate::conversion::_helpers::expressions::strings::text_operand;
 use crate::conversion::_helpers::support::scope::{Emitted, Literal};
 use crate::conversion::_helpers::support::site::Site;
 use crate::conversion::_helpers::support::tree::{
-    field, flag, node_construct, outside_conditions, payload_object, require_understood,
+    field, flag, node_construct, node_kind, outside_conditions, payload_object, require_understood,
 };
 use crate::conversion::constants::{
-    LENGTH_TYPE, LIKE, POSIX_SPACE_CLASS, REGEXP, REGEXP_PARAMETERS, REGEXP_POSIX_SPACE,
-    REGEXP_SHORTHANDS, TEXT_PAD, TEXT_POSITION, TEXT_REPLACE, TEXT_TRANSLATE,
+    ILIKE_FOLDING, LENGTH_TYPE, LIKE, POSIX_SPACE_CLASS, REGEXP, REGEXP_EXTRACTING_FUNCTIONS,
+    REGEXP_LINE_FEED_ESCAPE, REGEXP_PARAMETERS, REGEXP_POSIX_SPACE, REGEXP_SHORTHANDS, TEXT_PAD,
+    TEXT_POSITION, TEXT_REPLACE, TEXT_TRANSLATE,
 };
+
+/// The quantifier LIKE ANY is written with.
+const LIKE_ANY: &str = "ANY";
+/// The node kind of a parenthesised list.
+const TUPLE_KIND: &str = "tuple";
+/// The node kind of ILIKE, the one LIKE recorded with ANY.
+const ILIKE_KIND: &str = "i_like";
 
 /// LPAD or RPAD: padded or cut to the length; an empty pad only cuts, as Snowflake documents.
 pub(crate) fn pad(
@@ -235,41 +243,62 @@ pub(crate) fn like(kind: &str, payload: &Value, site: Site<'_>) -> Result<Emitte
         ],
         &construct,
     )?;
-    if payload
-        .get("quantifier")
-        .is_some_and(|value| !value.is_null())
-    {
+    let right = field(payload, "right", &construct)?;
+    let patterns: Vec<&Value> = match payload.get("quantifier").and_then(Value::as_str) {
+        None => vec![right],
+        Some(LIKE_ANY) if kind != ILIKE_KIND || flag(payload, "negated") => {
+            return Err(outside_conditions(
+                construct,
+                "LIKE ANY, and NOT ILIKE ANY written infix, which no recording shows".to_owned(),
+            ));
+        }
+        Some(LIKE_ANY) if payload.get("escape").is_none_or(Value::is_null) => {
+            match node_kind(right) {
+                Some((TUPLE_KIND, tuple)) => tuple
+                    .get("expressions")
+                    .and_then(Value::as_array)
+                    .map(|items| items.iter().collect())
+                    .unwrap_or_default(),
+                _ => vec![right],
+            }
+        }
+        Some(_) => {
+            return Err(outside_conditions(
+                construct,
+                "LIKE ALL, or LIKE ANY with an escape".to_owned(),
+            ));
+        }
+    };
+    if patterns.is_empty() {
         return Err(outside_conditions(
             construct,
-            "LIKE ANY and LIKE ALL".to_owned(),
+            "LIKE ANY of no patterns".to_owned(),
         ));
     }
     let text = text_operand(field(payload, "left", &construct)?, &construct, site)?;
-    let pattern_node = field(payload, "right", &construct)?;
-    let pattern = text_operand(pattern_node, &construct, site)?;
-    let operator = match kind {
-        "i_like" => {
-            let literal = text_literal(pattern_node, &construct, site)?;
-            if !literal.is_ascii() {
-                return Err(outside_conditions(
-                    construct,
-                    "ILIKE with a pattern outside ASCII, whose case folding is unproven".to_owned(),
-                ));
-            }
-            "ILIKE"
-        }
-        _ => "LIKE",
-    };
-    let negation = match flag(payload, "negated") {
-        true => "NOT ",
-        false => "",
-    };
     let escape = match payload.get("escape").filter(|escape| !escape.is_null()) {
         Some(escape) => format!(" ESCAPE {}", text_operand(escape, &construct, site)?),
         None => String::new(),
     };
+    let mut matches: Vec<String> = Vec::with_capacity(patterns.len());
+    for pattern_node in patterns {
+        let pattern = text_operand(pattern_node, &construct, site)?;
+        let matched = match kind {
+            "i_like" if !text_literal(pattern_node, &construct, site)?.is_ascii() => {
+                let _folding = site.context.log.rule(ILIKE_FOLDING);
+                format!("(lower({text}) LIKE lower({pattern}){escape})")
+            }
+            "i_like" => format!("({text} ILIKE {pattern}{escape})"),
+            _ => format!("({text} LIKE {pattern}{escape})"),
+        };
+        matches.push(matched);
+    }
+    let negation = match flag(payload, "negated") {
+        true => "NOT ",
+        false => "",
+    };
     Ok(Emitted::new(
-        format!("({text} {negation}{operator} {pattern}{escape})"),
+        format!("({negation}({}))", matches.join(" OR ")),
         SnowflakeType::Boolean,
     ))
 }
@@ -289,7 +318,8 @@ pub(crate) fn regexp(
     let text = text_operand(subject, construct, site)?;
     let pattern_text = text_literal(pattern, construct, site)?;
     let log = site.context.log;
-    let _posix = shared_pattern(&pattern_text)
+    let extracting = REGEXP_EXTRACTING_FUNCTIONS.contains(&name);
+    let _posix = shared_pattern(&pattern_text, extracting)
         .map_err(|reason| refuse(&reason))?
         .then(|| log.rule(REGEXP_POSIX_SPACE));
     let pattern = string_literal(&pattern_text, log);
@@ -324,9 +354,11 @@ pub(crate) fn regexp(
             let flags = match options {
                 [] | ["1"] | ["1", "0"] | ["1", "0", "c"] => "g",
                 ["1", "0", "i"] => "gi",
+                ["1", "1"] | ["1", "1", "c"] => "",
+                ["1", "1", "i"] => "i",
                 _ => {
                     return Err(refuse(
-                        "REGEXP_REPLACE from a position or of one occurrence",
+                        "REGEXP_REPLACE from a position other than 1 or of an occurrence other than 1",
                     ));
                 }
             };
@@ -343,21 +375,55 @@ pub(crate) fn regexp(
             SnowflakeType::Varchar,
         ),
         ("REGEXP_SUBSTR", options) => {
-            let (occurrence, group) = match options {
-                [] | ["1"] => ("1", "0"),
-                ["1", occurrence] | ["1", occurrence, "c"] => (*occurrence, "0"),
-                ["1", occurrence, "e"] | ["1", occurrence, "ce"] => (*occurrence, "1"),
-                ["1", occurrence, "e" | "ce", group] => (*occurrence, *group),
+            let (occurrence, parameters, group) = match options {
+                [] | ["1"] => ("1", "", None),
+                ["1", occurrence] => (*occurrence, "", None),
+                ["1", occurrence, parameters] => (*occurrence, *parameters, None),
+                ["1", occurrence, parameters, group] if parameters.contains('e') => {
+                    (*occurrence, *parameters, Some(*group))
+                }
                 _ => return Err(refuse("REGEXP_SUBSTR with these parameters")),
             };
+            let extract = parameters.contains('e');
+            let group = group.unwrap_or(if extract { "1" } else { "0" });
+            let flags = inline_flags(&parameters.replace('e', ""))
+                .ok_or_else(|| refuse("REGEXP_SUBSTR parameters other than c, e, i and s"))?;
             if !positive_integer(occurrence) || !group.bytes().all(|byte| byte.is_ascii_digit()) {
                 return Err(refuse(
                     "REGEXP_SUBSTR with a non-literal occurrence or group",
                 ));
             }
+            let _parameters = (!flags.is_empty()).then(|| log.rule(REGEXP_PARAMETERS));
             (
-                format!("regexp_extract_all({text}, {pattern}, {group})[{occurrence}]"),
+                format!(
+                    "regexp_extract_all({text}, {}, {group})[{occurrence}]",
+                    string_literal(&format!("{flags}{}", greedy(&pattern_text)), log)
+                ),
                 SnowflakeType::Varchar,
+            )
+        }
+        ("REGEXP_SUBSTR_ALL", options) => {
+            let (parameters, group) = match options {
+                [] | ["1"] | ["1", "1"] => ("", None),
+                ["1", "1", parameters] => (*parameters, None),
+                ["1", "1", parameters, group] if parameters.contains('e') => {
+                    (*parameters, Some(*group))
+                }
+                _ => return Err(refuse("REGEXP_SUBSTR_ALL with these parameters")),
+            };
+            let group = group.unwrap_or(if parameters.contains('e') { "1" } else { "0" });
+            let flags = inline_flags(&parameters.replace('e', ""))
+                .ok_or_else(|| refuse("REGEXP_SUBSTR_ALL parameters other than c, e, i and s"))?;
+            if !group.bytes().all(|byte| byte.is_ascii_digit()) {
+                return Err(refuse("REGEXP_SUBSTR_ALL with a non-literal group"));
+            }
+            let _parameters = (!flags.is_empty()).then(|| log.rule(REGEXP_PARAMETERS));
+            (
+                format!(
+                    "CAST(to_json(regexp_extract_all({text}, {}, {group})) AS JSON)",
+                    string_literal(&format!("{flags}{}", greedy(&pattern_text)), log)
+                ),
+                SnowflakeType::SemiStructured,
             )
         }
         _ => return Err(refuse("a REGEXP function with these arguments")),
@@ -419,41 +485,83 @@ fn text_literal(node: &Value, construct: &Construct, site: Site<'_>) -> Result<S
     }
 }
 
-/// Checks a pattern uses syntax Snowflake and RE2 read alike; true when it uses `[:space:]`.
-fn shared_pattern(pattern: &str) -> Result<bool, String> {
+/// Checks a pattern Snowflake and RE2 read alike (`extracting`: as REGEXP_SUBSTR); true for `[:space:]`.
+fn shared_pattern(pattern: &str, extracting: bool) -> Result<bool, String> {
     let mut characters = pattern.chars().peekable();
     let mut previous_quantifier = false;
     let mut in_bracket = false;
     let mut posix = false;
+    let mut previous = ' ';
     while let Some(character) = characters.next() {
         let quantifier = matches!(character, '*' | '+' | '?' | '}');
         match character {
             '\\' => match characters.next() {
                 Some(escaped) if REGEXP_SHORTHANDS.contains(escaped) => {}
+                Some(REGEXP_LINE_FEED_ESCAPE) if extracting => {}
                 Some(escaped) if escaped.is_ascii_punctuation() => {}
                 Some(escaped) => return Err(format!("the regular expression escape \\{escaped}")),
                 None => return Err("a pattern ending in a backslash".to_owned()),
             },
+            '?' if previous_quantifier && extracting && previous != '}' => {}
             '?' if previous_quantifier => {
                 return Err("a lazy quantifier".to_owned());
             }
             '(' if characters.peek() == Some(&'?') => {
                 return Err("a group modifier such as a lookaround".to_owned());
             }
-            '[' if characters.peek() == Some(&':') => {
+            '[' if in_bracket && characters.peek() == Some(&':') => {
                 let class: String = characters.by_ref().take(POSIX_SPACE_CLASS.len()).collect();
                 if !in_bracket || class != POSIX_SPACE_CLASS {
                     return Err("a POSIX character class other than [:space:]".to_owned());
                 }
                 posix = true;
             }
+            '[' if !in_bracket => {
+                in_bracket = true;
+                if characters.peek() == Some(&'^') {
+                    characters.next();
+                }
+                if characters.peek() == Some(&']') {
+                    characters.next();
+                }
+            }
+            ']' => in_bracket = false,
+            _ => {}
+        }
+        previous_quantifier = quantifier && !(character == '?' && previous_quantifier);
+        previous = character;
+    }
+    Ok(posix)
+}
+
+/// The pattern with `+?`, `*?` and `??` as the optional repetitions REGEXP_SUBSTR was recorded reading.
+fn greedy(pattern: &str) -> String {
+    let mut written = String::with_capacity(pattern.len());
+    let mut characters = pattern.chars();
+    let (mut previous_quantifier, mut in_bracket) = (false, false);
+    while let Some(character) = characters.next() {
+        if character == '?' && previous_quantifier && !in_bracket {
+            if written.ends_with('+') {
+                written.pop();
+                written.push('*');
+            }
+            previous_quantifier = false;
+            continue;
+        }
+        written.push(character);
+        match character {
+            '\\' => {
+                written.extend(characters.next());
+                previous_quantifier = false;
+                continue;
+            }
             '[' => in_bracket = true,
             ']' => in_bracket = false,
             _ => {}
         }
-        previous_quantifier = quantifier;
+        previous_quantifier = !in_bracket && matches!(character, '*' | '+' | '?' | '}');
     }
-    Ok(posix)
+    written
 }
 
 /// Checks that a replacement uses backslashes only for group references.

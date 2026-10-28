@@ -1,21 +1,6 @@
-//! What DuckDB's serialiser reports about printed SQL, and stand-ins for project functions.
+//! Stand-ins for project functions in DuckDB's check.
 
 use sqlquack_snowflake::typing::models::SnowflakeType;
-
-/// DuckDB's parse result for printed SQL.
-#[derive(Clone, Debug, PartialEq, Eq)]
-pub struct SerialisedSummary {
-    /// Whether DuckDB's parser failed.
-    pub error: bool,
-    /// Its message when it failed.
-    pub message: Option<String>,
-    /// How many statements it read.
-    pub count: i64,
-    /// The distinct base-table names read, CTE references included, as a JSON array.
-    pub tables: String,
-    /// The distinct function names called, as a JSON array.
-    pub functions: String,
-}
 
 /// What a project function returns, for the stand-in the check defines.
 #[derive(Clone, Debug, PartialEq, Eq)]

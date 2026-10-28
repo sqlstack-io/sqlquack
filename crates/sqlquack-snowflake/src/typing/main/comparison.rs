@@ -23,6 +23,7 @@ pub fn comparison(
             | (SnowflakeType::Varchar, SnowflakeType::Varchar)
             | (SnowflakeType::Boolean, SnowflakeType::Boolean)
             | (SnowflakeType::Date, SnowflakeType::Date)
+            | (SnowflakeType::Time { .. }, SnowflakeType::Time { .. })
             | (
                 SnowflakeType::TimestampNtz { .. },
                 SnowflakeType::TimestampNtz { .. }

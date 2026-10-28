@@ -6,6 +6,8 @@ mod test_analyze;
 mod test_analyze_function;
 #[path = "tests/test_case_provenance.rs"]
 mod test_case_provenance;
+#[path = "tests/test_collect_refusals.rs"]
+mod test_collect_refusals;
 #[path = "tests/test_composition.rs"]
 mod test_composition;
 #[path = "tests/test_conversion_budget.rs"]

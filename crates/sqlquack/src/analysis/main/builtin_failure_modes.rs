@@ -1,7 +1,7 @@
 //! `builtin_failure_modes`: the failure modes each built-in rule declares.
 
 use sqlquack_evidence::verify::types::FailureModes;
-use sqlquack_rules::conversion::constants::RULES;
+use sqlquack_rules::catalogue::constants::RULES;
 
 /// For each rule declaring failure modes, those modes.
 pub fn builtin_failure_modes() -> FailureModes {

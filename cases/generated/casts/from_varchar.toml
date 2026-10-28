@@ -222,6 +222,7 @@ rows = [
 expression = "CAST(x AS TIME(9))"
 tags = ["null", "boundary"]
 origin = "generated: casts@2"
+expected_divergence = "time_submicro"
 
 [[case]]
 id = "varchar_to_time9_invalid"

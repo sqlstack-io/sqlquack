@@ -6,51 +6,55 @@ use sqlquack_core::provenance::models::ProvenanceLog;
 use crate::blocks::constants::{
     DATE_TEXT_SPELLING, DAY_MONTH_NAME_DATE_PATTERN, EPOCH_SCALE_LIMITS, EPOCH_TEXT_PATTERN,
     ISO_TIMESTAMP_PATTERN, MONTH_ABBREVIATIONS, MONTH_FIRST_DATE_PATTERN,
-    MONTH_FIRST_TIMESTAMP_PATTERN, NULL_DATE_TEXT_PATTERN, RFC_UTC_TIMESTAMP_PATTERN,
-    SECONDS_PER_DAY, TEXT_TO_TIMESTAMP, TIMESTAMP_RANGE, UNPADDED_TIMESTAMP_PATTERN,
+    MONTH_FIRST_TIMESTAMP_PATTERN, NULL_DATE_TEXT_PATTERN, NULL_TIMESTAMP_TEXT_PATTERN,
+    RFC_UTC_TIMESTAMP_PATTERN, SECONDS_PER_DAY, TEXT_TO_TIMESTAMP, TIMESTAMP_RANGE,
+    UNPADDED_TIMESTAMP_PATTERN,
 };
 use crate::blocks::models::TextFailure;
 use crate::raises::main::raised::raised;
+use crate::temporal::_helpers::operands::once;
 use crate::temporal::_helpers::text::{checked, parse_failure, whitespace_trimmed};
 
-/// The AUTO spellings batch 6 recorded, or epoch integer text; others raise or are NULL.
+/// The AUTO spellings recorded, or epoch integer text; others raise, or are NULL as TRY_ recorded.
 pub fn text_to_timestamp(
-    sql: &str,
+    value: &str,
     (on_failure, date_only): (TextFailure, bool),
     log: &ProvenanceLog,
 ) -> String {
     log.building_block(TEXT_TO_TIMESTAMP);
-    let trimmed = whitespace_trimmed(sql);
-    let failure = parse_failure(
-        on_failure,
-        (TIMESTAMP_NOT_RECOGNIZED, "Timestamp is not recognized"),
-    );
-    let date = format!("regexp_extract({trimmed}, '^{ISO_TIMESTAMP_PATTERN}$', 1)");
-    if date_only {
-        return text_to_date(sql, (&trimmed, on_failure));
-    }
-    let [seconds, millis, micros] = EPOCH_SCALE_LIMITS;
-    let number = format!("CAST({trimmed} AS BIGINT)");
-    let group =
-        |index: u8| format!("regexp_extract({trimmed}, '^{ISO_TIMESTAMP_PATTERN}$', {index})");
-    let clock = format!(
-        "{date} || ' ' || coalesce(nullif({}, ''), '00:00') || coalesce(nullif({}, ''), ':00') \
+    once(value, "timestamp_text", |sql| {
+        let trimmed = whitespace_trimmed(sql);
+        let failure = parse_failure(
+            on_failure,
+            (TIMESTAMP_NOT_RECOGNIZED, "Timestamp is not recognized"),
+        );
+        let date = format!("regexp_extract({trimmed}, '^{ISO_TIMESTAMP_PATTERN}$', 1)");
+        if date_only {
+            return text_to_date(sql, (&trimmed, on_failure));
+        }
+        let [seconds, millis, micros] = EPOCH_SCALE_LIMITS;
+        let number = format!("CAST({trimmed} AS BIGINT)");
+        let group =
+            |index: u8| format!("regexp_extract({trimmed}, '^{ISO_TIMESTAMP_PATTERN}$', {index})");
+        let clock = format!(
+            "{date} || ' ' || coalesce(nullif({}, ''), '00:00') || coalesce(nullif({}, ''), ':00') \
          || coalesce('.' || left(nullif({}, ''), 9), '')",
-        group(2),
-        group(4),
-        group(5)
-    );
-    let parsed =
-        |format: &str| format!("CAST(try_strptime({trimmed}, '{format}') AS TIMESTAMP_NS)");
-    let rfc =
-        format!("try_strptime(left({trimmed}, length({trimmed}) - 6), '%a, %d %b %Y %H:%M:%S')");
-    let unpadded = format!(
-        "CASE WHEN contains({trimmed}, ' ') THEN {} ELSE {} END",
-        parsed("%Y-%m-%d %H:%M:%S"),
-        parsed("%Y-%m-%d")
-    );
-    let converted = format!(
-        "(CASE WHEN {sql} IS NULL THEN NULL \
+            group(2),
+            group(4),
+            group(5)
+        );
+        let parsed =
+            |format: &str| format!("CAST(try_strptime({trimmed}, '{format}') AS TIMESTAMP_NS)");
+        let rfc = format!(
+            "try_strptime(left({trimmed}, length({trimmed}) - 6), '%a, %d %b %Y %H:%M:%S')"
+        );
+        let unpadded = format!(
+            "CASE WHEN contains({trimmed}, ' ') THEN {} ELSE {} END",
+            parsed("%Y-%m-%d %H:%M:%S"),
+            parsed("%Y-%m-%d")
+        );
+        let converted = format!(
+            "(CASE WHEN {sql} IS NULL THEN NULL \
          WHEN regexp_full_match({trimmed}, '{EPOCH_TEXT_PATTERN}') THEN make_timestamp_ns( \
          CASE WHEN {number} < {seconds} THEN {number} * 1000000000 \
          WHEN {number} < {millis} THEN {number} * 1000000 \
@@ -65,13 +69,22 @@ pub fn text_to_timestamp(
          WHEN regexp_full_match({trimmed}, '{RFC_UTC_TIMESTAMP_PATTERN}') \
          AND strftime({rfc}, '%a') = left({trimmed}, 3) THEN CAST({rfc} AS TIMESTAMP_NS) \
          ELSE CAST({unrecorded} AS TIMESTAMP_NS) END)",
-        month_first = parsed("%m/%d/%Y %H:%M:%S"),
-        unrecorded = unrecorded_spelling(on_failure, &failure),
-        beyond = raised(&format!(
-            "{TIMESTAMP_RANGE}: a timestamp Snowflake holds outside the nanosecond range of DuckDB"
-        )),
-    );
-    checked(sql, &converted, &failure)
+            month_first = parsed("%m/%d/%Y %H:%M:%S"),
+            unrecorded = match on_failure {
+                TextFailure::Null => format!(
+                    "CASE WHEN {trimmed} = '' OR regexp_full_match({trimmed}, \
+                 '{NULL_TIMESTAMP_TEXT_PATTERN}') THEN NULL ELSE {} END",
+                    unrecorded_spelling(TextFailure::Text, &failure)
+                ),
+                TextFailure::Text | TextFailure::Variant =>
+                    unrecorded_spelling(on_failure, &failure),
+            },
+            beyond = raised(&format!(
+                "{TIMESTAMP_RANGE}: a timestamp Snowflake holds outside the nanosecond range of DuckDB"
+            )),
+        );
+        checked(sql, &converted, &failure)
+    })
 }
 
 /// Text to DATE in the recorded AUTO spellings and epoch integer text, without a timestamp's range.

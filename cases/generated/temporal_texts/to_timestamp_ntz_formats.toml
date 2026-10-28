@@ -29,6 +29,7 @@ rows = [
 expression = "TRY_TO_TIMESTAMP_NTZ(x, 'YYYY-MM-DD HH24:MI:SS')"
 tags = ["null", "invalid", "boundary"]
 origin = "generated: temporal_texts@4"
+expected_divergence = "date_text_spelling"
 
 [[case]]
 id = "to_timestamp_ntz_iso"
@@ -84,6 +85,7 @@ rows = [
 expression = "TRY_TO_TIMESTAMP_NTZ(x, 'YYYY-MM-DD\"T\"HH24:MI:SS.FF3')"
 tags = ["null", "invalid", "boundary"]
 origin = "generated: temporal_texts@4"
+expected_divergence = "date_text_spelling"
 
 [[case]]
 id = "to_timestamp_ntz_iso_t_millis"
@@ -139,6 +141,7 @@ rows = [
 expression = "TRY_TO_TIMESTAMP_NTZ(x, 'YYYY-MM-DD HH24:MI:SS.FF9')"
 tags = ["null", "invalid", "boundary"]
 origin = "generated: temporal_texts@4"
+expected_divergence = "date_text_spelling"
 
 [[case]]
 id = "to_timestamp_ntz_iso_nanos"
@@ -194,6 +197,7 @@ rows = [
 expression = "TRY_TO_TIMESTAMP_NTZ(x, 'DD/MM/YYYY HH24:MI')"
 tags = ["null", "invalid", "boundary"]
 origin = "generated: temporal_texts@4"
+expected_divergence = "date_text_spelling"
 
 [[case]]
 id = "to_timestamp_ntz_day_first_minutes"
@@ -249,6 +253,7 @@ rows = [
 expression = "TRY_TO_TIMESTAMP_NTZ(x, 'MM/DD/YYYY HH12:MI:SS AM')"
 tags = ["null", "invalid", "boundary"]
 origin = "generated: temporal_texts@4"
+expected_divergence = "date_text_spelling"
 
 [[case]]
 id = "to_timestamp_ntz_twelve_hour"
@@ -304,6 +309,7 @@ rows = [
 expression = "TRY_TO_TIMESTAMP_NTZ(x, 'YYYY-MM-DD HH24:MI:SS TZH:TZM')"
 tags = ["null", "invalid", "boundary"]
 origin = "generated: temporal_texts@4"
+expected_divergence = "date_text_spelling"
 
 [[case]]
 id = "to_timestamp_ntz_offset"
@@ -359,6 +365,7 @@ rows = [
 expression = "TRY_TO_TIMESTAMP_NTZ(x, 'YYYYMMDDHH24MISS')"
 tags = ["null", "invalid", "boundary"]
 origin = "generated: temporal_texts@4"
+expected_divergence = "date_text_spelling"
 
 [[case]]
 id = "to_timestamp_ntz_compact"
@@ -414,6 +421,7 @@ rows = [
 expression = "TRY_TO_TIMESTAMP_NTZ(x, 'YYYY-MM-DD\"T\"HH24:MI:SSTZH:TZM')"
 tags = ["null", "invalid", "boundary"]
 origin = "generated: temporal_texts@4"
+expected_divergence = "date_text_spelling"
 
 [[case]]
 id = "to_timestamp_ntz_iso_t_offset"

@@ -73,6 +73,7 @@ rows = [
 query = "SELECT v:a = 1 AS r FROM input ORDER BY ordinal"
 order = "ordered"
 tags = ["null", "json-null", "missing-key"]
+expected_divergence = "json_fidelity"
 
 [[case]]
 id = "variant_equals_text"

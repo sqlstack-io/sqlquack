@@ -30,3 +30,8 @@ pub(crate) fn checked(sql: &str, converted: &str, failure: &str) -> String {
 pub(crate) fn whitespace_trimmed(sql: &str) -> String {
     format!("trim({sql}, {CONVERSION_WHITESPACE})")
 }
+
+/// `body` over `value` evaluated once, as the lambda parameter `name`.
+pub(crate) fn bound(value: &str, name: &str, body: &str) -> String {
+    format!("list_transform([{value}], lambda {name}: {body})[1]")
+}

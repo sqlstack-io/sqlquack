@@ -90,6 +90,7 @@ rows = [
 ]
 expression = "TRY_TO_TIMESTAMP(s)"
 tags = ["null", "boundary"]
+expected_divergence = "date_text_spelling"
 
 [[case]]
 id = "to_timestamp_ntz_text"

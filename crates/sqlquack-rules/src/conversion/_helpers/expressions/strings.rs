@@ -1,4 +1,4 @@
-//! UPPER, LOWER, TRIM and concatenation.
+//! UPPER, LOWER, INITCAP, TRIM, CHR, HEX_ENCODE and concatenation.
 
 use serde_json::Value;
 use sqlquack_core::classification::models::Construct;
@@ -6,17 +6,25 @@ use sqlquack_core::refusals::models::Refusal;
 use sqlquack_duckdb::blocks::main::full_case_lower::full_case_lower;
 use sqlquack_duckdb::blocks::main::full_case_upper::full_case_upper;
 use sqlquack_duckdb::blocks::main::null_propagating_concat::null_propagating_concat;
+use sqlquack_duckdb::text::constants::{
+    HEX_LOWER_CASE, HEX_UPPER_CASE, INITCAP_DEFAULT_DELIMITERS, INITCAP_TEXT,
+};
 use sqlquack_duckdb::text::main::character_edit_distance::character_edit_distance;
+use sqlquack_duckdb::text::main::code_point_text::code_point_text;
+use sqlquack_duckdb::text::main::hex_text::hex_text;
+use sqlquack_duckdb::text::main::title_case::title_case;
 use sqlquack_snowflake::typing::models::SnowflakeType;
 
 use crate::conversion::_helpers::expressions::scalar::convert_expression;
-use crate::conversion::_helpers::support::scope::Emitted;
+use crate::conversion::_helpers::support::divergence::diverge;
+use crate::conversion::_helpers::support::scope::{Emitted, Literal};
 use crate::conversion::_helpers::support::site::Site;
 use crate::conversion::_helpers::support::tree::{
     field, missing, node_construct, outside_conditions, payload_object, require_understood,
 };
 use crate::conversion::constants::{
-    CASE_MAPPING, CONCAT, CONCAT_WS, EDIT_DISTANCE, TEXT_AFFIX, TEXT_CONTAINS, TEXT_MD5, TRIM,
+    CASE_MAPPING, CONCAT, CONCAT_WS, EDIT_DISTANCE, TEXT_AFFIX, TEXT_CHR, TEXT_CONTAINS, TEXT_HEX,
+    TEXT_INITCAP, TEXT_MD5, TRIM,
 };
 
 /// What TRIM removes without a character list: spaces only, as in Snowflake.
@@ -260,4 +268,88 @@ fn operand_texts(
         texts.push(text);
     }
     Ok(texts)
+}
+
+/// INITCAP(s) and INITCAP(s, delimiters) with literal delimiters among space, `_` and `-`.
+pub(crate) fn initcap(
+    arguments: &[Value],
+    construct: &Construct,
+    site: Site<'_>,
+) -> Result<Emitted, Refusal> {
+    let _rule = site.context.log.rule(TEXT_INITCAP);
+    let refuse = |reason: &str| outside_conditions(construct.clone(), reason.to_owned());
+    let (text, delimiters) = match arguments {
+        [text] => (text, INITCAP_DEFAULT_DELIMITERS.to_owned()),
+        [text, delimiters] => match convert_expression(delimiters, site)?.literal {
+            Some(Literal::Text(delimiters))
+                if delimiters
+                    .chars()
+                    .all(|character| INITCAP_DEFAULT_DELIMITERS.contains(character)) =>
+            {
+                (text, delimiters)
+            }
+            _ => {
+                return Err(refuse(
+                    "INITCAP delimiters other than literal space, _ and -",
+                ));
+            }
+        },
+        _ => return Err(refuse("INITCAP takes one or two arguments")),
+    };
+    let text = text_operand(text, construct, site)?;
+    diverge(site.context, INITCAP_TEXT, construct)?;
+    Ok(Emitted::new(
+        title_case(&text, &delimiters, site.context.log),
+        SnowflakeType::Varchar,
+    ))
+}
+
+/// CHR(n) of an integer NUMBER.
+pub(crate) fn chr(
+    arguments: &[Value],
+    construct: &Construct,
+    site: Site<'_>,
+) -> Result<Emitted, Refusal> {
+    let _rule = site.context.log.rule(TEXT_CHR);
+    let [code] = arguments else {
+        return Err(outside_conditions(
+            construct.clone(),
+            "CHR takes one argument".to_owned(),
+        ));
+    };
+    let code = convert_expression(code, site)?;
+    match code.data_type {
+        SnowflakeType::Number { scale: 0, .. } | SnowflakeType::Null => Ok(Emitted::new(
+            code_point_text(&code.sql, site.context.log),
+            SnowflakeType::Varchar,
+        )),
+        other => Err(outside_conditions(
+            construct.clone(),
+            format!("CHR of {other}"),
+        )),
+    }
+}
+
+/// HEX_ENCODE(s) and HEX_ENCODE(s, case) with a literal case of 0 or 1.
+pub(crate) fn hex_encode(
+    arguments: &[Value],
+    construct: &Construct,
+    site: Site<'_>,
+) -> Result<Emitted, Refusal> {
+    let _rule = site.context.log.rule(TEXT_HEX);
+    let refuse = |reason: &str| outside_conditions(construct.clone(), reason.to_owned());
+    let (text, lower) = match arguments {
+        [text] => (text, false),
+        [text, case] => match convert_expression(case, site)?.literal {
+            Some(Literal::Number(case)) if case == HEX_LOWER_CASE => (text, true),
+            Some(Literal::Number(case)) if case == HEX_UPPER_CASE => (text, false),
+            _ => return Err(refuse("HEX_ENCODE with a case other than literal 0 or 1")),
+        },
+        _ => return Err(refuse("HEX_ENCODE takes one or two arguments")),
+    };
+    let text = text_operand(text, construct, site)?;
+    Ok(Emitted::new(
+        hex_text(&text, lower, site.context.log),
+        SnowflakeType::Varchar,
+    ))
 }

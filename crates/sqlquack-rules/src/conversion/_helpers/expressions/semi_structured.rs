@@ -7,6 +7,7 @@ use sqlquack_core::refusals::models::Refusal;
 use sqlquack_duckdb::blocks::main::varchar_length_check::varchar_length_check;
 use sqlquack_duckdb::semi_structured::constants::VARIANT_TYPED_VALUES;
 use sqlquack_duckdb::semi_structured::constants::{JSON_FIDELITY, JSON_NULL};
+use sqlquack_duckdb::semi_structured::main::json_get_computed::json_get_computed;
 use sqlquack_duckdb::semi_structured::main::json_get_ignore_case::json_get_ignore_case;
 use sqlquack_duckdb::semi_structured::main::json_guarded::json_guarded;
 use sqlquack_duckdb::semi_structured::main::json_null_value::json_null_value;
@@ -14,12 +15,13 @@ use sqlquack_duckdb::semi_structured::main::json_path::json_path;
 use sqlquack_duckdb::semi_structured::main::json_scalar::json_scalar;
 use sqlquack_duckdb::semi_structured::main::json_serialized::json_serialized;
 use sqlquack_duckdb::semi_structured::main::json_text::json_text;
+use sqlquack_duckdb::semi_structured::main::json_zoned_wall::json_zoned_wall;
 use sqlquack_duckdb::semi_structured::models::PathStep;
 use sqlquack_duckdb::variants::main::json_type_name::json_type_name;
 use sqlquack_snowflake::typing::models::{CastTarget, SnowflakeType};
 
 use crate::conversion::_helpers::expressions::scalar::convert_expression;
-use crate::conversion::_helpers::expressions::strings::text_operand;
+use crate::conversion::_helpers::expressions::temporal::temporal_cast;
 use crate::conversion::_helpers::support::divergence::{allows, diverge};
 use crate::conversion::_helpers::support::scope::{Context, Emitted, Literal};
 use crate::conversion::_helpers::support::site::Site;
@@ -27,8 +29,8 @@ use crate::conversion::_helpers::support::tree::{
     field, node_construct, outside_conditions, payload_object, require_understood,
 };
 use crate::conversion::constants::{
-    PARSE_JSON_RULE, TIMESTAMP_RANGE, VARIANT_CAST, VARIANT_INSPECT, VARIANT_NAME, VARIANT_PATH,
-    VARIANT_TYPE_NAME,
+    DATE_TEXT_SPELLING, PARSE_JSON_RULE, PARSE_JSON_VARIANT, TIMESTAMP_RANGE, VARIANT_CAST,
+    VARIANT_COMPUTED_GET, VARIANT_INSPECT, VARIANT_NAME, VARIANT_PATH, VARIANT_TYPE_NAME,
 };
 
 /// PARSE_JSON or TRY_PARSE_JSON of text: raises wherever the two parsers may disagree.
@@ -44,7 +46,20 @@ pub(crate) fn parse_json(
             "parsing JSON takes one argument here".to_owned(),
         ));
     };
-    let text = text_operand(text, construct, site)?;
+    let operand = convert_expression(text, site)?;
+    let text = match operand.data_type {
+        SnowflakeType::Varchar | SnowflakeType::Null => operand.sql,
+        SnowflakeType::SemiStructured => {
+            let _variant = site.context.log.rule(PARSE_JSON_VARIANT);
+            json_text(&operand.sql, site.context.log)
+        }
+        other => {
+            return Err(outside_conditions(
+                construct.clone(),
+                format!("a {other} operand needs an implicit conversion to text"),
+            ));
+        }
+    };
     diverge(site.context, JSON_FIDELITY, construct)?;
     Ok(semi_structured(json_guarded(&text, site.context.log)))
 }
@@ -110,10 +125,26 @@ pub(crate) fn variant_get(
     };
     let base = variant_operand(value, construct, site)?;
     match name {
-        "GET" => {
-            let step = literal_step(key, construct, site)?;
-            located(&base, &[step], construct, site.context)
-        }
+        "GET" => match literal_step(key, construct, site) {
+            Ok(step) => located(&base, &[step], construct, site.context),
+            Err(refusal) => {
+                let step = convert_expression(key, site)?;
+                let index = match step.data_type {
+                    SnowflakeType::Number { scale: 0, .. } => true,
+                    SnowflakeType::Varchar => false,
+                    _ => return Err(refusal),
+                };
+                let _computed = site.context.log.rule(VARIANT_COMPUTED_GET);
+                if !index {
+                    diverge(site.context, JSON_FIDELITY, construct)?;
+                }
+                Ok(semi_structured(json_get_computed(
+                    &base,
+                    (&step.sql, index),
+                    site.context.log,
+                )))
+            }
+        },
         "GET_PATH" => {
             let text = text_literal_value(key, construct, site)?;
             let steps = path_steps(&text).ok_or_else(|| {
@@ -195,6 +226,18 @@ pub(crate) fn variant_cast(
         diverge(context, TIMESTAMP_RANGE, construct).map_err(|refusal| refusal.reason)?;
     }
     match (target.data_type, target.max_length) {
+        (SnowflakeType::TimestampTz { precision: 9 }, _) => {
+            diverge(context, DATE_TEXT_SPELLING, construct).map_err(|refusal| refusal.reason)?;
+            diverge(context, TIMESTAMP_RANGE, construct).map_err(|refusal| refusal.reason)?;
+            temporal_cast(
+                &json_zoned_wall(&operand.sql, context.log),
+                (
+                    SnowflakeType::TimestampNtz { precision: 9 },
+                    target.data_type,
+                ),
+                (context, construct),
+            )
+        }
         (SnowflakeType::Varchar, Some(max_length)) => Ok(varchar_length_check(
             &json_text(&operand.sql, context.log),
             max_length,

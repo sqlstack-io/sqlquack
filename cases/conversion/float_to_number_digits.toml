@@ -1,0 +1,64 @@
+# FLOAT to NUMBER at scales and significant digits recordings do not show yet.
+category = "conversion"
+construct = "node:cast"
+session_profile = "utc-v1"
+
+[[case]]
+id = "float_to_number_scale_18"
+description = "FLOAT to NUMBER(20,18), where the double's binary expansion reaches the scale."
+columns = [{ name = "x", type = "FLOAT" }]
+rows = [
+  ["0.1"],
+  ["0.3"],
+  ["1.0000000000000002"],
+  ["-0.7"],
+  ["NULL"],
+]
+expression = "x::NUMBER(20,18)"
+tags = ["null", "invalid", "boundary"]
+
+[[case]]
+id = "float_to_number_other_scales"
+description = "FLOAT to NUMBER at scales 1, 3, 4, 10 and 12."
+columns = [{ name = "x", type = "FLOAT" }]
+rows = [
+  ["0.15"],
+  ["2.675"],
+  ["1.0005"],
+  ["-0.125"],
+  ["NULL"],
+]
+query = "SELECT x::NUMBER(10,1) AS s1, x::NUMBER(10,3) AS s3, x::NUMBER(10,4) AS s4, x::NUMBER(20,10) AS s10, x::NUMBER(20,12) AS s12 FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "invalid", "boundary"]
+
+[[case]]
+id = "float_to_number_large_scale_2"
+description = "FLOAT to NUMBER(38,2) of magnitudes with 15 to 18 significant digits."
+columns = [{ name = "x", type = "FLOAT" }]
+rows = [
+  ["1234567890123.45"],
+  ["9007199254740.99"],
+  ["123456789012345.67"],
+  ["-98765432109876.54"],
+  ["0.005"],
+  ["NULL"],
+]
+expression = "x::NUMBER(38,2)"
+tags = ["null", "invalid", "boundary"]
+expected_divergence = "float_decimal_digits"
+
+[[case]]
+id = "float_to_number_digits_scale_6_8"
+description = "FLOAT to NUMBER(38,6) and NUMBER(38,8) with 15 to 17 significant digits."
+columns = [{ name = "x", type = "FLOAT" }]
+rows = [
+  ["123456789.123456"],
+  ["0.123456789012345"],
+  ["9876.54321098765"],
+  ["NULL"],
+]
+query = "SELECT x::NUMBER(38,6) AS s6, x::NUMBER(38,8) AS s8 FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "invalid", "boundary"]
+expected_divergence = "float_decimal_digits"

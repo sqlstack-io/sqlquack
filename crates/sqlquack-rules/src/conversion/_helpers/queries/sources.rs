@@ -11,6 +11,7 @@ use crate::conversion::_helpers::expressions::semi_structured::guarded_column;
 use crate::conversion::_helpers::queries::clauses::condition_sql;
 use crate::conversion::_helpers::queries::flatten::lateral_flatten;
 use crate::conversion::_helpers::queries::query::{convert_query, require_distinct_names};
+use crate::conversion::_helpers::support::collecting::{collecting, events, opaque, record};
 use crate::conversion::_helpers::support::scope::{Context, Scope, ScopeRelation};
 use crate::conversion::_helpers::support::site::{Placement, Site};
 use crate::conversion::_helpers::support::tree::{
@@ -18,8 +19,8 @@ use crate::conversion::_helpers::support::tree::{
     outside_conditions, payload_object, require_understood, unresolved,
 };
 use crate::conversion::constants::{
-    FROM_RELATION, FROM_SUBQUERY, JOIN_CROSS, JOIN_ON, LATERAL_KEY, PROJECT_TABLE_FUNCTION,
-    TABLE_WRAPPER,
+    FROM_RELATION, FROM_SUBQUERY, JOIN_CROSS, JOIN_ON, LATERAL_KEY, LATERAL_SUBQUERY,
+    OPAQUE_ALIAS_PREFIX, PROJECT_TABLE_FUNCTION, TABLE_WRAPPER,
 };
 use crate::conversion::models::FunctionReturns;
 
@@ -49,20 +50,31 @@ pub(crate) fn convert_from(
     };
     let mut sql = String::from(" FROM ");
     for (position, source) in sources.iter().enumerate() {
+        let before = events();
         if let Some(lateral) = source.get(LATERAL_KEY) {
-            if position == 0 {
-                return Err(missing(
+            let flattened = match position {
+                0 => Err(missing(
                     node_construct(LATERAL_KEY),
                     "LATERAL as the first FROM source".to_owned(),
-                ));
+                )),
+                _ => lateral_flatten(lateral, &relations, outer, context)
+                    .map(|flattened| (flattened.sql, flattened.relation)),
             }
-            let flattened = lateral_flatten(lateral, &relations, outer, context)
-                .map_err(|refusal| context.locator.placed(refusal, source))?;
-            sql.push_str(&flattened.sql);
-            relations.push(flattened.relation);
+            .map_err(|refusal| context.locator.placed(refusal, source));
+            let (flattened_sql, relation) =
+                recovered(flattened, source, (before, relations.len()))?;
+            sql.push_str(&flattened_sql);
+            relations.push(relation);
             continue;
         }
-        let (source_sql, relation) = convert_source(source, context)?;
+        let converted = match position == 0 && lateral_subquery(source) {
+            true => Err(missing(
+                node_construct(LATERAL_KEY),
+                "LATERAL as the first FROM source".to_owned(),
+            )),
+            false => convert_source(source, (&relations, outer), context),
+        };
+        let (source_sql, relation) = recovered(converted, source, (before, relations.len()))?;
         if position > 0 {
             sql.push_str(separator);
         }
@@ -70,8 +82,11 @@ pub(crate) fn convert_from(
         relations.push(relation);
     }
     for join in list(select, "joins") {
-        let (join_sql, relation) = convert_join(join, &relations, outer, context)
-            .map_err(|refusal| context.locator.placed(refusal, join))?;
+        let before = events();
+        let joined = convert_join(join, &relations, outer, context)
+            .map_err(|refusal| context.locator.placed(refusal, join));
+        let source = join.get("this").unwrap_or(&Value::Null);
+        let (join_sql, relation) = recovered(joined, source, (before, relations.len()))?;
         sql.push_str(&join_sql);
         relations.push(relation);
     }
@@ -104,8 +119,22 @@ fn convert_join(
     let join = payload_object(join, &join_construct)?;
     require_understood(join, &["this", "on", "kind"], &join_construct)?;
     let kind = join.get("kind").and_then(Value::as_str).unwrap_or_default();
-    let (source_sql, relation) = convert_source(field(join, "this", &join_construct)?, context)?;
+    let source = field(join, "this", &join_construct)?;
     let on = join.get("on").filter(|on| !on.is_null());
+    let before = events();
+    if let (Some(lateral), "Implicit" | "Cross", None) = (source.get(LATERAL_KEY), kind, on) {
+        let flattened = lateral_flatten(lateral, earlier, outer, context)
+            .map(|flattened| (flattened.sql, flattened.relation));
+        return recovered(flattened, source, (before, earlier.len()));
+    }
+    let converted = match lateral_subquery(source) {
+        true => Err(missing(
+            node_construct("subquery"),
+            "a LATERAL subquery after JOIN ... ON clauses".to_owned(),
+        )),
+        false => convert_source(source, (earlier, outer), context),
+    };
+    let (source_sql, relation) = recovered(converted, source, (before, earlier.len()))?;
     let keyword = match (kind, on) {
         ("Inner", Some(_)) => "JOIN",
         ("Left", Some(_)) => "LEFT JOIN",
@@ -141,22 +170,72 @@ fn convert_join(
     Ok((format!(" {keyword} {source_sql} ON {condition}"), relation))
 }
 
+/// The FROM sources before a source and the enclosing scope, which a LATERAL subquery reads.
+type Earlier<'s, 'a> = (&'s [ScopeRelation], Option<&'s Scope<'a>>);
+
+/// When collecting, a refused source becomes a relation of unknown columns, so later clauses convert.
+fn recovered(
+    converted: Result<(String, ScopeRelation), Refusal>,
+    source: &Value,
+    (before, position): (usize, usize),
+) -> Result<(String, ScopeRelation), Refusal> {
+    match converted {
+        Err(refusal) if collecting() => {
+            record(refusal, before);
+            let alias =
+                source_alias(source).unwrap_or_else(|| format!("{OPAQUE_ALIAS_PREFIX}{position}"));
+            opaque(&alias);
+            Ok((
+                String::new(),
+                ScopeRelation {
+                    alias,
+                    columns: Vec::new(),
+                },
+            ))
+        }
+        converted => converted,
+    }
+}
+
+/// The name a FROM source is read by, where its tree says.
+fn source_alias(source: &Value) -> Option<String> {
+    if let Some(lateral) = source.get(LATERAL_KEY) {
+        return lateral
+            .get("alias")
+            .and_then(Value::as_str)
+            .map(str::to_ascii_uppercase);
+    }
+    let (kind, payload) = node_kind(source)?;
+    let alias = payload.get("alias").and_then(identifier_name);
+    match kind {
+        "table" => alias.or_else(|| payload.get("name").and_then(identifier_name)),
+        _ => alias,
+    }
+}
+
+fn lateral_subquery(source: &Value) -> bool {
+    matches!(node_kind(source), Some(("subquery", payload))
+        if payload.get(LATERAL_KEY).and_then(Value::as_bool) == Some(true))
+}
+
 fn convert_source(
     source: &Value,
+    earlier: Earlier<'_, '_>,
     context: &Context<'_>,
 ) -> Result<(String, ScopeRelation), Refusal> {
-    let (sql, relation) = convert_source_kind(source, context)
+    let (sql, relation) = convert_source_kind(source, earlier, context)
         .map_err(|refusal| context.locator.placed(refusal, source))?;
     Ok((context.locator.identified(&sql, source), relation))
 }
 
 fn convert_source_kind(
     source: &Value,
+    earlier: Earlier<'_, '_>,
     context: &Context<'_>,
 ) -> Result<(String, ScopeRelation), Refusal> {
     match node_kind(source) {
         Some(("table", payload)) => table_source(payload, context),
-        Some(("subquery", payload)) => subquery_source(payload, context),
+        Some(("subquery", payload)) => subquery_source(payload, earlier, context),
         Some(("function", _)) => table_function_source(source, None, context),
         Some(("alias", payload)) => aliased_source(payload, context),
         Some((other, _)) => Err(missing(
@@ -298,15 +377,27 @@ fn aliased_source(
 
 fn subquery_source(
     payload: &Value,
+    (relations, outer): Earlier<'_, '_>,
     context: &Context<'_>,
 ) -> Result<(String, ScopeRelation), Refusal> {
     let construct = node_construct("subquery");
     let log = context.log;
     let _rule = log.rule(FROM_SUBQUERY);
     let subquery = payload_object(payload, &construct)?;
-    require_understood(subquery, &["this", "alias", "column_aliases"], &construct)?;
-    let (sql, mut columns) =
-        convert_query(field(subquery, "this", &construct)?, None, context, true)?;
+    require_understood(
+        subquery,
+        &["this", "alias", "column_aliases", LATERAL_KEY],
+        &construct,
+    )?;
+    let lateral = subquery.get(LATERAL_KEY).and_then(Value::as_bool) == Some(true);
+    let _lateral_rule = lateral.then(|| log.rule(LATERAL_SUBQUERY));
+    let scope = Scope::new(relations.to_vec(), outer);
+    let (sql, mut columns) = convert_query(
+        field(subquery, "this", &construct)?,
+        lateral.then_some(&scope),
+        context,
+        true,
+    )?;
     let renamed = list(subquery, "column_aliases");
     if !renamed.is_empty() {
         if renamed.len() != columns.len() {
@@ -327,13 +418,17 @@ fn subquery_source(
             "a FROM subquery without an alias".to_owned(),
         ));
     };
+    let keyword = match lateral {
+        true => "LATERAL ",
+        false => "",
+    };
     let column_list: Vec<String> = columns
         .iter()
         .map(|column| quoted_identifier(&column.name, log))
         .collect();
     Ok((
         format!(
-            "({sql}) AS {}({})",
+            "{keyword}({sql}) AS {}({})",
             quoted_identifier(&alias, log),
             column_list.join(", ")
         ),

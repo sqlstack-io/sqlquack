@@ -17,6 +17,7 @@ from scripts.case_generators.constants import (
     COMPOSED_RESORT_DOCUMENTS,
     COMPOSED_UNPACK_QUERY,
     DATE_PROJECTIONS,
+    DATE_TEXT_SPELLING,
     DECIMAL_TOKENS,
     DOUBLE_PROJECTIONS,
     DOUBLE_TOKENS,
@@ -34,6 +35,7 @@ from scripts.case_generators.constants import (
     JSON_NUMBERS,
     JSON_TEMPORAL,
     JSON_TEMPORAL_CASTS,
+    JSON_TEMPORAL_DIVERGENCES,
     JSON_TEMPORAL_DOCUMENTS,
     KEY_ORDER_COMPARISONS,
     KEY_ORDER_CONSTRUCTED,
@@ -302,6 +304,7 @@ def sure_case(projection: Projection) -> Case:
         rows=rows,
         expression=projection.template,
         tags=("null", "json-null", "missing-key", "case-sensitive-key"),
+        expected_divergence=JSON_TEMPORAL_DIVERGENCES.get(projection.slug),
     )
 
 
@@ -329,6 +332,7 @@ def json_temporal_files() -> list[CaseFile]:
             rows=tuple((document_cell(text_document(text)),) for text in UNSURE_TIMESTAMP_TEXTS),
             expression=JSON_TEMPORAL_CASTS[3].template,
             tags=("invalid",),
+            expected_divergence=DATE_TEXT_SPELLING,
         )
     )
     cases.append(

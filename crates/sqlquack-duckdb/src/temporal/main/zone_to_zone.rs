@@ -4,20 +4,27 @@ use sqlquack_core::provenance::models::ProvenanceLog;
 use sqlquack_snowflake::typing::models::SnowflakeType;
 
 use crate::blocks::constants::ZONE_TO_ZONE;
-use crate::blocks::main::string_literal::string_literal;
+use crate::temporal::_helpers::operands::once;
 use crate::temporal::_helpers::timestamps::{microsecond_base, with_source_nanos};
 
-/// The naive timestamp read in `source` (repeated times early, as Snowflake) as `target` wall time.
+/// The naive timestamp read in the zone `source` (repeated times early) as `target` wall time.
 pub fn zone_to_zone(
-    sql: &str,
+    value: &str,
     [source, target]: [&str; 2],
     data_type: SnowflakeType,
     log: &ProvenanceLog,
 ) -> String {
     log.building_block(ZONE_TO_ZONE);
+    once(value, "zone_wall", |sql| {
+        once(source, "zone_name", |source| {
+            converted(sql, [source, target], data_type)
+        })
+    })
+}
+
+/// The conversion of the plain operand `sql` from the plain zone `source`.
+fn converted(sql: &str, [source, target]: [&str; 2], data_type: SnowflakeType) -> String {
     let base = microsecond_base(sql, data_type);
-    let source = string_literal(source, log);
-    let target = string_literal(target, log);
     let later = format!("timezone({source}, {base})");
     let day_before = format!("({later} - INTERVAL 1 DAY)");
     let earlier_offset =

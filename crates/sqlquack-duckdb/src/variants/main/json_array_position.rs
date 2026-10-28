@@ -1,0 +1,28 @@
+//! `json_array_position`: ARRAY_POSITION, the first index of a value in an array.
+
+use sqlquack_core::provenance::models::ProvenanceLog;
+
+use crate::semi_structured::constants::JSON_ARRAY_POSITION;
+use crate::variants::_helpers::objects::{bound, fidelity_error};
+
+/// The needle's first index in the array; fractions and integers beside fractions raise.
+pub fn json_array_position((needle, array): (&str, &str), log: &ProvenanceLog) -> String {
+    log.building_block(JSON_ARRAY_POSITION);
+    bound(
+        &format!("struct_pack(n := CAST({needle} AS JSON), a := CAST({array} AS JSON))"),
+        "q",
+        &format!(
+            "(CASE WHEN q['n'] IS NULL OR q['a'] IS NULL OR json_type(q['a']) <> 'ARRAY' THEN NULL \
+             WHEN json_type(q['n']) IN ('DOUBLE', 'OBJECT', 'ARRAY') THEN CAST({} AS BIGINT) \
+             WHEN json_type(q['n']) IN ('UBIGINT', 'BIGINT', 'HUGEINT') \
+             AND list_bool_or(list_transform(json_extract(q['a'], '$[*]'), \
+             lambda e: json_type(e) NOT IN ('UBIGINT', 'BIGINT', 'HUGEINT', 'VARCHAR', 'BOOLEAN', 'NULL', \
+             'OBJECT', 'ARRAY'))) THEN CAST({} AS BIGINT) \
+             ELSE list_position(json_extract(q['a'], '$[*]'), q['n']) - 1 END)",
+            fidelity_error("ARRAY_POSITION of a fraction, object or array"),
+            fidelity_error(
+                "ARRAY_POSITION of an integer in an array holding a fraction or exponent"
+            )
+        ),
+    )
+}

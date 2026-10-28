@@ -1,0 +1,355 @@
+# TRY_TO_TIMESTAMP_NTZ of text, without and with the formats models use.
+category = "temporal"
+construct = "fn:TRY_TO_TIMESTAMP_NTZ"
+session_profile = "utc-v1"
+
+[[case]]
+id = "try_ntz_iso_basic"
+description = "TRY_TO_TIMESTAMP_NTZ without a format: ISO dates and times with a space or T, with and without seconds."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'2024-02-29 13:45:01'"],
+  ["'2024-02-29T13:45:01'"],
+  ["'2024-02-29 13:45'"],
+  ["'2024-02-29T13:45'"],
+  ["'2024-02-29'"],
+  ["NULL"],
+]
+expression = "TRY_TO_TIMESTAMP_NTZ(s)"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "try_ntz_iso_fraction"
+description = "TRY_TO_TIMESTAMP_NTZ without a format: ISO times with one to nine fractional digits."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'2024-02-29 13:45:01.5'"],
+  ["'2024-02-29 13:45:01.123'"],
+  ["'2024-02-29T13:45:01.123456'"],
+  ["'2024-02-29T13:45:01.123456789'"],
+  ["'2024-02-29 13:45:01.1234567891'"],
+  ["NULL"],
+]
+expression = "TRY_TO_TIMESTAMP_NTZ(s)"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "try_ntz_iso_zone"
+description = "TRY_TO_TIMESTAMP_NTZ without a format: ISO times with Z and numeric offsets, which TIMESTAMP_NTZ drops."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'2024-02-29T13:45:01Z'"],
+  ["'2024-02-29T13:45:01.123Z'"],
+  ["'2024-02-29T13:45:01+02:00'"],
+  ["'2024-02-29T13:45:01-05:30'"],
+  ["'2024-02-29 13:45:01 +0200'"],
+  ["'2024-02-29T13:45:01+0000'"],
+  ["NULL"],
+]
+expression = "TRY_TO_TIMESTAMP_NTZ(s)"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "try_ntz_iso_case"
+description = "TRY_TO_TIMESTAMP_NTZ without a format: Lower-case t and z separators."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'2024-02-29t13:45:01'"],
+  ["'2024-02-29T13:45:01z'"],
+  ["'2024-02-29t13:45:01.5z'"],
+  ["NULL"],
+]
+expression = "TRY_TO_TIMESTAMP_NTZ(s)"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "try_ntz_spaces"
+description = "TRY_TO_TIMESTAMP_NTZ without a format: Leading and trailing spaces, tabs and line feeds around ISO text."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["' 2024-02-29 13:45:01'"],
+  ["'2024-02-29 13:45:01 '"],
+  ["'\t2024-02-29\n'"],
+  ["'2024-02-29  13:45:01'"],
+  ["NULL"],
+]
+expression = "TRY_TO_TIMESTAMP_NTZ(s)"
+tags = ["null", "boundary"]
+expected_divergence = "date_text_spelling"
+
+[[case]]
+id = "try_ntz_blank"
+description = "TRY_TO_TIMESTAMP_NTZ without a format: Empty and blank text."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["''"],
+  ["' '"],
+  ["'\t'"],
+  ["NULL"],
+]
+expression = "TRY_TO_TIMESTAMP_NTZ(s)"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "try_ntz_impossible"
+description = "TRY_TO_TIMESTAMP_NTZ without a format: Impossible dates and times."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'2024-02-30 10:00:00'"],
+  ["'2023-02-29'"],
+  ["'2024-13-01 00:00:00'"],
+  ["'2024-02-29 24:00:00'"],
+  ["'2024-02-29 23:60:00'"],
+  ["'2024-02-29 23:59:60'"],
+  ["'2024-00-10'"],
+]
+expression = "TRY_TO_TIMESTAMP_NTZ(s)"
+tags = ["boundary"]
+
+[[case]]
+id = "try_ntz_garbage"
+description = "TRY_TO_TIMESTAMP_NTZ without a format: Text that is not a timestamp."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'not a date'"],
+  ["'13:45'"],
+  ["'2024'"],
+  ["'2024-02'"],
+  ["'2024-02-29 13'"],
+  ["'2024-02-29 13:45:01 junk'"],
+  ["'TBA'"],
+]
+expression = "TRY_TO_TIMESTAMP_NTZ(s)"
+tags = ["boundary"]
+expected_divergence = "date_text_spelling"
+
+[[case]]
+id = "try_ntz_other_spellings"
+description = "TRY_TO_TIMESTAMP_NTZ without a format: Spellings other than ISO."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'2024/02/29 13:45:01'"],
+  ["'29/02/2024 13:45'"],
+  ["'02/29/2024 13:45:01'"],
+  ["'29-Feb-2024'"],
+  ["'Thu, 29 Feb 2024 13:45:01 +0000'"],
+  ["'20240229'"],
+  ["'2024-02-29 1:45:01'"],
+  ["'2024-2-9 13:45:01'"],
+]
+expression = "TRY_TO_TIMESTAMP_NTZ(s)"
+tags = ["boundary"]
+expected_divergence = "date_text_spelling"
+
+[[case]]
+id = "try_ntz_epoch"
+description = "TRY_TO_TIMESTAMP_NTZ without a format: Integer text read as an epoch by magnitude, and negative or fractional numbers."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'1709214301'"],
+  ["'1709214301123'"],
+  ["'1709214301123456'"],
+  ["'0'"],
+  ["'-1'"],
+  ["'1709214301.5'"],
+]
+expression = "TRY_TO_TIMESTAMP_NTZ(s)"
+tags = ["boundary"]
+expected_divergence = "date_text_spelling"
+
+[[case]]
+id = "try_ntz_range"
+description = "TRY_TO_TIMESTAMP_NTZ without a format: Years at the edges of the range."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'0001-01-01 00:00:00'"],
+  ["'1582-10-10 12:00:00'"],
+  ["'1969-12-31 23:59:59.999999999'"],
+  ["'9999-12-31 23:59:59.999999999'"],
+  ["'10000-01-01 00:00:00'"],
+]
+expression = "TRY_TO_TIMESTAMP_NTZ(s)"
+tags = ["boundary"]
+expected_divergence = "timestamp_range"
+
+[[case]]
+id = "try_ntz_format_hh24mi"
+description = "TRY_TO_TIMESTAMP_NTZ with the format YYYY-MM-DD HH24:MI."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'2024-02-29 13:45'"],
+  ["'2024-02-29 09:05'"],
+  ["'2024-02-29 9:05'"],
+  ["'2024-02-29 00:00'"],
+  ["'2024-02-29 23:59'"],
+  ["'2024-2-9 13:45'"],
+  ["NULL"],
+]
+expression = "TRY_TO_TIMESTAMP_NTZ(s, 'YYYY-MM-DD HH24:MI')"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "try_ntz_format_hh24mi_mismatch"
+description = "TRY_TO_TIMESTAMP_NTZ with the format YYYY-MM-DD HH24:MI."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'2024-02-29 13:45:30'"],
+  ["'2024-02-29T13:45'"],
+  ["'2024-02-29  13:45'"],
+  ["' 2024-02-29 13:45 '"],
+  ["'2024-02-29'"],
+  ["''"],
+  ["'2024-02-29 24:00'"],
+  ["'2024-02-29 13:60'"],
+  ["'2024-02-30 13:45'"],
+  ["'29-02-2024 13:45'"],
+]
+expression = "TRY_TO_TIMESTAMP_NTZ(s, 'YYYY-MM-DD HH24:MI')"
+tags = ["boundary"]
+expected_divergence = "date_text_spelling"
+
+[[case]]
+id = "try_ntz_format_hh24miss"
+description = "TRY_TO_TIMESTAMP_NTZ with the format YYYY-MM-DD HH24:MI:SS."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'2024-02-29 13:45:01'"],
+  ["'2024-02-29 13:45'"],
+  ["'2024-02-29 13:45:01.5'"],
+  ["'2024-02-29 9:5:1'"],
+  ["''"],
+  ["NULL"],
+]
+expression = "TRY_TO_TIMESTAMP_NTZ(s, 'YYYY-MM-DD HH24:MI:SS')"
+tags = ["null", "boundary"]
+expected_divergence = "date_text_spelling"
+
+[[case]]
+id = "try_ntz_format_hh12mi_space_am"
+description = "TRY_TO_TIMESTAMP_NTZ with the format YYYY-MM-DD HH12:MI AM."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'2024-02-29 01:45 PM'"],
+  ["'2024-02-29 12:00 AM'"],
+  ["'2024-02-29 12:30 PM'"],
+  ["'2024-02-29 1:45 pm'"],
+  ["'2024-02-29 01:45PM'"],
+  ["'2024-02-29 13:45 PM'"],
+  ["'2024-02-29 01:45'"],
+  ["'2024-02-29 00:15 AM'"],
+  ["NULL"],
+]
+expression = "TRY_TO_TIMESTAMP_NTZ(s, 'YYYY-MM-DD HH12:MI AM')"
+tags = ["null", "boundary"]
+expected_divergence = "date_text_spelling"
+
+[[case]]
+id = "try_ntz_format_hh12miam"
+description = "TRY_TO_TIMESTAMP_NTZ with the format YYYY-MM-DD HH12:MIAM."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'2024-02-29 01:45PM'"],
+  ["'2024-02-29 1:45AM'"],
+  ["'2024-02-29 12:05AM'"],
+  ["'2024-02-29 12:05PM'"],
+  ["'2024-02-29 01:45 PM'"],
+  ["'2024-02-29 01:45pm'"],
+  ["'2024-02-29 01:45'"],
+  ["NULL"],
+]
+expression = "TRY_TO_TIMESTAMP_NTZ(s, 'YYYY-MM-DD HH12:MIAM')"
+tags = ["null", "boundary"]
+expected_divergence = "date_text_spelling"
+
+[[case]]
+id = "try_ntz_format_hh12missam"
+description = "TRY_TO_TIMESTAMP_NTZ with the format YYYY-MM-DD HH12:MI:SSAM."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'2024-02-29 01:45:30PM'"],
+  ["'2024-02-29 12:00:00AM'"],
+  ["'2024-02-29 1:45:30am'"],
+  ["'2024-02-29 01:45PM'"],
+  ["NULL"],
+]
+expression = "TRY_TO_TIMESTAMP_NTZ(s, 'YYYY-MM-DD HH12:MI:SSAM')"
+tags = ["null", "boundary"]
+expected_divergence = "date_text_spelling"
+
+[[case]]
+id = "try_ntz_format_ddmmyyyy_hh24miss"
+description = "TRY_TO_TIMESTAMP_NTZ with the format DD-MM-YYYY HH24:MI:SS."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'29-02-2024 13:45:01'"],
+  ["'01-01-2024 00:00:00'"],
+  ["'29-02-2024 13:45'"],
+  ["'2024-02-29 13:45:01'"],
+  ["'31-04-2024 10:00:00'"],
+  ["NULL"],
+]
+expression = "TRY_TO_TIMESTAMP_NTZ(s, 'DD-MM-YYYY HH24:MI:SS')"
+tags = ["null", "boundary"]
+expected_divergence = "date_text_spelling"
+
+[[case]]
+id = "try_ntz_format_dotted_kl"
+description = "TRY_TO_TIMESTAMP_NTZ with the format DD. MM. YYYY kl. HH24:MI."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'29. 02. 2024 kl. 13:45'"],
+  ["'01. 01. 2024 kl. 00:05'"],
+  ["'29.02.2024 kl. 13:45'"],
+  ["'29. 02. 2024 kl 13:45'"],
+  ["'29. 02. 2024 KL. 13:45'"],
+  ["NULL"],
+]
+expression = "TRY_TO_TIMESTAMP_NTZ(s, 'DD. MM. YYYY kl. HH24:MI')"
+tags = ["null", "boundary"]
+expected_divergence = "date_text_spelling"
+
+[[case]]
+id = "try_ntz_format_quoted_alle"
+description = "TRY_TO_TIMESTAMP_NTZ with the format DD-MM-YYYY \"alle\" HH24:MI."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'29-02-2024 alle 13:45'"],
+  ["'01-01-2024 alle 9:05'"],
+  ["'29-02-2024 ALLE 13:45'"],
+  ["'29-02-2024 13:45'"],
+  ["NULL"],
+]
+expression = "TRY_TO_TIMESTAMP_NTZ(s, 'DD-MM-YYYY \"alle\" HH24:MI')"
+tags = ["null", "boundary"]
+expected_divergence = "date_text_spelling"
+
+[[case]]
+id = "try_ntz_format_concatenated"
+description = "A date and a time concatenated, read with YYYY-MM-DD HH24:MI, as models build them."
+columns = [{ name = "d", type = "VARCHAR" }, { name = "t", type = "VARCHAR" }]
+rows = [
+  ["'2024-02-29'", "'13:45'"],
+  ["'2024-02-29'", "'9:05'"],
+  ["'2024-02-29'", "NULL"],
+  ["NULL", "'13:45'"],
+  ["'2024-02-29'", "''"],
+  ["'2024-02-29'", "'13.45'"],
+]
+expression = "TRY_TO_TIMESTAMP_NTZ(d || ' ' || t, 'YYYY-MM-DD HH24:MI')"
+tags = ["null", "boundary"]
+expected_divergence = "date_text_spelling"
+
+[[case]]
+id = "try_ntz_of_variant_text"
+description = "TRY_TO_TIMESTAMP_NTZ of a JSON string read as text, JSON null and a missing key."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('{\"t\":\"2024-02-29T13:45:01Z\"}')"],
+  ["PARSE_JSON('{\"t\":\"2024-02-29 13:45\"}')"],
+  ["PARSE_JSON('{\"t\":null}')"],
+  ["PARSE_JSON('{}')"],
+  ["PARSE_JSON('{\"t\":\"\"}')"],
+  ["NULL"],
+]
+expression = "TRY_TO_TIMESTAMP_NTZ(v:t::VARCHAR)"
+tags = ["null", "boundary"]

@@ -4,11 +4,15 @@ use serde_json::Value;
 use sqlquack_core::refusals::models::Refusal;
 use sqlquack_duckdb::blocks::main::cast::cast;
 use sqlquack_duckdb::blocks::main::string_literal::string_literal;
+use sqlquack_snowflake::typing::main::literal_digits::literal_digits;
 use sqlquack_snowflake::typing::main::number_literal::number_literal;
 use sqlquack_snowflake::typing::models::SnowflakeType;
 
 use crate::conversion::_helpers::expressions::scalar::convert_expression;
 use crate::conversion::_helpers::queries::query::convert_query;
+use crate::conversion::_helpers::support::collecting::{
+    collecting, guessed, opaque_in_scope, placeholder,
+};
 use crate::conversion::_helpers::support::scope::{Emitted, Literal};
 use crate::conversion::_helpers::support::site::Site;
 use crate::conversion::_helpers::support::tree::{
@@ -28,8 +32,21 @@ pub(crate) fn column(payload: &Value, site: Site<'_>) -> Result<Emitted, Refusal
     let name = identifier_name(field(payload, "name", &construct)?)
         .ok_or_else(|| missing(construct.clone(), "a column has no name".to_owned()))?;
     let qualifier = payload.get("table").and_then(identifier_name);
-    site.scope
+    match site
+        .scope
         .resolve(qualifier.as_deref(), &name, site.context.log)
+    {
+        Ok(emitted) => {
+            if emitted.data_type == SnowflakeType::Null && collecting() {
+                guessed();
+            }
+            Ok(emitted)
+        }
+        Err(_) if collecting() && opaque_in_scope(site.scope, qualifier.as_deref()) => {
+            Ok(placeholder(None))
+        }
+        Err(refusal) => Err(refusal),
+    }
 }
 
 /// A numeric or string literal.
@@ -47,10 +64,8 @@ pub(crate) fn literal(payload: &Value, site: Site<'_>) -> Result<Emitted, Refusa
             let _rule = log.rule(NUMBER_LITERAL);
             let data_type = number_literal(text, log)
                 .map_err(|reason| outside_conditions(construct.clone(), reason))?;
-            let digits = match text.strip_prefix('.') {
-                Some(fraction) => format!("0.{fraction}"),
-                None => text.to_owned(),
-            };
+            let digits = literal_digits(text)
+                .map_err(|reason| outside_conditions(construct.clone(), reason))?;
             Ok(Emitted {
                 sql: cast(&digits, data_type, log)
                     .map_err(|reason| outside_conditions(construct, reason))?,

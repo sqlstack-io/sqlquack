@@ -1,0 +1,221 @@
+# TRY_TO_TIMESTAMP_TZ of text, as models use it: without a format.
+category = "temporal"
+construct = "fn:TRY_TO_TIMESTAMP_TZ"
+session_profile = "utc-v1"
+
+[[case]]
+id = "try_tz_zulu"
+description = "TRY_TO_TIMESTAMP_TZ: ISO times ending in Z."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'2024-02-29T13:45:01Z'"],
+  ["'2024-02-29T13:45:01.123Z'"],
+  ["'2024-02-29T13:45:01.123456789Z'"],
+  ["'2024-02-29T00:00:00z'"],
+  ["NULL"],
+]
+expression = "TRY_TO_TIMESTAMP_TZ(s)"
+tags = ["null", "boundary"]
+expected_divergence = "timestamp_tz_submicro"
+
+[[case]]
+id = "try_tz_zulu_utc"
+description = "CONVERT_TIMEZONE('UTC', TRY_TO_TIMESTAMP_TZ(s)) as TIMESTAMP_NTZ: ISO times ending in Z."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'2024-02-29T13:45:01Z'"],
+  ["'2024-02-29T13:45:01.123Z'"],
+  ["'2024-02-29T13:45:01.123456789Z'"],
+  ["'2024-02-29T00:00:00z'"],
+  ["NULL"],
+]
+expression = "CONVERT_TIMEZONE('UTC', TRY_TO_TIMESTAMP_TZ(s))::TIMESTAMP_NTZ"
+tags = ["null", "boundary"]
+expected_divergence = "timestamp_tz_submicro"
+
+[[case]]
+id = "try_tz_offsets"
+description = "TRY_TO_TIMESTAMP_TZ: ISO times with numeric offsets."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'2024-02-29T13:45:01+02:00'"],
+  ["'2024-02-29T13:45:01-05:30'"],
+  ["'2024-02-29T13:45:01+0530'"],
+  ["'2024-02-29 13:45:01 +01:00'"],
+  ["'2024-02-29T13:45:01+14:00'"],
+  ["'2024-02-29T13:45:01-12:00'"],
+  ["NULL"],
+]
+expression = "TRY_TO_TIMESTAMP_TZ(s)"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "try_tz_offsets_utc"
+description = "CONVERT_TIMEZONE('UTC', TRY_TO_TIMESTAMP_TZ(s)) as TIMESTAMP_NTZ: ISO times with numeric offsets."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'2024-02-29T13:45:01+02:00'"],
+  ["'2024-02-29T13:45:01-05:30'"],
+  ["'2024-02-29T13:45:01+0530'"],
+  ["'2024-02-29 13:45:01 +01:00'"],
+  ["'2024-02-29T13:45:01+14:00'"],
+  ["'2024-02-29T13:45:01-12:00'"],
+  ["NULL"],
+]
+expression = "CONVERT_TIMEZONE('UTC', TRY_TO_TIMESTAMP_TZ(s))::TIMESTAMP_NTZ"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "try_tz_no_offset"
+description = "TRY_TO_TIMESTAMP_TZ: ISO times and dates without an offset, read in the session's UTC."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'2024-02-29T13:45:01'"],
+  ["'2024-02-29 13:45:01.5'"],
+  ["'2024-02-29 13:45'"],
+  ["'2024-02-29'"],
+  ["NULL"],
+]
+expression = "TRY_TO_TIMESTAMP_TZ(s)"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "try_tz_no_offset_utc"
+description = "CONVERT_TIMEZONE('UTC', TRY_TO_TIMESTAMP_TZ(s)) as TIMESTAMP_NTZ: ISO times and dates without an offset, read in the session's UTC."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'2024-02-29T13:45:01'"],
+  ["'2024-02-29 13:45:01.5'"],
+  ["'2024-02-29 13:45'"],
+  ["'2024-02-29'"],
+  ["NULL"],
+]
+expression = "CONVERT_TIMEZONE('UTC', TRY_TO_TIMESTAMP_TZ(s))::TIMESTAMP_NTZ"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "try_tz_spaces"
+description = "TRY_TO_TIMESTAMP_TZ: Spaces around zoned text."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["' 2024-02-29T13:45:01Z'"],
+  ["'2024-02-29T13:45:01Z '"],
+  ["'\t2024-02-29T13:45:01+02:00\n'"],
+  ["NULL"],
+]
+expression = "TRY_TO_TIMESTAMP_TZ(s)"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "try_tz_spaces_utc"
+description = "CONVERT_TIMEZONE('UTC', TRY_TO_TIMESTAMP_TZ(s)) as TIMESTAMP_NTZ: Spaces around zoned text."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["' 2024-02-29T13:45:01Z'"],
+  ["'2024-02-29T13:45:01Z '"],
+  ["'\t2024-02-29T13:45:01+02:00\n'"],
+  ["NULL"],
+]
+expression = "CONVERT_TIMEZONE('UTC', TRY_TO_TIMESTAMP_TZ(s))::TIMESTAMP_NTZ"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "try_tz_blank"
+description = "TRY_TO_TIMESTAMP_TZ: Empty and blank text."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["''"],
+  ["' '"],
+  ["NULL"],
+]
+expression = "TRY_TO_TIMESTAMP_TZ(s)"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "try_tz_blank_utc"
+description = "CONVERT_TIMEZONE('UTC', TRY_TO_TIMESTAMP_TZ(s)) as TIMESTAMP_NTZ: Empty and blank text."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["''"],
+  ["' '"],
+  ["NULL"],
+]
+expression = "CONVERT_TIMEZONE('UTC', TRY_TO_TIMESTAMP_TZ(s))::TIMESTAMP_NTZ"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "try_tz_invalid"
+description = "TRY_TO_TIMESTAMP_TZ: Text that is not a timestamp, impossible values and bad offsets."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'not a date'"],
+  ["'2024-02-30T10:00:00Z'"],
+  ["'2024-02-29T25:00:00Z'"],
+  ["'2024-02-29T13:45:01+25:00'"],
+  ["'2024-02-29T13:45:01 UTC'"],
+  ["'2024-02-29T13:45:01+2'"],
+]
+expression = "TRY_TO_TIMESTAMP_TZ(s)"
+tags = ["boundary"]
+expected_divergence = "date_text_spelling"
+
+[[case]]
+id = "try_tz_invalid_utc"
+description = "CONVERT_TIMEZONE('UTC', TRY_TO_TIMESTAMP_TZ(s)) as TIMESTAMP_NTZ: Text that is not a timestamp, impossible values and bad offsets."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'not a date'"],
+  ["'2024-02-30T10:00:00Z'"],
+  ["'2024-02-29T25:00:00Z'"],
+  ["'2024-02-29T13:45:01+25:00'"],
+  ["'2024-02-29T13:45:01 UTC'"],
+  ["'2024-02-29T13:45:01+2'"],
+]
+expression = "CONVERT_TIMEZONE('UTC', TRY_TO_TIMESTAMP_TZ(s))::TIMESTAMP_NTZ"
+tags = ["boundary"]
+expected_divergence = "date_text_spelling"
+
+[[case]]
+id = "try_tz_other_spellings"
+description = "TRY_TO_TIMESTAMP_TZ: Spellings other than ISO."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'Thu, 29 Feb 2024 13:45:01 +0000'"],
+  ["'2024/02/29 13:45:01'"],
+  ["'02/29/2024 13:45:01'"],
+  ["'1709214301'"],
+  ["'1709214301123'"],
+]
+expression = "TRY_TO_TIMESTAMP_TZ(s)"
+tags = ["boundary"]
+expected_divergence = "date_text_spelling"
+
+[[case]]
+id = "try_tz_other_spellings_utc"
+description = "CONVERT_TIMEZONE('UTC', TRY_TO_TIMESTAMP_TZ(s)) as TIMESTAMP_NTZ: Spellings other than ISO."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'Thu, 29 Feb 2024 13:45:01 +0000'"],
+  ["'2024/02/29 13:45:01'"],
+  ["'02/29/2024 13:45:01'"],
+  ["'1709214301'"],
+  ["'1709214301123'"],
+]
+expression = "CONVERT_TIMEZONE('UTC', TRY_TO_TIMESTAMP_TZ(s))::TIMESTAMP_NTZ"
+tags = ["boundary"]
+expected_divergence = "date_text_spelling"
+
+[[case]]
+id = "try_tz_of_variant_text"
+description = "TRY_TO_TIMESTAMP_TZ of a JSON string read as text, JSON null and a missing key."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('{\"t\":\"2024-02-29T13:45:01.5+02:00\"}')"],
+  ["PARSE_JSON('{\"t\":\"2024-02-29T13:45:01Z\"}')"],
+  ["PARSE_JSON('{\"t\":null}')"],
+  ["PARSE_JSON('{}')"],
+  ["PARSE_JSON('{\"t\":17}')"],
+  ["NULL"],
+]
+expression = "TRY_TO_TIMESTAMP_TZ(v:t::VARCHAR)"
+tags = ["null", "boundary"]

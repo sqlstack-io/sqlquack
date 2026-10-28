@@ -1,0 +1,780 @@
+# ANY_VALUE, COUNT_IF, OBJECT_AGG, ARRAY_AGG forms, BOOLOR_AGG, MAX_BY, MODE and windowed COUNT(DISTINCT).
+category = "aggregate"
+construct = "fn:ANY_VALUE"
+session_profile = "utc-v1"
+
+[[case]]
+id = "any_value_single_valued"
+description = "ANY_VALUE of text, DATE, NUMBER and VARIANT columns with one distinct value per group."
+columns = [{ name = "g", type = "VARCHAR" }, { name = "x", type = "VARCHAR" }, { name = "d", type = "DATE" }, { name = "n", type = "NUMBER(10,2)" }, { name = "v", type = "VARIANT" }]
+rows = [
+  ["'a'", "'open'", "'2024-02-29'", "1.50", "PARSE_JSON('{\"k\":1}')"],
+  ["'a'", "'open'", "'2024-02-29'", "1.50", "PARSE_JSON('{\"k\":1}')"],
+  ["'b'", "NULL", "NULL", "NULL", "NULL"],
+  ["'c'", "'shipped'", "'2024-01-01'", "-2.00", "PARSE_JSON('[1,\"x\"]')"],
+]
+query = "SELECT g, ANY_VALUE(x) AS x, ANY_VALUE(d) AS d, ANY_VALUE(n) AS n, ANY_VALUE(v) AS v FROM input GROUP BY g ORDER BY g"
+order = "ordered"
+tags = ["null", "empty-input", "duplicates"]
+
+[[case]]
+id = "any_value_empty"
+description = "ANY_VALUE over no rows."
+columns = [{ name = "g", type = "VARCHAR" }, { name = "x", type = "VARCHAR" }, { name = "d", type = "DATE" }, { name = "n", type = "NUMBER(10,2)" }, { name = "v", type = "VARIANT" }]
+rows = [
+  ["'a'", "'open'", "'2024-02-29'", "1.50", "PARSE_JSON('{\"k\":1}')"],
+  ["'a'", "'open'", "'2024-02-29'", "1.50", "PARSE_JSON('{\"k\":1}')"],
+  ["'b'", "NULL", "NULL", "NULL", "NULL"],
+  ["'c'", "'shipped'", "'2024-01-01'", "-2.00", "PARSE_JSON('[1,\"x\"]')"],
+]
+query = "SELECT ANY_VALUE(x) AS x FROM input WHERE FALSE"
+order = "ordered"
+tags = ["null", "empty-input", "duplicates"]
+
+[[case]]
+id = "any_value_all_null"
+description = "ANY_VALUE of a group whose values are all NULL."
+columns = [{ name = "g", type = "VARCHAR" }, { name = "x", type = "VARCHAR" }, { name = "d", type = "DATE" }, { name = "n", type = "NUMBER(10,2)" }, { name = "v", type = "VARIANT" }]
+rows = [
+  ["'a'", "'open'", "'2024-02-29'", "1.50", "PARSE_JSON('{\"k\":1}')"],
+  ["'a'", "'open'", "'2024-02-29'", "1.50", "PARSE_JSON('{\"k\":1}')"],
+  ["'b'", "NULL", "NULL", "NULL", "NULL"],
+  ["'c'", "'shipped'", "'2024-01-01'", "-2.00", "PARSE_JSON('[1,\"x\"]')"],
+]
+query = "SELECT ANY_VALUE(x) AS x FROM input WHERE g = 'b'"
+order = "ordered"
+tags = ["null", "empty-input", "duplicates"]
+
+[[case]]
+id = "any_value_with_aggregates"
+description = "ANY_VALUE beside COUNT, grouped by an expression."
+columns = [{ name = "g", type = "VARCHAR" }, { name = "x", type = "VARCHAR" }, { name = "d", type = "DATE" }, { name = "n", type = "NUMBER(10,2)" }, { name = "v", type = "VARIANT" }]
+rows = [
+  ["'a'", "'open'", "'2024-02-29'", "1.50", "PARSE_JSON('{\"k\":1}')"],
+  ["'a'", "'open'", "'2024-02-29'", "1.50", "PARSE_JSON('{\"k\":1}')"],
+  ["'b'", "NULL", "NULL", "NULL", "NULL"],
+  ["'c'", "'shipped'", "'2024-01-01'", "-2.00", "PARSE_JSON('[1,\"x\"]')"],
+]
+query = "SELECT UPPER(g) AS g, ANY_VALUE(d) AS d, COUNT(*) AS n FROM input GROUP BY UPPER(g) ORDER BY g"
+order = "ordered"
+tags = ["null", "empty-input", "duplicates"]
+
+[[case]]
+id = "count_if_boolean"
+description = "COUNT_IF of a BOOLEAN column with NULLs."
+columns = [{ name = "g", type = "VARCHAR" }, { name = "b", type = "BOOLEAN" }, { name = "s", type = "VARCHAR" }]
+rows = [
+  ["'a'", "TRUE", "'/'"],
+  ["'a'", "FALSE", "'x'"],
+  ["'a'", "NULL", "'/'"],
+  ["'b'", "NULL", "NULL"],
+  ["'c'", "TRUE", "'/'"],
+  ["'c'", "TRUE", "'/'"],
+]
+query = "SELECT g, COUNT_IF(b) AS n FROM input GROUP BY g ORDER BY g"
+order = "ordered"
+tags = ["null", "empty-input", "duplicates"]
+
+[[case]]
+id = "count_if_comparison"
+description = "COUNT_IF of a comparison and of a conjunction."
+columns = [{ name = "g", type = "VARCHAR" }, { name = "b", type = "BOOLEAN" }, { name = "s", type = "VARCHAR" }]
+rows = [
+  ["'a'", "TRUE", "'/'"],
+  ["'a'", "FALSE", "'x'"],
+  ["'a'", "NULL", "'/'"],
+  ["'b'", "NULL", "NULL"],
+  ["'c'", "TRUE", "'/'"],
+  ["'c'", "TRUE", "'/'"],
+]
+query = "SELECT g, COUNT_IF(s = '/') AS slashes, COUNT_IF(s = '/' AND b) AS both_set FROM input GROUP BY g ORDER BY g"
+order = "ordered"
+tags = ["null", "empty-input", "duplicates"]
+
+[[case]]
+id = "count_if_empty"
+description = "COUNT_IF over no rows."
+columns = [{ name = "g", type = "VARCHAR" }, { name = "b", type = "BOOLEAN" }, { name = "s", type = "VARCHAR" }]
+rows = [
+  ["'a'", "TRUE", "'/'"],
+  ["'a'", "FALSE", "'x'"],
+  ["'a'", "NULL", "'/'"],
+  ["'b'", "NULL", "NULL"],
+  ["'c'", "TRUE", "'/'"],
+  ["'c'", "TRUE", "'/'"],
+]
+query = "SELECT COUNT_IF(b) AS n FROM input WHERE FALSE"
+order = "ordered"
+tags = ["null", "empty-input", "duplicates"]
+
+[[case]]
+id = "count_if_window"
+description = "COUNT_IF as a window function over a partition."
+columns = [{ name = "g", type = "VARCHAR" }, { name = "b", type = "BOOLEAN" }, { name = "s", type = "VARCHAR" }]
+rows = [
+  ["'a'", "TRUE", "'/'"],
+  ["'a'", "FALSE", "'x'"],
+  ["'a'", "NULL", "'/'"],
+  ["'b'", "NULL", "NULL"],
+  ["'c'", "TRUE", "'/'"],
+  ["'c'", "TRUE", "'/'"],
+]
+query = "SELECT g, COUNT_IF(b) OVER (PARTITION BY g) AS n FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "ties", "single-row-partition"]
+
+[[case]]
+id = "count_if_window_ordered"
+description = "COUNT_IF over an ordered window, a running count."
+columns = [{ name = "g", type = "VARCHAR" }, { name = "b", type = "BOOLEAN" }, { name = "s", type = "VARCHAR" }]
+rows = [
+  ["'a'", "TRUE", "'/'"],
+  ["'a'", "FALSE", "'x'"],
+  ["'a'", "NULL", "'/'"],
+  ["'b'", "NULL", "NULL"],
+  ["'c'", "TRUE", "'/'"],
+  ["'c'", "TRUE", "'/'"],
+]
+query = "SELECT g, COUNT_IF(b) OVER (PARTITION BY g ORDER BY ordinal) AS n FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "ties", "single-row-partition"]
+
+[[case]]
+id = "object_agg_variant_number"
+description = "OBJECT_AGG of keys and TO_VARIANT(NUMBER), NULL keys and values skipped."
+columns = [{ name = "g", type = "VARCHAR" }, { name = "k", type = "VARCHAR" }, { name = "n", type = "NUMBER(10,0)" }, { name = "t", type = "VARCHAR" }]
+rows = [
+  ["'a'", "'size'", "1", "'L'"],
+  ["'a'", "'color'", "2", "'red'"],
+  ["'a'", "NULL", "3", "'x'"],
+  ["'b'", "'size'", "NULL", "NULL"],
+  ["'c'", "'b'", "5", "'q'"],
+  ["'c'", "'a'", "6", "'r'"],
+]
+query = "SELECT g, OBJECT_AGG(k, TO_VARIANT(n)) AS o FROM input GROUP BY g ORDER BY g"
+order = "ordered"
+tags = ["null", "empty-input", "duplicates"]
+
+[[case]]
+id = "object_agg_variant_text"
+description = "OBJECT_AGG of keys and TO_VARIANT(VARCHAR)."
+columns = [{ name = "g", type = "VARCHAR" }, { name = "k", type = "VARCHAR" }, { name = "n", type = "NUMBER(10,0)" }, { name = "t", type = "VARCHAR" }]
+rows = [
+  ["'a'", "'size'", "1", "'L'"],
+  ["'a'", "'color'", "2", "'red'"],
+  ["'a'", "NULL", "3", "'x'"],
+  ["'b'", "'size'", "NULL", "NULL"],
+  ["'c'", "'b'", "5", "'q'"],
+  ["'c'", "'a'", "6", "'r'"],
+]
+query = "SELECT g, OBJECT_AGG(k, TO_VARIANT(t)) AS o FROM input GROUP BY g ORDER BY g"
+order = "ordered"
+tags = ["null", "empty-input", "duplicates"]
+
+[[case]]
+id = "object_agg_read"
+description = "A field of an OBJECT_AGG read back."
+columns = [{ name = "g", type = "VARCHAR" }, { name = "k", type = "VARCHAR" }, { name = "n", type = "NUMBER(10,0)" }, { name = "t", type = "VARCHAR" }]
+rows = [
+  ["'a'", "'size'", "1", "'L'"],
+  ["'a'", "'color'", "2", "'red'"],
+  ["'a'", "NULL", "3", "'x'"],
+  ["'b'", "'size'", "NULL", "NULL"],
+  ["'c'", "'b'", "5", "'q'"],
+  ["'c'", "'a'", "6", "'r'"],
+]
+query = "SELECT g, o:size::VARCHAR AS size FROM (SELECT g, OBJECT_AGG(k, TO_VARIANT(t)) AS o FROM input GROUP BY g) AS a ORDER BY g"
+order = "ordered"
+tags = ["null", "empty-input", "duplicates"]
+
+[[case]]
+id = "object_agg_lpad_key"
+description = "OBJECT_AGG keyed by LPAD of a number as text."
+columns = [{ name = "g", type = "VARCHAR" }, { name = "k", type = "VARCHAR" }, { name = "n", type = "NUMBER(10,0)" }, { name = "t", type = "VARCHAR" }]
+rows = [
+  ["'a'", "'size'", "1", "'L'"],
+  ["'a'", "'color'", "2", "'red'"],
+  ["'a'", "NULL", "3", "'x'"],
+  ["'b'", "'size'", "NULL", "NULL"],
+  ["'c'", "'b'", "5", "'q'"],
+  ["'c'", "'a'", "6", "'r'"],
+]
+query = "SELECT g, OBJECT_AGG(LPAD(n::VARCHAR, 2, '0'), TO_VARIANT(t)) AS o FROM input WHERE n IS NOT NULL GROUP BY g ORDER BY g"
+order = "ordered"
+tags = ["null", "empty-input", "duplicates"]
+
+[[case]]
+id = "object_agg_duplicate_key"
+description = "OBJECT_AGG with a repeated key raises."
+columns = [{ name = "g", type = "VARCHAR" }, { name = "k", type = "VARCHAR" }, { name = "n", type = "NUMBER(10,0)" }, { name = "t", type = "VARCHAR" }]
+rows = [
+  ["'a'", "'k'", "1", "'x'"],
+  ["'a'", "'k'", "2", "'y'"],
+]
+query = "SELECT OBJECT_AGG(k, TO_VARIANT(n)) AS o FROM input"
+order = "ordered"
+tags = ["null", "empty-input", "duplicates"]
+
+[[case]]
+id = "object_agg_empty"
+description = "OBJECT_AGG over no rows."
+columns = [{ name = "g", type = "VARCHAR" }, { name = "k", type = "VARCHAR" }, { name = "n", type = "NUMBER(10,0)" }, { name = "t", type = "VARCHAR" }]
+rows = [
+  ["'a'", "'size'", "1", "'L'"],
+  ["'a'", "'color'", "2", "'red'"],
+  ["'a'", "NULL", "3", "'x'"],
+  ["'b'", "'size'", "NULL", "NULL"],
+  ["'c'", "'b'", "5", "'q'"],
+  ["'c'", "'a'", "6", "'r'"],
+]
+query = "SELECT OBJECT_AGG(k, TO_VARIANT(n)) AS o FROM input WHERE FALSE"
+order = "ordered"
+tags = ["null", "empty-input", "duplicates"]
+
+[[case]]
+id = "array_agg_distinct_sorted"
+description = "ARRAY_AGG(DISTINCT x), sorted to be deterministic."
+columns = [{ name = "g", type = "VARCHAR" }, { name = "x", type = "VARCHAR" }, { name = "n", type = "NUMBER(10,0)" }]
+rows = [
+  ["'a'", "'b'", "2"],
+  ["'a'", "'a'", "1"],
+  ["'a'", "'b'", "3"],
+  ["'a'", "NULL", "4"],
+  ["'b'", "NULL", "NULL"],
+  ["'c'", "'z'", "9"],
+]
+query = "SELECT g, ARRAY_SORT(ARRAY_AGG(DISTINCT x)) AS a FROM input GROUP BY g ORDER BY g"
+order = "ordered"
+tags = ["null", "empty-input", "duplicates"]
+
+[[case]]
+id = "array_agg_distinct_size"
+description = "ARRAY_SIZE of ARRAY_AGG(DISTINCT x)."
+columns = [{ name = "g", type = "VARCHAR" }, { name = "x", type = "VARCHAR" }, { name = "n", type = "NUMBER(10,0)" }]
+rows = [
+  ["'a'", "'b'", "2"],
+  ["'a'", "'a'", "1"],
+  ["'a'", "'b'", "3"],
+  ["'a'", "NULL", "4"],
+  ["'b'", "NULL", "NULL"],
+  ["'c'", "'z'", "9"],
+]
+query = "SELECT g, ARRAY_SIZE(ARRAY_AGG(DISTINCT x)) AS n FROM input GROUP BY g ORDER BY g"
+order = "ordered"
+tags = ["null", "empty-input", "duplicates"]
+
+[[case]]
+id = "array_agg_within_group"
+description = "ARRAY_AGG of integers WITHIN GROUP (ORDER BY n DESC)."
+columns = [{ name = "g", type = "VARCHAR" }, { name = "x", type = "VARCHAR" }, { name = "n", type = "NUMBER(10,0)" }]
+rows = [
+  ["'a'", "'b'", "2"],
+  ["'a'", "'a'", "1"],
+  ["'a'", "'b'", "3"],
+  ["'a'", "NULL", "4"],
+  ["'b'", "NULL", "NULL"],
+  ["'c'", "'z'", "9"],
+]
+query = "SELECT g, ARRAY_AGG(n) WITHIN GROUP (ORDER BY n DESC) AS a FROM input GROUP BY g ORDER BY g"
+order = "ordered"
+tags = ["null", "empty-input", "duplicates"]
+
+[[case]]
+id = "array_agg_cast_integer"
+description = "ARRAY_AGG of n::INTEGER ordered."
+columns = [{ name = "g", type = "VARCHAR" }, { name = "x", type = "VARCHAR" }, { name = "n", type = "NUMBER(10,0)" }]
+rows = [
+  ["'a'", "'b'", "2"],
+  ["'a'", "'a'", "1"],
+  ["'a'", "'b'", "3"],
+  ["'a'", "NULL", "4"],
+  ["'b'", "NULL", "NULL"],
+  ["'c'", "'z'", "9"],
+]
+query = "SELECT g, ARRAY_AGG(n::INTEGER) WITHIN GROUP (ORDER BY ordinal) AS a FROM input GROUP BY g ORDER BY g"
+order = "ordered"
+tags = ["null", "empty-input", "duplicates"]
+
+[[case]]
+id = "array_agg_objects"
+description = "ARRAY_AGG of OBJECT_INSERT objects in order."
+columns = [{ name = "g", type = "VARCHAR" }, { name = "x", type = "VARCHAR" }, { name = "n", type = "NUMBER(10,0)" }]
+rows = [
+  ["'a'", "'b'", "2"],
+  ["'a'", "'a'", "1"],
+  ["'a'", "'b'", "3"],
+  ["'a'", "NULL", "4"],
+  ["'b'", "NULL", "NULL"],
+  ["'c'", "'z'", "9"],
+]
+query = "SELECT g, ARRAY_AGG(OBJECT_INSERT(OBJECT_CONSTRUCT('n', n), 'x', x, TRUE)) WITHIN GROUP (ORDER BY ordinal) AS a FROM input GROUP BY g ORDER BY g"
+order = "ordered"
+tags = ["null", "empty-input", "duplicates"]
+
+[[case]]
+id = "array_agg_unordered_single"
+description = "ARRAY_AGG without an order of single-row groups."
+columns = [{ name = "g", type = "VARCHAR" }, { name = "x", type = "VARCHAR" }, { name = "n", type = "NUMBER(10,0)" }]
+rows = [
+  ["'a'", "'b'", "2"],
+  ["'a'", "'a'", "1"],
+  ["'a'", "'b'", "3"],
+  ["'a'", "NULL", "4"],
+  ["'b'", "NULL", "NULL"],
+  ["'c'", "'z'", "9"],
+]
+query = "SELECT g, ARRAY_AGG(x) AS a FROM input WHERE g <> 'a' GROUP BY g ORDER BY g"
+order = "ordered"
+tags = ["null", "empty-input", "duplicates"]
+
+[[case]]
+id = "array_agg_distinct_case"
+description = "ARRAY_AGG(DISTINCT CASE ...) sorted."
+columns = [{ name = "g", type = "VARCHAR" }, { name = "x", type = "VARCHAR" }, { name = "n", type = "NUMBER(10,0)" }]
+rows = [
+  ["'a'", "'b'", "2"],
+  ["'a'", "'a'", "1"],
+  ["'a'", "'b'", "3"],
+  ["'a'", "NULL", "4"],
+  ["'b'", "NULL", "NULL"],
+  ["'c'", "'z'", "9"],
+]
+query = "SELECT g, ARRAY_SORT(ARRAY_AGG(DISTINCT CASE WHEN x IS NOT NULL AND x <> '' THEN x END)) AS a FROM input GROUP BY g ORDER BY g"
+order = "ordered"
+tags = ["null", "empty-input", "duplicates"]
+
+[[case]]
+id = "array_compact_array_agg"
+description = "ARRAY_COMPACT of an ordered ARRAY_AGG of an IFF."
+columns = [{ name = "g", type = "VARCHAR" }, { name = "x", type = "VARCHAR" }, { name = "n", type = "NUMBER(10,0)" }]
+rows = [
+  ["'a'", "'b'", "2"],
+  ["'a'", "'a'", "1"],
+  ["'a'", "'b'", "3"],
+  ["'a'", "NULL", "4"],
+  ["'b'", "NULL", "NULL"],
+  ["'c'", "'z'", "9"],
+]
+query = "SELECT g, ARRAY_COMPACT(ARRAY_AGG(IFF(x = 'b', n, NULL)) WITHIN GROUP (ORDER BY ordinal)) AS a FROM input GROUP BY g ORDER BY g"
+order = "ordered"
+tags = ["null", "empty-input", "duplicates"]
+
+[[case]]
+id = "boolor_agg_grouped"
+description = "BOOLOR_AGG per group, all-NULL groups included."
+columns = [{ name = "g", type = "VARCHAR" }, { name = "b", type = "BOOLEAN" }, { name = "c", type = "BOOLEAN" }]
+rows = [
+  ["'a'", "TRUE", "FALSE"],
+  ["'a'", "FALSE", "FALSE"],
+  ["'b'", "NULL", "NULL"],
+  ["'c'", "FALSE", "NULL"],
+  ["'d'", "TRUE", "TRUE"],
+  ["'d'", "NULL", "TRUE"],
+]
+query = "SELECT g, BOOLOR_AGG(b) AS r FROM input GROUP BY g ORDER BY g"
+order = "ordered"
+tags = ["null", "empty-input", "duplicates"]
+
+[[case]]
+id = "boolor_agg_expression"
+description = "BOOLOR_AGG of a negation and a conjunction."
+columns = [{ name = "g", type = "VARCHAR" }, { name = "b", type = "BOOLEAN" }, { name = "c", type = "BOOLEAN" }]
+rows = [
+  ["'a'", "TRUE", "FALSE"],
+  ["'a'", "FALSE", "FALSE"],
+  ["'b'", "NULL", "NULL"],
+  ["'c'", "FALSE", "NULL"],
+  ["'d'", "TRUE", "TRUE"],
+  ["'d'", "NULL", "TRUE"],
+]
+query = "SELECT g, BOOLOR_AGG(NOT b) AS a, BOOLOR_AGG(b AND NOT c) AS b2 FROM input GROUP BY g ORDER BY g"
+order = "ordered"
+tags = ["null", "empty-input", "duplicates"]
+
+[[case]]
+id = "boolor_agg_window"
+description = "BOOLOR_AGG as a window function."
+columns = [{ name = "g", type = "VARCHAR" }, { name = "b", type = "BOOLEAN" }, { name = "c", type = "BOOLEAN" }]
+rows = [
+  ["'a'", "TRUE", "FALSE"],
+  ["'a'", "FALSE", "FALSE"],
+  ["'b'", "NULL", "NULL"],
+  ["'c'", "FALSE", "NULL"],
+  ["'d'", "TRUE", "TRUE"],
+  ["'d'", "NULL", "TRUE"],
+]
+query = "SELECT g, BOOLOR_AGG(b) OVER (PARTITION BY g) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "ties", "single-row-partition"]
+
+[[case]]
+id = "boolor_agg_empty"
+description = "BOOLOR_AGG over no rows."
+columns = [{ name = "g", type = "VARCHAR" }, { name = "b", type = "BOOLEAN" }, { name = "c", type = "BOOLEAN" }]
+rows = [
+  ["'a'", "TRUE", "FALSE"],
+  ["'a'", "FALSE", "FALSE"],
+  ["'b'", "NULL", "NULL"],
+  ["'c'", "FALSE", "NULL"],
+  ["'d'", "TRUE", "TRUE"],
+  ["'d'", "NULL", "TRUE"],
+]
+query = "SELECT BOOLOR_AGG(b) AS r FROM input WHERE FALSE"
+order = "ordered"
+tags = ["null", "empty-input", "duplicates"]
+
+[[case]]
+id = "booland_agg_grouped"
+description = "BOOLAND_AGG per group, all-NULL groups included."
+columns = [{ name = "g", type = "VARCHAR" }, { name = "b", type = "BOOLEAN" }, { name = "c", type = "BOOLEAN" }]
+rows = [
+  ["'a'", "TRUE", "FALSE"],
+  ["'a'", "FALSE", "FALSE"],
+  ["'b'", "NULL", "NULL"],
+  ["'c'", "FALSE", "NULL"],
+  ["'d'", "TRUE", "TRUE"],
+  ["'d'", "NULL", "TRUE"],
+]
+query = "SELECT g, BOOLAND_AGG(b) AS r FROM input GROUP BY g ORDER BY g"
+order = "ordered"
+tags = ["null", "empty-input", "duplicates"]
+
+[[case]]
+id = "booland_agg_expression"
+description = "BOOLAND_AGG of a negation and a conjunction."
+columns = [{ name = "g", type = "VARCHAR" }, { name = "b", type = "BOOLEAN" }, { name = "c", type = "BOOLEAN" }]
+rows = [
+  ["'a'", "TRUE", "FALSE"],
+  ["'a'", "FALSE", "FALSE"],
+  ["'b'", "NULL", "NULL"],
+  ["'c'", "FALSE", "NULL"],
+  ["'d'", "TRUE", "TRUE"],
+  ["'d'", "NULL", "TRUE"],
+]
+query = "SELECT g, BOOLAND_AGG(NOT b) AS a, BOOLAND_AGG(b AND NOT c) AS b2 FROM input GROUP BY g ORDER BY g"
+order = "ordered"
+tags = ["null", "empty-input", "duplicates"]
+
+[[case]]
+id = "booland_agg_window"
+description = "BOOLAND_AGG as a window function."
+columns = [{ name = "g", type = "VARCHAR" }, { name = "b", type = "BOOLEAN" }, { name = "c", type = "BOOLEAN" }]
+rows = [
+  ["'a'", "TRUE", "FALSE"],
+  ["'a'", "FALSE", "FALSE"],
+  ["'b'", "NULL", "NULL"],
+  ["'c'", "FALSE", "NULL"],
+  ["'d'", "TRUE", "TRUE"],
+  ["'d'", "NULL", "TRUE"],
+]
+query = "SELECT g, BOOLAND_AGG(b) OVER (PARTITION BY g) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "ties", "single-row-partition"]
+
+[[case]]
+id = "booland_agg_empty"
+description = "BOOLAND_AGG over no rows."
+columns = [{ name = "g", type = "VARCHAR" }, { name = "b", type = "BOOLEAN" }, { name = "c", type = "BOOLEAN" }]
+rows = [
+  ["'a'", "TRUE", "FALSE"],
+  ["'a'", "FALSE", "FALSE"],
+  ["'b'", "NULL", "NULL"],
+  ["'c'", "FALSE", "NULL"],
+  ["'d'", "TRUE", "TRUE"],
+  ["'d'", "NULL", "TRUE"],
+]
+query = "SELECT BOOLAND_AGG(b) AS r FROM input WHERE FALSE"
+order = "ordered"
+tags = ["null", "empty-input", "duplicates"]
+
+[[case]]
+id = "max_by_grouped"
+description = "MAX_BY per group, NULL keys skipped, a NULL value at the extreme kept."
+columns = [{ name = "g", type = "VARCHAR" }, { name = "x", type = "VARCHAR" }, { name = "k", type = "NUMBER(10,0)" }]
+rows = [
+  ["'a'", "'first'", "1"],
+  ["'a'", "'last'", "3"],
+  ["'a'", "'mid'", "2"],
+  ["'a'", "'nullkey'", "NULL"],
+  ["'b'", "'only'", "NULL"],
+  ["'c'", "NULL", "5"],
+  ["'c'", "'low'", "1"],
+]
+query = "SELECT g, MAX_BY(x, k) AS r FROM input GROUP BY g ORDER BY g"
+order = "ordered"
+tags = ["null", "empty-input", "duplicates"]
+
+[[case]]
+id = "max_by_variant"
+description = "MAX_BY of a VARIANT value."
+columns = [{ name = "g", type = "VARCHAR" }, { name = "v", type = "VARIANT" }, { name = "k", type = "NUMBER(10,0)" }]
+rows = [
+  ["'a'", "PARSE_JSON('{\"s\":\"x\"}')", "1"],
+  ["'a'", "PARSE_JSON('{\"s\":\"y\"}')", "2"],
+  ["'b'", "PARSE_JSON('[1]')", "1"],
+]
+query = "SELECT g, MAX_BY(v, k) AS r FROM input GROUP BY g ORDER BY g"
+order = "ordered"
+tags = ["null", "empty-input", "duplicates"]
+
+[[case]]
+id = "max_by_iff_key"
+description = "MAX_BY keyed by an IFF that is NULL for some rows."
+columns = [{ name = "g", type = "VARCHAR" }, { name = "x", type = "VARCHAR" }, { name = "k", type = "NUMBER(10,0)" }]
+rows = [
+  ["'a'", "'first'", "1"],
+  ["'a'", "'last'", "3"],
+  ["'a'", "'mid'", "2"],
+  ["'a'", "'nullkey'", "NULL"],
+  ["'b'", "'only'", "NULL"],
+  ["'c'", "NULL", "5"],
+  ["'c'", "'low'", "1"],
+]
+query = "SELECT g, MAX_BY(x, IFF(x <> 'mid', k, NULL)) AS r FROM input GROUP BY g ORDER BY g"
+order = "ordered"
+tags = ["null", "empty-input", "duplicates"]
+
+[[case]]
+id = "max_by_count"
+description = "MAX_BY with a count argument, returning an array."
+columns = [{ name = "g", type = "VARCHAR" }, { name = "x", type = "VARCHAR" }, { name = "k", type = "NUMBER(10,0)" }]
+rows = [
+  ["'a'", "'first'", "1"],
+  ["'a'", "'last'", "3"],
+  ["'a'", "'mid'", "2"],
+  ["'a'", "'nullkey'", "NULL"],
+  ["'b'", "'only'", "NULL"],
+  ["'c'", "NULL", "5"],
+  ["'c'", "'low'", "1"],
+]
+query = "SELECT g, MAX_BY(x, k, 2) AS r FROM input GROUP BY g ORDER BY g"
+order = "ordered"
+tags = ["null", "empty-input", "duplicates"]
+
+[[case]]
+id = "max_by_empty"
+description = "MAX_BY over no rows."
+columns = [{ name = "g", type = "VARCHAR" }, { name = "x", type = "VARCHAR" }, { name = "k", type = "NUMBER(10,0)" }]
+rows = [
+  ["'a'", "'first'", "1"],
+  ["'a'", "'last'", "3"],
+  ["'a'", "'mid'", "2"],
+  ["'a'", "'nullkey'", "NULL"],
+  ["'b'", "'only'", "NULL"],
+  ["'c'", "NULL", "5"],
+  ["'c'", "'low'", "1"],
+]
+query = "SELECT MAX_BY(x, k) AS r FROM input WHERE FALSE"
+order = "ordered"
+tags = ["null", "empty-input", "duplicates"]
+
+[[case]]
+id = "min_by_grouped"
+description = "MIN_BY per group, NULL keys skipped, a NULL value at the extreme kept."
+columns = [{ name = "g", type = "VARCHAR" }, { name = "x", type = "VARCHAR" }, { name = "k", type = "NUMBER(10,0)" }]
+rows = [
+  ["'a'", "'first'", "1"],
+  ["'a'", "'last'", "3"],
+  ["'a'", "'mid'", "2"],
+  ["'a'", "'nullkey'", "NULL"],
+  ["'b'", "'only'", "NULL"],
+  ["'c'", "NULL", "5"],
+  ["'c'", "'low'", "1"],
+]
+query = "SELECT g, MIN_BY(x, k) AS r FROM input GROUP BY g ORDER BY g"
+order = "ordered"
+tags = ["null", "empty-input", "duplicates"]
+
+[[case]]
+id = "min_by_variant"
+description = "MIN_BY of a VARIANT value."
+columns = [{ name = "g", type = "VARCHAR" }, { name = "v", type = "VARIANT" }, { name = "k", type = "NUMBER(10,0)" }]
+rows = [
+  ["'a'", "PARSE_JSON('{\"s\":\"x\"}')", "1"],
+  ["'a'", "PARSE_JSON('{\"s\":\"y\"}')", "2"],
+  ["'b'", "PARSE_JSON('[1]')", "1"],
+]
+query = "SELECT g, MIN_BY(v, k) AS r FROM input GROUP BY g ORDER BY g"
+order = "ordered"
+tags = ["null", "empty-input", "duplicates"]
+
+[[case]]
+id = "min_by_iff_key"
+description = "MIN_BY keyed by an IFF that is NULL for some rows."
+columns = [{ name = "g", type = "VARCHAR" }, { name = "x", type = "VARCHAR" }, { name = "k", type = "NUMBER(10,0)" }]
+rows = [
+  ["'a'", "'first'", "1"],
+  ["'a'", "'last'", "3"],
+  ["'a'", "'mid'", "2"],
+  ["'a'", "'nullkey'", "NULL"],
+  ["'b'", "'only'", "NULL"],
+  ["'c'", "NULL", "5"],
+  ["'c'", "'low'", "1"],
+]
+query = "SELECT g, MIN_BY(x, IFF(x <> 'mid', k, NULL)) AS r FROM input GROUP BY g ORDER BY g"
+order = "ordered"
+tags = ["null", "empty-input", "duplicates"]
+
+[[case]]
+id = "min_by_count"
+description = "MIN_BY with a count argument, returning an array."
+columns = [{ name = "g", type = "VARCHAR" }, { name = "x", type = "VARCHAR" }, { name = "k", type = "NUMBER(10,0)" }]
+rows = [
+  ["'a'", "'first'", "1"],
+  ["'a'", "'last'", "3"],
+  ["'a'", "'mid'", "2"],
+  ["'a'", "'nullkey'", "NULL"],
+  ["'b'", "'only'", "NULL"],
+  ["'c'", "NULL", "5"],
+  ["'c'", "'low'", "1"],
+]
+query = "SELECT g, MIN_BY(x, k, 2) AS r FROM input GROUP BY g ORDER BY g"
+order = "ordered"
+tags = ["null", "empty-input", "duplicates"]
+
+[[case]]
+id = "min_by_empty"
+description = "MIN_BY over no rows."
+columns = [{ name = "g", type = "VARCHAR" }, { name = "x", type = "VARCHAR" }, { name = "k", type = "NUMBER(10,0)" }]
+rows = [
+  ["'a'", "'first'", "1"],
+  ["'a'", "'last'", "3"],
+  ["'a'", "'mid'", "2"],
+  ["'a'", "'nullkey'", "NULL"],
+  ["'b'", "'only'", "NULL"],
+  ["'c'", "NULL", "5"],
+  ["'c'", "'low'", "1"],
+]
+query = "SELECT MIN_BY(x, k) AS r FROM input WHERE FALSE"
+order = "ordered"
+tags = ["null", "empty-input", "duplicates"]
+
+[[case]]
+id = "max_by_timestamp_key"
+description = "MAX_BY keyed by a timestamp."
+columns = [{ name = "x", type = "NUMBER(10,0)" }, { name = "t", type = "TIMESTAMP_NTZ(9)" }]
+rows = [
+  ["1", "'2024-01-01 00:00:00'"],
+  ["2", "'2024-01-01 00:00:00.000000001'"],
+  ["3", "NULL"],
+]
+query = "SELECT MAX_BY(x, t) AS r FROM input"
+order = "ordered"
+tags = ["null", "empty-input", "duplicates"]
+
+[[case]]
+id = "mode_unique"
+description = "MODE with a unique most frequent value per group."
+columns = [{ name = "g", type = "VARCHAR" }, { name = "x", type = "VARCHAR" }, { name = "n", type = "NUMBER(10,0)" }]
+rows = [
+  ["'a'", "'x'", "1"],
+  ["'a'", "'x'", "2"],
+  ["'a'", "'y'", "3"],
+  ["'b'", "NULL", "1"],
+  ["'b'", "'z'", "2"],
+]
+query = "SELECT g, MODE(x) AS m FROM input GROUP BY g ORDER BY g"
+order = "ordered"
+tags = ["null", "empty-input", "duplicates"]
+
+[[case]]
+id = "count_distinct_window"
+description = "COUNT(DISTINCT x) OVER (PARTITION BY g)."
+columns = [{ name = "g", type = "VARCHAR" }, { name = "x", type = "VARCHAR" }, { name = "n", type = "NUMBER(10,0)" }]
+rows = [
+  ["'a'", "'b'", "2"],
+  ["'a'", "'a'", "1"],
+  ["'a'", "'b'", "3"],
+  ["'a'", "NULL", "4"],
+  ["'b'", "NULL", "NULL"],
+  ["'c'", "'z'", "9"],
+]
+query = "SELECT g, COUNT(DISTINCT x) OVER (PARTITION BY g) AS n FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "ties", "single-row-partition"]
+
+[[case]]
+id = "count_distinct_window_whole"
+description = "COUNT(DISTINCT x) OVER () across all rows."
+columns = [{ name = "g", type = "VARCHAR" }, { name = "x", type = "VARCHAR" }, { name = "n", type = "NUMBER(10,0)" }]
+rows = [
+  ["'a'", "'b'", "2"],
+  ["'a'", "'a'", "1"],
+  ["'a'", "'b'", "3"],
+  ["'a'", "NULL", "4"],
+  ["'b'", "NULL", "NULL"],
+  ["'c'", "'z'", "9"],
+]
+query = "SELECT COUNT(DISTINCT x) OVER () AS n FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "ties", "single-row-partition"]
+
+[[case]]
+id = "count_distinct_two"
+description = "COUNT(DISTINCT x, n) of two columns."
+columns = [{ name = "g", type = "VARCHAR" }, { name = "x", type = "VARCHAR" }, { name = "n", type = "NUMBER(10,0)" }]
+rows = [
+  ["'a'", "'b'", "2"],
+  ["'a'", "'a'", "1"],
+  ["'a'", "'b'", "3"],
+  ["'a'", "NULL", "4"],
+  ["'b'", "NULL", "NULL"],
+  ["'c'", "'z'", "9"],
+]
+query = "SELECT g, COUNT(DISTINCT x, n) AS c FROM input GROUP BY g ORDER BY g"
+order = "ordered"
+tags = ["null", "empty-input", "duplicates"]
+
+[[case]]
+id = "any_value_several_values"
+description = "ANY_VALUE of a group holding two different values."
+columns = [{ name = "g", type = "VARCHAR" }, { name = "x", type = "VARCHAR" }]
+rows = [
+  ["'a'", "'open'"],
+  ["'a'", "'shipped'"],
+]
+query = "SELECT g, ANY_VALUE(x) AS x FROM input GROUP BY g ORDER BY g"
+order = "ordered"
+tags = ["null", "empty-input", "duplicates"]
+expected_divergence = "any_value_choice"
+
+[[case]]
+id = "any_value_null_beside_value"
+description = "ANY_VALUE of a group holding NULL and a value."
+columns = [{ name = "g", type = "VARCHAR" }, { name = "x", type = "VARCHAR" }]
+rows = [
+  ["'a'", "NULL"],
+  ["'a'", "'open'"],
+]
+query = "SELECT g, ANY_VALUE(x) AS x FROM input GROUP BY g ORDER BY g"
+order = "ordered"
+tags = ["null", "empty-input", "duplicates"]
+expected_divergence = "any_value_choice"
+
+[[case]]
+id = "count_if_window_frames"
+description = "COUNT_IF, BOOLOR_AGG and BOOLAND_AGG over explicit ROWS frames, empty for the first rows."
+columns = [{ name = "g", type = "VARCHAR" }, { name = "b", type = "BOOLEAN" }]
+rows = [
+  ["'a'", "TRUE"],
+  ["'a'", "FALSE"],
+  ["'a'", "NULL"],
+  ["'a'", "TRUE"],
+  ["'b'", "TRUE"],
+]
+query = "SELECT g, COUNT_IF(b) OVER (PARTITION BY g ORDER BY ordinal ROWS BETWEEN 2 PRECEDING AND 1 PRECEDING) AS n, BOOLOR_AGG(b) OVER (PARTITION BY g ORDER BY ordinal ROWS BETWEEN 2 PRECEDING AND 1 PRECEDING) AS any_set, BOOLAND_AGG(b) OVER (PARTITION BY g ORDER BY ordinal ROWS BETWEEN 1 FOLLOWING AND UNBOUNDED FOLLOWING) AS all_set FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "empty-input", "duplicates"]
+
+[[case]]
+id = "count_if_window_range"
+description = "COUNT_IF over an explicit RANGE frame with ties."
+columns = [{ name = "g", type = "VARCHAR" }, { name = "k", type = "NUMBER(2,0)" }, { name = "b", type = "BOOLEAN" }]
+rows = [
+  ["'a'", "1", "TRUE"],
+  ["'a'", "1", "FALSE"],
+  ["'a'", "2", "TRUE"],
+]
+query = "SELECT g, COUNT_IF(b) OVER (PARTITION BY g ORDER BY k RANGE BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) AS n FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "empty-input", "duplicates"]

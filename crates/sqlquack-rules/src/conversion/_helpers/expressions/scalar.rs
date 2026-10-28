@@ -9,13 +9,18 @@ use crate::conversion::_helpers::expressions::atoms::{
 use crate::conversion::_helpers::expressions::calls::{convert_aggregate, convert_function};
 use crate::conversion::_helpers::expressions::casts::convert_cast;
 use crate::conversion::_helpers::expressions::conditionals::{case_expression, coalesce, iff, nvl};
+use crate::conversion::_helpers::expressions::named_aggregates::{
+    is_named_aggregate, named_aggregate,
+};
+use crate::conversion::_helpers::expressions::objects::object_constant;
 use crate::conversion::_helpers::expressions::operators::{
-    arithmetic, comparison_predicate, logic, negation, null_safe_comparison,
+    arithmetic, comparison_predicate, logic, modulo, negation, null_safe_comparison,
 };
 use crate::conversion::_helpers::expressions::ordered_aggregates::within_group;
 use crate::conversion::_helpers::expressions::predicates::{
     between, exists, in_predicate, null_test,
 };
+use crate::conversion::_helpers::expressions::result_types::result_type;
 use crate::conversion::_helpers::expressions::semi_structured::{variant_path, variant_subscript};
 use crate::conversion::_helpers::expressions::spellings::{as_typed, as_written, rlike_as_call};
 use crate::conversion::_helpers::expressions::strings::{
@@ -24,15 +29,36 @@ use crate::conversion::_helpers::expressions::strings::{
 use crate::conversion::_helpers::expressions::temporal_functions::{date_diff, extract};
 use crate::conversion::_helpers::expressions::text_functions::{length, like, substring};
 use crate::conversion::_helpers::expressions::windows::convert_window;
+use crate::conversion::_helpers::support::collecting::{
+    collecting, events, placeholder, record, stopped,
+};
 use crate::conversion::_helpers::support::scope::Emitted;
 use crate::conversion::_helpers::support::site::Site;
 use crate::conversion::_helpers::support::tree::{
     function_construct, missing, node_construct, node_kind, outside_conditions,
 };
-use crate::conversion::constants::{CALL_KIND, RLIKE_PAIR};
+use crate::conversion::constants::{CALL_KIND, OBJECT_CONSTANT_KIND, RLIKE_PAIR};
 
-/// Converts one scalar expression; refusals and raises inside it name their innermost node.
+/// One scalar expression, located; when collecting, a refused one becomes a placeholder.
 pub(crate) fn convert_expression(node: &Value, site: Site<'_>) -> Result<Emitted, Refusal> {
+    if !collecting() {
+        return located(node, site);
+    }
+    let before = events();
+    match located(node, site) {
+        Ok(emitted) => Ok(emitted),
+        Err(refusal) => {
+            record(refusal, before);
+            if matches!(node_kind(node), Some(("subquery" | "exists", _))) {
+                stopped();
+            }
+            Ok(placeholder(result_type(node)))
+        }
+    }
+}
+
+/// One expression converted, its refusal placed at it and its raises identified.
+fn located(node: &Value, site: Site<'_>) -> Result<Emitted, Refusal> {
     let locator = site.context.locator;
     let mut emitted = convert_kind(node, site).map_err(|refusal| locator.placed(refusal, node))?;
     emitted.sql = locator.identified(&emitted.sql, node);
@@ -56,6 +82,7 @@ fn convert_kind(node: &Value, site: Site<'_>) -> Result<Emitted, Refusal> {
         "neg" => negate(payload, site),
         "subquery" => scalar_subquery(payload, site),
         "add" | "sub" | "mul" | "div" => arithmetic(kind, payload, site),
+        "mod" => modulo(payload, site),
         "eq" | "neq" | "lt" | "lte" | "gt" | "gte" => comparison_predicate(kind, payload, site),
         "null_safe_eq" | "null_safe_neq" => null_safe_comparison(kind, payload, site),
         "and" | "or" => logic(kind, payload, site),
@@ -82,6 +109,7 @@ fn convert_kind(node: &Value, site: Site<'_>) -> Result<Emitted, Refusal> {
         "j_s_o_n_extract" => variant_path(payload, site),
         "subscript" => variant_subscript(payload, site),
         "concat" => concat_operator(payload, site),
+        OBJECT_CONSTANT_KIND => object_constant(payload, site),
         "regexp_like" => match rlike_as_call(payload) {
             Some(call) => {
                 site.context.log.equivalence(RLIKE_PAIR);
@@ -105,6 +133,15 @@ fn convert_kind(node: &Value, site: Site<'_>) -> Result<Emitted, Refusal> {
                 convert_expression(&typed, site).map_err(|refusal| as_written(refusal, spelling))
             }
             None if kind == CALL_KIND => convert_function(payload, site),
+            None if is_named_aggregate(&call_name(payload)) => {
+                if !site.placement.aggregates {
+                    return Err(outside_conditions(
+                        function_construct(&call_name(payload)),
+                        "an aggregate is not allowed here".to_owned(),
+                    ));
+                }
+                named_aggregate(&call_name(payload), payload, site, None)
+            }
             None => {
                 let name = payload
                     .get("name")
@@ -129,6 +166,15 @@ fn convert_kind(node: &Value, site: Site<'_>) -> Result<Emitted, Refusal> {
             format!("no rule converts node:{other}"),
         )),
     }
+}
+
+/// A call's upper-case name.
+pub(crate) fn call_name(payload: &Value) -> String {
+    payload
+        .get("name")
+        .and_then(Value::as_str)
+        .unwrap_or_default()
+        .to_ascii_uppercase()
 }
 
 fn aggregate(kind: &str, payload: &Value, site: Site<'_>) -> Result<Emitted, Refusal> {

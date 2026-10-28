@@ -10,6 +10,7 @@ use sqlquack_core::failures::main::raise_id::raise_id;
 use sqlquack_core::failures::models::FailureMode;
 use sqlquack_core::parsing::models::SourceLocation;
 use sqlquack_core::provenance::models::Provenance;
+use sqlquack_core::refusals::models::Refusal;
 use sqlquack_snowflake::typing::models::SnowflakeType;
 
 /// One column of a relation: its Snowflake name, as resolved, and type.
@@ -214,4 +215,15 @@ pub struct SpellingPair {
     pub canonical: &'static str,
     /// The case file, relative to the cases directory, holding the recorded pairs.
     pub cases: &'static str,
+}
+
+/// Every refusal found in a statement by converting past each refused node.
+#[derive(Clone, Debug, Default, PartialEq, Eq)]
+pub struct CollectedRefusals {
+    /// The refusals, in the order found.
+    pub refusals: Vec<Refusal>,
+    /// Whether a refusal may be missing, or have been dropped as a possible knock-on.
+    pub possibly_incomplete: bool,
+    /// The statement's result columns where conversion reached them; refused values are NULL-typed.
+    pub columns: Option<Vec<ColumnSpec>>,
 }

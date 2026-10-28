@@ -5,8 +5,13 @@ use crate::checking::main::check_printed::check_printed;
 
 /// The stage at which `sql` fails against the relation `ORDERS`, or `None` when it passes.
 pub(crate) fn failed_stage(sql: &str) -> Option<CheckStage> {
+    failed_stage_over(sql, &["ORDERS"])
+}
+
+/// The stage at which `sql` fails against `relations`, each with the columns of `ORDERS`.
+pub(crate) fn failed_stage_over(sql: &str, relations: &[&str]) -> Option<CheckStage> {
     let orders = |name: &str| -> Option<Vec<(String, SnowflakeType)>> {
-        (name == "ORDERS").then(|| {
+        relations.contains(&name).then(|| {
             vec![
                 (
                     "ID".to_owned(),

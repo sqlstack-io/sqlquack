@@ -20,9 +20,13 @@ use sqlquack_snowflake::typing::models::SnowflakeType;
 use crate::analysis::main::analyze::analyze;
 use crate::analysis::main::analyze_function::analyze_function;
 use crate::analysis::main::check_equivalence_cases::check_equivalence_cases;
+use crate::analysis::main::collect_all_refusals::collect_all_refusals;
 use crate::analysis::main::conversion_options::conversion_options;
+use crate::analysis::main::refused_construct::refused_construct;
 use crate::analysis::models::PipelineConverter;
-use crate::analysis::tests::test_types::{AnalysisSummary, DivergenceModeOutcome};
+use crate::analysis::tests::test_types::{
+    AnalysisSummary, CollectedSummary, DivergenceModeOutcome,
+};
 
 fn shop_schema() -> Schema {
     let mut schema = shop_relations();
@@ -549,4 +553,45 @@ pub(crate) fn converts_identically(texts: &[&str]) -> Result<bool, Vec<String>> 
         .map(|sql| shop_conversion(sql).map(|converted| converted.sql))
         .collect::<Result<_, _>>()?;
     Ok(converted.windows(2).all(|pair| pair[0] == pair[1]))
+}
+
+/// Every refused construct of `sql` over the shop, collected past each refusal.
+pub(crate) fn collected_summary(sql: &str) -> CollectedSummary {
+    let collected = collect_all_refusals(
+        sql,
+        SourceDialect::Snowflake,
+        &builtin_catalogue(),
+        (&shop_schema(), &ConversionOptions::default()),
+    );
+    CollectedSummary {
+        constructs: collected
+            .refusals
+            .iter()
+            .map(refused_construct)
+            .collect::<BTreeSet<_>>()
+            .into_iter()
+            .collect(),
+        possibly_incomplete: collected.possibly_incomplete,
+    }
+}
+
+/// Each statement's converted SQL, or `None` where it is refused.
+pub(crate) fn converted_sql(statements: &[&str]) -> Vec<Option<String>> {
+    statements
+        .iter()
+        .map(|sql| {
+            let analysis = analyze(
+                sql,
+                SourceDialect::Snowflake,
+                &builtin_catalogue(),
+                (&shop_schema(), &ConversionOptions::default()),
+            );
+            let sql: Vec<String> = analysis
+                .conversions
+                .iter()
+                .map(|converted| converted.sql.clone())
+                .collect();
+            analysis.refusals.is_empty().then(|| sql.join(";\n"))
+        })
+        .collect()
 }

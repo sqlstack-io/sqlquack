@@ -1,0 +1,437 @@
+# ARRAY_POSITION, ARRAY_CAT, ARRAY_COMPACT, GET, TRANSFORM and PARSE_JSON of VARIANTs.
+category = "semi-structured-array"
+construct = "fn:ARRAY_POSITION"
+session_profile = "utc-v1"
+
+[[case]]
+id = "array_position_color"
+description = "ARRAY_POSITION of the text Color as a VARIANT in arrays of headers."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('[\"Size\",\"Color\",\"Weight\"]')"],
+  ["PARSE_JSON('[\"color\",\"Color\"]')"],
+  ["PARSE_JSON('[\"Weight\",null,\"Weight\"]')"],
+  ["PARSE_JSON('[]')"],
+  ["PARSE_JSON('[1,\"1\",true]')"],
+  ["PARSE_JSON('[\"Größe\",\"Çolor\"]')"],
+  ["NULL"],
+]
+expression = "ARRAY_POSITION('Color'::VARIANT, v)"
+tags = ["null", "duplicates", "empty", "invalid"]
+expected_divergence = "json_fidelity"
+
+[[case]]
+id = "array_position_weight"
+description = "ARRAY_POSITION of the text Weight as a VARIANT in arrays of headers."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('[\"Size\",\"Color\",\"Weight\"]')"],
+  ["PARSE_JSON('[\"color\",\"Color\"]')"],
+  ["PARSE_JSON('[\"Weight\",null,\"Weight\"]')"],
+  ["PARSE_JSON('[]')"],
+  ["PARSE_JSON('[1,\"1\",true]')"],
+  ["PARSE_JSON('[\"Größe\",\"Çolor\"]')"],
+  ["NULL"],
+]
+expression = "ARRAY_POSITION('Weight'::VARIANT, v)"
+tags = ["null", "duplicates", "empty", "invalid"]
+expected_divergence = "json_fidelity"
+
+[[case]]
+id = "array_position_1"
+description = "ARRAY_POSITION of the text 1 as a VARIANT in arrays of headers."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('[\"Size\",\"Color\",\"Weight\"]')"],
+  ["PARSE_JSON('[\"color\",\"Color\"]')"],
+  ["PARSE_JSON('[\"Weight\",null,\"Weight\"]')"],
+  ["PARSE_JSON('[]')"],
+  ["PARSE_JSON('[1,\"1\",true]')"],
+  ["PARSE_JSON('[\"Größe\",\"Çolor\"]')"],
+  ["NULL"],
+]
+expression = "ARRAY_POSITION('1'::VARIANT, v)"
+tags = ["null", "duplicates", "empty", "invalid"]
+expected_divergence = "json_fidelity"
+
+[[case]]
+id = "array_position_grosse"
+description = "ARRAY_POSITION of the text Größe as a VARIANT in arrays of headers."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('[\"Size\",\"Color\",\"Weight\"]')"],
+  ["PARSE_JSON('[\"color\",\"Color\"]')"],
+  ["PARSE_JSON('[\"Weight\",null,\"Weight\"]')"],
+  ["PARSE_JSON('[]')"],
+  ["PARSE_JSON('[1,\"1\",true]')"],
+  ["PARSE_JSON('[\"Größe\",\"Çolor\"]')"],
+  ["NULL"],
+]
+expression = "ARRAY_POSITION('Größe'::VARIANT, v)"
+tags = ["null", "duplicates", "empty", "invalid"]
+expected_divergence = "json_fidelity"
+
+[[case]]
+id = "array_position_number"
+description = "ARRAY_POSITION of a number in a mixed array."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('[\"Size\",\"Color\",\"Weight\"]')"],
+  ["PARSE_JSON('[\"color\",\"Color\"]')"],
+  ["PARSE_JSON('[\"Weight\",null,\"Weight\"]')"],
+  ["PARSE_JSON('[]')"],
+  ["PARSE_JSON('[1,\"1\",true]')"],
+  ["PARSE_JSON('[\"Größe\",\"Çolor\"]')"],
+]
+expression = "ARRAY_POSITION(1::VARIANT, v)"
+tags = ["null", "duplicates", "empty", "invalid"]
+expected_divergence = "json_fidelity"
+
+[[case]]
+id = "array_position_get"
+description = "GET of the position ARRAY_POSITION finds, as models read a column by header."
+columns = [{ name = "h", type = "VARIANT" }, { name = "r", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('[\"Size\",\"Color\"]')", "PARSE_JSON('[\"L\",\"red\"]')"],
+  ["PARSE_JSON('[\"Color\"]')", "PARSE_JSON('[\"blue\",\"x\"]')"],
+  ["PARSE_JSON('[\"Size\"]')", "PARSE_JSON('[\"M\"]')"],
+]
+expression = "GET(r, ARRAY_POSITION('Color'::VARIANT, h))::VARCHAR"
+tags = ["null", "duplicates", "empty", "invalid"]
+
+[[case]]
+id = "array_position_null_needle"
+description = "ARRAY_POSITION of SQL NULL and of a JSON null."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('[null,\"a\"]')"],
+  ["PARSE_JSON('[\"a\"]')"],
+]
+query = "SELECT ARRAY_POSITION(NULL, v) AS a, ARRAY_POSITION(PARSE_JSON('null'), v) AS b FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "duplicates", "empty", "invalid"]
+
+[[case]]
+id = "array_position_not_array"
+description = "ARRAY_POSITION in a value that is not an array."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('{\"a\":1}')"],
+]
+expression = "ARRAY_POSITION('a'::VARIANT, v)"
+tags = ["null", "duplicates", "empty", "invalid"]
+
+[[case]]
+id = "array_cat_pairs"
+description = "ARRAY_CAT of two arrays, empty arrays and nested values."
+columns = [{ name = "a", type = "VARIANT" }, { name = "b", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('[1,2]')", "PARSE_JSON('[3]')"],
+  ["PARSE_JSON('[]')", "PARSE_JSON('[\"x\"]')"],
+  ["PARSE_JSON('[null]')", "PARSE_JSON('[{\"k\":1}]')"],
+  ["PARSE_JSON('[1]')", "NULL"],
+  ["NULL", "PARSE_JSON('[1]')"],
+]
+expression = "ARRAY_CAT(a, b)"
+tags = ["null", "duplicates", "empty", "invalid"]
+
+[[case]]
+id = "array_cat_coalesce_construct"
+description = "ARRAY_CAT of COALESCE(path, ARRAY_CONSTRUCT()) as models write it."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('{\"a\":[1],\"b\":[2]}')"],
+  ["PARSE_JSON('{\"a\":[1]}')"],
+  ["PARSE_JSON('{}')"],
+  ["PARSE_JSON('{\"a\":null,\"b\":[\"x\"]}')"],
+]
+expression = "ARRAY_CAT(COALESCE(v:a, ARRAY_CONSTRUCT()), COALESCE(v:b, ARRAY_CONSTRUCT()))"
+tags = ["null", "duplicates", "empty", "invalid"]
+
+[[case]]
+id = "array_cat_coalesce_literal"
+description = "ARRAY_CAT of COALESCE(path, []) and a nested ARRAY_CAT."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('{\"a\":[1],\"b\":[2],\"c\":[3]}')"],
+  ["PARSE_JSON('{\"c\":[3]}')"],
+  ["PARSE_JSON('{}')"],
+]
+expression = "ARRAY_CAT(ARRAY_CAT(COALESCE(v:a, []), COALESCE(v:b, [])), COALESCE(v:c, []))"
+tags = ["null", "duplicates", "empty", "invalid"]
+
+[[case]]
+id = "array_cat_not_array"
+description = "ARRAY_CAT of a value that is not an array."
+columns = [{ name = "a", type = "VARIANT" }, { name = "b", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('{\"k\":1}')", "PARSE_JSON('[1]')"],
+]
+expression = "ARRAY_CAT(a, b)"
+tags = ["null", "duplicates", "empty", "invalid"]
+
+[[case]]
+id = "array_compact_construct"
+description = "ARRAY_COMPACT of ARRAY_CONSTRUCT with SQL NULLs and JSON nulls."
+columns = [{ name = "x", type = "VARCHAR" }, { name = "v", type = "VARIANT" }]
+rows = [
+  ["'a'", "PARSE_JSON('null')"],
+  ["NULL", "PARSE_JSON('1')"],
+  ["NULL", "NULL"],
+]
+expression = "ARRAY_COMPACT(ARRAY_CONSTRUCT(x, v, 'z'))"
+tags = ["null", "duplicates", "empty", "invalid"]
+expected_divergence = "json_fidelity"
+
+[[case]]
+id = "array_compact_path"
+description = "ARRAY_COMPACT of an array path holding JSON nulls."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('{\"a\":[1,null,2]}')"],
+  ["PARSE_JSON('{\"a\":[null]}')"],
+  ["PARSE_JSON('{\"a\":[]}')"],
+  ["PARSE_JSON('{}')"],
+  ["NULL"],
+]
+expression = "ARRAY_COMPACT(v:a)"
+tags = ["null", "duplicates", "empty", "invalid"]
+
+[[case]]
+id = "array_compact_not_array"
+description = "ARRAY_COMPACT of a value that is not an array."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('{\"a\":1}')"],
+]
+expression = "ARRAY_COMPACT(v)"
+tags = ["null", "duplicates", "empty", "invalid"]
+
+[[case]]
+id = "get_computed_index"
+description = "GET of an array at a computed index i - 1, past its end and of an object."
+columns = [{ name = "v", type = "VARIANT" }, { name = "i", type = "NUMBER(5,0)" }]
+rows = [
+  ["PARSE_JSON('[\"a\",\"b\",\"c\"]')", "1"],
+  ["PARSE_JSON('[\"a\",\"b\",\"c\"]')", "3"],
+  ["PARSE_JSON('[\"a\",\"b\",\"c\"]')", "4"],
+  ["PARSE_JSON('[\"a\"]')", "0"],
+  ["PARSE_JSON('[\"a\"]')", "NULL"],
+  ["PARSE_JSON('{\"k\":1}')", "1"],
+  ["NULL", "1"],
+]
+expression = "GET(v, i - 1)"
+tags = ["null", "duplicates", "empty", "invalid"]
+
+[[case]]
+id = "get_computed_index_text"
+description = "GET at a computed index read as text."
+columns = [{ name = "v", type = "VARIANT" }, { name = "i", type = "NUMBER(5,0)" }]
+rows = [
+  ["PARSE_JSON('[\"a\",\"b\",\"c\"]')", "1"],
+  ["PARSE_JSON('[\"a\",\"b\",\"c\"]')", "3"],
+  ["PARSE_JSON('[\"a\",\"b\",\"c\"]')", "4"],
+  ["PARSE_JSON('[\"a\"]')", "0"],
+  ["PARSE_JSON('[\"a\"]')", "NULL"],
+  ["PARSE_JSON('{\"k\":1}')", "1"],
+  ["NULL", "1"],
+]
+expression = "GET(v, i - 1)::VARCHAR"
+tags = ["null", "duplicates", "empty", "invalid"]
+
+[[case]]
+id = "get_literal_indexes"
+description = "GET(v, 0) and GET(v, 1) of arrays, short arrays and objects."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('[\"x\",\"y\"]')"],
+  ["PARSE_JSON('[\"x\"]')"],
+  ["PARSE_JSON('[]')"],
+  ["PARSE_JSON('{\"0\":1}')"],
+  ["PARSE_JSON('null')"],
+  ["NULL"],
+]
+query = "SELECT GET(v, 0) AS a, GET(v, 1) AS b FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "duplicates", "empty", "invalid"]
+
+[[case]]
+id = "get_negative_index"
+description = "GET at a negative computed index."
+columns = [{ name = "v", type = "VARIANT" }, { name = "i", type = "NUMBER(5,0)" }]
+rows = [
+  ["PARSE_JSON('[\"a\",\"b\"]')", "-1"],
+]
+expression = "GET(v, i)"
+tags = ["null", "duplicates", "empty", "invalid"]
+
+[[case]]
+id = "get_key_column"
+description = "GET of an object by a key column, missing keys and case."
+columns = [{ name = "v", type = "VARIANT" }, { name = "k", type = "VARCHAR" }]
+rows = [
+  ["PARSE_JSON('{\"a\":1,\"B\":2}')", "'a'"],
+  ["PARSE_JSON('{\"a\":1,\"B\":2}')", "'b'"],
+  ["PARSE_JSON('{\"a\":1}')", "NULL"],
+  ["PARSE_JSON('[\"a\"]')", "'a'"],
+]
+expression = "GET(v, k)"
+tags = ["null", "duplicates", "empty", "invalid"]
+
+[[case]]
+id = "get_path_text"
+description = "GET_PATH with a literal path."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('{\"a\":{\"b\":[1,2]}}')"],
+  ["PARSE_JSON('{\"a\":{}}')"],
+  ["PARSE_JSON('{}')"],
+]
+expression = "GET_PATH(v, 'a.b[1]')"
+tags = ["null", "duplicates", "empty", "invalid"]
+
+[[case]]
+id = "transform_text"
+description = "TRANSFORM of array elements read as text."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('[{\"text\":\"a\"},{\"text\":\"b\"}]')"],
+  ["PARSE_JSON('[{\"text\":null},{}]')"],
+  ["PARSE_JSON('[]')"],
+  ["NULL"],
+]
+expression = "TRANSFORM(v, c -> c:text::VARCHAR)"
+tags = ["null", "duplicates", "empty", "invalid"]
+expected_divergence = "json_fidelity"
+
+[[case]]
+id = "transform_split_left"
+description = "TRANSFORM of FILTERed SPLIT words to their first letters."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'ann  lee'"],
+  ["'B'"],
+  ["''"],
+  ["NULL"],
+]
+expression = "TRANSFORM(FILTER(SPLIT(TRIM(UPPER(s)), ' '), x -> x <> ''), x -> LEFT(x, 1))"
+tags = ["null", "duplicates", "empty", "invalid"]
+
+[[case]]
+id = "transform_lpad"
+description = "TRANSFORM with LPAD of trimmed element text."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('[1,\"2\",\" 3 \"]')"],
+  ["PARSE_JSON('[]')"],
+  ["PARSE_JSON('[null]')"],
+]
+expression = "TRANSFORM(v, x -> LPAD(TRIM(x::string), 2, '0'))"
+tags = ["null", "duplicates", "empty", "invalid"]
+expected_divergence = "json_fidelity"
+
+[[case]]
+id = "transform_typed_float"
+description = "TRANSFORM with a typed FLOAT lambda parameter."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('[0.5,1,-2]')"],
+  ["PARSE_JSON('[]')"],
+]
+expression = "TRANSFORM(v, x FLOAT -> x * 2)"
+tags = ["null", "duplicates", "empty", "invalid"]
+
+[[case]]
+id = "transform_typed_varchar"
+description = "TRANSFORM of SPLIT parts with a typed VARCHAR lambda parameter cast to INT."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'1&2&10'"],
+  ["'7'"],
+  ["NULL"],
+]
+expression = "TRANSFORM(SPLIT(s, '&'), leg VARCHAR -> leg::INT)"
+tags = ["null", "duplicates", "empty", "invalid"]
+
+[[case]]
+id = "transform_object_insert"
+description = "TRANSFORM inserting a key into each object."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('[{\"a\":1},{\"a\":2}]')"],
+  ["PARSE_JSON('[]')"],
+]
+expression = "TRANSFORM(v, w -> OBJECT_INSERT(w, 'flag', TRUE))"
+tags = ["null", "duplicates", "empty", "invalid"]
+
+[[case]]
+id = "transform_not_array"
+description = "TRANSFORM of a value that is not an array."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('{\"a\":1}')"],
+]
+expression = "TRANSFORM(v, x -> x)"
+tags = ["null", "duplicates", "empty", "invalid"]
+
+[[case]]
+id = "transform_size"
+description = "ARRAY_SIZE of a TRANSFORM."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('[1,2,3]')"],
+  ["PARSE_JSON('[]')"],
+  ["NULL"],
+]
+expression = "ARRAY_SIZE(TRANSFORM(v, x -> x))"
+tags = ["null", "duplicates", "empty", "invalid"]
+
+[[case]]
+id = "try_parse_json_of_variant"
+description = "TRY_PARSE_JSON of a VARIANT string path."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('{\"raw\":\"{\\\\\"a\\\\\":1}\"}')"],
+  ["PARSE_JSON('{\"raw\":\"[1,2]\"}')"],
+  ["PARSE_JSON('{\"raw\":\"not json\"}')"],
+  ["PARSE_JSON('{\"raw\":null}')"],
+  ["PARSE_JSON('{}')"],
+  ["PARSE_JSON('{\"raw\":{\"a\":1}}')"],
+  ["PARSE_JSON('{\"raw\":\"\\\\\"s\\\\\"\"}')"],
+]
+expression = "TRY_PARSE_JSON(v:raw)"
+tags = ["null", "duplicates", "empty", "invalid"]
+expected_divergence = "json_fidelity"
+
+[[case]]
+id = "parse_json_of_variant"
+description = "PARSE_JSON of a VARIANT string path holding valid JSON."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('{\"raw\":\"{\\\\\"a\\\\\":1}\"}')"],
+  ["PARSE_JSON('{\"raw\":\"[1,2]\"}')"],
+  ["PARSE_JSON('{\"raw\":null}')"],
+  ["PARSE_JSON('{}')"],
+]
+expression = "PARSE_JSON(v:raw)"
+tags = ["null", "duplicates", "empty", "invalid"]
+
+[[case]]
+id = "parse_json_of_variant_object"
+description = "PARSE_JSON of a VARIANT that is already an object."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('{\"raw\":{\"a\":1}}')"],
+]
+expression = "PARSE_JSON(v:raw)"
+tags = ["null", "duplicates", "empty", "invalid"]
+
+[[case]]
+id = "parse_json_of_variant_invalid"
+description = "PARSE_JSON of a VARIANT string that is not JSON raises."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('{\"raw\":\"not json\"}')"],
+]
+expression = "PARSE_JSON(v:raw)"
+tags = ["null", "duplicates", "empty", "invalid"]

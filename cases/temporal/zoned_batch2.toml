@@ -1,0 +1,353 @@
+# DATE_PART, TO_DATE and CONVERT_TIMEZONE over zoned values and zone columns.
+category = "temporal"
+construct = "fn:DATE_PART"
+session_profile = "utc-v1"
+
+[[case]]
+id = "date_part_tz_epoch_second"
+description = "DATE_PART('epoch_second') of TIMESTAMP_TZ values at several offsets."
+columns = [{ name = "t", type = "TIMESTAMP_TZ(9)" }]
+rows = [
+  ["'2024-03-10 02:30:00 -05:00'"],
+  ["'2024-06-01 12:00:00.5 +05:30'"],
+  ["'2024-12-31 23:59:59.999 -08:00'"],
+  ["'2024-01-01 00:30:00 +14:00'"],
+  ["'1970-01-01 00:00:00 +00:00'"],
+  ["NULL"],
+]
+expression = "DATE_PART('epoch_second', t)"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "date_part_tz_epoch_millisecond"
+description = "DATE_PART('epoch_millisecond') of TIMESTAMP_TZ values at several offsets."
+columns = [{ name = "t", type = "TIMESTAMP_TZ(9)" }]
+rows = [
+  ["'2024-03-10 02:30:00 -05:00'"],
+  ["'2024-06-01 12:00:00.5 +05:30'"],
+  ["'2024-12-31 23:59:59.999 -08:00'"],
+  ["'2024-01-01 00:30:00 +14:00'"],
+  ["'1970-01-01 00:00:00 +00:00'"],
+  ["NULL"],
+]
+expression = "DATE_PART('epoch_millisecond', t)"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "date_part_tz_hour"
+description = "DATE_PART('hour') of TIMESTAMP_TZ values at several offsets."
+columns = [{ name = "t", type = "TIMESTAMP_TZ(9)" }]
+rows = [
+  ["'2024-03-10 02:30:00 -05:00'"],
+  ["'2024-06-01 12:00:00.5 +05:30'"],
+  ["'2024-12-31 23:59:59.999 -08:00'"],
+  ["'2024-01-01 00:30:00 +14:00'"],
+  ["'1970-01-01 00:00:00 +00:00'"],
+  ["NULL"],
+]
+expression = "DATE_PART('hour', t)"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "date_part_tz_minute"
+description = "DATE_PART('minute') of TIMESTAMP_TZ values at several offsets."
+columns = [{ name = "t", type = "TIMESTAMP_TZ(9)" }]
+rows = [
+  ["'2024-03-10 02:30:00 -05:00'"],
+  ["'2024-06-01 12:00:00.5 +05:30'"],
+  ["'2024-12-31 23:59:59.999 -08:00'"],
+  ["'2024-01-01 00:30:00 +14:00'"],
+  ["'1970-01-01 00:00:00 +00:00'"],
+  ["NULL"],
+]
+expression = "DATE_PART('minute', t)"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "date_part_tz_second"
+description = "DATE_PART('second') of TIMESTAMP_TZ values at several offsets."
+columns = [{ name = "t", type = "TIMESTAMP_TZ(9)" }]
+rows = [
+  ["'2024-03-10 02:30:00 -05:00'"],
+  ["'2024-06-01 12:00:00.5 +05:30'"],
+  ["'2024-12-31 23:59:59.999 -08:00'"],
+  ["'2024-01-01 00:30:00 +14:00'"],
+  ["'1970-01-01 00:00:00 +00:00'"],
+  ["NULL"],
+]
+expression = "DATE_PART('second', t)"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "date_part_tz_day"
+description = "DATE_PART('day') of TIMESTAMP_TZ values at several offsets."
+columns = [{ name = "t", type = "TIMESTAMP_TZ(9)" }]
+rows = [
+  ["'2024-03-10 02:30:00 -05:00'"],
+  ["'2024-06-01 12:00:00.5 +05:30'"],
+  ["'2024-12-31 23:59:59.999 -08:00'"],
+  ["'2024-01-01 00:30:00 +14:00'"],
+  ["'1970-01-01 00:00:00 +00:00'"],
+  ["NULL"],
+]
+expression = "DATE_PART('day', t)"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "date_part_tz_year"
+description = "DATE_PART('year') of TIMESTAMP_TZ values at several offsets."
+columns = [{ name = "t", type = "TIMESTAMP_TZ(9)" }]
+rows = [
+  ["'2024-03-10 02:30:00 -05:00'"],
+  ["'2024-06-01 12:00:00.5 +05:30'"],
+  ["'2024-12-31 23:59:59.999 -08:00'"],
+  ["'2024-01-01 00:30:00 +14:00'"],
+  ["'1970-01-01 00:00:00 +00:00'"],
+  ["NULL"],
+]
+expression = "DATE_PART('year', t)"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "date_part_ltz_epoch_second"
+description = "DATE_PART('epoch_second') of TIMESTAMP_LTZ values in a UTC session."
+columns = [{ name = "t", type = "TIMESTAMP_LTZ(9)" }]
+rows = [
+  ["'2024-03-10 02:30:00 -05:00'"],
+  ["'2024-06-01 12:00:00.5 +05:30'"],
+  ["'2024-12-31 23:59:59.999 -08:00'"],
+  ["'2024-01-01 00:30:00 +14:00'"],
+  ["'1970-01-01 00:00:00 +00:00'"],
+  ["NULL"],
+]
+expression = "DATE_PART('epoch_second', t)"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "date_part_ltz_epoch_millisecond"
+description = "DATE_PART('epoch_millisecond') of TIMESTAMP_LTZ values in a UTC session."
+columns = [{ name = "t", type = "TIMESTAMP_LTZ(9)" }]
+rows = [
+  ["'2024-03-10 02:30:00 -05:00'"],
+  ["'2024-06-01 12:00:00.5 +05:30'"],
+  ["'2024-12-31 23:59:59.999 -08:00'"],
+  ["'2024-01-01 00:30:00 +14:00'"],
+  ["'1970-01-01 00:00:00 +00:00'"],
+  ["NULL"],
+]
+expression = "DATE_PART('epoch_millisecond', t)"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "date_part_ltz_hour"
+description = "DATE_PART('hour') of TIMESTAMP_LTZ values in a UTC session."
+columns = [{ name = "t", type = "TIMESTAMP_LTZ(9)" }]
+rows = [
+  ["'2024-03-10 02:30:00 -05:00'"],
+  ["'2024-06-01 12:00:00.5 +05:30'"],
+  ["'2024-12-31 23:59:59.999 -08:00'"],
+  ["'2024-01-01 00:30:00 +14:00'"],
+  ["'1970-01-01 00:00:00 +00:00'"],
+  ["NULL"],
+]
+expression = "DATE_PART('hour', t)"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "date_part_epoch_try_tz"
+description = "DATE_PART('epoch_second') of TRY_TO_TIMESTAMP_TZ text."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'2024-02-29T13:45:01Z'"],
+  ["'2024-02-29T13:45:01.5+02:00'"],
+  ["'x'"],
+  ["NULL"],
+]
+expression = "DATE_PART('epoch_second', TRY_TO_TIMESTAMP_TZ(s))"
+tags = ["null", "boundary"]
+expected_divergence = "date_text_spelling"
+
+[[case]]
+id = "to_date_tz"
+description = "TO_DATE of TIMESTAMP_TZ values: the date at their own offset."
+columns = [{ name = "t", type = "TIMESTAMP_TZ(9)" }]
+rows = [
+  ["'2024-03-10 02:30:00 -05:00'"],
+  ["'2024-06-01 12:00:00.5 +05:30'"],
+  ["'2024-12-31 23:59:59.999 -08:00'"],
+  ["'2024-01-01 00:30:00 +14:00'"],
+  ["'1970-01-01 00:00:00 +00:00'"],
+  ["NULL"],
+]
+expression = "TO_DATE(t)"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "to_date_tz_utc"
+description = "TO_DATE of CONVERT_TIMEZONE('UTC', zoned)."
+columns = [{ name = "t", type = "TIMESTAMP_TZ(9)" }]
+rows = [
+  ["'2024-03-10 02:30:00 -05:00'"],
+  ["'2024-06-01 12:00:00.5 +05:30'"],
+  ["'2024-12-31 23:59:59.999 -08:00'"],
+  ["'2024-01-01 00:30:00 +14:00'"],
+  ["'1970-01-01 00:00:00 +00:00'"],
+  ["NULL"],
+]
+expression = "TO_DATE(CONVERT_TIMEZONE('UTC', t))"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "to_date_try_tz"
+description = "TO_DATE of TRY_TO_TIMESTAMP_TZ text."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'2024-02-29T23:30:00-05:00'"],
+  ["'2024-02-29T01:00:00+05:00'"],
+  ["'2024-02-29T13:45:01Z'"],
+  ["NULL"],
+]
+expression = "TO_DATE(TRY_TO_TIMESTAMP_TZ(s))"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "to_date_ntz3"
+description = "TO_DATE of TIMESTAMP_NTZ(3)."
+columns = [{ name = "t", type = "TIMESTAMP_NTZ(3)" }]
+rows = [
+  ["'2024-02-29 23:59:59.999'"],
+  ["'2024-01-01 00:00:00'"],
+  ["NULL"],
+]
+expression = "TO_DATE(t)"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "to_date_ntz6"
+description = "TO_DATE of TIMESTAMP_NTZ(6)."
+columns = [{ name = "t", type = "TIMESTAMP_NTZ(6)" }]
+rows = [
+  ["'2024-02-29 23:59:59.999'"],
+  ["'2024-01-01 00:00:00'"],
+  ["NULL"],
+]
+expression = "TO_DATE(t)"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "to_date_ntz9"
+description = "TO_DATE of TIMESTAMP_NTZ(9)."
+columns = [{ name = "t", type = "TIMESTAMP_NTZ(9)" }]
+rows = [
+  ["'2024-02-29 23:59:59.999'"],
+  ["'2024-01-01 00:00:00'"],
+  ["NULL"],
+]
+expression = "TO_DATE(t)"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "to_date_date"
+description = "TO_DATE of a DATE."
+columns = [{ name = "d", type = "DATE" }]
+rows = [
+  ["'2024-02-29'"],
+  ["NULL"],
+]
+expression = "TO_DATE(d)"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "tz_to_ntz_try"
+description = "TRY_TO_TIMESTAMP_TZ text cast to TIMESTAMP_NTZ: the wall time at its own offset."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'2024-02-29T13:45:01Z'"],
+  ["'2024-02-29T13:45:01+02:00'"],
+  ["'2024-02-29 13:45:01'"],
+  ["NULL"],
+]
+expression = "TRY_TO_TIMESTAMP_TZ(s)::TIMESTAMP_NTZ"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "tz_to_varchar"
+description = "TO_VARCHAR of TIMESTAMP_TZ values in the default output format."
+columns = [{ name = "t", type = "TIMESTAMP_TZ(9)" }]
+rows = [
+  ["'2024-03-10 02:30:00 -05:00'"],
+  ["'2024-06-01 12:00:00.5 +05:30'"],
+  ["'2024-12-31 23:59:59.999 -08:00'"],
+  ["'2024-01-01 00:30:00 +14:00'"],
+  ["'1970-01-01 00:00:00 +00:00'"],
+  ["NULL"],
+]
+expression = "TO_VARCHAR(t)"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "convert_timezone_source_column"
+description = "CONVERT_TIMEZONE from a zone column to UTC, across DST changes."
+columns = [{ name = "z", type = "VARCHAR" }, { name = "t", type = "TIMESTAMP_NTZ(9)" }]
+rows = [
+  ["'Europe/Paris'", "'2024-03-31 01:30:00'"],
+  ["'America/New_York'", "'2024-11-03 01:30:00'"],
+  ["'UTC'", "'2024-02-29 12:00:00'"],
+  ["'Asia/Kolkata'", "'2024-02-29 12:00:00'"],
+  ["NULL", "'2024-02-29 12:00:00'"],
+  ["'Europe/Paris'", "NULL"],
+]
+expression = "CONVERT_TIMEZONE(z, 'UTC', t)"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "convert_timezone_target_column"
+description = "CONVERT_TIMEZONE from UTC to a zone column."
+columns = [{ name = "z", type = "VARCHAR" }, { name = "t", type = "TIMESTAMP_NTZ(9)" }]
+rows = [
+  ["'Europe/Paris'", "'2024-03-31 01:30:00'"],
+  ["'America/New_York'", "'2024-11-03 01:30:00'"],
+  ["'UTC'", "'2024-02-29 12:00:00'"],
+  ["'Asia/Kolkata'", "'2024-02-29 12:00:00'"],
+  ["NULL", "'2024-02-29 12:00:00'"],
+  ["'Europe/Paris'", "NULL"],
+]
+expression = "CONVERT_TIMEZONE('UTC', z, t)"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "convert_timezone_source_coalesce"
+description = "CONVERT_TIMEZONE from COALESCE(zone, a default)."
+columns = [{ name = "z", type = "VARCHAR" }, { name = "t", type = "TIMESTAMP_NTZ(9)" }]
+rows = [
+  ["'Europe/Paris'", "'2024-03-31 01:30:00'"],
+  ["'America/New_York'", "'2024-11-03 01:30:00'"],
+  ["'UTC'", "'2024-02-29 12:00:00'"],
+  ["'Asia/Kolkata'", "'2024-02-29 12:00:00'"],
+  ["NULL", "'2024-02-29 12:00:00'"],
+  ["'Europe/Paris'", "NULL"],
+]
+expression = "CONVERT_TIMEZONE(COALESCE(z, 'Europe/London'), 'UTC', t)"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "convert_timezone_two_column"
+description = "Two-argument CONVERT_TIMEZONE to a zone column of a TIMESTAMP_TZ."
+columns = [{ name = "z", type = "VARCHAR" }, { name = "t", type = "TIMESTAMP_TZ(9)" }]
+rows = [
+  ["'Europe/Paris'", "'2024-03-31 01:30:00 +00:00'"],
+  ["'America/New_York'", "'2024-11-03 05:30:00 +00:00'"],
+  ["NULL", "'2024-02-29 12:00:00 +00:00'"],
+]
+expression = "CONVERT_TIMEZONE(z, t)"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "convert_timezone_bad_zone"
+description = "CONVERT_TIMEZONE from an unknown zone column raises."
+columns = [{ name = "z", type = "VARCHAR" }, { name = "t", type = "TIMESTAMP_NTZ(9)" }]
+rows = [
+  ["'Not/AZone'", "'2024-02-29 12:00:00'"],
+]
+expression = "CONVERT_TIMEZONE(z, 'UTC', t)"
+tags = ["boundary"]

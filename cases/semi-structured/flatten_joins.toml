@@ -1,0 +1,304 @@
+# LATERAL FLATTEN after explicit JOIN ... ON clauses, as a comma-separated source.
+category = "semi-structured"
+construct = "node:lateral"
+session_profile = "utc-v1"
+
+[[case]]
+id = "join_then_flatten"
+description = "A JOIN ... ON, then LATERAL FLATTEN after a comma: array elements, empty arrays, JSON null, missing keys, scalars, objects and NULL."
+columns = [{ name = "side", type = "VARCHAR" }, { name = "k", type = "NUMBER(2,0)" }, { name = "v", type = "VARIANT" }]
+rows = [
+  ["'o'", "1", "PARSE_JSON('{\"items\":[{\"sku\":\"A-10\",\"qty\":2,\"parts\":[{\"p\":\"x\"},{\"p\":\"y\"}]},{\"sku\":\"B-20\",\"qty\":1,\"parts\":[]}],\"meta\":{\"items\":[{\"n\":1},{\"n\":2}],\"Tier\":\"gold\",\"tier\":\"x\"}}')"],
+  ["'o'", "2", "PARSE_JSON('{\"items\":[],\"meta\":{\"items\":[]}}')"],
+  ["'o'", "3", "PARSE_JSON('{\"items\":null,\"meta\":null}')"],
+  ["'o'", "4", "PARSE_JSON('{\"meta\":{}}')"],
+  ["'o'", "5", "PARSE_JSON('{\"items\":\"scalar\",\"meta\":\"scalar\"}')"],
+  ["'o'", "6", "NULL"],
+  ["'o'", "7", "PARSE_JSON('{\"items\":{\"b\":{\"sku\":\"C-30\"},\"a\":{\"sku\":\"D-40\"}},\"meta\":{\"items\":[{\"n\":3}]}}')"],
+  ["'o'", "8", "PARSE_JSON('{\"items\":[{\"sku\":\"E-50\",\"qty\":3,\"parts\":[{\"p\":\"z\"}]}]}')"],
+  ["'c'", "1", "PARSE_JSON('{\"name\":\"Ada\",\"tags\":[\"new\",\"vip\"]}')"],
+  ["'c'", "2", "PARSE_JSON('{\"name\":\"Bo\",\"tags\":[]}')"],
+  ["'c'", "3", "PARSE_JSON('{\"name\":\"Cy\"}')"],
+  ["'c'", "4", "PARSE_JSON('{\"name\":\"Di\",\"tags\":null}')"],
+  ["'c'", "5", "PARSE_JSON('{\"name\":\"Ed\",\"tags\":\"vip\"}')"],
+  ["'c'", "7", "PARSE_JSON('{\"name\":\"Fa\",\"tags\":[\"a\"]}')"],
+  ["'c'", "8", "PARSE_JSON('{\"name\":\"Gu\",\"tags\":[\"b\",\"c\"]}')"],
+]
+query = "SELECT o.k, c.v:name::VARCHAR AS name, f.index, f.key, f.path, f.value:sku::VARCHAR AS sku, f.value:qty::NUMBER(10,0) AS qty FROM input o JOIN input c ON c.k = o.k AND c.side = 'c', LATERAL FLATTEN(input => o.v:items) f WHERE o.side = 'o' ORDER BY o.k, f.index, f.key"
+order = "ordered"
+tags = ["null", "json-null", "missing-key", "nested", "array-index", "case-sensitive-key"]
+
+[[case]]
+id = "join_then_two_flattens"
+description = "A JOIN, then FLATTEN, then FLATTEN over the first FLATTEN's value."
+columns = [{ name = "side", type = "VARCHAR" }, { name = "k", type = "NUMBER(2,0)" }, { name = "v", type = "VARIANT" }]
+rows = [
+  ["'o'", "1", "PARSE_JSON('{\"items\":[{\"sku\":\"A-10\",\"qty\":2,\"parts\":[{\"p\":\"x\"},{\"p\":\"y\"}]},{\"sku\":\"B-20\",\"qty\":1,\"parts\":[]}],\"meta\":{\"items\":[{\"n\":1},{\"n\":2}],\"Tier\":\"gold\",\"tier\":\"x\"}}')"],
+  ["'o'", "2", "PARSE_JSON('{\"items\":[],\"meta\":{\"items\":[]}}')"],
+  ["'o'", "3", "PARSE_JSON('{\"items\":null,\"meta\":null}')"],
+  ["'o'", "4", "PARSE_JSON('{\"meta\":{}}')"],
+  ["'o'", "5", "PARSE_JSON('{\"items\":\"scalar\",\"meta\":\"scalar\"}')"],
+  ["'o'", "6", "NULL"],
+  ["'o'", "7", "PARSE_JSON('{\"items\":{\"b\":{\"sku\":\"C-30\"},\"a\":{\"sku\":\"D-40\"}},\"meta\":{\"items\":[{\"n\":3}]}}')"],
+  ["'o'", "8", "PARSE_JSON('{\"items\":[{\"sku\":\"E-50\",\"qty\":3,\"parts\":[{\"p\":\"z\"}]}]}')"],
+  ["'c'", "1", "PARSE_JSON('{\"name\":\"Ada\",\"tags\":[\"new\",\"vip\"]}')"],
+  ["'c'", "2", "PARSE_JSON('{\"name\":\"Bo\",\"tags\":[]}')"],
+  ["'c'", "3", "PARSE_JSON('{\"name\":\"Cy\"}')"],
+  ["'c'", "4", "PARSE_JSON('{\"name\":\"Di\",\"tags\":null}')"],
+  ["'c'", "5", "PARSE_JSON('{\"name\":\"Ed\",\"tags\":\"vip\"}')"],
+  ["'c'", "7", "PARSE_JSON('{\"name\":\"Fa\",\"tags\":[\"a\"]}')"],
+  ["'c'", "8", "PARSE_JSON('{\"name\":\"Gu\",\"tags\":[\"b\",\"c\"]}')"],
+]
+query = "SELECT o.k, f.index AS item_index, p.index AS part_index, p.value:p::VARCHAR AS part FROM input o JOIN input c ON c.k = o.k AND c.side = 'c', LATERAL FLATTEN(input => o.v:items) f, LATERAL FLATTEN(input => f.value:parts) p WHERE o.side = 'o' ORDER BY o.k, item_index, part_index"
+order = "ordered"
+tags = ["nested", "array-index", "missing-key"]
+
+[[case]]
+id = "join_then_flatten_array_construct"
+description = "A JOIN, then FLATTEN over ARRAY_CONSTRUCT of a path, then FLATTEN over its value's array."
+columns = [{ name = "side", type = "VARCHAR" }, { name = "k", type = "NUMBER(2,0)" }, { name = "v", type = "VARIANT" }]
+rows = [
+  ["'o'", "1", "PARSE_JSON('{\"items\":[{\"sku\":\"A-10\",\"qty\":2,\"parts\":[{\"p\":\"x\"},{\"p\":\"y\"}]},{\"sku\":\"B-20\",\"qty\":1,\"parts\":[]}],\"meta\":{\"items\":[{\"n\":1},{\"n\":2}],\"Tier\":\"gold\",\"tier\":\"x\"}}')"],
+  ["'o'", "2", "PARSE_JSON('{\"items\":[],\"meta\":{\"items\":[]}}')"],
+  ["'o'", "3", "PARSE_JSON('{\"items\":null,\"meta\":null}')"],
+  ["'o'", "4", "PARSE_JSON('{\"meta\":{}}')"],
+  ["'o'", "5", "PARSE_JSON('{\"items\":\"scalar\",\"meta\":\"scalar\"}')"],
+  ["'o'", "6", "NULL"],
+  ["'o'", "7", "PARSE_JSON('{\"items\":{\"b\":{\"sku\":\"C-30\"},\"a\":{\"sku\":\"D-40\"}},\"meta\":{\"items\":[{\"n\":3}]}}')"],
+  ["'o'", "8", "PARSE_JSON('{\"items\":[{\"sku\":\"E-50\",\"qty\":3,\"parts\":[{\"p\":\"z\"}]}]}')"],
+  ["'c'", "1", "PARSE_JSON('{\"name\":\"Ada\",\"tags\":[\"new\",\"vip\"]}')"],
+  ["'c'", "2", "PARSE_JSON('{\"name\":\"Bo\",\"tags\":[]}')"],
+  ["'c'", "3", "PARSE_JSON('{\"name\":\"Cy\"}')"],
+  ["'c'", "4", "PARSE_JSON('{\"name\":\"Di\",\"tags\":null}')"],
+  ["'c'", "5", "PARSE_JSON('{\"name\":\"Ed\",\"tags\":\"vip\"}')"],
+  ["'c'", "7", "PARSE_JSON('{\"name\":\"Fa\",\"tags\":[\"a\"]}')"],
+  ["'c'", "8", "PARSE_JSON('{\"name\":\"Gu\",\"tags\":[\"b\",\"c\"]}')"],
+]
+query = "SELECT o.k, r.index AS r_index, u.index AS u_index, u.value:n::NUMBER(10,0) AS n FROM input o JOIN input c ON c.k = o.k AND c.side = 'c', LATERAL FLATTEN(input => ARRAY_CONSTRUCT(o.v:meta)) r, LATERAL FLATTEN(input => r.value:items) u WHERE o.side = 'o' ORDER BY o.k, r_index, u_index"
+order = "ordered"
+tags = ["nested", "array-index", "json-null", "null"]
+expected_divergence = "json_fidelity"
+
+[[case]]
+id = "left_join_then_flatten_outer"
+description = "A LEFT JOIN, then FLATTEN with OUTER => TRUE: rows without elements keep NULLs."
+columns = [{ name = "side", type = "VARCHAR" }, { name = "k", type = "NUMBER(2,0)" }, { name = "v", type = "VARIANT" }]
+rows = [
+  ["'o'", "1", "PARSE_JSON('{\"items\":[{\"sku\":\"A-10\",\"qty\":2,\"parts\":[{\"p\":\"x\"},{\"p\":\"y\"}]},{\"sku\":\"B-20\",\"qty\":1,\"parts\":[]}],\"meta\":{\"items\":[{\"n\":1},{\"n\":2}],\"Tier\":\"gold\",\"tier\":\"x\"}}')"],
+  ["'o'", "2", "PARSE_JSON('{\"items\":[],\"meta\":{\"items\":[]}}')"],
+  ["'o'", "3", "PARSE_JSON('{\"items\":null,\"meta\":null}')"],
+  ["'o'", "4", "PARSE_JSON('{\"meta\":{}}')"],
+  ["'o'", "5", "PARSE_JSON('{\"items\":\"scalar\",\"meta\":\"scalar\"}')"],
+  ["'o'", "6", "NULL"],
+  ["'o'", "7", "PARSE_JSON('{\"items\":{\"b\":{\"sku\":\"C-30\"},\"a\":{\"sku\":\"D-40\"}},\"meta\":{\"items\":[{\"n\":3}]}}')"],
+  ["'o'", "8", "PARSE_JSON('{\"items\":[{\"sku\":\"E-50\",\"qty\":3,\"parts\":[{\"p\":\"z\"}]}]}')"],
+  ["'c'", "1", "PARSE_JSON('{\"name\":\"Ada\",\"tags\":[\"new\",\"vip\"]}')"],
+  ["'c'", "2", "PARSE_JSON('{\"name\":\"Bo\",\"tags\":[]}')"],
+  ["'c'", "3", "PARSE_JSON('{\"name\":\"Cy\"}')"],
+  ["'c'", "4", "PARSE_JSON('{\"name\":\"Di\",\"tags\":null}')"],
+  ["'c'", "5", "PARSE_JSON('{\"name\":\"Ed\",\"tags\":\"vip\"}')"],
+  ["'c'", "7", "PARSE_JSON('{\"name\":\"Fa\",\"tags\":[\"a\"]}')"],
+  ["'c'", "8", "PARSE_JSON('{\"name\":\"Gu\",\"tags\":[\"b\",\"c\"]}')"],
+]
+query = "SELECT o.k, c.v:name::VARCHAR AS name, f.index, f.value:sku::VARCHAR AS sku FROM input o LEFT JOIN input c ON c.k = o.k AND c.side = 'c', LATERAL FLATTEN(input => o.v:items, outer => TRUE) f WHERE o.side = 'o' ORDER BY o.k, f.index, f.key"
+order = "ordered"
+tags = ["null", "json-null", "missing-key", "array-index"]
+
+[[case]]
+id = "join_then_flatten_joined_side"
+description = "A JOIN, then FLATTEN over the joined relation's array."
+columns = [{ name = "side", type = "VARCHAR" }, { name = "k", type = "NUMBER(2,0)" }, { name = "v", type = "VARIANT" }]
+rows = [
+  ["'o'", "1", "PARSE_JSON('{\"items\":[{\"sku\":\"A-10\",\"qty\":2,\"parts\":[{\"p\":\"x\"},{\"p\":\"y\"}]},{\"sku\":\"B-20\",\"qty\":1,\"parts\":[]}],\"meta\":{\"items\":[{\"n\":1},{\"n\":2}],\"Tier\":\"gold\",\"tier\":\"x\"}}')"],
+  ["'o'", "2", "PARSE_JSON('{\"items\":[],\"meta\":{\"items\":[]}}')"],
+  ["'o'", "3", "PARSE_JSON('{\"items\":null,\"meta\":null}')"],
+  ["'o'", "4", "PARSE_JSON('{\"meta\":{}}')"],
+  ["'o'", "5", "PARSE_JSON('{\"items\":\"scalar\",\"meta\":\"scalar\"}')"],
+  ["'o'", "6", "NULL"],
+  ["'o'", "7", "PARSE_JSON('{\"items\":{\"b\":{\"sku\":\"C-30\"},\"a\":{\"sku\":\"D-40\"}},\"meta\":{\"items\":[{\"n\":3}]}}')"],
+  ["'o'", "8", "PARSE_JSON('{\"items\":[{\"sku\":\"E-50\",\"qty\":3,\"parts\":[{\"p\":\"z\"}]}]}')"],
+  ["'c'", "1", "PARSE_JSON('{\"name\":\"Ada\",\"tags\":[\"new\",\"vip\"]}')"],
+  ["'c'", "2", "PARSE_JSON('{\"name\":\"Bo\",\"tags\":[]}')"],
+  ["'c'", "3", "PARSE_JSON('{\"name\":\"Cy\"}')"],
+  ["'c'", "4", "PARSE_JSON('{\"name\":\"Di\",\"tags\":null}')"],
+  ["'c'", "5", "PARSE_JSON('{\"name\":\"Ed\",\"tags\":\"vip\"}')"],
+  ["'c'", "7", "PARSE_JSON('{\"name\":\"Fa\",\"tags\":[\"a\"]}')"],
+  ["'c'", "8", "PARSE_JSON('{\"name\":\"Gu\",\"tags\":[\"b\",\"c\"]}')"],
+]
+query = "SELECT o.k, t.index, t.value::VARCHAR AS tag FROM input o JOIN input c ON c.k = o.k AND c.side = 'c', LATERAL FLATTEN(input => c.v:tags) t WHERE o.side = 'o' ORDER BY o.k, t.index"
+order = "ordered"
+tags = ["null", "json-null", "missing-key", "array-index"]
+
+[[case]]
+id = "join_then_flatten_object"
+description = "A JOIN, then FLATTEN over an object: KEY, PATH, VALUE and THIS, in key order."
+columns = [{ name = "side", type = "VARCHAR" }, { name = "k", type = "NUMBER(2,0)" }, { name = "v", type = "VARIANT" }]
+rows = [
+  ["'o'", "1", "PARSE_JSON('{\"items\":[{\"sku\":\"A-10\",\"qty\":2,\"parts\":[{\"p\":\"x\"},{\"p\":\"y\"}]},{\"sku\":\"B-20\",\"qty\":1,\"parts\":[]}],\"meta\":{\"items\":[{\"n\":1},{\"n\":2}],\"Tier\":\"gold\",\"tier\":\"x\"}}')"],
+  ["'o'", "2", "PARSE_JSON('{\"items\":[],\"meta\":{\"items\":[]}}')"],
+  ["'o'", "3", "PARSE_JSON('{\"items\":null,\"meta\":null}')"],
+  ["'o'", "4", "PARSE_JSON('{\"meta\":{}}')"],
+  ["'o'", "5", "PARSE_JSON('{\"items\":\"scalar\",\"meta\":\"scalar\"}')"],
+  ["'o'", "6", "NULL"],
+  ["'o'", "7", "PARSE_JSON('{\"items\":{\"b\":{\"sku\":\"C-30\"},\"a\":{\"sku\":\"D-40\"}},\"meta\":{\"items\":[{\"n\":3}]}}')"],
+  ["'o'", "8", "PARSE_JSON('{\"items\":[{\"sku\":\"E-50\",\"qty\":3,\"parts\":[{\"p\":\"z\"}]}]}')"],
+  ["'c'", "1", "PARSE_JSON('{\"name\":\"Ada\",\"tags\":[\"new\",\"vip\"]}')"],
+  ["'c'", "2", "PARSE_JSON('{\"name\":\"Bo\",\"tags\":[]}')"],
+  ["'c'", "3", "PARSE_JSON('{\"name\":\"Cy\"}')"],
+  ["'c'", "4", "PARSE_JSON('{\"name\":\"Di\",\"tags\":null}')"],
+  ["'c'", "5", "PARSE_JSON('{\"name\":\"Ed\",\"tags\":\"vip\"}')"],
+  ["'c'", "7", "PARSE_JSON('{\"name\":\"Fa\",\"tags\":[\"a\"]}')"],
+  ["'c'", "8", "PARSE_JSON('{\"name\":\"Gu\",\"tags\":[\"b\",\"c\"]}')"],
+]
+query = "SELECT o.k, f.key, f.index, f.path, f.value::VARCHAR AS value, TO_JSON(f.this) AS this FROM input o JOIN input c ON c.k = o.k AND c.side = 'c', LATERAL FLATTEN(input => o.v:meta) f WHERE o.side = 'o' ORDER BY o.k, f.key"
+order = "ordered"
+tags = ["case-sensitive-key", "json-null", "nested"]
+
+[[case]]
+id = "join_then_flatten_object_unordered"
+description = "FLATTEN over one object without ORDER BY: Snowflake returns keys in byte order, but row order is not part of the contract."
+columns = [{ name = "side", type = "VARCHAR" }, { name = "k", type = "NUMBER(2,0)" }, { name = "v", type = "VARIANT" }]
+rows = [
+  ["'o'", "1", "PARSE_JSON('{\"m\":{\"b\":1,\"a\":2,\"B\":3,\"_\":4,\"é\":5,\"aa\":6}}')"],
+  ["'c'", "1", "PARSE_JSON('{\"name\":\"Ada\"}')"],
+]
+query = "SELECT f.key, f.value::NUMBER(10,0) AS n FROM input o JOIN input c ON c.k = o.k AND c.side = 'c', LATERAL FLATTEN(input => o.v:m) f WHERE o.side = 'o'"
+order = "bag"
+tags = ["case-sensitive-key"]
+
+[[case]]
+id = "join_then_flatten_array_unordered"
+description = "FLATTEN over one array without ORDER BY: Snowflake returns elements by index, but row order is not part of the contract."
+columns = [{ name = "side", type = "VARCHAR" }, { name = "k", type = "NUMBER(2,0)" }, { name = "v", type = "VARIANT" }]
+rows = [
+  ["'o'", "1", "PARSE_JSON('{\"xs\":[30,10,20,10]}')"],
+  ["'c'", "1", "PARSE_JSON('{\"name\":\"Ada\"}')"],
+]
+query = "SELECT f.index, f.value::NUMBER(10,0) AS n FROM input o JOIN input c ON c.k = o.k AND c.side = 'c', LATERAL FLATTEN(input => o.v:xs) f WHERE o.side = 'o'"
+order = "bag"
+tags = ["array-index"]
+
+[[case]]
+id = "join_then_flatten_grouped"
+description = "A JOIN, FLATTEN with OUTER => TRUE, and GROUP BY counts per order."
+columns = [{ name = "side", type = "VARCHAR" }, { name = "k", type = "NUMBER(2,0)" }, { name = "v", type = "VARIANT" }]
+rows = [
+  ["'o'", "1", "PARSE_JSON('{\"items\":[{\"sku\":\"A-10\",\"qty\":2,\"parts\":[{\"p\":\"x\"},{\"p\":\"y\"}]},{\"sku\":\"B-20\",\"qty\":1,\"parts\":[]}],\"meta\":{\"items\":[{\"n\":1},{\"n\":2}],\"Tier\":\"gold\",\"tier\":\"x\"}}')"],
+  ["'o'", "2", "PARSE_JSON('{\"items\":[],\"meta\":{\"items\":[]}}')"],
+  ["'o'", "3", "PARSE_JSON('{\"items\":null,\"meta\":null}')"],
+  ["'o'", "4", "PARSE_JSON('{\"meta\":{}}')"],
+  ["'o'", "5", "PARSE_JSON('{\"items\":\"scalar\",\"meta\":\"scalar\"}')"],
+  ["'o'", "6", "NULL"],
+  ["'o'", "7", "PARSE_JSON('{\"items\":{\"b\":{\"sku\":\"C-30\"},\"a\":{\"sku\":\"D-40\"}},\"meta\":{\"items\":[{\"n\":3}]}}')"],
+  ["'o'", "8", "PARSE_JSON('{\"items\":[{\"sku\":\"E-50\",\"qty\":3,\"parts\":[{\"p\":\"z\"}]}]}')"],
+  ["'c'", "1", "PARSE_JSON('{\"name\":\"Ada\",\"tags\":[\"new\",\"vip\"]}')"],
+  ["'c'", "2", "PARSE_JSON('{\"name\":\"Bo\",\"tags\":[]}')"],
+  ["'c'", "3", "PARSE_JSON('{\"name\":\"Cy\"}')"],
+  ["'c'", "4", "PARSE_JSON('{\"name\":\"Di\",\"tags\":null}')"],
+  ["'c'", "5", "PARSE_JSON('{\"name\":\"Ed\",\"tags\":\"vip\"}')"],
+  ["'c'", "7", "PARSE_JSON('{\"name\":\"Fa\",\"tags\":[\"a\"]}')"],
+  ["'c'", "8", "PARSE_JSON('{\"name\":\"Gu\",\"tags\":[\"b\",\"c\"]}')"],
+]
+query = "SELECT o.k, COUNT(f.value) AS n, COUNT(*) AS r, SUM(f.value:qty::NUMBER(10,0)) AS qty FROM input o LEFT JOIN input c ON c.k = o.k AND c.side = 'c', LATERAL FLATTEN(input => o.v:items, outer => TRUE) f WHERE o.side = 'o' GROUP BY o.k ORDER BY o.k"
+order = "ordered"
+tags = ["null", "json-null", "missing-key", "array-index"]
+
+[[case]]
+id = "join_then_flatten_qualify"
+description = "A JOIN, FLATTEN and QUALIFY keeping each order's last element."
+columns = [{ name = "side", type = "VARCHAR" }, { name = "k", type = "NUMBER(2,0)" }, { name = "v", type = "VARIANT" }]
+rows = [
+  ["'o'", "1", "PARSE_JSON('{\"items\":[{\"sku\":\"A-10\",\"qty\":2,\"parts\":[{\"p\":\"x\"},{\"p\":\"y\"}]},{\"sku\":\"B-20\",\"qty\":1,\"parts\":[]}],\"meta\":{\"items\":[{\"n\":1},{\"n\":2}],\"Tier\":\"gold\",\"tier\":\"x\"}}')"],
+  ["'o'", "2", "PARSE_JSON('{\"items\":[],\"meta\":{\"items\":[]}}')"],
+  ["'o'", "3", "PARSE_JSON('{\"items\":null,\"meta\":null}')"],
+  ["'o'", "4", "PARSE_JSON('{\"meta\":{}}')"],
+  ["'o'", "5", "PARSE_JSON('{\"items\":\"scalar\",\"meta\":\"scalar\"}')"],
+  ["'o'", "6", "NULL"],
+  ["'o'", "7", "PARSE_JSON('{\"items\":{\"b\":{\"sku\":\"C-30\"},\"a\":{\"sku\":\"D-40\"}},\"meta\":{\"items\":[{\"n\":3}]}}')"],
+  ["'o'", "8", "PARSE_JSON('{\"items\":[{\"sku\":\"E-50\",\"qty\":3,\"parts\":[{\"p\":\"z\"}]}]}')"],
+  ["'c'", "1", "PARSE_JSON('{\"name\":\"Ada\",\"tags\":[\"new\",\"vip\"]}')"],
+  ["'c'", "2", "PARSE_JSON('{\"name\":\"Bo\",\"tags\":[]}')"],
+  ["'c'", "3", "PARSE_JSON('{\"name\":\"Cy\"}')"],
+  ["'c'", "4", "PARSE_JSON('{\"name\":\"Di\",\"tags\":null}')"],
+  ["'c'", "5", "PARSE_JSON('{\"name\":\"Ed\",\"tags\":\"vip\"}')"],
+  ["'c'", "7", "PARSE_JSON('{\"name\":\"Fa\",\"tags\":[\"a\"]}')"],
+  ["'c'", "8", "PARSE_JSON('{\"name\":\"Gu\",\"tags\":[\"b\",\"c\"]}')"],
+]
+query = "SELECT o.k, f.index, f.value:sku::VARCHAR AS sku FROM input o JOIN input c ON c.k = o.k AND c.side = 'c', LATERAL FLATTEN(input => o.v:items) f WHERE o.side = 'o' QUALIFY ROW_NUMBER() OVER (PARTITION BY o.k ORDER BY f.index DESC) = 1 ORDER BY o.k"
+order = "ordered"
+tags = ["array-index", "nested"]
+
+[[case]]
+id = "join_then_flatten_in_cte"
+description = "A JOIN and FLATTEN inside a CTE, read by the outer query."
+columns = [{ name = "side", type = "VARCHAR" }, { name = "k", type = "NUMBER(2,0)" }, { name = "v", type = "VARIANT" }]
+rows = [
+  ["'o'", "1", "PARSE_JSON('{\"items\":[{\"sku\":\"A-10\",\"qty\":2,\"parts\":[{\"p\":\"x\"},{\"p\":\"y\"}]},{\"sku\":\"B-20\",\"qty\":1,\"parts\":[]}],\"meta\":{\"items\":[{\"n\":1},{\"n\":2}],\"Tier\":\"gold\",\"tier\":\"x\"}}')"],
+  ["'o'", "2", "PARSE_JSON('{\"items\":[],\"meta\":{\"items\":[]}}')"],
+  ["'o'", "3", "PARSE_JSON('{\"items\":null,\"meta\":null}')"],
+  ["'o'", "4", "PARSE_JSON('{\"meta\":{}}')"],
+  ["'o'", "5", "PARSE_JSON('{\"items\":\"scalar\",\"meta\":\"scalar\"}')"],
+  ["'o'", "6", "NULL"],
+  ["'o'", "7", "PARSE_JSON('{\"items\":{\"b\":{\"sku\":\"C-30\"},\"a\":{\"sku\":\"D-40\"}},\"meta\":{\"items\":[{\"n\":3}]}}')"],
+  ["'o'", "8", "PARSE_JSON('{\"items\":[{\"sku\":\"E-50\",\"qty\":3,\"parts\":[{\"p\":\"z\"}]}]}')"],
+  ["'c'", "1", "PARSE_JSON('{\"name\":\"Ada\",\"tags\":[\"new\",\"vip\"]}')"],
+  ["'c'", "2", "PARSE_JSON('{\"name\":\"Bo\",\"tags\":[]}')"],
+  ["'c'", "3", "PARSE_JSON('{\"name\":\"Cy\"}')"],
+  ["'c'", "4", "PARSE_JSON('{\"name\":\"Di\",\"tags\":null}')"],
+  ["'c'", "5", "PARSE_JSON('{\"name\":\"Ed\",\"tags\":\"vip\"}')"],
+  ["'c'", "7", "PARSE_JSON('{\"name\":\"Fa\",\"tags\":[\"a\"]}')"],
+  ["'c'", "8", "PARSE_JSON('{\"name\":\"Gu\",\"tags\":[\"b\",\"c\"]}')"],
+]
+query = "WITH lines AS (SELECT o.k, c.v:name::VARCHAR AS name, f.index AS line_index, f.value AS line FROM input o JOIN input c ON c.k = o.k AND c.side = 'c', LATERAL FLATTEN(input => o.v:items) f WHERE o.side = 'o') SELECT k, name, line_index, line:sku::VARCHAR AS sku FROM lines WHERE line:qty::NUMBER(10,0) > 1 ORDER BY k, line_index"
+order = "ordered"
+tags = ["nested", "array-index"]
+
+[[case]]
+id = "join_then_flatten_then_join"
+description = "A JOIN, a comma FLATTEN, then another JOIN on the flattened value."
+columns = [{ name = "side", type = "VARCHAR" }, { name = "k", type = "NUMBER(2,0)" }, { name = "v", type = "VARIANT" }]
+rows = [
+  ["'o'", "1", "PARSE_JSON('{\"items\":[{\"sku\":\"A-10\",\"qty\":2,\"parts\":[{\"p\":\"x\"},{\"p\":\"y\"}]},{\"sku\":\"B-20\",\"qty\":1,\"parts\":[]}],\"meta\":{\"items\":[{\"n\":1},{\"n\":2}],\"Tier\":\"gold\",\"tier\":\"x\"}}')"],
+  ["'o'", "2", "PARSE_JSON('{\"items\":[],\"meta\":{\"items\":[]}}')"],
+  ["'o'", "3", "PARSE_JSON('{\"items\":null,\"meta\":null}')"],
+  ["'o'", "4", "PARSE_JSON('{\"meta\":{}}')"],
+  ["'o'", "5", "PARSE_JSON('{\"items\":\"scalar\",\"meta\":\"scalar\"}')"],
+  ["'o'", "6", "NULL"],
+  ["'o'", "7", "PARSE_JSON('{\"items\":{\"b\":{\"sku\":\"C-30\"},\"a\":{\"sku\":\"D-40\"}},\"meta\":{\"items\":[{\"n\":3}]}}')"],
+  ["'o'", "8", "PARSE_JSON('{\"items\":[{\"sku\":\"E-50\",\"qty\":3,\"parts\":[{\"p\":\"z\"}]}]}')"],
+  ["'c'", "1", "PARSE_JSON('{\"name\":\"Ada\",\"tags\":[\"new\",\"vip\"]}')"],
+  ["'c'", "2", "PARSE_JSON('{\"name\":\"Bo\",\"tags\":[]}')"],
+  ["'c'", "3", "PARSE_JSON('{\"name\":\"Cy\"}')"],
+  ["'c'", "4", "PARSE_JSON('{\"name\":\"Di\",\"tags\":null}')"],
+  ["'c'", "5", "PARSE_JSON('{\"name\":\"Ed\",\"tags\":\"vip\"}')"],
+  ["'c'", "7", "PARSE_JSON('{\"name\":\"Fa\",\"tags\":[\"a\"]}')"],
+  ["'c'", "8", "PARSE_JSON('{\"name\":\"Gu\",\"tags\":[\"b\",\"c\"]}')"],
+]
+query = "SELECT o.k, f.index, x.v:name::VARCHAR AS name FROM input o JOIN input c ON c.k = o.k AND c.side = 'c', LATERAL FLATTEN(input => o.v:items) f JOIN input x ON x.side = 'c' AND x.k = f.value:qty::NUMBER(10,0) WHERE o.side = 'o' ORDER BY o.k, f.index"
+order = "ordered"
+tags = ["nested", "array-index"]
+
+[[case]]
+id = "two_joins_then_flatten"
+description = "Two JOINs, then FLATTEN after a comma."
+columns = [{ name = "side", type = "VARCHAR" }, { name = "k", type = "NUMBER(2,0)" }, { name = "v", type = "VARIANT" }]
+rows = [
+  ["'o'", "1", "PARSE_JSON('{\"items\":[{\"sku\":\"A-10\",\"qty\":2,\"parts\":[{\"p\":\"x\"},{\"p\":\"y\"}]},{\"sku\":\"B-20\",\"qty\":1,\"parts\":[]}],\"meta\":{\"items\":[{\"n\":1},{\"n\":2}],\"Tier\":\"gold\",\"tier\":\"x\"}}')"],
+  ["'o'", "2", "PARSE_JSON('{\"items\":[],\"meta\":{\"items\":[]}}')"],
+  ["'o'", "3", "PARSE_JSON('{\"items\":null,\"meta\":null}')"],
+  ["'o'", "4", "PARSE_JSON('{\"meta\":{}}')"],
+  ["'o'", "5", "PARSE_JSON('{\"items\":\"scalar\",\"meta\":\"scalar\"}')"],
+  ["'o'", "6", "NULL"],
+  ["'o'", "7", "PARSE_JSON('{\"items\":{\"b\":{\"sku\":\"C-30\"},\"a\":{\"sku\":\"D-40\"}},\"meta\":{\"items\":[{\"n\":3}]}}')"],
+  ["'o'", "8", "PARSE_JSON('{\"items\":[{\"sku\":\"E-50\",\"qty\":3,\"parts\":[{\"p\":\"z\"}]}]}')"],
+  ["'c'", "1", "PARSE_JSON('{\"name\":\"Ada\",\"tags\":[\"new\",\"vip\"]}')"],
+  ["'c'", "2", "PARSE_JSON('{\"name\":\"Bo\",\"tags\":[]}')"],
+  ["'c'", "3", "PARSE_JSON('{\"name\":\"Cy\"}')"],
+  ["'c'", "4", "PARSE_JSON('{\"name\":\"Di\",\"tags\":null}')"],
+  ["'c'", "5", "PARSE_JSON('{\"name\":\"Ed\",\"tags\":\"vip\"}')"],
+  ["'c'", "7", "PARSE_JSON('{\"name\":\"Fa\",\"tags\":[\"a\"]}')"],
+  ["'c'", "8", "PARSE_JSON('{\"name\":\"Gu\",\"tags\":[\"b\",\"c\"]}')"],
+]
+query = "SELECT o.k, d.v:name::VARCHAR AS name, f.index FROM input o JOIN input c ON c.k = o.k AND c.side = 'c' INNER JOIN input d ON d.k = c.k AND d.side = 'c', LATERAL FLATTEN(input => o.v:items) f WHERE o.side = 'o' ORDER BY o.k, f.index"
+order = "ordered"
+tags = ["array-index"]

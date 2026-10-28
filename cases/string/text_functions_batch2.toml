@@ -1,0 +1,420 @@
+# INITCAP, ILIKE ANY and non-ASCII ILIKE, CHR, HEX_ENCODE and TRY_TO_BOOLEAN.
+category = "string"
+construct = "fn:INITCAP"
+session_profile = "utc-v1"
+
+[[case]]
+id = "initcap_words"
+description = "INITCAP of words, apostrophes, hyphens, digits, spaces, underscores and non-ASCII letters."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'order shipped'"],
+  ["'ORDER SHIPPED'"],
+  ["'o\\'neil mc-donald'"],
+  ["'a1b2 c3'"],
+  ["'  two  spaces '"],
+  ["'under_score'"],
+  ["'élan ÉTÉ'"],
+  ["'straße'"],
+  ["'x'"],
+  ["''"],
+  ["NULL"],
+]
+expression = "INITCAP(s)"
+tags = ["null", "empty", "whitespace", "unicode"]
+
+[[case]]
+id = "initcap_replace"
+description = "INITCAP of underscores replaced by spaces."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'next_day_delivery'"],
+  ["'BULK_ORDER'"],
+  ["''"],
+  ["NULL"],
+]
+expression = "INITCAP(REPLACE(s, '_', ' '))"
+tags = ["null", "empty", "whitespace", "unicode"]
+
+[[case]]
+id = "initcap_delimiters"
+description = "INITCAP with an explicit delimiter list."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'a-b c'"],
+  ["'a b-c'"],
+  ["NULL"],
+]
+expression = "INITCAP(s, '-')"
+tags = ["null", "empty", "whitespace", "unicode"]
+
+[[case]]
+id = "initcap_empty_delimiters"
+description = "INITCAP with an empty delimiter list."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'ab cd'"],
+  ["NULL"],
+]
+expression = "INITCAP(s, '')"
+tags = ["null", "empty", "whitespace", "unicode"]
+
+[[case]]
+id = "ilike_any"
+description = "ILIKE ANY of several patterns."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'Express Order'"],
+  ["'standard'"],
+  ["'EXPRESS'"],
+  ["'x'"],
+  ["''"],
+  ["NULL"],
+]
+expression = "s ILIKE ANY ('%express%', '%priority%', 'std%')"
+tags = ["null", "empty", "whitespace", "unicode"]
+
+[[case]]
+id = "ilike_any_two"
+description = "ILIKE ANY of two patterns, one with an underscore."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'ab'"],
+  ["'AXB'"],
+  ["'c'"],
+  ["NULL"],
+]
+expression = "s ILIKE ANY ('a_b', 'c')"
+tags = ["null", "empty", "whitespace", "unicode"]
+
+[[case]]
+id = "not_ilike_any"
+description = "NOT ILIKE ANY."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'Express'"],
+  ["'plain'"],
+  ["NULL"],
+]
+expression = "NOT (s ILIKE ANY ('%express%', '%rush%'))"
+tags = ["null", "empty", "whitespace", "unicode"]
+
+[[case]]
+id = "ilike_non_ascii"
+description = "ILIKE with a non-ASCII pattern against upper- and lower-case text."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'Café'"],
+  ["'CAFÉ'"],
+  ["'cafe'"],
+  ["'ÄRGER'"],
+  ["'ärger'"],
+  ["NULL"],
+]
+expression = "s ILIKE '%é%' OR s ILIKE 'ä%'"
+tags = ["null", "empty", "whitespace", "unicode"]
+
+[[case]]
+id = "ilike_non_ascii_sharp_s"
+description = "ILIKE with ß against SS and ẞ."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'straße'"],
+  ["'STRASSE'"],
+  ["'STRAẞE'"],
+  ["NULL"],
+]
+expression = "s ILIKE '%ß%'"
+tags = ["null", "empty", "whitespace", "unicode"]
+
+[[case]]
+id = "chr_codes"
+description = "CHR of the codes models use: spaces, quotes and guillemets."
+columns = [{ name = "n", type = "NUMBER(8,0)" }]
+rows = [
+  ["160"],
+  ["8239"],
+  ["96"],
+  ["8217"],
+  ["171"],
+  ["187"],
+  ["10"],
+  ["65"],
+  ["NULL"],
+]
+expression = "CHR(n)"
+tags = ["null", "empty", "whitespace", "unicode"]
+
+[[case]]
+id = "chr_codes_wide"
+description = "CHR of code points beyond the Basic Multilingual Plane and at its edges."
+columns = [{ name = "n", type = "NUMBER(8,0)" }]
+rows = [
+  ["128512"],
+  ["65535"],
+  ["1114111"],
+  ["127"],
+]
+expression = "CHR(n)"
+tags = ["null", "empty", "whitespace", "unicode"]
+
+[[case]]
+id = "chr_invalid_1"
+description = "CHR(0): raises or converts."
+columns = [{ name = "n", type = "NUMBER(8,0)" }]
+rows = [
+  ["0"],
+]
+expression = "CHR(n)"
+tags = ["null", "empty", "whitespace", "unicode"]
+
+[[case]]
+id = "chr_invalid_2"
+description = "CHR(-1): raises or converts."
+columns = [{ name = "n", type = "NUMBER(8,0)" }]
+rows = [
+  ["-1"],
+]
+expression = "CHR(n)"
+tags = ["null", "empty", "whitespace", "unicode"]
+
+[[case]]
+id = "chr_invalid_3"
+description = "CHR(1114112): raises or converts."
+columns = [{ name = "n", type = "NUMBER(8,0)" }]
+rows = [
+  ["1114112"],
+]
+expression = "CHR(n)"
+tags = ["null", "empty", "whitespace", "unicode"]
+
+[[case]]
+id = "chr_invalid_4"
+description = "CHR(55296): raises or converts."
+columns = [{ name = "n", type = "NUMBER(8,0)" }]
+rows = [
+  ["55296"],
+]
+expression = "CHR(n)"
+tags = ["null", "empty", "whitespace", "unicode"]
+
+[[case]]
+id = "chr_in_replace"
+description = "REPLACE of a CHR(160) with a space, as models clean text."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'a b'"],
+  ["'a b'"],
+  ["' x'"],
+  ["NULL"],
+]
+expression = "REPLACE(REPLACE(s, CHR(160), ' '), CHR(8239), ' ')"
+tags = ["null", "empty", "whitespace", "unicode"]
+
+[[case]]
+id = "chr_lower"
+description = "chr in lower case."
+columns = [{ name = "n", type = "NUMBER(8,0)" }]
+rows = [
+  ["8217"],
+  ["171"],
+]
+expression = "chr(n)"
+tags = ["null", "empty", "whitespace", "unicode"]
+
+[[case]]
+id = "hex_encode"
+description = "HEX_ENCODE of ASCII, non-ASCII and empty text."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'abc'"],
+  ["'é'"],
+  ["''"],
+  ["'a b'"],
+  ["NULL"],
+]
+expression = "HEX_ENCODE(s)"
+tags = ["null", "empty", "whitespace", "unicode"]
+
+[[case]]
+id = "hex_encode_lower"
+description = "HEX_ENCODE with lower-case output."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'abc'"],
+  ["'é'"],
+  ["NULL"],
+]
+expression = "HEX_ENCODE(s, 0)"
+tags = ["null", "empty", "whitespace", "unicode"]
+
+[[case]]
+id = "try_hex_decode_string"
+description = "TRY_HEX_DECODE_STRING of valid, odd-length and invalid hex."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'616263'"],
+  ["'C3A9'"],
+  ["'abc'"],
+  ["'zz'"],
+  ["''"],
+  ["NULL"],
+]
+expression = "TRY_HEX_DECODE_STRING(s)"
+tags = ["null", "empty", "whitespace", "unicode"]
+
+[[case]]
+id = "try_to_boolean_text"
+description = "TRY_TO_BOOLEAN of the spellings Snowflake documents, blanks and garbage."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'true'"],
+  ["'false'"],
+  ["'TRUE'"],
+  ["'False'"],
+  ["'yes'"],
+  ["'no'"],
+  ["'YES'"],
+  ["'on'"],
+  ["'off'"],
+  ["'1'"],
+  ["'0'"],
+  ["'t'"],
+  ["'f'"],
+  ["'y'"],
+  ["'n'"],
+  ["' true '"],
+  ["''"],
+  ["'2'"],
+  ["'maybe'"],
+  ["NULL"],
+]
+expression = "TRY_TO_BOOLEAN(s)"
+tags = ["null", "empty", "whitespace", "unicode"]
+
+[[case]]
+id = "try_to_boolean_variant"
+description = "TRY_TO_BOOLEAN of VARIANT values read as text."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('{\"b\":true}')"],
+  ["PARSE_JSON('{\"b\":\"yes\"}')"],
+  ["PARSE_JSON('{\"b\":0}')"],
+  ["PARSE_JSON('{\"b\":null}')"],
+  ["PARSE_JSON('{}')"],
+  ["PARSE_JSON('{\"b\":\"x\"}')"],
+  ["NULL"],
+]
+expression = "TRY_TO_BOOLEAN(v:b::VARCHAR)"
+tags = ["null", "empty", "whitespace", "unicode"]
+
+[[case]]
+id = "to_boolean_text"
+description = "TO_BOOLEAN of valid spellings."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'true'"],
+  ["'off'"],
+  ["'Y'"],
+  ["NULL"],
+]
+expression = "TO_BOOLEAN(s)"
+tags = ["null", "empty", "whitespace", "unicode"]
+
+[[case]]
+id = "to_boolean_invalid"
+description = "TO_BOOLEAN of text it cannot read raises."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'maybe'"],
+]
+expression = "TO_BOOLEAN(s)"
+tags = ["null", "empty", "whitespace", "unicode"]
+
+[[case]]
+id = "not_ilike_any_infix"
+description = "NOT ILIKE ANY written infix."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'Express'"],
+  ["'plain'"],
+  ["'RUSH order'"],
+  ["''"],
+  ["NULL"],
+]
+expression = "s NOT ILIKE ANY ('%express%', '%rush%')"
+tags = ["null", "empty", "whitespace", "unicode"]
+
+[[case]]
+id = "like_any"
+description = "LIKE ANY of several patterns, case-sensitive."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'Express Order'"],
+  ["'express'"],
+  ["'std_1'"],
+  ["'x'"],
+  ["''"],
+  ["NULL"],
+]
+expression = "s LIKE ANY ('Express%', 'std\\_%', '%é')"
+tags = ["null", "empty", "whitespace", "unicode"]
+
+[[case]]
+id = "not_like_any_infix"
+description = "NOT LIKE ANY written infix."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'Express'"],
+  ["'plain'"],
+  ["NULL"],
+]
+expression = "s NOT LIKE ANY ('Ex%', 'pl%')"
+tags = ["null", "empty", "whitespace", "unicode"]
+
+[[case]]
+id = "initcap_digraphs"
+description = "INITCAP of words starting with and holding title-case digraph letters."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'ǆungla'"],
+  ["'ǉubav ǌiva'"],
+  ["'Ǳ ǳ'"],
+  ["'aǆb'"],
+  ["''"],
+  ["NULL"],
+]
+expression = "INITCAP(s)"
+tags = ["null", "empty", "whitespace", "unicode"]
+expected_divergence = "initcap_text"
+
+[[case]]
+id = "initcap_georgian"
+description = "INITCAP of words starting with and holding Georgian Mkhedruli letters, whose title case is the letter itself."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'ანა'"],
+  ["'x ბარი'"],
+  ["'ჽ ჾ ჿ'"],
+  ["'aბc'"],
+  ["NULL"],
+]
+expression = "INITCAP(s)"
+tags = ["null", "empty", "whitespace", "unicode"]
+expected_divergence = "initcap_text"
+
+[[case]]
+id = "try_hex_decode_string_edges"
+description = "TRY_HEX_DECODE_STRING of mixed case, invalid UTF-8, a NUL byte, spaces and a column split."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'4a4B'"],
+  ["'C328'"],
+  ["'610062'"],
+  ["'61 62'"],
+  ["'E282AC'"],
+  ["'f09f9880'"],
+  ["NULL"],
+]
+expression = "TRY_HEX_DECODE_STRING(s)"
+tags = ["null", "empty", "whitespace", "unicode"]

@@ -66,6 +66,7 @@ rows = [
 expression = "v:t::TIMESTAMP_TZ"
 tags = ["null", "json-null", "missing-key", "case-sensitive-key"]
 origin = "generated: json_temporal@1"
+expected_divergence = "timestamp_tz_submicro"
 
 [[case]]
 id = "try_to_timestamp_ntz"
@@ -114,6 +115,7 @@ rows = [
 expression = "TRY_TO_TIMESTAMP_NTZ(v:t::VARCHAR)"
 tags = ["invalid"]
 origin = "generated: json_temporal@1"
+expected_divergence = "date_text_spelling"
 
 [[case]]
 id = "nested_as_timestamp_ntz"

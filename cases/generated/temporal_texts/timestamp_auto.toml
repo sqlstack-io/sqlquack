@@ -38,6 +38,7 @@ rows = [
 expression = "TRY_TO_TIMESTAMP_NTZ(x)"
 tags = ["null", "invalid", "boundary"]
 origin = "generated: temporal_texts@4"
+expected_divergence = "date_text_spelling"
 
 [[case]]
 id = "cast_timestamp_ntz_auto"

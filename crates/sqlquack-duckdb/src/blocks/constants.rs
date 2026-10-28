@@ -33,6 +33,8 @@ pub const ZONE_CHECKED: &str = "duckdb.zone_checked";
 pub const TEXT_TO_TIMESTAMP: &str = "duckdb.text_to_timestamp";
 /// Text in one literal date format as a date: `duckdb.formatted_text_to_date`.
 pub const FORMATTED_TEXT_TO_DATE: &str = "duckdb.formatted_text_to_date";
+/// Text in a literal timestamp format: `duckdb.formatted_text_to_timestamp`.
+pub const FORMATTED_TEXT_TO_TIMESTAMP: &str = "duckdb.formatted_text_to_timestamp";
 /// The message of the error TO_DATE raises for an impossible date in its format.
 pub const UNPARSED_DATE_MESSAGE: &str = "Can't parse the text as date with the format";
 /// The first year two-digit years are read in, Snowflake's default TWO_DIGIT_CENTURY_START.
@@ -65,8 +67,16 @@ pub const RAISE_MARKER: &str = "' AS INTEGER) AS \"NULL\")";
 pub const TIMESTAMP_RANGE: &str = "timestamp_range";
 /// The error a TRY_ conversion to DATE raises for a spelling no recording shows.
 pub const DATE_TEXT_SPELLING: &str = "date_text_spelling";
-/// ISO date-time text with an optional `T`, fraction and zone suffix, captured as date and time.
-pub const ISO_TIMESTAMP_PATTERN: &str = "([0-9]{4}-[0-9]{2}-[0-9]{2})(?:[ T](([01][0-9]|2[0-3]):[0-5][0-9])(?:(:[0-5][0-9])(?:[.]([0-9]+))?)?)?(?:Z| ?[+-][0-9]{2}:?[0-9]{2})?";
+/// ISO date-time text with an optional `T`, fraction and Z, ±HH:MM or ` ±HHMM` zone, captured.
+pub const ISO_TIMESTAMP_PATTERN: &str = "([0-9]{4}-[0-9]{2}-[0-9]{2})(?:[ T](([01][0-9]|2[0-3]):[0-5][0-9])(?:(:[0-5][0-9])(?:[.]([0-9]+))?)?)?(Z| ?[+-][0-9]{2}:[0-9]{2}| [+-][0-9]{4})?";
+/// Spellings TRY_ conversions to timestamps were recorded returning NULL for.
+pub const NULL_TIMESTAMP_TEXT_PATTERN: &str = "[0-9]{4}-[0-9]{2}-[0-9]{2}(?:T[0-9]{2}:[0-9]{2}(?::[0-9]{2}(?:[.][0-9]+)?)?[+-][0-9]{4}|t[0-9]{2}:[0-9]{2}:[0-9]{2}(?:[.][0-9]+)?z?|T[0-9]{2}:[0-9]{2}:[0-9]{2}(?:[.][0-9]+)?z)|[0-9]{5}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}";
+/// The zone group of ISO_TIMESTAMP_PATTERN: sign, hours and minutes of an offset.
+pub const ZONE_OFFSET_PATTERN: &str = "([+-])([0-9]{2}):?([0-9]{2})";
+/// The largest offset hour Snowflake was recorded reading, and the largest minute.
+pub const ZONE_OFFSET_LIMITS: (u8, u8) = (25, 59);
+/// Text to a zoned timestamp's instant as UTC wall time: `duckdb.text_to_zoned`.
+pub const TEXT_TO_ZONED: &str = "duckdb.text_to_zoned";
 /// Non-negative integer text, read as an epoch count scaled by its magnitude.
 pub const EPOCH_TEXT_PATTERN: &str = "[0-9]{1,18}";
 /// Epoch magnitudes below which integer text counts seconds, milliseconds and microseconds.

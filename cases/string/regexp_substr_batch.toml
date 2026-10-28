@@ -1,0 +1,140 @@
+# REGEXP_SUBSTR forms models use beyond the converted ones.
+category = "string"
+construct = "fn:REGEXP_SUBSTR"
+session_profile = "utc-v1"
+
+[[case]]
+id = "regexp_substr_ie_group"
+description = "REGEXP_SUBSTR with parameters 'ie' and a group: case-insensitive extraction."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'https://shop.example/RES240229.PDF'"],
+  ["'https://shop.example/res240301.pdf'"],
+  ["'https://shop.example/report.pdf'"],
+  ["''"],
+  ["NULL"],
+]
+expression = "REGEXP_SUBSTR(s, '/res([0-9]{6})[.]pdf$', 1, 1, 'ie', 1)"
+tags = ["null", "empty", "whitespace", "unicode"]
+
+[[case]]
+id = "regexp_substr_ie_group_two"
+description = "REGEXP_SUBSTR with 'ie' and group 2."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'Order 12 for ACME ltd'"],
+  ["'order 7 for Bolt'"],
+  ["'ORDER X'"],
+  ["NULL"],
+]
+expression = "REGEXP_SUBSTR(s, 'order ([0-9]+) for (.+)$', 1, 1, 'ie', 2)"
+tags = ["null", "empty", "whitespace", "unicode"]
+
+[[case]]
+id = "regexp_substr_ie_unicode"
+description = "REGEXP_SUBSTR with 'ie' over non-ASCII letters, whose case folding RE2 and Snowflake may differ on."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'Žluťoučký KŮŇ'"],
+  ["'ÉCOLE école'"],
+  ["'straße STRASSE'"],
+  ["NULL"],
+]
+expression = "REGEXP_SUBSTR(s, '(école|kůň|strasse)', 1, 1, 'ie', 1)"
+tags = ["null", "empty", "whitespace", "unicode"]
+
+[[case]]
+id = "regexp_substr_space_class"
+description = "REGEXP_SUBSTR with [[:space:]] inside a bracket expression."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'a b'"],
+  ["'a\tb'"],
+  ["'a\nb'"],
+  ["'a　b'"],
+  ["'ab'"],
+  ["''"],
+  ["NULL"],
+]
+expression = "REGEXP_SUBSTR(s, 'a[[:space:]]+b')"
+tags = ["null", "empty", "whitespace", "unicode"]
+
+[[case]]
+id = "regexp_substr_space_class_trim"
+description = "REGEXP_SUBSTR with a negated [^[:space:]] class, and an ideographic space alongside."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'  lead and trail  '"],
+  ["'　wide　'"],
+  ["'x'"],
+  ["'   '"],
+  ["NULL"],
+]
+expression = "REGEXP_SUBSTR(s, '[^[:space:]　]+')"
+tags = ["null", "empty", "whitespace", "unicode"]
+
+[[case]]
+id = "regexp_substr_lazy"
+description = "REGEXP_SUBSTR with lazy quantifiers and a group."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'Returns: 3, 5</li><li>x</li>'"],
+  ["'Returns:</li>'"],
+  ["'none'"],
+  ["''"],
+  ["NULL"],
+]
+expression = "REGEXP_SUBSTR(s, 'Returns:(.*?)</li>', 1, 1, 'e', 1)"
+tags = ["null", "empty", "whitespace", "unicode"]
+
+[[case]]
+id = "regexp_substr_lazy_plus"
+description = "REGEXP_SUBSTR with +? before an optional group."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'North Store (XL)'"],
+  ["'Lakeside  (SKU)'"],
+  ["'No code'"],
+  ["'(MD)'"],
+  ["NULL"],
+]
+expression = "REGEXP_SUBSTR(s, '^(.+?)\\\\s*\\\\([A-Z]{2,3}\\\\)', 1, 1, 'e', 1)"
+tags = ["null", "empty", "whitespace", "unicode"]
+
+[[case]]
+id = "regexp_substr_se"
+description = "REGEXP_SUBSTR with parameters 'se': . matches a line feed."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'Returns: 3\n5</li>'"],
+  ["'Returns: 4</li>'"],
+  ["'x'"],
+  ["NULL"],
+]
+expression = "REGEXP_SUBSTR(s, 'Returns:(.*?)</li>', 1, 1, 'se', 1)"
+tags = ["null", "empty", "whitespace", "unicode"]
+
+[[case]]
+id = "regexp_substr_newline_escape"
+description = "REGEXP_SUBSTR with \\n in the pattern."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'head\nC7  Order line\nnext'"],
+  ["'C1 only'"],
+  ["'\nC12 x'"],
+  ["NULL"],
+]
+expression = "REGEXP_SUBSTR(s, '\\\\nC([0-9]+)\\\\s+([^\\\\n]+)', 1, 1, 'e', 2)"
+tags = ["null", "empty", "whitespace", "unicode"]
+
+[[case]]
+id = "regexp_substr_e_without_group"
+description = "REGEXP_SUBSTR with 'e' and no group number: the first group."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'link >  Name here  '"],
+  ["'x'"],
+  ["NULL"],
+]
+expression = "REGEXP_SUBSTR(s, '>\\\\s*([^<>]+?)\\\\s*$', 1, 1, 'e')"
+tags = ["null", "empty", "whitespace", "unicode"]

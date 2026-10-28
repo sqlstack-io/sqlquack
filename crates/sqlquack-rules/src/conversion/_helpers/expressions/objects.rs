@@ -16,10 +16,12 @@ use crate::conversion::_helpers::expressions::scalar::convert_expression;
 use crate::conversion::_helpers::support::divergence::diverge;
 use crate::conversion::_helpers::support::scope::{Context, Emitted, Literal};
 use crate::conversion::_helpers::support::site::Site;
-use crate::conversion::_helpers::support::tree::outside_conditions;
+use crate::conversion::_helpers::support::tree::{
+    node_construct, outside_conditions, payload_object, require_understood,
+};
 use crate::conversion::constants::{
-    KEEP_NULL_CONSTRUCTOR, MICROSECOND_DIGITS, OBJECT_CONSTRUCT_RULE, OBJECT_DELETE_RULE,
-    OBJECT_INSERT_RULE,
+    KEEP_NULL_CONSTRUCTOR, MICROSECOND_DIGITS, OBJECT_CONSTANT_KIND, OBJECT_CONSTRUCT_RULE,
+    OBJECT_CONSTRUCTOR, OBJECT_DELETE_RULE, OBJECT_INSERT_RULE,
 };
 
 /// OBJECT_DELETE of a VARIANT and literal text keys.
@@ -117,6 +119,38 @@ pub(crate) fn object_construct(
         name == KEEP_NULL_CONSTRUCTOR,
         log,
     )))
+}
+
+/// An object constant `{'key': value, ...}`, as OBJECT_CONSTRUCT of its pairs.
+pub(crate) fn object_constant(payload: &Value, site: Site<'_>) -> Result<Emitted, Refusal> {
+    let construct = node_construct(OBJECT_CONSTANT_KIND);
+    let payload = payload_object(payload, &construct)?;
+    require_understood(
+        payload,
+        &["keys", "values", "curly_brace_syntax", "with_map_keyword"],
+        &construct,
+    )?;
+    let flag = |name: &str| payload.get(name).and_then(Value::as_bool).unwrap_or(false);
+    if !flag("curly_brace_syntax") || flag("with_map_keyword") {
+        return Err(refused(&construct, "a MAP constructor"));
+    }
+    let list = |name: &str| {
+        payload
+            .get(name)
+            .and_then(Value::as_array)
+            .cloned()
+            .unwrap_or_default()
+    };
+    let (keys, values) = (list("keys"), list("values"));
+    if keys.len() != values.len() {
+        return Err(refused(&construct, "an object constant of unpaired keys"));
+    }
+    let arguments: Vec<Value> = keys
+        .into_iter()
+        .zip(values)
+        .flat_map(|(key, value)| [key, value])
+        .collect();
+    object_construct(OBJECT_CONSTRUCTOR, &arguments, &construct, site)
 }
 
 /// A value as JSON: a VARIANT as it is; text, booleans and whole numbers as Snowflake stores them.

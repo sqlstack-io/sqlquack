@@ -1,0 +1,293 @@
+# REGEXP_REPLACE occurrences, colon brackets and REGEXP_SUBSTR_ALL.
+category = "string"
+construct = "fn:REGEXP_REPLACE"
+session_profile = "utc-v1"
+
+[[case]]
+id = "regexp_replace_first_i"
+description = "REGEXP_REPLACE of the first match only, case-insensitively."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'Order ORDER order'"],
+  ["'no match'"],
+  ["'ORDER-1 order-2'"],
+  ["''"],
+  ["NULL"],
+]
+expression = "REGEXP_REPLACE(s, 'order', 'item', 1, 1, 'i')"
+tags = ["null", "empty", "whitespace", "unicode"]
+
+[[case]]
+id = "regexp_replace_first_i_group"
+description = "REGEXP_REPLACE of the first match with a group reference, case-insensitively."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'Box 12 and BOX 7'"],
+  ["'box'"],
+  ["'BOX 3'"],
+  ["NULL"],
+]
+expression = "REGEXP_REPLACE(s, 'box ([0-9]+)', 'crate \\\\1', 1, 1, 'i')"
+tags = ["null", "empty", "whitespace", "unicode"]
+
+[[case]]
+id = "regexp_replace_first_i_anchors"
+description = "REGEXP_REPLACE of the first match of an anchored alternation, as trimming patterns do."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'  padded  '"],
+  ["'　wide　'"],
+  ["'x'"],
+  ["'   '"],
+  ["NULL"],
+]
+expression = "REGEXP_REPLACE(s, '^[[:space:]　]+|[[:space:]　]+$', '', 1, 1, 'i')"
+tags = ["null", "empty", "whitespace", "unicode"]
+
+[[case]]
+id = "regexp_replace_first"
+description = "REGEXP_REPLACE of the first match, case-sensitively."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'a1b2c3'"],
+  ["'abc'"],
+  ["''"],
+  ["NULL"],
+]
+expression = "REGEXP_REPLACE(s, '[0-9]', '#', 1, 1)"
+tags = ["null", "empty", "whitespace", "unicode"]
+
+[[case]]
+id = "regexp_replace_first_c"
+description = "REGEXP_REPLACE of the first match with parameter c."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'Aa aA'"],
+  ["'aaa'"],
+  ["NULL"],
+]
+expression = "REGEXP_REPLACE(s, 'a', '-', 1, 1, 'c')"
+tags = ["null", "empty", "whitespace", "unicode"]
+
+[[case]]
+id = "regexp_replace_second"
+description = "REGEXP_REPLACE of the second match only."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'a1b2c3'"],
+  ["'a1'"],
+  ["NULL"],
+]
+expression = "REGEXP_REPLACE(s, '[0-9]', '#', 1, 2)"
+tags = ["null", "empty", "whitespace", "unicode"]
+
+[[case]]
+id = "regexp_replace_from_position"
+description = "REGEXP_REPLACE from position 3."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'a1b2c3'"],
+  ["'1'"],
+  ["NULL"],
+]
+expression = "REGEXP_REPLACE(s, '[0-9]', '#', 3)"
+tags = ["null", "empty", "whitespace", "unicode"]
+
+[[case]]
+id = "regexp_replace_all_i_dot"
+description = "REGEXP_REPLACE of every match with i over non-ASCII letters."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'Ärger ärger'"],
+  ["'ÉTÉ été'"],
+  ["NULL"],
+]
+expression = "REGEXP_REPLACE(s, 'ärger|été', 'x', 1, 0, 'i')"
+tags = ["null", "empty", "whitespace", "unicode"]
+
+[[case]]
+id = "regexp_like_bracket_colon"
+description = "REGEXP_LIKE with a bracket expression whose first character is a colon."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'12:34.56'"],
+  ["'12.34.56'"],
+  ["'12-34.5'"],
+  ["'1:2.3'"],
+  ["'12:345.6'"],
+  ["''"],
+  ["NULL"],
+]
+expression = "REGEXP_LIKE(s, '^([0-9]+)[:.-]([0-9]{1,2})[.]([0-9]+)$')"
+tags = ["null", "empty", "whitespace", "unicode"]
+
+[[case]]
+id = "regexp_substr_bracket_colon"
+description = "REGEXP_SUBSTR with a bracket expression starting with a colon and a group."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'12:34.56'"],
+  ["'12.34.56'"],
+  ["'12-34.5'"],
+  ["'1:2.3'"],
+  ["'12:345.6'"],
+  ["''"],
+  ["NULL"],
+]
+expression = "REGEXP_SUBSTR(s, '^([0-9]+)[:.-]', 1, 1, 'e', 1)"
+tags = ["null", "empty", "whitespace", "unicode"]
+
+[[case]]
+id = "regexp_like_fullwidth_colon"
+description = "REGEXP_LIKE with a full-width colon and an optional suffix."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'Code：A'"],
+  ["'Code:A'"],
+  ["'CodeA'"],
+  ["'コード：'"],
+  ["NULL"],
+]
+expression = "REGEXP_LIKE(s, '.*(Code|コード)[：:]?.*')"
+tags = ["null", "empty", "whitespace", "unicode"]
+
+[[case]]
+id = "regexp_like_space_class_words"
+description = "REGEXP_LIKE with [[:space:]] around a group of suffixes."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'Ann Lee jr.'"],
+  ["'Ann Lee Jr'"],
+  ["'Ann Lee\tsr'"],
+  ["'Ann Leesr'"],
+  ["''"],
+  ["NULL"],
+]
+expression = "REGEXP_LIKE(s, '.*[[:space:]]+(jr|sr|am)[.]?[[:space:]]*$')"
+tags = ["null", "empty", "whitespace", "unicode"]
+
+[[case]]
+id = "regexp_like_is"
+description = "REGEXP_LIKE with parameters is over a multi-line text."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'Line one\nSTEEP grade'"],
+  ["'flat'"],
+  ["'steep'"],
+  ["NULL"],
+]
+expression = "REGEXP_LIKE(s, '.*(steep|hill).*', 'is')"
+tags = ["null", "empty", "whitespace", "unicode"]
+
+[[case]]
+id = "regexp_like_column_pattern"
+description = "REGEXP_LIKE with a pattern from a column."
+columns = [{ name = "s", type = "VARCHAR" }, { name = "p", type = "VARCHAR" }]
+rows = [
+  ["'abc'", "'a.c'"],
+  ["'abc'", "'b'"],
+  ["'x'", "NULL"],
+  ["NULL", "'.*'"],
+]
+expression = "REGEXP_LIKE(s, p)"
+tags = ["null", "empty", "whitespace", "unicode"]
+
+[[case]]
+id = "regexp_substr_all_plain"
+description = "REGEXP_SUBSTR_ALL of every match."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'/item:a/item:b'"],
+  ["'/item:x'"],
+  ["'none'"],
+  ["'/item:'"],
+  ["''"],
+  ["NULL"],
+]
+expression = "REGEXP_SUBSTR_ALL(s, '/item:[^/]+')"
+tags = ["null", "empty", "whitespace", "unicode"]
+
+[[case]]
+id = "regexp_substr_all_bracket_close_first"
+description = "REGEXP_SUBSTR_ALL with ] first in a negated bracket expression."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'/item:a[1],/item:b(2)'"],
+  ["'/item:]'"],
+  ["''"],
+  ["NULL"],
+]
+expression = "REGEXP_SUBSTR_ALL(s, '/item:[^][(),]+')"
+tags = ["null", "empty", "whitespace", "unicode"]
+
+[[case]]
+id = "regexp_substr_all_digits"
+description = "REGEXP_SUBSTR_ALL of digit runs after slashes."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'/1/22/333'"],
+  ["'/x'"],
+  ["NULL"],
+]
+expression = "REGEXP_SUBSTR_ALL(s, '/[0-9]+')"
+tags = ["null", "empty", "whitespace", "unicode"]
+
+[[case]]
+id = "regexp_substr_all_group"
+description = "REGEXP_SUBSTR_ALL with e and a group."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'<th>A</th><th class=\"x\">B</th>'"],
+  ["'<th></th>'"],
+  ["'none'"],
+  ["NULL"],
+]
+expression = "REGEXP_SUBSTR_ALL(s, '<th[^>]*>([^<]*)</th>', 1, 1, 'e', 1)"
+tags = ["null", "empty", "whitespace", "unicode"]
+
+[[case]]
+id = "regexp_substr_all_size"
+description = "ARRAY_SIZE of REGEXP_SUBSTR_ALL."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'/item:a/item:b'"],
+  ["'/item:x'"],
+  ["'none'"],
+  ["'/item:'"],
+  ["''"],
+  ["NULL"],
+]
+expression = "ARRAY_SIZE(REGEXP_SUBSTR_ALL(s, '/item:[^/]+'))"
+tags = ["null", "empty", "whitespace", "unicode"]
+
+[[case]]
+id = "regexp_substr_all_index"
+description = "The first element of REGEXP_SUBSTR_ALL as text."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'/item:a/item:b'"],
+  ["'/item:x'"],
+  ["'none'"],
+  ["'/item:'"],
+  ["''"],
+  ["NULL"],
+]
+expression = "REGEXP_SUBSTR_ALL(s, '/item:[^/]+')[0]::VARCHAR"
+tags = ["null", "empty", "whitespace", "unicode"]
+
+[[case]]
+id = "regexp_like_column_pattern_parameters"
+description = "REGEXP_LIKE with a pattern from a column and the s and i parameters, as models filter on configured patterns."
+columns = [{ name = "s", type = "VARCHAR" }, { name = "p", type = "VARCHAR" }]
+rows = [
+  ["'good to firm'", "'good.*'"],
+  ["'Good\\nFirm'", "'good.firm'"],
+  ["'soft'", "'^(heavy|soft)$'"],
+  ["'yielding'", "'[a-z]+ing'"],
+  ["''", "'.*'"],
+  ["'x'", "NULL"],
+  ["NULL", "'x'"],
+]
+query = "SELECT REGEXP_LIKE(LOWER(TRIM(s)), p, 's') AS dotall, REGEXP_LIKE(s, p, 'i') AS folded FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "empty", "whitespace", "unicode"]

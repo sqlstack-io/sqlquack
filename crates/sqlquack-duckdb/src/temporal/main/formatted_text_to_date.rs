@@ -8,15 +8,23 @@ use crate::blocks::constants::{
     DATE_TEXT_SPELLING, FORMATTED_TEXT_TO_DATE, TWO_DIGIT_CENTURY_START, UNPARSED_DATE_MESSAGE,
 };
 use crate::raises::main::raised::raised;
+use crate::temporal::_helpers::operands::once;
 use crate::temporal::models::DateFormat;
 
 /// The date `sql` spells exactly in `format`; impossible dates are NULL when `trying`, else raise.
 pub fn formatted_text_to_date(
-    sql: &str,
+    value: &str,
     (format, trying): (&DateFormat, bool),
     log: &ProvenanceLog,
 ) -> String {
     log.building_block(FORMATTED_TEXT_TO_DATE);
+    once(value, "formatted_date", |sql| {
+        converted(sql, (format, trying))
+    })
+}
+
+/// The conversion of the plain operand `sql`.
+fn converted(sql: &str, (format, trying): (&DateFormat, bool)) -> String {
     let pattern = format.pattern;
     let field =
         |group: u8| format!("TRY_CAST(regexp_extract({sql}, '{pattern}', {group}) AS INTEGER)");

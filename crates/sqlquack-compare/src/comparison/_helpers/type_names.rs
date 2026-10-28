@@ -19,6 +19,7 @@ pub(crate) fn duckdb_type_name(data_type: &DataType) -> String {
         DataType::Utf8 | DataType::LargeUtf8 | DataType::Utf8View => "VARCHAR".to_owned(),
         DataType::Binary | DataType::LargeBinary | DataType::BinaryView => "BLOB".to_owned(),
         DataType::Date32 | DataType::Date64 => "DATE".to_owned(),
+        DataType::Time64(TimeUnit::Nanosecond) => "TIME_NS".to_owned(),
         DataType::Time32(_) | DataType::Time64(_) => "TIME".to_owned(),
         DataType::Timestamp(_, Some(_)) => "TIMESTAMPTZ".to_owned(),
         DataType::Timestamp(TimeUnit::Second, None) => "TIMESTAMP_S".to_owned(),

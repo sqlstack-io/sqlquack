@@ -1,0 +1,74 @@
+# Object constants { 'key': value } as models write them.
+category = "semi-structured-output"
+construct = "node:map_func"
+session_profile = "utc-v1"
+
+[[case]]
+id = "object_constant_flat"
+description = "An object constant { 'k': v, ... } of BOOLEAN, VARCHAR and NUMBER columns, NULLs included."
+columns = [{ name = "ok", type = "BOOLEAN" }, { name = "name", type = "VARCHAR" }, { name = "n", type = "NUMBER(10,2)" }]
+rows = [
+  ["TRUE", "'Ada'", "1.50"],
+  ["FALSE", "''", "0"],
+  ["NULL", "NULL", "NULL"],
+]
+expression = "{'ok': ok, 'name': name, 'n': n}"
+tags = ["null", "json-null", "nested"]
+
+[[case]]
+id = "object_constant_nested"
+description = "Nested object constants, as models write match details."
+columns = [{ name = "ok", type = "BOOLEAN" }, { name = "name", type = "VARCHAR" }, { name = "n", type = "NUMBER(10,2)" }]
+rows = [
+  ["TRUE", "'Ada'", "1.50"],
+  ["FALSE", "''", "0"],
+  ["NULL", "NULL", "NULL"],
+]
+expression = "{'validation': {'has_name': ok, 'name': name}, 'flags': {'missing_amount': n IS NULL}}"
+tags = ["null", "json-null", "nested"]
+
+[[case]]
+id = "object_constant_read"
+description = "A field of an object constant read back."
+columns = [{ name = "ok", type = "BOOLEAN" }, { name = "name", type = "VARCHAR" }, { name = "n", type = "NUMBER(10,2)" }]
+rows = [
+  ["TRUE", "'Ada'", "1.50"],
+  ["FALSE", "''", "0"],
+  ["NULL", "NULL", "NULL"],
+]
+query = "SELECT o:validation:has_name::BOOLEAN AS has_name, o:validation:name::VARCHAR AS name FROM (SELECT ordinal, {'validation': {'has_name': ok, 'name': name}} AS o FROM input) AS t ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "json-null", "nested"]
+
+[[case]]
+id = "object_constant_typeof"
+description = "TYPEOF of an object constant's fields, NULL ones included."
+columns = [{ name = "ok", type = "BOOLEAN" }, { name = "name", type = "VARCHAR" }, { name = "n", type = "NUMBER(10,2)" }]
+rows = [
+  ["TRUE", "'Ada'", "1.50"],
+  ["FALSE", "''", "0"],
+  ["NULL", "NULL", "NULL"],
+]
+query = "SELECT TYPEOF(o:ok) AS ok_type, TYPEOF(o:name) AS name_type, TYPEOF(o:n) AS n_type FROM (SELECT ordinal, {'ok': ok, 'name': name, 'n': n} AS o FROM input) AS t ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "json-null", "nested"]
+
+[[case]]
+id = "object_constant_literals"
+description = "An object constant of literals, NULL included."
+columns = [{ name = "k", type = "NUMBER(2,0)" }]
+rows = [
+  ["1"],
+]
+expression = "{'a': 1, 'b': 'x', 'c': NULL, 'd': TRUE, 'e': 2.5}"
+tags = ["null", "json-null", "nested"]
+
+[[case]]
+id = "object_constant_empty"
+description = "The empty object constant."
+columns = [{ name = "k", type = "NUMBER(2,0)" }]
+rows = [
+  ["1"],
+]
+expression = "{}"
+tags = ["null", "json-null", "nested"]

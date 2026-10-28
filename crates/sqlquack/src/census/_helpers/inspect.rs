@@ -5,7 +5,7 @@ use std::path::Path;
 
 use sqlquack_core::classification::models::Construct;
 use sqlquack_core::parsing::models::SourceDialect;
-use sqlquack_core::refusals::models::RefusalCategory;
+use sqlquack_core::refusals::models::{Refusal, RefusalCategory};
 use sqlquack_core::refusals::types::ConstructPolicy;
 
 use sqlquack_rules::conversion::constants::{UNKNOWN_RELATION_PREFIX, UNKNOWN_RELATION_SUFFIX};
@@ -15,12 +15,14 @@ use sqlquack_core::provenance::main::merge_provenance::merge_provenance;
 use sqlquack_core::provenance::models::Provenance;
 
 use crate::analysis::main::analyze::analyze;
+use crate::analysis::main::collect_all_refusals::collect_all_refusals;
 use crate::analysis::main::refused_construct::refused_construct;
 use crate::census::_helpers::placeholders::{original_location, rewrite_with_references};
 use crate::census::constants::GUARDS_DIR_VARIABLE;
 use crate::census::errors::CensusError;
 use crate::census::models::PlacedRefusal;
 
+#[derive(Clone)]
 pub(crate) struct FileCensus {
     pub(crate) parsed: bool,
     pub(crate) statements: usize,
@@ -38,6 +40,53 @@ pub(crate) struct FileCensus {
     pub(crate) unknown_relations: BTreeSet<String>,
     /// Every refusal with its position, in source order.
     pub(crate) placed: Vec<PlacedRefusal>,
+    /// Whether the file may hold refusals that converting past the others did not reach.
+    pub(crate) possibly_incomplete: bool,
+}
+
+/// A refused file's census with every refusal's roots, and the columns its conversion reached.
+pub(crate) fn complete_refusals(
+    (census, path): (&FileCensus, &Path),
+    dialect: SourceDialect,
+    policy: &(dyn ConstructPolicy + Sync),
+    (schema, options): (&Schema, &ConversionOptions),
+) -> Result<(FileCensus, Option<Vec<ColumnSpec>>), CensusError> {
+    let started = std::time::Instant::now();
+    let mut census = census.clone();
+    let bytes = std::fs::read(path).map_err(|error| CensusError::Read {
+        path: path.to_path_buf(),
+        message: error.to_string(),
+    })?;
+    let sql = rewrite_with_references(&String::from_utf8_lossy(&bytes)).sql;
+    let collected = collect_all_refusals(&sql, dialect, policy, (schema, options));
+    if !collected.refusals.is_empty() {
+        let (unknown_relations, root_constructs) = traced(&collected.refusals);
+        census.unknown_relations.extend(unknown_relations);
+        census.root_constructs = root_constructs;
+        census.possibly_incomplete = collected.possibly_incomplete;
+    }
+    census.elapsed += started.elapsed();
+    Ok((census, collected.columns))
+}
+
+/// The relations refusals found without known columns, and the other refusals' constructs.
+fn traced(refusals: &[Refusal]) -> (BTreeSet<String>, BTreeSet<(RefusalCategory, String)>) {
+    let unknown_relation = |reason: &str| {
+        reason
+            .strip_prefix(UNKNOWN_RELATION_PREFIX)?
+            .strip_suffix(UNKNOWN_RELATION_SUFFIX)
+            .map(str::to_owned)
+    };
+    let unknown_relations: BTreeSet<String> = refusals
+        .iter()
+        .filter_map(|refusal| unknown_relation(&refusal.reason))
+        .collect();
+    let root_constructs: BTreeSet<(RefusalCategory, String)> = refusals
+        .iter()
+        .filter(|refusal| unknown_relation(&refusal.reason).is_none())
+        .map(|refusal| (refusal.category, refused_construct(refusal)))
+        .collect();
+    (unknown_relations, root_constructs)
 }
 
 pub(crate) fn inspect_file(
@@ -80,23 +129,7 @@ pub(crate) fn inspect_file(
         });
         let _ = std::fs::write(format!("{dir}/{name}.json"), text.to_string());
     }
-    let unknown_relation = |reason: &str| {
-        reason
-            .strip_prefix(UNKNOWN_RELATION_PREFIX)?
-            .strip_suffix(UNKNOWN_RELATION_SUFFIX)
-            .map(str::to_owned)
-    };
-    let unknown_relations: BTreeSet<String> = analysis
-        .refusals
-        .iter()
-        .filter_map(|refusal| unknown_relation(&refusal.reason))
-        .collect();
-    let root_constructs: BTreeSet<(RefusalCategory, String)> = analysis
-        .refusals
-        .iter()
-        .filter(|refusal| unknown_relation(&refusal.reason).is_none())
-        .map(|refusal| (refusal.category, refused_construct(refusal)))
-        .collect();
+    let (unknown_relations, root_constructs) = traced(&analysis.refusals);
     let mut placed: Vec<PlacedRefusal> = Vec::new();
     for refusal in &analysis.refusals {
         let location = refusal
@@ -112,6 +145,7 @@ pub(crate) fn inspect_file(
     placed.sort();
     Ok(FileCensus {
         placed,
+        possibly_incomplete: false,
         elapsed: started.elapsed(),
         references: rewritten.references,
         unknown_relations,

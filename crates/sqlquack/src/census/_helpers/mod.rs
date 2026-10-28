@@ -1,5 +1,7 @@
 pub(crate) mod aggregate;
 pub(crate) mod blockers;
+pub(crate) mod combinations;
+pub(crate) mod completion;
 pub(crate) mod corpus;
 pub(crate) mod coverage;
 pub(crate) mod files;

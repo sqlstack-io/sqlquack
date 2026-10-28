@@ -13,8 +13,8 @@ pub(crate) fn duckdb_type(data_type: SnowflakeType, log: &ProvenanceLog) -> Resu
         SnowflakeType::Varchar => Ok("VARCHAR".to_owned()),
         SnowflakeType::Boolean => Ok("BOOLEAN".to_owned()),
         SnowflakeType::Date => Ok("DATE".to_owned()),
-        SnowflakeType::Time { precision } if precision <= DUCKDB_FRACTIONAL_PRECISION => {
-            Ok("TIME".to_owned())
+        SnowflakeType::Time { precision } if precision <= NANOSECOND_DIGITS => {
+            Ok("TIME_NS".to_owned())
         }
         SnowflakeType::TimestampNtz { precision } if precision <= DUCKDB_FRACTIONAL_PRECISION => {
             Ok("TIMESTAMP".to_owned())

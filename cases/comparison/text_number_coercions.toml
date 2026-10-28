@@ -1,0 +1,71 @@
+# = and COALESCE between text and numbers, as models compare codes and amounts.
+category = "comparison"
+construct = "node:eq"
+session_profile = "utc-v1"
+
+[[case]]
+id = "eq_text_integer"
+description = "Text compared with an integer column: leading zeros, spaces, signs, decimals and unreadable text."
+columns = [{ name = "s", type = "VARCHAR" }, { name = "n", type = "NUMBER(10,0)" }]
+rows = [
+  ["'7'", "7"],
+  ["'007'", "7"],
+  ["' 7'", "7"],
+  ["'7.0'", "7"],
+  ["'+7'", "7"],
+  ["'-0'", "0"],
+  ["NULL", "1"],
+]
+query = "SELECT s = n AS eq FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "ties", "mixed-types"]
+
+[[case]]
+id = "eq_text_integer_unreadable"
+description = "Text that does not read as a number compared with an integer."
+columns = [{ name = "s", type = "VARCHAR" }, { name = "n", type = "NUMBER(10,0)" }]
+rows = [
+  ["'x'", "1"],
+]
+query = "SELECT s = n AS eq FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "ties", "mixed-types"]
+
+[[case]]
+id = "eq_text_decimal_literal"
+description = "Text compared with a decimal literal and an integer literal."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'1.50'"],
+  ["'1.5'"],
+  ["'2'"],
+  ["NULL"],
+]
+query = "SELECT s = 1.5 AS eq_decimal, s = 2 AS eq_integer FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "ties", "mixed-types"]
+
+[[case]]
+id = "coalesce_text_number"
+description = "COALESCE of text with a number and of a number with text: the common type and its text."
+columns = [{ name = "s", type = "VARCHAR" }, { name = "n", type = "NUMBER(10,2)" }]
+rows = [
+  ["'3'", "1.50"],
+  ["NULL", "1.50"],
+  ["NULL", "NULL"],
+  ["'0.10'", "NULL"],
+]
+query = "SELECT COALESCE(s, n) AS a, COALESCE(n, s) AS b, TO_VARCHAR(COALESCE(s, 0)) AS c FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "ties", "mixed-types"]
+
+[[case]]
+id = "coalesce_text_number_unreadable"
+description = "COALESCE of a NULL number with text that does not read as a number."
+columns = [{ name = "s", type = "VARCHAR" }, { name = "n", type = "NUMBER(10,2)" }]
+rows = [
+  ["'n/a'", "NULL"],
+]
+query = "SELECT COALESCE(n, s) AS b FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "ties", "mixed-types"]

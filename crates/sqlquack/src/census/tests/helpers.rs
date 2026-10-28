@@ -1,7 +1,9 @@
 use std::path::Path;
 
 use sqlquack_core::parsing::models::SourceDialect;
-use sqlquack_rules::conversion::models::{ColumnSpec, ConversionOptions, Schema};
+use sqlquack_rules::conversion::models::{
+    AllowedDivergence, ColumnSpec, ConversionOptions, Schema,
+};
 use sqlquack_snowflake::typing::models::SnowflakeType;
 
 use crate::census::_helpers::coverage::{CoverageInput, greedy_order};
@@ -58,7 +60,7 @@ pub(crate) const CHAIN: &[ShopFile] = &[
     },
     ShopFile {
         path: "e.sql",
-        contents: "SELECT customer_id, INITCAP(name) AS label FROM __source(\"shop\", \"customers\")",
+        contents: "SELECT customer_id, SOUNDEX(name) AS label FROM __source(\"shop\", \"customers\")",
     },
     ShopFile {
         path: "f.sql",
@@ -73,7 +75,7 @@ pub(crate) const CHAIN: &[ShopFile] = &[
 pub(crate) const PLACED: &[ShopFile] = &[
     ShopFile {
         path: "a.sql",
-        contents: "SELECT customer_id\nFROM __source(\"shop\", \"customers\") WHERE INITCAP(name) = 'A'",
+        contents: "SELECT customer_id\nFROM __source(\"shop\", \"customers\") WHERE SOUNDEX(name) = 'A'",
     },
     ShopFile {
         path: "b.sql",
@@ -83,7 +85,7 @@ pub(crate) const PLACED: &[ShopFile] = &[
 
 pub(crate) const MANY_PLACED: &[ShopFile] = &[ShopFile {
     path: "a.sql",
-    contents: "SELECT INITCAP(name) AS n FROM __source(\"shop\", \"customers\");\nSELECT INITCAP(name) AS n FROM __source(\"shop\", \"customers\");\nSELECT INITCAP(name) AS n FROM __source(\"shop\", \"customers\");\nSELECT INITCAP(name) AS n FROM __source(\"shop\", \"customers\");\nSELECT INITCAP(name) AS n FROM __source(\"shop\", \"customers\");\nSELECT INITCAP(name) AS n FROM __source(\"shop\", \"customers\");\nSELECT INITCAP(name) AS n FROM __source(\"shop\", \"customers\");\n",
+    contents: "SELECT SOUNDEX(name) AS n FROM __source(\"shop\", \"customers\");\nSELECT SOUNDEX(name) AS n FROM __source(\"shop\", \"customers\");\nSELECT SOUNDEX(name) AS n FROM __source(\"shop\", \"customers\");\nSELECT SOUNDEX(name) AS n FROM __source(\"shop\", \"customers\");\nSELECT SOUNDEX(name) AS n FROM __source(\"shop\", \"customers\");\nSELECT SOUNDEX(name) AS n FROM __source(\"shop\", \"customers\");\nSELECT SOUNDEX(name) AS n FROM __source(\"shop\", \"customers\");\n",
 }];
 
 pub(crate) const UNRESOLVED_COLUMN_AND_RELATION: &[ShopFile] = &[ShopFile {
@@ -96,7 +98,7 @@ pub(crate) const UNRESOLVED_COLUMN_AND_RELATION: &[ShopFile] = &[ShopFile {
 pub(crate) const QUOTED_LOWER_CASE: &[ShopFile] = &[
     ShopFile {
         path: "a.sql",
-        contents: "SELECT INITCAP(name) AS label FROM __source(\"shop\", \"customers\")",
+        contents: "SELECT SOUNDEX(name) AS label FROM __source(\"shop\", \"customers\")",
     },
     ShopFile {
         path: "b.sql",
@@ -116,6 +118,18 @@ pub(crate) const CYCLE: &[ShopFile] = &[
     ShopFile {
         path: "c.sql",
         contents: "SELECT customer_id FROM __ref(\"a\")",
+    },
+];
+
+pub(crate) const TWO_BLOCKERS: &[ShopFile] = &[
+    ShopFile {
+        path: "a.sql",
+        contents: "SELECT HASH(name) AS h, SOUNDEX(name) AS label, customer_id \
+                   FROM __source(\"shop\", \"customers\")",
+    },
+    ShopFile {
+        path: "b.sql",
+        contents: "SELECT label FROM __ref(\"a\")",
     },
 ];
 
@@ -191,6 +205,15 @@ pub(crate) fn greedy(files: &[Option<Vec<usize>>], frequency_order: &[usize]) ->
 
 /// The blockers of `files` run with chained models over a schema holding the shop's customers.
 pub(crate) fn blocker_summary(files: &[ShopFile], names: bool) -> BlockerSummary {
+    blocker_summary_with(files, names, ConversionOptions::default())
+}
+
+/// The blockers of `files` as `blocker_summary`, converting with `conversion`.
+pub(crate) fn blocker_summary_with(
+    files: &[ShopFile],
+    names: bool,
+    conversion: ConversionOptions,
+) -> BlockerSummary {
     let directory = tempfile::tempdir().expect("temporary directory");
     write_files(directory.path(), files);
     let mut schema = Schema::default();
@@ -217,7 +240,7 @@ pub(crate) fn blocker_summary(files: &[ShopFile], names: bool) -> BlockerSummary
             coverage_points: vec![1],
             schema,
             chain_models: true,
-            conversion: ConversionOptions::default(),
+            conversion,
             names,
         },
         &CensusProgress::default(),
@@ -236,6 +259,22 @@ pub(crate) fn blocker_summary(files: &[ShopFile], names: bool) -> BlockerSummary
             })
             .collect(),
         single_root_files: blockers.single_root_files,
+        possibly_incomplete_files: blockers.possibly_incomplete_files,
+        pairs: blockers
+            .combinations
+            .iter()
+            .filter(|combination| combination.roots.len() == 2 && combination.files > 0)
+            .map(|combination| {
+                (
+                    combination
+                        .roots
+                        .iter()
+                        .map(|root| root.construct.clone())
+                        .collect(),
+                    combination.files,
+                )
+            })
+            .collect(),
         files: blockers
             .files
             .iter()
@@ -325,4 +364,17 @@ pub(crate) fn placed_refusals(
         .map(str::to_owned)
         .collect();
     (placed, lines)
+}
+
+/// Conversion options allowing the `hash` divergence for HASH.
+pub(crate) fn hash_allowed() -> ConversionOptions {
+    let mut options = ConversionOptions::default();
+    options.divergences.insert(
+        "hash".to_owned(),
+        AllowedDivergence {
+            constructs: vec!["fn:HASH".to_owned()],
+            reason: "test".to_owned(),
+        },
+    );
+    options
 }

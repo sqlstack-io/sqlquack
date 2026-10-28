@@ -1,3 +1,5 @@
+use sqlquack_rules::conversion::models::ConversionOptions;
+
 pub(crate) struct RewriteTestCase {
     pub(crate) description: &'static str,
     pub(crate) sql: &'static str,
@@ -53,6 +55,9 @@ pub(crate) type RootCounts = (String, [usize; 4]);
 pub(crate) struct BlockerSummary {
     pub(crate) roots: Vec<RootCounts>,
     pub(crate) single_root_files: usize,
+    pub(crate) possibly_incomplete_files: usize,
+    /// Root pairs unblocking at least one file, with the files they unblock.
+    pub(crate) pairs: Vec<(Vec<String>, usize)>,
     /// Each refused model, the refused models it reads and its unknown relations.
     pub(crate) files: Vec<(String, Vec<String>, usize)>,
 }
@@ -69,4 +74,10 @@ pub(crate) struct PlacedTestCase {
     pub(crate) fixtures: &'static [ShopFile],
     pub(crate) names: bool,
     pub(crate) expected_placed: (Vec<(String, Vec<String>)>, Vec<String>),
+}
+
+pub(crate) struct FixedBlockerTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) conversion: ConversionOptions,
+    pub(crate) expected_summary: BlockerSummary,
 }

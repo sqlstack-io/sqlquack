@@ -9,6 +9,7 @@ use sqlquack_duckdb::semi_structured::main::json_flatten::json_flatten;
 use sqlquack_snowflake::typing::models::SnowflakeType;
 
 use crate::conversion::_helpers::expressions::scalar::convert_expression;
+use crate::conversion::_helpers::queries::split_to_table::{SPLIT_TO_TABLE_NAME, lateral_split};
 use crate::conversion::_helpers::support::divergence::diverge;
 use crate::conversion::_helpers::support::scope::{Context, Scope, ScopeRelation};
 use crate::conversion::_helpers::support::site::{Placement, Site};
@@ -48,6 +49,9 @@ pub(crate) fn lateral_flatten(
         .unwrap_or_default()
         .to_ascii_uppercase();
     let function = function_construct(&name);
+    if name == SPLIT_TO_TABLE_NAME {
+        return lateral_split(call, lateral, (earlier, outer), context);
+    }
     if name != FLATTEN_NAME {
         return Err(missing(
             function,

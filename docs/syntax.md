@@ -261,12 +261,16 @@ when the analysis API (CHI-852) needs them.
    checks every output with `json_serialize_sql` (parse) and `PREPARE`/`EXPLAIN` (bind),
    replacing the polyglot re-parse. Polyglot then leaves the runtime dependency tree.
    - Done: the rules' building blocks are SQLQuack's DuckDB printer. `sqlquack-duckdb`'s
-     `check_printed` has DuckDB parse every converted statement (`json_serialize_sql`, exactly one
-     statement) and bind it (`prepare`) over empty tables for the relations it reads, created from
-     the schema; semi-structured columns are held as `JSON` (decision 3). Each check opens its own
-     in-memory engine and closes it before returning (a thread-local engine closing during process
-     exit killed processes intermittently; a fresh engine costs nothing measurable). The re-parse
-     of emitted SQL and the unused `check_duckdb_print` are gone.
+     `check_printed` has DuckDB parse and bind every converted statement (`prepare`) over empty
+     tables for the relations it reads, created from the schema; semi-structured columns are held
+     as `JSON` (decision 3). A lexical pass, skipping strings, quoted names and comments, requires
+     exactly one statement and finds the names that may be relations or project functions; DuckDB's
+     `json_serialize_sql` did this before and cost more than the bind on large statements. Each
+     thread reuses one in-memory engine, dropping the objects the previous check created before
+     defining its own, so a check sees only its relations; opening an engine per check dominated
+     the census once its completion pass bound thousands of statements. The engine is never
+     closed, since a thread-local engine closing during process exit killed processes
+     intermittently. The re-parse of emitted SQL and the unused `check_duckdb_print` are gone.
    - Done: cast type names in classification are SQLQuack's own (`cast_type_name`); the exact
      check proves them equal to polyglot's printed base names on every cast in every corpus,
      and on every Snowflake type spelling in each cast form (`snowflake_types.json`).

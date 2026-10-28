@@ -1,0 +1,329 @@
+# VARIANT comparisons, FLOAT ranges, and common types of COALESCE and UNION.
+category = "comparison"
+construct = "node:eq"
+session_profile = "utc-v1"
+
+[[case]]
+id = "eq_variant_text"
+description = "A VARIANT path compared with text: strings, numbers, booleans and nulls."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('{\"k\":\"abc\"}')"],
+  ["PARSE_JSON('{\"k\":\"ABC\"}')"],
+  ["PARSE_JSON('{\"k\":1}')"],
+  ["PARSE_JSON('{\"k\":\"1\"}')"],
+  ["PARSE_JSON('{\"k\":true}')"],
+  ["PARSE_JSON('{\"k\":null}')"],
+  ["PARSE_JSON('{}')"],
+  ["NULL"],
+]
+expression = "v:k = 'abc'"
+tags = ["null", "ties", "mixed-types"]
+
+[[case]]
+id = "eq_variant_text_number"
+description = "A VARIANT path compared with numeric text."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('{\"k\":\"abc\"}')"],
+  ["PARSE_JSON('{\"k\":\"ABC\"}')"],
+  ["PARSE_JSON('{\"k\":1}')"],
+  ["PARSE_JSON('{\"k\":\"1\"}')"],
+  ["PARSE_JSON('{\"k\":true}')"],
+  ["PARSE_JSON('{\"k\":null}')"],
+  ["PARSE_JSON('{}')"],
+  ["NULL"],
+]
+expression = "v:k = '1'"
+tags = ["null", "ties", "mixed-types"]
+
+[[case]]
+id = "eq_variant_text_column"
+description = "A VARIANT path compared with a VARCHAR column."
+columns = [{ name = "v", type = "VARIANT" }, { name = "s", type = "VARCHAR" }]
+rows = [
+  ["PARSE_JSON('{\"k\":\"abc\"}')", "'abc'"],
+  ["PARSE_JSON('{\"k\":1}')", "'1'"],
+  ["PARSE_JSON('{\"k\":true}')", "'true'"],
+  ["PARSE_JSON('{\"k\":null}')", "'null'"],
+  ["NULL", "'x'"],
+]
+expression = "v:k = s"
+tags = ["null", "ties", "mixed-types"]
+
+[[case]]
+id = "eq_number_variant"
+description = "A NUMBER compared with a VARIANT path."
+columns = [{ name = "v", type = "VARIANT" }, { name = "n", type = "NUMBER(38,0)" }]
+rows = [
+  ["PARSE_JSON('{\"k\":1}')", "1"],
+  ["PARSE_JSON('{\"k\":\"1\"}')", "1"],
+  ["PARSE_JSON('{\"k\":1.0}')", "1"],
+  ["PARSE_JSON('{\"k\":\"x\"}')", "1"],
+  ["PARSE_JSON('{\"k\":null}')", "1"],
+]
+expression = "n = v:k"
+tags = ["null", "ties", "mixed-types"]
+expected_divergence = "json_fidelity"
+
+[[case]]
+id = "eq_variant_text_invalid_number"
+description = "A NUMBER compared with a VARIANT string that is not a number."
+columns = [{ name = "v", type = "VARIANT" }, { name = "n", type = "NUMBER(38,0)" }]
+rows = [
+  ["PARSE_JSON('{\"k\":\"x\"}')", "1"],
+]
+expression = "n = v:k"
+tags = ["null", "ties", "mixed-types"]
+
+[[case]]
+id = "in_variant_text"
+description = "A VARIANT path IN a list of text."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('{\"k\":\"abc\"}')"],
+  ["PARSE_JSON('{\"k\":\"ABC\"}')"],
+  ["PARSE_JSON('{\"k\":1}')"],
+  ["PARSE_JSON('{\"k\":\"1\"}')"],
+  ["PARSE_JSON('{\"k\":true}')"],
+  ["PARSE_JSON('{\"k\":null}')"],
+  ["PARSE_JSON('{}')"],
+  ["NULL"],
+]
+expression = "v:k IN ('abc', '1')"
+tags = ["null", "ties", "mixed-types"]
+
+[[case]]
+id = "eq_time"
+description = "TIME compared with TIME."
+columns = [{ name = "a", type = "TIME(9)" }, { name = "b", type = "TIME(9)" }]
+rows = [
+  ["'12:00:00'", "'12:00:00'"],
+  ["'12:00:00'", "'12:00:00.000000001'"],
+  ["NULL", "'00:00:00'"],
+]
+expression = "a = b"
+tags = ["null", "ties", "mixed-types"]
+
+[[case]]
+id = "between_float_integers"
+description = "A FLOAT BETWEEN integer literals."
+columns = [{ name = "x", type = "FLOAT" }]
+rows = [
+  ["1"],
+  ["1.5"],
+  ["10"],
+  ["10.000001"],
+  ["0.999999"],
+  ["NULL"],
+]
+expression = "x BETWEEN 1 AND 10"
+tags = ["null", "ties", "mixed-types"]
+
+[[case]]
+id = "between_float_decimals"
+description = "A FLOAT BETWEEN decimal literals."
+columns = [{ name = "x", type = "FLOAT" }]
+rows = [
+  ["0.1"],
+  ["1.5"],
+  ["2.5"],
+  ["NULL"],
+]
+expression = "x BETWEEN 0.1 AND 2.5"
+tags = ["null", "ties", "mixed-types"]
+
+[[case]]
+id = "between_float_number_column"
+description = "A FLOAT BETWEEN NUMBER columns."
+columns = [{ name = "x", type = "FLOAT" }, { name = "lo", type = "NUMBER(3,1)" }, { name = "hi", type = "NUMBER(4,0)" }]
+rows = [
+  ["1.5", "1.5", "2"],
+  ["2.0000001", "1.0", "2"],
+  ["NULL", "1.0", "2"],
+  ["1", "NULL", "2"],
+]
+expression = "x BETWEEN lo AND hi"
+tags = ["null", "ties", "mixed-types"]
+
+[[case]]
+id = "between_date_text"
+description = "A DATE BETWEEN text dates."
+columns = [{ name = "d", type = "DATE" }]
+rows = [
+  ["'2024-01-01'"],
+  ["'2024-12-31'"],
+  ["'2023-12-31'"],
+  ["'2025-01-01'"],
+  ["NULL"],
+]
+expression = "d BETWEEN '2024-01-01' AND '2024-12-31'"
+tags = ["null", "ties", "mixed-types"]
+
+[[case]]
+id = "compare_float_integer"
+description = "A FLOAT compared with integer and decimal literals."
+columns = [{ name = "x", type = "FLOAT" }]
+rows = [
+  ["1"],
+  ["1.0000000001"],
+  ["0.3"],
+  ["NULL"],
+]
+query = "SELECT x = 1 AS e, x > 1 AS g, x < 0.3 AS l FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "ties", "mixed-types"]
+
+[[case]]
+id = "coalesce_text_number"
+description = "COALESCE of VARCHAR and NUMBER(38,0)."
+columns = [{ name = "s", type = "VARCHAR" }, { name = "n", type = "NUMBER(38,0)" }]
+rows = [
+  ["'a'", "1"],
+  ["NULL", "2"],
+  ["NULL", "NULL"],
+  ["'01'", "3"],
+]
+expression = "COALESCE(s, n)"
+tags = ["null", "all-null", "mixed-types"]
+
+[[case]]
+id = "coalesce_number_text"
+description = "COALESCE of NUMBER(38,0) and VARCHAR."
+columns = [{ name = "s", type = "VARCHAR" }, { name = "n", type = "NUMBER(38,0)" }]
+rows = [
+  ["'7'", "NULL"],
+  ["'x'", "1"],
+  ["NULL", "NULL"],
+]
+expression = "COALESCE(n, s)"
+tags = ["null", "all-null", "mixed-types"]
+
+[[case]]
+id = "coalesce_number_text_invalid"
+description = "COALESCE of NUMBER and text that is not a number."
+columns = [{ name = "s", type = "VARCHAR" }, { name = "n", type = "NUMBER(38,0)" }]
+rows = [
+  ["'x'", "NULL"],
+]
+expression = "COALESCE(n, s)"
+tags = ["null", "all-null", "mixed-types"]
+
+[[case]]
+id = "coalesce_ntz_date"
+description = "COALESCE of TIMESTAMP_NTZ(9) and DATE."
+columns = [{ name = "t", type = "TIMESTAMP_NTZ(9)" }, { name = "d", type = "DATE" }]
+rows = [
+  ["'2024-02-29 13:45:01.123456789'", "'2024-01-01'"],
+  ["NULL", "'2024-01-01'"],
+  ["NULL", "NULL"],
+]
+expression = "COALESCE(t, d)"
+tags = ["null", "all-null", "mixed-types"]
+
+[[case]]
+id = "coalesce_ntz_precisions"
+description = "COALESCE of TIMESTAMP_NTZ(3) and TIMESTAMP_NTZ(9)."
+columns = [{ name = "a", type = "TIMESTAMP_NTZ(3)" }, { name = "b", type = "TIMESTAMP_NTZ(9)" }]
+rows = [
+  ["'2024-02-29 13:45:01.123'", "'2024-01-01 00:00:00.123456789'"],
+  ["NULL", "'2024-01-01 00:00:00.123456789'"],
+  ["NULL", "NULL"],
+]
+expression = "COALESCE(a, b)"
+tags = ["null", "all-null", "mixed-types"]
+
+[[case]]
+id = "coalesce_ntz_ltz"
+description = "COALESCE of TIMESTAMP_NTZ(9) and TIMESTAMP_LTZ(9)."
+columns = [{ name = "a", type = "TIMESTAMP_NTZ(9)" }, { name = "b", type = "TIMESTAMP_LTZ(9)" }]
+rows = [
+  ["'2024-02-29 13:45:01'", "'2024-01-01 00:00:00 +02:00'"],
+  ["NULL", "'2024-01-01 00:00:00 +02:00'"],
+  ["NULL", "NULL"],
+]
+expression = "COALESCE(a, b)"
+tags = ["null", "all-null", "mixed-types"]
+
+[[case]]
+id = "coalesce_tz_ntz"
+description = "COALESCE of TIMESTAMP_TZ(9) and TIMESTAMP_NTZ(9)."
+columns = [{ name = "a", type = "TIMESTAMP_TZ(9)" }, { name = "b", type = "TIMESTAMP_NTZ(9)" }]
+rows = [
+  ["'2024-02-29 13:45:01 +02:00'", "'2024-01-01 00:00:00'"],
+  ["NULL", "'2024-01-01 00:00:00'"],
+  ["NULL", "NULL"],
+]
+expression = "COALESCE(a, b)"
+tags = ["null", "all-null", "mixed-types"]
+
+[[case]]
+id = "coalesce_text_float"
+description = "COALESCE of VARCHAR and FLOAT."
+columns = [{ name = "s", type = "VARCHAR" }, { name = "f", type = "FLOAT" }]
+rows = [
+  ["'a'", "1.5"],
+  ["NULL", "0.1"],
+  ["NULL", "NULL"],
+]
+expression = "COALESCE(s, f)"
+tags = ["null", "all-null", "mixed-types"]
+
+[[case]]
+id = "union_ntz_precisions"
+description = "UNION ALL of TIMESTAMP_NTZ(9) and TIMESTAMP_NTZ(3) columns."
+columns = [{ name = "a", type = "TIMESTAMP_NTZ(9)" }, { name = "b", type = "TIMESTAMP_NTZ(3)" }]
+rows = [
+  ["'2024-02-29 13:45:01.123456789'", "'2024-01-01 00:00:00.123'"],
+  ["NULL", "'2024-01-01 00:00:00'"],
+]
+query = "SELECT a AS t FROM input UNION ALL SELECT b FROM input ORDER BY t NULLS LAST"
+order = "ordered"
+tags = ["null", "duplicates", "empty-input"]
+
+[[case]]
+id = "union_ntz6_ntz9"
+description = "UNION ALL of TIMESTAMP_NTZ(6) and TIMESTAMP_NTZ(9)."
+columns = [{ name = "a", type = "TIMESTAMP_NTZ(6)" }, { name = "b", type = "TIMESTAMP_NTZ(9)" }]
+rows = [
+  ["'2024-02-29 13:45:01.123456'", "'2024-01-01 00:00:00.123456789'"],
+]
+query = "SELECT a AS t FROM input UNION ALL SELECT b FROM input ORDER BY t"
+order = "ordered"
+tags = ["null", "duplicates", "empty-input"]
+
+[[case]]
+id = "union_text_variant"
+description = "UNION ALL of VARCHAR and VARIANT columns."
+columns = [{ name = "s", type = "VARCHAR" }, { name = "v", type = "VARIANT" }]
+rows = [
+  ["'abc'", "PARSE_JSON('{\"k\":1}')"],
+  ["NULL", "PARSE_JSON('\"text\"')"],
+  ["'1'", "NULL"],
+]
+query = "SELECT s AS x, ordinal AS o FROM input UNION ALL SELECT v, ordinal + 10 FROM input ORDER BY o"
+order = "ordered"
+tags = ["null", "duplicates", "empty-input"]
+
+[[case]]
+id = "union_null_column"
+description = "UNION ALL of a NULL literal column and a NUMBER column."
+columns = [{ name = "n", type = "NUMBER(10,0)" }]
+rows = [
+  ["1"],
+  ["2"],
+]
+query = "SELECT NULL AS x, 0 AS o UNION ALL SELECT n, ordinal FROM input ORDER BY o"
+order = "ordered"
+tags = ["null", "duplicates", "empty-input"]
+
+[[case]]
+id = "union_tz_ntz"
+description = "UNION ALL of TIMESTAMP_TZ(9) and TIMESTAMP_NTZ(9)."
+columns = [{ name = "a", type = "TIMESTAMP_TZ(9)" }, { name = "b", type = "TIMESTAMP_NTZ(9)" }]
+rows = [
+  ["'2024-02-29 13:45:01 +02:00'", "'2024-01-01 00:00:00'"],
+]
+query = "SELECT a AS t, 1 AS o FROM input UNION ALL SELECT b, 2 FROM input ORDER BY o"
+order = "ordered"
+tags = ["null", "duplicates", "empty-input"]

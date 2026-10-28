@@ -1,6 +1,6 @@
 //! Which Snowflake errors and DuckDB messages mean which kind of failure.
 
-use crate::failures::models::{ErrorKind, SnowflakeCode};
+use crate::failures::models::{ErrorKind, FailureMode, SnowflakeCode};
 
 /// The prefix building blocks put before a Snowflake error number in the errors they raise.
 pub const ERROR_TAG_PREFIX: &str = "sqlquack:";
@@ -85,6 +85,24 @@ pub const NOT_AN_ARRAY_ARGUMENT: SnowflakeCode = SnowflakeCode {
     sqlstate: "22000",
 };
 
+/// Text that does not match a TIME format.
+pub const TIME_FORMAT_MISMATCH: SnowflakeCode = SnowflakeCode {
+    errno: 100_136,
+    sqlstate: "22007",
+};
+
+/// A time zone name no zone has.
+pub const UNKNOWN_TIME_ZONE: SnowflakeCode = SnowflakeCode {
+    errno: 100_094,
+    sqlstate: "22000",
+};
+
+/// A code point no character has, given to CHR.
+pub const INVALID_CHARACTER_CODE: SnowflakeCode = SnowflakeCode {
+    errno: 100_062,
+    sqlstate: "22021",
+};
+
 /// The object already holds the key.
 pub const OBJECT_KEY_EXISTS: SnowflakeCode = SnowflakeCode {
     errno: 100_103,
@@ -102,12 +120,15 @@ pub const SNOWFLAKE_ERRORS: &[(SnowflakeCode, ErrorKind)] = &[
     (TIMESTAMP_NOT_RECOGNIZED, ErrorKind::TimestampText),
     (TIMESTAMP_FORMAT_MISMATCH, ErrorKind::TimestampText),
     (TIME_NOT_RECOGNIZED, ErrorKind::TimeText),
+    (TIME_FORMAT_MISMATCH, ErrorKind::TimeText),
     (DIVISION_BY_ZERO, ErrorKind::DivisionByZero),
     (JSON_NOT_PARSED, ErrorKind::JsonParse),
     (VARIANT_NOT_CAST, ErrorKind::VariantCast),
     (STRING_TOO_LONG, ErrorKind::StringTooLong),
     (NOT_AN_ARRAY_ARGUMENT, ErrorKind::InvalidArgument),
     (OBJECT_KEY_EXISTS, ErrorKind::InvalidArgument),
+    (INVALID_CHARACTER_CODE, ErrorKind::InvalidArgument),
+    (UNKNOWN_TIME_ZONE, ErrorKind::InvalidArgument),
     (
         SnowflakeCode {
             errno: 1007,
@@ -144,6 +165,43 @@ pub const DUCKDB_MESSAGE_KINDS: &[(&str, ErrorKind)] = &[
     ("Could not convert string", ErrorKind::NumberText),
     ("Malformed JSON", ErrorKind::JsonParse),
     ("Division by zero", ErrorKind::DivisionByZero),
+    ("Unknown TimeZone", ErrorKind::InvalidArgument),
     ("Binder Error", ErrorKind::Compilation),
     ("Parser Error", ErrorKind::Compilation),
 ];
+
+/// How dividing by zero fails.
+pub const DIVISION_FAILURES: &[FailureMode] = &[FailureMode {
+    kind: ErrorKind::DivisionByZero,
+    snowflake: &[DIVISION_BY_ZERO],
+}];
+
+/// How reading text as a TIME fails, without and with a format.
+pub const TIME_TEXT_FAILURES: &[FailureMode] = &[FailureMode {
+    kind: ErrorKind::TimeText,
+    snowflake: &[TIME_NOT_RECOGNIZED, TIME_FORMAT_MISMATCH],
+}];
+
+/// How CHR fails for a code point no character has.
+pub const CHARACTER_CODE_FAILURES: &[FailureMode] = &[FailureMode {
+    kind: ErrorKind::InvalidArgument,
+    snowflake: &[INVALID_CHARACTER_CODE],
+}];
+
+/// How an array function fails for an argument other than an array.
+pub const NOT_AN_ARRAY_FAILURES: &[FailureMode] = &[FailureMode {
+    kind: ErrorKind::InvalidArgument,
+    snowflake: &[NOT_AN_ARRAY_ARGUMENT],
+}];
+
+/// How OBJECT_AGG fails for a repeated key.
+pub const KEY_EXISTS_FAILURES: &[FailureMode] = &[FailureMode {
+    kind: ErrorKind::InvalidArgument,
+    snowflake: &[OBJECT_KEY_EXISTS],
+}];
+
+/// How a time zone conversion fails for a name no zone has.
+pub const ZONE_FAILURES: &[FailureMode] = &[FailureMode {
+    kind: ErrorKind::InvalidArgument,
+    snowflake: &[UNKNOWN_TIME_ZONE],
+}];
