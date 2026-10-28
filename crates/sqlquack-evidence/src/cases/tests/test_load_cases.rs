@@ -1,5 +1,5 @@
-use crate::cases::tests::helpers::{observed_problem, source_sql_of};
-use crate::cases::tests::test_types::{LoadTestCase, SourceSqlTestCase};
+use crate::cases::tests::helpers::{observed_problem, row_source_count, source_sql_of};
+use crate::cases::tests::test_types::{LoadTestCase, RowSourceTestCase, SourceSqlTestCase};
 
 #[test]
 fn given_case_file_when_loading_then_format_and_policy_rules_are_enforced() {
@@ -152,6 +152,62 @@ fn given_case_when_expanding_then_inputs_become_typed_rows_before_the_case_sql()
         assert_eq!(
             source_sql_of(test_case.reference).as_deref(),
             Some(test_case.expected_sql),
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_multi_row_cases_when_loading_then_only_row_by_row_results_get_single_row_sources() {
+    let test_cases = [
+        RowSourceTestCase {
+            description: "an expression's result rows follow its input rows",
+            reference: "string/concat.toml#concat",
+            replace: "",
+            with: "",
+            expected_rows: Some(2),
+        },
+        RowSourceTestCase {
+            description: "an expression holding a subquery couples rows, so it is not split",
+            reference: "string/concat.toml#concat",
+            replace: "expression = \"CONCAT(a, b)\"",
+            with: "expression = \"CONCAT(a, (SELECT MAX(b) FROM input))\"",
+            expected_rows: Some(0),
+        },
+        RowSourceTestCase {
+            description: "a query ordered by another column is not split",
+            reference: "string/concat.toml#sorted",
+            replace: "",
+            with: "",
+            expected_rows: Some(0),
+        },
+        RowSourceTestCase {
+            description: "a query over input in order is split",
+            reference: "string/concat.toml#sorted",
+            replace: "SELECT a FROM input ORDER BY a",
+            with: "SELECT a FROM input ORDER BY ordinal",
+            expected_rows: Some(2),
+        },
+        RowSourceTestCase {
+            description: "an aggregate couples rows, so it is not split",
+            reference: "string/concat.toml#sorted",
+            replace: "SELECT a FROM input ORDER BY a",
+            with: "SELECT COUNT(a) AS n FROM input ORDER BY ordinal",
+            expected_rows: Some(0),
+        },
+        RowSourceTestCase {
+            description: "a window couples rows, so it is not split",
+            reference: "string/concat.toml#sorted",
+            replace: "SELECT a FROM input ORDER BY a",
+            with: "SELECT LAG(a) OVER (ORDER BY ordinal) AS p FROM input ORDER BY ordinal",
+            expected_rows: Some(0),
+        },
+    ];
+    for test_case in test_cases {
+        assert_eq!(
+            row_source_count(test_case.reference, (test_case.replace, test_case.with)),
+            test_case.expected_rows,
             "{}",
             test_case.description
         );

@@ -52,3 +52,11 @@ pub(crate) struct DivergenceErrorTestCase {
     pub(crate) error: &'static str,
     pub(crate) expected_matched: Option<&'static str>,
 }
+
+pub(crate) struct MicrosecondEvidenceTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) declared: &'static str,
+    pub(crate) stored_unit: arrow::datatypes::TimeUnit,
+    pub(crate) replayed_nanos: i64,
+    pub(crate) expected_floored: Option<i64>,
+}

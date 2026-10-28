@@ -1,0 +1,514 @@
+# The hazard catalogue: inputs known to make Snowflake and DuckDB disagree, per type family.
+#
+# Every rule needs a passing recorded case for each hazard of each argument family its declared
+# domain accepts (see `domains/`), and for each row-set hazard of a form that reads groups or
+# windows. `sqlquack verify` reports the hazards without one; `python -m scripts.generate_cases`
+# writes a case for each. A hazard is shown by a case when the column feeding the argument holds
+# one of its `cells` (source literals, compared exactly) or a cell containing one of its
+# `contains` texts, or when a literal argument is one of them. Row-set hazards are shown by text in
+# the case's SQL (`sql_contains`) or by the cells of a group of the input column `g` (`group`).
+#
+# Generated cases put every hazard of a family into one case per argument, except hazards marked
+# `isolate`, which often make one engine raise for the whole query, and hazards a form expects to
+# raise; those get a case of their own. A case whose recording is an error covers only the hazard its
+# column holds alone, since the error hides the other rows.
+#
+# A hazard's `divergence` names the divergence any converted query holding it relies on, because no
+# converted input holds the value; generated cases hold it alone and expect that divergence, as they
+# do for the hazards a form's `divergences` names. A hazard marked `unrecordable` says why no case
+# can record it: it generates no case and is reported apart, neither covered nor a gap.
+#
+# Raise `version` with every change. Never remove or weaken a hazard to close a gap; a review
+# finding becomes a new hazard here, protecting every rule of its family.
+version = 3
+
+[families.text]
+sql_type = "VARCHAR"
+benign = "'a'"
+other = "'b'"
+
+[[families.text.hazard]]
+id = "null"
+description = "SQL NULL."
+cells = ["NULL"]
+
+[[families.text.hazard]]
+id = "empty"
+description = "The empty string; a JSON path reads the empty key as the whole document."
+cells = ["''"]
+
+[[families.text.hazard]]
+id = "dollar_prefix"
+description = "Text starting with $, which DuckDB's JSON functions read as a path (GET with a computed key)."
+cells = ["'$.a'", "'$'"]
+contains = ["'$"]
+
+[[families.text.hazard]]
+id = "slash_prefix"
+description = "Text starting with /, which DuckDB's JSON functions read as a JSON pointer."
+cells = ["'/a'", "'/'"]
+contains = ["'/"]
+
+[[families.text.hazard]]
+id = "dots_brackets"
+description = "Dots, brackets and the wildcard, which paths and patterns read specially."
+cells = ["'a.b'", "'a[0]'", "'*'"]
+
+[[families.text.hazard]]
+id = "quotes_backslashes"
+description = "Single and double quotes and backslashes, which quoting and escaping must keep."
+cells = ["'it''s'", "'say \"hi\"'", "'a\\\\b'"]
+
+[[families.text.hazard]]
+id = "non_ascii"
+description = "Non-ASCII letters, combining marks and characters outside the basic plane."
+cells = ["'Größe'", "'é'", "'e\u0301'", "'😀'"]
+
+[[families.text.hazard]]
+id = "title_case_digraph"
+description = "Letters whose title case differs from their upper case (INITCAP)."
+cells = ["'ǆungla'", "'ǅ'", "'ǉubav'", "'ǲ'"]
+contains = ["ǆ", "ǅ", "Ǆ", "ǉ", "ǈ", "Ǉ", "ǌ", "ǋ", "Ǌ", "ǳ", "ǲ", "Ǳ"]
+
+[[families.text.hazard]]
+id = "case_only"
+description = "Text differing from other rows only by ASCII or Unicode case."
+pair = "case_only"
+cells = ["'Order'", "'ORDER'", "'order'", "'Straße'", "'STRASSE'"]
+
+[[families.text.hazard]]
+id = "whitespace"
+description = "Leading and trailing spaces, tabs and newlines, and text of spaces only."
+cells = ["' a'", "'a '", "' '", "'\t'", "'a\nb'"]
+
+[[families.text.hazard]]
+id = "number_text"
+description = "Text that reads as a number in several spellings: leading zeros, signs, exponents."
+cells = ["'007'", "'1.0'", "'1e0'", "'+7'", "'-0'"]
+
+[families.integer]
+sql_type = "NUMBER(38,0)"
+benign = "1"
+other = "2"
+
+[[families.integer.hazard]]
+id = "null"
+description = "SQL NULL."
+cells = ["NULL"]
+
+[[families.integer.hazard]]
+id = "zero_negative"
+description = "Zero and negative values."
+cells = ["0", "-1"]
+
+[[families.integer.hazard]]
+id = "beyond_64_bits"
+isolate = true
+description = "Integers beyond the 64-bit range, which BIGINT arithmetic overflows."
+cells = ["18446744073709551616", "-9223372036854775809"]
+
+[[families.integer.hazard]]
+id = "digits_38"
+isolate = true
+description = "The largest 38-digit integers."
+cells = ["99999999999999999999999999999999999999", "-99999999999999999999999999999999999999"]
+
+
+[[families.integer.hazard]]
+id = "beyond_double"
+description = "Integers just past 2^53, which a double cannot hold: FLOAT comparisons and mixes round them."
+cells = ["9007199254740993", "-9007199254740993"]
+
+[families.decimal]
+sql_type = "NUMBER(38,10)"
+benign = "1.5"
+other = "2.25"
+
+[[families.decimal.hazard]]
+id = "null"
+description = "SQL NULL."
+cells = ["NULL"]
+
+[[families.decimal.hazard]]
+id = "one_spellings"
+description = "One written with trailing zeros, and a negative zero."
+cells = ["1.0000000000", "-0.0000000000"]
+
+[[families.decimal.hazard]]
+id = "half_way"
+description = "Values half way between two at a smaller scale, where rounding modes differ."
+cells = ["2.5", "-2.5", "0.0000000005"]
+
+[[families.decimal.hazard]]
+id = "digits_38"
+isolate = true
+description = "Values using all 38 digits."
+cells = ["9999999999999999999999999999.9999999999", "-9999999999999999999999999999.9999999999"]
+
+
+[[families.decimal.hazard]]
+id = "beyond_double"
+description = "Seventeen significant digits, more than a double holds."
+cells = ["1234567890123456.7", "-1234567890123456.7"]
+
+[families.float]
+sql_type = "FLOAT"
+benign = "1.5"
+other = "2.25"
+
+[[families.float.hazard]]
+id = "null"
+description = "SQL NULL."
+cells = ["NULL"]
+
+[[families.float.hazard]]
+id = "one_spellings"
+description = "One written as 1, 1.0 and 1e0, which compare equal but may be written differently."
+cells = ["1", "1.0", "1e0"]
+
+[[families.float.hazard]]
+id = "negative_zero"
+description = "Negative zero."
+cells = ["'-0'"]
+
+[[families.float.hazard]]
+id = "nan_infinity"
+isolate = true
+description = "NaN and the infinities."
+cells = ["'NaN'", "'inf'", "'-inf'"]
+
+[[families.float.hazard]]
+id = "subnormal"
+description = "The smallest subnormal and the largest finite double."
+cells = ["5e-324", "1.7976931348623157e308"]
+
+[[families.float.hazard]]
+id = "binary_fractions"
+description = "Decimal fractions a double cannot hold exactly, and seventeen significant digits."
+cells = ["0.1", "0.30000000000000004", "123456789.12345678"]
+
+
+[[families.float.hazard]]
+id = "large_integers"
+description = "Doubles at and beyond 2^53, where neighbouring integers share a double."
+cells = ["9007199254740992", "9007199254740994", "1e16"]
+
+[families.boolean]
+sql_type = "BOOLEAN"
+benign = "TRUE"
+other = "FALSE"
+
+[[families.boolean.hazard]]
+id = "null"
+description = "SQL NULL."
+cells = ["NULL"]
+
+[families.date]
+sql_type = "DATE"
+benign = "'2024-01-15'"
+other = "'2024-01-16'"
+
+[[families.date.hazard]]
+id = "null"
+description = "SQL NULL."
+cells = ["NULL"]
+
+[[families.date.hazard]]
+id = "leap_day"
+description = "A leap day."
+cells = ["'2024-02-29'"]
+
+[[families.date.hazard]]
+id = "pre_1970"
+description = "Dates before the Unix epoch."
+cells = ["'1969-12-31'", "'1900-03-01'"]
+
+[[families.date.hazard]]
+id = "extreme_years"
+isolate = true
+description = "The first and last years Snowflake accepts."
+cells = ["'0001-01-01'", "'9999-12-31'"]
+
+[families.time]
+sql_type = "TIME(9)"
+benign = "'10:00:00'"
+other = "'11:30:00'"
+
+[[families.time.hazard]]
+id = "null"
+description = "SQL NULL."
+cells = ["NULL"]
+
+[[families.time.hazard]]
+id = "day_bounds"
+description = "Midnight and the last microsecond of the day; case inputs cannot hold sub-microsecond TIMEs (time_submicro)."
+cells = ["'00:00:00'", "'23:59:59.999999'"]
+
+[[families.time.hazard]]
+id = "half_millisecond"
+description = "Fractions on and near half a millisecond, where truncating and rounding differ."
+cells = ["'10:00:00.0005'", "'10:00:00.9996'"]
+
+[families.timestamp_ntz]
+sql_type = "TIMESTAMP_NTZ(9)"
+benign = "'2024-01-15 10:00:00'"
+other = "'2024-01-16 11:30:00'"
+
+[[families.timestamp_ntz.hazard]]
+id = "null"
+description = "SQL NULL."
+cells = ["NULL"]
+
+[[families.timestamp_ntz.hazard]]
+id = "dst_gap"
+description = "A wall time that does not exist where clocks spring forward."
+cells = ["'2024-03-10 02:30:00'", "'2024-03-31 02:30:00'"]
+
+[[families.timestamp_ntz.hazard]]
+id = "dst_overlap"
+description = "A wall time that happens twice where clocks fall back."
+cells = ["'2024-11-03 01:30:00'", "'2024-10-27 02:30:00'"]
+
+[[families.timestamp_ntz.hazard]]
+id = "leap_day"
+description = "The last second of a leap day."
+cells = ["'2024-02-29 23:59:59'"]
+
+[[families.timestamp_ntz.hazard]]
+id = "sub_microsecond"
+description = "Nanosecond fractions, beyond microseconds."
+cells = ["'2024-01-15 10:00:00.123456789'"]
+
+[[families.timestamp_ntz.hazard]]
+id = "half_millisecond"
+description = "Fractions on and near half a millisecond, where truncating and rounding to milliseconds differ (TIMESTAMP_NTZ(9) text)."
+cells = ["'2024-01-15 10:00:00.0005'", "'2024-01-15 10:00:00.9996'", "'2024-01-15 23:59:59.9999999'"]
+
+[[families.timestamp_ntz.hazard]]
+id = "pre_1970"
+description = "Times before the Unix epoch, where truncating division rounds the wrong way."
+cells = ["'1969-12-31 23:59:59.999'", "'1900-03-01 00:00:00'"]
+
+[[families.timestamp_ntz.hazard]]
+id = "extreme_years"
+isolate = true
+description = "The first and last years Snowflake accepts, beyond DuckDB's nanosecond range."
+cells = ["'0001-01-01 00:00:00'", "'9999-12-31 23:59:59.999999'"]
+divergence = "timestamp_range"
+
+[[families.timestamp_ntz.hazard]]
+id = "extreme_years_nanoseconds"
+description = "The last instant Snowflake accepts, with nanoseconds."
+cells = ["'9999-12-31 23:59:59.999999999'"]
+unrecordable = "The recording connector cannot convert a nanosecond timestamp past 2262 with sub-microsecond digits."
+
+[families.timestamp_ltz]
+sql_type = "TIMESTAMP_LTZ(9)"
+benign = "'2024-01-15 10:00:00'"
+other = "'2024-01-16 11:30:00'"
+
+[[families.timestamp_ltz.hazard]]
+id = "null"
+description = "SQL NULL."
+cells = ["NULL"]
+
+[[families.timestamp_ltz.hazard]]
+id = "dst_gap"
+description = "A wall time that does not exist where clocks spring forward."
+cells = ["'2024-03-10 02:30:00'", "'2024-03-31 02:30:00'"]
+
+[[families.timestamp_ltz.hazard]]
+id = "dst_overlap"
+description = "A wall time that happens twice where clocks fall back."
+cells = ["'2024-11-03 01:30:00'", "'2024-10-27 02:30:00'"]
+
+[[families.timestamp_ltz.hazard]]
+id = "sub_microsecond"
+description = "Nanosecond fractions, beyond microseconds."
+cells = ["'2024-01-15 10:00:00.123456789'"]
+divergence = "timestamp_tz_submicro"
+
+[[families.timestamp_ltz.hazard]]
+id = "pre_1970"
+description = "Times before the Unix epoch."
+cells = ["'1969-12-31 23:59:59.999'"]
+
+[[families.timestamp_ltz.hazard]]
+id = "extreme_years"
+isolate = true
+description = "The first and last years Snowflake accepts."
+cells = ["'0001-01-01 00:00:00'", "'9999-12-31 23:59:59.999999'"]
+
+[[families.timestamp_ltz.hazard]]
+id = "extreme_years_nanoseconds"
+description = "The last instant Snowflake accepts, with nanoseconds."
+cells = ["'9999-12-31 23:59:59.999999999'"]
+unrecordable = "The recording connector cannot convert a nanosecond timestamp past 2262 with sub-microsecond digits."
+
+[families.timestamp_tz]
+sql_type = "TIMESTAMP_TZ(9)"
+benign = "'2024-01-15 10:00:00 +00:00'"
+other = "'2024-01-16 11:30:00 +00:00'"
+
+[[families.timestamp_tz.hazard]]
+id = "null"
+description = "SQL NULL."
+cells = ["NULL"]
+
+[[families.timestamp_tz.hazard]]
+id = "offsets"
+description = "Non-zero and fractional-hour offsets, and the same instant at two offsets."
+cells = ["'2024-01-15 10:00:00 +05:45'", "'2024-01-15 04:15:00 -00:00'", "'2024-01-15 10:00:00 -09:30'"]
+
+[[families.timestamp_tz.hazard]]
+id = "dst_boundary"
+description = "Instants written at both offsets of a fall-back hour."
+cells = ["'2024-11-03 01:30:00 -04:00'", "'2024-11-03 01:30:00 -05:00'"]
+
+[[families.timestamp_tz.hazard]]
+id = "sub_microsecond"
+description = "Nanosecond fractions, beyond microseconds."
+cells = ["'2024-01-15 10:00:00.123456789 +00:00'"]
+divergence = "timestamp_tz_submicro"
+
+[[families.timestamp_tz.hazard]]
+id = "extreme_years"
+isolate = true
+description = "The first and last years Snowflake accepts."
+cells = ["'0001-01-01 00:00:00 +00:00'", "'9999-12-31 23:59:59.999999 +00:00'"]
+
+[[families.timestamp_tz.hazard]]
+id = "extreme_years_nanoseconds"
+description = "The last instant Snowflake accepts, with nanoseconds."
+cells = ["'9999-12-31 23:59:59.999999999 +00:00'"]
+unrecordable = "The recording connector cannot convert a nanosecond timestamp past 2262 with sub-microsecond digits."
+
+[families.variant]
+sql_type = "VARIANT"
+benign = "PARSE_JSON('{\"a\":1}')"
+other = "PARSE_JSON('{\"a\":2}')"
+
+[[families.variant.hazard]]
+id = "null"
+description = "SQL NULL, which is not JSON null."
+cells = ["NULL"]
+
+[[families.variant.hazard]]
+id = "json_null"
+description = "JSON null at the top and as a member, beside a missing member."
+cells = ["PARSE_JSON('null')", "PARSE_JSON('{\"a\":null}')", "PARSE_JSON('{}')"]
+
+[[families.variant.hazard]]
+id = "empty_containers"
+description = "The empty object and the empty array."
+cells = ["PARSE_JSON('{}')", "PARSE_JSON('[]')"]
+
+[[families.variant.hazard]]
+id = "duplicate_keys"
+isolate = true
+description = "A key repeated in one object."
+cells = ["PARSE_JSON('{\"a\":1,\"a\":2}')"]
+unrecordable = "Snowflake rejects the document when PARSE_JSON reads it, so no stored VARIANT holds it; PARSE_JSON's own cases cover the text."
+
+[[families.variant.hazard]]
+id = "case_keys"
+description = "Keys differing only by ASCII or Unicode case or normalisation."
+cells = ["PARSE_JSON('{\"a\":1,\"A\":2}')", "PARSE_JSON('{\"é\":1,\"É\":2}')"]
+
+[[families.variant.hazard]]
+id = "path_keys"
+description = "Keys a JSON path would read as a path: $-, /-prefixed, empty, dotted, bracketed (GET with a computed key)."
+cells = ["PARSE_JSON('{\"$.a\":1,\"/a\":2,\"\":3,\"a.b\":4,\"a[0]\":5,\"*\":6}')"]
+
+[[families.variant.hazard]]
+id = "nesting"
+description = "Objects and arrays nested several levels."
+cells = ["PARSE_JSON('{\"a\":{\"b\":[1,{\"c\":[2,[3]]}]}}')"]
+
+[[families.variant.hazard]]
+id = "number_spellings"
+description = "One number written as 1, 1.0 and 1e0, which Snowflake compares by value (ARRAY_POSITION)."
+cells = ["PARSE_JSON('[1,1.0,1e0]')", "PARSE_JSON('{\"a\":1.0}')", "PARSE_JSON('1e0')"]
+divergence = "json_fidelity"
+
+[[families.variant.hazard]]
+id = "large_numbers"
+isolate = true
+description = "Integers beyond 64 bits, long decimals and negative zero."
+cells = ["PARSE_JSON('{\"a\":18446744073709551616}')", "PARSE_JSON('{\"a\":12345678901234567890.123}')", "PARSE_JSON('-0')"]
+divergence = "json_fidelity"
+
+[[families.variant.hazard]]
+id = "scalars"
+description = "Top-level text, boolean and number documents."
+cells = ["PARSE_JSON('\"a\"')", "PARSE_JSON('true')", "PARSE_JSON('7')"]
+
+[families.group]
+
+[[families.group.hazard]]
+id = "empty_input"
+description = "An aggregate over no rows."
+sql_contains = ["WHERE FALSE"]
+query = "SELECT {expression} AS r FROM input WHERE FALSE"
+
+[[families.group.hazard]]
+id = "all_null"
+description = "A group whose values are all NULL."
+group = "all_null"
+rows = [["'a'", "NULL"], ["'a'", "NULL"], ["'b'", "{benign}"]]
+
+[[families.group.hazard]]
+id = "mixed"
+description = "A group holding different values (ANY_VALUE)."
+group = "mixed"
+rows = [["'a'", "{benign}"], ["'a'", "{other}"]]
+
+[[families.group.hazard]]
+id = "null_beside_value"
+description = "A group holding NULL beside a value (ANY_VALUE)."
+group = "null_beside_value"
+rows = [["'a'", "NULL"], ["'a'", "{benign}"]]
+
+[[families.group.hazard]]
+id = "duplicates"
+description = "A group holding one value several times beside another, ties for ordering."
+group = "duplicates"
+rows = [["'a'", "{benign}"], ["'a'", "{benign}"], ["'a'", "{other}"]]
+
+[[families.group.hazard]]
+id = "single_row"
+description = "A group of one row."
+group = "single_row"
+rows = [["'a'", "{benign}"]]
+
+[families.window]
+
+[[families.window.hazard]]
+id = "empty_input"
+description = "A window over no rows."
+sql_contains = ["WHERE FALSE"]
+query = "SELECT {expression} AS r FROM input WHERE FALSE"
+
+[[families.window.hazard]]
+id = "all_null"
+description = "A partition whose values are all NULL."
+group = "all_null"
+rows = [["'a'", "NULL"], ["'a'", "NULL"], ["'b'", "{benign}"]]
+
+[[families.window.hazard]]
+id = "null_beside_value"
+description = "A partition holding NULL beside values."
+group = "null_beside_value"
+rows = [["'a'", "{benign}"], ["'a'", "NULL"], ["'a'", "{other}"]]
+
+[[families.window.hazard]]
+id = "duplicates"
+description = "A partition holding one value several times, ties for ordering."
+group = "duplicates"
+rows = [["'a'", "{benign}"], ["'a'", "{benign}"], ["'a'", "{other}"]]
+
+[[families.window.hazard]]
+id = "single_row"
+description = "A partition of one row."
+group = "single_row"
+rows = [["'a'", "{benign}"]]

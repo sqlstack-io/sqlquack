@@ -156,6 +156,19 @@ pub struct LoadedCase {
     pub functions: Vec<CaseFunction>,
     /// The Snowflake statements creating them, run before `source_sql` in a scratch schema.
     pub setup_sql: Vec<String>,
+    /// Its input columns, each with its cells in row order; read by the coverage check.
+    pub inputs: Vec<CaseInput>,
+    /// The source SQL of each input row alone, where result rows follow input rows one for one.
+    pub row_sources: Vec<String>,
+}
+
+/// One input column of a loaded case and its cells, source-dialect literals in row order.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct CaseInput {
+    /// The column.
+    pub column: InputColumn,
+    /// Its cells.
+    pub cells: Vec<String>,
 }
 
 /// What a loaded case proves.

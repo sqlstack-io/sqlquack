@@ -17,6 +17,8 @@ use crate::replay::models::ReplaySettings;
 use crate::results::main::load_result::load_result;
 use crate::results::models::{RecordedOutcome, SessionDefaults, StoredResult};
 use crate::verify::_helpers::error_check::error_check;
+use crate::verify::_helpers::microsecond_evidence::differs_below_microseconds;
+use crate::verify::_helpers::row_checks::{RowCheck, row_check};
 use crate::verify::_helpers::session::{SessionCheck, session_check};
 use crate::verify::models::{Conversion, ErrorCheck, Verdict};
 use crate::verify::types::{CaseConverter, FailureModes};
@@ -127,6 +129,29 @@ fn judge_stored(
         ),
         None => replayed_verdict(case, (&stored, replayed), policy, &raises),
     };
+    let verdict = match (verdict, &stored.rows) {
+        (
+            Verdict::Diverged {
+                divergence,
+                error,
+                matched,
+                ..
+            },
+            Some(recorded),
+        ) => match row_check(case, recorded, (converter, policy, &settings), &divergence) {
+            RowCheck::Wrong(reason) => Verdict::Failed { reason },
+            RowCheck::Unreadable(error) => Verdict::Failed {
+                reason: format!("the recorded rows could not be read one by one: {error}"),
+            },
+            checked => Verdict::Diverged {
+                divergence,
+                error,
+                matched,
+                rows_proven: matches!(checked, RowCheck::Proven),
+            },
+        },
+        (verdict, _) => verdict,
+    };
     let error_check = match (&verdict, &stored.metadata.error, duckdb_error) {
         (Verdict::Passed, Some(recorded), Some(error)) => Some(error_check(
             (recorded, &error),
@@ -158,6 +183,7 @@ fn divergence_verdict(
                 divergence: divergence.to_owned(),
                 error,
                 matched,
+                rows_proven: false,
             },
             None => Verdict::Failed {
                 reason: format!(
@@ -284,11 +310,33 @@ fn replayed_verdict(
         (Some(recorded), Ok(replayed)) => {
             match compare_with_replay(recorded, &replayed, case.order, &policy.comparator) {
                 Ok(()) => Verdict::Passed,
-                Err(mismatch) => Verdict::Failed {
-                    reason: mismatch.to_string(),
-                },
+                Err(mismatch) => microsecond_verdict(case, recorded, &replayed, policy)
+                    .unwrap_or_else(|| Verdict::Failed {
+                        reason: mismatch.to_string(),
+                    }),
             }
         }
+    }
+}
+
+/// Unproven when the replay differs only in sub-microsecond digits the recording truncated.
+fn microsecond_verdict(
+    case: &LoadedCase,
+    recorded: &sqlquack_compare::comparison::models::RecordedResult,
+    replayed: &sqlquack_compare::values::models::ResultSet,
+    policy: &Policy,
+) -> Option<Verdict> {
+    match differs_below_microseconds(recorded, replayed, case.order, &policy.comparator) {
+        Ok(true) => Some(Verdict::Unproven {
+            reason: "the connector stored the declared nanosecond columns in microseconds, which \
+                     it does for a whole column when any row lies outside the nanosecond range, \
+                     and DuckDB's values differ only below a microsecond"
+                .to_owned(),
+        }),
+        Ok(false) => None,
+        Err(error) => Some(Verdict::Failed {
+            reason: format!("the replay's sub-microsecond digits could not be dropped: {error}"),
+        }),
     }
 }
 

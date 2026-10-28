@@ -1,0 +1,118 @@
+# Text parsing the coverage review found unrecorded: pre-1970 sub-microsecond digits, and words
+# or other scripts' digits that TRY_ parsing might read as NULL.
+category = "temporal"
+construct = "fn:TRY_TO_TIMESTAMP_NTZ"
+session_profile = "utc-v1"
+
+[[case]]
+id = "pre_epoch_nanos_try_to_timestamp_ntz"
+description = "TRY_TO_TIMESTAMP_NTZ of text before 1970 with sub-microsecond digits."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'1969-12-31 23:59:59.999999999'"],
+  ["'1969-12-31 23:59:59.000000001'"],
+  ["'1969-06-15 12:00:00.123456789'"],
+  ["'1900-03-01 00:00:00.5000005'"],
+  ["'1677-09-22 00:00:00.000000001'"],
+  ["'1970-01-01 00:00:00.000000001'"],
+  ["NULL"],
+]
+expression = "TRY_TO_TIMESTAMP_NTZ(s)"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "pre_epoch_nanos_to_timestamp_ntz"
+description = "TO_TIMESTAMP_NTZ of text before 1970 with sub-microsecond digits."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'1969-12-31 23:59:59.999999999'"],
+  ["'1969-06-15 12:00:00.123456789'"],
+  ["'1900-03-01 00:00:00.5000005'"],
+  ["NULL"],
+]
+expression = "TO_TIMESTAMP_NTZ(s)"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "pre_epoch_nanos_to_timestamp"
+description = "TO_TIMESTAMP and TRY_TO_TIMESTAMP of text before 1970 with sub-microsecond digits."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'1969-12-31 23:59:59.999999999'"],
+  ["'1969-06-15 12:00:00.123456789'"],
+  ["'1900-03-01 00:00:00.5000005'"],
+  ["NULL"],
+]
+query = "SELECT TO_TIMESTAMP(s) AS t, TRY_TO_TIMESTAMP(s) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "pre_epoch_nanos_cast"
+description = "Text columns before 1970 with sub-microsecond digits cast to TIMESTAMP_NTZ(9)."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'1969-12-31 23:59:59.999999999'"],
+  ["'1969-06-15 12:00:00.123456789'"],
+  ["'1900-03-01 00:00:00.5000005'"],
+  ["NULL"],
+]
+query = "SELECT CAST(s AS TIMESTAMP_NTZ(9)) AS c, TRY_CAST(s AS TIMESTAMP_NTZ(9)) AS t, s::TIMESTAMP_NTZ AS d FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "try_parse_date_words"
+description = "TRY_ date and timestamp parsing of words naming dates and digits of other scripts, read as NULL or not."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'now'"],
+  ["'NOW'"],
+  ["'today'"],
+  ["'tomorrow'"],
+  ["'yesterday'"],
+  ["'infinity'"],
+  ["'-infinity'"],
+  ["'epoch'"],
+  ["'allballs'"],
+  ["'２０２４-０１-１５'"],
+  ["'٢٠٢٤-٠١-١٥'"],
+  ["NULL"],
+]
+query = "SELECT TRY_TO_DATE(s) IS NULL AS d, TRY_TO_TIMESTAMP(s) IS NULL AS t, TRY_CAST(s AS DATE) IS NULL AS c, TRY_TO_DATE(s, 'YYYY-MM-DD') IS NULL AS fd, TRY_TO_TIMESTAMP(s, 'YYYY-MM-DD HH24:MI:SS') IS NULL AS ft FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "dateadd_amount_int32_bounds"
+description = "DATEADD by the largest and smallest signed 32-bit amounts."
+columns = [{ name = "n", type = "NUMBER(38,0)" }]
+rows = [
+  ["2147483647"],
+  ["-2147483648"],
+  ["NULL"],
+]
+query = "SELECT DATEADD(second, n, '2000-01-01 00:00:00'::TIMESTAMP_NTZ) AS s, DATEADD(minute, n, '2000-01-01 00:00:00'::TIMESTAMP_NTZ) AS m FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "boundary"]
+expected_divergence = "timestamp_range"
+
+[[case]]
+id = "dateadd_amount_above_int32"
+description = "DATEADD by one past the largest signed 32-bit amount."
+columns = [{ name = "n", type = "NUMBER(38,0)" }]
+rows = [
+  ["2147483648"],
+]
+expression = "DATEADD(second, n, '2000-01-01 00:00:00'::TIMESTAMP_NTZ)"
+tags = ["boundary"]
+
+[[case]]
+id = "dateadd_amount_below_int32"
+description = "DATEADD by one below the smallest signed 32-bit amount."
+columns = [{ name = "n", type = "NUMBER(38,0)" }]
+rows = [
+  ["-2147483649"],
+]
+expression = "DATEADD(second, n, '2000-01-01 00:00:00'::TIMESTAMP_NTZ)"
+tags = ["boundary"]

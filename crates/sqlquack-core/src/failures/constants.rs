@@ -162,6 +162,8 @@ pub const DUCKDB_MESSAGE_KINDS: &[(&str, ErrorKind)] = &[
     ("to DATE", ErrorKind::DateText),
     ("to TIMESTAMP", ErrorKind::TimestampText),
     ("to TIME", ErrorKind::TimeText),
+    ("Failed to cast decimal value", ErrorKind::NumericOverflow),
+    ("Could not cast value", ErrorKind::NumericOverflow),
     ("Could not convert string", ErrorKind::NumberText),
     ("Malformed JSON", ErrorKind::JsonParse),
     ("Division by zero", ErrorKind::DivisionByZero),

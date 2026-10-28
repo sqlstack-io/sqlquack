@@ -1,0 +1,19 @@
+# DECODE comparing FLOAT with NUMBER near a double's precision.
+category = "conditional"
+construct = "fn:DECODE"
+session_profile = "utc-v1"
+
+[[case]]
+id = "decode_float_against_number"
+description = "DECODE of FLOAT against NUMBER searches, and NUMBER against FLOAT, at ties past 2^53."
+columns = [{ name = "x", type = "FLOAT" }, { name = "n", type = "NUMBER(38,0)" }, { name = "m", type = "NUMBER(38,1)" }]
+rows = [
+  ["9007199254740992", "9007199254740993", "0.1"],
+  ["9007199254740992", "9007199254740992", "0.3"],
+  ["0.1", "0", "0.1"],
+  ["1e16", "10000000000000001", "1e16"],
+  ["NULL", "NULL", "NULL"],
+]
+query = "SELECT DECODE(x, n, 'same', 'different') AS a, DECODE(n, x, 'same', 'different') AS b, DECODE(x, m, 'same', NULL, 'null', 'different') AS c FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "all-null", "mixed-types"]

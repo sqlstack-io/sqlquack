@@ -2,14 +2,14 @@
 
 use sqlquack_core::provenance::models::ProvenanceLog;
 
-use crate::raises::main::raised::raised;
-use crate::semi_structured::constants::{JSON_FIDELITY, JSON_GET_COMPUTED, PATH_READ_KEYS};
+use crate::semi_structured::constants::{JSON_GET_COMPUTED, PATH_READ_KEYS};
 
-/// The array element at a non-negative integer `step`, or the object value at exactly a text key.
+/// An array element at a non-negative integer `step`, or an object's value at exactly a text key.
 pub fn json_get_computed(base: &str, (step, index): (&str, bool), log: &ProvenanceLog) -> String {
     log.building_block(JSON_GET_COMPUTED);
     let found = match index {
         true => "CASE WHEN json_type(q['v']) = 'ARRAY' AND q['s'] >= 0 \
+                 AND q['s'] < json_array_length(q['v']) \
                  THEN json_extract(q['v'], CAST(q['s'] AS BIGINT)) END"
             .to_owned(),
         false => {
@@ -19,18 +19,17 @@ pub fn json_get_computed(base: &str, (step, index): (&str, bool), log: &Provenan
                 .collect();
             format!(
                 "CASE WHEN json_type(q['v']) <> 'OBJECT' THEN NULL \
-                 WHEN q['s'] IN ({}) THEN CAST({} AS JSON) \
+                 WHEN q['s'] IN ({}) THEN list_transform([CAST(q['v'] AS MAP(VARCHAR, JSON))], \
+                 lambda m: CASE WHEN map_contains(m, q['s']) \
+                 THEN coalesce(map_extract_value(m, q['s']), CAST('null' AS JSON)) END)[1] \
                  ELSE json_extract(q['v'], '$.\"' || replace(replace(q['s'], '\\', '\\\\'), \
                  '\"', '\\\"') || '\"') END",
                 path_keys.join(", "),
-                raised(&format!(
-                    "{JSON_FIDELITY}: GET of a key DuckDB reads only as a path, empty or '*'"
-                ))
             )
         }
     };
     let step = match index {
-        true => format!("CAST({step} AS BIGINT)"),
+        true => format!("CAST({step} AS HUGEINT)"),
         false => format!("CAST({step} AS VARCHAR)"),
     };
     format!(

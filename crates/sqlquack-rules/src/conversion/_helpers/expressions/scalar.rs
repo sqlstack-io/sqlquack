@@ -33,6 +33,7 @@ use crate::conversion::_helpers::support::collecting::{
     collecting, events, placeholder, record, stopped,
 };
 use crate::conversion::_helpers::support::scope::Emitted;
+use crate::conversion::_helpers::support::shapes::{shape_argument, shape_construct};
 use crate::conversion::_helpers::support::site::Site;
 use crate::conversion::_helpers::support::tree::{
     function_construct, missing, node_construct, node_kind, outside_conditions,
@@ -60,7 +61,21 @@ pub(crate) fn convert_expression(node: &Value, site: Site<'_>) -> Result<Emitted
 /// One expression converted, its refusal placed at it and its raises identified.
 fn located(node: &Value, site: Site<'_>) -> Result<Emitted, Refusal> {
     let locator = site.context.locator;
-    let mut emitted = convert_kind(node, site).map_err(|refusal| locator.placed(refusal, node))?;
+    let log = site.context.log;
+    log.enter(&shape_construct(node), false);
+    let converted = convert_kind(node, site);
+    let argument = match &converted {
+        Ok(emitted) => Some(shape_argument(node, emitted)),
+        Err(_) => None,
+    };
+    log.leave(
+        argument,
+        (
+            std::ptr::from_ref(node) as usize,
+            locator.locate(node).map(|location| location.start),
+        ),
+    );
+    let mut emitted = converted.map_err(|refusal| locator.placed(refusal, node))?;
     emitted.sql = locator.identified(&emitted.sql, node);
     Ok(emitted)
 }

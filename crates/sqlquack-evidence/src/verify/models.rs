@@ -59,9 +59,16 @@ pub enum Verdict {
         error: String,
         /// Why the error is the divergence's: the guard's tag, or the native error pattern.
         matched: String,
+        /// Whether each row, replayed alone, matched its recorded row or raised the divergence.
+        rows_proven: bool,
     },
     /// A typing case is recorded: its column types and nullability are evidence for analysis.
     Typed,
+    /// The recording cannot show whether the replay is right, so the case neither passes nor fails.
+    Unproven {
+        /// Why.
+        reason: String,
+    },
     /// The replay differed from the recorded result, or the evidence is invalid.
     Failed {
         /// What went wrong.

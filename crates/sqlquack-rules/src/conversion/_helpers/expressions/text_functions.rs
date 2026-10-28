@@ -14,9 +14,10 @@ use crate::conversion::_helpers::support::tree::{
     field, flag, node_construct, node_kind, outside_conditions, payload_object, require_understood,
 };
 use crate::conversion::constants::{
-    ILIKE_FOLDING, LENGTH_TYPE, LIKE, POSIX_SPACE_CLASS, REGEXP, REGEXP_EXTRACTING_FUNCTIONS,
+    ILIKE_FOLDING, INFIX_NEGATION, LENGTH_TYPE, LIKE, LIKE_WILDCARDS, NEGATED_FACET, NO_QUANTIFIER,
+    POSIX_SPACE_CLASS, QUANTIFIER_FACET, REGEXP, REGEXP_EXTRACTING_FUNCTIONS,
     REGEXP_LINE_FEED_ESCAPE, REGEXP_PARAMETERS, REGEXP_POSIX_SPACE, REGEXP_SHORTHANDS, TEXT_PAD,
-    TEXT_POSITION, TEXT_REPLACE, TEXT_TRANSLATE,
+    TEXT_POSITION, TEXT_POSITION_LIMIT, TEXT_REPLACE, TEXT_TRANSLATE,
 };
 
 /// The quantifier LIKE ANY is written with.
@@ -76,7 +77,8 @@ pub(crate) fn left_right(
     let length = integer_operand(length, construct, site)?;
     Ok(Emitted::new(
         format!(
-            "{}({text}, (CASE WHEN {length} < 0 THEN 0 ELSE {length} END))",
+            "{}({text}, (CASE WHEN {length} < 0 THEN 0 WHEN {length} > {TEXT_POSITION_LIMIT} \
+             THEN {TEXT_POSITION_LIMIT} ELSE {length} END))",
             name.to_ascii_lowercase()
         ),
         SnowflakeType::Varchar,
@@ -95,7 +97,6 @@ pub(crate) fn substring(payload: &Value, site: Site<'_>) -> Result<Emitted, Refu
     )?;
     let text = text_operand(field(payload, "this", &construct)?, &construct, site)?;
     let start = integer_operand(field(payload, "start", &construct)?, &construct, site)?;
-    let start = format!("(CASE WHEN {start} = 0 THEN 1 ELSE {start} END)");
     let length = match payload.get("length").filter(|length| !length.is_null()) {
         None => String::new(),
         Some(length) => {
@@ -116,7 +117,12 @@ pub(crate) fn substring(payload: &Value, site: Site<'_>) -> Result<Emitted, Refu
         }
     };
     Ok(Emitted::new(
-        format!("substring({text}, {start}{length})"),
+        format!(
+            "list_transform([struct_pack(t := {text}, s := (CASE WHEN {start} < \
+             -{TEXT_POSITION_LIMIT} THEN -{TEXT_POSITION_LIMIT} WHEN {start} > {TEXT_POSITION_LIMIT} \
+             THEN {TEXT_POSITION_LIMIT} ELSE {start} END))], lambda p: CASE WHEN p['s'] < 0 \
+             AND -p['s'] > length(p['t']) THEN '' ELSE substring(p['t'], (CASE WHEN p['s'] = 0 THEN 1 ELSE p['s'] END){length}) END)[1]"
+        ),
         SnowflakeType::Varchar,
     ))
 }
@@ -226,7 +232,7 @@ pub(crate) fn split_part(
     ))
 }
 
-/// LIKE, NOT LIKE and ILIKE, with an optional ESCAPE; ILIKE needs an ASCII literal pattern.
+/// LIKE, NOT LIKE and ILIKE, with an optional one-character literal ESCAPE over literal patterns.
 pub(crate) fn like(kind: &str, payload: &Value, site: Site<'_>) -> Result<Emitted, Refusal> {
     let construct = node_construct(kind);
     let _rule = site.context.log.rule(LIKE);
@@ -269,6 +275,18 @@ pub(crate) fn like(kind: &str, payload: &Value, site: Site<'_>) -> Result<Emitte
             ));
         }
     };
+    let log = site.context.log;
+    log.facet(
+        QUANTIFIER_FACET,
+        &payload
+            .get("quantifier")
+            .and_then(Value::as_str)
+            .unwrap_or(NO_QUANTIFIER)
+            .to_ascii_lowercase(),
+    );
+    if flag(payload, "negated") {
+        log.facet(NEGATED_FACET, INFIX_NEGATION);
+    }
     if patterns.is_empty() {
         return Err(outside_conditions(
             construct,
@@ -276,12 +294,23 @@ pub(crate) fn like(kind: &str, payload: &Value, site: Site<'_>) -> Result<Emitte
         ));
     }
     let text = text_operand(field(payload, "left", &construct)?, &construct, site)?;
-    let escape = match payload.get("escape").filter(|escape| !escape.is_null()) {
-        Some(escape) => format!(" ESCAPE {}", text_operand(escape, &construct, site)?),
+    let escape_character = match payload.get("escape").filter(|escape| !escape.is_null()) {
+        Some(escape) => Some(like_escape(escape, &construct, site)?),
+        None => None,
+    };
+    let escape = match escape_character {
+        Some(character) => format!(" ESCAPE {}", string_literal(&character.to_string(), log)),
         None => String::new(),
     };
     let mut matches: Vec<String> = Vec::with_capacity(patterns.len());
     for pattern_node in patterns {
+        if let Some(character) = escape_character {
+            escaped_pattern(
+                &text_literal(pattern_node, &construct, site)?,
+                character,
+                &construct,
+            )?;
+        }
         let pattern = text_operand(pattern_node, &construct, site)?;
         let matched = match kind {
             "i_like" if !text_literal(pattern_node, &construct, site)?.is_ascii() => {
@@ -301,6 +330,41 @@ pub(crate) fn like(kind: &str, payload: &Value, site: Site<'_>) -> Result<Emitte
         format!("({negation}({}))", matches.join(" OR ")),
         SnowflakeType::Boolean,
     ))
+}
+
+/// A LIKE escape: one literal character other than a wildcard, as Snowflake accepts.
+fn like_escape(node: &Value, construct: &Construct, site: Site<'_>) -> Result<char, Refusal> {
+    let text = text_literal(node, construct, site)?;
+    let mut characters = text.chars();
+    match (characters.next(), characters.next()) {
+        (Some(character), None) if !LIKE_WILDCARDS.contains(&character) => Ok(character),
+        _ => Err(outside_conditions(
+            construct.clone(),
+            format!("the LIKE escape '{text}', which is not one character other than a wildcard"),
+        )),
+    }
+}
+
+/// Refuses a pattern whose escape character precedes anything but a wildcard or itself.
+fn escaped_pattern(pattern: &str, escape: char, construct: &Construct) -> Result<(), Refusal> {
+    let mut characters = pattern.chars();
+    while let Some(character) = characters.next() {
+        if character != escape {
+            continue;
+        }
+        match characters.next() {
+            Some(next) if next == escape || LIKE_WILDCARDS.contains(&next) => {}
+            _ => {
+                return Err(outside_conditions(
+                    construct.clone(),
+                    "a LIKE pattern whose escape character precedes neither a wildcard nor \
+                     itself"
+                        .to_owned(),
+                ));
+            }
+        }
+    }
+    Ok(())
 }
 
 /// REGEXP_LIKE, REGEXP_REPLACE and REGEXP_SUBSTR with a literal pattern in the shared syntax.

@@ -40,6 +40,9 @@
   assertion messages carrying `test_case.description`.
 - Run focused tests with `cargo test -p <crate> <filter>`. `make test` runs the workspace suite.
 - Before pushing, run `make check-ci`.
+- Every wrong value or hazard that a review or a recording finds also gets a matching synthetic
+  case in SQLBuild's DuckShop edge-case area, as SQLBuild's `AGENTS.md` describes under "DuckShop
+  Edge Cases". Report each one in neutral terms so it can be added there.
 
 ## Public Repository Hygiene
 

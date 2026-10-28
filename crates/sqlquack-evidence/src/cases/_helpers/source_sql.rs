@@ -1,7 +1,7 @@
 //! The source SQL a case expands to: typed input rows, then the expression or query.
 
 use crate::cases::models::{CaseDefinition, Spelling};
-use crate::constants::{INPUT_RELATION, ORDINAL_COLUMN, VALUE_COLUMN};
+use crate::constants::{INPUT_RELATION, ORDINAL_COLUMN, ROW_COUPLING_WORDS, VALUE_COLUMN};
 
 pub(crate) fn source_sql(case: &CaseDefinition, spelling: Spelling) -> String {
     let rows: Vec<String> = case
@@ -28,6 +28,45 @@ pub(crate) fn source_sql(case: &CaseDefinition, spelling: Spelling) -> String {
         },
         (_, None) => input,
     }
+}
+
+/// Each input row's source alone, for a case whose result rows follow its input rows one for one.
+pub(crate) fn row_sources(case: &CaseDefinition, spelling: Spelling) -> Vec<String> {
+    let independent = match (&case.expression, &case.query) {
+        (Some(expression), _) => !coupled(expression),
+        (None, Some(query)) => row_by_row(query),
+        (None, None) => false,
+    };
+    match independent && case.rows.len() > 1 {
+        true => case
+            .rows
+            .iter()
+            .map(|row| {
+                source_sql(
+                    &CaseDefinition {
+                        rows: vec![row.clone()],
+                        ..case.clone()
+                    },
+                    spelling,
+                )
+            })
+            .collect(),
+        false => Vec::new(),
+    }
+}
+
+/// Whether `query` reads `input` in order with no clause or call that couples rows.
+fn row_by_row(query: &str) -> bool {
+    let upper = query.to_ascii_uppercase();
+    upper.contains(&format!("FROM {INPUT_RELATION} ORDER BY {ORDINAL_COLUMN}").to_ascii_uppercase())
+        && upper.matches(" FROM ").count() == 1
+        && !coupled(query)
+}
+
+/// Whether `sql` holds a clause or call that makes one result row depend on other input rows.
+fn coupled(sql: &str) -> bool {
+    let upper = sql.to_ascii_uppercase();
+    ROW_COUPLING_WORDS.iter().any(|word| upper.contains(word))
 }
 
 /// A query's text after a leading `WITH`, whose CTEs follow the input fixture's.

@@ -32,6 +32,7 @@ pub(crate) fn converted(source: RecordSource, rule_uses: &[(&str, &[&str])]) -> 
                 .collect(),
             rule_uses: uses,
             divergences: BTreeMap::new(),
+            shapes: BTreeMap::new(),
         }),
         refused_constructs: Vec::new(),
     }

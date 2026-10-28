@@ -28,6 +28,13 @@ pub fn merge_provenance<'a>(records: impl IntoIterator<Item = &'a Provenance>) -
                 .or_default()
                 .extend(uses.iter().cloned());
         }
+        for (rule, shapes) in &record.shapes {
+            merged
+                .shapes
+                .entry(rule.clone())
+                .or_default()
+                .extend(shapes.iter().cloned());
+        }
     }
     merged
 }

@@ -12,7 +12,9 @@ use crate::conversion::_helpers::expressions::scalar::convert_expression;
 use crate::conversion::_helpers::support::scope::Emitted;
 use crate::conversion::_helpers::support::site::Site;
 use crate::conversion::_helpers::support::tree::outside_conditions;
-use crate::conversion::constants::{BITWISE, NUMERIC_FUNCTION, ROUNDING, SIGN_RULE};
+use crate::conversion::constants::{
+    BITWISE, NUMERIC_FUNCTION, ROUND_FUNCTION, ROUNDING, SIGN_RULE,
+};
 
 /// ABS of a NUMBER or FLOAT, of the operand's type.
 pub(crate) fn absolute(
@@ -115,8 +117,19 @@ pub(crate) fn rounding(
         _ => return Err(refuse(format!("{name} with these arguments"))),
     };
     let operand = convert_expression(value, site)?;
-    let function = name.to_ascii_lowercase();
+    let function = match name {
+        "TRUNCATE" => "trunc".to_owned(),
+        _ => name.to_ascii_lowercase(),
+    };
     match operand.data_type {
+        SnowflakeType::Float if name == ROUND_FUNCTION && places != 0 => Ok(Emitted::new(
+            format!(
+                "(round(CAST({} AS DOUBLE) * CAST(1e{places} AS DOUBLE)) / CAST(1e{places} AS DOUBLE) \
+                 + 0.0)",
+                operand.sql
+            ),
+            SnowflakeType::Float,
+        )),
         SnowflakeType::Float => Ok(Emitted::new(
             format!(
                 "(CAST({function}({}{}) AS DOUBLE) + 0.0)",

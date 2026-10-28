@@ -93,6 +93,7 @@ fn verdict_label(verdict: &Verdict) -> String {
         Verdict::Refused { .. } => "refused".to_owned(),
         Verdict::Diverged { divergence, .. } => format!("diverged as expected ({divergence})"),
         Verdict::Typed => "typed".to_owned(),
+        Verdict::Unproven { reason } => format!("unproven: {reason}"),
         Verdict::Failed { reason } => format!("FAILED: {reason}"),
     }
 }

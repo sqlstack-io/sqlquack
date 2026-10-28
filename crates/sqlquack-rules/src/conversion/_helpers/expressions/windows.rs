@@ -16,14 +16,16 @@ use crate::conversion::_helpers::expressions::ordered_aggregates::within_group;
 use crate::conversion::_helpers::expressions::scalar::{call_name, convert_expression};
 use crate::conversion::_helpers::expressions::spellings::{as_typed, as_written};
 use crate::conversion::_helpers::support::scope::Emitted;
+use crate::conversion::_helpers::support::shapes::type_family;
 use crate::conversion::_helpers::support::site::{Placement, Site};
 use crate::conversion::_helpers::support::tree::{
     Payload, field, flag, function_construct, integer_literal, list, missing, node_construct,
     node_kind, outside_conditions, payload_object, require_understood,
 };
 use crate::conversion::constants::{
-    DISTINCT_WINDOW_AGGREGATE, WINDOW_AGGREGATE, WINDOW_FIRST_LAST, WINDOW_OFFSET, WINDOW_RANKING,
-    WINDOWED_NAMED_AGGREGATES,
+    DISTINCT_WINDOW_AGGREGATE, FRAME_FACET, FUNCTION_FACET, NO_PARTITION, PARTITION_FACET,
+    SEVERAL_PARTITION_KEYS, UNORDERED_WINDOW_AGGREGATES, WINDOW_AGGREGATE, WINDOW_FIRST_LAST,
+    WINDOW_KEYS_CONSTRUCT, WINDOW_OFFSET, WINDOW_RANKING, WINDOWED_NAMED_AGGREGATES,
 };
 
 /// Snowflake's frame for FIRST_VALUE and LAST_VALUE when none is written.
@@ -35,6 +37,13 @@ const ROWS: &str = "Rows";
 const UNBOUNDED_PRECEDING: &str = "UnboundedPreceding";
 const UNBOUNDED_FOLLOWING: &str = "UnboundedFollowing";
 const CURRENT_ROW: &str = "CurrentRow";
+
+/// A window's partition keys, order items and partition keys' families.
+struct WindowKeys {
+    partition: Vec<String>,
+    order: Vec<String>,
+    families: Vec<&'static str>,
+}
 
 /// The converted OVER clause.
 struct Over<'a> {
@@ -101,6 +110,26 @@ pub(crate) fn convert_window(payload: &Value, site: Site<'_>) -> Result<Emitted,
     let _rule = site.context.log.rule(rule);
     let over_payload = payload_object(field(payload, "over", &construct)?, &construct)?;
     let over = convert_over(over_payload, site.placed(Placement::GROUPED))?;
+    let log = site.context.log;
+    log.facet(
+        FUNCTION_FACET,
+        &match function {
+            "function" | "aggregate_function" => call_name(function_payload),
+            other => other.to_ascii_uppercase(),
+        },
+    );
+    log.facet(
+        FRAME_FACET,
+        match (over.frame, over.order.is_empty()) {
+            (None, true) => "unordered",
+            (None, false) => "ordered",
+            (Some(frame), _) if is_whole_partition(frame) => "whole_partition",
+            (Some(frame), _) => match frame.get("kind").and_then(Value::as_str) {
+                Some(ROWS) => "rows",
+                _ => "range",
+            },
+        },
+    );
     let site = site.placed(Placement::GROUPED);
     let converted = match function {
         "row_number" | "rank" | "dense_rank" => ranking_window(function, &over, site),
@@ -116,6 +145,12 @@ pub(crate) fn convert_window(payload: &Value, site: Site<'_>) -> Result<Emitted,
                 return Err(outside_conditions(
                     function_construct(&name),
                     format!("{name} over an explicit frame, which no recording shows"),
+                ));
+            }
+            if UNORDERED_WINDOW_AGGREGATES.contains(&name.as_str()) && !over.order.is_empty() {
+                return Err(outside_conditions(
+                    function_construct(&name),
+                    format!("{name} over an ordered window, which Snowflake does not support"),
                 ));
             }
             let clause = aggregate_clause(&over, site, &node_construct(function))?;
@@ -140,18 +175,51 @@ pub(crate) fn convert_window(payload: &Value, site: Site<'_>) -> Result<Emitted,
 fn convert_over<'a>(over: &'a Payload, site: Site<'_>) -> Result<Over<'a>, Refusal> {
     let construct = node_construct("window_function");
     require_understood(over, &["partition_by", "order_by", "frame"], &construct)?;
+    let log = site.context.log;
+    log.enter(WINDOW_KEYS_CONSTRUCT, false);
+    let keys = window_keys(over, site, &construct);
+    log.leave(None, (0, None));
+    let WindowKeys {
+        partition,
+        order,
+        families,
+    } = keys?;
+    log.facet(
+        PARTITION_FACET,
+        match families.as_slice() {
+            [] => NO_PARTITION,
+            [family] => family,
+            _ => SEVERAL_PARTITION_KEYS,
+        },
+    );
+    Ok(Over {
+        partition,
+        order,
+        frame: over.get("frame").filter(|frame| !frame.is_null()),
+    })
+}
+
+/// The partition keys, the order items and the partition keys' families, outside the window's shape.
+fn window_keys(
+    over: &Payload,
+    site: Site<'_>,
+    construct: &Construct,
+) -> Result<WindowKeys, Refusal> {
     let mut partition: Vec<String> = Vec::new();
+    let mut families: Vec<&'static str> = Vec::new();
     for key in list(over, "partition_by") {
-        partition.push(grouping_key(convert_expression(key, site)?, &construct)?.sql);
+        let key = grouping_key(convert_expression(key, site)?, construct)?;
+        families.push(type_family(key.data_type));
+        partition.push(key.sql);
     }
     let mut order: Vec<String> = Vec::new();
     for item in list(over, "order_by") {
         order.push(order_item(item, site)?);
     }
-    Ok(Over {
+    Ok(WindowKeys {
         partition,
         order,
-        frame: over.get("frame").filter(|frame| !frame.is_null()),
+        families,
     })
 }
 

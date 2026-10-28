@@ -5,15 +5,16 @@ use sqlquack_core::provenance::models::ProvenanceLog;
 use crate::semi_structured::constants::JSON_ARRAY_POSITION;
 use crate::variants::_helpers::objects::{bound, fidelity_error};
 
-/// The needle's first index in the array; fractions and integers beside fractions raise.
+/// The needle's first index in the array; fractions, objects and arrays as needles raise.
 pub fn json_array_position((needle, array): (&str, &str), log: &ProvenanceLog) -> String {
     log.building_block(JSON_ARRAY_POSITION);
     bound(
         &format!("struct_pack(n := CAST({needle} AS JSON), a := CAST({array} AS JSON))"),
         "q",
         &format!(
-            "(CASE WHEN q['n'] IS NULL OR q['a'] IS NULL OR json_type(q['a']) <> 'ARRAY' THEN NULL \
+            "(CASE WHEN q['n'] IS NULL OR q['a'] IS NULL THEN NULL \
              WHEN json_type(q['n']) IN ('DOUBLE', 'OBJECT', 'ARRAY') THEN CAST({} AS BIGINT) \
+             WHEN json_type(q['a']) <> 'ARRAY' THEN NULL \
              WHEN json_type(q['n']) IN ('UBIGINT', 'BIGINT', 'HUGEINT') \
              AND list_bool_or(list_transform(json_extract(q['a'], '$[*]'), \
              lambda e: json_type(e) NOT IN ('UBIGINT', 'BIGINT', 'HUGEINT', 'VARCHAR', 'BOOLEAN', 'NULL', \

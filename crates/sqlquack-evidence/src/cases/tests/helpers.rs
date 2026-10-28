@@ -114,3 +114,13 @@ pub(crate) fn source_sql_of(reference: &str) -> Option<String> {
         .find(|case| case.reference == reference)
         .map(|case| case.source_sql)
 }
+
+/// How many single-row sources the case `reference` gets once `replace` becomes `with`.
+pub(crate) fn row_source_count(reference: &str, (replace, with): (&str, &str)) -> Option<usize> {
+    let directory = tempfile::tempdir().expect("temporary directory");
+    load_variant(directory.path(), replace, with)
+        .expect("the variant loads")
+        .into_iter()
+        .find(|case| case.reference == reference)
+        .map(|case| case.row_sources.len())
+}

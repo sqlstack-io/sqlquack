@@ -1,3 +1,4 @@
+pub mod date_add_amount;
 pub mod date_add_value;
 pub mod date_diff_value;
 pub mod date_from_parts;

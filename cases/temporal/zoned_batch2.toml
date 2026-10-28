@@ -165,7 +165,6 @@ rows = [
 ]
 expression = "DATE_PART('epoch_second', TRY_TO_TIMESTAMP_TZ(s))"
 tags = ["null", "boundary"]
-expected_divergence = "date_text_spelling"
 
 [[case]]
 id = "to_date_tz"

@@ -1,0 +1,21 @@
+# GET of arrays at computed indexes past 64 bits, which only objects were recorded at.
+category = "semi-structured-array"
+construct = "fn:GET"
+session_profile = "utc-v1"
+
+[[case]]
+id = "get_array_index_past_64_bits"
+description = "GET of arrays at computed indexes around and past the largest 64-bit integer."
+columns = [{ name = "v", type = "VARIANT" }, { name = "i", type = "NUMBER(38,0)" }]
+rows = [
+  ["PARSE_JSON('[1,2,3]')", "9223372036854775807"],
+  ["PARSE_JSON('[1,2,3]')", "9223372036854775808"],
+  ["PARSE_JSON('[1,2,3]')", "18446744073709551616"],
+  ["PARSE_JSON('[1,2,3]')", "99999999999999999999999999999999999999"],
+  ["PARSE_JSON('[\"a\",\"a\"]')", "1"],
+  ["PARSE_JSON('[]')", "18446744073709551616"],
+  ["NULL", "18446744073709551616"],
+  ["PARSE_JSON('[1]')", "NULL"],
+]
+expression = "GET(v, i)"
+tags = ["null", "duplicates", "empty", "invalid"]

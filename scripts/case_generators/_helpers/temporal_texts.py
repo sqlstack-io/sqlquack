@@ -20,9 +20,11 @@ from scripts.case_generators.constants import (
     INSTANTS_FOR_TEXT,
     LOCAL_TIMES,
     MONTH_NAMES,
+    NANOSECOND_YEARS,
     NULL_CELL,
     QUOTE,
     SPELLED_DATE_FORMATS,
+    SUB_MICROSECOND_FORMAT_TOKENS,
     TEMPORAL_TEXTS,
     TIME_ZONES,
     TIMESTAMP_FORMAT_FUNCTIONS,
@@ -118,23 +120,39 @@ def odd_texts(temporal_format: TemporalFormat) -> tuple[str, ...]:
     )
 
 
-def valid_texts(temporal_format: TemporalFormat) -> tuple[str, ...]:
+def valid_texts(
+    *, temporal_format: TemporalFormat, instants: tuple[Instant, ...] = INSTANTS_FOR_TEXT
+) -> tuple[str, ...]:
     """Every instant rendered in the format, without repeats."""
     texts: list[str] = []
-    for instant in INSTANTS_FOR_TEXT:
+    for instant in instants:
         text: str = render(format_text=temporal_format.format, instant=instant)
         if text not in texts:
             texts.append(text)
     return tuple(texts)
 
 
+def isolated_years(*, function: TemporalFunction, temporal_format: TemporalFormat) -> bool:
+    """Whether instants outside the nanosecond range need their own case, sparing other rows."""
+    return function in TIMESTAMP_FORMAT_FUNCTIONS and any(
+        token in temporal_format.format for token in SUB_MICROSECOND_FORMAT_TOKENS
+    )
+
+
 def format_cases(*, function: TemporalFunction, temporal_format: TemporalFormat) -> list[Case]:
     """TRY_ form over valid and odd texts; plain form over valid texts and an impossible date."""
     pattern: str = literal(temporal_format.format)
-    valid: tuple[Row, ...] = (
-        *((literal(text),) for text in valid_texts(temporal_format)),
-        (NULL_CELL,),
+    isolated: bool = isolated_years(function=function, temporal_format=temporal_format)
+    kept: tuple[Instant, ...] = tuple(
+        instant for instant in INSTANTS_FOR_TEXT if not isolated or instant.year in NANOSECOND_YEARS
     )
+    outside: tuple[Instant, ...] = tuple(
+        instant for instant in INSTANTS_FOR_TEXT if instant not in kept
+    )
+    extreme_texts: tuple[str, ...] = valid_texts(temporal_format=temporal_format, instants=outside)
+    extreme: tuple[Row, ...] = tuple((literal(text),) for text in extreme_texts)
+    kept_texts: tuple[str, ...] = valid_texts(temporal_format=temporal_format, instants=kept)
+    valid: tuple[Row, ...] = (*((literal(text),) for text in kept_texts), (NULL_CELL,))
     odd: tuple[Row, ...] = tuple((literal(text),) for text in odd_texts(temporal_format))
     plain: str = f"{function.name}(x, {pattern})"
     attempt: str = f"TRY_{function.name}(x, {pattern})"
@@ -164,6 +182,22 @@ def format_cases(*, function: TemporalFunction, temporal_format: TemporalFormat)
             rows=valid,
             expression=plain,
             tags=("null", "boundary"),
+        ),
+        *(
+            Case(
+                id=f"{case_id}_extreme_years",
+                description=f"{expression} over instants outside the nanosecond range, alone.",
+                columns=column,
+                rows=extreme,
+                expression=expression,
+                tags=("boundary",),
+                expected_divergence=divergence,
+            )
+            for case_id, expression, divergence in (
+                (f"try_{function.slug}_{temporal_format.slug}", attempt, DATE_TEXT_SPELLING),
+                (f"{function.slug}_{temporal_format.slug}", plain, None),
+            )
+            if extreme
         ),
         Case(
             id=f"{function.slug}_{temporal_format.slug}_invalid",
@@ -240,16 +274,7 @@ def auto_cases(
             tags=("null", "invalid", "boundary"),
         ),
         *(
-            Case(
-                id=f"{attempt.slug}_auto_unspelled_{index + 1}",
-                description=f"{attempt.template} of the text {literal(text)}, a spelling no "
-                "recording shows, raises.",
-                columns=column,
-                rows=((literal(text),),),
-                expression=attempt.template,
-                tags=("invalid",),
-                expected_divergence=DATE_TEXT_SPELLING,
-            )
+            _unspelled_case(attempt=attempt, number=index + 1, text=text)
             for index, text in enumerate(sorted(unspelled))
         ),
     ]
@@ -384,3 +409,18 @@ def zone_files() -> list[CaseFile]:
             header=("CONVERT_TIMEZONE across zone pairs and DST transitions.",),
         )
     ]
+
+
+def _unspelled_case(*, attempt: Projection, number: int, text: str) -> Case:
+    """The AUTO attempt on one unrecorded text: raising with digits, NULL without."""
+    digits: bool = any(character.isdigit() for character in text)
+    outcome: str = "a spelling no recording shows, raises" if digits else "without a digit, is NULL"
+    return Case(
+        id=f"{attempt.slug}_auto_unspelled_{number}",
+        description=f"{attempt.template} of the text {literal(text)}, {outcome}.",
+        columns=(Column("x", "VARCHAR"),),
+        rows=((literal(text),),),
+        expression=attempt.template,
+        tags=("invalid",),
+        expected_divergence=DATE_TEXT_SPELLING if digits else None,
+    )

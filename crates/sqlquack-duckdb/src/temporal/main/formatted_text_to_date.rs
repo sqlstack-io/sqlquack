@@ -9,6 +9,7 @@ use crate::blocks::constants::{
 };
 use crate::raises::main::raised::raised;
 use crate::temporal::_helpers::operands::once;
+use crate::temporal::_helpers::text::digitless;
 use crate::temporal::models::DateFormat;
 
 /// The date `sql` spells exactly in `format`; impossible dates are NULL when `trying`, else raise.
@@ -46,7 +47,10 @@ fn converted(sql: &str, (format, trying): (&DateFormat, bool)) -> String {
          Snowflake reading or rejecting"
     ));
     let (empty, impossible) = match trying {
-        true => (format!("{sql} = ''"), "NULL".to_owned()),
+        true => (
+            format!("{sql} = '' OR {}", digitless(sql)),
+            "NULL".to_owned(),
+        ),
         false => (
             "false".to_owned(),
             format!(

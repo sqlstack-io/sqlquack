@@ -41,6 +41,7 @@ use crate::conversion::_helpers::expressions::temporal::{
 use crate::conversion::_helpers::support::divergence::diverge;
 use crate::conversion::_helpers::support::failure::text_failure;
 use crate::conversion::_helpers::support::scope::{Context, Emitted, Literal};
+use crate::conversion::_helpers::support::shapes::type_family;
 use crate::conversion::_helpers::support::site::Site;
 use crate::conversion::_helpers::support::tree::{
     LITERAL_NUMBER, field, missing, node_construct, node_kind, outside_conditions, payload_object,
@@ -49,10 +50,10 @@ use crate::conversion::_helpers::support::tree::{
 use crate::conversion::constants::{
     CAST_BOOLEAN, CAST_NUMERIC, CAST_PARSED_TEXT, CAST_SAME_TYPE, CAST_TEMPORAL, CAST_TEXT_LITERAL,
     CAST_TEXT_TIME, CAST_TEXT_TIMESTAMP, CAST_TO_TEXT, CAST_UTC_ZONED, DATE_TEXT_SPELLING,
-    KIND_CAST_TARGETS, NTZ_OUTPUT_PATTERN, TEXT_TYPE_PAIR, TEXT_TYPE_SPELLINGS, TIME_CAST,
-    TIMESTAMP_RANGE, TIMESTAMP_TEXT_ROUNDING, TO_BOOLEAN_RULE, TO_DOUBLE_PAIR, TO_NUMBER_PAIR,
-    TO_VARCHAR_PAIR, TO_VARIANT_RULE, VARIANT_KIND_CAST, VARIANT_NAME, VARIANT_TEXT_FUNCTION,
-    VARIANT_TO_VARCHAR,
+    FLOAT_SCALE_FACET, KIND_CAST_TARGETS, MICROSECOND_DIGITS, NTZ_OUTPUT_PATTERN, TARGET_FACET,
+    TEXT_TYPE_PAIR, TEXT_TYPE_SPELLINGS, TIME_CAST, TIMESTAMP_RANGE, TIMESTAMP_TEXT_ROUNDING,
+    TO_BOOLEAN_RULE, TO_DOUBLE_PAIR, TO_NUMBER_PAIR, TO_VARCHAR_PAIR, TO_VARIANT_RULE,
+    VARIANT_KIND_CAST, VARIANT_NAME, VARIANT_TEXT_FUNCTION, VARIANT_TO_VARCHAR,
 };
 
 /// Serialised kinds of Snowflake's structured types.
@@ -94,6 +95,7 @@ pub(crate) fn convert_cast(
     let log = site.context.log;
     let refuse = |reason: String| outside_conditions(construct.clone(), reason);
     let target = cast_target(&type_name, &ProvenanceLog::default()).map_err(refuse)?;
+    log.facet(TARGET_FACET, type_family(target.data_type));
     let operand_node = field(payload, "this", &construct)?;
     if let Some(digits) = number_literal_text(operand_node)
         && type_name != VARIANT_NAME
@@ -103,6 +105,11 @@ pub(crate) fn convert_cast(
         return Ok(Emitted::new(sql, target.data_type));
     }
     let operand = convert_expression(operand_node, site)?;
+    if let (SnowflakeType::Float, SnowflakeType::Number { scale, .. }) =
+        (operand.data_type, target.data_type)
+    {
+        log.facet(FLOAT_SCALE_FACET, &scale.to_string());
+    }
     let trying = matches!(construct.name.as_str(), "try_cast");
     if operand.data_type == SnowflakeType::Null && type_name == VARIANT_NAME {
         let _rule = cast_rule(CAST_SAME_TYPE, log);
@@ -299,6 +306,7 @@ fn cast_sql(
         }
         (SnowflakeType::TimestampLtz { precision }, SnowflakeType::TimestampNtz { .. }, _) => {
             let _rule = cast_rule(CAST_UTC_ZONED, log);
+            nanosecond_range(to, (context, construct))?;
             temporal_cast(
                 &utc_wall_time(&operand.sql, log),
                 (SnowflakeType::TimestampNtz { precision }, to),
@@ -311,6 +319,7 @@ fn cast_sql(
             _,
         ) if operand.utc_offset => {
             let _rule = cast_rule(CAST_UTC_ZONED, log);
+            nanosecond_range(to, (context, construct))?;
             temporal_cast(
                 &utc_wall_time(&operand.sql, log),
                 (SnowflakeType::TimestampNtz { precision }, to),
@@ -322,6 +331,19 @@ fn cast_sql(
             temporal_cast(&operand.sql, (from, to), (context, construct))
         }
         (from, _, _) => strict_cast(operand, from, target, log),
+    }
+}
+
+/// Relies on timestamp_range for a naive target held in DuckDB nanoseconds, whose range is narrower.
+fn nanosecond_range(
+    target: SnowflakeType,
+    (context, construct): (&Context<'_>, &Construct),
+) -> Result<(), String> {
+    match target {
+        SnowflakeType::TimestampNtz { precision } if precision > MICROSECOND_DIGITS => {
+            diverge(context, TIMESTAMP_RANGE, construct).map_err(|refusal| refusal.reason)
+        }
+        _ => Ok(()),
     }
 }
 

@@ -67,3 +67,17 @@ pub(crate) struct FunctionMacroOutcome {
     pub(crate) exit_code: Option<i32>,
     pub(crate) values: Vec<String>,
 }
+
+pub(crate) struct CoverageTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) key_families: &'static str,
+    pub(crate) arguments: &'static [&'static str],
+    pub(crate) expected_outcome: CoverageOutcome,
+}
+
+#[derive(Debug, PartialEq, Eq)]
+pub(crate) struct CoverageOutcome {
+    pub(crate) exit_code: Option<i32>,
+    pub(crate) shape_gaps: Vec<String>,
+    pub(crate) hazard_gaps: Vec<String>,
+}

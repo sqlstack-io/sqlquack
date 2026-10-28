@@ -4,7 +4,7 @@ use sqlquack_core::provenance::models::ProvenanceLog;
 
 use crate::blocks::constants::{DATE_TEXT_SPELLING, FORMATTED_TEXT_TO_TIMESTAMP};
 use crate::raises::main::raised::raised;
-use crate::temporal::_helpers::text::bound;
+use crate::temporal::_helpers::text::{bound, digitless};
 use crate::temporal::models::{TimestampField, TimestampFormat};
 
 /// The timestamp `sql` spells in `format`: NULL if empty or impossible, raising if not so spelled.
@@ -43,7 +43,8 @@ pub fn formatted_text_to_timestamp(
          reading or rejecting"
     ));
     let body = format!(
-        "(CASE WHEN {sql} IS NULL OR {sql} = '' THEN NULL \
+        "(CASE WHEN {sql} IS NULL OR {sql} = '' \
+         OR {digitless} THEN NULL \
          WHEN regexp_full_match({sql}, '{pattern}') THEN \
          CASE WHEN {year} > 0 AND {hour} <= 23 AND {minute} <= 59 AND {second} <= 59 THEN \
          CAST(try(make_timestamp({year}, {month}, {day}, {hour}, {minute}, {second})) AS TIMESTAMP_NS) END \
@@ -51,6 +52,7 @@ pub fn formatted_text_to_timestamp(
         year = number(TimestampField::Year),
         month = number(TimestampField::Month),
         day = number(TimestampField::Day),
+        digitless = digitless(sql),
     );
     bound(value, sql, &body)
 }

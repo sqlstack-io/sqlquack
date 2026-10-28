@@ -63,9 +63,15 @@ test:
 # Replays every recorded case on DuckDB; every rule and equivalence needs a passed case.
 # Backup pushes may drop --require-verified; failed cases and error findings still block.
 VERIFY_FLAGS ?= --require-verified --strict-errors
+# Verify reports evidence coverage (docs/coverage.md) and writes it to COVERAGE_REPORT as JSON.
+# REQUIRE_COVERAGE=1 fails on any gap; it stays 0 until the generated hazard cases are recorded.
+COVERAGE_REPORT ?= target/coverage-report.json
+REQUIRE_COVERAGE ?= 0
+COVERAGE_FLAGS := --coverage-json $(COVERAGE_REPORT) $(if $(filter 1,$(REQUIRE_COVERAGE)),--require-coverage,)
 
 verify-recorded:
-	cargo run --release --locked -p sqlquack -- verify $(VERIFY_FLAGS)
+	mkdir -p $(dir $(COVERAGE_REPORT))
+	cargo run --release --locked -p sqlquack -- verify $(VERIFY_FLAGS) $(COVERAGE_FLAGS)
 
 # The exact parser check over each compiled DuckShop project in DUCKSHOP_COMPILED.
 polyglot-duckshop:

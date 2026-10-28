@@ -199,6 +199,14 @@ pub(crate) fn decode(
         match pair {
             [search, result] => {
                 let search = convert_expression(search, site)?;
+                if mixes_float_and_number(subject.data_type, search.data_type) {
+                    return Err(outside_conditions(
+                        construct.clone(),
+                        "DECODE comparing FLOAT with NUMBER, which no recording proves near a \
+                         double's precision"
+                            .to_owned(),
+                    ));
+                }
                 let (left, right) = comparable(subject.clone(), search, construct, site.context)?;
                 tests.push(format!("{} IS NOT DISTINCT FROM {}", left.sql, right.sql));
                 branches.push(convert_expression(result, site)?);
@@ -243,4 +251,13 @@ pub(crate) fn zero_if_null(
         )),
         other => Err(refuse(format!("ZEROIFNULL of {other}"))),
     }
+}
+
+/// Whether one of two types is FLOAT and the other NUMBER.
+fn mixes_float_and_number(left: SnowflakeType, right: SnowflakeType) -> bool {
+    matches!(
+        (left, right),
+        (SnowflakeType::Float, SnowflakeType::Number { .. })
+            | (SnowflakeType::Number { .. }, SnowflakeType::Float)
+    )
 }

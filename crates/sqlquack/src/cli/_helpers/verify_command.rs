@@ -1,13 +1,24 @@
 //! `sqlquack verify`.
 
+use std::collections::BTreeMap;
 use std::io::Write;
 use std::path::Path;
 use std::process::ExitCode;
 
+use sqlquack_evidence::cases::models::LoadedCase;
 use sqlquack_evidence::constants::{SESSION_DEFAULTS_FILE, SESSION_DEFAULTS_NAME};
+use sqlquack_evidence::coverage::constants::COVERAGE_GAPS_LISTED;
+use sqlquack_evidence::coverage::main::check_coverage::check_coverage;
+use sqlquack_evidence::coverage::main::load_domains::load_domains;
+use sqlquack_evidence::coverage::main::load_hazards::load_hazards;
+use sqlquack_evidence::coverage::models::CoverageReport;
 use sqlquack_evidence::results::main::load_session_defaults::load_session_defaults;
 use sqlquack_evidence::verify::main::verify_cases::verify_cases;
-use sqlquack_evidence::verify::models::{ErrorCheck, Verdict, VerifyInputs, VerifyReport};
+use sqlquack_evidence::verify::models::{
+    CaseVerdict, Conversion, ErrorCheck, Verdict, VerifyInputs, VerifyReport,
+};
+use sqlquack_evidence::verify::types::CaseConverter;
+use sqlquack_rules::catalogue::constants::RULES;
 
 use crate::analysis::main::builtin_claims::builtin_claims;
 use crate::analysis::main::builtin_failure_modes::builtin_failure_modes;
@@ -15,7 +26,7 @@ use crate::analysis::main::check_equivalence_cases::check_equivalence_cases;
 use crate::analysis::main::conversion_options::conversion_options;
 use crate::analysis::models::PipelineConverter;
 use crate::cli::_helpers::evidence::{Evidence, load_evidence};
-use crate::cli::models::{EvidencePaths, VerifyArguments};
+use crate::cli::models::{CoverageArguments, EvidencePaths, VerifyArguments};
 
 pub(crate) fn verify_command(
     arguments: &VerifyArguments,
@@ -26,17 +37,18 @@ pub(crate) fn verify_command(
         stderr,
         "sqlquack verify: loading cases and replaying recorded ones on DuckDB…"
     );
-    let report = match verify(arguments) {
-        Ok(report) => report,
+    let (evidence, report) = match verify(arguments) {
+        Ok(verified) => verified,
         Err(error) => {
             let _ = writeln!(stderr, "sqlquack verify: failed: {error}");
             return ExitCode::FAILURE;
         }
     };
+    let coverage = coverage(&arguments.coverage, &evidence, &report);
     let rendered = if arguments.json {
         serde_json::to_string_pretty(&report).unwrap_or_default() + "\n"
     } else {
-        render(&report)
+        render(&report) + &coverage.as_ref().map(render_coverage).unwrap_or_default()
     };
     let _ = stdout.write_all(rendered.as_bytes());
     let failed = count(&report, |verdict| matches!(verdict, Verdict::Failed { .. }));
@@ -50,9 +62,19 @@ pub(crate) fn verify_command(
         .iter()
         .filter(|case| case.error_check.as_ref().is_some_and(is_finding))
         .count();
+    let coverage_blocked = arguments.coverage.require_coverage
+        && !arguments.coverage.coverage_projected
+        && match &coverage {
+            Ok(coverage) => coverage.totals.has_gaps(),
+            Err(_) => true,
+        };
+    for line in report_coverage(&arguments.coverage, coverage.as_ref()) {
+        let _ = writeln!(stderr, "sqlquack verify: {line}");
+    }
     let blocked = failed > 0
         || (arguments.require_verified && (unverified > 0 || report.unproven_sessions > 0))
-        || (arguments.strict_errors && error_findings > 0);
+        || (arguments.strict_errors && error_findings > 0)
+        || coverage_blocked;
     let _ = writeln!(
         stderr,
         "sqlquack verify: error checks: {} agree, {} divergence raises, {error_findings} findings{}",
@@ -70,7 +92,7 @@ pub(crate) fn verify_command(
     let _ = writeln!(
         stderr,
         "sqlquack verify: {}, {} cases: {} passed, {} diverged as expected, {} refused, {} typed, \
-         {} pending, {failed} failed; {} of {} equivalences and rules verified",
+         {} pending, {} unproven, {failed} failed; {} of {} equivalences and rules verified",
         if blocked { "FAILED" } else { "done" },
         report.cases.len(),
         count(&report, |verdict| *verdict == Verdict::Passed),
@@ -84,6 +106,10 @@ pub(crate) fn verify_command(
         )),
         count(&report, |verdict| *verdict == Verdict::Typed),
         count(&report, |verdict| *verdict == Verdict::Pending),
+        count(&report, |verdict| matches!(
+            verdict,
+            Verdict::Unproven { .. }
+        )),
         report.claims.len() - unverified,
         report.claims.len(),
     );
@@ -108,8 +134,151 @@ pub(crate) fn verify_command(
     }
 }
 
-fn verify(arguments: &VerifyArguments) -> Result<VerifyReport, String> {
-    run_verification(&arguments.paths, Some(&arguments.audit_results)).map(|(_, report)| report)
+fn verify(arguments: &VerifyArguments) -> Result<(Evidence, VerifyReport), String> {
+    run_verification(&arguments.paths, Some(&arguments.audit_results))
+}
+
+/// The coverage report, or why it could not be made.
+fn coverage(
+    arguments: &CoverageArguments,
+    evidence: &Evidence,
+    report: &VerifyReport,
+) -> Result<CoverageReport, String> {
+    let domains = load_domains(&arguments.domains).map_err(|error| error.to_string())?;
+    let catalogue = load_hazards(&arguments.hazards).map_err(|error| error.to_string())?;
+    let rules: Vec<&str> = RULES.iter().map(|rule| rule.id).collect();
+    let (verdicts, projected_refusals) = match arguments.coverage_projected {
+        true => projected(evidence, report),
+        false => (report.cases.clone(), Vec::new()),
+    };
+    Ok(CoverageReport {
+        projected_refusals,
+        ..check_coverage(&rules, (&domains, &catalogue), (&evidence.cases, &verdicts))
+    })
+}
+
+/// The verdicts with pending cases that convert counted as passed, and the pending cases refused.
+fn projected(evidence: &Evidence, report: &VerifyReport) -> (Vec<CaseVerdict>, Vec<String>) {
+    let converter = PipelineConverter {
+        options: conversion_options(&evidence.policy, false),
+    };
+    let cases: BTreeMap<&str, &LoadedCase> = evidence
+        .cases
+        .iter()
+        .map(|case| (case.reference.as_str(), case))
+        .collect();
+    let mut refused: Vec<String> = Vec::new();
+    let mut verdicts: Vec<CaseVerdict> = Vec::new();
+    for verdict in &report.cases {
+        let converted = match (&verdict.verdict, cases.get(verdict.reference.as_str())) {
+            (Verdict::Pending, Some(case)) => match converter.convert(case) {
+                Conversion::Converted { provenance, .. } => CaseVerdict {
+                    verdict: Verdict::Passed,
+                    provenance: Some(provenance),
+                    ..verdict.clone()
+                },
+                Conversion::Refused { reasons, .. } => {
+                    refused.push(format!(
+                        "{}: {}",
+                        verdict.reference,
+                        reasons.first().map_or("", String::as_str)
+                    ));
+                    verdict.clone()
+                }
+            },
+            _ => verdict.clone(),
+        };
+        verdicts.push(converted);
+    }
+    (verdicts, refused)
+}
+
+/// The coverage totals to print, after writing the JSON report when asked.
+fn report_coverage(
+    arguments: &CoverageArguments,
+    coverage: Result<&CoverageReport, &String>,
+) -> Vec<String> {
+    let projected = match arguments.coverage_projected {
+        true => ", projected: pending cases that convert counted as passed",
+        false => "",
+    };
+    let mode = match arguments.require_coverage {
+        true => "",
+        false => " (reported only; --require-coverage fails on them)",
+    };
+    let coverage = match coverage {
+        Ok(coverage) => coverage,
+        Err(error) => return vec![format!("coverage not checked: {error}{mode}")],
+    };
+    let totals = &coverage.totals;
+    let mut lines = vec![format!(
+        "coverage (hazard catalogue v{}{projected}): {} of {} rules declare a domain, {} \
+         undeclarable; {} of {} combinations without a passing case, {} shapes accepted outside a \
+         declared domain; {} of {} hazards without a passing case, {} unrecordable{mode}",
+        coverage.catalogue_version,
+        totals.rules - totals.undeclared_rules,
+        totals.rules,
+        totals.undeclarable_rules,
+        totals.shape_gaps,
+        totals.combinations,
+        totals.undeclared_shapes,
+        totals.hazard_gaps,
+        totals.hazards,
+        totals.unrecordable_hazards,
+    )];
+    if arguments.coverage_projected {
+        lines.push(format!(
+            "projected coverage: {} pending cases are refused and would cover nothing",
+            coverage.projected_refusals.len()
+        ));
+    }
+    if let Some(path) = &arguments.coverage_json {
+        let text = serde_json::to_string_pretty(coverage).unwrap_or_default() + "\n";
+        if let Err(error) = std::fs::write(path, text) {
+            lines.push(format!("cannot write the coverage report: {error}"));
+        }
+    }
+    lines
+}
+
+/// One line per rule with a gap, and the first of each kind of gap.
+fn render_coverage(coverage: &CoverageReport) -> String {
+    let mut lines: Vec<String> = Vec::new();
+    for rule in &coverage.rules {
+        let status = match (rule.declared, &rule.undeclarable) {
+            (false, _) => "no declared domain".to_owned(),
+            (true, Some(reason)) => format!("domain cannot be stated: {reason}"),
+            (true, None) => format!(
+                "{} of {} combinations and {} of {} hazards without a passing case, {} shapes \
+                 outside the domain",
+                rule.shape_gaps.len(),
+                rule.combinations,
+                rule.hazard_gaps.len(),
+                rule.hazards,
+                rule.undeclared_shapes.len()
+            ),
+        };
+        let gaps = rule.shape_gaps.len() + rule.hazard_gaps.len() + rule.undeclared_shapes.len();
+        if rule.declared && rule.undeclarable.is_none() && gaps == 0 {
+            continue;
+        }
+        lines.push(format!("coverage: {}: {status}", rule.rule));
+        let listed = [
+            ("accepted outside the domain:", &rule.undeclared_shapes),
+            ("combination", &rule.shape_gaps),
+            ("hazard", &rule.hazard_gaps),
+        ];
+        for (label, gaps) in listed {
+            for gap in gaps.iter().take(COVERAGE_GAPS_LISTED) {
+                lines.push(format!("coverage:   {label} {gap}"));
+            }
+            if gaps.len() > COVERAGE_GAPS_LISTED {
+                let more = gaps.len() - COVERAGE_GAPS_LISTED;
+                lines.push(format!("coverage:   … {more} more (see --coverage-json)"));
+            }
+        }
+    }
+    lines.iter().map(|line| format!("{line}\n")).collect()
 }
 
 /// Loads the evidence and verifies every case with the production converter.
@@ -214,10 +383,12 @@ fn render(report: &VerifyReport) -> String {
                 divergence,
                 error,
                 matched,
+                ..
             } => {
                 format!("diverged as expected ({divergence}, {matched}): DuckDB raised {error}")
             }
             Verdict::Typed => "typed: column types recorded for analysis".to_owned(),
+            Verdict::Unproven { reason } => format!("unproven: {reason}"),
             Verdict::Failed { reason } => format!("FAILED: {reason}"),
         };
         let warnings: String = case

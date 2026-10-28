@@ -28,7 +28,7 @@ rows = [
 ]
 expression = "TRY_TO_TIMESTAMP_NTZ(x, 'YYYY-MM-DD HH24:MI:SS')"
 tags = ["null", "invalid", "boundary"]
-origin = "generated: temporal_texts@4"
+origin = "generated: temporal_texts@5"
 expected_divergence = "date_text_spelling"
 
 [[case]]
@@ -48,7 +48,7 @@ rows = [
 ]
 expression = "TO_TIMESTAMP_NTZ(x, 'YYYY-MM-DD HH24:MI:SS')"
 tags = ["null", "boundary"]
-origin = "generated: temporal_texts@4"
+origin = "generated: temporal_texts@5"
 
 [[case]]
 id = "to_timestamp_ntz_iso_invalid"
@@ -59,7 +59,7 @@ rows = [
 ]
 expression = "TO_TIMESTAMP_NTZ(x, 'YYYY-MM-DD HH24:MI:SS')"
 tags = ["invalid"]
-origin = "generated: temporal_texts@4"
+origin = "generated: temporal_texts@5"
 
 [[case]]
 id = "try_to_timestamp_ntz_iso_t_millis"
@@ -84,7 +84,7 @@ rows = [
 ]
 expression = "TRY_TO_TIMESTAMP_NTZ(x, 'YYYY-MM-DD\"T\"HH24:MI:SS.FF3')"
 tags = ["null", "invalid", "boundary"]
-origin = "generated: temporal_texts@4"
+origin = "generated: temporal_texts@5"
 expected_divergence = "date_text_spelling"
 
 [[case]]
@@ -104,7 +104,7 @@ rows = [
 ]
 expression = "TO_TIMESTAMP_NTZ(x, 'YYYY-MM-DD\"T\"HH24:MI:SS.FF3')"
 tags = ["null", "boundary"]
-origin = "generated: temporal_texts@4"
+origin = "generated: temporal_texts@5"
 
 [[case]]
 id = "to_timestamp_ntz_iso_t_millis_invalid"
@@ -115,7 +115,7 @@ rows = [
 ]
 expression = "TO_TIMESTAMP_NTZ(x, 'YYYY-MM-DD\"T\"HH24:MI:SS.FF3')"
 tags = ["invalid"]
-origin = "generated: temporal_texts@4"
+origin = "generated: temporal_texts@5"
 
 [[case]]
 id = "try_to_timestamp_ntz_iso_nanos"
@@ -128,8 +128,6 @@ rows = [
   ["'1970-01-01 00:00:00.500000000'"],
   ["'2038-01-19 03:14:08.000000000'"],
   ["'2024-07-04 09:05:07.007000000'"],
-  ["'0001-01-01 00:00:00.000000000'"],
-  ["'9999-12-31 23:59:59.999000000'"],
   ["NULL"],
   ["' 2024-02-29 13:45:01.123456789 '"],
   ["'2024-02-29 13:45:01.123456789'"],
@@ -140,7 +138,7 @@ rows = [
 ]
 expression = "TRY_TO_TIMESTAMP_NTZ(x, 'YYYY-MM-DD HH24:MI:SS.FF9')"
 tags = ["null", "invalid", "boundary"]
-origin = "generated: temporal_texts@4"
+origin = "generated: temporal_texts@5"
 expected_divergence = "date_text_spelling"
 
 [[case]]
@@ -154,13 +152,36 @@ rows = [
   ["'1970-01-01 00:00:00.500000000'"],
   ["'2038-01-19 03:14:08.000000000'"],
   ["'2024-07-04 09:05:07.007000000'"],
-  ["'0001-01-01 00:00:00.000000000'"],
-  ["'9999-12-31 23:59:59.999000000'"],
   ["NULL"],
 ]
 expression = "TO_TIMESTAMP_NTZ(x, 'YYYY-MM-DD HH24:MI:SS.FF9')"
 tags = ["null", "boundary"]
-origin = "generated: temporal_texts@4"
+origin = "generated: temporal_texts@5"
+
+[[case]]
+id = "try_to_timestamp_ntz_iso_nanos_extreme_years"
+description = "TRY_TO_TIMESTAMP_NTZ(x, 'YYYY-MM-DD HH24:MI:SS.FF9') over instants outside the nanosecond range, alone."
+columns = [{ name = "x", type = "VARCHAR" }]
+rows = [
+  ["'0001-01-01 00:00:00.000000000'"],
+  ["'9999-12-31 23:59:59.999000000'"],
+]
+expression = "TRY_TO_TIMESTAMP_NTZ(x, 'YYYY-MM-DD HH24:MI:SS.FF9')"
+tags = ["boundary"]
+origin = "generated: temporal_texts@5"
+expected_divergence = "date_text_spelling"
+
+[[case]]
+id = "to_timestamp_ntz_iso_nanos_extreme_years"
+description = "TO_TIMESTAMP_NTZ(x, 'YYYY-MM-DD HH24:MI:SS.FF9') over instants outside the nanosecond range, alone."
+columns = [{ name = "x", type = "VARCHAR" }]
+rows = [
+  ["'0001-01-01 00:00:00.000000000'"],
+  ["'9999-12-31 23:59:59.999000000'"],
+]
+expression = "TO_TIMESTAMP_NTZ(x, 'YYYY-MM-DD HH24:MI:SS.FF9')"
+tags = ["boundary"]
+origin = "generated: temporal_texts@5"
 
 [[case]]
 id = "to_timestamp_ntz_iso_nanos_invalid"
@@ -171,7 +192,7 @@ rows = [
 ]
 expression = "TO_TIMESTAMP_NTZ(x, 'YYYY-MM-DD HH24:MI:SS.FF9')"
 tags = ["invalid"]
-origin = "generated: temporal_texts@4"
+origin = "generated: temporal_texts@5"
 
 [[case]]
 id = "try_to_timestamp_ntz_day_first_minutes"
@@ -196,7 +217,7 @@ rows = [
 ]
 expression = "TRY_TO_TIMESTAMP_NTZ(x, 'DD/MM/YYYY HH24:MI')"
 tags = ["null", "invalid", "boundary"]
-origin = "generated: temporal_texts@4"
+origin = "generated: temporal_texts@5"
 expected_divergence = "date_text_spelling"
 
 [[case]]
@@ -216,7 +237,7 @@ rows = [
 ]
 expression = "TO_TIMESTAMP_NTZ(x, 'DD/MM/YYYY HH24:MI')"
 tags = ["null", "boundary"]
-origin = "generated: temporal_texts@4"
+origin = "generated: temporal_texts@5"
 
 [[case]]
 id = "to_timestamp_ntz_day_first_minutes_invalid"
@@ -227,7 +248,7 @@ rows = [
 ]
 expression = "TO_TIMESTAMP_NTZ(x, 'DD/MM/YYYY HH24:MI')"
 tags = ["invalid"]
-origin = "generated: temporal_texts@4"
+origin = "generated: temporal_texts@5"
 
 [[case]]
 id = "try_to_timestamp_ntz_twelve_hour"
@@ -252,7 +273,7 @@ rows = [
 ]
 expression = "TRY_TO_TIMESTAMP_NTZ(x, 'MM/DD/YYYY HH12:MI:SS AM')"
 tags = ["null", "invalid", "boundary"]
-origin = "generated: temporal_texts@4"
+origin = "generated: temporal_texts@5"
 expected_divergence = "date_text_spelling"
 
 [[case]]
@@ -272,7 +293,7 @@ rows = [
 ]
 expression = "TO_TIMESTAMP_NTZ(x, 'MM/DD/YYYY HH12:MI:SS AM')"
 tags = ["null", "boundary"]
-origin = "generated: temporal_texts@4"
+origin = "generated: temporal_texts@5"
 
 [[case]]
 id = "to_timestamp_ntz_twelve_hour_invalid"
@@ -283,7 +304,7 @@ rows = [
 ]
 expression = "TO_TIMESTAMP_NTZ(x, 'MM/DD/YYYY HH12:MI:SS AM')"
 tags = ["invalid"]
-origin = "generated: temporal_texts@4"
+origin = "generated: temporal_texts@5"
 
 [[case]]
 id = "try_to_timestamp_ntz_offset"
@@ -308,7 +329,7 @@ rows = [
 ]
 expression = "TRY_TO_TIMESTAMP_NTZ(x, 'YYYY-MM-DD HH24:MI:SS TZH:TZM')"
 tags = ["null", "invalid", "boundary"]
-origin = "generated: temporal_texts@4"
+origin = "generated: temporal_texts@5"
 expected_divergence = "date_text_spelling"
 
 [[case]]
@@ -328,7 +349,7 @@ rows = [
 ]
 expression = "TO_TIMESTAMP_NTZ(x, 'YYYY-MM-DD HH24:MI:SS TZH:TZM')"
 tags = ["null", "boundary"]
-origin = "generated: temporal_texts@4"
+origin = "generated: temporal_texts@5"
 
 [[case]]
 id = "to_timestamp_ntz_offset_invalid"
@@ -339,7 +360,7 @@ rows = [
 ]
 expression = "TO_TIMESTAMP_NTZ(x, 'YYYY-MM-DD HH24:MI:SS TZH:TZM')"
 tags = ["invalid"]
-origin = "generated: temporal_texts@4"
+origin = "generated: temporal_texts@5"
 
 [[case]]
 id = "try_to_timestamp_ntz_compact"
@@ -364,7 +385,7 @@ rows = [
 ]
 expression = "TRY_TO_TIMESTAMP_NTZ(x, 'YYYYMMDDHH24MISS')"
 tags = ["null", "invalid", "boundary"]
-origin = "generated: temporal_texts@4"
+origin = "generated: temporal_texts@5"
 expected_divergence = "date_text_spelling"
 
 [[case]]
@@ -384,7 +405,7 @@ rows = [
 ]
 expression = "TO_TIMESTAMP_NTZ(x, 'YYYYMMDDHH24MISS')"
 tags = ["null", "boundary"]
-origin = "generated: temporal_texts@4"
+origin = "generated: temporal_texts@5"
 
 [[case]]
 id = "to_timestamp_ntz_compact_invalid"
@@ -395,7 +416,7 @@ rows = [
 ]
 expression = "TO_TIMESTAMP_NTZ(x, 'YYYYMMDDHH24MISS')"
 tags = ["invalid"]
-origin = "generated: temporal_texts@4"
+origin = "generated: temporal_texts@5"
 
 [[case]]
 id = "try_to_timestamp_ntz_iso_t_offset"
@@ -420,7 +441,7 @@ rows = [
 ]
 expression = "TRY_TO_TIMESTAMP_NTZ(x, 'YYYY-MM-DD\"T\"HH24:MI:SSTZH:TZM')"
 tags = ["null", "invalid", "boundary"]
-origin = "generated: temporal_texts@4"
+origin = "generated: temporal_texts@5"
 expected_divergence = "date_text_spelling"
 
 [[case]]
@@ -440,7 +461,7 @@ rows = [
 ]
 expression = "TO_TIMESTAMP_NTZ(x, 'YYYY-MM-DD\"T\"HH24:MI:SSTZH:TZM')"
 tags = ["null", "boundary"]
-origin = "generated: temporal_texts@4"
+origin = "generated: temporal_texts@5"
 
 [[case]]
 id = "to_timestamp_ntz_iso_t_offset_invalid"
@@ -451,4 +472,4 @@ rows = [
 ]
 expression = "TO_TIMESTAMP_NTZ(x, 'YYYY-MM-DD\"T\"HH24:MI:SSTZH:TZM')"
 tags = ["invalid"]
-origin = "generated: temporal_texts@4"
+origin = "generated: temporal_texts@5"

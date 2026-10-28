@@ -1,0 +1,212 @@
+# Declared domains of predicates: BETWEEN, IN, EXISTS, IS NULL.
+# Format: see docs/coverage.md.
+version = 1
+
+[[rule]]
+id = "rule.between"
+
+[[rule.form]]
+construct = "node:between"
+arguments = [
+  { families = ["integer", "decimal"] },
+  { families = ["integer", "decimal"] },
+  { families = ["integer", "decimal"] },
+]
+template = "{0} BETWEEN {1} AND {2}"
+category = "comparison"
+
+[[rule.form]]
+construct = "node:between"
+arguments = [
+  { families = ["float"] },
+  { families = ["float"] },
+  { families = ["float"] },
+]
+template = "{0} BETWEEN {1} AND {2}"
+category = "comparison"
+
+[[rule.form]]
+construct = "node:between"
+arguments = [
+  { families = ["text"] },
+  { families = ["text"] },
+  { families = ["text"] },
+]
+template = "{0} BETWEEN {1} AND {2}"
+category = "comparison"
+
+[[rule.form]]
+construct = "node:between"
+arguments = [
+  { families = ["date"] },
+  { families = ["date"] },
+  { families = ["date"] },
+]
+template = "{0} BETWEEN {1} AND {2}"
+category = "comparison"
+
+[[rule.form]]
+construct = "node:between"
+arguments = [
+  { families = ["timestamp_ntz"] },
+  { families = ["timestamp_ntz"] },
+  { families = ["timestamp_ntz"] },
+]
+template = "{0} BETWEEN {1} AND {2}"
+category = "comparison"
+
+[[rule.form]]
+construct = "node:between"
+arguments = [
+  { families = ["timestamp_tz", "timestamp_ltz"] },
+  { families = ["timestamp_tz", "timestamp_ltz"] },
+  { families = ["timestamp_tz", "timestamp_ltz"] },
+]
+template = "{0} BETWEEN {1} AND {2}"
+category = "comparison"
+
+[[rule.form]]
+construct = "node:between"
+arguments = [
+  { families = ["date"] },
+  { families = ["text"], kinds = ["literal"] },
+  { families = ["text"], kinds = ["literal"] },
+]
+
+[[rule]]
+id = "rule.exists"
+
+[[rule.form]]
+construct = "node:exists"
+arguments = [
+  { families = ["query"] },
+]
+
+[[rule]]
+id = "rule.in_list"
+
+[[rule.form]]
+construct = "node:in"
+arguments = [
+  { families = ["integer", "decimal"] },
+  { families = ["integer", "decimal", "null"] },
+]
+repeat = true
+template = "{0} IN ({1})"
+category = "comparison"
+
+[[rule.form]]
+construct = "node:in"
+arguments = [
+  { families = ["float"] },
+  { families = ["float", "null"] },
+]
+repeat = true
+template = "{0} IN ({1})"
+category = "comparison"
+
+[[rule.form]]
+construct = "node:in"
+arguments = [
+  { families = ["text"] },
+  { families = ["text", "null"] },
+]
+repeat = true
+template = "{0} IN ({1})"
+category = "comparison"
+
+[[rule.form]]
+construct = "node:in"
+arguments = [
+  { families = ["boolean"] },
+  { families = ["boolean", "null"] },
+]
+repeat = true
+template = "{0} IN ({1})"
+category = "comparison"
+
+[[rule.form]]
+construct = "node:in"
+arguments = [
+  { families = ["date"] },
+  { families = ["date", "null"] },
+]
+repeat = true
+template = "{0} IN ({1})"
+category = "comparison"
+
+[[rule.form]]
+construct = "node:in"
+arguments = [
+  { families = ["timestamp_ntz"] },
+  { families = ["timestamp_ntz", "null"] },
+]
+repeat = true
+template = "{0} IN ({1})"
+category = "comparison"
+
+[[rule.form]]
+construct = "node:in"
+arguments = [
+  { families = ["timestamp_tz"] },
+  { families = ["timestamp_tz", "null"] },
+]
+repeat = true
+template = "{0} IN ({1})"
+category = "comparison"
+
+[[rule.form]]
+construct = "node:in"
+arguments = [
+  { families = ["timestamp_ltz"] },
+  { families = ["timestamp_ltz", "null"] },
+]
+repeat = true
+template = "{0} IN ({1})"
+category = "comparison"
+
+[[rule.form]]
+construct = "node:in"
+arguments = [
+  { families = ["variant"] },
+  { families = ["text"] },
+]
+repeat = true
+
+[[rule]]
+id = "rule.in_subquery"
+
+[[rule.form]]
+construct = "node:in"
+arguments = [
+  { families = ["integer", "decimal", "float", "text", "boolean", "date", "timestamp_ntz", "timestamp_ltz", "timestamp_tz"] },
+  { families = ["query"] },
+]
+template = "{0} IN {1}"
+category = "comparison"
+benign = { "1" = "(SELECT x0 FROM input)" }
+
+[[rule]]
+id = "rule.not_in_subquery"
+
+[[rule.form]]
+construct = "node:in"
+arguments = [
+  { families = ["integer", "decimal", "float", "text", "boolean", "date", "timestamp_ntz", "timestamp_ltz", "timestamp_tz"] },
+  { families = ["query"] },
+]
+template = "{0} NOT IN {1}"
+query = "SELECT x0 FROM input WHERE {expression} ORDER BY ordinal"
+category = "comparison"
+benign = { "1" = "(SELECT x0 FROM input WHERE ordinal = 1)" }
+
+[[rule]]
+id = "rule.is_null"
+
+[[rule.form]]
+construct = "node:is_null"
+arguments = [
+  { families = ["integer", "decimal", "float", "text", "boolean", "date", "time", "timestamp_ntz", "timestamp_ltz", "timestamp_tz", "variant"] },
+]
+template = "{0} IS NULL"
+category = "conditional"

@@ -167,7 +167,7 @@ fn modulo_of(
         let _float = log.rule(FLOAT_MODULO);
         return Ok(Emitted::new(
             format!(
-                "(CAST({} AS DOUBLE) % CAST({} AS DOUBLE))",
+                "((CAST({} AS DOUBLE) % CAST({} AS DOUBLE)) + 0.0)",
                 left.sql, right.sql
             ),
             SnowflakeType::Float,
@@ -186,8 +186,41 @@ fn modulo_of(
             left.data_type, right.data_type
         )));
     }
-    let sql = cast(&format!("({} % {})", left.sql, right.sql), result, log).map_err(refuse)?;
+    let remainder = match (left.data_type, right.data_type) {
+        (
+            SnowflakeType::Number {
+                precision: left_precision,
+                scale: left_scale,
+            },
+            SnowflakeType::Number {
+                precision: right_precision,
+                scale: right_scale,
+            },
+        ) if (left_precision - left_scale).max(right_precision - right_scale)
+            + left_scale.max(right_scale)
+            > MAX_PRECISION =>
+        {
+            if right_scale != 0 {
+                return Err(refuse(format!(
+                    "`%` of {} and {}, which DuckDB computes as a double",
+                    left.data_type, right.data_type
+                )));
+            }
+            whole_divisor_remainder((&left.sql, &right.sql))
+        }
+        _ => format!("({} % {})", left.sql, right.sql),
+    };
+    let sql = cast(&remainder, result, log).map_err(refuse)?;
     Ok(Emitted::new(sql, result))
+}
+
+/// `x % y` for a whole-number `y`, exact where DuckDB's `%` of the two would use a double.
+fn whole_divisor_remainder((dividend, divisor): (&str, &str)) -> String {
+    format!(
+        "list_transform([{dividend}], lambda modulo_dividend: \
+         (CAST(trunc(modulo_dividend) AS DECIMAL({MAX_PRECISION},0)) % {divisor}) \
+         + (modulo_dividend - trunc(modulo_dividend)))[1]"
+    )
 }
 
 fn exact_arithmetic(

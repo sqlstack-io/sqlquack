@@ -25,16 +25,18 @@ use sqlquack_snowflake::typing::models::SnowflakeType;
 use crate::conversion::_helpers::expressions::objects::{
     json_value, refused, semi_structured, text_literal, variant,
 };
-use crate::conversion::_helpers::expressions::scalar::convert_expression;
+use crate::conversion::_helpers::expressions::scalar::{call_name, convert_expression};
 use crate::conversion::_helpers::expressions::strings::text_operand;
 use crate::conversion::_helpers::support::divergence::{allows, diverge};
 use crate::conversion::_helpers::support::scope::{Emitted, Literal};
 use crate::conversion::_helpers::support::site::Site;
+use crate::conversion::_helpers::support::tree::node_kind;
 use crate::conversion::constants::{
     ARRAY_CAT_RULE, ARRAY_COMPACT_RULE, ARRAY_CONSTRUCT_COMPACT_RULE, ARRAY_CONSTRUCT_RULE,
     ARRAY_CONTAINS_RULE, ARRAY_EXCEPT_RULE, ARRAY_POSITION_RULE, ARRAY_POSITION_TYPE,
-    ARRAY_SIZE_RULE, ARRAY_TO_STRING_RULE, OBJECT_KEYS_RULE, OBJECT_PICK_RULE, SPLIT_RULE,
-    TO_VARIANT_RULE, TYPED_CHECKS, VARIANT_KIND_RULE, VARIANT_KINDS, VARIANT_TYPED_CHECK,
+    ARRAY_SIZE_RULE, ARRAY_TO_STRING_RULE, FUNCTION_KIND, OBJECT_KEYS_RULE, OBJECT_PICK_RULE,
+    PICKED_ARRAY_FUNCTIONS, SPLIT_RULE, TO_VARIANT_RULE, TYPED_CHECKS, VARIANT_KIND_RULE,
+    VARIANT_KINDS, VARIANT_TYPED_CHECK,
 };
 
 /// A VARIANT operand, or a NULL literal as a NULL VARIANT.
@@ -183,7 +185,7 @@ pub(crate) fn variant_function(
     }
 }
 
-/// OBJECT_PICK of literal text keys, or of one VARIANT array of strings.
+/// OBJECT_PICK of literal text keys, or of one array of strings an array builder makes.
 fn object_pick(
     object: &Value,
     keys: &[Value],
@@ -195,6 +197,12 @@ fn object_pick(
     let object = variant(object, construct, site)?;
     let picked = match keys {
         [array] if !matches!(literal(array, site)?, Some(Literal::Text(_))) => {
+            if !built_array(array) {
+                return Err(refused(
+                    construct,
+                    "OBJECT_PICK of keys in a VARIANT, which Snowflake does not pick by its elements",
+                ));
+            }
             diverge(site.context, JSON_FIDELITY, construct)?;
             PickedKeys::Array(variant(array, construct, site)?)
         }
@@ -205,6 +213,13 @@ fn object_pick(
         ),
     };
     Ok(semi_structured(json_object_pick(&object, &picked, log)))
+}
+
+/// Whether `node` calls a function recorded giving OBJECT_PICK an ARRAY rather than a VARIANT.
+fn built_array(node: &Value) -> bool {
+    node_kind(node).is_some_and(|(kind, payload)| {
+        kind == FUNCTION_KIND && PICKED_ARRAY_FUNCTIONS.contains(&call_name(payload).as_str())
+    })
 }
 
 fn literal(node: &Value, site: Site<'_>) -> Result<Option<Literal>, Refusal> {

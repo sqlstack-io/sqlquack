@@ -6,7 +6,7 @@ use sqlquack_core::provenance::models::ProvenanceLog;
 use sqlquack_core::refusals::models::Refusal;
 use sqlquack_duckdb::blocks::main::varchar_length_check::varchar_length_check;
 use sqlquack_duckdb::semi_structured::constants::VARIANT_TYPED_VALUES;
-use sqlquack_duckdb::semi_structured::constants::{JSON_FIDELITY, JSON_NULL};
+use sqlquack_duckdb::semi_structured::constants::{JSON_FIDELITY, JSON_NULL, PATH_READ_KEYS};
 use sqlquack_duckdb::semi_structured::main::json_get_computed::json_get_computed;
 use sqlquack_duckdb::semi_structured::main::json_get_ignore_case::json_get_ignore_case;
 use sqlquack_duckdb::semi_structured::main::json_guarded::json_guarded;
@@ -26,11 +26,12 @@ use crate::conversion::_helpers::support::divergence::{allows, diverge};
 use crate::conversion::_helpers::support::scope::{Context, Emitted, Literal};
 use crate::conversion::_helpers::support::site::Site;
 use crate::conversion::_helpers::support::tree::{
-    field, node_construct, outside_conditions, payload_object, require_understood,
+    field, node_construct, node_kind, outside_conditions, payload_object, require_understood,
 };
 use crate::conversion::constants::{
-    DATE_TEXT_SPELLING, PARSE_JSON_RULE, PARSE_JSON_VARIANT, TIMESTAMP_RANGE, VARIANT_CAST,
-    VARIANT_COMPUTED_GET, VARIANT_INSPECT, VARIANT_NAME, VARIANT_PATH, VARIANT_TYPE_NAME,
+    DATE_TEXT_SPELLING, LITERAL_KIND, NEGATE_KIND, PARSE_JSON_RULE, PARSE_JSON_VARIANT,
+    TIMESTAMP_RANGE, VARIANT_CAST, VARIANT_COMPUTED_GET, VARIANT_INSPECT, VARIANT_NAME,
+    VARIANT_PATH, VARIANT_TYPE_NAME,
 };
 
 /// PARSE_JSON or TRY_PARSE_JSON of text: raises wherever the two parsers may disagree.
@@ -125,19 +126,23 @@ pub(crate) fn variant_get(
     };
     let base = variant_operand(value, construct, site)?;
     match name {
+        "GET" if negative_literal(key) => Err(outside_conditions(
+            construct.clone(),
+            "GET at a negative constant index, which Snowflake rejects".to_owned(),
+        )),
         "GET" => match literal_step(key, construct, site) {
             Ok(step) => located(&base, &[step], construct, site.context),
             Err(refusal) => {
                 let step = convert_expression(key, site)?;
+                if step.literal.is_some() {
+                    return Err(refusal);
+                }
                 let index = match step.data_type {
                     SnowflakeType::Number { scale: 0, .. } => true,
                     SnowflakeType::Varchar => false,
                     _ => return Err(refusal),
                 };
                 let _computed = site.context.log.rule(VARIANT_COMPUTED_GET);
-                if !index {
-                    diverge(site.context, JSON_FIDELITY, construct)?;
-                }
                 Ok(semi_structured(json_get_computed(
                     &base,
                     (&step.sql, index),
@@ -159,6 +164,17 @@ pub(crate) fn variant_get(
                 .map(semi_structured)
                 .map_err(|reason| outside_conditions(construct.clone(), reason))
         }
+    }
+}
+
+/// Whether `node` is a negated number literal, a constant Snowflake checks when it compiles.
+fn negative_literal(node: &Value) -> bool {
+    match node_kind(node) {
+        Some((NEGATE_KIND, payload)) => payload
+            .get("this")
+            .and_then(node_kind)
+            .is_some_and(|(kind, _)| kind == LITERAL_KIND),
+        _ => false,
     }
 }
 
@@ -282,6 +298,12 @@ fn located(
 
 fn literal_step(node: &Value, construct: &Construct, site: Site<'_>) -> Result<PathStep, Refusal> {
     match convert_expression(node, site)?.literal {
+        Some(Literal::Text(key)) if PATH_READ_KEYS.contains(&key.as_str()) => {
+            Err(outside_conditions(
+                construct.clone(),
+                format!("the key `{key}`, which a quoted JSON path cannot name"),
+            ))
+        }
         Some(Literal::Text(key)) => Ok(PathStep::Key(key)),
         Some(Literal::Number(digits)) => digits.parse().map(PathStep::Index).map_err(|_| {
             outside_conditions(

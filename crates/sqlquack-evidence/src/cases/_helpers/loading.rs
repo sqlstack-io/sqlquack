@@ -7,10 +7,10 @@ use sqlquack_policy::policy::models::{Policy, SessionValue};
 
 use crate::cases::_helpers::functions::{create_function, function_problems};
 use crate::cases::_helpers::hashing::case_hash;
-use crate::cases::_helpers::source_sql::source_sql;
+use crate::cases::_helpers::source_sql::{row_sources, source_sql};
 use crate::cases::models::{
-    CaseDefinition, CaseFile, CaseRole, EvidenceKind, HashedContent, LoadedCase, QueryOrder,
-    Spelling,
+    CaseDefinition, CaseFile, CaseInput, CaseRole, EvidenceKind, HashedContent, LoadedCase,
+    QueryOrder, Spelling,
 };
 use crate::constants::{
     CANONICAL_SUFFIX, EVIDENCE_FORMAT, ORDINAL_COLUMN, SOURCE_DIALECT, VALUE_COLUMN,
@@ -128,7 +128,25 @@ fn expand(
         values,
         functions: case.functions.clone(),
         setup_sql,
+        inputs: inputs(case),
+        row_sources: row_sources(case, spelling),
     }
+}
+
+/// Each input column of `case` with its cells in row order.
+fn inputs(case: &CaseDefinition) -> Vec<CaseInput> {
+    let mut inputs: Vec<CaseInput> = Vec::new();
+    for (index, column) in case.columns.iter().enumerate() {
+        let mut cells: Vec<String> = Vec::new();
+        for row in &case.rows {
+            cells.extend(row.get(index).cloned());
+        }
+        inputs.push(CaseInput {
+            column: column.clone(),
+            cells,
+        });
+    }
+    inputs
 }
 
 /// What `case` is evidence for: its own `evidence`, else its file's, else conversion.

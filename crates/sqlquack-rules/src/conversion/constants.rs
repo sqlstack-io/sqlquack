@@ -54,6 +54,8 @@ pub const LAMBDA_PARAMETER_PREFIX: &str = "lambda_";
 pub const DISTINCT_WINDOW_AGGREGATE: &str = "count";
 /// The named aggregates that convert over a window.
 pub const WINDOWED_NAMED_AGGREGATES: &[&str] = &["COUNT_IF", "BOOLOR_AGG", "BOOLAND_AGG"];
+/// Window aggregates Snowflake accepts only over an unordered window.
+pub const UNORDERED_WINDOW_AGGREGATES: &[&str] = &["BOOLOR_AGG", "BOOLAND_AGG"];
 /// The divergence where DuckDB raises for a zoned timestamp with a sub-microsecond part.
 pub const TIMESTAMP_TZ_SUBMICRO: &str = "timestamp_tz_submicro";
 /// Fractional digits DuckDB's TIMESTAMP and TIMESTAMPTZ hold.
@@ -1024,3 +1026,45 @@ pub const FUNCTION_RESULT_TYPES: &[(&str, SnowflakeType)] = &[
         },
     ),
 ];
+/// Node kinds whose shapes are named as calls, `fn:<NAME>`, besides generic calls.
+pub(crate) const SHAPE_CALL_KINDS: &[&str] = &["aggregate_function"];
+/// Node kinds an argument's source is read through: parentheses and comments.
+pub(crate) const SHAPE_WRAPPER_KINDS: &[&str] = &["paren", "annotated"];
+/// The shape facet naming a cast's target type family.
+pub(crate) const TARGET_FACET: &str = "target";
+/// The shape facet naming the scale a FLOAT is cast to.
+pub(crate) const FLOAT_SCALE_FACET: &str = "float_scale";
+/// The shape facet naming a LIKE's quantifier: `none`, `any` or `all`.
+pub(crate) const QUANTIFIER_FACET: &str = "quantifier";
+/// A LIKE's quantifier when none is written.
+pub(crate) const NO_QUANTIFIER: &str = "none";
+/// The shape facet recording a negation written infix, as in `x NOT LIKE p`.
+pub(crate) const NEGATED_FACET: &str = "negated";
+/// The value of `negated` for an infix negation.
+pub(crate) const INFIX_NEGATION: &str = "infix";
+/// The shape facet naming a window's function.
+pub(crate) const FUNCTION_FACET: &str = "function";
+/// The shape facet naming a window's frame: unordered, ordered, whole partition, rows or range.
+pub(crate) const FRAME_FACET: &str = "frame";
+/// The construct a window's partition and order keys convert under, outside the window's shape.
+pub(crate) const WINDOW_KEYS_CONSTRUCT: &str = "node:window_keys";
+/// The shape facet naming a window's partition key family: `none`, a family or `several`.
+pub(crate) const PARTITION_FACET: &str = "partition";
+/// The `partition` facet of a window without PARTITION BY.
+pub(crate) const NO_PARTITION: &str = "none";
+/// The `partition` facet of a window partitioned by several keys.
+pub(crate) const SEVERAL_PARTITION_KEYS: &str = "several";
+/// The LIKE wildcards, which a LIKE escape character must precede.
+pub(crate) const LIKE_WILDCARDS: [char; 2] = ['%', '_'];
+/// The node kind of unary minus.
+pub(crate) const NEGATE_KIND: &str = "neg";
+/// The node kind of a literal.
+pub(crate) const LITERAL_KIND: &str = "literal";
+/// The furthest text position SUBSTR, LEFT and RIGHT pass to DuckDB, beyond any Snowflake text.
+pub(crate) const TEXT_POSITION_LIMIT: &str = "2147483647";
+/// ROUND, whose FLOAT form to positive places overflows as Snowflake computes it.
+pub(crate) const ROUND_FUNCTION: &str = "ROUND";
+/// The node kind of a function call.
+pub(crate) const FUNCTION_KIND: &str = "function";
+/// Array builders whose ARRAY OBJECT_PICK was recorded picking by its elements.
+pub(crate) const PICKED_ARRAY_FUNCTIONS: [&str; 2] = ["ARRAY_CONSTRUCT", "ARRAY_EXCEPT"];

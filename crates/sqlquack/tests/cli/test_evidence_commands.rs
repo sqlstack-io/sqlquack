@@ -17,7 +17,7 @@ fn given_repository_policy_and_cases_when_running_evidence_commands_then_they_lo
         CommandTestCase {
             description: "verify validates the policy and cases and reports every case pending",
             arguments: &["verify"],
-            mention: " pending, 0 failed",
+            mention: " unproven, 0 failed",
             expected_outcome: CommandOutcome {
                 exit_code: Some(0),
                 wrote_pending_files: false,

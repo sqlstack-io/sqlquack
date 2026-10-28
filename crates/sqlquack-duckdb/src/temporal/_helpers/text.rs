@@ -4,7 +4,9 @@ use sqlquack_core::failures::constants::VARIANT_NOT_CAST;
 use sqlquack_core::failures::main::tagged_message::tagged_message;
 use sqlquack_core::failures::models::SnowflakeCode;
 
-use crate::blocks::constants::{CONVERSION_WHITESPACE, VARIANT_CAST_MESSAGE};
+use crate::blocks::constants::{
+    CONVERSION_WHITESPACE, DIGITLESS_TEXT_PATTERN, VARIANT_CAST_MESSAGE,
+};
 use crate::blocks::models::TextFailure;
 use crate::raises::main::raised::raised;
 
@@ -34,4 +36,9 @@ pub(crate) fn whitespace_trimmed(sql: &str) -> String {
 /// `body` over `value` evaluated once, as the lambda parameter `name`.
 pub(crate) fn bound(value: &str, name: &str, body: &str) -> String {
     format!("list_transform([{value}], lambda {name}: {body})[1]")
+}
+
+/// Whether `sql` has no ASCII digit, which TRY_ parsing was recorded reading as NULL.
+pub(crate) fn digitless(sql: &str) -> String {
+    format!("regexp_full_match({sql}, '{DIGITLESS_TEXT_PATTERN}')")
 }

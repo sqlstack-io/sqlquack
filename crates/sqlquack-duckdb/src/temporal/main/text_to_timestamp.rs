@@ -13,7 +13,7 @@ use crate::blocks::constants::{
 use crate::blocks::models::TextFailure;
 use crate::raises::main::raised::raised;
 use crate::temporal::_helpers::operands::once;
-use crate::temporal::_helpers::text::{checked, parse_failure, whitespace_trimmed};
+use crate::temporal::_helpers::text::{checked, digitless, parse_failure, whitespace_trimmed};
 
 /// The AUTO spellings recorded, or epoch integer text; others raise, or are NULL as TRY_ recorded.
 pub fn text_to_timestamp(
@@ -72,8 +72,9 @@ pub fn text_to_timestamp(
             month_first = parsed("%m/%d/%Y %H:%M:%S"),
             unrecorded = match on_failure {
                 TextFailure::Null => format!(
-                    "CASE WHEN {trimmed} = '' OR regexp_full_match({trimmed}, \
+                    "CASE WHEN {trimmed} = '' OR {} OR regexp_full_match({trimmed}, \
                  '{NULL_TIMESTAMP_TEXT_PATTERN}') THEN NULL ELSE {} END",
+                    digitless(&trimmed),
                     unrecorded_spelling(TextFailure::Text, &failure)
                 ),
                 TextFailure::Text | TextFailure::Variant =>
@@ -92,8 +93,9 @@ fn text_to_date(sql: &str, (trimmed, on_failure): (&str, TextFailure)) -> String
     let impossible = parse_failure(on_failure, (DATE_NOT_RECOGNIZED, "Date is not recognized"));
     let failure = match on_failure {
         TextFailure::Null => format!(
-            "CASE WHEN {trimmed} = '' OR regexp_full_match({trimmed}, '{NULL_DATE_TEXT_PATTERN}') \
-             THEN NULL ELSE {} END",
+            "CASE WHEN {trimmed} = '' OR {} OR regexp_full_match({trimmed}, \
+             '{NULL_DATE_TEXT_PATTERN}') THEN NULL ELSE {} END",
+            digitless(trimmed),
             raised(&format!(
                 "{DATE_TEXT_SPELLING}: text in a spelling no recording shows Snowflake reading or \
                  rejecting"

@@ -8,6 +8,7 @@ use sqlquack_duckdb::blocks::main::cast::cast;
 use sqlquack_duckdb::blocks::main::string_literal::string_literal;
 use sqlquack_duckdb::blocks::models::TextFailure;
 use sqlquack_duckdb::temporal::constants::DATE_FORMATS;
+use sqlquack_duckdb::temporal::main::date_add_amount::date_add_amount;
 use sqlquack_duckdb::temporal::main::date_add_value::date_add_value;
 use sqlquack_duckdb::temporal::main::date_diff_value::date_diff_value;
 use sqlquack_duckdb::temporal::main::date_from_parts::date_from_parts;
@@ -123,14 +124,12 @@ fn zoned_part_operand(operand: Emitted, unit: &str, site: Site<'_>) -> Result<Zo
     };
     let _zoned = log.rule(ZONED_PARTS);
     match unit {
-        "EPOCH_SECOND" => Ok(ZonedPart::Epoch(format!(
-            "floor(epoch_us({}) / 1000000)",
-            operand.sql
-        ))),
-        "EPOCH_MILLISECOND" => Ok(ZonedPart::Epoch(format!(
-            "floor(epoch_us({}) / 1000)",
-            operand.sql
-        ))),
+        "EPOCH_SECOND" | "EPOCH_MILLISECOND" => Ok(ZonedPart::Epoch(date_part_value(
+            &operand.sql,
+            unit,
+            operand.data_type,
+            log,
+        )?)),
         _ if utc => Ok(ZonedPart::Clock(Emitted::new(
             utc_wall_time(&operand.sql, log),
             SnowflakeType::TimestampNtz {
@@ -246,6 +245,10 @@ pub(crate) fn date_add(
         return Err(refuse(format!("a {} amount", amount.data_type)));
     };
     let operand = clock_operand(value, construct, site)?;
+    let amount = Emitted::new(
+        date_add_amount(&amount.sql, site.context.log),
+        amount.data_type,
+    );
     if let SnowflakeType::Time { .. } = operand.data_type {
         let _time = site.context.log.rule(TIME_ARITHMETIC);
         let sql =
@@ -487,9 +490,7 @@ pub(crate) fn to_timestamp(
         }
         (SnowflakeType::Number { scale: 0, .. }, scale, false) if !trying => {
             let scale = scale.unwrap_or(0);
-            if scale > MICROSECOND_DIGITS {
-                diverge(site.context, TIMESTAMP_RANGE, construct)?;
-            }
+            diverge(site.context, TIMESTAMP_RANGE, construct)?;
             Ok(Emitted::new(
                 epoch_to_timestamp(&operand.sql, scale, log),
                 SnowflakeType::TimestampNtz { precision: scale },
@@ -499,9 +500,7 @@ pub(crate) fn to_timestamp(
             if !trying && scale <= MAX_FRACTION_DIGITS_U8 =>
         {
             let _decimal = log.rule(DECIMAL_EPOCH_RULE);
-            if scale > MICROSECOND_DIGITS {
-                diverge(site.context, TIMESTAMP_RANGE, construct)?;
-            }
+            diverge(site.context, TIMESTAMP_RANGE, construct)?;
             let units = format!(
                 "(CAST({} AS DECIMAL(38,{scale})) * {})",
                 operand.sql,
