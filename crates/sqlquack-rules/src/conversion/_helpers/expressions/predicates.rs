@@ -53,6 +53,18 @@ pub(crate) fn between(payload: &Value, site: Site<'_>) -> Result<Emitted, Refusa
     let value = convert_expression(field(payload, "this", &construct)?, site)?;
     let low = convert_expression(field(payload, "low", &construct)?, site)?;
     let high = convert_expression(field(payload, "high", &construct)?, site)?;
+    let numeric = [value.data_type, low.data_type, high.data_type];
+    if numeric.contains(&SnowflakeType::Float)
+        && numeric
+            .iter()
+            .any(|data_type| matches!(data_type, SnowflakeType::Number { .. }))
+    {
+        return Err(outside_conditions(
+            construct,
+            "BETWEEN mixing FLOAT and NUMBER, which no recording proves near a double's precision"
+                .to_owned(),
+        ));
+    }
     let (value, low, high) = match (
         same_family(value.data_type, low.data_type, &construct),
         same_family(value.data_type, high.data_type, &construct),
