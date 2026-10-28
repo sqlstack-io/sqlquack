@@ -2,7 +2,10 @@
 
 use sqlquack_snowflake::typing::models::SnowflakeType;
 
-use crate::blocks::constants::{DUCKDB_FRACTIONAL_PRECISION, NANOSECOND_DIGITS};
+use crate::blocks::constants::{
+    DUCKDB_FRACTIONAL_PRECISION, NANOSECOND_DIGITS, NANOSECOND_TIMESTAMP_MICROS, TIMESTAMP_RANGE,
+};
+use crate::raises::main::raised::raised;
 
 /// The digits of the DuckDB timestamp that holds a naive Snowflake timestamp of `precision`.
 pub(crate) fn stored_digits(precision: u8) -> u8 {
@@ -65,7 +68,14 @@ pub(crate) fn with_source_nanos(micros: &str, source_sql: &str, source: Snowflak
         SnowflakeType::TimestampNtz { precision } if precision > DUCKDB_FRACTIONAL_PRECISION => {
             let nanos = epoch_units(source_sql, NANOSECOND_DIGITS);
             format!(
-                "make_timestamp_ns(epoch_us({micros}) * 1000 + ((({nanos}) % 1000) + 1000) % 1000)"
+                "list_transform([epoch_us({micros})], lambda result_micros: CASE WHEN \
+                 abs(result_micros) > {NANOSECOND_TIMESTAMP_MICROS} THEN CAST({} AS TIMESTAMP_NS) \
+                 ELSE make_timestamp_ns(result_micros * 1000 + ((({nanos}) % 1000) + 1000) % 1000) \
+                 END)[1]",
+                raised(&format!(
+                    "{TIMESTAMP_RANGE}: a timestamp Snowflake holds outside the nanosecond range of \
+                     DuckDB"
+                ))
             )
         }
         _ => format!("CAST({micros} AS TIMESTAMP)"),

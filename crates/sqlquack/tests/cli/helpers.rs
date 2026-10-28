@@ -4,7 +4,8 @@ use std::process::Command;
 use walkdir::WalkDir;
 
 use crate::test_types::{
-    CommandOutcome, DivergenceOutcome, ErrorCheckOutcome, FunctionMacroOutcome, ReviewOutcome,
+    CommandOutcome, CoverageOutcome, DivergenceOutcome, ErrorCheckOutcome, FunctionMacroOutcome,
+    ReviewOutcome,
 };
 
 fn repository_root() -> PathBuf {
@@ -351,4 +352,101 @@ fn macro_values(converted: &serde_json::Value, macro_body: &str, call: &str) -> 
         .expect("the call runs")
         .map(|value| value.expect("a value"))
         .collect()
+}
+
+const COVERAGE_RULE: &str = "rule.variant_computed_get";
+
+const COVERAGE_HAZARDS: &str = r#"version = 3
+
+[families.text]
+sql_type = "VARCHAR"
+benign = "'a'"
+other = "'b'"
+
+[[families.text.hazard]]
+id = "recorded_key"
+description = "A key the recorded case holds."
+cells = ["'a'"]
+
+[[families.text.hazard]]
+id = "unrecorded_key"
+description = "A key no recorded case holds."
+cells = ["'zz'"]
+"#;
+
+/// Verifies the recorded GET cases against a GET domain with `key_families`; reports its gaps.
+pub(crate) fn verify_coverage(key_families: &str, arguments: &[&str]) -> CoverageOutcome {
+    let directory = tempfile::tempdir().expect("temporary directory");
+    let root = repository_root();
+    std::fs::copy(
+        root.join("sqlquack.toml"),
+        directory.path().join("sqlquack.toml"),
+    )
+    .expect("policy copied");
+    copy_files(
+        &root.join("cases/fidelity"),
+        &directory.path().join("cases/fidelity"),
+    );
+    let cases = directory.path().join("cases/semi-structured");
+    std::fs::create_dir_all(&cases).expect("cases directory");
+    std::fs::copy(
+        root.join("cases/semi-structured/arrays_batch2.toml"),
+        cases.join("arrays_batch2.toml"),
+    )
+    .expect("case copied");
+    copy_files(
+        &root.join("evidence/results"),
+        &directory.path().join("evidence/results"),
+    );
+    let domains = directory.path().join("domains");
+    std::fs::create_dir_all(&domains).expect("domains directory");
+    std::fs::write(
+        domains.join("get.toml"),
+        format!(
+            "version = 1\n\n[[rule]]\nid = \"{COVERAGE_RULE}\"\n\n[[rule.form]]\nconstruct = \
+             \"fn:GET\"\narguments = [{{ families = [\"variant\"] }}, {{ families = \
+             {key_families}, kinds = [\"value\"] }}]\n"
+        ),
+    )
+    .expect("domain written");
+    std::fs::write(directory.path().join("hazards.toml"), COVERAGE_HAZARDS)
+        .expect("hazards written");
+    let output = Command::new(env!("CARGO_BIN_EXE_sqlquack"))
+        .args([
+            "verify",
+            "--domains",
+            "domains",
+            "--hazards",
+            "hazards.toml",
+            "--coverage-json",
+            "coverage.json",
+        ])
+        .args(arguments)
+        .current_dir(directory.path())
+        .output()
+        .expect("sqlquack runs");
+    let report: serde_json::Value = serde_json::from_str(
+        &std::fs::read_to_string(directory.path().join("coverage.json")).unwrap_or_default(),
+    )
+    .unwrap_or(serde_json::Value::Null);
+    let rule = report["rules"]
+        .as_array()
+        .into_iter()
+        .flatten()
+        .find(|rule| rule["rule"] == COVERAGE_RULE)
+        .cloned()
+        .unwrap_or(serde_json::Value::Null);
+    let strings = |key: &str| -> Vec<String> {
+        rule[key]
+            .as_array()
+            .into_iter()
+            .flatten()
+            .filter_map(|gap| gap.as_str().map(str::to_owned))
+            .collect()
+    };
+    CoverageOutcome {
+        exit_code: output.status.code(),
+        shape_gaps: strings("shape_gaps"),
+        hazard_gaps: strings("hazard_gaps"),
+    }
 }

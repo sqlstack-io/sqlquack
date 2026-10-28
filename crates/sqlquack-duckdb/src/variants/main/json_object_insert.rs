@@ -10,7 +10,7 @@ use crate::variants::_helpers::objects::{
     bound, json_error, key_list, object_entries, sorted_object,
 };
 
-/// The object with `key` set to the JSON `value`; a NULL value leaves it unchanged.
+/// The object with `key` set to JSON `value`; a NULL value keeps it, or removes it when updating.
 pub fn json_object_insert(
     (sql, value): (&str, &str),
     (key, update): (&str, bool),
@@ -18,6 +18,13 @@ pub fn json_object_insert(
 ) -> String {
     log.building_block(JSON_OBJECT_INSERT);
     let keys = key_list(&[key.to_owned()]);
+    let nulled = match update {
+        true => sorted_object(&format!(
+            "list_filter({}, lambda e: NOT list_contains({keys}, e['key']))",
+            object_entries("a['o']")
+        )),
+        false => sorted_object(&object_entries("a['o']")),
+    };
     let existing = match update {
         true => String::new(),
         false => format!(
@@ -30,9 +37,8 @@ pub fn json_object_insert(
         "a",
         &format!(
             "(CASE WHEN a['o'] IS NULL OR json_type(a['o']) = 'NULL' THEN NULL WHEN json_type(a['o']) <> 'OBJECT' THEN {} \
-             WHEN a['v'] IS NULL THEN {}{existing} ELSE {} END)",
+             WHEN a['v'] IS NULL THEN {nulled}{existing} ELSE {} END)",
             json_error(VARIANT_NOT_CAST, NOT_AN_OBJECT_MESSAGE),
-            sorted_object(&object_entries("a['o']")),
             sorted_object(&format!(
                 "list_append(list_filter({}, lambda e: NOT list_contains({keys}, e['key'])), \
                  struct_pack(key := {keys}[1], value := a['v']))",

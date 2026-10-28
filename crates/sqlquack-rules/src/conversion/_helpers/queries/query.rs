@@ -1,6 +1,8 @@
 //! Queries: SELECT with its projection and clauses, and WITH.
 
 use serde_json::Value;
+use sqlquack_core::provenance::constants::QUERY_CONSTRUCT;
+use sqlquack_core::provenance::models::ShapeArgument;
 use sqlquack_core::refusals::models::Refusal;
 use sqlquack_duckdb::blocks::main::quoted_identifier::quoted_identifier;
 
@@ -58,8 +60,19 @@ pub(crate) fn convert_query(
     context: &Context<'_>,
     named: bool,
 ) -> Result<ConvertedQuery, Refusal> {
-    let (sql, columns) = convert_query_kind(node, outer, context, named)
-        .map_err(|refusal| context.locator.placed(refusal, node))?;
+    context.log.enter(QUERY_CONSTRUCT, true);
+    let converted = convert_query_kind(node, outer, context, named);
+    let argument = match &converted {
+        Ok(_) => Some(ShapeArgument {
+            family: QUERY_CONSTRUCT.to_owned(),
+            ..ShapeArgument::default()
+        }),
+        Err(_) => None,
+    };
+    context
+        .log
+        .leave(argument, (std::ptr::from_ref(node) as usize, None));
+    let (sql, columns) = converted.map_err(|refusal| context.locator.placed(refusal, node))?;
     Ok((context.locator.identified(&sql, node), columns))
 }
 

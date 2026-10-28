@@ -1,0 +1,173 @@
+# Declared domains of aggregate functions.
+# Format: see docs/coverage.md.
+version = 1
+
+[[rule]]
+id = "rule.named_aggregates"
+
+[[rule.form]]
+construct = "fn:ANY_VALUE"
+arguments = [{ families = ["integer", "decimal", "float", "text", "boolean", "date", "time", "timestamp_ntz", "timestamp_ltz", "timestamp_tz", "variant"] }]
+rows = "group"
+template = "ANY_VALUE({0})"
+query = "SELECT g, {expression} AS r FROM input GROUP BY g ORDER BY g"
+category = "aggregate"
+divergences = { mixed = "any_value_choice", null_beside_value = "any_value_choice", duplicates = "any_value_choice" }
+row_groups = true
+
+[[rule.form]]
+construct = "fn:COUNT_IF"
+arguments = [{ families = ["boolean"] }]
+rows = "group"
+template = "COUNT_IF({0})"
+query = "SELECT g, {expression} AS r FROM input GROUP BY g ORDER BY g"
+category = "aggregate"
+
+[[rule.form]]
+construct = "fn:BOOLOR_AGG"
+arguments = [{ families = ["boolean"] }]
+rows = "group"
+template = "BOOLOR_AGG({0})"
+query = "SELECT g, {expression} AS r FROM input GROUP BY g ORDER BY g"
+category = "aggregate"
+
+[[rule.form]]
+construct = "fn:BOOLAND_AGG"
+arguments = [{ families = ["boolean"] }]
+rows = "group"
+template = "BOOLAND_AGG({0})"
+query = "SELECT g, {expression} AS r FROM input GROUP BY g ORDER BY g"
+category = "aggregate"
+
+[[rule.form]]
+construct = "fn:OBJECT_AGG"
+arguments = [{ families = ["text"] }, { families = ["variant"] }]
+rows = "group"
+template = "OBJECT_AGG({0}, {1})"
+query = "SELECT g, {expression} AS r FROM input GROUP BY g ORDER BY g"
+category = "aggregate"
+divergences = { "variant.large_numbers" = "", "1.variant.number_spellings" = "" }
+
+[[rule.form]]
+construct = "fn:COUNT"
+arguments = [{ families = ["integer", "decimal", "float", "text", "boolean", "date", "time", "timestamp_ntz", "timestamp_ltz", "timestamp_tz"] }, { families = ["integer", "decimal", "float", "text", "boolean", "date", "time", "timestamp_ntz", "timestamp_ltz", "timestamp_tz"] }]
+repeat = true
+rows = "group"
+template = "COUNT(DISTINCT {0}, {1})"
+query = "SELECT g, {expression} AS r FROM input GROUP BY g ORDER BY g"
+category = "aggregate"
+
+# The same aggregates over windows: whole partitions and running ordered windows, no frames.
+[[rule.form]]
+construct = "node:window_function"
+arguments = [{ families = ["boolean"] }]
+facets = { function = ["COUNT_IF"], frame = ["unordered", "ordered"] }
+each = { partition = ["none", "text", "integer", "decimal", "float", "boolean", "date", "time", "timestamp_ntz", "timestamp_ltz", "timestamp_tz", "several"] }
+rows = "window"
+template = "COUNT_IF({0}) OVER (PARTITION BY g ORDER BY ordinal)"
+variants = ["COUNT_IF({0}) OVER (PARTITION BY g)"]
+query = "SELECT g, {expression} AS r FROM input ORDER BY ordinal"
+category = "window"
+
+# BOOLOR_AGG and BOOLAND_AGG over whole partitions only: Snowflake rejects an ordered window.
+[[rule.form]]
+construct = "node:window_function"
+arguments = [{ families = ["boolean"] }]
+facets = { function = ["BOOLOR_AGG", "BOOLAND_AGG"], frame = ["unordered"] }
+each = { partition = ["none", "text", "integer", "decimal", "float", "boolean", "date", "time", "timestamp_ntz", "timestamp_ltz", "timestamp_tz", "several"] }
+rows = "window"
+template = "BOOLOR_AGG({0}) OVER (PARTITION BY g)"
+variants = ["BOOLAND_AGG({0}) OVER (PARTITION BY g)"]
+query = "SELECT g, {expression} AS r FROM input ORDER BY ordinal"
+category = "window"
+
+[[rule]]
+id = "rule.array_agg"
+
+[[rule.form]]
+construct = "node:within_group"
+arguments = [
+  { families = ["integer", "text", "variant", "boolean"] },
+  { families = ["integer", "text", "decimal", "date", "timestamp_ntz"], grammar = true },
+]
+rows = "group"
+template = "ARRAY_AGG({0}) WITHIN GROUP (ORDER BY {1})"
+query = "SELECT g, {expression} AS r FROM input GROUP BY g ORDER BY g"
+category = "aggregate"
+ordinal = ["1"]
+
+[[rule]]
+id = "rule.listagg"
+
+[[rule.form]]
+construct = "node:within_group"
+arguments = [
+  { families = ["text"], kinds = ["literal"] },
+  { families = ["text"] },
+  { families = ["integer", "text", "decimal", "date"], grammar = true },
+]
+repeat = true
+rows = "group"
+template = "LISTAGG({1}, {0}) WITHIN GROUP (ORDER BY {2})"
+query = "SELECT g, {expression} AS r FROM input GROUP BY g ORDER BY g"
+category = "aggregate"
+benign = { "0" = "','" }
+ordinal = ["2"]
+
+[[rule.form]]
+construct = "node:within_group"
+arguments = [
+  { families = ["text"] },
+  { families = ["integer", "text", "decimal", "date"], grammar = true },
+]
+rows = "group"
+template = "LISTAGG({0}) WITHIN GROUP (ORDER BY {1})"
+query = "SELECT g, {expression} AS r FROM input GROUP BY g ORDER BY g"
+category = "aggregate"
+ordinal = ["1"]
+
+[[rule.form]]
+construct = "node:window_function"
+arguments = [
+  { families = ["text"], kinds = ["literal"] },
+  { families = ["text"] },
+  { families = ["integer", "text", "decimal", "date"], grammar = true },
+]
+repeat = true
+facets = { function = ["WITHIN_GROUP"], frame = ["unordered"] }
+each = { partition = ["none", "text", "integer", "decimal", "float", "boolean", "date", "time", "timestamp_ntz", "timestamp_ltz", "timestamp_tz", "several"] }
+rows = "window"
+template = "LISTAGG({1}, {0}) WITHIN GROUP (ORDER BY {2}) OVER (PARTITION BY g)"
+query = "SELECT g, {expression} AS r FROM input ORDER BY ordinal"
+category = "window"
+benign = { "0" = "','" }
+ordinal = ["2"]
+
+[[rule]]
+id = "rule.percentile"
+
+[[rule.form]]
+construct = "node:within_group"
+arguments = [
+  { families = ["integer", "decimal"], kinds = ["literal"], grammar = true },
+  { families = ["integer", "decimal"] },
+]
+rows = "group"
+template = "PERCENTILE_DISC({0}) WITHIN GROUP (ORDER BY {1})"
+query = "SELECT g, {expression} AS r FROM input GROUP BY g ORDER BY g"
+category = "aggregate"
+benign = { "0" = "0.5" }
+
+[[rule.form]]
+construct = "node:window_function"
+arguments = [
+  { families = ["integer", "decimal"], kinds = ["literal"], grammar = true },
+  { families = ["integer", "decimal"] },
+]
+facets = { function = ["WITHIN_GROUP"], frame = ["unordered"] }
+each = { partition = ["none", "text", "integer", "decimal", "float", "boolean", "date", "time", "timestamp_ntz", "timestamp_ltz", "timestamp_tz", "several"] }
+rows = "window"
+template = "PERCENTILE_DISC({0}) WITHIN GROUP (ORDER BY {1}) OVER (PARTITION BY g)"
+query = "SELECT g, {expression} AS r FROM input ORDER BY ordinal"
+category = "window"
+benign = { "0" = "0.5" }

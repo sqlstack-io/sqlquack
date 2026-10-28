@@ -20,3 +20,24 @@ class FileTestCase:
     description: str
     name: str
     expected_origin_prefix: str
+
+
+@dataclass(frozen=True)
+class HazardTestCase:
+    description: str
+    case_id: str
+    expected_rows: tuple[tuple[str, ...], ...]
+
+
+@dataclass(frozen=True)
+class FindingTestCase:
+    description: str
+    table: str
+    expected_entry: str
+
+
+@dataclass(frozen=True)
+class ExpectationTestCase:
+    description: str
+    case_id: str
+    expected_divergence: str | None

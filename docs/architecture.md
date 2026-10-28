@@ -411,6 +411,11 @@ patterns (`numeric_range` and `timestamp_range` overflows). Another DuckDB error
 different value or a Snowflake error fails it, and the verdict names what matched. Such cases do
 not count toward verifying a claim.
 
+A raise on one row hides the values of the others, so verify then replays each input row alone
+where result rows follow input rows one for one: an expression, or a query reading `input` in
+order with no window, grouping, aggregate, join, subquery or set operation. A row that alone
+returns a value other than its recorded row fails the case; one that raises again shows nothing.
+
 A case expands to one source statement: the input rows as a `WITH input AS (...)` of casts, then
 the expression (`SELECT <expression> AS value FROM input ORDER BY ordinal`) or the query. In an
 equivalence file each case expands twice, once per spelling; the canonical one is referenced as

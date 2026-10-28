@@ -19,6 +19,18 @@ pub const DATE_PART: &str = "duckdb.date_part";
 pub const DATE_TRUNC: &str = "duckdb.date_trunc";
 /// Adding calendar or clock units: `duckdb.date_add`.
 pub const DATE_ADD: &str = "duckdb.date_add";
+/// A DATEADD amount checked against the magnitude Snowflake rejects: `duckdb.date_add_amount`.
+pub const DATE_ADD_AMOUNT: &str = "duckdb.date_add_amount";
+/// The largest DATEADD amount magnitude recorded short of Snowflake's error 100046: 2^53.
+pub const DATE_ADD_AMOUNT_LIMIT: &str = "9007199254740992";
+/// Calendar months a DATEADD may move a value, well inside DuckDB's interval and date ranges.
+pub const DATE_ADD_MONTH_LIMIT: i64 = 2_400_000;
+/// Days a DATEADD may move a value, well inside DuckDB's interval and date ranges.
+pub const DATE_ADD_DAY_LIMIT: i64 = 73_000_000;
+/// DuckDB's microsecond timestamp range, in microseconds either side of the epoch.
+pub const MICROSECOND_TIMESTAMP_LIMIT: i64 = 9_223_372_036_854_775_806;
+/// The microseconds a nanosecond timestamp can hold either side of the epoch.
+pub const NANOSECOND_TIMESTAMP_MICROS: i64 = 9_223_372_036_854_774;
 /// Counting unit boundaries between two values: `duckdb.date_diff`.
 pub const DATE_DIFF: &str = "duckdb.date_diff";
 /// Naive UTC wall times as wall times in another zone: `duckdb.utc_to_zone`.
@@ -69,6 +81,8 @@ pub const TIMESTAMP_RANGE: &str = "timestamp_range";
 pub const DATE_TEXT_SPELLING: &str = "date_text_spelling";
 /// ISO date-time text with an optional `T`, fraction and Z, ±HH:MM or ` ±HHMM` zone, captured.
 pub const ISO_TIMESTAMP_PATTERN: &str = "([0-9]{4}-[0-9]{2}-[0-9]{2})(?:[ T](([01][0-9]|2[0-3]):[0-5][0-9])(?:(:[0-5][0-9])(?:[.]([0-9]+))?)?)?(Z| ?[+-][0-9]{2}:[0-9]{2}| [+-][0-9]{4})?";
+/// Text without an ASCII digit, which TRY_ date and timestamp parsing were recorded reading as NULL.
+pub const DIGITLESS_TEXT_PATTERN: &str = "[^0-9]*";
 /// Spellings TRY_ conversions to timestamps were recorded returning NULL for.
 pub const NULL_TIMESTAMP_TEXT_PATTERN: &str = "[0-9]{4}-[0-9]{2}-[0-9]{2}(?:T[0-9]{2}:[0-9]{2}(?::[0-9]{2}(?:[.][0-9]+)?)?[+-][0-9]{4}|t[0-9]{2}:[0-9]{2}:[0-9]{2}(?:[.][0-9]+)?z?|T[0-9]{2}:[0-9]{2}:[0-9]{2}(?:[.][0-9]+)?z)|[0-9]{5}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}";
 /// The zone group of ISO_TIMESTAMP_PATTERN: sign, hours and minutes of an offset.
@@ -115,6 +129,10 @@ pub const BOOLEAN_NUMBER: &str = "duckdb.boolean_number";
 
 /// Fractional-second digits a DuckDB TIMESTAMP or TIME keeps.
 pub const DUCKDB_FRACTIONAL_PRECISION: u8 = 6;
+/// Seconds from the epoch to 0001-01-01 00:00:00, the first instant Snowflake writes.
+pub const EPOCH_SECONDS_MIN: i128 = -62_135_596_800;
+/// Seconds from the epoch to 9999-12-31 23:59:59, the last whole second Snowflake writes.
+pub const EPOCH_SECONDS_MAX: i128 = 253_402_300_799;
 /// Decimal text Snowflake reads as a number: sign, digits with an optional point, exponent.
 pub const DECIMAL_TEXT_PATTERN: &str = "[+-]?([0-9]+[.]?[0-9]*|[.][0-9]+)([eE][+-]?[0-9]+)?";
 /// Decimal text with an exponent marker but no exponent digits, which Snowflake reads as exponent 0.

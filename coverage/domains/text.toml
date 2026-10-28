@@ -1,0 +1,328 @@
+# Declared domains of text functions and operators.
+# Format: see docs/coverage.md.
+version = 1
+
+[[rule]]
+id = "rule.like"
+
+# LIKE with a pattern, or a literal pattern and a one-character literal ESCAPE; infix NOT allowed.
+[[rule.form]]
+construct = "node:like"
+arguments = [{ families = ["text"] }, { families = ["text"] }]
+facets = { quantifier = ["none"], negated = ["none", "infix"] }
+template = "{0} LIKE {1}"
+category = "string"
+
+[[rule.form]]
+construct = "node:like"
+arguments = [{ families = ["text"] }, { families = ["text"], kinds = ["literal"] }, { families = ["text"], kinds = ["literal"] }]
+facets = { quantifier = ["none"], negated = ["none", "infix"] }
+template = "{0} LIKE {1} ESCAPE {2}"
+category = "string"
+benign = { "1" = "'a!%'", "2" = "'!'" }
+
+# ILIKE of a literal pattern, alone or ANY of a list, not negated infix.
+[[rule.form]]
+construct = "node:i_like"
+arguments = [{ families = ["text"] }, { families = ["text"], kinds = ["literal"] }]
+repeat = true
+facets = { quantifier = ["none", "any"], negated = ["none"] }
+template = "{0} ILIKE {1}"
+category = "string"
+
+[[rule]]
+id = "rule.text_initcap"
+
+[[rule.form]]
+construct = "fn:INITCAP"
+arguments = [{ families = ["text"] }]
+template = "INITCAP({0})"
+category = "string"
+
+# The delimiters convert first, so they are the first argument shapes record.
+divergences = { "text.dollar_prefix" = "initcap_text", "text.slash_prefix" = "initcap_text", "text.dots_brackets" = "initcap_text", "text.quotes_backslashes" = "initcap_text", "text.non_ascii" = "initcap_text", "text.title_case_digraph" = "initcap_text", "text.whitespace" = "initcap_text", "text.number_text" = "initcap_text" }
+[[rule.form]]
+construct = "fn:INITCAP"
+arguments = [{ families = ["text"], kinds = ["literal"], grammar = true }, { families = ["text"] }]
+template = "INITCAP({1}, {0})"
+benign = { 0 = "'-'" }
+category = "string"
+divergences = { "text.dollar_prefix" = "initcap_text", "text.slash_prefix" = "initcap_text", "text.dots_brackets" = "initcap_text", "text.quotes_backslashes" = "initcap_text", "text.non_ascii" = "initcap_text", "text.title_case_digraph" = "initcap_text", "text.whitespace" = "initcap_text", "text.number_text" = "initcap_text" }
+
+[[rule]]
+id = "rule.ilike_folding"
+
+[[rule.form]]
+construct = "node:i_like"
+arguments = [
+  { families = ["text"] },
+  { families = ["text"], kinds = ["literal"] },
+]
+repeat = true
+facets = { quantifier = ["none", "any"], negated = ["none"] }
+template = "{0} ILIKE {1}"
+category = "string"
+benign = { "1" = "'%é%'" }
+
+[[rule]]
+id = "rule.regexp"
+
+[[rule.form]]
+construct = "fn:REGEXP_LIKE"
+also = ["node:regexp_like", "fn:REGEXP_SUBSTR", "fn:REGEXP_SUBSTR_ALL", "fn:REGEXP_REPLACE"]
+arguments = [
+  { families = ["text"] },
+  { families = ["text"], kinds = ["literal"], grammar = true },
+]
+template = "REGEXP_LIKE({0}, {1})"
+category = "string"
+benign = { "1" = "'a.*'" }
+variants = ["{0} REGEXP {1}", "REGEXP_SUBSTR({0}, {1})", "REGEXP_SUBSTR_ALL({0}, {1})", "REGEXP_REPLACE({0}, {1})"]
+
+[[rule.form]]
+construct = "fn:REGEXP_LIKE"
+also = ["fn:REGEXP_REPLACE"]
+arguments = [
+  { families = ["text"] },
+  { families = ["text"], kinds = ["literal"], grammar = true },
+  { families = ["text"], kinds = ["literal"], grammar = true },
+]
+template = "REGEXP_REPLACE({0}, {1}, {2})"
+category = "string"
+benign = { "1" = "'a'", "2" = "'b'" }
+
+[[rule.form]]
+construct = "fn:REGEXP_SUBSTR"
+also = ["fn:REGEXP_SUBSTR_ALL"]
+arguments = [
+  { families = ["text"] },
+  { families = ["text"], kinds = ["literal"], grammar = true },
+  { families = ["integer"], kinds = ["literal"], grammar = true },
+  { families = ["integer"], kinds = ["literal"], grammar = true },
+  { families = ["text"], kinds = ["literal"], grammar = true },
+]
+
+[[rule.form]]
+construct = "fn:REGEXP_SUBSTR"
+also = ["fn:REGEXP_SUBSTR_ALL"]
+arguments = [
+  { families = ["text"] },
+  { families = ["text"], kinds = ["literal"], grammar = true },
+  { families = ["integer"], kinds = ["literal"], grammar = true },
+  { families = ["integer"], kinds = ["literal"], grammar = true },
+  { families = ["text"], kinds = ["literal"], grammar = true },
+  { families = ["integer"], kinds = ["literal"], grammar = true },
+]
+template = "REGEXP_SUBSTR({0}, {1}, 1, 1, 'e', 1)"
+category = "string"
+benign = { "1" = "'(a)'" }
+variants = ["REGEXP_SUBSTR_ALL({0}, {1}, 1, 1, 'e', 1)"]
+
+[[rule.form]]
+construct = "fn:REGEXP_REPLACE"
+arguments = [
+  { families = ["text"] },
+  { families = ["text"], kinds = ["literal"], grammar = true },
+  { families = ["text"], kinds = ["literal"], grammar = true },
+  { families = ["integer"], kinds = ["literal"], grammar = true },
+  { families = ["integer"], kinds = ["literal"], grammar = true },
+]
+
+[[rule.form]]
+construct = "fn:REGEXP_REPLACE"
+arguments = [
+  { families = ["text"] },
+  { families = ["text"], kinds = ["literal"], grammar = true },
+  { families = ["text"], kinds = ["literal"], grammar = true },
+  { families = ["integer"], kinds = ["literal"], grammar = true },
+  { families = ["integer"], kinds = ["literal"], grammar = true },
+  { families = ["text"], kinds = ["literal"], grammar = true },
+]
+
+[[rule]]
+id = "rule.regexp_parameters"
+
+[[rule.form]]
+construct = "fn:REGEXP_LIKE"
+arguments = [
+  { families = ["text"] },
+  { families = ["text"], kinds = ["literal"], grammar = true },
+  { families = ["text"], kinds = ["literal"], grammar = true },
+]
+template = "REGEXP_LIKE({0}, {1}, {2})"
+category = "string"
+benign = { "1" = "'a.*'", "2" = "'i'" }
+
+[[rule.form]]
+construct = "fn:REGEXP_SUBSTR"
+arguments = [
+  { families = ["text"] },
+  { families = ["text"], kinds = ["literal"], grammar = true },
+  { families = ["integer"], kinds = ["literal"], grammar = true },
+  { families = ["integer"], kinds = ["literal"], grammar = true },
+  { families = ["text"], kinds = ["literal"], grammar = true },
+  { families = ["integer"], kinds = ["literal"], grammar = true },
+]
+
+[[rule.form]]
+construct = "fn:REGEXP_SUBSTR"
+arguments = [
+  { families = ["text"] },
+  { families = ["text"], kinds = ["literal"], grammar = true },
+  { families = ["integer"], kinds = ["literal"], grammar = true },
+  { families = ["integer"], kinds = ["literal"], grammar = true },
+  { families = ["text"], kinds = ["literal"], grammar = true },
+]
+
+[[rule]]
+id = "rule.regexp_posix_space"
+
+[[rule.form]]
+construct = "fn:REGEXP_LIKE"
+also = ["fn:REGEXP_SUBSTR", "fn:REGEXP_SUBSTR_ALL"]
+arguments = [
+  { families = ["text"] },
+  { families = ["text"], kinds = ["literal"], grammar = true },
+]
+template = "REGEXP_LIKE({0}, {1})"
+category = "string"
+benign = { "1" = "'[[:space:]]*a'" }
+variants = ["REGEXP_SUBSTR({0}, {1})", "REGEXP_SUBSTR_ALL({0}, {1})"]
+
+[[rule.form]]
+construct = "fn:REGEXP_REPLACE"
+arguments = [
+  { families = ["text"] },
+  { families = ["text"], kinds = ["literal"], grammar = true },
+  { families = ["text"], kinds = ["literal"], grammar = true },
+]
+repeat = true
+
+[[rule.form]]
+construct = "fn:REGEXP_REPLACE"
+arguments = [
+  { families = ["text"] },
+  { families = ["text"], kinds = ["literal"], grammar = true },
+  { families = ["text"], kinds = ["literal"], grammar = true },
+  { families = ["integer"], kinds = ["literal"], grammar = true },
+  { families = ["integer"], kinds = ["literal"], grammar = true },
+  { families = ["text"], kinds = ["literal"], grammar = true },
+]
+template = "REGEXP_REPLACE({0}, {1}, {2}, {3}, {4}, {5})"
+category = "string"
+benign = { "1" = "'[[:space:]]+'", "2" = "'-'", "3" = "1", "4" = "0", "5" = "'i'" }
+
+[[rule]]
+id = "rule.text_pad"
+
+[[rule.form]]
+construct = "fn:LPAD"
+also = ["fn:RPAD"]
+arguments = [
+  { families = ["text"] },
+  { families = ["integer"] },
+]
+template = "LPAD({0}, {1})"
+category = "string"
+benign = { "1" = "3" }
+variants = ["RPAD({0}, {1})"]
+
+[[rule.form]]
+construct = "fn:LPAD"
+also = ["fn:RPAD"]
+arguments = [
+  { families = ["text"] },
+  { families = ["integer"] },
+  { families = ["text"] },
+]
+template = "RPAD({0}, {1}, {2})"
+category = "string"
+benign = { "1" = "3" }
+
+[[rule]]
+id = "rule.text_position"
+
+[[rule.form]]
+construct = "fn:LEFT"
+also = ["fn:RIGHT"]
+arguments = [
+  { families = ["text"] },
+  { families = ["integer"] },
+]
+template = "LEFT({0}, {1})"
+category = "string"
+variants = ["RIGHT({0}, {1})"]
+
+[[rule.form]]
+construct = "node:length"
+arguments = [
+  { families = ["text"] },
+]
+template = "LENGTH({0})"
+category = "string"
+
+[[rule.form]]
+construct = "node:substring"
+arguments = [
+  { families = ["text"] },
+  { families = ["integer"] },
+]
+template = "SUBSTR({0}, {1})"
+category = "string"
+
+[[rule.form]]
+construct = "node:substring"
+arguments = [
+  { families = ["text"] },
+  { families = ["integer"] },
+  { families = ["integer"], kinds = ["literal"], grammar = true },
+]
+template = "SUBSTR({0}, {1}, {2})"
+category = "string"
+
+[[rule]]
+id = "rule.text_replace"
+
+[[rule.form]]
+construct = "fn:REPLACE"
+arguments = [
+  { families = ["text"] },
+  { families = ["text"] },
+]
+template = "REPLACE({0}, {1})"
+category = "string"
+
+[[rule.form]]
+construct = "fn:REPLACE"
+arguments = [
+  { families = ["text"] },
+  { families = ["text"] },
+  { families = ["text"] },
+]
+template = "REPLACE({0}, {1}, {2})"
+category = "string"
+
+[[rule.form]]
+construct = "fn:SPLIT_PART"
+arguments = [
+  { families = ["text"] },
+  { families = ["text"], kinds = ["literal"], grammar = true },
+  { families = ["integer"], kinds = ["literal"], grammar = true },
+]
+template = "SPLIT_PART({0}, {1}, {2})"
+category = "string"
+benign = { "1" = "'-'", "2" = "2" }
+
+[[rule]]
+id = "rule.text_translate"
+
+[[rule.form]]
+construct = "fn:TRANSLATE"
+arguments = [
+  { families = ["text"] },
+  { families = ["text"], kinds = ["literal"], grammar = true },
+  { families = ["text"], kinds = ["literal"], grammar = true },
+]
+template = "TRANSLATE({0}, {1}, {2})"
+category = "string"
+benign = { "1" = "'ab'", "2" = "'x'" }

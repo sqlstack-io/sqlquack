@@ -342,7 +342,7 @@ pub const RULES: &[RuleSpec] = &[
     RuleSpec {
         id: CAST_PARSED_TEXT,
         constructs: &["node:cast", "node:try_cast"],
-        conditions: "VARCHAR to NUMBER, FLOAT or BOOLEAN; only recorded spellings convert, around which spaces, tabs and line feeds are ignored: decimal text with optional sign, point and exponent (an exponent marker without digits counts as exponent 0, an exponent without mantissa as zero); nan, -nan, inf, +inf, -inf, infinity, -infinity in any case; true/false, t/f, yes/no, y/n, on/off, 1/0 in any case. Other text fails, or is NULL under TRY_CAST; FLOAT overflow is infinite under CAST and NULL under TRY_CAST. VARCHAR to DATE reads the spellings TO_DATE reads, and fails for others; TRY_CAST to DATE is NULL for empty text, impossible values and the spellings recorded returning NULL, and raises for other spellings, relying on date_text_spelling.",
+        conditions: "VARCHAR to NUMBER, FLOAT or BOOLEAN; only recorded spellings convert, around which spaces, tabs and line feeds are ignored: decimal text with optional sign, point and exponent (an exponent marker without digits counts as exponent 0, an exponent without mantissa as zero); nan, -nan, inf, +inf, -inf, infinity, -infinity in any case; true/false, t/f, yes/no, y/n, on/off, 1/0 in any case. Other text fails, or is NULL under TRY_CAST; FLOAT overflow is infinite under CAST and NULL under TRY_CAST. VARCHAR to DATE reads the spellings TO_DATE reads, and fails for others; TRY_CAST to DATE is NULL for empty text, text without an ASCII digit (words such as now or epoch, and other scripts' digits, as recorded), impossible values and the spellings recorded returning NULL, and raises for other spellings, relying on date_text_spelling.",
         failures: &[
             FailureMode {
                 kind: ErrorKind::NumberText,
@@ -401,8 +401,11 @@ pub const RULES: &[RuleSpec] = &[
             "fn:TIMEDIFF",
             "fn:TIMESTAMPDIFF",
         ],
-        conditions: "DATE or TIMESTAMP_NTZ values. DATE_TRUNC to YEAR, QUARTER, MONTH, WEEK (Monday) or DAY, and for timestamps HOUR, MINUTE or SECOND, keeping the type. DATEADD of a NUMBER(p,0) amount of YEAR, QUARTER, MONTH (clamped to the month's end), WEEK or DAY, and for timestamps HOUR, MINUTE or SECOND, keeping the type and its nanoseconds; precision 7-9 relies on timestamp_range. DATEDIFF between two DATEs or two timestamps counts YEAR, QUARTER, MONTH and DAY boundaries of the dates, and for timestamps HOUR, MINUTE, SECOND, MILLISECOND or MICROSECOND boundaries toward the past.",
-        failures: &[],
+        conditions: "DATE or TIMESTAMP_NTZ values. DATE_TRUNC to YEAR, QUARTER, MONTH, WEEK (Monday) or DAY, and for timestamps HOUR, MINUTE or SECOND, keeping the type. DATEADD of a NUMBER(p,0) amount, which fails beyond 2^53 as Snowflake's error 100046, of YEAR, QUARTER, MONTH (clamped to the month's end), WEEK or DAY, and for timestamps HOUR, MINUTE or SECOND, keeping the type and its nanoseconds; a result beyond DuckDB's range (for precision 7-9 its nanosecond range) raises timestamp_range. DATEDIFF between two DATEs or two timestamps counts YEAR, QUARTER, MONTH and DAY boundaries of the dates, and for timestamps HOUR, MINUTE, SECOND, MILLISECOND or MICROSECOND boundaries toward the past.",
+        failures: &[FailureMode {
+            kind: ErrorKind::NumericOverflow,
+            snowflake: &[NUMBER_OUT_OF_RANGE],
+        }],
     },
     RuleSpec {
         id: TIME_ZONE_CONVERSION,
@@ -458,7 +461,7 @@ pub const RULES: &[RuleSpec] = &[
     RuleSpec {
         id: OBJECT_PICK_RULE,
         constructs: &["fn:OBJECT_PICK"],
-        conditions: "A VARIANT and literal text keys, or one VARIANT array of strings: keys matched exactly and case-sensitively, missing keys ignored, keys kept in byte order; SQL NULL and JSON null objects give SQL NULL, other non-objects raise; an array holding other than strings raises, relying on json_fidelity.",
+        conditions: "A VARIANT and literal text keys, or one array of strings built by ARRAY_CONSTRUCT or ARRAY_EXCEPT (a VARIANT holding an array is not picked by, as recorded, so it refuses): keys matched exactly and case-sensitively, missing keys ignored, keys kept in byte order; SQL NULL and JSON null objects give SQL NULL, other non-objects raise; an array holding other than strings raises, relying on json_fidelity.",
         failures: &[FailureMode {
             kind: ErrorKind::VariantCast,
             snowflake: &[VARIANT_NOT_CAST],
@@ -500,7 +503,7 @@ pub const RULES: &[RuleSpec] = &[
     RuleSpec {
         id: ARRAY_TO_STRING_RULE,
         constructs: &["fn:ARRAY_TO_STRING"],
-        conditions: "A VARIANT or ARRAY and a VARCHAR separator: strings joined as their text, numbers, booleans, objects and arrays as Snowflake writes JSON, keys in byte order and its escapes, as recorded; an empty array gives empty text and SQL NULL gives NULL; a JSON null element raises 100071, and a JSON null or another value that is not an array 100098, as recorded; an object whose keys DuckDB could sort only by rewriting a number raises, relying on json_fidelity.",
+        conditions: "A VARIANT or ARRAY and a VARCHAR separator, a NULL separator giving NULL as recorded: strings joined as their text, numbers, booleans, objects and arrays as Snowflake writes JSON, keys in byte order and its escapes, as recorded; an empty array gives empty text and SQL NULL gives NULL; a JSON null element raises 100071, and a JSON null or another value that is not an array 100098, as recorded; an object whose keys DuckDB could sort only by rewriting a number raises, relying on json_fidelity.",
         failures: &[
             FailureMode {
                 kind: ErrorKind::VariantCast,
@@ -576,7 +579,7 @@ pub const RULES: &[RuleSpec] = &[
     RuleSpec {
         id: OBJECT_INSERT_RULE,
         constructs: &["fn:OBJECT_INSERT"],
-        conditions: "A VARIANT, a literal text key, a VARIANT, text, boolean or NUMBER(p,0) value and an optional literal update flag: a SQL NULL value leaves the object unchanged, JSON null is inserted, an existing key raises unless updating, keys stay in byte order; SQL NULL and JSON null objects give SQL NULL, other non-objects raise. NUMBER values rely on json_fidelity.",
+        conditions: "A VARIANT, a literal text key, a VARIANT, text, boolean or NUMBER(p,0) value and an optional literal update flag: a SQL NULL value leaves the object unchanged, or with the update flag removes the key; JSON null is inserted, an existing key raises unless updating, keys stay in byte order; SQL NULL and JSON null objects give SQL NULL, other non-objects raise. NUMBER values rely on json_fidelity.",
         failures: &[
             FailureMode {
                 kind: ErrorKind::VariantCast,
@@ -629,14 +632,17 @@ pub const RULES: &[RuleSpec] = &[
     RuleSpec {
         id: DECIMAL_EPOCH_RULE,
         constructs: &["fn:TO_TIMESTAMP", "fn:TO_TIMESTAMP_NTZ"],
-        conditions: "A NUMBER(p,s) with 0 < s <= 9 and no scale argument: seconds since the epoch with a fraction, typed TIMESTAMP_NTZ(s), as Snowflake documents; scales above 6 rely on timestamp_range.",
+        conditions: "A NUMBER(p,s) with 0 < s <= 9 and no scale argument: seconds since the epoch with a fraction, typed TIMESTAMP_NTZ(s), as Snowflake documents; counts outside the years 1 to 9999 or DuckDB's range at that precision raise timestamp_range.",
         failures: &[],
     },
     RuleSpec {
         id: TEXT_PAD,
         constructs: &["fn:LPAD", "fn:RPAD"],
         conditions: "VARCHAR text and pad (a space by default) and an integer NUMBER length, counted in characters: shorter text is padded, longer text cut to the length; an empty pad only cuts; a length of zero or less gives empty text; NULL arguments give NULL.",
-        failures: &[],
+        failures: &[FailureMode {
+            kind: ErrorKind::NumericOverflow,
+            snowflake: &[NUMBER_OUT_OF_RANGE],
+        }],
     },
     RuleSpec {
         id: NULL_SAFE_COMPARISON,
@@ -659,7 +665,7 @@ pub const RULES: &[RuleSpec] = &[
     RuleSpec {
         id: DECODE_RULE,
         constructs: &["fn:DECODE"],
-        conditions: "An expression compared with each search as rule.comparison compares them, NULL matching NULL; the first matching result, else the default or NULL; results and default unify.",
+        conditions: "An expression compared with each search as rule.comparison compares them, NULL matching NULL, not FLOAT against NUMBER, which no recording proves near a double's precision; the first matching result, else the default or NULL; results and default unify, NUMBER beside FLOAT included.",
         failures: &[],
     },
     RuleSpec {
@@ -671,7 +677,7 @@ pub const RULES: &[RuleSpec] = &[
     RuleSpec {
         id: ROUNDING,
         constructs: &["fn:ROUND", "fn:CEIL", "fn:FLOOR", "fn:TRUNC", "fn:TRUNCATE"],
-        conditions: "A NUMBER or FLOAT; ROUND to literal places (0 by default, possibly negative), half away from zero; CEIL, FLOOR and TRUNC to whole numbers. A NUMBER(p,s) whose scale drops to d is NUMBER(min(38, p + 1), max(d, 0)), else its own type, as recorded; a FLOAT stays FLOAT, a zero result positive. A result beyond NUMBER(38,0) raises, as Snowflake does.",
+        conditions: "A NUMBER or FLOAT; ROUND to literal places (0 by default, possibly negative), half away from zero; CEIL, FLOOR and TRUNC to whole numbers. A NUMBER(p,s) whose scale drops to d is NUMBER(min(38, p + 1), max(d, 0)), else its own type, as recorded; a FLOAT stays FLOAT, a zero result positive, and ROUND of a FLOAT to places p multiplies by 10^p, rounds and divides by 10^p, as recorded, so it overflows to infinity where that product does. A result beyond NUMBER(38,0) raises, as Snowflake does.",
         failures: &[FailureMode {
             kind: ErrorKind::NumericOverflow,
             snowflake: &[NUMBER_OUT_OF_RANGE],
@@ -692,7 +698,7 @@ pub const RULES: &[RuleSpec] = &[
     RuleSpec {
         id: DATE_FORMAT_RULE,
         constructs: &["fn:TO_DATE", "fn:TRY_TO_DATE"],
-        conditions: "TO_DATE or TRY_TO_DATE of text with a literal format YYYYMMDD, YYYY-MM-DD, YYYY/MM/DD, DD.MM.YYYY, DD.MM.YY, DD/MM/YYYY, MM/DD/YYYY, YY-MM-DD or DD-MM-YY, in any case: text spelled exactly in the format's digits and separators is its date; an impossible date is NULL under TRY_TO_DATE and raises 100097 under TO_DATE, as recorded; two-digit years read from 1970 (00-69 as 20xx); NULL is NULL, and empty text NULL under TRY_TO_DATE. Any other text raises, relying on date_text_spelling.",
+        conditions: "TO_DATE or TRY_TO_DATE of text with a literal format YYYYMMDD, YYYY-MM-DD, YYYY/MM/DD, DD.MM.YYYY, DD.MM.YY, DD/MM/YYYY, MM/DD/YYYY, YY-MM-DD or DD-MM-YY, in any case: text spelled exactly in the format's digits and separators is its date; an impossible date is NULL under TRY_TO_DATE and raises 100097 under TO_DATE, as recorded; two-digit years read from 1970 (00-69 as 20xx); NULL is NULL, and empty text and text without an ASCII digit (words such as now or epoch, and other scripts' digits, as recorded) NULL under TRY_TO_DATE. Any other text raises, relying on date_text_spelling.",
         failures: &[FailureMode {
             kind: ErrorKind::DateText,
             snowflake: &[DATE_FORMAT_MISMATCH],
@@ -701,7 +707,7 @@ pub const RULES: &[RuleSpec] = &[
     RuleSpec {
         id: TIMESTAMP_FORMAT_RULE,
         constructs: &["fn:TRY_TO_TIMESTAMP", "fn:TRY_TO_TIMESTAMP_NTZ"],
-        conditions: "TRY_TO_TIMESTAMP_NTZ or TRY_TO_TIMESTAMP of text with a literal format of YYYY, MM, DD, HH24, or HH12 with AM or PM, MI and SS, in any case, with punctuation (- : . / ,), quoted literals and letters that begin no format element as literal text: YYYY reads four digits, the other numbers one or two, AM and PM either in any case, a space in the format any run of spaces, including none, and everything else itself, case-sensitively, as recorded. Text so spelled is its TIMESTAMP_NTZ(9), NULL when a field is out of range or the date impossible; NULL and empty text are NULL. Any other text raises, relying on date_text_spelling; timestamps rely on timestamp_range.",
+        conditions: "TRY_TO_TIMESTAMP_NTZ or TRY_TO_TIMESTAMP of text with a literal format of YYYY, MM, DD, HH24, or HH12 with AM or PM, MI and SS, in any case, with punctuation (- : . / ,), quoted literals and letters that begin no format element as literal text: YYYY reads four digits, the other numbers one or two, AM and PM either in any case, a space in the format any run of spaces, including none, and everything else itself, case-sensitively, as recorded. Text so spelled is its TIMESTAMP_NTZ(9), NULL when a field is out of range or the date impossible; NULL, empty text and text without an ASCII digit (words such as now or epoch, and other scripts' digits, as recorded) are NULL. Any other text raises, relying on date_text_spelling; timestamps rely on timestamp_range.",
         failures: &[],
     },
     RuleSpec {
@@ -716,7 +722,7 @@ pub const RULES: &[RuleSpec] = &[
             "fn:TO_DATE",
             "fn:TRY_TO_DATE",
         ],
-        conditions: "Text, without a format, in the recorded spellings, around which spaces, tabs and line feeds are ignored: YYYY-MM-DD with an optional ' ' or 'T' and HH:MI:SS[.f(1-9)], and an optional Z, ±HH:MM or, after a space, ±HHMM, ignored except by TRY_TO_TIMESTAMP_TZ; or, for timestamps, non-negative integer text read as seconds, milliseconds, microseconds or nanoseconds by magnitude. Dates also read MM/DD/YYYY, DD-Mon-YY(YY) in title or upper case (two-digit years as written), unpadded fields, RFC 2822 at +0000 and epoch integer text. Other text raises. The TRY_ forms are NULL for empty text, impossible values and the spellings recorded returning NULL (for timestamps, ISO text with T and a ±HHMM offset right after the time, with a lower-case t or z, or with a five-digit year), and raise for other spellings, relying on date_text_spelling. Timestamps are TIMESTAMP_NTZ(9) and rely on timestamp_range. TRY_TO_TIMESTAMP_TZ of text is the instant its wall time names less its offset, of at most 25 hours and 59 minutes, or at UTC without one, as TIMESTAMP_TZ(9) relying on timestamp_tz_submicro. TO_TIMESTAMP of a NUMBER(p,0) counts seconds, or units of a literal scale, typed TIMESTAMP_NTZ(scale).",
+        conditions: "Text, without a format, in the recorded spellings, around which spaces, tabs and line feeds are ignored: YYYY-MM-DD with an optional ' ' or 'T' and HH:MI:SS[.f(1-9)], and an optional Z, ±HH:MM or, after a space, ±HHMM, ignored except by TRY_TO_TIMESTAMP_TZ; or, for timestamps, non-negative integer text read as seconds, milliseconds, microseconds or nanoseconds by magnitude. Dates also read MM/DD/YYYY, DD-Mon-YY(YY) in title or upper case (two-digit years as written), unpadded fields, RFC 2822 at +0000 and epoch integer text. Other text raises. The TRY_ forms are NULL for empty text, text without an ASCII digit (words such as now or epoch, and other scripts' digits, as recorded), impossible values and the spellings recorded returning NULL (for timestamps, ISO text with T and a ±HHMM offset right after the time, with a lower-case t or z, or with a five-digit year), and raise for other spellings, relying on date_text_spelling. Timestamps are TIMESTAMP_NTZ(9) and rely on timestamp_range. TRY_TO_TIMESTAMP_TZ of text is the instant its wall time names less its offset, of at most 25 hours and 59 minutes, or at UTC without one, as TIMESTAMP_TZ(9) relying on timestamp_tz_submicro. TO_TIMESTAMP of a NUMBER(p,0) counts seconds, or units of a literal scale, typed TIMESTAMP_NTZ(scale); counts outside the years 1 to 9999 or DuckDB's range at that precision raise timestamp_range.",
         failures: &[
             FailureMode {
                 kind: ErrorKind::DateText,
@@ -738,8 +744,11 @@ pub const RULES: &[RuleSpec] = &[
             "fn:LENGTH",
             "fn:LEN",
         ],
-        conditions: "VARCHAR text and NUMBER(p,0) positions, counted in characters. LEFT and RIGHT give the empty string for a negative length; SUBSTR counts start 0 as 1 and negative starts from the end, with a length only as a non-negative integer literal; LENGTH is NUMBER(18,0).",
-        failures: &[],
+        conditions: "VARCHAR text and NUMBER(p,0) positions, counted in characters. LEFT and RIGHT give the empty string for a negative length; SUBSTR counts start 0 as 1 and negative starts from the end, a start before the text giving the empty string, as recorded, with a length only as a non-negative integer literal; positions beyond any text are clamped so DuckDB accepts them; LENGTH is NUMBER(18,0).",
+        failures: &[FailureMode {
+            kind: ErrorKind::NumericOverflow,
+            snowflake: &[NUMBER_OUT_OF_RANGE],
+        }],
     },
     RuleSpec {
         id: FLATTEN_RULE,
@@ -784,7 +793,7 @@ pub const RULES: &[RuleSpec] = &[
     RuleSpec {
         id: LIKE,
         constructs: &["node:like", "node:i_like"],
-        conditions: "VARCHAR operands, case-sensitive for LIKE, with no default escape character; ESCAPE as given. ILIKE only with a literal pattern. ILIKE ANY of a list of patterns, without ESCAPE, as the OR of each match; not LIKE ANY, NOT ILIKE ANY written infix, or LIKE ALL.",
+        conditions: "VARCHAR operands, case-sensitive for LIKE, with no default escape character. ESCAPE only as one literal character other than a wildcard, over literal patterns where it precedes only a wildcard or itself; Snowflake rejects other escapes and escaped characters. ILIKE only with a literal pattern. ILIKE ANY of a list of patterns, without ESCAPE, as the OR of each match; not LIKE ANY, NOT ILIKE ANY written infix, or LIKE ALL.",
         failures: &[],
     },
     RuleSpec {
@@ -812,13 +821,13 @@ pub const RULES: &[RuleSpec] = &[
             "fn:REGEXP_SUBSTR",
             "fn:REGEXP_SUBSTR_ALL",
         ],
-        conditions: "A REGEXP pattern as for rule.regexp that also uses [:space:] inside a bracket expression: ASCII space, tab, line feed, vertical tab, form feed and carriage return, as RE2 reads it.",
+        conditions: "A REGEXP pattern as for rule.regexp that also uses [:space:] inside a bracket expression: ASCII space, tab, line feed, vertical tab, form feed and carriage return, as RE2 reads it; REGEXP_REPLACE with it takes position, occurrence and parameters as rule.regexp does.",
         failures: &[],
     },
     RuleSpec {
         id: LEAST_GREATEST,
         constructs: &["fn:LEAST", "fn:GREATEST"],
-        conditions: "Arguments that compare directly with each other; the result has their unified type and is NULL when any argument is NULL (DuckDB's own functions skip NULLs).",
+        conditions: "Arguments that compare directly with each other, NUMBER beside FLOAT included as recorded; the result has their unified type and is NULL when any argument is NULL (DuckDB's own functions skip NULLs).",
         failures: &[],
     },
     RuleSpec {
@@ -863,7 +872,7 @@ pub const RULES: &[RuleSpec] = &[
     RuleSpec {
         id: CAST_UTC_ZONED,
         constructs: &["node:cast"],
-        conditions: "A TIMESTAMP_TZ from CONVERT_TIMEZONE('UTC', x) of two arguments, whose offset is +00:00, cast to TIMESTAMP_NTZ or DATE, and a TIMESTAMP_LTZ, whose session zone is UTC, cast to TIMESTAMP_NTZ: its UTC wall time, then as a TIMESTAMP_NTZ cast. Zoned values of unknown offset are refused, since DuckDB keeps instants without their offsets.",
+        conditions: "A TIMESTAMP_TZ from CONVERT_TIMEZONE('UTC', x) of two arguments, whose offset is +00:00, cast to TIMESTAMP_NTZ or DATE, and a TIMESTAMP_LTZ, whose session zone is UTC, cast to TIMESTAMP_NTZ: its UTC wall time, then as a TIMESTAMP_NTZ cast; precision 7-9 relies on timestamp_range. Zoned values of unknown offset are refused, since DuckDB keeps instants without their offsets.",
         failures: &[],
     },
     RuleSpec {
@@ -930,7 +939,10 @@ pub const RULES: &[RuleSpec] = &[
         id: AVERAGE,
         constructs: &["fn:AVG"],
         conditions: "A NUMBER of scale at most 6 and precision at most 26.",
-        failures: &[],
+        failures: &[FailureMode {
+            kind: ErrorKind::NumericOverflow,
+            snowflake: &[NUMBER_OUT_OF_RANGE],
+        }],
     },
     RuleSpec {
         id: MIN_MAX_FLOAT,
@@ -958,8 +970,11 @@ pub const RULES: &[RuleSpec] = &[
     RuleSpec {
         id: WINDOW_OFFSET,
         constructs: &["fn:LAG", "fn:LEAD", "node:window_function"],
-        conditions: "An ORDER BY, no frame, an integer literal offset and a default of the value's type.",
-        failures: &[],
+        conditions: "An ORDER BY, no frame, an integer literal offset and a default of the value's type or an integer literal beside a NUMBER or FLOAT value, as recorded.",
+        failures: &[FailureMode {
+            kind: ErrorKind::NumericOverflow,
+            snowflake: &[NUMBER_OUT_OF_RANGE],
+        }],
     },
     RuleSpec {
         id: WINDOW_FIRST_LAST,
@@ -976,7 +991,7 @@ pub const RULES: &[RuleSpec] = &[
             "fn:MAX",
             "node:window_function",
         ],
-        conditions: "The aggregate's own conditions; without a frame, a running RANGE frame when ordered.",
+        conditions: "The aggregate's own conditions; without a frame, a running RANGE frame when ordered. BOOLOR_AGG and BOOLAND_AGG only over an unordered window, as Snowflake accepts them.",
         failures: &[FailureMode {
             kind: ErrorKind::NumericOverflow,
             snowflake: &[NUMBER_OUT_OF_RANGE],
@@ -1015,7 +1030,7 @@ pub const RULES: &[RuleSpec] = &[
     RuleSpec {
         id: DECIMAL_MODULO,
         constructs: &["node:mod", "fn:MOD"],
-        conditions: "NUMBER operands; the result has the larger operand's digits before the point and the larger scale, with the dividend's sign. A zero divisor raises division by zero. Not FLOAT operands.",
+        conditions: "NUMBER operands; the result has the larger operand's digits before the point and the larger scale, with the dividend's sign. Where the operands' common type needs more than 38 digits, which DuckDB's `%` computes as a double, a whole-number divisor gives the exact remainder of the whole part plus the fraction, and other divisors refuse. A zero divisor raises division by zero. Not FLOAT operands.",
         failures: DIVISION_FAILURES,
     },
     RuleSpec {
@@ -1048,8 +1063,11 @@ pub const RULES: &[RuleSpec] = &[
             "fn:SECOND",
             "fn:DATE_PART",
         ],
-        conditions: "TIME operands: DATEADD and TIMEADD of whole hours or minutes wrap at midnight; DATEDIFF in seconds or milliseconds between two TIMEs counts boundaries crossed, as NUMBER(9,0); HOUR, MINUTE and SECOND read the clock fields.",
-        failures: &[],
+        conditions: "TIME operands: DATEADD and TIMEADD of whole hours or minutes wrap at midnight, an amount beyond 2^53 failing as Snowflake's error 100046; DATEDIFF in seconds or milliseconds between two TIMEs counts boundaries crossed, as NUMBER(9,0); HOUR, MINUTE and SECOND read the clock fields.",
+        failures: &[FailureMode {
+            kind: ErrorKind::NumericOverflow,
+            snowflake: &[NUMBER_OUT_OF_RANGE],
+        }],
     },
     RuleSpec {
         id: TEXT_TO_TIME_RULE,
@@ -1061,7 +1079,10 @@ pub const RULES: &[RuleSpec] = &[
         id: FROM_PARTS,
         constructs: &["fn:DATE_FROM_PARTS", "fn:TIMESTAMP_NTZ_FROM_PARTS"],
         conditions: "NUMBER or FLOAT parts rounded half away from zero to integers; DATE_FROM_PARTS is January 1 of the year moved by the months and days past the first, so overflow carries. TIMESTAMP_NTZ_FROM_PARTS of a DATE and a TIME, or of six parts with hours, minutes and seconds carried, is a TIMESTAMP_NTZ(9) under timestamp_range.",
-        failures: &[],
+        failures: &[FailureMode {
+            kind: ErrorKind::NumericOverflow,
+            snowflake: &[NUMBER_OUT_OF_RANGE],
+        }],
     },
     RuleSpec {
         id: NAMED_AGGREGATES,
@@ -1096,7 +1117,7 @@ pub const RULES: &[RuleSpec] = &[
     RuleSpec {
         id: VARIANT_COMPUTED_GET,
         constructs: &["fn:GET"],
-        conditions: "GET of a VARIANT with an integer NUMBER index computed per row, the element of an array at a non-negative index in range, or with a VARCHAR key, an object's value under exactly that key, read through a quoted JSON path; NULL otherwise. The empty key and *, which a quoted path cannot name, raise json_fidelity.",
+        conditions: "GET of a VARIANT with an integer NUMBER index computed per row, the element of an array at a non-negative index in range, or with a VARCHAR key, an object's value under exactly that key, read through a quoted JSON path; NULL otherwise. Not a negative constant index, which Snowflake rejects; an index past an array's end, 64 bits and beyond included, gives NULL as recorded. The empty key and *, which a quoted path cannot name, are looked up in the object as a map.",
         failures: &[],
     },
     RuleSpec {
@@ -1138,7 +1159,7 @@ pub const RULES: &[RuleSpec] = &[
     RuleSpec {
         id: FLOAT_MODULO,
         constructs: &["node:mod", "fn:MOD"],
-        conditions: "A FLOAT operand with a non-zero numeric literal divisor: the remainder as a FLOAT with the dividend's sign, as C's fmod computes it.",
+        conditions: "A FLOAT operand with a non-zero numeric literal divisor: the remainder as a FLOAT with the dividend's sign, as C's fmod computes it, a zero remainder positive.",
         failures: &[],
     },
 ];

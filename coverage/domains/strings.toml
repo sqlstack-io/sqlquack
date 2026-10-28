@@ -1,0 +1,110 @@
+# Declared domains of string functions and HASH.
+# Format: see docs/coverage.md.
+version = 1
+
+[[rule]]
+id = "rule.case_mapping"
+
+[[rule.form]]
+construct = "node:upper"
+also = ["node:lower"]
+arguments = [
+  { families = ["text"] },
+]
+template = "UPPER({0})"
+category = "string"
+variants = ["LOWER({0})"]
+
+[[rule]]
+id = "rule.contains"
+
+[[rule.form]]
+construct = "fn:CONTAINS"
+arguments = [
+  { families = ["text"] },
+  { families = ["text"] },
+]
+template = "CONTAINS({0}, {1})"
+category = "string"
+
+[[rule]]
+id = "rule.editdistance"
+
+[[rule.form]]
+construct = "fn:EDITDISTANCE"
+arguments = [
+  { families = ["text"] },
+  { families = ["text"] },
+]
+template = "EDITDISTANCE({0}, {1})"
+category = "string"
+
+[[rule]]
+id = "rule.md5"
+
+[[rule.form]]
+construct = "fn:MD5"
+arguments = [
+  { families = ["text"] },
+]
+template = "MD5({0})"
+category = "string"
+
+[[rule]]
+id = "rule.text_affix"
+
+[[rule.form]]
+construct = "node:starts_with"
+also = ["node:ends_with"]
+arguments = [
+  { families = ["text"] },
+  { families = ["text"] },
+]
+template = "STARTSWITH({0}, {1})"
+category = "string"
+variants = ["ENDSWITH({0}, {1})"]
+
+[[rule]]
+id = "rule.text_chr"
+
+[[rule.form]]
+construct = "fn:CHR"
+arguments = [
+  { families = ["integer"] },
+]
+template = "CHR({0})"
+category = "string"
+
+[[rule]]
+id = "rule.text_hex"
+
+[[rule.form]]
+construct = "fn:HEX_ENCODE"
+arguments = [
+  { families = ["text"] },
+]
+template = "HEX_ENCODE({0})"
+category = "string"
+
+[[rule.form]]
+construct = "fn:HEX_ENCODE"
+arguments = [
+  { families = ["integer"], kinds = ["literal"], grammar = true },
+  { families = ["text"] },
+]
+template = "HEX_ENCODE({1}, {0})"
+category = "string"
+benign = { "0" = "0" }
+
+[[rule]]
+id = "rule.hash"
+
+[[rule.form]]
+construct = "fn:HASH"
+arguments = [
+  { families = ["text", "integer", "boolean", "date", "variant", "null"] },
+]
+repeat = true
+# HASH values are never Snowflake's (the hash divergence); cases check that equal input hashes equal.
+template = "HASH({0}) = HASH({0})"
+category = "numeric"

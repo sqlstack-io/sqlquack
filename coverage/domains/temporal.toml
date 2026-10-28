@@ -1,0 +1,466 @@
+# Declared domains of temporal functions.
+# Format: see docs/coverage.md.
+version = 1
+
+[[rule]]
+id = "rule.convert_timezone"
+
+[[rule.form]]
+construct = "fn:CONVERT_TIMEZONE"
+arguments = [
+  { families = ["text"], kinds = ["literal"], grammar = true },
+  { families = ["text"], kinds = ["literal"], grammar = true },
+  { families = ["timestamp_ntz"] },
+]
+template = "CONVERT_TIMEZONE({0}, {1}, {2})"
+category = "temporal"
+benign = { "0" = "'America/New_York'", "1" = "'Europe/London'" }
+
+[[rule.form]]
+construct = "fn:CONVERT_TIMEZONE"
+arguments = [
+  { families = ["text"], kinds = ["literal"], grammar = true },
+  { families = ["timestamp_ntz", "timestamp_ltz", "timestamp_tz"] },
+]
+template = "CONVERT_TIMEZONE({0}, {1})"
+category = "temporal"
+benign = { "0" = "'Europe/London'" }
+divergences = { "timestamp_ntz.sub_microsecond" = "timestamp_tz_submicro", "timestamp_ntz.half_millisecond" = "timestamp_tz_submicro" }
+
+[[rule.form]]
+construct = "fn:CONVERT_TIMEZONE"
+arguments = [
+  { families = ["text"] },
+  { families = ["text"] },
+  { families = ["timestamp_ntz"] },
+]
+
+[[rule.form]]
+construct = "fn:CONVERT_TIMEZONE"
+arguments = [
+  { families = ["text"] },
+  { families = ["timestamp_ntz", "timestamp_ltz", "timestamp_tz"] },
+]
+
+[[rule]]
+id = "rule.zone_columns"
+
+[[rule.form]]
+construct = "fn:CONVERT_TIMEZONE"
+arguments = [
+  { families = ["text"] },
+  { families = ["text"] },
+  { families = ["timestamp_ntz"] },
+]
+template = "CONVERT_TIMEZONE({0}, {1}, {2})"
+category = "temporal"
+benign = { "0" = "'America/New_York'", "1" = "'Europe/London'" }
+
+[[rule.form]]
+construct = "fn:CONVERT_TIMEZONE"
+arguments = [
+  { families = ["text"] },
+  { families = ["timestamp_ntz", "timestamp_ltz", "timestamp_tz"] },
+]
+template = "CONVERT_TIMEZONE({0}, {1})"
+category = "temporal"
+benign = { "0" = "'Europe/London'" }
+divergences = { "timestamp_ntz.sub_microsecond" = "timestamp_tz_submicro", "timestamp_ntz.half_millisecond" = "timestamp_tz_submicro" }
+
+[[rule]]
+id = "rule.current_time"
+
+[[rule.form]]
+construct = "fn:CURRENT_DATE"
+also = ["fn:CURRENT_TIMESTAMP"]
+arguments = []
+
+[[rule]]
+id = "rule.date_arithmetic"
+
+[[rule.form]]
+construct = "fn:DATE_TRUNC"
+arguments = [
+  { families = ["date", "timestamp_ntz"] },
+]
+template = "DATE_TRUNC('month', {0})"
+category = "temporal"
+
+[[rule.form]]
+construct = "fn:DATEADD"
+also = ["fn:TIMESTAMPADD"]
+arguments = [
+  { families = ["integer"] },
+  { families = ["date", "timestamp_ntz"] },
+]
+template = "DATEADD(month, {0}, {1})"
+category = "temporal"
+variants = ["TIMESTAMPADD(month, {0}, {1})"]
+
+[[rule.form]]
+construct = "fn:DATEDIFF"
+also = ["fn:TIMEDIFF", "fn:TIMESTAMPDIFF", "node:date_diff"]
+arguments = [
+  { families = ["date"] },
+  { families = ["date"] },
+]
+template = "DATEDIFF(day, {0}, {1})"
+category = "temporal"
+variants = ["TIMEDIFF(day, {0}, {1})", "TIMESTAMPDIFF(day, {0}, {1})"]
+
+[[rule.form]]
+construct = "fn:DATEDIFF"
+also = ["fn:TIMEDIFF", "fn:TIMESTAMPDIFF", "node:date_diff"]
+arguments = [
+  { families = ["timestamp_ntz"] },
+  { families = ["timestamp_ntz"] },
+]
+template = "DATEDIFF(second, {0}, {1})"
+category = "temporal"
+variants = ["TIMEDIFF(second, {0}, {1})", "TIMESTAMPDIFF(second, {0}, {1})"]
+
+[[rule.form]]
+construct = "fn:DATEADD"
+also = ["fn:TIMEADD"]
+arguments = [
+  { families = ["integer"] },
+  { families = ["time"] },
+]
+
+[[rule.form]]
+construct = "fn:DATEDIFF"
+also = ["node:date_diff"]
+arguments = [
+  { families = ["time"] },
+  { families = ["time"] },
+]
+
+[[rule.probe]]
+construct = "fn:DATEDIFF"
+arguments = [
+  { families = ["date"] },
+  { families = ["timestamp_ntz"] },
+]
+template = "DATEDIFF(day, {0}, {1})"
+category = "temporal"
+extra_rows = [["'2024-01-15'", "'2024-01-15 23:59:59.999999999'"], ["'2024-03-01'", "'2024-02-29 00:00:00'"]]
+
+[[rule.probe]]
+construct = "fn:DATEDIFF"
+arguments = [
+  { families = ["timestamp_ntz"] },
+  { families = ["date"] },
+]
+template = "DATEDIFF(day, {0}, {1})"
+category = "temporal"
+
+[[rule.probe]]
+construct = "fn:DATEDIFF"
+arguments = [
+  { families = ["text"], kinds = ["literal"], grammar = true },
+  { families = ["date", "timestamp_ntz"] },
+]
+template = "DATEDIFF(day, {0}, {1})"
+category = "temporal"
+benign = { "0" = "'2020-01-01'" }
+
+[[rule]]
+id = "rule.time_arithmetic"
+
+[[rule.form]]
+construct = "fn:DATEADD"
+also = ["fn:TIMEADD"]
+arguments = [
+  { families = ["integer"] },
+  { families = ["time"] },
+]
+template = "DATEADD(hour, {0}, {1})"
+category = "temporal"
+variants = ["TIMEADD(hour, {0}, {1})"]
+
+[[rule.form]]
+construct = "fn:DATEDIFF"
+also = ["node:date_diff"]
+arguments = [
+  { families = ["time"] },
+  { families = ["time"] },
+]
+template = "DATEDIFF(second, {0}, {1})"
+category = "temporal"
+
+[[rule.form]]
+construct = "node:hour"
+also = ["node:minute", "node:second", "fn:DATE_PART"]
+arguments = [
+  { families = ["time"] },
+]
+template = "HOUR({0})"
+category = "temporal"
+variants = ["MINUTE({0})", "SECOND({0})"]
+
+[[rule]]
+id = "rule.date_part"
+
+[[rule.form]]
+construct = "fn:DATE_PART"
+arguments = [
+  { families = ["date", "timestamp_ntz"] },
+]
+template = "DATE_PART(dayofweek, {0})"
+category = "temporal"
+
+[[rule.form]]
+construct = "node:extract"
+arguments = [
+  { families = ["date", "timestamp_ntz"] },
+]
+template = "EXTRACT(year FROM {0})"
+category = "temporal"
+
+[[rule.form]]
+construct = "node:year"
+also = ["node:quarter", "node:month", "node:day"]
+arguments = [
+  { families = ["date", "timestamp_ntz"] },
+]
+template = "YEAR({0})"
+category = "temporal"
+variants = ["QUARTER({0})", "MONTH({0})", "DAY({0})"]
+
+[[rule.form]]
+construct = "node:hour"
+also = ["node:minute", "node:second"]
+arguments = [
+  { families = ["timestamp_ntz"] },
+]
+template = "HOUR({0})"
+category = "temporal"
+variants = ["MINUTE({0})", "SECOND({0})"]
+
+[[rule.form]]
+construct = "fn:DATE_PART"
+arguments = [
+  { families = ["timestamp_tz", "timestamp_ltz"] },
+]
+
+[[rule.form]]
+construct = "node:extract"
+also = ["node:hour", "node:year"]
+arguments = [
+  { families = ["timestamp_tz", "timestamp_ltz"] },
+]
+
+[[rule.form]]
+construct = "node:hour"
+also = ["node:minute", "node:second"]
+arguments = [
+  { families = ["time"] },
+]
+
+[[rule]]
+id = "rule.zoned_parts"
+
+[[rule.form]]
+construct = "fn:DATE_PART"
+also = ["node:extract", "node:hour", "node:year"]
+arguments = [
+  { families = ["timestamp_tz", "timestamp_ltz"] },
+]
+template = "DATE_PART(epoch_second, {0})"
+category = "temporal"
+variants = ["EXTRACT(year FROM {0})", "HOUR({0})", "YEAR({0})"]
+
+[[rule]]
+id = "rule.date_format"
+
+[[rule.form]]
+construct = "fn:TO_DATE"
+also = ["fn:TRY_TO_DATE"]
+arguments = [
+  { families = ["text"], kinds = ["literal"], grammar = true },
+  { families = ["text"] },
+]
+template = "TRY_TO_DATE({1}, {0})"
+category = "temporal"
+benign = { "0" = "'YYYY-MM-DD'" }
+divergences = { "text.dollar_prefix" = "date_text_spelling", "text.slash_prefix" = "date_text_spelling", "text.dots_brackets" = "date_text_spelling", "text.quotes_backslashes" = "date_text_spelling", "text.non_ascii" = "date_text_spelling", "text.title_case_digraph" = "date_text_spelling", "text.case_only" = "date_text_spelling", "text.whitespace" = "date_text_spelling", "text.number_text" = "date_text_spelling", "1.text.case_only" = "", "1.text.dollar_prefix" = "", "1.text.non_ascii" = "", "1.text.quotes_backslashes" = "", "1.text.slash_prefix" = "", "1.text.title_case_digraph" = "", "1.text.whitespace" = "" }
+
+[[rule]]
+id = "rule.timestamp_format"
+
+[[rule.form]]
+construct = "fn:TRY_TO_TIMESTAMP"
+also = ["fn:TRY_TO_TIMESTAMP_NTZ"]
+arguments = [
+  { families = ["text"], kinds = ["literal"], grammar = true },
+  { families = ["text"] },
+]
+template = "TRY_TO_TIMESTAMP({1}, {0})"
+category = "temporal"
+benign = { "0" = "'YYYY-MM-DD HH24:MI:SS'" }
+variants = ["TRY_TO_TIMESTAMP_NTZ({1}, {0})"]
+divergences = { "text.dollar_prefix" = "date_text_spelling", "text.slash_prefix" = "date_text_spelling", "text.dots_brackets" = "date_text_spelling", "text.quotes_backslashes" = "date_text_spelling", "text.non_ascii" = "date_text_spelling", "text.title_case_digraph" = "date_text_spelling", "text.case_only" = "date_text_spelling", "text.whitespace" = "date_text_spelling", "text.number_text" = "date_text_spelling", "1.text.case_only" = "", "1.text.dollar_prefix" = "", "1.text.non_ascii" = "", "1.text.quotes_backslashes" = "", "1.text.slash_prefix" = "", "1.text.title_case_digraph" = "", "1.text.whitespace" = "" }
+
+[[rule]]
+id = "rule.temporal_text_format"
+
+[[rule.form]]
+construct = "fn:TO_VARCHAR"
+also = ["fn:TO_CHAR"]
+arguments = [
+  { families = ["text"], kinds = ["literal"], grammar = true },
+  { families = ["date", "timestamp_ntz"] },
+]
+template = "TO_VARCHAR({1}, {0})"
+category = "temporal"
+benign = { "0" = "'YYYY-MM-DD'" }
+variants = ["TO_CHAR({1}, {0})"]
+
+[[rule]]
+id = "rule.to_timestamp"
+
+[[rule.form]]
+construct = "fn:TO_TIMESTAMP"
+also = ["fn:DATE", "fn:TO_TIMESTAMP_NTZ", "fn:TRY_TO_TIMESTAMP", "fn:TRY_TO_TIMESTAMP_NTZ", "fn:TRY_TO_TIMESTAMP_TZ", "fn:TO_DATE", "fn:TRY_TO_DATE"]
+arguments = [
+  { families = ["text"] },
+]
+template = "TRY_TO_TIMESTAMP({0})"
+category = "temporal"
+divergences = { "text.dollar_prefix" = "date_text_spelling", "text.slash_prefix" = "date_text_spelling", "text.dots_brackets" = "date_text_spelling", "text.quotes_backslashes" = "date_text_spelling", "text.non_ascii" = "date_text_spelling", "text.title_case_digraph" = "date_text_spelling", "text.case_only" = "date_text_spelling", "text.whitespace" = "date_text_spelling", "text.number_text" = "date_text_spelling", "0.text.case_only" = "", "0.text.dollar_prefix" = "", "0.text.non_ascii" = "", "0.text.quotes_backslashes" = "", "0.text.slash_prefix" = "", "0.text.title_case_digraph" = "", "0.text.whitespace" = "" }
+
+[[rule.form]]
+construct = "fn:TO_TIMESTAMP"
+arguments = [
+  { families = ["integer"] },
+]
+template = "TO_TIMESTAMP({0})"
+category = "temporal"
+divergences = { "integer.beyond_64_bits" = "timestamp_range", "integer.digits_38" = "timestamp_range", "integer.beyond_double" = "timestamp_range" }
+
+[[rule.form]]
+construct = "fn:TO_TIMESTAMP"
+arguments = [
+  { families = ["integer"] },
+  { families = ["integer"], kinds = ["literal"], grammar = true },
+]
+template = "TO_TIMESTAMP({0}, {1})"
+category = "temporal"
+benign = { "1" = "3" }
+divergences = { "integer.beyond_64_bits" = "timestamp_range", "integer.digits_38" = "timestamp_range", "integer.beyond_double" = "timestamp_range" }
+
+[[rule.form]]
+construct = "fn:TRY_TO_TIMESTAMP"
+also = ["fn:TRY_TO_TIMESTAMP_NTZ"]
+arguments = [
+  { families = ["text"], kinds = ["literal"] },
+  { families = ["text"] },
+]
+
+[[rule.form]]
+construct = "fn:TO_DATE"
+arguments = [
+  { families = ["date", "timestamp_ntz", "timestamp_tz", "timestamp_ltz"] },
+]
+
+[[rule.form]]
+construct = "fn:TO_TIMESTAMP"
+also = ["fn:TO_TIMESTAMP_NTZ"]
+arguments = [
+  { families = ["decimal"] },
+]
+
+[[rule]]
+id = "rule.to_timestamp_decimal"
+
+[[rule.form]]
+construct = "fn:TO_TIMESTAMP"
+also = ["fn:TO_TIMESTAMP_NTZ"]
+arguments = [
+  { families = ["decimal"] },
+]
+template = "TO_TIMESTAMP({0})"
+category = "temporal"
+variants = ["TO_TIMESTAMP_NTZ({0})"]
+
+[[rule]]
+id = "rule.to_date_temporal"
+
+[[rule.form]]
+construct = "fn:TO_DATE"
+arguments = [
+  { families = ["date", "timestamp_ntz"] },
+]
+template = "TO_DATE({0})"
+category = "temporal"
+
+[[rule.probe]]
+construct = "fn:TO_DATE"
+arguments = [
+  { families = ["timestamp_tz", "timestamp_ltz"] },
+]
+template = "TO_DATE({0})"
+category = "temporal"
+
+[[rule]]
+id = "rule.text_to_time"
+
+[[rule.form]]
+construct = "fn:TO_TIME"
+also = ["fn:TRY_TO_TIME"]
+arguments = [
+  { families = ["text"] },
+]
+template = "TRY_TO_TIME({0})"
+category = "temporal"
+divergences = { "text.dots_brackets" = "date_text_spelling", "text.number_text" = "date_text_spelling" }
+
+[[rule.form]]
+construct = "fn:TO_TIME"
+also = ["fn:TRY_TO_TIME"]
+arguments = [
+  { families = ["text"], kinds = ["literal"], grammar = true },
+  { families = ["text"] },
+]
+template = "TRY_TO_TIME({1}, {0})"
+category = "temporal"
+benign = { "0" = "'HH24:MI'" }
+divergences = { "text.dots_brackets" = "date_text_spelling", "text.number_text" = "date_text_spelling" }
+
+[[rule]]
+id = "rule.from_parts"
+
+[[rule.form]]
+construct = "fn:DATE_FROM_PARTS"
+arguments = [
+  { families = ["integer", "decimal", "float"] },
+  { families = ["integer", "decimal", "float"] },
+  { families = ["integer", "decimal", "float"] },
+]
+template = "DATE_FROM_PARTS({0}, {1}, {2})"
+category = "temporal"
+
+[[rule.form]]
+construct = "fn:TIMESTAMP_NTZ_FROM_PARTS"
+arguments = [
+  { families = ["date"] },
+  { families = ["time"] },
+]
+template = "TIMESTAMP_NTZ_FROM_PARTS({0}, {1})"
+category = "temporal"
+divergences = { "date.extreme_years" = "timestamp_range" }
+
+[[rule.form]]
+construct = "fn:TIMESTAMP_NTZ_FROM_PARTS"
+arguments = [
+  { families = ["integer", "decimal", "float"] },
+  { families = ["integer", "decimal", "float"] },
+  { families = ["integer", "decimal", "float"] },
+  { families = ["integer", "decimal", "float"] },
+  { families = ["integer", "decimal", "float"] },
+  { families = ["integer", "decimal", "float"] },
+]
+one_wise = true
+template = "TIMESTAMP_NTZ_FROM_PARTS({0}, {1}, {2}, {3}, {4}, {5})"
+category = "temporal"
+benign = { "0" = "2024" }

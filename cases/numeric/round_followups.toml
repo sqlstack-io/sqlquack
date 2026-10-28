@@ -1,0 +1,59 @@
+# ROUND to places beyond one either side of the point.
+category = "numeric"
+construct = "fn:ROUND"
+session_profile = "utc-v1"
+
+[[case]]
+id = "round_float_places"
+description = "ROUND of FLOAT values to two, ten and fifteen places, and to minus two and minus ten."
+columns = [{ name = "x", type = "FLOAT" }]
+rows = [
+  ["1234.5678"],
+  ["-0.000123456"],
+  ["2.675"],
+  ["0.5"],
+  ["0"],
+  ["-98765432109.875"],
+  ["1.7976931348623157e308"],
+  ["5e-324"],
+  ["NULL"],
+]
+query = "SELECT ROUND(x, 2) AS p2, ROUND(x, 10) AS p10, ROUND(x, 15) AS p15, ROUND(x, -2) AS m2, ROUND(x, -10) AS m10 FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "zero", "negative", "boundary"]
+
+[[case]]
+id = "round_number_places"
+description = "ROUND of NUMBER(38,10) values to two and five places, and to minus two and minus ten."
+columns = [{ name = "x", type = "NUMBER(38,10)" }]
+rows = [
+  ["1234.5678901234"],
+  ["-0.0001234567"],
+  ["2.675"],
+  ["0"],
+  ["-98765432109.875"],
+  ["9999999999999999999999999999.9999999999"],
+  ["NULL"],
+]
+query = "SELECT ROUND(x, 2) AS p2, ROUND(x, 5) AS p5, ROUND(x, -2) AS m2, ROUND(x, -10) AS m10 FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "zero", "negative", "boundary"]
+
+[[case]]
+id = "round_float_negative_places_large"
+description = "ROUND of large FLOAT values to minus one, two, three and ten places, where scaling by a power of ten and dividing by one round differently."
+columns = [{ name = "x", type = "FLOAT" }]
+rows = [
+  ["278649975557804.97"],
+  ["-9.832054348504777e33"],
+  ["2.151496422618225e16"],
+  ["-5.994097319622147e159"],
+  ["3.9677523366151496e16"],
+  ["2.5917971696576604e269"],
+  ["9.2427354345236e18"],
+  ["2.908798792312442e94"],
+  ["NULL"],
+]
+query = "SELECT ROUND(x, -1) AS m1, ROUND(x, -2) AS m2, ROUND(x, -3) AS m3, ROUND(x, -10) AS m10 FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "negative", "boundary"]

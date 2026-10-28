@@ -8,7 +8,7 @@ use crate::temporal::_helpers::timestamps::{
     epoch_units, floor_units, microsecond_base, stored_digits,
 };
 
-/// The part named by its canonical Snowflake name, with weeks as ISO weeks.
+/// The part named by its canonical Snowflake name, with weeks as ISO weeks; zoned values by instant.
 pub fn date_part_value(
     sql: &str,
     part: &str,
@@ -22,6 +22,9 @@ pub fn date_part_value(
         SnowflakeType::TimestampNtz { precision } => {
             let digits = stored_digits(precision);
             (epoch_units(sql, digits), digits)
+        }
+        SnowflakeType::TimestampLtz { .. } | SnowflakeType::TimestampTz { .. } => {
+            (format!("epoch_us({sql})"), 6)
         }
         _ => (format!("epoch_us(CAST({sql} AS TIMESTAMP))"), 6),
     };

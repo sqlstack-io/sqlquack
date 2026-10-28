@@ -3,8 +3,8 @@ use std::fs::File;
 use std::path::Path;
 use std::sync::Arc;
 
-use arrow::array::{ArrayRef, Decimal128Array, RecordBatch};
-use arrow::datatypes::DataType;
+use arrow::array::{Array, ArrayRef, Decimal128Array, RecordBatch, TimestampNanosecondArray};
+use arrow::datatypes::{DataType, Field, Schema};
 use arrow::ipc::writer::FileWriter;
 use sqlquack_compare::values::models::ResultSet;
 use sqlquack_policy::policy::main::load_policy::load_policy;
@@ -428,4 +428,24 @@ pub(crate) fn test_policy() -> Policy {
 pub(crate) fn repository_policy() -> Policy {
     let path = Path::new(env!("CARGO_MANIFEST_DIR")).join("../../sqlquack.toml");
     load_policy(&path).expect("the repository policy is valid")
+}
+
+/// One nullable column `T` of `data_type` holding `array`.
+pub(crate) fn result_set(data_type: DataType, array: ArrayRef) -> ResultSet {
+    let schema = Arc::new(Schema::new(vec![Field::new("T", data_type, true)]));
+    let batch = RecordBatch::try_new(Arc::clone(&schema), vec![array]).expect("batch");
+    ResultSet {
+        schema,
+        batches: vec![batch],
+    }
+}
+
+/// The first nanosecond timestamp of `rows`.
+pub(crate) fn floored_nanos(rows: &ResultSet) -> i64 {
+    rows.batches[0]
+        .column(0)
+        .as_any()
+        .downcast_ref::<TimestampNanosecondArray>()
+        .expect("nanosecond timestamps")
+        .value(0)
 }

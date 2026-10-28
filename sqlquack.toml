@@ -298,7 +298,7 @@ reason = "User decision 2026-10-25: a DATE, TIMESTAMP or TIME inside a VARIANT k
 constructs = ["node:cast", "node:try_cast", "fn:DATEADD", "fn:TIMESTAMPADD", "fn:CONVERT_TIMEZONE", "fn:TO_TIMESTAMP", "fn:TO_TIMESTAMP_NTZ", "fn:TRY_TO_TIMESTAMP", "fn:TRY_TO_TIMESTAMP_NTZ", "fn:TRY_TO_TIMESTAMP_TZ", "fn:TIMESTAMP_NTZ_FROM_PARTS"]
 default = "warn"
 strict = "refuse"
-reason = "DuckDB nanosecond timestamps span 1677-09-21 to 2262-04-11; outside it DuckDB raises an error where Snowflake returns the TIMESTAMP_NTZ(7-9) value. The failure is loud, never a wrong value."
+reason = "DuckDB nanosecond timestamps span 1677-09-21 to 2262-04-11; outside it DuckDB raises an error where Snowflake returns the TIMESTAMP_NTZ(7-9) value. TO_TIMESTAMP of an epoch count outside the years 1 to 9999, which Snowflake returns wrapped or beyond them, raises too. The failure is loud, never a wrong value."
 native_errors = ["Out of Range Error: Overflow in multiplication of INT64*", "Conversion Error: Type INT32 with value * can't be cast to the destination type INT64*", "Conversion Error: Could not convert Timestamp to higher precision*", "Conversion Error: Could not convert string '*-*-* *:*:*' to INT64"]
 
 [divergences.timestamp_tz_submicro]

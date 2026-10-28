@@ -7,6 +7,7 @@ use clap::{Args, Parser, Subcommand};
 use sqlquack_evidence::constants::{
     AUDIT_PENDING_DIR, AUDIT_RESULTS_DIR, CASES_DIR, PENDING_DIR, RESULTS_DIR,
 };
+use sqlquack_evidence::coverage::constants::{DOMAINS_DIR, HAZARDS_FILE};
 use sqlquack_policy::policy::constants::POLICY_FILE_NAME;
 
 use crate::census::constants::DEFAULT_TEXT_LIMIT;
@@ -112,6 +113,29 @@ pub struct VerifyArguments {
     /// Re-recorded results, read for the messages of errors stored without one.
     #[arg(long, default_value = AUDIT_RESULTS_DIR)]
     pub audit_results: PathBuf,
+    /// Where coverage is checked against.
+    #[command(flatten)]
+    pub coverage: CoverageArguments,
+}
+
+/// The coverage check `sqlquack verify` reports: declared rule domains and the hazard catalogue.
+#[derive(Debug, Args)]
+pub struct CoverageArguments {
+    /// The directory of declared rule domains.
+    #[arg(long, default_value = DOMAINS_DIR)]
+    pub domains: PathBuf,
+    /// The hazard catalogue.
+    #[arg(long, default_value = HAZARDS_FILE)]
+    pub hazards: PathBuf,
+    /// Write the coverage report as JSON to this file.
+    #[arg(long)]
+    pub coverage_json: Option<PathBuf>,
+    /// Count pending cases that convert as passed, to plan a recording.
+    #[arg(long, conflicts_with = "require_coverage")]
+    pub coverage_projected: bool,
+    /// Fail on any coverage gap; off while the generated hazard cases are recorded.
+    #[arg(long)]
+    pub require_coverage: bool,
 }
 
 /// Arguments of `sqlquack audit`.

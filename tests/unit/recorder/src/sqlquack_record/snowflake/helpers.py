@@ -75,11 +75,47 @@ def _arrow_table() -> pa.Table:
     return pa.table({"VALUE": pa.array([1], type=pa.int64())})
 
 
+def _truncated_table() -> pa.Table:
+    return pa.table({"VALUE": pa.array([0], type=pa.timestamp("us"))})
+
+
 def _json_result() -> pa.Table:
     raise NotSupportedError
 
 
-_FETCHES: dict[bool, Callable[[], pa.Table]] = {False: _arrow_table, True: _json_result}
+def _overflowing_result() -> pa.Table:
+    raise OverflowError("The total number of nanoseconds overflows int64 range.")
+
+
+_FETCHES: dict[str, Callable[[], pa.Table]] = {
+    "arrow": _arrow_table,
+    "json": _json_result,
+    "overflow": _overflowing_result,
+    "truncated": _truncated_table,
+}
+
+_NANOSECOND_DESCRIPTION: tuple[SimpleNamespace, ...] = (
+    SimpleNamespace(
+        name="VALUE", type_code=8, precision=0, scale=9, internal_size=None, is_nullable=True
+    ),
+)
+
+_RESULT_DESCRIPTIONS: dict[str, tuple[SimpleNamespace, ...]] = {
+    "truncated": _NANOSECOND_DESCRIPTION,
+}
+
+
+def _result_kinds(
+    *,
+    json_results: frozenset[str],
+    overflow_results: frozenset[str],
+    truncated_results: frozenset[str],
+) -> dict[str, str]:
+    return (
+        {statement: "json" for statement in json_results}
+        | {statement: "overflow" for statement in overflow_results}
+        | {statement: "truncated" for statement in truncated_results}
+    )
 
 
 _PARAMETER_DESCRIPTIONS: dict[str, tuple[SimpleNamespace, ...]] = {
@@ -88,17 +124,17 @@ _PARAMETER_DESCRIPTIONS: dict[str, tuple[SimpleNamespace, ...]] = {
 
 
 class FakeCursor:
-    """Runs each statement by its scripted behaviour and logs it; some answer in JSON."""
+    """Runs each scripted statement and logs it; some answer in JSON, overflow or truncate."""
 
     def __init__(
         self,
         *,
         behaviours: dict[str, Callable[[], None]],
-        json_results: frozenset[str],
+        result_kinds: dict[str, str],
         log: list[str],
     ) -> None:
         self._behaviours: dict[str, Callable[[], None]] = behaviours
-        self._json_results: frozenset[str] = json_results
+        self._result_kinds: dict[str, str] = result_kinds
         self._log: list[str] = log
         self._results: list[str] = []
         self.sfqid: str = "fake-query"
@@ -108,8 +144,12 @@ class FakeCursor:
         self._log.append(f"{num_statements}:{statement}")
         self._behaviours[statement]()
         self._results = statement.split(";\n")
-        self.description = _PARAMETER_DESCRIPTIONS.get(statement, _DESCRIPTION)
+        self.description = _PARAMETER_DESCRIPTIONS.get(statement, self._current_description())
         return self
+
+    def _current_description(self) -> tuple[SimpleNamespace, ...]:
+        kind: str = self._result_kinds.get((*self._results, "")[0], "arrow")
+        return _RESULT_DESCRIPTIONS.get(kind, _DESCRIPTION)
 
     def fetchall(self) -> list[tuple[str, str]]:
         return [("TIMEZONE", "UTC")]
@@ -118,10 +158,11 @@ class FakeCursor:
         return ("0.0.0-fake",)
 
     def fetch_arrow_all(self, force_return_table: bool) -> pa.Table:
-        return _FETCHES[self._results[0] in self._json_results]()
+        return _FETCHES[self._result_kinds.get(self._results[0], "arrow")]()
 
     def nextset(self) -> bool:
         self._results = self._results[1:]
+        self.description = self._current_description()
         return bool(self._results)
 
     def close(self) -> None:
@@ -135,16 +176,16 @@ class FakeConnection:
         self,
         *,
         behaviours: dict[str, Callable[[], None]],
-        json_results: frozenset[str],
+        result_kinds: dict[str, str],
         log: list[str],
     ) -> None:
         self._behaviours: dict[str, Callable[[], None]] = behaviours
-        self._json_results: frozenset[str] = json_results
+        self._result_kinds: dict[str, str] = result_kinds
         self._log: list[str] = log
 
     def cursor(self) -> FakeCursor:
         return FakeCursor(
-            behaviours=self._behaviours, json_results=self._json_results, log=self._log
+            behaviours=self._behaviours, result_kinds=self._result_kinds, log=self._log
         )
 
     def close(self) -> None:
@@ -162,6 +203,8 @@ def record_with_fake_connection(
     batch_error: tuple[int, str] | None,
     statement_errors: Sequence[tuple[str, int, str]],
     json_results: frozenset[str],
+    overflow_results: frozenset[str],
+    truncated_results: frozenset[str],
 ) -> tuple[tuple[str, ...] | None, tuple[str, ...], int, str]:
     """Outcomes (`None` when the run stopped), single runs, files written and the report."""
     behaviours: defaultdict[str, Callable[[], None]] = defaultdict(lambda: _succeed)
@@ -181,7 +224,15 @@ def record_with_fake_connection(
 
     def open_session(_: SessionParameters) -> WarehouseSession:
         return SnowflakeSession(
-            FakeConnection(behaviours=behaviours, json_results=json_results, log=log)
+            FakeConnection(
+                behaviours=behaviours,
+                result_kinds=_result_kinds(
+                    json_results=json_results,
+                    overflow_results=overflow_results,
+                    truncated_results=truncated_results,
+                ),
+                log=log,
+            )
         )
 
     cases: list[PendingCase] = [

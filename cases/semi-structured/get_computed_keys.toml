@@ -39,7 +39,6 @@ rows = [
 ]
 expression = "GET(v, k)"
 tags = ["null", "duplicates", "empty", "invalid"]
-expected_divergence = "json_fidelity"
 
 [[case]]
 id = "get_key_star"
@@ -50,7 +49,6 @@ rows = [
 ]
 expression = "GET(v, k)"
 tags = ["null", "duplicates", "empty", "invalid"]
-expected_divergence = "json_fidelity"
 
 [[case]]
 id = "get_key_quotes_backslashes"

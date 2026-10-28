@@ -1,0 +1,129 @@
+# Declared domains of query-level rules, which record no arguments or facets yet.
+# Format: see docs/coverage.md.
+version = 1
+
+[[rule]]
+id = "rule.alias"
+
+[[rule.form]]
+construct = "query"
+
+[[rule]]
+id = "rule.common_table"
+
+[[rule.form]]
+construct = "query"
+
+[[rule]]
+id = "rule.group_by"
+
+[[rule.form]]
+construct = "query"
+
+[[rule]]
+id = "rule.having"
+
+[[rule.form]]
+construct = "query"
+
+[[rule]]
+id = "rule.qualify"
+
+[[rule.form]]
+construct = "query"
+
+[[rule]]
+id = "rule.star"
+
+[[rule.form]]
+construct = "query"
+
+[[rule]]
+id = "rule.from_relation"
+
+[[rule.form]]
+construct = "query"
+
+[[rule]]
+id = "rule.from_subquery"
+
+[[rule.form]]
+construct = "query"
+
+[[rule]]
+id = "rule.join_cross"
+
+[[rule.form]]
+construct = "query"
+
+[[rule]]
+id = "rule.join_on"
+
+[[rule.form]]
+construct = "query"
+
+[[rule]]
+id = "rule.lateral_subquery"
+
+[[rule.form]]
+construct = "query"
+
+[[rule]]
+id = "rule.project_table_function"
+
+[[rule.form]]
+construct = "query"
+
+[[rule]]
+id = "rule.limit"
+
+[[rule.form]]
+construct = "query"
+
+[[rule]]
+id = "rule.order_by"
+
+[[rule.form]]
+construct = "query"
+
+[[rule]]
+id = "rule.where"
+
+[[rule.form]]
+construct = "query"
+
+[[rule]]
+id = "rule.set_operation"
+
+[[rule.form]]
+construct = "query"
+
+[[rule]]
+id = "rule.union_by_name"
+
+[[rule.form]]
+construct = "query"
+
+[[rule]]
+id = "rule.flatten"
+
+[[rule.form]]
+construct = "query"
+
+[[rule]]
+id = "rule.select"
+
+[[rule.form]]
+construct = "query"
+
+[[rule]]
+id = "rule.split_to_table"
+
+[[rule.form]]
+construct = "query"
+
+[[rule]]
+id = "rule.distinct"
+
+[[rule.form]]
+construct = "query"

@@ -30,6 +30,11 @@ DATA_EXCEPTION_SQLSTATE_CLASSES: frozenset[str] = frozenset({"22"})
 SESSION_DEPENDENT_SQLSTATES: frozenset[str] = frozenset({"42501"})
 SESSION_FAILURE_SQLSTATE_CLASSES: frozenset[str] = frozenset({"08", "28", "53", "57", "XX"})
 HASH_NAME_LENGTH: int = 64
+NANOSECOND_TYPE_NAMES: frozenset[str] = frozenset(
+    {"TIMESTAMP_NTZ", "TIMESTAMP_LTZ", "TIMESTAMP_TZ", "TIME"}
+)
+MICROSECOND_SCALE: int = 6
+NANOSECOND_UNIT: str = "ns"
 HEX_DIGITS: frozenset[str] = frozenset("0123456789abcdef")
 PENDING_KEYS: frozenset[str] = frozenset(
     {

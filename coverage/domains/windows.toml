@@ -1,0 +1,308 @@
+# Declared domains of window functions.
+# Format: see docs/coverage.md.
+version = 1
+
+[[rule]]
+id = "rule.window_aggregate"
+
+[[rule.form]]
+construct = "node:window_function"
+arguments = [
+  { families = ["boolean"] },
+]
+facets = { function = ["COUNT_IF"], frame = ["unordered", "ordered"] }
+each = { partition = ["none", "text", "integer", "decimal", "float", "boolean", "date", "time", "timestamp_ntz", "timestamp_ltz", "timestamp_tz", "several"] }
+rows = "window"
+template = "COUNT_IF({0}) OVER (PARTITION BY g)"
+query = "SELECT g, {expression} AS r FROM input ORDER BY ordinal"
+category = "window"
+variants = ["COUNT_IF({0}) OVER (PARTITION BY g ORDER BY ordinal)"]
+
+# BOOLOR_AGG and BOOLAND_AGG over whole partitions only: Snowflake rejects an ordered window.
+[[rule.form]]
+construct = "node:window_function"
+arguments = [
+  { families = ["boolean"] },
+]
+facets = { function = ["BOOLOR_AGG", "BOOLAND_AGG"], frame = ["unordered"] }
+each = { partition = ["none", "text", "integer", "decimal", "float", "boolean", "date", "time", "timestamp_ntz", "timestamp_ltz", "timestamp_tz", "several"] }
+rows = "window"
+template = "BOOLOR_AGG({0}) OVER (PARTITION BY g)"
+query = "SELECT g, {expression} AS r FROM input ORDER BY ordinal"
+category = "window"
+variants = ["BOOLAND_AGG({0}) OVER (PARTITION BY g)"]
+
+[[rule.form]]
+construct = "node:window_function"
+arguments = [
+  { families = ["integer", "decimal", "float", "text", "boolean", "date", "time", "timestamp_ntz", "timestamp_ltz", "timestamp_tz", "variant"] },
+]
+facets = { function = ["COUNT"], frame = ["unordered", "ordered", "rows", "whole_partition"] }
+each = { partition = ["none", "text", "integer", "decimal", "float", "boolean", "date", "time", "timestamp_ntz", "timestamp_ltz", "timestamp_tz", "several"] }
+rows = "window"
+template = "COUNT({0}) OVER (PARTITION BY g ORDER BY ordinal)"
+query = "SELECT g, {expression} AS r FROM input ORDER BY ordinal"
+category = "window"
+variants = ["COUNT({0}) OVER (PARTITION BY g)", "COUNT({0}) OVER (PARTITION BY g ORDER BY ordinal ROWS BETWEEN 1 PRECEDING AND CURRENT ROW)", "COUNT({0}) OVER (PARTITION BY g ORDER BY ordinal ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING)"]
+
+[[rule.form]]
+construct = "node:window_function"
+arguments = []
+facets = { function = ["COUNT"], frame = ["unordered", "ordered", "rows", "whole_partition"] }
+each = { partition = ["none", "text", "integer", "decimal", "float", "boolean", "date", "time", "timestamp_ntz", "timestamp_ltz", "timestamp_tz", "several"] }
+rows = "window"
+template = "COUNT(*) OVER (PARTITION BY g)"
+query = "SELECT g, {expression} AS r FROM input ORDER BY ordinal"
+category = "window"
+variants = ["COUNT(*) OVER (PARTITION BY g ORDER BY ordinal)", "COUNT(*) OVER (PARTITION BY g ORDER BY ordinal ROWS BETWEEN 1 PRECEDING AND CURRENT ROW)", "COUNT(*) OVER (PARTITION BY g ORDER BY ordinal ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING)"]
+
+[[rule.form]]
+construct = "node:window_function"
+arguments = [
+  { families = ["integer", "decimal"] },
+]
+facets = { function = ["SUM"], frame = ["unordered", "ordered", "rows", "whole_partition"] }
+each = { partition = ["none", "text", "integer", "decimal", "float", "boolean", "date", "time", "timestamp_ntz", "timestamp_ltz", "timestamp_tz", "several"] }
+rows = "window"
+template = "SUM({0}) OVER (PARTITION BY g ORDER BY ordinal)"
+query = "SELECT g, {expression} AS r FROM input ORDER BY ordinal"
+category = "window"
+variants = ["SUM({0}) OVER (PARTITION BY g)", "SUM({0}) OVER (PARTITION BY g ORDER BY ordinal ROWS BETWEEN 1 PRECEDING AND CURRENT ROW)", "SUM({0}) OVER (PARTITION BY g ORDER BY ordinal ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING)"]
+
+[[rule.form]]
+construct = "node:window_function"
+arguments = [
+  { families = ["integer", "decimal", "float", "text", "boolean", "date", "timestamp_ntz", "timestamp_ltz", "timestamp_tz"] },
+]
+facets = { function = ["MIN", "MAX"], frame = ["unordered", "ordered", "rows", "whole_partition"] }
+each = { partition = ["none", "text", "integer", "decimal", "float", "boolean", "date", "time", "timestamp_ntz", "timestamp_ltz", "timestamp_tz", "several"] }
+rows = "window"
+template = "MIN({0}) OVER (PARTITION BY g ORDER BY ordinal)"
+query = "SELECT g, {expression} AS r FROM input ORDER BY ordinal"
+category = "window"
+variants = ["MIN({0}) OVER (PARTITION BY g)", "MIN({0}) OVER (PARTITION BY g ORDER BY ordinal ROWS BETWEEN 1 PRECEDING AND CURRENT ROW)", "MIN({0}) OVER (PARTITION BY g ORDER BY ordinal ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING)", "MAX({0}) OVER (PARTITION BY g)", "MAX({0}) OVER (PARTITION BY g ORDER BY ordinal)", "MAX({0}) OVER (PARTITION BY g ORDER BY ordinal ROWS BETWEEN 1 PRECEDING AND CURRENT ROW)", "MAX({0}) OVER (PARTITION BY g ORDER BY ordinal ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING)"]
+
+[[rule.form]]
+construct = "node:window_function"
+arguments = [
+  { families = ["text", "decimal", "integer", "date"], grammar = true },
+]
+repeat = true
+facets = { function = ["WITHIN_GROUP"], frame = ["unordered"] }
+each = { partition = ["none", "text", "integer", "decimal", "float", "boolean", "date", "time", "timestamp_ntz", "timestamp_ltz", "timestamp_tz", "several"] }
+rows = "window"
+query = "SELECT g, {expression} AS r FROM input ORDER BY ordinal"
+category = "window"
+
+[[rule]]
+id = "rule.window_ranking"
+
+[[rule.form]]
+construct = "node:window_function"
+arguments = []
+facets = { function = ["ROW_NUMBER", "RANK", "DENSE_RANK"], frame = ["ordered"] }
+each = { partition = ["none", "text", "integer", "decimal", "float", "boolean", "date", "time", "timestamp_ntz", "timestamp_ltz", "timestamp_tz", "several"] }
+rows = "window"
+template = "ROW_NUMBER() OVER (PARTITION BY g ORDER BY ordinal)"
+query = "SELECT g, {expression} AS r FROM input ORDER BY ordinal"
+category = "window"
+variants = ["RANK() OVER (PARTITION BY g ORDER BY ordinal)", "DENSE_RANK() OVER (PARTITION BY g ORDER BY ordinal)"]
+
+[[rule]]
+id = "rule.window_offset"
+
+[[rule.form]]
+construct = "node:window_function"
+arguments = [
+  { families = ["integer", "decimal", "float", "text", "boolean", "date", "time", "timestamp_ntz", "timestamp_ltz", "timestamp_tz"] },
+]
+facets = { function = ["LAG", "LEAD"], frame = ["ordered"] }
+each = { partition = ["none", "text", "integer", "decimal", "float", "boolean", "date", "time", "timestamp_ntz", "timestamp_ltz", "timestamp_tz", "several"] }
+rows = "window"
+template = "LAG({0}) OVER (PARTITION BY g ORDER BY ordinal)"
+query = "SELECT g, {expression} AS r FROM input ORDER BY ordinal"
+category = "window"
+variants = ["LEAD({0}) OVER (PARTITION BY g ORDER BY ordinal)"]
+
+[[rule.form]]
+construct = "node:window_function"
+arguments = [
+  { families = ["integer", "decimal", "float", "text", "boolean", "date", "time", "timestamp_ntz", "timestamp_ltz", "timestamp_tz"] },
+]
+facets = { function = ["LAG", "LEAD"], frame = ["ordered"] }
+each = { partition = ["none", "text", "integer", "decimal", "float", "boolean", "date", "time", "timestamp_ntz", "timestamp_ltz", "timestamp_tz", "several"] }
+rows = "window"
+template = "LEAD({0}, 2) OVER (PARTITION BY g ORDER BY ordinal)"
+query = "SELECT g, {expression} AS r FROM input ORDER BY ordinal"
+category = "window"
+variants = ["LAG({0}, 2) OVER (PARTITION BY g ORDER BY ordinal)"]
+
+[[rule.form]]
+construct = "node:window_function"
+arguments = [
+  { families = ["integer"] },
+  { families = ["integer", "null"] },
+]
+facets = { function = ["LAG", "LEAD"], frame = ["ordered"] }
+each = { partition = ["none", "text", "integer", "decimal", "float", "boolean", "date", "time", "timestamp_ntz", "timestamp_ltz", "timestamp_tz", "several"] }
+rows = "window"
+template = "LAG({0}, 1, {1}) OVER (PARTITION BY g ORDER BY ordinal)"
+query = "SELECT g, {expression} AS r FROM input ORDER BY ordinal"
+category = "window"
+variants = ["LEAD({0}, 1, {1}) OVER (PARTITION BY g ORDER BY ordinal)"]
+
+[[rule.form]]
+construct = "node:window_function"
+arguments = [
+  { families = ["decimal"] },
+  { families = ["decimal", "null"] },
+]
+facets = { function = ["LAG", "LEAD"], frame = ["ordered"] }
+each = { partition = ["none", "text", "integer", "decimal", "float", "boolean", "date", "time", "timestamp_ntz", "timestamp_ltz", "timestamp_tz", "several"] }
+rows = "window"
+template = "LAG({0}, 1, {1}) OVER (PARTITION BY g ORDER BY ordinal)"
+query = "SELECT g, {expression} AS r FROM input ORDER BY ordinal"
+category = "window"
+variants = ["LEAD({0}, 1, {1}) OVER (PARTITION BY g ORDER BY ordinal)"]
+
+[[rule.form]]
+construct = "node:window_function"
+arguments = [
+  { families = ["float"] },
+  { families = ["float", "null"] },
+]
+facets = { function = ["LAG", "LEAD"], frame = ["ordered"] }
+each = { partition = ["none", "text", "integer", "decimal", "float", "boolean", "date", "time", "timestamp_ntz", "timestamp_ltz", "timestamp_tz", "several"] }
+rows = "window"
+template = "LAG({0}, 1, {1}) OVER (PARTITION BY g ORDER BY ordinal)"
+query = "SELECT g, {expression} AS r FROM input ORDER BY ordinal"
+category = "window"
+variants = ["LEAD({0}, 1, {1}) OVER (PARTITION BY g ORDER BY ordinal)"]
+
+[[rule.form]]
+construct = "node:window_function"
+arguments = [
+  { families = ["text"] },
+  { families = ["text", "null"] },
+]
+facets = { function = ["LAG", "LEAD"], frame = ["ordered"] }
+each = { partition = ["none", "text", "integer", "decimal", "float", "boolean", "date", "time", "timestamp_ntz", "timestamp_ltz", "timestamp_tz", "several"] }
+rows = "window"
+template = "LAG({0}, 1, {1}) OVER (PARTITION BY g ORDER BY ordinal)"
+query = "SELECT g, {expression} AS r FROM input ORDER BY ordinal"
+category = "window"
+variants = ["LEAD({0}, 1, {1}) OVER (PARTITION BY g ORDER BY ordinal)"]
+
+[[rule.form]]
+construct = "node:window_function"
+arguments = [
+  { families = ["boolean"] },
+  { families = ["boolean", "null"] },
+]
+facets = { function = ["LAG", "LEAD"], frame = ["ordered"] }
+each = { partition = ["none", "text", "integer", "decimal", "float", "boolean", "date", "time", "timestamp_ntz", "timestamp_ltz", "timestamp_tz", "several"] }
+rows = "window"
+template = "LAG({0}, 1, {1}) OVER (PARTITION BY g ORDER BY ordinal)"
+query = "SELECT g, {expression} AS r FROM input ORDER BY ordinal"
+category = "window"
+variants = ["LEAD({0}, 1, {1}) OVER (PARTITION BY g ORDER BY ordinal)"]
+
+[[rule.form]]
+construct = "node:window_function"
+arguments = [
+  { families = ["date"] },
+  { families = ["date", "null"] },
+]
+facets = { function = ["LAG", "LEAD"], frame = ["ordered"] }
+each = { partition = ["none", "text", "integer", "decimal", "float", "boolean", "date", "time", "timestamp_ntz", "timestamp_ltz", "timestamp_tz", "several"] }
+rows = "window"
+template = "LAG({0}, 1, {1}) OVER (PARTITION BY g ORDER BY ordinal)"
+query = "SELECT g, {expression} AS r FROM input ORDER BY ordinal"
+category = "window"
+variants = ["LEAD({0}, 1, {1}) OVER (PARTITION BY g ORDER BY ordinal)"]
+
+[[rule.form]]
+construct = "node:window_function"
+arguments = [
+  { families = ["time"] },
+  { families = ["time", "null"] },
+]
+facets = { function = ["LAG", "LEAD"], frame = ["ordered"] }
+each = { partition = ["none", "text", "integer", "decimal", "float", "boolean", "date", "time", "timestamp_ntz", "timestamp_ltz", "timestamp_tz", "several"] }
+rows = "window"
+template = "LAG({0}, 1, {1}) OVER (PARTITION BY g ORDER BY ordinal)"
+query = "SELECT g, {expression} AS r FROM input ORDER BY ordinal"
+category = "window"
+variants = ["LEAD({0}, 1, {1}) OVER (PARTITION BY g ORDER BY ordinal)"]
+
+[[rule.form]]
+construct = "node:window_function"
+arguments = [
+  { families = ["timestamp_ntz"] },
+  { families = ["timestamp_ntz", "null"] },
+]
+facets = { function = ["LAG", "LEAD"], frame = ["ordered"] }
+each = { partition = ["none", "text", "integer", "decimal", "float", "boolean", "date", "time", "timestamp_ntz", "timestamp_ltz", "timestamp_tz", "several"] }
+rows = "window"
+template = "LAG({0}, 1, {1}) OVER (PARTITION BY g ORDER BY ordinal)"
+query = "SELECT g, {expression} AS r FROM input ORDER BY ordinal"
+category = "window"
+variants = ["LEAD({0}, 1, {1}) OVER (PARTITION BY g ORDER BY ordinal)"]
+
+[[rule.form]]
+construct = "node:window_function"
+arguments = [
+  { families = ["timestamp_ltz"] },
+  { families = ["timestamp_ltz", "null"] },
+]
+facets = { function = ["LAG", "LEAD"], frame = ["ordered"] }
+each = { partition = ["none", "text", "integer", "decimal", "float", "boolean", "date", "time", "timestamp_ntz", "timestamp_ltz", "timestamp_tz", "several"] }
+rows = "window"
+template = "LAG({0}, 1, {1}) OVER (PARTITION BY g ORDER BY ordinal)"
+query = "SELECT g, {expression} AS r FROM input ORDER BY ordinal"
+category = "window"
+variants = ["LEAD({0}, 1, {1}) OVER (PARTITION BY g ORDER BY ordinal)"]
+
+[[rule.form]]
+construct = "node:window_function"
+arguments = [
+  { families = ["timestamp_tz"] },
+  { families = ["timestamp_tz", "null"] },
+]
+facets = { function = ["LAG", "LEAD"], frame = ["ordered"] }
+each = { partition = ["none", "text", "integer", "decimal", "float", "boolean", "date", "time", "timestamp_ntz", "timestamp_ltz", "timestamp_tz", "several"] }
+rows = "window"
+template = "LAG({0}, 1, {1}) OVER (PARTITION BY g ORDER BY ordinal)"
+query = "SELECT g, {expression} AS r FROM input ORDER BY ordinal"
+category = "window"
+variants = ["LEAD({0}, 1, {1}) OVER (PARTITION BY g ORDER BY ordinal)"]
+
+[[rule.form]]
+construct = "node:window_function"
+arguments = [
+  { families = ["decimal", "float"] },
+  { families = ["integer"], kinds = ["literal"] },
+]
+facets = { function = ["LAG", "LEAD"], frame = ["ordered"] }
+each = { partition = ["text"] }
+template = "LAG({0}, 1, {1}) OVER (PARTITION BY g ORDER BY ordinal)"
+query = "SELECT g, {expression} AS r FROM input ORDER BY ordinal"
+category = "window"
+benign = { "1" = "0" }
+variants = ["LEAD({0}, 1, {1}) OVER (PARTITION BY g ORDER BY ordinal)"]
+
+[[rule]]
+id = "rule.window_first_last"
+
+[[rule.form]]
+construct = "node:window_function"
+arguments = [
+  { families = ["integer", "decimal", "float", "text", "boolean", "date", "time", "timestamp_ntz", "timestamp_ltz", "timestamp_tz", "variant"] },
+]
+facets = { function = ["FIRST_VALUE", "LAST_VALUE"], frame = ["ordered", "whole_partition"] }
+each = { partition = ["none", "text", "integer", "decimal", "float", "boolean", "date", "time", "timestamp_ntz", "timestamp_ltz", "timestamp_tz", "several"] }
+rows = "window"
+template = "LAST_VALUE({0}) OVER (PARTITION BY g ORDER BY ordinal)"
+query = "SELECT g, {expression} AS r FROM input ORDER BY ordinal"
+category = "window"
+variants = ["FIRST_VALUE({0}) OVER (PARTITION BY g ORDER BY ordinal)", "FIRST_VALUE({0}) OVER (PARTITION BY g ORDER BY ordinal ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING)", "LAST_VALUE({0}) OVER (PARTITION BY g ORDER BY ordinal ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING)"]
