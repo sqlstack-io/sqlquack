@@ -20,11 +20,11 @@ fn given_recorded_cases_when_exporting_for_review_then_each_case_shows_sql_and_e
         },
         ReviewTestCase {
             description: "a refusal shows the line and column of the construct it refuses",
-            file: "fidelity/mod.slt",
+            file: "temporal/current_time_batch2.slt",
             expected_lines: &[
-                "SELECT MOD(a, b) AS value",
+                "SELECT SYSTEM$TYPEOF(CURRENT_DATE()) AS value",
                 "refused",
-                "# missing rule at 4:8: no rule converts fn:MOD",
+                "# missing rule at 4:8: no rule converts fn:SYSTEM$TYPEOF",
             ],
         },
         ReviewTestCase {

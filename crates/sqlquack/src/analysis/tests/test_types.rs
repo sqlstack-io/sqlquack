@@ -119,3 +119,23 @@ pub(crate) struct StructuredTypeTestCase {
     pub(crate) sql: &'static str,
     pub(crate) expected_refusal: Result<usize, Vec<String>>,
 }
+
+#[derive(Debug, PartialEq, Eq)]
+pub(crate) struct CollectedSummary {
+    pub(crate) constructs: Vec<String>,
+    pub(crate) possibly_incomplete: bool,
+}
+
+pub(crate) struct CollectedRefusalsTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) sql: &'static str,
+    pub(crate) expected_summary: CollectedSummary,
+}
+
+pub(crate) struct CollectionIsolationTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) converting: &'static [&'static str],
+    pub(crate) refused: &'static str,
+    /// Converting statements, refusals collected, and whether the SQL stayed byte-identical.
+    pub(crate) expected_outcome: (usize, usize, bool),
+}

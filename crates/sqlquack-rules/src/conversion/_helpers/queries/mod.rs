@@ -4,3 +4,4 @@ pub(crate) mod function_body;
 pub(crate) mod query;
 pub(crate) mod set_operations;
 pub(crate) mod sources;
+pub(crate) mod split_to_table;

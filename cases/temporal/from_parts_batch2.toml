@@ -1,0 +1,124 @@
+# DATE_FROM_PARTS and TIMESTAMP_NTZ_FROM_PARTS.
+category = "temporal"
+construct = "fn:DATE_FROM_PARTS"
+session_profile = "utc-v1"
+
+[[case]]
+id = "date_from_parts_plain"
+description = "DATE_FROM_PARTS of ordinary parts and a leap day."
+columns = [{ name = "y", type = "NUMBER(5,0)" }, { name = "m", type = "NUMBER(3,0)" }, { name = "d", type = "NUMBER(3,0)" }]
+rows = [
+  ["2024", "2", "29"],
+  ["2023", "12", "31"],
+  ["1970", "1", "1"],
+  ["NULL", "1", "1"],
+  ["2024", "NULL", "1"],
+]
+expression = "DATE_FROM_PARTS(y, m, d)"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "date_from_parts_normalised"
+description = "DATE_FROM_PARTS with months and days outside their ranges, which Snowflake carries."
+columns = [{ name = "y", type = "NUMBER(5,0)" }, { name = "m", type = "NUMBER(3,0)" }, { name = "d", type = "NUMBER(3,0)" }]
+rows = [
+  ["2024", "13", "1"],
+  ["2024", "0", "1"],
+  ["2024", "1", "0"],
+  ["2024", "2", "30"],
+  ["2024", "-1", "15"],
+  ["2024", "1", "-1"],
+  ["2024", "25", "100"],
+]
+expression = "DATE_FROM_PARTS(y, m, d)"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "date_from_parts_year_edges"
+description = "DATE_FROM_PARTS at early and late years."
+columns = [{ name = "y", type = "NUMBER(5,0)" }, { name = "m", type = "NUMBER(3,0)" }, { name = "d", type = "NUMBER(3,0)" }]
+rows = [
+  ["1", "1", "1"],
+  ["9999", "12", "31"],
+  ["1582", "10", "10"],
+]
+expression = "DATE_FROM_PARTS(y, m, d)"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "date_from_parts_year_of"
+description = "DATE_FROM_PARTS(YEAR(d) - n, 1, 1), as models compute a birth year."
+columns = [{ name = "dt", type = "DATE" }, { name = "n", type = "NUMBER(3,0)" }]
+rows = [
+  ["'2024-02-29'", "3"],
+  ["'2024-01-01'", "0"],
+  ["NULL", "2"],
+  ["'2024-06-30'", "NULL"],
+]
+expression = "DATE_FROM_PARTS(YEAR(dt) - n, 1, 1)"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "date_from_parts_month_test"
+description = "DATE_FROM_PARTS with an IFF on the month, as models write it."
+columns = [{ name = "dt", type = "DATE" }, { name = "n", type = "NUMBER(3,0)" }]
+rows = [
+  ["'2024-02-29'", "3"],
+  ["'2024-09-01'", "3"],
+  ["'2024-08-01'", "2"],
+]
+expression = "DATE_FROM_PARTS(YEAR(dt) - n - IFF(MONTH(dt) < 8, 1, 0), 8, 1)"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "date_from_parts_float"
+description = "DATE_FROM_PARTS of FLOAT and fractional parts."
+columns = [{ name = "y", type = "FLOAT" }, { name = "m", type = "NUMBER(4,2)" }]
+rows = [
+  ["2024.0", "2.00"],
+  ["2024.6", "2.50"],
+  ["NULL", "1.00"],
+]
+expression = "DATE_FROM_PARTS(y, m, 1)"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "timestamp_ntz_from_parts_date_time"
+description = "TIMESTAMP_NTZ_FROM_PARTS of a DATE and a TIME."
+columns = [{ name = "dt", type = "DATE" }, { name = "t", type = "TIME(9)" }]
+rows = [
+  ["'2024-02-29'", "'13:45:00'"],
+  ["'2024-12-31'", "'23:59:59.999999999'"],
+  ["'2024-01-01'", "'00:00:00'"],
+  ["NULL", "'12:00:00'"],
+  ["'2024-01-01'", "NULL"],
+]
+expression = "TIMESTAMP_NTZ_FROM_PARTS(dt, t)"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "timestamp_ntz_from_parts_try_time"
+description = "TIMESTAMP_NTZ_FROM_PARTS of a DATE and TRY_TO_TIME text."
+columns = [{ name = "dt", type = "DATE" }, { name = "s", type = "VARCHAR" }]
+rows = [
+  ["'2024-02-29'", "'13:45'"],
+  ["'2024-02-29'", "'9:05'"],
+  ["'2024-02-29'", "'x'"],
+  ["'2024-02-29'", "NULL"],
+]
+expression = "TIMESTAMP_NTZ_FROM_PARTS(dt, TRY_TO_TIME(s, 'HH24:MI'))"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "timestamp_ntz_from_parts_six"
+description = "TIMESTAMP_NTZ_FROM_PARTS of six numbers, normalising out-of-range parts."
+columns = [{ name = "y", type = "NUMBER(5,0)" }, { name = "mo", type = "NUMBER(3,0)" }, { name = "d", type = "NUMBER(3,0)" }, { name = "h", type = "NUMBER(3,0)" }, { name = "mi", type = "NUMBER(3,0)" }, { name = "se", type = "NUMBER(3,0)" }]
+rows = [
+  ["2024", "2", "29", "13", "45", "1"],
+  ["2024", "1", "1", "24", "0", "0"],
+  ["2024", "1", "1", "0", "60", "0"],
+  ["2024", "1", "1", "0", "0", "-1"],
+  ["NULL", "1", "1", "0", "0", "0"],
+]
+expression = "TIMESTAMP_NTZ_FROM_PARTS(y, mo, d, h, mi, se)"
+tags = ["null", "boundary"]

@@ -1,0 +1,47 @@
+# ARRAY_POSITION of numbers among elements spelled as fractions, exponents and text.
+category = "semi-structured-array"
+construct = "fn:ARRAY_POSITION"
+session_profile = "utc-v1"
+
+[[case]]
+id = "array_position_integer_among_fractions"
+description = "ARRAY_POSITION of the integer 1 in arrays holding 1.0, 1e0 and the text 1."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('[1.0]')"],
+  ["PARSE_JSON('[2, 1e0]')"],
+  ["PARSE_JSON('[\"1\", 1.0]')"],
+  ["PARSE_JSON('[\"1\", 1]')"],
+  ["PARSE_JSON('[0.5, 1]')"],
+  ["PARSE_JSON('[]')"],
+  ["NULL"],
+]
+expression = "ARRAY_POSITION(1::VARIANT, v)"
+tags = ["null", "duplicates", "empty", "invalid"]
+expected_divergence = "json_fidelity"
+
+[[case]]
+id = "array_position_integer_mixed"
+description = "ARRAY_POSITION of the integer 1 in arrays of integers, text and booleans."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('[\"1\", 1]')"],
+  ["PARSE_JSON('[true, \"a\", 1]')"],
+  ["PARSE_JSON('[2, 3]')"],
+  ["PARSE_JSON('[null, 1]')"],
+]
+expression = "ARRAY_POSITION(1::VARIANT, v)"
+tags = ["null", "duplicates", "empty", "invalid"]
+
+[[case]]
+id = "array_position_text_among_numbers"
+description = "ARRAY_POSITION of the text 1 in arrays holding the numbers 1, 1.0 and 1e0."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('[1, \"1\"]')"],
+  ["PARSE_JSON('[1.0, 1e0]')"],
+  ["PARSE_JSON('[1]')"],
+]
+expression = "ARRAY_POSITION('1'::VARIANT, v)"
+tags = ["null", "duplicates", "empty", "invalid"]
+expected_divergence = "json_fidelity"

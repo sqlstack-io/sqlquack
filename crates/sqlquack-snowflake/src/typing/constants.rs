@@ -29,6 +29,8 @@ pub const CAST_TARGET: &str = "snowflake.cast_target";
 pub const NUMBER_LITERAL: &str = "snowflake.number_literal";
 /// `+` and `-`: `snowflake.numeric_add_subtract`.
 pub const NUMERIC_ADD_SUBTRACT: &str = "snowflake.numeric_add_subtract";
+/// `%` and MOD: `snowflake.numeric_modulo`.
+pub const NUMERIC_MODULO: &str = "snowflake.numeric_modulo";
 /// `*`: `snowflake.numeric_multiply`.
 pub const NUMERIC_MULTIPLY: &str = "snowflake.numeric_multiply";
 /// `/`: `snowflake.numeric_divide`.
@@ -52,3 +54,30 @@ pub const RANKING: &str = "snowflake.ranking";
 pub const STRUCTURED_TYPES: &[&str] = &["ARRAY", "OBJECT", "MAP"];
 /// Why a structured type is refused until rules for it have evidence.
 pub const STRUCTURED_UNSUPPORTED: &str = "is not supported yet";
+/// The recorded type of DATEDIFF between two TIMEs.
+pub const TIME_DIFF_TYPE: SnowflakeType = SnowflakeType::Number {
+    precision: 9,
+    scale: 0,
+};
+/// DATEDIFF's units and the precision of their recorded NUMBER(p,0) type.
+pub const DATEDIFF_PRECISIONS: &[(&str, u8)] = &[
+    ("YEAR", 9),
+    ("QUARTER", 9),
+    ("MONTH", 9),
+    ("WEEK", 9),
+    ("DAY", 9),
+    ("HOUR", 9),
+    ("MINUTE", 18),
+    ("SECOND", 18),
+    ("MILLISECOND", 38),
+    ("MICROSECOND", 38),
+];
+/// The most digits a numeric literal's exponent is read with.
+pub const MAX_EXPONENT_DIGITS: usize = 2;
+/// The furthest a numeric literal's exponent moves its decimal point, in either direction.
+pub const MAX_POINT_SHIFT: usize = 64;
+/// The recorded type of COUNT_IF.
+pub const COUNT_IF_TYPE: SnowflakeType = SnowflakeType::Number {
+    precision: 13,
+    scale: 0,
+};

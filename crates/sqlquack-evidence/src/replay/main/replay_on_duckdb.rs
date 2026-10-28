@@ -5,7 +5,7 @@ use sqlquack_compare::values::models::ResultSet;
 
 use crate::replay::models::ReplaySettings;
 
-/// The result of `setup` then `sql` in a new in-memory database with `settings`, or the error.
+/// `setup` then `sql` in a new single-threaded in-memory database with `settings`, or the error.
 pub fn replay_on_duckdb(
     (setup, sql): (&[String], &str),
     settings: &ReplaySettings,
@@ -13,7 +13,7 @@ pub fn replay_on_duckdb(
     let connection = Connection::open_in_memory().map_err(|error| error.to_string())?;
     connection
         .execute_batch(&format!(
-            "SET TimeZone = '{}'; SET default_null_order = '{}';",
+            "SET TimeZone = '{}'; SET default_null_order = '{}'; SET threads = 1;",
             settings.time_zone.replace('\'', "''"),
             settings.null_order.replace('\'', "''")
         ))

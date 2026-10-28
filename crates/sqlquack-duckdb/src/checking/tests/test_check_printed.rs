@@ -1,6 +1,6 @@
 use crate::checking::errors::CheckStage;
-use crate::checking::tests::helpers::{failed_stage, nested_union};
-use crate::checking::tests::test_types::CheckTestCase;
+use crate::checking::tests::helpers::{failed_stage, failed_stage_over, nested_union};
+use crate::checking::tests::test_types::{CheckTestCase, RelationsTestCase};
 
 #[test]
 fn given_printed_sql_when_duckdb_checks_it_then_only_one_bindable_statement_passes() {
@@ -64,6 +64,11 @@ fn given_printed_sql_when_duckdb_checks_it_then_only_one_bindable_statement_pass
             expected_stage: Some(CheckStage::Parse),
         },
         CheckTestCase {
+            description: "a semicolon in a string, a quoted name or a comment is not a separator",
+            sql: "SELECT ';' AS \"A;B\" -- a; b\n/* c; d */ FROM \"ORDERS\";".to_owned(),
+            expected_stage: None,
+        },
+        CheckTestCase {
             description: "two statements are refused",
             sql: "SELECT 1; SELECT 2".to_owned(),
             expected_stage: Some(CheckStage::StatementCount),
@@ -78,6 +83,30 @@ fn given_printed_sql_when_duckdb_checks_it_then_only_one_bindable_statement_pass
     for test_case in test_cases {
         assert_eq!(
             failed_stage(&test_case.sql),
+            test_case.expected_stage,
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_a_relation_an_earlier_check_defined_when_a_later_check_lacks_it_then_it_does_not_bind() {
+    let test_cases = [
+        RelationsTestCase {
+            description: "a relation the check knows binds",
+            relations: &["ORDERS", "CUSTOMERS"],
+            expected_stage: None,
+        },
+        RelationsTestCase {
+            description: "the same relation, no longer known to a later check, does not bind",
+            relations: &["ORDERS"],
+            expected_stage: Some(CheckStage::Bind),
+        },
+    ];
+    for test_case in test_cases {
+        assert_eq!(
+            failed_stage_over("SELECT \"ID\" FROM \"CUSTOMERS\"", test_case.relations),
             test_case.expected_stage,
             "{}",
             test_case.description

@@ -234,8 +234,11 @@ upper-case hex text is indistinguishable from ordinary strings, `''` included) s
 IS_OBJECT, IS_ARRAY and IS_BOOLEAN test the JSON kind; OBJECT_KEYS, OBJECT_PICK, ARRAY_CONSTRUCT
 (a SQL NULL element, undefined in Snowflake, raises) and ARRAY_EXCEPT of string arrays keep keys
 in byte order; `::OBJECT` and `::ARRAY` of a VARIANT raise for another kind. LATERAL FLATTEN becomes a lateral subquery over
-`json_each` (`duckdb.json_flatten`); its PATH raises for object keys that are not plain names
-until their spelling is recorded. `percentile_interpolation` covers PERCENTILE_CONT between two different values:
+`json_each` (`duckdb.json_flatten`), after a FROM source or after JOIN ... ON clauses; its PATH
+raises for object keys that are not plain names until their spelling is recorded. LATERAL
+SPLIT_TO_TABLE on a non-empty literal delimiter becomes a lateral subquery over `string_split`
+(`duckdb.split_to_rows`). An aliased LATERAL subquery directly in the FROM list becomes a DuckDB
+LATERAL subquery reading the sources before it. `percentile_interpolation` covers PERCENTILE_CONT between two different values:
 Snowflake's interpolated results carry rounding error in the last digits that no exact or double
 formula reproduces, so the converted SQL returns a value only where the fraction lands on a row
 (or between equal values) and raises otherwise. `date_text_spelling` covers TRY_TO_DATE and
@@ -278,14 +281,29 @@ Progress goes to stderr every few seconds, and the conversion times of the slowe
 pass, are listed there at the end. `--names` adds file, model and relation names: the slowest
 files' paths, the blockers' model names and the relation in each `model:` and `relation:` root.
 
-The `blockers` section traces each refused file through the models it references. A file's own
+The `blockers` section traces each refused file through the models it references. Conversion stops
+at a statement's first refusal, so for blockers the census converts each refused file again,
+collecting every refusal: a refused expression becomes a NULL placeholder typed as the node alone
+decides (a cast's target, a predicate's BOOLEAN, a function with a fixed result type) and
+conversion carries on; a refused FROM source or join becomes a relation whose columns are unknown.
+A refusal over an untyped placeholder or unknown column may be a knock-on, so it is dropped and the
+file marked possibly incomplete, as is a file whose statement stops at a query-level refusal; a
+missing rule depends on no type and is always kept. Refused models are collected upstream first, and
+the columns their conversion reached type their readers. This pass never changes conversion output:
+it runs only for refused files, on its own, and its SQL is discarded. A file's own
 refusals are its roots, except an unresolved relation that is a refused model of the project, which
 contributes that model's roots instead; a relation that is neither a model nor in the schema is
 the root `relation:<name>`. Relation and model names match in upper case, as Snowflake folds
 unquoted identifiers, and a file's other refusals stay roots next to its relations'. Models refused
 only because they read each other share the root `cycle`. Each root reports the files it refuses
 directly, the files downstream of those, their total and the files it alone blocks; a file blocked
-by several roots counts towards each. `single_root_files` counts the refused files one fix would unblock. Without `--names`, files
+by several roots counts towards each. `sole` counts the files with complete refusals whose only root it is, which fixing it alone
+would make convert as far as the census can tell, and `sole_uncertain` the possibly incomplete ones;
+roots rank by `sole`. A file is possibly incomplete when it or a model upstream is.
+`single_root_files` counts the complete refused files one fix would unblock. `combinations` ranks
+pairs and triples of roots by the complete files whose roots they cover, reading no refused model
+(`direct`) or reading one (`downstream`). The `refusals` totals still count each file's first
+refusal. Without `--names`, files
 are numbered in name order, their unknown relations are left out, and `model:` and `relation:`
 roots fold into `upstream model` and `unknown relation`.
 

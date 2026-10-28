@@ -5,6 +5,7 @@ use sqlquack_snowflake::typing::models::SnowflakeType;
 
 use crate::blocks::main::column_type::column_type;
 use crate::blocks::main::quoted_identifier::quoted_identifier;
+use crate::checking::constants::MACRO_PREFIX;
 use crate::checking::constants::SEMI_STRUCTURED_HOLDING_TYPE;
 use crate::checking::models::{FunctionStub, StubReturns};
 use crate::checking::types::{FunctionLookup, RelationLookup};
@@ -80,7 +81,7 @@ fn create_macro(name: &str, stub: &FunctionStub) -> String {
         }
     };
     format!(
-        "CREATE OR REPLACE MACRO {}({}) AS {body}",
+        "{MACRO_PREFIX} {}({}) AS {body}",
         quoted_identifier(name, &log),
         parameters.join(", ")
     )

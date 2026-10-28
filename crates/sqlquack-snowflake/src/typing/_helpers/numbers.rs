@@ -69,6 +69,36 @@ pub(crate) fn unify_pair(
             u32::from((left_precision - left_scale).max(right_precision - right_scale)),
             u32::from(left_scale.max(right_scale)),
         )),
+        (
+            SnowflakeType::TimestampNtz {
+                precision: left_precision,
+            },
+            SnowflakeType::TimestampNtz {
+                precision: right_precision,
+            },
+        ) => Ok(SnowflakeType::TimestampNtz {
+            precision: left_precision.max(right_precision),
+        }),
+        (SnowflakeType::TimestampNtz { precision: 9 }, SnowflakeType::Date)
+        | (SnowflakeType::Date, SnowflakeType::TimestampNtz { precision: 9 }) => {
+            Ok(SnowflakeType::TimestampNtz { precision: 9 })
+        }
+        (
+            SnowflakeType::TimestampNtz { precision: 9 },
+            zoned @ SnowflakeType::TimestampLtz { precision: 9 },
+        )
+        | (
+            zoned @ SnowflakeType::TimestampLtz { precision: 9 },
+            SnowflakeType::TimestampNtz { precision: 9 },
+        )
+        | (
+            SnowflakeType::TimestampNtz { precision: 9 },
+            zoned @ SnowflakeType::TimestampTz { precision: 9 },
+        )
+        | (
+            zoned @ SnowflakeType::TimestampTz { precision: 9 },
+            SnowflakeType::TimestampNtz { precision: 9 },
+        ) => Ok(zoned),
         (SnowflakeType::Varchar, SnowflakeType::Varchar)
         | (SnowflakeType::Boolean, SnowflakeType::Boolean)
         | (SnowflakeType::Date, SnowflakeType::Date) => Ok(left),

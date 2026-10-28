@@ -143,6 +143,7 @@ rows = [
 expression = "TRY_CAST(x AS TIME(9))"
 tags = ["null", "invalid", "boundary"]
 origin = "generated: casts@2"
+expected_divergence = "time_submicro"
 
 [[case]]
 id = "varchar_try_cast_ntz9"

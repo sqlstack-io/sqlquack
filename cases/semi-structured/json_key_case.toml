@@ -1,0 +1,260 @@
+# Documents whose keys differ only by ASCII or Unicode case or normalisation.
+
+category = "semi-structured-output"
+construct = "fn:TO_JSON"
+session_profile = "utc-v1"
+
+[[case]]
+id = "key_case_ascii_nested"
+description = "Keys 'a' and 'A' in sibling and nested objects, written as text."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('{\"o\":{\"A\":1,\"a\":2},\"O\":{\"a\":3}}')"],
+]
+query = "SELECT TO_VARCHAR(v) AS t, v::VARCHAR AS c, TO_JSON(v) AS j, MD5(TO_JSON(v)) AS m, v AS raw FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["nested", "case-sensitive-key", "unicode"]
+
+[[case]]
+id = "key_case_ascii_array_elements"
+description = "Objects in one array keyed 'a', 'A' and both."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('[{\"a\":1},{\"A\":2},{\"a\":3,\"A\":4}]')"],
+]
+query = "SELECT TO_VARCHAR(v) AS t, v::VARCHAR AS c, TO_JSON(v) AS j, MD5(TO_JSON(v)) AS m, v AS raw FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["nested", "case-sensitive-key", "unicode"]
+
+[[case]]
+id = "key_case_e_acute_nested"
+description = "Keys 'é' and 'É' in sibling and nested objects, written as text."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('{\"o\":{\"É\":1,\"é\":2},\"O\":{\"é\":3}}')"],
+]
+query = "SELECT TO_VARCHAR(v) AS t, v::VARCHAR AS c, TO_JSON(v) AS j, MD5(TO_JSON(v)) AS m, v AS raw FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["nested", "case-sensitive-key", "unicode"]
+
+[[case]]
+id = "key_case_e_acute_array_elements"
+description = "Objects in one array keyed 'é', 'É' and both."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('[{\"é\":1},{\"É\":2},{\"é\":3,\"É\":4}]')"],
+]
+query = "SELECT TO_VARCHAR(v) AS t, v::VARCHAR AS c, TO_JSON(v) AS j, MD5(TO_JSON(v)) AS m, v AS raw FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["nested", "case-sensitive-key", "unicode"]
+
+[[case]]
+id = "key_case_sharp_s_nested"
+description = "Keys 'ß' and 'ẞ' in sibling and nested objects, written as text."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('{\"o\":{\"ẞ\":1,\"ß\":2},\"O\":{\"ß\":3}}')"],
+]
+query = "SELECT TO_VARCHAR(v) AS t, v::VARCHAR AS c, TO_JSON(v) AS j, MD5(TO_JSON(v)) AS m, v AS raw FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["nested", "case-sensitive-key", "unicode"]
+
+[[case]]
+id = "key_case_sharp_s_array_elements"
+description = "Objects in one array keyed 'ß', 'ẞ' and both."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('[{\"ß\":1},{\"ẞ\":2},{\"ß\":3,\"ẞ\":4}]')"],
+]
+query = "SELECT TO_VARCHAR(v) AS t, v::VARCHAR AS c, TO_JSON(v) AS j, MD5(TO_JSON(v)) AS m, v AS raw FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["nested", "case-sensitive-key", "unicode"]
+
+[[case]]
+id = "key_case_kelvin_nested"
+description = "Keys 'k' and 'K' in sibling and nested objects, written as text."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('{\"o\":{\"K\":1,\"k\":2},\"O\":{\"k\":3}}')"],
+]
+query = "SELECT TO_VARCHAR(v) AS t, v::VARCHAR AS c, TO_JSON(v) AS j, MD5(TO_JSON(v)) AS m, v AS raw FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["nested", "case-sensitive-key", "unicode"]
+
+[[case]]
+id = "key_case_kelvin_array_elements"
+description = "Objects in one array keyed 'k', 'K' and both."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('[{\"k\":1},{\"K\":2},{\"k\":3,\"K\":4}]')"],
+]
+query = "SELECT TO_VARCHAR(v) AS t, v::VARCHAR AS c, TO_JSON(v) AS j, MD5(TO_JSON(v)) AS m, v AS raw FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["nested", "case-sensitive-key", "unicode"]
+
+[[case]]
+id = "key_case_dotted_i_nested"
+description = "Keys 'i' and 'İ' in sibling and nested objects, written as text."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('{\"o\":{\"İ\":1,\"i\":2},\"O\":{\"i\":3}}')"],
+]
+query = "SELECT TO_VARCHAR(v) AS t, v::VARCHAR AS c, TO_JSON(v) AS j, MD5(TO_JSON(v)) AS m, v AS raw FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["nested", "case-sensitive-key", "unicode"]
+
+[[case]]
+id = "key_case_dotted_i_array_elements"
+description = "Objects in one array keyed 'i', 'İ' and both."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('[{\"i\":1},{\"İ\":2},{\"i\":3,\"İ\":4}]')"],
+]
+query = "SELECT TO_VARCHAR(v) AS t, v::VARCHAR AS c, TO_JSON(v) AS j, MD5(TO_JSON(v)) AS m, v AS raw FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["nested", "case-sensitive-key", "unicode"]
+
+[[case]]
+id = "key_case_sigma_nested"
+description = "Keys 'σ' and 'Σ' in sibling and nested objects, written as text."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('{\"o\":{\"Σ\":1,\"σ\":2},\"O\":{\"σ\":3}}')"],
+]
+query = "SELECT TO_VARCHAR(v) AS t, v::VARCHAR AS c, TO_JSON(v) AS j, MD5(TO_JSON(v)) AS m, v AS raw FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["nested", "case-sensitive-key", "unicode"]
+
+[[case]]
+id = "key_case_sigma_array_elements"
+description = "Objects in one array keyed 'σ', 'Σ' and both."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('[{\"σ\":1},{\"Σ\":2},{\"σ\":3,\"Σ\":4}]')"],
+]
+query = "SELECT TO_VARCHAR(v) AS t, v::VARCHAR AS c, TO_JSON(v) AS j, MD5(TO_JSON(v)) AS m, v AS raw FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["nested", "case-sensitive-key", "unicode"]
+
+[[case]]
+id = "key_case_final_sigma_nested"
+description = "Keys 'ς' and 'σ' in sibling and nested objects, written as text."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('{\"o\":{\"σ\":1,\"ς\":2},\"O\":{\"ς\":3}}')"],
+]
+query = "SELECT TO_VARCHAR(v) AS t, v::VARCHAR AS c, TO_JSON(v) AS j, MD5(TO_JSON(v)) AS m, v AS raw FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["nested", "case-sensitive-key", "unicode"]
+
+[[case]]
+id = "key_case_final_sigma_array_elements"
+description = "Objects in one array keyed 'ς', 'σ' and both."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('[{\"ς\":1},{\"σ\":2},{\"ς\":3,\"σ\":4}]')"],
+]
+query = "SELECT TO_VARCHAR(v) AS t, v::VARCHAR AS c, TO_JSON(v) AS j, MD5(TO_JSON(v)) AS m, v AS raw FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["nested", "case-sensitive-key", "unicode"]
+
+[[case]]
+id = "key_case_dz_titlecase_nested"
+description = "Keys 'ǆ' and 'ǅ' in sibling and nested objects, written as text."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('{\"o\":{\"ǅ\":1,\"ǆ\":2},\"O\":{\"ǆ\":3}}')"],
+]
+query = "SELECT TO_VARCHAR(v) AS t, v::VARCHAR AS c, TO_JSON(v) AS j, MD5(TO_JSON(v)) AS m, v AS raw FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["nested", "case-sensitive-key", "unicode"]
+
+[[case]]
+id = "key_case_dz_titlecase_array_elements"
+description = "Objects in one array keyed 'ǆ', 'ǅ' and both."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('[{\"ǆ\":1},{\"ǅ\":2},{\"ǆ\":3,\"ǅ\":4}]')"],
+]
+query = "SELECT TO_VARCHAR(v) AS t, v::VARCHAR AS c, TO_JSON(v) AS j, MD5(TO_JSON(v)) AS m, v AS raw FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["nested", "case-sensitive-key", "unicode"]
+
+[[case]]
+id = "key_case_ligature_nested"
+description = "Keys 'ﬀ' and 'ff' in sibling and nested objects, written as text."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('{\"o\":{\"ff\":1,\"ﬀ\":2},\"O\":{\"ﬀ\":3}}')"],
+]
+query = "SELECT TO_VARCHAR(v) AS t, v::VARCHAR AS c, TO_JSON(v) AS j, MD5(TO_JSON(v)) AS m, v AS raw FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["nested", "case-sensitive-key", "unicode"]
+
+[[case]]
+id = "key_case_ligature_array_elements"
+description = "Objects in one array keyed 'ﬀ', 'ff' and both."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('[{\"ﬀ\":1},{\"ff\":2},{\"ﬀ\":3,\"ff\":4}]')"],
+]
+query = "SELECT TO_VARCHAR(v) AS t, v::VARCHAR AS c, TO_JSON(v) AS j, MD5(TO_JSON(v)) AS m, v AS raw FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["nested", "case-sensitive-key", "unicode"]
+
+[[case]]
+id = "key_case_combining_nested"
+description = "Keys 'é' and 'é' in sibling and nested objects, written as text."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('{\"o\":{\"é\":1,\"é\":2},\"O\":{\"é\":3}}')"],
+]
+query = "SELECT TO_VARCHAR(v) AS t, v::VARCHAR AS c, TO_JSON(v) AS j, MD5(TO_JSON(v)) AS m, v AS raw FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["nested", "case-sensitive-key", "unicode"]
+
+[[case]]
+id = "key_case_combining_array_elements"
+description = "Objects in one array keyed 'é', 'é' and both."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('[{\"é\":1},{\"é\":2},{\"é\":3,\"é\":4}]')"],
+]
+query = "SELECT TO_VARCHAR(v) AS t, v::VARCHAR AS c, TO_JSON(v) AS j, MD5(TO_JSON(v)) AS m, v AS raw FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["nested", "case-sensitive-key", "unicode"]
+
+[[case]]
+id = "key_case_all_pairs_one_object"
+description = "Every case- and Unicode-differing key pair in one object, listed in reverse."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('{\"é\":17,\"é\":1,\"ff\":2,\"ﬀ\":3,\"ǅ\":4,\"ǆ\":5,\"σ\":9,\"ς\":7,\"Σ\":8,\"İ\":10,\"i\":11,\"K\":12,\"k\":13,\"ẞ\":14,\"ß\":15,\"É\":16,\"A\":18,\"a\":19}')"],
+]
+query = "SELECT TO_VARCHAR(v) AS t, v::VARCHAR AS c, TO_JSON(v) AS j, MD5(TO_JSON(v)) AS m, v AS raw FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["nested", "case-sensitive-key", "unicode"]
+
+[[case]]
+id = "key_case_twelve_levels"
+description = "Twelve levels alternating objects and arrays, each with case-differing keys."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('{\"b\":{\"B\":[{\"b\":{\"B\":[{\"b\":{\"B\":[{\"b\":{\"B\":[{\"b\":{\"B\":[{\"b\":{\"B\":[{\"a\":0,\"A\":1}],\"b\":{\"ß\":1,\"ẞ\":2},\"A\":0},\"B\":[{\"é\":1,\"É\":[1]}],\"a\":1}],\"b\":{\"ß\":1,\"ẞ\":2},\"A\":2},\"B\":[{\"é\":3,\"É\":[3]}],\"a\":3}],\"b\":{\"ß\":1,\"ẞ\":2},\"A\":4},\"B\":[{\"é\":5,\"É\":[5]}],\"a\":5}],\"b\":{\"ß\":1,\"ẞ\":2},\"A\":6},\"B\":[{\"é\":7,\"É\":[7]}],\"a\":7}],\"b\":{\"ß\":1,\"ẞ\":2},\"A\":8},\"B\":[{\"é\":9,\"É\":[9]}],\"a\":9}],\"b\":{\"ß\":1,\"ẞ\":2},\"A\":10},\"B\":[{\"é\":11,\"É\":[11]}],\"a\":11}')"],
+]
+query = "SELECT TO_VARCHAR(v) AS t, v::VARCHAR AS c, TO_JSON(v) AS j, MD5(TO_JSON(v)) AS m, v AS raw FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["nested", "case-sensitive-key", "unicode"]
+
+[[case]]
+id = "key_case_with_nulls"
+description = "Case-differing keys beside a JSON null document and SQL NULL."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('{\"b\":{\"x\":1,\"X\":null},\"B\":[{\"é\":null},{\"É\":2}]}')"],
+  ["PARSE_JSON('null')"],
+  ["NULL"],
+]
+query = "SELECT TO_VARCHAR(v) AS t, v::VARCHAR AS c, TO_JSON(v) AS j, MD5(TO_JSON(v)) AS m, v AS raw FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["nested", "case-sensitive-key", "unicode", "null", "json-null"]

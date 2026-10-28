@@ -1,0 +1,269 @@
+# DATEDIFF with quoted and keyword units over DATE and TIMESTAMP_NTZ.
+category = "temporal"
+construct = "fn:DATEDIFF"
+session_profile = "utc-v1"
+
+[[case]]
+id = "datediff_date_day"
+description = "DATEDIFF('day') between DATEs across month and year ends."
+columns = [{ name = "a", type = "DATE" }, { name = "b", type = "DATE" }]
+rows = [
+  ["'2024-01-31'", "'2024-02-29'"],
+  ["'2024-02-29'", "'2025-02-28'"],
+  ["'2024-03-01'", "'2024-02-28'"],
+  ["'2023-12-31'", "'2024-01-01'"],
+  ["'2024-01-01'", "'2024-01-01'"],
+  ["NULL", "'2024-01-01'"],
+]
+expression = "DATEDIFF('day', a, b)"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "datediff_date_day_keyword"
+description = "DATEDIFF(day) with the unit as a keyword."
+columns = [{ name = "a", type = "DATE" }, { name = "b", type = "DATE" }]
+rows = [
+  ["'2024-01-31'", "'2024-02-29'"],
+  ["'2024-02-29'", "'2025-02-28'"],
+  ["'2024-03-01'", "'2024-02-28'"],
+  ["'2023-12-31'", "'2024-01-01'"],
+  ["'2024-01-01'", "'2024-01-01'"],
+  ["NULL", "'2024-01-01'"],
+]
+expression = "DATEDIFF(day, a, b)"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "datediff_date_month"
+description = "DATEDIFF('month') between DATEs across month and year ends."
+columns = [{ name = "a", type = "DATE" }, { name = "b", type = "DATE" }]
+rows = [
+  ["'2024-01-31'", "'2024-02-29'"],
+  ["'2024-02-29'", "'2025-02-28'"],
+  ["'2024-03-01'", "'2024-02-28'"],
+  ["'2023-12-31'", "'2024-01-01'"],
+  ["'2024-01-01'", "'2024-01-01'"],
+  ["NULL", "'2024-01-01'"],
+]
+expression = "DATEDIFF('month', a, b)"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "datediff_date_month_keyword"
+description = "DATEDIFF(month) with the unit as a keyword."
+columns = [{ name = "a", type = "DATE" }, { name = "b", type = "DATE" }]
+rows = [
+  ["'2024-01-31'", "'2024-02-29'"],
+  ["'2024-02-29'", "'2025-02-28'"],
+  ["'2024-03-01'", "'2024-02-28'"],
+  ["'2023-12-31'", "'2024-01-01'"],
+  ["'2024-01-01'", "'2024-01-01'"],
+  ["NULL", "'2024-01-01'"],
+]
+expression = "DATEDIFF(month, a, b)"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "datediff_date_year"
+description = "DATEDIFF('year') between DATEs across month and year ends."
+columns = [{ name = "a", type = "DATE" }, { name = "b", type = "DATE" }]
+rows = [
+  ["'2024-01-31'", "'2024-02-29'"],
+  ["'2024-02-29'", "'2025-02-28'"],
+  ["'2024-03-01'", "'2024-02-28'"],
+  ["'2023-12-31'", "'2024-01-01'"],
+  ["'2024-01-01'", "'2024-01-01'"],
+  ["NULL", "'2024-01-01'"],
+]
+expression = "DATEDIFF('year', a, b)"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "datediff_date_year_keyword"
+description = "DATEDIFF(year) with the unit as a keyword."
+columns = [{ name = "a", type = "DATE" }, { name = "b", type = "DATE" }]
+rows = [
+  ["'2024-01-31'", "'2024-02-29'"],
+  ["'2024-02-29'", "'2025-02-28'"],
+  ["'2024-03-01'", "'2024-02-28'"],
+  ["'2023-12-31'", "'2024-01-01'"],
+  ["'2024-01-01'", "'2024-01-01'"],
+  ["NULL", "'2024-01-01'"],
+]
+expression = "DATEDIFF(year, a, b)"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "datediff_date_week"
+description = "DATEDIFF('week') between DATEs across month and year ends."
+columns = [{ name = "a", type = "DATE" }, { name = "b", type = "DATE" }]
+rows = [
+  ["'2024-01-31'", "'2024-02-29'"],
+  ["'2024-02-29'", "'2025-02-28'"],
+  ["'2024-03-01'", "'2024-02-28'"],
+  ["'2023-12-31'", "'2024-01-01'"],
+  ["'2024-01-01'", "'2024-01-01'"],
+  ["NULL", "'2024-01-01'"],
+]
+expression = "DATEDIFF('week', a, b)"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "datediff_date_week_keyword"
+description = "DATEDIFF(week) with the unit as a keyword."
+columns = [{ name = "a", type = "DATE" }, { name = "b", type = "DATE" }]
+rows = [
+  ["'2024-01-31'", "'2024-02-29'"],
+  ["'2024-02-29'", "'2025-02-28'"],
+  ["'2024-03-01'", "'2024-02-28'"],
+  ["'2023-12-31'", "'2024-01-01'"],
+  ["'2024-01-01'", "'2024-01-01'"],
+  ["NULL", "'2024-01-01'"],
+]
+expression = "DATEDIFF(week, a, b)"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "datediff_date_quarter"
+description = "DATEDIFF('quarter') between DATEs across month and year ends."
+columns = [{ name = "a", type = "DATE" }, { name = "b", type = "DATE" }]
+rows = [
+  ["'2024-01-31'", "'2024-02-29'"],
+  ["'2024-02-29'", "'2025-02-28'"],
+  ["'2024-03-01'", "'2024-02-28'"],
+  ["'2023-12-31'", "'2024-01-01'"],
+  ["'2024-01-01'", "'2024-01-01'"],
+  ["NULL", "'2024-01-01'"],
+]
+expression = "DATEDIFF('quarter', a, b)"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "datediff_date_quarter_keyword"
+description = "DATEDIFF(quarter) with the unit as a keyword."
+columns = [{ name = "a", type = "DATE" }, { name = "b", type = "DATE" }]
+rows = [
+  ["'2024-01-31'", "'2024-02-29'"],
+  ["'2024-02-29'", "'2025-02-28'"],
+  ["'2024-03-01'", "'2024-02-28'"],
+  ["'2023-12-31'", "'2024-01-01'"],
+  ["'2024-01-01'", "'2024-01-01'"],
+  ["NULL", "'2024-01-01'"],
+]
+expression = "DATEDIFF(quarter, a, b)"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "datediff_ntz_second"
+description = "DATEDIFF('second') between TIMESTAMP_NTZ values, counting boundaries."
+columns = [{ name = "a", type = "TIMESTAMP_NTZ(9)" }, { name = "b", type = "TIMESTAMP_NTZ(9)" }]
+rows = [
+  ["'2024-02-29 23:59:59.999'", "'2024-03-01 00:00:00'"],
+  ["'2024-02-29 10:00:00'", "'2024-02-29 09:59:30'"],
+  ["'2024-01-01 00:00:00'", "'2024-01-02 12:30:45.5'"],
+  ["'2024-01-01 00:00:00'", "NULL"],
+]
+expression = "DATEDIFF('second', a, b)"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "datediff_ntz_minute"
+description = "DATEDIFF('minute') between TIMESTAMP_NTZ values, counting boundaries."
+columns = [{ name = "a", type = "TIMESTAMP_NTZ(9)" }, { name = "b", type = "TIMESTAMP_NTZ(9)" }]
+rows = [
+  ["'2024-02-29 23:59:59.999'", "'2024-03-01 00:00:00'"],
+  ["'2024-02-29 10:00:00'", "'2024-02-29 09:59:30'"],
+  ["'2024-01-01 00:00:00'", "'2024-01-02 12:30:45.5'"],
+  ["'2024-01-01 00:00:00'", "NULL"],
+]
+expression = "DATEDIFF('minute', a, b)"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "datediff_ntz_hour"
+description = "DATEDIFF('hour') between TIMESTAMP_NTZ values, counting boundaries."
+columns = [{ name = "a", type = "TIMESTAMP_NTZ(9)" }, { name = "b", type = "TIMESTAMP_NTZ(9)" }]
+rows = [
+  ["'2024-02-29 23:59:59.999'", "'2024-03-01 00:00:00'"],
+  ["'2024-02-29 10:00:00'", "'2024-02-29 09:59:30'"],
+  ["'2024-01-01 00:00:00'", "'2024-01-02 12:30:45.5'"],
+  ["'2024-01-01 00:00:00'", "NULL"],
+]
+expression = "DATEDIFF('hour', a, b)"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "datediff_ntz_day"
+description = "DATEDIFF('day') between TIMESTAMP_NTZ values, counting boundaries."
+columns = [{ name = "a", type = "TIMESTAMP_NTZ(9)" }, { name = "b", type = "TIMESTAMP_NTZ(9)" }]
+rows = [
+  ["'2024-02-29 23:59:59.999'", "'2024-03-01 00:00:00'"],
+  ["'2024-02-29 10:00:00'", "'2024-02-29 09:59:30'"],
+  ["'2024-01-01 00:00:00'", "'2024-01-02 12:30:45.5'"],
+  ["'2024-01-01 00:00:00'", "NULL"],
+]
+expression = "DATEDIFF('day', a, b)"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "datediff_ntz_month"
+description = "DATEDIFF('month') between TIMESTAMP_NTZ values, counting boundaries."
+columns = [{ name = "a", type = "TIMESTAMP_NTZ(9)" }, { name = "b", type = "TIMESTAMP_NTZ(9)" }]
+rows = [
+  ["'2024-02-29 23:59:59.999'", "'2024-03-01 00:00:00'"],
+  ["'2024-02-29 10:00:00'", "'2024-02-29 09:59:30'"],
+  ["'2024-01-01 00:00:00'", "'2024-01-02 12:30:45.5'"],
+  ["'2024-01-01 00:00:00'", "NULL"],
+]
+expression = "DATEDIFF('month', a, b)"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "datediff_ntz_millisecond"
+description = "DATEDIFF('millisecond') between TIMESTAMP_NTZ values, counting boundaries."
+columns = [{ name = "a", type = "TIMESTAMP_NTZ(9)" }, { name = "b", type = "TIMESTAMP_NTZ(9)" }]
+rows = [
+  ["'2024-02-29 23:59:59.999'", "'2024-03-01 00:00:00'"],
+  ["'2024-02-29 10:00:00'", "'2024-02-29 09:59:30'"],
+  ["'2024-01-01 00:00:00'", "'2024-01-02 12:30:45.5'"],
+  ["'2024-01-01 00:00:00'", "NULL"],
+]
+expression = "DATEDIFF('millisecond', a, b)"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "datediff_mixed"
+description = "DATEDIFF('day') from a DATE to a TIMESTAMP_NTZ."
+columns = [{ name = "a", type = "DATE" }, { name = "b", type = "TIMESTAMP_NTZ(9)" }]
+rows = [
+  ["'2024-02-28'", "'2024-02-29 23:00:00'"],
+  ["'2024-03-01'", "'2024-02-29 00:00:00'"],
+  ["NULL", "'2024-01-01 00:00:00'"],
+]
+expression = "DATEDIFF('day', a, b)"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "datediff_text_dates"
+description = "DATEDIFF('day') of a text date and a DATE column."
+columns = [{ name = "b", type = "DATE" }]
+rows = [
+  ["'2024-02-29'"],
+  ["'2019-12-31'"],
+  ["NULL"],
+]
+expression = "DATEDIFF('day', '2020-01-01', b)"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "datediff_seconds_keyword_ntz"
+description = "DATEDIFF(SECOND, a, b) between TIMESTAMP_NTZ values."
+columns = [{ name = "a", type = "TIMESTAMP_NTZ(9)" }, { name = "b", type = "TIMESTAMP_NTZ(9)" }]
+rows = [
+  ["'2024-02-29 23:59:59.999'", "'2024-03-01 00:00:00'"],
+  ["'2024-02-29 10:00:00'", "'2024-02-29 09:59:30'"],
+  ["'2024-01-01 00:00:00'", "'2024-01-02 12:30:45.5'"],
+  ["'2024-01-01 00:00:00'", "NULL"],
+]
+expression = "DATEDIFF(SECOND, a, b)"
+tags = ["null", "boundary"]

@@ -1,12 +1,15 @@
-//! An in-memory DuckDB engine for one check, and the tables created in it.
+//! The in-memory DuckDB engine each thread checks with, and the objects created in it.
 
-use std::collections::BTreeMap;
+use std::cell::RefCell;
+use std::collections::{BTreeMap, BTreeSet};
+use std::mem::ManuallyDrop;
 
 use duckdb::Connection;
 use sqlquack_core::provenance::models::ProvenanceLog;
 
 use crate::blocks::main::quoted_identifier::quoted_identifier;
 
+use crate::checking::constants::MACRO_PREFIX;
 use crate::checking::errors::{CheckStage, PrintedSqlFailure};
 
 /// A DuckDB connection and the definition of each table created in it.
@@ -42,17 +45,59 @@ impl Engine {
     }
 }
 
-/// Runs `check` with a new in-memory engine, closed before this returns.
+/// Drops every object a check created that `kept` does not name, so a check sees only its own.
+impl Engine {
+    pub(crate) fn keep_only(&mut self, kept: &BTreeSet<&str>) -> Result<(), PrintedSqlFailure> {
+        let stale: Vec<(String, String)> = self
+            .tables
+            .iter()
+            .filter(|(name, _)| !kept.contains(name.as_str()))
+            .map(|(name, statement)| (name.clone(), statement.clone()))
+            .collect();
+        for (name, statement) in stale {
+            let quoted = quoted_identifier(&name, &ProvenanceLog::default());
+            let drop = match statement.starts_with(MACRO_PREFIX) {
+                true => {
+                    format!("DROP MACRO TABLE IF EXISTS {quoted}; DROP MACRO IF EXISTS {quoted}")
+                }
+                false => format!("DROP TABLE IF EXISTS {quoted}"),
+            };
+            self.connection
+                .execute_batch(&drop)
+                .map_err(|error| PrintedSqlFailure {
+                    stage: CheckStage::Engine,
+                    message: format!("cannot drop {name}: {error}"),
+                })?;
+            self.tables.remove(&name);
+        }
+        Ok(())
+    }
+}
+
+thread_local! {
+    /// The thread's engine, reused and never closed: closing one during process exit killed processes.
+    static ENGINE: ManuallyDrop<RefCell<Option<Engine>>> =
+        const { ManuallyDrop::new(RefCell::new(None)) };
+}
+
+/// Runs `check` with the thread's in-memory engine; an engine a check failed in is discarded.
 pub(crate) fn with_engine<T>(
     check: impl FnOnce(&mut Engine) -> Result<T, PrintedSqlFailure>,
 ) -> Result<T, PrintedSqlFailure> {
-    let connection = Connection::open_in_memory().map_err(|error| PrintedSqlFailure {
-        stage: CheckStage::Engine,
-        message: error.to_string(),
-    })?;
-    let mut engine = Engine {
-        connection,
-        tables: BTreeMap::new(),
+    let mut engine = match ENGINE.with(|cell| cell.borrow_mut().take()) {
+        Some(engine) => engine,
+        None => Engine {
+            connection: Connection::open_in_memory().map_err(|error| PrintedSqlFailure {
+                stage: CheckStage::Engine,
+                message: error.to_string(),
+            })?,
+            tables: BTreeMap::new(),
+        },
     };
-    check(&mut engine)
+    let result = check(&mut engine);
+    let healthy = !matches!(&result, Err(failure) if failure.stage == CheckStage::Engine);
+    if healthy {
+        ENGINE.with(|cell| *cell.borrow_mut() = Some(engine));
+    }
+    result
 }

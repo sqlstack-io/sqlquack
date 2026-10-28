@@ -105,20 +105,54 @@ fn render_blockers(text: &mut String, blockers: &BlockerReport, limit: usize) {
     let _ = writeln!(text);
     let _ = writeln!(
         text,
-        "Root blockers through the model graph (top {limit}; {} of {} refused files have one root)",
+        "Root blockers through the model graph, every refusal collected (top {limit}; {} of {} \
+         refused files have one root, {} possibly incomplete)",
         blockers.single_root_files,
-        blockers.files.len()
+        blockers.files.len(),
+        blockers.possibly_incomplete_files
     );
     let _ = writeln!(
         text,
-        "  {:>6}  {:>6}  {:>10}  {:>6}  root",
-        "total", "direct", "downstream", "sole"
+        "  {:>6}  {:>9}  {:>6}  {:>6}  {:>10}  root",
+        "sole", "uncertain", "total", "direct", "downstream"
     );
     for root in blockers.roots.iter().take(limit) {
         let _ = writeln!(
             text,
-            "  {:>6}  {:>6}  {:>10}  {:>6}  {}: {}",
-            root.total, root.direct, root.downstream, root.sole, root.category, root.construct
+            "  {:>6}  {:>9}  {:>6}  {:>6}  {:>10}  {}: {}",
+            root.sole,
+            root.sole_uncertain,
+            root.total,
+            root.direct,
+            root.downstream,
+            root.category,
+            root.construct
+        );
+    }
+    let _ = writeln!(text);
+    let _ = writeln!(
+        text,
+        "Root combinations by the files fixing them all unblocks"
+    );
+    let _ = writeln!(
+        text,
+        "  {:>6}  {:>6}  {:>10}  {:>9}  roots",
+        "files", "direct", "downstream", "uncertain"
+    );
+    for combination in &blockers.combinations {
+        let roots: Vec<String> = combination
+            .roots
+            .iter()
+            .map(|root| format!("{}: {}", root.category, root.construct))
+            .collect();
+        let _ = writeln!(
+            text,
+            "  {:>6}  {:>6}  {:>10}  {:>9}  {}",
+            combination.files,
+            combination.direct,
+            combination.downstream,
+            combination.uncertain,
+            roots.join(" + ")
         );
     }
     let placed: Vec<&BlockedFile> = blockers

@@ -374,6 +374,7 @@ rows = [
 ]
 expression = "v:a = 1"
 tags = ["json-null", "boundary"]
+expected_divergence = "json_fidelity"
 
 [[case]]
 id = "path_to_json"

@@ -1,0 +1,135 @@
+# TRY_TO_TIME and TO_TIME as models use them.
+category = "temporal"
+construct = "fn:TRY_TO_TIME"
+session_profile = "utc-v1"
+
+[[case]]
+id = "try_to_time_hh24mi"
+description = "TRY_TO_TIME with HH24:MI."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'13:45'"],
+  ["'9:05'"],
+  ["'09:05:30'"],
+  ["'00:00'"],
+  ["'23:59'"],
+  ["'24:00'"],
+  ["'13:60'"],
+  ["'1345'"],
+  ["''"],
+  ["' 13:45 '"],
+  ["'x'"],
+  ["NULL"],
+]
+expression = "TRY_TO_TIME(s, 'HH24:MI')"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "try_to_time_hh24mi_cast"
+description = "TRY_TO_TIME with HH24:MI cast to TIME."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'13:45'"],
+  ["'9:05'"],
+  ["'09:05:30'"],
+  ["'00:00'"],
+  ["'23:59'"],
+  ["'24:00'"],
+  ["'13:60'"],
+  ["'1345'"],
+  ["''"],
+  ["' 13:45 '"],
+  ["'x'"],
+  ["NULL"],
+]
+expression = "CAST(TRY_TO_TIME(s, 'HH24:MI') AS TIME)"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "try_to_time_compact"
+description = "TRY_TO_TIME with HH24MI."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'1345'"],
+  ["'0905'"],
+  ["'905'"],
+  ["'2400'"],
+  ["'0000'"],
+  ["'13:45'"],
+  ["''"],
+  ["NULL"],
+]
+expression = "TRY_TO_TIME(s, 'HH24MI')"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "try_to_time_auto"
+description = "TRY_TO_TIME without a format."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'13:45:01'"],
+  ["'13:45'"],
+  ["'9:05:07'"],
+  ["'13:45:01.123456789'"],
+  ["'1:2:3'"],
+  ["'24:00:00'"],
+  ["'noon'"],
+  ["''"],
+  ["' 13:45 '"],
+  ["NULL"],
+]
+expression = "TRY_TO_TIME(s)"
+tags = ["null", "boundary"]
+expected_divergence = "time_submicro"
+
+[[case]]
+id = "try_to_time_lpad"
+description = "TRY_TO_TIME of LPAD text, as models build it."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'945'"],
+  ["'1345'"],
+  ["'5'"],
+  ["''"],
+  ["NULL"],
+]
+expression = "TRY_TO_TIME(LPAD(NULLIF(s, ''), 4, '0'), 'HH24MI')"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "try_to_time_of_variant"
+description = "TRY_TO_TIME of a VARIANT string read as text."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('{\"t\":\"13:45\"}')"],
+  ["PARSE_JSON('{\"t\":\"7:30\"}')"],
+  ["PARSE_JSON('{\"t\":null}')"],
+  ["PARSE_JSON('{}')"],
+  ["PARSE_JSON('{\"t\":\"\"}')"],
+  ["NULL"],
+]
+expression = "TRY_TO_TIME(v:t::VARCHAR, 'HH24:MI')"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "to_time_hh24mi"
+description = "TO_TIME with HH24:MI over valid text."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'13:45'"],
+  ["'9:05'"],
+  ["'00:00'"],
+  ["NULL"],
+]
+expression = "TO_TIME(s, 'HH24:MI')"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "to_time_invalid"
+description = "TO_TIME of text outside the format raises."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'25:00'"],
+]
+expression = "TO_TIME(s, 'HH24:MI')"
+tags = ["boundary"]

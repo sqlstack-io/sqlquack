@@ -1,0 +1,124 @@
+# SUM of FLOAT values, MAX_BY with ties and VARIANT values, and ARRAY_AGG(DISTINCT) forms.
+category = "aggregate"
+construct = "fn:SUM"
+session_profile = "utc-v1"
+
+[[case]]
+id = "sum_float_grouped"
+description = "SUM of FLOAT per group, with fractions whose binary sums depend on order."
+columns = [{ name = "g", type = "VARCHAR" }, { name = "x", type = "FLOAT" }]
+rows = [
+  ["'a'", "0.1"],
+  ["'a'", "0.2"],
+  ["'a'", "0.3"],
+  ["'b'", "1e16"],
+  ["'b'", "1"],
+  ["'b'", "-1e16"],
+  ["'c'", "NULL"],
+  ["'d'", "2.5"],
+]
+query = "SELECT g, SUM(x) AS s FROM input GROUP BY g ORDER BY g"
+order = "ordered"
+tags = ["null", "empty-input", "duplicates"]
+
+[[case]]
+id = "sum_float_of_text"
+description = "SUM of TRY_TO_DOUBLE of text and of COALESCE(TRY_CAST(text AS FLOAT), 0)."
+columns = [{ name = "g", type = "VARCHAR" }, { name = "s", type = "VARCHAR" }]
+rows = [
+  ["'a'", "'1.5'"],
+  ["'a'", "'2.25'"],
+  ["'a'", "'x'"],
+  ["'b'", "NULL"],
+  ["'b'", "'-0.5'"],
+  ["'c'", "''"],
+]
+query = "SELECT g, SUM(TRY_TO_DOUBLE(s)) AS a, SUM(COALESCE(TRY_CAST(s AS FLOAT), 0)) AS b FROM input GROUP BY g ORDER BY g"
+order = "ordered"
+tags = ["null", "empty-input", "duplicates"]
+
+[[case]]
+id = "sum_float_window"
+description = "SUM of FLOAT over a whole partition and a running ordered window."
+columns = [{ name = "g", type = "VARCHAR" }, { name = "x", type = "FLOAT" }]
+rows = [
+  ["'a'", "0.1"],
+  ["'a'", "0.2"],
+  ["'a'", "NULL"],
+  ["'a'", "0.3"],
+  ["'b'", "5"],
+]
+query = "SELECT g, SUM(x) OVER (PARTITION BY g) AS whole, SUM(COALESCE(x, 0)) OVER (PARTITION BY g ORDER BY ordinal) AS running FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "empty-input", "duplicates"]
+
+[[case]]
+id = "sum_float_empty"
+description = "SUM of FLOAT over no rows."
+columns = [{ name = "x", type = "FLOAT" }]
+rows = [
+  ["1.5"],
+]
+query = "SELECT SUM(x) AS s FROM input WHERE FALSE"
+order = "ordered"
+tags = ["null", "empty-input", "duplicates"]
+
+[[case]]
+id = "max_by_ties"
+description = "MAX_BY and MIN_BY where the extreme key is tied, with one distinct value and with two."
+columns = [{ name = "g", type = "VARCHAR" }, { name = "x", type = "VARCHAR" }, { name = "k", type = "NUMBER(10,0)" }]
+rows = [
+  ["'a'", "'same'", "3"],
+  ["'a'", "'same'", "3"],
+  ["'a'", "'low'", "1"],
+  ["'b'", "'one'", "3"],
+  ["'b'", "'two'", "3"],
+]
+query = "SELECT g, MAX_BY(x, k) AS hi, MIN_BY(x, -k) AS lo FROM input GROUP BY g ORDER BY g"
+order = "ordered"
+tags = ["null", "empty-input", "duplicates"]
+
+[[case]]
+id = "max_by_variant_path"
+description = "MAX_BY of a VARIANT path and of a whole VARIANT by a timestamp key."
+columns = [{ name = "g", type = "VARCHAR" }, { name = "v", type = "VARIANT" }, { name = "t", type = "TIMESTAMP_NTZ(9)" }]
+rows = [
+  ["'a'", "PARSE_JSON('{\"state\":[{\"code\":\"open\"}]}')", "'2024-01-01 00:00:00'"],
+  ["'a'", "PARSE_JSON('{\"state\":[{\"code\":\"shipped\"}]}')", "'2024-01-02 00:00:00'"],
+  ["'b'", "PARSE_JSON('{\"state\":[]}')", "'2024-01-01 00:00:00'"],
+  ["'c'", "NULL", "'2024-01-05 00:00:00'"],
+  ["'c'", "PARSE_JSON('{\"state\":[{\"code\":\"held\"}]}')", "'2024-01-03 00:00:00'"],
+]
+query = "SELECT g, MAX_BY(v:state[0]:code::STRING, t) AS latest_code, MAX_BY(v, t) AS latest FROM input GROUP BY g ORDER BY g"
+order = "ordered"
+tags = ["null", "empty-input", "duplicates"]
+
+[[case]]
+id = "array_agg_distinct_single"
+description = "ARRAY_AGG(DISTINCT) of groups holding one distinct value, NULLs and repeats."
+columns = [{ name = "g", type = "VARCHAR" }, { name = "x", type = "VARCHAR" }]
+rows = [
+  ["'a'", "'k'"],
+  ["'a'", "'k'"],
+  ["'a'", "NULL"],
+  ["'b'", "NULL"],
+  ["'c'", "'z'"],
+]
+query = "SELECT g, ARRAY_AGG(DISTINCT x) AS a FROM input GROUP BY g ORDER BY g"
+order = "ordered"
+tags = ["null", "empty-input", "duplicates"]
+
+[[case]]
+id = "array_agg_distinct_ordered"
+description = "ARRAY_AGG(DISTINCT) WITHIN GROUP ordered by the value, of text and of an expression."
+columns = [{ name = "g", type = "VARCHAR" }, { name = "x", type = "VARCHAR" }]
+rows = [
+  ["'a'", "'b'"],
+  ["'a'", "'a'"],
+  ["'a'", "'b'"],
+  ["'a'", "' a '"],
+  ["'b'", "NULL"],
+]
+query = "SELECT g, ARRAY_AGG(DISTINCT x) WITHIN GROUP (ORDER BY x) AS a, ARRAY_AGG(DISTINCT UPPER(TRIM(x))) WITHIN GROUP (ORDER BY UPPER(TRIM(x))) AS b FROM input GROUP BY g ORDER BY g"
+order = "ordered"
+tags = ["null", "empty-input", "duplicates"]

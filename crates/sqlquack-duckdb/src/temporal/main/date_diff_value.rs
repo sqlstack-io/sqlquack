@@ -29,6 +29,11 @@ pub fn date_diff_value(
         "YEAR" => return calendar(&|day| format!("year({day})")),
         "QUARTER" => return calendar(&|day| format!("(year({day}) * 4 + quarter({day}))")),
         "MONTH" => return calendar(&|day| format!("(year({day}) * 12 + month({day}))")),
+        "WEEK" => {
+            return Ok(format!(
+                "(date_diff('day', date_trunc('week', {start_date}), date_trunc('week', {end_date})) // 7)"
+            ));
+        }
         "DAY" => return Ok(format!("date_diff('day', {start_date}, {end_date})")),
         "HOUR" => 3600,
         "MINUTE" => 60,

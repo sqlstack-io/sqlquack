@@ -7,6 +7,7 @@ use std::path::PathBuf;
 use sqlquack_core::refusals::models::RefusalCategory;
 use sqlquack_rules::conversion::models::Schema;
 
+use crate::census::_helpers::combinations::combinations;
 use crate::census::_helpers::corpus::model_relation;
 use crate::census::_helpers::inspect::FileCensus;
 use crate::census::constants::{
@@ -23,6 +24,7 @@ pub(crate) fn blockers(
 ) -> BlockerReport {
     let graph = Graph::new(files, censuses, schema);
     let (mut own, mut roots) = graph.roots();
+    let incomplete = graph.incomplete();
     let mut models = graph.models.clone();
     let mut order: Vec<usize> = (0..models.len()).collect();
     order.sort_by(|left, right| models[*left].cmp(&models[*right]));
@@ -52,11 +54,20 @@ pub(crate) fn blockers(
             },
             roots: roots[index].iter().cloned().collect(),
             placed: censuses[index].placed.clone(),
+            possibly_incomplete: incomplete[index],
         });
     }
     BlockerReport {
-        single_root_files: blocked.iter().filter(|file| file.roots.len() == 1).count(),
+        single_root_files: blocked
+            .iter()
+            .filter(|file| file.roots.len() == 1 && !file.possibly_incomplete)
+            .count(),
+        possibly_incomplete_files: blocked
+            .iter()
+            .filter(|file| file.possibly_incomplete)
+            .count(),
         roots: ranking(&blocked),
+        combinations: combinations(&blocked),
         files: blocked,
     }
 }
@@ -68,6 +79,7 @@ struct Graph {
     own: Vec<BTreeSet<RootKey>>,
     upstream: Vec<BTreeSet<usize>>,
     unknown: Vec<BTreeSet<String>>,
+    possibly_incomplete: Vec<bool>,
 }
 
 impl Graph {
@@ -93,6 +105,10 @@ impl Graph {
             own: Vec::with_capacity(censuses.len()),
             upstream: Vec::with_capacity(censuses.len()),
             unknown: Vec::with_capacity(censuses.len()),
+            possibly_incomplete: censuses
+                .iter()
+                .map(|census| census.possibly_incomplete)
+                .collect(),
         };
         for (index, census) in censuses.iter().enumerate() {
             let model_of = |relation: &String| by_relation.get(&folded(relation)).copied();
@@ -145,6 +161,31 @@ impl Graph {
         }
         let roots = self.inherited(own.clone());
         (own, roots)
+    }
+
+    /// Whether each file, or a refused model upstream of it, may hold refusals not collected.
+    fn incomplete(&self) -> Vec<bool> {
+        (0..self.models.len())
+            .map(|index| self.possibly_incomplete[index] || self.incomplete_upstream(index))
+            .collect()
+    }
+
+    /// Whether a refused model upstream of `start` may hold refusals not collected.
+    fn incomplete_upstream(&self, start: usize) -> bool {
+        let mut upstream = self.upstream_of(start);
+        upstream.any(|index| self.possibly_incomplete[index])
+    }
+
+    /// Every refused model upstream of `start`, each once.
+    fn upstream_of(&self, start: usize) -> impl Iterator<Item = usize> {
+        let mut seen: BTreeSet<usize> = BTreeSet::new();
+        let mut pending: Vec<usize> = self.upstream[start].iter().copied().collect();
+        while let Some(index) = pending.pop() {
+            if seen.insert(index) {
+                pending.extend(self.upstream[index].iter().copied());
+            }
+        }
+        seen.into_iter()
     }
 
     /// Whether `target` is upstream of `start`, through refused models.
@@ -228,32 +269,34 @@ fn model_name(path: &std::path::Path) -> String {
 
 /// Each root with the files it refuses directly, downstream and alone, most files first.
 fn ranking(files: &[BlockedFile]) -> Vec<RootBlocker> {
-    let mut counts: BTreeMap<&RootKey, (usize, usize, usize)> = BTreeMap::new();
+    let mut counts: BTreeMap<&RootKey, [usize; 4]> = BTreeMap::new();
     for file in files {
         for root in &file.roots {
             let entry = counts.entry(root).or_default();
-            entry.1 += 1;
+            entry[1] += 1;
             if file.own.contains(root) {
-                entry.0 += 1;
+                entry[0] += 1;
             }
             if file.roots.len() == 1 {
-                entry.2 += 1;
+                entry[if file.possibly_incomplete { 3 } else { 2 }] += 1;
             }
         }
     }
     let mut ranked: Vec<RootBlocker> = counts
         .into_iter()
-        .map(|(key, (direct, total, sole))| RootBlocker {
+        .map(|(key, [direct, total, sole, sole_uncertain])| RootBlocker {
             category: key.category.clone(),
             construct: key.construct.clone(),
             direct,
             downstream: total - direct,
             total,
             sole,
+            sole_uncertain,
         })
         .collect();
     ranked.sort_by_key(|root| {
         (
+            Reverse(root.sole),
             Reverse(root.total),
             Reverse(root.direct),
             root.category.clone(),

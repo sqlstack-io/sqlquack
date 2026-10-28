@@ -1,0 +1,126 @@
+# FILTER with a lambda, as models use it over SPLIT words and arrays of objects.
+category = "semi-structured-array"
+construct = "fn:FILTER"
+session_profile = "utc-v1"
+
+[[case]]
+id = "filter_split_length"
+description = "FILTER of SPLIT words keeping those of two or more characters."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'J. A. SMITH'"],
+  ["'AL B CDE'"],
+  ["''"],
+  ["' '"],
+  ["'X'"],
+  ["NULL"],
+]
+expression = "FILTER(SPLIT(UPPER(REPLACE(s, '.', ' ')), ' '), x -> LENGTH(x) >= 2)"
+tags = ["null", "duplicates", "empty", "invalid"]
+
+[[case]]
+id = "filter_split_nonempty"
+description = "FILTER of SPLIT words dropping empty ones."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'a  b'"],
+  ["' a b '"],
+  ["''"],
+  ["'ab'"],
+  ["NULL"],
+]
+expression = "FILTER(SPLIT(TRIM(s), ' '), x -> x <> '')"
+tags = ["null", "duplicates", "empty", "invalid"]
+
+[[case]]
+id = "filter_size"
+description = "ARRAY_SIZE of a FILTER result, zero when nothing is kept."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'J. A. SMITH'"],
+  ["'A B'"],
+  ["''"],
+  ["NULL"],
+]
+expression = "ARRAY_SIZE(FILTER(SPLIT(s, ' '), x -> LENGTH(x) >= 2))"
+tags = ["null", "duplicates", "empty", "invalid"]
+
+[[case]]
+id = "filter_objects_by_label"
+description = "FILTER of an array of objects by a field's text."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('[{\"label\":\"Size\",\"value\":\"1:02\"},{\"label\":\"Color\",\"value\":\"1\"},{\"label\":\"Size\",\"value\":\"1:03\"}]')"],
+  ["PARSE_JSON('[{\"label\":\"Weight\"}]')"],
+  ["PARSE_JSON('[]')"],
+  ["PARSE_JSON('[{\"label\":null},{\"value\":\"x\"}]')"],
+  ["PARSE_JSON('[1,\"Size\",null]')"],
+  ["NULL"],
+]
+expression = "FILTER(v, c -> c:label::VARCHAR = 'Size')"
+tags = ["null", "duplicates", "empty", "invalid"]
+expected_divergence = "json_fidelity"
+
+[[case]]
+id = "filter_objects_first"
+description = "The first element of a FILTER result, read as text."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('[{\"label\":\"Size\",\"value\":\"1:02\"},{\"label\":\"Color\",\"value\":\"1\"},{\"label\":\"Size\",\"value\":\"1:03\"}]')"],
+  ["PARSE_JSON('[{\"label\":\"Weight\"}]')"],
+  ["PARSE_JSON('[]')"],
+  ["PARSE_JSON('[{\"label\":null},{\"value\":\"x\"}]')"],
+  ["PARSE_JSON('[1,\"Size\",null]')"],
+  ["NULL"],
+]
+expression = "FILTER(v, c -> c:label::VARCHAR = 'Size')[0]:value::VARCHAR"
+tags = ["null", "duplicates", "empty", "invalid"]
+expected_divergence = "json_fidelity"
+
+[[case]]
+id = "filter_startswith"
+description = "FILTER with STARTSWITH over a field."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('[{\"text\":\"Note: 2\"},{\"text\":\"x\"},{\"text\":\"Note:\"}]')"],
+  ["PARSE_JSON('[{\"text\":null}]')"],
+  ["PARSE_JSON('[]')"],
+]
+expression = "FILTER(v, c -> STARTSWITH(c:text::VARCHAR, 'Note:'))"
+tags = ["null", "duplicates", "empty", "invalid"]
+
+[[case]]
+id = "filter_coalesce_or"
+description = "FILTER with COALESCE of an OR of comparisons, against another column."
+columns = [{ name = "s", type = "VARCHAR" }, { name = "lead", type = "VARCHAR" }]
+rows = [
+  ["'SMITH JONES SMI'", "'SMI'"],
+  ["'A B'", "NULL"],
+  ["NULL", "'A'"],
+  ["''", "''"],
+]
+expression = "FILTER(SPLIT(s, ' '), w -> COALESCE(STARTSWITH(w, lead) OR STARTSWITH(lead, w), FALSE))"
+tags = ["null", "duplicates", "empty", "invalid"]
+
+[[case]]
+id = "filter_json_nulls"
+description = "FILTER over an array holding JSON nulls and mixed kinds."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('[\"ab\",null,\"c\",1,true]')"],
+  ["PARSE_JSON('[null]')"],
+  ["PARSE_JSON('[\"abc\"]')"],
+]
+expression = "FILTER(v, x -> LENGTH(x::VARCHAR) >= 2)"
+tags = ["null", "duplicates", "empty", "invalid"]
+expected_divergence = "json_fidelity"
+
+[[case]]
+id = "filter_not_array"
+description = "FILTER of a value that is not an array: raises or converts."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('{\"a\":1}')"],
+]
+expression = "FILTER(v, x -> x IS NOT NULL)"
+tags = ["null", "duplicates", "empty", "invalid"]

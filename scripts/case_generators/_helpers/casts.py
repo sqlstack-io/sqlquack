@@ -10,6 +10,7 @@ from scripts.case_generators.constants import (
     CAST_NUMBER_LIMITS,
     CAST_SOURCES,
     CAST_TARGETS,
+    CAST_TIME,
     CAST_VARCHAR,
     CASTS,
     CONVERSION_FUNCTIONS,
@@ -37,6 +38,7 @@ from scripts.case_generators.constants import (
     TEXT_INVALID,
     TEXT_SEARCH,
     TEXT_VALID,
+    TIME_SUBMICRO,
     TIMESTAMP_RANGE,
     TIMESTAMP_TEXT_FORMATS,
     TIMESTAMP_TEXT_VALUES,
@@ -198,6 +200,7 @@ def text_cases(target: CastType) -> tuple[Case, ...]:
             rows=tuple((value,) for value in TEXT_VALID[target]),
             expression=f"CAST(x AS {target.name})",
             tags=("null", "boundary"),
+            expected_divergence=TIME_SUBMICRO if target == CAST_TIME else None,
         ),
         *invalid,
     )
@@ -215,6 +218,7 @@ def try_cast_case(target: CastType) -> Case:
         ),
         expression=f"TRY_CAST(x AS {target.name})",
         tags=("null", "invalid", "boundary"),
+        expected_divergence=TIME_SUBMICRO if target == CAST_TIME else None,
     )
 
 

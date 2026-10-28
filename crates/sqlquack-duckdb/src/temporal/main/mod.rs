@@ -1,11 +1,16 @@
 pub mod date_add_value;
 pub mod date_diff_value;
+pub mod date_from_parts;
 pub mod date_part_value;
 pub mod date_trunc_value;
 pub mod epoch_to_timestamp;
 pub mod formatted_text_to_date;
+pub mod formatted_text_to_timestamp;
 pub mod submicro_check;
 pub mod text_to_timestamp;
+pub mod text_to_zoned;
+pub mod timestamp_format;
+pub mod timestamp_from_parts;
 pub mod truncate_timestamp;
 pub mod truncate_timestamp_to_date;
 pub mod utc_to_zone;

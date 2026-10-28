@@ -12,29 +12,31 @@ use sqlquack_snowflake::typing::main::sum::sum;
 use sqlquack_snowflake::typing::models::SnowflakeType;
 
 use crate::conversion::_helpers::expressions::casts::{
-    to_double_call, to_number_call, to_varchar_call,
+    to_boolean_call, to_double_call, to_number_call, to_varchar_call,
 };
 use crate::conversion::_helpers::expressions::conditionals::unified;
 use crate::conversion::_helpers::expressions::conditionals::{decode, zero_if_null};
 use crate::conversion::_helpers::expressions::hashing::hash_call;
+use crate::conversion::_helpers::expressions::lambdas::lambda_call;
 use crate::conversion::_helpers::expressions::numeric_functions::{
     absolute, bitwise, rounding, sign,
 };
 use crate::conversion::_helpers::expressions::objects::{
     object_construct, object_delete, object_insert,
 };
-use crate::conversion::_helpers::expressions::operators::{comparable, equal_null};
+use crate::conversion::_helpers::expressions::operators::{comparable, equal_null, mod_call};
 use crate::conversion::_helpers::expressions::project_functions::project_call;
 use crate::conversion::_helpers::expressions::scalar::convert_expression;
 use crate::conversion::_helpers::expressions::semi_structured::{
     parse_json, variant_get, variant_inspect,
 };
 use crate::conversion::_helpers::expressions::strings::{
-    concatenate, concatenate_with_separator, edit_distance, text_contains, text_md5, text_operand,
-    trim_call,
+    chr, concatenate, concatenate_with_separator, edit_distance, hex_encode, initcap,
+    text_contains, text_md5, text_operand, trim_call,
 };
 use crate::conversion::_helpers::expressions::temporal_functions::{
-    convert_timezone, date_add, date_part, date_trunc, temporal_text, to_timestamp,
+    convert_timezone, current_time, date_add, date_diff_call, date_from_parts_call, date_part,
+    date_trunc, temporal_text, timestamp_from_parts_call, to_time, to_timestamp, to_timestamp_tz,
 };
 use crate::conversion::_helpers::expressions::text_functions::{
     left_right, pad, regexp, replace, split_part, translate,
@@ -71,7 +73,11 @@ pub(crate) fn convert_function(payload: &Value, site: Site<'_>) -> Result<Emitte
             format!("not in Snowflake's function reference: {name}"),
         ));
     }
-    require_understood(payload, &["name", "args"], &construct)?;
+    let understood: &[&str] = match name.as_str() {
+        "CURRENT_DATE" | "CURRENT_TIMESTAMP" => &["name", "args", "no_parens"],
+        _ => &["name", "args"],
+    };
+    require_understood(payload, understood, &construct)?;
     let arguments = list(payload, "args");
     match (name.as_str(), arguments) {
         ("NULLIF", [left, right]) => nullif(left, right, site),
@@ -92,6 +98,12 @@ pub(crate) fn convert_function(payload: &Value, site: Site<'_>) -> Result<Emitte
         ("CONTAINS", parts) => text_contains(parts, &construct, site),
         ("EDITDISTANCE", parts) => edit_distance(parts, &construct, site),
         ("MD5", parts) => text_md5(parts, &construct, site),
+        ("MOD", parts) => mod_call(parts, &construct, site),
+        ("FILTER" | "TRANSFORM", parts) => lambda_call(&name, parts, &construct, site),
+        ("INITCAP", parts) => initcap(parts, &construct, site),
+        ("CHR", parts) => chr(parts, &construct, site),
+        ("HEX_ENCODE", parts) => hex_encode(parts, &construct, site),
+        ("TO_BOOLEAN" | "TRY_TO_BOOLEAN", parts) => to_boolean_call(&name, parts, &construct, site),
         (
             "TO_NUMBER" | "TO_DECIMAL" | "TO_NUMERIC" | "TRY_TO_NUMBER" | "TRY_TO_DECIMAL"
             | "TRY_TO_NUMERIC",
@@ -117,12 +129,19 @@ pub(crate) fn convert_function(payload: &Value, site: Site<'_>) -> Result<Emitte
         ("REPLACE", parts) if (2..=3).contains(&parts.len()) => replace(parts, &construct, site),
         ("TRANSLATE", parts) => translate(parts, &construct, site),
         ("SPLIT_PART", parts) => split_part(parts, &construct, site),
-        ("REGEXP_LIKE" | "REGEXP_REPLACE" | "REGEXP_SUBSTR", parts) => {
+        ("REGEXP_LIKE" | "REGEXP_REPLACE" | "REGEXP_SUBSTR" | "REGEXP_SUBSTR_ALL", parts) => {
             regexp(&name, parts, &construct, site)
         }
         ("DATE_PART", [unit, value]) => date_part(unit, value, &construct, site),
+        ("DATEDIFF", parts) => date_diff_call(parts, &construct, site),
+        ("TO_TIME" | "TRY_TO_TIME", parts) => to_time(&name, parts, &construct, site),
+        ("DATE_FROM_PARTS", parts) => date_from_parts_call(parts, &construct, site),
+        ("TIMESTAMP_NTZ_FROM_PARTS", parts) => timestamp_from_parts_call(parts, &construct, site),
+        ("CURRENT_DATE" | "CURRENT_TIMESTAMP", parts) => {
+            current_time(&name, parts, &construct, site)
+        }
         ("DATE_TRUNC", [unit, value]) => date_trunc(unit, value, &construct, site),
-        ("DATEADD" | "TIMESTAMPADD", [unit, amount, value]) => {
+        ("DATEADD" | "TIMEADD" | "TIMESTAMPADD", [unit, amount, value]) => {
             date_add((unit, amount, value), &construct, site)
         }
         ("CONVERT_TIMEZONE", parts) => convert_timezone(parts, &construct, site),
@@ -136,6 +155,9 @@ pub(crate) fn convert_function(payload: &Value, site: Site<'_>) -> Result<Emitte
             | "OBJECT_KEYS"
             | "ARRAY_CONSTRUCT"
             | "ARRAY_EXCEPT"
+            | "ARRAY_POSITION"
+            | "ARRAY_CAT"
+            | "ARRAY_COMPACT"
             | "ARRAY_SIZE"
             | "ARRAY_CONTAINS"
             | "ARRAY_CONSTRUCT_COMPACT"
@@ -170,6 +192,7 @@ pub(crate) fn convert_function(payload: &Value, site: Site<'_>) -> Result<Emitte
             parts,
         ) => to_timestamp(&name, parts, &construct, site),
         ("DATE", parts) => to_timestamp(TO_DATE_NAME, parts, &construct, site),
+        ("TRY_TO_TIMESTAMP_TZ", parts) => to_timestamp_tz(parts, &construct, site),
         ("LEAST" | "GREATEST", parts) if !parts.is_empty() => {
             least_greatest(&name, parts, &construct, site)
         }
@@ -360,6 +383,7 @@ impl AggregateCall<'_> {
             | SnowflakeType::Varchar
             | SnowflakeType::Boolean
             | SnowflakeType::Date
+            | SnowflakeType::Time { .. }
             | SnowflakeType::TimestampNtz { .. }
             | SnowflakeType::TimestampTz { .. }
             | SnowflakeType::TimestampLtz { .. } => Ok(Emitted::new(

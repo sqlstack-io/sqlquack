@@ -1,0 +1,401 @@
+# MOD and the numeric literals models write.
+category = "numeric"
+construct = "fn:MOD"
+session_profile = "utc-v1"
+
+[[case]]
+id = "mod_integers"
+description = "MOD of integers with negative operands."
+columns = [{ name = "a", type = "NUMBER(10,0)" }, { name = "b", type = "NUMBER(10,0)" }]
+rows = [
+  ["7", "3"],
+  ["-7", "3"],
+  ["7", "-3"],
+  ["-7", "-3"],
+  ["0", "5"],
+  ["NULL", "3"],
+  ["5", "NULL"],
+]
+expression = "MOD(a, b)"
+tags = ["null", "zero", "negative", "boundary"]
+
+[[case]]
+id = "mod_zero_divisor"
+description = "MOD by zero."
+columns = [{ name = "a", type = "NUMBER(10,0)" }, { name = "b", type = "NUMBER(10,0)" }]
+rows = [
+  ["7", "0"],
+]
+expression = "MOD(a, b)"
+tags = ["null", "zero", "negative", "boundary"]
+
+[[case]]
+id = "mod_decimal"
+description = "MOD of decimals."
+columns = [{ name = "a", type = "NUMBER(10,2)" }, { name = "b", type = "NUMBER(10,1)" }]
+rows = [
+  ["7.25", "2.0"],
+  ["-7.25", "2.5"],
+  ["0.10", "0.3"],
+]
+expression = "MOD(a, b)"
+tags = ["null", "zero", "negative", "boundary"]
+
+[[case]]
+id = "mod_float"
+description = "MOD of a FLOAT by an integer."
+columns = [{ name = "a", type = "FLOAT" }]
+rows = [
+  ["52.5"],
+  ["-52.5"],
+  ["49.999"],
+  ["NULL"],
+]
+expression = "MOD(a, 50)"
+tags = ["null", "zero", "negative", "boundary"]
+
+[[case]]
+id = "mod_expression"
+description = "MOD of an expression, as models compute weekday offsets."
+columns = [{ name = "a", type = "NUMBER(10,0)" }]
+rows = [
+  ["1"],
+  ["12"],
+  ["13"],
+  ["-2"],
+]
+expression = "MOD(12 - a, 7)"
+tags = ["null", "zero", "negative", "boundary"]
+
+[[case]]
+id = "mod_operator"
+description = "The % operator beside MOD."
+columns = [{ name = "a", type = "NUMBER(10,0)" }, { name = "b", type = "NUMBER(10,0)" }]
+rows = [
+  ["7", "3"],
+  ["-7", "3"],
+]
+expression = "a % b"
+tags = ["null", "zero", "negative", "boundary"]
+
+[[case]]
+id = "literal_100p0"
+description = "The numeric literal 100.0: its value."
+columns = [{ name = "k", type = "NUMBER(2,0)" }]
+rows = [
+  ["1"],
+]
+expression = "100.0"
+tags = ["null", "zero", "negative", "boundary"]
+
+[[case]]
+id = "literal_100p0_arith"
+description = "The numeric literal 100.0 in arithmetic with a NUMBER(10,2) column."
+columns = [{ name = "x", type = "NUMBER(10,2)" }]
+rows = [
+  ["3.25"],
+  ["-1.00"],
+  ["0"],
+  ["NULL"],
+]
+expression = "x * 100.0"
+tags = ["null", "zero", "negative", "boundary"]
+
+[[case]]
+id = "literal_1p0"
+description = "The numeric literal 1.0: its value."
+columns = [{ name = "k", type = "NUMBER(2,0)" }]
+rows = [
+  ["1"],
+]
+expression = "1.0"
+tags = ["null", "zero", "negative", "boundary"]
+
+[[case]]
+id = "literal_1p0_arith"
+description = "The numeric literal 1.0 in arithmetic with a NUMBER(10,2) column."
+columns = [{ name = "x", type = "NUMBER(10,2)" }]
+rows = [
+  ["3.25"],
+  ["-1.00"],
+  ["0"],
+  ["NULL"],
+]
+expression = "x * 1.0"
+tags = ["null", "zero", "negative", "boundary"]
+
+[[case]]
+id = "literal_0p0"
+description = "The numeric literal 0.0: its value."
+columns = [{ name = "k", type = "NUMBER(2,0)" }]
+rows = [
+  ["1"],
+]
+expression = "0.0"
+tags = ["null", "zero", "negative", "boundary"]
+
+[[case]]
+id = "literal_0p0_arith"
+description = "The numeric literal 0.0 in arithmetic with a NUMBER(10,2) column."
+columns = [{ name = "x", type = "NUMBER(10,2)" }]
+rows = [
+  ["3.25"],
+  ["-1.00"],
+  ["0"],
+  ["NULL"],
+]
+expression = "x * 0.0"
+tags = ["null", "zero", "negative", "boundary"]
+
+[[case]]
+id = "literal_10p0"
+description = "The numeric literal 10.0: its value."
+columns = [{ name = "k", type = "NUMBER(2,0)" }]
+rows = [
+  ["1"],
+]
+expression = "10.0"
+tags = ["null", "zero", "negative", "boundary"]
+
+[[case]]
+id = "literal_10p0_arith"
+description = "The numeric literal 10.0 in arithmetic with a NUMBER(10,2) column."
+columns = [{ name = "x", type = "NUMBER(10,2)" }]
+rows = [
+  ["3.25"],
+  ["-1.00"],
+  ["0"],
+  ["NULL"],
+]
+expression = "x * 10.0"
+tags = ["null", "zero", "negative", "boundary"]
+
+[[case]]
+id = "literal_200p0"
+description = "The numeric literal 200.0: its value."
+columns = [{ name = "k", type = "NUMBER(2,0)" }]
+rows = [
+  ["1"],
+]
+expression = "200.0"
+tags = ["null", "zero", "negative", "boundary"]
+
+[[case]]
+id = "literal_200p0_arith"
+description = "The numeric literal 200.0 in arithmetic with a NUMBER(10,2) column."
+columns = [{ name = "x", type = "NUMBER(10,2)" }]
+rows = [
+  ["3.25"],
+  ["-1.00"],
+  ["0"],
+  ["NULL"],
+]
+expression = "x * 200.0"
+tags = ["null", "zero", "negative", "boundary"]
+
+[[case]]
+id = "literal_25p0"
+description = "The numeric literal 25.0: its value."
+columns = [{ name = "k", type = "NUMBER(2,0)" }]
+rows = [
+  ["1"],
+]
+expression = "25.0"
+tags = ["null", "zero", "negative", "boundary"]
+
+[[case]]
+id = "literal_25p0_arith"
+description = "The numeric literal 25.0 in arithmetic with a NUMBER(10,2) column."
+columns = [{ name = "x", type = "NUMBER(10,2)" }]
+rows = [
+  ["3.25"],
+  ["-1.00"],
+  ["0"],
+  ["NULL"],
+]
+expression = "x * 25.0"
+tags = ["null", "zero", "negative", "boundary"]
+
+[[case]]
+id = "literal_0p05"
+description = "The numeric literal 0.05: its value."
+columns = [{ name = "k", type = "NUMBER(2,0)" }]
+rows = [
+  ["1"],
+]
+expression = "0.05"
+tags = ["null", "zero", "negative", "boundary"]
+
+[[case]]
+id = "literal_0p05_arith"
+description = "The numeric literal 0.05 in arithmetic with a NUMBER(10,2) column."
+columns = [{ name = "x", type = "NUMBER(10,2)" }]
+rows = [
+  ["3.25"],
+  ["-1.00"],
+  ["0"],
+  ["NULL"],
+]
+expression = "x * 0.05"
+tags = ["null", "zero", "negative", "boundary"]
+
+[[case]]
+id = "literal_0p9144"
+description = "The numeric literal 0.9144: its value."
+columns = [{ name = "k", type = "NUMBER(2,0)" }]
+rows = [
+  ["1"],
+]
+expression = "0.9144"
+tags = ["null", "zero", "negative", "boundary"]
+
+[[case]]
+id = "literal_0p9144_arith"
+description = "The numeric literal 0.9144 in arithmetic with a NUMBER(10,2) column."
+columns = [{ name = "x", type = "NUMBER(10,2)" }]
+rows = [
+  ["3.25"],
+  ["-1.00"],
+  ["0"],
+  ["NULL"],
+]
+expression = "x * 0.9144"
+tags = ["null", "zero", "negative", "boundary"]
+
+[[case]]
+id = "literal_201p168"
+description = "The numeric literal 201.168: its value."
+columns = [{ name = "k", type = "NUMBER(2,0)" }]
+rows = [
+  ["1"],
+]
+expression = "201.168"
+tags = ["null", "zero", "negative", "boundary"]
+
+[[case]]
+id = "literal_201p168_arith"
+description = "The numeric literal 201.168 in arithmetic with a NUMBER(10,2) column."
+columns = [{ name = "x", type = "NUMBER(10,2)" }]
+rows = [
+  ["3.25"],
+  ["-1.00"],
+  ["0"],
+  ["NULL"],
+]
+expression = "x * 201.168"
+tags = ["null", "zero", "negative", "boundary"]
+
+[[case]]
+id = "literal_1em12"
+description = "The numeric literal 1e-12: its value."
+columns = [{ name = "k", type = "NUMBER(2,0)" }]
+rows = [
+  ["1"],
+]
+expression = "1e-12"
+tags = ["null", "zero", "negative", "boundary"]
+
+[[case]]
+id = "literal_1em12_arith"
+description = "The numeric literal 1e-12 in arithmetic with a NUMBER(10,2) column."
+columns = [{ name = "x", type = "NUMBER(10,2)" }]
+rows = [
+  ["3.25"],
+  ["-1.00"],
+  ["0"],
+  ["NULL"],
+]
+expression = "x * 1e-12"
+tags = ["null", "zero", "negative", "boundary"]
+
+[[case]]
+id = "literal_1e5"
+description = "The numeric literal 1e5: its value."
+columns = [{ name = "k", type = "NUMBER(2,0)" }]
+rows = [
+  ["1"],
+]
+expression = "1e5"
+tags = ["null", "zero", "negative", "boundary"]
+
+[[case]]
+id = "literal_1e5_arith"
+description = "The numeric literal 1e5 in arithmetic with a NUMBER(10,2) column."
+columns = [{ name = "x", type = "NUMBER(10,2)" }]
+rows = [
+  ["3.25"],
+  ["-1.00"],
+  ["0"],
+  ["NULL"],
+]
+expression = "x * 1e5"
+tags = ["null", "zero", "negative", "boundary"]
+
+[[case]]
+id = "literal_1em10"
+description = "The numeric literal 1e-10: its value."
+columns = [{ name = "k", type = "NUMBER(2,0)" }]
+rows = [
+  ["1"],
+]
+expression = "1e-10"
+tags = ["null", "zero", "negative", "boundary"]
+
+[[case]]
+id = "literal_1em10_arith"
+description = "The numeric literal 1e-10 in arithmetic with a NUMBER(10,2) column."
+columns = [{ name = "x", type = "NUMBER(10,2)" }]
+rows = [
+  ["3.25"],
+  ["-1.00"],
+  ["0"],
+  ["NULL"],
+]
+expression = "x * 1e-10"
+tags = ["null", "zero", "negative", "boundary"]
+
+[[case]]
+id = "literal_9223372036854775807"
+description = "The numeric literal 9223372036854775807: its value."
+columns = [{ name = "k", type = "NUMBER(2,0)" }]
+rows = [
+  ["1"],
+]
+expression = "9223372036854775807"
+tags = ["null", "zero", "negative", "boundary"]
+
+[[case]]
+id = "literal_9223372036854775807_arith"
+description = "The numeric literal 9223372036854775807 in arithmetic with a NUMBER(10,2) column."
+columns = [{ name = "x", type = "NUMBER(10,2)" }]
+rows = [
+  ["3.25"],
+  ["-1.00"],
+  ["0"],
+  ["NULL"],
+]
+expression = "x * 9223372036854775807"
+tags = ["null", "zero", "negative", "boundary"]
+
+[[case]]
+id = "literal_1p5e3"
+description = "The numeric literal 1.5e3: its value."
+columns = [{ name = "k", type = "NUMBER(2,0)" }]
+rows = [
+  ["1"],
+]
+expression = "1.5e3"
+tags = ["null", "zero", "negative", "boundary"]
+
+[[case]]
+id = "literal_1p5e3_arith"
+description = "The numeric literal 1.5e3 in arithmetic with a NUMBER(10,2) column."
+columns = [{ name = "x", type = "NUMBER(10,2)" }]
+rows = [
+  ["3.25"],
+  ["-1.00"],
+  ["0"],
+  ["NULL"],
+]
+expression = "x * 1.5e3"
+tags = ["null", "zero", "negative", "boundary"]

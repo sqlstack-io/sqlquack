@@ -1,0 +1,122 @@
+# LATERAL SPLIT_TO_TABLE: one row per delimited part, with SEQ, INDEX and VALUE.
+category = "string"
+construct = "fn:SPLIT_TO_TABLE"
+session_profile = "utc-v1"
+
+[[case]]
+id = "split_to_table_comma"
+description = "LATERAL SPLIT_TO_TABLE on a comma: empty text, NULL, leading, trailing and repeated delimiters, unicode and spaces."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'a,b,c'"],
+  ["''"],
+  ["NULL"],
+  ["',a,,b,'"],
+  ["'single'"],
+  ["','"],
+  ["'é,日本,😀'"],
+  ["'  a , b  '"],
+]
+query = "SELECT i.ordinal, p.index, p.value FROM input i, LATERAL SPLIT_TO_TABLE(i.s, ',') p ORDER BY i.ordinal, p.index"
+order = "ordered"
+tags = ["null", "empty", "whitespace", "unicode"]
+
+[[case]]
+id = "split_to_table_multi_character"
+description = "SPLIT_TO_TABLE on multi-character delimiters ' / ' and ' - '."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'a / b / c'"],
+  ["'a - b'"],
+  ["' / '"],
+  ["'a/b'"],
+  ["NULL"],
+  ["''"],
+]
+query = "SELECT i.ordinal, p.index, p.value AS slash, q.index AS dash_index, q.value AS dash FROM input i, LATERAL SPLIT_TO_TABLE(i.s, ' / ') p, LATERAL SPLIT_TO_TABLE(p.value, ' - ') q ORDER BY i.ordinal, p.index, q.index"
+order = "ordered"
+tags = ["null", "empty", "whitespace", "unicode"]
+
+[[case]]
+id = "split_to_table_lines"
+description = "SPLIT_TO_TABLE on CHR(10) with blank lines filtered after TRIM."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'line one' || CHR(10) || CHR(10) || '  line two ' || CHR(10)"],
+  ["CHR(10)"],
+  ["'no break'"],
+  ["NULL"],
+]
+query = "SELECT i.ordinal, p.index, TRIM(p.value) AS line FROM input i, LATERAL SPLIT_TO_TABLE(i.s, CHR(10)) p WHERE TRIM(p.value) <> '' ORDER BY i.ordinal, p.index"
+order = "ordered"
+tags = ["null", "empty", "whitespace", "unicode"]
+
+[[case]]
+id = "split_to_table_empty_delimiter"
+description = "SPLIT_TO_TABLE with an empty and a NULL delimiter."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'abc'"],
+  ["''"],
+  ["NULL"],
+]
+query = "SELECT i.ordinal, p.index, p.value, q.index AS null_index FROM input i, LATERAL SPLIT_TO_TABLE(i.s, '') p, LATERAL SPLIT_TO_TABLE(i.s, NULL) q ORDER BY i.ordinal, p.index"
+order = "ordered"
+tags = ["null", "empty", "whitespace", "unicode"]
+
+[[case]]
+id = "split_to_table_expression"
+description = "SPLIT_TO_TABLE over TRIM and REGEXP_REPLACE of the text, grouped."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'{a,b,c}'"],
+  ["'{x}'"],
+  ["'{}'"],
+  ["'(note) red - blue (x)'"],
+  ["NULL"],
+]
+query = "SELECT i.ordinal, COUNT(*) AS n, LISTAGG(p.value, '|') WITHIN GROUP (ORDER BY p.index) AS parts, COUNT(q.value) AS segments FROM input i, LATERAL SPLIT_TO_TABLE(TRIM(i.s, '{}'), ',') p, LATERAL SPLIT_TO_TABLE(REGEXP_REPLACE(i.s, '[(][^)]*[)]', ''), ' - ') q GROUP BY i.ordinal ORDER BY i.ordinal"
+order = "ordered"
+tags = ["null", "empty", "whitespace", "unicode"]
+
+[[case]]
+id = "split_to_table_seq"
+description = "SPLIT_TO_TABLE's SEQ: one value per input row, and IS NOT NULL."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'a,b,c'"],
+  ["''"],
+  ["NULL"],
+  ["',a,,b,'"],
+  ["'single'"],
+  ["','"],
+  ["'é,日本,😀'"],
+  ["'  a , b  '"],
+]
+query = "SELECT i.ordinal, COUNT(DISTINCT p.seq) AS seqs, SUM(IFF(p.seq IS NOT NULL, 1, 0)) AS with_seq, COUNT(*) AS n FROM input i, LATERAL SPLIT_TO_TABLE(i.s, ',') p GROUP BY i.ordinal ORDER BY i.ordinal"
+order = "ordered"
+tags = ["null", "empty", "whitespace", "unicode"]
+
+[[case]]
+id = "split_to_table_unordered"
+description = "SPLIT_TO_TABLE of one text without ORDER BY: Snowflake returns parts by index, but row order is not part of the contract."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'c,a,b,a'"],
+]
+query = "SELECT p.index, p.value FROM input i, LATERAL SPLIT_TO_TABLE(i.s, ',') p"
+order = "bag"
+tags = ["empty", "whitespace", "unicode", "null"]
+
+[[case]]
+id = "split_to_table_after_join"
+description = "A JOIN, then LATERAL SPLIT_TO_TABLE after a comma."
+columns = [{ name = "k", type = "NUMBER(2,0)" }, { name = "s", type = "VARCHAR" }]
+rows = [
+  ["1", "'a,b'"],
+  ["2", "''"],
+  ["3", "NULL"],
+]
+query = "SELECT a.k, p.index, p.value FROM input a JOIN input b ON b.k = a.k, LATERAL SPLIT_TO_TABLE(a.s, ',') p ORDER BY a.k, p.index"
+order = "ordered"
+tags = ["null", "empty", "whitespace", "unicode"]

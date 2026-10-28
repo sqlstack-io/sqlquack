@@ -1,0 +1,154 @@
+# OBJECT_CONSTRUCT star forms and NUMBER values with a fraction in VARIANTs.
+category = "semi-structured-output"
+construct = "fn:OBJECT_CONSTRUCT_KEEP_NULL"
+session_profile = "utc-v1"
+
+[[case]]
+id = "keep_null_star_text"
+description = "OBJECT_CONSTRUCT_KEEP_NULL(r.* EXCLUDE ...) of integer, text and boolean columns."
+columns = [{ name = "order_id", type = "NUMBER(10,0)" }, { name = "status", type = "VARCHAR" }, { name = "note", type = "VARCHAR" }, { name = "flag", type = "BOOLEAN" }]
+rows = [
+  ["1", "'open'", "NULL", "TRUE"],
+  ["2", "NULL", "'gift'", "NULL"],
+  ["3", "''", "''", "FALSE"],
+]
+query = "SELECT r.order_id, OBJECT_CONSTRUCT_KEEP_NULL(r.* EXCLUDE (ordinal, note)) AS o FROM input AS r ORDER BY r.order_id"
+order = "ordered"
+tags = ["null", "json-null", "nested"]
+
+[[case]]
+id = "keep_null_star_all"
+description = "OBJECT_CONSTRUCT_KEEP_NULL(*) of a subquery of integer, text and boolean columns."
+columns = [{ name = "order_id", type = "NUMBER(10,0)" }, { name = "status", type = "VARCHAR" }, { name = "note", type = "VARCHAR" }, { name = "flag", type = "BOOLEAN" }]
+rows = [
+  ["1", "'open'", "NULL", "TRUE"],
+  ["2", "NULL", "'gift'", "NULL"],
+  ["3", "''", "''", "FALSE"],
+]
+query = "SELECT OBJECT_CONSTRUCT_KEEP_NULL(*) AS o FROM (SELECT order_id, status, note, flag FROM input) AS r ORDER BY o:ORDER_ID::NUMBER"
+order = "ordered"
+tags = ["null", "json-null", "nested"]
+
+[[case]]
+id = "object_construct_star"
+description = "OBJECT_CONSTRUCT(*) of a subquery, NULLs dropped."
+columns = [{ name = "order_id", type = "NUMBER(10,0)" }, { name = "status", type = "VARCHAR" }, { name = "note", type = "VARCHAR" }, { name = "flag", type = "BOOLEAN" }]
+rows = [
+  ["1", "'open'", "NULL", "TRUE"],
+  ["2", "NULL", "'gift'", "NULL"],
+  ["3", "''", "''", "FALSE"],
+]
+query = "SELECT OBJECT_CONSTRUCT(*) AS o FROM (SELECT order_id, status, note FROM input) AS r ORDER BY o:ORDER_ID::NUMBER"
+order = "ordered"
+tags = ["null", "json-null", "nested"]
+
+[[case]]
+id = "keep_null_star_quoted"
+description = "OBJECT_CONSTRUCT_KEEP_NULL(*) over quoted lower-case column names."
+columns = [{ name = "order_id", type = "NUMBER(10,0)" }, { name = "status", type = "VARCHAR" }, { name = "note", type = "VARCHAR" }, { name = "flag", type = "BOOLEAN" }]
+rows = [
+  ["1", "'open'", "NULL", "TRUE"],
+  ["2", "NULL", "'gift'", "NULL"],
+  ["3", "''", "''", "FALSE"],
+]
+query = "SELECT OBJECT_CONSTRUCT_KEEP_NULL(*) AS o FROM (SELECT order_id AS \"id\", status AS \"Status\" FROM input) AS r ORDER BY o:\"id\"::NUMBER"
+order = "ordered"
+tags = ["null", "json-null", "nested"]
+
+[[case]]
+id = "decimal_in_object"
+description = "A NUMBER(10,2) in OBJECT_CONSTRUCT_KEEP_NULL, written as JSON text."
+columns = [{ name = "n", type = "NUMBER(10,2)" }]
+rows = [
+  ["1.50"],
+  ["0.00"],
+  ["-2.25"],
+  ["12345678.99"],
+  ["0.01"],
+  ["NULL"],
+]
+expression = "OBJECT_CONSTRUCT_KEEP_NULL('amount', n)"
+tags = ["null", "json-null", "nested"]
+
+[[case]]
+id = "decimal_in_object_typeof"
+description = "TYPEOF of a NUMBER(10,2) kept in an object."
+columns = [{ name = "n", type = "NUMBER(10,2)" }]
+rows = [
+  ["1.50"],
+  ["0.00"],
+  ["-2.25"],
+  ["12345678.99"],
+  ["0.01"],
+  ["NULL"],
+]
+expression = "TYPEOF(OBJECT_CONSTRUCT_KEEP_NULL('amount', n):amount)"
+tags = ["null", "json-null", "nested"]
+
+[[case]]
+id = "decimal_in_object_text"
+description = "A NUMBER(10,2) kept in an object read back as VARCHAR."
+columns = [{ name = "n", type = "NUMBER(10,2)" }]
+rows = [
+  ["1.50"],
+  ["0.00"],
+  ["-2.25"],
+  ["12345678.99"],
+  ["0.01"],
+  ["NULL"],
+]
+expression = "OBJECT_CONSTRUCT_KEEP_NULL('amount', n):amount::VARCHAR"
+tags = ["null", "json-null", "nested"]
+
+[[case]]
+id = "decimal_in_object_number"
+description = "A NUMBER(10,2) kept in an object read back as NUMBER(10,2)."
+columns = [{ name = "n", type = "NUMBER(10,2)" }]
+rows = [
+  ["1.50"],
+  ["0.00"],
+  ["-2.25"],
+  ["12345678.99"],
+  ["0.01"],
+  ["NULL"],
+]
+expression = "OBJECT_CONSTRUCT_KEEP_NULL('amount', n):amount::NUMBER(10,2)"
+tags = ["null", "json-null", "nested"]
+
+[[case]]
+id = "decimal_in_array"
+description = "NUMBER(18,4) values in ARRAY_CONSTRUCT."
+columns = [{ name = "n", type = "NUMBER(18,4)" }]
+rows = [
+  ["1.5000"],
+  ["0.0001"],
+  ["-3"],
+  ["NULL"],
+]
+expression = "ARRAY_CONSTRUCT(n, 1)"
+tags = ["null", "json-null", "nested"]
+
+[[case]]
+id = "decimal_to_variant"
+description = "TO_VARIANT of NUMBER(26,10)."
+columns = [{ name = "n", type = "NUMBER(26,10)" }]
+rows = [
+  ["1.5"],
+  ["0.0000000001"],
+  ["1234567890123456.5"],
+  ["NULL"],
+]
+expression = "TO_VARIANT(n)"
+tags = ["null", "json-null", "nested"]
+
+[[case]]
+id = "decimal_to_variant_typeof"
+description = "TYPEOF of TO_VARIANT of NUMBER(26,10)."
+columns = [{ name = "n", type = "NUMBER(26,10)" }]
+rows = [
+  ["1.5"],
+  ["2"],
+  ["NULL"],
+]
+expression = "TYPEOF(TO_VARIANT(n))"
+tags = ["null", "json-null", "nested"]

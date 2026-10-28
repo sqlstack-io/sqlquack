@@ -1,0 +1,114 @@
+# Object constants of column values, array literals, REDUCE, and VARIANT compared with VARIANT.
+category = "semi-structured-object"
+construct = "node:map_func"
+session_profile = "utc-v1"
+
+[[case]]
+id = "object_constant_column_values"
+description = "An object constant of text, BOOLEAN and integer columns, NULLs included."
+columns = [{ name = "s", type = "VARCHAR" }, { name = "b", type = "BOOLEAN" }, { name = "n", type = "NUMBER(10,0)" }]
+rows = [
+  ["'a'", "TRUE", "1"],
+  ["NULL", "FALSE", "NULL"],
+  ["'é'", "NULL", "-2"],
+]
+query = "SELECT TO_JSON({'name': s, 'valid': b, 'count': n}) AS j, {'name': s, 'valid': b} AS o FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "json-null", "missing-key", "invalid"]
+
+[[case]]
+id = "object_constant_nested_values"
+description = "An object constant holding a VARIANT path, a nested object constant and a decimal."
+columns = [{ name = "v", type = "VARIANT" }, { name = "d", type = "NUMBER(10,2)" }]
+rows = [
+  ["PARSE_JSON('{\"a\":{\"b\":1}}')", "1.50"],
+  ["PARSE_JSON('{}')", "NULL"],
+]
+query = "SELECT TO_JSON({'inner': v:a, 'nested': {'x': 1}, 'amount': d}) AS j FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "json-null", "missing-key", "invalid"]
+
+[[case]]
+id = "array_literal_empty_coalesce"
+description = "COALESCE of a VARIANT path with an empty array literal, and its size."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('{\"items\":[1,2]}')"],
+  ["PARSE_JSON('{\"items\":null}')"],
+  ["PARSE_JSON('{}')"],
+  ["NULL"],
+]
+query = "SELECT TO_JSON(COALESCE(v:items, [])) AS j, ARRAY_SIZE(COALESCE(v:items, [])) AS n FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "json-null", "missing-key", "invalid"]
+
+[[case]]
+id = "array_literal_values"
+description = "Array literals of text, integers, NULL and a column."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'a'"],
+  ["NULL"],
+]
+query = "SELECT TO_JSON([s, 'b']) AS j, TO_JSON([1, 2]) AS k, ARRAY_SIZE([]) AS e FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "json-null", "missing-key", "invalid"]
+
+[[case]]
+id = "reduce_sum_integers"
+description = "REDUCE of a VARIANT array of integers to their sum, with JSON nulls, empty and NULL arrays."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('[1,2,3]')"],
+  ["PARSE_JSON('[]')"],
+  ["PARSE_JSON('[1,null,2]')"],
+  ["NULL"],
+]
+query = "SELECT REDUCE(v, 0, (acc, x) -> acc + x) AS s FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "json-null", "missing-key", "invalid"]
+
+[[case]]
+id = "reduce_text_amounts"
+description = "REDUCE of an array of objects, summing a text amount read as a number and skipping unreadable ones."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('[{\"amount\":\"1.5\"},{\"amount\":\"x\"},{\"amount\":\"2\"}]')"],
+  ["PARSE_JSON('[{\"amount\":\"x\"}]')"],
+  ["PARSE_JSON('[]')"],
+  ["PARSE_JSON('[{}]')"],
+]
+query = "SELECT REDUCE(v, NULL::DOUBLE, (total, item) -> IFF(TRY_TO_DOUBLE(item:amount::VARCHAR) IS NULL, total, COALESCE(total, 0) + TRY_TO_DOUBLE(item:amount::VARCHAR))) AS s FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "json-null", "missing-key", "invalid"]
+
+[[case]]
+id = "variant_equals_variant"
+description = "Two VARIANT paths compared with = across integers, text, decimals, JSON null, objects and arrays."
+columns = [{ name = "v", type = "VARIANT" }, { name = "w", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('{\"k\":1}')", "PARSE_JSON('{\"k\":1}')"],
+  ["PARSE_JSON('{\"k\":1}')", "PARSE_JSON('{\"k\":\"1\"}')"],
+  ["PARSE_JSON('{\"k\":\"a\"}')", "PARSE_JSON('{\"k\":\"A\"}')"],
+  ["PARSE_JSON('{\"k\":null}')", "PARSE_JSON('{\"k\":null}')"],
+  ["PARSE_JSON('{}')", "PARSE_JSON('{\"k\":1}')"],
+  ["PARSE_JSON('{\"k\":{\"a\":1,\"b\":2}}')", "PARSE_JSON('{\"k\":{\"b\":2,\"a\":1}}')"],
+  ["PARSE_JSON('{\"k\":[1,2]}')", "PARSE_JSON('{\"k\":[2,1]}')"],
+  ["PARSE_JSON('{\"k\":true}')", "PARSE_JSON('{\"k\":\"true\"}')"],
+]
+query = "SELECT v:k = w:k AS eq, v:k <> w:k AS ne FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "json-null", "missing-key", "invalid"]
+
+[[case]]
+id = "variant_equals_variant_in_filter"
+description = "FILTER keeping elements whose path equals another document's path, then GET of the first."
+columns = [{ name = "v", type = "VARIANT" }, { name = "w", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('[{\"n\":1,\"d\":\"a\"},{\"n\":2,\"d\":\"b\"}]')", "PARSE_JSON('{\"n\":2}')"],
+  ["PARSE_JSON('[{\"n\":1,\"d\":\"a\"}]')", "PARSE_JSON('{\"n\":3}')"],
+  ["PARSE_JSON('[]')", "PARSE_JSON('{\"n\":1}')"],
+]
+query = "SELECT GET(FILTER(v, x -> x:n = w:n), 0):d::VARCHAR AS d FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "json-null", "missing-key", "invalid"]

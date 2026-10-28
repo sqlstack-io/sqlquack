@@ -1,0 +1,194 @@
+# Typed FLOAT values inside VARIANT, for the hybrid VARIANT holding.
+# Typed FLOAT values inside VARIANT: runtime text, folding, -0, NaN, ARRAY_AGG, FLATTEN, mixing, equality, ordering.
+
+category = "semi-structured-typed"
+construct = "fn:OBJECT_CONSTRUCT_KEEP_NULL"
+session_profile = "utc-v1"
+
+[[case]]
+id = "keep_null_float_runtime"
+description = "OBJECT_CONSTRUCT_KEEP_NULL of text and FLOAT over many rows (no constant folding): text, type, casts and the result."
+columns = [{ name = "s", type = "VARCHAR" }, { name = "x", type = "FLOAT" }]
+rows = [
+  ["'src'", "0.1"],
+  ["'src'", "0.30000000000000004"],
+  ["'src'", "1e23"],
+  ["'src'", "5e-324"],
+  ["'src'", "1.7976931348623157e308"],
+  ["'src'", "123456789.125"],
+  ["'src'", "-1.5e-10"],
+  ["'src'", "100"],
+  ["NULL", "NULL"],
+]
+query = "SELECT TO_JSON(OBJECT_CONSTRUCT_KEEP_NULL('source', s, 'unit_price', x)) AS j, TYPEOF(OBJECT_CONSTRUCT_KEEP_NULL('source', s, 'unit_price', x):unit_price) AS t, OBJECT_CONSTRUCT_KEEP_NULL('source', s, 'unit_price', x):unit_price::FLOAT AS f, OBJECT_CONSTRUCT_KEEP_NULL('source', s, 'unit_price', x):unit_price::VARCHAR AS c, CAST(OBJECT_CONSTRUCT_KEEP_NULL('source', s, 'unit_price', x) AS VARIANT) AS v FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "json-null", "boundary"]
+
+[[case]]
+id = "float_text_folding_single_row"
+description = "TO_VARIANT(FLOAT)::VARCHAR and TO_JSON from a one-row input, to compare with the many-row case below."
+columns = [{ name = "x", type = "FLOAT" }]
+rows = [
+  ["1e23"],
+]
+query = "SELECT TO_VARIANT(x)::VARCHAR AS c, TO_JSON(TO_VARIANT(x)) AS j, x::VARCHAR AS fx FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["boundary"]
+
+[[case]]
+id = "float_text_folding_many_rows"
+description = "The same expressions over several rows, which Snowflake cannot fold at compile time."
+columns = [{ name = "x", type = "FLOAT" }]
+rows = [
+  ["1e23"],
+  ["1e15"],
+  ["1.7e-5"],
+  ["0.30000000000000004"],
+  ["5e-324"],
+  ["1"],
+]
+query = "SELECT TO_VARIANT(x)::VARCHAR AS c, TO_JSON(TO_VARIANT(x)) AS j, x::VARCHAR AS fx FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["boundary"]
+
+[[case]]
+id = "float_negative_zero_computed"
+description = "A negative zero computed at run time inside OBJECT_CONSTRUCT, ARRAY_CONSTRUCT and TO_VARIANT."
+columns = [{ name = "x", type = "FLOAT" }]
+rows = [
+  ["0"],
+  ["1"],
+]
+query = "SELECT TO_JSON(OBJECT_CONSTRUCT('n', -x * 0)) AS d, TO_JSON(ARRAY_CONSTRUCT(-x * 0)) AS a, TO_JSON(TO_VARIANT(-x * 0)) AS j, TO_JSON(PARSE_JSON('-0e0')) AS p FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["zero", "negative", "boundary"]
+
+[[case]]
+id = "float_special_values"
+description = "NaN and infinities inside a VARIANT: TO_JSON, TYPEOF and ::VARCHAR."
+columns = [{ name = "x", type = "FLOAT" }]
+rows = [
+  ["'NaN'::FLOAT"],
+  ["'inf'::FLOAT"],
+  ["'-inf'::FLOAT"],
+]
+query = "SELECT TO_JSON(OBJECT_CONSTRUCT('n', x)) AS d, TYPEOF(TO_VARIANT(x)) AS t, TO_VARIANT(x)::VARCHAR AS c, TO_JSON(ARRAY_CONSTRUCT(x)) AS a FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["boundary"]
+
+[[case]]
+id = "array_agg_floats"
+description = "ARRAY_AGG of FLOAT within groups, skipping NULL: text, size, element type and element casts."
+columns = [{ name = "g", type = "VARCHAR" }, { name = "k", type = "NUMBER(38,0)" }, { name = "x", type = "FLOAT" }]
+rows = [
+  ["'a'", "1", "0.5"],
+  ["'a'", "2", "NULL"],
+  ["'a'", "3", "1e300"],
+  ["'b'", "1", "NULL"],
+  ["'c'", "1", "0.30000000000000004"],
+  ["'c'", "2", "100"],
+]
+query = "SELECT g, TO_JSON(ARRAY_AGG(x) WITHIN GROUP (ORDER BY k)) AS j, ARRAY_SIZE(ARRAY_AGG(x) WITHIN GROUP (ORDER BY k)) AS n, TYPEOF((ARRAY_AGG(x) WITHIN GROUP (ORDER BY k))[0]) AS t, (ARRAY_AGG(x) WITHIN GROUP (ORDER BY k))[0]::FLOAT AS f, ARRAY_AGG(x) WITHIN GROUP (ORDER BY k) AS v FROM input GROUP BY g ORDER BY g"
+order = "ordered"
+tags = ["null", "all-null", "boundary"]
+
+[[case]]
+id = "array_agg_float_objects"
+description = "ARRAY_AGG of OBJECT_CONSTRUCT_KEEP_NULL with a FLOAT, as models nest it."
+columns = [{ name = "g", type = "VARCHAR" }, { name = "k", type = "NUMBER(38,0)" }, { name = "x", type = "FLOAT" }]
+rows = [
+  ["'a'", "1", "0.5"],
+  ["'a'", "2", "NULL"],
+  ["'b'", "1", "2.25"],
+]
+query = "SELECT g, TO_JSON(ARRAY_AGG(OBJECT_CONSTRUCT_KEEP_NULL('p', x, 'k', k)) WITHIN GROUP (ORDER BY k)) AS j FROM input GROUP BY g ORDER BY g"
+order = "ordered"
+tags = ["null", "json-null", "nested"]
+
+[[case]]
+id = "flatten_float_array"
+description = "FLATTEN over an ARRAY_AGG of FLOAT: INDEX, VALUE, TYPEOF and TO_JSON of each element."
+columns = [{ name = "k", type = "NUMBER(38,0)" }, { name = "x", type = "FLOAT" }]
+rows = [
+  ["1", "0.5"],
+  ["2", "1e23"],
+  ["3", "7"],
+]
+query = "SELECT f.index AS i, TYPEOF(f.value) AS t, TO_JSON(f.value) AS j, f.value::FLOAT AS x, f.value AS v FROM (SELECT ARRAY_AGG(x) WITHIN GROUP (ORDER BY k) AS a FROM input) AS s, LATERAL FLATTEN(input => s.a) AS f ORDER BY i"
+order = "ordered"
+tags = ["array-index"]
+
+[[case]]
+id = "flatten_float_object"
+description = "FLATTEN over an object holding a FLOAT, an integer and a decimal: KEY, TYPEOF and TO_JSON of each value."
+columns = [{ name = "x", type = "FLOAT" }]
+rows = [
+  ["0.5"],
+]
+query = "SELECT f.key AS k, TYPEOF(f.value) AS t, TO_JSON(f.value) AS j FROM input, LATERAL FLATTEN(input => OBJECT_CONSTRUCT('f', x, 'i', 3, 'd', 1.50::NUMBER(10,2), 'F', x * 2)) AS f ORDER BY k"
+order = "ordered"
+tags = ["case-sensitive-key", "mixed-types"]
+
+[[case]]
+id = "float_mixed_with_parsed_decimals"
+description = "A FLOAT and a parsed JSON decimal in one object: Snowflake writes each by its own type."
+columns = [{ name = "x", type = "FLOAT" }]
+rows = [
+  ["1.5"],
+  ["NULL"],
+]
+query = "SELECT TO_JSON(OBJECT_CONSTRUCT('f', x, 'j', PARSE_JSON('{\"d\":1.5,\"e\":1.5e0,\"i\":2}'))) AS d, TYPEOF(OBJECT_CONSTRUCT('f', x, 'j', PARSE_JSON('{\"d\":1.5}')):j:d) AS t, TO_JSON(ARRAY_CONSTRUCT(x, PARSE_JSON('1.5'))) AS a FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["mixed-types", "nested", "null"]
+
+[[case]]
+id = "float_variant_text_round_trip"
+description = "A constructed FLOAT object written as text and parsed back: the type and text after the round trip."
+columns = [{ name = "x", type = "FLOAT" }]
+rows = [
+  ["0.1"],
+  ["1e23"],
+  ["2"],
+]
+query = "SELECT TYPEOF(PARSE_JSON(TO_VARCHAR(OBJECT_CONSTRUCT('n', x))):n) AS t, TO_JSON(PARSE_JSON(TO_JSON(OBJECT_CONSTRUCT('n', x)))) AS j, PARSE_JSON(TO_JSON(OBJECT_CONSTRUCT('n', x))):n::FLOAT = x AS same FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["boundary"]
+
+[[case]]
+id = "float_variant_equality"
+description = "Equality of VARIANTs holding the same number as FLOAT, integer, decimal and parsed JSON."
+columns = [{ name = "k", type = "NUMBER(38,0)" }]
+rows = [
+  ["1"],
+]
+query = "SELECT TO_VARIANT(1::FLOAT) = TO_VARIANT(1) AS fi, TO_VARIANT(1.5::FLOAT) = TO_VARIANT(1.5::NUMBER(10,2)) AS fd, OBJECT_CONSTRUCT('k', 1.5::FLOAT) = PARSE_JSON('{\"k\":1.5}') AS fo, TO_VARIANT(1.5::FLOAT) = PARSE_JSON('1.5e0') AS fe FROM input"
+order = "ordered"
+tags = ["equality", "numeric-coercion"]
+
+[[case]]
+id = "float_variant_ordering"
+description = "ORDER BY and GROUP BY over VARIANTs mixing FLOAT, integers and text."
+columns = [{ name = "x", type = "VARIANT" }]
+rows = [
+  ["TO_VARIANT(10)"],
+  ["TO_VARIANT(1.5::FLOAT)"],
+  ["TO_VARIANT(2::FLOAT)"],
+  ["TO_VARIANT(2)"],
+  ["TO_VARIANT('b')"],
+  ["PARSE_JSON('1.5')"],
+]
+query = "SELECT TO_JSON(x) AS j, COUNT(*) OVER (PARTITION BY x) AS same FROM input ORDER BY x, ordinal"
+order = "ordered"
+tags = ["ties", "mixed-types"]
+
+[[case]]
+id = "object_insert_float"
+description = "OBJECT_INSERT of a FLOAT into a constructed and a parsed object."
+columns = [{ name = "x", type = "FLOAT" }]
+rows = [
+  ["0.5"],
+  ["NULL"],
+]
+query = "SELECT TO_JSON(OBJECT_INSERT(OBJECT_CONSTRUCT('a', 1), 'f', x)) AS c, TO_JSON(OBJECT_INSERT(PARSE_JSON('{\"d\":1.5}'), 'f', x)) AS p, TO_JSON(OBJECT_INSERT(OBJECT_CONSTRUCT('a', 1), 'f', x, TRUE)) AS u FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "mixed-types"]

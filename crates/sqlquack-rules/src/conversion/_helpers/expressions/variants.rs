@@ -3,13 +3,17 @@
 use serde_json::Value;
 use sqlquack_core::classification::models::Construct;
 use sqlquack_core::refusals::models::Refusal;
+use sqlquack_duckdb::blocks::main::cast::cast;
 use sqlquack_duckdb::semi_structured::constants::{JSON_FIDELITY, VARIANT_TYPED_VALUES};
 use sqlquack_duckdb::semi_structured::main::json_array_to_string::json_array_to_string;
 use sqlquack_duckdb::semi_structured::models::PickedKeys;
+use sqlquack_duckdb::variants::main::json_array_cat::json_array_cat;
+use sqlquack_duckdb::variants::main::json_array_compact::json_array_compact;
 use sqlquack_duckdb::variants::main::json_array_construct::json_array_construct;
 use sqlquack_duckdb::variants::main::json_array_construct_compact::json_array_construct_compact;
 use sqlquack_duckdb::variants::main::json_array_contains::json_array_contains;
 use sqlquack_duckdb::variants::main::json_array_except::json_array_except;
+use sqlquack_duckdb::variants::main::json_array_position::json_array_position;
 use sqlquack_duckdb::variants::main::json_array_size::json_array_size;
 use sqlquack_duckdb::variants::main::json_is_kind::json_is_kind;
 use sqlquack_duckdb::variants::main::json_is_typed::json_is_typed;
@@ -27,10 +31,21 @@ use crate::conversion::_helpers::support::divergence::{allows, diverge};
 use crate::conversion::_helpers::support::scope::{Emitted, Literal};
 use crate::conversion::_helpers::support::site::Site;
 use crate::conversion::constants::{
-    ARRAY_CONSTRUCT_COMPACT_RULE, ARRAY_CONSTRUCT_RULE, ARRAY_CONTAINS_RULE, ARRAY_EXCEPT_RULE,
+    ARRAY_CAT_RULE, ARRAY_COMPACT_RULE, ARRAY_CONSTRUCT_COMPACT_RULE, ARRAY_CONSTRUCT_RULE,
+    ARRAY_CONTAINS_RULE, ARRAY_EXCEPT_RULE, ARRAY_POSITION_RULE, ARRAY_POSITION_TYPE,
     ARRAY_SIZE_RULE, ARRAY_TO_STRING_RULE, OBJECT_KEYS_RULE, OBJECT_PICK_RULE, SPLIT_RULE,
     TO_VARIANT_RULE, TYPED_CHECKS, VARIANT_KIND_RULE, VARIANT_KINDS, VARIANT_TYPED_CHECK,
 };
+
+/// A VARIANT operand, or a NULL literal as a NULL VARIANT.
+fn variant_or_null(node: &Value, construct: &Construct, site: Site<'_>) -> Result<String, Refusal> {
+    let emitted = convert_expression(node, site)?;
+    match emitted.data_type {
+        SnowflakeType::SemiStructured => Ok(emitted.sql),
+        SnowflakeType::Null => Ok("CAST(NULL AS JSON)".to_owned()),
+        other => Err(refused(construct, &format!("a needle of type {other}"))),
+    }
+}
 
 /// One of the semi-structured functions this module converts, by its upper-case name.
 pub(crate) fn variant_function(
@@ -73,6 +88,32 @@ pub(crate) fn variant_function(
             let left = variant(left, construct, site)?;
             let right = variant(right, construct, site)?;
             Ok(semi_structured(json_array_except((&left, &right), log)))
+        }
+        ("ARRAY_POSITION", [needle, array]) => {
+            let _rule = log.rule(ARRAY_POSITION_RULE);
+            diverge(site.context, JSON_FIDELITY, construct)?;
+            let needle = variant_or_null(needle, construct, site)?;
+            let array = variant(array, construct, site)?;
+            Ok(Emitted::new(
+                cast(
+                    &json_array_position((&needle, &array), log),
+                    ARRAY_POSITION_TYPE,
+                    log,
+                )
+                .map_err(|reason| refused(construct, &reason))?,
+                ARRAY_POSITION_TYPE,
+            ))
+        }
+        ("ARRAY_CAT", [left, right]) => {
+            let _rule = log.rule(ARRAY_CAT_RULE);
+            let left = variant(left, construct, site)?;
+            let right = variant(right, construct, site)?;
+            Ok(semi_structured(json_array_cat((&left, &right), log)))
+        }
+        ("ARRAY_COMPACT", [array]) => {
+            let _rule = log.rule(ARRAY_COMPACT_RULE);
+            let array = variant(array, construct, site)?;
+            Ok(semi_structured(json_array_compact(&array, log)))
         }
         ("ARRAY_SIZE", [array]) => {
             let _rule = log.rule(ARRAY_SIZE_RULE);

@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from dataclasses import replace
+
 from scripts.case_generators.constants import (
     AUTO_DATE_ATTEMPT,
     AUTO_DATE_SPELLINGS,
@@ -148,7 +150,9 @@ def format_cases(*, function: TemporalFunction, temporal_format: TemporalFormat)
             rows=(*valid, *odd),
             expression=attempt,
             tags=("null", "invalid", "boundary"),
-            expected_divergence=DATE_TEXT_SPELLING if spelled else None,
+            expected_divergence=DATE_TEXT_SPELLING
+            if spelled or function in TIMESTAMP_FORMAT_FUNCTIONS
+            else None,
         ),
         *spelled_cases(
             spelled=spelled, attempt=attempt, temporal_format=temporal_format, valid=valid
@@ -311,20 +315,24 @@ def temporal_text_files() -> list[CaseFile]:
             name="timestamp_auto",
             category="conversion",
             construct="cast:TIMESTAMP_NTZ",
-            cases=tuple(
-                auto_cases(
-                    spellings=AUTO_TIMESTAMP_SPELLINGS,
-                    attempt=AUTO_TIMESTAMP_ATTEMPT,
-                    sure=AUTO_TIMESTAMP_TEXTS,
-                    unsure=UNSURE_TIMESTAMP_TEXTS,
-                )
-            ),
+            cases=timestamp_auto_cases(),
             header=(
                 "Text to TIMESTAMP_NTZ without a format, under the session's AUTO input format.",
             ),
         )
     )
     return files
+
+
+def timestamp_auto_cases() -> tuple[Case, ...]:
+    """AUTO detection to TIMESTAMP_NTZ; the TRY_ form raises for spellings no recording shows."""
+    attempt, *spellings = auto_cases(
+        spellings=AUTO_TIMESTAMP_SPELLINGS,
+        attempt=AUTO_TIMESTAMP_ATTEMPT,
+        sure=AUTO_TIMESTAMP_TEXTS,
+        unsure=UNSURE_TIMESTAMP_TEXTS,
+    )
+    return (replace(attempt, expected_divergence=DATE_TEXT_SPELLING), *spellings)
 
 
 def slug(zone: str) -> str:

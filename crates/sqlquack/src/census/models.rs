@@ -52,10 +52,29 @@ pub struct CensusReport {
 pub struct BlockerReport {
     /// Each refused file, by model name, or by number when names are not asked for.
     pub files: Vec<BlockedFile>,
-    /// Each root refusal and the files it keeps from converting, most files first.
+    /// Each root refusal and the files it keeps from converting, most sole files first.
     pub roots: Vec<RootBlocker>,
-    /// Refused files with exactly one root refusal, which one fix would unblock.
+    /// Small sets of roots and the files fixing all of them would unblock, most files first.
+    pub combinations: Vec<RootCombination>,
+    /// Refused files whose complete roots are exactly one refusal, which one fix would unblock.
     pub single_root_files: usize,
+    /// Refused files that may hold refusals collecting did not reach, themselves or upstream.
+    pub possibly_incomplete_files: usize,
+}
+
+/// A set of roots and the refused files whose roots it covers.
+#[derive(Clone, Debug, PartialEq, Eq, Serialize)]
+pub struct RootCombination {
+    /// The roots.
+    pub roots: Vec<RootKey>,
+    /// Files with complete roots, all in the set, reading no refused model.
+    pub direct: usize,
+    /// Files with complete roots, all in the set, reading a refused model.
+    pub downstream: usize,
+    /// `direct` and `downstream` together.
+    pub files: usize,
+    /// Possibly incomplete files whose collected roots are all in the set.
+    pub uncertain: usize,
 }
 
 /// One refused file and what blocks it.
@@ -71,6 +90,8 @@ pub struct BlockedFile {
     pub unknown_relations: Vec<String>,
     /// Every root refusal blocking the file, its own and its upstream models'.
     pub roots: Vec<RootKey>,
+    /// Whether the file or a model upstream may hold refusals that collecting did not reach.
+    pub possibly_incomplete: bool,
     /// The file's refusals in source order, each with where in the file it is.
     pub placed: Vec<PlacedRefusal>,
 }
@@ -98,7 +119,7 @@ pub struct UpstreamBlock {
 }
 
 /// A refusal as a category and the construct it names.
-#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Serialize)]
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash, Serialize)]
 pub struct RootKey {
     /// The refusal category.
     pub category: String,
@@ -119,8 +140,10 @@ pub struct RootBlocker {
     pub downstream: usize,
     /// `direct` and `downstream` together.
     pub total: usize,
-    /// Files whose only root refusal it is.
+    /// Files with complete roots whose only root it is: fixing it alone makes them convert.
     pub sole: usize,
+    /// Possibly incomplete files whose only collected root it is.
+    pub sole_uncertain: usize,
 }
 
 /// Converted files per rule, building block and typing function, each sorted by identifier.

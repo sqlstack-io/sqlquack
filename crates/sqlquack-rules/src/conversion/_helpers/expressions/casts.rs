@@ -13,10 +13,18 @@ use sqlquack_duckdb::blocks::main::text_to_float::text_to_float;
 use sqlquack_duckdb::blocks::main::text_to_number::text_to_number;
 use sqlquack_duckdb::blocks::main::varchar_length_check::varchar_length_check;
 use sqlquack_duckdb::blocks::main::varchar_length_try::varchar_length_try;
+use sqlquack_duckdb::floats::constants::{FLOAT_DECIMAL_DIGITS, FLOAT_TEXT};
+use sqlquack_duckdb::floats::main::float_to_decimal::float_to_decimal;
+use sqlquack_duckdb::floats::main::float_to_text::float_to_text;
+use sqlquack_duckdb::raises::main::raised::raised;
 use sqlquack_duckdb::semi_structured::constants::JSON_FIDELITY;
 use sqlquack_duckdb::semi_structured::main::json_text::json_text;
 use sqlquack_duckdb::temporal::main::text_to_timestamp::text_to_timestamp;
 use sqlquack_duckdb::temporal::main::utc_wall_time::utc_wall_time;
+use sqlquack_duckdb::times::main::text_to_time::text_to_time;
+use sqlquack_duckdb::times::main::time_text::time_text;
+use sqlquack_duckdb::times::main::truncate_time::truncate_time;
+use sqlquack_duckdb::times::models::TimeFormat;
 use sqlquack_duckdb::variants::main::json_kind_cast::json_kind_cast;
 use sqlquack_snowflake::typing::constants::CAST_TARGET;
 use sqlquack_snowflake::typing::constants::STRUCTURED_UNSUPPORTED;
@@ -28,7 +36,7 @@ use crate::conversion::_helpers::expressions::operators::is_iso_date;
 use crate::conversion::_helpers::expressions::scalar::convert_expression;
 use crate::conversion::_helpers::expressions::semi_structured::{variant_cast, variant_null};
 use crate::conversion::_helpers::expressions::temporal::{
-    is_temporal, temporal_cast, timestamp_literal,
+    is_temporal, proven_time_text, temporal_cast, time_submicro, timestamp_literal,
 };
 use crate::conversion::_helpers::support::divergence::diverge;
 use crate::conversion::_helpers::support::failure::text_failure;
@@ -40,8 +48,9 @@ use crate::conversion::_helpers::support::tree::{
 };
 use crate::conversion::constants::{
     CAST_BOOLEAN, CAST_NUMERIC, CAST_PARSED_TEXT, CAST_SAME_TYPE, CAST_TEMPORAL, CAST_TEXT_LITERAL,
-    CAST_TEXT_TIMESTAMP, CAST_TO_TEXT, CAST_UTC_ZONED, DATE_TEXT_SPELLING, KIND_CAST_TARGETS,
-    TEXT_TYPE_PAIR, TEXT_TYPE_SPELLINGS, TIMESTAMP_RANGE, TO_DOUBLE_PAIR, TO_NUMBER_PAIR,
+    CAST_TEXT_TIME, CAST_TEXT_TIMESTAMP, CAST_TO_TEXT, CAST_UTC_ZONED, DATE_TEXT_SPELLING,
+    KIND_CAST_TARGETS, NTZ_OUTPUT_PATTERN, TEXT_TYPE_PAIR, TEXT_TYPE_SPELLINGS, TIME_CAST,
+    TIMESTAMP_RANGE, TIMESTAMP_TEXT_ROUNDING, TO_BOOLEAN_RULE, TO_DOUBLE_PAIR, TO_NUMBER_PAIR,
     TO_VARCHAR_PAIR, TO_VARIANT_RULE, VARIANT_KIND_CAST, VARIANT_NAME, VARIANT_TEXT_FUNCTION,
     VARIANT_TO_VARCHAR,
 };
@@ -145,6 +154,17 @@ pub(crate) fn convert_cast(
     Ok(Emitted::new(sql, target.data_type))
 }
 
+/// The SQL casting `operand` to the type named `type_name`, as CAST or TRY_CAST does.
+pub(crate) fn cast_to(
+    operand: &Emitted,
+    type_name: &str,
+    trying: bool,
+    (context, construct): (&Context<'_>, &Construct),
+) -> Result<String, String> {
+    let target = cast_target(type_name, &ProvenanceLog::default())?;
+    cast_sql(operand, target, trying, (context, construct))
+}
+
 /// Activates a cast rule, which relies on the target type `cast_target` resolved.
 fn cast_rule<'a>(id: &str, log: &'a ProvenanceLog) -> RuleScope<'a> {
     let scope = log.rule(id);
@@ -188,6 +208,32 @@ fn cast_sql(
             let _rule = cast_rule(CAST_PARSED_TEXT, log);
             Ok(text_to_boolean(&operand.sql, text_failure(trying), log))
         }
+        (SnowflakeType::Varchar, SnowflakeType::Time { precision }, literal) => {
+            let _rule = cast_rule(CAST_TEXT_TIME, log);
+            time_submicro((operand.literal.as_ref(), precision), construct, context)
+                .map_err(|refusal| refusal.reason)?;
+            if !matches!(literal, Some(Literal::Text(text)) if proven_time_text(text)) {
+                diverge(context, DATE_TEXT_SPELLING, construct)
+                    .map_err(|refusal| refusal.reason)?;
+            }
+            Ok(text_to_time(
+                &operand.sql,
+                (TimeFormat::Auto, precision),
+                text_failure(trying),
+                log,
+            ))
+        }
+        (SnowflakeType::Time { precision: from }, SnowflakeType::Time { precision }, _) => {
+            let _rule = cast_rule(TIME_CAST, log);
+            Ok(match precision < from {
+                true => truncate_time(&operand.sql, precision, log),
+                false => operand.sql.clone(),
+            })
+        }
+        (SnowflakeType::Time { .. }, SnowflakeType::Varchar, _) => {
+            let _rule = cast_rule(TIME_CAST, log);
+            Ok(bounded(time_text(&operand.sql, log), target, log))
+        }
         (SnowflakeType::Varchar, _, Some(Literal::Text(text)))
             if is_temporal(to) && to != SnowflakeType::Date =>
         {
@@ -221,6 +267,44 @@ fn cast_sql(
         (from, _, _) if trying => Err(format!(
             "TRY_CAST of {from} to {to} has no proven conversion"
         )),
+        (SnowflakeType::Float, SnowflakeType::Varchar, _) => {
+            let _rule = cast_rule(CAST_TO_TEXT, log);
+            diverge(context, FLOAT_TEXT, construct).map_err(|refusal| refusal.reason)?;
+            Ok(bounded(float_to_text(&operand.sql, log), target, log))
+        }
+        (SnowflakeType::Float, SnowflakeType::Number { scale, .. }, _) if scale > 0 => {
+            let _rule = cast_rule(CAST_NUMERIC, log);
+            diverge(context, FLOAT_DECIMAL_DIGITS, construct).map_err(|refusal| refusal.reason)?;
+            float_to_decimal(&operand.sql, to, log)
+        }
+        (SnowflakeType::TimestampNtz { precision: 9 }, SnowflakeType::Varchar, _) => {
+            let _rule = cast_rule(CAST_TO_TEXT, log);
+            diverge(context, TIMESTAMP_TEXT_ROUNDING, construct)
+                .map_err(|refusal| refusal.reason)?;
+            let unproven = raised(&format!(
+                "{TIMESTAMP_TEXT_ROUNDING}: a timestamp whose dropped digits past the millisecond \
+                 decide between truncating and rounding, which no recording shows"
+            ));
+            Ok(bounded(
+                format!(
+                    "list_transform([{}], lambda ntz_text: CASE WHEN ((epoch_ns(ntz_text) % 1000000) \
+                     + 1000000) % 1000000 >= 500000 THEN CAST({unproven} AS VARCHAR) \
+                     ELSE strftime(ntz_text, {}) END)[1]",
+                    operand.sql,
+                    string_literal(NTZ_OUTPUT_PATTERN, log)
+                ),
+                target,
+                log,
+            ))
+        }
+        (SnowflakeType::TimestampLtz { precision }, SnowflakeType::TimestampNtz { .. }, _) => {
+            let _rule = cast_rule(CAST_UTC_ZONED, log);
+            temporal_cast(
+                &utc_wall_time(&operand.sql, log),
+                (SnowflakeType::TimestampNtz { precision }, to),
+                (context, construct),
+            )
+        }
         (
             SnowflakeType::TimestampTz { precision },
             SnowflakeType::TimestampNtz { .. } | SnowflakeType::Date,
@@ -352,6 +436,31 @@ pub(crate) fn to_double_call(
     let trying = name.starts_with("TRY_");
     let sql = cast_sql(&operand, target, trying, (site.context, construct)).map_err(refuse)?;
     Ok(Emitted::new(sql, SnowflakeType::Float))
+}
+
+/// TO_BOOLEAN and TRY_TO_BOOLEAN of text, as CAST and TRY_CAST to BOOLEAN.
+pub(crate) fn to_boolean_call(
+    name: &str,
+    arguments: &[Value],
+    construct: &Construct,
+    site: Site<'_>,
+) -> Result<Emitted, Refusal> {
+    let _rule = site.context.log.rule(TO_BOOLEAN_RULE);
+    let refuse = |reason: String| outside_conditions(construct.clone(), reason);
+    let [value] = arguments else {
+        return Err(refuse(format!("{name} with these arguments")));
+    };
+    let operand = convert_expression(value, site)?;
+    if !matches!(
+        operand.data_type,
+        SnowflakeType::Varchar | SnowflakeType::Null
+    ) {
+        return Err(refuse(format!("{name} of {}", operand.data_type)));
+    }
+    let target = cast_target("BOOLEAN", &ProvenanceLog::default()).map_err(refuse)?;
+    let trying = name.starts_with("TRY_");
+    let sql = cast_sql(&operand, target, trying, (site.context, construct)).map_err(refuse)?;
+    Ok(Emitted::new(sql, SnowflakeType::Boolean))
 }
 
 /// TO_VARCHAR and TO_CHAR without a format, as CAST to VARCHAR; TO_VARCHAR of a VARIANT as its text.
@@ -495,7 +604,7 @@ fn field_names(fields: &[Value]) -> Option<Vec<String>> {
 }
 
 /// The Snowflake spelling of a serialised cast target type.
-fn data_type_name(data_type: &Value) -> Option<String> {
+pub(crate) fn data_type_name(data_type: &Value) -> Option<String> {
     let object = data_type.as_object()?;
     let number = |name: &str| object.get(name).and_then(Value::as_u64);
     let zoned = object

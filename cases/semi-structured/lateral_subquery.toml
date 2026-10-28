@@ -1,0 +1,103 @@
+# LATERAL over subqueries, correlated or not.
+category = "relational"
+construct = "node:lateral"
+session_profile = "utc-v1"
+
+[[case]]
+id = "lateral_uncorrelated"
+description = "LATERAL over an uncorrelated subquery: every pairing."
+columns = [{ name = "side", type = "VARCHAR" }, { name = "k", type = "NUMBER(2,0)" }, { name = "s", type = "VARCHAR" }]
+rows = [
+  ["'u'", "1", "'{\"kind\":\"gift\",\"n\":1}'"],
+  ["'u'", "2", "'{\"kind\":\"sale\"}'"],
+  ["'u'", "3", "NULL"],
+  ["'u'", "3", "'not json'"],
+  ["'c'", "1", "'north'"],
+  ["'c'", "2", "'south'"],
+  ["'c'", "2", "'south'"],
+]
+query = "SELECT u.k, c.region FROM input u, LATERAL (SELECT s AS region FROM input WHERE side = 'c') c WHERE u.side = 'u' ORDER BY u.k, c.region"
+order = "ordered"
+tags = ["null", "duplicates", "empty-input"]
+
+[[case]]
+id = "lateral_correlated_unaliased"
+description = "LATERAL over a correlated subquery without an alias, read by its column name."
+columns = [{ name = "side", type = "VARCHAR" }, { name = "k", type = "NUMBER(2,0)" }, { name = "s", type = "VARCHAR" }]
+rows = [
+  ["'u'", "1", "'{\"kind\":\"gift\",\"n\":1}'"],
+  ["'u'", "2", "'{\"kind\":\"sale\"}'"],
+  ["'u'", "3", "NULL"],
+  ["'u'", "3", "'not json'"],
+  ["'c'", "1", "'north'"],
+  ["'c'", "2", "'south'"],
+  ["'c'", "2", "'south'"],
+]
+query = "SELECT t.k, e:kind::VARCHAR AS kind FROM input t, LATERAL (SELECT TRY_PARSE_JSON(t.s) AS e) WHERE t.side = 'u' ORDER BY t.k, kind"
+order = "ordered"
+tags = ["null", "duplicates", "empty-input"]
+
+[[case]]
+id = "lateral_correlated_aggregate"
+description = "LATERAL over a correlated aggregate subquery."
+columns = [{ name = "side", type = "VARCHAR" }, { name = "k", type = "NUMBER(2,0)" }, { name = "s", type = "VARCHAR" }]
+rows = [
+  ["'u'", "1", "'{\"kind\":\"gift\",\"n\":1}'"],
+  ["'u'", "2", "'{\"kind\":\"sale\"}'"],
+  ["'u'", "3", "NULL"],
+  ["'u'", "3", "'not json'"],
+  ["'c'", "1", "'north'"],
+  ["'c'", "2", "'south'"],
+  ["'c'", "2", "'south'"],
+]
+query = "SELECT t.k, x.n FROM input t, LATERAL (SELECT COUNT(*) AS n FROM input c WHERE c.side = 'c' AND c.k = t.k) x WHERE t.side = 'u' ORDER BY t.k, x.n"
+order = "ordered"
+tags = ["null", "duplicates", "empty-input"]
+
+[[case]]
+id = "lateral_correlated_rows"
+description = "LATERAL over a correlated subquery returning several rows or none."
+columns = [{ name = "side", type = "VARCHAR" }, { name = "k", type = "NUMBER(2,0)" }, { name = "s", type = "VARCHAR" }]
+rows = [
+  ["'u'", "1", "'{\"kind\":\"gift\",\"n\":1}'"],
+  ["'u'", "2", "'{\"kind\":\"sale\"}'"],
+  ["'u'", "3", "NULL"],
+  ["'u'", "3", "'not json'"],
+  ["'c'", "1", "'north'"],
+  ["'c'", "2", "'south'"],
+  ["'c'", "2", "'south'"],
+]
+query = "SELECT t.k, x.s AS region FROM input t, LATERAL (SELECT c.s FROM input c WHERE c.side = 'c' AND c.k <= t.k) x WHERE t.side = 'u' ORDER BY t.k, region"
+order = "ordered"
+tags = ["null", "duplicates", "empty-input"]
+
+[[case]]
+id = "lateral_correlated_unaliased_valid"
+description = "LATERAL over a correlated subquery without an alias, over text that is JSON or NULL."
+columns = [{ name = "side", type = "VARCHAR" }, { name = "k", type = "NUMBER(2,0)" }, { name = "s", type = "VARCHAR" }]
+rows = [
+  ["'u'", "1", "'{\"kind\":\"gift\",\"n\":1}'"],
+  ["'u'", "2", "'{\"kind\":\"sale\"}'"],
+  ["'u'", "3", "NULL"],
+  ["'u'", "4", "'[]'"],
+  ["'c'", "1", "'north'"],
+]
+query = "SELECT t.k, e:kind::VARCHAR AS kind, e AS doc FROM input t, LATERAL (SELECT PARSE_JSON(t.s) AS e) WHERE t.side = 'u' ORDER BY t.k"
+order = "ordered"
+tags = ["null", "duplicates", "empty-input"]
+
+[[case]]
+id = "lateral_after_join"
+description = "LATERAL over a correlated subquery after a JOIN ... ON clause."
+columns = [{ name = "side", type = "VARCHAR" }, { name = "k", type = "NUMBER(2,0)" }, { name = "s", type = "VARCHAR" }]
+rows = [
+  ["'u'", "1", "'a'"],
+  ["'u'", "2", "'b'"],
+  ["'u'", "3", "NULL"],
+  ["'c'", "1", "'north'"],
+  ["'c'", "2", "'south'"],
+  ["'c'", "3", "'east'"],
+]
+query = "SELECT t.k, c.s AS region, x.n FROM input t JOIN input c ON c.k = t.k AND c.side = 'c', LATERAL (SELECT COUNT(*) AS n FROM input d WHERE d.side = 'c' AND d.k < t.k) x WHERE t.side = 'u' ORDER BY t.k"
+order = "ordered"
+tags = ["null", "duplicates", "empty-input"]

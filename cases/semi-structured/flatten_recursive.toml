@@ -1,0 +1,212 @@
+# FLATTEN's RECURSIVE, PATH and MODE arguments, and its SEQ column.
+category = "semi-structured"
+construct = "node:lateral"
+session_profile = "utc-v1"
+
+[[case]]
+id = "flatten_recursive"
+description = "RECURSIVE => TRUE: every element and key at every depth, with PATH, KEY, INDEX, VALUE and THIS."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('{\"order\":{\"id\":17,\"lines\":[{\"sku\":\"A-10\",\"qty\":2},{\"sku\":\"B-20\",\"tags\":[\"x\",null]}],\"note\":\"/\"},\"empty\":[],\"none\":null,\"obj\":{}}')"],
+  ["PARSE_JSON('[[1,[2]],{\"b\":{\"a\":1}}]')"],
+  ["PARSE_JSON('\"scalar\"')"],
+  ["PARSE_JSON('null')"],
+  ["NULL"],
+  ["PARSE_JSON('{}')"],
+  ["PARSE_JSON('[]')"],
+]
+query = "SELECT i.ordinal, f.key, f.index, f.path, TO_JSON(f.value) AS value, TO_JSON(f.this) AS this, TYPEOF(f.value) AS kind FROM input i, LATERAL FLATTEN(input => i.v, recursive => TRUE) f ORDER BY i.ordinal, f.path"
+order = "ordered"
+tags = ["null", "json-null", "missing-key", "nested", "array-index", "case-sensitive-key"]
+
+[[case]]
+id = "flatten_recursive_order"
+description = "RECURSIVE => TRUE over one document, rows in the order FLATTEN returns them."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('{\"order\":{\"id\":17,\"lines\":[{\"sku\":\"A-10\",\"qty\":2},{\"sku\":\"B-20\",\"tags\":[\"x\",null]}],\"note\":\"/\"},\"empty\":[],\"none\":null,\"obj\":{}}')"],
+]
+query = "SELECT f.key, f.index, f.path, TO_JSON(f.value) AS value, TO_JSON(f.this) AS this, TYPEOF(f.value) AS kind FROM input i, LATERAL FLATTEN(input => i.v, recursive => TRUE) f"
+order = "ordered"
+tags = ["nested", "array-index", "json-null"]
+
+[[case]]
+id = "flatten_recursive_order_arrays"
+description = "RECURSIVE => TRUE over nested arrays, rows in the order FLATTEN returns them."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('[[1,[2]],{\"b\":{\"a\":1}}]')"],
+]
+query = "SELECT f.key, f.index, f.path, TO_JSON(f.value) AS value, TO_JSON(f.this) AS this, TYPEOF(f.value) AS kind FROM input i, LATERAL FLATTEN(input => i.v, recursive => TRUE) f"
+order = "ordered"
+tags = ["nested", "array-index"]
+
+[[case]]
+id = "flatten_recursive_outer"
+description = "RECURSIVE => TRUE with OUTER => TRUE over empty, null and scalar input."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('{\"order\":{\"id\":17,\"lines\":[{\"sku\":\"A-10\",\"qty\":2},{\"sku\":\"B-20\",\"tags\":[\"x\",null]}],\"note\":\"/\"},\"empty\":[],\"none\":null,\"obj\":{}}')"],
+  ["PARSE_JSON('[[1,[2]],{\"b\":{\"a\":1}}]')"],
+  ["PARSE_JSON('\"scalar\"')"],
+  ["PARSE_JSON('null')"],
+  ["NULL"],
+  ["PARSE_JSON('{}')"],
+  ["PARSE_JSON('[]')"],
+]
+query = "SELECT i.ordinal, f.key, f.index, f.path, TO_JSON(f.value) AS value FROM input i, LATERAL FLATTEN(input => i.v, recursive => TRUE, outer => TRUE) f ORDER BY i.ordinal, f.path"
+order = "ordered"
+tags = ["null", "json-null", "missing-key"]
+
+[[case]]
+id = "flatten_recursive_filtered"
+description = "RECURSIVE => TRUE filtered on a scalar value's text, as a cleanup model does."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('{\"order\":{\"id\":17,\"lines\":[{\"sku\":\"A-10\",\"qty\":2},{\"sku\":\"B-20\",\"tags\":[\"x\",null]}],\"note\":\"/\"},\"empty\":[],\"none\":null,\"obj\":{}}')"],
+  ["PARSE_JSON('[[1,[2]],{\"b\":{\"a\":1}}]')"],
+  ["PARSE_JSON('\"scalar\"')"],
+  ["PARSE_JSON('null')"],
+  ["NULL"],
+  ["PARSE_JSON('{}')"],
+  ["PARSE_JSON('[]')"],
+]
+query = "SELECT i.ordinal, f.path, f.key FROM input i, LATERAL FLATTEN(input => i.v, recursive => TRUE) f WHERE f.value::VARCHAR = '/' ORDER BY i.ordinal, f.path"
+order = "ordered"
+tags = ["nested", "missing-key"]
+
+[[case]]
+id = "flatten_recursive_deep"
+description = "RECURSIVE => TRUE through ten levels of objects and an array: deep PATHs."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":[{\"k\":1}]}}}}}}}}}}')"],
+]
+query = "SELECT f.path, f.key, f.index FROM input i, LATERAL FLATTEN(input => i.v, recursive => TRUE) f ORDER BY f.path"
+order = "ordered"
+tags = ["nested", "array-index"]
+
+[[case]]
+id = "flatten_recursive_key_paths"
+description = "RECURSIVE => TRUE through keys that are not plain names: PATH quoting."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('{\"a b\":{\"c.d\":[1]},\"日\":{\"x\":2},\"Q\\\\\"t\":3,\"\":4,\"_1\":{\"9z\":5}}')"],
+]
+query = "SELECT f.path, f.key, f.index, TO_JSON(f.value) AS value FROM input i, LATERAL FLATTEN(input => i.v, recursive => TRUE) f ORDER BY f.path"
+order = "ordered"
+tags = ["case-sensitive-key", "nested"]
+
+[[case]]
+id = "flatten_recursive_twice"
+description = "Two RECURSIVE FLATTENs of one input, matched on PATH."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('{\"order\":{\"id\":17,\"lines\":[{\"sku\":\"A-10\",\"qty\":2},{\"sku\":\"B-20\",\"tags\":[\"x\",null]}],\"note\":\"/\"},\"empty\":[],\"none\":null,\"obj\":{}}')"],
+  ["PARSE_JSON('[[1,[2]],{\"b\":{\"a\":1}}]')"],
+]
+query = "SELECT i.ordinal, f.path, g.key AS child_key, g.index AS child_index FROM input i, LATERAL FLATTEN(input => i.v, recursive => TRUE) f, LATERAL FLATTEN(input => i.v, recursive => TRUE) g WHERE STARTSWITH(g.path, f.path || '.') OR STARTSWITH(g.path, f.path || '[') ORDER BY i.ordinal, f.path, g.path"
+order = "ordered"
+tags = ["nested", "array-index"]
+
+[[case]]
+id = "flatten_path_option"
+description = "PATH => 'order.lines' flattens the element at that path."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('{\"order\":{\"id\":17,\"lines\":[{\"sku\":\"A-10\",\"qty\":2},{\"sku\":\"B-20\",\"tags\":[\"x\",null]}],\"note\":\"/\"},\"empty\":[],\"none\":null,\"obj\":{}}')"],
+  ["PARSE_JSON('[[1,[2]],{\"b\":{\"a\":1}}]')"],
+  ["PARSE_JSON('\"scalar\"')"],
+  ["PARSE_JSON('null')"],
+  ["NULL"],
+  ["PARSE_JSON('{}')"],
+  ["PARSE_JSON('[]')"],
+]
+query = "SELECT i.ordinal, f.index, f.path, TO_JSON(f.value) AS value FROM input i, LATERAL FLATTEN(input => i.v, path => 'order.lines') f ORDER BY i.ordinal, f.index"
+order = "ordered"
+tags = ["nested", "missing-key", "null", "json-null"]
+
+[[case]]
+id = "flatten_recursive_mode_array"
+description = "RECURSIVE => TRUE with MODE => 'ARRAY'."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('{\"order\":{\"id\":17,\"lines\":[{\"sku\":\"A-10\",\"qty\":2},{\"sku\":\"B-20\",\"tags\":[\"x\",null]}],\"note\":\"/\"},\"empty\":[],\"none\":null,\"obj\":{}}')"],
+  ["PARSE_JSON('[[1,[2]],{\"b\":{\"a\":1}}]')"],
+]
+query = "SELECT i.ordinal, f.path, f.key, f.index FROM input i, LATERAL FLATTEN(input => i.v, recursive => TRUE, mode => 'ARRAY') f ORDER BY i.ordinal, f.path"
+order = "ordered"
+tags = ["nested", "array-index"]
+
+[[case]]
+id = "flatten_recursive_mode_object"
+description = "RECURSIVE => TRUE with MODE => 'OBJECT'."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('{\"order\":{\"id\":17,\"lines\":[{\"sku\":\"A-10\",\"qty\":2},{\"sku\":\"B-20\",\"tags\":[\"x\",null]}],\"note\":\"/\"},\"empty\":[],\"none\":null,\"obj\":{}}')"],
+  ["PARSE_JSON('[[1,[2]],{\"b\":{\"a\":1}}]')"],
+]
+query = "SELECT i.ordinal, f.path, f.key, f.index FROM input i, LATERAL FLATTEN(input => i.v, recursive => TRUE, mode => 'OBJECT') f ORDER BY i.ordinal, f.path"
+order = "ordered"
+tags = ["nested", "array-index"]
+
+[[case]]
+id = "flatten_recursive_mode_both"
+description = "RECURSIVE => TRUE with MODE => 'BOTH'."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('{\"order\":{\"id\":17,\"lines\":[{\"sku\":\"A-10\",\"qty\":2},{\"sku\":\"B-20\",\"tags\":[\"x\",null]}],\"note\":\"/\"},\"empty\":[],\"none\":null,\"obj\":{}}')"],
+  ["PARSE_JSON('[[1,[2]],{\"b\":{\"a\":1}}]')"],
+]
+query = "SELECT i.ordinal, f.path, f.key, f.index FROM input i, LATERAL FLATTEN(input => i.v, recursive => TRUE, mode => 'BOTH') f ORDER BY i.ordinal, f.path"
+order = "ordered"
+tags = ["nested", "array-index"]
+
+[[case]]
+id = "flatten_seq_per_row"
+description = "SEQ is one value per input row: distinct SEQs, and the rows sharing each."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('{\"order\":{\"id\":17,\"lines\":[{\"sku\":\"A-10\",\"qty\":2},{\"sku\":\"B-20\",\"tags\":[\"x\",null]}],\"note\":\"/\"},\"empty\":[],\"none\":null,\"obj\":{}}')"],
+  ["PARSE_JSON('[[1,[2]],{\"b\":{\"a\":1}}]')"],
+  ["PARSE_JSON('\"scalar\"')"],
+  ["PARSE_JSON('null')"],
+  ["NULL"],
+  ["PARSE_JSON('{}')"],
+  ["PARSE_JSON('[]')"],
+  ["PARSE_JSON('{\"order\":{\"id\":17,\"lines\":[{\"sku\":\"A-10\",\"qty\":2},{\"sku\":\"B-20\",\"tags\":[\"x\",null]}],\"note\":\"/\"},\"empty\":[],\"none\":null,\"obj\":{}}')"],
+]
+query = "SELECT i.ordinal, COUNT(DISTINCT f.seq) AS seqs, COUNT(*) AS n FROM input i, LATERAL FLATTEN(input => i.v, recursive => TRUE) f GROUP BY i.ordinal ORDER BY i.ordinal"
+order = "ordered"
+tags = ["null", "json-null", "nested"]
+
+[[case]]
+id = "flatten_seq_two_flattens"
+description = "Two FLATTENs of the same input row share SEQ; different rows differ."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('{\"order\":{\"id\":17,\"lines\":[{\"sku\":\"A-10\",\"qty\":2},{\"sku\":\"B-20\",\"tags\":[\"x\",null]}],\"note\":\"/\"},\"empty\":[],\"none\":null,\"obj\":{}}')"],
+  ["PARSE_JSON('[[1,[2]],{\"b\":{\"a\":1}}]')"],
+  ["PARSE_JSON('\"scalar\"')"],
+  ["PARSE_JSON('null')"],
+  ["NULL"],
+  ["PARSE_JSON('{}')"],
+  ["PARSE_JSON('[]')"],
+]
+query = "SELECT COUNT(*) AS pairs, SUM(IFF(f.seq = g.seq, 1, 0)) AS same_seq, COUNT(DISTINCT f.seq) AS seqs FROM input i, LATERAL FLATTEN(input => i.v, recursive => TRUE) f, LATERAL FLATTEN(input => i.v) g"
+order = "ordered"
+tags = ["nested"]
+
+[[case]]
+id = "flatten_seq_order"
+description = "SEQ ordered against the input order, as ranks."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('[1,2]')"],
+  ["PARSE_JSON('[3]')"],
+  ["PARSE_JSON('{\"a\":1}')"],
+]
+query = "SELECT i.ordinal, DENSE_RANK() OVER (ORDER BY f.seq) AS seq_rank FROM input i, LATERAL FLATTEN(input => i.v) f ORDER BY i.ordinal, f.index"
+order = "ordered"
+tags = ["array-index"]

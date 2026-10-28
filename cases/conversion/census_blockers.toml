@@ -154,6 +154,7 @@ rows = [
 ]
 expression = "f::VARCHAR"
 tags = ["null", "zero", "boundary"]
+expected_divergence = "float_text"
 
 [[case]]
 id = "to_varchar_numbers"

@@ -1,0 +1,115 @@
+# The types of the numeric literals models write.
+category = "numeric"
+construct = "node:literal"
+session_profile = "utc-v1"
+evidence = "typing"
+
+[[case]]
+id = "literal_type_100p0"
+description = "The result type of the literal 100.0."
+columns = [{ name = "k", type = "NUMBER(2,0)" }]
+rows = [
+  ["1"],
+]
+expression = "100.0"
+tags = ["null", "zero", "negative", "boundary"]
+values = false
+
+[[case]]
+id = "literal_type_1p0"
+description = "The result type of the literal 1.0."
+columns = [{ name = "k", type = "NUMBER(2,0)" }]
+rows = [
+  ["1"],
+]
+expression = "1.0"
+tags = ["null", "zero", "negative", "boundary"]
+values = false
+
+[[case]]
+id = "literal_type_0p0"
+description = "The result type of the literal 0.0."
+columns = [{ name = "k", type = "NUMBER(2,0)" }]
+rows = [
+  ["1"],
+]
+expression = "0.0"
+tags = ["null", "zero", "negative", "boundary"]
+values = false
+
+[[case]]
+id = "literal_type_10p0"
+description = "The result type of the literal 10.0."
+columns = [{ name = "k", type = "NUMBER(2,0)" }]
+rows = [
+  ["1"],
+]
+expression = "10.0"
+tags = ["null", "zero", "negative", "boundary"]
+values = false
+
+[[case]]
+id = "literal_type_0p05"
+description = "The result type of the literal 0.05."
+columns = [{ name = "k", type = "NUMBER(2,0)" }]
+rows = [
+  ["1"],
+]
+expression = "0.05"
+tags = ["null", "zero", "negative", "boundary"]
+values = false
+
+[[case]]
+id = "literal_type_1em12"
+description = "The result type of the literal 1e-12."
+columns = [{ name = "k", type = "NUMBER(2,0)" }]
+rows = [
+  ["1"],
+]
+expression = "1e-12"
+tags = ["null", "zero", "negative", "boundary"]
+values = false
+
+[[case]]
+id = "literal_type_1e5"
+description = "The result type of the literal 1e5."
+columns = [{ name = "k", type = "NUMBER(2,0)" }]
+rows = [
+  ["1"],
+]
+expression = "1e5"
+tags = ["null", "zero", "negative", "boundary"]
+values = false
+
+[[case]]
+id = "literal_type_1em10"
+description = "The result type of the literal 1e-10."
+columns = [{ name = "k", type = "NUMBER(2,0)" }]
+rows = [
+  ["1"],
+]
+expression = "1e-10"
+tags = ["null", "zero", "negative", "boundary"]
+values = false
+
+[[case]]
+id = "literal_type_9223372036854775807"
+description = "The result type of the literal 9223372036854775807."
+columns = [{ name = "k", type = "NUMBER(2,0)" }]
+rows = [
+  ["1"],
+]
+expression = "9223372036854775807"
+tags = ["null", "zero", "negative", "boundary"]
+values = false
+
+[[case]]
+id = "literal_type_1p5e3"
+description = "The result type of the literal 1.5e3."
+columns = [{ name = "k", type = "NUMBER(2,0)" }]
+rows = [
+  ["1"],
+]
+expression = "1.5e3"
+tags = ["null", "zero", "negative", "boundary"]
+values = false

@@ -11,8 +11,9 @@ use sqlquack_snowflake::typing::main::unify::unify;
 use sqlquack_snowflake::typing::models::SnowflakeType;
 
 use crate::conversion::_helpers::expressions::calls::convert_aggregate;
+use crate::conversion::_helpers::expressions::named_aggregates::named_aggregate;
 use crate::conversion::_helpers::expressions::ordered_aggregates::within_group;
-use crate::conversion::_helpers::expressions::scalar::convert_expression;
+use crate::conversion::_helpers::expressions::scalar::{call_name, convert_expression};
 use crate::conversion::_helpers::expressions::spellings::{as_typed, as_written};
 use crate::conversion::_helpers::support::scope::Emitted;
 use crate::conversion::_helpers::support::site::{Placement, Site};
@@ -21,7 +22,8 @@ use crate::conversion::_helpers::support::tree::{
     node_kind, outside_conditions, payload_object, require_understood,
 };
 use crate::conversion::constants::{
-    WINDOW_AGGREGATE, WINDOW_FIRST_LAST, WINDOW_OFFSET, WINDOW_RANKING,
+    DISTINCT_WINDOW_AGGREGATE, WINDOW_AGGREGATE, WINDOW_FIRST_LAST, WINDOW_OFFSET, WINDOW_RANKING,
+    WINDOWED_NAMED_AGGREGATES,
 };
 
 /// Snowflake's frame for FIRST_VALUE and LAST_VALUE when none is written.
@@ -77,12 +79,13 @@ pub(crate) fn convert_window(payload: &Value, site: Site<'_>) -> Result<Emitted,
         "lag" | "lead" => WINDOW_OFFSET,
         "first_value" | "last_value" => WINDOW_FIRST_LAST,
         "count" | "sum" | "min" | "max" | "within_group" => WINDOW_AGGREGATE,
+        "function" | "aggregate_function"
+            if WINDOWED_NAMED_AGGREGATES.contains(&call_name(function_payload).as_str()) =>
+        {
+            WINDOW_AGGREGATE
+        }
         "function" | "aggregate_function" => {
-            let name = function_payload
-                .get("name")
-                .and_then(Value::as_str)
-                .unwrap_or_default()
-                .to_ascii_uppercase();
+            let name = call_name(function_payload);
             return Err(missing(
                 function_construct(&name),
                 format!("no rule converts window function fn:{name}"),
@@ -107,6 +110,22 @@ pub(crate) fn convert_window(payload: &Value, site: Site<'_>) -> Result<Emitted,
             aggregate_window(function, function_payload, &over, site)
         }
         "within_group" => ordered_window(function_payload, &over, site),
+        "function" | "aggregate_function" => {
+            let name = call_name(function_payload);
+            if over.frame.is_some() {
+                return Err(outside_conditions(
+                    function_construct(&name),
+                    format!("{name} over an explicit frame, which no recording shows"),
+                ));
+            }
+            let clause = aggregate_clause(&over, site, &node_construct(function))?;
+            named_aggregate(
+                &call_name(function_payload),
+                function_payload,
+                site,
+                Some(&clause),
+            )
+        }
         other => Err(missing(
             node_construct(other),
             format!("no rule converts window function node:{other}"),
@@ -240,18 +259,34 @@ fn aggregate_window(
 ) -> Result<Emitted, Refusal> {
     let construct = node_construct(function);
     let refuse = |reason: String| outside_conditions(construct.clone(), reason);
-    if flag(payload_object(payload, &construct)?, "distinct") {
-        return Err(refuse("DISTINCT in a window aggregate".to_owned()));
+    if flag(payload_object(payload, &construct)?, "distinct")
+        && (function != DISTINCT_WINDOW_AGGREGATE || !over.order.is_empty() || over.frame.is_some())
+    {
+        return Err(refuse(
+            "DISTINCT in a window aggregate other than COUNT over whole partitions".to_owned(),
+        ));
     }
+    let clause = aggregate_clause(over, site, &construct)?;
+    convert_aggregate(function, payload, site, Some(&clause))
+}
+
+/// An aggregate's OVER clause: an explicit literal ROWS frame, or a running one when ordered.
+fn aggregate_clause(
+    over: &Over<'_>,
+    site: Site<'_>,
+    construct: &Construct,
+) -> Result<String, Refusal> {
     let frame = match over.frame {
         Some(frame) => Some(explicit_frame(frame).ok_or_else(|| {
-            refuse("only ROWS frames with literal bounds are converted".to_owned())
+            outside_conditions(
+                construct.clone(),
+                "only ROWS frames with literal bounds are converted".to_owned(),
+            )
         })?),
         None if !over.order.is_empty() => Some(RUNNING_RANGE.to_owned()),
         None => None,
     };
-    let clause = over.clause(frame.as_deref(), site);
-    convert_aggregate(function, payload, site, Some(&clause))
+    Ok(over.clause(frame.as_deref(), site))
 }
 
 /// A WITHIN GROUP aggregate over whole partitions: OVER without ORDER BY or a frame.

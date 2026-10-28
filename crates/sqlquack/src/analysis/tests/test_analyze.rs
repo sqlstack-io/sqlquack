@@ -164,8 +164,8 @@ fn given_sql_and_a_schema_when_analyzing_then_it_converts_or_refuses_with_a_cate
             },
         },
         AnalyzeTestCase {
-            description: "ILIKE with a non-ASCII pattern is refused",
-            sql: "SELECT note ILIKE 'ü%' AS r FROM customers",
+            description: "ILIKE with a column pattern is refused",
+            sql: "SELECT note ILIKE note AS r FROM customers",
             expected_summary: AnalysisSummary {
                 parsed: true,
                 statements: 1,

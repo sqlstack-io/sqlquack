@@ -1,6 +1,7 @@
 //! Timestamp literals and casts between DATE and timestamps.
 
 use sqlquack_core::classification::models::Construct;
+use sqlquack_core::refusals::models::Refusal;
 use sqlquack_duckdb::blocks::constants::SUBMICRO_MESSAGE;
 use sqlquack_duckdb::blocks::main::cast::cast;
 use sqlquack_duckdb::blocks::main::string_literal::string_literal;
@@ -8,10 +9,12 @@ use sqlquack_duckdb::raises::main::raised::raised;
 use sqlquack_duckdb::temporal::main::submicro_check::submicro_check;
 use sqlquack_duckdb::temporal::main::truncate_timestamp::truncate_timestamp;
 use sqlquack_duckdb::temporal::main::truncate_timestamp_to_date::truncate_timestamp_to_date;
+use sqlquack_duckdb::times::constants::{MICROSECOND_PRECISION, TIME_SUBMICRO};
 use sqlquack_snowflake::typing::models::SnowflakeType;
 
 use crate::conversion::_helpers::support::divergence::diverge;
-use crate::conversion::_helpers::support::scope::Context;
+use crate::conversion::_helpers::support::scope::{Context, Literal};
+use crate::conversion::_helpers::support::tree::outside_conditions;
 use crate::conversion::constants::{
     HOURS_PER_DAY, MAX_FRACTION_DIGITS, MAX_OFFSET_HOURS, MICROSECOND_DIGITS, MINUTES_PER_HOUR,
     NANOSECOND_RANGE_END, NANOSECOND_RANGE_START, OFFSET_WITH_COLON, OFFSET_WITHOUT_COLON,
@@ -238,4 +241,53 @@ fn valid_date(year: u16, month: u16, day: u16) -> Option<()> {
         _ => return None,
     };
     (year >= 1 && day >= 1 && day <= days).then_some(())
+}
+
+/// Whether `text` is a time in a spelling recordings show Snowflake reading without a format.
+pub(crate) fn proven_time_text(text: &str) -> bool {
+    let fields: Vec<&str> = text.trim_matches(' ').split(':').collect();
+    let small = |field: &str, limit: u32| {
+        (1..=2).contains(&field.len())
+            && field.bytes().all(|byte| byte.is_ascii_digit())
+            && field.parse::<u32>().is_ok_and(|value| value < limit)
+    };
+    match fields.as_slice() {
+        [hour, minute] => small(hour, 24) && small(minute, 60),
+        [hour, minute, second] => {
+            let (whole, fraction) = second.split_once('.').unwrap_or((second, "1"));
+            small(hour, 24)
+                && small(minute, 60)
+                && small(whole, 60)
+                && (1..=9).contains(&fraction.len())
+                && fraction.bytes().all(|byte| byte.is_ascii_digit())
+        }
+        _ => false,
+    }
+}
+
+/// Whether a time text has a non-zero digit past the sixth fractional one.
+pub(crate) fn submicro_time_text(text: &str) -> bool {
+    text.trim_matches(' ')
+        .split_once('.')
+        .and_then(|(_, fraction)| fraction.get(6..))
+        .is_some_and(|rest| rest.bytes().any(|byte| byte != b'0'))
+}
+
+/// Refuses a literal time with a sub-microsecond part, or allows `time_submicro` for text.
+pub(crate) fn time_submicro(
+    (literal, precision): (Option<&Literal>, u8),
+    construct: &Construct,
+    context: &Context<'_>,
+) -> Result<(), Refusal> {
+    if precision <= MICROSECOND_PRECISION {
+        return Ok(());
+    }
+    match literal {
+        Some(Literal::Text(text)) if submicro_time_text(text) => Err(outside_conditions(
+            construct.clone(),
+            "a TIME literal with a sub-microsecond part, which recordings cannot show".to_owned(),
+        )),
+        Some(_) => Ok(()),
+        None => diverge(context, TIME_SUBMICRO, construct),
+    }
 }

@@ -1,0 +1,189 @@
+# OBJECT_CONSTRUCT_KEEP_NULL as models use it: FLOAT and timestamp values, and star forms.
+category = "semi-structured-output"
+construct = "fn:OBJECT_CONSTRUCT_KEEP_NULL"
+session_profile = "utc-v1"
+
+[[case]]
+id = "keep_null_float_text"
+description = "OBJECT_CONSTRUCT_KEEP_NULL with a FLOAT value, written as JSON text."
+columns = [{ name = "k", type = "NUMBER(2,0)" }, { name = "x", type = "FLOAT" }]
+rows = [
+  ["1", "0"],
+  ["2", "1.5"],
+  ["3", "-0.25"],
+  ["4", "1/3"],
+  ["5", "3"],
+  ["6", "1E20"],
+  ["7", "1E-7"],
+  ["8", "123456.789"],
+  ["9", "NULL"],
+]
+expression = "OBJECT_CONSTRUCT_KEEP_NULL('channel', 'web', 'price', x)"
+tags = ["null", "json-null", "nested"]
+
+[[case]]
+id = "keep_null_float_read_float"
+description = "A FLOAT kept in an object and read back as FLOAT."
+columns = [{ name = "k", type = "NUMBER(2,0)" }, { name = "x", type = "FLOAT" }]
+rows = [
+  ["1", "0"],
+  ["2", "1.5"],
+  ["3", "-0.25"],
+  ["4", "1/3"],
+  ["5", "3"],
+  ["6", "1E20"],
+  ["7", "1E-7"],
+  ["8", "123456.789"],
+  ["9", "NULL"],
+]
+expression = "OBJECT_CONSTRUCT_KEEP_NULL('price', x):price::FLOAT"
+tags = ["null", "json-null", "nested"]
+
+[[case]]
+id = "keep_null_float_read_varchar"
+description = "A FLOAT kept in an object and read back as VARCHAR."
+columns = [{ name = "k", type = "NUMBER(2,0)" }, { name = "x", type = "FLOAT" }]
+rows = [
+  ["1", "0"],
+  ["2", "1.5"],
+  ["3", "-0.25"],
+  ["4", "1/3"],
+  ["5", "3"],
+  ["6", "1E20"],
+  ["7", "1E-7"],
+  ["8", "123456.789"],
+  ["9", "NULL"],
+]
+expression = "OBJECT_CONSTRUCT_KEEP_NULL('price', x):price::VARCHAR"
+tags = ["null", "json-null", "nested"]
+
+[[case]]
+id = "keep_null_float_typeof"
+description = "TYPEOF of a FLOAT kept in an object."
+columns = [{ name = "k", type = "NUMBER(2,0)" }, { name = "x", type = "FLOAT" }]
+rows = [
+  ["1", "0"],
+  ["2", "1.5"],
+  ["3", "-0.25"],
+  ["4", "1/3"],
+  ["5", "3"],
+  ["6", "1E20"],
+  ["7", "1E-7"],
+  ["8", "123456.789"],
+  ["9", "NULL"],
+]
+expression = "TYPEOF(OBJECT_CONSTRUCT_KEEP_NULL('price', x):price)"
+tags = ["null", "json-null", "nested"]
+
+[[case]]
+id = "keep_null_float_to_json"
+description = "TO_JSON of an object holding a FLOAT and a NUMBER."
+columns = [{ name = "k", type = "NUMBER(2,0)" }, { name = "x", type = "FLOAT" }]
+rows = [
+  ["1", "0"],
+  ["2", "1.5"],
+  ["3", "-0.25"],
+  ["4", "1/3"],
+  ["5", "3"],
+  ["6", "1E20"],
+  ["7", "1E-7"],
+  ["8", "123456.789"],
+  ["9", "NULL"],
+]
+expression = "TO_JSON(OBJECT_CONSTRUCT_KEEP_NULL('price', x, 'rank', k))"
+tags = ["null", "json-null", "nested"]
+
+[[case]]
+id = "keep_null_float_special"
+description = "NaN and infinities kept in an object."
+columns = [{ name = "k", type = "NUMBER(2,0)" }, { name = "x", type = "FLOAT" }]
+rows = [
+  ["1", "'NaN'"],
+  ["2", "'inf'"],
+  ["3", "'-inf'"],
+]
+expression = "OBJECT_CONSTRUCT_KEEP_NULL('price', x)"
+tags = ["null", "json-null", "nested"]
+
+[[case]]
+id = "keep_null_variant_path_float"
+description = "OBJECT_CONSTRUCT_KEEP_NULL of a VARIANT path cast to FLOAT and to INTEGER."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('{\"win_price\":2.5,\"rank_hint\":3}')"],
+  ["PARSE_JSON('{\"win_price\":\"4.25\",\"rank_hint\":\"7\"}')"],
+  ["PARSE_JSON('{\"win_price\":null,\"rank_hint\":null}')"],
+  ["PARSE_JSON('{}')"],
+  ["PARSE_JSON('{\"win_price\":10,\"rank_hint\":1.6}')"],
+  ["NULL"],
+]
+expression = "OBJECT_CONSTRUCT_KEEP_NULL('win_price', v:win_price::FLOAT, 'rank_hint', v:rank_hint::INTEGER)"
+tags = ["null", "json-null", "nested"]
+
+[[case]]
+id = "keep_null_float_nested"
+description = "A FLOAT inside a nested object and an array."
+columns = [{ name = "k", type = "NUMBER(2,0)" }, { name = "x", type = "FLOAT" }]
+rows = [
+  ["1", "0"],
+  ["2", "1.5"],
+  ["3", "-0.25"],
+  ["4", "1/3"],
+  ["5", "3"],
+]
+expression = "OBJECT_CONSTRUCT_KEEP_NULL('item', OBJECT_CONSTRUCT_KEEP_NULL('price', x), 'history', ARRAY_CONSTRUCT(x, k))"
+tags = ["null", "json-null", "nested"]
+
+[[case]]
+id = "keep_null_tz"
+description = "A TIMESTAMP_TZ kept in an object, written as JSON text."
+columns = [{ name = "t", type = "TIMESTAMP_TZ(9)" }]
+rows = [
+  ["'2024-03-10 02:30:00 -05:00'"],
+  ["'2024-06-01 12:00:00.5 +05:30'"],
+  ["'2024-12-31 23:59:59.999999999 -08:00'"],
+  ["'2024-01-01 00:30:00 +14:00'"],
+  ["'1970-01-01 00:00:00 +00:00'"],
+  ["NULL"],
+]
+expression = "OBJECT_CONSTRUCT_KEEP_NULL('at', t)"
+tags = ["null", "json-null", "nested"]
+
+[[case]]
+id = "keep_null_star_exclude"
+description = "OBJECT_CONSTRUCT_KEEP_NULL of r.* EXCLUDE a load column: every other column, NULLs kept."
+columns = [{ name = "order_id", type = "NUMBER(10,0)" }, { name = "status", type = "VARCHAR" }, { name = "amount", type = "NUMBER(10,2)" }, { name = "loaded_at", type = "TIMESTAMP_NTZ(9)" }]
+rows = [
+  ["1", "'open'", "12.50", "'2024-02-29 13:45:01'"],
+  ["2", "NULL", "NULL", "'2024-02-29 13:45:02'"],
+  ["3", "''", "0", "NULL"],
+]
+query = "SELECT r.order_id, OBJECT_CONSTRUCT_KEEP_NULL(r.* EXCLUDE (ordinal, loaded_at)) AS o FROM input AS r ORDER BY r.order_id"
+order = "ordered"
+tags = ["null", "json-null", "nested"]
+
+[[case]]
+id = "keep_null_star_exclude_read"
+description = "A field of OBJECT_CONSTRUCT_KEEP_NULL(r.* EXCLUDE ...) read back."
+columns = [{ name = "order_id", type = "NUMBER(10,0)" }, { name = "status", type = "VARCHAR" }, { name = "amount", type = "NUMBER(10,2)" }, { name = "loaded_at", type = "TIMESTAMP_NTZ(9)" }]
+rows = [
+  ["1", "'open'", "12.50", "'2024-02-29 13:45:01'"],
+  ["2", "NULL", "NULL", "'2024-02-29 13:45:02'"],
+  ["3", "''", "0", "NULL"],
+]
+query = "SELECT r.order_id, OBJECT_CONSTRUCT_KEEP_NULL(r.* EXCLUDE (ordinal, loaded_at)):STATUS::VARCHAR AS status, OBJECT_CONSTRUCT_KEEP_NULL(r.* EXCLUDE (ordinal, loaded_at)):AMOUNT::NUMBER(10,2) AS amount FROM input AS r ORDER BY r.order_id"
+order = "ordered"
+tags = ["null", "json-null", "nested"]
+
+[[case]]
+id = "keep_null_star_plain"
+description = "OBJECT_CONSTRUCT_KEEP_NULL(*) of a subquery's columns."
+columns = [{ name = "order_id", type = "NUMBER(10,0)" }, { name = "status", type = "VARCHAR" }, { name = "amount", type = "NUMBER(10,2)" }, { name = "loaded_at", type = "TIMESTAMP_NTZ(9)" }]
+rows = [
+  ["1", "'open'", "12.50", "'2024-02-29 13:45:01'"],
+  ["2", "NULL", "NULL", "'2024-02-29 13:45:02'"],
+  ["3", "''", "0", "NULL"],
+]
+query = "SELECT OBJECT_CONSTRUCT_KEEP_NULL(*) AS o FROM (SELECT order_id, status, amount FROM input) AS r ORDER BY o:ORDER_ID::NUMBER"
+order = "ordered"
+tags = ["null", "json-null", "nested"]
