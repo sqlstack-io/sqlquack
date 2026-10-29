@@ -18,6 +18,8 @@ mod test_conversion_budget;
 mod test_divergence_modes;
 #[path = "tests/test_equivalence_cases.rs"]
 mod test_equivalence_cases;
+#[path = "tests/test_float_text.rs"]
+mod test_float_text;
 #[path = "tests/test_guarded_conditions.rs"]
 mod test_guarded_conditions;
 #[path = "tests/test_held_variants.rs"]

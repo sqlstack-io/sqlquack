@@ -113,9 +113,10 @@ arguments = [
 facets = { target = ["text"] }
 template = "CAST({0} AS VARCHAR)"
 category = "conversion"
-divergences = { "float.negative_zero" = "float_text" }
-# Subnormal FLOATs are written with ten significant digits, as recorded.
-alone = ["0.float.subnormal"]
+# Subnormal FLOATs are written with ten significant digits, and negative zero as -0, as recorded.
+alone = ["0.float.subnormal", "0.float.negative_zero"]
+# Each edge of the digit bands, max(10, min(15, whole digits + 9)), and each exponent switch.
+extra_rows = [["9.999999999949"], ["9.99999999995"], ["10.00000000049"], ["99.9999999999949"], ["999.999999999949"], ["9999.99999999999"], ["99999.9999999999"], ["100000.000000001"], ["999999999999999"], ["999999999999999.4"], ["0.00009999999999"], ["0.0000999999999999"], ["-1234.5678901234567"], ["NULL"]]
 
 [[rule.form]]
 construct = "node:cast"
@@ -137,9 +138,9 @@ arguments = [
 template = "TO_VARCHAR({0})"
 category = "conversion"
 variants = ["TO_CHAR({0})"]
-divergences = { "float.negative_zero" = "float_text", "timestamp_ntz.half_millisecond" = "timestamp_text_rounding" }
-# Subnormal FLOATs are written with ten significant digits, as recorded.
-alone = ["0.float.subnormal"]
+divergences = { "timestamp_ntz.half_millisecond" = "timestamp_text_rounding" }
+# Subnormal FLOATs are written with ten significant digits, and negative zero as -0, as recorded.
+alone = ["0.float.subnormal", "0.float.negative_zero"]
 
 [[rule]]
 id = "rule.cast_boolean"

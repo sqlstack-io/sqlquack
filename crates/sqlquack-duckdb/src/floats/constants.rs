@@ -20,16 +20,12 @@ pub const FLOAT_DECIMAL_SCALES: &[u8] = &[2, 6, 8];
 pub const FLOAT_DECIMAL_DIGITS: &str = "float_decimal_digits";
 /// The most significant digits of a rounded FLOAT recordings show: its scaled value stays below.
 pub const FLOAT_DECIMAL_UNITS_LIMIT: u128 = 1_000_000_000;
-/// Significant digits Snowflake writes a FLOAT's text with near one and below normal doubles.
-pub const FLOAT_TEXT_SHORT_DIGITS: u8 = 10;
-/// Significant digits Snowflake writes a FLOAT's text with in the recorded wider magnitudes.
-pub const FLOAT_TEXT_LONG_DIGITS: u8 = 15;
-/// Magnitude ranges, [from, to), whose text Snowflake was recorded writing with ten digits.
-pub const FLOAT_TEXT_SHORT_RANGES: &[(&str, &str)] =
-    &[("0", "2.2250738585072014e-308"), ("0.1", "10")];
-/// Magnitude ranges, [from, to), whose text Snowflake was recorded writing with fifteen digits.
-pub const FLOAT_TEXT_LONG_RANGES: &[(&str, &str)] =
-    &[("1e5", "1e6"), ("1e8", "1e9"), ("1e15", "inf")];
+/// The fewest significant digits Snowflake writes a FLOAT's text with: below 10, and below 1.
+pub const FLOAT_TEXT_MIN_DIGITS: u8 = 10;
+/// The most significant digits Snowflake writes a FLOAT's text with: from 1e5 on.
+pub const FLOAT_TEXT_MAX_DIGITS: u8 = 15;
+/// The digits beyond its whole digits Snowflake writes a FLOAT's text with, between those bounds.
+pub const FLOAT_TEXT_FRACTION_DIGITS: u8 = 9;
 /// The divergence for FLOAT sums whose value depends on the order of addition.
 pub const FLOAT_SUM_ORDER: &str = "float_sum_order";
 /// SUM of FLOAT, exact in any order or raising: `duckdb.exact_float_sum`.

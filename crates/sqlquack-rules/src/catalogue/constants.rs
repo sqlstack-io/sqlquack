@@ -329,7 +329,7 @@ pub const RULES: &[RuleSpec] = &[
     RuleSpec {
         id: CAST_TO_TEXT,
         constructs: &["node:cast"],
-        conditions: "From NUMBER, BOOLEAN, DATE or VARCHAR; from FLOAT as recorded: up to ten significant digits as %.15g writes them, ten significant digits from 0.1 to 10 and below normal doubles, fifteen from 1e5 to 1e6, from 1e8 to 1e9 and from 1e15, NaN, inf and -inf, raising for negative zero and other magnitudes with more digits (float_text); from TIMESTAMP_NTZ(9) in the output format YYYY-MM-DD HH24:MI:SS.FF3 where the dropped digits are below half a millisecond, so truncating and rounding agree, raising timestamp_text_rounding otherwise; a length is enforced by raising an error; not TRY_CAST unless from VARCHAR.",
+        conditions: "From NUMBER, BOOLEAN, DATE or VARCHAR; from FLOAT as recorded: max(10, min(15, whole digits + 9)) significant digits as %.{n}g writes them, so ten below 10, one more per whole digit, fifteen from 1e5, plain from 1e-4 to below 1e15 and an exponent outside, NaN, inf, -inf, 0 and -0; from TIMESTAMP_NTZ(9) in the output format YYYY-MM-DD HH24:MI:SS.FF3 where the dropped digits are below half a millisecond, so truncating and rounding agree, raising timestamp_text_rounding otherwise; a length is enforced by raising an error; not TRY_CAST unless from VARCHAR.",
         failures: &[FailureMode {
             kind: ErrorKind::StringTooLong,
             snowflake: &[STRING_TOO_LONG],
@@ -918,13 +918,13 @@ pub const RULES: &[RuleSpec] = &[
     RuleSpec {
         id: CONCAT_WS,
         constructs: &["fn:CONCAT_WS"],
-        conditions: "A separator and at least one part, each VARCHAR, NUMBER, BOOLEAN or DATE as for CONCAT; NULL when any part is NULL, or the separator is NULL and there are two parts or more; a single part is returned whatever the separator, as recorded.",
+        conditions: "A separator and at least one part, each VARCHAR, NUMBER, FLOAT, BOOLEAN or DATE as for CONCAT; NULL when any part is NULL, or the separator is NULL and there are two parts or more; a single part is returned whatever the separator, as recorded.",
         failures: &[],
     },
     RuleSpec {
         id: CONCAT,
         constructs: &["node:concat", "fn:CONCAT"],
-        conditions: "VARCHAR, NUMBER, BOOLEAN or DATE operands; NUMBER, BOOLEAN and DATE are formatted as Snowflake does.",
+        conditions: "VARCHAR, NUMBER, FLOAT, BOOLEAN or DATE operands; NUMBER, BOOLEAN and DATE are formatted as Snowflake does, FLOAT as its ::VARCHAR text, recorded over many rows.",
         failures: &[],
     },
     RuleSpec {

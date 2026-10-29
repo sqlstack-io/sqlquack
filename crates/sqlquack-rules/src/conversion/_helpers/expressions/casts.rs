@@ -13,7 +13,7 @@ use sqlquack_duckdb::blocks::main::text_to_float::text_to_float;
 use sqlquack_duckdb::blocks::main::text_to_number::text_to_number;
 use sqlquack_duckdb::blocks::main::varchar_length_check::varchar_length_check;
 use sqlquack_duckdb::blocks::main::varchar_length_try::varchar_length_try;
-use sqlquack_duckdb::floats::constants::{FLOAT_DECIMAL_DIGITS, FLOAT_TEXT};
+use sqlquack_duckdb::floats::constants::FLOAT_DECIMAL_DIGITS;
 use sqlquack_duckdb::floats::main::float_to_decimal::float_to_decimal;
 use sqlquack_duckdb::floats::main::float_to_text::float_to_text;
 use sqlquack_duckdb::raises::main::raised::raised;
@@ -291,7 +291,6 @@ fn cast_sql(
         )),
         (SnowflakeType::Float, SnowflakeType::Varchar, _) => {
             let _rule = cast_rule(CAST_TO_TEXT, log);
-            diverge(context, FLOAT_TEXT, construct).map_err(|refusal| refusal.reason)?;
             Ok(bounded(float_to_text(&operand.sql, log), target, log))
         }
         (SnowflakeType::Float, SnowflakeType::Number { scale, .. }, _) if scale > 0 => {
