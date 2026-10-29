@@ -1,0 +1,71 @@
+# FLOAT text over many rows: negative zero, and FLOATs concatenated with text.
+category = "conversion"
+construct = "node:concat"
+session_profile = "utc-v1"
+
+[[case]]
+id = "float_text_negative_zero_many_rows"
+description = "Negative zero's text over many rows, which Snowflake cannot fold, beside zero and other negatives."
+columns = [{ name = "x", type = "FLOAT" }]
+rows = [
+  ["'-0'"],
+  ["0"],
+  ["-1.5"],
+  ["'-0'"],
+  ["-0.000123456789"],
+  ["NULL"],
+]
+query = "SELECT x::VARCHAR AS fx, TO_VARCHAR(x) AS tv, OBJECT_CONSTRUCT('k', x):k::VARCHAR AS o FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "boundary", "negative"]
+# Negative zero is written -0 everywhere; building the object still raises for it.
+expected_divergence = "json_fidelity"
+
+[[case]]
+id = "float_concat_many_rows"
+description = "FLOATs concatenated with text over many rows, at each digit band, exponent switch and special value."
+columns = [{ name = "x", type = "FLOAT" }]
+rows = [
+  ["3.141592653589793"],
+  ["12.345678901234567"],
+  ["12345.678901234567"],
+  ["1234567.8901234567"],
+  ["123456789012345.67"],
+  ["1e15"],
+  ["0.0001"],
+  ["1e-5"],
+  ["5e-324"],
+  ["-99999.99999999999"],
+  ["0"],
+  ["'NaN'"],
+  ["'inf'"],
+  ["NULL"],
+]
+query = "SELECT 'v=' || x AS op, CONCAT(x, '|') AS fn, CONCAT_WS(',', x, x) AS ws FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "boundary", "negative"]
+
+[[case]]
+id = "float_concat_single_row"
+description = "A FLOAT concatenated with text from a one-row input, which Snowflake may fold, against the many-row case."
+columns = [{ name = "x", type = "FLOAT" }]
+rows = [
+  ["12.345678901234567"],
+]
+query = "SELECT 'v=' || x AS op, CONCAT(x, '|') AS fn, CONCAT_WS(',', x, x) AS ws FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["boundary"]
+
+[[case]]
+id = "float_concat_from_text"
+description = "Text read as a FLOAT and concatenated back; unreadable text is NULL."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'1234567.8901234567'"],
+  ["'not a number'"],
+  ["''"],
+  ["NULL"],
+]
+query = "SELECT 'v=' || TRY_TO_DOUBLE(s) AS op FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "invalid", "boundary"]

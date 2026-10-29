@@ -23,7 +23,6 @@ rows = [
 query = "SELECT x::VARCHAR AS fx, TO_VARCHAR(x) AS tv, OBJECT_CONSTRUCT('k', x):k::VARCHAR AS o FROM input ORDER BY ordinal"
 order = "ordered"
 tags = ["null", "boundary", "negative"]
-expected_divergence = "float_text"
 
 [[case]]
 id = "float_text_many_rows_six_to_fifteen_whole_digits"
@@ -45,7 +44,6 @@ rows = [
 query = "SELECT x::VARCHAR AS fx, TO_VARCHAR(x) AS tv, OBJECT_CONSTRUCT('k', x):k::VARCHAR AS o FROM input ORDER BY ordinal"
 order = "ordered"
 tags = ["null", "boundary", "negative"]
-expected_divergence = "float_text"
 
 [[case]]
 id = "float_text_many_rows_band_edges"
@@ -66,7 +64,6 @@ rows = [
 query = "SELECT x::VARCHAR AS fx, TO_VARCHAR(x) AS tv, OBJECT_CONSTRUCT('k', x):k::VARCHAR AS o FROM input ORDER BY ordinal"
 order = "ordered"
 tags = ["null", "boundary", "negative"]
-expected_divergence = "float_text"
 
 [[case]]
 id = "float_text_many_rows_small_fractions"
@@ -84,7 +81,6 @@ rows = [
 query = "SELECT x::VARCHAR AS fx, TO_VARCHAR(x) AS tv, OBJECT_CONSTRUCT('k', x):k::VARCHAR AS o FROM input ORDER BY ordinal"
 order = "ordered"
 tags = ["null", "boundary", "negative"]
-expected_divergence = "float_text"
 
 [[case]]
 id = "float_text_many_rows_negatives"
@@ -103,7 +99,6 @@ rows = [
 query = "SELECT x::VARCHAR AS fx, TO_VARCHAR(x) AS tv, OBJECT_CONSTRUCT('k', x):k::VARCHAR AS o FROM input ORDER BY ordinal"
 order = "ordered"
 tags = ["null", "boundary", "negative"]
-expected_divergence = "float_text"
 
 [[case]]
 id = "float_text_single_row_two_whole_digits"
@@ -115,7 +110,6 @@ rows = [
 query = "SELECT x::VARCHAR AS fx, TO_VARCHAR(x) AS tv, OBJECT_CONSTRUCT('k', x):k::VARCHAR AS o FROM input ORDER BY ordinal"
 order = "ordered"
 tags = ["boundary"]
-expected_divergence = "float_text"
 
 [[case]]
 id = "float_text_single_row_five_whole_digits"
@@ -127,7 +121,6 @@ rows = [
 query = "SELECT x::VARCHAR AS fx, TO_VARCHAR(x) AS tv, OBJECT_CONSTRUCT('k', x):k::VARCHAR AS o FROM input ORDER BY ordinal"
 order = "ordered"
 tags = ["boundary"]
-expected_divergence = "float_text"
 
 [[case]]
 id = "float_text_single_row_seven_whole_digits"
@@ -139,7 +132,6 @@ rows = [
 query = "SELECT x::VARCHAR AS fx, TO_VARCHAR(x) AS tv, OBJECT_CONSTRUCT('k', x):k::VARCHAR AS o FROM input ORDER BY ordinal"
 order = "ordered"
 tags = ["boundary"]
-expected_divergence = "float_text"
 
 [[case]]
 id = "float_text_single_row_fifteen_whole_digits"
@@ -151,7 +143,6 @@ rows = [
 query = "SELECT x::VARCHAR AS fx, TO_VARCHAR(x) AS tv, OBJECT_CONSTRUCT('k', x):k::VARCHAR AS o FROM input ORDER BY ordinal"
 order = "ordered"
 tags = ["boundary"]
-expected_divergence = "float_text"
 
 [[case]]
 id = "float_text_single_row_edge_ten"
@@ -185,7 +176,6 @@ rows = [
 query = "SELECT x::VARCHAR AS fx, TO_VARCHAR(x) AS tv, OBJECT_CONSTRUCT('k', x):k::VARCHAR AS o FROM input ORDER BY ordinal"
 order = "ordered"
 tags = ["boundary"]
-expected_divergence = "float_text"
 
 [[case]]
 id = "float_text_from_text"
@@ -202,4 +192,3 @@ rows = [
 query = "SELECT TRY_TO_DOUBLE(s)::VARCHAR AS fx FROM input ORDER BY ordinal"
 order = "ordered"
 tags = ["null", "invalid", "boundary"]
-expected_divergence = "float_text"

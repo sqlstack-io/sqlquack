@@ -323,7 +323,7 @@ reason = "DuckDB zoned timestamps hold microseconds; a TIMESTAMP_TZ or TIMESTAMP
 constructs = ["node:cast", "fn:TO_VARCHAR", "fn:TO_CHAR"]
 default = "warn"
 strict = "refuse"
-reason = "Snowflake writes a FLOAT as text with fifteen significant digits, as C's %.15g does, except that values below one were recorded keeping no digit past the fifteenth decimal place and subnormal values fewer digits than recordings explain, and negative zero has no recording. The converted SQL raises for values whose text those cases would change, for subnormal values and for negative zero. The failure is loud, never a wrong value."
+reason = "Snowflake writes a FLOAT as text with max(10, min(15, whole digits + 9)) significant digits, as C's %g does with that many, which the converted SQL follows everywhere it was recorded. A FLOAT at the root of a VARIANT cast to text is written as Java writes it when Snowflake folds a constant and with %g otherwise, which the conversion cannot tell apart; the converted SQL raises for it. The failure is loud, never a wrong value."
 
 [divergences.regexp_pattern_syntax]
 constructs = ["fn:REGEXP_LIKE"]

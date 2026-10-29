@@ -75,9 +75,9 @@ fn given_typed_builds_holding_a_float_when_converting_then_results_leave_as_snow
             expected_outcome: Ok("123456789"),
         },
         FirstValueTestCase {
-            description: "an element whose FLOAT text is unproven still raises float_text",
+            description: "an element with two whole digits is written with eleven, as recorded",
             sql: "SELECT OBJECT_CONSTRUCT('k', 12.345678901234567::FLOAT):k::VARCHAR AS v",
-            expected_outcome: Err("float_text"),
+            expected_outcome: Ok("12.345678901"),
         },
         FirstValueTestCase {
             description: "a subnormal element has ten significant digits, as recorded",

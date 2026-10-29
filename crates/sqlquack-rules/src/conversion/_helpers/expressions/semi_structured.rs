@@ -291,7 +291,7 @@ pub(crate) fn held_cast(
     let sql = match (target.data_type, target.max_length) {
         (SnowflakeType::Varchar, max_length) => {
             diverge(context, JSON_FIDELITY, construct)?;
-            if operand.root != VariantRoot::Container {
+            if !matches!(operand.root, VariantRoot::Container | VariantRoot::Element) {
                 diverge(context, FLOAT_TEXT, construct)?;
             }
             let text = variant_text(&operand.sql, operand.root == VariantRoot::Element, log);

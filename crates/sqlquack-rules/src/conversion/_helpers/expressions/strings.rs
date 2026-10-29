@@ -6,6 +6,7 @@ use sqlquack_core::refusals::models::Refusal;
 use sqlquack_duckdb::blocks::main::full_case_lower::full_case_lower;
 use sqlquack_duckdb::blocks::main::full_case_upper::full_case_upper;
 use sqlquack_duckdb::blocks::main::null_propagating_concat::null_propagating_concat;
+use sqlquack_duckdb::floats::main::float_to_text::float_to_text;
 use sqlquack_duckdb::text::constants::{
     HEX_LOWER_CASE, HEX_UPPER_CASE, INITCAP_DEFAULT_DELIMITERS, INITCAP_TEXT,
 };
@@ -231,7 +232,7 @@ pub(crate) fn concatenate_with_separator(
     ))
 }
 
-/// Text from VARCHAR, NUMBER, BOOLEAN or DATE operands, formatted as Snowflake formats them.
+/// Text from VARCHAR, NUMBER, FLOAT, BOOLEAN or DATE operands, formatted as Snowflake formats them.
 pub(crate) fn concatenate(
     parts: &[Value],
     construct: &Construct,
@@ -245,7 +246,7 @@ pub(crate) fn concatenate(
     ))
 }
 
-/// Each operand as text: VARCHAR as it is, NUMBER, BOOLEAN and DATE cast as Snowflake formats them.
+/// Each operand as text: VARCHAR as it is, others as Snowflake's `::VARCHAR` writes them.
 fn operand_texts(
     parts: &[Value],
     construct: &Construct,
@@ -259,6 +260,7 @@ fn operand_texts(
             SnowflakeType::Number { .. } | SnowflakeType::Boolean | SnowflakeType::Date => {
                 format!("CAST({} AS VARCHAR)", emitted.sql)
             }
+            SnowflakeType::Float => float_to_text(&emitted.sql, site.context.log),
             other => {
                 return Err(outside_conditions(
                     construct.clone(),
