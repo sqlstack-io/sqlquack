@@ -66,10 +66,7 @@ pub(crate) fn lateral_split(
     let log = context.log;
     let columns: Vec<ColumnSpec> = SPLIT_TO_TABLE_COLUMNS
         .iter()
-        .map(|(column, data_type)| ColumnSpec {
-            name: (*column).to_owned(),
-            data_type: *data_type,
-        })
+        .map(|(column, data_type)| ColumnSpec::new(*column, *data_type))
         .collect();
     Ok(Flattened {
         sql: format!(

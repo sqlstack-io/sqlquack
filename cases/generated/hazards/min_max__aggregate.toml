@@ -352,6 +352,22 @@ tags = ["null", "empty-input", "duplicates"]
 origin = "generated: hazards@1"
 
 [[case]]
+id = "node_min_0_float_notation_boundaries"
+description = "node:min with Doubles where text switches between plain and exponent notation, which %.15g and %.15e write differently in argument 0, float."
+columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "FLOAT" }]
+rows = [
+  ["'a'", "100"],
+  ["'a'", "0.0001"],
+  ["'a'", "1e-5"],
+  ["'a'", "1e15"],
+  ["'a'", "1e21"],
+]
+query = "SELECT g, MIN(x0) AS r FROM input GROUP BY g ORDER BY g"
+order = "ordered"
+tags = ["null", "empty-input", "duplicates"]
+origin = "generated: hazards@1"
+
+[[case]]
 id = "node_min_0_text_hazards"
 description = "node:min with the hazards null, empty, dollar_prefix, slash_prefix, dots_brackets, quotes_backslashes, non_ascii, title_case_digraph, case_only, whitespace, number_text in argument 0, text."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "VARCHAR" }]

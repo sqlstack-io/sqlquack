@@ -19,8 +19,8 @@ resolver = "2"
 version = "0.2.0"
 edition = "2024"
 license = "Apache-2.0"
-repository = "https://github.com/chio-labs/sqlquack"
-homepage = "https://github.com/chio-labs/sqlquack"
+repository = "https://github.com/sqlstack-io/sqlquack"
+homepage = "https://github.com/sqlstack-io/sqlquack"
 readme = "README.md"
 publish = false
 rust-version = "1.88"
@@ -29,7 +29,7 @@ rust-version = "1.88"
 arrow = { version = "60", default-features = false, features = ["ipc"] }
 clap = { version = "4.5", features = ["derive"] }
 duckdb = "=1.20000.0"
-polyglot-sql = { git = "https://github.com/chio-labs/polyglot.git", rev = "7d5fe2ccce7b3cbd1413a2823560f8dfc63ecc2e", default-features = false, features = [
+polyglot-sql = { git = "https://github.com/sqlstack-io/polyglot.git", rev = "7d5fe2ccce7b3cbd1413a2823560f8dfc63ecc2e", default-features = false, features = [
     "dialect-snowflake",
     "dialect-duckdb",
     "dialect-bigquery",

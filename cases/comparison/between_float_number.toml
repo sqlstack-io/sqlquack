@@ -1,0 +1,138 @@
+# BETWEEN mixing FLOAT and NUMBER near a double's precision, against the >= and <= pair it abbreviates.
+category = "comparison"
+construct = "node:between"
+session_profile = "utc-v1"
+
+[[case]]
+id = "between_float_integer_bounds_past_2p53"
+description = "A FLOAT between NUMBER(20,0) bounds past 2^53, where a bound rounded to a double ties onto the value."
+columns = [{ name = "x", type = "FLOAT" }, { name = "lo", type = "NUMBER(20,0)" }, { name = "hi", type = "NUMBER(20,0)" }]
+rows = [
+  ["9007199254740992", "9007199254740993", "9007199254740993"],
+  ["9007199254740992", "9007199254740993", "9007199254740995"],
+  ["9007199254740996", "9007199254740995", "9007199254740995"],
+  ["9007199254740994", "9007199254740993", "9007199254740993"],
+  ["18014398509481984", "18014398509481986", "18014398509481986"],
+  ["18014398509481992", "18014398509481990", "18014398509481990"],
+  ["9007199254740992", "9007199254740991", "9007199254740991"],
+  ["NULL", "9007199254740993", "9007199254740993"],
+  ["9007199254740992", "NULL", "9007199254740993"],
+]
+query = "SELECT x BETWEEN lo AND hi AS b, x >= lo AND x <= hi AS p, x = lo AS e_lo, x = hi AS e_hi FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "ties", "mixed-types", "boundary"]
+
+[[case]]
+id = "between_float_literal_bounds_past_2p53"
+description = "A FLOAT between integer literals past 2^53, the bounds written in the query."
+columns = [{ name = "x", type = "FLOAT" }]
+rows = [
+  ["9007199254740992"],
+  ["9007199254740994"],
+  ["9007199254740996"],
+  ["NULL"],
+]
+query = "SELECT x BETWEEN 9007199254740993 AND 9007199254740995 AS b, x >= 9007199254740993 AND x <= 9007199254740995 AS p FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "ties", "mixed-types", "boundary"]
+
+[[case]]
+id = "between_number_float_bounds_past_2p53"
+description = "A NUMBER(20,0) between FLOAT bounds past 2^53, where the NUMBER rounded to a double ties onto a bound."
+columns = [{ name = "n", type = "NUMBER(20,0)" }, { name = "lo", type = "FLOAT" }, { name = "hi", type = "FLOAT" }]
+rows = [
+  ["9007199254740993", "9007199254740992", "9007199254740992"],
+  ["9007199254740995", "9007199254740996", "9007199254740996"],
+  ["9007199254740993", "9007199254740994", "9007199254740994"],
+  ["18014398509481986", "18014398509481984", "18014398509481984"],
+  ["9007199254740991", "9007199254740991", "9007199254740991"],
+  ["NULL", "9007199254740992", "9007199254740992"],
+  ["9007199254740993", "9007199254740992", "NULL"],
+]
+query = "SELECT n BETWEEN lo AND hi AS b, n >= lo AND n <= hi AS p, n = lo AS e_lo FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "ties", "mixed-types", "boundary"]
+
+[[case]]
+id = "between_float_scaled_bounds"
+description = "A FLOAT between NUMBER(38,37) bounds whose rounding to a double changes the comparison."
+columns = [{ name = "x", type = "FLOAT" }, { name = "lo", type = "NUMBER(38,37)" }, { name = "hi", type = "NUMBER(38,37)" }]
+rows = [
+  ["0.1", "0", "0.1"],
+  ["0.3", "0.3", "1"],
+  ["0.1", "0.1000000000000000055511151231257827021", "1"],
+  ["0.1", "0.1000000000000000055511151231257827022", "1"],
+  ["0.1", "0.0999999999999999999999999999999999999", "0.0999999999999999999999999999999999999"],
+  ["0.30000000000000004", "0.3", "0.3000000000000000166533453693773481064"],
+  ["NULL", "0", "1"],
+]
+query = "SELECT x BETWEEN lo AND hi AS b, x >= lo AND x <= hi AS p, x = lo AS e_lo, x = hi AS e_hi FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "ties", "mixed-types", "boundary"]
+
+[[case]]
+id = "between_number_float_scaled"
+description = "A NUMBER(38,37) between FLOAT bounds whose double is not the NUMBER's exact value."
+columns = [{ name = "n", type = "NUMBER(38,37)" }, { name = "lo", type = "FLOAT" }, { name = "hi", type = "FLOAT" }]
+rows = [
+  ["0.1", "0.1", "0.1"],
+  ["0.3", "0.3", "0.3"],
+  ["0.1000000000000000055511151231257827022", "0", "0.1"],
+  ["0.0999999999999999999999999999999999999", "0.1", "1"],
+  ["NULL", "0", "1"],
+]
+query = "SELECT n BETWEEN lo AND hi AS b, n >= lo AND n <= hi AS p, n = lo AS e_lo, n = hi AS e_hi FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "ties", "mixed-types", "boundary"]
+
+[[case]]
+id = "between_float_wide_bounds"
+description = "A FLOAT between NUMBER(38,0) bounds near 1e38, which round to the double of 1e38."
+columns = [{ name = "x", type = "FLOAT" }, { name = "lo", type = "NUMBER(38,0)" }, { name = "hi", type = "NUMBER(38,0)" }]
+rows = [
+  ["1e38", "99999999999999999999999999999999999999", "99999999999999999999999999999999999999"],
+  ["1e38", "0", "99999999999999999999999999999999999999"],
+  ["9.999999999999999e37", "99999999999999999999999999999999999999", "99999999999999999999999999999999999999"],
+  ["-1e38", "-99999999999999999999999999999999999999", "0"],
+  ["NULL", "0", "1"],
+]
+query = "SELECT x BETWEEN lo AND hi AS b, x >= lo AND x <= hi AS p, x = lo AS e_lo FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "ties", "mixed-types", "boundary"]
+
+[[case]]
+id = "between_float_nan_and_nulls"
+description = "NaN, the infinities and NULLs as a FLOAT between NUMBER(10,2) bounds."
+columns = [{ name = "x", type = "FLOAT" }, { name = "lo", type = "NUMBER(10,2)" }, { name = "hi", type = "NUMBER(10,2)" }]
+rows = [
+  ["'NaN'::FLOAT", "0", "1"],
+  ["'NaN'::FLOAT", "-99999999.99", "99999999.99"],
+  ["'inf'::FLOAT", "0", "99999999.99"],
+  ["'-inf'::FLOAT", "-99999999.99", "0"],
+  ["'NaN'::FLOAT", "NULL", "1"],
+  ["NULL", "0", "1"],
+  ["0.5", "NULL", "1"],
+  ["1.5", "NULL", "1"],
+  ["0.5", "0", "NULL"],
+  ["-0.5", "0", "NULL"],
+]
+query = "SELECT x BETWEEN lo AND hi AS b, x >= lo AND x <= hi AS p, x NOT BETWEEN lo AND hi AS nb FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "mixed-types", "boundary"]
+
+[[case]]
+id = "between_number_nan_bounds"
+description = "A NUMBER(10,2) between FLOAT bounds that are NaN, infinite or NULL."
+columns = [{ name = "n", type = "NUMBER(10,2)" }, { name = "lo", type = "FLOAT" }, { name = "hi", type = "FLOAT" }]
+rows = [
+  ["1", "'NaN'::FLOAT", "'NaN'::FLOAT"],
+  ["1", "0", "'NaN'::FLOAT"],
+  ["1", "'NaN'::FLOAT", "2"],
+  ["1", "'-inf'::FLOAT", "'inf'::FLOAT"],
+  ["99999999.99", "0", "'inf'::FLOAT"],
+  ["1", "NULL", "'NaN'::FLOAT"],
+  ["NULL", "'NaN'::FLOAT", "'NaN'::FLOAT"],
+]
+query = "SELECT n BETWEEN lo AND hi AS b, n >= lo AND n <= hi AS p, n NOT BETWEEN lo AND hi AS nb FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "mixed-types", "boundary"]

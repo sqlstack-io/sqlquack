@@ -18,8 +18,9 @@ use crate::conversion::_helpers::support::site::{Placement, Site};
 use crate::conversion::_helpers::support::tree::{
     field, flag, missing, node_construct, outside_conditions, payload_object, require_understood,
 };
+use crate::conversion::constants::DUPLICATE_VARIANTS;
 use crate::conversion::constants::{SEMI_STRUCTURED_HOLDING, SET_OPERATION, UNION_BY_NAME};
-use crate::conversion::models::ColumnSpec;
+use crate::conversion::models::{ColumnSpec, Holding};
 
 /// The relation name for the result of a set operation that is then ordered or limited.
 const SET_RESULT: &str = "_SET";
@@ -98,6 +99,7 @@ pub(crate) fn convert_set_operation(
         &context,
         false,
     )?;
+    let (left_columns, right_columns) = (left.1.clone(), right.1.clone());
     let (left_sql, right_sql, columns) = match by_name {
         true => {
             let columns = named_columns(
@@ -126,6 +128,17 @@ pub(crate) fn convert_set_operation(
             )
         }
     };
+    let columns = proven_columns(columns, (&left_columns, &right_columns), by_name);
+    if keyword != UNION_ALL
+        && columns
+            .iter()
+            .any(|column| column.data_type == SnowflakeType::SemiStructured)
+    {
+        return Err(outside_conditions(
+            construct,
+            format!("a set operation {DUPLICATE_VARIANTS}"),
+        ));
+    }
     let sql = format!("{with_sql}{left_sql} {keyword} {right_sql}");
     let ordered = ["order_by", "limit", "offset"]
         .iter()
@@ -177,6 +190,7 @@ fn unified_columns(
         ));
     }
     let mut columns: Vec<ColumnSpec> = Vec::new();
+    require_json_held(left.iter().chain(right), construct)?;
     for (left_column, right_column) in left.iter().zip(right) {
         let variant = SnowflakeType::SemiStructured;
         let data_type = match (left_column.data_type, right_column.data_type) {
@@ -199,10 +213,7 @@ fn unified_columns(
                     .map_err(|reason| outside_conditions(construct.clone(), reason))?
             }
         };
-        columns.push(ColumnSpec {
-            name: left_column.name.clone(),
-            data_type,
-        });
+        columns.push(ColumnSpec::new(left_column.name.clone(), data_type));
     }
     Ok(columns)
 }
@@ -274,6 +285,7 @@ fn named_columns(
         }
     }
     let mut columns: Vec<ColumnSpec> = Vec::new();
+    require_json_held(left.iter().chain(right), construct)?;
     for name in names {
         if columns
             .iter()
@@ -304,10 +316,7 @@ fn named_columns(
         require_widening_range(&[typed(left), typed(right)], construct, context)?;
         let data_type = unify(&[typed(left), typed(right)], context.log)
             .map_err(|reason| outside_conditions(construct.clone(), reason))?;
-        columns.push(ColumnSpec {
-            name: name.to_owned(),
-            data_type,
-        });
+        columns.push(ColumnSpec::new(name, data_type));
     }
     Ok(columns)
 }
@@ -341,4 +350,51 @@ fn conform_by_name(
         items.join(", "),
         quoted_identifier(BRANCH, log)
     ))
+}
+
+/// Refuses branches with a VARIANT-held column, which a JSON column of the other branch cannot meet.
+fn require_json_held<'a>(
+    columns: impl IntoIterator<Item = &'a ColumnSpec>,
+    construct: &Construct,
+) -> Result<(), Refusal> {
+    match columns
+        .into_iter()
+        .any(|column| column.holding != Holding::Json)
+    {
+        true => Err(outside_conditions(
+            construct.clone(),
+            "a set operation over a VARIANT built from a FLOAT, which DuckDB holds apart from JSON"
+                .to_owned(),
+        )),
+        false => Ok(()),
+    }
+}
+
+/// The result `columns`, proven free of typed leaves where both branches are, sourced where either is.
+fn proven_columns(
+    columns: Vec<ColumnSpec>,
+    (left, right): (&[ColumnSpec], &[ColumnSpec]),
+    by_name: bool,
+) -> Vec<ColumnSpec> {
+    let mut proven: Vec<ColumnSpec> = Vec::with_capacity(columns.len());
+    for (index, column) in columns.into_iter().enumerate() {
+        let mut untainted = true;
+        let mut sourced = false;
+        for branch in [left, right] {
+            let found = match by_name {
+                true => branch.iter().find(|found| found.name == column.name),
+                false => branch.get(index),
+            };
+            if let Some(found) = found {
+                untainted &= found.untainted;
+                sourced |= found.sourced;
+            }
+        }
+        proven.push(ColumnSpec {
+            untainted,
+            sourced,
+            ..column
+        });
+    }
+    proven
 }

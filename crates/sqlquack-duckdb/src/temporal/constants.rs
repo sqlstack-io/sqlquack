@@ -104,3 +104,5 @@ pub const TIMESTAMP_FORMAT_ELEMENTS: &[(&str, TimestampField, &str)] = &[
 pub const DATE_FROM_PARTS: &str = "duckdb.date_from_parts";
 /// A nanosecond timestamp from a date and a time of day: `duckdb.timestamp_from_parts`.
 pub const TIMESTAMP_FROM_PARTS: &str = "duckdb.timestamp_from_parts";
+/// The dates whose every instant DuckDB's nanosecond timestamps hold.
+pub const NANOSECOND_DATE_RANGE: (&str, &str) = ("1677-09-22", "2262-04-10");

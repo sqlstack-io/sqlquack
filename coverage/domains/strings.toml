@@ -97,6 +97,17 @@ category = "string"
 benign = { "0" = "0" }
 
 [[rule]]
+id = "rule.text_hex_decode"
+
+[[rule.form]]
+construct = "fn:TRY_HEX_DECODE_STRING"
+arguments = [
+  { families = ["text"] },
+]
+template = "TRY_HEX_DECODE_STRING({0})"
+category = "string"
+
+[[rule]]
 id = "rule.hash"
 
 [[rule.form]]

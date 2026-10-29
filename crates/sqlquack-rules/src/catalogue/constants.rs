@@ -30,15 +30,17 @@ use crate::conversion::constants::{
     NULLIF, NUMBER_LITERAL, NUMERIC_FUNCTION, OBJECT_CONSTRUCT_RULE, OBJECT_DELETE_RULE,
     OBJECT_INSERT_RULE, OBJECT_KEYS_RULE, OBJECT_PICK_RULE, ORDER_BY, PARENTHESES, PARSE_JSON_RULE,
     PARSE_JSON_VARIANT, PERCENTILE_RULE, PROJECT_FUNCTION_CALL, PROJECT_TABLE_FUNCTION, QUALIFY,
-    REGEXP, REGEXP_PARAMETERS, REGEXP_POSIX_SPACE, ROUNDING, SCALAR_SUBQUERY, SELECT,
-    SET_OPERATION, SIGN_RULE, SPLIT_RULE, SPLIT_TO_TABLE_RULE, STAR, SUM, TEMPORAL_TEXT_FORMAT,
-    TEXT_AFFIX, TEXT_CHR, TEXT_CONTAINS, TEXT_HEX, TEXT_INITCAP, TEXT_MD5, TEXT_PAD, TEXT_POSITION,
-    TEXT_REPLACE, TEXT_TO_TIME_RULE, TEXT_TO_TIMESTAMP_RULE, TEXT_TRANSLATE, TIME_ARITHMETIC,
-    TIME_CAST, TIME_ZONE_CONVERSION, TIMESTAMP_FORMAT_RULE, TO_BOOLEAN_RULE, TO_DATE_TEMPORAL,
-    TO_VARIANT_RULE, TRIM, UNION_BY_NAME, VARIANT_CAST, VARIANT_COMPUTED_GET, VARIANT_EQUALITY,
-    VARIANT_INSPECT, VARIANT_KIND_CAST, VARIANT_KIND_RULE, VARIANT_PATH, VARIANT_TO_VARCHAR,
-    VARIANT_TYPE_NAME, VARIANT_TYPED_CHECK, WHERE, WINDOW_AGGREGATE, WINDOW_FIRST_LAST,
-    WINDOW_OFFSET, WINDOW_RANKING, ZERO_IF_NULL_RULE, ZONE_COLUMNS, ZONED_PARTS,
+    REDUCE_RULE, REGEXP, REGEXP_PARAMETERS, REGEXP_POSIX_SPACE, ROUNDING, SCALAR_SUBQUERY, SELECT,
+    SET_OPERATION, SIGN_RULE, SPLIT_RULE, SPLIT_TO_TABLE_RULE, STAR, SUM, SUM_FLOAT,
+    TEMPORAL_TEXT_FORMAT, TEXT_AFFIX, TEXT_CHR, TEXT_CONTAINS, TEXT_HEX, TEXT_HEX_DECODE,
+    TEXT_INITCAP, TEXT_MD5, TEXT_NUMBER_COMPARISON, TEXT_PAD, TEXT_POSITION, TEXT_REPLACE,
+    TEXT_TO_TIME_RULE, TEXT_TO_TIMESTAMP_RULE, TEXT_TRANSLATE, TIME_ARITHMETIC, TIME_CAST,
+    TIME_ZONE_CONVERSION, TIMESTAMP_FORMAT_RULE, TO_BOOLEAN_RULE, TO_DATE_TEMPORAL,
+    TO_VARIANT_RULE, TRIM, UNION_BY_NAME, VALUE_AT_EXTREME_KEY, VARIANT_CAST, VARIANT_COMPUTED_GET,
+    VARIANT_EQUALITY, VARIANT_INSPECT, VARIANT_KIND_CAST, VARIANT_KIND_RULE, VARIANT_PARTITION,
+    VARIANT_PATH, VARIANT_TO_VARCHAR, VARIANT_TYPE_NAME, VARIANT_TYPED_CHECK, WHERE,
+    WINDOW_AGGREGATE, WINDOW_FIRST_LAST, WINDOW_OFFSET, WINDOW_RANKING, ZERO_IF_NULL_RULE,
+    ZONE_COLUMNS, ZONED_PARTS,
 };
 use crate::conversion::models::RuleSpec;
 
@@ -53,7 +55,7 @@ pub const RULES: &[RuleSpec] = &[
     RuleSpec {
         id: DISTINCT,
         constructs: &["node:select"],
-        conditions: "DISTINCT over the converted columns.",
+        conditions: "DISTINCT over the converted columns, none a VARIANT, which DuckDB compares by its JSON as written, keys in their order, not as VARIANT equality does.",
         failures: &[],
     },
     RuleSpec {
@@ -155,7 +157,7 @@ pub const RULES: &[RuleSpec] = &[
     RuleSpec {
         id: SET_OPERATION,
         constructs: &["node:union", "node:except", "node:intersect"],
-        conditions: "Branches with the same column count whose types unify; differing branches are cast to the unified type.",
+        conditions: "Branches with the same column count whose types unify; differing branches are cast to the unified type; a set operation removing duplicates has no VARIANT column.",
         failures: &[FailureMode {
             kind: ErrorKind::NumericOverflow,
             snowflake: &[NUMBER_OUT_OF_RANGE],
@@ -288,7 +290,7 @@ pub const RULES: &[RuleSpec] = &[
     RuleSpec {
         id: BETWEEN,
         constructs: &["node:between"],
-        conditions: "Bounds of the operand's type family, as for comparisons, without FLOAT and NUMBER mixed.",
+        conditions: "Bounds of the operand's type family, or bounds the comparison rule compares with it: a FLOAT and a NUMBER as doubles, as recorded past 2^53, at 37 decimal places, near 1e38 and with NaN, which sorts above every number; with bounds compared differently, the >= and <= pair, which Snowflake was recorded answering alike.",
         failures: &[],
     },
     RuleSpec {
@@ -327,7 +329,7 @@ pub const RULES: &[RuleSpec] = &[
     RuleSpec {
         id: CAST_TO_TEXT,
         constructs: &["node:cast"],
-        conditions: "From NUMBER, BOOLEAN, DATE or VARCHAR; from FLOAT with fifteen significant digits as %.15g writes them, NaN, inf and -inf, raising for subnormal values and negative zero (float_text); from TIMESTAMP_NTZ(9) in the output format YYYY-MM-DD HH24:MI:SS.FF3 where the dropped digits are below half a millisecond, so truncating and rounding agree, raising timestamp_text_rounding otherwise; a length is enforced by raising an error; not TRY_CAST unless from VARCHAR.",
+        conditions: "From NUMBER, BOOLEAN, DATE or VARCHAR; from FLOAT as recorded: up to ten significant digits as %.15g writes them, ten significant digits from 0.1 to 10 and below normal doubles, fifteen from 1e5 to 1e6, from 1e8 to 1e9 and from 1e15, NaN, inf and -inf, raising for negative zero and other magnitudes with more digits (float_text); from TIMESTAMP_NTZ(9) in the output format YYYY-MM-DD HH24:MI:SS.FF3 where the dropped digits are below half a millisecond, so truncating and rounding agree, raising timestamp_text_rounding otherwise; a length is enforced by raising an error; not TRY_CAST unless from VARCHAR.",
         failures: &[FailureMode {
             kind: ErrorKind::StringTooLong,
             snowflake: &[STRING_TOO_LONG],
@@ -478,8 +480,13 @@ pub const RULES: &[RuleSpec] = &[
     },
     RuleSpec {
         id: ARRAY_AGG_RULE,
-        constructs: &["fn:ARRAY_AGG", "node:within_group"],
-        conditions: "ARRAY_AGG WITHIN GROUP (ORDER BY ...), not as a window function: the non-NULL values in order as an ARRAY, values written as TO_VARIANT writes them and a JSON null kept; an empty ARRAY when no value is non-NULL; DISTINCT only of text ordered by itself.",
+        constructs: &[
+            "fn:ARRAY_AGG",
+            "node:within_group",
+            "fn:ARRAY_SIZE",
+            "fn:ARRAY_SORT",
+        ],
+        conditions: "ARRAY_AGG WITHIN GROUP (ORDER BY ...), not as a window function: the non-NULL values in order as an ARRAY, values written as TO_VARIANT writes them and a JSON null kept; an empty ARRAY when no value is non-NULL; DISTINCT only of text ordered by itself. ARRAY_AGG, also DISTINCT, without WITHIN GROUP, whose order neither engine defines: the same where at most one distinct value is non-NULL, otherwise raising, relying on array_agg_order; ARRAY_SIZE of it counts the non-NULL (distinct) values; ARRAY_SORT of it, of text or whole numbers, orders them ascending. DISTINCT of a VARIANT refuses, as DuckDB compares JSON as written, not as VARIANT equality does; without WITHIN GROUP, a VARIANT not proven free of DATEs and timestamps refuses where one entered the statement, as its one-value check compares text; one read from a source table or schema relation relies on source_variant_json.",
         failures: &[],
     },
     RuleSpec {
@@ -497,7 +504,7 @@ pub const RULES: &[RuleSpec] = &[
     RuleSpec {
         id: ARRAY_CONTAINS_RULE,
         constructs: &["fn:ARRAY_CONTAINS"],
-        conditions: "A VARIANT value and a VARIANT or ARRAY: whether an element equals the value, strings, integers, booleans and JSON null compared as JSON text; SQL NULL arguments give NULL; a decimal or nested value or element, or a value other than an array, raises, relying on json_fidelity.",
+        conditions: "A VARIANT value and a VARIANT or ARRAY: whether an element equals the value, strings, integers, booleans and JSON null compared as JSON text; SQL NULL arguments give NULL; a decimal or nested value or element, or a value other than an array, raises, relying on json_fidelity. Refused for a VARIANT not proven free of DATEs and timestamps, built only from values without one, in a statement that puts one in a VARIANT or reads a model's VARIANT that may hold one, since Snowflake keeps its type and DuckDB writes it as text. A VARIANT read from a source table or schema relation is trusted to hold JSON values, relying on source_variant_json.",
         failures: &[],
     },
     RuleSpec {
@@ -523,14 +530,14 @@ pub const RULES: &[RuleSpec] = &[
     },
     RuleSpec {
         id: ARRAY_CONSTRUCT_RULE,
-        constructs: &["fn:ARRAY_CONSTRUCT"],
-        conditions: "VARIANT, text, boolean or NUMBER(p,0) elements; a SQL NULL element, which Snowflake keeps as undefined, raises, relying on json_fidelity. NUMBER elements rely on json_fidelity.",
+        constructs: &["fn:ARRAY_CONSTRUCT", "node:array_func"],
+        conditions: "A bracket literal [a, b] builds as ARRAY_CONSTRUCT(a, b) does, as recorded. VARIANT, text, boolean or NUMBER(p,0) elements; a SQL NULL element, which Snowflake keeps as undefined, raises, relying on json_fidelity. NUMBER elements rely on json_fidelity.",
         failures: &[],
     },
     RuleSpec {
         id: ARRAY_EXCEPT_RULE,
         constructs: &["fn:ARRAY_EXCEPT"],
-        conditions: "Two VARIANT arrays of strings: each element of the second removes one equal element of the first, order kept; SQL NULL gives NULL; non-arrays (which Snowflake wraps) and other elements, JSON null included, raise relying on json_fidelity.",
+        conditions: "Two VARIANT arrays of strings: each element of the second removes one equal element of the first, order kept; SQL NULL gives NULL; non-arrays (which Snowflake wraps) and other elements, JSON null included, raise relying on json_fidelity. Refused for a VARIANT not proven free of DATEs and timestamps, built only from values without one, in a statement that puts one in a VARIANT or reads a model's VARIANT that may hold one, since Snowflake keeps its type and DuckDB writes it as text. A VARIANT read from a source table or schema relation is trusted to hold JSON values, relying on source_variant_json.",
         failures: &[],
     },
     RuleSpec {
@@ -613,7 +620,7 @@ pub const RULES: &[RuleSpec] = &[
     RuleSpec {
         id: VARIANT_CAST,
         constructs: &["node:cast"],
-        conditions: "A VARIANT to VARIANT, VARCHAR, VARCHAR(n), NUMBER, FLOAT, BOOLEAN, DATE, TIMESTAMP_NTZ(9) or TIMESTAMP_TZ(9): strings and numbers read as their text, a string cast to TIMESTAMP_TZ(9) as TRY_TO_TIMESTAMP_TZ reads it but raising where that is NULL, whole numbers as epoch seconds, text longer than VARCHAR(n) raises, JSON null is NULL; objects, arrays and other kinds raise; written as text, object keys are in byte order at every depth and an object DuckDB could sort only by rewriting a number raises, relying on json_fidelity.",
+        conditions: "A VARIANT to VARIANT, VARCHAR, VARCHAR(n), NUMBER, FLOAT, BOOLEAN, DATE, TIMESTAMP_NTZ(9) or TIMESTAMP_TZ(9): strings and numbers read as their text, a string cast to TIMESTAMP_TZ(9) as TRY_TO_TIMESTAMP_TZ reads it but raising where that is NULL, whole numbers as epoch seconds, text longer than VARCHAR(n) raises, JSON null is NULL; objects, arrays and other kinds raise; written as text, object keys are in byte order at every depth and an object DuckDB could sort only by rewriting a number raises, relying on json_fidelity. A FLOAT read by a path out of a VARIANT built from typed values is written as the FLOAT's own text, as recorded from one row and many; a FLOAT at the root raises float_text, since Snowflake writes it as Java does when it folds a constant.",
         failures: &[
             FailureMode {
                 kind: ErrorKind::VariantCast,
@@ -804,7 +811,7 @@ pub const RULES: &[RuleSpec] = &[
             "fn:REGEXP_SUBSTR",
             "node:regexp_like",
         ],
-        conditions: "A literal pattern without lookarounds, group modifiers, lazy quantifiers (except +?, *? and ?? in REGEXP_SUBSTR, recorded reading as optional greedy repetitions, so as *, * and ?), POSIX classes or escapes other than \\d \\s \\w (ASCII, as recorded), their negations, escaped punctuation and, in REGEXP_SUBSTR, \\n. REGEXP_LIKE matches the whole text; REGEXP_REPLACE replaces every match, or only the first, from position 1, case-sensitively or with 'i', with group references only; REGEXP_SUBSTR from position 1, any occurrence, with parameters of c, i, s and e and, with e, a group (1 without one), NULL when there is no match; REGEXP_SUBSTR_ALL the same, every match as an ARRAY of strings, empty without one. A ':' opening a bracket expression is literal, and ']' first in one is literal.",
+        conditions: "A literal pattern without lookarounds, group modifiers, lazy quantifiers (except +?, *? and ?? in REGEXP_SUBSTR, recorded reading as optional greedy repetitions, so as *, * and ?), POSIX classes or escapes other than \\d \\s \\w (ASCII, as recorded), their negations, escaped punctuation and, in REGEXP_SUBSTR, \\n. REGEXP_LIKE matches the whole text; REGEXP_REPLACE replaces every match, or only the first, from position 1, case-sensitively or with 'i', with group references only; REGEXP_SUBSTR from position 1, any occurrence, with parameters of c, i, s and e and, with e, a group (1 without one), NULL when there is no match; REGEXP_SUBSTR_ALL the same, every match as an ARRAY of strings, empty without one. A ':' opening a bracket expression is literal, and ']' first in one is literal. REGEXP_LIKE also takes a VARCHAR pattern from a column, with or without literal parameters, relying on regexp_pattern_syntax: it runs only where the pattern is literal characters, '.', groups, alternation, plain bracket expressions, single '*', '+' or '?' and anchors at its ends, and raises otherwise.",
         failures: &[],
     },
     RuleSpec {
@@ -945,6 +952,18 @@ pub const RULES: &[RuleSpec] = &[
         }],
     },
     RuleSpec {
+        id: VALUE_AT_EXTREME_KEY,
+        constructs: &["fn:MAX_BY", "fn:MIN_BY"],
+        conditions: "MAX_BY(value, key) and MIN_BY(value, key) as aggregates, not over a window and without a count, with a key MIN and MAX order: the value of the row with the largest or smallest key, rows with a NULL key skipped and a NULL value kept; NULL without such rows. Rows tied on that key must hold one value, a FLOAT's -0 and 0 counted as different, or it raises, relying on extreme_key_ties, since which tied row Snowflake picks is unrecorded. A VARIANT value not proven free of DATEs and timestamps refuses where one entered the statement, as the tie check compares text; one read from a source table or schema relation relies on source_variant_json.",
+        failures: &[],
+    },
+    RuleSpec {
+        id: SUM_FLOAT,
+        constructs: &["fn:SUM"],
+        conditions: "SUM of a FLOAT, also DISTINCT and over a window, relying on float_sum_order: for at most two values, whose one addition is commutative, or where every value is a whole multiple of 1, 2^-16 or 2^-32 and their magnitudes sum to at most 2^52 units of it, so every order of addition is exact, or where one value's magnitude exceeds the others' so far that every partial sum of them added to it rounds back to it, the sum as a FLOAT with zero positive; NaN when any value is NaN, as recorded; NULL without values; otherwise it raises, since Snowflake was recorded adding in an order DuckDB does not share.",
+        failures: &[],
+    },
+    RuleSpec {
         id: MIN_MAX_FLOAT,
         constructs: &["fn:MIN", "fn:MAX"],
         conditions: "MIN and MAX of FLOAT, NULLs skipped: NaN orders above every number and infinity, as DuckDB orders it.",
@@ -1022,6 +1041,12 @@ pub const RULES: &[RuleSpec] = &[
         failures: &[],
     },
     RuleSpec {
+        id: TEXT_HEX_DECODE,
+        constructs: &["fn:TRY_HEX_DECODE_STRING"],
+        conditions: "A VARCHAR operand of whole pairs of hexadecimal digits of either case, decoded as UTF-8 text, NUL characters kept; an odd count, any other character or bytes that are not UTF-8 give NULL, as recorded.",
+        failures: &[],
+    },
+    RuleSpec {
         id: TO_BOOLEAN_RULE,
         constructs: &["fn:TO_BOOLEAN", "fn:TRY_TO_BOOLEAN"],
         conditions: "A VARCHAR operand, read as CAST and TRY_CAST to BOOLEAN read it.",
@@ -1093,13 +1118,13 @@ pub const RULES: &[RuleSpec] = &[
             "fn:BOOLAND_AGG",
             "fn:OBJECT_AGG",
         ],
-        conditions: "ANY_VALUE of any typed value, the group's one value, raising any_value_choice for a group holding different values or NULL beside a value; COUNT_IF of a BOOLEAN as NUMBER(13,0), NULL over no rows; BOOLOR_AGG and BOOLAND_AGG of BOOLEANs ignoring NULLs, NULL when all are; COUNT_IF, BOOLOR_AGG and BOOLAND_AGG also over whole partitions and running ordered windows, not explicit frames. OBJECT_AGG of VARCHAR keys and VARIANT values skips NULL keys and values, is {} over no rows, and raises Snowflake's error for a repeated key. COUNT(DISTINCT a, b, ...) counts distinct rows of values none of which is NULL.",
+        conditions: "ANY_VALUE of any typed value, the group's one value, raising any_value_choice for a group holding different values, a FLOAT's -0 and 0 among them, and refusing a VARIANT not proven free of DATEs and timestamps where one entered the statement, one read from a source table or schema relation relying on source_variant_json, or NULL beside a value; COUNT_IF of a BOOLEAN as NUMBER(13,0), NULL over no rows; BOOLOR_AGG and BOOLAND_AGG of BOOLEANs ignoring NULLs, NULL when all are; COUNT_IF, BOOLOR_AGG and BOOLAND_AGG also over whole partitions and running ordered windows, not explicit frames. OBJECT_AGG of VARCHAR keys and VARIANT values skips NULL keys and values, is {} over no rows, and raises Snowflake's error for a repeated key. COUNT(DISTINCT a, b, ...) counts distinct rows of values none of which is NULL.",
         failures: KEY_EXISTS_FAILURES,
     },
     RuleSpec {
         id: ARRAY_POSITION_RULE,
         constructs: &["fn:ARRAY_POSITION"],
-        conditions: "A VARIANT needle and array: the zero-based index of the first element equal to the needle as NUMBER(9,0), comparing JSON text, so strings match exactly and 1 differs from '1'; a JSON null needle finds a null element; NULL when not found, for a NULL needle or array, or a value other than an array. A needle that is a fraction, object or array, or an integer needle in an array holding a fraction or exponent, raises json_fidelity.",
+        conditions: "A VARIANT needle and array: the zero-based index of the first element equal to the needle as NUMBER(9,0), comparing JSON text, so strings match exactly and 1 differs from '1'; a JSON null needle finds a null element; NULL when not found, for a NULL needle or array, or a value other than an array. A needle that is a fraction, object or array, or an integer needle in an array holding a fraction or exponent, raises json_fidelity. Refused for a VARIANT not proven free of DATEs and timestamps, built only from values without one, in a statement that puts one in a VARIANT or reads a model's VARIANT that may hold one, since Snowflake keeps its type and DuckDB writes it as text. A VARIANT read from a source table or schema relation is trusted to hold JSON values, relying on source_variant_json.",
         failures: &[],
     },
     RuleSpec {
@@ -1133,9 +1158,38 @@ pub const RULES: &[RuleSpec] = &[
         failures: &[],
     },
     RuleSpec {
+        id: VARIANT_PARTITION,
+        constructs: &["node:window_function"],
+        conditions: "PARTITION BY a VARIANT, JSON-held: rows share a partition where Snowflake writes their values as the same text, keys in byte order at every depth, so 1 and \"1\" differ, JSON nulls share one, and SQL NULL, a missing path among them, another; relies on json_fidelity, as writing a VARIANT does. Refused for a VARIANT not proven free of DATEs and timestamps, built only from values without one, in a statement that puts one in a VARIANT or reads a model's VARIANT that may hold one, since Snowflake keeps its type and DuckDB writes it as text. A VARIANT read from a source table or schema relation is trusted to hold JSON values, relying on source_variant_json.",
+        failures: &[],
+    },
+    RuleSpec {
+        id: TEXT_NUMBER_COMPARISON,
+        constructs: &[
+            "node:eq", "node:neq", "node:lt", "node:lte", "node:gt", "node:gte",
+        ],
+        conditions: "A VARCHAR compared with a NUMBER(p,s) reads the text as a NUMBER, as recorded: surrounding spaces, a sign, leading zeros and trailing fraction zeros allowed, so '007', ' 7', '+7' and '7.0' equal 7; text Snowflake cannot read fails as its error 100038. The text is compared unrounded, so '1.5' does not equal 2, read at the widest scale that holds p - s whole digits; text with an exponent or more fraction digits than that raises, relying on text_number_scale, as its reading is unrecorded. A NUMBER of scale below 10 with more than 20 whole digits fails as 100046 when it has 38, as recorded, and otherwise raises, relying on text_number_scale, as only those widths are recorded; scale 10 and above was recorded comparing at every width.",
+        failures: &[
+            FailureMode {
+                kind: ErrorKind::NumberText,
+                snowflake: &[NUMBER_NOT_RECOGNIZED],
+            },
+            FailureMode {
+                kind: ErrorKind::NumericOverflow,
+                snowflake: &[NUMBER_OUT_OF_RANGE],
+            },
+        ],
+    },
+    RuleSpec {
+        id: REDUCE_RULE,
+        constructs: &["fn:REDUCE"],
+        conditions: "REDUCE(array, initial, (acc, x) -> body) with a FLOAT initial value and a FLOAT body over untyped parameters, the element a VARIANT: the elements folded left in array order, as recorded; the initial value for an empty array, NULL for NULL, NULL for a value other than an array when the initial value is NULL, as recorded, and otherwise a raise for a value other than an array, relying on json_fidelity.",
+        failures: &[],
+    },
+    RuleSpec {
         id: VARIANT_EQUALITY,
         constructs: &["node:eq", "node:neq", "node:in"],
-        conditions: "= and <> of a VARIANT and a VARCHAR compare the VARIANT's text, as TO_VARCHAR writes it, with the text, so 1 equals '1' and true equals 'true', and JSON null is NULL; IN of a VARIANT and VARCHAR items likewise. = and <> of a VARIANT and an integer NUMBER are TRUE only for an equal integer, FALSE for other values, JSON null included, and raise json_fidelity for a fraction.",
+        conditions: "= and <> of a VARIANT and a VARCHAR compare the VARIANT's text, as TO_VARCHAR writes it, with the text, so 1 equals '1' and true equals 'true', and JSON null is NULL; IN of a VARIANT and VARCHAR items likewise. = and <> of a VARIANT and an integer NUMBER are TRUE only for an equal integer, FALSE for other values, JSON null included, and raise json_fidelity for a fraction. = and <> of two JSON-held VARIANTs compare Snowflake's text of each, keys in byte order at every depth, so objects differing only in key order are equal, 1 and \"1\" or true and \"true\" differ, arrays compare in order, two JSON nulls are equal, and SQL NULL gives NULL. Refused for a VARIANT not proven free of DATEs and timestamps, built only from values without one, in a statement that puts one in a VARIANT or reads a model's VARIANT that may hold one, since Snowflake keeps its type and DuckDB writes it as text. A VARIANT read from a source table or schema relation is trusted to hold JSON values, relying on source_variant_json.",
         failures: &[],
     },
     RuleSpec {

@@ -15,7 +15,7 @@ use crate::conversion::_helpers::support::tree::{
     Payload, field, flag, identifier_name, integer_literal, list, missing, node_construct,
     node_kind, outside_conditions, payload_object, require_understood, unresolved,
 };
-use crate::conversion::constants::{LIMIT, ORDER_BY};
+use crate::conversion::constants::{LIMIT, ORDER_BY, VARIANT_HELD_UNREAD};
 
 /// A clause's condition node, such as WHERE's.
 pub(crate) fn clause_condition<'a>(select: &'a Payload, clause: &str) -> Option<&'a Value> {
@@ -83,11 +83,7 @@ fn is_and(node: &Value) -> bool {
 }
 
 /// GROUP BY positions or expressions over FROM columns.
-pub(crate) fn group_by(
-    select: &Payload,
-    site: Site<'_>,
-    column_count: usize,
-) -> Result<String, Refusal> {
+pub(crate) fn group_by(select: &Payload, site: Site<'_>, held: &[bool]) -> Result<String, Refusal> {
     let construct = node_construct("group_by");
     let group = payload_object(field(select, "group_by", &construct)?, &construct)?;
     require_understood(group, &["expressions"], &construct)?;
@@ -96,7 +92,7 @@ pub(crate) fn group_by(
     let mut keys: Vec<String> = Vec::new();
     for key in list(group, "expressions") {
         match integer_literal(key) {
-            Some(position) => keys.push(position_key(position, column_count, "GROUP BY")?),
+            Some(position) => keys.push(position_key(position, held, "GROUP BY")?),
             None => keys.push(grouping_key(convert_expression(key, site)?, &construct)?.sql),
         }
     }
@@ -106,12 +102,19 @@ pub(crate) fn group_by(
     Ok(format!(" GROUP BY {}", keys.join(", ")))
 }
 
-fn position_key(position: u64, column_count: usize, clause: &str) -> Result<String, Refusal> {
-    let in_range =
-        usize::try_from(position).is_ok_and(|position| (1..=column_count).contains(&position));
-    match in_range {
-        true => Ok(position.to_string()),
-        false => Err(unresolved(format!(
+/// A key by output position; an output held as a DuckDB VARIANT is refused, as its order is.
+fn position_key(position: u64, held: &[bool], clause: &str) -> Result<String, Refusal> {
+    let output = held
+        .iter()
+        .zip(1_u64..)
+        .find(|(_, output)| *output == position);
+    match output.map(|(held, _)| held) {
+        Some(false) => Ok(position.to_string()),
+        Some(true) => Err(outside_conditions(
+            node_construct("ordered"),
+            VARIANT_HELD_UNREAD.to_owned(),
+        )),
+        None => Err(unresolved(format!(
             "{clause} position {position} is out of range"
         ))),
     }
@@ -184,7 +187,11 @@ fn order_key(
     let key = item.get("this").unwrap_or(&Value::Null);
     let object = payload_object(item, &node_construct("ordered"))?;
     if let Some(position) = integer_literal(key) {
-        let position = position_key(position, outputs.len(), "ORDER BY")?;
+        let held: Vec<bool> = outputs
+            .iter()
+            .map(|(_, emitted)| emitted.is_variant_held())
+            .collect();
+        let position = position_key(position, &held, "ORDER BY")?;
         return Ok(explicit_null_order(
             &position,
             flag(object, "desc"),

@@ -4,10 +4,13 @@ use serde_json::Value;
 use sqlquack_core::classification::models::Construct;
 use sqlquack_core::refusals::models::Refusal;
 use sqlquack_duckdb::blocks::main::string_literal::string_literal;
+use sqlquack_duckdb::text::constants::REGEXP_PATTERN_SYNTAX;
+use sqlquack_duckdb::text::main::guarded_pattern::guarded_pattern;
 use sqlquack_snowflake::typing::models::SnowflakeType;
 
 use crate::conversion::_helpers::expressions::scalar::convert_expression;
 use crate::conversion::_helpers::expressions::strings::text_operand;
+use crate::conversion::_helpers::support::divergence::diverge;
 use crate::conversion::_helpers::support::scope::{Emitted, Literal};
 use crate::conversion::_helpers::support::site::Site;
 use crate::conversion::_helpers::support::tree::{
@@ -380,7 +383,14 @@ pub(crate) fn regexp(
         return Err(refuse("a REGEXP function without a pattern"));
     };
     let text = text_operand(subject, construct, site)?;
-    let pattern_text = text_literal(pattern, construct, site)?;
+    let pattern = convert_expression(pattern, site)?;
+    let pattern_text = match (&pattern.literal, name) {
+        (Some(Literal::Text(text)), _) => text.clone(),
+        (_, "REGEXP_LIKE") if pattern.data_type == SnowflakeType::Varchar => {
+            return regexp_like_column(&text, &pattern.sql, rest, (construct, site));
+        }
+        _ => return Err(refuse("an argument that must be a string literal")),
+    };
     let log = site.context.log;
     let extracting = REGEXP_EXTRACTING_FUNCTIONS.contains(&name);
     let _posix = shared_pattern(&pattern_text, extracting)
@@ -536,6 +546,37 @@ fn integer_operand(node: &Value, construct: &Construct, site: Site<'_>) -> Resul
             format!("a {other} position or length needs an implicit conversion"),
         )),
     }
+}
+
+/// REGEXP_LIKE with a pattern from a column, raising for syntax no recording shows read alike.
+fn regexp_like_column(
+    text: &str,
+    pattern: &str,
+    rest: &[Value],
+    (construct, site): (&Construct, Site<'_>),
+) -> Result<Emitted, Refusal> {
+    let refuse = |reason: &str| outside_conditions(construct.clone(), reason.to_owned());
+    let log = site.context.log;
+    let flags = match rest {
+        [] => String::new(),
+        [parameters] => {
+            let _parameters = log.rule(REGEXP_PARAMETERS);
+            match convert_expression(parameters, site)?.literal {
+                Some(Literal::Text(parameters)) => inline_flags(&parameters)
+                    .ok_or_else(|| refuse("REGEXP_LIKE parameters other than c, i and s"))?,
+                _ => return Err(refuse("a REGEXP argument other than a literal")),
+            }
+        }
+        _ => return Err(refuse("REGEXP_LIKE takes two or three arguments")),
+    };
+    diverge(site.context, REGEXP_PATTERN_SYNTAX, construct)?;
+    Ok(Emitted::new(
+        format!(
+            "regexp_full_match({text}, {})",
+            guarded_pattern(pattern, &flags, log)
+        ),
+        SnowflakeType::Boolean,
+    ))
 }
 
 /// The value of a string literal argument.

@@ -30,6 +30,18 @@ tags = ["null", "json-null", "missing-key", "nested", "array-index", "case-sensi
 origin = "generated: hazards@1"
 
 [[case]]
+id = "node_eq_combination_0_variant_variant"
+description = "node:eq over benign values of each declared argument kind."
+columns = [{ name = "x0", type = "VARIANT" }, { name = "x1", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('{\"a\":1}')", "PARSE_JSON('{\"a\":1}')"],
+  ["PARSE_JSON('{\"a\":2}')", "PARSE_JSON('{\"a\":2}')"],
+]
+expression = "x0 = x1"
+tags = ["null", "json-null", "missing-key", "nested", "array-index", "case-sensitive-key"]
+origin = "generated: hazards@1"
+
+[[case]]
 id = "node_eq_combination_1_variant_text"
 description = "node:eq over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "VARIANT" }, { name = "x1", type = "VARCHAR" }]
@@ -48,6 +60,18 @@ columns = [{ name = "x0", type = "VARIANT" }, { name = "x1", type = "NUMBER(38,0
 rows = [
   ["PARSE_JSON('{\"a\":1}')", "1"],
   ["PARSE_JSON('{\"a\":2}')", "2"],
+]
+expression = "x0 <> x1"
+tags = ["null", "json-null", "missing-key", "nested", "array-index", "case-sensitive-key"]
+origin = "generated: hazards@1"
+
+[[case]]
+id = "node_eq_combination_1_variant_variant"
+description = "node:eq over benign values of each declared argument kind."
+columns = [{ name = "x0", type = "VARIANT" }, { name = "x1", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('{\"a\":1}')", "PARSE_JSON('{\"a\":1}')"],
+  ["PARSE_JSON('{\"a\":2}')", "PARSE_JSON('{\"a\":2}')"],
 ]
 expression = "x0 <> x1"
 tags = ["null", "json-null", "missing-key", "nested", "array-index", "case-sensitive-key"]
@@ -186,6 +210,56 @@ rows = [
 expression = "x0 = x1"
 tags = ["null", "json-null", "missing-key", "nested", "array-index", "case-sensitive-key"]
 origin = "generated: hazards@1"
+
+[[case]]
+id = "node_eq_1_variant_hazards"
+description = "node:eq with the hazards null, json_null, empty_containers, case_keys, path_keys, nesting, scalars in argument 1, variant."
+columns = [{ name = "x0", type = "VARIANT" }, { name = "x1", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('{\"a\":1}')", "NULL"],
+  ["PARSE_JSON('{\"a\":1}')", "PARSE_JSON('null')"],
+  ["PARSE_JSON('{\"a\":1}')", "PARSE_JSON('{\"a\":null}')"],
+  ["PARSE_JSON('{\"a\":1}')", "PARSE_JSON('{}')"],
+  ["PARSE_JSON('{\"a\":1}')", "PARSE_JSON('[]')"],
+  ["PARSE_JSON('{\"a\":1}')", "PARSE_JSON('{\"a\":1,\"A\":2}')"],
+  ["PARSE_JSON('{\"a\":1}')", "PARSE_JSON('{\"é\":1,\"É\":2}')"],
+  ["PARSE_JSON('{\"a\":1}')", "PARSE_JSON('{\"$.a\":1,\"/a\":2,\"\":3,\"a.b\":4,\"a[0]\":5,\"*\":6}')"],
+  ["PARSE_JSON('{\"a\":1}')", "PARSE_JSON('{\"a\":{\"b\":[1,{\"c\":[2,[3]]}]}}')"],
+  ["PARSE_JSON('{\"a\":1}')", "PARSE_JSON('\"a\"')"],
+  ["PARSE_JSON('{\"a\":1}')", "PARSE_JSON('true')"],
+  ["PARSE_JSON('{\"a\":1}')", "PARSE_JSON('7')"],
+]
+expression = "x0 = x1"
+tags = ["null", "json-null", "missing-key", "nested", "array-index", "case-sensitive-key"]
+origin = "generated: hazards@1"
+
+[[case]]
+id = "node_eq_1_variant_number_spellings"
+description = "node:eq with One number written as 1, 1.0 and 1e0, which Snowflake compares by value (ARRAY_POSITION) in argument 1, variant."
+columns = [{ name = "x0", type = "VARIANT" }, { name = "x1", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('{\"a\":1}')", "PARSE_JSON('[1,1.0,1e0]')"],
+  ["PARSE_JSON('{\"a\":1}')", "PARSE_JSON('{\"a\":1.0}')"],
+  ["PARSE_JSON('{\"a\":1}')", "PARSE_JSON('1e0')"],
+]
+expression = "x0 = x1"
+tags = ["null", "json-null", "missing-key", "nested", "array-index", "case-sensitive-key"]
+origin = "generated: hazards@1"
+expected_divergence = "json_fidelity"
+
+[[case]]
+id = "node_eq_1_variant_large_numbers"
+description = "node:eq with Integers beyond 64 bits, long decimals and negative zero in argument 1, variant."
+columns = [{ name = "x0", type = "VARIANT" }, { name = "x1", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('{\"a\":1}')", "PARSE_JSON('{\"a\":18446744073709551616}')"],
+  ["PARSE_JSON('{\"a\":1}')", "PARSE_JSON('{\"a\":12345678901234567890.123}')"],
+  ["PARSE_JSON('{\"a\":1}')", "PARSE_JSON('-0')"],
+]
+expression = "x0 = x1"
+tags = ["null", "json-null", "missing-key", "nested", "array-index", "case-sensitive-key"]
+origin = "generated: hazards@1"
+expected_divergence = "json_fidelity"
 
 [[case]]
 id = "node_eq_1_combination_0_text_variant"

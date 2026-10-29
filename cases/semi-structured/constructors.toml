@@ -61,6 +61,7 @@ rows = [
 query = "SELECT TYPEOF(OBJECT_CONSTRUCT('i', i):i) AS ti, TYPEOF(OBJECT_CONSTRUCT('f', f):f) AS tf, TO_JSON(OBJECT_CONSTRUCT('i', i, 'f', f)) AS j FROM input ORDER BY ordinal"
 order = "ordered"
 tags = ["null", "boundary"]
+expected_divergence = "json_fidelity"
 
 [[case]]
 id = "object_construct_empty"
@@ -455,3 +456,19 @@ rows = [
 query = "SELECT TO_JSON(x) AS j FROM (SELECT v:a AS x, ordinal FROM input UNION ALL SELECT v:o AS x, ordinal + 10 FROM input) u ORDER BY ordinal"
 order = "ordered"
 tags = ["null", "json-null", "missing-key"]
+
+[[case]]
+id = "object_construct_number_types_64_bits"
+description = "OBJECT_CONSTRUCT values from integers within 64 bits and FLOAT, read back by TYPEOF."
+columns = [{ name = "i", type = "NUMBER(38,0)" }, { name = "f", type = "FLOAT" }]
+rows = [
+  ["0", "0.5"],
+  ["-7", "1e300"],
+  ["9007199254740993", "2.5"],
+  ["-9223372036854775808", "1e-7"],
+  ["18446744073709551615", "3"],
+  ["NULL", "NULL"],
+]
+query = "SELECT TYPEOF(OBJECT_CONSTRUCT('i', i):i) AS ti, TYPEOF(OBJECT_CONSTRUCT('f', f):f) AS tf, TO_JSON(OBJECT_CONSTRUCT('i', i, 'f', f)) AS j FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "boundary"]

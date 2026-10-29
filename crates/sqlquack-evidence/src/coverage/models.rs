@@ -86,6 +86,12 @@ pub struct Form {
     /// Hazard id, `family.id` or `position.family.id` to the divergence its case expects.
     #[serde(default)]
     pub divergences: BTreeMap<String, String>,
+    /// `position.family.id` hazards generated cases hold alone, expecting no divergence.
+    #[serde(default)]
+    pub alone: Vec<String>,
+    /// `position.family.id` to why no case of this form can record the hazard there.
+    #[serde(default)]
+    pub unrecordable: BTreeMap<String, String>,
     /// Argument positions generated cases fill with each row's number, so ordering keys never tie.
     #[serde(default)]
     pub ordinal: Vec<String>,

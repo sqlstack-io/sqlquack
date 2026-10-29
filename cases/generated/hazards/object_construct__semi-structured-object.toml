@@ -54,6 +54,18 @@ tags = ["null", "json-null", "missing-key", "invalid"]
 origin = "generated: hazards@1"
 
 [[case]]
+id = "fn_object_construct_1_combination_0_text_float"
+description = "fn:OBJECT_CONSTRUCT over benign values of each declared argument kind."
+columns = [{ name = "x0", type = "VARCHAR" }, { name = "x1", type = "FLOAT" }]
+rows = [
+  ["'a'", "1.5"],
+  ["'b'", "2.25"],
+]
+expression = "OBJECT_CONSTRUCT_KEEP_NULL('k', x1, x0, 1)"
+tags = ["null", "json-null", "missing-key", "invalid"]
+origin = "generated: hazards@1"
+
+[[case]]
 id = "fn_object_construct_1_combination_0_text_null_literal"
 description = "fn:OBJECT_CONSTRUCT over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "VARCHAR" }]
@@ -252,6 +264,473 @@ rows = [
   ["'a'", "-99999999999999999999999999999999999999"],
 ]
 expression = "OBJECT_CONSTRUCT_KEEP_NULL('k', x1, x0, 1)"
+tags = ["null", "json-null", "missing-key", "invalid"]
+origin = "generated: hazards@1"
+
+[[case]]
+id = "fn_object_construct_1_1_float_hazards"
+description = "fn:OBJECT_CONSTRUCT with the hazards null, one_spellings, subnormal, binary_fractions, large_integers in argument 1, float."
+columns = [{ name = "x0", type = "VARCHAR" }, { name = "x1", type = "FLOAT" }]
+rows = [
+  ["'a'", "NULL"],
+  ["'a'", "1"],
+  ["'a'", "1.0"],
+  ["'a'", "1e0"],
+  ["'a'", "5e-324"],
+  ["'a'", "1.7976931348623157e308"],
+  ["'a'", "0.1"],
+  ["'a'", "0.30000000000000004"],
+  ["'a'", "123456789.12345678"],
+  ["'a'", "9007199254740992"],
+  ["'a'", "9007199254740994"],
+  ["'a'", "1e16"],
+]
+expression = "OBJECT_CONSTRUCT_KEEP_NULL('k', x1, x0, 1)"
+tags = ["null", "json-null", "missing-key", "invalid"]
+origin = "generated: hazards@1"
+
+[[case]]
+id = "fn_object_construct_1_1_float_negative_zero"
+description = "fn:OBJECT_CONSTRUCT with Negative zero in argument 1, float."
+columns = [{ name = "x0", type = "VARCHAR" }, { name = "x1", type = "FLOAT" }]
+rows = [
+  ["'a'", "'-0'"],
+]
+expression = "OBJECT_CONSTRUCT_KEEP_NULL('k', x1, x0, 1)"
+tags = ["null", "json-null", "missing-key", "invalid"]
+origin = "generated: hazards@1"
+expected_divergence = "json_fidelity"
+
+[[case]]
+id = "fn_object_construct_1_1_float_nan_infinity"
+description = "fn:OBJECT_CONSTRUCT with NaN and the infinities in argument 1, float."
+columns = [{ name = "x0", type = "VARCHAR" }, { name = "x1", type = "FLOAT" }]
+rows = [
+  ["'a'", "'NaN'"],
+  ["'a'", "'inf'"],
+  ["'a'", "'-inf'"],
+]
+expression = "OBJECT_CONSTRUCT_KEEP_NULL('k', x1, x0, 1)"
+tags = ["null", "json-null", "missing-key", "invalid"]
+origin = "generated: hazards@1"
+expected_divergence = "json_fidelity"
+
+[[case]]
+id = "fn_object_construct_1_1_float_notation_boundaries"
+description = "fn:OBJECT_CONSTRUCT with Doubles where text switches between plain and exponent notation, which %.15g and %.15e write differently in argument 1, float."
+columns = [{ name = "x0", type = "VARCHAR" }, { name = "x1", type = "FLOAT" }]
+rows = [
+  ["'a'", "100"],
+  ["'a'", "0.0001"],
+  ["'a'", "1e-5"],
+  ["'a'", "1e15"],
+  ["'a'", "1e21"],
+]
+expression = "OBJECT_CONSTRUCT_KEEP_NULL('k', x1, x0, 1)"
+tags = ["null", "json-null", "missing-key", "invalid"]
+origin = "generated: hazards@1"
+
+[[case]]
+id = "fn_object_construct_2_combination_0_text_literal_float_text_literal_variant"
+description = "fn:OBJECT_CONSTRUCT over benign values of each declared argument kind."
+columns = [{ name = "x1", type = "FLOAT" }, { name = "x3", type = "VARIANT" }]
+rows = [
+  ["1.5", "PARSE_JSON('{\"a\":1}')"],
+  ["2.25", "PARSE_JSON('{\"a\":2}')"],
+]
+expression = "OBJECT_CONSTRUCT('k', x1, 'K', x3)"
+tags = ["null", "json-null", "missing-key", "invalid"]
+origin = "generated: hazards@1"
+
+[[case]]
+id = "fn_object_construct_2_combination_0_text_literal_float_text_literal_text"
+description = "fn:OBJECT_CONSTRUCT over benign values of each declared argument kind."
+columns = [{ name = "x1", type = "FLOAT" }, { name = "x3", type = "VARCHAR" }]
+rows = [
+  ["1.5", "'a'"],
+  ["2.25", "'b'"],
+]
+expression = "OBJECT_CONSTRUCT('k', x1, 'K', x3)"
+tags = ["null", "json-null", "missing-key", "invalid"]
+origin = "generated: hazards@1"
+
+[[case]]
+id = "fn_object_construct_2_combination_0_text_literal_float_text_literal_boolean"
+description = "fn:OBJECT_CONSTRUCT over benign values of each declared argument kind."
+columns = [{ name = "x1", type = "FLOAT" }, { name = "x3", type = "BOOLEAN" }]
+rows = [
+  ["1.5", "TRUE"],
+  ["2.25", "FALSE"],
+]
+expression = "OBJECT_CONSTRUCT('k', x1, 'K', x3)"
+tags = ["null", "json-null", "missing-key", "invalid"]
+origin = "generated: hazards@1"
+
+[[case]]
+id = "fn_object_construct_2_combination_0_text_literal_float_text_literal_integer"
+description = "fn:OBJECT_CONSTRUCT over benign values of each declared argument kind."
+columns = [{ name = "x1", type = "FLOAT" }, { name = "x3", type = "NUMBER(38,0)" }]
+rows = [
+  ["1.5", "1"],
+  ["2.25", "2"],
+]
+expression = "OBJECT_CONSTRUCT('k', x1, 'K', x3)"
+tags = ["null", "json-null", "missing-key", "invalid"]
+origin = "generated: hazards@1"
+
+[[case]]
+id = "fn_object_construct_2_combination_0_text_literal_float_text_literal_float"
+description = "fn:OBJECT_CONSTRUCT over benign values of each declared argument kind."
+columns = [{ name = "x1", type = "FLOAT" }, { name = "x3", type = "FLOAT" }]
+rows = [
+  ["1.5", "1.5"],
+  ["2.25", "2.25"],
+]
+expression = "OBJECT_CONSTRUCT('k', x1, 'K', x3)"
+tags = ["null", "json-null", "missing-key", "invalid"]
+origin = "generated: hazards@1"
+
+[[case]]
+id = "fn_object_construct_2_combination_1_text_literal_float_text_literal_variant"
+description = "fn:OBJECT_CONSTRUCT over benign values of each declared argument kind."
+columns = [{ name = "x1", type = "FLOAT" }, { name = "x3", type = "VARIANT" }]
+rows = [
+  ["1.5", "PARSE_JSON('{\"a\":1}')"],
+  ["2.25", "PARSE_JSON('{\"a\":2}')"],
+]
+expression = "OBJECT_CONSTRUCT_KEEP_NULL('k', x1, 'K', x3)"
+tags = ["null", "json-null", "missing-key", "invalid"]
+origin = "generated: hazards@1"
+
+[[case]]
+id = "fn_object_construct_2_combination_1_text_literal_float_text_literal_text"
+description = "fn:OBJECT_CONSTRUCT over benign values of each declared argument kind."
+columns = [{ name = "x1", type = "FLOAT" }, { name = "x3", type = "VARCHAR" }]
+rows = [
+  ["1.5", "'a'"],
+  ["2.25", "'b'"],
+]
+expression = "OBJECT_CONSTRUCT_KEEP_NULL('k', x1, 'K', x3)"
+tags = ["null", "json-null", "missing-key", "invalid"]
+origin = "generated: hazards@1"
+
+[[case]]
+id = "fn_object_construct_2_combination_1_text_literal_float_text_literal_boolean"
+description = "fn:OBJECT_CONSTRUCT over benign values of each declared argument kind."
+columns = [{ name = "x1", type = "FLOAT" }, { name = "x3", type = "BOOLEAN" }]
+rows = [
+  ["1.5", "TRUE"],
+  ["2.25", "FALSE"],
+]
+expression = "OBJECT_CONSTRUCT_KEEP_NULL('k', x1, 'K', x3)"
+tags = ["null", "json-null", "missing-key", "invalid"]
+origin = "generated: hazards@1"
+
+[[case]]
+id = "fn_object_construct_2_combination_1_text_literal_float_text_literal_integer"
+description = "fn:OBJECT_CONSTRUCT over benign values of each declared argument kind."
+columns = [{ name = "x1", type = "FLOAT" }, { name = "x3", type = "NUMBER(38,0)" }]
+rows = [
+  ["1.5", "1"],
+  ["2.25", "2"],
+]
+expression = "OBJECT_CONSTRUCT_KEEP_NULL('k', x1, 'K', x3)"
+tags = ["null", "json-null", "missing-key", "invalid"]
+origin = "generated: hazards@1"
+
+[[case]]
+id = "fn_object_construct_2_combination_1_text_literal_float_text_literal_float"
+description = "fn:OBJECT_CONSTRUCT over benign values of each declared argument kind."
+columns = [{ name = "x1", type = "FLOAT" }, { name = "x3", type = "FLOAT" }]
+rows = [
+  ["1.5", "1.5"],
+  ["2.25", "2.25"],
+]
+expression = "OBJECT_CONSTRUCT_KEEP_NULL('k', x1, 'K', x3)"
+tags = ["null", "json-null", "missing-key", "invalid"]
+origin = "generated: hazards@1"
+
+[[case]]
+id = "fn_object_construct_2_1_float_hazards"
+description = "fn:OBJECT_CONSTRUCT with the hazards null, one_spellings, subnormal, binary_fractions, large_integers in argument 1, float."
+columns = [{ name = "x1", type = "FLOAT" }, { name = "x3", type = "VARIANT" }]
+rows = [
+  ["NULL", "PARSE_JSON('{\"a\":1}')"],
+  ["1", "PARSE_JSON('{\"a\":1}')"],
+  ["1.0", "PARSE_JSON('{\"a\":1}')"],
+  ["1e0", "PARSE_JSON('{\"a\":1}')"],
+  ["5e-324", "PARSE_JSON('{\"a\":1}')"],
+  ["1.7976931348623157e308", "PARSE_JSON('{\"a\":1}')"],
+  ["0.1", "PARSE_JSON('{\"a\":1}')"],
+  ["0.30000000000000004", "PARSE_JSON('{\"a\":1}')"],
+  ["123456789.12345678", "PARSE_JSON('{\"a\":1}')"],
+  ["9007199254740992", "PARSE_JSON('{\"a\":1}')"],
+  ["9007199254740994", "PARSE_JSON('{\"a\":1}')"],
+  ["1e16", "PARSE_JSON('{\"a\":1}')"],
+]
+expression = "OBJECT_CONSTRUCT('k', x1, 'K', x3)"
+tags = ["null", "json-null", "missing-key", "invalid"]
+origin = "generated: hazards@1"
+
+[[case]]
+id = "fn_object_construct_2_1_float_negative_zero"
+description = "fn:OBJECT_CONSTRUCT with Negative zero in argument 1, float."
+columns = [{ name = "x1", type = "FLOAT" }, { name = "x3", type = "VARIANT" }]
+rows = [
+  ["'-0'", "PARSE_JSON('{\"a\":1}')"],
+]
+expression = "OBJECT_CONSTRUCT('k', x1, 'K', x3)"
+tags = ["null", "json-null", "missing-key", "invalid"]
+origin = "generated: hazards@1"
+expected_divergence = "json_fidelity"
+
+[[case]]
+id = "fn_object_construct_2_1_float_nan_infinity"
+description = "fn:OBJECT_CONSTRUCT with NaN and the infinities in argument 1, float."
+columns = [{ name = "x1", type = "FLOAT" }, { name = "x3", type = "VARIANT" }]
+rows = [
+  ["'NaN'", "PARSE_JSON('{\"a\":1}')"],
+  ["'inf'", "PARSE_JSON('{\"a\":1}')"],
+  ["'-inf'", "PARSE_JSON('{\"a\":1}')"],
+]
+expression = "OBJECT_CONSTRUCT('k', x1, 'K', x3)"
+tags = ["null", "json-null", "missing-key", "invalid"]
+origin = "generated: hazards@1"
+expected_divergence = "json_fidelity"
+
+[[case]]
+id = "fn_object_construct_2_1_float_notation_boundaries"
+description = "fn:OBJECT_CONSTRUCT with Doubles where text switches between plain and exponent notation, which %.15g and %.15e write differently in argument 1, float."
+columns = [{ name = "x1", type = "FLOAT" }, { name = "x3", type = "VARIANT" }]
+rows = [
+  ["100", "PARSE_JSON('{\"a\":1}')"],
+  ["0.0001", "PARSE_JSON('{\"a\":1}')"],
+  ["1e-5", "PARSE_JSON('{\"a\":1}')"],
+  ["1e15", "PARSE_JSON('{\"a\":1}')"],
+  ["1e21", "PARSE_JSON('{\"a\":1}')"],
+]
+expression = "OBJECT_CONSTRUCT('k', x1, 'K', x3)"
+tags = ["null", "json-null", "missing-key", "invalid"]
+origin = "generated: hazards@1"
+
+[[case]]
+id = "fn_object_construct_2_3_variant_hazards"
+description = "fn:OBJECT_CONSTRUCT with the hazards null, json_null, empty_containers, case_keys, path_keys, nesting in argument 3, variant."
+columns = [{ name = "x1", type = "FLOAT" }, { name = "x3", type = "VARIANT" }]
+rows = [
+  ["1.5", "NULL"],
+  ["1.5", "PARSE_JSON('null')"],
+  ["1.5", "PARSE_JSON('{\"a\":null}')"],
+  ["1.5", "PARSE_JSON('{}')"],
+  ["1.5", "PARSE_JSON('[]')"],
+  ["1.5", "PARSE_JSON('{\"a\":1,\"A\":2}')"],
+  ["1.5", "PARSE_JSON('{\"é\":1,\"É\":2}')"],
+  ["1.5", "PARSE_JSON('{\"$.a\":1,\"/a\":2,\"\":3,\"a.b\":4,\"a[0]\":5,\"*\":6}')"],
+  ["1.5", "PARSE_JSON('{\"a\":{\"b\":[1,{\"c\":[2,[3]]}]}}')"],
+]
+expression = "OBJECT_CONSTRUCT('k', x1, 'K', x3)"
+tags = ["null", "json-null", "missing-key", "invalid"]
+origin = "generated: hazards@1"
+
+[[case]]
+id = "fn_object_construct_2_3_variant_number_spellings"
+description = "fn:OBJECT_CONSTRUCT with One number written as 1, 1.0 and 1e0, which Snowflake compares by value (ARRAY_POSITION) in argument 3, variant."
+columns = [{ name = "x1", type = "FLOAT" }, { name = "x3", type = "VARIANT" }]
+rows = [
+  ["1.5", "PARSE_JSON('[1,1.0,1e0]')"],
+  ["1.5", "PARSE_JSON('{\"a\":1.0}')"],
+  ["1.5", "PARSE_JSON('1e0')"],
+]
+expression = "OBJECT_CONSTRUCT('k', x1, 'K', x3)"
+tags = ["null", "json-null", "missing-key", "invalid"]
+origin = "generated: hazards@1"
+expected_divergence = "json_fidelity"
+
+[[case]]
+id = "fn_object_construct_2_3_variant_large_numbers"
+description = "fn:OBJECT_CONSTRUCT with Integers beyond 64 bits, long decimals and negative zero in argument 3, variant."
+columns = [{ name = "x1", type = "FLOAT" }, { name = "x3", type = "VARIANT" }]
+rows = [
+  ["1.5", "PARSE_JSON('{\"a\":18446744073709551616}')"],
+  ["1.5", "PARSE_JSON('{\"a\":12345678901234567890.123}')"],
+  ["1.5", "PARSE_JSON('-0')"],
+]
+expression = "OBJECT_CONSTRUCT('k', x1, 'K', x3)"
+tags = ["null", "json-null", "missing-key", "invalid"]
+origin = "generated: hazards@1"
+expected_divergence = "json_fidelity"
+
+[[case]]
+id = "fn_object_construct_2_3_variant_scalars"
+description = "fn:OBJECT_CONSTRUCT with Top-level text, boolean and number documents in argument 3, variant."
+columns = [{ name = "x1", type = "FLOAT" }, { name = "x3", type = "VARIANT" }]
+rows = [
+  ["1.5", "PARSE_JSON('\"a\"')"],
+  ["1.5", "PARSE_JSON('true')"],
+  ["1.5", "PARSE_JSON('7')"],
+]
+expression = "OBJECT_CONSTRUCT('k', x1, 'K', x3)"
+tags = ["null", "json-null", "missing-key", "invalid"]
+origin = "generated: hazards@1"
+expected_divergence = "json_fidelity"
+
+[[case]]
+id = "fn_object_construct_2_3_text_hazards"
+description = "fn:OBJECT_CONSTRUCT with the hazards null, empty, dollar_prefix, slash_prefix, dots_brackets, quotes_backslashes, non_ascii, title_case_digraph, case_only, whitespace, number_text in argument 3, text."
+columns = [{ name = "x1", type = "FLOAT" }, { name = "x3", type = "VARCHAR" }]
+rows = [
+  ["1.5", "NULL"],
+  ["1.5", "''"],
+  ["1.5", "'$.a'"],
+  ["1.5", "'$'"],
+  ["1.5", "'/a'"],
+  ["1.5", "'/'"],
+  ["1.5", "'a.b'"],
+  ["1.5", "'a[0]'"],
+  ["1.5", "'*'"],
+  ["1.5", "'it''s'"],
+  ["1.5", "'say \"hi\"'"],
+  ["1.5", "'a\\\\b'"],
+  ["1.5", "'Größe'"],
+  ["1.5", "'é'"],
+  ["1.5", "'é'"],
+  ["1.5", "'😀'"],
+  ["1.5", "'ǆungla'"],
+  ["1.5", "'ǅ'"],
+  ["1.5", "'ǉubav'"],
+  ["1.5", "'ǲ'"],
+  ["1.5", "'Order'"],
+  ["1.5", "'ORDER'"],
+  ["1.5", "'order'"],
+  ["1.5", "'Straße'"],
+  ["1.5", "'STRASSE'"],
+  ["1.5", "' a'"],
+  ["1.5", "'a '"],
+  ["1.5", "' '"],
+  ["1.5", "'	'"],
+  ["1.5", "'a\nb'"],
+  ["1.5", "'007'"],
+  ["1.5", "'1.0'"],
+  ["1.5", "'1e0'"],
+  ["1.5", "'+7'"],
+  ["1.5", "'-0'"],
+]
+expression = "OBJECT_CONSTRUCT('k', x1, 'K', x3)"
+tags = ["null", "json-null", "missing-key", "invalid"]
+origin = "generated: hazards@1"
+
+[[case]]
+id = "fn_object_construct_2_3_boolean_hazards"
+description = "fn:OBJECT_CONSTRUCT with SQL NULL in argument 3, boolean."
+columns = [{ name = "x1", type = "FLOAT" }, { name = "x3", type = "BOOLEAN" }]
+rows = [
+  ["1.5", "NULL"],
+]
+expression = "OBJECT_CONSTRUCT('k', x1, 'K', x3)"
+tags = ["null", "json-null", "missing-key", "invalid"]
+origin = "generated: hazards@1"
+
+[[case]]
+id = "fn_object_construct_2_3_integer_hazards"
+description = "fn:OBJECT_CONSTRUCT with the hazards null, zero_negative, beyond_double in argument 3, integer."
+columns = [{ name = "x1", type = "FLOAT" }, { name = "x3", type = "NUMBER(38,0)" }]
+rows = [
+  ["1.5", "NULL"],
+  ["1.5", "0"],
+  ["1.5", "-1"],
+  ["1.5", "9007199254740993"],
+  ["1.5", "-9007199254740993"],
+]
+expression = "OBJECT_CONSTRUCT('k', x1, 'K', x3)"
+tags = ["null", "json-null", "missing-key", "invalid"]
+origin = "generated: hazards@1"
+
+[[case]]
+id = "fn_object_construct_2_3_integer_beyond_64_bits"
+description = "fn:OBJECT_CONSTRUCT with Integers beyond the 64-bit range, which BIGINT arithmetic overflows in argument 3, integer."
+columns = [{ name = "x1", type = "FLOAT" }, { name = "x3", type = "NUMBER(38,0)" }]
+rows = [
+  ["1.5", "18446744073709551616"],
+  ["1.5", "-9223372036854775809"],
+]
+expression = "OBJECT_CONSTRUCT('k', x1, 'K', x3)"
+tags = ["null", "json-null", "missing-key", "invalid"]
+origin = "generated: hazards@1"
+expected_divergence = "json_fidelity"
+
+[[case]]
+id = "fn_object_construct_2_3_integer_digits_38"
+description = "fn:OBJECT_CONSTRUCT with The largest 38-digit integers in argument 3, integer."
+columns = [{ name = "x1", type = "FLOAT" }, { name = "x3", type = "NUMBER(38,0)" }]
+rows = [
+  ["1.5", "99999999999999999999999999999999999999"],
+  ["1.5", "-99999999999999999999999999999999999999"],
+]
+expression = "OBJECT_CONSTRUCT('k', x1, 'K', x3)"
+tags = ["null", "json-null", "missing-key", "invalid"]
+origin = "generated: hazards@1"
+expected_divergence = "json_fidelity"
+
+[[case]]
+id = "fn_object_construct_2_3_float_hazards"
+description = "fn:OBJECT_CONSTRUCT with the hazards null, one_spellings, subnormal, binary_fractions, large_integers in argument 3, float."
+columns = [{ name = "x1", type = "FLOAT" }, { name = "x3", type = "FLOAT" }]
+rows = [
+  ["1.5", "NULL"],
+  ["1.5", "1"],
+  ["1.5", "1.0"],
+  ["1.5", "1e0"],
+  ["1.5", "5e-324"],
+  ["1.5", "1.7976931348623157e308"],
+  ["1.5", "0.1"],
+  ["1.5", "0.30000000000000004"],
+  ["1.5", "123456789.12345678"],
+  ["1.5", "9007199254740992"],
+  ["1.5", "9007199254740994"],
+  ["1.5", "1e16"],
+]
+expression = "OBJECT_CONSTRUCT('k', x1, 'K', x3)"
+tags = ["null", "json-null", "missing-key", "invalid"]
+origin = "generated: hazards@1"
+
+[[case]]
+id = "fn_object_construct_2_3_float_negative_zero"
+description = "fn:OBJECT_CONSTRUCT with Negative zero in argument 3, float."
+columns = [{ name = "x1", type = "FLOAT" }, { name = "x3", type = "FLOAT" }]
+rows = [
+  ["1.5", "'-0'"],
+]
+expression = "OBJECT_CONSTRUCT('k', x1, 'K', x3)"
+tags = ["null", "json-null", "missing-key", "invalid"]
+origin = "generated: hazards@1"
+expected_divergence = "json_fidelity"
+
+[[case]]
+id = "fn_object_construct_2_3_float_nan_infinity"
+description = "fn:OBJECT_CONSTRUCT with NaN and the infinities in argument 3, float."
+columns = [{ name = "x1", type = "FLOAT" }, { name = "x3", type = "FLOAT" }]
+rows = [
+  ["1.5", "'NaN'"],
+  ["1.5", "'inf'"],
+  ["1.5", "'-inf'"],
+]
+expression = "OBJECT_CONSTRUCT('k', x1, 'K', x3)"
+tags = ["null", "json-null", "missing-key", "invalid"]
+origin = "generated: hazards@1"
+expected_divergence = "json_fidelity"
+
+[[case]]
+id = "fn_object_construct_2_3_float_notation_boundaries"
+description = "fn:OBJECT_CONSTRUCT with Doubles where text switches between plain and exponent notation, which %.15g and %.15e write differently in argument 3, float."
+columns = [{ name = "x1", type = "FLOAT" }, { name = "x3", type = "FLOAT" }]
+rows = [
+  ["1.5", "100"],
+  ["1.5", "0.0001"],
+  ["1.5", "1e-5"],
+  ["1.5", "1e15"],
+  ["1.5", "1e21"],
+]
+expression = "OBJECT_CONSTRUCT('k', x1, 'K', x3)"
 tags = ["null", "json-null", "missing-key", "invalid"]
 origin = "generated: hazards@1"
 

@@ -73,6 +73,24 @@ arguments = [
   { families = ["text"], kinds = ["literal"] },
 ]
 
+# A FLOAT against NUMBER bounds and a NUMBER against FLOAT bounds, compared as doubles; the
+# between_float_number cases record them, so this form generates none.
+[[rule.form]]
+construct = "node:between"
+arguments = [
+  { families = ["float"] },
+  { families = ["integer", "decimal"] },
+  { families = ["integer", "decimal"] },
+]
+
+[[rule.form]]
+construct = "node:between"
+arguments = [
+  { families = ["integer", "decimal"] },
+  { families = ["float"] },
+  { families = ["float"] },
+]
+
 [[rule]]
 id = "rule.exists"
 

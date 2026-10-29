@@ -356,7 +356,7 @@ fn macro_values(converted: &serde_json::Value, macro_body: &str, call: &str) -> 
 
 const COVERAGE_RULE: &str = "rule.variant_computed_get";
 
-const COVERAGE_HAZARDS: &str = r#"version = 3
+const COVERAGE_HAZARDS: &str = r#"version = 4
 
 [families.text]
 sql_type = "VARCHAR"

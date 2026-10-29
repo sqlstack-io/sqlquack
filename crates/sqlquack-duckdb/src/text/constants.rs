@@ -15,6 +15,34 @@ pub const CODE_POINT_TEXT: &str = "duckdb.code_point_text";
 /// HEX_ENCODE's hexadecimal digits of the UTF-8 bytes: `duckdb.hex_text`.
 pub const HEX_TEXT: &str = "duckdb.hex_text";
 
+/// TRY_HEX_DECODE_STRING's text from hexadecimal digits: `duckdb.hex_decoded_text`.
+pub const HEX_DECODED_TEXT: &str = "duckdb.hex_decoded_text";
+
+/// The divergence for REGEXP patterns from a column in a syntax no recording shows read alike.
+pub const REGEXP_PATTERN_SYNTAX: &str = "regexp_pattern_syntax";
+
+/// Regular expression syntax RE2 and Snowflake were recorded reading alike, anchors only at the ends.
+pub const RECORDED_PATTERN_SYNTAX: &str =
+    r"\^?(?:(?:[^\\.\[\](){}*+?|^$]|\.|\)|\[\^?[^\]\[\\:][^\]\[\\:]*\])[*+?]?|\(|\|)*\$?";
+
+/// A REGEXP pattern from a column checked against the recorded syntax: `duckdb.guarded_pattern`.
+pub const GUARDED_PATTERN: &str = "duckdb.guarded_pattern";
+
+/// The divergence for text compared with a NUMBER that it spells beyond the NUMBER's scale.
+pub const TEXT_NUMBER_SCALE: &str = "text_number_scale";
+
+/// Text compared with a NUMBER, read at its scale or raising: `duckdb.compared_number_text`.
+pub const COMPARED_NUMBER_TEXT: &str = "duckdb.compared_number_text";
+/// A NUMBER compared with text, raising beyond the recorded widths: `duckdb.compared_number_range`.
+pub const COMPARED_NUMBER_RANGE: &str = "duckdb.compared_number_range";
+/// The whole digits of a NUMBER recorded comparing with text; 38 overflow as 100046.
+pub const TEXT_COMPARED_WHOLE_DIGITS: u8 = 20;
+/// The scale from which a NUMBER compared with text was recorded never overflowing.
+pub const TEXT_COMPARED_SAFE_SCALE: u8 = 10;
+
+/// Whole pairs of hexadecimal digits of either case, which TRY_HEX_DECODE_STRING decodes.
+pub const HEX_PAIRS_PATTERN: &str = "(?:[0-9A-Fa-f]{2})*";
+
 /// The divergence INITCAP raises for text no recording shows it capitalising.
 pub const INITCAP_TEXT: &str = "initcap_text";
 

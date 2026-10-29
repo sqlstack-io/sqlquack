@@ -4,31 +4,47 @@ use sqlquack_core::provenance::models::ProvenanceLog;
 
 use crate::floats::_helpers::values::bound;
 use crate::floats::constants::{
-    FLOAT_TEXT, FLOAT_TEXT_PLACES, FLOAT_TO_TEXT, SMALLEST_NORMAL_DOUBLE,
+    FLOAT_TEXT, FLOAT_TEXT_LONG_DIGITS, FLOAT_TEXT_LONG_RANGES, FLOAT_TEXT_SHORT_DIGITS,
+    FLOAT_TEXT_SHORT_RANGES, FLOAT_TO_TEXT,
 };
 use crate::raises::main::raised::raised;
 
-/// `%.15g` text, `NaN`, `inf` and `-inf`; text no recording pins down raises `float_text`.
+/// The recorded text: up to ten significant digits as written, more only in recorded magnitudes.
 pub fn float_to_text(value: &str, log: &ProvenanceLog) -> String {
     log.building_block(FLOAT_TO_TEXT);
     let sql = "f";
     let unproven = raised(&format!(
-        "{FLOAT_TEXT}: a FLOAT whose text no recording shows: negative zero, subnormal or with \
-         digits past the fifteenth decimal place"
+        "{FLOAT_TEXT}: a FLOAT whose text no recording shows: negative zero, or more than ten \
+         significant digits at a magnitude whose text is unrecorded"
     ));
-    let text = format!("printf('%.15g', {sql})");
-    let places = format!(
-        "(CASE WHEN contains({text}, 'e') THEN length(regexp_extract({text}, '[.]([0-9]+)e', 1)) \
-         + CAST(regexp_extract({text}, 'e-([0-9]+)$', 1) AS INTEGER) \
-         ELSE length(regexp_extract({text}, '[.]([0-9]+)$', 1)) END)"
+    let text = |digits: u8| format!("printf('%.{digits}g', {sql})");
+    let full = text(FLOAT_TEXT_LONG_DIGITS);
+    let digits = format!(
+        "length(ltrim(regexp_replace(regexp_replace({full}, 'e.*$', ''), '[^0-9]', '', 'g'), '0'))"
     );
+    let within = |ranges: &[(&str, &str)]| {
+        ranges
+            .iter()
+            .map(|(from, to)| {
+                format!(
+                    "abs({sql}) >= CAST('{from}' AS DOUBLE) AND abs({sql}) < CAST('{to}' AS DOUBLE)"
+                )
+            })
+            .collect::<Vec<String>>()
+            .join(" OR ")
+    };
     let body = format!(
         "(CASE WHEN {sql} IS NULL THEN NULL WHEN isnan({sql}) THEN 'NaN' \
          WHEN isinf({sql}) THEN CASE WHEN {sql} > 0 THEN 'inf' ELSE '-inf' END \
          WHEN {sql} = 0 AND NOT signbit({sql}) THEN '0' \
-         WHEN abs({sql}) < {SMALLEST_NORMAL_DOUBLE} \
-         OR abs({sql}) < 1 AND {places} > {FLOAT_TEXT_PLACES} THEN CAST({unproven} AS VARCHAR) \
-         ELSE {text} END)"
+         WHEN {sql} = 0 THEN CAST({unproven} AS VARCHAR) \
+         WHEN {digits} <= {FLOAT_TEXT_SHORT_DIGITS} THEN {full} \
+         WHEN {} THEN {} \
+         WHEN {} THEN {full} \
+         ELSE CAST({unproven} AS VARCHAR) END)",
+        within(FLOAT_TEXT_SHORT_RANGES),
+        text(FLOAT_TEXT_SHORT_DIGITS),
+        within(FLOAT_TEXT_LONG_RANGES),
     );
     bound(value, sql, &body)
 }

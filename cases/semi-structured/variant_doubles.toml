@@ -25,6 +25,25 @@ order = "ordered"
 tags = ["null", "json-null", "boundary"]
 
 [[case]]
+id = "keep_null_float_runtime_values"
+description = "OBJECT_CONSTRUCT_KEEP_NULL of text and FLOAT over many rows: text, type, FLOAT cast and the result, without the text cast that raises."
+columns = [{ name = "s", type = "VARCHAR" }, { name = "x", type = "FLOAT" }]
+rows = [
+  ["'src'", "0.1"],
+  ["'src'", "0.30000000000000004"],
+  ["'src'", "1e23"],
+  ["'src'", "5e-324"],
+  ["'src'", "1.7976931348623157e308"],
+  ["'src'", "123456789.125"],
+  ["'src'", "-1.5e-10"],
+  ["'src'", "100"],
+  ["NULL", "NULL"],
+]
+query = "SELECT TO_JSON(OBJECT_CONSTRUCT_KEEP_NULL('source', s, 'unit_price', x)) AS j, TYPEOF(OBJECT_CONSTRUCT_KEEP_NULL('source', s, 'unit_price', x):unit_price) AS t, OBJECT_CONSTRUCT_KEEP_NULL('source', s, 'unit_price', x):unit_price::FLOAT AS f, CAST(OBJECT_CONSTRUCT_KEEP_NULL('source', s, 'unit_price', x) AS VARIANT) AS v FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "json-null", "boundary"]
+
+[[case]]
 id = "float_text_folding_single_row"
 description = "TO_VARIANT(FLOAT)::VARCHAR and TO_JSON from a one-row input, to compare with the many-row case below."
 columns = [{ name = "x", type = "FLOAT" }]
@@ -34,6 +53,7 @@ rows = [
 query = "SELECT TO_VARIANT(x)::VARCHAR AS c, TO_JSON(TO_VARIANT(x)) AS j, x::VARCHAR AS fx FROM input ORDER BY ordinal"
 order = "ordered"
 tags = ["boundary"]
+expected_divergence = "float_text"
 
 [[case]]
 id = "float_text_folding_many_rows"
@@ -50,6 +70,7 @@ rows = [
 query = "SELECT TO_VARIANT(x)::VARCHAR AS c, TO_JSON(TO_VARIANT(x)) AS j, x::VARCHAR AS fx FROM input ORDER BY ordinal"
 order = "ordered"
 tags = ["boundary"]
+expected_divergence = "float_text"
 
 [[case]]
 id = "float_negative_zero_computed"
@@ -62,6 +83,7 @@ rows = [
 query = "SELECT TO_JSON(OBJECT_CONSTRUCT('n', -x * 0)) AS d, TO_JSON(ARRAY_CONSTRUCT(-x * 0)) AS a, TO_JSON(TO_VARIANT(-x * 0)) AS j, TO_JSON(PARSE_JSON('-0e0')) AS p FROM input ORDER BY ordinal"
 order = "ordered"
 tags = ["zero", "negative", "boundary"]
+expected_divergence = "json_fidelity"
 
 [[case]]
 id = "float_special_values"
@@ -75,6 +97,7 @@ rows = [
 query = "SELECT TO_JSON(OBJECT_CONSTRUCT('n', x)) AS d, TYPEOF(TO_VARIANT(x)) AS t, TO_VARIANT(x)::VARCHAR AS c, TO_JSON(ARRAY_CONSTRUCT(x)) AS a FROM input ORDER BY ordinal"
 order = "ordered"
 tags = ["boundary"]
+expected_divergence = "json_fidelity"
 
 [[case]]
 id = "array_agg_floats"
@@ -140,6 +163,7 @@ rows = [
 query = "SELECT TO_JSON(OBJECT_CONSTRUCT('f', x, 'j', PARSE_JSON('{\"d\":1.5,\"e\":1.5e0,\"i\":2}'))) AS d, TYPEOF(OBJECT_CONSTRUCT('f', x, 'j', PARSE_JSON('{\"d\":1.5}')):j:d) AS t, TO_JSON(ARRAY_CONSTRUCT(x, PARSE_JSON('1.5'))) AS a FROM input ORDER BY ordinal"
 order = "ordered"
 tags = ["mixed-types", "nested", "null"]
+expected_divergence = "json_fidelity"
 
 [[case]]
 id = "float_variant_text_round_trip"
@@ -153,6 +177,7 @@ rows = [
 query = "SELECT TYPEOF(PARSE_JSON(TO_VARCHAR(OBJECT_CONSTRUCT('n', x))):n) AS t, TO_JSON(PARSE_JSON(TO_JSON(OBJECT_CONSTRUCT('n', x)))) AS j, PARSE_JSON(TO_JSON(OBJECT_CONSTRUCT('n', x))):n::FLOAT = x AS same FROM input ORDER BY ordinal"
 order = "ordered"
 tags = ["boundary"]
+expected_divergence = "json_fidelity"
 
 [[case]]
 id = "float_variant_equality"
@@ -190,5 +215,19 @@ rows = [
   ["NULL"],
 ]
 query = "SELECT TO_JSON(OBJECT_INSERT(OBJECT_CONSTRUCT('a', 1), 'f', x)) AS c, TO_JSON(OBJECT_INSERT(PARSE_JSON('{\"d\":1.5}'), 'f', x)) AS p, TO_JSON(OBJECT_INSERT(OBJECT_CONSTRUCT('a', 1), 'f', x, TRUE)) AS u FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "mixed-types"]
+expected_divergence = "json_fidelity"
+
+[[case]]
+id = "object_insert_float_constructed"
+description = "OBJECT_INSERT of a FLOAT into a constructed object, inserted and updated."
+columns = [{ name = "x", type = "FLOAT" }]
+rows = [
+  ["0.5"],
+  ["1e300"],
+  ["NULL"],
+]
+query = "SELECT TO_JSON(OBJECT_INSERT(OBJECT_CONSTRUCT('a', 1), 'f', x)) AS c, TO_JSON(OBJECT_INSERT(OBJECT_CONSTRUCT('a', 1, 'f', 2), 'f', x, TRUE)) AS u FROM input ORDER BY ordinal"
 order = "ordered"
 tags = ["null", "mixed-types"]

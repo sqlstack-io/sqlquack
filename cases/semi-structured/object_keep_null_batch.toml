@@ -104,6 +104,7 @@ rows = [
 ]
 expression = "OBJECT_CONSTRUCT_KEEP_NULL('price', x)"
 tags = ["null", "json-null", "nested"]
+expected_divergence = "json_fidelity"
 
 [[case]]
 id = "keep_null_variant_path_float"

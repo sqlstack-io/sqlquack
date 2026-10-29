@@ -1,6 +1,7 @@
 //! Scalar expressions: dispatching each node kind to its rule.
 
 use serde_json::Value;
+use sqlquack_core::classification::models::Construct;
 use sqlquack_core::refusals::models::Refusal;
 
 use crate::conversion::_helpers::expressions::atoms::{
@@ -17,6 +18,9 @@ use crate::conversion::_helpers::expressions::operators::{
     arithmetic, comparison_predicate, logic, modulo, negation, null_safe_comparison,
 };
 use crate::conversion::_helpers::expressions::ordered_aggregates::within_group;
+use crate::conversion::_helpers::expressions::ordered_aggregates::{
+    unordered_array_agg, unordered_array_agg_call,
+};
 use crate::conversion::_helpers::expressions::predicates::{
     between, exists, in_predicate, null_test,
 };
@@ -28,6 +32,7 @@ use crate::conversion::_helpers::expressions::strings::{
 };
 use crate::conversion::_helpers::expressions::temporal_functions::{date_diff, extract};
 use crate::conversion::_helpers::expressions::text_functions::{length, like, substring};
+use crate::conversion::_helpers::expressions::variants::variant_function;
 use crate::conversion::_helpers::expressions::windows::convert_window;
 use crate::conversion::_helpers::support::collecting::{
     collecting, events, placeholder, record, stopped,
@@ -36,17 +41,52 @@ use crate::conversion::_helpers::support::scope::Emitted;
 use crate::conversion::_helpers::support::shapes::{shape_argument, shape_construct};
 use crate::conversion::_helpers::support::site::Site;
 use crate::conversion::_helpers::support::tree::{
-    function_construct, missing, node_construct, node_kind, outside_conditions,
+    function_construct, missing, node_construct, node_kind, outside_conditions, payload_object,
+    require_understood,
 };
-use crate::conversion::constants::{CALL_KIND, OBJECT_CONSTANT_KIND, RLIKE_PAIR};
+use crate::conversion::constants::{
+    AGGREGATE_CALL_KIND, ARRAY_LITERAL_KIND, CALL_KIND, OBJECT_CONSTANT_KIND, RLIKE_PAIR,
+    VARIANT_HELD_UNREAD,
+};
 
-/// One scalar expression, located; when collecting, a refused one becomes a placeholder.
+/// One scalar expression, located; VARIANT-held values refused, collected refusals as placeholders.
 pub(crate) fn convert_expression(node: &Value, site: Site<'_>) -> Result<Emitted, Refusal> {
+    converted(node, site, false)
+}
+
+/// One scalar expression, as [`convert_expression`], also when it is a VARIANT-held value.
+pub(crate) fn convert_held(node: &Value, site: Site<'_>) -> Result<Emitted, Refusal> {
+    converted(node, site, true)
+}
+
+fn converted(node: &Value, site: Site<'_>, held: bool) -> Result<Emitted, Refusal> {
+    let typed = site.context.typed;
+    let reads = typed.reads();
+    converted_checked(node, site, held).map(|emitted| {
+        let (untainted, sourced) = typed.since(reads);
+        Emitted {
+            untainted,
+            sourced,
+            ..emitted
+        }
+    })
+}
+
+fn converted_checked(node: &Value, site: Site<'_>, held: bool) -> Result<Emitted, Refusal> {
+    let checked = |node: &Value| {
+        located(node, site).and_then(|emitted| match held || !emitted.is_variant_held() {
+            true => Ok(emitted),
+            false => Err(site.context.locator.placed(
+                outside_conditions(held_construct(node), VARIANT_HELD_UNREAD.to_owned()),
+                node,
+            )),
+        })
+    };
     if !collecting() {
-        return located(node, site);
+        return checked(node);
     }
     let before = events();
-    match located(node, site) {
+    match checked(node) {
         Ok(emitted) => Ok(emitted),
         Err(refusal) => {
             record(refusal, before);
@@ -78,6 +118,17 @@ fn located(node: &Value, site: Site<'_>) -> Result<Emitted, Refusal> {
     let mut emitted = converted.map_err(|refusal| locator.placed(refusal, node))?;
     emitted.sql = locator.identified(&emitted.sql, node);
     Ok(emitted)
+}
+
+/// The construct a VARIANT-held value was built by, which a reader cannot take.
+fn held_construct(node: &Value) -> Construct {
+    match node_kind(node) {
+        Some((kind, payload)) if kind == CALL_KIND || kind == AGGREGATE_CALL_KIND => {
+            function_construct(&call_name(payload))
+        }
+        Some((kind, _)) => node_construct(kind),
+        None => node_construct("unknown"),
+    }
 }
 
 fn convert_kind(node: &Value, site: Site<'_>) -> Result<Emitted, Refusal> {
@@ -125,6 +176,7 @@ fn convert_kind(node: &Value, site: Site<'_>) -> Result<Emitted, Refusal> {
         "subscript" => variant_subscript(payload, site),
         "concat" => concat_operator(payload, site),
         OBJECT_CONSTANT_KIND => object_constant(payload, site),
+        ARRAY_LITERAL_KIND => array_literal(payload, site),
         "regexp_like" => match rlike_as_call(payload) {
             Some(call) => {
                 site.context.log.equivalence(RLIKE_PAIR);
@@ -156,6 +208,15 @@ fn convert_kind(node: &Value, site: Site<'_>) -> Result<Emitted, Refusal> {
                     ));
                 }
                 named_aggregate(&call_name(payload), payload, site, None)
+            }
+            None if site.placement.aggregates && unordered_array_agg_call(node).is_some() => {
+                let call = unordered_array_agg_call(node).ok_or_else(|| {
+                    missing(
+                        function_construct("ARRAY_AGG"),
+                        "ARRAY_AGG has an unexpected shape".to_owned(),
+                    )
+                })?;
+                unordered_array_agg(call, site)
             }
             None => {
                 let name = payload
@@ -210,4 +271,28 @@ fn window(payload: &Value, site: Site<'_>) -> Result<Emitted, Refusal> {
         ));
     }
     convert_window(payload, site)
+}
+
+/// A bracket array literal, `[a, b]`, which Snowflake builds as ARRAY_CONSTRUCT(a, b) does.
+fn array_literal(payload: &Value, site: Site<'_>) -> Result<Emitted, Refusal> {
+    let construct = node_construct(ARRAY_LITERAL_KIND);
+    let payload = payload_object(payload, &construct)?;
+    require_understood(
+        payload,
+        &["expressions", "bracket_notation", "use_list_keyword"],
+        &construct,
+    )?;
+    let flag = |name: &str| payload.get(name).and_then(Value::as_bool).unwrap_or(false);
+    if !flag("bracket_notation") || flag("use_list_keyword") {
+        return Err(outside_conditions(
+            construct,
+            "an ARRAY or LIST constructor other than a bracket literal".to_owned(),
+        ));
+    }
+    let elements = payload
+        .get("expressions")
+        .and_then(Value::as_array)
+        .cloned()
+        .unwrap_or_default();
+    variant_function("ARRAY_CONSTRUCT", &elements, &construct, site)
 }

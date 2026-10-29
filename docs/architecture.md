@@ -159,6 +159,11 @@ functions, keyed by the names statements use once resolved (unquoted names upper
 A file holding only the relations map, the earlier form, still loads. A relation or function using
 a type SQLQuack does not know is left out, so statements using it are refused.
 
+A column may also be written as an object, `{"name": "PAYLOAD", "type": "VARIANT",
+"typed_leaves": true}`. `typed_leaves` marks a VARIANT column that may hold DATE, TIME, timestamp
+or BINARY values written by a process outside the project. Statements comparing such a column by
+its text are refused rather than relying on `source_variant_json` (see Known divergences).
+
 - A scalar call is typed by its signature (`rule.project_function_call`): as many arguments as
   parameters, each of the parameter's type, NULL, or a NUMBER widened to a NUMBER or FLOAT
   parameter; the emitted call `"NAME"(...)` is cast to the declared return type. Python functions
@@ -206,7 +211,18 @@ read as JSON, numbers with an exponent, an all-zero fraction, six leading fracti
 than 15 decimal digits or 39 integer digits, letters and trailing commas outside strings,
 surrogate escapes and repeated keys at any depth. PARSE_JSON and TRY_PARSE_JSON raise alike, so
 TRY_PARSE_JSON never returns NULL on one side and a value on the other. VARIANT columns of base
-tables pass the same guard. Documents the guard passes convert exactly. Snowflake writes a
+tables pass the same guard. VARIANT columns of source tables are assumed to hold JSON values, as loaded from JSON:
+`source_variant_json` names that assumption. Snowflake keeps a DATE, TIME, timestamp or BINARY
+typed inside a VARIANT, unequal to its text (recorded), where DuckDB's JSON holds only the text.
+So VARIANT `=` and `<>`, PARTITION BY a VARIANT, ARRAY_CONTAINS, ARRAY_POSITION, ARRAY_EXCEPT,
+ANY_VALUE, MAX_BY, MIN_BY and ARRAY_AGG without WITHIN GROUP, which tell VARIANTs apart by their
+text, convert values read from a source or schema VARIANT only by relying on it, and every such
+statement carries it in its provenance, its review warnings and the census tally. Typed values
+written into a source VARIANT by a process outside the project are not detected; mark the column
+`typed_leaves` in the schema file to have those statements refused, and strict mode refuses every
+statement relying on the assumption. Values a statement builds itself are tracked instead: a
+comparison by text of a value not proven free of typed leaves is refused where a DATE or timestamp
+enters a VARIANT in the statement, or where it reads a model's VARIANT column that may hold one. Documents the guard passes convert exactly. Snowflake writes a
 VARIANT as text with every object's keys in UTF-8 byte order, at every depth, and array elements
 in order (batch 12 recorded mixed case, non-ASCII and supplementary-plane keys, prefixes, empty
 containers, escaped keys and thirteen levels of nesting). The writer behind `::VARCHAR`, TO_VARCHAR,

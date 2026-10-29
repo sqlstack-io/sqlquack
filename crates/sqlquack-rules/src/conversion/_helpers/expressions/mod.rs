@@ -3,6 +3,7 @@ pub(crate) mod calls;
 pub(crate) mod casts;
 pub(crate) mod conditionals;
 pub(crate) mod hashing;
+pub(crate) mod held;
 pub(crate) mod lambdas;
 pub(crate) mod named_aggregates;
 pub(crate) mod numeric_functions;

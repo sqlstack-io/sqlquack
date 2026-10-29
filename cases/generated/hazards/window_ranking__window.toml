@@ -199,6 +199,20 @@ tags = ["null", "ties", "single-row-partition"]
 origin = "generated: hazards@1"
 
 [[case]]
+id = "node_window_function_partition_variant"
+description = "node:window_function partitioned by variant."
+columns = [{ name = "g", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('{\"a\":1}')"],
+  ["PARSE_JSON('{\"a\":1}')"],
+  ["PARSE_JSON('{\"a\":2}')"],
+]
+query = "SELECT g, ROW_NUMBER() OVER (PARTITION BY g ORDER BY ordinal) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "ties", "single-row-partition"]
+origin = "generated: hazards@1"
+
+[[case]]
 id = "node_window_function_partition_several"
 description = "node:window_function partitioned by several."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "g2", type = "VARCHAR" }]

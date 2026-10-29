@@ -195,6 +195,21 @@ tags = ["null", "all-null", "mixed-types"]
 origin = "generated: hazards@1"
 
 [[case]]
+id = "fn_decode_0_float_notation_boundaries"
+description = "fn:DECODE with Doubles where text switches between plain and exponent notation, which %.15g and %.15e write differently in argument 0, float."
+columns = [{ name = "x0", type = "FLOAT" }, { name = "x1", type = "NUMBER(38,0)" }, { name = "x2", type = "NUMBER(38,0)" }]
+rows = [
+  ["100", "1", "1"],
+  ["0.0001", "1", "1"],
+  ["1e-5", "1", "1"],
+  ["1e15", "1", "1"],
+  ["1e21", "1", "1"],
+]
+expression = "DECODE(x0, x1, x2)"
+tags = ["null", "all-null", "mixed-types"]
+origin = "generated: hazards@1"
+
+[[case]]
 id = "fn_decode_1_integer_hazards"
 description = "fn:DECODE with the hazards null, zero_negative, beyond_double in argument 1, integer."
 columns = [{ name = "x0", type = "NUMBER(38,0)" }, { name = "x1", type = "NUMBER(38,0)" }, { name = "x2", type = "NUMBER(38,0)" }]
@@ -294,6 +309,21 @@ rows = [
   ["1", "'NaN'", "1"],
   ["1", "'inf'", "1"],
   ["1", "'-inf'", "1"],
+]
+expression = "DECODE(x0, x1, x2)"
+tags = ["null", "all-null", "mixed-types"]
+origin = "generated: hazards@1"
+
+[[case]]
+id = "fn_decode_1_float_notation_boundaries"
+description = "fn:DECODE with Doubles where text switches between plain and exponent notation, which %.15g and %.15e write differently in argument 1, float."
+columns = [{ name = "x0", type = "NUMBER(38,0)" }, { name = "x1", type = "FLOAT" }, { name = "x2", type = "NUMBER(38,0)" }]
+rows = [
+  ["1", "100", "1"],
+  ["1", "0.0001", "1"],
+  ["1", "1e-5", "1"],
+  ["1", "1e15", "1"],
+  ["1", "1e21", "1"],
 ]
 expression = "DECODE(x0, x1, x2)"
 tags = ["null", "all-null", "mixed-types"]
@@ -1274,6 +1304,21 @@ tags = ["null", "all-null", "mixed-types"]
 origin = "generated: hazards@1"
 
 [[case]]
+id = "fn_decode_6_2_float_notation_boundaries"
+description = "fn:DECODE with Doubles where text switches between plain and exponent notation, which %.15g and %.15e write differently in argument 2, float."
+columns = [{ name = "x0", type = "NUMBER(38,0)" }, { name = "x1", type = "NUMBER(38,10)" }, { name = "x2", type = "FLOAT" }, { name = "x3", type = "NUMBER(38,10)" }]
+rows = [
+  ["1", "1.5", "100", "1.5"],
+  ["1", "1.5", "0.0001", "1.5"],
+  ["1", "1.5", "1e-5", "1.5"],
+  ["1", "1.5", "1e15", "1.5"],
+  ["1", "1.5", "1e21", "1.5"],
+]
+expression = "DECODE(x0, x1, x2, x3)"
+tags = ["null", "all-null", "mixed-types"]
+origin = "generated: hazards@1"
+
+[[case]]
 id = "fn_decode_6_3_decimal_hazards"
 description = "fn:DECODE with the hazards null, one_spellings, half_way, beyond_double in argument 3, decimal."
 columns = [{ name = "x0", type = "NUMBER(38,0)" }, { name = "x1", type = "NUMBER(38,10)" }, { name = "x2", type = "NUMBER(38,0)" }, { name = "x3", type = "NUMBER(38,10)" }]
@@ -1334,6 +1379,21 @@ rows = [
   ["1", "1.5", "1", "'NaN'"],
   ["1", "1.5", "1", "'inf'"],
   ["1", "1.5", "1", "'-inf'"],
+]
+expression = "DECODE(x0, x1, x2, x3)"
+tags = ["null", "all-null", "mixed-types"]
+origin = "generated: hazards@1"
+
+[[case]]
+id = "fn_decode_6_3_float_notation_boundaries"
+description = "fn:DECODE with Doubles where text switches between plain and exponent notation, which %.15g and %.15e write differently in argument 3, float."
+columns = [{ name = "x0", type = "NUMBER(38,0)" }, { name = "x1", type = "NUMBER(38,10)" }, { name = "x2", type = "NUMBER(38,0)" }, { name = "x3", type = "FLOAT" }]
+rows = [
+  ["1", "1.5", "1", "100"],
+  ["1", "1.5", "1", "0.0001"],
+  ["1", "1.5", "1", "1e-5"],
+  ["1", "1.5", "1", "1e15"],
+  ["1", "1.5", "1", "1e21"],
 ]
 expression = "DECODE(x0, x1, x2, x3)"
 tags = ["null", "all-null", "mixed-types"]

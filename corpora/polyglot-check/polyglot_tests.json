@@ -1,5 +1,5 @@
 {
- "origin": "SQL inputs of polyglot's tests at chio-labs/polyglot 7d5fe2c (crates/polyglot-sql/src and tests), whatever dialect they were written for",
+ "origin": "SQL inputs of polyglot's tests at sqlstack-io/polyglot 7d5fe2c (crates/polyglot-sql/src and tests), whatever dialect they were written for",
  "entries": [
   {
    "dialect": "both",

@@ -732,6 +732,7 @@ NESTED_TEMPORAL_DOCUMENTS: tuple[str, ...] = (
 TYPE_PROJECTION: str = "typeof"
 UNENCODABLE_JSON_TEXTS: frozenset[str] = frozenset({'"\\ud800"'})
 JSON_FIDELITY: str = "json_fidelity"
+FLOAT_TEXT: str = "float_text"
 JSON_STRING_PATTERN: re.Pattern[str] = re.compile(r'"(?:[^"\\]|\\.)*"')
 JSON_WORD_PATTERN: re.Pattern[str] = re.compile(r"\b(?:true|false|null)\b")
 JSON_UNSAFE_PATTERN: re.Pattern[str] = re.compile(
@@ -1043,6 +1044,10 @@ VARIANT_TYPED_VALUES: str = "variant_typed_values"
 CONVERTED_TYPED_SOURCES: frozenset[str] = frozenset({"date", "ntz0", "ntz9", "ltz9"})
 RAISING_TYPED_SOURCES: frozenset[str] = frozenset({"ntz9_submilli"})
 RAISING_TYPED_READS: frozenset[str] = frozenset({"typeof", "is_type"})
+FLOAT_TEXT_TYPED_READS: frozenset[tuple[str, str]] = frozenset(
+    {("float", "as_varchar"), ("float", "to_varchar")}
+)
+ELEMENT_TYPED_WRAPPERS: frozenset[str] = frozenset({"object"})
 ZONED_VARIANT_TEXTS: tuple[str, ...] = (
     '"2024-02-29T13:45:01Z"',
     '"2024-02-29 13:45:01 +01:00"',
@@ -1352,6 +1357,7 @@ DOUBLE_TOKENS: tuple[tuple[str, str], ...] = (
     ("seventeen_digit_integer", "1.2345678901234568e17"),
     ("halfway_digits", "0.1234567890123456789e0"),
 )
+FLOAT_RAISING_TOKENS: frozenset[str] = frozenset({"negative_zero", "negative_zero_fraction"})
 DECIMAL_TOKENS: tuple[tuple[str, str], ...] = (
     ("integer_above_2_53", "9007199254740993"),
     ("integer_above_2_55", "36028797018963971"),
@@ -1373,6 +1379,10 @@ DECIMAL_TOKENS: tuple[tuple[str, str], ...] = (
 DOUBLE_PROJECTIONS: str = (
     "SELECT TYPEOF(v:n) AS ty, v:n::VARCHAR AS s, TO_JSON(v:n) AS j, TO_JSON(v) AS d, "
     "v::VARCHAR AS c, TO_JSON(w) AS nested, v:n::FLOAT AS f FROM input ORDER BY ordinal"
+)
+FLOAT_WRITTEN_PROJECTIONS: str = (
+    "SELECT TO_JSON(TO_VARIANT(x)) AS j, TO_JSON(OBJECT_CONSTRUCT('n', x)) AS d, "
+    "TO_JSON(ARRAY_CONSTRUCT(x, 1)) AS a FROM input ORDER BY ordinal"
 )
 FLOAT_VARIANT_PROJECTIONS: str = (
     "SELECT TO_JSON(TO_VARIANT(x)) AS j, TO_VARIANT(x)::VARCHAR AS c, "

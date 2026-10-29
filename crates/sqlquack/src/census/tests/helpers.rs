@@ -1,11 +1,15 @@
+use std::collections::BTreeMap;
 use std::path::Path;
 
 use sqlquack_core::parsing::models::SourceDialect;
+use sqlquack_policy::policy::constants::POLICY_FILE_NAME;
+use sqlquack_policy::policy::main::load_policy::load_policy;
 use sqlquack_rules::conversion::models::{
     AllowedDivergence, ColumnSpec, ConversionOptions, Schema,
 };
 use sqlquack_snowflake::typing::models::SnowflakeType;
 
+use crate::analysis::main::conversion_options::conversion_options;
 use crate::census::_helpers::coverage::{CoverageInput, greedy_order};
 use crate::census::_helpers::timed::run_census_timed;
 use crate::census::main::render_census_text::render_census_text;
@@ -35,6 +39,58 @@ pub(crate) const SHOP: &[ShopFile] = &[
     ShopFile {
         path: "staging/notes.txt",
         contents: "not SQL",
+    },
+];
+
+/// A model holding a FLOAT in a VARIANT, one model reading it back and one not.
+pub(crate) const HELD_CHAIN: &[ShopFile] = &[
+    ShopFile {
+        path: "order_amounts.sql",
+        contents: "SELECT ARRAY_CONSTRUCT(CAST(1.5 AS FLOAT), 2) AS amounts, customer_id \
+                   FROM __source(\"shop\", \"customers\")",
+    },
+    ShopFile {
+        path: "order_report.sql",
+        contents: "SELECT amounts[0]::FLOAT AS first_amount FROM __ref(\"order_amounts\")",
+    },
+    ShopFile {
+        path: "order_customers.sql",
+        contents: "SELECT customer_id FROM __ref(\"order_amounts\")",
+    },
+];
+
+/// A model putting a DATE in a VARIANT, one comparing that column by its text, one reading another.
+pub(crate) const TYPED_CHAIN: &[ShopFile] = &[
+    ShopFile {
+        path: "order_dates.sql",
+        contents: "SELECT OBJECT_CONSTRUCT('placed', CAST('2024-01-01' AS DATE)) AS placed, \
+                   customer_id FROM __source(\"shop\", \"customers\")",
+    },
+    ShopFile {
+        path: "order_matches.sql",
+        contents: "SELECT placed = PARSE_JSON('{\"placed\":\"2024-01-01\"}') AS same \
+                   FROM __ref(\"order_dates\")",
+    },
+    ShopFile {
+        path: "order_customers.sql",
+        contents: "SELECT customer_id FROM __ref(\"order_dates\")",
+    },
+];
+
+/// A model passing a source VARIANT on, one comparing it by text downstream, one reading neither.
+pub(crate) const SOURCE_VARIANT_CHAIN: &[ShopFile] = &[
+    ShopFile {
+        path: "order_events.sql",
+        contents: "SELECT payload FROM __source(\"shop\", \"events\")",
+    },
+    ShopFile {
+        path: "order_kinds.sql",
+        contents: "SELECT payload:kind = PARSE_JSON('\"order\"') AS is_order \
+                   FROM __ref(\"order_events\")",
+    },
+    ShopFile {
+        path: "order_customers.sql",
+        contents: "SELECT customer_id FROM __source(\"shop\", \"customers\")",
     },
 ];
 
@@ -220,17 +276,14 @@ pub(crate) fn blocker_summary_with(
     schema.relations.insert(
         "__SQLQUACK_RELATION__SHOP__CUSTOMERS".to_owned(),
         vec![
-            ColumnSpec {
-                name: "CUSTOMER_ID".to_owned(),
-                data_type: SnowflakeType::Number {
+            ColumnSpec::new(
+                "CUSTOMER_ID",
+                SnowflakeType::Number {
                     precision: 38,
                     scale: 0,
                 },
-            },
-            ColumnSpec {
-                name: "NAME".to_owned(),
-                data_type: SnowflakeType::Varchar,
-            },
+            ),
+            ColumnSpec::new("NAME", SnowflakeType::Varchar),
         ],
     );
     let run = run_census_timed(
@@ -307,17 +360,14 @@ pub(crate) fn placed_refusals(
     schema.relations.insert(
         "__SQLQUACK_RELATION__SHOP__CUSTOMERS".to_owned(),
         vec![
-            ColumnSpec {
-                name: "CUSTOMER_ID".to_owned(),
-                data_type: SnowflakeType::Number {
+            ColumnSpec::new(
+                "CUSTOMER_ID",
+                SnowflakeType::Number {
                     precision: 38,
                     scale: 0,
                 },
-            },
-            ColumnSpec {
-                name: "NAME".to_owned(),
-                data_type: SnowflakeType::Varchar,
-            },
+            ),
+            ColumnSpec::new("NAME", SnowflakeType::Varchar),
         ],
     );
     let run = run_census_timed(
@@ -377,4 +427,58 @@ pub(crate) fn hash_allowed() -> ConversionOptions {
         },
     );
     options
+}
+
+/// The repository policy's conversion options.
+pub(crate) fn policy_allowed() -> ConversionOptions {
+    let policy = load_policy(
+        &Path::new(env!("CARGO_MANIFEST_DIR"))
+            .join("../..")
+            .join(POLICY_FILE_NAME),
+    )
+    .expect("the repository policy loads");
+    conversion_options(&policy, false)
+}
+
+/// The divergence tally of `files` run with chained models and the repository policy.
+pub(crate) fn chained_divergences(files: &[ShopFile]) -> BTreeMap<String, usize> {
+    let policy = load_policy(
+        &Path::new(env!("CARGO_MANIFEST_DIR"))
+            .join("../..")
+            .join(POLICY_FILE_NAME),
+    )
+    .expect("the repository policy loads");
+    let directory = tempfile::tempdir().expect("temporary directory");
+    write_files(directory.path(), files);
+    let mut schema = Schema::default();
+    schema.relations.insert(
+        "__SQLQUACK_RELATION__SHOP__CUSTOMERS".to_owned(),
+        vec![ColumnSpec::new(
+            "CUSTOMER_ID",
+            SnowflakeType::Number {
+                precision: 38,
+                scale: 0,
+            },
+        )],
+    );
+    schema.relations.insert(
+        "__SQLQUACK_RELATION__SHOP__EVENTS".to_owned(),
+        vec![ColumnSpec::new("PAYLOAD", SnowflakeType::SemiStructured)],
+    );
+    run_census_timed(
+        &[directory.path().to_path_buf()],
+        &CensusOptions {
+            dialect: SourceDialect::Snowflake,
+            coverage_points: vec![1],
+            schema,
+            chain_models: true,
+            conversion: conversion_options(&policy, false),
+            names: true,
+        },
+        &CensusProgress::default(),
+    )
+    .expect("the census runs")
+    .report
+    .provenance
+    .divergences
 }

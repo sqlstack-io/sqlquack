@@ -8,10 +8,33 @@ use sqlquack_duckdb::checking::models::{FunctionStub, StubReturns};
 use sqlquack_snowflake::typing::models::SnowflakeType;
 
 use crate::conversion::_helpers::expressions::project_functions::held_type;
+use crate::conversion::_helpers::queries::query::convert_query;
+use crate::conversion::_helpers::support::scope::{Context, Scope, ScopeRelation};
 use crate::conversion::_helpers::support::tree::{missing, node_construct, outside_conditions};
-use crate::conversion::constants::{BODY_ALIAS, NO_PARAMETERS_COLUMN, PARAMETERS_RELATION};
-use crate::conversion::models::{ColumnSpec, FunctionReturns, Schema};
+use crate::conversion::constants::{
+    BODY_ALIAS, NO_PARAMETERS_COLUMN, PARAMETERS_RELATION, VARIANT_HELD_UNREAD,
+};
+use crate::conversion::models::{ColumnSpec, FunctionReturns, FunctionSpec, Schema};
 
+/// The body `tree` over the function's parameters, checked for typed leaves compared by text.
+pub(crate) fn converted_body(
+    tree: &serde_json::Value,
+    spec: &FunctionSpec,
+    context: &Context<'_>,
+) -> Result<(String, Vec<ColumnSpec>), Refusal> {
+    let parameters = Scope::new(
+        vec![ScopeRelation {
+            alias: PARAMETERS_RELATION.to_owned(),
+            columns: spec.arguments.clone(),
+        }],
+        None,
+    );
+    context
+        .typed
+        .checked(convert_query(tree, Some(&parameters), context, true))
+}
+
+/// Refuses a body whose columns differ from the declared types or are VARIANT-held.
 pub(crate) fn require_declared_types(
     columns: &[ColumnSpec],
     returns: &FunctionReturns,
@@ -22,6 +45,9 @@ pub(crate) fn require_declared_types(
             declared.iter().map(|column| column.data_type).collect()
         }
     };
+    if columns.iter().any(|column| !column.holding.is_json()) {
+        return Err(refused(VARIANT_HELD_UNREAD));
+    }
     let found: Vec<SnowflakeType> = columns.iter().map(|column| column.data_type).collect();
     match found == expected {
         true => Ok(()),

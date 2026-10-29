@@ -53,6 +53,8 @@ facets = { target = ["decimal"], float_scale = ["8"] }
 template = "CAST({0} AS NUMBER(20,8))"
 category = "conversion"
 variants = ["CAST({0} AS NUMBER(38,2))"]
+# 1e15 and 1e21 overflow NUMBER(20,8), and Snowflake fails the whole query with 100046.
+divergences = { "float.notation_boundaries" = "" }
 
 [[rule.form]]
 construct = "node:cast"
@@ -111,7 +113,9 @@ arguments = [
 facets = { target = ["text"] }
 template = "CAST({0} AS VARCHAR)"
 category = "conversion"
-divergences = { "float.negative_zero" = "float_text", "float.subnormal" = "float_text" }
+divergences = { "float.negative_zero" = "float_text" }
+# Subnormal FLOATs are written with ten significant digits, as recorded.
+alone = ["0.float.subnormal"]
 
 [[rule.form]]
 construct = "node:cast"
@@ -133,7 +137,9 @@ arguments = [
 template = "TO_VARCHAR({0})"
 category = "conversion"
 variants = ["TO_CHAR({0})"]
-divergences = { "float.negative_zero" = "float_text", "float.subnormal" = "float_text", "timestamp_ntz.half_millisecond" = "timestamp_text_rounding" }
+divergences = { "float.negative_zero" = "float_text", "timestamp_ntz.half_millisecond" = "timestamp_text_rounding" }
+# Subnormal FLOATs are written with ten significant digits, as recorded.
+alone = ["0.float.subnormal"]
 
 [[rule]]
 id = "rule.cast_boolean"
@@ -173,7 +179,7 @@ variants = ["CAST({0} AS NUMBER(38,0))", "CAST({0} AS NUMBER(38,2))", "CAST({0} 
 
 [[rule.form]]
 construct = "fn:TO_NUMBER"
-also = ["fn:TRY_TO_NUMBER", "fn:TO_BOOLEAN", "fn:TRY_TO_BOOLEAN"]
+also = ["fn:TRY_TO_NUMBER", "fn:TO_BOOLEAN", "fn:TRY_TO_BOOLEAN", "fn:TRY_TO_DOUBLE"]
 arguments = [
   { families = ["text"] },
 ]
@@ -624,11 +630,11 @@ id = "rule.to_variant"
 [[rule.form]]
 construct = "fn:TO_VARIANT"
 arguments = [
-  { families = ["text", "boolean", "integer", "date", "timestamp_ntz", "timestamp_ltz"] },
+  { families = ["text", "boolean", "integer", "float", "date", "timestamp_ntz", "timestamp_ltz"] },
 ]
 template = "TO_VARIANT({0})"
 category = "semi-structured-typed"
-divergences = { "timestamp_ntz.sub_microsecond" = "variant_typed_values", "timestamp_ntz.half_millisecond" = "variant_typed_values", "0.timestamp_ltz.extreme_years" = "variant_typed_values" }
+divergences = { "timestamp_ntz.sub_microsecond" = "variant_typed_values", "timestamp_ntz.half_millisecond" = "variant_typed_values", "0.timestamp_ltz.extreme_years" = "variant_typed_values", "float.nan_infinity" = "json_fidelity", "float.negative_zero" = "json_fidelity" }
 
 [[rule.form]]
 construct = "node:cast"
@@ -639,6 +645,17 @@ arguments = [
 facets = { target = ["variant"] }
 template = "CAST({0} AS VARIANT)"
 category = "semi-structured-typed"
+
+[[rule.form]]
+construct = "node:cast"
+also = []
+arguments = [
+  { families = ["float"] },
+]
+facets = { target = ["variant"] }
+template = "CAST({0} AS VARIANT)"
+category = "semi-structured-typed"
+divergences = { "float.nan_infinity" = "json_fidelity", "float.negative_zero" = "json_fidelity" }
 
 [[rule.form]]
 construct = "node:cast"
@@ -729,3 +746,11 @@ facets = { target = ["variant", "text", "integer", "decimal", "float", "boolean"
 template = "CAST({0} AS VARCHAR)"
 category = "semi-structured-cast"
 variants = ["CAST({0} AS VARIANT)", "CAST({0} AS NUMBER(38,0))", "CAST({0} AS NUMBER(38,2))", "CAST({0} AS FLOAT)", "CAST({0} AS BOOLEAN)", "CAST({0} AS DATE)", "CAST({0} AS TIMESTAMP_NTZ(9))", "CAST({0} AS TIMESTAMP_TZ(9))"]
+
+# TO_VARCHAR of a VARIANT, as ::VARCHAR; the VARIANT-held text cases record it.
+[[rule.form]]
+construct = "fn:TO_VARCHAR"
+arguments = [
+  { families = ["variant"] },
+]
+

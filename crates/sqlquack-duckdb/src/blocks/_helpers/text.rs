@@ -7,7 +7,9 @@ use sqlquack_core::failures::main::tagged_message::tagged_message;
 use sqlquack_core::failures::models::SnowflakeCode;
 use sqlquack_core::provenance::models::ProvenanceLog;
 
-use crate::blocks::constants::{CONVERSION_WHITESPACE, NUMBER_RANGE_MESSAGE, VARIANT_CAST_MESSAGE};
+use crate::blocks::constants::{
+    CONVERSION_WHITESPACE, INLINE_ARGUMENT_LIMIT, NUMBER_RANGE_MESSAGE, VARIANT_CAST_MESSAGE,
+};
 use crate::blocks::main::string_literal::string_literal;
 use crate::blocks::models::TextFailure;
 use crate::raises::main::raised::raised;
@@ -48,6 +50,14 @@ pub(crate) fn overflow_failure(failure: TextFailure) -> String {
 /// An expression raising the Snowflake error `code`, tagged so verification can read it back.
 pub(crate) fn tagged_error(code: SnowflakeCode, message: &str) -> String {
     raised(&tagged_message(code, message))
+}
+
+/// `body` over `sql`, which a long `sql` reaches once through the lambda parameter `name`.
+pub(crate) fn once_bound(sql: &str, name: &str, body: impl Fn(&str) -> String) -> String {
+    match sql.len() > INLINE_ARGUMENT_LIMIT {
+        true => format!("list_transform([{sql}], lambda {name}: {})[1]", body(name)),
+        false => body(sql),
+    }
 }
 
 /// The text with surrounding whitespace removed, as Snowflake's conversions read it.

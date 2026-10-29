@@ -5,6 +5,11 @@ use sqlquack_core::classification::models::Construct;
 use sqlquack_core::provenance::models::ProvenanceLog;
 use sqlquack_core::refusals::models::Refusal;
 use sqlquack_duckdb::blocks::main::varchar_length_check::varchar_length_check;
+use sqlquack_duckdb::floats::constants::FLOAT_TEXT;
+use sqlquack_duckdb::held::main::variant_double::variant_double;
+use sqlquack_duckdb::held::main::variant_text::variant_text;
+use sqlquack_duckdb::held::main::variant_type_name::variant_type_name;
+use sqlquack_duckdb::held::main::variant_written::variant_written;
 use sqlquack_duckdb::semi_structured::constants::VARIANT_TYPED_VALUES;
 use sqlquack_duckdb::semi_structured::constants::{JSON_FIDELITY, JSON_NULL, PATH_READ_KEYS};
 use sqlquack_duckdb::semi_structured::main::json_get_computed::json_get_computed;
@@ -20,18 +25,19 @@ use sqlquack_duckdb::semi_structured::models::PathStep;
 use sqlquack_duckdb::variants::main::json_type_name::json_type_name;
 use sqlquack_snowflake::typing::models::{CastTarget, SnowflakeType};
 
-use crate::conversion::_helpers::expressions::scalar::convert_expression;
+use crate::conversion::_helpers::expressions::held::read_json;
+use crate::conversion::_helpers::expressions::scalar::{convert_expression, convert_held};
 use crate::conversion::_helpers::expressions::temporal::temporal_cast;
 use crate::conversion::_helpers::support::divergence::{allows, diverge};
-use crate::conversion::_helpers::support::scope::{Context, Emitted, Literal};
+use crate::conversion::_helpers::support::scope::{Context, Emitted, Literal, VariantRoot};
 use crate::conversion::_helpers::support::site::Site;
 use crate::conversion::_helpers::support::tree::{
     field, node_construct, node_kind, outside_conditions, payload_object, require_understood,
 };
 use crate::conversion::constants::{
     DATE_TEXT_SPELLING, LITERAL_KIND, NEGATE_KIND, PARSE_JSON_RULE, PARSE_JSON_VARIANT,
-    TIMESTAMP_RANGE, VARIANT_CAST, VARIANT_COMPUTED_GET, VARIANT_INSPECT, VARIANT_NAME,
-    VARIANT_PATH, VARIANT_TYPE_NAME,
+    TIMESTAMP_RANGE, VARIANT_CAST, VARIANT_COMPUTED_GET, VARIANT_HELD_UNREAD, VARIANT_INSPECT,
+    VARIANT_NAME, VARIANT_PATH, VARIANT_TYPE_NAME,
 };
 
 /// PARSE_JSON or TRY_PARSE_JSON of text: raises wherever the two parsers may disagree.
@@ -143,6 +149,7 @@ pub(crate) fn variant_get(
                     _ => return Err(refusal),
                 };
                 let _computed = site.context.log.rule(VARIANT_COMPUTED_GET);
+                let base = json_only(base, construct)?;
                 Ok(semi_structured(json_get_computed(
                     &base,
                     (&step.sql, index),
@@ -160,6 +167,7 @@ pub(crate) fn variant_get(
         _ => {
             let text = text_literal_value(key, construct, site)?;
             diverge(site.context, JSON_FIDELITY, construct)?;
+            let base = json_only(base, construct)?;
             json_get_ignore_case(&base, &text, site.context.log)
                 .map(semi_structured)
                 .map_err(|reason| outside_conditions(construct.clone(), reason))
@@ -193,32 +201,32 @@ pub(crate) fn variant_inspect(
         ));
     };
     let base = variant_operand(value, construct, site)?;
+    let held = base.is_variant_held();
     match name {
         "TYPEOF" => {
             let _rule = log.rule(VARIANT_TYPE_NAME);
-            Ok(Emitted::new(
-                json_type_name(
-                    &base,
-                    allows(site.context, VARIANT_TYPED_VALUES, construct),
-                    log,
-                ),
-                SnowflakeType::Varchar,
-            ))
+            let typed = allows(site.context, VARIANT_TYPED_VALUES, construct);
+            let sql = match held {
+                true => variant_type_name(&base.sql, typed, log),
+                false => json_type_name(&base.sql, typed, log),
+            };
+            Ok(Emitted::new(sql, SnowflakeType::Varchar))
         }
         "IS_NULL_VALUE" => {
             let _rule = log.rule(VARIANT_INSPECT);
             Ok(Emitted::new(
-                json_null_value(&base, log),
+                json_null_value(&read_json(&base, site.context), log),
                 SnowflakeType::Boolean,
             ))
         }
         _ => {
             let _rule = log.rule(VARIANT_INSPECT);
             diverge(site.context, JSON_FIDELITY, construct)?;
-            Ok(Emitted::new(
-                json_serialized(&base, log),
-                SnowflakeType::Varchar,
-            ))
+            let sql = match held {
+                true => variant_written(&base.sql, log),
+                false => json_serialized(&base.sql, log),
+            };
+            Ok(Emitted::new(sql, SnowflakeType::Varchar))
         }
     }
 }
@@ -264,6 +272,47 @@ pub(crate) fn variant_cast(
     }
 }
 
+/// A cast of a VARIANT-held value: to VARIANT unchanged, to text through its JSON, or to FLOAT.
+pub(crate) fn held_cast(
+    operand: Emitted,
+    (type_name, target): (&str, CastTarget),
+    trying: bool,
+    (context, construct): (&Context<'_>, &Construct),
+) -> Result<Emitted, Refusal> {
+    let log = context.log;
+    let _rule = log.rule(VARIANT_CAST);
+    let refuse = |reason: &str| outside_conditions(construct.clone(), reason.to_owned());
+    if trying {
+        return Err(refuse("TRY_CAST of a VARIANT has no proven conversion"));
+    }
+    if type_name == VARIANT_NAME {
+        return Ok(operand);
+    }
+    let sql = match (target.data_type, target.max_length) {
+        (SnowflakeType::Varchar, max_length) => {
+            diverge(context, JSON_FIDELITY, construct)?;
+            if operand.root != VariantRoot::Container {
+                diverge(context, FLOAT_TEXT, construct)?;
+            }
+            let text = variant_text(&operand.sql, operand.root == VariantRoot::Element, log);
+            match max_length {
+                Some(max_length) => varchar_length_check(&text, max_length, log),
+                None => text,
+            }
+        }
+        (SnowflakeType::Float, _) => {
+            diverge(context, JSON_FIDELITY, construct)?;
+            variant_double(&operand.sql, log)
+        }
+        (other, _) => {
+            return Err(refuse(&format!(
+                "a cast of a VARIANT built from a FLOAT to {other}, which no recording shows"
+            )));
+        }
+    };
+    Ok(Emitted::new(sql, target.data_type))
+}
+
 /// SQL NULL as a VARIANT.
 pub(crate) fn variant_null(log: &ProvenanceLog) -> String {
     log.building_block(JSON_NULL);
@@ -274,10 +323,14 @@ fn semi_structured(sql: String) -> Emitted {
     Emitted::new(sql, SnowflakeType::SemiStructured)
 }
 
-fn variant_operand(node: &Value, construct: &Construct, site: Site<'_>) -> Result<String, Refusal> {
-    let emitted = convert_expression(node, site)?;
+fn variant_operand(
+    node: &Value,
+    construct: &Construct,
+    site: Site<'_>,
+) -> Result<Emitted, Refusal> {
+    let emitted = convert_held(node, site)?;
     match emitted.data_type {
-        SnowflakeType::SemiStructured => Ok(emitted.sql),
+        SnowflakeType::SemiStructured => Ok(emitted),
         other => Err(outside_conditions(
             construct.clone(),
             format!("a path into a {other} value, not a VARIANT"),
@@ -285,15 +338,30 @@ fn variant_operand(node: &Value, construct: &Construct, site: Site<'_>) -> Resul
     }
 }
 
+/// A literal path into a VARIANT, into a held one through its JSON.
 fn located(
-    base: &str,
+    base: &Emitted,
     steps: &[PathStep],
     construct: &Construct,
     context: &Context<'_>,
 ) -> Result<Emitted, Refusal> {
-    json_path(base, steps, context.log)
-        .map(semi_structured)
-        .map_err(|reason| outside_conditions(construct.clone(), reason))
+    let sql = json_path(&read_json(base, context), steps, context.log)
+        .map_err(|reason| outside_conditions(construct.clone(), reason))?;
+    Ok(match base.is_variant_held() {
+        true => Emitted::variant_held(sql, VariantRoot::Element),
+        false => semi_structured(sql),
+    })
+}
+
+/// The JSON operand of a reader that has no rule for VARIANT-held values.
+fn json_only(base: Emitted, construct: &Construct) -> Result<String, Refusal> {
+    match base.is_variant_held() {
+        true => Err(outside_conditions(
+            construct.clone(),
+            VARIANT_HELD_UNREAD.to_owned(),
+        )),
+        false => Ok(base.sql),
+    }
 }
 
 fn literal_step(node: &Value, construct: &Construct, site: Site<'_>) -> Result<PathStep, Refusal> {

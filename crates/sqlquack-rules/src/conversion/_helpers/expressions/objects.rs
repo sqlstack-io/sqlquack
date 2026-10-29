@@ -12,9 +12,10 @@ use sqlquack_duckdb::variants::main::json_object_insert::json_object_insert;
 use sqlquack_duckdb::variants::main::json_typed_text::json_typed_text;
 use sqlquack_snowflake::typing::models::SnowflakeType;
 
-use crate::conversion::_helpers::expressions::scalar::convert_expression;
+use crate::conversion::_helpers::expressions::held::{built, leaves};
+use crate::conversion::_helpers::expressions::scalar::{convert_expression, convert_held};
 use crate::conversion::_helpers::support::divergence::diverge;
-use crate::conversion::_helpers::support::scope::{Context, Emitted, Literal};
+use crate::conversion::_helpers::support::scope::{Context, Emitted, Literal, VariantRoot};
 use crate::conversion::_helpers::support::site::Site;
 use crate::conversion::_helpers::support::tree::{
     node_construct, outside_conditions, payload_object, require_understood,
@@ -72,14 +73,28 @@ pub(crate) fn object_insert(
             ));
         }
     };
-    let object = variant(object, construct, site)?;
+    let object = convert_held(object, site)?;
+    if object.data_type != SnowflakeType::SemiStructured {
+        return Err(refused(
+            construct,
+            &format!("an object argument of type {}", object.data_type),
+        ));
+    }
     let key = text_literal(key, construct, site)?;
-    let value = json_value(value, construct, site)?;
-    Ok(semi_structured(json_object_insert(
-        (&object, &value),
-        (&key, update),
-        log,
-    )))
+    let value = convert_held(value, site)?;
+    let (leaves, held) = leaves(vec![object, value], construct, site.context)?;
+    let [object, value] = leaves.as_slice() else {
+        return Err(refused(
+            construct,
+            "OBJECT_INSERT of other than an object and a value",
+        ));
+    };
+    Ok(built(
+        json_object_insert((object, value), (&key, update), log),
+        held,
+        VariantRoot::Container,
+        site.context,
+    ))
 }
 
 /// OBJECT_CONSTRUCT or OBJECT_CONSTRUCT_KEEP_NULL of text keys and values.
@@ -97,7 +112,8 @@ pub(crate) fn object_construct(
             "OBJECT_CONSTRUCT of other than key-value pairs",
         ));
     }
-    let mut pairs: Vec<(String, String)> = Vec::new();
+    let mut keys: Vec<String> = Vec::new();
+    let mut values: Vec<Emitted> = Vec::new();
     for pair in arguments.chunks(2) {
         let [key, value] = pair else {
             return Err(refused(
@@ -112,13 +128,17 @@ pub(crate) fn object_construct(
                 "an OBJECT_CONSTRUCT key that is not text",
             ));
         }
-        pairs.push((key.sql, json_value(value, construct, site)?));
+        keys.push(key.sql);
+        values.push(convert_held(value, site)?);
     }
-    Ok(semi_structured(json_object_construct(
-        &pairs,
-        name == KEEP_NULL_CONSTRUCTOR,
-        log,
-    )))
+    let (values, held) = leaves(values, construct, site.context)?;
+    let pairs: Vec<(String, String)> = keys.into_iter().zip(values).collect();
+    Ok(built(
+        json_object_construct(&pairs, name == KEEP_NULL_CONSTRUCTOR, log),
+        held,
+        VariantRoot::Container,
+        site.context,
+    ))
 }
 
 /// An object constant `{'key': value, ...}`, as OBJECT_CONSTRUCT of its pairs.
@@ -153,16 +173,7 @@ pub(crate) fn object_constant(payload: &Value, site: Site<'_>) -> Result<Emitted
     object_construct(OBJECT_CONSTRUCTOR, &arguments, &construct, site)
 }
 
-/// A value as JSON: a VARIANT as it is; text, booleans and whole numbers as Snowflake stores them.
-pub(crate) fn json_value(
-    node: &Value,
-    construct: &Construct,
-    site: Site<'_>,
-) -> Result<String, Refusal> {
-    as_json(convert_expression(node, site)?, construct, site.context)
-}
-
-/// A converted value as JSON, as [`json_value`] describes.
+/// A converted value as JSON, as Snowflake stores it in a VARIANT.
 pub(crate) fn as_json(
     emitted: Emitted,
     construct: &Construct,
@@ -184,6 +195,7 @@ pub(crate) fn as_json(
         | SnowflakeType::TimestampNtz { .. }
         | SnowflakeType::TimestampLtz { .. }) => {
             diverge(context, VARIANT_TYPED_VALUES, construct)?;
+            context.typed.enter();
             let source = match typed {
                 SnowflakeType::Date => TypedSource::Date,
                 SnowflakeType::TimestampNtz { precision } if precision > MICROSECOND_DIGITS => {

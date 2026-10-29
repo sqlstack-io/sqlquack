@@ -139,3 +139,18 @@ pub(crate) struct CollectionIsolationTestCase {
     /// Converting statements, refusals collected, and whether the SQL stayed byte-identical.
     pub(crate) expected_outcome: (usize, usize, bool),
 }
+
+pub(crate) struct FirstValueTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) sql: &'static str,
+    /// The first value as text, or a fragment of the refusal reason or DuckDB error.
+    pub(crate) expected_outcome: Result<&'static str, &'static str>,
+}
+
+pub(crate) struct ArgumentCopiesTestCase {
+    pub(crate) description: &'static str,
+    /// A query writing `ARGUMENT` once in its source.
+    pub(crate) wrapper: &'static str,
+    /// The most times the converted SQL may write the argument.
+    pub(crate) expected_most_copies: usize,
+}

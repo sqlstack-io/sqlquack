@@ -11,6 +11,7 @@ use sqlquack_duckdb::text::constants::{
 };
 use sqlquack_duckdb::text::main::character_edit_distance::character_edit_distance;
 use sqlquack_duckdb::text::main::code_point_text::code_point_text;
+use sqlquack_duckdb::text::main::hex_decoded_text::hex_decoded_text;
 use sqlquack_duckdb::text::main::hex_text::hex_text;
 use sqlquack_duckdb::text::main::title_case::title_case;
 use sqlquack_snowflake::typing::models::SnowflakeType;
@@ -24,7 +25,7 @@ use crate::conversion::_helpers::support::tree::{
 };
 use crate::conversion::constants::{
     CASE_MAPPING, CONCAT, CONCAT_WS, EDIT_DISTANCE, TEXT_AFFIX, TEXT_CHR, TEXT_CONTAINS, TEXT_HEX,
-    TEXT_INITCAP, TEXT_MD5, TRIM,
+    TEXT_HEX_DECODE, TEXT_INITCAP, TEXT_MD5, TRIM,
 };
 
 /// What TRIM removes without a character list: spaces only, as in Snowflake.
@@ -350,6 +351,26 @@ pub(crate) fn hex_encode(
     let text = text_operand(text, construct, site)?;
     Ok(Emitted::new(
         hex_text(&text, lower, site.context.log),
+        SnowflakeType::Varchar,
+    ))
+}
+
+/// TRY_HEX_DECODE_STRING(s): the text its hexadecimal digits spell, or NULL.
+pub(crate) fn try_hex_decode(
+    arguments: &[Value],
+    construct: &Construct,
+    site: Site<'_>,
+) -> Result<Emitted, Refusal> {
+    let _rule = site.context.log.rule(TEXT_HEX_DECODE);
+    let [text] = arguments else {
+        return Err(outside_conditions(
+            construct.clone(),
+            "TRY_HEX_DECODE_STRING takes one argument".to_owned(),
+        ));
+    };
+    let text = text_operand(text, construct, site)?;
+    Ok(Emitted::new(
+        hex_decoded_text(&text, site.context.log),
         SnowflakeType::Varchar,
     ))
 }

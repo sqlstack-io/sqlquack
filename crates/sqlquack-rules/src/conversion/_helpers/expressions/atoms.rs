@@ -4,15 +4,17 @@ use serde_json::Value;
 use sqlquack_core::refusals::models::Refusal;
 use sqlquack_duckdb::blocks::main::cast::cast;
 use sqlquack_duckdb::blocks::main::string_literal::string_literal;
+use sqlquack_duckdb::semi_structured::constants::VARIANT_CHAIN_TYPE;
 use sqlquack_snowflake::typing::main::literal_digits::literal_digits;
 use sqlquack_snowflake::typing::main::number_literal::number_literal;
 use sqlquack_snowflake::typing::models::SnowflakeType;
 
-use crate::conversion::_helpers::expressions::scalar::convert_expression;
+use crate::conversion::_helpers::expressions::scalar::{convert_expression, convert_held};
 use crate::conversion::_helpers::queries::query::convert_query;
 use crate::conversion::_helpers::support::collecting::{
     collecting, guessed, opaque_in_scope, placeholder,
 };
+use crate::conversion::_helpers::support::divergence::diverge;
 use crate::conversion::_helpers::support::scope::{Emitted, Literal};
 use crate::conversion::_helpers::support::site::Site;
 use crate::conversion::_helpers::support::tree::{
@@ -22,6 +24,7 @@ use crate::conversion::_helpers::support::tree::{
 use crate::conversion::constants::{
     COLUMN, COMMENT, CONSTANT_LITERAL, NEGATE, NUMBER_LITERAL, PARENTHESES, SCALAR_SUBQUERY,
 };
+use crate::conversion::models::Holding;
 
 /// A column reference.
 pub(crate) fn column(payload: &Value, site: Site<'_>) -> Result<Emitted, Refusal> {
@@ -37,10 +40,20 @@ pub(crate) fn column(payload: &Value, site: Site<'_>) -> Result<Emitted, Refusal
         .resolve(qualifier.as_deref(), &name, site.context.log)
     {
         Ok(emitted) => {
+            site.context
+                .typed
+                .read((emitted.untainted, emitted.sourced));
             if emitted.data_type == SnowflakeType::Null && collecting() {
                 guessed();
             }
-            Ok(emitted)
+            if emitted.held != Holding::Chained {
+                return Ok(emitted);
+            }
+            diverge(site.context, VARIANT_CHAIN_TYPE, &construct)?;
+            Ok(Emitted {
+                held: Holding::Json,
+                ..emitted
+            })
         }
         Err(_) if collecting() && opaque_in_scope(site.scope, qualifier.as_deref()) => {
             Ok(placeholder(None))
@@ -66,21 +79,18 @@ pub(crate) fn literal(payload: &Value, site: Site<'_>) -> Result<Emitted, Refusa
                 .map_err(|reason| outside_conditions(construct.clone(), reason))?;
             let digits = literal_digits(text)
                 .map_err(|reason| outside_conditions(construct.clone(), reason))?;
+            let sql = cast(&digits, data_type, log)
+                .map_err(|reason| outside_conditions(construct, reason))?;
             Ok(Emitted {
-                sql: cast(&digits, data_type, log)
-                    .map_err(|reason| outside_conditions(construct, reason))?,
-                data_type,
                 literal: Some(Literal::Number(text.to_owned())),
-                utc_offset: false,
+                ..Emitted::new(sql, data_type)
             })
         }
         Some(LITERAL_STRING) => {
             let _rule = log.rule(CONSTANT_LITERAL);
             Ok(Emitted {
-                sql: string_literal(text, log),
-                data_type: SnowflakeType::Varchar,
                 literal: Some(Literal::Text(text.to_owned())),
-                utc_offset: false,
+                ..Emitted::new(string_literal(text, log), SnowflakeType::Varchar)
             })
         }
         other => Err(missing(
@@ -112,7 +122,7 @@ pub(crate) fn parentheses(payload: &Value, site: Site<'_>) -> Result<Emitted, Re
     let _rule = site.context.log.rule(PARENTHESES);
     let payload = payload_object(payload, &construct)?;
     require_understood(payload, &["this"], &construct)?;
-    let inner = convert_expression(field(payload, "this", &construct)?, site)?;
+    let inner = convert_held(field(payload, "this", &construct)?, site)?;
     Ok(Emitted {
         sql: format!("({})", inner.sql),
         ..inner
@@ -125,7 +135,7 @@ pub(crate) fn commented(payload: &Value, site: Site<'_>) -> Result<Emitted, Refu
     let _rule = site.context.log.rule(COMMENT);
     let payload = payload_object(payload, &construct)?;
     require_understood(payload, &["this", "trailing_comments"], &construct)?;
-    convert_expression(field(payload, "this", &construct)?, site)
+    convert_held(field(payload, "this", &construct)?, site)
 }
 
 /// Unary minus, which keeps the operand's type.
@@ -156,7 +166,12 @@ pub(crate) fn scalar_subquery(payload: &Value, site: Site<'_>) -> Result<Emitted
         false,
     )?;
     match columns.as_slice() {
-        [column] => Ok(Emitted::new(format!("({sql})"), column.data_type)),
+        [column] => Ok(Emitted {
+            held: column.holding,
+            untainted: column.untainted,
+            sourced: column.sourced,
+            ..Emitted::new(format!("({sql})"), column.data_type)
+        }),
         _ => Err(outside_conditions(
             construct,
             "a scalar subquery must return exactly one column".to_owned(),

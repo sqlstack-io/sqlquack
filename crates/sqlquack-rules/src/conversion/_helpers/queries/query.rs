@@ -5,8 +5,9 @@ use sqlquack_core::provenance::constants::QUERY_CONSTRUCT;
 use sqlquack_core::provenance::models::ShapeArgument;
 use sqlquack_core::refusals::models::Refusal;
 use sqlquack_duckdb::blocks::main::quoted_identifier::quoted_identifier;
+use sqlquack_snowflake::typing::models::SnowflakeType;
 
-use crate::conversion::_helpers::expressions::scalar::convert_expression;
+use crate::conversion::_helpers::expressions::scalar::convert_held;
 use crate::conversion::_helpers::queries::clauses::{
     clause_condition, condition_sql, group_by, order_and_limit,
 };
@@ -18,8 +19,10 @@ use crate::conversion::_helpers::support::tree::{
     Payload, field, flag, identifier_name, list, missing, node_construct, node_kind,
     outside_conditions, payload_object, require_understood, unresolved,
 };
+use crate::conversion::constants::DUPLICATE_VARIANTS;
 use crate::conversion::constants::{
-    ALIAS, COMMENT, COMMON_TABLE, DISTINCT, GROUP_BY, HAVING, QUALIFY, SELECT, STAR, WHERE,
+    ALIAS, COMMENT, COMMON_TABLE, DISTINCT, GROUP_BY, HAVING, QUALIFY, SELECT, STAR,
+    VARIANT_HELD_UNREAD, WHERE,
 };
 use crate::conversion::models::ColumnSpec;
 
@@ -143,14 +146,31 @@ fn convert_select(
     let columns: Vec<ColumnSpec> = outputs
         .iter()
         .map(|(name, emitted)| ColumnSpec {
-            name: name.clone(),
-            data_type: emitted.data_type,
+            holding: emitted.held,
+            untainted: emitted.untainted,
+            sourced: emitted.sourced,
+            ..ColumnSpec::new(name.clone(), emitted.data_type)
         })
         .collect();
     if named {
         require_distinct_names(&columns)?;
     }
     let distinct = match flag(select, "distinct") {
+        true if outputs.iter().any(|(_, emitted)| emitted.is_variant_held()) => {
+            return Err(outside_conditions(
+                node_construct("distinct"),
+                VARIANT_HELD_UNREAD.to_owned(),
+            ));
+        }
+        true if outputs
+            .iter()
+            .any(|(_, emitted)| emitted.data_type == SnowflakeType::SemiStructured) =>
+        {
+            return Err(outside_conditions(
+                node_construct("distinct"),
+                format!("SELECT DISTINCT {DUPLICATE_VARIANTS}"),
+            ));
+        }
         true => {
             let _rule = context.log.rule(DISTINCT);
             "DISTINCT "
@@ -200,7 +220,11 @@ fn select_tail(
     }
     if select.get("group_by").is_some_and(|group| !group.is_null()) {
         let _rule = context.log.rule(GROUP_BY);
-        sql.push_str(&group_by(select, site, outputs.len())?);
+        let held: Vec<bool> = outputs
+            .iter()
+            .map(|(_, emitted)| emitted.is_variant_held())
+            .collect();
+        sql.push_str(&group_by(select, site, &held)?);
     }
     if let Some(condition) = clause_condition(select, "having") {
         let _rule = context.log.rule(HAVING);
@@ -256,9 +280,24 @@ pub(crate) fn convert_with<'a>(
             "{} AS ({sql})",
             quoted_identifier(&name, context.log)
         ));
+        let columns = match fixture(&name) {
+            true => sourced_columns(columns),
+            false => columns,
+        };
         extended.ctes.push((name, columns));
     }
     Ok((format!("WITH {} ", parts.join(", ")), extended))
+}
+
+/// A case's input fixture stands in for a source table: its VARIANTs are trusted to hold JSON.
+fn sourced_columns(columns: Vec<ColumnSpec>) -> Vec<ColumnSpec> {
+    columns
+        .into_iter()
+        .map(|column| ColumnSpec {
+            sourced: column.sourced || column.data_type == SnowflakeType::SemiStructured,
+            ..column
+        })
+        .collect()
 }
 
 fn convert_projection(
@@ -282,15 +321,15 @@ fn convert_projection(
             require_understood(alias, &["this", "alias"], &construct)?;
             let name = identifier_name(field(alias, "alias", &construct)?)
                 .ok_or_else(|| missing(construct.clone(), "an alias has no name".to_owned()))?;
-            let emitted = convert_expression(field(alias, "this", &construct)?, site)?;
+            let emitted = convert_held(field(alias, "this", &construct)?, site)?;
             Ok(vec![(Some(name), emitted)])
         }
         Some(("column", payload)) => {
             let name = payload.get("name").and_then(identifier_name);
-            Ok(vec![(name, convert_expression(item, site)?)])
+            Ok(vec![(name, convert_held(item, site)?)])
         }
         Some((kind, _)) => {
-            let emitted = convert_expression(item, site)?;
+            let emitted = convert_held(item, site)?;
             if named {
                 return Err(outside_conditions(
                     node_construct(kind),
@@ -321,9 +360,15 @@ fn star(payload: &Value, site: Site<'_>) -> Result<Vec<Projected>, Refusal> {
                 quoted_identifier(&relation.alias, log),
                 quoted_identifier(&column.name, log)
             );
+            site.context.typed.read((column.untainted, column.sourced));
             expanded.push((
                 Some(column.name.clone()),
-                Emitted::new(sql, column.data_type),
+                Emitted {
+                    held: column.holding,
+                    untainted: column.untainted,
+                    sourced: column.sourced,
+                    ..Emitted::new(sql, column.data_type)
+                },
             ));
         }
     }

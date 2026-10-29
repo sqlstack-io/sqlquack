@@ -8,7 +8,8 @@ use sqlquack_duckdb::semi_structured::constants::JSON_FIDELITY;
 use sqlquack_duckdb::semi_structured::main::json_flatten::json_flatten;
 use sqlquack_snowflake::typing::models::SnowflakeType;
 
-use crate::conversion::_helpers::expressions::scalar::convert_expression;
+use crate::conversion::_helpers::expressions::held::read_json;
+use crate::conversion::_helpers::expressions::scalar::convert_held;
 use crate::conversion::_helpers::queries::split_to_table::{SPLIT_TO_TABLE_NAME, lateral_split};
 use crate::conversion::_helpers::support::divergence::diverge;
 use crate::conversion::_helpers::support::scope::{Context, Scope, ScopeRelation};
@@ -18,7 +19,7 @@ use crate::conversion::_helpers::support::tree::{
     outside_conditions, payload_object, require_understood,
 };
 use crate::conversion::constants::{FLATTEN_COLUMNS, FLATTEN_RULE};
-use crate::conversion::models::ColumnSpec;
+use crate::conversion::models::{ColumnSpec, Holding};
 
 /// The name of the table function LATERAL converts.
 const FLATTEN_NAME: &str = "FLATTEN";
@@ -71,7 +72,7 @@ pub(crate) fn lateral_flatten(
         context,
         placement: Placement::ROW,
     };
-    let input = convert_expression(input, site)?;
+    let input = convert_held(input, site)?;
     if input.data_type != SnowflakeType::SemiStructured {
         return Err(outside_conditions(
             function,
@@ -82,7 +83,7 @@ pub(crate) fn lateral_flatten(
     let log = context.log;
     let flattened = format!(
         "LATERAL ({}) AS {}",
-        json_flatten(&input.sql, log),
+        json_flatten(&read_json(&input, context), log),
         quoted_identifier(&alias, log)
     );
     let sql = match keep_empty {
@@ -92,8 +93,13 @@ pub(crate) fn lateral_flatten(
     let columns: Vec<ColumnSpec> = FLATTEN_COLUMNS
         .iter()
         .map(|(column, data_type)| ColumnSpec {
-            name: (*column).to_owned(),
-            data_type: *data_type,
+            untainted: input.untainted,
+            sourced: input.sourced,
+            holding: match (*data_type, input.is_variant_held()) {
+                (SnowflakeType::SemiStructured, true) => Holding::Variant,
+                _ => Holding::Json,
+            },
+            ..ColumnSpec::new(*column, *data_type)
         })
         .collect();
     Ok(Flattened {

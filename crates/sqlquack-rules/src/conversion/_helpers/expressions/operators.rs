@@ -9,7 +9,11 @@ use sqlquack_duckdb::blocks::main::double_arithmetic::double_arithmetic;
 use sqlquack_duckdb::blocks::main::exact_decimal_divide::exact_decimal_divide;
 use sqlquack_duckdb::semi_structured::constants::JSON_FIDELITY;
 use sqlquack_duckdb::semi_structured::main::json_number_equal::json_number_equal;
+use sqlquack_duckdb::semi_structured::main::json_output::json_output;
 use sqlquack_duckdb::semi_structured::main::json_text::json_text;
+use sqlquack_duckdb::text::constants::TEXT_NUMBER_SCALE;
+use sqlquack_duckdb::text::main::compared_number_range::compared_number_range;
+use sqlquack_duckdb::text::main::compared_number_text::compared_number_text;
 use sqlquack_snowflake::typing::constants::MAX_PRECISION;
 use sqlquack_snowflake::typing::main::comparison::comparison;
 use sqlquack_snowflake::typing::main::numeric_add_subtract::numeric_add_subtract;
@@ -25,10 +29,11 @@ use crate::conversion::_helpers::support::site::Site;
 use crate::conversion::_helpers::support::tree::{
     field, node_construct, outside_conditions, payload_object, require_understood,
 };
+use crate::conversion::_helpers::support::typed_leaves::compared_by_text;
 use crate::conversion::constants::{
     COMPARISON, DATE_LITERAL_COMPARISON, DECIMAL_ARITHMETIC, DECIMAL_DIVISION, DECIMAL_MODULO,
     FLOAT_ARITHMETIC, FLOAT_MODULO, LOGIC, MOD_PAIR, NULL_SAFE_COMPARISON, NUMERIC_RANGE,
-    VARIANT_EQUALITY,
+    TEXT_NUMBER_COMPARISON, VARIANT_EQUALITY,
 };
 
 /// Characters in a `YYYY-MM-DD` date.
@@ -320,7 +325,7 @@ pub(crate) fn comparison_predicate(
     ))
 }
 
-/// `=` or `<>` of a VARIANT and a VARCHAR or integer NUMBER; None for other operands.
+/// `=` or `<>` with a VARIANT, compared by Snowflake's text of each; None for other operands.
 fn variant_equality(
     kind: &str,
     (left, right): (&Emitted, &Emitted),
@@ -343,10 +348,24 @@ fn variant_equality(
         SnowflakeType::Number { scale: 0, .. } => {
             json_number_equal((&variant.sql, &other.sql), context.log)
         }
+        SnowflakeType::SemiStructured => format!(
+            "(CAST({} AS VARCHAR) = CAST({} AS VARCHAR))",
+            json_output(&variant.sql, context.log),
+            json_output(&other.sql, context.log)
+        ),
         _ => return Ok(None),
     };
     let _rule = context.log.rule(VARIANT_EQUALITY);
     diverge(context, JSON_FIDELITY, construct)?;
+    let other_variant = other.data_type == SnowflakeType::SemiStructured;
+    compared_by_text(
+        (
+            variant.untainted && (other.untainted || !other_variant),
+            variant.sourced || (other.sourced && other_variant),
+        ),
+        construct,
+        context,
+    )?;
     Ok(Some(Emitted::new(
         format!("({negation}{compared})"),
         SnowflakeType::Boolean,
@@ -411,6 +430,14 @@ pub(crate) fn comparable(
             let left = date_literal(left, construct, context)?;
             return Ok((left, right));
         }
+        (SnowflakeType::Varchar, number @ SnowflakeType::Number { .. }) => {
+            let text = number_text(left, number, construct, context)?;
+            return Ok((text, number_range(right, context)));
+        }
+        (number @ SnowflakeType::Number { .. }, SnowflakeType::Varchar) => {
+            let text = number_text(right, number, construct, context)?;
+            return Ok((number_range(left, context), text));
+        }
         _ => {}
     }
     let log = context.log;
@@ -426,6 +453,44 @@ pub(crate) fn comparable(
         )),
         _ => Ok((left, right)),
     }
+}
+
+/// A NUMBER compared with text, raising where Snowflake's comparison overflows.
+fn number_range(number: Emitted, context: &Context<'_>) -> Emitted {
+    match number.data_type {
+        SnowflakeType::Number { precision, scale } => Emitted::new(
+            compared_number_range(&number.sql, (precision, scale), context.log),
+            number.data_type,
+        ),
+        _ => number,
+    }
+}
+
+/// Text compared with `number`, read unrounded as Snowflake reads it; relies on text_number_scale.
+fn number_text(
+    text: Emitted,
+    number: SnowflakeType,
+    construct: &Construct,
+    context: &Context<'_>,
+) -> Result<Emitted, Refusal> {
+    let SnowflakeType::Number { precision, scale } = number else {
+        return Err(outside_conditions(
+            construct.clone(),
+            format!("text compared with {number}"),
+        ));
+    };
+    let scale = scale.max(MAX_PRECISION - precision);
+    let _rule = context.log.rule(TEXT_NUMBER_COMPARISON);
+    diverge(context, TEXT_NUMBER_SCALE, construct)?;
+    let sql = compared_number_text(&text.sql, scale, context.log)
+        .map_err(|reason| outside_conditions(construct.clone(), reason))?;
+    Ok(Emitted::new(
+        sql,
+        SnowflakeType::Number {
+            precision: MAX_PRECISION,
+            scale,
+        },
+    ))
 }
 
 fn as_double(

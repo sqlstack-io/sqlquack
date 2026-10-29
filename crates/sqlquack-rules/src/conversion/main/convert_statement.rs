@@ -5,6 +5,7 @@ use sqlquack_core::provenance::models::ProvenanceLog;
 use sqlquack_core::refusals::models::Refusal;
 use sqlquack_duckdb::blocks::main::quoted_identifier::quoted_identifier;
 use sqlquack_duckdb::checking::main::check_printed::check_printed;
+use sqlquack_duckdb::held::main::variant_written::variant_written;
 use sqlquack_duckdb::semi_structured::main::json_output::json_output;
 use sqlquack_snowflake::typing::models::SnowflakeType;
 use sqlquack_syntax::Expression;
@@ -14,8 +15,9 @@ use crate::conversion::_helpers::queries::query::convert_query;
 use crate::conversion::_helpers::support::locations::Locator;
 use crate::conversion::_helpers::support::scope::Context;
 use crate::conversion::_helpers::support::tree::{missing, node_construct, strip_positions};
+use crate::conversion::_helpers::support::typed_leaves::TypedLeaves;
 use crate::conversion::constants::OUTPUT_ALIAS;
-use crate::conversion::models::{ColumnSpec, ConversionOptions, Converted, Schema};
+use crate::conversion::models::{ColumnSpec, ConversionOptions, Converted, Holding, Schema};
 
 /// Converts a statement over the schema's relations, placing refusals in `lines`; DuckDB must bind it.
 pub fn convert_statement(
@@ -31,14 +33,17 @@ pub fn convert_statement(
     })?;
     let tree = strip_positions(&positioned);
     let locator = Locator::new(&tree, &positioned, lines);
+    let typed = TypedLeaves::default();
     let context = Context {
         log: &log,
         schema,
         options,
         ctes: Vec::new(),
         locator: &locator,
+        typed: &typed,
     };
-    let (sql, columns) = convert_query(&tree, None, &context, true)
+    let (sql, columns) = typed
+        .checked(convert_query(&tree, None, &context, true))
         .map_err(|refusal| locator.placed(refusal, &tree))?;
     let (sql, raises) = locator.finished(&output_variants(sql, &columns, &log), &tree);
     let relation = |name: &str| -> Option<Vec<(String, SnowflakeType)>> {
@@ -68,7 +73,14 @@ fn output_variants(sql: String, columns: &[ColumnSpec], log: &ProvenanceLog) -> 
         .filter(|column| column.data_type == SnowflakeType::SemiStructured)
         .map(|column| {
             let name = quoted_identifier(&column.name, log);
-            format!("{} AS {name}", json_output(&name, log))
+            match column.holding {
+                Holding::Variant => {
+                    format!("CAST({} AS JSON) AS {name}", variant_written(&name, log))
+                }
+                Holding::Json | Holding::Chained => {
+                    format!("{} AS {name}", json_output(&name, log))
+                }
+            }
         })
         .collect();
     match replaced.is_empty() {

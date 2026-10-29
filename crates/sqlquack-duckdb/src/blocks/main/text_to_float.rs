@@ -3,13 +3,18 @@
 use sqlquack_core::failures::constants::NUMBER_NOT_RECOGNIZED;
 use sqlquack_core::provenance::models::ProvenanceLog;
 
-use crate::blocks::_helpers::text::{conversion_failure, space_trimmed};
+use crate::blocks::_helpers::text::{conversion_failure, once_bound, space_trimmed};
 use crate::blocks::constants::{DECIMAL_TEXT_PATTERN, NON_FINITE_FLOAT_WORDS, TEXT_TO_FLOAT};
 use crate::blocks::models::TextFailure;
 
 /// Text to a double; unrecorded spellings fail or are NULL when trying, as is overflow when trying.
 pub fn text_to_float(sql: &str, failure: TextFailure, log: &ProvenanceLog) -> String {
     log.building_block(TEXT_TO_FLOAT);
+    once_bound(sql, "float_text", |sql| read_float(sql, failure))
+}
+
+/// The CASE reading the text `sql` as a double.
+fn read_float(sql: &str, failure: TextFailure) -> String {
     let trimmed = space_trimmed(sql);
     let unread = format!(
         "CAST({} AS DOUBLE)",

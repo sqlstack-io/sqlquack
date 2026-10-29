@@ -22,21 +22,29 @@ use sqlquack_duckdb::variants::main::json_object_pick::json_object_pick;
 use sqlquack_duckdb::variants::main::json_split::json_split;
 use sqlquack_snowflake::typing::models::SnowflakeType;
 
+use crate::conversion::_helpers::expressions::held::{built, leaves, read_json};
 use crate::conversion::_helpers::expressions::objects::{
-    json_value, refused, semi_structured, text_literal, variant,
+    refused, semi_structured, text_literal, variant,
 };
-use crate::conversion::_helpers::expressions::scalar::{call_name, convert_expression};
+use crate::conversion::_helpers::expressions::ordered_aggregates::{
+    sorted_array_agg, unordered_array_agg_call,
+};
+use crate::conversion::_helpers::expressions::scalar::{
+    call_name, convert_expression, convert_held,
+};
 use crate::conversion::_helpers::expressions::strings::text_operand;
 use crate::conversion::_helpers::support::divergence::{allows, diverge};
-use crate::conversion::_helpers::support::scope::{Emitted, Literal};
-use crate::conversion::_helpers::support::site::Site;
-use crate::conversion::_helpers::support::tree::node_kind;
+use crate::conversion::_helpers::support::scope::{Context, Emitted, Literal, VariantRoot};
+use crate::conversion::_helpers::support::site::{Placement, Site};
+use crate::conversion::_helpers::support::tree::{Payload, flag, list, node_kind};
+use crate::conversion::_helpers::support::typed_leaves::compared_by_text;
+use crate::conversion::constants::DUPLICATE_VARIANTS;
 use crate::conversion::constants::{
-    ARRAY_CAT_RULE, ARRAY_COMPACT_RULE, ARRAY_CONSTRUCT_COMPACT_RULE, ARRAY_CONSTRUCT_RULE,
-    ARRAY_CONTAINS_RULE, ARRAY_EXCEPT_RULE, ARRAY_POSITION_RULE, ARRAY_POSITION_TYPE,
-    ARRAY_SIZE_RULE, ARRAY_TO_STRING_RULE, FUNCTION_KIND, OBJECT_KEYS_RULE, OBJECT_PICK_RULE,
-    PICKED_ARRAY_FUNCTIONS, SPLIT_RULE, TO_VARIANT_RULE, TYPED_CHECKS, VARIANT_KIND_RULE,
-    VARIANT_KINDS, VARIANT_TYPED_CHECK,
+    ARRAY_AGG_RULE, ARRAY_CAT_RULE, ARRAY_COMPACT_RULE, ARRAY_CONSTRUCT_COMPACT_RULE,
+    ARRAY_CONSTRUCT_RULE, ARRAY_CONTAINS_RULE, ARRAY_EXCEPT_RULE, ARRAY_POSITION_RULE,
+    ARRAY_POSITION_TYPE, ARRAY_SIZE_RULE, ARRAY_TO_STRING_RULE, FUNCTION_KIND, OBJECT_KEYS_RULE,
+    OBJECT_PICK_RULE, PICKED_ARRAY_FUNCTIONS, SPLIT_RULE, TO_VARIANT_RULE, TYPED_CHECKS,
+    VARIANT_KIND_RULE, VARIANT_KINDS, VARIANT_TYPED_CHECK,
 };
 
 /// A VARIANT operand, or a NULL literal as a NULL VARIANT.
@@ -47,6 +55,63 @@ fn variant_or_null(node: &Value, construct: &Construct, site: Site<'_>) -> Resul
         SnowflakeType::Null => Ok("CAST(NULL AS JSON)".to_owned()),
         other => Err(refused(construct, &format!("a needle of type {other}"))),
     }
+}
+
+/// ARRAY_CONSTRUCT, or with `compact` ARRAY_CONSTRUCT_COMPACT, of `values`, held when typed.
+fn array_construct(
+    values: &[Value],
+    compact: bool,
+    construct: &Construct,
+    site: Site<'_>,
+) -> Result<Emitted, Refusal> {
+    let log = site.context.log;
+    let _rule = log.rule(match compact {
+        true => ARRAY_CONSTRUCT_COMPACT_RULE,
+        false => ARRAY_CONSTRUCT_RULE,
+    });
+    diverge(site.context, JSON_FIDELITY, construct)?;
+    let values = values
+        .iter()
+        .map(|value| convert_held(value, site))
+        .collect::<Result<Vec<Emitted>, Refusal>>()?;
+    let (values, held) = leaves(values, construct, site.context)?;
+    let sql = match compact {
+        true => json_array_construct_compact(&values, log),
+        false => json_array_construct(&values, log),
+    };
+    Ok(built(sql, held, VariantRoot::Container, site.context))
+}
+
+/// ARRAY_SIZE of an unordered ARRAY_AGG `call`: the count of its non-NULL values.
+fn array_agg_size(
+    call: &Payload,
+    construct: &Construct,
+    site: Site<'_>,
+) -> Result<Emitted, Refusal> {
+    let log = site.context.log;
+    let _rule = log.rule(ARRAY_SIZE_RULE);
+    let _aggregate = log.rule(ARRAY_AGG_RULE);
+    let [value] = list(call, "args") else {
+        return Err(refused(construct, "ARRAY_AGG takes one value"));
+    };
+    let value = convert_expression(value, site.placed(Placement::ROW))?;
+    if flag(call, "distinct") && value.data_type == SnowflakeType::SemiStructured {
+        return Err(refused(
+            construct,
+            &format!("ARRAY_AGG DISTINCT {DUPLICATE_VARIANTS}"),
+        ));
+    }
+    let distinct = match flag(call, "distinct") {
+        true => "DISTINCT ",
+        false => "",
+    };
+    let data_type = SnowflakeType::Number {
+        precision: 9,
+        scale: 0,
+    };
+    let sql = cast(&format!("count({distinct}{})", value.sql), data_type, log)
+        .map_err(|reason| refused(construct, &reason))?;
+    Ok(Emitted::new(sql, data_type))
 }
 
 /// One of the semi-structured functions this module converts, by its upper-case name.
@@ -66,36 +131,24 @@ pub(crate) fn variant_function(
         ("OBJECT_PICK", [object, keys @ ..]) if !keys.is_empty() => {
             object_pick(object, keys, construct, site)
         }
-        ("ARRAY_CONSTRUCT", values) => {
-            let _rule = log.rule(ARRAY_CONSTRUCT_RULE);
-            diverge(site.context, JSON_FIDELITY, construct)?;
-            let values = values
-                .iter()
-                .map(|value| json_value(value, construct, site))
-                .collect::<Result<Vec<String>, Refusal>>()?;
-            Ok(semi_structured(json_array_construct(&values, log)))
-        }
-        ("ARRAY_CONSTRUCT_COMPACT", values) => {
-            let _rule = log.rule(ARRAY_CONSTRUCT_COMPACT_RULE);
-            diverge(site.context, JSON_FIDELITY, construct)?;
-            let values = values
-                .iter()
-                .map(|value| json_value(value, construct, site))
-                .collect::<Result<Vec<String>, Refusal>>()?;
-            Ok(semi_structured(json_array_construct_compact(&values, log)))
-        }
+        ("ARRAY_CONSTRUCT", values) => array_construct(values, false, construct, site),
+        ("ARRAY_CONSTRUCT_COMPACT", values) => array_construct(values, true, construct, site),
         ("ARRAY_EXCEPT", [left, right]) => {
             let _rule = log.rule(ARRAY_EXCEPT_RULE);
             diverge(site.context, JSON_FIDELITY, construct)?;
+            let reads = site.context.typed.reads();
             let left = variant(left, construct, site)?;
             let right = variant(right, construct, site)?;
+            compared_by_text(site.context.typed.since(reads), construct, site.context)?;
             Ok(semi_structured(json_array_except((&left, &right), log)))
         }
         ("ARRAY_POSITION", [needle, array]) => {
             let _rule = log.rule(ARRAY_POSITION_RULE);
             diverge(site.context, JSON_FIDELITY, construct)?;
+            let reads = site.context.typed.reads();
             let needle = variant_or_null(needle, construct, site)?;
             let array = variant(array, construct, site)?;
+            compared_by_text(site.context.typed.since(reads), construct, site.context)?;
             Ok(Emitted::new(
                 cast(
                     &json_array_position((&needle, &array), log),
@@ -117,9 +170,23 @@ pub(crate) fn variant_function(
             let array = variant(array, construct, site)?;
             Ok(semi_structured(json_array_compact(&array, log)))
         }
+        ("ARRAY_SIZE", [array])
+            if site.placement.aggregates && unordered_array_agg_call(array).is_some() =>
+        {
+            let call = unordered_array_agg_call(array)
+                .ok_or_else(|| refused(construct, "ARRAY_SIZE of other than ARRAY_AGG"))?;
+            array_agg_size(call, construct, site)
+        }
+        ("ARRAY_SORT", [array])
+            if site.placement.aggregates && unordered_array_agg_call(array).is_some() =>
+        {
+            let call = unordered_array_agg_call(array)
+                .ok_or_else(|| refused(construct, "ARRAY_SORT of other than ARRAY_AGG"))?;
+            sorted_array_agg(call, site)
+        }
         ("ARRAY_SIZE", [array]) => {
             let _rule = log.rule(ARRAY_SIZE_RULE);
-            let array = variant(array, construct, site)?;
+            let array = held_variant(array, construct, site)?;
             Ok(Emitted::new(
                 json_array_size(&array, log),
                 SnowflakeType::Number {
@@ -131,8 +198,10 @@ pub(crate) fn variant_function(
         ("ARRAY_CONTAINS", [value, array]) => {
             let _rule = log.rule(ARRAY_CONTAINS_RULE);
             diverge(site.context, JSON_FIDELITY, construct)?;
+            let reads = site.context.typed.reads();
             let value = variant(value, construct, site)?;
             let array = variant(array, construct, site)?;
+            compared_by_text(site.context.typed.since(reads), construct, site.context)?;
             Ok(Emitted::new(
                 json_array_contains((&value, &array), log),
                 SnowflakeType::Boolean,
@@ -156,7 +225,7 @@ pub(crate) fn variant_function(
         }
         ("TO_VARIANT", [value]) => {
             let _rule = log.rule(TO_VARIANT_RULE);
-            Ok(semi_structured(json_value(value, construct, site)?))
+            to_variant(convert_held(value, site)?, construct, site.context)
         }
         (_, [value]) if TYPED_CHECKS.contains(&name) => {
             let _rule = log.rule(VARIANT_TYPED_CHECK);
@@ -224,4 +293,34 @@ fn built_array(node: &Value) -> bool {
 
 fn literal(node: &Value, site: Site<'_>) -> Result<Option<Literal>, Refusal> {
     Ok(convert_expression(node, site)?.literal)
+}
+
+/// TO_VARIANT or `::VARIANT` of a converted value: a FLOAT is held as a DuckDB VARIANT.
+pub(crate) fn to_variant(
+    value: Emitted,
+    construct: &Construct,
+    context: &Context<'_>,
+) -> Result<Emitted, Refusal> {
+    if value.is_variant_held() {
+        return Ok(value);
+    }
+    let root = match value.data_type {
+        SnowflakeType::Float => VariantRoot::Double,
+        _ => VariantRoot::Dynamic,
+    };
+    let (values, held) = leaves(vec![value], construct, context)?;
+    let sql = values.into_iter().next().unwrap_or_default();
+    Ok(built(sql, held, root, context))
+}
+
+/// A VARIANT argument read as JSON, also when it is VARIANT-held.
+fn held_variant(node: &Value, construct: &Construct, site: Site<'_>) -> Result<String, Refusal> {
+    let emitted = convert_held(node, site)?;
+    match emitted.data_type {
+        SnowflakeType::SemiStructured => Ok(read_json(&emitted, site.context)),
+        other => Err(refused(
+            construct,
+            &format!("an object argument of type {other}"),
+        )),
+    }
 }

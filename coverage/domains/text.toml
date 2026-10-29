@@ -139,6 +139,22 @@ arguments = [
   { families = ["text"], kinds = ["literal"], grammar = true },
 ]
 
+# A pattern from a column reaches rule.regexp_parameters' guard through this rule; those cases record it.
+[[rule.form]]
+construct = "fn:REGEXP_LIKE"
+arguments = [
+  { families = ["text"] },
+  { families = ["text"], kinds = ["value"] },
+]
+
+[[rule.form]]
+construct = "fn:REGEXP_LIKE"
+arguments = [
+  { families = ["text"] },
+  { families = ["text"], kinds = ["value"] },
+  { families = ["text"], kinds = ["literal"], grammar = true },
+]
+
 [[rule]]
 id = "rule.regexp_parameters"
 
@@ -153,6 +169,21 @@ template = "REGEXP_LIKE({0}, {1}, {2})"
 category = "string"
 benign = { "1" = "'a.*'", "2" = "'i'" }
 
+# A pattern from a column, checked at run time against the recorded syntax.
+[[rule.form]]
+construct = "fn:REGEXP_LIKE"
+arguments = [
+  { families = ["text"] },
+  { families = ["text"], kinds = ["value"] },
+]
+template = "REGEXP_LIKE({0}, {1})"
+category = "string"
+benign = { "1" = "'a.*'" }
+divergences = { "1.text.quotes_backslashes" = "regexp_pattern_syntax", "1.text.dollar_prefix" = "regexp_pattern_syntax" }
+# Snowflake rejects '*' and '+7' as patterns (100048), failing the whole query: each keeps its own
+# case, without a divergence, since Snowflake fails too.
+alone = ["1.text.dots_brackets", "1.text.number_text"]
+
 [[rule.form]]
 construct = "fn:REGEXP_SUBSTR"
 arguments = [
@@ -171,6 +202,15 @@ arguments = [
   { families = ["text"], kinds = ["literal"], grammar = true },
   { families = ["integer"], kinds = ["literal"], grammar = true },
   { families = ["integer"], kinds = ["literal"], grammar = true },
+  { families = ["text"], kinds = ["literal"], grammar = true },
+]
+
+# A pattern from a column with parameters, recorded by the column pattern cases.
+[[rule.form]]
+construct = "fn:REGEXP_LIKE"
+arguments = [
+  { families = ["text"] },
+  { families = ["text"], kinds = ["value"] },
   { families = ["text"], kinds = ["literal"], grammar = true },
 ]
 

@@ -294,6 +294,36 @@ fn given_a_known_divergence_when_converting_then_default_mode_warns_and_strict_m
                 categories: vec![],
             },
         },
+        DivergenceModeTestCase {
+            description: "a source VARIANT compared by text relies on source_variant_json by default",
+            sql: "SELECT payload = PARSE_JSON('{\"k\":\"a\"}') AS same FROM events",
+            strict: false,
+            expected_outcome: DivergenceModeOutcome {
+                converted: true,
+                divergences: vec![
+                    (
+                        "json_fidelity".to_owned(),
+                        vec![
+                            "fn:PARSE_JSON".to_owned(),
+                            "node:column".to_owned(),
+                            "node:eq".to_owned(),
+                        ],
+                    ),
+                    ("source_variant_json".to_owned(), vec!["node:eq".to_owned()]),
+                ],
+                categories: vec![],
+            },
+        },
+        DivergenceModeTestCase {
+            description: "strict mode refuses a source VARIANT compared by text",
+            sql: "SELECT payload = PARSE_JSON('{\"k\":\"a\"}') AS same FROM events",
+            strict: true,
+            expected_outcome: DivergenceModeOutcome {
+                converted: false,
+                divergences: vec![],
+                categories: vec![RefusalCategory::TypeCondition],
+            },
+        },
     ];
     for test_case in test_cases {
         assert_eq!(

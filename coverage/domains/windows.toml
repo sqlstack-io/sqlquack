@@ -94,6 +94,15 @@ rows = "window"
 query = "SELECT g, {expression} AS r FROM input ORDER BY ordinal"
 category = "window"
 
+# SUM of FLOAT over a window: rule.sum_float's cases record it.
+[[rule.form]]
+construct = "node:window_function"
+arguments = [
+  { families = ["float"] },
+]
+facets = { function = ["SUM"], frame = ["unordered", "ordered", "rows", "whole_partition"] }
+each = { partition = ["text"] }
+
 [[rule]]
 id = "rule.window_ranking"
 
@@ -101,7 +110,7 @@ id = "rule.window_ranking"
 construct = "node:window_function"
 arguments = []
 facets = { function = ["ROW_NUMBER", "RANK", "DENSE_RANK"], frame = ["ordered"] }
-each = { partition = ["none", "text", "integer", "decimal", "float", "boolean", "date", "time", "timestamp_ntz", "timestamp_ltz", "timestamp_tz", "several"] }
+each = { partition = ["none", "text", "integer", "decimal", "float", "boolean", "date", "time", "timestamp_ntz", "timestamp_ltz", "timestamp_tz", "variant", "several"] }
 rows = "window"
 template = "ROW_NUMBER() OVER (PARTITION BY g ORDER BY ordinal)"
 query = "SELECT g, {expression} AS r FROM input ORDER BY ordinal"

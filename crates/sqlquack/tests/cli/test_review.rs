@@ -36,6 +36,14 @@ fn given_recorded_cases_when_exporting_for_review_then_each_case_shows_sql_and_e
                 "100000000000000000000000000000000000000",
             ],
         },
+        ReviewTestCase {
+            description: "a source VARIANT compared by text shows the source_variant_json assumption",
+            file: "comparison/predicates_batch2.slt",
+            expected_lines: &[
+                "# case comparison/predicates_batch2.toml#eq_variant_text",
+                "# warning: known divergence source_variant_json at node:eq",
+            ],
+        },
     ];
     for test_case in test_cases {
         assert_eq!(

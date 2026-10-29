@@ -81,6 +81,16 @@ variants = ["BOOLAND_AGG({0}) OVER (PARTITION BY g)"]
 query = "SELECT g, {expression} AS r FROM input ORDER BY ordinal"
 category = "window"
 
+# MAX_BY and MIN_BY reach rule.value_at_extreme_key through this dispatcher; their cases are that
+# rule's, so this form only declares the shapes and generates none.
+[[rule.form]]
+construct = "fn:MAX_BY"
+also = ["fn:MIN_BY"]
+arguments = [
+  { families = ["integer", "decimal", "float", "text", "boolean", "date", "timestamp_ntz", "variant"] },
+  { families = ["integer", "decimal", "float", "text", "date", "timestamp_ntz"] },
+]
+
 [[rule]]
 id = "rule.array_agg"
 
@@ -95,6 +105,50 @@ template = "ARRAY_AGG({0}) WITHIN GROUP (ORDER BY {1})"
 query = "SELECT g, {expression} AS r FROM input GROUP BY g ORDER BY g"
 category = "aggregate"
 ordinal = ["1"]
+
+# Without WITHIN GROUP the order is undefined, so only one distinct value converts.
+[[rule.form]]
+construct = "fn:ARRAY_AGG"
+arguments = [
+  { families = ["integer", "text", "boolean"] },
+]
+rows = "group"
+template = "ARRAY_AGG({0})"
+query = "SELECT g, {expression} AS r FROM input GROUP BY g ORDER BY g"
+category = "aggregate"
+variants = ["ARRAY_AGG(DISTINCT {0})"]
+row_groups = true
+divergences = { mixed = "array_agg_order", duplicates = "array_agg_order" }
+
+[[rule.form]]
+construct = "fn:ARRAY_SIZE"
+arguments = [
+  { families = ["integer", "text", "boolean", "variant"] },
+]
+rows = "group"
+template = "ARRAY_SIZE(ARRAY_AGG({0}))"
+query = "SELECT g, {expression} AS r FROM input GROUP BY g ORDER BY g"
+category = "aggregate"
+variants = ["ARRAY_SIZE(ARRAY_AGG(DISTINCT {0}))"]
+
+[[rule.form]]
+construct = "fn:ARRAY_SORT"
+arguments = [
+  { families = ["integer", "text"] },
+]
+rows = "group"
+template = "ARRAY_SORT(ARRAY_AGG({0}))"
+query = "SELECT g, {expression} AS r FROM input GROUP BY g ORDER BY g"
+category = "aggregate"
+variants = ["ARRAY_SORT(ARRAY_AGG(DISTINCT {0}))"]
+
+# A FLOAT ordered by WITHIN GROUP, held as a VARIANT: the VARIANT-held cases record it.
+[[rule.form]]
+construct = "node:within_group"
+arguments = [
+  { families = ["float"] },
+  { families = ["integer"], grammar = true },
+]
 
 [[rule]]
 id = "rule.listagg"
@@ -171,3 +225,23 @@ template = "PERCENTILE_DISC({0}) WITHIN GROUP (ORDER BY {1}) OVER (PARTITION BY 
 query = "SELECT g, {expression} AS r FROM input ORDER BY ordinal"
 category = "window"
 benign = { "0" = "0.5" }
+
+[[rule]]
+id = "rule.value_at_extreme_key"
+
+[[rule.form]]
+construct = "fn:MAX_BY"
+also = ["fn:MIN_BY"]
+arguments = [
+  { families = ["integer", "decimal", "float", "text", "boolean", "date", "timestamp_ntz", "variant"] },
+  { families = ["integer", "decimal", "float", "text", "date", "timestamp_ntz"] },
+]
+rows = "group"
+template = "MAX_BY({0}, {1})"
+query = "SELECT g, {expression} AS r FROM input GROUP BY g ORDER BY g"
+category = "aggregate"
+variants = ["MIN_BY({0}, {1})"]
+row_groups = true
+divergences = { mixed = "extreme_key_ties", null_beside_value = "extreme_key_ties", duplicates = "extreme_key_ties" }
+# The result is the timestamp itself, which the recording connector truncates past 2262.
+unrecordable = { "0.timestamp_ntz.extreme_years" = "The recording connector cannot convert the nanosecond timestamp past 2262 MAX_BY returns." }
