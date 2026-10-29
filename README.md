@@ -13,7 +13,7 @@ comparisons, conditionals, casts, basic string functions, aggregates and window 
 everything else is refused. What works today:
 
 - parsing Snowflake SQL with SQLQuack's own parser, derived from
-  [polyglot](https://github.com/chio-labs/polyglot), which keeps every call as written, and
+  [polyglot](https://github.com/sqlstack-io/polyglot), which keeps every call as written, and
   classifying every function, operator, type, cast, join and clause in it;
 - a structured refusal for each construct: *missing rule*, *outside a rule's type conditions*,
   *unresolved name*, *not expressible in DuckDB*, *parse fidelity*, or *conversion budget
@@ -32,7 +32,7 @@ $ cargo run --release -p sqlquack -- census path/to/sql --json
 ```
 
 Each `.sql` file is one query, or one model compiled by
-[SQLBuild](https://github.com/chio-labs/sqlbuild); SQLBuild's reference calls are recognised. The
+[SQLBuild](https://github.com/sqlstack-io/sqlbuild); SQLBuild's reference calls are recognised. The
 report contains counts and construct names only, never SQL text or file names; `--names` adds
 file, model and relation names to the slowest files and the blockers. Conversion needs the
 column types of the relations a file reads: `--schema` takes a JSON file mapping relation names to

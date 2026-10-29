@@ -81,3 +81,11 @@ pub(crate) struct FixedBlockerTestCase {
     pub(crate) conversion: ConversionOptions,
     pub(crate) expected_summary: BlockerSummary,
 }
+
+pub(crate) struct DivergenceTallyTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) fixtures: &'static [ShopFile],
+    pub(crate) divergence: &'static str,
+    /// The models relying on `divergence`, or None when none does.
+    pub(crate) expected_models: Option<usize>,
+}

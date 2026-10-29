@@ -139,6 +139,8 @@ pub const DECIMAL_TEXT_PATTERN: &str = "[+-]?([0-9]+[.]?[0-9]*|[.][0-9]+)([eE][+
 pub const BARE_EXPONENT_PATTERN: &str = "[+-]?([0-9]+[.]?[0-9]*|[.][0-9]+)[eE]";
 /// An exponent without a mantissa, which Snowflake reads as zero.
 pub const MANTISSA_FREE_PATTERN: &str = "[eE][+-]?[0-9]+";
+/// The longest argument a block repeats inline; a longer one is bound once, so nesting stays linear.
+pub const INLINE_ARGUMENT_LIMIT: usize = 256;
 /// Whitespace conversions ignore around a value (space, tab, line feed; not no-break space).
 pub const CONVERSION_WHITESPACE: &str = "(' ' || chr(9) || chr(10))";
 /// Words Snowflake reads as a non-finite FLOAT, lower-cased, with their DuckDB spelling.

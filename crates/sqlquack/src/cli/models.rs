@@ -185,7 +185,7 @@ pub struct IndexArguments {
     /// Print the index as JSON on standard output.
     #[arg(long)]
     pub json: bool,
-    /// A JSON file mapping relation names to `[column, Snowflake type]` pairs, for SQL files.
+    /// A JSON file mapping relation names to `[column, type]` pairs or column objects, for SQL files.
     #[arg(long)]
     pub schema: Option<PathBuf>,
     /// Treat each converted SQL file as the relation its file name references, and convert again.
@@ -208,7 +208,7 @@ pub struct CensusArguments {
     /// Constructs listed in the text report.
     #[arg(long, default_value_t = DEFAULT_TEXT_LIMIT)]
     pub limit: usize,
-    /// A JSON file mapping relation names to `[column, Snowflake type]` pairs.
+    /// A JSON file mapping relation names to `[column, Snowflake type]` pairs or column objects.
     #[arg(long)]
     pub schema: Option<PathBuf>,
     /// Treat each converted file as the relation its file name references, and convert again.

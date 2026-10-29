@@ -482,3 +482,788 @@ query = "SELECT g, ARRAY_AGG(x0) WITHIN GROUP (ORDER BY x1) AS r FROM input GROU
 order = "ordered"
 tags = ["null", "empty-input", "duplicates"]
 origin = "generated: hazards@1"
+
+[[case]]
+id = "fn_array_agg_1_combination_0_integer"
+description = "fn:ARRAY_AGG over benign values of each declared argument kind."
+columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "NUMBER(38,0)" }]
+rows = [
+  ["'g001'", "1"],
+  ["'g002'", "2"],
+]
+query = "SELECT g, ARRAY_AGG(x0) AS r FROM input GROUP BY g ORDER BY g"
+order = "ordered"
+tags = ["null", "empty-input", "duplicates"]
+origin = "generated: hazards@1"
+
+[[case]]
+id = "fn_array_agg_1_combination_0_text"
+description = "fn:ARRAY_AGG over benign values of each declared argument kind."
+columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "VARCHAR" }]
+rows = [
+  ["'g001'", "'a'"],
+  ["'g002'", "'b'"],
+]
+query = "SELECT g, ARRAY_AGG(x0) AS r FROM input GROUP BY g ORDER BY g"
+order = "ordered"
+tags = ["null", "empty-input", "duplicates"]
+origin = "generated: hazards@1"
+
+[[case]]
+id = "fn_array_agg_1_combination_0_boolean"
+description = "fn:ARRAY_AGG over benign values of each declared argument kind."
+columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "BOOLEAN" }]
+rows = [
+  ["'g001'", "TRUE"],
+  ["'g002'", "FALSE"],
+]
+query = "SELECT g, ARRAY_AGG(x0) AS r FROM input GROUP BY g ORDER BY g"
+order = "ordered"
+tags = ["null", "empty-input", "duplicates"]
+origin = "generated: hazards@1"
+
+[[case]]
+id = "fn_array_agg_1_combination_1_integer"
+description = "fn:ARRAY_AGG over benign values of each declared argument kind."
+columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "NUMBER(38,0)" }]
+rows = [
+  ["'g001'", "1"],
+  ["'g002'", "2"],
+]
+query = "SELECT g, ARRAY_AGG(DISTINCT x0) AS r FROM input GROUP BY g ORDER BY g"
+order = "ordered"
+tags = ["null", "empty-input", "duplicates"]
+origin = "generated: hazards@1"
+
+[[case]]
+id = "fn_array_agg_1_combination_1_text"
+description = "fn:ARRAY_AGG over benign values of each declared argument kind."
+columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "VARCHAR" }]
+rows = [
+  ["'g001'", "'a'"],
+  ["'g002'", "'b'"],
+]
+query = "SELECT g, ARRAY_AGG(DISTINCT x0) AS r FROM input GROUP BY g ORDER BY g"
+order = "ordered"
+tags = ["null", "empty-input", "duplicates"]
+origin = "generated: hazards@1"
+
+[[case]]
+id = "fn_array_agg_1_combination_1_boolean"
+description = "fn:ARRAY_AGG over benign values of each declared argument kind."
+columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "BOOLEAN" }]
+rows = [
+  ["'g001'", "TRUE"],
+  ["'g002'", "FALSE"],
+]
+query = "SELECT g, ARRAY_AGG(DISTINCT x0) AS r FROM input GROUP BY g ORDER BY g"
+order = "ordered"
+tags = ["null", "empty-input", "duplicates"]
+origin = "generated: hazards@1"
+
+[[case]]
+id = "fn_array_agg_1_0_integer_hazards"
+description = "fn:ARRAY_AGG with the hazards null, zero_negative, beyond_double in argument 0, integer."
+columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "NUMBER(38,0)" }]
+rows = [
+  ["'g001'", "NULL"],
+  ["'g002'", "0"],
+  ["'g003'", "-1"],
+  ["'g004'", "9007199254740993"],
+  ["'g005'", "-9007199254740993"],
+]
+query = "SELECT g, ARRAY_AGG(x0) AS r FROM input GROUP BY g ORDER BY g"
+order = "ordered"
+tags = ["null", "empty-input", "duplicates"]
+origin = "generated: hazards@1"
+
+[[case]]
+id = "fn_array_agg_1_0_integer_beyond_64_bits"
+description = "fn:ARRAY_AGG with Integers beyond the 64-bit range, which BIGINT arithmetic overflows in argument 0, integer."
+columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "NUMBER(38,0)" }]
+rows = [
+  ["'g001'", "18446744073709551616"],
+  ["'g002'", "-9223372036854775809"],
+]
+query = "SELECT g, ARRAY_AGG(x0) AS r FROM input GROUP BY g ORDER BY g"
+order = "ordered"
+tags = ["null", "empty-input", "duplicates"]
+origin = "generated: hazards@1"
+
+[[case]]
+id = "fn_array_agg_1_0_integer_digits_38"
+description = "fn:ARRAY_AGG with The largest 38-digit integers in argument 0, integer."
+columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "NUMBER(38,0)" }]
+rows = [
+  ["'g001'", "99999999999999999999999999999999999999"],
+  ["'g002'", "-99999999999999999999999999999999999999"],
+]
+query = "SELECT g, ARRAY_AGG(x0) AS r FROM input GROUP BY g ORDER BY g"
+order = "ordered"
+tags = ["null", "empty-input", "duplicates"]
+origin = "generated: hazards@1"
+
+[[case]]
+id = "fn_array_agg_1_0_text_hazards"
+description = "fn:ARRAY_AGG with the hazards null, empty, dollar_prefix, slash_prefix, dots_brackets, quotes_backslashes, non_ascii, title_case_digraph, case_only, whitespace, number_text in argument 0, text."
+columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "VARCHAR" }]
+rows = [
+  ["'g001'", "NULL"],
+  ["'g002'", "''"],
+  ["'g003'", "'$.a'"],
+  ["'g004'", "'$'"],
+  ["'g005'", "'/a'"],
+  ["'g006'", "'/'"],
+  ["'g007'", "'a.b'"],
+  ["'g008'", "'a[0]'"],
+  ["'g009'", "'*'"],
+  ["'g010'", "'it''s'"],
+  ["'g011'", "'say \"hi\"'"],
+  ["'g012'", "'a\\\\b'"],
+  ["'g013'", "'Größe'"],
+  ["'g014'", "'é'"],
+  ["'g015'", "'é'"],
+  ["'g016'", "'😀'"],
+  ["'g017'", "'ǆungla'"],
+  ["'g018'", "'ǅ'"],
+  ["'g019'", "'ǉubav'"],
+  ["'g020'", "'ǲ'"],
+  ["'g021'", "'Order'"],
+  ["'g022'", "'ORDER'"],
+  ["'g023'", "'order'"],
+  ["'g024'", "'Straße'"],
+  ["'g025'", "'STRASSE'"],
+  ["'g026'", "' a'"],
+  ["'g027'", "'a '"],
+  ["'g028'", "' '"],
+  ["'g029'", "'	'"],
+  ["'g030'", "'a\nb'"],
+  ["'g031'", "'007'"],
+  ["'g032'", "'1.0'"],
+  ["'g033'", "'1e0'"],
+  ["'g034'", "'+7'"],
+  ["'g035'", "'-0'"],
+]
+query = "SELECT g, ARRAY_AGG(x0) AS r FROM input GROUP BY g ORDER BY g"
+order = "ordered"
+tags = ["null", "empty-input", "duplicates"]
+origin = "generated: hazards@1"
+
+[[case]]
+id = "fn_array_agg_1_0_boolean_hazards"
+description = "fn:ARRAY_AGG with SQL NULL in argument 0, boolean."
+columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "BOOLEAN" }]
+rows = [
+  ["'g001'", "NULL"],
+]
+query = "SELECT g, ARRAY_AGG(x0) AS r FROM input GROUP BY g ORDER BY g"
+order = "ordered"
+tags = ["null", "empty-input", "duplicates"]
+origin = "generated: hazards@1"
+
+[[case]]
+id = "fn_array_agg_1_group_empty_input"
+description = "fn:ARRAY_AGG over an aggregate over no rows."
+columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "NUMBER(38,0)" }]
+rows = [
+  ["'a'", "1"],
+]
+query = "SELECT ARRAY_AGG(x0) AS r FROM input WHERE FALSE"
+order = "ordered"
+tags = ["null", "empty-input", "duplicates"]
+origin = "generated: hazards@1"
+
+[[case]]
+id = "fn_array_agg_1_group_all_null"
+description = "fn:ARRAY_AGG over a group whose values are all null."
+columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "NUMBER(38,0)" }]
+rows = [
+  ["'a'", "NULL"],
+  ["'a'", "NULL"],
+  ["'b'", "1"],
+]
+query = "SELECT g, ARRAY_AGG(x0) AS r FROM input GROUP BY g ORDER BY g"
+order = "ordered"
+tags = ["null", "empty-input", "duplicates"]
+origin = "generated: hazards@1"
+
+[[case]]
+id = "fn_array_agg_1_group_mixed"
+description = "fn:ARRAY_AGG over a group holding different values (any_value)."
+columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "NUMBER(38,0)" }]
+rows = [
+  ["'a'", "1"],
+  ["'a'", "2"],
+]
+query = "SELECT g, ARRAY_AGG(x0) AS r FROM input GROUP BY g ORDER BY g"
+order = "ordered"
+tags = ["null", "empty-input", "duplicates"]
+origin = "generated: hazards@1"
+expected_divergence = "array_agg_order"
+
+[[case]]
+id = "fn_array_agg_1_group_null_beside_value"
+description = "fn:ARRAY_AGG over a group holding null beside a value (any_value)."
+columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "NUMBER(38,0)" }]
+rows = [
+  ["'a'", "NULL"],
+  ["'a'", "1"],
+]
+query = "SELECT g, ARRAY_AGG(x0) AS r FROM input GROUP BY g ORDER BY g"
+order = "ordered"
+tags = ["null", "empty-input", "duplicates"]
+origin = "generated: hazards@1"
+
+[[case]]
+id = "fn_array_agg_1_group_duplicates"
+description = "fn:ARRAY_AGG over a group holding one value several times beside another, ties for ordering."
+columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "NUMBER(38,0)" }]
+rows = [
+  ["'a'", "1"],
+  ["'a'", "1"],
+  ["'a'", "2"],
+]
+query = "SELECT g, ARRAY_AGG(x0) AS r FROM input GROUP BY g ORDER BY g"
+order = "ordered"
+tags = ["null", "empty-input", "duplicates"]
+origin = "generated: hazards@1"
+expected_divergence = "array_agg_order"
+
+[[case]]
+id = "fn_array_agg_1_group_single_row"
+description = "fn:ARRAY_AGG over a group of one row."
+columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "NUMBER(38,0)" }]
+rows = [
+  ["'a'", "1"],
+]
+query = "SELECT g, ARRAY_AGG(x0) AS r FROM input GROUP BY g ORDER BY g"
+order = "ordered"
+tags = ["null", "empty-input", "duplicates"]
+origin = "generated: hazards@1"
+
+[[case]]
+id = "fn_array_size_2_combination_0_integer"
+description = "fn:ARRAY_SIZE over benign values of each declared argument kind."
+columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "NUMBER(38,0)" }]
+rows = [
+  ["'a'", "1"],
+  ["'a'", "2"],
+]
+query = "SELECT g, ARRAY_SIZE(ARRAY_AGG(x0)) AS r FROM input GROUP BY g ORDER BY g"
+order = "ordered"
+tags = ["null", "empty-input", "duplicates"]
+origin = "generated: hazards@1"
+
+[[case]]
+id = "fn_array_size_2_combination_0_text"
+description = "fn:ARRAY_SIZE over benign values of each declared argument kind."
+columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "VARCHAR" }]
+rows = [
+  ["'a'", "'a'"],
+  ["'a'", "'b'"],
+]
+query = "SELECT g, ARRAY_SIZE(ARRAY_AGG(x0)) AS r FROM input GROUP BY g ORDER BY g"
+order = "ordered"
+tags = ["null", "empty-input", "duplicates"]
+origin = "generated: hazards@1"
+
+[[case]]
+id = "fn_array_size_2_combination_0_boolean"
+description = "fn:ARRAY_SIZE over benign values of each declared argument kind."
+columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "BOOLEAN" }]
+rows = [
+  ["'a'", "TRUE"],
+  ["'a'", "FALSE"],
+]
+query = "SELECT g, ARRAY_SIZE(ARRAY_AGG(x0)) AS r FROM input GROUP BY g ORDER BY g"
+order = "ordered"
+tags = ["null", "empty-input", "duplicates"]
+origin = "generated: hazards@1"
+
+[[case]]
+id = "fn_array_size_2_combination_0_variant"
+description = "fn:ARRAY_SIZE over benign values of each declared argument kind."
+columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "VARIANT" }]
+rows = [
+  ["'a'", "PARSE_JSON('{\"a\":1}')"],
+  ["'a'", "PARSE_JSON('{\"a\":2}')"],
+]
+query = "SELECT g, ARRAY_SIZE(ARRAY_AGG(x0)) AS r FROM input GROUP BY g ORDER BY g"
+order = "ordered"
+tags = ["null", "empty-input", "duplicates"]
+origin = "generated: hazards@1"
+
+[[case]]
+id = "fn_array_size_2_combination_1_integer"
+description = "fn:ARRAY_SIZE over benign values of each declared argument kind."
+columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "NUMBER(38,0)" }]
+rows = [
+  ["'a'", "1"],
+  ["'a'", "2"],
+]
+query = "SELECT g, ARRAY_SIZE(ARRAY_AGG(DISTINCT x0)) AS r FROM input GROUP BY g ORDER BY g"
+order = "ordered"
+tags = ["null", "empty-input", "duplicates"]
+origin = "generated: hazards@1"
+
+[[case]]
+id = "fn_array_size_2_combination_1_text"
+description = "fn:ARRAY_SIZE over benign values of each declared argument kind."
+columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "VARCHAR" }]
+rows = [
+  ["'a'", "'a'"],
+  ["'a'", "'b'"],
+]
+query = "SELECT g, ARRAY_SIZE(ARRAY_AGG(DISTINCT x0)) AS r FROM input GROUP BY g ORDER BY g"
+order = "ordered"
+tags = ["null", "empty-input", "duplicates"]
+origin = "generated: hazards@1"
+
+[[case]]
+id = "fn_array_size_2_combination_1_boolean"
+description = "fn:ARRAY_SIZE over benign values of each declared argument kind."
+columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "BOOLEAN" }]
+rows = [
+  ["'a'", "TRUE"],
+  ["'a'", "FALSE"],
+]
+query = "SELECT g, ARRAY_SIZE(ARRAY_AGG(DISTINCT x0)) AS r FROM input GROUP BY g ORDER BY g"
+order = "ordered"
+tags = ["null", "empty-input", "duplicates"]
+origin = "generated: hazards@1"
+
+[[case]]
+id = "fn_array_size_2_combination_1_variant"
+description = "fn:ARRAY_SIZE over benign values of each declared argument kind."
+columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "VARIANT" }]
+rows = [
+  ["'a'", "PARSE_JSON('{\"a\":1}')"],
+  ["'a'", "PARSE_JSON('{\"a\":2}')"],
+]
+query = "SELECT g, ARRAY_SIZE(ARRAY_AGG(DISTINCT x0)) AS r FROM input GROUP BY g ORDER BY g"
+order = "ordered"
+tags = ["null", "empty-input", "duplicates"]
+origin = "generated: hazards@1"
+
+[[case]]
+id = "fn_array_size_2_0_integer_hazards"
+description = "fn:ARRAY_SIZE with the hazards null, zero_negative, beyond_double in argument 0, integer."
+columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "NUMBER(38,0)" }]
+rows = [
+  ["'a'", "NULL"],
+  ["'a'", "0"],
+  ["'a'", "-1"],
+  ["'a'", "9007199254740993"],
+  ["'a'", "-9007199254740993"],
+]
+query = "SELECT g, ARRAY_SIZE(ARRAY_AGG(x0)) AS r FROM input GROUP BY g ORDER BY g"
+order = "ordered"
+tags = ["null", "empty-input", "duplicates"]
+origin = "generated: hazards@1"
+
+[[case]]
+id = "fn_array_size_2_0_integer_beyond_64_bits"
+description = "fn:ARRAY_SIZE with Integers beyond the 64-bit range, which BIGINT arithmetic overflows in argument 0, integer."
+columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "NUMBER(38,0)" }]
+rows = [
+  ["'a'", "18446744073709551616"],
+  ["'a'", "-9223372036854775809"],
+]
+query = "SELECT g, ARRAY_SIZE(ARRAY_AGG(x0)) AS r FROM input GROUP BY g ORDER BY g"
+order = "ordered"
+tags = ["null", "empty-input", "duplicates"]
+origin = "generated: hazards@1"
+
+[[case]]
+id = "fn_array_size_2_0_integer_digits_38"
+description = "fn:ARRAY_SIZE with The largest 38-digit integers in argument 0, integer."
+columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "NUMBER(38,0)" }]
+rows = [
+  ["'a'", "99999999999999999999999999999999999999"],
+  ["'a'", "-99999999999999999999999999999999999999"],
+]
+query = "SELECT g, ARRAY_SIZE(ARRAY_AGG(x0)) AS r FROM input GROUP BY g ORDER BY g"
+order = "ordered"
+tags = ["null", "empty-input", "duplicates"]
+origin = "generated: hazards@1"
+
+[[case]]
+id = "fn_array_size_2_0_text_hazards"
+description = "fn:ARRAY_SIZE with the hazards null, empty, dollar_prefix, slash_prefix, dots_brackets, quotes_backslashes, non_ascii, title_case_digraph, case_only, whitespace, number_text in argument 0, text."
+columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "VARCHAR" }]
+rows = [
+  ["'a'", "NULL"],
+  ["'a'", "''"],
+  ["'a'", "'$.a'"],
+  ["'a'", "'$'"],
+  ["'a'", "'/a'"],
+  ["'a'", "'/'"],
+  ["'a'", "'a.b'"],
+  ["'a'", "'a[0]'"],
+  ["'a'", "'*'"],
+  ["'a'", "'it''s'"],
+  ["'a'", "'say \"hi\"'"],
+  ["'a'", "'a\\\\b'"],
+  ["'a'", "'Größe'"],
+  ["'a'", "'é'"],
+  ["'a'", "'é'"],
+  ["'a'", "'😀'"],
+  ["'a'", "'ǆungla'"],
+  ["'a'", "'ǅ'"],
+  ["'a'", "'ǉubav'"],
+  ["'a'", "'ǲ'"],
+  ["'a'", "'Order'"],
+  ["'a'", "'ORDER'"],
+  ["'a'", "'order'"],
+  ["'a'", "'Straße'"],
+  ["'a'", "'STRASSE'"],
+  ["'a'", "' a'"],
+  ["'a'", "'a '"],
+  ["'a'", "' '"],
+  ["'a'", "'	'"],
+  ["'a'", "'a\nb'"],
+  ["'a'", "'007'"],
+  ["'a'", "'1.0'"],
+  ["'a'", "'1e0'"],
+  ["'a'", "'+7'"],
+  ["'a'", "'-0'"],
+]
+query = "SELECT g, ARRAY_SIZE(ARRAY_AGG(x0)) AS r FROM input GROUP BY g ORDER BY g"
+order = "ordered"
+tags = ["null", "empty-input", "duplicates"]
+origin = "generated: hazards@1"
+
+[[case]]
+id = "fn_array_size_2_0_boolean_hazards"
+description = "fn:ARRAY_SIZE with SQL NULL in argument 0, boolean."
+columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "BOOLEAN" }]
+rows = [
+  ["'a'", "NULL"],
+]
+query = "SELECT g, ARRAY_SIZE(ARRAY_AGG(x0)) AS r FROM input GROUP BY g ORDER BY g"
+order = "ordered"
+tags = ["null", "empty-input", "duplicates"]
+origin = "generated: hazards@1"
+
+[[case]]
+id = "fn_array_size_2_0_variant_hazards"
+description = "fn:ARRAY_SIZE with the hazards null, json_null, empty_containers, case_keys, path_keys, nesting, scalars in argument 0, variant."
+columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "VARIANT" }]
+rows = [
+  ["'a'", "NULL"],
+  ["'a'", "PARSE_JSON('null')"],
+  ["'a'", "PARSE_JSON('{\"a\":null}')"],
+  ["'a'", "PARSE_JSON('{}')"],
+  ["'a'", "PARSE_JSON('[]')"],
+  ["'a'", "PARSE_JSON('{\"a\":1,\"A\":2}')"],
+  ["'a'", "PARSE_JSON('{\"é\":1,\"É\":2}')"],
+  ["'a'", "PARSE_JSON('{\"$.a\":1,\"/a\":2,\"\":3,\"a.b\":4,\"a[0]\":5,\"*\":6}')"],
+  ["'a'", "PARSE_JSON('{\"a\":{\"b\":[1,{\"c\":[2,[3]]}]}}')"],
+  ["'a'", "PARSE_JSON('\"a\"')"],
+  ["'a'", "PARSE_JSON('true')"],
+  ["'a'", "PARSE_JSON('7')"],
+]
+query = "SELECT g, ARRAY_SIZE(ARRAY_AGG(x0)) AS r FROM input GROUP BY g ORDER BY g"
+order = "ordered"
+tags = ["null", "empty-input", "duplicates"]
+origin = "generated: hazards@1"
+
+[[case]]
+id = "fn_array_size_2_0_variant_number_spellings"
+description = "fn:ARRAY_SIZE with One number written as 1, 1.0 and 1e0, which Snowflake compares by value (ARRAY_POSITION) in argument 0, variant."
+columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "VARIANT" }]
+rows = [
+  ["'a'", "PARSE_JSON('[1,1.0,1e0]')"],
+  ["'a'", "PARSE_JSON('{\"a\":1.0}')"],
+  ["'a'", "PARSE_JSON('1e0')"],
+]
+query = "SELECT g, ARRAY_SIZE(ARRAY_AGG(x0)) AS r FROM input GROUP BY g ORDER BY g"
+order = "ordered"
+tags = ["null", "empty-input", "duplicates"]
+origin = "generated: hazards@1"
+expected_divergence = "json_fidelity"
+
+[[case]]
+id = "fn_array_size_2_0_variant_large_numbers"
+description = "fn:ARRAY_SIZE with Integers beyond 64 bits, long decimals and negative zero in argument 0, variant."
+columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "VARIANT" }]
+rows = [
+  ["'a'", "PARSE_JSON('{\"a\":18446744073709551616}')"],
+  ["'a'", "PARSE_JSON('{\"a\":12345678901234567890.123}')"],
+  ["'a'", "PARSE_JSON('-0')"],
+]
+query = "SELECT g, ARRAY_SIZE(ARRAY_AGG(x0)) AS r FROM input GROUP BY g ORDER BY g"
+order = "ordered"
+tags = ["null", "empty-input", "duplicates"]
+origin = "generated: hazards@1"
+expected_divergence = "json_fidelity"
+
+[[case]]
+id = "fn_array_size_2_group_empty_input"
+description = "fn:ARRAY_SIZE over an aggregate over no rows."
+columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "NUMBER(38,0)" }]
+rows = [
+  ["'a'", "1"],
+]
+query = "SELECT ARRAY_SIZE(ARRAY_AGG(x0)) AS r FROM input WHERE FALSE"
+order = "ordered"
+tags = ["null", "empty-input", "duplicates"]
+origin = "generated: hazards@1"
+
+[[case]]
+id = "fn_array_size_2_group_all_null"
+description = "fn:ARRAY_SIZE over a group whose values are all null."
+columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "NUMBER(38,0)" }]
+rows = [
+  ["'a'", "NULL"],
+  ["'a'", "NULL"],
+  ["'b'", "1"],
+]
+query = "SELECT g, ARRAY_SIZE(ARRAY_AGG(x0)) AS r FROM input GROUP BY g ORDER BY g"
+order = "ordered"
+tags = ["null", "empty-input", "duplicates"]
+origin = "generated: hazards@1"
+
+[[case]]
+id = "fn_array_size_2_group_null_beside_value"
+description = "fn:ARRAY_SIZE over a group holding null beside a value (any_value)."
+columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "NUMBER(38,0)" }]
+rows = [
+  ["'a'", "NULL"],
+  ["'a'", "1"],
+]
+query = "SELECT g, ARRAY_SIZE(ARRAY_AGG(x0)) AS r FROM input GROUP BY g ORDER BY g"
+order = "ordered"
+tags = ["null", "empty-input", "duplicates"]
+origin = "generated: hazards@1"
+
+[[case]]
+id = "fn_array_size_2_group_duplicates"
+description = "fn:ARRAY_SIZE over a group holding one value several times beside another, ties for ordering."
+columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "NUMBER(38,0)" }]
+rows = [
+  ["'a'", "1"],
+  ["'a'", "1"],
+  ["'a'", "2"],
+]
+query = "SELECT g, ARRAY_SIZE(ARRAY_AGG(x0)) AS r FROM input GROUP BY g ORDER BY g"
+order = "ordered"
+tags = ["null", "empty-input", "duplicates"]
+origin = "generated: hazards@1"
+
+[[case]]
+id = "fn_array_size_2_group_single_row"
+description = "fn:ARRAY_SIZE over a group of one row."
+columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "NUMBER(38,0)" }]
+rows = [
+  ["'a'", "1"],
+]
+query = "SELECT g, ARRAY_SIZE(ARRAY_AGG(x0)) AS r FROM input GROUP BY g ORDER BY g"
+order = "ordered"
+tags = ["null", "empty-input", "duplicates"]
+origin = "generated: hazards@1"
+
+[[case]]
+id = "fn_array_sort_3_combination_0_integer"
+description = "fn:ARRAY_SORT over benign values of each declared argument kind."
+columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "NUMBER(38,0)" }]
+rows = [
+  ["'a'", "1"],
+  ["'a'", "2"],
+]
+query = "SELECT g, ARRAY_SORT(ARRAY_AGG(x0)) AS r FROM input GROUP BY g ORDER BY g"
+order = "ordered"
+tags = ["null", "empty-input", "duplicates"]
+origin = "generated: hazards@1"
+
+[[case]]
+id = "fn_array_sort_3_combination_0_text"
+description = "fn:ARRAY_SORT over benign values of each declared argument kind."
+columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "VARCHAR" }]
+rows = [
+  ["'a'", "'a'"],
+  ["'a'", "'b'"],
+]
+query = "SELECT g, ARRAY_SORT(ARRAY_AGG(x0)) AS r FROM input GROUP BY g ORDER BY g"
+order = "ordered"
+tags = ["null", "empty-input", "duplicates"]
+origin = "generated: hazards@1"
+
+[[case]]
+id = "fn_array_sort_3_combination_1_integer"
+description = "fn:ARRAY_SORT over benign values of each declared argument kind."
+columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "NUMBER(38,0)" }]
+rows = [
+  ["'a'", "1"],
+  ["'a'", "2"],
+]
+query = "SELECT g, ARRAY_SORT(ARRAY_AGG(DISTINCT x0)) AS r FROM input GROUP BY g ORDER BY g"
+order = "ordered"
+tags = ["null", "empty-input", "duplicates"]
+origin = "generated: hazards@1"
+
+[[case]]
+id = "fn_array_sort_3_combination_1_text"
+description = "fn:ARRAY_SORT over benign values of each declared argument kind."
+columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "VARCHAR" }]
+rows = [
+  ["'a'", "'a'"],
+  ["'a'", "'b'"],
+]
+query = "SELECT g, ARRAY_SORT(ARRAY_AGG(DISTINCT x0)) AS r FROM input GROUP BY g ORDER BY g"
+order = "ordered"
+tags = ["null", "empty-input", "duplicates"]
+origin = "generated: hazards@1"
+
+[[case]]
+id = "fn_array_sort_3_0_integer_hazards"
+description = "fn:ARRAY_SORT with the hazards null, zero_negative, beyond_double in argument 0, integer."
+columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "NUMBER(38,0)" }]
+rows = [
+  ["'a'", "NULL"],
+  ["'a'", "0"],
+  ["'a'", "-1"],
+  ["'a'", "9007199254740993"],
+  ["'a'", "-9007199254740993"],
+]
+query = "SELECT g, ARRAY_SORT(ARRAY_AGG(x0)) AS r FROM input GROUP BY g ORDER BY g"
+order = "ordered"
+tags = ["null", "empty-input", "duplicates"]
+origin = "generated: hazards@1"
+
+[[case]]
+id = "fn_array_sort_3_0_integer_beyond_64_bits"
+description = "fn:ARRAY_SORT with Integers beyond the 64-bit range, which BIGINT arithmetic overflows in argument 0, integer."
+columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "NUMBER(38,0)" }]
+rows = [
+  ["'a'", "18446744073709551616"],
+  ["'a'", "-9223372036854775809"],
+]
+query = "SELECT g, ARRAY_SORT(ARRAY_AGG(x0)) AS r FROM input GROUP BY g ORDER BY g"
+order = "ordered"
+tags = ["null", "empty-input", "duplicates"]
+origin = "generated: hazards@1"
+
+[[case]]
+id = "fn_array_sort_3_0_integer_digits_38"
+description = "fn:ARRAY_SORT with The largest 38-digit integers in argument 0, integer."
+columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "NUMBER(38,0)" }]
+rows = [
+  ["'a'", "99999999999999999999999999999999999999"],
+  ["'a'", "-99999999999999999999999999999999999999"],
+]
+query = "SELECT g, ARRAY_SORT(ARRAY_AGG(x0)) AS r FROM input GROUP BY g ORDER BY g"
+order = "ordered"
+tags = ["null", "empty-input", "duplicates"]
+origin = "generated: hazards@1"
+
+[[case]]
+id = "fn_array_sort_3_0_text_hazards"
+description = "fn:ARRAY_SORT with the hazards null, empty, dollar_prefix, slash_prefix, dots_brackets, quotes_backslashes, non_ascii, title_case_digraph, case_only, whitespace, number_text in argument 0, text."
+columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "VARCHAR" }]
+rows = [
+  ["'a'", "NULL"],
+  ["'a'", "''"],
+  ["'a'", "'$.a'"],
+  ["'a'", "'$'"],
+  ["'a'", "'/a'"],
+  ["'a'", "'/'"],
+  ["'a'", "'a.b'"],
+  ["'a'", "'a[0]'"],
+  ["'a'", "'*'"],
+  ["'a'", "'it''s'"],
+  ["'a'", "'say \"hi\"'"],
+  ["'a'", "'a\\\\b'"],
+  ["'a'", "'Größe'"],
+  ["'a'", "'é'"],
+  ["'a'", "'é'"],
+  ["'a'", "'😀'"],
+  ["'a'", "'ǆungla'"],
+  ["'a'", "'ǅ'"],
+  ["'a'", "'ǉubav'"],
+  ["'a'", "'ǲ'"],
+  ["'a'", "'Order'"],
+  ["'a'", "'ORDER'"],
+  ["'a'", "'order'"],
+  ["'a'", "'Straße'"],
+  ["'a'", "'STRASSE'"],
+  ["'a'", "' a'"],
+  ["'a'", "'a '"],
+  ["'a'", "' '"],
+  ["'a'", "'	'"],
+  ["'a'", "'a\nb'"],
+  ["'a'", "'007'"],
+  ["'a'", "'1.0'"],
+  ["'a'", "'1e0'"],
+  ["'a'", "'+7'"],
+  ["'a'", "'-0'"],
+]
+query = "SELECT g, ARRAY_SORT(ARRAY_AGG(x0)) AS r FROM input GROUP BY g ORDER BY g"
+order = "ordered"
+tags = ["null", "empty-input", "duplicates"]
+origin = "generated: hazards@1"
+
+[[case]]
+id = "fn_array_sort_3_group_empty_input"
+description = "fn:ARRAY_SORT over an aggregate over no rows."
+columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "NUMBER(38,0)" }]
+rows = [
+  ["'a'", "1"],
+]
+query = "SELECT ARRAY_SORT(ARRAY_AGG(x0)) AS r FROM input WHERE FALSE"
+order = "ordered"
+tags = ["null", "empty-input", "duplicates"]
+origin = "generated: hazards@1"
+
+[[case]]
+id = "fn_array_sort_3_group_all_null"
+description = "fn:ARRAY_SORT over a group whose values are all null."
+columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "NUMBER(38,0)" }]
+rows = [
+  ["'a'", "NULL"],
+  ["'a'", "NULL"],
+  ["'b'", "1"],
+]
+query = "SELECT g, ARRAY_SORT(ARRAY_AGG(x0)) AS r FROM input GROUP BY g ORDER BY g"
+order = "ordered"
+tags = ["null", "empty-input", "duplicates"]
+origin = "generated: hazards@1"
+
+[[case]]
+id = "fn_array_sort_3_group_null_beside_value"
+description = "fn:ARRAY_SORT over a group holding null beside a value (any_value)."
+columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "NUMBER(38,0)" }]
+rows = [
+  ["'a'", "NULL"],
+  ["'a'", "1"],
+]
+query = "SELECT g, ARRAY_SORT(ARRAY_AGG(x0)) AS r FROM input GROUP BY g ORDER BY g"
+order = "ordered"
+tags = ["null", "empty-input", "duplicates"]
+origin = "generated: hazards@1"
+
+[[case]]
+id = "fn_array_sort_3_group_duplicates"
+description = "fn:ARRAY_SORT over a group holding one value several times beside another, ties for ordering."
+columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "NUMBER(38,0)" }]
+rows = [
+  ["'a'", "1"],
+  ["'a'", "1"],
+  ["'a'", "2"],
+]
+query = "SELECT g, ARRAY_SORT(ARRAY_AGG(x0)) AS r FROM input GROUP BY g ORDER BY g"
+order = "ordered"
+tags = ["null", "empty-input", "duplicates"]
+origin = "generated: hazards@1"
+
+[[case]]
+id = "fn_array_sort_3_group_single_row"
+description = "fn:ARRAY_SORT over a group of one row."
+columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "NUMBER(38,0)" }]
+rows = [
+  ["'a'", "1"],
+]
+query = "SELECT g, ARRAY_SORT(ARRAY_AGG(x0)) AS r FROM input GROUP BY g ORDER BY g"
+order = "ordered"
+tags = ["null", "empty-input", "duplicates"]
+origin = "generated: hazards@1"

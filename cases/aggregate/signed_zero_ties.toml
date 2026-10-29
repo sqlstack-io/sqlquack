@@ -1,0 +1,86 @@
+# MAX_BY, MIN_BY and ANY_VALUE over groups whose tied rows hold -0 beside 0, or NaN.
+category = "aggregate"
+construct = "fn:MAX_BY"
+session_profile = "utc-v1"
+
+[[case]]
+id = "max_by_ties_holding_signed_zeros"
+description = "MAX_BY and MIN_BY where rows tied on the key hold -0 and 0, beside a group whose ties hold the same zero."
+columns = [{ name = "g", type = "VARCHAR" }, { name = "k", type = "NUMBER(38,0)" }, { name = "v", type = "FLOAT" }]
+rows = [
+  ["'a'", "1", "'-0'"],
+  ["'a'", "1", "0"],
+  ["'b'", "1", "0"],
+  ["'b'", "1", "0"],
+  ["'c'", "NULL", "'-0'"],
+]
+query = "SELECT g, MAX_BY(v, k) AS mx, MIN_BY(v, k) AS mn FROM input GROUP BY g ORDER BY g"
+order = "ordered"
+tags = ["null", "empty-input", "duplicates"]
+expected_divergence = "extreme_key_ties"
+
+[[case]]
+id = "max_by_keys_of_both_zero_signs"
+description = "MAX_BY and MIN_BY whose extreme FLOAT keys are -0 and 0, holding different values."
+columns = [{ name = "g", type = "VARCHAR" }, { name = "k", type = "FLOAT" }, { name = "v", type = "VARCHAR" }]
+rows = [
+  ["'a'", "'-0'", "'negative'"],
+  ["'a'", "0", "'positive'"],
+  ["'b'", "'-0'", "'negative'"],
+  ["'b'", "-1", "'below'"],
+  ["'c'", "NULL", "'none'"],
+]
+query = "SELECT g, MAX_BY(v, k) AS mx, MIN_BY(v, k) AS mn FROM input GROUP BY g ORDER BY g"
+order = "ordered"
+tags = ["null", "empty-input", "duplicates"]
+expected_divergence = "extreme_key_ties"
+
+[[case]]
+id = "max_by_ties_holding_one_zero_or_nan"
+description = "MAX_BY and MIN_BY where tied rows hold the same value: 0 twice, -0 twice, NaN twice; no group raises."
+columns = [{ name = "g", type = "VARCHAR" }, { name = "k", type = "NUMBER(38,0)" }, { name = "v", type = "FLOAT" }]
+rows = [
+  ["'a'", "1", "0"],
+  ["'a'", "1", "0"],
+  ["'b'", "1", "'-0'"],
+  ["'b'", "1", "'-0'"],
+  ["'c'", "1", "'NaN'"],
+  ["'c'", "1", "'NaN'"],
+  ["'d'", "2", "'-0'"],
+  ["'d'", "1", "0"],
+  ["'e'", "NULL", "1"],
+]
+query = "SELECT g, MAX_BY(v, k) AS mx, MIN_BY(v, k) AS mn FROM input GROUP BY g ORDER BY g"
+order = "ordered"
+tags = ["null", "empty-input", "duplicates"]
+
+[[case]]
+id = "any_value_signed_zeros"
+description = "ANY_VALUE of a group holding -0 beside 0, beside groups holding one zero."
+columns = [{ name = "g", type = "VARCHAR" }, { name = "v", type = "FLOAT" }]
+rows = [
+  ["'a'", "'-0'"],
+  ["'a'", "0"],
+  ["'b'", "0"],
+  ["'b'", "0"],
+]
+query = "SELECT g, ANY_VALUE(v) AS v FROM input GROUP BY g ORDER BY g"
+order = "ordered"
+tags = ["null", "empty-input", "duplicates"]
+expected_divergence = "any_value_choice"
+
+[[case]]
+id = "any_value_one_zero_or_nan"
+description = "ANY_VALUE of groups holding only -0, only 0, only NaN, or nothing but NULL."
+columns = [{ name = "g", type = "VARCHAR" }, { name = "v", type = "FLOAT" }]
+rows = [
+  ["'a'", "'-0'"],
+  ["'a'", "'-0'"],
+  ["'b'", "0"],
+  ["'c'", "'NaN'"],
+  ["'c'", "'NaN'"],
+  ["'d'", "NULL"],
+]
+query = "SELECT g, ANY_VALUE(v) AS v FROM input GROUP BY g ORDER BY g"
+order = "ordered"
+tags = ["null", "empty-input", "duplicates"]

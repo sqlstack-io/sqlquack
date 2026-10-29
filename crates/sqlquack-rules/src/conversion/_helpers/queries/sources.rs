@@ -22,7 +22,7 @@ use crate::conversion::constants::{
     FROM_RELATION, FROM_SUBQUERY, JOIN_CROSS, JOIN_ON, LATERAL_KEY, LATERAL_SUBQUERY,
     OPAQUE_ALIAS_PREFIX, PROJECT_TABLE_FUNCTION, TABLE_WRAPPER,
 };
-use crate::conversion::models::FunctionReturns;
+use crate::conversion::models::{ColumnSpec, FunctionReturns, Holding};
 
 /// The FROM clause with its joins, and the relations it brings into scope.
 pub(crate) fn convert_from(
@@ -281,6 +281,19 @@ fn table_source(
             guarded.join(", "),
             quoted_identifier(&name, log)
         ),
+    };
+    let columns = match is_cte {
+        true => columns,
+        false => columns
+            .into_iter()
+            .map(|column| ColumnSpec {
+                holding: match column.holding {
+                    Holding::Json => Holding::Json,
+                    Holding::Variant | Holding::Chained => Holding::Chained,
+                },
+                ..column
+            })
+            .collect(),
     };
     Ok((
         format!("{relation} AS {}", quoted_identifier(&alias, log)),

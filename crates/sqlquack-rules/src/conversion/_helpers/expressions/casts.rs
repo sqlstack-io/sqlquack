@@ -33,11 +33,14 @@ use sqlquack_snowflake::typing::models::{CastTarget, SnowflakeType};
 
 use crate::conversion::_helpers::expressions::objects::as_json;
 use crate::conversion::_helpers::expressions::operators::is_iso_date;
-use crate::conversion::_helpers::expressions::scalar::convert_expression;
-use crate::conversion::_helpers::expressions::semi_structured::{variant_cast, variant_null};
+use crate::conversion::_helpers::expressions::scalar::{convert_expression, convert_held};
+use crate::conversion::_helpers::expressions::semi_structured::{
+    held_cast, variant_cast, variant_null,
+};
 use crate::conversion::_helpers::expressions::temporal::{
     is_temporal, proven_time_text, temporal_cast, time_submicro, timestamp_literal,
 };
+use crate::conversion::_helpers::expressions::variants::to_variant;
 use crate::conversion::_helpers::support::divergence::diverge;
 use crate::conversion::_helpers::support::failure::text_failure;
 use crate::conversion::_helpers::support::scope::{Context, Emitted, Literal};
@@ -104,13 +107,25 @@ pub(crate) fn convert_cast(
         let sql = number_literal_cast(&digits, target.data_type, log).map_err(refuse)?;
         return Ok(Emitted::new(sql, target.data_type));
     }
-    let operand = convert_expression(operand_node, site)?;
+    let operand = convert_held(operand_node, site)?;
+    let trying = matches!(construct.name.as_str(), "try_cast");
+    if operand.is_variant_held() {
+        return held_cast(
+            operand,
+            (&type_name, target),
+            trying,
+            (site.context, &construct),
+        );
+    }
+    if operand.data_type == SnowflakeType::Float && type_name == VARIANT_NAME && !trying {
+        let _rule = cast_rule(TO_VARIANT_RULE, log);
+        return to_variant(operand, &construct, site.context);
+    }
     if let (SnowflakeType::Float, SnowflakeType::Number { scale, .. }) =
         (operand.data_type, target.data_type)
     {
         log.facet(FLOAT_SCALE_FACET, &scale.to_string());
     }
-    let trying = matches!(construct.name.as_str(), "try_cast");
     if operand.data_type == SnowflakeType::Null && type_name == VARIANT_NAME {
         let _rule = cast_rule(CAST_SAME_TYPE, log);
         return Ok(Emitted::new(
@@ -493,7 +508,19 @@ pub(crate) fn to_varchar_call(
     site: Site<'_>,
 ) -> Result<Emitted, Refusal> {
     let refuse = |reason: String| outside_conditions(construct.clone(), reason);
-    let operand = convert_expression(value, site)?;
+    let operand = convert_held(value, site)?;
+    if operand.is_variant_held() && name == VARIANT_TEXT_FUNCTION {
+        let target = cast_target("VARCHAR", &ProvenanceLog::default()).map_err(refuse)?;
+        return held_cast(
+            operand,
+            ("VARCHAR", target),
+            false,
+            (site.context, construct),
+        );
+    }
+    if operand.is_variant_held() {
+        return Err(refuse(format!("{name} of a VARIANT has no recording")));
+    }
     if operand.data_type == SnowflakeType::SemiStructured {
         if name != VARIANT_TEXT_FUNCTION {
             return Err(refuse(format!("{name} of a VARIANT has no recording")));

@@ -6,9 +6,12 @@ from scripts.case_generators._helpers.json_texts import text_literal
 from scripts.case_generators.constants import (
     CONSTRUCT_GRIDS,
     CONVERTED_TYPED_SOURCES,
+    ELEMENT_TYPED_WRAPPERS,
     EXCEPT_PAIRS,
     EXCEPT_UNSURE_PAIRS,
     FLOAT_NUMBER_VALUES,
+    FLOAT_TEXT,
+    FLOAT_TEXT_TYPED_READS,
     FLOAT_TEXT_VALUES,
     INSERT_KEYS,
     INSERT_TARGETS,
@@ -227,7 +230,9 @@ def typed_cases() -> list[Case]:
                         query=f"SELECT {expression} AS r FROM input ORDER BY ordinal",
                         order="ordered",
                         tags=("null", "boundary"),
-                        expected_divergence=typed_divergence(source=slug, read=read_slug),
+                        expected_divergence=typed_divergence(
+                            source=slug, read=read_slug, wrapper=wrapper_slug
+                        ),
                     )
                 )
             cases.append(
@@ -259,8 +264,10 @@ def typed_cases() -> list[Case]:
     return cases
 
 
-def typed_divergence(*, source: str, read: str) -> str | None:
-    """variant_typed_values where the converted SQL raises: typed reads, or values text drops."""
+def typed_divergence(*, source: str, read: str, wrapper: str | None = None) -> str | None:
+    """The divergence a typed read raises: FLOAT text at the root, typed reads, or values."""
+    if (source, read) in FLOAT_TEXT_TYPED_READS and wrapper not in ELEMENT_TYPED_WRAPPERS:
+        return FLOAT_TEXT
     if source in RAISING_TYPED_SOURCES or (
         source in CONVERTED_TYPED_SOURCES and read in RAISING_TYPED_READS
     ):

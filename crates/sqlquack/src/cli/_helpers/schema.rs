@@ -10,8 +10,26 @@ use sqlquack_rules::conversion::models::{
 };
 use sqlquack_snowflake::typing::main::cast_target::cast_target;
 
-/// Name and Snowflake type pairs, as the schema file writes columns and parameters.
-type RawColumns = Vec<(String, String)>;
+/// Columns and parameters as the schema file writes them.
+type RawColumns = Vec<RawColumn>;
+
+/// A name and Snowflake type pair, or an object that may also mark a VARIANT's typed leaves.
+#[derive(Deserialize)]
+#[serde(untagged)]
+enum RawColumn {
+    Pair(String, String),
+    Described(RawDescribedColumn),
+}
+
+#[derive(Deserialize)]
+#[serde(deny_unknown_fields)]
+struct RawDescribedColumn {
+    name: String,
+    #[serde(rename = "type")]
+    type_name: String,
+    #[serde(default)]
+    typed_leaves: bool,
+}
 
 /// The schema file: relations and functions, or relations alone as the top-level map.
 #[derive(Deserialize)]
@@ -98,11 +116,15 @@ fn typed_function(function: RawFunction, log: &ProvenanceLog) -> Option<Function
 
 fn typed_columns(columns: RawColumns, log: &ProvenanceLog) -> Option<Vec<ColumnSpec>> {
     let mut typed: Vec<ColumnSpec> = Vec::with_capacity(columns.len());
-    for (name, type_name) in columns {
+    for column in columns {
+        let (name, type_name, typed_leaves) = match column {
+            RawColumn::Pair(name, type_name) => (name, type_name, false),
+            RawColumn::Described(column) => (column.name, column.type_name, column.typed_leaves),
+        };
         match cast_target(&type_name, log) {
             Ok(target) => typed.push(ColumnSpec {
-                name,
-                data_type: target.data_type,
+                typed_leaves,
+                ..ColumnSpec::new(name, target.data_type)
             }),
             Err(_) => return None,
         }

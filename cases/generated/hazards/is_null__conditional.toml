@@ -243,6 +243,21 @@ tags = ["null", "all-null", "mixed-types"]
 origin = "generated: hazards@1"
 
 [[case]]
+id = "node_is_null_0_float_notation_boundaries"
+description = "node:is_null with Doubles where text switches between plain and exponent notation, which %.15g and %.15e write differently in argument 0, float."
+columns = [{ name = "x0", type = "FLOAT" }]
+rows = [
+  ["100"],
+  ["0.0001"],
+  ["1e-5"],
+  ["1e15"],
+  ["1e21"],
+]
+expression = "x0 IS NULL"
+tags = ["null", "all-null", "mixed-types"]
+origin = "generated: hazards@1"
+
+[[case]]
 id = "node_is_null_0_text_hazards"
 description = "node:is_null with the hazards null, empty, dollar_prefix, slash_prefix, dots_brackets, quotes_backslashes, non_ascii, title_case_digraph, case_only, whitespace, number_text in argument 0, text."
 columns = [{ name = "x0", type = "VARCHAR" }]

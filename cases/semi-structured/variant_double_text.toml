@@ -1,0 +1,256 @@
+# FLOAT held in a VARIANT cast to text, over many rows and folded from one row, by value class.
+category = "semi-structured-typed"
+construct = "node:cast"
+session_profile = "utc-v1"
+
+[[case]]
+id = "variant_double_text_many_rows_integers"
+description = "Text of a FLOAT in a VARIANT over many rows, which Snowflake cannot fold: whole doubles, up to and past 2^53."
+columns = [{ name = "x", type = "FLOAT" }]
+rows = [
+  ["0"],
+  ["1"],
+  ["-42"],
+  ["100"],
+  ["123456789"],
+  ["1e15"],
+  ["9007199254740992"],
+  ["1e16"],
+  ["1e17"],
+  ["123456789012345678"],
+  ["NULL"],
+]
+query = "SELECT TO_VARIANT(x)::VARCHAR AS c, TO_VARCHAR(TO_VARIANT(x)) AS tv, OBJECT_CONSTRUCT('k', x):k::VARCHAR AS o, ARRAY_CONSTRUCT(x)[0]::VARCHAR AS a, x::VARCHAR AS fx, TO_JSON(TO_VARIANT(x)) AS j FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "boundary"]
+expected_divergence = "float_text"
+
+[[case]]
+id = "variant_double_text_many_rows_fractions"
+description = "Text of a FLOAT in a VARIANT over many rows, which Snowflake cannot fold: fractions with up to 17 significant digits."
+columns = [{ name = "x", type = "FLOAT" }]
+rows = [
+  ["0.1"],
+  ["0.5"],
+  ["-7.25"],
+  ["0.30000000000000004"],
+  ["0.3333333333333333"],
+  ["0.6666666666666666"],
+  ["3.141592653589793"],
+  ["2.718281828459045"],
+  ["1.0000000000000002"],
+  ["123456.78901234567"],
+  ["0.12345678901234568"],
+  ["99.99999999999999"],
+  ["NULL"],
+]
+query = "SELECT TO_VARIANT(x)::VARCHAR AS c, TO_VARCHAR(TO_VARIANT(x)) AS tv, OBJECT_CONSTRUCT('k', x):k::VARCHAR AS o, ARRAY_CONSTRUCT(x)[0]::VARCHAR AS a, x::VARCHAR AS fx, TO_JSON(TO_VARIANT(x)) AS j FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "boundary"]
+expected_divergence = "float_text"
+
+[[case]]
+id = "variant_double_text_many_rows_small_exponents"
+description = "Text of a FLOAT in a VARIANT over many rows, which Snowflake cannot fold: negative exponents: 1e-5 and 1e-7 and their neighbours."
+columns = [{ name = "x", type = "FLOAT" }]
+rows = [
+  ["0.0001"],
+  ["1e-5"],
+  ["1.5e-5"],
+  ["0.000123456789"],
+  ["1e-6"],
+  ["1e-7"],
+  ["1.234e-7"],
+  ["-1e-7"],
+  ["1e-300"],
+  ["NULL"],
+]
+query = "SELECT TO_VARIANT(x)::VARCHAR AS c, TO_VARCHAR(TO_VARIANT(x)) AS tv, OBJECT_CONSTRUCT('k', x):k::VARCHAR AS o, ARRAY_CONSTRUCT(x)[0]::VARCHAR AS a, x::VARCHAR AS fx, TO_JSON(TO_VARIANT(x)) AS j FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "boundary"]
+expected_divergence = "float_text"
+
+[[case]]
+id = "variant_double_text_many_rows_large_exponents"
+description = "Text of a FLOAT in a VARIANT over many rows, which Snowflake cannot fold: positive exponents: 1e15, 1e17 and 1e21 and their neighbours."
+columns = [{ name = "x", type = "FLOAT" }]
+rows = [
+  ["1e15"],
+  ["1.5e15"],
+  ["1e16"],
+  ["1e17"],
+  ["1.5e17"],
+  ["1e20"],
+  ["1e21"],
+  ["-1e21"],
+  ["1e22"],
+  ["1e23"],
+  ["1.7976931348623157e308"],
+  ["NULL"],
+]
+query = "SELECT TO_VARIANT(x)::VARCHAR AS c, TO_VARCHAR(TO_VARIANT(x)) AS tv, OBJECT_CONSTRUCT('k', x):k::VARCHAR AS o, ARRAY_CONSTRUCT(x)[0]::VARCHAR AS a, x::VARCHAR AS fx, TO_JSON(TO_VARIANT(x)) AS j FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "boundary"]
+expected_divergence = "float_text"
+
+[[case]]
+id = "variant_double_text_many_rows_subnormals"
+description = "Text of a FLOAT in a VARIANT over many rows, which Snowflake cannot fold: subnormal doubles and the smallest normal one."
+columns = [{ name = "x", type = "FLOAT" }]
+rows = [
+  ["5e-324"],
+  ["-5e-324"],
+  ["1e-320"],
+  ["1e-310"],
+  ["2.225073858507201e-308"],
+  ["2.2250738585072014e-308"],
+  ["NULL"],
+]
+query = "SELECT TO_VARIANT(x)::VARCHAR AS c, TO_VARCHAR(TO_VARIANT(x)) AS tv, OBJECT_CONSTRUCT('k', x):k::VARCHAR AS o, ARRAY_CONSTRUCT(x)[0]::VARCHAR AS a, x::VARCHAR AS fx, TO_JSON(TO_VARIANT(x)) AS j FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "boundary"]
+expected_divergence = "float_text"
+
+[[case]]
+id = "variant_double_text_single_row_integer"
+description = "Text of the FLOAT 123456789 in a VARIANT from a one-row input, which Snowflake may fold, against the many-row cases."
+columns = [{ name = "x", type = "FLOAT" }]
+rows = [
+  ["123456789"],
+]
+query = "SELECT TO_VARIANT(x)::VARCHAR AS c, TO_VARCHAR(TO_VARIANT(x)) AS tv, OBJECT_CONSTRUCT('k', x):k::VARCHAR AS o, ARRAY_CONSTRUCT(x)[0]::VARCHAR AS a, x::VARCHAR AS fx, TO_JSON(TO_VARIANT(x)) AS j FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["boundary"]
+expected_divergence = "float_text"
+
+[[case]]
+id = "variant_double_text_single_row_integer_2p53"
+description = "Text of the FLOAT 9007199254740992 in a VARIANT from a one-row input, which Snowflake may fold, against the many-row cases."
+columns = [{ name = "x", type = "FLOAT" }]
+rows = [
+  ["9007199254740992"],
+]
+query = "SELECT TO_VARIANT(x)::VARCHAR AS c, TO_VARCHAR(TO_VARIANT(x)) AS tv, OBJECT_CONSTRUCT('k', x):k::VARCHAR AS o, ARRAY_CONSTRUCT(x)[0]::VARCHAR AS a, x::VARCHAR AS fx, TO_JSON(TO_VARIANT(x)) AS j FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["boundary"]
+expected_divergence = "float_text"
+
+[[case]]
+id = "variant_double_text_single_row_fraction_tenth"
+description = "Text of the FLOAT 0.1 in a VARIANT from a one-row input, which Snowflake may fold, against the many-row cases."
+columns = [{ name = "x", type = "FLOAT" }]
+rows = [
+  ["0.1"],
+]
+query = "SELECT TO_VARIANT(x)::VARCHAR AS c, TO_VARCHAR(TO_VARIANT(x)) AS tv, OBJECT_CONSTRUCT('k', x):k::VARCHAR AS o, ARRAY_CONSTRUCT(x)[0]::VARCHAR AS a, x::VARCHAR AS fx, TO_JSON(TO_VARIANT(x)) AS j FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["boundary"]
+expected_divergence = "float_text"
+
+[[case]]
+id = "variant_double_text_single_row_fraction_17_digits"
+description = "Text of the FLOAT 0.30000000000000004 in a VARIANT from a one-row input, which Snowflake may fold, against the many-row cases."
+columns = [{ name = "x", type = "FLOAT" }]
+rows = [
+  ["0.30000000000000004"],
+]
+query = "SELECT TO_VARIANT(x)::VARCHAR AS c, TO_VARCHAR(TO_VARIANT(x)) AS tv, OBJECT_CONSTRUCT('k', x):k::VARCHAR AS o, ARRAY_CONSTRUCT(x)[0]::VARCHAR AS a, x::VARCHAR AS fx, TO_JSON(TO_VARIANT(x)) AS j FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["boundary"]
+expected_divergence = "float_text"
+
+[[case]]
+id = "variant_double_text_single_row_fraction_pi"
+description = "Text of the FLOAT 3.141592653589793 in a VARIANT from a one-row input, which Snowflake may fold, against the many-row cases."
+columns = [{ name = "x", type = "FLOAT" }]
+rows = [
+  ["3.141592653589793"],
+]
+query = "SELECT TO_VARIANT(x)::VARCHAR AS c, TO_VARCHAR(TO_VARIANT(x)) AS tv, OBJECT_CONSTRUCT('k', x):k::VARCHAR AS o, ARRAY_CONSTRUCT(x)[0]::VARCHAR AS a, x::VARCHAR AS fx, TO_JSON(TO_VARIANT(x)) AS j FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["boundary"]
+expected_divergence = "float_text"
+
+[[case]]
+id = "variant_double_text_single_row_exponent_1e_5"
+description = "Text of the FLOAT 1e-5 in a VARIANT from a one-row input, which Snowflake may fold, against the many-row cases."
+columns = [{ name = "x", type = "FLOAT" }]
+rows = [
+  ["1e-5"],
+]
+query = "SELECT TO_VARIANT(x)::VARCHAR AS c, TO_VARCHAR(TO_VARIANT(x)) AS tv, OBJECT_CONSTRUCT('k', x):k::VARCHAR AS o, ARRAY_CONSTRUCT(x)[0]::VARCHAR AS a, x::VARCHAR AS fx, TO_JSON(TO_VARIANT(x)) AS j FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["boundary"]
+expected_divergence = "float_text"
+
+[[case]]
+id = "variant_double_text_single_row_exponent_1e_7"
+description = "Text of the FLOAT 1e-7 in a VARIANT from a one-row input, which Snowflake may fold, against the many-row cases."
+columns = [{ name = "x", type = "FLOAT" }]
+rows = [
+  ["1e-7"],
+]
+query = "SELECT TO_VARIANT(x)::VARCHAR AS c, TO_VARCHAR(TO_VARIANT(x)) AS tv, OBJECT_CONSTRUCT('k', x):k::VARCHAR AS o, ARRAY_CONSTRUCT(x)[0]::VARCHAR AS a, x::VARCHAR AS fx, TO_JSON(TO_VARIANT(x)) AS j FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["boundary"]
+expected_divergence = "float_text"
+
+[[case]]
+id = "variant_double_text_single_row_exponent_1e15"
+description = "Text of the FLOAT 1e15 in a VARIANT from a one-row input, which Snowflake may fold, against the many-row cases."
+columns = [{ name = "x", type = "FLOAT" }]
+rows = [
+  ["1e15"],
+]
+query = "SELECT TO_VARIANT(x)::VARCHAR AS c, TO_VARCHAR(TO_VARIANT(x)) AS tv, OBJECT_CONSTRUCT('k', x):k::VARCHAR AS o, ARRAY_CONSTRUCT(x)[0]::VARCHAR AS a, x::VARCHAR AS fx, TO_JSON(TO_VARIANT(x)) AS j FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["boundary"]
+expected_divergence = "float_text"
+
+[[case]]
+id = "variant_double_text_single_row_exponent_1e17"
+description = "Text of the FLOAT 1e17 in a VARIANT from a one-row input, which Snowflake may fold, against the many-row cases."
+columns = [{ name = "x", type = "FLOAT" }]
+rows = [
+  ["1e17"],
+]
+query = "SELECT TO_VARIANT(x)::VARCHAR AS c, TO_VARCHAR(TO_VARIANT(x)) AS tv, OBJECT_CONSTRUCT('k', x):k::VARCHAR AS o, ARRAY_CONSTRUCT(x)[0]::VARCHAR AS a, x::VARCHAR AS fx, TO_JSON(TO_VARIANT(x)) AS j FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["boundary"]
+expected_divergence = "float_text"
+
+[[case]]
+id = "variant_double_text_single_row_exponent_1e21"
+description = "Text of the FLOAT 1e21 in a VARIANT from a one-row input, which Snowflake may fold, against the many-row cases."
+columns = [{ name = "x", type = "FLOAT" }]
+rows = [
+  ["1e21"],
+]
+query = "SELECT TO_VARIANT(x)::VARCHAR AS c, TO_VARCHAR(TO_VARIANT(x)) AS tv, OBJECT_CONSTRUCT('k', x):k::VARCHAR AS o, ARRAY_CONSTRUCT(x)[0]::VARCHAR AS a, x::VARCHAR AS fx, TO_JSON(TO_VARIANT(x)) AS j FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["boundary"]
+expected_divergence = "float_text"
+
+[[case]]
+id = "variant_double_text_single_row_subnormal_min"
+description = "Text of the FLOAT 5e-324 in a VARIANT from a one-row input, which Snowflake may fold, against the many-row cases."
+columns = [{ name = "x", type = "FLOAT" }]
+rows = [
+  ["5e-324"],
+]
+query = "SELECT TO_VARIANT(x)::VARCHAR AS c, TO_VARCHAR(TO_VARIANT(x)) AS tv, OBJECT_CONSTRUCT('k', x):k::VARCHAR AS o, ARRAY_CONSTRUCT(x)[0]::VARCHAR AS a, x::VARCHAR AS fx, TO_JSON(TO_VARIANT(x)) AS j FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["boundary"]
+expected_divergence = "float_text"
+
+[[case]]
+id = "variant_double_text_single_row_subnormal_1e_310"
+description = "Text of the FLOAT 1e-310 in a VARIANT from a one-row input, which Snowflake may fold, against the many-row cases."
+columns = [{ name = "x", type = "FLOAT" }]
+rows = [
+  ["1e-310"],
+]
+query = "SELECT TO_VARIANT(x)::VARCHAR AS c, TO_VARCHAR(TO_VARIANT(x)) AS tv, OBJECT_CONSTRUCT('k', x):k::VARCHAR AS o, ARRAY_CONSTRUCT(x)[0]::VARCHAR AS a, x::VARCHAR AS fx, TO_JSON(TO_VARIANT(x)) AS j FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["boundary"]
+expected_divergence = "float_text"

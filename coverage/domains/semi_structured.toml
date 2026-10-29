@@ -70,12 +70,39 @@ arguments = []
 [[rule.form]]
 construct = "fn:ARRAY_CONSTRUCT"
 arguments = [
-  { families = ["variant", "text", "boolean", "integer"] },
+  { families = ["variant", "text", "boolean", "integer", "float"] },
 ]
 repeat = true
 template = "ARRAY_CONSTRUCT({0})"
 category = "semi-structured-array"
+divergences = { "boolean.null" = "json_fidelity", "integer.null" = "json_fidelity", "text.null" = "json_fidelity", "float.null" = "json_fidelity", "float.nan_infinity" = "json_fidelity", "float.negative_zero" = "json_fidelity", "0.variant.null" = "json_fidelity", "0.variant.number_spellings" = "json_fidelity", "0.variant.large_numbers" = "json_fidelity" }
+
+# A FLOAT beside each other value holds the array as a typed VARIANT, which every value then joins.
+[[rule.form]]
+construct = "fn:ARRAY_CONSTRUCT"
+arguments = [
+  { families = ["float"] },
+  { families = ["variant", "text", "boolean", "integer", "float"] },
+]
+template = "ARRAY_CONSTRUCT({0}, {1})"
+category = "semi-structured-array"
+divergences = { "0.float.null" = "json_fidelity", "0.float.nan_infinity" = "json_fidelity", "0.float.negative_zero" = "json_fidelity", "1.boolean.null" = "json_fidelity", "1.text.null" = "json_fidelity", "1.integer.null" = "json_fidelity", "1.variant.null" = "json_fidelity", "1.float.null" = "json_fidelity", "1.float.nan_infinity" = "json_fidelity", "1.float.negative_zero" = "json_fidelity", "1.integer.beyond_64_bits" = "json_fidelity", "1.integer.digits_38" = "json_fidelity", "1.variant.large_numbers" = "json_fidelity", "1.variant.number_spellings" = "json_fidelity", "1.variant.scalars" = "json_fidelity" }
+
+# A bracket literal builds as ARRAY_CONSTRUCT does.
+[[rule.form]]
+construct = "node:array_func"
+arguments = [
+  { families = ["variant", "text", "boolean", "integer"] },
+]
+repeat = true
+template = "[{0}]"
+category = "semi-structured-array"
 divergences = { "boolean.null" = "json_fidelity", "integer.null" = "json_fidelity", "text.null" = "json_fidelity", "0.variant.null" = "json_fidelity", "0.variant.number_spellings" = "json_fidelity", "0.variant.large_numbers" = "json_fidelity" }
+
+# The empty bracket literal [], recorded by the array literal cases.
+[[rule.form]]
+construct = "node:array_func"
+arguments = []
 
 [[rule]]
 id = "rule.array_construct_compact"
@@ -132,6 +159,13 @@ arguments = [
 ]
 template = "ARRAY_SIZE({0})"
 category = "semi-structured-array"
+
+# ARRAY_SIZE(ARRAY_AGG(x)) as a count: rule.array_agg's cases record it.
+[[rule.form]]
+construct = "fn:ARRAY_SIZE"
+arguments = [
+  { families = ["integer", "text", "boolean"] },
+]
 
 [[rule]]
 id = "rule.array_to_string"
@@ -245,12 +279,29 @@ construct = "fn:OBJECT_CONSTRUCT"
 also = ["fn:OBJECT_CONSTRUCT_KEEP_NULL", "node:map_func"]
 arguments = [
   { families = ["text"] },
-  { families = ["variant", "text", "boolean", "integer", "null"] },
+  { families = ["variant", "text", "boolean", "integer", "float", "null"] },
 ]
 repeat = true
 one_wise = true
 template = "OBJECT_CONSTRUCT_KEEP_NULL('k', {1}, {0}, 1)"
 category = "semi-structured-object"
+divergences = { "1.float.nan_infinity" = "json_fidelity", "1.float.negative_zero" = "json_fidelity" }
+
+# A FLOAT beside each other value, under keys differing only by case, holds a typed VARIANT.
+[[rule.form]]
+construct = "fn:OBJECT_CONSTRUCT"
+also = ["fn:OBJECT_CONSTRUCT_KEEP_NULL"]
+arguments = [
+  { families = ["text"], kinds = ["literal"], grammar = true },
+  { families = ["float"] },
+  { families = ["text"], kinds = ["literal"], grammar = true },
+  { families = ["variant", "text", "boolean", "integer", "float"] },
+]
+template = "OBJECT_CONSTRUCT({0}, {1}, {2}, {3})"
+category = "semi-structured-object"
+benign = { "0" = "'k'", "2" = "'K'" }
+variants = ["OBJECT_CONSTRUCT_KEEP_NULL({0}, {1}, {2}, {3})"]
+divergences = { "1.float.nan_infinity" = "json_fidelity", "1.float.negative_zero" = "json_fidelity", "3.float.nan_infinity" = "json_fidelity", "3.float.negative_zero" = "json_fidelity", "3.integer.beyond_64_bits" = "json_fidelity", "3.integer.digits_38" = "json_fidelity", "3.variant.large_numbers" = "json_fidelity", "3.variant.number_spellings" = "json_fidelity", "3.variant.scalars" = "json_fidelity" }
 
 [[rule.probe]]
 construct = "fn:OBJECT_CONSTRUCT"
@@ -287,12 +338,12 @@ construct = "fn:OBJECT_INSERT"
 arguments = [
   { families = ["variant"] },
   { families = ["text"], kinds = ["literal"] },
-  { families = ["variant", "text", "boolean", "integer", "null"] },
+  { families = ["variant", "text", "boolean", "integer", "float", "null"] },
 ]
 template = "OBJECT_INSERT({0}, {1}, {2})"
 category = "semi-structured-object"
 benign = { "1" = "'k'" }
-divergences = { "0.variant.large_numbers" = "", "0.variant.number_spellings" = "" }
+divergences = { "0.variant.large_numbers" = "", "0.variant.number_spellings" = "", "2.float.nan_infinity" = "json_fidelity", "2.float.negative_zero" = "json_fidelity" }
 
 [[rule.form]]
 construct = "fn:OBJECT_INSERT"
@@ -300,12 +351,12 @@ arguments = [
   { families = ["boolean"], kinds = ["literal"], grammar = true },
   { families = ["variant"] },
   { families = ["text"], kinds = ["literal"] },
-  { families = ["variant", "text", "boolean", "integer", "null"] },
+  { families = ["variant", "text", "boolean", "integer", "float", "null"] },
 ]
 template = "OBJECT_INSERT({1}, {2}, {3}, {0})"
 category = "semi-structured-object"
 benign = { "2" = "'a'" }
-divergences = { "1.variant.large_numbers" = "", "1.variant.number_spellings" = "" }
+divergences = { "1.variant.large_numbers" = "", "1.variant.number_spellings" = "", "3.float.nan_infinity" = "json_fidelity", "3.float.negative_zero" = "json_fidelity" }
 
 [[rule]]
 id = "rule.parse_json"
@@ -393,3 +444,25 @@ arguments = [
 ]
 template = "TYPEOF({0})"
 category = "semi-structured"
+
+[[rule]]
+id = "rule.reduce"
+
+[[rule.form]]
+construct = "fn:REDUCE"
+arguments = [
+  { families = ["variant"] },
+]
+template = "REDUCE({0}, NULL::DOUBLE, (total, item) -> IFF(TRY_TO_DOUBLE(item:amount::VARCHAR) IS NULL, total, COALESCE(total, 0) + TRY_TO_DOUBLE(item:amount::VARCHAR)))"
+category = "semi-structured-array"
+benign = { "0" = "PARSE_JSON('[{\"amount\":\"1.5\"}]')" }
+
+# The initial value and the lambda as REDUCE's cases write them.
+[[rule.form]]
+construct = "fn:REDUCE"
+arguments = [
+  { families = ["variant"] },
+  { families = ["float"], grammar = true },
+  { families = ["float"], grammar = true },
+]
+

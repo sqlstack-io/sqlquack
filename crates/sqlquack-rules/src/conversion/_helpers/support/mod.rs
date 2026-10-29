@@ -6,3 +6,4 @@ pub(crate) mod scope;
 pub(crate) mod shapes;
 pub(crate) mod site;
 pub(crate) mod tree;
+pub(crate) mod typed_leaves;

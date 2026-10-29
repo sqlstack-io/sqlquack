@@ -20,7 +20,7 @@
 #
 # Raise `version` with every change. Never remove or weaken a hazard to close a gap; a review
 # finding becomes a new hazard here, protecting every rule of its family.
-version = 3
+version = 4
 
 [families.text]
 sql_type = "VARCHAR"
@@ -192,6 +192,12 @@ cells = ["0.1", "0.30000000000000004", "123456789.12345678"]
 id = "large_integers"
 description = "Doubles at and beyond 2^53, where neighbouring integers share a double."
 cells = ["9007199254740992", "9007199254740994", "1e16"]
+
+[[families.float.hazard]]
+id = "notation_boundaries"
+isolate = true
+description = "Doubles where text switches between plain and exponent notation, which %.15g and %.15e write differently."
+cells = ["100", "0.0001", "1e-5", "1e15", "1e21"]
 
 [families.boolean]
 sql_type = "BOOLEAN"

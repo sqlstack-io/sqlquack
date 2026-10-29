@@ -3,7 +3,11 @@
 use serde_json::Value;
 use sqlquack_core::provenance::models::ProvenanceLog;
 use sqlquack_core::refusals::models::Refusal;
+use sqlquack_duckdb::aggregates::constants::EXTREME_KEY_TIES;
+use sqlquack_duckdb::aggregates::main::value_at_extreme::value_at_extreme;
 use sqlquack_duckdb::blocks::main::cast::cast;
+use sqlquack_duckdb::blocks::main::column_type::column_type;
+use sqlquack_duckdb::checking::constants::SEMI_STRUCTURED_HOLDING_TYPE;
 use sqlquack_duckdb::raises::main::raised::raised;
 use sqlquack_duckdb::semi_structured::constants::JSON_FIDELITY;
 use sqlquack_duckdb::variants::main::json_object_agg::json_object_agg;
@@ -18,9 +22,10 @@ use crate::conversion::_helpers::support::site::{Placement, Site};
 use crate::conversion::_helpers::support::tree::{
     flag, function_construct, list, outside_conditions, payload_object, require_understood,
 };
+use crate::conversion::_helpers::support::typed_leaves::compared_value;
 use crate::conversion::constants::{
-    ANY_VALUE_CHOICE, MULTI_COUNT, NAMED_AGGREGATE_NAMES, NAMED_AGGREGATES,
-    WINDOWED_NAMED_AGGREGATES,
+    ANY_VALUE_CHOICE, MAX_BY_FUNCTION, MULTI_COUNT, NAMED_AGGREGATE_NAMES, NAMED_AGGREGATES,
+    VALUE_AT_EXTREME_KEY, WINDOWED_NAMED_AGGREGATES,
 };
 
 /// Whether `name` is an aggregate converted here.
@@ -59,6 +64,7 @@ pub(crate) fn named_aggregate(
     match (name, arguments.as_slice()) {
         ("ANY_VALUE", [value]) if value.data_type != SnowflakeType::Null => {
             diverge(site.context, ANY_VALUE_CHOICE, &construct)?;
+            compared_value(value, &construct, site.context)?;
             Ok(Emitted::new(
                 single_value(&value.sql, value.data_type, log).map_err(refuse)?,
                 value.data_type,
@@ -114,6 +120,24 @@ pub(crate) fn named_aggregate(
                 data_type,
             ))
         }
+        ("MAX_BY" | "MIN_BY", [value, key]) if ordered_key(key.data_type) => {
+            let _rule = log.rule(VALUE_AT_EXTREME_KEY);
+            diverge(site.context, EXTREME_KEY_TIES, &construct)?;
+            compared_value(value, &construct, site.context)?;
+            let value_type = match value.data_type {
+                SnowflakeType::SemiStructured => SEMI_STRUCTURED_HOLDING_TYPE.to_owned(),
+                other => column_type(other, log).map_err(refuse)?,
+            };
+            Ok(Emitted::new(
+                value_at_extreme(
+                    (&value.sql, &key.sql),
+                    name == MAX_BY_FUNCTION,
+                    (&value_type, value.data_type == SnowflakeType::Float),
+                    log,
+                ),
+                value.data_type,
+            ))
+        }
         ("OBJECT_AGG", [key, value])
             if matches!(key.data_type, SnowflakeType::Varchar)
                 && value.data_type == SnowflakeType::SemiStructured =>
@@ -142,7 +166,7 @@ fn boolean(emitted: &Emitted) -> bool {
     )
 }
 
-/// The group's one value; different values, or NULL beside a value, raise `any_value_choice`.
+/// The group's one value; different values, -0 beside 0, or NULL beside a value, raise `any_value_choice`.
 fn single_value(
     value: &str,
     data_type: SnowflakeType,
@@ -155,8 +179,29 @@ fn single_value(
         SnowflakeType::SemiStructured => format!("CAST({raise} AS JSON)"),
         _ => cast(&raise, data_type, log)?,
     };
+    let signs = match data_type {
+        SnowflakeType::Float => format!(" OR count(DISTINCT signbit({value})) > 1"),
+        _ => String::new(),
+    };
     Ok(format!(
-        "(CASE WHEN count(DISTINCT {value}) > 1 OR (count({value}) > 0 AND count({value}) < count(*)) \
+        "(CASE WHEN count(DISTINCT {value}) > 1{signs} \
+         OR (count({value}) > 0 AND count({value}) < count(*)) \
          THEN {raise} ELSE any_value({value}) END)"
     ))
+}
+
+/// Whether MIN and MAX order `key` as Snowflake does, so MAX_BY and MIN_BY can find its extreme.
+fn ordered_key(key: SnowflakeType) -> bool {
+    matches!(
+        key,
+        SnowflakeType::Number { .. }
+            | SnowflakeType::Float
+            | SnowflakeType::Varchar
+            | SnowflakeType::Boolean
+            | SnowflakeType::Date
+            | SnowflakeType::Time { .. }
+            | SnowflakeType::TimestampNtz { .. }
+            | SnowflakeType::TimestampTz { .. }
+            | SnowflakeType::TimestampLtz { .. }
+    )
 }

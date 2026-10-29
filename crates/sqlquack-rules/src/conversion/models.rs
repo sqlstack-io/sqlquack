@@ -20,6 +20,52 @@ pub struct ColumnSpec {
     pub name: String,
     /// The Snowflake type.
     pub data_type: SnowflakeType,
+    /// How a VARIANT column's values are held in DuckDB.
+    #[serde(skip_serializing_if = "Holding::is_json")]
+    pub holding: Holding,
+    /// Whether a VARIANT column may hold a DATE or timestamp, which Snowflake keeps typed.
+    #[serde(skip_serializing_if = "std::ops::Not::not")]
+    pub typed_leaves: bool,
+    /// Whether the column is proven to hold no typed leaf: a base table's, or built from such values.
+    #[serde(skip)]
+    pub untainted: bool,
+    /// Whether the column reads a source or schema VARIANT trusted to hold no typed leaf.
+    #[serde(skip)]
+    pub sourced: bool,
+}
+
+impl ColumnSpec {
+    /// A column held as DuckDB stores its Snowflake type: VARIANTs as JSON.
+    pub fn new(name: impl Into<String>, data_type: SnowflakeType) -> Self {
+        Self {
+            name: name.into(),
+            data_type,
+            holding: Holding::Json,
+            typed_leaves: false,
+            untainted: false,
+            sourced: false,
+        }
+    }
+}
+
+/// How a semi-structured value is held in DuckDB.
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq, Serialize)]
+#[serde(rename_all = "snake_case")]
+pub enum Holding {
+    /// DuckDB `JSON`: values parsed from text, base-table columns, and builds without a FLOAT.
+    #[default]
+    Json,
+    /// A DuckDB `VARIANT` built from typed SQL scalars, FLOAT among them, which keeps their types.
+    Variant,
+    /// A column another model wrote from a VARIANT-held value, read back as JSON: types are lost.
+    Chained,
+}
+
+impl Holding {
+    /// Whether values are held as JSON, which serialised schemas leave unwritten.
+    pub fn is_json(&self) -> bool {
+        *self == Self::Json
+    }
 }
 
 /// The relations and project functions a statement may use, keyed by resolved name.

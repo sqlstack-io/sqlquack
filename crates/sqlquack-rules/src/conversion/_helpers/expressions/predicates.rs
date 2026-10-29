@@ -18,6 +18,7 @@ use crate::conversion::_helpers::support::tree::{
 };
 use crate::conversion::constants::{
     BETWEEN, EXISTS, IN_LIST, IN_SUBQUERY, IS_NULL, NOT_IN_SUBQUERY, VARIANT_EQUALITY,
+    VARIANT_HELD_UNREAD,
 };
 
 fn negated(payload: &serde_json::Map<String, Value>, keyword: &str) -> String {
@@ -53,39 +54,35 @@ pub(crate) fn between(payload: &Value, site: Site<'_>) -> Result<Emitted, Refusa
     let value = convert_expression(field(payload, "this", &construct)?, site)?;
     let low = convert_expression(field(payload, "low", &construct)?, site)?;
     let high = convert_expression(field(payload, "high", &construct)?, site)?;
-    let numeric = [value.data_type, low.data_type, high.data_type];
-    if numeric.contains(&SnowflakeType::Float)
-        && numeric
-            .iter()
-            .any(|data_type| matches!(data_type, SnowflakeType::Number { .. }))
-    {
-        return Err(outside_conditions(
-            construct,
-            "BETWEEN mixing FLOAT and NUMBER, which no recording proves near a double's precision"
-                .to_owned(),
-        ));
-    }
-    let (value, low, high) = match (
+    let (low_value, high_value, low, high) = match (
         same_family(value.data_type, low.data_type, &construct),
         same_family(value.data_type, high.data_type, &construct),
     ) {
-        (Ok(()), Ok(())) => (value, low, high),
+        (Ok(()), Ok(())) => (value.clone(), value, low, high),
         _ => {
-            let (compared, low) = comparable(value.clone(), low, &construct, site.context)?;
-            let (_, high) = comparable(value, high, &construct, site.context)?;
-            (compared, low, high)
+            let (low_value, low) = comparable(value.clone(), low, &construct, site.context)?;
+            let (high_value, high) = comparable(value, high, &construct, site.context)?;
+            (low_value, high_value, low, high)
         }
     };
-    Ok(Emitted::new(
-        format!(
+    let sql = match low_value.sql == high_value.sql {
+        true => format!(
             "({} {} {} AND {})",
-            value.sql,
+            low_value.sql,
             negated(payload, "BETWEEN"),
             low.sql,
             high.sql
         ),
-        SnowflakeType::Boolean,
-    ))
+        false => format!(
+            "({}({} >= {} AND {} <= {}))",
+            negated(payload, ""),
+            low_value.sql,
+            low.sql,
+            high_value.sql,
+            high.sql
+        ),
+    };
+    Ok(Emitted::new(sql, SnowflakeType::Boolean))
 }
 
 /// [NOT] EXISTS.
@@ -194,6 +191,12 @@ fn in_subquery(
             "IN needs a one-column subquery".to_owned(),
         ));
     };
+    if !column.holding.is_json() {
+        return Err(outside_conditions(
+            construct,
+            VARIANT_HELD_UNREAD.to_owned(),
+        ));
+    }
     same_family(value.data_type, column.data_type, &construct)?;
     let probe = Emitted::new(String::new(), column.data_type);
     let (value, _) = comparable(value, probe, &construct, site.context)?;

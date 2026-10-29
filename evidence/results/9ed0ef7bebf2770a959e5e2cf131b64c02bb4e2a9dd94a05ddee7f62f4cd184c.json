@@ -71,8 +71,8 @@
   "format": 1,
   "outcome": "rows",
   "parameters_sha256": "36e4297fedc2296f596b9fbafdfd61e58e7e620ee0c228e16a4fa88a18dcc10f",
-  "query_id_sha256": "0480ec4ba30708807ea514710bc1bee25e21b5fc3d2dc64aaa111e52bff4626c",
-  "recorded_at": "2026-10-28T22:32:50Z",
+  "query_id_sha256": "1cce723b6dc7450e6d2911695b7a3364a80c13e2c5552de1a7242069569c4dfa",
+  "recorded_at": "2026-10-29T01:43:20Z",
   "recorder": "sqlquack-record 0.1.0",
   "row_count": 9,
   "session_parameters": {

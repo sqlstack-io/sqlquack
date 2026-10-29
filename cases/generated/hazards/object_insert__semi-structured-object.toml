@@ -54,6 +54,18 @@ tags = ["null", "json-null", "missing-key", "invalid"]
 origin = "generated: hazards@1"
 
 [[case]]
+id = "fn_object_insert_combination_0_variant_text_literal_float"
+description = "fn:OBJECT_INSERT over benign values of each declared argument kind."
+columns = [{ name = "x0", type = "VARIANT" }, { name = "x2", type = "FLOAT" }]
+rows = [
+  ["PARSE_JSON('{\"a\":1}')", "1.5"],
+  ["PARSE_JSON('{\"a\":2}')", "2.25"],
+]
+expression = "OBJECT_INSERT(x0, 'k', x2)"
+tags = ["null", "json-null", "missing-key", "invalid"]
+origin = "generated: hazards@1"
+
+[[case]]
 id = "fn_object_insert_combination_0_variant_text_literal_null_literal"
 description = "fn:OBJECT_INSERT over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "VARIANT" }]
@@ -391,6 +403,69 @@ tags = ["null", "json-null", "missing-key", "invalid"]
 origin = "generated: hazards@1"
 
 [[case]]
+id = "fn_object_insert_2_float_hazards"
+description = "fn:OBJECT_INSERT with the hazards null, one_spellings, subnormal, binary_fractions, large_integers in argument 2, float."
+columns = [{ name = "x0", type = "VARIANT" }, { name = "x2", type = "FLOAT" }]
+rows = [
+  ["PARSE_JSON('{\"a\":1}')", "NULL"],
+  ["PARSE_JSON('{\"a\":1}')", "1"],
+  ["PARSE_JSON('{\"a\":1}')", "1.0"],
+  ["PARSE_JSON('{\"a\":1}')", "1e0"],
+  ["PARSE_JSON('{\"a\":1}')", "5e-324"],
+  ["PARSE_JSON('{\"a\":1}')", "1.7976931348623157e308"],
+  ["PARSE_JSON('{\"a\":1}')", "0.1"],
+  ["PARSE_JSON('{\"a\":1}')", "0.30000000000000004"],
+  ["PARSE_JSON('{\"a\":1}')", "123456789.12345678"],
+  ["PARSE_JSON('{\"a\":1}')", "9007199254740992"],
+  ["PARSE_JSON('{\"a\":1}')", "9007199254740994"],
+  ["PARSE_JSON('{\"a\":1}')", "1e16"],
+]
+expression = "OBJECT_INSERT(x0, 'k', x2)"
+tags = ["null", "json-null", "missing-key", "invalid"]
+origin = "generated: hazards@1"
+
+[[case]]
+id = "fn_object_insert_2_float_negative_zero"
+description = "fn:OBJECT_INSERT with Negative zero in argument 2, float."
+columns = [{ name = "x0", type = "VARIANT" }, { name = "x2", type = "FLOAT" }]
+rows = [
+  ["PARSE_JSON('{\"a\":1}')", "'-0'"],
+]
+expression = "OBJECT_INSERT(x0, 'k', x2)"
+tags = ["null", "json-null", "missing-key", "invalid"]
+origin = "generated: hazards@1"
+expected_divergence = "json_fidelity"
+
+[[case]]
+id = "fn_object_insert_2_float_nan_infinity"
+description = "fn:OBJECT_INSERT with NaN and the infinities in argument 2, float."
+columns = [{ name = "x0", type = "VARIANT" }, { name = "x2", type = "FLOAT" }]
+rows = [
+  ["PARSE_JSON('{\"a\":1}')", "'NaN'"],
+  ["PARSE_JSON('{\"a\":1}')", "'inf'"],
+  ["PARSE_JSON('{\"a\":1}')", "'-inf'"],
+]
+expression = "OBJECT_INSERT(x0, 'k', x2)"
+tags = ["null", "json-null", "missing-key", "invalid"]
+origin = "generated: hazards@1"
+expected_divergence = "json_fidelity"
+
+[[case]]
+id = "fn_object_insert_2_float_notation_boundaries"
+description = "fn:OBJECT_INSERT with Doubles where text switches between plain and exponent notation, which %.15g and %.15e write differently in argument 2, float."
+columns = [{ name = "x0", type = "VARIANT" }, { name = "x2", type = "FLOAT" }]
+rows = [
+  ["PARSE_JSON('{\"a\":1}')", "100"],
+  ["PARSE_JSON('{\"a\":1}')", "0.0001"],
+  ["PARSE_JSON('{\"a\":1}')", "1e-5"],
+  ["PARSE_JSON('{\"a\":1}')", "1e15"],
+  ["PARSE_JSON('{\"a\":1}')", "1e21"],
+]
+expression = "OBJECT_INSERT(x0, 'k', x2)"
+tags = ["null", "json-null", "missing-key", "invalid"]
+origin = "generated: hazards@1"
+
+[[case]]
 id = "fn_object_insert_1_combination_0_boolean_literal_variant_text_literal_variant"
 description = "fn:OBJECT_INSERT over benign values of each declared argument kind."
 columns = [{ name = "x1", type = "VARIANT" }, { name = "x3", type = "VARIANT" }]
@@ -433,6 +508,18 @@ columns = [{ name = "x1", type = "VARIANT" }, { name = "x3", type = "NUMBER(38,0
 rows = [
   ["PARSE_JSON('{\"a\":1}')", "1"],
   ["PARSE_JSON('{\"a\":2}')", "2"],
+]
+expression = "OBJECT_INSERT(x1, 'a', x3, TRUE)"
+tags = ["null", "json-null", "missing-key", "invalid"]
+origin = "generated: hazards@1"
+
+[[case]]
+id = "fn_object_insert_1_combination_0_boolean_literal_variant_text_literal_float"
+description = "fn:OBJECT_INSERT over benign values of each declared argument kind."
+columns = [{ name = "x1", type = "VARIANT" }, { name = "x3", type = "FLOAT" }]
+rows = [
+  ["PARSE_JSON('{\"a\":1}')", "1.5"],
+  ["PARSE_JSON('{\"a\":2}')", "2.25"],
 ]
 expression = "OBJECT_INSERT(x1, 'a', x3, TRUE)"
 tags = ["null", "json-null", "missing-key", "invalid"]
@@ -770,6 +857,69 @@ columns = [{ name = "x1", type = "VARIANT" }, { name = "x3", type = "NUMBER(38,0
 rows = [
   ["PARSE_JSON('{\"a\":1}')", "99999999999999999999999999999999999999"],
   ["PARSE_JSON('{\"a\":1}')", "-99999999999999999999999999999999999999"],
+]
+expression = "OBJECT_INSERT(x1, 'a', x3, TRUE)"
+tags = ["null", "json-null", "missing-key", "invalid"]
+origin = "generated: hazards@1"
+
+[[case]]
+id = "fn_object_insert_1_3_float_hazards"
+description = "fn:OBJECT_INSERT with the hazards null, one_spellings, subnormal, binary_fractions, large_integers in argument 3, float."
+columns = [{ name = "x1", type = "VARIANT" }, { name = "x3", type = "FLOAT" }]
+rows = [
+  ["PARSE_JSON('{\"a\":1}')", "NULL"],
+  ["PARSE_JSON('{\"a\":1}')", "1"],
+  ["PARSE_JSON('{\"a\":1}')", "1.0"],
+  ["PARSE_JSON('{\"a\":1}')", "1e0"],
+  ["PARSE_JSON('{\"a\":1}')", "5e-324"],
+  ["PARSE_JSON('{\"a\":1}')", "1.7976931348623157e308"],
+  ["PARSE_JSON('{\"a\":1}')", "0.1"],
+  ["PARSE_JSON('{\"a\":1}')", "0.30000000000000004"],
+  ["PARSE_JSON('{\"a\":1}')", "123456789.12345678"],
+  ["PARSE_JSON('{\"a\":1}')", "9007199254740992"],
+  ["PARSE_JSON('{\"a\":1}')", "9007199254740994"],
+  ["PARSE_JSON('{\"a\":1}')", "1e16"],
+]
+expression = "OBJECT_INSERT(x1, 'a', x3, TRUE)"
+tags = ["null", "json-null", "missing-key", "invalid"]
+origin = "generated: hazards@1"
+
+[[case]]
+id = "fn_object_insert_1_3_float_negative_zero"
+description = "fn:OBJECT_INSERT with Negative zero in argument 3, float."
+columns = [{ name = "x1", type = "VARIANT" }, { name = "x3", type = "FLOAT" }]
+rows = [
+  ["PARSE_JSON('{\"a\":1}')", "'-0'"],
+]
+expression = "OBJECT_INSERT(x1, 'a', x3, TRUE)"
+tags = ["null", "json-null", "missing-key", "invalid"]
+origin = "generated: hazards@1"
+expected_divergence = "json_fidelity"
+
+[[case]]
+id = "fn_object_insert_1_3_float_nan_infinity"
+description = "fn:OBJECT_INSERT with NaN and the infinities in argument 3, float."
+columns = [{ name = "x1", type = "VARIANT" }, { name = "x3", type = "FLOAT" }]
+rows = [
+  ["PARSE_JSON('{\"a\":1}')", "'NaN'"],
+  ["PARSE_JSON('{\"a\":1}')", "'inf'"],
+  ["PARSE_JSON('{\"a\":1}')", "'-inf'"],
+]
+expression = "OBJECT_INSERT(x1, 'a', x3, TRUE)"
+tags = ["null", "json-null", "missing-key", "invalid"]
+origin = "generated: hazards@1"
+expected_divergence = "json_fidelity"
+
+[[case]]
+id = "fn_object_insert_1_3_float_notation_boundaries"
+description = "fn:OBJECT_INSERT with Doubles where text switches between plain and exponent notation, which %.15g and %.15e write differently in argument 3, float."
+columns = [{ name = "x1", type = "VARIANT" }, { name = "x3", type = "FLOAT" }]
+rows = [
+  ["PARSE_JSON('{\"a\":1}')", "100"],
+  ["PARSE_JSON('{\"a\":1}')", "0.0001"],
+  ["PARSE_JSON('{\"a\":1}')", "1e-5"],
+  ["PARSE_JSON('{\"a\":1}')", "1e15"],
+  ["PARSE_JSON('{\"a\":1}')", "1e21"],
 ]
 expression = "OBJECT_INSERT(x1, 'a', x3, TRUE)"
 tags = ["null", "json-null", "missing-key", "invalid"]

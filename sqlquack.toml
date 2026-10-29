@@ -271,10 +271,22 @@ reason = "DuckDB raises an error where Snowflake returns a value DuckDB cannot r
 native_errors = ["Out of Range Error: Overflow in *"]
 
 [divergences.json_fidelity]
-constructs = ["fn:PARSE_JSON", "fn:TRY_PARSE_JSON", "node:column", "node:cast", "fn:TO_JSON", "fn:TO_VARCHAR", "fn:GET_IGNORE_CASE", "fn:FLATTEN", "fn:OBJECT_CONSTRUCT", "fn:OBJECT_CONSTRUCT_KEEP_NULL", "fn:OBJECT_INSERT", "fn:OBJECT_PICK", "fn:ARRAY_CONSTRUCT", "fn:ARRAY_EXCEPT", "fn:TO_VARIANT", "fn:ARRAY_AGG", "fn:ARRAY_TO_STRING", "fn:ARRAY_CONTAINS", "fn:ARRAY_CONSTRUCT_COMPACT", "node:map_func", "fn:OBJECT_AGG", "fn:ARRAY_POSITION", "fn:FILTER", "fn:TRANSFORM", "node:eq", "node:neq", "node:in", "fn:GET"]
+constructs = ["fn:PARSE_JSON", "fn:TRY_PARSE_JSON", "node:column", "node:cast", "fn:TO_JSON", "fn:TO_VARCHAR", "fn:GET_IGNORE_CASE", "fn:FLATTEN", "fn:OBJECT_CONSTRUCT", "fn:OBJECT_CONSTRUCT_KEEP_NULL", "fn:OBJECT_INSERT", "fn:OBJECT_PICK", "fn:ARRAY_CONSTRUCT", "fn:ARRAY_EXCEPT", "fn:TO_VARIANT", "fn:ARRAY_AGG", "fn:ARRAY_TO_STRING", "fn:ARRAY_CONTAINS", "fn:ARRAY_CONSTRUCT_COMPACT", "node:map_func", "fn:OBJECT_AGG", "fn:ARRAY_POSITION", "fn:FILTER", "fn:TRANSFORM", "node:eq", "node:neq", "node:in", "fn:GET", "node:window_function", "node:array_func", "fn:REDUCE"]
 default = "warn"
 strict = "refuse"
 reason = "DuckDB's JSON keeps non-integer numbers as doubles, reads a different set of lenient spellings, accepts repeated keys and keeps keys in input order, where Snowflake keeps exact decimals, reads single quotes, NaN and undefined, rejects repeated keys and writes keys sorted. The converted SQL raises for any document DuckDB might read differently, PARSE_JSON and TRY_PARSE_JSON alike, writes objects as text with keys sorted and strings escaped as Snowflake does, raises where sorting would rewrite a number, and raises for FLATTEN paths through keys that are not plain names. The failure is loud, never a wrong value."
+
+[divergences.variant_chain_type]
+constructs = ["node:column"]
+default = "warn"
+strict = "refuse"
+reason = "A model that builds a VARIANT from a FLOAT holds it as a DuckDB VARIANT, which keeps the FLOAT's type, but writes the column as JSON text with the double spelled as Snowflake writes it, an exponent with fifteen fraction digits. A model reading that column back gets JSON, where the type is lost, and the guard on VARIANT columns of other relations raises for any number with an exponent. The failure is loud, never a wrong value; models reading such columns need them materialised as DuckDB VARIANT to convert."
+
+[divergences.source_variant_json]
+constructs = ["node:eq", "node:neq", "node:window_function", "fn:ARRAY_CONTAINS", "fn:ARRAY_POSITION", "fn:ARRAY_EXCEPT", "fn:ANY_VALUE", "fn:MAX_BY", "fn:MIN_BY", "fn:ARRAY_AGG"]
+default = "warn"
+strict = "refuse"
+reason = "Snowflake keeps a DATE, TIME, timestamp or BINARY typed inside a VARIANT, unequal to its text, where DuckDB's JSON holds only the text. VARIANT equality, PARTITION BY a VARIANT, ARRAY_CONTAINS, ARRAY_POSITION, ARRAY_EXCEPT, ANY_VALUE, MAX_BY, MIN_BY and ARRAY_AGG without WITHIN GROUP tell VARIANTs apart by their text, so they trust a source table's or schema relation's VARIANT column to hold JSON values, as loaded from JSON. Typed values written into such a column by a process outside the project are not detected and would compare equal to their text: a wrong value. A schema column marked typed_leaves is refused instead."
 
 [divergences.percentile_interpolation]
 constructs = ["fn:PERCENTILE_CONT"]
@@ -312,6 +324,36 @@ constructs = ["node:cast", "fn:TO_VARCHAR", "fn:TO_CHAR"]
 default = "warn"
 strict = "refuse"
 reason = "Snowflake writes a FLOAT as text with fifteen significant digits, as C's %.15g does, except that values below one were recorded keeping no digit past the fifteenth decimal place and subnormal values fewer digits than recordings explain, and negative zero has no recording. The converted SQL raises for values whose text those cases would change, for subnormal values and for negative zero. The failure is loud, never a wrong value."
+
+[divergences.regexp_pattern_syntax]
+constructs = ["fn:REGEXP_LIKE"]
+default = "warn"
+strict = "refuse"
+reason = "A REGEXP_LIKE pattern from a column cannot be checked before it runs. Snowflake and RE2 were recorded reading literal characters, '.', groups, alternation, plain bracket expressions, single '*', '+' and '?' and anchors at the ends alike; the converted SQL raises for a pattern with any other syntax, such as escapes, counted repetition, POSIX classes or lazy quantifiers. The failure is loud, never a wrong value."
+
+[divergences.float_sum_order]
+constructs = ["fn:SUM"]
+default = "warn"
+strict = "refuse"
+reason = "Snowflake adds FLOAT values in an order DuckDB does not share: recordings show 0.1 + 0.2 + 0.3 as 0.6 and 1e16 + 1 - 1e16 as 0, neither in input order nor exactly. The converted SQL sums only where every order of addition is exact, values being whole multiples of one power of two with a small enough total, and raises otherwise. The failure is loud, never a wrong value."
+
+[divergences.extreme_key_ties]
+constructs = ["fn:MAX_BY", "fn:MIN_BY"]
+default = "warn"
+strict = "refuse"
+reason = "MAX_BY and MIN_BY pick one row among rows tied on the extreme key, and no recording shows which: one recorded the first in input order, which neither engine guarantees. The converted SQL returns the value where every tied row holds it, and raises where tied rows hold different values. The failure is loud, never a wrong value."
+
+[divergences.array_agg_order]
+constructs = ["fn:ARRAY_AGG"]
+default = "warn"
+strict = "refuse"
+reason = "ARRAY_AGG without WITHIN GROUP returns its values in an order neither engine defines. The converted SQL returns the array where it holds at most one distinct value, and raises otherwise; ARRAY_SIZE and ARRAY_SORT of it, which do not depend on the order, convert without it. The failure is loud, never a wrong value."
+
+[divergences.text_number_scale]
+constructs = ["node:eq", "node:neq", "node:lt", "node:lte", "node:gt", "node:gte", "node:in", "fn:EQUAL_NULL", "node:null_safe_eq", "node:null_safe_neq"]
+default = "warn"
+strict = "refuse"
+reason = "Snowflake reads text compared with a NUMBER as a number; recordings show spellings exact at the NUMBER's scale, not how text with more fraction digits or an exponent is rounded. The converted SQL compares text exact at that scale and raises for other numeric text. The failure is loud, never a wrong value."
 
 [divergences.hash]
 constructs = ["fn:HASH"]

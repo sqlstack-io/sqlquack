@@ -293,7 +293,7 @@ construct = "node:eq"
 also = ["node:neq"]
 arguments = [
   { families = ["variant"] },
-  { families = ["text", "integer"] },
+  { families = ["text", "integer", "variant"] },
 ]
 template = "{0} = {1}"
 category = "semi-structured"
@@ -350,3 +350,29 @@ construct = "node:case"
 
 [[rule.form]]
 construct = "query"
+
+[[rule]]
+id = "rule.text_number_comparison"
+
+[[rule.form]]
+construct = "node:eq"
+also = ["node:neq", "node:lt", "node:lte", "node:gt", "node:gte"]
+arguments = [
+  { families = ["text"] },
+  { families = ["integer", "decimal"] },
+]
+template = "{0} = {1}"
+category = "comparison"
+variants = ["{0} <> {1}", "{0} < {1}", "{1} >= {0}"]
+benign = { "0" = "'7'" }
+divergences = { "0.text.number_text" = "text_number_scale" }
+
+# The NUMBER written first, recorded by the text and number comparison cases.
+[[rule.form]]
+construct = "node:eq"
+also = ["node:neq", "node:lt", "node:lte", "node:gt", "node:gte"]
+arguments = [
+  { families = ["integer", "decimal"] },
+  { families = ["text"] },
+]
+

@@ -7,19 +7,21 @@ use sqlquack_duckdb::blocks::main::string_literal::string_literal;
 use sqlquack_duckdb::raises::main::raised::raised;
 use sqlquack_snowflake::typing::models::SnowflakeType;
 
-use crate::conversion::_helpers::expressions::objects::as_json;
-use crate::conversion::_helpers::expressions::scalar::convert_expression;
+use crate::conversion::_helpers::expressions::held::{builds_held, built, leaf};
+use crate::conversion::_helpers::expressions::scalar::{convert_expression, convert_held};
 use crate::conversion::_helpers::expressions::strings::text_operand;
 use crate::conversion::_helpers::expressions::windows::order_item;
 use crate::conversion::_helpers::support::divergence::diverge;
-use crate::conversion::_helpers::support::scope::{Emitted, Literal};
+use crate::conversion::_helpers::support::scope::{Emitted, Literal, VariantRoot};
 use crate::conversion::_helpers::support::site::{Placement, Site};
 use crate::conversion::_helpers::support::tree::{
     Payload, field, flag, function_construct, list, missing, node_construct, outside_conditions,
     payload_object, require_understood,
 };
+use crate::conversion::_helpers::support::typed_leaves::compared_value;
+use crate::conversion::constants::DUPLICATE_VARIANTS;
 use crate::conversion::constants::{
-    ARRAY_AGG_RULE, LISTAGG_RULE, PERCENTILE_DECIMALS, PERCENTILE_EXTRA_DIGITS,
+    ARRAY_AGG_ORDER, ARRAY_AGG_RULE, LISTAGG_RULE, PERCENTILE_DECIMALS, PERCENTILE_EXTRA_DIGITS,
     PERCENTILE_FRACTION_DIGITS, PERCENTILE_INTERPOLATION, PERCENTILE_MAX_PRECISION,
     PERCENTILE_RULE,
 };
@@ -48,6 +50,7 @@ pub(crate) fn within_group(
     let ordered = Ordered {
         call,
         order: list(payload, "order_by"),
+        by: Ordering::Written,
         site: site.placed(Placement::ROW),
         over: over.map_or_else(String::new, |over| format!(" OVER ({over})")),
     };
@@ -66,8 +69,51 @@ pub(crate) fn within_group(
 struct Ordered<'a> {
     call: &'a Payload,
     order: &'a [Value],
+    by: Ordering,
     site: Site<'a>,
     over: String,
+}
+
+/// How ARRAY_AGG orders its elements.
+#[derive(Clone, Copy, PartialEq, Eq)]
+enum Ordering {
+    /// By the WITHIN GROUP keys as written.
+    Written,
+    /// Ascending by the value itself, as ARRAY_SORT of the result orders it.
+    Value,
+    /// In no defined order, so only a result of at most one distinct element converts.
+    Unordered,
+}
+
+/// ARRAY_AGG without WITHIN GROUP, whose order neither engine defines.
+pub(crate) fn unordered_array_agg(call: &Payload, site: Site<'_>) -> Result<Emitted, Refusal> {
+    Ordered {
+        call,
+        order: &[],
+        by: Ordering::Unordered,
+        site: site.placed(Placement::ROW),
+        over: String::new(),
+    }
+    .array_agg()
+}
+
+/// ARRAY_SORT of ARRAY_AGG without WITHIN GROUP: the values ascending, text or whole numbers.
+pub(crate) fn sorted_array_agg(call: &Payload, site: Site<'_>) -> Result<Emitted, Refusal> {
+    Ordered {
+        call,
+        order: &[],
+        by: Ordering::Value,
+        site: site.placed(Placement::ROW),
+        over: String::new(),
+    }
+    .array_agg()
+}
+
+/// The call of `node` when it is ARRAY_AGG without WITHIN GROUP.
+pub(crate) fn unordered_array_agg_call(node: &Value) -> Option<&Payload> {
+    let call = node.get("aggregate_function")?.as_object()?;
+    let name = call.get("name")?.as_str()?;
+    name.eq_ignore_ascii_case("ARRAY_AGG").then_some(call)
 }
 
 impl Ordered<'_> {
@@ -118,31 +164,65 @@ impl Ordered<'_> {
         let [value] = list(self.call, "args") else {
             return Err(refuse("ARRAY_AGG takes one value"));
         };
-        let emitted = convert_expression(value, self.site)?;
+        let emitted = convert_held(value, self.site)?;
+        let text = emitted.data_type == SnowflakeType::Varchar;
         let mut keys: Vec<String> = Vec::new();
         for item in self.order {
             keys.push(order_item(item, self.site)?);
         }
+        if self.by == Ordering::Value {
+            if !matches!(
+                emitted.data_type,
+                SnowflakeType::Varchar | SnowflakeType::Number { scale: 0, .. }
+            ) {
+                return Err(refuse(
+                    "ARRAY_SORT of ARRAY_AGG of other than text or whole numbers",
+                ));
+            }
+            keys.push(format!("{} ASC", emitted.sql));
+        }
         let distinct = flag(self.call, "distinct");
-        let text = emitted.data_type == SnowflakeType::Varchar;
-        if distinct && !(text && self.order_is_value(&emitted.sql)?) {
+        if distinct && emitted.data_type == SnowflakeType::SemiStructured {
+            return Err(refuse(&format!("ARRAY_AGG DISTINCT {DUPLICATE_VARIANTS}")));
+        }
+        if distinct
+            && self.by == Ordering::Written
+            && !(text && self.order_is_value(&emitted.sql)?)
+        {
             return Err(refuse(
                 "ARRAY_AGG DISTINCT of other than text ordered by its value",
             ));
         }
         let present = emitted.sql.clone();
+        let held = builds_held(std::slice::from_ref(&emitted));
+        if self.by == Ordering::Unordered {
+            compared_value(&emitted, &construct, self.site.context)?;
+        }
         let element = match text {
             true => emitted.sql,
-            false => as_json(emitted, &construct, self.site.context)?,
+            false => leaf(emitted, held, &construct, self.site.context)?,
         };
         let distinct = if distinct { "DISTINCT " } else { "" };
-        Ok(Emitted::new(
-            format!(
-                "coalesce(CAST(to_json(list({distinct}{element} ORDER BY {}) \
-                 FILTER (WHERE {present} IS NOT NULL)) AS JSON), CAST('[]' AS JSON))",
-                keys.join(", ")
-            ),
-            SnowflakeType::SemiStructured,
+        let order = match keys.is_empty() {
+            true => String::new(),
+            false => format!(" ORDER BY {}", keys.join(", ")),
+        };
+        let array = format!(
+            "coalesce(CAST(to_json(list({distinct}{element}{order}) \
+             FILTER (WHERE {present} IS NOT NULL)) AS JSON), CAST('[]' AS JSON))"
+        );
+        let array = match self.by {
+            Ordering::Unordered => {
+                diverge(self.site.context, ARRAY_AGG_ORDER, &construct)?;
+                unordered_array(&element, &present, distinct)
+            }
+            Ordering::Written | Ordering::Value => array,
+        };
+        Ok(built(
+            array,
+            held,
+            VariantRoot::Container,
+            self.site.context,
         ))
     }
 
@@ -264,4 +344,21 @@ fn thousandths(digits: &str) -> Option<u32> {
         },
     };
     (value <= PERCENTILE_DECIMALS).then_some(value)
+}
+
+/// An unordered ARRAY_AGG of `element` where `present`, raising for more than one distinct value.
+fn unordered_array(element: &str, present: &str, distinct: &str) -> String {
+    let unordered = raised(&format!(
+        "{ARRAY_AGG_ORDER}: ARRAY_AGG of several values in no defined order"
+    ));
+    let listed = match distinct.is_empty() {
+        true => "array_agg_values",
+        false => "list_distinct(array_agg_values)",
+    };
+    format!(
+        "list_transform([list({element}) FILTER (WHERE {present} IS NOT NULL)], \
+         lambda array_agg_values: CASE WHEN array_agg_values IS NULL THEN CAST('[]' AS JSON) \
+         WHEN len(list_distinct(array_agg_values)) <= 1 THEN CAST(to_json({listed}) AS JSON) \
+         ELSE CAST({unordered} AS JSON) END)[1]"
+    )
 }

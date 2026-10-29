@@ -30,10 +30,7 @@ use crate::analysis::tests::test_types::{
 
 fn shop_schema() -> Schema {
     let mut schema = shop_relations();
-    let column = |name: &str, data_type: SnowflakeType| ColumnSpec {
-        name: name.to_owned(),
-        data_type,
-    };
+    let column = |name: &str, data_type: SnowflakeType| ColumnSpec::new(name, data_type);
     let amount = SnowflakeType::Number {
         precision: 10,
         scale: 2,
@@ -79,10 +76,7 @@ fn shop_schema() -> Schema {
 }
 
 fn shop_relations() -> Schema {
-    let column = |name: &str, data_type: SnowflakeType| ColumnSpec {
-        name: name.to_owned(),
-        data_type,
-    };
+    let column = |name: &str, data_type: SnowflakeType| ColumnSpec::new(name, data_type);
     let mut schema = Schema::default();
     schema.relations.insert(
         "CUSTOMERS".to_owned(),
@@ -424,10 +418,7 @@ pub(crate) fn function_refusal_places(body: &str) -> Vec<(RefusalCategory, &str,
     };
     let spec = FunctionSpec {
         language: FunctionLanguage::Sql,
-        arguments: vec![ColumnSpec {
-            name: "AMOUNT".to_owned(),
-            data_type: amount,
-        }],
+        arguments: vec![ColumnSpec::new("AMOUNT", amount)],
         returns: FunctionReturns::Scalar(amount),
     };
     let refusals = analyze_function(
@@ -594,4 +585,54 @@ pub(crate) fn converted_sql(statements: &[&str]) -> Vec<Option<String>> {
             analysis.refusals.is_empty().then(|| sql.join(";\n"))
         })
         .collect()
+}
+
+/// The first value `sql` returns as text when converted and run on the shop rows, or why not.
+pub(crate) fn shop_first_value(sql: &str) -> Result<String, Vec<String>> {
+    let converted = shop_conversion(sql)?;
+    let connection = duckdb::Connection::open_in_memory().expect("DuckDB opens");
+    connection
+        .execute_batch(SHOP_ROWS)
+        .expect("the shop tables are created");
+    connection
+        .query_row(
+            &format!(
+                "SELECT CAST(COLUMNS(*) AS VARCHAR) FROM ({}) AS t",
+                converted.sql
+            ),
+            [],
+            |row| row.get::<_, String>(0),
+        )
+        .map_err(|error| vec![error.to_string()])
+}
+
+/// The first value, or the expected fragment when a reason contains it, else every reason.
+pub(crate) fn shop_first_outcome(
+    sql: &str,
+    expected: Result<&str, &str>,
+) -> Result<String, String> {
+    let fragment = expected.err();
+    shop_first_value(sql).map_err(|reasons| {
+        reasons
+            .iter()
+            .find(|reason| fragment.is_some_and(|fragment| reason.contains(fragment)))
+            .and(fragment)
+            .map_or_else(|| reasons.join("; "), str::to_owned)
+    })
+}
+
+/// How many times the converted `wrapper` writes `ARGUMENT`, to the nearest copy, as it grows.
+pub(crate) fn argument_copies(wrapper: &str, short: &str, long: &str) -> usize {
+    let length = |argument: &str| {
+        shop_conversion(&wrapper.replace("ARGUMENT", argument))
+            .map(|converted| converted.sql.len())
+            .expect("the wrapper converts")
+    };
+    let bare = |argument: &str| {
+        shop_conversion(&format!("SELECT {argument} AS v"))
+            .map(|converted| converted.sql.len())
+            .expect("the argument converts")
+    };
+    let grown = bare(long) - bare(short);
+    (length(long) - length(short) + grown / 2) / grown
 }

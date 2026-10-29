@@ -86,12 +86,12 @@ fn typed_columns(
     columns
         .iter()
         .map(|column| {
-            Ok(ColumnSpec {
-                name: column.name.to_ascii_uppercase(),
-                data_type: cast_target(&column.data_type, log)
+            Ok(ColumnSpec::new(
+                column.name.to_ascii_uppercase(),
+                cast_target(&column.data_type, log)
                     .map_err(|reason| format!("function {}: {reason}", function.name))?
                     .data_type,
-            })
+            ))
         })
         .collect()
 }

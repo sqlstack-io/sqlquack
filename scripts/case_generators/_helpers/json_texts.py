@@ -21,7 +21,10 @@ from scripts.case_generators.constants import (
     DECIMAL_TOKENS,
     DOUBLE_PROJECTIONS,
     DOUBLE_TOKENS,
+    FLOAT_RAISING_TOKENS,
+    FLOAT_TEXT,
     FLOAT_VARIANT_PROJECTIONS,
+    FLOAT_WRITTEN_PROJECTIONS,
     GUARD_BOUNDARY_TOKENS,
     GUARD_STRING_DOCUMENTS,
     GUARD_TRIGGER_DOCUMENTS,
@@ -605,6 +608,20 @@ def float_variant_case(*, name: str, token: str) -> Case:
         query=FLOAT_VARIANT_PROJECTIONS,
         order="ordered",
         tags=("boundary",),
+        expected_divergence=JSON_FIDELITY if name in FLOAT_RAISING_TOKENS else FLOAT_TEXT,
+    )
+
+
+def float_written_case() -> Case:
+    """Every FLOAT that converts, over rows Snowflake cannot fold, written in VARIANT documents."""
+    return Case(
+        id="float_written_rows",
+        description="FLOAT values inside a VARIANT, an object and an array, written as JSON.",
+        columns=(Column("x", "FLOAT"),),
+        rows=tuple((token,) for name, token in DOUBLE_TOKENS if name not in FLOAT_RAISING_TOKENS),
+        query=FLOAT_WRITTEN_PROJECTIONS,
+        order="ordered",
+        tags=("boundary",),
     )
 
 
@@ -618,6 +635,7 @@ def float_null_case() -> Case:
         query=FLOAT_VARIANT_PROJECTIONS,
         order="ordered",
         tags=("null", "json-null", "missing-key"),
+        expected_divergence=JSON_FIDELITY,
     )
 
 
@@ -654,6 +672,7 @@ def double_files() -> list[CaseFile]:
             cases=(
                 *(float_variant_case(name=name, token=token) for name, token in DOUBLE_TOKENS),
                 float_null_case(),
+                float_written_case(),
             ),
             header=("SQL FLOAT values inside VARIANTs, written as text.",),
         ),

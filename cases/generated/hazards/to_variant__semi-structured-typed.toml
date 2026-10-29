@@ -42,6 +42,18 @@ tags = ["null", "boundary"]
 origin = "generated: hazards@1"
 
 [[case]]
+id = "fn_to_variant_combination_0_float"
+description = "fn:TO_VARIANT over benign values of each declared argument kind."
+columns = [{ name = "x0", type = "FLOAT" }]
+rows = [
+  ["1.5"],
+  ["2.25"],
+]
+expression = "TO_VARIANT(x0)"
+tags = ["null", "boundary"]
+origin = "generated: hazards@1"
+
+[[case]]
 id = "fn_to_variant_combination_0_date"
 description = "fn:TO_VARIANT over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "DATE" }]
@@ -167,6 +179,69 @@ columns = [{ name = "x0", type = "NUMBER(38,0)" }]
 rows = [
   ["99999999999999999999999999999999999999"],
   ["-99999999999999999999999999999999999999"],
+]
+expression = "TO_VARIANT(x0)"
+tags = ["null", "boundary"]
+origin = "generated: hazards@1"
+
+[[case]]
+id = "fn_to_variant_0_float_hazards"
+description = "fn:TO_VARIANT with the hazards null, one_spellings, subnormal, binary_fractions, large_integers in argument 0, float."
+columns = [{ name = "x0", type = "FLOAT" }]
+rows = [
+  ["NULL"],
+  ["1"],
+  ["1.0"],
+  ["1e0"],
+  ["5e-324"],
+  ["1.7976931348623157e308"],
+  ["0.1"],
+  ["0.30000000000000004"],
+  ["123456789.12345678"],
+  ["9007199254740992"],
+  ["9007199254740994"],
+  ["1e16"],
+]
+expression = "TO_VARIANT(x0)"
+tags = ["null", "boundary"]
+origin = "generated: hazards@1"
+
+[[case]]
+id = "fn_to_variant_0_float_negative_zero"
+description = "fn:TO_VARIANT with Negative zero in argument 0, float."
+columns = [{ name = "x0", type = "FLOAT" }]
+rows = [
+  ["'-0'"],
+]
+expression = "TO_VARIANT(x0)"
+tags = ["null", "boundary"]
+origin = "generated: hazards@1"
+expected_divergence = "json_fidelity"
+
+[[case]]
+id = "fn_to_variant_0_float_nan_infinity"
+description = "fn:TO_VARIANT with NaN and the infinities in argument 0, float."
+columns = [{ name = "x0", type = "FLOAT" }]
+rows = [
+  ["'NaN'"],
+  ["'inf'"],
+  ["'-inf'"],
+]
+expression = "TO_VARIANT(x0)"
+tags = ["null", "boundary"]
+origin = "generated: hazards@1"
+expected_divergence = "json_fidelity"
+
+[[case]]
+id = "fn_to_variant_0_float_notation_boundaries"
+description = "fn:TO_VARIANT with Doubles where text switches between plain and exponent notation, which %.15g and %.15e write differently in argument 0, float."
+columns = [{ name = "x0", type = "FLOAT" }]
+rows = [
+  ["100"],
+  ["0.0001"],
+  ["1e-5"],
+  ["1e15"],
+  ["1e21"],
 ]
 expression = "TO_VARIANT(x0)"
 tags = ["null", "boundary"]
@@ -354,7 +429,82 @@ tags = ["null", "boundary"]
 origin = "generated: hazards@1"
 
 [[case]]
-id = "node_cast_2_combination_0_boolean"
+id = "node_cast_2_combination_0_float"
+description = "node:cast over benign values of each declared argument kind."
+columns = [{ name = "x0", type = "FLOAT" }]
+rows = [
+  ["1.5"],
+  ["2.25"],
+]
+expression = "CAST(x0 AS VARIANT)"
+tags = ["null", "boundary"]
+origin = "generated: hazards@1"
+
+[[case]]
+id = "node_cast_2_0_float_hazards"
+description = "node:cast with the hazards null, one_spellings, subnormal, binary_fractions, large_integers in argument 0, float."
+columns = [{ name = "x0", type = "FLOAT" }]
+rows = [
+  ["NULL"],
+  ["1"],
+  ["1.0"],
+  ["1e0"],
+  ["5e-324"],
+  ["1.7976931348623157e308"],
+  ["0.1"],
+  ["0.30000000000000004"],
+  ["123456789.12345678"],
+  ["9007199254740992"],
+  ["9007199254740994"],
+  ["1e16"],
+]
+expression = "CAST(x0 AS VARIANT)"
+tags = ["null", "boundary"]
+origin = "generated: hazards@1"
+
+[[case]]
+id = "node_cast_2_0_float_negative_zero"
+description = "node:cast with Negative zero in argument 0, float."
+columns = [{ name = "x0", type = "FLOAT" }]
+rows = [
+  ["'-0'"],
+]
+expression = "CAST(x0 AS VARIANT)"
+tags = ["null", "boundary"]
+origin = "generated: hazards@1"
+expected_divergence = "json_fidelity"
+
+[[case]]
+id = "node_cast_2_0_float_nan_infinity"
+description = "node:cast with NaN and the infinities in argument 0, float."
+columns = [{ name = "x0", type = "FLOAT" }]
+rows = [
+  ["'NaN'"],
+  ["'inf'"],
+  ["'-inf'"],
+]
+expression = "CAST(x0 AS VARIANT)"
+tags = ["null", "boundary"]
+origin = "generated: hazards@1"
+expected_divergence = "json_fidelity"
+
+[[case]]
+id = "node_cast_2_0_float_notation_boundaries"
+description = "node:cast with Doubles where text switches between plain and exponent notation, which %.15g and %.15e write differently in argument 0, float."
+columns = [{ name = "x0", type = "FLOAT" }]
+rows = [
+  ["100"],
+  ["0.0001"],
+  ["1e-5"],
+  ["1e15"],
+  ["1e21"],
+]
+expression = "CAST(x0 AS VARIANT)"
+tags = ["null", "boundary"]
+origin = "generated: hazards@1"
+
+[[case]]
+id = "node_cast_3_combination_0_boolean"
 description = "node:cast over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "BOOLEAN" }]
 rows = [
@@ -366,7 +516,7 @@ tags = ["null", "boundary"]
 origin = "generated: hazards@1"
 
 [[case]]
-id = "node_cast_2_0_boolean_hazards"
+id = "node_cast_3_0_boolean_hazards"
 description = "node:cast with SQL NULL in argument 0, boolean."
 columns = [{ name = "x0", type = "BOOLEAN" }]
 rows = [
@@ -377,7 +527,7 @@ tags = ["null", "boundary"]
 origin = "generated: hazards@1"
 
 [[case]]
-id = "node_cast_3_combination_0_integer"
+id = "node_cast_4_combination_0_integer"
 description = "node:cast over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "NUMBER(38,0)" }]
 rows = [
@@ -389,7 +539,7 @@ tags = ["null", "boundary"]
 origin = "generated: hazards@1"
 
 [[case]]
-id = "node_cast_3_0_integer_hazards"
+id = "node_cast_4_0_integer_hazards"
 description = "node:cast with the hazards null, zero_negative, beyond_double in argument 0, integer."
 columns = [{ name = "x0", type = "NUMBER(38,0)" }]
 rows = [
@@ -404,7 +554,7 @@ tags = ["null", "boundary"]
 origin = "generated: hazards@1"
 
 [[case]]
-id = "node_cast_3_0_integer_beyond_64_bits"
+id = "node_cast_4_0_integer_beyond_64_bits"
 description = "node:cast with Integers beyond the 64-bit range, which BIGINT arithmetic overflows in argument 0, integer."
 columns = [{ name = "x0", type = "NUMBER(38,0)" }]
 rows = [
@@ -416,7 +566,7 @@ tags = ["null", "boundary"]
 origin = "generated: hazards@1"
 
 [[case]]
-id = "node_cast_3_0_integer_digits_38"
+id = "node_cast_4_0_integer_digits_38"
 description = "node:cast with The largest 38-digit integers in argument 0, integer."
 columns = [{ name = "x0", type = "NUMBER(38,0)" }]
 rows = [
@@ -428,7 +578,7 @@ tags = ["null", "boundary"]
 origin = "generated: hazards@1"
 
 [[case]]
-id = "node_cast_4_combination_0_date"
+id = "node_cast_5_combination_0_date"
 description = "node:cast over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "DATE" }]
 rows = [
@@ -440,7 +590,7 @@ tags = ["null", "boundary"]
 origin = "generated: hazards@1"
 
 [[case]]
-id = "node_cast_4_0_date_hazards"
+id = "node_cast_5_0_date_hazards"
 description = "node:cast with the hazards null, leap_day, pre_1970 in argument 0, date."
 columns = [{ name = "x0", type = "DATE" }]
 rows = [
@@ -454,7 +604,7 @@ tags = ["null", "boundary"]
 origin = "generated: hazards@1"
 
 [[case]]
-id = "node_cast_4_0_date_extreme_years"
+id = "node_cast_5_0_date_extreme_years"
 description = "node:cast with The first and last years Snowflake accepts in argument 0, date."
 columns = [{ name = "x0", type = "DATE" }]
 rows = [
@@ -466,7 +616,7 @@ tags = ["null", "boundary"]
 origin = "generated: hazards@1"
 
 [[case]]
-id = "node_cast_5_combination_0_timestamp_ntz"
+id = "node_cast_6_combination_0_timestamp_ntz"
 description = "node:cast over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "TIMESTAMP_NTZ(9)" }]
 rows = [
@@ -478,7 +628,7 @@ tags = ["null", "boundary"]
 origin = "generated: hazards@1"
 
 [[case]]
-id = "node_cast_5_0_timestamp_ntz_hazards"
+id = "node_cast_6_0_timestamp_ntz_hazards"
 description = "node:cast with the hazards null, dst_gap, dst_overlap, leap_day, pre_1970 in argument 0, timestamp_ntz."
 columns = [{ name = "x0", type = "TIMESTAMP_NTZ(9)" }]
 rows = [
@@ -496,7 +646,7 @@ tags = ["null", "boundary"]
 origin = "generated: hazards@1"
 
 [[case]]
-id = "node_cast_5_0_timestamp_ntz_sub_microsecond"
+id = "node_cast_6_0_timestamp_ntz_sub_microsecond"
 description = "node:cast with Nanosecond fractions, beyond microseconds in argument 0, timestamp_ntz."
 columns = [{ name = "x0", type = "TIMESTAMP_NTZ(9)" }]
 rows = [
@@ -508,7 +658,7 @@ origin = "generated: hazards@1"
 expected_divergence = "variant_typed_values"
 
 [[case]]
-id = "node_cast_5_0_timestamp_ntz_half_millisecond"
+id = "node_cast_6_0_timestamp_ntz_half_millisecond"
 description = "node:cast with Fractions on and near half a millisecond, where truncating and rounding to milliseconds differ (TIMESTAMP_NTZ(9) text) in argument 0, timestamp_ntz."
 columns = [{ name = "x0", type = "TIMESTAMP_NTZ(9)" }]
 rows = [
@@ -522,7 +672,7 @@ origin = "generated: hazards@1"
 expected_divergence = "variant_typed_values"
 
 [[case]]
-id = "node_cast_5_0_timestamp_ntz_extreme_years"
+id = "node_cast_6_0_timestamp_ntz_extreme_years"
 description = "node:cast with The first and last years Snowflake accepts, beyond DuckDB's nanosecond range in argument 0, timestamp_ntz."
 columns = [{ name = "x0", type = "TIMESTAMP_NTZ(9)" }]
 rows = [
@@ -535,7 +685,7 @@ origin = "generated: hazards@1"
 expected_divergence = "timestamp_range"
 
 [[case]]
-id = "node_cast_6_combination_0_timestamp_ltz"
+id = "node_cast_7_combination_0_timestamp_ltz"
 description = "node:cast over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "TIMESTAMP_LTZ(9)" }]
 rows = [
@@ -547,7 +697,7 @@ tags = ["null", "boundary"]
 origin = "generated: hazards@1"
 
 [[case]]
-id = "node_cast_6_0_timestamp_ltz_hazards"
+id = "node_cast_7_0_timestamp_ltz_hazards"
 description = "node:cast with the hazards null, dst_gap, dst_overlap, pre_1970 in argument 0, timestamp_ltz."
 columns = [{ name = "x0", type = "TIMESTAMP_LTZ(9)" }]
 rows = [
@@ -563,7 +713,7 @@ tags = ["null", "boundary"]
 origin = "generated: hazards@1"
 
 [[case]]
-id = "node_cast_6_0_timestamp_ltz_sub_microsecond"
+id = "node_cast_7_0_timestamp_ltz_sub_microsecond"
 description = "node:cast with Nanosecond fractions, beyond microseconds in argument 0, timestamp_ltz."
 columns = [{ name = "x0", type = "TIMESTAMP_LTZ(9)" }]
 rows = [
@@ -575,7 +725,7 @@ origin = "generated: hazards@1"
 expected_divergence = "timestamp_tz_submicro"
 
 [[case]]
-id = "node_cast_6_0_timestamp_ltz_extreme_years"
+id = "node_cast_7_0_timestamp_ltz_extreme_years"
 description = "node:cast with The first and last years Snowflake accepts in argument 0, timestamp_ltz."
 columns = [{ name = "x0", type = "TIMESTAMP_LTZ(9)" }]
 rows = [

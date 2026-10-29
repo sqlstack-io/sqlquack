@@ -74,6 +74,10 @@ pub const TYPED_TEXT_PATTERN: &str =
     "[0-9]{4}-[0-9]{2}-[0-9]{2}( [0-9]{2}:[0-9]{2}:[0-9]{2}\\.[0-9]{3}( Z)?)?";
 /// The divergence the guards rely on.
 pub const JSON_FIDELITY: &str = "json_fidelity";
+/// The divergence a read of a column another model wrote from a VARIANT-held value relies on.
+pub const VARIANT_CHAIN_TYPE: &str = "variant_chain_type";
+/// The assumption that a source table's VARIANT holds JSON values, no typed leaf.
+pub const SOURCE_VARIANT_JSON: &str = "source_variant_json";
 /// A JSON string, as RE2 matches it.
 pub const JSON_STRING_PATTERN: &str = r#""(?:[^"\\]|\\.)*""#;
 /// The JSON literals spelled with letters.
@@ -118,6 +122,10 @@ pub const JSON_GET_COMPUTED: &str = "duckdb.json_get_computed";
 pub const JSON_FILTER: &str = "duckdb.json_filter";
 /// TRANSFORM: `duckdb.json_transform`.
 pub const JSON_TRANSFORM: &str = "duckdb.json_transform";
+/// REDUCE, a left fold of an array's elements: `duckdb.json_reduce`.
+pub const JSON_REDUCE: &str = "duckdb.json_reduce";
+/// JSON text with Snowflake's escapes: `duckdb.json_escaped`.
+pub const JSON_ESCAPED: &str = "duckdb.json_escaped";
 /// A VARIANT equal to an integer NUMBER: `duckdb.json_number_equal`.
 pub const JSON_NUMBER_EQUAL: &str = "duckdb.json_number_equal";
 /// Object keys a quoted JSON path cannot name exactly: the empty key and the wildcard.

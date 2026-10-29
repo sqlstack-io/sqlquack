@@ -102,7 +102,11 @@ fn hazard_units(
                         "{}[{index}] argument {position} {family}: {}",
                         form.construct, hazard.id
                     ),
-                    hazard.unrecordable.is_none().then_some(covered),
+                    (hazard.unrecordable.is_none()
+                        && !form
+                            .unrecordable
+                            .contains_key(&format!("{position}.{family}.{}", hazard.id)))
+                    .then_some(covered),
                 ));
             }
         }

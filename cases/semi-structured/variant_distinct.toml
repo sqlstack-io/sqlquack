@@ -1,0 +1,70 @@
+# Duplicate VARIANTs removed by SELECT DISTINCT, UNION and ARRAY_AGG DISTINCT: key order, typed values and nesting.
+category = "semi-structured-typed"
+construct = "node:distinct"
+session_profile = "utc-v1"
+
+[[case]]
+id = "distinct_variant_key_order"
+description = "SELECT DISTINCT over objects holding the same keys and values in different orders, and nested objects so."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('{\"a\":1,\"b\":2}')"],
+  ["PARSE_JSON('{\"b\":2,\"a\":1}')"],
+  ["PARSE_JSON('{\"k\":{\"a\":1,\"b\":2}}')"],
+  ["PARSE_JSON('{\"k\":{\"b\":2,\"a\":1}}')"],
+  ["PARSE_JSON('[{\"a\":1,\"b\":2}]')"],
+  ["PARSE_JSON('[{\"b\":2,\"a\":1}]')"],
+  ["NULL"],
+]
+query = "SELECT DISTINCT v FROM input ORDER BY v::VARCHAR"
+order = "ordered"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "distinct_variant_number_spellings"
+description = "SELECT DISTINCT over JSON numbers spelled differently: 1, 1.0, 1e0 and 10 against 1e1."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('1')"],
+  ["PARSE_JSON('1.0')"],
+  ["PARSE_JSON('1e0')"],
+  ["PARSE_JSON('10')"],
+  ["PARSE_JSON('1e1')"],
+  ["PARSE_JSON('\"1\"')"],
+]
+query = "SELECT COUNT(*) AS n FROM (SELECT DISTINCT v FROM input) AS t"
+order = "ordered"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "distinct_variant_typed_against_text"
+description = "SELECT DISTINCT over VARIANTs holding a DATE, a timestamp and their text, alone and in objects and arrays."
+columns = [{ name = "d", type = "DATE" }, { name = "t", type = "TIMESTAMP_NTZ(9)" }]
+rows = [
+  ["'2024-01-01'", "'2024-01-01 10:00:00'"],
+]
+query = "SELECT COUNT(*) AS kept, COUNT(DISTINCT kept_rows.v::VARCHAR) AS texts FROM (SELECT DISTINCT v FROM (SELECT TO_VARIANT(d) AS v FROM input UNION ALL SELECT TO_VARIANT(d::VARCHAR) FROM input UNION ALL SELECT TO_VARIANT(t) FROM input UNION ALL SELECT TO_VARIANT('2024-01-01 10:00:00.000') FROM input UNION ALL SELECT OBJECT_CONSTRUCT('k', d) FROM input UNION ALL SELECT OBJECT_CONSTRUCT('k', d::VARCHAR) FROM input UNION ALL SELECT ARRAY_CONSTRUCT(d) FROM input UNION ALL SELECT ARRAY_CONSTRUCT(d::VARCHAR) FROM input) AS all_values) AS kept_rows"
+order = "ordered"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "union_variant_key_order"
+description = "UNION removing duplicate VARIANTs whose keys are in different orders, beside a DATE and its text."
+columns = [{ name = "d", type = "DATE" }]
+rows = [
+  ["'2024-01-01'"],
+]
+query = "SELECT COUNT(*) AS n FROM (SELECT PARSE_JSON('{\"a\":1,\"b\":2}') AS v FROM input UNION SELECT PARSE_JSON('{\"b\":2,\"a\":1}') FROM input UNION SELECT TO_VARIANT(d) FROM input UNION SELECT TO_VARIANT(d::VARCHAR) FROM input) AS t"
+order = "ordered"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "array_agg_distinct_variant"
+description = "ARRAY_SIZE of ARRAY_AGG DISTINCT over objects in different key orders, and over a DATE in an object beside its text."
+columns = [{ name = "g", type = "VARCHAR" }, { name = "d", type = "DATE" }]
+rows = [
+  ["'a'", "'2024-01-01'"],
+]
+query = "SELECT (SELECT ARRAY_SIZE(ARRAY_AGG(DISTINCT v)) FROM (SELECT PARSE_JSON('{\"a\":1,\"b\":2}') AS v UNION ALL SELECT PARSE_JSON('{\"b\":2,\"a\":1}'))) AS key_order, (SELECT ARRAY_SIZE(ARRAY_AGG(DISTINCT v)) FROM (SELECT OBJECT_CONSTRUCT('k', d) AS v FROM input UNION ALL SELECT OBJECT_CONSTRUCT('k', d::VARCHAR) FROM input)) AS typed FROM input"
+order = "ordered"
+tags = ["null", "boundary"]

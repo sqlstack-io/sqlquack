@@ -7,8 +7,9 @@ use sqlquack_snowflake::typing::models::SnowflakeType;
 
 use crate::conversion::_helpers::support::locations::Locator;
 use crate::conversion::_helpers::support::tree::unresolved;
+use crate::conversion::_helpers::support::typed_leaves::TypedLeaves;
 use crate::conversion::constants::{UNKNOWN_RELATION_PREFIX, UNKNOWN_RELATION_SUFFIX};
-use crate::conversion::models::{ColumnSpec, ConversionOptions, Schema};
+use crate::conversion::models::{ColumnSpec, ConversionOptions, Holding, Schema};
 
 /// A converted scalar: DuckDB SQL whose type is the DuckDB pairing of `data_type`.
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -19,6 +20,28 @@ pub(crate) struct Emitted {
     pub(crate) literal: Option<Literal>,
     /// For TIMESTAMP_TZ values: whether every value's offset is known to be +00:00.
     pub(crate) utc_offset: bool,
+    /// For VARIANT values: how DuckDB holds them.
+    pub(crate) held: Holding,
+    /// For VARIANT-held values: what their root is known to be.
+    pub(crate) root: VariantRoot,
+    /// Whether the value is proven to hold no typed leaf: built without one, reading only such values.
+    pub(crate) untainted: bool,
+    /// Whether the value reads a source or schema VARIANT trusted to hold no typed leaf.
+    pub(crate) sourced: bool,
+}
+
+/// What a VARIANT-held value's root is known to be, which decides how it is written as text.
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
+pub(crate) enum VariantRoot {
+    /// An object or an array.
+    Container,
+    /// A FLOAT, whose text Snowflake writes differently when it folds a constant.
+    Double,
+    /// A value a path reads out of another: a FLOAT there is written as its own text, folded or not.
+    Element,
+    /// Unknown until run time, such as a column.
+    #[default]
+    Dynamic,
 }
 
 /// A literal's kind and text.
@@ -35,7 +58,25 @@ impl Emitted {
             data_type,
             literal: None,
             utc_offset: false,
+            held: Holding::Json,
+            root: VariantRoot::Dynamic,
+            untainted: false,
+            sourced: false,
         }
+    }
+
+    /// A value built from typed scalars, held as a DuckDB `VARIANT` or its JSON, its root `root`.
+    pub(crate) fn variant_held(sql: String, root: VariantRoot) -> Self {
+        Self {
+            held: Holding::Variant,
+            root,
+            ..Self::new(sql, SnowflakeType::SemiStructured)
+        }
+    }
+
+    /// Whether the value is a DuckDB `VARIANT` built from typed scalars.
+    pub(crate) fn is_variant_held(&self) -> bool {
+        self.held == Holding::Variant
     }
 }
 
@@ -98,14 +139,19 @@ impl<'a> Scope<'a> {
                         column.name
                     )));
                 }
-                found.push(Emitted::new(
-                    format!(
-                        "{}.{}",
-                        quoted_identifier(&relation.alias, log),
-                        quoted_identifier(&column.name, log)
-                    ),
-                    column.data_type,
-                ));
+                found.push(Emitted {
+                    held: column.holding,
+                    untainted: column.untainted,
+                    sourced: column.sourced,
+                    ..Emitted::new(
+                        format!(
+                            "{}.{}",
+                            quoted_identifier(&relation.alias, log),
+                            quoted_identifier(&column.name, log)
+                        ),
+                        column.data_type,
+                    )
+                });
             }
         }
         match found.len() {
@@ -159,6 +205,7 @@ pub(crate) struct Context<'a> {
     pub(crate) options: &'a ConversionOptions,
     pub(crate) ctes: Vec<(String, Vec<ColumnSpec>)>,
     pub(crate) locator: &'a Locator<'a>,
+    pub(crate) typed: &'a TypedLeaves,
 }
 
 impl Context<'_> {
@@ -168,7 +215,18 @@ impl Context<'_> {
             return Ok(columns.clone());
         }
         if let Some(columns) = self.schema.relations.get(name) {
-            return Ok(columns.clone());
+            if columns.iter().any(|column| column.typed_leaves) {
+                self.typed.enter();
+            }
+            return Ok(columns
+                .iter()
+                .map(|column| ColumnSpec {
+                    untainted: !column.typed_leaves,
+                    sourced: !column.typed_leaves
+                        && column.data_type == SnowflakeType::SemiStructured,
+                    ..column.clone()
+                })
+                .collect());
         }
         if self
             .ctes

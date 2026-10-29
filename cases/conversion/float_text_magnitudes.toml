@@ -1,0 +1,205 @@
+# FLOAT text by magnitude, deciding the digits Snowflake writes between the recorded bands.
+category = "conversion"
+construct = "node:cast"
+session_profile = "utc-v1"
+
+[[case]]
+id = "float_text_many_rows_two_to_five_whole_digits"
+description = "FLOAT text over many rows, which Snowflake cannot fold: 17 significant digits with 2 to 5 whole digits, where the rule writes 11 to 14."
+columns = [{ name = "x", type = "FLOAT" }]
+rows = [
+  ["12.345678901234567"],
+  ["98.76543210987654"],
+  ["123.45678901234567"],
+  ["987.6543210987654"],
+  ["1234.5678901234567"],
+  ["9876.543210987654"],
+  ["12345.678901234567"],
+  ["98765.43210987654"],
+  ["10.000000000000002"],
+  ["12.5"],
+  ["NULL"],
+]
+query = "SELECT x::VARCHAR AS fx, TO_VARCHAR(x) AS tv, OBJECT_CONSTRUCT('k', x):k::VARCHAR AS o FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "boundary", "negative"]
+expected_divergence = "float_text"
+
+[[case]]
+id = "float_text_many_rows_six_to_fifteen_whole_digits"
+description = "FLOAT text over many rows, which Snowflake cannot fold: 17 significant digits with 7, 8 and 10 to 15 whole digits, between the recorded bands."
+columns = [{ name = "x", type = "FLOAT" }]
+rows = [
+  ["1234567.8901234567"],
+  ["12345678.901234567"],
+  ["1234567890.1234567"],
+  ["12345678901.234567"],
+  ["123456789012.34567"],
+  ["1234567890123.4567"],
+  ["12345678901234.567"],
+  ["123456789012345.67"],
+  ["12345678901"],
+  ["123456789012345"],
+  ["NULL"],
+]
+query = "SELECT x::VARCHAR AS fx, TO_VARCHAR(x) AS tv, OBJECT_CONSTRUCT('k', x):k::VARCHAR AS o FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "boundary", "negative"]
+expected_divergence = "float_text"
+
+[[case]]
+id = "float_text_many_rows_band_edges"
+description = "FLOAT text over many rows, which Snowflake cannot fold: values rounding across a band edge: 10, 1e5, 1e6, 1e9 and 1e15."
+columns = [{ name = "x", type = "FLOAT" }]
+rows = [
+  ["9.9999999999"],
+  ["9.999999999999998"],
+  ["99.99999999999"],
+  ["99999.99999999999"],
+  ["999999.9999999999"],
+  ["9999999.999999998"],
+  ["999999999.9999999"],
+  ["99999999999999.98"],
+  ["999999999999999.9"],
+  ["NULL"],
+]
+query = "SELECT x::VARCHAR AS fx, TO_VARCHAR(x) AS tv, OBJECT_CONSTRUCT('k', x):k::VARCHAR AS o FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "boundary", "negative"]
+expected_divergence = "float_text"
+
+[[case]]
+id = "float_text_many_rows_small_fractions"
+description = "FLOAT text over many rows, which Snowflake cannot fold: 17 significant digits below 0.1, between the recorded fractions and subnormals."
+columns = [{ name = "x", type = "FLOAT" }]
+rows = [
+  ["0.09999999999999999"],
+  ["0.012345678901234567"],
+  ["0.0012345678901234567"],
+  ["0.00012345678901234567"],
+  ["1.2345678901234567e-7"],
+  ["1.2345678901234567e-100"],
+  ["NULL"],
+]
+query = "SELECT x::VARCHAR AS fx, TO_VARCHAR(x) AS tv, OBJECT_CONSTRUCT('k', x):k::VARCHAR AS o FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "boundary", "negative"]
+expected_divergence = "float_text"
+
+[[case]]
+id = "float_text_many_rows_negatives"
+description = "FLOAT text over many rows, which Snowflake cannot fold: the same magnitudes negative."
+columns = [{ name = "x", type = "FLOAT" }]
+rows = [
+  ["-12.345678901234567"],
+  ["-12345.678901234567"],
+  ["-1234567.8901234567"],
+  ["-123456789012345.67"],
+  ["-9.9999999999"],
+  ["-99999.99999999999"],
+  ["-0.012345678901234567"],
+  ["NULL"],
+]
+query = "SELECT x::VARCHAR AS fx, TO_VARCHAR(x) AS tv, OBJECT_CONSTRUCT('k', x):k::VARCHAR AS o FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "boundary", "negative"]
+expected_divergence = "float_text"
+
+[[case]]
+id = "float_text_single_row_two_whole_digits"
+description = "FLOAT text of 12.345678901234567 from a one-row input, which Snowflake may fold, against the many-row cases."
+columns = [{ name = "x", type = "FLOAT" }]
+rows = [
+  ["12.345678901234567"],
+]
+query = "SELECT x::VARCHAR AS fx, TO_VARCHAR(x) AS tv, OBJECT_CONSTRUCT('k', x):k::VARCHAR AS o FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["boundary"]
+expected_divergence = "float_text"
+
+[[case]]
+id = "float_text_single_row_five_whole_digits"
+description = "FLOAT text of 12345.678901234567 from a one-row input, which Snowflake may fold, against the many-row cases."
+columns = [{ name = "x", type = "FLOAT" }]
+rows = [
+  ["12345.678901234567"],
+]
+query = "SELECT x::VARCHAR AS fx, TO_VARCHAR(x) AS tv, OBJECT_CONSTRUCT('k', x):k::VARCHAR AS o FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["boundary"]
+expected_divergence = "float_text"
+
+[[case]]
+id = "float_text_single_row_seven_whole_digits"
+description = "FLOAT text of 1234567.8901234567 from a one-row input, which Snowflake may fold, against the many-row cases."
+columns = [{ name = "x", type = "FLOAT" }]
+rows = [
+  ["1234567.8901234567"],
+]
+query = "SELECT x::VARCHAR AS fx, TO_VARCHAR(x) AS tv, OBJECT_CONSTRUCT('k', x):k::VARCHAR AS o FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["boundary"]
+expected_divergence = "float_text"
+
+[[case]]
+id = "float_text_single_row_fifteen_whole_digits"
+description = "FLOAT text of 123456789012345.67 from a one-row input, which Snowflake may fold, against the many-row cases."
+columns = [{ name = "x", type = "FLOAT" }]
+rows = [
+  ["123456789012345.67"],
+]
+query = "SELECT x::VARCHAR AS fx, TO_VARCHAR(x) AS tv, OBJECT_CONSTRUCT('k', x):k::VARCHAR AS o FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["boundary"]
+expected_divergence = "float_text"
+
+[[case]]
+id = "float_text_single_row_edge_ten"
+description = "FLOAT text of 9.9999999999 from a one-row input, which Snowflake may fold, against the many-row cases."
+columns = [{ name = "x", type = "FLOAT" }]
+rows = [
+  ["9.9999999999"],
+]
+query = "SELECT x::VARCHAR AS fx, TO_VARCHAR(x) AS tv, OBJECT_CONSTRUCT('k', x):k::VARCHAR AS o FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["boundary"]
+
+[[case]]
+id = "float_text_single_row_edge_hundred_thousand"
+description = "FLOAT text of 99999.99999999999 from a one-row input, which Snowflake may fold, against the many-row cases."
+columns = [{ name = "x", type = "FLOAT" }]
+rows = [
+  ["99999.99999999999"],
+]
+query = "SELECT x::VARCHAR AS fx, TO_VARCHAR(x) AS tv, OBJECT_CONSTRUCT('k', x):k::VARCHAR AS o FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["boundary"]
+
+[[case]]
+id = "float_text_single_row_small_fraction"
+description = "FLOAT text of 0.012345678901234567 from a one-row input, which Snowflake may fold, against the many-row cases."
+columns = [{ name = "x", type = "FLOAT" }]
+rows = [
+  ["0.012345678901234567"],
+]
+query = "SELECT x::VARCHAR AS fx, TO_VARCHAR(x) AS tv, OBJECT_CONSTRUCT('k', x):k::VARCHAR AS o FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["boundary"]
+expected_divergence = "float_text"
+
+[[case]]
+id = "float_text_from_text"
+description = "Text read as a FLOAT and written back, at the undecided magnitudes; unreadable text is NULL."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'12.345678901234567'"],
+  ["'1234567.8901234567'"],
+  ["'0.012345678901234567'"],
+  ["'not a number'"],
+  ["''"],
+  ["NULL"],
+]
+query = "SELECT TRY_TO_DOUBLE(s)::VARCHAR AS fx FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "invalid", "boundary"]
+expected_divergence = "float_text"

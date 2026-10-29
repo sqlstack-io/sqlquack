@@ -61,3 +61,147 @@ rows = [
 expression = "REGEXP_LIKE(x0, 'a.*', 'i')"
 tags = ["null", "empty", "whitespace", "unicode"]
 origin = "generated: hazards@1"
+
+[[case]]
+id = "fn_regexp_like_1_combination_0_text_text"
+description = "fn:REGEXP_LIKE over benign values of each declared argument kind."
+columns = [{ name = "x0", type = "VARCHAR" }, { name = "x1", type = "VARCHAR" }]
+rows = [
+  ["'a'", "'a.*'"],
+  ["'b'", "'a.*'"],
+]
+expression = "REGEXP_LIKE(x0, x1)"
+tags = ["null", "empty", "whitespace", "unicode"]
+origin = "generated: hazards@1"
+
+[[case]]
+id = "fn_regexp_like_1_0_text_hazards"
+description = "fn:REGEXP_LIKE with the hazards null, empty, dollar_prefix, slash_prefix, dots_brackets, quotes_backslashes, non_ascii, title_case_digraph, case_only, whitespace, number_text in argument 0, text."
+columns = [{ name = "x0", type = "VARCHAR" }, { name = "x1", type = "VARCHAR" }]
+rows = [
+  ["NULL", "'a.*'"],
+  ["''", "'a.*'"],
+  ["'$.a'", "'a.*'"],
+  ["'$'", "'a.*'"],
+  ["'/a'", "'a.*'"],
+  ["'/'", "'a.*'"],
+  ["'a.b'", "'a.*'"],
+  ["'a[0]'", "'a.*'"],
+  ["'*'", "'a.*'"],
+  ["'it''s'", "'a.*'"],
+  ["'say \"hi\"'", "'a.*'"],
+  ["'a\\\\b'", "'a.*'"],
+  ["'Größe'", "'a.*'"],
+  ["'é'", "'a.*'"],
+  ["'é'", "'a.*'"],
+  ["'😀'", "'a.*'"],
+  ["'ǆungla'", "'a.*'"],
+  ["'ǅ'", "'a.*'"],
+  ["'ǉubav'", "'a.*'"],
+  ["'ǲ'", "'a.*'"],
+  ["'Order'", "'a.*'"],
+  ["'ORDER'", "'a.*'"],
+  ["'order'", "'a.*'"],
+  ["'Straße'", "'a.*'"],
+  ["'STRASSE'", "'a.*'"],
+  ["' a'", "'a.*'"],
+  ["'a '", "'a.*'"],
+  ["' '", "'a.*'"],
+  ["'	'", "'a.*'"],
+  ["'a\nb'", "'a.*'"],
+  ["'007'", "'a.*'"],
+  ["'1.0'", "'a.*'"],
+  ["'1e0'", "'a.*'"],
+  ["'+7'", "'a.*'"],
+  ["'-0'", "'a.*'"],
+]
+expression = "REGEXP_LIKE(x0, x1)"
+tags = ["null", "empty", "whitespace", "unicode"]
+origin = "generated: hazards@1"
+
+[[case]]
+id = "fn_regexp_like_1_1_text_hazards"
+description = "fn:REGEXP_LIKE with the hazards null, empty, slash_prefix, non_ascii, title_case_digraph, case_only, whitespace in argument 1, text."
+columns = [{ name = "x0", type = "VARCHAR" }, { name = "x1", type = "VARCHAR" }]
+rows = [
+  ["'a'", "NULL"],
+  ["'a'", "''"],
+  ["'a'", "'/a'"],
+  ["'a'", "'/'"],
+  ["'a'", "'Größe'"],
+  ["'a'", "'é'"],
+  ["'a'", "'é'"],
+  ["'a'", "'😀'"],
+  ["'a'", "'ǆungla'"],
+  ["'a'", "'ǅ'"],
+  ["'a'", "'ǉubav'"],
+  ["'a'", "'ǲ'"],
+  ["'a'", "'Order'"],
+  ["'a'", "'ORDER'"],
+  ["'a'", "'order'"],
+  ["'a'", "'Straße'"],
+  ["'a'", "'STRASSE'"],
+  ["'a'", "' a'"],
+  ["'a'", "'a '"],
+  ["'a'", "' '"],
+  ["'a'", "'	'"],
+  ["'a'", "'a\nb'"],
+]
+expression = "REGEXP_LIKE(x0, x1)"
+tags = ["null", "empty", "whitespace", "unicode"]
+origin = "generated: hazards@1"
+
+[[case]]
+id = "fn_regexp_like_1_1_text_dollar_prefix"
+description = "fn:REGEXP_LIKE with Text starting with $, which DuckDB's JSON functions read as a path (GET with a computed key) in argument 1, text."
+columns = [{ name = "x0", type = "VARCHAR" }, { name = "x1", type = "VARCHAR" }]
+rows = [
+  ["'a'", "'$.a'"],
+  ["'a'", "'$'"],
+]
+expression = "REGEXP_LIKE(x0, x1)"
+tags = ["null", "empty", "whitespace", "unicode"]
+origin = "generated: hazards@1"
+expected_divergence = "regexp_pattern_syntax"
+
+[[case]]
+id = "fn_regexp_like_1_1_text_dots_brackets"
+description = "fn:REGEXP_LIKE with Dots, brackets and the wildcard, which paths and patterns read specially in argument 1, text."
+columns = [{ name = "x0", type = "VARCHAR" }, { name = "x1", type = "VARCHAR" }]
+rows = [
+  ["'a'", "'a.b'"],
+  ["'a'", "'a[0]'"],
+  ["'a'", "'*'"],
+]
+expression = "REGEXP_LIKE(x0, x1)"
+tags = ["null", "empty", "whitespace", "unicode"]
+origin = "generated: hazards@1"
+
+[[case]]
+id = "fn_regexp_like_1_1_text_quotes_backslashes"
+description = "fn:REGEXP_LIKE with Single and double quotes and backslashes, which quoting and escaping must keep in argument 1, text."
+columns = [{ name = "x0", type = "VARCHAR" }, { name = "x1", type = "VARCHAR" }]
+rows = [
+  ["'a'", "'it''s'"],
+  ["'a'", "'say \"hi\"'"],
+  ["'a'", "'a\\\\b'"],
+]
+expression = "REGEXP_LIKE(x0, x1)"
+tags = ["null", "empty", "whitespace", "unicode"]
+origin = "generated: hazards@1"
+expected_divergence = "regexp_pattern_syntax"
+
+[[case]]
+id = "fn_regexp_like_1_1_text_number_text"
+description = "fn:REGEXP_LIKE with Text that reads as a number in several spellings: leading zeros, signs, exponents in argument 1, text."
+columns = [{ name = "x0", type = "VARCHAR" }, { name = "x1", type = "VARCHAR" }]
+rows = [
+  ["'a'", "'007'"],
+  ["'a'", "'1.0'"],
+  ["'a'", "'1e0'"],
+  ["'a'", "'+7'"],
+  ["'a'", "'-0'"],
+]
+expression = "REGEXP_LIKE(x0, x1)"
+tags = ["null", "empty", "whitespace", "unicode"]
+origin = "generated: hazards@1"

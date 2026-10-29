@@ -3316,6 +3316,7 @@ query = "SELECT TO_VARIANT(x)::VARCHAR AS r FROM input ORDER BY ordinal"
 order = "ordered"
 tags = ["null", "boundary"]
 origin = "generated: variant_typed@2"
+expected_divergence = "float_text"
 
 [[case]]
 id = "typed_float_to_variant_to_varchar"
@@ -3330,6 +3331,7 @@ query = "SELECT TO_VARCHAR(TO_VARIANT(x)) AS r FROM input ORDER BY ordinal"
 order = "ordered"
 tags = ["null", "boundary"]
 origin = "generated: variant_typed@2"
+expected_divergence = "float_text"
 
 [[case]]
 id = "typed_float_to_variant_to_json"
@@ -3428,6 +3430,7 @@ query = "SELECT x::VARIANT::VARCHAR AS r FROM input ORDER BY ordinal"
 order = "ordered"
 tags = ["null", "boundary"]
 origin = "generated: variant_typed@2"
+expected_divergence = "float_text"
 
 [[case]]
 id = "typed_float_cast_to_varchar"
@@ -3442,6 +3445,7 @@ query = "SELECT TO_VARCHAR(x::VARIANT) AS r FROM input ORDER BY ordinal"
 order = "ordered"
 tags = ["null", "boundary"]
 origin = "generated: variant_typed@2"
+expected_divergence = "float_text"
 
 [[case]]
 id = "typed_float_cast_to_json"
@@ -3650,6 +3654,7 @@ query = "SELECT v::VARCHAR AS r FROM input ORDER BY ordinal"
 order = "ordered"
 tags = ["boundary"]
 origin = "generated: variant_typed@2"
+expected_divergence = "float_text"
 
 [[case]]
 id = "typed_float_round_trip_to_varchar"
@@ -3663,6 +3668,7 @@ query = "SELECT TO_VARCHAR(v) AS r FROM input ORDER BY ordinal"
 order = "ordered"
 tags = ["boundary"]
 origin = "generated: variant_typed@2"
+expected_divergence = "float_text"
 
 [[case]]
 id = "typed_float_round_trip_to_json"

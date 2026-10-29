@@ -4,7 +4,9 @@ use sqlquack_core::failures::constants::NUMBER_NOT_RECOGNIZED;
 use sqlquack_core::provenance::models::ProvenanceLog;
 use sqlquack_snowflake::typing::models::SnowflakeType;
 
-use crate::blocks::_helpers::text::{conversion_failure, overflow_failure, space_trimmed};
+use crate::blocks::_helpers::text::{
+    conversion_failure, once_bound, overflow_failure, space_trimmed,
+};
 use crate::blocks::_helpers::types_map::duckdb_type;
 use crate::blocks::constants::{
     BARE_EXPONENT_PATTERN, DECIMAL_TEXT_PATTERN, MANTISSA_FREE_PATTERN, TEXT_TO_NUMBER,
@@ -25,6 +27,17 @@ pub fn text_to_number(
         ));
     };
     let target = duckdb_type(result, log)?;
+    Ok(once_bound(sql, "number_text", |sql| {
+        read_number(sql, (&target, precision, scale), failure)
+    }))
+}
+
+/// The CASE reading the text `sql` as the DuckDB `target` of NUMBER(`precision`, `scale`).
+fn read_number(
+    sql: &str,
+    (target, precision, scale): (&str, u8, u8),
+    failure: TextFailure,
+) -> String {
     let trimmed = space_trimmed(sql);
     let overflow = format!("CAST({} AS {target})", overflow_failure(failure));
     let whole = "9".repeat(usize::from(precision - scale));
@@ -34,7 +47,7 @@ pub fn text_to_number(
     };
     let parsed = format!("TRY_CAST({trimmed} AS {target})");
     let beyond = format!("abs({parsed}) > CAST('{largest}' AS {target})");
-    Ok(format!(
+    format!(
         "(CASE WHEN {sql} IS NULL THEN NULL \
          WHEN regexp_matches({trimmed}, '[eE]') AND {beyond} THEN {overflow} \
          WHEN regexp_full_match({trimmed}, '{DECIMAL_TEXT_PATTERN}') \
@@ -47,5 +60,5 @@ pub fn text_to_number(
             failure,
             (NUMBER_NOT_RECOGNIZED, "Numeric value is not recognized")
         )
-    ))
+    )
 }

@@ -145,3 +145,18 @@ rows = [
 expression = "ZEROIFNULL(x0)"
 tags = ["null", "zero", "negative", "boundary"]
 origin = "generated: hazards@1"
+
+[[case]]
+id = "fn_zeroifnull_0_float_notation_boundaries"
+description = "fn:ZEROIFNULL with Doubles where text switches between plain and exponent notation, which %.15g and %.15e write differently in argument 0, float."
+columns = [{ name = "x0", type = "FLOAT" }]
+rows = [
+  ["100"],
+  ["0.0001"],
+  ["1e-5"],
+  ["1e15"],
+  ["1e21"],
+]
+expression = "ZEROIFNULL(x0)"
+tags = ["null", "zero", "negative", "boundary"]
+origin = "generated: hazards@1"

@@ -67,7 +67,11 @@ def _hazard_cases(
                 continue
             types: list[str] = [*chosen]
             types[position] = family
-            hazards: list[dict[str, Any]] = recordable(families[family].get("hazard", []))
+            hazards: list[dict[str, Any]] = [
+                hazard
+                for hazard in recordable(families[family].get("hazard", []))
+                if f"{position}.{family}.{hazard['id']}" not in form.get("unrecordable", {})
+            ]
             alone: list[dict[str, Any]] = [
                 hazard
                 for hazard in hazards
@@ -75,6 +79,7 @@ def _hazard_cases(
                 or hazard.get("isolate")
                 or hazard.get("divergence")
                 or hazard_divergence(form=form, hazard=hazard, place=(position, family)) is not None
+                or f"{position}.{family}.{hazard['id']}" in form.get("alone", [])
             ]
             together: list[dict[str, Any]] = [hazard for hazard in hazards if hazard not in alone]
             groups: list[tuple[str, list[dict[str, Any]]]] = [

@@ -1,0 +1,149 @@
+# Typed values in a VARIANT compared with each other and with their text, and partitioned by.
+category = "semi-structured-typed"
+construct = "node:eq"
+session_profile = "utc-v1"
+
+[[case]]
+id = "typed_equality_date_vs_text"
+description = "A DATE in a VARIANT against a VARIANT of its text, of its own ::VARCHAR and of parsed JSON."
+columns = [{ name = "x", type = "DATE" }, { name = "s", type = "VARCHAR" }]
+rows = [
+  ["'2024-01-01'", "'2024-01-01'"],
+  ["'2024-02-29'", "'2024-02-29'"],
+  ["NULL", "NULL"],
+]
+query = "SELECT TO_VARIANT(x) = TO_VARIANT(s) AS eq, TO_VARIANT(x) <> TO_VARIANT(s) AS ne, TO_VARIANT(x) = TO_VARIANT(x::VARCHAR) AS own_text, TO_VARIANT(x) = PARSE_JSON('\"' || s || '\"') AS parsed, TYPEOF(TO_VARIANT(x)) AS t FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "typed_equality_timestamp_ntz_vs_text"
+description = "A TIMESTAMP_NTZ in a VARIANT against a VARIANT of its text, of its own ::VARCHAR and of parsed JSON."
+columns = [{ name = "x", type = "TIMESTAMP_NTZ(9)" }, { name = "s", type = "VARCHAR" }]
+rows = [
+  ["'2024-01-01 10:00:00'", "'2024-01-01 10:00:00.000'"],
+  ["'2024-01-01 10:00:00.123'", "'2024-01-01 10:00:00.123'"],
+  ["NULL", "NULL"],
+]
+query = "SELECT TO_VARIANT(x) = TO_VARIANT(s) AS eq, TO_VARIANT(x) <> TO_VARIANT(s) AS ne, TO_VARIANT(x) = TO_VARIANT(x::VARCHAR) AS own_text, TO_VARIANT(x) = PARSE_JSON('\"' || s || '\"') AS parsed, TYPEOF(TO_VARIANT(x)) AS t FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "typed_equality_timestamp_ltz_vs_text"
+description = "A TIMESTAMP_LTZ in a VARIANT against a VARIANT of its text, of its own ::VARCHAR and of parsed JSON."
+columns = [{ name = "x", type = "TIMESTAMP_LTZ(9)" }, { name = "s", type = "VARCHAR" }]
+rows = [
+  ["'2024-01-01 10:00:00'", "'2024-01-01 10:00:00.000 Z'"],
+  ["'2024-01-01 10:00:00.123'", "'2024-01-01 10:00:00.123 +0000'"],
+  ["NULL", "NULL"],
+]
+query = "SELECT TO_VARIANT(x) = TO_VARIANT(s) AS eq, TO_VARIANT(x) <> TO_VARIANT(s) AS ne, TO_VARIANT(x) = TO_VARIANT(x::VARCHAR) AS own_text, TO_VARIANT(x) = PARSE_JSON('\"' || s || '\"') AS parsed, TYPEOF(TO_VARIANT(x)) AS t FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "typed_equality_timestamp_tz_vs_text"
+description = "A TIMESTAMP_TZ in a VARIANT against a VARIANT of its text, of its own ::VARCHAR and of parsed JSON."
+columns = [{ name = "x", type = "TIMESTAMP_TZ(9)" }, { name = "s", type = "VARCHAR" }]
+rows = [
+  ["'2024-01-01 10:00:00 +00:00'", "'2024-01-01 10:00:00.000 Z'"],
+  ["'2024-01-01 10:00:00 +01:00'", "'2024-01-01 10:00:00.000 +0100'"],
+  ["NULL", "NULL"],
+]
+query = "SELECT TO_VARIANT(x) = TO_VARIANT(s) AS eq, TO_VARIANT(x) <> TO_VARIANT(s) AS ne, TO_VARIANT(x) = TO_VARIANT(x::VARCHAR) AS own_text, TO_VARIANT(x) = PARSE_JSON('\"' || s || '\"') AS parsed, TYPEOF(TO_VARIANT(x)) AS t FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "typed_equality_time_vs_text"
+description = "A TIME in a VARIANT against a VARIANT of its text, of its own ::VARCHAR and of parsed JSON."
+columns = [{ name = "x", type = "TIME" }, { name = "s", type = "VARCHAR" }]
+rows = [
+  ["'10:00:00'", "'10:00:00'"],
+  ["'23:59:59.5'", "'23:59:59.500000000'"],
+  ["NULL", "NULL"],
+]
+query = "SELECT TO_VARIANT(x) = TO_VARIANT(s) AS eq, TO_VARIANT(x) <> TO_VARIANT(s) AS ne, TO_VARIANT(x) = TO_VARIANT(x::VARCHAR) AS own_text, TO_VARIANT(x) = PARSE_JSON('\"' || s || '\"') AS parsed, TYPEOF(TO_VARIANT(x)) AS t FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "typed_equality_binary_vs_hex"
+description = "A BINARY in a VARIANT against a VARIANT of its hex text, of its own ::VARCHAR and of parsed JSON."
+columns = [{ name = "x", type = "BINARY" }, { name = "s", type = "VARCHAR" }]
+rows = [
+  ["TO_BINARY('ABCD', 'HEX')", "'ABCD'"],
+  ["TO_BINARY('', 'HEX')", "''"],
+  ["NULL", "NULL"],
+]
+query = "SELECT TO_VARIANT(x) = TO_VARIANT(s) AS eq, TO_VARIANT(x) <> TO_VARIANT(s) AS ne, TO_VARIANT(x) = TO_VARIANT(x::VARCHAR) AS own_text, TO_VARIANT(x) = PARSE_JSON('\"' || s || '\"') AS parsed, TYPEOF(TO_VARIANT(x)) AS t FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "typed_equality_date_vs_varchar"
+description = "A DATE in a VARIANT compared with a VARCHAR directly, not through a VARIANT."
+columns = [{ name = "x", type = "DATE" }, { name = "s", type = "VARCHAR" }]
+rows = [
+  ["'2024-01-01'", "'2024-01-01'"],
+  ["'2024-01-01'", "'2024-01-02'"],
+  ["NULL", "'2024-01-01'"],
+]
+query = "SELECT TO_VARIANT(x) = s AS eq, s = TO_VARIANT(x) AS flipped FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "typed_equality_nested"
+description = "A DATE and a timestamp inside objects and arrays against the same structures holding their text."
+columns = [{ name = "x", type = "DATE" }, { name = "t", type = "TIMESTAMP_NTZ(9)" }, { name = "s", type = "VARCHAR" }, { name = "u", type = "VARCHAR" }]
+rows = [
+  ["'2024-01-01'", "'2024-01-01 10:00:00'", "'2024-01-01'", "'2024-01-01 10:00:00.000'"],
+  ["NULL", "NULL", "NULL", "NULL"],
+]
+query = "SELECT OBJECT_CONSTRUCT('k', x) = OBJECT_CONSTRUCT('k', s) AS object_date, OBJECT_CONSTRUCT('k', t) = OBJECT_CONSTRUCT('k', u) AS object_timestamp, ARRAY_CONSTRUCT(x, t) = ARRAY_CONSTRUCT(s, u) AS array_both, OBJECT_CONSTRUCT('k', x) = PARSE_JSON('{\"k\":\"2024-01-01\"}') AS parsed_object, ARRAY_CONTAINS(TO_VARIANT(x), ARRAY_CONSTRUCT(s)) AS contained, ARRAY_POSITION(TO_VARIANT(x), ARRAY_CONSTRUCT(s)) AS position FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "typed_equality_date_vs_date"
+description = "DATEs in VARIANTs against each other, equal and different, and a DATE against the midnight timestamp of its day."
+columns = [{ name = "x", type = "DATE" }, { name = "y", type = "DATE" }]
+rows = [
+  ["'2024-01-01'", "'2024-01-01'"],
+  ["'2024-01-01'", "'2024-01-02'"],
+  ["'2024-01-01'", "NULL"],
+]
+query = "SELECT TO_VARIANT(x) = TO_VARIANT(y) AS eq, TO_VARIANT(x) <> TO_VARIANT(y) AS ne, TO_VARIANT(x) = TO_VARIANT(x::TIMESTAMP_NTZ) AS day_timestamp FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "typed_equality_timestamp_precisions"
+description = "Timestamps in VARIANTs against each other at equal and different precisions, and across NTZ and LTZ."
+columns = [{ name = "x", type = "TIMESTAMP_NTZ(9)" }, { name = "y", type = "TIMESTAMP_NTZ(9)" }]
+rows = [
+  ["'2024-01-01 10:00:00'", "'2024-01-01 10:00:00'"],
+  ["'2024-01-01 10:00:00.123'", "'2024-01-01 10:00:00.123456789'"],
+  ["'2024-01-01 10:00:00.123456789'", "'2024-01-01 10:00:00.123456789'"],
+  ["'2024-01-01 10:00:00'", "NULL"],
+]
+query = "SELECT TO_VARIANT(x) = TO_VARIANT(y) AS same_precision, TO_VARIANT(x::TIMESTAMP_NTZ(3)) = TO_VARIANT(y::TIMESTAMP_NTZ(3)) AS milliseconds, TO_VARIANT(x::TIMESTAMP_NTZ(3)) = TO_VARIANT(x) AS three_against_nine, TO_VARIANT(x) = TO_VARIANT(x::TIMESTAMP_LTZ) AS ntz_against_ltz FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "typed_equality_partition_mixed"
+description = "PARTITION BY a VARIANT holding a DATE on some rows and the same day's text on others."
+columns = [{ name = "x", type = "DATE" }, { name = "s", type = "VARCHAR" }]
+rows = [
+  ["'2024-01-01'", "'2024-01-01'"],
+  ["'2024-01-01'", "'2024-01-01'"],
+  ["'2024-01-02'", "'2024-01-02'"],
+  ["'2024-01-02'", "'2024-01-02'"],
+  ["NULL", "NULL"],
+]
+query = "SELECT COUNT(*) OVER (PARTITION BY IFF(ordinal % 2 = 0, TO_VARIANT(x), TO_VARIANT(s))) AS mixed, COUNT(*) OVER (PARTITION BY TO_VARIANT(x)) AS typed, COUNT(*) OVER (PARTITION BY IFF(ordinal % 2 = 0, OBJECT_CONSTRUCT('k', x), OBJECT_CONSTRUCT('k', s))) AS nested FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "boundary"]

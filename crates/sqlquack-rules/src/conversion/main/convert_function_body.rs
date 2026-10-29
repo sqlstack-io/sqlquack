@@ -6,13 +6,13 @@ use sqlquack_core::refusals::models::Refusal;
 use sqlquack_syntax::Expression;
 
 use crate::conversion::_helpers::queries::function_body::{
-    check_body, held_types, parameters_joined, refused, require_declared_types, selected_columns,
+    check_body, converted_body, held_types, parameters_joined, refused, require_declared_types,
+    selected_columns,
 };
-use crate::conversion::_helpers::queries::query::convert_query;
 use crate::conversion::_helpers::support::locations::Locator;
-use crate::conversion::_helpers::support::scope::{Context, Scope, ScopeRelation};
+use crate::conversion::_helpers::support::scope::Context;
 use crate::conversion::_helpers::support::tree::strip_positions;
-use crate::conversion::constants::PARAMETERS_RELATION;
+use crate::conversion::_helpers::support::typed_leaves::TypedLeaves;
 use crate::conversion::models::{
     ConversionOptions, ConvertedFunction, FunctionLanguage, FunctionReturns, FunctionSpec, Schema,
 };
@@ -31,22 +31,17 @@ pub fn convert_function_body(
         .map_err(|error| refused(&format!("the tree does not serialise: {error}")))?;
     let tree = strip_positions(&positioned);
     let locator = Locator::new(&tree, &positioned, lines);
+    let typed = TypedLeaves::default();
     let context = Context {
         log: &log,
         schema,
         options,
         ctes: Vec::new(),
         locator: &locator,
+        typed: &typed,
     };
-    let parameters = Scope::new(
-        vec![ScopeRelation {
-            alias: PARAMETERS_RELATION.to_owned(),
-            columns: spec.arguments.clone(),
-        }],
-        None,
-    );
-    let (sql, columns) = convert_query(&tree, Some(&parameters), &context, true)
-        .map_err(|refusal| locator.placed(refusal, &tree))?;
+    let (sql, columns) =
+        converted_body(&tree, spec, &context).map_err(|refusal| locator.placed(refusal, &tree))?;
     require_declared_types(&columns, &spec.returns)?;
     let names: Vec<String> = (1..=spec.arguments.len())
         .map(|index| format!("p{index}"))

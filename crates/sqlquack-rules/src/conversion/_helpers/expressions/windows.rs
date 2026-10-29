@@ -6,6 +6,8 @@ use sqlquack_core::refusals::models::Refusal;
 use sqlquack_duckdb::blocks::main::cast::cast;
 use sqlquack_duckdb::blocks::main::explicit_null_order::explicit_null_order;
 use sqlquack_duckdb::blocks::main::window_frame::window_frame;
+use sqlquack_duckdb::semi_structured::constants::JSON_FIDELITY;
+use sqlquack_duckdb::semi_structured::main::json_output::json_output;
 use sqlquack_snowflake::typing::main::ranking::ranking;
 use sqlquack_snowflake::typing::main::unify::unify;
 use sqlquack_snowflake::typing::models::SnowflakeType;
@@ -15,17 +17,20 @@ use crate::conversion::_helpers::expressions::named_aggregates::named_aggregate;
 use crate::conversion::_helpers::expressions::ordered_aggregates::within_group;
 use crate::conversion::_helpers::expressions::scalar::{call_name, convert_expression};
 use crate::conversion::_helpers::expressions::spellings::{as_typed, as_written};
-use crate::conversion::_helpers::support::scope::Emitted;
+use crate::conversion::_helpers::support::divergence::diverge;
+use crate::conversion::_helpers::support::scope::{Context, Emitted};
 use crate::conversion::_helpers::support::shapes::type_family;
 use crate::conversion::_helpers::support::site::{Placement, Site};
 use crate::conversion::_helpers::support::tree::{
     Payload, field, flag, function_construct, integer_literal, list, missing, node_construct,
     node_kind, outside_conditions, payload_object, require_understood,
 };
+use crate::conversion::_helpers::support::typed_leaves::compared_by_text;
 use crate::conversion::constants::{
     DISTINCT_WINDOW_AGGREGATE, FRAME_FACET, FUNCTION_FACET, NO_PARTITION, PARTITION_FACET,
-    SEVERAL_PARTITION_KEYS, UNORDERED_WINDOW_AGGREGATES, WINDOW_AGGREGATE, WINDOW_FIRST_LAST,
-    WINDOW_KEYS_CONSTRUCT, WINDOW_OFFSET, WINDOW_RANKING, WINDOWED_NAMED_AGGREGATES,
+    SEVERAL_PARTITION_KEYS, UNORDERED_WINDOW_AGGREGATES, VARIANT_PARTITION, WINDOW_AGGREGATE,
+    WINDOW_FIRST_LAST, WINDOW_KEYS_CONSTRUCT, WINDOW_OFFSET, WINDOW_RANKING,
+    WINDOWED_NAMED_AGGREGATES,
 };
 
 /// Snowflake's frame for FIRST_VALUE and LAST_VALUE when none is written.
@@ -208,8 +213,9 @@ fn window_keys(
     let mut partition: Vec<String> = Vec::new();
     let mut families: Vec<&'static str> = Vec::new();
     for key in list(over, "partition_by") {
-        let key = grouping_key(convert_expression(key, site)?, construct)?;
+        let key = convert_expression(key, site)?;
         families.push(type_family(key.data_type));
+        let key = partition_key(key, construct, site.context)?;
         partition.push(key.sql);
     }
     let mut order: Vec<String> = Vec::new();
@@ -416,6 +422,26 @@ pub(crate) fn grouping_key(key: Emitted, construct: &Construct) -> Result<Emitte
             construct.clone(),
             "a VARIANT key, which DuckDB orders and groups differently".to_owned(),
         )),
+        _ => Ok(key),
+    }
+}
+
+/// A partition key; a VARIANT partitions by Snowflake's text of it, keys in byte order.
+fn partition_key(
+    key: Emitted,
+    construct: &Construct,
+    context: &Context<'_>,
+) -> Result<Emitted, Refusal> {
+    match key.data_type {
+        SnowflakeType::SemiStructured => {
+            let _rule = context.log.rule(VARIANT_PARTITION);
+            diverge(context, JSON_FIDELITY, construct)?;
+            compared_by_text((key.untainted, key.sourced), construct, context)?;
+            Ok(Emitted::new(
+                format!("CAST({} AS VARCHAR)", json_output(&key.sql, context.log)),
+                SnowflakeType::Varchar,
+            ))
+        }
         _ => Ok(key),
     }
 }

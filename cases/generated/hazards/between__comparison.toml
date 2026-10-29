@@ -357,6 +357,21 @@ tags = ["null", "ties", "mixed-types"]
 origin = "generated: hazards@1"
 
 [[case]]
+id = "node_between_1_0_float_notation_boundaries"
+description = "node:between with Doubles where text switches between plain and exponent notation, which %.15g and %.15e write differently in argument 0, float."
+columns = [{ name = "x0", type = "FLOAT" }, { name = "x1", type = "FLOAT" }, { name = "x2", type = "FLOAT" }]
+rows = [
+  ["100", "1.5", "1.5"],
+  ["0.0001", "1.5", "1.5"],
+  ["1e-5", "1.5", "1.5"],
+  ["1e15", "1.5", "1.5"],
+  ["1e21", "1.5", "1.5"],
+]
+expression = "x0 BETWEEN x1 AND x2"
+tags = ["null", "ties", "mixed-types"]
+origin = "generated: hazards@1"
+
+[[case]]
 id = "node_between_1_1_float_hazards"
 description = "node:between with the hazards null, one_spellings, negative_zero, subnormal, binary_fractions, large_integers in argument 1, float."
 columns = [{ name = "x0", type = "FLOAT" }, { name = "x1", type = "FLOAT" }, { name = "x2", type = "FLOAT" }]
@@ -393,6 +408,21 @@ tags = ["null", "ties", "mixed-types"]
 origin = "generated: hazards@1"
 
 [[case]]
+id = "node_between_1_1_float_notation_boundaries"
+description = "node:between with Doubles where text switches between plain and exponent notation, which %.15g and %.15e write differently in argument 1, float."
+columns = [{ name = "x0", type = "FLOAT" }, { name = "x1", type = "FLOAT" }, { name = "x2", type = "FLOAT" }]
+rows = [
+  ["1.5", "100", "1.5"],
+  ["1.5", "0.0001", "1.5"],
+  ["1.5", "1e-5", "1.5"],
+  ["1.5", "1e15", "1.5"],
+  ["1.5", "1e21", "1.5"],
+]
+expression = "x0 BETWEEN x1 AND x2"
+tags = ["null", "ties", "mixed-types"]
+origin = "generated: hazards@1"
+
+[[case]]
 id = "node_between_1_2_float_hazards"
 description = "node:between with the hazards null, one_spellings, negative_zero, subnormal, binary_fractions, large_integers in argument 2, float."
 columns = [{ name = "x0", type = "FLOAT" }, { name = "x1", type = "FLOAT" }, { name = "x2", type = "FLOAT" }]
@@ -423,6 +453,21 @@ rows = [
   ["1.5", "1.5", "'NaN'"],
   ["1.5", "1.5", "'inf'"],
   ["1.5", "1.5", "'-inf'"],
+]
+expression = "x0 BETWEEN x1 AND x2"
+tags = ["null", "ties", "mixed-types"]
+origin = "generated: hazards@1"
+
+[[case]]
+id = "node_between_1_2_float_notation_boundaries"
+description = "node:between with Doubles where text switches between plain and exponent notation, which %.15g and %.15e write differently in argument 2, float."
+columns = [{ name = "x0", type = "FLOAT" }, { name = "x1", type = "FLOAT" }, { name = "x2", type = "FLOAT" }]
+rows = [
+  ["1.5", "1.5", "100"],
+  ["1.5", "1.5", "0.0001"],
+  ["1.5", "1.5", "1e-5"],
+  ["1.5", "1.5", "1e15"],
+  ["1.5", "1.5", "1e21"],
 ]
 expression = "x0 BETWEEN x1 AND x2"
 tags = ["null", "ties", "mixed-types"]

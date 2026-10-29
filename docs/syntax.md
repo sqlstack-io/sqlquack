@@ -54,7 +54,7 @@ no polyglot at all.
 
 ## Where the code comes from
 
-The tokenizer, parser and tree are copied from **chio-labs/polyglot `7d5fe2c`**, the commit
+The tokenizer, parser and tree are copied from **sqlstack-io/polyglot `7d5fe2c`**, the commit
 SQLQuack's polyglot pin moved to first, so the exact check compares like with like. It includes the
 fork's typed-marker lowering (`__polyglot_typed`, inert when the names are absent) and upstream
 0.13.4's parser fixes.

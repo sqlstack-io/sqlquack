@@ -5,6 +5,8 @@ use sqlquack_core::classification::models::Construct;
 use sqlquack_core::refusals::models::Refusal;
 use sqlquack_duckdb::blocks::main::cast::cast;
 use sqlquack_duckdb::blocks::main::exact_decimal_divide::exact_decimal_divide;
+use sqlquack_duckdb::floats::constants::FLOAT_SUM_ORDER;
+use sqlquack_duckdb::floats::main::exact_float_sum::exact_float_sum;
 use sqlquack_snowflake::typing::constants::{COUNT_PRECISION, MAX_PRECISION, SUM_EXTRA_DIGITS};
 use sqlquack_snowflake::typing::main::average::average;
 use sqlquack_snowflake::typing::main::count::count;
@@ -17,7 +19,7 @@ use crate::conversion::_helpers::expressions::casts::{
 use crate::conversion::_helpers::expressions::conditionals::unified;
 use crate::conversion::_helpers::expressions::conditionals::{decode, zero_if_null};
 use crate::conversion::_helpers::expressions::hashing::hash_call;
-use crate::conversion::_helpers::expressions::lambdas::lambda_call;
+use crate::conversion::_helpers::expressions::lambdas::{lambda_call, reduce_call};
 use crate::conversion::_helpers::expressions::numeric_functions::{
     absolute, bitwise, rounding, sign,
 };
@@ -32,7 +34,7 @@ use crate::conversion::_helpers::expressions::semi_structured::{
 };
 use crate::conversion::_helpers::expressions::strings::{
     chr, concatenate, concatenate_with_separator, edit_distance, hex_encode, initcap,
-    text_contains, text_md5, text_operand, trim_call,
+    text_contains, text_md5, text_operand, trim_call, try_hex_decode,
 };
 use crate::conversion::_helpers::expressions::temporal_functions::{
     convert_timezone, current_time, date_add, date_diff_call, date_from_parts_call, date_part,
@@ -51,7 +53,7 @@ use crate::conversion::_helpers::support::tree::{
 };
 use crate::conversion::constants::{
     AVERAGE, AVG_NAME, COUNT, LEAST_GREATEST, MIN_MAX, MIN_MAX_FLOAT, NOT_SNOWFLAKE_FUNCTIONS,
-    NULLIF, NUMERIC_RANGE, SUM, TO_DATE_NAME, TRIM,
+    NULLIF, NUMERIC_RANGE, SUM, SUM_FLOAT, TO_DATE_NAME, TRIM,
 };
 
 /// NULLIF, LTRIM, RTRIM and CONCAT, which the parser keeps as generic calls.
@@ -100,9 +102,11 @@ pub(crate) fn convert_function(payload: &Value, site: Site<'_>) -> Result<Emitte
         ("MD5", parts) => text_md5(parts, &construct, site),
         ("MOD", parts) => mod_call(parts, &construct, site),
         ("FILTER" | "TRANSFORM", parts) => lambda_call(&name, parts, &construct, site),
+        ("REDUCE", parts) => reduce_call(parts, &construct, site),
         ("INITCAP", parts) => initcap(parts, &construct, site),
         ("CHR", parts) => chr(parts, &construct, site),
         ("HEX_ENCODE", parts) => hex_encode(parts, &construct, site),
+        ("TRY_HEX_DECODE_STRING", parts) => try_hex_decode(parts, &construct, site),
         ("TO_BOOLEAN" | "TRY_TO_BOOLEAN", parts) => to_boolean_call(&name, parts, &construct, site),
         (
             "TO_NUMBER" | "TO_DECIMAL" | "TO_NUMERIC" | "TRY_TO_NUMBER" | "TRY_TO_DECIMAL"
@@ -159,6 +163,7 @@ pub(crate) fn convert_function(payload: &Value, site: Site<'_>) -> Result<Emitte
             | "ARRAY_CAT"
             | "ARRAY_COMPACT"
             | "ARRAY_SIZE"
+            | "ARRAY_SORT"
             | "ARRAY_CONTAINS"
             | "ARRAY_CONSTRUCT_COMPACT"
             | "ARRAY_TO_STRING"
@@ -317,9 +322,21 @@ impl AggregateCall<'_> {
 
     fn sum(&self) -> Result<Emitted, Refusal> {
         let log = self.site.context.log;
-        let _rule = log.rule(SUM);
         let refuse = |reason: String| outside_conditions(node_construct("sum"), reason);
         let argument = self.argument("sum")?;
+        if argument.data_type == SnowflakeType::Float {
+            let _float = log.rule(SUM_FLOAT);
+            diverge(
+                self.site.context,
+                FLOAT_SUM_ORDER,
+                &function_construct("SUM"),
+            )?;
+            return Ok(Emitted::new(
+                exact_float_sum(&argument.sql, self.distinct(), &self.over, log),
+                SnowflakeType::Float,
+            ));
+        }
+        let _rule = log.rule(SUM);
         let data_type = sum_type(argument.data_type, self.site.context, "sum").map_err(refuse)?;
         let sql = cast(
             &format!("sum({}{}){}", self.distinct(), argument.sql, self.over),

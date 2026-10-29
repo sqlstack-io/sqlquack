@@ -103,6 +103,12 @@ pub const INVALID_CHARACTER_CODE: SnowflakeCode = SnowflakeCode {
     sqlstate: "22021",
 };
 
+/// A regular expression Snowflake cannot read, such as a repetition operator with no argument.
+pub const INVALID_REGULAR_EXPRESSION: SnowflakeCode = SnowflakeCode {
+    errno: 100_048,
+    sqlstate: "2201B",
+};
+
 /// The object already holds the key.
 pub const OBJECT_KEY_EXISTS: SnowflakeCode = SnowflakeCode {
     errno: 100_103,
@@ -128,6 +134,7 @@ pub const SNOWFLAKE_ERRORS: &[(SnowflakeCode, ErrorKind)] = &[
     (NOT_AN_ARRAY_ARGUMENT, ErrorKind::InvalidArgument),
     (OBJECT_KEY_EXISTS, ErrorKind::InvalidArgument),
     (INVALID_CHARACTER_CODE, ErrorKind::InvalidArgument),
+    (INVALID_REGULAR_EXPRESSION, ErrorKind::InvalidArgument),
     (UNKNOWN_TIME_ZONE, ErrorKind::InvalidArgument),
     (
         SnowflakeCode {

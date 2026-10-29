@@ -29,6 +29,8 @@ pub const NAMED_AGGREGATE_NAMES: &[&str] = &[
     "BOOLOR_AGG",
     "BOOLAND_AGG",
     "OBJECT_AGG",
+    "MAX_BY",
+    "MIN_BY",
     MULTI_COUNT,
 ];
 /// COUNT of several values, which the parser keeps as a named call.
@@ -133,6 +135,8 @@ pub const TEXT_INITCAP: &str = "rule.text_initcap";
 pub const TEXT_CHR: &str = "rule.text_chr";
 /// HEX_ENCODE.
 pub const TEXT_HEX: &str = "rule.text_hex";
+/// TRY_HEX_DECODE_STRING.
+pub const TEXT_HEX_DECODE: &str = "rule.text_hex_decode";
 /// TO_BOOLEAN and TRY_TO_BOOLEAN of text.
 pub const TO_BOOLEAN_RULE: &str = "rule.to_boolean";
 /// MOD and % of NUMBERs.
@@ -151,6 +155,8 @@ pub const TEXT_TO_TIME_RULE: &str = "rule.text_to_time";
 pub const FROM_PARTS: &str = "rule.from_parts";
 /// Named aggregates.
 pub const NAMED_AGGREGATES: &str = "rule.named_aggregates";
+/// MAX_BY and MIN_BY.
+pub const VALUE_AT_EXTREME_KEY: &str = "rule.value_at_extreme_key";
 /// ARRAY_POSITION.
 pub const ARRAY_POSITION_RULE: &str = "rule.array_position";
 /// ARRAY_CAT.
@@ -165,6 +171,12 @@ pub const PARSE_JSON_VARIANT: &str = "rule.parse_json_variant";
 pub const LAMBDA_RULE: &str = "rule.lambda";
 /// VARIANT equality with text and integers.
 pub const VARIANT_EQUALITY: &str = "rule.variant_equality";
+/// REDUCE.
+pub const REDUCE_RULE: &str = "rule.reduce";
+/// Text compared with a NUMBER.
+pub const TEXT_NUMBER_COMPARISON: &str = "rule.text_number_comparison";
+/// PARTITION BY a VARIANT.
+pub const VARIANT_PARTITION: &str = "rule.variant_partition";
 /// DATE_PART of zoned timestamps.
 pub const ZONED_PARTS: &str = "rule.zoned_parts";
 /// TO_DATE of dates and timestamps.
@@ -250,6 +262,8 @@ pub const KEEP_NULL_CONSTRUCTOR: &str = "OBJECT_CONSTRUCT_KEEP_NULL";
 pub const OBJECT_CONSTRUCTOR: &str = "OBJECT_CONSTRUCT";
 /// The node kind of an object constant `{...}`.
 pub const OBJECT_CONSTANT_KIND: &str = "map_func";
+/// The node kind of a bracket array literal.
+pub const ARRAY_LITERAL_KIND: &str = "array_func";
 /// A call to a scalar project function.
 pub const PROJECT_FUNCTION_CALL: &str = "rule.project_function_call";
 /// The relation a SQL function body reads its parameters from.
@@ -422,6 +436,10 @@ pub const CAST_UTC_ZONED: &str = "rule.cast_utc_zoned";
 
 /// The divergence where DuckDB raises an error for a value beyond its numeric range.
 pub const NUMERIC_RANGE: &str = "numeric_range";
+/// The divergence for ARRAY_AGG without WITHIN GROUP of several distinct values.
+pub const ARRAY_AGG_ORDER: &str = "array_agg_order";
+/// SUM of FLOAT.
+pub const SUM_FLOAT: &str = "rule.sum_float";
 
 /// SELECT with its FROM, WHERE and projection.
 pub const SELECT: &str = "rule.select";
@@ -996,6 +1014,7 @@ pub const FUNCTION_RESULT_TYPES: &[(&str, SnowflakeType)] = &[
     ("INITCAP", SnowflakeType::Varchar),
     ("SOUNDEX", SnowflakeType::Varchar),
     ("HEX_ENCODE", SnowflakeType::Varchar),
+    ("TRY_HEX_DECODE_STRING", SnowflakeType::Varchar),
     ("SPLIT_PART", SnowflakeType::Varchar),
     ("REPLACE", SnowflakeType::Varchar),
     ("CHR", SnowflakeType::Varchar),
@@ -1068,3 +1087,11 @@ pub(crate) const ROUND_FUNCTION: &str = "ROUND";
 pub(crate) const FUNCTION_KIND: &str = "function";
 /// Array builders whose ARRAY OBJECT_PICK was recorded picking by its elements.
 pub(crate) const PICKED_ARRAY_FUNCTIONS: [&str; 2] = ["ARRAY_CONSTRUCT", "ARRAY_EXCEPT"];
+/// Why a construct that reads VARIANTs only as JSON refuses a VARIANT built from a FLOAT.
+pub(crate) const VARIANT_HELD_UNREAD: &str = "a VARIANT built from a FLOAT, which this construct \
+                                               reads only as JSON, where the FLOAT's type is lost";
+
+/// The aggregate taking the value at the largest key; MIN_BY takes the smallest.
+pub const MAX_BY_FUNCTION: &str = "MAX_BY";
+/// Why removing duplicate VARIANTs refuses: DuckDB compares JSON as written, keys in their order.
+pub const DUPLICATE_VARIANTS: &str = "removing duplicate VARIANT values, which DuckDB compares by their JSON as written, not as VARIANT equality does";

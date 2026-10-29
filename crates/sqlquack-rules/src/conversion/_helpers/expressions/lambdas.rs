@@ -5,6 +5,7 @@ use sqlquack_core::classification::models::Construct;
 use sqlquack_core::refusals::models::Refusal;
 use sqlquack_duckdb::semi_structured::constants::JSON_FIDELITY;
 use sqlquack_duckdb::semi_structured::main::json_filter::json_filter;
+use sqlquack_duckdb::semi_structured::main::json_reduce::json_reduce;
 use sqlquack_duckdb::semi_structured::main::json_transform::json_transform;
 use sqlquack_snowflake::typing::models::SnowflakeType;
 
@@ -17,7 +18,7 @@ use crate::conversion::_helpers::support::tree::{
     identifier_name, list, node_kind, outside_conditions,
 };
 use crate::conversion::constants::{
-    CALL_KIND, FILTER_FUNCTION, LAMBDA_KIND, LAMBDA_PARAMETER_PREFIX, LAMBDA_RULE,
+    CALL_KIND, FILTER_FUNCTION, LAMBDA_KIND, LAMBDA_PARAMETER_PREFIX, LAMBDA_RULE, REDUCE_RULE,
     STRING_ARRAY_FUNCTION, TEXT_PARAMETER_TYPES,
 };
 
@@ -72,7 +73,9 @@ pub(crate) fn lambda_call(
             "a VARCHAR-typed parameter over an array not known to hold strings",
         ));
     }
+    let reads = site.context.typed.reads();
     let array = variant(array, construct, site)?;
+    let (untainted, sourced) = site.context.typed.since(reads);
     diverge(site.context, JSON_FIDELITY, construct)?;
     let bound = format!(
         "{LAMBDA_PARAMETER_PREFIX}{}",
@@ -92,6 +95,11 @@ pub(crate) fn lambda_call(
             SnowflakeType::Varchar,
         ),
         false => Emitted::new(bound.clone(), SnowflakeType::SemiStructured),
+    };
+    let element = Emitted {
+        untainted,
+        sourced,
+        ..element
     };
     scope.aliases.push((parameter, element));
     let inner = site.scoped(&scope).placed(Placement::ROW);
@@ -131,4 +139,101 @@ fn string_array(node: &Value) -> bool {
         },
         _ => false,
     }
+}
+
+/// REDUCE(array, initial, (acc, x) -> body) with a FLOAT accumulator, folded left in order.
+pub(crate) fn reduce_call(
+    arguments: &[Value],
+    construct: &Construct,
+    site: Site<'_>,
+) -> Result<Emitted, Refusal> {
+    let _rule = site.context.log.rule(REDUCE_RULE);
+    let refuse = |reason: &str| outside_conditions(construct.clone(), reason.to_owned());
+    let [array, initial, lambda] = arguments else {
+        return Err(refuse("REDUCE with these arguments"));
+    };
+    let Some((LAMBDA_KIND, lambda)) = node_kind(lambda) else {
+        return Err(refuse("a third argument other than a lambda"));
+    };
+    let untyped = list(
+        lambda
+            .as_object()
+            .ok_or_else(|| refuse("an unreadable lambda"))?,
+        "parameter_types",
+    )
+    .iter()
+    .all(Value::is_null);
+    let parameters = lambda
+        .get("parameters")
+        .and_then(Value::as_array)
+        .map(Vec::as_slice)
+        .unwrap_or_default();
+    let [accumulator, element] = parameters else {
+        return Err(refuse("a REDUCE lambda with other than two parameters"));
+    };
+    if !untyped || lambda.get("colon").and_then(Value::as_bool) == Some(true) {
+        return Err(refuse("a REDUCE lambda with typed parameters"));
+    }
+    let initial = convert_expression(initial, site)?;
+    if initial.data_type != SnowflakeType::Float {
+        return Err(refuse(&format!(
+            "REDUCE from a {} initial value, whose accumulator type no recording shows",
+            initial.data_type
+        )));
+    }
+    let name = |node: &Value| identifier_name(node).ok_or_else(|| refuse("an unnamed parameter"));
+    let (accumulator, element) = (name(accumulator)?, name(element)?);
+    let bound = |parameter: &str| {
+        format!(
+            "{LAMBDA_PARAMETER_PREFIX}{}",
+            parameter
+                .chars()
+                .map(|character| match character.is_ascii_alphanumeric() {
+                    true => character.to_ascii_lowercase(),
+                    false => '_',
+                })
+                .collect::<String>()
+        )
+    };
+    let (accumulator_sql, element_sql) = (bound(&accumulator), bound(&element));
+    if accumulator_sql == element_sql {
+        return Err(refuse("REDUCE parameters that bind alike"));
+    }
+    let reads = site.context.typed.reads();
+    let array = variant(array, construct, site)?;
+    let (untainted, sourced) = site.context.typed.since(reads);
+    diverge(site.context, JSON_FIDELITY, construct)?;
+    let mut scope = Scope::new(Vec::new(), Some(site.scope));
+    scope.aliases_first = true;
+    scope.aliases.push((
+        accumulator,
+        Emitted::new(accumulator_sql.clone(), SnowflakeType::Float),
+    ));
+    scope.aliases.push((
+        element,
+        Emitted {
+            untainted,
+            sourced,
+            ..Emitted::new(element_sql.clone(), SnowflakeType::SemiStructured)
+        },
+    ));
+    let body = lambda
+        .get("body")
+        .ok_or_else(|| refuse("a lambda without a body"))?;
+    let body = convert_expression(body, site.scoped(&scope).placed(Placement::ROW))?;
+    if !matches!(body.data_type, SnowflakeType::Float | SnowflakeType::Null) {
+        return Err(refuse(&format!(
+            "a REDUCE body of type {}, not the FLOAT accumulator",
+            body.data_type
+        )));
+    }
+    Ok(Emitted::new(
+        json_reduce(
+            &array,
+            (&accumulator_sql, &element_sql, &body.sql),
+            &initial.sql,
+            site.context.log,
+        ),
+        SnowflakeType::Float,
+    ))
 }

@@ -53,6 +53,7 @@ rows = [
 query = "SELECT TO_JSON([s, 'b']) AS j, TO_JSON([1, 2]) AS k, ARRAY_SIZE([]) AS e FROM input ORDER BY ordinal"
 order = "ordered"
 tags = ["null", "json-null", "missing-key", "invalid"]
+expected_divergence = "json_fidelity"
 
 [[case]]
 id = "reduce_sum_integers"

@@ -227,7 +227,21 @@ rows = [
 expression = "CAST(x0 AS VARCHAR)"
 tags = ["null", "invalid", "boundary"]
 origin = "generated: hazards@1"
-expected_divergence = "float_text"
+
+[[case]]
+id = "node_cast_4_0_float_notation_boundaries"
+description = "node:cast with Doubles where text switches between plain and exponent notation, which %.15g and %.15e write differently in argument 0, float."
+columns = [{ name = "x0", type = "FLOAT" }]
+rows = [
+  ["100"],
+  ["0.0001"],
+  ["1e-5"],
+  ["1e15"],
+  ["1e21"],
+]
+expression = "CAST(x0 AS VARCHAR)"
+tags = ["null", "invalid", "boundary"]
+origin = "generated: hazards@1"
 
 [[case]]
 id = "node_cast_5_combination_0_timestamp_ntz"
@@ -593,7 +607,21 @@ rows = [
 expression = "TO_VARCHAR(x0)"
 tags = ["null", "invalid", "boundary"]
 origin = "generated: hazards@1"
-expected_divergence = "float_text"
+
+[[case]]
+id = "fn_to_varchar_6_0_float_notation_boundaries"
+description = "fn:TO_VARCHAR with Doubles where text switches between plain and exponent notation, which %.15g and %.15e write differently in argument 0, float."
+columns = [{ name = "x0", type = "FLOAT" }]
+rows = [
+  ["100"],
+  ["0.0001"],
+  ["1e-5"],
+  ["1e15"],
+  ["1e21"],
+]
+expression = "TO_VARCHAR(x0)"
+tags = ["null", "invalid", "boundary"]
+origin = "generated: hazards@1"
 
 [[case]]
 id = "fn_to_varchar_6_0_timestamp_ntz_hazards"

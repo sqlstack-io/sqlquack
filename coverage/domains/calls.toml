@@ -43,6 +43,42 @@ category = "window"
 variants = ["SUM({0}) OVER (PARTITION BY g ORDER BY ordinal)", "SUM({0}) OVER (PARTITION BY g ORDER BY ordinal ROWS BETWEEN 1 PRECEDING AND CURRENT ROW)", "SUM({0}) OVER (PARTITION BY g ORDER BY ordinal ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING)"]
 
 [[rule]]
+id = "rule.sum_float"
+
+[[rule.form]]
+construct = "node:sum"
+arguments = [
+  { families = ["float"] },
+]
+rows = "group"
+template = "SUM({0})"
+query = "SELECT g, {expression} AS r FROM input GROUP BY g ORDER BY g"
+category = "aggregate"
+divergences = { "float.binary_fractions" = "float_sum_order", "float.large_integers" = "float_sum_order", "float.notation_boundaries" = "float_sum_order" }
+
+[[rule.form]]
+construct = "node:window_function"
+arguments = [
+  { families = ["float"] },
+]
+facets = { function = ["SUM"], frame = ["unordered", "ordered", "rows", "whole_partition"] }
+rows = "window"
+template = "SUM({0}) OVER (PARTITION BY g)"
+query = "SELECT g, {expression} AS r FROM input ORDER BY ordinal"
+category = "window"
+variants = ["SUM({0}) OVER (PARTITION BY g ORDER BY ordinal)", "SUM({0}) OVER (PARTITION BY g ORDER BY ordinal ROWS BETWEEN 1 PRECEDING AND CURRENT ROW)", "SUM({0}) OVER (PARTITION BY g ORDER BY ordinal ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING)"]
+divergences = { "float.binary_fractions" = "float_sum_order", "float.large_integers" = "float_sum_order", "float.notation_boundaries" = "float_sum_order" }
+
+# Partitioned by text, as every FLOAT SUM window case is.
+[[rule.form]]
+construct = "node:window_function"
+arguments = [
+  { families = ["float"] },
+]
+facets = { function = ["SUM"], frame = ["unordered", "ordered", "rows", "whole_partition"] }
+each = { partition = ["text"] }
+
+[[rule]]
 id = "rule.count"
 
 [[rule.form]]

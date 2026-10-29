@@ -54,7 +54,7 @@ pub(crate) fn sorted_text(sql: &str, root: Root) -> String {
 }
 
 /// DuckDB's JSON text `sql` with Snowflake's escapes: DEL as `\u007f`, `\u` hex in lower case.
-fn escaped(sql: &str) -> String {
+pub(crate) fn escaped(sql: &str) -> String {
     let lowered =
         JSON_ESCAPE_HEX_LETTERS
             .chars()

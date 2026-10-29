@@ -5,7 +5,7 @@ pub const DOMAINS_DIR: &str = "coverage/domains";
 /// The hazard catalogue.
 pub const HAZARDS_FILE: &str = "coverage/hazards.toml";
 /// The catalogue format version this build reads.
-pub const CATALOGUE_VERSION: u32 = 3;
+pub const CATALOGUE_VERSION: u32 = 4;
 /// The domain format version this build reads.
 pub const DOMAINS_VERSION: u32 = 1;
 /// The argument kind of a literal.
