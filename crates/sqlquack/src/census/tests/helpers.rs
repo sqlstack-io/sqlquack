@@ -77,6 +77,23 @@ pub(crate) const TYPED_CHAIN: &[ShopFile] = &[
     },
 ];
 
+/// A model putting a NUMBER with a scale in a VARIANT, a reader typing it, one reading text.
+pub(crate) const DECIMAL_CHAIN: &[ShopFile] = &[
+    ShopFile {
+        path: "order_scores.sql",
+        contents: "SELECT OBJECT_CONSTRUCT('score', CAST(100 AS NUMBER(5,2))) AS scored, \
+                   customer_id FROM __source(\"shop\", \"customers\")",
+    },
+    ShopFile {
+        path: "order_score_types.sql",
+        contents: "SELECT TYPEOF(scored:score) AS score_type FROM __ref(\"order_scores\")",
+    },
+    ShopFile {
+        path: "order_score_texts.sql",
+        contents: "SELECT scored:score::VARCHAR AS score_text FROM __ref(\"order_scores\")",
+    },
+];
+
 /// A model passing a source VARIANT on, one comparing it by text downstream, one reading neither.
 pub(crate) const SOURCE_VARIANT_CHAIN: &[ShopFile] = &[
     ShopFile {

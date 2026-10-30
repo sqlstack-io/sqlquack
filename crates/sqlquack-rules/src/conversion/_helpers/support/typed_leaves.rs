@@ -20,9 +20,11 @@ pub(crate) type ConvertedQuery = Result<(String, Vec<ColumnSpec>), Refusal>;
 #[derive(Debug, Default)]
 pub(crate) struct TypedLeaves {
     entered: Cell<bool>,
+    decimal: Cell<bool>,
     unproven: Cell<usize>,
     sourced: Cell<usize>,
     compared: RefCell<Option<Construct>>,
+    inspected: RefCell<Option<Construct>>,
 }
 
 /// How many unproven values, and how many source VARIANTs trusted to hold JSON, were read so far.
@@ -37,6 +39,21 @@ impl TypedLeaves {
     pub(crate) fn enter(&self) {
         self.entered.set(true);
         self.unproven.set(self.unproven.get() + 1);
+    }
+
+    /// A NUMBER with a scale entered a VARIANT, or a column that may hold one was read.
+    pub(crate) fn enter_decimal(&self) {
+        self.decimal.set(true);
+        self.unproven.set(self.unproven.get() + 1);
+    }
+
+    /// The type of `value` read at `construct`, recorded when it is a VARIANT not proven free.
+    pub(crate) fn inspect(&self, value: &Emitted, construct: &Construct) {
+        if value.data_type == SnowflakeType::SemiStructured && !value.untainted {
+            self.inspected
+                .borrow_mut()
+                .get_or_insert_with(|| construct.clone());
+        }
     }
 
     /// A column or alias read: counted unless proven free of typed leaves, and when a source's.
@@ -72,16 +89,22 @@ impl TypedLeaves {
 
     /// The refusal when both happen in one statement: DuckDB cannot tell a typed leaf from text.
     pub(crate) fn refusal(&self) -> Option<Refusal> {
-        match self.entered.get() {
-            true => self.compared.borrow().clone().map(|construct| {
-                outside_conditions(
-                    construct,
-                    "a VARIANT compared by its text where a VARIANT may hold a DATE or timestamp, \
-                     which Snowflake keeps typed and DuckDB writes as text"
-                        .to_owned(),
-                )
-            }),
-            false => None,
+        let compared = self.compared.borrow().clone();
+        let inspected = self.inspected.borrow().clone();
+        match (self.entered.get(), self.decimal.get(), compared, inspected) {
+            (true, _, Some(construct), _) => Some(outside_conditions(
+                construct,
+                "a VARIANT compared by its text where a VARIANT may hold a DATE or timestamp, \
+                 which Snowflake keeps typed and DuckDB writes as text"
+                    .to_owned(),
+            )),
+            (_, true, _, Some(construct)) => Some(outside_conditions(
+                construct,
+                "TYPEOF of a VARIANT where a VARIANT may hold a whole NUMBER with a scale, which \
+                 Snowflake types DECIMAL and DuckDB's JSON holds as an integer"
+                    .to_owned(),
+            )),
+            _ => None,
         }
     }
 
@@ -101,6 +124,10 @@ impl TypedLeaves {
             .map(|column| ColumnSpec {
                 typed_leaves: column.typed_leaves
                     || (self.entered.get()
+                        && !column.untainted
+                        && column.data_type == SnowflakeType::SemiStructured),
+                decimal_leaves: column.decimal_leaves
+                    || (self.decimal.get()
                         && !column.untainted
                         && column.data_type == SnowflakeType::SemiStructured),
                 ..column

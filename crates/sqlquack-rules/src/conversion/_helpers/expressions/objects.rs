@@ -3,7 +3,9 @@
 use serde_json::Value;
 use sqlquack_core::classification::models::Construct;
 use sqlquack_core::refusals::models::Refusal;
+use sqlquack_duckdb::blocks::main::string_literal::string_literal;
 use sqlquack_duckdb::semi_structured::constants::{JSON_FIDELITY, VARIANT_TYPED_VALUES};
+use sqlquack_duckdb::semi_structured::main::json_decimal::json_decimal;
 use sqlquack_duckdb::semi_structured::main::json_guarded::json_guarded;
 use sqlquack_duckdb::semi_structured::models::TypedSource;
 use sqlquack_duckdb::variants::main::json_object_construct::json_object_construct;
@@ -14,11 +16,12 @@ use sqlquack_snowflake::typing::models::SnowflakeType;
 
 use crate::conversion::_helpers::expressions::held::{built, leaves};
 use crate::conversion::_helpers::expressions::scalar::{convert_expression, convert_held};
+use crate::conversion::_helpers::queries::query::star;
 use crate::conversion::_helpers::support::divergence::diverge;
 use crate::conversion::_helpers::support::scope::{Context, Emitted, Literal, VariantRoot};
 use crate::conversion::_helpers::support::site::Site;
 use crate::conversion::_helpers::support::tree::{
-    node_construct, outside_conditions, payload_object, require_understood,
+    node_construct, node_kind, outside_conditions, payload_object, require_understood,
 };
 use crate::conversion::constants::{
     KEEP_NULL_CONSTRUCTOR, MICROSECOND_DIGITS, OBJECT_CONSTANT_KIND, OBJECT_CONSTRUCT_RULE,
@@ -106,6 +109,27 @@ pub(crate) fn object_construct(
 ) -> Result<Emitted, Refusal> {
     let log = site.context.log;
     let _rule = log.rule(OBJECT_CONSTRUCT_RULE);
+    if let [argument] = arguments
+        && let Some(("star", payload)) = node_kind(argument)
+    {
+        let columns = star(payload, site, true)?;
+        let mut keys: Vec<String> = Vec::new();
+        let mut values: Vec<Emitted> = Vec::new();
+        for (column, value) in columns {
+            let column =
+                column.ok_or_else(|| refused(construct, "a star column without a name"))?;
+            if keys.contains(&column) {
+                return Err(refused(
+                    construct,
+                    &format!("the star reads `{column}` more than once"),
+                ));
+            }
+            keys.push(column);
+            values.push(value);
+        }
+        let keys: Vec<String> = keys.iter().map(|key| string_literal(key, log)).collect();
+        return constructed(name, (keys, values), construct, site.context);
+    }
     if !arguments.len().is_multiple_of(2) {
         return Err(refused(
             construct,
@@ -131,13 +155,23 @@ pub(crate) fn object_construct(
         keys.push(key.sql);
         values.push(convert_held(value, site)?);
     }
-    let (values, held) = leaves(values, construct, site.context)?;
+    constructed(name, (keys, values), construct, site.context)
+}
+
+/// The object of `keys` and `values`, NULL values kept for OBJECT_CONSTRUCT_KEEP_NULL.
+fn constructed(
+    name: &str,
+    (keys, values): (Vec<String>, Vec<Emitted>),
+    construct: &Construct,
+    context: &Context<'_>,
+) -> Result<Emitted, Refusal> {
+    let (values, held) = leaves(values, construct, context)?;
     let pairs: Vec<(String, String)> = keys.into_iter().zip(values).collect();
     Ok(built(
-        json_object_construct(&pairs, name == KEEP_NULL_CONSTRUCTOR, log),
+        json_object_construct(&pairs, name == KEEP_NULL_CONSTRUCTOR, context.log),
         held,
         VariantRoot::Container,
-        site.context,
+        context,
     ))
 }
 
@@ -184,7 +218,12 @@ pub(crate) fn as_json(
         SnowflakeType::SemiStructured => Ok(sql),
         SnowflakeType::Null => Ok("CAST(NULL AS JSON)".to_owned()),
         SnowflakeType::Varchar | SnowflakeType::Boolean => Ok(format!("to_json({sql})")),
-        SnowflakeType::Number { scale: 0, .. } => {
+        SnowflakeType::Number { scale, .. } if scale > 0 => {
+            diverge(context, JSON_FIDELITY, construct)?;
+            context.typed.enter_decimal();
+            Ok(json_decimal(&sql, context.log))
+        }
+        SnowflakeType::Number { .. } => {
             diverge(context, JSON_FIDELITY, construct)?;
             Ok(json_guarded(
                 &format!("CAST({sql} AS VARCHAR)"),

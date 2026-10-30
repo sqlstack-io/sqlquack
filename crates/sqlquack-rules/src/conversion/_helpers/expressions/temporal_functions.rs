@@ -615,10 +615,10 @@ fn formatted_date(
             "TO_DATE with a format that is not literal text".to_owned(),
         ));
     };
-    let Some(known) = DATE_FORMATS
-        .iter()
-        .find(|known| known.snowflake.eq_ignore_ascii_case(&written))
-    else {
+    let Some(known) = DATE_FORMATS.iter().find(|known| match known.named_month {
+        true => known.snowflake == written,
+        false => known.snowflake.eq_ignore_ascii_case(&written),
+    }) else {
         return Err(refuse(format!(
             "TO_DATE with format '{written}', which no recording shows"
         )));
@@ -631,6 +631,11 @@ fn formatted_date(
         return Err(refuse(format!(
             "TO_DATE of {} with a format",
             operand.data_type
+        )));
+    }
+    if known.named_month && !trying {
+        return Err(refuse(format!(
+            "TO_DATE with format '{written}', recorded only under TRY_TO_DATE"
         )));
     }
     diverge(site.context, DATE_TEXT_SPELLING, construct)?;

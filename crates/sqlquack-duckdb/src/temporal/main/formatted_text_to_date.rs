@@ -46,6 +46,20 @@ fn converted(sql: &str, (format, trying): (&DateFormat, bool)) -> String {
         "{DATE_TEXT_SPELLING}: text not spelled exactly in the format, which no recording shows \
          Snowflake reading or rejecting"
     ));
+    let month = match format.named_month {
+        true => format!(
+            "list_position(['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', \
+             'nov', 'dec'], left(lower(regexp_extract({sql}, '{pattern}', {month_group})), 3))"
+        ),
+        false => field(month_group),
+    };
+    let rejected = match (trying, format.null_pattern) {
+        (true, Some(rejected)) => format!(
+            "WHEN NOT regexp_full_match({sql}, '{pattern}') \
+             AND regexp_full_match({sql}, '{rejected}') THEN NULL "
+        ),
+        _ => String::new(),
+    };
     let (empty, impossible) = match trying {
         true => (
             format!("{sql} = '' OR {}", digitless(sql)),
@@ -59,12 +73,17 @@ fn converted(sql: &str, (format, trying): (&DateFormat, bool)) -> String {
             ),
         ),
     };
+    let foreign = match format.named_month {
+        true => {
+            format!("WHEN regexp_matches({sql}, '[^\\x00-\\x7F]') THEN CAST({spelling} AS DATE) ")
+        }
+        false => String::new(),
+    };
     format!(
-        "(CASE WHEN {sql} IS NULL OR {empty} THEN NULL \
+        "(CASE WHEN {sql} IS NULL OR {empty} THEN NULL {foreign}\
          WHEN regexp_full_match({sql}, '{pattern}') AND {year} > 0 THEN \
-         coalesce(try(make_date({year}, {}, {})), {impossible}) \
-         ELSE CAST({spelling} AS DATE) END)",
-        field(month_group),
+         coalesce(try(make_date({year}, {month}, {})), {impossible}) \
+         {rejected}ELSE CAST({spelling} AS DATE) END)",
         field(day_group)
     )
 }

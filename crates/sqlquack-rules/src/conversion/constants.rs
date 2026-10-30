@@ -137,6 +137,10 @@ pub const TEXT_CHR: &str = "rule.text_chr";
 pub const TEXT_HEX: &str = "rule.text_hex";
 /// TRY_HEX_DECODE_STRING.
 pub const TEXT_HEX_DECODE: &str = "rule.text_hex_decode";
+/// TRY_BASE64_DECODE_BINARY, its bytes read by HEX_ENCODE, TO_VARCHAR with UTF-8 and SUBSTR.
+pub const BASE64_BINARY: &str = "rule.base64_binary";
+/// The function whose bytes the base64 rule reads.
+pub(crate) const BASE64_DECODER: &str = "TRY_BASE64_DECODE_BINARY";
 /// TO_BOOLEAN and TRY_TO_BOOLEAN of text.
 pub const TO_BOOLEAN_RULE: &str = "rule.to_boolean";
 /// MOD and % of NUMBERs.

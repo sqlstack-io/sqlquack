@@ -115,6 +115,12 @@ pub const OBJECT_KEY_EXISTS: SnowflakeCode = SnowflakeCode {
     sqlstate: "22000",
 };
 
+/// Bytes that are not UTF-8, read as UTF-8 text.
+pub const INVALID_UTF8: SnowflakeCode = SnowflakeCode {
+    errno: 100_146,
+    sqlstate: "22000",
+};
+
 /// Every Snowflake error the recordings hold, and its kind.
 pub const SNOWFLAKE_ERRORS: &[(SnowflakeCode, ErrorKind)] = &[
     (NUMBER_OUT_OF_RANGE, ErrorKind::NumericOverflow),
@@ -135,6 +141,7 @@ pub const SNOWFLAKE_ERRORS: &[(SnowflakeCode, ErrorKind)] = &[
     (OBJECT_KEY_EXISTS, ErrorKind::InvalidArgument),
     (INVALID_CHARACTER_CODE, ErrorKind::InvalidArgument),
     (INVALID_REGULAR_EXPRESSION, ErrorKind::InvalidArgument),
+    (INVALID_UTF8, ErrorKind::InvalidArgument),
     (UNKNOWN_TIME_ZONE, ErrorKind::InvalidArgument),
     (
         SnowflakeCode {
@@ -195,6 +202,12 @@ pub const TIME_TEXT_FAILURES: &[FailureMode] = &[FailureMode {
 pub const CHARACTER_CODE_FAILURES: &[FailureMode] = &[FailureMode {
     kind: ErrorKind::InvalidArgument,
     snowflake: &[INVALID_CHARACTER_CODE],
+}];
+
+/// How reading bytes as UTF-8 text fails for bytes that are not UTF-8.
+pub const INVALID_UTF8_FAILURES: &[FailureMode] = &[FailureMode {
+    kind: ErrorKind::InvalidArgument,
+    snowflake: &[INVALID_UTF8],
 }];
 
 /// How an array function fails for an argument other than an array.

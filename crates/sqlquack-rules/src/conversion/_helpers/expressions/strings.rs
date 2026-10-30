@@ -10,6 +10,9 @@ use sqlquack_duckdb::floats::main::float_to_text::float_to_text;
 use sqlquack_duckdb::text::constants::{
     HEX_LOWER_CASE, HEX_UPPER_CASE, INITCAP_DEFAULT_DELIMITERS, INITCAP_TEXT,
 };
+use sqlquack_duckdb::text::main::base64_bytes::base64_bytes;
+use sqlquack_duckdb::text::main::bytes_substring::bytes_substring;
+use sqlquack_duckdb::text::main::bytes_text::bytes_text;
 use sqlquack_duckdb::text::main::character_edit_distance::character_edit_distance;
 use sqlquack_duckdb::text::main::code_point_text::code_point_text;
 use sqlquack_duckdb::text::main::hex_decoded_text::hex_decoded_text;
@@ -18,15 +21,18 @@ use sqlquack_duckdb::text::main::title_case::title_case;
 use sqlquack_snowflake::typing::models::SnowflakeType;
 
 use crate::conversion::_helpers::expressions::scalar::convert_expression;
+use crate::conversion::_helpers::expressions::text_functions::integer_operand;
 use crate::conversion::_helpers::support::divergence::diverge;
 use crate::conversion::_helpers::support::scope::{Emitted, Literal};
 use crate::conversion::_helpers::support::site::Site;
 use crate::conversion::_helpers::support::tree::{
-    field, missing, node_construct, outside_conditions, payload_object, require_understood,
+    field, function_construct, list, missing, node_construct, node_kind, outside_conditions,
+    payload_object, require_understood,
 };
 use crate::conversion::constants::{
-    CASE_MAPPING, CONCAT, CONCAT_WS, EDIT_DISTANCE, TEXT_AFFIX, TEXT_CHR, TEXT_CONTAINS, TEXT_HEX,
-    TEXT_HEX_DECODE, TEXT_INITCAP, TEXT_MD5, TRIM,
+    BASE64_BINARY, BASE64_DECODER, CASE_MAPPING, CONCAT, CONCAT_WS, EDIT_DISTANCE, TEXT_AFFIX,
+    TEXT_CHR, TEXT_CONTAINS, TEXT_HEX, TEXT_HEX_DECODE, TEXT_INITCAP, TEXT_MD5,
+    TEXT_POSITION_LIMIT, TRIM,
 };
 
 /// What TRIM removes without a character list: spaces only, as in Snowflake.
@@ -339,7 +345,11 @@ pub(crate) fn hex_encode(
     construct: &Construct,
     site: Site<'_>,
 ) -> Result<Emitted, Refusal> {
-    let _rule = site.context.log.rule(TEXT_HEX);
+    let rule = match arguments.first().is_some_and(decodes_bytes) {
+        true => BASE64_BINARY,
+        false => TEXT_HEX,
+    };
+    let _rule = site.context.log.rule(rule);
     let refuse = |reason: &str| outside_conditions(construct.clone(), reason.to_owned());
     let (text, lower) = match arguments {
         [text] => (text, false),
@@ -350,11 +360,156 @@ pub(crate) fn hex_encode(
         },
         _ => return Err(refuse("HEX_ENCODE takes one or two arguments")),
     };
+    if let Some(bytes) = binary_operand(text, site)? {
+        let sql = match lower {
+            true => format!("lower({bytes})"),
+            false => bytes,
+        };
+        return Ok(Emitted::new(sql, SnowflakeType::Varchar));
+    }
     let text = text_operand(text, construct, site)?;
     Ok(Emitted::new(
         hex_text(&text, lower, site.context.log),
         SnowflakeType::Varchar,
     ))
+}
+
+/// TO_VARCHAR or TO_CHAR of decoded bytes with a literal UTF-8 format, or None for other values.
+pub(crate) fn bytes_as_text(
+    (value, format): (&Value, &Value),
+    construct: &Construct,
+    site: Site<'_>,
+) -> Result<Option<Emitted>, Refusal> {
+    if !decodes_bytes(value) {
+        return Ok(None);
+    }
+    let _rule = site.context.log.rule(BASE64_BINARY);
+    let Some(bytes) = binary_operand(value, site)? else {
+        return Ok(None);
+    };
+    match convert_expression(format, site)?.literal {
+        Some(Literal::Text(format))
+            if format.eq_ignore_ascii_case("UTF-8") || format.eq_ignore_ascii_case("UTF8") =>
+        {
+            Ok(Some(Emitted::new(
+                bytes_text(&bytes, site.context.log),
+                SnowflakeType::Varchar,
+            )))
+        }
+        _ => Err(outside_conditions(
+            construct.clone(),
+            "decoded bytes written as text in a format other than a literal UTF-8".to_owned(),
+        )),
+    }
+}
+
+/// Whether `node` is TRY_BASE64_DECODE_BINARY, or SUBSTR of it, whose bytes only some calls read.
+pub(crate) fn decodes_bytes(node: &Value) -> bool {
+    match node_kind(node) {
+        Some(("function", payload)) => {
+            let name = payload
+                .get("name")
+                .and_then(Value::as_str)
+                .unwrap_or_default()
+                .to_ascii_uppercase();
+            match (name.as_str(), payload.get("args").and_then(Value::as_array)) {
+                (BASE64_DECODER, _) => true,
+                ("SUBSTR" | "SUBSTRING", Some(arguments)) => {
+                    arguments.first().is_some_and(decodes_bytes)
+                }
+                _ => false,
+            }
+        }
+        Some(("substring", payload)) => payload.get("this").is_some_and(decodes_bytes),
+        _ => false,
+    }
+}
+
+/// Decoded bytes as upper-case hex digits, from TRY_BASE64_DECODE_BINARY or SUBSTR; else None.
+fn binary_operand(node: &Value, site: Site<'_>) -> Result<Option<String>, Refusal> {
+    match node_kind(node) {
+        Some(("function", payload)) => {
+            let name = payload
+                .get("name")
+                .and_then(Value::as_str)
+                .unwrap_or_default()
+                .to_ascii_uppercase();
+            let construct = function_construct(&name);
+            let payload = payload_object(payload, &construct)?;
+            match (name.as_str(), list(payload, "args")) {
+                (BASE64_DECODER, arguments) => {
+                    let _rule = site.context.log.rule(BASE64_BINARY);
+                    require_understood(payload, &["name", "args"], &construct)?;
+                    let [text] = arguments else {
+                        return Err(outside_conditions(
+                            construct,
+                            "TRY_BASE64_DECODE_BINARY with other than one argument".to_owned(),
+                        ));
+                    };
+                    let text = text_operand(text, &construct, site)?;
+                    Ok(Some(base64_bytes(&text, site.context.log)))
+                }
+                ("SUBSTR" | "SUBSTRING", [bytes, start, length @ ..]) if length.len() <= 1 => {
+                    bytes_substring_of((bytes, start, length.first()), site)
+                }
+                _ => Ok(None),
+            }
+        }
+        Some(("substring", payload)) => {
+            let construct = node_construct("substring");
+            let payload = payload_object(payload, &construct)?;
+            require_understood(
+                payload,
+                &["this", "start", "length", "from_for_syntax"],
+                &construct,
+            )?;
+            let length = payload.get("length").filter(|length| !length.is_null());
+            bytes_substring_of(
+                (
+                    field(payload, "this", &construct)?,
+                    field(payload, "start", &construct)?,
+                    length,
+                ),
+                site,
+            )
+        }
+        _ => Ok(None),
+    }
+}
+
+/// SUBSTR of decoded bytes, counted in bytes; None when `bytes` is not decoded bytes.
+fn bytes_substring_of(
+    (bytes, start, length): (&Value, &Value, Option<&Value>),
+    site: Site<'_>,
+) -> Result<Option<String>, Refusal> {
+    let Some(bytes) = binary_operand(bytes, site)? else {
+        return Ok(None);
+    };
+    let construct = node_construct("substring");
+    let start = integer_operand(start, &construct, site)?;
+    let start = format!(
+        "(CASE WHEN {start} < -{TEXT_POSITION_LIMIT} THEN -{TEXT_POSITION_LIMIT} \
+         WHEN {start} > {TEXT_POSITION_LIMIT} THEN {TEXT_POSITION_LIMIT} ELSE {start} END)"
+    );
+    let length = match length {
+        None => None,
+        Some(length) => match convert_expression(length, site)?.literal {
+            Some(Literal::Number(digits)) if digits.bytes().all(|byte| byte.is_ascii_digit()) => {
+                Some(digits)
+            }
+            _ => {
+                return Err(outside_conditions(
+                    construct,
+                    "a SUBSTR length other than a non-negative integer literal".to_owned(),
+                ));
+            }
+        },
+    };
+    Ok(Some(bytes_substring(
+        &bytes,
+        (&start, length.as_deref()),
+        site.context.log,
+    )))
 }
 
 /// TRY_HEX_DECODE_STRING(s): the text its hexadecimal digits spell, or NULL.

@@ -38,6 +38,12 @@ id = "rule.star"
 [[rule.form]]
 construct = "query"
 
+# OBJECT_CONSTRUCT of * or alias.*, recorded by the object star cases.
+[[rule.form]]
+construct = "fn:OBJECT_CONSTRUCT"
+also = ["fn:OBJECT_CONSTRUCT_KEEP_NULL"]
+arguments = []
+
 [[rule]]
 id = "rule.from_relation"
 

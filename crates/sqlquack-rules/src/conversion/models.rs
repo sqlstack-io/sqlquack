@@ -26,6 +26,9 @@ pub struct ColumnSpec {
     /// Whether a VARIANT column may hold a DATE or timestamp, which Snowflake keeps typed.
     #[serde(skip_serializing_if = "std::ops::Not::not")]
     pub typed_leaves: bool,
+    /// Whether a VARIANT column may hold a whole NUMBER with a scale, which Snowflake types DECIMAL.
+    #[serde(skip_serializing_if = "std::ops::Not::not")]
+    pub decimal_leaves: bool,
     /// Whether the column is proven to hold no typed leaf: a base table's, or built from such values.
     #[serde(skip)]
     pub untainted: bool,
@@ -42,6 +45,7 @@ impl ColumnSpec {
             data_type,
             holding: Holding::Json,
             typed_leaves: false,
+            decimal_leaves: false,
             untainted: false,
             sourced: false,
         }
@@ -124,6 +128,8 @@ pub struct ConversionOptions {
     pub fixture: Option<Fixture>,
     /// Limits beyond which converting one statement is refused rather than kept.
     pub budget: ConversionBudget,
+    /// Whether the source quotes a name in an EXCLUDE list, a quoting the parsed tree does not keep.
+    pub quoted_exclusions: bool,
 }
 
 /// How long converting one statement may take, and how large its DuckDB SQL may grow.

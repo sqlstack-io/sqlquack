@@ -1,0 +1,211 @@
+category = "string"
+construct = "fn:TRY_BASE64_DECODE_BINARY"
+session_profile = "utc-v1"
+
+[[case]]
+id = "base64_hex_canonical"
+description = "Canonical base64 with no, one and two padding characters, decoded and written as hex."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'b3JkZXI='"],
+  ["'Y3VzdG9tZXJz'"],
+  ["'YQ=='"],
+  ["'YWI='"],
+  ["'YWJj'"],
+  ["'/+8='"],
+  ["'AA=='"],
+  ["'AAAA'"],
+  ["'+/+/'"],
+  ["''"],
+  ["NULL"],
+]
+expression = "HEX_ENCODE(TRY_BASE64_DECODE_BINARY(s))"
+tags = ["null", "empty", "boundary"]
+
+[[case]]
+id = "base64_hex_padding"
+description = "Missing, excess and misplaced padding, and padding bits left set."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'b3JkZXI'"],
+  ["'YQ'"],
+  ["'YWI'"],
+  ["'YQ='"],
+  ["'YQ==='"],
+  ["'YWI=='"],
+  ["'Y==='"],
+  ["'='"],
+  ["'=='"],
+  ["'===='"],
+  ["'YQ==YQ=='"],
+  ["'QU=D'"],
+  ["'YR=='"],
+  ["'YWJ='"],
+  ["'Q'"],
+  ["'QUJDQ'"],
+  ["'YWJjZA'"],
+]
+expression = "HEX_ENCODE(TRY_BASE64_DECODE_BINARY(s))"
+tags = ["invalid", "boundary"]
+
+[[case]]
+id = "base64_hex_whitespace"
+description = "Line breaks, spaces and tabs between and inside groups, around the text, and alone."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'b3Jk' || CHR(10) || 'ZXI='"],
+  ["'b3JkZXIg' || CHR(10) || 'b3JkZXI='"],
+  ["'b3JkZXIg' || CHR(13) || '' || CHR(10) || 'b3JkZXI='"],
+  ["'b3JkZXIg' || CHR(13) || 'b3JkZXI='"],
+  ["'b3Jk ZXI='"],
+  ["'b3Jk' || CHR(9) || 'ZXI='"],
+  ["' b3JkZXI='"],
+  ["'b3JkZXI= '"],
+  ["'b3JkZXI=' || CHR(10) || ''"],
+  ["'' || CHR(10) || 'b3JkZXI='"],
+  ["'YQ= ='"],
+  ["'   '"],
+  ["'' || CHR(10) || ''"],
+]
+expression = "HEX_ENCODE(TRY_BASE64_DECODE_BINARY(s))"
+tags = ["invalid", "whitespace", "boundary"]
+
+[[case]]
+id = "base64_hex_alphabet"
+description = "Characters outside the standard alphabet: the URL-safe pair, punctuation and non-ASCII letters."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'b3J-ZXI_'"],
+  ["'-_8='"],
+  ["'b3Jk!XI='"],
+  ["'b3Jk.XI='"],
+  ["'b3Jk*XI='"],
+  ["'b3JkéXI='"],
+  ["'b3Jk\\XI='"],
+  ["'b3Jk\"XI='"],
+]
+expression = "HEX_ENCODE(TRY_BASE64_DECODE_BINARY(s))"
+tags = ["invalid", "unicode"]
+
+[[case]]
+id = "base64_hex_case"
+description = "HEX_ENCODE of decoded bytes in lower and upper case."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'/+8='"],
+  ["'q83v'"],
+  ["''"],
+  ["'not base64!'"],
+  ["NULL"],
+]
+expression = "HEX_ENCODE(TRY_BASE64_DECODE_BINARY(s), 0) || '|' || HEX_ENCODE(TRY_BASE64_DECODE_BINARY(s), 1)"
+tags = ["null", "invalid"]
+
+[[case]]
+id = "base64_utf8_text"
+description = "Decoded bytes read as UTF-8 text: ASCII, accented and four-byte characters, empty, and invalid base64."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'b3JkZXI='"],
+  ["'w6k='"],
+  ["'R3LDtsOfZQ=='"],
+  ["'8J+YgA=='"],
+  ["'b3JkZXIKc2hpcHBlZA=='"],
+  ["''"],
+  ["'YQ'"],
+  ["'not base64!'"],
+  ["NULL"],
+]
+expression = "TO_VARCHAR(TRY_BASE64_DECODE_BINARY(s), 'UTF-8')"
+tags = ["null", "invalid", "unicode"]
+
+[[case]]
+id = "base64_utf8_zero_byte"
+description = "A decoded zero byte read as UTF-8 text."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'AA=='"],
+  ["'YQBi'"],
+]
+expression = "TO_VARCHAR(TRY_BASE64_DECODE_BINARY(s), 'UTF-8')"
+tags = ["boundary"]
+
+[[case]]
+id = "base64_utf8_invalid"
+description = "Decoded bytes that are not UTF-8, read as UTF-8 text."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'/w=='"],
+]
+expression = "TO_VARCHAR(TRY_BASE64_DECODE_BINARY(s), 'UTF-8')"
+tags = ["invalid"]
+
+[[case]]
+id = "base64_utf8_truncated"
+description = "A multi-byte character cut by SUBSTRING, read as UTF-8 text."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'w6k='"],
+]
+expression = "TO_VARCHAR(SUBSTRING(TRY_BASE64_DECODE_BINARY(s), 1, 1), 'UTF-8')"
+tags = ["invalid", "unicode"]
+
+[[case]]
+id = "base64_utf8_spellings"
+description = "The UTF-8 format spelled UTF8 and in lower case, and through TO_CHAR."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'b3JkZXI='"],
+  ["''"],
+  ["NULL"],
+]
+expression = "TO_VARCHAR(TRY_BASE64_DECODE_BINARY(s), 'UTF8') || '|' || TO_VARCHAR(TRY_BASE64_DECODE_BINARY(s), 'utf-8') || '|' || TO_CHAR(TRY_BASE64_DECODE_BINARY(s), 'UTF-8')"
+tags = ["null"]
+
+[[case]]
+id = "base64_substring_text"
+description = "SUBSTRING of decoded bytes read as UTF-8 text, inside, across and past the end."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'b3JkZXJfc3RhdHVzX3VwZGF0ZV9maWVsZHM='"],
+  ["'YWJj'"],
+  ["'YQ=='"],
+  ["''"],
+  ["'not base64!'"],
+  ["NULL"],
+]
+expression = "TO_VARCHAR(SUBSTRING(TRY_BASE64_DECODE_BINARY(s), 3, 1), 'UTF-8') || '|' || TO_VARCHAR(SUBSTRING(TRY_BASE64_DECODE_BINARY(s), 28, 8), 'UTF-8') || '|' || TO_VARCHAR(SUBSTRING(TRY_BASE64_DECODE_BINARY(s), 2), 'UTF-8')"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "base64_substring_edges"
+description = "SUBSTRING of decoded bytes from zero and negative starts and with zero length, as hex."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'b3JkZXJfc3RhdHVzX3VwZGF0ZV9maWVsZHM='"],
+  ["'YWJj'"],
+  ["'YQ=='"],
+  ["''"],
+  ["'not base64!'"],
+  ["NULL"],
+]
+expression = "HEX_ENCODE(SUBSTRING(TRY_BASE64_DECODE_BINARY(s), 0, 2)) || '|' || HEX_ENCODE(SUBSTRING(TRY_BASE64_DECODE_BINARY(s), -2, 2)) || '|' || HEX_ENCODE(SUBSTRING(TRY_BASE64_DECODE_BINARY(s), 2, 0)) || '|' || HEX_ENCODE(SUBSTR(TRY_BASE64_DECODE_BINARY(s), 2, 3))"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "base64_hex_line_feed_positions"
+description = "Line feeds inside a group, inside and before padding, after padding with more text or at the end, and two in a row."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'b3J' || CHR(10) || 'kZXI='"],
+  ["'YQ=' || CHR(10) || '='"],
+  ["'YQ' || CHR(10) || '=='"],
+  ["'YQ==' || CHR(10) || 'YWI='"],
+  ["'YQ==' || CHR(10) || ''"],
+  ["'b3Jk' || CHR(10) || '' || CHR(10) || 'ZXI='"],
+  ["'' || CHR(10) || '' || CHR(10) || 'b3JkZXI='"],
+  ["'b3JkZXI=' || CHR(10) || '' || CHR(10) || ''"],
+  ["'' || CHR(10) || '' || CHR(10) || ''"],
+]
+expression = "HEX_ENCODE(TRY_BASE64_DECODE_BINARY(s))"
+tags = ["invalid", "whitespace", "boundary"]

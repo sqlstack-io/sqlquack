@@ -218,11 +218,15 @@ impl Context<'_> {
             if columns.iter().any(|column| column.typed_leaves) {
                 self.typed.enter();
             }
+            if columns.iter().any(|column| column.decimal_leaves) {
+                self.typed.enter_decimal();
+            }
             return Ok(columns
                 .iter()
                 .map(|column| ColumnSpec {
-                    untainted: !column.typed_leaves,
+                    untainted: !column.typed_leaves && !column.decimal_leaves,
                     sourced: !column.typed_leaves
+                        && !column.decimal_leaves
                         && column.data_type == SnowflakeType::SemiStructured,
                     ..column.clone()
                 })

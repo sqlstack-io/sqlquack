@@ -1,0 +1,165 @@
+category = "semi-structured"
+construct = "fn:OBJECT_CONSTRUCT_KEEP_NULL"
+session_profile = "utc-v1"
+
+[[case]]
+id = "keep_null_star_float_columns"
+description = "OBJECT_CONSTRUCT_KEEP_NULL of r.* EXCLUDE load columns over FLOAT, integer and text columns, then OBJECT_INSERT of a key."
+columns = [{ name = "product_id", type = "NUMBER(38,0)" }, { name = "label", type = "VARCHAR" }, { name = "score", type = "FLOAT" }, { name = "weight", type = "FLOAT" }, { name = "loaded_on", type = "DATE" }]
+rows = [
+  ["1", "'open'", "0.125", "12.5", "'2024-02-29'"],
+  ["2", "NULL", "NULL", "-3", "'2024-03-01'"],
+  ["3", "''", "1e-7", "123456.789", "NULL"],
+]
+query = "SELECT r.product_id, OBJECT_INSERT(OBJECT_CONSTRUCT_KEEP_NULL(r.* EXCLUDE (ordinal, loaded_on)), 'PRODUCT_KEY', r.product_id, TRUE) AS o FROM input AS r ORDER BY r.product_id"
+order = "ordered"
+tags = ["null", "json-null", "nested"]
+
+[[case]]
+id = "keep_null_star_float_read"
+description = "Fields of OBJECT_CONSTRUCT_KEEP_NULL(r.* EXCLUDE ...) over FLOAT columns read back as text and FLOAT."
+columns = [{ name = "product_id", type = "NUMBER(38,0)" }, { name = "score", type = "FLOAT" }, { name = "loaded_on", type = "DATE" }]
+rows = [
+  ["1", "0.125", "'2024-02-29'"],
+  ["2", "NULL", "'2024-03-01'"],
+  ["3", "1e-7", "NULL"],
+]
+query = "SELECT r.product_id, OBJECT_CONSTRUCT_KEEP_NULL(r.* EXCLUDE (ordinal, loaded_on)):SCORE::VARCHAR AS t, OBJECT_CONSTRUCT_KEEP_NULL(r.* EXCLUDE (ordinal, loaded_on)):SCORE::FLOAT AS f FROM input AS r ORDER BY r.product_id"
+order = "ordered"
+tags = ["null", "json-null"]
+
+[[case]]
+id = "keep_null_star_date_column"
+description = "OBJECT_CONSTRUCT_KEEP_NULL of r.* with a DATE column kept, written as text."
+columns = [{ name = "product_id", type = "NUMBER(38,0)" }, { name = "shipped_on", type = "DATE" }]
+rows = [
+  ["1", "'2024-02-29'"],
+  ["2", "NULL"],
+]
+query = "SELECT r.product_id, OBJECT_CONSTRUCT_KEEP_NULL(r.* EXCLUDE ordinal)::VARCHAR AS o FROM input AS r ORDER BY r.product_id"
+order = "ordered"
+tags = ["null", "json-null"]
+
+[[case]]
+id = "keep_null_star_exclude_unknown"
+description = "OBJECT_CONSTRUCT_KEEP_NULL of r.* EXCLUDE a column the relation does not have."
+columns = [{ name = "product_id", type = "NUMBER(38,0)" }]
+rows = [
+  ["1"],
+]
+query = "SELECT OBJECT_CONSTRUCT_KEEP_NULL(r.* EXCLUDE (ordinal, missing_column)) AS o FROM input AS r"
+order = "ordered"
+tags = ["invalid"]
+
+[[case]]
+id = "keep_null_star_join"
+description = "OBJECT_CONSTRUCT_KEEP_NULL of one side's columns, a.*, over a join."
+columns = [{ name = "product_id", type = "NUMBER(38,0)" }, { name = "label", type = "VARCHAR" }]
+rows = [
+  ["1", "'open'"],
+  ["2", "NULL"],
+]
+query = "SELECT a.product_id, OBJECT_CONSTRUCT_KEEP_NULL(b.*) AS o FROM input AS a JOIN (SELECT product_id AS pid, label AS other_label FROM input) AS b ON a.product_id = b.pid ORDER BY a.product_id"
+order = "ordered"
+tags = ["null", "json-null"]
+
+[[case]]
+id = "decimal_whole_values_in_object"
+description = "Whole NUMBER(5,2) values, zero among them, in an object: written as text, read back as text and as NUMBER."
+columns = [{ name = "n", type = "NUMBER(5,2)" }]
+rows = [
+  ["100.00"],
+  ["0.00"],
+  ["-7.00"],
+  ["87.50"],
+  ["999.99"],
+  ["NULL"],
+]
+query = "SELECT OBJECT_CONSTRUCT_KEEP_NULL('score', n)::VARCHAR AS o, OBJECT_CONSTRUCT_KEEP_NULL('score', n):score::VARCHAR AS t, OBJECT_CONSTRUCT_KEEP_NULL('score', n):score::NUMBER(5,2) AS v FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "zero", "negative", "boundary"]
+
+[[case]]
+id = "decimal_whole_values_typeof"
+description = "TYPEOF of whole and fractional NUMBER(5,2) values kept in an object."
+columns = [{ name = "n", type = "NUMBER(5,2)" }]
+rows = [
+  ["100.00"],
+  ["0.00"],
+  ["87.50"],
+  ["NULL"],
+]
+query = "SELECT TYPEOF(OBJECT_CONSTRUCT_KEEP_NULL('score', n):score) AS t FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "zero"]
+
+[[case]]
+id = "decimal_whole_values_equal_integers"
+description = "Whole NUMBER(5,2) values kept in a VARIANT compared with VARIANT integers and decimals parsed from JSON."
+columns = [{ name = "n", type = "NUMBER(5,2)" }]
+rows = [
+  ["100.00"],
+  ["0.00"],
+  ["87.50"],
+  ["NULL"],
+]
+query = "SELECT OBJECT_CONSTRUCT('k', n):k = PARSE_JSON('100') AS whole, OBJECT_CONSTRUCT('k', n):k = PARSE_JSON('87.5') AS fraction, OBJECT_CONSTRUCT('k', n):k = TO_VARIANT(0) AS zero, ARRAY_CONTAINS(PARSE_JSON('0'), ARRAY_CONSTRUCT(n)) AS contained FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "zero"]
+# ARRAY_CONSTRUCT of the NULL row raises; decimal_whole_values_compare covers the others.
+expected_divergence = "json_fidelity"
+
+[[case]]
+id = "decimal_wide_values_in_object"
+description = "NUMBER(38,6) values in an object: whole, tiny, long and negative, written as text."
+columns = [{ name = "n", type = "NUMBER(38,6)" }]
+rows = [
+  ["1234.500000"],
+  ["0.000001"],
+  ["-1.000000"],
+  ["123456789.123456"],
+  ["0.100000"],
+  ["NULL"],
+]
+query = "SELECT OBJECT_CONSTRUCT_KEEP_NULL('rating', n)::VARCHAR AS o FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "negative", "boundary"]
+
+[[case]]
+id = "object_constant_nested_decimals"
+description = "An object constant nesting objects of NUMBER(5,2), text and BOOLEAN values, NULLs among them, cast to VARIANT."
+columns = [{ name = "n", type = "NUMBER(5,2)" }, { name = "s", type = "VARCHAR" }, { name = "b", type = "BOOLEAN" }]
+rows = [
+  ["87.50", "'gb'", "TRUE"],
+  ["100.00", "NULL", "FALSE"],
+  ["NULL", "'fr'", "NULL"],
+]
+query = "SELECT {'validation': {'has_code': b}, 'catalog': {'match_id': s, 'match_score': n}, 'archive': {'match_id': s, 'match_score': n}}::VARIANT AS v FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "json-null", "nested"]
+
+[[case]]
+id = "keep_null_star_key_case"
+description = "Keys of OBJECT_CONSTRUCT_KEEP_NULL(r.* ...) read in their own and another case, and through an array index."
+columns = [{ name = "label", type = "VARCHAR" }]
+rows = [
+  ["'open'"],
+  ["NULL"],
+]
+query = "SELECT OBJECT_CONSTRUCT_KEEP_NULL(r.* EXCLUDE ordinal):LABEL::VARCHAR AS upper_key, OBJECT_CONSTRUCT_KEEP_NULL(r.* EXCLUDE ordinal):label::VARCHAR AS lower_key, ARRAY_CONSTRUCT(OBJECT_CONSTRUCT_KEEP_NULL(r.* EXCLUDE ordinal))[0]:LABEL::VARCHAR AS indexed FROM input AS r ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "json-null", "missing-key", "array-index", "case-sensitive-key"]
+
+[[case]]
+id = "decimal_whole_values_compare"
+description = "Whole and fractional NUMBER(5,2) values kept in a VARIANT compared with VARIANT integers, decimals and text, and found in arrays."
+columns = [{ name = "n", type = "NUMBER(5,2)" }]
+rows = [
+  ["100.00"],
+  ["0.00"],
+  ["87.50"],
+  ["-7.00"],
+]
+query = "SELECT OBJECT_CONSTRUCT('k', n):k = PARSE_JSON('100') AS whole, OBJECT_CONSTRUCT('k', n):k = PARSE_JSON('87.5') AS fraction, OBJECT_CONSTRUCT('k', n):k = TO_VARIANT(0) AS zero, OBJECT_CONSTRUCT('k', n):k = '-7' AS text, ARRAY_CONTAINS(PARSE_JSON('-7'), ARRAY_CONSTRUCT(n)) AS contained, ARRAY_POSITION(PARSE_JSON('0'), ARRAY_CONSTRUCT(1, n)) AS position FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["zero", "negative"]

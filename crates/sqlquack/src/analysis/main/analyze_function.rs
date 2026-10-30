@@ -10,6 +10,7 @@ use sqlquack_core::refusals::main::refuse_unparsed::refuse_unparsed;
 use sqlquack_core::refusals::models::{Refusal, RefusalCategory};
 use sqlquack_core::refusals::types::ConstructPolicy;
 use sqlquack_rules::conversion::main::convert_function_body::convert_function_body;
+use sqlquack_rules::conversion::main::quoted_exclusions::quoted_exclusions;
 use sqlquack_rules::conversion::models::{
     ConversionOptions, ConvertedFunction, FunctionReturns, FunctionSpec, Schema,
 };
@@ -36,6 +37,10 @@ pub fn analyze_function(
         FunctionReturns::Table(_) => (String::new(), String::new()),
     };
     let sql = format!("{prefix}{body}{suffix}");
+    let options = &ConversionOptions {
+        quoted_exclusions: quoted_exclusions(body),
+        ..options.clone()
+    };
     let lines = SourceLines::shifted(body, prefix.chars().count());
     let statements =
         parse_source(&sql, dialect).map_err(|failure| vec![refuse_unparsed(&failure, &lines)])?;

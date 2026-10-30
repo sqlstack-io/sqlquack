@@ -231,6 +231,7 @@ rows = [
 query = "SELECT TO_JSON(ARRAY_CONSTRUCT(n, s, d)) AS j, ARRAY_SIZE(ARRAY_CONSTRUCT(n, s, d)) AS size FROM input ORDER BY ordinal"
 order = "ordered"
 tags = ["null", "boundary"]
+expected_divergence = "json_fidelity"
 
 [[case]]
 id = "array_size_values"

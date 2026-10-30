@@ -33,8 +33,8 @@ use crate::conversion::_helpers::expressions::semi_structured::{
     parse_json, variant_get, variant_inspect,
 };
 use crate::conversion::_helpers::expressions::strings::{
-    chr, concatenate, concatenate_with_separator, edit_distance, hex_encode, initcap,
-    text_contains, text_md5, text_operand, trim_call, try_hex_decode,
+    bytes_as_text, chr, concatenate, concatenate_with_separator, edit_distance, hex_encode,
+    initcap, text_contains, text_md5, text_operand, trim_call, try_hex_decode,
 };
 use crate::conversion::_helpers::expressions::temporal_functions::{
     convert_timezone, current_time, date_add, date_diff_call, date_from_parts_call, date_part,
@@ -116,8 +116,17 @@ pub(crate) fn convert_function(payload: &Value, site: Site<'_>) -> Result<Emitte
         ("TO_DOUBLE" | "TRY_TO_DOUBLE", parts) => to_double_call(&name, parts, &construct, site),
         ("TO_VARCHAR" | "TO_CHAR", [value]) => to_varchar_call(&name, value, &construct, site),
         ("TO_VARCHAR" | "TO_CHAR", [value, format]) => {
-            temporal_text((value, format), &construct, site)
+            match bytes_as_text((value, format), &construct, site)? {
+                Some(text) => Ok(text),
+                None => temporal_text((value, format), &construct, site),
+            }
         }
+        ("TRY_BASE64_DECODE_BINARY", _) => Err(outside_conditions(
+            construct,
+            "decoded bytes other than as the operand of HEX_ENCODE, TO_VARCHAR with UTF-8 or \
+             SUBSTR inside them"
+                .to_owned(),
+        )),
         ("LPAD" | "RPAD", parts) => pad(&name, parts, &construct, site),
         ("ABS", parts) => absolute(parts, &construct, site),
         ("SIGN", parts) => sign(parts, &construct, site),

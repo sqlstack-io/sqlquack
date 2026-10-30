@@ -1,6 +1,7 @@
 //! One building block per module.
 
 pub mod json_array_to_string;
+pub mod json_decimal;
 pub mod json_escaped;
 pub mod json_filter;
 pub mod json_flatten;

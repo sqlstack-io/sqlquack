@@ -14,6 +14,8 @@ mod test_collect_refusals;
 mod test_composition;
 #[path = "tests/test_conversion_budget.rs"]
 mod test_conversion_budget;
+#[path = "tests/test_decoded_values.rs"]
+mod test_decoded_values;
 #[path = "tests/test_divergence_modes.rs"]
 mod test_divergence_modes;
 #[path = "tests/test_equivalence_cases.rs"]
@@ -26,6 +28,8 @@ mod test_guarded_conditions;
 mod test_held_variants;
 #[path = "tests/test_locations.rs"]
 mod test_locations;
+#[path = "tests/test_object_values.rs"]
+mod test_object_values;
 #[path = "tests/test_raises.rs"]
 mod test_raises;
 #[path = "tests/test_structured_types.rs"]
