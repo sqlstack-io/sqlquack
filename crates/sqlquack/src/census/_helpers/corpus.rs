@@ -8,7 +8,7 @@ use rayon::iter::{IntoParallelRefIterator, ParallelIterator};
 use sqlquack_rules::catalogue::main::builtin_catalogue::builtin_catalogue;
 use std::collections::BTreeSet;
 
-use sqlquack_rules::conversion::models::Schema;
+use sqlquack_semantics::types::models::Schema;
 
 use crate::census::_helpers::completion::{Completed, complete_in_waves};
 use crate::census::_helpers::inspect::{FileCensus, complete_refusals, inspect_file};

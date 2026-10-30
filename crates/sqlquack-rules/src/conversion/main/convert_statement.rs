@@ -1,7 +1,9 @@
 //! `convert_statement`: DuckDB SQL for one canonical Snowflake query, or the first refusal.
 
+use crate::conversion::_helpers::support::typed_leaves::checked;
 use sqlquack_core::parsing::models::SourceLines;
 use sqlquack_core::provenance::models::ProvenanceLog;
+use sqlquack_core::refusals::main::missing::missing;
 use sqlquack_core::refusals::models::Refusal;
 use sqlquack_duckdb::blocks::main::quoted_identifier::quoted_identifier;
 use sqlquack_duckdb::checking::main::check_printed::check_printed;
@@ -14,10 +16,11 @@ use crate::conversion::_helpers::queries::function_body::{column_types, function
 use crate::conversion::_helpers::queries::query::convert_query;
 use crate::conversion::_helpers::support::locations::Locator;
 use crate::conversion::_helpers::support::scope::Context;
-use crate::conversion::_helpers::support::tree::{missing, node_construct, strip_positions};
-use crate::conversion::_helpers::support::typed_leaves::TypedLeaves;
+use crate::conversion::_helpers::support::tree::{node_construct, strip_positions};
 use crate::conversion::constants::OUTPUT_ALIAS;
-use crate::conversion::models::{ColumnSpec, ConversionOptions, Converted, Holding, Schema};
+use crate::conversion::models::{ConversionOptions, Converted};
+use sqlquack_semantics::types::models::TypedLeaves;
+use sqlquack_semantics::types::models::{ColumnSpec, Holding, Schema};
 
 /// Converts a statement over the schema's relations, placing refusals in `lines`; DuckDB must bind it.
 pub fn convert_statement(
@@ -42,8 +45,7 @@ pub fn convert_statement(
         locator: &locator,
         typed: &typed,
     };
-    let (sql, columns) = typed
-        .checked(convert_query(&tree, None, &context, true))
+    let (sql, columns) = checked(&typed, convert_query(&tree, None, &context, true))
         .map_err(|refusal| locator.placed(refusal, &tree))?;
     let (sql, raises) = locator.finished(&output_variants(sql, &columns, &log), &tree);
     let relation = |name: &str| -> Option<Vec<(String, SnowflakeType)>> {

@@ -1,6 +1,9 @@
 //! WHERE-style conditions, GROUP BY, ORDER BY and LIMIT.
 
 use serde_json::Value;
+use sqlquack_core::refusals::main::missing::missing;
+use sqlquack_core::refusals::main::outside_conditions::outside_conditions;
+use sqlquack_core::refusals::main::unresolved::unresolved;
 use sqlquack_core::refusals::models::Refusal;
 use sqlquack_duckdb::blocks::constants::RAISE_MARKER;
 use sqlquack_duckdb::blocks::main::explicit_null_order::explicit_null_order;
@@ -9,11 +12,11 @@ use sqlquack_snowflake::typing::models::SnowflakeType;
 use crate::conversion::_helpers::expressions::operators::boolean_operand;
 use crate::conversion::_helpers::expressions::scalar::convert_expression;
 use crate::conversion::_helpers::expressions::windows::{grouping_key, order_item};
-use crate::conversion::_helpers::support::scope::{Emitted, Scope};
+use crate::conversion::_helpers::support::scope::{Emitted, Scope, resolve};
 use crate::conversion::_helpers::support::site::{Placement, Site};
 use crate::conversion::_helpers::support::tree::{
-    Payload, field, flag, identifier_name, integer_literal, list, missing, node_construct,
-    node_kind, outside_conditions, payload_object, require_understood, unresolved,
+    Payload, field, flag, identifier_name, integer_literal, list, node_construct, node_kind,
+    payload_object, require_understood,
 };
 use crate::conversion::constants::{LIMIT, ORDER_BY, VARIANT_HELD_UNREAD};
 
@@ -264,7 +267,7 @@ fn shadowing_column(
     let name = column.get("name").and_then(identifier_name)?;
     let (_, emitted) = outputs.iter().find(|(output, _)| *output == name)?;
     let from_only = Scope::new(site.scope.relations.clone(), None);
-    match from_only.resolve(None, &name, site.context.log) {
+    match resolve(&from_only, None, &name, site.context.log) {
         Ok(source) if emitted.sql != source.sql => Some(name),
         Ok(_) | Err(_) => None,
     }

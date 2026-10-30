@@ -1,6 +1,7 @@
 //! VARIANT values built from typed scalars, FLOAT among them, held as DuckDB `VARIANT`.
 
 use sqlquack_core::classification::models::Construct;
+use sqlquack_core::refusals::main::outside_conditions::outside_conditions;
 use sqlquack_core::refusals::models::Refusal;
 use sqlquack_duckdb::held::main::variant_built::variant_built;
 use sqlquack_duckdb::held::main::variant_double_leaf::variant_double_leaf;
@@ -13,7 +14,6 @@ use sqlquack_snowflake::typing::models::SnowflakeType;
 use crate::conversion::_helpers::expressions::objects::as_json;
 use crate::conversion::_helpers::support::divergence::diverge;
 use crate::conversion::_helpers::support::scope::{Context, Emitted, VariantRoot};
-use crate::conversion::_helpers::support::tree::outside_conditions;
 
 /// Whether a builder of `values` holds its result as a DuckDB VARIANT: one keeps a FLOAT's type.
 pub(crate) fn builds_held(values: &[Emitted]) -> bool {

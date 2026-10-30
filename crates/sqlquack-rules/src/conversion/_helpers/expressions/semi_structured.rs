@@ -3,6 +3,7 @@
 use serde_json::Value;
 use sqlquack_core::classification::models::Construct;
 use sqlquack_core::provenance::models::ProvenanceLog;
+use sqlquack_core::refusals::main::outside_conditions::outside_conditions;
 use sqlquack_core::refusals::models::Refusal;
 use sqlquack_duckdb::blocks::main::varchar_length_check::varchar_length_check;
 use sqlquack_duckdb::floats::constants::FLOAT_TEXT;
@@ -33,7 +34,7 @@ use crate::conversion::_helpers::support::divergence::{allows, diverge};
 use crate::conversion::_helpers::support::scope::{Context, Emitted, Literal, VariantRoot};
 use crate::conversion::_helpers::support::site::Site;
 use crate::conversion::_helpers::support::tree::{
-    field, node_construct, node_kind, outside_conditions, payload_object, require_understood,
+    field, node_construct, node_kind, payload_object, require_understood,
 };
 use crate::conversion::constants::{
     DATE_TEXT_SPELLING, LITERAL_KIND, NEGATE_KIND, PARSE_JSON_RULE, PARSE_JSON_VARIANT,
@@ -206,7 +207,9 @@ pub(crate) fn variant_inspect(
     match name {
         "TYPEOF" => {
             let _rule = log.rule(VARIANT_TYPE_NAME);
-            site.context.typed.inspect(&base, construct);
+            site.context
+                .typed
+                .inspect((base.data_type, base.untainted), construct);
             let typed = allows(site.context, VARIANT_TYPED_VALUES, construct);
             let sql = match held {
                 true => variant_type_name(&base.sql, typed, log),

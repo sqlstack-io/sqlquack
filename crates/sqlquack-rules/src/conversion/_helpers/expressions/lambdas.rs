@@ -2,6 +2,7 @@
 
 use serde_json::Value;
 use sqlquack_core::classification::models::Construct;
+use sqlquack_core::refusals::main::outside_conditions::outside_conditions;
 use sqlquack_core::refusals::models::Refusal;
 use sqlquack_duckdb::semi_structured::constants::JSON_FIDELITY;
 use sqlquack_duckdb::semi_structured::main::json_filter::json_filter;
@@ -14,9 +15,7 @@ use crate::conversion::_helpers::expressions::scalar::{call_name, convert_expres
 use crate::conversion::_helpers::support::divergence::diverge;
 use crate::conversion::_helpers::support::scope::{Emitted, Scope};
 use crate::conversion::_helpers::support::site::{Placement, Site};
-use crate::conversion::_helpers::support::tree::{
-    identifier_name, list, node_kind, outside_conditions,
-};
+use crate::conversion::_helpers::support::tree::{identifier_name, list, node_kind};
 use crate::conversion::constants::{
     CALL_KIND, FILTER_FUNCTION, LAMBDA_KIND, LAMBDA_PARAMETER_PREFIX, LAMBDA_RULE, REDUCE_RULE,
     STRING_ARRAY_FUNCTION, TEXT_PARAMETER_TYPES,

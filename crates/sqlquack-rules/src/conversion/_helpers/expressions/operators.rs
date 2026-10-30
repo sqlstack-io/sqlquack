@@ -2,6 +2,7 @@
 
 use serde_json::Value;
 use sqlquack_core::classification::models::Construct;
+use sqlquack_core::refusals::main::outside_conditions::outside_conditions;
 use sqlquack_core::refusals::models::Refusal;
 use sqlquack_duckdb::blocks::main::cast::cast;
 use sqlquack_duckdb::blocks::main::decimal_arithmetic::decimal_arithmetic;
@@ -27,7 +28,7 @@ use crate::conversion::_helpers::support::divergence::{diverge, require_widening
 use crate::conversion::_helpers::support::scope::{Context, Emitted, Literal};
 use crate::conversion::_helpers::support::site::Site;
 use crate::conversion::_helpers::support::tree::{
-    field, node_construct, outside_conditions, payload_object, require_understood,
+    field, node_construct, payload_object, require_understood,
 };
 use crate::conversion::_helpers::support::typed_leaves::compared_by_text;
 use crate::conversion::constants::{

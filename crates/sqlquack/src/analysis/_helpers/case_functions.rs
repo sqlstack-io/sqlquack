@@ -4,8 +4,9 @@ use sqlquack_core::parsing::models::SourceDialect;
 use sqlquack_core::provenance::models::ProvenanceLog;
 use sqlquack_evidence::cases::models::{CaseFunction, InputColumn};
 use sqlquack_rules::catalogue::main::builtin_catalogue::builtin_catalogue;
-use sqlquack_rules::conversion::models::{
-    ColumnSpec, ConversionOptions, FunctionLanguage, FunctionReturns, FunctionSpec, Schema,
+use sqlquack_rules::conversion::models::ConversionOptions;
+use sqlquack_semantics::types::models::{
+    ColumnSpec, FunctionLanguage, FunctionReturns, FunctionSpec, Schema,
 };
 use sqlquack_snowflake::typing::main::cast_target::cast_target;
 

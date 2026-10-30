@@ -3,7 +3,7 @@
 use std::collections::{BTreeMap, BTreeSet};
 use std::path::PathBuf;
 
-use sqlquack_rules::conversion::models::{ColumnSpec, Schema};
+use sqlquack_semantics::types::models::{ColumnSpec, Schema};
 
 use crate::census::_helpers::corpus::model_relation;
 use crate::census::_helpers::inspect::FileCensus;

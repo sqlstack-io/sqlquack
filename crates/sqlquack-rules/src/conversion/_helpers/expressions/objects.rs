@@ -2,6 +2,7 @@
 
 use serde_json::Value;
 use sqlquack_core::classification::models::Construct;
+use sqlquack_core::refusals::main::outside_conditions::outside_conditions;
 use sqlquack_core::refusals::models::Refusal;
 use sqlquack_duckdb::blocks::main::string_literal::string_literal;
 use sqlquack_duckdb::semi_structured::constants::{JSON_FIDELITY, VARIANT_TYPED_VALUES};
@@ -21,7 +22,7 @@ use crate::conversion::_helpers::support::divergence::diverge;
 use crate::conversion::_helpers::support::scope::{Context, Emitted, Literal, VariantRoot};
 use crate::conversion::_helpers::support::site::Site;
 use crate::conversion::_helpers::support::tree::{
-    node_construct, node_kind, outside_conditions, payload_object, require_understood,
+    node_construct, node_kind, payload_object, require_understood,
 };
 use crate::conversion::constants::{
     KEEP_NULL_CONSTRUCTOR, MICROSECOND_DIGITS, OBJECT_CONSTANT_KIND, OBJECT_CONSTRUCT_RULE,

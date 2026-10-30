@@ -5,7 +5,7 @@ use std::path::Path;
 
 use serde::Deserialize;
 use sqlquack_core::provenance::models::ProvenanceLog;
-use sqlquack_rules::conversion::models::{
+use sqlquack_semantics::types::models::{
     ColumnSpec, FunctionLanguage, FunctionReturns, FunctionSpec, Schema,
 };
 use sqlquack_snowflake::typing::main::cast_target::cast_target;

@@ -13,7 +13,8 @@ use sqlquack_evidence::constants::{INPUT_RELATION, ORDINAL_COLUMN};
 use sqlquack_evidence::verify::models::Conversion;
 use sqlquack_evidence::verify::types::CaseConverter;
 use sqlquack_rules::catalogue::main::builtin_catalogue::builtin_catalogue;
-use sqlquack_rules::conversion::models::{ConversionOptions, Converted, Fixture, Schema};
+use sqlquack_rules::conversion::models::{ConversionOptions, Converted, Fixture};
+use sqlquack_semantics::types::models::Schema;
 
 use crate::analysis::_helpers::case_functions::case_functions;
 use crate::analysis::constants::STATEMENT_REFUSAL;

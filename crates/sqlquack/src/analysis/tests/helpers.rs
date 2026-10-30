@@ -11,9 +11,9 @@ use sqlquack_policy::policy::constants::POLICY_FILE_NAME;
 use sqlquack_policy::policy::main::load_policy::load_policy;
 use sqlquack_rules::catalogue::main::builtin_catalogue::builtin_catalogue;
 use sqlquack_rules::catalogue::models::{NotExpressibleDeclaration, RuleCatalogue};
-use sqlquack_rules::conversion::models::{
-    ColumnSpec, ConversionBudget, ConversionOptions, Converted, FunctionLanguage, FunctionReturns,
-    FunctionSpec, Schema,
+use sqlquack_rules::conversion::models::{ConversionBudget, ConversionOptions, Converted};
+use sqlquack_semantics::types::models::{
+    ColumnSpec, FunctionLanguage, FunctionReturns, FunctionSpec, Schema,
 };
 use sqlquack_snowflake::typing::models::SnowflakeType;
 

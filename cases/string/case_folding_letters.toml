@@ -18,3 +18,20 @@ rows = [
 query = "SELECT REGEXP_LIKE(s, 's', 'i') AS like_s, REGEXP_LIKE(s, 'k', 'i') AS like_k, s ILIKE 's' AS ilike_s, s ILIKE 'k' AS ilike_k, REGEXP_SUBSTR(s, '[a-z]', 1, 1, 'i') AS letter, REGEXP_COUNT(s, 'S', 1, 'i') AS count_s FROM input ORDER BY ordinal"
 order = "ordered"
 tags = ["null", "empty", "whitespace", "unicode"]
+
+[[case]]
+id = "case_insensitive_like_long_s_and_kelvin"
+description = "REGEXP_LIKE and ILIKE only: the long s (U+017F) and the Kelvin sign (U+212A), which Unicode case folding maps to s and k, against s and k matched case-insensitively."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'ſ'"],
+  ["'K'"],
+  ["'S'"],
+  ["'k'"],
+  ["''"],
+  ["' '"],
+  ["NULL"],
+]
+query = "SELECT REGEXP_LIKE(s, 's', 'i') AS like_s, REGEXP_LIKE(s, 'k', 'i') AS like_k, s ILIKE 's' AS ilike_s, s ILIKE 'k' AS ilike_k, s ILIKE '%S%' AS ilike_any_s, REGEXP_SUBSTR(s, '[a-z]', 1, 1, 'i') AS letter FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "empty", "whitespace", "unicode"]

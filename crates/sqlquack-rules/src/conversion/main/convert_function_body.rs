@@ -12,10 +12,9 @@ use crate::conversion::_helpers::queries::function_body::{
 use crate::conversion::_helpers::support::locations::Locator;
 use crate::conversion::_helpers::support::scope::Context;
 use crate::conversion::_helpers::support::tree::strip_positions;
-use crate::conversion::_helpers::support::typed_leaves::TypedLeaves;
-use crate::conversion::models::{
-    ConversionOptions, ConvertedFunction, FunctionLanguage, FunctionReturns, FunctionSpec, Schema,
-};
+use crate::conversion::models::{ConversionOptions, ConvertedFunction};
+use sqlquack_semantics::types::models::TypedLeaves;
+use sqlquack_semantics::types::models::{FunctionLanguage, FunctionReturns, FunctionSpec, Schema};
 
 /// The macro body of a SQL function; `query` is its body, a scalar's wrapped as one CAST column.
 pub fn convert_function_body(

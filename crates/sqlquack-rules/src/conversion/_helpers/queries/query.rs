@@ -3,6 +3,9 @@
 use serde_json::Value;
 use sqlquack_core::provenance::constants::QUERY_CONSTRUCT;
 use sqlquack_core::provenance::models::ShapeArgument;
+use sqlquack_core::refusals::main::missing::missing;
+use sqlquack_core::refusals::main::outside_conditions::outside_conditions;
+use sqlquack_core::refusals::main::unresolved::unresolved;
 use sqlquack_core::refusals::models::Refusal;
 use sqlquack_duckdb::blocks::main::quoted_identifier::quoted_identifier;
 use sqlquack_snowflake::typing::models::SnowflakeType;
@@ -16,15 +19,17 @@ use crate::conversion::_helpers::queries::sources::convert_from;
 use crate::conversion::_helpers::support::scope::{Context, Emitted, Scope};
 use crate::conversion::_helpers::support::site::{Placement, Site};
 use crate::conversion::_helpers::support::tree::{
-    Payload, field, flag, identifier_name, list, missing, node_construct, node_kind,
-    outside_conditions, payload_object, require_understood, unresolved,
+    Payload, field, flag, identifier_name, list, node_construct, node_kind, payload_object,
+    require_understood,
 };
 use crate::conversion::constants::DUPLICATE_VARIANTS;
 use crate::conversion::constants::{
     ALIAS, COMMENT, COMMON_TABLE, DISTINCT, GROUP_BY, HAVING, QUALIFY, SELECT, STAR,
     VARIANT_HELD_UNREAD, WHERE,
 };
-use crate::conversion::models::ColumnSpec;
+use sqlquack_semantics::dialects::constants::SNOWFLAKE_TO_DUCKDB;
+use sqlquack_semantics::scopes::main::star_relations::star_relations;
+use sqlquack_semantics::types::models::ColumnSpec;
 
 /// The SELECT clauses this rule converts; anything else set on the node is refused.
 const SELECT_FIELDS: &[&str] = &[
@@ -379,7 +384,7 @@ pub(crate) fn star(
                 .to_owned(),
         ));
     }
-    let relations = site.scope.star_relations(qualifier.as_deref())?;
+    let relations = star_relations(site.scope, qualifier.as_deref(), SNOWFLAKE_TO_DUCKDB)?;
     let read: Vec<&String> = relations
         .iter()
         .flat_map(|relation| &relation.columns)

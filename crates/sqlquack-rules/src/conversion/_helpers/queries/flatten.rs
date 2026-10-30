@@ -2,6 +2,8 @@
 
 use serde_json::Value;
 use sqlquack_core::classification::models::Construct;
+use sqlquack_core::refusals::main::missing::missing;
+use sqlquack_core::refusals::main::outside_conditions::outside_conditions;
 use sqlquack_core::refusals::models::Refusal;
 use sqlquack_duckdb::blocks::main::quoted_identifier::quoted_identifier;
 use sqlquack_duckdb::semi_structured::constants::JSON_FIDELITY;
@@ -12,14 +14,15 @@ use crate::conversion::_helpers::expressions::held::read_json;
 use crate::conversion::_helpers::expressions::scalar::convert_held;
 use crate::conversion::_helpers::queries::split_to_table::{SPLIT_TO_TABLE_NAME, lateral_split};
 use crate::conversion::_helpers::support::divergence::diverge;
-use crate::conversion::_helpers::support::scope::{Context, Scope, ScopeRelation};
+use crate::conversion::_helpers::support::scope::{Context, Scope};
 use crate::conversion::_helpers::support::site::{Placement, Site};
 use crate::conversion::_helpers::support::tree::{
-    Payload, field, function_construct, identifier_name, list, missing, node_construct,
-    outside_conditions, payload_object, require_understood,
+    Payload, field, function_construct, identifier_name, list, node_construct, payload_object,
+    require_understood,
 };
 use crate::conversion::constants::{FLATTEN_COLUMNS, FLATTEN_RULE};
-use crate::conversion::models::{ColumnSpec, Holding};
+use sqlquack_semantics::scopes::models::ScopeRelation;
+use sqlquack_semantics::types::models::{ColumnSpec, Holding};
 
 /// The name of the table function LATERAL converts.
 const FLATTEN_NAME: &str = "FLATTEN";

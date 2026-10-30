@@ -1,6 +1,7 @@
 //! Timestamp literals and casts between DATE and timestamps.
 
 use sqlquack_core::classification::models::Construct;
+use sqlquack_core::refusals::main::outside_conditions::outside_conditions;
 use sqlquack_core::refusals::models::Refusal;
 use sqlquack_duckdb::blocks::constants::SUBMICRO_MESSAGE;
 use sqlquack_duckdb::blocks::main::cast::cast;
@@ -14,7 +15,7 @@ use sqlquack_snowflake::typing::models::SnowflakeType;
 
 use crate::conversion::_helpers::support::divergence::diverge;
 use crate::conversion::_helpers::support::scope::{Context, Literal};
-use crate::conversion::_helpers::support::tree::outside_conditions;
+
 use crate::conversion::constants::{
     HOURS_PER_DAY, MAX_FRACTION_DIGITS, MAX_OFFSET_HOURS, MICROSECOND_DIGITS, MINUTES_PER_HOUR,
     NANOSECOND_RANGE_END, NANOSECOND_RANGE_START, OFFSET_WITH_COLON, OFFSET_WITHOUT_COLON,

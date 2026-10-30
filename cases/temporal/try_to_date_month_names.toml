@@ -167,3 +167,37 @@ rows = [
 ]
 expression = "TRY_TO_DATE(s, 'MMMM DD YYYY')"
 tags = ["invalid", "boundary"]
+
+[[case]]
+id = "try_to_date_dd_mon_yyyy_space_runs"
+description = "TRY_TO_DATE with DD MON YYYY: runs of spaces longer than recorded around the text and between its fields, and doubled spaces on both sides of the month."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'   05 Mar 2024'"],
+  ["'05 Mar 2024   '"],
+  ["'  05 Mar 2024'"],
+  ["'05 Mar 2024  '"],
+  ["'05  Mar  2024'"],
+  ["'05   Mar 2024'"],
+  ["'05 Mar   2024'"],
+  ["'05Mar  2024'"],
+  ["'05  Mar2024'"],
+]
+expression = "TRY_TO_DATE(s, 'DD MON YYYY')"
+tags = ["whitespace", "boundary"]
+
+[[case]]
+id = "try_to_date_mmmm_dd_yyyy_space_runs"
+description = "TRY_TO_DATE with MMMM DD YYYY: runs of spaces longer than recorded between its fields and after the text, and doubled spaces on both sides of the day."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'March   05   2024'"],
+  ["'March   05 2024'"],
+  ["'March 05   2024'"],
+  ["'March  05  2024'"],
+  ["'March 05 2024  '"],
+  ["'March 05 2024   '"],
+  ["'   March 05 2024'"],
+]
+expression = "TRY_TO_DATE(s, 'MMMM DD YYYY')"
+tags = ["whitespace", "boundary"]

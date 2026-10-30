@@ -2,6 +2,7 @@
 
 use serde_json::Value;
 use sqlquack_core::classification::models::Construct;
+use sqlquack_core::refusals::main::outside_conditions::outside_conditions;
 use sqlquack_core::refusals::models::Refusal;
 use sqlquack_duckdb::blocks::main::string_literal::string_literal;
 use sqlquack_duckdb::text::constants::{
@@ -17,7 +18,7 @@ use crate::conversion::_helpers::support::divergence::diverge;
 use crate::conversion::_helpers::support::scope::{Emitted, Literal};
 use crate::conversion::_helpers::support::site::Site;
 use crate::conversion::_helpers::support::tree::{
-    field, flag, node_construct, node_kind, outside_conditions, payload_object, require_understood,
+    field, flag, node_construct, node_kind, payload_object, require_understood,
 };
 use crate::conversion::constants::{
     ILIKE_FOLDING, INFIX_NEGATION, LENGTH_TYPE, LIKE, LIKE_WILDCARDS, NEGATED_FACET, NO_QUANTIFIER,
@@ -326,8 +327,9 @@ pub(crate) fn like(kind: &str, payload: &Value, site: Site<'_>) -> Result<Emitte
         }
         let pattern = match kind {
             ILIKE_KIND => {
-                folded_pattern(&text_literal(pattern_node, &construct, site)?, &construct)
-                    .map(|folded| string_literal(&folded, log))?
+                let literal = text_literal(pattern_node, &construct, site)?;
+                escape_kept(&literal, escape_character, &construct)?;
+                folded_pattern(&literal, &construct).map(|folded| string_literal(&folded, log))?
             }
             _ => text_operand(pattern_node, &construct, site)?,
         };
@@ -721,4 +723,21 @@ fn unfolded(character: char) -> bool {
     UNFOLDED_LETTERS
         .iter()
         .any(|(first, last)| (*first..=*last).contains(&point))
+}
+
+/// Refuses an ILIKE escape that folding or lower-casing the pattern could create or remove.
+fn escape_kept(pattern: &str, escape: Option<char>, construct: &Construct) -> Result<(), Refusal> {
+    let Some(escape) = escape else {
+        return Ok(());
+    };
+    let folded = pattern.contains(LONG_S);
+    let lowered = !pattern.is_ascii() && !escape.to_lowercase().eq([escape]);
+    match folded || lowered {
+        true => Err(outside_conditions(
+            construct.clone(),
+            "an ILIKE pattern with an ESCAPE that folding or lower-casing the pattern changes"
+                .to_owned(),
+        )),
+        false => Ok(()),
+    }
 }

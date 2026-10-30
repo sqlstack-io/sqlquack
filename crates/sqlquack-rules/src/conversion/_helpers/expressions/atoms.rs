@@ -1,6 +1,8 @@
 //! Columns, literals, parentheses, negation and scalar subqueries.
 
 use serde_json::Value;
+use sqlquack_core::refusals::main::missing::missing;
+use sqlquack_core::refusals::main::outside_conditions::outside_conditions;
 use sqlquack_core::refusals::models::Refusal;
 use sqlquack_duckdb::blocks::main::cast::cast;
 use sqlquack_duckdb::blocks::main::string_literal::string_literal;
@@ -15,16 +17,16 @@ use crate::conversion::_helpers::support::collecting::{
     collecting, guessed, opaque_in_scope, placeholder,
 };
 use crate::conversion::_helpers::support::divergence::diverge;
-use crate::conversion::_helpers::support::scope::{Emitted, Literal};
+use crate::conversion::_helpers::support::scope::{Emitted, Literal, resolve};
 use crate::conversion::_helpers::support::site::Site;
 use crate::conversion::_helpers::support::tree::{
-    LITERAL_NUMBER, LITERAL_STRING, field, identifier_name, missing, node_construct,
-    outside_conditions, payload_object, require_understood,
+    LITERAL_NUMBER, LITERAL_STRING, field, identifier_name, node_construct, payload_object,
+    require_understood,
 };
 use crate::conversion::constants::{
     COLUMN, COMMENT, CONSTANT_LITERAL, NEGATE, NUMBER_LITERAL, PARENTHESES, SCALAR_SUBQUERY,
 };
-use crate::conversion::models::Holding;
+use sqlquack_semantics::types::models::Holding;
 
 /// A column reference.
 pub(crate) fn column(payload: &Value, site: Site<'_>) -> Result<Emitted, Refusal> {
@@ -35,10 +37,7 @@ pub(crate) fn column(payload: &Value, site: Site<'_>) -> Result<Emitted, Refusal
     let name = identifier_name(field(payload, "name", &construct)?)
         .ok_or_else(|| missing(construct.clone(), "a column has no name".to_owned()))?;
     let qualifier = payload.get("table").and_then(identifier_name);
-    match site
-        .scope
-        .resolve(qualifier.as_deref(), &name, site.context.log)
-    {
+    match resolve(site.scope, qualifier.as_deref(), &name, site.context.log) {
         Ok(emitted) => {
             site.context
                 .typed

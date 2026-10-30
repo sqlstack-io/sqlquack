@@ -32,12 +32,16 @@ a parameter of every entry point; Snowflake is the only one implemented.
 | `sqlquack-polyglot-check` | Development only: proves `sqlquack-syntax` parses exactly as polyglot does, on every corpus. |
 | `sqlquack-core` | Parsing with complexity guards, construct classification, refusals and provenance. |
 | `sqlquack-snowflake` | The Snowflake typing layer. Polyglot leaves many Snowflake expressions untyped, so exact types (`NUMBER(p, s)`, timestamp kinds, semi-structured values) are computed here. |
+| `sqlquack-semantics` | SQL semantics apart from conversion: dialect profiles (Snowflake and DuckDB), relation and column name resolution in query scopes, column types with the marks VARIANT values carry, and lineage. It builds without the conversion, DuckDB and evidence crates. |
 | `sqlquack-rules` | The conversion rules, their type conditions, and declared refusals. |
 | `sqlquack-duckdb` | DuckDB building blocks shared by rules, and DuckDB's own parse-and-bind check of every converted statement. |
 | `sqlquack-policy` | The policy file `sqlquack.toml`: schema, validation and type-pattern matching. |
 | `sqlquack-compare` | The strict comparator between a recorded result and a DuckDB replay or a fresh recording. |
 | `sqlquack-evidence` | Cases, case hashes, pending files, stored results, DuckDB replay, verification and audits. |
 | `sqlquack` | The `sqlquack` command line and the library entry points: the pipeline, the census, the index and the evidence commands. |
+
+Fensu layer targets keep the rules out of every crate but the command line ones, and keep the
+conversion, DuckDB and evidence crates out of syntax, core, typing and semantics.
 
 DuckDB is pinned exactly (`duckdb = "=1.20000.0"`, DuckDB v2.0.0). Its build script downloads the
 matching prebuilt `libduckdb`, so binaries are run with `cargo run`, which sets the library path.
@@ -132,8 +136,9 @@ Conversion works on the parsed tree, statement by statement, in three layers:
   decimal division rounding half away from zero, NULL-propagating concatenation, explicit NULL
   ordering, or text conversions that accept only spellings Snowflake is recorded to read.
 - **Rules** (`sqlquack-rules`): one rule per construct family, each stating the type conditions it
-  needs and refusing outside them. Names resolve against a schema of typed relations and the
-  statement's CTEs; anything unresolved is refused.
+  needs and refusing outside them. Names resolve through `sqlquack-semantics` against a schema
+  of typed relations and the statement's CTEs, as Snowflake reads them and refusing names DuckDB
+  cannot tell apart; anything unresolved is refused.
 
 DuckDB parses and binds the emitted SQL as a final check.
 

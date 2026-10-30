@@ -2,6 +2,8 @@
 
 use serde_json::Value;
 use sqlquack_core::classification::models::Construct;
+use sqlquack_core::refusals::main::missing::missing;
+use sqlquack_core::refusals::main::outside_conditions::outside_conditions;
 use sqlquack_core::refusals::models::Refusal;
 use sqlquack_duckdb::blocks::main::cast::cast;
 use sqlquack_duckdb::blocks::main::quoted_identifier::quoted_identifier;
@@ -13,14 +15,15 @@ use crate::conversion::_helpers::queries::query::{
     ConvertedQuery, QueryRequest, convert_query, convert_with,
 };
 use crate::conversion::_helpers::support::divergence::require_widening_range;
-use crate::conversion::_helpers::support::scope::{Context, Emitted, Scope, ScopeRelation};
+use crate::conversion::_helpers::support::scope::{Context, Emitted, Scope};
 use crate::conversion::_helpers::support::site::{Placement, Site};
 use crate::conversion::_helpers::support::tree::{
-    field, flag, missing, node_construct, outside_conditions, payload_object, require_understood,
+    field, flag, node_construct, payload_object, require_understood,
 };
 use crate::conversion::constants::DUPLICATE_VARIANTS;
 use crate::conversion::constants::{SEMI_STRUCTURED_HOLDING, SET_OPERATION, UNION_BY_NAME};
-use crate::conversion::models::{ColumnSpec, Holding};
+use sqlquack_semantics::scopes::models::ScopeRelation;
+use sqlquack_semantics::types::models::{ColumnSpec, Holding};
 
 /// The relation name for the result of a set operation that is then ordered or limited.
 const SET_RESULT: &str = "_SET";

@@ -2,6 +2,8 @@
 
 use serde_json::Value;
 use sqlquack_core::classification::models::Construct;
+use sqlquack_core::refusals::main::missing::missing;
+use sqlquack_core::refusals::main::outside_conditions::outside_conditions;
 use sqlquack_core::refusals::models::Refusal;
 use sqlquack_duckdb::blocks::main::quoted_identifier::quoted_identifier;
 use sqlquack_duckdb::blocks::main::string_literal::string_literal;
@@ -10,13 +12,12 @@ use sqlquack_snowflake::typing::models::SnowflakeType;
 
 use crate::conversion::_helpers::expressions::scalar::convert_expression;
 use crate::conversion::_helpers::queries::flatten::Flattened;
-use crate::conversion::_helpers::support::scope::{Context, Literal, Scope, ScopeRelation};
+use crate::conversion::_helpers::support::scope::{Context, Literal, Scope};
 use crate::conversion::_helpers::support::site::{Placement, Site};
-use crate::conversion::_helpers::support::tree::{
-    Payload, function_construct, list, missing, outside_conditions,
-};
+use crate::conversion::_helpers::support::tree::{Payload, function_construct, list};
 use crate::conversion::constants::{SPLIT_TO_TABLE_COLUMNS, SPLIT_TO_TABLE_RULE};
-use crate::conversion::models::ColumnSpec;
+use sqlquack_semantics::scopes::models::ScopeRelation;
+use sqlquack_semantics::types::models::ColumnSpec;
 
 /// The name of the table function this module converts.
 pub(crate) const SPLIT_TO_TABLE_NAME: &str = "SPLIT_TO_TABLE";

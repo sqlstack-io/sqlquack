@@ -1,6 +1,9 @@
 //! Pieces of a SQL function body's conversion: type checks, the parameters join and DuckDB's check.
 
+use crate::conversion::_helpers::support::typed_leaves::checked;
 use sqlquack_core::provenance::models::ProvenanceLog;
+use sqlquack_core::refusals::main::missing::missing;
+use sqlquack_core::refusals::main::outside_conditions::outside_conditions;
 use sqlquack_core::refusals::models::Refusal;
 use sqlquack_duckdb::blocks::main::quoted_identifier::quoted_identifier;
 use sqlquack_duckdb::checking::main::check_printed::check_printed;
@@ -9,12 +12,13 @@ use sqlquack_snowflake::typing::models::SnowflakeType;
 
 use crate::conversion::_helpers::expressions::project_functions::held_type;
 use crate::conversion::_helpers::queries::query::convert_query;
-use crate::conversion::_helpers::support::scope::{Context, Scope, ScopeRelation};
-use crate::conversion::_helpers::support::tree::{missing, node_construct, outside_conditions};
+use crate::conversion::_helpers::support::scope::{Context, Scope};
+use crate::conversion::_helpers::support::tree::node_construct;
 use crate::conversion::constants::{
     BODY_ALIAS, NO_PARAMETERS_COLUMN, PARAMETERS_RELATION, VARIANT_HELD_UNREAD,
 };
-use crate::conversion::models::{ColumnSpec, FunctionReturns, FunctionSpec, Schema};
+use sqlquack_semantics::scopes::models::ScopeRelation;
+use sqlquack_semantics::types::models::{ColumnSpec, FunctionReturns, FunctionSpec, Schema};
 
 /// The body `tree` over the function's parameters, checked for typed leaves compared by text.
 pub(crate) fn converted_body(
@@ -29,9 +33,10 @@ pub(crate) fn converted_body(
         }],
         None,
     );
-    context
-        .typed
-        .checked(convert_query(tree, Some(&parameters), context, true))
+    checked(
+        context.typed,
+        convert_query(tree, Some(&parameters), context, true),
+    )
 }
 
 /// Refuses a body whose columns differ from the declared types or are VARIANT-held.

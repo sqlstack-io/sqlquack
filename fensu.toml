@@ -12,3 +12,43 @@ tests = []
 tooling = ["crates/sqlquack-polyglot-check"]
 rule_packs = ["rust"]
 select = ["FPRS"]
+
+# Layer: only the command-line crates may depend on the conversion rules.
+[targets.rust_rules_layer]
+analyzer = "rust"
+roots = ["crates"]
+tests = []
+tooling = ["crates/sqlquack", "crates/sqlquack-polyglot-check"]
+rule_packs = ["rust"]
+select = ["FPRSL301"]
+
+[targets.rust_rules_layer.rule_options.FPRSL301]
+forbidden_packages = ["sqlquack-rules"]
+
+# Layer: syntax, core, Snowflake typing and semantics build without conversion, DuckDB or evidence.
+[targets.rust_analysis_layer]
+analyzer = "rust"
+roots = ["crates"]
+tests = []
+tooling = [
+  "crates/sqlquack",
+  "crates/sqlquack-polyglot-check",
+  "crates/sqlquack-rules",
+  "crates/sqlquack-duckdb",
+  "crates/sqlquack-evidence",
+  "crates/sqlquack-compare",
+  "crates/sqlquack-policy",
+]
+rule_packs = ["rust"]
+select = ["FPRSL301"]
+
+[targets.rust_analysis_layer.rule_options.FPRSL301]
+forbidden_packages = [
+  "sqlquack",
+  "sqlquack-rules",
+  "sqlquack-duckdb",
+  "sqlquack-evidence",
+  "sqlquack-compare",
+  "sqlquack-policy",
+  "duckdb",
+]

@@ -143,9 +143,39 @@ fn given_decoded_or_parsed_values_when_converting_then_they_read_as_recorded() {
             expected_outcome: Err("no recording shows"),
         },
         FirstValueTestCase {
+            description: "an ILIKE pattern holding the long s with an ESCAPE is refused",
+            sql: "SELECT 'sabc' ILIKE '\u{17f}%' ESCAPE 's' AS v",
+            expected_outcome: Err("folding or lower-casing"),
+        },
+        FirstValueTestCase {
+            description: "a non-ASCII ILIKE pattern with an upper-case letter ESCAPE is refused",
+            sql: "SELECT 'S%\u{e9}' ILIKE 'S%\u{e9}' ESCAPE 'S' AS v",
+            expected_outcome: Err("folding or lower-casing"),
+        },
+        FirstValueTestCase {
             description: "ILIKE still folds recorded non-ASCII letters",
             sql: "SELECT '\u{c9}t\u{17f}' ILIKE '\u{e9}TS' AS v",
             expected_outcome: Ok("true"),
+        },
+        FirstValueTestCase {
+            description: "four leading spaces, longer than recorded, raise",
+            sql: "SELECT TRY_TO_DATE('    05 Mar 2024', 'DD MON YYYY') AS v",
+            expected_outcome: Err("date_text_spelling"),
+        },
+        FirstValueTestCase {
+            description: "doubled spaces on both sides of the month read the date, as recorded",
+            sql: "SELECT TRY_TO_DATE('05  Mar  2024', 'DD MON YYYY') AS v",
+            expected_outcome: Ok("2024-03-05"),
+        },
+        FirstValueTestCase {
+            description: "four spaces between MMMM fields, longer than recorded, raise",
+            sql: "SELECT TRY_TO_DATE('March    05 2024', 'MMMM DD YYYY') AS v",
+            expected_outcome: Err("date_text_spelling"),
+        },
+        FirstValueTestCase {
+            description: "a doubled space on one side of the month reads, as recorded",
+            sql: "SELECT TRY_TO_DATE('05  Mar 2024', 'DD MON YYYY') AS v",
+            expected_outcome: Ok("2024-03-05"),
         },
         FirstValueTestCase {
             description: "a month-name format in another case is refused",
