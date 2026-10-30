@@ -4,6 +4,7 @@ use serde_json::Value;
 use sqlquack_core::classification::models::Construct;
 use sqlquack_core::refusals::main::outside_conditions::outside_conditions;
 use sqlquack_core::refusals::models::Refusal;
+use sqlquack_duckdb::blocks::main::split_text_part::split_text_part;
 use sqlquack_duckdb::blocks::main::string_literal::string_literal;
 use sqlquack_duckdb::text::constants::{
     CASE_FOLDING, LONG_S, REGEXP_PATTERN_SYNTAX, UNFOLDED_LETTERS,
@@ -232,11 +233,9 @@ pub(crate) fn split_part(
         };
     }
     let part = integer_operand(part, construct, site)?;
+    let delimiter = string_literal(&delimiter, site.context.log);
     Ok(Emitted::new(
-        format!(
-            "split_part({text}, {}, (CASE WHEN {part} = 0 THEN 1 ELSE {part} END))",
-            string_literal(&delimiter, site.context.log)
-        ),
+        split_text_part(&text, (&delimiter, &part), site.context.log),
         SnowflakeType::Varchar,
     ))
 }

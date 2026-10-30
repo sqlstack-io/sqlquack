@@ -51,4 +51,7 @@ forbidden_packages = [
   "sqlquack-compare",
   "sqlquack-policy",
   "duckdb",
+  "libduckdb-sys",
+  "arrow",
+  "polyglot-sql",
 ]

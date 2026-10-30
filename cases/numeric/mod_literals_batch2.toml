@@ -399,3 +399,31 @@ rows = [
 ]
 expression = "x * 1.5e3"
 tags = ["null", "zero", "negative", "boundary"]
+
+[[case]]
+id = "mod_small_precision_types"
+description = "The type of % over one-digit integers alone, through UNION ALL, and as a GROUP BY key."
+columns = [{ name = "a", type = "NUMBER(1,0)" }]
+rows = [
+  ["1"],
+  ["2"],
+  ["7"],
+  ["NULL"],
+]
+query = "WITH m AS (SELECT a % 2 AS g FROM input UNION ALL SELECT a % 3 AS g FROM input) SELECT (SELECT MAX(a % 2) FROM input) AS alone, g, COUNT(*) AS n FROM m GROUP BY g ORDER BY g"
+order = "ordered"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "small_precision_arithmetic_types"
+description = "The types of %, MOD, +, -, * and negation over operands of one to three digits, with and without scale, over non-zero divisors."
+columns = [{ name = "a", type = "NUMBER(1,0)" }, { name = "d", type = "NUMBER(2,0)" }, { name = "c", type = "NUMBER(3,0)" }, { name = "b", type = "NUMBER(2,1)" }, { name = "f", type = "NUMBER(1,1)" }]
+rows = [
+  ["7", "-12", "305", "4.5", "0.3"],
+  ["-3", "99", "-7", "-0.5", "-0.9"],
+  ["1", "1", "1", "9.9", "0.1"],
+  ["NULL", "NULL", "NULL", "NULL", "NULL"],
+]
+query = "SELECT a % a AS aa, MOD(a, 5) AS a5, a % d AS ad, d % a AS da, d % d AS dd, a % c AS ac, c % a AS ca, b % b AS bb, a % b AS ab, b % a AS ba, f % f AS ff, a % f AS af, a + a AS sum_aa, a - a AS difference_aa, a * a AS product_aa, -a AS negated, f + f AS sum_ff FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "negative", "boundary"]

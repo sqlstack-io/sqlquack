@@ -31,6 +31,8 @@ pub const NUMBER_LITERAL: &str = "snowflake.number_literal";
 pub const NUMERIC_ADD_SUBTRACT: &str = "snowflake.numeric_add_subtract";
 /// `%` and MOD: `snowflake.numeric_modulo`.
 pub const NUMERIC_MODULO: &str = "snowflake.numeric_modulo";
+/// The fewest digits before the point Snowflake gives `%`, whatever its operands' own.
+pub const MODULO_MIN_LEADING_DIGITS: u32 = 2;
 /// `*`: `snowflake.numeric_multiply`.
 pub const NUMERIC_MULTIPLY: &str = "snowflake.numeric_multiply";
 /// `/`: `snowflake.numeric_divide`.

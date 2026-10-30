@@ -416,10 +416,13 @@ impl AggregateCall<'_> {
             | SnowflakeType::Time { .. }
             | SnowflakeType::TimestampNtz { .. }
             | SnowflakeType::TimestampTz { .. }
-            | SnowflakeType::TimestampLtz { .. } => Ok(Emitted::new(
-                format!("{kind}({}{}){}", self.distinct(), argument.sql, self.over),
-                argument.data_type,
-            )),
+            | SnowflakeType::TimestampLtz { .. } => Ok(Emitted {
+                utc_offset: argument.utc_offset,
+                ..Emitted::new(
+                    format!("{kind}({}{}){}", self.distinct(), argument.sql, self.over),
+                    argument.data_type,
+                )
+            }),
             SnowflakeType::Float => {
                 let _float = self.site.context.log.rule(MIN_MAX_FLOAT);
                 Ok(Emitted::new(

@@ -9,7 +9,7 @@ use sqlquack_core::provenance::models::ProvenanceLog;
 
 use crate::blocks::main::quoted_identifier::quoted_identifier;
 
-use crate::checking::constants::MACRO_PREFIX;
+use crate::checking::constants::{DISABLE_OPTIMIZER, MACRO_PREFIX};
 use crate::checking::errors::{CheckStage, PrintedSqlFailure};
 
 /// A DuckDB connection and the definition of each table created in it.
@@ -87,10 +87,7 @@ pub(crate) fn with_engine<T>(
     let mut engine = match ENGINE.with(|cell| cell.borrow_mut().take()) {
         Some(engine) => engine,
         None => Engine {
-            connection: Connection::open_in_memory().map_err(|error| PrintedSqlFailure {
-                stage: CheckStage::Engine,
-                message: error.to_string(),
-            })?,
+            connection: binding_connection()?,
             tables: BTreeMap::new(),
         },
     };
@@ -100,4 +97,17 @@ pub(crate) fn with_engine<T>(
         ENGINE.with(|cell| *cell.borrow_mut() = Some(engine));
     }
     result
+}
+
+/// An in-memory connection that parses and binds without optimising, which the check does not need.
+fn binding_connection() -> Result<Connection, PrintedSqlFailure> {
+    let engine_failure = |error: duckdb::Error| PrintedSqlFailure {
+        stage: CheckStage::Engine,
+        message: error.to_string(),
+    };
+    let connection = Connection::open_in_memory().map_err(engine_failure)?;
+    connection
+        .execute_batch(DISABLE_OPTIMIZER)
+        .map_err(engine_failure)?;
+    Ok(connection)
 }

@@ -38,11 +38,11 @@ use crate::conversion::constants::{
     TEXT_INITCAP, TEXT_MD5, TEXT_NUMBER_COMPARISON, TEXT_PAD, TEXT_POSITION, TEXT_REPLACE,
     TEXT_SEARCH_POSITION, TEXT_TO_TIME_RULE, TEXT_TO_TIMESTAMP_RULE, TEXT_TRANSLATE,
     TIME_ARITHMETIC, TIME_CAST, TIME_ZONE_CONVERSION, TIMESTAMP_FORMAT_RULE, TIMESTAMP_TIME_RULE,
-    TO_BOOLEAN_RULE, TO_DATE_TEMPORAL, TO_VARIANT_RULE, TRIM, UNION_BY_NAME, VALUE_AT_EXTREME_KEY,
-    VARIANT_CAST, VARIANT_COMPUTED_GET, VARIANT_EQUALITY, VARIANT_INSPECT, VARIANT_KIND_CAST,
-    VARIANT_KIND_RULE, VARIANT_PARTITION, VARIANT_PATH, VARIANT_TO_VARCHAR, VARIANT_TYPE_NAME,
-    VARIANT_TYPED_CHECK, WHERE, WINDOW_AGGREGATE, WINDOW_FIRST_LAST, WINDOW_OFFSET, WINDOW_RANKING,
-    ZERO_IF_NULL_RULE, ZONE_COLUMNS, ZONED_PARTS,
+    TO_BOOLEAN_RULE, TO_DATE_TEMPORAL, TO_VARIANT_RULE, TRIM, UNION_BY_NAME, UTC_OFFSET_ARITHMETIC,
+    VALUE_AT_EXTREME_KEY, VARIANT_CAST, VARIANT_COMPUTED_GET, VARIANT_EQUALITY, VARIANT_INSPECT,
+    VARIANT_KIND_CAST, VARIANT_KIND_RULE, VARIANT_PARTITION, VARIANT_PATH, VARIANT_TO_VARCHAR,
+    VARIANT_TYPE_NAME, VARIANT_TYPED_CHECK, WHERE, WINDOW_AGGREGATE, WINDOW_FIRST_LAST,
+    WINDOW_OFFSET, WINDOW_RANKING, ZERO_IF_NULL_RULE, ZONE_COLUMNS, ZONED_PARTS,
 };
 use crate::conversion::models::RuleSpec;
 
@@ -346,7 +346,7 @@ pub const RULES: &[RuleSpec] = &[
     RuleSpec {
         id: CAST_PARSED_TEXT,
         constructs: &["node:cast", "node:try_cast"],
-        conditions: "VARCHAR to NUMBER, FLOAT or BOOLEAN; only recorded spellings convert, around which spaces, tabs and line feeds are ignored: decimal text with optional sign, point and exponent (an exponent marker without digits counts as exponent 0, an exponent without mantissa as zero); nan, -nan, inf, +inf, -inf, infinity, -infinity in any case; true/false, t/f, yes/no, y/n, on/off, 1/0 in any case. Other text fails, or is NULL under TRY_CAST; FLOAT overflow is infinite under CAST and NULL under TRY_CAST. VARCHAR to DATE reads the spellings TO_DATE reads, and fails for others; TRY_CAST to DATE is NULL for empty text, text without an ASCII digit (words such as now or epoch, and other scripts' digits, as recorded), impossible values and the spellings recorded returning NULL, and raises for other spellings, relying on date_text_spelling.",
+        conditions: "VARCHAR to NUMBER, FLOAT or BOOLEAN; only recorded spellings convert, around which spaces, tabs and line feeds are ignored: decimal text with optional sign, point and exponent (an exponent marker without digits counts as exponent 0, an exponent without mantissa as zero); nan, -nan, inf, +inf, -inf, infinity, -infinity in any case of ASCII letters (spellings with other letters, such as a dotted capital I, are not read, as recorded); true/false, t/f, yes/no, y/n, on/off, 1/0 in any case. Other text fails, or is NULL under TRY_CAST; FLOAT overflow is infinite under CAST and NULL under TRY_CAST. VARCHAR to DATE reads the spellings TO_DATE reads, and fails for others; TRY_CAST to DATE is NULL for empty text, text without an ASCII digit (words such as now or epoch, and other scripts' digits, as recorded), impossible values and the spellings recorded returning NULL, and raises for other spellings, relying on date_text_spelling.",
         failures: &[
             FailureMode {
                 kind: ErrorKind::NumberText,
@@ -895,7 +895,7 @@ pub const RULES: &[RuleSpec] = &[
     RuleSpec {
         id: CAST_UTC_ZONED,
         constructs: &["node:cast"],
-        conditions: "A TIMESTAMP_TZ from CONVERT_TIMEZONE('UTC', x) of two arguments, whose offset is +00:00, cast to TIMESTAMP_NTZ or DATE, and a TIMESTAMP_LTZ, whose session zone is UTC, cast to TIMESTAMP_NTZ: its UTC wall time, then as a TIMESTAMP_NTZ cast; precision 7-9 relies on timestamp_range. Zoned values of unknown offset are refused, since DuckDB keeps instants without their offsets.",
+        conditions: "A TIMESTAMP_TZ known to hold the UTC offset, +00:00, cast to TIMESTAMP_NTZ or DATE: from CONVERT_TIMEZONE('UTC', x) of two arguments or a cast of a DATE or naive timestamp in the UTC session, carried through columns, CTEs, subqueries, set operations and stored models, and chosen by COALESCE, NVL, IFF, CASE, MIN, MAX, LAG, LEAD, FIRST_VALUE or LAST_VALUE from such values or NULL; and a TIMESTAMP_LTZ, whose session zone is UTC, cast to TIMESTAMP_NTZ: its UTC wall time, then as a TIMESTAMP_NTZ cast; precision 7-9 relies on timestamp_range. Zoned values of unknown offset are refused, since DuckDB keeps instants without their offsets.",
         failures: &[],
     },
     RuleSpec {
@@ -1077,7 +1077,7 @@ pub const RULES: &[RuleSpec] = &[
     RuleSpec {
         id: DECIMAL_MODULO,
         constructs: &["node:mod", "fn:MOD"],
-        conditions: "NUMBER operands; the result has the larger operand's digits before the point and the larger scale, with the dividend's sign. Where the operands' common type needs more than 38 digits, which DuckDB's `%` computes as a double, a whole-number divisor gives the exact remainder of the whole part plus the fraction, and other divisors refuse. A zero divisor raises division by zero. Not FLOAT operands.",
+        conditions: "NUMBER operands; the result has the larger operand's digits before the point, at least two, and the larger scale, with the dividend's sign. Where the operands' common type needs more than 38 digits, which DuckDB's `%` computes as a double, a whole-number divisor gives the exact remainder of the whole part plus the fraction, and other divisors refuse. A zero divisor raises division by zero. Not FLOAT operands.",
         failures: DIVISION_FAILURES,
     },
     RuleSpec {
@@ -1236,6 +1236,19 @@ pub const RULES: &[RuleSpec] = &[
         id: VARIANT_EQUALITY,
         constructs: &["node:eq", "node:neq", "node:in"],
         conditions: "= and <> of a VARIANT and a VARCHAR compare the VARIANT's text, as TO_VARCHAR writes it, with the text, so 1 equals '1' and true equals 'true', and JSON null is NULL; IN of a VARIANT and VARCHAR items likewise. = and <> of a VARIANT and an integer NUMBER are TRUE only for an equal integer, FALSE for other values, JSON null included, and raise json_fidelity for a fraction. = and <> of two JSON-held VARIANTs compare Snowflake's text of each, keys in byte order at every depth, so objects differing only in key order are equal, 1 and \"1\" or true and \"true\" differ, arrays compare in order, two JSON nulls are equal, and SQL NULL gives NULL. Refused for a VARIANT not proven free of DATEs and timestamps, built only from values without one, in a statement that puts one in a VARIANT or reads a model's VARIANT that may hold one, since Snowflake keeps its type and DuckDB writes it as text. A VARIANT read from a source table or schema relation is trusted to hold JSON values, relying on source_variant_json.",
+        failures: &[],
+    },
+    RuleSpec {
+        id: UTC_OFFSET_ARITHMETIC,
+        constructs: &[
+            "fn:DATE_TRUNC",
+            "fn:DATEADD",
+            "fn:TIMESTAMPADD",
+            "fn:DATEDIFF",
+            "fn:TIMEDIFF",
+            "fn:TIMESTAMPDIFF",
+        ],
+        conditions: "DATE_TRUNC and DATEADD of a TIMESTAMP_TZ known to hold the UTC offset, +00:00 (from CONVERT_TIMEZONE('UTC', x), a cast of a DATE or naive timestamp in the UTC session, or values chosen from such), computed on its UTC wall time and read back at +00:00, keeping its type; DATEDIFF of two such values from their UTC wall times. A UTC-offset value against a naive one, and zoned values of unknown offset, refuse.",
         failures: &[],
     },
     RuleSpec {

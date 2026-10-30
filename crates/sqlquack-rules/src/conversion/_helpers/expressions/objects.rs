@@ -215,6 +215,7 @@ pub(crate) fn as_json(
     context: &Context<'_>,
 ) -> Result<String, Refusal> {
     let sql = emitted.sql;
+    let utc_offset = emitted.utc_offset;
     match emitted.data_type {
         SnowflakeType::SemiStructured => Ok(sql),
         SnowflakeType::Null => Ok("CAST(NULL AS JSON)".to_owned()),
@@ -228,6 +229,15 @@ pub(crate) fn as_json(
             diverge(context, JSON_FIDELITY, construct)?;
             Ok(json_guarded(
                 &format!("CAST({sql} AS VARCHAR)"),
+                context.log,
+            ))
+        }
+        SnowflakeType::TimestampTz { .. } if utc_offset => {
+            diverge(context, VARIANT_TYPED_VALUES, construct)?;
+            context.typed.enter();
+            Ok(json_typed_text(
+                &sql,
+                TypedSource::TimestampLocal,
                 context.log,
             ))
         }

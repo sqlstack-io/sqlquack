@@ -100,6 +100,7 @@ pub(crate) fn resolve(
             held: column.holding,
             untainted: column.untainted,
             sourced: column.sourced,
+            utc_offset: column.utc_offset,
             ..Emitted::new(
                 format!(
                     "{}.{}",

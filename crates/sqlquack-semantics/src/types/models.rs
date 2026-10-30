@@ -31,6 +31,9 @@ pub struct ColumnSpec {
     /// Whether the column reads a source or schema VARIANT trusted to hold no typed leaf.
     #[serde(skip)]
     pub sourced: bool,
+    /// Whether a TIMESTAMP_TZ column's every value is known to hold the UTC offset, +00:00.
+    #[serde(skip_serializing_if = "std::ops::Not::not")]
+    pub utc_offset: bool,
 }
 
 impl ColumnSpec {
@@ -44,6 +47,7 @@ impl ColumnSpec {
             decimal_leaves: false,
             untainted: false,
             sourced: false,
+            utc_offset: false,
         }
     }
 }

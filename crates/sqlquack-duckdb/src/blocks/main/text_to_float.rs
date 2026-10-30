@@ -7,7 +7,7 @@ use crate::blocks::_helpers::text::{conversion_failure, once_bound, space_trimme
 use crate::blocks::constants::{DECIMAL_TEXT_PATTERN, NON_FINITE_FLOAT_WORDS, TEXT_TO_FLOAT};
 use crate::blocks::models::TextFailure;
 
-/// Text to a double; unrecorded spellings fail or are NULL when trying, as is overflow when trying.
+/// Text to a double; special-value words in ASCII only; other unrecorded text fails, or is NULL trying.
 pub fn text_to_float(sql: &str, failure: TextFailure, log: &ProvenanceLog) -> String {
     log.building_block(TEXT_TO_FLOAT);
     once_bound(sql, "float_text", |sql| read_float(sql, failure))
@@ -26,7 +26,10 @@ fn read_float(sql: &str, failure: TextFailure) -> String {
     let words: String = NON_FINITE_FLOAT_WORDS
         .iter()
         .map(|(word, duckdb)| {
-            format!(" WHEN lower({trimmed}) = '{word}' THEN CAST('{duckdb}' AS DOUBLE)")
+            format!(
+                " WHEN lower({trimmed}) = '{word}' AND strlen({trimmed}) = length({trimmed}) \
+                 THEN CAST('{duckdb}' AS DOUBLE)"
+            )
         })
         .collect();
     let overflow = match failure {

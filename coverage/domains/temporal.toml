@@ -258,6 +258,31 @@ arguments = [
 ]
 
 [[rule]]
+id = "rule.utc_offset_arithmetic"
+
+[[rule.form]]
+construct = "fn:DATE_TRUNC"
+arguments = [
+  { families = ["timestamp_tz"] },
+]
+
+[[rule.form]]
+construct = "fn:DATEADD"
+also = ["fn:TIMESTAMPADD"]
+arguments = [
+  { families = ["integer"] },
+  { families = ["timestamp_tz"] },
+]
+
+[[rule.form]]
+construct = "fn:DATEDIFF"
+also = ["fn:TIMEDIFF", "fn:TIMESTAMPDIFF", "node:date_diff"]
+arguments = [
+  { families = ["timestamp_tz"] },
+  { families = ["timestamp_tz"] },
+]
+
+[[rule]]
 id = "rule.zoned_parts"
 
 [[rule.form]]

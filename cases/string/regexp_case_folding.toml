@@ -1,0 +1,38 @@
+category = "string"
+construct = "fn:REGEXP_LIKE"
+session_profile = "utc-v1"
+
+[[case]]
+id = "regexp_i_unfolded_letters"
+description = "REGEXP_LIKE and REGEXP_SUBSTR with the i parameter over letters whose Unicode case folding differs from their lower case: micro sign, final sigma, Greek symbol variants, sharp s, dotted and dotless i, ligatures, Cyrillic and Cherokee variants."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'µ'"],
+  ["'μ'"],
+  ["'Μ'"],
+  ["'ς'"],
+  ["'σ'"],
+  ["'Σ'"],
+  ["'ϐ'"],
+  ["'β'"],
+  ["'ϑ'"],
+  ["'Θ'"],
+  ["'ß'"],
+  ["'ẞ'"],
+  ["'ss'"],
+  ["'İ'"],
+  ["'ı'"],
+  ["'I'"],
+  ["'ﬀ'"],
+  ["'FF'"],
+  ["'ᲀ'"],
+  ["'В'"],
+  ["'ꭰ'"],
+  ["'Ꭰ'"],
+  ["''"],
+  ["' '"],
+  ["NULL"],
+]
+query = "SELECT REGEXP_LIKE(s, 'μ', 'i') AS mu, REGEXP_LIKE(s, 'σ', 'i') AS sigma, REGEXP_LIKE(s, 'β', 'i') AS beta, REGEXP_LIKE(s, 'θ', 'i') AS theta, REGEXP_LIKE(s, 'ß', 'i') AS sharp_s, REGEXP_LIKE(s, 'ss', 'i') AS double_s, REGEXP_LIKE(s, 'i', 'i') AS i, REGEXP_LIKE(s, 'ı', 'i') AS dotless_i, REGEXP_LIKE(s, 'ff', 'i') AS ff, REGEXP_LIKE(s, 'в', 'i') AS ve, REGEXP_LIKE(s, 'Ꭰ', 'i') AS cherokee, REGEXP_SUBSTR(s, '[α-ω]', 1, 1, 'i') AS greek FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "empty", "whitespace", "unicode"]
