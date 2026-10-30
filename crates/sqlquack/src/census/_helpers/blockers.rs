@@ -11,17 +11,21 @@ use crate::census::_helpers::combinations::combinations;
 use crate::census::_helpers::corpus::model_relation;
 use crate::census::_helpers::inspect::FileCensus;
 use crate::census::constants::{
-    CYCLE_ROOT, MODEL_ROOT_PREFIX, RELATION_ROOT_PREFIX, UNKNOWN_RELATION_ROOT, UPSTREAM_MODEL_ROOT,
+    CYCLE_ROOT, MODEL_ROOT_PREFIX, RELATION_ROOT_PREFIX, UNKNOWN_RELATION_ROOT,
+    UPSTREAM_MODEL_ROOT, UPSTREAM_REFUSED_LABEL,
 };
-use crate::census::models::{BlockedFile, BlockerReport, RootBlocker, RootKey, UpstreamBlock};
+use crate::census::models::{
+    BlockedFile, BlockerReport, RootBlocker, RootKey, UpstreamBlock, UpstreamRefusedFile,
+};
+use crate::planning::models::PlanInput;
 
-/// What the census's refused files are blocked by, through the model graph of `files`.
+/// What the census's refused files are blocked by, through `files`' model graph, and that graph.
 pub(crate) fn blockers(
     files: &[PathBuf],
     censuses: &[FileCensus],
     schema: &Schema,
     names: bool,
-) -> BlockerReport {
+) -> (BlockerReport, PlanInput) {
     let graph = Graph::new(files, censuses, schema);
     let (mut own, mut roots) = graph.roots();
     let incomplete = graph.incomplete();
@@ -35,6 +39,29 @@ pub(crate) fn blockers(
         for keys in roots.iter_mut().chain(own.iter_mut()) {
             *keys = std::mem::take(keys).into_iter().map(unnamed).collect();
         }
+    }
+    let (reads, needs) = model_reads(files, censuses, schema);
+    let refused_upstream = upstream_refused(censuses, &reads);
+    let plan_input = PlanInput {
+        own: own.clone(),
+        needs,
+        reads,
+        parsed: censuses.iter().map(|census| census.parsed).collect(),
+        incomplete: incomplete.clone(),
+    };
+    let mut upstream_refused: Vec<UpstreamRefusedFile> = Vec::new();
+    for index in order
+        .iter()
+        .filter(|index| !refused_upstream[**index].is_empty())
+    {
+        let mut labels: Vec<String> = Vec::new();
+        for upstream in &refused_upstream[*index] {
+            labels.push(format!("{UPSTREAM_REFUSED_LABEL}{}", models[*upstream]));
+        }
+        upstream_refused.push(UpstreamRefusedFile {
+            model: models[*index].clone(),
+            labels,
+        });
     }
     let mut blocked: Vec<BlockedFile> = Vec::new();
     for index in order.into_iter().filter(|index| graph.refused[*index]) {
@@ -57,7 +84,7 @@ pub(crate) fn blockers(
             possibly_incomplete: incomplete[index],
         });
     }
-    BlockerReport {
+    let report = BlockerReport {
         single_root_files: blocked
             .iter()
             .filter(|file| file.roots.len() == 1 && !file.possibly_incomplete)
@@ -69,7 +96,9 @@ pub(crate) fn blockers(
         roots: ranking(&blocked),
         combinations: combinations(&blocked),
         files: blocked,
-    }
+        upstream_refused,
+    };
+    (report, plan_input)
 }
 
 /// The model graph: each file's own root refusals, and the refused models it reads.
@@ -221,6 +250,80 @@ impl Graph {
         }
         roots
     }
+}
+
+/// The models each file reads, and those among them neither converting nor typed by the schema.
+fn model_reads(
+    files: &[PathBuf],
+    censuses: &[FileCensus],
+    schema: &Schema,
+) -> (Vec<BTreeSet<usize>>, Vec<BTreeSet<usize>>) {
+    let mut by_relation: BTreeMap<String, usize> = BTreeMap::new();
+    let mut untyped: BTreeSet<usize> = BTreeSet::new();
+    let typed_relations: BTreeSet<String> =
+        schema.relations.keys().map(|known| folded(known)).collect();
+    for (index, file) in files.iter().enumerate() {
+        if let Some(relation) = model_relation(file) {
+            let typed = typed_relations.contains(&folded(&relation));
+            let census = &censuses[index];
+            if !typed && (!census.parsed || !census.refusal_categories.is_empty()) {
+                untyped.insert(index);
+            }
+            by_relation.entry(folded(&relation)).or_insert(index);
+        }
+    }
+    let models_of = |index: usize, relations: &BTreeSet<String>| {
+        let mut models: BTreeSet<usize> = BTreeSet::new();
+        for relation in relations {
+            if let Some(model) = by_relation.get(&folded(relation))
+                && *model != index
+            {
+                models.insert(*model);
+            }
+        }
+        models
+    };
+    let mut reads: Vec<BTreeSet<usize>> = Vec::with_capacity(censuses.len());
+    let mut needs: Vec<BTreeSet<usize>> = Vec::with_capacity(censuses.len());
+    for (index, census) in censuses.iter().enumerate() {
+        let read = models_of(index, &census.references);
+        needs.push(read.intersection(&untyped).copied().collect());
+        reads.push(read);
+    }
+    (reads, needs)
+}
+
+/// For each converted file, the refused models upstream of it; empty when it runs end to end.
+fn upstream_refused(censuses: &[FileCensus], reads: &[BTreeSet<usize>]) -> Vec<BTreeSet<usize>> {
+    let converted: Vec<bool> = censuses
+        .iter()
+        .map(|census| census.parsed && census.refusal_categories.is_empty())
+        .collect();
+    let mut refused_upstream: Vec<BTreeSet<usize>> = Vec::with_capacity(censuses.len());
+    for (index, is_converted) in converted.iter().enumerate() {
+        let mut refused: BTreeSet<usize> = BTreeSet::new();
+        if *is_converted {
+            refused.extend(
+                upstream_reads(index, reads)
+                    .into_iter()
+                    .filter(|model| !converted[*model]),
+            );
+        }
+        refused_upstream.push(refused);
+    }
+    refused_upstream
+}
+
+/// Every model upstream of `start` through the models each file reads, each once.
+fn upstream_reads(start: usize, reads: &[BTreeSet<usize>]) -> BTreeSet<usize> {
+    let mut seen: BTreeSet<usize> = BTreeSet::new();
+    let mut pending: Vec<usize> = reads[start].iter().copied().collect();
+    while let Some(index) = pending.pop() {
+        if index != start && seen.insert(index) {
+            pending.extend(reads[index].iter().copied());
+        }
+    }
+    seen
 }
 
 /// The root an unresolved relation stands for; none for a refused model, whose roots count instead.

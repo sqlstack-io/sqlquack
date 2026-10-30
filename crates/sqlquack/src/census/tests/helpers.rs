@@ -14,7 +14,9 @@ use crate::census::_helpers::timed::run_census_timed;
 use crate::census::main::render_census_text::render_census_text;
 use crate::census::models::CensusProgress;
 use crate::census::models::{CensusOptions, CensusReport};
-use crate::census::tests::test_types::{BlockerSummary, CensusSummary, ShopFile};
+use crate::census::tests::test_types::{
+    BlockerSummary, CensusSummary, PlanSummary, ShopFile, UpstreamSummary,
+};
 
 pub(crate) const SHOP: &[ShopFile] = &[
     ShopFile {
@@ -205,6 +207,30 @@ pub(crate) const TWO_BLOCKERS: &[ShopFile] = &[
     },
 ];
 
+/// A refused model, a reader of it, a reader of that reader, and a strict pair beside them.
+pub(crate) const UPSTREAM_CHAIN: &[ShopFile] = &[
+    ShopFile {
+        path: "fuzzy_names.sql",
+        contents: "SELECT customer_id, SOUNDEX(name) AS sound FROM __source(\"shop\", \"customers\")",
+    },
+    ShopFile {
+        path: "name_report.sql",
+        contents: "SELECT customer_id, UPPER(sound) AS sound FROM __ref(\"fuzzy_names\")",
+    },
+    ShopFile {
+        path: "name_summary.sql",
+        contents: "SELECT COUNT(*) AS customers FROM __ref(\"name_report\")",
+    },
+    ShopFile {
+        path: "customer_names.sql",
+        contents: "SELECT customer_id, name FROM __source(\"shop\", \"customers\")",
+    },
+    ShopFile {
+        path: "customer_report.sql",
+        contents: "SELECT COUNT(*) AS customers FROM __ref(\"customer_names\")",
+    },
+];
+
 pub(crate) const NOT_SQL: &[ShopFile] = &[ShopFile {
     path: "notes.txt",
     contents: "not SQL",
@@ -260,6 +286,7 @@ pub(crate) fn census_summary(files: &[ShopFile]) -> Result<CensusSummary, String
             chain_models: false,
             conversion: ConversionOptions::default(),
             names: false,
+            assume_supported: Vec::new(),
         },
         &CensusProgress::default(),
     )
@@ -311,6 +338,7 @@ pub(crate) fn blocker_summary_with(
             chain_models: true,
             conversion,
             names,
+            assume_supported: Vec::new(),
         },
         &CensusProgress::default(),
     )
@@ -361,6 +389,64 @@ pub(crate) fn blocker_summary_with(
     }
 }
 
+/// The census of `files`, the schema file also typing each model in `typed` as an id and a text.
+pub(crate) fn upstream_summary(files: &[ShopFile], typed: &[&str]) -> UpstreamSummary {
+    let directory = tempfile::tempdir().expect("temporary directory");
+    write_files(directory.path(), files);
+    let mut schema = Schema::default();
+    let id = ColumnSpec::new(
+        "CUSTOMER_ID",
+        SnowflakeType::Number {
+            precision: 38,
+            scale: 0,
+        },
+    );
+    schema.relations.insert(
+        "__SQLQUACK_RELATION__SHOP__CUSTOMERS".to_owned(),
+        vec![id.clone(), ColumnSpec::new("NAME", SnowflakeType::Varchar)],
+    );
+    for model in typed {
+        schema.relations.insert(
+            format!("__SQLQUACK_RELATION__{}", model.to_ascii_uppercase()),
+            vec![id.clone(), ColumnSpec::new("SOUND", SnowflakeType::Varchar)],
+        );
+    }
+    let run = run_census_timed(
+        &[directory.path().to_path_buf()],
+        &CensusOptions {
+            dialect: SourceDialect::Snowflake,
+            coverage_points: vec![1],
+            schema,
+            chain_models: true,
+            conversion: ConversionOptions::default(),
+            names: true,
+            assume_supported: Vec::new(),
+        },
+        &CensusProgress::default(),
+    )
+    .expect("the census runs");
+    let text = render_census_text(&run.report, 10);
+    UpstreamSummary {
+        convertible: run.report.refusals.convertible,
+        strict: run.report.refusals.convertible_strict,
+        labelled: run
+            .report
+            .blockers
+            .upstream_refused
+            .iter()
+            .map(|file| (file.model.clone(), file.labels.clone()))
+            .collect(),
+        refused: run
+            .report
+            .blockers
+            .files
+            .iter()
+            .map(|file| file.model.clone())
+            .collect(),
+        text_names_both: text.contains("convertible: strict") && text.contains("unit-testable"),
+    }
+}
+
 pub(crate) fn owned(models: &[&str]) -> Vec<String> {
     models.iter().map(|model| (*model).to_owned()).collect()
 }
@@ -395,6 +481,7 @@ pub(crate) fn placed_refusals(
             chain_models: false,
             conversion: ConversionOptions::default(),
             names,
+            assume_supported: Vec::new(),
         },
         &CensusProgress::default(),
     )
@@ -490,6 +577,7 @@ pub(crate) fn chained_divergences(files: &[ShopFile]) -> BTreeMap<String, usize>
             chain_models: true,
             conversion: conversion_options(&policy, false),
             names: true,
+            assume_supported: Vec::new(),
         },
         &CensusProgress::default(),
     )
@@ -497,4 +585,67 @@ pub(crate) fn chained_divergences(files: &[ShopFile]) -> BTreeMap<String, usize>
     .report
     .provenance
     .divergences
+}
+
+/// The plan of `files` with `assumed` supported, beside the census's own counts.
+pub(crate) fn plan_summary(files: &[ShopFile], assumed: &[&str]) -> PlanSummary {
+    let directory = tempfile::tempdir().expect("temporary directory");
+    write_files(directory.path(), files);
+    let mut schema = Schema::default();
+    schema.relations.insert(
+        "__SQLQUACK_RELATION__SHOP__CUSTOMERS".to_owned(),
+        vec![
+            ColumnSpec::new(
+                "CUSTOMER_ID",
+                SnowflakeType::Number {
+                    precision: 38,
+                    scale: 0,
+                },
+            ),
+            ColumnSpec::new("NAME", SnowflakeType::Varchar),
+        ],
+    );
+    let run = run_census_timed(
+        &[directory.path().to_path_buf()],
+        &CensusOptions {
+            dialect: SourceDialect::Snowflake,
+            coverage_points: vec![1],
+            schema,
+            chain_models: true,
+            conversion: ConversionOptions::default(),
+            names: true,
+            assume_supported: assumed
+                .iter()
+                .map(|construct| (*construct).to_owned())
+                .collect(),
+        },
+        &CensusProgress::default(),
+    )
+    .expect("the census runs");
+    let plan = &run.report.plan;
+    PlanSummary {
+        convertible: [
+            run.report.refusals.convertible,
+            run.report.refusals.convertible_strict,
+        ],
+        upper_bounds: [plan.unit_testable_upper_bound, plan.strict_upper_bound],
+        next: plan
+            .next
+            .iter()
+            .map(|next| (next.root.construct.clone(), next.files, next.sole))
+            .collect(),
+        steps: plan
+            .steps
+            .iter()
+            .map(|step| {
+                (
+                    step.roots
+                        .iter()
+                        .map(|root| root.construct.clone())
+                        .collect(),
+                    [step.unit_testable_upper_bound, step.strict_upper_bound],
+                )
+            })
+            .collect(),
+    }
 }

@@ -6,13 +6,14 @@ use std::time::Instant;
 
 use sqlquack_core::parsing::models::SourceDialect;
 
-use crate::census::constants::{COVERAGE_POINTS, SLOWEST_FILES};
+use crate::census::constants::{COVERAGE_POINTS, RULE_ID_PREFIX, SLOWEST_FILES};
 use crate::census::main::census_with_progress::census_with_progress;
 use crate::census::main::render_census_text::render_census_text;
 use crate::census::models::CensusOptions;
 use crate::cli::_helpers::evidence::divergence_options;
 use crate::cli::_helpers::schema::load_schema;
 use crate::cli::models::CensusArguments;
+use sqlquack_rules::catalogue::constants::RULES;
 
 pub(crate) fn census_command(
     arguments: &CensusArguments,
@@ -48,6 +49,16 @@ pub(crate) fn census_command(
             return ExitCode::FAILURE;
         }
     };
+    let assume_supported = match assumed_constructs(&arguments.assume_supported) {
+        Ok(constructs) => constructs,
+        Err(unknown) => {
+            let _ = writeln!(
+                stderr,
+                "sqlquack census: --assume-supported names unknown rule '{unknown}'"
+            );
+            return ExitCode::from(2);
+        }
+    };
     let options = CensusOptions {
         dialect,
         coverage_points: COVERAGE_POINTS.to_vec(),
@@ -55,6 +66,7 @@ pub(crate) fn census_command(
         chain_models: arguments.chain_models,
         conversion,
         names: arguments.names,
+        assume_supported,
     };
     let started = Instant::now();
     let _ = writeln!(stderr, "sqlquack census: reading SQL files…");
@@ -97,4 +109,25 @@ pub(crate) fn census_command(
         started.elapsed().as_secs_f64()
     );
     ExitCode::SUCCESS
+}
+
+/// The constructs `names` stand for: a rule's constructs for `rule.<id>`, else the construct key.
+fn assumed_constructs(names: &[String]) -> Result<Vec<String>, String> {
+    let mut constructs: Vec<String> = Vec::new();
+    for name in names {
+        if !name.starts_with(RULE_ID_PREFIX) {
+            constructs.push(name.clone());
+            continue;
+        }
+        let rule = RULES
+            .iter()
+            .find(|rule| rule.id == name)
+            .ok_or_else(|| name.clone())?;
+        constructs.extend(
+            rule.constructs
+                .iter()
+                .map(|construct| (*construct).to_owned()),
+        );
+    }
+    Ok(constructs)
 }

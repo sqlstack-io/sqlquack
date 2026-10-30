@@ -4,6 +4,7 @@ use std::fmt::Write;
 
 use crate::census::constants::PLACED_PER_FILE;
 use crate::census::models::{BlockedFile, BlockerReport, CensusReport, RefusalCount};
+use crate::planning::main::render_plan_text::render_plan_text;
 
 /// The report as text, listing at most `limit` constructs.
 pub fn render_census_text(report: &CensusReport, limit: usize) -> String {
@@ -35,14 +36,21 @@ pub fn render_census_text(report: &CensusReport, limit: usize) -> String {
     let _ = writeln!(
         text,
         "  files refused: missing rule {}, outside type conditions {}, unresolved name {}, \
-         not expressible {}, parse fidelity {}, conversion budget {}; convertible {}",
+         not expressible {}, parse fidelity {}, conversion budget {}",
         refusals.missing_rule,
         refusals.type_condition,
         refusals.unresolved_name,
         refusals.not_expressible,
         refusals.parse_fidelity,
         refusals.conversion_budget,
-        refusals.convertible
+    );
+    let _ = writeln!(
+        text,
+        "  convertible: strict {} (every model upstream converts too), unit-testable {} \
+         (the file's own SQL converts, reading the schema file's columns for {} upstream-refused)",
+        refusals.convertible_strict,
+        refusals.convertible,
+        report.blockers.upstream_refused.len()
     );
     for (divergence, files) in &report.provenance.divergences {
         let _ = writeln!(
@@ -52,6 +60,7 @@ pub fn render_census_text(report: &CensusReport, limit: usize) -> String {
     }
     render_refusals(&mut text, &refusals.by_construct, limit);
     render_blockers(&mut text, &report.blockers, limit);
+    render_plan_text(&mut text, &report.plan);
     let _ = writeln!(text);
     let _ = writeln!(text, "Convertible files as the top constructs get rules");
     let _ = writeln!(
@@ -154,6 +163,16 @@ fn render_blockers(text: &mut String, blockers: &BlockerReport, limit: usize) {
             combination.uncertain,
             roots.join(" + ")
         );
+    }
+    if !blockers.upstream_refused.is_empty() {
+        let _ = writeln!(text);
+        let _ = writeln!(
+            text,
+            "Unit-testable but not strict: files reading a model that does not convert (first {limit})"
+        );
+        for file in blockers.upstream_refused.iter().take(limit) {
+            let _ = writeln!(text, "  {}  {}", file.model, file.labels.join(", "));
+        }
     }
     let placed: Vec<&BlockedFile> = blockers
         .files

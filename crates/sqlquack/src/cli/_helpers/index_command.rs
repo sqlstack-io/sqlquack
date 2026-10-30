@@ -87,6 +87,7 @@ fn index(arguments: &IndexArguments) -> Result<ProvenanceIndex, String> {
             chain_models: arguments.chain_models,
             conversion,
             names: false,
+            assume_supported: Vec::new(),
         };
         let files = inspect_corpus(&corpus, &options).map_err(|error| error.to_string())?;
         records.extend(corpus_records(files));

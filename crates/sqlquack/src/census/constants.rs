@@ -66,8 +66,26 @@ pub const CYCLE_ROOT: &str = "cycle";
 /// A `model:` root without its name, when names are not asked for.
 pub const UPSTREAM_MODEL_ROOT: &str = "upstream model";
 
+/// The label of a converted file reading a model that does not convert end to end.
+pub const UPSTREAM_REFUSED_LABEL: &str = "upstream_refused:";
+
 /// A `relation:` root without its name, when names are not asked for.
 pub const UNKNOWN_RELATION_ROOT: &str = "unknown relation";
 
 /// How many of a file's refusals the text report places before counting the rest.
 pub const PLACED_PER_FILE: usize = 5;
+
+/// Greedy plan steps reported.
+pub const PLAN_STEPS: usize = 10;
+
+/// The most roots one plan step supports together.
+pub const PLAN_SET_SIZE: usize = 3;
+
+/// Roots still blocking files, after the assumed constructs, listed in the plan.
+pub const NEXT_ROOTS: usize = 20;
+
+/// Roots naming a relation or model, not a construct, which no plan step supports.
+pub const PLANNABLE_ROOT_EXCLUDED: &[&str] = &[RELATION_ROOT_PREFIX, MODEL_ROOT_PREFIX];
+
+/// How `--assume-supported` names a rule rather than a construct.
+pub const RULE_ID_PREFIX: &str = "rule.";

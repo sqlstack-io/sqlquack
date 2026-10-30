@@ -37,7 +37,14 @@ report contains counts and construct names only, never SQL text or file names; `
 file, model and relation names to the slowest files and the blockers. Conversion needs the
 column types of the relations a file reads: `--schema` takes a JSON file mapping relation names to
 `[column, Snowflake type]` pairs, and `--chain-models` types each converted file as the relation
-its file name references, then converts again.
+its file name references, then converts again. Where the schema file types a model that is itself
+refused, files reading it still convert from those columns: the report counts them as
+unit-testable (`convertible`) but not strict (`convertible_strict`, every model upstream converts
+too), and lists each with an `upstream_refused:<model>` label for every refused model upstream.
+`--assume-supported` takes construct keys or `rule.<id>`s and reports how many files would then be
+unit-testable and strict, what blocks the rest next, and a greedy plan of the few constructs each
+step should support together. Every such figure is an upper bound: it counts only the refusals
+collected, and supporting a construct may uncover others.
 
 ## Index
 

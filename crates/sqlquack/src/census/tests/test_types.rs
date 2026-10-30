@@ -89,3 +89,37 @@ pub(crate) struct DivergenceTallyTestCase {
     /// The models relying on `divergence`, or None when none does.
     pub(crate) expected_models: Option<usize>,
 }
+
+#[derive(Debug, PartialEq, Eq)]
+pub(crate) struct UpstreamSummary {
+    pub(crate) convertible: usize,
+    pub(crate) strict: usize,
+    /// Each unit-testable but not strict file and its `upstream_refused:` labels.
+    pub(crate) labelled: Vec<(String, Vec<String>)>,
+    pub(crate) refused: Vec<String>,
+    pub(crate) text_names_both: bool,
+}
+
+pub(crate) struct UpstreamTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) typed: &'static [&'static str],
+    pub(crate) expected_summary: UpstreamSummary,
+}
+
+#[derive(Debug, PartialEq, Eq)]
+pub(crate) struct PlanSummary {
+    /// The census's unit-testable and strict counts.
+    pub(crate) convertible: [usize; 2],
+    /// The plan's unit-testable and strict upper bounds with the assumed constructs.
+    pub(crate) upper_bounds: [usize; 2],
+    /// Each root still blocking files, with the files it blocks and blocks alone.
+    pub(crate) next: Vec<(String, usize, usize)>,
+    /// Each greedy step's roots and its cumulative unit-testable and strict bounds.
+    pub(crate) steps: Vec<(Vec<String>, [usize; 2])>,
+}
+
+pub(crate) struct PlanTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) assumed: &'static [&'static str],
+    pub(crate) expected_summary: PlanSummary,
+}
