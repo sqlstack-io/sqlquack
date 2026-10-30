@@ -1,6 +1,6 @@
 use std::process::Command;
 
-use crate::test_types::{BinaryOutcome, SourceVariantOutcome};
+use crate::test_types::{BinaryOutcome, SourceVariantOutcome, UpstreamOutcome};
 
 const ORDERS_SQL: &str = "SELECT customer_id, COUNT(*) AS orders FROM __ref(\"orders\") \
                           GROUP BY customer_id";
@@ -29,6 +29,55 @@ pub(crate) fn run_on_shop(arguments: &[&str]) -> BinaryOutcome {
             let text = String::from_utf8_lossy(stream).to_ascii_lowercase();
             text.contains("orders") || text.contains("products")
         }),
+    }
+}
+
+const FUZZY_NAMES_SQL: &str = "SELECT customer_id, SOUNDEX(name) AS sound FROM customers";
+const NAME_REPORT_SQL: &str =
+    "SELECT customer_id, UPPER(sound) AS sound FROM __ref(\"fuzzy_names\")";
+const CUSTOMERS_SCHEMA: &str =
+    "\"CUSTOMERS\": [[\"CUSTOMER_ID\", \"NUMBER(38,0)\"], [\"NAME\", \"VARCHAR\"]]";
+const FUZZY_NAMES_SCHEMA: &str = "\"__SQLQUACK_RELATION__FUZZY_NAMES\": \
+                                  [[\"CUSTOMER_ID\", \"NUMBER(38,0)\"], [\"SOUND\", \"VARCHAR\"]]";
+
+/// The chained census of a refused model and its reader, the schema typing the model if `typed`.
+pub(crate) fn run_on_refused_upstream(typed: bool, flags: &[&str]) -> UpstreamOutcome {
+    let directory = tempfile::tempdir().expect("temporary directory");
+    let models = directory.path().join("models");
+    std::fs::create_dir(&models).expect("models directory created");
+    std::fs::write(models.join("fuzzy_names.sql"), FUZZY_NAMES_SQL).expect("fixture written");
+    std::fs::write(models.join("name_report.sql"), NAME_REPORT_SQL).expect("fixture written");
+    let relations = [CUSTOMERS_SCHEMA, FUZZY_NAMES_SCHEMA][..1 + usize::from(typed)].join(", ");
+    let schema = directory.path().join("schema.json");
+    std::fs::write(&schema, format!("{{\"relations\": {{{relations}}}}}")).expect("schema written");
+    let output = Command::new(env!("CARGO_BIN_EXE_sqlquack"))
+        .args(["census", "--chain-models", "--schema"])
+        .arg(&schema)
+        .args(flags)
+        .arg(&models)
+        .output()
+        .expect("sqlquack runs");
+    let stdout = String::from_utf8_lossy(&output.stdout);
+    let report: serde_json::Value = serde_json::from_slice(&output.stdout).unwrap_or_default();
+    UpstreamOutcome {
+        exit_code: output.status.code(),
+        unit_testable: report["refusals"]["convertible"].as_u64(),
+        strict: report["refusals"]["convertible_strict"].as_u64(),
+        labels: report["blockers"]["upstream_refused"]
+            .as_array()
+            .into_iter()
+            .flatten()
+            .flat_map(|file| file["labels"].as_array().cloned().unwrap_or_default())
+            .filter_map(|label| label.as_str().map(str::to_owned))
+            .collect(),
+        text_counts: stdout
+            .lines()
+            .find(|line| line.trim_start().starts_with("convertible: strict"))
+            .map(|line| line.trim().to_owned()),
+        plan_bounds: report["plan"]["unit_testable_upper_bound"]
+            .as_u64()
+            .zip(report["plan"]["strict_upper_bound"].as_u64())
+            .map(|(unit, strict)| [unit, strict]),
     }
 }
 

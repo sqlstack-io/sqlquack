@@ -223,4 +223,7 @@ pub struct CensusArguments {
     /// Print file, model and relation names in the slowest files and the blockers.
     #[arg(long)]
     pub names: bool,
+    /// Construct keys or `rule.<id>`s the what-if counts treat as supported, comma-separated.
+    #[arg(long, value_delimiter = ',')]
+    pub assume_supported: Vec<String>,
 }

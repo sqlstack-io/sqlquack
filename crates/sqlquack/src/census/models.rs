@@ -27,6 +27,8 @@ pub struct CensusOptions {
     pub conversion: ConversionOptions,
     /// Name models and relations in the blockers; without it they are numbered or folded.
     pub names: bool,
+    /// Constructs whose refusals the what-if counts treat as resolved.
+    pub assume_supported: Vec<String>,
 }
 
 /// A census report: counts and construct keys, and model names in blockers only when asked.
@@ -46,6 +48,47 @@ pub struct CensusReport {
     pub provenance: ProvenanceCounts,
     /// What keeps each refused file from converting, traced through the models it reads.
     pub blockers: BlockerReport,
+    /// Upper bounds on the files converting once constructs are supported, and a greedy plan.
+    pub plan: PlanReport,
+}
+
+/// Upper bounds on what converts once more constructs are supported, from collected refusals.
+#[derive(Clone, Debug, Default, PartialEq, Eq, Serialize)]
+pub struct PlanReport {
+    /// The constructs assumed supported, as given or expanded from rules.
+    pub assumed: Vec<String>,
+    /// Upper bound on unit-testable files with the assumed constructs supported.
+    pub unit_testable_upper_bound: usize,
+    /// Upper bound on strict files with the assumed constructs supported.
+    pub strict_upper_bound: usize,
+    /// Of the unit-testable bound, files that may hold refusals collecting did not reach.
+    pub possibly_incomplete: usize,
+    /// The roots still blocking files, by the files they block, most first.
+    pub next: Vec<NextRoot>,
+    /// Greedy steps from the assumed constructs, each adding the roots gaining the most files.
+    pub steps: Vec<PlanStep>,
+}
+
+/// A root still blocking files after the assumed constructs.
+#[derive(Clone, Debug, PartialEq, Eq, Serialize)]
+pub struct NextRoot {
+    /// The root.
+    pub root: RootKey,
+    /// Files it blocks among those still not unit-testable.
+    pub files: usize,
+    /// Of those, files it alone blocks.
+    pub sole: usize,
+}
+
+/// One greedy step: roots supported together, and the cumulative upper bounds after it.
+#[derive(Clone, Debug, PartialEq, Eq, Serialize)]
+pub struct PlanStep {
+    /// The roots this step supports, together.
+    pub roots: Vec<RootKey>,
+    /// Upper bound on unit-testable files after this and every earlier step.
+    pub unit_testable_upper_bound: usize,
+    /// Upper bound on strict files after this and every earlier step.
+    pub strict_upper_bound: usize,
 }
 
 /// Refused files traced to the refusals at the root of the models they read.
@@ -61,6 +104,17 @@ pub struct BlockerReport {
     pub single_root_files: usize,
     /// Refused files that may hold refusals collecting did not reach, themselves or upstream.
     pub possibly_incomplete_files: usize,
+    /// Converted files reading a model that does not convert end to end, typed by the schema file.
+    pub upstream_refused: Vec<UpstreamRefusedFile>,
+}
+
+/// A converted file reading models that do not convert end to end.
+#[derive(Clone, Debug, PartialEq, Eq, Serialize)]
+pub struct UpstreamRefusedFile {
+    /// The model the file defines, or its number when names are not asked for.
+    pub model: String,
+    /// One `upstream_refused:<model>` label for each refused model upstream of it.
+    pub labels: Vec<String>,
 }
 
 /// A set of roots and the refused files whose roots it covers.
@@ -196,8 +250,10 @@ pub struct RefusalTotals {
     pub conversion_budget: usize,
     /// Refusals by category and construct, counting each file once per pair, most frequent first.
     pub by_construct: Vec<RefusalCount>,
-    /// Files with no refusal at all.
+    /// Unit-testable files: no refusal, reading models as the schema file or their conversion types.
     pub convertible: usize,
+    /// Convertible files whose every model upstream converts too, so they run end to end.
+    pub convertible_strict: usize,
 }
 
 /// How many files use one construct.
