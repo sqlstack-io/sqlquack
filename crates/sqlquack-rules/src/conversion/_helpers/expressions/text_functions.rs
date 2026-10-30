@@ -4,7 +4,10 @@ use serde_json::Value;
 use sqlquack_core::classification::models::Construct;
 use sqlquack_core::refusals::models::Refusal;
 use sqlquack_duckdb::blocks::main::string_literal::string_literal;
-use sqlquack_duckdb::text::constants::REGEXP_PATTERN_SYNTAX;
+use sqlquack_duckdb::text::constants::{
+    CASE_FOLDING, LONG_S, REGEXP_PATTERN_SYNTAX, UNFOLDED_LETTERS,
+};
+use sqlquack_duckdb::text::main::folded_text::folded_text;
 use sqlquack_duckdb::text::main::guarded_pattern::guarded_pattern;
 use sqlquack_snowflake::typing::models::SnowflakeType;
 
@@ -297,6 +300,13 @@ pub(crate) fn like(kind: &str, payload: &Value, site: Site<'_>) -> Result<Emitte
         ));
     }
     let text = text_operand(field(payload, "left", &construct)?, &construct, site)?;
+    let text = match kind {
+        ILIKE_KIND => {
+            diverge(site.context, CASE_FOLDING, &construct)?;
+            folded_text(&text, site.context.log)
+        }
+        _ => text,
+    };
     let escape_character = match payload.get("escape").filter(|escape| !escape.is_null()) {
         Some(escape) => Some(like_escape(escape, &construct, site)?),
         None => None,
@@ -314,7 +324,13 @@ pub(crate) fn like(kind: &str, payload: &Value, site: Site<'_>) -> Result<Emitte
                 &construct,
             )?;
         }
-        let pattern = text_operand(pattern_node, &construct, site)?;
+        let pattern = match kind {
+            ILIKE_KIND => {
+                folded_pattern(&text_literal(pattern_node, &construct, site)?, &construct)
+                    .map(|folded| string_literal(&folded, log))?
+            }
+            _ => text_operand(pattern_node, &construct, site)?,
+        };
         let matched = match kind {
             "i_like" if !text_literal(pattern_node, &construct, site)?.is_ascii() => {
                 let _folding = site.context.log.rule(ILIKE_FOLDING);
@@ -535,7 +551,11 @@ fn positive_integer(text: &str) -> bool {
 }
 
 /// A NUMBER operand of scale 0, as a BIGINT expression.
-fn integer_operand(node: &Value, construct: &Construct, site: Site<'_>) -> Result<String, Refusal> {
+pub(crate) fn integer_operand(
+    node: &Value,
+    construct: &Construct,
+    site: Site<'_>,
+) -> Result<String, Refusal> {
     let emitted = convert_expression(node, site)?;
     match emitted.data_type {
         SnowflakeType::Number { scale: 0, .. } | SnowflakeType::Null => {
@@ -682,4 +702,23 @@ fn shared_replacement(replacement: &str) -> Result<(), String> {
         }
     }
     Ok(())
+}
+
+/// An ILIKE pattern with the long s as s; a letter whose folding no recording shows is refused.
+fn folded_pattern(pattern: &str, construct: &Construct) -> Result<String, Refusal> {
+    match pattern.chars().any(unfolded) {
+        true => Err(outside_conditions(
+            construct.clone(),
+            "an ILIKE pattern holding a letter whose case folding no recording shows".to_owned(),
+        )),
+        false => Ok(pattern.replace(LONG_S, "s")),
+    }
+}
+
+/// Whether `character` is a letter whose case folding no recording shows.
+fn unfolded(character: char) -> bool {
+    let point = u32::from(character);
+    UNFOLDED_LETTERS
+        .iter()
+        .any(|(first, last)| (*first..=*last).contains(&point))
 }

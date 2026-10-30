@@ -306,7 +306,7 @@ fn convert_projection(
     named: bool,
 ) -> Result<Vec<Projected>, Refusal> {
     match node_kind(item) {
-        Some(("star", payload)) => star(payload, site),
+        Some(("star", payload)) => star(payload, site, false),
         Some(("annotated", payload)) => {
             let construct = node_construct("annotated");
             let _rule = site.context.log.rule(COMMENT);
@@ -345,16 +345,61 @@ fn convert_projection(
     }
 }
 
-fn star(payload: &Value, site: Site<'_>) -> Result<Vec<Projected>, Refusal> {
+/// The columns `*` or `alias.*` names, without those an EXCLUDE list names where `excluding`.
+pub(crate) fn star(
+    payload: &Value,
+    site: Site<'_>,
+    excluding: bool,
+) -> Result<Vec<Projected>, Refusal> {
     let log = site.context.log;
     let _rule = log.rule(STAR);
     let construct = node_construct("star");
     let star = payload_object(payload, &construct)?;
-    require_understood(star, &["table"], &construct)?;
+    let understood: &[&str] = match excluding {
+        true => &["table", "except"],
+        false => &["table"],
+    };
+    require_understood(star, understood, &construct)?;
     let qualifier = star.get("table").and_then(identifier_name);
+    let excluded: Vec<String> = list(star, "except")
+        .iter()
+        .map(|name| {
+            identifier_name(name).ok_or_else(|| {
+                outside_conditions(
+                    construct.clone(),
+                    "an EXCLUDE entry without a name".to_owned(),
+                )
+            })
+        })
+        .collect::<Result<Vec<String>, Refusal>>()?;
+    if !excluded.is_empty() && site.context.options.quoted_exclusions {
+        return Err(outside_conditions(
+            construct,
+            "an EXCLUDE list where the source quotes a name, a quoting the parsed tree does not keep"
+                .to_owned(),
+        ));
+    }
+    let relations = site.scope.star_relations(qualifier.as_deref())?;
+    let read: Vec<&String> = relations
+        .iter()
+        .flat_map(|relation| &relation.columns)
+        .map(|column| &column.name)
+        .collect();
+    for name in &excluded {
+        if !read.contains(&name) {
+            return Err(outside_conditions(
+                construct.clone(),
+                format!("EXCLUDE names `{name}`, which the star does not read"),
+            ));
+        }
+    }
     let mut expanded: Vec<Projected> = Vec::new();
-    for relation in site.scope.star_relations(qualifier.as_deref())? {
-        for column in &relation.columns {
+    for relation in relations {
+        for column in relation
+            .columns
+            .iter()
+            .filter(|column| !excluded.contains(&column.name))
+        {
             let sql = format!(
                 "{}.{}",
                 quoted_identifier(&relation.alias, log),

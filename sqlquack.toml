@@ -270,6 +270,12 @@ strict = "refuse"
 reason = "DuckDB raises an error where Snowflake returns a value DuckDB cannot represent: a SUM or AVG total, or a sum, difference or product, beyond 38 digits (Snowflake keeps up to 128 bits under a NUMBER(38) type), or a division whose exact intermediate exceeds 128 bits. The failure is loud, never a wrong value. NUMBERs compared or unified as one DECIMAL needing more than 38 digits (such as NUMBER(38,0) with NUMBER(10,5)) are cast to it in DuckDB, which raises for values beyond its range."
 native_errors = ["Out of Range Error: Overflow in *"]
 
+[divergences.case_folding]
+constructs = ["node:i_like"]
+default = "warn"
+strict = "refuse"
+reason = "Snowflake's ILIKE was recorded folding the long s onto s and the Kelvin sign onto k, and matching other letters as their lower case. Letters whose Unicode case folding differs from their lower case, or whose lower case DuckDB writes otherwise, have no recording; the converted SQL raises for text holding one rather than guessing whether it matches. The failure is loud, never a wrong value."
+
 [divergences.json_fidelity]
 constructs = ["fn:PARSE_JSON", "fn:TRY_PARSE_JSON", "node:column", "node:cast", "fn:TO_JSON", "fn:TO_VARCHAR", "fn:GET_IGNORE_CASE", "fn:FLATTEN", "fn:OBJECT_CONSTRUCT", "fn:OBJECT_CONSTRUCT_KEEP_NULL", "fn:OBJECT_INSERT", "fn:OBJECT_PICK", "fn:ARRAY_CONSTRUCT", "fn:ARRAY_EXCEPT", "fn:TO_VARIANT", "fn:ARRAY_AGG", "fn:ARRAY_TO_STRING", "fn:ARRAY_CONTAINS", "fn:ARRAY_CONSTRUCT_COMPACT", "node:map_func", "fn:OBJECT_AGG", "fn:ARRAY_POSITION", "fn:FILTER", "fn:TRANSFORM", "node:eq", "node:neq", "node:in", "fn:GET", "node:window_function", "node:array_func", "fn:REDUCE"]
 default = "warn"

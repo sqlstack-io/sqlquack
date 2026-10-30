@@ -3,10 +3,10 @@
 use crate::catalogue::models::NotExpressibleDeclaration;
 use sqlquack_core::failures::constants::{
     BOOLEAN_NOT_RECOGNIZED, CHARACTER_CODE_FAILURES, DATE_FORMAT_MISMATCH, DATE_NOT_RECOGNIZED,
-    DIVISION_BY_ZERO, DIVISION_FAILURES, JSON_NOT_PARSED, KEY_EXISTS_FAILURES,
-    NOT_AN_ARRAY_ARGUMENT, NOT_AN_ARRAY_FAILURES, NUMBER_NOT_RECOGNIZED, NUMBER_OUT_OF_RANGE,
-    NUMBER_TEXT_OUT_OF_RANGE, OBJECT_KEY_EXISTS, STRING_TOO_LONG, TIME_TEXT_FAILURES,
-    TIMESTAMP_NOT_RECOGNIZED, VARIANT_NOT_CAST, ZONE_FAILURES,
+    DIVISION_BY_ZERO, DIVISION_FAILURES, INVALID_UTF8_FAILURES, JSON_NOT_PARSED,
+    KEY_EXISTS_FAILURES, NOT_AN_ARRAY_ARGUMENT, NOT_AN_ARRAY_FAILURES, NUMBER_NOT_RECOGNIZED,
+    NUMBER_OUT_OF_RANGE, NUMBER_TEXT_OUT_OF_RANGE, OBJECT_KEY_EXISTS, STRING_TOO_LONG,
+    TIME_TEXT_FAILURES, TIMESTAMP_NOT_RECOGNIZED, VARIANT_NOT_CAST, ZONE_FAILURES,
 };
 use sqlquack_core::failures::models::{ErrorKind, FailureMode};
 use sqlquack_snowflake::typing::constants::VARIANT_COMMON_TYPE;
@@ -17,25 +17,25 @@ pub const NOT_EXPRESSIBLE: &[NotExpressibleDeclaration] = &[];
 use crate::conversion::constants::{
     ALIAS, ARRAY_AGG_RULE, ARRAY_CAT_RULE, ARRAY_COMPACT_RULE, ARRAY_CONSTRUCT_COMPACT_RULE,
     ARRAY_CONSTRUCT_RULE, ARRAY_CONTAINS_RULE, ARRAY_EXCEPT_RULE, ARRAY_POSITION_RULE,
-    ARRAY_SIZE_RULE, ARRAY_TO_STRING_RULE, AVERAGE, BETWEEN, BITWISE, CASE, CASE_MAPPING,
-    CAST_BOOLEAN, CAST_NUMERIC, CAST_PARSED_TEXT, CAST_SAME_TYPE, CAST_TEMPORAL, CAST_TEXT_LITERAL,
-    CAST_TEXT_TIME, CAST_TEXT_TIMESTAMP, CAST_TO_TEXT, CAST_UTC_ZONED, COALESCE, COLUMN, COMMENT,
-    COMMON_TABLE, COMPARISON, CONCAT, CONCAT_WS, CONSTANT_LITERAL, COUNT, CURRENT_TIME_RULE,
-    DATE_ARITHMETIC, DATE_FORMAT_RULE, DATE_LITERAL_COMPARISON, DATE_PART_RULE, DECIMAL_ARITHMETIC,
-    DECIMAL_DIVISION, DECIMAL_EPOCH_RULE, DECIMAL_MODULO, DECODE_RULE, DISTINCT, EDIT_DISTANCE,
-    EXISTS, FLATTEN_RULE, FLOAT_ARITHMETIC, FLOAT_MODULO, FROM_PARTS, FROM_RELATION, FROM_SUBQUERY,
-    GROUP_BY, HASH_RULE, HAVING, IFF, ILIKE_FOLDING, IN_LIST, IN_SUBQUERY, IS_NULL, JOIN_CROSS,
-    JOIN_ON, LAMBDA_RULE, LATERAL_SUBQUERY, LEAST_GREATEST, LIKE, LIMIT, LISTAGG_RULE, LOGIC,
-    MIN_MAX, MIN_MAX_FLOAT, NAMED_AGGREGATES, NEGATE, NOT_IN_SUBQUERY, NULL_SAFE_COMPARISON,
-    NULLIF, NUMBER_LITERAL, NUMERIC_FUNCTION, OBJECT_CONSTRUCT_RULE, OBJECT_DELETE_RULE,
-    OBJECT_INSERT_RULE, OBJECT_KEYS_RULE, OBJECT_PICK_RULE, ORDER_BY, PARENTHESES, PARSE_JSON_RULE,
-    PARSE_JSON_VARIANT, PERCENTILE_RULE, PROJECT_FUNCTION_CALL, PROJECT_TABLE_FUNCTION, QUALIFY,
-    REDUCE_RULE, REGEXP, REGEXP_PARAMETERS, REGEXP_POSIX_SPACE, ROUNDING, SCALAR_SUBQUERY, SELECT,
-    SET_OPERATION, SIGN_RULE, SPLIT_RULE, SPLIT_TO_TABLE_RULE, STAR, SUM, SUM_FLOAT,
-    TEMPORAL_TEXT_FORMAT, TEXT_AFFIX, TEXT_CHR, TEXT_CONTAINS, TEXT_HEX, TEXT_HEX_DECODE,
-    TEXT_INITCAP, TEXT_MD5, TEXT_NUMBER_COMPARISON, TEXT_PAD, TEXT_POSITION, TEXT_REPLACE,
-    TEXT_TO_TIME_RULE, TEXT_TO_TIMESTAMP_RULE, TEXT_TRANSLATE, TIME_ARITHMETIC, TIME_CAST,
-    TIME_ZONE_CONVERSION, TIMESTAMP_FORMAT_RULE, TO_BOOLEAN_RULE, TO_DATE_TEMPORAL,
+    ARRAY_SIZE_RULE, ARRAY_TO_STRING_RULE, AVERAGE, BASE64_BINARY, BETWEEN, BITWISE, CASE,
+    CASE_MAPPING, CAST_BOOLEAN, CAST_NUMERIC, CAST_PARSED_TEXT, CAST_SAME_TYPE, CAST_TEMPORAL,
+    CAST_TEXT_LITERAL, CAST_TEXT_TIME, CAST_TEXT_TIMESTAMP, CAST_TO_TEXT, CAST_UTC_ZONED, COALESCE,
+    COLUMN, COMMENT, COMMON_TABLE, COMPARISON, CONCAT, CONCAT_WS, CONSTANT_LITERAL, COUNT,
+    CURRENT_TIME_RULE, DATE_ARITHMETIC, DATE_FORMAT_RULE, DATE_LITERAL_COMPARISON, DATE_PART_RULE,
+    DECIMAL_ARITHMETIC, DECIMAL_DIVISION, DECIMAL_EPOCH_RULE, DECIMAL_MODULO, DECODE_RULE,
+    DISTINCT, EDIT_DISTANCE, EXISTS, FLATTEN_RULE, FLOAT_ARITHMETIC, FLOAT_MODULO, FROM_PARTS,
+    FROM_RELATION, FROM_SUBQUERY, GROUP_BY, HASH_RULE, HAVING, IFF, ILIKE_FOLDING, IN_LIST,
+    IN_SUBQUERY, IS_NULL, JOIN_CROSS, JOIN_ON, LAMBDA_RULE, LATERAL_SUBQUERY, LEAST_GREATEST, LIKE,
+    LIMIT, LISTAGG_RULE, LOGIC, MIN_MAX, MIN_MAX_FLOAT, NAMED_AGGREGATES, NEGATE, NOT_IN_SUBQUERY,
+    NULL_SAFE_COMPARISON, NULLIF, NUMBER_LITERAL, NUMERIC_FUNCTION, OBJECT_CONSTRUCT_RULE,
+    OBJECT_DELETE_RULE, OBJECT_INSERT_RULE, OBJECT_KEYS_RULE, OBJECT_PICK_RULE, ORDER_BY,
+    PARENTHESES, PARSE_JSON_RULE, PARSE_JSON_VARIANT, PERCENTILE_RULE, PROJECT_FUNCTION_CALL,
+    PROJECT_TABLE_FUNCTION, QUALIFY, REDUCE_RULE, REGEXP, REGEXP_PARAMETERS, REGEXP_POSIX_SPACE,
+    ROUNDING, SCALAR_SUBQUERY, SELECT, SET_OPERATION, SIGN_RULE, SPLIT_RULE, SPLIT_TO_TABLE_RULE,
+    STAR, SUM, SUM_FLOAT, TEMPORAL_TEXT_FORMAT, TEXT_AFFIX, TEXT_CHR, TEXT_CONTAINS, TEXT_HEX,
+    TEXT_HEX_DECODE, TEXT_INITCAP, TEXT_MD5, TEXT_NUMBER_COMPARISON, TEXT_PAD, TEXT_POSITION,
+    TEXT_REPLACE, TEXT_TO_TIME_RULE, TEXT_TO_TIMESTAMP_RULE, TEXT_TRANSLATE, TIME_ARITHMETIC,
+    TIME_CAST, TIME_ZONE_CONVERSION, TIMESTAMP_FORMAT_RULE, TO_BOOLEAN_RULE, TO_DATE_TEMPORAL,
     TO_VARIANT_RULE, TRIM, UNION_BY_NAME, VALUE_AT_EXTREME_KEY, VARIANT_CAST, VARIANT_COMPUTED_GET,
     VARIANT_EQUALITY, VARIANT_INSPECT, VARIANT_KIND_CAST, VARIANT_KIND_RULE, VARIANT_PARTITION,
     VARIANT_PATH, VARIANT_TO_VARCHAR, VARIANT_TYPE_NAME, VARIANT_TYPED_CHECK, WHERE,
@@ -504,7 +504,7 @@ pub const RULES: &[RuleSpec] = &[
     RuleSpec {
         id: ARRAY_CONTAINS_RULE,
         constructs: &["fn:ARRAY_CONTAINS"],
-        conditions: "A VARIANT value and a VARIANT or ARRAY: whether an element equals the value, strings, integers, booleans and JSON null compared as JSON text; SQL NULL arguments give NULL; a decimal or nested value or element, or a value other than an array, raises, relying on json_fidelity. Refused for a VARIANT not proven free of DATEs and timestamps, built only from values without one, in a statement that puts one in a VARIANT or reads a model's VARIANT that may hold one, since Snowflake keeps its type and DuckDB writes it as text. A VARIANT read from a source table or schema relation is trusted to hold JSON values, relying on source_variant_json.",
+        conditions: "A VARIANT value and a VARIANT or ARRAY: whether an element equals the value, strings, integers, booleans and JSON null compared as JSON text; SQL NULL arguments give NULL; a decimal or nested value, a decimal element other than a plain fraction that is not whole (which equals no integer, as recorded beside whole decimals), or a value other than an array, raises, relying on json_fidelity. Refused for a VARIANT not proven free of DATEs and timestamps, built only from values without one, in a statement that puts one in a VARIANT or reads a model's VARIANT that may hold one, since Snowflake keeps its type and DuckDB writes it as text. A VARIANT read from a source table or schema relation is trusted to hold JSON values, relying on source_variant_json.",
         failures: &[],
     },
     RuleSpec {
@@ -605,7 +605,7 @@ pub const RULES: &[RuleSpec] = &[
             "fn:OBJECT_CONSTRUCT_KEEP_NULL",
             "node:map_func",
         ],
-        conditions: "An object constant {'key': value, ...} converts as OBJECT_CONSTRUCT of its pairs, as recorded. Text keys and VARIANT, text, boolean or NUMBER(p,0) values: NULL keys are skipped, SQL NULL values are skipped (kept as JSON null by _KEEP_NULL), repeated keys raise, keys are in byte order. Other value types are refused: Snowflake keeps them typed inside the VARIANT, and no recording yet shows TYPEOF of a decimal there. NUMBER values rely on json_fidelity.",
+        conditions: "An object constant {'key': value, ...} converts as OBJECT_CONSTRUCT of its pairs, as recorded. Text keys and VARIANT, text, boolean or NUMBER values, or a single `*` or `alias.*` with an optional EXCLUDE list of unquoted names, each naming a column the star reads, whose columns become keys named as resolved (an EXCLUDE list in a source that quotes an EXCLUDE name is refused, since the parsed tree does not keep the quoting): NULL keys are skipped, SQL NULL values are skipped (kept as JSON null by _KEEP_NULL), repeated keys raise, keys are in byte order. A NUMBER with a scale is written as Snowflake writes it, trailing fraction zeros dropped and a whole value without a point, as recorded; since DuckDB's JSON then holds a whole value as an integer, Snowflake's DECIMAL, a statement where one enters is refused where it reads TYPEOF of a VARIANT not proven free of one, and so is a statement reading a model column that may hold one; comparisons hold, as Snowflake was recorded comparing a whole decimal equal to the integer. Other value types are refused: Snowflake keeps them typed inside the VARIANT. NUMBER values rely on json_fidelity.",
         failures: &[FailureMode {
             kind: ErrorKind::InvalidArgument,
             snowflake: &[OBJECT_KEY_EXISTS],
@@ -620,7 +620,7 @@ pub const RULES: &[RuleSpec] = &[
     RuleSpec {
         id: VARIANT_CAST,
         constructs: &["node:cast"],
-        conditions: "A VARIANT to VARIANT, VARCHAR, VARCHAR(n), NUMBER, FLOAT, BOOLEAN, DATE, TIMESTAMP_NTZ(9) or TIMESTAMP_TZ(9): strings and numbers read as their text, a string cast to TIMESTAMP_TZ(9) as TRY_TO_TIMESTAMP_TZ reads it but raising where that is NULL, whole numbers as epoch seconds, text longer than VARCHAR(n) raises, JSON null is NULL; objects, arrays and other kinds raise; written as text, object keys are in byte order at every depth and an object DuckDB could sort only by rewriting a number raises, relying on json_fidelity. A FLOAT read by a path out of a VARIANT built from typed values is written as the FLOAT's own text, as recorded from one row and many; a FLOAT at the root raises float_text, since Snowflake writes it as Java does when it folds a constant.",
+        conditions: "A VARIANT to VARIANT, VARCHAR, VARCHAR(n), NUMBER, FLOAT, BOOLEAN, DATE, TIMESTAMP_NTZ(9) or TIMESTAMP_TZ(9): strings and numbers read as their text, a string cast to TIMESTAMP_TZ(9) as TRY_TO_TIMESTAMP_TZ reads it but raising where that is NULL, whole numbers as epoch seconds, text longer than VARCHAR(n) raises, JSON null is NULL; objects, arrays and other kinds raise; written as text, object keys are in byte order at every depth and an object DuckDB could sort only by rewriting a number raises, relying on json_fidelity. A FLOAT read by a path out of a VARIANT built from typed values is written as the FLOAT's own text, as recorded from one row and many; a FLOAT at the root raises float_text, since Snowflake writes it as Java does when it folds a constant. A VARIANT built from typed values, a FLOAT among them, casts to VARCHAR, FLOAT and DATE only: to DATE through its JSON as a VARIANT of strings does, a number or boolean raising.",
         failures: &[
             FailureMode {
                 kind: ErrorKind::VariantCast,
@@ -705,7 +705,7 @@ pub const RULES: &[RuleSpec] = &[
     RuleSpec {
         id: DATE_FORMAT_RULE,
         constructs: &["fn:TO_DATE", "fn:TRY_TO_DATE"],
-        conditions: "TO_DATE or TRY_TO_DATE of text with a literal format YYYYMMDD, YYYY-MM-DD, YYYY/MM/DD, DD.MM.YYYY, DD.MM.YY, DD/MM/YYYY, MM/DD/YYYY, YY-MM-DD or DD-MM-YY, in any case: text spelled exactly in the format's digits and separators is its date; an impossible date is NULL under TRY_TO_DATE and raises 100097 under TO_DATE, as recorded; two-digit years read from 1970 (00-69 as 20xx); NULL is NULL, and empty text and text without an ASCII digit (words such as now or epoch, and other scripts' digits, as recorded) NULL under TRY_TO_DATE. Any other text raises, relying on date_text_spelling.",
+        conditions: "TRY_TO_DATE with DD MON YYYY or MMMM DD YYYY, written so: an English month name or three-letter abbreviation in ASCII letters of any case under either (text holding any other character raises), a one- or two-digit day, a four-digit year or a two-digit one read as written (24 is 0024), and under DD MON YYYY one or three digits too; DD MON YYYY with any spaces, none included, between its fields and around the text, MMMM DD YYYY with spaces between its fields and after the text but none before it, as recorded. The other recorded spellings, in the recorded shapes only (another word, a comma, hyphens or slashes, mixed or alike, doubled or leading spaces, a day or year of other lengths, or a trailing time), are NULL, impossible dates NULL, and any other text raises, relying on date_text_spelling. TO_DATE or TRY_TO_DATE of text with a literal format YYYYMMDD, YYYY-MM-DD, YYYY/MM/DD, DD.MM.YYYY, DD.MM.YY, DD/MM/YYYY, MM/DD/YYYY, YY-MM-DD or DD-MM-YY, in any case: text spelled exactly in the format's digits and separators is its date; an impossible date is NULL under TRY_TO_DATE and raises 100097 under TO_DATE, as recorded; two-digit years read from 1970 (00-69 as 20xx); NULL is NULL, and empty text and text without an ASCII digit (words such as now or epoch, and other scripts' digits, as recorded) NULL under TRY_TO_DATE. Any other text raises, relying on date_text_spelling.",
         failures: &[FailureMode {
             kind: ErrorKind::DateText,
             snowflake: &[DATE_FORMAT_MISMATCH],
@@ -800,7 +800,7 @@ pub const RULES: &[RuleSpec] = &[
     RuleSpec {
         id: LIKE,
         constructs: &["node:like", "node:i_like"],
-        conditions: "VARCHAR operands, case-sensitive for LIKE, with no default escape character. ESCAPE only as one literal character other than a wildcard, over literal patterns where it precedes only a wildcard or itself; Snowflake rejects other escapes and escaped characters. ILIKE only with a literal pattern. ILIKE ANY of a list of patterns, without ESCAPE, as the OR of each match; not LIKE ANY, NOT ILIKE ANY written infix, or LIKE ALL.",
+        conditions: "VARCHAR operands, case-sensitive for LIKE, with no default escape character. ESCAPE only as one literal character other than a wildcard, over literal patterns where it precedes only a wildcard or itself; Snowflake rejects other escapes and escaped characters. ILIKE only with a literal pattern; it folds the long s onto s and matches the Kelvin sign as k, as recorded, and text holding a letter whose Unicode case folding differs from its lower case, or whose lower case DuckDB writes otherwise, raises case_folding (such a pattern is refused). ILIKE ANY of a list of patterns, without ESCAPE, as the OR of each match; not LIKE ANY, NOT ILIKE ANY written infix, or LIKE ALL.",
         failures: &[],
     },
     RuleSpec {
@@ -1041,6 +1041,12 @@ pub const RULES: &[RuleSpec] = &[
         failures: &[],
     },
     RuleSpec {
+        id: BASE64_BINARY,
+        constructs: &["fn:TRY_BASE64_DECODE_BINARY"],
+        conditions: "TRY_BASE64_DECODE_BINARY of VARCHAR with no alphabet argument, its bytes read only by HEX_ENCODE, by TO_VARCHAR or TO_CHAR with a literal UTF-8 or UTF8 format in any case, and by SUBSTR or SUBSTRING inside them, counted in bytes as SUBSTR counts characters; never as a result column. Line feeds anywhere, inside a group or its padding, after padding or several in a row, are ignored, as recorded; whole groups of four characters of A-Z, a-z, 0-9, + and /, the last padded with = to its length, decode, padding bits left set included; any other text, carriage returns, spaces and tabs, missing or extra padding and the URL-safe alphabet included, is NULL, as recorded. Bytes that are not UTF-8 read as text raise 100146.",
+        failures: INVALID_UTF8_FAILURES,
+    },
+    RuleSpec {
         id: TEXT_HEX_DECODE,
         constructs: &["fn:TRY_HEX_DECODE_STRING"],
         conditions: "A VARCHAR operand of whole pairs of hexadecimal digits of either case, decoded as UTF-8 text, NUL characters kept; an odd count, any other character or bytes that are not UTF-8 give NULL, as recorded.",
@@ -1124,7 +1130,7 @@ pub const RULES: &[RuleSpec] = &[
     RuleSpec {
         id: ARRAY_POSITION_RULE,
         constructs: &["fn:ARRAY_POSITION"],
-        conditions: "A VARIANT needle and array: the zero-based index of the first element equal to the needle as NUMBER(9,0), comparing JSON text, so strings match exactly and 1 differs from '1'; a JSON null needle finds a null element; NULL when not found, for a NULL needle or array, or a value other than an array. A needle that is a fraction, object or array, or an integer needle in an array holding a fraction or exponent, raises json_fidelity. Refused for a VARIANT not proven free of DATEs and timestamps, built only from values without one, in a statement that puts one in a VARIANT or reads a model's VARIANT that may hold one, since Snowflake keeps its type and DuckDB writes it as text. A VARIANT read from a source table or schema relation is trusted to hold JSON values, relying on source_variant_json.",
+        conditions: "A VARIANT needle and array: the zero-based index of the first element equal to the needle as NUMBER(9,0), comparing JSON text, so strings match exactly and 1 differs from '1'; a JSON null needle finds a null element; NULL when not found, for a NULL needle or array, or a value other than an array. A needle that is a fraction, object or array, or an integer needle in an array holding a number written with an exponent or a whole value with a point, raises json_fidelity; plain fractions that are not whole equal no integer, as recorded. Refused for a VARIANT not proven free of DATEs and timestamps, built only from values without one, in a statement that puts one in a VARIANT or reads a model's VARIANT that may hold one, since Snowflake keeps its type and DuckDB writes it as text. A VARIANT read from a source table or schema relation is trusted to hold JSON values, relying on source_variant_json.",
         failures: &[],
     },
     RuleSpec {

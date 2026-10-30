@@ -279,13 +279,13 @@ construct = "fn:OBJECT_CONSTRUCT"
 also = ["fn:OBJECT_CONSTRUCT_KEEP_NULL", "node:map_func"]
 arguments = [
   { families = ["text"] },
-  { families = ["variant", "text", "boolean", "integer", "float", "null"] },
+  { families = ["variant", "text", "boolean", "integer", "float", "decimal", "null"] },
 ]
 repeat = true
 one_wise = true
 template = "OBJECT_CONSTRUCT_KEEP_NULL('k', {1}, {0}, 1)"
 category = "semi-structured-object"
-divergences = { "1.float.nan_infinity" = "json_fidelity", "1.float.negative_zero" = "json_fidelity" }
+divergences = { "1.float.nan_infinity" = "json_fidelity", "1.float.negative_zero" = "json_fidelity", "1.decimal.digits_38" = "json_fidelity", "1.decimal.beyond_double" = "json_fidelity", "1.decimal.half_way" = "json_fidelity" }
 
 # A FLOAT beside each other value, under keys differing only by case, holds a typed VARIANT.
 [[rule.form]]

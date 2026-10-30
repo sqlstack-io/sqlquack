@@ -14,6 +14,7 @@ use sqlquack_core::refusals::types::ConstructPolicy;
 use sqlquack_core::provenance::models::ProvenanceLog;
 use sqlquack_core::refusals::models::{Refusal, RefusalCategory};
 use sqlquack_rules::conversion::main::convert_statement::convert_statement;
+use sqlquack_rules::conversion::main::quoted_exclusions::quoted_exclusions;
 use sqlquack_rules::conversion::models::{ConversionOptions, Converted, Schema};
 
 use crate::analysis::models::Analysis;
@@ -26,6 +27,10 @@ pub fn analyze(
     (schema, options): (&Schema, &ConversionOptions),
 ) -> Analysis {
     let lines = SourceLines::new(sql);
+    let options = &ConversionOptions {
+        quoted_exclusions: quoted_exclusions(sql),
+        ..options.clone()
+    };
     let statements = match parse_source(sql, dialect) {
         Ok(statements) => statements,
         Err(failure) => {

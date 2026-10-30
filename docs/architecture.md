@@ -236,8 +236,14 @@ result columns convert (user decision of 2026-10-25, superseding that part of de
 `duckdb.json_output` writes them as DuckDB `JSON` text written this way, and verify compares them
 with Snowflake's JSON text without whitespace outside strings. OBJECT_CONSTRUCT, OBJECT_INSERT and
 OBJECT_DELETE rebuild objects with keys in byte order, as Snowflake keeps them; keys are matched
-exactly and never read as paths. Values Snowflake keeps typed inside a VARIANT (dates,
-timestamps, times, binary, floats, decimals) are refused until recordings prove how they read
+exactly and never read as paths. OBJECT_CONSTRUCT and OBJECT_CONSTRUCT_KEEP_NULL of `*` or
+`alias.*`, with an optional EXCLUDE list, take the columns as keys named as resolved. A NUMBER
+with a scale in a VARIANT is written as Snowflake writes it (trailing fraction zeros dropped, a
+whole value without a point); DuckDB's JSON then holds a whole value as an integer where Snowflake
+keeps a DECIMAL, so a statement where one enters is refused where it reads TYPEOF of a VARIANT
+not proven free of it, and so is a statement reading a model's VARIANT column that may hold one
+(`decimal_leaves`); comparisons hold, as Snowflake compares a whole decimal equal to the integer. Other values Snowflake keeps typed inside a VARIANT
+(timestamps with a time zone, times, binary) are refused until recordings prove how they read
 back. VARIANT keys in ORDER BY, GROUP BY and PARTITION BY are refused.
 
 `variant_typed_values` covers DATE, TIMESTAMP_NTZ and TIMESTAMP_LTZ values put in a VARIANT (by

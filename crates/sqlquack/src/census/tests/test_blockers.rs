@@ -1,10 +1,10 @@
 use sqlquack_rules::conversion::models::ConversionOptions;
 
 use crate::census::tests::helpers::{
-    CHAIN, CYCLE, HELD_CHAIN, MANY_PLACED, PLACED, QUOTED_LOWER_CASE, SOURCE_VARIANT_CHAIN,
-    TWO_BLOCKERS, TYPED_CHAIN, UNRESOLVED_COLUMN_AND_RELATION, blocker_summary,
-    blocker_summary_with, chained_divergences, hash_allowed, owned, placed_refusals,
-    policy_allowed,
+    CHAIN, CYCLE, DECIMAL_CHAIN, HELD_CHAIN, MANY_PLACED, PLACED, QUOTED_LOWER_CASE,
+    SOURCE_VARIANT_CHAIN, TWO_BLOCKERS, TYPED_CHAIN, UNRESOLVED_COLUMN_AND_RELATION,
+    blocker_summary, blocker_summary_with, chained_divergences, hash_allowed, owned,
+    placed_refusals, policy_allowed,
 };
 use crate::census::tests::test_types::{
     BlockerSummary, BlockerTestCase, DivergenceTallyTestCase, FixedBlockerTestCase, PlacedTestCase,
@@ -320,6 +320,30 @@ fn given_a_model_comparing_a_chained_source_variant_when_chaining_then_source_va
             divergences.get(test_case.divergence).copied(),
             test_case.expected_models,
             "{}: {divergences:?}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_a_model_putting_a_scaled_number_in_a_variant_when_a_reader_types_it_then_the_reader_is_refused()
+ {
+    let test_cases = [FixedBlockerTestCase {
+        description: "only the reader taking TYPEOF of the chained VARIANT is refused",
+        conversion: policy_allowed(),
+        expected_summary: BlockerSummary {
+            roots: vec![("fn:TYPEOF".to_owned(), [1, 0, 1, 1])],
+            single_root_files: 1,
+            possibly_incomplete_files: 0,
+            pairs: vec![],
+            files: vec![("order_score_types".to_owned(), owned(&[]), 0)],
+        },
+    }];
+    for test_case in test_cases {
+        assert_eq!(
+            blocker_summary_with(DECIMAL_CHAIN, true, test_case.conversion),
+            test_case.expected_summary,
+            "{}",
             test_case.description
         );
     }

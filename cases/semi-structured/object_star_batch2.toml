@@ -127,6 +127,7 @@ rows = [
 ]
 expression = "ARRAY_CONSTRUCT(n, 1)"
 tags = ["null", "json-null", "nested"]
+expected_divergence = "json_fidelity"
 
 [[case]]
 id = "decimal_to_variant"
@@ -140,6 +141,7 @@ rows = [
 ]
 expression = "TO_VARIANT(n)"
 tags = ["null", "json-null", "nested"]
+expected_divergence = "json_fidelity"
 
 [[case]]
 id = "decimal_to_variant_typeof"

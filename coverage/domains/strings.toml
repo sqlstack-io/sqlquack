@@ -108,6 +108,80 @@ template = "TRY_HEX_DECODE_STRING({0})"
 category = "string"
 
 [[rule]]
+id = "rule.base64_binary"
+
+# The decoded bytes are read only inside HEX_ENCODE, TO_VARCHAR with UTF-8 and SUBSTR within them.
+[[rule.form]]
+construct = "fn:HEX_ENCODE"
+arguments = [
+  { families = ["text"] },
+]
+template = "HEX_ENCODE(TRY_BASE64_DECODE_BINARY({0}))"
+category = "string"
+# Padding, line breaks, the URL-safe alphabet and padding bits left set.
+extra_rows = [["'b3JkZXI='"], ["'b3JkZXI'"], ["'YQ=='"], ["'YQ'"], ["'YR=='"], ["'YQ==='"], ["'b3Jk' || CHR(10) || 'ZXI='"], ["'b3J-ZXI_'"], ["'/+8='"], ["NULL"]]
+
+[[rule.form]]
+construct = "fn:HEX_ENCODE"
+arguments = [
+  { families = ["integer"], kinds = ["literal"], grammar = true },
+  { families = ["text"] },
+]
+template = "HEX_ENCODE(TRY_BASE64_DECODE_BINARY({1}), {0})"
+category = "string"
+benign = { "0" = "0" }
+
+[[rule.form]]
+construct = "fn:TO_VARCHAR"
+also = ["fn:TO_CHAR"]
+arguments = [
+  { families = ["text"] },
+  { families = ["text"], kinds = ["literal"], grammar = true },
+]
+template = "TO_VARCHAR(TRY_BASE64_DECODE_BINARY({0}), {1})"
+category = "string"
+benign = { "1" = "'UTF-8'" }
+# ASCII and multi-byte text, a zero byte, and padding left out.
+extra_rows = [["'b3JkZXI='"], ["'w6k='"], ["'8J+YgA=='"], ["'AA=='"], ["'YQ'"], ["''"], ["NULL"]]
+
+[[rule.form]]
+construct = "fn:HEX_ENCODE"
+arguments = [
+  { families = ["text"] },
+  { families = ["integer"], kinds = ["literal"], grammar = true },
+  { families = ["integer"], kinds = ["literal"], grammar = true },
+]
+template = "HEX_ENCODE(SUBSTRING(TRY_BASE64_DECODE_BINARY({0}), {1}, {2}))"
+category = "string"
+benign = { "1" = "2", "2" = "3" }
+extra_rows = [["'b3JkZXJfc3RhdHVzX3VwZGF0ZV9maWVsZHM='"], ["'YWJj'"], ["'YQ=='"], ["''"], ["NULL"]]
+
+[[rule.form]]
+construct = "fn:TO_VARCHAR"
+arguments = [
+  { families = ["text"] },
+  { families = ["integer"], kinds = ["literal"], grammar = true },
+  { families = ["integer"], kinds = ["literal"], grammar = true },
+  { families = ["text"], kinds = ["literal"], grammar = true },
+]
+template = "TO_VARCHAR(SUBSTRING(TRY_BASE64_DECODE_BINARY({0}), {1}, {2}), {3})"
+category = "string"
+benign = { "1" = "3", "2" = "1", "3" = "'UTF-8'" }
+extra_rows = [["'b3JkZXJfc3RhdHVzX3VwZGF0ZV9maWVsZHM='"], ["'YWJj'"], ["'YQ=='"], ["''"], ["NULL"]]
+
+[[rule.form]]
+construct = "fn:TO_VARCHAR"
+arguments = [
+  { families = ["text"] },
+  { families = ["integer"], kinds = ["literal"], grammar = true },
+  { families = ["text"], kinds = ["literal"], grammar = true },
+]
+template = "TO_VARCHAR(SUBSTRING(TRY_BASE64_DECODE_BINARY({0}), {1}), {2})"
+category = "string"
+benign = { "1" = "2", "2" = "'UTF-8'" }
+extra_rows = [["'b3JkZXJfc3RhdHVzX3VwZGF0ZV9maWVsZHM='"], ["'YWJj'"], ["'YQ=='"], ["''"], ["NULL"]]
+
+[[rule]]
 id = "rule.hash"
 
 [[rule.form]]

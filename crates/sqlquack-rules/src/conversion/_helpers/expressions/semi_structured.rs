@@ -7,6 +7,7 @@ use sqlquack_core::refusals::models::Refusal;
 use sqlquack_duckdb::blocks::main::varchar_length_check::varchar_length_check;
 use sqlquack_duckdb::floats::constants::FLOAT_TEXT;
 use sqlquack_duckdb::held::main::variant_double::variant_double;
+use sqlquack_duckdb::held::main::variant_json::variant_json;
 use sqlquack_duckdb::held::main::variant_text::variant_text;
 use sqlquack_duckdb::held::main::variant_type_name::variant_type_name;
 use sqlquack_duckdb::held::main::variant_written::variant_written;
@@ -205,6 +206,7 @@ pub(crate) fn variant_inspect(
     match name {
         "TYPEOF" => {
             let _rule = log.rule(VARIANT_TYPE_NAME);
+            site.context.typed.inspect(&base, construct);
             let typed = allows(site.context, VARIANT_TYPED_VALUES, construct);
             let sql = match held {
                 true => variant_type_name(&base.sql, typed, log),
@@ -272,7 +274,7 @@ pub(crate) fn variant_cast(
     }
 }
 
-/// A cast of a VARIANT-held value: to VARIANT unchanged, to text through its JSON, or to FLOAT.
+/// A cast of a VARIANT-held value: to VARIANT unchanged, to text or DATE through JSON, or FLOAT.
 pub(crate) fn held_cast(
     operand: Emitted,
     (type_name, target): (&str, CastTarget),
@@ -303,6 +305,11 @@ pub(crate) fn held_cast(
         (SnowflakeType::Float, _) => {
             diverge(context, JSON_FIDELITY, construct)?;
             variant_double(&operand.sql, log)
+        }
+        (SnowflakeType::Date, _) => {
+            diverge(context, JSON_FIDELITY, construct)?;
+            json_scalar(&variant_json(&operand.sql, log), SnowflakeType::Date, log)
+                .map_err(|reason| refuse(&reason))?
         }
         (other, _) => {
             return Err(refuse(&format!(

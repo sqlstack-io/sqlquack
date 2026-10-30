@@ -13,6 +13,7 @@ use sqlquack_snowflake::typing::models::SnowflakeType;
 use crate::conversion::_helpers::expressions::objects::as_json;
 use crate::conversion::_helpers::support::divergence::diverge;
 use crate::conversion::_helpers::support::scope::{Context, Emitted, VariantRoot};
+use crate::conversion::_helpers::support::tree::outside_conditions;
 
 /// Whether a builder of `values` holds its result as a DuckDB VARIANT: one keeps a FLOAT's type.
 pub(crate) fn builds_held(values: &[Emitted]) -> bool {
@@ -44,6 +45,13 @@ pub(crate) fn leaf(
             diverge(context, JSON_FIDELITY, construct)?;
             Ok(variant_integer_leaf(&emitted.sql, log))
         }
+        SnowflakeType::Number { .. } => Err(outside_conditions(
+            construct.clone(),
+            format!(
+                "a {} value beside a FLOAT in one VARIANT, which no recording shows",
+                emitted.data_type
+            ),
+        )),
         SnowflakeType::SemiStructured => {
             diverge(context, JSON_FIDELITY, construct)?;
             Ok(variant_json_leaf(&emitted.sql, log))

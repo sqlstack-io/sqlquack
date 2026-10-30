@@ -66,6 +66,18 @@ tags = ["null", "json-null", "missing-key", "invalid"]
 origin = "generated: hazards@1"
 
 [[case]]
+id = "fn_object_construct_1_combination_0_text_decimal"
+description = "fn:OBJECT_CONSTRUCT over benign values of each declared argument kind."
+columns = [{ name = "x0", type = "VARCHAR" }, { name = "x1", type = "NUMBER(38,10)" }]
+rows = [
+  ["'a'", "1.5"],
+  ["'b'", "2.25"],
+]
+expression = "OBJECT_CONSTRUCT_KEEP_NULL('k', x1, x0, 1)"
+tags = ["null", "json-null", "missing-key", "invalid"]
+origin = "generated: hazards@1"
+
+[[case]]
 id = "fn_object_construct_1_combination_0_text_null_literal"
 description = "fn:OBJECT_CONSTRUCT over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "VARCHAR" }]
@@ -329,6 +341,59 @@ rows = [
 expression = "OBJECT_CONSTRUCT_KEEP_NULL('k', x1, x0, 1)"
 tags = ["null", "json-null", "missing-key", "invalid"]
 origin = "generated: hazards@1"
+
+[[case]]
+id = "fn_object_construct_1_1_decimal_hazards"
+description = "fn:OBJECT_CONSTRUCT with the hazards null, one_spellings in argument 1, decimal."
+columns = [{ name = "x0", type = "VARCHAR" }, { name = "x1", type = "NUMBER(38,10)" }]
+rows = [
+  ["'a'", "NULL"],
+  ["'a'", "1.0000000000"],
+  ["'a'", "-0.0000000000"],
+]
+expression = "OBJECT_CONSTRUCT_KEEP_NULL('k', x1, x0, 1)"
+tags = ["null", "json-null", "missing-key", "invalid"]
+origin = "generated: hazards@1"
+
+[[case]]
+id = "fn_object_construct_1_1_decimal_half_way"
+description = "fn:OBJECT_CONSTRUCT with Values half way between two at a smaller scale, where rounding modes differ in argument 1, decimal."
+columns = [{ name = "x0", type = "VARCHAR" }, { name = "x1", type = "NUMBER(38,10)" }]
+rows = [
+  ["'a'", "2.5"],
+  ["'a'", "-2.5"],
+  ["'a'", "0.0000000005"],
+]
+expression = "OBJECT_CONSTRUCT_KEEP_NULL('k', x1, x0, 1)"
+tags = ["null", "json-null", "missing-key", "invalid"]
+origin = "generated: hazards@1"
+expected_divergence = "json_fidelity"
+
+[[case]]
+id = "fn_object_construct_1_1_decimal_digits_38"
+description = "fn:OBJECT_CONSTRUCT with Values using all 38 digits in argument 1, decimal."
+columns = [{ name = "x0", type = "VARCHAR" }, { name = "x1", type = "NUMBER(38,10)" }]
+rows = [
+  ["'a'", "9999999999999999999999999999.9999999999"],
+  ["'a'", "-9999999999999999999999999999.9999999999"],
+]
+expression = "OBJECT_CONSTRUCT_KEEP_NULL('k', x1, x0, 1)"
+tags = ["null", "json-null", "missing-key", "invalid"]
+origin = "generated: hazards@1"
+expected_divergence = "json_fidelity"
+
+[[case]]
+id = "fn_object_construct_1_1_decimal_beyond_double"
+description = "fn:OBJECT_CONSTRUCT with Seventeen significant digits, more than a double holds in argument 1, decimal."
+columns = [{ name = "x0", type = "VARCHAR" }, { name = "x1", type = "NUMBER(38,10)" }]
+rows = [
+  ["'a'", "1234567890123456.7"],
+  ["'a'", "-1234567890123456.7"],
+]
+expression = "OBJECT_CONSTRUCT_KEEP_NULL('k', x1, x0, 1)"
+tags = ["null", "json-null", "missing-key", "invalid"]
+origin = "generated: hazards@1"
+expected_divergence = "json_fidelity"
 
 [[case]]
 id = "fn_object_construct_2_combination_0_text_literal_float_text_literal_variant"

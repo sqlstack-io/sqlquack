@@ -1,0 +1,51 @@
+category = "semi-structured"
+construct = "node:cast"
+session_profile = "utc-v1"
+
+[[case]]
+id = "held_object_text_to_date"
+description = "A text field of an object that also holds a FLOAT, cast to DATE: dates, a timestamp's text and nulls."
+columns = [{ name = "s", type = "VARCHAR" }, { name = "x", type = "FLOAT" }]
+rows = [
+  ["'2024-02-29'", "1.5"],
+  ["'1999-12-31'", "NULL"],
+  ["'2024-02-29 13:45:01'", "0.125"],
+  ["NULL", "2.5"],
+]
+query = "SELECT OBJECT_CONSTRUCT_KEEP_NULL('SHIPPED_ON', s, 'WEIGHT', x):SHIPPED_ON::DATE AS d, OBJECT_CONSTRUCT('SHIPPED_ON', s, 'WEIGHT', x):SHIPPED_ON::DATE AS dropped FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "json-null", "missing-key", "boundary"]
+
+[[case]]
+id = "held_object_star_text_to_date"
+description = "A text column of OBJECT_CONSTRUCT_KEEP_NULL(r.* EXCLUDE ...) over a FLOAT column read back as DATE, by its key, by the key in another case and through an array index."
+columns = [{ name = "shipped_on", type = "VARCHAR" }, { name = "weight", type = "FLOAT" }]
+rows = [
+  ["'2024-02-29'", "1.5"],
+  ["NULL", "2.5"],
+]
+query = "SELECT OBJECT_CONSTRUCT_KEEP_NULL(r.* EXCLUDE ordinal):SHIPPED_ON::DATE AS d, OBJECT_CONSTRUCT_KEEP_NULL(r.* EXCLUDE ordinal):shipped_on::DATE AS lower_key, ARRAY_CONSTRUCT(OBJECT_CONSTRUCT_KEEP_NULL(r.* EXCLUDE ordinal))[0]:SHIPPED_ON::DATE AS indexed FROM input AS r ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "json-null", "nested", "missing-key", "array-index", "case-sensitive-key"]
+
+[[case]]
+id = "held_object_impossible_date"
+description = "A text field holding an impossible date, in an object that also holds a FLOAT, cast to DATE."
+columns = [{ name = "s", type = "VARCHAR" }, { name = "x", type = "FLOAT" }]
+rows = [
+  ["'2024-02-30'", "1.5"],
+]
+query = "SELECT OBJECT_CONSTRUCT('SHIPPED_ON', s, 'WEIGHT', x):SHIPPED_ON::DATE AS d FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["invalid"]
+
+[[case]]
+id = "held_object_float_to_date"
+description = "A FLOAT field of an object cast to DATE."
+columns = [{ name = "x", type = "FLOAT" }]
+rows = [
+  ["1.5"],
+]
+query = "SELECT OBJECT_CONSTRUCT('WEIGHT', x):WEIGHT::DATE AS d FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["invalid"]

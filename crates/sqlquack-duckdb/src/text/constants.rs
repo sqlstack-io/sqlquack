@@ -18,6 +18,77 @@ pub const HEX_TEXT: &str = "duckdb.hex_text";
 /// TRY_HEX_DECODE_STRING's text from hexadecimal digits: `duckdb.hex_decoded_text`.
 pub const HEX_DECODED_TEXT: &str = "duckdb.hex_decoded_text";
 
+/// TRY_BASE64_DECODE_BINARY's bytes, as upper-case hexadecimal digits: `duckdb.base64_bytes`.
+pub const BASE64_BYTES: &str = "duckdb.base64_bytes";
+
+/// Bytes held as hexadecimal digits, read as UTF-8 text: `duckdb.bytes_text`.
+pub const BYTES_TEXT: &str = "duckdb.bytes_text";
+
+/// SUBSTR of bytes held as hexadecimal digits, counted in bytes: `duckdb.bytes_substring`.
+pub const BYTES_SUBSTRING: &str = "duckdb.bytes_substring";
+
+/// ILIKE's text with letters no recording shows Snowflake folding: `duckdb.folded_text`.
+pub const FOLDED_TEXT: &str = "duckdb.folded_text";
+
+/// The divergence of case-insensitive text holding letters whose folding no recording shows.
+pub const CASE_FOLDING: &str = "case_folding";
+
+/// The long s, which Snowflake's ILIKE was recorded folding onto s, as DuckDB's lower does not.
+pub const LONG_S: char = '\u{17f}';
+
+/// Code point ranges whose case folding differs from DuckDB's lower-casing, or DuckDB's from Unicode's.
+pub const UNFOLDED_LETTERS: &[(u32, u32)] = &[
+    (0xB5, 0xB5),
+    (0x130, 0x130),
+    (0x149, 0x149),
+    (0x1F0, 0x1F0),
+    (0x345, 0x345),
+    (0x390, 0x390),
+    (0x3B0, 0x3B0),
+    (0x3C2, 0x3C2),
+    (0x3D0, 0x3D1),
+    (0x3D5, 0x3D6),
+    (0x3F0, 0x3F1),
+    (0x3F5, 0x3F5),
+    (0x587, 0x587),
+    (0x13A0, 0x13F5),
+    (0x13F8, 0x13FD),
+    (0x1C80, 0x1C89),
+    (0x1E96, 0x1E9B),
+    (0x1F50, 0x1F50),
+    (0x1F52, 0x1F52),
+    (0x1F54, 0x1F54),
+    (0x1F56, 0x1F56),
+    (0x1F80, 0x1FAF),
+    (0x1FB2, 0x1FB4),
+    (0x1FB6, 0x1FB7),
+    (0x1FBC, 0x1FBC),
+    (0x1FBE, 0x1FBE),
+    (0x1FC2, 0x1FC4),
+    (0x1FC6, 0x1FC7),
+    (0x1FCC, 0x1FCC),
+    (0x1FD2, 0x1FD3),
+    (0x1FD6, 0x1FD7),
+    (0x1FE2, 0x1FE4),
+    (0x1FE6, 0x1FE7),
+    (0x1FF2, 0x1FF4),
+    (0x1FF6, 0x1FF7),
+    (0x1FFC, 0x1FFC),
+    (0xA7CB, 0xA7CC),
+    (0xA7DA, 0xA7DA),
+    (0xA7DC, 0xA7DC),
+    (0xAB70, 0xABBF),
+    (0xFB00, 0xFB06),
+    (0xFB13, 0xFB17),
+    (0x10D50, 0x10D65),
+];
+
+/// Base64 Snowflake decodes: whole groups of four, the last padded with `=` to its length.
+pub const BASE64_PATTERN: &str = "(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?";
+
+/// The message for bytes that are not UTF-8 read as UTF-8 text.
+pub const INVALID_UTF8_MESSAGE: &str = "Invalid UTF8 detected while decoding bytes as text";
+
 /// The divergence for REGEXP patterns from a column in a syntax no recording shows read alike.
 pub const REGEXP_PATTERN_SYNTAX: &str = "regexp_pattern_syntax";
 

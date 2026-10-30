@@ -11,6 +11,10 @@ pub struct DateFormat {
     pub groups: (u8, u8, u8),
     /// Whether the year has two digits, read from TWO_DIGIT_CENTURY_START.
     pub two_digit_year: bool,
+    /// Whether the month is an English name or abbreviation, in ASCII letters of either case.
+    pub named_month: bool,
+    /// The whole-text pattern of other spellings TRY_TO_DATE was recorded reading as NULL.
+    pub null_pattern: Option<&'static str>,
 }
 
 /// A field a timestamp format element reads.

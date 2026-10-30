@@ -44,6 +44,8 @@ pub const JSON_ARRAY_EXCEPT: &str = "duckdb.json_array_except";
 pub const JSON_ARRAY_CONSTRUCT_COMPACT: &str = "duckdb.json_array_construct_compact";
 /// ARRAY_CONTAINS: `duckdb.json_array_contains`.
 pub const JSON_ARRAY_CONTAINS: &str = "duckdb.json_array_contains";
+/// A JSON number written as a plain decimal that is not whole, which equals no integer.
+pub const JSON_FRACTION_PATTERN: &str = r"-?[0-9]+\.[0-9]*[1-9]";
 /// ARRAY_TO_STRING: `duckdb.json_array_to_string`.
 pub const JSON_ARRAY_TO_STRING: &str = "duckdb.json_array_to_string";
 /// The message of the error ARRAY_TO_STRING raises for a value other than an array.
@@ -65,6 +67,8 @@ pub const JSON_OBJECT_PICK: &str = "duckdb.json_object_pick";
 pub const JSON_KIND_CAST: &str = "duckdb.json_kind_cast";
 /// A typed value put in a VARIANT: `duckdb.json_typed_text`.
 pub const JSON_TYPED_TEXT: &str = "duckdb.json_typed_text";
+/// A NUMBER with a scale put in a VARIANT: `duckdb.json_decimal`.
+pub const JSON_DECIMAL: &str = "duckdb.json_decimal";
 /// IS_DATE-style checks of a VARIANT: `duckdb.json_is_typed`.
 pub const JSON_IS_TYPED: &str = "duckdb.json_is_typed";
 /// The divergence typed values in a VARIANT rely on.

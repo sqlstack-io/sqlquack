@@ -1,0 +1,169 @@
+category = "temporal"
+construct = "fn:TRY_TO_DATE"
+session_profile = "utc-v1"
+
+[[case]]
+id = "try_to_date_dd_mon_yyyy_months"
+description = "TRY_TO_DATE with DD MON YYYY for every month's abbreviation."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'01 Jan 2024'"],
+  ["'02 Feb 2024'"],
+  ["'03 Mar 2024'"],
+  ["'04 Apr 2024'"],
+  ["'05 May 2024'"],
+  ["'06 Jun 2024'"],
+  ["'07 Jul 2024'"],
+  ["'08 Aug 2024'"],
+  ["'09 Sep 2024'"],
+  ["'01 Oct 2024'"],
+  ["'02 Nov 2024'"],
+  ["'03 Dec 2024'"],
+]
+expression = "TRY_TO_DATE(s, 'DD MON YYYY')"
+tags = ["boundary"]
+
+[[case]]
+id = "try_to_date_dd_mon_yyyy_spellings"
+description = "TRY_TO_DATE with DD MON YYYY: one-digit days, letter case, full and other month names, impossible dates and other separators."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'5 Mar 2024'"],
+  ["'05 MAR 2024'"],
+  ["'05 mar 2024'"],
+  ["'05 March 2024'"],
+  ["'05 Sept 2024'"],
+  ["'05 Mrz 2024'"],
+  ["'05 Ma 2024'"],
+  ["'29 Feb 2023'"],
+  ["'29 Feb 2024'"],
+  ["'31 Apr 2024'"],
+  ["'00 Jan 2024'"],
+  ["'32 Jan 2024'"],
+  ["'005 Mar 2024'"],
+  ["'05 Mar 24'"],
+  ["'05 Mar 02024'"],
+  ["'05-Mar-2024'"],
+  ["'05Mar2024'"],
+  ["'05/Mar/2024'"],
+  ["'05  Mar 2024'"],
+  ["'05 Mar  2024'"],
+  ["' 05 Mar 2024'"],
+  ["'05 Mar 2024 '"],
+  ["'05 Mar 2024 10:00'"],
+  ["'2024-03-05'"],
+  ["'not a date'"],
+  ["''"],
+  ["'01 Jan 0001'"],
+  ["'31 Dec 9999'"],
+  ["NULL"],
+]
+expression = "TRY_TO_DATE(s, 'DD MON YYYY')"
+tags = ["null", "invalid", "boundary"]
+
+[[case]]
+id = "try_to_date_mmmm_dd_yyyy_months"
+description = "TRY_TO_DATE with MMMM DD YYYY for every month's full name, in lower case as URLs write them."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'january 1 2024'"],
+  ["'february 2 2024'"],
+  ["'march 3 2024'"],
+  ["'april 4 2024'"],
+  ["'may 5 2024'"],
+  ["'june 6 2024'"],
+  ["'july 7 2024'"],
+  ["'august 8 2024'"],
+  ["'september 9 2024'"],
+  ["'october 10 2024'"],
+  ["'november 11 2024'"],
+  ["'december 12 2024'"],
+]
+expression = "TRY_TO_DATE(s, 'MMMM DD YYYY')"
+tags = ["boundary"]
+
+[[case]]
+id = "try_to_date_mmmm_dd_yyyy_spellings"
+description = "TRY_TO_DATE with MMMM DD YYYY: letter case, abbreviations, padded days, commas, impossible dates and other separators."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'March 05 2024'"],
+  ["'March 5 2024'"],
+  ["'MARCH 05 2024'"],
+  ["'Mar 05 2024'"],
+  ["'Sept 05 2024'"],
+  ["'Sep 05 2024'"],
+  ["'Marc 05 2024'"],
+  ["'Mai 05 2024'"],
+  ["'March 05, 2024'"],
+  ["'March  05 2024'"],
+  ["'March 05  2024'"],
+  ["'march-05-2024'"],
+  ["'March 005 2024'"],
+  ["'February 30 2024'"],
+  ["'February 29 2023'"],
+  ["'March 05 24'"],
+  ["' March 05 2024'"],
+  ["'March 05 2024 '"],
+  ["'2024-03-05'"],
+  ["'not a date'"],
+  ["''"],
+  ["NULL"],
+]
+expression = "TRY_TO_DATE(s, 'MMMM DD YYYY')"
+tags = ["null", "invalid", "boundary"]
+
+[[case]]
+id = "try_to_date_month_format_case"
+description = "Month-name formats written in lower and mixed case."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'05 Mar 2024'"],
+  ["'March 05 2024'"],
+  ["NULL"],
+]
+expression = "TRY_TO_DATE(s, 'dd mon yyyy')::VARCHAR || '|' || TRY_TO_DATE(s, 'Mmmm Dd Yyyy')::VARCHAR"
+tags = ["null"]
+
+[[case]]
+id = "try_to_date_dd_mon_yyyy_unrecorded_shapes"
+description = "TRY_TO_DATE with DD MON YYYY: spaces on one side of the month only, mixed and one-digit-day separators, other words and lengths with one-digit days and short years, and other trailing times."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'05Mar 2024'"],
+  ["'05 Mar2024'"],
+  ["' 05Mar 2024'"],
+  ["'05-Mar/2024'"],
+  ["'05/Mar-2024'"],
+  ["'5-Mar-2024'"],
+  ["'05-Mar-24'"],
+  ["'5 Sept 2024'"],
+  ["'05  Sept 2024'"],
+  ["'05 Sept 24'"],
+  ["'05 Mar 202'"],
+  ["'05 Mar 2'"],
+  ["'5 Mar 02024'"],
+  ["'05 Mar 2024 1:00'"],
+  ["'05 Mar 2024T10:00'"],
+  ["' 05-Mar-2024'"],
+]
+expression = "TRY_TO_DATE(s, 'DD MON YYYY')"
+tags = ["invalid", "boundary"]
+
+[[case]]
+id = "try_to_date_mmmm_dd_yyyy_unrecorded_shapes"
+description = "TRY_TO_DATE with MMMM DD YYYY: other words with one-digit days and short years, commas without a space or with one-digit days, and other separators."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'Sept 5 2024'"],
+  ["'Sept 05 24'"],
+  ["'March 5, 2024'"],
+  ["'March 05,2024'"],
+  ["'march/05/2024'"],
+  ["'march-5-2024'"],
+  ["'March 0005 2024'"],
+  ["'  March 05 2024'"],
+  ["'Marchh 05 2024'"],
+]
+expression = "TRY_TO_DATE(s, 'MMMM DD YYYY')"
+tags = ["invalid", "boundary"]
