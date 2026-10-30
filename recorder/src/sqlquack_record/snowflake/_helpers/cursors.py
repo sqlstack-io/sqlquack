@@ -47,6 +47,7 @@ def fetch(cursor: Any) -> StatementResult:
     if table is None:
         raise UnrecordableResultError("the connector returned no Arrow table for the result")
     _require_declared_units(columns=columns, table=table)
+    _require_declared_nullability(columns=columns, table=table)
     return StatementResult(query_id=cursor.sfqid, columns=columns, table=table, failure=None)
 
 
@@ -93,6 +94,18 @@ def _require_declared_units(*, columns: tuple[ColumnDescription, ...], table: pa
                 f"the connector returned {column.name} {column.type_name}({column.scale}) in "
                 f"{unit} rather than ns, which truncates every row's sub-microsecond digits "
                 "when any row lies outside the nanosecond range"
+            )
+
+
+def _require_declared_nullability(
+    *, columns: tuple[ColumnDescription, ...], table: pa.Table
+) -> None:
+    """Refuse a NULL in a NOT NULL column: the connector's, standing for a value no one knows."""
+    for index, column in enumerate(columns):
+        if column.nullable is False and table.column(index).null_count > 0:
+            raise UnrecordableResultError(
+                f"the connector returned NULL in {column.name} {column.type_name}, which "
+                "Snowflake declares NOT NULL, so the value it stands for is unknown"
             )
 
 

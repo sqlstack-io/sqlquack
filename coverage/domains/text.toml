@@ -186,6 +186,7 @@ alone = ["1.text.dots_brackets", "1.text.number_text"]
 
 [[rule.form]]
 construct = "fn:REGEXP_SUBSTR"
+also = ["fn:REGEXP_SUBSTR_ALL"]
 arguments = [
   { families = ["text"] },
   { families = ["text"], kinds = ["literal"], grammar = true },
@@ -197,6 +198,7 @@ arguments = [
 
 [[rule.form]]
 construct = "fn:REGEXP_SUBSTR"
+also = ["fn:REGEXP_SUBSTR_ALL"]
 arguments = [
   { families = ["text"] },
   { families = ["text"], kinds = ["literal"], grammar = true },

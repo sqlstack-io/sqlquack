@@ -7,12 +7,14 @@ id = "rule.variant_computed_get"
 
 [[rule.form]]
 construct = "fn:GET"
+also = ["node:subscript"]
 arguments = [
   { families = ["variant"] },
   { families = ["text", "integer"], kinds = ["value"] },
 ]
 template = "GET({0}, {1})"
 category = "semi-structured-array"
+variants = ["{0}[{1}]"]
 
 [[rule.probe]]
 construct = "fn:GET"
@@ -429,6 +431,7 @@ category = "semi-structured"
 
 [[rule.form]]
 construct = "fn:GET"
+also = ["node:subscript"]
 arguments = [
   { families = ["variant"] },
   { families = ["text", "integer"], kinds = ["value"] },

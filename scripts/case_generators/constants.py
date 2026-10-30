@@ -40,7 +40,7 @@ JSON_PATHS: str = "json_paths@2"
 PARSE_JSON_TEXTS: str = "parse_json_texts@2"
 JSON_LENIENCE: str = "json_lenience@3"
 JSON_NUMBERS: str = "json_numbers@2"
-TEMPORAL_TEXTS: str = "temporal_texts@5"
+TEMPORAL_TEXTS: str = "temporal_texts@7"
 DATE_TEXT_SPELLING: str = "date_text_spelling"
 TIMESTAMP_TZ_SUBMICRO: str = "timestamp_tz_submicro"
 TIME_SUBMICRO: str = "time_submicro"
@@ -615,7 +615,6 @@ CENTURY_PIVOT_INSTANTS: tuple[Instant, ...] = (
     Instant(2069, 6, 15, 0, 0, 0, 0, 0),
     Instant(1970, 6, 15, 0, 0, 0, 0, 0),
 )
-SUB_MICROSECOND_FORMAT_TOKENS: tuple[str, ...] = ("FF7", "FF8", "FF9")
 NANOSECOND_YEARS: range = range(1678, 2262)
 TIMESTAMP_FORMATS: tuple[TemporalFormat, ...] = (
     TemporalFormat("iso", "YYYY-MM-DD HH24:MI:SS"),

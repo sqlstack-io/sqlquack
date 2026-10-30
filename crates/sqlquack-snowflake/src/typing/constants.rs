@@ -59,6 +59,11 @@ pub const TIME_DIFF_TYPE: SnowflakeType = SnowflakeType::Number {
     precision: 9,
     scale: 0,
 };
+/// The type of DATEDIFF in microseconds between two TIMEs, whose values reach 86,400,000,000.
+pub const TIME_DIFF_MICROSECONDS_TYPE: SnowflakeType = SnowflakeType::Number {
+    precision: 18,
+    scale: 0,
+};
 /// DATEDIFF's units and the precision of their recorded NUMBER(p,0) type.
 pub const DATEDIFF_PRECISIONS: &[(&str, u8)] = &[
     ("YEAR", 9),

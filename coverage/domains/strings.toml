@@ -28,6 +28,20 @@ template = "CONTAINS({0}, {1})"
 category = "string"
 
 [[rule]]
+id = "rule.charindex"
+
+[[rule.form]]
+construct = "fn:CHARINDEX"
+also = ["fn:POSITION", "node:str_position"]
+arguments = [
+  { families = ["text"] },
+  { families = ["text"] },
+]
+template = "CHARINDEX({0}, {1})"
+category = "string"
+variants = ["POSITION({0}, {1})", "POSITION({0} IN {1})"]
+
+[[rule]]
 id = "rule.editdistance"
 
 [[rule.form]]

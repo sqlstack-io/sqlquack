@@ -24,7 +24,6 @@ from scripts.case_generators.constants import (
     NULL_CELL,
     QUOTE,
     SPELLED_DATE_FORMATS,
-    SUB_MICROSECOND_FORMAT_TOKENS,
     TEMPORAL_TEXTS,
     TIME_ZONES,
     TIMESTAMP_FORMAT_FUNCTIONS,
@@ -132,25 +131,20 @@ def valid_texts(
     return tuple(texts)
 
 
-def isolated_years(*, function: TemporalFunction, temporal_format: TemporalFormat) -> bool:
-    """Whether instants outside the nanosecond range need their own case, sparing other rows."""
-    return function in TIMESTAMP_FORMAT_FUNCTIONS and any(
-        token in temporal_format.format for token in SUB_MICROSECOND_FORMAT_TOKENS
-    )
+def unrecordable_years(*, function: TemporalFunction) -> bool:
+    """Whether instants outside the nanosecond range are left out: the connector truncates them."""
+    return function in TIMESTAMP_FORMAT_FUNCTIONS
 
 
 def format_cases(*, function: TemporalFunction, temporal_format: TemporalFormat) -> list[Case]:
     """TRY_ form over valid and odd texts; plain form over valid texts and an impossible date."""
     pattern: str = literal(temporal_format.format)
-    isolated: bool = isolated_years(function=function, temporal_format=temporal_format)
+    unrecordable: bool = unrecordable_years(function=function)
     kept: tuple[Instant, ...] = tuple(
-        instant for instant in INSTANTS_FOR_TEXT if not isolated or instant.year in NANOSECOND_YEARS
+        instant
+        for instant in INSTANTS_FOR_TEXT
+        if not unrecordable or instant.year in NANOSECOND_YEARS
     )
-    outside: tuple[Instant, ...] = tuple(
-        instant for instant in INSTANTS_FOR_TEXT if instant not in kept
-    )
-    extreme_texts: tuple[str, ...] = valid_texts(temporal_format=temporal_format, instants=outside)
-    extreme: tuple[Row, ...] = tuple((literal(text),) for text in extreme_texts)
     kept_texts: tuple[str, ...] = valid_texts(temporal_format=temporal_format, instants=kept)
     valid: tuple[Row, ...] = (*((literal(text),) for text in kept_texts), (NULL_CELL,))
     odd: tuple[Row, ...] = tuple((literal(text),) for text in odd_texts(temporal_format))
@@ -182,22 +176,6 @@ def format_cases(*, function: TemporalFunction, temporal_format: TemporalFormat)
             rows=valid,
             expression=plain,
             tags=("null", "boundary"),
-        ),
-        *(
-            Case(
-                id=f"{case_id}_extreme_years",
-                description=f"{expression} over instants outside the nanosecond range, alone.",
-                columns=column,
-                rows=extreme,
-                expression=expression,
-                tags=("boundary",),
-                expected_divergence=divergence,
-            )
-            for case_id, expression, divergence in (
-                (f"try_{function.slug}_{temporal_format.slug}", attempt, DATE_TEXT_SPELLING),
-                (f"{function.slug}_{temporal_format.slug}", plain, None),
-            )
-            if extreme
         ),
         Case(
             id=f"{function.slug}_{temporal_format.slug}_invalid",

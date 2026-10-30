@@ -45,6 +45,7 @@ use crate::conversion::_helpers::expressions::temporal_functions::{
 use crate::conversion::_helpers::expressions::text_functions::{
     left_right, pad, regexp, replace, split_part, translate,
 };
+use crate::conversion::_helpers::expressions::text_search::charindex_call;
 use crate::conversion::_helpers::expressions::variants::variant_function;
 use crate::conversion::_helpers::support::divergence::diverge;
 use crate::conversion::_helpers::support::scope::{Context, Emitted};
@@ -101,6 +102,7 @@ pub(crate) fn convert_function(payload: &Value, site: Site<'_>) -> Result<Emitte
         ("CONCAT_WS", parts) => concatenate_with_separator(parts, &construct, site),
         ("CONTAINS", parts) => text_contains(parts, &construct, site),
         ("EDITDISTANCE", parts) => edit_distance(parts, &construct, site),
+        ("CHARINDEX" | "POSITION", parts) => charindex_call(&name, parts, &construct, site),
         ("MD5", parts) => text_md5(parts, &construct, site),
         ("MOD", parts) => mod_call(parts, &construct, site),
         ("FILTER" | "TRANSFORM", parts) => lambda_call(&name, parts, &construct, site),
@@ -149,7 +151,7 @@ pub(crate) fn convert_function(payload: &Value, site: Site<'_>) -> Result<Emitte
         }
         ("DATE_PART", [unit, value]) => date_part(unit, value, &construct, site),
         ("DATEDIFF", parts) => date_diff_call(parts, &construct, site),
-        ("TO_TIME" | "TRY_TO_TIME", parts) => to_time(&name, parts, &construct, site),
+        ("TO_TIME" | "TRY_TO_TIME" | "TIME", parts) => to_time(&name, parts, &construct, site),
         ("DATE_FROM_PARTS", parts) => date_from_parts_call(parts, &construct, site),
         ("TIMESTAMP_NTZ_FROM_PARTS", parts) => timestamp_from_parts_call(parts, &construct, site),
         ("CURRENT_DATE" | "CURRENT_TIMESTAMP", parts) => {

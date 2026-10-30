@@ -448,17 +448,25 @@ fn partition_key(
     }
 }
 
+/// One ORDER BY item's key, as it is compared when sorting.
+pub(crate) fn order_key(item: &Value, site: Site<'_>) -> Result<String, Refusal> {
+    let construct = node_construct("ordered");
+    let object = payload_object(item, &construct)?;
+    let key = grouping_key(
+        convert_expression(field(object, "this", &construct)?, site)?,
+        &construct,
+    )?;
+    Ok(key.sql)
+}
+
 /// One ORDER BY item with Snowflake's NULL placement spelled out.
 pub(crate) fn order_item(item: &Value, site: Site<'_>) -> Result<String, Refusal> {
     let construct = node_construct("ordered");
     let object = payload_object(item, &construct)?;
     require_understood(object, &["this", "desc", "nulls_first"], &construct)?;
-    let key = grouping_key(
-        convert_expression(field(object, "this", &construct)?, site)?,
-        &construct,
-    )?;
+    let key = order_key(item, site)?;
     Ok(explicit_null_order(
-        &key.sql,
+        &key,
         flag(object, "desc"),
         object.get("nulls_first").and_then(Value::as_bool),
         site.context.log,

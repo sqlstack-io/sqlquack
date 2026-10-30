@@ -22,6 +22,10 @@ pub const CURRENT_TIME: &str = "current_time";
 pub const TIMESTAMP_TEXT_ROUNDING: &str = "timestamp_text_rounding";
 /// The divergence of ANY_VALUE, whose choice among a group's values differs between engines.
 pub const ANY_VALUE_CHOICE: &str = "any_value_choice";
+/// The divergence of MODE, whose choice among values tied for most frequent differs between engines.
+pub const MODE_TIES: &str = "mode_ties";
+/// MODE, the most frequent value.
+pub const MODE_RULE: &str = "rule.mode";
 /// The aggregates the parser keeps as named calls that convert.
 pub const NAMED_AGGREGATE_NAMES: &[&str] = &[
     "ANY_VALUE",
@@ -31,6 +35,7 @@ pub const NAMED_AGGREGATE_NAMES: &[&str] = &[
     "OBJECT_AGG",
     "MAX_BY",
     "MIN_BY",
+    "MODE",
     MULTI_COUNT,
 ];
 /// COUNT of several values, which the parser keeps as a named call.
@@ -153,6 +158,58 @@ pub const CAST_TEXT_TIME: &str = "rule.cast_text_time";
 pub const TIME_CAST: &str = "rule.time_cast";
 /// TIME arithmetic and parts.
 pub const TIME_ARITHMETIC: &str = "rule.time_arithmetic";
+/// GROUP BY ALL.
+pub const GROUP_BY_ALL_RULE: &str = "rule.group_by_all";
+/// A DATE or naive timestamp plus or minus an interval literal.
+pub const INTERVAL_ARITHMETIC: &str = "rule.interval_arithmetic";
+/// Why GROUP BY ALL with every SELECT item an aggregate is refused: no recording shows its rows.
+pub const GROUP_BY_ALL: &str = "GROUP BY ALL where every SELECT item is an aggregate";
+/// Node kinds that are aggregates, outside a window.
+pub const AGGREGATE_KINDS: &[&str] = &[
+    "count",
+    "sum",
+    "avg",
+    "min",
+    "max",
+    "aggregate_function",
+    "within_group",
+];
+/// Node kinds GROUP BY ALL refuses in a SELECT item.
+pub const GROUP_BY_ALL_REFUSED_KINDS: &[&str] = &["window_function", "subquery", "exists"];
+/// The node kind of a star.
+pub const STAR_KIND: &str = "star";
+/// Why an interval is refused.
+pub const INTERVAL_REFUSAL: &str =
+    "an INTERVAL other than a literal of one whole number of days, hours, minutes or seconds";
+/// The fields an interval literal the conversion reads may set.
+pub const INTERVAL_FIELDS: &[&str] = &["this", "unit"];
+/// The parser's kind of an interval unit written as one word, such as `DAY`.
+pub const INTERVAL_SIMPLE_UNIT: &str = "simple";
+/// The most digits an interval literal's amount may have, so it fits a BIGINT unit count.
+pub const INTERVAL_MAX_DIGITS: usize = 9;
+/// The precision of a naive timestamp plus or minus an interval, whatever the timestamp's own.
+pub const INTERVAL_TIMESTAMP_PRECISION: u8 = 9;
+/// MODE without GROUP BY over no rows of a NUMBER or FLOAT: zero.
+pub const MODE_EMPTY_NUMBER: &str = "0";
+/// MODE without GROUP BY over no rows of text: the empty string.
+pub const MODE_EMPTY_TEXT: &str = "''";
+/// MODE without GROUP BY over no rows of a DATE: the epoch.
+pub const MODE_EMPTY_DATE: &str = "'1970-01-01'";
+/// MODE without GROUP BY over no rows of a BOOLEAN: NULL.
+pub const MODE_EMPTY_BOOLEAN: &str = "NULL";
+/// The node kind of an interval.
+pub const INTERVAL_KIND: &str = "interval";
+/// Interval units as written, singular and plural in upper case, and the DATEADD unit each is.
+pub const INTERVAL_UNITS: &[(&[&str], &str)] = &[
+    (&["DAY", "DAYS"], "DAY"),
+    (&["HOUR", "HOURS"], "HOUR"),
+    (&["MINUTE", "MINUTES"], "MINUTE"),
+    (&["SECOND", "SECONDS"], "SECOND"),
+];
+/// The interval units added to a DATE that keep it a DATE.
+pub const INTERVAL_DATE_UNITS: &[&str] = &["DAY"];
+/// TO_TIME and TIME of a naive timestamp.
+pub const TIMESTAMP_TIME_RULE: &str = "rule.timestamp_time";
 /// TO_TIME and TRY_TO_TIME of text.
 pub const TEXT_TO_TIME_RULE: &str = "rule.text_to_time";
 /// DATE_FROM_PARTS and TIMESTAMP_NTZ_FROM_PARTS.
@@ -208,8 +265,8 @@ pub const LENGTH_TYPE: SnowflakeType = SnowflakeType::Number {
 pub const REGEXP_SHORTHANDS: &str = "dDsSwW";
 /// The REGEXP functions that read lazy quantifiers and `\n` as recorded.
 pub const REGEXP_EXTRACTING_FUNCTIONS: &[&str] = &["REGEXP_SUBSTR", "REGEXP_SUBSTR_ALL"];
-/// The escape REGEXP_SUBSTR was recorded reading as a line feed.
-pub const REGEXP_LINE_FEED_ESCAPE: char = 'n';
+/// The escapes REGEXP_SUBSTR reads as a line feed, a tab and a carriage return.
+pub const REGEXP_CONTROL_ESCAPES: &str = "ntr";
 /// DATE_PART, EXTRACT and the single-part functions.
 pub const DATE_PART_RULE: &str = "rule.date_part";
 /// DATE_TRUNC, DATEADD and DATEDIFF.
@@ -278,6 +335,8 @@ pub const BODY_ALIAS: &str = "\"__sqlquack_body\"";
 pub const TABLE_WRAPPER: &str = "TABLE";
 /// The DuckDB type semi-structured values are held in.
 pub const SEMI_STRUCTURED_HOLDING: &str = "JSON";
+/// The lambda parameter a simple CASE binds its computed operand and WHEN values to.
+pub const CASE_SUBJECT: &str = "case_subject";
 /// OBJECT_PICK.
 pub const OBJECT_PICK_RULE: &str = "rule.object_pick";
 /// OBJECT_KEYS.
@@ -431,6 +490,13 @@ pub const TEXT_CONTAINS: &str = "rule.contains";
 pub const TEXT_MD5: &str = "rule.md5";
 /// EDITDISTANCE of two texts.
 pub const EDIT_DISTANCE: &str = "rule.editdistance";
+/// CHARINDEX and POSITION of one text in another.
+pub const TEXT_SEARCH_POSITION: &str = "rule.charindex";
+/// The recorded type of CHARINDEX and POSITION.
+pub const TEXT_SEARCH_POSITION_TYPE: SnowflakeType = SnowflakeType::Number {
+    precision: 9,
+    scale: 0,
+};
 /// Casts between DATE and timestamp types.
 pub const CAST_TEMPORAL: &str = "rule.cast_temporal";
 /// Casts of VARCHAR to TIMESTAMP_NTZ, read as TO_TIMESTAMP_NTZ reads text.
@@ -840,6 +906,10 @@ pub const NOT_SNOWFLAKE_FUNCTIONS: &[&str] = &[
 ];
 /// The pair behind converting `t RLIKE p` through the `REGEXP_LIKE` rule.
 pub const RLIKE_PAIR: &str = "rlike_to_regexp_like";
+/// A computed `v[i]` spelled as GET.
+pub const SUBSCRIPT_PAIR: &str = "subscript_to_get";
+/// POSITION spelled as CHARINDEX.
+pub const POSITION_PAIR: &str = "position_to_charindex";
 
 /// Every recorded spelling pair; `sqlquack verify` requires both spellings' results to match.
 pub const SPELLING_PAIRS: &[SpellingPair] = &[
@@ -856,7 +926,13 @@ pub const SPELLING_PAIRS: &[SpellingPair] = &[
         cases: "fidelity/text_type.toml",
     },
     SpellingPair {
-        id: "position_to_charindex",
+        id: SUBSCRIPT_PAIR,
+        source: "v[i] and v[k] with an index or key computed per row",
+        canonical: "GET(v, i) and GET(v, k)",
+        cases: "fidelity/subscript_get.toml",
+    },
+    SpellingPair {
+        id: POSITION_PAIR,
         source: "POSITION(s, t [, n]) and POSITION(s IN t)",
         canonical: "CHARINDEX(s, t [, n])",
         cases: "fidelity/position.toml",

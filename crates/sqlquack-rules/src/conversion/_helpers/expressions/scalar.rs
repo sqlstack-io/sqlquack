@@ -12,6 +12,7 @@ use crate::conversion::_helpers::expressions::atoms::{
 use crate::conversion::_helpers::expressions::calls::{convert_aggregate, convert_function};
 use crate::conversion::_helpers::expressions::casts::convert_cast;
 use crate::conversion::_helpers::expressions::conditionals::{case_expression, coalesce, iff, nvl};
+use crate::conversion::_helpers::expressions::intervals::{adds_interval, interval_arithmetic};
 use crate::conversion::_helpers::expressions::named_aggregates::{
     is_named_aggregate, named_aggregate,
 };
@@ -34,6 +35,7 @@ use crate::conversion::_helpers::expressions::strings::{
 };
 use crate::conversion::_helpers::expressions::temporal_functions::{date_diff, extract};
 use crate::conversion::_helpers::expressions::text_functions::{length, like, substring};
+use crate::conversion::_helpers::expressions::text_search::position_in;
 use crate::conversion::_helpers::expressions::variants::variant_function;
 use crate::conversion::_helpers::expressions::windows::convert_window;
 use crate::conversion::_helpers::support::collecting::{
@@ -148,6 +150,7 @@ fn convert_kind(node: &Value, site: Site<'_>) -> Result<Emitted, Refusal> {
         "annotated" => commented(payload, site),
         "neg" => negate(payload, site),
         "subquery" => scalar_subquery(payload, site),
+        "add" | "sub" if adds_interval(payload) => interval_arithmetic(kind, payload, site),
         "add" | "sub" | "mul" | "div" => arithmetic(kind, payload, site),
         "mod" => modulo(payload, site),
         "eq" | "neq" | "lt" | "lte" | "gt" | "gte" => comparison_predicate(kind, payload, site),
@@ -168,6 +171,7 @@ fn convert_kind(node: &Value, site: Site<'_>) -> Result<Emitted, Refusal> {
         "starts_with" | "ends_with" => text_affix(kind, payload, site),
         "substring" => substring(payload, site),
         "length" => length(payload, site),
+        "str_position" => position_in(payload, site),
         "like" | "i_like" => like(kind, payload, site),
         "extract" | "year" | "quarter" | "month" | "day" | "hour" | "minute" | "second" => {
             extract(kind, payload, site)

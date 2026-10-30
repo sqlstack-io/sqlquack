@@ -1,0 +1,59 @@
+# DATEs and naive timestamps plus or minus INTERVAL literals.
+category = "temporal"
+construct = "node:sub"
+session_profile = "utc-v1"
+
+[[case]]
+id = "date_minus_days"
+description = "A DATE minus INTERVAL '7 days' and plus INTERVAL '1 DAY', across a leap day, a month and a year, and NULL."
+columns = [{ name = "d", type = "DATE" }]
+rows = [
+  ["'2024-03-05'"],
+  ["'2024-01-03'"],
+  ["'2023-03-01'"],
+  ["'2024-12-31'"],
+  ["NULL"],
+]
+query = "SELECT d - INTERVAL '7 days' AS week_before, d + INTERVAL '1 DAY' AS next_day, d - INTERVAL '30 Days' AS month_before FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "date_minus_days_filter"
+description = "Orders shipped within a week of a fixed date, as a rolling window filters them."
+columns = [{ name = "shipped", type = "DATE" }]
+rows = [
+  ["'2024-02-26'"],
+  ["'2024-02-27'"],
+  ["'2024-03-04'"],
+  ["NULL"],
+]
+query = "SELECT shipped FROM input WHERE shipped >= '2024-03-04'::DATE - INTERVAL '7 days' ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "timestamp_plus_clock_units"
+description = "A TIMESTAMP_NTZ(9) plus hours, minutes and seconds, across midnight and a leap day, and NULL."
+columns = [{ name = "ts", type = "TIMESTAMP_NTZ(9)" }]
+rows = [
+  ["'2024-02-28 23:30:00.123456'"],
+  ["'2024-03-10 01:15:00'"],
+  ["'1969-12-31 23:59:59'"],
+  ["NULL"],
+]
+query = "SELECT ts + INTERVAL '2 hours' AS later, ts - INTERVAL '90 minutes' AS earlier, ts + INTERVAL '1 second' AS tick, ts - INTERVAL '2 days' AS days FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "timestamp_scales_plus_interval"
+description = "TIMESTAMP_NTZ(3) and TIMESTAMP_NTZ(0) plus an hour keep their precision."
+columns = [{ name = "ms", type = "TIMESTAMP_NTZ(3)" }, { name = "s", type = "TIMESTAMP_NTZ(0)" }]
+rows = [
+  ["'2024-02-29 23:59:59.999'", "'2024-02-29 23:59:59'"],
+  ["NULL", "NULL"],
+]
+query = "SELECT ms + INTERVAL '1 hour' AS ms, s + INTERVAL '1 HOUR' AS s FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "boundary"]

@@ -22,6 +22,8 @@ pub struct Scope<'a, A> {
     pub outer: Option<&'a Scope<'a, A>>,
     /// Whether unqualified names resolve to select aliases first, as in Snowflake's ORDER BY.
     pub aliases_first: bool,
+    /// Whether the query level has a GROUP BY, so its aggregates never see an empty input.
+    pub grouped: bool,
 }
 
 impl<'a, A> Scope<'a, A> {
@@ -32,6 +34,7 @@ impl<'a, A> Scope<'a, A> {
             aliases: Vec::new(),
             outer,
             aliases_first: false,
+            grouped: false,
         }
     }
 }

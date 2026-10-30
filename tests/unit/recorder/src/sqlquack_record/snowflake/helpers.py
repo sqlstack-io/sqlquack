@@ -79,6 +79,10 @@ def _truncated_table() -> pa.Table:
     return pa.table({"VALUE": pa.array([0], type=pa.timestamp("us"))})
 
 
+def _null_table() -> pa.Table:
+    return pa.table({"VALUE": pa.array([None], type=pa.timestamp("ns"))})
+
+
 def _json_result() -> pa.Table:
     raise NotSupportedError
 
@@ -92,6 +96,7 @@ _FETCHES: dict[str, Callable[[], pa.Table]] = {
     "json": _json_result,
     "overflow": _overflowing_result,
     "truncated": _truncated_table,
+    "null": _null_table,
 }
 
 _NANOSECOND_DESCRIPTION: tuple[SimpleNamespace, ...] = (
@@ -100,8 +105,15 @@ _NANOSECOND_DESCRIPTION: tuple[SimpleNamespace, ...] = (
     ),
 )
 
+_NOT_NULL_DESCRIPTION: tuple[SimpleNamespace, ...] = (
+    SimpleNamespace(
+        name="VALUE", type_code=8, precision=0, scale=9, internal_size=None, is_nullable=False
+    ),
+)
+
 _RESULT_DESCRIPTIONS: dict[str, tuple[SimpleNamespace, ...]] = {
     "truncated": _NANOSECOND_DESCRIPTION,
+    "null": _NOT_NULL_DESCRIPTION,
 }
 
 
@@ -110,11 +122,13 @@ def _result_kinds(
     json_results: frozenset[str],
     overflow_results: frozenset[str],
     truncated_results: frozenset[str],
+    null_results: frozenset[str],
 ) -> dict[str, str]:
     return (
         {statement: "json" for statement in json_results}
         | {statement: "overflow" for statement in overflow_results}
         | {statement: "truncated" for statement in truncated_results}
+        | {statement: "null" for statement in null_results}
     )
 
 
@@ -205,6 +219,7 @@ def record_with_fake_connection(
     json_results: frozenset[str],
     overflow_results: frozenset[str],
     truncated_results: frozenset[str],
+    null_results: frozenset[str],
 ) -> tuple[tuple[str, ...] | None, tuple[str, ...], int, str]:
     """Outcomes (`None` when the run stopped), single runs, files written and the report."""
     behaviours: defaultdict[str, Callable[[], None]] = defaultdict(lambda: _succeed)
@@ -230,6 +245,7 @@ def record_with_fake_connection(
                     json_results=json_results,
                     overflow_results=overflow_results,
                     truncated_results=truncated_results,
+                    null_results=null_results,
                 ),
                 log=log,
             )

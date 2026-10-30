@@ -30,8 +30,11 @@ use sqlquack_duckdb::times::constants::NANOS_PER_SECOND;
 use sqlquack_duckdb::times::main::text_to_time::text_to_time;
 use sqlquack_duckdb::times::main::time_add_value::time_add_value;
 use sqlquack_duckdb::times::main::time_diff_value::time_diff_value;
+use sqlquack_duckdb::times::main::timestamp_time::timestamp_time;
 use sqlquack_duckdb::times::models::TimeFormat;
-use sqlquack_snowflake::typing::constants::{DATEDIFF_PRECISIONS, MAX_PRECISION, TIME_DIFF_TYPE};
+use sqlquack_snowflake::typing::constants::{
+    DATEDIFF_PRECISIONS, MAX_PRECISION, TIME_DIFF_MICROSECONDS_TYPE, TIME_DIFF_TYPE,
+};
 use sqlquack_snowflake::typing::models::SnowflakeType;
 
 use crate::conversion::_helpers::expressions::casts::cast_to;
@@ -51,8 +54,8 @@ use crate::conversion::constants::{
     DATE_PARTS, DATE_TEXT_SPELLING, DECIMAL_EPOCH_RULE, FROM_PARTS, MAX_FRACTION_DIGITS_U8,
     MICROSECOND_DIGITS, SCALE_DIGITS, TEMPORAL_TEXT_FIELDS, TEMPORAL_TEXT_FORMAT,
     TEMPORAL_TEXT_SEPARATORS, TEXT_TO_TIME_RULE, TEXT_TO_TIMESTAMP_RULE, TIME_ARITHMETIC,
-    TIME_ZONE_CONVERSION, TIMESTAMP_FORMAT_RULE, TIMESTAMP_RANGE, TO_DATE_TEMPORAL, UNIT_ALIASES,
-    UTC_ZONE, ZONE_COLUMNS, ZONED_PARTS,
+    TIME_ZONE_CONVERSION, TIMESTAMP_FORMAT_RULE, TIMESTAMP_RANGE, TIMESTAMP_TIME_RULE,
+    TO_DATE_TEMPORAL, UNIT_ALIASES, UTC_ZONE, ZONE_COLUMNS, ZONED_PARTS,
 };
 
 /// The canonical Snowflake name of a unit written as a keyword, string or parsed field name.
@@ -314,9 +317,13 @@ fn date_diff_of(
     {
         let _time = log.rule(TIME_ARITHMETIC);
         let value = time_diff_value((&start.sql, &end.sql), &unit, log).map_err(refuse)?;
+        let data_type = match unit.as_str() {
+            "MICROSECOND" => TIME_DIFF_MICROSECONDS_TYPE,
+            _ => TIME_DIFF_TYPE,
+        };
         return Ok(Emitted::new(
-            cast(&value, TIME_DIFF_TYPE, log).map_err(refuse)?,
-            TIME_DIFF_TYPE,
+            cast(&value, data_type, log).map_err(refuse)?,
+            data_type,
         ));
     }
     let precision = DATEDIFF_PRECISIONS
@@ -455,8 +462,14 @@ pub(crate) fn to_timestamp(
     let log = site.context.log;
     let trying = name.starts_with("TRY_");
     let date_only = name.ends_with("_DATE");
-    if let ([value, format], true, false) = (arguments, trying, date_only) {
-        return formatted_timestamp((value, format), construct, site);
+    if let ([value, format], false) = (arguments, date_only)
+        && (trying
+            || matches!(
+                convert_expression(format, site)?.literal,
+                Some(Literal::Text(_))
+            ))
+    {
+        return formatted_timestamp((value, format), trying, construct, site);
     }
     let [value, rest @ ..] = arguments else {
         return Err(refuse(format!("{name} without an argument")));
@@ -529,9 +542,10 @@ pub(crate) fn to_timestamp(
     }
 }
 
-/// TRY_TO_TIMESTAMP_NTZ or TRY_TO_TIMESTAMP of text in a literal format of recorded elements.
+/// TO_TIMESTAMP_NTZ, TO_TIMESTAMP or their TRY_ forms of text in a literal format of recorded elements.
 fn formatted_timestamp(
     (value, format): (&Value, &Value),
+    trying: bool,
     construct: &Construct,
     site: Site<'_>,
 ) -> Result<Emitted, Refusal> {
@@ -556,7 +570,7 @@ fn formatted_timestamp(
     diverge(site.context, DATE_TEXT_SPELLING, construct)?;
     diverge(site.context, TIMESTAMP_RANGE, construct)?;
     Ok(Emitted::new(
-        formatted_text_to_timestamp(&operand.sql, &known, site.context.log),
+        formatted_text_to_timestamp(&operand.sql, (&known, trying), site.context.log),
         SnowflakeType::TimestampNtz { precision: 9 },
     ))
 }
@@ -809,6 +823,21 @@ pub(crate) fn to_time(
         _ => return Err(refuse(format!("{name} with these arguments"))),
     };
     let operand = convert_expression(text, site)?;
+    if let (SnowflakeType::TimestampNtz { precision }, TimeFormat::Auto, false) =
+        (operand.data_type, format, name.starts_with("TRY_"))
+    {
+        let _time = site.context.log.rule(TIMESTAMP_TIME_RULE);
+        return Ok(Emitted::new(
+            timestamp_time(
+                &operand.sql,
+                precision > MICROSECOND_DIGITS,
+                site.context.log,
+            ),
+            SnowflakeType::Time {
+                precision: NANOSECOND_DIGITS,
+            },
+        ));
+    }
     if !matches!(
         operand.data_type,
         SnowflakeType::Varchar | SnowflakeType::Null

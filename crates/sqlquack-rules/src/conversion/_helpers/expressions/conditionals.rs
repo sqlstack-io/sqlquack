@@ -15,10 +15,10 @@ use crate::conversion::_helpers::support::divergence::require_widening_range;
 use crate::conversion::_helpers::support::scope::{Context, Emitted};
 use crate::conversion::_helpers::support::site::Site;
 use crate::conversion::_helpers::support::tree::{
-    field, list, node_construct, payload_object, require_understood,
+    field, list, node_construct, node_kind, payload_object, require_understood,
 };
 use crate::conversion::constants::{
-    CASE, COALESCE, DECODE_RULE, IFF, SEMI_STRUCTURED_HOLDING, ZERO_IF_NULL_RULE,
+    CASE, CASE_SUBJECT, COALESCE, DECODE_RULE, IFF, SEMI_STRUCTURED_HOLDING, ZERO_IF_NULL_RULE,
 };
 
 /// The branches cast to their unified type, and that type.
@@ -126,18 +126,31 @@ pub(crate) fn case_expression(payload: &Value, site: Site<'_>) -> Result<Emitted
     let _rule = site.context.log.rule(CASE);
     let payload = payload_object(payload, &construct)?;
     require_understood(payload, &["operand", "whens", "else_"], &construct)?;
-    let operand = match payload.get("operand").filter(|operand| !operand.is_null()) {
-        Some(operand) => Some(convert_expression(operand, site)?),
-        None => None,
+    let whens = list(payload, "whens");
+    let operand_node = payload.get("operand").filter(|operand| !operand.is_null());
+    let (subject, conditions, mut branches) = match operand_node {
+        Some(node) if !plain(node) && whens.iter().all(|when| when.get(0).is_some_and(plain)) => {
+            let (subject, results) = bound_whens(node, whens, site)?;
+            let positions = (1..=results.len()).map(|position| position.to_string());
+            (format!(" {subject}"), positions.collect(), results)
+        }
+        Some(node) => {
+            let operand = convert_expression(node, site)?;
+            let (conditions, results) = case_whens(whens, Some(&operand), site)?;
+            (String::new(), conditions, results)
+        }
+        None => {
+            let (conditions, results) = case_whens(whens, None, site)?;
+            (String::new(), conditions, results)
+        }
     };
-    let (conditions, mut branches) = case_whens(list(payload, "whens"), operand.as_ref(), site)?;
     let otherwise = match payload.get("else_").filter(|value| !value.is_null()) {
         Some(otherwise) => Some(convert_expression(otherwise, site)?),
         None => None,
     };
     branches.extend(otherwise.iter().cloned());
     let (cast_branches, target) = unified(&branches, &construct, site.context)?;
-    let mut sql = String::from("(CASE");
+    let mut sql = format!("(CASE{subject}");
     for (condition, result) in conditions.iter().zip(&cast_branches) {
         sql.push_str(&format!(" WHEN {condition} THEN {result}"));
     }
@@ -146,6 +159,65 @@ pub(crate) fn case_expression(payload: &Value, site: Site<'_>) -> Result<Emitted
     }
     sql.push_str(" END)");
     Ok(Emitted::new(sql, target))
+}
+
+/// Whether evaluating `node` is cheap to repeat and cannot fail: a column or a literal.
+fn plain(node: &Value) -> bool {
+    match node_kind(node) {
+        Some(("column" | "literal" | "null" | "boolean", _)) => true,
+        Some(("neg" | "paren", payload)) => payload.get("this").is_some_and(plain),
+        _ => false,
+    }
+}
+
+/// A simple CASE's operand bound once beside its WHEN values: the first equal WHEN's position.
+fn bound_whens(
+    operand: &Value,
+    whens: &[Value],
+    site: Site<'_>,
+) -> Result<(String, Vec<Emitted>), Refusal> {
+    let construct = node_construct("case");
+    let operand = convert_expression(operand, site)?;
+    let mut packed = vec![format!("o := {}", operand.sql)];
+    let subject = Emitted {
+        sql: format!("{CASE_SUBJECT}['o']"),
+        ..operand
+    };
+    let mut tests: Vec<String> = Vec::new();
+    let mut results: Vec<Emitted> = Vec::new();
+    for (position, when) in whens.iter().enumerate() {
+        let [value, result] = when.as_array().map_or(&[][..], Vec::as_slice) else {
+            return Err(missing(
+                construct,
+                "a WHEN has an unexpected shape".to_owned(),
+            ));
+        };
+        let value = convert_expression(value, site)?;
+        packed.push(format!("w{position} := {}", value.sql));
+        let value = Emitted {
+            sql: format!("{CASE_SUBJECT}['w{position}']"),
+            ..value
+        };
+        let (left, right) = comparable(subject.clone(), value, &construct, site.context)?;
+        tests.push(format!(
+            " WHEN {} = {} THEN {}",
+            left.sql,
+            right.sql,
+            position + 1
+        ));
+        results.push(convert_expression(result, site)?);
+    }
+    if tests.is_empty() {
+        return Err(missing(construct, "CASE without WHEN".to_owned()));
+    }
+    Ok((
+        format!(
+            "list_transform([struct_pack({})], lambda {CASE_SUBJECT}: CASE{} END)[1]",
+            packed.join(", "),
+            tests.concat()
+        ),
+        results,
+    ))
 }
 
 fn case_whens(

@@ -105,6 +105,7 @@ that converts both spellings of a pair cites the pair in its provenance.
 |---|---|---|
 | `variant_path_to_get_path` | `v:a.b[0]` | `GET_PATH(v, 'a.b[0]')` |
 | `text_type_to_varchar` | `TEXT`, `STRING`, `STRING(n)` | `VARCHAR`, `VARCHAR(n)` |
+| `subscript_to_get` | `v[i]`, `v[k]` with an index or key computed per row | `GET(v, i)`, `GET(v, k)` |
 | `position_to_charindex` | `POSITION(s, t [, n])`, `POSITION(s IN t)` | `CHARINDEX(s, t [, n])` |
 | `rlike_to_regexp_like` | `t RLIKE p` | `REGEXP_LIKE(t, p)` |
 | `mod_function_to_operator` | `MOD(a, b)` | `a % b` |

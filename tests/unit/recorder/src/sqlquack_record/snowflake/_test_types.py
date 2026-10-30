@@ -23,6 +23,7 @@ class BatchRecordingTestCase:
     json_results: frozenset[str]
     overflow_results: frozenset[str]
     truncated_results: frozenset[str]
+    null_results: frozenset[str]
     expected_outcomes: tuple[str, ...] | None
     expected_single_runs: tuple[str, ...]
     expected_files_written: int

@@ -1,0 +1,57 @@
+category = "aggregate"
+construct = "clause:group_by"
+session_profile = "utc-v1"
+
+[[case]]
+id = "group_by_all_columns"
+description = "GROUP BY ALL over two key columns beside COUNT and SUM, with a NULL key and repeated keys."
+columns = [{ name = "region", type = "VARCHAR" }, { name = "channel", type = "VARCHAR" }, { name = "amount", type = "NUMBER(10,2)" }]
+rows = [
+  ["'north'", "'web'", "10.00"],
+  ["'north'", "'web'", "5.50"],
+  ["'north'", "'store'", "1.00"],
+  ["NULL", "'web'", "2.00"],
+  ["NULL", "'web'", "NULL"],
+  ["'south'", "NULL", "3.25"],
+]
+query = "SELECT region, channel, COUNT(*) AS orders, SUM(amount) AS total FROM input GROUP BY ALL"
+order = "bag"
+tags = ["null", "empty-input", "duplicates"]
+
+[[case]]
+id = "group_by_all_expressions"
+description = "GROUP BY ALL over expressions and a constant, beside aggregates inside expressions and COUNT_IF."
+columns = [{ name = "sku", type = "VARCHAR" }, { name = "qty", type = "NUMBER(10,0)" }]
+rows = [
+  ["'a-1'", "3"],
+  ["'A-1'", "4"],
+  ["'b-2'", "0"],
+  ["'b-2'", "NULL"],
+  ["NULL", "1"],
+]
+query = "SELECT UPPER(sku) AS product, 'shop' AS source, MAX(qty) + 1 AS most, COUNT_IF(qty > 0) AS stocked FROM input GROUP BY ALL"
+order = "bag"
+tags = ["null", "empty-input", "duplicates"]
+
+[[case]]
+id = "group_by_all_no_rows"
+description = "GROUP BY ALL over no rows."
+columns = [{ name = "region", type = "VARCHAR" }, { name = "amount", type = "NUMBER(10,2)" }]
+rows = [["'north'", "1.00"]]
+query = "SELECT region, COUNT(*) AS orders FROM input WHERE amount > 5 GROUP BY ALL"
+order = "bag"
+tags = ["null", "empty-input", "duplicates"]
+
+[[case]]
+id = "group_by_all_ordered"
+description = "GROUP BY ALL with ORDER BY an output and HAVING."
+columns = [{ name = "region", type = "VARCHAR" }, { name = "amount", type = "NUMBER(10,2)" }]
+rows = [
+  ["'north'", "1.00"],
+  ["'north'", "2.00"],
+  ["'south'", "4.00"],
+  ["'east'", "NULL"],
+]
+query = "SELECT region, SUM(amount) AS total FROM input GROUP BY ALL HAVING COUNT(*) > 0 ORDER BY region"
+order = "ordered"
+tags = ["null", "empty-input", "duplicates"]
