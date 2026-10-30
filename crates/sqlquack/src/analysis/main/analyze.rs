@@ -15,7 +15,8 @@ use sqlquack_core::provenance::models::ProvenanceLog;
 use sqlquack_core::refusals::models::{Refusal, RefusalCategory};
 use sqlquack_rules::conversion::main::convert_statement::convert_statement;
 use sqlquack_rules::conversion::main::quoted_exclusions::quoted_exclusions;
-use sqlquack_rules::conversion::models::{ConversionOptions, Converted, Schema};
+use sqlquack_rules::conversion::models::{ConversionOptions, Converted};
+use sqlquack_semantics::types::models::Schema;
 
 use crate::analysis::models::Analysis;
 

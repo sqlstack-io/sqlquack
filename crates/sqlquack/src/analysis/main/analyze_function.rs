@@ -11,9 +11,8 @@ use sqlquack_core::refusals::models::{Refusal, RefusalCategory};
 use sqlquack_core::refusals::types::ConstructPolicy;
 use sqlquack_rules::conversion::main::convert_function_body::convert_function_body;
 use sqlquack_rules::conversion::main::quoted_exclusions::quoted_exclusions;
-use sqlquack_rules::conversion::models::{
-    ConversionOptions, ConvertedFunction, FunctionReturns, FunctionSpec, Schema,
-};
+use sqlquack_rules::conversion::models::{ConversionOptions, ConvertedFunction};
+use sqlquack_semantics::types::models::{FunctionReturns, FunctionSpec, Schema};
 use sqlquack_snowflake::typing::models::SnowflakeType;
 
 use crate::analysis::constants::SCALAR_RESULT_COLUMN;

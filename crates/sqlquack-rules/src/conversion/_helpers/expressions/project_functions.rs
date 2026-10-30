@@ -3,6 +3,7 @@
 use serde_json::Value;
 use sqlquack_core::classification::models::Construct;
 use sqlquack_core::provenance::models::ProvenanceLog;
+use sqlquack_core::refusals::main::outside_conditions::outside_conditions;
 use sqlquack_core::refusals::models::Refusal;
 use sqlquack_duckdb::blocks::main::cast::cast;
 use sqlquack_duckdb::blocks::main::column_type::column_type;
@@ -12,9 +13,9 @@ use sqlquack_snowflake::typing::models::SnowflakeType;
 use crate::conversion::_helpers::expressions::scalar::convert_expression;
 use crate::conversion::_helpers::support::scope::Emitted;
 use crate::conversion::_helpers::support::site::Site;
-use crate::conversion::_helpers::support::tree::outside_conditions;
+
 use crate::conversion::constants::{PROJECT_FUNCTION_CALL, SEMI_STRUCTURED_HOLDING};
-use crate::conversion::models::{FunctionLanguage, FunctionReturns, FunctionSpec};
+use sqlquack_semantics::types::models::{FunctionLanguage, FunctionReturns, FunctionSpec};
 
 /// A scalar project function call: arguments coerced to the parameters, the result to its type.
 pub(crate) fn project_call(

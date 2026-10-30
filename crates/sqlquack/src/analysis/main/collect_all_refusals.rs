@@ -8,7 +8,9 @@ use sqlquack_core::refusals::main::refuse_unparsed::refuse_unparsed;
 use sqlquack_core::refusals::models::RefusalCategory;
 use sqlquack_core::refusals::types::ConstructPolicy;
 use sqlquack_rules::conversion::main::collect_refusals::collect_refusals;
-use sqlquack_rules::conversion::models::{CollectedRefusals, ConversionOptions, Schema};
+use sqlquack_rules::conversion::main::quoted_exclusions::quoted_exclusions;
+use sqlquack_rules::conversion::models::{CollectedRefusals, ConversionOptions};
+use sqlquack_semantics::types::models::Schema;
 
 /// The refusals of every statement; the conversions found on the way are discarded.
 pub fn collect_all_refusals(
@@ -18,6 +20,10 @@ pub fn collect_all_refusals(
     (schema, options): (&Schema, &ConversionOptions),
 ) -> CollectedRefusals {
     let lines = SourceLines::new(sql);
+    let options = &ConversionOptions {
+        quoted_exclusions: quoted_exclusions(sql),
+        ..options.clone()
+    };
     let statements = match parse_source(sql, dialect) {
         Ok(statements) => statements,
         Err(failure) => {

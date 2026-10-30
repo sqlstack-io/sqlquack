@@ -2,6 +2,9 @@
 
 use serde_json::Value;
 use sqlquack_core::classification::models::{Construct, ConstructFamily};
+use sqlquack_core::refusals::main::missing::missing;
+use sqlquack_core::refusals::main::outside_conditions::outside_conditions;
+use sqlquack_core::refusals::main::unresolved::unresolved;
 use sqlquack_core::refusals::models::Refusal;
 use sqlquack_duckdb::blocks::main::quoted_identifier::quoted_identifier;
 use sqlquack_snowflake::typing::models::SnowflakeType;
@@ -12,17 +15,19 @@ use crate::conversion::_helpers::queries::clauses::condition_sql;
 use crate::conversion::_helpers::queries::flatten::lateral_flatten;
 use crate::conversion::_helpers::queries::query::{convert_query, require_distinct_names};
 use crate::conversion::_helpers::support::collecting::{collecting, events, opaque, record};
-use crate::conversion::_helpers::support::scope::{Context, Scope, ScopeRelation};
+use crate::conversion::_helpers::support::scope::{Context, Scope};
 use crate::conversion::_helpers::support::site::{Placement, Site};
 use crate::conversion::_helpers::support::tree::{
-    Payload, field, function_construct, identifier_name, list, missing, node_construct, node_kind,
-    outside_conditions, payload_object, require_understood, unresolved,
+    Payload, field, function_construct, identifier_name, list, node_construct, node_kind,
+    payload_object, require_understood,
 };
 use crate::conversion::constants::{
     FROM_RELATION, FROM_SUBQUERY, JOIN_CROSS, JOIN_ON, LATERAL_KEY, LATERAL_SUBQUERY,
     OPAQUE_ALIAS_PREFIX, PROJECT_TABLE_FUNCTION, TABLE_WRAPPER,
 };
-use crate::conversion::models::{ColumnSpec, FunctionReturns, Holding};
+use sqlquack_semantics::lineage::main::stored_columns::stored_columns;
+use sqlquack_semantics::scopes::models::ScopeRelation;
+use sqlquack_semantics::types::models::FunctionReturns;
 
 /// The FROM clause with its joins, and the relations it brings into scope.
 pub(crate) fn convert_from(
@@ -284,16 +289,7 @@ fn table_source(
     };
     let columns = match is_cte {
         true => columns,
-        false => columns
-            .into_iter()
-            .map(|column| ColumnSpec {
-                holding: match column.holding {
-                    Holding::Json => Holding::Json,
-                    Holding::Variant | Holding::Chained => Holding::Chained,
-                },
-                ..column
-            })
-            .collect(),
+        false => stored_columns(columns),
     };
     Ok((
         format!("{relation} AS {}", quoted_identifier(&alias, log)),

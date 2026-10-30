@@ -1,12 +1,13 @@
 //! Relying on a known divergence the policy allows, or refusing.
 
 use sqlquack_core::classification::models::Construct;
+use sqlquack_core::refusals::main::outside_conditions::outside_conditions;
 use sqlquack_core::refusals::models::Refusal;
 use sqlquack_snowflake::typing::constants::MAX_PRECISION;
 use sqlquack_snowflake::typing::models::SnowflakeType;
 
 use crate::conversion::_helpers::support::scope::Context;
-use crate::conversion::_helpers::support::tree::outside_conditions;
+
 use crate::conversion::constants::NUMERIC_RANGE;
 
 /// Records the divergence at `construct` when the policy allows it here; refuses otherwise.

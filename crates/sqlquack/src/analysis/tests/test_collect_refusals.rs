@@ -19,6 +19,14 @@ fn given_independent_blockers_when_collecting_refusals_then_every_one_is_listed(
             },
         },
         CollectedRefusalsTestCase {
+            description: "an object star excluding a quoted name, as conversion refuses it",
+            sql: "SELECT OBJECT_CONSTRUCT(c.* EXCLUDE (\"note\")) AS v FROM customers AS c",
+            expected_summary: CollectedSummary {
+                constructs: vec!["node:star".to_owned()],
+                possibly_incomplete: false,
+            },
+        },
+        CollectedRefusalsTestCase {
             description: "a refused function in the select list and another in WHERE",
             sql: "SELECT SOUNDEX(note) AS label FROM customers \
                   WHERE JAROWINKLER_SIMILARITY(note, 'gift') > 0.5",

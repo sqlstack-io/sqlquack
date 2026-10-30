@@ -3,13 +3,17 @@
 use sqlquack_core::provenance::models::ProvenanceLog;
 use sqlquack_core::refusals::models::Refusal;
 use sqlquack_duckdb::blocks::main::quoted_identifier::quoted_identifier;
+use sqlquack_semantics::dialects::constants::SNOWFLAKE_TO_DUCKDB;
+use sqlquack_semantics::names::main::relation_columns::relation_columns;
+use sqlquack_semantics::scopes::main::resolve_name::resolve_name;
+use sqlquack_semantics::scopes::models::{Resolution, Scope as SemanticScope};
+use sqlquack_semantics::types::models::TypedLeaves;
 use sqlquack_snowflake::typing::models::SnowflakeType;
 
 use crate::conversion::_helpers::support::locations::Locator;
-use crate::conversion::_helpers::support::tree::unresolved;
-use crate::conversion::_helpers::support::typed_leaves::TypedLeaves;
-use crate::conversion::constants::{UNKNOWN_RELATION_PREFIX, UNKNOWN_RELATION_SUFFIX};
-use crate::conversion::models::{ColumnSpec, ConversionOptions, Holding, Schema};
+
+use crate::conversion::models::ConversionOptions;
+use sqlquack_semantics::types::models::{ColumnSpec, Holding, Schema};
 
 /// A converted scalar: DuckDB SQL whose type is the DuckDB pairing of `data_type`.
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -80,121 +84,32 @@ impl Emitted {
     }
 }
 
-/// A relation visible in a FROM clause.
-#[derive(Clone, Debug, PartialEq, Eq)]
-pub(crate) struct ScopeRelation {
-    pub(crate) alias: String,
-    pub(crate) columns: Vec<ColumnSpec>,
-}
+/// What a query level can see, its aliases bound to converted values.
+pub(crate) type Scope<'a> = SemanticScope<'a, Emitted>;
 
-/// What a query level can see.
-#[derive(Clone, Debug)]
-pub(crate) struct Scope<'a> {
-    pub(crate) relations: Vec<ScopeRelation>,
-    pub(crate) aliases: Vec<(String, Emitted)>,
-    pub(crate) outer: Option<&'a Scope<'a>>,
-    /// Whether unqualified names resolve to select aliases first, as in Snowflake's ORDER BY.
-    pub(crate) aliases_first: bool,
-}
-
-impl<'a> Scope<'a> {
-    pub(crate) fn new(relations: Vec<ScopeRelation>, outer: Option<&'a Scope<'a>>) -> Self {
-        Self {
-            relations,
-            aliases: Vec::new(),
-            outer,
-            aliases_first: false,
-        }
+/// Resolves a name to its converted value: a column read through its relation, or an alias's.
+pub(crate) fn resolve(
+    scope: &Scope<'_>,
+    qualifier: Option<&str>,
+    name: &str,
+    log: &ProvenanceLog,
+) -> Result<Emitted, Refusal> {
+    match resolve_name(scope, (qualifier, name), SNOWFLAKE_TO_DUCKDB)? {
+        Resolution::Alias(emitted) => Ok(emitted.clone()),
+        Resolution::Column { alias, column } => Ok(Emitted {
+            held: column.holding,
+            untainted: column.untainted,
+            sourced: column.sourced,
+            ..Emitted::new(
+                format!(
+                    "{}.{}",
+                    quoted_identifier(alias, log),
+                    quoted_identifier(&column.name, log)
+                ),
+                column.data_type,
+            )
+        }),
     }
-
-    /// Resolves a name: FROM columns, then select aliases, then outer queries; case-only clashes refuse.
-    pub(crate) fn resolve(
-        &self,
-        qualifier: Option<&str>,
-        name: &str,
-        log: &ProvenanceLog,
-    ) -> Result<Emitted, Refusal> {
-        if self.aliases_first
-            && qualifier.is_none()
-            && let Some((_, emitted)) = self.aliases.iter().rev().find(|(alias, _)| alias == name)
-        {
-            return Ok(emitted.clone());
-        }
-        let mut found: Vec<Emitted> = Vec::new();
-        for relation in &self.relations {
-            if qualifier.is_some_and(|qualifier| !same_name(&relation.alias, qualifier)) {
-                continue;
-            }
-            for column in relation
-                .columns
-                .iter()
-                .filter(|column| same_name(&column.name, name))
-            {
-                if column.name != name
-                    || qualifier.is_some_and(|qualifier| relation.alias != qualifier)
-                {
-                    return Err(unresolved(format!(
-                        "`{name}` matches `{}` only without regard to case, which DuckDB \
-                         cannot tell apart",
-                        column.name
-                    )));
-                }
-                found.push(Emitted {
-                    held: column.holding,
-                    untainted: column.untainted,
-                    sourced: column.sourced,
-                    ..Emitted::new(
-                        format!(
-                            "{}.{}",
-                            quoted_identifier(&relation.alias, log),
-                            quoted_identifier(&column.name, log)
-                        ),
-                        column.data_type,
-                    )
-                });
-            }
-        }
-        match found.len() {
-            1 => return Ok(found.remove(0)),
-            0 => {}
-            _ => return Err(unresolved(format!("column `{name}` is ambiguous"))),
-        }
-        if qualifier.is_none()
-            && let Some((_, emitted)) = self.aliases.iter().rev().find(|(alias, _)| alias == name)
-        {
-            return Ok(emitted.clone());
-        }
-        match self.outer {
-            Some(outer) => outer.resolve(qualifier, name, log),
-            None => Err(unresolved(match qualifier {
-                Some(qualifier) => format!("column `{qualifier}.{name}` does not resolve"),
-                None => format!("column `{name}` does not resolve"),
-            })),
-        }
-    }
-
-    /// The relations a star expands to: one by alias, or all.
-    pub(crate) fn star_relations(
-        &self,
-        qualifier: Option<&str>,
-    ) -> Result<Vec<&ScopeRelation>, Refusal> {
-        let relations: Vec<&ScopeRelation> = self
-            .relations
-            .iter()
-            .filter(|relation| qualifier.is_none_or(|qualifier| relation.alias == qualifier))
-            .collect();
-        if relations.is_empty() {
-            return Err(unresolved(format!(
-                "`{}.*` names no relation in scope",
-                qualifier.unwrap_or_default()
-            )));
-        }
-        Ok(relations)
-    }
-}
-
-fn same_name(left: &str, right: &str) -> bool {
-    left.eq_ignore_ascii_case(right)
 }
 
 /// The relations a statement can read: the schema, then CTEs from outermost to innermost.
@@ -211,40 +126,11 @@ pub(crate) struct Context<'a> {
 impl Context<'_> {
     /// The columns of a relation name: the innermost CTE, else the schema.
     pub(crate) fn relation(&self, name: &str) -> Result<Vec<ColumnSpec>, Refusal> {
-        if let Some((_, columns)) = self.ctes.iter().rev().find(|(cte, _)| cte == name) {
-            return Ok(columns.clone());
-        }
-        if let Some(columns) = self.schema.relations.get(name) {
-            if columns.iter().any(|column| column.typed_leaves) {
-                self.typed.enter();
-            }
-            if columns.iter().any(|column| column.decimal_leaves) {
-                self.typed.enter_decimal();
-            }
-            return Ok(columns
-                .iter()
-                .map(|column| ColumnSpec {
-                    untainted: !column.typed_leaves && !column.decimal_leaves,
-                    sourced: !column.typed_leaves
-                        && !column.decimal_leaves
-                        && column.data_type == SnowflakeType::SemiStructured,
-                    ..column.clone()
-                })
-                .collect());
-        }
-        if self
-            .ctes
-            .iter()
-            .map(|(cte, _)| cte.as_str())
-            .chain(self.schema.relations.keys().map(String::as_str))
-            .any(|known| same_name(known, name))
-        {
-            return Err(unresolved(format!(
-                "relation `{name}` matches another only without regard to case"
-            )));
-        }
-        Err(unresolved(format!(
-            "{UNKNOWN_RELATION_PREFIX}{name}{UNKNOWN_RELATION_SUFFIX}"
-        )))
+        relation_columns(
+            name,
+            (&self.ctes, self.schema),
+            self.typed,
+            SNOWFLAKE_TO_DUCKDB,
+        )
     }
 }

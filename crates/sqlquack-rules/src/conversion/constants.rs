@@ -930,11 +930,6 @@ pub const DEFAULT_BUDGET_SIZE_RATIO: u64 = 2_000;
 /// Emitted SQL up to this size is within budget whatever the source's size.
 pub const DEFAULT_BUDGET_MINIMUM_BYTES: u64 = 4 * 1024 * 1024;
 
-/// How a refusal for a relation without known columns begins, before the relation's name.
-pub const UNKNOWN_RELATION_PREFIX: &str = "relation `";
-/// How it ends, after the name.
-pub const UNKNOWN_RELATION_SUFFIX: &str = "` has no known columns";
-
 /// The field a located parse records a node's source range in.
 pub const SPAN_FIELD: &str = "span";
 /// A source range's first character.

@@ -1291,6 +1291,7 @@ dependencies = [
  "sqlquack-evidence",
  "sqlquack-policy",
  "sqlquack-rules",
+ "sqlquack-semantics",
  "sqlquack-snowflake",
  "sqlquack-syntax",
  "tempfile",
@@ -1374,8 +1375,19 @@ dependencies = [
  "serde_json",
  "sqlquack-core",
  "sqlquack-duckdb",
+ "sqlquack-semantics",
  "sqlquack-snowflake",
  "sqlquack-syntax",
+]
+
+[[package]]
+name = "sqlquack-semantics"
+version = "0.2.0"
+dependencies = [
+ "serde",
+ "serde_json",
+ "sqlquack-core",
+ "sqlquack-snowflake",
 ]
 
 [[package]]

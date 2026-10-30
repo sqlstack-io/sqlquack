@@ -4,9 +4,8 @@ use std::path::Path;
 use sqlquack_core::parsing::models::SourceDialect;
 use sqlquack_policy::policy::constants::POLICY_FILE_NAME;
 use sqlquack_policy::policy::main::load_policy::load_policy;
-use sqlquack_rules::conversion::models::{
-    AllowedDivergence, ColumnSpec, ConversionOptions, Schema,
-};
+use sqlquack_rules::conversion::models::{AllowedDivergence, ConversionOptions};
+use sqlquack_semantics::types::models::{ColumnSpec, Schema};
 use sqlquack_snowflake::typing::models::SnowflakeType;
 
 use crate::analysis::main::conversion_options::conversion_options;

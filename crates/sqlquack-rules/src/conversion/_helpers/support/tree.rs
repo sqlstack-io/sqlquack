@@ -6,7 +6,10 @@ use sqlquack_core::classification::constants::{
     PROJECT_FUNCTION_CONSTRUCT, PROJECT_FUNCTION_PLACEHOLDER,
 };
 use sqlquack_core::classification::models::{Construct, ConstructFamily};
-use sqlquack_core::refusals::models::{Refusal, RefusalCategory};
+use sqlquack_core::refusals::main::missing::missing;
+use sqlquack_core::refusals::models::Refusal;
+use sqlquack_semantics::dialects::constants::SNOWFLAKE;
+use sqlquack_semantics::dialects::main::identifier_name::identifier_name as resolved_identifier;
 
 /// Fields that only record how the source was spelled or where it was.
 const COSMETIC_FIELDS: &[&str] = &[
@@ -162,43 +165,9 @@ pub(crate) fn function_construct(name: &str) -> Construct {
     Construct::new(ConstructFamily::Function, name.to_ascii_uppercase())
 }
 
-/// No rule converts the construct.
-pub(crate) fn missing(construct: Construct, reason: String) -> Refusal {
-    refusal(Some(construct), RefusalCategory::MissingRule, reason)
-}
-
-/// A rule covers the construct, but not for these operand types.
-pub(crate) fn outside_conditions(construct: Construct, reason: String) -> Refusal {
-    refusal(Some(construct), RefusalCategory::TypeCondition, reason)
-}
-
-/// A name does not resolve.
-pub(crate) fn unresolved(reason: String) -> Refusal {
-    refusal(None, RefusalCategory::UnresolvedName, reason)
-}
-
-fn refusal(construct: Option<Construct>, category: RefusalCategory, reason: String) -> Refusal {
-    Refusal {
-        construct,
-        location: None,
-        category,
-        reason,
-    }
-}
-
-/// An identifier's resolved name: upper case unless quoted.
+/// An identifier's resolved name in Snowflake: upper case unless quoted.
 pub(crate) fn identifier_name(identifier: &Value) -> Option<String> {
-    let object = identifier.as_object()?;
-    let name = object.get("name")?.as_str()?;
-    if object
-        .get("quoted")
-        .and_then(Value::as_bool)
-        .unwrap_or(false)
-    {
-        Some(name.to_owned())
-    } else {
-        Some(name.to_ascii_uppercase())
-    }
+    resolved_identifier(identifier, &SNOWFLAKE)
 }
 
 /// The text of an integer literal node.

@@ -11,9 +11,11 @@ use crate::conversion::_helpers::support::collecting::{Collector, collected};
 use crate::conversion::_helpers::support::locations::Locator;
 use crate::conversion::_helpers::support::scope::Context;
 use crate::conversion::_helpers::support::tree::strip_positions;
-use crate::conversion::_helpers::support::typed_leaves::{ConvertedQuery, TypedLeaves};
+use crate::conversion::_helpers::support::typed_leaves::ConvertedQuery;
 use crate::conversion::main::convert_statement::convert_statement;
-use crate::conversion::models::{CollectedRefusals, ConversionOptions, Schema};
+use crate::conversion::models::{CollectedRefusals, ConversionOptions};
+use sqlquack_semantics::types::models::Schema;
+use sqlquack_semantics::types::models::TypedLeaves;
 
 /// The statement's refusals, converting past each refused node; its conversion is discarded.
 pub fn collect_refusals(

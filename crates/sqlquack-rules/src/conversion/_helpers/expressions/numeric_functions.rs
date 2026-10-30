@@ -2,6 +2,7 @@
 
 use serde_json::Value;
 use sqlquack_core::classification::models::Construct;
+use sqlquack_core::refusals::main::outside_conditions::outside_conditions;
 use sqlquack_core::refusals::models::Refusal;
 use sqlquack_duckdb::blocks::main::cast::cast;
 use sqlquack_snowflake::typing::constants::MAX_PRECISION;
@@ -11,7 +12,7 @@ use crate::conversion::_helpers::expressions::casts::number_literal_text;
 use crate::conversion::_helpers::expressions::scalar::convert_expression;
 use crate::conversion::_helpers::support::scope::Emitted;
 use crate::conversion::_helpers::support::site::Site;
-use crate::conversion::_helpers::support::tree::outside_conditions;
+
 use crate::conversion::constants::{
     BITWISE, NUMERIC_FUNCTION, ROUND_FUNCTION, ROUNDING, SIGN_RULE,
 };

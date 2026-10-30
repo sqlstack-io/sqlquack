@@ -9,7 +9,8 @@ use serde::Serialize;
 
 use sqlquack_core::parsing::models::SourceDialect;
 use sqlquack_core::provenance::models::Provenance;
-use sqlquack_rules::conversion::models::{ConversionOptions, Schema};
+use sqlquack_rules::conversion::models::ConversionOptions;
+use sqlquack_semantics::types::models::Schema;
 
 /// What a census reads and reports.
 #[derive(Clone, Debug, PartialEq, Eq)]

@@ -4,6 +4,7 @@ members = [
     "crates/sqlquack-syntax-derive",
     "crates/sqlquack-core",
     "crates/sqlquack-snowflake",
+    "crates/sqlquack-semantics",
     "crates/sqlquack-rules",
     "crates/sqlquack-duckdb",
     "crates/sqlquack-policy",
@@ -51,6 +52,7 @@ sqlquack-duckdb = { path = "crates/sqlquack-duckdb" }
 sqlquack-evidence = { path = "crates/sqlquack-evidence" }
 sqlquack-policy = { path = "crates/sqlquack-policy" }
 sqlquack-rules = { path = "crates/sqlquack-rules" }
+sqlquack-semantics = { path = "crates/sqlquack-semantics" }
 sqlquack-snowflake = { path = "crates/sqlquack-snowflake" }
 sqlquack-syntax = { path = "crates/sqlquack-syntax" }
 sqlquack-syntax-derive = { path = "crates/sqlquack-syntax-derive" }

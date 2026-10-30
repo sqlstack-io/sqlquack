@@ -17,6 +17,24 @@ fn given_a_star_or_a_scaled_number_when_building_an_object_then_it_converts_as_r
             expected_outcome: Err("quotes a name"),
         },
         FirstValueTestCase {
+            description: "a block comment before a quoted EXCLUDE list does not hide it",
+            sql: "SELECT OBJECT_CONSTRUCT(o.* EXCLUDE /* c */ (\"customer_id\"))::VARCHAR AS v \
+                  FROM orders AS o",
+            expected_outcome: Err("quotes a name"),
+        },
+        FirstValueTestCase {
+            description: "a line comment before a quoted EXCLUDE list does not hide it",
+            sql: "SELECT OBJECT_CONSTRUCT(o.* EXCLUDE -- c\n (\"customer_id\"))::VARCHAR AS v \
+                  FROM orders AS o",
+            expected_outcome: Err("quotes a name"),
+        },
+        FirstValueTestCase {
+            description: "a quote inside a comment after EXCLUDE is not a quoted name",
+            sql: "SELECT OBJECT_CONSTRUCT(o.* EXCLUDE /* \" */ (customer_id))::VARCHAR AS v \
+                  FROM orders AS o",
+            expected_outcome: Ok("{\"AMOUNT\":5}"),
+        },
+        FirstValueTestCase {
             description: "a quoted upper-case EXCLUDE name is refused too",
             sql: "SELECT OBJECT_CONSTRUCT(o.* EXCLUDE \"CUSTOMER_ID\")::VARCHAR AS v FROM orders AS o",
             expected_outcome: Err("quotes a name"),

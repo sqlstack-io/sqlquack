@@ -7,7 +7,7 @@ use sqlquack_core::refusals::models::{Refusal, RefusalCategory};
 use sqlquack_snowflake::typing::models::SnowflakeType;
 
 use crate::conversion::_helpers::support::scope::{Emitted, Scope};
-use crate::conversion::constants::UNKNOWN_RELATION_PREFIX;
+use sqlquack_semantics::names::constants::UNKNOWN_RELATION_PREFIX;
 
 /// What collecting found so far in the statement being converted.
 #[derive(Default)]

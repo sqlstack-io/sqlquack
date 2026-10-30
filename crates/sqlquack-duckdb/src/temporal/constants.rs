@@ -102,7 +102,7 @@ pub const DATE_FORMATS: &[DateFormat] = &[
     },
     DateFormat {
         snowflake: "DD MON YYYY",
-        pattern: "(?i)^ *([0-9]{1,2}) *(january|february|march|april|june|july|august|september|october|november|december|jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec) *([0-9]{1,4}) *$",
+        pattern: "(?i)^ {0,3}([0-9]{1,2}) {0,3}(january|february|march|april|june|july|august|september|october|november|december|jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec) {0,3}([0-9]{1,4}) {0,3}$",
         groups: (3, 2, 1),
         two_digit_year: false,
         named_month: true,
@@ -115,14 +115,14 @@ pub const DATE_FORMATS: &[DateFormat] = &[
     },
     DateFormat {
         snowflake: "MMMM DD YYYY",
-        pattern: "(?i)^(january|february|march|april|june|july|august|september|october|november|december|jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec) +([0-9]{1,2}) +([0-9]{4}|[0-9]{2}) *$",
+        pattern: "(?i)^(january|february|march|april|june|july|august|september|october|november|december|jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec) {1,3}([0-9]{1,2}) {1,3}([0-9]{4}|[0-9]{2}) {0,3}$",
         groups: (3, 1, 2),
         two_digit_year: false,
         named_month: true,
         null_pattern: Some(
             "(?i)^([a-z]+ [0-9]{1,2} [0-9]{4}|[a-z]+ [0-9]{2} [0-9]{2}|[a-z]+ [0-9]{1,2}, [0-9]{4}\
              |[a-z]+ [0-9]{2},[0-9]{4}|[a-z]+-[0-9]{1,2}-[0-9]{4}|[a-z]+/[0-9]{2}/[0-9]{4}\
-             |[a-z]+ [0-9]{3,4} [0-9]{4}| {1,2}[a-z]+ [0-9]{2} [0-9]{4}|[0-9]{4}-[0-9]{2}-[0-9]{2})$",
+             |[a-z]+ [0-9]{3,4} [0-9]{4}| {1,3}[a-z]+ [0-9]{2} [0-9]{4}|[0-9]{4}-[0-9]{2}-[0-9]{2})$",
         ),
     },
 ];
