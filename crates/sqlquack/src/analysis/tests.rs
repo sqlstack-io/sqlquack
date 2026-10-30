@@ -14,6 +14,8 @@ mod test_collect_refusals;
 mod test_composition;
 #[path = "tests/test_conversion_budget.rs"]
 mod test_conversion_budget;
+#[path = "tests/test_coverage_batch.rs"]
+mod test_coverage_batch;
 #[path = "tests/test_decoded_values.rs"]
 mod test_decoded_values;
 #[path = "tests/test_divergence_modes.rs"]

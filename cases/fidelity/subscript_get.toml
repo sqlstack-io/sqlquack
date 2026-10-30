@@ -1,0 +1,80 @@
+category = "semi-structured-array"
+construct = "node:subscript"
+session_profile = "utc-v1"
+equivalence = "subscript_to_get"
+
+[[case]]
+id = "subscript_computed_index"
+description = "v[i - 1] of arrays at indexes in range, past the end, of an object, a JSON null and SQL NULL."
+columns = [{ name = "v", type = "VARIANT" }, { name = "i", type = "NUMBER(5,0)" }]
+rows = [
+  ["PARSE_JSON('[\"a\",\"b\",\"c\"]')", "1"],
+  ["PARSE_JSON('[\"a\",\"b\",\"c\"]')", "3"],
+  ["PARSE_JSON('[\"a\",\"b\",\"c\"]')", "4"],
+  ["PARSE_JSON('[\"a\"]')", "0"],
+  ["PARSE_JSON('[\"a\"]')", "NULL"],
+  ["PARSE_JSON('{\"k\":1}')", "1"],
+  ["PARSE_JSON('null')", "1"],
+  ["NULL", "1"],
+]
+expression = "v[i - 1]"
+canonical = "GET(v, i - 1)"
+tags = ["null", "duplicates", "empty", "invalid"]
+
+[[case]]
+id = "subscript_index_column"
+description = "v[i] with an index column, a negative index and a JSON null element."
+columns = [{ name = "v", type = "VARIANT" }, { name = "i", type = "NUMBER(38,0)" }]
+rows = [
+  ["PARSE_JSON('[10,null,30]')", "0"],
+  ["PARSE_JSON('[10,null,30]')", "1"],
+  ["PARSE_JSON('[10,null,30]')", "2"],
+  ["PARSE_JSON('[10,null,30]')", "-1"],
+  ["PARSE_JSON('[]')", "0"],
+]
+expression = "v[i]"
+canonical = "GET(v, i)"
+tags = ["null", "duplicates", "empty", "invalid"]
+
+[[case]]
+id = "subscript_index_text"
+description = "v[i]::VARCHAR, as an element is read as text."
+columns = [{ name = "v", type = "VARIANT" }, { name = "i", type = "NUMBER(9,0)" }]
+rows = [
+  ["PARSE_JSON('[\"gift\",\"card\"]')", "1"],
+  ["PARSE_JSON('[\"gift\",\"card\"]')", "2"],
+  ["PARSE_JSON('[1.5,\"x\"]')", "0"],
+  ["PARSE_JSON('[1.5,\"x\"]')", "1"],
+]
+expression = "v[i]::VARCHAR"
+canonical = "GET(v, i)::VARCHAR"
+tags = ["null", "duplicates", "empty", "invalid"]
+
+[[case]]
+id = "subscript_key_column"
+description = "v[k] with a key column: present, missing and case-differing keys, a non-ASCII key, an array and NULL."
+columns = [{ name = "v", type = "VARIANT" }, { name = "k", type = "VARCHAR" }]
+rows = [
+  ["PARSE_JSON('{\"a\":1,\"B\":2}')", "'a'"],
+  ["PARSE_JSON('{\"a\":1,\"B\":2}')", "'b'"],
+  ["PARSE_JSON('{\"Größe\":\"L\"}')", "'Größe'"],
+  ["PARSE_JSON('{\"x.y\":2,\"x\":{\"y\":5}}')", "'x.y'"],
+  ["PARSE_JSON('{\"a\":1}')", "NULL"],
+  ["PARSE_JSON('[\"a\"]')", "'a'"],
+]
+expression = "v[k]"
+canonical = "GET(v, k)"
+tags = ["null", "duplicates", "empty", "invalid"]
+
+[[case]]
+id = "subscript_array_position"
+description = "An element found by ARRAY_POSITION in a header array, as a delimited row is read by its header."
+columns = [{ name = "header", type = "VARIANT" }, { name = "fields", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('[\"sku\",\"qty\"]')", "PARSE_JSON('[\"A-1\",\"3\"]')"],
+  ["PARSE_JSON('[\"qty\",\"sku\"]')", "PARSE_JSON('[\"5\",\"B-2\"]')"],
+  ["PARSE_JSON('[\"name\"]')", "PARSE_JSON('[\"C-3\"]')"],
+]
+expression = "fields[ARRAY_POSITION('sku'::VARIANT, header)]::VARCHAR"
+canonical = "GET(fields, ARRAY_POSITION('sku'::VARIANT, header))::VARCHAR"
+tags = ["null", "duplicates", "empty", "invalid"]

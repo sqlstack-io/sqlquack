@@ -25,7 +25,8 @@ use crate::conversion::_helpers::support::tree::{
 };
 use crate::conversion::_helpers::support::typed_leaves::compared_value;
 use crate::conversion::constants::{
-    ANY_VALUE_CHOICE, MAX_BY_FUNCTION, MULTI_COUNT, NAMED_AGGREGATE_NAMES, NAMED_AGGREGATES,
+    ANY_VALUE_CHOICE, MAX_BY_FUNCTION, MODE_EMPTY_BOOLEAN, MODE_EMPTY_DATE, MODE_EMPTY_NUMBER,
+    MODE_EMPTY_TEXT, MODE_RULE, MODE_TIES, MULTI_COUNT, NAMED_AGGREGATE_NAMES, NAMED_AGGREGATES,
     VALUE_AT_EXTREME_KEY, WINDOWED_NAMED_AGGREGATES,
 };
 
@@ -149,6 +150,19 @@ pub(crate) fn named_aggregate(
                 SnowflakeType::SemiStructured,
             ))
         }
+        ("MODE", [value]) if window.is_none() && mode_value(value.data_type) => {
+            let _rule = log.rule(MODE_RULE);
+            diverge(site.context, MODE_TIES, &construct)?;
+            let mode = most_frequent(&value.sql, value.data_type, log).map_err(refuse)?;
+            let sql = match site.scope.grouped {
+                true => mode,
+                false => {
+                    let empty = mode_of_no_rows(value.data_type, log).map_err(refuse)?;
+                    format!("(CASE WHEN count(*) = 0 THEN {empty} ELSE {mode} END)")
+                }
+            };
+            Ok(Emitted::new(sql, value.data_type))
+        }
         (_, arguments) => Err(refuse(format!(
             "{name} of {}",
             arguments
@@ -188,6 +202,58 @@ fn single_value(
         "(CASE WHEN count(DISTINCT {value}) > 1{signs} \
          OR (count({value}) > 0 AND count({value}) < count(*)) \
          THEN {raise} ELSE any_value({value}) END)"
+    ))
+}
+
+/// What Snowflake's MODE without GROUP BY returns over no rows: the type's zero, as recorded.
+fn mode_of_no_rows(data_type: SnowflakeType, log: &ProvenanceLog) -> Result<String, String> {
+    let zero = match data_type {
+        SnowflakeType::Number { .. } | SnowflakeType::Float => MODE_EMPTY_NUMBER,
+        SnowflakeType::Varchar => MODE_EMPTY_TEXT,
+        SnowflakeType::Date => MODE_EMPTY_DATE,
+        SnowflakeType::Boolean => MODE_EMPTY_BOOLEAN,
+        other => return Err(format!("MODE without GROUP BY of {other} over no rows")),
+    };
+    cast(zero, data_type, log)
+}
+
+/// Whether MODE's equality of `data_type` values is DuckDB's, so both engines count them alike.
+fn mode_value(data_type: SnowflakeType) -> bool {
+    matches!(
+        data_type,
+        SnowflakeType::Number { .. }
+            | SnowflakeType::Float
+            | SnowflakeType::Varchar
+            | SnowflakeType::Boolean
+            | SnowflakeType::Date
+            | SnowflakeType::TimestampNtz { .. }
+    )
+}
+
+/// The group's most frequent value; values tied for most frequent, or -0 beside 0, raise `mode_ties`.
+fn most_frequent(
+    value: &str,
+    data_type: SnowflakeType,
+    log: &ProvenanceLog,
+) -> Result<String, String> {
+    let raise = cast(
+        &raised(&format!(
+            "{MODE_TIES}: MODE of a group whose most frequent values tie"
+        )),
+        data_type,
+        log,
+    )?;
+    let counts = format!("map_values(histogram({value}))");
+    let signs = match data_type {
+        SnowflakeType::Float => format!(
+            " OR (count(CASE WHEN {value} = 0 AND signbit({value}) THEN 1 END) > 0 \
+             AND count(CASE WHEN {value} = 0 AND NOT signbit({value}) THEN 1 END) > 0)"
+        ),
+        _ => String::new(),
+    };
+    Ok(format!(
+        "(CASE WHEN length(list_filter({counts}, lambda n: n = list_max({counts}))) > 1{signs} \
+         THEN {raise} ELSE mode({value}) END)"
     ))
 }
 

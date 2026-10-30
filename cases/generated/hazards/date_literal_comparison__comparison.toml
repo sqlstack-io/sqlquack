@@ -102,3 +102,90 @@ rows = [
 expression = "x0 = '2024-01-15'"
 tags = ["null", "ties", "mixed-types"]
 origin = "generated: hazards@1"
+
+[[case]]
+id = "node_eq_2_combination_0_time_text_literal"
+description = "node:eq over benign values of each declared argument kind."
+columns = [{ name = "x0", type = "TIME(9)" }]
+rows = [
+  ["'10:00:00'"],
+  ["'11:30:00'"],
+]
+expression = "x0 = '10:30:00'"
+tags = ["null", "ties", "mixed-types"]
+origin = "generated: hazards@1"
+
+[[case]]
+id = "node_eq_2_combination_1_time_text_literal"
+description = "node:eq over benign values of each declared argument kind."
+columns = [{ name = "x0", type = "TIME(9)" }]
+rows = [
+  ["'10:00:00'"],
+  ["'11:30:00'"],
+]
+expression = "x0 <> '10:30:00'"
+tags = ["null", "ties", "mixed-types"]
+origin = "generated: hazards@1"
+
+[[case]]
+id = "node_eq_2_combination_2_time_text_literal"
+description = "node:eq over benign values of each declared argument kind."
+columns = [{ name = "x0", type = "TIME(9)" }]
+rows = [
+  ["'10:00:00'"],
+  ["'11:30:00'"],
+]
+expression = "x0 < '10:30:00'"
+tags = ["null", "ties", "mixed-types"]
+origin = "generated: hazards@1"
+
+[[case]]
+id = "node_eq_2_combination_3_time_text_literal"
+description = "node:eq over benign values of each declared argument kind."
+columns = [{ name = "x0", type = "TIME(9)" }]
+rows = [
+  ["'10:00:00'"],
+  ["'11:30:00'"],
+]
+expression = "x0 <= '10:30:00'"
+tags = ["null", "ties", "mixed-types"]
+origin = "generated: hazards@1"
+
+[[case]]
+id = "node_eq_2_combination_4_time_text_literal"
+description = "node:eq over benign values of each declared argument kind."
+columns = [{ name = "x0", type = "TIME(9)" }]
+rows = [
+  ["'10:00:00'"],
+  ["'11:30:00'"],
+]
+expression = "x0 > '10:30:00'"
+tags = ["null", "ties", "mixed-types"]
+origin = "generated: hazards@1"
+
+[[case]]
+id = "node_eq_2_combination_5_time_text_literal"
+description = "node:eq over benign values of each declared argument kind."
+columns = [{ name = "x0", type = "TIME(9)" }]
+rows = [
+  ["'10:00:00'"],
+  ["'11:30:00'"],
+]
+expression = "x0 >= '10:30:00'"
+tags = ["null", "ties", "mixed-types"]
+origin = "generated: hazards@1"
+
+[[case]]
+id = "node_eq_2_0_time_hazards"
+description = "node:eq with the hazards null, day_bounds, half_millisecond in argument 0, time."
+columns = [{ name = "x0", type = "TIME(9)" }]
+rows = [
+  ["NULL"],
+  ["'00:00:00'"],
+  ["'23:59:59.999999'"],
+  ["'10:00:00.0005'"],
+  ["'10:00:00.9996'"],
+]
+expression = "x0 = '10:30:00'"
+tags = ["null", "ties", "mixed-types"]
+origin = "generated: hazards@1"

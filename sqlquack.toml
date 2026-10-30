@@ -313,7 +313,7 @@ strict = "refuse"
 reason = "User decision 2026-10-25: a DATE, TIMESTAMP or TIME inside a VARIANT keeps its type in Snowflake, which DuckDB JSON cannot. The converted SQL stores the JSON string Snowflake writes for the value (batch 8 recorded YYYY-MM-DD, YYYY-MM-DD HH:MI:SS.FFF and a ' Z' suffix for TIMESTAMP_LTZ in UTC), raising where that text drops digits or an offset. TYPEOF and IS_DATE-style reads of a string in such a text raise rather than answer VARCHAR or false. TIMESTAMP_TZ (its offset is not kept), TIME and BINARY (its hex text is indistinguishable from plain strings) stay refused."
 
 [divergences.timestamp_range]
-constructs = ["node:cast", "node:try_cast", "fn:DATEADD", "fn:TIMESTAMPADD", "fn:CONVERT_TIMEZONE", "fn:TO_TIMESTAMP", "fn:TO_TIMESTAMP_NTZ", "fn:TRY_TO_TIMESTAMP", "fn:TRY_TO_TIMESTAMP_NTZ", "fn:TRY_TO_TIMESTAMP_TZ", "fn:TIMESTAMP_NTZ_FROM_PARTS"]
+constructs = ["node:cast", "node:try_cast", "node:add", "node:sub", "fn:DATEADD", "fn:TIMESTAMPADD", "fn:CONVERT_TIMEZONE", "fn:TO_TIMESTAMP", "fn:TO_TIMESTAMP_NTZ", "fn:TRY_TO_TIMESTAMP", "fn:TRY_TO_TIMESTAMP_NTZ", "fn:TRY_TO_TIMESTAMP_TZ", "fn:TIMESTAMP_NTZ_FROM_PARTS"]
 default = "warn"
 strict = "refuse"
 reason = "DuckDB nanosecond timestamps span 1677-09-21 to 2262-04-11; outside it DuckDB raises an error where Snowflake returns the TIMESTAMP_NTZ(7-9) value. TO_TIMESTAMP of an epoch count outside the years 1 to 9999, which Snowflake returns wrapped or beyond them, raises too. The failure is loud, never a wrong value."
@@ -349,11 +349,17 @@ default = "warn"
 strict = "refuse"
 reason = "MAX_BY and MIN_BY pick one row among rows tied on the extreme key, and no recording shows which: one recorded the first in input order, which neither engine guarantees. The converted SQL returns the value where every tied row holds it, and raises where tied rows hold different values. The failure is loud, never a wrong value."
 
+[divergences.mode_ties]
+constructs = ["fn:MODE"]
+default = "warn"
+strict = "refuse"
+reason = "MODE returns one of the values tied for most frequent, and no recording shows which; DuckDB may choose another, and both engines count -0 and 0 as one value whose sign either may keep. The converted SQL returns the most frequent value where exactly one value is, and raises where several tie or a FLOAT group holds both -0 and 0. The failure is loud, never a wrong value."
+
 [divergences.array_agg_order]
 constructs = ["fn:ARRAY_AGG"]
 default = "warn"
 strict = "refuse"
-reason = "ARRAY_AGG without WITHIN GROUP returns its values in an order neither engine defines. The converted SQL returns the array where it holds at most one distinct value, and raises otherwise; ARRAY_SIZE and ARRAY_SORT of it, which do not depend on the order, convert without it. The failure is loud, never a wrong value."
+reason = "ARRAY_AGG without WITHIN GROUP returns its values in an order neither engine defines, as WITHIN GROUP does among rows tied on its keys. The converted SQL returns the array where it holds at most one distinct value, or where tied rows hold equal values, and raises otherwise; ARRAY_SIZE and ARRAY_SORT of an unordered ARRAY_AGG, which do not depend on the order, convert without it. The failure is loud, never a wrong value."
 
 [divergences.text_number_scale]
 constructs = ["node:eq", "node:neq", "node:lt", "node:lte", "node:gt", "node:gte", "node:in", "fn:EQUAL_NULL", "node:null_safe_eq", "node:null_safe_neq"]

@@ -49,6 +49,8 @@ pub const FORMATTED_TEXT_TO_DATE: &str = "duckdb.formatted_text_to_date";
 pub const FORMATTED_TEXT_TO_TIMESTAMP: &str = "duckdb.formatted_text_to_timestamp";
 /// The message of the error TO_DATE raises for an impossible date in its format.
 pub const UNPARSED_DATE_MESSAGE: &str = "Can't parse the text as date with the format";
+/// The message of Snowflake's error for text a timestamp format cannot read as a timestamp.
+pub const UNPARSED_TIMESTAMP_MESSAGE: &str = "Can't parse the text as timestamp with the format";
 /// The first year two-digit years are read in, Snowflake's default TWO_DIGIT_CENTURY_START.
 pub const TWO_DIGIT_CENTURY_START: u16 = 1970;
 /// Epoch counts as naive timestamps: `duckdb.epoch_to_timestamp`.

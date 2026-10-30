@@ -134,6 +134,7 @@ fn convert_select(
     let (with_sql, context) = convert_with(select.get("with"), outer, context)?;
     let (from_sql, relations) = convert_from(select, outer, &context)?;
     let mut scope = Scope::new(relations, outer);
+    scope.grouped = select.get("group_by").is_some_and(|group| !group.is_null());
     let mut items: Vec<String> = Vec::new();
     let mut outputs: Vec<(String, Emitted)> = Vec::new();
     for item in list(select, "expressions") {

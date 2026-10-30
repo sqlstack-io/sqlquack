@@ -38,8 +38,8 @@ use crate::conversion::_helpers::support::tree::{
 };
 use crate::conversion::constants::{
     DATE_TEXT_SPELLING, LITERAL_KIND, NEGATE_KIND, PARSE_JSON_RULE, PARSE_JSON_VARIANT,
-    TIMESTAMP_RANGE, VARIANT_CAST, VARIANT_COMPUTED_GET, VARIANT_HELD_UNREAD, VARIANT_INSPECT,
-    VARIANT_NAME, VARIANT_PATH, VARIANT_TYPE_NAME,
+    SUBSCRIPT_PAIR, TIMESTAMP_RANGE, VARIANT_CAST, VARIANT_COMPUTED_GET, VARIANT_HELD_UNREAD,
+    VARIANT_INSPECT, VARIANT_NAME, VARIANT_PATH, VARIANT_TYPE_NAME,
 };
 
 /// PARSE_JSON or TRY_PARSE_JSON of text: raises wherever the two parsers may disagree.
@@ -114,8 +114,17 @@ pub(crate) fn variant_subscript(payload: &Value, site: Site<'_>) -> Result<Emitt
     let payload = payload_object(payload, &construct)?;
     require_understood(payload, &["this", "index"], &construct)?;
     let base = variant_operand(field(payload, "this", &construct)?, &construct, site)?;
-    let step = literal_step(field(payload, "index", &construct)?, &construct, site)?;
-    located(&base, &[step], &construct, site.context)
+    let index = field(payload, "index", &construct)?;
+    let key = convert_expression(index, site)?;
+    match step_of(&key, &construct) {
+        Ok(step) => located(&base, &[step], &construct, site.context),
+        Err(refusal) if negative_literal(index) => Err(refusal),
+        Err(refusal) => {
+            let got = computed_get((base, key), refusal, &construct, site)?;
+            site.context.log.equivalence(SUBSCRIPT_PAIR);
+            Ok(got)
+        }
+    }
 }
 
 /// GET, GET_PATH and GET_IGNORE_CASE with literal keys, indexes and paths.
@@ -138,27 +147,13 @@ pub(crate) fn variant_get(
             construct.clone(),
             "GET at a negative constant index, which Snowflake rejects".to_owned(),
         )),
-        "GET" => match literal_step(key, construct, site) {
-            Ok(step) => located(&base, &[step], construct, site.context),
-            Err(refusal) => {
-                let step = convert_expression(key, site)?;
-                if step.literal.is_some() {
-                    return Err(refusal);
-                }
-                let index = match step.data_type {
-                    SnowflakeType::Number { scale: 0, .. } => true,
-                    SnowflakeType::Varchar => false,
-                    _ => return Err(refusal),
-                };
-                let _computed = site.context.log.rule(VARIANT_COMPUTED_GET);
-                let base = json_only(base, construct)?;
-                Ok(semi_structured(json_get_computed(
-                    &base,
-                    (&step.sql, index),
-                    site.context.log,
-                )))
+        "GET" => {
+            let key = convert_expression(key, site)?;
+            match step_of(&key, construct) {
+                Ok(step) => located(&base, &[step], construct, site.context),
+                Err(refusal) => computed_get((base, key), refusal, construct, site),
             }
-        },
+        }
         "GET_PATH" => {
             let text = text_literal_value(key, construct, site)?;
             let steps = path_steps(&text).ok_or_else(|| {
@@ -175,6 +170,30 @@ pub(crate) fn variant_get(
                 .map_err(|reason| outside_conditions(construct.clone(), reason))
         }
     }
+}
+
+/// GET of `base` at a key or index `step` computed per row; `refusal` when it is another literal.
+fn computed_get(
+    (base, step): (Emitted, Emitted),
+    refusal: Refusal,
+    construct: &Construct,
+    site: Site<'_>,
+) -> Result<Emitted, Refusal> {
+    if step.literal.is_some() {
+        return Err(refusal);
+    }
+    let index = match step.data_type {
+        SnowflakeType::Number { scale: 0, .. } => true,
+        SnowflakeType::Varchar => false,
+        _ => return Err(refusal),
+    };
+    let _computed = site.context.log.rule(VARIANT_COMPUTED_GET);
+    let base = json_only(base, construct)?;
+    Ok(semi_structured(json_get_computed(
+        &base,
+        (&step.sql, index),
+        site.context.log,
+    )))
 }
 
 /// Whether `node` is a negated number literal, a constant Snowflake checks when it compiles.
@@ -374,8 +393,9 @@ fn json_only(base: Emitted, construct: &Construct) -> Result<String, Refusal> {
     }
 }
 
-fn literal_step(node: &Value, construct: &Construct, site: Site<'_>) -> Result<PathStep, Refusal> {
-    match convert_expression(node, site)?.literal {
+/// The path step a converted key or index literal names.
+fn step_of(key: &Emitted, construct: &Construct) -> Result<PathStep, Refusal> {
+    match key.literal.clone() {
         Some(Literal::Text(key)) if PATH_READ_KEYS.contains(&key.as_str()) => {
             Err(outside_conditions(
                 construct.clone(),

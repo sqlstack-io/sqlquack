@@ -301,6 +301,20 @@ benign = { "0" = "'YYYY-MM-DD HH24:MI:SS'" }
 variants = ["TRY_TO_TIMESTAMP_NTZ({1}, {0})"]
 divergences = { "text.dollar_prefix" = "date_text_spelling", "text.slash_prefix" = "date_text_spelling", "text.dots_brackets" = "date_text_spelling", "text.quotes_backslashes" = "date_text_spelling", "text.non_ascii" = "date_text_spelling", "text.title_case_digraph" = "date_text_spelling", "text.case_only" = "date_text_spelling", "text.whitespace" = "date_text_spelling", "text.number_text" = "date_text_spelling", "1.text.case_only" = "", "1.text.dollar_prefix" = "", "1.text.non_ascii" = "", "1.text.quotes_backslashes" = "", "1.text.slash_prefix" = "", "1.text.title_case_digraph" = "", "1.text.whitespace" = "" }
 
+
+# Without TRY_, an impossible timestamp raises Snowflake's error: its hazard cases stand apart.
+[[rule.form]]
+construct = "fn:TO_TIMESTAMP"
+also = ["fn:TO_TIMESTAMP_NTZ"]
+arguments = [
+  { families = ["text"], kinds = ["literal"], grammar = true },
+  { families = ["text"] },
+]
+template = "TO_TIMESTAMP({1}, {0})"
+category = "temporal"
+benign = { "0" = "'YYYY-MM-DD HH24:MI:SS'", "1" = "'2024-01-15 10:00:00'" }
+variants = ["TO_TIMESTAMP_NTZ({1}, {0})"]
+
 [[rule]]
 id = "rule.temporal_text_format"
 
@@ -351,7 +365,7 @@ divergences = { "integer.beyond_64_bits" = "timestamp_range", "integer.digits_38
 
 [[rule.form]]
 construct = "fn:TRY_TO_TIMESTAMP"
-also = ["fn:TRY_TO_TIMESTAMP_NTZ"]
+also = ["fn:TRY_TO_TIMESTAMP_NTZ", "fn:TO_TIMESTAMP", "fn:TO_TIMESTAMP_NTZ"]
 arguments = [
   { families = ["text"], kinds = ["literal"] },
   { families = ["text"] },
@@ -464,3 +478,47 @@ one_wise = true
 template = "TIMESTAMP_NTZ_FROM_PARTS({0}, {1}, {2}, {3}, {4}, {5})"
 category = "temporal"
 benign = { "0" = "2024" }
+
+[[rule]]
+id = "rule.timestamp_time"
+
+# Read as microseconds since midnight: the connector returns a TIME(9) result only in microseconds.
+[[rule.form]]
+construct = "fn:TO_TIME"
+also = ["fn:TIME"]
+arguments = [
+  { families = ["timestamp_ntz"] },
+]
+template = "DATEDIFF('microsecond', '00:00:00'::TIME, TO_TIME({0}))"
+category = "temporal"
+variants = ["DATEDIFF('microsecond', '00:00:00'::TIME, TIME({0}))"]
+
+[[rule]]
+id = "rule.interval_arithmetic"
+
+[[rule.form]]
+construct = "node:sub"
+also = ["node:add"]
+arguments = [
+  { families = ["date", "timestamp_ntz"] },
+  { families = ["text"], kinds = ["literal"], grammar = true },
+]
+template = "{0} - INTERVAL {1}"
+category = "temporal"
+benign = { "1" = "'1 day'" }
+variants = ["{0} + INTERVAL {1}"]
+# The result is a nanosecond timestamp, which the recording connector truncates past 2262.
+unrecordable = { "0.timestamp_ntz.extreme_years" = "The recording connector cannot convert the nanosecond timestamp past 2262 the sum returns." }
+
+[[rule.form]]
+construct = "node:sub"
+also = ["node:add"]
+arguments = [
+  { families = ["timestamp_ntz"] },
+  { families = ["text"], kinds = ["literal"], grammar = true },
+]
+template = "{0} + INTERVAL {1}"
+category = "temporal"
+benign = { "1" = "'2 hours'" }
+# The result is a nanosecond timestamp, which the recording connector truncates past 2262.
+unrecordable = { "0.timestamp_ntz.extreme_years" = "The recording connector cannot convert the nanosecond timestamp past 2262 the sum returns." }

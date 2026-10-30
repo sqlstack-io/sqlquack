@@ -6,7 +6,8 @@ use sqlquack_core::failures::constants::{
     DIVISION_BY_ZERO, DIVISION_FAILURES, INVALID_UTF8_FAILURES, JSON_NOT_PARSED,
     KEY_EXISTS_FAILURES, NOT_AN_ARRAY_ARGUMENT, NOT_AN_ARRAY_FAILURES, NUMBER_NOT_RECOGNIZED,
     NUMBER_OUT_OF_RANGE, NUMBER_TEXT_OUT_OF_RANGE, OBJECT_KEY_EXISTS, STRING_TOO_LONG,
-    TIME_TEXT_FAILURES, TIMESTAMP_NOT_RECOGNIZED, VARIANT_NOT_CAST, ZONE_FAILURES,
+    TIME_TEXT_FAILURES, TIMESTAMP_FORMAT_MISMATCH, TIMESTAMP_NOT_RECOGNIZED, VARIANT_NOT_CAST,
+    ZONE_FAILURES,
 };
 use sqlquack_core::failures::models::{ErrorKind, FailureMode};
 use sqlquack_snowflake::typing::constants::VARIANT_COMMON_TYPE;
@@ -24,23 +25,24 @@ use crate::conversion::constants::{
     CURRENT_TIME_RULE, DATE_ARITHMETIC, DATE_FORMAT_RULE, DATE_LITERAL_COMPARISON, DATE_PART_RULE,
     DECIMAL_ARITHMETIC, DECIMAL_DIVISION, DECIMAL_EPOCH_RULE, DECIMAL_MODULO, DECODE_RULE,
     DISTINCT, EDIT_DISTANCE, EXISTS, FLATTEN_RULE, FLOAT_ARITHMETIC, FLOAT_MODULO, FROM_PARTS,
-    FROM_RELATION, FROM_SUBQUERY, GROUP_BY, HASH_RULE, HAVING, IFF, ILIKE_FOLDING, IN_LIST,
-    IN_SUBQUERY, IS_NULL, JOIN_CROSS, JOIN_ON, LAMBDA_RULE, LATERAL_SUBQUERY, LEAST_GREATEST, LIKE,
-    LIMIT, LISTAGG_RULE, LOGIC, MIN_MAX, MIN_MAX_FLOAT, NAMED_AGGREGATES, NEGATE, NOT_IN_SUBQUERY,
-    NULL_SAFE_COMPARISON, NULLIF, NUMBER_LITERAL, NUMERIC_FUNCTION, OBJECT_CONSTRUCT_RULE,
-    OBJECT_DELETE_RULE, OBJECT_INSERT_RULE, OBJECT_KEYS_RULE, OBJECT_PICK_RULE, ORDER_BY,
-    PARENTHESES, PARSE_JSON_RULE, PARSE_JSON_VARIANT, PERCENTILE_RULE, PROJECT_FUNCTION_CALL,
-    PROJECT_TABLE_FUNCTION, QUALIFY, REDUCE_RULE, REGEXP, REGEXP_PARAMETERS, REGEXP_POSIX_SPACE,
-    ROUNDING, SCALAR_SUBQUERY, SELECT, SET_OPERATION, SIGN_RULE, SPLIT_RULE, SPLIT_TO_TABLE_RULE,
-    STAR, SUM, SUM_FLOAT, TEMPORAL_TEXT_FORMAT, TEXT_AFFIX, TEXT_CHR, TEXT_CONTAINS, TEXT_HEX,
-    TEXT_HEX_DECODE, TEXT_INITCAP, TEXT_MD5, TEXT_NUMBER_COMPARISON, TEXT_PAD, TEXT_POSITION,
-    TEXT_REPLACE, TEXT_TO_TIME_RULE, TEXT_TO_TIMESTAMP_RULE, TEXT_TRANSLATE, TIME_ARITHMETIC,
-    TIME_CAST, TIME_ZONE_CONVERSION, TIMESTAMP_FORMAT_RULE, TO_BOOLEAN_RULE, TO_DATE_TEMPORAL,
-    TO_VARIANT_RULE, TRIM, UNION_BY_NAME, VALUE_AT_EXTREME_KEY, VARIANT_CAST, VARIANT_COMPUTED_GET,
-    VARIANT_EQUALITY, VARIANT_INSPECT, VARIANT_KIND_CAST, VARIANT_KIND_RULE, VARIANT_PARTITION,
-    VARIANT_PATH, VARIANT_TO_VARCHAR, VARIANT_TYPE_NAME, VARIANT_TYPED_CHECK, WHERE,
-    WINDOW_AGGREGATE, WINDOW_FIRST_LAST, WINDOW_OFFSET, WINDOW_RANKING, ZERO_IF_NULL_RULE,
-    ZONE_COLUMNS, ZONED_PARTS,
+    FROM_RELATION, FROM_SUBQUERY, GROUP_BY, GROUP_BY_ALL_RULE, HASH_RULE, HAVING, IFF,
+    ILIKE_FOLDING, IN_LIST, IN_SUBQUERY, INTERVAL_ARITHMETIC, IS_NULL, JOIN_CROSS, JOIN_ON,
+    LAMBDA_RULE, LATERAL_SUBQUERY, LEAST_GREATEST, LIKE, LIMIT, LISTAGG_RULE, LOGIC, MIN_MAX,
+    MIN_MAX_FLOAT, MODE_RULE, NAMED_AGGREGATES, NEGATE, NOT_IN_SUBQUERY, NULL_SAFE_COMPARISON,
+    NULLIF, NUMBER_LITERAL, NUMERIC_FUNCTION, OBJECT_CONSTRUCT_RULE, OBJECT_DELETE_RULE,
+    OBJECT_INSERT_RULE, OBJECT_KEYS_RULE, OBJECT_PICK_RULE, ORDER_BY, PARENTHESES, PARSE_JSON_RULE,
+    PARSE_JSON_VARIANT, PERCENTILE_RULE, PROJECT_FUNCTION_CALL, PROJECT_TABLE_FUNCTION, QUALIFY,
+    REDUCE_RULE, REGEXP, REGEXP_PARAMETERS, REGEXP_POSIX_SPACE, ROUNDING, SCALAR_SUBQUERY, SELECT,
+    SET_OPERATION, SIGN_RULE, SPLIT_RULE, SPLIT_TO_TABLE_RULE, STAR, SUM, SUM_FLOAT,
+    TEMPORAL_TEXT_FORMAT, TEXT_AFFIX, TEXT_CHR, TEXT_CONTAINS, TEXT_HEX, TEXT_HEX_DECODE,
+    TEXT_INITCAP, TEXT_MD5, TEXT_NUMBER_COMPARISON, TEXT_PAD, TEXT_POSITION, TEXT_REPLACE,
+    TEXT_SEARCH_POSITION, TEXT_TO_TIME_RULE, TEXT_TO_TIMESTAMP_RULE, TEXT_TRANSLATE,
+    TIME_ARITHMETIC, TIME_CAST, TIME_ZONE_CONVERSION, TIMESTAMP_FORMAT_RULE, TIMESTAMP_TIME_RULE,
+    TO_BOOLEAN_RULE, TO_DATE_TEMPORAL, TO_VARIANT_RULE, TRIM, UNION_BY_NAME, VALUE_AT_EXTREME_KEY,
+    VARIANT_CAST, VARIANT_COMPUTED_GET, VARIANT_EQUALITY, VARIANT_INSPECT, VARIANT_KIND_CAST,
+    VARIANT_KIND_RULE, VARIANT_PARTITION, VARIANT_PATH, VARIANT_TO_VARCHAR, VARIANT_TYPE_NAME,
+    VARIANT_TYPED_CHECK, WHERE, WINDOW_AGGREGATE, WINDOW_FIRST_LAST, WINDOW_OFFSET, WINDOW_RANKING,
+    ZERO_IF_NULL_RULE, ZONE_COLUMNS, ZONED_PARTS,
 };
 use crate::conversion::models::RuleSpec;
 
@@ -272,7 +274,7 @@ pub const RULES: &[RuleSpec] = &[
         constructs: &[
             "node:eq", "node:neq", "node:lt", "node:lte", "node:gt", "node:gte",
         ],
-        conditions: "A DATE and a string literal in YYYY-MM-DD form.",
+        conditions: "A DATE and a string literal in YYYY-MM-DD form, or a TIME and a string literal in HH:MI:SS form (hours 00-23), read as that DATE or TIME.",
         failures: &[],
     },
     RuleSpec {
@@ -486,7 +488,7 @@ pub const RULES: &[RuleSpec] = &[
             "fn:ARRAY_SIZE",
             "fn:ARRAY_SORT",
         ],
-        conditions: "ARRAY_AGG WITHIN GROUP (ORDER BY ...), not as a window function: the non-NULL values in order as an ARRAY, values written as TO_VARIANT writes them and a JSON null kept; an empty ARRAY when no value is non-NULL; DISTINCT only of text ordered by itself. ARRAY_AGG, also DISTINCT, without WITHIN GROUP, whose order neither engine defines: the same where at most one distinct value is non-NULL, otherwise raising, relying on array_agg_order; ARRAY_SIZE of it counts the non-NULL (distinct) values; ARRAY_SORT of it, of text or whole numbers, orders them ascending. DISTINCT of a VARIANT refuses, as DuckDB compares JSON as written, not as VARIANT equality does; without WITHIN GROUP, a VARIANT not proven free of DATEs and timestamps refuses where one entered the statement, as its one-value check compares text; one read from a source table or schema relation relies on source_variant_json.",
+        conditions: "ARRAY_AGG WITHIN GROUP (ORDER BY ...), not as a window function: the non-NULL values in order as an ARRAY, values written as TO_VARIANT writes them and a JSON null kept; an empty ARRAY when no value is non-NULL; DISTINCT only of text ordered by itself; rows tied on every key holding different values raise, relying on array_agg_order. ARRAY_AGG, also DISTINCT, without WITHIN GROUP, whose order neither engine defines: the same where at most one distinct value is non-NULL, otherwise raising, relying on array_agg_order; ARRAY_SIZE of it counts the non-NULL (distinct) values; ARRAY_SORT of it, of text or whole numbers, orders them ascending. DISTINCT of a VARIANT refuses, as DuckDB compares JSON as written, not as VARIANT equality does; without WITHIN GROUP, a VARIANT not proven free of DATEs and timestamps refuses where one entered the statement, as its one-value check compares text; one read from a source table or schema relation relies on source_variant_json.",
         failures: &[],
     },
     RuleSpec {
@@ -713,9 +715,17 @@ pub const RULES: &[RuleSpec] = &[
     },
     RuleSpec {
         id: TIMESTAMP_FORMAT_RULE,
-        constructs: &["fn:TRY_TO_TIMESTAMP", "fn:TRY_TO_TIMESTAMP_NTZ"],
-        conditions: "TRY_TO_TIMESTAMP_NTZ or TRY_TO_TIMESTAMP of text with a literal format of YYYY, MM, DD, HH24, or HH12 with AM or PM, MI and SS, in any case, with punctuation (- : . / ,), quoted literals and letters that begin no format element as literal text: YYYY reads four digits, the other numbers one or two, AM and PM either in any case, a space in the format any run of spaces, including none, and everything else itself, case-sensitively, as recorded. Text so spelled is its TIMESTAMP_NTZ(9), NULL when a field is out of range or the date impossible; NULL, empty text and text without an ASCII digit (words such as now or epoch, and other scripts' digits, as recorded) are NULL. Any other text raises, relying on date_text_spelling; timestamps rely on timestamp_range.",
-        failures: &[],
+        constructs: &[
+            "fn:TRY_TO_TIMESTAMP",
+            "fn:TRY_TO_TIMESTAMP_NTZ",
+            "fn:TO_TIMESTAMP",
+            "fn:TO_TIMESTAMP_NTZ",
+        ],
+        conditions: "TO_TIMESTAMP_NTZ, TO_TIMESTAMP or their TRY_ forms of text with a literal format of YYYY, MM, DD, HH24, or HH12 with AM or PM, MI and SS, in any case, with punctuation (- : . / ,), quoted literals and letters that begin no format element as literal text: YYYY reads four digits, the other numbers one or two, AM and PM either in any case, a space in the format any run of spaces, including none, and everything else itself, case-sensitively, as recorded. Text so spelled is its TIMESTAMP_NTZ(9); a field out of range or an impossible date is NULL under the TRY_ forms and raises 100096 otherwise; NULL is NULL, and empty text and text without an ASCII digit (words such as now or epoch, and other scripts' digits, as recorded) are NULL under the TRY_ forms, and empty text raises 100096 otherwise, as recorded. Any other text raises, relying on date_text_spelling; timestamps rely on timestamp_range.",
+        failures: &[FailureMode {
+            kind: ErrorKind::TimestampText,
+            snowflake: &[TIMESTAMP_FORMAT_MISMATCH],
+        }],
     },
     RuleSpec {
         id: TEXT_TO_TIMESTAMP_RULE,
@@ -811,13 +821,13 @@ pub const RULES: &[RuleSpec] = &[
             "fn:REGEXP_SUBSTR",
             "node:regexp_like",
         ],
-        conditions: "A literal pattern without lookarounds, group modifiers, lazy quantifiers (except +?, *? and ?? in REGEXP_SUBSTR, recorded reading as optional greedy repetitions, so as *, * and ?), POSIX classes or escapes other than \\d \\s \\w (ASCII, as recorded), their negations, escaped punctuation and, in REGEXP_SUBSTR, \\n. REGEXP_LIKE matches the whole text; REGEXP_REPLACE replaces every match, or only the first, from position 1, case-sensitively or with 'i', with group references only; REGEXP_SUBSTR from position 1, any occurrence, with parameters of c, i, s and e and, with e, a group (1 without one), NULL when there is no match; REGEXP_SUBSTR_ALL the same, every match as an ARRAY of strings, empty without one. A ':' opening a bracket expression is literal, and ']' first in one is literal. REGEXP_LIKE also takes a VARCHAR pattern from a column, with or without literal parameters, relying on regexp_pattern_syntax: it runs only where the pattern is literal characters, '.', groups, alternation, plain bracket expressions, single '*', '+' or '?' and anchors at its ends, and raises otherwise.",
+        conditions: "A literal pattern without lookarounds, group modifiers, lazy quantifiers (except +?, *? and ?? in REGEXP_SUBSTR, recorded reading as optional greedy repetitions, so as *, * and ?), POSIX classes or escapes other than \\d \\s \\w (ASCII, as recorded), their negations, escaped punctuation and, in REGEXP_SUBSTR and REGEXP_SUBSTR_ALL, \\n, \\t and \\r. REGEXP_LIKE matches the whole text; REGEXP_REPLACE replaces every match, or only the first, from position 1, case-sensitively or with 'i', with group references only; REGEXP_SUBSTR from position 1, any occurrence, with parameters of c, i, m, s and e and a group, which implies e (1 with e and without one, 0 without either), NULL when there is no match; REGEXP_SUBSTR_ALL the same, every match as an ARRAY of strings, empty without one. A ':' opening a bracket expression is literal, and ']' first in one is literal. REGEXP_LIKE also takes a VARCHAR pattern from a column, with or without literal parameters, relying on regexp_pattern_syntax: it runs only where the pattern is literal characters, '.', groups, alternation, plain bracket expressions, single '*', '+' or '?' and anchors at its ends, and raises otherwise.",
         failures: &[],
     },
     RuleSpec {
         id: REGEXP_PARAMETERS,
-        constructs: &["fn:REGEXP_LIKE", "fn:REGEXP_SUBSTR"],
-        conditions: "REGEXP_LIKE or REGEXP_SUBSTR with a literal parameter string of c, i and s (and e for REGEXP_SUBSTR), as RE2 inline flags: i matches case-insensitively, c case-sensitively (the last wins), s lets . match a line feed.",
+        constructs: &["fn:REGEXP_LIKE", "fn:REGEXP_SUBSTR", "fn:REGEXP_SUBSTR_ALL"],
+        conditions: "REGEXP_LIKE or REGEXP_SUBSTR with a literal parameter string of c, i and s (and e and m for REGEXP_SUBSTR and REGEXP_SUBSTR_ALL), as RE2 inline flags: i matches case-insensitively, c case-sensitively (the last wins), s lets . match a line feed, m lets ^ and $ match at line feeds.",
         failures: &[],
     },
     RuleSpec {
@@ -856,6 +866,12 @@ pub const RULES: &[RuleSpec] = &[
         failures: &[],
     },
     RuleSpec {
+        id: TEXT_SEARCH_POSITION,
+        constructs: &["fn:CHARINDEX", "fn:POSITION", "node:str_position"],
+        conditions: "CHARINDEX(s, t), POSITION(s, t) and POSITION(s IN t) of two VARCHAR operands, without a start position: the first position of s in t counted in characters from 1, case-sensitive, 0 when absent and 1 for an empty s, also in empty t, as NUMBER(9,0); NULL when either operand is NULL.",
+        failures: &[],
+    },
+    RuleSpec {
         id: TEXT_AFFIX,
         constructs: &["fn:STARTSWITH", "fn:ENDSWITH"],
         conditions: "VARCHAR operands, compared bytewise; an empty affix matches; NULL when either operand is NULL.",
@@ -869,8 +885,8 @@ pub const RULES: &[RuleSpec] = &[
     },
     RuleSpec {
         id: CAST_TEXT_TIMESTAMP,
-        constructs: &["node:cast"],
-        conditions: "CAST of non-literal VARCHAR to TIMESTAMP_NTZ(p): the text read as rule.to_timestamp reads it without a format, then cast from TIMESTAMP_NTZ(9) to the precision; relies on timestamp_range. TRY_CAST stays refused.",
+        constructs: &["node:cast", "node:try_cast"],
+        conditions: "CAST of non-literal VARCHAR to TIMESTAMP_NTZ(p): the text read as rule.to_timestamp reads it without a format, then cast from TIMESTAMP_NTZ(9) to the precision; relies on timestamp_range. TRY_CAST reads it as TRY_TO_TIMESTAMP_NTZ does, NULL where that is NULL.",
         failures: &[FailureMode {
             kind: ErrorKind::TimestampText,
             snowflake: &[TIMESTAMP_NOT_RECOGNIZED],
@@ -1101,6 +1117,24 @@ pub const RULES: &[RuleSpec] = &[
         }],
     },
     RuleSpec {
+        id: GROUP_BY_ALL_RULE,
+        constructs: &["clause:group_by", "node:group_by"],
+        conditions: "GROUP BY ALL groups by the SELECT items that hold no aggregate (COUNT, SUM, AVG, MIN, MAX, an aggregate call or WITHIN GROUP, or a named aggregate such as COUNT_IF), by output position. Refused where an item holds a window function or subquery, where the SELECT list has a star, and where every item is an aggregate.",
+        failures: &[],
+    },
+    RuleSpec {
+        id: INTERVAL_ARITHMETIC,
+        constructs: &["node:add", "node:sub", "node:interval"],
+        conditions: "A DATE or TIMESTAMP_NTZ plus or minus an INTERVAL literal of one whole number of days, hours, minutes or seconds, written '<n> <unit>' with the unit singular or plural in any case: DATEADD of n or -n of that unit. A DATE takes only days and stays a DATE; a TIMESTAMP_NTZ of any precision becomes a TIMESTAMP_NTZ(9), relying on timestamp_range. Other intervals and operands stay refused.",
+        failures: &[],
+    },
+    RuleSpec {
+        id: TIMESTAMP_TIME_RULE,
+        constructs: &["fn:TO_TIME", "fn:TIME"],
+        conditions: "TO_TIME or TIME of a TIMESTAMP_NTZ, without a format: its wall-clock time of day with every fractional digit it holds, as TIME(9); NULL for NULL. TRY_TO_TIME of a timestamp and zoned timestamps are refused.",
+        failures: &[],
+    },
+    RuleSpec {
         id: TEXT_TO_TIME_RULE,
         constructs: &["fn:TO_TIME", "fn:TRY_TO_TIME"],
         conditions: "VARCHAR text as TIME(9): without a format as a cast to TIME reads it; with HH24:MI, H:MM with surrounding spaces; with HH24MI, HMM or HHMM. An hour past 23, a minute past 59, empty text, text without digits and the recorded non-times of each format fail, with error 100108 or NULL when trying; other spellings raise date_text_spelling.",
@@ -1128,6 +1162,12 @@ pub const RULES: &[RuleSpec] = &[
         failures: KEY_EXISTS_FAILURES,
     },
     RuleSpec {
+        id: MODE_RULE,
+        constructs: &["fn:MODE"],
+        conditions: "MODE of NUMBER, FLOAT, VARCHAR, BOOLEAN, DATE or TIMESTAMP_NTZ values as an aggregate in a query with GROUP BY, not over a window: the most frequent non-NULL value, NULL when every value in the group is NULL. Without GROUP BY, over no rows it is the type's zero as recorded (0, 0.0, '', 1970-01-01) and NULL for BOOLEAN; a TIMESTAMP_NTZ there stays refused, as no valid recording shows it. Where several values tie for most frequent, or a FLOAT group holds both -0 and 0, which Snowflake chooses among is not recorded, so the converted SQL raises mode_ties.",
+        failures: &[],
+    },
+    RuleSpec {
         id: ARRAY_POSITION_RULE,
         constructs: &["fn:ARRAY_POSITION"],
         conditions: "A VARIANT needle and array: the zero-based index of the first element equal to the needle as NUMBER(9,0), comparing JSON text, so strings match exactly and 1 differs from '1'; a JSON null needle finds a null element; NULL when not found, for a NULL needle or array, or a value other than an array. A needle that is a fraction, object or array, or an integer needle in an array holding a number written with an exponent or a whole value with a point, raises json_fidelity; plain fractions that are not whole equal no integer, as recorded. Refused for a VARIANT not proven free of DATEs and timestamps, built only from values without one, in a statement that puts one in a VARIANT or reads a model's VARIANT that may hold one, since Snowflake keeps its type and DuckDB writes it as text. A VARIANT read from a source table or schema relation is trusted to hold JSON values, relying on source_variant_json.",
@@ -1147,8 +1187,8 @@ pub const RULES: &[RuleSpec] = &[
     },
     RuleSpec {
         id: VARIANT_COMPUTED_GET,
-        constructs: &["fn:GET"],
-        conditions: "GET of a VARIANT with an integer NUMBER index computed per row, the element of an array at a non-negative index in range, or with a VARCHAR key, an object's value under exactly that key, read through a quoted JSON path; NULL otherwise. Not a negative constant index, which Snowflake rejects; an index past an array's end, 64 bits and beyond included, gives NULL as recorded. The empty key and *, which a quoted path cannot name, are looked up in the object as a map.",
+        constructs: &["fn:GET", "node:subscript"],
+        conditions: "GET, or v[i] and v[k] through the subscript_to_get pair, of a VARIANT with an integer NUMBER index computed per row, the element of an array at a non-negative index in range, or with a VARCHAR key, an object's value under exactly that key, read through a quoted JSON path; NULL otherwise. Not a negative constant index, which Snowflake rejects; an index past an array's end, 64 bits and beyond included, gives NULL as recorded. The empty key and *, which a quoted path cannot name, are looked up in the object as a map.",
         failures: &[],
     },
     RuleSpec {

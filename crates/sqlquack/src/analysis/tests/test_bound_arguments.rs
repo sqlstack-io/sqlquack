@@ -196,6 +196,26 @@ fn given_a_long_argument_when_converting_then_no_block_repeats_it() {
             expected_most_copies: 1,
         },
         ArgumentCopiesTestCase {
+            description: "SUBSTR writes a long computed start once",
+            wrapper: "SELECT SUBSTR('order', LENGTH(ARGUMENT)) AS v",
+            expected_most_copies: 1,
+        },
+        ArgumentCopiesTestCase {
+            description: "SUBSTR writes a long text once",
+            wrapper: "SELECT SUBSTR(ARGUMENT, 2) AS v",
+            expected_most_copies: 1,
+        },
+        ArgumentCopiesTestCase {
+            description: "LEFT writes a long computed length once",
+            wrapper: "SELECT LEFT('order', LENGTH(ARGUMENT)) AS v",
+            expected_most_copies: 1,
+        },
+        ArgumentCopiesTestCase {
+            description: "a simple CASE writes a long operand once",
+            wrapper: "SELECT CASE TRIM(ARGUMENT) WHEN 'a' THEN 1 WHEN 'b' THEN 2 WHEN 'c' THEN 3 END AS v",
+            expected_most_copies: 1,
+        },
+        ArgumentCopiesTestCase {
             description: "an unordered ARRAY_AGG writes its value twice, once to filter",
             wrapper: "SELECT ARRAY_AGG(ARGUMENT) AS v",
             expected_most_copies: 2,

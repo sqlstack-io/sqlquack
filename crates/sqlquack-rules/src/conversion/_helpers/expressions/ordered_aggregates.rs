@@ -12,7 +12,7 @@ use sqlquack_snowflake::typing::models::SnowflakeType;
 use crate::conversion::_helpers::expressions::held::{builds_held, built, leaf};
 use crate::conversion::_helpers::expressions::scalar::{convert_expression, convert_held};
 use crate::conversion::_helpers::expressions::strings::text_operand;
-use crate::conversion::_helpers::expressions::windows::order_item;
+use crate::conversion::_helpers::expressions::windows::{order_item, order_key};
 use crate::conversion::_helpers::support::divergence::diverge;
 use crate::conversion::_helpers::support::scope::{Emitted, Literal, VariantRoot};
 use crate::conversion::_helpers::support::site::{Placement, Site};
@@ -218,6 +218,14 @@ impl Ordered<'_> {
                 diverge(self.site.context, ARRAY_AGG_ORDER, &construct)?;
                 unordered_array(&element, &present, distinct)
             }
+            Ordering::Written if distinct.is_empty() => {
+                diverge(self.site.context, ARRAY_AGG_ORDER, &construct)?;
+                let mut tie_keys: Vec<String> = Vec::new();
+                for (position, item) in self.order.iter().enumerate() {
+                    tie_keys.push(format!("k{position} := {}", order_key(item, self.site)?));
+                }
+                tied_array(&element, &present, (&tie_keys, &order))
+            }
             Ordering::Written | Ordering::Value => array,
         };
         Ok(built(
@@ -346,6 +354,22 @@ fn thousandths(digits: &str) -> Option<u32> {
         },
     };
     (value <= PERCENTILE_DECIMALS).then_some(value)
+}
+
+/// ARRAY_AGG of `element` in `order`, raising where rows tied on `tie_keys` hold different values.
+fn tied_array(element: &str, present: &str, (tie_keys, order): (&[String], &str)) -> String {
+    let tied = raised(&format!(
+        "{ARRAY_AGG_ORDER}: ARRAY_AGG WITHIN GROUP of different values tied on its order"
+    ));
+    format!(
+        "list_transform([list(struct_pack(k := struct_pack({}), v := {element}){order}) \
+         FILTER (WHERE {present} IS NOT NULL)], lambda array_agg_rows: CASE WHEN array_agg_rows \
+         IS NULL THEN CAST('[]' AS JSON) WHEN len(list_distinct(list_transform(array_agg_rows, \
+         lambda array_agg_row: array_agg_row['k']))) = len(list_distinct(array_agg_rows)) THEN \
+         CAST(to_json(list_transform(array_agg_rows, lambda array_agg_row: array_agg_row['v'])) AS JSON) \
+         ELSE CAST({tied} AS JSON) END)[1]",
+        tie_keys.join(", ")
+    )
 }
 
 /// An unordered ARRAY_AGG of `element` where `present`, raising for more than one distinct value.

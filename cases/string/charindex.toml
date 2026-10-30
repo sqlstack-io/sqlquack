@@ -1,0 +1,56 @@
+category = "string"
+construct = "fn:CHARINDEX"
+session_profile = "utc-v1"
+
+[[case]]
+id = "charindex_values"
+description = "CHARINDEX of present, absent, repeated, case-differing, empty, whitespace and non-ASCII texts, and NULL."
+columns = [{ name = "needle", type = "VARCHAR" }, { name = "haystack", type = "VARCHAR" }]
+rows = [
+  ["'ship'", "'order shipped'"],
+  ["'SHIP'", "'order shipped'"],
+  ["'d'", "'order shipped'"],
+  ["'x'", "'order shipped'"],
+  ["''", "'order'"],
+  ["''", "''"],
+  ["'a'", "''"],
+  ["' '", "'gift  card'"],
+  ["'é'", "'café crème'"],
+  ["'ß'", "'Straße'"],
+  ["NULL", "'order'"],
+  ["'o'", "NULL"],
+]
+expression = "CHARINDEX(needle, haystack)"
+tags = ["null", "empty", "whitespace", "unicode"]
+
+[[case]]
+id = "charindex_characters"
+description = "CHARINDEX counting characters outside the BMP, combining marks, line breaks and a needle longer than the text."
+columns = [{ name = "needle", type = "VARCHAR" }, { name = "haystack", type = "VARCHAR" }]
+rows = [
+  ["'b'", "'😀a😀b'"],
+  ["'😀'", "'ab😀'"],
+  ["'\u0301'", "'cafe\u0301'"],
+  ["'é'", "'cafe\u0301'"],
+  ["'b'", "'a\nb'"],
+  ["'orders'", "'order'"],
+  ["'%'", "'50% off'"],
+  ["'_'", "'gift_card'"],
+]
+expression = "CHARINDEX(needle, haystack)"
+tags = ["unicode", "whitespace"]
+
+[[case]]
+id = "position_in_query"
+description = "POSITION(s IN t) and POSITION(s, t) inside SUBSTR, as a product code is split at a separator."
+columns = [{ name = "code", type = "VARCHAR" }]
+rows = [
+  ["'SKU - 1042'"],
+  ["'SKU-1042'"],
+  ["' - '"],
+  ["''"],
+  ["NULL"],
+]
+query = "SELECT SUBSTR(code, POSITION(' - ' IN code) + 3) AS tail, POSITION('-', code) AS dash FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "empty", "whitespace", "unicode"]

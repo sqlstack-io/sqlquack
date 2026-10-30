@@ -92,6 +92,21 @@ arguments = [
 ]
 
 [[rule]]
+id = "rule.mode"
+
+[[rule.form]]
+construct = "fn:MODE"
+arguments = [{ families = ["integer", "decimal", "float", "text", "boolean", "date", "timestamp_ntz"] }]
+rows = "group"
+template = "MODE({0})"
+query = "SELECT g, {expression} AS r FROM input GROUP BY g ORDER BY g"
+category = "aggregate"
+divergences = { mixed = "mode_ties" }
+row_groups = true
+# The result is the timestamp itself, which the recording connector truncates past 2262.
+unrecordable = { "0.timestamp_ntz.extreme_years" = "The recording connector cannot convert the nanosecond timestamp past 2262 MODE returns." }
+
+[[rule]]
 id = "rule.array_agg"
 
 [[rule.form]]

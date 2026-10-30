@@ -22,9 +22,9 @@ use crate::conversion::_helpers::support::tree::{
 };
 use crate::conversion::constants::{
     ILIKE_FOLDING, INFIX_NEGATION, LENGTH_TYPE, LIKE, LIKE_WILDCARDS, NEGATED_FACET, NO_QUANTIFIER,
-    POSIX_SPACE_CLASS, QUANTIFIER_FACET, REGEXP, REGEXP_EXTRACTING_FUNCTIONS,
-    REGEXP_LINE_FEED_ESCAPE, REGEXP_PARAMETERS, REGEXP_POSIX_SPACE, REGEXP_SHORTHANDS, TEXT_PAD,
-    TEXT_POSITION, TEXT_POSITION_LIMIT, TEXT_REPLACE, TEXT_TRANSLATE,
+    POSIX_SPACE_CLASS, QUANTIFIER_FACET, REGEXP, REGEXP_CONTROL_ESCAPES,
+    REGEXP_EXTRACTING_FUNCTIONS, REGEXP_PARAMETERS, REGEXP_POSIX_SPACE, REGEXP_SHORTHANDS,
+    TEXT_PAD, TEXT_POSITION, TEXT_POSITION_LIMIT, TEXT_REPLACE, TEXT_TRANSLATE,
 };
 
 /// The quantifier LIKE ANY is written with.
@@ -84,8 +84,9 @@ pub(crate) fn left_right(
     let length = integer_operand(length, construct, site)?;
     Ok(Emitted::new(
         format!(
-            "{}({text}, (CASE WHEN {length} < 0 THEN 0 WHEN {length} > {TEXT_POSITION_LIMIT} \
-             THEN {TEXT_POSITION_LIMIT} ELSE {length} END))",
+            "list_transform([struct_pack(t := {text}, n := {length})], lambda p: {}(p['t'], \
+             (CASE WHEN p['n'] < 0 THEN 0 WHEN p['n'] > {TEXT_POSITION_LIMIT} \
+             THEN {TEXT_POSITION_LIMIT} ELSE p['n'] END)))[1]",
             name.to_ascii_lowercase()
         ),
         SnowflakeType::Varchar,
@@ -125,10 +126,11 @@ pub(crate) fn substring(payload: &Value, site: Site<'_>) -> Result<Emitted, Refu
     };
     Ok(Emitted::new(
         format!(
-            "list_transform([struct_pack(t := {text}, s := (CASE WHEN {start} < \
-             -{TEXT_POSITION_LIMIT} THEN -{TEXT_POSITION_LIMIT} WHEN {start} > {TEXT_POSITION_LIMIT} \
-             THEN {TEXT_POSITION_LIMIT} ELSE {start} END))], lambda p: CASE WHEN p['s'] < 0 \
-             AND -p['s'] > length(p['t']) THEN '' ELSE substring(p['t'], (CASE WHEN p['s'] = 0 THEN 1 ELSE p['s'] END){length}) END)[1]"
+            "list_transform([struct_pack(t := {text}, s := {start})], lambda p: \
+             list_transform([struct_pack(t := p['t'], s := (CASE WHEN p['s'] < -{TEXT_POSITION_LIMIT} \
+             THEN -{TEXT_POSITION_LIMIT} WHEN p['s'] > {TEXT_POSITION_LIMIT} THEN {TEXT_POSITION_LIMIT} \
+             ELSE p['s'] END))], lambda q: CASE WHEN q['s'] < 0 AND -q['s'] > length(q['t']) THEN '' \
+             ELSE substring(q['t'], (CASE WHEN q['s'] = 0 THEN 1 ELSE q['s'] END){length}) END)[1])[1]"
         ),
         SnowflakeType::Varchar,
     ))
@@ -471,15 +473,13 @@ pub(crate) fn regexp(
                 [] | ["1"] => ("1", "", None),
                 ["1", occurrence] => (*occurrence, "", None),
                 ["1", occurrence, parameters] => (*occurrence, *parameters, None),
-                ["1", occurrence, parameters, group] if parameters.contains('e') => {
-                    (*occurrence, *parameters, Some(*group))
-                }
+                ["1", occurrence, parameters, group] => (*occurrence, *parameters, Some(*group)),
                 _ => return Err(refuse("REGEXP_SUBSTR with these parameters")),
             };
             let extract = parameters.contains('e');
             let group = group.unwrap_or(if extract { "1" } else { "0" });
-            let flags = inline_flags(&parameters.replace('e', ""))
-                .ok_or_else(|| refuse("REGEXP_SUBSTR parameters other than c, e, i and s"))?;
+            let flags = extracting_flags(parameters)
+                .ok_or_else(|| refuse("REGEXP_SUBSTR parameters other than c, e, i, m and s"))?;
             if !positive_integer(occurrence) || !group.bytes().all(|byte| byte.is_ascii_digit()) {
                 return Err(refuse(
                     "REGEXP_SUBSTR with a non-literal occurrence or group",
@@ -498,14 +498,13 @@ pub(crate) fn regexp(
             let (parameters, group) = match options {
                 [] | ["1"] | ["1", "1"] => ("", None),
                 ["1", "1", parameters] => (*parameters, None),
-                ["1", "1", parameters, group] if parameters.contains('e') => {
-                    (*parameters, Some(*group))
-                }
+                ["1", "1", parameters, group] => (*parameters, Some(*group)),
                 _ => return Err(refuse("REGEXP_SUBSTR_ALL with these parameters")),
             };
             let group = group.unwrap_or(if parameters.contains('e') { "1" } else { "0" });
-            let flags = inline_flags(&parameters.replace('e', ""))
-                .ok_or_else(|| refuse("REGEXP_SUBSTR_ALL parameters other than c, e, i and s"))?;
+            let flags = extracting_flags(parameters).ok_or_else(|| {
+                refuse("REGEXP_SUBSTR_ALL parameters other than c, e, i, m and s")
+            })?;
             if !group.bytes().all(|byte| byte.is_ascii_digit()) {
                 return Err(refuse("REGEXP_SUBSTR_ALL with a non-literal group"));
             }
@@ -543,6 +542,16 @@ fn inline_flags(parameters: &str) -> Option<String> {
     Some(match flags.is_empty() {
         true => String::new(),
         false => format!("(?{flags})"),
+    })
+}
+
+/// RE2 inline flags for REGEXP_SUBSTR's parameters: those of [`inline_flags`], e, and m for multi-line.
+fn extracting_flags(parameters: &str) -> Option<String> {
+    let flags = inline_flags(&parameters.replace(['e', 'm'], ""))?;
+    Some(match (parameters.contains('m'), flags.strip_suffix(')')) {
+        (false, _) => flags,
+        (true, Some(open)) => format!("{open}m)"),
+        (true, None) => "(?m)".to_owned(),
     })
 }
 
@@ -624,7 +633,7 @@ fn shared_pattern(pattern: &str, extracting: bool) -> Result<bool, String> {
         match character {
             '\\' => match characters.next() {
                 Some(escaped) if REGEXP_SHORTHANDS.contains(escaped) => {}
-                Some(REGEXP_LINE_FEED_ESCAPE) if extracting => {}
+                Some(escaped) if extracting && REGEXP_CONTROL_ESCAPES.contains(escaped) => {}
                 Some(escaped) if escaped.is_ascii_punctuation() => {}
                 Some(escaped) => return Err(format!("the regular expression escape \\{escaped}")),
                 None => return Err("a pattern ending in a backslash".to_owned()),

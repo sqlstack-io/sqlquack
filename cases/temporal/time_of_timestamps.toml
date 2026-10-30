@@ -1,0 +1,62 @@
+# TO_TIME and TIME of naive timestamps, TIMEs compared with text, and DATEDIFF between TIMEs in
+# microseconds, minutes and hours.
+category = "temporal"
+construct = "fn:TO_TIME"
+session_profile = "utc-v1"
+
+[[case]]
+id = "time_compared_with_text"
+description = "The time of day of a timestamp compared with HH:MI:SS text, as orders without a delivery time are found."
+columns = [{ name = "ts", type = "TIMESTAMP_NTZ(9)" }]
+rows = [
+  ["'2024-02-29 00:00:00'"],
+  ["'2024-02-29 00:00:00.000001'"],
+  ["'2024-02-29 13:45:01'"],
+  ["NULL"],
+]
+query = "SELECT TIME(ts) <> '00:00:00' AS timed, TO_TIME(ts) = '13:45:01' AS at, '12:00:00' < TO_TIME(ts) AS afternoon FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "datediff_time_units"
+description = "DATEDIFF in microseconds, minutes and hours from midnight to a TIME and back."
+columns = [{ name = "t", type = "TIME(9)" }]
+rows = [
+  ["'23:59:59.999999'"],
+  ["'00:00:00'"],
+  ["'12:30:00.5'"],
+  ["'00:59:59.999999'"],
+  ["NULL"],
+]
+query = "SELECT DATEDIFF('microsecond', '00:00:00'::TIME, t) AS us, DATEDIFF(minute, '00:00:00'::TIME, t) AS mi, DATEDIFF(hour, t, '00:00:00'::TIME) AS back FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "datediff_time_seconds_of_text"
+description = "A finishing time read with TRY_TO_TIME, as whole seconds from microseconds, zero as NULL."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'00:01:35.42'"],
+  ["'00:00:00'"],
+  ["'01:02:03.000001'"],
+  ["NULL"],
+]
+expression = "NULLIF(DATEDIFF('microsecond', '00:00:00'::TIME, TRY_TO_TIME(s)) / 1000000, 0)"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "to_time_of_timestamp_ntz_microseconds"
+description = "TO_TIME and TIME of TIMESTAMP_NTZ at several scales, read as microseconds since midnight, since the connector returns TIME(9) only in microseconds."
+columns = [{ name = "ts", type = "TIMESTAMP_NTZ(9)" }, { name = "ms", type = "TIMESTAMP_NTZ(3)" }, { name = "s", type = "TIMESTAMP_NTZ(0)" }]
+rows = [
+  ["'2024-02-29 13:45:01.123456'", "'2024-02-29 13:45:01.123'", "'2024-02-29 13:45:01'"],
+  ["'2024-03-01 00:00:00'", "'2024-03-01 00:00:00'", "'2024-03-01 00:00:00'"],
+  ["'1969-12-31 23:59:59.999999'", "'1969-12-31 23:59:59.999'", "'1969-12-31 23:59:59'"],
+  ["'1900-03-01 06:30:00'", "'1900-03-01 06:30:00.5'", "'1900-03-01 06:30:00'"],
+  ["NULL", "NULL", "NULL"],
+]
+query = "SELECT DATEDIFF('microsecond', '00:00:00'::TIME, TO_TIME(ts)) AS t, DATEDIFF('microsecond', '00:00:00'::TIME, TIME(ts)) AS alias, DATEDIFF('microsecond', '00:00:00'::TIME, TO_TIME(ms)) AS ms, DATEDIFF('microsecond', '00:00:00'::TIME, TO_TIME(s)) AS s FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "boundary"]

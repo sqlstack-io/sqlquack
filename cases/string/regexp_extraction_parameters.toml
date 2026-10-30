@@ -1,0 +1,110 @@
+# REGEXP_SUBSTR and REGEXP_SUBSTR_ALL with a group and no e, multi-line mode, and tab and
+# carriage-return escapes.
+category = "string"
+construct = "fn:REGEXP_SUBSTR_ALL"
+session_profile = "utc-v1"
+
+[[case]]
+id = "substr_all_group_without_e"
+description = "REGEXP_SUBSTR_ALL with c and a group but no e, as order codes are read after slashes."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'/1/22/333'"],
+  ["'win/3'"],
+  ["'/x'"],
+  ["''"],
+  ["' '"],
+  ["'/٣'"],
+  ["NULL"],
+]
+expression = "REGEXP_SUBSTR_ALL(s, '/([0-9]+)', 1, 1, 'c', 1)"
+tags = ["null", "empty", "whitespace", "unicode"]
+
+[[case]]
+id = "substr_all_group_zero_without_e"
+description = "REGEXP_SUBSTR_ALL with group 0 and no e: the whole matches."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'/1/22'"],
+  ["'x'"],
+  ["''"],
+  ["NULL"],
+]
+query = "SELECT REGEXP_SUBSTR_ALL(s, '/([0-9]+)', 1, 1, 'c', 0) AS whole, REGEXP_SUBSTR_ALL(s, '/([0-9]+)', 1, 1, 'i', 1) AS insensitive FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "empty", "whitespace", "unicode"]
+
+[[case]]
+id = "substr_group_without_e"
+description = "REGEXP_SUBSTR of the first and second occurrence with c and a group but no e."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'/1/22/333'"],
+  ["'/7'"],
+  ["'none'"],
+  ["''"],
+  ["NULL"],
+]
+query = "SELECT REGEXP_SUBSTR(s, '/([0-9]+)', 1, 1, 'c', 1) AS first, REGEXP_SUBSTR(s, '/([0-9]+)', 1, 2, 'c', 1) AS second FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "empty", "whitespace", "unicode"]
+
+[[case]]
+id = "substr_all_multi_line"
+description = "REGEXP_SUBSTR_ALL with m: ^ and $ at line feeds, carriage returns and the text's ends, beside the same pattern without m."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'gift\\ncard\\nwrap'"],
+  ["'gift\\r\\ncard'"],
+  ["'gift card\\nwrap'"],
+  ["'\\n\\nbox\\n'"],
+  ["'GIFT\\ncard'"],
+  ["''"],
+  ["NULL"],
+]
+query = "SELECT REGEXP_SUBSTR_ALL(s, '^[a-z]+$', 1, 1, 'm') AS lines, REGEXP_SUBSTR_ALL(s, '^[a-z]+$') AS whole, REGEXP_SUBSTR_ALL(s, '^[a-z]+$', 1, 1, 'mi') AS insensitive FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "empty", "whitespace", "unicode"]
+
+[[case]]
+id = "substr_all_multi_line_extract"
+description = "REGEXP_SUBSTR_ALL with me and a group, a line ending in spaces, tabs and a carriage return, as an embedded object is read from a page."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'var order = {\"id\":1};  \\r\\nvar item = {\"id\":2};\\t\\nend'"],
+  ["'var order = {\"id\":1}; x\\n'"],
+  ["'var order = {\"a\":{\"b\":2}};'"],
+  ["'none'"],
+  ["NULL"],
+]
+expression = "REGEXP_SUBSTR_ALL(s, 'var [a-z]+ = (\\\\{.*\\\\});[ \\\\t\\\\r]*$', 1, 1, 'me', 1)"
+tags = ["null", "empty", "whitespace", "unicode"]
+
+[[case]]
+id = "substr_tab_return_escapes"
+description = "REGEXP_SUBSTR reading \\t and \\r escapes outside and inside a bracket expression."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'sku\\t42'"],
+  ["'sku 42'"],
+  ["'sku\\r\\n42'"],
+  ["'sku\\\\t42'"],
+  ["''"],
+  ["NULL"],
+]
+query = "SELECT REGEXP_SUBSTR(s, 'sku\\\\t[0-9]+') AS tab, REGEXP_SUBSTR(s, 'sku[\\\\t\\\\r ]+') AS spaced, REGEXP_SUBSTR_ALL(s, '[\\\\r\\\\t]') AS controls FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "empty", "whitespace", "unicode"]
+
+[[case]]
+id = "substr_multi_line_dot_all"
+description = "REGEXP_SUBSTR with ms and m alone: . across line feeds only with s."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'a\\nb\\nc'"],
+  ["'abc'"],
+  ["NULL"],
+]
+query = "SELECT REGEXP_SUBSTR(s, '^a.*$', 1, 1, 'm') AS line, REGEXP_SUBSTR(s, '^a.*$', 1, 1, 'ms') AS across FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "empty", "whitespace", "unicode"]

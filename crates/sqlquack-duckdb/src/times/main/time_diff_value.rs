@@ -12,8 +12,11 @@ pub fn time_diff_value(
 ) -> Result<String, String> {
     log.building_block(TIME_DIFF);
     let divisor = match unit {
+        "HOUR" => NANOS_PER_SECOND * 3600,
+        "MINUTE" => NANOS_PER_SECOND * 60,
         "SECOND" => NANOS_PER_SECOND,
         "MILLISECOND" => NANOS_PER_SECOND / 1000,
+        "MICROSECOND" => NANOS_PER_SECOND / 1_000_000,
         other => return Err(format!("DATEDIFF in {other} of TIMEs has no recording")),
     };
     Ok(format!(

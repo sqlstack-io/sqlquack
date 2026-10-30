@@ -8,10 +8,14 @@ pub const TRUNCATE_TIME: &str = "duckdb.truncate_time";
 pub const TIME_TEXT: &str = "duckdb.time_text";
 /// A TIME moved by clock units, wrapping at midnight: `duckdb.time_add_value`.
 pub const TIME_ADD: &str = "duckdb.time_add_value";
+/// The time of day of a naive timestamp: `duckdb.timestamp_time`.
+pub const TIMESTAMP_TIME: &str = "duckdb.timestamp_time";
 /// Clock unit boundaries crossed between two TIMEs: `duckdb.time_diff_value`.
 pub const TIME_DIFF: &str = "duckdb.time_diff_value";
 /// Nanoseconds in a day.
 pub const NANOS_PER_DAY: i64 = 86_400_000_000_000;
+/// Microseconds in a day.
+pub const MICROS_PER_DAY: i64 = 86_400_000_000;
 /// Nanoseconds in a second.
 pub const NANOS_PER_SECOND: i64 = 1_000_000_000;
 /// The message of the error text that is not a time raises.

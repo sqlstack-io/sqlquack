@@ -1,0 +1,90 @@
+category = "aggregate"
+construct = "node:within_group"
+session_profile = "utc-v1"
+
+[[case]]
+id = "array_agg_ties_equal_values"
+description = "ARRAY_AGG WITHIN GROUP where rows tied on the key hold equal values, NULL values beside tied values, and NULL keys holding equal values, ascending and descending."
+columns = [{ name = "g", type = "VARCHAR" }, { name = "k", type = "NUMBER(10,0)" }, { name = "j", type = "NUMBER(10,0)" }, { name = "x", type = "VARCHAR" }]
+rows = [
+  ["'a'", "2", "1", "'pear'"],
+  ["'a'", "1", "1", "'fig'"],
+  ["'a'", "1", "2", "'fig'"],
+  ["'a'", "3", "1", "NULL"],
+  ["'a'", "3", "2", "'plum'"],
+  ["'a'", "NULL", "1", "'kiwi'"],
+  ["'a'", "NULL", "2", "'kiwi'"],
+  ["'c'", "NULL", "1", "NULL"],
+]
+query = "SELECT g, ARRAY_AGG(x) WITHIN GROUP (ORDER BY k) AS by_key, ARRAY_AGG(x) WITHIN GROUP (ORDER BY k DESC NULLS FIRST, j) AS by_both FROM input GROUP BY g ORDER BY g"
+order = "ordered"
+tags = ["null", "empty-input", "duplicates"]
+
+[[case]]
+id = "array_agg_ties_second_key"
+description = "ARRAY_AGG WITHIN GROUP where a second key orders rows tied on the first."
+columns = [{ name = "g", type = "VARCHAR" }, { name = "k", type = "NUMBER(10,0)" }, { name = "j", type = "VARCHAR" }, { name = "x", type = "VARCHAR" }]
+rows = [
+  ["'a'", "5", "'b'", "'lime'"],
+  ["'a'", "5", "'a'", "'date'"],
+  ["'a'", "4", "NULL", "'fig'"],
+  ["'a'", "4", "'z'", "'kiwi'"],
+]
+query = "SELECT g, ARRAY_AGG(x) WITHIN GROUP (ORDER BY k, j) AS r FROM input GROUP BY g ORDER BY g"
+order = "ordered"
+tags = ["null", "empty-input", "duplicates"]
+
+[[case]]
+id = "array_agg_ties_different_values"
+description = "ARRAY_AGG WITHIN GROUP where rows tied on the key hold different values, whose order neither engine defines."
+columns = [{ name = "g", type = "VARCHAR" }, { name = "k", type = "NUMBER(10,0)" }, { name = "x", type = "NUMBER(10,0)" }]
+rows = [
+  ["'a'", "1", "10"],
+  ["'a'", "2", "20"],
+  ["'a'", "2", "30"],
+]
+query = "SELECT g, ARRAY_AGG(x) WITHIN GROUP (ORDER BY k) AS r FROM input GROUP BY g ORDER BY g"
+order = "ordered"
+tags = ["null", "empty-input", "duplicates"]
+expected_divergence = "array_agg_order"
+
+[[case]]
+id = "array_agg_ties_null_keys"
+description = "ARRAY_AGG WITHIN GROUP where rows with NULL keys hold different values."
+columns = [{ name = "g", type = "VARCHAR" }, { name = "k", type = "NUMBER(10,0)" }, { name = "x", type = "VARCHAR" }]
+rows = [
+  ["'a'", "1", "'fig'"],
+  ["'a'", "NULL", "'kiwi'"],
+  ["'a'", "NULL", "'lime'"],
+]
+query = "SELECT g, ARRAY_AGG(x) WITHIN GROUP (ORDER BY k) AS r FROM input GROUP BY g ORDER BY g"
+order = "ordered"
+tags = ["null", "empty-input", "duplicates"]
+expected_divergence = "array_agg_order"
+
+[[case]]
+id = "array_agg_ties_signed_zero_keys"
+description = "ARRAY_AGG WITHIN GROUP ordered by a FLOAT key holding -0 and 0 beside different values."
+columns = [{ name = "g", type = "VARCHAR" }, { name = "k", type = "FLOAT" }, { name = "x", type = "VARCHAR" }]
+rows = [
+  ["'a'", "-0.0", "'fig'"],
+  ["'a'", "0.0", "'kiwi'"],
+  ["'a'", "1.0", "'lime'"],
+]
+query = "SELECT g, ARRAY_AGG(x) WITHIN GROUP (ORDER BY k) AS r FROM input GROUP BY g ORDER BY g"
+order = "ordered"
+tags = ["null", "empty-input", "duplicates"]
+expected_divergence = "array_agg_order"
+
+[[case]]
+id = "array_agg_ties_signed_zero_values"
+description = "ARRAY_AGG WITHIN GROUP of whole numbers read from text as -0 and 0 under a tied key."
+columns = [{ name = "g", type = "VARCHAR" }, { name = "k", type = "NUMBER(10,0)" }, { name = "x", type = "VARCHAR" }]
+rows = [
+  ["'a'", "1", "'-0'"],
+  ["'a'", "1", "'0'"],
+  ["'a'", "2", "'7'"],
+]
+query = "SELECT g, ARRAY_AGG(TO_NUMBER(x)) WITHIN GROUP (ORDER BY k) AS r FROM input GROUP BY g ORDER BY g"
+order = "ordered"
+tags = ["null", "empty-input", "duplicates"]

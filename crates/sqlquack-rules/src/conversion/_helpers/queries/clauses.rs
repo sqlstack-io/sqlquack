@@ -12,13 +12,14 @@ use sqlquack_snowflake::typing::models::SnowflakeType;
 use crate::conversion::_helpers::expressions::operators::boolean_operand;
 use crate::conversion::_helpers::expressions::scalar::convert_expression;
 use crate::conversion::_helpers::expressions::windows::{grouping_key, order_item};
+use crate::conversion::_helpers::queries::group_all::group_all_positions;
 use crate::conversion::_helpers::support::scope::{Emitted, Scope, resolve};
 use crate::conversion::_helpers::support::site::{Placement, Site};
 use crate::conversion::_helpers::support::tree::{
     Payload, field, flag, identifier_name, integer_literal, list, node_construct, node_kind,
     payload_object, require_understood,
 };
-use crate::conversion::constants::{LIMIT, ORDER_BY, VARIANT_HELD_UNREAD};
+use crate::conversion::constants::{GROUP_BY_ALL_RULE, LIMIT, ORDER_BY, VARIANT_HELD_UNREAD};
 
 /// A clause's condition node, such as WHERE's.
 pub(crate) fn clause_condition<'a>(select: &'a Payload, clause: &str) -> Option<&'a Value> {
@@ -89,6 +90,17 @@ fn is_and(node: &Value) -> bool {
 pub(crate) fn group_by(select: &Payload, site: Site<'_>, held: &[bool]) -> Result<String, Refusal> {
     let construct = node_construct("group_by");
     let group = payload_object(field(select, "group_by", &construct)?, &construct)?;
+    if group.get("all").and_then(Value::as_bool) == Some(true)
+        && list(group, "expressions").is_empty()
+    {
+        require_understood(group, &["expressions", "all"], &construct)?;
+        let _all = site.context.log.rule(GROUP_BY_ALL_RULE);
+        let keys = group_all_positions(select)?
+            .into_iter()
+            .map(|position| position_key(position, held, "GROUP BY ALL"))
+            .collect::<Result<Vec<String>, Refusal>>()?;
+        return Ok(format!(" GROUP BY {}", keys.join(", ")));
+    }
     require_understood(group, &["expressions"], &construct)?;
     let without_aliases = Scope::new(site.scope.relations.clone(), site.scope.outer);
     let site = site.scoped(&without_aliases).placed(Placement::ROW);

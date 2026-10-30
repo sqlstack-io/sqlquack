@@ -1,0 +1,70 @@
+{
+  "arrow_sha256": "9755689f2a59b97fbbd89d409bfe4b0dac8a28780f7f4577af600048bc544a47",
+  "case_hash": "a5a900fe2df9fee69df6f1c60c87abe28ea97bb23375c5cc15b87235e08c77bb",
+  "columns": [
+    {
+      "internal_size": 134217728,
+      "name": "FIRST",
+      "nullable": true,
+      "precision": null,
+      "scale": null,
+      "type_code": 2,
+      "type_name": "TEXT"
+    },
+    {
+      "internal_size": 134217728,
+      "name": "SECOND",
+      "nullable": true,
+      "precision": null,
+      "scale": null,
+      "type_code": 2,
+      "type_name": "TEXT"
+    }
+  ],
+  "connector": "snowflake-connector-python 4.7.2",
+  "duckdb_version": "v2.0.0",
+  "effective_parameters": {
+    "BINARY_INPUT_FORMAT": "HEX",
+    "BINARY_OUTPUT_FORMAT": "HEX",
+    "DATE_INPUT_FORMAT": "AUTO",
+    "DATE_OUTPUT_FORMAT": "YYYY-MM-DD",
+    "DEFAULT_NULL_ORDERING": "LAST",
+    "GEOGRAPHY_OUTPUT_FORMAT": "GeoJSON",
+    "GEOMETRY_OUTPUT_FORMAT": "GeoJSON",
+    "JSON_INDENT": "2",
+    "QUOTED_IDENTIFIERS_IGNORE_CASE": "false",
+    "STRICT_JSON_OUTPUT": "false",
+    "TIMESTAMP_DAY_IS_ALWAYS_24H": "false",
+    "TIMESTAMP_INPUT_FORMAT": "AUTO",
+    "TIMESTAMP_LTZ_OUTPUT_FORMAT": "",
+    "TIMESTAMP_NTZ_OUTPUT_FORMAT": "YYYY-MM-DD HH24:MI:SS.FF3",
+    "TIMESTAMP_OUTPUT_FORMAT": "YYYY-MM-DD HH24:MI:SS.FF3 TZHTZM",
+    "TIMESTAMP_TYPE_MAPPING": "TIMESTAMP_NTZ",
+    "TIMESTAMP_TZ_OUTPUT_FORMAT": "",
+    "TIMEZONE": "UTC",
+    "TIME_INPUT_FORMAT": "AUTO",
+    "TIME_OUTPUT_FORMAT": "HH24:MI:SS",
+    "TWO_DIGIT_CENTURY_START": "1970",
+    "USE_CACHED_RESULT": "false",
+    "WEEK_OF_YEAR_POLICY": "0",
+    "WEEK_START": "0"
+  },
+  "error": null,
+  "format": 1,
+  "outcome": "rows",
+  "parameters_sha256": "36e4297fedc2296f596b9fbafdfd61e58e7e620ee0c228e16a4fa88a18dcc10f",
+  "query_id_sha256": "6e1533dbcd218fad1ce3c1b9b5d08836ab2495fcbbc0633bca153a2e3e20e7e4",
+  "recorded_at": "2026-10-30T09:46:42Z",
+  "recorder": "sqlquack-record 0.1.0",
+  "row_count": 5,
+  "session_parameters": {
+    "DEFAULT_NULL_ORDERING": "LAST",
+    "QUOTED_IDENTIFIERS_IGNORE_CASE": false,
+    "TIMESTAMP_TYPE_MAPPING": "TIMESTAMP_NTZ",
+    "TIMEZONE": "UTC",
+    "USE_CACHED_RESULT": false,
+    "WEEK_OF_YEAR_POLICY": 0,
+    "WEEK_START": 0
+  },
+  "warehouse_version": "10.39.101"
+}

@@ -31,6 +31,8 @@ use crate::conversion::_helpers::support::tree::{
     field, node_construct, payload_object, require_understood,
 };
 use crate::conversion::_helpers::support::typed_leaves::compared_by_text;
+use sqlquack_duckdb::blocks::constants::NANOSECOND_DIGITS;
+
 use crate::conversion::constants::{
     COMPARISON, DATE_LITERAL_COMPARISON, DECIMAL_ARITHMETIC, DECIMAL_DIVISION, DECIMAL_MODULO,
     FLOAT_ARITHMETIC, FLOAT_MODULO, LOGIC, MOD_PAIR, NULL_SAFE_COMPARISON, NUMERIC_RANGE,
@@ -39,6 +41,8 @@ use crate::conversion::constants::{
 
 /// Characters in a `YYYY-MM-DD` date.
 const ISO_DATE_LENGTH: usize = 10;
+/// Characters in an `HH:MI:SS` time.
+const CLOCK_TIME_LENGTH: usize = 8;
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 enum Arithmetic {
@@ -431,6 +435,14 @@ pub(crate) fn comparable(
             let left = date_literal(left, construct, context)?;
             return Ok((left, right));
         }
+        (SnowflakeType::Time { .. }, SnowflakeType::Varchar) => {
+            let right = time_literal(right, construct, context)?;
+            return Ok((left, right));
+        }
+        (SnowflakeType::Varchar, SnowflakeType::Time { .. }) => {
+            let left = time_literal(left, construct, context)?;
+            return Ok((left, right));
+        }
         (SnowflakeType::Varchar, number @ SnowflakeType::Number { .. }) => {
             let text = number_text(left, number, construct, context)?;
             return Ok((text, number_range(right, context)));
@@ -525,6 +537,47 @@ fn date_literal(
             "comparing DATE with VARCHAR needs an implicit conversion".to_owned(),
         )),
     }
+}
+
+/// A text literal compared with a TIME, read as the TIME it spells in `HH:MI:SS`.
+fn time_literal(
+    emitted: Emitted,
+    construct: &Construct,
+    context: &Context<'_>,
+) -> Result<Emitted, Refusal> {
+    match &emitted.literal {
+        Some(Literal::Text(text)) if is_clock_time(text) => {
+            let _rule = context.log.rule(DATE_LITERAL_COMPARISON);
+            let data_type = SnowflakeType::Time {
+                precision: NANOSECOND_DIGITS,
+            };
+            Ok(Emitted::new(
+                cast(&emitted.sql, data_type, context.log)
+                    .map_err(|reason| outside_conditions(construct.clone(), reason))?,
+                data_type,
+            ))
+        }
+        _ => Err(outside_conditions(
+            construct.clone(),
+            "comparing TIME with VARCHAR needs an implicit conversion".to_owned(),
+        )),
+    }
+}
+
+/// Whether text is an `HH:MI:SS` time of day, hours 00-23 and minutes and seconds 00-59.
+fn is_clock_time(text: &str) -> bool {
+    let bytes = text.as_bytes();
+    let field = |start: usize, most: &[u8; 2]| {
+        bytes
+            .get(start..start + 2)
+            .is_some_and(|digits| digits.iter().all(u8::is_ascii_digit) && digits <= &most[..])
+    };
+    text.len() == CLOCK_TIME_LENGTH
+        && bytes[2] == b':'
+        && bytes[5] == b':'
+        && field(0, b"23")
+        && field(3, b"59")
+        && field(6, b"59")
 }
 
 /// Whether text is a `YYYY-MM-DD` date.

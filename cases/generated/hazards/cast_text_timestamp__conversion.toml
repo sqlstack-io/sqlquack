@@ -18,6 +18,18 @@ tags = ["null", "invalid", "boundary"]
 origin = "generated: hazards@1"
 
 [[case]]
+id = "node_cast_combination_1_text"
+description = "node:cast over benign values of each declared argument kind."
+columns = [{ name = "x0", type = "VARCHAR" }]
+rows = [
+  ["'a'"],
+  ["'b'"],
+]
+expression = "TRY_CAST(x0 AS TIMESTAMP_NTZ(9))"
+tags = ["null", "invalid", "boundary"]
+origin = "generated: hazards@1"
+
+[[case]]
 id = "node_cast_0_text_hazards"
 description = "node:cast with the hazards null, empty, dollar_prefix, slash_prefix, dots_brackets, quotes_backslashes, non_ascii, title_case_digraph, case_only, whitespace, number_text in argument 0, text."
 columns = [{ name = "x0", type = "VARCHAR" }]

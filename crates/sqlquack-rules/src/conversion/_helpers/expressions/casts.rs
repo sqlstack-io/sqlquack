@@ -276,11 +276,11 @@ fn cast_sql(
                 log,
             ))
         }
-        (SnowflakeType::Varchar, SnowflakeType::TimestampNtz { .. }, _) if !trying => {
+        (SnowflakeType::Varchar, SnowflakeType::TimestampNtz { .. }, _) => {
             let _rule = cast_rule(CAST_TEXT_TIMESTAMP, log);
             diverge(context, TIMESTAMP_RANGE, construct).map_err(|refusal| refusal.reason)?;
             diverge(context, DATE_TEXT_SPELLING, construct).map_err(|refusal| refusal.reason)?;
-            let parsed = text_to_timestamp(&operand.sql, (text_failure(false), false), log);
+            let parsed = text_to_timestamp(&operand.sql, (text_failure(trying), false), log);
             temporal_cast(
                 &parsed,
                 (SnowflakeType::TimestampNtz { precision: 9 }, to),

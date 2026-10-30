@@ -1,0 +1,140 @@
+category = "aggregate"
+construct = "fn:MODE"
+session_profile = "utc-v1"
+
+[[case]]
+id = "mode_numbers"
+description = "MODE of whole numbers per group: one most frequent value, NULLs ignored, all NULL and a single row."
+columns = [{ name = "g", type = "VARCHAR" }, { name = "x", type = "NUMBER(38,0)" }]
+rows = [
+  ["'a'", "7"],
+  ["'a'", "7"],
+  ["'a'", "3"],
+  ["'a'", "NULL"],
+  ["'a'", "NULL"],
+  ["'a'", "NULL"],
+  ["'b'", "NULL"],
+  ["'c'", "-12"],
+  ["'d'", "5"],
+  ["'d'", "9"],
+  ["'d'", "9"],
+  ["'d'", "9"],
+  ["'d'", "5"],
+]
+query = "SELECT g, MODE(x) AS m FROM input GROUP BY g ORDER BY g"
+order = "ordered"
+tags = ["null", "empty-input", "duplicates"]
+
+[[case]]
+id = "mode_types"
+description = "MODE keeps its operand's type: NUMBER with a scale, VARCHAR differing in case, DATE and BOOLEAN."
+columns = [{ name = "g", type = "VARCHAR" }, { name = "p", type = "NUMBER(10,2)" }, { name = "s", type = "VARCHAR" }, { name = "d", type = "DATE" }, { name = "b", type = "BOOLEAN" }]
+rows = [
+  ["'a'", "1.50", "'Gift'", "'2024-03-01'", "TRUE"],
+  ["'a'", "1.5", "'gift'", "'2024-03-01'", "TRUE"],
+  ["'a'", "2.25", "'gift'", "'2024-02-29'", "FALSE"],
+  ["'b'", "NULL", "NULL", "NULL", "NULL"],
+]
+query = "SELECT g, MODE(p) AS p, MODE(s) AS s, MODE(d) AS d, MODE(b) AS b FROM input GROUP BY g ORDER BY g"
+order = "ordered"
+tags = ["null", "empty-input", "duplicates"]
+
+[[case]]
+id = "mode_floats"
+description = "MODE of FLOAT values read from text, as distances are: repeated, unique and NULL text."
+columns = [{ name = "g", type = "VARCHAR" }, { name = "t", type = "VARCHAR" }]
+rows = [
+  ["'a'", "'1200'"],
+  ["'a'", "'1200.0'"],
+  ["'a'", "'1400'"],
+  ["'a'", "'n/a'"],
+  ["'b'", "'0.1'"],
+  ["'b'", "'0.1'"],
+  ["'b'", "'0.30000000000000004'"],
+  ["'c'", "NULL"],
+]
+query = "SELECT g, MODE(TRY_TO_DOUBLE(t)) AS m FROM input GROUP BY g ORDER BY g"
+order = "ordered"
+tags = ["null", "empty-input", "duplicates"]
+
+[[case]]
+id = "mode_no_rows"
+description = "MODE over no rows, without GROUP BY."
+columns = [{ name = "x", type = "NUMBER(10,0)" }]
+rows = [["1"], ["2"]]
+query = "SELECT MODE(x) AS m FROM input WHERE x > 5"
+order = "ordered"
+tags = ["null", "empty-input", "duplicates"]
+
+[[case]]
+id = "mode_ties"
+description = "MODE where two values tie for most frequent."
+columns = [{ name = "g", type = "VARCHAR" }, { name = "x", type = "NUMBER(10,0)" }]
+rows = [
+  ["'a'", "1"],
+  ["'a'", "2"],
+  ["'a'", "2"],
+  ["'a'", "1"],
+]
+query = "SELECT g, MODE(x) AS m FROM input GROUP BY g ORDER BY g"
+order = "ordered"
+tags = ["null", "empty-input", "duplicates"]
+expected_divergence = "mode_ties"
+
+[[case]]
+id = "mode_signed_zero"
+description = "MODE of a FLOAT group holding -0 and 0 read from text."
+columns = [{ name = "g", type = "VARCHAR" }, { name = "t", type = "VARCHAR" }]
+rows = [
+  ["'a'", "'-0'"],
+  ["'a'", "'0'"],
+  ["'a'", "'1'"],
+]
+query = "SELECT g, MODE(TO_DOUBLE(t)) AS m FROM input GROUP BY g ORDER BY g"
+order = "ordered"
+tags = ["null", "empty-input", "duplicates"]
+expected_divergence = "mode_ties"
+
+[[case]]
+id = "mode_no_rows_types"
+description = "MODE without GROUP BY over no rows, of each type it converts there: the type's zero, NULL for BOOLEAN."
+columns = [{ name = "p", type = "NUMBER(10,2)" }, { name = "f", type = "FLOAT" }, { name = "s", type = "VARCHAR" }, { name = "b", type = "BOOLEAN" }, { name = "d", type = "DATE" }]
+rows = [["1.50", "2.5", "'gift'", "TRUE", "'2024-03-01'"]]
+query = "SELECT MODE(p) AS p, MODE(f) AS f, MODE(s) AS s, MODE(b) AS b, MODE(d) AS d FROM input WHERE p > 5"
+order = "ordered"
+tags = ["null", "empty-input", "duplicates"]
+
+[[case]]
+id = "mode_all_null_no_group"
+description = "MODE without GROUP BY over rows whose values are all NULL, of each type MODE converts."
+columns = [{ name = "n", type = "NUMBER(10,0)" }, { name = "p", type = "NUMBER(10,2)" }, { name = "f", type = "FLOAT" }, { name = "s", type = "VARCHAR" }, { name = "b", type = "BOOLEAN" }, { name = "d", type = "DATE" }]
+rows = [
+  ["NULL", "NULL", "NULL", "NULL", "NULL", "NULL"],
+  ["NULL", "NULL", "NULL", "NULL", "NULL", "NULL"],
+]
+query = "SELECT MODE(n) AS n, MODE(p) AS p, MODE(f) AS f, MODE(s) AS s, MODE(b) AS b, MODE(d) AS d FROM input"
+order = "ordered"
+tags = ["null", "empty-input", "duplicates"]
+
+[[case]]
+id = "mode_values_no_group"
+description = "MODE without GROUP BY over rows holding values and NULLs."
+columns = [{ name = "n", type = "NUMBER(10,0)" }, { name = "s", type = "VARCHAR" }]
+rows = [
+  ["4", "'gift'"],
+  ["4", "NULL"],
+  ["NULL", "'gift'"],
+  ["9", "'card'"],
+]
+query = "SELECT MODE(n) AS n, MODE(s) AS s FROM input"
+order = "ordered"
+tags = ["null", "empty-input", "duplicates"]
+
+[[case]]
+id = "mode_no_rows_timestamp"
+description = "MODE without GROUP BY over no rows of a TIMESTAMP_NTZ, read as text and as a NULL test, since the connector returns NULL for the timestamp Snowflake declares NOT NULL."
+columns = [{ name = "ts", type = "TIMESTAMP_NTZ(9)" }]
+rows = [["'2024-03-01 10:00:00'"]]
+query = "SELECT MODE(ts)::VARCHAR AS ts_text, MODE(ts) IS NULL AS ts_null FROM input WHERE ts > '2030-01-01'::TIMESTAMP_NTZ"
+order = "ordered"
+tags = ["null", "empty-input", "duplicates"]

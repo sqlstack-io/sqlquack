@@ -217,12 +217,14 @@ id = "rule.cast_text_timestamp"
 
 [[rule.form]]
 construct = "node:cast"
+also = ["node:try_cast"]
 arguments = [
   { families = ["text"], kinds = ["value"] },
 ]
 facets = { target = ["timestamp_ntz"] }
 template = "CAST({0} AS TIMESTAMP_NTZ(9))"
 category = "conversion"
+variants = ["TRY_CAST({0} AS TIMESTAMP_NTZ(9))"]
 
 [[rule]]
 id = "rule.cast_text_time"
