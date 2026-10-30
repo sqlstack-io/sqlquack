@@ -28,6 +28,7 @@ use sqlquack_duckdb::times::main::time_text::time_text;
 use sqlquack_duckdb::times::main::truncate_time::truncate_time;
 use sqlquack_duckdb::times::models::TimeFormat;
 use sqlquack_duckdb::variants::main::json_kind_cast::json_kind_cast;
+use sqlquack_semantics::types::main::zoned_in_utc::zoned_in_utc;
 use sqlquack_snowflake::typing::constants::CAST_TARGET;
 use sqlquack_snowflake::typing::constants::STRUCTURED_UNSUPPORTED;
 use sqlquack_snowflake::typing::main::cast_target::cast_target;
@@ -147,7 +148,7 @@ pub(crate) fn convert_cast(
     }
     if type_name == VARIANT_NAME
         && !trying
-        && matches!(
+        && (matches!(
             operand.data_type,
             SnowflakeType::Varchar
                 | SnowflakeType::Boolean
@@ -155,7 +156,8 @@ pub(crate) fn convert_cast(
                 | SnowflakeType::Date
                 | SnowflakeType::TimestampNtz { .. }
                 | SnowflakeType::TimestampLtz { .. }
-        )
+        ) || (matches!(operand.data_type, SnowflakeType::TimestampTz { .. })
+            && operand.utc_offset))
     {
         let _rule = cast_rule(TO_VARIANT_RULE, log);
         return Ok(Emitted::new(
@@ -174,7 +176,10 @@ pub(crate) fn convert_cast(
         return Ok(Emitted::new(sql, target.data_type));
     }
     let sql = cast_sql(&operand, target, trying, (site.context, &construct)).map_err(refuse)?;
-    Ok(Emitted::new(sql, target.data_type))
+    Ok(Emitted {
+        utc_offset: zoned_in_utc((operand.data_type, operand.utc_offset), target.data_type),
+        ..Emitted::new(sql, target.data_type)
+    })
 }
 
 /// The SQL casting `operand` to the type named `type_name`, as CAST or TRY_CAST does.

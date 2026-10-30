@@ -20,6 +20,8 @@ mod test_coverage_batch;
 mod test_decoded_values;
 #[path = "tests/test_divergence_modes.rs"]
 mod test_divergence_modes;
+#[path = "tests/test_emitted_growth.rs"]
+mod test_emitted_growth;
 #[path = "tests/test_equivalence_cases.rs"]
 mod test_equivalence_cases;
 #[path = "tests/test_float_text.rs"]
@@ -42,3 +44,5 @@ mod test_swathe_values;
 mod test_typed_leaves;
 #[path = "tests/test_types.rs"]
 mod test_types;
+#[path = "tests/test_utc_offsets.rs"]
+mod test_utc_offsets;

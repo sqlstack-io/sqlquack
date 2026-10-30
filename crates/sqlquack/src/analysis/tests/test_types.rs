@@ -154,3 +154,9 @@ pub(crate) struct ArgumentCopiesTestCase {
     /// The most times the converted SQL may write the argument.
     pub(crate) expected_most_copies: usize,
 }
+
+pub(crate) struct EmittedGrowthTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) sql: &'static str,
+    pub(crate) expected_bindings: usize,
+}

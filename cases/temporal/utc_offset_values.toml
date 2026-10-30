@@ -1,0 +1,145 @@
+# TIMESTAMP_TZ values holding the UTC offset, carried through queries and read as wall times.
+category = "temporal"
+construct = "fn:CONVERT_TIMEZONE"
+session_profile = "utc-v1"
+
+[[case]]
+id = "utc_offset_through_cte"
+description = "CONVERT_TIMEZONE('UTC', t) through a CTE, cast to TIMESTAMP_NTZ and DATE and read by TO_DATE, from values at several offsets."
+columns = [{ name = "t", type = "TIMESTAMP_TZ(9)" }, { name = "t2", type = "TIMESTAMP_TZ(9)" }]
+rows = [
+  ["'2024-03-10 02:30:00 -05:00'", "'2024-03-09 23:00:00 +00:00'"],
+  ["'2024-06-01 12:00:00.5 +05:30'", "'2024-06-01 06:30:00.5 +00:00'"],
+  ["'2024-12-31 23:59:59.999 -08:00'", "'2025-01-01 00:00:00 +01:00'"],
+  ["'2024-01-01 00:30:00 +14:00'", "NULL"],
+  ["'1970-01-01 00:00:00 +00:00'", "'1969-12-31 23:59:00 -00:30'"],
+  ["NULL", "'2024-02-29 12:00:00 +09:00'"],
+]
+query = "WITH z AS (SELECT ordinal, CONVERT_TIMEZONE('UTC', t) AS u FROM input) SELECT CAST(u AS TIMESTAMP_NTZ) AS ntz, CAST(u AS DATE) AS d, TO_DATE(u) AS td, u AS kept FROM z ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "utc_offset_chosen_values"
+description = "COALESCE, IFF, CASE, LAG and FIRST_VALUE choosing among UTC-offset values, then cast to TIMESTAMP_NTZ."
+columns = [{ name = "t", type = "TIMESTAMP_TZ(9)" }, { name = "t2", type = "TIMESTAMP_TZ(9)" }]
+rows = [
+  ["'2024-03-10 02:30:00 -05:00'", "'2024-03-09 23:00:00 +00:00'"],
+  ["'2024-06-01 12:00:00.5 +05:30'", "'2024-06-01 06:30:00.5 +00:00'"],
+  ["'2024-12-31 23:59:59.999 -08:00'", "'2025-01-01 00:00:00 +01:00'"],
+  ["'2024-01-01 00:30:00 +14:00'", "NULL"],
+  ["'1970-01-01 00:00:00 +00:00'", "'1969-12-31 23:59:00 -00:30'"],
+  ["NULL", "'2024-02-29 12:00:00 +09:00'"],
+]
+query = "WITH z AS (SELECT ordinal, CONVERT_TIMEZONE('UTC', t) AS u, CONVERT_TIMEZONE('UTC', t2) AS v FROM input) SELECT CAST(COALESCE(u, v) AS TIMESTAMP_NTZ) AS first_known, CAST(IFF(u > v, u, v) AS TIMESTAMP_NTZ) AS later, CAST(CASE WHEN u IS NULL THEN v END AS TIMESTAMP_NTZ) AS fallback, CAST(LAG(u) OVER (ORDER BY ordinal) AS TIMESTAMP_NTZ) AS previous, CAST(FIRST_VALUE(v) OVER (ORDER BY ordinal) AS DATE) AS first_day FROM z ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "utc_offset_aggregated"
+description = "MIN and MAX of UTC-offset values, grouped and cast to TIMESTAMP_NTZ, and a UNION ALL of two such branches."
+columns = [{ name = "t", type = "TIMESTAMP_TZ(9)" }, { name = "t2", type = "TIMESTAMP_TZ(9)" }]
+rows = [
+  ["'2024-03-10 02:30:00 -05:00'", "'2024-03-09 23:00:00 +00:00'"],
+  ["'2024-06-01 12:00:00.5 +05:30'", "'2024-06-01 06:30:00.5 +00:00'"],
+  ["'2024-12-31 23:59:59.999 -08:00'", "'2025-01-01 00:00:00 +01:00'"],
+  ["'2024-01-01 00:30:00 +14:00'", "NULL"],
+  ["'1970-01-01 00:00:00 +00:00'", "'1969-12-31 23:59:00 -00:30'"],
+  ["NULL", "'2024-02-29 12:00:00 +09:00'"],
+]
+query = "WITH z AS (SELECT ordinal % 2 AS g, CONVERT_TIMEZONE('UTC', t) AS u FROM input UNION ALL SELECT ordinal % 2 AS g, CONVERT_TIMEZONE('UTC', t2) AS u FROM input) SELECT CAST(MIN(u) AS TIMESTAMP_NTZ) AS earliest, CAST(MAX(u) AS TIMESTAMP_NTZ) AS latest, COUNT(u) AS n FROM z GROUP BY g ORDER BY g"
+order = "ordered"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "utc_offset_arithmetic"
+description = "DATE_TRUNC, DATEADD and DATEDIFF of UTC-offset values, returned zoned and cast to TIMESTAMP_NTZ."
+columns = [{ name = "t", type = "TIMESTAMP_TZ(9)" }, { name = "t2", type = "TIMESTAMP_TZ(9)" }]
+rows = [
+  ["'2024-03-10 02:30:00 -05:00'", "'2024-03-09 23:00:00 +00:00'"],
+  ["'2024-06-01 12:00:00.5 +05:30'", "'2024-06-01 06:30:00.5 +00:00'"],
+  ["'2024-12-31 23:59:59.999 -08:00'", "'2025-01-01 00:00:00 +01:00'"],
+  ["'2024-01-01 00:30:00 +14:00'", "NULL"],
+  ["'1970-01-01 00:00:00 +00:00'", "'1969-12-31 23:59:00 -00:30'"],
+  ["NULL", "'2024-02-29 12:00:00 +09:00'"],
+]
+query = "WITH z AS (SELECT ordinal, CONVERT_TIMEZONE('UTC', t) AS u, CONVERT_TIMEZONE('UTC', t2) AS v FROM input) SELECT DATE_TRUNC('day', u) AS day_start, DATE_TRUNC('week', u) AS week_start, DATE_TRUNC('month', u) AS month_start, DATEADD(hour, 10, DATE_TRUNC('day', u)) AS boundary, CAST(DATEADD(day, 1, DATE_TRUNC('day', u)) AS TIMESTAMP_NTZ) AS next_day, DATEADD(minute, -90, u) AS earlier, DATEDIFF('minute', u, v) AS minutes, DATEDIFF('day', u, v) AS days, DATEDIFF('second', v, u) AS seconds FROM z ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "boundary", "negative"]
+
+[[case]]
+id = "naive_cast_to_utc_offset"
+description = "TIMESTAMP_NTZ and DATE cast to TIMESTAMP_TZ in the UTC session, kept and read back as wall times and dates."
+columns = [{ name = "n", type = "TIMESTAMP_NTZ(9)" }, { name = "d", type = "DATE" }]
+rows = [
+  ["'2024-03-10 02:30:00'", "'2024-03-10'"],
+  ["'2024-06-01 23:59:59.5'", "'2024-02-29'"],
+  ["'1970-01-01 00:00:00'", "'1970-01-01'"],
+  ["NULL", "NULL"],
+]
+query = "WITH z AS (SELECT ordinal, CAST(n AS TIMESTAMP_TZ) AS zn, CAST(d AS TIMESTAMP_TZ) AS zd FROM input) SELECT zn, zd, CAST(zn AS TIMESTAMP_NTZ) AS wall, CAST(zn AS DATE) AS day, DATE_TRUNC('day', zn) AS day_start, CAST(zd AS TIMESTAMP_NTZ) AS midnight, DATEDIFF('hour', zd, zn) AS hours FROM z ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "utc_offset_in_variant"
+description = "A UTC-offset TIMESTAMP_TZ kept in an object and an array, cast to VARIANT, and written as text."
+columns = [{ name = "t", type = "TIMESTAMP_TZ(9)" }, { name = "t2", type = "TIMESTAMP_TZ(9)" }]
+rows = [
+  ["'2024-03-10 02:30:00 -05:00'", "'2024-03-09 23:00:00 +00:00'"],
+  ["'2024-06-01 12:00:00.5 +05:30'", "'2024-06-01 06:30:00.5 +00:00'"],
+  ["'2024-12-31 23:59:59.999 -08:00'", "'2025-01-01 00:00:00 +01:00'"],
+  ["'1970-01-01 00:00:00 +00:00'", "NULL"],
+  ["NULL", "'2024-02-29 12:00:00 +09:00'"],
+]
+query = "WITH z AS (SELECT ordinal, CONVERT_TIMEZONE('UTC', t) AS u FROM input) SELECT OBJECT_CONSTRUCT_KEEP_NULL('at', u) AS obj, ARRAY_CONSTRUCT(u) AS arr, u::VARIANT AS v, OBJECT_CONSTRUCT_KEEP_NULL('at', u)::VARCHAR AS text, TYPEOF(u::VARIANT) AS kind FROM z ORDER BY ordinal"
+order = "ordered"
+expected_divergence = "variant_typed_values"
+tags = ["null", "json-null", "nested"]
+
+[[case]]
+id = "utc_offset_in_variant_values"
+description = "A UTC-offset TIMESTAMP_TZ kept in an object and an array, cast to VARIANT, and written as text, without TYPEOF."
+columns = [{ name = "t", type = "TIMESTAMP_TZ(9)" }]
+rows = [
+  ["'2024-03-10 02:30:00 -05:00'"],
+  ["'2024-06-01 12:00:00.5 +05:30'"],
+  ["'2024-12-31 23:59:59.999 -08:00'"],
+  ["'1970-01-01 00:00:00 +00:00'"],
+  ["NULL"],
+]
+query = "WITH z AS (SELECT ordinal, CONVERT_TIMEZONE('UTC', t) AS u FROM input) SELECT OBJECT_CONSTRUCT_KEEP_NULL('at', u) AS obj, ARRAY_CONSTRUCT(u) AS arr, u::VARIANT AS v, OBJECT_CONSTRUCT_KEEP_NULL('at', u)::VARCHAR AS text FROM z ORDER BY ordinal"
+order = "ordered"
+expected_divergence = "json_fidelity"
+tags = ["null", "json-null", "nested"]
+
+[[case]]
+id = "utc_offset_grouped_by_parity"
+description = "MIN and MAX of UTC-offset values grouped by a remainder key through UNION ALL, with the key returned."
+columns = [{ name = "t", type = "TIMESTAMP_TZ(9)" }, { name = "t2", type = "TIMESTAMP_TZ(9)" }]
+rows = [
+  ["'2024-03-10 02:30:00 -05:00'", "'2024-03-09 23:00:00 +00:00'"],
+  ["'2024-06-01 12:00:00.5 +05:30'", "'2024-06-01 06:30:00.5 +00:00'"],
+  ["'2024-12-31 23:59:59.999 -08:00'", "'2025-01-01 00:00:00 +01:00'"],
+  ["'2024-01-01 00:30:00 +14:00'", "NULL"],
+  ["'1970-01-01 00:00:00 +00:00'", "'1969-12-31 23:59:00 -00:30'"],
+  ["NULL", "'2024-02-29 12:00:00 +09:00'"],
+]
+query = "WITH z AS (SELECT ordinal % 2 AS g, CONVERT_TIMEZONE('UTC', t) AS u FROM input UNION ALL SELECT ordinal % 2 AS g, CONVERT_TIMEZONE('UTC', t2) AS u FROM input) SELECT g, CAST(MIN(u) AS TIMESTAMP_NTZ) AS earliest, CAST(MAX(u) AS TIMESTAMP_NTZ) AS latest, COUNT(u) AS n FROM z GROUP BY g ORDER BY g"
+order = "ordered"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "utc_offset_in_variant_objects"
+description = "A UTC-offset TIMESTAMP_TZ kept in an object and cast to VARIANT, and written as text, without arrays or TYPEOF."
+columns = [{ name = "t", type = "TIMESTAMP_TZ(9)" }]
+rows = [
+  ["'2024-03-10 02:30:00 -05:00'"],
+  ["'2024-06-01 12:00:00.5 +05:30'"],
+  ["'2024-12-31 23:59:59.999 -08:00'"],
+  ["'1970-01-01 00:00:00 +00:00'"],
+  ["NULL"],
+]
+query = "WITH z AS (SELECT ordinal, CONVERT_TIMEZONE('UTC', t) AS u FROM input) SELECT OBJECT_CONSTRUCT_KEEP_NULL('at', u) AS obj, u::VARIANT AS v, OBJECT_CONSTRUCT_KEEP_NULL('at', u)::VARCHAR AS text FROM z ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "json-null", "nested"]

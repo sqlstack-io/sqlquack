@@ -169,6 +169,7 @@ pub(crate) fn scalar_subquery(payload: &Value, site: Site<'_>) -> Result<Emitted
             held: column.holding,
             untainted: column.untainted,
             sourced: column.sourced,
+            utc_offset: column.utc_offset,
             ..Emitted::new(format!("({sql})"), column.data_type)
         }),
         _ => Err(outside_conditions(

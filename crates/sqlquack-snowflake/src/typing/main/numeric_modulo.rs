@@ -3,10 +3,10 @@
 use sqlquack_core::provenance::models::ProvenanceLog;
 
 use crate::typing::_helpers::numbers::{arithmetic_operands, capped};
-use crate::typing::constants::NUMERIC_MODULO;
+use crate::typing::constants::{MODULO_MIN_LEADING_DIGITS, NUMERIC_MODULO};
 use crate::typing::models::SnowflakeType;
 
-/// `%`: the larger operand's leading digits and the larger scale.
+/// `%`: the larger leading digits, at least two as recorded, and the larger scale.
 pub fn numeric_modulo(
     left: SnowflakeType,
     right: SnowflakeType,
@@ -16,7 +16,10 @@ pub fn numeric_modulo(
     Ok(match arithmetic_operands(left, right, "%")? {
         None => SnowflakeType::Float,
         Some(((leading_left, scale_left), (leading_right, scale_right))) => {
-            capped(leading_left.max(leading_right), scale_left.max(scale_right))
+            let leading = leading_left
+                .max(leading_right)
+                .max(MODULO_MIN_LEADING_DIGITS);
+            capped(leading, scale_left.max(scale_right))
         }
     })
 }

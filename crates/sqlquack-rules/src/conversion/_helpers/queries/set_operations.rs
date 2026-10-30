@@ -373,7 +373,7 @@ fn require_json_held<'a>(
     }
 }
 
-/// The result `columns`, proven free of typed leaves where both branches are, sourced where either is.
+/// The result `columns`: proven free of typed leaves and UTC-offset where both branches are, sourced where either is.
 fn proven_columns(
     columns: Vec<ColumnSpec>,
     (left, right): (&[ColumnSpec], &[ColumnSpec]),
@@ -383,11 +383,13 @@ fn proven_columns(
     for (index, column) in columns.into_iter().enumerate() {
         let mut untainted = true;
         let mut sourced = false;
+        let mut utc_offset = true;
         for branch in [left, right] {
             let found = match by_name {
                 true => branch.iter().find(|found| found.name == column.name),
                 false => branch.get(index),
             };
+            utc_offset &= found.is_some_and(|found| found.utc_offset);
             if let Some(found) = found {
                 untainted &= found.untainted;
                 sourced |= found.sourced;
@@ -396,6 +398,7 @@ fn proven_columns(
         proven.push(ColumnSpec {
             untainted,
             sourced,
+            utc_offset,
             ..column
         });
     }

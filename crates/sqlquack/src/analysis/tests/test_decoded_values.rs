@@ -178,6 +178,11 @@ fn given_decoded_or_parsed_values_when_converting_then_they_read_as_recorded() {
             expected_outcome: Ok("2024-03-05"),
         },
         FirstValueTestCase {
+            description: "an infinity word with a dotted capital I is not read, as recorded",
+            sql: "SELECT COALESCE(TRY_TO_DOUBLE('\u{130}nf')::VARCHAR, 'null') AS v",
+            expected_outcome: Ok("null"),
+        },
+        FirstValueTestCase {
             description: "a month-name format in another case is refused",
             sql: "SELECT TRY_TO_DATE('05 Mar 2024', 'dd mon yyyy') AS v",
             expected_outcome: Err("no recording shows"),

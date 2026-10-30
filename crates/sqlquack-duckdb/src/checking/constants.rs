@@ -9,3 +9,6 @@ pub const LAMBDA_KEYWORD: &str = "lambda ";
 pub const PARSER_ERROR: &str = "Parser Error";
 /// How the statement defining a function stub starts.
 pub const MACRO_PREFIX: &str = "CREATE OR REPLACE MACRO";
+
+/// Turns off DuckDB's optimiser: the check parses and binds, and optimising long SQL is slow.
+pub const DISABLE_OPTIMIZER: &str = "PRAGMA disable_optimizer";

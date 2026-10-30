@@ -272,3 +272,6 @@ pub const LOWERCASE_EXPANSIONS: &[(&str, &str)] = &[("\u{130}", "i\u{307}")];
 pub const VARIANT_CAST_MESSAGE: &str = "Failed to cast variant value";
 /// The message of the error numeric text beyond its type's range raises.
 pub const NUMBER_RANGE_MESSAGE: &str = "Numeric value out of range";
+
+/// SPLIT_PART's part of a text, the text bound once: `duckdb.split_text_part`.
+pub const SPLIT_TEXT_PART: &str = "duckdb.split_text_part";

@@ -1,0 +1,42 @@
+# Text read as FLOAT where a special-value word is spelled with letters outside ASCII.
+category = "conversion"
+construct = "fn:TRY_TO_DOUBLE"
+session_profile = "utc-v1"
+
+[[case]]
+id = "try_float_words_non_ascii"
+description = "TRY_TO_DOUBLE and TRY_CAST to FLOAT of infinity and NaN words with a dotted capital I, a dotless i, or mixed case."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'İnf'"],
+  ["'İNF'"],
+  ["'İnfinity'"],
+  ["'İNFINITY'"],
+  ["'-İnf'"],
+  ["'+İnf'"],
+  ["'ınf'"],
+  ["'İnF'"],
+  ["'Inf'"],
+  ["'NaN'"],
+  ["''"],
+  ["NULL"],
+]
+query = "SELECT TRY_TO_DOUBLE(s) AS d, TRY_CAST(s AS FLOAT) AS f FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "invalid", "unicode", "boundary"]
+
+[[case]]
+id = "to_double_dotted_capital_i"
+description = "TO_DOUBLE of an infinity word spelled with a dotted capital I."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [["'İnf'"]]
+expression = "TO_DOUBLE(s)"
+tags = ["invalid", "unicode"]
+
+[[case]]
+id = "cast_float_dotted_capital_i"
+description = "CAST to FLOAT of an infinity word spelled with a dotted capital I, in upper case."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [["'İNFINITY'"]]
+expression = "CAST(s AS FLOAT)"
+tags = ["invalid", "unicode"]

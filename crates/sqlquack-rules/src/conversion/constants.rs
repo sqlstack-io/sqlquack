@@ -240,6 +240,8 @@ pub const TEXT_NUMBER_COMPARISON: &str = "rule.text_number_comparison";
 pub const VARIANT_PARTITION: &str = "rule.variant_partition";
 /// DATE_PART of zoned timestamps.
 pub const ZONED_PARTS: &str = "rule.zoned_parts";
+/// DATE_TRUNC, DATEADD and DATEDIFF of TIMESTAMP_TZ values known to hold the UTC offset.
+pub const UTC_OFFSET_ARITHMETIC: &str = "rule.utc_offset_arithmetic";
 /// TO_DATE of dates and timestamps.
 pub const TO_DATE_TEMPORAL: &str = "rule.to_date_temporal";
 /// CONVERT_TIMEZONE with zone columns.

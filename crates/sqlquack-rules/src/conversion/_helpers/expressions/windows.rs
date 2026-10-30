@@ -10,6 +10,7 @@ use sqlquack_duckdb::blocks::main::explicit_null_order::explicit_null_order;
 use sqlquack_duckdb::blocks::main::window_frame::window_frame;
 use sqlquack_duckdb::semi_structured::constants::JSON_FIDELITY;
 use sqlquack_duckdb::semi_structured::main::json_output::json_output;
+use sqlquack_semantics::types::main::utc_kept::utc_kept;
 use sqlquack_snowflake::typing::main::ranking::ranking;
 use sqlquack_snowflake::typing::main::unify::unify;
 use sqlquack_snowflake::typing::models::SnowflakeType;
@@ -270,8 +271,10 @@ fn offset_window(
         None => 1,
     };
     let mut arguments = vec![value.sql.clone(), offset.to_string()];
+    let mut values = vec![(value.data_type, value.utc_offset)];
     if let Some(default) = inner.get("default").filter(|default| !default.is_null()) {
         let default = convert_expression(default, site)?;
+        values.push((default.data_type, default.utc_offset));
         let common = unify(&[value.data_type, default.data_type], log).map_err(refuse)?;
         if common != value.data_type {
             return Err(refuse(format!(
@@ -281,14 +284,17 @@ fn offset_window(
         }
         arguments.push(cast(&default.sql, value.data_type, log).map_err(refuse)?);
     }
-    Ok(Emitted::new(
-        format!(
-            "{function}({}) OVER ({})",
-            arguments.join(", "),
-            over.clause(None, site)
-        ),
-        value.data_type,
-    ))
+    Ok(Emitted {
+        utc_offset: utc_kept(&values, value.data_type),
+        ..Emitted::new(
+            format!(
+                "{function}({}) OVER ({})",
+                arguments.join(", "),
+                over.clause(None, site)
+            ),
+            value.data_type,
+        )
+    })
 }
 
 fn first_last_window(
@@ -317,14 +323,17 @@ fn first_last_window(
         true => " IGNORE NULLS",
         false => "",
     };
-    Ok(Emitted::new(
-        format!(
-            "{function}({}{nulls}) OVER ({})",
-            value.sql,
-            over.clause(Some(WHOLE_PARTITION), site)
-        ),
-        value.data_type,
-    ))
+    Ok(Emitted {
+        utc_offset: value.utc_offset,
+        ..Emitted::new(
+            format!(
+                "{function}({}{nulls}) OVER ({})",
+                value.sql,
+                over.clause(Some(WHOLE_PARTITION), site)
+            ),
+            value.data_type,
+        )
+    })
 }
 
 fn aggregate_window(

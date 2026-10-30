@@ -6,6 +6,7 @@ use sqlquack_core::refusals::main::missing::missing;
 use sqlquack_core::refusals::main::outside_conditions::outside_conditions;
 use sqlquack_core::refusals::models::Refusal;
 use sqlquack_duckdb::blocks::main::cast::cast;
+use sqlquack_semantics::types::main::utc_kept::utc_kept;
 use sqlquack_snowflake::typing::main::unify::unify;
 use sqlquack_snowflake::typing::models::SnowflakeType;
 
@@ -68,10 +69,10 @@ fn coalesce_arguments(
         ));
     }
     let (cast_branches, target) = unified(&branches, construct, site.context)?;
-    Ok(Emitted::new(
-        format!("COALESCE({})", cast_branches.join(", ")),
-        target,
-    ))
+    Ok(Emitted {
+        utc_offset: utc_kept(&marks(&branches), target),
+        ..Emitted::new(format!("COALESCE({})", cast_branches.join(", ")), target)
+    })
 }
 
 /// COALESCE and IFNULL.
@@ -111,13 +112,16 @@ pub(crate) fn iff(payload: &Value, site: Site<'_>) -> Result<Emitted, Refusal> {
         convert_expression(field(payload, "false_value", &construct)?, site)?,
     ];
     let (cast_branches, target) = unified(&branches, &construct, site.context)?;
-    Ok(Emitted::new(
-        format!(
-            "(CASE WHEN {condition} THEN {} ELSE {} END)",
-            cast_branches[0], cast_branches[1]
-        ),
-        target,
-    ))
+    Ok(Emitted {
+        utc_offset: utc_kept(&marks(&branches), target),
+        ..Emitted::new(
+            format!(
+                "(CASE WHEN {condition} THEN {} ELSE {} END)",
+                cast_branches[0], cast_branches[1]
+            ),
+            target,
+        )
+    })
 }
 
 /// Searched and simple CASE.
@@ -158,7 +162,22 @@ pub(crate) fn case_expression(payload: &Value, site: Site<'_>) -> Result<Emitted
         sql.push_str(&format!(" ELSE {last}"));
     }
     sql.push_str(" END)");
-    Ok(Emitted::new(sql, target))
+    let mut values = marks(&branches);
+    if otherwise.is_none() {
+        values.push((SnowflakeType::Null, false));
+    }
+    Ok(Emitted {
+        utc_offset: utc_kept(&values, target),
+        ..Emitted::new(sql, target)
+    })
+}
+
+/// Each branch's type, and whether it is known to hold the UTC offset.
+fn marks(branches: &[Emitted]) -> Vec<(SnowflakeType, bool)> {
+    branches
+        .iter()
+        .map(|branch| (branch.data_type, branch.utc_offset))
+        .collect()
 }
 
 /// Whether evaluating `node` is cheap to repeat and cannot fail: a column or a literal.
