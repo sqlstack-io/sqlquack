@@ -42,6 +42,7 @@ tags = ["null", "json-null"]
 
 [[case]]
 id = "keep_null_star_exclude_unknown"
+compile_error = true
 description = "OBJECT_CONSTRUCT_KEEP_NULL of r.* EXCLUDE a column the relation does not have."
 columns = [{ name = "product_id", type = "NUMBER(38,0)" }]
 rows = [

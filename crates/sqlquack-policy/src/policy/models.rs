@@ -172,6 +172,9 @@ pub struct Divergence {
     /// DuckDB's own errors that are this divergence's failure, as `*` patterns over a first line.
     #[serde(default)]
     pub native_errors: Vec<String>,
+    /// A named assumption: relying on it gives a wrong value, not an error, where it does not hold.
+    #[serde(default)]
+    pub assumption: bool,
 }
 
 /// How a mode treats a known divergence.

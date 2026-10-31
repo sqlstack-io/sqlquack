@@ -6,13 +6,13 @@ use std::process::ExitCode;
 
 use sqlquack_core::parsing::models::SourceDialect;
 use sqlquack_evidence::cases::main::load_cases::load_cases;
-use sqlquack_policy::policy::main::load_policy::load_policy;
+use sqlquack_policy::policy::models::Policy;
 use walkdir::WalkDir;
 
 use crate::analysis::models::PipelineConverter;
 use crate::census::main::inspect_corpus::inspect_corpus;
 use crate::census::models::CensusOptions;
-use crate::cli::_helpers::evidence::divergence_options;
+use crate::cli::_helpers::evidence::{chosen_policy, divergence_options};
 use crate::cli::_helpers::schema::load_schema;
 use crate::cli::models::IndexArguments;
 use crate::index::main::build_index::build_index;
@@ -30,7 +30,14 @@ pub(crate) fn index_command(
     stderr: &mut dyn Write,
 ) -> ExitCode {
     let _ = writeln!(stderr, "sqlquack index: converting cases and SQL files…");
-    let index = match index(arguments) {
+    let policy = match chosen_policy(&arguments.policy, arguments.builtin_policy) {
+        Ok(policy) => policy,
+        Err(error) => {
+            let _ = writeln!(stderr, "sqlquack index: failed: {error}");
+            return ExitCode::from(2);
+        }
+    };
+    let index = match index(arguments, policy.as_ref()) {
         Ok(index) => index,
         Err(error) => {
             let _ = writeln!(stderr, "sqlquack index: failed: {error}");
@@ -50,25 +57,24 @@ pub(crate) fn index_command(
     ExitCode::SUCCESS
 }
 
-fn index(arguments: &IndexArguments) -> Result<ProvenanceIndex, String> {
+fn index(arguments: &IndexArguments, policy: Option<&Policy>) -> Result<ProvenanceIndex, String> {
     let paths: Vec<PathBuf> = match arguments.paths.is_empty() {
         true => vec![PathBuf::from(DEFAULT_CASES)],
         false => arguments.paths.clone(),
     };
     let mut records: Vec<ConversionRecord> = Vec::new();
     let mut corpus: Vec<PathBuf> = Vec::new();
-    let (conversion, _) = divergence_options(
-        Some(arguments.policy.as_path()).filter(|path| path.is_file()),
-        (arguments.strict, arguments.utc_session),
-    )?;
+    let conversion = divergence_options(policy, (arguments.strict, arguments.utc_session));
     let converter = PipelineConverter {
         options: conversion.clone(),
     };
     for path in &paths {
         let (cases, sql) = contents(path)?;
         if cases {
-            let policy = load_policy(&arguments.policy).map_err(|error| error.to_string())?;
-            let loaded = load_cases(path, &policy).map_err(|error| error.to_string())?;
+            let policy = policy.ok_or(
+                "indexing cases needs a policy file, which declares their session profiles",
+            )?;
+            let loaded = load_cases(path, policy).map_err(|error| error.to_string())?;
             records.extend(case_records(&loaded, &converter));
         }
         if sql {
@@ -88,6 +94,7 @@ fn index(arguments: &IndexArguments) -> Result<ProvenanceIndex, String> {
             conversion,
             names: false,
             assume_supported: Vec::new(),
+            cursor_type: None,
         };
         let files = inspect_corpus(&corpus, &options).map_err(|error| error.to_string())?;
         records.extend(corpus_records(files));

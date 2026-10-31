@@ -57,3 +57,9 @@ pub(crate) struct WarningsTestCase {
     pub(crate) flags: &'static [&'static str],
     pub(crate) expected_warnings: Vec<String>,
 }
+
+pub(crate) struct CursorTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) flags: &'static [&'static str],
+    pub(crate) expected_convertible: Option<u64>,
+}

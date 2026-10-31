@@ -51,7 +51,7 @@ pub(crate) fn run_on_refused_upstream(typed: bool, flags: &[&str]) -> UpstreamOu
     let schema = directory.path().join("schema.json");
     std::fs::write(&schema, format!("{{\"relations\": {{{relations}}}}}")).expect("schema written");
     let output = Command::new(env!("CARGO_BIN_EXE_sqlquack"))
-        .args(["census", "--chain-models", "--schema"])
+        .args(["census", "--builtin-policy", "--chain-models", "--schema"])
         .arg(&schema)
         .args(flags)
         .arg(&models)
@@ -163,7 +163,13 @@ pub(crate) fn census_warnings(flags: &[&str]) -> Vec<String> {
     )
     .expect("schema written");
     let output = Command::new(env!("CARGO_BIN_EXE_sqlquack"))
-        .args(["census", "--json", "--chain-models", "--schema"])
+        .args([
+            "census",
+            "--builtin-policy",
+            "--json",
+            "--chain-models",
+            "--schema",
+        ])
         .arg(&schema)
         .args(flags)
         .arg(&models)
@@ -174,4 +180,30 @@ pub(crate) fn census_warnings(flags: &[&str]) -> Vec<String> {
         .filter(|line| line.contains("warning:"))
         .map(str::to_owned)
         .collect()
+}
+
+const CURSOR_SQL: &str = "SELECT order_id FROM orders WHERE order_id >= __cursor_start() \
+                          AND order_id < __cursor_end()";
+
+/// The census's unit-testable count over a model filtering by cursor intrinsics, with `flags`.
+pub(crate) fn cursor_model_convertible(flags: &[&str]) -> Option<u64> {
+    let directory = tempfile::tempdir().expect("temporary directory");
+    let models = directory.path().join("models");
+    std::fs::create_dir(&models).expect("models directory created");
+    std::fs::write(models.join("new_orders.sql"), CURSOR_SQL).expect("fixture written");
+    let schema = directory.path().join("schema.json");
+    std::fs::write(
+        &schema,
+        "{\"relations\": {\"ORDERS\": [[\"ORDER_ID\", \"NUMBER(38,0)\"]]}}",
+    )
+    .expect("schema written");
+    let output = Command::new(env!("CARGO_BIN_EXE_sqlquack"))
+        .args(["census", "--builtin-policy", "--json", "--schema"])
+        .arg(&schema)
+        .args(flags)
+        .arg(&models)
+        .output()
+        .expect("sqlquack runs");
+    let report: serde_json::Value = serde_json::from_slice(&output.stdout).unwrap_or_default();
+    report["refusals"]["convertible"].as_u64()
 }

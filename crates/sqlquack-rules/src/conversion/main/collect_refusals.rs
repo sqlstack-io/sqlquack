@@ -10,7 +10,7 @@ use crate::conversion::_helpers::queries::query::convert_query;
 use crate::conversion::_helpers::support::collecting::{Collector, collected};
 use crate::conversion::_helpers::support::locations::Locator;
 use crate::conversion::_helpers::support::scope::Context;
-use crate::conversion::_helpers::support::tree::strip_positions;
+use crate::conversion::_helpers::support::tree::{session_tree, strip_positions};
 use crate::conversion::_helpers::support::typed_leaves::ConvertedQuery;
 use crate::conversion::main::convert_statement::convert_statement;
 use crate::conversion::models::{CollectedRefusals, ConversionOptions};
@@ -64,7 +64,8 @@ fn collected_conversion(
     positioned: &Value,
     (schema, options, lines): (&Schema, &ConversionOptions, &SourceLines),
 ) -> (ConvertedQuery, Collector, Option<Refusal>) {
-    let tree = strip_positions(positioned);
+    let tree = session_tree(positioned, options.quoted_identifiers_ignore_case)
+        .unwrap_or_else(|_| strip_positions(positioned));
     let locator = Locator::new(&tree, positioned, lines);
     let log = ProvenanceLog::default();
     let typed = TypedLeaves::default();

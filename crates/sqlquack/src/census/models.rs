@@ -29,6 +29,17 @@ pub struct CensusOptions {
     pub names: bool,
     /// Constructs whose refusals the what-if counts treat as resolved.
     pub assume_supported: Vec<String>,
+    /// The project's cursor type, whose bound replaces cursor intrinsics; unknown without it.
+    pub cursor_type: Option<CursorType>,
+}
+
+/// A project's incremental cursor type, which decides how SQLBuild renders cursor bounds.
+#[derive(Clone, Copy, Debug, PartialEq, Eq, clap::ValueEnum)]
+pub enum CursorType {
+    /// Timestamp bounds, rendered as text.
+    Timestamp,
+    /// Integer bounds, rendered as integers.
+    Integer,
 }
 
 /// A census report: counts and construct keys, and model names in blockers only when asked.
@@ -258,6 +269,12 @@ pub struct RefusalTotals {
     pub convertible: usize,
     /// Convertible files whose every model upstream converts too, so they run end to end.
     pub convertible_strict: usize,
+    /// Unit-testable files relying on no named assumption.
+    pub convertible_no_assumptions: usize,
+    /// Strict files relying, themselves and every model upstream, on no named assumption.
+    pub convertible_strict_no_assumptions: usize,
+    /// Unit-testable files relying on each named assumption themselves.
+    pub assumptions: BTreeMap<String, usize>,
 }
 
 /// How many files use one construct.

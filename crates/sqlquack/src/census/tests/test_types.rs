@@ -123,3 +123,10 @@ pub(crate) struct PlanTestCase {
     pub(crate) assumed: &'static [&'static str],
     pub(crate) expected_summary: PlanSummary,
 }
+
+pub(crate) struct AssumptionTestCase {
+    pub(crate) description: &'static str,
+    /// Unit-testable, strict, and both again with no named assumption.
+    pub(crate) expected_counts: [usize; 4],
+    pub(crate) expected_relying: Vec<(String, usize)>,
+}

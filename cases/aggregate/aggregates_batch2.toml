@@ -753,6 +753,7 @@ expected_divergence = "any_value_choice"
 
 [[case]]
 id = "count_if_window_frames"
+compile_error = true
 description = "COUNT_IF, BOOLOR_AGG and BOOLAND_AGG over explicit ROWS frames, empty for the first rows."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "b", type = "BOOLEAN" }]
 rows = [

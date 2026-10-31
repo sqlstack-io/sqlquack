@@ -4,7 +4,6 @@ use std::path::Path;
 
 use sqlquack_evidence::cases::main::load_cases::load_cases;
 use sqlquack_evidence::cases::models::LoadedCase;
-use sqlquack_policy::policy::constants::POLICY_FILE_NAME;
 use sqlquack_policy::policy::main::load_policy::load_policy;
 use sqlquack_policy::policy::models::Policy;
 
@@ -25,23 +24,36 @@ pub(crate) fn load_evidence(paths: &EvidencePaths) -> Result<Evidence, String> {
     Ok(Evidence { policy, cases })
 }
 
-/// Allowed divergences from `policy`, else `sqlquack.toml` if present, else none; and if one was found.
+/// The policy at `path`, or none when `builtin` asks for the default; a missing file is an error.
+pub(crate) fn chosen_policy(path: &Path, builtin: bool) -> Result<Option<Policy>, String> {
+    if builtin {
+        return Ok(None);
+    }
+    if !path.is_file() {
+        return Err(format!(
+            "no policy file at {}; pass --policy <file>, or --builtin-policy to refuse every known \
+             divergence",
+            path.display()
+        ));
+    }
+    load_policy(path)
+        .map(Some)
+        .map_err(|error| error.to_string())
+}
+
+/// The conversion options of `policy`, or the built-in default allowing no divergence.
 pub(crate) fn divergence_options(
-    policy: Option<&Path>,
+    policy: Option<&Policy>,
     (strict, utc_session): (bool, bool),
-) -> Result<(ConversionOptions, bool), String> {
-    let default = Path::new(POLICY_FILE_NAME);
-    let path = match policy {
-        Some(path) => path,
-        None if default.is_file() => default,
-        None => return Ok((ConversionOptions::default(), false)),
+) -> ConversionOptions {
+    let Some(policy) = policy else {
+        return ConversionOptions::default();
     };
-    let loaded = load_policy(path).map_err(|error| error.to_string())?;
-    let options = conversion_options(&loaded, strict);
-    Ok(match utc_session {
-        true => (confirm_utc_session(options, &loaded), true),
-        false => (options, true),
-    })
+    let options = conversion_options(policy, strict);
+    match utc_session {
+        true => confirm_utc_session(options, policy),
+        false => options,
+    }
 }
 
 /// Parses `10%` and similar into a percentage between 0 and 100.

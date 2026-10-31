@@ -1,8 +1,9 @@
 use crate::helpers::{
-    census_warnings, run_on_events, run_on_placed_orders, run_on_refused_upstream, run_on_shop,
+    census_warnings, cursor_model_convertible, run_on_events, run_on_placed_orders,
+    run_on_refused_upstream, run_on_shop,
 };
 use crate::test_types::{
-    BinaryOutcome, BinaryTestCase, SessionTimeZoneTestCase, SourceVariantOutcome,
+    BinaryOutcome, BinaryTestCase, CursorTestCase, SessionTimeZoneTestCase, SourceVariantOutcome,
     SourceVariantTestCase, UpstreamOutcome, UpstreamTestCase, WarningsTestCase,
 };
 
@@ -11,7 +12,7 @@ fn given_sql_directory_when_running_census_binary_then_reports_on_the_right_stre
     let test_cases = [
         BinaryTestCase {
             description: "JSON goes to stdout; the slowest files and the completion message to stderr",
-            arguments: &["census", "--json"],
+            arguments: &["census", "--json", "--builtin-policy"],
             expected_outcome: BinaryOutcome {
                 exit_code: Some(0),
                 files: Some(2),
@@ -23,7 +24,13 @@ fn given_sql_directory_when_running_census_binary_then_reports_on_the_right_stre
         },
         BinaryTestCase {
             description: "--assume-supported without --chain-models is a usage error",
-            arguments: &["census", "--json", "--assume-supported", "fn:SOUNDEX"],
+            arguments: &[
+                "census",
+                "--json",
+                "--assume-supported",
+                "fn:SOUNDEX",
+                "--builtin-policy",
+            ],
             expected_outcome: BinaryOutcome {
                 exit_code: Some(2),
                 files: None,
@@ -35,7 +42,7 @@ fn given_sql_directory_when_running_census_binary_then_reports_on_the_right_stre
         },
         BinaryTestCase {
             description: "text output names no file, model or relation",
-            arguments: &["census"],
+            arguments: &["census", "--builtin-policy"],
             expected_outcome: BinaryOutcome {
                 exit_code: Some(0),
                 files: None,
@@ -47,7 +54,7 @@ fn given_sql_directory_when_running_census_binary_then_reports_on_the_right_stre
         },
         BinaryTestCase {
             description: "--names prints file, model and relation names",
-            arguments: &["census", "--json", "--names"],
+            arguments: &["census", "--json", "--names", "--builtin-policy"],
             expected_outcome: BinaryOutcome {
                 exit_code: Some(0),
                 files: Some(2),
@@ -58,8 +65,20 @@ fn given_sql_directory_when_running_census_binary_then_reports_on_the_right_stre
             },
         },
         BinaryTestCase {
+            description: "no policy file and no --builtin-policy is a usage error",
+            arguments: &["census", "--json"],
+            expected_outcome: BinaryOutcome {
+                exit_code: Some(2),
+                files: None,
+                unresolved_name: None,
+                completion_reported: false,
+                slowest_reported: false,
+                names_printed: false,
+            },
+        },
+        BinaryTestCase {
             description: "an unknown dialect is a usage error",
-            arguments: &["census", "--dialect", "unknown"],
+            arguments: &["census", "--dialect", "unknown", "--builtin-policy"],
             expected_outcome: BinaryOutcome {
                 exit_code: Some(2),
                 files: None,
@@ -181,8 +200,8 @@ fn given_a_refused_upstream_model_when_running_census_binary_then_strict_and_uni
                 labels: Vec::new(),
                 text_counts: Some(
                     "convertible: strict 0 (every model upstream converts too), unit-testable 1 \
-                     (the file's own SQL converts, reading the schema file's columns for 1 \
-                     upstream-refused)"
+                     (the file's own SQL converts; 1 with an upstream model refused or not \
+                     scanned)"
                         .to_owned(),
                 ),
                 plan_bounds: None,
@@ -284,6 +303,30 @@ fn given_assumed_keys_matching_nothing_when_running_census_then_each_is_warned_a
         assert_eq!(
             census_warnings(test_case.flags),
             test_case.expected_warnings,
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_cursor_intrinsics_when_running_census_then_only_a_known_cursor_type_types_them() {
+    let test_cases = [
+        CursorTestCase {
+            description: "without a cursor type the intrinsics stay unknown, so the model is refused",
+            flags: &[],
+            expected_convertible: Some(0),
+        },
+        CursorTestCase {
+            description: "an integer cursor's bounds are integers, so the model converts",
+            flags: &["--cursor-type", "integer"],
+            expected_convertible: Some(1),
+        },
+    ];
+    for test_case in test_cases {
+        assert_eq!(
+            cursor_model_convertible(test_case.flags),
+            test_case.expected_convertible,
             "{}",
             test_case.description
         );

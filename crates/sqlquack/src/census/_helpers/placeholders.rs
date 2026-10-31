@@ -15,8 +15,8 @@ use crate::census::models::{Replacement, Rewritten};
 const PROJECT_FUNCTION_CALL: &str = "__udf";
 const TABLE_FUNCTION_CALL: &str = "__table_fn";
 
-/// The rewritten SQL, the placeholder relation each reference call became and the replacements.
-pub(crate) fn rewrite_with_references(sql: &str) -> Rewritten {
+/// The rewritten SQL, its placeholder relations and replacements, cursors as `cursor_bound`.
+pub(crate) fn rewrite_with_references(sql: &str, cursor_bound: Option<&str>) -> Rewritten {
     let mut references: BTreeSet<String> = BTreeSet::new();
     let mut model_references: BTreeSet<String> = BTreeSet::new();
     let mut replacements: Vec<Replacement> = Vec::new();
@@ -44,7 +44,7 @@ pub(crate) fn rewrite_with_references(sql: &str) -> Rewritten {
         {
             let name_end = identifier_end(bytes, position);
             let name = sql[position..name_end].to_ascii_lowercase();
-            if let Some((replacement, end)) = replacement(bytes, &name, name_end) {
+            if let Some((replacement, end)) = replacement(bytes, &name, name_end, cursor_bound) {
                 if RELATION_CALLS.contains(&name.as_str()) {
                     references.insert(replacement.to_ascii_uppercase());
                 }
@@ -104,7 +104,12 @@ fn byte_offset(text: &str, characters: usize) -> usize {
         .map_or(text.len(), |(index, _)| index)
 }
 
-fn replacement(bytes: &[u8], name: &str, name_end: usize) -> Option<(String, usize)> {
+fn replacement(
+    bytes: &[u8],
+    name: &str,
+    name_end: usize,
+    cursor_bound: Option<&str>,
+) -> Option<(String, usize)> {
     let open = skip_whitespace(bytes, name_end);
     let call_end = if bytes.get(open) == Some(&b'(') {
         Some(matching_paren(bytes, open)?)
@@ -116,7 +121,10 @@ fn replacement(bytes: &[u8], name: &str, name_end: usize) -> Option<(String, usi
         return Some((relation_name(&bytes[open + 1..end - 1]), end));
     }
     if CURSOR_CALLS.contains(&name) {
-        return Some((CURSOR_PLACEHOLDER.to_owned(), call_end.unwrap_or(name_end)));
+        return Some((
+            cursor_bound.unwrap_or(CURSOR_PLACEHOLDER).to_owned(),
+            call_end.unwrap_or(name_end),
+        ));
     }
     match name {
         PROJECT_FUNCTION_CALL => Some((

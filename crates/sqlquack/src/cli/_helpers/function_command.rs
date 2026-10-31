@@ -1,14 +1,18 @@
 //! `sqlquack function`: a SQL project function's body as a DuckDB macro, or why it is refused.
 
+use std::collections::BTreeMap;
 use std::io::Write;
 use std::process::ExitCode;
 
 use sqlquack_core::parsing::models::SourceDialect;
+use sqlquack_policy::policy::models::Policy;
 use sqlquack_rules::catalogue::main::builtin_catalogue::builtin_catalogue;
 use sqlquack_rules::conversion::models::ConvertedFunction;
 
 use crate::analysis::main::analyze_function::analyze_function;
-use crate::cli::_helpers::evidence::divergence_options;
+use crate::analysis::main::parse_session::parse_session;
+use crate::analysis::main::session_conversion_options::session_conversion_options;
+use crate::cli::_helpers::evidence::chosen_policy;
 use crate::cli::_helpers::schema::load_schema;
 use crate::cli::models::FunctionArguments;
 
@@ -18,7 +22,14 @@ pub(crate) fn function_command(
     stderr: &mut dyn Write,
 ) -> ExitCode {
     let _ = writeln!(stderr, "sqlquack function: converting {}…", arguments.name);
-    match convert(arguments) {
+    let inputs = match function_inputs(arguments) {
+        Ok(inputs) => inputs,
+        Err(error) => {
+            let _ = writeln!(stderr, "sqlquack function: failed: {error}");
+            return ExitCode::from(2);
+        }
+    };
+    match convert(arguments, &inputs) {
         Ok(converted) => {
             let _ = writeln!(
                 stdout,
@@ -39,7 +50,23 @@ pub(crate) fn function_command(
     }
 }
 
-fn convert(arguments: &FunctionArguments) -> Result<ConvertedFunction, String> {
+/// The policy and the caller's session parameters; an error is a usage error.
+fn function_inputs(
+    arguments: &FunctionArguments,
+) -> Result<(Option<Policy>, BTreeMap<String, String>), String> {
+    let policy = chosen_policy(&arguments.policy, arguments.builtin_policy)?;
+    Ok((policy, parse_session(&arguments.session)?))
+}
+
+fn convert(
+    arguments: &FunctionArguments,
+    (policy, parameters): &(Option<Policy>, BTreeMap<String, String>),
+) -> Result<ConvertedFunction, String> {
+    let (options, _) = session_conversion_options(
+        policy.as_ref(),
+        (arguments.strict, arguments.utc_session),
+        parameters,
+    )?;
     let schema = load_schema(&arguments.schema)?;
     let spec = schema
         .functions
@@ -47,10 +74,6 @@ fn convert(arguments: &FunctionArguments) -> Result<ConvertedFunction, String> {
         .ok_or_else(|| format!("the schema declares no function {}", arguments.name))?;
     let body = std::fs::read_to_string(&arguments.body)
         .map_err(|error| format!("cannot read {}: {error}", arguments.body.display()))?;
-    let (options, _) = divergence_options(
-        Some(arguments.policy.as_path()).filter(|path| path.is_file()),
-        (arguments.strict, arguments.utc_session),
-    )?;
     analyze_function(
         (&body, spec),
         SourceDialect::Snowflake,

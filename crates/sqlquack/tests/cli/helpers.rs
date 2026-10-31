@@ -4,8 +4,8 @@ use std::process::Command;
 use walkdir::WalkDir;
 
 use crate::test_types::{
-    CommandOutcome, CoverageOutcome, DivergenceOutcome, ErrorCheckOutcome, FunctionMacroOutcome,
-    ReviewOutcome,
+    CommandOutcome, ConvertOutcome, CoverageOutcome, DivergenceOutcome, ErrorCheckOutcome,
+    FunctionMacroOutcome, ReviewOutcome,
 };
 
 fn repository_root() -> PathBuf {
@@ -47,6 +47,45 @@ pub(crate) fn run_on_repository_cases(arguments: &[&str], mention: &str) -> Comm
             .is_ok_and(|mut entries| entries.next().is_some()),
         stderr_mentions: String::from_utf8_lossy(&output.stderr).contains(mention),
     }
+}
+
+/// The column names DuckDB gives the statement `sqlquack convert` prints for `sql` with `flags`.
+pub(crate) fn converted_column_names(sql: &str, flags: &[&str]) -> Vec<String> {
+    let directory = tempfile::tempdir().expect("temporary directory");
+    std::fs::write(directory.path().join("query.sql"), sql).expect("query written");
+    let output = Command::new(env!("CARGO_BIN_EXE_sqlquack"))
+        .arg("convert")
+        .arg("--policy")
+        .arg(repository_root().join("sqlquack.toml"))
+        .args(flags)
+        .arg(directory.path().join("query.sql"))
+        .output()
+        .expect("sqlquack runs");
+    let converted = String::from_utf8_lossy(&output.stdout);
+    let connection = duckdb::Connection::open_in_memory().expect("DuckDB opens");
+    let mut statement = connection
+        .prepare(converted.trim())
+        .expect("the converted statement prepares");
+    let _ = statement.query([]).expect("the converted statement runs");
+    statement.column_names()
+}
+
+/// The exit code of `arguments` run where no policy file is, over a one-statement file.
+pub(crate) fn policy_free_exit_code(arguments: &[&str]) -> Option<i32> {
+    let directory = tempfile::tempdir().expect("temporary directory");
+    std::fs::write(directory.path().join("query.sql"), "SELECT 1 AS total").expect("query written");
+    std::fs::write(
+        directory.path().join("schema.json"),
+        "{\"functions\": {\"TOTAL\": {\"language\": \"sql\", \"arguments\": [], \"returns\": \"NUMBER(1,0)\"}}}",
+    )
+    .expect("schema written");
+    Command::new(env!("CARGO_BIN_EXE_sqlquack"))
+        .args(arguments)
+        .current_dir(directory.path())
+        .output()
+        .expect("sqlquack runs")
+        .status
+        .code()
 }
 
 const OVERFLOW_CASE: &str = r#"category = "aggregate"
@@ -297,6 +336,7 @@ pub(crate) fn review_project_functions(file: &str, expected_lines: &[&str]) -> R
 pub(crate) fn run_function_macro(
     (returns, body): (&str, &str),
     call: &str,
+    flags: &[&str],
 ) -> FunctionMacroOutcome {
     let directory = tempfile::tempdir().expect("temporary directory");
     let schema = format!(
@@ -314,6 +354,9 @@ pub(crate) fn run_function_macro(
             "--schema",
             "schema.json",
         ])
+        .arg("--policy")
+        .arg(repository_root().join("sqlquack.toml"))
+        .args(flags)
         .current_dir(directory.path())
         .output()
         .expect("sqlquack runs");
@@ -512,4 +555,50 @@ pub(crate) fn pending_compile_errors() -> Vec<(String, Option<bool>)> {
             .collect();
     flags.sort();
     flags
+}
+
+/// Runs `sqlquack convert` on `sql` from standard input with `flags` and the repository policy.
+pub(crate) fn run_convert(sql: &str, flags: &[&str], mention: &str) -> ConvertOutcome {
+    use std::io::Write;
+    let policy = repository_root().join("sqlquack.toml");
+    let builtin = flags.contains(&"--builtin-policy");
+    let policy_flags: Vec<&std::ffi::OsStr> =
+        [std::ffi::OsStr::new("--policy"), policy.as_os_str()]
+            .into_iter()
+            .filter(|_| !builtin)
+            .collect();
+    let mut child = Command::new(env!("CARGO_BIN_EXE_sqlquack"))
+        .arg("convert")
+        .args(policy_flags)
+        .args(flags)
+        .stdin(std::process::Stdio::piped())
+        .stdout(std::process::Stdio::piped())
+        .stderr(std::process::Stdio::piped())
+        .spawn()
+        .expect("sqlquack runs");
+    child
+        .stdin
+        .take()
+        .expect("standard input")
+        .write_all(sql.as_bytes())
+        .expect("SQL written");
+    let output = child.wait_with_output().expect("sqlquack finishes");
+    let stdout = String::from_utf8_lossy(&output.stdout);
+    let json: serde_json::Value = serde_json::from_str(&stdout).unwrap_or_default();
+    ConvertOutcome {
+        exit_code: output.status.code(),
+        printed_sql: stdout.starts_with("SELECT") || stdout.starts_with("WITH"),
+        json_converted: json["converted"].as_bool(),
+        stderr_mentions: String::from_utf8_lossy(&output.stderr).contains(mention),
+    }
+}
+
+/// The outcome of a conversion exiting `exit_code`, printing SQL or not, its mention found.
+pub(crate) fn convert_outcome(exit_code: i32, printed_sql: bool) -> ConvertOutcome {
+    ConvertOutcome {
+        exit_code: Some(exit_code),
+        printed_sql,
+        json_converted: None,
+        stderr_mentions: true,
+    }
 }

@@ -161,6 +161,22 @@ pub(crate) const PARTIAL_SCAN: &[ShopFile] = &[
     },
 ];
 
+pub(crate) const ASSUMING: &[ShopFile] = &[
+    ShopFile {
+        path: "placed_orders.sql",
+        contents: "SELECT customer_id, CAST(CAST('2024-03-10 22:30:00' AS TIMESTAMP_NTZ(6)) \
+                   AS TIMESTAMP_TZ) AS placed_at FROM __source(\"shop\", \"customers\")",
+    },
+    ShopFile {
+        path: "placed_report.sql",
+        contents: "SELECT customer_id FROM __ref(\"placed_orders\")",
+    },
+    ShopFile {
+        path: "customer_ids.sql",
+        contents: "SELECT customer_id FROM __source(\"shop\", \"customers\")",
+    },
+];
+
 pub(crate) const PLACED: &[ShopFile] = &[
     ShopFile {
         path: "a.sql",
@@ -302,6 +318,7 @@ pub(crate) fn census_summary(files: &[ShopFile]) -> Result<CensusSummary, String
             conversion: ConversionOptions::default(),
             names: false,
             assume_supported: Vec::new(),
+            cursor_type: None,
         },
         &CensusProgress::default(),
     )
@@ -354,6 +371,7 @@ pub(crate) fn blocker_summary_with(
             conversion,
             names,
             assume_supported: Vec::new(),
+            cursor_type: None,
         },
         &CensusProgress::default(),
     )
@@ -436,6 +454,7 @@ pub(crate) fn upstream_summary(files: &[ShopFile], typed: &[&str]) -> UpstreamSu
             conversion: ConversionOptions::default(),
             names: true,
             assume_supported: Vec::new(),
+            cursor_type: None,
         },
         &CensusProgress::default(),
     )
@@ -497,6 +516,7 @@ pub(crate) fn placed_refusals(
             conversion: ConversionOptions::default(),
             names,
             assume_supported: Vec::new(),
+            cursor_type: None,
         },
         &CensusProgress::default(),
     )
@@ -542,6 +562,7 @@ pub(crate) fn hash_allowed() -> ConversionOptions {
         AllowedDivergence {
             constructs: vec!["fn:HASH".to_owned()],
             reason: "test".to_owned(),
+            assumption: false,
         },
     );
     options
@@ -560,6 +581,25 @@ pub(crate) fn policy_allowed() -> ConversionOptions {
 
 /// The divergence tally of `files` run with chained models and the repository policy.
 pub(crate) fn chained_divergences(files: &[ShopFile]) -> BTreeMap<String, usize> {
+    chained_report(files).provenance.divergences
+}
+
+/// Unit-testable and strict counts of `files`, with and without assumptions, and files per one.
+pub(crate) fn assumption_counts(files: &[ShopFile]) -> ([usize; 4], BTreeMap<String, usize>) {
+    let refusals = chained_report(files).refusals;
+    (
+        [
+            refusals.convertible,
+            refusals.convertible_strict,
+            refusals.convertible_no_assumptions,
+            refusals.convertible_strict_no_assumptions,
+        ],
+        refusals.assumptions,
+    )
+}
+
+/// The census of `files` run with chained models and the repository policy.
+fn chained_report(files: &[ShopFile]) -> CensusReport {
     let policy = load_policy(
         &Path::new(env!("CARGO_MANIFEST_DIR"))
             .join("../..")
@@ -593,13 +633,12 @@ pub(crate) fn chained_divergences(files: &[ShopFile]) -> BTreeMap<String, usize>
             conversion: conversion_options(&policy, false),
             names: true,
             assume_supported: Vec::new(),
+            cursor_type: None,
         },
         &CensusProgress::default(),
     )
     .expect("the census runs")
     .report
-    .provenance
-    .divergences
 }
 
 /// The plan of `files` with `assumed` supported, beside the census's own counts.
@@ -633,6 +672,7 @@ pub(crate) fn plan_summary(files: &[ShopFile], assumed: &[&str]) -> PlanSummary 
                 .iter()
                 .map(|construct| (*construct).to_owned())
                 .collect(),
+            cursor_type: None,
         },
         &CensusProgress::default(),
     )

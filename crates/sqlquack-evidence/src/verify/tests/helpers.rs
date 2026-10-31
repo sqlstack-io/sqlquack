@@ -11,6 +11,7 @@ use sqlquack_policy::policy::main::load_policy::load_policy;
 use sqlquack_policy::policy::models::Policy;
 
 use crate::cases::main::load_cases::load_cases;
+use crate::cases::models::{CaseRole, LoadedCase};
 use crate::pending::main::write_pending::write_pending;
 use crate::pending::models::PendingCase;
 use crate::replay::main::replay_on_duckdb::replay_on_duckdb;
@@ -19,11 +20,13 @@ use crate::results::_helpers::reading::sha256_hex;
 use crate::results::models::{
     RecordedFailure, RecordedOutcome, ResultMetadata, SessionDefaults, WarehouseColumn,
 };
+use crate::verify::_helpers::compile_errors::undeclared_compile_error;
 use crate::verify::_helpers::session::parameter_text;
 use crate::verify::main::verify_cases::verify_cases;
 use crate::verify::models::VerifyInputs;
 use crate::verify::tests::test_types::{RoundTrip, Tampering, UnchangedSqlForTests};
 use crate::verify::types::FailureModes;
+use sqlquack_compare::comparison::models::RowOrder;
 
 /// Marks every stand-in result: produced by DuckDB in a test, never warehouse evidence.
 const STAND_IN_RECORDER: &str = "test fixture: DuckDB stand-in, not evidence";
@@ -448,4 +451,43 @@ pub(crate) fn floored_nanos(rows: &ResultSet) -> i64 {
         .downcast_ref::<TimestampNanosecondArray>()
         .expect("nanosecond timestamps")
         .value(0)
+}
+
+/// Whether a recorded `sqlstate` error fails a case declaring it or not, with setup or not.
+pub(crate) fn undeclared_compile_error_for(
+    sqlstate: &str,
+    declared: bool,
+    with_setup: bool,
+) -> bool {
+    let case = LoadedCase {
+        reference: "orders.toml#order_total".to_owned(),
+        description: String::new(),
+        category: String::new(),
+        construct: String::new(),
+        session_profile: String::new(),
+        session_parameters: BTreeMap::new(),
+        pinned_parameters: BTreeMap::new(),
+        source_sql: String::new(),
+        order: RowOrder::Ordered,
+        hash: String::new(),
+        role: CaseRole::Conversion,
+        expected_divergence: None,
+        values: true,
+        compile_error: declared,
+        functions: Vec::new(),
+        setup_sql: [String::from(
+            "CREATE FUNCTION order_total() RETURNS NUMBER AS $$ 1 $$",
+        )]
+        .into_iter()
+        .take(usize::from(with_setup))
+        .collect(),
+        inputs: Vec::new(),
+        row_sources: Vec::new(),
+    };
+    let recorded = RecordedFailure {
+        errno: Some(1003),
+        sqlstate: Some(sqlstate.to_owned()),
+        message: None,
+    };
+    undeclared_compile_error(&case, Some(&recorded)).is_some()
 }

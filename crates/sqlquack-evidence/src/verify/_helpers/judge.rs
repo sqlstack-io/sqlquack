@@ -16,6 +16,7 @@ use crate::replay::main::replay_on_duckdb::replay_on_duckdb;
 use crate::replay::models::ReplaySettings;
 use crate::results::main::load_result::load_result;
 use crate::results::models::{RecordedOutcome, SessionDefaults, StoredResult};
+use crate::verify::_helpers::compile_errors::undeclared_compile_error;
 use crate::verify::_helpers::error_check::error_check;
 use crate::verify::_helpers::microsecond_evidence::differs_below_microseconds;
 use crate::verify::_helpers::row_checks::{RowCheck, row_check};
@@ -73,6 +74,9 @@ fn judge_stored(
             ),
             RecordedOutcome::Rows | RecordedOutcome::Types => (Verdict::Typed, None, None),
         };
+    }
+    if let Some(reason) = undeclared_compile_error(case, stored.metadata.error.as_ref()) {
+        return (Verdict::Failed { reason }, None, None);
     }
     if stored.metadata.outcome == RecordedOutcome::Types {
         return (

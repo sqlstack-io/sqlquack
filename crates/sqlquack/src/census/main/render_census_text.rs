@@ -47,10 +47,25 @@ pub fn render_census_text(report: &CensusReport, limit: usize) -> String {
     let _ = writeln!(
         text,
         "  convertible: strict {} (every model upstream converts too), unit-testable {} \
-         (the file's own SQL converts, reading the schema file's columns for {} upstream-refused)",
+         (the file's own SQL converts; {} with an upstream model refused or not scanned)",
         refusals.convertible_strict,
         refusals.convertible,
         report.blockers.upstream_refused.len()
+    );
+    let relied: Vec<String> = refusals
+        .assumptions
+        .iter()
+        .map(|(id, files)| format!("{id} in {files}"))
+        .collect();
+    let _ = writeln!(
+        text,
+        "  with no named assumption: strict {}, unit-testable {} (relying on one: {})",
+        refusals.convertible_strict_no_assumptions,
+        refusals.convertible_no_assumptions,
+        match relied.is_empty() {
+            true => "none".to_owned(),
+            false => relied.join(", "),
+        }
     );
     for (divergence, files) in &report.provenance.divergences {
         let _ = writeln!(
@@ -168,7 +183,7 @@ fn render_blockers(text: &mut String, blockers: &BlockerReport, limit: usize) {
         let _ = writeln!(text);
         let _ = writeln!(
             text,
-            "Unit-testable but not strict: files reading a model that does not convert (first {limit})"
+            "Unit-testable but not strict: files with an upstream model refused or not scanned (first {limit})"
         );
         for file in blockers.upstream_refused.iter().take(limit) {
             let _ = writeln!(text, "  {}  {}", file.model, file.labels.join(", "));

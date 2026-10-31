@@ -45,7 +45,7 @@ fn given_sqlbuild_compiled_sql_when_rewriting_then_references_become_parseable_s
     ];
     for test_case in test_cases {
         assert_eq!(
-            rewrite_with_references(test_case.sql).sql,
+            rewrite_with_references(test_case.sql, None).sql,
             test_case.expected_sql,
             "{}",
             test_case.description

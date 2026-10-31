@@ -165,6 +165,38 @@ STRICT_JSON_OUTPUT = false
 GEOGRAPHY_OUTPUT_FORMAT = "GeoJSON"
 GEOMETRY_OUTPUT_FORMAT = "GeoJSON"
 
+[session_profiles.utc-qiic-v1]
+description = "utc-v1 with quoted identifiers resolving to upper case like unquoted ones."
+duckdb_time_zone = "UTC"
+
+[session_profiles.utc-qiic-v1.snowflake]
+TIMEZONE = "UTC"
+TIMESTAMP_TYPE_MAPPING = "TIMESTAMP_NTZ"
+WEEK_START = 0
+WEEK_OF_YEAR_POLICY = 0
+DEFAULT_NULL_ORDERING = "LAST"
+QUOTED_IDENTIFIERS_IGNORE_CASE = true
+USE_CACHED_RESULT = false
+
+[session_profiles.utc-qiic-v1.pinned]
+DATE_INPUT_FORMAT = "AUTO"
+DATE_OUTPUT_FORMAT = "YYYY-MM-DD"
+TIME_INPUT_FORMAT = "AUTO"
+TIME_OUTPUT_FORMAT = "HH24:MI:SS"
+TIMESTAMP_INPUT_FORMAT = "AUTO"
+TIMESTAMP_OUTPUT_FORMAT = "YYYY-MM-DD HH24:MI:SS.FF3 TZHTZM"
+TIMESTAMP_NTZ_OUTPUT_FORMAT = "YYYY-MM-DD HH24:MI:SS.FF3"
+TIMESTAMP_LTZ_OUTPUT_FORMAT = ""
+TIMESTAMP_TZ_OUTPUT_FORMAT = ""
+TWO_DIGIT_CENTURY_START = 1970
+BINARY_INPUT_FORMAT = "HEX"
+BINARY_OUTPUT_FORMAT = "HEX"
+TIMESTAMP_DAY_IS_ALWAYS_24H = false
+JSON_INDENT = 2
+STRICT_JSON_OUTPUT = false
+GEOGRAPHY_OUTPUT_FORMAT = "GeoJSON"
+GEOMETRY_OUTPUT_FORMAT = "GeoJSON"
+
 [edge_cases.numeric]
 description = "Arithmetic, rounding and numeric conversion."
 required = ["null", "zero", "negative", "boundary"]
@@ -290,12 +322,14 @@ reason = "A model that builds a VARIANT from a FLOAT holds it as a DuckDB VARIAN
 
 [divergences.source_variant_json]
 constructs = ["node:eq", "node:neq", "node:window_function", "fn:ARRAY_CONTAINS", "fn:ARRAY_POSITION", "fn:ARRAY_EXCEPT", "fn:ANY_VALUE", "fn:MAX_BY", "fn:MIN_BY", "fn:ARRAY_AGG"]
+assumption = true
 default = "warn"
 strict = "refuse"
 reason = "Snowflake keeps a DATE, TIME, timestamp or BINARY typed inside a VARIANT, unequal to its text, where DuckDB's JSON holds only the text. VARIANT equality, PARTITION BY a VARIANT, ARRAY_CONTAINS, ARRAY_POSITION, ARRAY_EXCEPT, ANY_VALUE, MAX_BY, MIN_BY and ARRAY_AGG without WITHIN GROUP tell VARIANTs apart by their text, so they trust a source table's or schema relation's VARIANT column to hold JSON values, as loaded from JSON. Typed values written into such a column by a process outside the project are not detected and would compare equal to their text: a wrong value. A schema column marked typed_leaves is refused instead."
 
 [divergences.session_timezone_utc]
 constructs = ["node:cast", "node:try_cast", "fn:TRY_TO_TIMESTAMP_TZ", "fn:CONVERT_TIMEZONE", "fn:CURRENT_DATE", "fn:CURRENT_TIMESTAMP", "fn:DATE_PART", "node:extract", "node:year", "node:quarter", "node:month", "node:day", "node:hour", "node:minute", "node:second", "fn:TO_VARIANT", "fn:OBJECT_CONSTRUCT", "fn:OBJECT_CONSTRUCT_KEEP_NULL", "fn:OBJECT_INSERT", "fn:ARRAY_CONSTRUCT", "node:map_func"]
+assumption = true
 default = "warn"
 strict = "refuse"
 reason = "Converted SQL is proven only in sessions whose time zone is UTC: Snowflake's TIMEZONE and DuckDB's TimeZone both 'UTC'. A statement whose result depends on the session time zone relies on that: a DATE, TIMESTAMP_NTZ or timestamp text without an offset read as TIMESTAMP_TZ or TIMESTAMP_LTZ (so CONVERT_TIMEZONE with two arguments of a naive value too), a TIMESTAMP_LTZ read as a wall time, a date part, VARIANT text or a TIMESTAMP_TZ, and CURRENT_DATE and CURRENT_TIMESTAMP. In any other session such a statement gives a wrong value silently. Strict mode refuses it unless the caller confirms both sessions run in UTC."

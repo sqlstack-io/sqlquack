@@ -333,6 +333,7 @@ tags = ["null", "empty", "whitespace", "unicode"]
 
 [[case]]
 id = "not_ilike_any_infix"
+compile_error = true
 description = "NOT ILIKE ANY written infix."
 columns = [{ name = "s", type = "VARCHAR" }]
 rows = [
@@ -362,6 +363,7 @@ tags = ["null", "empty", "whitespace", "unicode"]
 
 [[case]]
 id = "not_like_any_infix"
+compile_error = true
 description = "NOT LIKE ANY written infix."
 columns = [{ name = "s", type = "VARCHAR" }]
 rows = [
