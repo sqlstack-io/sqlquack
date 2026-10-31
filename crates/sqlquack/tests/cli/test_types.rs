@@ -31,6 +31,12 @@ pub(crate) struct ReviewTestCase {
     pub(crate) expected_lines: &'static [&'static str],
 }
 
+/// One `sqlquack review` of a copy of the repository: its exit code and export directory.
+pub(crate) struct ReviewedRepository {
+    pub(crate) exit_code: Option<i32>,
+    pub(crate) directory: tempfile::TempDir,
+}
+
 #[derive(Debug, PartialEq, Eq)]
 pub(crate) struct ReviewOutcome {
     pub(crate) exit_code: Option<i32>,

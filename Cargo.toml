@@ -81,3 +81,10 @@ debug = false
 
 [profile.release]
 strip = "symbols"
+
+# The test gate: release speed with debug assertions and overflow checks kept on.
+[profile.gate]
+inherits = "release"
+debug-assertions = true
+overflow-checks = true
+strip = "none"

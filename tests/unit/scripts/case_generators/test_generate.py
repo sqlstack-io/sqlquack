@@ -27,9 +27,12 @@ from tests.unit.scripts.case_generators.helpers import edited, removed, stray, u
 )
 def test_given_a_generated_file_when_generated_twice_then_it_is_identical_and_valid(
     test_case: FileTestCase,
+    first_generation: dict[str, str],
+    second_generation: dict[str, str],
 ) -> None:
-    text: str = generated_texts()[test_case.name]
-    assert generated_texts()[test_case.name] == text
+    text: str = first_generation[test_case.name]
+    assert second_generation[test_case.name] == text
+    assert sorted(second_generation) == sorted(first_generation)
     parsed: dict[str, list[dict[str, object]]] = tomllib.loads(text)
     cases: list[dict[str, object]] = parsed["case"]
     ids: list[object] = [case["id"] for case in cases]

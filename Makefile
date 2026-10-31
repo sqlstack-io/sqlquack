@@ -19,7 +19,7 @@ PYTHON_TYPED := scripts tests/unit/scripts
 PYTHON_TESTS := tests/unit/scripts
 endif
 
-.PHONY: format rust-lint python-check fensu evidence-guard polyglot-guard generate-cases generated-cases check-ci test verify-recorded polyglot-duckshop census-duckshop fuzz-smoke gate census
+.PHONY: format rust-lint python-check fensu evidence-guard polyglot-guard generate-cases generated-cases check-ci test test-rust test-python verify-recorded polyglot-duckshop census-duckshop fuzz-smoke gate gate-parallel census
 
 format:
 	cargo fmt --all
@@ -56,8 +56,17 @@ generated-cases:
 # The static gate, the first step of `gate`.
 check-ci: rust-lint python-check fensu evidence-guard polyglot-guard generated-cases
 
-test:
-	cargo test --workspace --locked
+# Rust tests build with the gate profile: release speed, debug assertions and overflow checks on.
+# Its test binaries run RUST_TEST_JOBS at a time; any failure fails the target.
+RUST_TEST_PROFILE ?= gate
+RUST_TEST_JOBS ?= 4
+
+test: test-rust test-python
+
+test-rust:
+	RUST_TEST_JOBS=$(RUST_TEST_JOBS) scripts/run_rust_tests.sh $(RUST_TEST_PROFILE)
+
+test-python:
 	uv run pytest $(PYTHON_TESTS) -n auto --dist loadfile
 
 # Replays every recorded case on DuckDB; every rule and equivalence needs a passed case.
@@ -102,7 +111,12 @@ fuzz-smoke:
 
 # Everything CI runs: the static gate, the tests, the recorded-case replay, the exact check and the
 # timed conversion on DuckShop, and the fuzz smoke. The pre-push verify hook runs this.
-gate: check-ci test verify-recorded polyglot-duckshop census-duckshop fuzz-smoke
+# After the static gate, the independent targets run in parallel, each target's output kept
+# together; any failure fails the gate. The verify hook builds what they need beforehand.
+gate: check-ci
+	$(MAKE) -j --output-sync=target gate-parallel
+
+gate-parallel: test-rust test-python verify-recorded polyglot-duckshop census-duckshop fuzz-smoke
 
 # Example: make census CENSUS_ARGS="path/to/sql --json"
 census:

@@ -5,7 +5,7 @@ use walkdir::WalkDir;
 
 use crate::test_types::{
     CommandOutcome, ConvertOutcome, CoverageOutcome, DivergenceOutcome, ErrorCheckOutcome,
-    FunctionMacroOutcome, ReviewOutcome,
+    FunctionMacroOutcome, ReviewOutcome, ReviewedRepository,
 };
 
 fn repository_root() -> PathBuf {
@@ -254,8 +254,8 @@ pub(crate) fn verify_error_check(
     }
 }
 
-/// Runs `sqlquack review` on a copy of the evidence; reports expected lines missing from one file.
-pub(crate) fn review_repository(file: &str, expected_lines: &[&str]) -> ReviewOutcome {
+/// Runs `sqlquack review` once on a copy of the policy, cases and recorded results.
+pub(crate) fn review_repository() -> ReviewedRepository {
     let directory = tempfile::tempdir().expect("temporary directory");
     let root = repository_root();
     std::fs::copy(
@@ -273,10 +273,22 @@ pub(crate) fn review_repository(file: &str, expected_lines: &[&str]) -> ReviewOu
         .current_dir(directory.path())
         .output()
         .expect("sqlquack runs");
-    let text =
-        std::fs::read_to_string(directory.path().join("exported").join(file)).unwrap_or_default();
-    ReviewOutcome {
+    ReviewedRepository {
         exit_code: output.status.code(),
+        directory,
+    }
+}
+
+/// The review's exit code and the expected lines missing from one exported file.
+pub(crate) fn review_export(
+    review: &ReviewedRepository,
+    file: &str,
+    expected_lines: &[&str],
+) -> ReviewOutcome {
+    let text = std::fs::read_to_string(review.directory.path().join("exported").join(file))
+        .unwrap_or_default();
+    ReviewOutcome {
+        exit_code: review.exit_code,
         missing_lines: expected_lines
             .iter()
             .filter(|expected| !text.lines().any(|line| line == **expected))
