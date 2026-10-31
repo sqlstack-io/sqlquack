@@ -24,7 +24,8 @@ use crate::conversion::_helpers::support::tree::{
     require_understood,
 };
 use crate::conversion::constants::{
-    COLUMN, COMMENT, CONSTANT_LITERAL, NEGATE, NUMBER_LITERAL, PARENTHESES, SCALAR_SUBQUERY,
+    COLUMN, COMMENT, CONSTANT_LITERAL, DOLLAR_PARAMETER, NEGATE, NUMBER_LITERAL, PARENTHESES,
+    POSITIONAL_COLUMN, SCALAR_SUBQUERY,
 };
 use sqlquack_semantics::types::models::Holding;
 
@@ -59,6 +60,45 @@ pub(crate) fn column(payload: &Value, site: Site<'_>) -> Result<Emitted, Refusal
         }
         Err(refusal) => Err(refusal),
     }
+}
+
+/// `$n`: the n-th column of the query level's only FROM source, read as that column.
+pub(crate) fn positional_column(payload: &Value, site: Site<'_>) -> Result<Emitted, Refusal> {
+    let construct = node_construct("parameter");
+    let _rule = site.context.log.rule(POSITIONAL_COLUMN);
+    let payload = payload_object(payload, &construct)?;
+    require_understood(payload, &["index", "style"], &construct)?;
+    let refuse = |reason: &str| outside_conditions(construct.clone(), reason.to_owned());
+    if payload.get("style").and_then(Value::as_str) != Some(DOLLAR_PARAMETER) {
+        return Err(refuse("a parameter other than a $n column position"));
+    }
+    let index = match payload
+        .get("index")
+        .and_then(Value::as_u64)
+        .map(usize::try_from)
+    {
+        Some(Ok(index)) if index > 0 => index,
+        _ => {
+            return Err(refuse(
+                "a column position that is not a positive whole number",
+            ));
+        }
+    };
+    let [relation] = site.scope.relations.as_slice() else {
+        return Err(refuse(
+            "a $n column position over other than one FROM source",
+        ));
+    };
+    let name = relation
+        .columns
+        .get(index - 1)
+        .map(|column| column.name.clone())
+        .ok_or_else(|| refuse("a $n column position beyond the source's columns"))?;
+    let alias = relation.alias.clone();
+    column(
+        &serde_json::json!({ "name": { "name": name }, "table": { "name": alias } }),
+        site,
+    )
 }
 
 /// A numeric or string literal.

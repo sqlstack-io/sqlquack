@@ -88,3 +88,11 @@ pub const COUNT_IF_TYPE: SnowflakeType = SnowflakeType::Number {
     precision: 13,
     scale: 0,
 };
+
+/// Text read beside other branches' types: `snowflake.text_reading`.
+pub const TEXT_READING: &str = "snowflake.text_reading";
+/// The NUMBER Snowflake reads text as beside numbers in COALESCE, NVL, IFF and CASE.
+pub const TEXT_AS_NUMBER: SnowflakeType = SnowflakeType::Number {
+    precision: 18,
+    scale: 5,
+};

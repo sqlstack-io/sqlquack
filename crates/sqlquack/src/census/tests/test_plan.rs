@@ -12,21 +12,21 @@ fn given_assumed_constructs_when_planning_then_upper_bounds_follow_the_model_gra
                 convertible: [1, 1],
                 upper_bounds: [1, 1],
                 next: vec![
-                    ("fn:JAROWINKLER_SIMILARITY".to_owned(), 1, 1),
                     ("fn:SOUNDEX".to_owned(), 1, 1),
+                    ("fn:STRTOK".to_owned(), 1, 1),
                     (
                         "relation:__SQLQUACK_RELATION__SHOP__RETURNS".to_owned(),
                         1,
                         1,
                     ),
                 ],
-                steps: vec![(owned(&["fn:JAROWINKLER_SIMILARITY", "fn:SOUNDEX"]), [6, 6])],
+                steps: vec![(owned(&["fn:SOUNDEX", "fn:STRTOK"]), [6, 6])],
             },
         },
         PlanTestCase {
             description: "one root assumed: its model and the readers typed by it convert, a \
                           reader also needing the other root does not",
-            assumed: &["fn:JAROWINKLER_SIMILARITY"],
+            assumed: &["fn:STRTOK"],
             expected_summary: PlanSummary {
                 convertible: [1, 1],
                 upper_bounds: [4, 4],

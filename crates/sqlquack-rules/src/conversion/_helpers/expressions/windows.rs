@@ -31,9 +31,9 @@ use crate::conversion::_helpers::support::tree::{
 use crate::conversion::_helpers::support::typed_leaves::compared_by_text;
 use crate::conversion::constants::{
     DISTINCT_WINDOW_AGGREGATE, FRAME_FACET, FUNCTION_FACET, NO_PARTITION, PARTITION_FACET,
-    SEVERAL_PARTITION_KEYS, UNORDERED_WINDOW_AGGREGATES, VARIANT_PARTITION, WINDOW_AGGREGATE,
-    WINDOW_FIRST_LAST, WINDOW_KEYS_CONSTRUCT, WINDOW_OFFSET, WINDOW_RANKING,
-    WINDOWED_NAMED_AGGREGATES,
+    SEVERAL_PARTITION_KEYS, UNORDERED_WINDOW_AGGREGATES, VARIANT_EQUALITY_BY_TEXT,
+    VARIANT_PARTITION, WINDOW_AGGREGATE, WINDOW_FIRST_LAST, WINDOW_KEYS_CONSTRUCT, WINDOW_OFFSET,
+    WINDOW_RANKING, WINDOW_VALUE_FRAME, WINDOWED_NAMED_AGGREGATES,
 };
 
 /// Snowflake's frame for FIRST_VALUE and LAST_VALUE when none is written.
@@ -45,6 +45,8 @@ const ROWS: &str = "Rows";
 const UNBOUNDED_PRECEDING: &str = "UnboundedPreceding";
 const UNBOUNDED_FOLLOWING: &str = "UnboundedFollowing";
 const CURRENT_ROW: &str = "CurrentRow";
+/// The one named aggregate whose window frame is recorded: COUNT_IF over a running ROWS frame.
+const COUNT_IF_NAME: &str = "COUNT_IF";
 
 /// A window's partition keys, order items and partition keys' families.
 struct WindowKeys {
@@ -149,7 +151,9 @@ pub(crate) fn convert_window(payload: &Value, site: Site<'_>) -> Result<Emitted,
         "within_group" => ordered_window(function_payload, &over, site),
         "function" | "aggregate_function" => {
             let name = call_name(function_payload);
-            if over.frame.is_some() {
+            if over.frame.is_some_and(|frame| {
+                name != COUNT_IF_NAME || !is_running(frame) || over.order.is_empty()
+            }) {
                 return Err(outside_conditions(
                     function_construct(&name),
                     format!("{name} over an explicit frame, which no recording shows"),
@@ -313,11 +317,15 @@ fn first_last_window(
             function.to_ascii_uppercase()
         )));
     }
-    if over.frame.is_some_and(|frame| !is_whole_partition(frame)) {
-        return Err(refuse(
-            "only the whole-partition frame is proven".to_owned(),
-        ));
-    }
+    let frame = match over.frame {
+        Some(frame) if !is_whole_partition(frame) => {
+            let _rule = site.context.log.rule(WINDOW_VALUE_FRAME);
+            explicit_frame(frame).ok_or_else(|| {
+                refuse("only ROWS frames with literal bounds are converted".to_owned())
+            })?
+        }
+        _ => WHOLE_PARTITION.to_owned(),
+    };
     let value = convert_expression(field(inner, "this", &construct)?, site)?;
     let nulls = match flag(inner, "ignore_nulls") {
         true => " IGNORE NULLS",
@@ -329,7 +337,7 @@ fn first_last_window(
             format!(
                 "{function}({}{nulls}) OVER ({})",
                 value.sql,
-                over.clause(Some(WHOLE_PARTITION), site)
+                over.clause(Some(&frame), site)
             ),
             value.data_type,
         )
@@ -385,6 +393,16 @@ fn ordered_window(payload: &Value, over: &Over<'_>, site: Site<'_>) -> Result<Em
     within_group(payload, site, Some(&over.clause(None, site)))
 }
 
+/// Whether a frame is the rows from the partition's start to the current row.
+fn is_running(frame: &Value) -> bool {
+    frame.get("kind").and_then(Value::as_str) == Some(ROWS)
+        && frame.get("start").and_then(Value::as_str) == Some(UNBOUNDED_PRECEDING)
+        && frame
+            .get("end")
+            .is_none_or(|end| end.is_null() || end.as_str() == Some(CURRENT_ROW))
+        && frame.get("exclude").is_none_or(Value::is_null)
+}
+
 fn is_whole_partition(frame: &Value) -> bool {
     frame.get("kind").and_then(Value::as_str) == Some(ROWS)
         && frame.get("start").and_then(Value::as_str) == Some(UNBOUNDED_PRECEDING)
@@ -392,20 +410,21 @@ fn is_whole_partition(frame: &Value) -> bool {
         && frame.get("exclude").is_none_or(Value::is_null)
 }
 
-fn frame_bound(bound: &Value) -> Option<String> {
+/// A frame bound's SQL and its place relative to the current row, unbounded ends outermost.
+fn frame_bound(bound: &Value) -> Option<(String, i128)> {
     match bound {
         Value::String(name) => match name.as_str() {
-            UNBOUNDED_PRECEDING => Some("UNBOUNDED PRECEDING".to_owned()),
-            UNBOUNDED_FOLLOWING => Some("UNBOUNDED FOLLOWING".to_owned()),
-            CURRENT_ROW => Some("CURRENT ROW".to_owned()),
+            UNBOUNDED_PRECEDING => Some(("UNBOUNDED PRECEDING".to_owned(), i128::MIN)),
+            UNBOUNDED_FOLLOWING => Some(("UNBOUNDED FOLLOWING".to_owned(), i128::MAX)),
+            CURRENT_ROW => Some(("CURRENT ROW".to_owned(), 0)),
             _ => None,
         },
         Value::Object(_) => {
             let (side, offset) = node_kind(bound)?;
             let offset = integer_literal(offset)?;
             match side {
-                "Preceding" => Some(format!("{offset} PRECEDING")),
-                "Following" => Some(format!("{offset} FOLLOWING")),
+                "Preceding" => Some((format!("{offset} PRECEDING"), -i128::from(offset))),
+                "Following" => Some((format!("{offset} FOLLOWING"), i128::from(offset))),
                 _ => None,
             }
         }
@@ -418,12 +437,13 @@ fn explicit_frame(frame: &Value) -> Option<String> {
     if !rows || !frame.get("exclude").is_none_or(Value::is_null) {
         return None;
     }
-    let start = frame_bound(frame.get("start")?)?;
-    let end = match frame.get("end") {
-        Some(Value::Null) | None => "CURRENT ROW".to_owned(),
+    let (start, from) = frame_bound(frame.get("start")?)?;
+    let (end, to) = match frame.get("end") {
+        Some(Value::Null) | None => ("CURRENT ROW".to_owned(), 0),
         Some(end) => frame_bound(end)?,
     };
-    Some(format!("ROWS BETWEEN {start} AND {end}"))
+    let inverted = from > to || from == i128::MAX || to == i128::MIN;
+    (!inverted).then(|| format!("ROWS BETWEEN {start} AND {end}"))
 }
 
 /// A sort, grouping or partition key; DuckDB orders and groups VARIANT keys differently.
@@ -435,6 +455,21 @@ pub(crate) fn grouping_key(key: Emitted, construct: &Construct) -> Result<Emitte
         )),
         _ => Ok(key),
     }
+}
+
+/// A VARIANT as Snowflake writes it, re-held as JSON, so DuckDB's equality of its text is VARIANT equality.
+pub(crate) fn canonical_variant(
+    value: Emitted,
+    construct: &Construct,
+    context: &Context<'_>,
+) -> Result<Emitted, Refusal> {
+    let _rule = context.log.rule(VARIANT_EQUALITY_BY_TEXT);
+    diverge(context, JSON_FIDELITY, construct)?;
+    compared_by_text((value.untainted, value.sourced), construct, context)?;
+    Ok(Emitted {
+        sql: json_output(&value.sql, context.log),
+        ..value
+    })
 }
 
 /// A partition key; a VARIANT partitions by Snowflake's text of it, keys in byte order.

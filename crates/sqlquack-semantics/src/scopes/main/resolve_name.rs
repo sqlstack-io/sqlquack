@@ -32,11 +32,13 @@ pub fn resolve_name<'s, A>(
         if qualifier.is_some_and(|qualifier| !target.same_identifier(&relation.alias, qualifier)) {
             continue;
         }
-        for column in relation
-            .columns
-            .iter()
-            .filter(|column| target.same_identifier(&column.name, name))
-        {
+        let hidden: &[String] = match qualifier {
+            Some(_) => &[],
+            None => &relation.merged,
+        };
+        for column in relation.columns.iter().filter(|column| {
+            target.same_identifier(&column.name, name) && !hidden.contains(&column.name)
+        }) {
             if !source.same_identifier(&column.name, name)
                 || qualifier
                     .is_some_and(|qualifier| !source.same_identifier(&relation.alias, qualifier))

@@ -1174,3 +1174,83 @@ pub(crate) const VARIANT_HELD_UNREAD: &str = "a VARIANT built from a FLOAT, whic
 pub const MAX_BY_FUNCTION: &str = "MAX_BY";
 /// Why removing duplicate VARIANTs refuses: DuckDB compares JSON as written, keys in their order.
 pub const DUPLICATE_VARIANTS: &str = "removing duplicate VARIANT values, which DuckDB compares by their JSON as written, not as VARIANT equality does";
+
+/// `$n` column positions over the only FROM source.
+pub const POSITIONAL_COLUMN: &str = "rule.positional_column";
+/// How the parsed tree marks a `$n` parameter.
+pub(crate) const DOLLAR_PARAMETER: &str = "Dollar";
+/// VALUES rows as a query or FROM source.
+pub const VALUES_ROWS: &str = "rule.values_rows";
+/// The column names Snowflake gives VALUES rows: COLUMN1, COLUMN2 and so on.
+pub(crate) const VALUES_COLUMN_PREFIX: &str = "COLUMN";
+/// JOIN ... USING.
+pub const JOIN_USING: &str = "rule.join_using";
+/// ASOF JOIN ... MATCH_CONDITION.
+pub const ASOF_JOIN: &str = "rule.asof_join";
+/// How the parsed tree names an ASOF join's kind.
+pub(crate) const ASOF_KIND: &str = "AsOf";
+/// The relation name given a FROM subquery written without an alias, which no source name can match.
+pub(crate) const UNALIASED_SUBQUERY_PREFIX: &str = "__SQLQUACK_SUBQUERY_";
+/// Text branches of COALESCE, NVL, IFF and CASE read as the other branches' type.
+pub const TEXT_BRANCHES: &str = "rule.text_branches";
+/// COALESCE, NVL, IFF and CASE whose branches are all untyped NULLs.
+pub const NULL_BRANCHES: &str = "rule.null_branches";
+/// The VARCHAR type's name.
+pub(crate) const VARCHAR_NAME: &str = "VARCHAR";
+/// Set operations reading a branch's VARIANT as text beside another branch's text.
+pub const VARIANT_TEXT_BRANCHES: &str = "rule.variant_text_branches";
+/// VARIANTs told apart by the text Snowflake writes for them, in DISTINCT and GROUP BY.
+pub const VARIANT_EQUALITY_BY_TEXT: &str = "rule.variant_equality_by_text";
+/// JAROWINKLER_SIMILARITY.
+pub const JARO_WINKLER: &str = "rule.jaro_winkler";
+/// FIRST_VALUE and LAST_VALUE over an explicit ROWS frame.
+pub const WINDOW_VALUE_FRAME: &str = "rule.window_value_frame";
+/// SUBSTR lengths computed from whole NUMBERs, negative ones as zero.
+pub const COMPUTED_SUBSTR_LENGTH: &str = "rule.computed_substr_length";
+/// DATEADD and TIMESTAMPADD amounts with a fraction, rounded half away from zero.
+pub const FRACTIONAL_DATE_AMOUNT: &str = "rule.fractional_date_amount";
+/// A DATE plus or minus a whole number of days.
+pub const DATE_DAY_ARITHMETIC: &str = "rule.date_day_arithmetic";
+/// The unit DATE arithmetic with a number adds.
+pub(crate) const DAY_UNIT: &str = "DAY";
+/// NULLIFZERO.
+pub const NULL_IF_ZERO_RULE: &str = "rule.null_if_zero";
+/// LN and EXP of a NUMBER or FLOAT.
+pub const LOGARITHM: &str = "rule.logarithm";
+/// The natural logarithm's name, beside EXP.
+pub(crate) const LN_NAME: &str = "LN";
+/// ARRAY_SORT of one array.
+pub const ARRAY_SORT_RULE: &str = "rule.array_sort";
+/// ARRAY_FLATTEN.
+pub const ARRAY_FLATTEN_RULE: &str = "rule.array_flatten";
+/// TO_ARRAY.
+pub const TO_ARRAY_RULE: &str = "rule.to_array";
+/// ARRAY_APPEND.
+pub const ARRAY_APPEND_RULE: &str = "rule.array_append";
+/// ARRAY_SLICE.
+pub const ARRAY_SLICE_RULE: &str = "rule.array_slice";
+/// ARRAY_GENERATE_RANGE.
+pub const ARRAY_RANGE_RULE: &str = "rule.array_range";
+/// ARRAY_SORT, which sorts ARRAY_AGG's values in the aggregate and other arrays as values.
+pub(crate) const SORTED_ARRAY_FUNCTION: &str = "ARRAY_SORT";
+/// REGEXP_COUNT and REGEXP_INSTR.
+pub const REGEXP_COUNTING: &str = "rule.regexp_counting";
+/// The recorded type of REGEXP_COUNT and REGEXP_INSTR.
+pub const REGEXP_COUNT_TYPE: SnowflakeType = SnowflakeType::Number {
+    precision: 18,
+    scale: 0,
+};
+/// SHA2 of text.
+pub const TEXT_SHA2: &str = "rule.text_sha2";
+/// SHA2's default digest size, the one DuckDB computes.
+pub(crate) const SHA2_DEFAULT_BITS: u64 = 256;
+/// The function decoding hexadecimal text to NULL rather than failing.
+pub(crate) const TRYING_HEX_DECODE: &str = "TRY_HEX_DECODE_STRING";
+/// Snowflake's message for HEX_DECODE_STRING of text that is not hexadecimal UTF-8.
+pub(crate) const HEX_DECODE_MESSAGE: &str = "The following string is not a legal hex-encoded value";
+/// DAYNAME.
+pub const DAY_NAME_RULE: &str = "rule.day_name";
+/// SQRT's name, beside LN and EXP.
+pub(crate) const SQRT_NAME: &str = "SQRT";
+/// TRY_TO_DOUBLE of a FLOAT, the value itself.
+pub const FLOAT_TO_DOUBLE: &str = "rule.float_to_double";

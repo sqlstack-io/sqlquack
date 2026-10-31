@@ -3,6 +3,7 @@
 #![forbid(unsafe_code)]
 
 pub mod aggregates;
+pub mod arrays;
 pub mod blocks;
 pub mod checking;
 pub mod floats;

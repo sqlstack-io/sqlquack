@@ -1,0 +1,231 @@
+# Array functions models use: sorting, flattening, set operations on arrays, slicing, ranges, and casts
+# through structured ARRAY types.
+category = "semi-structured-array"
+construct = "fn:ARRAY_SORT"
+session_profile = "utc-v1"
+
+[[case]]
+id = "array_sort_one_argument"
+description = "ARRAY_SORT of one argument over numbers, strings, mixed kinds, duplicates, JSON nulls, an empty array and NULL."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'[3,1,2,1]'"],
+  ["'[\"b\",\"a\",\"B\",\"\"]'"],
+  ["'[2,\"a\",true,null,1.5,[1],{\"k\":1}]'"],
+  ["'[null,2,null,1]'"],
+  ["'[]'"],
+  ["NULL"],
+  ["'[10,9,100,-1,0.5]'"],
+]
+query = "SELECT ARRAY_SORT(PARSE_JSON(s)) AS a, ARRAY_SORT(PARSE_JSON(s))::VARCHAR AS t FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "duplicates", "empty"]
+
+[[case]]
+id = "array_sort_of_aggregated_text"
+description = "ARRAY_SORT of ARRAY_AGG of text and of numbers, grouped, as models sort collected values."
+columns = [{ name = "g", type = "VARCHAR" }, { name = "s", type = "VARCHAR" }, { name = "n", type = "NUMBER(10,0)" }]
+rows = [
+  ["'p'", "'b'", "3"],
+  ["'p'", "'a'", "1"],
+  ["'p'", "NULL", "NULL"],
+  ["'p'", "'a'", "2"],
+  ["'q'", "'z'", "10"],
+]
+query = "SELECT g, ARRAY_SORT(ARRAY_AGG(s)) AS ss, ARRAY_SORT(ARRAY_AGG(n)) AS ns FROM input GROUP BY g ORDER BY g"
+order = "ordered"
+tags = ["null", "duplicates"]
+
+[[case]]
+id = "array_flatten"
+description = "ARRAY_FLATTEN of arrays of arrays one level deep, with empty and nested arrays, JSON null elements and NULL."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'[[1,2],[3]]'"],
+  ["'[[1,[2,3]],[],[\"a\"]]'"],
+  ["'[]'"],
+  ["'[[null],[1,1]]'"],
+  ["NULL"],
+]
+query = "SELECT ARRAY_FLATTEN(PARSE_JSON(s)) AS a FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "duplicates", "empty"]
+
+[[case]]
+id = "array_flatten_invalid_element"
+description = "ARRAY_FLATTEN of an array holding a non-array element."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [["'[[1],2]'"]]
+query = "SELECT ARRAY_FLATTEN(PARSE_JSON(s)) AS a FROM input"
+order = "ordered"
+tags = ["invalid"]
+
+[[case]]
+id = "array_flatten_null_element"
+description = "ARRAY_FLATTEN of an array holding a JSON null where an array is expected."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [["'[[1],null]'"]]
+query = "SELECT ARRAY_FLATTEN(PARSE_JSON(s)) AS a FROM input"
+order = "ordered"
+tags = ["invalid", "null"]
+
+[[case]]
+id = "to_array_values"
+description = "TO_ARRAY of text, numbers, a VARIANT array, a VARIANT object, JSON null and NULL."
+columns = [{ name = "s", type = "VARCHAR" }, { name = "n", type = "NUMBER(10,2)" }, { name = "j", type = "VARCHAR" }]
+rows = [
+  ["'a'", "1.50", "'[1,2]'"],
+  ["''", "0.00", "'{\"k\":1}'"],
+  ["NULL", "NULL", "'null'"],
+  ["'x'", "-2.00", "NULL"],
+  ["'y'", "3.00", "'[]'"],
+]
+query = "SELECT TO_ARRAY(s) AS a, TO_ARRAY(n) AS b, TO_ARRAY(PARSE_JSON(j)) AS c FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "empty", "duplicates"]
+
+[[case]]
+id = "array_set_functions"
+description = "ARRAY_INTERSECTION, ARRAYS_OVERLAP and ARRAY_DISTINCT over duplicates, mixed kinds, objects, JSON nulls, empty arrays and NULL."
+columns = [{ name = "a", type = "VARCHAR" }, { name = "b", type = "VARCHAR" }]
+rows = [
+  ["'[1,2,2,3]'", "'[2,2,2,4]'"],
+  ["'[\"a\",\"b\"]'", "'[\"B\",\"c\"]'"],
+  ["'[1,\"1\",1.0]'", "'[1]'"],
+  ["'[{\"x\":1,\"y\":2}]'", "'[{\"y\":2,\"x\":1}]'"],
+  ["'[null,1]'", "'[null]'"],
+  ["'[]'", "'[1]'"],
+  ["NULL", "'[1]'"],
+  ["'[1]'", "NULL"],
+]
+query = "SELECT ARRAY_INTERSECTION(PARSE_JSON(a), PARSE_JSON(b)) AS i, ARRAYS_OVERLAP(PARSE_JSON(a), PARSE_JSON(b)) AS o, ARRAY_DISTINCT(PARSE_JSON(a)) AS d FROM input ORDER BY ordinal"
+order = "ordered"
+expected_divergence = "json_fidelity"
+tags = ["null", "duplicates", "empty"]
+
+[[case]]
+id = "array_append_and_slice"
+description = "ARRAY_APPEND of values of several types, and ARRAY_SLICE with positive, negative, out-of-range and reversed bounds."
+columns = [{ name = "a", type = "VARCHAR" }, { name = "x", type = "NUMBER(10,2)" }, { name = "lo", type = "NUMBER(10,0)" }, { name = "hi", type = "NUMBER(10,0)" }]
+rows = [
+  ["'[1,2,3,4,5]'", "1.50", "1", "3"],
+  ["'[1,2,3,4,5]'", "NULL", "-2", "5"],
+  ["'[1,2,3]'", "0.00", "0", "10"],
+  ["'[1,2,3]'", "2.00", "2", "1"],
+  ["'[]'", "3.00", "0", "1"],
+  ["NULL", "1.00", "0", "1"],
+  ["'[1,2,3]'", "1.00", "NULL", "1"],
+]
+query = "SELECT ARRAY_APPEND(PARSE_JSON(a), x) AS ap, ARRAY_APPEND(PARSE_JSON(a), 'z') AS at, ARRAY_SLICE(PARSE_JSON(a), lo, hi) AS sl FROM input ORDER BY ordinal"
+order = "ordered"
+expected_divergence = "json_fidelity"
+tags = ["null", "empty", "duplicates"]
+
+[[case]]
+id = "array_generate_range"
+description = "ARRAY_GENERATE_RANGE with and without a step, empty ranges, negative steps and NULL bounds."
+columns = [{ name = "lo", type = "NUMBER(10,0)" }, { name = "hi", type = "NUMBER(10,0)" }, { name = "st", type = "NUMBER(10,0)" }]
+rows = [
+  ["0", "5", "1"],
+  ["0", "10", "3"],
+  ["5", "0", "-2"],
+  ["3", "3", "1"],
+  ["5", "0", "1"],
+  ["NULL", "3", "1"],
+  ["-2", "2", "1"],
+]
+query = "SELECT ARRAY_GENERATE_RANGE(lo, hi) AS a, ARRAY_GENERATE_RANGE(lo, hi, st) AS b FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "empty", "duplicates"]
+
+[[case]]
+id = "array_generate_range_zero_step"
+description = "ARRAY_GENERATE_RANGE with a step of zero."
+columns = [{ name = "lo", type = "NUMBER(10,0)" }]
+rows = [["0"]]
+query = "SELECT ARRAY_GENERATE_RANGE(lo, 5, 0) AS a FROM input"
+order = "ordered"
+tags = ["invalid"]
+
+[[case]]
+id = "structured_array_casts"
+description = "Arrays cast to ARRAY(VARCHAR) and ARRAY(NUMBER(38,10)) and back to ARRAY, from text, numbers, JSON nulls and NULL."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'[\"a\",\"b\"]'"],
+  ["'[1,2.5,\"3\"]'"],
+  ["'[null,\"x\"]'"],
+  ["'[]'"],
+  ["NULL"],
+]
+query = "SELECT CAST(CAST(PARSE_JSON(s) AS ARRAY(VARCHAR)) AS ARRAY) AS t, ARRAY_SIZE(CAST(PARSE_JSON(s) AS ARRAY(VARCHAR))) AS n FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "empty", "duplicates"]
+
+[[case]]
+id = "structured_number_array_casts"
+description = "Arrays of numbers and numeric text cast to ARRAY(NUMBER(38,10)) and back to ARRAY."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'[1,2.5,\"3\"]'"],
+  ["'[null,0.0000000001]'"],
+  ["'[]'"],
+  ["NULL"],
+]
+query = "SELECT CAST(CAST(PARSE_JSON(s) AS ARRAY(NUMBER(38, 10))) AS ARRAY) AS t FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "empty", "duplicates"]
+
+[[case]]
+id = "structured_number_array_invalid"
+description = "An array holding text that is not a number cast to ARRAY(NUMBER(38,10))."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [["'[1,\"x\"]'"]]
+query = "SELECT CAST(PARSE_JSON(s) AS ARRAY(NUMBER(38, 10))) AS t FROM input"
+order = "ordered"
+tags = ["invalid"]
+
+[[case]]
+id = "array_set_functions_exact"
+description = "ARRAY_INTERSECTION, ARRAYS_OVERLAP and ARRAY_DISTINCT over duplicates, strings differing in case, objects with keys in different orders, JSON nulls and no shared element."
+columns = [{ name = "a", type = "VARCHAR" }, { name = "b", type = "VARCHAR" }]
+rows = [
+  ["'[3,1,3,2,1]'", "'[1,3,3,3]'"],
+  ["'[\"a\",\"A\",\"a\"]'", "'[\"A\"]'"],
+  ["'[1,\"1\"]'", "'[\"1\"]'"],
+  ["'[{\"y\":[1,2],\"x\":1},{\"x\":1,\"y\":[1,2]}]'", "'[{\"x\":1,\"y\":[1,2]}]'"],
+  ["'[null,null,2]'", "'[2,null]'"],
+  ["'[true,false]'", "'[\"true\"]'"],
+  ["'[]'", "'[]'"],
+]
+query = "SELECT ARRAY_INTERSECTION(PARSE_JSON(a), PARSE_JSON(b)) AS i, ARRAYS_OVERLAP(PARSE_JSON(a), PARSE_JSON(b)) AS o, ARRAY_DISTINCT(PARSE_JSON(a)) AS d, ARRAY_DISTINCT(PARSE_JSON(b)) AS e FROM input ORDER BY ordinal"
+order = "ordered"
+expected_divergence = "json_fidelity"
+tags = ["null", "duplicates", "empty"]
+
+[[case]]
+id = "array_append_values"
+description = "ARRAY_APPEND of text, whole and scaled numbers, booleans, dates and VARIANTs, and ARRAY_SLICE of the result."
+columns = [{ name = "a", type = "VARCHAR" }, { name = "n", type = "NUMBER(10,2)" }, { name = "s", type = "VARCHAR" }]
+rows = [
+  ["'[1,2]'", "1.50", "'x'"],
+  ["'[]'", "-2.00", "''"],
+  ["'[\"a\"]'", "0.00", "'é'"],
+]
+query = "SELECT ARRAY_APPEND(PARSE_JSON(a), n) AS an, ARRAY_APPEND(PARSE_JSON(a), s) AS ast, ARRAY_APPEND(PARSE_JSON(a), 7) AS ai, ARRAY_APPEND(PARSE_JSON(a), TRUE) AS ab, ARRAY_APPEND(PARSE_JSON(a), PARSE_JSON('{\"k\":1}')) AS av, ARRAY_SLICE(ARRAY_APPEND(PARSE_JSON(a), s), -2, 10) AS sl FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["empty", "duplicates", "null"]
+
+[[case]]
+id = "array_sort_kinds_ambiguous"
+description = "ARRAY_SORT of arrays holding two different objects, two different arrays, and equal numbers spelled differently."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'[{\"b\":1},{\"a\":2},{\"a\":1}]'"],
+  ["'[[2],[1,5],[1]]'"],
+  ["'[2,1.0,1,0.5]'"],
+]
+query = "SELECT ARRAY_SORT(PARSE_JSON(s))::VARCHAR AS t FROM input ORDER BY ordinal"
+order = "ordered"
+expected_divergence = "array_sort_order"
+tags = ["duplicates", "null", "empty"]

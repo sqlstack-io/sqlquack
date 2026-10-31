@@ -53,12 +53,12 @@ use crate::conversion::_helpers::support::tree::{
 };
 use crate::conversion::constants::{
     CURRENT_TIME, CURRENT_TIME_RULE, DATE_ARITHMETIC, DATE_FORMAT_RULE, DATE_NAME, DATE_PART_RULE,
-    DATE_PARTS, DATE_TEXT_SPELLING, DECIMAL_EPOCH_RULE, FROM_PARTS, MAX_FRACTION_DIGITS_U8,
-    MICROSECOND_DIGITS, SCALE_DIGITS, SESSION_TIMEZONE_UTC, TEMPORAL_TEXT_FIELDS,
-    TEMPORAL_TEXT_FORMAT, TEMPORAL_TEXT_SEPARATORS, TEXT_TO_TIME_RULE, TEXT_TO_TIMESTAMP_RULE,
-    TIME_ARITHMETIC, TIME_ZONE_CONVERSION, TIMESTAMP_FORMAT_RULE, TIMESTAMP_RANGE,
-    TIMESTAMP_TIME_RULE, TO_DATE_TEMPORAL, UNIT_ALIASES, UTC_OFFSET_ARITHMETIC, UTC_ZONE,
-    ZONE_COLUMNS, ZONED_PARTS,
+    DATE_PARTS, DATE_TEXT_SPELLING, DAY_NAME_RULE, DECIMAL_EPOCH_RULE, FRACTIONAL_DATE_AMOUNT,
+    FROM_PARTS, MAX_FRACTION_DIGITS_U8, MICROSECOND_DIGITS, SCALE_DIGITS, SESSION_TIMEZONE_UTC,
+    TEMPORAL_TEXT_FIELDS, TEMPORAL_TEXT_FORMAT, TEMPORAL_TEXT_SEPARATORS, TEXT_TO_TIME_RULE,
+    TEXT_TO_TIMESTAMP_RULE, TIME_ARITHMETIC, TIME_ZONE_CONVERSION, TIMESTAMP_FORMAT_RULE,
+    TIMESTAMP_RANGE, TIMESTAMP_TIME_RULE, TO_DATE_TEMPORAL, UNIT_ALIASES, UTC_OFFSET_ARITHMETIC,
+    UTC_ZONE, ZONE_COLUMNS, ZONED_PARTS,
 };
 
 /// The canonical Snowflake name of a unit written as a keyword, string or parsed field name.
@@ -283,6 +283,30 @@ pub(crate) fn date_trunc(
     ))
 }
 
+/// DAYNAME of a DATE or TIMESTAMP_NTZ: the day's three-letter English name.
+pub(crate) fn day_name(
+    arguments: &[Value],
+    construct: &Construct,
+    site: Site<'_>,
+) -> Result<Emitted, Refusal> {
+    let _rule = site.context.log.rule(DAY_NAME_RULE);
+    let [value] = arguments else {
+        return Err(outside_conditions(
+            construct.clone(),
+            "DAYNAME takes one argument".to_owned(),
+        ));
+    };
+    let (operand, _) = temporal_or_refused(
+        convert_expression(value, site)?,
+        construct,
+        site.context.log,
+    )?;
+    Ok(Emitted::new(
+        format!("strftime({}, '%a')", operand.sql),
+        SnowflakeType::Varchar,
+    ))
+}
+
 /// DATEADD(unit, amount, value) with a NUMBER(p,0) amount, keeping the value's type.
 pub(crate) fn date_add(
     (unit, amount, value): (&Value, &Value, &Value),
@@ -292,10 +316,21 @@ pub(crate) fn date_add(
     let _rule = site.context.log.rule(DATE_ARITHMETIC);
     let refuse = |reason: String| outside_conditions(construct.clone(), reason);
     let unit = unit_name(unit).ok_or_else(|| refuse("an unreadable unit".to_owned()))?;
-    let amount = convert_expression(amount, site)?;
-    let SnowflakeType::Number { scale: 0, .. } = amount.data_type else {
-        return Err(refuse(format!("a {} amount", amount.data_type)));
-    };
+    let mut amount = convert_expression(amount, site)?;
+    match amount.data_type {
+        SnowflakeType::Number { scale: 0, .. } => {}
+        SnowflakeType::Number { .. } | SnowflakeType::Float => {
+            let _rule = site.context.log.rule(FRACTIONAL_DATE_AMOUNT);
+            amount = Emitted::new(
+                format!("round({})", amount.sql),
+                SnowflakeType::Number {
+                    precision: 38,
+                    scale: 0,
+                },
+            );
+        }
+        other => return Err(refuse(format!("a {other} amount"))),
+    }
     let (operand, zoned) = clock_operand(value, construct, site)?;
     let amount = Emitted::new(
         date_add_amount(&amount.sql, site.context.log),

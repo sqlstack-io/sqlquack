@@ -66,3 +66,33 @@ fn given_a_scope_when_resolving_names_then_columns_aliases_and_outer_queries_res
         );
     }
 }
+
+#[test]
+fn given_a_using_join_when_resolving_its_key_then_a_bare_name_reads_the_earlier_side() {
+    let mut joined = relation("R", &["K", "W"]);
+    joined.merged.push("K".to_owned());
+    let scope: Scope<'_, &'static str> = Scope::new(vec![relation("L", &["K", "V"]), joined], None);
+    let test_cases = [
+        ResolveNameTestCase {
+            description: "a bare USING key reads the earlier side's column",
+            name: (None, "K"),
+            expected_outcome: Ok("L.K"),
+        },
+        ResolveNameTestCase {
+            description: "a qualified USING key reads its own side's column",
+            name: (Some("R"), "K"),
+            expected_outcome: Ok("R.K"),
+        },
+    ];
+    for test_case in test_cases {
+        assert_eq!(
+            resolved(&scope, test_case.name),
+            test_case
+                .expected_outcome
+                .map(str::to_owned)
+                .map_err(str::to_owned),
+            "{}",
+            test_case.description
+        );
+    }
+}

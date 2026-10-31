@@ -10,4 +10,5 @@ pub mod numeric_modulo;
 pub mod numeric_multiply;
 pub mod ranking;
 pub mod sum;
+pub mod text_reading;
 pub mod unify;

@@ -12,6 +12,8 @@ use sqlquack_duckdb::semi_structured::constants::JSON_FIDELITY;
 use sqlquack_duckdb::semi_structured::main::json_number_equal::json_number_equal;
 use sqlquack_duckdb::semi_structured::main::json_output::json_output;
 use sqlquack_duckdb::semi_structured::main::json_text::json_text;
+use sqlquack_duckdb::temporal::main::date_add_amount::date_add_amount;
+use sqlquack_duckdb::temporal::main::date_add_value::date_add_value;
 use sqlquack_duckdb::text::constants::TEXT_NUMBER_SCALE;
 use sqlquack_duckdb::text::main::compared_number_range::compared_number_range;
 use sqlquack_duckdb::text::main::compared_number_text::compared_number_text;
@@ -34,9 +36,9 @@ use crate::conversion::_helpers::support::typed_leaves::compared_by_text;
 use sqlquack_duckdb::blocks::constants::NANOSECOND_DIGITS;
 
 use crate::conversion::constants::{
-    COMPARISON, DATE_LITERAL_COMPARISON, DECIMAL_ARITHMETIC, DECIMAL_DIVISION, DECIMAL_MODULO,
-    FLOAT_ARITHMETIC, FLOAT_MODULO, LOGIC, MOD_PAIR, NULL_SAFE_COMPARISON, NUMERIC_RANGE,
-    TEXT_NUMBER_COMPARISON, VARIANT_EQUALITY,
+    COMPARISON, DATE_DAY_ARITHMETIC, DATE_LITERAL_COMPARISON, DAY_UNIT, DECIMAL_ARITHMETIC,
+    DECIMAL_DIVISION, DECIMAL_MODULO, FLOAT_ARITHMETIC, FLOAT_MODULO, LOGIC, MOD_PAIR,
+    NULL_SAFE_COMPARISON, NUMERIC_RANGE, TEXT_NUMBER_COMPARISON, VARIANT_EQUALITY,
 };
 
 /// Characters in a `YYYY-MM-DD` date.
@@ -98,6 +100,12 @@ pub(crate) fn arithmetic(kind: &str, payload: &Value, site: Site<'_>) -> Result<
     let operator = Arithmetic::of(kind);
     let (left, right) = operands(kind, payload, site)?;
     let log = site.context.log;
+    if let (SnowflakeType::Date, SnowflakeType::Number { scale: 0, .. }) =
+        (left.data_type, right.data_type)
+        && matches!(operator, Arithmetic::Add | Arithmetic::Subtract)
+    {
+        return date_plus_days((&left, &right), operator, &construct, site.context);
+    }
     let rule = match (left.data_type, right.data_type, operator) {
         (SnowflakeType::Number { .. }, SnowflakeType::Number { .. }, Arithmetic::Divide) => {
             DECIMAL_DIVISION
@@ -132,6 +140,25 @@ pub(crate) fn arithmetic(kind: &str, payload: &Value, site: Site<'_>) -> Result<
             right.data_type
         ))),
     }
+}
+
+/// A DATE plus or minus a whole number of days, a DATE as recorded.
+fn date_plus_days(
+    (date, days): (&Emitted, &Emitted),
+    operator: Arithmetic,
+    construct: &Construct,
+    context: &Context<'_>,
+) -> Result<Emitted, Refusal> {
+    let log = context.log;
+    let _rule = log.rule(DATE_DAY_ARITHMETIC);
+    let amount = match operator {
+        Arithmetic::Subtract => format!("(-({}))", days.sql),
+        _ => days.sql.clone(),
+    };
+    let amount = format!("CAST({} AS BIGINT)", date_add_amount(&amount, log));
+    let sql = date_add_value(&date.sql, (DAY_UNIT, &amount), SnowflakeType::Date, log)
+        .map_err(|reason| outside_conditions(construct.clone(), reason))?;
+    Ok(Emitted::new(sql, SnowflakeType::Date))
 }
 
 /// `a % b` of two NUMBERs; a zero divisor fails as DuckDB's division by zero does.

@@ -35,6 +35,7 @@ rows = [
 ]
 query = "SELECT t.k, e:kind::VARCHAR AS kind FROM input t, LATERAL (SELECT TRY_PARSE_JSON(t.s) AS e) WHERE t.side = 'u' ORDER BY t.k, kind"
 order = "ordered"
+expected_divergence = "json_fidelity"
 tags = ["null", "duplicates", "empty-input"]
 
 [[case]]

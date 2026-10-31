@@ -30,6 +30,7 @@ pub(crate) fn converted_body(
         vec![ScopeRelation {
             alias: PARAMETERS_RELATION.to_owned(),
             columns: spec.arguments.clone(),
+            merged: Vec::new(),
         }],
         None,
     );

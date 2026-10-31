@@ -116,7 +116,7 @@ pub(crate) const SOURCE_VARIANT_CHAIN: &[ShopFile] = &[
 pub(crate) const CHAIN: &[ShopFile] = &[
     ShopFile {
         path: "a.sql",
-        contents: "SELECT JAROWINKLER_SIMILARITY(name, 'gift') AS score, customer_id \
+        contents: "SELECT STRTOK(name, 'gift') AS score, customer_id \
                    FROM __source(\"shop\", \"customers\")",
     },
     ShopFile {

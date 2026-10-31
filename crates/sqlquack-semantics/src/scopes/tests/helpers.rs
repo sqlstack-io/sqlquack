@@ -13,6 +13,7 @@ pub(crate) fn relation(alias: &str, columns: &[&str]) -> ScopeRelation {
             .iter()
             .map(|name| ColumnSpec::new(*name, SnowflakeType::Varchar))
             .collect(),
+        merged: Vec::new(),
     }
 }
 

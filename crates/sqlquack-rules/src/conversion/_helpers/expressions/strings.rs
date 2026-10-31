@@ -2,13 +2,20 @@
 
 use serde_json::Value;
 use sqlquack_core::classification::models::Construct;
+use sqlquack_core::failures::constants::HEX_DECODE_FAILED;
+use sqlquack_core::failures::main::tagged_message::tagged_message;
 use sqlquack_core::refusals::main::missing::missing;
 use sqlquack_core::refusals::main::outside_conditions::outside_conditions;
 use sqlquack_core::refusals::models::Refusal;
 use sqlquack_duckdb::blocks::main::full_case_lower::full_case_lower;
 use sqlquack_duckdb::blocks::main::full_case_upper::full_case_upper;
 use sqlquack_duckdb::blocks::main::null_propagating_concat::null_propagating_concat;
+use sqlquack_duckdb::blocks::main::string_literal::string_literal;
 use sqlquack_duckdb::floats::main::float_to_text::float_to_text;
+use sqlquack_duckdb::raises::main::raised::raised;
+use sqlquack_duckdb::semi_structured::constants::JSON_FIDELITY;
+use sqlquack_duckdb::semi_structured::main::json_text::json_text;
+use sqlquack_duckdb::text::constants::TEXT_SIMILARITY;
 use sqlquack_duckdb::text::constants::{
     HEX_LOWER_CASE, HEX_UPPER_CASE, INITCAP_DEFAULT_DELIMITERS, INITCAP_TEXT,
 };
@@ -16,6 +23,7 @@ use sqlquack_duckdb::text::main::base64_bytes::base64_bytes;
 use sqlquack_duckdb::text::main::bytes_substring::bytes_substring;
 use sqlquack_duckdb::text::main::bytes_text::bytes_text;
 use sqlquack_duckdb::text::main::character_edit_distance::character_edit_distance;
+use sqlquack_duckdb::text::main::character_similarity::character_similarity;
 use sqlquack_duckdb::text::main::code_point_text::code_point_text;
 use sqlquack_duckdb::text::main::hex_decoded_text::hex_decoded_text;
 use sqlquack_duckdb::text::main::hex_text::hex_text;
@@ -28,12 +36,14 @@ use crate::conversion::_helpers::support::divergence::diverge;
 use crate::conversion::_helpers::support::scope::{Emitted, Literal};
 use crate::conversion::_helpers::support::site::Site;
 use crate::conversion::_helpers::support::tree::{
-    field, function_construct, list, node_construct, node_kind, payload_object, require_understood,
+    field, function_construct, integer_literal, list, node_construct, node_kind, payload_object,
+    require_understood,
 };
 use crate::conversion::constants::{
-    BASE64_BINARY, BASE64_DECODER, CASE_MAPPING, CONCAT, CONCAT_WS, EDIT_DISTANCE, TEXT_AFFIX,
-    TEXT_CHR, TEXT_CONTAINS, TEXT_HEX, TEXT_HEX_DECODE, TEXT_INITCAP, TEXT_MD5,
-    TEXT_POSITION_LIMIT, TRIM,
+    BASE64_BINARY, BASE64_DECODER, CASE_MAPPING, CONCAT, CONCAT_WS, EDIT_DISTANCE,
+    HEX_DECODE_MESSAGE, JARO_WINKLER, SHA2_DEFAULT_BITS, TEXT_AFFIX, TEXT_CHR, TEXT_CONTAINS,
+    TEXT_HEX, TEXT_HEX_DECODE, TEXT_INITCAP, TEXT_MD5, TEXT_POSITION_LIMIT, TEXT_SHA2, TRIM,
+    TRYING_HEX_DECODE, VARIANT_TO_VARCHAR,
 };
 
 /// What TRIM removes without a character list: spaces only, as in Snowflake.
@@ -48,11 +58,22 @@ pub(crate) fn text_operand(
     let emitted = convert_expression(node, site)?;
     match emitted.data_type {
         SnowflakeType::Varchar | SnowflakeType::Null => Ok(emitted.sql),
+        SnowflakeType::Date => Ok(format!("CAST({} AS VARCHAR)", emitted.sql)),
+        SnowflakeType::SemiStructured if !emitted.is_variant_held() => {
+            variant_as_text(&emitted, site)
+        }
         other => Err(outside_conditions(
             construct.clone(),
             format!("a {other} operand needs an implicit conversion to text"),
         )),
     }
+}
+
+/// A JSON-held VARIANT where text is expected, read as `::VARCHAR` reads it.
+fn variant_as_text(emitted: &Emitted, site: Site<'_>) -> Result<String, Refusal> {
+    let _rule = site.context.log.rule(VARIANT_TO_VARCHAR);
+    diverge(site.context, JSON_FIDELITY, &node_construct("cast"))?;
+    Ok(json_text(&emitted.sql, site.context.log))
 }
 
 /// STARTSWITH or ENDSWITH on VARCHAR operands.
@@ -113,6 +134,31 @@ pub(crate) fn text_md5(
     };
     let text = text_operand(text, construct, site)?;
     Ok(Emitted::new(format!("md5({text})"), SnowflakeType::Varchar))
+}
+
+/// JAROWINKLER_SIMILARITY(a, b): Jaro-Winkler similarity of the characters ignoring case, 0 to 100.
+pub(crate) fn jaro_winkler(
+    arguments: &[Value],
+    construct: &Construct,
+    site: Site<'_>,
+) -> Result<Emitted, Refusal> {
+    let _rule = site.context.log.rule(JARO_WINKLER);
+    let [left, right] = arguments else {
+        return Err(outside_conditions(
+            construct.clone(),
+            "JAROWINKLER_SIMILARITY takes two arguments".to_owned(),
+        ));
+    };
+    let left = text_operand(left, construct, site)?;
+    let right = text_operand(right, construct, site)?;
+    diverge(site.context, TEXT_SIMILARITY, construct)?;
+    Ok(Emitted::new(
+        character_similarity(&left, &right, site.context.log),
+        SnowflakeType::Number {
+            precision: 4,
+            scale: 0,
+        },
+    ))
 }
 
 /// EDITDISTANCE(a, b): Levenshtein distance in characters, as Snowflake's NUMBER(9,0).
@@ -246,11 +292,38 @@ pub(crate) fn concatenate(
     site: Site<'_>,
 ) -> Result<Emitted, Refusal> {
     let _rule = site.context.log.rule(CONCAT);
-    let texts = operand_texts(parts, construct, site)?;
-    Ok(Emitted::new(
-        null_propagating_concat(&texts, site.context.log),
-        SnowflakeType::Varchar,
-    ))
+    let emitted = parts
+        .iter()
+        .map(|part| convert_expression(part, site))
+        .collect::<Result<Vec<Emitted>, Refusal>>()?;
+    let mut folded = String::new();
+    for part in &emitted {
+        match &part.literal {
+            Some(Literal::Text(text)) => folded.push_str(text),
+            _ => {
+                let mut texts: Vec<String> = Vec::with_capacity(emitted.len());
+                for part in &emitted {
+                    texts.push(emitted_text(part, construct, site)?);
+                }
+                return Ok(Emitted::new(
+                    null_propagating_concat(&texts, site.context.log),
+                    SnowflakeType::Varchar,
+                ));
+            }
+        }
+    }
+    Ok(text_constant(folded, site))
+}
+
+/// A constant text, carried as a literal so arguments that must be literals accept it.
+fn text_constant(text: String, site: Site<'_>) -> Emitted {
+    Emitted {
+        literal: Some(Literal::Text(text.clone())),
+        ..Emitted::new(
+            string_literal(&text, site.context.log),
+            SnowflakeType::Varchar,
+        )
+    }
 }
 
 /// Each operand as text: VARCHAR as it is, others as Snowflake's `::VARCHAR` writes them.
@@ -261,23 +334,35 @@ fn operand_texts(
 ) -> Result<Vec<String>, Refusal> {
     let mut texts: Vec<String> = Vec::with_capacity(parts.len());
     for part in parts {
-        let emitted = convert_expression(part, site)?;
-        let text = match emitted.data_type {
-            SnowflakeType::Varchar | SnowflakeType::Null => emitted.sql,
-            SnowflakeType::Number { .. } | SnowflakeType::Boolean | SnowflakeType::Date => {
-                format!("CAST({} AS VARCHAR)", emitted.sql)
-            }
-            SnowflakeType::Float => float_to_text(&emitted.sql, site.context.log),
-            other => {
-                return Err(outside_conditions(
-                    construct.clone(),
-                    format!("concatenating {other} needs Snowflake's text formatting for it"),
-                ));
-            }
-        };
-        texts.push(text);
+        texts.push(emitted_text(
+            &convert_expression(part, site)?,
+            construct,
+            site,
+        )?);
     }
     Ok(texts)
+}
+
+/// An operand as text: VARCHAR as it is, others as Snowflake's `::VARCHAR` writes them.
+fn emitted_text(
+    emitted: &Emitted,
+    construct: &Construct,
+    site: Site<'_>,
+) -> Result<String, Refusal> {
+    match emitted.data_type {
+        SnowflakeType::Varchar | SnowflakeType::Null => Ok(emitted.sql.clone()),
+        SnowflakeType::Number { .. } | SnowflakeType::Boolean | SnowflakeType::Date => {
+            Ok(format!("CAST({} AS VARCHAR)", emitted.sql))
+        }
+        SnowflakeType::Float => Ok(float_to_text(&emitted.sql, site.context.log)),
+        SnowflakeType::SemiStructured if !emitted.is_variant_held() => {
+            variant_as_text(emitted, site)
+        }
+        other => Err(outside_conditions(
+            construct.clone(),
+            format!("concatenating {other} needs Snowflake's text formatting for it"),
+        )),
+    }
 }
 
 /// INITCAP(s) and INITCAP(s, delimiters) with literal delimiters among space, `_` and `-`.
@@ -328,6 +413,13 @@ pub(crate) fn chr(
         ));
     };
     let code = convert_expression(code, site)?;
+    if let Some(Literal::Number(digits)) = &code.literal
+        && let Ok(point) = digits.parse::<u32>()
+        && point > 0
+        && let Some(character) = char::from_u32(point)
+    {
+        return Ok(text_constant(character.to_string(), site));
+    }
     match code.data_type {
         SnowflakeType::Number { scale: 0, .. } | SnowflakeType::Null => Ok(Emitted::new(
             code_point_text(&code.sql, site.context.log),
@@ -515,6 +607,7 @@ fn bytes_substring_of(
 
 /// TRY_HEX_DECODE_STRING(s): the text its hexadecimal digits spell, or NULL.
 pub(crate) fn try_hex_decode(
+    name: &str,
     arguments: &[Value],
     construct: &Construct,
     site: Site<'_>,
@@ -523,12 +616,43 @@ pub(crate) fn try_hex_decode(
     let [text] = arguments else {
         return Err(outside_conditions(
             construct.clone(),
-            "TRY_HEX_DECODE_STRING takes one argument".to_owned(),
+            format!("{name} takes one argument"),
         ));
     };
     let text = text_operand(text, construct, site)?;
+    let decoded = hex_decoded_text(&text, site.context.log);
+    let sql = match name {
+        TRYING_HEX_DECODE => decoded,
+        _ => strict_hex_decoded(&text, &decoded),
+    };
+    Ok(Emitted::new(sql, SnowflakeType::Varchar))
+}
+
+/// HEX_DECODE_STRING: the decoded text, failing with error 100115 where TRY_ gives NULL.
+fn strict_hex_decoded(text: &str, decoded: &str) -> String {
+    format!(
+        "list_transform([struct_pack(t := {text}, d := {decoded})], lambda h: CASE \
+         WHEN h['t'] IS NOT NULL AND h['d'] IS NULL THEN CAST({} AS VARCHAR) ELSE h['d'] END)[1]",
+        raised(&tagged_message(HEX_DECODE_FAILED, HEX_DECODE_MESSAGE))
+    )
+}
+
+/// SHA2 of text with 256 bits, the default: 64 lower-case hex digits of its UTF-8 bytes' digest.
+pub(crate) fn text_sha2(
+    arguments: &[Value],
+    construct: &Construct,
+    site: Site<'_>,
+) -> Result<Emitted, Refusal> {
+    let _rule = site.context.log.rule(TEXT_SHA2);
+    let refuse = |reason: &str| outside_conditions(construct.clone(), reason.to_owned());
+    let text = match arguments {
+        [text] => text,
+        [text, bits] if integer_literal(bits) == Some(SHA2_DEFAULT_BITS) => text,
+        _ => return Err(refuse("SHA2 with a digest size other than 256 bits")),
+    };
+    let text = text_operand(text, construct, site)?;
     Ok(Emitted::new(
-        hex_decoded_text(&text, site.context.log),
+        format!("sha256({text})"),
         SnowflakeType::Varchar,
     ))
 }

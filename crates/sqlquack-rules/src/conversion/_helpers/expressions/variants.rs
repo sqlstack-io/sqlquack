@@ -22,6 +22,7 @@ use sqlquack_duckdb::variants::main::json_object_pick::json_object_pick;
 use sqlquack_duckdb::variants::main::json_split::json_split;
 use sqlquack_snowflake::typing::models::SnowflakeType;
 
+use crate::conversion::_helpers::expressions::arrays::array_function;
 use crate::conversion::_helpers::expressions::held::{built, leaves, read_json};
 use crate::conversion::_helpers::expressions::objects::{
     refused, semi_structured, text_literal, variant,
@@ -43,8 +44,8 @@ use crate::conversion::constants::{
     ARRAY_AGG_RULE, ARRAY_CAT_RULE, ARRAY_COMPACT_RULE, ARRAY_CONSTRUCT_COMPACT_RULE,
     ARRAY_CONSTRUCT_RULE, ARRAY_CONTAINS_RULE, ARRAY_EXCEPT_RULE, ARRAY_POSITION_RULE,
     ARRAY_POSITION_TYPE, ARRAY_SIZE_RULE, ARRAY_TO_STRING_RULE, FUNCTION_KIND, OBJECT_KEYS_RULE,
-    OBJECT_PICK_RULE, PICKED_ARRAY_FUNCTIONS, SPLIT_RULE, TO_VARIANT_RULE, TYPED_CHECKS,
-    VARIANT_KIND_RULE, VARIANT_KINDS, VARIANT_TYPED_CHECK,
+    OBJECT_PICK_RULE, PICKED_ARRAY_FUNCTIONS, SORTED_ARRAY_FUNCTION, SPLIT_RULE, TO_VARIANT_RULE,
+    TYPED_CHECKS, VARIANT_KIND_RULE, VARIANT_KINDS, VARIANT_TYPED_CHECK,
 };
 
 /// A VARIANT operand, or a NULL literal as a NULL VARIANT.
@@ -58,7 +59,7 @@ fn variant_or_null(node: &Value, construct: &Construct, site: Site<'_>) -> Resul
 }
 
 /// ARRAY_CONSTRUCT, or with `compact` ARRAY_CONSTRUCT_COMPACT, of `values`, held when typed.
-fn array_construct(
+pub(crate) fn array_construct(
     values: &[Value],
     compact: bool,
     construct: &Construct,
@@ -236,6 +237,8 @@ pub(crate) fn variant_function(
             };
             Ok(Emitted::new(sql, SnowflakeType::Boolean))
         }
+        (SORTED_ARRAY_FUNCTION, [_]) => array_function(name, arguments, construct, site)
+            .unwrap_or_else(|| Err(refused(construct, &format!("{name} of one argument")))),
         (_, [value]) => match VARIANT_KINDS.iter().find(|(function, _)| *function == name) {
             Some((_, kind)) => {
                 let _rule = log.rule(VARIANT_KIND_RULE);

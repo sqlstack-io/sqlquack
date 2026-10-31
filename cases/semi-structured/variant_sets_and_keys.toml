@@ -1,0 +1,159 @@
+# VARIANT values through set operations, grouping and DISTINCT: values built from FLOATs beside
+# JSON-read values, keys written in different orders, and numbers spelled differently.
+category = "semi-structured-output"
+construct = "node:union"
+session_profile = "utc-v1"
+
+[[case]]
+id = "union_objects_built_from_floats"
+description = "UNION ALL of objects built from rows holding FLOATs in one branch and NUMBERs in the other, cast to VARIANT, kept and read back."
+columns = [{ name = "f", type = "FLOAT" }, { name = "n", type = "NUMBER(10,2)" }, { name = "s", type = "VARCHAR" }]
+rows = [
+  ["1.5", "2.25", "'a'"],
+  ["-0.1", "0.00", "NULL"],
+  ["1e300", "NULL", "'b'"],
+  ["NULL", "-3.50", "'c'"],
+  ["3", "4", "''"],
+]
+query = "WITH b AS (SELECT ordinal AS o, OBJECT_CONSTRUCT_KEEP_NULL('f', f, 's', s) AS obj FROM input UNION ALL SELECT ordinal + 10 AS o, OBJECT_CONSTRUCT_KEEP_NULL('n', n, 's', s) AS obj FROM input) SELECT o, CAST(obj AS VARIANT) AS v, obj:f::FLOAT AS ff, obj:n::NUMBER(10,2) AS nn, obj:s::VARCHAR AS ss, TYPEOF(obj:f) AS tf FROM b ORDER BY o"
+order = "ordered"
+tags = ["null", "json-null", "nested"]
+
+[[case]]
+id = "union_star_objects_built_from_floats"
+description = "UNION ALL of OBJECT_CONSTRUCT_KEEP_NULL over a star with EXCLUDE, both branches from rows holding FLOATs, written as text."
+columns = [{ name = "k", type = "VARCHAR" }, { name = "f", type = "FLOAT" }, { name = "g", type = "FLOAT" }]
+rows = [
+  ["'x'", "0.5", "2"],
+  ["'y'", "NULL", "-1.25"],
+  ["'z'", "100", "NULL"],
+]
+query = "WITH r AS (SELECT * FROM input), b AS (SELECT r.ordinal AS o, OBJECT_CONSTRUCT_KEEP_NULL(r.* EXCLUDE (ordinal, g)) AS obj FROM r UNION ALL SELECT r.ordinal + 10 AS o, OBJECT_CONSTRUCT_KEEP_NULL(r.* EXCLUDE (ordinal, f)) AS obj FROM r) SELECT o, obj, obj::VARCHAR AS t FROM b ORDER BY o"
+order = "ordered"
+tags = ["null", "json-null", "nested"]
+
+[[case]]
+id = "union_float_variant_with_json"
+description = "UNION ALL of a VARIANT built from a FLOAT with a VARIANT read from JSON text, read back by type, as FLOAT and as text."
+columns = [{ name = "f", type = "FLOAT" }, { name = "s", type = "VARCHAR" }]
+rows = [
+  ["1.5", "'1.5'"],
+  ["2", "'2'"],
+  ["NULL", "'null'"],
+  ["-0.25", "'{\"a\":1}'"],
+  ["1e-7", "NULL"],
+]
+query = "WITH b AS (SELECT ordinal AS o, TO_VARIANT(f) AS v FROM input UNION ALL SELECT ordinal + 10 AS o, PARSE_JSON(s) AS v FROM input) SELECT o, v, TYPEOF(v) AS t, v::VARCHAR AS txt FROM b ORDER BY o"
+order = "ordered"
+tags = ["null", "json-null", "nested"]
+
+[[case]]
+id = "union_distinct_variants"
+description = "UNION (distinct) of VARIANTs: objects with keys in different orders, equal numbers spelled differently, and NULLs."
+columns = [{ name = "a", type = "VARCHAR" }, { name = "b", type = "VARCHAR" }]
+rows = [
+  ["'{\"a\":1,\"b\":2}'", "'{\"b\":2,\"a\":1}'"],
+  ["'1'", "'1.0'"],
+  ["'[1,2]'", "'[1, 2]'"],
+  ["'\"x\"'", "'\"x\"'"],
+  ["NULL", "NULL"],
+  ["'null'", "'null'"],
+]
+query = "SELECT v::VARCHAR AS t, TYPEOF(v) AS k FROM (SELECT PARSE_JSON(a) AS v FROM input UNION SELECT PARSE_JSON(b) FROM input) ORDER BY t NULLS LAST, k"
+order = "ordered"
+tags = ["null", "json-null", "nested"]
+
+[[case]]
+id = "group_by_variant_values"
+description = "GROUP BY a VARIANT: objects with keys in different orders, numbers spelled differently, strings and JSON null, counted per group."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'{\"a\":1,\"b\":2}'"],
+  ["'{\"b\":2,\"a\":1}'"],
+  ["'1'"],
+  ["'1.0'"],
+  ["'1e0'"],
+  ["'\"1\"'"],
+  ["'[1,{\"y\":2,\"x\":1}]'"],
+  ["'[1,{\"x\":1,\"y\":2}]'"],
+  ["'null'"],
+  ["NULL"],
+  ["NULL"],
+]
+query = "SELECT v::VARCHAR AS t, TYPEOF(v) AS k, COUNT(*) AS n FROM (SELECT PARSE_JSON(s) AS v FROM input) GROUP BY v ORDER BY t NULLS LAST, k"
+order = "ordered"
+expected_divergence = "json_fidelity"
+tags = ["null", "json-null", "nested"]
+
+[[case]]
+id = "group_by_variant_kept"
+description = "GROUP BY a VARIANT path, returning the grouped VARIANT itself and counting the group."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'{\"k\":{\"a\":1,\"b\":2}}'"],
+  ["'{\"k\":{\"b\":2,\"a\":1}}'"],
+  ["'{\"k\":\"t\"}'"],
+  ["'{\"k\":null}'"],
+  ["'{}'"],
+]
+query = "SELECT v:k AS key, COUNT(*) AS n FROM (SELECT PARSE_JSON(s) AS v FROM input) GROUP BY v:k ORDER BY key::VARCHAR NULLS LAST, TYPEOF(key) NULLS LAST"
+order = "ordered"
+tags = ["null", "json-null", "nested"]
+
+[[case]]
+id = "group_by_float_variant"
+description = "GROUP BY a VARIANT built from FLOATs and from NUMBERs of equal value, counted per group."
+columns = [{ name = "f", type = "FLOAT" }, { name = "n", type = "NUMBER(10,2)" }]
+rows = [
+  ["1", "1.00"],
+  ["1.5", "1.50"],
+  ["NULL", "NULL"],
+  ["0.1", "0.10"],
+]
+query = "SELECT v::VARCHAR AS t, COUNT(*) AS c FROM (SELECT TO_VARIANT(f) AS v FROM input UNION ALL SELECT TO_VARIANT(n) FROM input) GROUP BY v ORDER BY t NULLS LAST"
+order = "ordered"
+tags = ["null", "nested"]
+
+[[case]]
+id = "distinct_variant_objects_kept"
+description = "SELECT DISTINCT of a VARIANT and a text column, objects with keys in different orders returned as VARIANTs."
+columns = [{ name = "s", type = "VARCHAR" }, { name = "g", type = "VARCHAR" }]
+rows = [
+  ["'{\"a\":1,\"b\":[1,2]}'", "'p'"],
+  ["'{\"b\":[1,2],\"a\":1}'", "'p'"],
+  ["'{\"a\":1,\"b\":[1,2]}'", "'q'"],
+  ["'2'", "'p'"],
+  ["'2.0'", "'p'"],
+  ["NULL", "'p'"],
+  ["NULL", "'p'"],
+]
+query = "SELECT DISTINCT PARSE_JSON(s) AS v, g FROM input ORDER BY g, v::VARCHAR NULLS LAST"
+order = "ordered"
+expected_divergence = "json_fidelity"
+tags = ["null", "json-null", "nested"]
+
+[[case]]
+id = "float_object_read_by_key"
+description = "An object built from FLOATs read with GET_IGNORE_CASE, a path, a subscript and inside ARRAY_CONSTRUCT."
+columns = [{ name = "f", type = "FLOAT" }]
+rows = [["1.5"], ["2"], ["NULL"], ["-1e-7"]]
+query = "WITH b AS (SELECT ordinal AS o, OBJECT_CONSTRUCT('Weight', f) AS obj FROM input) SELECT o, GET_IGNORE_CASE(obj, 'weight') AS g, obj:Weight AS p, obj['Weight'] AS s, ARRAY_CONSTRUCT(obj:Weight) AS a, TYPEOF(GET_IGNORE_CASE(obj, 'WEIGHT')) AS t FROM b ORDER BY o"
+order = "ordered"
+tags = ["null", "json-null", "nested"]
+
+[[case]]
+id = "group_by_variant_position_having"
+description = "GROUP BY a VARIANT by position and by expression with HAVING on it: objects with keys in different orders, strings, arrays and JSON null."
+columns = [{ name = "s", type = "VARCHAR" }, { name = "g", type = "VARCHAR" }]
+rows = [
+  ["'{\"a\":1,\"b\":\"x\"}'", "'p'"],
+  ["'{\"b\":\"x\",\"a\":1}'", "'p'"],
+  ["'\"1\"'", "'p'"],
+  ["'[2,{\"y\":1,\"x\":2}]'", "'q'"],
+  ["'[2,{\"x\":2,\"y\":1}]'", "'q'"],
+  ["'null'", "'q'"],
+  ["NULL", "'q'"],
+]
+query = "SELECT PARSE_JSON(s) AS v, g, COUNT(*) AS n, TYPEOF(PARSE_JSON(s)) AS t FROM input GROUP BY 1, g HAVING COUNT(*) >= 1 AND TYPEOF(PARSE_JSON(s)) <> 'INTEGER' ORDER BY g, TO_JSON(v) NULLS LAST"
+order = "ordered"
+tags = ["null", "json-null", "nested"]

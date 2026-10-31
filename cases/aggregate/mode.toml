@@ -138,3 +138,21 @@ rows = [["'2024-03-01 10:00:00'"]]
 query = "SELECT MODE(ts)::VARCHAR AS ts_text, MODE(ts) IS NULL AS ts_null FROM input WHERE ts > '2030-01-01'::TIMESTAMP_NTZ"
 order = "ordered"
 tags = ["null", "empty-input", "duplicates"]
+
+[[case]]
+id = "mode_no_rows_having"
+description = "MODE over no rows without GROUP BY, filtered by HAVING on the aggregate and on COUNT."
+columns = [{ name = "x", type = "NUMBER(10,0)" }]
+rows = [["1"], ["2"], ["2"]]
+query = "SELECT MODE(x) AS m, COUNT(*) AS n FROM input WHERE x > 5 HAVING COUNT(*) = 0 OR MODE(x) IS NULL"
+order = "ordered"
+tags = ["empty-input", "null"]
+
+[[case]]
+id = "mode_no_rows_having_excluded"
+description = "MODE over no rows without GROUP BY, whose HAVING keeps no row."
+columns = [{ name = "x", type = "NUMBER(10,0)" }]
+rows = [["1"], ["2"], ["2"]]
+query = "SELECT MODE(x) AS m FROM input WHERE x > 5 HAVING MODE(x) IS NOT NULL"
+order = "ordered"
+tags = ["empty-input"]

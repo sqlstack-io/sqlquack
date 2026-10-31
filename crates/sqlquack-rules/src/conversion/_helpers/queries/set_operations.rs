@@ -8,8 +8,9 @@ use sqlquack_core::refusals::models::Refusal;
 use sqlquack_duckdb::blocks::main::cast::cast;
 use sqlquack_duckdb::blocks::main::quoted_identifier::quoted_identifier;
 use sqlquack_snowflake::typing::main::unify::unify;
-use sqlquack_snowflake::typing::models::SnowflakeType;
+use sqlquack_snowflake::typing::models::{CastTarget, SnowflakeType};
 
+use crate::conversion::_helpers::expressions::semi_structured::{held_cast, variant_cast};
 use crate::conversion::_helpers::queries::clauses::order_and_limit;
 use crate::conversion::_helpers::queries::query::{
     ConvertedQuery, QueryRequest, convert_query, convert_with,
@@ -21,7 +22,10 @@ use crate::conversion::_helpers::support::tree::{
     field, flag, node_construct, payload_object, require_understood,
 };
 use crate::conversion::constants::DUPLICATE_VARIANTS;
-use crate::conversion::constants::{SEMI_STRUCTURED_HOLDING, SET_OPERATION, UNION_BY_NAME};
+use crate::conversion::constants::{
+    SEMI_STRUCTURED_HOLDING, SET_OPERATION, UNION_BY_NAME, VARCHAR_NAME, VARIANT_NAME,
+    VARIANT_TEXT_BRANCHES,
+};
 use sqlquack_semantics::scopes::models::ScopeRelation;
 use sqlquack_semantics::types::models::{ColumnSpec, Holding};
 
@@ -154,6 +158,7 @@ pub(crate) fn convert_set_operation(
         vec![ScopeRelation {
             alias: SET_RESULT.to_owned(),
             columns: columns.clone(),
+            merged: Vec::new(),
         }],
         outer,
     );
@@ -193,8 +198,8 @@ fn unified_columns(
         ));
     }
     let mut columns: Vec<ColumnSpec> = Vec::new();
-    require_json_held(left.iter().chain(right), construct)?;
     for (left_column, right_column) in left.iter().zip(right) {
+        let holding = shared_holding([Some(left_column), Some(right_column)], construct)?;
         let variant = SnowflakeType::SemiStructured;
         let data_type = match (left_column.data_type, right_column.data_type) {
             (left_type, right_type)
@@ -211,12 +216,13 @@ fn unified_columns(
                 ));
             }
             (left_type, right_type) => {
-                require_widening_range(&[left_type, right_type], construct, context)?;
-                unify(&[left_type, right_type], context.log)
-                    .map_err(|reason| outside_conditions(construct.clone(), reason))?
+                set_operation_type((left_type, right_type), construct, context)?
             }
         };
-        columns.push(ColumnSpec::new(left_column.name.clone(), data_type));
+        columns.push(ColumnSpec {
+            holding,
+            ..ColumnSpec::new(left_column.name.clone(), data_type)
+        });
     }
     Ok(columns)
 }
@@ -239,10 +245,13 @@ fn conform(
         .map(|index| format!("C{index}"))
         .collect();
     let mut items: Vec<String> = Vec::new();
-    for (name, column) in names.iter().zip(target) {
-        let value = match column.data_type {
-            SnowflakeType::SemiStructured => quoted_identifier(name, log),
-            data_type => cast(&quoted_identifier(name, log), data_type, log)
+    for ((name, column), own) in names.iter().zip(target).zip(&actual) {
+        let value = match (column.data_type, own.data_type) {
+            (SnowflakeType::SemiStructured, _) => quoted_identifier(name, log),
+            (SnowflakeType::Varchar, SnowflakeType::SemiStructured) => {
+                variant_text(quoted_identifier(name, log), own, context)?
+            }
+            (data_type, _) => cast(&quoted_identifier(name, log), data_type, log)
                 .map_err(|reason| outside_conditions(construct.clone(), reason))?,
         };
         items.push(format!(
@@ -263,8 +272,8 @@ fn conform(
 }
 
 /// UNION BY NAME's columns: the left branch's, then the right's new ones, NULL-filled where absent.
-fn named_columns(
-    (left, right): (&[ColumnSpec], &[ColumnSpec]),
+fn named_columns<'a>(
+    (left, right): (&'a [ColumnSpec], &'a [ColumnSpec]),
     keeps_all: bool,
     construct: &Construct,
     context: &Context<'_>,
@@ -288,7 +297,6 @@ fn named_columns(
         }
     }
     let mut columns: Vec<ColumnSpec> = Vec::new();
-    require_json_held(left.iter().chain(right), construct)?;
     for name in names {
         if columns
             .iter()
@@ -299,12 +307,11 @@ fn named_columns(
                 format!("UNION BY NAME columns `{name}` repeat or differ only in case"),
             ));
         }
-        let typed = |branch: &[ColumnSpec]| {
-            branch
-                .iter()
-                .find(|column| column.name == name)
-                .map_or(SnowflakeType::Null, |column| column.data_type)
+        let found = |branch: &'a [ColumnSpec]| branch.iter().find(|column| column.name == name);
+        let typed = |branch: &'a [ColumnSpec]| {
+            found(branch).map_or(SnowflakeType::Null, |column| column.data_type)
         };
+        let holding = shared_holding([found(left), found(right)], construct)?;
         if !keeps_all
             && typed(left) == SnowflakeType::SemiStructured
             && typed(right) == SnowflakeType::SemiStructured
@@ -316,10 +323,11 @@ fn named_columns(
                     .to_owned(),
             ));
         }
-        require_widening_range(&[typed(left), typed(right)], construct, context)?;
-        let data_type = unify(&[typed(left), typed(right)], context.log)
-            .map_err(|reason| outside_conditions(construct.clone(), reason))?;
-        columns.push(ColumnSpec::new(name, data_type));
+        let data_type = set_operation_type((typed(left), typed(right)), construct, context)?;
+        columns.push(ColumnSpec {
+            holding,
+            ..ColumnSpec::new(name, data_type)
+        });
     }
     Ok(columns)
 }
@@ -334,13 +342,26 @@ fn conform_by_name(
     let log = context.log;
     let mut items: Vec<String> = Vec::new();
     for column in target {
-        let value = match actual.iter().find(|own| own.name == column.name) {
+        let own = actual.iter().find(|own| own.name == column.name);
+        let value = match own {
             Some(_) => quoted_identifier(&column.name, log),
             None => "NULL".to_owned(),
         };
-        let value = match column.data_type {
-            SnowflakeType::SemiStructured => format!("CAST({value} AS {SEMI_STRUCTURED_HOLDING})"),
-            data_type => cast(&value, data_type, log)
+        let value = match (
+            column.data_type,
+            column.holding,
+            own.map(|own| own.data_type),
+        ) {
+            (SnowflakeType::Varchar, _, Some(SnowflakeType::SemiStructured)) => {
+                variant_text(value, own.unwrap_or(column), context)?
+            }
+            (SnowflakeType::SemiStructured, Holding::Variant, _) => {
+                format!("CAST({value} AS {VARIANT_NAME})")
+            }
+            (SnowflakeType::SemiStructured, _, _) => {
+                format!("CAST({value} AS {SEMI_STRUCTURED_HOLDING})")
+            }
+            (data_type, _, _) => cast(&value, data_type, log)
                 .map_err(|reason| outside_conditions(construct.clone(), reason))?,
         };
         items.push(format!(
@@ -355,21 +376,68 @@ fn conform_by_name(
     ))
 }
 
-/// Refuses branches with a VARIANT-held column, which a JSON column of the other branch cannot meet.
-fn require_json_held<'a>(
-    columns: impl IntoIterator<Item = &'a ColumnSpec>,
+/// A branch's VARIANT column read as text, as Snowflake reads it beside text in a set operation.
+fn variant_text(
+    sql: String,
+    column: &ColumnSpec,
+    context: &Context<'_>,
+) -> Result<String, Refusal> {
+    let _rule = context.log.rule(VARIANT_TEXT_BRANCHES);
+    let value = Emitted {
+        held: column.holding,
+        untainted: column.untainted,
+        sourced: column.sourced,
+        ..Emitted::new(sql, SnowflakeType::SemiStructured)
+    };
+    let target = CastTarget {
+        data_type: SnowflakeType::Varchar,
+        max_length: None,
+    };
+    let construct = &node_construct("cast");
+    match value.is_variant_held() {
+        true => Ok(held_cast(value, (VARCHAR_NAME, target), false, (context, construct))?.sql),
+        false => variant_cast(&value, (VARCHAR_NAME, target), false, (context, construct))
+            .map_err(|reason| outside_conditions(construct.clone(), reason)),
+    }
+}
+
+/// The common type of two branches' columns: text beside a VARIANT is text, otherwise as unified.
+fn set_operation_type(
+    (left, right): (SnowflakeType, SnowflakeType),
     construct: &Construct,
-) -> Result<(), Refusal> {
-    match columns
+    context: &Context<'_>,
+) -> Result<SnowflakeType, Refusal> {
+    match (left, right) {
+        (SnowflakeType::Varchar, SnowflakeType::SemiStructured)
+        | (SnowflakeType::SemiStructured, SnowflakeType::Varchar) => Ok(SnowflakeType::Varchar),
+        _ => {
+            require_widening_range(&[left, right], construct, context)?;
+            unify(&[left, right], context.log)
+                .map_err(|reason| outside_conditions(construct.clone(), reason))
+        }
+    }
+}
+
+/// How a result column's VARIANTs are held: as each branch holds them, which must agree, or as JSON.
+fn shared_holding(
+    branches: [Option<&ColumnSpec>; 2],
+    construct: &Construct,
+) -> Result<Holding, Refusal> {
+    let holdings: Vec<Holding> = branches
         .into_iter()
-        .any(|column| column.holding != Holding::Json)
-    {
-        true => Err(outside_conditions(
+        .flatten()
+        .filter(|column| column.data_type == SnowflakeType::SemiStructured)
+        .map(|column| column.holding)
+        .collect();
+    match holdings.as_slice() {
+        [] => Ok(Holding::Json),
+        [only] => Ok(*only),
+        [first, second] if first == second => Ok(*first),
+        _ => Err(outside_conditions(
             construct.clone(),
             "a set operation over a VARIANT built from a FLOAT, which DuckDB holds apart from JSON"
                 .to_owned(),
         )),
-        false => Ok(()),
     }
 }
 

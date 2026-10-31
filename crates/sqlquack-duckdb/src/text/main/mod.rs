@@ -4,6 +4,7 @@ pub mod base64_bytes;
 pub mod bytes_substring;
 pub mod bytes_text;
 pub mod character_edit_distance;
+pub mod character_similarity;
 pub mod code_point_text;
 pub mod compared_number_range;
 pub mod compared_number_text;

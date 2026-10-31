@@ -7,9 +7,11 @@ use sqlquack_core::refusals::main::outside_conditions::outside_conditions;
 use sqlquack_core::refusals::models::Refusal;
 use sqlquack_duckdb::blocks::main::cast::cast;
 use sqlquack_semantics::types::main::utc_kept::utc_kept;
+use sqlquack_snowflake::typing::main::text_reading::text_reading;
 use sqlquack_snowflake::typing::main::unify::unify;
 use sqlquack_snowflake::typing::models::SnowflakeType;
 
+use crate::conversion::_helpers::expressions::casts::cast_to;
 use crate::conversion::_helpers::expressions::operators::{boolean_operand, comparable};
 use crate::conversion::_helpers::expressions::scalar::convert_expression;
 use crate::conversion::_helpers::support::divergence::require_widening_range;
@@ -19,37 +21,123 @@ use crate::conversion::_helpers::support::tree::{
     field, list, node_construct, node_kind, payload_object, require_understood,
 };
 use crate::conversion::constants::{
-    CASE, CASE_SUBJECT, COALESCE, DECODE_RULE, IFF, SEMI_STRUCTURED_HOLDING, ZERO_IF_NULL_RULE,
+    CASE, CASE_SUBJECT, COALESCE, DECODE_RULE, IFF, NULL_BRANCHES, NULL_IF_ZERO_RULE,
+    SEMI_STRUCTURED_HOLDING, TEXT_BRANCHES, ZERO_IF_NULL_RULE,
 };
 
-/// The branches cast to their unified type, and that type.
+/// The branches cast to their unified type, and that type; text beside other types refuses.
 pub(crate) fn unified(
     branches: &[Emitted],
     construct: &Construct,
     context: &Context<'_>,
 ) -> Result<(Vec<String>, SnowflakeType), Refusal> {
-    let types: Vec<SnowflakeType> = branches.iter().map(|branch| branch.data_type).collect();
-    let target = unify(&types, context.log)
-        .map_err(|reason| outside_conditions(construct.clone(), reason))?;
+    unified_branches(branches, false, (construct, context))
+}
+
+/// As `unified`, reading text beside other types as recorded, for a construct choosing a branch every row.
+pub(crate) fn unified_reading_text(
+    branches: &[Emitted],
+    construct: &Construct,
+    context: &Context<'_>,
+) -> Result<(Vec<String>, SnowflakeType), Refusal> {
+    unified_branches(branches, true, (construct, context))
+}
+
+fn unified_branches(
+    branches: &[Emitted],
+    reads_text: bool,
+    (construct, context): (&Construct, &Context<'_>),
+) -> Result<(Vec<String>, SnowflakeType), Refusal> {
+    let refuse = |reason: String| outside_conditions(construct.clone(), reason);
+    let reading = match reads_text {
+        true => text_reading(
+            &branches
+                .iter()
+                .map(|branch| branch.data_type)
+                .collect::<Vec<SnowflakeType>>(),
+            context.log,
+        ),
+        false => None,
+    };
+    let read = |branch: &Emitted| {
+        branch.data_type == SnowflakeType::Varchar && branch.literal.is_none() && reading.is_some()
+    };
+    let types: Vec<SnowflakeType> = branches
+        .iter()
+        .map(|branch| match (read(branch), reading) {
+            (true, Some(reading)) => reading,
+            _ => branch.data_type,
+        })
+        .collect();
+    let target = unify(&types, context.log).map_err(refuse)?;
     require_widening_range(&types, construct, context)?;
     if target == SnowflakeType::Null {
-        return Err(outside_conditions(
-            construct.clone(),
-            "every branch is an untyped NULL".to_owned(),
-        ));
+        let _rule = context.log.rule(NULL_BRANCHES);
+        let null = cast("NULL", SnowflakeType::Varchar, context.log).map_err(refuse)?;
+        return Ok((vec![null; branches.len()], target));
     }
     let mut cast_branches: Vec<String> = Vec::with_capacity(branches.len());
+    let mut readings: Vec<String> = Vec::new();
     for branch in branches {
+        let branch = match (read(branch), reading) {
+            (true, Some(reading)) => {
+                let text = read_text(branch, (reading, target), construct, context)?;
+                readings.push(text.sql.clone());
+                &text.clone()
+            }
+            _ => branch,
+        };
         cast_branches.push(match (target, branch.data_type) {
             (SnowflakeType::SemiStructured, SnowflakeType::SemiStructured) => branch.sql.clone(),
             (SnowflakeType::SemiStructured, _) => {
                 format!("CAST(NULL AS {SEMI_STRUCTURED_HOLDING})")
             }
-            _ => cast(&branch.sql, target, context.log)
-                .map_err(|reason| outside_conditions(construct.clone(), reason))?,
+            _ => cast(&branch.sql, target, context.log).map_err(refuse)?,
         });
     }
-    Ok((cast_branches, target))
+    Ok((eagerly_read(cast_branches, &readings), target))
+}
+
+/// Branches that each first read every text branch, since Snowflake reads all of them for every row.
+fn eagerly_read(branches: Vec<String>, readings: &[String]) -> Vec<String> {
+    if readings.is_empty() {
+        return branches;
+    }
+    let texts: Vec<String> = readings
+        .iter()
+        .map(|reading| format!("CAST({reading} AS VARCHAR)"))
+        .collect();
+    let guard = format!("length(concat_ws('', {})) >= 0", texts.join(", "));
+    branches
+        .into_iter()
+        .map(|branch| format!("(CASE WHEN {guard} THEN {branch} END)"))
+        .collect()
+}
+
+/// A text branch cast as Snowflake reads it beside other types, before widening to `target`.
+fn read_text(
+    branch: &Emitted,
+    (reading, target): (SnowflakeType, SnowflakeType),
+    construct: &Construct,
+    context: &Context<'_>,
+) -> Result<Emitted, Refusal> {
+    let refuse = |reason: String| outside_conditions(construct.clone(), reason);
+    if let (
+        SnowflakeType::Number {
+            scale: read_scale, ..
+        },
+        SnowflakeType::Number { scale, .. },
+    ) = (reading, target)
+        && scale > read_scale
+    {
+        return Err(refuse(format!(
+            "text beside a {target}, whose reading at more than {read_scale} fraction digits no \
+             recording shows"
+        )));
+    }
+    let _rule = context.log.rule(TEXT_BRANCHES);
+    let sql = cast_to(branch, &reading.to_string(), false, (context, construct)).map_err(refuse)?;
+    Ok(Emitted::new(sql, reading))
 }
 
 fn coalesce_arguments(
@@ -68,7 +156,7 @@ fn coalesce_arguments(
             "COALESCE without arguments".to_owned(),
         ));
     }
-    let (cast_branches, target) = unified(&branches, construct, site.context)?;
+    let (cast_branches, target) = unified_reading_text(&branches, construct, site.context)?;
     Ok(Emitted {
         utc_offset: utc_kept(&marks(&branches), target),
         ..Emitted::new(format!("COALESCE({})", cast_branches.join(", ")), target)
@@ -111,7 +199,7 @@ pub(crate) fn iff(payload: &Value, site: Site<'_>) -> Result<Emitted, Refusal> {
         convert_expression(field(payload, "true_value", &construct)?, site)?,
         convert_expression(field(payload, "false_value", &construct)?, site)?,
     ];
-    let (cast_branches, target) = unified(&branches, &construct, site.context)?;
+    let (cast_branches, target) = unified_reading_text(&branches, &construct, site.context)?;
     Ok(Emitted {
         utc_offset: utc_kept(&marks(&branches), target),
         ..Emitted::new(
@@ -153,7 +241,10 @@ pub(crate) fn case_expression(payload: &Value, site: Site<'_>) -> Result<Emitted
         None => None,
     };
     branches.extend(otherwise.iter().cloned());
-    let (cast_branches, target) = unified(&branches, &construct, site.context)?;
+    let (cast_branches, target) = match otherwise {
+        Some(_) => unified_reading_text(&branches, &construct, site.context)?,
+        None => unified(&branches, &construct, site.context)?,
+    };
     let mut sql = format!("(CASE{subject}");
     for (condition, result) in conditions.iter().zip(&cast_branches) {
         sql.push_str(&format!(" WHEN {condition} THEN {result}"));
@@ -343,6 +434,27 @@ pub(crate) fn zero_if_null(
             operand.data_type,
         )),
         other => Err(refuse(format!("ZEROIFNULL of {other}"))),
+    }
+}
+
+/// NULLIFZERO of a NUMBER or FLOAT: NULL for zero, otherwise the value, of its type.
+pub(crate) fn null_if_zero(
+    arguments: &[Value],
+    construct: &Construct,
+    site: Site<'_>,
+) -> Result<Emitted, Refusal> {
+    let _rule = site.context.log.rule(NULL_IF_ZERO_RULE);
+    let refuse = |reason: String| outside_conditions(construct.clone(), reason);
+    let [value] = arguments else {
+        return Err(refuse("NULLIFZERO with these arguments".to_owned()));
+    };
+    let operand = convert_expression(value, site)?;
+    match operand.data_type {
+        SnowflakeType::Number { .. } | SnowflakeType::Float => Ok(Emitted::new(
+            format!("nullif({}, 0)", operand.sql),
+            operand.data_type,
+        )),
+        other => Err(refuse(format!("NULLIFZERO of {other}"))),
     }
 }
 

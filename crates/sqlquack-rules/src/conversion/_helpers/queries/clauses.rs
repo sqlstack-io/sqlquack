@@ -1,6 +1,7 @@
 //! WHERE-style conditions, GROUP BY, ORDER BY and LIMIT.
 
 use serde_json::Value;
+use sqlquack_core::classification::models::Construct;
 use sqlquack_core::refusals::main::missing::missing;
 use sqlquack_core::refusals::main::outside_conditions::outside_conditions;
 use sqlquack_core::refusals::main::unresolved::unresolved;
@@ -11,7 +12,9 @@ use sqlquack_snowflake::typing::models::SnowflakeType;
 
 use crate::conversion::_helpers::expressions::operators::boolean_operand;
 use crate::conversion::_helpers::expressions::scalar::convert_expression;
-use crate::conversion::_helpers::expressions::windows::{grouping_key, order_item};
+use crate::conversion::_helpers::expressions::windows::{
+    canonical_variant, grouping_key, order_item,
+};
 use crate::conversion::_helpers::queries::group_all::group_all_positions;
 use crate::conversion::_helpers::support::scope::{Emitted, Scope, resolve};
 use crate::conversion::_helpers::support::site::{Placement, Site};
@@ -108,13 +111,61 @@ pub(crate) fn group_by(select: &Payload, site: Site<'_>, held: &[bool]) -> Resul
     for key in list(group, "expressions") {
         match integer_literal(key) {
             Some(position) => keys.push(position_key(position, held, "GROUP BY")?),
-            None => keys.push(grouping_key(convert_expression(key, site)?, &construct)?.sql),
+            None => keys.push(group_key(convert_expression(key, site)?, &construct, site)?.sql),
         }
     }
     if keys.is_empty() {
         return Err(missing(construct, "GROUP BY without keys".to_owned()));
     }
     Ok(format!(" GROUP BY {}", keys.join(", ")))
+}
+
+/// A GROUP BY key; a JSON-held VARIANT groups by the text Snowflake writes for it.
+fn group_key(key: Emitted, construct: &Construct, site: Site<'_>) -> Result<Emitted, Refusal> {
+    match key.data_type == SnowflakeType::SemiStructured && !key.is_variant_held() {
+        true => canonical_variant(key, construct, site.context),
+        false => grouping_key(key, construct),
+    }
+}
+
+/// Each GROUP BY expression that is a JSON-held VARIANT, as converted and as grouped.
+pub(crate) fn variant_group_keys(
+    select: &Payload,
+    site: Site<'_>,
+) -> Result<Vec<(String, String)>, Refusal> {
+    let construct = node_construct("group_by");
+    let Some(group) = select.get("group_by").filter(|group| !group.is_null()) else {
+        return Ok(Vec::new());
+    };
+    let _muted = site.context.log.muted();
+    let without_aliases = Scope::new(site.scope.relations.clone(), site.scope.outer);
+    let site = site.scoped(&without_aliases).placed(Placement::ROW);
+    let mut keys: Vec<(String, String)> = Vec::new();
+    for key in list(payload_object(group, &construct)?, "expressions") {
+        if integer_literal(key).is_some() {
+            continue;
+        }
+        let converted = convert_expression(key, site)?;
+        if converted.data_type == SnowflakeType::SemiStructured && !converted.is_variant_held() {
+            let sql = converted.sql.clone();
+            keys.push((
+                sql,
+                canonical_variant(converted, &construct, site.context)?.sql,
+            ));
+        }
+    }
+    Ok(keys)
+}
+
+/// The output positions GROUP BY names.
+pub(crate) fn group_positions(select: &Payload) -> Vec<u64> {
+    let group = select.get("group_by").and_then(Value::as_object);
+    group
+        .map(|group| list(group, "expressions"))
+        .unwrap_or_default()
+        .iter()
+        .filter_map(integer_literal)
+        .collect()
 }
 
 /// A key by output position; an output held as a DuckDB VARIANT is refused, as its order is.
