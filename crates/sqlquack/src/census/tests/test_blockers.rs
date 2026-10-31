@@ -19,7 +19,7 @@ fn given_chained_models_when_tracing_refusals_then_each_root_counts_the_files_it
             names: true,
             expected_summary: BlockerSummary {
                 roots: vec![
-                    ("fn:JAROWINKLER_SIMILARITY".to_owned(), [1, 3, 4, 3]),
+                    ("fn:STRTOK".to_owned(), [1, 3, 4, 3]),
                     ("fn:SOUNDEX".to_owned(), [1, 1, 2, 1]),
                     (
                         "relation:__SQLQUACK_RELATION__SHOP__RETURNS".to_owned(),
@@ -28,12 +28,9 @@ fn given_chained_models_when_tracing_refusals_then_each_root_counts_the_files_it
                 ],
                 possibly_incomplete_files: 0,
                 pairs: vec![
-                    (owned(&["fn:JAROWINKLER_SIMILARITY", "fn:SOUNDEX"]), 5),
+                    (owned(&["fn:SOUNDEX", "fn:STRTOK"]), 5),
                     (
-                        owned(&[
-                            "fn:JAROWINKLER_SIMILARITY",
-                            "relation:__SQLQUACK_RELATION__SHOP__RETURNS",
-                        ]),
+                        owned(&["fn:STRTOK", "relation:__SQLQUACK_RELATION__SHOP__RETURNS"]),
                         4,
                     ),
                     (
@@ -58,14 +55,14 @@ fn given_chained_models_when_tracing_refusals_then_each_root_counts_the_files_it
             names: false,
             expected_summary: BlockerSummary {
                 roots: vec![
-                    ("fn:JAROWINKLER_SIMILARITY".to_owned(), [1, 3, 4, 3]),
+                    ("fn:STRTOK".to_owned(), [1, 3, 4, 3]),
                     ("fn:SOUNDEX".to_owned(), [1, 1, 2, 1]),
                     ("unknown relation".to_owned(), [1, 0, 1, 1]),
                 ],
                 possibly_incomplete_files: 0,
                 pairs: vec![
-                    (owned(&["fn:JAROWINKLER_SIMILARITY", "fn:SOUNDEX"]), 5),
-                    (owned(&["fn:JAROWINKLER_SIMILARITY", "unknown relation"]), 4),
+                    (owned(&["fn:SOUNDEX", "fn:STRTOK"]), 5),
+                    (owned(&["fn:STRTOK", "unknown relation"]), 4),
                     (owned(&["fn:SOUNDEX", "unknown relation"]), 2),
                 ],
                 single_root_files: 5,

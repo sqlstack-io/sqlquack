@@ -36,3 +36,9 @@ pub const EXACT_SUM_SCALES: &[u32] = &[0, 16, 32];
 pub const EXACT_SUM_UNITS: u64 = 1 << 52;
 /// The bound on the rounding of a partial sum of up to 2^32 values, over their exact sum.
 pub const DOMINANCE_MARGIN: &str = "1.000001";
+/// LN, zero or less raising: `duckdb.natural_logarithm`.
+pub const NATURAL_LOGARITHM: &str = "duckdb.natural_logarithm";
+/// EXP, beyond the double range raising: `duckdb.exponential`.
+pub const EXPONENTIAL: &str = "duckdb.exponential";
+/// SQRT, a negative number raising: `duckdb.square_root`.
+pub const SQUARE_ROOT: &str = "duckdb.square_root";

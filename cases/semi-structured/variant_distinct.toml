@@ -34,6 +34,7 @@ rows = [
 ]
 query = "SELECT COUNT(*) AS n FROM (SELECT DISTINCT v FROM input) AS t"
 order = "ordered"
+expected_divergence = "json_fidelity"
 tags = ["null", "boundary"]
 
 [[case]]

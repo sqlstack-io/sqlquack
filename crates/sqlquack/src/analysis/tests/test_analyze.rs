@@ -174,8 +174,8 @@ fn given_sql_and_a_schema_when_analyzing_then_it_converts_or_refuses_with_a_cate
             },
         },
         AnalyzeTestCase {
-            description: "SUBSTR with a column length is refused",
-            sql: "SELECT SUBSTR(note, 1, customer_id) AS r FROM customers",
+            description: "SUBSTR with a fractional length is refused",
+            sql: "SELECT SUBSTR(note, 1, 1.5) AS r FROM customers",
             expected_summary: AnalysisSummary {
                 parsed: true,
                 statements: 1,
@@ -195,7 +195,7 @@ fn given_sql_and_a_schema_when_analyzing_then_it_converts_or_refuses_with_a_cate
         },
         AnalyzeTestCase {
             description: "a construct without a rule is a missing rule",
-            sql: "SELECT JAROWINKLER_SIMILARITY(note, note) AS n FROM customers",
+            sql: "SELECT STRTOK(note, note) AS n FROM customers",
             expected_summary: AnalysisSummary {
                 parsed: true,
                 statements: 1,

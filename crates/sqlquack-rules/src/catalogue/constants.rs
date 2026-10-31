@@ -3,9 +3,10 @@
 use crate::catalogue::models::NotExpressibleDeclaration;
 use sqlquack_core::failures::constants::{
     BOOLEAN_NOT_RECOGNIZED, CHARACTER_CODE_FAILURES, DATE_FORMAT_MISMATCH, DATE_NOT_RECOGNIZED,
-    DIVISION_BY_ZERO, DIVISION_FAILURES, INVALID_UTF8_FAILURES, JSON_NOT_PARSED,
-    KEY_EXISTS_FAILURES, NOT_AN_ARRAY_ARGUMENT, NOT_AN_ARRAY_FAILURES, NUMBER_NOT_RECOGNIZED,
-    NUMBER_OUT_OF_RANGE, NUMBER_TEXT_OUT_OF_RANGE, OBJECT_KEY_EXISTS, STRING_TOO_LONG,
+    DIVISION_BY_ZERO, DIVISION_FAILURES, FLATTEN_FAILURES, HEX_DECODE_FAILURES,
+    INVALID_UTF8_FAILURES, JSON_NOT_PARSED, KEY_EXISTS_FAILURES, LOGARITHM_FAILURES,
+    NOT_AN_ARRAY_ARGUMENT, NOT_AN_ARRAY_FAILURES, NUMBER_NOT_RECOGNIZED, NUMBER_OUT_OF_RANGE,
+    NUMBER_TEXT_OUT_OF_RANGE, OBJECT_KEY_EXISTS, RANGE_STEP_FAILURES, STRING_TOO_LONG,
     TIME_TEXT_FAILURES, TIMESTAMP_FORMAT_MISMATCH, TIMESTAMP_NOT_RECOGNIZED, VARIANT_NOT_CAST,
     ZONE_FAILURES,
 };
@@ -16,33 +17,38 @@ use sqlquack_snowflake::typing::constants::VARIANT_COMMON_TYPE;
 pub const NOT_EXPRESSIBLE: &[NotExpressibleDeclaration] = &[];
 
 use crate::conversion::constants::{
-    ALIAS, ARRAY_AGG_RULE, ARRAY_CAT_RULE, ARRAY_COMPACT_RULE, ARRAY_CONSTRUCT_COMPACT_RULE,
-    ARRAY_CONSTRUCT_RULE, ARRAY_CONTAINS_RULE, ARRAY_EXCEPT_RULE, ARRAY_POSITION_RULE,
-    ARRAY_SIZE_RULE, ARRAY_TO_STRING_RULE, AVERAGE, BASE64_BINARY, BETWEEN, BITWISE, CASE,
-    CASE_MAPPING, CAST_BOOLEAN, CAST_NUMERIC, CAST_PARSED_TEXT, CAST_SAME_TYPE, CAST_TEMPORAL,
-    CAST_TEXT_LITERAL, CAST_TEXT_TIME, CAST_TEXT_TIMESTAMP, CAST_TO_TEXT, CAST_UTC_ZONED, COALESCE,
-    COLUMN, COMMENT, COMMON_TABLE, COMPARISON, CONCAT, CONCAT_WS, CONSTANT_LITERAL, COUNT,
-    CURRENT_TIME_RULE, DATE_ARITHMETIC, DATE_FORMAT_RULE, DATE_LITERAL_COMPARISON, DATE_PART_RULE,
+    ALIAS, ARRAY_AGG_RULE, ARRAY_APPEND_RULE, ARRAY_CAT_RULE, ARRAY_COMPACT_RULE,
+    ARRAY_CONSTRUCT_COMPACT_RULE, ARRAY_CONSTRUCT_RULE, ARRAY_CONTAINS_RULE, ARRAY_EXCEPT_RULE,
+    ARRAY_FLATTEN_RULE, ARRAY_POSITION_RULE, ARRAY_RANGE_RULE, ARRAY_SIZE_RULE, ARRAY_SLICE_RULE,
+    ARRAY_SORT_RULE, ARRAY_TO_STRING_RULE, ASOF_JOIN, AVERAGE, BASE64_BINARY, BETWEEN, BITWISE,
+    CASE, CASE_MAPPING, CAST_BOOLEAN, CAST_NUMERIC, CAST_PARSED_TEXT, CAST_SAME_TYPE,
+    CAST_TEMPORAL, CAST_TEXT_LITERAL, CAST_TEXT_TIME, CAST_TEXT_TIMESTAMP, CAST_TO_TEXT,
+    CAST_UTC_ZONED, COALESCE, COLUMN, COMMENT, COMMON_TABLE, COMPARISON, COMPUTED_SUBSTR_LENGTH,
+    CONCAT, CONCAT_WS, CONSTANT_LITERAL, COUNT, CURRENT_TIME_RULE, DATE_ARITHMETIC,
+    DATE_DAY_ARITHMETIC, DATE_FORMAT_RULE, DATE_LITERAL_COMPARISON, DATE_PART_RULE, DAY_NAME_RULE,
     DECIMAL_ARITHMETIC, DECIMAL_DIVISION, DECIMAL_EPOCH_RULE, DECIMAL_MODULO, DECODE_RULE,
-    DISTINCT, EDIT_DISTANCE, EXISTS, FLATTEN_RULE, FLOAT_ARITHMETIC, FLOAT_MODULO, FROM_PARTS,
-    FROM_RELATION, FROM_SUBQUERY, GROUP_BY, GROUP_BY_ALL_RULE, HASH_RULE, HAVING, IFF,
-    ILIKE_FOLDING, IN_LIST, IN_SUBQUERY, INTERVAL_ARITHMETIC, IS_NULL, JOIN_CROSS, JOIN_ON,
-    LAMBDA_RULE, LATERAL_SUBQUERY, LEAST_GREATEST, LIKE, LIMIT, LISTAGG_RULE, LOGIC, MIN_MAX,
-    MIN_MAX_FLOAT, MODE_RULE, NAMED_AGGREGATES, NEGATE, NOT_IN_SUBQUERY, NULL_SAFE_COMPARISON,
-    NULLIF, NUMBER_LITERAL, NUMERIC_FUNCTION, OBJECT_CONSTRUCT_RULE, OBJECT_DELETE_RULE,
-    OBJECT_INSERT_RULE, OBJECT_KEYS_RULE, OBJECT_PICK_RULE, ORDER_BY, PARENTHESES, PARSE_JSON_RULE,
-    PARSE_JSON_VARIANT, PERCENTILE_RULE, PROJECT_FUNCTION_CALL, PROJECT_TABLE_FUNCTION, QUALIFY,
-    REDUCE_RULE, REGEXP, REGEXP_PARAMETERS, REGEXP_POSIX_SPACE, ROUNDING, SCALAR_SUBQUERY, SELECT,
-    SET_OPERATION, SIGN_RULE, SPLIT_RULE, SPLIT_TO_TABLE_RULE, STAR, SUM, SUM_FLOAT,
-    TEMPORAL_TEXT_FORMAT, TEXT_AFFIX, TEXT_CHR, TEXT_CONTAINS, TEXT_HEX, TEXT_HEX_DECODE,
-    TEXT_INITCAP, TEXT_MD5, TEXT_NUMBER_COMPARISON, TEXT_PAD, TEXT_POSITION, TEXT_REPLACE,
-    TEXT_SEARCH_POSITION, TEXT_TO_TIME_RULE, TEXT_TO_TIMESTAMP_RULE, TEXT_TRANSLATE,
-    TIME_ARITHMETIC, TIME_CAST, TIME_ZONE_CONVERSION, TIMESTAMP_FORMAT_RULE, TIMESTAMP_TIME_RULE,
+    DISTINCT, EDIT_DISTANCE, EXISTS, FLATTEN_RULE, FLOAT_ARITHMETIC, FLOAT_MODULO, FLOAT_TO_DOUBLE,
+    FRACTIONAL_DATE_AMOUNT, FROM_PARTS, FROM_RELATION, FROM_SUBQUERY, GROUP_BY, GROUP_BY_ALL_RULE,
+    HASH_RULE, HAVING, IFF, ILIKE_FOLDING, IN_LIST, IN_SUBQUERY, INTERVAL_ARITHMETIC, IS_NULL,
+    JARO_WINKLER, JOIN_CROSS, JOIN_ON, JOIN_USING, LAMBDA_RULE, LATERAL_SUBQUERY, LEAST_GREATEST,
+    LIKE, LIMIT, LISTAGG_RULE, LOGARITHM, LOGIC, MIN_MAX, MIN_MAX_FLOAT, MODE_RULE,
+    NAMED_AGGREGATES, NEGATE, NOT_IN_SUBQUERY, NULL_BRANCHES, NULL_IF_ZERO_RULE,
+    NULL_SAFE_COMPARISON, NULLIF, NUMBER_LITERAL, NUMERIC_FUNCTION, OBJECT_CONSTRUCT_RULE,
+    OBJECT_DELETE_RULE, OBJECT_INSERT_RULE, OBJECT_KEYS_RULE, OBJECT_PICK_RULE, ORDER_BY,
+    PARENTHESES, PARSE_JSON_RULE, PARSE_JSON_VARIANT, PERCENTILE_RULE, POSITIONAL_COLUMN,
+    PROJECT_FUNCTION_CALL, PROJECT_TABLE_FUNCTION, QUALIFY, REDUCE_RULE, REGEXP, REGEXP_COUNTING,
+    REGEXP_PARAMETERS, REGEXP_POSIX_SPACE, ROUNDING, SCALAR_SUBQUERY, SELECT, SET_OPERATION,
+    SIGN_RULE, SPLIT_RULE, SPLIT_TO_TABLE_RULE, STAR, SUM, SUM_FLOAT, TEMPORAL_TEXT_FORMAT,
+    TEXT_AFFIX, TEXT_BRANCHES, TEXT_CHR, TEXT_CONTAINS, TEXT_HEX, TEXT_HEX_DECODE, TEXT_INITCAP,
+    TEXT_MD5, TEXT_NUMBER_COMPARISON, TEXT_PAD, TEXT_POSITION, TEXT_REPLACE, TEXT_SEARCH_POSITION,
+    TEXT_SHA2, TEXT_TO_TIME_RULE, TEXT_TO_TIMESTAMP_RULE, TEXT_TRANSLATE, TIME_ARITHMETIC,
+    TIME_CAST, TIME_ZONE_CONVERSION, TIMESTAMP_FORMAT_RULE, TIMESTAMP_TIME_RULE, TO_ARRAY_RULE,
     TO_BOOLEAN_RULE, TO_DATE_TEMPORAL, TO_VARIANT_RULE, TRIM, UNION_BY_NAME, UTC_OFFSET_ARITHMETIC,
-    VALUE_AT_EXTREME_KEY, VARIANT_CAST, VARIANT_COMPUTED_GET, VARIANT_EQUALITY, VARIANT_INSPECT,
-    VARIANT_KIND_CAST, VARIANT_KIND_RULE, VARIANT_PARTITION, VARIANT_PATH, VARIANT_TO_VARCHAR,
-    VARIANT_TYPE_NAME, VARIANT_TYPED_CHECK, WHERE, WINDOW_AGGREGATE, WINDOW_FIRST_LAST,
-    WINDOW_OFFSET, WINDOW_RANKING, ZERO_IF_NULL_RULE, ZONE_COLUMNS, ZONED_PARTS,
+    VALUE_AT_EXTREME_KEY, VALUES_ROWS, VARIANT_CAST, VARIANT_COMPUTED_GET, VARIANT_EQUALITY,
+    VARIANT_EQUALITY_BY_TEXT, VARIANT_INSPECT, VARIANT_KIND_CAST, VARIANT_KIND_RULE,
+    VARIANT_PARTITION, VARIANT_PATH, VARIANT_TEXT_BRANCHES, VARIANT_TO_VARCHAR, VARIANT_TYPE_NAME,
+    VARIANT_TYPED_CHECK, WHERE, WINDOW_AGGREGATE, WINDOW_FIRST_LAST, WINDOW_OFFSET, WINDOW_RANKING,
+    WINDOW_VALUE_FRAME, ZERO_IF_NULL_RULE, ZONE_COLUMNS, ZONED_PARTS,
 };
 use crate::conversion::models::RuleSpec;
 
@@ -57,7 +63,13 @@ pub const RULES: &[RuleSpec] = &[
     RuleSpec {
         id: DISTINCT,
         constructs: &["node:select"],
-        conditions: "DISTINCT over the converted columns, none a VARIANT, which DuckDB compares by its JSON as written, keys in their order, not as VARIANT equality does.",
+        conditions: "DISTINCT over the converted columns; a JSON-held VARIANT column is compared as variant_equality_by_text compares it, and one built from a FLOAT refuses.",
+        failures: &[],
+    },
+    RuleSpec {
+        id: VARIANT_EQUALITY_BY_TEXT,
+        constructs: &["node:distinct", "node:group_by"],
+        conditions: "A JSON-held VARIANT in SELECT DISTINCT or as a GROUP BY key, by expression or position, is replaced by the text Snowflake writes for it, keys in byte order at every depth, so objects differing only in key order are one value, 1 and \"1\" differ, JSON null and SQL NULL differ; the grouped value is read back from that text wherever the select list, HAVING, QUALIFY and ORDER BY use it. Relies on json_fidelity, which raises for numbers DuckDB writes differently (such as 1.0), and is refused for values not proven free of DATEs and timestamps, as writing a VARIANT is.",
         failures: &[],
     },
     RuleSpec {
@@ -69,7 +81,7 @@ pub const RULES: &[RuleSpec] = &[
     RuleSpec {
         id: FROM_SUBQUERY,
         constructs: &["node:subquery"],
-        conditions: "The subquery converts.",
+        conditions: "The subquery converts; one written without an alias is read by its columns' bare names.",
         failures: &[],
     },
     RuleSpec {
@@ -81,7 +93,31 @@ pub const RULES: &[RuleSpec] = &[
     RuleSpec {
         id: COMMON_TABLE,
         constructs: &["clause:with"],
-        conditions: "Not recursive; no column list.",
+        conditions: "Not recursive; a column list renames the query's columns in order and must match their number.",
+        failures: &[],
+    },
+    RuleSpec {
+        id: JOIN_USING,
+        constructs: &["join:inner", "join:left"],
+        conditions: "INNER or LEFT JOIN ... USING keys that are each one column of the earlier sources and a column of the joined source: each key compared as an ON equality would be. A bare key name reads the earlier side's column, a qualified one its own side's; a bare star leaves out the joined source's keys and converts only where the keys lead the first source's columns in order. RIGHT and FULL joins with USING refuse.",
+        failures: &[],
+    },
+    RuleSpec {
+        id: ASOF_JOIN,
+        constructs: &["join:asof"],
+        conditions: "ASOF JOIN with a MATCH_CONDITION of one comparison (>, >=, < or <=) and an ON of equalities joined by AND: each left row with the nearest right row the comparison admits among those whose ON equalities hold, or NULLs where none does (DuckDB's ASOF LEFT JOIN). Rows whose compared values are NULL match nothing.",
+        failures: &[],
+    },
+    RuleSpec {
+        id: VALUES_ROWS,
+        constructs: &["node:values"],
+        conditions: "VALUES rows of one width, as a query or FROM source: the UNION ALL of one SELECT per row, so each column takes the set operation's common type; columns are named COLUMN1, COLUMN2 and so on unless an alias list renames them.",
+        failures: &[],
+    },
+    RuleSpec {
+        id: POSITIONAL_COLUMN,
+        constructs: &["node:parameter"],
+        conditions: "$n over a query level with exactly one FROM source: that source's n-th column, read as the column itself.",
         failures: &[],
     },
     RuleSpec {
@@ -308,6 +344,24 @@ pub const RULES: &[RuleSpec] = &[
         failures: &[],
     },
     RuleSpec {
+        id: TEXT_BRANCHES,
+        constructs: &["fn:COALESCE", "fn:IFNULL", "fn:NVL", "fn:IFF", "node:case"],
+        conditions: "Non-literal text branches beside NUMBER branches are read as NUMBER(18,5), beside a FLOAT as FLOAT and beside a TIMESTAMP_NTZ(9) as one, then widened to the unified type, as recorded; a unified NUMBER of more than 5 fraction digits refuses. Every text branch is read for every row, whichever branch is chosen, so unreadable text raises as Snowflake raises (error 100038). CASE reads text only with an ELSE, so a branch is chosen every row; DECODE, NULLIF, LEAST and GREATEST, which no recording shows reading text, refuse text beside other types.",
+        failures: &[],
+    },
+    RuleSpec {
+        id: NULL_BRANCHES,
+        constructs: &["fn:COALESCE", "fn:IFNULL", "fn:NVL", "fn:IFF", "node:case"],
+        conditions: "Every branch an untyped NULL: the result is NULL of Snowflake's untyped NULL type, as recorded.",
+        failures: &[],
+    },
+    RuleSpec {
+        id: VARIANT_TEXT_BRANCHES,
+        constructs: &["node:union", "node:except", "node:intersect"],
+        conditions: "A VARIANT column beside a text column in another branch: the result column is VARCHAR and the VARIANT is read as VARIANT::VARCHAR reads it, strings unquoted, JSON null as NULL and objects and arrays as their JSON text, relying on json_fidelity.",
+        failures: &[],
+    },
+    RuleSpec {
         id: IFF,
         constructs: &["fn:IFF"],
         conditions: "A BOOLEAN condition; branches unify.",
@@ -405,7 +459,7 @@ pub const RULES: &[RuleSpec] = &[
             "fn:TIMEDIFF",
             "fn:TIMESTAMPDIFF",
         ],
-        conditions: "DATE or TIMESTAMP_NTZ values. DATE_TRUNC to YEAR, QUARTER, MONTH, WEEK (Monday) or DAY, and for timestamps HOUR, MINUTE or SECOND, keeping the type. DATEADD of a NUMBER(p,0) amount, which fails beyond 2^53 as Snowflake's error 100046, of YEAR, QUARTER, MONTH (clamped to the month's end), WEEK or DAY, and for timestamps HOUR, MINUTE or SECOND, keeping the type and its nanoseconds; a result beyond DuckDB's range (for precision 7-9 its nanosecond range) raises timestamp_range. DATEDIFF between two DATEs or two timestamps counts YEAR, QUARTER, MONTH and DAY boundaries of the dates, and for timestamps HOUR, MINUTE, SECOND, MILLISECOND or MICROSECOND boundaries toward the past.",
+        conditions: "DATE or TIMESTAMP_NTZ values. DATE_TRUNC to YEAR, QUARTER, MONTH, WEEK (Monday) or DAY, and for timestamps HOUR, MINUTE or SECOND, keeping the type. DATEADD of a NUMBER(p,0) amount, which fails beyond 2^53 as Snowflake's error 100046, of YEAR, QUARTER, MONTH (clamped to the month's end), WEEK or DAY, and for timestamps HOUR, MINUTE, SECOND, MILLISECOND or MICROSECOND, keeping the type and its nanoseconds; a result beyond DuckDB's range (for precision 7-9 its nanosecond range) raises timestamp_range. DATEDIFF between two DATEs or two timestamps counts YEAR, QUARTER, MONTH and DAY boundaries of the dates, and for timestamps HOUR, MINUTE, SECOND, MILLISECOND or MICROSECOND boundaries toward the past.",
         failures: &[FailureMode {
             kind: ErrorKind::NumericOverflow,
             snowflake: &[NUMBER_OUT_OF_RANGE],
@@ -768,6 +822,78 @@ pub const RULES: &[RuleSpec] = &[
         }],
     },
     RuleSpec {
+        id: FRACTIONAL_DATE_AMOUNT,
+        constructs: &["fn:DATEADD", "fn:TIMESTAMPADD"],
+        conditions: "A NUMBER amount with a scale, or a FLOAT one, is rounded to a whole number half away from zero before it is added, as recorded for minutes, milliseconds and days.",
+        failures: &[],
+    },
+    RuleSpec {
+        id: LOGARITHM,
+        constructs: &["fn:LN", "fn:EXP", "fn:SQRT"],
+        conditions: "LN, EXP and SQRT of a NUMBER or FLOAT, as a FLOAT computed in double precision. LN of zero or a negative number fails with error 100043 and SQRT of a negative number with error 100044, as recorded; EXP beyond the double range raises numeric_range, as no recording shows what Snowflake returns.",
+        failures: LOGARITHM_FAILURES,
+    },
+    RuleSpec {
+        id: FLOAT_TO_DOUBLE,
+        constructs: &["fn:TRY_TO_DOUBLE"],
+        conditions: "TRY_TO_DOUBLE of a FLOAT: the value itself, as recorded.",
+        failures: &[],
+    },
+    RuleSpec {
+        id: NULL_IF_ZERO_RULE,
+        constructs: &["fn:NULLIFZERO"],
+        conditions: "A NUMBER or FLOAT operand: NULL where it is zero, otherwise the operand, of its type.",
+        failures: &[],
+    },
+    RuleSpec {
+        id: ARRAY_SORT_RULE,
+        constructs: &["fn:ARRAY_SORT"],
+        conditions: "ARRAY_SORT of one VARIANT array other than ARRAY_AGG's: ascending, booleans first, then numbers by value, strings by their UTF-8 bytes, objects, arrays, and JSON nulls last, as recorded; arrays holding two different objects, two different arrays, or numbers DuckDB reads as one double raise array_sort_order. NULL for NULL; a value other than an array fails as other array functions do.",
+        failures: NOT_AN_ARRAY_FAILURES,
+    },
+    RuleSpec {
+        id: ARRAY_FLATTEN_RULE,
+        constructs: &["fn:ARRAY_FLATTEN"],
+        conditions: "ARRAY_FLATTEN of a VARIANT array of arrays: their elements in order, one level deep; an element other than an array, JSON null among them, fails with error 100107, as recorded.",
+        failures: FLATTEN_FAILURES,
+    },
+    RuleSpec {
+        id: TO_ARRAY_RULE,
+        constructs: &["fn:TO_ARRAY"],
+        conditions: "TO_ARRAY of a VARIANT keeps an array and wraps any other value in a one-element array, JSON null and NULL giving NULL; of another type, the value as ARRAY_CONSTRUCT holds it, NULL giving NULL, as recorded.",
+        failures: &[],
+    },
+    RuleSpec {
+        id: ARRAY_APPEND_RULE,
+        constructs: &["fn:ARRAY_APPEND"],
+        conditions: "ARRAY_APPEND of a VARIANT array and a value: ARRAY_CAT of the array with ARRAY_CONSTRUCT of the value, so the value is held as ARRAY_CONSTRUCT holds it, as recorded.",
+        failures: NOT_AN_ARRAY_FAILURES,
+    },
+    RuleSpec {
+        id: ARRAY_SLICE_RULE,
+        constructs: &["fn:ARRAY_SLICE"],
+        conditions: "ARRAY_SLICE of a VARIANT array with NUMBER(p,0) bounds: the elements from the 0-based start up to before the end, negative bounds counted from the end, both clamped to the array, empty where the end is not after the start, NULL for a NULL bound, as recorded.",
+        failures: NOT_AN_ARRAY_FAILURES,
+    },
+    RuleSpec {
+        id: ARRAY_RANGE_RULE,
+        constructs: &["fn:ARRAY_GENERATE_RANGE"],
+        conditions: "ARRAY_GENERATE_RANGE of NUMBER(p,0) start, end and optional step (1 when omitted): the whole numbers from the start by the step while before the end, empty when none is; a step of zero fails with error 100050, as recorded; NULL when an argument is NULL.",
+        failures: RANGE_STEP_FAILURES,
+    },
+    RuleSpec {
+        id: DATE_DAY_ARITHMETIC,
+        constructs: &["node:add", "node:sub"],
+        conditions: "A DATE plus or minus a NUMBER(p,0), the DATE on the left: that many days added or taken away, a DATE, as DATEADD of days does; NULL when either is NULL.",
+        failures: &[],
+    },
+    RuleSpec {
+        id: COMPUTED_SUBSTR_LENGTH,
+        constructs: &["fn:SUBSTR", "fn:SUBSTRING"],
+        conditions: "A text SUBSTR whose length is a NUMBER(p,0) expression: a negative length gives the empty string and a NULL one NULL, as recorded.",
+        failures: &[],
+    },
+    RuleSpec {
         id: FLATTEN_RULE,
         constructs: &["node:lateral", "fn:FLATTEN"],
         conditions: "LATERAL FLATTEN of a VARIANT input after another FROM source or after JOIN ... ON clauses, as a comma or CROSS JOIN source, with OUTER => a boolean literal at most: INDEX and PATH [i] for array elements, KEY and PATH for object keys (raising for keys that are not plain names), VALUE and THIS; scalars, JSON null and NULL give no rows, or one row of NULLs under OUTER => TRUE. SEQ, PATH =>, RECURSIVE => and MODE => are not converted.",
@@ -825,6 +951,12 @@ pub const RULES: &[RuleSpec] = &[
         failures: &[],
     },
     RuleSpec {
+        id: REGEXP_COUNTING,
+        constructs: &["fn:REGEXP_COUNT", "fn:REGEXP_INSTR"],
+        conditions: "A literal pattern as REGEXP_LIKE takes it, without lazy quantifiers or control escapes, which no recording shows for these functions. REGEXP_COUNT from position 1, with REGEXP_SUBSTR's parameters, counts non-overlapping matches, 0 for empty text; REGEXP_INSTR of two arguments is the 1-based character position where the first match starts, or 0. Both raise regexp_pattern_syntax for a pattern matching empty text, are NUMBER(18,0) and are NULL for NULL text, as recorded.",
+        failures: &[],
+    },
+    RuleSpec {
         id: REGEXP_PARAMETERS,
         constructs: &["fn:REGEXP_LIKE", "fn:REGEXP_SUBSTR", "fn:REGEXP_SUBSTR_ALL"],
         conditions: "REGEXP_LIKE or REGEXP_SUBSTR with a literal parameter string of c, i and s (and e and m for REGEXP_SUBSTR and REGEXP_SUBSTR_ALL), as RE2 inline flags: i matches case-insensitively, c case-sensitively (the last wins), s lets . match a line feed, m lets ^ and $ match at line feeds.",
@@ -857,6 +989,12 @@ pub const RULES: &[RuleSpec] = &[
         id: TEXT_MD5,
         constructs: &["fn:MD5"],
         conditions: "One VARCHAR operand: the MD5 digest of its UTF-8 bytes as 32 lower-case hex digits; NULL for NULL. BINARY operands are refused.",
+        failures: &[],
+    },
+    RuleSpec {
+        id: JARO_WINKLER,
+        constructs: &["fn:JAROWINKLER_SIMILARITY"],
+        conditions: "Two VARCHAR operands: the Jaro-Winkler similarity of their characters (code points) ignoring case, prefix scale 0.1 over at most 4 characters, times 100 rounded down, as NUMBER(4,0); 0 when either is empty and NULL when either is NULL, as recorded. A text holding any cased letter outside ASCII, or a pair of more than 127 distinct characters, raises text_similarity.",
         failures: &[],
     },
     RuleSpec {
@@ -940,7 +1078,7 @@ pub const RULES: &[RuleSpec] = &[
     RuleSpec {
         id: CONCAT,
         constructs: &["node:concat", "fn:CONCAT"],
-        conditions: "VARCHAR, NUMBER, FLOAT, BOOLEAN or DATE operands; NUMBER, BOOLEAN and DATE are formatted as Snowflake does, FLOAT as its ::VARCHAR text, recorded over many rows.",
+        conditions: "VARCHAR, NUMBER, FLOAT, BOOLEAN or DATE operands; NUMBER, BOOLEAN and DATE are formatted as Snowflake does, FLOAT as its ::VARCHAR text, recorded over many rows; JSON-held VARIANTs as ::VARCHAR writes them, relying on json_fidelity. Text constants concatenate to a text constant.",
         failures: &[],
     },
     RuleSpec {
@@ -1014,7 +1152,13 @@ pub const RULES: &[RuleSpec] = &[
     RuleSpec {
         id: WINDOW_FIRST_LAST,
         constructs: &["fn:FIRST_VALUE", "fn:LAST_VALUE", "node:window_function"],
-        conditions: "An ORDER BY; no frame or the whole partition, which is Snowflake's default for these functions.",
+        conditions: "An ORDER BY; no frame or the whole partition, which is Snowflake's default for these functions. COUNT_IF converts over a ROWS frame from UNBOUNDED PRECEDING to CURRENT ROW, as recorded; other named aggregates refuse frames.",
+        failures: &[],
+    },
+    RuleSpec {
+        id: WINDOW_VALUE_FRAME,
+        constructs: &["fn:FIRST_VALUE", "fn:LAST_VALUE"],
+        conditions: "FIRST_VALUE and LAST_VALUE, with or without IGNORE NULLS, over a ROWS frame with literal or unbounded bounds: the first or last value, or non-NULL value, among the frame's rows, NULL for an empty frame, as recorded. Rows tied in the window order are framed in an order neither engine fixes, as for other ROWS frames.",
         failures: &[],
     },
     RuleSpec {
@@ -1047,7 +1191,7 @@ pub const RULES: &[RuleSpec] = &[
     RuleSpec {
         id: TEXT_CHR,
         constructs: &["fn:CHR"],
-        conditions: "An integer NUMBER code point; negative, surrogate and larger than U+10FFFF code points raise Snowflake's error 100062.",
+        conditions: "An integer NUMBER code point; negative, surrogate and larger than U+10FFFF code points raise Snowflake's error 100062. A literal code point of a character is that character as a text constant, which arguments that must be literals accept.",
         failures: CHARACTER_CODE_FAILURES,
     },
     RuleSpec {
@@ -1064,8 +1208,20 @@ pub const RULES: &[RuleSpec] = &[
     },
     RuleSpec {
         id: TEXT_HEX_DECODE,
-        constructs: &["fn:TRY_HEX_DECODE_STRING"],
-        conditions: "A VARCHAR operand of whole pairs of hexadecimal digits of either case, decoded as UTF-8 text, NUL characters kept; an odd count, any other character or bytes that are not UTF-8 give NULL, as recorded.",
+        constructs: &["fn:TRY_HEX_DECODE_STRING", "fn:HEX_DECODE_STRING"],
+        conditions: "A VARCHAR operand of whole pairs of hexadecimal digits of either case, decoded as UTF-8 text, NUL characters kept; an odd count, any other character or bytes that are not UTF-8 give NULL under TRY_HEX_DECODE_STRING and fail with error 100115 under HEX_DECODE_STRING, as recorded.",
+        failures: HEX_DECODE_FAILURES,
+    },
+    RuleSpec {
+        id: DAY_NAME_RULE,
+        constructs: &["fn:DAYNAME"],
+        conditions: "A DATE or TIMESTAMP_NTZ, or a TIMESTAMP_TZ known to hold UTC: the day's three-letter English name, Mon to Sun, as recorded; NULL for NULL.",
+        failures: &[],
+    },
+    RuleSpec {
+        id: TEXT_SHA2,
+        constructs: &["fn:SHA2"],
+        conditions: "One VARCHAR operand and a digest size of 256 bits, written or the default: the SHA-256 digest of its UTF-8 bytes as 64 lower-case hex digits; NULL for NULL. Other sizes refuse.",
         failures: &[],
     },
     RuleSpec {

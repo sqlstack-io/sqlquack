@@ -8,13 +8,10 @@ fn given_independent_blockers_when_collecting_refusals_then_every_one_is_listed(
     let test_cases = [
         CollectedRefusalsTestCase {
             description: "two refused functions in different select items",
-            sql: "SELECT SOUNDEX(note) AS label, JAROWINKLER_SIMILARITY(note, 'gift') AS score \
+            sql: "SELECT SOUNDEX(note) AS label, STRTOK(note, 'gift') AS score \
                   FROM customers",
             expected_summary: CollectedSummary {
-                constructs: vec![
-                    "fn:JAROWINKLER_SIMILARITY".to_owned(),
-                    "fn:SOUNDEX".to_owned(),
-                ],
+                constructs: vec!["fn:SOUNDEX".to_owned(), "fn:STRTOK".to_owned()],
                 possibly_incomplete: false,
             },
         },
@@ -29,24 +26,18 @@ fn given_independent_blockers_when_collecting_refusals_then_every_one_is_listed(
         CollectedRefusalsTestCase {
             description: "a refused function in the select list and another in WHERE",
             sql: "SELECT SOUNDEX(note) AS label FROM customers \
-                  WHERE JAROWINKLER_SIMILARITY(note, 'gift') > 0.5",
+                  WHERE STRTOK(note, 'gift') > 0.5",
             expected_summary: CollectedSummary {
-                constructs: vec![
-                    "fn:JAROWINKLER_SIMILARITY".to_owned(),
-                    "fn:SOUNDEX".to_owned(),
-                ],
+                constructs: vec!["fn:SOUNDEX".to_owned(), "fn:STRTOK".to_owned()],
                 possibly_incomplete: false,
             },
         },
         CollectedRefusalsTestCase {
             description: "a refused function inside a typed parent: the cast keeps its target type",
             sql: "SELECT CAST(SOUNDEX(note) AS VARCHAR) || 'x' AS label, \
-                  JAROWINKLER_SIMILARITY(note, 'gift') AS score FROM customers",
+                  STRTOK(note, 'gift') AS score FROM customers",
             expected_summary: CollectedSummary {
-                constructs: vec![
-                    "fn:JAROWINKLER_SIMILARITY".to_owned(),
-                    "fn:SOUNDEX".to_owned(),
-                ],
+                constructs: vec!["fn:SOUNDEX".to_owned(), "fn:STRTOK".to_owned()],
                 possibly_incomplete: false,
             },
         },
@@ -89,7 +80,7 @@ fn given_converting_statements_when_collecting_refusals_elsewhere_then_their_sql
             "SELECT customer_id, CASE WHEN amount > 10 THEN 'big' ELSE 'small' END AS size \
              FROM orders ORDER BY customer_id",
         ],
-        refused: "SELECT SOUNDEX(note) AS label, JAROWINKLER_SIMILARITY(note, 'gift') AS score \
+        refused: "SELECT SOUNDEX(note) AS label, STRTOK(note, 'gift') AS score \
                   FROM customers",
         expected_outcome: (3, 2, true),
     }];

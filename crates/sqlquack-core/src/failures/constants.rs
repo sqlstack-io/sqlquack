@@ -121,6 +121,36 @@ pub const INVALID_UTF8: SnowflakeCode = SnowflakeCode {
     sqlstate: "22000",
 };
 
+/// A floating point operation outside its domain, such as the logarithm of zero.
+pub const INVALID_FLOAT_OPERATION: SnowflakeCode = SnowflakeCode {
+    errno: 100_043,
+    sqlstate: "2201E",
+};
+
+/// ARRAY_FLATTEN of an array holding an element other than an array.
+pub const FLATTEN_ELEMENT_NOT_ARRAY: SnowflakeCode = SnowflakeCode {
+    errno: 100_107,
+    sqlstate: "22000",
+};
+
+/// ARRAY_GENERATE_RANGE with a step of zero.
+pub const ZERO_RANGE_STEP: SnowflakeCode = SnowflakeCode {
+    errno: 100_050,
+    sqlstate: "22023",
+};
+
+/// HEX_DECODE_STRING of text that is not hexadecimal digits of UTF-8 bytes.
+pub const HEX_DECODE_FAILED: SnowflakeCode = SnowflakeCode {
+    errno: 100_115,
+    sqlstate: "22000",
+};
+
+/// The square root of a negative number.
+pub const SQUARE_ROOT_OF_NEGATIVE: SnowflakeCode = SnowflakeCode {
+    errno: 100_044,
+    sqlstate: "22P01",
+};
+
 /// Every Snowflake error the recordings hold, and its kind.
 pub const SNOWFLAKE_ERRORS: &[(SnowflakeCode, ErrorKind)] = &[
     (NUMBER_OUT_OF_RANGE, ErrorKind::NumericOverflow),
@@ -142,6 +172,11 @@ pub const SNOWFLAKE_ERRORS: &[(SnowflakeCode, ErrorKind)] = &[
     (INVALID_CHARACTER_CODE, ErrorKind::InvalidArgument),
     (INVALID_REGULAR_EXPRESSION, ErrorKind::InvalidArgument),
     (INVALID_UTF8, ErrorKind::InvalidArgument),
+    (INVALID_FLOAT_OPERATION, ErrorKind::InvalidArgument),
+    (FLATTEN_ELEMENT_NOT_ARRAY, ErrorKind::InvalidArgument),
+    (ZERO_RANGE_STEP, ErrorKind::InvalidArgument),
+    (HEX_DECODE_FAILED, ErrorKind::InvalidArgument),
+    (SQUARE_ROOT_OF_NEGATIVE, ErrorKind::InvalidArgument),
     (UNKNOWN_TIME_ZONE, ErrorKind::InvalidArgument),
     (
         SnowflakeCode {
@@ -196,6 +231,36 @@ pub const DIVISION_FAILURES: &[FailureMode] = &[FailureMode {
 pub const TIME_TEXT_FAILURES: &[FailureMode] = &[FailureMode {
     kind: ErrorKind::TimeText,
     snowflake: &[TIME_NOT_RECOGNIZED, TIME_FORMAT_MISMATCH],
+}];
+
+/// How LN fails for zero or a negative number, and SQRT for a negative one.
+pub const LOGARITHM_FAILURES: &[FailureMode] = &[FailureMode {
+    kind: ErrorKind::InvalidArgument,
+    snowflake: &[INVALID_FLOAT_OPERATION, SQUARE_ROOT_OF_NEGATIVE],
+}];
+
+/// How ARRAY_FLATTEN fails for an element other than an array.
+pub const FLATTEN_FAILURES: &[FailureMode] = &[
+    FailureMode {
+        kind: ErrorKind::InvalidArgument,
+        snowflake: &[FLATTEN_ELEMENT_NOT_ARRAY],
+    },
+    FailureMode {
+        kind: ErrorKind::InvalidArgument,
+        snowflake: &[NOT_AN_ARRAY_ARGUMENT],
+    },
+];
+
+/// How ARRAY_GENERATE_RANGE fails for a step of zero.
+pub const RANGE_STEP_FAILURES: &[FailureMode] = &[FailureMode {
+    kind: ErrorKind::InvalidArgument,
+    snowflake: &[ZERO_RANGE_STEP],
+}];
+
+/// How HEX_DECODE_STRING fails for text that is not hexadecimal UTF-8.
+pub const HEX_DECODE_FAILURES: &[FailureMode] = &[FailureMode {
+    kind: ErrorKind::InvalidArgument,
+    snowflake: &[HEX_DECODE_FAILED],
 }];
 
 /// How CHR fails for a code point no character has.

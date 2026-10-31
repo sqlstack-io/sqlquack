@@ -1,0 +1,86 @@
+# The common type Snowflake gives text beside numbers, VARIANTs and timestamps, and branches that are
+# all untyped NULLs.
+category = "conditional"
+construct = "fn:COALESCE"
+session_profile = "utc-v1"
+
+[[case]]
+id = "coalesce_text_with_numbers"
+description = "COALESCE of readable text with NUMBERs of several precisions and scales, in both orders, as written."
+columns = [{ name = "s", type = "VARCHAR" }, { name = "i", type = "NUMBER(38,0)" }, { name = "j", type = "NUMBER(10,0)" }, { name = "d", type = "NUMBER(5,2)" }, { name = "e", type = "NUMBER(38,10)" }]
+rows = [
+  ["'3'", "1", "2", "1.25", "0.5"],
+  ["NULL", "7", "8", "9.75", "-0.0000000001"],
+  ["'12'", "NULL", "NULL", "NULL", "NULL"],
+  ["'-4.5'", "1", "1", "1.00", "1"],
+  ["NULL", "NULL", "NULL", "NULL", "NULL"],
+]
+query = "SELECT COALESCE(s, i) AS si, COALESCE(i, s) AS is_, COALESCE(s, j) AS sj, COALESCE(s, d) AS sd, COALESCE(d, s) AS ds, COALESCE(s, e) AS se FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "mixed-types"]
+
+[[case]]
+id = "coalesce_text_with_float_and_timestamp"
+description = "COALESCE of readable text with a FLOAT and with a TIMESTAMP_NTZ, and NVL and IFF of text with a NUMBER."
+columns = [{ name = "s", type = "VARCHAR" }, { name = "t", type = "VARCHAR" }, { name = "f", type = "FLOAT" }, { name = "ts", type = "TIMESTAMP_NTZ(9)" }, { name = "n", type = "NUMBER(10,2)" }]
+rows = [
+  ["'1.5'", "'2024-01-01 10:00:00'", "2.5", "'2024-02-01 00:00:00'", "1.25"],
+  ["NULL", "NULL", "-0.5", "'2024-03-01 12:30:00.5'", "2.50"],
+  ["'1e3'", "'2024-01-01'", "NULL", "NULL", "NULL"],
+]
+query = "SELECT COALESCE(s, f) AS sf, COALESCE(f, s) AS fs, COALESCE(t, ts) AS tts, COALESCE(ts, t) AS tst, NVL(s, n) AS sn, IFF(n > 2, s, n) AS i FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "mixed-types"]
+
+[[case]]
+id = "union_text_with_variant_kinds"
+description = "UNION ALL of text with VARIANTs of every kind, and by name, typed and written as Snowflake gives them."
+columns = [{ name = "s", type = "VARCHAR" }, { name = "j", type = "VARCHAR" }]
+rows = [
+  ["'abc'", "'{\"k\":[1,\"x\"]}'"],
+  ["NULL", "'\"text\"'"],
+  ["''", "'1.50'"],
+  ["' x '", "'true'"],
+  ["'1'", "'null'"],
+  ["'2'", "NULL"],
+  ["'3'", "'[]'"],
+]
+query = "SELECT o, x, LENGTH(x) AS n FROM (SELECT ordinal AS o, s AS x FROM input UNION ALL SELECT ordinal + 10, PARSE_JSON(j) FROM input UNION ALL BY NAME SELECT PARSE_JSON(j):k[1] AS x, ordinal + 20 AS o FROM input) ORDER BY o"
+order = "ordered"
+tags = ["null", "mixed-types"]
+
+[[case]]
+id = "union_by_name_null_column"
+description = "UNION ALL BY NAME where one branch writes a column as a bare NULL and the other as a typed value."
+columns = [{ name = "k", type = "VARCHAR" }, { name = "b", type = "BOOLEAN" }, { name = "n", type = "NUMBER(10,2)" }]
+rows = [["'x'", "TRUE", "1.50"], ["'y'", "NULL", "NULL"], ["'z'", "FALSE", "-2.00"]]
+query = "SELECT k, flag, amount FROM (SELECT k, NULL AS flag, n AS amount FROM input UNION ALL BY NAME SELECT k, b AS flag, NULL AS amount FROM input) ORDER BY k, flag NULLS FIRST, amount NULLS FIRST"
+order = "ordered"
+tags = ["null", "all-null", "mixed-types"]
+
+[[case]]
+id = "iff_and_case_all_null_branches"
+description = "IFF and CASE whose branches are all untyped NULLs, alone and beside typed columns, and their result types."
+columns = [{ name = "b", type = "BOOLEAN" }, { name = "n", type = "NUMBER(10,0)" }]
+rows = [["TRUE", "1"], ["FALSE", "2"], ["NULL", "NULL"]]
+query = "SELECT IFF(b, NULL, NULL) AS i, CASE WHEN b THEN NULL ELSE NULL END AS c, CASE n WHEN 1 THEN NULL END AS d, COALESCE(IFF(b, NULL, NULL), n) AS e, IFF(b, NULL, NULL) IS NULL AS z FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "all-null"]
+
+[[case]]
+id = "case_without_else_unreadable_text"
+description = "CASE without ELSE mixing a NUMBER and unreadable text branch, where no WHEN matches for some rows."
+columns = [{ name = "n", type = "NUMBER(10,0)" }, { name = "s", type = "VARCHAR" }]
+rows = [["1", "'abc'"], ["2", "'7'"], ["3", "'x'"]]
+query = "SELECT CASE WHEN n = 2 THEN n WHEN n = 9 THEN s END AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["mixed-types", "null"]
+
+[[case]]
+id = "decode_number_and_text"
+description = "DECODE choosing a NUMBER or a readable text branch."
+columns = [{ name = "n", type = "NUMBER(10,0)" }, { name = "s", type = "VARCHAR" }]
+rows = [["1", "'2.5'"], ["2", "'7'"], ["3", "'-1'"]]
+query = "SELECT DECODE(n, 1, n, 2, s, 0) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["mixed-types", "null"]

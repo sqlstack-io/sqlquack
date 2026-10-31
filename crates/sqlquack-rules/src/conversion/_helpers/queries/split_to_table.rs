@@ -75,7 +75,11 @@ pub(crate) fn lateral_split(
             split_to_rows(&text.sql, &delimiter, log),
             quoted_identifier(&alias, log)
         ),
-        relation: ScopeRelation { alias, columns },
+        relation: ScopeRelation {
+            alias,
+            columns,
+            merged: Vec::new(),
+        },
     })
 }
 

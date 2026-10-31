@@ -7,7 +7,8 @@ use sqlquack_core::refusals::main::outside_conditions::outside_conditions;
 use sqlquack_core::refusals::models::Refusal;
 
 use crate::conversion::_helpers::expressions::atoms::{
-    boolean_literal, column, commented, literal, negate, null_literal, parentheses, scalar_subquery,
+    boolean_literal, column, commented, literal, negate, null_literal, parentheses,
+    positional_column, scalar_subquery,
 };
 use crate::conversion::_helpers::expressions::calls::{convert_aggregate, convert_function};
 use crate::conversion::_helpers::expressions::casts::convert_cast;
@@ -143,6 +144,7 @@ fn convert_kind(node: &Value, site: Site<'_>) -> Result<Emitted, Refusal> {
     };
     match kind {
         "column" => column(payload, site),
+        "parameter" => positional_column(payload, site),
         "literal" => literal(payload, site),
         "boolean" => Ok(boolean_literal(payload, site)),
         "null" => Ok(null_literal(site)),

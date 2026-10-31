@@ -3,12 +3,14 @@
 use crate::types::models::ColumnSpec;
 
 /// A relation visible in a FROM clause.
-#[derive(Clone, Debug, PartialEq, Eq)]
+#[derive(Clone, Debug, Default, PartialEq, Eq)]
 pub struct ScopeRelation {
     /// The name the relation is read by.
     pub alias: String,
     /// Its columns, in order.
     pub columns: Vec<ColumnSpec>,
+    /// Columns a JOIN USING merged into an earlier relation's: read only qualified, and not by a bare star.
+    pub merged: Vec<String>,
 }
 
 /// What a query level can see, select-list aliases bound to values of type `A`.

@@ -1,0 +1,106 @@
+{
+  "arrow_sha256": "fdfd77bc3df3f185d6a332c491c704931cc18202a936fe11a00e1b10aa436d3c",
+  "case_hash": "47b68356a9da6ea2077c5e6a87d064e15a37fa878129a250e15101c54500f9f3",
+  "columns": [
+    {
+      "internal_size": null,
+      "name": "O",
+      "nullable": false,
+      "precision": 3,
+      "scale": 0,
+      "type_code": 0,
+      "type_name": "FIXED"
+    },
+    {
+      "internal_size": null,
+      "name": "V",
+      "nullable": true,
+      "precision": null,
+      "scale": null,
+      "type_code": 5,
+      "type_name": "VARIANT"
+    },
+    {
+      "internal_size": null,
+      "name": "FF",
+      "nullable": true,
+      "precision": null,
+      "scale": null,
+      "type_code": 1,
+      "type_name": "REAL"
+    },
+    {
+      "internal_size": null,
+      "name": "NN",
+      "nullable": true,
+      "precision": 10,
+      "scale": 2,
+      "type_code": 0,
+      "type_name": "FIXED"
+    },
+    {
+      "internal_size": 134217728,
+      "name": "SS",
+      "nullable": true,
+      "precision": null,
+      "scale": null,
+      "type_code": 2,
+      "type_name": "TEXT"
+    },
+    {
+      "internal_size": 134217728,
+      "name": "TF",
+      "nullable": true,
+      "precision": null,
+      "scale": null,
+      "type_code": 2,
+      "type_name": "TEXT"
+    }
+  ],
+  "connector": "snowflake-connector-python 4.7.2",
+  "duckdb_version": "v2.0.0",
+  "effective_parameters": {
+    "BINARY_INPUT_FORMAT": "HEX",
+    "BINARY_OUTPUT_FORMAT": "HEX",
+    "DATE_INPUT_FORMAT": "AUTO",
+    "DATE_OUTPUT_FORMAT": "YYYY-MM-DD",
+    "DEFAULT_NULL_ORDERING": "LAST",
+    "GEOGRAPHY_OUTPUT_FORMAT": "GeoJSON",
+    "GEOMETRY_OUTPUT_FORMAT": "GeoJSON",
+    "JSON_INDENT": "2",
+    "QUOTED_IDENTIFIERS_IGNORE_CASE": "false",
+    "STRICT_JSON_OUTPUT": "false",
+    "TIMESTAMP_DAY_IS_ALWAYS_24H": "false",
+    "TIMESTAMP_INPUT_FORMAT": "AUTO",
+    "TIMESTAMP_LTZ_OUTPUT_FORMAT": "",
+    "TIMESTAMP_NTZ_OUTPUT_FORMAT": "YYYY-MM-DD HH24:MI:SS.FF3",
+    "TIMESTAMP_OUTPUT_FORMAT": "YYYY-MM-DD HH24:MI:SS.FF3 TZHTZM",
+    "TIMESTAMP_TYPE_MAPPING": "TIMESTAMP_NTZ",
+    "TIMESTAMP_TZ_OUTPUT_FORMAT": "",
+    "TIMEZONE": "UTC",
+    "TIME_INPUT_FORMAT": "AUTO",
+    "TIME_OUTPUT_FORMAT": "HH24:MI:SS",
+    "TWO_DIGIT_CENTURY_START": "1970",
+    "USE_CACHED_RESULT": "false",
+    "WEEK_OF_YEAR_POLICY": "0",
+    "WEEK_START": "0"
+  },
+  "error": null,
+  "format": 1,
+  "outcome": "rows",
+  "parameters_sha256": "36e4297fedc2296f596b9fbafdfd61e58e7e620ee0c228e16a4fa88a18dcc10f",
+  "query_id_sha256": "68838aa87b8529920e047e90ca1442cfe1eba3674d31e2079ea03e233472c62c",
+  "recorded_at": "2026-10-30T20:20:12Z",
+  "recorder": "sqlquack-record 0.1.0",
+  "row_count": 10,
+  "session_parameters": {
+    "DEFAULT_NULL_ORDERING": "LAST",
+    "QUOTED_IDENTIFIERS_IGNORE_CASE": false,
+    "TIMESTAMP_TYPE_MAPPING": "TIMESTAMP_NTZ",
+    "TIMEZONE": "UTC",
+    "USE_CACHED_RESULT": false,
+    "WEEK_OF_YEAR_POLICY": 0,
+    "WEEK_START": 0
+  },
+  "warehouse_version": "10.39.101"
+}

@@ -5,16 +5,21 @@ use sqlquack_core::classification::models::Construct;
 use sqlquack_core::refusals::main::outside_conditions::outside_conditions;
 use sqlquack_core::refusals::models::Refusal;
 use sqlquack_duckdb::blocks::main::cast::cast;
+use sqlquack_duckdb::floats::main::exponential::exponential;
+use sqlquack_duckdb::floats::main::natural_logarithm::natural_logarithm;
+use sqlquack_duckdb::floats::main::square_root::square_root;
 use sqlquack_snowflake::typing::constants::MAX_PRECISION;
 use sqlquack_snowflake::typing::models::SnowflakeType;
 
 use crate::conversion::_helpers::expressions::casts::number_literal_text;
 use crate::conversion::_helpers::expressions::scalar::convert_expression;
+use crate::conversion::_helpers::support::divergence::diverge;
 use crate::conversion::_helpers::support::scope::Emitted;
 use crate::conversion::_helpers::support::site::Site;
 
 use crate::conversion::constants::{
-    BITWISE, NUMERIC_FUNCTION, ROUND_FUNCTION, ROUNDING, SIGN_RULE,
+    BITWISE, LN_NAME, LOGARITHM, NUMERIC_FUNCTION, NUMERIC_RANGE, ROUND_FUNCTION, ROUNDING,
+    SIGN_RULE, SQRT_NAME,
 };
 
 /// ABS of a NUMBER or FLOAT, of the operand's type.
@@ -46,6 +51,36 @@ pub(crate) fn absolute(
             format!("ABS of {other}"),
         )),
     }
+}
+
+/// LN, EXP or SQRT of a NUMBER or FLOAT, a FLOAT, failing where Snowflake fails.
+pub(crate) fn logarithm(
+    name: &str,
+    arguments: &[Value],
+    construct: &Construct,
+    site: Site<'_>,
+) -> Result<Emitted, Refusal> {
+    let _rule = site.context.log.rule(LOGARITHM);
+    let refuse = |reason: String| outside_conditions(construct.clone(), reason);
+    let [value] = arguments else {
+        return Err(refuse(format!("{name} with these arguments")));
+    };
+    let operand = convert_expression(value, site)?;
+    if !matches!(
+        operand.data_type,
+        SnowflakeType::Number { .. } | SnowflakeType::Float
+    ) {
+        return Err(refuse(format!("{name} of {}", operand.data_type)));
+    }
+    let sql = match name {
+        LN_NAME => natural_logarithm(&operand.sql, site.context.log),
+        SQRT_NAME => square_root(&operand.sql, site.context.log),
+        _ => {
+            diverge(site.context, NUMERIC_RANGE, construct)?;
+            exponential(&operand.sql, site.context.log)
+        }
+    };
+    Ok(Emitted::new(sql, SnowflakeType::Float))
 }
 
 /// BITAND, BITOR and BITXOR of integer NUMBERs, as 128-bit two's complement.

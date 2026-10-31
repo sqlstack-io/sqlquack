@@ -1,0 +1,177 @@
+# Numeric functions and arithmetic models use: TRY_TO_NUMBER and TRY_TO_DOUBLE of numbers, NULLIFZERO,
+# MEDIAN, LN and EXP, date arithmetic with numbers, fractional DATEADD amounts and computed SUBSTR
+# lengths.
+category = "numeric"
+construct = "fn:TRY_TO_NUMBER"
+session_profile = "utc-v1"
+
+[[case]]
+id = "try_to_number_of_numbers"
+description = "TRY_TO_NUMBER and TRY_TO_DOUBLE of NUMBER and FLOAT values, with and without precision and scale."
+columns = [{ name = "n", type = "NUMBER(10,2)" }, { name = "f", type = "FLOAT" }, { name = "i", type = "NUMBER(38,0)" }]
+rows = [
+  ["1.50", "1.5", "7"],
+  ["2.49", "2.5", "-7"],
+  ["-0.50", "-0.5", "0"],
+  ["0.00", "1e20", "99999999999999999999999999999999999999"],
+  ["NULL", "NULL", "NULL"],
+]
+query = "SELECT TRY_TO_NUMBER(n) AS a, TRY_TO_NUMBER(n, 10, 1) AS b, TRY_TO_NUMBER(i) AS c, TRY_TO_DOUBLE(f) AS d, TRY_TO_NUMBER(f) AS e FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "zero", "negative", "boundary"]
+
+[[case]]
+id = "nullifzero_and_logs"
+description = "NULLIFZERO of NUMBER and FLOAT, LN and EXP of positive, zero and negative values, and a ratio over NULLIFZERO."
+columns = [{ name = "n", type = "NUMBER(10,2)" }, { name = "f", type = "FLOAT" }]
+rows = [
+  ["2.00", "2.5"],
+  ["0.00", "0"],
+  ["-1.50", "-1"],
+  ["NULL", "NULL"],
+  ["0.01", "700"],
+]
+query = "SELECT NULLIFZERO(n) AS a, NULLIFZERO(f) AS b, 1 / NULLIFZERO(n) AS r, LN(NULLIFZERO(ABS(f))) AS l, EXP(f) AS e FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "zero", "negative", "boundary"]
+
+[[case]]
+id = "ln_of_zero"
+description = "LN of zero."
+columns = [{ name = "f", type = "FLOAT" }]
+rows = [["0"]]
+query = "SELECT LN(f) AS l FROM input"
+order = "ordered"
+tags = ["zero"]
+
+[[case]]
+id = "ln_of_negative"
+description = "LN of a negative number."
+columns = [{ name = "n", type = "NUMBER(10,2)" }]
+rows = [["-1.00"]]
+query = "SELECT LN(n) AS l FROM input"
+order = "ordered"
+tags = ["negative"]
+
+[[case]]
+id = "median_values"
+description = "MEDIAN of NUMBER and FLOAT values per group, over even and odd counts, NULLs and a group of NULLs only."
+columns = [{ name = "g", type = "VARCHAR" }, { name = "n", type = "NUMBER(10,2)" }, { name = "f", type = "FLOAT" }]
+rows = [
+  ["'a'", "1.00", "1.5"],
+  ["'a'", "2.00", "-2"],
+  ["'a'", "4.00", "10"],
+  ["'a'", "NULL", "NULL"],
+  ["'b'", "1.25", "0"],
+  ["'b'", "2.50", "1"],
+  ["'c'", "NULL", "NULL"],
+]
+query = "SELECT g, MEDIAN(n) AS mn, MEDIAN(f) AS mf FROM input GROUP BY g ORDER BY g"
+order = "ordered"
+expected_divergence = "percentile_interpolation"
+tags = ["null", "zero", "negative", "boundary"]
+
+[[case]]
+id = "date_minus_and_plus_number"
+description = "A DATE minus and plus a whole number, a NUMBER with a scale, and a column, as days."
+columns = [{ name = "d", type = "DATE" }, { name = "n", type = "NUMBER(10,0)" }]
+rows = [
+  ["'2024-03-01'", "1"],
+  ["'2024-01-01'", "-31"],
+  ["'2024-12-31'", "0"],
+  ["NULL", "1"],
+  ["'2024-02-29'", "NULL"],
+]
+query = "SELECT d - 1 AS a, d + 7 AS b, d - n AS c FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "zero", "negative", "boundary"]
+
+[[case]]
+id = "dateadd_fractional_amounts"
+description = "DATEADD and TIMESTAMPADD with FLOAT and scaled NUMBER amounts, as models add halves of DATEDIFF and rounded FLOAT milliseconds."
+columns = [{ name = "t", type = "TIMESTAMP_NTZ(9)" }, { name = "u", type = "TIMESTAMP_NTZ(9)" }, { name = "f", type = "FLOAT" }]
+rows = [
+  ["'2024-01-01 10:00:00'", "'2024-01-01 10:00:03'", "1.5"],
+  ["'2024-01-01 10:00:00'", "'2024-01-01 10:00:00.001'", "-0.4"],
+  ["'2024-01-01 10:00:00'", "'2024-01-01 09:59:59.999'", "2.5"],
+  ["'2024-01-01 10:00:00'", "NULL", "NULL"],
+]
+query = "SELECT TIMESTAMPADD(MILLISECOND, DATEDIFF(MILLISECOND, t, u) / 2, t) AS mid, DATEADD('millisecond', ROUND(f * 1000), t) AS rf, DATEADD(minute, f, t) AS mf, DATEADD(day, f, t) AS df FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "zero", "negative", "boundary"]
+
+[[case]]
+id = "substr_computed_lengths"
+description = "SUBSTR and SUBSTRING with computed starts and lengths, including zero, negative and NULL lengths."
+columns = [{ name = "s", type = "VARCHAR" }, { name = "n", type = "NUMBER(10,0)" }]
+rows = [
+  ["'abcdef'", "2"],
+  ["'abcdef'", "0"],
+  ["'abcdef'", "-1"],
+  ["'abcdef'", "NULL"],
+  ["'é€x'", "1"],
+  ["NULL", "1"],
+]
+query = "SELECT SUBSTR(s, 2, n) AS a, SUBSTRING(s, n, LENGTH(s) - n) AS b, SUBSTR(s, 1, n + 1) AS c FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "zero", "negative", "boundary"]
+
+[[case]]
+id = "try_to_number_of_number"
+description = "TRY_TO_NUMBER of NUMBER values, with and without precision and scale, and of a whole NUMBER(38,0)."
+columns = [{ name = "n", type = "NUMBER(10,2)" }, { name = "i", type = "NUMBER(38,0)" }]
+rows = [
+  ["1.50", "7"],
+  ["2.49", "-7"],
+  ["-0.55", "0"],
+  ["0.00", "99999999999999999999999999999999999999"],
+  ["NULL", "NULL"],
+]
+query = "SELECT TRY_TO_NUMBER(n) AS a, TRY_TO_NUMBER(n, 10, 1) AS b, TRY_TO_NUMBER(n, 5, 2) AS c, TRY_TO_NUMBER(i) AS d FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "zero", "negative", "boundary"]
+
+[[case]]
+id = "try_to_double_of_float"
+description = "TRY_TO_DOUBLE of FLOAT values."
+columns = [{ name = "f", type = "FLOAT" }]
+rows = [["1.5"], ["-0.0"], ["1e300"], ["NULL"], ["0"]]
+query = "SELECT TRY_TO_DOUBLE(f) AS d FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "zero", "negative", "boundary"]
+
+[[case]]
+id = "median_wide_numbers"
+description = "MEDIAN of NUMBER(30,10) and NUMBER(5,0) values over even and odd groups, with many fraction digits, and of FLOAT means."
+columns = [{ name = "g", type = "VARCHAR" }, { name = "n", type = "NUMBER(30,10)" }, { name = "w", type = "NUMBER(5,0)" }, { name = "f", type = "FLOAT" }]
+rows = [
+  ["'a'", "12345678901234567890.0000000001", "1", "0.1"],
+  ["'a'", "12345678901234567890.0000000002", "2", "0.2"],
+  ["'b'", "-0.0000000001", "-3", "1e300"],
+  ["'b'", "0.0000000002", "4", "1e300"],
+  ["'b'", "5", "5", "2"],
+  ["'c'", "1", "99999", "3"],
+  ["'c'", "2", "99998", "4"],
+]
+query = "SELECT g, MEDIAN(n) AS mn, MEDIAN(w) AS mw, MEDIAN(f) AS mf FROM input GROUP BY g ORDER BY g"
+order = "ordered"
+expected_divergence = "percentile_interpolation"
+tags = ["null", "zero", "negative", "boundary"]
+
+[[case]]
+id = "sqrt_values"
+description = "SQRT of NUMBER and FLOAT values: perfect squares, fractions, zero, a large value and NULL."
+columns = [{ name = "n", type = "NUMBER(10,2)" }, { name = "f", type = "FLOAT" }]
+rows = [["4.00", "2"], ["0.00", "0"], ["2.25", "1e300"], ["NULL", "NULL"], ["0.01", "0.5"]]
+query = "SELECT SQRT(n) AS a, SQRT(f) AS b FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "zero", "negative", "boundary"]
+
+[[case]]
+id = "sqrt_of_negative"
+description = "SQRT of a negative number."
+columns = [{ name = "f", type = "FLOAT" }]
+rows = [["-1"]]
+query = "SELECT SQRT(f) AS a FROM input"
+order = "ordered"
+tags = ["negative"]

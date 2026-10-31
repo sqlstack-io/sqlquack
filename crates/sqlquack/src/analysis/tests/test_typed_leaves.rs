@@ -135,10 +135,10 @@ fn given_a_variant_holding_a_typed_leaf_when_compared_by_text_then_conversion_re
             expected_outcome: Ok("{\"k\":\"a\"}"),
         },
         FirstValueTestCase {
-            description: "SELECT DISTINCT over a VARIANT is refused, whose key order DuckDB keeps",
+            description: "SELECT DISTINCT over a VARIANT counts objects differing only in key order once",
             sql: "SELECT COUNT(*) AS n FROM (SELECT DISTINCT v FROM (SELECT PARSE_JSON('{\"a\":1,\"b\":2}') AS v \
                   UNION ALL SELECT PARSE_JSON('{\"b\":2,\"a\":1}') AS v) AS t) AS u",
-            expected_outcome: Err("SELECT DISTINCT removing duplicate VARIANT values"),
+            expected_outcome: Ok("1"),
         },
         FirstValueTestCase {
             description: "SELECT DISTINCT without a VARIANT still converts",

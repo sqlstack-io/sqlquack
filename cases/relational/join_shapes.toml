@@ -1,0 +1,206 @@
+# Join and row-source shapes: USING, ASOF with MATCH_CONDITION, VALUES in FROM, CTE column lists and
+# FROM subqueries without an alias.
+category = "relational"
+construct = "node:join"
+session_profile = "utc-v1"
+
+[[case]]
+id = "join_using_inner"
+description = "INNER JOIN USING one key: the key named bare and qualified, NULL keys never matching, duplicate keys multiplying."
+columns = [{ name = "side", type = "VARCHAR" }, { name = "k", type = "NUMBER(10,0)" }, { name = "v", type = "VARCHAR" }]
+rows = [
+  ["'l'", "1", "'a'"],
+  ["'l'", "2", "'b'"],
+  ["'l'", "NULL", "'c'"],
+  ["'l'", "3", "'d'"],
+  ["'r'", "1", "'x'"],
+  ["'r'", "1", "'y'"],
+  ["'r'", "NULL", "'z'"],
+  ["'r'", "4", "'w'"],
+]
+query = "WITH l AS (SELECT k, v FROM input WHERE side = 'l'), r AS (SELECT k, v AS w FROM input WHERE side = 'r') SELECT k, l.k AS lk, r.k AS rk, v, w FROM l INNER JOIN r USING (k) ORDER BY k, v, w"
+order = "ordered"
+tags = ["null", "duplicates"]
+
+[[case]]
+id = "join_using_left_star"
+description = "LEFT JOIN USING with SELECT *: the key appears once, unmatched and NULL keys keep the left row."
+columns = [{ name = "side", type = "VARCHAR" }, { name = "k", type = "NUMBER(10,0)" }, { name = "v", type = "VARCHAR" }]
+rows = [
+  ["'l'", "1", "'a'"],
+  ["'l'", "2", "'b'"],
+  ["'l'", "NULL", "'c'"],
+  ["'r'", "1", "'x'"],
+  ["'r'", "NULL", "'z'"],
+]
+query = "WITH l AS (SELECT k, v FROM input WHERE side = 'l'), r AS (SELECT k, v AS w FROM input WHERE side = 'r') SELECT * FROM l LEFT JOIN r USING (k) ORDER BY v"
+order = "ordered"
+tags = ["null"]
+
+[[case]]
+id = "join_using_two_keys"
+description = "JOIN USING two keys of different types, then grouped on the shared keys."
+columns = [{ name = "side", type = "VARCHAR" }, { name = "k", type = "NUMBER(10,0)" }, { name = "g", type = "VARCHAR" }, { name = "n", type = "NUMBER(10,2)" }]
+rows = [
+  ["'l'", "1", "'p'", "1.50"],
+  ["'l'", "1", "'q'", "2.00"],
+  ["'l'", "2", "'p'", "NULL"],
+  ["'r'", "1", "'p'", "10.00"],
+  ["'r'", "1", "'p'", "20.00"],
+  ["'r'", "2", "'q'", "5.00"],
+]
+query = "WITH l AS (SELECT k, g, n FROM input WHERE side = 'l'), r AS (SELECT k, g, n AS m FROM input WHERE side = 'r') SELECT k, g, COUNT(*) AS c, SUM(n) AS sn, SUM(m) AS sm FROM l JOIN r USING (k, g) GROUP BY k, g ORDER BY k, g"
+order = "ordered"
+tags = ["null", "duplicates"]
+
+[[case]]
+id = "join_using_empty"
+description = "JOIN USING where one side has no rows."
+columns = [{ name = "side", type = "VARCHAR" }, { name = "k", type = "NUMBER(10,0)" }]
+rows = [["'l'", "1"], ["'l'", "2"]]
+query = "WITH l AS (SELECT k FROM input WHERE side = 'l'), r AS (SELECT k FROM input WHERE side = 'r') SELECT k FROM l JOIN r USING (k) ORDER BY k"
+order = "ordered"
+tags = ["empty-input"]
+
+[[case]]
+id = "asof_join_greater_equal"
+description = "ASOF JOIN MATCH_CONDITION (l.t >= r.t) ON a key: the latest right row at or before each left row, NULL where none."
+columns = [{ name = "side", type = "VARCHAR" }, { name = "k", type = "VARCHAR" }, { name = "t", type = "TIMESTAMP_NTZ(9)" }, { name = "p", type = "NUMBER(10,2)" }]
+rows = [
+  ["'l'", "'a'", "'2024-01-01 10:00:00'", "NULL"],
+  ["'l'", "'a'", "'2024-01-01 10:05:00'", "NULL"],
+  ["'l'", "'a'", "'2024-01-01 09:00:00'", "NULL"],
+  ["'l'", "'b'", "'2024-01-01 10:00:00'", "NULL"],
+  ["'l'", "'c'", "'2024-01-01 10:00:00'", "NULL"],
+  ["'l'", "NULL", "'2024-01-01 10:00:00'", "NULL"],
+  ["'l'", "'a'", "NULL", "NULL"],
+  ["'r'", "'a'", "'2024-01-01 10:00:00'", "1.00"],
+  ["'r'", "'a'", "'2024-01-01 09:30:00'", "2.00"],
+  ["'r'", "'b'", "'2024-01-01 10:00:01'", "3.00"],
+  ["'r'", "NULL", "'2024-01-01 09:00:00'", "4.00"],
+]
+query = "WITH l AS (SELECT ordinal AS o, k, t FROM input WHERE side = 'l'), r AS (SELECT k, t, p FROM input WHERE side = 'r') SELECT l.o, l.k, l.t, r.t AS rt, r.p FROM l ASOF JOIN r MATCH_CONDITION (l.t >= r.t) ON l.k = r.k ORDER BY l.o"
+order = "ordered"
+tags = ["null", "duplicates"]
+
+[[case]]
+id = "asof_join_strictly_earlier"
+description = "ASOF JOIN with >: the latest strictly earlier right row."
+columns = [{ name = "side", type = "VARCHAR" }, { name = "k", type = "NUMBER(10,0)" }, { name = "t", type = "NUMBER(10,0)" }]
+rows = [
+  ["'l'", "1", "10"],
+  ["'l'", "1", "20"],
+  ["'l'", "1", "5"],
+  ["'l'", "2", "10"],
+  ["'r'", "1", "10"],
+  ["'r'", "1", "15"],
+  ["'r'", "1", "20"],
+  ["'r'", "2", "11"],
+]
+query = "WITH l AS (SELECT ordinal AS o, k, t FROM input WHERE side = 'l'), r AS (SELECT k, t FROM input WHERE side = 'r') SELECT a.o, a.t, b.t AS before_t FROM l AS a ASOF JOIN r AS b MATCH_CONDITION (a.t > b.t) ON a.k = b.k ORDER BY a.o"
+order = "ordered"
+tags = ["duplicates"]
+
+[[case]]
+id = "asof_join_later_or_equal"
+description = "ASOF JOIN with <=: the earliest right row at or after each left row."
+columns = [{ name = "side", type = "VARCHAR" }, { name = "k", type = "NUMBER(10,0)" }, { name = "t", type = "NUMBER(10,0)" }]
+rows = [
+  ["'l'", "1", "10"],
+  ["'l'", "1", "20"],
+  ["'l'", "1", "5"],
+  ["'l'", "2", "10"],
+  ["'r'", "1", "10"],
+  ["'r'", "1", "15"],
+  ["'r'", "1", "20"],
+  ["'r'", "2", "11"],
+]
+query = "WITH l AS (SELECT ordinal AS o, k, t FROM input WHERE side = 'l'), r AS (SELECT k, t FROM input WHERE side = 'r') SELECT a.o, a.t, b.t AS after_t FROM l AS a ASOF JOIN r AS b MATCH_CONDITION (a.t <= b.t) ON a.k = b.k ORDER BY a.o"
+order = "ordered"
+tags = ["duplicates"]
+
+[[case]]
+id = "values_in_from"
+description = "SELECT from VALUES with COLUMN1-style names and $N positions, mixed numeric literals and a NULL."
+columns = [{ name = "x", type = "NUMBER(10,0)" }]
+rows = [["1"]]
+query = "SELECT column1 AS a, column2 AS b, $3 AS c FROM VALUES (0, 'zero', 1.5), (10, 'ten', 2), (NULL, NULL, NULL), (10, 'ten', 2) ORDER BY a NULLS LAST, c"
+order = "ordered"
+tags = ["null", "duplicates"]
+
+[[case]]
+id = "values_joined_to_input"
+description = "VALUES in a CTE joined to the input, read by position with $N and with an alias column list."
+columns = [{ name = "code", type = "VARCHAR" }, { name = "n", type = "NUMBER(10,0)" }]
+rows = [["'WIN'", "1"], ["'PLA'", "2"], ["'SHO'", "3"], ["NULL", "4"]]
+query = "WITH m AS (SELECT $1 AS code, $2 AS label, $3 AS places FROM VALUES ('WIN', 'Win', 1), ('PLA', 'Place', 3)), n AS (SELECT * FROM (VALUES (1, TRUE), (2, FALSE)) AS v (n, flag)) SELECT input.n, m.label, m.places, n.flag FROM input LEFT JOIN m ON m.code = input.code LEFT JOIN n ON n.n = input.n ORDER BY input.n"
+order = "ordered"
+tags = ["null"]
+
+[[case]]
+id = "cte_column_list"
+description = "A CTE with a column list renaming its query's columns, read by the new names."
+columns = [{ name = "a", type = "VARCHAR" }, { name = "b", type = "NUMBER(10,0)" }]
+rows = [["'x'", "1"], ["'y'", "NULL"], ["'x'", "3"]]
+query = "WITH m (label, amount) AS (SELECT a, b FROM input) SELECT label, SUM(amount) AS total, COUNT(*) AS c FROM m GROUP BY label ORDER BY label"
+order = "ordered"
+tags = ["null", "duplicates"]
+
+[[case]]
+id = "from_subquery_without_alias"
+description = "A FROM subquery without an alias, its columns read bare."
+columns = [{ name = "a", type = "VARCHAR" }, { name = "b", type = "NUMBER(10,0)" }]
+rows = [["'x'", "1"], ["'y'", "NULL"], ["'x'", "3"]]
+query = "SELECT a, b FROM (SELECT a, b FROM input WHERE b IS NOT NULL) ORDER BY b"
+order = "ordered"
+tags = ["null"]
+
+[[case]]
+id = "parenthesised_query_in_set_operation"
+description = "Parenthesised SELECTs as the branches of UNION ALL and as a CTE body."
+columns = [{ name = "a", type = "VARCHAR" }, { name = "b", type = "NUMBER(10,0)" }]
+rows = [["'x'", "1"], ["'y'", "NULL"], ["'x'", "3"]]
+query = "WITH m AS ((SELECT a, b FROM input WHERE b > 1)) (SELECT a, b FROM m) UNION ALL (SELECT a, b FROM input WHERE b IS NULL) ORDER BY b NULLS LAST"
+order = "ordered"
+tags = ["null"]
+
+[[case]]
+id = "set_operation_branches_after_comments"
+description = "UNION ALL BY NAME and UNION ALL whose operator and branches follow line comments, inside a CTE body that starts with a comment."
+columns = [{ name = "a", type = "VARCHAR" }, { name = "b", type = "NUMBER(10,0)" }]
+rows = [["'x'", "1"], ["'y'", "NULL"], ["'x'", "3"]]
+query = """
+WITH m AS (
+  -- the first branch
+  SELECT a, b FROM input WHERE b = 1
+  -- a comment before the operator
+  UNION ALL BY NAME
+  -- a comment before the second branch
+  SELECT b, a FROM input WHERE b = 3
+  /* a block comment */
+  UNION ALL
+  SELECT a, b FROM input WHERE b IS NULL
+)
+SELECT a, b FROM m ORDER BY b NULLS LAST
+"""
+order = "ordered"
+tags = ["null", "duplicates"]
+
+[[case]]
+id = "join_using_text_against_number"
+description = "INNER JOIN USING a key that is text on the left and a number on the right: '01' against 1, the key read bare and from each side."
+columns = [{ name = "s", type = "VARCHAR" }, { name = "n", type = "NUMBER(10,0)" }]
+rows = [["'01'", "1"], ["'2'", "2"], ["'x'", "3"]]
+query = "WITH l AS (SELECT s AS k FROM input WHERE s <> 'x'), r AS (SELECT n AS k FROM input) SELECT k, l.k AS lk, r.k AS rk FROM l INNER JOIN r USING (k) ORDER BY rk"
+order = "ordered"
+tags = ["duplicates", "null"]
+
+[[case]]
+id = "asof_join_text_match_condition"
+description = "ASOF JOIN with a MATCH_CONDITION over VARCHAR columns."
+columns = [{ name = "side", type = "VARCHAR" }, { name = "s", type = "VARCHAR" }]
+rows = [["'l'", "'b'"], ["'l'", "'a'"], ["'r'", "'a'"], ["'r'", "'aa'"]]
+query = "WITH l AS (SELECT ordinal AS o, s FROM input WHERE side = 'l'), r AS (SELECT s AS rs FROM input WHERE side = 'r') SELECT l.o, r.rs FROM l ASOF JOIN r MATCH_CONDITION (l.s >= r.rs) ORDER BY l.o"
+order = "ordered"
+compile_error = true
+tags = ["null"]

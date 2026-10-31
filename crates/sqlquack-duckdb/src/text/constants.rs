@@ -2,6 +2,12 @@
 
 /// Levenshtein distance counted in characters: `duckdb.character_edit_distance`.
 pub const CHARACTER_EDIT_DISTANCE: &str = "duckdb.character_edit_distance";
+/// Building block: Jaro-Winkler similarity over lower-cased characters.
+pub const CHARACTER_SIMILARITY: &str = "duckdb.character_similarity";
+/// Text similarity whose answer no recording shows: case folding outside ASCII, or wide alphabets.
+pub const TEXT_SIMILARITY: &str = "text_similarity";
+/// How many distinct characters a pair may hold, each encoded as one ASCII byte from 1.
+pub const SIMILARITY_ALPHABET: usize = 127;
 
 /// SPLIT_TO_TABLE's rows for a text: `duckdb.split_to_rows`.
 pub const SPLIT_TO_ROWS: &str = "duckdb.split_to_rows";

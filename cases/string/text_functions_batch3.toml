@@ -1,0 +1,226 @@
+# Text functions and implicit text conversions models use: similarity, regular-expression counts and
+# positions, digests, hex decoding, day names, constant arguments built from CHR, and VARIANTs and
+# DATEs read as text.
+category = "string"
+construct = "fn:JAROWINKLER_SIMILARITY"
+session_profile = "utc-v1"
+
+[[case]]
+id = "jarowinkler_similarity"
+description = "JAROWINKLER_SIMILARITY of names: equal, transposed, prefixed, case-different, empty, whitespace, non-ASCII and NULL."
+columns = [{ name = "a", type = "VARCHAR" }, { name = "b", type = "VARCHAR" }]
+rows = [
+  ["'MARTHA'", "'MARHTA'"],
+  ["'DWAYNE'", "'DUANE'"],
+  ["'DIXON'", "'DICKSONX'"],
+  ["'smith'", "'SMITH'"],
+  ["'abc'", "'abc'"],
+  ["'abc'", "'xyz'"],
+  ["''", "'abc'"],
+  ["''", "''"],
+  ["' a'", "'a '"],
+  ["'Müller'", "'Muller'"],
+  ["'ŽELJKO'", "'ZELJKO'"],
+  ["'jean pierre'", "'jean-pierre'"],
+  ["'a'", "'ab'"],
+  ["'CRYSTAL OCEAN'", "'CRYSTAL OCEANS'"],
+  ["NULL", "'abc'"],
+]
+query = "SELECT JAROWINKLER_SIMILARITY(a, b) AS s, JAROWINKLER_SIMILARITY(b, a) AS r, JAROWINKLER_SIMILARITY(a, b) >= 90 AS close FROM input ORDER BY ordinal"
+order = "ordered"
+expected_divergence = "text_similarity"
+tags = ["null", "empty", "whitespace", "unicode"]
+
+[[case]]
+id = "regexp_count_and_instr"
+description = "REGEXP_COUNT and REGEXP_INSTR with groups, anchors, escaped line feeds, no match, empty text, non-ASCII and NULL."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'1 NP\\nNP\\n2 NP\\n'"],
+  ["'HK$ 100 HKD'"],
+  ["'EUR 5, euros 6'"],
+  ["'abc'"],
+  ["''"],
+  ["'  '"],
+  ["'€ éé'"],
+  ["NULL"],
+]
+query = "SELECT REGEXP_COUNT(s, 'NP\\\\n') AS c1, REGEXP_COUNT(s, '[0-9]+') AS c2, REGEXP_COUNT(s, ' ') AS c3, REGEXP_COUNT(s, 'é') AS c4, REGEXP_INSTR(s, '(^|[^A-Za-z])HKD([^A-Za-z]|$)') AS i1, REGEXP_INSTR(s, '(^|[^A-Za-z])(EUR|[Ee]uros?)([^A-Za-z]|$)') AS i2, REGEXP_INSTR(s, '[0-9]') AS i3, REGEXP_INSTR(s, 'é') AS i4 FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "empty", "whitespace", "unicode"]
+
+[[case]]
+id = "chr_built_arguments"
+description = "TRANSLATE, SPLIT_PART, REPLACE and REGEXP_REPLACE whose literal arguments are built with CHR and ||, and a pattern with a doubled quote."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'a\u00a0b\u202fc'"],
+  ["'x`y`z`w,v'"],
+  ["'b''abc'''"],
+  ["''"],
+  ["' '"],
+  ["NULL"],
+]
+query = "SELECT TRANSLATE(s, CHR(160) || CHR(8239), '  ') AS t, SPLIT_PART(SPLIT_PART(s, CHR(96), 4), ',', 1) AS p, REPLACE(s, CHR(96), '-') AS r, REGEXP_REPLACE(s, '^b''|''$', '') AS q FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "empty", "whitespace", "unicode"]
+
+[[case]]
+id = "digests_hex_and_day_names"
+description = "SHA2 of text, HEX_DECODE_STRING of hex digits, and DAYNAME of dates, over empty, non-ASCII and NULL values."
+columns = [{ name = "s", type = "VARCHAR" }, { name = "h", type = "VARCHAR" }, { name = "d", type = "DATE" }]
+rows = [
+  ["'abc'", "'616263'", "'2024-01-01'"],
+  ["''", "''", "'2024-02-29'"],
+  ["'é'", "'C3A9'", "'2024-03-02'"],
+  ["' '", "'4a4b'", "'2024-03-03'"],
+  ["NULL", "NULL", "NULL"],
+]
+query = "SELECT SHA2(s) AS h256, SHA2(s, 512) AS h512, HEX_DECODE_STRING(h) AS x, DAYNAME(d) AS dn FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "empty", "whitespace", "unicode"]
+
+[[case]]
+id = "hex_decode_invalid"
+description = "HEX_DECODE_STRING of text that is not hexadecimal."
+columns = [{ name = "h", type = "VARCHAR" }]
+rows = [["'zz'"]]
+query = "SELECT HEX_DECODE_STRING(h) AS x FROM input"
+order = "ordered"
+tags = ["null"]
+
+[[case]]
+id = "variants_read_as_text"
+description = "VARIANT values of each kind read by TRIM, LIKE, SPLIT_PART and || as text: strings unquoted, numbers, booleans, objects and JSON null."
+columns = [{ name = "j", type = "VARCHAR" }]
+rows = [
+  ["'\" a,b \"'"],
+  ["'1.50'"],
+  ["'true'"],
+  ["'{\"k\":\"v\"}'"],
+  ["'[1,\"x\"]'"],
+  ["'null'"],
+  ["'\"\"'"],
+  ["'\"é\"'"],
+  ["NULL"],
+]
+query = "SELECT TRIM(v) AS t, v LIKE '%a%' AS l, SPLIT_PART(v, ',', 1) AS p, 'x:' || v AS c, v[0] || '/' AS e FROM (SELECT ordinal, PARSE_JSON(j) AS v FROM input) ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "empty", "whitespace", "unicode"]
+
+[[case]]
+id = "flattened_split_values_as_text"
+description = "TRIM of FLATTEN values over SPLIT of text, as models split lists of numbers."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [["'1, 2,3 '"], ["''"], ["NULL"], ["'é ,x'"]]
+query = "SELECT input.ordinal, f.index, TRIM(f.value) AS t, f.value LIKE '%2%' AS has_two FROM input, LATERAL FLATTEN(INPUT => SPLIT(COALESCE(input.s, ''), ',')) AS f ORDER BY input.ordinal, f.index"
+order = "ordered"
+tags = ["null", "empty", "whitespace", "unicode"]
+
+[[case]]
+id = "dates_read_as_text"
+description = "REPLACE and CONCAT of DATE values read as text."
+columns = [{ name = "d", type = "DATE" }]
+rows = [["'2024-01-05'"], ["'1999-12-31'"], ["NULL"]]
+query = "SELECT REPLACE(d, '-', '_') AS r, CONCAT('day::', REPLACE(d, '-', '_')) AS c FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]
+
+[[case]]
+id = "regexp_multiline_dot_carriage_return"
+description = "REGEXP_SUBSTR and REGEXP_COUNT with the m parameter where . meets a carriage return, a line feed and both."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'ab\\rcd\\nae'"],
+  ["'a\\r\\nb'"],
+  ["'a\\rb'"],
+  ["''"],
+  ["NULL"],
+]
+query = "SELECT REGEXP_SUBSTR(s, '^a.*$', 1, 1, 'm') AS line, REGEXP_COUNT(s, '^a.', 1, 'm') AS starts, REGEXP_COUNT(s, '.$', 1, 'm') AS ends, REGEXP_SUBSTR(s, 'a.c', 1, 1, 'm') AS across FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "empty", "whitespace"]
+
+[[case]]
+id = "jarowinkler_prefix_and_threshold"
+description = "JAROWINKLER_SIMILARITY with a shared prefix below and above Jaro 0.7, prefixes longer than four characters, transpositions and single characters."
+columns = [{ name = "a", type = "VARCHAR" }, { name = "b", type = "VARCHAR" }]
+rows = [
+  ["'ab'", "'acdefgh'"],
+  ["'abc'", "'axyzuvw'"],
+  ["'abcdefg'", "'abcdefh'"],
+  ["'abcdefgh'", "'abcdefghij'"],
+  ["'ab'", "'ba'"],
+  ["'a'", "'b'"],
+  ["'a'", "'a'"],
+  ["'crate'", "'trace'"],
+  ["'Ab Cd'", "'aB cD'"],
+]
+query = "SELECT JAROWINKLER_SIMILARITY(a, b) AS s FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["empty", "whitespace", "unicode", "null"]
+
+[[case]]
+id = "digests_and_day_names"
+description = "SHA2 of text with the default and an explicit 256-bit size, and DAYNAME of dates and timestamps."
+columns = [{ name = "s", type = "VARCHAR" }, { name = "d", type = "DATE" }, { name = "t", type = "TIMESTAMP_NTZ(9)" }]
+rows = [
+  ["'abc'", "'2024-01-01'", "'2024-01-06 23:59:59'"],
+  ["''", "'2024-02-29'", "'2024-01-07 00:00:00'"],
+  ["'é'", "'1999-12-31'", "'2024-01-03 12:00:00'"],
+  ["NULL", "NULL", "NULL"],
+]
+query = "SELECT SHA2(s) AS h, SHA2(s, 256) AS h256, DAYNAME(d) AS dn, DAYNAME(t) AS tn FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "empty", "whitespace", "unicode"]
+
+[[case]]
+id = "regexp_instr_lazy_after_partial_match"
+description = "REGEXP_INSTR and REGEXP_COUNT with a lazy one-or-more quantifier, where the only full match follows an earlier partial one."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [["'bxba'"], ["'bxb'"], ["'baab'"], ["''"], ["NULL"]]
+query = "SELECT REGEXP_INSTR(s, 'ba+?') AS i, REGEXP_COUNT(s, 'ba+?') AS c FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["empty", "null"]
+
+[[case]]
+id = "regexp_instr_end_anchor_empty_text"
+description = "REGEXP_INSTR and REGEXP_COUNT with patterns that match empty text: an end anchor, a star and an optional letter, over empty and non-empty text."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [["''"], ["'baa'"], ["'x'"]]
+query = "SELECT REGEXP_INSTR(s, '$') AS e, REGEXP_INSTR(s, 'a*') AS a, REGEXP_INSTR(s, 'x?') AS x, REGEXP_COUNT(s, 'a*') AS c FROM input ORDER BY ordinal"
+order = "ordered"
+expected_divergence = "regexp_pattern_syntax"
+tags = ["empty"]
+
+[[case]]
+id = "regexp_count_and_instr_plain"
+description = "REGEXP_COUNT and REGEXP_INSTR with classes, groups, alternation, anchors, no match, empty text, non-ASCII and NULL, without escapes."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'order 12 of 345'"],
+  ["'SKU-9 SKU-10 sku-11'"],
+  ["'abc'"],
+  ["''"],
+  ["'€ éé é'"],
+  ["NULL"],
+]
+query = "SELECT REGEXP_COUNT(s, '[0-9]+') AS c1, REGEXP_COUNT(s, 'SKU-[0-9]') AS c2, REGEXP_COUNT(s, 'é') AS c3, REGEXP_COUNT(s, '(ab|é )') AS c4, REGEXP_INSTR(s, '[0-9]') AS i1, REGEXP_INSTR(s, '(^| )sku') AS i2, REGEXP_INSTR(s, 'é') AS i3, REGEXP_INSTR(s, 'c$') AS i4 FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["empty", "null", "unicode"]
+
+[[case]]
+id = "jarowinkler_accented_both_cases"
+description = "JAROWINKLER_SIMILARITY of customer names holding accented letters in both cases on both sides, and a cased letter against itself."
+columns = [{ name = "a", type = "VARCHAR" }, { name = "b", type = "VARCHAR" }]
+rows = [
+  ["'Éé'", "'éÉ'"],
+  ["'Émile émile'", "'émile Émile'"],
+  ["'Zoë'", "'ZOË'"],
+  ["'é'", "'é'"],
+  ["'Ana'", "'ana'"],
+]
+query = "SELECT JAROWINKLER_SIMILARITY(a, b) AS s FROM input ORDER BY ordinal"
+order = "ordered"
+expected_divergence = "text_similarity"
+tags = ["unicode", "whitespace", "null"]

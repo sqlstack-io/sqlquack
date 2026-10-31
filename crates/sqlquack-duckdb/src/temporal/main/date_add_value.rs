@@ -38,6 +38,8 @@ pub fn date_add_value(
         "HOUR" if clock => Some(3_600_000_000_i64),
         "MINUTE" if clock => Some(60_000_000),
         "SECOND" if clock => Some(1_000_000),
+        "MILLISECOND" if clock => Some(1_000),
+        "MICROSECOND" if clock => Some(1),
         _ => None,
     };
     let base = microsecond_base(sql, source);

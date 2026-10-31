@@ -107,7 +107,11 @@ pub(crate) fn lateral_flatten(
         .collect();
     Ok(Flattened {
         sql,
-        relation: ScopeRelation { alias, columns },
+        relation: ScopeRelation {
+            alias,
+            columns,
+            merged: Vec::new(),
+        },
     })
 }
 

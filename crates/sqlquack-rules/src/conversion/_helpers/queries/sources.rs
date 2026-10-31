@@ -1,6 +1,6 @@
 //! FROM: tables, CTEs, subqueries and joins.
 
-use serde_json::Value;
+use serde_json::{Value, json};
 use sqlquack_core::classification::models::{Construct, ConstructFamily};
 use sqlquack_core::refusals::main::missing::missing;
 use sqlquack_core::refusals::main::outside_conditions::outside_conditions;
@@ -10,6 +10,7 @@ use sqlquack_duckdb::blocks::main::quoted_identifier::quoted_identifier;
 use sqlquack_snowflake::typing::models::SnowflakeType;
 
 use crate::conversion::_helpers::expressions::project_functions::{exact_arguments, held_type};
+use crate::conversion::_helpers::expressions::scalar::convert_expression;
 use crate::conversion::_helpers::expressions::semi_structured::guarded_column;
 use crate::conversion::_helpers::queries::clauses::condition_sql;
 use crate::conversion::_helpers::queries::flatten::lateral_flatten;
@@ -22,8 +23,9 @@ use crate::conversion::_helpers::support::tree::{
     payload_object, require_understood,
 };
 use crate::conversion::constants::{
-    FROM_RELATION, FROM_SUBQUERY, JOIN_CROSS, JOIN_ON, LATERAL_KEY, LATERAL_SUBQUERY,
-    OPAQUE_ALIAS_PREFIX, PROJECT_TABLE_FUNCTION, TABLE_WRAPPER,
+    ASOF_JOIN, ASOF_KIND, FROM_RELATION, FROM_SUBQUERY, JOIN_CROSS, JOIN_ON, JOIN_USING,
+    LATERAL_KEY, LATERAL_SUBQUERY, OPAQUE_ALIAS_PREFIX, PROJECT_TABLE_FUNCTION, TABLE_WRAPPER,
+    UNALIASED_SUBQUERY_PREFIX,
 };
 use sqlquack_semantics::lineage::main::stored_columns::stored_columns;
 use sqlquack_semantics::scopes::models::ScopeRelation;
@@ -122,10 +124,18 @@ fn convert_join(
 ) -> Result<(String, ScopeRelation), Refusal> {
     let join_construct = node_construct("join");
     let join = payload_object(join, &join_construct)?;
-    require_understood(join, &["this", "on", "kind"], &join_construct)?;
+    require_understood(
+        join,
+        &["this", "on", "kind", "using", "match_condition"],
+        &join_construct,
+    )?;
     let kind = join.get("kind").and_then(Value::as_str).unwrap_or_default();
     let source = field(join, "this", &join_construct)?;
     let on = join.get("on").filter(|on| !on.is_null());
+    let using = list(join, "using");
+    let matching = join
+        .get("match_condition")
+        .filter(|matching| !matching.is_null());
     let before = events();
     if let (Some(lateral), "Implicit" | "Cross", None) = (source.get(LATERAL_KEY), kind, on) {
         let flattened = lateral_flatten(lateral, earlier, outer, context)
@@ -140,6 +150,22 @@ fn convert_join(
         false => convert_source(source, (earlier, outer), context),
     };
     let (source_sql, relation) = recovered(converted, source, (before, earlier.len()))?;
+    if !using.is_empty() {
+        return using_join(
+            (kind, on.is_some(), using),
+            (source_sql, relation),
+            earlier,
+            context,
+        );
+    }
+    if let Some(matching) = matching {
+        return asof_join(
+            (kind, on, matching),
+            (source_sql, relation),
+            (earlier, outer),
+            context,
+        );
+    }
     let keyword = match (kind, on) {
         ("Inner", Some(_)) => "JOIN",
         ("Left", Some(_)) => "LEFT JOIN",
@@ -175,6 +201,153 @@ fn convert_join(
     Ok((format!(" {keyword} {source_sql} ON {condition}"), relation))
 }
 
+/// `JOIN ... USING (keys)`: each key equal on both sides, read bare as the earlier side's column.
+fn using_join(
+    (kind, has_on, keys): (&str, bool, &[Value]),
+    (source_sql, mut relation): (String, ScopeRelation),
+    earlier: &[ScopeRelation],
+    context: &Context<'_>,
+) -> Result<(String, ScopeRelation), Refusal> {
+    let construct = node_construct("join");
+    let refuse = |reason: String| outside_conditions(construct.clone(), reason);
+    let keyword = match (kind, has_on) {
+        ("Inner", false) => "JOIN",
+        ("Left", false) => "LEFT JOIN",
+        _ => return Err(refuse(format!("a {kind} join with USING"))),
+    };
+    let _rule = context.log.rule(JOIN_USING);
+    let mut equalities: Vec<Value> = Vec::with_capacity(keys.len());
+    for key in keys {
+        let name = identifier_name(key)
+            .ok_or_else(|| missing(construct.clone(), "a USING key has no name".to_owned()))?;
+        let owners: Vec<&ScopeRelation> = earlier
+            .iter()
+            .filter(|owner| readable(owner, &name))
+            .collect();
+        let [owner] = owners.as_slice() else {
+            return Err(unresolved(format!(
+                "the USING key `{name}` is not one column of the earlier sources"
+            )));
+        };
+        let Some(joined) = relation.columns.iter().find(|column| column.name == name) else {
+            return Err(unresolved(format!(
+                "the USING key `{name}` is not a column of the joined source"
+            )));
+        };
+        let earlier_type = owner
+            .columns
+            .iter()
+            .find(|column| column.name == name)
+            .map(|column| column.data_type);
+        if earlier_type != Some(joined.data_type) {
+            return Err(refuse(format!(
+                "the USING key `{name}` of different types on its two sides, whose merged \
+                 value no recording shows"
+            )));
+        }
+        let side =
+            |alias: &str| json!({"column": {"name": {"name": name}, "table": {"name": alias}}});
+        equalities
+            .push(json!({"eq": {"left": side(&owner.alias), "right": side(&relation.alias)}}));
+        relation.merged.push(name);
+    }
+    let condition = equalities
+        .into_iter()
+        .reduce(|left, right| json!({"and": {"left": left, "right": right}}))
+        .ok_or_else(|| missing(construct.clone(), "USING without keys".to_owned()))?;
+    let mut visible = earlier.to_vec();
+    visible.push(relation.clone());
+    let scope = Scope::new(visible, None);
+    let site = Site {
+        scope: &scope,
+        context,
+        placement: Placement::ROW,
+    };
+    let condition = condition_sql(&condition, site)?;
+    Ok((format!(" {keyword} {source_sql} ON {condition}"), relation))
+}
+
+/// Whether a relation has a column `name` a bare name reads, not one a USING merged away.
+fn readable(relation: &ScopeRelation, name: &str) -> bool {
+    !relation.merged.iter().any(|merged| merged == name)
+        && relation.columns.iter().any(|column| column.name == name)
+}
+
+/// `ASOF JOIN ... MATCH_CONDITION (inequality) ON equalities`: each left row with its nearest match.
+fn asof_join(
+    (kind, on, matching): (&str, Option<&Value>, &Value),
+    (source_sql, relation): (String, ScopeRelation),
+    (earlier, outer): Earlier<'_, '_>,
+    context: &Context<'_>,
+) -> Result<(String, ScopeRelation), Refusal> {
+    let construct = Construct::new(ConstructFamily::Join, "asof".to_owned());
+    let refuse = |reason: &str| outside_conditions(construct.clone(), reason.to_owned());
+    if kind != ASOF_KIND {
+        return Err(refuse("a MATCH_CONDITION on other than an ASOF join"));
+    }
+    if !matches!(node_kind(matching), Some(("gt" | "gte" | "lt" | "lte", _))) {
+        return Err(refuse("a MATCH_CONDITION other than one inequality"));
+    }
+    if on.is_some_and(|on| !equalities_only(on)) {
+        return Err(refuse(
+            "an ASOF ON condition other than equalities joined by AND",
+        ));
+    }
+    let _rule = context.log.rule(ASOF_JOIN);
+    let mut visible = earlier.to_vec();
+    visible.push(relation.clone());
+    let scope = Scope::new(visible, outer);
+    let site = Site {
+        scope: &scope,
+        context,
+        placement: Placement::ROW,
+    };
+    if let Some((_, operands)) = node_kind(matching) {
+        for side in ["left", "right"] {
+            let operand = field(payload_object(operands, &construct)?, side, &construct)?;
+            if !matches!(node_kind(operand), Some(("column", _))) {
+                return Err(refuse("a MATCH_CONDITION over other than two columns"));
+            }
+            let converted = convert_expression(operand, site)?;
+            if !matches!(
+                converted.data_type,
+                SnowflakeType::Number { .. }
+                    | SnowflakeType::Float
+                    | SnowflakeType::Date
+                    | SnowflakeType::TimestampNtz { .. }
+            ) {
+                return Err(refuse(&format!(
+                    "a MATCH_CONDITION over {}, which no recording shows",
+                    converted.data_type
+                )));
+            }
+        }
+    }
+    let mut conditions = vec![condition_sql(matching, site)?];
+    if let Some(on) = on {
+        conditions.insert(0, condition_sql(on, site)?);
+    }
+    Ok((
+        format!(
+            " ASOF LEFT JOIN {source_sql} ON {}",
+            conditions.join(" AND ")
+        ),
+        relation,
+    ))
+}
+
+/// Whether a condition is equalities joined by AND, as an ASOF join's ON must be.
+fn equalities_only(condition: &Value) -> bool {
+    match node_kind(condition) {
+        Some(("and", payload)) => ["left", "right"]
+            .iter()
+            .all(|side| payload.get(*side).is_some_and(equalities_only)),
+        Some(("paren", payload)) => payload.get("this").is_some_and(equalities_only),
+        Some(("eq", _)) => true,
+        _ => false,
+    }
+}
+
 /// The FROM sources before a source and the enclosing scope, which a LATERAL subquery reads.
 type Earlier<'s, 'a> = (&'s [ScopeRelation], Option<&'s Scope<'a>>);
 
@@ -195,6 +368,7 @@ fn recovered(
                 ScopeRelation {
                     alias,
                     columns: Vec::new(),
+                    merged: Vec::new(),
                 },
             ))
         }
@@ -241,6 +415,10 @@ fn convert_source_kind(
     match node_kind(source) {
         Some(("table", payload)) => table_source(payload, context),
         Some(("subquery", payload)) => subquery_source(payload, earlier, context),
+        Some(("values", _)) => {
+            let wrapped = json!({ "this": source });
+            subquery_source(&wrapped, earlier, context)
+        }
         Some(("function", _)) => table_function_source(source, None, context),
         Some(("alias", payload)) => aliased_source(payload, context),
         Some((other, _)) => Err(missing(
@@ -293,7 +471,11 @@ fn table_source(
     };
     Ok((
         format!("{relation} AS {}", quoted_identifier(&alias, log)),
-        ScopeRelation { alias, columns },
+        ScopeRelation {
+            alias,
+            columns,
+            merged: Vec::new(),
+        },
     ))
 }
 
@@ -351,6 +533,7 @@ fn table_function_source(
         ScopeRelation {
             alias,
             columns: columns.clone(),
+            merged: Vec::new(),
         },
     ))
 }
@@ -421,12 +604,10 @@ fn subquery_source(
         }
         require_distinct_names(&columns)?;
     }
-    let Some(alias) = subquery.get("alias").and_then(identifier_name) else {
-        return Err(missing(
-            construct,
-            "a FROM subquery without an alias".to_owned(),
-        ));
-    };
+    let alias = subquery
+        .get("alias")
+        .and_then(identifier_name)
+        .unwrap_or_else(|| format!("{UNALIASED_SUBQUERY_PREFIX}{}", relations.len()));
     let keyword = match lateral {
         true => "LATERAL ",
         false => "",
@@ -441,6 +622,10 @@ fn subquery_source(
             quoted_identifier(&alias, log),
             column_list.join(", ")
         ),
-        ScopeRelation { alias, columns },
+        ScopeRelation {
+            alias,
+            columns,
+            merged: Vec::new(),
+        },
     ))
 }

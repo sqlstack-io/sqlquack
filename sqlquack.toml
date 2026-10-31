@@ -296,11 +296,23 @@ minimum_bytes = 4194304
 # mode refuses it. A divergence never covers DuckDB returning a different value.
 
 [divergences.numeric_range]
-constructs = ["fn:SUM", "fn:AVG", "node:add", "node:sub", "node:mul", "node:div", "node:eq", "node:neq", "node:lt", "node:lte", "node:gt", "node:gte", "node:null_safe_eq", "node:null_safe_neq", "node:in", "fn:EQUAL_NULL", "fn:NULLIF", "node:union", "node:except", "node:intersect", "node:case", "fn:COALESCE", "node:coalesce", "fn:DECODE", "fn:GREATEST", "fn:LEAST", "node:nvl", "fn:NVL2", "fn:IFF", "fn:IFNULL", "fn:ZEROIFNULL"]
+constructs = ["fn:SUM", "fn:AVG", "node:add", "node:sub", "node:mul", "node:div", "node:eq", "node:neq", "node:lt", "node:lte", "node:gt", "node:gte", "node:null_safe_eq", "node:null_safe_neq", "node:in", "fn:EQUAL_NULL", "fn:NULLIF", "node:union", "node:except", "node:intersect", "node:case", "fn:COALESCE", "node:coalesce", "fn:DECODE", "fn:GREATEST", "fn:LEAST", "node:nvl", "fn:NVL2", "fn:IFF", "fn:IFNULL", "fn:ZEROIFNULL", "fn:EXP"]
 default = "warn"
 strict = "refuse"
 reason = "DuckDB raises an error where Snowflake returns a value DuckDB cannot represent: a SUM or AVG total, or a sum, difference or product, beyond 38 digits (Snowflake keeps up to 128 bits under a NUMBER(38) type), or a division whose exact intermediate exceeds 128 bits. The failure is loud, never a wrong value. NUMBERs compared or unified as one DECIMAL needing more than 38 digits (such as NUMBER(38,0) with NUMBER(10,5)) are cast to it in DuckDB, which raises for values beyond its range."
 native_errors = ["Out of Range Error: Overflow in *"]
+
+[divergences.text_similarity]
+constructs = ["fn:JAROWINKLER_SIMILARITY"]
+default = "warn"
+strict = "refuse"
+reason = "Snowflake's JAROWINKLER_SIMILARITY was recorded ignoring case and counting characters, not bytes. How it folds letters outside ASCII has no recording, so the converted SQL raises for any text holding a cased letter outside ASCII, such as É or é; it also raises for pairs holding more than 127 distinct characters, which it cannot encode. The failure is loud, never a wrong value."
+
+[divergences.array_sort_order]
+constructs = ["fn:ARRAY_SORT"]
+default = "warn"
+strict = "refuse"
+reason = "Snowflake's ARRAY_SORT was recorded putting booleans, then numbers by value, strings by their bytes, objects, arrays and JSON nulls last. How it orders two different objects, two different arrays, or numbers DuckDB reads as the same double (such as 1 and 1.0) has no recording, so the converted SQL raises for arrays holding them. The failure is loud, never a wrong value."
 
 [divergences.case_folding]
 constructs = ["node:i_like"]
@@ -309,7 +321,7 @@ strict = "refuse"
 reason = "Snowflake's ILIKE was recorded folding the long s onto s and the Kelvin sign onto k, and matching other letters as their lower case. Letters whose Unicode case folding differs from their lower case, or whose lower case DuckDB writes otherwise, have no recording; the converted SQL raises for text holding one rather than guessing whether it matches. The failure is loud, never a wrong value."
 
 [divergences.json_fidelity]
-constructs = ["fn:PARSE_JSON", "fn:TRY_PARSE_JSON", "node:column", "node:cast", "fn:TO_JSON", "fn:TO_VARCHAR", "fn:GET_IGNORE_CASE", "fn:FLATTEN", "fn:OBJECT_CONSTRUCT", "fn:OBJECT_CONSTRUCT_KEEP_NULL", "fn:OBJECT_INSERT", "fn:OBJECT_PICK", "fn:ARRAY_CONSTRUCT", "fn:ARRAY_EXCEPT", "fn:TO_VARIANT", "fn:ARRAY_AGG", "fn:ARRAY_TO_STRING", "fn:ARRAY_CONTAINS", "fn:ARRAY_CONSTRUCT_COMPACT", "node:map_func", "fn:OBJECT_AGG", "fn:ARRAY_POSITION", "fn:FILTER", "fn:TRANSFORM", "node:eq", "node:neq", "node:in", "fn:GET", "node:window_function", "node:array_func", "fn:REDUCE"]
+constructs = ["fn:PARSE_JSON", "fn:TRY_PARSE_JSON", "node:column", "node:cast", "fn:TO_JSON", "fn:TO_VARCHAR", "fn:GET_IGNORE_CASE", "fn:FLATTEN", "fn:OBJECT_CONSTRUCT", "fn:OBJECT_CONSTRUCT_KEEP_NULL", "fn:OBJECT_INSERT", "fn:OBJECT_PICK", "fn:ARRAY_CONSTRUCT", "fn:ARRAY_EXCEPT", "fn:TO_VARIANT", "fn:ARRAY_AGG", "fn:ARRAY_TO_STRING", "fn:ARRAY_CONTAINS", "fn:ARRAY_CONSTRUCT_COMPACT", "node:map_func", "fn:OBJECT_AGG", "fn:ARRAY_POSITION", "fn:FILTER", "fn:TRANSFORM", "node:eq", "node:neq", "node:in", "fn:GET", "node:window_function", "node:array_func", "fn:REDUCE", "node:distinct", "node:group_by", "fn:ARRAY_APPEND", "fn:TO_ARRAY"]
 default = "warn"
 strict = "refuse"
 reason = "DuckDB's JSON keeps non-integer numbers as doubles, reads a different set of lenient spellings, accepts repeated keys and keeps keys in input order, where Snowflake keeps exact decimals, reads single quotes, NaN and undefined, rejects repeated keys and writes keys sorted. The converted SQL raises for any document DuckDB might read differently, PARSE_JSON and TRY_PARSE_JSON alike, writes objects as text with keys sorted and strings escaped as Snowflake does, raises where sorting would rewrite a number, and raises for FLATTEN paths through keys that are not plain names. The failure is loud, never a wrong value."
@@ -321,7 +333,7 @@ strict = "refuse"
 reason = "A model that builds a VARIANT from a FLOAT holds it as a DuckDB VARIANT, which keeps the FLOAT's type, but writes the column as JSON text with the double spelled as Snowflake writes it, an exponent with fifteen fraction digits. A model reading that column back gets JSON, where the type is lost, and the guard on VARIANT columns of other relations raises for any number with an exponent. The failure is loud, never a wrong value; models reading such columns need them materialised as DuckDB VARIANT to convert."
 
 [divergences.source_variant_json]
-constructs = ["node:eq", "node:neq", "node:window_function", "fn:ARRAY_CONTAINS", "fn:ARRAY_POSITION", "fn:ARRAY_EXCEPT", "fn:ANY_VALUE", "fn:MAX_BY", "fn:MIN_BY", "fn:ARRAY_AGG"]
+constructs = ["node:eq", "node:neq", "node:window_function", "fn:ARRAY_CONTAINS", "fn:ARRAY_POSITION", "fn:ARRAY_EXCEPT", "fn:ANY_VALUE", "fn:MAX_BY", "fn:MIN_BY", "fn:ARRAY_AGG", "node:distinct", "node:group_by"]
 assumption = true
 default = "warn"
 strict = "refuse"
@@ -338,7 +350,7 @@ reason = "Converted SQL is proven only in sessions whose time zone is UTC: Snowf
 constructs = ["fn:PERCENTILE_CONT"]
 default = "warn"
 strict = "refuse"
-reason = "Snowflake's PERCENTILE_CONT interpolates between two different values with rounding error in the last digits that recordings do not reproduce from any exact or double formula. The converted SQL returns the value where the fraction lands on a row, or between equal values, and raises where it would interpolate; the failure is loud, never a wrong value."
+reason = "Snowflake's PERCENTILE_CONT interpolates between two different values with rounding error in the last digits that recordings do not reproduce from any exact or double formula. The converted SQL returns the value where the fraction lands on a row, or between equal values, and raises where it would interpolate. The failure is loud, never a wrong value."
 
 [divergences.date_text_spelling]
 constructs = ["fn:TRY_TO_DATE", "fn:TO_DATE", "node:try_cast", "node:cast", "fn:TO_TIMESTAMP", "fn:TO_TIMESTAMP_NTZ", "fn:DATE", "fn:TRY_TO_TIMESTAMP", "fn:TRY_TO_TIMESTAMP_NTZ", "fn:TRY_TO_TIMESTAMP_TZ", "fn:TO_TIME", "fn:TRY_TO_TIME"]
@@ -372,10 +384,10 @@ strict = "refuse"
 reason = "Snowflake writes a FLOAT as text with max(10, min(15, whole digits + 9)) significant digits, as C's %g does with that many, which the converted SQL follows everywhere it was recorded. A FLOAT at the root of a VARIANT cast to text is written as Java writes it when Snowflake folds a constant and with %g otherwise, which the conversion cannot tell apart; the converted SQL raises for it. The failure is loud, never a wrong value."
 
 [divergences.regexp_pattern_syntax]
-constructs = ["fn:REGEXP_LIKE"]
+constructs = ["fn:REGEXP_LIKE", "fn:REGEXP_COUNT", "fn:REGEXP_INSTR"]
 default = "warn"
 strict = "refuse"
-reason = "A REGEXP_LIKE pattern from a column cannot be checked before it runs. Snowflake and RE2 were recorded reading literal characters, '.', groups, alternation, plain bracket expressions, single '*', '+' and '?' and anchors at the ends alike; the converted SQL raises for a pattern with any other syntax, such as escapes, counted repetition, POSIX classes or lazy quantifiers. The failure is loud, never a wrong value."
+reason = "A REGEXP_LIKE pattern from a column cannot be checked before it runs. Snowflake and RE2 were recorded reading literal characters, '.', groups, alternation, plain bracket expressions, single '*', '+' and '?' and anchors at the ends alike; the converted SQL raises for a pattern with any other syntax, such as escapes, counted repetition, POSIX classes or lazy quantifiers. REGEXP_COUNT and REGEXP_INSTR raise for a pattern that matches empty text, whose empty matches no recording shows. The failure is loud, never a wrong value."
 
 [divergences.float_sum_order]
 constructs = ["fn:SUM"]

@@ -4,8 +4,10 @@ use serde_json::Value;
 use sqlquack_core::classification::models::Construct;
 use sqlquack_core::refusals::main::outside_conditions::outside_conditions;
 use sqlquack_core::refusals::models::Refusal;
+use sqlquack_duckdb::blocks::main::cast::cast;
 use sqlquack_duckdb::blocks::main::split_text_part::split_text_part;
 use sqlquack_duckdb::blocks::main::string_literal::string_literal;
+use sqlquack_duckdb::raises::main::raised::raised;
 use sqlquack_duckdb::text::constants::{
     CASE_FOLDING, LONG_S, REGEXP_PATTERN_SYNTAX, UNFOLDED_LETTERS,
 };
@@ -22,10 +24,11 @@ use crate::conversion::_helpers::support::tree::{
     field, flag, node_construct, node_kind, payload_object, require_understood,
 };
 use crate::conversion::constants::{
-    ILIKE_FOLDING, INFIX_NEGATION, LENGTH_TYPE, LIKE, LIKE_WILDCARDS, NEGATED_FACET, NO_QUANTIFIER,
-    POSIX_SPACE_CLASS, QUANTIFIER_FACET, REGEXP, REGEXP_CONTROL_ESCAPES,
-    REGEXP_EXTRACTING_FUNCTIONS, REGEXP_PARAMETERS, REGEXP_POSIX_SPACE, REGEXP_SHORTHANDS,
-    TEXT_PAD, TEXT_POSITION, TEXT_POSITION_LIMIT, TEXT_REPLACE, TEXT_TRANSLATE,
+    COMPUTED_SUBSTR_LENGTH, ILIKE_FOLDING, INFIX_NEGATION, LENGTH_TYPE, LIKE, LIKE_WILDCARDS,
+    NEGATED_FACET, NO_QUANTIFIER, POSIX_SPACE_CLASS, QUANTIFIER_FACET, REGEXP,
+    REGEXP_CONTROL_ESCAPES, REGEXP_COUNT_TYPE, REGEXP_COUNTING, REGEXP_EXTRACTING_FUNCTIONS,
+    REGEXP_PARAMETERS, REGEXP_POSIX_SPACE, REGEXP_SHORTHANDS, TEXT_PAD, TEXT_POSITION,
+    TEXT_POSITION_LIMIT, TEXT_REPLACE, TEXT_TRANSLATE,
 };
 
 /// The quantifier LIKE ANY is written with.
@@ -94,7 +97,7 @@ pub(crate) fn left_right(
     ))
 }
 
-/// SUBSTR or SUBSTRING; start 0 counts as 1, and a length must be a non-negative literal.
+/// SUBSTR or SUBSTRING; start 0 counts as 1, and a negative length as 0.
 pub(crate) fn substring(payload: &Value, site: Site<'_>) -> Result<Emitted, Refusal> {
     let construct = node_construct("substring");
     let _rule = site.context.log.rule(TEXT_POSITION);
@@ -117,10 +120,9 @@ pub(crate) fn substring(payload: &Value, site: Site<'_>) -> Result<Emitted, Refu
                     format!(", {digits}")
                 }
                 _ => {
-                    return Err(outside_conditions(
-                        construct,
-                        "a SUBSTR length other than a non-negative integer literal".to_owned(),
-                    ));
+                    let _rule = site.context.log.rule(COMPUTED_SUBSTR_LENGTH);
+                    let length = integer_operand(length, &construct, site)?;
+                    format!(", (CASE WHEN {length} < 0 THEN 0 ELSE {length} END)")
                 }
             }
         }
@@ -516,9 +518,61 @@ pub(crate) fn regexp(
                 SnowflakeType::SemiStructured,
             )
         }
+        ("REGEXP_COUNT", options) => {
+            let parameters = match options {
+                [] | ["1"] => "",
+                ["1", parameters] => *parameters,
+                _ => return Err(refuse("REGEXP_COUNT from a position other than 1")),
+            };
+            let flags = extracting_flags(parameters)
+                .ok_or_else(|| refuse("REGEXP_COUNT parameters other than c, i, m and s"))?;
+            let _counted = log.rule(REGEXP_COUNTING);
+            let pattern = string_literal(&format!("{flags}{pattern_text}"), log);
+            (
+                format!(
+                    "(CASE WHEN {} THEN CAST(NULL AS BIGINT) \
+                     ELSE len(regexp_extract_all({text}, {pattern}, 0)) END)",
+                    empty_match_guard(name, &pattern, (construct, site))?
+                ),
+                REGEXP_COUNT_TYPE,
+            )
+        }
+        ("REGEXP_INSTR", []) => {
+            let _counted = log.rule(REGEXP_COUNTING);
+            let prefixed = string_literal(&format!("^((?s:.*?))(?:{pattern_text})"), log);
+            (
+                format!(
+                    "list_transform([{text}], lambda t: CASE WHEN {} THEN CAST(NULL AS BIGINT) \
+                     WHEN t IS NULL THEN NULL WHEN regexp_matches(t, {pattern}) \
+                     THEN length(regexp_extract(t, {prefixed}, 1)) + 1 ELSE 0 END)[1]",
+                    empty_match_guard(name, &pattern, (construct, site))?
+                ),
+                REGEXP_COUNT_TYPE,
+            )
+        }
         _ => return Err(refuse("a REGEXP function with these arguments")),
     };
+    let sql = match data_type {
+        REGEXP_COUNT_TYPE => cast(&sql, data_type, log).map_err(|reason| refuse(&reason))?,
+        _ => sql,
+    };
     Ok(Emitted::new(sql, data_type))
+}
+
+/// A condition raising regexp_pattern_syntax where the pattern matches empty text; FALSE otherwise.
+fn empty_match_guard(
+    name: &str,
+    pattern: &str,
+    (construct, site): (&Construct, Site<'_>),
+) -> Result<String, Refusal> {
+    diverge(site.context, REGEXP_PATTERN_SYNTAX, construct)?;
+    let raise = raised(&format!(
+        "{REGEXP_PATTERN_SYNTAX}: a {name} pattern matching empty text, whose matches no \
+         recording shows"
+    ));
+    Ok(format!(
+        "(CASE WHEN regexp_matches('', {pattern}) THEN CAST({raise} AS BOOLEAN) ELSE FALSE END)"
+    ))
 }
 
 /// RE2 inline flags for Snowflake's c, i and s parameters, the last of c and i winning.

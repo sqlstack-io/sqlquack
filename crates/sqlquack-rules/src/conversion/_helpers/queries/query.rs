@@ -1,6 +1,7 @@
 //! Queries: SELECT with its projection and clauses, and WITH.
 
-use serde_json::Value;
+use serde_json::{Value, json};
+use sqlquack_core::classification::models::Construct;
 use sqlquack_core::provenance::constants::QUERY_CONSTRUCT;
 use sqlquack_core::provenance::models::ShapeArgument;
 use sqlquack_core::refusals::main::missing::missing;
@@ -11,8 +12,9 @@ use sqlquack_duckdb::blocks::main::quoted_identifier::quoted_identifier;
 use sqlquack_snowflake::typing::models::SnowflakeType;
 
 use crate::conversion::_helpers::expressions::scalar::convert_held;
+use crate::conversion::_helpers::expressions::windows::canonical_variant;
 use crate::conversion::_helpers::queries::clauses::{
-    clause_condition, condition_sql, group_by, order_and_limit,
+    clause_condition, condition_sql, group_by, group_positions, order_and_limit, variant_group_keys,
 };
 use crate::conversion::_helpers::queries::set_operations::convert_set_operation;
 use crate::conversion::_helpers::queries::sources::convert_from;
@@ -22,13 +24,14 @@ use crate::conversion::_helpers::support::tree::{
     Payload, field, flag, identifier_name, list, node_construct, node_kind, payload_object,
     require_understood,
 };
-use crate::conversion::constants::DUPLICATE_VARIANTS;
 use crate::conversion::constants::{
     ALIAS, COMMENT, COMMON_TABLE, DISTINCT, GROUP_BY, HAVING, QUALIFY, SELECT, STAR,
     VARIANT_HELD_UNREAD, WHERE,
 };
+use crate::conversion::constants::{VALUES_COLUMN_PREFIX, VALUES_ROWS};
 use sqlquack_semantics::dialects::constants::SNOWFLAKE_TO_DUCKDB;
 use sqlquack_semantics::scopes::main::star_relations::star_relations;
+use sqlquack_semantics::scopes::models::ScopeRelation;
 use sqlquack_semantics::types::models::ColumnSpec;
 
 /// The SELECT clauses this rule converts; anything else set on the node is refused.
@@ -57,6 +60,9 @@ pub(crate) struct QueryRequest<'a> {
     pub(crate) context: &'a Context<'a>,
     pub(crate) named: bool,
 }
+
+/// A grouped VARIANT expression's SQL and the SQL it is grouped as.
+type Regrouped = (String, String);
 
 /// One result column: its name, when it has one, and its value.
 type Projected = (Option<String>, Emitted);
@@ -114,11 +120,57 @@ fn convert_query_kind(
                 convert_query(field(payload, "this", &construct)?, outer, context, named)?;
             Ok((format!("({sql})"), columns))
         }
+        "annotated" => {
+            let construct = node_construct("annotated");
+            let _rule = context.log.rule(COMMENT);
+            let payload = payload_object(payload, &construct)?;
+            require_understood(payload, &["this", "trailing_comments"], &construct)?;
+            convert_query(field(payload, "this", &construct)?, outer, context, named)
+        }
+        "values" => {
+            let _rule = context.log.rule(VALUES_ROWS);
+            convert_query(&values_rows(payload)?, outer, context, named)
+        }
         other => Err(missing(
             node_construct(other),
             format!("no rule converts node:{other} as a query"),
         )),
     }
+}
+
+/// VALUES rows as the UNION ALL of one SELECT per row, its columns named COLUMN1, COLUMN2 and so on.
+fn values_rows(payload: &Value) -> Result<Value, Refusal> {
+    let construct = node_construct("values");
+    let values = payload_object(payload, &construct)?;
+    require_understood(values, &["expressions"], &construct)?;
+    let mut selects: Vec<Value> = Vec::new();
+    let mut width: Option<usize> = None;
+    for row in list(values, "expressions") {
+        let row = payload_object(row, &construct)?;
+        require_understood(row, &["expressions"], &construct)?;
+        let cells = list(row, "expressions");
+        if *width.get_or_insert(cells.len()) != cells.len() || cells.is_empty() {
+            return Err(outside_conditions(
+                construct.clone(),
+                "VALUES rows of different or no widths".to_owned(),
+            ));
+        }
+        let expressions: Vec<Value> = cells
+            .iter()
+            .enumerate()
+            .map(|(position, cell)| {
+                json!({"alias": {
+                    "alias": {"name": format!("{VALUES_COLUMN_PREFIX}{}", position + 1)},
+                    "this": cell,
+                }})
+            })
+            .collect();
+        selects.push(json!({"select": {"expressions": expressions}}));
+    }
+    selects
+        .into_iter()
+        .reduce(|left, right| json!({"union": {"all": true, "left": left, "right": right}}))
+        .ok_or_else(|| missing(construct, "VALUES without rows".to_owned()))
 }
 
 fn convert_select(
@@ -135,7 +187,16 @@ fn convert_select(
     let (from_sql, relations) = convert_from(select, outer, &context)?;
     let mut scope = Scope::new(relations, outer);
     scope.grouped = select.get("group_by").is_some_and(|group| !group.is_null());
-    let mut items: Vec<String> = Vec::new();
+    let mut grouped_variants = variant_group_keys(
+        select,
+        Site {
+            scope: &scope,
+            context: &context,
+            placement: Placement::ROW,
+        },
+    )?;
+    let group_positions = group_positions(select);
+    let mut names: Vec<Option<String>> = Vec::new();
     let mut outputs: Vec<(String, Emitted)> = Vec::new();
     for item in list(select, "expressions") {
         let site = Site {
@@ -144,10 +205,33 @@ fn convert_select(
             placement: Placement::PROJECTION,
         };
         for (name, emitted) in convert_projection(item, site, named)? {
-            items.push(projected_sql(name.as_deref(), &emitted, &context));
-            outputs.push((name.unwrap_or_default(), emitted));
+            outputs.push((name.clone().unwrap_or_default(), emitted));
+            names.push(name);
         }
         scope.aliases = outputs.clone();
+    }
+    let mut positioned: Vec<usize> = Vec::new();
+    for (index, (_, emitted)) in outputs.iter_mut().enumerate() {
+        let position = u64::try_from(index + 1).unwrap_or(u64::MAX);
+        if group_positions.contains(&position)
+            && emitted.data_type == SnowflakeType::SemiStructured
+            && !emitted.is_variant_held()
+        {
+            let grouped =
+                canonical_variant(emitted.clone(), &node_construct("group_by"), &context)?;
+            grouped_variants.push((emitted.sql.clone(), grouped.sql.clone()));
+            *emitted = grouped;
+            positioned.push(index);
+        }
+    }
+    let mut items: Vec<String> = Vec::with_capacity(outputs.len());
+    for (index, ((_, emitted), name)) in outputs.iter_mut().zip(&names).enumerate() {
+        if !positioned.contains(&index) {
+            for (converted, grouped) in &grouped_variants {
+                emitted.sql = emitted.sql.replace(converted.as_str(), grouped);
+            }
+        }
+        items.push(projected_sql(name.as_deref(), emitted, &context));
     }
     let columns: Vec<ColumnSpec> = outputs
         .iter()
@@ -173,10 +257,21 @@ fn convert_select(
             .iter()
             .any(|(_, emitted)| emitted.data_type == SnowflakeType::SemiStructured) =>
         {
-            return Err(outside_conditions(
-                node_construct("distinct"),
-                format!("SELECT DISTINCT {DUPLICATE_VARIANTS}"),
-            ));
+            let _rule = context.log.rule(DISTINCT);
+            let construct = node_construct("distinct");
+            items.clear();
+            for (name, emitted) in &mut outputs {
+                if emitted.data_type == SnowflakeType::SemiStructured {
+                    *emitted = canonical_variant(emitted.clone(), &construct, &context)?;
+                }
+                items.push(projected_sql(
+                    Some(name.as_str()).filter(|name| !name.is_empty()),
+                    emitted,
+                    &context,
+                ));
+            }
+            scope.aliases = outputs.clone();
+            "DISTINCT "
         }
         true => {
             let _rule = context.log.rule(DISTINCT);
@@ -184,7 +279,7 @@ fn convert_select(
         }
         false => "",
     };
-    let tail = select_tail(select, &scope, &context, &outputs)?;
+    let tail = select_tail(select, &scope, &context, (&outputs, &grouped_variants))?;
     Ok((
         format!(
             "{with_sql}SELECT {distinct}{}{from_sql}{tail}",
@@ -210,8 +305,14 @@ fn select_tail(
     select: &Payload,
     scope: &Scope<'_>,
     context: &Context<'_>,
-    outputs: &[(String, Emitted)],
+    (outputs, grouped_variants): (&[(String, Emitted)], &[Regrouped]),
 ) -> Result<String, Refusal> {
+    let regrouped = |mut sql: String| {
+        for (converted, grouped) in grouped_variants {
+            sql = sql.replace(converted.as_str(), grouped);
+        }
+        sql
+    };
     let site = Site {
         scope,
         context,
@@ -236,14 +337,20 @@ fn select_tail(
     if let Some(condition) = clause_condition(select, "having") {
         let _rule = context.log.rule(HAVING);
         let site = site.placed(Placement::GROUPED);
-        sql.push_str(&format!(" HAVING {}", condition_sql(condition, site)?));
+        sql.push_str(&format!(
+            " HAVING {}",
+            regrouped(condition_sql(condition, site)?)
+        ));
     }
     if let Some(condition) = clause_condition(select, "qualify") {
         let _rule = context.log.rule(QUALIFY);
         let site = site.placed(Placement::PROJECTION);
-        sql.push_str(&format!(" QUALIFY {}", condition_sql(condition, site)?));
+        sql.push_str(&format!(
+            " QUALIFY {}",
+            regrouped(condition_sql(condition, site)?)
+        ));
     }
-    sql.push_str(&order_and_limit(select, site, outputs)?);
+    sql.push_str(&regrouped(order_and_limit(select, site, outputs)?));
     Ok(sql)
 }
 
@@ -277,14 +384,32 @@ pub(crate) fn convert_with<'a>(
     let mut parts: Vec<String> = Vec::new();
     for cte in list(with, "ctes") {
         let cte = payload_object(cte, &construct)?;
-        require_understood(cte, &["alias", "this"], &construct)?;
+        require_understood(cte, &["alias", "this", "columns"], &construct)?;
         let name = identifier_name(field(cte, "alias", &construct)?)
             .ok_or_else(|| missing(construct.clone(), "a CTE has no name".to_owned()))?;
         let _muted = fixture(&name).then(|| context.log.muted());
-        let (sql, columns) =
+        let (sql, mut columns) =
             convert_query(field(cte, "this", &construct)?, outer, &extended, true)?;
+        let renamed = list(cte, "columns");
+        let mut column_list = String::new();
+        if !renamed.is_empty() {
+            if renamed.len() != columns.len() {
+                return Err(unresolved(
+                    "a CTE column list does not match its query's columns".to_owned(),
+                ));
+            }
+            let mut quoted: Vec<String> = Vec::with_capacity(renamed.len());
+            for (column, alias) in columns.iter_mut().zip(renamed) {
+                column.name = identifier_name(alias).ok_or_else(|| {
+                    missing(construct.clone(), "a CTE column has no name".to_owned())
+                })?;
+                quoted.push(quoted_identifier(&column.name, context.log));
+            }
+            require_distinct_names(&columns)?;
+            column_list = format!("({})", quoted.join(", "));
+        }
         parts.push(format!(
-            "{} AS ({sql})",
+            "{}{column_list} AS ({sql})",
             quoted_identifier(&name, context.log)
         ));
         let columns = match fixture(&name) {
@@ -387,11 +512,20 @@ pub(crate) fn star(
         ));
     }
     let relations = star_relations(site.scope, qualifier.as_deref(), SNOWFLAKE_TO_DUCKDB)?;
-    let read: Vec<&String> = relations
-        .iter()
-        .flat_map(|relation| &relation.columns)
-        .map(|column| &column.name)
-        .collect();
+    let merged = |relation: &ScopeRelation, name: &String| {
+        qualifier.is_none() && relation.merged.contains(name)
+    };
+    if qualifier.is_none() {
+        require_leading_keys(&relations, &construct)?;
+    }
+    let mut read: Vec<&String> = Vec::new();
+    for relation in &relations {
+        for column in &relation.columns {
+            if !merged(relation, &column.name) {
+                read.push(&column.name);
+            }
+        }
+    }
     for name in &excluded {
         if !read.contains(&name) {
             return Err(outside_conditions(
@@ -405,7 +539,7 @@ pub(crate) fn star(
         for column in relation
             .columns
             .iter()
-            .filter(|column| !excluded.contains(&column.name))
+            .filter(|column| !excluded.contains(&column.name) && !merged(relation, &column.name))
         {
             let sql = format!(
                 "{}.{}",
@@ -426,6 +560,32 @@ pub(crate) fn star(
         }
     }
     Ok(expanded)
+}
+
+/// A bare star over USING joins converts only where the keys already lead the first source's columns.
+fn require_leading_keys(
+    relations: &[&ScopeRelation],
+    construct: &Construct,
+) -> Result<(), Refusal> {
+    let keys: Vec<&String> = relations
+        .iter()
+        .flat_map(|relation| &relation.merged)
+        .collect();
+    let leading = relations.first().is_some_and(|first| {
+        first.columns.len() >= keys.len()
+            && first
+                .columns
+                .iter()
+                .zip(&keys)
+                .all(|(column, key)| &&column.name == key)
+    });
+    match keys.is_empty() || leading {
+        true => Ok(()),
+        false => Err(outside_conditions(
+            construct.clone(),
+            "a bare star over a USING join whose keys do not lead the first source".to_owned(),
+        )),
+    }
 }
 
 /// Refuses result columns whose names repeat, which DuckDB would rename.

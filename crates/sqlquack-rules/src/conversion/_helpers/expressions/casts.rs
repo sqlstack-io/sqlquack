@@ -55,7 +55,7 @@ use crate::conversion::_helpers::support::tree::{
 use crate::conversion::constants::{
     CAST_BOOLEAN, CAST_NUMERIC, CAST_PARSED_TEXT, CAST_SAME_TYPE, CAST_TEMPORAL, CAST_TEXT_LITERAL,
     CAST_TEXT_TIME, CAST_TEXT_TIMESTAMP, CAST_TO_TEXT, CAST_UTC_ZONED, DATE_TEXT_SPELLING,
-    FLOAT_SCALE_FACET, KIND_CAST_TARGETS, MICROSECOND_DIGITS, NTZ_OUTPUT_PATTERN,
+    FLOAT_SCALE_FACET, FLOAT_TO_DOUBLE, KIND_CAST_TARGETS, MICROSECOND_DIGITS, NTZ_OUTPUT_PATTERN,
     SESSION_TIMEZONE_UTC, TARGET_FACET, TEXT_TYPE_PAIR, TEXT_TYPE_SPELLINGS, TIME_CAST,
     TIMESTAMP_RANGE, TIMESTAMP_TEXT_ROUNDING, TO_BOOLEAN_RULE, TO_DOUBLE_PAIR, TO_NUMBER_PAIR,
     TO_VARCHAR_PAIR, TO_VARIANT_RULE, VARIANT_KIND_CAST, VARIANT_NAME, VARIANT_TEXT_FUNCTION,
@@ -469,6 +469,10 @@ pub(crate) fn to_double_call(
         return Err(refuse(format!("{name} with a format or these arguments")));
     };
     let operand = convert_expression(value, site)?;
+    if operand.data_type == SnowflakeType::Float && name.starts_with("TRY_") {
+        let _rule = site.context.log.rule(FLOAT_TO_DOUBLE);
+        return Ok(operand);
+    }
     if !matches!(
         operand.data_type,
         SnowflakeType::Varchar | SnowflakeType::Null

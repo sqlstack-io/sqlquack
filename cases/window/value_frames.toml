@@ -1,0 +1,86 @@
+# FIRST_VALUE, LAST_VALUE and COUNT_IF over explicit ROWS frames, with and without IGNORE NULLS.
+category = "window"
+construct = "fn:LAST_VALUE"
+session_profile = "utc-v1"
+
+[[case]]
+id = "last_value_running_ignore_nulls"
+description = "LAST_VALUE IGNORE NULLS over ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW: the latest non-NULL value so far, per partition."
+columns = [{ name = "g", type = "VARCHAR" }, { name = "t", type = "NUMBER(10,0)" }, { name = "v", type = "NUMBER(10,2)" }]
+rows = [
+  ["'a'", "1", "1.50"],
+  ["'a'", "2", "NULL"],
+  ["'a'", "3", "2.50"],
+  ["'a'", "4", "NULL"],
+  ["'b'", "1", "NULL"],
+  ["'b'", "2", "NULL"],
+  ["'c'", "1", "9.00"],
+]
+query = "SELECT g, t, LAST_VALUE(v IGNORE NULLS) OVER (PARTITION BY g ORDER BY t ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) AS carried, LAST_VALUE(v) IGNORE NULLS OVER (PARTITION BY g ORDER BY t ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) AS carried_after, LAST_VALUE(v) OVER (PARTITION BY g ORDER BY t ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) AS current_v FROM input ORDER BY g, t"
+order = "ordered"
+tags = ["null", "single-row-partition"]
+
+[[case]]
+id = "first_and_last_value_sliding"
+description = "FIRST_VALUE and LAST_VALUE over sliding ROWS frames before and after the row, with ties in the order and NULLs."
+columns = [{ name = "g", type = "VARCHAR" }, { name = "t", type = "NUMBER(10,0)" }, { name = "v", type = "VARCHAR" }]
+rows = [
+  ["'a'", "1", "'p'"],
+  ["'a'", "2", "NULL"],
+  ["'a'", "3", "'q'"],
+  ["'a'", "4", "'r'"],
+  ["'a'", "5", "NULL"],
+  ["'b'", "1", "'s'"],
+]
+query = "SELECT g, t, FIRST_VALUE(v) OVER (PARTITION BY g ORDER BY t ROWS BETWEEN 1 PRECEDING AND 1 FOLLOWING) AS f1, LAST_VALUE(v) OVER (PARTITION BY g ORDER BY t ROWS BETWEEN 1 PRECEDING AND 1 FOLLOWING) AS l1, FIRST_VALUE(v IGNORE NULLS) OVER (PARTITION BY g ORDER BY t ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING) AS next_known, LAST_VALUE(v IGNORE NULLS) OVER (PARTITION BY g ORDER BY t ROWS BETWEEN UNBOUNDED PRECEDING AND 1 PRECEDING) AS previous_known FROM input ORDER BY g, t"
+order = "ordered"
+tags = ["null", "single-row-partition"]
+
+[[case]]
+id = "last_value_running_ties"
+description = "LAST_VALUE over a running ROWS frame where the order has ties broken by a second key."
+columns = [{ name = "g", type = "VARCHAR" }, { name = "t", type = "NUMBER(10,0)" }, { name = "u", type = "NUMBER(10,0)" }, { name = "v", type = "NUMBER(10,0)" }]
+rows = [
+  ["'a'", "1", "2", "10"],
+  ["'a'", "1", "1", "20"],
+  ["'a'", "2", "1", "NULL"],
+  ["'a'", "2", "2", "40"],
+]
+query = "SELECT t, u, LAST_VALUE(v) OVER (PARTITION BY g ORDER BY t DESC, u ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) AS l, FIRST_VALUE(v) OVER (PARTITION BY g ORDER BY t, u DESC ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) AS f FROM input ORDER BY t, u"
+order = "ordered"
+tags = ["ties", "null"]
+
+[[case]]
+id = "count_if_running_frame"
+description = "COUNT_IF over a running ROWS frame and over the default frame, per partition, with NULL conditions."
+columns = [{ name = "g", type = "VARCHAR" }, { name = "t", type = "NUMBER(10,0)" }, { name = "b", type = "BOOLEAN" }]
+rows = [
+  ["'a'", "1", "TRUE"],
+  ["'a'", "2", "FALSE"],
+  ["'a'", "3", "NULL"],
+  ["'a'", "4", "TRUE"],
+  ["'b'", "1", "FALSE"],
+]
+query = "SELECT g, t, COUNT_IF(b) OVER (PARTITION BY g ORDER BY t ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) AS running, COUNT_IF(b) OVER (PARTITION BY g ORDER BY t) AS by_default, COUNT_IF(b) OVER (PARTITION BY g) AS whole FROM input ORDER BY g, t"
+order = "ordered"
+tags = ["null", "single-row-partition"]
+
+[[case]]
+id = "count_if_running_frame_unordered"
+description = "COUNT_IF over a running ROWS frame without ORDER BY."
+columns = [{ name = "g", type = "VARCHAR" }, { name = "b", type = "BOOLEAN" }]
+rows = [["'a'", "TRUE"], ["'a'", "FALSE"], ["'b'", "TRUE"]]
+query = "SELECT g, COUNT_IF(b) OVER (PARTITION BY g ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) AS c FROM input ORDER BY ordinal"
+order = "ordered"
+compile_error = true
+tags = ["null"]
+
+[[case]]
+id = "last_value_inverted_frame"
+description = "LAST_VALUE over a ROWS frame whose start follows its end."
+columns = [{ name = "t", type = "NUMBER(10,0)" }, { name = "v", type = "VARCHAR" }]
+rows = [["1", "'p'"], ["2", "'q'"], ["3", "'r'"]]
+query = "SELECT t, LAST_VALUE(v) OVER (ORDER BY t ROWS BETWEEN 1 FOLLOWING AND 1 PRECEDING) AS l FROM input ORDER BY t"
+order = "ordered"
+compile_error = true
+tags = ["null"]

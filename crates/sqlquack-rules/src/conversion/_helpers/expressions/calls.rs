@@ -15,15 +15,16 @@ use sqlquack_snowflake::typing::main::count::count;
 use sqlquack_snowflake::typing::main::sum::sum;
 use sqlquack_snowflake::typing::models::SnowflakeType;
 
+use crate::conversion::_helpers::expressions::arrays::array_function;
 use crate::conversion::_helpers::expressions::casts::{
     to_boolean_call, to_double_call, to_number_call, to_varchar_call,
 };
 use crate::conversion::_helpers::expressions::conditionals::unified;
-use crate::conversion::_helpers::expressions::conditionals::{decode, zero_if_null};
+use crate::conversion::_helpers::expressions::conditionals::{decode, null_if_zero, zero_if_null};
 use crate::conversion::_helpers::expressions::hashing::hash_call;
 use crate::conversion::_helpers::expressions::lambdas::{lambda_call, reduce_call};
 use crate::conversion::_helpers::expressions::numeric_functions::{
-    absolute, bitwise, rounding, sign,
+    absolute, bitwise, logarithm, rounding, sign,
 };
 use crate::conversion::_helpers::expressions::objects::{
     object_construct, object_delete, object_insert,
@@ -36,11 +37,13 @@ use crate::conversion::_helpers::expressions::semi_structured::{
 };
 use crate::conversion::_helpers::expressions::strings::{
     bytes_as_text, chr, concatenate, concatenate_with_separator, edit_distance, hex_encode,
-    initcap, text_contains, text_md5, text_operand, trim_call, try_hex_decode,
+    initcap, jaro_winkler, text_contains, text_md5, text_operand, text_sha2, trim_call,
+    try_hex_decode,
 };
 use crate::conversion::_helpers::expressions::temporal_functions::{
     convert_timezone, current_time, date_add, date_diff_call, date_from_parts_call, date_part,
-    date_trunc, temporal_text, timestamp_from_parts_call, to_time, to_timestamp, to_timestamp_tz,
+    date_trunc, day_name, temporal_text, timestamp_from_parts_call, to_time, to_timestamp,
+    to_timestamp_tz,
 };
 use crate::conversion::_helpers::expressions::text_functions::{
     left_right, pad, regexp, replace, split_part, translate,
@@ -56,7 +59,7 @@ use crate::conversion::_helpers::support::tree::{
 };
 use crate::conversion::constants::{
     AVERAGE, AVG_NAME, COUNT, LEAST_GREATEST, MIN_MAX, MIN_MAX_FLOAT, NOT_SNOWFLAKE_FUNCTIONS,
-    NULLIF, NUMERIC_RANGE, SUM, SUM_FLOAT, TO_DATE_NAME, TRIM,
+    NULLIF, NUMERIC_RANGE, SORTED_ARRAY_FUNCTION, SUM, SUM_FLOAT, TO_DATE_NAME, TRIM,
 };
 
 /// NULLIF, LTRIM, RTRIM and CONCAT, which the parser keeps as generic calls.
@@ -84,6 +87,11 @@ pub(crate) fn convert_function(payload: &Value, site: Site<'_>) -> Result<Emitte
     };
     require_understood(payload, understood, &construct)?;
     let arguments = list(payload, "args");
+    if name != SORTED_ARRAY_FUNCTION
+        && let Some(converted) = array_function(&name, arguments, &construct, site)
+    {
+        return converted;
+    }
     match (name.as_str(), arguments) {
         ("NULLIF", [left, right]) => nullif(left, right, site),
         ("LTRIM" | "RTRIM", [text, rest @ ..]) if rest.len() <= 1 => {
@@ -102,6 +110,7 @@ pub(crate) fn convert_function(payload: &Value, site: Site<'_>) -> Result<Emitte
         ("CONCAT_WS", parts) => concatenate_with_separator(parts, &construct, site),
         ("CONTAINS", parts) => text_contains(parts, &construct, site),
         ("EDITDISTANCE", parts) => edit_distance(parts, &construct, site),
+        ("JAROWINKLER_SIMILARITY", parts) => jaro_winkler(parts, &construct, site),
         ("CHARINDEX" | "POSITION", parts) => charindex_call(&name, parts, &construct, site),
         ("MD5", parts) => text_md5(parts, &construct, site),
         ("MOD", parts) => mod_call(parts, &construct, site),
@@ -110,7 +119,10 @@ pub(crate) fn convert_function(payload: &Value, site: Site<'_>) -> Result<Emitte
         ("INITCAP", parts) => initcap(parts, &construct, site),
         ("CHR", parts) => chr(parts, &construct, site),
         ("HEX_ENCODE", parts) => hex_encode(parts, &construct, site),
-        ("TRY_HEX_DECODE_STRING", parts) => try_hex_decode(parts, &construct, site),
+        ("TRY_HEX_DECODE_STRING" | "HEX_DECODE_STRING", parts) => {
+            try_hex_decode(&name, parts, &construct, site)
+        }
+        ("SHA2", parts) => text_sha2(parts, &construct, site),
         ("TO_BOOLEAN" | "TRY_TO_BOOLEAN", parts) => to_boolean_call(&name, parts, &construct, site),
         (
             "TO_NUMBER" | "TO_DECIMAL" | "TO_NUMERIC" | "TRY_TO_NUMBER" | "TRY_TO_DECIMAL"
@@ -137,6 +149,8 @@ pub(crate) fn convert_function(payload: &Value, site: Site<'_>) -> Result<Emitte
         ("DECODE", parts) => decode(parts, &construct, site),
         ("HASH", parts) => hash_call(parts, &construct, site),
         ("ZEROIFNULL", parts) => zero_if_null(parts, &construct, site),
+        ("NULLIFZERO", parts) => null_if_zero(parts, &construct, site),
+        ("LN" | "EXP" | "SQRT", parts) => logarithm(&name, parts, &construct, site),
         ("EQUAL_NULL", parts) => equal_null(parts, &construct, site),
         ("ROUND" | "CEIL" | "FLOOR" | "TRUNC" | "TRUNCATE", parts) => {
             rounding(&name, parts, &construct, site)
@@ -146,9 +160,11 @@ pub(crate) fn convert_function(payload: &Value, site: Site<'_>) -> Result<Emitte
         ("REPLACE", parts) if (2..=3).contains(&parts.len()) => replace(parts, &construct, site),
         ("TRANSLATE", parts) => translate(parts, &construct, site),
         ("SPLIT_PART", parts) => split_part(parts, &construct, site),
-        ("REGEXP_LIKE" | "REGEXP_REPLACE" | "REGEXP_SUBSTR" | "REGEXP_SUBSTR_ALL", parts) => {
-            regexp(&name, parts, &construct, site)
-        }
+        (
+            "REGEXP_LIKE" | "REGEXP_REPLACE" | "REGEXP_SUBSTR" | "REGEXP_SUBSTR_ALL"
+            | "REGEXP_COUNT" | "REGEXP_INSTR",
+            parts,
+        ) => regexp(&name, parts, &construct, site),
         ("DATE_PART", [unit, value]) => date_part(unit, value, &construct, site),
         ("DATEDIFF", parts) => date_diff_call(parts, &construct, site),
         ("TO_TIME" | "TRY_TO_TIME" | "TIME", parts) => to_time(&name, parts, &construct, site),
@@ -158,6 +174,7 @@ pub(crate) fn convert_function(payload: &Value, site: Site<'_>) -> Result<Emitte
             current_time(&name, parts, &construct, site)
         }
         ("DATE_TRUNC", [unit, value]) => date_trunc(unit, value, &construct, site),
+        ("DAYNAME", parts) => day_name(parts, &construct, site),
         ("DATEADD" | "TIMEADD" | "TIMESTAMPADD", [unit, amount, value]) => {
             date_add((unit, amount, value), &construct, site)
         }
