@@ -3,6 +3,7 @@
 use std::collections::BTreeSet;
 use std::path::PathBuf;
 
+use crate::analysis::main::assumption_id::assumption_id;
 use crate::census::_helpers::aggregate::aggregate;
 use crate::census::_helpers::blockers::blockers;
 use crate::census::_helpers::corpus::inspect_files;
@@ -20,7 +21,12 @@ pub(crate) fn run_census_timed(
 ) -> Result<CensusRun, CensusError> {
     let files = collect_sql_files(paths)?;
     let censuses = inspect_files(&files, options, progress)?;
-    let mut report = aggregate(&censuses, options.dialect, &options.coverage_points);
+    let mut report = aggregate(
+        &censuses,
+        options.dialect,
+        &options.coverage_points,
+        options.names,
+    );
     let (blocked, plan_input) = blockers(&files, &censuses, &options.schema, options.names);
     report.blockers = blocked;
     let assumed: BTreeSet<String> = options.assume_supported.iter().cloned().collect();
@@ -42,7 +48,7 @@ pub(crate) fn run_census_timed(
                 provenance
                     .divergences
                     .keys()
-                    .filter(|id| named.contains(id))
+                    .filter(|id| named.contains(&assumption_id(id).to_owned()))
                     .cloned(),
             );
         }
@@ -53,8 +59,15 @@ pub(crate) fn run_census_timed(
     report.refusals.convertible_strict_no_assumptions = strict;
     for (index, ids) in relied.iter().enumerate() {
         if censuses[index].parsed && censuses[index].refusal_categories.is_empty() {
-            for id in ids {
-                *report.refusals.assumptions.entry(id.clone()).or_default() += 1;
+            let shown: BTreeSet<String> = ids
+                .iter()
+                .map(|id| match options.names {
+                    true => id.clone(),
+                    false => assumption_id(id).to_owned(),
+                })
+                .collect();
+            for id in shown {
+                *report.refusals.assumptions.entry(id).or_default() += 1;
             }
         }
     }

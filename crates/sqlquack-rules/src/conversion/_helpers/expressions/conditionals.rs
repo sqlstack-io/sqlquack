@@ -14,6 +14,7 @@ use sqlquack_snowflake::typing::models::SnowflakeType;
 use crate::conversion::_helpers::expressions::casts::cast_to;
 use crate::conversion::_helpers::expressions::operators::{boolean_operand, comparable};
 use crate::conversion::_helpers::expressions::scalar::convert_expression;
+use crate::conversion::_helpers::support::declared::declared_of;
 use crate::conversion::_helpers::support::divergence::require_widening_range;
 use crate::conversion::_helpers::support::scope::{Context, Emitted};
 use crate::conversion::_helpers::support::site::Site;
@@ -159,6 +160,7 @@ fn coalesce_arguments(
     let (cast_branches, target) = unified_reading_text(&branches, construct, site.context)?;
     Ok(Emitted {
         utc_offset: utc_kept(&marks(&branches), target),
+        declared: declared_of(branches.iter()),
         ..Emitted::new(format!("COALESCE({})", cast_branches.join(", ")), target)
     })
 }
@@ -202,6 +204,7 @@ pub(crate) fn iff(payload: &Value, site: Site<'_>) -> Result<Emitted, Refusal> {
     let (cast_branches, target) = unified_reading_text(&branches, &construct, site.context)?;
     Ok(Emitted {
         utc_offset: utc_kept(&marks(&branches), target),
+        declared: declared_of(branches.iter()),
         ..Emitted::new(
             format!(
                 "(CASE WHEN {condition} THEN {} ELSE {} END)",
@@ -259,6 +262,7 @@ pub(crate) fn case_expression(payload: &Value, site: Site<'_>) -> Result<Emitted
     }
     Ok(Emitted {
         utc_offset: utc_kept(&values, target),
+        declared: declared_of(branches.iter()),
         ..Emitted::new(sql, target)
     })
 }

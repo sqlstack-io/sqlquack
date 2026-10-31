@@ -1,0 +1,10 @@
+{
+  "relations": {
+    "ORDERS": [
+      ["ORDER_ID", "NUMBER(10,0)"],
+      {"name": "PLACED_AT", "type": "TIMESTAMP_TZ(9)", "offset": "+00:00"},
+      ["SHIPPED_AT", "TIMESTAMP_TZ(9)"],
+      {"name": "PAID_AT", "type": "TIMESTAMP_TZ(9)", "offset": "UTC"}
+    ]
+  }
+}

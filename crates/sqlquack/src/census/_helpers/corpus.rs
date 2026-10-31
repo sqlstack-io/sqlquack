@@ -8,7 +8,7 @@ use rayon::iter::{IntoParallelRefIterator, ParallelIterator};
 use sqlquack_rules::catalogue::main::builtin_catalogue::builtin_catalogue;
 use std::collections::BTreeSet;
 
-use sqlquack_semantics::types::models::Schema;
+use sqlquack_semantics::types::models::{ColumnSpec, Schema};
 
 use crate::census::_helpers::completion::{Completed, complete_in_waves};
 use crate::census::_helpers::inspect::{FileCensus, complete_refusals, inspect_file};
@@ -28,6 +28,13 @@ pub(crate) fn inspect_files(
         .stack_size(WORKER_STACK_BYTES)
         .build()
         .map_err(|error| CensusError::Workers(error.to_string()))?;
+    let declared_model = files
+        .iter()
+        .filter_map(|path| model_relation(path))
+        .find(|relation| declares_offset(options.schema.relations.get(relation)));
+    if let Some(relation) = declared_model {
+        return Err(CensusError::DeclaredModelOffset(relation));
+    }
     let mut schema = options.schema.clone();
     let cursor_bound: Option<&str> = options.cursor_type.map(|cursor| match cursor {
         CursorType::Timestamp => TIMESTAMP_CURSOR_BOUND,
@@ -107,4 +114,13 @@ pub(crate) fn inspect_files(
 pub(crate) fn model_relation(path: &Path) -> Option<String> {
     let stem = path.file_stem()?.to_str()?;
     Some(relation_name(stem.as_bytes()).to_ascii_uppercase())
+}
+
+/// Whether a relation's schema columns declare an offset for any column.
+fn declares_offset(columns: Option<&Vec<ColumnSpec>>) -> bool {
+    columns.is_some_and(|columns| {
+        columns
+            .iter()
+            .any(|column| !column.declared_offsets.is_empty())
+    })
 }

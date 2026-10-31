@@ -20,6 +20,7 @@ use crate::conversion::_helpers::expressions::named_aggregates::named_aggregate;
 use crate::conversion::_helpers::expressions::ordered_aggregates::within_group;
 use crate::conversion::_helpers::expressions::scalar::{call_name, convert_expression};
 use crate::conversion::_helpers::expressions::spellings::{as_typed, as_written};
+use crate::conversion::_helpers::support::declared::merged;
 use crate::conversion::_helpers::support::divergence::diverge;
 use crate::conversion::_helpers::support::scope::{Context, Emitted};
 use crate::conversion::_helpers::support::shapes::type_family;
@@ -276,9 +277,11 @@ fn offset_window(
     };
     let mut arguments = vec![value.sql.clone(), offset.to_string()];
     let mut values = vec![(value.data_type, value.utc_offset)];
+    let mut declared = value.declared.clone();
     if let Some(default) = inner.get("default").filter(|default| !default.is_null()) {
         let default = convert_expression(default, site)?;
         values.push((default.data_type, default.utc_offset));
+        declared.extend(default.declared.iter().cloned());
         let common = unify(&[value.data_type, default.data_type], log).map_err(refuse)?;
         if common != value.data_type {
             return Err(refuse(format!(
@@ -290,6 +293,7 @@ fn offset_window(
     }
     Ok(Emitted {
         utc_offset: utc_kept(&values, value.data_type),
+        declared: merged(declared),
         ..Emitted::new(
             format!(
                 "{function}({}) OVER ({})",
@@ -333,6 +337,7 @@ fn first_last_window(
     };
     Ok(Emitted {
         utc_offset: value.utc_offset,
+        declared: value.declared.clone(),
         ..Emitted::new(
             format!(
                 "{function}({}{nulls}) OVER ({})",

@@ -69,7 +69,8 @@ pub(crate) fn where_depth(sql: &str) -> usize {
         .map_or(0, |where_clause| where_clause.this.tree_depth())
 }
 
-const TERMINATION_BUDGET: Duration = Duration::from_secs(5);
+/// About a thousand times the slowest decision under the gate profile on a loaded machine.
+const TERMINATION_BUDGET: Duration = Duration::from_secs(1);
 const PARSE_STACK: usize = 16 * 1024 * 1024;
 const DEPTH_GUARD_CODE: &str = "E_GUARD_PARSER_DEPTH_EXCEEDED";
 const TERMINATION_STATEMENTS: &[&str] = &[

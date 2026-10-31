@@ -24,6 +24,8 @@ pub(crate) struct Emitted {
     pub(crate) literal: Option<Literal>,
     /// For TIMESTAMP_TZ values: whether every value's offset is known to be +00:00.
     pub(crate) utc_offset: bool,
+    /// The schema columns whose declared offset the UTC mark relies on, as `RELATION.COLUMN`.
+    pub(crate) declared: Vec<String>,
     /// For VARIANT values: how DuckDB holds them.
     pub(crate) held: Holding,
     /// For VARIANT-held values: what their root is known to be.
@@ -62,6 +64,7 @@ impl Emitted {
             data_type,
             literal: None,
             utc_offset: false,
+            declared: Vec::new(),
             held: Holding::Json,
             root: VariantRoot::Dynamic,
             untainted: false,
@@ -101,6 +104,7 @@ pub(crate) fn resolve(
             untainted: column.untainted,
             sourced: column.sourced,
             utc_offset: column.utc_offset,
+            declared: column.declared_offsets.clone(),
             ..Emitted::new(
                 format!(
                     "{}.{}",

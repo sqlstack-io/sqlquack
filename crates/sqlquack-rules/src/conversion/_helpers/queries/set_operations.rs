@@ -15,6 +15,7 @@ use crate::conversion::_helpers::queries::clauses::order_and_limit;
 use crate::conversion::_helpers::queries::query::{
     ConvertedQuery, QueryRequest, convert_query, convert_with,
 };
+use crate::conversion::_helpers::support::declared::merged;
 use crate::conversion::_helpers::support::divergence::require_widening_range;
 use crate::conversion::_helpers::support::scope::{Context, Emitted, Scope};
 use crate::conversion::_helpers::support::site::{Placement, Site};
@@ -452,6 +453,7 @@ fn proven_columns(
         let mut untainted = true;
         let mut sourced = false;
         let mut utc_offset = true;
+        let mut declared: Vec<String> = Vec::new();
         for branch in [left, right] {
             let found = match by_name {
                 true => branch.iter().find(|found| found.name == column.name),
@@ -459,6 +461,7 @@ fn proven_columns(
             };
             utc_offset &= found.is_some_and(|found| found.utc_offset);
             if let Some(found) = found {
+                declared.extend(found.declared_offsets.iter().cloned());
                 untainted &= found.untainted;
                 sourced |= found.sourced;
             }
@@ -467,6 +470,10 @@ fn proven_columns(
             untainted,
             sourced,
             utc_offset,
+            declared_offsets: match utc_offset {
+                true => merged(declared),
+                false => Vec::new(),
+            },
             ..column
         });
     }

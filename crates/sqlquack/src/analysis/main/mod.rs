@@ -1,9 +1,11 @@
 pub mod analyze;
 pub mod analyze_function;
+pub mod assumption_id;
 pub mod builtin_claims;
 pub mod builtin_failure_modes;
 pub mod check_equivalence_cases;
 pub mod collect_all_refusals;
+pub mod confirm_assumption;
 pub mod confirm_utc_session;
 pub mod conversion_options;
 pub mod parse_session;

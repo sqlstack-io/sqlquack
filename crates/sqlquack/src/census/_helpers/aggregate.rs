@@ -7,6 +7,7 @@ use sqlquack_core::classification::models::Construct;
 use sqlquack_core::parsing::models::SourceDialect;
 use sqlquack_core::refusals::models::RefusalCategory;
 
+use crate::analysis::main::assumption_id::assumption_id;
 use crate::census::_helpers::coverage::{CoverageInput, convertible_at, greedy_order};
 use crate::census::_helpers::inspect::FileCensus;
 use crate::census::models::{
@@ -18,6 +19,7 @@ pub(crate) fn aggregate(
     files: &[FileCensus],
     dialect: SourceDialect,
     coverage_points: &[usize],
+    names: bool,
 ) -> CensusReport {
     let mut usage: BTreeMap<&Construct, usize> = BTreeMap::new();
     for file in files {
@@ -47,7 +49,7 @@ pub(crate) fn aggregate(
             })
             .collect(),
         coverage: coverage(&file_ids, &frequency_order, coverage_points),
-        provenance: provenance_counts(files),
+        provenance: provenance_counts(files, names),
         blockers: BlockerReport::default(),
         plan: PlanReport::default(),
     }
@@ -101,7 +103,7 @@ fn refusal_totals(files: &[FileCensus]) -> RefusalTotals {
     }
 }
 
-fn provenance_counts(files: &[FileCensus]) -> ProvenanceCounts {
+fn provenance_counts(files: &[FileCensus], names: bool) -> ProvenanceCounts {
     let mut counts = ProvenanceCounts::default();
     for provenance in files.iter().filter_map(|file| file.provenance.as_ref()) {
         for (target, ids) in [
@@ -113,13 +115,18 @@ fn provenance_counts(files: &[FileCensus]) -> ProvenanceCounts {
                 *target.entry(id.clone()).or_default() += 1;
             }
         }
+        let mut labels: BTreeSet<String> = BTreeSet::new();
         for (divergence, constructs) in &provenance.divergences {
+            let divergence = match names {
+                true => divergence.as_str(),
+                false => assumption_id(divergence),
+            };
             for construct in constructs {
-                *counts
-                    .divergences
-                    .entry(format!("{divergence} at {construct}"))
-                    .or_default() += 1;
+                labels.insert(format!("{divergence} at {construct}"));
             }
+        }
+        for label in labels {
+            *counts.divergences.entry(label).or_default() += 1;
         }
     }
     counts

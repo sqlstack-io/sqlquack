@@ -10,13 +10,13 @@ fn given_composed_variant_text_when_converting_then_sql_and_time_grow_linearly()
             description: "one column, text written through nested PARSE_JSON and TO_VARCHAR",
             columns: 1,
             depths: [1, 4, 8],
-            expected_budget_seconds: 10,
+            expected_budget_seconds: 2,
         },
         CompositionTestCase {
             description: "sixteen columns of flattened elements, as staging models unpack them",
             columns: 16,
             depths: [1, 2, 3],
-            expected_budget_seconds: 20,
+            expected_budget_seconds: 8,
         },
     ];
     for test_case in test_cases {

@@ -12,10 +12,12 @@ use sqlquack_policy::policy::constants::{SESSION_TIME_ZONE, TIMEZONE_PARAMETER};
 use sqlquack_rules::catalogue::main::builtin_catalogue::builtin_catalogue;
 
 use crate::analysis::main::analyze::analyze;
+use crate::analysis::main::assumption_id::assumption_id;
 use crate::analysis::main::parse_session::parse_session;
 use crate::analysis::main::refused_construct::refused_construct;
 use crate::analysis::main::session_conversion_options::session_conversion_options;
 use crate::cli::_helpers::evidence::chosen_policy;
+use crate::cli::_helpers::evidence::confirmed_offsets;
 use crate::cli::_helpers::schema::load_schema;
 use crate::cli::models::ConvertArguments;
 
@@ -155,6 +157,10 @@ fn converted(arguments: &ConvertArguments) -> Result<ConvertReport, String> {
             });
         }
     };
+    let options = match &policy {
+        Some(policy) => confirmed_offsets(options, policy, arguments.confirm_declared_offsets),
+        None => options,
+    };
     let analysis = analyze(
         &sql,
         SourceDialect::Snowflake,
@@ -172,7 +178,7 @@ fn converted(arguments: &ConvertArguments) -> Result<ConvertReport, String> {
         .filter(|id| {
             policy
                 .as_ref()
-                .and_then(|policy| policy.divergences.get(*id))
+                .and_then(|policy| policy.divergences.get(assumption_id(id)))
                 .is_some_and(|divergence| divergence.assumption)
         })
         .cloned()

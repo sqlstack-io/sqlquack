@@ -63,3 +63,18 @@ pub(crate) struct CursorTestCase {
     pub(crate) flags: &'static [&'static str],
     pub(crate) expected_convertible: Option<u64>,
 }
+
+pub(crate) struct DeclaredTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) declare_model: bool,
+    pub(crate) flags: &'static [&'static str],
+    pub(crate) expected_outcome: DeclaredOutcome,
+}
+
+#[derive(Debug, PartialEq, Eq)]
+pub(crate) struct DeclaredOutcome {
+    pub(crate) exit_code: Option<i32>,
+    pub(crate) assumptions: Vec<String>,
+    pub(crate) divergences: Vec<String>,
+    pub(crate) model_declaration_refused: bool,
+}
