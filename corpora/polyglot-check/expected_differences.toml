@@ -757,6 +757,12 @@ marker = ",OBJECT("
 polyglot_errors = ["Expected RParen, got LParen ('(')"]
 note = "x::MAP(VARCHAR, OBJECT(k INT)) nests a structured OBJECT as the CAST form does"
 
+[[fix]]
+id = "parenthesized_typed_lambda"
+marker = "varchar)->"
+polyglot_errors = ["Expected RParen, got Var ('VARCHAR')"]
+note = "(x VARCHAR) -> ... is a lambda with a typed parameter; polyglot reads a parenthesized lambda's parameters as names only"
+
 # Statements SQLQuack rejects where polyglot parses them. The check counts an entry as rejected only
 # for this exact statement in a listed dialect when SQLQuack's error contains `sqlquack_error`;
 # crates/sqlquack-syntax/src/parser/tests/test_typed_expressions.rs pins the error.

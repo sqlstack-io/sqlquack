@@ -115,3 +115,30 @@ fn given_a_double_colon_object_type_when_parsing_then_its_fields_keep_names_type
         );
     }
 }
+
+#[test]
+fn given_a_parenthesized_typed_lambda_when_parsing_then_it_keeps_names_and_types() {
+    let test_cases = [
+        ProjectionTestCase {
+            description: "the parameter's name",
+            sql: "SELECT TRANSFORM(a, (leg VARCHAR) -> leg::INT) FROM t",
+            pointer: "/function/args/1/lambda/parameters/0/name",
+            expected_value: json!("leg"),
+        },
+        ProjectionTestCase {
+            description: "the parameter's type",
+            sql: "SELECT TRANSFORM(a, (leg VARCHAR) -> leg::INT) FROM t",
+            pointer: "/function/args/1/lambda/parameter_types/0/data_type",
+            expected_value: json!("var_char"),
+        },
+    ];
+
+    for test_case in test_cases {
+        assert_eq!(
+            projection_at(test_case.sql, test_case.pointer),
+            test_case.expected_value,
+            "{}",
+            test_case.description
+        );
+    }
+}

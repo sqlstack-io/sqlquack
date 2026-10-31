@@ -1,20 +1,22 @@
 //! The outputs of a query, set operation or CTE, with their lineage.
 
-use std::collections::BTreeSet;
+use std::borrow::Cow;
 
 use sqlquack_syntax::Expression;
 use sqlquack_syntax::ExpressionWalk;
-use sqlquack_syntax::expressions::names::models::{Identifier, Star};
-use sqlquack_syntax::expressions::queries::models::{Cte, Select, With};
+use sqlquack_syntax::expressions::names::models::{Identifier, Literal, Star};
+use sqlquack_syntax::expressions::queries::models::{Cte, OrderBy, Select, Union, With};
 
-use crate::lineage::_helpers::expressions::expression_lineage;
-use crate::lineage::_helpers::lineages::{combined, everything_read, merged, traced_if};
+use crate::lineage::_helpers::expressions::{expression_lineage, is_aggregate};
+use crate::lineage::_helpers::lineages::{combined, merged, traced_if, unresolved};
 use crate::lineage::_helpers::resolution::{key, plain_key};
 use crate::lineage::_helpers::sources::{from_sources, listed, values_query};
-use crate::lineage::constants::{DUCKDB_PROFILE, RECURSION_LIMIT, UNNAMED_CHARACTERS};
+use crate::lineage::constants::{
+    DUCKDB_PROFILE, ORDINAL_BASE, RECURSION_LIMIT, UNNAMED_CHARACTERS,
+};
 use crate::lineage::models::{
-    FromItems, Lineage, LineageContext, LineageScope, NamedQuery, ResolvedQuery, ScopeSource,
-    ScopedColumn, SourceColumn, TransformKind,
+    FromItems, Lineage, LineageContext, LineageScope, NamedQuery, ResolvedQuery, RowReads,
+    ScopeSource, ScopedColumn, TransformKind,
 };
 
 /// The outputs of `query`, with `ctes` in reach and `outer` the enclosing level.
@@ -26,13 +28,25 @@ pub(crate) fn resolved_query(
 ) -> ResolvedQuery {
     match query {
         Expression::Select(select) => select_query(select, ctes, outer, context),
+        Expression::Union(union) if union.by_name => {
+            let ctes = with_ctes(union.with.as_ref(), ctes, outer, context);
+            let sides: (&Expression, &Expression) = (&union.left, &union.right);
+            set_operation(sides, (&ctes, outer), context, SetSides::ByName)
+        }
         Expression::Union(union) => {
             let ctes = with_ctes(union.with.as_ref(), ctes, outer, context);
-            let sides: SetSides = match union.by_name {
-                true => SetSides::ByName,
-                false => SetSides::Both,
-            };
-            set_operation((&union.left, &union.right), (&ctes, outer), context, sides)
+            let branches: Vec<ResolvedQuery> = union_branches(union)
+                .into_iter()
+                .map(|branch| resolved_query(branch, &ctes, outer, context))
+                .collect();
+            let mut query: ResolvedQuery = positional(branches);
+            if union.limit.is_some() || union.offset.is_some() {
+                let order: Vec<&Expression> = order_keys(union.order_by.as_ref());
+                for read in output_reads(&order, &query.columns, context) {
+                    query.rows.read(&read);
+                }
+            }
+            query
         }
         Expression::Intersect(intersect) => {
             let ctes = with_ctes(intersect.with.as_ref(), ctes, outer, context);
@@ -103,7 +117,6 @@ pub(crate) fn renamed(
 /// Which sides of a set operation its rows and values come from.
 #[derive(Clone, Copy, PartialEq, Eq)]
 enum SetSides {
-    Both,
     ByName,
     Intersect,
     Left,
@@ -117,41 +130,68 @@ fn set_operation(
 ) -> ResolvedQuery {
     let left = resolved_query(left, ctes, outer, context);
     let right = resolved_query(right, ctes, outer, context);
-    let mut rows: BTreeSet<SourceColumn> = left.rows.union(&right.rows).cloned().collect();
+    let mut rows: RowReads = left.rows.clone();
+    rows.absorb(&right.rows);
     if matches!(sides, SetSides::Left | SetSides::Intersect) {
         for column in &right.columns {
-            rows.extend(everything_read(&column.lineage));
+            rows.read(&column.lineage);
         }
     }
     let query: ResolvedQuery = match sides {
         SetSides::Left => left,
         SetSides::ByName => by_name(left, right, context),
-        SetSides::Both | SetSides::Intersect => positional(left, right),
+        SetSides::Intersect => positional(vec![left, right]),
     };
     ResolvedQuery { rows, ..query }
 }
 
-/// Two queries' columns merged by position.
-fn positional(left: ResolvedQuery, right: ResolvedQuery) -> ResolvedQuery {
-    let open: bool = left.open || right.open;
-    let mut right_columns = right.columns.into_iter();
-    let columns: Vec<ScopedColumn> = left
-        .columns
-        .into_iter()
-        .map(|column| match right_columns.next() {
-            Some(other) => ScopedColumn {
-                lineage: merged(vec![column.lineage, other.lineage]),
-                ..column
-            },
-            None => ScopedColumn {
-                lineage: traced_if(column.lineage, false),
-                ..column
-            },
-        })
-        .collect();
+/// The branches of a chain of positional UNIONs, in order, so they merge in one pass.
+fn union_branches(union: &Union) -> Vec<&Expression> {
+    let mut branches: Vec<&Expression> = vec![&union.right];
+    let mut left: &Expression = &union.left;
+    while let Expression::Union(inner) = left {
+        if inner.by_name || inner.with.is_some() {
+            break;
+        }
+        branches.push(&inner.right);
+        left = &inner.left;
+    }
+    branches.push(left);
+    branches.reverse();
+    branches
+}
+
+/// Queries' columns merged by position: the first query's names, every branch's values and rows.
+fn positional(queries: Vec<ResolvedQuery>) -> ResolvedQuery {
+    let open: bool = queries.iter().any(|query| query.open);
+    let mut rows: RowReads = RowReads::default();
+    let mut branches: Vec<std::vec::IntoIter<ScopedColumn>> = Vec::with_capacity(queries.len());
+    for query in queries {
+        rows.absorb(&query.rows);
+        branches.push(query.columns.into_iter());
+    }
+    let Some((first, others)) = branches.split_first_mut() else {
+        return ResolvedQuery::default();
+    };
+    let mut columns: Vec<ScopedColumn> = Vec::new();
+    for column in first {
+        let mut parts: Vec<Lineage> = vec![column.lineage];
+        let mut complete: bool = true;
+        for other in others.iter_mut() {
+            match other.next() {
+                Some(other) => parts.push(other.lineage),
+                None => complete = false,
+            }
+        }
+        columns.push(ScopedColumn {
+            lineage: traced_if(merged(parts), complete),
+            ..column
+        });
+    }
     ResolvedQuery {
         columns,
         open,
+        rows,
         ..ResolvedQuery::default()
     }
 }
@@ -183,17 +223,19 @@ fn by_name(
 }
 
 /// The CTEs in reach inside a query with `with`: the enclosing ones, then its own in order.
-fn with_ctes(
+fn with_ctes<'a>(
     with: Option<&With>,
-    ctes: &[NamedQuery],
+    ctes: &'a [NamedQuery],
     outer: Option<&LineageScope<'_>>,
     context: LineageContext<'_>,
-) -> Vec<NamedQuery> {
+) -> Cow<'a, [NamedQuery]> {
+    let Some(with) = with else {
+        return Cow::Borrowed(ctes);
+    };
     let mut reach: Vec<NamedQuery> = ctes.to_vec();
-    let recursive: bool = with.is_some_and(|with| with.recursive);
-    for cte in with.map(|with| with.ctes.as_slice()).unwrap_or_default() {
+    for cte in &with.ctes {
         let name = key(&cte.alias, context);
-        let query: ResolvedQuery = match recursive || reads_itself(cte, &name, context) {
+        let query: ResolvedQuery = match with.recursive || reads_itself(cte, &name, context) {
             true => recursive_query(cte, (&name, &reach), outer, context),
             false => renamed(
                 resolved_query(&cte.this, &reach, outer, context),
@@ -204,7 +246,7 @@ fn with_ctes(
         reach.retain(|named| named.key != name);
         reach.push(NamedQuery { key: name, query });
     }
-    reach
+    Cow::Owned(reach)
 }
 
 /// Whether a CTE's body reads the CTE itself, as Snowflake allows without RECURSIVE.
@@ -251,11 +293,7 @@ fn recursive_query(
             &cte.columns,
             context,
         );
-        let rows: BTreeSet<SourceColumn> = current.rows.union(&next.rows).cloned().collect();
-        let joined: ResolvedQuery = ResolvedQuery {
-            rows,
-            ..positional(current.clone(), next)
-        };
+        let joined: ResolvedQuery = positional(vec![current.clone(), next]);
         if same_lineage(&joined, &current) {
             return joined;
         }
@@ -310,8 +348,9 @@ fn select_query(
         ..ResolvedQuery::default()
     };
     for source in &scope.sources {
-        query.rows.extend(source.query.rows.iter().cloned());
+        query.rows.absorb(&source.query.rows);
     }
+    let mut ungrouped: Vec<Lineage> = Vec::new();
     for projection in &select.expressions {
         let projection = unannotated(projection);
         if let Expression::Star(star) = projection {
@@ -319,6 +358,7 @@ fn select_query(
             query.open |= expanded.open;
             query.open_relation = query.open_relation.or(expanded.open_relation);
             query.open_reads = query.open_reads.or(expanded.open_reads);
+            ungrouped.extend(expanded.columns.iter().map(|column| column.lineage.clone()));
             query.columns.extend(expanded.columns);
             continue;
         }
@@ -327,28 +367,122 @@ fn select_query(
             key: output_key(projection, context),
             lineage: expression_lineage(projection, &scope, context),
         };
-        query.rows.extend(column.lineage.rows.iter().cloned());
+        query.rows.rows_of(&column.lineage);
+        if !projection.dfs().any(is_aggregate) {
+            ungrouped.push(column.lineage.clone());
+        }
         scope.aliases.push(column.clone());
         query.columns.push(column);
     }
     for filter in row_filters(select) {
-        query.rows.extend(everything_read(&expression_lineage(
-            filter, &scope, context,
-        )));
+        query
+            .rows
+            .read(&expression_lineage(filter, &scope, context));
+    }
+    let grouped_all: bool = select
+        .group_by
+        .as_ref()
+        .is_some_and(|group| group.all == Some(true));
+    if grouped_all {
+        for read in &ungrouped {
+            query.rows.read(read);
+        }
+    }
+    let grouping = select
+        .group_by
+        .iter()
+        .flat_map(|group| group.expressions.iter());
+    for item in grouping.chain(ordering(select)) {
+        let read: Lineage = match ordinal(item) {
+            Some(position) => output_at(&query.columns, position),
+            None => expression_lineage(item, &scope, context),
+        };
+        query.rows.read(&read);
     }
     query
 }
 
-/// The expressions that decide a level's rows: WHERE, GROUP BY, HAVING, QUALIFY and CONNECT BY.
+/// The ORDER BY keys that decide rows: those of a level with LIMIT, OFFSET, TOP or FETCH.
+fn ordering(select: &Select) -> Vec<&Expression> {
+    let limited: bool = select.limit.is_some()
+        || select.offset.is_some()
+        || select.top.is_some()
+        || select.fetch.is_some();
+    match (limited, &select.order_by) {
+        (true, Some(order)) => order
+            .expressions
+            .iter()
+            .map(|ordered| &ordered.this)
+            .collect(),
+        _ => Vec::new(),
+    }
+}
+
+/// What ORDER BY keys read: an ordinal or output name reads that output, else nothing traced.
+fn output_reads(
+    keys: &[&Expression],
+    columns: &[ScopedColumn],
+    context: LineageContext<'_>,
+) -> Vec<Lineage> {
+    keys.iter()
+        .map(|item| match (ordinal(item), unannotated(item)) {
+            (Some(position), _) => output_at(columns, position),
+            (None, Expression::Column(column)) if column.table.is_none() => {
+                named_output(columns, &key(&column.name, context), context)
+            }
+            (None, _) => unresolved(),
+        })
+        .collect()
+}
+
+/// The lineage of the output named `name`, untraced when there is none.
+fn named_output(columns: &[ScopedColumn], name: &str, context: LineageContext<'_>) -> Lineage {
+    match columns
+        .iter()
+        .find(|output| context.profile.same_identifier(&output.key, name))
+    {
+        Some(output) => output.lineage.clone(),
+        None => unresolved(),
+    }
+}
+
+/// The keys of an ORDER BY, when there is one.
+fn order_keys(order: Option<&OrderBy>) -> Vec<&Expression> {
+    match order {
+        Some(order) => order
+            .expressions
+            .iter()
+            .map(|ordered| &ordered.this)
+            .collect(),
+        None => Vec::new(),
+    }
+}
+
+/// The 0-based output a positional `n` in GROUP BY or ORDER BY names.
+fn ordinal(item: &Expression) -> Option<usize> {
+    let Expression::Literal(literal) = unannotated(item) else {
+        return None;
+    };
+    let Literal::Number(text) = literal.as_ref() else {
+        return None;
+    };
+    match text.parse::<usize>() {
+        Ok(number) => number.checked_sub(ORDINAL_BASE),
+        Err(_) => None,
+    }
+}
+
+/// The lineage of the output at `position`, untraced when there is none.
+fn output_at(columns: &[ScopedColumn], position: usize) -> Lineage {
+    columns
+        .get(position)
+        .map_or_else(unresolved, |column| column.lineage.clone())
+}
+
+/// The expressions that decide a level's rows: WHERE, HAVING, QUALIFY and CONNECT BY.
 fn row_filters(select: &Select) -> Vec<&Expression> {
     let mut filters: Vec<&Expression> = Vec::new();
     filters.extend(select.where_clause.iter().map(|clause| &clause.this));
-    filters.extend(
-        select
-            .group_by
-            .iter()
-            .flat_map(|group| group.expressions.iter()),
-    );
     filters.extend(select.having.iter().map(|clause| &clause.this));
     filters.extend(select.qualify.iter().map(|clause| &clause.this));
     if let Some(connect) = &select.connect {
@@ -434,7 +568,7 @@ pub(crate) fn expanded_star(
         open: !open.is_empty(),
         open_relation: only.and_then(|only| only.query.open_relation.clone()),
         open_reads: only.and_then(|only| only.query.open_reads.clone()),
-        rows: BTreeSet::new(),
+        rows: RowReads::default(),
     }
 }
 
