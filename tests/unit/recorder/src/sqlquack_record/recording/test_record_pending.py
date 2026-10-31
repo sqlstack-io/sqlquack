@@ -9,11 +9,13 @@ import pytest
 from tests.unit.recorder.src.sqlquack_record.recording._test_types import (
     BrokenCaseTestCase,
     ParametersTestCase,
+    PrecheckTestCase,
     RecordedFile,
     RecordTestCase,
 )
 from tests.unit.recorder.src.sqlquack_record.recording.helpers import (
     broken_case_message,
+    precheck,
     record,
     recorded_parameters,
 )
@@ -24,6 +26,7 @@ _ROWS: RecordedFile = ("rows", True, True, True, "2")
 _ERROR: RecordedFile = ("error", True, True, True, "null")
 _EXISTING: RecordedFile = ("preexisting", False, True, True, "null")
 _TYPES: RecordedFile = ("types", True, True, True, "2")
+_ALIAS: str = "SELECT 1 AS order"
 
 
 @pytest.mark.parametrize(
@@ -99,7 +102,7 @@ _TYPES: RecordedFile = ("types", True, True, True, "2")
             without_values=frozenset(),
             expected_recorded=2,
             expected_failures=0,
-            expected_log=("open", "one", "close", "open", "one", "close"),
+            expected_log=("open", "open", "one", "close", "one", "close"),
             expected_files=(_ROWS, _ROWS),
         ),
         RecordTestCase(
@@ -158,6 +161,61 @@ def test_given_a_case_that_does_not_compile_when_recording_then_the_error_names_
     )
 
     assert test_case.expected_mention in message
+
+
+@pytest.mark.parametrize(
+    "test_case",
+    (
+        PrecheckTestCase(
+            description="a case that does not compile stops the run before any case runs, "
+            "listing it",
+            statements=("SELECT 1", _ALIAS, "SELECT 22"),
+            uncompilable=frozenset({_ALIAS}),
+            declared=frozenset(),
+            with_functions=frozenset(),
+            expected_message="1 cases do not compile on Snowflake, so none was run: "
+            "fake.toml#17 (pending file",
+            expected_log=("open", "close"),
+            expected_files_written=0,
+        ),
+        PrecheckTestCase(
+            description="a case declaring compile_error is recorded with its refusal",
+            statements=("SELECT 1", _ALIAS),
+            uncompilable=frozenset({_ALIAS}),
+            declared=frozenset({_ALIAS}),
+            with_functions=frozenset(),
+            expected_message="",
+            expected_log=("open", "batch", "close"),
+            expected_files_written=2,
+        ),
+        PrecheckTestCase(
+            description="a case creating functions is not compiled before its functions exist",
+            statements=("SELECT 1", "SELECT order_total(2)"),
+            uncompilable=frozenset({"SELECT order_total(2)"}),
+            declared=frozenset(),
+            with_functions=frozenset({"SELECT order_total(2)"}),
+            expected_message="",
+            expected_log=("open", "one", "create function", "one", "drop function", "close"),
+            expected_files_written=2,
+        ),
+    ),
+    ids=lambda case: case.description,
+)
+def test_given_cases_that_do_not_compile_when_recording_then_nothing_runs_unless_declared(
+    test_case: PrecheckTestCase, tmp_path: Path
+) -> None:
+    message, log, files_written = precheck(
+        directory=tmp_path,
+        statements=test_case.statements,
+        uncompilable=test_case.uncompilable,
+        declared=test_case.declared,
+        with_functions=test_case.with_functions,
+    )
+
+    assert test_case.expected_message in message
+    assert bool(message) == bool(test_case.expected_message)
+    assert tuple(log) == test_case.expected_log
+    assert files_written == test_case.expected_files_written
 
 
 @pytest.mark.parametrize(

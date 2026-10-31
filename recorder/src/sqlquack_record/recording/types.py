@@ -5,7 +5,7 @@ from __future__ import annotations
 from collections.abc import Callable, Sequence
 from typing import Protocol
 
-from sqlquack_record.recording.models import StatementResult
+from sqlquack_record.recording.models import StatementResult, WarehouseFailure
 
 type SessionValue = bool | int | str
 type SessionParameters = tuple[tuple[str, SessionValue], ...]
@@ -28,6 +28,10 @@ class WarehouseSession(Protocol):
 
     def run_one(self, statement: str) -> StatementResult:
         """Run one statement; a recordable SQL error or an unrecordable result is the result."""
+        ...
+
+    def compile_failure(self, statement: str) -> WarehouseFailure | None:
+        """Compile a statement without running it or creating anything; absent when it compiles."""
         ...
 
     def execute(self, statement: str) -> None:

@@ -394,6 +394,8 @@ pub const OBJECT_DELETE_RULE: &str = "rule.object_delete";
 pub const OBJECT_INSERT_RULE: &str = "rule.object_insert";
 /// OBJECT_CONSTRUCT and OBJECT_CONSTRUCT_KEEP_NULL.
 pub const OBJECT_CONSTRUCT_RULE: &str = "rule.object_construct";
+/// The assumption that the session time zone is UTC, in Snowflake and DuckDB alike.
+pub const SESSION_TIMEZONE_UTC: &str = "session_timezone_utc";
 /// The zone from which CONVERT_TIMEZONE's three-argument form is covered.
 pub const UTC_ZONE: &str = "UTC";
 /// Fractional-second digits a Snowflake timestamp holds at most, as a scale.

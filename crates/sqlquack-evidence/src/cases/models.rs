@@ -68,6 +68,9 @@ pub struct CaseDefinition {
     /// `false` records a typing case's column types and row count but no values; hashed when false.
     #[serde(default)]
     pub values: Option<bool>,
+    /// Snowflake is expected to refuse to compile the SQL, past the recorder's check; never hashed.
+    #[serde(default)]
+    pub compile_error: bool,
     /// SQL project functions the query calls, created before it; their definitions are hashed.
     #[serde(default, rename = "function")]
     pub functions: Vec<CaseFunction>,
@@ -152,6 +155,8 @@ pub struct LoadedCase {
     pub expected_divergence: Option<String>,
     /// Whether the recording keeps the result's values, not only its column types and row count.
     pub values: bool,
+    /// Whether Snowflake is expected to refuse to compile the SQL.
+    pub compile_error: bool,
     /// The project functions the query calls.
     pub functions: Vec<CaseFunction>,
     /// The Snowflake statements creating them, run before `source_sql` in a scratch schema.

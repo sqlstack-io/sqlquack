@@ -59,7 +59,7 @@ fn index(arguments: &IndexArguments) -> Result<ProvenanceIndex, String> {
     let mut corpus: Vec<PathBuf> = Vec::new();
     let (conversion, _) = divergence_options(
         Some(arguments.policy.as_path()).filter(|path| path.is_file()),
-        arguments.strict,
+        (arguments.strict, arguments.utc_session),
     )?;
     let converter = PipelineConverter {
         options: conversion.clone(),

@@ -146,6 +146,21 @@ pub(crate) const CHAIN: &[ShopFile] = &[
     },
 ];
 
+pub(crate) const PARTIAL_SCAN: &[ShopFile] = &[
+    ShopFile {
+        path: "name_report.sql",
+        contents: "SELECT customer_id, sound FROM __ref(\"sounds\")",
+    },
+    ShopFile {
+        path: "name_summary.sql",
+        contents: "SELECT COUNT(*) AS customers FROM __ref(\"name_report\")",
+    },
+    ShopFile {
+        path: "customer_names.sql",
+        contents: "SELECT customer_id, name FROM __source(\"shop\", \"customers\")",
+    },
+];
+
 pub(crate) const PLACED: &[ShopFile] = &[
     ShopFile {
         path: "a.sql",

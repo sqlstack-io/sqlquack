@@ -32,6 +32,12 @@ fn given_utc_offset_values_when_carried_through_queries_then_their_wall_times_co
             expected_outcome: Ok("{\"at\":\"2024-03-10 07:30:00.000 Z\"}"),
         },
         FirstValueTestCase {
+            description: "only the target spelled 'UTC', as recorded, gives the UTC offset",
+            sql: "SELECT CAST(CONVERT_TIMEZONE('utc', \
+                  '2024-03-10 22:30:00 -05:00'::TIMESTAMP_TZ) AS TIMESTAMP_NTZ) AS v",
+            expected_outcome: Err("no proven conversion"),
+        },
+        FirstValueTestCase {
             description: "a zoned value of unknown offset is still refused",
             sql: "SELECT CAST('2024-03-10 22:30:00 -05:00'::TIMESTAMP_TZ AS TIMESTAMP_NTZ) AS v",
             expected_outcome: Err("no proven conversion"),

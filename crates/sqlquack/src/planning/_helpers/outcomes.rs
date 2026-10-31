@@ -12,7 +12,12 @@ pub(crate) fn outcomes(input: &PlanInput, supported: &BTreeSet<String>) -> Outco
         unit.push(*parsed && remaining(own, supported).is_empty());
     }
     let unit = narrowed(unit, &input.needs);
-    let strict = narrowed(unit.clone(), &input.reads);
+    let complete: Vec<bool> = unit
+        .iter()
+        .zip(&input.missing)
+        .map(|(unit, missing)| *unit && !missing)
+        .collect();
+    let strict = narrowed(complete, &input.reads);
     Outcomes { unit, strict }
 }
 

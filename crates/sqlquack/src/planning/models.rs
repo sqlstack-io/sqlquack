@@ -17,6 +17,8 @@ pub(crate) struct PlanInput {
     pub(crate) parsed: Vec<bool>,
     /// Whether the file may hold refusals that collecting did not reach.
     pub(crate) incomplete: Vec<bool>,
+    /// Whether the file reads a model the scan holds no file for, so it is never strict.
+    pub(crate) missing: Vec<bool>,
 }
 
 /// Which files are unit-testable and which strict under some supported constructs.

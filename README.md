@@ -24,6 +24,11 @@ everything else is refused. What works today:
 - `sqlquack index`, which maps every building block, typing function and rule to the cases and
   SQL files whose conversions rely on it.
 
+Converted SQL is proven only where both sessions run in UTC: Snowflake's `TIMEZONE` and DuckDB's
+`TimeZone` must be `'UTC'`. Statements whose result depends on the session time zone carry the
+`session_timezone_utc` assumption; strict mode refuses them unless you confirm a UTC session with
+`--utc-session`.
+
 ## Census
 
 ```console
@@ -41,10 +46,15 @@ its file name references, then converts again. Where the schema file types a mod
 refused, files reading it still convert from those columns: the report counts them as
 unit-testable (`convertible`) but not strict (`convertible_strict`, every model upstream converts
 too), and lists each with an `upstream_refused:<model>` label for every refused model upstream.
-`--assume-supported` takes construct keys or `rule.<id>`s and reports how many files would then be
-unit-testable and strict, what blocks the rest next, and a greedy plan of the few constructs each
-step should support together. Every such figure is an upper bound: it counts only the refusals
-collected, and supporting a construct may uncover others.
+`--assume-supported` (with `--chain-models`) takes construct keys or `rule.<id>`s and reports how
+many files would then be unit-testable and strict, what blocks the rest next, and a greedy plan of
+the few constructs each step should support together. Assumptions match at construct level: a
+`rule.<id>` expands to its construct keys, so it also clears other rules' refusals of the same
+construct, such as every refused `node:cast`. Plan steps support only missing rules and rules' type
+conditions. Every such figure is an upper bound: it counts only the refusals collected, matches
+constructs rather than the exact condition refused, and supporting a construct may uncover others.
+Each figure says how many of its unit-testable files may hold refusals collecting did not reach, and
+a key matching no collected refusal is warned about.
 
 ## Index
 

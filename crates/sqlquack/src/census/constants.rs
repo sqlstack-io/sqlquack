@@ -1,5 +1,7 @@
 //! Census defaults and the placeholders that stand in for sqlbuild references.
 
+use sqlquack_core::refusals::models::RefusalCategory;
+
 /// Rule counts at which the convertible share is reported.
 pub const COVERAGE_POINTS: &[usize] = &[10, 25, 50, 75, 100, 150, 200, 250];
 
@@ -26,6 +28,9 @@ pub const RELATION_CALLS: &[&str] = &[
     "__dbt_ref",
     "__empty_fixture",
 ];
+
+/// sqlbuild reference calls naming a model, which a complete scan holds a file for.
+pub const MODEL_CALLS: &[&str] = &["__ref", "__dbt_ref"];
 
 /// sqlbuild cursor intrinsics replaced by a column.
 pub const CURSOR_CALLS: &[&str] = &["__cursor_start", "__cursor_end"];
@@ -69,6 +74,9 @@ pub const UPSTREAM_MODEL_ROOT: &str = "upstream model";
 /// The label of a converted file reading a model that does not convert end to end.
 pub const UPSTREAM_REFUSED_LABEL: &str = "upstream_refused:";
 
+/// The label on a converted file reading, at some depth, a model the scan holds no file for.
+pub const UPSTREAM_MISSING_LABEL: &str = "upstream_missing:";
+
 /// A `relation:` root without its name, when names are not asked for.
 pub const UNKNOWN_RELATION_ROOT: &str = "unknown relation";
 
@@ -84,8 +92,9 @@ pub const PLAN_SET_SIZE: usize = 3;
 /// Roots still blocking files, after the assumed constructs, listed in the plan.
 pub const NEXT_ROOTS: usize = 20;
 
-/// Roots naming a relation or model, not a construct, which no plan step supports.
-pub const PLANNABLE_ROOT_EXCLUDED: &[&str] = &[RELATION_ROOT_PREFIX, MODEL_ROOT_PREFIX];
+/// The refusal categories a rule could resolve, the only roots plan steps support.
+pub const PLANNABLE_CATEGORIES: &[RefusalCategory] =
+    &[RefusalCategory::MissingRule, RefusalCategory::TypeCondition];
 
 /// How `--assume-supported` names a rule rather than a construct.
 pub const RULE_ID_PREFIX: &str = "rule.";

@@ -10,6 +10,7 @@ use sqlquack_policy::policy::models::Policy;
 
 use sqlquack_rules::conversion::models::ConversionOptions;
 
+use crate::analysis::main::confirm_utc_session::confirm_utc_session;
 use crate::analysis::main::conversion_options::conversion_options;
 use crate::cli::models::EvidencePaths;
 
@@ -27,7 +28,7 @@ pub(crate) fn load_evidence(paths: &EvidencePaths) -> Result<Evidence, String> {
 /// Allowed divergences from `policy`, else `sqlquack.toml` if present, else none; and if one was found.
 pub(crate) fn divergence_options(
     policy: Option<&Path>,
-    strict: bool,
+    (strict, utc_session): (bool, bool),
 ) -> Result<(ConversionOptions, bool), String> {
     let default = Path::new(POLICY_FILE_NAME);
     let path = match policy {
@@ -36,7 +37,11 @@ pub(crate) fn divergence_options(
         None => return Ok((ConversionOptions::default(), false)),
     };
     let loaded = load_policy(path).map_err(|error| error.to_string())?;
-    Ok((conversion_options(&loaded, strict), true))
+    let options = conversion_options(&loaded, strict);
+    Ok(match utc_session {
+        true => (confirm_utc_session(options, &loaded), true),
+        false => (options, true),
+    })
 }
 
 /// Parses `10%` and similar into a percentage between 0 and 100.

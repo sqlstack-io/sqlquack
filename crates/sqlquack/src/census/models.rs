@@ -62,7 +62,9 @@ pub struct PlanReport {
     /// Upper bound on strict files with the assumed constructs supported.
     pub strict_upper_bound: usize,
     /// Of the unit-testable bound, files that may hold refusals collecting did not reach.
-    pub possibly_incomplete: usize,
+    pub unit_testable_possibly_incomplete: usize,
+    /// Assumed constructs that match no collected root, which the bounds therefore ignore.
+    pub unmatched: Vec<String>,
     /// The roots still blocking files, by the files they block, most first.
     pub next: Vec<NextRoot>,
     /// Greedy steps from the assumed constructs, each adding the roots gaining the most files.
@@ -89,6 +91,8 @@ pub struct PlanStep {
     pub unit_testable_upper_bound: usize,
     /// Upper bound on strict files after this and every earlier step.
     pub strict_upper_bound: usize,
+    /// Of the unit-testable bound, files that may hold refusals collecting did not reach.
+    pub unit_testable_possibly_incomplete: usize,
 }
 
 /// Refused files traced to the refusals at the root of the models they read.
@@ -113,7 +117,7 @@ pub struct BlockerReport {
 pub struct UpstreamRefusedFile {
     /// The model the file defines, or its number when names are not asked for.
     pub model: String,
-    /// One `upstream_refused:<model>` label for each refused model upstream of it.
+    /// `upstream_refused:<model>` per refused model upstream, `upstream_missing:<relation>` per absent one.
     pub labels: Vec<String>,
 }
 
@@ -324,6 +328,17 @@ pub struct CensusRun {
     pub timings: Vec<(PathBuf, Duration)>,
 }
 
+/// Each file's model reads by file index: all of them, the untyped refused ones, and absent ones.
+#[derive(Clone, Debug, Default, PartialEq, Eq)]
+pub(crate) struct ModelReads {
+    /// Every model the file reads.
+    pub(crate) reads: Vec<BTreeSet<usize>>,
+    /// Models it reads that neither convert nor have schema columns.
+    pub(crate) needs: Vec<BTreeSet<usize>>,
+    /// Relations its model references name that the scan holds no file for.
+    pub(crate) missing: Vec<BTreeSet<String>>,
+}
+
 /// SQL with its sqlbuild reference calls replaced, and what was replaced.
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub(crate) struct Rewritten {
@@ -331,6 +346,8 @@ pub(crate) struct Rewritten {
     pub(crate) sql: String,
     /// The placeholder relation each reference call became, in upper case.
     pub(crate) references: BTreeSet<String>,
+    /// Of those, the ones a model reference call became.
+    pub(crate) model_references: BTreeSet<String>,
     /// Each replacement, in order.
     pub(crate) replacements: Vec<Replacement>,
 }

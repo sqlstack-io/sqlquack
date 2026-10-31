@@ -3,10 +3,10 @@
 use std::collections::BTreeSet;
 
 use crate::policy::_helpers::type_patterns::parse_type_pattern;
-use crate::policy::constants::SCHEMA_VERSION;
+use crate::policy::constants::{SCHEMA_VERSION, SESSION_TIME_ZONE, TIMEZONE_PARAMETER};
 use crate::policy::models::{
-    Divergence, EdgeCaseRequirement, PatternArgument, Policy, SessionProfile, TypeEquality,
-    TypePattern,
+    Divergence, EdgeCaseRequirement, PatternArgument, Policy, SessionProfile, SessionValue,
+    TypeEquality, TypePattern,
 };
 
 pub(crate) fn problems(policy: &Policy) -> Vec<String> {
@@ -103,8 +103,17 @@ fn profile_problems(name: &str, profile: &SessionProfile) -> Vec<String> {
     if profile.description.trim().is_empty() {
         found.push(format!("session profile `{name}` has no description"));
     }
-    if profile.duckdb_time_zone.trim().is_empty() {
-        found.push(format!("session profile `{name}` has no duckdb_time_zone"));
+    if profile.duckdb_time_zone != SESSION_TIME_ZONE {
+        found.push(format!(
+            "session profile `{name}` needs duckdb_time_zone = \"{SESSION_TIME_ZONE}\""
+        ));
+    }
+    if profile.snowflake.get(TIMEZONE_PARAMETER)
+        != Some(&SessionValue::Text(SESSION_TIME_ZONE.to_owned()))
+    {
+        found.push(format!(
+            "session profile `{name}` needs {TIMEZONE_PARAMETER} = \"{SESSION_TIME_ZONE}\""
+        ));
     }
     found.extend(
         profile

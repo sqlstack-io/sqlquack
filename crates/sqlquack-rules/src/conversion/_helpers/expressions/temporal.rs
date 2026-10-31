@@ -19,7 +19,7 @@ use crate::conversion::_helpers::support::scope::{Context, Literal};
 use crate::conversion::constants::{
     HOURS_PER_DAY, MAX_FRACTION_DIGITS, MAX_OFFSET_HOURS, MICROSECOND_DIGITS, MINUTES_PER_HOUR,
     NANOSECOND_RANGE_END, NANOSECOND_RANGE_START, OFFSET_WITH_COLON, OFFSET_WITHOUT_COLON,
-    TIMESTAMP_RANGE, TIMESTAMP_TZ_SUBMICRO,
+    SESSION_TIMEZONE_UTC, TIMESTAMP_RANGE, TIMESTAMP_TZ_SUBMICRO,
 };
 
 /// A timestamp literal in the recorded ISO form: `YYYY-MM-DD[ HH:MI:SS[.f]][ ±HH:MM]`.
@@ -54,6 +54,10 @@ pub(crate) fn timestamp_literal(
         SnowflakeType::TimestampTz { precision } | SnowflakeType::TimestampLtz { precision } => {
             let parsed = parse_timestamp(text, true).ok_or_else(unproven)?;
             fits(&parsed, precision).ok_or_else(unproven)?;
+            if parsed.offset.is_none() {
+                diverge(context, SESSION_TIMEZONE_UTC, construct)
+                    .map_err(|refusal| refusal.reason)?;
+            }
             let (micros, submicros) = parsed
                 .fraction
                 .split_at(parsed.fraction.len().min(usize::from(MICROSECOND_DIGITS)));
@@ -109,6 +113,7 @@ pub(crate) fn temporal_cast(
             SnowflakeType::TimestampNtz { precision: from },
             SnowflakeType::TimestampTz { precision } | SnowflakeType::TimestampLtz { precision },
         ) => {
+            diverge(context, SESSION_TIMEZONE_UTC, construct).map_err(|refusal| refusal.reason)?;
             let kept = from.min(precision);
             let truncated = truncate_timestamp(sql, (from, kept), log);
             match kept > MICROSECOND_DIGITS {
@@ -123,7 +128,10 @@ pub(crate) fn temporal_cast(
         (
             SnowflakeType::Date,
             SnowflakeType::TimestampTz { .. } | SnowflakeType::TimestampLtz { .. },
-        ) => cast(sql, to, log),
+        ) => {
+            diverge(context, SESSION_TIMEZONE_UTC, construct).map_err(|refusal| refusal.reason)?;
+            cast(sql, to, log)
+        }
         _ => Err(format!("casting {from} to {to} has no proven conversion")),
     }
 }

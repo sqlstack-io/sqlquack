@@ -42,6 +42,11 @@ _FAILURE: StatementResult = StatementResult(
 )
 
 
+_COMPILE_FAILURE: WarehouseFailure = WarehouseFailure(
+    errno=1003, sqlstate="42000", message="syntax error line 1 at position 10 unexpected 'order'"
+)
+
+
 def fake_table(statement: str) -> pa.Table:
     """The rows the fake warehouse returns for a statement."""
     return pa.table(
@@ -75,6 +80,7 @@ class FakeSession:
         self._responses: dict[str, StatementResult] = responses
         self._parameters: SessionParameters = parameters
         self.broken: frozenset[str] = frozenset()
+        self.uncompilable: frozenset[str] = frozenset()
         self._batch_fails: bool = batch_fails
         self._log: list[str] = log
 
@@ -100,6 +106,10 @@ class FakeSession:
             raise StatementNotRecordableError("Snowflake error 2139 is not a case outcome")
         return self._responses[_SCRATCH_SUFFIX.sub("", statement)]
 
+    def compile_failure(self, statement: str) -> WarehouseFailure | None:
+        failures: dict[bool, WarehouseFailure | None] = {True: _COMPILE_FAILURE, False: None}
+        return failures[statement in self.uncompilable]
+
     def execute(self, statement: str) -> None:
         self._log.append(" ".join(statement.split()[:2]).lower())
 
@@ -119,6 +129,7 @@ def _pending_case(
     parameters: SessionParameters,
     values: bool = True,
     with_functions: bool = False,
+    compile_error: bool = False,
 ) -> PendingCase:
     return PendingCase(
         case_hash=hashlib.sha256(statement.encode("utf-8")).hexdigest(),
@@ -130,6 +141,7 @@ def _pending_case(
         values=values,
         setup_sql=_FUNCTIONS * with_functions,
         pinned_parameters=_PINNED,
+        compile_error=compile_error,
     )
 
 
@@ -226,6 +238,50 @@ def broken_case_message(*, directory: Path, statements: Sequence[str], broken: s
     except RecorderError as error:
         return str(error)
     return ""
+
+
+def precheck(
+    *,
+    directory: Path,
+    statements: Sequence[str],
+    uncompilable: frozenset[str],
+    declared: frozenset[str],
+    with_functions: frozenset[str],
+) -> tuple[str, list[str], int]:
+    """Record cases some of which do not compile; the error, the session log and files written."""
+    cases: list[PendingCase] = [
+        _pending_case(
+            statement=statement,
+            parameters=(),
+            with_functions=statement in with_functions,
+            compile_error=statement in declared,
+        )
+        for statement in statements
+    ]
+    responses: dict[str, StatementResult] = {
+        statement: _rows(statement) for statement in statements
+    }
+    log: list[str] = []
+
+    def open_session(_: SessionParameters) -> WarehouseSession:
+        log.append("open")
+        session: FakeSession = FakeSession(responses=responses, batch_fails=False, log=log)
+        session.uncompilable = uncompilable
+        return session
+
+    results: Path = directory / "results"
+    message: str = ""
+    try:
+        record_pending(
+            cases=cases,
+            results=results,
+            open_session=open_session,
+            batch_size=10,
+            clock=lambda: "2026-01-01T00:00:00Z",
+        )
+    except RecorderError as error:
+        message = str(error)
+    return message, log, len(list(results.glob("*.json")))
 
 
 def recorded_parameters(

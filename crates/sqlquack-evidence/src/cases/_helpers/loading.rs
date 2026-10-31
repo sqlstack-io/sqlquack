@@ -126,6 +126,7 @@ fn expand(
         role: CaseRole::Conversion,
         expected_divergence: case.expected_divergence.clone(),
         values,
+        compile_error: case.compile_error,
         functions: case.functions.clone(),
         setup_sql,
         inputs: inputs(case),

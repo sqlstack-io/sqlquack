@@ -54,10 +54,11 @@ use crate::conversion::_helpers::support::tree::{
 use crate::conversion::constants::{
     CURRENT_TIME, CURRENT_TIME_RULE, DATE_ARITHMETIC, DATE_FORMAT_RULE, DATE_NAME, DATE_PART_RULE,
     DATE_PARTS, DATE_TEXT_SPELLING, DECIMAL_EPOCH_RULE, FROM_PARTS, MAX_FRACTION_DIGITS_U8,
-    MICROSECOND_DIGITS, SCALE_DIGITS, TEMPORAL_TEXT_FIELDS, TEMPORAL_TEXT_FORMAT,
-    TEMPORAL_TEXT_SEPARATORS, TEXT_TO_TIME_RULE, TEXT_TO_TIMESTAMP_RULE, TIME_ARITHMETIC,
-    TIME_ZONE_CONVERSION, TIMESTAMP_FORMAT_RULE, TIMESTAMP_RANGE, TIMESTAMP_TIME_RULE,
-    TO_DATE_TEMPORAL, UNIT_ALIASES, UTC_OFFSET_ARITHMETIC, UTC_ZONE, ZONE_COLUMNS, ZONED_PARTS,
+    MICROSECOND_DIGITS, SCALE_DIGITS, SESSION_TIMEZONE_UTC, TEMPORAL_TEXT_FIELDS,
+    TEMPORAL_TEXT_FORMAT, TEMPORAL_TEXT_SEPARATORS, TEXT_TO_TIME_RULE, TEXT_TO_TIMESTAMP_RULE,
+    TIME_ARITHMETIC, TIME_ZONE_CONVERSION, TIMESTAMP_FORMAT_RULE, TIMESTAMP_RANGE,
+    TIMESTAMP_TIME_RULE, TO_DATE_TEMPORAL, UNIT_ALIASES, UTC_OFFSET_ARITHMETIC, UTC_ZONE,
+    ZONE_COLUMNS, ZONED_PARTS,
 };
 
 /// The canonical Snowflake name of a unit written as a keyword, string or parsed field name.
@@ -152,7 +153,11 @@ enum ZonedPart {
 }
 
 /// A zoned operand's epoch part, or its UTC wall time where its offset is UTC; others as given.
-fn zoned_part_operand(operand: Emitted, unit: &str, site: Site<'_>) -> Result<ZonedPart, String> {
+fn zoned_part_operand(
+    operand: Emitted,
+    unit: &str,
+    (construct, site): (&Construct, Site<'_>),
+) -> Result<ZonedPart, String> {
     let log = site.context.log;
     let (precision, utc) = match operand.data_type {
         SnowflakeType::TimestampLtz { precision } => (precision, true),
@@ -167,12 +172,18 @@ fn zoned_part_operand(operand: Emitted, unit: &str, site: Site<'_>) -> Result<Zo
             operand.data_type,
             log,
         )?)),
-        _ if utc => Ok(ZonedPart::Clock(Emitted::new(
-            utc_wall_time(&operand.sql, log),
-            SnowflakeType::TimestampNtz {
-                precision: precision.min(MICROSECOND_DIGITS),
-            },
-        ))),
+        _ if utc => {
+            if let SnowflakeType::TimestampLtz { .. } = operand.data_type {
+                diverge(site.context, SESSION_TIMEZONE_UTC, construct)
+                    .map_err(|refusal| refusal.reason)?;
+            }
+            Ok(ZonedPart::Clock(Emitted::new(
+                utc_wall_time(&operand.sql, log),
+                SnowflakeType::TimestampNtz {
+                    precision: precision.min(MICROSECOND_DIGITS),
+                },
+            )))
+        }
         _ => Err(format!(
             "DATE_PART {unit} of {}, whose offset DuckDB does not keep",
             operand.data_type
@@ -190,8 +201,8 @@ pub(crate) fn date_part(
     let _rule = site.context.log.rule(DATE_PART_RULE);
     let refuse = |reason: String| outside_conditions(construct.clone(), reason);
     let unit = unit_name(unit).ok_or_else(|| refuse("an unreadable date part".to_owned()))?;
-    let operand =
-        zoned_part_operand(convert_expression(value, site)?, &unit, site).map_err(refuse)?;
+    let operand = zoned_part_operand(convert_expression(value, site)?, &unit, (construct, site))
+        .map_err(refuse)?;
     let operand = match operand {
         ZonedPart::Epoch(sql) => {
             let data_type = SnowflakeType::Number {
@@ -471,6 +482,9 @@ pub(crate) fn convert_timezone(
             let zoned = match operand.data_type {
                 SnowflakeType::TimestampTz { precision }
                 | SnowflakeType::TimestampLtz { precision } => {
+                    if let SnowflakeType::TimestampLtz { .. } = operand.data_type {
+                        diverge(site.context, SESSION_TIMEZONE_UTC, construct)?;
+                    }
                     let to = SnowflakeType::TimestampTz { precision };
                     (
                         cast(&operand.sql, to, log).map_err(|reason| refuse(&reason))?,
@@ -493,7 +507,7 @@ pub(crate) fn convert_timezone(
                 utc_offset: target
                     .literal
                     .as_deref()
-                    .is_some_and(|zone| zone.eq_ignore_ascii_case(UTC_ZONE)),
+                    .is_some_and(|zone| zone == UTC_ZONE),
                 ..Emitted::new(zone_checked(&zoned.0, &target.sql, log), zoned.1)
             })
         }
@@ -846,6 +860,7 @@ pub(crate) fn current_time(
         ));
     }
     diverge(site.context, CURRENT_TIME, construct)?;
+    diverge(site.context, SESSION_TIMEZONE_UTC, construct)?;
     Ok(match name {
         "CURRENT_DATE" => Emitted::new("current_date".to_owned(), SnowflakeType::Date),
         _ => Emitted::new(

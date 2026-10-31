@@ -37,6 +37,8 @@ pub(crate) struct FileCensus {
     pub(crate) elapsed: std::time::Duration,
     /// The placeholder relations the file references, in upper case.
     pub(crate) references: BTreeSet<String>,
+    /// Of those, the ones model references name.
+    pub(crate) model_references: BTreeSet<String>,
     /// Relations a refusal found without known columns.
     pub(crate) unknown_relations: BTreeSet<String>,
     /// Every refusal with its position, in source order.
@@ -149,6 +151,7 @@ pub(crate) fn inspect_file(
         possibly_incomplete: false,
         elapsed: started.elapsed(),
         references: rewritten.references,
+        model_references: rewritten.model_references,
         unknown_relations,
         root_constructs,
         outputs,

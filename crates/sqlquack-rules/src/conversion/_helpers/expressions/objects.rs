@@ -26,7 +26,7 @@ use crate::conversion::_helpers::support::tree::{
 };
 use crate::conversion::constants::{
     KEEP_NULL_CONSTRUCTOR, MICROSECOND_DIGITS, OBJECT_CONSTANT_KIND, OBJECT_CONSTRUCT_RULE,
-    OBJECT_CONSTRUCTOR, OBJECT_DELETE_RULE, OBJECT_INSERT_RULE,
+    OBJECT_CONSTRUCTOR, OBJECT_DELETE_RULE, OBJECT_INSERT_RULE, SESSION_TIMEZONE_UTC,
 };
 
 /// OBJECT_DELETE of a VARIANT and literal text keys.
@@ -245,6 +245,9 @@ pub(crate) fn as_json(
         | SnowflakeType::TimestampNtz { .. }
         | SnowflakeType::TimestampLtz { .. }) => {
             diverge(context, VARIANT_TYPED_VALUES, construct)?;
+            if let SnowflakeType::TimestampLtz { .. } = typed {
+                diverge(context, SESSION_TIMEZONE_UTC, construct)?;
+            }
             context.typed.enter();
             let source = match typed {
                 SnowflakeType::Date => TypedSource::Date,

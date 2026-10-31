@@ -6,6 +6,7 @@ import json
 from pathlib import Path
 
 from sqlquack_record.recording.constants import (
+    COMPILE_ERROR_KEY,
     EVIDENCE_FORMAT,
     HASH_NAME_LENGTH,
     HEX_DIGITS,
@@ -33,6 +34,9 @@ def parse_pending(path: Path) -> PendingCase:
     values: object = document.get(VALUES_KEY, True)
     if not isinstance(values, bool):
         raise RecorderError(f"{path.name}: values must be true or false")
+    compile_error: object = document.get(COMPILE_ERROR_KEY, False)
+    if not isinstance(compile_error, bool):
+        raise RecorderError(f"{path.name}: compile_error must be true or false")
     setup: object = document.get(SETUP_KEY, [])
     if not isinstance(setup, list) or not all(isinstance(statement, str) for statement in setup):
         raise RecorderError(f"{path.name}: setup_sql must be a list of statements")
@@ -58,6 +62,7 @@ def parse_pending(path: Path) -> PendingCase:
         pinned_parameters=tuple(
             sorted((str(key), _value(path=path, value=value)) for key, value in pinned.items())
         ),
+        compile_error=compile_error,
     )
 
 

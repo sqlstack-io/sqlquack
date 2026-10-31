@@ -34,6 +34,7 @@ pub fn write_pending(
             source_sql: case.source_sql.clone(),
             duckdb_version: duckdb_version.to_owned(),
             values: (!case.values).then_some(false),
+            compile_error: case.compile_error.then_some(true),
             setup_sql: case.setup_sql.clone(),
         };
         let name = format!("{}.json", case.hash);
