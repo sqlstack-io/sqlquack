@@ -32,7 +32,7 @@ a parameter of every entry point; Snowflake is the only one implemented.
 | `sqlquack-polyglot-check` | Development only: proves `sqlquack-syntax` parses exactly as polyglot does, on every corpus. |
 | `sqlquack-core` | Parsing with complexity guards, construct classification, refusals and provenance. |
 | `sqlquack-snowflake` | The Snowflake typing layer. Polyglot leaves many Snowflake expressions untyped, so exact types (`NUMBER(p, s)`, timestamp kinds, semi-structured values) are computed here. |
-| `sqlquack-semantics` | SQL semantics apart from conversion: dialect profiles (Snowflake and DuckDB), relation and column name resolution in query scopes, column types with the marks VARIANT values carry, and lineage. It builds without the conversion, DuckDB and evidence crates. |
+| `sqlquack-semantics` | SQL semantics apart from conversion: dialect profiles (Snowflake and DuckDB), relation and column name resolution in query scopes, column types with the marks VARIANT values carry, and lineage (each output's value sources, plus the query's `row_sources`: the columns filters, join keys, groups, CONNECT BY and PIVOT FOR decide rows by). It builds without the conversion, DuckDB and evidence crates. |
 | `sqlquack-rules` | The conversion rules, their type conditions, and declared refusals. |
 | `sqlquack-duckdb` | DuckDB building blocks shared by rules, and DuckDB's own parse-and-bind check of every converted statement. |
 | `sqlquack-policy` | The policy file `sqlquack.toml`: schema, validation and type-pattern matching. |
