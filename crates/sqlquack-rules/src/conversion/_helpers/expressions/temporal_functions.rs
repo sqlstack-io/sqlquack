@@ -52,9 +52,10 @@ use crate::conversion::_helpers::support::tree::{
     field, node_construct, payload_object, require_understood,
 };
 use crate::conversion::constants::{
-    CURRENT_TIME, CURRENT_TIME_RULE, DATE_ARITHMETIC, DATE_FORMAT_RULE, DATE_NAME, DATE_PART_RULE,
-    DATE_PARTS, DATE_TEXT_SPELLING, DAY_NAME_RULE, DECIMAL_EPOCH_RULE, FRACTIONAL_DATE_AMOUNT,
-    FROM_PARTS, MAX_FRACTION_DIGITS_U8, MICROSECOND_DIGITS, SCALE_DIGITS, SESSION_TIMEZONE_UTC,
+    BARE_FRACTION, BARE_FRACTION_PATTERNS, CURRENT_TIME, CURRENT_TIME_RULE, DATE_ARITHMETIC,
+    DATE_FORMAT_RULE, DATE_NAME, DATE_PART_RULE, DATE_PARTS, DATE_TEXT_SPELLING, DAY_NAME_RULE,
+    DECIMAL_EPOCH_RULE, FRACTIONAL_DATE_AMOUNT, FROM_PARTS, MAX_FRACTION_DIGITS_U8,
+    MICROSECOND_DIGITS, NUMBER_TEXT_FORMAT, SCALE_DIGITS, SESSION_TIMEZONE_UTC,
     TEMPORAL_TEXT_FIELDS, TEMPORAL_TEXT_FORMAT, TEMPORAL_TEXT_SEPARATORS, TEXT_TO_TIME_RULE,
     TEXT_TO_TIMESTAMP_RULE, TIME_ARITHMETIC, TIME_ZONE_CONVERSION, TIMESTAMP_FORMAT_RULE,
     TIMESTAMP_RANGE, TIMESTAMP_TIME_RULE, TO_DATE_TEMPORAL, UNIT_ALIASES, UTC_OFFSET_ARITHMETIC,
@@ -775,13 +776,16 @@ pub(crate) fn temporal_text(
         return Err(refuse("a format that is not literal text".to_owned()));
     };
     let operand = convert_expression(value, site)?;
-    let with_time = match operand.data_type {
-        SnowflakeType::Date => false,
-        SnowflakeType::TimestampNtz { .. } => true,
-        SnowflakeType::Null => true,
+    let precision = match operand.data_type {
+        SnowflakeType::Date => None,
+        SnowflakeType::TimestampNtz { precision } => Some(precision),
+        SnowflakeType::Null => Some(NANOSECOND_DIGITS),
+        SnowflakeType::Number { precision, scale } => {
+            return number_text((&operand.sql, precision, scale), &written, construct, site);
+        }
         other => return Err(refuse(format!("a format for {other}"))),
     };
-    let pattern = strftime_pattern(&written, with_time)
+    let pattern = strftime_pattern(&written, precision)
         .ok_or_else(|| refuse(format!("the format '{written}', which no recording shows")))?;
     Ok(Emitted::new(
         format!(
@@ -793,12 +797,75 @@ pub(crate) fn temporal_text(
     ))
 }
 
+/// TO_CHAR of a NUMBER with a format `FM9...90.0...0` its whole digits always hold.
+fn number_text(
+    (sql, precision, scale): (&str, u8, u8),
+    written: &str,
+    construct: &Construct,
+    site: Site<'_>,
+) -> Result<Emitted, Refusal> {
+    let _rule = site.context.log.rule(NUMBER_TEXT_FORMAT);
+    let refuse = |reason: String| outside_conditions(construct.clone(), reason);
+    let (whole, fraction) = fixed_number_format(written).ok_or_else(|| {
+        refuse(format!(
+            "the number format '{written}', which no recording shows"
+        ))
+    })?;
+    let carry = u8::from(scale > fraction);
+    let needed = (precision - scale).saturating_add(carry);
+    if needed > whole {
+        return Err(refuse(format!(
+            "the number format '{written}' for NUMBER({precision},{scale}), whose values may need more than {whole} whole digits"
+        )));
+    }
+    let wide = scale.max(fraction);
+    Ok(Emitted::new(
+        format!(
+            "list_transform([CAST({sql} AS DECIMAL(38,{wide}))], lambda number_value: \
+             CASE WHEN number_value IS NULL THEN NULL \
+             ELSE (CASE WHEN number_value < 0 THEN '-' ELSE '' END) || \
+             CAST(CAST(abs(round(number_value, {fraction})) AS DECIMAL(38,{fraction})) AS VARCHAR) END)[1]"
+        ),
+        SnowflakeType::Varchar,
+    ))
+}
+
+/// The whole digits and fraction digits of a format `FM`, nines, one zero, a point and zeros.
+fn fixed_number_format(written: &str) -> Option<(u8, u8)> {
+    let upper = written.to_ascii_uppercase();
+    let body = upper.strip_prefix("FM")?;
+    let (whole, fraction) = body.split_once('.')?;
+    let nines = whole.strip_suffix('0')?;
+    if !nines.bytes().all(|byte| byte == b'9')
+        || fraction.is_empty()
+        || !fraction.bytes().all(|byte| byte == b'0')
+    {
+        return None;
+    }
+    let (Ok(whole), Ok(fraction)) = (u8::try_from(whole.len()), u8::try_from(fraction.len()))
+    else {
+        return None;
+    };
+    Some((whole, fraction))
+}
+
 /// The strftime pattern of a format of known fields between separators, or None.
-fn strftime_pattern(format: &str, with_time: bool) -> Option<String> {
+fn strftime_pattern(format: &str, precision: Option<u8>) -> Option<String> {
+    let with_time = precision.is_some();
     let upper = format.to_ascii_uppercase();
     let mut rest = upper.as_str();
     let mut pattern = String::new();
     while !rest.is_empty() {
+        if let Some(after) = rest.strip_prefix(BARE_FRACTION)
+            && !after.starts_with(|next: char| next.is_ascii_digit())
+        {
+            let (_, digits) = BARE_FRACTION_PATTERNS
+                .iter()
+                .find(|(digits, _)| Some(*digits) == precision)?;
+            pattern.push_str(digits);
+            rest = after;
+            continue;
+        }
         let field = TEMPORAL_TEXT_FIELDS
             .iter()
             .find(|(token, _, time)| rest.starts_with(token) && (with_time || !time));
@@ -926,7 +993,16 @@ pub(crate) fn to_time(
         },
         _ => return Err(refuse(format!("{name} with these arguments"))),
     };
-    let operand = convert_expression(text, site)?;
+    let mut operand = convert_expression(text, site)?;
+    if let (SnowflakeType::TimestampTz { precision }, true) =
+        (operand.data_type, operand.utc_offset)
+    {
+        let _zoned = site.context.log.rule(UTC_OFFSET_ARITHMETIC);
+        operand = Emitted::new(
+            utc_wall_time(&operand.sql, site.context.log),
+            SnowflakeType::TimestampNtz { precision },
+        );
+    }
     if let (SnowflakeType::TimestampNtz { precision }, TimeFormat::Auto, false) =
         (operand.data_type, format, name.starts_with("TRY_"))
     {

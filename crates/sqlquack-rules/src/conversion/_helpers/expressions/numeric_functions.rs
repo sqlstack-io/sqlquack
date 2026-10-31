@@ -13,8 +13,9 @@ use sqlquack_snowflake::typing::models::SnowflakeType;
 
 use crate::conversion::_helpers::expressions::casts::number_literal_text;
 use crate::conversion::_helpers::expressions::scalar::convert_expression;
+use crate::conversion::_helpers::expressions::temporal_functions::date_trunc;
 use crate::conversion::_helpers::support::divergence::diverge;
-use crate::conversion::_helpers::support::scope::Emitted;
+use crate::conversion::_helpers::support::scope::{Emitted, Literal};
 use crate::conversion::_helpers::support::site::Site;
 
 use crate::conversion::constants::{
@@ -145,10 +146,13 @@ pub(crate) fn rounding(
     let refuse = |reason: String| outside_conditions(construct.clone(), reason);
     let (value, places) = match (name, arguments) {
         (_, [value]) => (value, 0_i32),
-        ("ROUND", [value, places]) => (
+        ("TRUNC" | "TRUNCATE", [value, unit]) if text_literal(unit, site)? => {
+            return date_trunc(unit, value, construct, site);
+        }
+        ("ROUND" | "TRUNC" | "TRUNCATE", [value, places]) => (
             value,
             literal_places(places)
-                .ok_or_else(|| refuse("ROUND to places other than a literal integer".to_owned()))?,
+                .ok_or_else(|| refuse(format!("{name} to places other than a literal integer")))?,
         ),
         _ => return Err(refuse(format!("{name} with these arguments"))),
     };
@@ -163,6 +167,21 @@ pub(crate) fn rounding(
                 "(round(CAST({} AS DOUBLE) * CAST(1e{places} AS DOUBLE)) / CAST(1e{places} AS DOUBLE) \
                  + 0.0)",
                 operand.sql
+            ),
+            SnowflakeType::Float,
+        )),
+        SnowflakeType::Float if places > 0 => Ok(Emitted::new(
+            format!(
+                "(trunc(CAST({} AS DOUBLE) * CAST(1e{places} AS DOUBLE)) / CAST(1e{places} AS DOUBLE) \
+                 + 0.0)",
+                operand.sql
+            ),
+            SnowflakeType::Float,
+        )),
+        SnowflakeType::Float if places < 0 => Ok(Emitted::new(
+            format!(
+                "(trunc(CAST({} AS DOUBLE) / CAST(1e{} AS DOUBLE)) * CAST(1e{} AS DOUBLE) + 0.0)",
+                operand.sql, -places, -places
             ),
             SnowflakeType::Float,
         )),
@@ -222,8 +241,17 @@ pub(crate) fn sign(
     ))
 }
 
+/// Whether `node` is literal text, as TRUNC's unit is.
+fn text_literal(node: &Value, site: Site<'_>) -> Result<bool, Refusal> {
+    Ok(matches!(
+        convert_expression(node, site)?.literal,
+        Some(Literal::Text(_))
+    ))
+}
+
 fn places_argument(name: &str, places: i32) -> String {
     match name {
+        "ROUND" | "TRUNC" | "TRUNCATE" if places != 0 => format!(", {places}"),
         "ROUND" => format!(", {places}"),
         _ => String::new(),
     }

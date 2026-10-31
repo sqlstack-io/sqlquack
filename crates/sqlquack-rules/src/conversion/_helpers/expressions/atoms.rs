@@ -1,6 +1,6 @@
 //! Columns, literals, parentheses, negation and scalar subqueries.
 
-use serde_json::Value;
+use serde_json::{Value, json};
 use sqlquack_core::refusals::main::missing::missing;
 use sqlquack_core::refusals::main::outside_conditions::outside_conditions;
 use sqlquack_core::refusals::models::Refusal;
@@ -25,7 +25,7 @@ use crate::conversion::_helpers::support::tree::{
 };
 use crate::conversion::constants::{
     COLUMN, COMMENT, CONSTANT_LITERAL, DOLLAR_PARAMETER, NEGATE, NUMBER_LITERAL, PARENTHESES,
-    POSITIONAL_COLUMN, SCALAR_SUBQUERY,
+    POSITIONAL_COLUMN, SCALAR_SUBQUERY, TYPED_LITERAL_KINDS, TYPED_LITERAL_PAIR,
 };
 use sqlquack_semantics::types::models::Holding;
 
@@ -131,6 +131,14 @@ pub(crate) fn literal(payload: &Value, site: Site<'_>) -> Result<Emitted, Refusa
                 literal: Some(Literal::Text(text.to_owned())),
                 ..Emitted::new(string_literal(text, log), SnowflakeType::Varchar)
             })
+        }
+        Some(kind) if TYPED_LITERAL_KINDS.contains(&kind) => {
+            log.equivalence(TYPED_LITERAL_PAIR);
+            let cast = json!({ "cast": {
+                "this": { "literal": { "literal_type": LITERAL_STRING, "value": text } },
+                "to": { "data_type": kind },
+            }});
+            convert_expression(&cast, site)
         }
         other => Err(missing(
             construct,

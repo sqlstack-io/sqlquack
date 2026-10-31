@@ -1,0 +1,36 @@
+# TIMESTAMP_TZ values holding the UTC offset, read as TIME by TO_TIME and casts.
+category = "temporal"
+construct = "fn:TO_TIME"
+session_profile = "utc-v1"
+
+[[case]]
+id = "utc_offset_to_time"
+description = "TO_TIME, TIME, CAST AS TIME and AS TIME(3) of CONVERT_TIMEZONE('UTC', t) from values at several offsets."
+columns = [{ name = "t", type = "TIMESTAMP_TZ(9)" }]
+rows = [
+  ["'2024-03-10 02:30:00 -05:00'"],
+  ["'2024-06-01 12:00:00.123456789 +05:30'"],
+  ["'2024-12-31 23:59:59.999 -08:00'"],
+  ["'2024-01-01 00:30:00 +14:00'"],
+  ["'1970-01-01 00:00:00 +00:00'"],
+  ["NULL"],
+]
+query = "WITH z AS (SELECT ordinal, CONVERT_TIMEZONE('UTC', t) AS u FROM input) SELECT TO_VARCHAR(TO_TIME(u)) AS tt, TO_VARCHAR(CAST(u AS TIME)) AS ct, TO_VARCHAR(CAST(u AS TIME(3))) AS ct3, DATEDIFF('microsecond', '00:00:00'::TIME, TO_TIME(u)) AS us FROM z ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "utc_offset_to_time_nanoseconds"
+description = "TO_TIME, TIME and CAST AS TIME of CONVERT_TIMEZONE('UTC', t), written as text and as microseconds since midnight."
+columns = [{ name = "t", type = "TIMESTAMP_TZ(9)" }]
+rows = [
+  ["'2024-03-10 02:30:00 -05:00'"],
+  ["'2024-06-01 12:00:00.123456 +05:30'"],
+  ["'2024-12-31 23:59:59.999 -08:00'"],
+  ["'2024-01-01 00:30:00 +14:00'"],
+  ["'1970-01-01 00:00:00 +00:00'"],
+  ["NULL"],
+]
+query = "WITH z AS (SELECT ordinal, CONVERT_TIMEZONE('UTC', t) AS u FROM input) SELECT TO_VARCHAR(TO_TIME(u)) AS tt, TO_VARCHAR(TIME(u)) AS ti, TO_VARCHAR(CAST(u AS TIME)) AS ct, DATEDIFF('microsecond', '00:00:00'::TIME, TO_TIME(u)) AS us FROM z ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "boundary"]

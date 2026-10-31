@@ -1,0 +1,89 @@
+# SQRT, REPEAT and TRUNCATE / TRUNC of numbers.
+category = "numeric"
+construct = "fn:SQRT"
+session_profile = "utc-v1"
+
+[[case]]
+id = "sqrt_float"
+description = "SQRT of FLOAT values: zero, squares, non-squares, tiny and huge values, negative zero and NULL."
+columns = [{ name = "f", type = "FLOAT" }]
+rows = [["0"], ["4"], ["2"], ["1e-300"], ["1e300"], ["0.25"], ["-0.0"], ["NULL"]]
+expression = "SQRT(f)"
+tags = ["null", "boundary", "zero"]
+
+[[case]]
+id = "sqrt_number"
+description = "SQRT of NUMBER values with and without a scale."
+columns = [{ name = "n", type = "NUMBER(10,2)" }, { name = "i", type = "NUMBER(38,0)" }]
+rows = [["2.25", "9"], ["0.00", "0"], ["10.00", "99999999999999999999"], ["NULL", "NULL"]]
+query = "SELECT SQRT(n) AS sn, SQRT(i) AS si FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "sqrt_negative_float"
+description = "SQRT of a negative FLOAT."
+columns = [{ name = "f", type = "FLOAT" }]
+rows = [["-1"]]
+expression = "SQRT(f)"
+tags = ["negative"]
+
+[[case]]
+id = "sqrt_negative_number"
+description = "SQRT of a negative NUMBER."
+columns = [{ name = "n", type = "NUMBER(10,2)" }]
+rows = [["-4.00"]]
+expression = "SQRT(n)"
+tags = ["negative"]
+
+[[case]]
+id = "repeat_text"
+description = "REPEAT of text by zero, one, several and NULL counts, empty and multi-byte text."
+columns = [{ name = "s", type = "VARCHAR" }, { name = "n", type = "NUMBER(3,0)" }]
+rows = [["', 2.0'", "3"], ["'ab'", "0"], ["'ab'", "1"], ["''", "5"], ["'é'", "2"], ["NULL", "2"], ["'ab'", "NULL"]]
+expression = "REPEAT(s, n)"
+tags = ["null", "empty", "unicode", "negative"]
+
+[[case]]
+id = "repeat_negative_count"
+description = "REPEAT by a negative count."
+columns = [{ name = "s", type = "VARCHAR" }, { name = "n", type = "NUMBER(3,0)" }]
+rows = [["'ab'", "-1"]]
+expression = "REPEAT(s, n)"
+tags = ["negative"]
+
+[[case]]
+id = "truncate_numbers"
+description = "TRUNCATE and TRUNC of NUMBER and FLOAT without a scale: toward zero."
+columns = [{ name = "n", type = "NUMBER(10,3)" }, { name = "f", type = "FLOAT" }]
+rows = [["1.999", "1.999"], ["-1.999", "-1.999"], ["0.000", "-0.5"], ["123.456", "1e15"], ["NULL", "NULL"]]
+query = "SELECT TRUNCATE(n) AS tn, TRUNC(n) AS tn2, TRUNCATE(f) AS tf, TRUNC(f) AS tf2 FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "negative", "boundary"]
+
+[[case]]
+id = "truncate_numbers_scale"
+description = "TRUNCATE and TRUNC of NUMBER and FLOAT to a positive, zero and negative scale."
+columns = [{ name = "n", type = "NUMBER(10,3)" }, { name = "f", type = "FLOAT" }]
+rows = [["1.999", "1.999"], ["-1.999", "-1.999"], ["123.456", "123.456"], ["-155.500", "-155.5"], ["NULL", "NULL"]]
+query = "SELECT TRUNCATE(n, 1) AS n1, TRUNC(n, 0) AS n0, TRUNC(n, -1) AS nm1, TRUNCATE(f, 1) AS f1, TRUNC(f, -2) AS fm2 FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "negative", "boundary"]
+
+[[case]]
+id = "truncate_timestamp_unit"
+description = "TRUNCATE and TRUNC of a TIMESTAMP_NTZ to a unit, spelled as DATE_TRUNC's arguments reversed."
+columns = [{ name = "t", type = "TIMESTAMP_NTZ(9)" }]
+rows = [["'2024-02-29 13:45:59.987654321'"], ["'1970-01-01 00:00:00'"], ["NULL"]]
+query = "SELECT TRUNCATE(t, 'second') AS s, TRUNC(t, 'minute') AS m, TRUNC(t, 'day') AS d FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "truncate_float_scale_edges"
+description = "TRUNC of FLOAT values to a positive scale where the scaled product is inexact."
+columns = [{ name = "f", type = "FLOAT" }]
+rows = [["0.29"], ["-0.29"], ["1.005"], ["0.57"], ["2.675"], ["1.1"], ["123456.789"], ["NULL"]]
+query = "SELECT TRUNC(f, 2) AS t2, TRUNC(f, 1) AS t1, TRUNCATE(f, 3) AS t3 FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "boundary", "rounding"]

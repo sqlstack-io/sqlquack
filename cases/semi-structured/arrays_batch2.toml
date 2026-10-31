@@ -18,7 +18,6 @@ rows = [
 ]
 expression = "ARRAY_POSITION('Color'::VARIANT, v)"
 tags = ["null", "duplicates", "empty", "invalid"]
-expected_divergence = "json_fidelity"
 
 [[case]]
 id = "array_position_weight"
@@ -35,7 +34,6 @@ rows = [
 ]
 expression = "ARRAY_POSITION('Weight'::VARIANT, v)"
 tags = ["null", "duplicates", "empty", "invalid"]
-expected_divergence = "json_fidelity"
 
 [[case]]
 id = "array_position_1"
@@ -52,7 +50,6 @@ rows = [
 ]
 expression = "ARRAY_POSITION('1'::VARIANT, v)"
 tags = ["null", "duplicates", "empty", "invalid"]
-expected_divergence = "json_fidelity"
 
 [[case]]
 id = "array_position_grosse"
@@ -69,7 +66,6 @@ rows = [
 ]
 expression = "ARRAY_POSITION('Größe'::VARIANT, v)"
 tags = ["null", "duplicates", "empty", "invalid"]
-expected_divergence = "json_fidelity"
 
 [[case]]
 id = "array_position_number"
@@ -85,7 +81,6 @@ rows = [
 ]
 expression = "ARRAY_POSITION(1::VARIANT, v)"
 tags = ["null", "duplicates", "empty", "invalid"]
-expected_divergence = "json_fidelity"
 
 [[case]]
 id = "array_position_get"

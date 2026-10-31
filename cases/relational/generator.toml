@@ -1,0 +1,76 @@
+# TABLE(GENERATOR(ROWCOUNT => n)) with SEQ4, SEQ8 and ROW_NUMBER.
+category = "relational"
+construct = "fn:GENERATOR"
+session_profile = "utc-v1"
+
+[[case]]
+id = "generator_sequences"
+description = "SEQ4, SEQ8 and ROW_NUMBER over a generator of 20 rows."
+columns = []
+rows = [[]]
+query = "SELECT SEQ4() AS s4, SEQ8() AS s8, ROW_NUMBER() OVER (ORDER BY SEQ4()) AS rn FROM TABLE(GENERATOR(ROWCOUNT => 20)) ORDER BY s4"
+order = "ordered"
+tags = ["boundary"]
+
+[[case]]
+id = "generator_one_row"
+description = "A generator of one row."
+columns = []
+rows = [[]]
+query = "SELECT SEQ4() AS s4, SEQ8() AS s8 FROM TABLE(GENERATOR(ROWCOUNT => 1))"
+order = "bag"
+tags = ["boundary"]
+
+[[case]]
+id = "generator_joined"
+description = "A generator cross joined with an input relation, numbering rows per input row."
+columns = [{ name = "sku", type = "VARCHAR" }]
+rows = [["'A-1'"], ["'B-2'"], ["NULL"]]
+query = "SELECT i.ordinal, i.sku, g.n FROM input i CROSS JOIN (SELECT SEQ4() AS n FROM TABLE(GENERATOR(ROWCOUNT => 3))) g ORDER BY i.ordinal, g.n"
+order = "ordered"
+tags = ["null"]
+
+[[case]]
+id = "generator_in_cte_arithmetic"
+description = "Generator rows in a CTE, scaled and filtered against input."
+columns = [{ name = "distance", type = "NUMBER(10,1)" }]
+rows = [["450.0"], ["1000.5"], ["NULL"]]
+query = "WITH steps AS (SELECT SEQ4() + 1 AS n FROM TABLE(GENERATOR(ROWCOUNT => 20))) SELECT i.ordinal, s.n * 200.0 AS mark FROM input i INNER JOIN steps s ON s.n * 200.0 < i.distance ORDER BY i.ordinal, mark"
+order = "ordered"
+tags = ["null"]
+
+[[case]]
+id = "generator_zero_rows"
+description = "A generator of zero rows returns no rows."
+columns = []
+rows = [[]]
+query = "SELECT SEQ4() AS s4 FROM TABLE(GENERATOR(ROWCOUNT => 0))"
+order = "bag"
+tags = ["empty-input"]
+
+[[case]]
+id = "generator_joined_duplicates"
+description = "A generator joined with duplicate input rows repeats each generated row per input row."
+columns = [{ name = "sku", type = "VARCHAR" }]
+rows = [["'A-1'"], ["'A-1'"]]
+query = "SELECT i.sku, g.n FROM input i CROSS JOIN (SELECT SEQ8() AS n FROM TABLE(GENERATOR(ROWCOUNT => 2))) g"
+order = "bag"
+tags = ["duplicates"]
+
+[[case]]
+id = "generator_large_contiguous_aliased"
+description = "SEQ4 and SEQ8 over generators of 1500 and of 100000 rows: count, distinct count and bounds."
+columns = []
+rows = [[]]
+query = "SELECT COUNT(*) AS n, COUNT(DISTINCT s4) AS d4, MIN(s4) AS lo4, MAX(s4) AS hi4, COUNT(DISTINCT s8) AS d8, MIN(s8) AS lo8, MAX(s8) AS hi8 FROM (SELECT SEQ4() AS s4, SEQ8() AS s8 FROM TABLE(GENERATOR(ROWCOUNT => 1500))) AS g UNION ALL SELECT COUNT(*), COUNT(DISTINCT s4), MIN(s4), MAX(s4), COUNT(DISTINCT s8), MIN(s8), MAX(s8) FROM (SELECT SEQ4() AS s4, SEQ8() AS s8 FROM TABLE(GENERATOR(ROWCOUNT => 100000))) AS h"
+order = "bag"
+tags = ["boundary"]
+
+[[case]]
+id = "generator_row_number_offsets"
+description = "ROW_NUMBER() OVER (ORDER BY SEQ4()) - 1 over a generator, joined to input as offsets."
+columns = [{ name = "d", type = "DATE" }]
+rows = [["'2024-02-28'"], ["NULL"]]
+query = "WITH offsets AS (SELECT ROW_NUMBER() OVER (ORDER BY SEQ4()) - 1 AS k FROM TABLE(GENERATOR(ROWCOUNT => 3))) SELECT i.ordinal, o.k, DATEADD(day, o.k, i.d) AS day FROM input i CROSS JOIN offsets o ORDER BY i.ordinal, o.k"
+order = "ordered"
+tags = ["null"]

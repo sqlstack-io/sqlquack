@@ -91,6 +91,40 @@ pub const TEXT_REPLACE: &str = "rule.text_replace";
 pub const TEXT_TRANSLATE: &str = "rule.text_translate";
 /// LATERAL FLATTEN.
 pub const FLATTEN_RULE: &str = "rule.flatten";
+/// START WITH ... CONNECT BY PRIOR as a recursive CTE.
+pub const HIERARCHY_RULE: &str = "rule.hierarchy";
+/// The pseudo-column of a row's depth in a CONNECT BY walk.
+pub(crate) const HIERARCHY_LEVEL: &str = "LEVEL";
+/// The prefix of the hidden columns a CONNECT BY walk carries.
+pub(crate) const HIERARCHY_COLUMN_PREFIX: &str = "SQLQUACK$HIERARCHY_";
+/// The recursive CTE of a CONNECT BY walk.
+pub(crate) const HIERARCHY_WALK: &str = "SQLQUACK$WALK";
+/// The parent row of a CONNECT BY step.
+pub(crate) const HIERARCHY_PRIOR: &str = "SQLQUACK$PRIOR";
+/// The depth past which a CONNECT BY walk raises rather than grow without end; never truncates.
+pub(crate) const HIERARCHY_MAX_DEPTH: u32 = 10_000;
+/// The tag of the raise past `HIERARCHY_MAX_DEPTH`.
+pub(crate) const HIERARCHY_DEPTH_TAG: &str = "connect_by_depth";
+/// Tree nodes holding a query, refused in a hierarchical query's projection and ordering.
+pub(crate) const HIERARCHY_NESTED_QUERIES: &[&str] = &[
+    "subquery",
+    "select",
+    "union",
+    "intersect",
+    "except",
+    "exists",
+    "with",
+];
+/// TABLE(GENERATOR(ROWCOUNT => n)) and SEQ4 / SEQ8 over it.
+pub const GENERATOR_RULE: &str = "rule.generator";
+/// The table function GENERATOR.
+pub(crate) const GENERATOR_NAME: &str = "GENERATOR";
+/// CHR, whose literal code point a SPLIT_TO_TABLE delimiter may give.
+pub(crate) const CHR_NAME: &str = "CHR";
+/// The column a generator's rows carry their sequence number in, read only by SEQ4 and SEQ8.
+pub(crate) const GENERATOR_SEQUENCE_COLUMN: &str = "SQLQUACK$GENERATOR_SEQUENCE";
+/// The largest ROWCOUNT whose sequence numbers a recording shows gap-free.
+pub(crate) const GENERATOR_MAX_ROWS: u64 = 100_000;
 /// LATERAL SPLIT_TO_TABLE.
 pub const SPLIT_TO_TABLE_RULE: &str = "rule.split_to_table";
 /// The columns SPLIT_TO_TABLE brings into scope; SEQ is not converted.
@@ -293,6 +327,10 @@ pub const ZERO_IF_NULL_RULE: &str = "rule.zeroifnull";
 pub const ROUNDING: &str = "rule.rounding";
 /// SIGN.
 pub const SIGN_RULE: &str = "rule.sign";
+/// TO_CHAR and TO_VARCHAR of a NUMBER with a fixed-point format.
+pub const NUMBER_TEXT_FORMAT: &str = "rule.number_text_format";
+/// REPEAT of text.
+pub const TEXT_REPEAT: &str = "rule.text_repeat";
 /// BITAND, BITOR and BITXOR.
 pub const BITWISE: &str = "rule.bitwise";
 /// TRY_TO_DATE with a literal format.
@@ -879,7 +917,15 @@ pub const TEMPORAL_TEXT_FIELDS: &[(&str, &str, bool)] = &[
     ("HH24", "%H", true),
     ("MI", "%M", true),
     ("SS", "%S", true),
+    ("FF9", "%n", true),
+    ("FF6", "%f", true),
+    ("FF3", "%g", true),
 ];
+/// The format element writing as many fraction digits as the timestamp's precision.
+pub(crate) const BARE_FRACTION: &str = "FF";
+/// What FF writes for each precision recorded: none for 0, then milli-, micro- and nanoseconds.
+pub(crate) const BARE_FRACTION_PATTERNS: &[(u8, &str)] =
+    &[(0, ""), (3, "%g"), (6, "%f"), (9, "%n")];
 /// Snowflake's TIMESTAMP_NTZ output format, YYYY-MM-DD HH24:MI:SS.FF3, as a strftime pattern.
 pub const NTZ_OUTPUT_PATTERN: &str = "%Y-%m-%d %H:%M:%S.%g";
 /// Characters a format may hold between fields, written as they are.
@@ -915,8 +961,27 @@ pub const SUBSCRIPT_PAIR: &str = "subscript_to_get";
 /// POSITION spelled as CHARINDEX.
 pub const POSITION_PAIR: &str = "position_to_charindex";
 
+/// The pair behind converting `DATE '...'`, `TIMESTAMP '...'` and `TIME '...'` as casts of their text.
+pub const TYPED_LITERAL_PAIR: &str = "typed_literal_to_cast";
+/// The parser's literal types for typed literals, each also the type its text is cast to.
+pub(crate) const TYPED_LITERAL_KINDS: &[&str] = &["date", "timestamp", "time"];
+/// The pair behind converting OBJECT_AGG of a typed value as OBJECT_AGG of its TO_VARIANT.
+pub const OBJECT_AGG_VALUE_PAIR: &str = "object_agg_value_to_variant";
+
 /// Every recorded spelling pair; `sqlquack verify` requires both spellings' results to match.
 pub const SPELLING_PAIRS: &[SpellingPair] = &[
+    SpellingPair {
+        id: TYPED_LITERAL_PAIR,
+        source: "DATE 's', TIMESTAMP 's' and TIME 's'",
+        canonical: "CAST('s' AS DATE), CAST('s' AS TIMESTAMP) and CAST('s' AS TIME)",
+        cases: "fidelity/typed_literals.toml",
+    },
+    SpellingPair {
+        id: OBJECT_AGG_VALUE_PAIR,
+        source: "OBJECT_AGG(k, x) of a NUMBER x",
+        canonical: "OBJECT_AGG(k, TO_VARIANT(x))",
+        cases: "fidelity/object_agg_values.toml",
+    },
     SpellingPair {
         id: "variant_path_to_get_path",
         source: "v:a.b[0]",

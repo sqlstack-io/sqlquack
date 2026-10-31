@@ -19,17 +19,18 @@ use crate::conversion::_helpers::support::collecting::{collecting, events, opaqu
 use crate::conversion::_helpers::support::scope::{Context, Scope};
 use crate::conversion::_helpers::support::site::{Placement, Site};
 use crate::conversion::_helpers::support::tree::{
-    Payload, field, function_construct, identifier_name, list, node_construct, node_kind,
-    payload_object, require_understood,
+    Payload, field, function_construct, identifier_name, integer_literal, list, node_construct,
+    node_kind, payload_object, require_understood,
 };
 use crate::conversion::constants::{
-    ASOF_JOIN, ASOF_KIND, FROM_RELATION, FROM_SUBQUERY, JOIN_CROSS, JOIN_ON, JOIN_USING,
-    LATERAL_KEY, LATERAL_SUBQUERY, OPAQUE_ALIAS_PREFIX, PROJECT_TABLE_FUNCTION, TABLE_WRAPPER,
+    ASOF_JOIN, ASOF_KIND, FROM_RELATION, FROM_SUBQUERY, GENERATOR_MAX_ROWS, GENERATOR_NAME,
+    GENERATOR_RULE, GENERATOR_SEQUENCE_COLUMN, JOIN_CROSS, JOIN_ON, JOIN_USING, LATERAL_KEY,
+    LATERAL_SUBQUERY, OPAQUE_ALIAS_PREFIX, PROJECT_TABLE_FUNCTION, TABLE_WRAPPER,
     UNALIASED_SUBQUERY_PREFIX,
 };
 use sqlquack_semantics::lineage::main::stored_columns::stored_columns;
 use sqlquack_semantics::scopes::models::ScopeRelation;
-use sqlquack_semantics::types::models::FunctionReturns;
+use sqlquack_semantics::types::models::{ColumnSpec, FunctionReturns};
 
 /// The FROM clause with its joins, and the relations it brings into scope.
 pub(crate) fn convert_from(
@@ -494,6 +495,9 @@ fn table_function_source(
         .and_then(Value::as_str)
         .unwrap_or_default()
         .to_ascii_uppercase();
+    if name == GENERATOR_NAME && !context.schema.functions.contains_key(&name) {
+        return generator_source(call, alias, context);
+    }
     let Some((resolved, spec)) = context.schema.functions.get_key_value(&name) else {
         return Err(missing(
             function_construct(&name),
@@ -533,6 +537,59 @@ fn table_function_source(
         ScopeRelation {
             alias,
             columns: columns.clone(),
+            merged: Vec::new(),
+        },
+    ))
+}
+
+/// `TABLE(GENERATOR(ROWCOUNT => n))` for a literal n: n rows numbered from 0 for SEQ4 and SEQ8.
+fn generator_source(
+    call: &Payload,
+    alias: Option<String>,
+    context: &Context<'_>,
+) -> Result<(String, ScopeRelation), Refusal> {
+    let construct = function_construct(GENERATOR_NAME);
+    let log = context.log;
+    let _rule = log.rule(GENERATOR_RULE);
+    let refuse = |reason: String| outside_conditions(construct.clone(), reason);
+    let [argument] = list(call, "args") else {
+        return Err(refuse("GENERATOR with other than one argument".to_owned()));
+    };
+    let named = argument
+        .get("named_argument")
+        .and_then(Value::as_object)
+        .filter(|named| {
+            named
+                .get("name")
+                .and_then(identifier_name)
+                .is_some_and(|name| name.eq_ignore_ascii_case("ROWCOUNT"))
+        })
+        .ok_or_else(|| refuse("GENERATOR with other than ROWCOUNT".to_owned()))?;
+    let rows = named
+        .get("value")
+        .and_then(integer_literal)
+        .filter(|rows| *rows <= GENERATOR_MAX_ROWS)
+        .ok_or_else(|| {
+            refuse(format!(
+                "a ROWCOUNT other than a whole literal up to {GENERATOR_MAX_ROWS}"
+            ))
+        })?;
+    let alias = alias.unwrap_or_else(|| GENERATOR_NAME.to_owned());
+    let column = quoted_identifier(GENERATOR_SEQUENCE_COLUMN, log);
+    Ok((
+        format!(
+            "(SELECT CAST(range AS BIGINT) AS {column} FROM range({rows})) AS {}",
+            quoted_identifier(&alias, log)
+        ),
+        ScopeRelation {
+            alias,
+            columns: vec![ColumnSpec::new(
+                GENERATOR_SEQUENCE_COLUMN,
+                SnowflakeType::Number {
+                    precision: 19,
+                    scale: 0,
+                },
+            )],
             merged: Vec::new(),
         },
     ))

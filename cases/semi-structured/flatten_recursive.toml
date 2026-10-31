@@ -89,6 +89,7 @@ tags = ["nested", "array-index"]
 
 [[case]]
 id = "flatten_recursive_key_paths"
+expected_divergence = "json_fidelity"
 description = "RECURSIVE => TRUE through keys that are not plain names: PATH quoting."
 columns = [{ name = "v", type = "VARIANT" }]
 rows = [

@@ -55,10 +55,10 @@ pub fn json_guarded(sql: &str, log: &ProvenanceLog) -> String {
     )
 }
 
-/// The JSON text `sql` with strings emptied and the words true, false and null removed.
+/// The JSON text `sql` with strings and the words true, false and null made empty strings.
 fn outside_strings(sql: &str) -> String {
     format!(
-        "regexp_replace(regexp_replace({sql}, '{}', '\"\"', 'g'), '{}', '', 'g')",
+        "regexp_replace(regexp_replace({sql}, '{}', '\"\"', 'g'), '{}', '\"\"', 'g')",
         quoted(JSON_STRING_PATTERN),
         quoted(JSON_WORD_PATTERN)
     )

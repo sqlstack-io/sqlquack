@@ -1,0 +1,65 @@
+# TO_CHAR and TO_VARCHAR of numbers with a literal numeric format.
+category = "numeric"
+construct = "fn:TO_VARCHAR"
+session_profile = "utc-v1"
+
+[[case]]
+id = "fm_fixed_decimals_number"
+description = "FM formats with fixed fraction digits over NUMBER values: rounding, zeros, negatives and overflow."
+columns = [{ name = "n", type = "NUMBER(14,6)" }]
+rows = [["1.5"], ["0"], ["-0.00005"], ["0.00005"], ["2.71825"], ["-2.71835"], ["1234567.123456"], ["12345678.9"], ["NULL"]]
+query = "SELECT TO_CHAR(n, 'FM9999990.0000') AS a, TO_VARCHAR(n, 'FM9990.0') AS b, TO_CHAR(n, 'FM990.00') AS c FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "negative", "rounding", "boundary", "zero"]
+
+[[case]]
+id = "fm_fixed_decimals_float"
+description = "FM formats with fixed fraction digits over FLOAT values: halfway values and overflow."
+columns = [{ name = "f", type = "FLOAT" }]
+rows = [["1.5"], ["0"], ["-0.05"], ["0.05"], ["2.675"], ["0.125"], ["-0.0"], ["123456789.5"], ["NULL"]]
+query = "SELECT TO_CHAR(f, 'FM9999990.0000') AS a, TO_VARCHAR(f, 'FM9990.0') AS b FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "negative", "rounding", "overflow"]
+
+[[case]]
+id = "fm_decimal_cast_chain"
+description = "TO_CHAR(TO_DECIMAL(text, 11, 3), 'FM99999990.000') over numeric text."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [["'1'"], ["'0.12345'"], ["'-7.5'"], ["'99999999.999'"], ["NULL"]]
+expression = "TO_CHAR(TO_DECIMAL(s, 11, 3), 'FM99999990.000')"
+tags = ["null", "rounding"]
+
+[[case]]
+id = "padded_formats"
+description = "Formats without FM pad with a leading sign position; zeros and group separators."
+columns = [{ name = "n", type = "NUMBER(10,2)" }]
+rows = [["1.50"], ["-1.50"], ["0.00"], ["12345.67"], ["NULL"]]
+query = "SELECT TO_CHAR(n, '9990.0') AS a, TO_CHAR(n, '999,990.00') AS b, TO_CHAR(n, '0000') AS c FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "negative", "padding"]
+
+[[case]]
+id = "fm_rounded_input"
+description = "TO_VARCHAR(ROUND(x, 1), 'FM9990.0') over NUMBER and FLOAT percentages."
+columns = [{ name = "n", type = "NUMBER(10,4)" }, { name = "f", type = "FLOAT" }]
+rows = [["12.3456", "12.3456"], ["99.95", "99.95"], ["0.0400", "0.04"], ["-3.2500", "-3.25"], ["NULL", "NULL"]]
+query = "SELECT TO_VARCHAR(ROUND(n, 1), 'FM9990.0') AS a, TO_VARCHAR(ROUND(f, 1), 'FM9990.0') AS b FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "rounding", "negative"]
+
+[[case]]
+id = "fm_narrow_numbers"
+description = "FM formats over NUMBERs whose type fits the format: rounding half away from zero, a sign kept when a negative value rounds to zero, and no rounding needed."
+columns = [{ name = "a", type = "NUMBER(6,6)" }, { name = "b", type = "NUMBER(6,3)" }, { name = "c", type = "NUMBER(10,4)" }]
+rows = [
+  ["0.000050", "1.250", "0"],
+  ["-0.000050", "-1.250", "-0.0001"],
+  ["0.000049", "-0.049", "999999.9999"],
+  ["-0.000049", "0.050", "-999999.9999"],
+  ["0.012345", "999.949", "12.5"],
+  ["0", "-999.950", "NULL"],
+  ["NULL", "NULL", "1"],
+]
+query = "SELECT TO_CHAR(a, 'FM90.0000') AS a4, TO_VARCHAR(a, 'FM0.0') AS a1, TO_CHAR(b, 'FM9990.0') AS b1, TO_VARCHAR(b, 'FM9990.00') AS b2, TO_CHAR(c, 'FM9999990.0000') AS c4, TO_VARCHAR(c, 'FM9999990.00') AS c2 FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "negative", "rounding", "boundary", "zero"]

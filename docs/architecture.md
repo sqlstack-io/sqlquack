@@ -116,6 +116,8 @@ that converts both spellings of a pair cites the pair in its provenance.
 | `to_double_to_cast` | `TO_DOUBLE(s)`, `TRY_TO_DOUBLE(s)` | `CAST(s AS FLOAT)`, `TRY_CAST(s AS FLOAT)` |
 | `timediff_to_datediff` | `TIMEDIFF(unit, a, b)` | `DATEDIFF(unit, a, b)` |
 | `timestampdiff_to_datediff` | `TIMESTAMPDIFF(unit, a, b)` | `DATEDIFF(unit, a, b)` |
+| `typed_literal_to_cast` | `DATE 's'`, `TIMESTAMP 's'`, `TIME 's'` | `CAST('s' AS DATE)`, `CAST('s' AS TIMESTAMP)`, `CAST('s' AS TIME)` |
+| `object_agg_value_to_variant` | `OBJECT_AGG(k, x)` of a NUMBER `x` | `OBJECT_AGG(k, TO_VARIANT(x))` |
 | `part_functions_to_date_part` | `YEAR(x)`, `QUARTER(x)`, `MONTH(x)`, `DAY(x)`, `HOUR(x)`, `MINUTE(x)`, `SECOND(x)` | `DATE_PART(unit, x)` |
 
 Spellings other engines accept that are not in Snowflake's function reference

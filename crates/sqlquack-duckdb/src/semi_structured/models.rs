@@ -1,4 +1,4 @@
-//! The steps of a VARIANT path, and the keys OBJECT_PICK keeps.
+//! The steps of a VARIANT path, the keys OBJECT_PICK keeps, and recursive FLATTEN modes.
 
 /// One step of a path: an object key or an array index.
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -29,4 +29,15 @@ pub enum TypedSource {
     TimestampNanos,
     /// A TIMESTAMP_LTZ, held as TIMESTAMPTZ.
     TimestampLocal,
+}
+
+/// Which containers a recursive FLATTEN descends into, as its MODE argument names them.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum FlattenMode {
+    /// Objects and arrays.
+    Both,
+    /// Objects only.
+    Object,
+    /// Arrays only.
+    Array,
 }

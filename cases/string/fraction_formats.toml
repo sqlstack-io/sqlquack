@@ -1,0 +1,35 @@
+# TO_CHAR and TO_VARCHAR of timestamps with fractional-second format elements.
+category = "temporal"
+construct = "fn:TO_CHAR"
+session_profile = "utc-v1"
+
+[[case]]
+id = "fraction_digits"
+description = "FF, FF3, FF6 and FF9 over TIMESTAMP_NTZ(9) values with and without fractions."
+columns = [{ name = "t", type = "TIMESTAMP_NTZ(9)" }]
+rows = [["'2024-02-29 13:45:01'"], ["'2024-02-29 13:45:01.5'"], ["'2024-02-29 13:45:01.123456789'"], ["'1970-01-01 00:00:00.000001'"], ["NULL"]]
+query = "SELECT TO_CHAR(t, 'YYYY-MM-DD HH24:MI:SS.FF6') AS f6, TO_CHAR(t, 'YYYY-MM-DD HH24:MI:SS.FF3') AS f3, TO_CHAR(t, 'HH24:MI:SS.FF9') AS f9, TO_CHAR(t, 'HH24:MI:SS.FF') AS ff FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "fraction_digits_lower_precision"
+description = "FF6 over TIMESTAMP_NTZ(0) and TIMESTAMP_NTZ(3) values."
+columns = [{ name = "t0", type = "TIMESTAMP_NTZ(0)" }, { name = "t3", type = "TIMESTAMP_NTZ(3)" }]
+rows = [["'2024-02-29 13:45:01'", "'2024-02-29 13:45:01.123'"], ["NULL", "'2024-02-29 13:45:01'"]]
+query = "SELECT TO_CHAR(t0, 'YYYY-MM-DD HH24:MI:SS.FF6') AS a, TO_VARCHAR(t3, 'YYYY-MM-DD HH24:MI:SS.FF6') AS b FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]
+
+[[case]]
+id = "fraction_digits_rounding_edges"
+description = "FF3 and FF6 of fractions whose dropped digits would round up, and bare FF over TIMESTAMP_NTZ(0), (3) and (6)."
+columns = [{ name = "t", type = "TIMESTAMP_NTZ(9)" }, { name = "t0", type = "TIMESTAMP_NTZ(0)" }, { name = "t3", type = "TIMESTAMP_NTZ(3)" }, { name = "t6", type = "TIMESTAMP_NTZ(6)" }]
+rows = [
+  ["'2024-02-29 13:45:01.1239'", "'2024-02-29 13:45:01'", "'2024-02-29 13:45:01.123'", "'2024-02-29 13:45:01.123456'"],
+  ["'2024-02-29 13:45:01.9999999'", "NULL", "'2024-02-29 13:45:01.5'", "'2024-02-29 13:45:01'"],
+  ["'2024-02-29 13:45:01.0005'", "'1970-01-01 00:00:00'", "NULL", "NULL"],
+]
+query = "SELECT TO_CHAR(t, 'HH24:MI:SS.FF3') AS f3, TO_CHAR(t, 'HH24:MI:SS.FF6') AS f6, TO_CHAR(t0, 'HH24:MI:SS.FF') AS ff0, TO_CHAR(t3, 'HH24:MI:SS.FF') AS ff3, TO_CHAR(t6, 'HH24:MI:SS.FF') AS ff6 FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "boundary"]
