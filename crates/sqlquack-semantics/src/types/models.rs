@@ -34,6 +34,9 @@ pub struct ColumnSpec {
     /// Whether a TIMESTAMP_TZ column's every value is known to hold the UTC offset, +00:00.
     #[serde(skip_serializing_if = "std::ops::Not::not")]
     pub utc_offset: bool,
+    /// The schema columns, as `RELATION.COLUMN`, whose declared offset the UTC mark relies on.
+    #[serde(skip_serializing_if = "Vec::is_empty")]
+    pub declared_offsets: Vec<String>,
 }
 
 impl ColumnSpec {
@@ -48,6 +51,7 @@ impl ColumnSpec {
             untainted: false,
             sourced: false,
             utc_offset: false,
+            declared_offsets: Vec::new(),
         }
     }
 }

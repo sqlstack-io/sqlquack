@@ -45,6 +45,7 @@ use crate::conversion::_helpers::expressions::temporal::{
     is_temporal, proven_time_text, temporal_cast, time_submicro, timestamp_literal,
 };
 use crate::conversion::_helpers::expressions::variants::to_variant;
+use crate::conversion::_helpers::support::declared::rely_on_declared;
 use crate::conversion::_helpers::support::divergence::diverge;
 use crate::conversion::_helpers::support::failure::text_failure;
 use crate::conversion::_helpers::support::scope::{Context, Emitted, Literal};
@@ -180,6 +181,7 @@ pub(crate) fn convert_cast(
     let sql = cast_sql(&operand, target, trying, (site.context, &construct)).map_err(refuse)?;
     Ok(Emitted {
         utc_offset: zoned_in_utc((operand.data_type, operand.utc_offset), target.data_type),
+        declared: operand.declared.clone(),
         ..Emitted::new(sql, target.data_type)
     })
 }
@@ -341,6 +343,8 @@ fn cast_sql(
         {
             let _rule = cast_rule(CAST_UTC_ZONED, log);
             let _time = log.rule(TIMESTAMP_TIME_RULE);
+            rely_on_declared(&operand.declared, construct, context)
+                .map_err(|refusal| refusal.reason)?;
             Ok(timestamp_time(
                 &utc_wall_time(&operand.sql, log),
                 precision > MICROSECOND_DIGITS,
@@ -353,6 +357,8 @@ fn cast_sql(
             _,
         ) if operand.utc_offset => {
             let _rule = cast_rule(CAST_UTC_ZONED, log);
+            rely_on_declared(&operand.declared, construct, context)
+                .map_err(|refusal| refusal.reason)?;
             nanosecond_range(to, (context, construct))?;
             temporal_cast(
                 &utc_wall_time(&operand.sql, log),

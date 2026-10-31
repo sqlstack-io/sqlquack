@@ -483,6 +483,7 @@ impl AggregateCall<'_> {
             | SnowflakeType::TimestampTz { .. }
             | SnowflakeType::TimestampLtz { .. } => Ok(Emitted {
                 utc_offset: argument.utc_offset,
+                declared: argument.declared.clone(),
                 ..Emitted::new(
                     format!("{kind}({}{}){}", self.distinct(), argument.sql, self.over),
                     argument.data_type,

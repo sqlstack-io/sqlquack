@@ -8,6 +8,8 @@ use crate::test_types::{
 
 const QUOTED_ALIAS: &str =
     "WITH totals AS (SELECT 1 AS \"orderTotal\") SELECT ordertotal FROM totals";
+const PLACED_DATE: &str = "SELECT TO_DATE(placed_at) AS placed_on FROM orders";
+const DECLARED_SCHEMA: &str = "tests/cli/fixtures/declared_offsets.json";
 const NAIVE_TO_ZONED: &str =
     "SELECT '2024-03-10 22:30:00'::TIMESTAMP_NTZ(6)::TIMESTAMP_TZ AS placed_at";
 
@@ -88,6 +90,77 @@ fn given_snowflake_sql_when_converting_then_duckdb_sql_or_named_refusals_are_pri
             ],
             mention: "TIMEZONE = America/New_York is not UTC",
             expected_outcome: convert_outcome(1, false),
+        },
+        ConvertTestCase {
+            description: "a declared-UTC TIMESTAMP_TZ column's date converts naming its assumption",
+            sql: PLACED_DATE,
+            flags: &["--schema", DECLARED_SCHEMA],
+            mention: "relies on assumption declared_offset:ORDERS.PLACED_AT at fn:TO_DATE",
+            expected_outcome: convert_outcome(0, true),
+        },
+        ConvertTestCase {
+            description: "a TIMESTAMP_TZ column without a declared offset keeps refusing",
+            sql: "SELECT TO_DATE(shipped_at) AS shipped_on FROM orders",
+            flags: &["--schema", DECLARED_SCHEMA],
+            mention: "casting TIMESTAMP_TZ(9) to DATE has no proven conversion",
+            expected_outcome: convert_outcome(1, false),
+        },
+        ConvertTestCase {
+            description: "the declared offset carries through a CTE and COALESCE to DATE_TRUNC",
+            sql: "WITH latest AS (SELECT COALESCE(placed_at, CONVERT_TIMEZONE('UTC', shipped_at)) AS at FROM orders) SELECT DATE_TRUNC('day', at) AS day FROM latest",
+            flags: &["--schema", DECLARED_SCHEMA],
+            mention: "relies on assumption declared_offset:ORDERS.PLACED_AT at fn:DATE_TRUNC",
+            expected_outcome: convert_outcome(0, true),
+        },
+        ConvertTestCase {
+            description: "strict mode refuses relying on a declared offset",
+            sql: PLACED_DATE,
+            flags: &["--schema", DECLARED_SCHEMA, "--strict"],
+            mention: "assumption `declared_offset`, which the policy does not allow in this mode",
+            expected_outcome: convert_outcome(1, false),
+        },
+        ConvertTestCase {
+            description: "strict mode converts it once --confirm-declared-offsets confirms them",
+            sql: PLACED_DATE,
+            flags: &[
+                "--schema",
+                DECLARED_SCHEMA,
+                "--strict",
+                "--confirm-declared-offsets",
+            ],
+            mention: "relies on assumption declared_offset:ORDERS.PLACED_AT",
+            expected_outcome: convert_outcome(0, true),
+        },
+        ConvertTestCase {
+            description: "strict mode refuses a declared offset read through FIRST_VALUE",
+            sql: "SELECT FIRST_VALUE(placed_at) OVER (ORDER BY order_id)::DATE AS first_on FROM orders",
+            flags: &["--schema", DECLARED_SCHEMA, "--strict"],
+            mention: "assumption `declared_offset`, which the policy does not allow in this mode",
+            expected_outcome: convert_outcome(1, false),
+        },
+        ConvertTestCase {
+            description: "LAST_VALUE keeps the origin of every declared column it reads",
+            sql: "SELECT DATEDIFF('day', placed_at, LAST_VALUE(paid_at) OVER (ORDER BY order_id)) AS days FROM orders",
+            flags: &["--schema", DECLARED_SCHEMA],
+            mention: "relies on assumption declared_offset:ORDERS.PAID_AT",
+            expected_outcome: convert_outcome(0, true),
+        },
+        ConvertTestCase {
+            description: "a declared offset other than UTC is a usage error",
+            sql: PLACED_DATE,
+            flags: &[
+                "--schema",
+                "tests/cli/fixtures/declared_offset_unsupported.json",
+            ],
+            mention: "the declared offset `-05:00` is not supported; only +00:00 (UTC) is",
+            expected_outcome: convert_outcome(2, false),
+        },
+        ConvertTestCase {
+            description: "an offset declared for a column other than TIMESTAMP_TZ is a usage error",
+            sql: "SELECT placed_on FROM orders",
+            flags: &["--schema", "tests/cli/fixtures/declared_offset_naive.json"],
+            mention: "an offset may be declared only for a TIMESTAMP_TZ column",
+            expected_outcome: convert_outcome(2, false),
         },
         ConvertTestCase {
             description: "a non-UTC TIMEZONE refuses a zone-dependent statement in default mode",

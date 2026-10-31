@@ -63,6 +63,9 @@ pub struct ConvertArguments {
     /// Confirm both sessions run in UTC, so strict mode relies on `session_timezone_utc`.
     #[arg(long)]
     pub utc_session: bool,
+    /// Confirm the TIMESTAMP_TZ offsets the schema declares, so strict mode relies on them.
+    #[arg(long)]
+    pub confirm_declared_offsets: bool,
     /// A Snowflake session parameter of the caller's session, `NAME=VALUE`; repeatable.
     #[arg(long = "session", value_name = "NAME=VALUE")]
     pub session: Vec<String>,
@@ -94,6 +97,9 @@ pub struct FunctionArguments {
     /// Confirm both sessions run in UTC, so strict mode relies on `session_timezone_utc`.
     #[arg(long)]
     pub utc_session: bool,
+    /// Confirm the TIMESTAMP_TZ offsets the schema declares, so strict mode relies on them.
+    #[arg(long)]
+    pub confirm_declared_offsets: bool,
     /// A Snowflake session parameter of the caller's session, `NAME=VALUE`; repeatable.
     #[arg(long = "session", value_name = "NAME=VALUE")]
     pub session: Vec<String>,
@@ -228,6 +234,9 @@ pub struct IndexArguments {
     /// Confirm both sessions run in UTC, so strict mode relies on `session_timezone_utc`.
     #[arg(long)]
     pub utc_session: bool,
+    /// Confirm the TIMESTAMP_TZ offsets the schema declares, so strict mode relies on them.
+    #[arg(long)]
+    pub confirm_declared_offsets: bool,
     /// Print the index as JSON on standard output.
     #[arg(long)]
     pub json: bool,
@@ -272,6 +281,9 @@ pub struct CensusArguments {
     /// Confirm both sessions run in UTC, so strict mode relies on `session_timezone_utc`.
     #[arg(long)]
     pub utc_session: bool,
+    /// Confirm the TIMESTAMP_TZ offsets the schema declares, so strict mode relies on them.
+    #[arg(long)]
+    pub confirm_declared_offsets: bool,
     /// Print file, model and relation names in the slowest files and the blockers.
     #[arg(long)]
     pub names: bool,

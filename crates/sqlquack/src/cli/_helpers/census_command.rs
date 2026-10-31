@@ -36,9 +36,14 @@ pub(crate) fn census_command(
         }
     };
     let conversion = match chosen_policy(&arguments.policy, arguments.builtin_policy) {
-        Ok(policy) => {
-            divergence_options(policy.as_ref(), (arguments.strict, arguments.utc_session))
-        }
+        Ok(policy) => divergence_options(
+            policy.as_ref(),
+            (
+                arguments.strict,
+                arguments.utc_session,
+                arguments.confirm_declared_offsets,
+            ),
+        ),
         Err(error) => {
             let _ = writeln!(stderr, "sqlquack census: failed: {error}");
             return ExitCode::from(2);

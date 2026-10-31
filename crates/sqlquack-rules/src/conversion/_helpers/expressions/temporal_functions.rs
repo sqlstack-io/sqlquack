@@ -44,8 +44,10 @@ use crate::conversion::_helpers::expressions::operators::is_iso_date;
 use crate::conversion::_helpers::expressions::scalar::convert_expression;
 use crate::conversion::_helpers::expressions::temporal::temporal_cast;
 use crate::conversion::_helpers::expressions::temporal::{proven_time_text, time_submicro};
+use crate::conversion::_helpers::support::declared::rely_on_declared;
 use crate::conversion::_helpers::support::divergence::diverge;
 use crate::conversion::_helpers::support::failure::text_failure;
+use crate::conversion::_helpers::support::scope::Context;
 use crate::conversion::_helpers::support::scope::{Emitted, Literal};
 use crate::conversion::_helpers::support::site::Site;
 use crate::conversion::_helpers::support::tree::{
@@ -94,7 +96,7 @@ fn temporal_operand(
     site: Site<'_>,
 ) -> Result<(Emitted, Option<SnowflakeType>), Refusal> {
     let emitted = convert_expression(node, site)?;
-    temporal_or_refused(emitted, construct, site.context.log)
+    temporal_or_refused(emitted, construct, site.context)
 }
 
 /// A DATE, naive timestamp or TIME operand, or a UTC-offset one as for `temporal_operand`.
@@ -106,26 +108,31 @@ fn clock_operand(
     let emitted = convert_expression(node, site)?;
     match emitted.data_type {
         SnowflakeType::Time { .. } => Ok((emitted, None)),
-        _ => temporal_or_refused(emitted, construct, site.context.log),
+        _ => temporal_or_refused(emitted, construct, site.context),
     }
 }
 
 fn temporal_or_refused(
     emitted: Emitted,
     construct: &Construct,
-    log: &ProvenanceLog,
+    context: &Context<'_>,
 ) -> Result<(Emitted, Option<SnowflakeType>), Refusal> {
+    let log = context.log;
     match emitted.data_type {
         SnowflakeType::Date | SnowflakeType::TimestampNtz { .. } => Ok((emitted, None)),
         zoned @ SnowflakeType::TimestampTz { precision } if emitted.utc_offset => {
             let _zoned = log.rule(UTC_OFFSET_ARITHMETIC);
+            rely_on_declared(&emitted.declared, construct, context)?;
             Ok((
-                Emitted::new(
-                    utc_wall_time(&emitted.sql, log),
-                    SnowflakeType::TimestampNtz {
-                        precision: precision.min(MICROSECOND_DIGITS),
-                    },
-                ),
+                Emitted {
+                    declared: emitted.declared.clone(),
+                    ..Emitted::new(
+                        utc_wall_time(&emitted.sql, log),
+                        SnowflakeType::TimestampNtz {
+                            precision: precision.min(MICROSECOND_DIGITS),
+                        },
+                    )
+                },
                 Some(zoned),
             ))
         }
@@ -141,6 +148,7 @@ fn rezoned(result: Emitted, zoned: Option<SnowflakeType>, log: &ProvenanceLog) -
     match zoned {
         Some(zoned) => Emitted {
             utc_offset: true,
+            declared: result.declared,
             ..Emitted::new(utc_zoned(&result.sql, log), zoned)
         },
         None => result,
@@ -165,6 +173,10 @@ fn zoned_part_operand(
         SnowflakeType::TimestampTz { precision } => (precision, operand.utc_offset),
         _ => return Ok(ZonedPart::Clock(operand)),
     };
+    if utc && !matches!(unit, "EPOCH_SECOND" | "EPOCH_MILLISECOND") {
+        rely_on_declared(&operand.declared, construct, site.context)
+            .map_err(|refusal| refusal.reason)?;
+    }
     let _zoned = log.rule(ZONED_PARTS);
     match unit {
         "EPOCH_SECOND" | "EPOCH_MILLISECOND" => Ok(ZonedPart::Epoch(date_part_value(
@@ -220,7 +232,7 @@ pub(crate) fn date_part(
         }
         ZonedPart::Clock(emitted) => match emitted.data_type {
             SnowflakeType::Time { .. } => emitted,
-            _ => temporal_or_refused(emitted, construct, site.context.log)?.0,
+            _ => temporal_or_refused(emitted, construct, site.context)?.0,
         },
     };
     let precision = DATE_PARTS
@@ -278,7 +290,10 @@ pub(crate) fn date_trunc(
     let sql = date_trunc_value(&operand.sql, &unit, operand.data_type, site.context.log)
         .map_err(refuse)?;
     Ok(rezoned(
-        Emitted::new(sql, operand.data_type),
+        Emitted {
+            declared: operand.declared,
+            ..Emitted::new(sql, operand.data_type)
+        },
         zoned,
         site.context.log,
     ))
@@ -297,11 +312,8 @@ pub(crate) fn day_name(
             "DAYNAME takes one argument".to_owned(),
         ));
     };
-    let (operand, _) = temporal_or_refused(
-        convert_expression(value, site)?,
-        construct,
-        site.context.log,
-    )?;
+    let (operand, _) =
+        temporal_or_refused(convert_expression(value, site)?, construct, site.context)?;
     Ok(Emitted::new(
         format!("strftime({}, '%a')", operand.sql),
         SnowflakeType::Varchar,
@@ -356,7 +368,10 @@ pub(crate) fn date_add(
     )
     .map_err(refuse)?;
     Ok(rezoned(
-        Emitted::new(sql, operand.data_type),
+        Emitted {
+            declared: operand.declared,
+            ..Emitted::new(sql, operand.data_type)
+        },
         zoned,
         site.context.log,
     ))
@@ -404,6 +419,8 @@ fn date_diff_of(
         (false, false) => (start, end),
         (true, true) => {
             let _zoned = log.rule(UTC_OFFSET_ARITHMETIC);
+            rely_on_declared(&start.declared, construct, site.context)?;
+            rely_on_declared(&end.declared, construct, site.context)?;
             (utc_wall(start, log), utc_wall(end, log))
         }
         _ => {
@@ -998,6 +1015,7 @@ pub(crate) fn to_time(
         (operand.data_type, operand.utc_offset)
     {
         let _zoned = site.context.log.rule(UTC_OFFSET_ARITHMETIC);
+        rely_on_declared(&operand.declared, construct, site.context)?;
         operand = Emitted::new(
             utc_wall_time(&operand.sql, site.context.log),
             SnowflakeType::TimestampNtz { precision },

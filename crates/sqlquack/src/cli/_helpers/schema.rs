@@ -9,6 +9,9 @@ use sqlquack_semantics::types::models::{
     ColumnSpec, FunctionLanguage, FunctionReturns, FunctionSpec, Schema,
 };
 use sqlquack_snowflake::typing::main::cast_target::cast_target;
+use sqlquack_snowflake::typing::models::SnowflakeType;
+
+use crate::analysis::constants::DECLARABLE_OFFSETS;
 
 /// Columns and parameters as the schema file writes them.
 type RawColumns = Vec<RawColumn>;
@@ -29,6 +32,9 @@ struct RawDescribedColumn {
     type_name: String,
     #[serde(default)]
     typed_leaves: bool,
+    /// The offset every value of a TIMESTAMP_TZ source column holds: `+00:00` or `UTC`.
+    #[serde(default)]
+    offset: Option<String>,
 }
 
 /// The schema file: relations and functions, or relations alone as the top-level map.
@@ -84,50 +90,106 @@ pub(crate) fn load_schema(path: &Path) -> Result<Schema, String> {
     let log = ProvenanceLog::default();
     let mut schema = Schema::default();
     for (relation, columns) in relations {
-        if let Some(typed) = typed_columns(columns, &log) {
+        if let Some(typed) = typed_columns(columns, Some(&relation), &log)? {
             schema.relations.insert(relation, typed);
         }
     }
     for (name, function) in functions {
-        if let Some(typed) = typed_function(function, &log) {
+        if let Some(typed) = typed_function(function, &log)? {
             schema.functions.insert(name, typed);
         }
     }
     Ok(schema)
 }
 
-fn typed_function(function: RawFunction, log: &ProvenanceLog) -> Option<FunctionSpec> {
+fn typed_function(
+    function: RawFunction,
+    log: &ProvenanceLog,
+) -> Result<Option<FunctionSpec>, String> {
     let returns = match function.returns {
         RawReturns::Scalar(type_name) => match cast_target(&type_name, log) {
             Ok(target) => FunctionReturns::Scalar(target.data_type),
-            Err(_) => return None,
+            Err(_) => return Ok(None),
         },
-        RawReturns::Table { table } => FunctionReturns::Table(typed_columns(table, log)?),
+        RawReturns::Table { table } => match typed_columns(table, None, log)? {
+            Some(columns) => FunctionReturns::Table(columns),
+            None => return Ok(None),
+        },
     };
-    Some(FunctionSpec {
+    let Some(arguments) = typed_columns(function.arguments, None, log)? else {
+        return Ok(None);
+    };
+    Ok(Some(FunctionSpec {
         language: match function.language {
             RawLanguage::Sql => FunctionLanguage::Sql,
             RawLanguage::Python => FunctionLanguage::Python,
         },
-        arguments: typed_columns(function.arguments, log)?,
+        arguments,
         returns,
-    })
+    }))
 }
 
-fn typed_columns(columns: RawColumns, log: &ProvenanceLog) -> Option<Vec<ColumnSpec>> {
+/// The columns of `relation`, or of a function when None; None when a type is unknown.
+fn typed_columns(
+    columns: RawColumns,
+    relation: Option<&str>,
+    log: &ProvenanceLog,
+) -> Result<Option<Vec<ColumnSpec>>, String> {
     let mut typed: Vec<ColumnSpec> = Vec::with_capacity(columns.len());
     for column in columns {
-        let (name, type_name, typed_leaves) = match column {
-            RawColumn::Pair(name, type_name) => (name, type_name, false),
-            RawColumn::Described(column) => (column.name, column.type_name, column.typed_leaves),
+        let (name, type_name, typed_leaves, offset) = match column {
+            RawColumn::Pair(name, type_name) => (name, type_name, false, None),
+            RawColumn::Described(column) => (
+                column.name,
+                column.type_name,
+                column.typed_leaves,
+                column.offset,
+            ),
         };
-        match cast_target(&type_name, log) {
-            Ok(target) => typed.push(ColumnSpec {
-                typed_leaves,
-                ..ColumnSpec::new(name, target.data_type)
-            }),
-            Err(_) => return None,
-        }
+        let Ok(target) = cast_target(&type_name, log) else {
+            return Ok(None);
+        };
+        let declared = match offset {
+            None => Vec::new(),
+            Some(offset) => vec![declared_offset(
+                (relation, &name),
+                target.data_type,
+                &offset,
+            )?],
+        };
+        typed.push(ColumnSpec {
+            typed_leaves,
+            utc_offset: !declared.is_empty(),
+            declared_offsets: declared,
+            ..ColumnSpec::new(name, target.data_type)
+        });
     }
-    Some(typed)
+    Ok(Some(typed))
+}
+
+/// The label of a relation column declared to hold the UTC offset; any other declaration fails.
+fn declared_offset(
+    (relation, name): (Option<&str>, &str),
+    data_type: SnowflakeType,
+    offset: &str,
+) -> Result<String, String> {
+    let Some(relation) = relation else {
+        return Err(format!(
+            "{name}: an offset may be declared only for a relation's column"
+        ));
+    };
+    if !matches!(data_type, SnowflakeType::TimestampTz { .. }) {
+        return Err(format!(
+            "{relation}.{name}: an offset may be declared only for a TIMESTAMP_TZ column, not {data_type}"
+        ));
+    }
+    if !DECLARABLE_OFFSETS
+        .iter()
+        .any(|declarable| declarable.eq_ignore_ascii_case(offset))
+    {
+        return Err(format!(
+            "{relation}.{name}: the declared offset `{offset}` is not supported; only +00:00 (UTC) is"
+        ));
+    }
+    Ok(format!("{relation}.{name}"))
 }

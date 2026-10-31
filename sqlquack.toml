@@ -339,6 +339,13 @@ default = "warn"
 strict = "refuse"
 reason = "Snowflake keeps a DATE, TIME, timestamp or BINARY typed inside a VARIANT, unequal to its text, where DuckDB's JSON holds only the text. VARIANT equality, PARTITION BY a VARIANT, ARRAY_CONTAINS, ARRAY_POSITION, ARRAY_EXCEPT, ANY_VALUE, MAX_BY, MIN_BY and ARRAY_AGG without WITHIN GROUP tell VARIANTs apart by their text, so they trust a source table's or schema relation's VARIANT column to hold JSON values, as loaded from JSON. Typed values written into such a column by a process outside the project are not detected and would compare equal to their text: a wrong value. A schema column marked typed_leaves is refused instead."
 
+[divergences.declared_offset]
+constructs = ["node:cast", "fn:TO_DATE", "fn:DATE", "fn:TO_TIME", "fn:TIME", "fn:DATE_TRUNC", "fn:DATEDIFF", "fn:DATEADD", "fn:TIMEADD", "fn:TIMESTAMPADD", "fn:DATE_PART", "node:extract", "node:year", "node:quarter", "node:month", "node:day", "node:hour", "node:minute", "node:second", "fn:TO_VARIANT", "fn:OBJECT_CONSTRUCT", "fn:OBJECT_CONSTRUCT_KEEP_NULL", "fn:OBJECT_INSERT", "fn:ARRAY_CONSTRUCT"]
+assumption = true
+default = "warn"
+strict = "refuse"
+reason = "A TIMESTAMP_TZ source column's values carry their own offsets, which DuckDB does not keep. Where the schema declares a column's offset (only +00:00 is supported), operations depending on the offset, such as its wall time, date or parts, convert as for a value known to hold +00:00, and rely on `declared_offset:<RELATION.COLUMN>`. A value with another offset gives a wrong result silently. Strict mode refuses it unless the caller confirms the declared offsets."
+
 [divergences.session_timezone_utc]
 constructs = ["node:cast", "node:try_cast", "fn:TRY_TO_TIMESTAMP_TZ", "fn:CONVERT_TIMEZONE", "fn:CURRENT_DATE", "fn:CURRENT_TIMESTAMP", "fn:DATE_PART", "node:extract", "node:year", "node:quarter", "node:month", "node:day", "node:hour", "node:minute", "node:second", "fn:TO_VARIANT", "fn:OBJECT_CONSTRUCT", "fn:OBJECT_CONSTRUCT_KEEP_NULL", "fn:OBJECT_INSERT", "fn:ARRAY_CONSTRUCT", "node:map_func"]
 assumption = true

@@ -112,11 +112,13 @@ fuzz-smoke:
 # Everything CI runs: the static gate, the tests, the recorded-case replay, the exact check and the
 # timed conversion on DuckShop, and the fuzz smoke. The pre-push verify hook runs this.
 # After the static gate, the independent targets run in parallel, each target's output kept
-# together; any failure fails the gate. The verify hook builds what they need beforehand.
+# together; any failure fails the gate. The verify hook builds what they need beforehand. The fuzz
+# smoke runs alone afterwards, so its time-boxed run gets the machine to itself.
 gate: check-ci
 	$(MAKE) -j --output-sync=target gate-parallel
+	$(MAKE) fuzz-smoke
 
-gate-parallel: test-rust test-python verify-recorded polyglot-duckshop census-duckshop fuzz-smoke
+gate-parallel: test-rust test-python verify-recorded polyglot-duckshop census-duckshop
 
 # Example: make census CENSUS_ARGS="path/to/sql --json"
 census:

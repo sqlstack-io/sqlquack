@@ -1,6 +1,6 @@
 use std::process::Command;
 
-use crate::test_types::{BinaryOutcome, SourceVariantOutcome, UpstreamOutcome};
+use crate::test_types::{BinaryOutcome, DeclaredOutcome, SourceVariantOutcome, UpstreamOutcome};
 
 const ORDERS_SQL: &str = "SELECT customer_id, COUNT(*) AS orders FROM __ref(\"orders\") \
                           GROUP BY customer_id";
@@ -206,4 +206,49 @@ pub(crate) fn cursor_model_convertible(flags: &[&str]) -> Option<u64> {
         .expect("sqlquack runs");
     let report: serde_json::Value = serde_json::from_slice(&output.stdout).unwrap_or_default();
     report["refusals"]["convertible"].as_u64()
+}
+
+const PLACED_DATE_SQL: &str = "SELECT TO_DATE(placed_at) AS placed_on FROM orders";
+const DECLARED_ORDERS_SCHEMA: &str = "\"ORDERS\": [{\"name\": \"PLACED_AT\", \
+                                      \"type\": \"TIMESTAMP_TZ(9)\", \"offset\": \"+00:00\"}]";
+
+/// The census of a model reading a declared-UTC column, optionally also declaring its output.
+pub(crate) fn run_on_declared_orders(declare_model: bool, flags: &[&str]) -> DeclaredOutcome {
+    let directory = tempfile::tempdir().expect("temporary directory");
+    let models = directory.path().join("models");
+    std::fs::create_dir(&models).expect("models directory created");
+    std::fs::write(models.join("placed_dates.sql"), PLACED_DATE_SQL).expect("fixture written");
+    let model = ", \"__SQLQUACK_RELATION__PLACED_DATES\": [{\"name\": \"PLACED_ON\", \
+                 \"type\": \"TIMESTAMP_TZ(9)\", \"offset\": \"UTC\"}]";
+    let schema = directory.path().join("schema.json");
+    let relations = format!(
+        "{DECLARED_ORDERS_SCHEMA}{}",
+        ["", model][usize::from(declare_model)]
+    );
+    std::fs::write(&schema, format!("{{\"relations\": {{{relations}}}}}")).expect("schema written");
+    let policy = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("../../sqlquack.toml");
+    let output = Command::new(env!("CARGO_BIN_EXE_sqlquack"))
+        .args(["census", "--json", "--schema"])
+        .arg(&schema)
+        .arg("--policy")
+        .arg(&policy)
+        .args(flags)
+        .arg(&models)
+        .output()
+        .expect("sqlquack runs");
+    let report: serde_json::Value =
+        serde_json::from_slice(&output.stdout).unwrap_or(serde_json::Value::Null);
+    let keys = |value: &serde_json::Value| -> Vec<String> {
+        value
+            .as_object()
+            .map(|object| object.keys().cloned().collect())
+            .unwrap_or_default()
+    };
+    DeclaredOutcome {
+        exit_code: output.status.code(),
+        assumptions: keys(&report["refusals"]["assumptions"]),
+        divergences: keys(&report["provenance"]["divergences"]),
+        model_declaration_refused: String::from_utf8_lossy(&output.stderr)
+            .contains("offsets may be declared only for source columns"),
+    }
 }

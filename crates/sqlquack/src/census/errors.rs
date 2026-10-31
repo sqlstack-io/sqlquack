@@ -17,6 +17,8 @@ pub enum CensusError {
     },
     /// The worker threads could not start.
     Workers(String),
+    /// The schema declares an offset on a model's output, which SQLQuack derives itself.
+    DeclaredModelOffset(String),
 }
 
 impl Display for CensusError {
@@ -27,6 +29,10 @@ impl Display for CensusError {
                 write!(formatter, "cannot read {}: {message}", path.display())
             }
             Self::Workers(message) => write!(formatter, "cannot start census workers: {message}"),
+            Self::DeclaredModelOffset(relation) => write!(
+                formatter,
+                "the schema declares an offset for {relation}, a model in the scan; offsets may be declared only for source columns"
+            ),
         }
     }
 }

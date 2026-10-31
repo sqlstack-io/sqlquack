@@ -1,5 +1,6 @@
 pub(crate) mod collecting;
 pub(crate) mod comments;
+pub(crate) mod declared;
 pub(crate) mod divergence;
 pub(crate) mod failure;
 pub(crate) mod locations;

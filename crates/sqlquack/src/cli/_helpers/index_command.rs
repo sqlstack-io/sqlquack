@@ -64,7 +64,14 @@ fn index(arguments: &IndexArguments, policy: Option<&Policy>) -> Result<Provenan
     };
     let mut records: Vec<ConversionRecord> = Vec::new();
     let mut corpus: Vec<PathBuf> = Vec::new();
-    let conversion = divergence_options(policy, (arguments.strict, arguments.utc_session));
+    let conversion = divergence_options(
+        policy,
+        (
+            arguments.strict,
+            arguments.utc_session,
+            arguments.confirm_declared_offsets,
+        ),
+    );
     let converter = PipelineConverter {
         options: conversion.clone(),
     };

@@ -172,6 +172,17 @@ A column may also be written as an object, `{"name": "PAYLOAD", "type": "VARIANT
 or BINARY values written by a process outside the project. Statements comparing such a column by
 its text are refused rather than relying on `source_variant_json` (see Known divergences).
 
+A TIMESTAMP_TZ column of a relation may declare the offset all its values hold, `"offset":
+"+00:00"` (or `"UTC"`; no other offset is supported, and declaring one, or declaring an offset for
+another type or a function's column, is a usage error). The column then carries the same UTC mark
+as `CONVERT_TIMEZONE('UTC', x)`, through CTEs, set operations, COALESCE, CASE and windows, and an
+operation depending on the offset (its wall time, date, parts, arithmetic, or a VARIANT holding it)
+relies on the named assumption `declared_offset:<RELATION.COLUMN>`. The policy's
+`declared_offset` divergence is an assumption: allowed with a warning by default, refused in strict
+mode unless the caller confirms the declarations (`--confirm-declared-offsets`). Operations that
+do not depend on the offset, such as comparing instants or CONVERT_TIMEZONE of the value, rely on
+nothing. Undeclared TIMESTAMP_TZ columns keep refusing offset-dependent operations.
+
 - A scalar call is typed by its signature (`rule.project_function_call`): as many arguments as
   parameters, each of the parameter's type, NULL, or a NUMBER widened to a NUMBER or FLOAT
   parameter; the emitted call `"NAME"(...)` is cast to the declared return type. Python functions

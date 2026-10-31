@@ -18,6 +18,7 @@ use sqlquack_snowflake::typing::models::SnowflakeType;
 use crate::conversion::_helpers::expressions::held::{built, leaves};
 use crate::conversion::_helpers::expressions::scalar::{convert_expression, convert_held};
 use crate::conversion::_helpers::queries::query::star;
+use crate::conversion::_helpers::support::declared::rely_on_declared;
 use crate::conversion::_helpers::support::divergence::diverge;
 use crate::conversion::_helpers::support::scope::{Context, Emitted, Literal, VariantRoot};
 use crate::conversion::_helpers::support::site::Site;
@@ -214,6 +215,7 @@ pub(crate) fn as_json(
     construct: &Construct,
     context: &Context<'_>,
 ) -> Result<String, Refusal> {
+    let declared = emitted.declared;
     let sql = emitted.sql;
     let utc_offset = emitted.utc_offset;
     match emitted.data_type {
@@ -233,6 +235,7 @@ pub(crate) fn as_json(
             ))
         }
         SnowflakeType::TimestampTz { .. } if utc_offset => {
+            rely_on_declared(&declared, construct, context)?;
             diverge(context, VARIANT_TYPED_VALUES, construct)?;
             context.typed.enter();
             Ok(json_typed_text(

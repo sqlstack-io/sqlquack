@@ -110,7 +110,7 @@ fn given_a_truncated_option_value_when_parsing_tolerantly_then_parsing_finishes(
     let test_cases = [TerminationTestCase {
         description: "a stage file format cut inside its options ends",
         sql: "ALTER TABLE l SET STAGE_FILE_FORMAT(T=(=",
-        seconds: 30,
+        seconds: 2,
         expected_finished: true,
     }];
 

@@ -8,6 +8,8 @@
 set -euo pipefail
 profile=${1:?usage: run_rust_tests.sh <profile>}
 jobs=${RUST_TEST_JOBS:-4}
+# The fewest test binaries the workspace builds; fewer means tests went missing, not that they pass.
+minimum=${RUST_TEST_MIN_BINARIES:-21}
 # Started first, so the longest binaries overlap the rest.
 slowest="cli runs index"
 work=$(mktemp -d)
@@ -26,6 +28,17 @@ export LD_LIBRARY_PATH="$library_path${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"
 jq -r 'select(.reason == "compiler-artifact" and .profile.test and .executable != null)
   | [.target.name, .executable, (.manifest_path | sub("/[^/]*$"; ""))] | @tsv' \
   "$work/messages.json" | sort -u >"$work/binaries"
+found=$(wc -l <"$work/binaries")
+if [ "$found" -lt "$minimum" ]; then
+  echo "run_rust_tests: FAILED: found $found test binaries, fewer than the $minimum expected" >&2
+  exit 1
+fi
+for name in $slowest; do
+  awk -F'\t' -v name="$name" '$1 == name { found = 1 } END { exit !found }' "$work/binaries" || {
+    echo "run_rust_tests: FAILED: the $name test binary is missing" >&2
+    exit 1
+  }
+done
 {
   for name in $slowest; do awk -F'\t' -v name="$name" '$1 == name' "$work/binaries"; done
   awk -F'\t' -v slowest=" $slowest " 'index(slowest, " " $1 " ") == 0' "$work/binaries"

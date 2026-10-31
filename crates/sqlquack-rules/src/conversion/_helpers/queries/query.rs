@@ -252,6 +252,7 @@ fn convert_select(
             untainted: emitted.untainted,
             sourced: emitted.sourced,
             utc_offset: emitted.utc_offset,
+            declared_offsets: emitted.declared.clone(),
             ..ColumnSpec::new(name.clone(), emitted.data_type)
         })
         .collect();
@@ -572,6 +573,7 @@ pub(crate) fn star(
                     untainted: column.untainted,
                     sourced: column.sourced,
                     utc_offset: column.utc_offset,
+                    declared: column.declared_offsets.clone(),
                     ..Emitted::new(sql, column.data_type)
                 },
             ));

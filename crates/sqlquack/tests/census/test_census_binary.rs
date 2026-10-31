@@ -1,10 +1,11 @@
 use crate::helpers::{
-    census_warnings, cursor_model_convertible, run_on_events, run_on_placed_orders,
-    run_on_refused_upstream, run_on_shop,
+    census_warnings, cursor_model_convertible, run_on_declared_orders, run_on_events,
+    run_on_placed_orders, run_on_refused_upstream, run_on_shop,
 };
 use crate::test_types::{
-    BinaryOutcome, BinaryTestCase, CursorTestCase, SessionTimeZoneTestCase, SourceVariantOutcome,
-    SourceVariantTestCase, UpstreamOutcome, UpstreamTestCase, WarningsTestCase,
+    BinaryOutcome, BinaryTestCase, CursorTestCase, DeclaredOutcome, DeclaredTestCase,
+    SessionTimeZoneTestCase, SourceVariantOutcome, SourceVariantTestCase, UpstreamOutcome,
+    UpstreamTestCase, WarningsTestCase,
 };
 
 #[test]
@@ -327,6 +328,53 @@ fn given_cursor_intrinsics_when_running_census_then_only_a_known_cursor_type_typ
         assert_eq!(
             cursor_model_convertible(test_case.flags),
             test_case.expected_convertible,
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_a_declared_offset_when_running_census_then_names_appear_only_under_names() {
+    let test_cases = [
+        DeclaredTestCase {
+            description: "without --names the assumption is counted by its policy id alone",
+            declare_model: false,
+            flags: &[],
+            expected_outcome: DeclaredOutcome {
+                exit_code: Some(0),
+                assumptions: vec!["declared_offset".to_owned()],
+                divergences: vec!["declared_offset at fn:TO_DATE".to_owned()],
+                model_declaration_refused: false,
+            },
+        },
+        DeclaredTestCase {
+            description: "with --names the declared column is named",
+            declare_model: false,
+            flags: &["--names"],
+            expected_outcome: DeclaredOutcome {
+                exit_code: Some(0),
+                assumptions: vec!["declared_offset:ORDERS.PLACED_AT".to_owned()],
+                divergences: vec!["declared_offset:ORDERS.PLACED_AT at fn:TO_DATE".to_owned()],
+                model_declaration_refused: false,
+            },
+        },
+        DeclaredTestCase {
+            description: "an offset declared on a scanned model's output is refused",
+            declare_model: true,
+            flags: &[],
+            expected_outcome: DeclaredOutcome {
+                exit_code: Some(1),
+                assumptions: Vec::new(),
+                divergences: Vec::new(),
+                model_declaration_refused: true,
+            },
+        },
+    ];
+    for test_case in test_cases {
+        assert_eq!(
+            run_on_declared_orders(test_case.declare_model, test_case.flags),
+            test_case.expected_outcome,
             "{}",
             test_case.description
         );

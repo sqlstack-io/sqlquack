@@ -11,3 +11,6 @@ pub const REQUIRED_DUCKDB_SETTINGS: &[(&str, &str)] = &[("TimeZone", "UTC")];
 
 /// The profile name reported when the built-in default stands in for a policy.
 pub const BUILTIN_PROFILE: &str = "the built-in default";
+
+/// The offsets a schema may declare for a TIMESTAMP_TZ source column, all meaning +00:00.
+pub const DECLARABLE_OFFSETS: &[&str] = &["+00:00", "UTC"];
