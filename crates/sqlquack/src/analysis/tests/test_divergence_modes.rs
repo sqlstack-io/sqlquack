@@ -267,20 +267,30 @@ fn given_a_known_divergence_when_converting_then_default_mode_warns_and_strict_m
             strict: false,
             expected_outcome: DivergenceModeOutcome {
                 converted: true,
-                divergences: vec![(
-                    "timestamp_tz_submicro".to_owned(),
-                    vec!["node:cast".to_owned()],
-                )],
+                divergences: vec![
+                    (
+                        "session_timezone_utc".to_owned(),
+                        vec!["node:cast".to_owned()],
+                    ),
+                    (
+                        "timestamp_tz_submicro".to_owned(),
+                        vec!["node:cast".to_owned()],
+                    ),
+                ],
                 categories: vec![],
             },
         },
         DivergenceModeTestCase {
-            description: "a cast keeping only microseconds needs no divergence",
+            description: "a cast keeping only microseconds needs no timestamp_tz_submicro, only \
+                          the UTC session every naive-to-zoned cast relies on",
             sql: "SELECT CAST(CAST('2024-02-29 13:45:01.1' AS TIMESTAMP_NTZ(9)) AS TIMESTAMP_TZ(6)) AS t",
-            strict: true,
+            strict: false,
             expected_outcome: DivergenceModeOutcome {
                 converted: true,
-                divergences: vec![],
+                divergences: vec![(
+                    "session_timezone_utc".to_owned(),
+                    vec!["node:cast".to_owned()],
+                )],
                 categories: vec![],
             },
         },

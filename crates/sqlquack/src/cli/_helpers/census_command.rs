@@ -35,7 +35,10 @@ pub(crate) fn census_command(
             return ExitCode::FAILURE;
         }
     };
-    let conversion = match divergence_options(arguments.policy.as_deref(), arguments.strict) {
+    let conversion = match divergence_options(
+        arguments.policy.as_deref(),
+        (arguments.strict, arguments.utc_session),
+    ) {
         Ok((conversion, true)) => conversion,
         Ok((conversion, false)) => {
             let _ = writeln!(
@@ -49,8 +52,28 @@ pub(crate) fn census_command(
             return ExitCode::FAILURE;
         }
     };
-    let assume_supported = match assumed_constructs(&arguments.assume_supported) {
-        Ok(constructs) => constructs,
+    if !arguments.assume_supported.is_empty() && !arguments.chain_models {
+        let _ = writeln!(
+            stderr,
+            "sqlquack census: --assume-supported needs --chain-models, since a reader of a \
+             refused model converts only once the model is typed"
+        );
+        return ExitCode::from(2);
+    }
+    let named: Vec<String> = arguments
+        .assume_supported
+        .iter()
+        .map(|name| name.trim().to_owned())
+        .collect();
+    if named.iter().any(String::is_empty) {
+        let _ = writeln!(
+            stderr,
+            "sqlquack census: warning: --assume-supported has an empty key, which is ignored"
+        );
+    }
+    let named: Vec<String> = named.into_iter().filter(|name| !name.is_empty()).collect();
+    let assumed = match assumed_constructs(&named) {
+        Ok(assumed) => assumed,
         Err(unknown) => {
             let _ = writeln!(
                 stderr,
@@ -66,7 +89,10 @@ pub(crate) fn census_command(
         chain_models: arguments.chain_models,
         conversion,
         names: arguments.names,
-        assume_supported,
+        assume_supported: assumed
+            .iter()
+            .flat_map(|(_, constructs)| constructs.iter().cloned())
+            .collect(),
     };
     let started = Instant::now();
     let _ = writeln!(stderr, "sqlquack census: reading SQL files…");
@@ -80,6 +106,18 @@ pub(crate) fn census_command(
         }
     };
     let report = run.report;
+    for (name, constructs) in &assumed {
+        if constructs
+            .iter()
+            .all(|construct| report.plan.unmatched.contains(construct))
+        {
+            let _ = writeln!(
+                stderr,
+                "sqlquack census: warning: --assume-supported '{name}' matches no collected \
+                 refusal, so it changes no bound"
+            );
+        }
+    }
     let rendered = if arguments.json {
         match serde_json::to_string_pretty(&report) {
             Ok(json) => json + "\n",
@@ -111,23 +149,25 @@ pub(crate) fn census_command(
     ExitCode::SUCCESS
 }
 
-/// The constructs `names` stand for: a rule's constructs for `rule.<id>`, else the construct key.
-fn assumed_constructs(names: &[String]) -> Result<Vec<String>, String> {
-    let mut constructs: Vec<String> = Vec::new();
+/// Each name with the constructs it stands for: a rule's for `rule.<id>`, else the construct key.
+fn assumed_constructs(names: &[String]) -> Result<Vec<(String, Vec<String>)>, String> {
+    let mut assumed: Vec<(String, Vec<String>)> = Vec::new();
     for name in names {
         if !name.starts_with(RULE_ID_PREFIX) {
-            constructs.push(name.clone());
+            assumed.push((name.clone(), vec![name.clone()]));
             continue;
         }
         let rule = RULES
             .iter()
             .find(|rule| rule.id == name)
             .ok_or_else(|| name.clone())?;
-        constructs.extend(
+        assumed.push((
+            name.clone(),
             rule.constructs
                 .iter()
-                .map(|construct| (*construct).to_owned()),
-        );
+                .map(|construct| (*construct).to_owned())
+                .collect(),
+        ));
     }
-    Ok(constructs)
+    Ok(assumed)
 }

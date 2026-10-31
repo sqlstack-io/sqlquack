@@ -69,6 +69,22 @@ fn given_policy_text_when_parsing_then_schema_and_rules_are_enforced() {
             ),
         },
         PolicyTestCase {
+            description: "a session profile must run DuckDB in UTC",
+            replace: "duckdb_time_zone = \"UTC\"",
+            with: "duckdb_time_zone = \"Europe/London\"",
+            expected_error: Some(
+                "the policy file is invalid: session profile `utc-v1` needs duckdb_time_zone = \"UTC\"",
+            ),
+        },
+        PolicyTestCase {
+            description: "a session profile must run Snowflake in UTC, spelled canonically",
+            replace: "TIMEZONE = \"UTC\"",
+            with: "TIMEZONE = \"utc\"",
+            expected_error: Some(
+                "the policy file is invalid: session profile `utc-v1` needs TIMEZONE = \"UTC\"",
+            ),
+        },
+        PolicyTestCase {
             description: "an edge-case category must require something",
             replace: "required = [\"null\", \"zero\"]",
             with: "required = []",

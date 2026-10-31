@@ -18,9 +18,11 @@ pub(crate) fn render_plan_text(text: &mut String, plan: &PlanReport) {
     };
     let _ = writeln!(
         text,
-        "  assuming {assumed} supported: unit-testable at most {}, strict at most {} ({} possibly \
-         incomplete)",
-        plan.unit_testable_upper_bound, plan.strict_upper_bound, plan.possibly_incomplete
+        "  assuming {assumed} supported: unit-testable at most {} ({} of them possibly \
+         incomplete), strict at most {}",
+        plan.unit_testable_upper_bound,
+        plan.unit_testable_possibly_incomplete,
+        plan.strict_upper_bound
     );
     for next in &plan.next {
         let _ = writeln!(
@@ -37,9 +39,11 @@ pub(crate) fn render_plan_text(text: &mut String, plan: &PlanReport) {
             .collect();
         let _ = writeln!(
             text,
-            "  step {:>2}: unit-testable at most {:>6}, strict at most {:>6}  + {}",
+            "  step {:>2}: unit-testable at most {:>6} ({:>5} possibly incomplete), strict at \
+             most {:>6}  + {}",
             number + 1,
             step.unit_testable_upper_bound,
+            step.unit_testable_possibly_incomplete,
             step.strict_upper_bound,
             roots.join(" + ")
         );

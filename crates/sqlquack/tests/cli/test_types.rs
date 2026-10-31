@@ -81,3 +81,8 @@ pub(crate) struct CoverageOutcome {
     pub(crate) shape_gaps: Vec<String>,
     pub(crate) hazard_gaps: Vec<String>,
 }
+
+pub(crate) struct PendingFlagsTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) expected_flags: Vec<(String, Option<bool>)>,
+}

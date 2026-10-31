@@ -45,3 +45,15 @@ pub(crate) struct UpstreamOutcome {
     /// The plan's unit-testable and strict upper bounds.
     pub(crate) plan_bounds: Option<[u64; 2]>,
 }
+
+pub(crate) struct SessionTimeZoneTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) flags: &'static [&'static str],
+    pub(crate) expected_outcome: SourceVariantOutcome,
+}
+
+pub(crate) struct WarningsTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) flags: &'static [&'static str],
+    pub(crate) expected_warnings: Vec<String>,
+}

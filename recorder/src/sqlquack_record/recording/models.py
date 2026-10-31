@@ -20,6 +20,7 @@ class PendingCase:
     values: bool = True
     setup_sql: tuple[str, ...] = ()
     pinned_parameters: tuple[tuple[str, bool | int | str], ...] = ()
+    compile_error: bool = False
 
     def recording_parameters(self) -> tuple[tuple[str, bool | int | str], ...]:
         """The pinned and case parameters the recording session sets, sorted by name."""

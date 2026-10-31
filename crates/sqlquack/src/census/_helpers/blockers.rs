@@ -12,10 +12,11 @@ use crate::census::_helpers::corpus::model_relation;
 use crate::census::_helpers::inspect::FileCensus;
 use crate::census::constants::{
     CYCLE_ROOT, MODEL_ROOT_PREFIX, RELATION_ROOT_PREFIX, UNKNOWN_RELATION_ROOT,
-    UPSTREAM_MODEL_ROOT, UPSTREAM_REFUSED_LABEL,
+    UPSTREAM_MISSING_LABEL, UPSTREAM_MODEL_ROOT, UPSTREAM_REFUSED_LABEL,
 };
 use crate::census::models::{
-    BlockedFile, BlockerReport, RootBlocker, RootKey, UpstreamBlock, UpstreamRefusedFile,
+    BlockedFile, BlockerReport, ModelReads, RootBlocker, RootKey, UpstreamBlock,
+    UpstreamRefusedFile,
 };
 use crate::planning::models::PlanInput;
 
@@ -40,23 +41,45 @@ pub(crate) fn blockers(
             *keys = std::mem::take(keys).into_iter().map(unnamed).collect();
         }
     }
-    let (reads, needs) = model_reads(files, censuses, schema);
+    let ModelReads {
+        reads,
+        needs,
+        missing,
+    } = model_reads(files, censuses, schema);
     let refused_upstream = upstream_refused(censuses, &reads);
     let plan_input = PlanInput {
         own: own.clone(),
         needs,
-        reads,
+        reads: reads.clone(),
         parsed: censuses.iter().map(|census| census.parsed).collect(),
         incomplete: incomplete.clone(),
+        missing: missing
+            .iter()
+            .map(|relations| !relations.is_empty())
+            .collect(),
     };
     let mut upstream_refused: Vec<UpstreamRefusedFile> = Vec::new();
-    for index in order
-        .iter()
-        .filter(|index| !refused_upstream[**index].is_empty())
-    {
+    for index in &order {
         let mut labels: Vec<String> = Vec::new();
         for upstream in &refused_upstream[*index] {
             labels.push(format!("{UPSTREAM_REFUSED_LABEL}{}", models[*upstream]));
+        }
+        if !graph.refused[*index] {
+            let mut absent: BTreeSet<&String> = missing[*index].iter().collect();
+            for upstream in upstream_reads(*index, &reads) {
+                absent.extend(&missing[upstream]);
+            }
+            for relation in absent {
+                let shown = match names {
+                    true => relation.as_str(),
+                    false => "",
+                };
+                labels.push(format!("{UPSTREAM_MISSING_LABEL}{shown}"));
+            }
+            labels.dedup();
+        }
+        if labels.is_empty() {
+            continue;
         }
         upstream_refused.push(UpstreamRefusedFile {
             model: models[*index].clone(),
@@ -252,12 +275,8 @@ impl Graph {
     }
 }
 
-/// The models each file reads, and those among them neither converting nor typed by the schema.
-fn model_reads(
-    files: &[PathBuf],
-    censuses: &[FileCensus],
-    schema: &Schema,
-) -> (Vec<BTreeSet<usize>>, Vec<BTreeSet<usize>>) {
+/// The models each file reads, the untyped refused ones among them, and absent ones it references.
+fn model_reads(files: &[PathBuf], censuses: &[FileCensus], schema: &Schema) -> ModelReads {
     let mut by_relation: BTreeMap<String, usize> = BTreeMap::new();
     let mut untyped: BTreeSet<usize> = BTreeSet::new();
     let typed_relations: BTreeSet<String> =
@@ -285,12 +304,25 @@ fn model_reads(
     };
     let mut reads: Vec<BTreeSet<usize>> = Vec::with_capacity(censuses.len());
     let mut needs: Vec<BTreeSet<usize>> = Vec::with_capacity(censuses.len());
+    let mut missing: Vec<BTreeSet<String>> = Vec::with_capacity(censuses.len());
     for (index, census) in censuses.iter().enumerate() {
         let read = models_of(index, &census.references);
         needs.push(read.intersection(&untyped).copied().collect());
         reads.push(read);
+        missing.push(
+            census
+                .model_references
+                .iter()
+                .filter(|relation| !by_relation.contains_key(&folded(relation)))
+                .cloned()
+                .collect(),
+        );
     }
-    (reads, needs)
+    ModelReads {
+        reads,
+        needs,
+        missing,
+    }
 }
 
 /// For each converted file, the refused models upstream of it; empty when it runs end to end.

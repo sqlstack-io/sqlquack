@@ -9,6 +9,7 @@ from typing import Any
 from snowflake.connector.errors import ProgrammingError
 
 from sqlquack_record.recording.constants import (
+    EXPLAIN_PREFIX,
     PARAMETER_KEY_COLUMN,
     PARAMETER_VALUE_COLUMN,
     SHOW_SESSION_PARAMETERS,
@@ -16,6 +17,7 @@ from sqlquack_record.recording.constants import (
 from sqlquack_record.recording.exceptions import RecorderError, UnrecordableResultError
 from sqlquack_record.recording.models import StatementResult, WarehouseFailure
 from sqlquack_record.snowflake._helpers.cursors import (
+    compile_message,
     error_message,
     fetch,
     require_batch_recordable,
@@ -84,6 +86,19 @@ class SnowflakeSession:
             )
         finally:
             cursor.close()
+
+    def compile_failure(self, statement: str) -> WarehouseFailure | None:
+        """`EXPLAIN` the statement, which compiles it without running it or creating anything."""
+        cursor: Any = self._connection.cursor()
+        try:
+            cursor.execute(f"{EXPLAIN_PREFIX}{statement}")
+        except ProgrammingError as error:
+            return WarehouseFailure(
+                errno=error.errno, sqlstate=error.sqlstate, message=compile_message(error)
+            )
+        finally:
+            cursor.close()
+        return None
 
     def execute(self, statement: str) -> None:
         """Run a statement that is not a case; a warehouse error raises `RecorderError`."""

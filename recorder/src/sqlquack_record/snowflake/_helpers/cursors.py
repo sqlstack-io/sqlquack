@@ -75,6 +75,20 @@ def error_message(error: ProgrammingError) -> str | None:
     return ERROR_PREFIX_PATTERN.sub("", message).strip(" :")
 
 
+def compile_message(error: ProgrammingError) -> str:
+    """A compile error's message for the console: session failures raise, no query ID is kept."""
+    sqlstate: str = str(error.sqlstate or "")
+    if not sqlstate or sqlstate[:2] in SESSION_FAILURE_SQLSTATE_CLASSES:
+        raise RecorderError(
+            f"Snowflake error {error.errno} (SQLSTATE {sqlstate or 'unknown'}) while compiling "
+            f"a case; nothing was recorded: {error.msg}"
+        ) from error
+    message: str = QUERY_ID_PATTERN.sub("", str(error.msg or ""))
+    if error.sfqid:
+        message = message.replace(str(error.sfqid), "")
+    return " ".join(ERROR_PREFIX_PATTERN.sub("", message).split())
+
+
 def require_batch_recordable(error: ProgrammingError) -> None:
     """Accept a multi-statement wrapper error as a batch failure; otherwise `require_recordable`."""
     if (error.errno, error.sqlstate) != MULTI_STATEMENT_FAILURE:

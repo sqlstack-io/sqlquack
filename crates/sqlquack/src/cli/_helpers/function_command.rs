@@ -49,7 +49,7 @@ fn convert(arguments: &FunctionArguments) -> Result<ConvertedFunction, String> {
         .map_err(|error| format!("cannot read {}: {error}", arguments.body.display()))?;
     let (options, _) = divergence_options(
         Some(arguments.policy.as_path()).filter(|path| path.is_file()),
-        arguments.strict,
+        (arguments.strict, arguments.utc_session),
     )?;
     analyze_function(
         (&body, spec),

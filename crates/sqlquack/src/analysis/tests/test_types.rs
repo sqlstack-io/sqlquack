@@ -160,3 +160,11 @@ pub(crate) struct EmittedGrowthTestCase {
     pub(crate) sql: &'static str,
     pub(crate) expected_bindings: usize,
 }
+
+pub(crate) struct SessionTimeZoneTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) sql: &'static str,
+    pub(crate) strict: bool,
+    pub(crate) utc_session: bool,
+    pub(crate) expected_outcome: DivergenceModeOutcome,
+}

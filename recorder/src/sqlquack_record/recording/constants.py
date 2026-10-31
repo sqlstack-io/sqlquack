@@ -50,7 +50,12 @@ PENDING_KEYS: frozenset[str] = frozenset(
 VALUES_KEY: str = "values"
 SETUP_KEY: str = "setup_sql"
 PINNED_KEY: str = "pinned_parameters"
-OPTIONAL_PENDING_KEYS: frozenset[str] = frozenset({VALUES_KEY, SETUP_KEY, PINNED_KEY})
+COMPILE_ERROR_KEY: str = "compile_error"
+OPTIONAL_PENDING_KEYS: frozenset[str] = frozenset(
+    {VALUES_KEY, SETUP_KEY, PINNED_KEY, COMPILE_ERROR_KEY}
+)
+EXPLAIN_PREFIX: str = "EXPLAIN USING TEXT "
+COMPILE_FAILURE_SQLSTATE_CLASSES: frozenset[str] = frozenset({"0A", "42"})
 SHOW_SESSION_PARAMETERS: str = "SHOW PARAMETERS IN SESSION"
 PARAMETER_KEY_COLUMN: str = "key"
 PARAMETER_VALUE_COLUMN: str = "value"

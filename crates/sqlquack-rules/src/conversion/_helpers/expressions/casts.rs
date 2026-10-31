@@ -55,10 +55,11 @@ use crate::conversion::_helpers::support::tree::{
 use crate::conversion::constants::{
     CAST_BOOLEAN, CAST_NUMERIC, CAST_PARSED_TEXT, CAST_SAME_TYPE, CAST_TEMPORAL, CAST_TEXT_LITERAL,
     CAST_TEXT_TIME, CAST_TEXT_TIMESTAMP, CAST_TO_TEXT, CAST_UTC_ZONED, DATE_TEXT_SPELLING,
-    FLOAT_SCALE_FACET, KIND_CAST_TARGETS, MICROSECOND_DIGITS, NTZ_OUTPUT_PATTERN, TARGET_FACET,
-    TEXT_TYPE_PAIR, TEXT_TYPE_SPELLINGS, TIME_CAST, TIMESTAMP_RANGE, TIMESTAMP_TEXT_ROUNDING,
-    TO_BOOLEAN_RULE, TO_DOUBLE_PAIR, TO_NUMBER_PAIR, TO_VARCHAR_PAIR, TO_VARIANT_RULE,
-    VARIANT_KIND_CAST, VARIANT_NAME, VARIANT_TEXT_FUNCTION, VARIANT_TO_VARCHAR,
+    FLOAT_SCALE_FACET, KIND_CAST_TARGETS, MICROSECOND_DIGITS, NTZ_OUTPUT_PATTERN,
+    SESSION_TIMEZONE_UTC, TARGET_FACET, TEXT_TYPE_PAIR, TEXT_TYPE_SPELLINGS, TIME_CAST,
+    TIMESTAMP_RANGE, TIMESTAMP_TEXT_ROUNDING, TO_BOOLEAN_RULE, TO_DOUBLE_PAIR, TO_NUMBER_PAIR,
+    TO_VARCHAR_PAIR, TO_VARIANT_RULE, VARIANT_KIND_CAST, VARIANT_NAME, VARIANT_TEXT_FUNCTION,
+    VARIANT_TO_VARCHAR,
 };
 
 /// Serialised kinds of Snowflake's structured types.
@@ -326,6 +327,7 @@ fn cast_sql(
         }
         (SnowflakeType::TimestampLtz { precision }, SnowflakeType::TimestampNtz { .. }, _) => {
             let _rule = cast_rule(CAST_UTC_ZONED, log);
+            diverge(context, SESSION_TIMEZONE_UTC, construct).map_err(|refusal| refusal.reason)?;
             nanosecond_range(to, (context, construct))?;
             temporal_cast(
                 &utc_wall_time(&operand.sql, log),

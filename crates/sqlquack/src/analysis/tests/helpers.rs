@@ -21,6 +21,7 @@ use crate::analysis::main::analyze::analyze;
 use crate::analysis::main::analyze_function::analyze_function;
 use crate::analysis::main::check_equivalence_cases::check_equivalence_cases;
 use crate::analysis::main::collect_all_refusals::collect_all_refusals;
+use crate::analysis::main::confirm_utc_session::confirm_utc_session;
 use crate::analysis::main::conversion_options::conversion_options;
 use crate::analysis::main::refused_construct::refused_construct;
 use crate::analysis::models::PipelineConverter;
@@ -244,9 +245,18 @@ pub(crate) fn equivalence_case_checks() -> Vec<String> {
 
 /// Converts `sql` under the repository policy's known divergences in one mode.
 pub(crate) fn divergence_outcome(sql: &str, strict: bool) -> DivergenceModeOutcome {
+    session_outcome(sql, (strict, false))
+}
+
+/// The outcome of `sql` in strict or default mode, with or without a confirmed UTC session.
+pub(crate) fn session_outcome(
+    sql: &str,
+    (strict, utc_session): (bool, bool),
+) -> DivergenceModeOutcome {
     let policy =
         load_policy(&repository_root().join(POLICY_FILE_NAME)).expect("repository policy loads");
-    let options = conversion_options(&policy, strict);
+    let options = std::iter::repeat_n(&policy, usize::from(utc_session))
+        .fold(conversion_options(&policy, strict), confirm_utc_session);
     let analysis = analyze(
         sql,
         SourceDialect::Snowflake,
@@ -635,4 +645,19 @@ pub(crate) fn argument_copies(wrapper: &str, short: &str, long: &str) -> usize {
     };
     let grown = bare(long) - bare(short);
     (length(long) - length(short) + grown / 2) / grown
+}
+
+/// The outcome of a statement that converts relying only on `session_timezone_utc` at `constructs`.
+pub(crate) fn relying_on_utc_session(constructs: &[&str]) -> DivergenceModeOutcome {
+    DivergenceModeOutcome {
+        converted: true,
+        divergences: vec![(
+            "session_timezone_utc".to_owned(),
+            constructs
+                .iter()
+                .map(|construct| (*construct).to_owned())
+                .collect(),
+        )],
+        categories: vec![],
+    }
 }

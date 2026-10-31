@@ -7,7 +7,7 @@ use sqlquack_core::parsing::models::{SourceLines, SourceLocation};
 use sqlquack_core::classification::constants::PROJECT_FUNCTION_PLACEHOLDER;
 
 use crate::census::constants::{
-    CURSOR_CALLS, CURSOR_PLACEHOLDER, RELATION_CALLS, RELATION_PLACEHOLDER,
+    CURSOR_CALLS, CURSOR_PLACEHOLDER, MODEL_CALLS, RELATION_CALLS, RELATION_PLACEHOLDER,
     TABLE_FUNCTION_PLACEHOLDER,
 };
 use crate::census::models::{Replacement, Rewritten};
@@ -18,11 +18,13 @@ const TABLE_FUNCTION_CALL: &str = "__table_fn";
 /// The rewritten SQL, the placeholder relation each reference call became and the replacements.
 pub(crate) fn rewrite_with_references(sql: &str) -> Rewritten {
     let mut references: BTreeSet<String> = BTreeSet::new();
+    let mut model_references: BTreeSet<String> = BTreeSet::new();
     let mut replacements: Vec<Replacement> = Vec::new();
     if !sql.contains("__") {
         return Rewritten {
             sql: sql.to_owned(),
             references,
+            model_references,
             replacements,
         };
     }
@@ -46,6 +48,9 @@ pub(crate) fn rewrite_with_references(sql: &str) -> Rewritten {
                 if RELATION_CALLS.contains(&name.as_str()) {
                     references.insert(replacement.to_ascii_uppercase());
                 }
+                if MODEL_CALLS.contains(&name.as_str()) {
+                    model_references.insert(replacement.to_ascii_uppercase());
+                }
                 rewritten.push_str(&sql[copied..position]);
                 replacements.push(Replacement {
                     rewritten: rewritten.len()..rewritten.len() + replacement.len(),
@@ -65,6 +70,7 @@ pub(crate) fn rewrite_with_references(sql: &str) -> Rewritten {
     Rewritten {
         sql: rewritten,
         references,
+        model_references,
         replacements,
     }
 }

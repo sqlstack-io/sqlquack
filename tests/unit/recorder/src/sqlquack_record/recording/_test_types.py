@@ -58,3 +58,15 @@ class DefaultsTestCase:
     names: frozenset[str]
     expected_parameters: dict[str, str]
     expected_error: str
+
+
+@dataclass(frozen=True)
+class PrecheckTestCase:
+    description: str
+    statements: tuple[str, ...]
+    uncompilable: frozenset[str]
+    declared: frozenset[str]
+    with_functions: frozenset[str]
+    expected_message: str
+    expected_log: tuple[str, ...]
+    expected_files_written: int

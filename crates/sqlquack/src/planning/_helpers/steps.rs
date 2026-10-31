@@ -2,7 +2,7 @@
 
 use std::collections::{BTreeMap, BTreeSet};
 
-use crate::census::constants::{PLAN_SET_SIZE, PLAN_STEPS, PLANNABLE_ROOT_EXCLUDED};
+use crate::census::constants::{PLAN_SET_SIZE, PLAN_STEPS, PLANNABLE_CATEGORIES};
 use crate::census::models::{PlanStep, RootKey};
 use crate::planning::_helpers::outcomes::{outcomes, remaining};
 use crate::planning::models::{Outcomes, PlanInput};
@@ -38,10 +38,21 @@ pub(crate) fn greedy_steps(input: &PlanInput, supported: &BTreeSet<String>) -> V
             roots: roots.into_iter().collect(),
             unit_testable_upper_bound: count(&after.unit),
             strict_upper_bound: count(&after.strict),
+            unit_testable_possibly_incomplete: possibly_incomplete(&after, &input.incomplete),
         });
         current = after;
     }
     steps
+}
+
+/// Of the unit-testable files, those that may hold refusals collecting did not reach.
+pub(crate) fn possibly_incomplete(outcomes: &Outcomes, incomplete: &[bool]) -> usize {
+    outcomes
+        .unit
+        .iter()
+        .zip(incomplete)
+        .filter(|(unit, incomplete)| **unit && **incomplete)
+        .count()
 }
 
 /// The unit-testable and strict files together.
@@ -100,10 +111,9 @@ fn closure_roots(
     roots
 }
 
-/// Whether a root names a construct a rule could support, not a name or a cycle.
+/// Whether a root is a missing rule or a rule's type condition, which a rule could resolve.
 fn plannable(root: &RootKey) -> bool {
-    root.construct.contains(':')
-        && !PLANNABLE_ROOT_EXCLUDED
-            .iter()
-            .any(|prefix| root.construct.starts_with(prefix))
+    PLANNABLE_CATEGORIES
+        .iter()
+        .any(|category| root.category == category.label())
 }

@@ -29,6 +29,7 @@ fn case(inputs: &[(&str, &[&str])]) -> LoadedCase {
         role: CaseRole::Conversion,
         expected_divergence: None,
         values: true,
+        compile_error: false,
         functions: Vec::new(),
         setup_sql: Vec::new(),
         inputs: inputs

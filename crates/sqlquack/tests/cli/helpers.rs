@@ -450,3 +450,66 @@ pub(crate) fn verify_coverage(key_families: &str, arguments: &[&str]) -> Coverag
         hazard_gaps: strings("hazard_gaps"),
     }
 }
+
+const COMPILE_ERROR_CASES: &str = r#"category = "relational"
+construct = "node:select"
+session_profile = "utc-v1"
+
+[[case]]
+id = "reserved_alias"
+description = "An alias Snowflake reserves, which it refuses to compile."
+columns = [{ name = "quantity", type = "NUMBER(38,0)" }]
+rows = [["1"]]
+query = "SELECT quantity AS order FROM input"
+order = "ordered"
+tags = ["null", "duplicates", "empty-input"]
+compile_error = true
+
+[[case]]
+id = "plain_alias"
+description = "An ordinary alias."
+columns = [{ name = "quantity", type = "NUMBER(38,0)" }]
+rows = [["1"]]
+query = "SELECT quantity AS order_quantity FROM input"
+order = "ordered"
+tags = ["null", "duplicates", "empty-input"]
+"#;
+
+/// Each pending file's case reference and `compile_error`, for one case declaring it.
+pub(crate) fn pending_compile_errors() -> Vec<(String, Option<bool>)> {
+    let directory = tempfile::tempdir().expect("temporary directory");
+    std::fs::copy(
+        repository_root().join("sqlquack.toml"),
+        directory.path().join("sqlquack.toml"),
+    )
+    .expect("policy copied");
+    let cases = directory.path().join("cases/relational");
+    std::fs::create_dir_all(&cases).expect("cases directory");
+    std::fs::write(cases.join("aliases.toml"), COMPILE_ERROR_CASES).expect("cases written");
+    let status = Command::new(env!("CARGO_BIN_EXE_sqlquack"))
+        .arg("pending")
+        .current_dir(directory.path())
+        .output()
+        .expect("sqlquack runs")
+        .status;
+    assert!(status.success(), "pending succeeds");
+    let mut flags: Vec<(String, Option<bool>)> =
+        std::fs::read_dir(directory.path().join("evidence/pending"))
+            .expect("pending files")
+            .flatten()
+            .map(|entry| {
+                let text = std::fs::read_to_string(entry.path()).expect("pending file read");
+                let pending: serde_json::Value =
+                    serde_json::from_str(&text).expect("pending file parses");
+                (
+                    pending["case_reference"]
+                        .as_str()
+                        .unwrap_or_default()
+                        .to_owned(),
+                    pending["compile_error"].as_bool(),
+                )
+            })
+            .collect();
+    flags.sort();
+    flags
+}

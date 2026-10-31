@@ -115,3 +115,63 @@ pub(crate) fn run_on_events(payload: &str, flags: &[&str]) -> SourceVariantOutco
         labelled: report["provenance"]["divergences"]["source_variant_json at node:eq"].as_u64(),
     }
 }
+
+const PLACED_SQL: &str = "SELECT CAST(placed_on AS TIMESTAMP_TZ) AS placed_at FROM orders";
+
+/// Runs the census, with `flags`, over a model reading a naive column as TIMESTAMP_TZ.
+pub(crate) fn run_on_placed_orders(flags: &[&str]) -> SourceVariantOutcome {
+    let directory = tempfile::tempdir().expect("temporary directory");
+    let models = directory.path().join("models");
+    std::fs::create_dir(&models).expect("models directory created");
+    std::fs::write(models.join("placed_orders.sql"), PLACED_SQL).expect("fixture written");
+    let schema = directory.path().join("schema.json");
+    std::fs::write(
+        &schema,
+        "{\"relations\": {\"ORDERS\": [[\"PLACED_ON\", \"DATE\"]]}}",
+    )
+    .expect("schema written");
+    let policy = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("../../sqlquack.toml");
+    let output = Command::new(env!("CARGO_BIN_EXE_sqlquack"))
+        .args(["census", "--json", "--schema"])
+        .arg(&schema)
+        .arg("--policy")
+        .arg(&policy)
+        .args(flags)
+        .arg(&models)
+        .output()
+        .expect("sqlquack runs");
+    let report: serde_json::Value =
+        serde_json::from_slice(&output.stdout).unwrap_or(serde_json::Value::Null);
+    SourceVariantOutcome {
+        exit_code: output.status.code(),
+        convertible: report["refusals"]["convertible"].as_u64(),
+        labelled: report["provenance"]["divergences"]["session_timezone_utc at node:cast"].as_u64(),
+    }
+}
+
+/// The warnings the census prints for `flags` over a refused model and its reader.
+pub(crate) fn census_warnings(flags: &[&str]) -> Vec<String> {
+    let directory = tempfile::tempdir().expect("temporary directory");
+    let models = directory.path().join("models");
+    std::fs::create_dir(&models).expect("models directory created");
+    std::fs::write(models.join("fuzzy_names.sql"), FUZZY_NAMES_SQL).expect("fixture written");
+    std::fs::write(models.join("name_report.sql"), NAME_REPORT_SQL).expect("fixture written");
+    let schema = directory.path().join("schema.json");
+    std::fs::write(
+        &schema,
+        format!("{{\"relations\": {{{CUSTOMERS_SCHEMA}}}}}"),
+    )
+    .expect("schema written");
+    let output = Command::new(env!("CARGO_BIN_EXE_sqlquack"))
+        .args(["census", "--json", "--chain-models", "--schema"])
+        .arg(&schema)
+        .args(flags)
+        .arg(&models)
+        .output()
+        .expect("sqlquack runs");
+    String::from_utf8_lossy(&output.stderr)
+        .lines()
+        .filter(|line| line.contains("warning:"))
+        .map(str::to_owned)
+        .collect()
+}

@@ -1,7 +1,9 @@
-use crate::helpers::{run_on_events, run_on_refused_upstream, run_on_shop};
+use crate::helpers::{
+    census_warnings, run_on_events, run_on_placed_orders, run_on_refused_upstream, run_on_shop,
+};
 use crate::test_types::{
-    BinaryOutcome, BinaryTestCase, SourceVariantOutcome, SourceVariantTestCase, UpstreamOutcome,
-    UpstreamTestCase,
+    BinaryOutcome, BinaryTestCase, SessionTimeZoneTestCase, SourceVariantOutcome,
+    SourceVariantTestCase, UpstreamOutcome, UpstreamTestCase, WarningsTestCase,
 };
 
 #[test]
@@ -16,6 +18,18 @@ fn given_sql_directory_when_running_census_binary_then_reports_on_the_right_stre
                 unresolved_name: Some(2),
                 completion_reported: true,
                 slowest_reported: true,
+                names_printed: false,
+            },
+        },
+        BinaryTestCase {
+            description: "--assume-supported without --chain-models is a usage error",
+            arguments: &["census", "--json", "--assume-supported", "fn:SOUNDEX"],
+            expected_outcome: BinaryOutcome {
+                exit_code: Some(2),
+                files: None,
+                unresolved_name: None,
+                completion_reported: false,
+                slowest_reported: false,
                 names_printed: false,
             },
         },
@@ -205,6 +219,71 @@ fn given_a_refused_upstream_model_when_running_census_binary_then_strict_and_uni
         assert_eq!(
             run_on_refused_upstream(test_case.typed, test_case.flags),
             test_case.expected_outcome,
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_a_model_reading_a_date_as_zoned_when_running_census_then_it_relies_on_a_utc_session() {
+    let test_cases = [
+        SessionTimeZoneTestCase {
+            description: "a DATE read as TIMESTAMP_TZ converts, relying on session_timezone_utc",
+            flags: &[],
+            expected_outcome: SourceVariantOutcome {
+                exit_code: Some(0),
+                convertible: Some(1),
+                labelled: Some(1),
+            },
+        },
+        SessionTimeZoneTestCase {
+            description: "strict mode refuses it",
+            flags: &["--strict"],
+            expected_outcome: SourceVariantOutcome {
+                exit_code: Some(0),
+                convertible: Some(0),
+                labelled: None,
+            },
+        },
+        SessionTimeZoneTestCase {
+            description: "strict mode converts it once --utc-session confirms a UTC session",
+            flags: &["--strict", "--utc-session"],
+            expected_outcome: SourceVariantOutcome {
+                exit_code: Some(0),
+                convertible: Some(1),
+                labelled: Some(1),
+            },
+        },
+    ];
+    for test_case in test_cases {
+        assert_eq!(
+            run_on_placed_orders(test_case.flags),
+            test_case.expected_outcome,
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_assumed_keys_matching_nothing_when_running_census_then_each_is_warned_about() {
+    let test_cases = [WarningsTestCase {
+        description: "an empty key and a construct no refusal names each warn; a matching one \
+                      does not",
+        flags: &["--assume-supported", "fn:SOUNDEX,,fn:EDITDISTANCE"],
+        expected_warnings: vec![
+            "sqlquack census: warning: --assume-supported has an empty key, which is ignored"
+                .to_owned(),
+            "sqlquack census: warning: --assume-supported 'fn:EDITDISTANCE' matches no \
+             collected refusal, so it changes no bound"
+                .to_owned(),
+        ],
+    }];
+    for test_case in test_cases {
+        assert_eq!(
+            census_warnings(test_case.flags),
+            test_case.expected_warnings,
             "{}",
             test_case.description
         );

@@ -57,6 +57,9 @@ pub struct FunctionArguments {
     /// Refuse every known divergence the policy refuses in strict mode.
     #[arg(long)]
     pub strict: bool,
+    /// Confirm both sessions run in UTC, so strict mode relies on `session_timezone_utc`.
+    #[arg(long)]
+    pub utc_session: bool,
 }
 
 /// Arguments of `sqlquack review`.
@@ -182,6 +185,9 @@ pub struct IndexArguments {
     /// Refuse every known divergence the policy refuses in strict mode.
     #[arg(long)]
     pub strict: bool,
+    /// Confirm both sessions run in UTC, so strict mode relies on `session_timezone_utc`.
+    #[arg(long)]
+    pub utc_session: bool,
     /// Print the index as JSON on standard output.
     #[arg(long)]
     pub json: bool,
@@ -220,6 +226,9 @@ pub struct CensusArguments {
     /// Refuse every known divergence the policy refuses in strict mode.
     #[arg(long)]
     pub strict: bool,
+    /// Confirm both sessions run in UTC, so strict mode relies on `session_timezone_utc`.
+    #[arg(long)]
+    pub utc_session: bool,
     /// Print file, model and relation names in the slowest files and the blockers.
     #[arg(long)]
     pub names: bool,

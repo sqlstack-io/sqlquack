@@ -476,6 +476,22 @@ dialect, the session profile's Snowflake parameters and the expanded source SQL,
 tags and file locations are not hashed. Any edit that can change the result changes the hash, so
 it becomes a new case with a new result.
 
+### Session time zone
+
+Converted SQL is proven only in UTC sessions: every session profile sets Snowflake's `TIMEZONE`
+and DuckDB's `TimeZone` to `'UTC'`, and policy loading rejects any other. DuckDB sessions running
+converted SQL must set `TimeZone = 'UTC'` too; `REQUIRED_DUCKDB_SETTINGS` lists it for callers.
+A statement whose result depends on the session time zone relies on the named assumption
+`session_timezone_utc`: reading a DATE, TIMESTAMP_NTZ or offset-less timestamp text as
+TIMESTAMP_TZ or TIMESTAMP_LTZ (including CONVERT_TIMEZONE with two arguments of a naive value),
+reading a TIMESTAMP_LTZ as a wall time, date part, VARIANT text or TIMESTAMP_TZ, and CURRENT_DATE
+and CURRENT_TIMESTAMP. Such statements convert with a warning by default and are refused in
+strict mode unless the caller confirms both sessions run in UTC (`confirm_utc_session`, or
+`--utc-session` on the command line). The statement that reads a value in the session zone
+carries the assumption; a UTC-offset value it passes on is a fact downstream. CONVERT_TIMEZONE
+marks its result as holding the UTC offset only for the target spelled `'UTC'`, the spelling the
+recordings prove.
+
 ### Pinned session parameters
 
 A profile's `pinned` parameters (date, time, timestamp and binary input and output formats,
@@ -492,7 +508,13 @@ setting reaches the repository. A pinned parameter whose account default differs
 ### Flow
 
 1. `sqlquack pending` writes `evidence/pending/<hash>.json` for every case without a result.
-2. The maintainer runs `sqlquack-record`, which runs the pending SQL in batches, one Snowflake
+2. The maintainer runs `sqlquack-record`. Before running anything it compiles every pending
+   case's SQL with `EXPLAIN`, which runs nothing and creates nothing, and when any fails with a
+   SQLSTATE class 0A or 42 error it stops and lists them, so a mistake such as a reserved word used
+   as an alias costs no recording. A case that records Snowflake refusing to compile its SQL
+   declares `compile_error = true` (not hashed) to pass the check; cases creating functions are
+   not compiled first, since their functions do not exist yet. It then runs the pending SQL in
+   batches, one Snowflake
    session per set of session parameters, and writes `evidence/results/<hash>.arrow` (the
    connector's Arrow result, unconverted) and `<hash>.json` (the SHA-256 of the query ID,
    warehouse, connector and DuckDB versions, recording time, column descriptions, row count and
