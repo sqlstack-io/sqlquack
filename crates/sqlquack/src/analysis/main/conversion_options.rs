@@ -24,6 +24,7 @@ pub fn conversion_options(policy: &Policy, strict: bool) -> ConversionOptions {
                 AllowedDivergence {
                     constructs: divergence.constructs.clone(),
                     reason: divergence.reason.clone(),
+                    assumption: divergence.assumption,
                 },
             );
         }

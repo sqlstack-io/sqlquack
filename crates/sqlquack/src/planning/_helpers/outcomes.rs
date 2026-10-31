@@ -49,3 +49,27 @@ fn narrowed(mut flags: Vec<bool>, depends: &[BTreeSet<usize>]) -> Vec<bool> {
     }
     flags
 }
+
+/// `outcomes` without files relying on an assumption, strict ones also without readers of them.
+pub(crate) fn assumption_free(
+    input: &PlanInput,
+    outcomes: &Outcomes,
+    assuming: &[bool],
+) -> Outcomes {
+    let unit: Vec<bool> = outcomes
+        .unit
+        .iter()
+        .zip(assuming)
+        .map(|(unit, assuming)| *unit && !assuming)
+        .collect();
+    let strict: Vec<bool> = outcomes
+        .strict
+        .iter()
+        .zip(assuming)
+        .map(|(strict, assuming)| *strict && !assuming)
+        .collect();
+    Outcomes {
+        unit,
+        strict: narrowed(strict, &input.reads),
+    }
+}

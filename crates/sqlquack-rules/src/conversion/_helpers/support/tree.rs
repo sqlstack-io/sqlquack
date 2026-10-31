@@ -187,6 +187,37 @@ pub(crate) fn integer_literal(node: &Value) -> Option<u64> {
     })
 }
 
+/// The tree conversion reads, positions stripped and quoted identifiers folded if case is ignored.
+pub(crate) fn session_tree(positioned: &Value, ignore_quoted_case: bool) -> Result<Value, String> {
+    let mut tree = strip_positions(positioned);
+    if ignore_quoted_case {
+        fold_quoted(&mut tree)?;
+    }
+    Ok(tree)
+}
+
+/// Upper-cases the name of each quoted identifier under `value`.
+fn fold_quoted(value: &mut Value) -> Result<(), String> {
+    match value {
+        Value::Object(fields) => {
+            if fields.get("quoted").and_then(Value::as_bool) == Some(true)
+                && let Some(Value::String(name)) = fields.get_mut("name")
+            {
+                if !name.is_ascii() {
+                    return Err(format!(
+                        "the quoted identifier \"{name}\" holds a non-ASCII character, whose case \
+                         folding under QUOTED_IDENTIFIERS_IGNORE_CASE has no recording"
+                    ));
+                }
+                *name = name.to_ascii_uppercase();
+            }
+            fields.values_mut().try_for_each(fold_quoted)
+        }
+        Value::Array(items) => items.iter_mut().try_for_each(fold_quoted),
+        _ => Ok(()),
+    }
+}
+
 /// The tree without positions and comments, which no rule reads.
 pub(crate) fn strip_positions(value: &Value) -> Value {
     match value {

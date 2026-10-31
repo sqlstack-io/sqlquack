@@ -91,3 +91,6 @@ pub const ROW_COUPLING_WORDS: &[&str] = &[
     "KURTOSIS(",
     "SKEW(",
 ];
+
+/// SQLSTATE classes of a Snowflake compile error, which the recorder's pre-check stops on.
+pub const COMPILE_ERROR_SQLSTATE_CLASSES: &[&str] = &["0A", "42"];

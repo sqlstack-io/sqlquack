@@ -16,9 +16,10 @@ use crate::conversion::_helpers::queries::function_body::{column_types, function
 use crate::conversion::_helpers::queries::query::convert_query;
 use crate::conversion::_helpers::support::locations::Locator;
 use crate::conversion::_helpers::support::scope::Context;
-use crate::conversion::_helpers::support::tree::{node_construct, strip_positions};
+use crate::conversion::_helpers::support::tree::{node_construct, session_tree};
 use crate::conversion::constants::OUTPUT_ALIAS;
 use crate::conversion::models::{ConversionOptions, Converted};
+use sqlquack_core::refusals::main::outside_conditions::outside_conditions;
 use sqlquack_semantics::types::models::TypedLeaves;
 use sqlquack_semantics::types::models::{ColumnSpec, Holding, Schema};
 
@@ -34,7 +35,8 @@ pub fn convert_statement(
             format!("the tree does not serialise: {error}"),
         )
     })?;
-    let tree = strip_positions(&positioned);
+    let tree = session_tree(&positioned, options.quoted_identifiers_ignore_case)
+        .map_err(|reason| outside_conditions(node_construct("statement"), reason))?;
     let locator = Locator::new(&tree, &positioned, lines);
     let typed = TypedLeaves::default();
     let context = Context {

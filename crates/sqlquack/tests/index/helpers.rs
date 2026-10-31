@@ -52,7 +52,14 @@ pub(crate) fn index_shop_corpus() -> IndexOutcome {
     std::fs::write(directory.path().join("schema.json"), SCHEMA).expect("schema written");
     let output = sqlquack(
         directory.path(),
-        &["index", "--json", "--schema", "schema.json", "corpus"],
+        &[
+            "index",
+            "--builtin-policy",
+            "--json",
+            "--schema",
+            "schema.json",
+            "corpus",
+        ],
     );
     let index: serde_json::Value =
         serde_json::from_slice(&output.stdout).unwrap_or(serde_json::Value::Null);

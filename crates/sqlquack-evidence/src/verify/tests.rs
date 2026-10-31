@@ -1,5 +1,7 @@
 #[path = "tests/helpers.rs"]
 mod helpers;
+#[path = "tests/test_compile_errors.rs"]
+mod test_compile_errors;
 #[path = "tests/test_divergence_error.rs"]
 mod test_divergence_error;
 #[path = "tests/test_microsecond_evidence.rs"]

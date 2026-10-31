@@ -13,9 +13,9 @@ use sqlquack_semantics::types::models::Schema;
 use crate::census::_helpers::completion::{Completed, complete_in_waves};
 use crate::census::_helpers::inspect::{FileCensus, complete_refusals, inspect_file};
 use crate::census::_helpers::placeholders::relation_name;
-use crate::census::constants::WORKER_STACK_BYTES;
+use crate::census::constants::{INTEGER_CURSOR_BOUND, TIMESTAMP_CURSOR_BOUND, WORKER_STACK_BYTES};
 use crate::census::errors::CensusError;
-use crate::census::models::{CensusOptions, CensusProgress};
+use crate::census::models::{CensusOptions, CensusProgress, CursorType};
 
 /// Each file's census, typing converted models as later files' relations when chaining.
 pub(crate) fn inspect_files(
@@ -29,6 +29,10 @@ pub(crate) fn inspect_files(
         .build()
         .map_err(|error| CensusError::Workers(error.to_string()))?;
     let mut schema = options.schema.clone();
+    let cursor_bound: Option<&str> = options.cursor_type.map(|cursor| match cursor {
+        CursorType::Timestamp => TIMESTAMP_CURSOR_BOUND,
+        CursorType::Integer => INTEGER_CURSOR_BOUND,
+    });
     let inspect_all = |schema: &Schema, selected: &[usize]| {
         progress.pass.fetch_add(1, Ordering::Relaxed);
         progress.done.store(0, Ordering::Relaxed);
@@ -39,7 +43,7 @@ pub(crate) fn inspect_files(
                 .map(|index| {
                     let census = inspect_file(
                         &files[*index],
-                        options.dialect,
+                        (options.dialect, cursor_bound),
                         &catalogue,
                         (schema, &options.conversion),
                     );
@@ -85,7 +89,7 @@ pub(crate) fn inspect_files(
                 .map(|index| {
                     let (census, columns) = complete_refusals(
                         (&censuses[*index], &files[*index]),
-                        options.dialect,
+                        (options.dialect, cursor_bound),
                         &catalogue,
                         (schema, &options.conversion),
                     )?;

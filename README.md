@@ -29,6 +29,36 @@ Converted SQL is proven only where both sessions run in UTC: Snowflake's `TIMEZO
 `session_timezone_utc` assumption; strict mode refuses them unless you confirm a UTC session with
 `--utc-session`.
 
+## Convert
+
+```console
+$ cargo run --release -p sqlquack -- convert query.sql --schema schema.json
+$ echo "SELECT 1 AS total" | cargo run --release -p sqlquack -- convert --json
+```
+
+`convert` prints the DuckDB SQL for Snowflake SQL from a file or standard input, and names the known
+divergences and assumptions it relies on on standard error. A refused statement prints its refusals
+instead and exits 1; input holding no statement exits 2. `--session NAME=VALUE` passes the caller's
+Snowflake session parameters (`function` takes it too):
+
+- Conversion runs under the recorded session profile they match (`utc-v1`, or `utc-qiic-v1` for
+  `QUOTED_IDENTIFIERS_IGNORE_CASE = true`) and refuses, naming the parameters, when they match none.
+  A parameter left unset takes Snowflake's documented default, as `utc-v1` pins it.
+- A parameter no profile covers is refused by name, so a misspelt name never falls back to the
+  defaults. Only parameters that cannot change a result are accepted and ignored:
+  `QUERY_TAG`, `USE_CACHED_RESULT`, `STATEMENT_TIMEOUT_IN_SECONDS`,
+  `STATEMENT_QUEUED_TIMEOUT_IN_SECONDS`, `ABORT_DETACHED_QUERY` and `CLIENT_SESSION_KEEP_ALIVE`
+  (`RESULT_NEUTRAL_SESSION_PARAMETERS` gives the reason for each). An empty name, or a name given
+  twice with different values, exits 2.
+- `TIMEZONE = UTC`, or no `TIMEZONE`, leaves time-zone-dependent statements to the
+  `session_timezone_utc` assumption. Any other `TIMEZONE` refuses them, even with `--utc-session`.
+
+`--strict`, `--utc-session` and `--json` work as for the census. `census` and `index` take no
+session parameters yet and convert under `utc-v1`.
+
+`convert`, `function`, `census` and `index` read `sqlquack.toml` (or `--policy`); without one they
+exit 2 unless `--builtin-policy` asks for the built-in default, which refuses every known divergence.
+
 ## Census
 
 ```console
@@ -45,7 +75,14 @@ column types of the relations a file reads: `--schema` takes a JSON file mapping
 its file name references, then converts again. Where the schema file types a model that is itself
 refused, files reading it still convert from those columns: the report counts them as
 unit-testable (`convertible`) but not strict (`convertible_strict`, every model upstream converts
-too), and lists each with an `upstream_refused:<model>` label for every refused model upstream.
+too), and lists each with an `upstream_refused:<model>` label for every refused model upstream,
+or `upstream_missing:<relation>` for a referenced model the scan holds no file for. Both counts are
+repeated without named assumptions (`convertible_no_assumptions`,
+`convertible_strict_no_assumptions`): a file relying on one, such as `session_timezone_utc` or
+`source_variant_json`, drops out, and a strict file also does when a model upstream relies on one.
+`--cursor-type timestamp|integer` replaces SQLBuild's cursor intrinsics with a bound as SQLBuild's
+Snowflake adapter renders it (timestamp bounds as text, integer bounds as integers); without it
+they stay unknown.
 `--assume-supported` (with `--chain-models`) takes construct keys or `rule.<id>`s and reports how
 many files would then be unit-testable and strict, what blocks the rest next, and a greedy plan of
 the few constructs each step should support together. Assumptions match at construct level: a

@@ -6,4 +6,6 @@ pub mod check_equivalence_cases;
 pub mod collect_all_refusals;
 pub mod confirm_utc_session;
 pub mod conversion_options;
+pub mod parse_session;
 pub mod refused_construct;
+pub mod session_conversion_options;

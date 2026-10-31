@@ -33,6 +33,7 @@ tags = ["duplicates"]
 
 [[case]]
 id = "having_bare_alias_shadows_column"
+compile_error = true
 description = "HAVING over a name that is an alias of SUM(a) and the column a."
 columns = [{ name = "k", type = "VARCHAR" }, { name = "a", type = "NUMBER(10,0)" }]
 rows = [["'x'", "1"], ["'x'", "4"], ["'y'", "3"], ["'z'", "2"], ["'z'", "2"]]
@@ -69,6 +70,7 @@ tags = ["duplicates"]
 
 [[case]]
 id = "having_alias_shadows_column_empty"
+compile_error = true
 description = "HAVING over a shadowing alias when the filter leaves no rows."
 columns = [{ name = "k", type = "VARCHAR" }, { name = "a", type = "NUMBER(10,0)" }]
 rows = [["'x'", "1"], ["'y'", "3"]]

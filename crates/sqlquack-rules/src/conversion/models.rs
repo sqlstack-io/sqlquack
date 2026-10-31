@@ -20,6 +20,8 @@ pub struct AllowedDivergence {
     pub constructs: Vec<String>,
     /// Why it is acceptable.
     pub reason: String,
+    /// Whether it assumes a fact about the data or session that, if false, gives a wrong value.
+    pub assumption: bool,
 }
 
 /// How conversion treats the policy's known divergences.
@@ -33,6 +35,8 @@ pub struct ConversionOptions {
     pub budget: ConversionBudget,
     /// Whether the source quotes a name in an EXCLUDE list, a quoting the parsed tree does not keep.
     pub quoted_exclusions: bool,
+    /// Whether quoted identifiers resolve to upper case, as `QUOTED_IDENTIFIERS_IGNORE_CASE = true`.
+    pub quoted_identifiers_ignore_case: bool,
 }
 
 /// How long converting one statement may take, and how large its DuckDB SQL may grow.

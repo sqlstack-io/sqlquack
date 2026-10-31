@@ -9,6 +9,7 @@ use crate::census::_helpers::corpus::inspect_files;
 use crate::census::_helpers::files::collect_sql_files;
 use crate::census::errors::CensusError;
 use crate::census::models::{CensusOptions, CensusProgress, CensusRun};
+use crate::planning::main::assumption_free_counts::assumption_free_counts;
 use crate::planning::main::plan_census::plan_census;
 
 /// The census and each file's conversion time, counting files into `progress` as they finish.
@@ -26,6 +27,37 @@ pub(crate) fn run_census_timed(
     report.plan = plan_census(&plan_input, &assumed);
     report.refusals.convertible_strict =
         report.refusals.convertible - report.blockers.upstream_refused.len();
+    let named: BTreeSet<&String> = options
+        .conversion
+        .divergences
+        .iter()
+        .filter(|(_, divergence)| divergence.assumption)
+        .map(|(id, _)| id)
+        .collect();
+    let mut relied: Vec<BTreeSet<String>> = Vec::with_capacity(censuses.len());
+    for census in &censuses {
+        let mut ids: BTreeSet<String> = BTreeSet::new();
+        if let Some(provenance) = &census.provenance {
+            ids.extend(
+                provenance
+                    .divergences
+                    .keys()
+                    .filter(|id| named.contains(id))
+                    .cloned(),
+            );
+        }
+        relied.push(ids);
+    }
+    let (unit, strict) = assumption_free_counts(&plan_input, &relied);
+    report.refusals.convertible_no_assumptions = unit;
+    report.refusals.convertible_strict_no_assumptions = strict;
+    for (index, ids) in relied.iter().enumerate() {
+        if censuses[index].parsed && censuses[index].refusal_categories.is_empty() {
+            for id in ids {
+                *report.refusals.assumptions.entry(id.clone()).or_default() += 1;
+            }
+        }
+    }
     let mut timings: Vec<(PathBuf, std::time::Duration)> = files
         .into_iter()
         .zip(censuses.iter().map(|census| census.elapsed))

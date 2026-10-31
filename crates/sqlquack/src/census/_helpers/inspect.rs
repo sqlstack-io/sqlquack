@@ -50,7 +50,7 @@ pub(crate) struct FileCensus {
 /// A refused file's census with every refusal's roots, and the columns its conversion reached.
 pub(crate) fn complete_refusals(
     (census, path): (&FileCensus, &Path),
-    dialect: SourceDialect,
+    (dialect, cursor_bound): (SourceDialect, Option<&str>),
     policy: &(dyn ConstructPolicy + Sync),
     (schema, options): (&Schema, &ConversionOptions),
 ) -> Result<(FileCensus, Option<Vec<ColumnSpec>>), CensusError> {
@@ -60,7 +60,7 @@ pub(crate) fn complete_refusals(
         path: path.to_path_buf(),
         message: error.to_string(),
     })?;
-    let sql = rewrite_with_references(&String::from_utf8_lossy(&bytes)).sql;
+    let sql = rewrite_with_references(&String::from_utf8_lossy(&bytes), cursor_bound).sql;
     let collected = collect_all_refusals(&sql, dialect, policy, (schema, options));
     if !collected.refusals.is_empty() {
         let (unknown_relations, root_constructs) = traced(&collected.refusals);
@@ -94,7 +94,7 @@ fn traced(refusals: &[Refusal]) -> (BTreeSet<String>, BTreeSet<(RefusalCategory,
 
 pub(crate) fn inspect_file(
     path: &Path,
-    dialect: SourceDialect,
+    (dialect, cursor_bound): (SourceDialect, Option<&str>),
     policy: &(dyn ConstructPolicy + Sync),
     (schema, options): (&Schema, &ConversionOptions),
 ) -> Result<FileCensus, CensusError> {
@@ -104,7 +104,7 @@ pub(crate) fn inspect_file(
         message: error.to_string(),
     })?;
     let original = String::from_utf8_lossy(&bytes);
-    let rewritten = rewrite_with_references(&original);
+    let rewritten = rewrite_with_references(&original, cursor_bound);
     let analysis = analyze(&rewritten.sql, dialect, policy, (schema, options));
     let outputs = match (
         analysis.refusals.is_empty(),

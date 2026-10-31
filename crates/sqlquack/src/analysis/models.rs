@@ -12,6 +12,8 @@ use sqlquack_evidence::cases::models::LoadedCase;
 use sqlquack_evidence::constants::{INPUT_RELATION, ORDINAL_COLUMN};
 use sqlquack_evidence::verify::models::Conversion;
 use sqlquack_evidence::verify::types::CaseConverter;
+use sqlquack_policy::policy::constants::QUOTED_IDENTIFIERS_IGNORE_CASE;
+use sqlquack_policy::policy::models::SessionValue;
 use sqlquack_rules::catalogue::main::builtin_catalogue::builtin_catalogue;
 use sqlquack_rules::conversion::models::{ConversionOptions, Converted, Fixture};
 use sqlquack_semantics::types::models::Schema;
@@ -61,6 +63,10 @@ impl CaseConverter for PipelineConverter {
                 relation: INPUT_RELATION.to_owned(),
                 ordering_column: ORDINAL_COLUMN.to_owned(),
             }),
+            quoted_identifiers_ignore_case: case
+                .session_parameters
+                .get(QUOTED_IDENTIFIERS_IGNORE_CASE)
+                == Some(&SessionValue::Boolean(true)),
             ..self.options.clone()
         };
         let functions = match case_functions(&case.functions, &options) {

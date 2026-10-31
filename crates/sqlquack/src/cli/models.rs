@@ -11,6 +11,7 @@ use sqlquack_evidence::coverage::constants::{DOMAINS_DIR, HAZARDS_FILE};
 use sqlquack_policy::policy::constants::POLICY_FILE_NAME;
 
 use crate::census::constants::DEFAULT_TEXT_LIMIT;
+use crate::census::models::CursorType;
 
 /// Snowflake-to-DuckDB SQL conversion that refuses to guess.
 #[derive(Debug, Parser)]
@@ -38,6 +39,36 @@ pub enum Command {
     Review(ReviewArguments),
     /// Convert a SQL project function's body into a DuckDB macro body, printed as JSON.
     Function(FunctionArguments),
+    /// Convert Snowflake SQL from a file or standard input into DuckDB SQL, or refuse it.
+    Convert(ConvertArguments),
+}
+
+/// Arguments of `sqlquack convert`.
+#[derive(Debug, Args)]
+pub struct ConvertArguments {
+    /// The SQL file; standard input when absent or `-`.
+    pub path: Option<PathBuf>,
+    /// A JSON file mapping relation names to `[column, Snowflake type]` pairs or column objects.
+    #[arg(long)]
+    pub schema: Option<PathBuf>,
+    /// The policy file whose known divergences conversion may rely on.
+    #[arg(long, default_value = POLICY_FILE_NAME)]
+    pub policy: PathBuf,
+    /// Use the built-in default instead of a policy file: every known divergence is refused.
+    #[arg(long, conflicts_with = "policy")]
+    pub builtin_policy: bool,
+    /// Refuse every known divergence the policy refuses in strict mode.
+    #[arg(long)]
+    pub strict: bool,
+    /// Confirm both sessions run in UTC, so strict mode relies on `session_timezone_utc`.
+    #[arg(long)]
+    pub utc_session: bool,
+    /// A Snowflake session parameter of the caller's session, `NAME=VALUE`; repeatable.
+    #[arg(long = "session", value_name = "NAME=VALUE")]
+    pub session: Vec<String>,
+    /// Print the conversion, refusals and divergences as JSON on standard output.
+    #[arg(long)]
+    pub json: bool,
 }
 
 /// Arguments of `sqlquack function`.
@@ -54,12 +85,18 @@ pub struct FunctionArguments {
     /// The policy file whose known divergences conversion may rely on.
     #[arg(long, default_value = POLICY_FILE_NAME)]
     pub policy: PathBuf,
+    /// Use the built-in default instead of a policy file: every known divergence is refused.
+    #[arg(long, conflicts_with = "policy")]
+    pub builtin_policy: bool,
     /// Refuse every known divergence the policy refuses in strict mode.
     #[arg(long)]
     pub strict: bool,
     /// Confirm both sessions run in UTC, so strict mode relies on `session_timezone_utc`.
     #[arg(long)]
     pub utc_session: bool,
+    /// A Snowflake session parameter of the caller's session, `NAME=VALUE`; repeatable.
+    #[arg(long = "session", value_name = "NAME=VALUE")]
+    pub session: Vec<String>,
 }
 
 /// Arguments of `sqlquack review`.
@@ -182,6 +219,9 @@ pub struct IndexArguments {
     /// The policy file, which case loading checks cases against.
     #[arg(long, default_value = POLICY_FILE_NAME)]
     pub policy: PathBuf,
+    /// Use the built-in default instead of a policy file: every known divergence is refused.
+    #[arg(long, conflicts_with = "policy")]
+    pub builtin_policy: bool,
     /// Refuse every known divergence the policy refuses in strict mode.
     #[arg(long)]
     pub strict: bool,
@@ -220,9 +260,12 @@ pub struct CensusArguments {
     /// Treat each converted file as the relation its file name references, and convert again.
     #[arg(long)]
     pub chain_models: bool,
-    /// The policy file whose known divergences conversion may rely on; default `sqlquack.toml`.
-    #[arg(long)]
-    pub policy: Option<PathBuf>,
+    /// The policy file whose known divergences conversion may rely on.
+    #[arg(long, default_value = POLICY_FILE_NAME)]
+    pub policy: PathBuf,
+    /// Use the built-in default instead of a policy file: every known divergence is refused.
+    #[arg(long, conflicts_with = "policy")]
+    pub builtin_policy: bool,
     /// Refuse every known divergence the policy refuses in strict mode.
     #[arg(long)]
     pub strict: bool,
@@ -232,6 +275,9 @@ pub struct CensusArguments {
     /// Print file, model and relation names in the slowest files and the blockers.
     #[arg(long)]
     pub names: bool,
+    /// The project's cursor type: cursor intrinsics become a bound as SQLBuild renders one.
+    #[arg(long, value_enum)]
+    pub cursor_type: Option<CursorType>,
     /// Construct keys or `rule.<id>`s the what-if counts treat as supported, comma-separated.
     #[arg(long, value_delimiter = ',')]
     pub assume_supported: Vec<String>,

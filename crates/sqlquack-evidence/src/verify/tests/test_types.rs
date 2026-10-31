@@ -60,3 +60,11 @@ pub(crate) struct MicrosecondEvidenceTestCase {
     pub(crate) replayed_nanos: i64,
     pub(crate) expected_floored: Option<i64>,
 }
+
+pub(crate) struct CompileErrorTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) sqlstate: &'static str,
+    pub(crate) declared: bool,
+    pub(crate) with_setup: bool,
+    pub(crate) expected_failed: bool,
+}

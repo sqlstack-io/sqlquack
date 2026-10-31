@@ -12,6 +12,7 @@ pub fn confirm_utc_session(mut options: ConversionOptions, policy: &Policy) -> C
             AllowedDivergence {
                 constructs: divergence.constructs.clone(),
                 reason: divergence.reason.clone(),
+                assumption: divergence.assumption,
             },
         );
     }

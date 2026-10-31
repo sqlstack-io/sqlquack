@@ -1,4 +1,5 @@
 pub(crate) mod claims;
+pub(crate) mod compile_errors;
 pub(crate) mod error_check;
 pub(crate) mod judge;
 pub(crate) mod messages;

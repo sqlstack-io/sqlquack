@@ -59,6 +59,7 @@ pub(crate) struct FunctionMacroTestCase {
     pub(crate) returns: &'static str,
     pub(crate) body: &'static str,
     pub(crate) call: &'static str,
+    pub(crate) flags: &'static [&'static str],
     pub(crate) expected_outcome: FunctionMacroOutcome,
 }
 
@@ -85,4 +86,33 @@ pub(crate) struct CoverageOutcome {
 pub(crate) struct PendingFlagsTestCase {
     pub(crate) description: &'static str,
     pub(crate) expected_flags: Vec<(String, Option<bool>)>,
+}
+
+#[derive(Debug, PartialEq, Eq)]
+pub(crate) struct ConvertOutcome {
+    pub(crate) exit_code: Option<i32>,
+    pub(crate) printed_sql: bool,
+    pub(crate) json_converted: Option<bool>,
+    pub(crate) stderr_mentions: bool,
+}
+
+pub(crate) struct ConvertTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) sql: &'static str,
+    pub(crate) flags: &'static [&'static str],
+    pub(crate) mention: &'static str,
+    pub(crate) expected_outcome: ConvertOutcome,
+}
+
+pub(crate) struct ColumnNameTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) sql: &'static str,
+    pub(crate) flags: &'static [&'static str],
+    pub(crate) expected_names: Vec<String>,
+}
+
+pub(crate) struct PolicyFreeTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) arguments: &'static [&'static str],
+    pub(crate) expected_exit_code: Option<i32>,
 }

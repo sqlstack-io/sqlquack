@@ -95,6 +95,9 @@ fn refusal_totals(files: &[FileCensus]) -> RefusalTotals {
             .filter(|file| file.parsed && file.refusal_categories.is_empty())
             .count(),
         convertible_strict: 0,
+        convertible_no_assumptions: 0,
+        convertible_strict_no_assumptions: 0,
+        assumptions: BTreeMap::new(),
     }
 }
 

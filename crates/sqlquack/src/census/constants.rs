@@ -32,6 +32,12 @@ pub const RELATION_CALLS: &[&str] = &[
 /// sqlbuild reference calls naming a model, which a complete scan holds a file for.
 pub const MODEL_CALLS: &[&str] = &["__ref", "__dbt_ref"];
 
+/// A timestamp cursor bound as SQLBuild's Snowflake adapter renders one: text in its naive form.
+pub const TIMESTAMP_CURSOR_BOUND: &str = "'2000-01-01T00:00:00'";
+
+/// An integer cursor bound as SQLBuild's Snowflake adapter renders one: a bare integer.
+pub const INTEGER_CURSOR_BOUND: &str = "0";
+
 /// sqlbuild cursor intrinsics replaced by a column.
 pub const CURSOR_CALLS: &[&str] = &["__cursor_start", "__cursor_end"];
 

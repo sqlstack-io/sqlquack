@@ -1,0 +1,87 @@
+# QUOTED_IDENTIFIERS_IGNORE_CASE = true: quoted identifiers resolve to upper case, like unquoted ones.
+# VARIANT keys are paths, not identifiers, so they stay case-sensitive (the control cases).
+category = "relational"
+construct = "node:column"
+session_profile = "utc-qiic-v1"
+
+[[case]]
+id = "quoted_mixed_case_alias"
+description = "A quoted mixed-case alias names an output column read back unquoted and quoted in other cases."
+columns = [{ name = "quantity", type = "NUMBER(10,0)" }]
+rows = [["1"], ["3"], ["3"], ["NULL"]]
+query = "WITH totals AS (SELECT ordinal, quantity * 2 AS \"orderTotal\" FROM input) SELECT ordertotal, \"ORDERTOTAL\", \"orderTotal\" FROM totals ORDER BY ordinal"
+order = "ordered"
+tags = ["duplicates", "null"]
+
+[[case]]
+id = "quoted_lower_case_reference_to_unquoted_column"
+description = "A quoted lower-case name refers to a column declared unquoted."
+columns = [{ name = "quantity", type = "NUMBER(10,0)" }]
+rows = [["1"], ["2"], ["NULL"]]
+query = "SELECT \"quantity\" + 1 AS next_quantity, \"Quantity\" AS same_quantity FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]
+
+[[case]]
+id = "select_star_over_quoted_columns"
+description = "SELECT * over a relation whose columns were aliased with quoted mixed-case names."
+columns = [{ name = "quantity", type = "NUMBER(10,0)" }, { name = "sku", type = "VARCHAR" }]
+rows = [["1", "'a'"], ["2", "'b'"], ["2", "'b'"]]
+query = "WITH items AS (SELECT ordinal AS \"Line\", quantity AS \"lineQuantity\", sku AS \"Sku\" FROM input) SELECT * FROM items ORDER BY line"
+order = "ordered"
+tags = ["duplicates"]
+
+[[case]]
+id = "join_quoted_and_unquoted_names"
+description = "A join between a relation with quoted mixed-case names and one with unquoted names."
+columns = [{ name = "quantity", type = "NUMBER(10,0)" }]
+rows = [["1"], ["2"], ["NULL"]]
+query = "WITH orders AS (SELECT ordinal AS \"orderId\", quantity FROM input), lines AS (SELECT ordinal AS order_id, quantity * 10 AS amount FROM input) SELECT o.\"ORDERID\", o.\"quantity\", l.amount FROM orders AS o JOIN lines AS l ON o.\"orderId\" = l.\"ORDER_ID\" ORDER BY o.orderid"
+order = "ordered"
+tags = ["null"]
+
+[[case]]
+id = "quoted_cte_name"
+description = "A CTE named with a quoted mixed-case name read back unquoted."
+columns = [{ name = "quantity", type = "NUMBER(10,0)" }]
+rows = [["4"], ["5"]]
+query = "WITH \"Totals\" AS (SELECT ordinal, quantity FROM input) SELECT quantity FROM totals ORDER BY ordinal"
+order = "ordered"
+tags = []
+
+[[case]]
+id = "quoted_aliases_differing_only_in_case"
+compile_error = true
+description = "Two quoted aliases differing only in case name the same column, so reading one is ambiguous."
+columns = [{ name = "quantity", type = "NUMBER(10,0)" }]
+rows = [["1"], ["2"]]
+query = "WITH pairs AS (SELECT ordinal, quantity AS \"amount\", quantity + 1 AS \"Amount\" FROM input) SELECT \"amount\" FROM pairs ORDER BY ordinal"
+order = "ordered"
+tags = []
+
+[[case]]
+id = "quoted_variant_key_stays_case_sensitive"
+description = "A quoted VARIANT path key matches only the key spelled with that case."
+columns = [{ name = "payload", type = "VARCHAR" }]
+rows = [["'{\"Key\": 1, \"KEY\": 2, \"key\": 3}'"], ["'{\"KEY\": 4}'"], ["NULL"]]
+query = "SELECT PARSE_JSON(payload):\"Key\"::NUMBER(10,0) AS mixed, PARSE_JSON(payload):\"KEY\"::NUMBER(10,0) AS upper_key FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]
+
+[[case]]
+id = "unquoted_variant_key_stays_case_sensitive"
+description = "An unquoted VARIANT path key matches the key as written, not upper-cased."
+columns = [{ name = "payload", type = "VARCHAR" }]
+rows = [["'{\"Key\": 1, \"KEY\": 2, \"key\": 3}'"], ["'{\"key\": 4}'"]]
+query = "SELECT PARSE_JSON(payload):key::NUMBER(10,0) AS lower_key, PARSE_JSON(payload):Key::NUMBER(10,0) AS mixed FROM input ORDER BY ordinal"
+order = "ordered"
+tags = []
+
+[[case]]
+id = "quoted_names_on_empty_input"
+description = "Quoted mixed-case aliases over a filter keeping no rows."
+columns = [{ name = "quantity", type = "NUMBER(10,0)" }]
+rows = [["-1"], ["NULL"]]
+query = "SELECT quantity AS \"emptyTotal\" FROM input WHERE \"quantity\" > 0"
+order = "bag"
+tags = ["empty-input"]

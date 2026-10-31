@@ -492,6 +492,27 @@ carries the assumption; a UTC-offset value it passes on is a fact downstream. CO
 marks its result as holding the UTC offset only for the target spelled `'UTC'`, the spelling the
 recordings prove.
 
+### Session profiles
+
+Each case records under a session profile. `utc-v1` pins Snowflake's documented defaults with the
+session in UTC; `utc-qiic-v1` is the same with `QUOTED_IDENTIFIERS_IGNORE_CASE = true`, under which
+quoted identifiers resolve to upper case like unquoted ones (recorded: values through quoted
+references to unquoted names, `SELECT *`, joins and CTE names) while VARIANT path keys stay
+case-sensitive. The comparator matches column names without regard to case, so recordings do not
+prove the case of output names; that quoted aliases come back upper case under `utc-qiic-v1` is
+Snowflake's documented resolution, checked by a CLI test on the converted SQL rather than by a
+recording. Conversion takes the caller's session parameters and converts under the profile they
+match: unset parameters take the defaults `utc-v1` pins; a parameter no profile covers is refused
+by name unless it is one of `RESULT_NEUTRAL_SESSION_PARAMETERS`, which cannot change a result; a
+`TIMEZONE` other than `UTC` refuses every statement relying on `session_timezone_utc`, overriding
+`--utc-session`; and parameters matching no profile refuse the statement with a named reason.
+`census` and `index` convert under `utc-v1` until they take session parameters. Under `utc-qiic-v1` conversion upper-cases every quoted identifier before resolving
+names; one holding a non-ASCII character is refused, its folding unrecorded.
+
+A recording that is a compile-class Snowflake error (SQLSTATE class 0A or 42) must come from a case
+declaring `compile_error = true`, or one creating functions; verify fails it otherwise, so the
+recorder's compile pre-check never blocks re-recording it.
+
 ### Pinned session parameters
 
 A profile's `pinned` parameters (date, time, timestamp and binary input and output formats,
