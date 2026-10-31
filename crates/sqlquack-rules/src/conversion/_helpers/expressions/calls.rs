@@ -7,6 +7,7 @@ use sqlquack_core::refusals::main::outside_conditions::outside_conditions;
 use sqlquack_core::refusals::models::Refusal;
 use sqlquack_duckdb::blocks::main::cast::cast;
 use sqlquack_duckdb::blocks::main::exact_decimal_divide::exact_decimal_divide;
+use sqlquack_duckdb::blocks::main::quoted_identifier::quoted_identifier;
 use sqlquack_duckdb::floats::constants::FLOAT_SUM_ORDER;
 use sqlquack_duckdb::floats::main::exact_float_sum::exact_float_sum;
 use sqlquack_snowflake::typing::constants::{COUNT_PRECISION, MAX_PRECISION, SUM_EXTRA_DIGITS};
@@ -37,7 +38,7 @@ use crate::conversion::_helpers::expressions::semi_structured::{
 };
 use crate::conversion::_helpers::expressions::strings::{
     bytes_as_text, chr, concatenate, concatenate_with_separator, edit_distance, hex_encode,
-    initcap, jaro_winkler, text_contains, text_md5, text_operand, text_sha2, trim_call,
+    initcap, jaro_winkler, repeat, text_contains, text_md5, text_operand, text_sha2, trim_call,
     try_hex_decode,
 };
 use crate::conversion::_helpers::expressions::temporal_functions::{
@@ -58,9 +59,54 @@ use crate::conversion::_helpers::support::tree::{
     require_understood,
 };
 use crate::conversion::constants::{
-    AVERAGE, AVG_NAME, COUNT, LEAST_GREATEST, MIN_MAX, MIN_MAX_FLOAT, NOT_SNOWFLAKE_FUNCTIONS,
-    NULLIF, NUMERIC_RANGE, SORTED_ARRAY_FUNCTION, SUM, SUM_FLOAT, TO_DATE_NAME, TRIM,
+    AVERAGE, AVG_NAME, COUNT, GENERATOR_RULE, GENERATOR_SEQUENCE_COLUMN, LEAST_GREATEST, MIN_MAX,
+    MIN_MAX_FLOAT, NOT_SNOWFLAKE_FUNCTIONS, NULLIF, NUMERIC_RANGE, SORTED_ARRAY_FUNCTION, SUM,
+    SUM_FLOAT, TO_DATE_NAME, TRIM,
 };
+
+/// SEQ4() or SEQ8() in a query level reading only a generator: the row's number from 0.
+fn generator_sequence(
+    name: &str,
+    construct: &Construct,
+    site: Site<'_>,
+) -> Result<Emitted, Refusal> {
+    let log = site.context.log;
+    let _rule = log.rule(GENERATOR_RULE);
+    let [relation] = site.scope.relations.as_slice() else {
+        return Err(outside_conditions(
+            construct.clone(),
+            format!("{name} in a query level not reading only a generator"),
+        ));
+    };
+    let Some(column) = relation
+        .columns
+        .iter()
+        .find(|column| column.name == GENERATOR_SEQUENCE_COLUMN)
+    else {
+        return Err(outside_conditions(
+            construct.clone(),
+            format!("{name} over a relation other than a generator"),
+        ));
+    };
+    let precision = match name {
+        "SEQ4" => 10,
+        _ => 19,
+    };
+    let data_type = SnowflakeType::Number {
+        precision,
+        scale: 0,
+    };
+    let read = format!(
+        "{}.{}",
+        quoted_identifier(&relation.alias, log),
+        quoted_identifier(&column.name, log)
+    );
+    Ok(Emitted::new(
+        cast(&read, data_type, log)
+            .map_err(|reason| outside_conditions(construct.clone(), reason))?,
+        data_type,
+    ))
+}
 
 /// NULLIF, LTRIM, RTRIM and CONCAT, which the parser keeps as generic calls.
 pub(crate) fn convert_function(payload: &Value, site: Site<'_>) -> Result<Emitted, Refusal> {
@@ -118,6 +164,8 @@ pub(crate) fn convert_function(payload: &Value, site: Site<'_>) -> Result<Emitte
         ("REDUCE", parts) => reduce_call(parts, &construct, site),
         ("INITCAP", parts) => initcap(parts, &construct, site),
         ("CHR", parts) => chr(parts, &construct, site),
+        ("REPEAT", parts) => repeat(parts, &construct, site),
+        ("SEQ4" | "SEQ8", []) => generator_sequence(&name, &construct, site),
         ("HEX_ENCODE", parts) => hex_encode(parts, &construct, site),
         ("TRY_HEX_DECODE_STRING" | "HEX_DECODE_STRING", parts) => {
             try_hex_decode(&name, parts, &construct, site)

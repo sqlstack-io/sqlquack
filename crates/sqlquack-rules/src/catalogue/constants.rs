@@ -28,27 +28,28 @@ use crate::conversion::constants::{
     DATE_DAY_ARITHMETIC, DATE_FORMAT_RULE, DATE_LITERAL_COMPARISON, DATE_PART_RULE, DAY_NAME_RULE,
     DECIMAL_ARITHMETIC, DECIMAL_DIVISION, DECIMAL_EPOCH_RULE, DECIMAL_MODULO, DECODE_RULE,
     DISTINCT, EDIT_DISTANCE, EXISTS, FLATTEN_RULE, FLOAT_ARITHMETIC, FLOAT_MODULO, FLOAT_TO_DOUBLE,
-    FRACTIONAL_DATE_AMOUNT, FROM_PARTS, FROM_RELATION, FROM_SUBQUERY, GROUP_BY, GROUP_BY_ALL_RULE,
-    HASH_RULE, HAVING, IFF, ILIKE_FOLDING, IN_LIST, IN_SUBQUERY, INTERVAL_ARITHMETIC, IS_NULL,
-    JARO_WINKLER, JOIN_CROSS, JOIN_ON, JOIN_USING, LAMBDA_RULE, LATERAL_SUBQUERY, LEAST_GREATEST,
-    LIKE, LIMIT, LISTAGG_RULE, LOGARITHM, LOGIC, MIN_MAX, MIN_MAX_FLOAT, MODE_RULE,
-    NAMED_AGGREGATES, NEGATE, NOT_IN_SUBQUERY, NULL_BRANCHES, NULL_IF_ZERO_RULE,
-    NULL_SAFE_COMPARISON, NULLIF, NUMBER_LITERAL, NUMERIC_FUNCTION, OBJECT_CONSTRUCT_RULE,
-    OBJECT_DELETE_RULE, OBJECT_INSERT_RULE, OBJECT_KEYS_RULE, OBJECT_PICK_RULE, ORDER_BY,
-    PARENTHESES, PARSE_JSON_RULE, PARSE_JSON_VARIANT, PERCENTILE_RULE, POSITIONAL_COLUMN,
-    PROJECT_FUNCTION_CALL, PROJECT_TABLE_FUNCTION, QUALIFY, REDUCE_RULE, REGEXP, REGEXP_COUNTING,
-    REGEXP_PARAMETERS, REGEXP_POSIX_SPACE, ROUNDING, SCALAR_SUBQUERY, SELECT, SET_OPERATION,
-    SIGN_RULE, SPLIT_RULE, SPLIT_TO_TABLE_RULE, STAR, SUM, SUM_FLOAT, TEMPORAL_TEXT_FORMAT,
-    TEXT_AFFIX, TEXT_BRANCHES, TEXT_CHR, TEXT_CONTAINS, TEXT_HEX, TEXT_HEX_DECODE, TEXT_INITCAP,
-    TEXT_MD5, TEXT_NUMBER_COMPARISON, TEXT_PAD, TEXT_POSITION, TEXT_REPLACE, TEXT_SEARCH_POSITION,
-    TEXT_SHA2, TEXT_TO_TIME_RULE, TEXT_TO_TIMESTAMP_RULE, TEXT_TRANSLATE, TIME_ARITHMETIC,
-    TIME_CAST, TIME_ZONE_CONVERSION, TIMESTAMP_FORMAT_RULE, TIMESTAMP_TIME_RULE, TO_ARRAY_RULE,
-    TO_BOOLEAN_RULE, TO_DATE_TEMPORAL, TO_VARIANT_RULE, TRIM, UNION_BY_NAME, UTC_OFFSET_ARITHMETIC,
-    VALUE_AT_EXTREME_KEY, VALUES_ROWS, VARIANT_CAST, VARIANT_COMPUTED_GET, VARIANT_EQUALITY,
-    VARIANT_EQUALITY_BY_TEXT, VARIANT_INSPECT, VARIANT_KIND_CAST, VARIANT_KIND_RULE,
-    VARIANT_PARTITION, VARIANT_PATH, VARIANT_TEXT_BRANCHES, VARIANT_TO_VARCHAR, VARIANT_TYPE_NAME,
-    VARIANT_TYPED_CHECK, WHERE, WINDOW_AGGREGATE, WINDOW_FIRST_LAST, WINDOW_OFFSET, WINDOW_RANKING,
-    WINDOW_VALUE_FRAME, ZERO_IF_NULL_RULE, ZONE_COLUMNS, ZONED_PARTS,
+    FRACTIONAL_DATE_AMOUNT, FROM_PARTS, FROM_RELATION, FROM_SUBQUERY, GENERATOR_RULE, GROUP_BY,
+    GROUP_BY_ALL_RULE, HASH_RULE, HAVING, HIERARCHY_RULE, IFF, ILIKE_FOLDING, IN_LIST, IN_SUBQUERY,
+    INTERVAL_ARITHMETIC, IS_NULL, JARO_WINKLER, JOIN_CROSS, JOIN_ON, JOIN_USING, LAMBDA_RULE,
+    LATERAL_SUBQUERY, LEAST_GREATEST, LIKE, LIMIT, LISTAGG_RULE, LOGARITHM, LOGIC, MIN_MAX,
+    MIN_MAX_FLOAT, MODE_RULE, NAMED_AGGREGATES, NEGATE, NOT_IN_SUBQUERY, NULL_BRANCHES,
+    NULL_IF_ZERO_RULE, NULL_SAFE_COMPARISON, NULLIF, NUMBER_LITERAL, NUMBER_TEXT_FORMAT,
+    NUMERIC_FUNCTION, OBJECT_CONSTRUCT_RULE, OBJECT_DELETE_RULE, OBJECT_INSERT_RULE,
+    OBJECT_KEYS_RULE, OBJECT_PICK_RULE, ORDER_BY, PARENTHESES, PARSE_JSON_RULE, PARSE_JSON_VARIANT,
+    PERCENTILE_RULE, POSITIONAL_COLUMN, PROJECT_FUNCTION_CALL, PROJECT_TABLE_FUNCTION, QUALIFY,
+    REDUCE_RULE, REGEXP, REGEXP_COUNTING, REGEXP_PARAMETERS, REGEXP_POSIX_SPACE, ROUNDING,
+    SCALAR_SUBQUERY, SELECT, SET_OPERATION, SIGN_RULE, SPLIT_RULE, SPLIT_TO_TABLE_RULE, STAR, SUM,
+    SUM_FLOAT, TEMPORAL_TEXT_FORMAT, TEXT_AFFIX, TEXT_BRANCHES, TEXT_CHR, TEXT_CONTAINS, TEXT_HEX,
+    TEXT_HEX_DECODE, TEXT_INITCAP, TEXT_MD5, TEXT_NUMBER_COMPARISON, TEXT_PAD, TEXT_POSITION,
+    TEXT_REPEAT, TEXT_REPLACE, TEXT_SEARCH_POSITION, TEXT_SHA2, TEXT_TO_TIME_RULE,
+    TEXT_TO_TIMESTAMP_RULE, TEXT_TRANSLATE, TIME_ARITHMETIC, TIME_CAST, TIME_ZONE_CONVERSION,
+    TIMESTAMP_FORMAT_RULE, TIMESTAMP_TIME_RULE, TO_ARRAY_RULE, TO_BOOLEAN_RULE, TO_DATE_TEMPORAL,
+    TO_VARIANT_RULE, TRIM, UNION_BY_NAME, UTC_OFFSET_ARITHMETIC, VALUE_AT_EXTREME_KEY, VALUES_ROWS,
+    VARIANT_CAST, VARIANT_COMPUTED_GET, VARIANT_EQUALITY, VARIANT_EQUALITY_BY_TEXT,
+    VARIANT_INSPECT, VARIANT_KIND_CAST, VARIANT_KIND_RULE, VARIANT_PARTITION, VARIANT_PATH,
+    VARIANT_TEXT_BRANCHES, VARIANT_TO_VARCHAR, VARIANT_TYPE_NAME, VARIANT_TYPED_CHECK, WHERE,
+    WINDOW_AGGREGATE, WINDOW_FIRST_LAST, WINDOW_OFFSET, WINDOW_RANKING, WINDOW_VALUE_FRAME,
+    ZERO_IF_NULL_RULE, ZONE_COLUMNS, ZONED_PARTS,
 };
 use crate::conversion::models::RuleSpec;
 
@@ -740,11 +741,23 @@ pub const RULES: &[RuleSpec] = &[
     RuleSpec {
         id: ROUNDING,
         constructs: &["fn:ROUND", "fn:CEIL", "fn:FLOOR", "fn:TRUNC", "fn:TRUNCATE"],
-        conditions: "A NUMBER or FLOAT; ROUND to literal places (0 by default, possibly negative), half away from zero; CEIL, FLOOR and TRUNC to whole numbers. A NUMBER(p,s) whose scale drops to d is NUMBER(min(38, p + 1), max(d, 0)), else its own type, as recorded; a FLOAT stays FLOAT, a zero result positive, and ROUND of a FLOAT to places p multiplies by 10^p, rounds and divides by 10^p, as recorded, so it overflows to infinity where that product does. A result beyond NUMBER(38,0) raises, as Snowflake does.",
+        conditions: "A NUMBER or FLOAT; ROUND to literal places (0 by default, possibly negative), half away from zero; CEIL and FLOOR to whole numbers; TRUNC and TRUNCATE to literal places (0 by default, possibly negative), toward zero, a FLOAT multiplied by 10^p (or divided by 10^-p), truncated and divided back, as recorded (TRUNC(0.29, 2) is 0.28 in both), and TRUNC or TRUNCATE of a temporal value and a literal unit as DATE_TRUNC of the unit and the value. A NUMBER(p,s) whose scale drops to d is NUMBER(min(38, p + 1), max(d, 0)), else its own type, as recorded; a FLOAT stays FLOAT, a zero result positive, and ROUND of a FLOAT to places p multiplies by 10^p, rounds and divides by 10^p, as recorded, so it overflows to infinity where that product does. A result beyond NUMBER(38,0) raises, as Snowflake does.",
         failures: &[FailureMode {
             kind: ErrorKind::NumericOverflow,
             snowflake: &[NUMBER_OUT_OF_RANGE],
         }],
+    },
+    RuleSpec {
+        id: TEXT_REPEAT,
+        constructs: &["fn:REPEAT"],
+        conditions: "REPEAT of VARCHAR by a whole NUMBER: the text that many times, empty for zero or a negative count, NULL when either is NULL.",
+        failures: &[],
+    },
+    RuleSpec {
+        id: NUMBER_TEXT_FORMAT,
+        constructs: &["fn:TO_CHAR", "fn:TO_VARCHAR"],
+        conditions: "TO_CHAR or TO_VARCHAR of a NUMBER with a literal format FM, nines, one zero, a point and one or more zeros, where the NUMBER's type keeps every value, rounded, within the format's whole digits: rounded half away from zero to the format's fraction digits, at least one whole digit, a minus sign for every negative value, including one rounding to zero. FLOAT operands, other formats and formats that might overflow are not converted.",
+        failures: &[],
     },
     RuleSpec {
         id: SIGN_RULE,
@@ -896,13 +909,25 @@ pub const RULES: &[RuleSpec] = &[
     RuleSpec {
         id: FLATTEN_RULE,
         constructs: &["node:lateral", "fn:FLATTEN"],
-        conditions: "LATERAL FLATTEN of a VARIANT input after another FROM source or after JOIN ... ON clauses, as a comma or CROSS JOIN source, with OUTER => a boolean literal at most: INDEX and PATH [i] for array elements, KEY and PATH for object keys (raising for keys that are not plain names), VALUE and THIS; scalars, JSON null and NULL give no rows, or one row of NULLs under OUTER => TRUE. SEQ, PATH =>, RECURSIVE => and MODE => are not converted.",
+        conditions: "LATERAL FLATTEN of a VARIANT input after another FROM source or after JOIN ... ON clauses, as a comma or CROSS JOIN source, with OUTER => a boolean literal at most: INDEX and PATH [i] for array elements, KEY and PATH for object keys (raising for keys that are not plain names), VALUE and THIS; scalars, JSON null and NULL give no rows, or one row of NULLs under OUTER => TRUE. RECURSIVE => TRUE walks every depth with keys in byte order, writing a key of letters, digits, `_`, spaces and dots that is not a plain name as ['key'] and raising for any other, MODE => 'BOTH', 'OBJECT' or 'ARRAY' choosing what it descends into, a scalar input giving one row of itself under BOTH and raising under OBJECT or ARRAY; RECURSIVE with OUTER, MODE without RECURSIVE, SEQ and PATH => are not converted.",
+        failures: &[],
+    },
+    RuleSpec {
+        id: HIERARCHY_RULE,
+        constructs: &["node:connect", "node:select"],
+        conditions: "SELECT over one relation with START WITH and CONNECT BY of conjunctions of an unqualified child column = PRIOR an unqualified parent column, without WHERE, GROUP BY, HAVING, QUALIFY or NOCYCLE: the rows START WITH selects, then for each row every row whose columns equal its PRIOR columns, duplicates and rows reached by several paths repeated, as recorded; LEVEL from 1 as NUMBER(38,0), SYS_CONNECT_BY_PATH of a VARCHAR with a literal separator as the separator before each level's value, and CONNECT_BY_ROOT of a column as the start row's value. A walk deeper than 10,000 levels, as a cycle makes it, raises instead of growing without end (Snowflake never finishes one). Subqueries in the projection or ORDER BY and SELECT * over the walk are not converted.",
+        failures: &[],
+    },
+    RuleSpec {
+        id: GENERATOR_RULE,
+        constructs: &["fn:GENERATOR", "fn:SEQ4", "fn:SEQ8"],
+        conditions: "TABLE(GENERATOR(ROWCOUNT => n)) for a literal n from 0 to 100000, the recorded range, as the only source of its query level: n rows, where SEQ4() numbers them from 0 as NUMBER(10,0) and SEQ8() as NUMBER(19,0) without gaps. SEQ4 and SEQ8 elsewhere, TIMELIMIT and a ROWCOUNT other than a literal are not converted.",
         failures: &[],
     },
     RuleSpec {
         id: SPLIT_TO_TABLE_RULE,
         constructs: &["node:lateral", "fn:SPLIT_TO_TABLE"],
-        conditions: "LATERAL SPLIT_TO_TABLE of a VARCHAR on a non-empty string literal, wherever LATERAL FLATTEN converts: INDEX from 1 and VALUE for every part, empty parts included, as recorded; empty text gives one empty part and NULL text no rows. SEQ is not converted.",
+        conditions: "LATERAL SPLIT_TO_TABLE of a VARCHAR on a non-empty string literal or CHR of a literal code point other than 0, wherever LATERAL FLATTEN converts: INDEX from 1 and VALUE for every part, empty parts included, as recorded; empty text gives one empty part and NULL text no rows. SEQ is not converted.",
         failures: &[],
     },
     RuleSpec {
@@ -1018,7 +1043,7 @@ pub const RULES: &[RuleSpec] = &[
     RuleSpec {
         id: TEMPORAL_TEXT_FORMAT,
         constructs: &["fn:TO_VARCHAR", "fn:TO_CHAR"],
-        conditions: "A DATE or TIMESTAMP_NTZ and a literal format of YYYY, MM and DD and, for timestamps, HH24, MI and SS fields, in any case, between the separators - _ / : . and space: each field zero-padded, as strftime writes it.",
+        conditions: "A DATE or TIMESTAMP_NTZ and a literal format of YYYY, MM and DD and, for timestamps, HH24, MI, SS and FF, FF3, FF6 and FF9 fields (each truncating, as recorded; FF writes as many digits as the TIMESTAMP_NTZ precision, recorded for 0, 3, 6 and 9), in any case, between the separators - _ / : . and space: each field zero-padded, as strftime writes it.",
         failures: &[],
     },
     RuleSpec {
@@ -1033,7 +1058,7 @@ pub const RULES: &[RuleSpec] = &[
     RuleSpec {
         id: CAST_UTC_ZONED,
         constructs: &["node:cast"],
-        conditions: "A TIMESTAMP_TZ known to hold the UTC offset, +00:00, cast to TIMESTAMP_NTZ or DATE: from CONVERT_TIMEZONE('UTC', x) of two arguments or a cast of a DATE or naive timestamp in the UTC session, carried through columns, CTEs, subqueries, set operations and stored models, and chosen by COALESCE, NVL, IFF, CASE, MIN, MAX, LAG, LEAD, FIRST_VALUE or LAST_VALUE from such values or NULL; and a TIMESTAMP_LTZ, whose session zone is UTC, cast to TIMESTAMP_NTZ: its UTC wall time, then as a TIMESTAMP_NTZ cast; precision 7-9 relies on timestamp_range. Zoned values of unknown offset are refused, since DuckDB keeps instants without their offsets.",
+        conditions: "A TIMESTAMP_TZ known to hold the UTC offset, +00:00, cast to TIMESTAMP_NTZ, DATE or TIME(9) (TIME as TO_TIME of its UTC wall time): from CONVERT_TIMEZONE('UTC', x) of two arguments or a cast of a DATE or naive timestamp in the UTC session, carried through columns, CTEs, subqueries, set operations and stored models, and chosen by COALESCE, NVL, IFF, CASE, MIN, MAX, LAG, LEAD, FIRST_VALUE or LAST_VALUE from such values or NULL; and a TIMESTAMP_LTZ, whose session zone is UTC, cast to TIMESTAMP_NTZ: its UTC wall time, then as a TIMESTAMP_NTZ cast; precision 7-9 relies on timestamp_range. Zoned values of unknown offset are refused, since DuckDB keeps instants without their offsets.",
         failures: &[],
     },
     RuleSpec {
@@ -1287,7 +1312,7 @@ pub const RULES: &[RuleSpec] = &[
     RuleSpec {
         id: TIMESTAMP_TIME_RULE,
         constructs: &["fn:TO_TIME", "fn:TIME"],
-        conditions: "TO_TIME or TIME of a TIMESTAMP_NTZ, without a format: its wall-clock time of day with every fractional digit it holds, as TIME(9); NULL for NULL. TRY_TO_TIME of a timestamp and zoned timestamps are refused.",
+        conditions: "TO_TIME or TIME of a TIMESTAMP_NTZ, or of a TIMESTAMP_TZ known to hold the UTC offset (read as its UTC wall time), without a format: its wall-clock time of day with every fractional digit it holds, as TIME(9); NULL for NULL. TRY_TO_TIME of a timestamp and other zoned timestamps are refused.",
         failures: &[],
     },
     RuleSpec {
@@ -1314,7 +1339,7 @@ pub const RULES: &[RuleSpec] = &[
             "fn:BOOLAND_AGG",
             "fn:OBJECT_AGG",
         ],
-        conditions: "ANY_VALUE of any typed value, the group's one value, raising any_value_choice for a group holding different values, a FLOAT's -0 and 0 among them, and refusing a VARIANT not proven free of DATEs and timestamps where one entered the statement, one read from a source table or schema relation relying on source_variant_json, or NULL beside a value; COUNT_IF of a BOOLEAN as NUMBER(13,0), NULL over no rows; BOOLOR_AGG and BOOLAND_AGG of BOOLEANs ignoring NULLs, NULL when all are; COUNT_IF, BOOLOR_AGG and BOOLAND_AGG also over whole partitions and running ordered windows, not explicit frames. OBJECT_AGG of VARCHAR keys and VARIANT values skips NULL keys and values, is {} over no rows, and raises Snowflake's error for a repeated key. COUNT(DISTINCT a, b, ...) counts distinct rows of values none of which is NULL.",
+        conditions: "ANY_VALUE of any typed value, the group's one value, raising any_value_choice for a group holding different values, a FLOAT's -0 and 0 among them, and refusing a VARIANT not proven free of DATEs and timestamps where one entered the statement, one read from a source table or schema relation relying on source_variant_json, or NULL beside a value; COUNT_IF of a BOOLEAN as NUMBER(13,0), NULL over no rows; BOOLOR_AGG and BOOLAND_AGG of BOOLEANs ignoring NULLs, NULL when all are; COUNT_IF, BOOLOR_AGG and BOOLAND_AGG also over whole partitions and running ordered windows, not explicit frames. OBJECT_AGG of VARCHAR keys and VARIANT or NUMBER values (a NUMBER as TO_VARIANT of it) skips NULL keys and values, is {} over no rows, and raises Snowflake's error for a repeated key. COUNT(DISTINCT a, b, ...) counts distinct rows of values none of which is NULL.",
         failures: KEY_EXISTS_FAILURES,
     },
     RuleSpec {

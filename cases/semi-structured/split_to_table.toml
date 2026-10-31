@@ -120,3 +120,18 @@ rows = [
 query = "SELECT a.k, p.index, p.value FROM input a JOIN input b ON b.k = a.k, LATERAL SPLIT_TO_TABLE(a.s, ',') p ORDER BY a.k, p.index"
 order = "ordered"
 tags = ["null", "empty", "whitespace", "unicode"]
+
+[[case]]
+id = "split_to_table_chr_delimiter"
+description = "SPLIT_TO_TABLE on CHR(10) and CHR(9): empty parts, a leading and trailing delimiter, empty and NULL text."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'line one' || CHR(10) || 'line two'"],
+  ["CHR(10) || 'a' || CHR(10) || CHR(10)"],
+  ["'tab' || CHR(9) || 'sep'"],
+  ["''"],
+  ["NULL"],
+]
+query = "SELECT i.ordinal, s.index, s.value AS line, t.index AS tab_index, t.value AS tab_part FROM input i, LATERAL SPLIT_TO_TABLE(i.s, CHR(10)) s, LATERAL SPLIT_TO_TABLE(s.value, CHR(9)) t ORDER BY i.ordinal, s.index, t.index"
+order = "ordered"
+tags = ["null", "empty", "nested"]

@@ -1,0 +1,68 @@
+# Typed literals DATE '...', TIMESTAMP '...' and TIME '...', recorded beside the casts of their text.
+category = "temporal"
+construct = "node:literal"
+session_profile = "utc-v1"
+equivalence = "typed_literal_to_cast"
+
+[[case]]
+id = "date_literal_compared"
+description = "A DATE literal compared with a DATE column reads as a cast of its text to DATE."
+columns = [{ name = "d", type = "DATE" }]
+rows = [["'2024-02-28'"], ["'2024-02-29'"], ["'2024-03-01'"], ["NULL"]]
+expression = "d >= DATE '2024-02-29'"
+canonical = "d >= CAST('2024-02-29' AS DATE)"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "date_literal_values"
+description = "DATE literals across years, leap days and the epoch."
+columns = [{ name = "k", type = "NUMBER(1,0)" }]
+rows = [["1"], ["2"], ["3"], ["4"]]
+expression = "CASE k WHEN 1 THEN DATE '2024-02-29' WHEN 2 THEN DATE '1970-01-01' WHEN 3 THEN DATE '1999-12-31' ELSE DATE '2100-03-01' END"
+canonical = "CASE k WHEN 1 THEN CAST('2024-02-29' AS DATE) WHEN 2 THEN CAST('1970-01-01' AS DATE) WHEN 3 THEN CAST('1999-12-31' AS DATE) ELSE CAST('2100-03-01' AS DATE) END"
+tags = ["boundary"]
+
+[[case]]
+id = "date_literal_arithmetic"
+description = "DATEADD and DATEDIFF over DATE literals."
+columns = [{ name = "n", type = "NUMBER(3,0)" }]
+rows = [["0"], ["1"], ["-1"], ["365"], ["NULL"]]
+expression = "DATEDIFF(day, DATE '2024-01-01', DATEADD(day, n, DATE '2024-02-28'))"
+canonical = "DATEDIFF(day, CAST('2024-01-01' AS DATE), DATEADD(day, n, CAST('2024-02-28' AS DATE)))"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "date_literal_between"
+description = "A DATE column between two DATE literals."
+columns = [{ name = "d", type = "DATE" }]
+rows = [["'2023-12-31'"], ["'2024-01-01'"], ["'2024-06-30'"], ["'2024-07-01'"], ["NULL"]]
+expression = "d BETWEEN DATE '2024-01-01' AND DATE '2024-06-30'"
+canonical = "d BETWEEN CAST('2024-01-01' AS DATE) AND CAST('2024-06-30' AS DATE)"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "timestamp_literal_values"
+description = "TIMESTAMP literals with no fraction, a fraction, nanoseconds and a date alone."
+columns = [{ name = "k", type = "NUMBER(1,0)" }]
+rows = [["1"], ["2"], ["3"], ["4"]]
+expression = "CASE k WHEN 1 THEN TIMESTAMP '2024-02-29 13:45:00' WHEN 2 THEN TIMESTAMP '2024-02-29 13:45:00.123' WHEN 3 THEN TIMESTAMP '2024-02-29 23:59:59.999999999' ELSE TIMESTAMP '2024-02-29' END"
+canonical = "CASE k WHEN 1 THEN CAST('2024-02-29 13:45:00' AS TIMESTAMP) WHEN 2 THEN CAST('2024-02-29 13:45:00.123' AS TIMESTAMP) WHEN 3 THEN CAST('2024-02-29 23:59:59.999999999' AS TIMESTAMP) ELSE CAST('2024-02-29' AS TIMESTAMP) END"
+tags = ["boundary"]
+
+[[case]]
+id = "timestamp_literal_compared"
+description = "A TIMESTAMP literal compared with a TIMESTAMP_NTZ column."
+columns = [{ name = "t", type = "TIMESTAMP_NTZ(9)" }]
+rows = [["'2024-02-29 13:44:59.999'"], ["'2024-02-29 13:45:00'"], ["'2024-02-29 13:45:00.001'"], ["NULL"]]
+expression = "t < TIMESTAMP '2024-02-29 13:45:00'"
+canonical = "t < CAST('2024-02-29 13:45:00' AS TIMESTAMP)"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "time_literal_values"
+description = "TIME literals with and without a fraction, written as text."
+columns = [{ name = "k", type = "NUMBER(1,0)" }]
+rows = [["1"], ["2"], ["3"]]
+expression = "TO_VARCHAR(CASE k WHEN 1 THEN TIME '13:45:00' WHEN 2 THEN TIME '00:00:00' ELSE TIME '23:59:59.5' END)"
+canonical = "TO_VARCHAR(CASE k WHEN 1 THEN CAST('13:45:00' AS TIME) WHEN 2 THEN CAST('00:00:00' AS TIME) ELSE CAST('23:59:59.5' AS TIME) END)"
+tags = ["boundary"]

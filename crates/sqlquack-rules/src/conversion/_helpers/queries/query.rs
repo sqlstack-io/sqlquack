@@ -16,6 +16,7 @@ use crate::conversion::_helpers::expressions::windows::canonical_variant;
 use crate::conversion::_helpers::queries::clauses::{
     clause_condition, condition_sql, group_by, group_positions, order_and_limit, variant_group_keys,
 };
+use crate::conversion::_helpers::queries::hierarchy::hierarchy;
 use crate::conversion::_helpers::queries::set_operations::convert_set_operation;
 use crate::conversion::_helpers::queries::sources::convert_from;
 use crate::conversion::_helpers::support::scope::{Context, Emitted, Scope};
@@ -25,8 +26,8 @@ use crate::conversion::_helpers::support::tree::{
     require_understood,
 };
 use crate::conversion::constants::{
-    ALIAS, COMMENT, COMMON_TABLE, DISTINCT, GROUP_BY, HAVING, QUALIFY, SELECT, STAR,
-    VARIANT_HELD_UNREAD, WHERE,
+    ALIAS, COMMENT, COMMON_TABLE, DISTINCT, GENERATOR_SEQUENCE_COLUMN, GROUP_BY, HAVING,
+    HIERARCHY_COLUMN_PREFIX, QUALIFY, SELECT, STAR, VARIANT_HELD_UNREAD, WHERE,
 };
 use crate::conversion::constants::{VALUES_COLUMN_PREFIX, VALUES_ROWS};
 use sqlquack_semantics::dialects::constants::SNOWFLAKE_TO_DUCKDB;
@@ -37,6 +38,7 @@ use sqlquack_semantics::types::models::ColumnSpec;
 /// The SELECT clauses this rule converts; anything else set on the node is refused.
 const SELECT_FIELDS: &[&str] = &[
     "expressions",
+    "connect",
     "from",
     "joins",
     "where_clause",
@@ -184,7 +186,17 @@ fn convert_select(
     require_understood(select, SELECT_FIELDS, &construct)?;
     let _rule = context.log.rule(SELECT);
     let (with_sql, context) = convert_with(select.get("with"), outer, context)?;
-    let (from_sql, relations) = convert_from(select, outer, &context)?;
+    let walk;
+    let (select, from_sql, relations) = match select.get("connect") {
+        Some(connect) if !connect.is_null() => {
+            walk = hierarchy(select, outer, &context)?;
+            (&walk.select, walk.from_sql.clone(), walk.relations.clone())
+        }
+        _ => {
+            let (from_sql, relations) = convert_from(select, outer, &context)?;
+            (select, from_sql, relations)
+        }
+    };
     let mut scope = Scope::new(relations, outer);
     scope.grouped = select.get("group_by").is_some_and(|group| !group.is_null());
     let mut grouped_variants = variant_group_keys(
@@ -512,6 +524,12 @@ pub(crate) fn star(
         ));
     }
     let relations = star_relations(site.scope, qualifier.as_deref(), SNOWFLAKE_TO_DUCKDB)?;
+    if relations.iter().any(|relation| reads_hidden(relation)) {
+        return Err(outside_conditions(
+            construct.clone(),
+            "a star over a generator or a CONNECT BY walk".to_owned(),
+        ));
+    }
     let merged = |relation: &ScopeRelation, name: &String| {
         qualifier.is_none() && relation.merged.contains(name)
     };
@@ -586,6 +604,15 @@ fn require_leading_keys(
             "a bare star over a USING join whose keys do not lead the first source".to_owned(),
         )),
     }
+}
+
+/// Whether a relation carries a generator's or a CONNECT BY walk's hidden columns.
+fn reads_hidden(relation: &ScopeRelation) -> bool {
+    relation.columns.iter().any(hidden_column)
+}
+
+fn hidden_column(column: &ColumnSpec) -> bool {
+    column.name == GENERATOR_SEQUENCE_COLUMN || column.name.starts_with(HIERARCHY_COLUMN_PREFIX)
 }
 
 /// Refuses result columns whose names repeat, which DuckDB would rename.

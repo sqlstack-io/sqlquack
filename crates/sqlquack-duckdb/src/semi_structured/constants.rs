@@ -20,6 +20,8 @@ pub const JSON_GET_IGNORE_CASE: &str = "duckdb.json_get_ignore_case";
 pub const JSON_NULL: &str = "duckdb.json_null";
 /// FLATTEN's rows for a VARIANT: `duckdb.json_flatten`.
 pub const JSON_FLATTEN: &str = "duckdb.json_flatten";
+/// FLATTEN with RECURSIVE => TRUE: `duckdb.json_flatten_recursive`.
+pub const JSON_FLATTEN_RECURSIVE: &str = "duckdb.json_flatten_recursive";
 /// An object key FLATTEN writes in a path as it is.
 pub const PLAIN_KEY_PATTERN: &str = "[A-Za-z_][A-Za-z0-9_]*";
 /// OBJECT_DELETE of literal keys: `duckdb.json_object_delete`.
@@ -134,3 +136,10 @@ pub const JSON_ESCAPED: &str = "duckdb.json_escaped";
 pub const JSON_NUMBER_EQUAL: &str = "duckdb.json_number_equal";
 /// Object keys a quoted JSON path cannot name exactly: the empty key and the wildcard.
 pub const PATH_READ_KEYS: &[&str] = &["", "*"];
+
+/// A key step of a DuckDB `json_tree` full key: a bare name, or a quoted one.
+pub const KEY_STEP: &str = r#"\.([A-Za-z_][A-Za-z0-9_]*|"([^"\\]|\\.)*")"#;
+/// An element step of a DuckDB `json_tree` full key.
+pub const ELEMENT_STEP: &str = r"\[[0-9]+\]";
+/// A quoted key Snowflake was recorded writing as `['key']`: letters, digits, `_`, spaces and dots.
+pub const BRACKETED_KEY: &str = r#"\."[A-Za-z0-9_ .]*""#;

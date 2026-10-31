@@ -59,7 +59,6 @@ rows = [
 ]
 expression = "FILTER(v, c -> c:label::VARCHAR = 'Size')"
 tags = ["null", "duplicates", "empty", "invalid"]
-expected_divergence = "json_fidelity"
 
 [[case]]
 id = "filter_objects_first"
@@ -75,7 +74,6 @@ rows = [
 ]
 expression = "FILTER(v, c -> c:label::VARCHAR = 'Size')[0]:value::VARCHAR"
 tags = ["null", "duplicates", "empty", "invalid"]
-expected_divergence = "json_fidelity"
 
 [[case]]
 id = "filter_startswith"
@@ -113,7 +111,6 @@ rows = [
 ]
 expression = "FILTER(v, x -> LENGTH(x::VARCHAR) >= 2)"
 tags = ["null", "duplicates", "empty", "invalid"]
-expected_divergence = "json_fidelity"
 
 [[case]]
 id = "filter_not_array"

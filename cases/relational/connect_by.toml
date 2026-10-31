@@ -1,0 +1,76 @@
+# Hierarchical queries: START WITH, CONNECT BY PRIOR, LEVEL, SYS_CONNECT_BY_PATH and CONNECT_BY_ROOT.
+category = "relational"
+construct = "node:select"
+session_profile = "utc-v1"
+
+[[case]]
+id = "connect_by_tree"
+description = "A forest of two trees walked from the rows without a parent: level, path and root per row."
+columns = [{ name = "id", type = "NUMBER(10,0)" }, { name = "parent", type = "NUMBER(10,0)" }, { name = "name", type = "VARCHAR" }]
+rows = [
+  ["1", "NULL", "'store'"],
+  ["2", "1", "'aisle a'"],
+  ["3", "1", "'aisle b'"],
+  ["4", "2", "'shelf a1'"],
+  ["5", "4", "'bin a1x'"],
+  ["6", "NULL", "'depot'"],
+  ["7", "6", "'bay'"],
+  ["8", "99", "'orphan'"],
+]
+query = "SELECT id, LEVEL AS lvl, SYS_CONNECT_BY_PATH(name, '/') AS path, CONNECT_BY_ROOT name AS root FROM input START WITH parent IS NULL CONNECT BY parent = PRIOR id ORDER BY id"
+order = "ordered"
+tags = ["null", "nested"]
+
+[[case]]
+id = "connect_by_merge_chains"
+description = "Chains of replaced accounts walked from the current ones, with the root's id carried down."
+columns = [{ name = "account_id", type = "NUMBER(10,0)" }, { name = "replaced_by", type = "NUMBER(10,0)" }]
+rows = [["10", "NULL"], ["11", "10"], ["12", "11"], ["13", "10"], ["20", "NULL"], ["21", "20"], ["30", "NULL"]]
+query = "SELECT account_id, CONNECT_BY_ROOT account_id AS current_account, LEVEL AS depth, SYS_CONNECT_BY_PATH(account_id::VARCHAR, '>') AS chain FROM input START WITH replaced_by IS NULL CONNECT BY replaced_by = PRIOR account_id ORDER BY account_id"
+order = "ordered"
+tags = ["null", "nested"]
+
+[[case]]
+id = "connect_by_repeated_child"
+description = "A child row listed under two parents appears once under each, and a duplicate row twice."
+columns = [{ name = "id", type = "NUMBER(10,0)" }, { name = "parent", type = "NUMBER(10,0)" }]
+rows = [["1", "NULL"], ["2", "NULL"], ["3", "1"], ["3", "2"], ["4", "3"], ["4", "3"]]
+query = "SELECT id, LEVEL AS lvl, SYS_CONNECT_BY_PATH(id::VARCHAR, '/') AS path FROM input START WITH parent IS NULL CONNECT BY parent = PRIOR id ORDER BY path, id"
+order = "ordered"
+tags = ["duplicates", "null"]
+
+[[case]]
+id = "connect_by_start_with_value"
+description = "START WITH a chosen id, the walk filtered by an outer query."
+columns = [{ name = "id", type = "NUMBER(10,0)" }, { name = "parent", type = "NUMBER(10,0)" }, { name = "name", type = "VARCHAR" }]
+rows = [["1", "NULL", "'store'"], ["2", "1", "'aisle a'"], ["3", "2", "'shelf'"], ["4", "2", "'cart'"], ["5", "1", "'aisle b'"]]
+query = "SELECT id, lvl, path FROM (SELECT id, name, LEVEL AS lvl, SYS_CONNECT_BY_PATH(name, ' > ') AS path FROM input START WITH id = 2 CONNECT BY parent = PRIOR id) WHERE name <> 'cart' ORDER BY id"
+order = "ordered"
+tags = ["nested"]
+
+[[case]]
+id = "connect_by_no_start_rows"
+description = "START WITH matching no row returns no rows."
+columns = [{ name = "id", type = "NUMBER(10,0)" }, { name = "parent", type = "NUMBER(10,0)" }]
+rows = [["1", "NULL"], ["2", "1"]]
+query = "SELECT id, LEVEL AS lvl FROM input START WITH id = 99 CONNECT BY parent = PRIOR id"
+order = "bag"
+tags = ["empty-input"]
+
+[[case]]
+id = "connect_by_null_path_values"
+description = "SYS_CONNECT_BY_PATH over values that are NULL at the root and below it, and LEVEL in arithmetic."
+columns = [{ name = "id", type = "NUMBER(10,0)" }, { name = "parent", type = "NUMBER(10,0)" }, { name = "name", type = "VARCHAR" }]
+rows = [["1", "NULL", "NULL"], ["2", "1", "'bin'"], ["3", "2", "NULL"], ["4", "3", "'tray'"], ["5", "NULL", "'depot'"]]
+query = "SELECT id, LEVEL - 1 AS depth, SYS_CONNECT_BY_PATH(name, '/') AS path, CONNECT_BY_ROOT name AS root FROM input START WITH parent IS NULL CONNECT BY parent = PRIOR id ORDER BY id"
+order = "ordered"
+tags = ["null", "nested"]
+
+[[case]]
+id = "connect_by_start_with_value_aliased"
+description = "START WITH a chosen id, the walk filtered by an outer query over an aliased subquery."
+columns = [{ name = "id", type = "NUMBER(10,0)" }, { name = "parent", type = "NUMBER(10,0)" }, { name = "name", type = "VARCHAR" }]
+rows = [["1", "NULL", "'store'"], ["2", "1", "'aisle a'"], ["3", "2", "'shelf'"], ["4", "2", "'cart'"], ["5", "1", "'aisle b'"]]
+query = "SELECT w.id, w.lvl, w.path FROM (SELECT id, name, LEVEL AS lvl, SYS_CONNECT_BY_PATH(name, ' > ') AS path FROM input START WITH id = 2 CONNECT BY parent = PRIOR id) AS w WHERE w.name <> 'cart' ORDER BY w.id"
+order = "ordered"
+tags = ["nested"]

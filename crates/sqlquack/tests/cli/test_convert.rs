@@ -1,5 +1,10 @@
-use crate::helpers::{convert_outcome, converted_column_names, policy_free_exit_code, run_convert};
-use crate::test_types::{ColumnNameTestCase, ConvertOutcome, ConvertTestCase, PolicyFreeTestCase};
+use crate::helpers::{
+    convert_outcome, converted_column_names, converted_run_error, policy_free_exit_code,
+    run_convert,
+};
+use crate::test_types::{
+    ColumnNameTestCase, ConvertOutcome, ConvertTestCase, ConvertedRunTestCase, PolicyFreeTestCase,
+};
 
 const QUOTED_ALIAS: &str =
     "WITH totals AS (SELECT 1 AS \"orderTotal\") SELECT ordertotal FROM totals";
@@ -15,6 +20,13 @@ fn given_snowflake_sql_when_converting_then_duckdb_sql_or_named_refusals_are_pri
             flags: &[],
             mention: "sqlquack convert: done, converted under utc-v1",
             expected_outcome: convert_outcome(0, true),
+        },
+        ConvertTestCase {
+            description: "a subquery in a hierarchical query's projection is refused",
+            sql: "WITH bins AS (SELECT 1 AS id, NULL AS parent) SELECT id, (SELECT 100) AS m FROM bins START WITH parent IS NULL CONNECT BY parent = PRIOR id",
+            flags: &[],
+            mention: "in a hierarchical query's projection or ordering",
+            expected_outcome: convert_outcome(1, false),
         },
         ConvertTestCase {
             description: "a refused statement prints no SQL, names the refusal and exits 1",
@@ -242,6 +254,32 @@ fn given_no_policy_file_when_converting_or_counting_then_the_command_exits_2() {
         assert_eq!(
             policy_free_exit_code(test_case.arguments),
             test_case.expected_exit_code,
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_a_hierarchy_with_a_cycle_when_running_the_conversion_then_duckdb_raises_the_depth_guard() {
+    let test_cases = [
+        ConvertedRunTestCase {
+            description: "a cycle reached from the start rows raises past the depth limit",
+            sql: "WITH edges AS (SELECT 1 AS id, 2 AS parent UNION ALL SELECT 2, 1 UNION ALL SELECT 3, NULL) SELECT id, LEVEL AS lvl FROM edges START WITH id = 1 CONNECT BY parent = PRIOR id",
+            expected_error: Some("connect_by_depth"),
+        },
+        ConvertedRunTestCase {
+            description: "a walk without a cycle runs to the end",
+            sql: "WITH edges AS (SELECT 1 AS id, NULL AS parent UNION ALL SELECT 2, 1 UNION ALL SELECT 3, 2) SELECT id, LEVEL AS lvl FROM edges START WITH parent IS NULL CONNECT BY parent = PRIOR id",
+            expected_error: None,
+        },
+    ];
+    for test_case in test_cases {
+        assert_eq!(
+            converted_run_error(test_case.sql).map(|error| error
+                .contains(test_case.expected_error.unwrap_or(""))
+                .then_some(())),
+            test_case.expected_error.map(|_| Some(())),
             "{}",
             test_case.description
         );

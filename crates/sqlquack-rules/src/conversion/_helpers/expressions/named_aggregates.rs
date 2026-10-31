@@ -17,6 +17,7 @@ use sqlquack_snowflake::typing::main::count::count;
 use sqlquack_snowflake::typing::models::SnowflakeType;
 
 use crate::conversion::_helpers::expressions::scalar::convert_expression;
+use crate::conversion::_helpers::expressions::variants::to_variant;
 use crate::conversion::_helpers::support::divergence::diverge;
 use crate::conversion::_helpers::support::scope::Emitted;
 use crate::conversion::_helpers::support::site::{Placement, Site};
@@ -27,7 +28,7 @@ use crate::conversion::_helpers::support::typed_leaves::compared_value;
 use crate::conversion::constants::{
     ANY_VALUE_CHOICE, MAX_BY_FUNCTION, MODE_EMPTY_BOOLEAN, MODE_EMPTY_DATE, MODE_EMPTY_NUMBER,
     MODE_EMPTY_TEXT, MODE_RULE, MODE_TIES, MULTI_COUNT, NAMED_AGGREGATE_NAMES, NAMED_AGGREGATES,
-    VALUE_AT_EXTREME_KEY, WINDOWED_NAMED_AGGREGATES,
+    OBJECT_AGG_VALUE_PAIR, TO_VARIANT_RULE, VALUE_AT_EXTREME_KEY, WINDOWED_NAMED_AGGREGATES,
 };
 
 /// Whether `name` is an aggregate converted here.
@@ -144,6 +145,19 @@ pub(crate) fn named_aggregate(
             if matches!(key.data_type, SnowflakeType::Varchar)
                 && value.data_type == SnowflakeType::SemiStructured =>
         {
+            diverge(site.context, JSON_FIDELITY, &construct)?;
+            Ok(Emitted::new(
+                json_object_agg((&key.sql, &value.sql), &over, log),
+                SnowflakeType::SemiStructured,
+            ))
+        }
+        ("OBJECT_AGG", [key, value])
+            if matches!(key.data_type, SnowflakeType::Varchar)
+                && matches!(value.data_type, SnowflakeType::Number { .. }) =>
+        {
+            log.equivalence(OBJECT_AGG_VALUE_PAIR);
+            let _rule = log.rule(TO_VARIANT_RULE);
+            let value = to_variant(value.clone(), &construct, site.context)?;
             diverge(site.context, JSON_FIDELITY, &construct)?;
             Ok(Emitted::new(
                 json_object_agg((&key.sql, &value.sql), &over, log),

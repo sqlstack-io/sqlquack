@@ -1,0 +1,72 @@
+# OBJECT_AGG of a typed value, recorded beside OBJECT_AGG of the value made a VARIANT by TO_VARIANT.
+category = "aggregate"
+construct = "fn:OBJECT_AGG"
+session_profile = "utc-v1"
+equivalence = "object_agg_value_to_variant"
+
+[[case]]
+id = "object_agg_integers"
+description = "OBJECT_AGG of integer NUMBER values, NULL keys and values skipped, per group."
+columns = [{ name = "g", type = "VARCHAR" }, { name = "k", type = "VARCHAR" }, { name = "n", type = "NUMBER(13,0)" }]
+rows = [
+  ["'a'", "'size'", "1"],
+  ["'a'", "'weight'", "-20"],
+  ["'a'", "NULL", "3"],
+  ["'b'", "'size'", "NULL"],
+  ["'c'", "'b'", "9999999999999"],
+  ["'c'", "'a'", "0"],
+]
+query = "SELECT g, TO_JSON(OBJECT_AGG(k, n)) AS o FROM input GROUP BY g ORDER BY g"
+canonical = "SELECT g, TO_JSON(OBJECT_AGG(k, TO_VARIANT(n))) AS o FROM input GROUP BY g ORDER BY g"
+order = "ordered"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "object_agg_decimals"
+description = "OBJECT_AGG of NUMBER values with a scale: trailing zeros, negatives and a whole value."
+columns = [{ name = "g", type = "VARCHAR" }, { name = "k", type = "VARCHAR" }, { name = "n", type = "NUMBER(38,7)" }]
+rows = [
+  ["'a'", "'price'", "1.5000000"],
+  ["'a'", "'discount'", "-0.0000001"],
+  ["'a'", "'tax'", "2.0000000"],
+  ["'b'", "'price'", "0"],
+  ["'b'", "'rate'", "NULL"],
+]
+query = "SELECT g, TO_JSON(OBJECT_AGG(k, n)) AS o FROM input GROUP BY g ORDER BY g"
+canonical = "SELECT g, TO_JSON(OBJECT_AGG(k, TO_VARIANT(n))) AS o FROM input GROUP BY g ORDER BY g"
+order = "ordered"
+tags = ["null", "trailing-zeros"]
+
+[[case]]
+id = "object_agg_decimals_read"
+description = "Fields of an OBJECT_AGG of scaled NUMBERs read back as NUMBER and checked with TYPEOF."
+columns = [{ name = "g", type = "VARCHAR" }, { name = "k", type = "VARCHAR" }, { name = "n", type = "NUMBER(25,6)" }]
+rows = [
+  ["'a'", "'price'", "1.500000"],
+  ["'a'", "'tax'", "2.000000"],
+  ["'b'", "'price'", "-3.250000"],
+]
+query = "SELECT g, o:price::NUMBER(25,6) AS price, TYPEOF(o:price) AS price_kind, TYPEOF(o:tax) AS tax_kind FROM (SELECT g, OBJECT_AGG(k, n) AS o FROM input GROUP BY g) ORDER BY g"
+canonical = "SELECT g, o:price::NUMBER(25,6) AS price, TYPEOF(o:price) AS price_kind, TYPEOF(o:tax) AS tax_kind FROM (SELECT g, OBJECT_AGG(k, TO_VARIANT(n)) AS o FROM input GROUP BY g) ORDER BY g"
+order = "ordered"
+tags = ["trailing-zeros"]
+
+[[case]]
+id = "object_agg_values_no_rows"
+description = "OBJECT_AGG of NUMBER values over no rows is an empty object."
+columns = [{ name = "k", type = "VARCHAR" }, { name = "n", type = "NUMBER(18,0)" }]
+rows = [["'a'", "1"]]
+query = "SELECT TO_JSON(OBJECT_AGG(k, n)) AS o FROM input WHERE n > 5"
+canonical = "SELECT TO_JSON(OBJECT_AGG(k, TO_VARIANT(n))) AS o FROM input WHERE n > 5"
+order = "bag"
+tags = ["empty-input"]
+
+[[case]]
+id = "object_agg_values_repeated_key"
+description = "OBJECT_AGG of NUMBER values with a repeated key raises Snowflake's error."
+columns = [{ name = "k", type = "VARCHAR" }, { name = "n", type = "NUMBER(18,0)" }]
+rows = [["'a'", "1"], ["'a'", "2"]]
+query = "SELECT TO_JSON(OBJECT_AGG(k, n)) AS o FROM input"
+canonical = "SELECT TO_JSON(OBJECT_AGG(k, TO_VARIANT(n))) AS o FROM input"
+order = "bag"
+tags = ["duplicates", "error"]

@@ -42,8 +42,8 @@ use crate::conversion::_helpers::support::tree::{
 use crate::conversion::constants::{
     BASE64_BINARY, BASE64_DECODER, CASE_MAPPING, CONCAT, CONCAT_WS, EDIT_DISTANCE,
     HEX_DECODE_MESSAGE, JARO_WINKLER, SHA2_DEFAULT_BITS, TEXT_AFFIX, TEXT_CHR, TEXT_CONTAINS,
-    TEXT_HEX, TEXT_HEX_DECODE, TEXT_INITCAP, TEXT_MD5, TEXT_POSITION_LIMIT, TEXT_SHA2, TRIM,
-    TRYING_HEX_DECODE, VARIANT_TO_VARCHAR,
+    TEXT_HEX, TEXT_HEX_DECODE, TEXT_INITCAP, TEXT_MD5, TEXT_POSITION_LIMIT, TEXT_REPEAT, TEXT_SHA2,
+    TRIM, TRYING_HEX_DECODE, VARIANT_TO_VARCHAR,
 };
 
 /// What TRIM removes without a character list: spaces only, as in Snowflake.
@@ -429,6 +429,34 @@ pub(crate) fn chr(
             construct.clone(),
             format!("CHR of {other}"),
         )),
+    }
+}
+
+/// REPEAT of text by a whole count: empty for a count below one.
+pub(crate) fn repeat(
+    arguments: &[Value],
+    construct: &Construct,
+    site: Site<'_>,
+) -> Result<Emitted, Refusal> {
+    let _rule = site.context.log.rule(TEXT_REPEAT);
+    let refuse = |reason: String| outside_conditions(construct.clone(), reason);
+    let [text, count] = arguments else {
+        return Err(refuse("REPEAT takes two arguments".to_owned()));
+    };
+    let text = convert_expression(text, site)?;
+    let count = convert_expression(count, site)?;
+    match (text.data_type, count.data_type) {
+        (
+            SnowflakeType::Varchar | SnowflakeType::Null,
+            SnowflakeType::Number { scale: 0, .. } | SnowflakeType::Null,
+        ) => Ok(Emitted::new(
+            format!(
+                "repeat(CAST({} AS VARCHAR), CAST({} AS BIGINT))",
+                text.sql, count.sql
+            ),
+            SnowflakeType::Varchar,
+        )),
+        (text, count) => Err(refuse(format!("REPEAT of {text} by {count}"))),
     }
 }
 

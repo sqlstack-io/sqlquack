@@ -1,0 +1,44 @@
+# OBJECT_CONSTRUCT and OBJECT_CONSTRUCT_KEEP_NULL holding a scaled NUMBER beside a FLOAT in one object.
+category = "semi-structured-typed"
+construct = "fn:OBJECT_CONSTRUCT_KEEP_NULL"
+session_profile = "utc-v1"
+
+[[case]]
+id = "decimal_beside_float_text"
+description = "A scaled NUMBER and a FLOAT in one object, written as JSON text."
+columns = [{ name = "price", type = "NUMBER(38,6)" }, { name = "ratio", type = "FLOAT" }]
+rows = [
+  ["1.500000", "0.25"],
+  ["2.000000", "1.0"],
+  ["-0.000001", "-2.5e-7"],
+  ["123456789.123456", "1e20"],
+  ["NULL", "NULL"],
+  ["0", "0"],
+]
+expression = "TO_JSON(OBJECT_CONSTRUCT_KEEP_NULL('price', price, 'ratio', ratio))"
+tags = ["null", "trailing-zeros", "boundary"]
+
+[[case]]
+id = "decimal_beside_float_dropped_nulls"
+description = "OBJECT_CONSTRUCT drops NULL values when a scaled NUMBER sits beside a FLOAT."
+columns = [{ name = "price", type = "NUMBER(28,1)" }, { name = "ratio", type = "FLOAT" }]
+rows = [["1.5", "0.5"], ["NULL", "0.5"], ["2.0", "NULL"], ["NULL", "NULL"]]
+expression = "TO_JSON(OBJECT_CONSTRUCT('price', price, 'ratio', ratio))"
+tags = ["null", "trailing-zeros"]
+
+[[case]]
+id = "decimal_beside_float_types"
+description = "TYPEOF of a scaled NUMBER and a FLOAT field built into one object."
+columns = [{ name = "price", type = "NUMBER(38,6)" }, { name = "ratio", type = "FLOAT" }]
+rows = [["1.500000", "0.25"], ["2.000000", "1.0"], ["NULL", "3.0"]]
+query = "SELECT ordinal, TYPEOF(o:price) AS price_kind, TYPEOF(o:ratio) AS ratio_kind, o:price::NUMBER(38,6) AS price, o:ratio::FLOAT AS ratio FROM (SELECT ordinal, OBJECT_CONSTRUCT_KEEP_NULL('price', price, 'ratio', ratio) AS o FROM input) ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "trailing-zeros"]
+
+[[case]]
+id = "integer_decimal_float_together"
+description = "An integer, a scaled NUMBER and a FLOAT in one object, with text beside them."
+columns = [{ name = "qty", type = "NUMBER(18,0)" }, { name = "price", type = "NUMBER(10,2)" }, { name = "ratio", type = "FLOAT" }, { name = "sku", type = "VARCHAR" }]
+rows = [["3", "9.90", "0.125", "'A-1'"], ["0", "0.00", "-1.5", "NULL"], ["NULL", "NULL", "NULL", "'B-2'"]]
+expression = "TO_JSON(OBJECT_CONSTRUCT_KEEP_NULL('qty', qty, 'price', price, 'ratio', ratio, 'sku', sku))"
+tags = ["null", "trailing-zeros"]

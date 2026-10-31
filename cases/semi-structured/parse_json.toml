@@ -265,13 +265,12 @@ tags = ["invalid"]
 
 [[case]]
 id = "parsed_to_varchar_guard_3"
-description = "TRY_PARSE_JSON(s)::VARCHAR of one text the JSON guard raises for: '[1,\"x\",null]'"
+description = "TRY_PARSE_JSON(s)::VARCHAR of one text the JSON guard once raised for: '[1,\"x\",null]'"
 columns = [{ name = "s", type = "VARCHAR" }]
 rows = [
   ["'[1,\"x\",null]'"],
 ]
 expression = "TRY_PARSE_JSON(s)::VARCHAR"
-expected_divergence = "json_fidelity"
 tags = ["invalid"]
 
 [[case]]

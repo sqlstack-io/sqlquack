@@ -110,6 +110,12 @@ pub(crate) struct ConvertTestCase {
     pub(crate) expected_outcome: ConvertOutcome,
 }
 
+pub(crate) struct ConvertedRunTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) sql: &'static str,
+    pub(crate) expected_error: Option<&'static str>,
+}
+
 pub(crate) struct ColumnNameTestCase {
     pub(crate) description: &'static str,
     pub(crate) sql: &'static str,

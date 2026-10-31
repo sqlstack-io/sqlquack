@@ -5,6 +5,7 @@ pub mod json_decimal;
 pub mod json_escaped;
 pub mod json_filter;
 pub mod json_flatten;
+pub mod json_flatten_recursive;
 pub mod json_get_computed;
 pub mod json_get_ignore_case;
 pub mod json_guarded;

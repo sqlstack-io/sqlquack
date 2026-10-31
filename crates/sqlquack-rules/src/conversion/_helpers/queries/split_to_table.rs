@@ -14,8 +14,10 @@ use crate::conversion::_helpers::expressions::scalar::convert_expression;
 use crate::conversion::_helpers::queries::flatten::Flattened;
 use crate::conversion::_helpers::support::scope::{Context, Literal, Scope};
 use crate::conversion::_helpers::support::site::{Placement, Site};
-use crate::conversion::_helpers::support::tree::{Payload, function_construct, list};
-use crate::conversion::constants::{SPLIT_TO_TABLE_COLUMNS, SPLIT_TO_TABLE_RULE};
+use crate::conversion::_helpers::support::tree::{
+    Payload, function_construct, integer_literal, list,
+};
+use crate::conversion::constants::{CHR_NAME, SPLIT_TO_TABLE_COLUMNS, SPLIT_TO_TABLE_RULE};
 use sqlquack_semantics::scopes::models::ScopeRelation;
 use sqlquack_semantics::types::models::ColumnSpec;
 
@@ -83,8 +85,11 @@ pub(crate) fn lateral_split(
     })
 }
 
-/// A non-empty string literal.
+/// A non-empty string literal, or CHR of a literal code point.
 fn delimiter_sql(node: &Value, function: &Construct, site: Site<'_>) -> Result<String, Refusal> {
+    if let Some(character) = character_literal(node) {
+        return Ok(string_literal(&character.to_string(), site.context.log));
+    }
     match convert_expression(node, site)?.literal {
         Some(Literal::Text(text)) if !text.is_empty() => {
             Ok(string_literal(&text, site.context.log))
@@ -94,4 +99,17 @@ fn delimiter_sql(node: &Value, function: &Construct, site: Site<'_>) -> Result<S
             "a delimiter other than a non-empty string literal".to_owned(),
         )),
     }
+}
+
+/// The character of `CHR(n)` for a literal code point n of a character other than NUL.
+fn character_literal(node: &Value) -> Option<char> {
+    let call = node.get("function")?;
+    if !call.get("name")?.as_str()?.eq_ignore_ascii_case(CHR_NAME) {
+        return None;
+    }
+    let [code] = call.get("args")?.as_array()?.as_slice() else {
+        return None;
+    };
+    let code = u32::try_from(integer_literal(code)?).unwrap_or(u32::MAX);
+    char::from_u32(code).filter(|character| *character != '\0')
 }

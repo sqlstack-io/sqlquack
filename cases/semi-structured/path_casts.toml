@@ -451,5 +451,4 @@ rows = [
   ["PARSE_JSON('{\"a\":{\"z\":1,\"y\":[true,null]}}')"],
 ]
 expression = "TO_JSON(v:a)"
-expected_divergence = "json_fidelity"
 tags = ["boundary"]

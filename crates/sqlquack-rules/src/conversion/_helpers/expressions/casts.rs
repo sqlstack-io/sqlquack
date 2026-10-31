@@ -25,6 +25,7 @@ use sqlquack_duckdb::temporal::main::text_to_timestamp::text_to_timestamp;
 use sqlquack_duckdb::temporal::main::utc_wall_time::utc_wall_time;
 use sqlquack_duckdb::times::main::text_to_time::text_to_time;
 use sqlquack_duckdb::times::main::time_text::time_text;
+use sqlquack_duckdb::times::main::timestamp_time::timestamp_time;
 use sqlquack_duckdb::times::main::truncate_time::truncate_time;
 use sqlquack_duckdb::times::models::TimeFormat;
 use sqlquack_duckdb::variants::main::json_kind_cast::json_kind_cast;
@@ -57,9 +58,9 @@ use crate::conversion::constants::{
     CAST_TEXT_TIME, CAST_TEXT_TIMESTAMP, CAST_TO_TEXT, CAST_UTC_ZONED, DATE_TEXT_SPELLING,
     FLOAT_SCALE_FACET, FLOAT_TO_DOUBLE, KIND_CAST_TARGETS, MICROSECOND_DIGITS, NTZ_OUTPUT_PATTERN,
     SESSION_TIMEZONE_UTC, TARGET_FACET, TEXT_TYPE_PAIR, TEXT_TYPE_SPELLINGS, TIME_CAST,
-    TIMESTAMP_RANGE, TIMESTAMP_TEXT_ROUNDING, TO_BOOLEAN_RULE, TO_DOUBLE_PAIR, TO_NUMBER_PAIR,
-    TO_VARCHAR_PAIR, TO_VARIANT_RULE, VARIANT_KIND_CAST, VARIANT_NAME, VARIANT_TEXT_FUNCTION,
-    VARIANT_TO_VARCHAR,
+    TIMESTAMP_RANGE, TIMESTAMP_TEXT_ROUNDING, TIMESTAMP_TIME_RULE, TO_BOOLEAN_RULE, TO_DOUBLE_PAIR,
+    TO_NUMBER_PAIR, TO_VARCHAR_PAIR, TO_VARIANT_RULE, VARIANT_KIND_CAST, VARIANT_NAME,
+    VARIANT_TEXT_FUNCTION, VARIANT_TO_VARCHAR,
 };
 
 /// Serialised kinds of Snowflake's structured types.
@@ -334,6 +335,17 @@ fn cast_sql(
                 (SnowflakeType::TimestampNtz { precision }, to),
                 (context, construct),
             )
+        }
+        (SnowflakeType::TimestampTz { precision }, SnowflakeType::Time { precision: 9 }, _)
+            if operand.utc_offset =>
+        {
+            let _rule = cast_rule(CAST_UTC_ZONED, log);
+            let _time = log.rule(TIMESTAMP_TIME_RULE);
+            Ok(timestamp_time(
+                &utc_wall_time(&operand.sql, log),
+                precision > MICROSECOND_DIGITS,
+                log,
+            ))
         }
         (
             SnowflakeType::TimestampTz { precision },
