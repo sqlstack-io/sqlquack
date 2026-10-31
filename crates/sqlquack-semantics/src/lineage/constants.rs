@@ -49,3 +49,5 @@ pub(crate) const IDENTIFIER_FUNCTION: &str = "IDENTIFIER";
 pub(crate) const RECURSION_LIMIT: usize = 32;
 /// Characters in an unaliased expression whose Snowflake output name lineage does not model.
 pub(crate) const UNNAMED_CHARACTERS: [char; 5] = ['"', '\'', '`', '-', '/'];
+/// GROUP BY and ORDER BY ordinals number outputs from 1.
+pub(crate) const ORDINAL_BASE: usize = 1;

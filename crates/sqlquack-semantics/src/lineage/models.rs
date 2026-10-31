@@ -3,7 +3,7 @@
 use std::collections::BTreeSet;
 
 use crate::dialects::types::DialectProfile;
-use crate::lineage::types::LineageSchema;
+use crate::lineage::types::{LineageSchema, SharedColumns};
 
 /// How an output column is derived from its source columns.
 #[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
@@ -64,6 +64,8 @@ pub struct QueryLineage {
     pub open_star: bool,
     /// Columns deciding rows (filters, join keys, groups, CONNECT BY, PIVOT FOR), sorted.
     pub row_sources: Vec<SourceColumn>,
+    /// Whether every column a row-deciding expression reads was traced into `row_sources`.
+    pub rows_resolved: bool,
 }
 
 /// What lineage needs besides the statement: name rules and the known relations.
@@ -80,11 +82,15 @@ pub struct LineageContext<'a> {
 /// The lineage of one value while it is being resolved.
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub(crate) struct Lineage {
-    pub(crate) sources: BTreeSet<SourceColumn>,
+    pub(crate) sources: SharedColumns,
     pub(crate) kind: TransformKind,
     pub(crate) resolved: bool,
     /// Columns deciding the rows of a query read inside the value, as a subquery's filters.
-    pub(crate) rows: BTreeSet<SourceColumn>,
+    pub(crate) rows: SharedColumns,
+    /// Whether a column the value reads could not be traced.
+    pub(crate) lost: bool,
+    /// Whether a column deciding the rows of a query inside the value could not be traced.
+    pub(crate) rows_lost: bool,
 }
 
 /// One column a FROM item offers, with its lineage.
@@ -133,7 +139,7 @@ pub(crate) struct ResolvedQuery {
     /// What every unknown column also reads, as a table function's arguments.
     pub(crate) open_reads: Option<Lineage>,
     /// Columns deciding which rows the query returns.
-    pub(crate) rows: BTreeSet<SourceColumn>,
+    pub(crate) rows: RowReads,
 }
 
 /// The FROM items of a query level: their sources, merged join keys and row dependencies.
@@ -141,5 +147,12 @@ pub(crate) struct ResolvedQuery {
 pub(crate) struct FromItems {
     pub(crate) sources: Vec<ScopeSource>,
     pub(crate) merged: Vec<ScopedColumn>,
-    pub(crate) rows: BTreeSet<SourceColumn>,
+    pub(crate) rows: RowReads,
+}
+
+/// The columns that decide a query's rows, and whether any such column could not be traced.
+#[derive(Clone, Debug, Default, PartialEq, Eq)]
+pub(crate) struct RowReads {
+    pub(crate) columns: BTreeSet<SourceColumn>,
+    pub(crate) lost: bool,
 }

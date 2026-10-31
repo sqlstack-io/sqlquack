@@ -1,16 +1,20 @@
 //! Building and combining the lineage of values.
 
 use std::collections::BTreeSet;
+use std::rc::Rc;
 
-use crate::lineage::models::{Lineage, SourceColumn, TransformKind};
+use crate::lineage::models::{Lineage, RowReads, SourceColumn, TransformKind};
+use crate::lineage::types::SharedColumns;
 
 /// A value that reads no column.
 pub(crate) fn constant() -> Lineage {
     Lineage {
-        sources: BTreeSet::new(),
+        sources: SharedColumns::default(),
         kind: TransformKind::Constant,
         resolved: true,
-        rows: BTreeSet::new(),
+        rows: SharedColumns::default(),
+        lost: false,
+        rows_lost: false,
     }
 }
 
@@ -18,6 +22,7 @@ pub(crate) fn constant() -> Lineage {
 pub(crate) fn unresolved() -> Lineage {
     Lineage {
         resolved: false,
+        lost: true,
         ..constant()
     }
 }
@@ -25,11 +30,11 @@ pub(crate) fn unresolved() -> Lineage {
 /// One source column, unchanged.
 pub(crate) fn direct(relation: &str, column: &str, quoted: bool) -> Lineage {
     Lineage {
-        sources: BTreeSet::from([SourceColumn {
+        sources: Rc::new(BTreeSet::from([SourceColumn {
             relation: relation.to_owned(),
             column: column.to_owned(),
             quoted,
-        }]),
+        }])),
         kind: TransformKind::Direct,
         ..constant()
     }
@@ -39,6 +44,7 @@ pub(crate) fn direct(relation: &str, column: &str, quoted: bool) -> Lineage {
 pub(crate) fn traced_if(lineage: Lineage, traced: bool) -> Lineage {
     Lineage {
         resolved: lineage.resolved && traced,
+        lost: lineage.lost || !traced,
         ..lineage
     }
 }
@@ -46,6 +52,8 @@ pub(crate) fn traced_if(lineage: Lineage, traced: bool) -> Lineage {
 /// The parts read together into one value derived at least as `floor`.
 pub(crate) fn combined(parts: Vec<Lineage>, floor: TransformKind) -> Lineage {
     let resolved = parts.iter().all(|part| part.resolved);
+    let lost: bool = parts.iter().any(|part| part.lost);
+    let rows_lost: bool = parts.iter().any(|part| part.rows_lost);
     let strongest = parts
         .iter()
         .filter(|part| !part.sources.is_empty() || part.kind == TransformKind::Aggregation)
@@ -62,12 +70,16 @@ pub(crate) fn combined(parts: Vec<Lineage>, floor: TransformKind) -> Lineage {
         kind,
         resolved,
         rows,
+        lost,
+        rows_lost,
     }
 }
 
 /// Alternative branches merged into one column: direct only when each is one same source unchanged.
 pub(crate) fn merged(parts: Vec<Lineage>) -> Lineage {
     let resolved = parts.iter().all(|part| part.resolved);
+    let lost: bool = parts.iter().any(|part| part.lost);
+    let rows_lost: bool = parts.iter().any(|part| part.rows_lost);
     let aggregated = parts
         .iter()
         .any(|part| part.kind == TransformKind::Aggregation);
@@ -87,20 +99,54 @@ pub(crate) fn merged(parts: Vec<Lineage>) -> Lineage {
         kind,
         resolved,
         rows,
+        lost,
+        rows_lost,
     }
 }
 
-/// Every column a value reads, its sources and row dependencies together.
-pub(crate) fn everything_read(lineage: &Lineage) -> BTreeSet<SourceColumn> {
-    lineage.sources.union(&lineage.rows).cloned().collect()
+impl RowReads {
+    /// Everything `lineage` reads, as columns deciding rows.
+    pub(crate) fn read(&mut self, lineage: &Lineage) {
+        self.columns.extend(lineage.sources.iter().cloned());
+        self.lost |= lineage.lost;
+        self.rows_of(lineage);
+    }
+
+    /// The columns deciding rows of the queries inside `lineage`.
+    pub(crate) fn rows_of(&mut self, lineage: &Lineage) {
+        self.columns.extend(lineage.rows.iter().cloned());
+        self.lost |= lineage.rows_lost;
+    }
+
+    /// Another query's row-deciding columns.
+    pub(crate) fn absorb(&mut self, other: &RowReads) {
+        self.columns.extend(other.columns.iter().cloned());
+        self.lost |= other.lost;
+    }
 }
 
-fn unions(parts: Vec<Lineage>) -> (BTreeSet<SourceColumn>, BTreeSet<SourceColumn>) {
-    let mut sources: BTreeSet<SourceColumn> = BTreeSet::new();
-    let mut rows: BTreeSet<SourceColumn> = BTreeSet::new();
+fn unions(parts: Vec<Lineage>) -> (SharedColumns, SharedColumns) {
+    let mut sources: Vec<SharedColumns> = Vec::with_capacity(parts.len());
+    let mut rows: Vec<SharedColumns> = Vec::with_capacity(parts.len());
     for part in parts {
-        sources.extend(part.sources);
-        rows.extend(part.rows);
+        sources.push(part.sources);
+        rows.push(part.rows);
     }
-    (sources, rows)
+    (shared_union(sources), shared_union(rows))
+}
+
+/// The union of `sets`, sharing one of them when it already holds the others.
+fn shared_union(sets: Vec<SharedColumns>) -> SharedColumns {
+    let mut union: SharedColumns = SharedColumns::default();
+    for set in sets {
+        if set.is_empty() || Rc::ptr_eq(&union, &set) || set.is_subset(&union) {
+            continue;
+        }
+        if union.is_subset(&set) {
+            union = set;
+            continue;
+        }
+        Rc::make_mut(&mut union).extend(set.iter().cloned());
+    }
+    union
 }

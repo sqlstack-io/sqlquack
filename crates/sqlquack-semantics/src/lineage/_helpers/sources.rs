@@ -1,7 +1,5 @@
 //! The FROM items of a query level, in order, each with the columns it offers.
 
-use std::collections::BTreeSet;
-
 use sqlquack_syntax::Expression;
 use sqlquack_syntax::ExpressionWalk;
 use sqlquack_syntax::expressions::names::models::{Identifier, Literal, TableRef};
@@ -11,9 +9,7 @@ use sqlquack_syntax::expressions::queries::models::{
 };
 
 use crate::lineage::_helpers::expressions::expression_lineage;
-use crate::lineage::_helpers::lineages::{
-    combined, constant, direct, everything_read, merged, unresolved,
-};
+use crate::lineage::_helpers::lineages::{combined, constant, direct, merged, unresolved};
 use crate::lineage::_helpers::queries::{empty_scope, renamed, resolved_query};
 use crate::lineage::_helpers::resolution::{key, plain_key};
 use crate::lineage::constants::{
@@ -21,8 +17,8 @@ use crate::lineage::constants::{
     TABLE_FUNCTION_COLUMNS, TABLE_WRAPPER,
 };
 use crate::lineage::models::{
-    FromItems, Lineage, LineageContext, LineageScope, NamedQuery, ResolvedQuery, ScopeSource,
-    ScopedColumn, SourceColumn, TransformKind,
+    FromItems, Lineage, LineageContext, LineageScope, NamedQuery, ResolvedQuery, RowReads,
+    ScopeSource, ScopedColumn, TransformKind,
 };
 
 /// The FROM items of `select` and its joins; a later item may read earlier ones (LATERAL).
@@ -50,7 +46,7 @@ pub(crate) fn from_sources(
         if let Some(join) = join {
             let (merged, rows) = joined(join, (&scope, &added), context);
             from.merged = merged;
-            from.rows.extend(rows);
+            from.rows.absorb(&rows);
         }
         from.sources.extend(added);
     }
@@ -82,9 +78,9 @@ fn joined(
     join: &Join,
     (left, right): (&LineageScope<'_>, &[ScopeSource]),
     context: LineageContext<'_>,
-) -> (Vec<ScopedColumn>, BTreeSet<SourceColumn>) {
+) -> (Vec<ScopedColumn>, RowReads) {
     let mut merged_keys: Vec<ScopedColumn> = left.merged.clone();
-    let mut rows: BTreeSet<SourceColumn> = BTreeSet::new();
+    let mut rows: RowReads = RowReads::default();
     let both = LineageScope {
         sources: left.sources.iter().chain(right).cloned().collect(),
         merged: left.merged.clone(),
@@ -92,7 +88,7 @@ fn joined(
     };
     for condition in join.on.iter().chain(join.match_condition.iter()) {
         let read: Lineage = expression_lineage(condition, &both, context);
-        rows.extend(everything_read(&read));
+        rows.read(&read);
     }
     let names: Vec<String> = match natural(join.kind) {
         true => common_names(left, right, context),
@@ -101,8 +97,8 @@ fn joined(
     for name in names {
         let left_side: Lineage = side_column(&left.merged, &left.sources, &name, context);
         let right_side: Lineage = side_column(&[], right, &name, context);
-        rows.extend(everything_read(&left_side));
-        rows.extend(everything_read(&right_side));
+        rows.read(&left_side);
+        rows.read(&right_side);
         let lineage: Lineage = match join.kind {
             JoinKind::Right | JoinKind::NaturalRight => right_side,
             JoinKind::Full | JoinKind::Outer | JoinKind::NaturalFull => {
@@ -247,13 +243,15 @@ fn item_sources(
                 .iter()
                 .map(|argument| expression_lineage(argument, scope, context))
                 .collect();
+            let reads: Option<Lineage> =
+                (!arguments.is_empty()).then(|| combined(arguments, TransformKind::Expression));
             vec![ScopeSource {
                 key: None,
                 query: ResolvedQuery {
                     open: true,
                     open_relation: Some(plain_key(&function.name, context)),
-                    open_reads: (!arguments.is_empty())
-                        .then(|| combined(arguments, TransformKind::Expression)),
+                    rows: input_rows(reads.as_ref()),
+                    open_reads: reads,
                     ..ResolvedQuery::default()
                 },
             }]
@@ -391,9 +389,28 @@ fn table_function_source(
                     lineage: input.clone(),
                 })
                 .collect(),
+            rows: input_rows(Some(&input)),
             ..ResolvedQuery::default()
         },
     }
+}
+
+/// A table function's inputs as the columns deciding its rows: it returns rows per input.
+fn input_rows(input: Option<&Lineage>) -> RowReads {
+    let mut rows: RowReads = RowReads::default();
+    if let Some(input) = input {
+        rows.read(input);
+    }
+    rows
+}
+
+/// The row-deciding columns of every source.
+fn absorbed(sources: &[ScopeSource]) -> RowReads {
+    let mut rows: RowReads = RowReads::default();
+    for source in sources {
+        rows.absorb(&source.query.rows);
+    }
+    rows
 }
 
 /// A VALUES list as a FROM item.
@@ -480,18 +497,16 @@ fn pivot_sources(
         .collect();
     let passed: Vec<ScopedColumn> = passed_columns(&input.sources, &used, context);
     let dynamic = values.is_empty() || values.iter().any(String::is_empty);
-    let mut rows: BTreeSet<SourceColumn> = BTreeSet::new();
+    let mut rows: RowReads = RowReads::default();
     for field in &pivot.fields {
         let pivoted: &Expression = match field {
             Expression::In(within) => &within.this,
             other => other,
         };
-        rows.extend(everything_read(&expression_lineage(
-            pivoted, &input, context,
-        )));
+        rows.read(&expression_lineage(pivoted, &input, context));
     }
     for source in &input.sources {
-        rows.extend(source.query.rows.iter().cloned());
+        rows.absorb(&source.query.rows);
     }
     let pivoted = values.into_iter().map(|name| ScopedColumn {
         key: context.profile.resolved_identifier(&name, true),
@@ -566,11 +581,7 @@ fn unpivot_source(
     let query = ResolvedQuery {
         columns: passed.into_iter().chain(generated).collect(),
         open: input.sources.iter().any(|source| source.query.open),
-        rows: input
-            .sources
-            .iter()
-            .flat_map(|source| source.query.rows.iter().cloned())
-            .collect(),
+        rows: absorbed(&input.sources),
         ..ResolvedQuery::default()
     };
     ScopeSource {

@@ -349,6 +349,18 @@ expression = "TRANSFORM(SPLIT(s, '&'), leg VARCHAR -> leg::INT)"
 tags = ["null", "duplicates", "empty", "invalid"]
 
 [[case]]
+id = "transform_typed_varchar_parenthesized"
+description = "TRANSFORM of SPLIT parts with a parenthesized typed VARCHAR lambda parameter."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'1&2&10'"],
+  ["'7'"],
+  ["NULL"],
+]
+expression = "TRANSFORM(SPLIT(s, '&'), (leg VARCHAR) -> leg::INT)"
+tags = ["null", "duplicates", "empty", "invalid"]
+
+[[case]]
 id = "transform_object_insert"
 description = "TRANSFORM inserting a key into each object."
 columns = [{ name = "v", type = "VARIANT" }]

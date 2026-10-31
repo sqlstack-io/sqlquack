@@ -16,11 +16,12 @@ pub fn statement_lineage(statement: &Expression, context: LineageContext<'_>) ->
                 name: column.name,
                 key: column.key,
                 kind: column.lineage.kind,
-                sources: column.lineage.sources.into_iter().collect(),
+                sources: column.lineage.sources.iter().cloned().collect(),
                 resolved: column.lineage.resolved,
             })
             .collect(),
         open_star: resolved.open,
-        row_sources: resolved.rows.into_iter().collect(),
+        row_sources: resolved.rows.columns.into_iter().collect(),
+        rows_resolved: !resolved.rows.lost,
     }
 }

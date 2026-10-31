@@ -32,6 +32,7 @@ fn given_a_query_when_tracing_lineage_then_values_rows_and_untraced_outputs_are_
                 "ORDERS.CUSTOMER_ID",
                 "ORDERS.STATUS",
             ],
+            expected_rows_resolved: true,
         },
         LineageDetailTestCase {
             description: "group by and having columns decide rows",
@@ -49,6 +50,7 @@ fn given_a_query_when_tracing_lineage_then_values_rows_and_untraced_outputs_are_
                 ("n", TransformKind::Aggregation, &[], true),
             ],
             expected_row_sources: &["ORDERS.AMOUNT", "ORDERS.CUSTOMER_ID"],
+            expected_rows_resolved: true,
         },
         LineageDetailTestCase {
             description: "a correlated EXISTS decides rows by both levels' columns",
@@ -58,6 +60,7 @@ fn given_a_query_when_tracing_lineage_then_values_rows_and_untraced_outputs_are_
             profile: &SNOWFLAKE,
             expected_outputs: &[("name", TransformKind::Direct, &["CUSTOMERS.NAME"], true)],
             expected_row_sources: &["CUSTOMERS.ID", "ORDERS.CUSTOMER_ID"],
+            expected_rows_resolved: true,
         },
         LineageDetailTestCase {
             description: "an EXISTS value is untraced, never a constant",
@@ -67,6 +70,7 @@ fn given_a_query_when_tracing_lineage_then_values_rows_and_untraced_outputs_are_
             profile: &SNOWFLAKE,
             expected_outputs: &[("has_orders", TransformKind::Constant, &[], false)],
             expected_row_sources: &["CUSTOMERS.ID", "ORDERS.CUSTOMER_ID"],
+            expected_rows_resolved: true,
         },
         LineageDetailTestCase {
             description: "CONNECT BY decides rows and CONNECT_BY_ROOT reads its column",
@@ -81,6 +85,7 @@ fn given_a_query_when_tracing_lineage_then_values_rows_and_untraced_outputs_are_
                 true,
             )],
             expected_row_sources: &["ORDERS.CUSTOMER_ID", "ORDERS.ID", "ORDERS.STATUS"],
+            expected_rows_resolved: true,
         },
         LineageDetailTestCase {
             description: "$n reads the n-th column of the one FROM item",
@@ -89,6 +94,7 @@ fn given_a_query_when_tracing_lineage_then_values_rows_and_untraced_outputs_are_
             profile: &SNOWFLAKE,
             expected_outputs: &[("cust", TransformKind::Direct, &["ORDERS.CUSTOMER_ID"], true)],
             expected_row_sources: &[],
+            expected_rows_resolved: true,
         },
         LineageDetailTestCase {
             description: "$n reads a CTE's column, and a VALUES column's constant",
@@ -101,6 +107,7 @@ fn given_a_query_when_tracing_lineage_then_values_rows_and_untraced_outputs_are_
                 ("second", TransformKind::Constant, &[], true),
             ],
             expected_row_sources: &[],
+            expected_rows_resolved: true,
         },
         LineageDetailTestCase {
             description: "$n past the known columns is untraced",
@@ -109,6 +116,7 @@ fn given_a_query_when_tracing_lineage_then_values_rows_and_untraced_outputs_are_
             profile: &SNOWFLAKE,
             expected_outputs: &[("missing", TransformKind::Constant, &[], false)],
             expected_row_sources: &[],
+            expected_rows_resolved: true,
         },
         LineageDetailTestCase {
             description: "a user table function's columns also read its arguments",
@@ -121,7 +129,8 @@ fn given_a_query_when_tracing_lineage_then_values_rows_and_untraced_outputs_are_
                 &["ORDERS.AMOUNT", "TICKETS_FOR.ticket_id"],
                 true,
             )],
-            expected_row_sources: &[],
+            expected_row_sources: &["ORDERS.AMOUNT"],
+            expected_rows_resolved: true,
         },
         LineageDetailTestCase {
             description: "IDENTIFIER names a relation at run time, so its columns are untraced",
@@ -130,6 +139,7 @@ fn given_a_query_when_tracing_lineage_then_values_rows_and_untraced_outputs_are_
             profile: &SNOWFLAKE,
             expected_outputs: &[("id", TransformKind::Constant, &[], false)],
             expected_row_sources: &[],
+            expected_rows_resolved: true,
         },
         LineageDetailTestCase {
             description: "a RIGHT join's USING key comes from the right side",
@@ -138,6 +148,7 @@ fn given_a_query_when_tracing_lineage_then_values_rows_and_untraced_outputs_are_
             profile: &SNOWFLAKE,
             expected_outputs: &[("id", TransformKind::Direct, &["CUSTOMERS.ID"], true)],
             expected_row_sources: &["CUSTOMERS.ID", "ORDERS.ID"],
+            expected_rows_resolved: true,
         },
         LineageDetailTestCase {
             description: "a NATURAL FULL join's key is an expression over both sides",
@@ -151,6 +162,7 @@ fn given_a_query_when_tracing_lineage_then_values_rows_and_untraced_outputs_are_
                 true,
             )],
             expected_row_sources: &["CUSTOMERS.ID", "ORDERS.ID"],
+            expected_rows_resolved: true,
         },
         LineageDetailTestCase {
             description: "a star over a USING join selects the merged key once, first",
@@ -177,6 +189,7 @@ fn given_a_query_when_tracing_lineage_then_values_rows_and_untraced_outputs_are_
                 ("STATUS", TransformKind::Direct, &["ORDERS.STATUS"], true),
             ],
             expected_row_sources: &["CUSTOMERS.ID", "ORDERS.ID"],
+            expected_rows_resolved: true,
         },
         LineageDetailTestCase {
             description: "a CTE reading itself without RECURSIVE is recursive, not a stored table",
@@ -192,6 +205,7 @@ fn given_a_query_when_tracing_lineage_then_values_rows_and_untraced_outputs_are_
                 true,
             )],
             expected_row_sources: &["ORDERS.CUSTOMER_ID", "ORDERS.ID"],
+            expected_rows_resolved: true,
         },
         LineageDetailTestCase {
             description: "a recursive CTE gathers columns that arrive in later iterations",
@@ -205,6 +219,7 @@ fn given_a_query_when_tracing_lineage_then_values_rows_and_untraced_outputs_are_
                 ("c", TransformKind::Expression, &["ORDERS.ID"], true),
             ],
             expected_row_sources: &[],
+            expected_rows_resolved: true,
         },
         LineageDetailTestCase {
             description: "a union with a constant branch is an expression",
@@ -213,6 +228,7 @@ fn given_a_query_when_tracing_lineage_then_values_rows_and_untraced_outputs_are_
             profile: &SNOWFLAKE,
             expected_outputs: &[("id", TransformKind::Expression, &["ORDERS.ID"], true)],
             expected_row_sources: &[],
+            expected_rows_resolved: true,
         },
         LineageDetailTestCase {
             description: "a union of one same column is direct",
@@ -221,6 +237,7 @@ fn given_a_query_when_tracing_lineage_then_values_rows_and_untraced_outputs_are_
             profile: &SNOWFLAKE,
             expected_outputs: &[("id", TransformKind::Direct, &["ORDERS.ID"], true)],
             expected_row_sources: &[],
+            expected_rows_resolved: true,
         },
         LineageDetailTestCase {
             description: "INTERSECT values read both sides and the right side decides rows",
@@ -234,6 +251,7 @@ fn given_a_query_when_tracing_lineage_then_values_rows_and_untraced_outputs_are_
                 true,
             )],
             expected_row_sources: &["CUSTOMERS.ID"],
+            expected_rows_resolved: true,
         },
         LineageDetailTestCase {
             description: "VALUES rows mixing a column and a literal are an expression",
@@ -242,6 +260,7 @@ fn given_a_query_when_tracing_lineage_then_values_rows_and_untraced_outputs_are_
             profile: &SNOWFLAKE,
             expected_outputs: &[("x", TransformKind::Expression, &["ORDERS.ID"], true)],
             expected_row_sources: &[],
+            expected_rows_resolved: true,
         },
         LineageDetailTestCase {
             description: "a select alias beside a relation of unknown columns is ambiguous",
@@ -258,6 +277,7 @@ fn given_a_query_when_tracing_lineage_then_values_rows_and_untraced_outputs_are_
                 ("doubled", TransformKind::Constant, &[], false),
             ],
             expected_row_sources: &[],
+            expected_rows_resolved: true,
         },
         LineageDetailTestCase {
             description: "DuckDB's WINDOW clause adds what the named window reads",
@@ -272,6 +292,7 @@ fn given_a_query_when_tracing_lineage_then_values_rows_and_untraced_outputs_are_
                 true,
             )],
             expected_row_sources: &[],
+            expected_rows_resolved: true,
         },
         LineageDetailTestCase {
             description: "a quoted column of an unknown relation keeps its quotes",
@@ -285,6 +306,7 @@ fn given_a_query_when_tracing_lineage_then_values_rows_and_untraced_outputs_are_
                 true,
             )],
             expected_row_sources: &[],
+            expected_rows_resolved: true,
         },
         LineageDetailTestCase {
             description: "an unaliased cast is named as Snowflake names it; a path or spaced text is not named",
@@ -297,6 +319,7 @@ fn given_a_query_when_tracing_lineage_then_values_rows_and_untraced_outputs_are_
                 ("", TransformKind::Expression, &["ORDERS.AMOUNT"], true),
             ],
             expected_row_sources: &[],
+            expected_rows_resolved: true,
         },
         LineageDetailTestCase {
             description: "an unaliased DuckDB cast has no name lineage models",
@@ -305,6 +328,7 @@ fn given_a_query_when_tracing_lineage_then_values_rows_and_untraced_outputs_are_
             profile: &DUCKDB,
             expected_outputs: &[("", TransformKind::Cast, &["orders.amount"], true)],
             expected_row_sources: &[],
+            expected_rows_resolved: true,
         },
         LineageDetailTestCase {
             description: "PIVOT's FOR column decides rows",
@@ -333,6 +357,7 @@ fn given_a_query_when_tracing_lineage_then_values_rows_and_untraced_outputs_are_
                 ),
             ],
             expected_row_sources: &["ORDERS.STATUS"],
+            expected_rows_resolved: true,
         },
         LineageDetailTestCase {
             description: "a star read as a value over every order column",
@@ -346,6 +371,147 @@ fn given_a_query_when_tracing_lineage_then_values_rows_and_untraced_outputs_are_
                 true,
             )],
             expected_row_sources: &[],
+            expected_rows_resolved: true,
+        },
+        LineageDetailTestCase {
+            description: "a filter on a select alias beside an unknown relation leaves rows unresolved",
+            sql: "SELECT amount AS b FROM support.tickets WHERE b > 1",
+            dialect: Dialect::Snowflake,
+            profile: &SNOWFLAKE,
+            expected_outputs: &[(
+                "b",
+                TransformKind::Direct,
+                &["SUPPORT.TICKETS.amount"],
+                true,
+            )],
+            expected_row_sources: &[],
+            expected_rows_resolved: false,
+        },
+        LineageDetailTestCase {
+            description: "a filter on a name two unknown relations may offer leaves rows unresolved",
+            sql: "SELECT t.ticket_id FROM support.tickets t, support.queues q WHERE x = 1",
+            dialect: Dialect::Snowflake,
+            profile: &SNOWFLAKE,
+            expected_outputs: &[(
+                "ticket_id",
+                TransformKind::Direct,
+                &["SUPPORT.TICKETS.ticket_id"],
+                true,
+            )],
+            expected_row_sources: &[],
+            expected_rows_resolved: false,
+        },
+        LineageDetailTestCase {
+            description: "IDENTIFIER in a filtering subquery leaves rows unresolved",
+            sql: "SELECT id FROM orders WHERE id IN (SELECT id FROM IDENTIFIER('customers'))",
+            dialect: Dialect::Snowflake,
+            profile: &SNOWFLAKE,
+            expected_outputs: &[("id", TransformKind::Direct, &["ORDERS.ID"], true)],
+            expected_row_sources: &["ORDERS.ID"],
+            expected_rows_resolved: false,
+        },
+        LineageDetailTestCase {
+            description: "a quoted name the relation lacks in a filter leaves rows unresolved",
+            sql: "SELECT id FROM orders WHERE \"id\" = 1",
+            dialect: Dialect::Snowflake,
+            profile: &SNOWFLAKE,
+            expected_outputs: &[("id", TransformKind::Direct, &["ORDERS.ID"], true)],
+            expected_row_sources: &[],
+            expected_rows_resolved: false,
+        },
+        LineageDetailTestCase {
+            description: "ORDER BY under LIMIT decides rows",
+            sql: "SELECT id FROM orders ORDER BY amount DESC LIMIT 5",
+            dialect: Dialect::Snowflake,
+            profile: &SNOWFLAKE,
+            expected_outputs: &[("id", TransformKind::Direct, &["ORDERS.ID"], true)],
+            expected_row_sources: &["ORDERS.AMOUNT"],
+            expected_rows_resolved: true,
+        },
+        LineageDetailTestCase {
+            description: "ORDER BY without a limit does not decide rows",
+            sql: "SELECT id FROM orders ORDER BY amount",
+            dialect: Dialect::Snowflake,
+            profile: &SNOWFLAKE,
+            expected_outputs: &[("id", TransformKind::Direct, &["ORDERS.ID"], true)],
+            expected_row_sources: &[],
+            expected_rows_resolved: true,
+        },
+        LineageDetailTestCase {
+            description: "ORDER BY an ordinal under TOP decides rows by that output",
+            sql: "SELECT TOP 3 id FROM orders ORDER BY 1",
+            dialect: Dialect::Snowflake,
+            profile: &SNOWFLAKE,
+            expected_outputs: &[("id", TransformKind::Direct, &["ORDERS.ID"], true)],
+            expected_row_sources: &["ORDERS.ID"],
+            expected_rows_resolved: true,
+        },
+        LineageDetailTestCase {
+            description: "ORDER BY under FETCH decides rows",
+            sql: "SELECT id FROM orders ORDER BY status FETCH FIRST 2 ROWS ONLY",
+            dialect: Dialect::Snowflake,
+            profile: &SNOWFLAKE,
+            expected_outputs: &[("id", TransformKind::Direct, &["ORDERS.ID"], true)],
+            expected_row_sources: &["ORDERS.STATUS"],
+            expected_rows_resolved: true,
+        },
+        LineageDetailTestCase {
+            description: "ORDER BY under a LIMIT on a union decides rows by both branches",
+            sql: "SELECT id FROM orders UNION ALL SELECT id FROM customers ORDER BY id LIMIT 3",
+            dialect: Dialect::Snowflake,
+            profile: &SNOWFLAKE,
+            expected_outputs: &[(
+                "id",
+                TransformKind::Expression,
+                &["CUSTOMERS.ID", "ORDERS.ID"],
+                true,
+            )],
+            expected_row_sources: &["CUSTOMERS.ID", "ORDERS.ID"],
+            expected_rows_resolved: true,
+        },
+        LineageDetailTestCase {
+            description: "a FLATTEN input decides rows though no FLATTEN column is selected",
+            sql: "SELECT o.id FROM orders o, LATERAL FLATTEN(input => o.items) f",
+            dialect: Dialect::Snowflake,
+            profile: &SNOWFLAKE,
+            expected_outputs: &[("id", TransformKind::Direct, &["ORDERS.ID"], true)],
+            expected_row_sources: &["ORDERS.ITEMS"],
+            expected_rows_resolved: true,
+        },
+        LineageDetailTestCase {
+            description: "a GROUP BY ordinal decides rows by that output",
+            sql: "SELECT status, COUNT(*) AS n FROM orders GROUP BY 1",
+            dialect: Dialect::Snowflake,
+            profile: &SNOWFLAKE,
+            expected_outputs: &[
+                ("status", TransformKind::Direct, &["ORDERS.STATUS"], true),
+                ("n", TransformKind::Aggregation, &[], true),
+            ],
+            expected_row_sources: &["ORDERS.STATUS"],
+            expected_rows_resolved: true,
+        },
+        LineageDetailTestCase {
+            description: "GROUP BY ALL decides rows by every output that does not aggregate",
+            sql: "SELECT status, customer_id, SUM(amount) AS total FROM orders GROUP BY ALL",
+            dialect: Dialect::Snowflake,
+            profile: &SNOWFLAKE,
+            expected_outputs: &[
+                ("status", TransformKind::Direct, &["ORDERS.STATUS"], true),
+                (
+                    "customer_id",
+                    TransformKind::Direct,
+                    &["ORDERS.CUSTOMER_ID"],
+                    true,
+                ),
+                (
+                    "total",
+                    TransformKind::Aggregation,
+                    &["ORDERS.AMOUNT"],
+                    true,
+                ),
+            ],
+            expected_row_sources: &["ORDERS.CUSTOMER_ID", "ORDERS.STATUS"],
+            expected_rows_resolved: true,
         },
     ];
     let schema = shop_schema();
@@ -390,6 +556,11 @@ fn given_a_query_when_tracing_lineage_then_values_rows_and_untraced_outputs_are_
         assert_eq!(outputs, expected, "{}", test_case.description);
         assert_eq!(
             rows, test_case.expected_row_sources,
+            "{}",
+            test_case.description
+        );
+        assert_eq!(
+            lineage.rows_resolved, test_case.expected_rows_resolved,
             "{}",
             test_case.description
         );

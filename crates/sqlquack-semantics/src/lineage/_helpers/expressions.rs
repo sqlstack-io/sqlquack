@@ -1,20 +1,18 @@
 //! The lineage of a value expression in a query level.
 
-use std::collections::BTreeSet;
+use std::rc::Rc;
 
 use sqlquack_syntax::Expression;
 use sqlquack_syntax::ExpressionWalk;
 use sqlquack_syntax::expressions::names::models::{Identifier, Star};
 use sqlquack_syntax::expressions::operators::models::Parameter;
 
-use crate::lineage::_helpers::lineages::{
-    combined, constant, everything_read, traced_if, unresolved,
-};
+use crate::lineage::_helpers::lineages::{combined, constant, traced_if, unresolved};
 use crate::lineage::_helpers::queries::{expanded_star, resolved_query};
 use crate::lineage::_helpers::resolution::{column_lineage, key, positional_column};
 use crate::lineage::constants::{AGGREGATE_FUNCTIONS, POSITIONAL_COLUMN_BASE};
 use crate::lineage::models::{
-    Lineage, LineageContext, LineageScope, ResolvedQuery, SourceColumn, TransformKind,
+    Lineage, LineageContext, LineageScope, ResolvedQuery, RowReads, TransformKind,
 };
 
 /// The lineage of `expression` read in `scope`.
@@ -52,9 +50,12 @@ pub(crate) fn expression_lineage(
         Expression::Exists(exists) => {
             let query: ResolvedQuery =
                 resolved_query(&exists.this, scope.ctes, Some(scope), context);
+            let reads: RowReads = query_reads(query);
             Lineage {
-                rows: query_reads(query),
-                ..unresolved()
+                rows: Rc::new(reads.columns),
+                rows_lost: reads.lost,
+                resolved: false,
+                ..constant()
             }
         }
         Expression::Subquery(subquery) => query_value(&subquery.this, scope, context),
@@ -144,7 +145,7 @@ fn query_value(
 ) -> Lineage {
     let resolved = resolved_query(query, scope.ctes, Some(scope), context);
     let open: bool = resolved.open;
-    let rows: BTreeSet<SourceColumn> = resolved.rows.clone();
+    let rows: RowReads = resolved.rows.clone();
     let value: Lineage = combined(
         resolved
             .columns
@@ -154,20 +155,21 @@ fn query_value(
         TransformKind::Expression,
     );
     let mut value: Lineage = traced_if(value, !open);
-    value.rows.extend(rows);
+    Rc::make_mut(&mut value.rows).extend(rows.columns);
+    value.rows_lost |= rows.lost;
     value
 }
 
 /// Every column a query reads, values and row dependencies together.
-fn query_reads(query: ResolvedQuery) -> BTreeSet<SourceColumn> {
-    let mut read: BTreeSet<SourceColumn> = query.rows;
+fn query_reads(query: ResolvedQuery) -> RowReads {
+    let mut read: RowReads = query.rows;
     for column in &query.columns {
-        read.extend(everything_read(&column.lineage));
+        read.read(&column.lineage);
     }
     read
 }
 
-fn is_aggregate(expression: &Expression) -> bool {
+pub(crate) fn is_aggregate(expression: &Expression) -> bool {
     match expression {
         Expression::AggregateFunction(_)
         | Expression::Count(_)

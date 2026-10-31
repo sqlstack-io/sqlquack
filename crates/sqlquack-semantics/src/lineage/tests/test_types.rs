@@ -32,6 +32,7 @@ pub(crate) struct LineageDetailTestCase {
     pub(crate) profile: &'static dyn DialectProfile,
     pub(crate) expected_outputs: &'static [ExpectedOutput],
     pub(crate) expected_row_sources: &'static [&'static str],
+    pub(crate) expected_rows_resolved: bool,
 }
 
 /// A synthetic shop schema: relation name to its columns.
