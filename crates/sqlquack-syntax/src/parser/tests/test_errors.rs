@@ -10,6 +10,7 @@ use crate::parser::tests::test_types::ParseErrorTestCase;
 use crate::parser::tests::test_types::ParseKindTestCase;
 use crate::parser::tests::test_types::SourceEntryTestCase;
 use crate::parser::tests::test_types::TerminationTestCase;
+use crate::tokens::models::DialectType;
 
 #[test]
 fn given_incomplete_sql_when_parsing_then_parsing_fails() {
@@ -167,6 +168,13 @@ fn given_incomplete_sql_when_parsing_then_parsing_fails() {
 #[test]
 fn given_unusual_but_valid_sql_when_parsing_then_it_parses() {
     let test_cases = [
+        ParseKindTestCase {
+            description: "a parenthesized lambda with typed parameters parses",
+            dialect: Some(DialectType::Snowflake),
+            sql: "SELECT REDUCE(a, 0, (acc NUMBER(18, 2), i VARIANT) -> acc + i) FROM t",
+            pointer: "/0/select/expressions/0/function/args/2",
+            expected_kind: Ok("lambda"),
+        },
         ParseKindTestCase {
             description: "a trailing comma before FROM is tolerated",
             dialect: None,

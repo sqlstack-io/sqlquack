@@ -7,3 +7,6 @@ pub mod lineage;
 pub mod names;
 pub mod scopes;
 pub mod types;
+
+pub use crate::lineage::main::query_lineage::query_lineage;
+pub use crate::lineage::main::statement_lineage::statement_lineage;

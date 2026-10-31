@@ -45,6 +45,7 @@ use crate::expressions::typed_functions::models::DateTimeField;
 use crate::expressions::typed_functions::models::IfFunc;
 use crate::expressions::typed_functions::models::StrPosition;
 use crate::expressions::types::main::parse_interval_unit_from_string::parse_interval_unit_from_string;
+use crate::expressions::types::models::DataType;
 use crate::expressions::types::models::IntervalUnit;
 use crate::expressions::types::models::Tuple;
 use crate::parser::constants::BINARY_ARITY;
@@ -533,6 +534,7 @@ impl Parser {
 
         let parenthesized = self.match_token(TokenType::LParen);
         let mut parameters: Vec<Identifier> = Vec::new();
+        let mut parameter_types: Vec<Option<DataType>> = Vec::new();
         while !(parenthesized && self.check(TokenType::RParen)) {
             if !self.is_identifier_token() {
                 self.current = start_index;
@@ -541,6 +543,17 @@ impl Parser {
             let token = self.advance()?;
             let quoted = token.token_type == TokenType::QuotedIdentifier;
             parameters.push(identifier_from_token(token, quoted));
+            let typed = parenthesized && self.is_type_keyword();
+            parameter_types.push(match typed {
+                true => match self.parse_data_type() {
+                    Ok(data_type) => Some(data_type),
+                    Err(_) => {
+                        self.current = start_index;
+                        return Ok(None);
+                    }
+                },
+                false => None,
+            });
             if !parenthesized || !self.match_token(TokenType::Comma) {
                 break;
             }
@@ -552,11 +565,15 @@ impl Parser {
 
         if self.match_token(TokenType::Arrow) || self.match_token(TokenType::FArrow) {
             let body = self.parse_expression()?;
+            let parameter_types = match parameter_types.iter().any(Option::is_some) {
+                true => parameter_types,
+                false => Vec::new(),
+            };
             Ok(Some(Expression::Lambda(Box::new(LambdaExpr {
                 parameters,
                 body,
                 colon: false,
-                parameter_types: Vec::new(),
+                parameter_types,
             }))))
         } else {
             self.current = start_index;

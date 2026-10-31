@@ -42,6 +42,8 @@ mod test_session_timezone;
 mod test_structured_types;
 #[path = "tests/test_swathe_values.rs"]
 mod test_swathe_values;
+#[path = "tests/test_typed_lambdas.rs"]
+mod test_typed_lambdas;
 #[path = "tests/test_typed_leaves.rs"]
 mod test_typed_leaves;
 #[path = "tests/test_types.rs"]

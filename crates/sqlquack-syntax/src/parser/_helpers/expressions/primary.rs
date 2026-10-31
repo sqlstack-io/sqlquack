@@ -58,6 +58,12 @@ impl Parser {
             return self.parse_primary_brace();
         }
 
+        if self.typed_lambda_ahead() {
+            if let Some(lambda) = self.parse_lambda()? {
+                return Ok(lambda);
+            }
+        }
+
         if self.match_token(TokenType::LParen) {
             let lparen_comments = self.previous_trailing_comments().to_vec();
             let set_operation_may_follow = self.current < SECOND_PREVIOUS_OFFSET
@@ -1840,5 +1846,24 @@ impl Parser {
     /// Whether the source dialect writes LOG(base, value), base first (not BigQuery or TSQL).
     pub(crate) fn log_base_first(&self) -> bool {
         !false
+    }
+}
+
+impl Parser {
+    /// Whether a Snowflake lambda with typed parameters, `(name TYPE, ...) ->`, starts here.
+    fn typed_lambda_ahead(&mut self) -> bool {
+        if self.config.dialect == Some(crate::tokens::models::DialectType::DuckDB)
+            || !self.check(TokenType::LParen)
+            || self.current + 2 >= self.tokens.len()
+        {
+            return false;
+        }
+        let start = self.current;
+        self.current = start + 1;
+        let named = self.is_identifier_token();
+        self.current = start + 2;
+        let typed = named && self.is_type_keyword();
+        self.current = start;
+        typed
     }
 }

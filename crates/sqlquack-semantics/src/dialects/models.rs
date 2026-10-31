@@ -23,6 +23,24 @@ impl DialectProfile for Snowflake {
     }
 }
 
+/// Snowflake with QUOTED_IDENTIFIERS_IGNORE_CASE: quoted identifiers resolve to upper case too.
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
+pub struct SnowflakeQuotedIgnoringCase;
+
+impl DialectProfile for SnowflakeQuotedIgnoringCase {
+    fn name(&self) -> &'static str {
+        "Snowflake"
+    }
+
+    fn resolved_identifier(&self, name: &str, _quoted: bool) -> String {
+        name.to_ascii_uppercase()
+    }
+
+    fn same_identifier(&self, left: &str, right: &str) -> bool {
+        left == right
+    }
+}
+
 /// DuckDB: identifiers keep their case as written, and names compare without regard to ASCII case.
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
 pub struct DuckDb;

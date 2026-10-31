@@ -1,9 +1,12 @@
 //! The implemented dialect profiles.
 
-use crate::dialects::models::{DuckDb, Profiles, Snowflake};
+use crate::dialects::models::{DuckDb, Profiles, Snowflake, SnowflakeQuotedIgnoringCase};
 
 /// The Snowflake profile.
 pub const SNOWFLAKE: Snowflake = Snowflake;
+
+/// The Snowflake profile under QUOTED_IDENTIFIERS_IGNORE_CASE.
+pub const SNOWFLAKE_QUOTED_IGNORING_CASE: SnowflakeQuotedIgnoringCase = SnowflakeQuotedIgnoringCase;
 
 /// The DuckDB profile.
 pub const DUCKDB: DuckDb = DuckDb;
