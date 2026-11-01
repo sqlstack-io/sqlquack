@@ -34,3 +34,6 @@ __pycache__/
 /evidence/pending/
 /evidence/audit/pending/
 /review/
+
+# Local agent instructions
+/AGENTS.md
