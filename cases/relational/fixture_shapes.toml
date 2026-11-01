@@ -1,0 +1,108 @@
+# Row sources unit-test fixtures use: VALUES with columns NULL in every row, VALUES with a table
+# alias and column names, NULLs cast to semi-structured types, and NOT IN over a subquery in CASE.
+category = "relational"
+construct = "node:values"
+session_profile = "utc-v1"
+
+[[case]]
+id = "values_all_null_column_cast"
+description = "FROM VALUES with a column NULL in every row, cast to NUMBER, VARCHAR, DATE, BOOLEAN and VARIANT."
+columns = [{ name = "x", type = "NUMBER(10,0)" }]
+rows = [["1"]]
+query = "SELECT COLUMN1::NUMBER AS a, COLUMN2::VARCHAR AS b, COLUMN2::DATE AS c, COLUMN2::BOOLEAN AS d, COLUMN2::VARIANT AS e, COLUMN3::VARCHAR AS f FROM VALUES (1, NULL, 'p'), (2, NULL, NULL), (3, NULL, 'q') ORDER BY a"
+order = "ordered"
+tags = ["null", "duplicates", "empty-input"]
+
+[[case]]
+id = "values_all_null_column_bare"
+description = "FROM VALUES with a column NULL in every row, read bare, its type and a COALESCE of it."
+columns = [{ name = "x", type = "NUMBER(10,0)" }]
+rows = [["1"]]
+query = "SELECT COLUMN1 AS a, COLUMN2 AS b, COALESCE(COLUMN2, 'z') AS c, SYSTEM$TYPEOF(COLUMN2) AS t FROM VALUES (1, NULL), (2, NULL) ORDER BY a"
+order = "ordered"
+tags = ["null", "duplicates", "empty-input"]
+
+[[case]]
+id = "union_all_null_columns"
+description = "UNION ALL whose column is NULL in every branch, then cast and compared."
+columns = [{ name = "x", type = "NUMBER(10,0)" }]
+rows = [["1"]]
+query = "WITH u AS (SELECT 1 AS k, NULL AS v UNION ALL SELECT 2, NULL) SELECT k, v, v::VARCHAR AS t, v IS NULL AS n FROM u ORDER BY k"
+order = "ordered"
+tags = ["null", "duplicates", "empty-input"]
+
+[[case]]
+id = "null_cast_to_semi_structured"
+description = "NULL cast to ARRAY, OBJECT and VARIANT, alone and in a UNION ALL beside built values."
+columns = [{ name = "x", type = "NUMBER(10,0)" }]
+rows = [["1"]]
+query = "SELECT 1 AS k, CAST(NULL AS ARRAY) AS a, CAST(NULL AS OBJECT) AS o, CAST(NULL AS VARIANT) AS v UNION ALL SELECT 2, ARRAY_CONSTRUCT(1, 'x'), OBJECT_CONSTRUCT('k', 1), PARSE_JSON('[1]') ORDER BY k"
+order = "ordered"
+tags = ["null", "duplicates", "empty-input"]
+
+[[case]]
+id = "values_alias_with_column_names"
+description = "FROM VALUES AS t(a, b, c): named columns, qualified and bare, mixed NULLs, and a join to another VALUES."
+columns = [{ name = "x", type = "NUMBER(10,0)" }]
+rows = [["1"]]
+query = "SELECT t.a, b, t.c, u.w FROM VALUES (1, 'x', 2.5), (2, NULL, NULL), (3, 'z', -1) AS t(a, b, c) LEFT JOIN VALUES (1, 'p'), (3, 'q') AS u(a, w) ON t.a = u.a ORDER BY t.a"
+order = "ordered"
+tags = ["null", "duplicates", "empty-input"]
+
+[[case]]
+id = "values_alias_without_column_names"
+description = "FROM VALUES AS t with no column names: COLUMN1 and COLUMN2 qualified by the alias."
+columns = [{ name = "x", type = "NUMBER(10,0)" }]
+rows = [["1"]]
+query = "SELECT t.COLUMN1 AS a, t.COLUMN2 AS b FROM VALUES (1, 'x'), (2, 'y') AS t ORDER BY a"
+order = "ordered"
+tags = ["null", "duplicates", "empty-input"]
+
+[[case]]
+id = "not_in_subquery_in_case"
+description = "CASE WHEN x NOT IN (SELECT ...) in the select list, with a NULL in the subquery and NULL probes."
+columns = [{ name = "s", type = "VARCHAR" }, { name = "side", type = "VARCHAR" }]
+rows = [["'a'", "'l'"], ["'b'", "'l'"], ["NULL", "'l'"], ["'a'", "'r'"], ["'c'", "'r'"]]
+query = "SELECT s, CASE WHEN s NOT IN (SELECT s FROM input WHERE side = 'r') THEN 'kept' ELSE 'dropped' END AS r, CASE WHEN s IN (SELECT s FROM input WHERE side = 'r') THEN 1 ELSE 0 END AS i FROM input WHERE side = 'l' ORDER BY ordinal"
+order = "ordered"
+compile_error = true
+tags = ["null", "duplicates", "empty-input"]
+
+[[case]]
+id = "not_in_subquery_with_null_in_case"
+description = "CASE WHEN x NOT IN (SELECT ...) where the subquery yields a NULL."
+columns = [{ name = "s", type = "VARCHAR" }, { name = "side", type = "VARCHAR" }]
+rows = [["'a'", "'l'"], ["'b'", "'l'"], ["'a'", "'r'"], ["NULL", "'r'"]]
+query = "SELECT s, CASE WHEN s NOT IN (SELECT s FROM input WHERE side = 'r') THEN 'kept' ELSE 'dropped' END AS r FROM input WHERE side = 'l' ORDER BY ordinal"
+order = "ordered"
+compile_error = true
+tags = ["null", "duplicates", "empty-input"]
+
+[[case]]
+id = "not_in_subquery_of_literal_rows_in_case"
+description = "CASE WHEN x NOT IN (SELECT ...) over a separate CTE of non-NULL literal VALUES rows, filtered."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [["'a'"], ["'b'"], ["NULL"], ["'c'"]]
+query = "WITH src AS (SELECT CAST(COLUMN1 AS VARCHAR) AS s, CAST(COLUMN2 AS BOOLEAN) AS ok FROM VALUES ('a', TRUE), ('c', FALSE), ('d', TRUE)), allowed AS (SELECT s FROM src WHERE ok) SELECT s, CASE WHEN s NOT IN (SELECT s FROM allowed) OR s IN (SELECT s FROM allowed WHERE s = 'd') THEN 'kept' ELSE 'dropped' END AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "duplicates", "empty-input"]
+
+[[case]]
+id = "not_in_subquery_of_nullable_literal_rows_in_case"
+description = "CASE WHEN x NOT IN (SELECT ...) over a separate CTE of VALUES rows, one of them NULL."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [["'a'"], ["'b'"]]
+query = "WITH src AS (SELECT CAST(COLUMN1 AS VARCHAR) AS s FROM VALUES ('a'), (NULL)) SELECT s, CASE WHEN s NOT IN (SELECT s FROM src) THEN 'kept' ELSE 'dropped' END AS r FROM input ORDER BY ordinal"
+order = "ordered"
+compile_error = true
+tags = ["null", "duplicates", "empty-input"]
+
+[[case]]
+id = "not_in_subquery_filtered_not_null_in_case"
+description = "CASE WHEN x NOT IN (SELECT ...) over the same input filtered to non-NULL values."
+columns = [{ name = "s", type = "VARCHAR" }, { name = "side", type = "VARCHAR" }]
+rows = [["'a'", "'l'"], ["'b'", "'l'"], ["NULL", "'l'"], ["'a'", "'r'"], ["NULL", "'r'"]]
+query = "SELECT s, CASE WHEN s NOT IN (SELECT s FROM input WHERE side = 'r' AND s IS NOT NULL) THEN 'kept' ELSE 'dropped' END AS r FROM input WHERE side = 'l' ORDER BY ordinal"
+order = "ordered"
+compile_error = true
+tags = ["null", "duplicates", "empty-input"]

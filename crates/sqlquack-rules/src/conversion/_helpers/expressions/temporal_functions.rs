@@ -57,7 +57,7 @@ use crate::conversion::constants::{
     BARE_FRACTION, BARE_FRACTION_PATTERNS, CURRENT_TIME, CURRENT_TIME_RULE, DATE_ARITHMETIC,
     DATE_FORMAT_RULE, DATE_NAME, DATE_PART_RULE, DATE_PARTS, DATE_TEXT_SPELLING, DAY_NAME_RULE,
     DECIMAL_EPOCH_RULE, FRACTIONAL_DATE_AMOUNT, FROM_PARTS, MAX_FRACTION_DIGITS_U8,
-    MICROSECOND_DIGITS, NUMBER_TEXT_FORMAT, SCALE_DIGITS, SESSION_TIMEZONE_UTC,
+    MICROSECOND_DIGITS, NULL_BRANCHES, NUMBER_TEXT_FORMAT, SCALE_DIGITS, SESSION_TIMEZONE_UTC,
     TEMPORAL_TEXT_FIELDS, TEMPORAL_TEXT_FORMAT, TEMPORAL_TEXT_SEPARATORS, TEXT_TO_TIME_RULE,
     TEXT_TO_TIMESTAMP_RULE, TIME_ARITHMETIC, TIME_ZONE_CONVERSION, TIMESTAMP_FORMAT_RULE,
     TIMESTAMP_RANGE, TIMESTAMP_TIME_RULE, TO_DATE_TEMPORAL, UNIT_ALIASES, UTC_OFFSET_ARITHMETIC,
@@ -97,19 +97,6 @@ fn temporal_operand(
 ) -> Result<(Emitted, Option<SnowflakeType>), Refusal> {
     let emitted = convert_expression(node, site)?;
     temporal_or_refused(emitted, construct, site.context)
-}
-
-/// A DATE, naive timestamp or TIME operand, or a UTC-offset one as for `temporal_operand`.
-fn clock_operand(
-    node: &Value,
-    construct: &Construct,
-    site: Site<'_>,
-) -> Result<(Emitted, Option<SnowflakeType>), Refusal> {
-    let emitted = convert_expression(node, site)?;
-    match emitted.data_type {
-        SnowflakeType::Time { .. } => Ok((emitted, None)),
-        _ => temporal_or_refused(emitted, construct, site.context),
-    }
 }
 
 fn temporal_or_refused(
@@ -214,8 +201,13 @@ pub(crate) fn date_part(
     let _rule = site.context.log.rule(DATE_PART_RULE);
     let refuse = |reason: String| outside_conditions(construct.clone(), reason);
     let unit = unit_name(unit).ok_or_else(|| refuse("an unreadable date part".to_owned()))?;
-    let operand = zoned_part_operand(convert_expression(value, site)?, &unit, (construct, site))
-        .map_err(refuse)?;
+    let value = convert_expression(value, site)?;
+    if value.data_type == SnowflakeType::Null {
+        let _null = site.context.log.rule(NULL_BRANCHES);
+        let null = cast("NULL", SnowflakeType::Varchar, site.context.log).map_err(refuse)?;
+        return Ok(Emitted::new(null, SnowflakeType::Null));
+    }
+    let operand = zoned_part_operand(value, &unit, (construct, site)).map_err(refuse)?;
     let operand = match operand {
         ZonedPart::Epoch(sql) => {
             let data_type = SnowflakeType::Number {
@@ -344,7 +336,20 @@ pub(crate) fn date_add(
         }
         other => return Err(refuse(format!("a {other} amount"))),
     }
-    let (operand, zoned) = clock_operand(value, construct, site)?;
+    let operand = convert_expression(value, site)?;
+    let operand = match operand.data_type {
+        SnowflakeType::Varchar => {
+            let ntz = SnowflakeType::TimestampNtz { precision: 9 };
+            let sql = cast_to(&operand, &ntz.to_string(), false, (site.context, construct))
+                .map_err(refuse)?;
+            Emitted::new(sql, ntz)
+        }
+        _ => operand,
+    };
+    let (operand, zoned) = match operand.data_type {
+        SnowflakeType::Time { .. } => (operand, None),
+        _ => temporal_or_refused(operand, construct, site.context)?,
+    };
     let amount = Emitted::new(
         date_add_amount(&amount.sql, site.context.log),
         amount.data_type,

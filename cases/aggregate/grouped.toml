@@ -192,3 +192,33 @@ rows = [
 query = "SELECT SUM(x) AS s, COUNT(x) AS n FROM input"
 order = "bag"
 tags = ["null", "duplicates"]
+
+[[case]]
+id = "max_of_variant_pivot"
+description = "MAX of IFF(condition, VARIANT, NULL) pivoting at most one VARIANT value per group, an all-NULL group, and a JSON null."
+columns = [{ name = "g", type = "VARCHAR" }, { name = "k", type = "NUMBER(10,0)" }, { name = "j", type = "VARCHAR" }]
+rows = [
+  ["'a'", "0", "'{\"p\":1.5,\"q\":\"x\"}'"],
+  ["'a'", "1", "'{\"p\":2,\"q\":null}'"],
+  ["'b'", "0", "'{\"p\":\"7\",\"q\":[1,2]}'"],
+  ["'c'", "2", "'{\"p\":3}'"],
+  ["'d'", "1", "NULL"],
+]
+query = "SELECT g, MAX(IFF(k = 0, PARSE_JSON(j):p, NULL)) AS p0, MAX(IFF(k = 1, PARSE_JSON(j):p, NULL)) AS p1, MAX(IFF(k = 0, PARSE_JSON(j):q, NULL)) AS q0, MAX(IFF(k = 1, PARSE_JSON(j):q, NULL)) AS q1 FROM input GROUP BY g ORDER BY g"
+order = "ordered"
+tags = ["null", "all-null", "empty-input"]
+
+[[case]]
+id = "max_of_variant_distinct_values"
+description = "MAX of VARIANT over groups holding different numbers, texts and kinds, whose order Snowflake defines."
+columns = [{ name = "g", type = "VARCHAR" }, { name = "j", type = "VARCHAR" }]
+rows = [
+  ["'a'", "'1'"], ["'a'", "'10'"], ["'a'", "'9.5'"],
+  ["'b'", "'\"x\"'"], ["'b'", "'\"ab\"'"],
+  ["'c'", "'1'"], ["'c'", "'\"1\"'"],
+  ["'d'", "'1'"], ["'d'", "'1'"],
+]
+query = "SELECT g, MAX(PARSE_JSON(j)) AS m FROM input GROUP BY g ORDER BY g"
+order = "ordered"
+expected_divergence = "array_sort_order"
+tags = ["duplicates", "mixed-types"]

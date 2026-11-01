@@ -8,6 +8,7 @@ use sqlquack_duckdb::blocks::main::cast::cast;
 use sqlquack_duckdb::blocks::main::decimal_arithmetic::decimal_arithmetic;
 use sqlquack_duckdb::blocks::main::double_arithmetic::double_arithmetic;
 use sqlquack_duckdb::blocks::main::exact_decimal_divide::exact_decimal_divide;
+use sqlquack_duckdb::blocks::main::string_literal::string_literal;
 use sqlquack_duckdb::semi_structured::constants::JSON_FIDELITY;
 use sqlquack_duckdb::semi_structured::main::json_number_equal::json_number_equal;
 use sqlquack_duckdb::semi_structured::main::json_output::json_output;
@@ -25,7 +26,9 @@ use sqlquack_snowflake::typing::main::numeric_modulo::numeric_modulo;
 use sqlquack_snowflake::typing::main::numeric_multiply::numeric_multiply;
 use sqlquack_snowflake::typing::models::SnowflakeType;
 
+use crate::conversion::_helpers::expressions::casts::cast_to;
 use crate::conversion::_helpers::expressions::scalar::convert_expression;
+use crate::conversion::_helpers::expressions::temporal::{literal_date, timestamp_literal};
 use crate::conversion::_helpers::support::divergence::{diverge, require_widening_range};
 use crate::conversion::_helpers::support::scope::{Context, Emitted, Literal};
 use crate::conversion::_helpers::support::site::Site;
@@ -33,6 +36,7 @@ use crate::conversion::_helpers::support::tree::{
     field, node_construct, payload_object, require_understood,
 };
 use crate::conversion::_helpers::support::typed_leaves::compared_by_text;
+use crate::conversion::constants::DATE_NAME;
 use sqlquack_duckdb::blocks::constants::NANOSECOND_DIGITS;
 
 use crate::conversion::constants::{
@@ -470,6 +474,14 @@ pub(crate) fn comparable(
             let left = time_literal(left, construct, context)?;
             return Ok((left, right));
         }
+        (ntz @ SnowflakeType::TimestampNtz { .. }, SnowflakeType::Varchar) => {
+            let right = ntz_literal(right, ntz, construct, context)?;
+            return Ok((left, right));
+        }
+        (SnowflakeType::Varchar, ntz @ SnowflakeType::TimestampNtz { .. }) => {
+            let left = ntz_literal(left, ntz, construct, context)?;
+            return Ok((left, right));
+        }
         (SnowflakeType::Varchar, number @ SnowflakeType::Number { .. }) => {
             let text = number_text(left, number, construct, context)?;
             return Ok((text, number_range(right, context)));
@@ -550,19 +562,75 @@ fn date_literal(
     construct: &Construct,
     context: &Context<'_>,
 ) -> Result<Emitted, Refusal> {
-    match &emitted.literal {
+    let refuse = |reason: String| outside_conditions(construct.clone(), reason);
+    let _rule = context.log.rule(DATE_LITERAL_COMPARISON);
+    let sql = match &emitted.literal {
         Some(Literal::Text(text)) if is_iso_date(text) => {
-            let _rule = context.log.rule(DATE_LITERAL_COMPARISON);
-            Ok(Emitted::new(
-                cast(&emitted.sql, SnowflakeType::Date, context.log)
-                    .map_err(|reason| outside_conditions(construct.clone(), reason))?,
-                SnowflakeType::Date,
-            ))
+            cast(&emitted.sql, SnowflakeType::Date, context.log).map_err(refuse)?
         }
-        _ => Err(outside_conditions(
+        Some(Literal::Text(text)) => match literal_date(text) {
+            Some(date) => cast(
+                &string_literal(date, context.log),
+                SnowflakeType::Date,
+                context.log,
+            )
+            .map_err(refuse)?,
+            None => {
+                return Err(refuse(
+                    "comparing DATE with VARCHAR needs an implicit conversion".to_owned(),
+                ));
+            }
+        },
+        _ => cast_to(&emitted, DATE_NAME, false, (context, construct)).map_err(refuse)?,
+    };
+    Ok(Emitted::new(sql, SnowflakeType::Date))
+}
+
+/// A text literal compared with a TIMESTAMP_NTZ, read as the timestamp it spells, T or space separated.
+fn ntz_literal(
+    emitted: Emitted,
+    ntz: SnowflakeType,
+    construct: &Construct,
+    context: &Context<'_>,
+) -> Result<Emitted, Refusal> {
+    let refuse = || {
+        outside_conditions(
             construct.clone(),
-            "comparing DATE with VARCHAR needs an implicit conversion".to_owned(),
-        )),
+            format!("comparing {ntz} with VARCHAR needs an implicit conversion"),
+        )
+    };
+    let _rule = context.log.rule(DATE_LITERAL_COMPARISON);
+    let sql = match &emitted.literal {
+        Some(Literal::Text(text)) => {
+            timestamp_literal(text, ntz, (context, construct)).map_err(|_| refuse())?
+        }
+        _ if ntz != (SnowflakeType::TimestampNtz { precision: 9 }) => {
+            return Err(outside_conditions(
+                construct.clone(),
+                format!(
+                    "comparing {ntz} with a VARCHAR column is recorded only for TIMESTAMP_NTZ(9)"
+                ),
+            ));
+        }
+        _ => cast_to(&emitted, &ntz.to_string(), false, (context, construct))
+            .map_err(|reason| outside_conditions(construct.clone(), reason))?,
+    };
+    Ok(Emitted::new(sql, ntz))
+}
+
+/// A text literal beside a DATE or TIMESTAMP_NTZ in a comparison or IN list, read as that type.
+pub(crate) fn temporal_text_literal(
+    emitted: Emitted,
+    temporal: SnowflakeType,
+    construct: &Construct,
+    context: &Context<'_>,
+) -> Result<Emitted, Refusal> {
+    match (temporal, emitted.data_type) {
+        (SnowflakeType::Date, SnowflakeType::Varchar) => date_literal(emitted, construct, context),
+        (SnowflakeType::TimestampNtz { .. }, SnowflakeType::Varchar) => {
+            ntz_literal(emitted, temporal, construct, context)
+        }
+        _ => Ok(emitted),
     }
 }
 

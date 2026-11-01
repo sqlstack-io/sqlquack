@@ -204,3 +204,35 @@ query = "WITH l AS (SELECT ordinal AS o, s FROM input WHERE side = 'l'), r AS (S
 order = "ordered"
 compile_error = true
 tags = ["null"]
+
+[[case]]
+id = "asof_join_cast_match_condition"
+description = "ASOF JOIN whose MATCH_CONDITION compares a DATE cast to TIMESTAMP_NTZ with a timestamp column, and a number expression with a number column."
+columns = [{ name = "side", type = "VARCHAR" }, { name = "k", type = "VARCHAR" }, { name = "d", type = "DATE" }, { name = "t", type = "TIMESTAMP_NTZ(9)" }, { name = "n", type = "NUMBER(10,0)" }]
+rows = [
+  ["'l'", "'a'", "'2024-01-02'", "NULL", "5"],
+  ["'l'", "'a'", "'2024-01-01'", "NULL", "1"],
+  ["'l'", "'b'", "'2024-01-02'", "NULL", "3"],
+  ["'r'", "'a'", "NULL", "'2024-01-01 12:00:00'", "2"],
+  ["'r'", "'a'", "NULL", "'2024-01-01 00:00:00'", "4"],
+  ["'r'", "'b'", "NULL", "'2024-01-03 00:00:00'", "9"],
+]
+query = "WITH l AS (SELECT ordinal AS o, k, d, n FROM input WHERE side = 'l'), r AS (SELECT k, t, n AS m FROM input WHERE side = 'r') SELECT l.o, r.t AS rt, s.m AS sm FROM l ASOF JOIN r MATCH_CONDITION (CAST(l.d AS TIMESTAMP_NTZ) > r.t) ON l.k = r.k ASOF JOIN r AS s MATCH_CONDITION (l.n * 2 >= s.m) ON l.k = s.k ORDER BY l.o"
+order = "ordered"
+tags = ["null", "duplicates", "empty-input"]
+
+[[case]]
+id = "full_join_using"
+description = "FULL OUTER JOIN USING two keys: the unqualified keys merge both sides, qualified ones keep their side's NULLs."
+columns = [{ name = "side", type = "VARCHAR" }, { name = "k", type = "NUMBER(10,0)" }, { name = "m", type = "VARCHAR" }, { name = "v", type = "VARCHAR" }]
+rows = [
+  ["'l'", "1", "'x'", "'l1'"],
+  ["'l'", "2", "'x'", "'l2'"],
+  ["'l'", "NULL", "'x'", "'ln'"],
+  ["'r'", "2", "'x'", "'r2'"],
+  ["'r'", "3", "'y'", "'r3'"],
+  ["'r'", "NULL", "'x'", "'rn'"],
+]
+query = "WITH a AS (SELECT k, m, v FROM input WHERE side = 'l'), e AS (SELECT k, m, v AS w FROM input WHERE side = 'r') SELECT k, m, a.k AS ak, e.k AS ek, v, w FROM a FULL OUTER JOIN e USING (k, m) WHERE a.k IS NULL OR e.k IS NULL OR v IS DISTINCT FROM w ORDER BY k NULLS LAST, v NULLS LAST, w NULLS LAST"
+order = "ordered"
+tags = ["null", "duplicates", "empty-input"]

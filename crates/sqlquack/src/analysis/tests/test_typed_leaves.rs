@@ -146,9 +146,15 @@ fn given_a_variant_holding_a_typed_leaf_when_compared_by_text_then_conversion_re
             expected_outcome: Ok("2"),
         },
         FirstValueTestCase {
-            description: "UNION of a VARIANT and NULL removes duplicates and is refused",
+            description: "UNION of a VARIANT and NULL removes duplicates by the text Snowflake writes",
             sql: "SELECT COUNT(*) AS n FROM (SELECT PARSE_JSON('1') AS v UNION SELECT NULL AS v) AS t",
-            expected_outcome: Err("a set operation removing duplicate VARIANT values"),
+            expected_outcome: Ok("2"),
+        },
+        FirstValueTestCase {
+            description: "UNION of a VARIANT holding a typed leaf and its text is refused",
+            sql: "SELECT COUNT(*) AS n FROM (SELECT TO_VARIANT('2024-01-01'::DATE) AS v \
+                  UNION SELECT TO_VARIANT('2024-01-01') AS v) AS t",
+            expected_outcome: Err(TYPED_REFUSAL),
         },
     ];
     for test_case in test_cases {

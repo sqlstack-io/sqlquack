@@ -1,14 +1,19 @@
-//! Sorting, flattening, appending, slicing and range functions over VARIANT arrays held as JSON.
+//! Sorting, flattening, set, slicing and range functions over VARIANT arrays held as JSON.
 
 use serde_json::Value;
 use sqlquack_core::classification::models::Construct;
 use sqlquack_core::refusals::models::Refusal;
 use sqlquack_duckdb::arrays::constants::ARRAY_SORT_ORDER;
+use sqlquack_duckdb::arrays::main::json_array_distinct::json_array_distinct;
 use sqlquack_duckdb::arrays::main::json_array_flatten::json_array_flatten;
+use sqlquack_duckdb::arrays::main::json_array_intersection::json_array_intersection;
 use sqlquack_duckdb::arrays::main::json_array_range::json_array_range;
+use sqlquack_duckdb::arrays::main::json_array_remove::json_array_remove;
 use sqlquack_duckdb::arrays::main::json_array_slice::json_array_slice;
 use sqlquack_duckdb::arrays::main::json_array_sort::json_array_sort;
+use sqlquack_duckdb::arrays::main::json_arrays_overlap::json_arrays_overlap;
 use sqlquack_duckdb::arrays::main::json_to_array::json_to_array;
+use sqlquack_duckdb::semi_structured::constants::JSON_FIDELITY;
 use sqlquack_duckdb::variants::main::json_array_cat::json_array_cat;
 use sqlquack_snowflake::typing::models::SnowflakeType;
 
@@ -19,9 +24,10 @@ use crate::conversion::_helpers::expressions::variants::array_construct;
 use crate::conversion::_helpers::support::divergence::diverge;
 use crate::conversion::_helpers::support::scope::Emitted;
 use crate::conversion::_helpers::support::site::Site;
+use crate::conversion::_helpers::support::typed_leaves::compared_by_text;
 use crate::conversion::constants::{
-    ARRAY_APPEND_RULE, ARRAY_FLATTEN_RULE, ARRAY_RANGE_RULE, ARRAY_SLICE_RULE, ARRAY_SORT_RULE,
-    TO_ARRAY_RULE,
+    ARRAY_APPEND_RULE, ARRAY_FLATTEN_RULE, ARRAY_RANGE_RULE, ARRAY_SET_RULE, ARRAY_SLICE_RULE,
+    ARRAY_SORT_RULE, TO_ARRAY_RULE,
 };
 
 /// One of this module's array functions, or `None` for another name or arity.
@@ -45,6 +51,11 @@ pub(crate) fn array_function(
                 .map(|array| semi_structured(json_array_flatten(&array, log)))
         }
         ("TO_ARRAY", [value]) => to_array(value, construct, site),
+        ("ARRAY_INTERSECTION" | "ARRAYS_OVERLAP", [left, right]) => {
+            compared_arrays(name, (left, Some(right)), construct, site)
+        }
+        ("ARRAY_DISTINCT", [array]) => compared_arrays(name, (array, None), construct, site),
+        ("ARRAY_REMOVE", [array, value]) => array_remove((array, value), construct, site),
         ("ARRAY_APPEND", [array, value]) => array_append((array, value), construct, site),
         ("ARRAY_SLICE", [array, from, to]) => {
             let _rule = log.rule(ARRAY_SLICE_RULE);
@@ -77,6 +88,60 @@ fn to_array(value: &Value, construct: &Construct, site: Site<'_>) -> Result<Emit
         "(CASE WHEN {} IS NULL THEN NULL ELSE {} END)",
         emitted.sql, wrapped.sql
     )))
+}
+
+/// ARRAY_INTERSECTION, ARRAYS_OVERLAP and ARRAY_DISTINCT, elements equal where Snowflake writes them alike.
+fn compared_arrays(
+    name: &str,
+    (left, right): (&Value, Option<&Value>),
+    construct: &Construct,
+    site: Site<'_>,
+) -> Result<Emitted, Refusal> {
+    let log = site.context.log;
+    let _rule = log.rule(ARRAY_SET_RULE);
+    diverge(site.context, JSON_FIDELITY, construct)?;
+    let reads = site.context.typed.reads();
+    let left = variant(left, construct, site)?;
+    let right = right
+        .map(|right| variant(right, construct, site))
+        .transpose()?;
+    compared_by_text(site.context.typed.since(reads), construct, site.context)?;
+    Ok(match (name, right) {
+        ("ARRAY_INTERSECTION", Some(right)) => {
+            semi_structured(json_array_intersection((&left, &right), log))
+        }
+        (_, Some(right)) => Emitted::new(
+            json_arrays_overlap((&left, &right), log),
+            SnowflakeType::Boolean,
+        ),
+        (_, None) => semi_structured(json_array_distinct(&left, log)),
+    })
+}
+
+/// ARRAY_REMOVE of a VARIANT value: elements equal to it as Snowflake writes them are removed.
+fn array_remove(
+    (array, value): (&Value, &Value),
+    construct: &Construct,
+    site: Site<'_>,
+) -> Result<Emitted, Refusal> {
+    let log = site.context.log;
+    let _rule = log.rule(ARRAY_SET_RULE);
+    diverge(site.context, JSON_FIDELITY, construct)?;
+    let reads = site.context.typed.reads();
+    let array = variant(array, construct, site)?;
+    let removed = convert_expression(value, site)?;
+    let removed = match removed.data_type {
+        SnowflakeType::SemiStructured if !removed.is_variant_held() => removed.sql,
+        SnowflakeType::Null => "CAST(NULL AS JSON)".to_owned(),
+        other => {
+            return Err(refused(
+                construct,
+                &format!("ARRAY_REMOVE of a {other} value, which Snowflake rejects (error 1044)"),
+            ));
+        }
+    };
+    compared_by_text(site.context.typed.since(reads), construct, site.context)?;
+    Ok(semi_structured(json_array_remove((&array, &removed), log)))
 }
 
 /// ARRAY_APPEND: the array's elements then the value, as ARRAY_CAT with ARRAY_CONSTRUCT of it.

@@ -84,3 +84,30 @@ rows = [["1", "'2.5'"], ["2", "'7'"], ["3", "'-1'"]]
 query = "SELECT DECODE(n, 1, n, 2, s, 0) AS r FROM input ORDER BY ordinal"
 order = "ordered"
 tags = ["mixed-types", "null"]
+
+[[case]]
+id = "case_without_else_readable_text"
+description = "CASE without ELSE mixing a NUMBER and readable text branches, with rows no WHEN matches."
+columns = [{ name = "n", type = "NUMBER(10,0)" }, { name = "s", type = "VARCHAR" }]
+rows = [["1", "'2.5'"], ["2", "'7'"], ["3", "'-1'"]]
+query = "SELECT CASE WHEN n = 2 THEN n WHEN n = 1 THEN s END AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["mixed-types", "null", "all-null"]
+
+[[case]]
+id = "decode_unreadable_text"
+description = "DECODE beside NUMBER branches with an unreadable text branch never chosen and one chosen."
+columns = [{ name = "n", type = "NUMBER(10,0)" }, { name = "s", type = "VARCHAR" }]
+rows = [["1", "'abc'"], ["2", "'7'"]]
+query = "SELECT DECODE(n, 1, n, 2, s, 0) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["mixed-types", "null", "all-null"]
+
+[[case]]
+id = "iff_and_case_else_unreadable_text"
+description = "IFF and CASE with ELSE beside a NUMBER, where an unreadable text branch is never chosen."
+columns = [{ name = "n", type = "NUMBER(10,0)" }, { name = "s", type = "VARCHAR" }]
+rows = [["1", "'abc'"], ["2", "'7'"]]
+query = "SELECT IFF(n = 2, s, n) AS i, CASE WHEN n = 2 THEN s ELSE n END AS c FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["mixed-types", "null", "all-null"]

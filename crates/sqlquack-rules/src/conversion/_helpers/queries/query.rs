@@ -131,13 +131,46 @@ fn convert_query_kind(
         }
         "values" => {
             let _rule = context.log.rule(VALUES_ROWS);
-            convert_query(&values_rows(payload)?, outer, context, named)
+            let (sql, mut columns) = convert_query(&values_rows(payload)?, outer, context, named)?;
+            let filled = filled_columns(payload);
+            for (position, column) in columns.iter_mut().enumerate() {
+                column.not_null = filled.get(position).copied().unwrap_or(false);
+            }
+            Ok((sql, columns))
         }
         other => Err(missing(
             node_construct(other),
             format!("no rule converts node:{other} as a query"),
         )),
     }
+}
+
+/// For each VALUES column, whether every row holds a non-NULL text or number literal there.
+fn filled_columns(payload: &Value) -> Vec<bool> {
+    let mut filled: Vec<bool> = Vec::new();
+    let rows = payload
+        .as_object()
+        .map(|values| list(values, "expressions"));
+    for (index, row) in rows.unwrap_or_default().iter().enumerate() {
+        let cells = row
+            .as_object()
+            .map(|row| list(row, "expressions"))
+            .unwrap_or_default();
+        if index == 0 {
+            filled = vec![true; cells.len()];
+        }
+        for (position, cell) in cells.iter().enumerate() {
+            let literal = matches!(
+                node_kind(cell),
+                Some(("literal", literal))
+                    if matches!(literal.get("literal_type").and_then(Value::as_str), Some("string" | "number"))
+            );
+            if let Some(slot) = filled.get_mut(position) {
+                *slot &= literal;
+            }
+        }
+    }
+    filled
 }
 
 /// VALUES rows as the UNION ALL of one SELECT per row, its columns named COLUMN1, COLUMN2 and so on.
@@ -245,6 +278,7 @@ fn convert_select(
         }
         items.push(projected_sql(name.as_deref(), emitted, &context));
     }
+    let plain = list(select, "joins").is_empty() && !scope.grouped;
     let columns: Vec<ColumnSpec> = outputs
         .iter()
         .map(|(name, emitted)| ColumnSpec {
@@ -253,6 +287,7 @@ fn convert_select(
             sourced: emitted.sourced,
             utc_offset: emitted.utc_offset,
             declared_offsets: emitted.declared.clone(),
+            not_null: plain && (emitted.not_null || emitted.literal.is_some()),
             ..ColumnSpec::new(name.clone(), emitted.data_type)
         })
         .collect();
@@ -574,6 +609,7 @@ pub(crate) fn star(
                     sourced: column.sourced,
                     utc_offset: column.utc_offset,
                     declared: column.declared_offsets.clone(),
+                    not_null: column.not_null,
                     ..Emitted::new(sql, column.data_type)
                 },
             ));

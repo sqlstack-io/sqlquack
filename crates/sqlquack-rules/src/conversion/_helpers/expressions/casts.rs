@@ -42,7 +42,7 @@ use crate::conversion::_helpers::expressions::semi_structured::{
     held_cast, variant_cast, variant_null,
 };
 use crate::conversion::_helpers::expressions::temporal::{
-    is_temporal, proven_time_text, temporal_cast, time_submicro, timestamp_literal,
+    is_temporal, literal_date, proven_time_text, temporal_cast, time_submicro, timestamp_literal,
 };
 use crate::conversion::_helpers::expressions::variants::to_variant;
 use crate::conversion::_helpers::support::declared::rely_on_declared;
@@ -131,7 +131,10 @@ pub(crate) fn convert_cast(
     {
         log.facet(FLOAT_SCALE_FACET, &scale.to_string());
     }
-    if operand.data_type == SnowflakeType::Null && type_name == VARIANT_NAME {
+    if operand.data_type == SnowflakeType::Null
+        && (type_name == VARIANT_NAME
+            || !trying && KIND_CAST_TARGETS.iter().any(|(name, _)| *name == type_name))
+    {
         let _rule = cast_rule(CAST_SAME_TYPE, log);
         return Ok(Emitted::new(
             variant_null(log),
@@ -182,6 +185,7 @@ pub(crate) fn convert_cast(
     Ok(Emitted {
         utc_offset: zoned_in_utc((operand.data_type, operand.utc_offset), target.data_type),
         declared: operand.declared.clone(),
+        not_null: (operand.not_null || operand.literal.is_some()) && !trying,
         ..Emitted::new(sql, target.data_type)
     })
 }
@@ -216,6 +220,10 @@ fn cast_sql(
         (SnowflakeType::Null, _, _) => {
             let _rule = cast_rule(CAST_SAME_TYPE, log);
             Ok(bounded(cast("NULL", to, log)?, target, log))
+        }
+        (from @ SnowflakeType::Number { .. }, to, _) if trying && from == to => {
+            let _rule = cast_rule(CAST_SAME_TYPE, log);
+            Ok(operand.sql.clone())
         }
         (SnowflakeType::Varchar, SnowflakeType::Varchar, _) if trying => {
             let _rule = cast_rule(CAST_SAME_TYPE, log);
@@ -639,6 +647,12 @@ fn text_literal_cast(text: &str, to: SnowflakeType, log: &ProvenanceLog) -> Resu
         SnowflakeType::Boolean if text.eq_ignore_ascii_case(TRUE_TEXT) => Ok("TRUE".to_owned()),
         SnowflakeType::Boolean if text.eq_ignore_ascii_case(FALSE_TEXT) => Ok("FALSE".to_owned()),
         SnowflakeType::Date if is_iso_date(text) => cast(&literal, to, log),
+        SnowflakeType::Date => match literal_date(text) {
+            Some(date) => cast(&string_literal(date, log), to, log),
+            None => Err(format!(
+                "casting the text '{text}' to {to} has no proven conversion"
+            )),
+        },
         other => Err(format!(
             "casting the text '{text}' to {other} has no proven conversion"
         )),

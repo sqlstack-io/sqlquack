@@ -300,7 +300,12 @@ pub const LENGTH_TYPE: SnowflakeType = SnowflakeType::Number {
 /// Regular-expression shorthand classes Snowflake and RE2 both read as ASCII classes.
 pub const REGEXP_SHORTHANDS: &str = "dDsSwW";
 /// The REGEXP functions that read lazy quantifiers and `\n` as recorded.
-pub const REGEXP_EXTRACTING_FUNCTIONS: &[&str] = &["REGEXP_SUBSTR", "REGEXP_SUBSTR_ALL"];
+pub const REGEXP_EXTRACTING_FUNCTIONS: &[&str] = &[
+    "REGEXP_SUBSTR",
+    "REGEXP_SUBSTR_ALL",
+    "REGEXP_COUNT",
+    "REGEXP_INSTR",
+];
 /// The escapes REGEXP_SUBSTR reads as a line feed, a tab and a carriage return.
 pub const REGEXP_CONTROL_ESCAPES: &str = "ntr";
 /// DATE_PART, EXTRACT and the single-part functions.
@@ -1292,6 +1297,8 @@ pub const ARRAY_SORT_RULE: &str = "rule.array_sort";
 pub const ARRAY_FLATTEN_RULE: &str = "rule.array_flatten";
 /// TO_ARRAY.
 pub const TO_ARRAY_RULE: &str = "rule.to_array";
+/// ARRAY_INTERSECTION, ARRAYS_OVERLAP and ARRAY_DISTINCT.
+pub const ARRAY_SET_RULE: &str = "rule.array_set";
 /// ARRAY_APPEND.
 pub const ARRAY_APPEND_RULE: &str = "rule.array_append";
 /// ARRAY_SLICE.
@@ -1321,3 +1328,9 @@ pub const DAY_NAME_RULE: &str = "rule.day_name";
 pub(crate) const SQRT_NAME: &str = "SQRT";
 /// TRY_TO_DOUBLE of a FLOAT, the value itself.
 pub const FLOAT_TO_DOUBLE: &str = "rule.float_to_double";
+/// REGEXP_REPLACE and REGEXP_SUBSTR with a pattern from a column.
+pub const REGEXP_COLUMN_PATTERN: &str = "rule.regexp_column_pattern";
+/// MAX of JSON-held VARIANTs.
+pub const VARIANT_MAX: &str = "rule.variant_max";
+/// The parser's node kind for MAX.
+pub const MAX_KIND: &str = "max";

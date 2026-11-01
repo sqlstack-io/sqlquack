@@ -8,7 +8,9 @@ use sqlquack_duckdb::semi_structured::constants::JSON_FIDELITY;
 use sqlquack_duckdb::semi_structured::main::json_text::json_text;
 use sqlquack_snowflake::typing::models::SnowflakeType;
 
-use crate::conversion::_helpers::expressions::operators::{comparable, same_family};
+use crate::conversion::_helpers::expressions::operators::{
+    comparable, same_family, temporal_text_literal,
+};
 use crate::conversion::_helpers::expressions::scalar::convert_expression;
 use crate::conversion::_helpers::queries::query::convert_query;
 use crate::conversion::_helpers::support::divergence::diverge;
@@ -140,6 +142,7 @@ pub(crate) fn in_predicate(payload: &Value, site: Site<'_>) -> Result<Emitted, R
     };
     let mut items_sql: Vec<String> = Vec::new();
     for item in items {
+        let item = temporal_text_literal(item, value.data_type, &construct, site.context)?;
         same_family(value.data_type, item.data_type, &construct)?;
         items_sql.push(item.sql);
     }
@@ -165,13 +168,6 @@ fn in_subquery(
 ) -> Result<Emitted, Refusal> {
     let construct = node_construct("in");
     let _rule = site.context.log.rule(IN_SUBQUERY);
-    if negated && !site.placement.filter {
-        return Err(outside_conditions(
-            construct,
-            "NOT IN with a subquery outside a WHERE condition, which Snowflake rejects (error 2031)"
-                .to_owned(),
-        ));
-    }
     let _negated = negated.then(|| site.context.log.rule(NOT_IN_SUBQUERY));
     let query = match node_kind(query) {
         Some(("subquery", inner)) => inner.get("this").unwrap_or(query),
@@ -192,6 +188,14 @@ fn in_subquery(
             "IN needs a one-column subquery".to_owned(),
         ));
     };
+    if negated && !site.placement.filter && !column.not_null {
+        return Err(outside_conditions(
+            construct,
+            "NOT IN with a subquery outside a WHERE condition, which Snowflake rejects (error 2031) \
+             unless it proves the subquery holds no NULL"
+                .to_owned(),
+        ));
+    }
     if !column.holding.is_json() {
         return Err(outside_conditions(
             construct,

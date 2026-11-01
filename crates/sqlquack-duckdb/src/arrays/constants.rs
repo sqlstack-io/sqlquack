@@ -4,6 +4,14 @@
 pub const JSON_ARRAY_SORT: &str = "duckdb.json_array_sort";
 /// ARRAY_FLATTEN: `duckdb.json_array_flatten`.
 pub const JSON_ARRAY_FLATTEN: &str = "duckdb.json_array_flatten";
+/// ARRAY_INTERSECTION: `duckdb.json_array_intersection`.
+pub const JSON_ARRAY_INTERSECTION: &str = "duckdb.json_array_intersection";
+/// ARRAYS_OVERLAP: `duckdb.json_arrays_overlap`.
+pub const JSON_ARRAYS_OVERLAP: &str = "duckdb.json_arrays_overlap";
+/// ARRAY_DISTINCT: `duckdb.json_array_distinct`.
+pub const JSON_ARRAY_DISTINCT: &str = "duckdb.json_array_distinct";
+/// ARRAY_REMOVE: `duckdb.json_array_remove`.
+pub const JSON_ARRAY_REMOVE: &str = "duckdb.json_array_remove";
 /// ARRAY_SLICE: `duckdb.json_array_slice`.
 pub const JSON_ARRAY_SLICE: &str = "duckdb.json_array_slice";
 /// ARRAY_GENERATE_RANGE: `duckdb.json_array_range`.

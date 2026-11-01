@@ -5,6 +5,8 @@ use sqlquack_core::classification::models::Construct;
 use sqlquack_core::refusals::main::missing::missing;
 use sqlquack_core::refusals::main::outside_conditions::outside_conditions;
 use sqlquack_core::refusals::models::Refusal;
+use sqlquack_duckdb::aggregates::main::json_variant_max::json_variant_max;
+use sqlquack_duckdb::arrays::constants::ARRAY_SORT_ORDER;
 use sqlquack_duckdb::blocks::main::cast::cast;
 use sqlquack_duckdb::blocks::main::exact_decimal_divide::exact_decimal_divide;
 use sqlquack_duckdb::blocks::main::quoted_identifier::quoted_identifier;
@@ -58,10 +60,12 @@ use crate::conversion::_helpers::support::tree::{
     Payload, field, flag, function_construct, list, node_construct, payload_object,
     require_understood,
 };
+use crate::conversion::_helpers::support::typed_leaves::compared_by_text;
+use crate::conversion::constants::MAX_KIND;
 use crate::conversion::constants::{
     AVERAGE, AVG_NAME, COUNT, GENERATOR_RULE, GENERATOR_SEQUENCE_COLUMN, LEAST_GREATEST, MIN_MAX,
     MIN_MAX_FLOAT, NOT_SNOWFLAKE_FUNCTIONS, NULLIF, NUMERIC_RANGE, SORTED_ARRAY_FUNCTION, SUM,
-    SUM_FLOAT, TO_DATE_NAME, TRIM,
+    SUM_FLOAT, TO_DATE_NAME, TRIM, VARIANT_MAX,
 };
 
 /// SEQ4() or SEQ8() in a query level reading only a generator: the row's number from 0.
@@ -489,6 +493,22 @@ impl AggregateCall<'_> {
                     argument.data_type,
                 )
             }),
+            SnowflakeType::SemiStructured
+                if kind == MAX_KIND
+                    && self.over.is_empty()
+                    && self.distinct().is_empty()
+                    && !argument.is_variant_held() =>
+            {
+                let context = self.site.context;
+                let construct = node_construct(kind);
+                let _variant = context.log.rule(VARIANT_MAX);
+                diverge(context, ARRAY_SORT_ORDER, &construct)?;
+                compared_by_text((argument.untainted, argument.sourced), &construct, context)?;
+                Ok(Emitted::new(
+                    json_variant_max(&argument.sql, context.log),
+                    SnowflakeType::SemiStructured,
+                ))
+            }
             SnowflakeType::Float => {
                 let _float = self.site.context.log.rule(MIN_MAX_FLOAT);
                 Ok(Emitted::new(

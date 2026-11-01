@@ -1,0 +1,21 @@
+# LAG and LEAD with IGNORE NULLS.
+category = "window"
+construct = "fn:LAG"
+session_profile = "utc-v1"
+
+[[case]]
+id = "lag_ignore_nulls"
+description = "LAG and LEAD IGNORE NULLS with offsets 1 and 2 and a default, over partitions with leading, trailing and consecutive NULLs."
+columns = [{ name = "g", type = "VARCHAR" }, { name = "t", type = "NUMBER(10,0)" }, { name = "v", type = "NUMBER(10,2)" }]
+rows = [
+  ["'a'", "1", "NULL"],
+  ["'a'", "2", "1.50"],
+  ["'a'", "3", "NULL"],
+  ["'a'", "4", "NULL"],
+  ["'a'", "5", "2.50"],
+  ["'a'", "6", "NULL"],
+  ["'b'", "1", "7.00"],
+]
+query = "SELECT g, t, LAG(v) IGNORE NULLS OVER (PARTITION BY g ORDER BY t) AS l1, LAG(v, 2) IGNORE NULLS OVER (PARTITION BY g ORDER BY t) AS l2, LEAD(v) IGNORE NULLS OVER (PARTITION BY g ORDER BY t) AS n1, LAG(v, 1, 0) IGNORE NULLS OVER (PARTITION BY g ORDER BY t) AS ld FROM input ORDER BY g, t"
+order = "ordered"
+tags = ["null", "ties", "single-row-partition"]

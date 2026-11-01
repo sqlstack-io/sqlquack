@@ -1,0 +1,52 @@
+# Array set functions over integers, strings, booleans and objects only, so the JSON guard lets them
+# through: ARRAY_INTERSECTION, ARRAYS_OVERLAP, ARRAY_DISTINCT and ARRAY_REMOVE.
+category = "semi-structured-array"
+construct = "fn:ARRAY_INTERSECTION"
+session_profile = "utc-v1"
+
+[[case]]
+id = "array_sets_integers_and_strings"
+description = "ARRAY_INTERSECTION, ARRAYS_OVERLAP and ARRAY_DISTINCT over integers and strings with duplicates, case differences and empty arrays."
+columns = [{ name = "a", type = "VARCHAR" }, { name = "b", type = "VARCHAR" }]
+rows = [
+  ["'[3,1,3,2,1]'", "'[1,3,3,3]'"],
+  ["'[\"a\",\"A\",\"a\"]'", "'[\"A\"]'"],
+  ["'[1,\"1\"]'", "'[\"1\"]'"],
+  ["'[]'", "'[]'"],
+  ["'[7]'", "'[8]'"],
+  ["NULL", "'[1]'"],
+]
+query = "SELECT ARRAY_INTERSECTION(PARSE_JSON(a), PARSE_JSON(b)) AS i, ARRAYS_OVERLAP(PARSE_JSON(a), PARSE_JSON(b)) AS o, ARRAY_DISTINCT(PARSE_JSON(a)) AS d FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "duplicates", "empty", "invalid"]
+
+[[case]]
+id = "array_sets_objects_reordered"
+description = "Array set functions over objects whose keys come in different orders."
+columns = [{ name = "a", type = "VARCHAR" }, { name = "b", type = "VARCHAR" }]
+rows = [
+  ["'[{\"y\":2,\"x\":1},{\"x\":1,\"y\":2},{\"x\":3}]'", "'[{\"x\":1,\"y\":2}]'"],
+  ["'[{\"k\":\"v\"}]'", "'[{\"k\":\"w\"}]'"],
+]
+query = "SELECT ARRAY_INTERSECTION(PARSE_JSON(a), PARSE_JSON(b)) AS i, ARRAYS_OVERLAP(PARSE_JSON(a), PARSE_JSON(b)) AS o, ARRAY_DISTINCT(PARSE_JSON(a)) AS d FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "duplicates", "empty", "invalid"]
+
+[[case]]
+id = "array_overlap_built_arrays"
+description = "ARRAYS_OVERLAP and ARRAY_INTERSECTION of arrays built from text columns, as models write them."
+columns = [{ name = "a", type = "VARCHAR" }, { name = "b", type = "VARCHAR" }]
+rows = [["'x'", "'y'"], ["'x'", "'x'"], ["NULL", "'x'"], ["''", "''"]]
+query = "SELECT ARRAYS_OVERLAP(ARRAY_CONSTRUCT(a, 'k'), ARRAY_CONSTRUCT(b)) AS o, ARRAY_INTERSECTION(ARRAY_CONSTRUCT(a, b), ARRAY_CONSTRUCT(b)) AS i, ARRAY_SIZE(ARRAY_DISTINCT(ARRAY_CONSTRUCT(a, b, a))) AS n FROM input ORDER BY ordinal"
+order = "ordered"
+expected_divergence = "json_fidelity"
+tags = ["null", "duplicates", "empty", "invalid"]
+
+[[case]]
+id = "array_remove_values"
+description = "ARRAY_REMOVE of integers, strings and NULL from arrays with duplicates."
+columns = [{ name = "a", type = "VARCHAR" }]
+rows = [["'[1,2,1,\"1\"]'"], ["'[\"a\",\"b\"]'"], ["'[]'"], ["NULL"]]
+query = "SELECT ARRAY_REMOVE(PARSE_JSON(a), 1::VARIANT) AS r1, ARRAY_REMOVE(PARSE_JSON(a), 'a'::VARIANT) AS r2, ARRAY_REMOVE(PARSE_JSON(a), NULL) AS r3, ARRAY_REMOVE(PARSE_JSON(a), PARSE_JSON('\"1\"')) AS r4 FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "duplicates", "empty", "invalid"]
