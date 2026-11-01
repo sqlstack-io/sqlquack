@@ -46,6 +46,10 @@ pub(crate) struct TypedShopSchema {
     pub(crate) open: HashMap<String, Vec<SchemaColumn>>,
     pub(crate) functions: HashMap<String, String>,
     pub(crate) rules: HashMap<String, NullabilityRule>,
+    /// Functions the project declares, whose calls the checks leave alone.
+    pub(crate) declared: Vec<String>,
+    /// The argument counts a catalog accepts for each function, by lower-case canonical name.
+    pub(crate) arities: HashMap<String, Vec<(usize, Option<usize>)>>,
 }
 
 /// An output's expected name, type and nullability.

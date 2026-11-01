@@ -1,11 +1,15 @@
-//! The findings of one parsed statement, each finding once.
+//! The findings of one parsed statement, each finding once, in polyglot's order.
+
+use std::collections::HashMap;
 
 use sqlquack_syntax::Expression;
+use sqlquack_syntax::ExpressionWalk;
 
 use crate::lineage::_helpers::findings::levels::query_findings;
+use crate::lineage::constants::NAME_PHASE;
 use crate::lineage::models::{LineageContext, NameFinding};
 
-/// Every unresolved column reference in `statement`: each level's own, then its inner queries'.
+/// Every finding of `statement`: scope rules, names, then types, each phase in polyglot's order.
 pub(crate) fn statement_findings(
     statement: &Expression,
     context: LineageContext<'_>,
@@ -16,5 +20,22 @@ pub(crate) fn statement_findings(
             distinct.push(finding);
         }
     }
-    distinct
+    let order: HashMap<usize, usize> = statement
+        .dfs()
+        .enumerate()
+        .map(|(position, node)| (std::ptr::from_ref(node) as usize, position))
+        .collect();
+    let mut keyed: Vec<((u8, usize), usize, NameFinding)> = distinct
+        .into_iter()
+        .enumerate()
+        .map(|(emitted, finding)| {
+            let place: usize = match finding.phase {
+                NAME_PHASE => 0,
+                _ => order.get(&finding.node).copied().unwrap_or(usize::MAX),
+            };
+            ((finding.phase, place), emitted, finding)
+        })
+        .collect();
+    keyed.sort_by_key(|(key, emitted, _)| (*key, *emitted));
+    keyed.into_iter().map(|(_, _, finding)| finding).collect()
 }

@@ -226,11 +226,14 @@ pub(crate) fn item_sources(
             };
             vec![ScopeSource {
                 key: subquery.alias.as_ref().map(|alias| key(alias, context)),
-                query: renamed(
-                    resolved_query(&subquery.this, scope.ctes, outer, context),
-                    &subquery.column_aliases,
-                    context,
-                ),
+                query: ResolvedQuery {
+                    derived: true,
+                    ..renamed(
+                        resolved_query(&subquery.this, scope.ctes, outer, context),
+                        &subquery.column_aliases,
+                        context,
+                    )
+                },
             }]
         }
         Expression::Alias(alias) => {

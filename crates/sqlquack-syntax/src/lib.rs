@@ -13,6 +13,7 @@ pub mod traversal;
 
 pub use crate::expressions::tree::models::Expression;
 pub use crate::expressions::types::models::DataType;
+pub use crate::functions::typed::main::canonical_call_name::canonical_call_name;
 pub use crate::guard::models::ComplexityGuardOptions;
 pub use crate::guard::models::ParseOptions;
 pub use crate::lossless::errors::TokenizeFailure;

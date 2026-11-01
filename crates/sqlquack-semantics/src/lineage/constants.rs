@@ -17,7 +17,7 @@ pub(crate) const DUCKDB_VALUES_COLUMN: &str = "col";
 /// The DuckDB profile's name, which numbers VALUES columns its own way.
 pub(crate) const DUCKDB_PROFILE: &str = "DuckDB";
 /// Window and group aggregate functions SQLQuack's faithful parse keeps as plain calls.
-pub(crate) const AGGREGATE_FUNCTIONS: [&str; 24] = [
+pub(crate) const AGGREGATE_FUNCTIONS: &[&str] = &[
     "ANY_VALUE",
     "APPROX_COUNT_DISTINCT",
     "ARRAY_AGG",
@@ -42,6 +42,45 @@ pub(crate) const AGGREGATE_FUNCTIONS: [&str; 24] = [
     "SUM",
     "VARIANCE",
     "LIST",
+    "APPROX_PERCENTILE",
+    "APPROX_TOP_K",
+    "ARG_MAX",
+    "ARG_MIN",
+    "ARRAY_UNIQUE_AGG",
+    "BITOR_AGG",
+    "BITXOR_AGG",
+    "BIT_AND",
+    "BIT_OR",
+    "BIT_XOR",
+    "BOOLXOR_AGG",
+    "BOOL_AND",
+    "BOOL_OR",
+    "CORR",
+    "COVAR_POP",
+    "COVAR_SAMP",
+    "HASH_AGG",
+    "KURTOSIS",
+    "MINHASH",
+    "MINHASH_COMBINE",
+    "PERCENTILE_DISC",
+    "QUANTILE_CONT",
+    "QUANTILE_DISC",
+    "REGR_AVGX",
+    "REGR_AVGY",
+    "REGR_COUNT",
+    "REGR_INTERCEPT",
+    "REGR_R2",
+    "REGR_SLOPE",
+    "REGR_SXX",
+    "REGR_SXY",
+    "REGR_SYY",
+    "SKEW",
+    "STDDEV_POP",
+    "STDDEV_SAMP",
+    "VARIANCE_POP",
+    "VARIANCE_SAMP",
+    "VAR_POP",
+    "VAR_SAMP",
 ];
 /// `$n` numbers a FROM item's columns from 1.
 pub(crate) const POSITIONAL_COLUMN_BASE: usize = 1;
@@ -249,6 +288,8 @@ pub(crate) const DATE_PART_FUNCTIONS: [(&str, usize); 9] = [
 ];
 /// The code of a column no FROM item offers.
 pub(crate) const UNKNOWN_COLUMN_CODE: &str = "E201";
+/// The code of a FROM item with more column aliases than columns.
+pub(crate) const ALIAS_COUNT_CODE: &str = "E223";
 /// The code of an unqualified column several FROM items offer.
 pub(crate) const AMBIGUOUS_COLUMN_CODE: &str = "E221";
 /// The code of a qualifier that names no FROM item.
@@ -263,3 +304,16 @@ pub(crate) const POSITIONAL_PREFIX: char = '$';
 pub(crate) const DUCKDB_ROWID: &str = "rowid";
 /// Sequence pseudo-columns, read after the sequence's name.
 pub(crate) const SEQUENCE_COLUMNS: [&str; 2] = ["NEXTVAL", "CURRVAL"];
+/// The phase of scope-rule findings: grouping, aggregate and window placement, structure.
+pub(crate) const SCOPE_PHASE: u8 = 0;
+/// The phase of name findings: unknown, ambiguous and unqualifiable references.
+pub(crate) const NAME_PHASE: u8 = 1;
+/// The phase of type findings: comparisons, arithmetic, casts, arguments and set operations.
+pub(crate) const TYPE_PHASE: u8 = 2;
+/// DuckDB keywords that are not callable functions: only the bracket-free form is valid.
+pub(crate) const DUCKDB_KEYWORD_ONLY_FUNCTIONS: [&str; 4] = [
+    "current_time",
+    "current_timestamp",
+    "localtime",
+    "localtimestamp",
+];

@@ -94,9 +94,14 @@ fn given_a_query_when_resolving_its_names_then_unknown_ambiguous_and_unqualifiab
             ],
         },
         QueryFindingsTestCase {
-            description: "a projection does not read its own alias",
+            description: "a projection does not read its own alias; ungrouped amount comes first",
             sql: "SELECT MAX(qty) AS qty, amount + total AS total, total FROM orders",
             expected_findings: &[
+                (
+                    "E230",
+                    "Column must be grouped or used in an aggregate function",
+                    24,
+                ),
                 ("E201", "Unknown column 'qty' in table 'orders'", 11),
                 ("E201", "Unknown column 'total' in table 'orders'", 33),
                 ("E201", "Unknown column 'total' in table 'orders'", 49),

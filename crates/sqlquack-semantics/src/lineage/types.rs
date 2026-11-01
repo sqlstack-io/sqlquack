@@ -27,6 +27,24 @@ pub trait LineageSchema: std::fmt::Debug + Sync {
         let _ = name;
         None
     }
+
+    /// Whether the project declares the function `name`, whose calls the type checks leave alone.
+    fn known_function(&self, name: &str) -> bool {
+        let _ = name;
+        false
+    }
+
+    /// The `(least, most)` argument counts the catalog accepts for `name`, when it knows them.
+    fn function_arities(&self, name: &str, canonical: &str) -> Option<Vec<(usize, Option<usize>)>> {
+        let _ = (name, canonical);
+        None
+    }
+
+    /// Whether the project declares the type `name`, which a cast may name.
+    fn known_type(&self, name: &str) -> bool {
+        let _ = name;
+        false
+    }
 }
 
 /// A set of source columns that copies of a value's lineage share until one changes it.

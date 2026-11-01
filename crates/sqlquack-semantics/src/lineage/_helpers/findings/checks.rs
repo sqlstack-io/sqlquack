@@ -5,11 +5,13 @@ use sqlquack_syntax::ExpressionWalk;
 use sqlquack_syntax::expressions::names::models::{Column, Identifier};
 use sqlquack_syntax::expressions::queries::models::Select;
 
+use crate::lineage::_helpers::checks::scope_rules::output_width;
 use crate::lineage::_helpers::tracing::queries::empty_scope;
 use crate::lineage::_helpers::tracing::resolution::key;
 use crate::lineage::_helpers::tracing::sources::item_sources;
 use crate::lineage::constants::{
-    AMBIGUOUS_COLUMN_CODE, CONNECT_BY_LEVEL, UNKNOWN_COLUMN_CODE, UNKNOWN_QUALIFIER_CODE,
+    ALIAS_COUNT_CODE, AMBIGUOUS_COLUMN_CODE, CONNECT_BY_LEVEL, NAME_PHASE, UNKNOWN_COLUMN_CODE,
+    UNKNOWN_QUALIFIER_CODE,
 };
 use crate::lineage::constants::{
     DUCKDB_PROFILE, DUCKDB_ROWID, METADATA_PREFIX, POSITIONAL_PREFIX, SEQUENCE_COLUMNS,
@@ -45,6 +47,8 @@ pub(crate) fn column_finding(
         message,
         span,
         written: name.name.clone(),
+        phase: NAME_PHASE,
+        ..NameFinding::default()
     };
     let written: String = name.name.to_lowercase();
     if pseudo_column(name, column.table.is_some(), context) {
@@ -74,11 +78,7 @@ pub(crate) fn column_finding(
         {
             return None;
         }
-        let matches: usize = current
-            .sources
-            .iter()
-            .filter(|source| offers(source, &wanted, context))
-            .count();
+        let matches: usize = offering_count(current, &wanted, context);
         if matches > 1 && !(level.filtering_join && std::ptr::eq(current, level.scope)) {
             return Some(finding(
                 AMBIGUOUS_COLUMN_CODE,
@@ -151,7 +151,9 @@ fn definitely_no_relation(alias: &str, level: &Level<'_, '_>, context: LineageCo
     let mut scope: Option<&LineageScope<'_>> = Some(level.scope);
     while let Some(current) = scope {
         if current.sources.iter().any(|source| {
-            unjudged(source) || source.key.is_none() || offers(source, alias, context)
+            unjudged(source)
+                || (source.key.is_none() && !source.query.derived)
+                || offers(source, alias, context)
         }) {
             return false;
         }
@@ -216,6 +218,8 @@ pub(crate) fn using_findings(
                     message: format!("JOIN USING column '{}' must exist on both sides", name.name),
                     span: at,
                     written: name.name.clone(),
+                    phase: NAME_PHASE,
+                    ..NameFinding::default()
                 });
             }
         }
@@ -255,6 +259,8 @@ pub(crate) fn unpivot_findings(
                     message: format!("Unknown UNPIVOT input column '{}'", column.name.name),
                     span: column.span.or(column.name.span),
                     written: column.name.name.clone(),
+                    phase: NAME_PHASE,
+                    ..NameFinding::default()
                 });
             }
         }
@@ -269,6 +275,24 @@ fn offers(source: &ScopeSource, wanted: &str, context: LineageContext<'_>) -> bo
         .columns
         .iter()
         .any(|offered| context.profile.same_identifier(&offered.key, wanted))
+}
+
+/// How many FROM items offer `wanted`, two under one name counted once.
+fn offering_count(scope: &LineageScope<'_>, wanted: &str, context: LineageContext<'_>) -> usize {
+    let mut names: Vec<&str> = Vec::new();
+    let mut keyless: usize = 0;
+    for source in scope
+        .sources
+        .iter()
+        .filter(|source| offers(source, wanted, context))
+    {
+        match source.key.as_deref() {
+            Some(name) if !names.contains(&name) => names.push(name),
+            Some(_) => {}
+            None => keyless += 1,
+        }
+    }
+    names.len() + keyless
 }
 
 /// Whether a FROM item's names are not judged: open, VALUES, or with an output of unknown name.
@@ -302,4 +326,53 @@ fn display_name(source: &ScopeSource, alias: &str) -> String {
         .written_name
         .clone()
         .unwrap_or_else(|| alias.to_lowercase())
+}
+
+/// FROM items with more column aliases than their relation has columns, as polyglot words it.
+pub(crate) fn alias_count_findings(
+    select: &Select,
+    scope: &LineageScope<'_>,
+    context: LineageContext<'_>,
+) -> Vec<NameFinding> {
+    let items = select
+        .from
+        .iter()
+        .flat_map(|from| from.expressions.iter())
+        .chain(select.joins.iter().map(|join| &join.this));
+    let mut findings: Vec<NameFinding> = Vec::new();
+    for item in items {
+        let (relation, aliases, width) = match item {
+            Expression::Subquery(subquery) => (
+                "Derived-table",
+                &subquery.column_aliases,
+                output_width(&subquery.this),
+            ),
+            Expression::Alias(alias) => (
+                "Derived-table",
+                &alias.column_aliases,
+                output_width(&alias.this),
+            ),
+            Expression::Table(table) => {
+                let name: String = key(table.alias.as_ref().unwrap_or(&table.name), context);
+                let width: Option<usize> = scope
+                    .sources
+                    .iter()
+                    .find(|source| source.key.as_deref() == Some(name.as_str()))
+                    .filter(|source| !source.query.open && !source.query.columns.is_empty())
+                    .map(|source| source.query.columns.len());
+                ("Table", &table.column_aliases, width)
+            }
+            _ => continue,
+        };
+        if !aliases.is_empty() && width.is_some_and(|width| aliases.len() > width) {
+            findings.push(NameFinding {
+                code: ALIAS_COUNT_CODE,
+                message: format!("{relation} column alias count exceeds its output column count"),
+                span: aliases.last().and_then(|alias| alias.span),
+                phase: NAME_PHASE,
+                ..NameFinding::default()
+            });
+        }
+    }
+    findings
 }
