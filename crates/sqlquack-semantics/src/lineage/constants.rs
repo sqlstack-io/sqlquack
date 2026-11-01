@@ -1,5 +1,7 @@
 //! Names lineage knows: table functions' columns and generated column names.
 
+use sqlquack_syntax::expressions::queries::models::JoinKind;
+
 /// Built-in table functions and their columns, each derived from the function's arguments.
 pub(crate) const TABLE_FUNCTION_COLUMNS: [(&str, &[&str]); 3] = [
     ("FLATTEN", &["SEQ", "KEY", "PATH", "INDEX", "VALUE", "THIS"]),
@@ -51,3 +53,185 @@ pub(crate) const RECURSION_LIMIT: usize = 32;
 pub(crate) const UNNAMED_CHARACTERS: [char; 5] = ['"', '\'', '`', '-', '/'];
 /// GROUP BY and ORDER BY ordinals number outputs from 1.
 pub(crate) const ORDINAL_BASE: usize = 1;
+/// The type of a boolean value.
+pub(crate) const BOOLEAN_TYPE: &str = "BOOLEAN";
+/// The type of text: a string literal, a concatenation or a cast to unsized VARCHAR.
+pub(crate) const TEXT_TYPE: &str = "VARCHAR";
+/// The type of COUNT.
+pub(crate) const COUNT_TYPE: &str = "BIGINT";
+/// The type of a whole-number literal.
+pub(crate) const INTEGER_LITERAL_TYPE: &str = "INT";
+/// The type of a literal with a point or an exponent.
+pub(crate) const DECIMAL_LITERAL_TYPE: &str = "DECIMAL";
+/// Functions whose result has one type, whatever their arguments.
+pub(crate) const FUNCTION_RESULT_TYPES: [(&str, &str); 31] = [
+    ("BOOLAND_AGG", BOOLEAN_TYPE),
+    ("BOOLOR_AGG", BOOLEAN_TYPE),
+    ("BOOLXOR_AGG", BOOLEAN_TYPE),
+    ("TIMESTAMP_NTZ_FROM_PARTS", "TIMESTAMPNTZ"),
+    ("PARSE_JSON", "VARIANT"),
+    ("TRY_PARSE_JSON", "VARIANT"),
+    ("REGEXP_LIKE", BOOLEAN_TYPE),
+    ("RLIKE", BOOLEAN_TYPE),
+    ("TO_DATE", "DATE"),
+    ("TRY_TO_DATE", "DATE"),
+    ("TO_TIMESTAMP", "TIMESTAMP"),
+    ("TO_TIMESTAMP_NTZ", "TIMESTAMP_NTZ"),
+    ("TRY_TO_TIMESTAMP_NTZ", "TIMESTAMP_NTZ"),
+    ("TO_VARCHAR", TEXT_TYPE),
+    ("TO_CHAR", TEXT_TYPE),
+    ("SUBSTRING", TEXT_TYPE),
+    ("SUBSTR", TEXT_TYPE),
+    ("REGEXP_SUBSTR", TEXT_TYPE),
+    ("REGEXP_REPLACE", TEXT_TYPE),
+    ("SPLIT_PART", TEXT_TYPE),
+    ("TRIM", TEXT_TYPE),
+    ("LTRIM", TEXT_TYPE),
+    ("RTRIM", TEXT_TYPE),
+    ("REPLACE", TEXT_TYPE),
+    ("UPPER", TEXT_TYPE),
+    ("LOWER", TEXT_TYPE),
+    ("CONCAT", TEXT_TYPE),
+    ("LISTAGG", TEXT_TYPE),
+    ("TRY_TO_DOUBLE", "FLOAT"),
+    ("OBJECT_AGG", "OBJECT"),
+    ("ROW_NUMBER", COUNT_TYPE),
+];
+/// Functions whose result is the one type their value operands share: (name, first operand).
+pub(crate) const OPERAND_TYPED_FUNCTIONS: [(&str, usize); 7] = [
+    ("COALESCE", 0),
+    ("NVL", 0),
+    ("IFNULL", 0),
+    ("IFF", 1),
+    ("NVL2", 1),
+    ("GREATEST", 0),
+    ("LEAST", 0),
+];
+/// Functions whose result has the type of one argument: (name, its position).
+pub(crate) const ARGUMENT_TYPED_FUNCTIONS: [(&str, usize); 11] = [
+    ("MIN", 0),
+    ("MAX", 0),
+    ("ANY_VALUE", 0),
+    ("NULLIF", 0),
+    ("LEAD", 0),
+    ("LAG", 0),
+    ("FIRST_VALUE", 0),
+    ("LAST_VALUE", 0),
+    ("NTH_VALUE", 0),
+    ("DATE_TRUNC", 1),
+    ("ABS", 0),
+];
+/// Joins that may NULL-fill the rows of the item they join, and of the items before it.
+pub(crate) const OUTER_LEFT_JOINS: [JoinKind; 9] = [
+    JoinKind::Left,
+    JoinKind::NaturalLeft,
+    JoinKind::AsOfLeft,
+    JoinKind::LeftLateral,
+    JoinKind::OuterApply,
+    JoinKind::LeftArray,
+    JoinKind::Full,
+    JoinKind::NaturalFull,
+    JoinKind::Outer,
+];
+pub(crate) const OUTER_RIGHT_JOINS: [JoinKind; 6] = [
+    JoinKind::Right,
+    JoinKind::NaturalRight,
+    JoinKind::AsOfRight,
+    JoinKind::Full,
+    JoinKind::NaturalFull,
+    JoinKind::Outer,
+];
+/// Functions that return their first operand that is not NULL.
+pub(crate) const COALESCING_FUNCTIONS: [&str; 2] = ["COALESCE", "IFNULL"];
+/// Functions that count rows, never NULL.
+pub(crate) const COUNTING_FUNCTIONS: [&str; 2] = ["COUNT", "COUNT_IF"];
+/// Spellings of floating-point types, as `canonical_type` writes them.
+pub(crate) const FLOAT_TYPES: [&str; 6] = [
+    "FLOAT",
+    "FLOAT4",
+    "FLOAT8",
+    "DOUBLE",
+    "DOUBLEPRECISION",
+    "REAL",
+];
+/// Spellings of whole-number types, as `canonical_type` writes them.
+pub(crate) const INTEGER_TYPES: [&str; 6] = [
+    "INT",
+    "BIGINT",
+    "SMALLINT",
+    "TINYINT",
+    "BYTEINT",
+    "NUMBER(38,0)",
+];
+/// The arguments of an IFF-style function: the condition and its two results.
+pub(crate) const CONDITIONAL_ARGUMENTS: usize = 3;
+/// The star a projection may be spelled as a column name.
+pub(crate) const SQL_STAR: &str = "*";
+/// The widest DuckDB DECIMAL.
+pub(crate) const DUCKDB_DECIMAL_LIMIT: u32 = 38;
+/// The widest DECIMAL DuckDB keeps in 64 bits.
+pub(crate) const DUCKDB_SMALL_DECIMAL: u32 = 18;
+/// DuckDB's DECIMAL without a precision.
+pub(crate) const DUCKDB_DEFAULT_DECIMAL: (u32, u32) = (18, 3);
+/// DuckDB's spelling of each integer type: (bits, unsigned, spelling).
+pub(crate) const DUCKDB_INTEGER_SPELLINGS: [(u16, bool, &str); 10] = [
+    (8, false, "TINYINT"),
+    (16, false, "SMALLINT"),
+    (32, false, "INTEGER"),
+    (64, false, "BIGINT"),
+    (128, false, "HUGEINT"),
+    (8, true, "UTINYINT"),
+    (16, true, "USMALLINT"),
+    (32, true, "UINTEGER"),
+    (64, true, "UBIGINT"),
+    (128, true, "UHUGEINT"),
+];
+/// Every spelling of each DuckDB integer type.
+pub(crate) const DUCKDB_INTEGER_ALIASES: [(&[&str], (u16, bool)); 10] = [
+    (&["TINYINT", "INT1"], (8, false)),
+    (&["SMALLINT", "INT2", "SHORT"], (16, false)),
+    (&["INTEGER", "INT", "INT4", "SIGNED"], (32, false)),
+    (&["BIGINT", "INT8", "LONG"], (64, false)),
+    (&["HUGEINT", "INT128"], (128, false)),
+    (&["UTINYINT", "UINT8"], (8, true)),
+    (&["USMALLINT", "UINT16"], (16, true)),
+    (&["UINTEGER", "UINT32"], (32, true)),
+    (&["UBIGINT", "UINT64"], (64, true)),
+    (&["UHUGEINT", "UINT128"], (128, true)),
+];
+/// The widest DuckDB integers, HUGEINT and UHUGEINT.
+pub(crate) const DUCKDB_WIDEST_INTEGER: u16 = 128;
+/// The width of DuckDB's BIGINT.
+pub(crate) const DUCKDB_BIGINT_BITS: u16 = 64;
+/// The width of DuckDB's INTEGER.
+pub(crate) const DUCKDB_INTEGER_BITS: u16 = 32;
+/// The arguments of a one-argument function.
+pub(crate) const ONE_ARGUMENT: usize = 1;
+/// The arguments of a two-argument function.
+pub(crate) const TWO_ARGUMENTS: usize = 2;
+/// Semi-structured DuckDB types CONCAT does not read as text.
+pub(crate) const DUCKDB_JSON_TYPES: [&str; 2] = ["JSON", "JSONB"];
+/// Functions NULL exactly when their first argument is, whatever the catalog's rules.
+pub(crate) const FIRST_ARGUMENT_NULLABILITY: [&str; 2] = ["UPPER", "LOWER"];
+/// The Snowflake profile's name.
+pub(crate) const SNOWFLAKE_PROFILE: &str = "Snowflake";
+/// Snowflake's semi-structured ARRAY type.
+pub(crate) const SNOWFLAKE_ARRAY_TYPE: &str = "ARRAY";
+/// The widest Snowflake NUMBER.
+pub(crate) const SNOWFLAKE_MAX_PRECISION: u32 = 38;
+/// The NUMBER Snowflake reads text as when a set operation combines it with a number.
+pub(crate) const SNOWFLAKE_TEXT_NUMBER: (u32, u32) = (18, 5);
+/// Snowflake's VARIANT type.
+pub(crate) const SNOWFLAKE_VARIANT_TYPE: &str = "VARIANT";
+/// The aggregates of a PIVOT whose columns DuckDB names by value alone.
+pub(crate) const ONE_AGGREGATE: usize = 1;
+/// Functions Snowflake types as COUNT.
+pub(crate) const SNOWFLAKE_COUNT_FUNCTIONS: [&str; 1] = ["COUNT"];
+/// The ranking window functions.
+pub(crate) const SNOWFLAKE_RANKING_FUNCTIONS: [&str; 3] = ["ROW_NUMBER", "RANK", "DENSE_RANK"];
+/// A timestamp written without its kind, which the profile's mapping decides.
+pub(crate) const UNMAPPED_TIMESTAMP: &str = "TIMESTAMP";
+/// Snowflake types whose value may be a JSON null.
+pub(crate) const SNOWFLAKE_JSON_HOLDERS: [&str; 1] = ["VARIANT"];
+/// GROUP BY constructs whose subtotal rows NULL the keys they roll up, as functions spell them.
+pub(crate) const SUBTOTAL_GROUPINGS: [&str; 3] = ["ROLLUP", "CUBE", "GROUPING SETS"];

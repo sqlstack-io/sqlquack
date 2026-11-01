@@ -8,15 +8,16 @@ use sqlquack_syntax::expressions::names::models::{Identifier, Literal, Star};
 use sqlquack_syntax::expressions::queries::models::{Cte, OrderBy, Select, Union, With};
 
 use crate::lineage::_helpers::expressions::{expression_lineage, is_aggregate};
-use crate::lineage::_helpers::lineages::{combined, merged, traced_if, unresolved};
+use crate::lineage::_helpers::lineages::{combined, set_merged, traced_if, unresolved};
 use crate::lineage::_helpers::resolution::{key, plain_key};
 use crate::lineage::_helpers::sources::{from_sources, listed, values_query};
+use crate::lineage::_helpers::typing::filtered_non_null;
 use crate::lineage::constants::{
-    DUCKDB_PROFILE, ORDINAL_BASE, RECURSION_LIMIT, UNNAMED_CHARACTERS,
+    DUCKDB_PROFILE, ORDINAL_BASE, RECURSION_LIMIT, SQL_STAR, SUBTOTAL_GROUPINGS, UNNAMED_CHARACTERS,
 };
 use crate::lineage::models::{
-    FromItems, Lineage, LineageContext, LineageScope, NamedQuery, ResolvedQuery, RowReads,
-    ScopeSource, ScopedColumn, TransformKind,
+    FromItems, Lineage, LineageContext, LineageScope, NamedQuery, Nullability, ResolvedQuery,
+    RowReads, ScopeSource, ScopedColumn, TransformKind,
 };
 
 /// The outputs of `query`, with `ctes` in reach and `outer` the enclosing level.
@@ -39,7 +40,7 @@ pub(crate) fn resolved_query(
                 .into_iter()
                 .map(|branch| resolved_query(branch, &ctes, outer, context))
                 .collect();
-            let mut query: ResolvedQuery = positional(branches);
+            let mut query: ResolvedQuery = positional(branches, context);
             if union.limit.is_some() || union.offset.is_some() {
                 let order: Vec<&Expression> = order_keys(union.order_by.as_ref());
                 for read in output_reads(&order, &query.columns, context) {
@@ -89,6 +90,7 @@ pub(crate) fn empty_scope<'a>(
         lambda_names: Vec::new(),
         merged: Vec::new(),
         windows: Vec::new(),
+        non_null: Vec::new(),
     }
 }
 
@@ -111,7 +113,11 @@ pub(crate) fn renamed(
             lineage: column.lineage,
         })
         .collect();
-    ResolvedQuery { columns, ..query }
+    ResolvedQuery {
+        columns,
+        stored_relation: None,
+        ..query
+    }
 }
 
 /// Which sides of a set operation its rows and values come from.
@@ -138,11 +144,27 @@ fn set_operation(
         }
     }
     let query: ResolvedQuery = match sides {
-        SetSides::Left => left,
+        SetSides::Left => left_typed_by_both(left, &right, context),
         SetSides::ByName => by_name(left, right, context),
-        SetSides::Intersect => positional(vec![left, right]),
+        SetSides::Intersect => positional(vec![left, right], context),
     };
     ResolvedQuery { rows, ..query }
+}
+
+/// EXCEPT's columns: values and rows from the left, each typed as both branches combine.
+fn left_typed_by_both(
+    mut left: ResolvedQuery,
+    right: &ResolvedQuery,
+    context: LineageContext<'_>,
+) -> ResolvedQuery {
+    for (column, other) in left.columns.iter_mut().zip(&right.columns) {
+        column.lineage.data_type = set_merged(
+            vec![column.lineage.clone(), other.lineage.clone()],
+            context.profile,
+        )
+        .data_type;
+    }
+    left
 }
 
 /// The branches of a chain of positional UNIONs, in order, so they merge in one pass.
@@ -162,7 +184,7 @@ fn union_branches(union: &Union) -> Vec<&Expression> {
 }
 
 /// Queries' columns merged by position: the first query's names, every branch's values and rows.
-fn positional(queries: Vec<ResolvedQuery>) -> ResolvedQuery {
+fn positional(queries: Vec<ResolvedQuery>, context: LineageContext<'_>) -> ResolvedQuery {
     let open: bool = queries.iter().any(|query| query.open);
     let mut rows: RowReads = RowReads::default();
     let mut branches: Vec<std::vec::IntoIter<ScopedColumn>> = Vec::with_capacity(queries.len());
@@ -184,7 +206,7 @@ fn positional(queries: Vec<ResolvedQuery>) -> ResolvedQuery {
             }
         }
         columns.push(ScopedColumn {
-            lineage: traced_if(merged(parts), complete),
+            lineage: traced_if(set_merged(parts, context.profile), complete),
             ..column
         });
     }
@@ -204,15 +226,33 @@ fn by_name(
 ) -> ResolvedQuery {
     let open = left.open || right.open;
     let mut columns: Vec<ScopedColumn> = left.columns;
-    for other in right.columns {
+    let mut matched: Vec<bool> = vec![false; columns.len()];
+    for mut other in right.columns {
         match columns
-            .iter_mut()
-            .find(|column| context.profile.same_identifier(&column.key, &other.key))
+            .iter()
+            .position(|column| context.profile.same_identifier(&column.key, &other.key))
         {
-            Some(column) => {
-                column.lineage = merged(vec![column.lineage.clone(), other.lineage]);
+            Some(position) => {
+                let column: &mut ScopedColumn = &mut columns[position];
+                column.lineage =
+                    set_merged(vec![column.lineage.clone(), other.lineage], context.profile);
+                matched[position] = true;
             }
-            None => columns.push(other),
+            None => {
+                if !left.open {
+                    other.lineage.nullability = Nullability::Nullable;
+                }
+                columns.push(other);
+            }
+        }
+    }
+    if !right.open {
+        for (column, _) in columns
+            .iter_mut()
+            .zip(&matched)
+            .filter(|(_, matched)| !**matched)
+        {
+            column.lineage.nullability = Nullability::Nullable;
         }
     }
     ResolvedQuery {
@@ -293,7 +333,7 @@ fn recursive_query(
             &cte.columns,
             context,
         );
-        let joined: ResolvedQuery = positional(vec![current.clone(), next]);
+        let joined: ResolvedQuery = positional(vec![current.clone(), next], context);
         if same_lineage(&joined, &current) {
             return joined;
         }
@@ -343,6 +383,7 @@ fn select_query(
         ..empty_scope(&ctes, outer)
     };
     scope.windows = named_windows(select, &scope, context);
+    scope.non_null = filtered_non_null(select);
     let mut query = ResolvedQuery {
         rows,
         ..ResolvedQuery::default()
@@ -351,6 +392,7 @@ fn select_query(
         query.rows.absorb(&source.query.rows);
     }
     let mut ungrouped: Vec<Lineage> = Vec::new();
+    let mut aggregated: Vec<bool> = Vec::new();
     for projection in &select.expressions {
         let projection = unannotated(projection);
         if let Expression::Star(star) = projection {
@@ -358,7 +400,9 @@ fn select_query(
             query.open |= expanded.open;
             query.open_relation = query.open_relation.or(expanded.open_relation);
             query.open_reads = query.open_reads.or(expanded.open_reads);
+            query.outer_nullable |= expanded.outer_nullable;
             ungrouped.extend(expanded.columns.iter().map(|column| column.lineage.clone()));
+            aggregated.extend(expanded.columns.iter().map(|_| false));
             query.columns.extend(expanded.columns);
             continue;
         }
@@ -372,7 +416,15 @@ fn select_query(
             ungrouped.push(column.lineage.clone());
         }
         scope.aliases.push(column.clone());
+        aggregated.push(is_aggregate(unwrapped_projection(projection)));
         query.columns.push(column);
+    }
+    if subtotals(select) {
+        for (column, aggregate) in query.columns.iter_mut().zip(&aggregated) {
+            if !aggregate {
+                column.lineage.nullability = Nullability::Nullable;
+            }
+        }
     }
     for filter in row_filters(select) {
         query
@@ -400,6 +452,38 @@ fn select_query(
         query.rows.read(&read);
     }
     query
+}
+
+/// Whether the level groups by ROLLUP, CUBE or GROUPING SETS, whose subtotal rows NULL the keys.
+fn subtotals(select: &Select) -> bool {
+    select
+        .group_by
+        .iter()
+        .flat_map(|group| group.expressions.iter())
+        .flat_map(|item| item.dfs())
+        .any(subtotal_grouping)
+}
+
+fn subtotal_grouping(node: &Expression) -> bool {
+    match node {
+        Expression::Rollup(_) | Expression::Cube(_) | Expression::GroupingSets(_) => true,
+        Expression::Function(function) => {
+            SUBTOTAL_GROUPINGS.contains(&function.name.to_ascii_uppercase().as_str())
+        }
+        _ => false,
+    }
+}
+
+/// A projection without its alias, parentheses or annotations.
+fn unwrapped_projection(mut projection: &Expression) -> &Expression {
+    loop {
+        projection = match projection {
+            Expression::Alias(alias) => &alias.this,
+            Expression::Paren(paren) => &paren.this,
+            Expression::Annotated(annotated) => &annotated.this,
+            _ => return projection,
+        };
+    }
 }
 
 /// The ORDER BY keys that decide rows: those of a level with LIMIT, OFFSET, TOP or FETCH.
@@ -567,8 +651,10 @@ pub(crate) fn expanded_star(
         columns,
         open: !open.is_empty(),
         open_relation: only.and_then(|only| only.query.open_relation.clone()),
+        stored_relation: None,
         open_reads: only.and_then(|only| only.query.open_reads.clone()),
         rows: RowReads::default(),
+        outer_nullable: only.is_some_and(|only| only.query.outer_nullable),
     }
 }
 
@@ -610,6 +696,12 @@ fn output_name(projection: &Expression, context: LineageContext<'_>) -> String {
         Expression::Alias(alias) => alias.alias.name.clone(),
         Expression::Column(column) => column.name.name.clone(),
         Expression::Dot(dot) if context.profile.name() == DUCKDB_PROFILE => dot.field.name.clone(),
+        Expression::Literal(literal) if context.profile.name() == DUCKDB_PROFILE => {
+            match literal.as_ref() {
+                Literal::Number(text) => text.clone(),
+                _ => String::new(),
+            }
+        }
         _ if context.profile.name() == DUCKDB_PROFILE => String::new(),
         _ => snowflake_name(projection, context).unwrap_or_default(),
     }
@@ -644,5 +736,30 @@ pub(crate) fn unannotated(expression: &Expression) -> &Expression {
     match expression {
         Expression::Annotated(annotated) => unannotated(&annotated.this),
         _ => expression,
+    }
+}
+
+/// Whether the outermost level of `query` (a set operation's first branch) projects a star.
+pub(crate) fn projects_star(query: &Expression) -> bool {
+    match query {
+        Expression::Select(select) => select.expressions.iter().any(is_star),
+        Expression::Union(set) => projects_star(&set.left),
+        Expression::Intersect(set) => projects_star(&set.left),
+        Expression::Except(set) => projects_star(&set.left),
+        Expression::Subquery(subquery) => projects_star(&subquery.this),
+        Expression::Annotated(annotated) => projects_star(&annotated.this),
+        _ => false,
+    }
+}
+
+/// Whether a projection is `*` or `t.*`, past aliases, annotations and parentheses.
+fn is_star(projection: &Expression) -> bool {
+    match projection {
+        Expression::Star(_) => true,
+        Expression::Column(column) => column.name.name == SQL_STAR,
+        Expression::Alias(alias) => is_star(&alias.this),
+        Expression::Annotated(annotated) => is_star(&annotated.this),
+        Expression::Paren(paren) => is_star(&paren.this),
+        _ => false,
     }
 }

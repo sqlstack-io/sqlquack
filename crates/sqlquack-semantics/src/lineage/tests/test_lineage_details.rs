@@ -411,12 +411,12 @@ fn given_a_query_when_tracing_lineage_then_values_rows_and_untraced_outputs_are_
             expected_rows_resolved: false,
         },
         LineageDetailTestCase {
-            description: "a quoted name the relation lacks in a filter leaves rows unresolved",
+            description: "a quoted name the relation lacks in a filter is read from it, rows unresolved",
             sql: "SELECT id FROM orders WHERE \"id\" = 1",
             dialect: Dialect::Snowflake,
             profile: &SNOWFLAKE,
             expected_outputs: &[("id", TransformKind::Direct, &["ORDERS.ID"], true)],
-            expected_row_sources: &[],
+            expected_row_sources: &["ORDERS.\"id\""],
             expected_rows_resolved: false,
         },
         LineageDetailTestCase {

@@ -1,5 +1,6 @@
 //! Dialect profiles: how each dialect resolves identifiers and which names a query level sees.
 
+pub(crate) mod _helpers;
 pub mod constants;
 pub mod main;
 pub mod models;

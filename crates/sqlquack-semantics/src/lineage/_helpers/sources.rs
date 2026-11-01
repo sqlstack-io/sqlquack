@@ -1,5 +1,7 @@
 //! The FROM items of a query level, in order, each with the columns it offers.
 
+use std::rc::Rc;
+
 use sqlquack_syntax::Expression;
 use sqlquack_syntax::ExpressionWalk;
 use sqlquack_syntax::expressions::names::models::{Identifier, Literal, TableRef};
@@ -13,12 +15,13 @@ use crate::lineage::_helpers::lineages::{combined, constant, direct, merged, unr
 use crate::lineage::_helpers::queries::{empty_scope, renamed, resolved_query};
 use crate::lineage::_helpers::resolution::{key, plain_key};
 use crate::lineage::constants::{
-    DUCKDB_PROFILE, DUCKDB_VALUES_COLUMN, IDENTIFIER_FUNCTION, SNOWFLAKE_VALUES_COLUMN,
-    TABLE_FUNCTION_COLUMNS, TABLE_WRAPPER,
+    DUCKDB_PROFILE, DUCKDB_VALUES_COLUMN, IDENTIFIER_FUNCTION, ONE_AGGREGATE, OUTER_LEFT_JOINS,
+    OUTER_RIGHT_JOINS, SNOWFLAKE_PROFILE, SNOWFLAKE_VALUES_COLUMN, TABLE_FUNCTION_COLUMNS,
+    TABLE_WRAPPER,
 };
 use crate::lineage::models::{
-    FromItems, Lineage, LineageContext, LineageScope, NamedQuery, ResolvedQuery, RowReads,
-    ScopeSource, ScopedColumn, TransformKind,
+    FromItems, Lineage, LineageContext, LineageScope, NamedQuery, Nullability, ResolvedQuery,
+    RowReads, SchemaColumn, ScopeSource, ScopedColumn, TransformKind,
 };
 
 /// The FROM items of `select` and its joins; a later item may read earlier ones (LATERAL).
@@ -37,20 +40,45 @@ pub(crate) fn from_sources(
     }
     let mut from = FromItems::default();
     for (item, join) in items {
+        if join.is_some_and(|join| OUTER_RIGHT_JOINS.contains(&join.kind)) {
+            for key in &mut from.merged {
+                key.lineage.nullability = Nullability::Nullable;
+            }
+        }
         let scope = LineageScope {
             sources: from.sources.clone(),
             merged: from.merged.clone(),
             ..empty_scope(ctes, outer)
         };
-        let added: Vec<ScopeSource> = item_sources(item, &scope, context);
+        let mut added: Vec<ScopeSource> = item_sources(item, &scope, context);
         if let Some(join) = join {
             let (merged, rows) = joined(join, (&scope, &added), context);
             from.merged = merged;
             from.rows.absorb(&rows);
+            if OUTER_RIGHT_JOINS.contains(&join.kind) {
+                from.sources = from.sources.into_iter().map(outer_nullable).collect();
+            }
+            if OUTER_LEFT_JOINS.contains(&join.kind) || outer_as_of(join.kind, context) {
+                added = added.into_iter().map(outer_nullable).collect();
+            }
         }
         from.sources.extend(added);
     }
     from
+}
+
+/// Snowflake's ASOF JOIN keeps unmatched left rows, NULL-filling the right; DuckDB's is inner.
+fn outer_as_of(kind: JoinKind, context: LineageContext<'_>) -> bool {
+    kind == JoinKind::AsOf && context.profile.name() == SNOWFLAKE_PROFILE
+}
+
+/// `source` on the side of an outer join that may be NULL-filled: every column it offers may be NULL.
+fn outer_nullable(mut source: ScopeSource) -> ScopeSource {
+    source.query.outer_nullable = true;
+    for column in &mut source.query.columns {
+        column.lineage.nullability = Nullability::Nullable;
+    }
+    source
 }
 
 /// A FROM item, with a parenthesised join's tables and joins listed in order.
@@ -102,7 +130,16 @@ fn joined(
         let lineage: Lineage = match join.kind {
             JoinKind::Right | JoinKind::NaturalRight => right_side,
             JoinKind::Full | JoinKind::Outer | JoinKind::NaturalFull => {
-                combined(vec![left_side, right_side], TransformKind::Expression)
+                let data_type: Option<Rc<str>> = left_side.data_type.clone().filter(|left| {
+                    right_side
+                        .data_type
+                        .as_ref()
+                        .is_some_and(|right| context.profile.same_type(left, right))
+                });
+                Lineage {
+                    data_type,
+                    ..combined(vec![left_side, right_side], TransformKind::Expression)
+                }
             }
             _ => left_side,
         };
@@ -332,28 +369,47 @@ fn relation_name(table: &TableRef, context: LineageContext<'_>) -> String {
     .join(".")
 }
 
-/// A stored relation: its schema columns, or open when the schema does not know it.
+/// A stored relation: its schema columns, or open with the columns known so far.
 fn base_relation(relation: &str, context: LineageContext<'_>) -> ResolvedQuery {
     match context.schema.columns(relation) {
         Some(columns) => ResolvedQuery {
-            columns: columns
-                .iter()
-                .map(|column| ScopedColumn {
-                    name: column.name.clone(),
-                    key: context
-                        .profile
-                        .resolved_identifier(&column.name, column.quoted),
-                    lineage: direct(relation, &column.name, column.quoted),
-                })
-                .collect(),
+            columns: stored_columns(relation, columns, context),
+            stored_relation: Some(relation.to_owned()),
             ..ResolvedQuery::default()
         },
         None => ResolvedQuery {
+            columns: stored_columns(
+                relation,
+                context.schema.open_columns(relation).unwrap_or_default(),
+                context,
+            ),
             open: true,
             open_relation: Some(relation.to_owned()),
             ..ResolvedQuery::default()
         },
     }
+}
+
+/// The columns a stored relation offers, typed as the schema lists them.
+fn stored_columns(
+    relation: &str,
+    columns: &[SchemaColumn],
+    context: LineageContext<'_>,
+) -> Vec<ScopedColumn> {
+    columns
+        .iter()
+        .map(|column| ScopedColumn {
+            name: column.name.clone(),
+            key: context
+                .profile
+                .resolved_identifier(&column.name, column.quoted),
+            lineage: Lineage {
+                data_type: column.data_type.as_deref().map(Rc::from),
+                nullability: column.nullability,
+                ..direct(relation, &column.name, column.quoted)
+            },
+        })
+        .collect()
 }
 
 /// The columns of a built-in table function, when `name` is one.
@@ -493,7 +549,7 @@ fn pivot_sources(
             Expression::In(within) => within.expressions.iter().collect::<Vec<&Expression>>(),
             _ => Vec::new(),
         })
-        .map(pivoted_name)
+        .map(|value| pivoted_name(value, pivot.expressions.len(), context))
         .collect();
     let passed: Vec<ScopedColumn> = passed_columns(&input.sources, &used, context);
     let dynamic = values.is_empty() || values.iter().any(String::is_empty);
@@ -528,10 +584,15 @@ fn pivot_sources(
     }]
 }
 
-/// The column a pivoted value names: a string literal's text, quoted as Snowflake names it.
-fn pivoted_name(value: &Expression) -> String {
+/// A pivoted value's column: quoted text in Snowflake, bare in DuckDB (unnamed beside several aggregates).
+fn pivoted_name(value: &Expression, aggregates: usize, context: LineageContext<'_>) -> String {
+    let duckdb: bool = context.profile.name() == DUCKDB_PROFILE;
+    if duckdb && aggregates != ONE_AGGREGATE {
+        return String::new();
+    }
     match value {
         Expression::Literal(literal) => match literal.as_ref() {
+            Literal::String(text) if duckdb => text.clone(),
             Literal::String(text) => format!("'{text}'"),
             Literal::Number(text) => text.clone(),
             _ => String::new(),
@@ -566,6 +627,7 @@ fn unpivot_source(
             .iter()
             .map(|column| expression_lineage(column, &input, context))
             .collect(),
+        context.profile,
     );
     let passed: Vec<ScopedColumn> = passed_columns(&input.sources, &unpivoted, context);
     let generated = [
@@ -613,7 +675,7 @@ fn values_column(
             read.push(expression_lineage(value, scope, context));
         }
     }
-    merged(read)
+    merged(read, context.profile)
 }
 
 /// The columns of `sources` a PIVOT or UNPIVOT passes through: those it does not consume.

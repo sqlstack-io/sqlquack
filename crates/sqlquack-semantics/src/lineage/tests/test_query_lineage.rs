@@ -4,7 +4,7 @@ use crate::dialects::constants::{DUCKDB, SNOWFLAKE};
 use crate::lineage::main::query_lineage::query_lineage;
 use crate::lineage::models::{LineageContext, TransformKind};
 use crate::lineage::tests::helpers::shop_schema;
-use crate::lineage::tests::test_types::QueryLineageTestCase;
+use crate::lineage::tests::test_types::{QueryLineageTestCase, ResolvedReadTestCase};
 
 #[test]
 fn given_a_query_when_tracing_lineage_then_each_output_names_its_sources_and_transform() {
@@ -222,13 +222,13 @@ fn given_a_query_when_tracing_lineage_then_each_output_names_its_sources_and_tra
             expected_open_star: false,
         },
         QueryLineageTestCase {
-            description: "a quoted stored column matches only its exact quoted spelling",
+            description: "a quoted stored column matches only its exact quoted spelling; a column the relation lacks is still read from it",
             sql: "SELECT e.\"listingId\" AS listing, e.listingid AS unmatched, e.listing_status FROM exports e",
             dialect: Dialect::Snowflake,
             profile: &SNOWFLAKE,
             expected_outputs: &[
                 ("listing", TransformKind::Direct, &["EXPORTS.listingId"]),
-                ("unmatched", TransformKind::Constant, &[]),
+                ("unmatched", TransformKind::Direct, &["EXPORTS.listingid"]),
                 (
                     "listing_status",
                     TransformKind::Direct,
@@ -272,6 +272,22 @@ fn given_a_query_when_tracing_lineage_then_each_output_names_its_sources_and_tra
                 &["ORDERS.CUSTOMER_ID"],
             )],
             expected_open_star: true,
+        },
+        QueryLineageTestCase {
+            description: "DuckDB names a pivoted column by its value's text, without quotes",
+            sql: "SELECT * FROM (SELECT customer_id, status, amount FROM orders) PIVOT (SUM(amount) FOR status IN ('open', 'shipped'))",
+            dialect: Dialect::DuckDB,
+            profile: &DUCKDB,
+            expected_outputs: &[
+                (
+                    "customer_id",
+                    TransformKind::Direct,
+                    &["orders.customer_id"],
+                ),
+                ("open", TransformKind::Aggregation, &["orders.amount"]),
+                ("shipped", TransformKind::Aggregation, &["orders.amount"]),
+            ],
+            expected_open_star: false,
         },
         QueryLineageTestCase {
             description: "a pivoted column is named by its value exactly, quotes included",
@@ -335,6 +351,17 @@ fn given_a_query_when_tracing_lineage_then_each_output_names_its_sources_and_tra
             ],
             expected_open_star: false,
         },
+        QueryLineageTestCase {
+            description: "DuckDB names an unaliased number by its text",
+            sql: "SELECT 1, id FROM ORDERS",
+            dialect: Dialect::DuckDB,
+            profile: &DUCKDB,
+            expected_outputs: &[
+                ("1", TransformKind::Constant, &[]),
+                ("id", TransformKind::Direct, &["ORDERS.ID"]),
+            ],
+            expected_open_star: false,
+        },
     ];
     let schema = shop_schema();
     for test_case in test_cases {
@@ -379,6 +406,77 @@ fn given_a_query_when_tracing_lineage_then_each_output_names_its_sources_and_tra
         assert_eq!(outputs, expected, "{}", test_case.description);
         assert_eq!(
             lineage.open_star, test_case.expected_open_star,
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_a_column_its_relation_lacks_when_tracing_lineage_then_one_stored_relation_is_read_untraced()
+ {
+    let test_cases = [
+        ResolvedReadTestCase {
+            description: "a qualified column a stored relation lacks",
+            sql: "SELECT o.qty FROM orders o",
+            expected_sources: &["ORDERS.qty"],
+            expected_resolved: false,
+        },
+        ResolvedReadTestCase {
+            description: "a qualified column of a derived table it lacks",
+            sql: "SELECT d.qty FROM (SELECT id FROM orders) d",
+            expected_sources: &[],
+            expected_resolved: false,
+        },
+        ResolvedReadTestCase {
+            description: "an unqualified column the one stored relation lacks",
+            sql: "SELECT qty FROM orders",
+            expected_sources: &["ORDERS.qty"],
+            expected_resolved: false,
+        },
+        ResolvedReadTestCase {
+            description: "an unqualified column two stored relations lack",
+            sql: "SELECT qty FROM orders, orders AS other",
+            expected_sources: &[],
+            expected_resolved: false,
+        },
+        ResolvedReadTestCase {
+            description: "a qualified column a stored relation has",
+            sql: "SELECT o.id FROM orders o",
+            expected_sources: &["ORDERS.ID"],
+            expected_resolved: true,
+        },
+    ];
+    let schema = shop_schema();
+    for test_case in test_cases {
+        let context = LineageContext {
+            profile: &SNOWFLAKE,
+            schema: &schema,
+            sql: None,
+        };
+        let lineage = query_lineage(
+            test_case.sql,
+            Dialect::Snowflake,
+            &ParseOptions::default(),
+            context,
+        )
+        .unwrap_or_else(|error| panic!("{}: {error:?}", test_case.description));
+        let output = &lineage.outputs[0];
+        let sources: Vec<String> = output
+            .sources
+            .iter()
+            .map(|source| format!("{}.{}", source.relation, source.column))
+            .collect();
+        assert_eq!(
+            (sources, output.resolved),
+            (
+                test_case
+                    .expected_sources
+                    .iter()
+                    .map(|source| (*source).to_owned())
+                    .collect::<Vec<String>>(),
+                test_case.expected_resolved
+            ),
             "{}",
             test_case.description
         );
