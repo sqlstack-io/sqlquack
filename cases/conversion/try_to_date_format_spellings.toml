@@ -1,0 +1,59 @@
+# TRY_TO_DATE with a format over text not spelled exactly in it: unpadded fields, other shapes.
+category = "conversion"
+construct = "fn:TRY_TO_DATE"
+session_profile = "utc-v1"
+
+[[case]]
+id = "format_spellings_probe"
+description = "TRY_TO_DATE under DD.MM.YYYY, YY-MM-DD, DD-MM-YYYY and YYYY-MM-DD of unpadded fields, short and long years, spaces, words and trailing text."
+columns = [{ name = "t", type = "VARCHAR" }]
+rows = [
+  ["'5.10.2026'"],
+  ["'05.1.2026'"],
+  ["'5.1.2026'"],
+  ["'05.10.26'"],
+  ["'5.10.226'"],
+  ["'05.10.2026'"],
+  ["'5.10.2026 '"],
+  ["'  5.10.2026'"],
+  ["'5.10.2026x'"],
+  ["'x5.10.2026'"],
+  ["'5. 10. 2026'"],
+  ["'5.10.2026 12:00'"],
+  ["'05.10.0026'"],
+  ["'31.2.2024'"],
+  ["'29.2.2024'"],
+  ["'0.10.2026'"],
+  ["'5.0.2026'"],
+  ["'05.13.2026'"],
+  ["'005.10.2026'"],
+  ["'5..10.2026'"],
+  ["'5.10.20260'"],
+  ["'15 oktober 2025'"],
+  ["'5 mei 2024'"],
+  ["'oktober'"],
+  ["'25-10-5'"],
+  ["'25-1-05'"],
+  ["'5-10-25'"],
+  ["'25-10-05'"],
+  ["'025-10-05'"],
+  ["'2025-10-05'"],
+  ["'25/10/05'"],
+  ["'25.10.05'"],
+  ["'1-1-2024'"],
+  ["'01-01-2024'"],
+  ["'1-01-24'"],
+  ["'2025-1-5'"],
+  ["'2025-10-5 '"],
+  ["'25-10-05x'"],
+  ["'abc 12'"],
+  ["'12'"],
+  ["'2025'"],
+  ["'-'"],
+  ["''"],
+  ["NULL"],
+]
+query = "SELECT t, TRY_TO_DATE(t, 'DD.MM.YYYY') AS dmy_dot, TRY_TO_DATE(t, 'YY-MM-DD') AS ymd_short, TRY_TO_DATE(t, 'DD-MM-YYYY') AS dmy_dash, TRY_TO_DATE(t, 'YYYY-MM-DD') AS ymd FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "invalid", "boundary", "empty"]
+expected_divergence = "date_text_spelling"

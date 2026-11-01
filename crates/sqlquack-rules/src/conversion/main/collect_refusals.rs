@@ -9,7 +9,7 @@ use sqlquack_syntax::Expression;
 use crate::conversion::_helpers::queries::query::convert_query;
 use crate::conversion::_helpers::support::collecting::{Collector, collected};
 use crate::conversion::_helpers::support::locations::Locator;
-use crate::conversion::_helpers::support::scope::Context;
+use crate::conversion::_helpers::support::scope::{Context, OrderTrack};
 use crate::conversion::_helpers::support::tree::{session_tree, strip_positions};
 use crate::conversion::_helpers::support::typed_leaves::ConvertedQuery;
 use crate::conversion::main::convert_statement::convert_statement;
@@ -69,6 +69,7 @@ fn collected_conversion(
     let locator = Locator::new(&tree, positioned, lines);
     let log = ProvenanceLog::default();
     let typed = TypedLeaves::default();
+    let order = OrderTrack::default();
     let context = Context {
         log: &log,
         schema,
@@ -76,6 +77,8 @@ fn collected_conversion(
         ctes: Vec::new(),
         locator: &locator,
         typed: &typed,
+        order: &order,
+        free_projections: false,
     };
     let (result, found) = collected(|| convert_query(&tree, None, &context, true));
     let refusal = typed

@@ -84,3 +84,61 @@ query = "SELECT t, LAST_VALUE(v) OVER (ORDER BY t ROWS BETWEEN 1 FOLLOWING AND 1
 order = "ordered"
 compile_error = true
 tags = ["null"]
+
+[[case]]
+id = "running_float_sum_order"
+description = "A running SUM of FLOAT over ROWS UNBOUNDED PRECEDING to the current row in a total order, over values whose order of addition changes the double."
+columns = [{ name = "p", type = "VARCHAR" }, { name = "k", type = "NUMBER(10,0)" }, { name = "v", type = "FLOAT" }]
+rows = [
+  ["'a'", "1", "0.1"],
+  ["'a'", "2", "0.2"],
+  ["'a'", "3", "0.3"],
+  ["'a'", "4", "1e16"],
+  ["'a'", "5", "1.0"],
+  ["'a'", "6", "-1e16"],
+  ["'a'", "7", "0.7"],
+  ["'a'", "8", "NULL"],
+  ["'a'", "9", "0.001"],
+  ["'a'", "10", "3.3"],
+  ["'a'", "11", "-2.2"],
+  ["'b'", "1", "0.7"],
+  ["'b'", "2", "0.1"],
+  ["'b'", "3", "0.2"],
+  ["'c'", "1", "NULL"],
+]
+query = "SELECT p, k, SUM(v) OVER (PARTITION BY p ORDER BY k ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) AS running, SUM(v) OVER (PARTITION BY p ORDER BY k DESC ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) AS reversed FROM input ORDER BY p, k"
+order = "ordered"
+expected_divergence = "float_sum_order"
+tags = ["null", "float"]
+
+[[case]]
+id = "running_float_sum_frames"
+description = "SUM of FLOAT over a sliding ROWS frame, a RANGE default frame and a whole partition, over values whose order of addition changes the double."
+columns = [{ name = "p", type = "VARCHAR" }, { name = "k", type = "NUMBER(10,0)" }, { name = "v", type = "FLOAT" }]
+rows = [
+  ["'a'", "1", "0.1"],
+  ["'a'", "2", "0.2"],
+  ["'a'", "3", "0.3"],
+  ["'a'", "4", "1e16"],
+  ["'a'", "5", "1.0"],
+  ["'a'", "6", "-1e16"],
+  ["'a'", "7", "0.7"],
+]
+query = "SELECT p, k, SUM(v) OVER (PARTITION BY p ORDER BY k ROWS BETWEEN 2 PRECEDING AND CURRENT ROW) AS sliding, SUM(v) OVER (PARTITION BY p ORDER BY k) AS ranged, SUM(v) OVER (PARTITION BY p) AS whole FROM input ORDER BY p, k"
+order = "ordered"
+tags = ["float"]
+expected_divergence = "float_sum_order"
+
+[[case]]
+id = "running_float_sum_tied_keys"
+description = "A running SUM of FLOAT over ROWS frames whose order key ties rows holding different values."
+columns = [{ name = "p", type = "VARCHAR" }, { name = "k", type = "NUMBER(10,0)" }, { name = "v", type = "FLOAT" }]
+rows = [
+  ["'a'", "1", "0.1"],
+  ["'a'", "1", "0.2"],
+  ["'a'", "2", "0.3"],
+]
+query = "SELECT p, v, SUM(v) OVER (PARTITION BY p ORDER BY k ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) AS running FROM input ORDER BY p, v"
+order = "ordered"
+tags = ["float", "duplicates"]
+expected_divergence = "float_sum_order"

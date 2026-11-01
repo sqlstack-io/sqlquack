@@ -18,7 +18,6 @@ rows = [
 ]
 expression = "TRY_TO_DATE(s, 'DD-MM-YYYY')"
 tags = ["null", "invalid", "boundary"]
-expected_divergence = "date_text_spelling"
 
 [[case]]
 id = "to_date_dd_mm_yyyy_1"

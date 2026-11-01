@@ -2,6 +2,9 @@
 
 use crate::temporal::models::{DateFormat, TimestampField};
 
+/// Unmatched text a numeric format reads as NULL, as recorded: a letter but ISO `T`/`Z`, or digits.
+pub const NUMERIC_DATE_NULL_PATTERN: &str = "^[ -~]*[A-SU-Ya-su-y][ -~]*$|^[0-9.:/-]+( [0-9:]+)?$";
+
 /// Each supported format; month-name formats match only as written.
 pub const DATE_FORMATS: &[DateFormat] = &[
     DateFormat {
@@ -14,19 +17,19 @@ pub const DATE_FORMATS: &[DateFormat] = &[
     },
     DateFormat {
         snowflake: "YYYY-MM-DD",
-        pattern: "^([0-9]{4})-([0-9]{2})-([0-9]{2})$",
+        pattern: "^([0-9]{1,4})-([0-9]{1,2})-([0-9]{1,2}) *$",
         groups: (1, 2, 3),
         two_digit_year: false,
         named_month: false,
-        null_pattern: None,
+        null_pattern: Some(NUMERIC_DATE_NULL_PATTERN),
     },
     DateFormat {
         snowflake: "DD.MM.YYYY",
-        pattern: r"^([0-9]{2})\.([0-9]{2})\.([0-9]{4})$",
+        pattern: r"^ *([0-9]{1,2})\.([0-9]{1,2})\.([0-9]{1,4}) *$",
         groups: (3, 2, 1),
         two_digit_year: false,
         named_month: false,
-        null_pattern: None,
+        null_pattern: Some(NUMERIC_DATE_NULL_PATTERN),
     },
     DateFormat {
         snowflake: "DD.MM.YY",
@@ -38,11 +41,11 @@ pub const DATE_FORMATS: &[DateFormat] = &[
     },
     DateFormat {
         snowflake: "YY-MM-DD",
-        pattern: "^([0-9]{2})-([0-9]{2})-([0-9]{2})$",
+        pattern: "^([0-9]{1,2})-([0-9]{1,2})-([0-9]{1,2})$",
         groups: (1, 2, 3),
         two_digit_year: true,
         named_month: false,
-        null_pattern: None,
+        null_pattern: Some(NUMERIC_DATE_NULL_PATTERN),
     },
     DateFormat {
         snowflake: "DD-MM-YY",
@@ -62,11 +65,11 @@ pub const DATE_FORMATS: &[DateFormat] = &[
     },
     DateFormat {
         snowflake: "DD-MM-YYYY",
-        pattern: "^ *([0-9]{1,2})-([0-9]{1,2})-([0-9]{4})$",
+        pattern: "^ *([0-9]{1,2})-([0-9]{1,2})-([0-9]{1,4})$",
         groups: (3, 2, 1),
         two_digit_year: false,
         named_month: false,
-        null_pattern: None,
+        null_pattern: Some(NUMERIC_DATE_NULL_PATTERN),
     },
     DateFormat {
         snowflake: "DD. MM. YYYY",

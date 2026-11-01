@@ -25,7 +25,7 @@ use sqlquack_snowflake::typing::models::SnowflakeType;
 use crate::conversion::_helpers::expressions::arrays::array_function;
 use crate::conversion::_helpers::expressions::held::{built, leaves, read_json};
 use crate::conversion::_helpers::expressions::objects::{
-    refused, semi_structured, text_literal, variant,
+    free_variant, refused, semi_structured, text_literal, variant,
 };
 use crate::conversion::_helpers::expressions::ordered_aggregates::{
     sorted_array_agg, unordered_array_agg_call,
@@ -138,10 +138,13 @@ pub(crate) fn variant_function(
             let _rule = log.rule(ARRAY_EXCEPT_RULE);
             diverge(site.context, JSON_FIDELITY, construct)?;
             let reads = site.context.typed.reads();
-            let left = variant(left, construct, site)?;
-            let right = variant(right, construct, site)?;
+            let (left, left_unordered) = free_variant(left, construct, site)?;
+            let (right, right_unordered) = free_variant(right, construct, site)?;
             compared_by_text(site.context.typed.since(reads), construct, site.context)?;
-            Ok(semi_structured(json_array_except((&left, &right), log)))
+            Ok(Emitted {
+                unordered: left_unordered || right_unordered,
+                ..semi_structured(json_array_except((&left, &right), log))
+            })
         }
         ("ARRAY_POSITION", [needle, array]) => {
             let _rule = log.rule(ARRAY_POSITION_RULE);
@@ -162,9 +165,12 @@ pub(crate) fn variant_function(
         }
         ("ARRAY_CAT", [left, right]) => {
             let _rule = log.rule(ARRAY_CAT_RULE);
-            let left = variant(left, construct, site)?;
-            let right = variant(right, construct, site)?;
-            Ok(semi_structured(json_array_cat((&left, &right), log)))
+            let (left, left_unordered) = free_variant(left, construct, site)?;
+            let (right, right_unordered) = free_variant(right, construct, site)?;
+            Ok(Emitted {
+                unordered: left_unordered || right_unordered,
+                ..semi_structured(json_array_cat((&left, &right), log))
+            })
         }
         ("ARRAY_COMPACT", [array]) => {
             let _rule = log.rule(ARRAY_COMPACT_RULE);
@@ -187,7 +193,9 @@ pub(crate) fn variant_function(
         }
         ("ARRAY_SIZE", [array]) => {
             let _rule = log.rule(ARRAY_SIZE_RULE);
-            let array = held_variant(array, construct, site)?;
+            let mark = site.context.order.mark();
+            let array = held_variant(array, construct, site.order_free(true))?;
+            site.context.order.absorb(mark);
             Ok(Emitted::new(
                 json_array_size(&array, log),
                 SnowflakeType::Number {
@@ -201,7 +209,7 @@ pub(crate) fn variant_function(
             diverge(site.context, JSON_FIDELITY, construct)?;
             let reads = site.context.typed.reads();
             let value = variant(value, construct, site)?;
-            let array = variant(array, construct, site)?;
+            let (array, _) = free_variant(array, construct, site)?;
             compared_by_text(site.context.typed.since(reads), construct, site.context)?;
             Ok(Emitted::new(
                 json_array_contains((&value, &array), log),

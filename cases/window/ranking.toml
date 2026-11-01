@@ -86,3 +86,20 @@ rows = [
 query = "SELECT grp, x, y FROM input QUALIFY ROW_NUMBER() OVER (PARTITION BY grp ORDER BY x DESC, y) = 1"
 order = "bag"
 tags = ["null", "ties", "single-row-partition"]
+
+[[case]]
+id = "aggregates_inside_windows_and_qualify"
+description = "Aggregates of a grouped query inside window functions in the projection and QUALIFY."
+columns = [{ name = "g", type = "VARCHAR" }, { name = "h", type = "VARCHAR" }, { name = "n", type = "NUMBER(10,0)" }]
+rows = [
+  ["'a'", "'x'", "1"],
+  ["'a'", "'x'", "2"],
+  ["'a'", "'y'", "3"],
+  ["'b'", "'x'", "4"],
+  ["'b'", "'z'", "NULL"],
+  ["'b'", "'z'", "6"],
+  ["'b'", "'z'", "7"],
+]
+query = "SELECT g, h, COUNT(*) AS c, SUM(COUNT(*)) OVER (PARTITION BY g) AS t, RANK() OVER (PARTITION BY g ORDER BY SUM(n) DESC NULLS LAST) AS r, MAX(SUM(n)) OVER () AS m FROM input GROUP BY g, h QUALIFY COUNT(*) * 2 > SUM(COUNT(*)) OVER (PARTITION BY g) OR COUNT(*) = 1 ORDER BY g, h"
+order = "ordered"
+tags = ["null", "duplicates"]

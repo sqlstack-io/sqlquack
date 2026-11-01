@@ -210,7 +210,7 @@ pub(crate) fn scalar_subquery(payload: &Value, site: Site<'_>) -> Result<Emitted
     let (sql, columns) = convert_query(
         field(payload, "this", &construct)?,
         Some(site.scope),
-        site.context,
+        &site.context.projecting(false),
         false,
     )?;
     match columns.as_slice() {

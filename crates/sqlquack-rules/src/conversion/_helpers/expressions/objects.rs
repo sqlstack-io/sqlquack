@@ -284,6 +284,24 @@ pub(crate) fn variant(
     }
 }
 
+/// A VARIANT argument read where its element order cannot matter, and whether that is undefined.
+pub(crate) fn free_variant(
+    node: &Value,
+    construct: &Construct,
+    site: Site<'_>,
+) -> Result<(String, bool), Refusal> {
+    let mark = site.context.order.mark();
+    let emitted = convert_expression(node, site.order_free(true))?;
+    site.context.order.absorb(mark);
+    match emitted.data_type {
+        SnowflakeType::SemiStructured => Ok((emitted.sql, emitted.unordered)),
+        other => Err(refused(
+            construct,
+            &format!("an object argument of type {other}"),
+        )),
+    }
+}
+
 pub(crate) fn text_literal(
     node: &Value,
     construct: &Construct,

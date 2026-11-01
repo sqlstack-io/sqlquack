@@ -40,6 +40,12 @@ pub struct ColumnSpec {
     /// Whether the column is proven to hold no NULL, as VALUES rows of non-NULL literals are.
     #[serde(skip)]
     pub not_null: bool,
+    /// Whether the column depends on an array order Snowflake leaves undefined.
+    #[serde(skip)]
+    pub unordered: bool,
+    /// Whether the column is held at a narrower NUMBER than its type, so reads cast it up.
+    #[serde(skip)]
+    pub widened: bool,
 }
 
 impl ColumnSpec {
@@ -56,6 +62,8 @@ impl ColumnSpec {
             utc_offset: false,
             declared_offsets: Vec::new(),
             not_null: false,
+            unordered: false,
+            widened: false,
         }
     }
 }

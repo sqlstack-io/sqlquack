@@ -257,7 +257,12 @@ fn order_key(
             .iter()
             .map(|(_, emitted)| emitted.is_variant_held())
             .collect();
-        let position = position_key(position, &held, "ORDER BY")?;
+        let position_sql = position_key(position, &held, "ORDER BY")?;
+        let ordered = outputs.iter().zip(1_u64..).find(|(_, at)| *at == position);
+        if let Some(((_, output), _)) = ordered {
+            grouping_key(output.clone(), &node_construct("ordered"))?;
+        }
+        let position = position_sql;
         return Ok(explicit_null_order(
             &position,
             flag(object, "desc"),

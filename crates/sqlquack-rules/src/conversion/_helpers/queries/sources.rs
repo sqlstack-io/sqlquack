@@ -101,13 +101,29 @@ pub(crate) fn convert_from(
         let (join_sql, relation) = recovered(joined, source, (before, relations.len()))?;
         sql.push_str(&join_sql);
         relations.push(relation);
-        if let Some(Merging { keys, relation }) = merging.into_inner() {
+        if let Some(Merging {
+            keys,
+            relation,
+            widened,
+        }) = merging.into_inner()
+        {
             for (owner, name) in keys {
                 if let Some(owner) = relations.iter_mut().find(|earlier| earlier.alias == owner) {
                     owner.merged.push(name);
                 }
             }
-            relations.push(relation);
+            for (owner, name, data_type) in widened {
+                let column = relations
+                    .iter_mut()
+                    .filter(|earlier| earlier.alias == owner)
+                    .flat_map(|earlier| earlier.columns.iter_mut())
+                    .find(|column| column.name == name);
+                if let Some(column) = column {
+                    column.data_type = data_type;
+                    column.widened = true;
+                }
+            }
+            relations.extend(relation);
         }
     }
     require_distinct_aliases(&relations)?;
@@ -131,10 +147,12 @@ fn require_distinct_aliases(relations: &[ScopeRelation]) -> Result<(), Refusal> 
 
 /// What a FULL JOIN USING adds: its merged keys, hidden on both sides, read through `relation`.
 struct Merging {
-    /// The earlier relation's alias and the key name, for each key.
+    /// The earlier relation's alias and the key name, for each key a FULL JOIN merges.
     keys: Vec<(String, String)>,
-    /// The merged keys, each the first non-NULL side's value.
-    relation: ScopeRelation,
+    /// For a FULL JOIN, the merged keys, each the first non-NULL side's value.
+    relation: Option<ScopeRelation>,
+    /// The earlier relation's alias, the key name and the wider NUMBER it is read as.
+    widened: Vec<(String, String, SnowflakeType)>,
 }
 
 fn convert_join(
@@ -242,6 +260,7 @@ fn using_join(
     let mut merged_keys: Vec<(String, String)> = Vec::new();
     let mut merged_items: Vec<String> = Vec::new();
     let mut merged_columns: Vec<ColumnSpec> = Vec::new();
+    let mut widened: Vec<(String, String, SnowflakeType)> = Vec::new();
     let mut equalities: Vec<Value> = Vec::with_capacity(keys.len());
     for key in keys {
         let name = identifier_name(key)
@@ -265,11 +284,30 @@ fn using_join(
             .iter()
             .find(|column| column.name == name)
             .map(|column| column.data_type);
-        if earlier_type != Some(joined.data_type) {
-            return Err(refuse(format!(
-                "the USING key `{name}` of different types on its two sides, whose merged \
-                 value no recording shows"
-            )));
+        let merged_type = match (earlier_type, joined.data_type) {
+            (Some(left), right) if left == right => left,
+            (
+                Some(SnowflakeType::Number {
+                    precision: left,
+                    scale,
+                }),
+                SnowflakeType::Number {
+                    precision: right,
+                    scale: joined_scale,
+                },
+            ) if scale == joined_scale => SnowflakeType::Number {
+                precision: left.max(right),
+                scale,
+            },
+            _ => {
+                return Err(refuse(format!(
+                    "the USING key `{name}` of different types on its two sides, whose merged \
+                     value no recording shows"
+                )));
+            }
+        };
+        if earlier_type != Some(merged_type) {
+            widened.push((owner.alias.clone(), name.clone(), merged_type));
         }
         let read = |alias: &str| {
             format!(
@@ -287,8 +325,19 @@ fn using_join(
         merged_keys.push((owner.alias.clone(), name.clone()));
         merged_columns.push(ColumnSpec {
             not_null: false,
+            widened: false,
+            data_type: merged_type,
             ..joined.clone()
         });
+        if let Some(joined) = relation
+            .columns
+            .iter_mut()
+            .find(|column| column.name == name)
+            && joined.data_type != merged_type
+        {
+            joined.data_type = merged_type;
+            joined.widened = true;
+        }
         let side =
             |alias: &str| json!({"column": {"name": {"name": name}, "table": {"name": alias}}});
         equalities
@@ -309,6 +358,11 @@ fn using_join(
     };
     let condition = condition_sql(&condition, site)?;
     if keyword != FULL_JOIN_KEYWORD {
+        merging.replace(Some(Merging {
+            keys: Vec::new(),
+            relation: None,
+            widened,
+        }));
         return Ok((format!(" {keyword} {source_sql} ON {condition}"), relation));
     }
     let alias = format!("{USING_ALIAS_PREFIX}{}", earlier.len());
@@ -319,11 +373,12 @@ fn using_join(
     );
     merging.replace(Some(Merging {
         keys: merged_keys,
-        relation: ScopeRelation {
+        relation: Some(ScopeRelation {
             alias,
             columns: merged_columns,
             merged: Vec::new(),
-        },
+        }),
+        widened,
     }));
     Ok((sql, relation))
 }
@@ -708,7 +763,7 @@ fn subquery_source(
     let (sql, mut columns) = convert_query(
         field(subquery, "this", &construct)?,
         lateral.then_some(&scope),
-        context,
+        &context.projecting(true),
         true,
     )?;
     let renamed = list(subquery, "column_aliases");

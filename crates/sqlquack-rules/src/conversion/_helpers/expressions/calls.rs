@@ -345,9 +345,13 @@ pub(crate) fn convert_aggregate(
     let construct = node_construct(kind);
     let payload = payload_object(payload, &construct)?;
     require_understood(payload, &["this", "star", "distinct", "name"], &construct)?;
+    let placement = match window.is_some() && site.scope.grouped {
+        true => Placement::GROUPED,
+        false => Placement::ROW,
+    };
     let call = AggregateCall {
         payload,
-        site: site.placed(Placement::ROW),
+        site: site.placed(placement),
         over: window.map_or_else(String::new, |window| format!(" OVER ({window})")),
     };
     match kind {

@@ -8,6 +8,8 @@ pub(crate) struct Placement {
     pub(crate) aggregates: bool,
     pub(crate) windows: bool,
     pub(crate) filter: bool,
+    /// Whether an unordered array may pass up unchecked, as only order-free readers take it.
+    pub(crate) order_free: bool,
 }
 
 impl Placement {
@@ -15,21 +17,25 @@ impl Placement {
         aggregates: false,
         windows: false,
         filter: false,
+        order_free: false,
     };
     pub(crate) const FILTER: Self = Self {
         aggregates: false,
         windows: false,
         filter: true,
+        order_free: false,
     };
     pub(crate) const PROJECTION: Self = Self {
         aggregates: true,
         windows: true,
         filter: false,
+        order_free: false,
     };
     pub(crate) const GROUPED: Self = Self {
         aggregates: true,
         windows: false,
         filter: false,
+        order_free: false,
     };
 }
 
@@ -45,6 +51,17 @@ impl<'a> Site<'a> {
     /// The same site in another clause.
     pub(crate) fn placed(self, placement: Placement) -> Self {
         Self { placement, ..self }
+    }
+
+    /// The same site where an unordered array may pass up unchecked, or with `free` false not.
+    pub(crate) fn order_free(self, free: bool) -> Self {
+        Self {
+            placement: Placement {
+                order_free: free,
+                ..self.placement
+            },
+            ..self
+        }
     }
 
     /// The same site in another scope.

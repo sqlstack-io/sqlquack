@@ -11,6 +11,7 @@ use sqlquack_core::refusals::models::Refusal;
 use sqlquack_duckdb::blocks::main::quoted_identifier::quoted_identifier;
 use sqlquack_snowflake::typing::models::SnowflakeType;
 
+use crate::conversion::_helpers::expressions::ordered_aggregates::order_checked;
 use crate::conversion::_helpers::expressions::scalar::convert_held;
 use crate::conversion::_helpers::expressions::windows::canonical_variant;
 use crate::conversion::_helpers::queries::clauses::{
@@ -19,12 +20,14 @@ use crate::conversion::_helpers::queries::clauses::{
 use crate::conversion::_helpers::queries::hierarchy::hierarchy;
 use crate::conversion::_helpers::queries::set_operations::convert_set_operation;
 use crate::conversion::_helpers::queries::sources::convert_from;
+use crate::conversion::_helpers::support::scope::read_column;
 use crate::conversion::_helpers::support::scope::{Context, Emitted, Scope};
 use crate::conversion::_helpers::support::site::{Placement, Site};
 use crate::conversion::_helpers::support::tree::{
     Payload, field, flag, identifier_name, list, node_construct, node_kind, payload_object,
     require_understood,
 };
+use crate::conversion::constants::WINDOW_MARKER;
 use crate::conversion::constants::{
     ALIAS, COMMENT, COMMON_TABLE, DISTINCT, GENERATOR_SEQUENCE_COLUMN, GROUP_BY, HAVING,
     HIERARCHY_COLUMN_PREFIX, QUALIFY, SELECT, STAR, USING_ALIAS_PREFIX, VARIANT_HELD_UNREAD, WHERE,
@@ -247,7 +250,10 @@ fn convert_select(
         let site = Site {
             scope: &scope,
             context: &context,
-            placement: Placement::PROJECTION,
+            placement: Placement {
+                order_free: context.free_projections,
+                ..Placement::PROJECTION
+            },
         };
         for (name, emitted) in convert_projection(item, site, named)? {
             outputs.push((name.clone().unwrap_or_default(), emitted));
@@ -288,6 +294,7 @@ fn convert_select(
             utc_offset: emitted.utc_offset,
             declared_offsets: emitted.declared.clone(),
             not_null: plain && (emitted.not_null || emitted.literal.is_some()),
+            unordered: emitted.unordered,
             ..ColumnSpec::new(name.clone(), emitted.data_type)
         })
         .collect();
@@ -327,6 +334,9 @@ fn convert_select(
         }
         false => "",
     };
+    if !distinct.is_empty() && outputs.iter().any(|(_, emitted)| emitted.unordered) {
+        items = distinct_checked(&outputs, &context)?;
+    }
     let tail = select_tail(select, &scope, &context, (&outputs, &grouped_variants))?;
     Ok((
         format!(
@@ -335,6 +345,42 @@ fn convert_select(
         ),
         columns,
     ))
+}
+
+/// SELECT DISTINCT items where an unordered array of several distinct elements in a repeated row raises.
+fn distinct_checked(
+    outputs: &[(String, Emitted)],
+    context: &Context<'_>,
+) -> Result<Vec<String>, Refusal> {
+    let windowed = outputs
+        .iter()
+        .any(|(_, emitted)| emitted.sql.contains(WINDOW_MARKER));
+    let partition: Vec<&str> = outputs
+        .iter()
+        .map(|(_, emitted)| emitted.sql.as_str())
+        .collect();
+    let repeated = format!("count(*) OVER (PARTITION BY {}) > 1", partition.join(", "));
+    let mut items: Vec<String> = Vec::with_capacity(outputs.len());
+    for (name, emitted) in outputs {
+        let name = Some(name.as_str()).filter(|name| !name.is_empty());
+        if !emitted.unordered {
+            items.push(projected_sql(name, emitted, context));
+            continue;
+        }
+        let checked = order_checked(emitted.clone(), context)?;
+        let value = match windowed {
+            true => checked,
+            false => Emitted {
+                sql: format!(
+                    "(CASE WHEN {repeated} THEN {} ELSE {} END)",
+                    checked.sql, emitted.sql
+                ),
+                ..emitted.clone()
+            },
+        };
+        items.push(projected_sql(name, &value, context));
+    }
+    Ok(items)
 }
 
 fn projected_sql(name: Option<&str>, emitted: &Emitted, context: &Context<'_>) -> String {
@@ -436,8 +482,12 @@ pub(crate) fn convert_with<'a>(
         let name = identifier_name(field(cte, "alias", &construct)?)
             .ok_or_else(|| missing(construct.clone(), "a CTE has no name".to_owned()))?;
         let _muted = fixture(&name).then(|| context.log.muted());
-        let (sql, mut columns) =
-            convert_query(field(cte, "this", &construct)?, outer, &extended, true)?;
+        let (sql, mut columns) = convert_query(
+            field(cte, "this", &construct)?,
+            outer,
+            &extended.projecting(true),
+            true,
+        )?;
         let renamed = list(cte, "columns");
         let mut column_list = String::new();
         if !renamed.is_empty() {
@@ -604,24 +654,24 @@ pub(crate) fn star(
             .iter()
             .filter(|column| !excluded.contains(&column.name) && !merged(relation, &column.name))
         {
-            let sql = format!(
-                "{}.{}",
-                quoted_identifier(&relation.alias, log),
-                quoted_identifier(&column.name, log)
-            );
+            let sql = read_column(&relation.alias, column, log)?;
             site.context.typed.read((column.untainted, column.sourced));
-            expanded.push((
-                Some(column.name.clone()),
-                Emitted {
-                    held: column.holding,
-                    untainted: column.untainted,
-                    sourced: column.sourced,
-                    utc_offset: column.utc_offset,
-                    declared: column.declared_offsets.clone(),
-                    not_null: column.not_null,
-                    ..Emitted::new(sql, column.data_type)
-                },
-            ));
+            let emitted = Emitted {
+                held: column.holding,
+                untainted: column.untainted,
+                sourced: column.sourced,
+                utc_offset: column.utc_offset,
+                declared: column.declared_offsets.clone(),
+                not_null: column.not_null,
+                unordered: column.unordered,
+                ..Emitted::new(sql, column.data_type)
+            };
+            let emitted =
+                match emitted.unordered && (!site.placement.order_free || site.scope.grouped) {
+                    true => order_checked(emitted, site.context)?,
+                    false => emitted,
+                };
+            expanded.push((Some(column.name.clone()), emitted));
         }
     }
     Ok(expanded)

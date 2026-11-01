@@ -15,7 +15,7 @@ use sqlquack_syntax::Expression;
 use crate::conversion::_helpers::queries::function_body::{column_types, function_stub};
 use crate::conversion::_helpers::queries::query::convert_query;
 use crate::conversion::_helpers::support::locations::Locator;
-use crate::conversion::_helpers::support::scope::Context;
+use crate::conversion::_helpers::support::scope::{Context, OrderTrack};
 use crate::conversion::_helpers::support::tree::{node_construct, session_tree};
 use crate::conversion::constants::OUTPUT_ALIAS;
 use crate::conversion::models::{ConversionOptions, Converted};
@@ -39,6 +39,7 @@ pub fn convert_statement(
         .map_err(|reason| outside_conditions(node_construct("statement"), reason))?;
     let locator = Locator::new(&tree, &positioned, lines);
     let typed = TypedLeaves::default();
+    let order = OrderTrack::default();
     let context = Context {
         log: &log,
         schema,
@@ -46,6 +47,8 @@ pub fn convert_statement(
         ctes: Vec::new(),
         locator: &locator,
         typed: &typed,
+        order: &order,
+        free_projections: false,
     };
     let (sql, columns) = checked(&typed, convert_query(&tree, None, &context, true))
         .map_err(|refusal| locator.placed(refusal, &tree))?;

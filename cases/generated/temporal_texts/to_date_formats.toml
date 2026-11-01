@@ -586,30 +586,6 @@ rows = [
 expression = "TRY_TO_DATE(x, 'DD.MM.YYYY')"
 tags = ["null", "invalid", "boundary"]
 origin = "generated: temporal_texts@7"
-expected_divergence = "date_text_spelling"
-
-[[case]]
-id = "try_to_date_day_first_dotted_spelled"
-description = "TRY_TO_DATE(x, 'DD.MM.YYYY') over texts spelled exactly in the format."
-columns = [{ name = "x", type = "VARCHAR" }]
-rows = [
-  ["'29.02.2024'"],
-  ["'31.12.1999'"],
-  ["'01.01.2000'"],
-  ["'01.01.1970'"],
-  ["'19.01.2038'"],
-  ["'04.07.2024'"],
-  ["'01.01.0001'"],
-  ["'31.12.9999'"],
-  ["NULL"],
-  ["'15.06.2069'"],
-  ["'15.06.1970'"],
-  ["'29.02.2023'"],
-  ["''"],
-]
-expression = "TRY_TO_DATE(x, 'DD.MM.YYYY')"
-tags = ["null", "invalid", "boundary", "empty"]
-origin = "generated: temporal_texts@7"
 
 [[case]]
 id = "to_date_day_first_dotted"

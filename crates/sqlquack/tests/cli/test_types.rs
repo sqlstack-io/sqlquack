@@ -134,3 +134,9 @@ pub(crate) struct ValueTestCase {
     pub(crate) sql: &'static str,
     pub(crate) expected_value: &'static str,
 }
+
+pub(crate) struct RunErrorTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) sql: &'static str,
+    pub(crate) expected_mention: &'static str,
+}

@@ -1,7 +1,9 @@
 //! Name resolution: relations in scope, CTEs, select-list aliases and outer queries.
 
 use sqlquack_core::provenance::models::ProvenanceLog;
+use sqlquack_core::refusals::main::outside_conditions::outside_conditions;
 use sqlquack_core::refusals::models::Refusal;
+use sqlquack_duckdb::blocks::main::cast::cast;
 use sqlquack_duckdb::blocks::main::quoted_identifier::quoted_identifier;
 use sqlquack_semantics::dialects::constants::SNOWFLAKE_TO_DUCKDB;
 use sqlquack_semantics::names::main::relation_columns::relation_columns;
@@ -11,6 +13,7 @@ use sqlquack_semantics::types::models::TypedLeaves;
 use sqlquack_snowflake::typing::models::SnowflakeType;
 
 use crate::conversion::_helpers::support::locations::Locator;
+use crate::conversion::_helpers::support::tree::node_construct;
 
 use crate::conversion::models::ConversionOptions;
 use sqlquack_semantics::types::models::{ColumnSpec, Holding, Schema};
@@ -36,6 +39,8 @@ pub(crate) struct Emitted {
     pub(crate) sourced: bool,
     /// Whether the value is proven never NULL: a non-NULL literal, a column proven so, or a cast of one.
     pub(crate) not_null: bool,
+    /// Whether the value depends on an array order Snowflake leaves undefined.
+    pub(crate) unordered: bool,
 }
 
 /// What a VARIANT-held value's root is known to be, which decides how it is written as text.
@@ -72,6 +77,7 @@ impl Emitted {
             untainted: false,
             sourced: false,
             not_null: false,
+            unordered: false,
         }
     }
 
@@ -103,12 +109,14 @@ pub(crate) fn resolve(
     match resolve_name(scope, (qualifier, name), SNOWFLAKE_TO_DUCKDB)? {
         Resolution::Alias(emitted) => Ok(emitted.clone()),
         Resolution::Column { alias, column } => Ok(Emitted {
+            sql: read_column(alias, column, log)?,
             held: column.holding,
             untainted: column.untainted,
             sourced: column.sourced,
             utc_offset: column.utc_offset,
             declared: column.declared_offsets.clone(),
             not_null: column.not_null,
+            unordered: column.unordered,
             ..Emitted::new(
                 format!(
                     "{}.{}",
@@ -121,6 +129,24 @@ pub(crate) fn resolve(
     }
 }
 
+/// A column read through its relation's alias, cast up to its type where it is held narrower.
+pub(crate) fn read_column(
+    alias: &str,
+    column: &ColumnSpec,
+    log: &ProvenanceLog,
+) -> Result<String, Refusal> {
+    let sql = format!(
+        "{}.{}",
+        quoted_identifier(alias, log),
+        quoted_identifier(&column.name, log)
+    );
+    match column.widened {
+        true => cast(&sql, column.data_type, log)
+            .map_err(|reason| outside_conditions(node_construct("column"), reason)),
+        false => Ok(sql),
+    }
+}
+
 /// The relations a statement can read: the schema, then CTEs from outermost to innermost.
 #[derive(Clone, Debug)]
 pub(crate) struct Context<'a> {
@@ -130,9 +156,44 @@ pub(crate) struct Context<'a> {
     pub(crate) ctes: Vec<(String, Vec<ColumnSpec>)>,
     pub(crate) locator: &'a Locator<'a>,
     pub(crate) typed: &'a TypedLeaves,
+    /// Unordered values passed up unchecked so far, to tell what a conversion passed up.
+    pub(crate) order: &'a OrderTrack,
+    /// Whether query results may keep unordered arrays: CTE and FROM subquery bodies.
+    pub(crate) free_projections: bool,
+}
+
+/// How many unordered values were passed up unchecked, to positions where order cannot matter.
+#[derive(Debug, Default)]
+pub(crate) struct OrderTrack {
+    passed: std::cell::Cell<usize>,
+}
+
+impl OrderTrack {
+    /// An unordered value passed up unchecked.
+    pub(crate) fn pass(&self) {
+        self.passed.set(self.passed.get() + 1);
+    }
+
+    /// The count so far.
+    pub(crate) fn mark(&self) -> usize {
+        self.passed.get()
+    }
+
+    /// Forgets what was passed up since `mark`, which a consumer has absorbed.
+    pub(crate) fn absorb(&self, mark: usize) {
+        self.passed.set(mark);
+    }
 }
 
 impl Context<'_> {
+    /// The same context for a query whose results may, with `free`, keep unordered arrays.
+    pub(crate) fn projecting(&self, free: bool) -> Self {
+        Self {
+            free_projections: free,
+            ..self.clone()
+        }
+    }
+
     /// The columns of a relation name: the innermost CTE, else the schema.
     pub(crate) fn relation(&self, name: &str) -> Result<Vec<ColumnSpec>, Refusal> {
         relation_columns(
