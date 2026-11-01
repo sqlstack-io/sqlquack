@@ -1298,6 +1298,12 @@ pub const ARRAY_SORT_RULE: &str = "rule.array_sort";
 pub const ARRAY_FLATTEN_RULE: &str = "rule.array_flatten";
 /// TO_ARRAY.
 pub const TO_ARRAY_RULE: &str = "rule.to_array";
+/// ARRAY_REVERSE.
+pub const ARRAY_REVERSE_RULE: &str = "rule.array_reverse";
+/// ARRAY_MAX and ARRAY_MIN.
+pub const ARRAY_EXTREME_RULE: &str = "rule.array_extreme";
+/// ARRAY_MAX's name, beside ARRAY_MIN.
+pub(crate) const ARRAY_MAX_NAME: &str = "ARRAY_MAX";
 /// ARRAY_INTERSECTION, ARRAYS_OVERLAP and ARRAY_DISTINCT.
 pub const ARRAY_SET_RULE: &str = "rule.array_set";
 /// ARRAY_APPEND.
@@ -1365,3 +1371,13 @@ pub const IFF_NAME: &str = "IFF";
 pub const WINDOW_MARKER: &str = " OVER (";
 /// FLATTEN columns that depend on the input array's order: its positions and the array itself.
 pub const FLATTEN_ORDERED_COLUMNS: &[&str] = &["PATH", "INDEX", "THIS"];
+/// The assumption a Python project function call relies on: its handler runs locally as in Snowflake.
+pub const PROJECT_UDF: &str = "project_udf";
+/// The divergence of a Python value whose crossing no recording shows, which SQLQuack's runtime raises.
+pub const PYTHON_VALUE_CROSSING: &str = "python_value_crossing";
+/// The assumption a user override relies on: its DuckDB SQL gives what the function it replaces gives.
+pub const USER_OVERRIDE: &str = "user_override";
+/// Calls to a function a user override replaces.
+pub const USER_OVERRIDE_RULE: &str = "rule.user_override";
+/// The prefix of the macro converted SQL calls a user override by.
+pub const OVERRIDE_MACRO_PREFIX: &str = "__sqlquack_override__";

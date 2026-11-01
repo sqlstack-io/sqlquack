@@ -21,6 +21,7 @@ clap.workspace = true
 rayon.workspace = true
 serde.workspace = true
 serde_json.workspace = true
+sha2.workspace = true
 sqlquack-compare.workspace = true
 sqlquack-core.workspace = true
 sqlquack-duckdb.workspace = true
@@ -33,6 +34,7 @@ sqlquack-syntax.workspace = true
 walkdir.workspace = true
 
 [dev-dependencies]
+arrow.workspace = true
 duckdb.workspace = true
 tempfile.workspace = true
 

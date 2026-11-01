@@ -69,11 +69,12 @@ fn index(arguments: &IndexArguments, policy: Option<&Policy>) -> Result<Provenan
         (
             arguments.strict,
             arguments.utc_session,
-            arguments.confirm_declared_offsets,
+            (arguments.confirm_declared_offsets, arguments.python_runtime),
         ),
     );
     let converter = PipelineConverter {
         options: conversion.clone(),
+        python: None,
     };
     for path in &paths {
         let (cases, sql) = contents(path)?;

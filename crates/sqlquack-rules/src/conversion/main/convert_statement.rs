@@ -12,7 +12,9 @@ use sqlquack_duckdb::semi_structured::main::json_output::json_output;
 use sqlquack_snowflake::typing::models::SnowflakeType;
 use sqlquack_syntax::Expression;
 
-use crate::conversion::_helpers::queries::function_body::{column_types, function_stub};
+use crate::conversion::_helpers::queries::function_body::{
+    column_types, function_stub, override_stub,
+};
 use crate::conversion::_helpers::queries::query::convert_query;
 use crate::conversion::_helpers::support::locations::Locator;
 use crate::conversion::_helpers::support::scope::{Context, OrderTrack};
@@ -57,7 +59,8 @@ pub fn convert_statement(
         let columns = schema.relations.get(name)?;
         Some(column_types(columns))
     };
-    let function = |name: &str| function_stub(schema, name);
+    let function =
+        |name: &str| function_stub(schema, name).or_else(|| override_stub(options, name));
     check_printed(&sql, (&relation, &function)).map_err(|failure| {
         let refusal = missing(
             node_construct("statement"),

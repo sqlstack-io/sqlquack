@@ -17,6 +17,8 @@ use crate::conversion::_helpers::support::tree::node_construct;
 use crate::conversion::constants::{
     BODY_ALIAS, NO_PARAMETERS_COLUMN, PARAMETERS_RELATION, VARIANT_HELD_UNREAD,
 };
+use crate::conversion::main::override_macro_name::override_macro_name;
+use crate::conversion::models::ConversionOptions;
 use sqlquack_semantics::scopes::models::ScopeRelation;
 use sqlquack_semantics::types::models::{ColumnSpec, FunctionReturns, FunctionSpec, Schema};
 
@@ -120,6 +122,18 @@ pub(crate) fn function_stub(schema: &Schema, name: &str) -> Option<FunctionStub>
             FunctionReturns::Scalar(data_type) => StubReturns::Scalar(*data_type),
             FunctionReturns::Table(columns) => StubReturns::Table(column_types(columns)),
         },
+    })
+}
+
+/// The stub DuckDB's check binds a call to the macro of a user override in `options` with.
+pub(crate) fn override_stub(options: &ConversionOptions, name: &str) -> Option<FunctionStub> {
+    let replacement = options
+        .overrides
+        .values()
+        .find(|replacement| override_macro_name(&replacement.name).eq_ignore_ascii_case(name))?;
+    Some(FunctionStub {
+        arguments: replacement.arguments.len(),
+        returns: StubReturns::Scalar(replacement.returns),
     })
 }
 

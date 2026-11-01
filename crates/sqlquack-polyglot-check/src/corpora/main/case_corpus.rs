@@ -18,6 +18,7 @@ pub fn case_corpus(cases: &Path, policy: &Path) -> Result<Vec<CorpusEntry>, Stri
     let loaded = load_cases(cases, &policy).map_err(|error| error.to_string())?;
     let converter = PipelineConverter {
         options: conversion_options(&policy, false),
+        python: None,
     };
     let mut entries = Vec::with_capacity(loaded.len() * 2);
     for case in &loaded {

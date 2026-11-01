@@ -46,11 +46,14 @@ pub(crate) fn row_check(
             source_sql: source_sql.clone(),
             ..case.clone()
         };
-        let Conversion::Converted { sql, setup, .. } = converter.convert(&alone) else {
+        let Conversion::Converted {
+            sql, setup, python, ..
+        } = converter.convert(&alone)
+        else {
             proven = false;
             continue;
         };
-        match replay_on_duckdb((&setup, &sql), settings) {
+        match replay_on_duckdb((&setup, &sql), python.as_deref(), settings) {
             Err(error) => proven &= divergence_error(&error, divergence, policy).is_some(),
             Ok(replayed) => {
                 let row = RecordedResult {

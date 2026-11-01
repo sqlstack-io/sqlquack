@@ -1,0 +1,361 @@
+category = "project-function"
+construct = "fn:<udf>"
+session_profile = "utc-v1"
+
+[[case]]
+id = "python_text_identity"
+description = "A Python function returning its STRING argument: empty, NULL, non-ASCII, a newline and a tab cross intact."
+columns = [{ name = "label", type = "VARCHAR" }]
+rows = [["'plain'"], ["''"], ["NULL"], ["'café ☕ 東京'"], ["'line\\nbreak'"], ["'tab\\there'"]]
+expression = "echo_label(label)"
+tags = ["null"]
+
+[[case.function]]
+name = "echo_label"
+language = "python"
+handler = "echo"
+runtime_version = "3.12"
+arguments = [{ name = "label", type = "VARCHAR" }]
+returns = "VARCHAR"
+body = '''
+def echo(label):
+    return label
+'''
+
+[[case]]
+id = "python_text_sees_none"
+description = "A Python function told NULL apart from text: NULL reaches the handler as None, and an empty string as empty text."
+columns = [{ name = "label", type = "VARCHAR" }]
+rows = [["'abc'"], ["''"], ["NULL"]]
+expression = "describe_label(label)"
+tags = ["null"]
+
+[[case.function]]
+name = "describe_label"
+language = "python"
+handler = "describe"
+runtime_version = "3.12"
+arguments = [{ name = "label", type = "VARCHAR" }]
+returns = "VARCHAR"
+body = '''
+def describe(label):
+    if label is None:
+        return "none"
+    return f"{type(label).__name__}:{len(label)}:{label.upper()}"
+'''
+
+[[case]]
+id = "python_returns_none"
+description = "A Python function returning None for every row gives SQL NULL."
+columns = [{ name = "label", type = "VARCHAR" }]
+rows = [["'abc'"], ["NULL"]]
+expression = "nothing_for(label)"
+tags = ["null"]
+
+[[case.function]]
+name = "nothing_for"
+language = "python"
+handler = "nothing"
+runtime_version = "3.12"
+arguments = [{ name = "label", type = "VARCHAR" }]
+returns = "VARCHAR"
+body = '''
+def nothing(label):
+    return None
+'''
+
+[[case]]
+id = "python_number_arguments_cross"
+description = "How NUMBER(10,0), NUMBER(10,2), FLOAT and BOOLEAN arguments reach a Python handler: their Python types and spellings."
+columns = [{ name = "qty", type = "NUMBER(10,0)" }, { name = "price", type = "NUMBER(10,2)" }, { name = "ratio", type = "FLOAT" }, { name = "flag", type = "BOOLEAN" }]
+rows = [["3", "2.50", "0.5", "TRUE"], ["-7", "-0.01", "-2", "FALSE"], ["0", "0", "0", "NULL"], ["NULL", "NULL", "NULL", "TRUE"], ["1234567890", "99999999.99", "1e300", "FALSE"]]
+expression = "argument_kinds(qty, price, ratio, flag)"
+tags = ["null", "boundary"]
+
+[[case.function]]
+name = "argument_kinds"
+language = "python"
+handler = "kinds"
+runtime_version = "3.12"
+arguments = [{ name = "qty", type = "NUMBER(10,0)" }, { name = "price", type = "NUMBER(10,2)" }, { name = "ratio", type = "FLOAT" }, { name = "flag", type = "BOOLEAN" }]
+returns = "VARCHAR"
+body = '''
+def kinds(qty, price, ratio, flag):
+    return "|".join(f"{type(value).__name__}:{value}" for value in (qty, price, ratio, flag))
+'''
+
+[[case]]
+id = "python_number_coerced_argument"
+description = "A NUMBER(4,1) argument passed to a FLOAT parameter of a Python function, and a NUMBER(4,0) to a NUMBER(10,0) one."
+columns = [{ name = "weight", type = "NUMBER(4,1)" }, { name = "units", type = "NUMBER(4,0)" }]
+rows = [["1.5", "2"], ["-2.4", "-3"], ["NULL", "NULL"]]
+expression = "weight_kinds(weight, units)"
+tags = ["null", "numeric-coercion"]
+
+[[case.function]]
+name = "weight_kinds"
+language = "python"
+handler = "kinds"
+runtime_version = "3.12"
+arguments = [{ name = "weight", type = "FLOAT" }, { name = "units", type = "NUMBER(10,0)" }]
+returns = "VARCHAR"
+body = '''
+def kinds(weight, units):
+    return f"{type(weight).__name__}:{weight}|{type(units).__name__}:{units}"
+'''
+
+[[case]]
+id = "python_whole_number_result"
+description = "A Python int returned as NUMBER(38,0), at small, negative and 38-digit values."
+columns = [{ name = "qty", type = "NUMBER(10,0)" }]
+rows = [["3"], ["-7"], ["0"], ["NULL"], ["9"]]
+expression = "tripled(qty)"
+tags = ["null", "boundary"]
+
+[[case.function]]
+name = "tripled"
+language = "python"
+handler = "triple"
+runtime_version = "3.12"
+arguments = [{ name = "qty", type = "NUMBER(10,0)" }]
+returns = "NUMBER(38,0)"
+body = '''
+def triple(qty):
+    if qty is None:
+        return None
+    if qty == 9:
+        return 10**38 - 1
+    return qty * 3
+'''
+
+[[case]]
+id = "python_decimal_result"
+description = "A Python Decimal returned as NUMBER(10,2): fewer digits than the scale, negative values and the widest value."
+columns = [{ name = "amount", type = "VARCHAR" }]
+rows = [["'2.5'"], ["'-0.12'"], ["'7'"], ["NULL"], ["'99999999.99'"], ["'1.50'"]]
+expression = "as_amount(amount)"
+tags = ["null", "boundary"]
+
+[[case.function]]
+name = "as_amount"
+language = "python"
+handler = "amount"
+runtime_version = "3.12"
+arguments = [{ name = "amount", type = "VARCHAR" }]
+returns = "NUMBER(10,2)"
+body = '''
+import decimal
+
+def amount(text):
+    if text is None:
+        return None
+    return decimal.Decimal(text)
+'''
+
+[[case]]
+id = "python_int_result_with_scale"
+description = "A Python int returned as NUMBER(10,2)."
+columns = [{ name = "qty", type = "NUMBER(10,0)" }]
+rows = [["3"], ["-7"], ["NULL"]]
+expression = "scaled_units(qty)"
+tags = ["null"]
+
+[[case.function]]
+name = "scaled_units"
+language = "python"
+handler = "scaled"
+runtime_version = "3.12"
+arguments = [{ name = "qty", type = "NUMBER(10,0)" }]
+returns = "NUMBER(10,2)"
+body = '''
+def scaled(qty):
+    return None if qty is None else qty * 100
+'''
+
+[[case]]
+id = "python_float_result"
+description = "A Python float returned as FLOAT: fractions, negative zero, a huge value, infinity and NaN."
+columns = [{ name = "text", type = "VARCHAR" }]
+rows = [["'0.1'"], ["'-0.0'"], ["'1e308'"], ["'inf'"], ["'-inf'"], ["'nan'"], ["NULL"], ["'123456789.125'"]]
+expression = "as_ratio(text)"
+tags = ["null", "boundary"]
+
+[[case.function]]
+name = "as_ratio"
+language = "python"
+handler = "ratio"
+runtime_version = "3.12"
+arguments = [{ name = "text", type = "VARCHAR" }]
+returns = "FLOAT"
+body = '''
+def ratio(text):
+    return None if text is None else float(text)
+'''
+
+[[case]]
+id = "python_boolean_result"
+description = "A Python bool returned as BOOLEAN."
+columns = [{ name = "label", type = "VARCHAR" }]
+rows = [["'yes'"], ["'no'"], ["NULL"]]
+expression = "is_yes(label)"
+tags = ["null"]
+
+[[case.function]]
+name = "is_yes"
+language = "python"
+handler = "yes"
+runtime_version = "3.12"
+arguments = [{ name = "label", type = "VARCHAR" }]
+returns = "BOOLEAN"
+body = '''
+def yes(label):
+    return None if label is None else label == "yes"
+'''
+
+[[case]]
+id = "python_int_returned_as_text"
+description = "A Python int returned from a function declaring VARCHAR."
+columns = [{ name = "qty", type = "NUMBER(10,0)" }]
+rows = [["5"]]
+expression = "units_text(qty)"
+tags = ["invalid"]
+expected_divergence = "python_value_crossing"
+
+[[case.function]]
+name = "units_text"
+language = "python"
+handler = "units"
+runtime_version = "3.12"
+arguments = [{ name = "qty", type = "NUMBER(10,0)" }]
+returns = "VARCHAR"
+body = '''
+def units(qty):
+    return qty
+'''
+
+[[case]]
+id = "python_float_returned_as_number"
+description = "A Python float returned from a function declaring NUMBER(10,2)."
+columns = [{ name = "qty", type = "NUMBER(10,0)" }]
+rows = [["5"]]
+expression = "half_units(qty)"
+tags = ["invalid"]
+expected_divergence = "python_value_crossing"
+
+[[case.function]]
+name = "half_units"
+language = "python"
+handler = "half"
+runtime_version = "3.12"
+arguments = [{ name = "qty", type = "NUMBER(10,0)" }]
+returns = "NUMBER(10,2)"
+body = '''
+def half(qty):
+    return qty / 2
+'''
+
+[[case]]
+id = "python_text_returned_as_number"
+description = "Python text returned from a function declaring NUMBER(10,0)."
+columns = [{ name = "qty", type = "NUMBER(10,0)" }]
+rows = [["5"]]
+expression = "units_spelled(qty)"
+tags = ["invalid"]
+expected_divergence = "python_value_crossing"
+
+[[case.function]]
+name = "units_spelled"
+language = "python"
+handler = "spelled"
+runtime_version = "3.12"
+arguments = [{ name = "qty", type = "NUMBER(10,0)" }]
+returns = "NUMBER(10,0)"
+body = '''
+def spelled(qty):
+    return str(qty)
+'''
+
+[[case]]
+id = "python_int_returned_as_boolean"
+description = "A Python int returned from a function declaring BOOLEAN."
+columns = [{ name = "qty", type = "NUMBER(10,0)" }]
+rows = [["1"]]
+expression = "units_flag(qty)"
+tags = ["invalid"]
+expected_divergence = "python_value_crossing"
+
+[[case.function]]
+name = "units_flag"
+language = "python"
+handler = "flag"
+runtime_version = "3.12"
+arguments = [{ name = "qty", type = "NUMBER(10,0)" }]
+returns = "BOOLEAN"
+body = '''
+def flag(qty):
+    return qty
+'''
+
+[[case]]
+id = "python_int_returned_as_float"
+description = "A Python int returned from a function declaring FLOAT."
+columns = [{ name = "qty", type = "NUMBER(10,0)" }]
+rows = [["5"], ["NULL"]]
+expression = "units_ratio(qty)"
+tags = ["null"]
+
+[[case.function]]
+name = "units_ratio"
+language = "python"
+handler = "ratio"
+runtime_version = "3.12"
+arguments = [{ name = "qty", type = "NUMBER(10,0)" }]
+returns = "FLOAT"
+body = '''
+def ratio(qty):
+    return qty
+'''
+
+[[case]]
+id = "python_in_a_grouped_query"
+description = "A Python function in a projection, a filter and a GROUP BY over a table."
+columns = [{ name = "sku", type = "VARCHAR" }, { name = "qty", type = "NUMBER(10,0)" }]
+rows = [["'ab-1'", "2"], ["'AB-2'", "3"], ["'cd-1'", "NULL"], ["NULL", "4"], ["'cd-9'", "5"]]
+query = "SELECT sku_family(sku) AS family, COUNT(*) AS n, SUM(qty) AS total FROM input WHERE sku_family(sku) <> 'zz' GROUP BY sku_family(sku) ORDER BY family NULLS LAST"
+order = "ordered"
+tags = ["null"]
+
+[[case.function]]
+name = "sku_family"
+language = "python"
+handler = "family"
+runtime_version = "3.12"
+arguments = [{ name = "sku", type = "VARCHAR" }]
+returns = "VARCHAR"
+body = '''
+def family(sku):
+    return None if sku is None else sku.split("-")[0].lower()
+'''
+
+[[case]]
+id = "python_decimal_result_lossy"
+description = "A Python Decimal with more digits than the declared NUMBER(10,2) scale, which Snowflake rejects rather than rounds."
+columns = [{ name = "amount", type = "VARCHAR" }]
+rows = [["'1.005'"]]
+expression = "lossy_amount(amount)"
+tags = ["invalid"]
+expected_divergence = "python_value_crossing"
+
+[[case.function]]
+name = "lossy_amount"
+language = "python"
+handler = "amount"
+runtime_version = "3.12"
+arguments = [{ name = "amount", type = "VARCHAR" }]
+returns = "NUMBER(10,2)"
+body = '''
+import decimal
+
+def amount(text):
+    return decimal.Decimal(text)
+'''

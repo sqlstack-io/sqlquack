@@ -26,6 +26,7 @@ CONNECTION_OVERRIDES: dict[str, str] = {
 RESULT_FORMAT_PARAMETER: str = "PYTHON_CONNECTOR_QUERY_RESULT_FORMAT"
 ARROW_RESULT_FORMAT: str = "ARROW"
 RECORDABLE_SQLSTATE_CLASSES: frozenset[str] = frozenset({"0A", "21", "22", "42"})
+RECORDABLE_FUNCTION_ERRORS: frozenset[tuple[int, str]] = frozenset({(100357, "P0000")})
 DATA_EXCEPTION_SQLSTATE_CLASSES: frozenset[str] = frozenset({"22"})
 SESSION_DEPENDENT_SQLSTATES: frozenset[str] = frozenset({"42501"})
 SESSION_FAILURE_SQLSTATE_CLASSES: frozenset[str] = frozenset({"08", "28", "53", "57", "XX"})

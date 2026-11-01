@@ -1,0 +1,74 @@
+# User overrides, a user's DuckDB SQL standing in for a Snowflake function, proven by the recorded
+# result of the same query without them.
+category = "semi-structured-array"
+construct = "fn:ARRAY_REVERSE"
+session_profile = "utc-v1"
+
+[[case]]
+id = "override_array_reverse_shapes"
+description = "A user override of ARRAY_REVERSE, over numbers, text, mixed values with JSON nulls and nested arrays, an empty array and NULL."
+columns = [{ name = "k", type = "NUMBER(2,0)" }]
+rows = [["1"], ["2"], ["3"], ["4"], ["5"]]
+query = "SELECT TO_JSON(ARRAY_REVERSE(CASE k WHEN 1 THEN ARRAY_CONSTRUCT(1, 2, 2, 3) WHEN 2 THEN ARRAY_CONSTRUCT('a', 'b') WHEN 3 THEN ARRAY_CONSTRUCT(1, PARSE_JSON('null'), ARRAY_CONSTRUCT(2, 3), 'x') WHEN 4 THEN ARRAY_CONSTRUCT() END)) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "duplicates", "empty"]
+
+[[case.override]]
+name = "reversed_items"
+definition = """
+FUNCTION (
+  arguments (items VARIANT),
+  returns VARIANT,
+  replaces ARRAY_REVERSE,
+  dialect duckdb,
+);
+CASE WHEN items IS NULL OR json_type(items) = 'NULL' THEN NULL
+     WHEN json_type(items) = 'ARRAY' THEN CAST(to_json(list_reverse(json_extract(items, '$[*]'))) AS JSON)
+     ELSE CAST(to_json([items]) AS JSON) END
+"""
+
+[[case]]
+id = "override_array_reverse_scalar_variants"
+description = "A user override of ARRAY_REVERSE, over VARIANTs that are not arrays: a number, text, a boolean and JSON null, each alone."
+columns = [{ name = "doc", type = "VARCHAR" }]
+rows = [["'5'"], ["'\"x\"'"], ["'true'"], ["'null'"], ["'[]'"]]
+query = "SELECT TO_JSON(ARRAY_REVERSE(PARSE_JSON(doc))) AS r, ARRAY_REVERSE(PARSE_JSON(doc)) IS NULL AS sql_null FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "invalid"]
+
+[[case.override]]
+name = "reversed_items"
+definition = """
+FUNCTION (
+  arguments (items VARIANT),
+  returns VARIANT,
+  replaces ARRAY_REVERSE,
+  dialect duckdb,
+);
+CASE WHEN items IS NULL OR json_type(items) = 'NULL' THEN NULL
+     WHEN json_type(items) = 'ARRAY' THEN CAST(to_json(list_reverse(json_extract(items, '$[*]'))) AS JSON)
+     ELSE CAST(to_json([items]) AS JSON) END
+"""
+
+[[case]]
+id = "override_array_reverse_object"
+description = "A user override of ARRAY_REVERSE, over a VARIANT holding an object."
+columns = [{ name = "k", type = "NUMBER(2,0)" }]
+rows = [["1"]]
+query = "SELECT TO_JSON(ARRAY_REVERSE(PARSE_JSON('{\"a\":1}'))) AS r FROM input"
+order = "ordered"
+tags = ["invalid"]
+
+[[case.override]]
+name = "reversed_items"
+definition = """
+FUNCTION (
+  arguments (items VARIANT),
+  returns VARIANT,
+  replaces ARRAY_REVERSE,
+  dialect duckdb,
+);
+CASE WHEN items IS NULL OR json_type(items) = 'NULL' THEN NULL
+     WHEN json_type(items) = 'ARRAY' THEN CAST(to_json(list_reverse(json_extract(items, '$[*]'))) AS JSON)
+     ELSE CAST(to_json([items]) AS JSON) END
+"""

@@ -1,12 +1,18 @@
 use crate::helpers::{
     convert_outcome, converted_column_names, converted_first_value, converted_run_error,
-    converted_value_over, policy_free_exit_code, run_convert,
+    converted_value_over, override_failure, override_outcome, policy_free_exit_code,
+    python_outcome, python_report, python_rows, run_convert,
 };
 use crate::test_types::{
-    ColumnNameTestCase, ConvertOutcome, ConvertTestCase, ConvertedRunTestCase, PolicyFreeTestCase,
+    ColumnNameTestCase, ConvertOutcome, ConvertTestCase, ConvertedRunTestCase,
+    CountedCallsTestCase, CrossingTestCase, DedicatedOverrideTestCase, OverrideFailureTestCase,
+    OverrideTestCase, PolicyFreeTestCase, PythonRefusalTestCase, PythonRunTestCase,
     RunErrorTestCase, ValueTestCase,
 };
+use sha2::{Digest, Sha256};
 
+const OTHER_BODY_SHA256: &str = "0000000000000000000000000000000000000000000000000000000000000000";
+const COUNTING_HANDLER: &str = "import itertools\nTICKETS = itertools.count(1)\ndef handle(*arguments):\n    return next(TICKETS)\n";
 const QUOTED_ALIAS: &str =
     "WITH totals AS (SELECT 1 AS \"orderTotal\") SELECT ordertotal FROM totals";
 const PLACED_DATE: &str = "SELECT TO_DATE(placed_at) AS placed_on FROM orders";
@@ -462,6 +468,384 @@ fn given_iso_date_text_under_a_numeric_format_when_running_then_it_raises_instea
             converted_run_error(test_case.sql)
                 .is_some_and(|error| error.contains(test_case.expected_mention)),
             "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_project_python_functions_when_converting_and_running_then_the_runtime_registers_them() {
+    let test_cases = [
+        PythonRunTestCase {
+            description: "a VARCHAR and a VARIANT Python function, listed and run through the runtime",
+            sql: "SELECT sku_family('AB-1') AS family, TO_JSON(sku_parts('ab')) AS parts, \
+              sku_parts('ab'):name::VARCHAR AS name",
+            handlers: &[
+                (
+                    "SKU_FAMILY",
+                    "def handle(sku):\n    return sku.split('-')[0].lower()\n",
+                ),
+                (
+                    "SKU_PARTS",
+                    "def handle(sku):\n    return {'name': sku.upper(), 'codes': [ord(c) for c in sku]}\n",
+                ),
+            ],
+            expected_refused_without_runtime: Some(false),
+            expected_functions: serde_json::json!([
+                {"name": "SKU_FAMILY", "abi": "scalar-v1", "arguments": ["VARCHAR"], "returns": "VARCHAR",
+                 "volatility": "volatile", "null_input": "called"},
+                {"name": "SKU_PARTS", "abi": "variant-json-v1", "arguments": ["VARCHAR"], "returns": "VARCHAR",
+                 "volatility": "volatile", "null_input": "called"},
+            ]),
+            expected_rows: &[&["ab", "{\"codes\":[97,98],\"name\":\"AB\"}", "AB"]],
+        },
+        PythonRunTestCase {
+            description: "a RETURNS NULL ON NULL INPUT function gives NULL for NULL without calling the handler",
+            sql: "SELECT label_or_null(sku) AS l FROM (VALUES ('p'), (NULL)) AS v(sku) ORDER BY sku NULLS LAST",
+            handlers: &[("LABEL_OR_NULL", "def handle(sku):\n    return 'called'\n")],
+            expected_refused_without_runtime: Some(false),
+            expected_functions: serde_json::json!([
+                {"name": "LABEL_OR_NULL", "abi": "scalar-v1", "arguments": ["VARCHAR"], "returns": "VARCHAR",
+                 "volatility": "volatile", "null_input": "returns_null"},
+            ]),
+            expected_rows: &[&["called"], &[""]],
+        },
+    ];
+    for test_case in test_cases {
+        let refused = python_report(test_case.sql, &[]);
+        let report = python_report(test_case.sql, &["--python-runtime"]);
+        assert_eq!(
+            refused["converted"].as_bool(),
+            test_case.expected_refused_without_runtime,
+            "{}",
+            test_case.description
+        );
+        assert_eq!(
+            report["python_functions"], test_case.expected_functions,
+            "{}",
+            test_case.description
+        );
+        assert_eq!(
+            python_rows(&report, test_case.handlers),
+            test_case.expected_rows,
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_a_volatile_python_function_when_called_repeatedly_then_duckdb_never_folds_or_shares_calls()
+{
+    let test_cases = [
+        CountedCallsTestCase {
+            description: "a call without arguments is made once per row",
+            sql: "SELECT next_ticket() AS a FROM (VALUES ('p'), ('q'), ('r')) AS v(sku)",
+            handlers: &[("NEXT_TICKET", COUNTING_HANDLER)],
+            expected_distinct_values: 3,
+        },
+        CountedCallsTestCase {
+            description: "a constant-argument call and two equal calls in one row are each made per row",
+            sql: "SELECT ticket_for('x') AS a, ticket_for(sku) AS b, ticket_for(sku) AS c \
+                  FROM (VALUES ('p'), ('q'), ('r')) AS v(sku)",
+            handlers: &[("TICKET_FOR", COUNTING_HANDLER)],
+            expected_distinct_values: 9,
+        },
+    ];
+    for test_case in test_cases {
+        let report = python_report(test_case.sql, &["--python-runtime"]);
+        let values: std::collections::BTreeSet<String> = python_rows(&report, test_case.handlers)
+            .into_iter()
+            .flatten()
+            .collect();
+        assert_eq!(
+            values.len(),
+            test_case.expected_distinct_values,
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_a_python_call_the_conversion_would_repeat_or_batch_when_converting_then_it_is_refused() {
+    let test_cases = [
+        PythonRefusalTestCase {
+            description: "DIV0 writes its dividend twice, which would call a volatile function twice",
+            sql: "SELECT DIV0(next_ticket(), 2) AS d",
+            expected_mention: "more often than the statement does",
+        },
+        PythonRefusalTestCase {
+            description: "a string literal spelling the name does not count as a call",
+            sql: "SELECT DIV0(next_ticket(), 2) AS d, \
+                  'next_ticket next_ticket next_ticket next_ticket' AS note",
+            expected_mention: "more often than the statement does",
+        },
+        PythonRefusalTestCase {
+            description: "a comment spelling the name does not count as a call",
+            sql: "SELECT DIV0(next_ticket(), 2) AS d /* next_ticket() next_ticket() */",
+            expected_mention: "more often than the statement does",
+        },
+        PythonRefusalTestCase {
+            description: "a column whose name starts with the function's does not count as a call",
+            sql: "SELECT DIV0(next_ticket(), 2) AS d, next_ticket_source FROM orders",
+            expected_mention: "more often than the statement does",
+        },
+        PythonRefusalTestCase {
+            description: "a vectorized handler is refused until recorded",
+            sql: "SELECT batch_label(sku) AS b FROM orders",
+            expected_mention: "vectorized",
+        },
+    ];
+    for test_case in test_cases {
+        let report = python_report(test_case.sql, &["--python-runtime"]);
+        assert!(
+            report["refusals"]
+                .to_string()
+                .contains(test_case.expected_mention),
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_a_python_result_no_recording_shows_when_running_then_the_runtime_raises_the_crossing() {
+    let test_cases = [
+        CrossingTestCase {
+            description: "a datetime with a time zone inside a VARIANT",
+            sql: "SELECT TO_JSON(sku_parts('ab')) AS parts",
+            handler: (
+                "SKU_PARTS",
+                "import datetime\ndef handle(sku):\n    \
+                return {'at': datetime.datetime(2024, 1, 2, tzinfo=datetime.timezone.utc)}\n",
+            ),
+            expected_mention: "python_value_crossing: a Python datetime with a time zone",
+        },
+        CrossingTestCase {
+            description: "a naive datetime without a fraction of a second inside a VARIANT",
+            sql: "SELECT TO_JSON(sku_parts('ab')) AS parts",
+            handler: (
+                "SKU_PARTS",
+                "import datetime\ndef handle(sku):\n    \
+                return {'at': datetime.datetime(2024, 1, 2, 3, 4, 5)}\n",
+            ),
+            expected_mention: "python_value_crossing: a Python datetime without a fraction",
+        },
+        CrossingTestCase {
+            description: "a Decimal in exponent form inside a VARIANT",
+            sql: "SELECT TO_JSON(sku_parts('ab')) AS parts",
+            handler: (
+                "SKU_PARTS",
+                "import decimal\ndef handle(sku):\n    \
+                return {'qty': decimal.Decimal('1E+2')}\n",
+            ),
+            expected_mention: "python_value_crossing: a Python Decimal in exponent form",
+        },
+        CrossingTestCase {
+            description: "an int beyond 2^53 returned as FLOAT",
+            sql: "SELECT unit_weight('ab') AS w",
+            handler: ("UNIT_WEIGHT", "def handle(sku):\n    return 2**53 + 1\n"),
+            expected_mention: "python_value_crossing: a Python int",
+        },
+        CrossingTestCase {
+            description: "a Decimal in exponent form returned as NUMBER",
+            sql: "SELECT unit_count('ab') AS n",
+            handler: (
+                "UNIT_COUNT",
+                "import decimal\ndef handle(sku):\n    \
+                return decimal.Decimal('1E+2')\n",
+            ),
+            expected_mention: "python_value_crossing: a Python Decimal",
+        },
+    ];
+    for test_case in test_cases {
+        let report = python_report(test_case.sql, &["--python-runtime"]);
+        let error = python_outcome(&report, &[test_case.handler])
+            .err()
+            .unwrap_or_default();
+        assert!(
+            error.contains(test_case.expected_mention),
+            "{}: {error}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_a_user_override_when_converting_then_its_macro_stands_in_for_the_function_it_replaces() {
+    let definition = "FUNCTION (\n  arguments (s VARCHAR),\n  returns VARCHAR,\n  \
+                      replaces REVERSE,\n  dialect duckdb,\n);\nupper(reverse(s))\n";
+    let sql = "SELECT REVERSE(sku) AS r FROM orders ORDER BY order_id LIMIT 1";
+    let body_sha256: String = Sha256::digest(b"upper(reverse(s))")
+        .iter()
+        .map(|byte| format!("{byte:02x}"))
+        .collect();
+    let test_cases = [
+        OverrideTestCase {
+            description: "the default mode calls the override, relying on its assumption",
+            strict: false,
+            verified_sha256: None,
+            expected_value: Some("1-BA"),
+            expected_refusal: None,
+        },
+        OverrideTestCase {
+            description: "strict mode refuses an override no recorded case verifies",
+            strict: true,
+            verified_sha256: None,
+            expected_value: None,
+            expected_refusal: Some("until recorded cases verify that body"),
+        },
+        OverrideTestCase {
+            description: "strict mode refuses an override verified for another body",
+            strict: true,
+            verified_sha256: Some(OTHER_BODY_SHA256),
+            expected_value: None,
+            expected_refusal: Some("until recorded cases verify that body"),
+        },
+        OverrideTestCase {
+            description: "strict mode allows an override verified for the body as loaded",
+            strict: true,
+            verified_sha256: Some(""),
+            expected_value: Some("1-BA"),
+            expected_refusal: None,
+        },
+    ];
+    for test_case in test_cases {
+        let verified = test_case.verified_sha256.map(|sha256| {
+            format!(
+                "reversed_text={}",
+                Some(sha256)
+                    .filter(|given| !given.is_empty())
+                    .unwrap_or(&body_sha256)
+            )
+        });
+        let flags: Vec<&str> = test_case
+            .strict
+            .then_some("--strict")
+            .into_iter()
+            .chain(
+                verified
+                    .iter()
+                    .flat_map(|named| ["--verified-override", named.as_str()]),
+            )
+            .collect();
+        let (report, value) = override_outcome(sql, definition, &flags);
+        assert_eq!(
+            value.as_deref(),
+            test_case.expected_value,
+            "{}",
+            test_case.description
+        );
+        assert_eq!(
+            test_case
+                .expected_refusal
+                .map(|mention| report["refusals"].to_string().contains(mention)),
+            test_case.expected_refusal.map(|_| true),
+            "{}",
+            test_case.description
+        );
+        assert_eq!(
+            (
+                report["assumptions"]
+                    .to_string()
+                    .contains("user_override:REVERSED_TEXT"),
+                report["overrides"][0]["sha256"].as_str(),
+                report["overrides"][0]["replaces"].as_str(),
+            ),
+            (
+                test_case.expected_value.is_some(),
+                Some(body_sha256.as_str()),
+                Some("REVERSE")
+            ),
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_an_override_whose_body_is_not_one_expression_when_converting_then_loading_fails() {
+    let header = "FUNCTION (\n  arguments (s VARCHAR),\n  returns VARCHAR,\n  replaces REVERSE,\n  \
+                  dialect duckdb,\n);\n";
+    let test_cases = [
+        OverrideFailureTestCase {
+            description: "a body closing the macro and running SET and CREATE MACRO statements",
+            body: "s); SET TimeZone = 'Asia/Tokyo'; CREATE OR REPLACE MACRO hacked(a) AS (a",
+            expected_mention: "its body is not one DuckDB expression",
+        },
+        OverrideFailureTestCase {
+            description: "a body adding a FROM and WHERE beyond its parentheses",
+            body: "s) FROM orders WHERE (1",
+            expected_mention: "reaches past its parentheses",
+        },
+    ];
+    for test_case in test_cases {
+        let (exit_code, stderr) = override_failure(
+            "SELECT REVERSE('ab') AS r",
+            &format!("{header}{}\n", test_case.body),
+        );
+        assert_eq!(
+            (exit_code, stderr.contains(test_case.expected_mention)),
+            (Some(2), true),
+            "{}: {stderr}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_an_override_of_a_name_the_rules_type_when_converting_then_it_is_honoured_or_refused() {
+    let test_cases = [
+        DedicatedOverrideTestCase {
+            description: "UPPER, which a built-in rule types, calls the override instead",
+            replaces: "UPPER",
+            body: "lower(s)",
+            sql: "SELECT UPPER(sku) AS r FROM orders ORDER BY order_id LIMIT 1",
+            expected_value: Some("ab-1"),
+            expected_failure: None,
+        },
+        DedicatedOverrideTestCase {
+            description: "COALESCE, which a built-in rule types, calls the override instead",
+            replaces: "COALESCE",
+            body: "'override'",
+            sql: "SELECT COALESCE(sku) AS r FROM orders ORDER BY order_id LIMIT 1",
+            expected_value: Some("override"),
+            expected_failure: None,
+        },
+        DedicatedOverrideTestCase {
+            description: "an aggregate cannot be overridden and fails at load",
+            replaces: "MEDIAN",
+            body: "s",
+            sql: "SELECT MEDIAN(order_id) AS r FROM orders",
+            expected_value: None,
+            expected_failure: Some("an aggregate or window function"),
+        },
+    ];
+    for test_case in test_cases {
+        let definition = format!(
+            "FUNCTION (\n  arguments (s VARCHAR),\n  returns VARCHAR,\n  replaces {},\n  \
+             dialect duckdb,\n);\n{}\n",
+            test_case.replaces, test_case.body
+        );
+        let (exit_code, stderr) = override_failure(test_case.sql, &definition);
+        let value = test_case
+            .expected_value
+            .and_then(|_| override_outcome(test_case.sql, &definition, &[]).1);
+        assert_eq!(
+            (
+                value.as_deref(),
+                test_case
+                    .expected_failure
+                    .map(|mention| stderr.contains(mention)),
+                exit_code == Some(2),
+            ),
+            (
+                test_case.expected_value,
+                test_case.expected_failure.map(|_| true),
+                test_case.expected_failure.is_some(),
+            ),
+            "{}: {stderr}",
             test_case.description
         );
     }

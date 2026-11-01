@@ -226,6 +226,15 @@ fn convert_kind(node: &Value, site: Site<'_>) -> Result<Emitted, Refusal> {
                 "no rule handles RLIKE with flags".to_owned(),
             )),
         },
+        CALL_KIND
+            if site
+                .context
+                .options
+                .overrides
+                .contains_key(&call_name(payload).to_ascii_uppercase()) =>
+        {
+            convert_function(payload, site)
+        }
         "function" | "aggregate_function" => match as_typed(node) {
             Some((typed, spelling)) => {
                 if let Some(pair) = spelling.pair {

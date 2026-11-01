@@ -11,9 +11,10 @@ use sqlquack_policy::policy::constants::POLICY_FILE_NAME;
 use sqlquack_policy::policy::main::load_policy::load_policy;
 use sqlquack_rules::catalogue::main::builtin_catalogue::builtin_catalogue;
 use sqlquack_rules::catalogue::models::{NotExpressibleDeclaration, RuleCatalogue};
+use sqlquack_rules::conversion::constants::PROJECT_UDF;
 use sqlquack_rules::conversion::models::{ConversionBudget, ConversionOptions, Converted};
 use sqlquack_semantics::types::models::{
-    ColumnSpec, FunctionLanguage, FunctionReturns, FunctionSpec, Schema,
+    ColumnSpec, FunctionLanguage, FunctionReturns, FunctionSpec, FunctionTraits, Schema,
 };
 use sqlquack_snowflake::typing::models::SnowflakeType;
 
@@ -21,6 +22,7 @@ use crate::analysis::main::analyze::analyze;
 use crate::analysis::main::analyze_function::analyze_function;
 use crate::analysis::main::check_equivalence_cases::check_equivalence_cases;
 use crate::analysis::main::collect_all_refusals::collect_all_refusals;
+use crate::analysis::main::confirm_assumption::confirm_assumption;
 use crate::analysis::main::confirm_utc_session::confirm_utc_session;
 use crate::analysis::main::conversion_options::conversion_options;
 use crate::analysis::main::refused_construct::refused_construct;
@@ -40,6 +42,7 @@ fn shop_schema() -> Schema {
         language,
         arguments,
         returns,
+        traits: FunctionTraits::default(),
     };
     schema.functions.insert(
         "IS_GIFT".to_owned(),
@@ -248,6 +251,17 @@ pub(crate) fn divergence_outcome(sql: &str, strict: bool) -> DivergenceModeOutco
     session_outcome(sql, (strict, false))
 }
 
+/// The outcome of `sql` in strict or default mode, with or without a confirmed Python runtime.
+pub(crate) fn python_outcome(sql: &str, (strict, runtime): (bool, bool)) -> DivergenceModeOutcome {
+    let policy =
+        load_policy(&repository_root().join(POLICY_FILE_NAME)).expect("repository policy loads");
+    let options = std::iter::repeat_n(&policy, usize::from(runtime))
+        .fold(conversion_options(&policy, strict), |options, policy| {
+            confirm_assumption(options, policy, PROJECT_UDF)
+        });
+    outcome(sql, &options)
+}
+
 /// The outcome of `sql` in strict or default mode, with or without a confirmed UTC session.
 pub(crate) fn session_outcome(
     sql: &str,
@@ -257,11 +271,15 @@ pub(crate) fn session_outcome(
         load_policy(&repository_root().join(POLICY_FILE_NAME)).expect("repository policy loads");
     let options = std::iter::repeat_n(&policy, usize::from(utc_session))
         .fold(conversion_options(&policy, strict), confirm_utc_session);
+    outcome(sql, &options)
+}
+
+fn outcome(sql: &str, options: &ConversionOptions) -> DivergenceModeOutcome {
     let analysis = analyze(
         sql,
         SourceDialect::Snowflake,
         &builtin_catalogue(),
-        (&shop_schema(), &options),
+        (&shop_schema(), options),
     );
     let provenance = merge_provenance(
         analysis
@@ -302,6 +320,7 @@ pub(crate) fn case_rules(reference: &str) -> Vec<String> {
         .expect("the case exists");
     let converter = PipelineConverter {
         options: conversion_options(&policy, false),
+        python: None,
     };
     let Conversion::Converted { provenance, .. } = converter.convert(case) else {
         panic!("{reference} converts");
@@ -430,6 +449,7 @@ pub(crate) fn function_refusal_places(body: &str) -> Vec<(RefusalCategory, &str,
         language: FunctionLanguage::Sql,
         arguments: vec![ColumnSpec::new("AMOUNT", amount)],
         returns: FunctionReturns::Scalar(amount),
+        traits: FunctionTraits::default(),
     };
     let refusals = analyze_function(
         (body, &spec),

@@ -16,6 +16,7 @@ from sqlquack_record.recording.constants import (
     NANOSECOND_TYPE_NAMES,
     NANOSECOND_UNIT,
     QUERY_ID_PATTERN,
+    RECORDABLE_FUNCTION_ERRORS,
     RECORDABLE_SQLSTATE_CLASSES,
     SESSION_DEPENDENT_SQLSTATES,
     SESSION_FAILURE_SQLSTATE_CLASSES,
@@ -55,6 +56,8 @@ def require_recordable(error: ProgrammingError) -> None:
     """Raise unless `error` is a SQL error that belongs to the case rather than the session."""
     sqlstate: str = str(error.sqlstate or "")
     if sqlstate[:2] in RECORDABLE_SQLSTATE_CLASSES and sqlstate not in SESSION_DEPENDENT_SQLSTATES:
+        return
+    if (error.errno, sqlstate) in RECORDABLE_FUNCTION_ERRORS:
         return
     message: str = (
         f"Snowflake error {error.errno} (SQLSTATE {sqlstate or 'unknown'}) is not a case "

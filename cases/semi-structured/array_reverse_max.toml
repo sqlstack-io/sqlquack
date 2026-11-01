@@ -1,0 +1,69 @@
+# ARRAY_REVERSE, ARRAY_MAX and ARRAY_MIN, which SQLQuack has no rule for: evidence for a built-in
+# rule or a user override of them.
+category = "semi-structured-array"
+construct = "fn:ARRAY_REVERSE"
+session_profile = "utc-v1"
+
+[[case]]
+id = "array_reverse_shapes"
+description = "ARRAY_REVERSE of numbers, text, mixed values with JSON nulls and nested arrays, an empty array and NULL."
+columns = [{ name = "k", type = "NUMBER(2,0)" }]
+rows = [["1"], ["2"], ["3"], ["4"], ["5"]]
+query = "SELECT TO_JSON(ARRAY_REVERSE(CASE k WHEN 1 THEN ARRAY_CONSTRUCT(1, 2, 2, 3) WHEN 2 THEN ARRAY_CONSTRUCT('a', 'b') WHEN 3 THEN ARRAY_CONSTRUCT(1, PARSE_JSON('null'), ARRAY_CONSTRUCT(2, 3), 'x') WHEN 4 THEN ARRAY_CONSTRUCT() END)) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "duplicates", "empty"]
+
+[[case]]
+id = "array_max_min_shapes"
+description = "ARRAY_MAX and ARRAY_MIN of numbers, text, mixed numbers and text, JSON nulls, an empty array and NULL."
+columns = [{ name = "k", type = "NUMBER(2,0)" }]
+rows = [["1"], ["2"], ["3"], ["4"], ["5"], ["6"]]
+query = "WITH a AS (SELECT ordinal, CASE k WHEN 1 THEN ARRAY_CONSTRUCT(3, 10, 2.5, -1) WHEN 2 THEN ARRAY_CONSTRUCT('b', 'a', 'B') WHEN 3 THEN ARRAY_CONSTRUCT(PARSE_JSON('null'), 4, PARSE_JSON('null')) WHEN 4 THEN ARRAY_CONSTRUCT() WHEN 6 THEN ARRAY_CONSTRUCT(PARSE_JSON('null')) END AS v FROM input) SELECT TO_JSON(ARRAY_MAX(v)) AS mx, TO_JSON(ARRAY_MIN(v)) AS mn, TYPEOF(ARRAY_MAX(v)) AS t FROM a ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "duplicates", "empty"]
+
+[[case]]
+id = "array_max_mixed_types"
+description = "ARRAY_MAX of numbers mixed with text."
+columns = [{ name = "k", type = "NUMBER(2,0)" }]
+rows = [["1"]]
+query = "SELECT TO_JSON(ARRAY_MAX(ARRAY_CONSTRUCT(1, 'a', 2))) AS mx FROM input"
+order = "ordered"
+tags = ["invalid"]
+
+[[case]]
+id = "array_reverse_not_an_array"
+description = "ARRAY_REVERSE of a VARIANT holding an object."
+columns = [{ name = "k", type = "NUMBER(2,0)" }]
+rows = [["1"]]
+query = "SELECT TO_JSON(ARRAY_REVERSE(PARSE_JSON('{\"a\":1}'))) AS r FROM input"
+order = "ordered"
+tags = ["invalid"]
+
+[[case]]
+id = "array_reverse_scalar_variants"
+description = "ARRAY_REVERSE of VARIANTs that are not arrays: a number, text, a boolean and JSON null, each alone."
+columns = [{ name = "doc", type = "VARCHAR" }]
+rows = [["'5'"], ["'\"x\"'"], ["'true'"], ["'null'"], ["'[]'"]]
+query = "SELECT TO_JSON(ARRAY_REVERSE(PARSE_JSON(doc))) AS r, ARRAY_REVERSE(PARSE_JSON(doc)) IS NULL AS sql_null FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "invalid"]
+
+[[case]]
+id = "array_max_min_containers"
+description = "ARRAY_MAX and ARRAY_MIN of booleans, objects, arrays and decimals with integers mixed in."
+columns = [{ name = "doc", type = "VARCHAR" }]
+rows = [["'[true, false]'"], ["'[{\"b\":1}, {\"a\":2}]'"], ["'[[2], [1, 9]]'"], ["'[1, 1.0, 0.99999999999999999999, 2]'"], ["'[true, 1, \"a\", {}, [], null]'"], ["'[-0.5, -1, 12345678901234567890]'"]]
+query = "SELECT TO_JSON(ARRAY_MAX(PARSE_JSON(doc))) AS mx, TO_JSON(ARRAY_MIN(PARSE_JSON(doc))) AS mn FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["duplicates"]
+expected_divergence = "json_fidelity"
+
+[[case]]
+id = "array_max_not_an_array"
+description = "ARRAY_MAX of a VARIANT holding a number."
+columns = [{ name = "doc", type = "VARCHAR" }]
+rows = [["'5'"]]
+query = "SELECT TO_JSON(ARRAY_MAX(PARSE_JSON(doc))) AS mx FROM input"
+order = "ordered"
+tags = ["invalid"]

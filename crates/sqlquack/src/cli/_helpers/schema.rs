@@ -6,7 +6,8 @@ use std::path::Path;
 use serde::Deserialize;
 use sqlquack_core::provenance::models::ProvenanceLog;
 use sqlquack_semantics::types::models::{
-    ColumnSpec, FunctionLanguage, FunctionReturns, FunctionSpec, Schema,
+    ColumnSpec, FunctionLanguage, FunctionReturns, FunctionSpec, FunctionTraits, NullInput, Schema,
+    Volatility,
 };
 use sqlquack_snowflake::typing::main::cast_target::cast_target;
 use sqlquack_snowflake::typing::models::SnowflakeType;
@@ -61,6 +62,12 @@ struct RawFunction {
     #[serde(default)]
     arguments: RawColumns,
     returns: RawReturns,
+    #[serde(default)]
+    volatility: Volatility,
+    #[serde(default)]
+    null_input: NullInput,
+    #[serde(default)]
+    vectorized: bool,
 }
 
 #[derive(Clone, Copy, Deserialize)]
@@ -126,6 +133,11 @@ fn typed_function(
         },
         arguments,
         returns,
+        traits: FunctionTraits {
+            volatility: function.volatility,
+            null_input: function.null_input,
+            vectorized: function.vectorized,
+        },
     }))
 }
 

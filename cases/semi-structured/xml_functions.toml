@@ -1,0 +1,88 @@
+# PARSE_XML, XMLGET and CHECK_XML over synthetic documents: the VARIANT shape Snowflake builds from
+# XML ($ and @ keys, attributes, text nodes and children), as TO_JSON and TYPEOF show it.
+category = "semi-structured-output"
+construct = "fn:PARSE_XML"
+session_profile = "utc-v1"
+
+[[case]]
+id = "parse_xml_shapes"
+description = "TO_JSON of PARSE_XML: text and numeric content, attributes, nested and repeated children, mixed content, empty and self-closing elements, CDATA, entities and whitespace."
+columns = [{ name = "doc", type = "VARCHAR" }]
+rows = [
+  ["'<order>plain</order>'"],
+  ["'<qty>12</qty>'"],
+  ["'<price>-3.50</price>'"],
+  ["'<order id=\"7\" state=\"open\">x</order>'"],
+  ["'<order><line>a</line><line>b</line><note>n</note></order>'"],
+  ["'<order>text<line>a</line>tail</order>'"],
+  ["'<order></order>'"],
+  ["'<order/>'"],
+  ["'<order><![CDATA[<b>&</b>]]></order>'"],
+  ["'<order>a &amp; b &lt; c</order>'"],
+  ["'<order>  padded  </order>'"],
+  ["'<order>\n  <line>a</line>\n</order>'"],
+  ["'<o:order xmlns:o=\"urn:x\"><o:line>a</o:line></o:order>'"],
+  ["'<order><qty>01</qty><flag>true</flag></order>'"],
+  ["NULL"],
+]
+query = "SELECT TO_JSON(PARSE_XML(doc)) AS j, TYPEOF(PARSE_XML(doc)) AS t FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "nested"]
+
+[[case]]
+id = "parse_xml_auto_convert_off"
+description = "PARSE_XML with auto-conversion disabled keeps numeric-looking content as text."
+columns = [{ name = "doc", type = "VARCHAR" }]
+rows = [["'<qty>12</qty>'"], ["'<order><qty>01</qty><price>2.50</price></order>'"], ["'<flag>true</flag>'"]]
+query = "SELECT TO_JSON(PARSE_XML(doc, TRUE)) AS j FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["nested"]
+
+[[case]]
+id = "xml_paths"
+description = "XMLGET by tag and instance, GET of $ and of @ attributes, and missing children."
+columns = [{ name = "doc", type = "VARCHAR" }]
+rows = [
+  ["'<order id=\"7\"><line n=\"1\">a</line><line n=\"2\">b</line><note/></order>'"],
+  ["'<order><note>only</note></order>'"],
+  ["NULL"],
+]
+query = "SELECT TO_JSON(XMLGET(PARSE_XML(doc), 'line')) AS first_line, TO_JSON(XMLGET(PARSE_XML(doc), 'line', 1)) AS second_line, XMLGET(PARSE_XML(doc), 'line', 5) IS NULL AS no_sixth, GET(XMLGET(PARSE_XML(doc), 'line'), '$')::VARCHAR AS line_text, GET(XMLGET(PARSE_XML(doc), 'line'), '@n')::VARCHAR AS line_n, GET(PARSE_XML(doc), '@id') AS order_id, GET(PARSE_XML(doc), '@') AS tag, TO_JSON(XMLGET(PARSE_XML(doc), 'note')) AS note, XMLGET(PARSE_XML(doc), 'missing') IS NULL AS no_missing FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "nested", "json-null"]
+
+[[case]]
+id = "check_xml_documents"
+description = "CHECK_XML of well-formed, malformed, empty and NULL text."
+columns = [{ name = "doc", type = "VARCHAR" }]
+rows = [["'<order>x</order>'"], ["'<order>x</line>'"], ["'<order>'"], ["'plain text'"], ["''"], ["NULL"], ["'<a/><b/>'"]]
+query = "SELECT CHECK_XML(doc) IS NULL AS well_formed FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]
+
+[[case]]
+id = "parse_xml_malformed"
+description = "PARSE_XML of a malformed document raises."
+columns = [{ name = "doc", type = "VARCHAR" }]
+rows = [["'<order>x</line>'"]]
+query = "SELECT TO_JSON(PARSE_XML(doc)) AS j FROM input"
+order = "ordered"
+tags = ["null"]
+
+[[case]]
+id = "xml_to_varchar"
+description = "A parsed XML VARIANT cast to VARCHAR and compared."
+columns = [{ name = "doc", type = "VARCHAR" }]
+rows = [["'<order id=\"7\"><line>a</line></order>'"], ["'<qty>12</qty>'"]]
+query = "SELECT PARSE_XML(doc)::VARCHAR AS text, PARSE_XML(doc) = PARSE_XML(doc) AS same FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["nested"]
+
+[[case]]
+id = "xml_values_read_back"
+description = "Types and text of what paths and FLATTEN read from parsed XML: attributes, content, child elements and an element cast to VARCHAR."
+columns = [{ name = "doc", type = "VARCHAR" }]
+rows = [["'<order id=\"7\" note=\"a b\"><line n=\"1\">a</line><line n=\"2\">5</line></order>'"]]
+query = "SELECT f.index AS i, TYPEOF(f.value) AS t, f.value::VARCHAR AS text, TO_JSON(f.value) AS j, TYPEOF(GET(f.value, '@n')) AS tn, TYPEOF(GET(f.value, '$')) AS tc, TYPEOF(GET(PARSE_XML(input.doc), '@id')) AS tid, GET(PARSE_XML(input.doc), '@note')::VARCHAR AS note, IS_OBJECT(f.value) AS is_object FROM input, LATERAL FLATTEN(INPUT => GET(PARSE_XML(input.doc), '$')) f ORDER BY f.index"
+order = "ordered"
+tags = ["nested"]

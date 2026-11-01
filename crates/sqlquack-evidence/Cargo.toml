@@ -18,11 +18,10 @@ sha2.workspace = true
 sqlquack-compare.workspace = true
 sqlquack-core.workspace = true
 sqlquack-policy.workspace = true
+tempfile.workspace = true
 toml.workspace = true
 walkdir.workspace = true
 
-[dev-dependencies]
-tempfile.workspace = true
 
 [lints]
 workspace = true

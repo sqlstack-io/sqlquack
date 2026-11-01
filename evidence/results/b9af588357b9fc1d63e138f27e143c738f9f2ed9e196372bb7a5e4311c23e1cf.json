@@ -1,0 +1,61 @@
+{
+  "arrow_sha256": "8552c8c99d29facd1864dc14589eb4e8cd1b5f54b55f90f28dd8ce50059b4ddd",
+  "case_hash": "b9af588357b9fc1d63e138f27e143c738f9f2ed9e196372bb7a5e4311c23e1cf",
+  "columns": [
+    {
+      "internal_size": 134217728,
+      "name": "VALUE",
+      "nullable": true,
+      "precision": null,
+      "scale": null,
+      "type_code": 2,
+      "type_name": "TEXT"
+    }
+  ],
+  "connector": "snowflake-connector-python 4.7.2",
+  "duckdb_version": "v2.0.0",
+  "effective_parameters": {
+    "BINARY_INPUT_FORMAT": "HEX",
+    "BINARY_OUTPUT_FORMAT": "HEX",
+    "DATE_INPUT_FORMAT": "AUTO",
+    "DATE_OUTPUT_FORMAT": "YYYY-MM-DD",
+    "DEFAULT_NULL_ORDERING": "LAST",
+    "GEOGRAPHY_OUTPUT_FORMAT": "GeoJSON",
+    "GEOMETRY_OUTPUT_FORMAT": "GeoJSON",
+    "JSON_INDENT": "2",
+    "QUOTED_IDENTIFIERS_IGNORE_CASE": "false",
+    "STRICT_JSON_OUTPUT": "false",
+    "TIMESTAMP_DAY_IS_ALWAYS_24H": "false",
+    "TIMESTAMP_INPUT_FORMAT": "AUTO",
+    "TIMESTAMP_LTZ_OUTPUT_FORMAT": "",
+    "TIMESTAMP_NTZ_OUTPUT_FORMAT": "YYYY-MM-DD HH24:MI:SS.FF3",
+    "TIMESTAMP_OUTPUT_FORMAT": "YYYY-MM-DD HH24:MI:SS.FF3 TZHTZM",
+    "TIMESTAMP_TYPE_MAPPING": "TIMESTAMP_NTZ",
+    "TIMESTAMP_TZ_OUTPUT_FORMAT": "",
+    "TIMEZONE": "UTC",
+    "TIME_INPUT_FORMAT": "AUTO",
+    "TIME_OUTPUT_FORMAT": "HH24:MI:SS",
+    "TWO_DIGIT_CENTURY_START": "1970",
+    "USE_CACHED_RESULT": "false",
+    "WEEK_OF_YEAR_POLICY": "0",
+    "WEEK_START": "0"
+  },
+  "error": null,
+  "format": 1,
+  "outcome": "rows",
+  "parameters_sha256": "36e4297fedc2296f596b9fbafdfd61e58e7e620ee0c228e16a4fa88a18dcc10f",
+  "query_id_sha256": "6ea6d560e95e5d4a4b2eba6718d3b72749498a68094c5dd407ff76cf1ae1b2c3",
+  "recorded_at": "2026-11-01T07:11:00Z",
+  "recorder": "sqlquack-record 0.1.0",
+  "row_count": 15,
+  "session_parameters": {
+    "DEFAULT_NULL_ORDERING": "LAST",
+    "QUOTED_IDENTIFIERS_IGNORE_CASE": false,
+    "TIMESTAMP_TYPE_MAPPING": "TIMESTAMP_NTZ",
+    "TIMEZONE": "UTC",
+    "USE_CACHED_RESULT": false,
+    "WEEK_OF_YEAR_POLICY": 0,
+    "WEEK_START": 0
+  },
+  "warehouse_version": "10.39.101"
+}

@@ -94,13 +94,14 @@ fn judge_stored(
             None,
         );
     }
-    let (duckdb_sql, setup, provenance, raises) = match converter.convert(case) {
+    let (duckdb_sql, setup, provenance, raises, python) = match converter.convert(case) {
         Conversion::Converted {
             sql,
             setup,
             provenance,
             raises,
-        } => (sql, setup, provenance, raises),
+            python,
+        } => (sql, setup, provenance, raises, python),
         Conversion::Refused {
             reasons,
             constructs,
@@ -122,7 +123,7 @@ fn judge_stored(
             .map_or_else(String::new, |profile| profile.duckdb_time_zone.clone()),
         null_order: policy.comparator.null_order.duckdb_setting().to_owned(),
     };
-    let replayed = replay_on_duckdb((&setup, &duckdb_sql), &settings);
+    let replayed = replay_on_duckdb((&setup, &duckdb_sql), python.as_deref(), &settings);
     let duckdb_error = replayed.as_ref().err().cloned();
     let verdict = match &case.expected_divergence {
         Some(divergence) => divergence_verdict(

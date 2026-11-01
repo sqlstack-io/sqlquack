@@ -2,14 +2,16 @@
 
 use sqlquack_core::parsing::models::SourceDialect;
 use sqlquack_core::provenance::models::ProvenanceLog;
-use sqlquack_evidence::cases::models::{CaseFunction, InputColumn};
+use sqlquack_evidence::cases::models::{CaseFunction, FunctionBodyLanguage, InputColumn};
+use sqlquack_evidence::replay::models::PythonFunction;
 use sqlquack_rules::catalogue::main::builtin_catalogue::builtin_catalogue;
 use sqlquack_rules::conversion::models::ConversionOptions;
 use sqlquack_semantics::types::models::{
-    ColumnSpec, FunctionLanguage, FunctionReturns, FunctionSpec, Schema,
+    ColumnSpec, FunctionLanguage, FunctionReturns, FunctionSpec, FunctionTraits, Schema,
 };
 use sqlquack_snowflake::typing::main::cast_target::cast_target;
 
+use crate::analysis::_helpers::python_signature::python_signature;
 use crate::analysis::main::analyze_function::analyze_function;
 use crate::analysis::models::CaseFunctions;
 
@@ -30,10 +32,17 @@ pub(crate) fn case_functions(
         provenance: Vec::with_capacity(functions.len()),
         setup: Vec::with_capacity(functions.len()),
         schema: Schema::default(),
+        python: Vec::new(),
     };
     for function in functions {
         let name = function.name.to_ascii_uppercase();
         let spec = &schema.functions[&name];
+        if function.language == FunctionBodyLanguage::Python {
+            converted
+                .python
+                .push(python_function((&name, function), spec).map_err(|reason| vec![reason])?);
+            continue;
+        }
         let body = analyze_function(
             (&function.body, spec),
             SourceDialect::Snowflake,
@@ -73,9 +82,13 @@ fn typed(function: &CaseFunction, log: &ProvenanceLog) -> Result<FunctionSpec, S
         (None, None) => return Err(format!("function {} returns nothing", function.name)),
     };
     Ok(FunctionSpec {
-        language: FunctionLanguage::Sql,
+        language: match function.language {
+            FunctionBodyLanguage::Sql => FunctionLanguage::Sql,
+            FunctionBodyLanguage::Python => FunctionLanguage::Python,
+        },
         arguments: typed_columns(function, &function.arguments, log)?,
         returns,
+        traits: FunctionTraits::default(),
     })
 }
 
@@ -95,4 +108,22 @@ fn typed_columns(
             ))
         })
         .collect()
+}
+
+/// A Python function as the replay registers it, with its handler and source.
+fn python_function(
+    (name, function): (&str, &CaseFunction),
+    spec: &FunctionSpec,
+) -> Result<PythonFunction, String> {
+    let signature = python_signature(name, spec)?;
+    Ok(PythonFunction {
+        name: signature.name,
+        abi: signature.abi,
+        arguments: signature.arguments,
+        returns: signature.returns,
+        volatility: signature.volatility,
+        null_input: signature.null_input,
+        handler: function.handler.clone().unwrap_or_default(),
+        source: function.body.clone(),
+    })
 }

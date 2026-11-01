@@ -76,11 +76,13 @@ VERIFY_FLAGS ?= --require-verified --strict-errors
 # REQUIRE_COVERAGE=1 fails on any gap; it stays 0 until the generated hazard cases are recorded.
 COVERAGE_REPORT ?= target/coverage-report.json
 REQUIRE_COVERAGE ?= 0
+# The interpreter that replays cases calling Python functions; it needs the dev group's duckdb.
+VERIFY_PYTHON ?= $(CURDIR)/.venv/bin/python
 COVERAGE_FLAGS := --coverage-json $(COVERAGE_REPORT) $(if $(filter 1,$(REQUIRE_COVERAGE)),--require-coverage,)
 
 verify-recorded:
 	mkdir -p $(dir $(COVERAGE_REPORT))
-	cargo run --release --locked -p sqlquack -- verify $(VERIFY_FLAGS) $(COVERAGE_FLAGS)
+	cargo run --release --locked -p sqlquack -- verify $(VERIFY_FLAGS) $(COVERAGE_FLAGS) --python $(VERIFY_PYTHON)
 
 # The exact parser check over each compiled DuckShop project in DUCKSHOP_COMPILED.
 polyglot-duckshop:

@@ -37,3 +37,11 @@ class ErrorMessageTestCase:
     sqlstate: str
     query_id: str | None
     expected_message: str | None
+
+
+@dataclass(frozen=True)
+class RecordableErrorTestCase:
+    description: str
+    errno: int
+    sqlstate: str
+    expected_recordable: bool

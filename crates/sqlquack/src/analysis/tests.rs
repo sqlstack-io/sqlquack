@@ -30,10 +30,14 @@ mod test_float_text;
 mod test_guarded_conditions;
 #[path = "tests/test_held_variants.rs"]
 mod test_held_variants;
+#[path = "tests/test_load_override.rs"]
+mod test_load_override;
 #[path = "tests/test_locations.rs"]
 mod test_locations;
 #[path = "tests/test_object_values.rs"]
 mod test_object_values;
+#[path = "tests/test_override_calls.rs"]
+mod test_override_calls;
 #[path = "tests/test_raises.rs"]
 mod test_raises;
 #[path = "tests/test_session_timezone.rs"]

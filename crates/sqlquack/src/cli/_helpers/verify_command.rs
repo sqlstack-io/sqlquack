@@ -18,11 +18,14 @@ use sqlquack_evidence::verify::models::{
     CaseVerdict, Conversion, ErrorCheck, Verdict, VerifyInputs, VerifyReport,
 };
 use sqlquack_evidence::verify::types::CaseConverter;
+use sqlquack_policy::policy::models::Policy;
 use sqlquack_rules::catalogue::constants::RULES;
+use sqlquack_rules::conversion::constants::PROJECT_UDF;
 
 use crate::analysis::main::builtin_claims::builtin_claims;
 use crate::analysis::main::builtin_failure_modes::builtin_failure_modes;
 use crate::analysis::main::check_equivalence_cases::check_equivalence_cases;
+use crate::analysis::main::confirm_assumption::confirm_assumption;
 use crate::analysis::main::conversion_options::conversion_options;
 use crate::analysis::models::PipelineConverter;
 use crate::cli::_helpers::evidence::{Evidence, load_evidence};
@@ -135,7 +138,11 @@ pub(crate) fn verify_command(
 }
 
 fn verify(arguments: &VerifyArguments) -> Result<(Evidence, VerifyReport), String> {
-    run_verification(&arguments.paths, Some(&arguments.audit_results))
+    run_verification(
+        &arguments.paths,
+        Some(&arguments.audit_results),
+        arguments.python.as_deref(),
+    )
 }
 
 /// The coverage report, or why it could not be made.
@@ -161,6 +168,7 @@ fn coverage(
 fn projected(evidence: &Evidence, report: &VerifyReport) -> (Vec<CaseVerdict>, Vec<String>) {
     let converter = PipelineConverter {
         options: conversion_options(&evidence.policy, false),
+        python: None,
     };
     let cases: BTreeMap<&str, &LoadedCase> = evidence
         .cases
@@ -285,6 +293,7 @@ fn render_coverage(coverage: &CoverageReport) -> String {
 pub(crate) fn run_verification(
     paths: &EvidencePaths,
     audit_results: Option<&Path>,
+    python: Option<&Path>,
 ) -> Result<(Evidence, VerifyReport), String> {
     let evidence = load_evidence(paths)?;
     let problems = check_equivalence_cases(&evidence.cases);
@@ -303,9 +312,7 @@ pub(crate) fn run_verification(
         cases: &evidence.cases,
         results: &paths.results,
         policy: &evidence.policy,
-        converter: &PipelineConverter {
-            options: conversion_options(&evidence.policy, false),
-        },
+        converter: &python_converter(&evidence.policy, python),
         claims: &claims,
         failure_modes: &failure_modes,
         audit_results,
@@ -426,4 +433,16 @@ fn render(report: &VerifyReport) -> String {
         ));
     }
     lines.join("\n") + "\n"
+}
+
+/// The converter of `policy`'s default mode, relying on `project_udf` when Python replays cases.
+pub(crate) fn python_converter(policy: &Policy, python: Option<&Path>) -> PipelineConverter {
+    let options = conversion_options(policy, false);
+    PipelineConverter {
+        options: match python {
+            Some(_) => confirm_assumption(options, policy, PROJECT_UDF),
+            None => options,
+        },
+        python: python.map(Path::to_path_buf),
+    }
 }

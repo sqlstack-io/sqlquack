@@ -1,0 +1,252 @@
+category = "project-function"
+construct = "fn:<udf>"
+session_profile = "utc-v1"
+
+[[case]]
+id = "python_variant_shapes"
+description = "VARIANTs a Python function returns as JSON text: objects with unsorted keys, nesting, arrays, tuples, text, booleans, integers, JSON null inside and None at the top, which is JSON null."
+columns = [{ name = "shape", type = "VARCHAR" }]
+rows = [["'object'"], ["'nested'"], ["'array'"], ["'tuple'"], ["'text'"], ["'boolean'"], ["'integer'"], ["'null_inside'"], ["'none'"], ["'empty_object'"], ["'empty_array'"], ["'escapes'"], ["'unicode_keys'"], ["'wide_integer'"], ["NULL"]]
+expression = "TO_JSON(shape_of(shape))"
+tags = ["null", "json-null", "nested"]
+
+[[case.function]]
+name = "shape_of"
+language = "python"
+handler = "shape"
+runtime_version = "3.12"
+arguments = [{ name = "shape", type = "VARCHAR" }]
+returns = "VARIANT"
+body = '''
+SHAPES = {
+    "object": {"zeta": 1, "alpha": "a", "Beta": True},
+    "nested": {"b": {"d": [1, {"f": "g"}], "c": None}, "a": []},
+    "array": [3, "x", False, None, [1, 2]],
+    "tuple": (1, "two"),
+    "text": "plain text",
+    "boolean": False,
+    "integer": -42,
+    "null_inside": {"a": None, "b": [None]},
+    "empty_object": {},
+    "empty_array": [],
+    "escapes": {"q": "say \"hi\"", "b": "back\\slash", "n": "line\nbreak", "t": "tab\t", "c": "\x01", "s": "a/b"},
+    "unicode_keys": {"é": 1, "z": 2, "Z": 3, "東": 4, "": 5},
+    "wide_integer": [10**38 - 1, -(10**38 - 1), 2**63, -(2**63) - 1],
+}
+
+def shape(name):
+    if name is None or name == "none":
+        return None
+    return SHAPES[name]
+'''
+
+[[case]]
+id = "python_variant_types"
+description = "TYPEOF of each VARIANT shape a Python function returns."
+columns = [{ name = "shape", type = "VARCHAR" }]
+rows = [["'object'"], ["'array'"], ["'tuple'"], ["'text'"], ["'boolean'"], ["'integer'"], ["'none'"], ["'json_null'"], ["'wide_integer'"]]
+expression = "TYPEOF(typed_shape(shape))"
+tags = ["null"]
+
+[[case.function]]
+name = "typed_shape"
+language = "python"
+handler = "shape"
+runtime_version = "3.12"
+arguments = [{ name = "shape", type = "VARCHAR" }]
+returns = "VARIANT"
+body = '''
+SHAPES = {
+    "object": {"a": 1},
+    "array": [1],
+    "tuple": (1,),
+    "text": "x",
+    "boolean": True,
+    "integer": 7,
+    "json_null": [None],
+    "wide_integer": 10**38 - 1,
+}
+
+def shape(name):
+    if name == "none":
+        return None
+    value = SHAPES[name]
+    return value[0] if name == "json_null" else value
+'''
+
+[[case]]
+id = "python_variant_read_back"
+description = "Paths, casts and FLATTEN over a VARIANT a Python function returns."
+columns = [{ name = "sku", type = "VARCHAR" }]
+rows = [["'ab'"], ["'cd'"], ["NULL"]]
+query = "SELECT input.sku, d.value::NUMBER(10,0) AS part, sku_parts(input.sku):name::VARCHAR AS name, sku_parts(input.sku):missing AS missing FROM input, LATERAL FLATTEN(INPUT => sku_parts(input.sku):parts, OUTER => TRUE) d ORDER BY input.ordinal, d.index"
+order = "ordered"
+tags = ["null", "numeric-coercion"]
+
+[[case.function]]
+name = "sku_parts"
+language = "python"
+handler = "parts"
+runtime_version = "3.12"
+arguments = [{ name = "sku", type = "VARCHAR" }]
+returns = "VARIANT"
+body = '''
+def parts(sku):
+    if sku is None:
+        return None
+    return {"parts": [ord(character) for character in sku], "name": sku.upper()}
+'''
+
+[[case]]
+id = "python_variant_float"
+description = "Python floats in a VARIANT: TO_JSON spellings, TYPEOF and reads as NUMBER(10,2) and FLOAT."
+columns = [{ name = "text", type = "VARCHAR" }]
+rows = [["'0.1'"], ["'1.0'"], ["'-0.0'"], ["'1e20'"], ["'1e-7'"], ["'123456789.125'"], ["'2.675'"], ["'1e16'"]]
+query = "SELECT TO_JSON(float_box(text)) AS j, TYPEOF(float_box(text):v) AS t, float_box(text):v::NUMBER(20,2) AS n, float_box(text):v::FLOAT AS f FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["boundary"]
+
+[[case.function]]
+name = "float_box"
+language = "python"
+handler = "box"
+runtime_version = "3.12"
+arguments = [{ name = "text", type = "VARCHAR" }]
+returns = "VARIANT"
+body = '''
+def box(text):
+    return {"v": float(text)}
+'''
+
+[[case]]
+id = "python_variant_decimal"
+description = "A Python Decimal in a VARIANT."
+columns = [{ name = "text", type = "VARCHAR" }]
+rows = [["'1.50'"], ["'-7'"]]
+query = "SELECT TO_JSON(decimal_box(text)) AS j, TYPEOF(decimal_box(text):v) AS t FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["boundary"]
+
+[[case.function]]
+name = "decimal_box"
+language = "python"
+handler = "box"
+runtime_version = "3.12"
+arguments = [{ name = "text", type = "VARCHAR" }]
+returns = "VARIANT"
+body = '''
+import decimal
+
+def box(text):
+    return {"v": decimal.Decimal(text)}
+'''
+
+[[case]]
+id = "python_variant_date"
+description = "A Python date and datetime in a VARIANT."
+columns = [{ name = "text", type = "VARCHAR" }]
+rows = [["'2024-02-29'"]]
+query = "SELECT TO_JSON(date_box(text)) AS j, TYPEOF(date_box(text):d) AS td, TYPEOF(date_box(text):t) AS tt FROM input"
+order = "ordered"
+tags = ["boundary"]
+expected_divergence = "variant_typed_values"
+
+[[case.function]]
+name = "date_box"
+language = "python"
+handler = "box"
+runtime_version = "3.12"
+arguments = [{ name = "text", type = "VARCHAR" }]
+returns = "VARIANT"
+body = '''
+import datetime
+
+def box(text):
+    day = datetime.date.fromisoformat(text)
+    return {"d": day, "t": datetime.datetime(day.year, day.month, day.day, 12, 30, 15, 250000)}
+'''
+
+[[case]]
+id = "python_variant_bytes"
+description = "Python bytes in a VARIANT."
+columns = [{ name = "text", type = "VARCHAR" }]
+rows = [["'ab'"]]
+query = "SELECT TO_JSON(bytes_box(text)) AS j, TYPEOF(bytes_box(text):b) AS t FROM input"
+order = "ordered"
+tags = ["boundary"]
+
+[[case.function]]
+name = "bytes_box"
+language = "python"
+handler = "box"
+runtime_version = "3.12"
+arguments = [{ name = "text", type = "VARCHAR" }]
+returns = "VARIANT"
+body = '''
+def box(text):
+    return {"b": text.encode("utf-8")}
+'''
+
+[[case]]
+id = "python_variant_integer_key"
+description = "A Python dict with an integer key in a VARIANT."
+columns = [{ name = "text", type = "VARCHAR" }]
+rows = [["'ab'"]]
+expression = "TO_JSON(keyed_box(text))"
+tags = ["invalid"]
+
+[[case.function]]
+name = "keyed_box"
+language = "python"
+handler = "box"
+runtime_version = "3.12"
+arguments = [{ name = "text", type = "VARCHAR" }]
+returns = "VARIANT"
+body = '''
+def box(text):
+    return {1: text}
+'''
+
+[[case]]
+id = "python_variant_too_wide_integer"
+description = "A Python int of 39 digits in a VARIANT."
+columns = [{ name = "text", type = "VARCHAR" }]
+rows = [["'ab'"]]
+query = "SELECT TO_JSON(wide_box(text)) AS j, TYPEOF(wide_box(text)) AS t FROM input"
+order = "ordered"
+tags = ["boundary"]
+expected_divergence = "json_fidelity"
+
+[[case.function]]
+name = "wide_box"
+language = "python"
+handler = "box"
+runtime_version = "3.12"
+arguments = [{ name = "text", type = "VARCHAR" }]
+returns = "VARIANT"
+body = '''
+def box(text):
+    return 10**38
+'''
+
+[[case]]
+id = "python_variant_nan"
+description = "A Python NaN float in a VARIANT."
+columns = [{ name = "text", type = "VARCHAR" }]
+rows = [["'ab'"]]
+query = "SELECT TO_JSON(nan_box(text)) AS j, TYPEOF(nan_box(text):v) AS t FROM input"
+order = "ordered"
+tags = ["boundary"]
+expected_divergence = "python_value_crossing"
+
+[[case.function]]
+name = "nan_box"
+language = "python"
+handler = "box"
+runtime_version = "3.12"
+arguments = [{ name = "text", type = "VARCHAR" }]
+returns = "VARIANT"
+body = '''
+def box(text):
+    return {"v": float("nan")}
+'''

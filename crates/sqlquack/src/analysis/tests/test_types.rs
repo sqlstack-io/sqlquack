@@ -27,6 +27,14 @@ pub(crate) struct DivergenceModeTestCase {
     pub(crate) expected_outcome: DivergenceModeOutcome,
 }
 
+pub(crate) struct PythonModeTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) sql: &'static str,
+    pub(crate) strict: bool,
+    pub(crate) runtime: bool,
+    pub(crate) expected_outcome: DivergenceModeOutcome,
+}
+
 #[derive(Debug, PartialEq, Eq)]
 pub(crate) struct DivergenceModeOutcome {
     pub(crate) converted: bool,
@@ -167,4 +175,18 @@ pub(crate) struct SessionTimeZoneTestCase {
     pub(crate) strict: bool,
     pub(crate) utc_session: bool,
     pub(crate) expected_outcome: DivergenceModeOutcome,
+}
+
+pub(crate) struct LoadOverrideTestCase {
+    pub(crate) name: &'static str,
+    pub(crate) description: &'static str,
+    pub(crate) text: &'static str,
+    pub(crate) expected_outcome: Result<(&'static str, usize), &'static str>,
+}
+
+pub(crate) struct OverrideCallsTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) sql: &'static str,
+    pub(crate) emitted: &'static str,
+    pub(crate) expected_refused: bool,
 }

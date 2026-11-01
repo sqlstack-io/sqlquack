@@ -35,7 +35,7 @@ use crate::conversion::_helpers::expressions::objects::{
     object_construct, object_delete, object_insert,
 };
 use crate::conversion::_helpers::expressions::operators::{comparable, equal_null, mod_call};
-use crate::conversion::_helpers::expressions::project_functions::project_call;
+use crate::conversion::_helpers::expressions::project_functions::{override_call, project_call};
 use crate::conversion::_helpers::expressions::scalar::convert_expression;
 use crate::conversion::_helpers::expressions::semi_structured::{
     parse_json, variant_get, variant_inspect,
@@ -126,6 +126,10 @@ pub(crate) fn convert_function(payload: &Value, site: Site<'_>) -> Result<Emitte
     if let Some((resolved, spec)) = site.context.schema.functions.get_key_value(&name) {
         require_understood(payload, &["name", "args"], &construct)?;
         return project_call((resolved, spec), list(payload, "args"), &construct, site);
+    }
+    if let Some(replacement) = site.context.options.overrides.get(&name) {
+        require_understood(payload, &["name", "args"], &construct)?;
+        return override_call(replacement, list(payload, "args"), &construct, site);
     }
     if NOT_SNOWFLAKE_FUNCTIONS.contains(&name.as_str()) {
         return Err(missing(

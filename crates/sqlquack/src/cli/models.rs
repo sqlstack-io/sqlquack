@@ -66,6 +66,15 @@ pub struct ConvertArguments {
     /// Confirm the TIMESTAMP_TZ offsets the schema declares, so strict mode relies on them.
     #[arg(long)]
     pub confirm_declared_offsets: bool,
+    /// Confirm a Python runtime registers the project's Python functions with SQLQuack's runtime.
+    #[arg(long)]
+    pub python_runtime: bool,
+    /// User overrides: a FUNCTION() file, or a directory of them, each with `replaces` and `dialect duckdb`.
+    #[arg(long)]
+    pub overrides: Option<PathBuf>,
+    /// NAME=<sha256>: an override verified for the body with that hash, as `convert --json` reports.
+    #[arg(long = "verified-override", value_name = "NAME=SHA256")]
+    pub verified_overrides: Vec<String>,
     /// A Snowflake session parameter of the caller's session, `NAME=VALUE`; repeatable.
     #[arg(long = "session", value_name = "NAME=VALUE")]
     pub session: Vec<String>,
@@ -100,6 +109,9 @@ pub struct FunctionArguments {
     /// Confirm the TIMESTAMP_TZ offsets the schema declares, so strict mode relies on them.
     #[arg(long)]
     pub confirm_declared_offsets: bool,
+    /// Confirm a Python runtime registers the project's Python functions with SQLQuack's runtime.
+    #[arg(long)]
+    pub python_runtime: bool,
     /// A Snowflake session parameter of the caller's session, `NAME=VALUE`; repeatable.
     #[arg(long = "session", value_name = "NAME=VALUE")]
     pub session: Vec<String>,
@@ -159,6 +171,9 @@ pub struct VerifyArguments {
     /// Re-recorded results, read for the messages of errors stored without one.
     #[arg(long, default_value = AUDIT_RESULTS_DIR)]
     pub audit_results: PathBuf,
+    /// A Python interpreter with the duckdb package, replaying cases that call Python functions.
+    #[arg(long)]
+    pub python: Option<PathBuf>,
     /// Where coverage is checked against.
     #[command(flatten)]
     pub coverage: CoverageArguments,
@@ -237,6 +252,9 @@ pub struct IndexArguments {
     /// Confirm the TIMESTAMP_TZ offsets the schema declares, so strict mode relies on them.
     #[arg(long)]
     pub confirm_declared_offsets: bool,
+    /// Confirm a Python runtime registers the project's Python functions with SQLQuack's runtime.
+    #[arg(long)]
+    pub python_runtime: bool,
     /// Print the index as JSON on standard output.
     #[arg(long)]
     pub json: bool,
@@ -284,6 +302,15 @@ pub struct CensusArguments {
     /// Confirm the TIMESTAMP_TZ offsets the schema declares, so strict mode relies on them.
     #[arg(long)]
     pub confirm_declared_offsets: bool,
+    /// Confirm a Python runtime registers the project's Python functions with SQLQuack's runtime.
+    #[arg(long)]
+    pub python_runtime: bool,
+    /// User overrides: a FUNCTION() file, or a directory of them, each with `replaces` and `dialect duckdb`.
+    #[arg(long)]
+    pub overrides: Option<PathBuf>,
+    /// NAME=<sha256>: an override verified for the body with that hash, as `convert --json` reports.
+    #[arg(long = "verified-override", value_name = "NAME=SHA256")]
+    pub verified_overrides: Vec<String>,
     /// Print file, model and relation names in the slowest files and the blockers.
     #[arg(long)]
     pub names: bool,

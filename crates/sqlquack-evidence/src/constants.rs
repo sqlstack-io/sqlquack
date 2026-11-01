@@ -48,6 +48,8 @@ pub const CASE_HASH_LENGTH: usize = 64;
 
 /// Quotes a project function's body in the Snowflake statement creating it.
 pub const FUNCTION_BODY_QUOTE: &str = "$$";
+/// The Snowflake Python runtime versions a case function may declare.
+pub const PYTHON_RUNTIME_VERSIONS: &[&str] = &["3.11", "3.12"];
 /// Upper-case query text that makes one result row depend on other input rows.
 pub const ROW_COUPLING_WORDS: &[&str] = &[
     " OVER",
