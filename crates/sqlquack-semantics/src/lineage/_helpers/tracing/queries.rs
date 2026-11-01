@@ -691,6 +691,7 @@ pub(crate) fn expanded_star(
         open_reads: only.and_then(|only| only.query.open_reads.clone()),
         rows: RowReads::default(),
         outer_nullable: only.is_some_and(|only| only.query.outer_nullable),
+        derived: false,
     }
 }
 

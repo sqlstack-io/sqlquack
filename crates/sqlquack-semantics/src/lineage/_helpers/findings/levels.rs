@@ -6,8 +6,12 @@ use sqlquack_syntax::Expression;
 use sqlquack_syntax::ExpressionWalk;
 use sqlquack_syntax::expressions::queries::models::{JoinKind, Select, With};
 
+use crate::lineage::_helpers::checks::issues::in_scope;
+use crate::lineage::_helpers::checks::node_checks::{NodeLevel, node_findings};
+use crate::lineage::_helpers::checks::scope_rules::{RuleLevel, select_rules, set_order};
+use crate::lineage::_helpers::checks::sets::{Branches, set_findings};
 use crate::lineage::_helpers::findings::checks::{
-    Level, column_finding, unpivot_findings, using_findings,
+    Level, alias_count_findings, column_finding, unpivot_findings, using_findings,
 };
 use crate::lineage::_helpers::tracing::expressions::date_part_argument;
 use crate::lineage::_helpers::tracing::queries::{
@@ -28,10 +32,18 @@ pub(crate) fn query_findings(
         let mut branches: Vec<NameFinding> = query_findings(left, (&ctes, outer, aliases), context);
         branches.extend(query_findings(right, (&ctes, outer, aliases), context));
         branches.append(&mut found);
+        branches.extend(set_order(query, context));
+        branches.extend(set_findings(
+            query,
+            Branches { ctes: &ctes, outer },
+            context,
+        ));
         branches
     };
     match query {
-        Expression::Select(select) => select_findings(select, (ctes, outer, aliases), context),
+        Expression::Select(select) => {
+            select_findings((query, select), (ctes, outer, aliases), context)
+        }
         Expression::Union(union) => branches(union.with.as_ref(), &union.left, &union.right),
         Expression::Intersect(intersect) => {
             branches(intersect.with.as_ref(), &intersect.left, &intersect.right)
@@ -62,13 +74,28 @@ fn visited_ctes<'a>(
 }
 
 fn select_findings(
-    select: &Select,
+    (node, select): (&Expression, &Select),
     (ctes, outer, aliases): (&[NamedQuery], Option<&LineageScope<'_>>, &[String]),
     context: LineageContext<'_>,
 ) -> Vec<NameFinding> {
     let (ctes, mut nested) = visited_ctes(select.with.as_ref(), (ctes, outer, aliases), context);
     let scope: LineageScope<'_> = level_scope(select, &ctes, outer, context);
-    let mut own: Vec<NameFinding> = using_findings(select, &scope, context);
+    let level = NodeLevel {
+        scope: &scope,
+        context,
+    };
+    nested.extend(select_rules(
+        (node, select),
+        RuleLevel {
+            scope: &scope,
+            context,
+        },
+    ));
+    for checked in in_scope(node) {
+        nested.extend(node_findings(checked, level));
+    }
+    let mut own: Vec<NameFinding> = alias_count_findings(select, &scope, context);
+    own.extend(using_findings(select, &scope, context));
     for item in from_items(select) {
         let reads: Option<&LineageScope<'_>> = lateral(item).then_some(&scope);
         nested.extend(query_findings(
@@ -214,6 +241,12 @@ fn clause_findings(
                 pending.push(&comprehension.this);
                 pending.extend(comprehension.iterator.as_deref());
                 pending.extend(comprehension.condition.as_deref());
+            }
+            Expression::MethodCall(call) => {
+                if !matches!(unannotated(&call.this), Expression::Column(_)) {
+                    pending.push(&call.this);
+                }
+                pending.extend(call.args.iter());
             }
             Expression::Column(column) => {
                 own.extend(column_finding(column, (level, &bound), context));

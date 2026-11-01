@@ -98,6 +98,8 @@ fn given_duckdb_functions_when_typing_outputs_then_each_has_the_engine_type() {
         open: HashMap::new(),
         functions: HashMap::new(),
         rules: HashMap::new(),
+        declared: Vec::new(),
+        arities: HashMap::new(),
     };
     for test_case in test_cases {
         assert_eq!(

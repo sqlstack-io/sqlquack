@@ -300,3 +300,32 @@ fn given_dispatch_group_specs_when_listing_names_then_they_are_exactly_the_heavy
         );
     }
 }
+
+#[test]
+fn given_a_written_call_name_when_canonicalizing_then_its_last_part_is_checked_in_lower_case() {
+    let test_cases = [
+        CanonicalNameTestCase {
+            description: "an alias becomes its canonical name",
+            name: "DATE_DIFF",
+            expected_canonical: "datediff",
+        },
+        CanonicalNameTestCase {
+            description: "a qualified name keeps its last part",
+            name: "shop.analytics.Substr",
+            expected_canonical: "substring",
+        },
+        CanonicalNameTestCase {
+            description: "a name the registry does not know stays as written, in lower case",
+            name: "Order_Score",
+            expected_canonical: "order_score",
+        },
+    ];
+    for test_case in test_cases {
+        assert_eq!(
+            crate::canonical_call_name(test_case.name),
+            test_case.expected_canonical,
+            "{}",
+            test_case.description
+        );
+    }
+}

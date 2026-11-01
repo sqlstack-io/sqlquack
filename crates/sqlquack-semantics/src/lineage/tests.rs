@@ -1,5 +1,7 @@
 #[path = "tests/helpers.rs"]
 mod helpers;
+#[path = "tests/test_checks.rs"]
+mod test_checks;
 #[path = "tests/test_duckdb_types.rs"]
 mod test_duckdb_types;
 #[path = "tests/test_lineage_details.rs"]

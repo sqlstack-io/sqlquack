@@ -72,7 +72,7 @@ fn schema_of(relations: [(&str, &[&str]); 4]) -> ShopSchema {
 /// The `(code, message, start)` findings of `sql`, parsed and read in one dialect.
 pub(crate) fn found_findings(
     sql: &str,
-    (dialect, profile, schema): (Dialect, &'static dyn DialectProfile, &ShopSchema),
+    (dialect, profile, schema): (Dialect, &'static dyn DialectProfile, &dyn LineageSchema),
 ) -> Vec<(&'static str, String, usize)> {
     let context = LineageContext {
         profile,
@@ -130,6 +130,17 @@ impl LineageSchema for TypedShopSchema {
     fn function_nullability(&self, name: &str) -> Option<NullabilityRule> {
         self.rules.get(&name.to_uppercase()).copied()
     }
+
+    fn function_arities(&self, name: &str, canonical: &str) -> Option<Vec<(usize, Option<usize>)>> {
+        let _ = name;
+        self.arities.get(canonical).cloned()
+    }
+
+    fn known_function(&self, name: &str) -> bool {
+        self.declared
+            .iter()
+            .any(|declared| declared.eq_ignore_ascii_case(name))
+    }
 }
 
 /// Orders and customers with types and nullability, an open events relation, and two functions.
@@ -171,6 +182,39 @@ pub(crate) fn typed_shop_schema() -> TypedShopSchema {
             ("IFF".to_owned(), NullabilityRule::ConditionalResult),
             ("UPPER".to_owned(), NullabilityRule::FirstArgument),
         ]),
+        declared: Vec::new(),
+        arities: HashMap::new(),
+    }
+}
+
+/// A DuckDB shop of typed columns: orders with numbers, text and a timestamp.
+pub(crate) fn typed_duckdb_shop_schema() -> TypedShopSchema {
+    TypedShopSchema {
+        closed: HashMap::from([
+            (
+                "orders".to_owned(),
+                vec![
+                    typed_column("id", "INTEGER"),
+                    typed_column("quantity", "INTEGER"),
+                    typed_column("price", "DECIMAL(10,2)"),
+                    typed_column("status", "VARCHAR"),
+                    typed_column("ordered_at", "TIMESTAMP"),
+                ],
+            ),
+            (
+                "customers".to_owned(),
+                vec![
+                    typed_column("id", "INTEGER"),
+                    typed_column("name", "VARCHAR"),
+                ],
+            ),
+        ]),
+        declared: vec!["shop_score".to_owned()],
+        arities: HashMap::from([
+            ("substring".to_owned(), vec![(2, Some(3))]),
+            ("coalesce".to_owned(), vec![(1, None)]),
+        ]),
+        ..TypedShopSchema::default()
     }
 }
 
@@ -203,6 +247,8 @@ fn engine_schema(fixture: &EngineTypeFixture) -> TypedShopSchema {
         open: HashMap::new(),
         functions: HashMap::new(),
         rules: HashMap::new(),
+        declared: Vec::new(),
+        arities: HashMap::new(),
     }
 }
 

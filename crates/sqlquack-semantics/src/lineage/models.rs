@@ -191,6 +191,8 @@ pub(crate) struct ResolvedQuery {
     pub(crate) rows: RowReads,
     /// Whether an outer join may fill its rows with NULLs, so every column it offers may be NULL.
     pub(crate) outer_nullable: bool,
+    /// Whether the FROM item is a derived table, which no qualifier names unless it is aliased.
+    pub(crate) derived: bool,
 }
 
 /// The FROM items of a query level: their sources, merged join keys and row dependencies.
@@ -208,8 +210,8 @@ pub(crate) struct RowReads {
     pub(crate) lost: bool,
 }
 
-/// A column reference no FROM item, CTE or enclosing level resolves, worded as polyglot words it.
-#[derive(Clone, Debug, PartialEq, Eq)]
+/// A finding of the checks, worded as polyglot words it: a name, type or scope rule broken.
+#[derive(Clone, Debug, Default, PartialEq, Eq)]
 pub struct NameFinding {
     /// The polyglot-compatible code: E201 unknown column, E221 ambiguous, E222 unknown qualifier.
     pub code: &'static str,
@@ -219,4 +221,8 @@ pub struct NameFinding {
     pub span: Option<Span>,
     /// The name as written, which the message spells in lower case as polyglot does.
     pub written: String,
+    /// When polyglot reports it: 0 scope rules, 1 names, 2 types.
+    pub phase: u8,
+    /// The node the finding is about, as an address: findings of a phase follow tree order.
+    pub(crate) node: usize,
 }
