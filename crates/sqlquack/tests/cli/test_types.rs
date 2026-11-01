@@ -128,3 +128,9 @@ pub(crate) struct PolicyFreeTestCase {
     pub(crate) arguments: &'static [&'static str],
     pub(crate) expected_exit_code: Option<i32>,
 }
+
+pub(crate) struct ValueTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) sql: &'static str,
+    pub(crate) expected_value: &'static str,
+}

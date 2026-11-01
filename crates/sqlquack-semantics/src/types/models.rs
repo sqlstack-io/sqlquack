@@ -37,6 +37,9 @@ pub struct ColumnSpec {
     /// The schema columns, as `RELATION.COLUMN`, whose declared offset the UTC mark relies on.
     #[serde(skip_serializing_if = "Vec::is_empty")]
     pub declared_offsets: Vec<String>,
+    /// Whether the column is proven to hold no NULL, as VALUES rows of non-NULL literals are.
+    #[serde(skip)]
+    pub not_null: bool,
 }
 
 impl ColumnSpec {
@@ -52,6 +55,7 @@ impl ColumnSpec {
             sourced: false,
             utc_offset: false,
             declared_offsets: Vec::new(),
+            not_null: false,
         }
     }
 }

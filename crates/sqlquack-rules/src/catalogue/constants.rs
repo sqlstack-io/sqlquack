@@ -19,25 +19,26 @@ pub const NOT_EXPRESSIBLE: &[NotExpressibleDeclaration] = &[];
 use crate::conversion::constants::{
     ALIAS, ARRAY_AGG_RULE, ARRAY_APPEND_RULE, ARRAY_CAT_RULE, ARRAY_COMPACT_RULE,
     ARRAY_CONSTRUCT_COMPACT_RULE, ARRAY_CONSTRUCT_RULE, ARRAY_CONTAINS_RULE, ARRAY_EXCEPT_RULE,
-    ARRAY_FLATTEN_RULE, ARRAY_POSITION_RULE, ARRAY_RANGE_RULE, ARRAY_SIZE_RULE, ARRAY_SLICE_RULE,
-    ARRAY_SORT_RULE, ARRAY_TO_STRING_RULE, ASOF_JOIN, AVERAGE, BASE64_BINARY, BETWEEN, BITWISE,
-    CASE, CASE_MAPPING, CAST_BOOLEAN, CAST_NUMERIC, CAST_PARSED_TEXT, CAST_SAME_TYPE,
-    CAST_TEMPORAL, CAST_TEXT_LITERAL, CAST_TEXT_TIME, CAST_TEXT_TIMESTAMP, CAST_TO_TEXT,
-    CAST_UTC_ZONED, COALESCE, COLUMN, COMMENT, COMMON_TABLE, COMPARISON, COMPUTED_SUBSTR_LENGTH,
-    CONCAT, CONCAT_WS, CONSTANT_LITERAL, COUNT, CURRENT_TIME_RULE, DATE_ARITHMETIC,
-    DATE_DAY_ARITHMETIC, DATE_FORMAT_RULE, DATE_LITERAL_COMPARISON, DATE_PART_RULE, DAY_NAME_RULE,
-    DECIMAL_ARITHMETIC, DECIMAL_DIVISION, DECIMAL_EPOCH_RULE, DECIMAL_MODULO, DECODE_RULE,
-    DISTINCT, EDIT_DISTANCE, EXISTS, FLATTEN_RULE, FLOAT_ARITHMETIC, FLOAT_MODULO, FLOAT_TO_DOUBLE,
-    FRACTIONAL_DATE_AMOUNT, FROM_PARTS, FROM_RELATION, FROM_SUBQUERY, GENERATOR_RULE, GROUP_BY,
-    GROUP_BY_ALL_RULE, HASH_RULE, HAVING, HIERARCHY_RULE, IFF, ILIKE_FOLDING, IN_LIST, IN_SUBQUERY,
-    INTERVAL_ARITHMETIC, IS_NULL, JARO_WINKLER, JOIN_CROSS, JOIN_ON, JOIN_USING, LAMBDA_RULE,
-    LATERAL_SUBQUERY, LEAST_GREATEST, LIKE, LIMIT, LISTAGG_RULE, LOGARITHM, LOGIC, MIN_MAX,
-    MIN_MAX_FLOAT, MODE_RULE, NAMED_AGGREGATES, NEGATE, NOT_IN_SUBQUERY, NULL_BRANCHES,
-    NULL_IF_ZERO_RULE, NULL_SAFE_COMPARISON, NULLIF, NUMBER_LITERAL, NUMBER_TEXT_FORMAT,
-    NUMERIC_FUNCTION, OBJECT_CONSTRUCT_RULE, OBJECT_DELETE_RULE, OBJECT_INSERT_RULE,
-    OBJECT_KEYS_RULE, OBJECT_PICK_RULE, ORDER_BY, PARENTHESES, PARSE_JSON_RULE, PARSE_JSON_VARIANT,
-    PERCENTILE_RULE, POSITIONAL_COLUMN, PROJECT_FUNCTION_CALL, PROJECT_TABLE_FUNCTION, QUALIFY,
-    REDUCE_RULE, REGEXP, REGEXP_COUNTING, REGEXP_PARAMETERS, REGEXP_POSIX_SPACE, ROUNDING,
+    ARRAY_FLATTEN_RULE, ARRAY_POSITION_RULE, ARRAY_RANGE_RULE, ARRAY_SET_RULE, ARRAY_SIZE_RULE,
+    ARRAY_SLICE_RULE, ARRAY_SORT_RULE, ARRAY_TO_STRING_RULE, ASOF_JOIN, AVERAGE, BASE64_BINARY,
+    BETWEEN, BITWISE, CASE, CASE_MAPPING, CAST_BOOLEAN, CAST_NUMERIC, CAST_PARSED_TEXT,
+    CAST_SAME_TYPE, CAST_TEMPORAL, CAST_TEXT_LITERAL, CAST_TEXT_TIME, CAST_TEXT_TIMESTAMP,
+    CAST_TO_TEXT, CAST_UTC_ZONED, COALESCE, COLUMN, COMMENT, COMMON_TABLE, COMPARISON,
+    COMPUTED_SUBSTR_LENGTH, CONCAT, CONCAT_WS, CONSTANT_LITERAL, COUNT, CURRENT_TIME_RULE,
+    DATE_ARITHMETIC, DATE_DAY_ARITHMETIC, DATE_FORMAT_RULE, DATE_LITERAL_COMPARISON,
+    DATE_PART_RULE, DAY_NAME_RULE, DECIMAL_ARITHMETIC, DECIMAL_DIVISION, DECIMAL_EPOCH_RULE,
+    DECIMAL_MODULO, DECODE_RULE, DISTINCT, EDIT_DISTANCE, EXISTS, FLATTEN_RULE, FLOAT_ARITHMETIC,
+    FLOAT_MODULO, FLOAT_TO_DOUBLE, FRACTIONAL_DATE_AMOUNT, FROM_PARTS, FROM_RELATION,
+    FROM_SUBQUERY, GENERATOR_RULE, GROUP_BY, GROUP_BY_ALL_RULE, HASH_RULE, HAVING, HIERARCHY_RULE,
+    IFF, ILIKE_FOLDING, IN_LIST, IN_SUBQUERY, INTERVAL_ARITHMETIC, IS_NULL, JARO_WINKLER,
+    JOIN_CROSS, JOIN_ON, JOIN_USING, LAMBDA_RULE, LATERAL_SUBQUERY, LEAST_GREATEST, LIKE, LIMIT,
+    LISTAGG_RULE, LOGARITHM, LOGIC, MIN_MAX, MIN_MAX_FLOAT, MODE_RULE, NAMED_AGGREGATES, NEGATE,
+    NOT_IN_SUBQUERY, NULL_BRANCHES, NULL_IF_ZERO_RULE, NULL_SAFE_COMPARISON, NULLIF,
+    NUMBER_LITERAL, NUMBER_TEXT_FORMAT, NUMERIC_FUNCTION, OBJECT_CONSTRUCT_RULE,
+    OBJECT_DELETE_RULE, OBJECT_INSERT_RULE, OBJECT_KEYS_RULE, OBJECT_PICK_RULE, ORDER_BY,
+    PARENTHESES, PARSE_JSON_RULE, PARSE_JSON_VARIANT, PERCENTILE_RULE, POSITIONAL_COLUMN,
+    PROJECT_FUNCTION_CALL, PROJECT_TABLE_FUNCTION, QUALIFY, REDUCE_RULE, REGEXP,
+    REGEXP_COLUMN_PATTERN, REGEXP_COUNTING, REGEXP_PARAMETERS, REGEXP_POSIX_SPACE, ROUNDING,
     SCALAR_SUBQUERY, SELECT, SET_OPERATION, SIGN_RULE, SPLIT_RULE, SPLIT_TO_TABLE_RULE, STAR, SUM,
     SUM_FLOAT, TEMPORAL_TEXT_FORMAT, TEXT_AFFIX, TEXT_BRANCHES, TEXT_CHR, TEXT_CONTAINS, TEXT_HEX,
     TEXT_HEX_DECODE, TEXT_INITCAP, TEXT_MD5, TEXT_NUMBER_COMPARISON, TEXT_PAD, TEXT_POSITION,
@@ -46,10 +47,10 @@ use crate::conversion::constants::{
     TIMESTAMP_FORMAT_RULE, TIMESTAMP_TIME_RULE, TO_ARRAY_RULE, TO_BOOLEAN_RULE, TO_DATE_TEMPORAL,
     TO_VARIANT_RULE, TRIM, UNION_BY_NAME, UTC_OFFSET_ARITHMETIC, VALUE_AT_EXTREME_KEY, VALUES_ROWS,
     VARIANT_CAST, VARIANT_COMPUTED_GET, VARIANT_EQUALITY, VARIANT_EQUALITY_BY_TEXT,
-    VARIANT_INSPECT, VARIANT_KIND_CAST, VARIANT_KIND_RULE, VARIANT_PARTITION, VARIANT_PATH,
-    VARIANT_TEXT_BRANCHES, VARIANT_TO_VARCHAR, VARIANT_TYPE_NAME, VARIANT_TYPED_CHECK, WHERE,
-    WINDOW_AGGREGATE, WINDOW_FIRST_LAST, WINDOW_OFFSET, WINDOW_RANKING, WINDOW_VALUE_FRAME,
-    ZERO_IF_NULL_RULE, ZONE_COLUMNS, ZONED_PARTS,
+    VARIANT_INSPECT, VARIANT_KIND_CAST, VARIANT_KIND_RULE, VARIANT_MAX, VARIANT_PARTITION,
+    VARIANT_PATH, VARIANT_TEXT_BRANCHES, VARIANT_TO_VARCHAR, VARIANT_TYPE_NAME,
+    VARIANT_TYPED_CHECK, WHERE, WINDOW_AGGREGATE, WINDOW_FIRST_LAST, WINDOW_OFFSET, WINDOW_RANKING,
+    WINDOW_VALUE_FRAME, ZERO_IF_NULL_RULE, ZONE_COLUMNS, ZONED_PARTS,
 };
 use crate::conversion::models::RuleSpec;
 
@@ -69,8 +70,14 @@ pub const RULES: &[RuleSpec] = &[
     },
     RuleSpec {
         id: VARIANT_EQUALITY_BY_TEXT,
-        constructs: &["node:distinct", "node:group_by"],
-        conditions: "A JSON-held VARIANT in SELECT DISTINCT or as a GROUP BY key, by expression or position, is replaced by the text Snowflake writes for it, keys in byte order at every depth, so objects differing only in key order are one value, 1 and \"1\" differ, JSON null and SQL NULL differ; the grouped value is read back from that text wherever the select list, HAVING, QUALIFY and ORDER BY use it. Relies on json_fidelity, which raises for numbers DuckDB writes differently (such as 1.0), and is refused for values not proven free of DATEs and timestamps, as writing a VARIANT is.",
+        constructs: &[
+            "node:distinct",
+            "node:group_by",
+            "node:union",
+            "node:except",
+            "node:intersect",
+        ],
+        conditions: "A JSON-held VARIANT in SELECT DISTINCT, in a UNION, EXCEPT or INTERSECT removing duplicates, or as a GROUP BY key, by expression or position, is replaced by the text Snowflake writes for it, keys in byte order at every depth, so objects differing only in key order are one value, 1 and \"1\" differ, JSON null and SQL NULL differ; the grouped value is read back from that text wherever the select list, HAVING, QUALIFY and ORDER BY use it. Relies on json_fidelity, which raises for numbers DuckDB writes differently (such as 1.0), and is refused for values not proven free of DATEs and timestamps, as writing a VARIANT is.",
         failures: &[],
     },
     RuleSpec {
@@ -106,7 +113,7 @@ pub const RULES: &[RuleSpec] = &[
     RuleSpec {
         id: ASOF_JOIN,
         constructs: &["join:asof"],
-        conditions: "ASOF JOIN with a MATCH_CONDITION of one comparison (>, >=, < or <=) and an ON of equalities joined by AND: each left row with the nearest right row the comparison admits among those whose ON equalities hold, or NULLs where none does (DuckDB's ASOF LEFT JOIN). Rows whose compared values are NULL match nothing.",
+        conditions: "ASOF JOIN with a MATCH_CONDITION of one comparison (>, >=, < or <=) and an ON of equalities joined by AND: each left row with the nearest right row the comparison admits among those whose ON equalities hold, or NULLs where none does (DuckDB's ASOF LEFT JOIN). Rows whose compared values are NULL match nothing. Both sides of the comparison are NUMBER, FLOAT or TIMESTAMP_NTZ expressions, as Snowflake requires and as recorded; others refuse.",
         failures: &[],
     },
     RuleSpec {
@@ -217,7 +224,7 @@ pub const RULES: &[RuleSpec] = &[
     RuleSpec {
         id: NOT_IN_SUBQUERY,
         constructs: &["node:in"],
-        conditions: "NOT IN with a one-column subquery, a set operation only when every branch has a FROM (batches 9 and 10 recorded NOT IN (SELECT 1 UNION ALL SELECT NULL) keeping rows, as if the NULL were absent, while branches reading relations and derived tables follow SQL's rules), in a WHERE condition outside any call (in a projection Snowflake raises error 2031, as recorded): NULL when the operand is NULL or the subquery holds a NULL and no match, false on a match, true otherwise; true for an empty subquery.",
+        conditions: "NOT IN with a one-column subquery, a set operation only when every branch has a FROM (batches 9 and 10 recorded NOT IN (SELECT 1 UNION ALL SELECT NULL) keeping rows, as if the NULL were absent, while branches reading relations and derived tables follow SQL's rules), in a WHERE condition outside any call, or elsewhere when the subquery's column is proven to hold no NULL: VALUES rows of non-NULL text or number literals, read through casts, plain projections and filters without joins or grouping (otherwise Snowflake raises error 2031 in a projection, as recorded): NULL when the operand is NULL or the subquery holds a NULL and no match, false on a match, true otherwise; true for an empty subquery.",
         failures: &[],
     },
     RuleSpec {
@@ -309,9 +316,9 @@ pub const RULES: &[RuleSpec] = &[
     RuleSpec {
         id: DATE_LITERAL_COMPARISON,
         constructs: &[
-            "node:eq", "node:neq", "node:lt", "node:lte", "node:gt", "node:gte",
+            "node:eq", "node:neq", "node:lt", "node:lte", "node:gt", "node:gte", "node:in",
         ],
-        conditions: "A DATE and a string literal in YYYY-MM-DD form, or a TIME and a string literal in HH:MI:SS form (hours 00-23), read as that DATE or TIME.",
+        conditions: "A DATE beside text, or a TIMESTAMP_NTZ beside text, in a comparison or IN list: the text is read as that type, a timestamp literal beside a DATE read as its date with the clock dropped, and text from a column cast as CAST reads it, as recorded. A TIME and a string literal in HH:MI:SS form (hours 00-23) read as that TIME.",
         failures: &[],
     },
     RuleSpec {
@@ -346,14 +353,35 @@ pub const RULES: &[RuleSpec] = &[
     },
     RuleSpec {
         id: TEXT_BRANCHES,
-        constructs: &["fn:COALESCE", "fn:IFNULL", "fn:NVL", "fn:IFF", "node:case"],
-        conditions: "Non-literal text branches beside NUMBER branches are read as NUMBER(18,5), beside a FLOAT as FLOAT and beside a TIMESTAMP_NTZ(9) as one, then widened to the unified type, as recorded; a unified NUMBER of more than 5 fraction digits refuses. Every text branch is read for every row, whichever branch is chosen, so unreadable text raises as Snowflake raises (error 100038). CASE reads text only with an ELSE, so a branch is chosen every row; DECODE, NULLIF, LEAST and GREATEST, which no recording shows reading text, refuse text beside other types.",
+        constructs: &[
+            "fn:COALESCE",
+            "fn:IFNULL",
+            "fn:NVL",
+            "fn:IFF",
+            "node:case",
+            "node:union",
+            "node:except",
+            "node:intersect",
+            "fn:DECODE",
+        ],
+        conditions: "Non-literal text branches beside NUMBER branches are read as NUMBER(18,5), beside a FLOAT as FLOAT and beside a TIMESTAMP_NTZ(9) as one, then widened to the unified type, as recorded; a unified NUMBER of more than 5 fraction digits refuses. COALESCE and NVL read every text branch for every row, whichever branch is chosen, so unreadable text raises as Snowflake raises (error 100038). IFF, CASE and DECODE read only the branch chosen, as recorded: an unreadable text branch not chosen raises nothing. A set operation reads a text column beside a NUMBER or FLOAT column the same way, for every row of that branch. NULLIF, LEAST and GREATEST, which no recording shows reading text, refuse text beside other types.",
         failures: &[],
     },
     RuleSpec {
         id: NULL_BRANCHES,
-        constructs: &["fn:COALESCE", "fn:IFNULL", "fn:NVL", "fn:IFF", "node:case"],
-        conditions: "Every branch an untyped NULL: the result is NULL of Snowflake's untyped NULL type, as recorded.",
+        constructs: &[
+            "fn:COALESCE",
+            "fn:IFNULL",
+            "fn:NVL",
+            "fn:IFF",
+            "node:case",
+            "node:union",
+            "node:except",
+            "node:intersect",
+            "fn:DATE_PART",
+            "node:extract",
+        ],
+        conditions: "Every branch an untyped NULL, in a conditional, in every branch of a set operation, or as the operand of DATE_PART, EXTRACT and the single-part functions: the result is NULL of Snowflake's untyped NULL type, described as VARCHAR(0), held as a DuckDB VARCHAR, as recorded.",
         failures: &[],
     },
     RuleSpec {
@@ -460,7 +488,7 @@ pub const RULES: &[RuleSpec] = &[
             "fn:TIMEDIFF",
             "fn:TIMESTAMPDIFF",
         ],
-        conditions: "DATE or TIMESTAMP_NTZ values. DATE_TRUNC to YEAR, QUARTER, MONTH, WEEK (Monday) or DAY, and for timestamps HOUR, MINUTE or SECOND, keeping the type. DATEADD of a NUMBER(p,0) amount, which fails beyond 2^53 as Snowflake's error 100046, of YEAR, QUARTER, MONTH (clamped to the month's end), WEEK or DAY, and for timestamps HOUR, MINUTE, SECOND, MILLISECOND or MICROSECOND, keeping the type and its nanoseconds; a result beyond DuckDB's range (for precision 7-9 its nanosecond range) raises timestamp_range. DATEDIFF between two DATEs or two timestamps counts YEAR, QUARTER, MONTH and DAY boundaries of the dates, and for timestamps HOUR, MINUTE, SECOND, MILLISECOND or MICROSECOND boundaries toward the past.",
+        conditions: "DATE or TIMESTAMP_NTZ values. DATE_TRUNC to YEAR, QUARTER, MONTH, WEEK (Monday) or DAY, and for timestamps HOUR, MINUTE or SECOND, keeping the type. DATEADD of a NUMBER(p,0) amount (to text read as TIMESTAMP_NTZ(9) as CAST reads it, as recorded), which fails beyond 2^53 as Snowflake's error 100046, of YEAR, QUARTER, MONTH (clamped to the month's end), WEEK or DAY, and for timestamps HOUR, MINUTE, SECOND, MILLISECOND or MICROSECOND, keeping the type and its nanoseconds; a result beyond DuckDB's range (for precision 7-9 its nanosecond range) raises timestamp_range. DATEDIFF between two DATEs or two timestamps counts YEAR, QUARTER, MONTH and DAY boundaries of the dates, and for timestamps HOUR, MINUTE, SECOND, MILLISECOND or MICROSECOND boundaries toward the past.",
         failures: &[FailureMode {
             kind: ErrorKind::NumericOverflow,
             snowflake: &[NUMBER_OUT_OF_RANGE],
@@ -877,6 +905,17 @@ pub const RULES: &[RuleSpec] = &[
         failures: &[],
     },
     RuleSpec {
+        id: ARRAY_SET_RULE,
+        constructs: &[
+            "fn:ARRAY_INTERSECTION",
+            "fn:ARRAYS_OVERLAP",
+            "fn:ARRAY_DISTINCT",
+            "fn:ARRAY_REMOVE",
+        ],
+        conditions: "VARIANT arrays whose elements are equal where Snowflake writes them alike, keys in byte order, so objects differing only in key order are equal and JSON nulls equal each other, relying on json_fidelity. ARRAY_INTERSECTION keeps the first array's elements as often as both hold them, in its order; ARRAYS_OVERLAP is whether one element is in both; ARRAY_DISTINCT keeps each element's first place; ARRAY_REMOVE of a VARIANT value drops every element equal to it. NULL when an operand is NULL, as recorded.",
+        failures: NOT_AN_ARRAY_FAILURES,
+    },
+    RuleSpec {
         id: ARRAY_APPEND_RULE,
         constructs: &["fn:ARRAY_APPEND"],
         conditions: "ARRAY_APPEND of a VARIANT array and a value: ARRAY_CAT of the array with ARRAY_CONSTRUCT of the value, so the value is held as ARRAY_CONSTRUCT holds it, as recorded.",
@@ -976,9 +1015,21 @@ pub const RULES: &[RuleSpec] = &[
         failures: &[],
     },
     RuleSpec {
+        id: VARIANT_MAX,
+        constructs: &["node:max"],
+        conditions: "MAX of a JSON-held VARIANT without DISTINCT or OVER, NULLs skipped: the value where every value is written alike, the largest number where all are numbers distinct as doubles, the bytewise largest string where all are strings, as recorded; other mixes raise array_sort_order.",
+        failures: &[],
+    },
+    RuleSpec {
+        id: REGEXP_COLUMN_PATTERN,
+        constructs: &["fn:REGEXP_REPLACE", "fn:REGEXP_SUBSTR"],
+        conditions: "A pattern from a VARCHAR column, raising regexp_pattern_syntax at run time for syntax REGEXP_LIKE's column form does not accept and for a pattern matching empty text. REGEXP_REPLACE replaces every match with a literal replacement, or removes them; REGEXP_SUBSTR from position 1 takes literal occurrence, parameters (c, e, i, m, s) and group as with a literal pattern, the match or NULL; NULL text or pattern gives NULL, as recorded.",
+        failures: &[],
+    },
+    RuleSpec {
         id: REGEXP_COUNTING,
         constructs: &["fn:REGEXP_COUNT", "fn:REGEXP_INSTR"],
-        conditions: "A literal pattern as REGEXP_LIKE takes it, without lazy quantifiers or control escapes, which no recording shows for these functions. REGEXP_COUNT from position 1, with REGEXP_SUBSTR's parameters, counts non-overlapping matches, 0 for empty text; REGEXP_INSTR of two arguments is the 1-based character position where the first match starts, or 0. Both raise regexp_pattern_syntax for a pattern matching empty text, are NUMBER(18,0) and are NULL for NULL text, as recorded.",
+        conditions: "A literal pattern as REGEXP_SUBSTR takes it, +?, *? and ?? read as the greedy *, * and ?, as recorded, in both the match test and the position. REGEXP_COUNT from position 1, with REGEXP_SUBSTR's parameters, counts non-overlapping matches, 0 for empty text; REGEXP_INSTR of two arguments is the 1-based character position where the first match starts, or 0. Both raise regexp_pattern_syntax for a pattern matching empty text, are NUMBER(18,0) and are NULL for NULL text, as recorded.",
         failures: &[],
     },
     RuleSpec {
@@ -1070,7 +1121,7 @@ pub const RULES: &[RuleSpec] = &[
     RuleSpec {
         id: CAST_SAME_TYPE,
         constructs: &["node:cast", "node:try_cast"],
-        conditions: "The operand already has the target type, or is NULL.",
+        conditions: "The operand already has the target type, or is NULL. TRY_CAST of a NUMBER to its own NUMBER type is the value, as recorded; to another NUMBER type Snowflake rejects it (error 1065), which refuses.",
         failures: &[FailureMode {
             kind: ErrorKind::StringTooLong,
             snowflake: &[STRING_TOO_LONG],
@@ -1168,7 +1219,7 @@ pub const RULES: &[RuleSpec] = &[
     RuleSpec {
         id: WINDOW_OFFSET,
         constructs: &["fn:LAG", "fn:LEAD", "node:window_function"],
-        conditions: "An ORDER BY, no frame, an integer literal offset and a default of the value's type or an integer literal beside a NUMBER or FLOAT value, as recorded.",
+        conditions: "An ORDER BY, no frame, an integer literal offset and a default of the value's type or an integer literal beside a NUMBER or FLOAT value, as recorded. With IGNORE NULLS the offset counts only rows whose value is not NULL, as recorded.",
         failures: &[FailureMode {
             kind: ErrorKind::NumericOverflow,
             snowflake: &[NUMBER_OUT_OF_RANGE],

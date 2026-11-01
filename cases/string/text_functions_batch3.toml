@@ -224,3 +224,28 @@ query = "SELECT JAROWINKLER_SIMILARITY(a, b) AS s FROM input ORDER BY ordinal"
 order = "ordered"
 expected_divergence = "text_similarity"
 tags = ["unicode", "whitespace", "null"]
+
+[[case]]
+id = "regexp_lazy_quantifiers_count_instr"
+description = "REGEXP_COUNT and REGEXP_INSTR with *?, +? and ?? lazy quantifiers after letters and groups."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [["'aaab'"], ["'bab'"], ["'xyz'"], ["''"]]
+query = "SELECT REGEXP_COUNT(s, 'a+?b') AS c1, REGEXP_INSTR(s, 'a+?b') AS i1, REGEXP_COUNT(s, 'ba*?') AS c2, REGEXP_INSTR(s, '(ab)??b') AS i2, REGEXP_INSTR(s, 'y+?z') AS i3 FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["empty", "null", "unicode", "whitespace"]
+
+[[case]]
+id = "jarowinkler_latin_letters"
+description = "JAROWINKLER_SIMILARITY of names with Latin letters outside ASCII in different cases, beside unaccented spellings."
+columns = [{ name = "a", type = "VARCHAR" }, { name = "b", type = "VARCHAR" }]
+rows = [
+  ["'Müller'", "'MÜLLER'"],
+  ["'Ñandú'", "'ñandu'"],
+  ["'Øre'", "'øRE'"],
+  ["'Straße'", "'STRASSE'"],
+  ["'Çelik'", "'celik'"],
+]
+query = "SELECT JAROWINKLER_SIMILARITY(a, b) AS s FROM input ORDER BY ordinal"
+order = "ordered"
+expected_divergence = "text_similarity"
+tags = ["unicode", "whitespace", "null", "empty"]

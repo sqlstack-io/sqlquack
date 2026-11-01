@@ -1,0 +1,84 @@
+# DATE and TIMESTAMP_NTZ compared with text, as SQLBuild renders an incremental cursor bound: ISO
+# spellings with a space or a T, dates against timestamp text, IN lists mixing the two.
+category = "comparison"
+construct = "node:gte"
+session_profile = "utc-v1"
+
+[[case]]
+id = "date_against_text"
+description = "A DATE compared with text literals: a date, a timestamp with T, a timestamp with a space, and with a column of text."
+columns = [{ name = "d", type = "DATE" }, { name = "s", type = "VARCHAR" }]
+rows = [
+  ["'1999-12-31'", "'2000-01-01'"],
+  ["'2000-01-01'", "'2000-01-01'"],
+  ["'2000-01-02'", "'1999-01-01'"],
+  ["NULL", "NULL"],
+]
+query = "SELECT d >= '2000-01-01' AS a, d < '2000-01-01T00:00:00' AS b, d > '2000-01-01 00:00:00' AS c, d = '2000-01-01' AS e, d >= s AS f FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "ties", "mixed-types"]
+
+[[case]]
+id = "timestamp_against_text"
+description = "A TIMESTAMP_NTZ compared with text literals with T and space separators, fractions and a bare date."
+columns = [{ name = "t", type = "TIMESTAMP_NTZ(9)" }]
+rows = [
+  ["'1999-12-31 23:59:59.999999999'"],
+  ["'2000-01-01 00:00:00'"],
+  ["'2000-01-01 00:00:00.000000001'"],
+  ["NULL"],
+]
+query = "SELECT t >= '2000-01-01T00:00:00' AS a, t < '2000-01-01 00:00:00.000' AS b, t > '2000-01-01' AS c, t = '2000-01-01T00:00:00.000000000' AS e FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "ties", "mixed-types"]
+
+[[case]]
+id = "date_in_text_list"
+description = "A DATE IN a list of text literals, and NOT IN."
+columns = [{ name = "d", type = "DATE" }]
+rows = [["'2024-01-01'"], ["'2024-01-02'"], ["NULL"]]
+query = "SELECT d IN ('2024-01-01', '2024-03-01') AS a, d NOT IN ('2024-01-01') AS b FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "ties", "mixed-types"]
+
+[[case]]
+id = "text_literal_with_t_cast"
+description = "Text literals with a T separator cast to DATE and TIMESTAMP_NTZ, as the cursor bound is written."
+columns = [{ name = "x", type = "NUMBER(10,0)" }]
+rows = [["1"]]
+query = "SELECT '2000-01-01T00:00:00'::DATE AS d, '2000-01-01T00:00:00'::TIMESTAMP_NTZ AS t, '2024-02-29T13:14:15.123'::TIMESTAMP_NTZ AS f, '2024-02-29T13:14:15'::DATE AS e FROM input"
+order = "ordered"
+tags = ["null", "ties", "mixed-types"]
+
+[[case]]
+id = "unreadable_text_against_date"
+description = "A DATE compared with text that is not a date."
+columns = [{ name = "d", type = "DATE" }]
+rows = [["'2024-01-01'"]]
+query = "SELECT d >= 'soon' AS a FROM input"
+order = "ordered"
+tags = ["null", "ties", "mixed-types"]
+
+[[case]]
+id = "date_against_clock_text"
+description = "A DATE compared with timestamp text literals that are not midnight, and a TIMESTAMP_NTZ compared with date text."
+columns = [{ name = "d", type = "DATE" }, { name = "t", type = "TIMESTAMP_NTZ(9)" }]
+rows = [["'2000-01-01'", "'2000-01-01 00:00:00'"], ["'2000-01-02'", "'2000-01-01 12:00:00'"], ["NULL", "NULL"]]
+query = "SELECT d < '2000-01-01 12:00:00' AS a, d = '2000-01-01T06:00:00' AS b, d >= '2000-01-02 00:00:01' AS c, t = '2000-01-01' AS e, t < '2000-01-02' AS f FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "ties", "mixed-types"]
+
+[[case]]
+id = "timestamp_and_date_against_text_column"
+description = "A TIMESTAMP_NTZ and a DATE compared with text from a column, space or T separated, date-only and NULL."
+columns = [{ name = "t", type = "TIMESTAMP_NTZ(9)" }, { name = "d", type = "DATE" }, { name = "s", type = "VARCHAR" }]
+rows = [
+  ["'2000-01-01 10:00:00'", "'2000-01-01'", "'2000-01-01 09:59:59'"],
+  ["'2000-01-01 10:00:00'", "'2000-01-02'", "'2000-01-01T10:00:00'"],
+  ["'2000-01-01 00:00:00'", "'2000-01-01'", "'2000-01-01'"],
+  ["NULL", "NULL", "'2000-01-01 00:00:00'"],
+  ["'2000-01-01 00:00:00'", "'2000-01-01'", "NULL"],
+]
+query = "SELECT t >= s AS a, t = s AS b, s < t AS c, d = s AS e, d > s AS f FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "ties", "mixed-types"]

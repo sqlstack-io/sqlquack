@@ -1,0 +1,35 @@
+# REGEXP_REPLACE and REGEXP_SUBSTR with patterns read from a column.
+category = "string"
+construct = "fn:REGEXP_REPLACE"
+session_profile = "utc-v1"
+
+[[case]]
+id = "regexp_replace_column_pattern"
+description = "REGEXP_REPLACE and REGEXP_SUBSTR with column patterns of literal text, classes, groups and alternation."
+columns = [{ name = "s", type = "VARCHAR" }, { name = "p", type = "VARCHAR" }]
+rows = [
+  ["'order-12'", "'[0-9]+'"],
+  ["'a.b.c'", "'.'"],
+  ["'SKU SKU'", "'(SK|U)'"],
+  ["''", "'x'"],
+  ["'é é'", "'é'"],
+  ["NULL", "'x'"],
+  ["'x'", "NULL"],
+]
+query = "SELECT REGEXP_REPLACE(s, p, '#') AS r, REGEXP_SUBSTR(s, p) AS m FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "empty", "whitespace", "unicode"]
+
+[[case]]
+id = "regexp_substr_column_pattern_group"
+description = "REGEXP_SUBSTR with a pattern from a column, an occurrence, the e and i parameters and a group."
+columns = [{ name = "s", type = "VARCHAR" }, { name = "p", type = "VARCHAR" }]
+rows = [
+  ["'id:AB12 id:cd34'", "'id:([a-z]+)([0-9]+)'"],
+  ["'no match'", "'x([0-9])'"],
+  ["NULL", "'(a)'"],
+  ["'abc'", "NULL"],
+]
+query = "SELECT REGEXP_SUBSTR(s, p, 1, 1, 'e', 1) AS a, REGEXP_SUBSTR(s, p, 1, 2, 'ie', 2) AS b, REGEXP_SUBSTR(s, p, 1, 1, 'i') AS c FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "regex"]

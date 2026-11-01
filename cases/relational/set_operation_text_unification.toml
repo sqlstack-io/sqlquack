@@ -1,0 +1,40 @@
+# Set operations unifying text with NUMBER, FLOAT and DATE columns, and NUMBER minus NULL.
+category = "relational"
+construct = "node:except"
+session_profile = "utc-v1"
+
+[[case]]
+id = "except_number_and_text"
+description = "EXCEPT and UNION ALL of a NUMBER column beside a VARCHAR column of readable numbers."
+columns = [{ name = "n", type = "NUMBER(10,0)" }, { name = "s", type = "VARCHAR" }]
+rows = [["1", "'1'"], ["2", "'2.50'"], ["3", "'03'"], ["NULL", "NULL"]]
+query = "SELECT 'e' AS op, x FROM (SELECT n AS x FROM input EXCEPT SELECT s FROM input) UNION ALL SELECT 'u', x FROM (SELECT n AS x FROM input UNION ALL SELECT s FROM input) ORDER BY op, x NULLS LAST"
+order = "ordered"
+tags = ["null", "duplicates", "empty-input"]
+
+[[case]]
+id = "union_date_float_and_text"
+description = "UNION ALL of DATE and FLOAT columns beside VARCHAR columns, and the result types."
+columns = [{ name = "d", type = "DATE" }, { name = "f", type = "FLOAT" }, { name = "s", type = "VARCHAR" }]
+rows = [["'2024-01-01'", "1.5", "'2024-01-02'"], ["NULL", "NULL", "'2'"]]
+query = "SELECT 1 AS k, d AS a, f AS b FROM input UNION ALL SELECT 2, s, s FROM input ORDER BY k, a NULLS LAST"
+order = "ordered"
+tags = ["null", "duplicates", "empty-input"]
+
+[[case]]
+id = "number_minus_null"
+description = "A NUMBER plus and minus an untyped NULL."
+columns = [{ name = "n", type = "NUMBER(10,2)" }]
+rows = [["1.50"], ["NULL"]]
+query = "SELECT n - NULL AS a, NULL + n AS b, SYSTEM$TYPEOF(n - NULL) AS t FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "duplicates", "empty-input"]
+
+[[case]]
+id = "union_float_and_text"
+description = "UNION ALL of a FLOAT column and readable text, and of text and a FLOAT."
+columns = [{ name = "f", type = "FLOAT" }, { name = "s", type = "VARCHAR" }]
+rows = [["1.5", "'2.25'"], ["NULL", "'1e3'"], ["-0.5", "' 3 '"], ["2", "NULL"]]
+query = "SELECT 1 AS k, f AS x FROM input UNION ALL SELECT 2, s FROM input UNION ALL SELECT 3, f FROM (SELECT s AS f FROM input UNION ALL SELECT f FROM input) ORDER BY k, x NULLS LAST"
+order = "ordered"
+tags = ["null", "mixed-types"]

@@ -1,0 +1,31 @@
+# TRY_CAST of NUMBER values to NUMBER and INTEGER.
+category = "conversion"
+construct = "node:try_cast"
+session_profile = "utc-v1"
+
+[[case]]
+id = "try_cast_number_to_integer"
+description = "TRY_CAST of a NUMBER to INTEGER and NUMBER(5,1): halves, negatives, overflow and NULL."
+columns = [{ name = "n", type = "NUMBER(10,2)" }, { name = "i", type = "NUMBER(38,0)" }]
+rows = [["1.50", "1"], ["-2.50", "0"], ["99999.99", "123456"], ["NULL", "NULL"]]
+query = "SELECT TRY_CAST(n AS INTEGER) AS a, TRY_CAST(i AS INTEGER) AS b, TRY_CAST(n AS NUMBER(5,1)) AS c FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "invalid", "boundary"]
+
+[[case]]
+id = "try_cast_integer_to_integer"
+description = "TRY_CAST of a NUMBER(38,0) to INTEGER, its own type."
+columns = [{ name = "i", type = "NUMBER(38,0)" }]
+rows = [["1"], ["0"], ["-7"], ["NULL"]]
+query = "SELECT TRY_CAST(i AS INTEGER) AS b, TRY_CAST(i AS INTEGER) = 0 AS z FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]
+
+[[case]]
+id = "try_cast_scaled_number_to_integer"
+description = "TRY_CAST of a NUMBER(10,2) to INTEGER."
+columns = [{ name = "n", type = "NUMBER(10,2)" }]
+rows = [["1.50"], ["-2.50"], ["NULL"]]
+query = "SELECT TRY_CAST(n AS INTEGER) AS a FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]

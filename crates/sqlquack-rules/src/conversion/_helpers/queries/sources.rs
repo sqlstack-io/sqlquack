@@ -306,15 +306,11 @@ fn asof_join(
     if let Some((_, operands)) = node_kind(matching) {
         for side in ["left", "right"] {
             let operand = field(payload_object(operands, &construct)?, side, &construct)?;
-            if !matches!(node_kind(operand), Some(("column", _))) {
-                return Err(refuse("a MATCH_CONDITION over other than two columns"));
-            }
             let converted = convert_expression(operand, site)?;
             if !matches!(
                 converted.data_type,
                 SnowflakeType::Number { .. }
                     | SnowflakeType::Float
-                    | SnowflakeType::Date
                     | SnowflakeType::TimestampNtz { .. }
             ) {
                 return Err(refuse(&format!(
@@ -416,8 +412,16 @@ fn convert_source_kind(
     match node_kind(source) {
         Some(("table", payload)) => table_source(payload, context),
         Some(("subquery", payload)) => subquery_source(payload, earlier, context),
-        Some(("values", _)) => {
-            let wrapped = json!({ "this": source });
+        Some(("values", payload)) => {
+            let mut rows = payload.as_object().cloned().unwrap_or_default();
+            let mut wrapped = serde_json::Map::new();
+            for name in ["alias", "column_aliases"] {
+                if let Some(value) = rows.remove(name) {
+                    wrapped.insert(name.to_owned(), value);
+                }
+            }
+            wrapped.insert("this".to_owned(), json!({ "values": rows }));
+            let wrapped = Value::Object(wrapped);
             subquery_source(&wrapped, earlier, context)
         }
         Some(("function", _)) => table_function_source(source, None, context),

@@ -34,6 +34,8 @@ pub(crate) struct Emitted {
     pub(crate) untainted: bool,
     /// Whether the value reads a source or schema VARIANT trusted to hold no typed leaf.
     pub(crate) sourced: bool,
+    /// Whether the value is proven never NULL: a non-NULL literal, a column proven so, or a cast of one.
+    pub(crate) not_null: bool,
 }
 
 /// What a VARIANT-held value's root is known to be, which decides how it is written as text.
@@ -69,6 +71,7 @@ impl Emitted {
             root: VariantRoot::Dynamic,
             untainted: false,
             sourced: false,
+            not_null: false,
         }
     }
 
@@ -105,6 +108,7 @@ pub(crate) fn resolve(
             sourced: column.sourced,
             utc_offset: column.utc_offset,
             declared: column.declared_offsets.clone(),
+            not_null: column.not_null,
             ..Emitted::new(
                 format!(
                     "{}.{}",

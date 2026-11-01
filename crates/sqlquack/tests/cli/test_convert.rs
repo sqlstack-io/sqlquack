@@ -1,9 +1,10 @@
 use crate::helpers::{
-    convert_outcome, converted_column_names, converted_run_error, policy_free_exit_code,
-    run_convert,
+    convert_outcome, converted_column_names, converted_first_value, converted_run_error,
+    policy_free_exit_code, run_convert,
 };
 use crate::test_types::{
     ColumnNameTestCase, ConvertOutcome, ConvertTestCase, ConvertedRunTestCase, PolicyFreeTestCase,
+    ValueTestCase,
 };
 
 const QUOTED_ALIAS: &str =
@@ -16,6 +17,29 @@ const NAIVE_TO_ZONED: &str =
 #[test]
 fn given_snowflake_sql_when_converting_then_duckdb_sql_or_named_refusals_are_printed() {
     let test_cases = [
+        ConvertTestCase {
+            description: "a TIMESTAMP_NTZ(3) compared with a text column refuses: only NTZ(9) is recorded",
+            sql: "WITH t AS (SELECT '2024-01-01 00:00:00.123'::TIMESTAMP_NTZ(3) AS placed_at, \
+                  '2024-01-01 00:00:00.1239' AS placed_text) SELECT placed_at = placed_text AS same FROM t",
+            flags: &[],
+            mention: "comparing TIMESTAMP_NTZ(3) with a VARCHAR column is recorded only for TIMESTAMP_NTZ(9)",
+            expected_outcome: convert_outcome(1, false),
+        },
+        ConvertTestCase {
+            description: "a quantifier straight after a lazy quantifier refuses",
+            sql: "SELECT REGEXP_COUNT('xaxax', '(xa)+??x') AS matches",
+            flags: &[],
+            mention: "a quantifier directly after a lazy quantifier",
+            expected_outcome: convert_outcome(1, false),
+        },
+        ConvertTestCase {
+            description: "LAG IGNORE NULLS with an offset of 0 refuses",
+            sql: "WITH t AS (SELECT 1 AS order_id, 2 AS quantity) \
+                  SELECT LAG(quantity, 0) IGNORE NULLS OVER (ORDER BY order_id) AS previous FROM t",
+            flags: &[],
+            mention: "IGNORE NULLS is recorded only with an offset of 1 or more",
+            expected_outcome: convert_outcome(1, false),
+        },
         ConvertTestCase {
             description: "a statement that converts prints DuckDB SQL and exits 0",
             sql: "SELECT 1 + 2 AS total",
@@ -353,6 +377,36 @@ fn given_a_hierarchy_with_a_cycle_when_running_the_conversion_then_duckdb_raises
                 .contains(test_case.expected_error.unwrap_or(""))
                 .then_some(())),
             test_case.expected_error.map(|_| Some(())),
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_a_bracket_expression_with_a_lazy_spelling_when_converting_then_the_class_is_kept_literal()
+{
+    let test_cases = [
+        ValueTestCase {
+            description: "a class opening with ] keeps +? as literal members",
+            sql: "SELECT REGEXP_SUBSTR('x+', '[]x+?]+') AS matched",
+            expected_value: "x+",
+        },
+        ValueTestCase {
+            description: "a negated class opening with ] keeps +? as literal members",
+            sql: "SELECT REGEXP_SUBSTR('x+', '[^]+?]+') AS matched",
+            expected_value: "x",
+        },
+        ValueTestCase {
+            description: "a POSIX class inside a bracket keeps the bracket open",
+            sql: "SELECT REGEXP_SUBSTR('a+ b', '[[:space:]+?]+') AS matched",
+            expected_value: "+ ",
+        },
+    ];
+    for test_case in test_cases {
+        assert_eq!(
+            converted_first_value(test_case.sql),
+            test_case.expected_value,
             "{}",
             test_case.description
         );

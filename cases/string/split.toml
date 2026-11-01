@@ -64,3 +64,16 @@ rows = [
 ]
 expression = "ARRAY_TO_STRING(SPLIT(s, ','), '|')"
 tags = ["null", "empty"]
+
+[[case]]
+id = "split_part_window_part_over_variant_text"
+description = "SPLIT_PART of text read from a VARIANT, its part a ROW_NUMBER ordered by a value read from the VARIANT."
+columns = [{ name = "j", type = "VARCHAR" }]
+rows = [
+  ["'{\"d\":\"x-y-z\",\"p\":\"2\"}'"],
+  ["'{\"d\":\"a-b-c\",\"p\":\"1\"}'"],
+  ["'{\"d\":\"m-n\",\"p\":\"3\"}'"],
+]
+query = "SELECT SPLIT_PART(v:d::VARCHAR, '-', ROW_NUMBER() OVER (ORDER BY TRY_TO_NUMBER(v:p::VARCHAR))) AS r FROM (SELECT PARSE_JSON(j) AS v FROM input) ORDER BY r"
+order = "ordered"
+tags = ["window", "empty-input"]

@@ -26,9 +26,9 @@ use crate::conversion::_helpers::support::tree::{
 use crate::conversion::constants::{
     COMPUTED_SUBSTR_LENGTH, ILIKE_FOLDING, INFIX_NEGATION, LENGTH_TYPE, LIKE, LIKE_WILDCARDS,
     NEGATED_FACET, NO_QUANTIFIER, POSIX_SPACE_CLASS, QUANTIFIER_FACET, REGEXP,
-    REGEXP_CONTROL_ESCAPES, REGEXP_COUNT_TYPE, REGEXP_COUNTING, REGEXP_EXTRACTING_FUNCTIONS,
-    REGEXP_PARAMETERS, REGEXP_POSIX_SPACE, REGEXP_SHORTHANDS, TEXT_PAD, TEXT_POSITION,
-    TEXT_POSITION_LIMIT, TEXT_REPLACE, TEXT_TRANSLATE,
+    REGEXP_COLUMN_PATTERN, REGEXP_CONTROL_ESCAPES, REGEXP_COUNT_TYPE, REGEXP_COUNTING,
+    REGEXP_EXTRACTING_FUNCTIONS, REGEXP_PARAMETERS, REGEXP_POSIX_SPACE, REGEXP_SHORTHANDS,
+    TEXT_PAD, TEXT_POSITION, TEXT_POSITION_LIMIT, TEXT_REPLACE, TEXT_TRANSLATE,
 };
 
 /// The quantifier LIKE ANY is written with.
@@ -410,6 +410,9 @@ pub(crate) fn regexp(
         (_, "REGEXP_LIKE") if pattern.data_type == SnowflakeType::Varchar => {
             return regexp_like_column(&text, &pattern.sql, rest, (construct, site));
         }
+        (_, "REGEXP_REPLACE" | "REGEXP_SUBSTR") if pattern.data_type == SnowflakeType::Varchar => {
+            return regexp_column(name, (&text, &pattern.sql), rest, (construct, site));
+        }
         _ => return Err(refuse("an argument that must be a string literal")),
     };
     let log = site.context.log;
@@ -527,7 +530,7 @@ pub(crate) fn regexp(
             let flags = extracting_flags(parameters)
                 .ok_or_else(|| refuse("REGEXP_COUNT parameters other than c, i, m and s"))?;
             let _counted = log.rule(REGEXP_COUNTING);
-            let pattern = string_literal(&format!("{flags}{pattern_text}"), log);
+            let pattern = string_literal(&format!("{flags}{}", greedy(&pattern_text)), log);
             (
                 format!(
                     "(CASE WHEN {} THEN CAST(NULL AS BIGINT) \
@@ -539,7 +542,9 @@ pub(crate) fn regexp(
         }
         ("REGEXP_INSTR", []) => {
             let _counted = log.rule(REGEXP_COUNTING);
-            let prefixed = string_literal(&format!("^((?s:.*?))(?:{pattern_text})"), log);
+            let read = greedy(&pattern_text);
+            let pattern = string_literal(&read, log);
+            let prefixed = string_literal(&format!("^((?s:.*?))(?:{read})"), log);
             (
                 format!(
                     "list_transform([{text}], lambda t: CASE WHEN {} THEN CAST(NULL AS BIGINT) \
@@ -663,6 +668,82 @@ fn regexp_like_column(
     ))
 }
 
+/// REGEXP_REPLACE and two-argument REGEXP_SUBSTR with a column pattern, checked as REGEXP_LIKE's is.
+fn regexp_column(
+    name: &str,
+    (text, pattern): (&str, &str),
+    rest: &[Value],
+    (construct, site): (&Construct, Site<'_>),
+) -> Result<Emitted, Refusal> {
+    let refuse = |reason: &str| outside_conditions(construct.clone(), reason.to_owned());
+    let log = site.context.log;
+    let _rule = log.rule(REGEXP_COLUMN_PATTERN);
+    let mut literals: Vec<String> = Vec::with_capacity(rest.len());
+    for argument in rest {
+        match convert_expression(argument, site)?.literal {
+            Some(Literal::Text(text) | Literal::Number(text)) => literals.push(text),
+            None => return Err(refuse("a REGEXP argument other than a literal")),
+        }
+    }
+    let literals: Vec<&str> = literals.iter().map(String::as_str).collect();
+    let (call, flags) = match (name, literals.as_slice()) {
+        ("REGEXP_REPLACE", []) => (
+            "regexp_replace(r['t'], r['q'], '', 'g')".to_owned(),
+            String::new(),
+        ),
+        ("REGEXP_REPLACE", [replacement]) => {
+            shared_replacement(replacement).map_err(|reason| refuse(&reason))?;
+            (
+                format!(
+                    "regexp_replace(r['t'], r['q'], {}, 'g')",
+                    string_literal(replacement, log)
+                ),
+                String::new(),
+            )
+        }
+        ("REGEXP_SUBSTR", options) => {
+            let (occurrence, parameters, group) = match options {
+                [] | ["1"] => ("1", "", None),
+                ["1", occurrence] => (*occurrence, "", None),
+                ["1", occurrence, parameters] => (*occurrence, *parameters, None),
+                ["1", occurrence, parameters, group] => (*occurrence, *parameters, Some(*group)),
+                _ => return Err(refuse("REGEXP_SUBSTR with these parameters")),
+            };
+            let group = group.unwrap_or(if parameters.contains('e') { "1" } else { "0" });
+            let flags = extracting_flags(parameters)
+                .ok_or_else(|| refuse("REGEXP_SUBSTR parameters other than c, e, i, m and s"))?;
+            if !positive_integer(occurrence) || !group.bytes().all(|byte| byte.is_ascii_digit()) {
+                return Err(refuse(
+                    "REGEXP_SUBSTR with a non-literal occurrence or group",
+                ));
+            }
+            let _parameters = (!flags.is_empty()).then(|| log.rule(REGEXP_PARAMETERS));
+            (
+                format!("regexp_extract_all(r['t'], r['q'], {group})[{occurrence}]"),
+                flags,
+            )
+        }
+        _ => {
+            return Err(refuse(
+                "a REGEXP function of a column pattern with these arguments",
+            ));
+        }
+    };
+    diverge(site.context, REGEXP_PATTERN_SYNTAX, construct)?;
+    let empty = raised(&format!(
+        "{REGEXP_PATTERN_SYNTAX}: a {name} pattern from a column matching empty text, whose \
+         matches no recording shows"
+    ));
+    Ok(Emitted::new(
+        format!(
+            "list_transform([struct_pack(t := {text}, q := {})], lambda r: CASE WHEN r['q'] IS NULL \
+             THEN NULL WHEN regexp_matches('', r['q']) THEN CAST({empty} AS VARCHAR) ELSE {call} END)[1]",
+            guarded_pattern(pattern, &flags, log)
+        ),
+        SnowflakeType::Varchar,
+    ))
+}
+
 /// The value of a string literal argument.
 fn text_literal(node: &Value, construct: &Construct, site: Site<'_>) -> Result<String, Refusal> {
     match convert_expression(node, site)?.literal {
@@ -681,8 +762,10 @@ fn shared_pattern(pattern: &str, extracting: bool) -> Result<bool, String> {
     let mut in_bracket = false;
     let mut posix = false;
     let mut previous = ' ';
+    let mut lazy = false;
     while let Some(character) = characters.next() {
         let quantifier = matches!(character, '*' | '+' | '?' | '}');
+        let follows_lazy = std::mem::take(&mut lazy);
         match character {
             '\\' => match characters.next() {
                 Some(escaped) if REGEXP_SHORTHANDS.contains(escaped) => {}
@@ -691,7 +774,10 @@ fn shared_pattern(pattern: &str, extracting: bool) -> Result<bool, String> {
                 Some(escaped) => return Err(format!("the regular expression escape \\{escaped}")),
                 None => return Err("a pattern ending in a backslash".to_owned()),
             },
-            '?' if previous_quantifier && extracting && previous != '}' => {}
+            '*' | '+' | '?' | '{' if follows_lazy && !in_bracket => {
+                return Err("a quantifier directly after a lazy quantifier".to_owned());
+            }
+            '?' if previous_quantifier && extracting && previous != '}' => lazy = !in_bracket,
             '?' if previous_quantifier => {
                 return Err("a lazy quantifier".to_owned());
             }
@@ -726,9 +812,27 @@ fn shared_pattern(pattern: &str, extracting: bool) -> Result<bool, String> {
 /// The pattern with `+?`, `*?` and `??` as the optional repetitions REGEXP_SUBSTR was recorded reading.
 fn greedy(pattern: &str) -> String {
     let mut written = String::with_capacity(pattern.len());
-    let mut characters = pattern.chars();
+    let mut characters = pattern.chars().peekable();
     let (mut previous_quantifier, mut in_bracket) = (false, false);
     while let Some(character) = characters.next() {
+        if character == '[' && !in_bracket {
+            written.push(character);
+            written.extend(characters.next_if_eq(&'^'));
+            written.extend(characters.next_if_eq(&']'));
+            (in_bracket, previous_quantifier) = (true, false);
+            continue;
+        }
+        if character == '[' && in_bracket && characters.peek() == Some(&':') {
+            written.push(character);
+            while let Some(class) = characters.next() {
+                written.push(class);
+                if class == ':' && characters.peek() == Some(&']') {
+                    written.extend(characters.next());
+                    break;
+                }
+            }
+            continue;
+        }
         if character == '?' && previous_quantifier && !in_bracket {
             if written.ends_with('+') {
                 written.pop();

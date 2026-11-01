@@ -32,7 +32,27 @@ pub(crate) fn unified(
     construct: &Construct,
     context: &Context<'_>,
 ) -> Result<(Vec<String>, SnowflakeType), Refusal> {
-    unified_branches(branches, false, (construct, context))
+    unified_branches(branches, TextReading::Refused, (construct, context))
+}
+
+/// How a construct reads text branches beside other types.
+#[derive(Clone, Copy, PartialEq, Eq)]
+enum TextReading {
+    /// Text beside other types refuses.
+    Refused,
+    /// Every text branch is read for every row, as COALESCE was recorded reading it.
+    Eager,
+    /// Only the chosen branch is read, as IFF, CASE and DECODE were recorded reading it.
+    Lazy,
+}
+
+/// As `unified`, reading only the chosen text branch, as IFF, CASE and DECODE were recorded.
+pub(crate) fn unified_reading_lazily(
+    branches: &[Emitted],
+    construct: &Construct,
+    context: &Context<'_>,
+) -> Result<(Vec<String>, SnowflakeType), Refusal> {
+    unified_branches(branches, TextReading::Lazy, (construct, context))
 }
 
 /// As `unified`, reading text beside other types as recorded, for a construct choosing a branch every row.
@@ -41,16 +61,16 @@ pub(crate) fn unified_reading_text(
     construct: &Construct,
     context: &Context<'_>,
 ) -> Result<(Vec<String>, SnowflakeType), Refusal> {
-    unified_branches(branches, true, (construct, context))
+    unified_branches(branches, TextReading::Eager, (construct, context))
 }
 
 fn unified_branches(
     branches: &[Emitted],
-    reads_text: bool,
+    reads_text: TextReading,
     (construct, context): (&Construct, &Context<'_>),
 ) -> Result<(Vec<String>, SnowflakeType), Refusal> {
     let refuse = |reason: String| outside_conditions(construct.clone(), reason);
-    let reading = match reads_text {
+    let reading = match reads_text != TextReading::Refused {
         true => text_reading(
             &branches
                 .iter()
@@ -96,7 +116,10 @@ fn unified_branches(
             _ => cast(&branch.sql, target, context.log).map_err(refuse)?,
         });
     }
-    Ok((eagerly_read(cast_branches, &readings), target))
+    match reads_text {
+        TextReading::Eager => Ok((eagerly_read(cast_branches, &readings), target)),
+        _ => Ok((cast_branches, target)),
+    }
 }
 
 /// Branches that each first read every text branch, since Snowflake reads all of them for every row.
@@ -116,7 +139,7 @@ fn eagerly_read(branches: Vec<String>, readings: &[String]) -> Vec<String> {
 }
 
 /// A text branch cast as Snowflake reads it beside other types, before widening to `target`.
-fn read_text(
+pub(crate) fn read_text(
     branch: &Emitted,
     (reading, target): (SnowflakeType, SnowflakeType),
     construct: &Construct,
@@ -201,7 +224,7 @@ pub(crate) fn iff(payload: &Value, site: Site<'_>) -> Result<Emitted, Refusal> {
         convert_expression(field(payload, "true_value", &construct)?, site)?,
         convert_expression(field(payload, "false_value", &construct)?, site)?,
     ];
-    let (cast_branches, target) = unified_reading_text(&branches, &construct, site.context)?;
+    let (cast_branches, target) = unified_reading_lazily(&branches, &construct, site.context)?;
     Ok(Emitted {
         utc_offset: utc_kept(&marks(&branches), target),
         declared: declared_of(branches.iter()),
@@ -244,10 +267,7 @@ pub(crate) fn case_expression(payload: &Value, site: Site<'_>) -> Result<Emitted
         None => None,
     };
     branches.extend(otherwise.iter().cloned());
-    let (cast_branches, target) = match otherwise {
-        Some(_) => unified_reading_text(&branches, &construct, site.context)?,
-        None => unified(&branches, &construct, site.context)?,
-    };
+    let (cast_branches, target) = unified_reading_lazily(&branches, &construct, site.context)?;
     let mut sql = format!("(CASE{subject}");
     for (condition, result) in conditions.iter().zip(&cast_branches) {
         sql.push_str(&format!(" WHEN {condition} THEN {result}"));
@@ -403,7 +423,7 @@ pub(crate) fn decode(
             _ => {}
         }
     }
-    let (cast_branches, target) = unified(&branches, construct, site.context)?;
+    let (cast_branches, target) = unified_reading_lazily(&branches, construct, site.context)?;
     let mut sql = String::from("(CASE");
     for (test, branch) in tests.iter().zip(&cast_branches) {
         sql.push_str(&format!(" WHEN {test} THEN {branch}"));

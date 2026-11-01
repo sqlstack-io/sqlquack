@@ -96,6 +96,24 @@ pub(crate) fn converted_run_error(sql: &str) -> Option<String> {
         .map(|error| error.to_string())
 }
 
+/// The first column of the first row the converted `sql` returns on DuckDB, as text.
+pub(crate) fn converted_first_value(sql: &str) -> String {
+    let directory = tempfile::tempdir().expect("temporary directory");
+    std::fs::write(directory.path().join("query.sql"), sql).expect("query written");
+    let output = Command::new(env!("CARGO_BIN_EXE_sqlquack"))
+        .arg("convert")
+        .arg("--policy")
+        .arg(repository_root().join("sqlquack.toml"))
+        .arg(directory.path().join("query.sql"))
+        .output()
+        .expect("sqlquack runs");
+    let converted = String::from_utf8_lossy(&output.stdout);
+    let connection = duckdb::Connection::open_in_memory().expect("DuckDB opens");
+    connection
+        .query_row(converted.trim(), [], |row| row.get::<_, String>(0))
+        .expect("the converted statement returns a text value")
+}
+
 /// The exit code of `arguments` run where no policy file is, over a one-statement file.
 pub(crate) fn policy_free_exit_code(arguments: &[&str]) -> Option<i32> {
     let directory = tempfile::tempdir().expect("temporary directory");

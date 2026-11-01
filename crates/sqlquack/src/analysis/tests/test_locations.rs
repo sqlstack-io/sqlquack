@@ -108,12 +108,12 @@ fn given_refused_sql_when_analyzing_then_each_refusal_is_placed_at_its_construct
         },
         LocationTestCase {
             description: "a set operation of unlike columns is placed at the whole operation",
-            sql: "SELECT amount FROM orders\nUNION ALL SELECT note FROM customers",
+            sql: "SELECT amount FROM orders\nUNION ALL SELECT amount > 1 FROM orders",
             declared: None,
             budget: None,
             expected_places: vec![(
                 RefusalCategory::TypeCondition,
-                "SELECT amount FROM orders\nUNION ALL SELECT note FROM customers",
+                "SELECT amount FROM orders\nUNION ALL SELECT amount > 1 FROM orders",
                 [1, 1],
             )],
         },

@@ -1,6 +1,6 @@
 //! Window functions and their OVER clauses.
 
-use serde_json::Value;
+use serde_json::{Value, json};
 use sqlquack_core::classification::models::Construct;
 use sqlquack_core::refusals::main::missing::missing;
 use sqlquack_core::refusals::main::outside_conditions::outside_conditions;
@@ -48,6 +48,11 @@ const UNBOUNDED_FOLLOWING: &str = "UnboundedFollowing";
 const CURRENT_ROW: &str = "CurrentRow";
 /// The one named aggregate whose window frame is recorded: COUNT_IF over a running ROWS frame.
 const COUNT_IF_NAME: &str = "COUNT_IF";
+/// LAG and LEAD as the parser names generic calls of them.
+const LAG_NAME: &str = "LAG";
+const LEAD_NAME: &str = "LEAD";
+/// LAG and LEAD take a value, an offset and a default.
+const OFFSET_ARGUMENTS: usize = 3;
 
 /// A window's partition keys, order items and partition keys' families.
 struct WindowKeys {
@@ -97,6 +102,9 @@ pub(crate) fn convert_window(payload: &Value, site: Site<'_>) -> Result<Emitted,
     let rule = match function {
         "row_number" | "rank" | "dense_rank" => WINDOW_RANKING,
         "lag" | "lead" => WINDOW_OFFSET,
+        "function" | "aggregate_function" if offset_name(function_payload).is_some() => {
+            WINDOW_OFFSET
+        }
         "first_value" | "last_value" => WINDOW_FIRST_LAST,
         "count" | "sum" | "min" | "max" | "within_group" => WINDOW_AGGREGATE,
         "function" | "aggregate_function"
@@ -144,7 +152,10 @@ pub(crate) fn convert_window(payload: &Value, site: Site<'_>) -> Result<Emitted,
     let site = site.placed(Placement::GROUPED);
     let converted = match function {
         "row_number" | "rank" | "dense_rank" => ranking_window(function, &over, site),
-        "lag" | "lead" => offset_window(function, function_payload, &over, site),
+        "lag" | "lead" => offset_window((function, false), function_payload, &over, site),
+        "function" | "aggregate_function" if offset_name(function_payload).is_some() => {
+            ignoring_nulls_offset(function_payload, &over, site)
+        }
         "first_value" | "last_value" => first_last_window(function, function_payload, &over, site),
         "count" | "sum" | "min" | "max" => {
             aggregate_window(function, function_payload, &over, site)
@@ -253,8 +264,51 @@ fn ranking_window(function: &str, over: &Over<'_>, site: Site<'_>) -> Result<Emi
     Ok(Emitted::new(sql, data_type))
 }
 
+/// `lag` or `lead` for a LAG or LEAD call the parser keeps generic, as it does with IGNORE NULLS.
+fn offset_name(payload: &Value) -> Option<&'static str> {
+    match call_name(payload).as_str() {
+        LAG_NAME => Some("lag"),
+        LEAD_NAME => Some("lead"),
+        _ => None,
+    }
+}
+
+/// LAG or LEAD with IGNORE NULLS: the offset counts only rows whose value is not NULL.
+fn ignoring_nulls_offset(
+    payload: &Value,
+    over: &Over<'_>,
+    site: Site<'_>,
+) -> Result<Emitted, Refusal> {
+    let function = offset_name(payload).unwrap_or("lag");
+    let construct = function_construct(&call_name(payload));
+    let call = payload_object(payload, &construct)?;
+    require_understood(call, &["name", "args", "ignore_nulls"], &construct)?;
+    if !flag(call, "ignore_nulls") {
+        return Err(outside_conditions(
+            construct,
+            format!(
+                "{} as a generic call without IGNORE NULLS",
+                call_name(payload)
+            ),
+        ));
+    }
+    let arguments = list(call, "args");
+    if arguments.is_empty() || arguments.len() > OFFSET_ARGUMENTS {
+        return Err(outside_conditions(
+            construct,
+            format!("{} with these arguments", call_name(payload)),
+        ));
+    }
+    let inner = json!({
+        "this": arguments[0],
+        "offset": arguments.get(1).cloned().unwrap_or(Value::Null),
+        "default": arguments.get(2).cloned().unwrap_or(Value::Null),
+    });
+    offset_window((function, true), &inner, over, site)
+}
+
 fn offset_window(
-    function: &str,
+    (function, ignore_nulls): (&str, bool),
     payload: &Value,
     over: &Over<'_>,
     site: Site<'_>,
@@ -275,6 +329,11 @@ fn offset_window(
             .ok_or_else(|| refuse("the offset must be an integer literal".to_owned()))?,
         None => 1,
     };
+    if ignore_nulls && offset < 1 {
+        return Err(refuse(
+            "IGNORE NULLS is recorded only with an offset of 1 or more".to_owned(),
+        ));
+    }
     let mut arguments = vec![value.sql.clone(), offset.to_string()];
     let mut values = vec![(value.data_type, value.utc_offset)];
     let mut declared = value.declared.clone();
@@ -296,8 +355,12 @@ fn offset_window(
         declared: merged(declared),
         ..Emitted::new(
             format!(
-                "{function}({}) OVER ({})",
+                "{function}({}{}) OVER ({})",
                 arguments.join(", "),
+                match ignore_nulls {
+                    true => " IGNORE NULLS",
+                    false => "",
+                },
                 over.clause(None, site)
             ),
             value.data_type,

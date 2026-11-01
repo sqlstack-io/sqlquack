@@ -49,7 +49,11 @@ pub(crate) fn timestamp_literal(
             if precision > MICROSECOND_DIGITS && !in_nanosecond_range(parsed.date) {
                 diverge(context, TIMESTAMP_RANGE, construct).map_err(|refusal| refusal.reason)?;
             }
-            cast(&string_literal(text, log), to, log)
+            let spelled = match parsed.fraction.is_empty() {
+                true => parsed.whole.replacen('T', " ", 1),
+                false => format!("{}.{}", parsed.whole.replacen('T', " ", 1), parsed.fraction),
+            };
+            cast(&string_literal(&spelled, log), to, log)
         }
         SnowflakeType::TimestampTz { precision } | SnowflakeType::TimestampLtz { precision } => {
             let parsed = parse_timestamp(text, true).ok_or_else(unproven)?;
@@ -147,6 +151,11 @@ pub(crate) fn is_temporal(data_type: SnowflakeType) -> bool {
     )
 }
 
+/// The ISO date a timestamp text literal without an offset spells, its clock dropped.
+pub(crate) fn literal_date(text: &str) -> Option<&str> {
+    parse_timestamp(text, false).map(|_| &text[..10])
+}
+
 fn fits(parsed: &TimestampText<'_>, precision: u8) -> Option<()> {
     (parsed.fraction.len() <= usize::from(precision)).then_some(())
 }
@@ -174,7 +183,10 @@ fn parse_timestamp(text: &str, zoned: bool) -> Option<TimestampText<'_>> {
         "" if offset.is_some() => return None,
         "" => (10, ""),
         _ => {
-            let clock = time.strip_prefix(' ')?;
+            let clock = match zoned {
+                true => time.strip_prefix(' ')?,
+                false => time.strip_prefix(' ').or_else(|| time.strip_prefix('T'))?,
+            };
             let (clock, fraction) = clock.split_once('.').unwrap_or((clock, ""));
             let fields: Vec<&str> = clock.split(':').collect();
             let [hour, minute, second] = fields.as_slice() else {

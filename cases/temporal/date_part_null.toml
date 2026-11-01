@@ -1,0 +1,22 @@
+# DATE_PART and EXTRACT of an untyped NULL.
+category = "temporal"
+construct = "fn:DATE_PART"
+session_profile = "utc-v1"
+
+[[case]]
+id = "date_part_of_null"
+description = "DATE_PART, EXTRACT and YEAR of an untyped NULL literal."
+columns = [{ name = "x", type = "NUMBER(10,0)" }]
+rows = [["1"]]
+query = "SELECT DATE_PART(YEAR, NULL) AS a, EXTRACT(MONTH FROM NULL) AS b, YEAR(NULL) AS c FROM input"
+order = "ordered"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "dateadd_of_text_literal"
+description = "DATEADD of days and hours to text literals, read as timestamps, and that result cast to DATE."
+columns = [{ name = "n", type = "NUMBER(10,0)" }]
+rows = [["1"]]
+query = "SELECT DATEADD(DAY, -1, '2000-03-01') AS a, DATEADD(DAY, 1, '2000-02-28')::DATE AS b, DATEADD(HOUR, n, '2000-01-01 23:30:00') AS c FROM input"
+order = "ordered"
+tags = ["boundary"]
