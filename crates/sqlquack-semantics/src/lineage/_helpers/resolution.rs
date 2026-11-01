@@ -1,11 +1,14 @@
 //! What a column name in a query level resolves to.
 
+use std::rc::Rc;
+
 use sqlquack_syntax::expressions::names::models::Identifier;
 
 use crate::lineage::_helpers::lineages::{combined, constant, direct, traced_if, unresolved};
 use crate::lineage::constants::POSITIONAL_COLUMN_BASE;
 use crate::lineage::models::{
-    Lineage, LineageContext, LineageScope, ScopeSource, ScopedColumn, TransformKind,
+    Lineage, LineageContext, LineageScope, Nullability, SchemaColumn, ScopeSource, ScopedColumn,
+    TransformKind,
 };
 
 /// The resolved key of an identifier.
@@ -20,23 +23,37 @@ pub(crate) fn plain_key(name: &str, context: LineageContext<'_>) -> String {
     context.profile.resolved_identifier(name, false)
 }
 
-/// The lineage of the column `name`, qualified by `table` when written so.
+/// The lineage of `name` (qualified by `table`); an unknown name over one relation reads it untraced.
 pub(crate) fn column_lineage(
     table: Option<&Identifier>,
     name: &Identifier,
     scope: &LineageScope<'_>,
     context: LineageContext<'_>,
 ) -> Lineage {
+    match (
+        resolved_column(table, name, scope, context),
+        table,
+        scope.sources.as_slice(),
+    ) {
+        (Some(found), _, _) => found,
+        (None, None, [only]) => missing_column(only, name),
+        (None, _, _) => unresolved(),
+    }
+}
+
+fn resolved_column(
+    table: Option<&Identifier>,
+    name: &Identifier,
+    scope: &LineageScope<'_>,
+    context: LineageContext<'_>,
+) -> Option<Lineage> {
     let column = key(name, context);
     let qualifier = table.map(|table| key(table, context));
     let found = match &qualifier {
         Some(qualifier) => qualified(qualifier, (&column, name), scope, context),
         None => unqualified((&column, name), scope, context),
     };
-    found.unwrap_or_else(|| match scope.outer {
-        Some(outer) => column_lineage(table, name, outer, context),
-        None => unresolved(),
-    })
+    found.or_else(|| resolved_column(table, name, scope.outer?, context))
 }
 
 fn qualified(
@@ -54,7 +71,18 @@ fn qualified(
     if let Some(position) = positional(written) {
         return Some(positional_column(source, position));
     }
-    Some(offered(source, (column, written), context).unwrap_or_else(unresolved))
+    Some(
+        offered(source, (column, written), context)
+            .unwrap_or_else(|| missing_column(source, written)),
+    )
+}
+
+/// A column its stored relation lacks: still read from that relation, but untraced.
+fn missing_column(source: &ScopeSource, written: &Identifier) -> Lineage {
+    match &source.query.stored_relation {
+        Some(relation) => traced_if(direct(relation, &written.name, written.quoted), false),
+        None => unresolved(),
+    }
 }
 
 /// The 0-based position `$n` names, when an unquoted name is one.
@@ -102,7 +130,7 @@ fn unqualified(
     let alias: Option<&ScopedColumn> = scope.aliases.iter().find(|alias| same(&alias.key));
     match (open.as_slice(), alias) {
         ([], Some(alias)) => Some(alias.lineage.clone()),
-        ([only], None) => Some(opened(only, written)),
+        ([only], None) => Some(opened(only, written, context)),
         ([], None) => None,
         _ => Some(unresolved()),
     }
@@ -114,7 +142,8 @@ fn offered(
     (column, written): (&str, &Identifier),
     context: LineageContext<'_>,
 ) -> Option<Lineage> {
-    known(source, column, context).or_else(|| source.query.open.then(|| opened(source, written)))
+    known(source, column, context)
+        .or_else(|| source.query.open.then(|| opened(source, written, context)))
 }
 
 fn known(source: &ScopeSource, column: &str, context: LineageContext<'_>) -> Option<Lineage> {
@@ -127,14 +156,44 @@ fn known(source: &ScopeSource, column: &str, context: LineageContext<'_>) -> Opt
 }
 
 /// A column read from an open source: its one relation's, with what that relation also reads.
-fn opened(source: &ScopeSource, written: &Identifier) -> Lineage {
+fn opened(source: &ScopeSource, written: &Identifier, context: LineageContext<'_>) -> Lineage {
     let Some(relation) = &source.query.open_relation else {
         return unresolved();
     };
-    let column: Lineage = direct(relation, &written.name, written.quoted);
+    let mut column: Lineage = open_column(relation, written, context);
+    if source.query.outer_nullable {
+        column.nullability = Nullability::Nullable;
+    }
     match &source.query.open_reads {
         Some(reads) if reads.sources.is_empty() => traced_if(column, reads.resolved),
         Some(reads) => combined(vec![column, reads.clone()], TransformKind::Expression),
+        None => column,
+    }
+}
+
+/// A column of an open relation, typed when the schema knows that column.
+fn open_column(relation: &str, written: &Identifier, context: LineageContext<'_>) -> Lineage {
+    let column: Lineage = direct(relation, &written.name, written.quoted);
+    let wanted: String = key(written, context);
+    let typed: Option<&SchemaColumn> = context
+        .schema
+        .open_columns(relation)
+        .into_iter()
+        .flatten()
+        .find(|known: &&SchemaColumn| {
+            context.profile.same_identifier(
+                &context
+                    .profile
+                    .resolved_identifier(&known.name, known.quoted),
+                &wanted,
+            )
+        });
+    match typed {
+        Some(known) => Lineage {
+            data_type: known.data_type.as_deref().map(Rc::from),
+            nullability: known.nullability,
+            ..column
+        },
         None => column,
     }
 }

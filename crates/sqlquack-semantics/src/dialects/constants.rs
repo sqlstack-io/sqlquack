@@ -16,3 +16,7 @@ pub const SNOWFLAKE_TO_DUCKDB: Profiles = Profiles {
     source: &SNOWFLAKE,
     target: &DUCKDB,
 };
+/// The length of Snowflake text declared without one.
+pub(crate) const SNOWFLAKE_LONGEST_VARCHAR: u32 = 16_777_216;
+/// What Snowflake's TIMESTAMP is under the default TIMESTAMP_TYPE_MAPPING.
+pub(crate) const SNOWFLAKE_TIMESTAMP_TYPE: &str = "TIMESTAMP_NTZ";

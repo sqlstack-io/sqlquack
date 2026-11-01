@@ -7,12 +7,20 @@ use sqlquack_syntax::ExpressionWalk;
 use sqlquack_syntax::expressions::names::models::{Identifier, Star};
 use sqlquack_syntax::expressions::operators::models::Parameter;
 
+use crate::dialects::main::canonical_type::canonical_type;
+use crate::lineage::_helpers::duckdb_types::cast_spelling;
 use crate::lineage::_helpers::lineages::{combined, constant, traced_if, unresolved};
 use crate::lineage::_helpers::queries::{expanded_star, resolved_query};
 use crate::lineage::_helpers::resolution::{column_lineage, key, positional_column};
-use crate::lineage::constants::{AGGREGATE_FUNCTIONS, POSITIONAL_COLUMN_BASE};
+use crate::lineage::_helpers::typing::{
+    ValueType, computed_type, literal_type, mapped_timestamp, rendered_type, required_non_null,
+};
+use crate::lineage::constants::{
+    AGGREGATE_FUNCTIONS, BOOLEAN_TYPE, DUCKDB_PROFILE, POSITIONAL_COLUMN_BASE,
+    SNOWFLAKE_JSON_HOLDERS, SNOWFLAKE_PROFILE, SNOWFLAKE_VARIANT_TYPE,
+};
 use crate::lineage::models::{
-    Lineage, LineageContext, LineageScope, ResolvedQuery, RowReads, TransformKind,
+    Lineage, LineageContext, LineageScope, Nullability, ResolvedQuery, RowReads, TransformKind,
 };
 
 /// The lineage of `expression` read in `scope`.
@@ -23,11 +31,33 @@ pub(crate) fn expression_lineage(
 ) -> Lineage {
     match expression {
         Expression::Column(column) => {
-            column_lineage(column.table.as_ref(), &column.name, scope, context)
+            let read: Lineage = column_lineage(column.table.as_ref(), &column.name, scope, context);
+            match required_non_null(column, &scope.non_null, context) {
+                true => Lineage {
+                    nullability: Nullability::NonNull,
+                    ..read
+                },
+                false => read,
+            }
         }
         Expression::Alias(alias) => expression_lineage(&alias.this, scope, context),
         Expression::Paren(paren) => expression_lineage(&paren.this, scope, context),
-        Expression::Annotated(annotated) => expression_lineage(&annotated.this, scope, context),
+        Expression::Annotated(annotated) => {
+            let inner: Lineage = expression_lineage(&annotated.this, scope, context);
+            if inner.data_type.is_some() {
+                return inner;
+            }
+            let asserted: Option<Rc<str>> = match (&annotated.type_assertion, &annotated.type_like)
+            {
+                (Some(asserted), _) => rendered_type(asserted).map(Rc::from),
+                (None, Some(like)) => expression_lineage(like, scope, context).data_type,
+                (None, None) => None,
+            };
+            Lineage {
+                data_type: asserted,
+                ..inner
+            }
+        }
         Expression::Star(star) => star_lineage(star, scope, context),
         Expression::Parameter(parameter) => positional_lineage(parameter, scope),
         Expression::ConnectByRoot(root) => match &root.this {
@@ -37,16 +67,26 @@ pub(crate) fn expression_lineage(
             other => expression_lineage(other, scope, context),
         },
         Expression::Cast(cast) | Expression::TryCast(cast) | Expression::SafeCast(cast) => {
-            combined(
-                vec![expression_lineage(&cast.this, scope, context)],
-                TransformKind::Cast,
+            let inner: Lineage = expression_lineage(&cast.this, scope, context);
+            let target: Option<String> = match context.profile.name() {
+                DUCKDB_PROFILE => cast_spelling(&cast.to),
+                _ => rendered_type(&cast.to),
+            };
+            let target: Option<Rc<str>> =
+                target.map(|target| mapped_timestamp(Rc::from(target), context));
+            let nullability: Nullability = match expression {
+                Expression::Cast(_) => cast_nullability(&inner, target.as_deref(), context),
+                _ => Nullability::Unknown,
+            };
+            typed(
+                combined(vec![inner], TransformKind::Cast),
+                (target, nullability),
             )
         }
-        Expression::Literal(_)
-        | Expression::Null(_)
-        | Expression::Boolean(_)
-        | Expression::Identifier(_)
-        | Expression::Var(_) => constant(),
+        Expression::Literal(_) | Expression::Null(_) | Expression::Boolean(_) => {
+            typed(constant(), literal_type(expression, context))
+        }
+        Expression::Identifier(_) | Expression::Var(_) => constant(),
         Expression::Exists(exists) => {
             let query: ResolvedQuery =
                 resolved_query(&exists.this, scope.ctes, Some(scope), context);
@@ -55,6 +95,7 @@ pub(crate) fn expression_lineage(
                 rows: Rc::new(reads.columns),
                 rows_lost: reads.lost,
                 resolved: false,
+                data_type: Some(Rc::from(BOOLEAN_TYPE)),
                 ..constant()
             }
         }
@@ -77,6 +118,7 @@ pub(crate) fn expression_lineage(
                 lambda_names: names,
                 merged: Vec::new(),
                 windows: Vec::new(),
+                non_null: Vec::new(),
             };
             expression_lineage(&lambda.body, &inner, context)
         }
@@ -97,7 +139,8 @@ pub(crate) fn expression_lineage(
                 parts.push(named.cloned().unwrap_or_else(unresolved));
             }
             let floor: TransformKind = parts[0].kind.max(TransformKind::Expression);
-            combined(parts, floor)
+            let value_type: ValueType = (parts[0].data_type.clone(), parts[0].nullability);
+            typed(combined(parts, floor), value_type)
         }
         _ if is_aggregate(expression) => {
             children_lineage(expression, scope, context, TransformKind::Aggregation)
@@ -112,17 +155,26 @@ fn children_lineage(
     context: LineageContext<'_>,
     floor: TransformKind,
 ) -> Lineage {
-    combined(
-        expression
-            .children()
-            .into_iter()
-            .map(|child| match (child, floor) {
-                (Expression::Star(_), TransformKind::Aggregation) => constant(),
-                _ => expression_lineage(child, scope, context),
-            })
-            .collect(),
-        floor,
-    )
+    let parts: Vec<(&Expression, Lineage)> = expression
+        .children()
+        .into_iter()
+        .map(|child| match (child, floor) {
+            (Expression::Star(_), TransformKind::Aggregation) => (child, constant()),
+            _ => (child, expression_lineage(child, scope, context)),
+        })
+        .collect();
+    let value_type: ValueType = computed_type(expression, &parts, context);
+    let lineage: Lineage = combined(parts.into_iter().map(|(_, part)| part).collect(), floor);
+    typed(lineage, value_type)
+}
+
+/// `lineage` with the value's type and nullability.
+fn typed(lineage: Lineage, (data_type, nullability): ValueType) -> Lineage {
+    Lineage {
+        data_type,
+        nullability,
+        ..lineage
+    }
 }
 
 /// `$n`: the n-th column of the level's one FROM item, untraced when that is not known.
@@ -169,6 +221,33 @@ fn query_reads(query: ResolvedQuery) -> RowReads {
     read
 }
 
+/// A cast keeps its value's nullability, unless a Snowflake JSON null may become SQL NULL.
+fn cast_nullability(
+    inner: &Lineage,
+    target: Option<&str>,
+    context: LineageContext<'_>,
+) -> Nullability {
+    let semi_structured = |spelling: Option<&str>| {
+        spelling.is_none_or(|spelling| {
+            SNOWFLAKE_JSON_HOLDERS.contains(&canonical_type(spelling).as_str())
+        })
+    };
+    match context.profile.name() {
+        SNOWFLAKE_PROFILE
+            if inner.nullability != Nullability::Nullable
+                && semi_structured(inner.data_type.as_deref())
+                && !target
+                    .is_some_and(|target| canonical_type(target) == SNOWFLAKE_VARIANT_TYPE) =>
+        {
+            match inner.data_type {
+                Some(_) => Nullability::Nullable,
+                None => Nullability::Unknown,
+            }
+        }
+        _ => inner.nullability,
+    }
+}
+
 pub(crate) fn is_aggregate(expression: &Expression) -> bool {
     match expression {
         Expression::AggregateFunction(_)
@@ -177,8 +256,38 @@ pub(crate) fn is_aggregate(expression: &Expression) -> bool {
         | Expression::Avg(_)
         | Expression::Min(_)
         | Expression::Max(_)
+        | Expression::GroupConcat(_)
+        | Expression::StringAgg(_)
+        | Expression::ListAgg(_)
         | Expression::ArrayAgg(_)
-        | Expression::CountIf(_) => true,
+        | Expression::CountIf(_)
+        | Expression::SumIf(_)
+        | Expression::Stddev(_)
+        | Expression::StddevPop(_)
+        | Expression::StddevSamp(_)
+        | Expression::Variance(_)
+        | Expression::VarPop(_)
+        | Expression::VarSamp(_)
+        | Expression::Median(_)
+        | Expression::Mode(_)
+        | Expression::First(_)
+        | Expression::Last(_)
+        | Expression::AnyValue(_)
+        | Expression::ApproxDistinct(_)
+        | Expression::ApproxCountDistinct(_)
+        | Expression::ApproxPercentile(_)
+        | Expression::Percentile(_)
+        | Expression::PercentileCont(_)
+        | Expression::PercentileDisc(_)
+        | Expression::LogicalAnd(_)
+        | Expression::LogicalOr(_)
+        | Expression::Skewness(_)
+        | Expression::BoolXorAgg(_)
+        | Expression::BitwiseAndAgg(_)
+        | Expression::BitwiseOrAgg(_)
+        | Expression::BitwiseXorAgg(_)
+        | Expression::ArgMax(_)
+        | Expression::ArgMin(_) => true,
         Expression::Function(function) => AGGREGATE_FUNCTIONS
             .iter()
             .any(|name| function.name.eq_ignore_ascii_case(name)),

@@ -3,7 +3,7 @@ use std::collections::HashMap;
 use sqlquack_syntax::Dialect;
 
 use crate::dialects::types::DialectProfile;
-use crate::lineage::models::{SchemaColumn, TransformKind};
+use crate::lineage::models::{Nullability, NullabilityRule, SchemaColumn, TransformKind};
 use crate::types::models::Holding;
 
 pub(crate) struct StoredColumnsTestCase {
@@ -38,3 +38,104 @@ pub(crate) struct LineageDetailTestCase {
 /// A synthetic shop schema: relation name to its columns.
 #[derive(Debug)]
 pub(crate) struct ShopSchema(pub(crate) HashMap<String, Vec<SchemaColumn>>);
+
+/// A synthetic typed shop schema: closed relations, typed columns of open ones, and functions.
+#[derive(Debug, Default)]
+pub(crate) struct TypedShopSchema {
+    pub(crate) closed: HashMap<String, Vec<SchemaColumn>>,
+    pub(crate) open: HashMap<String, Vec<SchemaColumn>>,
+    pub(crate) functions: HashMap<String, String>,
+    pub(crate) rules: HashMap<String, NullabilityRule>,
+}
+
+/// An output's expected name, type and nullability.
+pub(crate) type ExpectedTypedOutput = (&'static str, Option<&'static str>, Nullability);
+
+pub(crate) struct OutputTypeTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) sql: &'static str,
+    pub(crate) expected_outputs: &'static [ExpectedTypedOutput],
+}
+
+pub(crate) struct ProjectsStarTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) sql: &'static str,
+    pub(crate) expected_projects_star: bool,
+}
+
+pub(crate) struct ResolvedReadTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) sql: &'static str,
+    pub(crate) expected_sources: &'static [&'static str],
+    pub(crate) expected_resolved: bool,
+}
+
+pub(crate) struct DuckdbTypeTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) sql: &'static str,
+    pub(crate) expected_type: Option<&'static str>,
+}
+
+/// Engine-recorded result types: the schema the cases read and each case's bound type.
+#[derive(serde::Deserialize)]
+pub(crate) struct EngineTypeFixture {
+    pub(crate) schema: EngineTypeSchema,
+    pub(crate) cases: Vec<EngineTypeCase>,
+}
+
+#[derive(serde::Deserialize)]
+pub(crate) struct EngineTypeSchema {
+    pub(crate) tables: Vec<EngineTypeTable>,
+}
+
+#[derive(serde::Deserialize)]
+pub(crate) struct EngineTypeTable {
+    pub(crate) name: String,
+    pub(crate) columns: Vec<EngineTypeColumn>,
+}
+
+#[derive(serde::Deserialize)]
+pub(crate) struct EngineTypeColumn {
+    pub(crate) name: String,
+    #[serde(rename = "type")]
+    pub(crate) data_type: String,
+}
+
+#[derive(serde::Deserialize)]
+pub(crate) struct EngineTypeCase {
+    pub(crate) id: String,
+    pub(crate) category: String,
+    pub(crate) sql: String,
+    #[serde(rename = "type", default)]
+    pub(crate) engine_type: Option<String>,
+}
+
+/// Per category: cases typed as the engine did, and cases left untyped.
+#[derive(Debug, Default)]
+pub(crate) struct EngineTypeTally {
+    pub(crate) exact: usize,
+    pub(crate) untyped: usize,
+}
+
+pub(crate) struct EngineTypeReplayTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) fixture: &'static str,
+    pub(crate) expected_wrong: &'static [String],
+    pub(crate) expected_minimum_typed: usize,
+}
+
+/// A replay's wrong types, its exact count and the per-category tally.
+#[derive(Debug, Default)]
+pub(crate) struct EngineTypeReplay {
+    pub(crate) wrong: Vec<String>,
+    pub(crate) typed: usize,
+    pub(crate) tally: std::collections::BTreeMap<String, EngineTypeTally>,
+}
+
+pub(crate) struct DialectTypeTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) sql: &'static str,
+    pub(crate) dialect: Dialect,
+    pub(crate) profile: &'static dyn DialectProfile,
+    pub(crate) expected_outputs: &'static [ExpectedTypedOutput],
+}

@@ -1,6 +1,9 @@
 //! Column lineage of a query: each output column, the source columns it reads, and how.
 
 use std::collections::BTreeSet;
+use std::rc::Rc;
+
+use sqlquack_syntax::expressions::names::models::Column;
 
 use crate::dialects::types::DialectProfile;
 use crate::lineage::types::{LineageSchema, SharedColumns};
@@ -27,6 +30,33 @@ pub struct SchemaColumn {
     pub name: String,
     /// Whether the name is a quoted identifier.
     pub quoted: bool,
+    /// The column's type as the catalog spells it, when known.
+    pub data_type: Option<String>,
+    /// Whether the column may hold NULL.
+    pub nullability: Nullability,
+}
+
+/// How a function's nullability follows from its arguments'.
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
+pub enum NullabilityRule {
+    /// As its first argument.
+    FirstArgument,
+    /// As its two results, IFF-style: the second and third arguments.
+    ConditionalResult,
+    /// NULL when its first argument may be; it may also be NULL otherwise.
+    SafeCast,
+}
+
+/// Whether a value may be NULL.
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq, Hash)]
+pub enum Nullability {
+    /// Not known.
+    #[default]
+    Unknown,
+    /// It may be NULL.
+    Nullable,
+    /// It is never NULL.
+    NonNull,
 }
 
 /// One column of a source relation an output reads.
@@ -53,6 +83,10 @@ pub struct OutputLineage {
     pub sources: Vec<SourceColumn>,
     /// Whether every column name it reads resolved to one relation.
     pub resolved: bool,
+    /// Its type, spelled as the catalog or the cast that decides it spells it, when known.
+    pub data_type: Option<String>,
+    /// Whether it may be NULL.
+    pub nullability: Nullability,
 }
 
 /// The lineage of every output column of one query.
@@ -62,6 +96,8 @@ pub struct QueryLineage {
     pub outputs: Vec<OutputLineage>,
     /// Whether a star over a relation of unknown columns left outputs out.
     pub open_star: bool,
+    /// Whether the outermost query level (a set operation's first branch) projects a star.
+    pub projects_star: bool,
     /// Columns deciding rows (filters, join keys, groups, CONNECT BY, PIVOT FOR), sorted.
     pub row_sources: Vec<SourceColumn>,
     /// Whether every column a row-deciding expression reads was traced into `row_sources`.
@@ -91,6 +127,10 @@ pub(crate) struct Lineage {
     pub(crate) lost: bool,
     /// Whether a column deciding the rows of a query inside the value could not be traced.
     pub(crate) rows_lost: bool,
+    /// The value's type, when known.
+    pub(crate) data_type: Option<Rc<str>>,
+    /// Whether the value may be NULL.
+    pub(crate) nullability: Nullability,
 }
 
 /// One column a FROM item offers, with its lineage.
@@ -127,6 +167,8 @@ pub(crate) struct LineageScope<'a> {
     pub(crate) merged: Vec<ScopedColumn>,
     /// The named windows of the level, with what their partitions and orders read.
     pub(crate) windows: Vec<(String, Lineage)>,
+    /// Columns the level's WHERE requires to be NOT NULL, never NULL where the level reads them.
+    pub(crate) non_null: Vec<&'a Column>,
 }
 
 /// A query's outputs while resolving; `open` when it also offers columns not known by name.
@@ -136,10 +178,14 @@ pub(crate) struct ResolvedQuery {
     pub(crate) open: bool,
     /// The one relation unknown columns come from, when there is exactly one.
     pub(crate) open_relation: Option<String>,
+    /// The stored relation the query is, when the schema knows its columns.
+    pub(crate) stored_relation: Option<String>,
     /// What every unknown column also reads, as a table function's arguments.
     pub(crate) open_reads: Option<Lineage>,
     /// Columns deciding which rows the query returns.
     pub(crate) rows: RowReads,
+    /// Whether an outer join may fill its rows with NULLs, so every column it offers may be NULL.
+    pub(crate) outer_nullable: bool,
 }
 
 /// The FROM items of a query level: their sources, merged join keys and row dependencies.

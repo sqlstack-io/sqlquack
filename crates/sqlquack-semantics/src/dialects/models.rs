@@ -1,5 +1,7 @@
 //! The dialect profiles.
 
+use crate::dialects::_helpers::snowflake_types::same_snowflake_type;
+use crate::dialects::constants::SNOWFLAKE_TIMESTAMP_TYPE;
 use crate::dialects::types::DialectProfile;
 
 /// Snowflake: unquoted identifiers resolve to upper case, and resolved names compare exactly.
@@ -21,6 +23,14 @@ impl DialectProfile for Snowflake {
     fn same_identifier(&self, left: &str, right: &str) -> bool {
         left == right
     }
+
+    fn same_type(&self, left: &str, right: &str) -> bool {
+        same_snowflake_type(left, right)
+    }
+
+    fn timestamp_type(&self) -> &'static str {
+        SNOWFLAKE_TIMESTAMP_TYPE
+    }
 }
 
 /// Snowflake with QUOTED_IDENTIFIERS_IGNORE_CASE: quoted identifiers resolve to upper case too.
@@ -38,6 +48,14 @@ impl DialectProfile for SnowflakeQuotedIgnoringCase {
 
     fn same_identifier(&self, left: &str, right: &str) -> bool {
         left == right
+    }
+
+    fn same_type(&self, left: &str, right: &str) -> bool {
+        same_snowflake_type(left, right)
+    }
+
+    fn timestamp_type(&self) -> &'static str {
+        SNOWFLAKE_TIMESTAMP_TYPE
     }
 }
 
