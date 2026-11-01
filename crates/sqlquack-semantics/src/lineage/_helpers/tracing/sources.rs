@@ -10,10 +10,10 @@ use sqlquack_syntax::expressions::queries::models::{
     Join, JoinKind, Pivot, Select, Unpivot, Values,
 };
 
-use crate::lineage::_helpers::expressions::expression_lineage;
-use crate::lineage::_helpers::lineages::{combined, constant, direct, merged, unresolved};
-use crate::lineage::_helpers::queries::{empty_scope, renamed, resolved_query};
-use crate::lineage::_helpers::resolution::{key, plain_key};
+use crate::lineage::_helpers::tracing::expressions::expression_lineage;
+use crate::lineage::_helpers::tracing::lineages::{combined, constant, direct, merged, unresolved};
+use crate::lineage::_helpers::tracing::queries::{empty_scope, renamed, resolved_query};
+use crate::lineage::_helpers::tracing::resolution::{key, plain_key};
 use crate::lineage::constants::{
     DUCKDB_PROFILE, DUCKDB_VALUES_COLUMN, IDENTIFIER_FUNCTION, ONE_AGGREGATE, OUTER_LEFT_JOINS,
     OUTER_RIGHT_JOINS, SNOWFLAKE_PROFILE, SNOWFLAKE_VALUES_COLUMN, TABLE_FUNCTION_COLUMNS,
@@ -211,7 +211,7 @@ fn side_column(
 }
 
 /// The sources one FROM item adds, reading earlier items through `scope`.
-fn item_sources(
+pub(crate) fn item_sources(
     item: &Expression,
     scope: &LineageScope<'_>,
     context: LineageContext<'_>,
@@ -349,10 +349,26 @@ fn table_source(
         Some(cte) => cte.query.clone(),
         None => base_relation(&relation_name(table, context), context),
     };
+    let mut query: ResolvedQuery = renamed(query, &table.column_aliases, context);
+    query.written_name = Some(written_name(table));
     ScopeSource {
         key: source_key,
-        query: renamed(query, &table.column_aliases, context),
+        query,
     }
+}
+
+/// The relation's name as written, its parts joined by dots, in lower case.
+fn written_name(table: &TableRef) -> String {
+    [
+        table.catalog.as_ref(),
+        table.schema.as_ref(),
+        Some(&table.name),
+    ]
+    .into_iter()
+    .flatten()
+    .map(|part: &Identifier| part.name.to_lowercase())
+    .collect::<Vec<String>>()
+    .join(".")
 }
 
 /// The relation's name, its parts resolved and joined by dots.
@@ -509,6 +525,7 @@ pub(crate) fn values_query(
         .collect();
     let query = ResolvedQuery {
         columns,
+        from_values: true,
         ..ResolvedQuery::default()
     };
     renamed(query, &values.column_aliases, context)

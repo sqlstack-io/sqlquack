@@ -235,3 +235,31 @@ pub(crate) const UNMAPPED_TIMESTAMP: &str = "TIMESTAMP";
 pub(crate) const SNOWFLAKE_JSON_HOLDERS: [&str; 1] = ["VARIANT"];
 /// GROUP BY constructs whose subtotal rows NULL the keys they roll up, as functions spell them.
 pub(crate) const SUBTOTAL_GROUPINGS: [&str; 3] = ["ROLLUP", "CUBE", "GROUPING SETS"];
+/// Functions with a date or time part keyword argument, not a column, and its position.
+pub(crate) const DATE_PART_FUNCTIONS: [(&str, usize); 9] = [
+    ("DATEADD", 0),
+    ("DATEDIFF", 0),
+    ("TIMEADD", 0),
+    ("TIMEDIFF", 0),
+    ("TIMESTAMPADD", 0),
+    ("TIMESTAMPDIFF", 0),
+    ("DATE_PART", 0),
+    ("DATE_TRUNC", 0),
+    ("LAST_DAY", 1),
+];
+/// The code of a column no FROM item offers.
+pub(crate) const UNKNOWN_COLUMN_CODE: &str = "E201";
+/// The code of an unqualified column several FROM items offer.
+pub(crate) const AMBIGUOUS_COLUMN_CODE: &str = "E221";
+/// The code of a qualifier that names no FROM item.
+pub(crate) const UNKNOWN_QUALIFIER_CODE: &str = "E222";
+/// Snowflake's CONNECT BY pseudo-column.
+pub(crate) const CONNECT_BY_LEVEL: &str = "LEVEL";
+/// The prefix of Snowflake's metadata pseudo-columns: streams, CHANGES and staged files.
+pub(crate) const METADATA_PREFIX: &str = "METADATA$";
+/// The prefix of a positional column reference, `$1`.
+pub(crate) const POSITIONAL_PREFIX: char = '$';
+/// DuckDB's row identifier pseudo-column.
+pub(crate) const DUCKDB_ROWID: &str = "rowid";
+/// Sequence pseudo-columns, read after the sequence's name.
+pub(crate) const SEQUENCE_COLUMNS: [&str; 2] = ["NEXTVAL", "CURRVAL"];

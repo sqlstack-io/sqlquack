@@ -7,10 +7,10 @@ use sqlquack_syntax::expressions::queries::models::Select;
 use sqlquack_syntax::{DataType, Expression, ExpressionWalk};
 
 use crate::dialects::main::canonical_type::canonical_type;
-use crate::lineage::_helpers::duckdb_typing::{duckdb_literal_type, duckdb_type};
-use crate::lineage::_helpers::expressions::is_aggregate;
-use crate::lineage::_helpers::resolution::key;
-use crate::lineage::_helpers::snowflake_typing::{
+use crate::lineage::_helpers::tracing::expressions::is_aggregate;
+use crate::lineage::_helpers::tracing::resolution::key;
+use crate::lineage::_helpers::typing::duckdb_typing::{duckdb_literal_type, duckdb_type};
+use crate::lineage::_helpers::typing::snowflake_typing::{
     snowflake_literal_type, snowflake_type, snowflake_unified,
 };
 use crate::lineage::constants::{

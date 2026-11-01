@@ -7,11 +7,11 @@ use sqlquack_syntax::ExpressionWalk;
 use sqlquack_syntax::expressions::names::models::{Identifier, Literal, Star};
 use sqlquack_syntax::expressions::queries::models::{Cte, OrderBy, Select, Union, With};
 
-use crate::lineage::_helpers::expressions::{expression_lineage, is_aggregate};
-use crate::lineage::_helpers::lineages::{combined, set_merged, traced_if, unresolved};
-use crate::lineage::_helpers::resolution::{key, plain_key};
-use crate::lineage::_helpers::sources::{from_sources, listed, values_query};
-use crate::lineage::_helpers::typing::filtered_non_null;
+use crate::lineage::_helpers::tracing::expressions::{expression_lineage, is_aggregate};
+use crate::lineage::_helpers::tracing::lineages::{combined, set_merged, traced_if, unresolved};
+use crate::lineage::_helpers::tracing::resolution::{key, plain_key};
+use crate::lineage::_helpers::tracing::sources::{from_sources, listed, values_query};
+use crate::lineage::_helpers::typing::rules::filtered_non_null;
 use crate::lineage::constants::{
     DUCKDB_PROFILE, ORDINAL_BASE, RECURSION_LIMIT, SQL_STAR, SUBTOTAL_GROUPINGS, UNNAMED_CHARACTERS,
 };
@@ -106,11 +106,14 @@ pub(crate) fn renamed(
     let columns: Vec<ScopedColumn> = query
         .columns
         .into_iter()
-        .zip(aliases)
-        .map(|(column, alias)| ScopedColumn {
-            name: alias.name.clone(),
-            key: key(alias, context),
-            lineage: column.lineage,
+        .enumerate()
+        .map(|(position, column)| match aliases.get(position) {
+            Some(alias) => ScopedColumn {
+                name: alias.name.clone(),
+                key: key(alias, context),
+                lineage: column.lineage,
+            },
+            None => column,
         })
         .collect();
     ResolvedQuery {
@@ -263,17 +266,28 @@ fn by_name(
 }
 
 /// The CTEs in reach inside a query with `with`: the enclosing ones, then its own in order.
-fn with_ctes<'a>(
+pub(crate) fn with_ctes<'a>(
     with: Option<&With>,
     ctes: &'a [NamedQuery],
     outer: Option<&LineageScope<'_>>,
     context: LineageContext<'_>,
+) -> Cow<'a, [NamedQuery]> {
+    with_ctes_visiting(with, (ctes, outer), context, &mut |_, _| {})
+}
+
+/// `with_ctes`, showing `visit` each CTE with the CTEs its body can read.
+pub(crate) fn with_ctes_visiting<'a>(
+    with: Option<&With>,
+    (ctes, outer): (&'a [NamedQuery], Option<&LineageScope<'_>>),
+    context: LineageContext<'_>,
+    visit: &mut dyn FnMut(&Cte, &[NamedQuery]),
 ) -> Cow<'a, [NamedQuery]> {
     let Some(with) = with else {
         return Cow::Borrowed(ctes);
     };
     let mut reach: Vec<NamedQuery> = ctes.to_vec();
     for cte in &with.ctes {
+        visit(cte, &reach);
         let name = key(&cte.alias, context);
         let query: ResolvedQuery = match with.recursive || reads_itself(cte, &name, context) {
             true => recursive_query(cte, (&name, &reach), outer, context),
@@ -365,6 +379,37 @@ fn untraced(query: ResolvedQuery) -> ResolvedQuery {
     ResolvedQuery { columns, ..query }
 }
 
+/// The scope a SELECT's own clauses read: its FROM items, merged keys, windows and filters.
+pub(crate) fn level_scope<'a>(
+    select: &'a Select,
+    ctes: &'a [NamedQuery],
+    outer: Option<&'a LineageScope<'a>>,
+    context: LineageContext<'_>,
+) -> LineageScope<'a> {
+    level_scope_and_rows(select, ctes, outer, context).0
+}
+
+fn level_scope_and_rows<'a>(
+    select: &'a Select,
+    ctes: &'a [NamedQuery],
+    outer: Option<&'a LineageScope<'a>>,
+    context: LineageContext<'_>,
+) -> (LineageScope<'a>, RowReads) {
+    let FromItems {
+        sources,
+        merged,
+        rows,
+    } = from_sources(select, ctes, outer, context);
+    let mut scope = LineageScope {
+        sources,
+        merged,
+        ..empty_scope(ctes, outer)
+    };
+    scope.windows = named_windows(select, &scope, context);
+    scope.non_null = filtered_non_null(select);
+    (scope, rows)
+}
+
 fn select_query(
     select: &Select,
     ctes: &[NamedQuery],
@@ -372,18 +417,7 @@ fn select_query(
     context: LineageContext<'_>,
 ) -> ResolvedQuery {
     let ctes = with_ctes(select.with.as_ref(), ctes, outer, context);
-    let FromItems {
-        sources,
-        merged,
-        rows,
-    } = from_sources(select, &ctes, outer, context);
-    let mut scope = LineageScope {
-        sources,
-        merged,
-        ..empty_scope(&ctes, outer)
-    };
-    scope.windows = named_windows(select, &scope, context);
-    scope.non_null = filtered_non_null(select);
+    let (mut scope, rows) = level_scope_and_rows(select, &ctes, outer, context);
     let mut query = ResolvedQuery {
         rows,
         ..ResolvedQuery::default()
@@ -652,6 +686,8 @@ pub(crate) fn expanded_star(
         open: !open.is_empty(),
         open_relation: only.and_then(|only| only.query.open_relation.clone()),
         stored_relation: None,
+        from_values: false,
+        written_name: None,
         open_reads: only.and_then(|only| only.query.open_reads.clone()),
         rows: RowReads::default(),
         outer_nullable: only.is_some_and(|only| only.query.outer_nullable),
@@ -723,7 +759,7 @@ fn snowflake_name(projection: &Expression, context: LineageContext<'_>) -> Optio
     plain.then(|| text.to_uppercase())
 }
 
-fn output_key(projection: &Expression, context: LineageContext<'_>) -> String {
+pub(crate) fn output_key(projection: &Expression, context: LineageContext<'_>) -> String {
     match projection {
         Expression::Alias(alias) => key(&alias.alias, context),
         Expression::Column(column) => key(&column.name, context),
