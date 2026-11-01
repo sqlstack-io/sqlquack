@@ -74,6 +74,19 @@ pub struct CaseDefinition {
     /// SQL project functions the query calls, created before it; their definitions are hashed.
     #[serde(default, rename = "function")]
     pub functions: Vec<CaseFunction>,
+    /// User overrides conversion uses, proven by the case's recorded result; never hashed.
+    #[serde(default, rename = "override")]
+    pub overrides: Vec<CaseOverride>,
+}
+
+/// A user override a case converts with: its DuckDB SQL stands in for a Snowflake function.
+#[derive(Clone, Debug, PartialEq, Eq, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct CaseOverride {
+    /// The override's name, a lower-case identifier.
+    pub name: String,
+    /// Its file's text: a FUNCTION() header with `replaces` and `dialect duckdb`, then the body.
+    pub definition: String,
 }
 
 /// A SQL project function a case defines and calls.
@@ -91,8 +104,28 @@ pub struct CaseFunction {
     /// The columns of a table function.
     #[serde(default)]
     pub returns_table: Option<Vec<InputColumn>>,
-    /// The body: a scalar function's expression, or a table function's query.
+    /// The body: a scalar function's expression, a table function's query, or Python source.
     pub body: String,
+    /// The body's language; SQL by default.
+    #[serde(default)]
+    pub language: FunctionBodyLanguage,
+    /// A Python function's handler, a function the body defines.
+    #[serde(default)]
+    pub handler: Option<String>,
+    /// A Python function's Snowflake runtime version, such as `3.12`.
+    #[serde(default)]
+    pub runtime_version: Option<String>,
+}
+
+/// The language a case function's body is written in.
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub enum FunctionBodyLanguage {
+    /// A SQL expression or query.
+    #[default]
+    Sql,
+    /// Python source defining the handler.
+    Python,
 }
 
 /// What a case is evidence for.
@@ -159,6 +192,8 @@ pub struct LoadedCase {
     pub compile_error: bool,
     /// The project functions the query calls.
     pub functions: Vec<CaseFunction>,
+    /// The user overrides conversion uses.
+    pub overrides: Vec<CaseOverride>,
     /// The Snowflake statements creating them, run before `source_sql` in a scratch schema.
     pub setup_sql: Vec<String>,
     /// Its input columns, each with its cells in row order; read by the coverage check.

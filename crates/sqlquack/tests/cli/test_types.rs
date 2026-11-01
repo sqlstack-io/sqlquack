@@ -140,3 +140,56 @@ pub(crate) struct RunErrorTestCase {
     pub(crate) sql: &'static str,
     pub(crate) expected_mention: &'static str,
 }
+
+pub(crate) struct PythonRunTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) sql: &'static str,
+    pub(crate) handlers: &'static [(&'static str, &'static str)],
+    pub(crate) expected_refused_without_runtime: Option<bool>,
+    pub(crate) expected_functions: serde_json::Value,
+    pub(crate) expected_rows: &'static [&'static [&'static str]],
+}
+
+pub(crate) struct CountedCallsTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) sql: &'static str,
+    pub(crate) handlers: &'static [(&'static str, &'static str)],
+    pub(crate) expected_distinct_values: usize,
+}
+
+pub(crate) struct PythonRefusalTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) sql: &'static str,
+    pub(crate) expected_mention: &'static str,
+}
+
+pub(crate) struct CrossingTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) sql: &'static str,
+    pub(crate) handler: (&'static str, &'static str),
+    pub(crate) expected_mention: &'static str,
+}
+
+pub(crate) struct OverrideTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) strict: bool,
+    /// `NAME=<sha256>` to pass as verified; empty means the body's own hash.
+    pub(crate) verified_sha256: Option<&'static str>,
+    pub(crate) expected_value: Option<&'static str>,
+    pub(crate) expected_refusal: Option<&'static str>,
+}
+
+pub(crate) struct OverrideFailureTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) body: &'static str,
+    pub(crate) expected_mention: &'static str,
+}
+
+pub(crate) struct DedicatedOverrideTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) replaces: &'static str,
+    pub(crate) body: &'static str,
+    pub(crate) sql: &'static str,
+    pub(crate) expected_value: Option<&'static str>,
+    pub(crate) expected_failure: Option<&'static str>,
+}

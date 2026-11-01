@@ -3,8 +3,8 @@
 use std::collections::BTreeSet;
 
 use crate::cases::_helpers::loading::is_identifier;
-use crate::cases::models::{CaseDefinition, CaseFunction, InputColumn};
-use crate::constants::FUNCTION_BODY_QUOTE;
+use crate::cases::models::{CaseDefinition, CaseFunction, FunctionBodyLanguage, InputColumn};
+use crate::constants::{FUNCTION_BODY_QUOTE, PYTHON_RUNTIME_VERSIONS};
 
 /// `CREATE FUNCTION` for `function`, its body dollar-quoted.
 pub(crate) fn create_function(function: &CaseFunction) -> String {
@@ -13,8 +13,18 @@ pub(crate) fn create_function(function: &CaseFunction) -> String {
         (Some(data_type), None) => data_type.clone(),
         (None, None) => String::new(),
     };
+    let language = match (
+        function.language,
+        &function.handler,
+        &function.runtime_version,
+    ) {
+        (FunctionBodyLanguage::Python, Some(handler), Some(version)) => {
+            format!("\nLANGUAGE PYTHON\nRUNTIME_VERSION = '{version}'\nHANDLER = '{handler}'")
+        }
+        _ => String::new(),
+    };
     format!(
-        "CREATE FUNCTION {}({})\nRETURNS {returns}\nAS {FUNCTION_BODY_QUOTE}\n{}\n{FUNCTION_BODY_QUOTE}",
+        "CREATE FUNCTION {}({})\nRETURNS {returns}{language}\nAS {FUNCTION_BODY_QUOTE}\n{}\n{FUNCTION_BODY_QUOTE}",
         function.name,
         typed_list(&function.arguments),
         function.body.trim()
@@ -62,6 +72,31 @@ pub(crate) fn function_problems(label: &str, case: &CaseDefinition) -> Vec<Strin
                 "{named}: needs a body without `{FUNCTION_BODY_QUOTE}`"
             ));
         }
+        problems.extend(python_problems(&named, function));
+    }
+    problems
+}
+
+/// A Python function needs a handler, a known runtime version and a scalar return; SQL neither.
+fn python_problems(named: &str, function: &CaseFunction) -> Vec<String> {
+    let python = function.language == FunctionBodyLanguage::Python;
+    let handler_named = function.handler.as_deref().is_some_and(is_identifier);
+    let runtime_known = function
+        .runtime_version
+        .as_deref()
+        .is_some_and(|version| PYTHON_RUNTIME_VERSIONS.contains(&version));
+    let mut problems: Vec<String> = Vec::new();
+    if python && !(handler_named && runtime_known && function.returns_table.is_none()) {
+        problems.push(format!(
+            "{named}: a Python function needs a lower-case `handler`, a `runtime_version` of {} \
+             and a scalar `returns`",
+            PYTHON_RUNTIME_VERSIONS.join(", ")
+        ));
+    }
+    if !python && (function.handler.is_some() || function.runtime_version.is_some()) {
+        problems.push(format!(
+            "{named}: only a Python function takes `handler` and `runtime_version`"
+        ));
     }
     problems
 }

@@ -307,8 +307,8 @@ fn record_stand_in(pending: &PendingCase, results: &Path) {
         time_zone: "UTC".to_owned(),
         null_order: "nulls_last_on_asc_first_on_desc".to_owned(),
     };
-    let rows =
-        replay_on_duckdb((&[], &pending.source_sql), &settings).expect("DuckDB runs the case");
+    let rows = replay_on_duckdb((&[], &pending.source_sql), None, &settings)
+        .expect("DuckDB runs the case");
     let keeps_values = pending.values != Some(false);
     let arrow_path = results.join(format!("{}.arrow", pending.case_hash));
     let arrow_sha256 = keeps_values.then(|| sha256_hex(&write_arrow(&arrow_path, &rows)));
@@ -475,6 +475,7 @@ pub(crate) fn undeclared_compile_error_for(
         values: true,
         compile_error: declared,
         functions: Vec::new(),
+        overrides: Vec::new(),
         setup_sql: [String::from(
             "CREATE FUNCTION order_total() RETURNS NUMBER AS $$ 1 $$",
         )]

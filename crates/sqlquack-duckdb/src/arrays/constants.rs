@@ -16,6 +16,10 @@ pub const JSON_ARRAY_REMOVE: &str = "duckdb.json_array_remove";
 pub const JSON_ARRAY_SLICE: &str = "duckdb.json_array_slice";
 /// ARRAY_GENERATE_RANGE: `duckdb.json_array_range`.
 pub const JSON_ARRAY_RANGE: &str = "duckdb.json_array_range";
+/// ARRAY_REVERSE: `duckdb.json_array_reverse`.
+pub const JSON_ARRAY_REVERSE: &str = "duckdb.json_array_reverse";
+/// ARRAY_MAX and ARRAY_MIN: `duckdb.json_array_extreme`.
+pub const JSON_ARRAY_EXTREME: &str = "duckdb.json_array_extreme";
 /// TO_ARRAY of a VARIANT: `duckdb.json_to_array`.
 pub const JSON_TO_ARRAY: &str = "duckdb.json_to_array";
 /// The known divergence for ARRAY_SORT orders no recording shows.

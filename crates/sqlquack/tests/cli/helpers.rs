@@ -1,6 +1,9 @@
 use std::path::{Path, PathBuf};
 use std::process::Command;
 
+use sqlquack_evidence::replay::main::replay_on_duckdb::replay_on_duckdb;
+use sqlquack_evidence::replay::models::{PythonFunction, PythonReplay, ReplaySettings};
+
 use walkdir::WalkDir;
 
 use crate::test_types::{
@@ -136,6 +139,81 @@ pub(crate) fn converted_value_over(sql: &str, (schema, setup): (&str, &str)) -> 
         .expect("the converted statement returns a text value")
 }
 
+/// The exit code and standard error of converting `sql` with the override `definition`.
+pub(crate) fn override_failure(sql: &str, definition: &str) -> (Option<i32>, String) {
+    let directory = tempfile::tempdir().expect("temporary directory");
+    let overrides = directory.path().join("overrides");
+    std::fs::create_dir(&overrides).expect("overrides directory");
+    std::fs::write(overrides.join("reversed_text.sql"), definition).expect("override written");
+    std::fs::write(directory.path().join("query.sql"), sql).expect("query written");
+    let output = Command::new(env!("CARGO_BIN_EXE_sqlquack"))
+        .args(["convert", "--policy"])
+        .arg(repository_root().join("sqlquack.toml"))
+        .arg("--overrides")
+        .arg(&overrides)
+        .arg(directory.path().join("query.sql"))
+        .output()
+        .expect("sqlquack runs");
+    (
+        output.status.code(),
+        String::from_utf8_lossy(&output.stderr).into_owned(),
+    )
+}
+
+/// `sql` converted with the override `definition`: the report, and its first value over three orders.
+pub(crate) fn override_outcome(
+    sql: &str,
+    definition: &str,
+    flags: &[&str],
+) -> (serde_json::Value, Option<String>) {
+    let directory = tempfile::tempdir().expect("temporary directory");
+    let overrides = directory.path().join("overrides");
+    std::fs::create_dir(&overrides).expect("overrides directory");
+    std::fs::write(overrides.join("reversed_text.sql"), definition).expect("override written");
+    std::fs::write(directory.path().join("query.sql"), sql).expect("query written");
+    std::fs::write(
+        directory.path().join("schema.json"),
+        r#"{"relations": {"ORDERS": [["ORDER_ID", "NUMBER(10,0)"], ["SKU", "VARCHAR"]]}}"#,
+    )
+    .expect("schema written");
+    let output = Command::new(env!("CARGO_BIN_EXE_sqlquack"))
+        .args(["convert", "--json", "--policy"])
+        .arg(repository_root().join("sqlquack.toml"))
+        .arg("--schema")
+        .arg(directory.path().join("schema.json"))
+        .arg("--overrides")
+        .arg(&overrides)
+        .args(flags)
+        .arg(directory.path().join("query.sql"))
+        .output()
+        .expect("sqlquack runs");
+    let report: serde_json::Value = serde_json::from_slice(&output.stdout).expect("a JSON report");
+    let value = (report["converted"] == serde_json::Value::Bool(true))
+        .then(|| converted_value_with_macros(&report));
+    (report, value)
+}
+
+/// The first value `report`'s SQL returns over three orders, once its macros run on DuckDB.
+fn converted_value_with_macros(report: &serde_json::Value) -> String {
+    let connection = duckdb::Connection::open_in_memory().expect("DuckDB opens");
+    connection
+        .execute_batch(
+            "CREATE TABLE \"ORDERS\" (\"ORDER_ID\" DECIMAL(10,0), \"SKU\" VARCHAR); \
+             INSERT INTO \"ORDERS\" VALUES (1, 'ab-1'), (2, 'cd-2'), (3, 'ef-3')",
+        )
+        .expect("orders made");
+    for statement in report["macros"].as_array().expect("macros listed") {
+        connection
+            .execute_batch(statement.as_str().unwrap_or_default())
+            .expect("the override's macro is made");
+    }
+    connection
+        .query_row(report["sql"].as_str().unwrap_or_default(), [], |row| {
+            row.get::<_, String>(0)
+        })
+        .expect("the converted statement returns a text value")
+}
+
 /// The exit code of `arguments` run where no policy file is, over a one-statement file.
 pub(crate) fn policy_free_exit_code(arguments: &[&str]) -> Option<i32> {
     let directory = tempfile::tempdir().expect("temporary directory");
@@ -153,6 +231,9 @@ pub(crate) fn policy_free_exit_code(arguments: &[&str]) -> Option<i32> {
         .status
         .code()
 }
+
+const PYTHON_SCHEMA: &str = "crates/sqlquack/tests/cli/fixtures/python_functions.json";
+const PYTHON_HANDLER: &str = "handle";
 
 const OVERFLOW_CASE: &str = r#"category = "aggregate"
 construct = "node:sum"
@@ -669,6 +750,87 @@ pub(crate) fn run_convert(sql: &str, flags: &[&str], mention: &str) -> ConvertOu
         json_converted: json["converted"].as_bool(),
         stderr_mentions: String::from_utf8_lossy(&output.stderr).contains(mention),
     }
+}
+
+/// The `convert --json` report of `sql` over the Python functions fixture, with `flags`.
+pub(crate) fn python_report(sql: &str, flags: &[&str]) -> serde_json::Value {
+    let directory = tempfile::tempdir().expect("temporary directory");
+    std::fs::write(directory.path().join("query.sql"), sql).expect("query written");
+    let output = Command::new(env!("CARGO_BIN_EXE_sqlquack"))
+        .args(["convert", "--json", "--policy"])
+        .arg(repository_root().join("sqlquack.toml"))
+        .arg("--schema")
+        .arg(repository_root().join(PYTHON_SCHEMA))
+        .args(flags)
+        .arg(directory.path().join("query.sql"))
+        .output()
+        .expect("sqlquack runs");
+    serde_json::from_slice(&output.stdout).expect("a JSON report")
+}
+
+/// The rows of `report`'s SQL run on DuckDB, or its error, its Python functions registered by the runtime.
+pub(crate) fn python_outcome(
+    report: &serde_json::Value,
+    handlers: &[(&str, &str)],
+) -> Result<Vec<Vec<String>>, String> {
+    let functions: Vec<PythonFunction> = report["python_functions"]
+        .as_array()
+        .expect("the functions listed")
+        .iter()
+        .map(|listed| {
+            let name = listed["name"].as_str().unwrap_or_default();
+            let source = handlers
+                .iter()
+                .find(|(handler, _)| *handler == name)
+                .map(|(_, source)| (*source).to_owned())
+                .expect("a handler for each listed function");
+            PythonFunction {
+                name: name.to_owned(),
+                abi: listed["abi"].as_str().unwrap_or_default().to_owned(),
+                arguments: serde_json::from_value(listed["arguments"].clone()).unwrap_or_default(),
+                returns: listed["returns"].as_str().unwrap_or_default().to_owned(),
+                volatility: listed["volatility"].as_str().unwrap_or_default().to_owned(),
+                null_input: listed["null_input"].as_str().unwrap_or_default().to_owned(),
+                handler: PYTHON_HANDLER.to_owned(),
+                source,
+            }
+        })
+        .collect();
+    let replay = PythonReplay {
+        interpreter: repository_root().join(".venv/bin/python"),
+        functions,
+    };
+    let settings = ReplaySettings {
+        time_zone: "UTC".to_owned(),
+        null_order: "nulls_last".to_owned(),
+    };
+    let rows = replay_on_duckdb(
+        (&[], report["sql"].as_str().unwrap_or_default()),
+        Some(&replay),
+        &settings,
+    )?;
+    Ok(rows
+        .batches
+        .iter()
+        .flat_map(|batch| {
+            (0..batch.num_rows()).map(move |row| {
+                (0..batch.num_columns())
+                    .map(|column| {
+                        arrow::util::display::array_value_to_string(batch.column(column), row)
+                            .expect("a printable value")
+                    })
+                    .collect::<Vec<String>>()
+            })
+        })
+        .collect())
+}
+
+/// The rows of `report`'s SQL run on DuckDB, its Python functions registered by the runtime.
+pub(crate) fn python_rows(
+    report: &serde_json::Value,
+    handlers: &[(&str, &str)],
+) -> Vec<Vec<String>> {
+    python_outcome(report, handlers).expect("the converted statement runs")
 }
 
 /// The outcome of a conversion exiting `exit_code`, printing SQL or not, its mention found.

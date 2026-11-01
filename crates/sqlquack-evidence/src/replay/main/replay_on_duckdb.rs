@@ -1,15 +1,20 @@
-//! `replay_on_duckdb`: run SQL in a fresh in-memory DuckDB and fetch Arrow results.
+//! `replay_on_duckdb`: run SQL in a fresh DuckDB, through Python when it calls Python functions.
 
 use duckdb::Connection;
 use sqlquack_compare::values::models::ResultSet;
 
-use crate::replay::models::ReplaySettings;
+use crate::replay::_helpers::python_replay::python_replay;
+use crate::replay::models::{PythonReplay, ReplaySettings};
 
 /// `setup` then `sql` in a new single-threaded in-memory database with `settings`, or the error.
 pub fn replay_on_duckdb(
     (setup, sql): (&[String], &str),
+    python: Option<&PythonReplay>,
     settings: &ReplaySettings,
 ) -> Result<ResultSet, String> {
+    if let Some(python) = python.filter(|python| !python.functions.is_empty()) {
+        return python_replay((setup, sql), python, settings);
+    }
     let connection = Connection::open_in_memory().map_err(|error| error.to_string())?;
     connection
         .execute_batch(&format!(

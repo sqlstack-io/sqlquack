@@ -12,6 +12,7 @@ use sqlquack_core::parsing::models::SourceLocation;
 use sqlquack_core::provenance::models::Provenance;
 use sqlquack_core::refusals::models::Refusal;
 use sqlquack_semantics::types::models::ColumnSpec;
+use sqlquack_snowflake::typing::models::SnowflakeType;
 
 /// A known divergence the policy allows in the current mode.
 #[derive(Clone, Debug, PartialEq, Eq, Serialize)]
@@ -37,6 +38,25 @@ pub struct ConversionOptions {
     pub quoted_exclusions: bool,
     /// Whether quoted identifiers resolve to upper case, as `QUOTED_IDENTIFIERS_IGNORE_CASE = true`.
     pub quoted_identifiers_ignore_case: bool,
+    /// User overrides by the name of the function each replaces, upper case.
+    pub overrides: BTreeMap<String, UserOverride>,
+    /// Override names to the SHA-256 of the body recorded cases verified, which strict mode allows.
+    pub verified_overrides: BTreeMap<String, String>,
+}
+
+/// A user's DuckDB SQL standing in for a Snowflake function, written in SQLBuild's FUNCTION() format.
+#[derive(Clone, Debug, PartialEq, Eq, Serialize)]
+pub struct UserOverride {
+    /// The override's own name, upper case.
+    pub name: String,
+    /// The parameters, in order, with the names its body reads.
+    pub arguments: Vec<ColumnSpec>,
+    /// The result's Snowflake type.
+    pub returns: SnowflakeType,
+    /// The DuckDB expression over the parameters, as loaded.
+    pub body: String,
+    /// The SHA-256 of `body`, in lower-case hex, which verification is bound to.
+    pub sha256: String,
 }
 
 /// How long converting one statement may take, and how large its DuckDB SQL may grow.

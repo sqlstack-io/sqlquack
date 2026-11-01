@@ -7,9 +7,9 @@ use crate::analysis::tests::test_types::{AnalysisSummary, AnalyzeTestCase};
 fn given_sql_and_a_schema_when_analyzing_then_it_converts_or_refuses_with_a_category() {
     let test_cases = [
         AnalyzeTestCase {
-            description: "a declared Python function of matching types is a typed call",
+            description: "a declared Python function is refused where no Python runtime registers it",
             sql: "SELECT is_gift(note) AS gift FROM customers",
-            expected_summary: converted(),
+            expected_summary: refused(RefusalCategory::TypeCondition),
         },
         AnalyzeTestCase {
             description: "a SQL function named by its reference placeholder is a typed call",

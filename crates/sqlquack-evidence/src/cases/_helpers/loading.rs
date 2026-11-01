@@ -128,6 +128,7 @@ fn expand(
         values,
         compile_error: case.compile_error,
         functions: case.functions.clone(),
+        overrides: case.overrides.clone(),
         setup_sql,
         inputs: inputs(case),
         row_sources: row_sources(case, spelling),

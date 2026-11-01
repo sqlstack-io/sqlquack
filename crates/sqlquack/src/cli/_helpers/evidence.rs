@@ -13,7 +13,7 @@ use crate::analysis::main::confirm_assumption::confirm_assumption;
 use crate::analysis::main::confirm_utc_session::confirm_utc_session;
 use crate::analysis::main::conversion_options::conversion_options;
 use crate::cli::models::EvidencePaths;
-use sqlquack_rules::conversion::constants::DECLARED_OFFSET;
+use sqlquack_rules::conversion::constants::{DECLARED_OFFSET, PROJECT_UDF};
 
 pub(crate) struct Evidence {
     pub(crate) policy: Policy,
@@ -46,7 +46,7 @@ pub(crate) fn chosen_policy(path: &Path, builtin: bool) -> Result<Option<Policy>
 /// The conversion options of `policy`, or the built-in default allowing no divergence.
 pub(crate) fn divergence_options(
     policy: Option<&Policy>,
-    (strict, utc_session, declared_offsets): (bool, bool, bool),
+    (strict, utc_session, confirmed): (bool, bool, (bool, bool)),
 ) -> ConversionOptions {
     let Some(policy) = policy else {
         return ConversionOptions::default();
@@ -56,17 +56,21 @@ pub(crate) fn divergence_options(
         true => confirm_utc_session(options, policy),
         false => options,
     };
-    confirmed_offsets(options, policy, declared_offsets)
+    confirmed_offsets(options, policy, confirmed)
 }
 
-/// `options` relying on `declared_offset` in any mode when the caller confirmed the offsets.
+/// `options` relying on `declared_offset` and `project_udf` in any mode when the caller confirmed.
 pub(crate) fn confirmed_offsets(
     options: ConversionOptions,
     policy: &Policy,
-    confirmed: bool,
+    (offsets, python_runtime): (bool, bool),
 ) -> ConversionOptions {
-    match confirmed {
+    let options = match offsets {
         true => confirm_assumption(options, policy, DECLARED_OFFSET),
+        false => options,
+    };
+    match python_runtime {
+        true => confirm_assumption(options, policy, PROJECT_UDF),
         false => options,
     }
 }

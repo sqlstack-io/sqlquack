@@ -10,12 +10,17 @@ use sqlquack_core::provenance::main::merge_provenance::merge_provenance;
 use sqlquack_core::refusals::models::Refusal;
 use sqlquack_policy::policy::constants::{SESSION_TIME_ZONE, TIMEZONE_PARAMETER};
 use sqlquack_rules::catalogue::main::builtin_catalogue::builtin_catalogue;
+use sqlquack_rules::conversion::models::ConversionOptions;
 
 use crate::analysis::main::analyze::analyze;
 use crate::analysis::main::assumption_id::assumption_id;
+use crate::analysis::main::override_macros::override_macros;
 use crate::analysis::main::parse_session::parse_session;
+use crate::analysis::main::python_functions::python_functions;
 use crate::analysis::main::refused_construct::refused_construct;
 use crate::analysis::main::session_conversion_options::session_conversion_options;
+use crate::analysis::main::with_overrides::with_overrides;
+use crate::analysis::models::PythonSignature;
 use crate::cli::_helpers::evidence::chosen_policy;
 use crate::cli::_helpers::evidence::confirmed_offsets;
 use crate::cli::_helpers::schema::load_schema;
@@ -41,6 +46,19 @@ struct ConvertReport {
     assumptions: Vec<String>,
     /// What the session parameters changed about conversion.
     notes: Vec<String>,
+    /// The Python functions the SQL calls, which the caller registers before running it.
+    python_functions: Vec<PythonSignature>,
+    /// The macros of the user overrides the SQL calls, which the caller runs before it.
+    macros: Vec<String>,
+    /// Every user override loaded: its name, the function it replaces and its body's hash.
+    overrides: Vec<OverrideListing>,
+}
+
+#[derive(Serialize)]
+struct OverrideListing {
+    name: String,
+    replaces: String,
+    sha256: String,
 }
 
 /// One refusal as `convert --json` prints it.
@@ -68,7 +86,15 @@ pub(crate) fn convert_command(
     };
     let rendered = match arguments.json {
         true => serde_json::to_string_pretty(&report).unwrap_or_default() + "\n",
-        false if report.converted => report.sql.clone() + "\n",
+        false if report.converted => {
+            report
+                .macros
+                .iter()
+                .map(|statement| format!("{statement};\n"))
+                .collect::<String>()
+                + &report.sql
+                + "\n"
+        }
         false => String::new(),
     };
     if stdout.write_all(rendered.as_bytes()).is_err() {
@@ -154,13 +180,27 @@ fn converted(arguments: &ConvertArguments) -> Result<ConvertReport, String> {
                 divergences: BTreeMap::new(),
                 assumptions: Vec::new(),
                 notes: Vec::new(),
+                python_functions: Vec::new(),
+                macros: Vec::new(),
+                overrides: Vec::new(),
             });
         }
     };
     let options = match &policy {
-        Some(policy) => confirmed_offsets(options, policy, arguments.confirm_declared_offsets),
+        Some(policy) => confirmed_offsets(
+            options,
+            policy,
+            (arguments.confirm_declared_offsets, arguments.python_runtime),
+        ),
         None => options,
     };
+    let options = with_overrides(
+        options,
+        (
+            arguments.overrides.as_deref(),
+            &arguments.verified_overrides,
+        ),
+    )?;
     let analysis = analyze(
         &sql,
         SourceDialect::Snowflake,
@@ -208,6 +248,9 @@ fn converted(arguments: &ConvertArguments) -> Result<ConvertReport, String> {
             false => String::new(),
         },
         refusals: analysis.refusals.iter().map(convert_refusal).collect(),
+        python_functions: python_functions(&provenance.divergences, &schema)?,
+        macros: override_macros(&provenance.divergences, &options),
+        overrides: override_listings(&options),
         divergences: listed(provenance.divergences),
         assumptions,
     })
@@ -246,4 +289,16 @@ fn read_sql(arguments: &ConvertArguments) -> Result<String, String> {
             Ok(sql)
         }
     }
+}
+
+fn override_listings(options: &ConversionOptions) -> Vec<OverrideListing> {
+    options
+        .overrides
+        .iter()
+        .map(|(replaces, replacement)| OverrideListing {
+            name: replacement.name.clone(),
+            replaces: replaces.clone(),
+            sha256: replacement.sha256.clone(),
+        })
+        .collect()
 }

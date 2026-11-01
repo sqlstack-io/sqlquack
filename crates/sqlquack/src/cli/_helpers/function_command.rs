@@ -69,7 +69,11 @@ fn convert(
         parameters,
     )?;
     let options = match policy {
-        Some(policy) => confirmed_offsets(options, policy, arguments.confirm_declared_offsets),
+        Some(policy) => confirmed_offsets(
+            options,
+            policy,
+            (arguments.confirm_declared_offsets, arguments.python_runtime),
+        ),
         None => options,
     };
     let schema = load_schema(&arguments.schema)?;

@@ -5,10 +5,12 @@ use sqlquack_core::classification::models::Construct;
 use sqlquack_core::refusals::models::Refusal;
 use sqlquack_duckdb::arrays::constants::ARRAY_SORT_ORDER;
 use sqlquack_duckdb::arrays::main::json_array_distinct::json_array_distinct;
+use sqlquack_duckdb::arrays::main::json_array_extreme::json_array_extreme;
 use sqlquack_duckdb::arrays::main::json_array_flatten::json_array_flatten;
 use sqlquack_duckdb::arrays::main::json_array_intersection::json_array_intersection;
 use sqlquack_duckdb::arrays::main::json_array_range::json_array_range;
 use sqlquack_duckdb::arrays::main::json_array_remove::json_array_remove;
+use sqlquack_duckdb::arrays::main::json_array_reverse::json_array_reverse;
 use sqlquack_duckdb::arrays::main::json_array_slice::json_array_slice;
 use sqlquack_duckdb::arrays::main::json_array_sort::json_array_sort;
 use sqlquack_duckdb::arrays::main::json_arrays_overlap::json_arrays_overlap;
@@ -28,8 +30,8 @@ use crate::conversion::_helpers::support::scope::Emitted;
 use crate::conversion::_helpers::support::site::Site;
 use crate::conversion::_helpers::support::typed_leaves::compared_by_text;
 use crate::conversion::constants::{
-    ARRAY_APPEND_RULE, ARRAY_FLATTEN_RULE, ARRAY_RANGE_RULE, ARRAY_SET_RULE, ARRAY_SLICE_RULE,
-    ARRAY_SORT_RULE, TO_ARRAY_RULE,
+    ARRAY_APPEND_RULE, ARRAY_EXTREME_RULE, ARRAY_FLATTEN_RULE, ARRAY_MAX_NAME, ARRAY_RANGE_RULE,
+    ARRAY_REVERSE_RULE, ARRAY_SET_RULE, ARRAY_SLICE_RULE, ARRAY_SORT_RULE, TO_ARRAY_RULE,
 };
 
 /// One of this module's array functions, or `None` for another name or arity.
@@ -53,6 +55,19 @@ pub(crate) fn array_function(
                 .map(|array| semi_structured(json_array_flatten(&array, log)))
         }
         ("TO_ARRAY", [value]) => to_array(value, construct, site),
+        ("ARRAY_REVERSE", [array]) => {
+            let _rule = log.rule(ARRAY_REVERSE_RULE);
+            variant(array, construct, site)
+                .map(|array| semi_structured(json_array_reverse(&array, log)))
+        }
+        ("ARRAY_MAX" | "ARRAY_MIN", [array]) => {
+            let _rule = log.rule(ARRAY_EXTREME_RULE);
+            diverge(site.context, ARRAY_SORT_ORDER, construct)
+                .and_then(|()| variant(array, construct, site))
+                .map(|array| {
+                    semi_structured(json_array_extreme(&array, name == ARRAY_MAX_NAME, log))
+                })
+        }
         ("ARRAY_INTERSECTION" | "ARRAYS_OVERLAP", [left, right]) => {
             compared_arrays(name, (left, Some(right)), construct, site)
         }

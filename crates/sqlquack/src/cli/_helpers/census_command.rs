@@ -6,6 +6,7 @@ use std::time::Instant;
 
 use sqlquack_core::parsing::models::SourceDialect;
 
+use crate::analysis::main::with_overrides::with_overrides;
 use crate::census::constants::{COVERAGE_POINTS, RULE_ID_PREFIX, SLOWEST_FILES};
 use crate::census::main::census_with_progress::census_with_progress;
 use crate::census::main::render_census_text::render_census_text;
@@ -41,9 +42,22 @@ pub(crate) fn census_command(
             (
                 arguments.strict,
                 arguments.utc_session,
-                arguments.confirm_declared_offsets,
+                (arguments.confirm_declared_offsets, arguments.python_runtime),
             ),
         ),
+        Err(error) => {
+            let _ = writeln!(stderr, "sqlquack census: failed: {error}");
+            return ExitCode::from(2);
+        }
+    };
+    let conversion = match with_overrides(
+        conversion,
+        (
+            arguments.overrides.as_deref(),
+            &arguments.verified_overrides,
+        ),
+    ) {
+        Ok(conversion) => conversion,
         Err(error) => {
             let _ = writeln!(stderr, "sqlquack census: failed: {error}");
             return ExitCode::from(2);

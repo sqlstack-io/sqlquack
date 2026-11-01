@@ -18,6 +18,8 @@ use sqlquack_rules::conversion::main::quoted_exclusions::quoted_exclusions;
 use sqlquack_rules::conversion::models::{ConversionOptions, Converted};
 use sqlquack_semantics::types::models::Schema;
 
+use crate::analysis::_helpers::override_calls::overrides_applied;
+use crate::analysis::_helpers::volatile_calls::volatile_calls_kept;
 use crate::analysis::models::Analysis;
 
 /// Parses, classifies, and converts each statement or refuses it.
@@ -62,7 +64,10 @@ pub fn analyze(
         analysis.refusals.extend(declared);
         analysis.occurrences.extend(occurrences);
         if !refused {
-            match convert_within_budget(statement, sql, (schema, options, &lines)) {
+            match convert_within_budget(statement, sql, (schema, options, &lines))
+                .and_then(|converted| volatile_calls_kept(converted, statement, schema))
+                .and_then(|converted| overrides_applied(converted, statement, options))
+            {
                 Ok(converted) => analysis.conversions.push(converted),
                 Err(refusal) => analysis.refusals.push(refusal),
             }

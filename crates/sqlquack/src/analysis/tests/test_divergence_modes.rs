@@ -1,7 +1,9 @@
 use sqlquack_core::refusals::models::RefusalCategory;
 
-use crate::analysis::tests::helpers::{divergence_outcome, numeric_range};
-use crate::analysis::tests::test_types::{DivergenceModeOutcome, DivergenceModeTestCase};
+use crate::analysis::tests::helpers::{divergence_outcome, numeric_range, python_outcome};
+use crate::analysis::tests::test_types::{
+    DivergenceModeOutcome, DivergenceModeTestCase, PythonModeTestCase,
+};
 
 #[test]
 fn given_a_known_divergence_when_converting_then_default_mode_warns_and_strict_mode_refuses() {
@@ -338,6 +340,63 @@ fn given_a_known_divergence_when_converting_then_default_mode_warns_and_strict_m
     for test_case in test_cases {
         assert_eq!(
             divergence_outcome(test_case.sql, test_case.strict),
+            test_case.expected_outcome,
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_a_python_function_call_when_converting_then_it_needs_a_confirmed_runtime_and_names_its_label()
+ {
+    let test_cases = [
+        PythonModeTestCase {
+            description: "without a Python runtime the call is refused",
+            sql: "SELECT is_gift(note) AS gift FROM customers",
+            strict: false,
+            runtime: false,
+            expected_outcome: DivergenceModeOutcome {
+                converted: false,
+                divergences: vec![],
+                categories: vec![RefusalCategory::TypeCondition],
+            },
+        },
+        PythonModeTestCase {
+            description: "with a runtime the call relies on project_udf:<NAME> and python_value_crossing",
+            sql: "SELECT is_gift(note) AS gift FROM customers",
+            strict: false,
+            runtime: true,
+            expected_outcome: DivergenceModeOutcome {
+                converted: true,
+                divergences: vec![
+                    (
+                        "project_udf:IS_GIFT".to_owned(),
+                        vec!["fn:IS_GIFT".to_owned()],
+                    ),
+                    (
+                        "python_value_crossing".to_owned(),
+                        vec!["fn:IS_GIFT".to_owned()],
+                    ),
+                ],
+                categories: vec![],
+            },
+        },
+        PythonModeTestCase {
+            description: "strict mode refuses the call even with a runtime, as its crossing can raise",
+            sql: "SELECT is_gift(note) AS gift FROM customers",
+            strict: true,
+            runtime: true,
+            expected_outcome: DivergenceModeOutcome {
+                converted: false,
+                divergences: vec![],
+                categories: vec![RefusalCategory::TypeCondition],
+            },
+        },
+    ];
+    for test_case in test_cases {
+        assert_eq!(
+            python_outcome(test_case.sql, (test_case.strict, test_case.runtime)),
             test_case.expected_outcome,
             "{}",
             test_case.description

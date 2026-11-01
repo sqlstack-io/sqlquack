@@ -3,7 +3,7 @@
 use std::cell::{Cell, RefCell};
 use std::collections::BTreeMap;
 
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 use sqlquack_core::classification::models::Construct;
 use sqlquack_core::refusals::main::outside_conditions::outside_conditions;
 use sqlquack_core::refusals::models::Refusal;
@@ -106,6 +106,64 @@ pub struct FunctionSpec {
     pub arguments: Vec<ColumnSpec>,
     /// A scalar type, or the columns of a table function.
     pub returns: FunctionReturns,
+    /// How calls behave: volatility, NULL input and batching.
+    pub traits: FunctionTraits,
+}
+
+/// How a project function's calls behave; absent declarations take Snowflake's defaults.
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq, Serialize, Deserialize)]
+pub struct FunctionTraits {
+    /// Whether calls may be folded and shared.
+    #[serde(default)]
+    pub volatility: Volatility,
+    /// Whether a NULL argument calls the handler.
+    #[serde(default)]
+    pub null_input: NullInput,
+    /// Whether the handler takes batches of rows.
+    #[serde(default)]
+    pub vectorized: bool,
+}
+
+/// A function's volatility: VOLATILE, Snowflake's default, or IMMUTABLE.
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub enum Volatility {
+    /// Each call may return another value, so calls are never folded or shared.
+    #[default]
+    Volatile,
+    /// Equal arguments give equal results.
+    Immutable,
+}
+
+/// What a NULL argument does: CALLED ON NULL INPUT, Snowflake's default, or RETURNS NULL ON NULL INPUT.
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub enum NullInput {
+    /// The handler is called with None.
+    #[default]
+    Called,
+    /// The call is NULL without calling the handler.
+    ReturnsNull,
+}
+
+impl Volatility {
+    /// The declaration's name, as schema files and conversion reports write it.
+    pub fn name(self) -> &'static str {
+        match self {
+            Self::Volatile => "volatile",
+            Self::Immutable => "immutable",
+        }
+    }
+}
+
+impl NullInput {
+    /// The declaration's name, as schema files and conversion reports write it.
+    pub fn name(self) -> &'static str {
+        match self {
+            Self::Called => "called",
+            Self::ReturnsNull => "returns_null",
+        }
+    }
 }
 
 /// The language a project function is written in.

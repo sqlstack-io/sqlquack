@@ -10,6 +10,7 @@ use sqlquack_core::provenance::models::Provenance;
 use sqlquack_policy::policy::models::Policy;
 
 use crate::cases::models::LoadedCase;
+use crate::replay::models::PythonReplay;
 use crate::results::models::SessionDefaults;
 use crate::verify::types::{CaseConverter, FailureModes};
 
@@ -26,6 +27,8 @@ pub enum Conversion {
         provenance: Provenance,
         /// Where each raise ID in the SQL comes from in the case's source SQL.
         raises: BTreeMap<String, Vec<SourceLocation>>,
+        /// The Python functions the SQL calls, registered before it runs.
+        python: Option<Box<PythonReplay>>,
     },
     /// The converter refused.
     Refused {

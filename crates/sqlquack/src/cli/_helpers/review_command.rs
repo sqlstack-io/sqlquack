@@ -32,9 +32,10 @@ pub(crate) fn review_command(arguments: &ReviewArguments, stderr: &mut dyn Write
 }
 
 fn review(arguments: &ReviewArguments) -> Result<usize, String> {
-    let (evidence, report) = run_verification(&arguments.paths, None)?;
+    let (evidence, report) = run_verification(&arguments.paths, None, None)?;
     let converter = PipelineConverter {
         options: conversion_options(&evidence.policy, false),
+        python: None,
     };
     let files: Vec<ReviewFile> = export_review(
         &evidence.cases,

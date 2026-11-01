@@ -18,6 +18,7 @@ impl CaseConverter for UnchangedSqlForTests {
             setup: Vec::new(),
             provenance: Provenance::default(),
             raises: std::collections::BTreeMap::new(),
+            python: None,
         }
     }
 }
