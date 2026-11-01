@@ -4,6 +4,7 @@ use std::collections::BTreeSet;
 use std::rc::Rc;
 
 use sqlquack_syntax::expressions::names::models::Column;
+use sqlquack_syntax::tokens::models::Span;
 
 use crate::dialects::types::DialectProfile;
 use crate::lineage::types::{LineageSchema, SharedColumns};
@@ -180,6 +181,10 @@ pub(crate) struct ResolvedQuery {
     pub(crate) open_relation: Option<String>,
     /// The stored relation the query is, when the schema knows its columns.
     pub(crate) stored_relation: Option<String>,
+    /// Whether the query is a VALUES list, whose generated column names validation does not judge.
+    pub(crate) from_values: bool,
+    /// The relation a FROM item names, as written in lower case, when it is a table reference.
+    pub(crate) written_name: Option<String>,
     /// What every unknown column also reads, as a table function's arguments.
     pub(crate) open_reads: Option<Lineage>,
     /// Columns deciding which rows the query returns.
@@ -201,4 +206,17 @@ pub(crate) struct FromItems {
 pub(crate) struct RowReads {
     pub(crate) columns: BTreeSet<SourceColumn>,
     pub(crate) lost: bool,
+}
+
+/// A column reference no FROM item, CTE or enclosing level resolves, worded as polyglot words it.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct NameFinding {
+    /// The polyglot-compatible code: E201 unknown column, E221 ambiguous, E222 unknown qualifier.
+    pub code: &'static str,
+    /// The message, in polyglot's words.
+    pub message: String,
+    /// Where the reference is written, when the parse located it.
+    pub span: Option<Span>,
+    /// The name as written, which the message spells in lower case as polyglot does.
+    pub written: String,
 }

@@ -139,3 +139,9 @@ pub(crate) struct DialectTypeTestCase {
     pub(crate) profile: &'static dyn DialectProfile,
     pub(crate) expected_outputs: &'static [ExpectedTypedOutput],
 }
+
+pub(crate) struct QueryFindingsTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) sql: &'static str,
+    pub(crate) expected_findings: &'static [(&'static str, &'static str, usize)],
+}

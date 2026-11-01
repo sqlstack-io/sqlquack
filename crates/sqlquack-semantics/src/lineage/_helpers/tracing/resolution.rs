@@ -4,7 +4,9 @@ use std::rc::Rc;
 
 use sqlquack_syntax::expressions::names::models::Identifier;
 
-use crate::lineage::_helpers::lineages::{combined, constant, direct, traced_if, unresolved};
+use crate::lineage::_helpers::tracing::lineages::{
+    combined, constant, direct, traced_if, unresolved,
+};
 use crate::lineage::constants::POSITIONAL_COLUMN_BASE;
 use crate::lineage::models::{
     Lineage, LineageContext, LineageScope, Nullability, SchemaColumn, ScopeSource, ScopedColumn,

@@ -4,8 +4,8 @@ use std::collections::BTreeSet;
 use std::rc::Rc;
 
 use crate::dialects::types::DialectProfile;
-use crate::lineage::_helpers::duckdb_types::{DuckType, common_type, parsed_type};
-use crate::lineage::_helpers::snowflake_sets::snowflake_set_type;
+use crate::lineage::_helpers::typing::duckdb_types::{DuckType, common_type, parsed_type};
+use crate::lineage::_helpers::typing::snowflake_sets::snowflake_set_type;
 use crate::lineage::constants::{DUCKDB_PROFILE, SNOWFLAKE_PROFILE};
 use crate::lineage::models::{Lineage, Nullability, RowReads, SourceColumn, TransformKind};
 use crate::lineage::types::SharedColumns;

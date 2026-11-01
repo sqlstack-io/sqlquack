@@ -8,15 +8,15 @@ use sqlquack_syntax::expressions::names::models::{Identifier, Star};
 use sqlquack_syntax::expressions::operators::models::Parameter;
 
 use crate::dialects::main::canonical_type::canonical_type;
-use crate::lineage::_helpers::duckdb_types::cast_spelling;
-use crate::lineage::_helpers::lineages::{combined, constant, traced_if, unresolved};
-use crate::lineage::_helpers::queries::{expanded_star, resolved_query};
-use crate::lineage::_helpers::resolution::{column_lineage, key, positional_column};
-use crate::lineage::_helpers::typing::{
+use crate::lineage::_helpers::tracing::lineages::{combined, constant, traced_if, unresolved};
+use crate::lineage::_helpers::tracing::queries::{expanded_star, resolved_query};
+use crate::lineage::_helpers::tracing::resolution::{column_lineage, key, positional_column};
+use crate::lineage::_helpers::typing::duckdb_types::cast_spelling;
+use crate::lineage::_helpers::typing::rules::{
     ValueType, computed_type, literal_type, mapped_timestamp, rendered_type, required_non_null,
 };
 use crate::lineage::constants::{
-    AGGREGATE_FUNCTIONS, BOOLEAN_TYPE, DUCKDB_PROFILE, POSITIONAL_COLUMN_BASE,
+    AGGREGATE_FUNCTIONS, BOOLEAN_TYPE, DATE_PART_FUNCTIONS, DUCKDB_PROFILE, POSITIONAL_COLUMN_BASE,
     SNOWFLAKE_JSON_HOLDERS, SNOWFLAKE_PROFILE, SNOWFLAKE_VARIANT_TYPE,
 };
 use crate::lineage::models::{
@@ -160,12 +160,28 @@ fn children_lineage(
         .into_iter()
         .map(|child| match (child, floor) {
             (Expression::Star(_), TransformKind::Aggregation) => (child, constant()),
+            _ if date_part_argument(expression, child) => (child, constant()),
             _ => (child, expression_lineage(child, scope, context)),
         })
         .collect();
     let value_type: ValueType = computed_type(expression, &parts, context);
     let lineage: Lineage = combined(parts.into_iter().map(|(_, part)| part).collect(), floor);
     typed(lineage, value_type)
+}
+
+/// Whether `child` is the date part keyword a function like DATEADD or LAST_DAY takes.
+pub(crate) fn date_part_argument(function: &Expression, child: &Expression) -> bool {
+    let Expression::Function(function) = function else {
+        return false;
+    };
+    matches!(child, Expression::Column(column) if column.table.is_none() && !column.name.quoted)
+        && DATE_PART_FUNCTIONS.iter().any(|(name, position)| {
+            function.name.eq_ignore_ascii_case(name)
+                && function
+                    .args
+                    .get(*position)
+                    .is_some_and(|argument| std::ptr::eq(argument, child))
+        })
 }
 
 /// `lineage` with the value's type and nullability.

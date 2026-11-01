@@ -9,4 +9,6 @@ pub mod scopes;
 pub mod types;
 
 pub use crate::lineage::main::query_lineage::query_lineage;
+pub use crate::lineage::main::query_lineage_and_findings::query_lineage_and_findings;
+pub use crate::lineage::main::query_name_findings::query_name_findings;
 pub use crate::lineage::main::statement_lineage::statement_lineage;

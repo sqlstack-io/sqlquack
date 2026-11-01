@@ -2,9 +2,11 @@ use std::collections::HashMap;
 
 use crate::lineage::models::NullabilityRule;
 use crate::lineage::models::{Nullability, SchemaColumn, SourceColumn};
-use sqlquack_syntax::{Dialect, ParseOptions};
+use sqlquack_syntax::{CallMode, Dialect, ParseOptions, parse_statements_with};
 
 use crate::dialects::constants::DUCKDB;
+use crate::dialects::types::DialectProfile;
+use crate::lineage::_helpers::findings::statement::statement_findings;
 use crate::lineage::main::query_lineage::query_lineage;
 use crate::lineage::models::LineageContext;
 use crate::lineage::tests::test_types::{
@@ -20,7 +22,7 @@ impl LineageSchema for ShopSchema {
 
 /// Orders, customers and products, as a Snowflake catalog spells unquoted names.
 pub(crate) fn shop_schema() -> ShopSchema {
-    let relations: [(&str, &[&str]); 4] = [
+    schema_of([
         (
             "ORDERS",
             &["ID", "CUSTOMER_ID", "AMOUNT", "ITEMS", "STATUS"],
@@ -28,7 +30,24 @@ pub(crate) fn shop_schema() -> ShopSchema {
         ("CUSTOMERS", &["ID", "NAME", "COUNTRY"]),
         ("SHOP.PRODUCTS", &["SKU", "PRICE"]),
         ("EXPORTS", &["\"listingId\"", "LISTING_STATUS"]),
-    ];
+    ])
+}
+
+/// The same shop as DuckDB spells unquoted names, in lower case.
+pub(crate) fn duckdb_shop_schema() -> ShopSchema {
+    schema_of([
+        (
+            "orders",
+            &["id", "customer_id", "amount", "items", "status"],
+        ),
+        ("customers", &["id", "name", "country"]),
+        ("shop.products", &["sku", "price"]),
+        ("exports", &["\"listingId\"", "listing_status"]),
+    ])
+}
+
+/// Relations of untyped columns, a quoted column written in its quotes.
+fn schema_of(relations: [(&str, &[&str]); 4]) -> ShopSchema {
     ShopSchema(
         relations
             .into_iter()
@@ -48,6 +67,45 @@ pub(crate) fn shop_schema() -> ShopSchema {
             })
             .collect(),
     )
+}
+
+/// The `(code, message, start)` findings of `sql`, parsed and read in one dialect.
+pub(crate) fn found_findings(
+    sql: &str,
+    (dialect, profile, schema): (Dialect, &'static dyn DialectProfile, &ShopSchema),
+) -> Vec<(&'static str, String, usize)> {
+    let context = LineageContext {
+        profile,
+        schema,
+        sql: Some(sql),
+    };
+    let statements = parse_statements_with(
+        sql,
+        dialect,
+        &ParseOptions::default(),
+        CallMode::FaithfulLocated,
+    )
+    .unwrap_or_else(|error| panic!("{sql}: {error}"));
+    statement_findings(&statements[0], context)
+        .into_iter()
+        .map(|finding| {
+            (
+                finding.code,
+                finding.message,
+                finding.span.map_or(0, |span| span.start),
+            )
+        })
+        .collect()
+}
+
+/// `expected` as owned `(code, message, start)` findings.
+pub(crate) fn owned_findings(
+    expected: &[(&'static str, &str, usize)],
+) -> Vec<(&'static str, String, usize)> {
+    expected
+        .iter()
+        .map(|(code, message, start)| (*code, (*message).to_owned(), *start))
+        .collect()
 }
 
 /// A source column as `RELATION.column`, a quoted column in quotes.

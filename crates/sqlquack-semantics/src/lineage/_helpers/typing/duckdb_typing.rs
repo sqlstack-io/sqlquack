@@ -5,7 +5,7 @@ use std::rc::Rc;
 use sqlquack_syntax::Expression;
 use sqlquack_syntax::expressions::names::models::Literal;
 
-use crate::lineage::_helpers::duckdb_types::{
+use crate::lineage::_helpers::typing::duckdb_types::{
     DuckType, Number, common_type, decimal_shape, parsed_type, unsigned_coercion,
 };
 use crate::lineage::constants::{
