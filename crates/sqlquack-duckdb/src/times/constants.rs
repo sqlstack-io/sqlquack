@@ -40,3 +40,5 @@ pub const TIME_SUBMICRO: &str = "time_submicro";
 pub const MICROSECOND_PRECISION: u8 = 6;
 /// The message of the error text not in a TIME format raises.
 pub const TIME_FORMAT_MESSAGE: &str = "Can't parse as time with the format";
+/// Nanoseconds in a millisecond.
+pub const NANOS_PER_MILLISECOND: i64 = 1_000_000;

@@ -2,6 +2,7 @@
 
 use serde_json::Value;
 use sqlquack_core::classification::models::Construct;
+use sqlquack_core::provenance::models::ProvenanceLog;
 use sqlquack_core::refusals::main::outside_conditions::outside_conditions;
 use sqlquack_core::refusals::models::Refusal;
 use sqlquack_duckdb::blocks::main::cast::cast;
@@ -42,7 +43,8 @@ use sqlquack_duckdb::blocks::constants::NANOSECOND_DIGITS;
 use crate::conversion::constants::{
     COMPARISON, DATE_DAY_ARITHMETIC, DATE_LITERAL_COMPARISON, DAY_UNIT, DECIMAL_ARITHMETIC,
     DECIMAL_DIVISION, DECIMAL_MODULO, FLOAT_ARITHMETIC, FLOAT_MODULO, LOGIC, MOD_PAIR,
-    NULL_SAFE_COMPARISON, NUMERIC_RANGE, TEXT_NUMBER_COMPARISON, VARIANT_EQUALITY,
+    NULL_ARITHMETIC, NULL_SAFE_COMPARISON, NULL_SQL, NULL_SUM_PRECISION, NUMERIC_RANGE,
+    TEXT_NUMBER_COMPARISON, VARIANT_EQUALITY,
 };
 
 /// Characters in a `YYYY-MM-DD` date.
@@ -110,6 +112,22 @@ pub(crate) fn arithmetic(kind: &str, payload: &Value, site: Site<'_>) -> Result<
     {
         return date_plus_days((&left, &right), operator, &construct, site.context);
     }
+    let literal_null = |emitted: &Emitted| emitted.sql == NULL_SQL;
+    let null_type = match operator {
+        _ if !literal_null(&left) && !literal_null(&right) => None,
+        Arithmetic::Add | Arithmetic::Subtract => null_sum_type(left.data_type, right.data_type),
+        _ if !literal_null(&right) => None,
+        Arithmetic::Multiply | Arithmetic::Divide => {
+            null_product_type((left.data_type, right.data_type), operator, log)
+                .map_err(|reason| outside_conditions(construct.clone(), reason))?
+        }
+    };
+    if let Some(data_type) = null_type {
+        let _rule = log.rule(NULL_ARITHMETIC);
+        let sql = cast("NULL", data_type, log)
+            .map_err(|reason| outside_conditions(construct.clone(), reason))?;
+        return Ok(Emitted::new(sql, data_type));
+    }
     let rule = match (left.data_type, right.data_type, operator) {
         (SnowflakeType::Number { .. }, SnowflakeType::Number { .. }, Arithmetic::Divide) => {
             DECIMAL_DIVISION
@@ -143,6 +161,46 @@ pub(crate) fn arithmetic(kind: &str, payload: &Value, site: Site<'_>) -> Result<
             left.data_type,
             right.data_type
         ))),
+    }
+}
+
+/// NUMBER(p,s) or FLOAT plus or minus an untyped NULL: NUMBER(max(p, 18) + 1, s), or FLOAT.
+fn null_sum_type(left: SnowflakeType, right: SnowflakeType) -> Option<SnowflakeType> {
+    match (left, right) {
+        (SnowflakeType::Null, other) | (other, SnowflakeType::Null) => match other {
+            SnowflakeType::Number { precision, scale } => Some(SnowflakeType::Number {
+                precision: (precision.max(NULL_SUM_PRECISION) + 1).min(MAX_PRECISION),
+                scale,
+            }),
+            SnowflakeType::Float => Some(SnowflakeType::Float),
+            _ => None,
+        },
+        _ => None,
+    }
+}
+
+/// NUMBER(p,s) of up to 18 digits times or over a NULL literal, or FLOAT times one, as recorded.
+fn null_product_type(
+    (left, right): (SnowflakeType, SnowflakeType),
+    operator: Arithmetic,
+    log: &ProvenanceLog,
+) -> Result<Option<SnowflakeType>, String> {
+    let null = SnowflakeType::Number {
+        precision: NULL_SUM_PRECISION,
+        scale: 0,
+    };
+    let (left, right) = match (left, right, operator) {
+        (other @ SnowflakeType::Number { precision, .. }, SnowflakeType::Null, _)
+            if precision <= NULL_SUM_PRECISION =>
+        {
+            (other, null)
+        }
+        (other @ SnowflakeType::Float, SnowflakeType::Null, Arithmetic::Multiply) => (other, null),
+        _ => return Ok(None),
+    };
+    match operator {
+        Arithmetic::Divide => numeric_divide(left, right, log).map(Some),
+        _ => numeric_multiply(left, right, log).map(Some),
     }
 }
 
@@ -483,11 +541,11 @@ pub(crate) fn comparable(
             return Ok((left, right));
         }
         (SnowflakeType::Varchar, number @ SnowflakeType::Number { .. }) => {
-            let text = number_text(left, number, construct, context)?;
+            let text = number_text(left, (number, &right.sql), construct, context)?;
             return Ok((text, number_range(right, context)));
         }
         (number @ SnowflakeType::Number { .. }, SnowflakeType::Varchar) => {
-            let text = number_text(right, number, construct, context)?;
+            let text = number_text(right, (number, &left.sql), construct, context)?;
             return Ok((number_range(left, context), text));
         }
         _ => {}
@@ -521,7 +579,7 @@ fn number_range(number: Emitted, context: &Context<'_>) -> Emitted {
 /// Text compared with `number`, read unrounded as Snowflake reads it; relies on text_number_scale.
 fn number_text(
     text: Emitted,
-    number: SnowflakeType,
+    (number, number_sql): (SnowflakeType, &str),
     construct: &Construct,
     context: &Context<'_>,
 ) -> Result<Emitted, Refusal> {
@@ -537,7 +595,7 @@ fn number_text(
     let sql = compared_number_text(&text.sql, scale, context.log)
         .map_err(|reason| outside_conditions(construct.clone(), reason))?;
     Ok(Emitted::new(
-        sql,
+        format!("(CASE WHEN {number_sql} IS NULL THEN NULL ELSE {sql} END)"),
         SnowflakeType::Number {
             precision: MAX_PRECISION,
             scale,

@@ -68,7 +68,6 @@ rows = [
 ]
 query = "SELECT g, MEDIAN(n) AS mn, MEDIAN(f) AS mf FROM input GROUP BY g ORDER BY g"
 order = "ordered"
-expected_divergence = "percentile_interpolation"
 tags = ["null", "zero", "negative", "boundary"]
 
 [[case]]
@@ -193,4 +192,19 @@ rows = [
 ]
 query = "SELECT g, MEDIAN(n) AS mn, MEDIAN(w) AS mw FROM input GROUP BY g ORDER BY g"
 order = "ordered"
+expected_divergence = "percentile_interpolation"
 tags = ["null", "zero", "negative", "boundary"]
+
+[[case]]
+id = "median_exact_halves"
+description = "MEDIAN of NUMBER(10,2) and NUMBER(18,15) groups of two middles whose average ends in a half digit."
+columns = [{ name = "g", type = "VARCHAR" }, { name = "n", type = "NUMBER(10,2)" }, { name = "m", type = "NUMBER(18,15)" }]
+rows = [
+  ["'a'", "1.01", "0.123456789012344"],
+  ["'a'", "1.02", "0.123456789012345"],
+  ["'b'", "-0.01", "0.000000000000001"],
+  ["'b'", "0.02", "0.000000000000002"],
+]
+query = "SELECT g, MEDIAN(n) AS mn, MEDIAN(m) AS mm FROM input GROUP BY g ORDER BY g"
+order = "ordered"
+tags = ["negative", "boundary"]

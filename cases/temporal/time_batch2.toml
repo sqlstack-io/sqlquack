@@ -768,3 +768,21 @@ rows = [
 ]
 expression = "SYSTEM$TYPEOF(s::TIME)"
 tags = ["null", "boundary"]
+
+[[case]]
+id = "dateadd_milliseconds_to_time"
+description = "DATEADD of rounded milliseconds to a TIME, past midnight too, written with HH24:MI:SS.FF3."
+columns = [{ name = "s", type = "FLOAT" }]
+rows = [["38.67"], ["0.0015"], ["3725.5"], ["86399.9994"], ["90000"], ["NULL"]]
+query = "SELECT DATEADD('millisecond', ROUND(s * 1000), '00:00:00'::TIME)::VARCHAR AS t, TO_VARCHAR(DATEADD('millisecond', ROUND(s * 1000), '00:00:00'::TIME), 'HH24:MI:SS.FF3') AS v FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "time_format_truncates_nanoseconds"
+description = "TO_VARCHAR of TIME(9) values with sub-microsecond digits under HH24:MI:SS.FF6 and FF3, which truncate."
+columns = [{ name = "t", type = "TIME(9)" }]
+rows = [["'23:59:59.9999999'"], ["'12:00:00.0000005'"], ["'00:00:00.123456789'"], ["NULL"]]
+query = "SELECT TO_VARCHAR(t, 'HH24:MI:SS.FF6') AS f6, TO_VARCHAR(t, 'HH24:MI:SS.FF3') AS f3, TO_VARCHAR(t, 'HH24:MI:SS') AS f0 FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "boundary"]

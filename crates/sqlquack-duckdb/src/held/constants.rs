@@ -6,6 +6,8 @@ pub const VARIANT_BUILT: &str = "duckdb.variant_built";
 pub const VARIANT_DOUBLE_LEAF: &str = "duckdb.variant_double_leaf";
 /// A whole NUMBER as a leaf, raising beyond DuckDB's integers: `duckdb.variant_integer_leaf`.
 pub const VARIANT_INTEGER_LEAF: &str = "duckdb.variant_integer_leaf";
+/// A NUMBER with a scale as a held VARIANT leaf: `duckdb.variant_decimal_leaf`.
+pub const VARIANT_DECIMAL_LEAF: &str = "duckdb.variant_decimal_leaf";
 /// A JSON-held value as a leaf, raising for retyped numbers: `duckdb.variant_json_leaf`.
 pub const VARIANT_JSON_LEAF: &str = "duckdb.variant_json_leaf";
 /// A VARIANT-held value as Snowflake writes it as JSON: `duckdb.variant_written`.

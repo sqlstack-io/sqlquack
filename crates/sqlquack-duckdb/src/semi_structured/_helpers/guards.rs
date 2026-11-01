@@ -1,7 +1,10 @@
 //! Run-time checks that raise where DuckDB's JSON could differ from Snowflake's VARIANT.
 
 use crate::raises::main::raised::raised;
-use crate::semi_structured::constants::{JSON_DECIMAL_DIGITS, JSON_FIDELITY};
+use crate::semi_structured::constants::{
+    JSON_DECIMAL_DIGITS, JSON_FIDELITY, JSON_STRING_PATTERN, KEPT_NUMBER_PATTERN,
+    ZERO_FRACTION_PATTERN,
+};
 
 /// An expression raising the json_fidelity error, naming `what`.
 pub(crate) fn fidelity_error(what: &str) -> String {
@@ -43,4 +46,11 @@ fn any_object(sql: &str, test: &str) -> String {
 /// `body` over `value` evaluated once, as the lambda parameter `name`.
 pub(crate) fn bound(value: &str, name: &str, body: &str) -> String {
     format!("list_transform([{value}], lambda {name}: {body})[1]")
+}
+
+/// JSON text with all-zero fractions outside strings dropped, as Snowflake reads them; not -0.0.
+pub(crate) fn zero_fractions_whole(sql: &str) -> String {
+    let pattern = format!("({JSON_STRING_PATTERN}|{KEPT_NUMBER_PATTERN}){ZERO_FRACTION_PATTERN}")
+        .replace('\'', "''");
+    format!("regexp_replace({sql}, '{pattern}', '\\1\\2\\3', 'g')")
 }

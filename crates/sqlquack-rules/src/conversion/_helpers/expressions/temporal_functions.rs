@@ -54,9 +54,9 @@ use crate::conversion::_helpers::support::tree::{
     field, node_construct, payload_object, require_understood,
 };
 use crate::conversion::constants::{
-    BARE_FRACTION, BARE_FRACTION_PATTERNS, CURRENT_TIME, CURRENT_TIME_RULE, DATE_ARITHMETIC,
-    DATE_FORMAT_RULE, DATE_NAME, DATE_PART_RULE, DATE_PARTS, DATE_TEXT_SPELLING, DAY_NAME_RULE,
-    DECIMAL_EPOCH_RULE, FRACTIONAL_DATE_AMOUNT, FROM_PARTS, MAX_FRACTION_DIGITS_U8,
+    BARE_FRACTION, BARE_FRACTION_PATTERNS, CLOCK_FORMAT_FIELDS, CURRENT_TIME, CURRENT_TIME_RULE,
+    DATE_ARITHMETIC, DATE_FORMAT_RULE, DATE_NAME, DATE_PART_RULE, DATE_PARTS, DATE_TEXT_SPELLING,
+    DAY_NAME_RULE, DECIMAL_EPOCH_RULE, FRACTIONAL_DATE_AMOUNT, FROM_PARTS, MAX_FRACTION_DIGITS_U8,
     MICROSECOND_DIGITS, NULL_BRANCHES, NUMBER_TEXT_FORMAT, SCALE_DIGITS, SESSION_TIMEZONE_UTC,
     TEMPORAL_TEXT_FIELDS, TEMPORAL_TEXT_FORMAT, TEMPORAL_TEXT_SEPARATORS, TEXT_TO_TIME_RULE,
     TEXT_TO_TIMESTAMP_RULE, TIME_ARITHMETIC, TIME_ZONE_CONVERSION, TIMESTAMP_FORMAT_RULE,
@@ -798,6 +798,29 @@ pub(crate) fn temporal_text(
         return Err(refuse("a format that is not literal text".to_owned()));
     };
     let operand = convert_expression(value, site)?;
+    if let SnowflakeType::Time { precision } = operand.data_type {
+        if !clock_format(&written) {
+            return Err(refuse(format!(
+                "the TIME format '{written}', which no recording shows"
+            )));
+        }
+        let pattern = strftime_pattern(&written, Some(precision))
+            .ok_or_else(|| refuse(format!("the format '{written}', which no recording shows")))?;
+        let micros = match precision > MICROSECOND_DIGITS {
+            true => format!(
+                "(CAST('00:00:00' AS TIME) + to_microseconds(epoch_ns({}) // 1000))",
+                operand.sql
+            ),
+            false => format!("CAST({} AS TIME)", operand.sql),
+        };
+        return Ok(Emitted::new(
+            format!(
+                "strftime(CAST('1970-01-01' AS DATE) + {micros}, {})",
+                string_literal(&pattern, site.context.log)
+            ),
+            SnowflakeType::Varchar,
+        ));
+    }
     let precision = match operand.data_type {
         SnowflakeType::Date => None,
         SnowflakeType::TimestampNtz { precision } => Some(precision),
@@ -817,6 +840,21 @@ pub(crate) fn temporal_text(
         ),
         SnowflakeType::Varchar,
     ))
+}
+
+/// Whether a format names only clock fields, HH24, MI, SS and up to six fraction digits.
+fn clock_format(written: &str) -> bool {
+    let mut rest = written;
+    while !rest.is_empty() {
+        let Some(field) = CLOCK_FORMAT_FIELDS
+            .iter()
+            .find(|field| rest.starts_with(**field))
+        else {
+            return false;
+        };
+        rest = &rest[field.len()..];
+    }
+    true
 }
 
 /// TO_CHAR of a NUMBER with a format `FM9...90.0...0` its whole digits always hold.

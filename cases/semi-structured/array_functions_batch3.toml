@@ -100,7 +100,6 @@ rows = [
 ]
 query = "SELECT ARRAY_INTERSECTION(PARSE_JSON(a), PARSE_JSON(b)) AS i, ARRAYS_OVERLAP(PARSE_JSON(a), PARSE_JSON(b)) AS o, ARRAY_DISTINCT(PARSE_JSON(a)) AS d FROM input ORDER BY ordinal"
 order = "ordered"
-expected_divergence = "json_fidelity"
 tags = ["null", "duplicates", "empty"]
 
 [[case]]

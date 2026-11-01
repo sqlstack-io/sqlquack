@@ -16,6 +16,7 @@ rows = [
   ["0", "0"],
 ]
 expression = "TO_JSON(OBJECT_CONSTRUCT_KEEP_NULL('price', price, 'ratio', ratio))"
+expected_divergence = "json_fidelity"
 tags = ["null", "trailing-zeros", "boundary"]
 
 [[case]]
@@ -24,6 +25,7 @@ description = "OBJECT_CONSTRUCT drops NULL values when a scaled NUMBER sits besi
 columns = [{ name = "price", type = "NUMBER(28,1)" }, { name = "ratio", type = "FLOAT" }]
 rows = [["1.5", "0.5"], ["NULL", "0.5"], ["2.0", "NULL"], ["NULL", "NULL"]]
 expression = "TO_JSON(OBJECT_CONSTRUCT('price', price, 'ratio', ratio))"
+expected_divergence = "json_fidelity"
 tags = ["null", "trailing-zeros"]
 
 [[case]]
@@ -41,4 +43,23 @@ description = "An integer, a scaled NUMBER and a FLOAT in one object, with text 
 columns = [{ name = "qty", type = "NUMBER(18,0)" }, { name = "price", type = "NUMBER(10,2)" }, { name = "ratio", type = "FLOAT" }, { name = "sku", type = "VARCHAR" }]
 rows = [["3", "9.90", "0.125", "'A-1'"], ["0", "0.00", "-1.5", "NULL"], ["NULL", "NULL", "NULL", "'B-2'"]]
 expression = "TO_JSON(OBJECT_CONSTRUCT_KEEP_NULL('qty', qty, 'price', price, 'ratio', ratio, 'sku', sku))"
+expected_divergence = "json_fidelity"
 tags = ["null", "trailing-zeros"]
+
+[[case]]
+id = "whole_decimal_beside_float_read"
+description = "Whole scaled NUMBERs beside a FLOAT in one object: written, read back by path, and the object cast to OBJECT."
+columns = [{ name = "p", type = "NUMBER(10,2)" }, { name = "f", type = "FLOAT" }, { name = "i", type = "NUMBER(10,0)" }]
+rows = [["2.00", "0.5", "1"], ["0.00", "-1.5", "NULL"], ["NULL", "2", "3"], ["-7.00", "NULL", "0"]]
+query = "SELECT TO_JSON(o) AS t, o:p::NUMBER(10,2) AS p, o:p::FLOAT AS pf, o:f::FLOAT AS f, TO_JSON(c) AS c, c:i::NUMBER AS ci FROM (SELECT ordinal, o, CAST(o AS OBJECT) AS c FROM (SELECT ordinal, OBJECT_CONSTRUCT('p', p, 'f', f, 'i', i) AS o FROM input)) ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "trailing-zeros"]
+
+[[case]]
+id = "built_array_cast_to_object"
+description = "An array built beside a FLOAT cast to OBJECT."
+columns = [{ name = "f", type = "FLOAT" }]
+rows = [["1.5"]]
+query = "SELECT TO_JSON(CAST(ARRAY_CONSTRUCT(f, 1) AS OBJECT)) AS c FROM input"
+order = "ordered"
+tags = ["invalid"]

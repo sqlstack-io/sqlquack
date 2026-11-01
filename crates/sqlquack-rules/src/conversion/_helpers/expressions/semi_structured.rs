@@ -24,6 +24,7 @@ use sqlquack_duckdb::semi_structured::main::json_serialized::json_serialized;
 use sqlquack_duckdb::semi_structured::main::json_text::json_text;
 use sqlquack_duckdb::semi_structured::main::json_zoned_wall::json_zoned_wall;
 use sqlquack_duckdb::semi_structured::models::PathStep;
+use sqlquack_duckdb::variants::main::json_kind_cast::json_kind_cast;
 use sqlquack_duckdb::variants::main::json_type_name::json_type_name;
 use sqlquack_snowflake::typing::models::{CastTarget, SnowflakeType};
 
@@ -41,6 +42,7 @@ use crate::conversion::constants::{
     SUBSCRIPT_PAIR, TIMESTAMP_RANGE, VARIANT_CAST, VARIANT_COMPUTED_GET, VARIANT_HELD_UNREAD,
     VARIANT_INSPECT, VARIANT_NAME, VARIANT_PATH, VARIANT_TYPE_NAME,
 };
+use crate::conversion::constants::{OBJECT_TYPE_NAME, VARIANT_KIND_CAST};
 
 /// PARSE_JSON or TRY_PARSE_JSON of text: raises wherever the two parsers may disagree.
 pub(crate) fn parse_json(
@@ -311,6 +313,17 @@ pub(crate) fn held_cast(
     }
     if type_name == VARIANT_NAME {
         return Ok(operand);
+    }
+    if type_name == OBJECT_TYPE_NAME {
+        let _kind = log.rule(VARIANT_KIND_CAST);
+        let checked = json_kind_cast(&variant_json(&operand.sql, log), OBJECT_TYPE_NAME, log);
+        return Ok(Emitted {
+            sql: format!(
+                "(CASE WHEN {checked} IS NULL THEN NULL ELSE {} END)",
+                operand.sql
+            ),
+            ..operand
+        });
     }
     let sql = match (target.data_type, target.max_length) {
         (SnowflakeType::Varchar, max_length) => {

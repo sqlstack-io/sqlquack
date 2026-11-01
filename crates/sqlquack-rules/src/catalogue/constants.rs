@@ -27,17 +27,17 @@ use crate::conversion::constants::{
     COMPUTED_SUBSTR_LENGTH, CONCAT, CONCAT_WS, CONSTANT_LITERAL, COUNT, CURRENT_TIME_RULE,
     DATE_ARITHMETIC, DATE_DAY_ARITHMETIC, DATE_FORMAT_RULE, DATE_LITERAL_COMPARISON,
     DATE_PART_RULE, DAY_NAME_RULE, DECIMAL_ARITHMETIC, DECIMAL_DIVISION, DECIMAL_EPOCH_RULE,
-    DECIMAL_MODULO, DECODE_RULE, DISTINCT, EDIT_DISTANCE, EXISTS, FLATTEN_RULE, FLOAT_ARITHMETIC,
-    FLOAT_MODULO, FLOAT_TO_DOUBLE, FRACTIONAL_DATE_AMOUNT, FROM_PARTS, FROM_RELATION,
-    FROM_SUBQUERY, GENERATOR_RULE, GROUP_BY, GROUP_BY_ALL_RULE, HASH_RULE, HAVING, HIERARCHY_RULE,
-    IFF, ILIKE_FOLDING, IN_LIST, IN_SUBQUERY, INTERVAL_ARITHMETIC, IS_NULL, JARO_WINKLER,
-    JOIN_CROSS, JOIN_ON, JOIN_USING, LAMBDA_RULE, LATERAL_SUBQUERY, LEAST_GREATEST, LIKE, LIMIT,
-    LISTAGG_RULE, LOGARITHM, LOGIC, MIN_MAX, MIN_MAX_FLOAT, MODE_RULE, NAMED_AGGREGATES, NEGATE,
-    NOT_IN_SUBQUERY, NULL_BRANCHES, NULL_IF_ZERO_RULE, NULL_SAFE_COMPARISON, NULLIF,
-    NUMBER_LITERAL, NUMBER_TEXT_FORMAT, NUMERIC_FUNCTION, OBJECT_CONSTRUCT_RULE,
-    OBJECT_DELETE_RULE, OBJECT_INSERT_RULE, OBJECT_KEYS_RULE, OBJECT_PICK_RULE, ORDER_BY,
-    PARENTHESES, PARSE_JSON_RULE, PARSE_JSON_VARIANT, PERCENTILE_RULE, POSITIONAL_COLUMN,
-    PROJECT_FUNCTION_CALL, PROJECT_TABLE_FUNCTION, QUALIFY, REDUCE_RULE, REGEXP,
+    DECIMAL_MODULO, DECODE_RULE, DISTINCT, DIV0_RULE, EDIT_DISTANCE, EXISTS, FLATTEN_RULE,
+    FLOAT_ARITHMETIC, FLOAT_MODULO, FLOAT_TO_DOUBLE, FRACTIONAL_DATE_AMOUNT, FROM_PARTS,
+    FROM_RELATION, FROM_SUBQUERY, GENERATOR_RULE, GROUP_BY, GROUP_BY_ALL_RULE, HASH_RULE, HAVING,
+    HIERARCHY_RULE, IFF, ILIKE_FOLDING, IN_LIST, IN_SUBQUERY, INTERVAL_ARITHMETIC, IS_NULL,
+    JARO_WINKLER, JOIN_CROSS, JOIN_ON, JOIN_USING, LAMBDA_RULE, LATERAL_SUBQUERY, LEAST_GREATEST,
+    LIKE, LIMIT, LISTAGG_RULE, LOGARITHM, LOGIC, MEDIAN_RULE, MIN_MAX, MIN_MAX_FLOAT, MODE_RULE,
+    NAMED_AGGREGATES, NEGATE, NOT_IN_SUBQUERY, NULL_ARITHMETIC, NULL_BRANCHES, NULL_IF_ZERO_RULE,
+    NULL_SAFE_COMPARISON, NULLIF, NUMBER_LITERAL, NUMBER_TEXT_FORMAT, NUMERIC_FUNCTION,
+    OBJECT_CONSTRUCT_RULE, OBJECT_DELETE_RULE, OBJECT_INSERT_RULE, OBJECT_KEYS_RULE,
+    OBJECT_PICK_RULE, ORDER_BY, PARENTHESES, PARSE_JSON_RULE, PARSE_JSON_VARIANT, PERCENTILE_RULE,
+    POSITIONAL_COLUMN, PROJECT_FUNCTION_CALL, PROJECT_TABLE_FUNCTION, QUALIFY, REDUCE_RULE, REGEXP,
     REGEXP_COLUMN_PATTERN, REGEXP_COUNTING, REGEXP_PARAMETERS, REGEXP_POSIX_SPACE, ROUNDING,
     SCALAR_SUBQUERY, SELECT, SET_OPERATION, SIGN_RULE, SPLIT_RULE, SPLIT_TO_TABLE_RULE, STAR, SUM,
     SUM_FLOAT, TEMPORAL_TEXT_FORMAT, TEXT_AFFIX, TEXT_BRANCHES, TEXT_CHR, TEXT_CONTAINS, TEXT_HEX,
@@ -106,8 +106,8 @@ pub const RULES: &[RuleSpec] = &[
     },
     RuleSpec {
         id: JOIN_USING,
-        constructs: &["join:inner", "join:left"],
-        conditions: "INNER or LEFT JOIN ... USING keys that are each one column of the earlier sources and a column of the joined source: each key compared as an ON equality would be. A bare key name reads the earlier side's column, a qualified one its own side's; a bare star leaves out the joined source's keys and converts only where the keys lead the first source's columns in order. RIGHT and FULL joins with USING refuse.",
+        constructs: &["join:inner", "join:left", "join:full"],
+        conditions: "INNER, LEFT or FULL JOIN ... USING keys that are each one column of the earlier sources and a column of the joined source: each key compared as an ON equality would be. A bare key name reads the earlier side's column, a qualified one its own side's; a bare star leaves out the joined source's keys and converts only where the keys lead the first source's columns in order. In a FULL JOIN a bare key reads the first non-NULL side, as recorded, and a bare star refuses. RIGHT joins with USING refuse.",
         failures: &[],
     },
     RuleSpec {
@@ -248,7 +248,7 @@ pub const RULES: &[RuleSpec] = &[
     RuleSpec {
         id: CONSTANT_LITERAL,
         constructs: &["node:literal", "node:boolean", "node:null"],
-        conditions: "String, TRUE, FALSE or NULL.",
+        conditions: "String, dollar-quoted string (its text as written, escapes kept), TRUE, FALSE or NULL.",
         failures: &[],
     },
     RuleSpec {
@@ -503,7 +503,7 @@ pub const RULES: &[RuleSpec] = &[
     RuleSpec {
         id: PARSE_JSON_RULE,
         constructs: &["fn:PARSE_JSON", "fn:TRY_PARSE_JSON"],
-        conditions: "One VARCHAR argument. Empty or blank text is NULL; text DuckDB does not read as JSON, numbers with an exponent, an all-zero fraction, six leading fraction zeros, more than 15 decimal digits or 39 integer digits, NaN, Infinity, undefined, trailing commas, surrogate escapes and repeated keys raise, relying on json_fidelity; for TRY_PARSE_JSON too. A VARIANT column of a base table is guarded the same way.",
+        conditions: "One VARCHAR argument. Empty or blank text is NULL; text DuckDB does not read as JSON, numbers with an exponent, -0 with an all-zero fraction, six leading fraction zeros, more than 15 decimal digits or 39 integer digits, NaN, Infinity, undefined, trailing commas, surrogate escapes and repeated keys raise, relying on json_fidelity; for TRY_PARSE_JSON too. A number whose fraction is all zeros, such as 2.0, is read as the integer Snowflake reads it as, as recorded. A VARIANT column of a base table is guarded the same way.",
         failures: &[FailureMode {
             kind: ErrorKind::JsonParse,
             snowflake: &[JSON_NOT_PARSED],
@@ -1015,6 +1015,24 @@ pub const RULES: &[RuleSpec] = &[
         failures: &[],
     },
     RuleSpec {
+        id: NULL_ARITHMETIC,
+        constructs: &["node:add", "node:sub", "node:mul", "node:div"],
+        conditions: "A NUMBER(p,s) plus or minus an untyped NULL is NULL of NUMBER(max(p,18)+1, s), capped at 38 digits, as recorded for p of 5, 10, 20 and 38; a NUMBER(p,s) of up to 18 digits times or divided by one, NULL of the type with NUMBER(18,0) in its place, and a FLOAT times one, NULL of FLOAT, as recorded. The NULL must be a NULL literal; other shapes refuse.",
+        failures: &[],
+    },
+    RuleSpec {
+        id: MEDIAN_RULE,
+        constructs: &["fn:MEDIAN"],
+        conditions: "MEDIAN as an aggregate, NULLs skipped, NULL over none: the middle value or the average of the two middle values. Of NUMBER(p,s) it is NUMBER(p+3,s+3), exact where both middles stay below 10^(12-s), as recorded; wider middles, where Snowflake's double average was recorded losing digits, raise percentile_interpolation. Scales above 12 refuse. Of FLOAT, the double average.",
+        failures: &[],
+    },
+    RuleSpec {
+        id: DIV0_RULE,
+        constructs: &["fn:DIV0", "fn:DIV0NULL"],
+        conditions: "The quotient's type: NULL where the dividend is NULL, zero where the divisor is zero (DIV0NULL: or NULL), otherwise the quotient, as recorded.",
+        failures: &[],
+    },
+    RuleSpec {
         id: VARIANT_MAX,
         constructs: &["node:max"],
         conditions: "MAX of a JSON-held VARIANT without DISTINCT or OVER, NULLs skipped: the value where every value is written alike, the largest number where all are numbers distinct as doubles, the bytewise largest string where all are strings, as recorded; other mixes raise array_sort_order.",
@@ -1094,7 +1112,7 @@ pub const RULES: &[RuleSpec] = &[
     RuleSpec {
         id: TEMPORAL_TEXT_FORMAT,
         constructs: &["fn:TO_VARCHAR", "fn:TO_CHAR"],
-        conditions: "A DATE or TIMESTAMP_NTZ and a literal format of YYYY, MM and DD and, for timestamps, HH24, MI, SS and FF, FF3, FF6 and FF9 fields (each truncating, as recorded; FF writes as many digits as the TIMESTAMP_NTZ precision, recorded for 0, 3, 6 and 9), in any case, between the separators - _ / : . and space: each field zero-padded, as strftime writes it.",
+        conditions: "A TIME and a format of only HH24, MI, SS and FF1 to FF6 fields, truncating, as recorded; a DATE or TIMESTAMP_NTZ and a literal format of YYYY, MM and DD and, for timestamps, HH24, MI, SS and FF, FF3, FF6 and FF9 fields (each truncating, as recorded; FF writes as many digits as the TIMESTAMP_NTZ precision, recorded for 0, 3, 6 and 9), in any case, between the separators - _ / : . and space: each field zero-padded, as strftime writes it.",
         failures: &[],
     },
     RuleSpec {
@@ -1342,7 +1360,7 @@ pub const RULES: &[RuleSpec] = &[
             "fn:SECOND",
             "fn:DATE_PART",
         ],
-        conditions: "TIME operands: DATEADD and TIMEADD of whole hours or minutes wrap at midnight, an amount beyond 2^53 failing as Snowflake's error 100046; DATEDIFF in seconds or milliseconds between two TIMEs counts boundaries crossed, as NUMBER(9,0); HOUR, MINUTE and SECOND read the clock fields.",
+        conditions: "TIME operands: DATEADD and TIMEADD of whole hours, minutes or milliseconds wrap at midnight, an amount beyond 2^53 failing as Snowflake's error 100046; DATEDIFF in seconds or milliseconds between two TIMEs counts boundaries crossed, as NUMBER(9,0); HOUR, MINUTE and SECOND read the clock fields.",
         failures: &[FailureMode {
             kind: ErrorKind::NumericOverflow,
             snowflake: &[NUMBER_OUT_OF_RANGE],
@@ -1396,7 +1414,7 @@ pub const RULES: &[RuleSpec] = &[
     RuleSpec {
         id: MODE_RULE,
         constructs: &["fn:MODE"],
-        conditions: "MODE of NUMBER, FLOAT, VARCHAR, BOOLEAN, DATE or TIMESTAMP_NTZ values as an aggregate in a query with GROUP BY, not over a window: the most frequent non-NULL value, NULL when every value in the group is NULL. Without GROUP BY, over no rows it is the type's zero as recorded (0, 0.0, '', 1970-01-01) and NULL for BOOLEAN; a TIMESTAMP_NTZ there stays refused, as no valid recording shows it. Where several values tie for most frequent, or a FLOAT group holds both -0 and 0, which Snowflake chooses among is not recorded, so the converted SQL raises mode_ties.",
+        conditions: "MODE of NUMBER, FLOAT, VARCHAR, BOOLEAN, DATE or TIMESTAMP_NTZ values as an aggregate in a query with GROUP BY, not over a window: the most frequent non-NULL value, NULL when every value in the group is NULL. Without GROUP BY, over no rows it is the type's zero as recorded (0, 0.0, '', 1970-01-01) and NULL for BOOLEAN, and 1970-01-01 00:00:00 for TIMESTAMP_NTZ, as recorded. Where several values tie for most frequent, or a FLOAT group holds both -0 and 0, which Snowflake chooses among is not recorded, so the converted SQL raises mode_ties.",
         failures: &[],
     },
     RuleSpec {
@@ -1446,7 +1464,7 @@ pub const RULES: &[RuleSpec] = &[
         constructs: &[
             "node:eq", "node:neq", "node:lt", "node:lte", "node:gt", "node:gte",
         ],
-        conditions: "A VARCHAR compared with a NUMBER(p,s) reads the text as a NUMBER, as recorded: surrounding spaces, a sign, leading zeros and trailing fraction zeros allowed, so '007', ' 7', '+7' and '7.0' equal 7; text Snowflake cannot read fails as its error 100038. The text is compared unrounded, so '1.5' does not equal 2, read at the widest scale that holds p - s whole digits; text with an exponent or more fraction digits than that raises, relying on text_number_scale, as its reading is unrecorded. A NUMBER of scale below 10 with more than 20 whole digits fails as 100046 when it has 38, as recorded, and otherwise raises, relying on text_number_scale, as only those widths are recorded; scale 10 and above was recorded comparing at every width.",
+        conditions: "A VARCHAR compared with a NUMBER(p,s) reads the text as a NUMBER, as recorded: surrounding spaces, a sign, leading zeros and trailing fraction zeros allowed, so '007', ' 7', '+7' and '7.0' equal 7; text Snowflake cannot read fails as its error 100038, except beside a NULL NUMBER, where the comparison is NULL without reading the text, as recorded. The text is compared unrounded, so '1.5' does not equal 2, read at the widest scale that holds p - s whole digits; text with an exponent or more fraction digits than that raises, relying on text_number_scale, as its reading is unrecorded. A NUMBER of scale below 10 with more than 20 whole digits fails as 100046 when it has 38, as recorded, and otherwise raises, relying on text_number_scale, as only those widths are recorded; scale 10 and above was recorded comparing at every width.",
         failures: &[
             FailureMode {
                 kind: ErrorKind::NumberText,

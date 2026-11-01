@@ -23,7 +23,9 @@ use crate::conversion::_helpers::expressions::casts::{
     to_boolean_call, to_double_call, to_number_call, to_varchar_call,
 };
 use crate::conversion::_helpers::expressions::conditionals::unified;
-use crate::conversion::_helpers::expressions::conditionals::{decode, null_if_zero, zero_if_null};
+use crate::conversion::_helpers::expressions::conditionals::{
+    decode, div0, null_if_zero, zero_if_null,
+};
 use crate::conversion::_helpers::expressions::hashing::hash_call;
 use crate::conversion::_helpers::expressions::lambdas::{lambda_call, reduce_call};
 use crate::conversion::_helpers::expressions::numeric_functions::{
@@ -201,6 +203,8 @@ pub(crate) fn convert_function(payload: &Value, site: Site<'_>) -> Result<Emitte
         ("DECODE", parts) => decode(parts, &construct, site),
         ("HASH", parts) => hash_call(parts, &construct, site),
         ("ZEROIFNULL", parts) => zero_if_null(parts, &construct, site),
+        ("DIV0", parts) => div0(parts, false, &construct, site),
+        ("DIV0NULL", parts) => div0(parts, true, &construct, site),
         ("NULLIFZERO", parts) => null_if_zero(parts, &construct, site),
         ("LN" | "EXP" | "SQRT", parts) => logarithm(&name, parts, &construct, site),
         ("EQUAL_NULL", parts) => equal_null(parts, &construct, site),

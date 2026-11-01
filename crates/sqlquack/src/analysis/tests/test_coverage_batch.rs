@@ -133,9 +133,9 @@ fn given_mode_when_converting_then_one_most_frequent_value_converts_and_ties_rai
             expected_outcome: Ok("2"),
         },
         FirstValueTestCase {
-            description: "MODE without GROUP BY of a timestamp stays refused",
-            sql: "SELECT MODE(TO_TIMESTAMP_NTZ(note)) AS v FROM customers",
-            expected_outcome: Err("MODE without GROUP BY of TIMESTAMP_NTZ"),
+            description: "MODE without GROUP BY of a timestamp over no rows is the epoch",
+            sql: "SELECT MODE(TO_TIMESTAMP_NTZ(note)) AS v FROM customers WHERE customer_id > 100",
+            expected_outcome: Ok("1970-01-01 00:00:00"),
         },
         FirstValueTestCase {
             description: "MODE over a window stays refused",

@@ -1,5 +1,7 @@
 //! FROM: tables, CTEs, subqueries and joins.
 
+use std::cell::RefCell;
+
 use serde_json::{Value, json};
 use sqlquack_core::classification::models::{Construct, ConstructFamily};
 use sqlquack_core::refusals::main::missing::missing;
@@ -22,11 +24,12 @@ use crate::conversion::_helpers::support::tree::{
     Payload, field, function_construct, identifier_name, integer_literal, list, node_construct,
     node_kind, payload_object, require_understood,
 };
+use crate::conversion::constants::FULL_JOIN_KEYWORD;
 use crate::conversion::constants::{
     ASOF_JOIN, ASOF_KIND, FROM_RELATION, FROM_SUBQUERY, GENERATOR_MAX_ROWS, GENERATOR_NAME,
     GENERATOR_RULE, GENERATOR_SEQUENCE_COLUMN, JOIN_CROSS, JOIN_ON, JOIN_USING, LATERAL_KEY,
     LATERAL_SUBQUERY, OPAQUE_ALIAS_PREFIX, PROJECT_TABLE_FUNCTION, TABLE_WRAPPER,
-    UNALIASED_SUBQUERY_PREFIX,
+    UNALIASED_SUBQUERY_PREFIX, USING_ALIAS_PREFIX,
 };
 use sqlquack_semantics::lineage::main::stored_columns::stored_columns;
 use sqlquack_semantics::scopes::models::ScopeRelation;
@@ -91,12 +94,21 @@ pub(crate) fn convert_from(
     }
     for join in list(select, "joins") {
         let before = events();
-        let joined = convert_join(join, &relations, outer, context)
+        let merging = RefCell::new(None);
+        let joined = convert_join(join, &relations, (outer, &merging), context)
             .map_err(|refusal| context.locator.placed(refusal, join));
         let source = join.get("this").unwrap_or(&Value::Null);
         let (join_sql, relation) = recovered(joined, source, (before, relations.len()))?;
         sql.push_str(&join_sql);
         relations.push(relation);
+        if let Some(Merging { keys, relation }) = merging.into_inner() {
+            for (owner, name) in keys {
+                if let Some(owner) = relations.iter_mut().find(|earlier| earlier.alias == owner) {
+                    owner.merged.push(name);
+                }
+            }
+            relations.push(relation);
+        }
     }
     require_distinct_aliases(&relations)?;
     Ok((sql, relations))
@@ -117,10 +129,18 @@ fn require_distinct_aliases(relations: &[ScopeRelation]) -> Result<(), Refusal> 
     Ok(())
 }
 
+/// What a FULL JOIN USING adds: its merged keys, hidden on both sides, read through `relation`.
+struct Merging {
+    /// The earlier relation's alias and the key name, for each key.
+    keys: Vec<(String, String)>,
+    /// The merged keys, each the first non-NULL side's value.
+    relation: ScopeRelation,
+}
+
 fn convert_join(
     join: &Value,
     earlier: &[ScopeRelation],
-    outer: Option<&Scope<'_>>,
+    (outer, merging): (Option<&Scope<'_>>, &RefCell<Option<Merging>>),
     context: &Context<'_>,
 ) -> Result<(String, ScopeRelation), Refusal> {
     let join_construct = node_construct("join");
@@ -155,7 +175,7 @@ fn convert_join(
         return using_join(
             (kind, on.is_some(), using),
             (source_sql, relation),
-            earlier,
+            (earlier, merging),
             context,
         );
     }
@@ -206,7 +226,7 @@ fn convert_join(
 fn using_join(
     (kind, has_on, keys): (&str, bool, &[Value]),
     (source_sql, mut relation): (String, ScopeRelation),
-    earlier: &[ScopeRelation],
+    (earlier, merging): (&[ScopeRelation], &RefCell<Option<Merging>>),
     context: &Context<'_>,
 ) -> Result<(String, ScopeRelation), Refusal> {
     let construct = node_construct("join");
@@ -214,9 +234,14 @@ fn using_join(
     let keyword = match (kind, has_on) {
         ("Inner", false) => "JOIN",
         ("Left", false) => "LEFT JOIN",
+        ("Full", false) => FULL_JOIN_KEYWORD,
         _ => return Err(refuse(format!("a {kind} join with USING"))),
     };
     let _rule = context.log.rule(JOIN_USING);
+    let log = context.log;
+    let mut merged_keys: Vec<(String, String)> = Vec::new();
+    let mut merged_items: Vec<String> = Vec::new();
+    let mut merged_columns: Vec<ColumnSpec> = Vec::new();
     let mut equalities: Vec<Value> = Vec::with_capacity(keys.len());
     for key in keys {
         let name = identifier_name(key)
@@ -246,6 +271,24 @@ fn using_join(
                  value no recording shows"
             )));
         }
+        let read = |alias: &str| {
+            format!(
+                "{}.{}",
+                quoted_identifier(alias, log),
+                quoted_identifier(&name, log)
+            )
+        };
+        merged_items.push(format!(
+            "coalesce({}, {}) AS {}",
+            read(&owner.alias),
+            read(&relation.alias),
+            quoted_identifier(&name, log)
+        ));
+        merged_keys.push((owner.alias.clone(), name.clone()));
+        merged_columns.push(ColumnSpec {
+            not_null: false,
+            ..joined.clone()
+        });
         let side =
             |alias: &str| json!({"column": {"name": {"name": name}, "table": {"name": alias}}});
         equalities
@@ -265,7 +308,24 @@ fn using_join(
         placement: Placement::ROW,
     };
     let condition = condition_sql(&condition, site)?;
-    Ok((format!(" {keyword} {source_sql} ON {condition}"), relation))
+    if keyword != FULL_JOIN_KEYWORD {
+        return Ok((format!(" {keyword} {source_sql} ON {condition}"), relation));
+    }
+    let alias = format!("{USING_ALIAS_PREFIX}{}", earlier.len());
+    let sql = format!(
+        " {keyword} {source_sql} ON {condition} CROSS JOIN LATERAL (SELECT {}) AS {}",
+        merged_items.join(", "),
+        quoted_identifier(&alias, log)
+    );
+    merging.replace(Some(Merging {
+        keys: merged_keys,
+        relation: ScopeRelation {
+            alias,
+            columns: merged_columns,
+            merged: Vec::new(),
+        },
+    }));
+    Ok((sql, relation))
 }
 
 /// Whether a relation has a column `name` a bare name reads, not one a USING merged away.

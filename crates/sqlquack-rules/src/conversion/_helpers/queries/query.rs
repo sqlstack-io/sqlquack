@@ -27,7 +27,7 @@ use crate::conversion::_helpers::support::tree::{
 };
 use crate::conversion::constants::{
     ALIAS, COMMENT, COMMON_TABLE, DISTINCT, GENERATOR_SEQUENCE_COLUMN, GROUP_BY, HAVING,
-    HIERARCHY_COLUMN_PREFIX, QUALIFY, SELECT, STAR, VARIANT_HELD_UNREAD, WHERE,
+    HIERARCHY_COLUMN_PREFIX, QUALIFY, SELECT, STAR, USING_ALIAS_PREFIX, VARIANT_HELD_UNREAD, WHERE,
 };
 use crate::conversion::constants::{VALUES_COLUMN_PREFIX, VALUES_ROWS};
 use sqlquack_semantics::dialects::constants::SNOWFLAKE_TO_DUCKDB;
@@ -560,6 +560,15 @@ pub(crate) fn star(
         ));
     }
     let relations = star_relations(site.scope, qualifier.as_deref(), SNOWFLAKE_TO_DUCKDB)?;
+    if relations
+        .iter()
+        .any(|relation| relation.alias.starts_with(USING_ALIAS_PREFIX))
+    {
+        return Err(outside_conditions(
+            construct.clone(),
+            "a star over a FULL JOIN USING, whose merged keys Snowflake lists first".to_owned(),
+        ));
+    }
     if relations.iter().any(|relation| reads_hidden(relation)) {
         return Err(outside_conditions(
             construct.clone(),

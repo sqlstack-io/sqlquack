@@ -61,7 +61,6 @@ rows = [
 ]
 query = "SELECT v::VARCHAR AS t, TYPEOF(v) AS k FROM (SELECT PARSE_JSON(a) AS v FROM input UNION SELECT PARSE_JSON(b) FROM input) ORDER BY t NULLS LAST, k"
 order = "ordered"
-expected_divergence = "json_fidelity"
 tags = ["null", "json-null", "nested"]
 
 [[case]]
@@ -130,7 +129,6 @@ rows = [
 ]
 query = "SELECT DISTINCT PARSE_JSON(s) AS v, g FROM input ORDER BY g, v::VARCHAR NULLS LAST"
 order = "ordered"
-expected_divergence = "json_fidelity"
 tags = ["null", "json-null", "nested"]
 
 [[case]]

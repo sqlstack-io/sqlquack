@@ -64,3 +64,12 @@ rows = [
 ]
 expression = "a || a"
 tags = ["whitespace", "unicode"]
+
+[[case]]
+id = "dollar_quoted_strings"
+description = "Dollar-quoted string literals holding quotes, a line break, non-ASCII text and nothing."
+columns = [{ name = "k", type = "VARCHAR" }]
+rows = [["'x'"]]
+query = "SELECT $$it's \"x\"$$ AS a, $$two\nlines$$ AS b, LENGTH($$€*$$) AS c, $$$$ AS d, $$a$$ || k AS e FROM input"
+order = "ordered"
+tags = ["unicode", "empty"]
