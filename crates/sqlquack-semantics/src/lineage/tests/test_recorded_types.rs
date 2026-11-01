@@ -130,6 +130,36 @@ fn given_a_query_when_typing_outputs_then_nulls_and_numbers_follow_the_recorded_
                 ("parsed", Some("TIMESTAMP_NTZ"), Unknown),
             ],
         },
+        DialectTypeTestCase {
+            description: "DATEADD keeps a TIMESTAMP(9)'s type, widens TIME to TIME(9), keeps a DATE's",
+            sql: "SELECT DATEADD(day, 1, shipped_at) AS a, DATEADD(d, 1, shipped_on) AS b, \
+                  DATEADD(hour, 1, cutoff) AS c, DATEADD(hour, 1, shipped_on) AS d, \
+                  DATEADD(minute, 30, pickup_time) AS e, DATEADD(day, 1, packed_at) AS f \
+                  FROM shipments",
+            dialect: Dialect::Snowflake,
+            profile: &SNOWFLAKE,
+            expected_outputs: &[
+                ("a", Some("TIMESTAMP_NTZ(9)"), Unknown),
+                ("b", Some("DATE"), Unknown),
+                ("c", Some("TIME(9)"), Unknown),
+                ("d", None, Unknown),
+                ("e", Some("TIME(9)"), Unknown),
+                ("f", None, Unknown),
+            ],
+        },
+        DialectTypeTestCase {
+            description: "DATEDIFF takes its unit's recorded NUMBER, and TIMEs their own",
+            sql: "SELECT DATEDIFF(day, shipped_on, shipped_at) AS a, \
+                  DATEDIFF('second', shipped_at, shipped_at) AS b, \
+                  DATEDIFF(minute, cutoff, cutoff) AS c FROM shipments",
+            dialect: Dialect::Snowflake,
+            profile: &SNOWFLAKE,
+            expected_outputs: &[
+                ("a", Some("NUMBER(9,0)"), Unknown),
+                ("b", Some("NUMBER(18,0)"), Unknown),
+                ("c", Some("NUMBER(9,0)"), Unknown),
+            ],
+        },
     ];
     let schema = typed_shop_schema();
     for test_case in test_cases {

@@ -198,7 +198,8 @@ pub(crate) fn cast_spelling(data_type: &DataType) -> Option<String> {
         DataType::VarChar {
             length: Some(length),
             ..
-        } => Some(format!("VARCHAR({length})")),
+        }
+        | DataType::TextWithLength { length } => Some(format!("VARCHAR({length})")),
         DataType::Struct { fields, .. } => {
             let mut spelled: Vec<String> = Vec::with_capacity(fields.len());
             for field in fields {

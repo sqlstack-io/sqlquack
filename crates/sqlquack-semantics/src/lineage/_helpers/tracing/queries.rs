@@ -768,10 +768,14 @@ pub(crate) fn output_key(projection: &Expression, context: LineageContext<'_>) -
     }
 }
 
-/// The expression a comment annotation wraps.
+/// The expression a comment annotation wraps; a typed marker is kept, as it types its value.
 pub(crate) fn unannotated(expression: &Expression) -> &Expression {
     match expression {
-        Expression::Annotated(annotated) => unannotated(&annotated.this),
+        Expression::Annotated(annotated)
+            if annotated.type_assertion.is_none() && annotated.type_like.is_none() =>
+        {
+            unannotated(&annotated.this)
+        }
         _ => expression,
     }
 }

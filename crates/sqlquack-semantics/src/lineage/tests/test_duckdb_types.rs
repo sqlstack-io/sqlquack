@@ -80,6 +80,41 @@ fn given_duckdb_functions_when_typing_outputs_then_each_has_the_engine_type() {
             expected_type: Some("VARCHAR(3)"),
         },
         DuckdbTypeTestCase {
+            description: "sized TEXT is DuckDB's VARCHAR of that length as written",
+            sql: "SELECT CAST(name AS TEXT(5)) AS v FROM t",
+            expected_type: Some("VARCHAR(5)"),
+        },
+        DuckdbTypeTestCase {
+            description: "EXTRACT of a numbered part is BIGINT",
+            sql: "SELECT EXTRACT(YEAR FROM created_at) AS v FROM t",
+            expected_type: Some("BIGINT"),
+        },
+        DuckdbTypeTestCase {
+            description: "EXTRACT of the epoch is DOUBLE",
+            sql: "SELECT EXTRACT(EPOCH FROM created_at) AS v FROM t",
+            expected_type: Some("DOUBLE"),
+        },
+        DuckdbTypeTestCase {
+            description: "an INTERVAL is INTERVAL",
+            sql: "SELECT INTERVAL 1 DAY AS v FROM t",
+            expected_type: Some("INTERVAL"),
+        },
+        DuckdbTypeTestCase {
+            description: "a timestamp plus an INTERVAL stays a timestamp",
+            sql: "SELECT created_at + INTERVAL 1 DAY AS v FROM t",
+            expected_type: Some("TIMESTAMP"),
+        },
+        DuckdbTypeTestCase {
+            description: "a scalar subquery has its one column's type",
+            sql: "SELECT (SELECT CAST(name AS VARCHAR(3)) FROM t LIMIT 1) AS v FROM t",
+            expected_type: Some("VARCHAR(3)"),
+        },
+        DuckdbTypeTestCase {
+            description: "a typed marker in a scalar subquery types the subquery",
+            sql: "SELECT (SELECT __polyglot_typed(bar(LENGTH(name), 0, 10), 'VARCHAR') FROM t LIMIT 1) AS v FROM t",
+            expected_type: Some("VARCHAR"),
+        },
+        DuckdbTypeTestCase {
             description: "an unknown function stays untyped",
             sql: "SELECT unknown_udf(quantity) AS v FROM t",
             expected_type: None,
@@ -93,6 +128,7 @@ fn given_duckdb_functions_when_typing_outputs_then_each_has_the_engine_type() {
                 typed_column("line_count", "BIGINT"),
                 typed_column("price", "DECIMAL(10,2)"),
                 typed_column("name", "VARCHAR"),
+                typed_column("created_at", "TIMESTAMP"),
             ],
         )]),
         open: HashMap::new(),

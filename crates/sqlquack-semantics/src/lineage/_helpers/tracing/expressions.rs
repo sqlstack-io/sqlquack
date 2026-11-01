@@ -214,6 +214,10 @@ fn query_value(
     let resolved = resolved_query(query, scope.ctes, Some(scope), context);
     let open: bool = resolved.open;
     let rows: RowReads = resolved.rows.clone();
+    let single_type: Option<Rc<str>> = match resolved.columns.as_slice() {
+        [column] => column.lineage.data_type.clone(),
+        _ => None,
+    };
     let value: Lineage = combined(
         resolved
             .columns
@@ -223,6 +227,7 @@ fn query_value(
         TransformKind::Expression,
     );
     let mut value: Lineage = traced_if(value, !open);
+    value.data_type = single_type;
     Rc::make_mut(&mut value.rows).extend(rows.columns);
     value.rows_lost |= rows.lost;
     value

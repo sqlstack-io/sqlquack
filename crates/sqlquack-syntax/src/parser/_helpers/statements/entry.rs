@@ -1825,6 +1825,17 @@ impl Parser {
             };
 
             self.expect_token(TokenType::LParen)?;
+            if matches!(
+                self.config.dialect,
+                Some(crate::tokens::models::DialectType::Snowflake)
+            ) && self.check(TokenType::Values)
+            {
+                return Err(self.parse_error(format!(
+                    "Snowflake does not accept a bare VALUES list as the body of CTE '{}'; \
+                     select from it instead, as SELECT * FROM (VALUES ...) AS t(column, ...)",
+                    name.name
+                )));
+            }
             let query_start = self.current;
             let query = self.parse_statement()?;
             let query = self.spanned(query_start, query);

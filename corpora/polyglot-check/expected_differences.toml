@@ -773,3 +773,10 @@ sql = "SELECT __polyglot_typed(amount, 'NOT A TYPE (') FROM orders"
 dialects = ["Snowflake", "DuckDB"]
 sqlquack_error = "Unexpected token after data type"
 note = "malformed typed-expression type text errors instead of degrading to an ordinary call"
+
+[[rejection]]
+id = "snowflake_bare_values_cte"
+sql = "WITH RECURSIVE T(n) AS (VALUES (1) UNION ALL SELECT n + 1 FROM t WHERE n < 100) SELECT SUM(n) FROM t"
+dialects = ["Snowflake"]
+sqlquack_error = "Snowflake does not accept a bare VALUES list as the body of CTE 'T'"
+note = "Snowflake takes VALUES only in FROM; polyglot added this rule after SQLQuack's fork (rev 8767d68), with the same message"

@@ -35,7 +35,7 @@ use sqlquack_duckdb::times::main::timestamp_time::timestamp_time;
 use sqlquack_duckdb::times::models::TimeFormat;
 use sqlquack_duckdb::zones::main::utc_zoned::utc_zoned;
 use sqlquack_snowflake::typing::constants::{
-    DATEDIFF_PRECISIONS, MAX_PRECISION, TIME_DIFF_MICROSECONDS_TYPE, TIME_DIFF_TYPE,
+    DATEDIFF_PRECISIONS, MAX_PRECISION, TIME_DIFF_MICROSECONDS_TYPE, TIME_DIFF_TYPE, UNIT_ALIASES,
 };
 use sqlquack_snowflake::typing::models::SnowflakeType;
 
@@ -60,8 +60,8 @@ use crate::conversion::constants::{
     MICROSECOND_DIGITS, NULL_BRANCHES, NUMBER_TEXT_FORMAT, SCALE_DIGITS, SESSION_TIMEZONE_UTC,
     TEMPORAL_TEXT_FIELDS, TEMPORAL_TEXT_FORMAT, TEMPORAL_TEXT_SEPARATORS, TEXT_TO_TIME_RULE,
     TEXT_TO_TIMESTAMP_RULE, TIME_ARITHMETIC, TIME_ZONE_CONVERSION, TIMESTAMP_FORMAT_RULE,
-    TIMESTAMP_RANGE, TIMESTAMP_TIME_RULE, TO_DATE_TEMPORAL, UNIT_ALIASES, UTC_OFFSET_ARITHMETIC,
-    UTC_ZONE, ZONE_COLUMNS, ZONED_PARTS,
+    TIMESTAMP_RANGE, TIMESTAMP_TIME_RULE, TO_DATE_TEMPORAL, UTC_OFFSET_ARITHMETIC, UTC_ZONE,
+    ZONE_COLUMNS, ZONED_PARTS,
 };
 
 /// The canonical Snowflake name of a unit written as a keyword, string or parsed field name.

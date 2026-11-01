@@ -169,6 +169,16 @@ pub(crate) fn typed_shop_schema() -> TypedShopSchema {
                     column("NAME", "VARCHAR(100)", Nullability::NonNull),
                 ],
             ),
+            (
+                "SHIPMENTS".to_owned(),
+                vec![
+                    column("SHIPPED_ON", "DATE", Nullability::NonNull),
+                    column("SHIPPED_AT", "TIMESTAMP_NTZ(9)", Nullability::NonNull),
+                    column("CUTOFF", "TIME(9)", Nullability::NonNull),
+                    column("PICKUP_TIME", "TIME(3)", Nullability::NonNull),
+                    column("PACKED_AT", "TIMESTAMP_NTZ(3)", Nullability::NonNull),
+                ],
+            ),
         ]),
         open: HashMap::from([(
             "EVENTS".to_owned(),

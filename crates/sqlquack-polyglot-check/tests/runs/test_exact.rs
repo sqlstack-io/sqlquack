@@ -18,7 +18,10 @@ fn given_committed_corpora_when_parsed_by_both_parsers_then_results_are_identica
             entries: load_corpus(&corpora.join("polyglot_tests.json")),
             expected_outcome: ExactOutcome {
                 loaded: true,
-                rejected: BTreeMap::from([("malformed_typed_type_text".to_owned(), 2)]),
+                rejected: BTreeMap::from([
+                    ("malformed_typed_type_text".to_owned(), 2),
+                    ("snowflake_bare_values_cte".to_owned(), 1),
+                ]),
                 differences: Vec::new(),
                 tokens_lost: Vec::new(),
                 type_names: Vec::new(),

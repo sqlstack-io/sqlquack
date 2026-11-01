@@ -266,6 +266,28 @@ pub(crate) const SNOWFLAKE_VARIANT_TYPE: &str = "VARIANT";
 pub(crate) const ONE_AGGREGATE: usize = 1;
 /// Functions Snowflake types as COUNT.
 pub(crate) const SNOWFLAKE_COUNT_FUNCTIONS: [&str; 1] = ["COUNT"];
+/// DuckDB's date part counting seconds since the epoch, a DOUBLE.
+pub(crate) const DUCKDB_EPOCH_PART: &str = "epoch";
+/// DuckDB's Julian day date part, a DOUBLE.
+pub(crate) const DUCKDB_JULIAN_PART: &str = "julian";
+/// Snowflake's names for DATEADD, whose result keeps its value's type.
+pub(crate) const SNOWFLAKE_DATE_ADD_FUNCTIONS: [&str; 3] = ["DATEADD", "TIMEADD", "TIMESTAMPADD"];
+/// Snowflake's names for DATEDIFF, written as a call when its unit is not a keyword.
+pub(crate) const SNOWFLAKE_DATE_DIFF_FUNCTIONS: [&str; 3] =
+    ["DATEDIFF", "TIMEDIFF", "TIMESTAMPDIFF"];
+/// Date parts by which DATEADD moves a DATE and keeps it a DATE.
+pub(crate) const SNOWFLAKE_DATE_UNITS: [&str; 5] = ["YEAR", "QUARTER", "MONTH", "WEEK", "DAY"];
+/// Time parts by which DATEADD moves a TIME and keeps it a TIME.
+pub(crate) const SNOWFLAKE_TIME_UNITS: [&str; 6] = [
+    "HOUR",
+    "MINUTE",
+    "SECOND",
+    "MILLISECOND",
+    "MICROSECOND",
+    "NANOSECOND",
+];
+/// The DATEDIFF unit whose TIME difference needs the wider recorded type.
+pub(crate) const SNOWFLAKE_MICROSECOND_UNIT: &str = "MICROSECOND";
 /// The ranking window functions.
 pub(crate) const SNOWFLAKE_RANKING_FUNCTIONS: [&str; 3] = ["ROW_NUMBER", "RANK", "DENSE_RANK"];
 /// A timestamp written without its kind, which the profile's mapping decides.

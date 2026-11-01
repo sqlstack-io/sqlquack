@@ -4,13 +4,15 @@ use std::rc::Rc;
 
 use sqlquack_syntax::Expression;
 use sqlquack_syntax::expressions::names::models::Literal;
+use sqlquack_syntax::expressions::typed_functions::models::DateTimeField;
 
 use crate::lineage::_helpers::typing::duckdb_types::{
     DuckType, Number, common_type, decimal_shape, parsed_type, unsigned_coercion,
 };
 use crate::lineage::constants::{
-    DUCKDB_BIGINT_BITS, DUCKDB_DECIMAL_LIMIT, DUCKDB_INTEGER_BITS, DUCKDB_JSON_TYPES,
-    DUCKDB_SMALL_DECIMAL, DUCKDB_WIDEST_INTEGER, ONE_ARGUMENT, TWO_ARGUMENTS,
+    DUCKDB_BIGINT_BITS, DUCKDB_DECIMAL_LIMIT, DUCKDB_EPOCH_PART, DUCKDB_INTEGER_BITS,
+    DUCKDB_JSON_TYPES, DUCKDB_JULIAN_PART, DUCKDB_SMALL_DECIMAL, DUCKDB_WIDEST_INTEGER,
+    ONE_ARGUMENT, TWO_ARGUMENTS,
 };
 use crate::lineage::models::Lineage;
 
@@ -286,7 +288,21 @@ fn scalar_type(expression: &Expression, operands: &Operands<'_, '_>) -> Owned {
         | Expression::Minute(_)
         | Expression::Second(_) => Some(Some(DuckType::Integer(64, false))),
         Expression::Uuid(_) => Some(Some(DuckType::Uuid)),
+        Expression::Extract(function) => Some(extracted_type(&function.field)),
+        Expression::Interval(_) => Some(Some(DuckType::Interval)),
         _ => None,
+    }
+}
+
+/// EXTRACT's type: DOUBLE for the epoch and the Julian day, BIGINT for every numbered part.
+fn extracted_type(field: &DateTimeField) -> Option<DuckType> {
+    match field {
+        DateTimeField::Epoch => Some(DuckType::Double),
+        DateTimeField::Custom(name) if name.eq_ignore_ascii_case(DUCKDB_JULIAN_PART) => {
+            Some(DuckType::Double)
+        }
+        DateTimeField::Date | DateTimeField::Time | DateTimeField::Custom(_) => None,
+        _ => Some(DuckType::Integer(64, false)),
     }
 }
 
@@ -717,7 +733,9 @@ fn part_type(field: &Expression) -> Option<DuckType> {
         return None;
     };
     Some(
-        if name.eq_ignore_ascii_case("epoch") || name.eq_ignore_ascii_case("julian") {
+        if name.eq_ignore_ascii_case(DUCKDB_EPOCH_PART)
+            || name.eq_ignore_ascii_case(DUCKDB_JULIAN_PART)
+        {
             DuckType::Double
         } else {
             DuckType::Integer(64, false)

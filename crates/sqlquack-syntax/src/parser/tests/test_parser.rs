@@ -1029,3 +1029,21 @@ fn given_long_boolean_chains_when_parsing_then_the_tree_stays_balanced() {
         );
     }
 }
+
+#[test]
+fn given_a_snowflake_cte_whose_body_is_a_bare_values_list_when_parsing_then_parsing_fails() {
+    let test_cases = [ParseErrorTestCase {
+        description: "Snowflake takes VALUES only in FROM, not as a CTE body",
+        dialect: Some(DialectType::Snowflake),
+        sql: "WITH v AS (VALUES (1), (2)) SELECT v.column1 FROM v",
+        expected_error: "Snowflake does not accept a bare VALUES list as the body of CTE 'v'",
+    }];
+    for test_case in test_cases {
+        let error = parse_error(test_case.dialect, test_case.sql);
+        assert!(
+            error.contains(test_case.expected_error),
+            "{}: {error}",
+            test_case.description
+        );
+    }
+}
