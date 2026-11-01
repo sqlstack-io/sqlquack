@@ -1,9 +1,9 @@
 //! VARIANT values built from typed scalars, FLOAT among them, held as DuckDB `VARIANT`.
 
 use sqlquack_core::classification::models::Construct;
-use sqlquack_core::refusals::main::outside_conditions::outside_conditions;
 use sqlquack_core::refusals::models::Refusal;
 use sqlquack_duckdb::held::main::variant_built::variant_built;
+use sqlquack_duckdb::held::main::variant_decimal_leaf::variant_decimal_leaf;
 use sqlquack_duckdb::held::main::variant_double_leaf::variant_double_leaf;
 use sqlquack_duckdb::held::main::variant_integer_leaf::variant_integer_leaf;
 use sqlquack_duckdb::held::main::variant_json::variant_json;
@@ -45,13 +45,11 @@ pub(crate) fn leaf(
             diverge(context, JSON_FIDELITY, construct)?;
             Ok(variant_integer_leaf(&emitted.sql, log))
         }
-        SnowflakeType::Number { .. } => Err(outside_conditions(
-            construct.clone(),
-            format!(
-                "a {} value beside a FLOAT in one VARIANT, which no recording shows",
-                emitted.data_type
-            ),
-        )),
+        SnowflakeType::Number { .. } => {
+            diverge(context, JSON_FIDELITY, construct)?;
+            context.typed.enter_decimal();
+            Ok(variant_decimal_leaf(&emitted.sql, log))
+        }
         SnowflakeType::SemiStructured => {
             diverge(context, JSON_FIDELITY, construct)?;
             Ok(variant_json_leaf(&emitted.sql, log))

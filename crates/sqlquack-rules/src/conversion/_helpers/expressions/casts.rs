@@ -57,7 +57,8 @@ use crate::conversion::_helpers::support::tree::{
 use crate::conversion::constants::{
     CAST_BOOLEAN, CAST_NUMERIC, CAST_PARSED_TEXT, CAST_SAME_TYPE, CAST_TEMPORAL, CAST_TEXT_LITERAL,
     CAST_TEXT_TIME, CAST_TEXT_TIMESTAMP, CAST_TO_TEXT, CAST_UTC_ZONED, DATE_TEXT_SPELLING,
-    FLOAT_SCALE_FACET, FLOAT_TO_DOUBLE, KIND_CAST_TARGETS, MICROSECOND_DIGITS, NTZ_OUTPUT_PATTERN,
+    FLOAT_SCALE_FACET, FLOAT_TO_DOUBLE, KEEP_NULL_CONSTRUCTOR, KIND_CAST_TARGETS,
+    MICROSECOND_DIGITS, NTZ_OUTPUT_PATTERN, OBJECT_CONSTRUCTOR, OBJECT_TYPE_NAME,
     SESSION_TIMEZONE_UTC, TARGET_FACET, TEXT_TYPE_PAIR, TEXT_TYPE_SPELLINGS, TIME_CAST,
     TIMESTAMP_RANGE, TIMESTAMP_TEXT_ROUNDING, TIMESTAMP_TIME_RULE, TO_BOOLEAN_RULE, TO_DOUBLE_PAIR,
     TO_NUMBER_PAIR, TO_VARCHAR_PAIR, TO_VARIANT_RULE, VARIANT_KIND_CAST, VARIANT_NAME,
@@ -115,6 +116,13 @@ pub(crate) fn convert_cast(
     let operand = convert_held(operand_node, site)?;
     let trying = matches!(construct.name.as_str(), "try_cast");
     if operand.is_variant_held() {
+        if type_name == OBJECT_TYPE_NAME && !built_object(operand_node) {
+            return Err(refuse(
+                "a VARIANT built from a FLOAT cast to OBJECT, other than an OBJECT_CONSTRUCT, \
+                 which Snowflake may reject as it compiles"
+                    .to_owned(),
+            ));
+        }
         return held_cast(
             operand,
             (&type_name, target),
@@ -728,4 +736,12 @@ pub(crate) fn data_type_name(data_type: &Value) -> Option<String> {
         ),
         _ => return None,
     })
+}
+
+/// Whether `node` is an OBJECT_CONSTRUCT call, which Snowflake types as OBJECT.
+fn built_object(node: &Value) -> bool {
+    node.get("function")
+        .and_then(|function| function.get("name"))
+        .and_then(Value::as_str)
+        .is_some_and(|name| [OBJECT_CONSTRUCTOR, KEEP_NULL_CONSTRUCTOR].contains(&name))
 }

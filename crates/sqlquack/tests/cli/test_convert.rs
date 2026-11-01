@@ -1,6 +1,6 @@
 use crate::helpers::{
     convert_outcome, converted_column_names, converted_first_value, converted_run_error,
-    policy_free_exit_code, run_convert,
+    converted_value_over, policy_free_exit_code, run_convert,
 };
 use crate::test_types::{
     ColumnNameTestCase, ConvertOutcome, ConvertTestCase, ConvertedRunTestCase, PolicyFreeTestCase,
@@ -410,5 +410,32 @@ fn given_a_bracket_expression_with_a_lazy_spelling_when_converting_then_the_clas
             "{}",
             test_case.description
         );
+    }
+}
+
+#[test]
+fn given_a_time_with_nanoseconds_when_formatting_then_digits_beyond_the_format_are_truncated() {
+    let test_cases = [
+        ValueTestCase {
+            description: "FF6 truncates the seventh digit instead of rounding into the next day",
+            sql: "SELECT TO_VARCHAR(t, 'HH24:MI:SS.FF6') AS f FROM clocks",
+            expected_value: "23:59:59.999999",
+        },
+        ValueTestCase {
+            description: "FF3 truncates the digits after milliseconds",
+            sql: "SELECT TO_VARCHAR(t, 'HH24:MI:SS.FF3') AS f FROM clocks",
+            expected_value: "23:59:59.999",
+        },
+    ];
+    for test_case in test_cases {
+        let value = converted_value_over(
+            test_case.sql,
+            (
+                "{\"CLOCKS\": [[\"T\", \"TIME(9)\"]]}",
+                "CREATE TABLE \"CLOCKS\" (\"T\" TIME_NS); \
+                 INSERT INTO \"CLOCKS\" VALUES ('23:59:59.9999999')",
+            ),
+        );
+        assert_eq!(value, test_case.expected_value, "{}", test_case.description);
     }
 }

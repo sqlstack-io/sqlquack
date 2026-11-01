@@ -1,6 +1,6 @@
 //! CASE, COALESCE, NVL, IFF, DECODE, ZEROIFNULL and the unification of their branches.
 
-use serde_json::Value;
+use serde_json::{Value, json};
 use sqlquack_core::classification::models::Construct;
 use sqlquack_core::refusals::main::missing::missing;
 use sqlquack_core::refusals::main::outside_conditions::outside_conditions;
@@ -16,13 +16,13 @@ use crate::conversion::_helpers::expressions::operators::{boolean_operand, compa
 use crate::conversion::_helpers::expressions::scalar::convert_expression;
 use crate::conversion::_helpers::support::declared::declared_of;
 use crate::conversion::_helpers::support::divergence::require_widening_range;
-use crate::conversion::_helpers::support::scope::{Context, Emitted};
+use crate::conversion::_helpers::support::scope::{Context, Emitted, Literal};
 use crate::conversion::_helpers::support::site::Site;
 use crate::conversion::_helpers::support::tree::{
     field, list, node_construct, node_kind, payload_object, require_understood,
 };
 use crate::conversion::constants::{
-    CASE, CASE_SUBJECT, COALESCE, DECODE_RULE, IFF, NULL_BRANCHES, NULL_IF_ZERO_RULE,
+    CASE, CASE_SUBJECT, COALESCE, DECODE_RULE, DIV0_RULE, IFF, NULL_BRANCHES, NULL_IF_ZERO_RULE,
     SEMI_STRUCTURED_HOLDING, TEXT_BRANCHES, ZERO_IF_NULL_RULE,
 };
 
@@ -459,6 +459,46 @@ pub(crate) fn zero_if_null(
         )),
         other => Err(refuse(format!("ZEROIFNULL of {other}"))),
     }
+}
+
+/// DIV0 (DIV0NULL with `null_divisor`): zero for a zero divisor, NULL for a NULL dividend.
+pub(crate) fn div0(
+    arguments: &[Value],
+    null_divisor: bool,
+    construct: &Construct,
+    site: Site<'_>,
+) -> Result<Emitted, Refusal> {
+    let _rule = site.context.log.rule(DIV0_RULE);
+    let refuse = |reason: String| outside_conditions(construct.clone(), reason);
+    let [dividend, divisor] = arguments else {
+        return Err(refuse(format!("{} with these arguments", construct.name)));
+    };
+    let quotient = convert_expression(&json!({"div": {"left": dividend, "right": divisor}}), site)?;
+    let dividend = convert_expression(dividend, site)?;
+    let divisor = convert_expression(divisor, site)?;
+    let zero = cast("0", quotient.data_type, site.context.log).map_err(refuse)?;
+    let null_test = match null_divisor {
+        true => format!(" OR {} IS NULL", divisor.sql),
+        false => String::new(),
+    };
+    if let Some(Literal::Number(digits)) = &divisor.literal
+        && digits.trim_start_matches(['0', '.']).is_empty()
+    {
+        return Ok(Emitted::new(
+            format!(
+                "(CASE WHEN {} IS NULL THEN NULL ELSE {zero} END)",
+                dividend.sql
+            ),
+            quotient.data_type,
+        ));
+    }
+    Ok(Emitted::new(
+        format!(
+            "(CASE WHEN {} IS NULL THEN NULL WHEN {} = 0{null_test} THEN {zero} ELSE {} END)",
+            dividend.sql, divisor.sql, quotient.sql
+        ),
+        quotient.data_type,
+    ))
 }
 
 /// NULLIFZERO of a NUMBER or FLOAT: NULL for zero, otherwise the value, of its type.

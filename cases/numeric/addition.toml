@@ -76,3 +76,12 @@ rows = [
 ]
 expression = "a + b"
 tags = ["null", "zero", "negative", "boundary"]
+
+[[case]]
+id = "numbers_and_null_types"
+description = "NUMBER and FLOAT beside an untyped NULL in +, -, * and /: the result types."
+columns = [{ name = "a", type = "NUMBER(5,0)" }, { name = "b", type = "NUMBER(38,0)" }, { name = "c", type = "NUMBER(20,5)" }, { name = "d", type = "NUMBER(10,2)" }, { name = "f", type = "FLOAT" }]
+rows = [["1", "2", "3.5", "4.25", "0.5"]]
+query = "SELECT a + NULL AS a1, NULL - a AS a2, b + NULL AS b1, c - NULL AS c1, d + NULL AS d1, NULL + d AS d4, d * NULL AS d2, d / NULL AS d3, f + NULL AS f1, f * NULL AS f2 FROM input"
+order = "ordered"
+tags = ["null"]

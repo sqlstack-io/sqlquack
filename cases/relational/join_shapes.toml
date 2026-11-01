@@ -236,3 +236,12 @@ rows = [
 query = "WITH a AS (SELECT k, m, v FROM input WHERE side = 'l'), e AS (SELECT k, m, v AS w FROM input WHERE side = 'r') SELECT k, m, a.k AS ak, e.k AS ek, v, w FROM a FULL OUTER JOIN e USING (k, m) WHERE a.k IS NULL OR e.k IS NULL OR v IS DISTINCT FROM w ORDER BY k NULLS LAST, v NULLS LAST, w NULLS LAST"
 order = "ordered"
 tags = ["null", "duplicates", "empty-input"]
+
+[[case]]
+id = "join_using_number_widths"
+description = "INNER, LEFT and FULL JOIN USING a key that is NUMBER(18,0) on one side and NUMBER(38,0) on the other."
+columns = [{ name = "side", type = "VARCHAR" }, { name = "k", type = "NUMBER(18,0)" }, { name = "v", type = "VARCHAR" }]
+rows = [["'l'", "1", "'l1'"], ["'l'", "2", "'l2'"], ["'r'", "2", "'r2'"], ["'r'", "3", "'r3'"], ["'l'", "NULL", "'ln'"]]
+query = "WITH a AS (SELECT k, v FROM input WHERE side = 'l'), e AS (SELECT CAST(k AS NUMBER(38,0)) AS k, v AS w FROM input WHERE side = 'r') SELECT 'full' AS j, k, a.k AS ak, e.k AS ek, v, w FROM a FULL OUTER JOIN e USING (k) UNION ALL SELECT 'left', k, a.k, e.k, v, w FROM a LEFT JOIN e USING (k) UNION ALL SELECT 'inner', k, a.k, e.k, v, w FROM e JOIN a USING (k) ORDER BY j, k NULLS LAST, v NULLS LAST, w NULLS LAST"
+order = "ordered"
+tags = ["null", "mixed-types"]

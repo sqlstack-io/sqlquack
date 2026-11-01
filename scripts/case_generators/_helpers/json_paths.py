@@ -28,6 +28,7 @@ from scripts.case_generators.constants import (
     SEMI_STRUCTURED_TAGS,
     SNOWFLAKE_REJECTED_JSON_TEXTS,
     TEXT_PROJECTIONS,
+    ZERO_FRACTION_PATTERN,
 )
 from scripts.case_generators.exceptions import StrictJsonError
 from scripts.case_generators.models import Case, CaseFile, Column, Path, Projection
@@ -65,7 +66,9 @@ def guard_trigger(*, text: str | None, written_back: bool) -> bool:
         json.loads(text, object_pairs_hook=unique_object, parse_constant=reject_constant)
     except ValueError:
         return True
-    tokens: str = JSON_WORD_PATTERN.sub("", JSON_STRING_PATTERN.sub('""', text))
+    tokens: str = JSON_WORD_PATTERN.sub(
+        "", JSON_STRING_PATTERN.sub('""', zero_fractions_whole(text))
+    )
     long_decimal: bool = JSON_LONG_DECIMAL_PATTERN.search(tokens) is not None
     return any(
         (
@@ -74,6 +77,11 @@ def guard_trigger(*, text: str | None, written_back: bool) -> bool:
             JSON_SURROGATE_PATTERN.search(text),
         )
     )
+
+
+def zero_fractions_whole(text: str) -> str:
+    """`text` with all-zero fractions outside strings dropped, as duckdb.json_guarded reads it."""
+    return ZERO_FRACTION_PATTERN.sub(r"\1\2\3", text)
 
 
 def numbers_written_back(tokens: str) -> bool:

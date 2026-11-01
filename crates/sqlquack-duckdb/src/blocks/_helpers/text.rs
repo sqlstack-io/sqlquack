@@ -14,16 +14,28 @@ use crate::blocks::main::string_literal::string_literal;
 use crate::blocks::models::TextFailure;
 use crate::raises::main::raised::raised;
 
+/// `sql` with each one-character key of `expansions` spelled as its text, by a single lookup.
 pub(crate) fn expanded(sql: &str, expansions: &[(&str, &str)], log: &ProvenanceLog) -> String {
-    let mut text = sql.to_owned();
-    for (from, to) in expansions {
-        text = format!(
-            "replace({text}, {}, {})",
-            string_literal(from, log),
-            string_literal(to, log)
-        );
-    }
-    text
+    let class: String = expansions
+        .iter()
+        .flat_map(|(from, _)| from.chars())
+        .map(|character| format!("\\x{{{:x}}}", u32::from(character)))
+        .collect();
+    let list = |texts: Vec<&str>| {
+        texts
+            .into_iter()
+            .map(|text| string_literal(text, log))
+            .collect::<Vec<String>>()
+            .join(", ")
+    };
+    let keys = list(expansions.iter().map(|(from, _)| *from).collect());
+    let values = list(expansions.iter().map(|(_, to)| *to).collect());
+    format!(
+        "list_transform([{sql}], lambda case_text: CASE WHEN regexp_matches(case_text, '[{class}]') \
+         THEN array_to_string(list_transform(string_split(case_text, ''), lambda case_character: \
+         coalesce([{values}][list_position([{keys}], case_character)], case_character)), '') \
+         ELSE case_text END)[1]"
+    )
 }
 
 /// What a failed conversion yields: NULL when trying, else text's error `code` or a VARIANT's.

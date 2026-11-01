@@ -1,10 +1,13 @@
 //! Aggregates the parser keeps as named calls, such as ANY_VALUE, COUNT_IF and OBJECT_AGG.
 
+use crate::conversion::_helpers::support::scope::Context;
 use serde_json::Value;
+use sqlquack_core::classification::models::Construct;
 use sqlquack_core::provenance::models::ProvenanceLog;
 use sqlquack_core::refusals::main::outside_conditions::outside_conditions;
 use sqlquack_core::refusals::models::Refusal;
 use sqlquack_duckdb::aggregates::constants::EXTREME_KEY_TIES;
+use sqlquack_duckdb::aggregates::main::list_median::list_median;
 use sqlquack_duckdb::aggregates::main::value_at_extreme::value_at_extreme;
 use sqlquack_duckdb::blocks::main::cast::cast;
 use sqlquack_duckdb::blocks::main::column_type::column_type;
@@ -13,6 +16,7 @@ use sqlquack_duckdb::raises::main::raised::raised;
 use sqlquack_duckdb::semi_structured::constants::JSON_FIDELITY;
 use sqlquack_duckdb::variants::main::json_object_agg::json_object_agg;
 use sqlquack_snowflake::typing::constants::COUNT_IF_TYPE;
+use sqlquack_snowflake::typing::constants::MAX_PRECISION;
 use sqlquack_snowflake::typing::main::count::count;
 use sqlquack_snowflake::typing::models::SnowflakeType;
 
@@ -26,9 +30,10 @@ use crate::conversion::_helpers::support::tree::{
 };
 use crate::conversion::_helpers::support::typed_leaves::compared_value;
 use crate::conversion::constants::{
-    ANY_VALUE_CHOICE, MAX_BY_FUNCTION, MODE_EMPTY_BOOLEAN, MODE_EMPTY_DATE, MODE_EMPTY_NUMBER,
-    MODE_EMPTY_TEXT, MODE_RULE, MODE_TIES, MULTI_COUNT, NAMED_AGGREGATE_NAMES, NAMED_AGGREGATES,
-    OBJECT_AGG_VALUE_PAIR, TO_VARIANT_RULE, VALUE_AT_EXTREME_KEY, WINDOWED_NAMED_AGGREGATES,
+    ANY_VALUE_CHOICE, MAX_BY_FUNCTION, MEDIAN_EXACT_DIGITS, MEDIAN_EXTRA_DIGITS, MEDIAN_RULE,
+    MODE_EMPTY_BOOLEAN, MODE_EMPTY_DATE, MODE_EMPTY_NUMBER, MODE_EMPTY_TEXT, MODE_RULE, MODE_TIES,
+    MULTI_COUNT, NAMED_AGGREGATE_NAMES, NAMED_AGGREGATES, OBJECT_AGG_VALUE_PAIR,
+    PERCENTILE_INTERPOLATION, TO_VARIANT_RULE, VALUE_AT_EXTREME_KEY, WINDOWED_NAMED_AGGREGATES,
 };
 
 /// Whether `name` is an aggregate converted here.
@@ -164,6 +169,7 @@ pub(crate) fn named_aggregate(
                 SnowflakeType::SemiStructured,
             ))
         }
+        ("MEDIAN", [value]) if window.is_none() => median(value, &construct, site.context),
         ("MODE", [value]) if window.is_none() && mode_value(value.data_type) => {
             let _rule = log.rule(MODE_RULE);
             diverge(site.context, MODE_TIES, &construct)?;
@@ -185,6 +191,41 @@ pub(crate) fn named_aggregate(
                 .collect::<Vec<_>>()
                 .join(", ")
         ))),
+    }
+}
+
+/// MEDIAN of a NUMBER, exact where its middles are narrow enough, or of a FLOAT, as recorded.
+fn median(
+    value: &Emitted,
+    construct: &Construct,
+    context: &Context<'_>,
+) -> Result<Emitted, Refusal> {
+    let log = context.log;
+    let _rule = log.rule(MEDIAN_RULE);
+    let refuse = |reason: String| outside_conditions(construct.clone(), reason);
+    match value.data_type {
+        SnowflakeType::Number { precision, scale }
+            if precision + MEDIAN_EXTRA_DIGITS <= MAX_PRECISION
+                && scale + MEDIAN_EXTRA_DIGITS < MEDIAN_EXACT_DIGITS =>
+        {
+            diverge(context, PERCENTILE_INTERPOLATION, construct)?;
+            let data_type = SnowflakeType::Number {
+                precision: precision + MEDIAN_EXTRA_DIGITS,
+                scale: scale + MEDIAN_EXTRA_DIGITS,
+            };
+            let held = column_type(data_type, log).map_err(refuse)?;
+            let digits = MEDIAN_EXACT_DIGITS - scale - MEDIAN_EXTRA_DIGITS;
+            let bound = format!("1e{digits}");
+            Ok(Emitted::new(
+                list_median(&value.sql, (&held, Some(&bound)), log),
+                data_type,
+            ))
+        }
+        SnowflakeType::Float => Ok(Emitted::new(
+            list_median(&value.sql, ("DOUBLE", None), log),
+            SnowflakeType::Float,
+        )),
+        other => Err(refuse(format!("MEDIAN of {other}"))),
     }
 }
 
@@ -224,7 +265,7 @@ fn mode_of_no_rows(data_type: SnowflakeType, log: &ProvenanceLog) -> Result<Stri
     let zero = match data_type {
         SnowflakeType::Number { .. } | SnowflakeType::Float => MODE_EMPTY_NUMBER,
         SnowflakeType::Varchar => MODE_EMPTY_TEXT,
-        SnowflakeType::Date => MODE_EMPTY_DATE,
+        SnowflakeType::Date | SnowflakeType::TimestampNtz { .. } => MODE_EMPTY_DATE,
         SnowflakeType::Boolean => MODE_EMPTY_BOOLEAN,
         other => return Err(format!("MODE without GROUP BY of {other} over no rows")),
     };

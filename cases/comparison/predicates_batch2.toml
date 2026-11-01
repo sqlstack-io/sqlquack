@@ -64,7 +64,6 @@ rows = [
 ]
 expression = "n = v:k"
 tags = ["null", "ties", "mixed-types"]
-expected_divergence = "json_fidelity"
 
 [[case]]
 id = "eq_variant_text_invalid_number"

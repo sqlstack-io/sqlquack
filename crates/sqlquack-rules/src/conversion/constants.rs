@@ -36,6 +36,7 @@ pub const NAMED_AGGREGATE_NAMES: &[&str] = &[
     "MAX_BY",
     "MIN_BY",
     "MODE",
+    "MEDIAN",
     MULTI_COUNT,
 ];
 /// COUNT of several values, which the parser keeps as a named call.
@@ -1334,3 +1335,29 @@ pub const REGEXP_COLUMN_PATTERN: &str = "rule.regexp_column_pattern";
 pub const VARIANT_MAX: &str = "rule.variant_max";
 /// The parser's node kind for MAX.
 pub const MAX_KIND: &str = "max";
+/// The OBJECT type name in a cast.
+pub const OBJECT_TYPE_NAME: &str = "OBJECT";
+/// DIV0 and DIV0NULL.
+pub const DIV0_RULE: &str = "rule.div0";
+/// MEDIAN.
+pub const MEDIAN_RULE: &str = "rule.median";
+/// MEDIAN of NUMBER(p,s) is NUMBER(p+3,s+3), as recorded.
+pub const MEDIAN_EXTRA_DIGITS: u8 = 3;
+/// Significant digits at the result scale up to which a double average rounds back exactly.
+pub const MEDIAN_EXACT_DIGITS: u8 = 15;
+/// The alias prefix of the relation holding a FULL JOIN USING's merged keys.
+pub const USING_ALIAS_PREFIX: &str = "__SQLQUACK_USING_";
+/// DuckDB's FULL JOIN keyword.
+pub const FULL_JOIN_KEYWORD: &str = "FULL JOIN";
+/// The parser's literal kind for a dollar-quoted string, whose text it keeps as written.
+pub const DOLLAR_STRING_KIND: &str = "dollar_string";
+/// A NUMBER or FLOAT plus or minus an untyped NULL.
+pub const NULL_ARITHMETIC: &str = "rule.null_arithmetic";
+/// The precision an untyped NULL widens a sum to, as recorded.
+pub const NULL_SUM_PRECISION: u8 = 18;
+/// The pieces of a TIME format recorded through TO_VARCHAR: clock fields and separators.
+pub const CLOCK_FORMAT_FIELDS: &[&str] = &[
+    "HH24", "MI", "SS", "FF1", "FF2", "FF3", "FF4", "FF5", "FF6", ":", ".",
+];
+/// The SQL of a NULL literal.
+pub const NULL_SQL: &str = "NULL";

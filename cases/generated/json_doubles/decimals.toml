@@ -181,7 +181,6 @@ query = "SELECT TYPEOF(v:n) AS ty, v:n::VARCHAR AS s, TO_JSON(v:n) AS j, TO_JSON
 order = "ordered"
 tags = ["boundary"]
 origin = "generated: json_doubles@1"
-expected_divergence = "json_fidelity"
 
 [[case]]
 id = "number_decimal_small"

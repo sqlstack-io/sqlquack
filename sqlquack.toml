@@ -354,10 +354,10 @@ strict = "refuse"
 reason = "Converted SQL is proven only in sessions whose time zone is UTC: Snowflake's TIMEZONE and DuckDB's TimeZone both 'UTC'. A statement whose result depends on the session time zone relies on that: a DATE, TIMESTAMP_NTZ or timestamp text without an offset read as TIMESTAMP_TZ or TIMESTAMP_LTZ (so CONVERT_TIMEZONE with two arguments of a naive value too), a TIMESTAMP_LTZ read as a wall time, a date part, VARIANT text or a TIMESTAMP_TZ, and CURRENT_DATE and CURRENT_TIMESTAMP. In any other session such a statement gives a wrong value silently. Strict mode refuses it unless the caller confirms both sessions run in UTC."
 
 [divergences.percentile_interpolation]
-constructs = ["fn:PERCENTILE_CONT"]
+constructs = ["fn:PERCENTILE_CONT", "fn:MEDIAN"]
 default = "warn"
 strict = "refuse"
-reason = "Snowflake's PERCENTILE_CONT interpolates between two different values with rounding error in the last digits that recordings do not reproduce from any exact or double formula. The converted SQL returns the value where the fraction lands on a row, or between equal values, and raises where it would interpolate. The failure is loud, never a wrong value."
+reason = "Snowflake's PERCENTILE_CONT interpolates between two different values with rounding error in the last digits that recordings do not reproduce from any exact or double formula. The converted SQL returns the value where the fraction lands on a row, or between equal values, and raises where it would interpolate. MEDIAN of NUMBER was recorded as a double average that loses digits for wide values; the converted SQL returns the exact median where both middle values are below 10^(12-s) for scale s, and raises otherwise. The failure is loud, never a wrong value."
 
 [divergences.date_text_spelling]
 constructs = ["fn:TRY_TO_DATE", "fn:TO_DATE", "node:try_cast", "node:cast", "fn:TO_TIMESTAMP", "fn:TO_TIMESTAMP_NTZ", "fn:DATE", "fn:TRY_TO_TIMESTAMP", "fn:TRY_TO_TIMESTAMP_NTZ", "fn:TRY_TO_TIMESTAMP_TZ", "fn:TO_TIME", "fn:TRY_TO_TIME", "node:eq", "node:neq", "node:lt", "node:lte", "node:gt", "node:gte", "node:in"]

@@ -82,3 +82,30 @@ rows = [
 query = "SELECT t >= s AS a, t = s AS b, s < t AS c, d = s AS e, d > s AS f FROM input ORDER BY ordinal"
 order = "ordered"
 tags = ["null", "ties", "mixed-types"]
+
+[[case]]
+id = "constant_null_number_against_text"
+description = "A column that is CAST(NULL AS INT) in a CTE compared with unreadable text literals."
+columns = [{ name = "k", type = "VARCHAR" }]
+rows = [["'a'"], ["'b'"]]
+query = "WITH c AS (SELECT k, CAST(NULL AS INT) AS n FROM input) SELECT k, IFF(c.n = 'HKG', 1, 0) AS i, c.n = 'FRA' AS e FROM c ORDER BY k"
+order = "ordered"
+tags = ["null", "mixed-types"]
+
+[[case]]
+id = "constant_null_number_values_against_text"
+description = "A VALUES column CAST(NULL AS INT) compared with an unreadable text literal through a CTE chain."
+columns = [{ name = "k", type = "VARCHAR" }]
+rows = [["'a'"]]
+query = "WITH v AS (SELECT CAST(COLUMN1 AS VARCHAR) AS k, CAST(NULL AS INT) AS n FROM VALUES ('a'), ('b')), w AS (SELECT * FROM v) SELECT w.k, IFF(w.n = 'HKG', 'y', 'n') AS i FROM w ORDER BY w.k"
+order = "ordered"
+tags = ["null", "mixed-types"]
+
+[[case]]
+id = "computed_null_number_against_text"
+description = "A NUMBER computed NULL at run time compared with an unreadable text literal."
+columns = [{ name = "k", type = "VARCHAR" }]
+rows = [["'a'"], ["'b'"]]
+query = "SELECT k, IFF(k = 'zz', 1, NULL) = 'HKG' AS e FROM input ORDER BY k"
+order = "ordered"
+tags = ["null", "mixed-types"]

@@ -3,7 +3,7 @@
 use sqlquack_core::provenance::models::ProvenanceLog;
 
 use crate::semi_structured::_helpers::guards::{
-    bound, fidelity_error, keys_repeated, long_decimal_pattern,
+    bound, fidelity_error, keys_repeated, long_decimal_pattern, zero_fractions_whole,
 };
 use crate::semi_structured::constants::{
     JSON_GUARDED, JSON_NUMBER_PATTERN, JSON_STRING_PATTERN, JSON_SURROGATE_PATTERN,
@@ -23,7 +23,7 @@ pub fn json_guarded(sql: &str, log: &ProvenanceLog) -> String {
         keys_repeated("(CASE WHEN json_valid(json_source) THEN json(json_source) ELSE '[]' END)");
     let body = format!(
         "(CASE WHEN r['t'] IS NULL THEN NULL WHEN regexp_full_match(r['t'], ' *') THEN NULL \
-         WHEN NOT json_valid(r['t']) THEN {invalid} \
+         WHEN NOT r['valid'] THEN {invalid} \
          WHEN regexp_matches({tokens}, '{unsafe}') THEN {numbers} \
          WHEN regexp_matches({tokens}, '{long}') \
          AND regexp_extract_all({tokens}, '{JSON_NUMBER_PATTERN}') <> {written_numbers} \
@@ -48,7 +48,11 @@ pub fn json_guarded(sql: &str, log: &ProvenanceLog) -> String {
         &text,
         "json_source",
         &bound(
-            &format!("struct_pack(t := json_source, repeated := {duplicates})"),
+            &format!(
+                "struct_pack(t := {}, valid := json_valid(json_source), \
+                 repeated := {duplicates})",
+                zero_fractions_whole("json_source")
+            ),
             "r",
             &body,
         ),

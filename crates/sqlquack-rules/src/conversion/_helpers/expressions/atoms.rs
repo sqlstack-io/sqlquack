@@ -24,8 +24,9 @@ use crate::conversion::_helpers::support::tree::{
     require_understood,
 };
 use crate::conversion::constants::{
-    COLUMN, COMMENT, CONSTANT_LITERAL, DOLLAR_PARAMETER, NEGATE, NUMBER_LITERAL, PARENTHESES,
-    POSITIONAL_COLUMN, SCALAR_SUBQUERY, TYPED_LITERAL_KINDS, TYPED_LITERAL_PAIR,
+    COLUMN, COMMENT, CONSTANT_LITERAL, DOLLAR_PARAMETER, DOLLAR_STRING_KIND, NEGATE,
+    NUMBER_LITERAL, PARENTHESES, POSITIONAL_COLUMN, SCALAR_SUBQUERY, TYPED_LITERAL_KINDS,
+    TYPED_LITERAL_PAIR,
 };
 use sqlquack_semantics::types::models::Holding;
 
@@ -125,7 +126,7 @@ pub(crate) fn literal(payload: &Value, site: Site<'_>) -> Result<Emitted, Refusa
                 ..Emitted::new(sql, data_type)
             })
         }
-        Some(LITERAL_STRING) => {
+        Some(LITERAL_STRING | DOLLAR_STRING_KIND) => {
             let _rule = log.rule(CONSTANT_LITERAL);
             Ok(Emitted {
                 literal: Some(Literal::Text(text.to_owned())),

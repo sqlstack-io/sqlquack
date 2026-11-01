@@ -738,6 +738,10 @@ JSON_UNSAFE_PATTERN: re.Pattern[str] = re.compile(
     r"[A-Za-z]|,\s*[\]}]|[0-9]\.0*(?:[^0-9]|$)|\.0{6}|[0-9]{39}"
 )
 JSON_NUMBER_PATTERN: re.Pattern[str] = re.compile(r"-?[0-9]+(?:\.[0-9]+)?")
+ZERO_FRACTION_PATTERN: re.Pattern[str] = re.compile(
+    r'("(?:[^"\\]|\\.)*"|-0\.0+|-?[0-9]{20,}(?:\.[0-9]+)?)'
+    r"|(-?[1-9][0-9]{0,18}|0)\.0{1,19}([,\]} \t\n\r]|$)"
+)
 JSON_LONG_DECIMAL_PATTERN: re.Pattern[str] = re.compile(
     "|".join(
         [

@@ -228,7 +228,6 @@ rows = [
   ["'{\"a\": 1.000}'"],
 ]
 expression = "TO_JSON(TRY_PARSE_JSON(s))"
-expected_divergence = "json_fidelity"
 tags = ["invalid"]
 
 [[case]]
@@ -294,3 +293,44 @@ rows = [
 expression = "TRY_PARSE_JSON(s):data.id::VARCHAR"
 expected_divergence = "json_fidelity"
 tags = ["invalid"]
+
+[[case]]
+id = "zero_fraction_numbers_probe"
+description = "JSON numbers with an all-zero fraction: their type, text and casts, beside other decimals."
+columns = [{ name = "j", type = "VARCHAR" }]
+rows = [["'{\"a\":2.0,\"b\":[11.0,22.4],\"c\":1.50,\"d\":100.00,\"e\":0.0,\"f\":-3.0}'"]]
+query = "SELECT PARSE_JSON(j)::VARCHAR AS t, TYPEOF(PARSE_JSON(j):a) AS ka, TYPEOF(PARSE_JSON(j):c) AS kc, TYPEOF(PARSE_JSON(j):b[1]) AS kb, PARSE_JSON(j):a::VARCHAR AS av, PARSE_JSON(j):d::VARCHAR AS dv, PARSE_JSON(j):e::VARCHAR AS ev, PARSE_JSON(j):a = 2 AS eq, PARSE_JSON(j):a = PARSE_JSON('2') AS veq FROM input"
+order = "ordered"
+tags = ["trailing-zeros"]
+
+[[case]]
+id = "zero_fraction_numbers_read"
+description = "JSON numbers with an all-zero fraction read by path as FLOAT, NUMBER and integer, and written back."
+columns = [{ name = "j", type = "VARCHAR" }]
+rows = [
+  ["'{\"a\":2.0,\"b\":[11.0,22.4],\"f\":-3.0}'"],
+  ["'{\"a\":1.000000,\"b\":[0.0],\"f\":10.50}'"],
+  ["'[1.0, 1, 2.50]'"],
+  ["'2.0'"],
+]
+query = "SELECT PARSE_JSON(j):a::FLOAT AS af, PARSE_JSON(j):a::NUMBER(10,2) AS an, PARSE_JSON(j):b[0]::INT AS b0, PARSE_JSON(j):f::FLOAT AS ff, PARSE_JSON(j)[0]::FLOAT AS e0, PARSE_JSON(j)::FLOAT AS rf, TO_JSON(PARSE_JSON(j)) AS t FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["trailing-zeros", "null"]
+
+[[case]]
+id = "zero_fraction_invalid_and_wide"
+description = "JSON text whose zero fraction is followed by more than a delimiter, which is invalid, and zero fractions too wide for a NUMBER."
+columns = [{ name = "j", type = "VARCHAR" }]
+rows = [
+  ["'1.0.5'"],
+  ["'{\"a\":1.00.25}'"],
+  ["'[1.0.5]'"],
+  ["'[1.0,2.0, 3.0 ]'"],
+  ["'{\"a\":1.0000000000000000000000000000000000000}'"],
+  ["'123456789012345678901234567890123456789.0'"],
+  ["'[1.0e2]'"],
+]
+query = "SELECT TRY_PARSE_JSON(j) IS NULL AS n, TO_JSON(TRY_PARSE_JSON(j)) AS t FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["invalid", "boundary"]
+expected_divergence = "json_fidelity"

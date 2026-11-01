@@ -1,10 +1,10 @@
-//! `time_add_value`: a TIME moved by whole hours or minutes, wrapping at midnight.
+//! `time_add_value`: a TIME moved by whole hours, minutes or milliseconds, wrapping at midnight.
 
 use sqlquack_core::provenance::models::ProvenanceLog;
 
 use crate::temporal::constants::NANOS_PER_MINUTE;
 use crate::times::_helpers::nanos::time_of_nanos;
-use crate::times::constants::{NANOS_PER_DAY, TIME_ADD};
+use crate::times::constants::{NANOS_PER_DAY, NANOS_PER_MILLISECOND, TIME_ADD};
 
 /// The TIME plus `amount` units, modulo a day.
 pub fn time_add_value(
@@ -16,6 +16,7 @@ pub fn time_add_value(
     let step = match unit {
         "HOUR" => NANOS_PER_MINUTE * 60,
         "MINUTE" => NANOS_PER_MINUTE,
+        "MILLISECOND" => NANOS_PER_MILLISECOND,
         other => return Err(format!("DATEADD of {other} to a TIME has no recording")),
     };
     let moved = format!(

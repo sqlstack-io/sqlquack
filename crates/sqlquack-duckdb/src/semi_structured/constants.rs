@@ -143,3 +143,7 @@ pub const KEY_STEP: &str = r#"\.([A-Za-z_][A-Za-z0-9_]*|"([^"\\]|\\.)*")"#;
 pub const ELEMENT_STEP: &str = r"\[[0-9]+\]";
 /// A quoted key Snowflake was recorded writing as `['key']`: letters, digits, `_`, spaces and dots.
 pub const BRACKETED_KEY: &str = r#"\."[A-Za-z0-9_ .]*""#;
+/// Negative zero with an all-zero fraction, and runs of 20 or more digits, kept as written.
+pub const KEPT_NUMBER_PATTERN: &str = r"-0\.0+|-?[0-9]{20,}(?:\.[0-9]+)?";
+/// A number of at most 38 digits with an all-zero fraction, and the JSON delimiter after it.
+pub const ZERO_FRACTION_PATTERN: &str = r"|(-?[1-9][0-9]{0,18}|0)\.0{1,19}([,\]} \t\n\r]|$)";
