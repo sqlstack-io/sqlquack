@@ -138,7 +138,7 @@ See [docs/architecture.md](docs/architecture.md).
 
 `make check-ci` runs every static gate (rustfmt, clippy, fensu, ruff, ty and the append-only
 evidence guard) and `make test` runs the tests. CI runs both with `RECORDER=0`, which leaves the
-recorder out. See [AGENTS.md](AGENTS.md) for the rules every change follows.
+recorder out.
 
 ## License
 
