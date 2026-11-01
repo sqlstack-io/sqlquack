@@ -43,7 +43,7 @@ use sqlquack_duckdb::blocks::constants::NANOSECOND_DIGITS;
 use crate::conversion::constants::{
     COMPARISON, DATE_DAY_ARITHMETIC, DATE_LITERAL_COMPARISON, DAY_UNIT, DECIMAL_ARITHMETIC,
     DECIMAL_DIVISION, DECIMAL_MODULO, FLOAT_ARITHMETIC, FLOAT_MODULO, LOGIC, MOD_PAIR,
-    NULL_ARITHMETIC, NULL_SAFE_COMPARISON, NULL_SQL, NULL_SUM_PRECISION, NUMERIC_RANGE,
+    NULL_ARITHMETIC, NULL_SAFE_COMPARISON, NULL_SUM_PRECISION, NUMERIC_RANGE,
     TEXT_NUMBER_COMPARISON, VARIANT_EQUALITY,
 };
 
@@ -112,11 +112,8 @@ pub(crate) fn arithmetic(kind: &str, payload: &Value, site: Site<'_>) -> Result<
     {
         return date_plus_days((&left, &right), operator, &construct, site.context);
     }
-    let literal_null = |emitted: &Emitted| emitted.sql == NULL_SQL;
     let null_type = match operator {
-        _ if !literal_null(&left) && !literal_null(&right) => None,
         Arithmetic::Add | Arithmetic::Subtract => null_sum_type(left.data_type, right.data_type),
-        _ if !literal_null(&right) => None,
         Arithmetic::Multiply | Arithmetic::Divide => {
             null_product_type((left.data_type, right.data_type), operator, log)
                 .map_err(|reason| outside_conditions(construct.clone(), reason))?
@@ -179,7 +176,7 @@ fn null_sum_type(left: SnowflakeType, right: SnowflakeType) -> Option<SnowflakeT
     }
 }
 
-/// NUMBER(p,s) of up to 18 digits times or over a NULL literal, or FLOAT times one, as recorded.
+/// NUMBER or FLOAT times or over an untyped NULL, typed as with NUMBER(18,0) in its place.
 fn null_product_type(
     (left, right): (SnowflakeType, SnowflakeType),
     operator: Arithmetic,
@@ -189,13 +186,13 @@ fn null_product_type(
         precision: NULL_SUM_PRECISION,
         scale: 0,
     };
-    let (left, right) = match (left, right, operator) {
-        (other @ SnowflakeType::Number { precision, .. }, SnowflakeType::Null, _)
-            if precision <= NULL_SUM_PRECISION =>
-        {
+    let (left, right) = match (left, right) {
+        (SnowflakeType::Null, other @ (SnowflakeType::Number { .. } | SnowflakeType::Float)) => {
+            (null, other)
+        }
+        (other @ (SnowflakeType::Number { .. } | SnowflakeType::Float), SnowflakeType::Null) => {
             (other, null)
         }
-        (other @ SnowflakeType::Float, SnowflakeType::Null, Arithmetic::Multiply) => (other, null),
         _ => return Ok(None),
     };
     match operator {

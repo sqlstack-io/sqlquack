@@ -22,7 +22,7 @@ use crate::conversion::_helpers::support::tree::{
     Payload, field, function_construct, identifier_name, list, node_construct, payload_object,
     require_understood,
 };
-use crate::conversion::constants::{FLATTEN_COLUMNS, FLATTEN_RULE};
+use crate::conversion::constants::{FLATTEN_COLUMNS, FLATTEN_ORDERED_COLUMNS, FLATTEN_RULE};
 use sqlquack_semantics::scopes::models::ScopeRelation;
 use sqlquack_semantics::types::models::{ColumnSpec, Holding};
 
@@ -79,9 +79,14 @@ pub(crate) fn lateral_flatten(
     let site = Site {
         scope: &scope,
         context,
-        placement: Placement::ROW,
+        placement: Placement {
+            order_free: true,
+            ..Placement::ROW
+        },
     };
+    let mark = context.order.mark();
     let input = convert_held(input, site)?;
+    context.order.absorb(mark);
     if input.data_type != SnowflakeType::SemiStructured {
         return Err(outside_conditions(
             function,
@@ -109,6 +114,7 @@ pub(crate) fn lateral_flatten(
                 (SnowflakeType::SemiStructured, true) => Holding::Variant,
                 _ => Holding::Json,
             },
+            unordered: input.unordered && FLATTEN_ORDERED_COLUMNS.contains(column),
             ..ColumnSpec::new(*column, *data_type)
         })
         .collect();

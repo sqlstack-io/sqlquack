@@ -1,0 +1,133 @@
+# Unordered ARRAY_AGG read only where element order cannot matter, and where it can.
+category = "aggregate"
+construct = "fn:ARRAY_AGG"
+session_profile = "utc-v1"
+
+[[case]]
+id = "order_free_set_sizes"
+description = "Unordered ARRAY_AGG and ARRAY_AGG DISTINCT through a CTE, read by ARRAY_SIZE of ARRAY_INTERSECTION and ARRAY_EXCEPT, ARRAYS_OVERLAP and ARRAY_SIZE."
+columns = [{ name = "g", type = "VARCHAR" }, { name = "x", type = "VARCHAR" }, { name = "n", type = "NUMBER(10,0)" }]
+rows = [
+  ["'a'", "'fig'", "1"],
+  ["'a'", "'pear'", "2"],
+  ["'a'", "'plum'", "2"],
+  ["'a'", "'fig'", "NULL"],
+  ["'b'", "'pear'", "3"],
+  ["'b'", "'fig'", "4"],
+  ["'b'", "'kiwi'", "1"],
+  ["'c'", "'lime'", "7"],
+  ["'c'", "NULL", "8"],
+]
+query = "WITH a AS (SELECT g, ARRAY_AGG(DISTINCT x) AS xs, ARRAY_AGG(n) AS ns, ARRAY_AGG(DISTINCT n) AS ds FROM input GROUP BY g) SELECT a1.g AS g1, a2.g AS g2, ARRAY_SIZE(ARRAY_INTERSECTION(a1.xs, a2.xs)) AS common, ARRAY_SIZE(ARRAY_EXCEPT(a1.xs, a2.xs)) AS only_first, ARRAYS_OVERLAP(a1.ns, a2.ns) AS overlap, ARRAY_SIZE(a1.ns) AS n1, ARRAY_SIZE(ARRAY_INTERSECTION(a1.ds, a2.ds)) AS dcommon FROM a AS a1 JOIN a AS a2 ON a1.g < a2.g ORDER BY g1, g2"
+order = "ordered"
+tags = ["null", "duplicates"]
+
+[[case]]
+id = "order_free_removed_appended_flattened"
+description = "Unordered ARRAY_AGG with an element removed and one appended, flattened by value and searched with ARRAY_CONTAINS."
+columns = [{ name = "g", type = "VARCHAR" }, { name = "x", type = "VARCHAR" }]
+rows = [
+  ["'a'", "'fig'"],
+  ["'a'", "'pear'"],
+  ["'a'", "'plum'"],
+  ["'b'", "'pear'"],
+  ["'b'", "'kiwi'"],
+]
+query = "WITH a AS (SELECT g, ARRAY_APPEND(ARRAY_REMOVE(ARRAY_AGG(x), 'pear'::VARIANT), g) AS r FROM input GROUP BY g), f AS (SELECT a.g, v.value::VARCHAR AS item FROM a, LATERAL FLATTEN(input => a.r) AS v) SELECT f.g, f.item, ARRAY_CONTAINS('fig'::VARIANT, a.r) AS has_fig, ARRAY_CONTAINS(f.item::VARIANT, a.r) AS has_item FROM f JOIN a ON a.g = f.g ORDER BY f.g, f.item"
+order = "ordered"
+tags = ["duplicates"]
+
+[[case]]
+id = "order_free_branches_and_union"
+description = "Unordered ARRAY_AGG chosen by IFF and CASE, passed through UNION ALL, then sized and compared by ARRAY_EXCEPT."
+columns = [{ name = "g", type = "VARCHAR" }, { name = "x", type = "VARCHAR" }]
+rows = [
+  ["'a'", "'fig'"],
+  ["'a'", "'pear'"],
+  ["'a'", "'plum'"],
+  ["'b'", "'pear'"],
+  ["'b'", "'fig'"],
+]
+query = "WITH a AS (SELECT g, ARRAY_AGG(x) AS xs, COUNT(*) AS c FROM input GROUP BY g), p AS (SELECT a1.g AS g1, a2.g AS g2, IFF(a1.c <= a2.c, a1.xs, a2.xs) AS smaller, CASE WHEN a1.c <= a2.c THEN a2.xs ELSE a1.xs END AS larger FROM a AS a1 JOIN a AS a2 ON a1.g <> a2.g), u AS (SELECT g1, smaller AS s FROM p UNION ALL SELECT g, ARRAY_CONSTRUCT('fig') FROM a) SELECT p.g1, p.g2, ARRAY_SIZE(ARRAY_EXCEPT(p.smaller, p.larger)) AS missing, ARRAY_SIZE(p.larger) AS l, t.total FROM p JOIN (SELECT g1, SUM(ARRAY_SIZE(s)) AS total FROM u GROUP BY g1) AS t ON t.g1 = p.g1 ORDER BY p.g1, p.g2"
+order = "ordered"
+tags = ["duplicates"]
+
+[[case]]
+id = "order_free_distinct_without_repeats"
+description = "Unordered ARRAY_AGG DISTINCT kept in a SELECT DISTINCT whose input holds no repeated row, then sized."
+columns = [{ name = "g", type = "VARCHAR" }, { name = "x", type = "VARCHAR" }]
+rows = [
+  ["'a'", "'fig'"],
+  ["'a'", "'pear'"],
+  ["'b'", "'pear'"],
+  ["'b'", "'fig'"],
+  ["'c'", "'kiwi'"],
+]
+query = "WITH a AS (SELECT g, ARRAY_AGG(DISTINCT x) AS xs FROM input GROUP BY g), d AS (SELECT DISTINCT a1.g, a1.xs, a2.g AS h FROM a AS a1 JOIN a AS a2 ON a1.g < a2.g) SELECT g, h, ARRAY_SIZE(xs) AS s FROM d ORDER BY g, h"
+order = "ordered"
+tags = ["duplicates"]
+
+[[case]]
+id = "order_free_distinct_with_repeats"
+description = "Unordered ARRAY_AGG DISTINCT in a SELECT DISTINCT whose input repeats rows holding several elements, where Snowflake compares arrays in their own order."
+columns = [{ name = "g", type = "VARCHAR" }, { name = "x", type = "VARCHAR" }]
+rows = [
+  ["'a'", "'fig'"],
+  ["'a'", "'pear'"],
+  ["'b'", "'kiwi'"],
+]
+query = "WITH a AS (SELECT g, ARRAY_AGG(DISTINCT x) AS xs FROM input GROUP BY g), d AS (SELECT DISTINCT a.g, a.xs FROM a JOIN input AS i ON i.g = a.g) SELECT g, ARRAY_SIZE(xs) AS s FROM d ORDER BY g"
+order = "ordered"
+tags = ["duplicates"]
+expected_divergence = "array_agg_order"
+
+[[case]]
+id = "order_observed_after_cte"
+description = "Unordered ARRAY_AGG through a CTE, then compared with an array and written as text, which observe its order."
+columns = [{ name = "g", type = "VARCHAR" }, { name = "x", type = "VARCHAR" }]
+rows = [
+  ["'a'", "'fig'"],
+  ["'a'", "'pear'"],
+  ["'b'", "'kiwi'"],
+]
+query = "WITH a AS (SELECT g, ARRAY_AGG(x) AS xs FROM input GROUP BY g) SELECT g, xs = ARRAY_CONSTRUCT('kiwi') AS e, ARRAY_TO_STRING(xs, ',') AS t FROM a ORDER BY g"
+order = "ordered"
+tags = ["duplicates"]
+expected_divergence = "array_agg_order"
+
+[[case]]
+id = "order_observed_single_values"
+description = "Unordered ARRAY_AGG through a CTE where each group holds one distinct value, compared and written as text."
+columns = [{ name = "g", type = "VARCHAR" }, { name = "x", type = "VARCHAR" }]
+rows = [
+  ["'a'", "'fig'"],
+  ["'a'", "'fig'"],
+  ["'b'", "'kiwi'"],
+  ["'c'", "NULL"],
+]
+query = "WITH a AS (SELECT g, ARRAY_AGG(x) AS xs FROM input GROUP BY g) SELECT g, xs = ARRAY_CONSTRUCT('kiwi') AS e, ARRAY_TO_STRING(xs, ',') AS t, xs AS v FROM a ORDER BY g"
+order = "ordered"
+tags = ["null", "duplicates"]
+
+[[case]]
+id = "order_observed_flatten_index"
+description = "FLATTEN of an unordered ARRAY_AGG read by INDEX, which depends on its order."
+columns = [{ name = "g", type = "VARCHAR" }, { name = "x", type = "VARCHAR" }]
+rows = [
+  ["'a'", "'fig'"],
+  ["'a'", "'pear'"],
+]
+query = "WITH a AS (SELECT g, ARRAY_AGG(x) AS xs FROM input GROUP BY g) SELECT v.index AS i, v.value::VARCHAR AS x FROM a, LATERAL FLATTEN(input => a.xs) AS v ORDER BY x"
+order = "ordered"
+tags = ["duplicates"]
+
+[[case]]
+id = "order_free_no_rows"
+description = "Unordered ARRAY_AGG through a CTE over no rows and over only NULLs, sized and intersected."
+columns = [{ name = "g", type = "VARCHAR" }, { name = "x", type = "VARCHAR" }]
+rows = [
+  ["'a'", "NULL"],
+]
+query = "WITH a AS (SELECT ARRAY_AGG(x) AS xs, ARRAY_AGG(DISTINCT x) AS ds FROM input WHERE g = 'zz'), b AS (SELECT ARRAY_AGG(x) AS xs FROM input) SELECT ARRAY_SIZE(a.xs) AS s, ARRAY_SIZE(ARRAY_INTERSECTION(a.ds, b.xs)) AS i, ARRAY_SIZE(b.xs) AS n FROM a CROSS JOIN b"
+order = "ordered"
+tags = ["null", "empty-input"]

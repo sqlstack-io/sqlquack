@@ -97,6 +97,7 @@ pub(crate) fn convert_set_operation(
             ));
         }
     };
+    let context = &context.projecting(context.free_projections && keyword == UNION_ALL);
     let (with_sql, context) = convert_with(operation.get("with"), outer, context)?;
     let left = convert_query(
         field(operation, "left", &construct)?,
@@ -203,6 +204,7 @@ fn unified_columns(
         };
         columns.push(ColumnSpec {
             holding,
+            unordered: left_column.unordered || right_column.unordered,
             ..ColumnSpec::new(left_column.name.clone(), data_type)
         });
     }
@@ -367,6 +369,10 @@ fn named_columns<'a>(
         let data_type = set_operation_type((typed(left), typed(right)), construct, context)?;
         columns.push(ColumnSpec {
             holding,
+            unordered: [found(left), found(right)]
+                .into_iter()
+                .flatten()
+                .any(|column| column.unordered),
             ..ColumnSpec::new(name, data_type)
         });
     }

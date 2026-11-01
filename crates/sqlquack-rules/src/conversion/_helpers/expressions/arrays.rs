@@ -17,7 +17,9 @@ use sqlquack_duckdb::semi_structured::constants::JSON_FIDELITY;
 use sqlquack_duckdb::variants::main::json_array_cat::json_array_cat;
 use sqlquack_snowflake::typing::models::SnowflakeType;
 
-use crate::conversion::_helpers::expressions::objects::{refused, semi_structured, variant};
+use crate::conversion::_helpers::expressions::objects::{
+    free_variant, refused, semi_structured, variant,
+};
 use crate::conversion::_helpers::expressions::scalar::convert_expression;
 use crate::conversion::_helpers::expressions::text_functions::integer_operand;
 use crate::conversion::_helpers::expressions::variants::array_construct;
@@ -101,20 +103,25 @@ fn compared_arrays(
     let _rule = log.rule(ARRAY_SET_RULE);
     diverge(site.context, JSON_FIDELITY, construct)?;
     let reads = site.context.typed.reads();
-    let left = variant(left, construct, site)?;
+    let (left, left_unordered) = free_variant(left, construct, site)?;
     let right = right
-        .map(|right| variant(right, construct, site))
+        .map(|right| free_variant(right, construct, site))
         .transpose()?;
     compared_by_text(site.context.typed.since(reads), construct, site.context)?;
+    let unordered = left_unordered || right.as_ref().is_some_and(|(_, unordered)| *unordered);
     Ok(match (name, right) {
-        ("ARRAY_INTERSECTION", Some(right)) => {
-            semi_structured(json_array_intersection((&left, &right), log))
-        }
-        (_, Some(right)) => Emitted::new(
+        ("ARRAY_INTERSECTION", Some((right, _))) => Emitted {
+            unordered,
+            ..semi_structured(json_array_intersection((&left, &right), log))
+        },
+        (_, Some((right, _))) => Emitted::new(
             json_arrays_overlap((&left, &right), log),
             SnowflakeType::Boolean,
         ),
-        (_, None) => semi_structured(json_array_distinct(&left, log)),
+        (_, None) => Emitted {
+            unordered,
+            ..semi_structured(json_array_distinct(&left, log))
+        },
     })
 }
 
@@ -128,7 +135,7 @@ fn array_remove(
     let _rule = log.rule(ARRAY_SET_RULE);
     diverge(site.context, JSON_FIDELITY, construct)?;
     let reads = site.context.typed.reads();
-    let array = variant(array, construct, site)?;
+    let (array, unordered) = free_variant(array, construct, site)?;
     let removed = convert_expression(value, site)?;
     let removed = match removed.data_type {
         SnowflakeType::SemiStructured if !removed.is_variant_held() => removed.sql,
@@ -141,7 +148,10 @@ fn array_remove(
         }
     };
     compared_by_text(site.context.typed.since(reads), construct, site.context)?;
-    Ok(semi_structured(json_array_remove((&array, &removed), log)))
+    Ok(Emitted {
+        unordered,
+        ..semi_structured(json_array_remove((&array, &removed), log))
+    })
 }
 
 /// ARRAY_APPEND: the array's elements then the value, as ARRAY_CAT with ARRAY_CONSTRUCT of it.
@@ -152,7 +162,7 @@ fn array_append(
 ) -> Result<Emitted, Refusal> {
     let log = site.context.log;
     let _rule = log.rule(ARRAY_APPEND_RULE);
-    let array = variant(array, construct, site)?;
+    let (array, unordered) = free_variant(array, construct, site)?;
     let appended = array_construct(std::slice::from_ref(value), false, construct, site)?;
     if appended.is_variant_held() {
         return Err(refused(
@@ -160,10 +170,10 @@ fn array_append(
             "ARRAY_APPEND of a FLOAT, which DuckDB holds apart from JSON",
         ));
     }
-    Ok(semi_structured(json_array_cat(
-        (&array, &appended.sql),
-        log,
-    )))
+    Ok(Emitted {
+        unordered,
+        ..semi_structured(json_array_cat((&array, &appended.sql), log))
+    })
 }
 
 /// ARRAY_SLICE with whole-number bounds.

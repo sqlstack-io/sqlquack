@@ -308,7 +308,7 @@ arguments = [
 template = "TRY_TO_DATE({1}, {0})"
 category = "temporal"
 benign = { "0" = "'YYYY-MM-DD'" }
-divergences = { "text.dollar_prefix" = "date_text_spelling", "text.slash_prefix" = "date_text_spelling", "text.dots_brackets" = "date_text_spelling", "text.quotes_backslashes" = "date_text_spelling", "text.non_ascii" = "date_text_spelling", "text.title_case_digraph" = "date_text_spelling", "text.case_only" = "date_text_spelling", "text.whitespace" = "date_text_spelling", "text.number_text" = "date_text_spelling", "1.text.case_only" = "", "1.text.dollar_prefix" = "", "1.text.non_ascii" = "", "1.text.quotes_backslashes" = "", "1.text.slash_prefix" = "", "1.text.title_case_digraph" = "", "1.text.whitespace" = "" }
+divergences = { "text.dollar_prefix" = "date_text_spelling", "text.slash_prefix" = "date_text_spelling", "text.dots_brackets" = "date_text_spelling", "text.quotes_backslashes" = "date_text_spelling", "text.non_ascii" = "date_text_spelling", "text.title_case_digraph" = "date_text_spelling", "text.case_only" = "date_text_spelling", "text.whitespace" = "date_text_spelling", "text.number_text" = "date_text_spelling", "1.text.dots_brackets" = "", "1.text.case_only" = "", "1.text.dollar_prefix" = "", "1.text.non_ascii" = "", "1.text.quotes_backslashes" = "", "1.text.slash_prefix" = "", "1.text.title_case_digraph" = "", "1.text.whitespace" = "" }
 
 [[rule]]
 id = "rule.timestamp_format"

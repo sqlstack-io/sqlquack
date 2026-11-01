@@ -4,7 +4,7 @@ use crate::helpers::{
 };
 use crate::test_types::{
     ColumnNameTestCase, ConvertOutcome, ConvertTestCase, ConvertedRunTestCase, PolicyFreeTestCase,
-    ValueTestCase,
+    RunErrorTestCase, ValueTestCase,
 };
 
 const QUOTED_ALIAS: &str =
@@ -30,6 +30,16 @@ fn given_snowflake_sql_when_converting_then_duckdb_sql_or_named_refusals_are_pri
             sql: "SELECT REGEXP_COUNT('xaxax', '(xa)+??x') AS matches",
             flags: &[],
             mention: "a quantifier directly after a lazy quantifier",
+            expected_outcome: convert_outcome(1, false),
+        },
+        ConvertTestCase {
+            description: "a positional ORDER BY over an unordered aggregated array refuses",
+            sql: "WITH totals AS (SELECT customer_id, ARRAY_AGG(sku) AS skus FROM \
+                  (SELECT 1 AS customer_id, 'a' AS sku) GROUP BY customer_id), \
+                  top_customer AS (SELECT customer_id, skus FROM totals ORDER BY 2 DESC LIMIT 1) \
+                  SELECT customer_id FROM top_customer",
+            flags: &[],
+            mention: "a VARIANT key, which DuckDB orders and groups differently",
             expected_outcome: convert_outcome(1, false),
         },
         ConvertTestCase {
@@ -437,5 +447,22 @@ fn given_a_time_with_nanoseconds_when_formatting_then_digits_beyond_the_format_a
             ),
         );
         assert_eq!(value, test_case.expected_value, "{}", test_case.description);
+    }
+}
+
+#[test]
+fn given_iso_date_text_under_a_numeric_format_when_running_then_it_raises_instead_of_null() {
+    let test_cases = [RunErrorTestCase {
+        description: "an ISO T separator is unrecorded, so TRY_TO_DATE raises rather than guessing NULL",
+        sql: "SELECT TRY_TO_DATE('2025-10-05T10:00', 'YYYY-MM-DD') AS placed_on",
+        expected_mention: "date_text_spelling",
+    }];
+    for test_case in test_cases {
+        assert!(
+            converted_run_error(test_case.sql)
+                .is_some_and(|error| error.contains(test_case.expected_mention)),
+            "{}",
+            test_case.description
+        );
     }
 }

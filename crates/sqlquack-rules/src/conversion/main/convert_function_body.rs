@@ -10,7 +10,7 @@ use crate::conversion::_helpers::queries::function_body::{
     selected_columns,
 };
 use crate::conversion::_helpers::support::locations::Locator;
-use crate::conversion::_helpers::support::scope::Context;
+use crate::conversion::_helpers::support::scope::{Context, OrderTrack};
 use crate::conversion::_helpers::support::tree::session_tree;
 use crate::conversion::models::{ConversionOptions, ConvertedFunction};
 use sqlquack_semantics::types::models::TypedLeaves;
@@ -32,6 +32,7 @@ pub fn convert_function_body(
         .map_err(|reason| refused(&reason))?;
     let locator = Locator::new(&tree, &positioned, lines);
     let typed = TypedLeaves::default();
+    let order = OrderTrack::default();
     let context = Context {
         log: &log,
         schema,
@@ -39,6 +40,8 @@ pub fn convert_function_body(
         ctes: Vec::new(),
         locator: &locator,
         typed: &typed,
+        order: &order,
+        free_projections: false,
     };
     let (sql, columns) =
         converted_body(&tree, spec, &context).map_err(|refusal| locator.placed(refusal, &tree))?;

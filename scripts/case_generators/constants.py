@@ -603,7 +603,6 @@ SPELLED_DATE_FORMATS: frozenset[str] = frozenset(
         "YYYYMMDD",
         "YYYY-MM-DD",
         "YYYY/MM/DD",
-        "DD.MM.YYYY",
         "DD.MM.YY",
         "DD/MM/YYYY",
         "MM/DD/YYYY",

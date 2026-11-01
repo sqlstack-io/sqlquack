@@ -1359,5 +1359,9 @@ pub const NULL_SUM_PRECISION: u8 = 18;
 pub const CLOCK_FORMAT_FIELDS: &[&str] = &[
     "HH24", "MI", "SS", "FF1", "FF2", "FF3", "FF4", "FF5", "FF6", ":", ".",
 ];
-/// The SQL of a NULL literal.
-pub const NULL_SQL: &str = "NULL";
+/// IFF, which passes either branch up as it is.
+pub const IFF_NAME: &str = "IFF";
+/// Text every converted window function holds, which a window cannot hold inside its partition.
+pub const WINDOW_MARKER: &str = " OVER (";
+/// FLATTEN columns that depend on the input array's order: its positions and the array itself.
+pub const FLATTEN_ORDERED_COLUMNS: &[&str] = &["PATH", "INDEX", "THIS"];

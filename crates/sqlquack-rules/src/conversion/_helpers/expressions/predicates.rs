@@ -97,7 +97,7 @@ pub(crate) fn exists(payload: &Value, site: Site<'_>) -> Result<Emitted, Refusal
     let (sql, _) = convert_query(
         field(payload, "this", &construct)?,
         Some(site.scope),
-        site.context,
+        &site.context.projecting(false),
         false,
     )?;
     Ok(Emitted::new(
@@ -181,7 +181,12 @@ fn in_subquery(
                 .to_owned(),
         ));
     }
-    let (sql, columns) = convert_query(query, Some(site.scope), site.context, false)?;
+    let (sql, columns) = convert_query(
+        query,
+        Some(site.scope),
+        &site.context.projecting(false),
+        false,
+    )?;
     let [column] = columns.as_slice() else {
         return Err(outside_conditions(
             construct,

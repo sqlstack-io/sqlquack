@@ -23,7 +23,7 @@ use crate::conversion::_helpers::expressions::operators::{
 };
 use crate::conversion::_helpers::expressions::ordered_aggregates::within_group;
 use crate::conversion::_helpers::expressions::ordered_aggregates::{
-    unordered_array_agg, unordered_array_agg_call,
+    order_checked, unordered_array_agg, unordered_array_agg_call,
 };
 use crate::conversion::_helpers::expressions::predicates::{
     between, exists, in_predicate, null_test,
@@ -49,7 +49,7 @@ use crate::conversion::_helpers::support::tree::{
     function_construct, node_construct, node_kind, payload_object, require_understood,
 };
 use crate::conversion::constants::{
-    AGGREGATE_CALL_KIND, ARRAY_LITERAL_KIND, CALL_KIND, OBJECT_CONSTANT_KIND, RLIKE_PAIR,
+    AGGREGATE_CALL_KIND, ARRAY_LITERAL_KIND, CALL_KIND, IFF_NAME, OBJECT_CONSTANT_KIND, RLIKE_PAIR,
     VARIANT_HELD_UNREAD,
 };
 
@@ -66,14 +66,46 @@ pub(crate) fn convert_held(node: &Value, site: Site<'_>) -> Result<Emitted, Refu
 fn converted(node: &Value, site: Site<'_>, held: bool) -> Result<Emitted, Refusal> {
     let typed = site.context.typed;
     let reads = typed.reads();
-    converted_checked(node, site, held).map(|emitted| {
+    let order = site.context.order;
+    let mark = order.mark();
+    let free = site.placement.order_free
+        && !(site.scope.grouped
+            && site.placement.aggregates
+            && matches!(node_kind(node), Some(("column", _))));
+    let inner = site.order_free(free && keeps_order(node));
+    let emitted = converted_checked(node, inner, held).map(|emitted| {
         let (untainted, sourced) = typed.since(reads);
         Emitted {
             untainted,
             sourced,
+            unordered: emitted.unordered || (passes_order(node) && order.mark() > mark),
             ..emitted
         }
-    })
+    })?;
+    match (emitted.unordered, free) {
+        (false, _) => Ok(emitted),
+        (true, true) => {
+            order.pass();
+            Ok(emitted)
+        }
+        (true, false) => order_checked(emitted, site.context)
+            .map_err(|refusal| site.context.locator.placed(refusal, node)),
+    }
+}
+
+/// Whether `node` passes an unordered value up as it is: a column read or a branch choice.
+fn keeps_order(node: &Value) -> bool {
+    matches!(node_kind(node), Some(("column", _))) || passes_order(node)
+}
+
+/// Whether `node` chooses among values without reading them: parentheses, IFF and searched CASE.
+fn passes_order(node: &Value) -> bool {
+    match node_kind(node) {
+        Some(("paren" | "if_func", _)) => true,
+        Some(("case", payload)) => payload.get("operand").is_none_or(Value::is_null),
+        Some((kind, payload)) if kind == CALL_KIND => call_name(payload) == IFF_NAME,
+        _ => false,
+    }
 }
 
 fn converted_checked(node: &Value, site: Site<'_>, held: bool) -> Result<Emitted, Refusal> {

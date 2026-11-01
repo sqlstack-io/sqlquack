@@ -14,7 +14,7 @@ use crate::conversion::_helpers::expressions::scalar::{convert_expression, conve
 use crate::conversion::_helpers::expressions::strings::text_operand;
 use crate::conversion::_helpers::expressions::windows::{order_item, order_key};
 use crate::conversion::_helpers::support::divergence::diverge;
-use crate::conversion::_helpers::support::scope::{Emitted, Literal, VariantRoot};
+use crate::conversion::_helpers::support::scope::{Context, Emitted, Literal, VariantRoot};
 use crate::conversion::_helpers::support::site::{Placement, Site};
 use crate::conversion::_helpers::support::tree::{
     Payload, field, flag, function_construct, list, node_construct, payload_object,
@@ -196,6 +196,7 @@ impl Ordered<'_> {
             ));
         }
         let present = emitted.sql.clone();
+        let variant_element = emitted.data_type == SnowflakeType::SemiStructured;
         let held = builds_held(std::slice::from_ref(&emitted));
         if self.by == Ordering::Unordered {
             compared_value(&emitted, &construct, self.site.context)?;
@@ -214,6 +215,17 @@ impl Ordered<'_> {
              FILTER (WHERE {present} IS NOT NULL)) AS JSON), CAST('[]' AS JSON))"
         );
         let array = match self.by {
+            Ordering::Unordered if !held && !variant_element => {
+                diverge(self.site.context, ARRAY_AGG_ORDER, &construct)?;
+                let sorted = format!(
+                    "coalesce(CAST(to_json(list_sort(list({distinct}{element}) \
+                     FILTER (WHERE {present} IS NOT NULL))) AS JSON), CAST('[]' AS JSON))"
+                );
+                return Ok(Emitted {
+                    unordered: true,
+                    ..built(sorted, held, VariantRoot::Container, self.site.context)
+                });
+            }
             Ordering::Unordered => {
                 diverge(self.site.context, ARRAY_AGG_ORDER, &construct)?;
                 unordered_array(&element, &present, distinct)
@@ -370,6 +382,32 @@ fn tied_array(element: &str, present: &str, (tie_keys, order): (&[String], &str)
          ELSE CAST({tied} AS JSON) END)[1]",
         tie_keys.join(", ")
     )
+}
+
+/// An unordered array read where order matters: raising for several distinct elements.
+pub(crate) fn order_checked(emitted: Emitted, context: &Context<'_>) -> Result<Emitted, Refusal> {
+    let construct = function_construct("ARRAY_AGG");
+    if emitted.data_type != SnowflakeType::SemiStructured || emitted.is_variant_held() {
+        return Err(outside_conditions(
+            construct,
+            "a value that depends on the order of an ARRAY_AGG, which Snowflake leaves undefined"
+                .to_owned(),
+        ));
+    }
+    diverge(context, ARRAY_AGG_ORDER, &construct)?;
+    let unordered = raised(&format!(
+        "{ARRAY_AGG_ORDER}: ARRAY_AGG of several values in no defined order"
+    ));
+    Ok(Emitted {
+        sql: format!(
+            "list_transform([{}], lambda ordered_array: CASE WHEN ordered_array IS NULL \
+             OR len(list_distinct(CAST(ordered_array AS JSON[]))) <= 1 THEN ordered_array \
+             ELSE CAST({unordered} AS JSON) END)[1]",
+            emitted.sql
+        ),
+        unordered: false,
+        ..emitted
+    })
 }
 
 /// An unordered ARRAY_AGG of `element` where `present`, raising for more than one distinct value.

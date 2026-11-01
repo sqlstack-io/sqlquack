@@ -19,7 +19,7 @@ origin = "generated: hazards@1"
 
 [[case]]
 id = "fn_to_date_1_text_hazards"
-description = "fn:TO_DATE with the hazards null, empty, dollar_prefix, slash_prefix, quotes_backslashes, non_ascii, title_case_digraph, case_only, whitespace in argument 1, text."
+description = "fn:TO_DATE with the hazards null, empty, dollar_prefix, slash_prefix, dots_brackets, quotes_backslashes, non_ascii, title_case_digraph, case_only, whitespace in argument 1, text."
 columns = [{ name = "x1", type = "VARCHAR" }]
 rows = [
   ["NULL"],
@@ -28,6 +28,9 @@ rows = [
   ["'$'"],
   ["'/a'"],
   ["'/'"],
+  ["'a.b'"],
+  ["'a[0]'"],
+  ["'*'"],
   ["'it''s'"],
   ["'say \"hi\"'"],
   ["'a\\\\b'"],
@@ -53,20 +56,6 @@ rows = [
 expression = "TRY_TO_DATE(x1, 'YYYY-MM-DD')"
 tags = ["null", "boundary"]
 origin = "generated: hazards@1"
-
-[[case]]
-id = "fn_to_date_1_text_dots_brackets"
-description = "fn:TO_DATE with Dots, brackets and the wildcard, which paths and patterns read specially in argument 1, text."
-columns = [{ name = "x1", type = "VARCHAR" }]
-rows = [
-  ["'a.b'"],
-  ["'a[0]'"],
-  ["'*'"],
-]
-expression = "TRY_TO_DATE(x1, 'YYYY-MM-DD')"
-tags = ["null", "boundary"]
-origin = "generated: hazards@1"
-expected_divergence = "date_text_spelling"
 
 [[case]]
 id = "fn_to_date_1_text_number_text"
