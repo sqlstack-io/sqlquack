@@ -22,6 +22,7 @@ use crate::expressions::operators::models::QuantifiedOp;
 use crate::expressions::operators::models::SimilarToExpr;
 use crate::expressions::operators::models::UnaryOp;
 use crate::expressions::statements::models::Annotated;
+use crate::expressions::statements::models::Paren;
 use crate::expressions::statements::models::Raw;
 use crate::expressions::tree::models::Expression;
 use crate::expressions::typed_functions::main::new_unary_func::new_unary_func;
@@ -34,6 +35,7 @@ use crate::expressions::typed_functions::models::RegexpILike;
 use crate::expressions::typed_functions::models::UnaryFunc;
 use crate::expressions::types::models::DataType;
 use crate::parser::constants::INTEGER;
+use crate::parser::constants::SQLITE_RANGE_FOLLOWERS;
 use crate::parser::models::Parser;
 use crate::tokens::models::SourceSpan;
 use crate::tokens::models::TokenType;
@@ -148,9 +150,32 @@ impl Parser {
                 }
             };
 
-            let expr = { expr };
-            left = expr;
+            left = match self.config.dialect {
+                Some(crate::tokens::models::DialectType::SQLite) => self.sqlite_negated_in(expr),
+                _ => expr,
+            };
         }
+    }
+
+    /// Rewrites SQLite's `x NOT IN (...)` as `NOT (x IN (...))`, parenthesized before a comparison.
+    fn sqlite_negated_in(&self, expr: Expression) -> Expression {
+        let expr: Expression = match expr {
+            Expression::In(mut in_expr) if in_expr.not => {
+                in_expr.not = false;
+                Expression::Not(Box::new(UnaryOp::new(Expression::In(in_expr))))
+            }
+            other => other,
+        };
+        let negated_in: bool =
+            matches!(&expr, Expression::Not(op) if matches!(&op.this, Expression::In(_)));
+        if negated_in && SQLITE_RANGE_FOLLOWERS.contains(&self.peek().token_type) {
+            return Expression::Paren(Box::new(Paren {
+                this: expr,
+                trailing_comments: Vec::new(),
+                span: SourceSpan::default(),
+            }));
+        }
+        expr
     }
 
     fn parse_comparison_operator(
@@ -920,7 +945,11 @@ impl Parser {
     #[inline(always)]
     pub(crate) fn parse_bitwise_or(&mut self) -> Result<Expression> {
         let start = self.current;
-        if self.config.dialect == Some(crate::tokens::models::DialectType::PostgreSQL) {
+        if matches!(
+            self.config.dialect,
+            Some(crate::tokens::models::DialectType::PostgreSQL)
+                | Some(crate::tokens::models::DialectType::SQLite)
+        ) {
             let expr = self.parse_bitwise_same_precedence()?;
             return Ok(self.spanned(start, expr));
         }
@@ -929,24 +958,23 @@ impl Parser {
         Ok(self.spanned(start, expr))
     }
 
-    /// Parses PostgreSQL's `&`, `|`, `#`, `<<` and `>>`, one left-associative tier below arithmetic.
+    /// Parses SQLite's `&`, `|`, `<<` and `>>` and PostgreSQL's (with `#`), one tier below arithmetic.
     pub(crate) fn parse_bitwise_same_precedence(&mut self) -> Result<Expression> {
         let expr_start = self.current;
+        let postgres: bool =
+            self.config.dialect == Some(crate::tokens::models::DialectType::PostgreSQL);
         let mut left = self.parse_addition()?;
         loop {
             let token = self.peek().token_type;
             if !matches!(
                 token,
-                TokenType::Pipe
-                    | TokenType::Amp
-                    | TokenType::LtLt
-                    | TokenType::GtGt
-                    | TokenType::Hash
-            ) {
+                TokenType::Pipe | TokenType::Amp | TokenType::LtLt | TokenType::GtGt
+            ) && !(token == TokenType::Hash && postgres)
+            {
                 return Ok(left);
             }
             self.skip();
-            if token == TokenType::LtLt && self.match_token(TokenType::DArrow) {
+            if token == TokenType::LtLt && postgres && self.match_token(TokenType::DArrow) {
                 let _ = self.parse_addition()?;
                 left = Expression::Raw(Raw {
                     sql: self.tokens_to_sql(expr_start, self.current),
@@ -1385,8 +1413,58 @@ impl Parser {
 
     #[inline(always)]
     pub(crate) fn parse_multiplicative_operand(&mut self) -> Result<Expression> {
-        {
+        if self.config.dialect == Some(crate::tokens::models::DialectType::SQLite) {
+            self.parse_sqlite_concat()
+        } else {
             self.parse_power()
+        }
+    }
+
+    /// Parses SQLite's `||`, `->` and `->>`, one left-associative tier above multiplication.
+    #[inline(never)]
+    pub(crate) fn parse_sqlite_concat(&mut self) -> Result<Expression> {
+        let mut left = self.parse_power()?;
+        loop {
+            let left_comments = self.previous_trailing_comments().to_vec();
+            if self.match_token(TokenType::DPipe) {
+                let operator_comments = self.previous_trailing_comments().to_vec();
+                let right = self.parse_power()?;
+                let trailing_comments = self.previous_trailing_comments().to_vec();
+                left = Expression::Concat(Box::new(BinaryOp {
+                    left,
+                    right,
+                    left_comments,
+                    operator_comments,
+                    trailing_comments,
+                    inferred_type: None,
+                    span: SourceSpan::default(),
+                }));
+            } else if self.check(TokenType::Arrow) || self.check(TokenType::DArrow) {
+                let scalar = self.match_token(TokenType::DArrow);
+                if !scalar {
+                    self.skip();
+                }
+                let path = self.parse_power()?;
+                let extract = Box::new(JsonExtractFunc {
+                    this: left,
+                    path,
+                    arrow_syntax: true,
+                    source_dialect: None,
+                    options: None,
+                    returning: None,
+                    hash_arrow_syntax: false,
+                    wrapper_option: None,
+                    quotes_option: None,
+                    on_scalar_string: false,
+                    on_error: None,
+                });
+                left = match scalar {
+                    true => Expression::JsonExtractScalar(extract),
+                    false => Expression::JsonExtract(extract),
+                };
+            } else {
+                return Ok(left);
+            }
         }
     }
 

@@ -208,6 +208,9 @@ difference it allows there; `crates/sqlquack-syntax/tests/faithful.rs` pins the 
 | sqlglot v30.14.0's identity, parser and dialect fixtures: every Snowflake and DuckDB statement, generic ones in both (`corpora/polyglot-check/sqlglot.json`) | Snowflake, DuckDB | CI, `cargo test` |
 | The SQL inputs of polyglot's own tests, whatever they were written for, in both dialects (`corpora/polyglot-check/polyglot_tests.json`) | Snowflake, DuckDB | CI, `cargo test` |
 | sqlglot v30.14.0's PostgreSQL dialect tests (`corpora/polyglot-check/sqlglot_postgres.json`) | PostgreSQL | CI, `cargo test` |
+| sqlglot v30.14.0's SQLite dialect tests (`corpora/polyglot-check/sqlglot_sqlite.json`) | SQLite | CI, `cargo test` |
+| sqllogictest's evidence statements and a seeded sample of the rest (`corpora/polyglot-check/sqllogictest.json`, MIT) | SQLite | CI, `cargo test` |
+| All 5,719,877 distinct sqllogictest statements SQLite runs | SQLite | locally only; counts in the change notes |
 | PostgreSQL 17.2's regression SQL (`src/test/regress/sql`), split into statements (`corpora/polyglot-check/postgres_regress.json`, PostgreSQL License) | PostgreSQL | CI, `cargo test` |
 | DuckShop (`benchmarks/duckshop` in sqlbuild), compiled with `sqb compile`: models, audits, tests and functions | Snowflake | CI job `polyglot-check`, at a pinned sqlbuild commit and release |
 | DuckShop 10K (`benchmarks/duckshop-10k`, generated, then compiled) | Snowflake | the same job |

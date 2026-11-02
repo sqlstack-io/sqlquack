@@ -15,7 +15,8 @@ The exact-check corpus corpora/polyglot-check/sqlglot.json holds the SQL of sqlg
 fixtures at v30.14.0 (tests/fixtures/identity.sql, tests/test_parser.py and tests/dialects/),
 as extracted by polyglot's fixture tooling. polyglot, below, is itself inspired by sqlglot and
 ships sqlglot's licence. corpora/polyglot-check/sqlglot_postgres.json holds the SQL of
-tests/dialects/test_postgres.py at the same version.
+tests/dialects/test_postgres.py at the same version, and corpora/polyglot-check/sqlglot_sqlite.json
+that of tests/dialects/test_sqlite.py.
 
 sqlglot is distributed under the following licence:
 
@@ -110,3 +111,30 @@ INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
 AND FITNESS FOR A PARTICULAR PURPOSE.  THE SOFTWARE PROVIDED HEREUNDER IS
 ON AN "AS IS" BASIS, AND THE UNIVERSITY OF CALIFORNIA HAS NO OBLIGATIONS TO
 PROVIDE MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
+
+
+sqllogictest
+------------
+
+corpora/polyglot-check/sqllogictest.json holds SQL statements from sqllogictest
+(https://www.sqlite.org/sqllogictest), test/**/*.test: every hand-written statement under
+test/evidence/ that SQLite runs and a seeded random sample of the others. Its author offers it under
+any of the GNU General Public License, the BSD License, the MIT License or CC0, and requires no
+attribution; SQLQuack uses it under the MIT License:
+
+Copyright (c) 2008 D. Richard Hipp
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and
+associated documentation files (the "Software"), to deal in the Software without restriction,
+including without limitation the rights to use, copy, modify, merge, publish, distribute,
+sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or
+substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT
+NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT
+OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.

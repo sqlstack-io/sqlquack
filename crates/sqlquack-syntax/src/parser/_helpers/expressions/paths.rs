@@ -619,6 +619,7 @@ impl Parser {
         if !matches!(
             self.config.dialect,
             Some(crate::tokens::models::DialectType::DuckDB)
+                | Some(crate::tokens::models::DialectType::SQLite)
         ) && self.match_token(TokenType::Arrow)
         {
             let parameters = if let Expression::Column(c) = first_expr {
@@ -1175,6 +1176,7 @@ impl Parser {
                 self.config.dialect,
                 Some(crate::tokens::models::DialectType::DuckDB)
                     | Some(crate::tokens::models::DialectType::PostgreSQL)
+                    | Some(crate::tokens::models::DialectType::SQLite)
             )
             && !self
                 .peek_nth(1)

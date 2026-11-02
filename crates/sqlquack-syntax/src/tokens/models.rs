@@ -29,6 +29,8 @@ pub enum Dialect {
     DuckDB,
     /// PostgreSQL.
     PostgreSQL,
+    /// SQLite.
+    SQLite,
 }
 
 impl Dialect {
@@ -37,6 +39,7 @@ impl Dialect {
             Dialect::Snowflake => DialectType::Snowflake,
             Dialect::DuckDB => DialectType::DuckDB,
             Dialect::PostgreSQL => DialectType::PostgreSQL,
+            Dialect::SQLite => DialectType::SQLite,
         }
     }
 }
@@ -68,6 +71,8 @@ pub enum DialectType {
     DuckDB,
     /// PostgreSQL -- `$$` strings, nested comments and its own operators.
     PostgreSQL,
+    /// SQLite -- several identifier quotes, hex numbers, its own operator tiers.
+    SQLite,
 }
 
 impl DialectType {
@@ -90,6 +95,7 @@ impl std::fmt::Display for DialectType {
             DialectType::Snowflake => write!(f, "snowflake"),
             DialectType::DuckDB => write!(f, "duckdb"),
             DialectType::PostgreSQL => write!(f, "postgresql"),
+            DialectType::SQLite => write!(f, "sqlite"),
         }
     }
 }
@@ -104,6 +110,7 @@ impl std::str::FromStr for DialectType {
             "snowflake" => Ok(DialectType::Snowflake),
             "duckdb" => Ok(DialectType::DuckDB),
             "postgresql" | "postgres" => Ok(DialectType::PostgreSQL),
+            "sqlite" => Ok(DialectType::SQLite),
 
             _ => Err(crate::tokens::errors::Error::parse(
                 format!("Unknown dialect: {}", s),

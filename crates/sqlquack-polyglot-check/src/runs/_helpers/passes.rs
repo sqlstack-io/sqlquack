@@ -15,6 +15,7 @@ pub(crate) fn polyglot_pass(entries: &[CorpusEntry]) -> Duration {
             Dialect::Snowflake => DialectType::Snowflake,
             Dialect::DuckDB => DialectType::DuckDB,
             Dialect::PostgreSQL => DialectType::PostgreSQL,
+            Dialect::SQLite => DialectType::SQLite,
         };
         let _ = std::hint::black_box(polyglot_sql::parse(&entry.sql, dialect));
     }

@@ -36,6 +36,7 @@ polyglot-sql = { git = "https://github.com/sqlstack-io/polyglot.git", rev = "7d5
     "dialect-bigquery",
     "dialect-databricks",
     "dialect-postgresql",
+    "dialect-sqlite",
     "generate",
     "semantic",
     "stacker",

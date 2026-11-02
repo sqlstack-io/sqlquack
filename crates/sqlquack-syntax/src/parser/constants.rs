@@ -205,3 +205,16 @@ pub(crate) const EXPLAIN_ANALYZE: &str = "ANALYZE";
 
 /// The EXPLAIN option values that turn an option on.
 pub(crate) const EXPLAIN_TRUE_VALUES: [&str; 3] = ["TRUE", "ON", "1"];
+
+/// The tokens after which SQLite's rewritten `NOT (x IN (...))` keeps parentheses.
+pub(crate) const SQLITE_RANGE_FOLLOWERS: [crate::tokens::models::TokenType; 9] = [
+    crate::tokens::models::TokenType::Not,
+    crate::tokens::models::TokenType::In,
+    crate::tokens::models::TokenType::Is,
+    crate::tokens::models::TokenType::Between,
+    crate::tokens::models::TokenType::Like,
+    crate::tokens::models::TokenType::ILike,
+    crate::tokens::models::TokenType::RLike,
+    crate::tokens::models::TokenType::Glob,
+    crate::tokens::models::TokenType::Match,
+];

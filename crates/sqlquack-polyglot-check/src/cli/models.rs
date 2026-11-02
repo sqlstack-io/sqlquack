@@ -65,4 +65,6 @@ pub enum DialectArgument {
     Duckdb,
     /// PostgreSQL.
     Postgres,
+    /// SQLite.
+    Sqlite,
 }

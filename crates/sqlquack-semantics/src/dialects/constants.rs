@@ -1,6 +1,8 @@
 //! The implemented dialect profiles.
 
-use crate::dialects::models::{DuckDb, Postgres, Profiles, Snowflake, SnowflakeQuotedIgnoringCase};
+use crate::dialects::models::{
+    DuckDb, Postgres, Profiles, Snowflake, SnowflakeQuotedIgnoringCase, Sqlite,
+};
 
 /// The Snowflake profile.
 pub const SNOWFLAKE: Snowflake = Snowflake;
@@ -13,6 +15,9 @@ pub const DUCKDB: DuckDb = DuckDb;
 
 /// The PostgreSQL profile.
 pub const POSTGRES: Postgres = Postgres;
+
+/// The SQLite profile.
+pub const SQLITE: Sqlite = Sqlite;
 
 /// Snowflake SQL resolved so its names stay apart in DuckDB, as conversion needs.
 pub const SNOWFLAKE_TO_DUCKDB: Profiles = Profiles {

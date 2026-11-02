@@ -354,6 +354,7 @@ impl Parser {
                 } else if !matches!(
                     self.config.dialect,
                     Some(crate::tokens::models::DialectType::DuckDB)
+                        | Some(crate::tokens::models::DialectType::SQLite)
                 ) && self.match_token(TokenType::Arrow)
                 {
                     let body = self.parse_expression()?;
@@ -975,6 +976,7 @@ impl Parser {
                 && !matches!(
                     self.config.dialect,
                     Some(crate::tokens::models::DialectType::DuckDB)
+                        | Some(crate::tokens::models::DialectType::SQLite)
                 )
             {
                 self.skip();
@@ -996,6 +998,7 @@ impl Parser {
             } else if !matches!(
                 self.config.dialect,
                 Some(crate::tokens::models::DialectType::DuckDB)
+                    | Some(crate::tokens::models::DialectType::SQLite)
             ) && self.match_token(TokenType::DArrow)
             {
                 let path = self.parse_json_path_operand()?;

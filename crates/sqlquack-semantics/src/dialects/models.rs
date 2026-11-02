@@ -98,6 +98,24 @@ impl DialectProfile for Postgres {
     }
 }
 
+/// SQLite: identifiers keep their case as written, and names compare without regard to ASCII case.
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
+pub struct Sqlite;
+
+impl DialectProfile for Sqlite {
+    fn name(&self) -> &'static str {
+        "SQLite"
+    }
+
+    fn resolved_identifier(&self, name: &str, _quoted: bool) -> String {
+        name.to_owned()
+    }
+
+    fn same_identifier(&self, left: &str, right: &str) -> bool {
+        left.eq_ignore_ascii_case(right)
+    }
+}
+
 /// The dialect SQL is written in, and the one it is resolved for, whose names may clash.
 #[derive(Clone, Copy, Debug)]
 pub struct Profiles {

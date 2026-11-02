@@ -73,6 +73,34 @@ fn given_committed_corpora_when_parsed_by_both_parsers_then_results_are_identica
             },
         },
         CorpusTestCase {
+            description: "sqlglot's SQLite tests",
+            entries: load_corpus(&corpora.join("sqlglot_sqlite.json")),
+            expected_outcome: ExactOutcome {
+                loaded: true,
+                rejected: BTreeMap::new(),
+                differences: Vec::new(),
+                tokens_lost: Vec::new(),
+                type_names: Vec::new(),
+                unlisted: Vec::new(),
+                unexplained: Vec::new(),
+                located: Vec::new(),
+            },
+        },
+        CorpusTestCase {
+            description: "sqllogictest's statements",
+            entries: load_corpus(&corpora.join("sqllogictest.json")),
+            expected_outcome: ExactOutcome {
+                loaded: true,
+                rejected: BTreeMap::new(),
+                differences: Vec::new(),
+                tokens_lost: Vec::new(),
+                type_names: Vec::new(),
+                unlisted: Vec::new(),
+                unexplained: Vec::new(),
+                located: Vec::new(),
+            },
+        },
+        CorpusTestCase {
             description: "every Snowflake type spelling in each cast form",
             entries: load_corpus(&corpora.join("snowflake_types.json")),
             expected_outcome: ExactOutcome {

@@ -18,6 +18,7 @@ pub fn load_corpus(path: &Path) -> Result<Vec<CorpusEntry>, String> {
             "snowflake" => &[Dialect::Snowflake],
             "duckdb" => &[Dialect::DuckDB],
             "postgres" => &[Dialect::PostgreSQL],
+            "sqlite" => &[Dialect::SQLite],
             "both" => &[Dialect::Snowflake, Dialect::DuckDB],
             other => return Err(format!("{}: unknown dialect {other}", path.display())),
         };

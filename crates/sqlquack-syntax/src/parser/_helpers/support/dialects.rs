@@ -9,6 +9,7 @@ use crate::parser::models::DuckDBDialect;
 use crate::parser::models::GenericDialect;
 use crate::parser::models::PostgresDialect;
 use crate::parser::models::SnowflakeDialect;
+use crate::parser::models::SqliteDialect;
 use crate::parser::types::DialectImpl;
 use crate::tokens::models::DialectType;
 
@@ -24,6 +25,9 @@ pub(crate) static CACHED_DUCKDB: LazyLock<CachedDialectConfig> =
 pub(crate) static CACHED_POSTGRES: LazyLock<CachedDialectConfig> =
     LazyLock::new(|| cached(PostgresDialect));
 
+pub(crate) static CACHED_SQLITE: LazyLock<CachedDialectConfig> =
+    LazyLock::new(|| cached(SqliteDialect));
+
 /// A dialect's cached configuration.
 pub(crate) fn cached(dialect: impl DialectImpl) -> CachedDialectConfig {
     CachedDialectConfig {
@@ -36,6 +40,7 @@ pub(crate) fn configs_for_dialect_type(dt: DialectType) -> DialectConfigs {
         DialectType::Snowflake => &CACHED_SNOWFLAKE,
         DialectType::DuckDB => &CACHED_DUCKDB,
         DialectType::PostgreSQL => &CACHED_POSTGRES,
+        DialectType::SQLite => &CACHED_SQLITE,
         DialectType::Generic => &CACHED_GENERIC,
     };
     DialectConfigs {

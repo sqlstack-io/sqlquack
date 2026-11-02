@@ -18,6 +18,8 @@ mod test_parser;
 mod test_postgres;
 #[path = "tests/test_snowflake.rs"]
 mod test_snowflake;
+#[path = "tests/test_sqlite.rs"]
+mod test_sqlite;
 #[path = "tests/test_termination.rs"]
 mod test_termination;
 #[path = "tests/test_typed_expressions.rs"]

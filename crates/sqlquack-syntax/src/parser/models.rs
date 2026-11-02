@@ -224,6 +224,22 @@ impl DialectImpl for PostgresDialect {
     }
 }
 
+/// SQLite dialect
+#[derive(Debug)]
+pub(crate) struct SqliteDialect;
+
+impl DialectImpl for SqliteDialect {
+    fn tokenizer_config(&self) -> TokenizerConfig {
+        let mut config = TokenizerConfig::default();
+        config.identifiers.insert('"', '"');
+        config.identifiers.insert('[', ']');
+        config.identifiers.insert('`', '`');
+        config.nested_comments = false;
+        config.hex_number_strings = true;
+        config
+    }
+}
+
 /// Snowflake dialect
 #[derive(Debug)]
 pub(crate) struct SnowflakeDialect;

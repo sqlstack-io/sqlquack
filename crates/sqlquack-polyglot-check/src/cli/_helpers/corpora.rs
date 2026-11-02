@@ -23,6 +23,7 @@ pub(crate) fn named_corpora(argument: &CorpusArgument) -> Vec<NamedCorpus> {
                 DialectArgument::Snowflake => Dialect::Snowflake,
                 DialectArgument::Duckdb => Dialect::DuckDB,
                 DialectArgument::Postgres => Dialect::PostgreSQL,
+                DialectArgument::Sqlite => Dialect::SQLite,
             };
             vec![(path.display().to_string(), directory_corpus(path, dialect))]
         }

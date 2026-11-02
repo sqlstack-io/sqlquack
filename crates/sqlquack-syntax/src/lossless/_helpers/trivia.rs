@@ -6,6 +6,7 @@ use crate::lossless::models::TokenKind;
 use crate::parser::models::DuckDBDialect;
 use crate::parser::models::PostgresDialect;
 use crate::parser::models::SnowflakeDialect;
+use crate::parser::models::SqliteDialect;
 use crate::parser::types::DialectImpl;
 use crate::tokens::models::Dialect;
 use crate::tokens::models::TokenizerConfig;
@@ -16,6 +17,7 @@ pub(crate) fn tokenizer_config(dialect: Dialect) -> TokenizerConfig {
         Dialect::Snowflake => SnowflakeDialect.tokenizer_config(),
         Dialect::DuckDB => DuckDBDialect.tokenizer_config(),
         Dialect::PostgreSQL => PostgresDialect.tokenizer_config(),
+        Dialect::SQLite => SqliteDialect.tokenizer_config(),
     }
 }
 
