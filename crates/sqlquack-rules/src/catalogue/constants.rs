@@ -108,7 +108,7 @@ pub const RULES: &[RuleSpec] = &[
     RuleSpec {
         id: JOIN_USING,
         constructs: &["join:inner", "join:left", "join:full"],
-        conditions: "INNER, LEFT or FULL JOIN ... USING keys that are each one column of the earlier sources and a column of the joined source: each key compared as an ON equality would be. A bare key name reads the earlier side's column, a qualified one its own side's; a bare star leaves out the joined source's keys and converts only where the keys lead the first source's columns in order. In a FULL JOIN a bare key reads the first non-NULL side, as recorded, and a bare star refuses. Keys are of one type on both sides, or NUMBERs of one scale, where every read of the key, bare or qualified, is of the wider NUMBER, as recorded. RIGHT joins with USING refuse.",
+        conditions: "INNER, LEFT or FULL JOIN ... USING keys that are each one column of the earlier sources and a column of the joined source: each key compared as an ON equality would be. A bare key name reads the earlier side's column, a qualified one its own side's; a bare star leaves out the joined source's keys and converts only where the keys lead the first source's columns in order. In a FULL JOIN a bare key reads the first non-NULL side, as recorded, and a bare star refuses. Keys are of one type on both sides, or NUMBERs of one scale: in an INNER join the bare key and both qualified keys are of the earlier side's NUMBER; in a LEFT join the bare key is the earlier side's and each qualified key keeps its own; in a FULL join the bare key is the wider NUMBER and each qualified key keeps its own, as recorded per join kind. RIGHT joins with USING refuse.",
         failures: &[],
     },
     RuleSpec {
@@ -498,7 +498,7 @@ pub const RULES: &[RuleSpec] = &[
     RuleSpec {
         id: TIME_ZONE_CONVERSION,
         constructs: &["fn:CONVERT_TIMEZONE"],
-        conditions: "Literal IANA zone names. Three arguments on TIMESTAMP_NTZ, giving the wall time in the target zone at the same precision, a repeated source wall time read as its earlier instant and a skipped one with the offset before the transition; two arguments on any timestamp, giving the same instant as TIMESTAMP_TZ, with the target zone checked. Precision 7-9 relies on timestamp_range or timestamp_tz_submicro.",
+        conditions: "Literal zone names recorded as accepted, spelled exactly, case included (UTC, Etc/UTC, GMT and recorded IANA names); others refuse, as Snowflake rejects 'utc' and 'europe/london'. Three arguments on TIMESTAMP_NTZ, giving the wall time in the target zone at the same precision, a repeated source wall time read as its earlier instant and a skipped one with the offset before the transition; two arguments on any timestamp, giving the same instant as TIMESTAMP_TZ, with the target zone checked. Precision 7-9 relies on timestamp_range or timestamp_tz_submicro.",
         failures: &[],
     },
     RuleSpec {
@@ -967,7 +967,7 @@ pub const RULES: &[RuleSpec] = &[
     RuleSpec {
         id: FLATTEN_RULE,
         constructs: &["node:lateral", "fn:FLATTEN"],
-        conditions: "LATERAL FLATTEN of a VARIANT input after another FROM source or after JOIN ... ON clauses, as a comma or CROSS JOIN source, with OUTER => a boolean literal at most: INDEX and PATH [i] for array elements, KEY and PATH for object keys (raising for keys that are not plain names), VALUE and THIS; scalars, JSON null and NULL give no rows, or one row of NULLs under OUTER => TRUE. RECURSIVE => TRUE walks every depth with keys in byte order, writing a key of letters, digits, `_`, spaces and dots that is not a plain name as ['key'] and raising for any other, MODE => 'BOTH', 'OBJECT' or 'ARRAY' choosing what it descends into, a scalar input giving one row of itself under BOTH and raising under OBJECT or ARRAY; RECURSIVE with OUTER, MODE without RECURSIVE, SEQ and PATH => are not converted.",
+        conditions: "LATERAL FLATTEN of a VARIANT input after another FROM source or after JOIN ... ON clauses, as a comma or CROSS JOIN source, with OUTER => a boolean literal at most: INDEX and PATH [i] for array elements, KEY and PATH for object keys (raising for keys that are not plain names), VALUE and THIS; scalars, JSON null and NULL give no rows. Under OUTER => TRUE an input with no rows gives one row: PATH '' and THIS the input for an empty container MODE takes, every column NULL otherwise (JSON null, NULL, a missing path, a scalar, a kind MODE skips), as recorded. MODE => 'ARRAY' or 'OBJECT' without RECURSIVE takes only that kind. RECURSIVE => TRUE walks every depth with keys in byte order, writing a key of letters, digits, `_`, spaces and dots that is not a plain name as ['key'] and raising for any other, MODE => 'BOTH', 'OBJECT' or 'ARRAY' choosing what it descends into, a scalar input giving one row of itself under BOTH and raising under OBJECT or ARRAY; RECURSIVE with OUTER, SEQ and PATH => are not converted.",
         failures: &[],
     },
     RuleSpec {
@@ -1433,7 +1433,7 @@ pub const RULES: &[RuleSpec] = &[
     RuleSpec {
         id: MODE_RULE,
         constructs: &["fn:MODE"],
-        conditions: "MODE of NUMBER, FLOAT, VARCHAR, BOOLEAN, DATE or TIMESTAMP_NTZ values as an aggregate in a query with GROUP BY, not over a window: the most frequent non-NULL value, NULL when every value in the group is NULL. Without GROUP BY, over no rows it is the type's zero as recorded (0, 0.0, '', 1970-01-01) and NULL for BOOLEAN, and 1970-01-01 00:00:00 for TIMESTAMP_NTZ, as recorded. Where several values tie for most frequent, or a FLOAT group holds both -0 and 0, which Snowflake chooses among is not recorded, so the converted SQL raises mode_ties.",
+        conditions: "MODE of NUMBER, FLOAT, VARCHAR, BOOLEAN, DATE or TIMESTAMP_NTZ values as an aggregate in a query with GROUP BY, not over a window: the most frequent non-NULL value, NULL when every value in the group is NULL. Without GROUP BY, over no rows Snowflake gives the type's zero in some plans and NULL in others, so the converted SQL raises mode_of_no_rows. Where several values tie for most frequent, or a FLOAT group holds both -0 and 0, which Snowflake chooses among is not recorded, so the converted SQL raises mode_ties.",
         failures: &[],
     },
     RuleSpec {
@@ -1535,7 +1535,7 @@ pub const RULES: &[RuleSpec] = &[
     RuleSpec {
         id: ZONE_COLUMNS,
         constructs: &["fn:CONVERT_TIMEZONE"],
-        conditions: "A source or target zone given as a VARCHAR expression per row rather than a literal, converted as a literal zone is; a NULL zone is NULL, and a name no zone has raises Snowflake's error.",
+        conditions: "A source or target zone given as a VARCHAR expression per row rather than a literal, converted as a literal zone is; a NULL zone is NULL, and a name outside the recorded accepted spellings raises time_zone_spelling.",
         failures: ZONE_FAILURES,
     },
     RuleSpec {

@@ -1,0 +1,576 @@
+# Every FLATTEN output column under OUTER => TRUE and FALSE, over empty, null, missing and
+# scalar inputs, plain and RECURSIVE, each MODE.
+category = "semi-structured"
+construct = "node:lateral"
+session_profile = "utc-v1"
+
+[[case]]
+id = "flatten_columns_outer_plain_default"
+description = "FLATTEN with OUTER => TRUE, RECURSIVE => FALSE, MODE unset: every column over an empty array, an empty object, JSON null, a missing path, NULL and non-empty containers."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('{\"lines\":[]}')"],
+  ["PARSE_JSON('{\"lines\":{}}')"],
+  ["PARSE_JSON('{\"lines\":null}')"],
+  ["PARSE_JSON('{}')"],
+  ["NULL"],
+  ["PARSE_JSON('{\"lines\":[1,{\"c\":2}]}')"],
+  ["PARSE_JSON('{\"lines\":{\"b\":1,\"a\":[3]}}')"],
+  ["PARSE_JSON('{\"lines\":{\"A\":1,\"a\":2}}')"],
+]
+query = "SELECT i.ordinal, f.key, f.path, f.index, TO_JSON(f.value) AS value, TO_JSON(f.this) AS this FROM input i, LATERAL FLATTEN(input => i.v:lines, outer => TRUE, recursive => FALSE) f ORDER BY i.ordinal, f.path NULLS FIRST"
+order = "ordered"
+tags = ["null", "json-null", "missing-key", "empty", "nested", "array-index", "case-sensitive-key"]
+
+[[case]]
+id = "flatten_columns_outer_plain_both"
+description = "FLATTEN with OUTER => TRUE, RECURSIVE => FALSE, MODE BOTH: every column over an empty array, an empty object, JSON null, a missing path, NULL and non-empty containers."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('{\"lines\":[]}')"],
+  ["PARSE_JSON('{\"lines\":{}}')"],
+  ["PARSE_JSON('{\"lines\":null}')"],
+  ["PARSE_JSON('{}')"],
+  ["NULL"],
+  ["PARSE_JSON('{\"lines\":[1,{\"c\":2}]}')"],
+  ["PARSE_JSON('{\"lines\":{\"b\":1,\"a\":[3]}}')"],
+  ["PARSE_JSON('{\"lines\":{\"A\":1,\"a\":2}}')"],
+]
+query = "SELECT i.ordinal, f.key, f.path, f.index, TO_JSON(f.value) AS value, TO_JSON(f.this) AS this FROM input i, LATERAL FLATTEN(input => i.v:lines, outer => TRUE, recursive => FALSE, mode => 'BOTH') f ORDER BY i.ordinal, f.path NULLS FIRST"
+order = "ordered"
+tags = ["null", "json-null", "missing-key", "empty", "nested", "array-index", "case-sensitive-key"]
+
+[[case]]
+id = "flatten_columns_outer_plain_array"
+description = "FLATTEN with OUTER => TRUE, RECURSIVE => FALSE, MODE ARRAY: every column over an empty array, an empty object, JSON null, a missing path, NULL and non-empty containers."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('{\"lines\":[]}')"],
+  ["PARSE_JSON('{\"lines\":{}}')"],
+  ["PARSE_JSON('{\"lines\":null}')"],
+  ["PARSE_JSON('{}')"],
+  ["NULL"],
+  ["PARSE_JSON('{\"lines\":[1,{\"c\":2}]}')"],
+  ["PARSE_JSON('{\"lines\":{\"b\":1,\"a\":[3]}}')"],
+  ["PARSE_JSON('{\"lines\":{\"A\":1,\"a\":2}}')"],
+]
+query = "SELECT i.ordinal, f.key, f.path, f.index, TO_JSON(f.value) AS value, TO_JSON(f.this) AS this FROM input i, LATERAL FLATTEN(input => i.v:lines, outer => TRUE, recursive => FALSE, mode => 'ARRAY') f ORDER BY i.ordinal, f.path NULLS FIRST"
+order = "ordered"
+tags = ["null", "json-null", "missing-key", "empty", "nested", "array-index", "case-sensitive-key"]
+
+[[case]]
+id = "flatten_columns_outer_plain_object"
+description = "FLATTEN with OUTER => TRUE, RECURSIVE => FALSE, MODE OBJECT: every column over an empty array, an empty object, JSON null, a missing path, NULL and non-empty containers."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('{\"lines\":[]}')"],
+  ["PARSE_JSON('{\"lines\":{}}')"],
+  ["PARSE_JSON('{\"lines\":null}')"],
+  ["PARSE_JSON('{}')"],
+  ["NULL"],
+  ["PARSE_JSON('{\"lines\":[1,{\"c\":2}]}')"],
+  ["PARSE_JSON('{\"lines\":{\"b\":1,\"a\":[3]}}')"],
+  ["PARSE_JSON('{\"lines\":{\"A\":1,\"a\":2}}')"],
+]
+query = "SELECT i.ordinal, f.key, f.path, f.index, TO_JSON(f.value) AS value, TO_JSON(f.this) AS this FROM input i, LATERAL FLATTEN(input => i.v:lines, outer => TRUE, recursive => FALSE, mode => 'OBJECT') f ORDER BY i.ordinal, f.path NULLS FIRST"
+order = "ordered"
+tags = ["null", "json-null", "missing-key", "empty", "nested", "array-index", "case-sensitive-key"]
+
+[[case]]
+id = "flatten_top_level_outer_plain"
+description = "FLATTEN with OUTER => TRUE, RECURSIVE => FALSE of a top-level empty array, empty object, JSON null, NULL and containers holding empty ones."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('[]')"],
+  ["PARSE_JSON('{}')"],
+  ["PARSE_JSON('null')"],
+  ["NULL"],
+  ["PARSE_JSON('[1,[]]')"],
+  ["PARSE_JSON('{\"a\":{}}')"],
+]
+query = "SELECT i.ordinal, f.key, f.path, f.index, TO_JSON(f.value) AS value, TO_JSON(f.this) AS this FROM input i, LATERAL FLATTEN(input => i.v, outer => TRUE, recursive => FALSE) f ORDER BY i.ordinal, f.path NULLS FIRST"
+order = "ordered"
+tags = ["null", "json-null", "empty"]
+
+[[case]]
+id = "flatten_seq_outer_plain"
+description = "FLATTEN's SEQ with OUTER => TRUE, RECURSIVE => FALSE: whether it is NULL on each row, over the same inputs."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('{\"lines\":[]}')"],
+  ["PARSE_JSON('{\"lines\":{}}')"],
+  ["PARSE_JSON('{\"lines\":null}')"],
+  ["PARSE_JSON('{}')"],
+  ["NULL"],
+  ["PARSE_JSON('{\"lines\":[1,{\"c\":2}]}')"],
+  ["PARSE_JSON('{\"lines\":{\"b\":1,\"a\":[3]}}')"],
+  ["PARSE_JSON('{\"lines\":{\"A\":1,\"a\":2}}')"],
+]
+query = "SELECT i.ordinal, f.path, f.seq IS NULL AS seq_null FROM input i, LATERAL FLATTEN(input => i.v:lines, outer => TRUE, recursive => FALSE) f ORDER BY i.ordinal, f.path NULLS FIRST"
+order = "ordered"
+tags = ["null", "empty"]
+
+[[case]]
+id = "flatten_scalar_number_outer_plain"
+description = "FLATTEN with OUTER => TRUE, RECURSIVE => FALSE of a number scalar: every column."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('{\"lines\":5}')"],
+]
+query = "SELECT i.ordinal, f.key, f.path, f.index, TO_JSON(f.value) AS value, TO_JSON(f.this) AS this FROM input i, LATERAL FLATTEN(input => i.v:lines, outer => TRUE, recursive => FALSE) f ORDER BY i.ordinal, f.path NULLS FIRST"
+order = "ordered"
+tags = ["boundary"]
+
+[[case]]
+id = "flatten_scalar_text_outer_plain"
+description = "FLATTEN with OUTER => TRUE, RECURSIVE => FALSE of a text scalar: every column."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('{\"lines\":\"x\"}')"],
+]
+query = "SELECT i.ordinal, f.key, f.path, f.index, TO_JSON(f.value) AS value, TO_JSON(f.this) AS this FROM input i, LATERAL FLATTEN(input => i.v:lines, outer => TRUE, recursive => FALSE) f ORDER BY i.ordinal, f.path NULLS FIRST"
+order = "ordered"
+tags = ["boundary"]
+
+[[case]]
+id = "flatten_scalar_boolean_outer_plain"
+description = "FLATTEN with OUTER => TRUE, RECURSIVE => FALSE of a boolean scalar: every column."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('{\"lines\":true}')"],
+]
+query = "SELECT i.ordinal, f.key, f.path, f.index, TO_JSON(f.value) AS value, TO_JSON(f.this) AS this FROM input i, LATERAL FLATTEN(input => i.v:lines, outer => TRUE, recursive => FALSE) f ORDER BY i.ordinal, f.path NULLS FIRST"
+order = "ordered"
+tags = ["boundary"]
+
+[[case]]
+id = "flatten_columns_outer_recursive_default"
+description = "FLATTEN with OUTER => TRUE, RECURSIVE => TRUE, MODE unset: every column over an empty array, an empty object, JSON null, a missing path, NULL and non-empty containers."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('{\"lines\":[]}')"],
+  ["PARSE_JSON('{\"lines\":{}}')"],
+  ["PARSE_JSON('{\"lines\":null}')"],
+  ["PARSE_JSON('{}')"],
+  ["NULL"],
+  ["PARSE_JSON('{\"lines\":[1,{\"c\":2}]}')"],
+  ["PARSE_JSON('{\"lines\":{\"b\":1,\"a\":[3]}}')"],
+  ["PARSE_JSON('{\"lines\":{\"A\":1,\"a\":2}}')"],
+]
+query = "SELECT i.ordinal, f.key, f.path, f.index, TO_JSON(f.value) AS value, TO_JSON(f.this) AS this FROM input i, LATERAL FLATTEN(input => i.v:lines, outer => TRUE, recursive => TRUE) f ORDER BY i.ordinal, f.path NULLS FIRST"
+order = "ordered"
+tags = ["null", "json-null", "missing-key", "empty", "nested", "array-index", "case-sensitive-key"]
+
+[[case]]
+id = "flatten_columns_outer_recursive_both"
+description = "FLATTEN with OUTER => TRUE, RECURSIVE => TRUE, MODE BOTH: every column over an empty array, an empty object, JSON null, a missing path, NULL and non-empty containers."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('{\"lines\":[]}')"],
+  ["PARSE_JSON('{\"lines\":{}}')"],
+  ["PARSE_JSON('{\"lines\":null}')"],
+  ["PARSE_JSON('{}')"],
+  ["NULL"],
+  ["PARSE_JSON('{\"lines\":[1,{\"c\":2}]}')"],
+  ["PARSE_JSON('{\"lines\":{\"b\":1,\"a\":[3]}}')"],
+  ["PARSE_JSON('{\"lines\":{\"A\":1,\"a\":2}}')"],
+]
+query = "SELECT i.ordinal, f.key, f.path, f.index, TO_JSON(f.value) AS value, TO_JSON(f.this) AS this FROM input i, LATERAL FLATTEN(input => i.v:lines, outer => TRUE, recursive => TRUE, mode => 'BOTH') f ORDER BY i.ordinal, f.path NULLS FIRST"
+order = "ordered"
+tags = ["null", "json-null", "missing-key", "empty", "nested", "array-index", "case-sensitive-key"]
+
+[[case]]
+id = "flatten_columns_outer_recursive_array"
+description = "FLATTEN with OUTER => TRUE, RECURSIVE => TRUE, MODE ARRAY: every column over an empty array, an empty object, JSON null, a missing path, NULL and non-empty containers."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('{\"lines\":[]}')"],
+  ["PARSE_JSON('{\"lines\":{}}')"],
+  ["PARSE_JSON('{\"lines\":null}')"],
+  ["PARSE_JSON('{}')"],
+  ["NULL"],
+  ["PARSE_JSON('{\"lines\":[1,{\"c\":2}]}')"],
+  ["PARSE_JSON('{\"lines\":{\"b\":1,\"a\":[3]}}')"],
+  ["PARSE_JSON('{\"lines\":{\"A\":1,\"a\":2}}')"],
+]
+query = "SELECT i.ordinal, f.key, f.path, f.index, TO_JSON(f.value) AS value, TO_JSON(f.this) AS this FROM input i, LATERAL FLATTEN(input => i.v:lines, outer => TRUE, recursive => TRUE, mode => 'ARRAY') f ORDER BY i.ordinal, f.path NULLS FIRST"
+order = "ordered"
+tags = ["null", "json-null", "missing-key", "empty", "nested", "array-index", "case-sensitive-key"]
+
+[[case]]
+id = "flatten_columns_outer_recursive_object"
+description = "FLATTEN with OUTER => TRUE, RECURSIVE => TRUE, MODE OBJECT: every column over an empty array, an empty object, JSON null, a missing path, NULL and non-empty containers."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('{\"lines\":[]}')"],
+  ["PARSE_JSON('{\"lines\":{}}')"],
+  ["PARSE_JSON('{\"lines\":null}')"],
+  ["PARSE_JSON('{}')"],
+  ["NULL"],
+  ["PARSE_JSON('{\"lines\":[1,{\"c\":2}]}')"],
+  ["PARSE_JSON('{\"lines\":{\"b\":1,\"a\":[3]}}')"],
+  ["PARSE_JSON('{\"lines\":{\"A\":1,\"a\":2}}')"],
+]
+query = "SELECT i.ordinal, f.key, f.path, f.index, TO_JSON(f.value) AS value, TO_JSON(f.this) AS this FROM input i, LATERAL FLATTEN(input => i.v:lines, outer => TRUE, recursive => TRUE, mode => 'OBJECT') f ORDER BY i.ordinal, f.path NULLS FIRST"
+order = "ordered"
+tags = ["null", "json-null", "missing-key", "empty", "nested", "array-index", "case-sensitive-key"]
+
+[[case]]
+id = "flatten_top_level_outer_recursive"
+description = "FLATTEN with OUTER => TRUE, RECURSIVE => TRUE of a top-level empty array, empty object, JSON null, NULL and containers holding empty ones."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('[]')"],
+  ["PARSE_JSON('{}')"],
+  ["PARSE_JSON('null')"],
+  ["NULL"],
+  ["PARSE_JSON('[1,[]]')"],
+  ["PARSE_JSON('{\"a\":{}}')"],
+]
+query = "SELECT i.ordinal, f.key, f.path, f.index, TO_JSON(f.value) AS value, TO_JSON(f.this) AS this FROM input i, LATERAL FLATTEN(input => i.v, outer => TRUE, recursive => TRUE) f ORDER BY i.ordinal, f.path NULLS FIRST"
+order = "ordered"
+tags = ["null", "json-null", "empty"]
+
+[[case]]
+id = "flatten_seq_outer_recursive"
+description = "FLATTEN's SEQ with OUTER => TRUE, RECURSIVE => TRUE: whether it is NULL on each row, over the same inputs."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('{\"lines\":[]}')"],
+  ["PARSE_JSON('{\"lines\":{}}')"],
+  ["PARSE_JSON('{\"lines\":null}')"],
+  ["PARSE_JSON('{}')"],
+  ["NULL"],
+  ["PARSE_JSON('{\"lines\":[1,{\"c\":2}]}')"],
+  ["PARSE_JSON('{\"lines\":{\"b\":1,\"a\":[3]}}')"],
+  ["PARSE_JSON('{\"lines\":{\"A\":1,\"a\":2}}')"],
+]
+query = "SELECT i.ordinal, f.path, f.seq IS NULL AS seq_null FROM input i, LATERAL FLATTEN(input => i.v:lines, outer => TRUE, recursive => TRUE) f ORDER BY i.ordinal, f.path NULLS FIRST"
+order = "ordered"
+tags = ["null", "empty"]
+
+[[case]]
+id = "flatten_scalar_number_outer_recursive"
+description = "FLATTEN with OUTER => TRUE, RECURSIVE => TRUE of a number scalar: every column."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('{\"lines\":5}')"],
+]
+query = "SELECT i.ordinal, f.key, f.path, f.index, TO_JSON(f.value) AS value, TO_JSON(f.this) AS this FROM input i, LATERAL FLATTEN(input => i.v:lines, outer => TRUE, recursive => TRUE) f ORDER BY i.ordinal, f.path NULLS FIRST"
+order = "ordered"
+tags = ["boundary"]
+
+[[case]]
+id = "flatten_scalar_text_outer_recursive"
+description = "FLATTEN with OUTER => TRUE, RECURSIVE => TRUE of a text scalar: every column."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('{\"lines\":\"x\"}')"],
+]
+query = "SELECT i.ordinal, f.key, f.path, f.index, TO_JSON(f.value) AS value, TO_JSON(f.this) AS this FROM input i, LATERAL FLATTEN(input => i.v:lines, outer => TRUE, recursive => TRUE) f ORDER BY i.ordinal, f.path NULLS FIRST"
+order = "ordered"
+tags = ["boundary"]
+
+[[case]]
+id = "flatten_scalar_boolean_outer_recursive"
+description = "FLATTEN with OUTER => TRUE, RECURSIVE => TRUE of a boolean scalar: every column."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('{\"lines\":true}')"],
+]
+query = "SELECT i.ordinal, f.key, f.path, f.index, TO_JSON(f.value) AS value, TO_JSON(f.this) AS this FROM input i, LATERAL FLATTEN(input => i.v:lines, outer => TRUE, recursive => TRUE) f ORDER BY i.ordinal, f.path NULLS FIRST"
+order = "ordered"
+tags = ["boundary"]
+
+[[case]]
+id = "flatten_columns_inner_plain_default"
+description = "FLATTEN with OUTER => FALSE, RECURSIVE => FALSE, MODE unset: every column over an empty array, an empty object, JSON null, a missing path, NULL and non-empty containers."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('{\"lines\":[]}')"],
+  ["PARSE_JSON('{\"lines\":{}}')"],
+  ["PARSE_JSON('{\"lines\":null}')"],
+  ["PARSE_JSON('{}')"],
+  ["NULL"],
+  ["PARSE_JSON('{\"lines\":[1,{\"c\":2}]}')"],
+  ["PARSE_JSON('{\"lines\":{\"b\":1,\"a\":[3]}}')"],
+  ["PARSE_JSON('{\"lines\":{\"A\":1,\"a\":2}}')"],
+]
+query = "SELECT i.ordinal, f.key, f.path, f.index, TO_JSON(f.value) AS value, TO_JSON(f.this) AS this FROM input i, LATERAL FLATTEN(input => i.v:lines, outer => FALSE, recursive => FALSE) f ORDER BY i.ordinal, f.path NULLS FIRST"
+order = "ordered"
+tags = ["null", "json-null", "missing-key", "empty", "nested", "array-index", "case-sensitive-key"]
+
+[[case]]
+id = "flatten_columns_inner_plain_both"
+description = "FLATTEN with OUTER => FALSE, RECURSIVE => FALSE, MODE BOTH: every column over an empty array, an empty object, JSON null, a missing path, NULL and non-empty containers."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('{\"lines\":[]}')"],
+  ["PARSE_JSON('{\"lines\":{}}')"],
+  ["PARSE_JSON('{\"lines\":null}')"],
+  ["PARSE_JSON('{}')"],
+  ["NULL"],
+  ["PARSE_JSON('{\"lines\":[1,{\"c\":2}]}')"],
+  ["PARSE_JSON('{\"lines\":{\"b\":1,\"a\":[3]}}')"],
+  ["PARSE_JSON('{\"lines\":{\"A\":1,\"a\":2}}')"],
+]
+query = "SELECT i.ordinal, f.key, f.path, f.index, TO_JSON(f.value) AS value, TO_JSON(f.this) AS this FROM input i, LATERAL FLATTEN(input => i.v:lines, outer => FALSE, recursive => FALSE, mode => 'BOTH') f ORDER BY i.ordinal, f.path NULLS FIRST"
+order = "ordered"
+tags = ["null", "json-null", "missing-key", "empty", "nested", "array-index", "case-sensitive-key"]
+
+[[case]]
+id = "flatten_columns_inner_plain_array"
+description = "FLATTEN with OUTER => FALSE, RECURSIVE => FALSE, MODE ARRAY: every column over an empty array, an empty object, JSON null, a missing path, NULL and non-empty containers."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('{\"lines\":[]}')"],
+  ["PARSE_JSON('{\"lines\":{}}')"],
+  ["PARSE_JSON('{\"lines\":null}')"],
+  ["PARSE_JSON('{}')"],
+  ["NULL"],
+  ["PARSE_JSON('{\"lines\":[1,{\"c\":2}]}')"],
+  ["PARSE_JSON('{\"lines\":{\"b\":1,\"a\":[3]}}')"],
+  ["PARSE_JSON('{\"lines\":{\"A\":1,\"a\":2}}')"],
+]
+query = "SELECT i.ordinal, f.key, f.path, f.index, TO_JSON(f.value) AS value, TO_JSON(f.this) AS this FROM input i, LATERAL FLATTEN(input => i.v:lines, outer => FALSE, recursive => FALSE, mode => 'ARRAY') f ORDER BY i.ordinal, f.path NULLS FIRST"
+order = "ordered"
+tags = ["null", "json-null", "missing-key", "empty", "nested", "array-index", "case-sensitive-key"]
+
+[[case]]
+id = "flatten_columns_inner_plain_object"
+description = "FLATTEN with OUTER => FALSE, RECURSIVE => FALSE, MODE OBJECT: every column over an empty array, an empty object, JSON null, a missing path, NULL and non-empty containers."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('{\"lines\":[]}')"],
+  ["PARSE_JSON('{\"lines\":{}}')"],
+  ["PARSE_JSON('{\"lines\":null}')"],
+  ["PARSE_JSON('{}')"],
+  ["NULL"],
+  ["PARSE_JSON('{\"lines\":[1,{\"c\":2}]}')"],
+  ["PARSE_JSON('{\"lines\":{\"b\":1,\"a\":[3]}}')"],
+  ["PARSE_JSON('{\"lines\":{\"A\":1,\"a\":2}}')"],
+]
+query = "SELECT i.ordinal, f.key, f.path, f.index, TO_JSON(f.value) AS value, TO_JSON(f.this) AS this FROM input i, LATERAL FLATTEN(input => i.v:lines, outer => FALSE, recursive => FALSE, mode => 'OBJECT') f ORDER BY i.ordinal, f.path NULLS FIRST"
+order = "ordered"
+tags = ["null", "json-null", "missing-key", "empty", "nested", "array-index", "case-sensitive-key"]
+
+[[case]]
+id = "flatten_top_level_inner_plain"
+description = "FLATTEN with OUTER => FALSE, RECURSIVE => FALSE of a top-level empty array, empty object, JSON null, NULL and containers holding empty ones."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('[]')"],
+  ["PARSE_JSON('{}')"],
+  ["PARSE_JSON('null')"],
+  ["NULL"],
+  ["PARSE_JSON('[1,[]]')"],
+  ["PARSE_JSON('{\"a\":{}}')"],
+]
+query = "SELECT i.ordinal, f.key, f.path, f.index, TO_JSON(f.value) AS value, TO_JSON(f.this) AS this FROM input i, LATERAL FLATTEN(input => i.v, outer => FALSE, recursive => FALSE) f ORDER BY i.ordinal, f.path NULLS FIRST"
+order = "ordered"
+tags = ["null", "json-null", "empty"]
+
+[[case]]
+id = "flatten_seq_inner_plain"
+description = "FLATTEN's SEQ with OUTER => FALSE, RECURSIVE => FALSE: whether it is NULL on each row, over the same inputs."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('{\"lines\":[]}')"],
+  ["PARSE_JSON('{\"lines\":{}}')"],
+  ["PARSE_JSON('{\"lines\":null}')"],
+  ["PARSE_JSON('{}')"],
+  ["NULL"],
+  ["PARSE_JSON('{\"lines\":[1,{\"c\":2}]}')"],
+  ["PARSE_JSON('{\"lines\":{\"b\":1,\"a\":[3]}}')"],
+  ["PARSE_JSON('{\"lines\":{\"A\":1,\"a\":2}}')"],
+]
+query = "SELECT i.ordinal, f.path, f.seq IS NULL AS seq_null FROM input i, LATERAL FLATTEN(input => i.v:lines, outer => FALSE, recursive => FALSE) f ORDER BY i.ordinal, f.path NULLS FIRST"
+order = "ordered"
+tags = ["null", "empty"]
+
+[[case]]
+id = "flatten_scalar_number_inner_plain"
+description = "FLATTEN with OUTER => FALSE, RECURSIVE => FALSE of a number scalar: every column."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('{\"lines\":5}')"],
+]
+query = "SELECT i.ordinal, f.key, f.path, f.index, TO_JSON(f.value) AS value, TO_JSON(f.this) AS this FROM input i, LATERAL FLATTEN(input => i.v:lines, outer => FALSE, recursive => FALSE) f ORDER BY i.ordinal, f.path NULLS FIRST"
+order = "ordered"
+tags = ["boundary"]
+
+[[case]]
+id = "flatten_scalar_text_inner_plain"
+description = "FLATTEN with OUTER => FALSE, RECURSIVE => FALSE of a text scalar: every column."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('{\"lines\":\"x\"}')"],
+]
+query = "SELECT i.ordinal, f.key, f.path, f.index, TO_JSON(f.value) AS value, TO_JSON(f.this) AS this FROM input i, LATERAL FLATTEN(input => i.v:lines, outer => FALSE, recursive => FALSE) f ORDER BY i.ordinal, f.path NULLS FIRST"
+order = "ordered"
+tags = ["boundary"]
+
+[[case]]
+id = "flatten_scalar_boolean_inner_plain"
+description = "FLATTEN with OUTER => FALSE, RECURSIVE => FALSE of a boolean scalar: every column."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('{\"lines\":true}')"],
+]
+query = "SELECT i.ordinal, f.key, f.path, f.index, TO_JSON(f.value) AS value, TO_JSON(f.this) AS this FROM input i, LATERAL FLATTEN(input => i.v:lines, outer => FALSE, recursive => FALSE) f ORDER BY i.ordinal, f.path NULLS FIRST"
+order = "ordered"
+tags = ["boundary"]
+
+[[case]]
+id = "flatten_columns_inner_recursive_default"
+description = "FLATTEN with OUTER => FALSE, RECURSIVE => TRUE, MODE unset: every column over an empty array, an empty object, JSON null, a missing path, NULL and non-empty containers."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('{\"lines\":[]}')"],
+  ["PARSE_JSON('{\"lines\":{}}')"],
+  ["PARSE_JSON('{\"lines\":null}')"],
+  ["PARSE_JSON('{}')"],
+  ["NULL"],
+  ["PARSE_JSON('{\"lines\":[1,{\"c\":2}]}')"],
+  ["PARSE_JSON('{\"lines\":{\"b\":1,\"a\":[3]}}')"],
+  ["PARSE_JSON('{\"lines\":{\"A\":1,\"a\":2}}')"],
+]
+query = "SELECT i.ordinal, f.key, f.path, f.index, TO_JSON(f.value) AS value, TO_JSON(f.this) AS this FROM input i, LATERAL FLATTEN(input => i.v:lines, outer => FALSE, recursive => TRUE) f ORDER BY i.ordinal, f.path NULLS FIRST"
+order = "ordered"
+tags = ["null", "json-null", "missing-key", "empty", "nested", "array-index", "case-sensitive-key"]
+
+[[case]]
+id = "flatten_columns_inner_recursive_both"
+description = "FLATTEN with OUTER => FALSE, RECURSIVE => TRUE, MODE BOTH: every column over an empty array, an empty object, JSON null, a missing path, NULL and non-empty containers."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('{\"lines\":[]}')"],
+  ["PARSE_JSON('{\"lines\":{}}')"],
+  ["PARSE_JSON('{\"lines\":null}')"],
+  ["PARSE_JSON('{}')"],
+  ["NULL"],
+  ["PARSE_JSON('{\"lines\":[1,{\"c\":2}]}')"],
+  ["PARSE_JSON('{\"lines\":{\"b\":1,\"a\":[3]}}')"],
+  ["PARSE_JSON('{\"lines\":{\"A\":1,\"a\":2}}')"],
+]
+query = "SELECT i.ordinal, f.key, f.path, f.index, TO_JSON(f.value) AS value, TO_JSON(f.this) AS this FROM input i, LATERAL FLATTEN(input => i.v:lines, outer => FALSE, recursive => TRUE, mode => 'BOTH') f ORDER BY i.ordinal, f.path NULLS FIRST"
+order = "ordered"
+tags = ["null", "json-null", "missing-key", "empty", "nested", "array-index", "case-sensitive-key"]
+
+[[case]]
+id = "flatten_columns_inner_recursive_array"
+description = "FLATTEN with OUTER => FALSE, RECURSIVE => TRUE, MODE ARRAY: every column over an empty array, an empty object, JSON null, a missing path, NULL and non-empty containers."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('{\"lines\":[]}')"],
+  ["PARSE_JSON('{\"lines\":{}}')"],
+  ["PARSE_JSON('{\"lines\":null}')"],
+  ["PARSE_JSON('{}')"],
+  ["NULL"],
+  ["PARSE_JSON('{\"lines\":[1,{\"c\":2}]}')"],
+  ["PARSE_JSON('{\"lines\":{\"b\":1,\"a\":[3]}}')"],
+  ["PARSE_JSON('{\"lines\":{\"A\":1,\"a\":2}}')"],
+]
+query = "SELECT i.ordinal, f.key, f.path, f.index, TO_JSON(f.value) AS value, TO_JSON(f.this) AS this FROM input i, LATERAL FLATTEN(input => i.v:lines, outer => FALSE, recursive => TRUE, mode => 'ARRAY') f ORDER BY i.ordinal, f.path NULLS FIRST"
+order = "ordered"
+tags = ["null", "json-null", "missing-key", "empty", "nested", "array-index", "case-sensitive-key"]
+expected_divergence = "json_fidelity"
+
+[[case]]
+id = "flatten_columns_inner_recursive_object"
+description = "FLATTEN with OUTER => FALSE, RECURSIVE => TRUE, MODE OBJECT: every column over an empty array, an empty object, JSON null, a missing path, NULL and non-empty containers."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('{\"lines\":[]}')"],
+  ["PARSE_JSON('{\"lines\":{}}')"],
+  ["PARSE_JSON('{\"lines\":null}')"],
+  ["PARSE_JSON('{}')"],
+  ["NULL"],
+  ["PARSE_JSON('{\"lines\":[1,{\"c\":2}]}')"],
+  ["PARSE_JSON('{\"lines\":{\"b\":1,\"a\":[3]}}')"],
+  ["PARSE_JSON('{\"lines\":{\"A\":1,\"a\":2}}')"],
+]
+query = "SELECT i.ordinal, f.key, f.path, f.index, TO_JSON(f.value) AS value, TO_JSON(f.this) AS this FROM input i, LATERAL FLATTEN(input => i.v:lines, outer => FALSE, recursive => TRUE, mode => 'OBJECT') f ORDER BY i.ordinal, f.path NULLS FIRST"
+order = "ordered"
+tags = ["null", "json-null", "missing-key", "empty", "nested", "array-index", "case-sensitive-key"]
+expected_divergence = "json_fidelity"
+
+[[case]]
+id = "flatten_top_level_inner_recursive"
+description = "FLATTEN with OUTER => FALSE, RECURSIVE => TRUE of a top-level empty array, empty object, JSON null, NULL and containers holding empty ones."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('[]')"],
+  ["PARSE_JSON('{}')"],
+  ["PARSE_JSON('null')"],
+  ["NULL"],
+  ["PARSE_JSON('[1,[]]')"],
+  ["PARSE_JSON('{\"a\":{}}')"],
+]
+query = "SELECT i.ordinal, f.key, f.path, f.index, TO_JSON(f.value) AS value, TO_JSON(f.this) AS this FROM input i, LATERAL FLATTEN(input => i.v, outer => FALSE, recursive => TRUE) f ORDER BY i.ordinal, f.path NULLS FIRST"
+order = "ordered"
+tags = ["null", "json-null", "empty"]
+
+[[case]]
+id = "flatten_seq_inner_recursive"
+description = "FLATTEN's SEQ with OUTER => FALSE, RECURSIVE => TRUE: whether it is NULL on each row, over the same inputs."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('{\"lines\":[]}')"],
+  ["PARSE_JSON('{\"lines\":{}}')"],
+  ["PARSE_JSON('{\"lines\":null}')"],
+  ["PARSE_JSON('{}')"],
+  ["NULL"],
+  ["PARSE_JSON('{\"lines\":[1,{\"c\":2}]}')"],
+  ["PARSE_JSON('{\"lines\":{\"b\":1,\"a\":[3]}}')"],
+  ["PARSE_JSON('{\"lines\":{\"A\":1,\"a\":2}}')"],
+]
+query = "SELECT i.ordinal, f.path, f.seq IS NULL AS seq_null FROM input i, LATERAL FLATTEN(input => i.v:lines, outer => FALSE, recursive => TRUE) f ORDER BY i.ordinal, f.path NULLS FIRST"
+order = "ordered"
+tags = ["null", "empty"]
+
+[[case]]
+id = "flatten_scalar_number_inner_recursive"
+description = "FLATTEN with OUTER => FALSE, RECURSIVE => TRUE of a number scalar: every column."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('{\"lines\":5}')"],
+]
+query = "SELECT i.ordinal, f.key, f.path, f.index, TO_JSON(f.value) AS value, TO_JSON(f.this) AS this FROM input i, LATERAL FLATTEN(input => i.v:lines, outer => FALSE, recursive => TRUE) f ORDER BY i.ordinal, f.path NULLS FIRST"
+order = "ordered"
+tags = ["boundary"]
+
+[[case]]
+id = "flatten_scalar_text_inner_recursive"
+description = "FLATTEN with OUTER => FALSE, RECURSIVE => TRUE of a text scalar: every column."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('{\"lines\":\"x\"}')"],
+]
+query = "SELECT i.ordinal, f.key, f.path, f.index, TO_JSON(f.value) AS value, TO_JSON(f.this) AS this FROM input i, LATERAL FLATTEN(input => i.v:lines, outer => FALSE, recursive => TRUE) f ORDER BY i.ordinal, f.path NULLS FIRST"
+order = "ordered"
+tags = ["boundary"]
+
+[[case]]
+id = "flatten_scalar_boolean_inner_recursive"
+description = "FLATTEN with OUTER => FALSE, RECURSIVE => TRUE of a boolean scalar: every column."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('{\"lines\":true}')"],
+]
+query = "SELECT i.ordinal, f.key, f.path, f.index, TO_JSON(f.value) AS value, TO_JSON(f.this) AS this FROM input i, LATERAL FLATTEN(input => i.v:lines, outer => FALSE, recursive => TRUE) f ORDER BY i.ordinal, f.path NULLS FIRST"
+order = "ordered"
+tags = ["boundary"]
+
+[[case]]
+id = "lateral_subquery_without_rows"
+description = "A LATERAL subquery giving no rows for some outer rows drops them."
+columns = [{ name = "k", type = "NUMBER(4,0)" }]
+rows = [
+  ["1"],
+  ["2"],
+  ["NULL"],
+]
+query = "SELECT i.k, s.x FROM input i, LATERAL (SELECT i.k * 10 AS x WHERE i.k > 1) s ORDER BY i.k"
+order = "ordered"
+tags = ["null", "empty"]

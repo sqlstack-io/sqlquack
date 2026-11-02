@@ -101,7 +101,7 @@ rows = "group"
 template = "MODE({0})"
 query = "SELECT g, {expression} AS r FROM input GROUP BY g ORDER BY g"
 category = "aggregate"
-divergences = { mixed = "mode_ties" }
+divergences = { mixed = "mode_ties", empty_input = "mode_of_no_rows" }
 row_groups = true
 # The result is the timestamp itself, which the recording connector truncates past 2262.
 unrecordable = { "0.timestamp_ntz.extreme_years" = "The recording connector cannot convert the nanosecond timestamp past 2262 MODE returns." }

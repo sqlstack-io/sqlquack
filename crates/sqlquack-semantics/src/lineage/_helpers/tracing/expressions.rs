@@ -64,6 +64,15 @@ pub(crate) fn expression_lineage(
             Expression::Var(var) => {
                 column_lineage(None, &Identifier::new(var.this.clone()), scope, context)
             }
+            Expression::Dot(dot) => match &dot.this {
+                Expression::Var(table) => column_lineage(
+                    Some(&Identifier::new(table.this.clone())),
+                    &dot.field,
+                    scope,
+                    context,
+                ),
+                other => expression_lineage(other, scope, context),
+            },
             other => expression_lineage(other, scope, context),
         },
         Expression::Cast(cast) | Expression::TryCast(cast) | Expression::SafeCast(cast) => {

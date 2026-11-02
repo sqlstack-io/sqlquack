@@ -850,3 +850,135 @@ fn given_an_override_of_a_name_the_rules_type_when_converting_then_it_is_honoure
         );
     }
 }
+
+#[test]
+fn given_flatten_outer_over_empty_and_missing_inputs_when_running_then_columns_are_as_recorded() {
+    let schema = r#"{"relations": {"DOCS": [["K", "NUMBER(4,0)"], ["J", "VARCHAR"]]}}"#;
+    let setup = "SET TimeZone = 'UTC'; CREATE TABLE \"DOCS\" (\"K\" INTEGER, \"J\" VARCHAR); \
+                 INSERT INTO \"DOCS\" VALUES (1, '{\"lines\": []}'), (2, '{\"lines\": {}}'), \
+                 (3, '{\"lines\": null}'), (4, '{}'), (5, '{\"lines\": [7]}')";
+    let test_cases = [
+        ValueTestCase {
+            description: "OUTER: PATH '' and THIS the input for an empty container, NULL otherwise",
+            sql: "SELECT LISTAGG(d.k::VARCHAR || '=' || COALESCE(f.path, 'N') || '/' \
+                  || COALESCE(TO_JSON(f.this), 'N'), ',') WITHIN GROUP (ORDER BY d.k) AS r \
+                  FROM docs d, LATERAL FLATTEN(input => PARSE_JSON(d.j):lines, outer => TRUE) f",
+            expected_value: "1=/[],2=/{},3=N/N,4=N/N,5=[0]/[7]",
+        },
+        ValueTestCase {
+            description: "OUTER with MODE 'ARRAY': an empty object is a skipped kind, all NULL",
+            sql: "SELECT LISTAGG(d.k::VARCHAR || '=' || COALESCE(f.path, 'N'), ',') \
+                  WITHIN GROUP (ORDER BY d.k) AS r FROM docs d, \
+                  LATERAL FLATTEN(input => PARSE_JSON(d.j):lines, outer => TRUE, mode => 'ARRAY') f",
+            expected_value: "1=,2=N,3=N,4=N,5=[0]",
+        },
+    ];
+    for test_case in test_cases {
+        assert_eq!(
+            converted_value_over(test_case.sql, (schema, setup)),
+            test_case.expected_value,
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_mode_or_a_zone_spelling_without_a_recorded_answer_when_running_then_it_raises() {
+    let test_cases = [
+        RunErrorTestCase {
+            description: "MODE without GROUP BY over no rows, which Snowflake answers by plan",
+            sql: "SELECT MODE(x) AS m FROM (SELECT 1 AS x) AS t WHERE x > 1",
+            expected_mention: "mode_of_no_rows",
+        },
+        RunErrorTestCase {
+            description: "a zone column holding a lower-case name Snowflake rejects",
+            sql: "SELECT CONVERT_TIMEZONE(z, 'UTC', '2024-07-01 12:00:00'::TIMESTAMP_NTZ) AS c \
+                  FROM (SELECT column1 AS z FROM VALUES ('utc')) AS t",
+            expected_mention: "time_zone_spelling",
+        },
+    ];
+    for test_case in test_cases {
+        assert!(
+            converted_run_error(test_case.sql)
+                .is_some_and(|error| error.contains(test_case.expected_mention)),
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_recorded_shapes_when_converting_then_they_convert_or_refuse_as_recorded() {
+    let test_cases = [
+        PythonRefusalTestCase {
+            description: "a lower-case zone literal, which Snowflake rejects",
+            sql: "SELECT CONVERT_TIMEZONE('utc', 'Europe/London', '2024-07-01 12:00:00'::TIMESTAMP_NTZ) AS c",
+            expected_mention: "no recording shows Snowflake accepting",
+        },
+        PythonRefusalTestCase {
+            description: "a lower-case IANA zone literal",
+            sql: "SELECT CONVERT_TIMEZONE('UTC', 'europe/london', '2024-07-01 12:00:00'::TIMESTAMP_NTZ) AS c",
+            expected_mention: "no recording shows Snowflake accepting",
+        },
+    ];
+    for test_case in test_cases {
+        let refusals = python_report(test_case.sql, &[])["refusals"].to_string();
+        assert!(
+            refusals.contains(test_case.expected_mention),
+            "{}: {refusals}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_connect_by_root_of_a_qualified_column_when_running_then_it_reads_the_root_value() {
+    let test_cases = [ValueTestCase {
+        description: "CONNECT_BY_ROOT of a qualified column reads the root row's value",
+        sql: "WITH l AS (SELECT * FROM VALUES ('A', NULL, 'x'), ('B', 'A', 'y') AS v(id, p, n)) \
+                  SELECT LISTAGG(id || CONNECT_BY_ROOT k.n, ',') WITHIN GROUP (ORDER BY id) AS r \
+                  FROM l k START WITH p IS NULL CONNECT BY p = PRIOR id",
+        expected_value: "Ax,Bx",
+    }];
+    for test_case in test_cases {
+        assert_eq!(
+            converted_first_value(test_case.sql),
+            test_case.expected_value,
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_an_inner_join_using_keys_of_two_widths_when_running_then_a_wide_unmatched_key_does_not_fail()
+ {
+    let schema = r#"{"relations": {"NARROW": [["K", "NUMBER(18,0)"]], "WIDE": [["K", "NUMBER(38,0)"], ["V", "VARCHAR"]]}}"#;
+    let setup = "SET TimeZone = 'UTC'; CREATE TABLE \"NARROW\" (\"K\" DECIMAL(18,0)); \
+                 CREATE TABLE \"WIDE\" (\"K\" DECIMAL(38,0), \"V\" VARCHAR); \
+                 INSERT INTO \"NARROW\" VALUES (7); \
+                 INSERT INTO \"WIDE\" VALUES (7, 'seven'), (99999999999999999999999, 'wide')";
+    let test_cases = [
+        ValueTestCase {
+            description: "the wide row matches nothing and the narrow key's row joins",
+            sql: "SELECT LISTAGG(k::VARCHAR || '=' || v, ',') WITHIN GROUP (ORDER BY k) AS r \
+                  FROM narrow JOIN wide USING (k)",
+            expected_value: "7=seven",
+        },
+        ValueTestCase {
+            description: "a filter on the joined key, which DuckDB may push below the join",
+            sql: "SELECT LISTAGG(wide.k::VARCHAR || '=' || v, ',') WITHIN GROUP (ORDER BY wide.k) \
+                  AS r FROM narrow JOIN wide USING (k) WHERE wide.k > 1",
+            expected_value: "7=seven",
+        },
+    ];
+    for test_case in test_cases {
+        assert_eq!(
+            converted_value_over(test_case.sql, (schema, setup)),
+            test_case.expected_value,
+            "{}",
+            test_case.description
+        );
+    }
+}

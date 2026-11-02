@@ -285,6 +285,8 @@ fn carried_value(object: &Map<String, Value>) -> Result<Option<Carried>, String>
                 json!({ "column": { "name": { "name": name } } })
             }
             Some(Value::Object(this)) if this.contains_key("column") => Value::Object(this.clone()),
+            Some(Value::Object(this)) if this.contains_key("dot") => qualified_root(this)
+                .ok_or_else(|| "CONNECT_BY_ROOT of other than a column".to_owned())?,
             _ => return Err("CONNECT_BY_ROOT of other than a column".to_owned()),
         };
         return Ok(Some(Carried::Root(value)));
@@ -353,4 +355,12 @@ fn qualified(node: &Value, alias: &str) -> Result<Value, String> {
     let mut column = column.clone();
     column.insert("table".to_owned(), json!({ "name": alias, "quoted": true }));
     Ok(json!({ "column": column }))
+}
+
+/// `relation.column` after CONNECT_BY_ROOT, which parses as a field of the relation's name.
+fn qualified_root(this: &serde_json::Map<String, Value>) -> Option<Value> {
+    let dot = this.get("dot")?;
+    let table = dot.get("this")?.get("var")?.get("this")?.as_str()?;
+    let field = dot.get("field")?;
+    Some(json!({ "column": { "name": field, "table": { "name": table } } }))
 }

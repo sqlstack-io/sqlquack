@@ -88,6 +88,31 @@ fn given_a_query_when_tracing_lineage_then_values_rows_and_untraced_outputs_are_
             expected_rows_resolved: true,
         },
         LineageDetailTestCase {
+            description: "CONNECT_BY_ROOT of a qualified column reads that column",
+            sql: "SELECT CONNECT_BY_ROOT o.amount AS root_amount FROM orders o \
+                  START WITH o.status = 'open' CONNECT BY PRIOR o.id = o.customer_id",
+            dialect: Dialect::Snowflake,
+            profile: &SNOWFLAKE,
+            expected_outputs: &[(
+                "root_amount",
+                TransformKind::Direct,
+                &["ORDERS.AMOUNT"],
+                true,
+            )],
+            expected_row_sources: &["ORDERS.CUSTOMER_ID", "ORDERS.ID", "ORDERS.STATUS"],
+            expected_rows_resolved: true,
+        },
+        LineageDetailTestCase {
+            description: "a star EXCLUDE of a quoted lower-case name drops that column",
+            sql: "WITH n AS (SELECT id, amount AS \"note\" FROM orders) \
+                  SELECT * EXCLUDE (\"note\") FROM n",
+            dialect: Dialect::Snowflake,
+            profile: &SNOWFLAKE,
+            expected_outputs: &[("id", TransformKind::Direct, &["ORDERS.ID"], true)],
+            expected_row_sources: &[],
+            expected_rows_resolved: true,
+        },
+        LineageDetailTestCase {
             description: "$n reads the n-th column of the one FROM item",
             sql: "SELECT $2 AS cust FROM orders",
             dialect: Dialect::Snowflake,

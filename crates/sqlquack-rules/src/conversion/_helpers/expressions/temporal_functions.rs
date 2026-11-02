@@ -57,12 +57,13 @@ use crate::conversion::constants::{
     BARE_FRACTION, BARE_FRACTION_PATTERNS, CLOCK_FORMAT_FIELDS, CURRENT_TIME, CURRENT_TIME_RULE,
     DATE_ARITHMETIC, DATE_FORMAT_RULE, DATE_NAME, DATE_PART_RULE, DATE_PARTS, DATE_TEXT_SPELLING,
     DAY_NAME_RULE, DECIMAL_EPOCH_RULE, FRACTIONAL_DATE_AMOUNT, FROM_PARTS, MAX_FRACTION_DIGITS_U8,
-    MICROSECOND_DIGITS, NULL_BRANCHES, NUMBER_TEXT_FORMAT, SCALE_DIGITS, SESSION_TIMEZONE_UTC,
-    TEMPORAL_TEXT_FIELDS, TEMPORAL_TEXT_FORMAT, TEMPORAL_TEXT_SEPARATORS, TEXT_TO_TIME_RULE,
-    TEXT_TO_TIMESTAMP_RULE, TIME_ARITHMETIC, TIME_ZONE_CONVERSION, TIMESTAMP_FORMAT_RULE,
-    TIMESTAMP_RANGE, TIMESTAMP_TIME_RULE, TO_DATE_TEMPORAL, UTC_OFFSET_ARITHMETIC, UTC_ZONE,
-    ZONE_COLUMNS, ZONED_PARTS,
+    MICROSECOND_DIGITS, NULL_BRANCHES, NUMBER_TEXT_FORMAT, RECORDED_TIME_ZONES, SCALE_DIGITS,
+    SESSION_TIMEZONE_UTC, TEMPORAL_TEXT_FIELDS, TEMPORAL_TEXT_FORMAT, TEMPORAL_TEXT_SEPARATORS,
+    TEXT_TO_TIME_RULE, TEXT_TO_TIMESTAMP_RULE, TIME_ARITHMETIC, TIME_ZONE_CONVERSION,
+    TIME_ZONE_SPELLING, TIMESTAMP_FORMAT_RULE, TIMESTAMP_RANGE, TIMESTAMP_TIME_RULE,
+    TO_DATE_TEMPORAL, UTC_OFFSET_ARITHMETIC, UTC_ZONE, ZONE_COLUMNS, ZONED_PARTS,
 };
+use sqlquack_duckdb::raises::main::raised::raised;
 
 /// The canonical Snowflake name of a unit written as a keyword, string or parsed field name.
 fn unit_name(node: &Value) -> Option<String> {
@@ -967,6 +968,14 @@ struct Zone {
 /// A literal zone name, or a VARCHAR expression naming one per row.
 fn zone_operand(node: &Value, construct: &Construct, site: Site<'_>) -> Result<Zone, Refusal> {
     if let Some(zone) = zone_literal(node, site) {
+        if !RECORDED_TIME_ZONES.contains(&zone.as_str()) {
+            return Err(outside_conditions(
+                construct.clone(),
+                format!(
+                    "the time zone '{zone}', whose spelling no recording shows Snowflake accepting"
+                ),
+            ));
+        }
         return Ok(Zone {
             sql: string_literal(&zone, site.context.log),
             literal: Some(zone),
@@ -975,9 +984,24 @@ fn zone_operand(node: &Value, construct: &Construct, site: Site<'_>) -> Result<Z
     let emitted = convert_expression(node, site)?;
     match emitted.data_type {
         SnowflakeType::Varchar | SnowflakeType::Null => {
-            let _column = site.context.log.rule(ZONE_COLUMNS);
+            let log = site.context.log;
+            let _column = log.rule(ZONE_COLUMNS);
+            diverge(site.context, TIME_ZONE_SPELLING, construct)?;
+            let names: Vec<String> = RECORDED_TIME_ZONES
+                .iter()
+                .map(|zone| string_literal(zone, log))
+                .collect();
+            let unrecorded = raised(&format!(
+                "{TIME_ZONE_SPELLING}: a time zone name whose spelling no recording shows \
+                 Snowflake accepting"
+            ));
             Ok(Zone {
-                sql: emitted.sql,
+                sql: format!(
+                    "list_transform([{}], lambda z: CASE WHEN z IS NULL OR z IN ({}) THEN z \
+                     ELSE CAST({unrecorded} AS VARCHAR) END)[1]",
+                    emitted.sql,
+                    names.join(", ")
+                ),
                 literal: None,
             })
         }

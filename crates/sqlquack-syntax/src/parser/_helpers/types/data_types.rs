@@ -804,6 +804,7 @@ impl Parser {
             if self.match_token(TokenType::LParen) {
                 loop {
                     let start = self.peek().span;
+                    let quoted = self.check(TokenType::QuotedIdentifier);
                     let col =
                         if self.check(TokenType::String) || self.is_safe_keyword_as_identifier() {
                             self.advance_text()?
@@ -821,9 +822,10 @@ impl Parser {
                                 .with_span(start.through(self.previous().span)),
                         );
                     } else {
-                        columns.push(
-                            Identifier::new(col).with_span(start.through(self.previous().span)),
-                        );
+                        let mut column =
+                            Identifier::new(col).with_span(start.through(self.previous().span));
+                        column.quoted = quoted;
+                        columns.push(column);
                     }
                     if !self.match_token(TokenType::Comma) {
                         break;
@@ -832,12 +834,16 @@ impl Parser {
                 self.expect_token(TokenType::RParen)?;
             } else {
                 let start = self.peek().span;
+                let quoted = self.check(TokenType::QuotedIdentifier);
                 let col = if self.check(TokenType::String) || self.is_safe_keyword_as_identifier() {
                     self.advance_text()?
                 } else {
                     self.expect_identifier()?
                 };
-                columns.push(Identifier::new(col).with_span(start.through(self.previous().span)));
+                let mut column =
+                    Identifier::new(col).with_span(start.through(self.previous().span));
+                column.quoted = quoted;
+                columns.push(column);
             }
             except = Some(columns);
         }

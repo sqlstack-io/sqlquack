@@ -118,14 +118,14 @@ fn given_mode_when_converting_then_one_most_frequent_value_converts_and_ties_rai
             expected_outcome: Err("mode_ties"),
         },
         FirstValueTestCase {
-            description: "MODE without GROUP BY over no rows is the type's zero",
+            description: "MODE without GROUP BY over no rows raises: Snowflake answers by plan",
             sql: "SELECT MODE(amount) AS v FROM orders WHERE amount > 100",
-            expected_outcome: Ok("0.00"),
+            expected_outcome: Err("mode_of_no_rows"),
         },
         FirstValueTestCase {
-            description: "MODE without GROUP BY of text over no rows is empty text",
+            description: "MODE without GROUP BY of text over no rows raises",
             sql: "SELECT MODE(note) = '' AS v FROM customers WHERE customer_id > 100",
-            expected_outcome: Ok("true"),
+            expected_outcome: Err("mode_of_no_rows"),
         },
         FirstValueTestCase {
             description: "MODE without GROUP BY over values is the most frequent one",
@@ -133,9 +133,9 @@ fn given_mode_when_converting_then_one_most_frequent_value_converts_and_ties_rai
             expected_outcome: Ok("2"),
         },
         FirstValueTestCase {
-            description: "MODE without GROUP BY of a timestamp over no rows is the epoch",
+            description: "MODE without GROUP BY of a timestamp over no rows raises",
             sql: "SELECT MODE(TO_TIMESTAMP_NTZ(note)) AS v FROM customers WHERE customer_id > 100",
-            expected_outcome: Ok("1970-01-01 00:00:00"),
+            expected_outcome: Err("mode_of_no_rows"),
         },
         FirstValueTestCase {
             description: "MODE over a window stays refused",

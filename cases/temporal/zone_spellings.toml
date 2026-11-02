@@ -1,0 +1,437 @@
+# Which time zone spellings Snowflake accepts: each alone, two-argument, and as the target and
+# the source of the three-argument form.
+category = "temporal"
+construct = "fn:CONVERT_TIMEZONE"
+session_profile = "utc-v1"
+
+[[case]]
+id = "zone_spelling_two_args_utc_upper"
+description = "Two-argument CONVERT_TIMEZONE to 'UTC' of a TIMESTAMP_TZ."
+columns = [{ name = "t", type = "TIMESTAMP_TZ(9)" }]
+rows = [
+  ["'2024-07-01 12:00:00 +00:00'"],
+  ["NULL"],
+]
+query = "SELECT CONVERT_TIMEZONE('UTC', t)::VARCHAR AS c FROM input ORDER BY c NULLS LAST"
+order = "ordered"
+tags = ["boundary", "null"]
+
+[[case]]
+id = "zone_spelling_target_utc_upper"
+description = "Three-argument CONVERT_TIMEZONE from 'UTC' to 'UTC' of a TIMESTAMP_NTZ."
+columns = [{ name = "t", type = "TIMESTAMP_NTZ(9)" }]
+rows = [
+  ["'2024-07-01 12:00:00'"],
+  ["NULL"],
+]
+query = "SELECT CONVERT_TIMEZONE('UTC', 'UTC', t) AS c FROM input"
+order = "ordered"
+tags = ["boundary", "null"]
+
+[[case]]
+id = "zone_spelling_source_utc_upper"
+description = "Three-argument CONVERT_TIMEZONE from 'UTC' to 'UTC' of a TIMESTAMP_NTZ."
+columns = [{ name = "t", type = "TIMESTAMP_NTZ(9)" }]
+rows = [
+  ["'2024-07-01 12:00:00'"],
+  ["NULL"],
+]
+query = "SELECT CONVERT_TIMEZONE('UTC', 'UTC', t) AS c FROM input ORDER BY c NULLS LAST"
+order = "ordered"
+tags = ["boundary", "null"]
+
+[[case]]
+id = "zone_spelling_two_args_utc_lower"
+description = "Two-argument CONVERT_TIMEZONE to 'utc' of a TIMESTAMP_TZ."
+columns = [{ name = "t", type = "TIMESTAMP_TZ(9)" }]
+rows = [
+  ["'2024-07-01 12:00:00 +00:00'"],
+  ["NULL"],
+]
+query = "SELECT CONVERT_TIMEZONE('utc', t)::VARCHAR AS c FROM input ORDER BY c NULLS LAST"
+order = "ordered"
+tags = ["boundary", "null"]
+
+[[case]]
+id = "zone_spelling_target_utc_lower"
+description = "Three-argument CONVERT_TIMEZONE from 'UTC' to 'utc' of a TIMESTAMP_NTZ."
+columns = [{ name = "t", type = "TIMESTAMP_NTZ(9)" }]
+rows = [
+  ["'2024-07-01 12:00:00'"],
+  ["NULL"],
+]
+query = "SELECT CONVERT_TIMEZONE('UTC', 'utc', t) AS c FROM input"
+order = "ordered"
+tags = ["boundary", "null"]
+
+[[case]]
+id = "zone_spelling_source_utc_lower"
+description = "Three-argument CONVERT_TIMEZONE from 'utc' to 'UTC' of a TIMESTAMP_NTZ."
+columns = [{ name = "t", type = "TIMESTAMP_NTZ(9)" }]
+rows = [
+  ["'2024-07-01 12:00:00'"],
+  ["NULL"],
+]
+query = "SELECT CONVERT_TIMEZONE('utc', 'UTC', t) AS c FROM input ORDER BY c NULLS LAST"
+order = "ordered"
+tags = ["boundary", "null"]
+
+[[case]]
+id = "zone_spelling_two_args_utc_capitalised"
+description = "Two-argument CONVERT_TIMEZONE to 'Utc' of a TIMESTAMP_TZ."
+columns = [{ name = "t", type = "TIMESTAMP_TZ(9)" }]
+rows = [
+  ["'2024-07-01 12:00:00 +00:00'"],
+  ["NULL"],
+]
+query = "SELECT CONVERT_TIMEZONE('Utc', t)::VARCHAR AS c FROM input ORDER BY c NULLS LAST"
+order = "ordered"
+tags = ["boundary", "null"]
+
+[[case]]
+id = "zone_spelling_target_utc_capitalised"
+description = "Three-argument CONVERT_TIMEZONE from 'UTC' to 'Utc' of a TIMESTAMP_NTZ."
+columns = [{ name = "t", type = "TIMESTAMP_NTZ(9)" }]
+rows = [
+  ["'2024-07-01 12:00:00'"],
+  ["NULL"],
+]
+query = "SELECT CONVERT_TIMEZONE('UTC', 'Utc', t) AS c FROM input"
+order = "ordered"
+tags = ["boundary", "null"]
+
+[[case]]
+id = "zone_spelling_source_utc_capitalised"
+description = "Three-argument CONVERT_TIMEZONE from 'Utc' to 'UTC' of a TIMESTAMP_NTZ."
+columns = [{ name = "t", type = "TIMESTAMP_NTZ(9)" }]
+rows = [
+  ["'2024-07-01 12:00:00'"],
+  ["NULL"],
+]
+query = "SELECT CONVERT_TIMEZONE('Utc', 'UTC', t) AS c FROM input ORDER BY c NULLS LAST"
+order = "ordered"
+tags = ["boundary", "null"]
+
+[[case]]
+id = "zone_spelling_two_args_etc_utc"
+description = "Two-argument CONVERT_TIMEZONE to 'Etc/UTC' of a TIMESTAMP_TZ."
+columns = [{ name = "t", type = "TIMESTAMP_TZ(9)" }]
+rows = [
+  ["'2024-07-01 12:00:00 +00:00'"],
+  ["NULL"],
+]
+query = "SELECT CONVERT_TIMEZONE('Etc/UTC', t)::VARCHAR AS c FROM input ORDER BY c NULLS LAST"
+order = "ordered"
+tags = ["boundary", "null"]
+
+[[case]]
+id = "zone_spelling_target_etc_utc"
+description = "Three-argument CONVERT_TIMEZONE from 'UTC' to 'Etc/UTC' of a TIMESTAMP_NTZ."
+columns = [{ name = "t", type = "TIMESTAMP_NTZ(9)" }]
+rows = [
+  ["'2024-07-01 12:00:00'"],
+  ["NULL"],
+]
+query = "SELECT CONVERT_TIMEZONE('UTC', 'Etc/UTC', t) AS c FROM input"
+order = "ordered"
+tags = ["boundary", "null"]
+
+[[case]]
+id = "zone_spelling_source_etc_utc"
+description = "Three-argument CONVERT_TIMEZONE from 'Etc/UTC' to 'UTC' of a TIMESTAMP_NTZ."
+columns = [{ name = "t", type = "TIMESTAMP_NTZ(9)" }]
+rows = [
+  ["'2024-07-01 12:00:00'"],
+  ["NULL"],
+]
+query = "SELECT CONVERT_TIMEZONE('Etc/UTC', 'UTC', t) AS c FROM input ORDER BY c NULLS LAST"
+order = "ordered"
+tags = ["boundary", "null"]
+
+[[case]]
+id = "zone_spelling_two_args_etc_utc_lower"
+description = "Two-argument CONVERT_TIMEZONE to 'etc/utc' of a TIMESTAMP_TZ."
+columns = [{ name = "t", type = "TIMESTAMP_TZ(9)" }]
+rows = [
+  ["'2024-07-01 12:00:00 +00:00'"],
+  ["NULL"],
+]
+query = "SELECT CONVERT_TIMEZONE('etc/utc', t)::VARCHAR AS c FROM input ORDER BY c NULLS LAST"
+order = "ordered"
+tags = ["boundary", "null"]
+
+[[case]]
+id = "zone_spelling_target_etc_utc_lower"
+description = "Three-argument CONVERT_TIMEZONE from 'UTC' to 'etc/utc' of a TIMESTAMP_NTZ."
+columns = [{ name = "t", type = "TIMESTAMP_NTZ(9)" }]
+rows = [
+  ["'2024-07-01 12:00:00'"],
+  ["NULL"],
+]
+query = "SELECT CONVERT_TIMEZONE('UTC', 'etc/utc', t) AS c FROM input"
+order = "ordered"
+tags = ["boundary", "null"]
+
+[[case]]
+id = "zone_spelling_source_etc_utc_lower"
+description = "Three-argument CONVERT_TIMEZONE from 'etc/utc' to 'UTC' of a TIMESTAMP_NTZ."
+columns = [{ name = "t", type = "TIMESTAMP_NTZ(9)" }]
+rows = [
+  ["'2024-07-01 12:00:00'"],
+  ["NULL"],
+]
+query = "SELECT CONVERT_TIMEZONE('etc/utc', 'UTC', t) AS c FROM input ORDER BY c NULLS LAST"
+order = "ordered"
+tags = ["boundary", "null"]
+
+[[case]]
+id = "zone_spelling_two_args_gmt"
+description = "Two-argument CONVERT_TIMEZONE to 'GMT' of a TIMESTAMP_TZ."
+columns = [{ name = "t", type = "TIMESTAMP_TZ(9)" }]
+rows = [
+  ["'2024-07-01 12:00:00 +00:00'"],
+  ["NULL"],
+]
+query = "SELECT CONVERT_TIMEZONE('GMT', t)::VARCHAR AS c FROM input ORDER BY c NULLS LAST"
+order = "ordered"
+tags = ["boundary", "null"]
+
+[[case]]
+id = "zone_spelling_target_gmt"
+description = "Three-argument CONVERT_TIMEZONE from 'UTC' to 'GMT' of a TIMESTAMP_NTZ."
+columns = [{ name = "t", type = "TIMESTAMP_NTZ(9)" }]
+rows = [
+  ["'2024-07-01 12:00:00'"],
+  ["NULL"],
+]
+query = "SELECT CONVERT_TIMEZONE('UTC', 'GMT', t) AS c FROM input"
+order = "ordered"
+tags = ["boundary", "null"]
+
+[[case]]
+id = "zone_spelling_source_gmt"
+description = "Three-argument CONVERT_TIMEZONE from 'GMT' to 'UTC' of a TIMESTAMP_NTZ."
+columns = [{ name = "t", type = "TIMESTAMP_NTZ(9)" }]
+rows = [
+  ["'2024-07-01 12:00:00'"],
+  ["NULL"],
+]
+query = "SELECT CONVERT_TIMEZONE('GMT', 'UTC', t) AS c FROM input ORDER BY c NULLS LAST"
+order = "ordered"
+tags = ["boundary", "null"]
+
+[[case]]
+id = "zone_spelling_two_args_london"
+description = "Two-argument CONVERT_TIMEZONE to 'Europe/London' of a TIMESTAMP_TZ."
+columns = [{ name = "t", type = "TIMESTAMP_TZ(9)" }]
+rows = [
+  ["'2024-07-01 12:00:00 +00:00'"],
+  ["NULL"],
+]
+query = "SELECT CONVERT_TIMEZONE('Europe/London', t)::VARCHAR AS c FROM input ORDER BY c NULLS LAST"
+order = "ordered"
+tags = ["boundary", "null"]
+
+[[case]]
+id = "zone_spelling_target_london"
+description = "Three-argument CONVERT_TIMEZONE from 'UTC' to 'Europe/London' of a TIMESTAMP_NTZ."
+columns = [{ name = "t", type = "TIMESTAMP_NTZ(9)" }]
+rows = [
+  ["'2024-07-01 12:00:00'"],
+  ["NULL"],
+]
+query = "SELECT CONVERT_TIMEZONE('UTC', 'Europe/London', t) AS c FROM input"
+order = "ordered"
+tags = ["boundary", "null"]
+
+[[case]]
+id = "zone_spelling_source_london"
+description = "Three-argument CONVERT_TIMEZONE from 'Europe/London' to 'UTC' of a TIMESTAMP_NTZ."
+columns = [{ name = "t", type = "TIMESTAMP_NTZ(9)" }]
+rows = [
+  ["'2024-07-01 12:00:00'"],
+  ["NULL"],
+]
+query = "SELECT CONVERT_TIMEZONE('Europe/London', 'UTC', t) AS c FROM input ORDER BY c NULLS LAST"
+order = "ordered"
+tags = ["boundary", "null"]
+
+[[case]]
+id = "zone_spelling_two_args_london_lower"
+description = "Two-argument CONVERT_TIMEZONE to 'europe/london' of a TIMESTAMP_TZ."
+columns = [{ name = "t", type = "TIMESTAMP_TZ(9)" }]
+rows = [
+  ["'2024-07-01 12:00:00 +00:00'"],
+  ["NULL"],
+]
+query = "SELECT CONVERT_TIMEZONE('europe/london', t)::VARCHAR AS c FROM input ORDER BY c NULLS LAST"
+order = "ordered"
+tags = ["boundary", "null"]
+
+[[case]]
+id = "zone_spelling_target_london_lower"
+description = "Three-argument CONVERT_TIMEZONE from 'UTC' to 'europe/london' of a TIMESTAMP_NTZ."
+columns = [{ name = "t", type = "TIMESTAMP_NTZ(9)" }]
+rows = [
+  ["'2024-07-01 12:00:00'"],
+  ["NULL"],
+]
+query = "SELECT CONVERT_TIMEZONE('UTC', 'europe/london', t) AS c FROM input"
+order = "ordered"
+tags = ["boundary", "null"]
+
+[[case]]
+id = "zone_spelling_source_london_lower"
+description = "Three-argument CONVERT_TIMEZONE from 'europe/london' to 'UTC' of a TIMESTAMP_NTZ."
+columns = [{ name = "t", type = "TIMESTAMP_NTZ(9)" }]
+rows = [
+  ["'2024-07-01 12:00:00'"],
+  ["NULL"],
+]
+query = "SELECT CONVERT_TIMEZONE('europe/london', 'UTC', t) AS c FROM input ORDER BY c NULLS LAST"
+order = "ordered"
+tags = ["boundary", "null"]
+
+[[case]]
+id = "zone_spelling_two_args_london_upper"
+description = "Two-argument CONVERT_TIMEZONE to 'EUROPE/LONDON' of a TIMESTAMP_TZ."
+columns = [{ name = "t", type = "TIMESTAMP_TZ(9)" }]
+rows = [
+  ["'2024-07-01 12:00:00 +00:00'"],
+  ["NULL"],
+]
+query = "SELECT CONVERT_TIMEZONE('EUROPE/LONDON', t)::VARCHAR AS c FROM input ORDER BY c NULLS LAST"
+order = "ordered"
+tags = ["boundary", "null"]
+
+[[case]]
+id = "zone_spelling_target_london_upper"
+description = "Three-argument CONVERT_TIMEZONE from 'UTC' to 'EUROPE/LONDON' of a TIMESTAMP_NTZ."
+columns = [{ name = "t", type = "TIMESTAMP_NTZ(9)" }]
+rows = [
+  ["'2024-07-01 12:00:00'"],
+  ["NULL"],
+]
+query = "SELECT CONVERT_TIMEZONE('UTC', 'EUROPE/LONDON', t) AS c FROM input"
+order = "ordered"
+tags = ["boundary", "null"]
+
+[[case]]
+id = "zone_spelling_source_london_upper"
+description = "Three-argument CONVERT_TIMEZONE from 'EUROPE/LONDON' to 'UTC' of a TIMESTAMP_NTZ."
+columns = [{ name = "t", type = "TIMESTAMP_NTZ(9)" }]
+rows = [
+  ["'2024-07-01 12:00:00'"],
+  ["NULL"],
+]
+query = "SELECT CONVERT_TIMEZONE('EUROPE/LONDON', 'UTC', t) AS c FROM input ORDER BY c NULLS LAST"
+order = "ordered"
+tags = ["boundary", "null"]
+
+[[case]]
+id = "zone_spelling_two_args_new_york"
+description = "Two-argument CONVERT_TIMEZONE to 'America/New_York' of a TIMESTAMP_TZ."
+columns = [{ name = "t", type = "TIMESTAMP_TZ(9)" }]
+rows = [
+  ["'2024-07-01 12:00:00 +00:00'"],
+  ["NULL"],
+]
+query = "SELECT CONVERT_TIMEZONE('America/New_York', t)::VARCHAR AS c FROM input ORDER BY c NULLS LAST"
+order = "ordered"
+tags = ["boundary", "null"]
+
+[[case]]
+id = "zone_spelling_target_new_york"
+description = "Three-argument CONVERT_TIMEZONE from 'UTC' to 'America/New_York' of a TIMESTAMP_NTZ."
+columns = [{ name = "t", type = "TIMESTAMP_NTZ(9)" }]
+rows = [
+  ["'2024-07-01 12:00:00'"],
+  ["NULL"],
+]
+query = "SELECT CONVERT_TIMEZONE('UTC', 'America/New_York', t) AS c FROM input"
+order = "ordered"
+tags = ["boundary", "null"]
+
+[[case]]
+id = "zone_spelling_source_new_york"
+description = "Three-argument CONVERT_TIMEZONE from 'America/New_York' to 'UTC' of a TIMESTAMP_NTZ."
+columns = [{ name = "t", type = "TIMESTAMP_NTZ(9)" }]
+rows = [
+  ["'2024-07-01 12:00:00'"],
+  ["NULL"],
+]
+query = "SELECT CONVERT_TIMEZONE('America/New_York', 'UTC', t) AS c FROM input ORDER BY c NULLS LAST"
+order = "ordered"
+tags = ["boundary", "null"]
+
+[[case]]
+id = "zone_spelling_two_args_new_york_lower"
+description = "Two-argument CONVERT_TIMEZONE to 'america/new_york' of a TIMESTAMP_TZ."
+columns = [{ name = "t", type = "TIMESTAMP_TZ(9)" }]
+rows = [
+  ["'2024-07-01 12:00:00 +00:00'"],
+  ["NULL"],
+]
+query = "SELECT CONVERT_TIMEZONE('america/new_york', t)::VARCHAR AS c FROM input ORDER BY c NULLS LAST"
+order = "ordered"
+tags = ["boundary", "null"]
+
+[[case]]
+id = "zone_spelling_target_new_york_lower"
+description = "Three-argument CONVERT_TIMEZONE from 'UTC' to 'america/new_york' of a TIMESTAMP_NTZ."
+columns = [{ name = "t", type = "TIMESTAMP_NTZ(9)" }]
+rows = [
+  ["'2024-07-01 12:00:00'"],
+  ["NULL"],
+]
+query = "SELECT CONVERT_TIMEZONE('UTC', 'america/new_york', t) AS c FROM input"
+order = "ordered"
+tags = ["boundary", "null"]
+
+[[case]]
+id = "zone_spelling_source_new_york_lower"
+description = "Three-argument CONVERT_TIMEZONE from 'america/new_york' to 'UTC' of a TIMESTAMP_NTZ."
+columns = [{ name = "t", type = "TIMESTAMP_NTZ(9)" }]
+rows = [
+  ["'2024-07-01 12:00:00'"],
+  ["NULL"],
+]
+query = "SELECT CONVERT_TIMEZONE('america/new_york', 'UTC', t) AS c FROM input ORDER BY c NULLS LAST"
+order = "ordered"
+tags = ["boundary", "null"]
+
+[[case]]
+id = "zone_spelling_two_args_zulu"
+description = "Two-argument CONVERT_TIMEZONE to 'Z' of a TIMESTAMP_TZ."
+columns = [{ name = "t", type = "TIMESTAMP_TZ(9)" }]
+rows = [
+  ["'2024-07-01 12:00:00 +00:00'"],
+  ["NULL"],
+]
+query = "SELECT CONVERT_TIMEZONE('Z', t)::VARCHAR AS c FROM input ORDER BY c NULLS LAST"
+order = "ordered"
+tags = ["boundary", "null"]
+
+[[case]]
+id = "zone_spelling_target_zulu"
+description = "Three-argument CONVERT_TIMEZONE from 'UTC' to 'Z' of a TIMESTAMP_NTZ."
+columns = [{ name = "t", type = "TIMESTAMP_NTZ(9)" }]
+rows = [
+  ["'2024-07-01 12:00:00'"],
+  ["NULL"],
+]
+query = "SELECT CONVERT_TIMEZONE('UTC', 'Z', t) AS c FROM input"
+order = "ordered"
+tags = ["boundary", "null"]
+
+[[case]]
+id = "zone_spelling_source_zulu"
+description = "Three-argument CONVERT_TIMEZONE from 'Z' to 'UTC' of a TIMESTAMP_NTZ."
+columns = [{ name = "t", type = "TIMESTAMP_NTZ(9)" }]
+rows = [
+  ["'2024-07-01 12:00:00'"],
+  ["NULL"],
+]
+query = "SELECT CONVERT_TIMEZONE('Z', 'UTC', t) AS c FROM input ORDER BY c NULLS LAST"
+order = "ordered"
+tags = ["boundary", "null"]

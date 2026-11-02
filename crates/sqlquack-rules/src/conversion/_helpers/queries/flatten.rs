@@ -74,6 +74,7 @@ pub(crate) fn lateral_flatten(
         input,
         keep_empty,
         recursive,
+        mode,
     } = arguments(call, &function)?;
     let scope = Scope::new(earlier.to_vec(), outer);
     let site = Site {
@@ -96,15 +97,12 @@ pub(crate) fn lateral_flatten(
     diverge(context, JSON_FIDELITY, &function)?;
     let log = context.log;
     let json = read_json(&input, context);
-    let rows = match recursive {
-        Some(mode) => json_flatten_recursive(&json, mode, log),
-        None => json_flatten(&json, log),
+    let rows = match (recursive, mode) {
+        (true, mode) => json_flatten_recursive(&json, mode, log),
+        (false, mode) => json_flatten(&json, (mode, keep_empty), log),
     };
     let flattened = format!("LATERAL ({rows}) AS {}", quoted_identifier(&alias, log));
-    let sql = match keep_empty {
-        true => format!(" LEFT JOIN {flattened} ON TRUE"),
-        false => format!(" CROSS JOIN {flattened}"),
-    };
+    let sql = format!(" CROSS JOIN {flattened}");
     let columns: Vec<ColumnSpec> = FLATTEN_COLUMNS
         .iter()
         .map(|(column, data_type)| ColumnSpec {
@@ -128,14 +126,15 @@ pub(crate) fn lateral_flatten(
     })
 }
 
-/// A FLATTEN call's input, OUTER flag, and MODE when RECURSIVE.
+/// A FLATTEN call's input, OUTER and RECURSIVE flags, and MODE.
 struct Arguments<'a> {
     input: &'a Value,
     keep_empty: bool,
-    recursive: Option<FlattenMode>,
+    recursive: bool,
+    mode: FlattenMode,
 }
 
-/// The input, OUTER, RECURSIVE and MODE; PATH, OUTER with RECURSIVE and MODE without it are refused.
+/// The input, OUTER, RECURSIVE and MODE; PATH and OUTER with RECURSIVE are refused.
 fn arguments<'a>(call: &'a Payload, construct: &Construct) -> Result<Arguments<'a>, Refusal> {
     let refuse = |reason: String| outside_conditions(construct.clone(), reason);
     let mut input: Option<&Value> = None;
@@ -183,19 +182,15 @@ fn arguments<'a>(call: &'a Payload, construct: &Construct) -> Result<Arguments<'
             other => return Err(refuse(format!("FLATTEN with {other}"))),
         }
     }
-    let recursive = match (recursive, mode, keep_empty) {
-        (true, _, true) => {
-            return Err(refuse("FLATTEN with RECURSIVE and OUTER".to_owned()));
-        }
-        (true, mode, false) => Some(mode.unwrap_or(FlattenMode::Both)),
-        (false, None, _) => None,
-        (false, Some(_), _) => return Err(refuse("FLATTEN with MODE".to_owned())),
-    };
+    if recursive && keep_empty {
+        return Err(refuse("FLATTEN with RECURSIVE and OUTER".to_owned()));
+    }
     let input = input.ok_or_else(|| refuse("FLATTEN without an input".to_owned()))?;
     Ok(Arguments {
         input,
         keep_empty,
         recursive,
+        mode: mode.unwrap_or(FlattenMode::Both),
     })
 }
 

@@ -344,6 +344,7 @@ query = "SELECT MODE(x0) AS r FROM input WHERE FALSE"
 order = "ordered"
 tags = ["null", "empty-input", "duplicates"]
 origin = "generated: hazards@1"
+expected_divergence = "mode_of_no_rows"
 
 [[case]]
 id = "fn_mode_group_all_null"

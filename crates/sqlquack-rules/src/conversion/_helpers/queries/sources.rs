@@ -24,13 +24,13 @@ use crate::conversion::_helpers::support::tree::{
     Payload, field, function_construct, identifier_name, integer_literal, list, node_construct,
     node_kind, payload_object, require_understood,
 };
-use crate::conversion::constants::FULL_JOIN_KEYWORD;
 use crate::conversion::constants::{
     ASOF_JOIN, ASOF_KIND, FROM_RELATION, FROM_SUBQUERY, GENERATOR_MAX_ROWS, GENERATOR_NAME,
     GENERATOR_RULE, GENERATOR_SEQUENCE_COLUMN, JOIN_CROSS, JOIN_ON, JOIN_USING, LATERAL_KEY,
     LATERAL_SUBQUERY, OPAQUE_ALIAS_PREFIX, PROJECT_TABLE_FUNCTION, TABLE_WRAPPER,
     UNALIASED_SUBQUERY_PREFIX, USING_ALIAS_PREFIX,
 };
+use crate::conversion::constants::{FULL_JOIN_KEYWORD, INNER_JOIN_KEYWORD};
 use sqlquack_semantics::lineage::main::stored_columns::stored_columns;
 use sqlquack_semantics::scopes::models::ScopeRelation;
 use sqlquack_semantics::types::models::{ColumnSpec, FunctionReturns};
@@ -101,26 +101,10 @@ pub(crate) fn convert_from(
         let (join_sql, relation) = recovered(joined, source, (before, relations.len()))?;
         sql.push_str(&join_sql);
         relations.push(relation);
-        if let Some(Merging {
-            keys,
-            relation,
-            widened,
-        }) = merging.into_inner()
-        {
+        if let Some(Merging { keys, relation }) = merging.into_inner() {
             for (owner, name) in keys {
                 if let Some(owner) = relations.iter_mut().find(|earlier| earlier.alias == owner) {
                     owner.merged.push(name);
-                }
-            }
-            for (owner, name, data_type) in widened {
-                let column = relations
-                    .iter_mut()
-                    .filter(|earlier| earlier.alias == owner)
-                    .flat_map(|earlier| earlier.columns.iter_mut())
-                    .find(|column| column.name == name);
-                if let Some(column) = column {
-                    column.data_type = data_type;
-                    column.widened = true;
                 }
             }
             relations.extend(relation);
@@ -151,8 +135,6 @@ struct Merging {
     keys: Vec<(String, String)>,
     /// For a FULL JOIN, the merged keys, each the first non-NULL side's value.
     relation: Option<ScopeRelation>,
-    /// The earlier relation's alias, the key name and the wider NUMBER it is read as.
-    widened: Vec<(String, String, SnowflakeType)>,
 }
 
 fn convert_join(
@@ -250,7 +232,7 @@ fn using_join(
     let construct = node_construct("join");
     let refuse = |reason: String| outside_conditions(construct.clone(), reason);
     let keyword = match (kind, has_on) {
-        ("Inner", false) => "JOIN",
+        ("Inner", false) => INNER_JOIN_KEYWORD,
         ("Left", false) => "LEFT JOIN",
         ("Full", false) => FULL_JOIN_KEYWORD,
         _ => return Err(refuse(format!("a {kind} join with USING"))),
@@ -260,8 +242,8 @@ fn using_join(
     let mut merged_keys: Vec<(String, String)> = Vec::new();
     let mut merged_items: Vec<String> = Vec::new();
     let mut merged_columns: Vec<ColumnSpec> = Vec::new();
-    let mut widened: Vec<(String, String, SnowflakeType)> = Vec::new();
     let mut equalities: Vec<Value> = Vec::with_capacity(keys.len());
+    let unwidened: Vec<ColumnSpec> = relation.columns.clone();
     for key in keys {
         let name = identifier_name(key)
             .ok_or_else(|| missing(construct.clone(), "a USING key has no name".to_owned()))?;
@@ -296,7 +278,10 @@ fn using_join(
                     scale: joined_scale,
                 },
             ) if scale == joined_scale => SnowflakeType::Number {
-                precision: left.max(right),
+                precision: match keyword {
+                    FULL_JOIN_KEYWORD => left.max(right),
+                    _ => left,
+                },
                 scale,
             },
             _ => {
@@ -306,9 +291,6 @@ fn using_join(
                 )));
             }
         };
-        if earlier_type != Some(merged_type) {
-            widened.push((owner.alias.clone(), name.clone(), merged_type));
-        }
         let read = |alias: &str| {
             format!(
                 "{}.{}",
@@ -334,6 +316,7 @@ fn using_join(
             .iter_mut()
             .find(|column| column.name == name)
             && joined.data_type != merged_type
+            && keyword == INNER_JOIN_KEYWORD
         {
             joined.data_type = merged_type;
             joined.widened = true;
@@ -349,7 +332,10 @@ fn using_join(
         .reduce(|left, right| json!({"and": {"left": left, "right": right}}))
         .ok_or_else(|| missing(construct.clone(), "USING without keys".to_owned()))?;
     let mut visible = earlier.to_vec();
-    visible.push(relation.clone());
+    visible.push(ScopeRelation {
+        columns: unwidened,
+        ..relation.clone()
+    });
     let scope = Scope::new(visible, None);
     let site = Site {
         scope: &scope,
@@ -361,7 +347,6 @@ fn using_join(
         merging.replace(Some(Merging {
             keys: Vec::new(),
             relation: None,
-            widened,
         }));
         return Ok((format!(" {keyword} {source_sql} ON {condition}"), relation));
     }
@@ -378,7 +363,6 @@ fn using_join(
             columns: merged_columns,
             merged: Vec::new(),
         }),
-        widened,
     }));
     Ok((sql, relation))
 }

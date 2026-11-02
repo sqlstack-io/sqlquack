@@ -129,7 +129,7 @@ pub(crate) fn resolve(
     }
 }
 
-/// A column read through its relation's alias, cast up to its type where it is held narrower.
+/// A column read through its alias; an inner USING key TRY_CASTs, as unmatched rows never survive.
 pub(crate) fn read_column(
     alias: &str,
     column: &ColumnSpec,
@@ -142,6 +142,7 @@ pub(crate) fn read_column(
     );
     match column.widened {
         true => cast(&sql, column.data_type, log)
+            .map(|cast_sql| format!("TRY_{cast_sql}"))
             .map_err(|reason| outside_conditions(node_construct("column"), reason)),
         false => Ok(sql),
     }

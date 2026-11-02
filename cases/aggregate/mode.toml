@@ -65,6 +65,7 @@ rows = [["1"], ["2"]]
 query = "SELECT MODE(x) AS m FROM input WHERE x > 5"
 order = "ordered"
 tags = ["null", "empty-input", "duplicates"]
+expected_divergence = "mode_of_no_rows"
 
 [[case]]
 id = "mode_ties"
@@ -103,6 +104,7 @@ rows = [["1.50", "2.5", "'gift'", "TRUE", "'2024-03-01'"]]
 query = "SELECT MODE(p) AS p, MODE(f) AS f, MODE(s) AS s, MODE(b) AS b, MODE(d) AS d FROM input WHERE p > 5"
 order = "ordered"
 tags = ["null", "empty-input", "duplicates"]
+expected_divergence = "mode_of_no_rows"
 
 [[case]]
 id = "mode_all_null_no_group"
@@ -138,6 +140,7 @@ rows = [["'2024-03-01 10:00:00'"]]
 query = "SELECT MODE(ts)::VARCHAR AS ts_text, MODE(ts) IS NULL AS ts_null FROM input WHERE ts > '2030-01-01'::TIMESTAMP_NTZ"
 order = "ordered"
 tags = ["null", "empty-input", "duplicates"]
+expected_divergence = "mode_of_no_rows"
 
 [[case]]
 id = "mode_no_rows_having"
@@ -147,6 +150,7 @@ rows = [["1"], ["2"], ["2"]]
 query = "SELECT MODE(x) AS m, COUNT(*) AS n FROM input WHERE x > 5 HAVING COUNT(*) = 0 OR MODE(x) IS NULL"
 order = "ordered"
 tags = ["empty-input", "null"]
+expected_divergence = "mode_of_no_rows"
 
 [[case]]
 id = "mode_no_rows_having_excluded"
@@ -156,3 +160,4 @@ rows = [["1"], ["2"], ["2"]]
 query = "SELECT MODE(x) AS m FROM input WHERE x > 5 HAVING MODE(x) IS NOT NULL"
 order = "ordered"
 tags = ["empty-input"]
+expected_divergence = "mode_of_no_rows"

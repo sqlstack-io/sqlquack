@@ -1,0 +1,174 @@
+# JOIN USING a key NUMBER(18,0) on one side and NUMBER(38,0) on the other, each join kind alone,
+# and union columns NULL in every branch.
+category = "relational"
+construct = "node:join"
+session_profile = "utc-v1"
+
+[[case]]
+id = "join_using_widths_inner_a_first"
+description = "JOIN USING a key NUMBER(18,0) on the left and NUMBER(38,0) on the right: the merged and both qualified key types."
+columns = [{ name = "side", type = "VARCHAR" }, { name = "k", type = "NUMBER(18,0)" }, { name = "v", type = "VARCHAR" }]
+rows = [
+  ["'l'", "1", "'l1'"],
+  ["'l'", "2", "'l2'"],
+  ["'r'", "2", "'r2'"],
+  ["'r'", "3", "'r3'"],
+  ["'l'", "NULL", "'ln'"],
+]
+query = "WITH a AS (SELECT k, v FROM input WHERE side = 'l'), e AS (SELECT CAST(k AS NUMBER(38,0)) AS k, v AS w FROM input WHERE side = 'r') SELECT k, a.k AS ak, e.k AS ek, v, w FROM a JOIN e USING (k) ORDER BY k NULLS LAST, v NULLS LAST, w NULLS LAST"
+order = "ordered"
+tags = ["null", "mixed-types"]
+
+[[case]]
+id = "join_using_widths_inner_e_first"
+description = "JOIN USING a key NUMBER(38,0) on the left and NUMBER(18,0) on the right: the merged and both qualified key types."
+columns = [{ name = "side", type = "VARCHAR" }, { name = "k", type = "NUMBER(18,0)" }, { name = "v", type = "VARCHAR" }]
+rows = [
+  ["'l'", "1", "'l1'"],
+  ["'l'", "2", "'l2'"],
+  ["'r'", "2", "'r2'"],
+  ["'r'", "3", "'r3'"],
+  ["'l'", "NULL", "'ln'"],
+]
+query = "WITH a AS (SELECT k, v FROM input WHERE side = 'l'), e AS (SELECT CAST(k AS NUMBER(38,0)) AS k, v AS w FROM input WHERE side = 'r') SELECT k, a.k AS ak, e.k AS ek, v, w FROM e JOIN a USING (k) ORDER BY k NULLS LAST, v NULLS LAST, w NULLS LAST"
+order = "ordered"
+tags = ["null", "mixed-types"]
+
+[[case]]
+id = "join_using_widths_left_a_first"
+description = "LEFT JOIN USING a key NUMBER(18,0) on the left and NUMBER(38,0) on the right: the merged and both qualified key types."
+columns = [{ name = "side", type = "VARCHAR" }, { name = "k", type = "NUMBER(18,0)" }, { name = "v", type = "VARCHAR" }]
+rows = [
+  ["'l'", "1", "'l1'"],
+  ["'l'", "2", "'l2'"],
+  ["'r'", "2", "'r2'"],
+  ["'r'", "3", "'r3'"],
+  ["'l'", "NULL", "'ln'"],
+]
+query = "WITH a AS (SELECT k, v FROM input WHERE side = 'l'), e AS (SELECT CAST(k AS NUMBER(38,0)) AS k, v AS w FROM input WHERE side = 'r') SELECT k, a.k AS ak, e.k AS ek, v, w FROM a LEFT JOIN e USING (k) ORDER BY k NULLS LAST, v NULLS LAST, w NULLS LAST"
+order = "ordered"
+tags = ["null", "mixed-types"]
+
+[[case]]
+id = "join_using_widths_left_e_first"
+description = "LEFT JOIN USING a key NUMBER(38,0) on the left and NUMBER(18,0) on the right: the merged and both qualified key types."
+columns = [{ name = "side", type = "VARCHAR" }, { name = "k", type = "NUMBER(18,0)" }, { name = "v", type = "VARCHAR" }]
+rows = [
+  ["'l'", "1", "'l1'"],
+  ["'l'", "2", "'l2'"],
+  ["'r'", "2", "'r2'"],
+  ["'r'", "3", "'r3'"],
+  ["'l'", "NULL", "'ln'"],
+]
+query = "WITH a AS (SELECT k, v FROM input WHERE side = 'l'), e AS (SELECT CAST(k AS NUMBER(38,0)) AS k, v AS w FROM input WHERE side = 'r') SELECT k, a.k AS ak, e.k AS ek, v, w FROM e LEFT JOIN a USING (k) ORDER BY k NULLS LAST, v NULLS LAST, w NULLS LAST"
+order = "ordered"
+tags = ["null", "mixed-types"]
+
+[[case]]
+id = "join_using_widths_right_a_first"
+description = "RIGHT JOIN USING a key NUMBER(18,0) on the left and NUMBER(38,0) on the right: the merged and both qualified key types."
+columns = [{ name = "side", type = "VARCHAR" }, { name = "k", type = "NUMBER(18,0)" }, { name = "v", type = "VARCHAR" }]
+rows = [
+  ["'l'", "1", "'l1'"],
+  ["'l'", "2", "'l2'"],
+  ["'r'", "2", "'r2'"],
+  ["'r'", "3", "'r3'"],
+  ["'l'", "NULL", "'ln'"],
+]
+query = "WITH a AS (SELECT k, v FROM input WHERE side = 'l'), e AS (SELECT CAST(k AS NUMBER(38,0)) AS k, v AS w FROM input WHERE side = 'r') SELECT k, a.k AS ak, e.k AS ek, v, w FROM a RIGHT JOIN e USING (k) ORDER BY k NULLS LAST, v NULLS LAST, w NULLS LAST"
+order = "ordered"
+tags = ["null", "mixed-types"]
+
+[[case]]
+id = "join_using_widths_right_e_first"
+description = "RIGHT JOIN USING a key NUMBER(38,0) on the left and NUMBER(18,0) on the right: the merged and both qualified key types."
+columns = [{ name = "side", type = "VARCHAR" }, { name = "k", type = "NUMBER(18,0)" }, { name = "v", type = "VARCHAR" }]
+rows = [
+  ["'l'", "1", "'l1'"],
+  ["'l'", "2", "'l2'"],
+  ["'r'", "2", "'r2'"],
+  ["'r'", "3", "'r3'"],
+  ["'l'", "NULL", "'ln'"],
+]
+query = "WITH a AS (SELECT k, v FROM input WHERE side = 'l'), e AS (SELECT CAST(k AS NUMBER(38,0)) AS k, v AS w FROM input WHERE side = 'r') SELECT k, a.k AS ak, e.k AS ek, v, w FROM e RIGHT JOIN a USING (k) ORDER BY k NULLS LAST, v NULLS LAST, w NULLS LAST"
+order = "ordered"
+tags = ["null", "mixed-types"]
+
+[[case]]
+id = "join_using_widths_full_a_first"
+description = "FULL OUTER JOIN USING a key NUMBER(18,0) on the left and NUMBER(38,0) on the right: the merged and both qualified key types."
+columns = [{ name = "side", type = "VARCHAR" }, { name = "k", type = "NUMBER(18,0)" }, { name = "v", type = "VARCHAR" }]
+rows = [
+  ["'l'", "1", "'l1'"],
+  ["'l'", "2", "'l2'"],
+  ["'r'", "2", "'r2'"],
+  ["'r'", "3", "'r3'"],
+  ["'l'", "NULL", "'ln'"],
+]
+query = "WITH a AS (SELECT k, v FROM input WHERE side = 'l'), e AS (SELECT CAST(k AS NUMBER(38,0)) AS k, v AS w FROM input WHERE side = 'r') SELECT k, a.k AS ak, e.k AS ek, v, w FROM a FULL OUTER JOIN e USING (k) ORDER BY k NULLS LAST, v NULLS LAST, w NULLS LAST"
+order = "ordered"
+tags = ["null", "mixed-types"]
+
+[[case]]
+id = "join_using_widths_full_e_first"
+description = "FULL OUTER JOIN USING a key NUMBER(38,0) on the left and NUMBER(18,0) on the right: the merged and both qualified key types."
+columns = [{ name = "side", type = "VARCHAR" }, { name = "k", type = "NUMBER(18,0)" }, { name = "v", type = "VARCHAR" }]
+rows = [
+  ["'l'", "1", "'l1'"],
+  ["'l'", "2", "'l2'"],
+  ["'r'", "2", "'r2'"],
+  ["'r'", "3", "'r3'"],
+  ["'l'", "NULL", "'ln'"],
+]
+query = "WITH a AS (SELECT k, v FROM input WHERE side = 'l'), e AS (SELECT CAST(k AS NUMBER(38,0)) AS k, v AS w FROM input WHERE side = 'r') SELECT k, a.k AS ak, e.k AS ek, v, w FROM e FULL OUTER JOIN a USING (k) ORDER BY k NULLS LAST, v NULLS LAST, w NULLS LAST"
+order = "ordered"
+tags = ["null", "mixed-types"]
+
+[[case]]
+id = "join_using_widths_inner_duplicates"
+description = "JOIN USING NUMBER(18,0) and NUMBER(38,0) keys with duplicate keys on both sides."
+columns = [{ name = "side", type = "VARCHAR" }, { name = "k", type = "NUMBER(18,0)" }, { name = "v", type = "VARCHAR" }]
+rows = [
+  ["'l'", "2", "'l2'"],
+  ["'l'", "2", "'l2b'"],
+  ["'r'", "2", "'r2'"],
+  ["'r'", "2", "'r2b'"],
+]
+query = "WITH a AS (SELECT k, v FROM input WHERE side = 'l'), e AS (SELECT CAST(k AS NUMBER(38,0)) AS k, v AS w FROM input WHERE side = 'r') SELECT k, a.k AS ak, e.k AS ek, v, w FROM a JOIN e USING (k) ORDER BY v, w"
+order = "ordered"
+tags = ["duplicates", "mixed-types"]
+
+[[case]]
+id = "join_using_widths_inner_empty"
+description = "JOIN USING NUMBER(18,0) and NUMBER(38,0) keys when one side has no rows."
+columns = [{ name = "side", type = "VARCHAR" }, { name = "k", type = "NUMBER(18,0)" }, { name = "v", type = "VARCHAR" }]
+rows = [
+  ["'l'", "1", "'l1'"],
+]
+query = "WITH a AS (SELECT k, v FROM input WHERE side = 'l'), e AS (SELECT CAST(k AS NUMBER(38,0)) AS k, v AS w FROM input WHERE side = 'r') SELECT k, a.k AS ak, e.k AS ek, v, w FROM a JOIN e USING (k) ORDER BY k"
+order = "ordered"
+tags = ["empty-input", "mixed-types"]
+
+[[case]]
+id = "union_null_column"
+description = "A column NULL in every branch of a UNION ALL: its type."
+columns = [{ name = "k", type = "NUMBER(4,0)" }]
+rows = [
+  ["1"],
+  ["2"],
+]
+query = "SELECT k, NULL AS n FROM input UNION ALL SELECT k, NULL FROM input ORDER BY k"
+order = "ordered"
+tags = ["null"]
+
+[[case]]
+id = "union_null_column_typed_branch"
+description = "A column NULL in one branch and a NUMBER in the other."
+columns = [{ name = "k", type = "NUMBER(4,0)" }]
+rows = [
+  ["1"],
+  ["2"],
+]
+query = "SELECT k, NULL AS n FROM input UNION ALL SELECT k, k * 2 FROM input ORDER BY k, n NULLS FIRST"
+order = "ordered"
+tags = ["null"]

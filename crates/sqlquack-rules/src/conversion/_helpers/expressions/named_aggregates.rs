@@ -31,9 +31,9 @@ use crate::conversion::_helpers::support::tree::{
 use crate::conversion::_helpers::support::typed_leaves::compared_value;
 use crate::conversion::constants::{
     ANY_VALUE_CHOICE, MAX_BY_FUNCTION, MEDIAN_EXACT_DIGITS, MEDIAN_EXTRA_DIGITS, MEDIAN_RULE,
-    MODE_EMPTY_BOOLEAN, MODE_EMPTY_DATE, MODE_EMPTY_NUMBER, MODE_EMPTY_TEXT, MODE_RULE, MODE_TIES,
-    MULTI_COUNT, NAMED_AGGREGATE_NAMES, NAMED_AGGREGATES, OBJECT_AGG_VALUE_PAIR,
-    PERCENTILE_INTERPOLATION, TO_VARIANT_RULE, VALUE_AT_EXTREME_KEY, WINDOWED_NAMED_AGGREGATES,
+    MODE_OF_NO_ROWS, MODE_RULE, MODE_TIES, MULTI_COUNT, NAMED_AGGREGATE_NAMES, NAMED_AGGREGATES,
+    OBJECT_AGG_VALUE_PAIR, PERCENTILE_INTERPOLATION, TO_VARIANT_RULE, VALUE_AT_EXTREME_KEY,
+    WINDOWED_NAMED_AGGREGATES,
 };
 
 /// Whether `name` is an aggregate converted here.
@@ -173,6 +173,9 @@ pub(crate) fn named_aggregate(
         ("MODE", [value]) if window.is_none() && mode_value(value.data_type) => {
             let _rule = log.rule(MODE_RULE);
             diverge(site.context, MODE_TIES, &construct)?;
+            if !site.scope.grouped {
+                diverge(site.context, MODE_OF_NO_ROWS, &construct)?;
+            }
             let mode = most_frequent(&value.sql, value.data_type, log).map_err(refuse)?;
             let sql = match site.scope.grouped {
                 true => mode,
@@ -260,16 +263,12 @@ fn single_value(
     ))
 }
 
-/// What Snowflake's MODE without GROUP BY returns over no rows: the type's zero, as recorded.
+/// MODE of no rows raises: Snowflake gives a zero value in some plans and NULL in others.
 fn mode_of_no_rows(data_type: SnowflakeType, log: &ProvenanceLog) -> Result<String, String> {
-    let zero = match data_type {
-        SnowflakeType::Number { .. } | SnowflakeType::Float => MODE_EMPTY_NUMBER,
-        SnowflakeType::Varchar => MODE_EMPTY_TEXT,
-        SnowflakeType::Date | SnowflakeType::TimestampNtz { .. } => MODE_EMPTY_DATE,
-        SnowflakeType::Boolean => MODE_EMPTY_BOOLEAN,
-        other => return Err(format!("MODE without GROUP BY of {other} over no rows")),
-    };
-    cast(zero, data_type, log)
+    let empty = raised(&format!(
+        "{MODE_OF_NO_ROWS}: MODE over no rows, which Snowflake answers differently by plan"
+    ));
+    cast(&empty, data_type, log)
 }
 
 /// Whether MODE's equality of `data_type` values is DuckDB's, so both engines count them alike.

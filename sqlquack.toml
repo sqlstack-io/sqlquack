@@ -379,6 +379,18 @@ default = "warn"
 strict = "refuse"
 reason = "Snowflake's PERCENTILE_CONT interpolates between two different values with rounding error in the last digits that recordings do not reproduce from any exact or double formula. The converted SQL returns the value where the fraction lands on a row, or between equal values, and raises where it would interpolate. MEDIAN of NUMBER was recorded as a double average that loses digits for wide values; the converted SQL returns the exact median where both middle values are below 10^(12-s) for scale s, and raises otherwise. The failure is loud, never a wrong value."
 
+[divergences.time_zone_spelling]
+constructs = ["fn:CONVERT_TIMEZONE"]
+default = "warn"
+strict = "refuse"
+reason = "Snowflake reads a time zone name exactly, case included, and rejects spellings such as 'utc' or 'europe/london' that DuckDB accepts. A zone given per row converts only for names recorded as accepted, and the converted SQL raises for any other name rather than convert a value Snowflake would reject."
+
+[divergences.mode_of_no_rows]
+constructs = ["fn:MODE"]
+default = "warn"
+strict = "refuse"
+reason = "MODE without GROUP BY over no rows returns a zero value in some Snowflake plans and NULL in others. The converted SQL raises when the input has no rows rather than pick one."
+
 [divergences.date_text_spelling]
 constructs = ["fn:TRY_TO_DATE", "fn:TO_DATE", "node:try_cast", "node:cast", "fn:TO_TIMESTAMP", "fn:TO_TIMESTAMP_NTZ", "fn:DATE", "fn:TRY_TO_TIMESTAMP", "fn:TRY_TO_TIMESTAMP_NTZ", "fn:TRY_TO_TIMESTAMP_TZ", "fn:TO_TIME", "fn:TRY_TO_TIME", "node:eq", "node:neq", "node:lt", "node:lte", "node:gt", "node:gte", "node:in"]
 default = "warn"
