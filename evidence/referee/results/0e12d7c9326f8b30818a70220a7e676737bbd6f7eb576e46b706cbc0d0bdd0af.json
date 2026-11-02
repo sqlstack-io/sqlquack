@@ -1,0 +1,110 @@
+{
+  "case_hash": "0e12d7c9326f8b30818a70220a7e676737bbd6f7eb576e46b706cbc0d0bdd0af",
+  "columns": [
+    {
+      "internal_size": null,
+      "name": "PLACED_DATE_LOCAL",
+      "nullable": true,
+      "precision": null,
+      "scale": null,
+      "type_code": 3,
+      "type_name": "DATE"
+    },
+    {
+      "internal_size": 16777216,
+      "name": "STATUS",
+      "nullable": true,
+      "precision": null,
+      "scale": null,
+      "type_code": 2,
+      "type_name": "TEXT"
+    },
+    {
+      "internal_size": null,
+      "name": "ROW_COUNT",
+      "nullable": false,
+      "precision": 38,
+      "scale": 0,
+      "type_code": 0,
+      "type_name": "FIXED"
+    },
+    {
+      "internal_size": null,
+      "name": "TOTAL_TOTAL_AMOUNT",
+      "nullable": true,
+      "precision": 18,
+      "scale": 2,
+      "type_code": 0,
+      "type_name": "FIXED"
+    },
+    {
+      "internal_size": null,
+      "name": "AVERAGE_TOTAL_AMOUNT",
+      "nullable": true,
+      "precision": 18,
+      "scale": 2,
+      "type_code": 0,
+      "type_name": "FIXED"
+    },
+    {
+      "internal_size": null,
+      "name": "TOTAL_ORDER_ITEMS_ITEM_PRICE_AMOUNT",
+      "nullable": true,
+      "precision": 18,
+      "scale": 2,
+      "type_code": 0,
+      "type_name": "FIXED"
+    },
+    {
+      "internal_size": null,
+      "name": "AVERAGE_ORDER_ITEMS_ITEM_PRICE_AMOUNT",
+      "nullable": true,
+      "precision": 18,
+      "scale": 2,
+      "type_code": 0,
+      "type_name": "FIXED"
+    },
+    {
+      "internal_size": null,
+      "name": "TOTAL_FEES_FEE_AMOUNT",
+      "nullable": true,
+      "precision": 18,
+      "scale": 2,
+      "type_code": 0,
+      "type_name": "FIXED"
+    },
+    {
+      "internal_size": null,
+      "name": "AVERAGE_FEES_FEE_AMOUNT",
+      "nullable": true,
+      "precision": 18,
+      "scale": 2,
+      "type_code": 0,
+      "type_name": "FIXED"
+    },
+    {
+      "internal_size": null,
+      "name": "ORDER_ITEMS_ITEM_PRICE_AMOUNT_SHARE_OF_TOTAL_AMOUNT",
+      "nullable": true,
+      "precision": 9,
+      "scale": 4,
+      "type_code": 0,
+      "type_name": "FIXED"
+    }
+  ],
+  "connector": "snowflake-connector-python 4.7.2",
+  "describe_error": null,
+  "effective_parameters": {
+    "QUOTED_IDENTIFIERS_IGNORE_CASE": "false",
+    "TIMESTAMP_TYPE_MAPPING": "TIMESTAMP_NTZ",
+    "TIMEZONE": "UTC"
+  },
+  "environment_sha256": "fae437c879c27dc4a9ac57f23baa0dc0b7f812054316eddc6d8c51121d062994",
+  "error": null,
+  "format": 1,
+  "outcome": "accepted",
+  "recorded_at": "2026-11-02T05:19:43Z",
+  "recorder": "sqlquack-record 0.1.0",
+  "syntax_only": false,
+  "warehouse_version": "10.39.101"
+}

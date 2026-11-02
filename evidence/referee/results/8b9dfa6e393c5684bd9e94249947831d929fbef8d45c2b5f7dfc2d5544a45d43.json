@@ -1,0 +1,23 @@
+{
+  "case_hash": "8b9dfa6e393c5684bd9e94249947831d929fbef8d45c2b5f7dfc2d5544a45d43",
+  "columns": null,
+  "connector": "snowflake-connector-python 4.7.2",
+  "describe_error": null,
+  "effective_parameters": {
+    "QUOTED_IDENTIFIERS_IGNORE_CASE": "false",
+    "TIMESTAMP_TYPE_MAPPING": "TIMESTAMP_NTZ",
+    "TIMEZONE": "UTC"
+  },
+  "environment_sha256": "c24c5e761af06cf85c2e3eeb40fa46740d25922eb8445d8777d280b4d878c479",
+  "error": {
+    "errno": 1044,
+    "message": "SQL compilation error: error line 1 at position 26 Invalid argument types for function 'DATE_ADDMONTHSEOMTODATE': (BOOLEAN, DATE)",
+    "sqlstate": "42P13"
+  },
+  "format": 1,
+  "outcome": "rejected",
+  "recorded_at": "2026-11-02T04:26:37Z",
+  "recorder": "sqlquack-record 0.1.0",
+  "syntax_only": false,
+  "warehouse_version": "10.39.101"
+}

@@ -1,0 +1,119 @@
+{
+  "case_hash": "3ad7d53e397449f62a52aed67afe5cd3d4f9e0017883728d30697f2c02e90e0e",
+  "columns": [
+    {
+      "internal_size": 16777216,
+      "name": "SLOT_ID",
+      "nullable": false,
+      "precision": null,
+      "scale": null,
+      "type_code": 2,
+      "type_name": "TEXT"
+    },
+    {
+      "internal_size": 134217728,
+      "name": "WAREHOUSE_CODE",
+      "nullable": true,
+      "precision": null,
+      "scale": null,
+      "type_code": 2,
+      "type_name": "TEXT"
+    },
+    {
+      "internal_size": null,
+      "name": "SLOT_START_LOCAL",
+      "nullable": true,
+      "precision": 0,
+      "scale": 9,
+      "type_code": 8,
+      "type_name": "TIMESTAMP_NTZ"
+    },
+    {
+      "internal_size": null,
+      "name": "SLOT_END_LOCAL",
+      "nullable": true,
+      "precision": 0,
+      "scale": 9,
+      "type_code": 8,
+      "type_name": "TIMESTAMP_NTZ"
+    },
+    {
+      "internal_size": null,
+      "name": "SLOT_MINUTES",
+      "nullable": true,
+      "precision": 38,
+      "scale": 0,
+      "type_code": 0,
+      "type_name": "FIXED"
+    },
+    {
+      "internal_size": null,
+      "name": "CAPACITY",
+      "nullable": true,
+      "precision": 38,
+      "scale": 0,
+      "type_code": 0,
+      "type_name": "FIXED"
+    },
+    {
+      "internal_size": null,
+      "name": "BOOKED",
+      "nullable": false,
+      "precision": 38,
+      "scale": 0,
+      "type_code": 0,
+      "type_name": "FIXED"
+    },
+    {
+      "internal_size": null,
+      "name": "REMAINING_CAPACITY",
+      "nullable": true,
+      "precision": 38,
+      "scale": 0,
+      "type_code": 0,
+      "type_name": "FIXED"
+    },
+    {
+      "internal_size": null,
+      "name": "EXCLUDED_POSTCODE_PREFIXES",
+      "nullable": true,
+      "precision": null,
+      "scale": null,
+      "type_code": 10,
+      "type_name": "ARRAY"
+    },
+    {
+      "internal_size": null,
+      "name": "SOURCE_SEQ",
+      "nullable": false,
+      "precision": 38,
+      "scale": 0,
+      "type_code": 0,
+      "type_name": "FIXED"
+    },
+    {
+      "internal_size": null,
+      "name": "SOURCE_LOADED_AT",
+      "nullable": false,
+      "precision": 0,
+      "scale": 9,
+      "type_code": 8,
+      "type_name": "TIMESTAMP_NTZ"
+    }
+  ],
+  "connector": "snowflake-connector-python 4.7.2",
+  "describe_error": null,
+  "effective_parameters": {
+    "QUOTED_IDENTIFIERS_IGNORE_CASE": "false",
+    "TIMESTAMP_TYPE_MAPPING": "TIMESTAMP_NTZ",
+    "TIMEZONE": "UTC"
+  },
+  "environment_sha256": "30b511a8a93e546389f18cd07def603dbed9fead17ed080902f68e566b0a848e",
+  "error": null,
+  "format": 1,
+  "outcome": "accepted",
+  "recorded_at": "2026-11-02T04:42:25Z",
+  "recorder": "sqlquack-record 0.1.0",
+  "syntax_only": false,
+  "warehouse_version": "10.39.101"
+}

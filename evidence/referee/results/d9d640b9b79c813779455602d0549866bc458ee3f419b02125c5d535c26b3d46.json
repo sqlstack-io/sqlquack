@@ -1,0 +1,92 @@
+{
+  "case_hash": "d9d640b9b79c813779455602d0549866bc458ee3f419b02125c5d535c26b3d46",
+  "columns": [
+    {
+      "internal_size": 16777216,
+      "name": "TICKET_ID",
+      "nullable": false,
+      "precision": null,
+      "scale": null,
+      "type_code": 2,
+      "type_name": "TEXT"
+    },
+    {
+      "internal_size": 16777216,
+      "name": "CUSTOMER_ID",
+      "nullable": true,
+      "precision": null,
+      "scale": null,
+      "type_code": 2,
+      "type_name": "TEXT"
+    },
+    {
+      "internal_size": null,
+      "name": "TICKET_NUMBER_FOR_CUSTOMER",
+      "nullable": true,
+      "precision": 38,
+      "scale": 0,
+      "type_code": 0,
+      "type_name": "FIXED"
+    },
+    {
+      "internal_size": null,
+      "name": "DAYS_SINCE_PREVIOUS_TICKET",
+      "nullable": true,
+      "precision": 38,
+      "scale": 0,
+      "type_code": 0,
+      "type_name": "FIXED"
+    },
+    {
+      "internal_size": null,
+      "name": "CSAT_SCORE",
+      "nullable": true,
+      "precision": 38,
+      "scale": 0,
+      "type_code": 0,
+      "type_name": "FIXED"
+    },
+    {
+      "internal_size": null,
+      "name": "ROLLING_CSAT_AVG",
+      "nullable": true,
+      "precision": 6,
+      "scale": 3,
+      "type_code": 0,
+      "type_name": "FIXED"
+    },
+    {
+      "internal_size": null,
+      "name": "IS_REPEAT_CONTACT_7D",
+      "nullable": true,
+      "precision": null,
+      "scale": null,
+      "type_code": 13,
+      "type_name": "BOOLEAN"
+    },
+    {
+      "internal_size": 16777216,
+      "name": "CONTACT_REASON",
+      "nullable": true,
+      "precision": null,
+      "scale": null,
+      "type_code": 2,
+      "type_name": "TEXT"
+    }
+  ],
+  "connector": "snowflake-connector-python 4.7.2",
+  "describe_error": null,
+  "effective_parameters": {
+    "QUOTED_IDENTIFIERS_IGNORE_CASE": "false",
+    "TIMESTAMP_TYPE_MAPPING": "TIMESTAMP_NTZ",
+    "TIMEZONE": "UTC"
+  },
+  "environment_sha256": "911baf0dc8833fc8e10c4d0499cc551064ae5e386bbcac9c96fa5a4f559aa19a",
+  "error": null,
+  "format": 1,
+  "outcome": "accepted",
+  "recorded_at": "2026-11-02T06:16:59Z",
+  "recorder": "sqlquack-record 0.1.0",
+  "syntax_only": false,
+  "warehouse_version": "10.39.101"
+}

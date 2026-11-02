@@ -1,0 +1,23 @@
+{
+  "case_hash": "10cbf522da0744b85fe115a0125e4d97a615a6a1368c0fdba3571607e1b334d6",
+  "columns": null,
+  "connector": "snowflake-connector-python 4.7.2",
+  "describe_error": null,
+  "effective_parameters": {
+    "QUOTED_IDENTIFIERS_IGNORE_CASE": "false",
+    "TIMESTAMP_TYPE_MAPPING": "TIMESTAMP_NTZ",
+    "TIMEZONE": "UTC"
+  },
+  "environment_sha256": "30b511a8a93e546389f18cd07def603dbed9fead17ed080902f68e566b0a848e",
+  "error": {
+    "errno": 904,
+    "message": "SQL compilation error: error line 13 at position 48 invalid identifier 'W.ITEMS'",
+    "sqlstate": "42000"
+  },
+  "format": 1,
+  "outcome": "rejected",
+  "recorded_at": "2026-11-02T04:42:25Z",
+  "recorder": "sqlquack-record 0.1.0",
+  "syntax_only": false,
+  "warehouse_version": "10.39.101"
+}

@@ -1,0 +1,12 @@
+{
+  "format": 1,
+  "name": "generated_structured",
+  "session_parameters": {
+    "QUOTED_IDENTIFIERS_IGNORE_CASE": false,
+    "TIMESTAMP_TYPE_MAPPING": "TIMESTAMP_NTZ",
+    "TIMEZONE": "UTC"
+  },
+  "setup_sql": [
+    "CREATE TEMPORARY TABLE structured_types (c_number NUMBER(38, 0), c_numbers ARRAY(NUMBER(38, 0)), c_labels ARRAY(VARCHAR), c_record OBJECT(id NUMBER(38, 0), label VARCHAR), c_map MAP(VARCHAR, NUMBER(38, 0)), c_vector VECTOR(FLOAT, 3), c_int_vector VECTOR(INT, 3))"
+  ]
+}

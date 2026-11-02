@@ -13,3 +13,7 @@ class StatementNotRecordableError(RecorderError):
 
 class UnrecordableResultError(RecorderError):
     """The warehouse answered, but not in a form whose types the recorder can keep exactly."""
+
+
+class InternalCompileError(RecorderError):
+    """The warehouse failed internally while compiling one statement; the session still works."""

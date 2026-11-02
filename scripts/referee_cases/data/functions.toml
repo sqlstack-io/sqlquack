@@ -1,0 +1,260 @@
+# Snowflake built-ins the generator calls: each with its canonical arguments, written as the
+# argument kinds below, and its smallest and largest argument count (no maximum: variadic).
+# Shapes: scalar (the default), aggregate, or window (called with an OVER clause).
+
+functions = [
+  # Numeric
+  { name = "ABS", arguments = "number", minimum = 1, maximum = 1 },
+  { name = "CEIL", arguments = "decimal integer", minimum = 1, maximum = 2 },
+  { name = "FLOOR", arguments = "decimal integer", minimum = 1, maximum = 2 },
+  { name = "ROUND", arguments = "decimal integer rounding", minimum = 1, maximum = 3 },
+  { name = "TRUNCATE", arguments = "decimal integer", minimum = 1, maximum = 2 },
+  { name = "SIGN", arguments = "number", minimum = 1, maximum = 1 },
+  { name = "SQRT", arguments = "float", minimum = 1, maximum = 1 },
+  { name = "SQUARE", arguments = "number", minimum = 1, maximum = 1 },
+  { name = "CBRT", arguments = "float", minimum = 1, maximum = 1 },
+  { name = "EXP", arguments = "float", minimum = 1, maximum = 1 },
+  { name = "LN", arguments = "float", minimum = 1, maximum = 1 },
+  { name = "LOG", arguments = "integer float", minimum = 2, maximum = 2 },
+  { name = "POWER", arguments = "number integer", minimum = 2, maximum = 2 },
+  { name = "MOD", arguments = "number integer", minimum = 2, maximum = 2 },
+  { name = "DIV0", arguments = "number number", minimum = 2, maximum = 2 },
+  { name = "DIV0NULL", arguments = "number number", minimum = 2, maximum = 2 },
+  { name = "GREATEST", arguments = "number number", minimum = 1 },
+  { name = "LEAST", arguments = "number number", minimum = 1 },
+  { name = "WIDTH_BUCKET", arguments = "number integer integer integer", minimum = 4, maximum = 4 },
+  { name = "SIN", arguments = "float", minimum = 1, maximum = 1 },
+  { name = "ATAN2", arguments = "float float", minimum = 2, maximum = 2 },
+  { name = "DEGREES", arguments = "float", minimum = 1, maximum = 1 },
+  { name = "PI", arguments = "", minimum = 0, maximum = 0 },
+  { name = "FACTORIAL", arguments = "integer", minimum = 1, maximum = 1 },
+  { name = "BITAND", arguments = "number number", minimum = 2, maximum = 3 },
+  { name = "HAVERSINE", arguments = "float float float float", minimum = 4, maximum = 4 },
+  # Text
+  { name = "LENGTH", arguments = "text", minimum = 1, maximum = 1 },
+  { name = "LEN", arguments = "text", minimum = 1, maximum = 1 },
+  { name = "UPPER", arguments = "text", minimum = 1, maximum = 1 },
+  { name = "LOWER", arguments = "text", minimum = 1, maximum = 1 },
+  { name = "INITCAP", arguments = "text chars", minimum = 1, maximum = 2 },
+  { name = "TRIM", arguments = "text chars", minimum = 1, maximum = 2 },
+  { name = "LTRIM", arguments = "text chars", minimum = 1, maximum = 2 },
+  { name = "RTRIM", arguments = "text chars", minimum = 1, maximum = 2 },
+  { name = "LPAD", arguments = "text integer chars", minimum = 2, maximum = 3 },
+  { name = "RPAD", arguments = "text integer chars", minimum = 2, maximum = 3 },
+  { name = "SUBSTR", arguments = "text integer integer", minimum = 2, maximum = 3 },
+  { name = "SUBSTRING", arguments = "text integer integer", minimum = 2, maximum = 3 },
+  { name = "LEFT", arguments = "text integer", minimum = 2, maximum = 2 },
+  { name = "RIGHT", arguments = "text integer", minimum = 2, maximum = 2 },
+  { name = "REPLACE", arguments = "text chars chars", minimum = 2, maximum = 3 },
+  { name = "TRANSLATE", arguments = "text chars chars", minimum = 3, maximum = 3 },
+  { name = "REVERSE", arguments = "text", minimum = 1, maximum = 1 },
+  { name = "REPEAT", arguments = "text integer", minimum = 2, maximum = 2 },
+  { name = "CONCAT", arguments = "text text", minimum = 1 },
+  { name = "CONCAT_WS", arguments = "separator text text", minimum = 2 },
+  { name = "SPLIT", arguments = "text separator", minimum = 2, maximum = 2 },
+  { name = "SPLIT_PART", arguments = "text separator integer", minimum = 3, maximum = 3 },
+  { name = "STRTOK", arguments = "text separator integer", minimum = 1, maximum = 3 },
+  { name = "CHARINDEX", arguments = "chars text integer", minimum = 2, maximum = 3 },
+  { name = "POSITION", arguments = "chars text integer", minimum = 2, maximum = 3 },
+  { name = "CONTAINS", arguments = "text chars", minimum = 2, maximum = 2 },
+  { name = "STARTSWITH", arguments = "text chars", minimum = 2, maximum = 2 },
+  { name = "ENDSWITH", arguments = "text chars", minimum = 2, maximum = 2 },
+  { name = "REGEXP_LIKE", arguments = "text pattern flags", minimum = 2, maximum = 3 },
+  { name = "REGEXP_SUBSTR", arguments = "text pattern one one flags one", minimum = 2, maximum = 6 },
+  { name = "REGEXP_REPLACE", arguments = "text pattern chars one one flags", minimum = 2, maximum = 6 },
+  { name = "REGEXP_COUNT", arguments = "text pattern one flags", minimum = 2, maximum = 4 },
+  { name = "REGEXP_INSTR", arguments = "text pattern one one one flags one", minimum = 2, maximum = 7 },
+  { name = "ASCII", arguments = "text", minimum = 1, maximum = 1 },
+  { name = "CHR", arguments = "integer", minimum = 1, maximum = 1 },
+  { name = "MD5", arguments = "text", minimum = 1, maximum = 1 },
+  { name = "SHA2", arguments = "text integer", minimum = 1, maximum = 2 },
+  { name = "HASH", arguments = "text number", minimum = 1 },
+  { name = "EDITDISTANCE", arguments = "text chars integer", minimum = 2, maximum = 3 },
+  { name = "SOUNDEX", arguments = "text", minimum = 1, maximum = 1 },
+  { name = "BASE64_ENCODE", arguments = "text integer", minimum = 1, maximum = 3 },
+  { name = "HEX_ENCODE", arguments = "text one", minimum = 1, maximum = 2 },
+  { name = "UUID_STRING", arguments = "", minimum = 0, maximum = 2 },
+  { name = "SPACE", arguments = "integer", minimum = 1, maximum = 1 },
+  { name = "INSERT", arguments = "text integer integer chars", minimum = 4, maximum = 4 },
+  # Conditional
+  { name = "IFF", arguments = "boolean number number", minimum = 3, maximum = 3 },
+  { name = "IFNULL", arguments = "number number", minimum = 2, maximum = 2 },
+  { name = "NVL", arguments = "number number", minimum = 2, maximum = 2 },
+  { name = "NVL2", arguments = "number number number", minimum = 3, maximum = 3 },
+  { name = "NULLIF", arguments = "number number", minimum = 2, maximum = 2 },
+  { name = "COALESCE", arguments = "number number", minimum = 1 },
+  { name = "ZEROIFNULL", arguments = "number", minimum = 1, maximum = 1 },
+  { name = "NULLIFZERO", arguments = "number", minimum = 1, maximum = 1 },
+  { name = "DECODE", arguments = "number one chars", minimum = 3 },
+  { name = "EQUAL_NULL", arguments = "number number", minimum = 2, maximum = 2 },
+  { name = "BOOLAND", arguments = "boolean boolean", minimum = 2, maximum = 2 },
+  { name = "IS_NULL_VALUE", arguments = "variant", minimum = 1, maximum = 1 },
+  # Dates and times
+  { name = "CURRENT_DATE", arguments = "", minimum = 0, maximum = 0 },
+  { name = "CURRENT_TIMESTAMP", arguments = "integer", minimum = 0, maximum = 1 },
+  { name = "SYSDATE", arguments = "", minimum = 0, maximum = 0 },
+  { name = "DATEADD", arguments = "part integer date", minimum = 3, maximum = 3 },
+  { name = "DATEDIFF", arguments = "part date date", minimum = 3, maximum = 3 },
+  { name = "TIMESTAMPADD", arguments = "part integer timestamp", minimum = 3, maximum = 3 },
+  { name = "TIMESTAMPDIFF", arguments = "part timestamp timestamp", minimum = 3, maximum = 3 },
+  { name = "DATE_TRUNC", arguments = "quoted_part timestamp", minimum = 2, maximum = 2 },
+  { name = "DATE_PART", arguments = "quoted_part timestamp", minimum = 2, maximum = 2 },
+  { name = "YEAR", arguments = "date", minimum = 1, maximum = 1 },
+  { name = "MONTH", arguments = "date", minimum = 1, maximum = 1 },
+  { name = "DAY", arguments = "date", minimum = 1, maximum = 1 },
+  { name = "DAYOFWEEK", arguments = "date", minimum = 1, maximum = 1 },
+  { name = "DAYOFYEAR", arguments = "date", minimum = 1, maximum = 1 },
+  { name = "WEEK", arguments = "date", minimum = 1, maximum = 1 },
+  { name = "QUARTER", arguments = "date", minimum = 1, maximum = 1 },
+  { name = "HOUR", arguments = "timestamp", minimum = 1, maximum = 1 },
+  { name = "MINUTE", arguments = "time", minimum = 1, maximum = 1 },
+  { name = "SECOND", arguments = "timestamp_tz", minimum = 1, maximum = 1 },
+  { name = "LAST_DAY", arguments = "date quoted_part", minimum = 1, maximum = 2 },
+  { name = "NEXT_DAY", arguments = "date weekday", minimum = 2, maximum = 2 },
+  { name = "PREVIOUS_DAY", arguments = "date weekday", minimum = 2, maximum = 2 },
+  { name = "ADD_MONTHS", arguments = "date integer", minimum = 2, maximum = 2 },
+  { name = "MONTHS_BETWEEN", arguments = "date date", minimum = 2, maximum = 2 },
+  { name = "TO_DATE", arguments = "text date_format", minimum = 1, maximum = 2 },
+  { name = "DATE_FROM_PARTS", arguments = "integer integer integer", minimum = 3, maximum = 3 },
+  { name = "TIME_FROM_PARTS", arguments = "integer integer integer integer", minimum = 3, maximum = 4 },
+  { name = "TO_TIMESTAMP", arguments = "text date_format", minimum = 1, maximum = 2 },
+  { name = "TO_TIMESTAMP_NTZ", arguments = "text date_format", minimum = 1, maximum = 2 },
+  { name = "TO_TIMESTAMP_TZ", arguments = "text date_format", minimum = 1, maximum = 2 },
+  { name = "TO_TIME", arguments = "text", minimum = 1, maximum = 2 },
+  { name = "CONVERT_TIMEZONE", arguments = "zone zone timestamp", minimum = 2, maximum = 3 },
+  { name = "DAYNAME", arguments = "date", minimum = 1, maximum = 1 },
+  { name = "MONTHNAME", arguments = "date", minimum = 1, maximum = 1 },
+  { name = "TIME_SLICE", arguments = "timestamp integer quoted_part", minimum = 3, maximum = 4 },
+  # Conversion
+  { name = "TO_CHAR", arguments = "number", minimum = 1, maximum = 2 },
+  { name = "TO_VARCHAR", arguments = "date date_format", minimum = 1, maximum = 2 },
+  { name = "TO_NUMBER", arguments = "text integer integer", minimum = 1, maximum = 4 },
+  { name = "TO_DOUBLE", arguments = "text", minimum = 1, maximum = 2 },
+  { name = "TO_BOOLEAN", arguments = "text", minimum = 1, maximum = 1 },
+  { name = "TRY_TO_NUMBER", arguments = "text integer integer", minimum = 1, maximum = 4 },
+  { name = "TRY_TO_DATE", arguments = "text date_format", minimum = 1, maximum = 2 },
+  { name = "TRY_TO_TIMESTAMP", arguments = "text date_format", minimum = 1, maximum = 2 },
+  { name = "TRY_TO_BOOLEAN", arguments = "text", minimum = 1, maximum = 1 },
+  { name = "TO_BINARY", arguments = "text", minimum = 1, maximum = 2 },
+  { name = "TO_VARIANT", arguments = "number", minimum = 1, maximum = 1 },
+  { name = "TO_OBJECT", arguments = "variant", minimum = 1, maximum = 1 },
+  { name = "TO_ARRAY", arguments = "number", minimum = 1, maximum = 1 },
+  { name = "TO_JSON", arguments = "variant", minimum = 1, maximum = 1 },
+  { name = "PARSE_JSON", arguments = "json", minimum = 1, maximum = 2 },
+  { name = "TRY_PARSE_JSON", arguments = "json", minimum = 1, maximum = 2 },
+  { name = "TYPEOF", arguments = "variant", minimum = 1, maximum = 1 },
+  # Semi-structured
+  { name = "GET", arguments = "variant key", minimum = 2, maximum = 2 },
+  { name = "GET_PATH", arguments = "variant path", minimum = 2, maximum = 2 },
+  { name = "OBJECT_CONSTRUCT", arguments = "key number", minimum = 0 },
+  { name = "OBJECT_INSERT", arguments = "object key number boolean", minimum = 3, maximum = 4 },
+  { name = "OBJECT_DELETE", arguments = "object key", minimum = 2 },
+  { name = "OBJECT_PICK", arguments = "object key", minimum = 2 },
+  { name = "OBJECT_KEYS", arguments = "object", minimum = 1, maximum = 1 },
+  { name = "ARRAY_CONSTRUCT", arguments = "number number", minimum = 0 },
+  { name = "ARRAY_SIZE", arguments = "array", minimum = 1, maximum = 1 },
+  { name = "ARRAY_CONTAINS", arguments = "variant array", minimum = 2, maximum = 2 },
+  { name = "ARRAY_APPEND", arguments = "array number", minimum = 2, maximum = 2 },
+  { name = "ARRAY_CAT", arguments = "array array", minimum = 2, maximum = 2 },
+  { name = "ARRAY_COMPACT", arguments = "array", minimum = 1, maximum = 1 },
+  { name = "ARRAY_DISTINCT", arguments = "array", minimum = 1, maximum = 1 },
+  { name = "ARRAY_FLATTEN", arguments = "array", minimum = 1, maximum = 1 },
+  { name = "ARRAY_INTERSECTION", arguments = "array array", minimum = 2, maximum = 2 },
+  { name = "ARRAY_POSITION", arguments = "variant array", minimum = 2, maximum = 2 },
+  { name = "ARRAY_SLICE", arguments = "array integer integer", minimum = 3, maximum = 3 },
+  { name = "ARRAY_TO_STRING", arguments = "array separator", minimum = 2, maximum = 2 },
+  { name = "ARRAY_SORT", arguments = "array boolean boolean", minimum = 1, maximum = 3 },
+  { name = "ARRAY_GENERATE_RANGE", arguments = "integer integer integer", minimum = 2, maximum = 3 },
+  { name = "ARRAYS_OVERLAP", arguments = "array array", minimum = 2, maximum = 2 },
+  { name = "ARRAY_EXCEPT", arguments = "array array", minimum = 2, maximum = 2 },
+  { name = "ARRAY_INSERT", arguments = "array integer variant", minimum = 3, maximum = 3 },
+  { name = "ARRAY_REMOVE", arguments = "array variant", minimum = 2, maximum = 2 },
+  { name = "ARRAY_REVERSE", arguments = "array", minimum = 1, maximum = 1 },
+  { name = "ARRAY_MAX", arguments = "array", minimum = 1, maximum = 1 },
+  { name = "IS_ARRAY", arguments = "variant", minimum = 1, maximum = 1 },
+  { name = "AS_VARCHAR", arguments = "variant", minimum = 1, maximum = 1 },
+  { name = "AS_INTEGER", arguments = "variant", minimum = 1, maximum = 1 },
+  { name = "STRIP_NULL_VALUE", arguments = "variant", minimum = 1, maximum = 1 },
+  { name = "CHECK_JSON", arguments = "text", minimum = 1, maximum = 1 },
+  { name = "JSON_EXTRACT_PATH_TEXT", arguments = "text path", minimum = 2, maximum = 2 },
+  # Aggregates
+  { name = "COUNT", arguments = "number number", minimum = 1, shape = "aggregate" },
+  { name = "SUM", arguments = "number", minimum = 1, maximum = 1, shape = "aggregate" },
+  { name = "AVG", arguments = "number", minimum = 1, maximum = 1, shape = "aggregate" },
+  { name = "MIN", arguments = "number", minimum = 1, maximum = 1, shape = "aggregate" },
+  { name = "MAX", arguments = "number", minimum = 1, maximum = 1, shape = "aggregate" },
+  { name = "MEDIAN", arguments = "number", minimum = 1, maximum = 1, shape = "aggregate" },
+  { name = "MODE", arguments = "number", minimum = 1, maximum = 1, shape = "aggregate" },
+  { name = "STDDEV", arguments = "number", minimum = 1, maximum = 1, shape = "aggregate" },
+  { name = "VARIANCE", arguments = "number", minimum = 1, maximum = 1, shape = "aggregate" },
+  { name = "COUNT_IF", arguments = "boolean", minimum = 1, maximum = 1, shape = "aggregate" },
+  { name = "ANY_VALUE", arguments = "number", minimum = 1, maximum = 1, shape = "aggregate" },
+  { name = "LISTAGG", arguments = "text separator", minimum = 1, maximum = 2, shape = "aggregate" },
+  { name = "ARRAY_AGG", arguments = "number", minimum = 1, maximum = 1, shape = "aggregate" },
+  { name = "OBJECT_AGG", arguments = "text variant", minimum = 2, maximum = 2, shape = "aggregate" },
+  { name = "BOOLAND_AGG", arguments = "boolean", minimum = 1, maximum = 1, shape = "aggregate" },
+  { name = "BOOLOR_AGG", arguments = "boolean", minimum = 1, maximum = 1, shape = "aggregate" },
+  { name = "APPROX_COUNT_DISTINCT", arguments = "number number", minimum = 1, shape = "aggregate" },
+  { name = "HASH_AGG", arguments = "number number", minimum = 1, shape = "aggregate" },
+  { name = "CORR", arguments = "float float", minimum = 2, maximum = 2, shape = "aggregate" },
+  { name = "COVAR_SAMP", arguments = "float float", minimum = 2, maximum = 2, shape = "aggregate" },
+  { name = "MAX_BY", arguments = "text number integer", minimum = 2, maximum = 3, shape = "aggregate" },
+  { name = "MIN_BY", arguments = "text number integer", minimum = 2, maximum = 3, shape = "aggregate" },
+  { name = "APPROX_PERCENTILE", arguments = "number fraction", minimum = 2, maximum = 2, shape = "aggregate" },
+  { name = "KURTOSIS", arguments = "float", minimum = 1, maximum = 1, shape = "aggregate" },
+  { name = "SKEW", arguments = "float", minimum = 1, maximum = 1, shape = "aggregate" },
+  { name = "BITAND_AGG", arguments = "number", minimum = 1, maximum = 1, shape = "aggregate" },
+  { name = "REGR_SLOPE", arguments = "float float", minimum = 2, maximum = 2, shape = "aggregate" },
+  # Window functions
+  { name = "ROW_NUMBER", arguments = "", minimum = 0, maximum = 0, shape = "window" },
+  { name = "RANK", arguments = "", minimum = 0, maximum = 0, shape = "window" },
+  { name = "DENSE_RANK", arguments = "", minimum = 0, maximum = 0, shape = "window" },
+  { name = "PERCENT_RANK", arguments = "", minimum = 0, maximum = 0, shape = "window" },
+  { name = "CUME_DIST", arguments = "", minimum = 0, maximum = 0, shape = "window" },
+  { name = "NTILE", arguments = "integer", minimum = 1, maximum = 1, shape = "window" },
+  { name = "LAG", arguments = "number integer number", minimum = 1, maximum = 3, shape = "window" },
+  { name = "LEAD", arguments = "number integer number", minimum = 1, maximum = 3, shape = "window" },
+  { name = "FIRST_VALUE", arguments = "number", minimum = 1, maximum = 1, shape = "window" },
+  { name = "LAST_VALUE", arguments = "number", minimum = 1, maximum = 1, shape = "window" },
+  { name = "NTH_VALUE", arguments = "number integer", minimum = 2, maximum = 2, shape = "window" },
+  { name = "RATIO_TO_REPORT", arguments = "number", minimum = 1, maximum = 1, shape = "window" },
+  { name = "CONDITIONAL_CHANGE_EVENT", arguments = "number", minimum = 1, maximum = 1, shape = "window" },
+  { name = "CONDITIONAL_TRUE_EVENT", arguments = "boolean", minimum = 1, maximum = 1, shape = "window" },
+]
+
+[arguments]
+number = "c_number"
+decimal = "c_decimal"
+integer = "2"
+float = "c_float"
+text = "c_varchar"
+chars = "'ab'"
+date = "c_date"
+time = "c_time"
+timestamp = "c_ntz"
+timestamp_ltz = "c_ltz"
+timestamp_tz = "c_tz"
+boolean = "c_boolean"
+variant = "c_variant"
+array = "c_array"
+object = "c_object"
+binary = "c_binary"
+geography = "c_geography"
+part = "day"
+quoted_part = "'day'"
+date_format = "'YYYY-MM-DD'"
+key = "'k'"
+path = "'a.b'"
+pattern = "'[a-z]+'"
+json = "'{\"a\": 1}'"
+weekday = "'monday'"
+rounding = "'HALF_TO_EVEN'"
+separator = "','"
+zone = "'UTC'"
+fraction = "0.5"
+one = "1"
+flags = "'i'"
+
+[sweeps]
+first = ["c_number", "c_float", "c_varchar", "c_boolean", "c_date", "c_ntz", "c_tz", "c_variant", "c_array", "c_binary"]
+second = ["c_number", "c_varchar", "c_date", "c_variant", "c_boolean"]

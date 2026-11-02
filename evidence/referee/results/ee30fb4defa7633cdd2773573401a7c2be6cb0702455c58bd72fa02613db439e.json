@@ -1,0 +1,110 @@
+{
+  "case_hash": "ee30fb4defa7633cdd2773573401a7c2be6cb0702455c58bd72fa02613db439e",
+  "columns": [
+    {
+      "internal_size": 16777216,
+      "name": "MESSAGE_ID",
+      "nullable": false,
+      "precision": null,
+      "scale": null,
+      "type_code": 2,
+      "type_name": "TEXT"
+    },
+    {
+      "internal_size": null,
+      "name": "ORDER_SUMMARY",
+      "nullable": true,
+      "precision": null,
+      "scale": null,
+      "type_code": 9,
+      "type_name": "OBJECT"
+    },
+    {
+      "internal_size": null,
+      "name": "ORDER_SUMMARY_KEEP_NULL",
+      "nullable": true,
+      "precision": null,
+      "scale": null,
+      "type_code": 9,
+      "type_name": "OBJECT"
+    },
+    {
+      "internal_size": null,
+      "name": "CURRENCY_OBJECT",
+      "nullable": true,
+      "precision": null,
+      "scale": null,
+      "type_code": 9,
+      "type_name": "OBJECT"
+    },
+    {
+      "internal_size": null,
+      "name": "NORMALISED_PAYLOAD",
+      "nullable": true,
+      "precision": null,
+      "scale": null,
+      "type_code": 9,
+      "type_name": "OBJECT"
+    },
+    {
+      "internal_size": null,
+      "name": "GIFT_NOTE_UPDATED",
+      "nullable": true,
+      "precision": null,
+      "scale": null,
+      "type_code": 9,
+      "type_name": "OBJECT"
+    },
+    {
+      "internal_size": null,
+      "name": "PICKED_PAYLOAD",
+      "nullable": true,
+      "precision": null,
+      "scale": null,
+      "type_code": 9,
+      "type_name": "OBJECT"
+    },
+    {
+      "internal_size": null,
+      "name": "PICKED_BY_ARRAY",
+      "nullable": true,
+      "precision": null,
+      "scale": null,
+      "type_code": 9,
+      "type_name": "OBJECT"
+    },
+    {
+      "internal_size": null,
+      "name": "PICKED_BY_VARIANT",
+      "nullable": true,
+      "precision": null,
+      "scale": null,
+      "type_code": 9,
+      "type_name": "OBJECT"
+    },
+    {
+      "internal_size": null,
+      "name": "PAYLOAD_KEYS",
+      "nullable": true,
+      "precision": null,
+      "scale": null,
+      "type_code": 10,
+      "type_name": "ARRAY"
+    }
+  ],
+  "connector": "snowflake-connector-python 4.7.2",
+  "describe_error": null,
+  "effective_parameters": {
+    "QUOTED_IDENTIFIERS_IGNORE_CASE": "false",
+    "TIMESTAMP_TYPE_MAPPING": "TIMESTAMP_NTZ",
+    "TIMEZONE": "UTC"
+  },
+  "environment_sha256": "30b511a8a93e546389f18cd07def603dbed9fead17ed080902f68e566b0a848e",
+  "error": null,
+  "format": 1,
+  "outcome": "accepted",
+  "recorded_at": "2026-11-02T04:42:25Z",
+  "recorder": "sqlquack-record 0.1.0",
+  "syntax_only": false,
+  "warehouse_version": "10.39.101"
+}

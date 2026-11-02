@@ -1,0 +1,19 @@
+{
+  "case_hash": "7d6801e6ba08e540a3985013561a123975667e4a81f96a80c6fa5710b54cf407",
+  "columns": null,
+  "connector": "snowflake-connector-python 4.7.2",
+  "describe_error": null,
+  "effective_parameters": {
+    "QUOTED_IDENTIFIERS_IGNORE_CASE": "false",
+    "TIMESTAMP_TYPE_MAPPING": "TIMESTAMP_NTZ",
+    "TIMEZONE": "UTC"
+  },
+  "environment_sha256": "4e9ae1758bacdfa5d19c202e91d5e101c4f57a361d35fb18ee79afb47ce78059",
+  "error": null,
+  "format": 1,
+  "outcome": "accepted",
+  "recorded_at": "2026-11-02T04:47:57Z",
+  "recorder": "sqlquack-record 0.1.0",
+  "syntax_only": true,
+  "warehouse_version": "10.39.101"
+}

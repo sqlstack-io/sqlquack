@@ -7,6 +7,7 @@ import os
 import sys
 from pathlib import Path
 
+from sqlquack_record.cli._helpers.referee import dry_run_referee, run_referee
 from sqlquack_record.cli._helpers.settings import connection_settings, utc_now
 from sqlquack_record.pending.main.evidence_directories import evidence_directories
 from sqlquack_record.pending.main.load_pending import load_pending
@@ -19,6 +20,9 @@ from sqlquack_record.recording.exceptions import RecorderError
 from sqlquack_record.recording.main.record_pending import record_pending
 from sqlquack_record.recording.main.record_session_defaults import record_session_defaults
 from sqlquack_record.recording.models import PendingCase, RecordSummary
+from sqlquack_record.referee.constants import REFEREE_DIRECTORY
+from sqlquack_record.referee.main.load_referee import load_referee
+from sqlquack_record.referee.models import RefereePending
 from sqlquack_record.snowflake.main.open_snowflake_sessions import snowflake_sessions
 from sqlquack_record.snowflake.models import ConnectionSettings
 
@@ -33,11 +37,14 @@ def main(argv: list[str] | None = None) -> int:
             pending=arguments.pending, results=arguments.results, working_directory=Path.cwd()
         )
         cases: list[PendingCase] = load_pending(pending)
+        referee: RefereePending | None = load_referee(pending / REFEREE_DIRECTORY)
         print(f"sqlquack-record: {len(cases)} pending cases in {pending}", file=sys.stderr)
-        if arguments.dry_run or not cases:
+        if arguments.dry_run:
             for case in cases:
                 print(f"{case.case_hash}  {case.case_reference}")
-            return 0
+            return dry_run_referee(referee)
+        if not cases:
+            return run_referee(arguments=arguments, referee=referee, results=results)
         settings: ConnectionSettings = connection_settings(arguments)
         print("sqlquack-record: connecting to Snowflake and recording…", file=sys.stderr)
         summary: RecordSummary = record_pending(
@@ -50,6 +57,7 @@ def main(argv: list[str] | None = None) -> int:
     except RecorderError as error:
         print(f"sqlquack-record: failed: {error}", file=sys.stderr)
         return 1
+    referee_status: int = run_referee(arguments=arguments, referee=referee, results=results)
     for reference, reason in summary.refused:
         print(f"sqlquack-record: refused {reference}: {reason}", file=sys.stderr)
     status: str = "FAILED" if summary.refused else "done"
@@ -59,7 +67,13 @@ def main(argv: list[str] | None = None) -> int:
         f"{len(summary.refused)} cases refused and left pending",
         file=sys.stderr,
     )
-    return 1 if summary.refused else 0
+    if referee is not None and (referee.cases or referee.catalogue):
+        print(
+            f"sqlquack-record: {status}, recorded {summary.recorded} results; referee "
+            f"{'FAILED' if referee_status else 'done'}",
+            file=sys.stderr,
+        )
+    return 1 if summary.refused or referee_status else 0
 
 
 def _parser() -> argparse.ArgumentParser:

@@ -18,6 +18,10 @@ ships sqlglot's licence. corpora/polyglot-check/sqlglot_postgres.json holds the 
 tests/dialects/test_postgres.py at the same version, and corpora/polyglot-check/sqlglot_sqlite.json
 that of tests/dialects/test_sqlite.py.
 
+The referee corpus referee/corpora/sqlglot.json holds the query statements passed to
+`validate_identity` and `validate_all` in tests/dialects/test_snowflake.py at the sqlglot commit
+its `origin` field names. Only Snowflake's syntax verdict on each statement is recorded.
+
 sqlglot is distributed under the following licence:
 
 MIT License

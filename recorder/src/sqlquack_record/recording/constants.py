@@ -30,6 +30,7 @@ RECORDABLE_FUNCTION_ERRORS: frozenset[tuple[int, str]] = frozenset({(100357, "P0
 DATA_EXCEPTION_SQLSTATE_CLASSES: frozenset[str] = frozenset({"22"})
 SESSION_DEPENDENT_SQLSTATES: frozenset[str] = frozenset({"42501"})
 SESSION_FAILURE_SQLSTATE_CLASSES: frozenset[str] = frozenset({"08", "28", "53", "57", "XX"})
+INTERNAL_SQLSTATE_CLASS: str = "XX"
 HASH_NAME_LENGTH: int = 64
 NANOSECOND_TYPE_NAMES: frozenset[str] = frozenset(
     {"TIMESTAMP_NTZ", "TIMESTAMP_LTZ", "TIMESTAMP_TZ", "TIME"}

@@ -1,0 +1,23 @@
+{
+  "case_hash": "0babda858e3b00fe9626442d5961cf01a6804c563f63fae83943b8017312f979",
+  "columns": null,
+  "connector": "snowflake-connector-python 4.7.2",
+  "describe_error": null,
+  "effective_parameters": {
+    "QUOTED_IDENTIFIERS_IGNORE_CASE": "false",
+    "TIMESTAMP_TYPE_MAPPING": "TIMESTAMP_NTZ",
+    "TIMEZONE": "UTC"
+  },
+  "environment_sha256": "2e5ddccbcb4d8876315d3dd403439bff365dd79cbbce0f79b20a080db70cf677",
+  "error": {
+    "errno": 93201,
+    "message": "Function GET: expected structured object to contain field missing but it did not.",
+    "sqlstate": "23001"
+  },
+  "format": 1,
+  "outcome": "rejected",
+  "recorded_at": "2026-11-02T04:32:17Z",
+  "recorder": "sqlquack-record 0.1.0",
+  "syntax_only": false,
+  "warehouse_version": "10.39.101"
+}

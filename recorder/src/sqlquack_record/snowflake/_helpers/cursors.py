@@ -11,6 +11,7 @@ from snowflake.connector.errors import NotSupportedError, ProgrammingError
 from sqlquack_record.recording.constants import (
     DATA_EXCEPTION_SQLSTATE_CLASSES,
     ERROR_PREFIX_PATTERN,
+    INTERNAL_SQLSTATE_CLASS,
     MICROSECOND_SCALE,
     MULTI_STATEMENT_FAILURE,
     NANOSECOND_TYPE_NAMES,
@@ -22,6 +23,7 @@ from sqlquack_record.recording.constants import (
     SESSION_FAILURE_SQLSTATE_CLASSES,
 )
 from sqlquack_record.recording.exceptions import (
+    InternalCompileError,
     RecorderError,
     StatementNotRecordableError,
     UnrecordableResultError,
@@ -32,7 +34,7 @@ from sqlquack_record.recording.models import ColumnDescription, StatementResult
 def fetch(cursor: Any) -> StatementResult:
     """The cursor's current result as the connector's Arrow table."""
     columns: tuple[ColumnDescription, ...] = tuple(
-        _describe(column) for column in cursor.description or ()
+        describe_column(column) for column in cursor.description or ()
     )
     try:
         table: pa.Table | None = cursor.fetch_arrow_all(force_return_table=True)
@@ -81,6 +83,11 @@ def error_message(error: ProgrammingError) -> str | None:
 def compile_message(error: ProgrammingError) -> str:
     """A compile error's message for the console: session failures raise, no query ID is kept."""
     sqlstate: str = str(error.sqlstate or "")
+    if sqlstate[:2] == INTERNAL_SQLSTATE_CLASS:
+        raise InternalCompileError(
+            f"Snowflake error {error.errno} (SQLSTATE {sqlstate}) while compiling a case; "
+            f"nothing was recorded: {error.msg}"
+        ) from error
     if not sqlstate or sqlstate[:2] in SESSION_FAILURE_SQLSTATE_CLASSES:
         raise RecorderError(
             f"Snowflake error {error.errno} (SQLSTATE {sqlstate or 'unknown'}) while compiling "
@@ -126,7 +133,8 @@ def _require_declared_nullability(
             )
 
 
-def _describe(column: Any) -> ColumnDescription:
+def describe_column(column: Any) -> ColumnDescription:
+    """One column of a cursor description or a described statement."""
     return ColumnDescription(
         name=str(column.name),
         type_code=int(column.type_code),

@@ -15,9 +15,16 @@ from sqlquack_record.recording.constants import (
     SHOW_SESSION_PARAMETERS,
 )
 from sqlquack_record.recording.exceptions import RecorderError, UnrecordableResultError
-from sqlquack_record.recording.models import StatementResult, WarehouseFailure
+from sqlquack_record.recording.models import ColumnDescription, StatementResult, WarehouseFailure
+from sqlquack_record.referee.constants import (
+    BUILTIN_COLUMN,
+    BUILTIN_VALUE,
+    IDENTITY_FUNCTIONS,
+    SHOW_FUNCTIONS,
+)
 from sqlquack_record.snowflake._helpers.cursors import (
     compile_message,
+    describe_column,
     error_message,
     fetch,
     require_batch_recordable,
@@ -100,6 +107,46 @@ class SnowflakeSession:
             cursor.close()
         return None
 
+    def describe(self, statement: str) -> tuple[ColumnDescription, ...] | WarehouseFailure:
+        """The statement's result columns, which the connector describes without running it."""
+        cursor: Any = self._connection.cursor()
+        try:
+            described: Any = cursor.describe(statement)
+        except ProgrammingError as error:
+            return WarehouseFailure(
+                errno=error.errno, sqlstate=error.sqlstate, message=compile_message(error)
+            )
+        finally:
+            cursor.close()
+        return tuple(describe_column(column) for column in described or ())
+
+    def builtin_functions(self) -> list[dict[str, str]]:
+        """`SHOW FUNCTIONS` rows of built-in functions only, every value as text."""
+        cursor: Any = self._connection.cursor()
+        try:
+            cursor.execute(SHOW_FUNCTIONS)
+            names: list[str] = [str(column.name).lower() for column in cursor.description]
+            rows: list[dict[str, str]] = [
+                _text_row(names=names, row=row) for row in cursor.fetchall()
+            ]
+        finally:
+            cursor.close()
+        return [row for row in rows if row.get(BUILTIN_COLUMN) == BUILTIN_VALUE]
+
+    def identity(self) -> tuple[tuple[str, str], ...]:
+        """The session's account, user, role, warehouse, database and schema names, by kind."""
+        cursor: Any = self._connection.cursor()
+        try:
+            row: tuple[object, ...] = cursor.execute(
+                "SELECT " + ", ".join(function for _, function in IDENTITY_FUNCTIONS)
+            ).fetchone()
+        finally:
+            cursor.close()
+        return tuple(
+            (kind, "" if value is None else str(value))
+            for (kind, _), value in zip(IDENTITY_FUNCTIONS, row, strict=True)
+        )
+
     def execute(self, statement: str) -> None:
         """Run a statement that is not a case; a warehouse error raises `RecorderError`."""
         cursor: Any = self._connection.cursor()
@@ -138,3 +185,10 @@ class SnowflakeSession:
         finally:
             cursor.close()
         return None if row is None else row[0]
+
+
+def _text_row(*, names: list[str], row: tuple[object, ...]) -> dict[str, str]:
+    """A result row by lower-case column name, NULL as empty text."""
+    return {
+        name: "" if value is None else str(value) for name, value in zip(names, row, strict=True)
+    }

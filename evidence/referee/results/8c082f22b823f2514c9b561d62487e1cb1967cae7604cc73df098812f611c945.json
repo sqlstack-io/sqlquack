@@ -1,0 +1,23 @@
+{
+  "case_hash": "8c082f22b823f2514c9b561d62487e1cb1967cae7604cc73df098812f611c945",
+  "columns": null,
+  "connector": "snowflake-connector-python 4.7.2",
+  "describe_error": null,
+  "effective_parameters": {
+    "QUOTED_IDENTIFIERS_IGNORE_CASE": "false",
+    "TIMESTAMP_TYPE_MAPPING": "TIMESTAMP_NTZ",
+    "TIMEZONE": "UTC"
+  },
+  "environment_sha256": "2e5ddccbcb4d8876315d3dd403439bff365dd79cbbce0f79b20a080db70cf677",
+  "error": {
+    "errno": 1044,
+    "message": "SQL compilation error: error line 1 at position 26 Invalid argument types for function 'ARRAY_TO_STRING': (ARRAY(VARCHAR(16777216)), VARCHAR(1))",
+    "sqlstate": "42P13"
+  },
+  "format": 1,
+  "outcome": "rejected",
+  "recorded_at": "2026-11-02T04:32:17Z",
+  "recorder": "sqlquack-record 0.1.0",
+  "syntax_only": false,
+  "warehouse_version": "10.39.101"
+}

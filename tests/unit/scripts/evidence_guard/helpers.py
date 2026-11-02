@@ -190,6 +190,81 @@ def edit_audit(results: Path, _: str) -> None:
     (audit / f"{stored}.arrow").write_bytes(b"other rows")
 
 
+def _referee_outcome(
+    *, results: Path, seed: bytes, replaced: tuple[tuple[str, object], ...]
+) -> Path:
+    referee: Path = results.parent / "referee" / "results"
+    referee.mkdir(parents=True, exist_ok=True)
+    case_hash: str = hashlib.sha256(seed).hexdigest()
+    document: dict[str, object] = {
+        "format": 1,
+        "case_hash": case_hash,
+        "environment_sha256": hashlib.sha256(b"environment").hexdigest(),
+        "syntax_only": False,
+        "outcome": "accepted",
+        "recorder": _RECORDER,
+        "connector": "test",
+        "warehouse_version": "test",
+        "recorded_at": "1970-01-01T00:00:00Z",
+        "effective_parameters": {"TIMEZONE": "UTC"},
+        "error": None,
+        "columns": [],
+        "describe_error": None,
+    }
+    path: Path = referee / f"{case_hash}.json"
+    path.write_text(json.dumps({**document, **dict(replaced)}), encoding="utf-8")
+    return path
+
+
+def add_referee_accepted(results: Path, _: str) -> None:
+    """Adds an accepted referee outcome with its described columns."""
+    _referee_outcome(results=results, seed=b"new", replaced=())
+
+
+def add_referee_rejected(results: Path, _: str) -> None:
+    """Adds a rejected referee outcome keeping its error."""
+    error: dict[str, object] = {"errno": 904, "sqlstate": "42000", "message": "invalid identifier"}
+    _referee_outcome(
+        results=results,
+        seed=b"new",
+        replaced=(("outcome", "rejected"), ("error", error), ("columns", None)),
+    )
+
+
+def add_referee_rejected_without_error(results: Path, _: str) -> None:
+    """Adds a rejected referee outcome that lost its error."""
+    _referee_outcome(
+        results=results, seed=b"new", replaced=(("outcome", "rejected"), ("columns", None))
+    )
+
+
+def edit_referee(results: Path, _: str) -> None:
+    """Rewrites a committed referee outcome."""
+    stored: str = hashlib.sha256(b"stored referee").hexdigest()
+    path: Path = results.parent / "referee" / "results" / f"{stored}.json"
+    path.write_text(path.read_text(encoding="utf-8").replace("accepted", "rejected"))
+
+
+def add_referee_catalogue(results: Path, _: str) -> None:
+    """Adds a function catalogue named by the hash of its functions."""
+    functions: list[dict[str, str]] = [{"name": "ABS", "arguments": "ABS(NUMBER) RETURN NUMBER"}]
+    digest: str = hashlib.sha256(
+        json.dumps(functions, sort_keys=True, separators=(",", ":")).encode("utf-8")
+    ).hexdigest()
+    folder: Path = results.parent / "referee" / "functions"
+    folder.mkdir(parents=True)
+    document: dict[str, object] = {
+        "format": 1,
+        "catalogue_sha256": digest,
+        "recorder": _RECORDER,
+        "connector": "test",
+        "warehouse_version": "test",
+        "recorded_at": "1970-01-01T00:00:00Z",
+        "functions": functions,
+    }
+    (folder / f"{digest}.json").write_text(json.dumps(document), encoding="utf-8")
+
+
 def guard_after(*, repository: Path, change: Change) -> int:
     """Commit one recorded result as the base, apply `change` on top, and run the guard."""
     results: Path = repository / _RESULTS
@@ -201,6 +276,7 @@ def guard_after(*, repository: Path, change: Change) -> int:
     audit: Path = repository / _AUDIT_RESULTS
     audit.mkdir(parents=True)
     _write_result(results=audit, seed="audited", recorder=_RECORDER, arrow=b"rows", claimed=b"rows")
+    _referee_outcome(results=results, seed=b"stored referee", replaced=())
     _git(repository, "add", "-A")
     _git(repository, "commit", "--quiet", "-m", "base")
     change(results, stored)

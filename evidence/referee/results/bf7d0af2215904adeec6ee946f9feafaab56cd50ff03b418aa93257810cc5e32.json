@@ -1,0 +1,23 @@
+{
+  "case_hash": "bf7d0af2215904adeec6ee946f9feafaab56cd50ff03b418aa93257810cc5e32",
+  "columns": null,
+  "connector": "snowflake-connector-python 4.7.2",
+  "describe_error": null,
+  "effective_parameters": {
+    "QUOTED_IDENTIFIERS_IGNORE_CASE": "false",
+    "TIMESTAMP_TYPE_MAPPING": "TIMESTAMP_NTZ",
+    "TIMEZONE": "UTC"
+  },
+  "environment_sha256": "c24c5e761af06cf85c2e3eeb40fa46740d25922eb8445d8777d280b4d878c479",
+  "error": {
+    "errno": 1015,
+    "message": "SQL compilation error: argument 1 to function INITCAP needs to be constant, found 'CAST(ALL_TYPES.C_BOOLEAN AS VARCHAR(134217728))'",
+    "sqlstate": "22023"
+  },
+  "format": 1,
+  "outcome": "rejected",
+  "recorded_at": "2026-11-02T04:26:37Z",
+  "recorder": "sqlquack-record 0.1.0",
+  "syntax_only": false,
+  "warehouse_version": "10.39.101"
+}

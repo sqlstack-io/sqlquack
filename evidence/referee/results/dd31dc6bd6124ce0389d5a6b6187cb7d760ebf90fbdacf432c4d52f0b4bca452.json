@@ -1,0 +1,23 @@
+{
+  "case_hash": "dd31dc6bd6124ce0389d5a6b6187cb7d760ebf90fbdacf432c4d52f0b4bca452",
+  "columns": null,
+  "connector": "snowflake-connector-python 4.7.2",
+  "describe_error": null,
+  "effective_parameters": {
+    "QUOTED_IDENTIFIERS_IGNORE_CASE": "false",
+    "TIMESTAMP_TYPE_MAPPING": "TIMESTAMP_NTZ",
+    "TIMEZONE": "UTC"
+  },
+  "environment_sha256": "30b511a8a93e546389f18cd07def603dbed9fead17ed080902f68e566b0a848e",
+  "error": {
+    "errno": 1100,
+    "message": "SQL compilation error: 'CURRENCIES' is an invalid Recursive CTE",
+    "sqlstate": "42601"
+  },
+  "format": 1,
+  "outcome": "rejected",
+  "recorded_at": "2026-11-02T04:42:25Z",
+  "recorder": "sqlquack-record 0.1.0",
+  "syntax_only": false,
+  "warehouse_version": "10.39.101"
+}

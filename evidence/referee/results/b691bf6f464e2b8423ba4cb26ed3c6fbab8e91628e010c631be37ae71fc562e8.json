@@ -1,0 +1,23 @@
+{
+  "case_hash": "b691bf6f464e2b8423ba4cb26ed3c6fbab8e91628e010c631be37ae71fc562e8",
+  "columns": null,
+  "connector": "snowflake-connector-python 4.7.2",
+  "describe_error": null,
+  "effective_parameters": {
+    "QUOTED_IDENTIFIERS_IGNORE_CASE": "false",
+    "TIMESTAMP_TYPE_MAPPING": "TIMESTAMP_NTZ",
+    "TIMEZONE": "UTC"
+  },
+  "environment_sha256": "30b511a8a93e546389f18cd07def603dbed9fead17ed080902f68e566b0a848e",
+  "error": {
+    "errno": 904,
+    "message": "SQL compilation error: error line 12 at position 54 invalid identifier 'P.LINES'",
+    "sqlstate": "42000"
+  },
+  "format": 1,
+  "outcome": "rejected",
+  "recorded_at": "2026-11-02T04:42:25Z",
+  "recorder": "sqlquack-record 0.1.0",
+  "syntax_only": false,
+  "warehouse_version": "10.39.101"
+}

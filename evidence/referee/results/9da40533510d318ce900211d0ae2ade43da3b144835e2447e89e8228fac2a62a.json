@@ -1,0 +1,23 @@
+{
+  "case_hash": "9da40533510d318ce900211d0ae2ade43da3b144835e2447e89e8228fac2a62a",
+  "columns": null,
+  "connector": "snowflake-connector-python 4.7.2",
+  "describe_error": null,
+  "effective_parameters": {
+    "QUOTED_IDENTIFIERS_IGNORE_CASE": "false",
+    "TIMESTAMP_TYPE_MAPPING": "TIMESTAMP_NTZ",
+    "TIMEZONE": "UTC"
+  },
+  "environment_sha256": "c24c5e761af06cf85c2e3eeb40fa46740d25922eb8445d8777d280b4d878c479",
+  "error": {
+    "errno": 1044,
+    "message": "SQL compilation error: error line 1 at position 26 Invalid argument types for function 'DIV0': (BINARY(8388608), NUMBER(38,0))",
+    "sqlstate": "42P13"
+  },
+  "format": 1,
+  "outcome": "rejected",
+  "recorded_at": "2026-11-02T04:26:37Z",
+  "recorder": "sqlquack-record 0.1.0",
+  "syntax_only": false,
+  "warehouse_version": "10.39.101"
+}

@@ -19,7 +19,7 @@ PYTHON_TYPED := scripts tests/unit/scripts
 PYTHON_TESTS := tests/unit/scripts
 endif
 
-.PHONY: format rust-lint python-check fensu evidence-guard polyglot-guard generate-cases generated-cases check-ci test test-rust test-python verify-recorded polyglot-duckshop census-duckshop fuzz-smoke gate gate-parallel census
+.PHONY: format rust-lint python-check fensu evidence-guard polyglot-guard generate-cases generated-cases generate-referee-cases referee-cases referee-pending check-ci test test-rust test-python verify-recorded polyglot-duckshop census-duckshop fuzz-smoke gate gate-parallel census
 
 format:
 	cargo fmt --all
@@ -53,8 +53,21 @@ generate-cases:
 generated-cases:
 	uv run python -m scripts.generate_cases --check
 
+# Rewrites referee/generated/ and referee/environments/ from scripts/referee_cases/.
+generate-referee-cases:
+	uv run python -m scripts.generate_referee_cases
+
+# Fails when a generated referee file differs from what its generator writes.
+referee-cases:
+	uv run python -m scripts.generate_referee_cases --check
+
+# Writes evidence/pending/referee/ for the recorder. Example:
+# make referee-pending REFEREE_ARGS="--select 'generated/*.json' --catalogue"
+referee-pending:
+	uv run python -m scripts.write_referee_pending $(REFEREE_ARGS)
+
 # The static gate, the first step of `gate`.
-check-ci: rust-lint python-check fensu evidence-guard polyglot-guard generated-cases
+check-ci: rust-lint python-check fensu evidence-guard polyglot-guard generated-cases referee-cases
 
 # Rust tests build with the gate profile: release speed, debug assertions and overflow checks on.
 # Its test binaries run RUST_TEST_JOBS at a time; any failure fails the target.

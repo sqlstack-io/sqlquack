@@ -1,0 +1,23 @@
+{
+  "case_hash": "f4601ffd5d0c009271f3e4d59e5e60eae90b5a41cdd08e99d5c0535bdd0b5062",
+  "columns": null,
+  "connector": "snowflake-connector-python 4.7.2",
+  "describe_error": null,
+  "effective_parameters": {
+    "QUOTED_IDENTIFIERS_IGNORE_CASE": "false",
+    "TIMESTAMP_TYPE_MAPPING": "TIMESTAMP_NTZ",
+    "TIMEZONE": "UTC"
+  },
+  "environment_sha256": "c24c5e761af06cf85c2e3eeb40fa46740d25922eb8445d8777d280b4d878c479",
+  "error": {
+    "errno": 1007,
+    "message": "SQL compilation error: invalid type [TO_BOOLEAN(ALL_TYPES.C_FLOAT)] for parameter 'TO_BOOLEAN'",
+    "sqlstate": "22023"
+  },
+  "format": 1,
+  "outcome": "rejected",
+  "recorded_at": "2026-11-02T04:26:37Z",
+  "recorder": "sqlquack-record 0.1.0",
+  "syntax_only": false,
+  "warehouse_version": "10.39.101"
+}

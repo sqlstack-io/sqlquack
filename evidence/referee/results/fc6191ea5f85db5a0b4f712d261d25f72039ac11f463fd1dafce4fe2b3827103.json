@@ -1,0 +1,23 @@
+{
+  "case_hash": "fc6191ea5f85db5a0b4f712d261d25f72039ac11f463fd1dafce4fe2b3827103",
+  "columns": null,
+  "connector": "snowflake-connector-python 4.7.2",
+  "describe_error": null,
+  "effective_parameters": {
+    "QUOTED_IDENTIFIERS_IGNORE_CASE": "false",
+    "TIMESTAMP_TYPE_MAPPING": "TIMESTAMP_NTZ",
+    "TIMEZONE": "UTC"
+  },
+  "environment_sha256": "2e5ddccbcb4d8876315d3dd403439bff365dd79cbbce0f79b20a080db70cf677",
+  "error": {
+    "errno": 1039,
+    "message": "SQL compilation error: Invalid type [VARCHAR(1)] for function 'ARRAY_CONTAINS' at position 1",
+    "sqlstate": "22023"
+  },
+  "format": 1,
+  "outcome": "rejected",
+  "recorded_at": "2026-11-02T04:32:17Z",
+  "recorder": "sqlquack-record 0.1.0",
+  "syntax_only": false,
+  "warehouse_version": "10.39.101"
+}

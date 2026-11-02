@@ -1,0 +1,23 @@
+{
+  "case_hash": "0e4b158fe927313a7d126cf4c6e9c095ad60ceb907b08f94528d4195127860e0",
+  "columns": null,
+  "connector": "snowflake-connector-python 4.7.2",
+  "describe_error": null,
+  "effective_parameters": {
+    "QUOTED_IDENTIFIERS_IGNORE_CASE": "false",
+    "TIMESTAMP_TYPE_MAPPING": "TIMESTAMP_NTZ",
+    "TIMEZONE": "UTC"
+  },
+  "environment_sha256": "c24c5e761af06cf85c2e3eeb40fa46740d25922eb8445d8777d280b4d878c479",
+  "error": {
+    "errno": 1007,
+    "message": "SQL compilation error: invalid type [TO_OBJECT(ALL_TYPES.C_TZ)] for parameter 'TO_OBJECT'",
+    "sqlstate": "22023"
+  },
+  "format": 1,
+  "outcome": "rejected",
+  "recorded_at": "2026-11-02T04:26:37Z",
+  "recorder": "sqlquack-record 0.1.0",
+  "syntax_only": false,
+  "warehouse_version": "10.39.101"
+}

@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-RESULTS_DIRS: tuple[str, ...] = ("evidence/results", "evidence/audit/results")
+RESULTS_DIRS: tuple[str, ...] = ("evidence/results", "evidence/audit/results", "evidence/referee")
 UNGUARDED_FILES: frozenset[str] = frozenset({"README.md"})
 RECORDER_PREFIX: str = "sqlquack-record "
 EVIDENCE_FORMAT: int = 1
@@ -36,3 +36,36 @@ ERROR_OUTCOME: str = "error"
 TYPES_OUTCOME: str = "types"
 HEX_DIGITS: frozenset[str] = frozenset("0123456789abcdef")
 GIT_FIELD_SEPARATOR: str = "\t"
+REFEREE_RESULTS_PREFIX: str = "evidence/referee/results/"
+REFEREE_FUNCTIONS_PREFIX: str = "evidence/referee/functions/"
+REFEREE_RESULT_KEYS: frozenset[str] = frozenset(
+    {
+        "format",
+        "case_hash",
+        "environment_sha256",
+        "syntax_only",
+        "outcome",
+        "recorder",
+        "connector",
+        "warehouse_version",
+        "recorded_at",
+        "effective_parameters",
+        "error",
+        "columns",
+        "describe_error",
+    }
+)
+REFEREE_CATALOGUE_KEYS: frozenset[str] = frozenset(
+    {
+        "format",
+        "catalogue_sha256",
+        "recorder",
+        "connector",
+        "warehouse_version",
+        "recorded_at",
+        "functions",
+    }
+)
+ACCEPTED_OUTCOME: str = "accepted"
+REJECTED_OUTCOME: str = "rejected"
+REFEREE_DIRECTORY: str = "evidence/referee/"
