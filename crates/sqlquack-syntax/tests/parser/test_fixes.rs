@@ -131,6 +131,24 @@ fn given_a_parenthesized_typed_lambda_when_parsing_then_it_keeps_names_and_types
             pointer: "/function/args/1/lambda/parameter_types/0/data_type",
             expected_value: json!("var_char"),
         },
+        ProjectionTestCase {
+            description: "the second of two typed parameters' name",
+            sql: "SELECT REDUCE(a, 0, (acc NUMBER(18, 2), i VARIANT) -> acc + i::INT) FROM t",
+            pointer: "/function/args/2/lambda/parameters/1/name",
+            expected_value: json!("i"),
+        },
+        ProjectionTestCase {
+            description: "a parameterised parameter type keeps its precision and scale",
+            sql: "SELECT REDUCE(a, 0, (acc NUMBER(18, 2), i VARIANT) -> acc + i::INT) FROM t",
+            pointer: "/function/args/2/lambda/parameter_types/0/name",
+            expected_value: json!("NUMBER(18, 2)"),
+        },
+        ProjectionTestCase {
+            description: "the second parameter's type",
+            sql: "SELECT REDUCE(a, 0, (acc NUMBER(18, 2), i VARIANT) -> acc + i::INT) FROM t",
+            pointer: "/function/args/2/lambda/parameter_types/1/name",
+            expected_value: json!("VARIANT"),
+        },
     ];
 
     for test_case in test_cases {

@@ -62,8 +62,8 @@ jobs:
       CARGO_TERM_COLOR: always
       CARGO_INCREMENTAL: "0"
       # The DuckShop benchmarks and the SQLBuild release that compiles them, pinned together.
-      SQLBUILD_REF: 3dc8d7f6ac8caac6c601d2ca4f8df548a004f35d
-      SQLBUILD_VERSION: 0.176.0
+      SQLBUILD_REF: a7bc60e0abee5bb19d67e5bdc948e048a1df82e0
+      SQLBUILD_VERSION: 0.187.2
     steps:
       - uses: actions/checkout@v4
       - uses: actions/checkout@v4

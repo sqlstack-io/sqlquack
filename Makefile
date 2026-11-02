@@ -5,8 +5,8 @@ RECORDER ?= 1
 # The revision recorded results are compared against by the append-only guard.
 EVIDENCE_BASE ?= origin/main
 # The DuckShop benchmarks and the SQLBuild release that compiles them, pinned together as in CI.
-SQLBUILD_REF ?= 3dc8d7f6ac8caac6c601d2ca4f8df548a004f35d
-SQLBUILD_VERSION ?= 0.176.0
+SQLBUILD_REF ?= a7bc60e0abee5bb19d67e5bdc948e048a1df82e0
+SQLBUILD_VERSION ?= 0.187.2
 DUCKSHOP_DIR ?= target/duckshop
 # Compiled DuckShop projects the exact parser check reads; `make duckshop-compiled` builds them.
 DUCKSHOP_COMPILED ?= $(DUCKSHOP_DIR)/sqlbuild/benchmarks/duckshop/project/target/compiled $(DUCKSHOP_DIR)/duckshop-10k/target/compiled

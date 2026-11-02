@@ -195,6 +195,12 @@ rejected, not different, only for that statement in a listed dialect with that e
 rejection: `__polyglot_typed(amount, 'NOT A TYPE (')`, a generated typed-expression marker whose
 type text is malformed, errors instead of becoming an ordinary call.
 
+A statement both parsers parse, where polyglot drops the quoting of a name SQLQuack keeps quoted,
+is a `[[kept_quoting]]` entry: an id, a marker the statement contains (whitespace removed) and a
+reason. The check counts it as kept quoting, not different, only when the marker appears and the
+two trees differ in nothing but identifiers that are unquoted in polyglot's tree and quoted in
+SQLQuack's. The only entry: a star's `EXCLUDE ("note")`, whose quotes make the name case-sensitive.
+
 The faithful parse also keeps a quoted variant path key that holds `.`, `[`, `]`, `"` or `:` in
 brackets (`v:a."x.y"` is the path `a["x.y"]`), where polyglot joins it with dots (`a.x.y`), which
 reads as two keys. The check compares variant paths written flat, so this bracketing is the only

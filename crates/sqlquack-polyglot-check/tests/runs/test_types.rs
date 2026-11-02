@@ -28,3 +28,18 @@ pub(crate) struct RejectionTestCase {
     pub(crate) expected_rejected: usize,
     pub(crate) expected_differences: usize,
 }
+
+pub(crate) struct KeptQuotingTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) sql: &'static str,
+    pub(crate) expected_kept_quoting: usize,
+    pub(crate) expected_differences: usize,
+}
+
+pub(crate) struct QuotingTreesTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) sql: &'static str,
+    pub(crate) polyglot: String,
+    pub(crate) sqlquack: String,
+    pub(crate) expected_match: bool,
+}

@@ -763,6 +763,12 @@ marker = "varchar)->"
 polyglot_errors = ["Expected RParen, got Var ('VARCHAR')"]
 note = "(x VARCHAR) -> ... is a lambda with a typed parameter; polyglot reads a parenthesized lambda's parameters as names only"
 
+[[fix]]
+id = "parenthesized_typed_lambda_parameters"
+marker = "variant)->"
+polyglot_errors = ["Expected RParen, got Var ('NUMBER')"]
+note = "(acc NUMBER(18, 2), i VARIANT) -> ... is a lambda with several typed parameters, one parameterised; polyglot reads a parenthesized lambda's parameters as names only"
+
 # Statements SQLQuack rejects where polyglot parses them. The check counts an entry as rejected only
 # for this exact statement in a listed dialect when SQLQuack's error contains `sqlquack_error`;
 # crates/sqlquack-syntax/src/parser/tests/test_typed_expressions.rs pins the error.
@@ -780,3 +786,14 @@ sql = "WITH RECURSIVE T(n) AS (VALUES (1) UNION ALL SELECT n + 1 FROM t WHERE n 
 dialects = ["Snowflake"]
 sqlquack_error = "Snowflake does not accept a bare VALUES list as the body of CTE 'T'"
 note = "Snowflake takes VALUES only in FROM; polyglot added this rule after SQLQuack's fork (rev 8767d68), with the same message"
+
+# Statements both parsers parse where polyglot drops the quoting of a name SQLQuack keeps quoted.
+# The check counts an entry as kept quoting only when the statement, without whitespace and ignoring
+# case, contains `marker`, and the trees differ in nothing but identifiers whose `quoted` is false in
+# polyglot's tree and true in SQLQuack's; crates/sqlquack-polyglot-check/tests/runs/test_kept_quoting.rs
+# pins both.
+
+[[kept_quoting]]
+id = "star_exclude_quoted_name"
+marker = "EXCLUDE(\""
+note = "SELECT * EXCLUDE (\"note\") excludes the case-sensitive column note, not NOTE; polyglot drops the quotes of a star's EXCLUDE names"

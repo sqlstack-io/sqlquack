@@ -13,6 +13,7 @@ pub fn load_expected(path: &Path) -> Result<ExpectedDifferences, String> {
     let mut expected = ExpectedDifferences {
         fixes: file.fixes,
         rejections: file.rejections,
+        kept_quotings: file.kept_quotings,
         ..ExpectedDifferences::default()
     };
     for spelling in file.spellings {

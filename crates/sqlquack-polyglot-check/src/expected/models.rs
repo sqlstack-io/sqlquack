@@ -1,5 +1,6 @@
 //! Expected differences.
 
+use crate::expected::_helpers::quoting::{compact, differ_only_by_kept_quoting};
 use crate::expected::constants::{ERROR_PREFIX, OK_PREFIX};
 use std::collections::{BTreeMap, BTreeSet};
 
@@ -18,6 +19,21 @@ pub struct ExpectedFile {
     /// One entry per reviewed statement SQLQuack rejects where polyglot parses it.
     #[serde(default, rename = "rejection")]
     pub rejections: Vec<ParserRejection>,
+    /// One entry per reviewed name whose quoting polyglot drops and SQLQuack keeps.
+    #[serde(default, rename = "kept_quoting")]
+    pub kept_quotings: Vec<KeptQuoting>,
+}
+
+/// A statement both parsers parse, where polyglot drops the quoting of names SQLQuack keeps quoted.
+#[derive(Clone, Debug, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct KeptQuoting {
+    /// A lower-case identifier.
+    pub id: String,
+    /// Text the statement contains, with whitespace removed and ignoring case, such as `EXCLUDE("`.
+    pub marker: String,
+    /// Why SQLQuack's quoting is right; the trees may differ in nothing else.
+    pub note: String,
 }
 
 /// A statement SQLQuack rejects and polyglot parses, recognised by its exact text and dialect.
@@ -71,6 +87,8 @@ pub struct ExpectedDifferences {
     pub fixes: Vec<ParserFix>,
     /// The reviewed rejections.
     pub rejections: Vec<ParserRejection>,
+    /// The reviewed names whose quoting polyglot drops.
+    pub kept_quotings: Vec<KeptQuoting>,
 }
 
 impl ParserFix {
@@ -85,11 +103,7 @@ impl ParserFix {
 impl ExpectedDifferences {
     /// The fix explaining polyglot's error `polyglot` on `sql` where SQLQuack parsed it.
     pub fn fix_for(&self, sql: &str, polyglot: &str) -> Option<&ParserFix> {
-        let compact: String = sql
-            .chars()
-            .filter(|character| !character.is_whitespace())
-            .map(|character| character.to_ascii_uppercase())
-            .collect();
+        let compact = compact(sql);
         self.fixes.iter().find(|fix| {
             polyglot.starts_with(ERROR_PREFIX)
                 && fix.names_error(polyglot)
@@ -112,6 +126,20 @@ impl ExpectedDifferences {
                 && rejection.sql == sql
                 && rejection.dialects.contains(&dialect.to_owned())
         })
+    }
+
+    /// The entry explaining where polyglot drops the quoting of a name SQLQuack keeps quoted.
+    pub fn kept_quoting_for(
+        &self,
+        sql: &str,
+        polyglot: &str,
+        sqlquack: &str,
+    ) -> Option<&KeptQuoting> {
+        let compact = compact(sql);
+        self.kept_quotings
+            .iter()
+            .find(|entry| compact.contains(&entry.marker.to_ascii_uppercase()))
+            .filter(|_| differ_only_by_kept_quoting(polyglot, sqlquack))
     }
 
     /// Whether keeping `name` where polyglot makes `polyglot` of it is listed.
