@@ -4,8 +4,12 @@ SHELL := /bin/bash
 RECORDER ?= 1
 # The revision recorded results are compared against by the append-only guard.
 EVIDENCE_BASE ?= origin/main
-# Compiled DuckShop projects the exact parser check reads, as CI's polyglot-check job compiles them.
-DUCKSHOP_COMPILED ?=
+# The DuckShop benchmarks and the SQLBuild release that compiles them, pinned together as in CI.
+SQLBUILD_REF ?= 3dc8d7f6ac8caac6c601d2ca4f8df548a004f35d
+SQLBUILD_VERSION ?= 0.176.0
+DUCKSHOP_DIR ?= target/duckshop
+# Compiled DuckShop projects the exact parser check reads; `make duckshop-compiled` builds them.
+DUCKSHOP_COMPILED ?= $(DUCKSHOP_DIR)/sqlbuild/benchmarks/duckshop/project/target/compiled $(DUCKSHOP_DIR)/duckshop-10k/target/compiled
 # How to run cargo-fuzz, the corpus it starts from and how long it runs, as CI's fuzz job does.
 FUZZ_CARGO ?= cargo +nightly fuzz
 FUZZ_CORPUS ?= fuzz/corpus/tolerant
@@ -19,7 +23,7 @@ PYTHON_TYPED := scripts tests/unit/scripts
 PYTHON_TESTS := tests/unit/scripts
 endif
 
-.PHONY: format rust-lint python-check fensu evidence-guard polyglot-guard generate-cases generated-cases generate-referee-cases referee-cases referee-pending check-ci test test-rust test-python verify-recorded polyglot-duckshop census-duckshop fuzz-smoke gate gate-parallel census
+.PHONY: format rust-lint python-check fensu evidence-guard polyglot-guard generate-cases generated-cases generate-referee-cases referee-cases referee-pending check-ci test test-rust test-python verify-recorded polyglot-duckshop census-duckshop fuzz-smoke gate gate-parallel census duckshop-compiled
 
 format:
 	cargo fmt --all
@@ -97,9 +101,26 @@ verify-recorded:
 	mkdir -p $(dir $(COVERAGE_REPORT))
 	cargo run --release --locked -p sqlquack -- verify $(VERIFY_FLAGS) $(COVERAGE_FLAGS) --python $(VERIFY_PYTHON)
 
+# Compiles DuckShop and DuckShop 10K at SQLBUILD_REF with sqlbuild SQLBUILD_VERSION, as CI does.
+# Skipped when DUCKSHOP_DIR already holds that revision.
+duckshop-compiled:
+	@if [ "$$(cat $(DUCKSHOP_DIR)/.ref 2>/dev/null)" = "$(SQLBUILD_REF) $(SQLBUILD_VERSION)" ]; then \
+	  echo "duckshop-compiled: $(DUCKSHOP_DIR) is current"; exit 0; fi; \
+	set -e; rm -rf $(DUCKSHOP_DIR); mkdir -p $(DUCKSHOP_DIR); \
+	git clone -q --filter=blob:none --no-checkout https://github.com/sqlstack-io/sqlbuild $(DUCKSHOP_DIR)/sqlbuild; \
+	git -C $(DUCKSHOP_DIR)/sqlbuild sparse-checkout set benchmarks; \
+	git -C $(DUCKSHOP_DIR)/sqlbuild checkout -q $(SQLBUILD_REF); \
+	uv venv -q -p 3.12 $(DUCKSHOP_DIR)/venv; \
+	VIRTUAL_ENV=$(abspath $(DUCKSHOP_DIR)/venv) uv pip install -q "sqlbuild==$(SQLBUILD_VERSION)"; \
+	python3 $(DUCKSHOP_DIR)/sqlbuild/benchmarks/duckshop-10k/generate.py --out $(DUCKSHOP_DIR)/duckshop-10k; \
+	(cd $(DUCKSHOP_DIR)/sqlbuild/benchmarks/duckshop/project && $(abspath $(DUCKSHOP_DIR)/venv/bin/sqb) compile); \
+	(cd $(DUCKSHOP_DIR)/duckshop-10k && $(abspath $(DUCKSHOP_DIR)/venv/bin/sqb) compile); \
+	echo "$(SQLBUILD_REF) $(SQLBUILD_VERSION)" > $(DUCKSHOP_DIR)/.ref
+
 # The exact parser check over each compiled DuckShop project in DUCKSHOP_COMPILED.
 polyglot-duckshop:
-	@test -n "$(DUCKSHOP_COMPILED)" || { echo "polyglot-duckshop: set DUCKSHOP_COMPILED" >&2; exit 1; }
+	@for compiled in $(DUCKSHOP_COMPILED); do test -d "$$compiled" || \
+	  { echo "polyglot-duckshop: $$compiled is missing; run make duckshop-compiled" >&2; exit 1; }; done
 	for compiled in $(DUCKSHOP_COMPILED); do \
 	  cargo run --locked --release -p sqlquack-polyglot-check -- directory "$$compiled" --dialect snowflake || exit 1; \
 	done
@@ -110,7 +131,8 @@ polyglot-duckshop:
 DUCKSHOP_CENSUS_SECONDS ?= 300
 
 census-duckshop:
-	@test -n "$(DUCKSHOP_COMPILED)" || { echo "census-duckshop: set DUCKSHOP_COMPILED" >&2; exit 1; }
+	@for compiled in $(DUCKSHOP_COMPILED); do test -d "$$compiled" || \
+	  { echo "census-duckshop: $$compiled is missing; run make duckshop-compiled" >&2; exit 1; }; done
 	cargo build --locked --release -p sqlquack
 	for compiled in $(DUCKSHOP_COMPILED); do \
 	  timeout $(DUCKSHOP_CENSUS_SECONDS) cargo run --locked --release -q -p sqlquack -- \
@@ -129,7 +151,7 @@ fuzz-smoke:
 # After the static gate, the independent targets run in parallel, each target's output kept
 # together; any failure fails the gate. The verify hook builds what they need beforehand. The fuzz
 # smoke runs alone afterwards, so its time-boxed run gets the machine to itself.
-gate: check-ci
+gate: check-ci $(if $(filter command line,$(origin DUCKSHOP_COMPILED)),,duckshop-compiled)
 	$(MAKE) -j --output-sync=target gate-parallel
 	$(MAKE) fuzz-smoke
 

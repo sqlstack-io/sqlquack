@@ -140,6 +140,20 @@ See [docs/architecture.md](docs/architecture.md).
 evidence guard) and `make test` runs the tests. CI runs both with `RECORDER=0`, which leaves the
 recorder out.
 
+`make gate` runs everything CI runs: the static gate, the tests, the replay of every recorded case,
+the exact parser check and timed conversion over DuckShop and DuckShop 10K, and a fuzz smoke run.
+It needs a nightly toolchain with `cargo-fuzz` for the fuzz step, and fetches and compiles the
+pinned DuckShop projects itself on first use (`make duckshop-compiled`, pinned by `SQLBUILD_REF`
+and `SQLBUILD_VERSION`). Run it with `RECORDER=0 UV_NO_SYNC=1` in a clean checkout of the commit:
+
+```console
+$ uv sync --locked --no-group recorder
+$ RECORDER=0 UV_NO_SYNC=1 make gate VERIFY_FLAGS="--require-verified --strict-errors"
+```
+
+A change lands on `main` as one squashed commit whose tree is exactly a tree that passed
+`make gate`.
+
 ## License
 
 Apache-2.0.
