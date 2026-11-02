@@ -14,6 +14,8 @@ mod test_explicit_eof_token;
 mod test_join_marker;
 #[path = "tests/test_parser.rs"]
 mod test_parser;
+#[path = "tests/test_postgres.rs"]
+mod test_postgres;
 #[path = "tests/test_snowflake.rs"]
 mod test_snowflake;
 #[path = "tests/test_termination.rs"]

@@ -47,6 +47,7 @@ use crate::parser::_helpers::functions::token_sets::TYPE_TOKENS;
 use crate::parser::constants::ARRAY;
 use crate::parser::constants::BINARY_ARITY;
 use crate::parser::constants::LIST;
+use crate::parser::constants::VARIADIC_KEYWORD;
 use crate::parser::models::Parser;
 use crate::tokens::models::SourceSpan;
 use crate::tokens::models::TokenType;
@@ -325,7 +326,12 @@ impl Parser {
             let ident_name = ident_token.text.to_string();
             let quoted = ident_token.token_type == TokenType::QuotedIdentifier;
 
+            if ident_name.eq_ignore_ascii_case(VARIADIC_KEYWORD)
+                && self.config.dialect == Some(crate::tokens::models::DialectType::PostgreSQL)
             {
+                self.current = saved_pos;
+                self.parse_expression()?
+            } else {
                 if !self.is_at_end()
                     && self.is_type_keyword()
                     && !self.check(TokenType::FArrow)

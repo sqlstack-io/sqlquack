@@ -13,6 +13,7 @@ pub fn compare_parse(sql: &str, dialect: Dialect) -> Comparison {
     let polyglot_dialect = match dialect {
         Dialect::Snowflake => DialectType::Snowflake,
         Dialect::DuckDB => DialectType::DuckDB,
+        Dialect::PostgreSQL => DialectType::PostgreSQL,
     };
     let started = Instant::now();
     let theirs = rendered(|| polyglot_sql::parse(sql, polyglot_dialect));

@@ -1,6 +1,6 @@
 use sqlquack_syntax::Dialect;
 
-use crate::dialects::constants::{DUCKDB, SNOWFLAKE};
+use crate::dialects::constants::{DUCKDB, POSTGRES, SNOWFLAKE};
 use crate::lineage::tests::helpers::{
     found_findings, owned_findings, typed_duckdb_shop_schema, typed_shop_schema,
 };
@@ -387,6 +387,41 @@ fn given_a_duckdb_query_when_checking_subqueries_keys_frames_and_the_catalog_the
     for test_case in test_cases {
         assert_eq!(
             found_findings(test_case.sql, (Dialect::DuckDB, &DUCKDB, &schema)),
+            owned_findings(test_case.expected_findings),
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_a_postgres_query_when_checking_scope_rules_then_only_postgres_errors_are_found() {
+    let test_cases = [
+        QueryFindingsTestCase {
+            description: "DISTINCT ON may order by columns it does not select",
+            sql: "SELECT DISTINCT ON (status) status, quantity FROM orders \
+                  ORDER BY status, ordered_at DESC",
+            expected_findings: &[],
+        },
+        QueryFindingsTestCase {
+            description: "a CTE column list may name fewer columns than the CTE outputs",
+            sql: "WITH c(a) AS (SELECT id, quantity FROM orders) SELECT a FROM c",
+            expected_findings: &[],
+        },
+        QueryFindingsTestCase {
+            description: "a CTE column list naming more columns than the CTE outputs is an error",
+            sql: "WITH c(a, b) AS (SELECT id FROM orders) SELECT a FROM c",
+            expected_findings: &[(
+                "E223",
+                "CTE column alias count does not match its output column count",
+                24,
+            )],
+        },
+    ];
+    let schema = typed_duckdb_shop_schema();
+    for test_case in test_cases {
+        assert_eq!(
+            found_findings(test_case.sql, (Dialect::PostgreSQL, &POSTGRES, &schema)),
             owned_findings(test_case.expected_findings),
             "{}",
             test_case.description

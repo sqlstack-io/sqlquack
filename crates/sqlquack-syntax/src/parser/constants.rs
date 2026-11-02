@@ -185,3 +185,23 @@ pub(crate) const OPTION_CLAUSE_OPEN: &str = "OPTION(";
 
 /// The length of the shortest quoted text: its two quotes.
 pub(crate) const QUOTED_TEXT_MIN_LEN: usize = 2;
+
+/// PostgreSQL's streaming-replication commands, tokenized as commands as polyglot does.
+pub(crate) const POSTGRES_REPLICATION_COMMANDS: [&str; 7] = [
+    "BASE_BACKUP",
+    "CREATE_REPLICATION_SLOT",
+    "DROP_REPLICATION_SLOT",
+    "IDENTIFY_SYSTEM",
+    "READ_REPLICATION_SLOT",
+    "START_REPLICATION",
+    "TIMELINE_HISTORY",
+];
+
+/// PostgreSQL's prefix for an argument that spreads an array over a variadic parameter.
+pub(crate) const VARIADIC_KEYWORD: &str = "VARIADIC";
+
+/// The EXPLAIN option that runs the statement.
+pub(crate) const EXPLAIN_ANALYZE: &str = "ANALYZE";
+
+/// The EXPLAIN option values that turn an option on.
+pub(crate) const EXPLAIN_TRUE_VALUES: [&str; 3] = ["TRUE", "ON", "1"];

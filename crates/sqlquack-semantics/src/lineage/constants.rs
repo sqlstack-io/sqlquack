@@ -254,6 +254,8 @@ pub(crate) const DUCKDB_JSON_TYPES: [&str; 2] = ["JSON", "JSONB"];
 pub(crate) const FIRST_ARGUMENT_NULLABILITY: [&str; 2] = ["UPPER", "LOWER"];
 /// The Snowflake profile's name.
 pub(crate) const SNOWFLAKE_PROFILE: &str = "Snowflake";
+/// The PostgreSQL profile's name.
+pub(crate) const POSTGRES_PROFILE: &str = "PostgreSQL";
 /// Snowflake's semi-structured ARRAY type.
 pub(crate) const SNOWFLAKE_ARRAY_TYPE: &str = "ARRAY";
 /// The widest Snowflake NUMBER.

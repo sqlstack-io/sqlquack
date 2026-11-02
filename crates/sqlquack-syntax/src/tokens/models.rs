@@ -27,6 +27,8 @@ pub enum Dialect {
     Snowflake,
     /// DuckDB SQL.
     DuckDB,
+    /// PostgreSQL.
+    PostgreSQL,
 }
 
 impl Dialect {
@@ -34,6 +36,7 @@ impl Dialect {
         match self {
             Dialect::Snowflake => DialectType::Snowflake,
             Dialect::DuckDB => DialectType::DuckDB,
+            Dialect::PostgreSQL => DialectType::PostgreSQL,
         }
     }
 }
@@ -63,6 +66,8 @@ pub enum DialectType {
     Snowflake,
     /// DuckDB -- in-process analytical database with modern SQL extensions.
     DuckDB,
+    /// PostgreSQL -- `$$` strings, nested comments and its own operators.
+    PostgreSQL,
 }
 
 impl DialectType {
@@ -84,6 +89,7 @@ impl std::fmt::Display for DialectType {
 
             DialectType::Snowflake => write!(f, "snowflake"),
             DialectType::DuckDB => write!(f, "duckdb"),
+            DialectType::PostgreSQL => write!(f, "postgresql"),
         }
     }
 }
@@ -97,6 +103,7 @@ impl std::str::FromStr for DialectType {
 
             "snowflake" => Ok(DialectType::Snowflake),
             "duckdb" => Ok(DialectType::DuckDB),
+            "postgresql" | "postgres" => Ok(DialectType::PostgreSQL),
 
             _ => Err(crate::tokens::errors::Error::parse(
                 format!("Unknown dialect: {}", s),

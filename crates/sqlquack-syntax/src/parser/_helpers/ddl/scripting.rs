@@ -122,6 +122,8 @@ impl Parser {
 
     /// Parses DESCRIBE [EXTENDED|FORMATTED|ANALYZE] target, and EXPLAIN.
     pub(crate) fn parse_describe(&mut self) -> Result<Expression> {
+        let is_explain =
+            self.check(TokenType::Var) && self.peek_text().eq_ignore_ascii_case("EXPLAIN");
         let leading_comments = if self.check(TokenType::Describe)
             || self.check(TokenType::Desc)
             || (self.check(TokenType::Var) && self.peek_text().eq_ignore_ascii_case("EXPLAIN"))
@@ -132,6 +134,8 @@ impl Parser {
             return Err(self.parse_error("Expected DESCRIBE, DESC, or EXPLAIN"));
         };
 
+        let analyze_option: bool = is_explain && self.parse_postgres_explain_options()?;
+
         let extended = self.match_identifier("EXTENDED");
         let formatted = if !extended {
             self.match_identifier("FORMATTED")
@@ -141,7 +145,11 @@ impl Parser {
 
         let style = self.parse_describe_style(extended, formatted);
 
-        let style = { style };
+        let style = if analyze_option && style.is_none() {
+            Some("ANALYZE".to_string())
+        } else {
+            style
+        };
 
         let kind = self.parse_describe_kind();
 

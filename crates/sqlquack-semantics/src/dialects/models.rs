@@ -77,6 +77,27 @@ impl DialectProfile for DuckDb {
     }
 }
 
+/// PostgreSQL: unquoted identifiers resolve to lower case, and resolved names compare exactly.
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
+pub struct Postgres;
+
+impl DialectProfile for Postgres {
+    fn name(&self) -> &'static str {
+        "PostgreSQL"
+    }
+
+    fn resolved_identifier(&self, name: &str, quoted: bool) -> String {
+        match quoted {
+            true => name.to_owned(),
+            false => name.to_ascii_lowercase(),
+        }
+    }
+
+    fn same_identifier(&self, left: &str, right: &str) -> bool {
+        left == right
+    }
+}
+
 /// The dialect SQL is written in, and the one it is resolved for, whose names may clash.
 #[derive(Clone, Copy, Debug)]
 pub struct Profiles {

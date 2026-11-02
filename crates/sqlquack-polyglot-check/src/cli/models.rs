@@ -63,4 +63,6 @@ pub enum DialectArgument {
     Snowflake,
     /// DuckDB.
     Duckdb,
+    /// PostgreSQL.
+    Postgres,
 }

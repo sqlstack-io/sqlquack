@@ -22,6 +22,7 @@ use crate::expressions::operators::models::QuantifiedOp;
 use crate::expressions::operators::models::SimilarToExpr;
 use crate::expressions::operators::models::UnaryOp;
 use crate::expressions::statements::models::Annotated;
+use crate::expressions::statements::models::Raw;
 use crate::expressions::tree::models::Expression;
 use crate::expressions::typed_functions::main::new_unary_func::new_unary_func;
 use crate::expressions::typed_functions::models::AtTimeZone;
@@ -919,9 +920,49 @@ impl Parser {
     #[inline(always)]
     pub(crate) fn parse_bitwise_or(&mut self) -> Result<Expression> {
         let start = self.current;
+        if self.config.dialect == Some(crate::tokens::models::DialectType::PostgreSQL) {
+            let expr = self.parse_bitwise_same_precedence()?;
+            return Ok(self.spanned(start, expr));
+        }
         let left = self.parse_bitwise_xor()?;
         let expr = self.parse_bitwise_or_tail(left)?;
         Ok(self.spanned(start, expr))
+    }
+
+    /// Parses PostgreSQL's `&`, `|`, `#`, `<<` and `>>`, one left-associative tier below arithmetic.
+    pub(crate) fn parse_bitwise_same_precedence(&mut self) -> Result<Expression> {
+        let expr_start = self.current;
+        let mut left = self.parse_addition()?;
+        loop {
+            let token = self.peek().token_type;
+            if !matches!(
+                token,
+                TokenType::Pipe
+                    | TokenType::Amp
+                    | TokenType::LtLt
+                    | TokenType::GtGt
+                    | TokenType::Hash
+            ) {
+                return Ok(left);
+            }
+            self.skip();
+            if token == TokenType::LtLt && self.match_token(TokenType::DArrow) {
+                let _ = self.parse_addition()?;
+                left = Expression::Raw(Raw {
+                    sql: self.tokens_to_sql(expr_start, self.current),
+                });
+                continue;
+            }
+            let right = self.parse_addition()?;
+            let op = Box::new(BinaryOp::new(left, right));
+            left = match token {
+                TokenType::Pipe => Expression::BitwiseOr(op),
+                TokenType::Amp => Expression::BitwiseAnd(op),
+                TokenType::Hash => Expression::BitwiseXor(op),
+                TokenType::LtLt => Expression::BitwiseLeftShift(op),
+                _ => Expression::BitwiseRightShift(op),
+            };
+        }
     }
 
     #[inline(never)]
@@ -1091,13 +1132,15 @@ impl Parser {
     #[inline(never)]
     pub(crate) fn parse_bitwise_xor_tail(&mut self, mut left: Expression) -> Result<Expression> {
         loop {
-            {
-                if self.match_token(TokenType::Caret) {
-                    let right = self.parse_bitwise_and()?;
-                    left = Expression::BitwiseXor(Box::new(BinaryOp::new(left, right)));
-                } else {
-                    return Ok(left);
-                }
+            let xor: TokenType = match self.config.dialect {
+                Some(crate::tokens::models::DialectType::PostgreSQL) => TokenType::Hash,
+                _ => TokenType::Caret,
+            };
+            if self.match_token(xor) {
+                let right = self.parse_bitwise_and()?;
+                left = Expression::BitwiseXor(Box::new(BinaryOp::new(left, right)));
+            } else {
+                return Ok(left);
             }
         }
     }
@@ -1124,14 +1167,28 @@ impl Parser {
     /// Parse shift expressions (<< and >>)
     #[inline(always)]
     pub(crate) fn parse_shift(&mut self) -> Result<Expression> {
+        let expr_start = self.current;
         let left = self.parse_duckdb_concat()?;
-        self.parse_shift_tail(left)
+        self.parse_shift_tail(left, expr_start)
     }
 
     #[inline(never)]
-    pub(crate) fn parse_shift_tail(&mut self, mut left: Expression) -> Result<Expression> {
+    pub(crate) fn parse_shift_tail(
+        &mut self,
+        mut left: Expression,
+        expr_start: usize,
+    ) -> Result<Expression> {
         loop {
             if self.match_token(TokenType::LtLt) {
+                if self.config.dialect == Some(crate::tokens::models::DialectType::PostgreSQL)
+                    && self.match_token(TokenType::DArrow)
+                {
+                    let _ = self.parse_duckdb_concat()?;
+                    left = Expression::Raw(Raw {
+                        sql: self.tokens_to_sql(expr_start, self.current),
+                    });
+                    continue;
+                }
                 let right = self.parse_duckdb_concat()?;
                 left = Expression::BitwiseLeftShift(Box::new(BinaryOp::new(left, right)));
             } else if self.match_token(TokenType::GtGt) {
@@ -1413,6 +1470,7 @@ impl Parser {
             } else if matches!(
                 self.config.dialect,
                 Some(crate::tokens::models::DialectType::DuckDB)
+                    | Some(crate::tokens::models::DialectType::PostgreSQL)
             ) && self.match_token(TokenType::Caret)
             {
                 let right = self.parse_unary()?;
@@ -1688,6 +1746,26 @@ impl Parser {
         {
             {
                 if self.check(TokenType::DAt)
+                    && self.config.dialect == Some(crate::tokens::models::DialectType::PostgreSQL)
+                {
+                    self.skip();
+                    let expr = self.with_parser_depth(|parser| parser.parse_bitwise_or())?;
+                    Ok(Expression::Abs(Box::new(new_unary_func(expr))))
+                } else if self.check(TokenType::Var)
+                    && self.peek_text().starts_with('@')
+                    && self.config.dialect == Some(crate::tokens::models::DialectType::PostgreSQL)
+                {
+                    let token = self.advance()?;
+                    let col_expr = Self::parsed_column(Column {
+                        name: Identifier::new(&token.text[1..]),
+                        table: None,
+                        join_mark: false,
+                        trailing_comments: Vec::new(),
+                        span: None,
+                        inferred_type: None,
+                    });
+                    Ok(Expression::Abs(Box::new(new_unary_func(col_expr))))
+                } else if self.check(TokenType::DAt)
                     && matches!(
                         self.config.dialect,
                         Some(crate::tokens::models::DialectType::DuckDB)

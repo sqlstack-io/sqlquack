@@ -1,4 +1,4 @@
-use crate::dialects::constants::{DUCKDB, SNOWFLAKE};
+use crate::dialects::constants::{DUCKDB, POSTGRES, SNOWFLAKE};
 use crate::dialects::main::identifier_name::identifier_name;
 use crate::dialects::tests::test_types::IdentifierTestCase;
 
@@ -28,6 +28,22 @@ fn given_identifiers_when_resolving_by_profile_then_each_dialect_folds_and_compa
             compared_with: "CUSTOMER_ID",
             expected_resolved: "customer_id",
             expected_same: true,
+        },
+        IdentifierTestCase {
+            description: "PostgreSQL resolves an unquoted identifier to lower case",
+            profile: &POSTGRES,
+            written: ("Customer_ID", false),
+            compared_with: "customer_id",
+            expected_resolved: "customer_id",
+            expected_same: true,
+        },
+        IdentifierTestCase {
+            description: "PostgreSQL keeps a quoted identifier as written and compares it exactly",
+            profile: &POSTGRES,
+            written: ("Customer_ID", true),
+            compared_with: "customer_id",
+            expected_resolved: "Customer_ID",
+            expected_same: false,
         },
     ];
     for test_case in test_cases {

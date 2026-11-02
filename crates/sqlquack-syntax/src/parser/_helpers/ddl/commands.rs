@@ -149,6 +149,7 @@ impl Parser {
         matches!(
             self.config.dialect,
             None | Some(crate::tokens::models::DialectType::Generic)
+                | Some(crate::tokens::models::DialectType::PostgreSQL)
         )
     }
 

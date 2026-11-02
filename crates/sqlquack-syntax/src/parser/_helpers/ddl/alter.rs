@@ -1756,6 +1756,26 @@ impl Parser {
         Ok(Expression::Rollback(Box::new(Rollback { savepoint, this })))
     }
 
+    /// Parses PostgreSQL's END [WORK|TRANSACTION] [AND [NO] CHAIN], an alias of COMMIT.
+    pub(crate) fn parse_end_transaction(&mut self) -> Result<Expression> {
+        self.expect_token(TokenType::End)?;
+        let _has_work = self.match_identifier("WORK") || self.match_token(TokenType::Transaction);
+        let chain = if self.match_token(TokenType::And) {
+            let no_chain = self.match_token(TokenType::No);
+            self.match_identifier("CHAIN");
+            Some(Box::new(Expression::Boolean(BooleanLiteral {
+                value: !no_chain,
+            })))
+        } else {
+            None
+        };
+        Ok(Expression::Commit(Box::new(Commit {
+            chain,
+            this: None,
+            durability: None,
+        })))
+    }
+
     /// Parses COMMIT [TRANSACTION|WORK] [name] [WITH (...)] [AND [NO] CHAIN].
     pub(crate) fn parse_commit(&mut self) -> Result<Expression> {
         self.expect_token(TokenType::Commit)?;

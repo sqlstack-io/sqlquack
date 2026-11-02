@@ -128,6 +128,7 @@ impl Parser {
         let supports_array_type_suffix = matches!(
             self.config.dialect,
             Some(crate::tokens::models::DialectType::DuckDB)
+                | Some(crate::tokens::models::DialectType::PostgreSQL)
         );
 
         let is_quoted = self.check(TokenType::QuotedIdentifier);

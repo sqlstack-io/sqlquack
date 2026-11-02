@@ -640,6 +640,21 @@ pub(crate) fn expanded_star(
     context: LineageContext<'_>,
 ) -> ResolvedQuery {
     let qualifier = star.table.as_ref().map(|table| key(table, context));
+    let named = |level: &LineageScope<'_>| -> bool {
+        level.sources.iter().any(|source| {
+            matches!((&qualifier, &source.key), (Some(qualifier), Some(key))
+                if context.profile.same_identifier(key, qualifier))
+        })
+    };
+    let mut owner: &LineageScope<'_> = scope;
+    while qualifier.is_some() && !named(owner) {
+        let Some(outer) = owner.outer else {
+            owner = scope;
+            break;
+        };
+        owner = outer;
+    }
+    let scope: &LineageScope<'_> = owner;
     let selected: Vec<&ScopeSource> = scope
         .sources
         .iter()

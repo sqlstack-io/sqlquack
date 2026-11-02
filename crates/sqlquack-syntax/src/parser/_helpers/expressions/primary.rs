@@ -32,6 +32,7 @@ use crate::parser::constants::ODBC_TIME_ESCAPE;
 use crate::parser::constants::PYFORMAT_PARAMETER_SUFFIX;
 use crate::parser::constants::SECOND_PREVIOUS_OFFSET;
 use crate::parser::constants::STRUCT;
+use crate::parser::constants::VARIADIC_KEYWORD;
 use crate::parser::models::Parser;
 use crate::tokens::models::SourceSpan;
 use crate::tokens::models::TokenType;
@@ -48,6 +49,21 @@ impl Parser {
 
         if let Some(connect_by_root) = self.try_parse_connect_by_root_expression()? {
             return Ok(connect_by_root);
+        }
+
+        if matches!(
+            self.config.dialect,
+            Some(crate::tokens::models::DialectType::PostgreSQL)
+        ) && self.check(TokenType::Var)
+            && self.peek_text().eq_ignore_ascii_case(VARIADIC_KEYWORD)
+        {
+            self.skip();
+            let this = self.parse_bitwise_or()?;
+            return Ok(Expression::Variadic(Box::new(
+                crate::expressions::statements::models::Variadic {
+                    this: Box::new(this),
+                },
+            )));
         }
 
         if self.match_token(TokenType::LBracket) {

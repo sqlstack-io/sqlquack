@@ -443,6 +443,11 @@ impl Parser {
             TokenType::Rollback => self.parse_rollback(),
             TokenType::Commit => self.parse_commit(),
             TokenType::Begin => self.parse_transaction(),
+            TokenType::End
+                if self.config.dialect == Some(crate::tokens::models::DialectType::PostgreSQL) =>
+            {
+                self.parse_end_transaction()
+            }
             TokenType::End => {
                 self.skip();
                 Ok(Expression::Command(Box::new(Command {

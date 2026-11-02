@@ -1449,6 +1449,7 @@ impl Parser {
     }
 
     pub(crate) fn parse_duckdb_json_arrow(&mut self) -> Result<Expression> {
+        let expression_start = self.current;
         let mut expression = self.parse_or()?;
         if self.config.dialect == Some(crate::tokens::models::DialectType::DuckDB) {
             while self.match_token(TokenType::Arrow) {
@@ -1470,7 +1471,7 @@ impl Parser {
                 }));
                 if self.check(TokenType::DArrow) {
                     expression = self.parse_duckdb_concat_tail(expression)?;
-                    expression = self.parse_shift_tail(expression)?;
+                    expression = self.parse_shift_tail(expression, expression_start)?;
                     expression = self.parse_bitwise_and_tail(expression)?;
                     expression = self.parse_bitwise_xor_tail(expression)?;
                     expression = self.parse_bitwise_or_tail(expression)?;

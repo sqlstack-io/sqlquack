@@ -1,5 +1,6 @@
 //! Data models of parser.
 
+use crate::parser::constants::POSTGRES_REPLICATION_COMMANDS;
 use std::collections::HashMap;
 use std::collections::HashSet;
 use std::sync::atomic::AtomicUsize;
@@ -195,6 +196,30 @@ impl DialectImpl for DuckDBDialect {
         config.nested_comments = true;
         config.numbers_can_be_underscore_separated = true;
         config.double_slash_int_div = true;
+        config
+    }
+}
+
+/// PostgreSQL dialect
+#[derive(Debug)]
+pub(crate) struct PostgresDialect;
+
+impl DialectImpl for PostgresDialect {
+    fn tokenizer_config(&self) -> TokenizerConfig {
+        let mut config = TokenizerConfig::default();
+        config.quotes.insert("$$".to_string(), "$$".to_string());
+        config.identifiers.insert('"', '"');
+        config.nested_comments = true;
+        config.keywords.insert(
+            "EXEC".to_string(),
+            crate::tokens::models::TokenType::Command,
+        );
+        for command in POSTGRES_REPLICATION_COMMANDS {
+            config.keywords.insert(
+                command.to_string(),
+                crate::tokens::models::TokenType::Command,
+            );
+        }
         config
     }
 }

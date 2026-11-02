@@ -1174,6 +1174,7 @@ impl Parser {
             && !matches!(
                 self.config.dialect,
                 Some(crate::tokens::models::DialectType::DuckDB)
+                    | Some(crate::tokens::models::DialectType::PostgreSQL)
             )
             && !self
                 .peek_nth(1)

@@ -22,6 +22,7 @@ pub(crate) fn named_corpora(argument: &CorpusArgument) -> Vec<NamedCorpus> {
             let dialect = match dialect {
                 DialectArgument::Snowflake => Dialect::Snowflake,
                 DialectArgument::Duckdb => Dialect::DuckDB,
+                DialectArgument::Postgres => Dialect::PostgreSQL,
             };
             vec![(path.display().to_string(), directory_corpus(path, dialect))]
         }

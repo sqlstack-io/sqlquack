@@ -108,6 +108,18 @@ fn given_a_query_when_resolving_its_names_then_unknown_ambiguous_and_unqualifiab
             ],
         },
         QueryFindingsTestCase {
+            description: "a lateral star over an earlier lateral item offers its columns",
+            sql: "SELECT ss2.status FROM orders o, LATERAL (SELECT o.status) AS ss1, \
+                  LATERAL (SELECT ss1.* FROM customers LIMIT 1) AS ss2",
+            expected_findings: &[],
+        },
+        QueryFindingsTestCase {
+            description: "a lateral star over an earlier item still checks what it offers",
+            sql: "SELECT ss2.missing FROM orders o, LATERAL (SELECT o.status) AS ss1, \
+                  LATERAL (SELECT ss1.* FROM customers LIMIT 1) AS ss2",
+            expected_findings: &[("E201", "Unknown column 'missing' in table 'ss2'", 11)],
+        },
+        QueryFindingsTestCase {
             description: "a CTE column the CTE does not output",
             sql: "WITH c AS (SELECT id FROM orders) SELECT c.amount FROM c",
             expected_findings: &[("E201", "Unknown column 'amount' in table 'c'", 43)],
@@ -309,6 +321,60 @@ fn given_a_duckdb_query_when_a_name_is_definitely_unresolved_then_it_is_still_fo
         assert_eq!(
             found_findings(test_case.sql, (Dialect::DuckDB, &DUCKDB, &schema)),
             owned_findings(test_case.expected_findings),
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_a_duckdb_lateral_star_over_an_earlier_item_when_resolving_names_then_its_columns_resolve()
+{
+    let test_cases = [
+        QueryFindingsTestCase {
+            description: "a DuckDB lateral star over an earlier lateral item offers its columns",
+            sql: "SELECT ss2.status FROM orders o, LATERAL (SELECT o.status) AS ss1, \
+                  LATERAL (SELECT ss1.* FROM customers LIMIT 1) AS ss2 WHERE ss2.status = 'open'",
+            expected_findings: &[],
+        },
+        QueryFindingsTestCase {
+            description: "a DuckDB lateral star still checks the columns it offers",
+            sql: "SELECT ss2.missing FROM orders o, LATERAL (SELECT o.status) AS ss1, \
+                  LATERAL (SELECT ss1.* FROM customers LIMIT 1) AS ss2",
+            expected_findings: &[("E201", "Unknown column 'missing' in table 'ss2'", 11)],
+        },
+    ];
+    let schema = shop_schema();
+    for test_case in test_cases {
+        let context = LineageContext {
+            profile: &DUCKDB,
+            schema: &schema,
+            sql: Some(test_case.sql),
+        };
+        let statements = parse_statements_with(
+            test_case.sql,
+            Dialect::DuckDB,
+            &ParseOptions::default(),
+            CallMode::FaithfulLocated,
+        )
+        .unwrap_or_else(|error| panic!("{}: {error}", test_case.description));
+        let found: Vec<(&str, String, usize)> = statement_findings(&statements[0], context)
+            .into_iter()
+            .map(|finding| {
+                (
+                    finding.code,
+                    finding.message,
+                    finding.span.map_or(0, |span| span.start),
+                )
+            })
+            .collect();
+        assert_eq!(
+            found,
+            test_case
+                .expected_findings
+                .iter()
+                .map(|(code, message, start)| (*code, (*message).to_owned(), *start))
+                .collect::<Vec<(&str, String, usize)>>(),
             "{}",
             test_case.description
         );

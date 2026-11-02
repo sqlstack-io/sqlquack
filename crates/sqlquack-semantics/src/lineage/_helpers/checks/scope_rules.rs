@@ -11,7 +11,7 @@ use crate::lineage::_helpers::checks::coercion::Engine;
 use crate::lineage::_helpers::checks::issues::{in_scope, issue, rule_location};
 use crate::lineage::_helpers::tracing::expressions::is_aggregate;
 use crate::lineage::_helpers::tracing::resolution::key;
-use crate::lineage::constants::SCOPE_PHASE;
+use crate::lineage::constants::{POSTGRES_PROFILE, SCOPE_PHASE, SNOWFLAKE_PROFILE};
 use crate::lineage::models::{LineageContext, LineageScope, NameFinding, ScopeSource};
 
 const COLUMNS_FUNCTION: &str = "columns";
@@ -217,10 +217,13 @@ fn structure_rules(
     if let Some(with) = &select.with {
         let mut names: HashSet<String> = HashSet::new();
         for cte in &with.ctes {
-            if engine == Engine::Snowflake
-                && !cte.columns.is_empty()
-                && output_width(&cte.this).is_some_and(|width| width != cte.columns.len())
-            {
+            let profile: &str = level.context.profile.name();
+            let mismatched = |width: usize| match profile {
+                SNOWFLAKE_PROFILE => width != cte.columns.len(),
+                POSTGRES_PROFILE => width < cte.columns.len(),
+                _ => false,
+            };
+            if !cte.columns.is_empty() && output_width(&cte.this).is_some_and(mismatched) {
                 findings.push(rule(
                     "E223",
                     "CTE column alias count does not match its output column count".to_owned(),
@@ -804,7 +807,7 @@ fn distinct_order(
         .filter(|order| !order_by_all(order, level));
     if !select.distinct
         || ordered.is_none()
-        || Engine::of(level.context) != Engine::Snowflake
+        || level.context.profile.name() != SNOWFLAKE_PROFILE
         || !select
             .expressions
             .iter()
