@@ -224,13 +224,19 @@ fn given_a_known_divergence_when_converting_then_default_mode_warns_and_strict_m
             },
         },
         DivergenceModeTestCase {
-            description: "ordering by a VARIANT is refused",
+            description: "ordering by a VARIANT relies on array_sort_order's recorded kind order",
             sql: "SELECT note FROM customers ORDER BY PARSE_JSON(note)",
             strict: false,
             expected_outcome: DivergenceModeOutcome {
-                converted: false,
-                divergences: vec![],
-                categories: vec![RefusalCategory::TypeCondition],
+                converted: true,
+                divergences: vec![
+                    (
+                        "array_sort_order".to_owned(),
+                        vec!["node:ordered".to_owned()],
+                    ),
+                    ("json_fidelity".to_owned(), vec!["fn:PARSE_JSON".to_owned()]),
+                ],
+                categories: vec![],
             },
         },
         DivergenceModeTestCase {

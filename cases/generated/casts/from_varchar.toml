@@ -300,6 +300,7 @@ rows = [
 expression = "CAST(x AS TIMESTAMP_TZ(9))"
 tags = ["null", "boundary"]
 origin = "generated: casts@2"
+expected_divergence = "timestamp_tz_offset"
 
 [[case]]
 id = "varchar_to_tz9_invalid"
@@ -311,6 +312,7 @@ rows = [
 expression = "CAST(x AS TIMESTAMP_TZ(9))"
 tags = ["invalid"]
 origin = "generated: casts@2"
+expected_divergence = "timestamp_tz_offset"
 
 [[case]]
 id = "varchar_to_ltz9"

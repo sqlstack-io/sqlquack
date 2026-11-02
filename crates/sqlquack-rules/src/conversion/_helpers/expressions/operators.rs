@@ -43,7 +43,7 @@ use sqlquack_duckdb::blocks::constants::NANOSECOND_DIGITS;
 use crate::conversion::constants::{
     COMPARISON, DATE_DAY_ARITHMETIC, DATE_LITERAL_COMPARISON, DAY_UNIT, DECIMAL_ARITHMETIC,
     DECIMAL_DIVISION, DECIMAL_MODULO, FLOAT_ARITHMETIC, FLOAT_MODULO, LOGIC, MOD_PAIR,
-    NULL_ARITHMETIC, NULL_SAFE_COMPARISON, NULL_SUM_PRECISION, NUMERIC_RANGE,
+    NULL_ARITHMETIC, NULL_SAFE_COMPARISON, NULL_SUM_PRECISION, NUMERIC_RANGE, SESSION_TIMEZONE_UTC,
     TEXT_NUMBER_COMPARISON, VARIANT_EQUALITY,
 };
 
@@ -478,11 +478,49 @@ pub(crate) fn equal_null(
     };
     let left = convert_expression(left, site)?;
     let right = convert_expression(right, site)?;
+    if let Some(compared) = variant_null_safe((&left, &right), false, construct, site.context)? {
+        return Ok(compared);
+    }
     let (left, right) = comparable(left, right, construct, site.context)?;
     Ok(Emitted::new(
         format!("({} IS NOT DISTINCT FROM {})", left.sql, right.sql),
         SnowflakeType::Boolean,
     ))
+}
+
+/// A null-safe comparison with a VARIANT: equal by Snowflake's text, NULL equal only to NULL.
+fn variant_null_safe(
+    (left, right): (&Emitted, &Emitted),
+    distinct: bool,
+    construct: &Construct,
+    context: &Context<'_>,
+) -> Result<Option<Emitted>, Refusal> {
+    let kinds = [left.data_type, right.data_type];
+    if kinds.contains(&SnowflakeType::Varchar) && kinds.contains(&SnowflakeType::SemiStructured) {
+        return Err(outside_conditions(
+            construct.clone(),
+            "a null-safe comparison of a VARIANT with text, where no recording shows how a JSON \
+             null compares"
+                .to_owned(),
+        ));
+    }
+    let Some(equal) = variant_equality("eq", (left, right), construct, context)? else {
+        return Ok(None);
+    };
+    let negation = match distinct {
+        true => "NOT ",
+        false => "",
+    };
+    Ok(Some(Emitted::new(
+        format!(
+            "({negation}CASE WHEN {l} IS NULL AND {r} IS NULL THEN TRUE \
+             WHEN {l} IS NULL OR {r} IS NULL THEN FALSE ELSE {} END)",
+            equal.sql,
+            l = left.sql,
+            r = right.sql
+        ),
+        SnowflakeType::Boolean,
+    )))
 }
 
 /// `IS [NOT] DISTINCT FROM`: NULL compares equal to NULL and unequal to any value.
@@ -494,6 +532,11 @@ pub(crate) fn null_safe_comparison(
     let construct = node_construct(kind);
     let _rule = site.context.log.rule(NULL_SAFE_COMPARISON);
     let (left, right) = operands(kind, payload, site)?;
+    let distinct = !matches!(kind, "null_safe_eq");
+    if let Some(compared) = variant_null_safe((&left, &right), distinct, &construct, site.context)?
+    {
+        return Ok(compared);
+    }
     let (left, right) = comparable(left, right, &construct, site.context)?;
     let symbol = match kind {
         "null_safe_eq" => "IS NOT DISTINCT FROM",
@@ -535,6 +578,20 @@ pub(crate) fn comparable(
         }
         (SnowflakeType::Varchar, ntz @ SnowflakeType::TimestampNtz { .. }) => {
             let left = ntz_literal(left, ntz, construct, context)?;
+            return Ok((left, right));
+        }
+        (
+            SnowflakeType::TimestampTz { .. } | SnowflakeType::TimestampLtz { .. },
+            SnowflakeType::Varchar,
+        ) if text_literal(&right) => {
+            let right = zoned_literal(right, construct, context)?;
+            return Ok((left, right));
+        }
+        (
+            SnowflakeType::Varchar,
+            SnowflakeType::TimestampTz { .. } | SnowflakeType::TimestampLtz { .. },
+        ) if text_literal(&left) => {
+            let left = zoned_literal(left, construct, context)?;
             return Ok((left, right));
         }
         (SnowflakeType::Varchar, number @ SnowflakeType::Number { .. }) => {
@@ -639,6 +696,37 @@ fn date_literal(
         _ => cast_to(&emitted, DATE_NAME, false, (context, construct)).map_err(refuse)?,
     };
     Ok(Emitted::new(sql, SnowflakeType::Date))
+}
+
+/// Whether `emitted` is a text literal.
+fn text_literal(emitted: &Emitted) -> bool {
+    matches!(emitted.literal, Some(Literal::Text(_)))
+}
+
+/// A text literal compared with a zoned value: its instant, T or space separated, read at UTC.
+fn zoned_literal(
+    emitted: Emitted,
+    construct: &Construct,
+    context: &Context<'_>,
+) -> Result<Emitted, Refusal> {
+    let to = SnowflakeType::TimestampLtz { precision: 9 };
+    let refuse = || {
+        outside_conditions(
+            construct.clone(),
+            "comparing a zoned timestamp with this text needs an implicit conversion".to_owned(),
+        )
+    };
+    let Some(Literal::Text(text)) = &emitted.literal else {
+        return Err(refuse());
+    };
+    let _rule = context.log.rule(DATE_LITERAL_COMPARISON);
+    diverge(context, SESSION_TIMEZONE_UTC, construct)?;
+    let spelled = match (text.get(..10), text.get(10..11), text.get(11..)) {
+        (Some(date), Some("T"), Some(rest)) => format!("{date} {rest}"),
+        _ => text.clone(),
+    };
+    let sql = timestamp_literal(&spelled, to, (context, construct)).map_err(|_| refuse())?;
+    Ok(Emitted::new(sql, to))
 }
 
 /// A text literal compared with a TIMESTAMP_NTZ, read as the timestamp it spells, T or space separated.

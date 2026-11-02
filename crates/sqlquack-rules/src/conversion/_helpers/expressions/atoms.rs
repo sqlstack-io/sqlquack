@@ -1,6 +1,8 @@
 //! Columns, literals, parentheses, negation and scalar subqueries.
 
 use serde_json::{Value, json};
+use sqlquack_core::classification::constants::{CURSOR_CONSTRUCT, CURSOR_PLACEHOLDER};
+use sqlquack_core::classification::models::{Construct, ConstructFamily};
 use sqlquack_core::refusals::main::missing::missing;
 use sqlquack_core::refusals::main::outside_conditions::outside_conditions;
 use sqlquack_core::refusals::models::Refusal;
@@ -17,7 +19,7 @@ use crate::conversion::_helpers::support::collecting::{
     collecting, guessed, opaque_in_scope, placeholder,
 };
 use crate::conversion::_helpers::support::divergence::diverge;
-use crate::conversion::_helpers::support::scope::{Emitted, Literal, resolve};
+use crate::conversion::_helpers::support::scope::{Emitted, Literal, Scope, resolve};
 use crate::conversion::_helpers::support::site::Site;
 use crate::conversion::_helpers::support::tree::{
     LITERAL_NUMBER, LITERAL_STRING, field, identifier_name, node_construct, payload_object,
@@ -25,9 +27,10 @@ use crate::conversion::_helpers::support::tree::{
 };
 use crate::conversion::constants::{
     COLUMN, COMMENT, CONSTANT_LITERAL, DOLLAR_PARAMETER, DOLLAR_STRING_KIND, NEGATE,
-    NUMBER_LITERAL, PARENTHESES, POSITIONAL_COLUMN, SCALAR_SUBQUERY, TYPED_LITERAL_KINDS,
-    TYPED_LITERAL_PAIR,
+    NUMBER_LITERAL, PARENTHESES, POSITIONAL_COLUMN, SCALAR_SUBQUERY, SEQUENCE_COLUMN,
+    SEQUENCE_PEERS, TYPED_LITERAL_KINDS, TYPED_LITERAL_PAIR,
 };
+use sqlquack_semantics::scopes::models::ScopeRelation;
 use sqlquack_semantics::types::models::Holding;
 
 /// A column reference.
@@ -59,8 +62,41 @@ pub(crate) fn column(payload: &Value, site: Site<'_>) -> Result<Emitted, Refusal
         Err(_) if collecting() && opaque_in_scope(site.scope, qualifier.as_deref()) => {
             Ok(placeholder(None))
         }
+        Err(_) if qualifier.is_none() && name.eq_ignore_ascii_case(CURSOR_PLACEHOLDER) => {
+            Err(missing(
+                Construct::new(ConstructFamily::Function, CURSOR_CONSTRUCT),
+                "a microbatch cursor bound, __cursor_start() or __cursor_end(), which converts \
+                 only where its type is known (census --cursor-type)"
+                    .to_owned(),
+            ))
+        }
+        Err(_) if sequence_column(site.scope, qualifier.as_deref(), &name) => {
+            Err(outside_conditions(
+                construct,
+                "SEQ of FLATTEN or SPLIT_TO_TABLE, which no rule converts".to_owned(),
+            ))
+        }
         Err(refusal) => Err(refusal),
     }
+}
+
+/// Whether `qualifier.name` is SEQ of a FLATTEN or SPLIT_TO_TABLE source, which neither scopes.
+fn sequence_column(scope: &Scope<'_>, qualifier: Option<&str>, name: &str) -> bool {
+    let Some(qualifier) = qualifier else {
+        return false;
+    };
+    let table_function = |relation: &ScopeRelation| {
+        relation.alias.eq_ignore_ascii_case(qualifier)
+            && SEQUENCE_PEERS.iter().all(|peer| has_column(relation, peer))
+    };
+    let mut level = Some(scope);
+    while let Some(current) = level {
+        if current.relations.iter().any(table_function) {
+            return name.eq_ignore_ascii_case(SEQUENCE_COLUMN);
+        }
+        level = current.outer;
+    }
+    false
 }
 
 /// `$n`: the n-th column of the query level's only FROM source, read as that column.
@@ -227,4 +263,12 @@ pub(crate) fn scalar_subquery(payload: &Value, site: Site<'_>) -> Result<Emitted
             "a scalar subquery must return exactly one column".to_owned(),
         )),
     }
+}
+
+/// Whether `relation` has a column named `name`, ignoring case.
+fn has_column(relation: &ScopeRelation, name: &str) -> bool {
+    relation
+        .columns
+        .iter()
+        .any(|column| column.name.eq_ignore_ascii_case(name))
 }

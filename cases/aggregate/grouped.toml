@@ -220,5 +220,4 @@ rows = [
 ]
 query = "SELECT g, MAX(PARSE_JSON(j)) AS m FROM input GROUP BY g ORDER BY g"
 order = "ordered"
-expected_divergence = "array_sort_order"
 tags = ["duplicates", "mixed-types"]

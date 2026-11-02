@@ -17,9 +17,6 @@ pub const RELATION_PLACEHOLDER: &str = "__sqlquack_relation";
 /// The table function that stands in for sqlbuild table-function references.
 pub const TABLE_FUNCTION_PLACEHOLDER: &str = "__sqlquack_table_fn";
 
-/// The column that stands in for sqlbuild cursor bounds.
-pub const CURSOR_PLACEHOLDER: &str = "__sqlquack_cursor";
-
 /// sqlbuild reference calls replaced by a relation.
 pub const RELATION_CALLS: &[&str] = &[
     "__ref",

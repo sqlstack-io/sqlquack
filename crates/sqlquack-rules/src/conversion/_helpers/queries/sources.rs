@@ -7,7 +7,7 @@ use sqlquack_core::classification::models::{Construct, ConstructFamily};
 use sqlquack_core::refusals::main::missing::missing;
 use sqlquack_core::refusals::main::outside_conditions::outside_conditions;
 use sqlquack_core::refusals::main::unresolved::unresolved;
-use sqlquack_core::refusals::models::Refusal;
+use sqlquack_core::refusals::models::{Refusal, RefusalCategory};
 use sqlquack_duckdb::blocks::main::quoted_identifier::quoted_identifier;
 use sqlquack_snowflake::typing::models::SnowflakeType;
 
@@ -17,7 +17,9 @@ use crate::conversion::_helpers::expressions::semi_structured::guarded_column;
 use crate::conversion::_helpers::queries::clauses::condition_sql;
 use crate::conversion::_helpers::queries::flatten::lateral_flatten;
 use crate::conversion::_helpers::queries::query::{convert_query, require_distinct_names};
-use crate::conversion::_helpers::support::collecting::{collecting, events, opaque, record};
+use crate::conversion::_helpers::support::collecting::{
+    collecting, events, opaque, record, recorded, replace_since, suspended, unresolved_since,
+};
 use crate::conversion::_helpers::support::scope::{Context, Scope};
 use crate::conversion::_helpers::support::site::{Placement, Site};
 use crate::conversion::_helpers::support::tree::{
@@ -25,9 +27,9 @@ use crate::conversion::_helpers::support::tree::{
     node_kind, payload_object, require_understood,
 };
 use crate::conversion::constants::{
-    ASOF_JOIN, ASOF_KIND, FROM_RELATION, FROM_SUBQUERY, GENERATOR_MAX_ROWS, GENERATOR_NAME,
-    GENERATOR_RULE, GENERATOR_SEQUENCE_COLUMN, JOIN_CROSS, JOIN_ON, JOIN_USING, LATERAL_KEY,
-    LATERAL_SUBQUERY, OPAQUE_ALIAS_PREFIX, PROJECT_TABLE_FUNCTION, TABLE_WRAPPER,
+    ASOF_JOIN, ASOF_KIND, CORRELATED_DERIVED, FROM_RELATION, FROM_SUBQUERY, GENERATOR_MAX_ROWS,
+    GENERATOR_NAME, GENERATOR_RULE, GENERATOR_SEQUENCE_COLUMN, JOIN_CROSS, JOIN_ON, JOIN_USING,
+    LATERAL_KEY, LATERAL_SUBQUERY, OPAQUE_ALIAS_PREFIX, PROJECT_TABLE_FUNCTION, TABLE_WRAPPER,
     UNALIASED_SUBQUERY_PREFIX, USING_ALIAS_PREFIX,
 };
 use crate::conversion::constants::{FULL_JOIN_KEYWORD, INNER_JOIN_KEYWORD};
@@ -744,12 +746,38 @@ fn subquery_source(
     let lateral = subquery.get(LATERAL_KEY).and_then(Value::as_bool) == Some(true);
     let _lateral_rule = lateral.then(|| log.rule(LATERAL_SUBQUERY));
     let scope = Scope::new(relations.to_vec(), outer);
-    let (sql, mut columns) = convert_query(
-        field(subquery, "this", &construct)?,
+    let query = field(subquery, "this", &construct)?;
+    let before = recorded();
+    let converted = convert_query(
+        query,
         lateral.then_some(&scope),
         &context.projecting(true),
         true,
-    )?;
+    );
+    let unresolved_inside = match &converted {
+        Ok(_) => unresolved_since(before),
+        Err(refusal) => refusal.category == RefusalCategory::UnresolvedName,
+    };
+    let correlated = match (outer, lateral, unresolved_inside) {
+        (Some(outer), false, true) => reads_enclosing(query, outer, context),
+        _ => false,
+    };
+    let (sql, mut columns) = match (correlated, converted) {
+        (false, converted) => converted?,
+        (true, converted) => {
+            let refusal = context.locator.placed(
+                outside_conditions(node_construct("subquery"), CORRELATED_DERIVED.to_owned()),
+                query,
+            );
+            match (collecting(), converted) {
+                (true, Ok(converted)) => {
+                    replace_since(before, refusal);
+                    converted
+                }
+                _ => return Err(refusal),
+            }
+        }
+    };
     let renamed = list(subquery, "column_aliases");
     if !renamed.is_empty() {
         if renamed.len() != columns.len() {
@@ -788,4 +816,16 @@ fn subquery_source(
             merged: Vec::new(),
         },
     ))
+}
+
+/// Whether a FROM subquery's names resolve once it may read the enclosing query's columns.
+fn reads_enclosing(query: &Value, outer: &Scope<'_>, context: &Context<'_>) -> bool {
+    let _muted = context.log.muted();
+    let enclosing = Scope::new(Vec::new(), Some(outer));
+    let converted =
+        suspended(|| convert_query(query, Some(&enclosing), &context.projecting(true), true));
+    match converted {
+        Ok(_) => true,
+        Err(refusal) => refusal.reason == CORRELATED_DERIVED,
+    }
 }

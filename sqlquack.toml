@@ -309,7 +309,7 @@ strict = "refuse"
 reason = "Snowflake's JAROWINKLER_SIMILARITY was recorded ignoring case and counting characters, not bytes. How it folds letters outside ASCII has no recording, so the converted SQL raises for any text holding a cased letter outside ASCII, such as É or é; it also raises for pairs holding more than 127 distinct characters, which it cannot encode. The failure is loud, never a wrong value."
 
 [divergences.array_sort_order]
-constructs = ["fn:ARRAY_SORT", "node:max", "fn:ARRAY_MAX", "fn:ARRAY_MIN"]
+constructs = ["fn:ARRAY_SORT", "node:max", "fn:ARRAY_MAX", "fn:ARRAY_MIN", "node:ordered", "node:min", "fn:MIN_BY", "fn:MAX_BY", "fn:ARRAY_AGG", "node:array_agg", "node:within_group", "node:window", "fn:MIN", "fn:MAX"]
 default = "warn"
 strict = "refuse"
 reason = "ARRAY_SORT, and ARRAY_MAX and ARRAY_MIN as its last and first elements: Snowflake's ARRAY_SORT was recorded putting booleans, then numbers by value, strings by their bytes, objects, arrays and JSON nulls last. How it orders two different objects, two different arrays, or numbers DuckDB reads as the same double (such as 1 and 1.0) has no recording, so the converted SQL raises for arrays holding them. MAX of VARIANT was recorded taking the largest number and the bytewise largest string, and a string above a number; the converted SQL returns a single value, the largest of numbers or of strings, and raises for other mixes. The failure is loud, never a wrong value."
@@ -321,7 +321,7 @@ strict = "refuse"
 reason = "Snowflake's ILIKE was recorded folding the long s onto s and the Kelvin sign onto k, and matching other letters as their lower case. Letters whose Unicode case folding differs from their lower case, or whose lower case DuckDB writes otherwise, have no recording; the converted SQL raises for text holding one rather than guessing whether it matches. The failure is loud, never a wrong value."
 
 [divergences.json_fidelity]
-constructs = ["fn:PARSE_JSON", "fn:TRY_PARSE_JSON", "node:column", "node:cast", "fn:TO_JSON", "fn:TO_VARCHAR", "fn:GET_IGNORE_CASE", "fn:FLATTEN", "fn:OBJECT_CONSTRUCT", "fn:OBJECT_CONSTRUCT_KEEP_NULL", "fn:OBJECT_INSERT", "fn:OBJECT_PICK", "fn:ARRAY_CONSTRUCT", "fn:ARRAY_EXCEPT", "fn:TO_VARIANT", "fn:ARRAY_AGG", "fn:ARRAY_TO_STRING", "fn:ARRAY_CONTAINS", "fn:ARRAY_CONSTRUCT_COMPACT", "node:map_func", "fn:OBJECT_AGG", "fn:ARRAY_POSITION", "fn:FILTER", "fn:TRANSFORM", "node:eq", "node:neq", "node:in", "fn:GET", "node:window_function", "node:array_func", "fn:REDUCE", "node:distinct", "node:group_by", "node:union", "node:except", "node:intersect", "fn:ARRAY_APPEND", "fn:TO_ARRAY", "fn:ARRAY_INTERSECTION", "fn:ARRAYS_OVERLAP", "fn:ARRAY_DISTINCT", "fn:ARRAY_REMOVE"]
+constructs = ["fn:PARSE_JSON", "fn:TRY_PARSE_JSON", "node:column", "node:cast", "fn:TO_JSON", "fn:TO_VARCHAR", "fn:GET_IGNORE_CASE", "fn:FLATTEN", "fn:OBJECT_CONSTRUCT", "fn:OBJECT_CONSTRUCT_KEEP_NULL", "fn:OBJECT_INSERT", "fn:OBJECT_PICK", "fn:ARRAY_CONSTRUCT", "fn:ARRAY_EXCEPT", "fn:TO_VARIANT", "fn:ARRAY_AGG", "fn:ARRAY_TO_STRING", "fn:ARRAY_CONTAINS", "fn:ARRAY_CONSTRUCT_COMPACT", "node:map_func", "fn:OBJECT_AGG", "fn:ARRAY_POSITION", "fn:FILTER", "fn:TRANSFORM", "node:eq", "node:neq", "node:in", "fn:GET", "node:window_function", "node:array_func", "fn:REDUCE", "node:distinct", "node:group_by", "node:union", "node:except", "node:intersect", "fn:ARRAY_APPEND", "fn:TO_ARRAY", "fn:ARRAY_INTERSECTION", "fn:ARRAYS_OVERLAP", "fn:ARRAY_DISTINCT", "fn:ARRAY_REMOVE", "node:ordered", "node:min", "node:max", "fn:MIN", "fn:MAX", "fn:MIN_BY", "fn:MAX_BY", "fn:TO_NUMBER", "fn:TO_DECIMAL", "fn:TO_NUMERIC", "fn:EQUAL_NULL", "node:null_safe_eq", "node:null_safe_neq"]
 default = "warn"
 strict = "refuse"
 reason = "DuckDB's JSON keeps non-integer numbers as doubles, reads a different set of lenient spellings, accepts repeated keys and keeps keys in input order, where Snowflake keeps exact decimals, reads single quotes, NaN and undefined, rejects repeated keys and writes keys sorted. The converted SQL raises for any document DuckDB might read differently, PARSE_JSON and TRY_PARSE_JSON alike, writes objects as text with keys sorted and strings escaped as Snowflake does, raises where sorting would rewrite a number, and raises for FLATTEN paths through keys that are not plain names. The failure is loud, never a wrong value."
@@ -333,7 +333,7 @@ strict = "refuse"
 reason = "A model that builds a VARIANT from a FLOAT holds it as a DuckDB VARIANT, which keeps the FLOAT's type, but writes the column as JSON text with the double spelled as Snowflake writes it, an exponent with fifteen fraction digits. A model reading that column back gets JSON, where the type is lost, and the guard on VARIANT columns of other relations raises for any number with an exponent. The failure is loud, never a wrong value; models reading such columns need them materialised as DuckDB VARIANT to convert."
 
 [divergences.source_variant_json]
-constructs = ["node:eq", "node:neq", "node:window_function", "fn:ARRAY_CONTAINS", "fn:ARRAY_POSITION", "fn:ARRAY_EXCEPT", "fn:ANY_VALUE", "fn:MAX_BY", "fn:MIN_BY", "fn:ARRAY_AGG", "node:distinct", "node:group_by", "node:union", "node:except", "node:intersect", "fn:ARRAY_INTERSECTION", "fn:ARRAYS_OVERLAP", "fn:ARRAY_DISTINCT", "fn:ARRAY_REMOVE"]
+constructs = ["node:eq", "node:neq", "node:window_function", "fn:ARRAY_CONTAINS", "fn:ARRAY_POSITION", "fn:ARRAY_EXCEPT", "fn:ANY_VALUE", "fn:MAX_BY", "fn:MIN_BY", "fn:ARRAY_AGG", "node:distinct", "node:group_by", "node:union", "node:except", "node:intersect", "fn:ARRAY_INTERSECTION", "fn:ARRAYS_OVERLAP", "fn:ARRAY_DISTINCT", "fn:ARRAY_REMOVE", "node:ordered", "node:min", "node:max", "fn:MIN", "fn:MAX", "fn:TO_NUMBER", "fn:TO_DECIMAL", "fn:TO_NUMERIC", "fn:EQUAL_NULL", "node:null_safe_eq", "node:null_safe_neq"]
 assumption = true
 default = "warn"
 strict = "refuse"
@@ -367,7 +367,7 @@ strict = "refuse"
 reason = "A TIMESTAMP_TZ source column's values carry their own offsets, which DuckDB does not keep. Where the schema declares a column's offset (only +00:00 is supported), operations depending on the offset, such as its wall time, date or parts, convert as for a value known to hold +00:00, and rely on `declared_offset:<RELATION.COLUMN>`. A value with another offset gives a wrong result silently. Strict mode refuses it unless the caller confirms the declared offsets."
 
 [divergences.session_timezone_utc]
-constructs = ["node:cast", "node:try_cast", "fn:TRY_TO_TIMESTAMP_TZ", "fn:CONVERT_TIMEZONE", "fn:CURRENT_DATE", "fn:CURRENT_TIMESTAMP", "fn:DATE_PART", "node:extract", "node:year", "node:quarter", "node:month", "node:day", "node:hour", "node:minute", "node:second", "fn:TO_VARIANT", "fn:OBJECT_CONSTRUCT", "fn:OBJECT_CONSTRUCT_KEEP_NULL", "fn:OBJECT_INSERT", "fn:ARRAY_CONSTRUCT", "node:map_func"]
+constructs = ["node:cast", "node:try_cast", "fn:TRY_TO_TIMESTAMP_TZ", "fn:CONVERT_TIMEZONE", "fn:CURRENT_DATE", "fn:CURRENT_TIMESTAMP", "fn:DATE_PART", "node:extract", "node:year", "node:quarter", "node:month", "node:day", "node:hour", "node:minute", "node:second", "fn:TO_VARIANT", "fn:OBJECT_CONSTRUCT", "fn:OBJECT_CONSTRUCT_KEEP_NULL", "fn:OBJECT_INSERT", "fn:ARRAY_CONSTRUCT", "node:map_func", "fn:TO_TIMESTAMP_TZ", "fn:TO_TIMESTAMP_LTZ", "fn:TRY_TO_TIMESTAMP_LTZ", "node:eq", "node:neq", "node:lt", "node:lte", "node:gt", "node:gte", "node:between"]
 assumption = true
 default = "warn"
 strict = "refuse"
@@ -391,27 +391,33 @@ default = "warn"
 strict = "refuse"
 reason = "MODE without GROUP BY over no rows returns a zero value in some Snowflake plans and NULL in others. The converted SQL raises when the input has no rows rather than pick one."
 
+[divergences.timestamp_tz_offset]
+constructs = ["node:cast", "node:try_cast", "fn:TO_TIMESTAMP_TZ"]
+default = "warn"
+strict = "refuse"
+reason = "Text read as TIMESTAMP_TZ carries its offset, which a DuckDB instant does not keep, so its wall time, date and parts would be UTC's. The converted SQL holds such a value only where the text's offset is +00:00, Z or absent, and raises for any other offset rather than give a wrong wall time."
+
 [divergences.date_text_spelling]
-constructs = ["fn:TRY_TO_DATE", "fn:TO_DATE", "node:try_cast", "node:cast", "fn:TO_TIMESTAMP", "fn:TO_TIMESTAMP_NTZ", "fn:DATE", "fn:TRY_TO_TIMESTAMP", "fn:TRY_TO_TIMESTAMP_NTZ", "fn:TRY_TO_TIMESTAMP_TZ", "fn:TO_TIME", "fn:TRY_TO_TIME", "node:eq", "node:neq", "node:lt", "node:lte", "node:gt", "node:gte", "node:in"]
+constructs = ["fn:TRY_TO_DATE", "fn:TO_DATE", "node:try_cast", "node:cast", "fn:TO_TIMESTAMP", "fn:TO_TIMESTAMP_NTZ", "fn:DATE", "fn:TRY_TO_TIMESTAMP", "fn:TRY_TO_TIMESTAMP_NTZ", "fn:TRY_TO_TIMESTAMP_TZ", "fn:TO_TIME", "fn:TRY_TO_TIME", "node:eq", "node:neq", "node:lt", "node:lte", "node:gt", "node:gte", "node:in", "fn:TO_TIMESTAMP_TZ", "fn:TO_TIMESTAMP_LTZ", "fn:TRY_TO_TIMESTAMP_LTZ"]
 default = "warn"
 strict = "refuse"
 reason = "TRY_TO_DATE and TRY_CAST to DATE return NULL in Snowflake for text it cannot read, but Snowflake's AUTO detection reads more spellings than the recordings show. The converted SQL returns NULL only for empty text, impossible values in recorded spellings, and the spellings recorded returning NULL; any other spelling raises rather than return NULL where Snowflake might return a date. With a literal format, recordings show Snowflake also reading unpadded fields and, for some formats, surrounding spaces, so only text spelled exactly in the format's digits and separators converts and other text raises. The failure is loud, never a wrong value. Non-TRY casts and TO_DATE, TO_TIMESTAMP and TO_TIMESTAMP_NTZ of text in a spelling no recording shows raise this divergence rather than claim Snowflake's error, since Snowflake may read the text. Text read as a TIME, by a cast, TO_TIME or TRY_TO_TIME, follows the same pattern with the time spellings recordings show."
 
 [divergences.variant_typed_values]
-constructs = ["fn:TO_VARIANT", "node:cast", "fn:OBJECT_CONSTRUCT", "fn:OBJECT_CONSTRUCT_KEEP_NULL", "fn:OBJECT_INSERT", "fn:ARRAY_CONSTRUCT", "fn:TYPEOF", "fn:IS_DATE", "fn:IS_TIME", "fn:IS_TIMESTAMP_NTZ", "fn:IS_TIMESTAMP_LTZ", "fn:IS_TIMESTAMP_TZ", "fn:IS_BINARY", "node:map_func"]
+constructs = ["fn:TO_VARIANT", "node:cast", "fn:OBJECT_CONSTRUCT", "fn:OBJECT_CONSTRUCT_KEEP_NULL", "fn:OBJECT_INSERT", "fn:ARRAY_CONSTRUCT", "fn:TYPEOF", "fn:IS_DATE", "fn:IS_TIME", "fn:IS_TIMESTAMP_NTZ", "fn:IS_TIMESTAMP_LTZ", "fn:IS_TIMESTAMP_TZ", "fn:IS_BINARY", "node:map_func", "fn:ARRAY_AGG"]
 default = "warn"
 strict = "refuse"
 reason = "User decision 2026-10-25: a DATE, TIMESTAMP or TIME inside a VARIANT keeps its type in Snowflake, which DuckDB JSON cannot. The converted SQL stores the JSON string Snowflake writes for the value (batch 8 recorded YYYY-MM-DD, YYYY-MM-DD HH:MI:SS.FFF and a ' Z' suffix for TIMESTAMP_LTZ in UTC), raising where that text drops digits or an offset. TYPEOF and IS_DATE-style reads of a string in such a text raise rather than answer VARCHAR or false. TIMESTAMP_TZ (its offset is not kept), TIME and BINARY (its hex text is indistinguishable from plain strings) stay refused."
 
 [divergences.timestamp_range]
-constructs = ["node:cast", "node:try_cast", "node:add", "node:sub", "fn:DATEADD", "fn:TIMESTAMPADD", "fn:CONVERT_TIMEZONE", "fn:TO_TIMESTAMP", "fn:TO_TIMESTAMP_NTZ", "fn:TRY_TO_TIMESTAMP", "fn:TRY_TO_TIMESTAMP_NTZ", "fn:TRY_TO_TIMESTAMP_TZ", "fn:TIMESTAMP_NTZ_FROM_PARTS", "node:eq", "node:neq", "node:lt", "node:lte", "node:gt", "node:gte", "node:in"]
+constructs = ["node:cast", "node:try_cast", "node:add", "node:sub", "fn:DATEADD", "fn:TIMESTAMPADD", "fn:CONVERT_TIMEZONE", "fn:TO_TIMESTAMP", "fn:TO_TIMESTAMP_NTZ", "fn:TRY_TO_TIMESTAMP", "fn:TRY_TO_TIMESTAMP_NTZ", "fn:TRY_TO_TIMESTAMP_TZ", "fn:TIMESTAMP_NTZ_FROM_PARTS", "node:eq", "node:neq", "node:lt", "node:lte", "node:gt", "node:gte", "node:in", "fn:TO_TIMESTAMP_TZ", "fn:TO_TIMESTAMP_LTZ", "fn:TRY_TO_TIMESTAMP_LTZ"]
 default = "warn"
 strict = "refuse"
 reason = "DuckDB nanosecond timestamps span 1677-09-21 to 2262-04-11; outside it DuckDB raises an error where Snowflake returns the TIMESTAMP_NTZ(7-9) value. TO_TIMESTAMP of an epoch count outside the years 1 to 9999, which Snowflake returns wrapped or beyond them, raises too. The failure is loud, never a wrong value."
 native_errors = ["Out of Range Error: Overflow in multiplication of INT64*", "Conversion Error: Type INT32 with value * can't be cast to the destination type INT64*", "Conversion Error: Could not convert Timestamp to higher precision*", "Conversion Error: Could not convert string '*-*-* *:*:*' to INT64"]
 
 [divergences.timestamp_tz_submicro]
-constructs = ["node:cast", "node:try_cast", "fn:CONVERT_TIMEZONE", "fn:TRY_TO_TIMESTAMP_TZ"]
+constructs = ["node:cast", "node:try_cast", "fn:CONVERT_TIMEZONE", "fn:TRY_TO_TIMESTAMP_TZ", "fn:TO_TIMESTAMP_TZ", "fn:TO_TIMESTAMP_LTZ", "fn:TRY_TO_TIMESTAMP_LTZ"]
 default = "warn"
 strict = "refuse"
 reason = "DuckDB zoned timestamps hold microseconds; a TIMESTAMP_TZ or TIMESTAMP_LTZ(7-9) value with a non-zero sub-microsecond part raises an error instead of being rounded. The failure is loud, never a wrong value."
@@ -435,7 +441,7 @@ strict = "refuse"
 reason = "Snowflake adds FLOAT values in an order DuckDB does not share: recordings show 0.1 + 0.2 + 0.3 as 0.6 and 1e16 + 1 - 1e16 as 0, neither in input order nor exactly. The converted SQL sums only where every order of addition is exact, values being whole multiples of one power of two with a small enough total, and raises otherwise. The failure is loud, never a wrong value."
 
 [divergences.extreme_key_ties]
-constructs = ["fn:MAX_BY", "fn:MIN_BY"]
+constructs = ["fn:MAX_BY", "fn:MIN_BY", "node:min", "node:max", "fn:MIN", "fn:MAX"]
 default = "warn"
 strict = "refuse"
 reason = "MAX_BY and MIN_BY pick one row among rows tied on the extreme key, and no recording shows which: one recorded the first in input order, which neither engine guarantees. The converted SQL returns the value where every tied row holds it, and raises where tied rows hold different values. The failure is loud, never a wrong value."

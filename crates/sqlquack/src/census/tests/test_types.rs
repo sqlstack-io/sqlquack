@@ -69,6 +69,12 @@ pub(crate) struct BlockerTestCase {
     pub(crate) expected_summary: BlockerSummary,
 }
 
+pub(crate) struct RootsTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) fixtures: &'static [ShopFile],
+    pub(crate) expected_roots: Vec<RootCounts>,
+}
+
 pub(crate) struct PlacedTestCase {
     pub(crate) description: &'static str,
     pub(crate) fixtures: &'static [ShopFile],

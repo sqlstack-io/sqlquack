@@ -8,6 +8,8 @@ use sqlquack_core::refusals::main::unresolved::unresolved;
 use sqlquack_core::refusals::models::Refusal;
 use sqlquack_duckdb::blocks::constants::RAISE_MARKER;
 use sqlquack_duckdb::blocks::main::explicit_null_order::explicit_null_order;
+use sqlquack_semantics::dialects::constants::SNOWFLAKE_TO_DUCKDB;
+use sqlquack_semantics::scopes::main::resolve_name::resolve_name;
 use sqlquack_snowflake::typing::models::SnowflakeType;
 
 use crate::conversion::_helpers::expressions::operators::boolean_operand;
@@ -22,7 +24,9 @@ use crate::conversion::_helpers::support::tree::{
     Payload, field, flag, identifier_name, integer_literal, list, node_construct, node_kind,
     payload_object, require_understood,
 };
-use crate::conversion::constants::{GROUP_BY_ALL_RULE, LIMIT, ORDER_BY, VARIANT_HELD_UNREAD};
+use crate::conversion::constants::{
+    AMBIGUOUS_SUFFIX, GROUP_BY_ALL_RULE, LIMIT, ORDER_BY, VARIANT_HELD_UNREAD,
+};
 
 /// A clause's condition node, such as WHERE's.
 pub(crate) fn clause_condition<'a>(select: &'a Payload, clause: &str) -> Option<&'a Value> {
@@ -105,13 +109,19 @@ pub(crate) fn group_by(select: &Payload, site: Site<'_>, held: &[bool]) -> Resul
         return Ok(format!(" GROUP BY {}", keys.join(", ")));
     }
     require_understood(group, &["expressions"], &construct)?;
+    let names = select_alias_names(select);
+    let aliases: Vec<&str> = names.iter().map(String::as_str).collect();
     let without_aliases = Scope::new(site.scope.relations.clone(), site.scope.outer);
     let site = site.scoped(&without_aliases).placed(Placement::ROW);
     let mut keys: Vec<String> = Vec::new();
     for key in list(group, "expressions") {
         match integer_literal(key) {
             Some(position) => keys.push(position_key(position, held, "GROUP BY")?),
-            None => keys.push(group_key(convert_expression(key, site)?, &construct, site)?.sql),
+            None => {
+                alias_only_key(key, &aliases, site)?;
+                let converted = convert_expression(key, site)?;
+                keys.push(group_key(converted, &construct, site)?.sql);
+            }
         }
     }
     if keys.is_empty() {
@@ -138,6 +148,8 @@ pub(crate) fn variant_group_keys(
         return Ok(Vec::new());
     };
     let _muted = site.context.log.muted();
+    let names = select_alias_names(select);
+    let aliases: Vec<&str> = names.iter().map(String::as_str).collect();
     let without_aliases = Scope::new(site.scope.relations.clone(), site.scope.outer);
     let site = site.scoped(&without_aliases).placed(Placement::ROW);
     let mut keys: Vec<(String, String)> = Vec::new();
@@ -145,6 +157,7 @@ pub(crate) fn variant_group_keys(
         if integer_literal(key).is_some() {
             continue;
         }
+        alias_only_key(key, &aliases, site)?;
         let converted = convert_expression(key, site)?;
         if converted.data_type == SnowflakeType::SemiStructured && !converted.is_variant_held() {
             let sql = converted.sql.clone();
@@ -270,6 +283,18 @@ fn order_key(
             site.context.log,
         ));
     }
+    if let Some(name) = ambiguous_shadow(key, (site, outputs)) {
+        return Err(site.context.locator.placed(
+            outside_conditions(
+                node_construct("ordered"),
+                format!(
+                    "ORDER BY `{name}` names an alias over a column several FROM relations hold, \
+                     whose resolution no recording shows"
+                ),
+            ),
+            key,
+        ));
+    }
     let shadowing = shadowing_names(key, (site, outputs));
     let Some(name) = shadowing.first() else {
         return order_item(item, site);
@@ -339,4 +364,65 @@ fn shadowing_column(
         Ok(source) if emitted.sql != source.sql => Some(name),
         Ok(_) | Err(_) => None,
     }
+}
+
+/// A bare ORDER BY name that is a select alias and a column of more than one FROM relation.
+fn ambiguous_shadow(
+    key: &Value,
+    (site, outputs): (Site<'_>, &[(String, Emitted)]),
+) -> Option<String> {
+    let Some(("column", column)) = node_kind(key) else {
+        return None;
+    };
+    if !column.get("table").is_none_or(Value::is_null) {
+        return None;
+    }
+    let name = column.get("name").and_then(identifier_name)?;
+    outputs.iter().find(|(output, _)| *output == name)?;
+    let from_only = Scope::new(site.scope.relations.clone(), None);
+    let _muted = site.context.log.muted();
+    match resolve(&from_only, None, &name, site.context.log) {
+        Err(refusal) if refusal.reason.ends_with(AMBIGUOUS_SUFFIX) => Some(name),
+        Ok(_) | Err(_) => None,
+    }
+}
+
+/// Refuses a GROUP BY key naming only a select alias, which no FROM column resolves.
+fn alias_only_key(key: &Value, aliases: &[&str], site: Site<'_>) -> Result<(), Refusal> {
+    let name = match node_kind(key) {
+        Some(("column", payload)) if payload.get("table").is_none_or(Value::is_null) => {
+            payload.get("name").and_then(identifier_name)
+        }
+        _ => None,
+    };
+    match name {
+        Some(name)
+            if aliases
+                .iter()
+                .any(|alias| alias.eq_ignore_ascii_case(&name))
+                && resolve_name(site.scope, (None, &name), SNOWFLAKE_TO_DUCKDB).is_err() =>
+        {
+            Err(site.context.locator.placed(
+                outside_conditions(
+                    node_construct("group_by"),
+                    format!(
+                        "GROUP BY `{name}`, which names only a select alias, a key no rule converts"
+                    ),
+                ),
+                key,
+            ))
+        }
+        _ => Ok(()),
+    }
+}
+
+/// The aliases a select list names its items by.
+fn select_alias_names(select: &Payload) -> Vec<String> {
+    list(select, "expressions")
+        .iter()
+        .filter_map(|item| match node_kind(item) {
+            Some(("alias", payload)) => payload.get("alias").and_then(identifier_name),
+            _ => None,
+        })
+        .collect()
 }

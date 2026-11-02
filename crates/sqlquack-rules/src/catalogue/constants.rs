@@ -48,10 +48,10 @@ use crate::conversion::constants::{
     TO_ARRAY_RULE, TO_BOOLEAN_RULE, TO_DATE_TEMPORAL, TO_VARIANT_RULE, TRIM, UNION_BY_NAME,
     USER_OVERRIDE_RULE, UTC_OFFSET_ARITHMETIC, VALUE_AT_EXTREME_KEY, VALUES_ROWS, VARIANT_CAST,
     VARIANT_COMPUTED_GET, VARIANT_EQUALITY, VARIANT_EQUALITY_BY_TEXT, VARIANT_INSPECT,
-    VARIANT_KIND_CAST, VARIANT_KIND_RULE, VARIANT_MAX, VARIANT_PARTITION, VARIANT_PATH,
-    VARIANT_TEXT_BRANCHES, VARIANT_TO_VARCHAR, VARIANT_TYPE_NAME, VARIANT_TYPED_CHECK, WHERE,
-    WINDOW_AGGREGATE, WINDOW_FIRST_LAST, WINDOW_OFFSET, WINDOW_RANKING, WINDOW_VALUE_FRAME,
-    ZERO_IF_NULL_RULE, ZONE_COLUMNS, ZONED_PARTS,
+    VARIANT_KIND_CAST, VARIANT_KIND_RULE, VARIANT_MAX, VARIANT_ORDER_KEY, VARIANT_PARTITION,
+    VARIANT_PATH, VARIANT_TEXT_BRANCHES, VARIANT_TO_VARCHAR, VARIANT_TYPE_NAME,
+    VARIANT_TYPED_CHECK, WHERE, WINDOW_AGGREGATE, WINDOW_FIRST_LAST, WINDOW_OFFSET, WINDOW_RANKING,
+    WINDOW_VALUE_FRAME, ZERO_IF_NULL_RULE, ZONE_COLUMNS, ZONED_PARTS,
 };
 use crate::conversion::models::RuleSpec;
 
@@ -204,7 +204,7 @@ pub const RULES: &[RuleSpec] = &[
     RuleSpec {
         id: SET_OPERATION,
         constructs: &["node:union", "node:except", "node:intersect"],
-        conditions: "Branches with the same column count whose types unify; differing branches are cast to the unified type; a set operation removing duplicates has no VARIANT column.",
+        conditions: "Branches with the same column count whose types unify; differing branches are cast to the unified type; a VARIANT built from a FLOAT beside a JSON-held one holds both as a DuckDB VARIANT, raising for a JSON number it would retype; a set operation removing duplicates has no VARIANT column.",
         failures: &[FailureMode {
             kind: ErrorKind::NumericOverflow,
             snowflake: &[NUMBER_OUT_OF_RANGE],
@@ -1053,8 +1053,14 @@ pub const RULES: &[RuleSpec] = &[
     },
     RuleSpec {
         id: VARIANT_MAX,
-        constructs: &["node:max"],
-        conditions: "MAX of a JSON-held VARIANT without DISTINCT or OVER, NULLs skipped: the value where every value is written alike, the largest number where all are numbers distinct as doubles, the bytewise largest string where all are strings, as recorded; other mixes raise array_sort_order.",
+        constructs: &["node:max", "node:min"],
+        conditions: "MIN or MAX of a JSON-held VARIANT without DISTINCT or OVER, NULLs skipped: the value at the extreme of rule.variant_order_key's order, JSON null greatest; tied values written differently raise extreme_key_ties, as recorded.",
+        failures: &[],
+    },
+    RuleSpec {
+        id: VARIANT_ORDER_KEY,
+        constructs: &["node:ordered", "fn:MIN_BY", "fn:MAX_BY"],
+        conditions: "A JSON-held VARIANT as a sort key in ARRAY_SORT's order of kinds: booleans (false first), numbers by value (whole numbers exactly), strings by bytes, then JSON null, SQL NULL placed as for other keys, as recorded. Objects, arrays and fractional numbers beyond 2^53 raise array_sort_order.",
         failures: &[],
     },
     RuleSpec {

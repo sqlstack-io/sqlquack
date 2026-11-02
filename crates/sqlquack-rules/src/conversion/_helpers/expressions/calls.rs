@@ -5,7 +5,8 @@ use sqlquack_core::classification::models::Construct;
 use sqlquack_core::refusals::main::missing::missing;
 use sqlquack_core::refusals::main::outside_conditions::outside_conditions;
 use sqlquack_core::refusals::models::Refusal;
-use sqlquack_duckdb::aggregates::main::json_variant_max::json_variant_max;
+use sqlquack_duckdb::aggregates::constants::EXTREME_KEY_TIES;
+use sqlquack_duckdb::aggregates::main::json_variant_extreme::json_variant_extreme;
 use sqlquack_duckdb::arrays::constants::ARRAY_SORT_ORDER;
 use sqlquack_duckdb::blocks::main::cast::cast;
 use sqlquack_duckdb::blocks::main::exact_decimal_divide::exact_decimal_divide;
@@ -19,6 +20,7 @@ use sqlquack_snowflake::typing::main::sum::sum;
 use sqlquack_snowflake::typing::models::SnowflakeType;
 
 use crate::conversion::_helpers::expressions::arrays::array_function;
+use crate::conversion::_helpers::expressions::casts::zoned_text;
 use crate::conversion::_helpers::expressions::casts::{
     to_boolean_call, to_double_call, to_number_call, to_varchar_call,
 };
@@ -65,9 +67,9 @@ use crate::conversion::_helpers::support::tree::{
 use crate::conversion::_helpers::support::typed_leaves::compared_by_text;
 use crate::conversion::constants::MAX_KIND;
 use crate::conversion::constants::{
-    AVERAGE, AVG_NAME, COUNT, GENERATOR_RULE, GENERATOR_SEQUENCE_COLUMN, LEAST_GREATEST, MIN_MAX,
-    MIN_MAX_FLOAT, NOT_SNOWFLAKE_FUNCTIONS, NULLIF, NUMERIC_RANGE, SORTED_ARRAY_FUNCTION, SUM,
-    SUM_FLOAT, TO_DATE_NAME, TRIM, VARIANT_MAX,
+    AVERAGE, AVG_NAME, COUNT, GENERATOR_RULE, GENERATOR_SEQUENCE_COLUMN, LEAST_GREATEST,
+    LOCAL_ZONE_SUFFIX, MIN_MAX, MIN_MAX_FLOAT, NOT_SNOWFLAKE_FUNCTIONS, NULLIF, NUMERIC_RANGE,
+    SORTED_ARRAY_FUNCTION, SUM, SUM_FLOAT, TO_DATE_NAME, TRIM, TRY_PREFIX, VARIANT_MAX,
 };
 
 /// SEQ4() or SEQ8() in a query level reading only a generator: the row's number from 0.
@@ -288,6 +290,9 @@ pub(crate) fn convert_function(payload: &Value, site: Site<'_>) -> Result<Emitte
         ) => to_timestamp(&name, parts, &construct, site),
         ("DATE", parts) => to_timestamp(TO_DATE_NAME, parts, &construct, site),
         ("TRY_TO_TIMESTAMP_TZ", parts) => to_timestamp_tz(parts, &construct, site),
+        ("TO_TIMESTAMP_TZ" | "TO_TIMESTAMP_LTZ" | "TRY_TO_TIMESTAMP_LTZ", [value]) => {
+            zoned_text_call(&name, value, &construct, site)
+        }
         ("LEAST" | "GREATEST", parts) if !parts.is_empty() => {
             least_greatest(&name, parts, &construct, site)
         }
@@ -506,18 +511,18 @@ impl AggregateCall<'_> {
                 )
             }),
             SnowflakeType::SemiStructured
-                if kind == MAX_KIND
-                    && self.over.is_empty()
+                if self.over.is_empty()
                     && self.distinct().is_empty()
                     && !argument.is_variant_held() =>
             {
                 let context = self.site.context;
                 let construct = node_construct(kind);
                 let _variant = context.log.rule(VARIANT_MAX);
+                diverge(context, EXTREME_KEY_TIES, &construct)?;
                 diverge(context, ARRAY_SORT_ORDER, &construct)?;
                 compared_by_text((argument.untainted, argument.sourced), &construct, context)?;
                 Ok(Emitted::new(
-                    json_variant_max(&argument.sql, context.log),
+                    json_variant_extreme(&argument.sql, kind == MAX_KIND, context.log),
                     SnowflakeType::SemiStructured,
                 ))
             }
@@ -561,4 +566,31 @@ fn sum_type(
         ),
         other => sum(other, context.log),
     }
+}
+
+/// TO_TIMESTAMP_TZ, TO_TIMESTAMP_LTZ and TRY_TO_TIMESTAMP_LTZ of text, read as a cast of it is.
+fn zoned_text_call(
+    name: &str,
+    value: &Value,
+    construct: &Construct,
+    site: Site<'_>,
+) -> Result<Emitted, Refusal> {
+    let operand = convert_expression(value, site)?;
+    if operand.data_type != SnowflakeType::Varchar {
+        return Err(outside_conditions(
+            construct.clone(),
+            format!("{name} of {}", operand.data_type),
+        ));
+    }
+    let to = match name.ends_with(LOCAL_ZONE_SUFFIX) {
+        true => SnowflakeType::TimestampLtz { precision: 9 },
+        false => SnowflakeType::TimestampTz { precision: 9 },
+    };
+    zoned_text(
+        &operand,
+        to,
+        name.starts_with(TRY_PREFIX),
+        (site.context, construct),
+    )
+    .map_err(|reason| outside_conditions(construct.clone(), reason))
 }

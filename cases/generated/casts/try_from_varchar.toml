@@ -191,6 +191,7 @@ rows = [
 expression = "TRY_CAST(x AS TIMESTAMP_TZ(9))"
 tags = ["null", "invalid", "boundary"]
 origin = "generated: casts@2"
+expected_divergence = "timestamp_tz_offset"
 
 [[case]]
 id = "varchar_try_cast_ltz9"

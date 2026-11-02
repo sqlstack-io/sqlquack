@@ -11,6 +11,7 @@ from scripts.case_generators.constants import (
     CAST_SOURCES,
     CAST_TARGETS,
     CAST_TIME,
+    CAST_TZ,
     CAST_VARCHAR,
     CASTS,
     CONVERSION_FUNCTIONS,
@@ -42,6 +43,7 @@ from scripts.case_generators.constants import (
     TIMESTAMP_RANGE,
     TIMESTAMP_TEXT_FORMATS,
     TIMESTAMP_TEXT_VALUES,
+    TIMESTAMP_TZ_OFFSET,
     TIMESTAMP_TZ_SUBMICRO,
     WHOLE_MICROSECONDS,
     ZONED_NANOSECOND_TARGETS,
@@ -170,6 +172,12 @@ def overlong_case(source: CastType) -> Case:
     )
 
 
+def text_divergence(target: CastType) -> str | None:
+    """What text cast to `target` raises: sub-microsecond TIMEs, offsets other than +00:00."""
+    divergences: dict[CastType, str] = {CAST_TIME: TIME_SUBMICRO, CAST_TZ: TIMESTAMP_TZ_OFFSET}
+    return divergences.get(target)
+
+
 def invalid_text_case(*, target: CastType, index: int) -> Case:
     """CAST of one invalid text to `target`; the first keeps the plain `_invalid` id."""
     invalid: str = TEXT_INVALID[target][index]
@@ -181,6 +189,7 @@ def invalid_text_case(*, target: CastType, index: int) -> Case:
         rows=((invalid,),),
         expression=f"CAST(x AS {target.name})",
         tags=("invalid",),
+        expected_divergence=TIMESTAMP_TZ_OFFSET if target == CAST_TZ else None,
     )
 
 
@@ -200,7 +209,7 @@ def text_cases(target: CastType) -> tuple[Case, ...]:
             rows=tuple((value,) for value in TEXT_VALID[target]),
             expression=f"CAST(x AS {target.name})",
             tags=("null", "boundary"),
-            expected_divergence=TIME_SUBMICRO if target == CAST_TIME else None,
+            expected_divergence=text_divergence(target),
         ),
         *invalid,
     )
@@ -218,7 +227,7 @@ def try_cast_case(target: CastType) -> Case:
         ),
         expression=f"TRY_CAST(x AS {target.name})",
         tags=("null", "invalid", "boundary"),
-        expected_divergence=TIME_SUBMICRO if target == CAST_TIME else None,
+        expected_divergence=text_divergence(target),
     )
 
 

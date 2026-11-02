@@ -1,5 +1,6 @@
 //! Aggregates the parser keeps as named calls, such as ANY_VALUE, COUNT_IF and OBJECT_AGG.
 
+use crate::conversion::_helpers::expressions::windows::variant_order_key;
 use crate::conversion::_helpers::support::scope::Context;
 use serde_json::Value;
 use sqlquack_core::classification::models::Construct;
@@ -128,9 +129,16 @@ pub(crate) fn named_aggregate(
                 data_type,
             ))
         }
-        ("MAX_BY" | "MIN_BY", [value, key]) if ordered_key(key.data_type) => {
+        ("MAX_BY" | "MIN_BY", [value, key])
+            if ordered_key(key.data_type)
+                || key.data_type == SnowflakeType::SemiStructured && !key.is_variant_held() =>
+        {
             let _rule = log.rule(VALUE_AT_EXTREME_KEY);
             diverge(site.context, EXTREME_KEY_TIES, &construct)?;
+            let key = match key.data_type {
+                SnowflakeType::SemiStructured => variant_order_key(key, &construct, site.context)?,
+                _ => key.clone(),
+            };
             compared_value(value, &construct, site.context)?;
             let value_type = match value.data_type {
                 SnowflakeType::SemiStructured => SEMI_STRUCTURED_HOLDING_TYPE.to_owned(),

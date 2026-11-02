@@ -89,12 +89,13 @@ pub(crate) fn converted_run_error(sql: &str) -> Option<String> {
     connection
         .execute_batch("SET TimeZone = 'UTC'")
         .expect("UTC session");
-    let mut statement = connection
+    connection
         .prepare(converted.trim())
-        .expect("the converted statement prepares");
-    statement
-        .query_map([], |_| Ok(()))
-        .and_then(|rows| rows.collect::<Result<Vec<()>, _>>())
+        .and_then(|mut statement| {
+            statement
+                .query_map([], |_| Ok(()))
+                .and_then(|rows| rows.collect::<Result<Vec<()>, _>>())
+        })
         .err()
         .map(|error| error.to_string())
 }

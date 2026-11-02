@@ -5,6 +5,8 @@ use sqlquack_core::classification::models::Construct;
 use sqlquack_core::refusals::main::missing::missing;
 use sqlquack_core::refusals::main::outside_conditions::outside_conditions;
 use sqlquack_core::refusals::models::Refusal;
+use sqlquack_duckdb::arrays::constants::ARRAY_SORT_ORDER;
+use sqlquack_duckdb::arrays::main::json_order_key::json_order_key;
 use sqlquack_duckdb::blocks::main::cast::cast;
 use sqlquack_duckdb::blocks::main::explicit_null_order::explicit_null_order;
 use sqlquack_duckdb::blocks::main::window_frame::window_frame;
@@ -33,8 +35,9 @@ use crate::conversion::_helpers::support::typed_leaves::compared_by_text;
 use crate::conversion::constants::{
     DISTINCT_WINDOW_AGGREGATE, FRAME_FACET, FUNCTION_FACET, NO_PARTITION, PARTITION_FACET,
     SEVERAL_PARTITION_KEYS, UNORDERED_WINDOW_AGGREGATES, VARIANT_EQUALITY_BY_TEXT,
-    VARIANT_PARTITION, WINDOW_AGGREGATE, WINDOW_FIRST_LAST, WINDOW_KEYS_CONSTRUCT, WINDOW_OFFSET,
-    WINDOW_RANKING, WINDOW_VALUE_FRAME, WINDOWED_NAMED_AGGREGATES,
+    VARIANT_ORDER_KEY, VARIANT_PARTITION, WINDOW_AGGREGATE, WINDOW_FIRST_LAST,
+    WINDOW_KEYS_CONSTRUCT, WINDOW_OFFSET, WINDOW_RANKING, WINDOW_VALUE_FRAME,
+    WINDOWED_NAMED_AGGREGATES,
 };
 
 /// Snowflake's frame for FIRST_VALUE and LAST_VALUE when none is written.
@@ -564,11 +567,26 @@ fn partition_key(
 pub(crate) fn order_key(item: &Value, site: Site<'_>) -> Result<String, Refusal> {
     let construct = node_construct("ordered");
     let object = payload_object(item, &construct)?;
-    let key = grouping_key(
-        convert_expression(field(object, "this", &construct)?, site)?,
-        &construct,
-    )?;
-    Ok(key.sql)
+    let key = convert_expression(field(object, "this", &construct)?, site)?;
+    if key.data_type == SnowflakeType::SemiStructured && !key.is_variant_held() {
+        return Ok(variant_order_key(&key, &construct, site.context)?.sql);
+    }
+    Ok(grouping_key(key, &construct)?.sql)
+}
+
+/// A JSON-held VARIANT's sort key in ARRAY_SORT's recorded order of kinds.
+pub(crate) fn variant_order_key(
+    key: &Emitted,
+    construct: &Construct,
+    context: &Context<'_>,
+) -> Result<Emitted, Refusal> {
+    let _rule = context.log.rule(VARIANT_ORDER_KEY);
+    diverge(context, ARRAY_SORT_ORDER, construct)?;
+    compared_by_text((key.untainted, key.sourced), construct, context)?;
+    Ok(Emitted::new(
+        json_order_key(&key.sql, false, context.log),
+        SnowflakeType::SemiStructured,
+    ))
 }
 
 /// One ORDER BY item with Snowflake's NULL placement spelled out.

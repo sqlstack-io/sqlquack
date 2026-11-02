@@ -275,3 +275,7 @@ pub const NUMBER_RANGE_MESSAGE: &str = "Numeric value out of range";
 
 /// SPLIT_PART's part of a text, the text bound once: `duckdb.split_text_part`.
 pub const SPLIT_TEXT_PART: &str = "duckdb.split_text_part";
+/// Text read as TIMESTAMP_TZ whose offset must be +00:00: `duckdb.text_to_utc_zoned`.
+pub const TEXT_TO_UTC_ZONED: &str = "duckdb.text_to_utc_zoned";
+/// Zoned text whose offset is not +00:00, whose wall time a DuckDB instant does not keep.
+pub const TIMESTAMP_TZ_OFFSET: &str = "timestamp_tz_offset";

@@ -24,6 +24,20 @@ const NAIVE_TO_ZONED: &str =
 fn given_snowflake_sql_when_converting_then_duckdb_sql_or_named_refusals_are_printed() {
     let test_cases = [
         ConvertTestCase {
+            description: "EQUAL_NULL of a VARIANT and text refuses: no recording shows a JSON null",
+            sql: "SELECT EQUAL_NULL(PARSE_JSON('null'), '1') AS e",
+            flags: &[],
+            mention: "how a JSON null compares",
+            expected_outcome: convert_outcome(1, false),
+        },
+        ConvertTestCase {
+            description: "IS DISTINCT FROM between text and a VARIANT refuses the same way",
+            sql: "SELECT '1' IS DISTINCT FROM PARSE_JSON('null') AS e",
+            flags: &[],
+            mention: "how a JSON null compares",
+            expected_outcome: convert_outcome(1, false),
+        },
+        ConvertTestCase {
             description: "a TIMESTAMP_NTZ(3) compared with a text column refuses: only NTZ(9) is recorded",
             sql: "WITH t AS (SELECT '2024-01-01 00:00:00.123'::TIMESTAMP_NTZ(3) AS placed_at, \
                   '2024-01-01 00:00:00.1239' AS placed_text) SELECT placed_at = placed_text AS same FROM t",
@@ -977,6 +991,233 @@ fn given_an_inner_join_using_keys_of_two_widths_when_running_then_a_wide_unmatch
         assert_eq!(
             converted_value_over(test_case.sql, (schema, setup)),
             test_case.expected_value,
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_zoned_text_when_converting_and_running_then_wall_time_parts_hold_its_utc_offset() {
+    let schema = r#"{"relations": {"EVENTS": [["AT_TEXT", "VARCHAR"]]}}"#;
+    let setup = "SET TimeZone = 'UTC'; CREATE TABLE \"EVENTS\" (\"AT_TEXT\" VARCHAR); \
+                 INSERT INTO \"EVENTS\" VALUES ('2023-12-31 22:30:15 +00:00')";
+    let test_cases = [
+        ValueTestCase {
+            description: "YEAR of a text column cast to TIMESTAMP_TZ, the year at its +00:00 offset",
+            sql: "SELECT YEAR(CAST(at_text AS TIMESTAMP_TZ))::VARCHAR AS y FROM events",
+            expected_value: "2023",
+        },
+        ValueTestCase {
+            description: "TO_DATE of TO_TIMESTAMP_TZ of a text column",
+            sql: "SELECT TO_DATE(TO_TIMESTAMP_TZ(at_text))::VARCHAR AS d FROM events",
+            expected_value: "2023-12-31",
+        },
+        ValueTestCase {
+            description: "the wall time of a TIMESTAMP_LTZ read from text, in the UTC session",
+            sql: "SELECT CAST(CAST(at_text AS TIMESTAMP_LTZ) AS TIMESTAMP_NTZ)::VARCHAR AS w \
+                  FROM events",
+            expected_value: "2023-12-31 22:30:15.000",
+        },
+    ];
+    for test_case in test_cases {
+        assert_eq!(
+            converted_value_over(test_case.sql, (schema, setup)),
+            test_case.expected_value,
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_zoned_text_with_another_offset_when_running_then_its_wall_time_raises() {
+    let test_cases = [RunErrorTestCase {
+        description: "an ISO literal at +09:00, whose wall time DuckDB's instant does not keep",
+        sql: "SELECT YEAR('2023-12-31T22:30:15+09:00'::TIMESTAMP_TZ) AS y",
+        expected_mention: "timestamp_tz_offset",
+    }];
+    for test_case in test_cases {
+        assert!(
+            converted_run_error(test_case.sql)
+                .is_some_and(|error| error.contains(test_case.expected_mention)),
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_a_name_the_conversion_does_not_scope_when_converting_then_the_refusal_says_why() {
+    let test_cases = [
+        PythonRefusalTestCase {
+            description: "SEQ of FLATTEN is a known column no rule converts, not an unresolved one",
+            sql: "SELECT f.seq AS q FROM orders, LATERAL FLATTEN(input => PARSE_JSON(orders.sku)) f",
+            expected_mention: "SEQ of FLATTEN or SPLIT_TO_TABLE",
+        },
+        PythonRefusalTestCase {
+            description: "SEQ of SPLIT_TO_TABLE",
+            sql: "SELECT seg.seq AS q FROM orders, LATERAL SPLIT_TO_TABLE(orders.sku, '-') seg",
+            expected_mention: "SEQ of FLATTEN or SPLIT_TO_TABLE",
+        },
+        PythonRefusalTestCase {
+            description: "a GROUP BY key naming only a select alias",
+            sql: "SELECT UPPER(sku) AS family, COUNT(*) AS n FROM orders GROUP BY family",
+            expected_mention: "names only a select alias",
+        },
+        PythonRefusalTestCase {
+            description: "a FROM subquery reading a column of the enclosing query",
+            sql: "SELECT order_id, (SELECT q FROM (SELECT order_id + 1 AS q)) AS next_id \
+                  FROM orders",
+            expected_mention: "reading a column of an enclosing query",
+        },
+        PythonRefusalTestCase {
+            description: "an ORDER BY alias over a column two FROM relations hold",
+            sql: "SELECT COALESCE(o.sku, p.sku) AS sku FROM orders AS o \
+                  JOIN orders AS p ON o.order_id = p.order_id ORDER BY sku",
+            expected_mention: "several FROM relations hold",
+        },
+    ];
+    for test_case in test_cases {
+        let report = python_report(test_case.sql, &[]);
+        let refusals = report["refusals"].to_string();
+        assert_eq!(
+            (
+                refusals.contains(test_case.expected_mention),
+                refusals.contains("unresolved name")
+            ),
+            (true, false),
+            "{}: {refusals}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_variant_keys_when_converting_and_running_then_they_order_and_compare_as_recorded() {
+    let schema = r#"{"relations": {"DOCS": [["K", "NUMBER(4,0)"], ["J", "VARCHAR"]]}}"#;
+    let setup = "SET TimeZone = 'UTC'; CREATE TABLE \"DOCS\" (\"K\" INTEGER, \"J\" VARCHAR); \
+                 INSERT INTO \"DOCS\" VALUES (0, '\"b\"'), (1, '10'), (2, 'true'), (3, 'null'), \
+                 (4, '2'), (5, NULL)";
+    let test_cases = [
+        ValueTestCase {
+            description: "ORDER BY a VARIANT: booleans, numbers by value, strings, JSON null, NULL",
+            sql: "SELECT LISTAGG(k::VARCHAR, ',') WITHIN GROUP (ORDER BY PARSE_JSON(j), k) AS o \
+                  FROM docs",
+            expected_value: "2,4,1,0,3,5",
+        },
+        ValueTestCase {
+            description: "MIN and MAX of a VARIANT, JSON null greatest",
+            sql: "SELECT TO_JSON(MIN(PARSE_JSON(j))) || ' ' || TO_JSON(MAX(PARSE_JSON(j))) AS m \
+                  FROM docs",
+            expected_value: "true null",
+        },
+        ValueTestCase {
+            description: "MAX_BY a VARIANT key",
+            sql: "SELECT MAX_BY(k, PARSE_JSON(j))::VARCHAR AS m FROM docs WHERE k <> 3",
+            expected_value: "0",
+        },
+        ValueTestCase {
+            description: "EQUAL_NULL of a VARIANT and NULL",
+            sql: "SELECT EQUAL_NULL(PARSE_JSON(j), NULL)::VARCHAR AS e FROM docs WHERE k = 5",
+            expected_value: "true",
+        },
+        ValueTestCase {
+            description: "TO_DECIMAL of a VARIANT number",
+            sql: "SELECT TO_DECIMAL(PARSE_JSON(j), 10, 2)::VARCHAR AS d FROM docs WHERE k = 1",
+            expected_value: "10.00",
+        },
+    ];
+    for test_case in test_cases {
+        assert_eq!(
+            converted_value_over(test_case.sql, (schema, setup)),
+            test_case.expected_value,
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_a_zoned_column_and_text_or_a_by_name_union_when_running_then_values_are_as_recorded() {
+    let schema = r#"{"relations": {"EVENTS": [["AT", "TIMESTAMP_TZ(9)"]]}}"#;
+    let setup = "SET TimeZone = 'UTC'; CREATE TABLE \"EVENTS\" (\"AT\" TIMESTAMPTZ); \
+                 INSERT INTO \"EVENTS\" VALUES ('2023-12-31 22:30:15-05:30'), \
+                 ('2024-01-01 08:59:59+09:00')";
+    let test_cases = [
+        ValueTestCase {
+            description: "a zoned column against date text compares instants, the text at UTC",
+            sql: "SELECT LISTAGG((at >= '2024-01-01')::VARCHAR, ',') WITHIN GROUP (ORDER BY at) \
+                  AS r FROM events",
+            expected_value: "false,true",
+        },
+        ValueTestCase {
+            description: "a zoned column against T-separated text without an offset, at UTC",
+            sql: "SELECT LISTAGG((at < '2024-01-01T00:00:00')::VARCHAR, ',') \
+                  WITHIN GROUP (ORDER BY at) AS r FROM events",
+            expected_value: "true,false",
+        },
+        ValueTestCase {
+            description: "UNION ALL BY NAME with a column NULL in every branch",
+            sql: "SELECT COUNT(*)::VARCHAR AS n FROM (SELECT 1 AS a, NULL AS b \
+                  UNION ALL BY NAME SELECT 2 AS a) AS u WHERE b IS NULL",
+            expected_value: "2",
+        },
+    ];
+    for test_case in test_cases {
+        assert_eq!(
+            converted_value_over(test_case.sql, (schema, setup)),
+            test_case.expected_value,
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_a_union_of_a_float_variant_and_parsed_json_when_running_then_types_hold() {
+    let schema =
+        r#"{"relations": {"READINGS": [["K", "NUMBER(2,0)"], ["F", "FLOAT"], ["J", "VARCHAR"]]}}"#;
+    let setup = "CREATE TABLE \"READINGS\" (\"K\" INTEGER, \"F\" DOUBLE, \"J\" VARCHAR); \
+                 INSERT INTO \"READINGS\" VALUES (1, 1.5, '7'), (2, -0.25, '{\"a\": \"x\"}')";
+    let test_cases = [ValueTestCase {
+        description: "a FLOAT keeps DOUBLE beside parsed JSON, whose whole number stays INTEGER",
+        sql: "WITH b AS (SELECT k AS o, TO_VARIANT(f) AS v FROM readings UNION ALL \
+              SELECT k + 10 AS o, PARSE_JSON(j) AS v FROM readings) \
+              SELECT LISTAGG(o::VARCHAR || ':' || TYPEOF(v) || '=' || v::FLOAT::VARCHAR, ',') \
+              WITHIN GROUP (ORDER BY o) AS r FROM b WHERE TYPEOF(v) <> 'OBJECT'",
+        expected_value: "1:DOUBLE=1.5,2:DOUBLE=-0.25,11:INTEGER=7",
+    }];
+    for test_case in test_cases {
+        assert_eq!(
+            converted_value_over(test_case.sql, (schema, setup)),
+            test_case.expected_value,
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_a_union_of_a_float_variant_and_a_json_decimal_when_running_then_it_raises() {
+    let test_cases = [
+        RunErrorTestCase {
+            description: "a JSON decimal beside a FLOAT, which DuckDB's VARIANT would retype",
+            sql: "WITH b AS (SELECT 1 AS o, TO_VARIANT(1.5::FLOAT) AS v UNION ALL \
+                  SELECT 2, PARSE_JSON('2.5')) SELECT o, TYPEOF(v) AS t FROM b",
+            expected_mention: "json_fidelity",
+        },
+        RunErrorTestCase {
+            description: "a JSON null beside a FLOAT, which DuckDB's VARIANT would make SQL NULL",
+            sql: "WITH b AS (SELECT 1 AS o, TO_VARIANT(1.5::FLOAT) AS v UNION ALL \
+                  SELECT 2, PARSE_JSON('null')) SELECT o, TYPEOF(v) AS t FROM b",
+            expected_mention: "json_fidelity",
+        },
+    ];
+    for test_case in test_cases {
+        assert!(
+            converted_run_error(test_case.sql)
+                .is_some_and(|error| error.contains(test_case.expected_mention)),
             "{}",
             test_case.description
         );

@@ -43,3 +43,7 @@ pub const SORT_KIND_ORDER: &[&[&str]] = &[
 pub const SORT_OBJECT_RANK: usize = 3;
 /// The rank of arrays in `SORT_KIND_ORDER`.
 pub const SORT_ARRAY_RANK: usize = 4;
+/// A VARIANT's sort key: `duckdb.json_order_key`.
+pub const JSON_ORDER_KEY: &str = "duckdb.json_order_key";
+/// The magnitude from which a double no longer holds every whole number exactly: 2^53.
+pub const EXACT_DOUBLE_LIMIT: &str = "9007199254740992";

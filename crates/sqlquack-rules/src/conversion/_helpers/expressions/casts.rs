@@ -22,6 +22,7 @@ use sqlquack_duckdb::raises::main::raised::raised;
 use sqlquack_duckdb::semi_structured::constants::JSON_FIDELITY;
 use sqlquack_duckdb::semi_structured::main::json_text::json_text;
 use sqlquack_duckdb::temporal::main::text_to_timestamp::text_to_timestamp;
+use sqlquack_duckdb::temporal::main::text_to_zoned::text_to_zoned;
 use sqlquack_duckdb::temporal::main::utc_wall_time::utc_wall_time;
 use sqlquack_duckdb::times::main::text_to_time::text_to_time;
 use sqlquack_duckdb::times::main::time_text::time_text;
@@ -29,6 +30,7 @@ use sqlquack_duckdb::times::main::timestamp_time::timestamp_time;
 use sqlquack_duckdb::times::main::truncate_time::truncate_time;
 use sqlquack_duckdb::times::models::TimeFormat;
 use sqlquack_duckdb::variants::main::json_kind_cast::json_kind_cast;
+use sqlquack_duckdb::zones::main::text_to_utc_zoned::text_to_utc_zoned;
 use sqlquack_semantics::types::main::zoned_in_utc::zoned_in_utc;
 use sqlquack_snowflake::typing::constants::CAST_TARGET;
 use sqlquack_snowflake::typing::constants::STRUCTURED_UNSUPPORTED;
@@ -43,6 +45,7 @@ use crate::conversion::_helpers::expressions::semi_structured::{
 };
 use crate::conversion::_helpers::expressions::temporal::{
     is_temporal, literal_date, proven_time_text, temporal_cast, time_submicro, timestamp_literal,
+    zoned_literal_utc,
 };
 use crate::conversion::_helpers::expressions::variants::to_variant;
 use crate::conversion::_helpers::support::declared::rely_on_declared;
@@ -60,9 +63,9 @@ use crate::conversion::constants::{
     FLOAT_SCALE_FACET, FLOAT_TO_DOUBLE, KEEP_NULL_CONSTRUCTOR, KIND_CAST_TARGETS,
     MICROSECOND_DIGITS, NTZ_OUTPUT_PATTERN, OBJECT_CONSTRUCTOR, OBJECT_TYPE_NAME,
     SESSION_TIMEZONE_UTC, TARGET_FACET, TEXT_TYPE_PAIR, TEXT_TYPE_SPELLINGS, TIME_CAST,
-    TIMESTAMP_RANGE, TIMESTAMP_TEXT_ROUNDING, TIMESTAMP_TIME_RULE, TO_BOOLEAN_RULE, TO_DOUBLE_PAIR,
-    TO_NUMBER_PAIR, TO_VARCHAR_PAIR, TO_VARIANT_RULE, VARIANT_KIND_CAST, VARIANT_NAME,
-    VARIANT_TEXT_FUNCTION, VARIANT_TO_VARCHAR,
+    TIMESTAMP_RANGE, TIMESTAMP_TEXT_ROUNDING, TIMESTAMP_TIME_RULE, TIMESTAMP_TZ_OFFSET,
+    TO_BOOLEAN_RULE, TO_DOUBLE_PAIR, TO_NUMBER_PAIR, TO_VARCHAR_PAIR, TO_VARIANT_RULE,
+    VARIANT_KIND_CAST, VARIANT_NAME, VARIANT_TEXT_FUNCTION, VARIANT_TO_VARCHAR,
 };
 
 /// Serialised kinds of Snowflake's structured types.
@@ -178,6 +181,20 @@ pub(crate) fn convert_cast(
             as_json(operand, &construct, site.context)?,
             SnowflakeType::SemiStructured,
         ));
+    }
+    if operand.data_type == SnowflakeType::Varchar
+        && matches!(
+            target.data_type,
+            SnowflakeType::TimestampTz { .. } | SnowflakeType::TimestampLtz { .. }
+        )
+    {
+        return zoned_text(
+            &operand,
+            target.data_type,
+            trying,
+            (site.context, &construct),
+        )
+        .map_err(refuse);
     }
     if operand.data_type == SnowflakeType::SemiStructured {
         let sql = variant_cast(
@@ -479,6 +496,17 @@ pub(crate) fn to_number_call(
     };
     let target = cast_target(&type_name, &ProvenanceLog::default()).map_err(refuse)?;
     let operand = convert_expression(value, site)?;
+    let trying = name.starts_with("TRY_");
+    if operand.data_type == SnowflakeType::SemiStructured && !operand.is_variant_held() && !trying {
+        let sql = variant_cast(
+            &operand,
+            (&type_name, target),
+            false,
+            (site.context, construct),
+        )
+        .map_err(refuse)?;
+        return Ok(Emitted::new(sql, target.data_type));
+    }
     if !matches!(
         operand.data_type,
         SnowflakeType::Varchar | SnowflakeType::Null
@@ -486,7 +514,6 @@ pub(crate) fn to_number_call(
         return Err(refuse(format!("{name} of {}", operand.data_type)));
     }
     site.context.log.equivalence(TO_NUMBER_PAIR);
-    let trying = name.starts_with("TRY_");
     let sql = cast_sql(&operand, target, trying, (site.context, construct)).map_err(refuse)?;
     Ok(Emitted::new(sql, target.data_type))
 }
@@ -744,4 +771,44 @@ fn built_object(node: &Value) -> bool {
         .and_then(|function| function.get("name"))
         .and_then(Value::as_str)
         .is_some_and(|name| [OBJECT_CONSTRUCTOR, KEEP_NULL_CONSTRUCTOR].contains(&name))
+}
+
+/// Text to TIMESTAMP_TZ or _LTZ; a TIMESTAMP_TZ holds +00:00, raising for any other offset.
+pub(crate) fn zoned_text(
+    operand: &Emitted,
+    to: SnowflakeType,
+    trying: bool,
+    (context, construct): (&Context<'_>, &Construct),
+) -> Result<Emitted, String> {
+    let log = context.log;
+    let zoned = matches!(to, SnowflakeType::TimestampTz { .. });
+    if let Some(Literal::Text(text)) = &operand.literal
+        && let Some(utc) = zoned_literal_utc(text)
+    {
+        let _rule = cast_rule(CAST_TEXT_LITERAL, log);
+        let sql = timestamp_literal(text, to, (context, construct))?;
+        return Ok(Emitted {
+            utc_offset: zoned && utc,
+            ..Emitted::new(sql, to)
+        });
+    }
+    let _rule = cast_rule(CAST_TEXT_TIMESTAMP, log);
+    diverge(context, TIMESTAMP_RANGE, construct).map_err(|refusal| refusal.reason)?;
+    diverge(context, DATE_TEXT_SPELLING, construct).map_err(|refusal| refusal.reason)?;
+    let instant = match zoned {
+        true => {
+            diverge(context, TIMESTAMP_TZ_OFFSET, construct).map_err(|refusal| refusal.reason)?;
+            text_to_utc_zoned(&operand.sql, text_failure(trying), log)
+        }
+        false => text_to_zoned(&operand.sql, text_failure(trying), log),
+    };
+    let sql = temporal_cast(
+        &instant,
+        (SnowflakeType::TimestampNtz { precision: 9 }, to),
+        (context, construct),
+    )?;
+    Ok(Emitted {
+        utc_offset: zoned,
+        ..Emitted::new(sql, to)
+    })
 }

@@ -24,6 +24,7 @@ rows = [
 query = "SELECT TYPEOF(v:a) AS t, v:a::VARCHAR AS a FROM input ORDER BY v:a, ordinal"
 order = "ordered"
 tags = ["null", "json-null", "missing-key", "nested", "array-index", "case-sensitive-key"]
+expected_divergence = "array_sort_order"
 
 [[case]]
 id = "variant_group"

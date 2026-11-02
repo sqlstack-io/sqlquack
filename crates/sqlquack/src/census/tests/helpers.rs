@@ -200,6 +200,31 @@ pub(crate) const UNRESOLVED_COLUMN_AND_RELATION: &[ShopFile] = &[ShopFile {
                SELECT nickname FROM __source(\"shop\", \"customers\")",
 }];
 
+pub(crate) const CURSOR_BOUND: &[ShopFile] = &[ShopFile {
+    path: "a.sql",
+    contents: "SELECT customer_id FROM __source(\"shop\", \"customers\") \
+               WHERE customer_id >= __cursor_start()",
+}];
+
+pub(crate) const UNSCOPED_NAMES: &[ShopFile] = &[
+    ShopFile {
+        path: "a.sql",
+        contents: "SELECT UPPER(name) AS label, COUNT(*) AS n \
+                   FROM __source(\"shop\", \"customers\") GROUP BY label",
+    },
+    ShopFile {
+        path: "b.sql",
+        contents: "SELECT customer_id, (SELECT r FROM (SELECT q * 2 AS r \
+                   FROM (SELECT customer_id + 1 AS q))) AS doubled \
+                   FROM __source(\"shop\", \"customers\")",
+    },
+    ShopFile {
+        path: "c.sql",
+        contents: "SELECT part.seq AS position FROM __source(\"shop\", \"customers\") AS c, \
+                   LATERAL SPLIT_TO_TABLE(c.name, ' ') AS part",
+    },
+];
+
 pub(crate) const QUOTED_LOWER_CASE: &[ShopFile] = &[
     ShopFile {
         path: "a.sql",

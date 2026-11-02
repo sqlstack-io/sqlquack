@@ -10,4 +10,5 @@ pub mod json_array_reverse;
 pub mod json_array_slice;
 pub mod json_array_sort;
 pub mod json_arrays_overlap;
+pub mod json_order_key;
 pub mod json_to_array;

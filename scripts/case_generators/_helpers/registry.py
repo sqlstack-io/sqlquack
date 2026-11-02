@@ -33,6 +33,7 @@ from scripts.case_generators._helpers.objects import object_files, variant_funct
 from scripts.case_generators._helpers.temporal_texts import temporal_text_files, zone_files
 from scripts.case_generators._helpers.toml_text import file_text
 from scripts.case_generators.models import CaseFile
+from scripts.family_cases.main.family_files import family_files
 from scripts.hazard_cases.main.hazard_files import hazard_files
 
 
@@ -61,6 +62,7 @@ def generators() -> tuple[Callable[[], list[CaseFile]], ...]:
         double_files,
         composed_files,
         hazard_files,
+        family_files,
     )
 
 

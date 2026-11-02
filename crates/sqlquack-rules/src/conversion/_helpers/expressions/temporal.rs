@@ -19,7 +19,7 @@ use crate::conversion::_helpers::support::scope::{Context, Literal};
 use crate::conversion::constants::{
     HOURS_PER_DAY, MAX_FRACTION_DIGITS, MAX_OFFSET_HOURS, MICROSECOND_DIGITS, MINUTES_PER_HOUR,
     NANOSECOND_RANGE_END, NANOSECOND_RANGE_START, OFFSET_WITH_COLON, OFFSET_WITHOUT_COLON,
-    SESSION_TIMEZONE_UTC, TIMESTAMP_RANGE, TIMESTAMP_TZ_SUBMICRO,
+    SESSION_TIMEZONE_UTC, TIMESTAMP_RANGE, TIMESTAMP_TZ_SUBMICRO, ZERO_OFFSETS,
 };
 
 /// A timestamp literal in the recorded ISO form: `YYYY-MM-DD[ HH:MI:SS[.f]][ ±HH:MM]`.
@@ -32,6 +32,17 @@ struct TimestampText<'a> {
     fraction: &'a str,
     /// The UTC offset as `±HH:MM`.
     offset: Option<&'a str>,
+}
+
+/// For a zoned literal the literal path reads: whether its offset is zero and its date in range.
+pub(crate) fn zoned_literal_utc(text: &str) -> Option<bool> {
+    let parsed = parse_timestamp(text, true)?;
+    Some(
+        in_nanosecond_range(parsed.date)
+            && parsed
+                .offset
+                .is_none_or(|offset| ZERO_OFFSETS.contains(&offset_with_colon(offset).as_str())),
+    )
 }
 
 /// The DuckDB SQL of a text literal cast to a timestamp type.

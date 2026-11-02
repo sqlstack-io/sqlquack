@@ -72,3 +72,4 @@ rows = [
 ]
 expression = "s::TIMESTAMP_TZ"
 tags = ["null", "boundary"]
+expected_divergence = "timestamp_tz_offset"

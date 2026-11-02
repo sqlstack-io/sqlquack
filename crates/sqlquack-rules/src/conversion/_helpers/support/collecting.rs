@@ -64,6 +64,47 @@ pub(crate) fn record(refusal: Refusal, before: usize) {
     });
 }
 
+/// The number of refusals recorded so far.
+pub(crate) fn recorded() -> usize {
+    COLLECTOR.with(|collector| {
+        collector
+            .borrow()
+            .as_ref()
+            .map_or(0, |found| found.refusals.len())
+    })
+}
+
+/// Whether a refusal recorded since `before` is an unresolved name.
+pub(crate) fn unresolved_since(before: usize) -> bool {
+    COLLECTOR.with(|collector| {
+        collector.borrow().as_ref().is_some_and(|found| {
+            found
+                .refusals
+                .iter()
+                .skip(before)
+                .any(|refusal| refusal.category == RefusalCategory::UnresolvedName)
+        })
+    })
+}
+
+/// Replaces the refusals recorded since `before` with `refusal`.
+pub(crate) fn replace_since(before: usize, refusal: Refusal) {
+    COLLECTOR.with(|collector| {
+        if let Some(found) = collector.borrow_mut().as_mut() {
+            found.refusals.truncate(before);
+            found.refusals.push(refusal);
+        }
+    });
+}
+
+/// Runs `convert` with collecting off, then restores what was collected.
+pub(crate) fn suspended<T>(convert: impl FnOnce() -> T) -> T {
+    let saved = COLLECTOR.with(|collector| collector.borrow_mut().take());
+    let result = convert();
+    COLLECTOR.with(|collector| *collector.borrow_mut() = saved);
+    result
+}
+
 /// Marks the statement possibly incomplete: conversion stopped inside a node.
 pub(crate) fn stopped() {
     COLLECTOR.with(|collector| {

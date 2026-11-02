@@ -1918,3 +1918,22 @@ pub(crate) const RECORDED_TIME_ZONES: &[&str] = &[
 pub const TIME_ZONE_SPELLING: &str = "time_zone_spelling";
 /// The keyword of an inner join, whose USING keys all take the earlier side's type, as recorded.
 pub(crate) const INNER_JOIN_KEYWORD: &str = "JOIN";
+/// The sequence-number column of FLATTEN and SPLIT_TO_TABLE, which no rule converts.
+pub(crate) const SEQUENCE_COLUMN: &str = "SEQ";
+/// Columns FLATTEN and SPLIT_TO_TABLE both bring into scope, which mark a source as one of them.
+pub(crate) const SEQUENCE_PEERS: [&str; 2] = ["INDEX", "VALUE"];
+/// Offsets that leave a zoned value's wall time at UTC's.
+pub(crate) const ZERO_OFFSETS: &[&str] = &["+00:00", "-00:00"];
+/// The divergence of zoned text whose offset is not +00:00, raised where its wall time matters.
+pub const TIMESTAMP_TZ_OFFSET: &str = "timestamp_tz_offset";
+/// The suffix of the TIMESTAMP_LTZ conversion functions' names.
+pub(crate) const LOCAL_ZONE_SUFFIX: &str = "_LTZ";
+/// The prefix of the conversion functions that give NULL where their strict forms raise.
+pub(crate) const TRY_PREFIX: &str = "TRY_";
+/// Why a FROM subquery reading an enclosing query's column is refused.
+pub(crate) const CORRELATED_DERIVED: &str =
+    "a FROM subquery reading a column of an enclosing query, which no rule converts";
+/// How a name several FROM relations hold is refused.
+pub(crate) const AMBIGUOUS_SUFFIX: &str = "is ambiguous";
+/// A JSON-held VARIANT as a sort key, in ARRAY_SORT's recorded order of kinds.
+pub const VARIANT_ORDER_KEY: &str = "rule.variant_order_key";

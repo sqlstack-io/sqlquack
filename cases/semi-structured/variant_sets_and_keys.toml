@@ -45,6 +45,7 @@ rows = [
 ]
 query = "WITH b AS (SELECT ordinal AS o, TO_VARIANT(f) AS v FROM input UNION ALL SELECT ordinal + 10 AS o, PARSE_JSON(s) AS v FROM input) SELECT o, v, TYPEOF(v) AS t, v::VARCHAR AS txt FROM b ORDER BY o"
 order = "ordered"
+expected_divergence = "float_text"
 tags = ["null", "json-null", "nested"]
 
 [[case]]

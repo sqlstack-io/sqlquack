@@ -1,13 +1,14 @@
 use sqlquack_rules::conversion::models::ConversionOptions;
 
 use crate::census::tests::helpers::{
-    CHAIN, CYCLE, DECIMAL_CHAIN, HELD_CHAIN, MANY_PLACED, PLACED, QUOTED_LOWER_CASE,
+    CHAIN, CURSOR_BOUND, CYCLE, DECIMAL_CHAIN, HELD_CHAIN, MANY_PLACED, PLACED, QUOTED_LOWER_CASE,
     SOURCE_VARIANT_CHAIN, TWO_BLOCKERS, TYPED_CHAIN, UNRESOLVED_COLUMN_AND_RELATION,
-    blocker_summary, blocker_summary_with, chained_divergences, hash_allowed, owned,
-    placed_refusals, policy_allowed,
+    UNSCOPED_NAMES, blocker_summary, blocker_summary_with, chained_divergences, hash_allowed,
+    owned, placed_refusals, policy_allowed,
 };
 use crate::census::tests::test_types::{
     BlockerSummary, BlockerTestCase, DivergenceTallyTestCase, FixedBlockerTestCase, PlacedTestCase,
+    RootsTestCase,
 };
 
 #[test]
@@ -74,6 +75,18 @@ fn given_chained_models_when_tracing_refusals_then_each_root_counts_the_files_it
                     ("#5".to_owned(), owned(&[]), 0),
                     ("#6".to_owned(), owned(&[]), 0),
                 ],
+            },
+        },
+        BlockerTestCase {
+            description: "a cursor bound without --cursor-type is its own root, not an unresolved column",
+            fixtures: CURSOR_BOUND,
+            names: true,
+            expected_summary: BlockerSummary {
+                roots: vec![("fn:<cursor>".to_owned(), [1, 0, 1, 1])],
+                possibly_incomplete_files: 0,
+                pairs: vec![],
+                single_root_files: 1,
+                files: vec![("a".to_owned(), owned(&[]), 0)],
             },
         },
         BlockerTestCase {
@@ -340,6 +353,27 @@ fn given_a_model_putting_a_scaled_number_in_a_variant_when_a_reader_types_it_the
         assert_eq!(
             blocker_summary_with(DECIMAL_CHAIN, true, test_case.conversion),
             test_case.expected_summary,
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_known_names_a_rule_does_not_scope_when_tracing_then_each_root_names_the_rule_limit() {
+    let test_cases = [RootsTestCase {
+        description: "SEQ of SPLIT_TO_TABLE, a GROUP BY select alias and a correlated FROM subquery",
+        fixtures: UNSCOPED_NAMES,
+        expected_roots: vec![
+            ("node:column".to_owned(), [1, 0, 1, 1]),
+            ("node:subquery".to_owned(), [1, 0, 1, 1]),
+            ("node:group_by".to_owned(), [1, 0, 1, 0]),
+        ],
+    }];
+    for test_case in test_cases {
+        assert_eq!(
+            blocker_summary_with(test_case.fixtures, true, policy_allowed()).roots,
+            test_case.expected_roots,
             "{}",
             test_case.description
         );
