@@ -129,9 +129,6 @@ impl Parser {
                         statement,
                     })
                 }
-                None if is_let => {
-                    return Err(self.parse_error("Expected DEFAULT or := after LET RESULTSET"));
-                }
                 None => None,
             };
             return Ok(ScriptingDeclaration::Resultset(ScriptingResultset {
