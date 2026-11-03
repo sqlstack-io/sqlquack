@@ -186,10 +186,10 @@ impl Parser {
                 if matches!(&negated.this, Expression::Literal(literal)
                     if matches!(**literal, Literal::Number(ref text)
                         if text.bytes().all(|b| b.is_ascii_digit())
-                            && text.parse::<u32>().is_ok_and(|n| (20001..=20999).contains(&n)))));
+                            && text.parse::<u32>().is_ok_and(|n| (20001..=20998).contains(&n)))));
             if !documented {
                 return Err(
-                    self.parse_error("Expected an exception number between -20999 and -20001")
+                    self.parse_error("Expected an exception number between -20998 and -20001")
                 );
             }
             self.expect_token(TokenType::Comma)?;
