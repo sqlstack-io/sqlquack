@@ -46,13 +46,13 @@ fn given_a_valid_tree_when_loading_then_every_record_is_kept() {
     let counts = |receipts: usize| LoadedCounts {
         sources: 2,
         indexes: 1,
-        aliases: 1,
+        aliases: 2,
         forms: 2,
         definitions: 1,
         obligations: 4,
         cases: 1,
         receipts,
-        reviews: 1,
+        reviews: 2,
         file_hashes: 2 * FAMILIES.len(),
     };
     let test_cases = [
@@ -558,7 +558,7 @@ fn given_a_format_fault_when_loading_then_the_problem_is_named() {
                     "sf.dml.insert",
                 )
             },
-            expected_problem: "an exclusion is not a form id of its family with a reason",
+            expected_problem: "an exclusion needs exactly one of a form id of its family or a source id",
         },
         FormatFaultTestCase {
             description: "a review accepting an exclusion without a reason",
@@ -570,12 +570,77 @@ fn given_a_format_fault_when_loading_then_the_problem_is_named() {
                     " ",
                 )
             },
-            expected_problem: "an exclusion is not a form id of its family with a reason",
+            expected_problem: "review query-1: an exclusion needs a reason",
         },
         FormatFaultTestCase {
             description: "an alias renaming a form to itself",
             mutate: |root| replace(root, "aliases.toml", "sf.query.selects", "sf.query.select"),
-            expected_problem: "not two distinct form ids",
+            expected_problem: "alias sf.query.select: needs distinct form ids",
+        },
+        FormatFaultTestCase {
+            description: "a split naming one id twice",
+            mutate: |root| {
+                replace(
+                    root,
+                    "aliases.toml",
+                    "\"sf.functions.dayofweek\"",
+                    "\"sf.functions.dayofmonth\"",
+                )
+            },
+            expected_problem: "alias sf.functions.day: needs distinct form ids",
+        },
+        FormatFaultTestCase {
+            description: "an alias into nothing",
+            mutate: |root| replace(root, "aliases.toml", "[\"sf.query.select\"]", "[]"),
+            expected_problem: "alias sf.query.selects: needs distinct form ids",
+        },
+        FormatFaultTestCase {
+            description: "an exclusion naming both a form and a source",
+            mutate: |root| {
+                replace(
+                    root,
+                    "reviews/query.toml",
+                    "form = \"sf.query.select.define-view\"",
+                    "form = \"sf.query.select.define-view\"\nsource = \"doc.select\"",
+                )
+            },
+            expected_problem: "review query-1: an exclusion needs exactly one",
+        },
+        FormatFaultTestCase {
+            description: "a page review excluding a form",
+            mutate: |root| {
+                replace(
+                    root,
+                    "reviews/exclusions.toml",
+                    "source = \"doc.billing\"",
+                    "form = \"sf.query.select\"",
+                )
+            },
+            expected_problem: "review pages-1: an exclusion needs exactly one",
+        },
+        FormatFaultTestCase {
+            description: "a page review binding catalogue hashes",
+            mutate: |root| {
+                replace(
+                    root,
+                    "reviews/exclusions.toml",
+                    "sources_sha256",
+                    "catalogue_sha256",
+                )
+            },
+            expected_problem: "review pages-1: a family review binds its catalogue",
+        },
+        FormatFaultTestCase {
+            description: "a family review binding the sources file",
+            mutate: |root| {
+                replace(
+                    root,
+                    "reviews/query.toml",
+                    "obligations_sha256",
+                    "sources_sha256",
+                )
+            },
+            expected_problem: "review query-1: a family review binds its catalogue",
         },
     ];
     for test_case in test_cases {

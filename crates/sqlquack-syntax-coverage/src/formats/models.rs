@@ -70,7 +70,8 @@ pub struct AliasesFile {
 #[serde(deny_unknown_fields)]
 pub struct Alias {
     pub from: String,
-    pub to: String,
+    /// One id for a rename, several for a split; the old id stays as `absent_from_source`.
+    pub to: Vec<String>,
     pub reason: String,
 }
 
@@ -285,9 +286,16 @@ pub struct ReviewsFile {
 pub struct Review {
     pub id: String,
     pub reviewer_lane: Lane,
+    /// Empty for a review of page exclusions only.
     pub family: String,
-    pub catalogue_sha256: String,
-    pub obligations_sha256: String,
+    /// A family review binds its catalogue and obligation files.
+    #[serde(default)]
+    pub catalogue_sha256: Option<String>,
+    #[serde(default)]
+    pub obligations_sha256: Option<String>,
+    /// A page review binds `sources.toml`.
+    #[serde(default)]
+    pub sources_sha256: Option<String>,
     /// The full Git tree id of the reviewed parser source.
     pub parser_tree: String,
     pub reviewed_utc: String,
@@ -302,7 +310,11 @@ pub struct Review {
 #[derive(Clone, Debug, PartialEq, Eq, Deserialize, Serialize)]
 #[serde(deny_unknown_fields)]
 pub struct Exclusion {
-    pub form: String,
+    /// Exactly one of a form id and a source id.
+    #[serde(default)]
+    pub form: Option<String>,
+    #[serde(default)]
+    pub source: Option<String>,
     pub reason: String,
 }
 

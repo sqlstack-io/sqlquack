@@ -138,10 +138,14 @@ says nothing about runtime.
 A `[[review]]` has these fields:
 
 - `id`, `reviewer_lane` (`a`, `b`, `c` or `backend`) and `family`.
-- `catalogue_sha256` and `obligations_sha256`: the hashes of the reviewed file bytes.
+- A family review binds `catalogue_sha256` and `obligations_sha256`, the hashes of the reviewed
+  file bytes. A page review has an empty `family` and binds only `sources_sha256`, the hash of
+  `sources.toml`.
 - `parser_tree`: the full Git tree id of the reviewed parser source.
 - `reviewed_utc`, plus a `verdict` of `approved` or `changes_requested`.
-- `[[review.exclusion]]`: `form` and `reason` for each excluded form id it accepts.
+- `[[review.exclusion]]`: exactly one of `form` (a form id of the review's family) or `source` (a
+  page id, used for out-of-scope and syntax-less pages), plus a `reason`. A page review excludes
+  pages only.
 - `note`.
 
 ## Verification

@@ -76,7 +76,9 @@ pub(crate) fn valid_tree(root: &Path) {
     write(
         root,
         "aliases.toml",
-        "[[alias]]\nfrom = \"sf.query.selects\"\nto = \"sf.query.select\"\nreason = \"page renamed\"\n",
+        "[[alias]]\nfrom = \"sf.query.selects\"\nto = [\"sf.query.select\"]\nreason = \"page renamed\"\n\
+         [[alias]]\nfrom = \"sf.functions.day\"\nto = [\"sf.functions.dayofmonth\", \"sf.functions.dayofweek\"]\n\
+         reason = \"one call form merged two names\"\n",
     );
     for family in FAMILIES {
         write(root, &format!("catalogue/{family}.toml"), "");
@@ -129,6 +131,18 @@ pub(crate) fn valid_tree(root: &Path) {
              reviewed_utc = \"2026-11-03T23:00:00Z\"\nverdict = \"approved\"\n\
              [[review.exclusion]]\nform = \"sf.query.select.define-view\"\n\
              reason = \"valid only inside project files\"\n"
+        ),
+    );
+    write(
+        root,
+        "reviews/exclusions.toml",
+        &format!(
+            "[[review]]\nid = \"pages-1\"\nreviewer_lane = \"backend\"\nfamily = \"\"\n\
+             sources_sha256 = \"{SHA_A}\"\n\
+             parser_tree = \"0123456789abcdef0123456789abcdef01234567\"\n\
+             reviewed_utc = \"2026-11-03T23:00:00Z\"\nverdict = \"approved\"\n\
+             [[review.exclusion]]\nsource = \"doc.billing\"\n\
+             reason = \"documents view columns, not syntax\"\n"
         ),
     );
 }

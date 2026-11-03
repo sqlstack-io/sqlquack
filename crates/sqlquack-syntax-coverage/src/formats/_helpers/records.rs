@@ -13,8 +13,8 @@ use crate::formats::constants::{
     RECEIPT_FORBIDDEN_TEXT, RECEIPT_FORMAT,
 };
 use crate::formats::models::{
-    Alias, Case, Definition, Form, FormKind, Index, Obligation, ObligationKind, Receipt, Review,
-    Source, SourceStatus,
+    Alias, Case, Definition, Exclusion, Form, FormKind, Index, Obligation, ObligationKind, Receipt,
+    Review, Source, SourceStatus,
 };
 
 fn blank(text: &str) -> bool {
@@ -77,13 +77,18 @@ pub(crate) fn check_index(index: &Index) -> Vec<String> {
 
 pub(crate) fn check_alias(alias: &Alias) -> Vec<String> {
     let mut problems: Vec<String> = Vec::new();
+    let distinct: BTreeSet<&String> = alias.to.iter().collect();
     if !is_form_id(&alias.from, form_family(&alias.from))
-        || !is_form_id(&alias.to, form_family(&alias.to))
-        || alias.from == alias.to
+        || alias.to.is_empty()
+        || distinct.len() != alias.to.len()
+        || alias
+            .to
+            .iter()
+            .any(|to| to == &alias.from || !is_form_id(to, form_family(to)))
     {
         problems.push(format!(
-            "alias {} -> {}: not two distinct form ids",
-            alias.from, alias.to
+            "alias {}: needs distinct form ids to rename or split into, none of them itself",
+            alias.from
         ));
     }
     if blank(&alias.reason) {
@@ -301,18 +306,46 @@ pub(crate) fn check_receipt(receipt: &Receipt) -> Vec<String> {
     problems
 }
 
+/// The exclusion problem, if any: exactly one target, a reason, and a target the review may name.
+fn exclusion_problem(exclusion: &Exclusion, family: &str) -> Option<&'static str> {
+    let target_valid: bool = match (&exclusion.form, &exclusion.source) {
+        (Some(form), None) => !family.is_empty() && is_form_id(form, family),
+        (None, Some(source)) => is_source_id(source),
+        _ => false,
+    };
+    match (target_valid, blank(&exclusion.reason)) {
+        (true, false) => None,
+        (false, _) => {
+            Some("an exclusion needs exactly one of a form id of its family or a source id")
+        }
+        (true, true) => Some("an exclusion needs a reason"),
+    }
+}
+
 pub(crate) fn check_review(review: &Review) -> Vec<String> {
     let id: &str = &review.id;
     let mut problems: Vec<String> = Vec::new();
     if !is_segment(id) {
         problems.push(format!("review {id}: id is not a lower-case name"));
     }
-    if !FAMILIES.contains(&review.family.as_str()) {
-        problems.push(format!("review {id}: unknown family {}", review.family));
-    }
-    if !is_sha256(&review.catalogue_sha256) || !is_sha256(&review.obligations_sha256) {
+    let hash = |value: &Option<String>| value.as_deref().is_some_and(is_sha256);
+    let bound: bool = match review.family.as_str() {
+        "" => {
+            hash(&review.sources_sha256)
+                && review.catalogue_sha256.is_none()
+                && review.obligations_sha256.is_none()
+        }
+        family => {
+            FAMILIES.contains(&family)
+                && hash(&review.catalogue_sha256)
+                && hash(&review.obligations_sha256)
+                && review.sources_sha256.is_none()
+        }
+    };
+    if !bound {
         problems.push(format!(
-            "review {id}: a file hash is not a lower-case SHA-256"
+            "review {id}: a family review binds its catalogue and obligation hashes, a page review \
+             (empty family) binds only sources_sha256"
         ));
     }
     if !is_git_tree(&review.parser_tree) {
@@ -323,14 +356,12 @@ pub(crate) fn check_review(review: &Review) -> Vec<String> {
             "review {id}: reviewed_utc is not YYYY-MM-DDTHH:MM:SSZ"
         ));
     }
-    if review
-        .exclusions
-        .iter()
-        .any(|exclusion| !is_form_id(&exclusion.form, &review.family) || blank(&exclusion.reason))
-    {
-        problems.push(format!(
-            "review {id}: an exclusion is not a form id of its family with a reason"
-        ));
-    }
+    problems.extend(
+        review
+            .exclusions
+            .iter()
+            .filter_map(|exclusion| exclusion_problem(exclusion, &review.family))
+            .map(|problem| format!("review {id}: {problem}")),
+    );
     problems
 }
