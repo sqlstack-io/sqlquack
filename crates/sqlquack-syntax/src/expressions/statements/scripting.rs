@@ -353,7 +353,8 @@ pub struct ScriptingReturn {
     #[serde(default, skip_serializing_if = "SourceSpan::is_absent")]
     #[ast(skip)]
     pub span: SourceSpan,
-    pub value: ScriptingReturnValue,
+    /// Absent for a bare `RETURN;`, which returns NULL.
+    pub value: Option<ScriptingReturnValue>,
 }
 
 /// A scalar expression, or `TABLE(...)` returning the rows its argument names.

@@ -21,6 +21,9 @@ use crate::tokens::types::Result;
 /// Words that end a statement list; the enclosing construct decides which one it accepts.
 const BODY_TERMINATORS: [&str; 6] = ["END", "ELSE", "ELSEIF", "WHEN", "UNTIL", "EXCEPTION"];
 
+/// Unquoted words Snowflake refuses as labels; IF, CASE, LOOP and WHILE are recorded as accepted.
+const RESERVED_LABELS: [&str; 1] = ["FOR"];
+
 /// Words that keep `BEGIN` a transaction statement rather than a block.
 const TRANSACTION_CONTINUATIONS: [&str; 10] = [
     "TRANSACTION",
@@ -147,7 +150,7 @@ impl Parser {
         }
         let data_type = if self.check(TokenType::ColonEq)
             || self.check_text_seq(&["DEFAULT"])
-            || (!is_let && self.check(TokenType::Semicolon))
+            || self.check(TokenType::Semicolon)
         {
             None
         } else {
@@ -158,7 +161,9 @@ impl Parser {
                 operator,
                 value: self.parse_scripting_value()?,
             }),
-            None if is_let => return Err(self.parse_error("Expected DEFAULT or := after LET")),
+            None if data_type.is_none() => {
+                return Err(self.parse_error("Expected a type or a value for the variable"));
+            }
             None => None,
         };
         Ok(ScriptingDeclaration::Variable(ScriptingVariable {
@@ -177,14 +182,15 @@ impl Parser {
         let (mut number, mut message) = (None, None);
         if self.match_token(TokenType::LParen) {
             let value = self.parse_expression()?;
-            let integer = |literal: &Expression| {
-                matches!(literal, Expression::Literal(value)
-                    if matches!(**value, Literal::Number(ref text) if text.bytes().all(|b| b.is_ascii_digit())))
-            };
-            if !(integer(&value)
-                || matches!(&value, Expression::Neg(negated) if integer(&negated.this)))
-            {
-                return Err(self.parse_error("Expected an integer exception number"));
+            let documented = matches!(&value, Expression::Neg(negated)
+                if matches!(&negated.this, Expression::Literal(literal)
+                    if matches!(**literal, Literal::Number(ref text)
+                        if text.bytes().all(|b| b.is_ascii_digit())
+                            && text.parse::<u32>().is_ok_and(|n| (20001..=20999).contains(&n)))));
+            if !documented {
+                return Err(
+                    self.parse_error("Expected an exception number between -20999 and -20001")
+                );
             }
             self.expect_token(TokenType::Comma)?;
             if !self.check(TokenType::String) {
@@ -397,15 +403,16 @@ impl Parser {
             }
             "RETURN" => {
                 self.skip();
-                let value = if self.check_text_seq(&["TABLE"]) && self.check_next(TokenType::LParen)
-                {
+                let value = if self.check(TokenType::Semicolon) {
+                    None
+                } else if self.check_text_seq(&["TABLE"]) && self.check_next(TokenType::LParen) {
                     self.skip();
                     self.skip();
                     let rows = self.parse_expression()?;
                     self.expect_token(TokenType::RParen)?;
-                    ScriptingReturnValue::Table(rows)
+                    Some(ScriptingReturnValue::Table(rows))
                 } else {
-                    ScriptingReturnValue::Scalar(self.parse_scripting_value()?)
+                    Some(ScriptingReturnValue::Scalar(self.parse_scripting_value()?))
                 };
                 Ok(ScriptingStatement::Return(ScriptingReturn {
                     span: self.source_range(start),
@@ -480,8 +487,10 @@ impl Parser {
         self.skip();
         let operand = if self.check(TokenType::LParen) {
             Some(self.parse_scripting_condition()?)
-        } else {
+        } else if self.check_text_seq(&["WHEN"]) {
             None
+        } else {
+            Some(self.parse_expression()?)
         };
         let mut branches = Vec::new();
         while self.check_text_seq(&["WHEN"]) {
@@ -534,9 +543,9 @@ impl Parser {
         let variable = self.expect_identifier_or_keyword_with_quoted()?;
         self.expect_token(TokenType::In)?;
         let rows = self.is_identifier_token()
-            && self
-                .peek_nth(1)
-                .is_some_and(|next| next.text.eq_ignore_ascii_case("DO"));
+            && self.peek_nth(1).is_some_and(|next| {
+                next.text.eq_ignore_ascii_case("DO") || next.text.eq_ignore_ascii_case("LOOP")
+            });
         let iteration = if rows && !self.check_text_seq(&["REVERSE"]) {
             ScriptingForIteration::Rows(self.expect_identifier_with_quoted()?)
         } else {
@@ -639,6 +648,12 @@ impl Parser {
     fn parse_scripting_label(&mut self) -> Result<Option<Identifier>> {
         if self.is_at_end() || self.check(TokenType::Semicolon) {
             return Ok(None);
+        }
+        if RESERVED_LABELS
+            .iter()
+            .any(|word| self.check_text_seq(&[word]))
+        {
+            return Err(self.parse_error("Expected a label, not a reserved word"));
         }
         self.expect_identifier_or_keyword_with_quoted().map(Some)
     }
