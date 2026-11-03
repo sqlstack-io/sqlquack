@@ -2,7 +2,12 @@
 
 from __future__ import annotations
 
-RESULTS_DIRS: tuple[str, ...] = ("evidence/results", "evidence/audit/results", "evidence/referee")
+RESULTS_DIRS: tuple[str, ...] = (
+    "evidence/results",
+    "evidence/audit/results",
+    "evidence/referee",
+    "coverage/syntax/receipts",
+)
 UNGUARDED_FILES: frozenset[str] = frozenset({"README.md"})
 RECORDER_PREFIX: str = "sqlquack-record "
 EVIDENCE_FORMAT: int = 1
@@ -69,3 +74,6 @@ REFEREE_CATALOGUE_KEYS: frozenset[str] = frozenset(
 ACCEPTED_OUTCOME: str = "accepted"
 REJECTED_OUTCOME: str = "rejected"
 REFEREE_DIRECTORY: str = "evidence/referee/"
+SYNTAX_RECEIPTS_DIRECTORY: str = "coverage/syntax/receipts/"
+SYNTAX_RECEIPT_SUFFIX: str = ".jsonl"
+SYNTAX_REPORT_SUFFIX: str = ".report.json"

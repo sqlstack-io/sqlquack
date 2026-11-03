@@ -12,6 +12,7 @@ members = [
     "crates/sqlquack-evidence",
     "crates/sqlquack",
     "crates/sqlquack-polyglot-check",
+    "crates/sqlquack-syntax-coverage",
 ]
 exclude = ["fuzz"]
 resolver = "2"

@@ -1,0 +1,23 @@
+[package]
+name = "sqlquack-syntax-coverage"
+version.workspace = true
+description = "Development check of documented Snowflake syntax coverage; never a runtime dependency."
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+homepage.workspace = true
+publish = false
+rust-version.workspace = true
+
+[dependencies]
+clap.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+sha2.workspace = true
+toml.workspace = true
+
+[dev-dependencies]
+tempfile.workspace = true
+
+[lints]
+workspace = true

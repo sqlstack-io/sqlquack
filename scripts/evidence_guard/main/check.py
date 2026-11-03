@@ -10,7 +10,13 @@ from pathlib import Path, PurePosixPath
 from scripts.evidence_guard._helpers.git import changed_results
 from scripts.evidence_guard._helpers.metadata import added_result_problems
 from scripts.evidence_guard._helpers.referee import added_referee_problems
-from scripts.evidence_guard.constants import ADDED_STATUS, REFEREE_DIRECTORY, UNGUARDED_FILES
+from scripts.evidence_guard._helpers.syntax_receipts import added_syntax_receipt_problems
+from scripts.evidence_guard.constants import (
+    ADDED_STATUS,
+    REFEREE_DIRECTORY,
+    SYNTAX_RECEIPTS_DIRECTORY,
+    UNGUARDED_FILES,
+)
 from scripts.evidence_guard.models import ChangedPath
 
 
@@ -38,6 +44,8 @@ def run_evidence_guard(argv: list[str] | None = None) -> int:
         checker: Callable[..., list[str]] = (
             added_referee_problems
             if change.path.startswith(REFEREE_DIRECTORY)
+            else added_syntax_receipt_problems
+            if change.path.startswith(SYNTAX_RECEIPTS_DIRECTORY)
             else added_result_problems
         )
         problems.extend(
