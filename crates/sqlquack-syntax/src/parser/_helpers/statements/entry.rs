@@ -442,6 +442,14 @@ impl Parser {
             TokenType::Pragma => self.parse_pragma(),
             TokenType::Rollback => self.parse_rollback(),
             TokenType::Commit => self.parse_commit(),
+            TokenType::Begin
+                if matches!(
+                    self.config.dialect,
+                    Some(crate::tokens::models::DialectType::Snowflake)
+                ) && self.is_scripting_begin() =>
+            {
+                self.parse_scripting_block()
+            }
             TokenType::Begin => self.parse_transaction(),
             TokenType::End
                 if self.config.dialect == Some(crate::tokens::models::DialectType::PostgreSQL) =>

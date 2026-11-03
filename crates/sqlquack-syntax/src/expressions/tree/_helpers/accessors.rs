@@ -145,6 +145,7 @@ impl Expression {
             | Expression::Pivot(_)
             | Expression::Unpivot(_)
             | Expression::Command(_)
+            | Expression::ScriptingBlock(_)
             | Expression::Raw(_)
             | Expression::CreateTask(_)
             | Expression::ReturnStmt(_) => true,

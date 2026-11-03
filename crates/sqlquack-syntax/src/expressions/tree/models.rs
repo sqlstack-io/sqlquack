@@ -438,6 +438,7 @@ use crate::expressions::statements::models::Version;
 use crate::expressions::statements::models::VerticaExpression;
 use crate::expressions::statements::models::When;
 use crate::expressions::statements::models::Whens;
+use crate::expressions::statements::scripting::ScriptingBlock;
 use crate::expressions::tables::models::AlgorithmProperty;
 use crate::expressions::tables::models::AllowedValuesProperty;
 use crate::expressions::tables::models::AutoIncrementProperty;
@@ -1201,6 +1202,7 @@ pub enum Expression {
     Show(Box<Show>),
 
     Command(Box<Command>),
+    ScriptingBlock(Box<ScriptingBlock>),
     Kill(Box<Kill>),
     /// PREPARE statement (PostgreSQL/generic prepared statement definition)
     Prepare(Box<PrepareStatement>),

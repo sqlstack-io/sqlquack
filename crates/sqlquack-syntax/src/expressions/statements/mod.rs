@@ -2,3 +2,4 @@
 
 pub(crate) mod main;
 pub mod models;
+pub mod scripting;
