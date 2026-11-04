@@ -1,5 +1,4 @@
 //! Snowflake ALTER of object kinds with no statement of their own: EXPERIMENT, SNAPSHOT, SNAPSHOT SET, TAG, TASK and TASK GRAPH.
-//! The application, backup, Cortex Search, database, semantic view and Streamlit kinds are in `snowflake_alter_objects`.
 
 use crate::expressions::names::models::Identifier;
 use crate::expressions::names::models::TableRef;

@@ -7,6 +7,8 @@ use crate::expressions::tree::models::Expression;
 use crate::expressions::types::models::Tuple;
 use crate::parser::_helpers::ddl::snowflake_alter::alter_object;
 use crate::parser::_helpers::ddl::snowflake_alter::property;
+use crate::parser::constants::CONTACT;
+use crate::parser::constants::TAG;
 use crate::parser::models::Parser;
 use crate::tokens::models::TokenType;
 use crate::tokens::types::Result;
@@ -108,7 +110,7 @@ impl Parser {
     /// Parse a property value: a parenthesized list, NULL, a literal or a name.
     fn parse_alter_value(&mut self) -> Result<Expression> {
         if self.match_token(TokenType::LParen) {
-            let mut items = Vec::new();
+            let mut items: Vec<Expression> = Vec::new();
             loop {
                 let item = self.parse_object_value()?;
                 if self.match_token(TokenType::Eq) {
@@ -150,7 +152,7 @@ impl Parser {
 
     /// Parse `<name> = <value>` for each name of `names` that comes next, in any order.
     fn parse_named_options(&mut self, names: &[&str]) -> Result<Vec<ObjectProperty>> {
-        let mut properties = Vec::new();
+        let mut properties: Vec<ObjectProperty> = Vec::new();
         while let Some(name) = names
             .iter()
             .find(|name| self.check_text_seq(&[name]) && self.check_next(TokenType::Eq))
@@ -172,8 +174,7 @@ impl Parser {
     /// Parse the properties of a SET (`set`) or UNSET: TAG and CONTACT lists, PRIMARY KEY, or named properties.
     fn parse_alter_settings(&mut self, set: bool) -> Result<Vec<ObjectProperty>> {
         let mut properties: Vec<ObjectProperty> = Vec::new();
-        // Snowflake ends the SET after a CONTACT list of several purposes.
-        let mut contact_list = false;
+        let mut contact_list_ends_set = false;
         loop {
             let named = self.check_next(TokenType::Eq) || self.check_next(TokenType::Comma) || {
                 let next = self.current + 1;
@@ -183,7 +184,7 @@ impl Parser {
                 let kind = self.peek_text().to_ascii_uppercase();
                 self.skip();
                 loop {
-                    let name = if kind == "TAG" {
+                    let name = if kind == TAG {
                         self.parse_simple_qualified_name()?
                     } else {
                         self.parse_simple_name()?
@@ -192,7 +193,7 @@ impl Parser {
                         None
                     } else {
                         self.expect_token(TokenType::Eq)?;
-                        Some(if kind == "CONTACT" {
+                        Some(if kind == CONTACT {
                             self.object_operand()?
                         } else {
                             self.parse_object_value()?
@@ -202,8 +203,8 @@ impl Parser {
                     if !self.match_token(TokenType::Comma) {
                         break;
                     }
-                    if kind == "CONTACT" {
-                        contact_list = true;
+                    if kind == CONTACT {
+                        contact_list_ends_set = true;
                     }
                 }
             } else if self.match_text_seq(&["PRIMARY", "KEY"]) {
@@ -230,7 +231,7 @@ impl Parser {
             if self.is_at_end() || self.check(TokenType::Semicolon) || !set && !comma {
                 return Ok(properties);
             }
-            if contact_list {
+            if contact_list_ends_set {
                 return Err(self.parse_error("Expected the end of the statement after CONTACT"));
             }
         }
@@ -241,13 +242,15 @@ impl Parser {
         Ok((vec![], self.parse_alter_settings(set)?))
     }
 
-    /// Parse `<policy_name> [ FORCE ]` after `{ FEATURE | MAINTENANCE | BACKUP } POLICY`.
-    fn parse_alter_policy(&mut self, action: &mut String) -> Result<Parts> {
+    /// Parse `<policy_name> [ FORCE ]` after `{ FEATURE | MAINTENANCE | BACKUP } POLICY`, with the action's suffix.
+    fn parse_alter_policy(&mut self) -> Result<(Parts, String)> {
         let policy = self.object_operand()?;
-        if self.match_text_seq(&["FORCE"]) {
-            action.push_str(" FORCE");
-        }
-        Ok((vec![policy], vec![]))
+        let suffix = if self.match_text_seq(&["FORCE"]) {
+            " FORCE"
+        } else {
+            ""
+        };
+        Ok(((vec![policy], vec![]), suffix.to_owned()))
     }
 
     /// Parse ALTER DATABASE after its kind.
@@ -273,17 +276,25 @@ impl Parser {
         let parts = match action.as_str() {
             "RENAME" => self.parse_alter_target("TO")?,
             "SWAP" => self.parse_alter_target("WITH")?,
-            "SET FEATURE POLICY" => self.parse_alter_policy(&mut action)?,
+            "SET FEATURE POLICY" => {
+                let (parts, suffix) = self.parse_alter_policy()?;
+                action.push_str(&suffix);
+                parts
+            }
             "SET" => self.parse_alter_set(true)?,
             "UNSET" => self.parse_alter_set(false)?,
-            "UPDATE LINKED_CATALOG" => self.parse_linked_catalog_update(&mut action)?,
+            "UPDATE LINKED_CATALOG" => {
+                let (parts, suffix) = self.parse_linked_catalog_update()?;
+                action.push_str(&suffix);
+                parts
+            }
             _ if action.starts_with("ENABLE") || action.starts_with("DISABLE") => {
-                let mut operands = Vec::new();
+                let mut operands: Vec<Expression> = Vec::new();
                 if action.starts_with("ENABLE") || self.check_text_seq(&["TO"]) {
                     self.expect_alter_words(&[&["TO", "ACCOUNTS"]])?;
                     operands.push(self.account_list_operand()?);
                 }
-                if action == "ENABLE REPLICATION"
+                if matches!(action.as_str(), "ENABLE REPLICATION")
                     && self.match_text_seq(&["IGNORE", "EDITION", "CHECK"])
                 {
                     action.push_str(" IGNORE EDITION CHECK");
@@ -295,20 +306,22 @@ impl Parser {
         Ok(alter_object("DATABASE", head, action, parts))
     }
 
-    /// Parse the change after `UPDATE LINKED_CATALOG`.
-    fn parse_linked_catalog_update(&mut self, action: &mut String) -> Result<Parts> {
+    /// Parse the change after `UPDATE LINKED_CATALOG`, with the action's suffix.
+    fn parse_linked_catalog_update(&mut self) -> Result<(Parts, String)> {
         let change = self.expect_alter_words(&[&["ADD"], &["REMOVE"], &["SET"], &["UNSET"]])?;
-        action.push(' ');
-        action.push_str(&change);
+        let mut suffix: String = format!(" {change}");
         let namespaces: &[&[&str]] = &[&["ALLOWED_NAMESPACES"], &["BLOCKED_NAMESPACES"]];
         match change.as_str() {
             "ADD" | "REMOVE" => {
                 let list = self.parse_string_list()?;
-                let word = if change == "ADD" { "TO" } else { "FROM" };
+                let word = match change.as_str() {
+                    "ADD" => "TO",
+                    _ => "FROM",
+                };
                 self.expect_alter_words(&[&[word]])?;
                 let target = self.expect_alter_words(namespaces)?;
-                action.push_str(&format!(" {word} {target}"));
-                Ok((vec![list], vec![]))
+                suffix.push_str(&format!(" {word} {target}"));
+                Ok(((vec![list], vec![]), suffix))
             }
             "SET" => {
                 let name = self.expect_alter_words(&[
@@ -316,18 +329,19 @@ impl Parser {
                     &["SYNC_INTERVAL_SECONDS"],
                 ])?;
                 self.expect_token(TokenType::Eq)?;
-                let value = if name == "SYNC_INTERVAL_SECONDS" {
-                    self.parse_object_value()?
-                } else {
-                    let mode = self.expect_alter_words(&[&["NONE"], &["ALL"]])?;
-                    Expression::Identifier(Identifier::new(mode))
+                let value = match name.as_str() {
+                    "SYNC_INTERVAL_SECONDS" => self.parse_object_value()?,
+                    _ => {
+                        let mode = self.expect_alter_words(&[&["NONE"], &["ALL"]])?;
+                        Expression::Identifier(Identifier::new(mode))
+                    }
                 };
-                Ok((vec![], vec![property(&name, None, Some(value))]))
+                Ok(((vec![], vec![property(&name, None, Some(value))]), suffix))
             }
             _ => {
                 let target = self.expect_alter_words(namespaces)?;
-                action.push_str(&format!(" {target}"));
-                Ok((vec![], vec![]))
+                suffix.push_str(&format!(" {target}"));
+                Ok(((vec![], vec![]), suffix))
             }
         }
     }
@@ -345,7 +359,7 @@ impl Parser {
         {
             self.current += action.len();
             let name = self.object_operand()?;
-            let properties = if action[0] == "SET" {
+            let properties = if matches!(action[0], "SET") {
                 self.parse_alter_settings(true)?
             } else {
                 vec![]
@@ -378,7 +392,9 @@ impl Parser {
         let parts = match action.as_str() {
             "RENAME" => self.parse_alter_target("TO")?,
             "SET FEATURE POLICY" | "SET MAINTENANCE POLICY" => {
-                self.parse_alter_policy(&mut action)?
+                let (parts, suffix) = self.parse_alter_policy()?;
+                action.push_str(&suffix);
+                parts
             }
             "SET SHARED TELEMETRY EVENTS" => (vec![self.parse_string_list()?], vec![]),
             "SET CONFIGURATION" => {
@@ -444,14 +460,14 @@ impl Parser {
         let parts = match action.as_str() {
             "RENAME" => self.parse_alter_target("TO")?,
             "ADD VERSION" | "REGISTER VERSION" => {
-                let mut operands = Vec::new();
+                let mut operands: Vec<Expression> = Vec::new();
                 if !self.check_text_seq(&["USING"]) {
                     operands.push(self.object_operand()?);
                 }
                 self.parse_version_source(operands)?
             }
             "ADD PATCH" => {
-                let mut operands = Vec::new();
+                let mut operands: Vec<Expression> = Vec::new();
                 if self.check(TokenType::Number) {
                     operands.push(self.number_operand()?);
                 }
@@ -482,19 +498,25 @@ impl Parser {
                         self.expect_token(TokenType::Eq)?;
                         (vec![self.parse_account_list()?], vec![])
                     }
-                    _ => self.parse_release_directive(&change, &mut action)?,
+                    _ => {
+                        let (parts, suffix) = self.parse_release_directive(&change, &action)?;
+                        action.push_str(&suffix);
+                        parts
+                    }
                 };
                 operands.insert(0, channel);
                 (operands, properties)
             }
             _ if action.contains("RELEASE DIRECTIVE") => {
                 let change = action.clone();
-                self.parse_release_directive(&change, &mut action)?
+                let (parts, suffix) = self.parse_release_directive(&change, &change)?;
+                action.push_str(&suffix);
+                parts
             }
             "SET" => self.parse_alter_set(true)?,
             _ => {
                 let parts = self.parse_alter_set(false)?;
-                if parts.1.len() > 1 && parts.1.iter().any(|p| p.kind != "TAG") {
+                if parts.1.len() > 1 && parts.1.iter().any(|p| p.kind != TAG) {
                     return Err(self.parse_error("Snowflake unsets one package property at a time"));
                 }
                 parts
@@ -507,7 +529,7 @@ impl Parser {
     fn parse_version_source(&mut self, mut operands: Vec<Expression>) -> Result<Parts> {
         self.expect_alter_words(&[&["USING"]])?;
         operands.push(self.parse_string_value()?);
-        let mut properties = Vec::new();
+        let mut properties: Vec<ObjectProperty> = Vec::new();
         if self.match_text_seq(&["LABEL"]) {
             self.expect_token(TokenType::Eq)?;
             properties.push(property("LABEL", None, Some(self.parse_string_value()?)));
@@ -515,15 +537,16 @@ impl Parser {
         Ok((operands, properties))
     }
 
-    /// Parse the rest of a release directive change named by `change`.
-    fn parse_release_directive(&mut self, change: &str, action: &mut String) -> Result<Parts> {
-        let mut operands = Vec::new();
-        let mut properties = Vec::new();
-        if change != "SET DEFAULT RELEASE DIRECTIVE" {
+    /// Parse the rest of a release directive change named by `change`, with the action's suffix.
+    fn parse_release_directive(&mut self, change: &str, action: &str) -> Result<(Parts, String)> {
+        let mut suffix: String = String::new();
+        let mut operands: Vec<Expression> = Vec::new();
+        let mut properties: Vec<ObjectProperty> = Vec::new();
+        if !matches!(change, "SET DEFAULT RELEASE DIRECTIVE") {
             operands.push(self.object_operand()?);
         }
         if change.starts_with("UNSET") {
-            return Ok((operands, properties));
+            return Ok(((operands, properties), suffix));
         }
         let mut version_required = true;
         let accounts = if change.starts_with("SET RELEASE") {
@@ -533,7 +556,7 @@ impl Parser {
             match self.match_one_of(&["ADD", "REMOVE"]) {
                 Some(word) => {
                     self.expect_alter_words(&[&["ACCOUNTS"]])?;
-                    action.push_str(&format!(" {word} ACCOUNTS"));
+                    suffix.push_str(&format!(" {word} ACCOUNTS"));
                     version_required = false;
                     true
                 }
@@ -557,10 +580,13 @@ impl Parser {
         if version_required {
             properties.extend(self.parse_named_options(UPGRADE_OPTIONS)?);
         }
-        if !action.contains("REMOVE") && self.match_text_seq(&["FORCE"]) {
-            action.push_str(" FORCE");
+        if !action.contains("REMOVE")
+            && !suffix.contains("REMOVE")
+            && self.match_text_seq(&["FORCE"])
+        {
+            suffix.push_str(" FORCE");
         }
-        Ok((operands, properties))
+        Ok(((operands, properties), suffix))
     }
 
     /// Parse ALTER APPLICATION SERVICE after its kind.
@@ -602,7 +628,11 @@ impl Parser {
             &["UNSET", "TAG"],
         ])?;
         let parts = match action.as_str() {
-            "APPLY BACKUP POLICY" => self.parse_alter_policy(&mut action)?,
+            "APPLY BACKUP POLICY" => {
+                let (parts, suffix) = self.parse_alter_policy()?;
+                action.push_str(&suffix);
+                parts
+            }
             "DELETE BACKUP IDENTIFIER" => (vec![self.parse_string_value()?], vec![]),
             "MODIFY BACKUP IDENTIFIER" => {
                 let id = self.parse_string_value()?;
@@ -613,8 +643,8 @@ impl Parser {
                     &["UNSET", "COMMENT"],
                 ])?;
                 action.push_str(&format!(" {change}"));
-                let mut properties = Vec::new();
-                if change == "SET COMMENT" {
+                let mut properties: Vec<ObjectProperty> = Vec::new();
+                if matches!(change.as_str(), "SET COMMENT") {
                     self.expect_token(TokenType::Eq)?;
                     let comment = self.parse_string_value()?;
                     properties.push(property("COMMENT", None, Some(comment)));
@@ -638,7 +668,7 @@ impl Parser {
             "SET TAG" | "UNSET TAG" => {
                 self.current -= 1;
                 action.truncate(action.len() - " TAG".len());
-                self.parse_alter_set(action == "SET")?
+                self.parse_alter_set(matches!(action.as_str(), "SET"))?
             }
             _ => (vec![], vec![]),
         };
@@ -691,7 +721,8 @@ impl Parser {
             "UNSET" => {
                 if !self.check_text_seq(&["PRIMARY", "KEY"])
                     && !(self.check_text_seq(&["TAG"])
-                        && self.text_at(1).is_some_and(|text| text != ";"))
+                        && self.text_at(1).is_some()
+                        && !self.check_next(TokenType::Semicolon))
                 {
                     return Err(self.parse_error("Expected PRIMARY KEY or TAG"));
                 }
@@ -770,7 +801,7 @@ impl Parser {
         ])?;
         let parts = match action.as_str() {
             "PUSH" => {
-                let mut operands = Vec::new();
+                let mut operands: Vec<Expression> = Vec::new();
                 if self.match_text_seq(&["TO"]) {
                     action.push_str(" TO");
                     operands.push(self.parse_string_value()?);
