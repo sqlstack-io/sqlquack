@@ -75,3 +75,7 @@ pub(crate) fn cast_targets(type_text: &str) -> (Value, Value) {
         target(format!("SELECT CAST(x AS {type_text})")),
     )
 }
+
+pub(crate) fn accepted(sql: &str, dialect: Dialect) -> bool {
+    parse_statements_with(sql, dialect, &ParseOptions::default(), CallMode::Faithful).is_ok()
+}

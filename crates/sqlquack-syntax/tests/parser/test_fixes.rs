@@ -1,7 +1,9 @@
 use serde_json::json;
 
-use crate::helpers::{cast_targets, projection_at};
-use crate::test_types::{CastTargetTestCase, ProjectionTestCase};
+use sqlquack_syntax::Dialect;
+
+use crate::helpers::{accepted, cast_targets, projection_at};
+use crate::test_types::{AcceptanceTestCase, CastTargetTestCase, ProjectionTestCase};
 
 #[test]
 fn given_an_index_followed_by_a_key_when_parsing_then_it_is_a_path_on_the_element() {
@@ -155,6 +157,39 @@ fn given_a_parenthesized_typed_lambda_when_parsing_then_it_keeps_names_and_types
         assert_eq!(
             projection_at(test_case.sql, test_case.pointer),
             test_case.expected_value,
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_double_star_exponentiation_when_parsing_then_only_dialects_that_have_it_accept_it() {
+    let test_cases = [
+        AcceptanceTestCase {
+            description: "Snowflake rejects ** (recorded errno 1003)",
+            sql: "SELECT 3 ** 5",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "Snowflake still accepts POWER",
+            sql: "SELECT POWER(3, 5)",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "DuckDB keeps ** as exponentiation",
+            sql: "SELECT 3 ** 5",
+            dialect: Dialect::DuckDB,
+            expected_accepted: true,
+        },
+    ];
+
+    for test_case in test_cases {
+        assert_eq!(
+            accepted(test_case.sql, test_case.dialect),
+            test_case.expected_accepted,
             "{}",
             test_case.description
         );
