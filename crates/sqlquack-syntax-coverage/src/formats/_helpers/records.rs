@@ -8,14 +8,14 @@ use crate::formats::_helpers::hashes::{
 use crate::formats::_helpers::ids::{
     is_case_id, is_form_id, is_rfc3339_utc, is_segment, is_source_id, is_utc,
 };
-use crate::formats::main::obligation_form::obligation_form;
 use crate::formats::constants::{
     DEFINITION_SEPARATOR, FAMILIES, GRAMMAR_JOIN, HTTPS, INTERACTION_MEMBERS, PROSE_HASH_PREFIX,
     RECEIPT_FORBIDDEN_TEXT, RECEIPT_FORMAT,
 };
+use crate::formats::main::obligation_form::obligation_form;
 use crate::formats::models::{
-    Alias, Case, Definition, Exclusion, Form, FormKind, Index, Obligation, ObligationKind, Receipt,
-    Review, Source, SourceStatus,
+    Alias, Case, Definition, Exclusion, Form, FormKind, FormStatus, Index, Obligation,
+    ObligationKind, Receipt, Review, Source, SourceStatus,
 };
 
 fn blank(text: &str) -> bool {
@@ -385,7 +385,7 @@ pub(crate) fn check_review(review: &Review) -> Vec<String> {
     problems
 }
 
-/// Restated pages against the forms: each is cited by an `also_sources`, and none has a form.
+/// Restated pages against the forms: each is listed in an `also_sources`, none has a live form.
 pub(crate) fn check_restatements<'a>(
     sources: &[Source],
     forms: impl Iterator<Item = &'a Form>,
@@ -397,7 +397,9 @@ pub(crate) fn check_restatements<'a>(
     let mut problems: Vec<String> = Vec::new();
     let mut cited: BTreeSet<&str> = BTreeSet::new();
     for form in forms {
-        if status.get(form.source.as_str()) == Some(&SourceStatus::Restated) {
+        if form.status == FormStatus::Catalogued
+            && status.get(form.source.as_str()) == Some(&SourceStatus::Restated)
+        {
             problems.push(format!(
                 "form {}: its source {} is restated, so it has no form of its own",
                 form.id, form.source
@@ -422,7 +424,12 @@ pub(crate) fn check_restatements<'a>(
             .filter(|source| {
                 source.status == SourceStatus::Restated && !cited.contains(source.id.as_str())
             })
-            .map(|source| format!("source {}: restated, but no form lists it in also_sources", source.id)),
+            .map(|source| {
+                format!(
+                    "source {}: restated, but no form lists it in also_sources",
+                    source.id
+                )
+            }),
     );
     problems
 }

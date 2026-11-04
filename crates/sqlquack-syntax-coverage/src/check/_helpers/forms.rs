@@ -2,9 +2,7 @@
 
 use std::collections::BTreeSet;
 
-use crate::check::models::{
-    CaseResult, FormResult, FormState, Joined, ObligationResult, Reason,
-};
+use crate::check::models::{CaseResult, FormResult, FormState, Joined, ObligationResult, Reason};
 use crate::formats::models::{Form, FormStatus, Obligation};
 
 /// Satisfied only when at least one case cites it and every citing case agrees.

@@ -62,7 +62,10 @@ pub(crate) fn join<'a>(
         let found: &[&Receipt] = receipts
             .get(case.case_id.as_str())
             .map_or(&[], Vec::as_slice);
-        cases.insert(case.case_id.as_str(), case_result(case, found, parse(&case.sql)));
+        cases.insert(
+            case.case_id.as_str(),
+            case_result(case, found, parse(&case.sql)),
+        );
     }
     Joined {
         forms: forms_by_id(coverage),

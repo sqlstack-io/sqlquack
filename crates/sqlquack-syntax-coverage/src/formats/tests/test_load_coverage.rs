@@ -112,6 +112,23 @@ fn given_a_valid_tree_when_loading_then_every_record_is_kept() {
             },
         },
         LoadTestCase {
+            description: "a folded form, absent from the source, keeps its now restated page",
+            tree: |root| {
+                valid_tree(root);
+                restated_page(root);
+                replace(
+                    root,
+                    "catalogue/query.toml",
+                    "source = \"doc.select\"\nanchor = \"DEFINE VIEW\"",
+                    "source = \"doc.select-copy\"\nanchor = \"DEFINE VIEW\"",
+                );
+            },
+            expected_counts: LoadedCounts {
+                sources: 3,
+                ..counts(1)
+            },
+        },
+        LoadTestCase {
             description: "a tree without renames or reviews yet",
             tree: |root| {
                 valid_tree(root);
