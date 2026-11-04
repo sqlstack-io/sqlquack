@@ -949,6 +949,12 @@ required = true
 note = "the form without its required ) in [ , ( <fractional_seconds_precision> ) ]"
 
 [[obligation]]
+id = "sf.expressions.data-types-datetime.interval.o089"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
+
+[[obligation]]
 id = "sf.expressions.data-types-datetime.interval.o085"
 kind = "option_present"
 required = true
@@ -1441,6 +1447,12 @@ id = "sf.expressions.data-types-datetime.interval-yearmonthqualifier-daytimequal
 kind = "negative_neighbour"
 required = true
 note = "the form without its required { YEAR [ ( <precision> ) ] [ TO MONTH ] | MONTH [ ( <precision> ) ] | DAY [ ( <precision> ) ] [ TO { HOUR | MINUTE | SECOND [ ( <fractional_seconds_precision> ) ] } ] | HOUR [ ( <precision> ) ] [ TO { MINUTE | SECOND [ ( <fractional_seconds_precision> ) ] } ] | MINUTE [ ( <precision> ) ] [ TO SECOND [ ( <fractional_seconds_precision> ) ] ] | SECOND [ ( <precision> ) [ , ( <fractional_seconds_precision> ) ] ] }"
+
+[[obligation]]
+id = "sf.expressions.data-types-datetime.interval-yearmonthqualifier-daytimequalifier.o091"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
 
 [[obligation]]
 id = "sf.expressions.data-types-datetime.interval-yearmonthqualifier-daytimequalifier.o082"
@@ -2982,6 +2994,12 @@ id = "sf.expressions.data-types-structured.object.o025"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required )"
+
+[[obligation]]
+id = "sf.expressions.data-types-structured.object.o026"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
 
 [[obligation]]
 id = "sf.expressions.data-types-text.binary.o001"

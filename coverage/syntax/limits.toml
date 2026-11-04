@@ -4141,8 +4141,8 @@ reason = "the page shows `'<object_identifier>', [ , '<reference_scope>' ...`, a
 [[reading]]
 form = "sf.functions.model-monitor-performance-metric.model-monitor-performance-metric"
 grammar_sha256 = "eff1dc33f7777e43c48a681815befad9fbbf7835dfde916998319dc9433ae576"
-grammar = ["MODEL_MONITOR_PERFORMANCE_METRIC( <model_monitor_name> , <performance_metric_name> [ , <granularity> [ , <start_time> [ , <end_time> [ , <extra_args> ] ] ] ] )"]
-reason = "the page shows `<performance_metric_name>, [, <granularity> ...`, a comma both before and inside the optional; the gateway variant on the same page writes `<performance_metric_name> [, <granularity> ...`; read with the optional's comma only"
+grammar = ["MODEL_MONITOR_PERFORMANCE_METRIC( '<model_monitor_name>' , '<performance_metric_name>' [ , <granularity> [ , <start_time> [ , <end_time> [ , <extra_args> ] ] ] ] )"]
+reason = "the page shows `<performance_metric_name>, [, <granularity> ...`, a comma both before and inside the optional; the gateway variant on the same page writes `<performance_metric_name> [, <granularity> ...`; read with the optional's comma only; D118: the monitor and metric names are strings: the page lists metrics as 'RMSE' etc. and its examples pass 'MY_MONITOR', 'RMSE'"
 
 [[reading]]
 form = "sf.functions.system-provision-privatelink-endpoint"
@@ -57897,3 +57897,356 @@ form = "sf.functions.timestampdiff"
 grammar_sha256 = "e909539fb04ffcc338b4debf389a404d5263d9d287ddffb093a229388a176699"
 grammar = ["TIMESTAMPDIFF( { <date_or_time_part> | '<date_or_time_part>' } , <date_or_time_expr1> , <date_or_time_expr2> )"]
 reason = "D118: the page says the part can be a string literal or unquoted ('month' or month)"
+
+# D118 batch 2: auditor findings on optional, alternative and own-grammar function forms.
+
+[[reading]]
+form = "sf.functions.approx-count-distinct.approx-count-distinct"
+grammar_sha256 = "019719c2a0d834384028197d5c1b74163173cf8d5c6bd7cafad6fbe3964f7b01"
+grammar = ["APPROX_COUNT_DISTINCT( [ DISTINCT ] <expr1> [ , ... ] )", "APPROX_COUNT_DISTINCT( [ <table_name> . ] * [ { ILIKE '<pattern>' | EXCLUDE { <column_name> | ( <column_name> [ , <column_name> ... ] ) } } ] )"]
+reason = "D118: the page defines the * argument with a table qualifier (mytable.*) and ILIKE or EXCLUDE filtering ((* ILIKE 'col1%'), (* EXCLUDE col1), (* EXCLUDE (col1, col2)), (mytable.* ILIKE 'col1%')), and says ILIKE and EXCLUDE can't be combined"
+
+[[reading]]
+form = "sf.functions.approx-count-distinct.approx-count-distinct-over.syntax"
+grammar_sha256 = "a002775f27b085dbb449cb86b2fddad6ea6a8b6ee03727715433d4691814ab8f"
+grammar = ["APPROX_COUNT_DISTINCT( [ <table_name> . ] * [ { ILIKE '<pattern>' | EXCLUDE { <column_name> | ( <column_name> [ , <column_name> ... ] ) } } ] ) OVER ( [ PARTITION BY <expr2> ] )"]
+reason = "D118: the page defines the * argument with a table qualifier (mytable.*) and ILIKE or EXCLUDE filtering ((* ILIKE 'col1%'), (* EXCLUDE col1), (* EXCLUDE (col1, col2)), (mytable.* ILIKE 'col1%')), and says ILIKE and EXCLUDE can't be combined"
+
+[[reading]]
+form = "sf.functions.hash-agg.hash-agg"
+grammar_sha256 = "9a5a581216b938714e91a4aee821eea9ef0e835f03e419336a99a77a84efae10"
+grammar = ["HASH_AGG( [ DISTINCT ] <expr> [ , <expr2> ... ] )", "HASH_AGG( [ <table_name> . ] * [ { ILIKE '<pattern>' | EXCLUDE { <column_name> | ( <column_name> [ , <column_name> ... ] ) } } ] )"]
+reason = "D118: the page defines the * argument with a table qualifier (mytable.*) and ILIKE or EXCLUDE filtering ((* ILIKE 'col1%'), (* EXCLUDE col1), (* EXCLUDE (col1, col2)), (mytable.* ILIKE 'col1%')), and says ILIKE and EXCLUDE can't be combined"
+
+[[reading]]
+form = "sf.functions.hash-agg.hash-agg-over.syntax"
+grammar_sha256 = "e8599e2974e1105423f2e9d91404c5f2f41b5e8cf708879fef1511ef1ba4dca5"
+grammar = ["HASH_AGG( [ <table_name> . ] * [ { ILIKE '<pattern>' | EXCLUDE { <column_name> | ( <column_name> [ , <column_name> ... ] ) } } ] ) OVER ( [ PARTITION BY <expr3> ] )"]
+reason = "D118: the page defines the * argument with a table qualifier (mytable.*) and ILIKE or EXCLUDE filtering ((* ILIKE 'col1%'), (* EXCLUDE col1), (* EXCLUDE (col1, col2)), (mytable.* ILIKE 'col1%')), and says ILIKE and EXCLUDE can't be combined"
+
+[[reading]]
+form = "sf.functions.hash"
+grammar_sha256 = "6d08fdcc0b2ea9b0eae0717b464d554a40ca1d416431d1816103d2307fb39454"
+grammar = ["HASH( <expr> [ , <expr> ... ] )", "HASH( [ <table_name> . ] * [ { ILIKE '<pattern>' | EXCLUDE { <column_name> | ( <column_name> [ , <column_name> ... ] ) } } ] )"]
+reason = "D118: the page defines the * argument with a table qualifier (mytable.*) and ILIKE or EXCLUDE filtering ((* ILIKE 'col1%'), (* EXCLUDE col1), (* EXCLUDE (col1, col2)), (mytable.* ILIKE 'col1%')), and says ILIKE and EXCLUDE can't be combined"
+
+[[reading]]
+form = "sf.functions.count.count"
+grammar_sha256 = "b4f596806a61a14b117c6cb6df5a44b38f376a870a249c362c51dc7f02ba1b24"
+grammar = ["COUNT( [ DISTINCT ] <expr1> [ , <expr2> ... ] )", "COUNT( [ <alias> . ] * [ { ILIKE '<pattern>' | EXCLUDE { <column_name> | ( <column_name> [ , <column_name> ... ] ) } } ] )"]
+reason = "D118: the page defines the * argument with a table qualifier (mytable.*) and ILIKE or EXCLUDE filtering ((* ILIKE 'col1%'), (* EXCLUDE col1), (* EXCLUDE (col1, col2)), (mytable.* ILIKE 'col1%')), and says ILIKE and EXCLUDE can't be combined; the page's COUNT(*) and COUNT(<alias>.*) lines are both this production"
+
+[[reading]]
+form = "sf.functions.object-construct"
+grammar_sha256 = "cf16bf1f3a10c1b267976ecc94abbd526e986e4facbfc5646af29f6fb480761f"
+grammar = ["OBJECT_CONSTRUCT( [<key>, <value> [, <key>, <value> , ...]] )", "OBJECT_CONSTRUCT( [ <table_name> . ] * [ { ILIKE '<pattern>' | EXCLUDE { <column_name> | ( <column_name> [ , <column_name> ... ] ) } } ] )"]
+reason = "D118: the page defines the * argument with a table qualifier (mytable.*) and ILIKE or EXCLUDE filtering ((* ILIKE 'col1%'), (* EXCLUDE col1), (* EXCLUDE (col1, col2)), (mytable.* ILIKE 'col1%')), and says ILIKE and EXCLUDE can't be combined"
+
+[[reading]]
+form = "sf.functions.object-construct-keep-null"
+grammar_sha256 = "e5488314fafe18951091f171ac18ece9525e8c5c7d4a5d5925912ba585c7c6a8"
+grammar = ["OBJECT_CONSTRUCT_KEEP_NULL( [<key>, <value> [, <key>, <value> , ...]] )", "OBJECT_CONSTRUCT_KEEP_NULL( [ <table_name> . ] * [ { ILIKE '<pattern>' | EXCLUDE { <column_name> | ( <column_name> [ , <column_name> ... ] ) } } ] )"]
+reason = "D118: the page defines the * argument with a table qualifier (mytable.*) and ILIKE or EXCLUDE filtering ((* ILIKE 'col1%'), (* EXCLUDE col1), (* EXCLUDE (col1, col2)), (mytable.* ILIKE 'col1%')), and says ILIKE and EXCLUDE can't be combined"
+
+[[reading]]
+form = "sf.functions.object-construct-keep-null-structured"
+grammar_sha256 = "32f6923233e1d09adb984d5dcd0acbe77851dcf87198ea8edea348126ea277ae"
+grammar = ["OBJECT_CONSTRUCT_KEEP_NULL_STRUCTURED( <key>, <value> [ , <key>, <value> , ... ] )", "OBJECT_CONSTRUCT_KEEP_NULL_STRUCTURED( [ <table_name> . ] * [ { ILIKE '<pattern>' | EXCLUDE { <column_name> | ( <column_name> [ , <column_name> ... ] ) } } ] )"]
+reason = "D118: the page defines the * argument with a table qualifier (mytable.*) and ILIKE or EXCLUDE filtering ((* ILIKE 'col1%'), (* EXCLUDE col1), (* EXCLUDE (col1, col2)), (mytable.* ILIKE 'col1%')), and says ILIKE and EXCLUDE can't be combined"
+
+[[reading]]
+form = "sf.functions.search"
+grammar_sha256 = "bf05f1aa4e5ad258f2dc7957fb4d9fce167094700d9e686b1575ee5d6049ee8e"
+grammar = ["SEARCH( { <search_data> | ( <search_data> [ , <search_data> ... ] ) | ( [ <table_name> . ] * [ { ILIKE '<pattern>' | EXCLUDE { <column_name> | ( <column_name> [ , <column_name> ... ] ) } } ] ) } , '<search_string>' [ , ANALYZER => '<analyzer_name>' ] [ , SEARCH_MODE => { 'OR' | 'AND' | 'PHRASE' | 'EXACT' } ] )"]
+reason = "D118: search_data is a single item, a parenthesised list of items, or a parenthesised wildcard; the page says parentheses are required for *, table.* or multiple items (SEARCH((col1, col2, col3), 'string'), SEARCH((t1.*), 'string'), SEARCH((*), 'string')) and defines the wildcard's qualifier and ILIKE or EXCLUDE filtering"
+
+[[reading]]
+form = "sf.functions.search-ip"
+grammar_sha256 = "2690683d4f52b5bc40304b4e02473db5e03a3370a52216980927af217070aa1c"
+grammar = ["SEARCH_IP( { <search_data> | ( <search_data> [ , <search_data> ... ] ) | ( [ <table_name> . ] * [ { ILIKE '<pattern>' | EXCLUDE { <column_name> | ( <column_name> [ , <column_name> ... ] ) } } ] ) | * ILIKE '<pattern>' } , '<search_string>' )"]
+reason = "D118: the page says search_data takes the wildcard with ILIKE and EXCLUDE as described for SEARCH (parenthesised list, (*) and (table.*)); its own examples are SEARCH_IP((*), '192.0.2.146') and, without parentheses, SEARCH_IP(* ILIKE '%_target', '192.0.2.146'), so the unparenthesised ILIKE form is a separate alternative"
+
+[[reading]]
+form = "sf.functions.ai-complete-prompt-object"
+grammar_sha256 = "4eb9caf8818e840fdd398ddf8b0ff324529ac0c1b6ac3efdc4e769fa45c6ce3a"
+grammar = ["AI_COMPLETE( <model>, <prompt> [ , <model_parameters> ] )", "AI_COMPLETE( MODEL => <model> , PROMPT => <prompt> [ , MODEL_PARAMETERS => <model_parameters> ] )"]
+reason = "D118: the page says the function can be used with either positional or named argument syntax; the argument names are model, prompt and model_parameters"
+
+[[reading]]
+form = "sf.functions.ai-complete-single-file"
+grammar_sha256 = "81b094787ad01ac8988933aaa9848241db0c4931fee8846815f72bb259b41d10"
+grammar = ["AI_COMPLETE( <model>, <predicate>, <file> [, <model_parameters> ] )", "AI_COMPLETE( MODEL => <model> , PREDICATE => <predicate> , FILE => <file> [ , MODEL_PARAMETERS => <model_parameters> ] )"]
+reason = "D118: the page says the function can be used with either positional or named argument syntax; the argument names are model, predicate, file and model_parameters"
+
+[[reading]]
+form = "sf.functions.ai-complete-single-string"
+grammar_sha256 = "632330d0814a52357428249384cab56c5fb85f1ae84f81ac9e0aa2a9396ae297"
+grammar = ["AI_COMPLETE( <model>, <prompt> [ , <model_parameters>, <response_format>, <show_details> ] )", "AI_COMPLETE( MODEL => <model> , PROMPT => <prompt> [ , MODEL_PARAMETERS => <model_parameters> ] [ , RESPONSE_FORMAT => <response_format> ] [ , SHOW_DETAILS => <show_details> ] )"]
+reason = "D118: the page says the function can be used with either positional or named argument syntax; its named examples pass model_parameters and show_details without response_format, so each named optional argument is independent"
+
+[[reading]]
+form = "sf.functions.check-xml.check-xml"
+grammar_sha256 = "21bff39a3884cd68a921f28834a780e3973641596a73ff08cc5437ec55aef20e"
+grammar = ["CHECK_XML( <string_containing_xml> [ , <disable_auto_convert> ] )", "CHECK_XML( <string_containing_xml> , DISABLE_AUTO_CONVERT => <disable_auto_convert> )"]
+reason = "D118: the usage notes allow mixing positional and named arguments with the positional ones first; the only mixed call is the positional string followed by the named DISABLE_AUTO_CONVERT"
+
+[[reading]]
+form = "sf.functions.parse-xml.parse-xml"
+grammar_sha256 = "a8f37829992f9fc62b02e12ce6aa5a0c6a8cfe19dcb38c97046db4df75d19b31"
+grammar = ["PARSE_XML( <string_containing_xml> [ , <disable_auto_convert> ] )", "PARSE_XML( <string_containing_xml> , DISABLE_AUTO_CONVERT => <disable_auto_convert> )"]
+reason = "D118: the usage notes allow mixing positional and named arguments with the positional ones first; the only mixed call is the positional string followed by the named DISABLE_AUTO_CONVERT"
+
+[[reading]]
+form = "sf.functions.warehouse-metering-history"
+grammar_sha256 = "82082338ef17a131b480afbdd958dacded3deb90278975dc90d05182b454ab80"
+grammar = ["WAREHOUSE_METERING_HISTORY( DATE_RANGE_START => <constant_expr> [ , DATE_RANGE_END => <constant_expr> ] [ , WAREHOUSE_NAME => '<string>' ] )", "WAREHOUSE_METERING_HISTORY( <constant_expr> [ , <constant_expr> [ , '<string>' ] ] )"]
+reason = "D118: the usage notes say the keywords are not required if the arguments are specified in order"
+
+[[reading]]
+form = "sf.functions.system-pipe-force-resume"
+grammar_sha256 = "f19b54d2f4f1449e1bbec234910e35b9fc18f45dae510e1be7e4b5f27a6a12cb"
+grammar = ["SYSTEM$PIPE_FORCE_RESUME( '<pipe_name>' [ , '<override_options>' ] )"]
+reason = "D118: the page says passing pipe_name as the only input is syntactically equivalent to passing OWNERSHIP_TRANSFER_CHECK_OVERRIDE, and its example is SYSTEM$PIPE_FORCE_RESUME('mydb.myschema.mypipe'); the second argument is one string holding STALENESS_CHECK_OVERRIDE and/or OWNERSHIP_TRANSFER_CHECK_OVERRIDE in either order"
+
+[[reading]]
+form = "sf.functions.lag"
+grammar_sha256 = "0f9495ab56d7382860c79f1654cc4decd1576b112ec90e50189f3e6ca8062fd0"
+grammar = ["LAG ( <expr> [ , <offset> [ , <default> ] ] ) [ { IGNORE | RESPECT } NULLS ] OVER ( [ PARTITION BY <expr1> ] ORDER BY <expr2> [ { ASC | DESC } ] [ NULLS { FIRST | LAST } ] )"]
+reason = "D118: the page brackets offset and default together, but documents a default for each (offset 1, default NULL), so offset may be given without default"
+
+[[reading]]
+form = "sf.functions.lead"
+grammar_sha256 = "6fa2f93744458bcac4fe670a87b4d79e9e943e31eb31edff5e59b61b9f9cea99"
+grammar = ["LEAD ( <expr> [ , <offset> [ , <default> ] ] ) [ { IGNORE | RESPECT } NULLS ] OVER ( [ PARTITION BY <expr1> ] ORDER BY <expr2> [ { ASC | DESC } ] [ NULLS { FIRST | LAST } ] )"]
+reason = "D118: the page brackets offset and default together, but documents a default for each (offset 1, default NULL), so offset may be given without default"
+
+[[reading]]
+form = "sf.functions.object-agg.object-agg"
+grammar_sha256 = "c4c8e4bbda988c51f0ef16ea67fd77705c977094b1319d71f7ab360576d255f5"
+grammar = ["OBJECT_AGG( [ DISTINCT ] <key> , <value> )"]
+reason = "D118: the usage notes say the DISTINCT keyword is supported"
+
+[[reading]]
+form = "sf.functions.object-agg.object-agg-over"
+grammar_sha256 = "0c30fc4c2ae4c40a5d302282f2934814ebe484e9b10252e87cc8a03e47e3fe4a"
+grammar = ["OBJECT_AGG( [ DISTINCT ] <key> , <value> ) OVER ( [ PARTITION BY <expr2> ] )"]
+reason = "D118: the usage notes say the DISTINCT keyword is supported"
+
+[[reading]]
+form = "sf.functions.var-samp.var-samp-over"
+grammar_sha256 = "5aeae53e4751ee836a54720226581c83080f0593c508418f0289e7780527aae5"
+grammar = ["VAR_SAMP( [ DISTINCT ] <expr1> ) OVER ( [ PARTITION BY <expr2> ] [ ORDER BY <expr3> [ { ASC | DESC } ] [ NULLS { FIRST | LAST } ] [ <window_frame> ] ] )"]
+reason = "D118: the usage notes say that as a window function the syntax allows the DISTINCT keyword, but it is ignored"
+
+[[reading]]
+form = "sf.functions.ai-extract.ai-extract-file-responseformat"
+grammar_sha256 = "c0c3f76bbb569c1d178e1be8f397908a3e65339c93efddbe392aa3a92ece0ea6"
+grammar = ["AI_EXTRACT( file => <file> , responseFormat => <responseFormat> [ , scores => { TRUE | FALSE } ] [ , scale_factor => <scale_factor> ] )"]
+reason = "D118: the page writes the comma before the optional scores argument outside its bracket and leaves TRUE | FALSE unbraced; read with the optional's comma only; the usage notes document a scale_factor parameter (1.0 through 4.0, ignored with cross-region inference) without naming its syntax, read as an optional named argument"
+
+[[reading]]
+form = "sf.functions.ai-extract.ai-extract-text-responseformat"
+grammar_sha256 = "bcf54d147e4752178239ca83110de072b2a656459f757b7ac81da59efc92ef35"
+grammar = ["AI_EXTRACT( text => <text> , responseFormat => <responseFormat> [ , scores => { TRUE | FALSE } ] )"]
+reason = "D118: the page writes the comma before the optional scores argument outside its bracket and leaves TRUE | FALSE unbraced; read with the optional's comma only"
+
+[[reading]]
+form = "sf.functions.get-ddl"
+grammar_sha256 = "dc1e923d974d17fb554462835a3653a3c6c2b99c67764760b8173a540a9954ac"
+grammar = ["GET_DDL( '<object_type>' , '<qualified_object_name>' [ , { TRUE | FALSE } ] )"]
+reason = "D118: the page writes the name as '[<namespace>.]<object_name>', one string literal whose qualification is not SQL syntax; use_fully_qualified_names_for_recreated_objects is a boolean (If TRUE …, Default: FALSE), not an identifier"
+
+[[reading]]
+form = "sf.functions.system-clustering-depth"
+grammar_sha256 = "5bda1f9cde2a62c39f13acf7ac45e4f40aa7cdcf1176abc629cdab374b6d980e"
+grammar = ["SYSTEM$CLUSTERING_DEPTH( '<table_name>' , '<column_list>' [ , '<predicate>' ] )"]
+reason = "D118: the page writes the column argument as '( <col1> [ , <col2> ... ] )', one string literal whose contents are not SQL syntax"
+
+[[reading]]
+form = "sf.functions.system-clustering-ratio"
+grammar_sha256 = "2ecb74a12652157c88b71e055ddf38e10bb1da4c3bfbed200abb940989586063"
+grammar = ["SYSTEM$CLUSTERING_RATIO( '<table_name>' , '<column_list>' [ , '<predicate>' ] )"]
+reason = "D118: the page writes the column argument as '( <col1> [ , <col2> ... ] )', one string literal whose contents are not SQL syntax"
+
+[[reading]]
+form = "sf.functions.system-data-metric-scan"
+grammar_sha256 = "81541a75218c6aba60768043177aa96f8defb99c8dff322d678244cb76980fad"
+grammar = ["SYSTEM$DATA_METRIC_SCAN( REF_ENTITY_NAME => '<object>' , METRIC_NAME => '<data_metric_function>' , ARGUMENT_NAME => '<argument_columns>' [ , ARGUMENT_EXPRESSION => '<boolean-expression>' ] [ , AT_TIMESTAMP => '<timestamp>' ] [ , WITHIN_GROUP_VALUES => '<json_object>' ] )"]
+reason = "D118: the page writes ARGUMENT_NAME => '<column> [ , <column> ... ]', one string literal whose contents are not SQL syntax"
+
+[[reading]]
+form = "sf.functions.system-opt-out-malicious-ip-protection-by-category"
+grammar_sha256 = "0b15af43abe5aa7f90fdfb3e1b33bcbefaeb130632602772c306c9d6d6bbda96"
+grammar = ["SYSTEM$OPT_OUT_MALICIOUS_IP_PROTECTION_BY_CATEGORY( '<categories>' [ , '<user_name>' ] )"]
+reason = "D118: the page writes '<category>,<category>', one string literal holding a comma-separated list"
+
+[[reading]]
+form = "sf.functions.system-estimate-automatic-clustering-costs"
+grammar_sha256 = "25f7186260e4b37a8025f29d135e95343f133342755f06ecfc0de2295fdaec99"
+grammar = ["SYSTEM$ESTIMATE_AUTOMATIC_CLUSTERING_COSTS( '<table_name>' [ , '<clustering_key>' ] )"]
+reason = "D118: the page writes the comma before the optional clustering key outside its bracket, and the key as '( <expr1> [ , <expr2> ... ] )', one string literal; read with the optional's comma only"
+
+[[reading]]
+form = "sf.functions.parse-url"
+grammar_sha256 = "a09ed0638ff1d00c2912ab9eb1b9ccc9a276bfd7982f64e2e947201ba95abc0b"
+grammar = ["PARSE_URL( <string> [ , <permissive> ] )"]
+reason = "D118: the page writes the comma before the optional permissive argument outside its bracket; read with the optional's comma only"
+
+[[reading]]
+form = "sf.functions.xmlget"
+grammar_sha256 = "e0114d8b9d8d4a449aca4f3f8b8dca73c600960ebbd4ab1220a814120620261b"
+grammar = ["XMLGET( <expression> , '<tag_name>' [ , <instance_number> ] )"]
+reason = "D118: tag_name is the name of an XML tag passed as a string; every example passes a string literal ('my_tag', 'level2')"
+
+[[reading]]
+form = "sf.functions.model-monitor-performance-metric.model-monitor-performance-metric-service"
+grammar_sha256 = "719f5bd5da83c9a2876b934480b8ef2db6e434b4e23bfd87622d3b567e785351"
+grammar = ["MODEL_MONITOR_PERFORMANCE_METRIC( '<model_monitor_name>' , '<performance_metric_name>' [ , <granularity> [ , <start_time> [ , <end_time> ] ] ] , SERVICE => <service_name> )"]
+reason = "D118: the monitor and metric names are strings: the page lists metrics as 'RMSE' etc. and its examples pass 'MY_MONITOR', 'RMSE'"
+
+[[reading]]
+form = "sf.functions.st-simplify"
+grammar_sha256 = "2e546bcc7cc5a3f5adc2a4b3b640bf717c83510ec0bd6f0ac20d68016845fa32"
+grammar = ["ST_SIMPLIFY( <geography_expression>, <tolerance> [ , { TRUE | FALSE } ] )", "ST_SIMPLIFY( <geometry_expression>, <tolerance> )"]
+reason = "D118: preserve_collapsed is a boolean (If TRUE …, Default: FALSE), not an identifier"
+
+[[reading]]
+form = "sf.functions.last-day"
+grammar_sha256 = "1fb66d0b1f7e7cceac363b90e2901fd677717bcdad291387f78c83cb8468c270"
+grammar = ["LAST_DAY( <date_or_timestamp_expr> [ , '<date_part>' ] )"]
+reason = "D118: the date part is passed as a string; the page's example is LAST_DAY(\"DATE\", 'year')"
+
+[[reading]]
+form = "sf.functions.time-slice"
+grammar_sha256 = "ec6019570fdbfeef2196ae9743c0e5ef5987d4a2ca7acb91dbb6688c955daa4d"
+grammar = ["TIME_SLICE( <date_or_time_expr> , <slice_length> , '<date_or_time_part>' [ , '<start_or_end>' ] )"]
+reason = "D118: the page says the time unit must be a string and start_or_end is 'START' or 'END'; the examples pass 'MONTH', 'HOUR', 'START' and 'END'"
+
+[[reading]]
+form = "sf.functions.system-wait"
+grammar_sha256 = "ef017aaa84b8cd3bb1f64253423d23a9af89e9a301b529cf28a41d269265043d"
+grammar = ["SYSTEM$WAIT( <amount> [ , '<time_unit>' ] )"]
+reason = "D118: the page says the unit should be in single quotes; its example is SYSTEM$WAIT(2, 'MINUTES')"
+
+[[reading]]
+form = "sf.functions.percent-rank"
+grammar_sha256 = "251b47d082113f45faf303bede5d295e4f63ebe7f775ebab650df8051c5ceec6"
+grammar = ["PERCENT_RANK() OVER ( [ PARTITION BY <expr1> ] ORDER BY <expr2> [ { ASC | DESC } ] [ NULLS { FIRST | LAST } ] [ { RANGE UNBOUNDED PRECEDING | RANGE BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW | RANGE BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING } ] )"]
+reason = "D118: the page defines fixedRangeFrame as RANGE UNBOUNDED PRECEDING, RANGE BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW or RANGE BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING; inlined so each documented frame is an alternative"
+
+[[reading]]
+form = "sf.functions.finetune-snowflake-cortex"
+grammar_sha256 = "1a70ceddcc33ed01b1417f7d399c2b13a07f7d2cb3255e30e441c2afeca07e08"
+grammar = ["FINETUNE( { 'CREATE' | 'SHOW' | 'DESCRIBE' | 'CANCEL' } [ , <argument> [ , ... ] ] )"]
+reason = "D118: the overview page writes the command's remaining arguments as a bare ...; it documents only the first argument's choice and says the rest vary by command (each has its own page and form: finetune-create, -show, -describe, -cancel), so the rest are read as an optional argument list"
+
+# D118: interaction_all_options rows newly derived for options nested inside an option; Snowflake already rejected their SQL.
+
+[[suppress]]
+form = "sf.ddl.alter-schema.set"
+kind = "interaction_all_options"
+note = "every independent option of one production together"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-24); observed, not flipped to reject"
+
+[[limit]]
+form = "sf.ddl.alter-schema.set"
+kind = "interaction_all_options"
+note = "every independent option of one production together, observed"
+anchor = "doc.sql.alter-schema / Syntax"
+sql = "ALTER SCHEMA IF EXISTS v1 SET DATA_RETENTION_TIME_IN_DAYS = 1 MAX_DATA_EXTENSION_TIME_IN_DAYS = 1 STAGE_UNDROP_RETENTION_TIME_IN_DAYS = 1 EXTERNAL_VOLUME = v1 CATALOG = v1 ICEBERG_DEFAULT_DDL_COLLATION = 'm' ICEBERG_VERSION_DEFAULT = 1 ICEBERG_MERGE_ON_READ_BEHAVIOR = 'AUTO' ENABLE_ICEBERG_MERGE_ON_READ = TRUE REPLACE_INVALID_CHARACTERS = TRUE DEFAULT_DDL_COLLATION = 'm' DEFAULT_NOTEBOOK_COMPUTE_POOL_CPU = 'm' DEFAULT_NOTEBOOK_COMPUTE_POOL_GPU = 'm' LOG_LEVEL = 'm' TRACE_LEVEL = 'm' STORAGE_SERIALIZATION_POLICY = COMPATIBLE CLASSIFICATION_PROFILE = 'm' COMMENT = 'm' CATALOG_SYNC = 'm' REPLICABLE_WITH_FAILOVER_GROUPS = 'YES' BASE_LOCATION_PREFIX = 'm' DEFAULT_STREAMLIT_NOTEBOOK_WAREHOUSE = 'm' CONTACT STEWARD = v1 , STEWARD = v1 OBJECT_VISIBILITY = PRIVILEGED ENABLE_DATA_COMPACTION = TRUE OAUTH_AUTHORIZATION_SERVER = i1 OAUTH_SCOPES_SUPPORTED = 'm' ;"
+expect = "observe"
+documented = true
+context = "raw"
+
+[[suppress]]
+form = "sf.query.from"
+kind = "interaction_all_options"
+note = "every independent option of one production together"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-12); observed, not flipped to reject; as for sf.query.constructs, the FROM items (AT/BEFORE, CHANGES, MATCH_RECOGNIZE, PIVOT …) are not documented as all co-occurring"
+
+[[limit]]
+form = "sf.query.from"
+kind = "interaction_all_options"
+note = "every independent option of one production together, observed"
+anchor = "doc.constructs.from / Syntax"
+sql = "SELECT 1 FROM d1 . v1 AT ( OFFSET => -60 ) CHANGES ( INFORMATION => DEFAULT ) MATCH_RECOGNIZE ( PATTERN ( a ) DEFINE a AS TRUE ) PIVOT ( SUM ( c1 ) FOR c2 IN ( 1 ) ) AS v1 SAMPLE ( 10 ) JOIN t2 ;"
+expect = "observe"
+documented = true
+context = "raw"
+
+[[suppress]]
+form = "sf.utility.execute-dcm-project.deploy-fromsource-fromdeployment"
+kind = "interaction_all_options"
+note = "every independent option of one production together"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-21); observed, not flipped to reject"
+
+[[limit]]
+form = "sf.utility.execute-dcm-project.deploy-fromsource-fromdeployment"
+kind = "interaction_all_options"
+note = "every independent option of one production together, observed"
+anchor = "doc.sql.execute-dcm-project / Syntax"
+sql = "EXECUTE DCM PROJECT v1 DEPLOY AS \"d1\" USING CONFIGURATION v1 ( 1 , 1 ) ENVIRONMENT ( v1 ) FROM 'm' ;"
+expect = "observe"
+documented = true
+context = "raw"
+
+[[reading]]
+form = "sf.functions.date-part.date-part-from"
+grammar_sha256 = "1ca66843ab3faedc7d605a0b65f10f1a7b2515e3d53b492d5f7eafab304d60eb"
+grammar = ["DATE_PART( { <date_or_time_part> | '<date_or_time_part>' } FROM <date_interval_time_or_timestamp_expr> )"]
+reason = "D118: the page says the part can be a string literal or unquoted ('month' or month); the rule is in the shared date_or_time_part argument, so it covers the FROM form too"
+
+[[reading]]
+form = "sf.functions.extract.extract-from"
+grammar_sha256 = "b5c74180d41ded8ecf96f32e374edc41f501d641d5504e9278c97ad0d1343eed"
+grammar = ["EXTRACT( { <date_or_time_part> | '<date_or_time_part>' } FROM <date_interval_time_or_timestamp_expr> )"]
+reason = "D118: the page says the part can be a string literal or unquoted ('month' or month); the rule is in the shared date_or_time_part argument, so it covers the FROM form too"
+
+# D113 classes receipt triage (import 58): remaining contradictions observed, each reason names its category and receipt.
+
+[[suppress]]
+form = "sf.classes.custom-classifier.methods.list"
+kind = "required_operand_missing"
+target = "<custom_classifier>"
+note = "omit <custom_classifier>"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2139 SQLSTATE 02000, phase semantic_error, import-20261104-58), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.classes.custom-classifier.methods.list"
+kind = "required_operand_missing"
+target = "<custom_classifier>"
+note = "omit <custom_classifier>, observed"
+anchor = "doc.classes.custom_classifier.methods.list / Syntax"
+sql = "SELECT !LIST ( ) ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.classes.forecast.commands.show-forecast"
+kind = "negative_neighbour"
+note = "the form without its required ML"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 02000, phase semantic_error, import-20261104-58), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.classes.forecast.commands.show-forecast"
+kind = "negative_neighbour"
+note = "the form without its required ML, observed"
+anchor = "doc.classes.forecast.commands.show-forecast / Syntax"
+sql = "SHOW SNOWFLAKE . . FORECAST ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.classes.top-insights.commands.show-top-insights"
+kind = "negative_neighbour"
+note = "the form without its required ML"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 02000, phase semantic_error, import-20261104-58), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.classes.top-insights.commands.show-top-insights"
+kind = "negative_neighbour"
+note = "the form without its required ML, observed"
+anchor = "doc.classes.top-insights.commands.show-top-insights / Syntax"
+sql = "SHOW SNOWFLAKE . . TOP_INSIGHTS ;"
+expect = "observe"
+context = "raw"

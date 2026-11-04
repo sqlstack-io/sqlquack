@@ -2493,6 +2493,13 @@ anchor = "doc.constructs.from / Syntax"
 note = "quoted: a double-quoted identifier with blanks and mixed case, observed"
 
 [[obligation]]
+id = "sf.query.from.o165"
+kind = "interaction_all_options"
+required = true
+anchor = "doc.constructs.from / Syntax"
+note = "every independent option of one production together, observed"
+
+[[obligation]]
 id = "sf.query.group-by-cube.o001"
 kind = "positive"
 required = true
@@ -10326,6 +10333,12 @@ required = true
 note = "the form without its required ) in [ , <cte_nameN> [ ( <cte_column_list> ) ] AS ( SELECT ... ) ]"
 
 [[obligation]]
+id = "sf.query.with.select.o055"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
+
+[[obligation]]
 id = "sf.query.with.select.o047"
 kind = "identifier_class"
 required = true
@@ -10796,6 +10809,12 @@ id = "sf.query.with.select.syntax.o130"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required UNION in [ , <cte_nameN> ( <cte_column_list> ) AS ( SELECT <anchor_column_list> FROM ... UNION ALL SELECT <recursive_column_list…"
+
+[[obligation]]
+id = "sf.query.with.select.syntax.o145"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
 
 [[obligation]]
 id = "sf.query.with.select.syntax.o055"

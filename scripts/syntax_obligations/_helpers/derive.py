@@ -107,6 +107,7 @@ class _Walk:
         self.arity_drops: set[str] = set()
         self.previous: str = ""
         self.argument_classes: Counter[str] = Counter()
+        self.widest: int = 0
 
     def target(self, *, text: str, tail: str = "") -> str:
         """A per-form unique target, shortened before `tail`; repeats get `#2`, `#3` …"""
@@ -155,6 +156,7 @@ class _Walk:
                 self.dropped.setdefault(key, self.reject(action=ACTION_DROP_NODE, node=node))
                 if argument and node.kind == NODE_CHOICE:
                     self.arity_drops.add(key)
+        self.widest = max(self.widest, len(options))
         return options
 
     def _track(self, node: Node) -> None:
@@ -341,11 +343,17 @@ def derive_trees(
     note: str = "the documented form with every required part and no optional part"
     walk.add(kind=KIND_POSITIVE, target="", note=note, spec=walk.spec(action=ACTION_MIN_OPTIONS))
     trees: list[tuple[Node, ...]] = []
-    widest: int = 0
     for index, production in enumerate(grammar):
         walk.production = index
         trees.append(parse(production))
-        widest = max(widest, len(walk.sequence(nodes=trees[-1], where="", top=True)))
+        walk.sequence(nodes=trees[-1], where="", top=True)
+        if index and not any(d.spec and d.spec.production == index for d in walk.drafts):
+            walk.add(
+                kind=KIND_ALTERNATIVE,
+                target=walk.target(text=production),
+                note="a documented production with no option or operand of its own (D118)",
+                spec=Spec(ACTION_MIN_OPTIONS, index),
+            )
     for keyword, spec in walk.dropped.items():
         walk.add(
             kind=KIND_NEGATIVE,
@@ -354,7 +362,7 @@ def derive_trees(
             spec=spec,
             arity=keyword in walk.arity_drops,
         )
-    if widest >= MIN_INTERACTION_OPTIONS:
+    if walk.widest >= MIN_INTERACTION_OPTIONS:
         note = "every independent option of one production together"
         walk.add(kind=KIND_INTERACTION_ALL, target="", note=note, spec=Spec(ACTION_ALL_OPTIONS))
     for placeholder in walk.identifiers:

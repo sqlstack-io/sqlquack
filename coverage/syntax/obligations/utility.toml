@@ -7211,6 +7211,13 @@ anchor = "doc.sql.execute-dcm-project / Syntax"
 note = "the list continued at least once, observed"
 
 [[obligation]]
+id = "sf.utility.execute-dcm-project.deploy-fromsource-fromdeployment.o076"
+kind = "interaction_all_options"
+required = true
+anchor = "doc.sql.execute-dcm-project / Syntax"
+note = "every independent option of one production together, observed"
+
+[[obligation]]
 id = "sf.utility.execute-dcm-project.plan-fromsource-fromdeployment.o001"
 kind = "positive"
 required = true

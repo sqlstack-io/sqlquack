@@ -509,6 +509,60 @@ target = "<model_parameters> in [ , <model_parameters> ]"
 note = "a valid operand"
 
 [[obligation]]
+id = "sf.functions.ai-complete-prompt-object.o012"
+kind = "required_operand_missing"
+required = true
+target = "<model> #2"
+note = "omit <model>"
+
+[[obligation]]
+id = "sf.functions.ai-complete-prompt-object.o013"
+kind = "operand_type_class"
+required = true
+target = "<model> #2"
+note = "a valid operand"
+
+[[obligation]]
+id = "sf.functions.ai-complete-prompt-object.o014"
+kind = "required_operand_missing"
+required = true
+target = "<prompt> #2"
+note = "omit <prompt>"
+
+[[obligation]]
+id = "sf.functions.ai-complete-prompt-object.o015"
+kind = "operand_type_class"
+required = true
+target = "<prompt> #2"
+note = "a valid operand"
+
+[[obligation]]
+id = "sf.functions.ai-complete-prompt-object.o016"
+kind = "option_present"
+required = true
+target = "[ , MODEL_PARAMETERS => <model_parameters> ]"
+
+[[obligation]]
+id = "sf.functions.ai-complete-prompt-object.o017"
+kind = "option_absent"
+required = true
+target = "[ , MODEL_PARAMETERS => <model_parameters> ]"
+
+[[obligation]]
+id = "sf.functions.ai-complete-prompt-object.o018"
+kind = "required_operand_missing"
+required = true
+target = "<model_parameters> in [ , MODEL_PARAMETERS => <model_parameters> ]"
+note = "omit <model_parameters>"
+
+[[obligation]]
+id = "sf.functions.ai-complete-prompt-object.o019"
+kind = "operand_type_class"
+required = true
+target = "<model_parameters> in [ , MODEL_PARAMETERS => <model_parameters> ]"
+note = "a valid operand"
+
+[[obligation]]
 id = "sf.functions.ai-complete-prompt-object.o010"
 kind = "negative_neighbour"
 required = true
@@ -519,6 +573,24 @@ id = "sf.functions.ai-complete-prompt-object.o011"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required )"
+
+[[obligation]]
+id = "sf.functions.ai-complete-prompt-object.o020"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required MODEL"
+
+[[obligation]]
+id = "sf.functions.ai-complete-prompt-object.o021"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required PROMPT"
+
+[[obligation]]
+id = "sf.functions.ai-complete-prompt-object.o022"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required MODEL_PARAMETERS in [ , MODEL_PARAMETERS => <model_parameters> ]"
 
 [[obligation]]
 id = "sf.functions.ai-complete-single-file.o001"
@@ -588,6 +660,74 @@ target = "<model_parameters> in [ , <model_parameters> ]"
 note = "a valid operand"
 
 [[obligation]]
+id = "sf.functions.ai-complete-single-file.o014"
+kind = "required_operand_missing"
+required = true
+target = "<model> #2"
+note = "omit <model>"
+
+[[obligation]]
+id = "sf.functions.ai-complete-single-file.o015"
+kind = "operand_type_class"
+required = true
+target = "<model> #2"
+note = "a valid operand"
+
+[[obligation]]
+id = "sf.functions.ai-complete-single-file.o016"
+kind = "required_operand_missing"
+required = true
+target = "<predicate> #2"
+note = "omit <predicate>"
+
+[[obligation]]
+id = "sf.functions.ai-complete-single-file.o017"
+kind = "operand_type_class"
+required = true
+target = "<predicate> #2"
+note = "a valid expression"
+
+[[obligation]]
+id = "sf.functions.ai-complete-single-file.o018"
+kind = "required_operand_missing"
+required = true
+target = "<file> #2"
+note = "omit <file>"
+
+[[obligation]]
+id = "sf.functions.ai-complete-single-file.o019"
+kind = "operand_type_class"
+required = true
+target = "<file> #2"
+note = "a valid operand"
+
+[[obligation]]
+id = "sf.functions.ai-complete-single-file.o020"
+kind = "option_present"
+required = true
+target = "[ , MODEL_PARAMETERS => <model_parameters> ]"
+
+[[obligation]]
+id = "sf.functions.ai-complete-single-file.o021"
+kind = "option_absent"
+required = true
+target = "[ , MODEL_PARAMETERS => <model_parameters> ]"
+
+[[obligation]]
+id = "sf.functions.ai-complete-single-file.o022"
+kind = "required_operand_missing"
+required = true
+target = "<model_parameters> in [ , MODEL_PARAMETERS => <model_parameters> ]"
+note = "omit <model_parameters>"
+
+[[obligation]]
+id = "sf.functions.ai-complete-single-file.o023"
+kind = "operand_type_class"
+required = true
+target = "<model_parameters> in [ , MODEL_PARAMETERS => <model_parameters> ]"
+note = "a valid operand"
+
+[[obligation]]
 id = "sf.functions.ai-complete-single-file.o012"
 kind = "negative_neighbour"
 required = true
@@ -598,6 +738,30 @@ id = "sf.functions.ai-complete-single-file.o013"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required )"
+
+[[obligation]]
+id = "sf.functions.ai-complete-single-file.o024"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required MODEL"
+
+[[obligation]]
+id = "sf.functions.ai-complete-single-file.o025"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required PREDICATE"
+
+[[obligation]]
+id = "sf.functions.ai-complete-single-file.o026"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required FILE"
+
+[[obligation]]
+id = "sf.functions.ai-complete-single-file.o027"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required MODEL_PARAMETERS in [ , MODEL_PARAMETERS => <model_parameters> ]"
 
 [[obligation]]
 id = "sf.functions.ai-complete-single-string.o001"
@@ -681,6 +845,112 @@ target = "<show_details> in [ , <model_parameters> , <response_format> , <show_d
 note = "a valid operand"
 
 [[obligation]]
+id = "sf.functions.ai-complete-single-string.o016"
+kind = "required_operand_missing"
+required = true
+target = "<model> #2"
+note = "omit <model>"
+
+[[obligation]]
+id = "sf.functions.ai-complete-single-string.o017"
+kind = "operand_type_class"
+required = true
+target = "<model> #2"
+note = "a valid operand"
+
+[[obligation]]
+id = "sf.functions.ai-complete-single-string.o018"
+kind = "required_operand_missing"
+required = true
+target = "<prompt> #2"
+note = "omit <prompt>"
+
+[[obligation]]
+id = "sf.functions.ai-complete-single-string.o019"
+kind = "operand_type_class"
+required = true
+target = "<prompt> #2"
+note = "a valid operand"
+
+[[obligation]]
+id = "sf.functions.ai-complete-single-string.o020"
+kind = "option_present"
+required = true
+target = "[ , MODEL_PARAMETERS => <model_parameters> ]"
+
+[[obligation]]
+id = "sf.functions.ai-complete-single-string.o021"
+kind = "option_absent"
+required = true
+target = "[ , MODEL_PARAMETERS => <model_parameters> ]"
+
+[[obligation]]
+id = "sf.functions.ai-complete-single-string.o022"
+kind = "required_operand_missing"
+required = true
+target = "<model_parameters> in [ , MODEL_PARAMETERS => <model_parameters> ]"
+note = "omit <model_parameters>"
+
+[[obligation]]
+id = "sf.functions.ai-complete-single-string.o023"
+kind = "operand_type_class"
+required = true
+target = "<model_parameters> in [ , MODEL_PARAMETERS => <model_parameters> ]"
+note = "a valid operand"
+
+[[obligation]]
+id = "sf.functions.ai-complete-single-string.o024"
+kind = "option_present"
+required = true
+target = "[ , RESPONSE_FORMAT => <response_format> ]"
+
+[[obligation]]
+id = "sf.functions.ai-complete-single-string.o025"
+kind = "option_absent"
+required = true
+target = "[ , RESPONSE_FORMAT => <response_format> ]"
+
+[[obligation]]
+id = "sf.functions.ai-complete-single-string.o026"
+kind = "required_operand_missing"
+required = true
+target = "<response_format> in [ , RESPONSE_FORMAT => <response_format> ]"
+note = "omit <response_format>"
+
+[[obligation]]
+id = "sf.functions.ai-complete-single-string.o027"
+kind = "operand_type_class"
+required = true
+target = "<response_format> in [ , RESPONSE_FORMAT => <response_format> ]"
+note = "a valid operand"
+
+[[obligation]]
+id = "sf.functions.ai-complete-single-string.o028"
+kind = "option_present"
+required = true
+target = "[ , SHOW_DETAILS => <show_details> ]"
+
+[[obligation]]
+id = "sf.functions.ai-complete-single-string.o029"
+kind = "option_absent"
+required = true
+target = "[ , SHOW_DETAILS => <show_details> ]"
+
+[[obligation]]
+id = "sf.functions.ai-complete-single-string.o030"
+kind = "required_operand_missing"
+required = true
+target = "<show_details> in [ , SHOW_DETAILS => <show_details> ]"
+note = "omit <show_details>"
+
+[[obligation]]
+id = "sf.functions.ai-complete-single-string.o031"
+kind = "operand_type_class"
+required = true
+target = "<show_details> in [ , SHOW_DETAILS => <show_details> ]"
+note = "a valid operand"
+
+[[obligation]]
 id = "sf.functions.ai-complete-single-string.o014"
 kind = "negative_neighbour"
 required = true
@@ -691,6 +961,42 @@ id = "sf.functions.ai-complete-single-string.o015"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required )"
+
+[[obligation]]
+id = "sf.functions.ai-complete-single-string.o032"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required MODEL"
+
+[[obligation]]
+id = "sf.functions.ai-complete-single-string.o033"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required PROMPT"
+
+[[obligation]]
+id = "sf.functions.ai-complete-single-string.o034"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required MODEL_PARAMETERS in [ , MODEL_PARAMETERS => <model_parameters> ]"
+
+[[obligation]]
+id = "sf.functions.ai-complete-single-string.o035"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required RESPONSE_FORMAT in [ , RESPONSE_FORMAT => <response_format> ]"
+
+[[obligation]]
+id = "sf.functions.ai-complete-single-string.o036"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required SHOW_DETAILS in [ , SHOW_DETAILS => <show_details> ]"
+
+[[obligation]]
+id = "sf.functions.ai-complete-single-string.o037"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
 
 [[obligation]]
 id = "sf.functions.ai-count-tokens.o001"
@@ -1368,16 +1674,16 @@ target = "<responseFormat>"
 note = "a valid operand"
 
 [[obligation]]
-id = "sf.functions.ai-extract.ai-extract-file-responseformat.o019"
+id = "sf.functions.ai-extract.ai-extract-file-responseformat.o026"
 kind = "option_present"
 required = true
-target = "[ scores => { TRUE | FALSE } ]"
+target = "[ , scores => { TRUE | FALSE } ]"
 
 [[obligation]]
-id = "sf.functions.ai-extract.ai-extract-file-responseformat.o020"
+id = "sf.functions.ai-extract.ai-extract-file-responseformat.o027"
 kind = "option_absent"
 required = true
-target = "[ scores => { TRUE | FALSE } ]"
+target = "[ , scores => { TRUE | FALSE } ]"
 
 [[obligation]]
 id = "sf.functions.ai-extract.ai-extract-file-responseformat.o021"
@@ -1390,6 +1696,32 @@ id = "sf.functions.ai-extract.ai-extract-file-responseformat.o022"
 kind = "alternative"
 required = true
 target = "{ TRUE | FALSE } → FALSE"
+
+[[obligation]]
+id = "sf.functions.ai-extract.ai-extract-file-responseformat.o028"
+kind = "option_present"
+required = true
+target = "[ , scale_factor => <scale_factor> ]"
+
+[[obligation]]
+id = "sf.functions.ai-extract.ai-extract-file-responseformat.o029"
+kind = "option_absent"
+required = true
+target = "[ , scale_factor => <scale_factor> ]"
+
+[[obligation]]
+id = "sf.functions.ai-extract.ai-extract-file-responseformat.o030"
+kind = "required_operand_missing"
+required = true
+target = "<scale_factor> in [ , scale_factor => <scale_factor> ]"
+note = "omit <scale_factor>"
+
+[[obligation]]
+id = "sf.functions.ai-extract.ai-extract-file-responseformat.o031"
+kind = "operand_type_class"
+required = true
+target = "<scale_factor> in [ , scale_factor => <scale_factor> ]"
+note = "a valid operand"
 
 [[obligation]]
 id = "sf.functions.ai-extract.ai-extract-file-responseformat.o016"
@@ -1410,16 +1742,34 @@ required = true
 note = "the form without its required responseFormat"
 
 [[obligation]]
-id = "sf.functions.ai-extract.ai-extract-file-responseformat.o025"
+id = "sf.functions.ai-extract.ai-extract-file-responseformat.o032"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required { TRUE | FALSE } in [ scores => { TRUE | FALSE } ]"
+note = "the form without its required scores in [ , scores => { TRUE | FALSE } ]"
+
+[[obligation]]
+id = "sf.functions.ai-extract.ai-extract-file-responseformat.o033"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { TRUE | FALSE } in [ , scores => { TRUE | FALSE } ]"
+
+[[obligation]]
+id = "sf.functions.ai-extract.ai-extract-file-responseformat.o034"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required scale_factor in [ , scale_factor => <scale_factor> ]"
 
 [[obligation]]
 id = "sf.functions.ai-extract.ai-extract-file-responseformat.o018"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required )"
+
+[[obligation]]
+id = "sf.functions.ai-extract.ai-extract-file-responseformat.o035"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
 
 [[obligation]]
 id = "sf.functions.ai-extract.ai-extract-text-responseformat.o001"
@@ -1456,16 +1806,16 @@ target = "<responseFormat>"
 note = "a valid operand"
 
 [[obligation]]
-id = "sf.functions.ai-extract.ai-extract-text-responseformat.o019"
+id = "sf.functions.ai-extract.ai-extract-text-responseformat.o026"
 kind = "option_present"
 required = true
-target = "[ scores => { TRUE | FALSE } ]"
+target = "[ , scores => { TRUE | FALSE } ]"
 
 [[obligation]]
-id = "sf.functions.ai-extract.ai-extract-text-responseformat.o020"
+id = "sf.functions.ai-extract.ai-extract-text-responseformat.o027"
 kind = "option_absent"
 required = true
-target = "[ scores => { TRUE | FALSE } ]"
+target = "[ , scores => { TRUE | FALSE } ]"
 
 [[obligation]]
 id = "sf.functions.ai-extract.ai-extract-text-responseformat.o021"
@@ -1498,10 +1848,16 @@ required = true
 note = "the form without its required responseFormat"
 
 [[obligation]]
-id = "sf.functions.ai-extract.ai-extract-text-responseformat.o025"
+id = "sf.functions.ai-extract.ai-extract-text-responseformat.o028"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required { TRUE | FALSE } in [ scores => { TRUE | FALSE } ]"
+note = "the form without its required scores in [ , scores => { TRUE | FALSE } ]"
+
+[[obligation]]
+id = "sf.functions.ai-extract.ai-extract-text-responseformat.o029"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { TRUE | FALSE } in [ , scores => { TRUE | FALSE } ]"
 
 [[obligation]]
 id = "sf.functions.ai-extract.ai-extract-text-responseformat.o018"
@@ -3405,6 +3761,116 @@ required = true
 target = "[ , ... ]"
 
 [[obligation]]
+id = "sf.functions.approx-count-distinct.approx-count-distinct.o010"
+kind = "option_present"
+required = true
+target = "[ <table_name> . ]"
+
+[[obligation]]
+id = "sf.functions.approx-count-distinct.approx-count-distinct.o011"
+kind = "option_absent"
+required = true
+target = "[ <table_name> . ]"
+
+[[obligation]]
+id = "sf.functions.approx-count-distinct.approx-count-distinct.o012"
+kind = "required_operand_missing"
+required = true
+target = "<table_name> in [ <table_name> . ]"
+note = "omit <table_name>"
+
+[[obligation]]
+id = "sf.functions.approx-count-distinct.approx-count-distinct.o013"
+kind = "operand_type_class"
+required = true
+target = "<table_name> in [ <table_name> . ]"
+note = "a valid identifier"
+
+[[obligation]]
+id = "sf.functions.approx-count-distinct.approx-count-distinct.o014"
+kind = "option_present"
+required = true
+target = "[ { ILIKE '<pattern>' | EXCLUDE { <column_name> | ( <column_name> [ , <column_name> ... ] ) } } ]"
+
+[[obligation]]
+id = "sf.functions.approx-count-distinct.approx-count-distinct.o015"
+kind = "option_absent"
+required = true
+target = "[ { ILIKE '<pattern>' | EXCLUDE { <column_name> | ( <column_name> [ , <column_name> ... ] ) } } ]"
+
+[[obligation]]
+id = "sf.functions.approx-count-distinct.approx-count-distinct.o016"
+kind = "alternative"
+required = true
+target = "{ ILIKE '<pattern>' | EXCLUDE { <column_name> | ( <column_name> [ , <column_name> ... ] ) } } → ILIKE '<pattern>'"
+
+[[obligation]]
+id = "sf.functions.approx-count-distinct.approx-count-distinct.o017"
+kind = "alternative"
+required = true
+target = "{ ILIKE '<pattern>' | EXCLUDE { <column_name> | ( <column_n… → EXCLUDE { <column_name> | ( <column_name> [ , <column_name> ... ] ) }"
+
+[[obligation]]
+id = "sf.functions.approx-count-distinct.approx-count-distinct.o018"
+kind = "required_operand_missing"
+required = true
+target = "'<pattern>' in [ { ILIKE '<pattern>' | EXCLUDE { <column_name> | ( <column_name> [ , <column_name> ... ] ) } } ]"
+note = "omit '<pattern>'"
+
+[[obligation]]
+id = "sf.functions.approx-count-distinct.approx-count-distinct.o019"
+kind = "operand_type_class"
+required = true
+target = "'<pattern>' in [ { ILIKE '<pattern>' | EXCLUDE { <column_name> | ( <column_name> [ , <column_name> ... ] ) } } ]"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.functions.approx-count-distinct.approx-count-distinct.o020"
+kind = "alternative"
+required = true
+target = "{ <column_name> | ( <column_name> [ , <column_name> ... ] ) } → <column_name>"
+
+[[obligation]]
+id = "sf.functions.approx-count-distinct.approx-count-distinct.o021"
+kind = "alternative"
+required = true
+target = "{ <column_name> | ( <column_name> [ , <column_name> ... ] ) } → ( <column_name> [ , <column_name> ... ] )"
+
+[[obligation]]
+id = "sf.functions.approx-count-distinct.approx-count-distinct.o022"
+kind = "operand_type_class"
+required = true
+target = "<column_name> in [ { ILIKE '<pattern>' | EXCLUDE { <column_name> | ( <column_name> [ , <column_name> ... ] ) } } ]"
+note = "a valid identifier"
+
+[[obligation]]
+id = "sf.functions.approx-count-distinct.approx-count-distinct.o023"
+kind = "negative_neighbour"
+required = true
+target = "<column_name> in [ { ILIKE '<pattern>' | EXCLUDE { <column_name> | ( <column_name> [ , <column_name> ... ] ) } } ]"
+note = "a string literal in place of <column_name>"
+
+[[obligation]]
+id = "sf.functions.approx-count-distinct.approx-count-distinct.o024"
+kind = "operand_type_class"
+required = true
+target = "<column_name> in [ { ILIKE '<pattern>' | EXCLUDE { <column_name> | ( <column_name> [ , <column_name> ... ] ) } } ] #2"
+note = "a valid identifier"
+
+[[obligation]]
+id = "sf.functions.approx-count-distinct.approx-count-distinct.o025"
+kind = "option_present"
+required = true
+target = "[ , <column_name> ... ]"
+note = "the list continued at least once"
+
+[[obligation]]
+id = "sf.functions.approx-count-distinct.approx-count-distinct.o026"
+kind = "option_absent"
+required = true
+target = "[ , <column_name> ... ]"
+
+[[obligation]]
 id = "sf.functions.approx-count-distinct.approx-count-distinct.o008"
 kind = "negative_neighbour"
 required = true
@@ -3415,6 +3881,56 @@ id = "sf.functions.approx-count-distinct.approx-count-distinct.o009"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required )"
+
+[[obligation]]
+id = "sf.functions.approx-count-distinct.approx-count-distinct.o027"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) in [ { ILIKE '<pattern>' | EXCLUDE { <column_name> | ( <column_name> [ , <column_name> ... ] ) } } ]"
+
+[[obligation]]
+id = "sf.functions.approx-count-distinct.approx-count-distinct.o028"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { <column_name> | ( <column_name> [ , <column_name> ... ] ) } in [ { ILIKE '<pattern>' | EXCLUDE { <column_name> | ( <column_name> [ , <column_name> ... ] ) } } ]"
+
+[[obligation]]
+id = "sf.functions.approx-count-distinct.approx-count-distinct.o029"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
+
+[[obligation]]
+id = "sf.functions.approx-count-distinct.approx-count-distinct.o030"
+kind = "identifier_class"
+required = true
+target = "<table_name>"
+anchor = "doc.identifiers-syntax"
+note = "quoted: a double-quoted identifier with blanks and mixed case"
+
+[[obligation]]
+id = "sf.functions.approx-count-distinct.approx-count-distinct.o031"
+kind = "identifier_class"
+required = true
+target = "<table_name>"
+anchor = "doc.identifiers-syntax"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.functions.approx-count-distinct.approx-count-distinct.o032"
+kind = "identifier_class"
+required = true
+target = "<column_name>"
+anchor = "doc.identifiers-syntax"
+note = "quoted: a double-quoted identifier with blanks and mixed case"
+
+[[obligation]]
+id = "sf.functions.approx-count-distinct.approx-count-distinct.o033"
+kind = "identifier_class"
+required = true
+target = "<column_name>"
+anchor = "doc.identifiers-syntax"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
 id = "sf.functions.approx-count-distinct.approx-count-distinct-over.o001"
@@ -3517,6 +4033,116 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
+id = "sf.functions.approx-count-distinct.approx-count-distinct-over.syntax.o010"
+kind = "option_present"
+required = true
+target = "[ <table_name> . ]"
+
+[[obligation]]
+id = "sf.functions.approx-count-distinct.approx-count-distinct-over.syntax.o011"
+kind = "option_absent"
+required = true
+target = "[ <table_name> . ]"
+
+[[obligation]]
+id = "sf.functions.approx-count-distinct.approx-count-distinct-over.syntax.o012"
+kind = "required_operand_missing"
+required = true
+target = "<table_name> in [ <table_name> . ]"
+note = "omit <table_name>"
+
+[[obligation]]
+id = "sf.functions.approx-count-distinct.approx-count-distinct-over.syntax.o013"
+kind = "operand_type_class"
+required = true
+target = "<table_name> in [ <table_name> . ]"
+note = "a valid identifier"
+
+[[obligation]]
+id = "sf.functions.approx-count-distinct.approx-count-distinct-over.syntax.o014"
+kind = "option_present"
+required = true
+target = "[ { ILIKE '<pattern>' | EXCLUDE { <column_name> | ( <column_name> [ , <column_name> ... ] ) } } ]"
+
+[[obligation]]
+id = "sf.functions.approx-count-distinct.approx-count-distinct-over.syntax.o015"
+kind = "option_absent"
+required = true
+target = "[ { ILIKE '<pattern>' | EXCLUDE { <column_name> | ( <column_name> [ , <column_name> ... ] ) } } ]"
+
+[[obligation]]
+id = "sf.functions.approx-count-distinct.approx-count-distinct-over.syntax.o016"
+kind = "alternative"
+required = true
+target = "{ ILIKE '<pattern>' | EXCLUDE { <column_name> | ( <column_name> [ , <column_name> ... ] ) } } → ILIKE '<pattern>'"
+
+[[obligation]]
+id = "sf.functions.approx-count-distinct.approx-count-distinct-over.syntax.o017"
+kind = "alternative"
+required = true
+target = "{ ILIKE '<pattern>' | EXCLUDE { <column_name> | ( <column_n… → EXCLUDE { <column_name> | ( <column_name> [ , <column_name> ... ] ) }"
+
+[[obligation]]
+id = "sf.functions.approx-count-distinct.approx-count-distinct-over.syntax.o018"
+kind = "required_operand_missing"
+required = true
+target = "'<pattern>' in [ { ILIKE '<pattern>' | EXCLUDE { <column_name> | ( <column_name> [ , <column_name> ... ] ) } } ]"
+note = "omit '<pattern>'"
+
+[[obligation]]
+id = "sf.functions.approx-count-distinct.approx-count-distinct-over.syntax.o019"
+kind = "operand_type_class"
+required = true
+target = "'<pattern>' in [ { ILIKE '<pattern>' | EXCLUDE { <column_name> | ( <column_name> [ , <column_name> ... ] ) } } ]"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.functions.approx-count-distinct.approx-count-distinct-over.syntax.o020"
+kind = "alternative"
+required = true
+target = "{ <column_name> | ( <column_name> [ , <column_name> ... ] ) } → <column_name>"
+
+[[obligation]]
+id = "sf.functions.approx-count-distinct.approx-count-distinct-over.syntax.o021"
+kind = "alternative"
+required = true
+target = "{ <column_name> | ( <column_name> [ , <column_name> ... ] ) } → ( <column_name> [ , <column_name> ... ] )"
+
+[[obligation]]
+id = "sf.functions.approx-count-distinct.approx-count-distinct-over.syntax.o022"
+kind = "operand_type_class"
+required = true
+target = "<column_name> in [ { ILIKE '<pattern>' | EXCLUDE { <column_name> | ( <column_name> [ , <column_name> ... ] ) } } ]"
+note = "a valid identifier"
+
+[[obligation]]
+id = "sf.functions.approx-count-distinct.approx-count-distinct-over.syntax.o023"
+kind = "negative_neighbour"
+required = true
+target = "<column_name> in [ { ILIKE '<pattern>' | EXCLUDE { <column_name> | ( <column_name> [ , <column_name> ... ] ) } } ]"
+note = "a string literal in place of <column_name>"
+
+[[obligation]]
+id = "sf.functions.approx-count-distinct.approx-count-distinct-over.syntax.o024"
+kind = "operand_type_class"
+required = true
+target = "<column_name> in [ { ILIKE '<pattern>' | EXCLUDE { <column_name> | ( <column_name> [ , <column_name> ... ] ) } } ] #2"
+note = "a valid identifier"
+
+[[obligation]]
+id = "sf.functions.approx-count-distinct.approx-count-distinct-over.syntax.o025"
+kind = "option_present"
+required = true
+target = "[ , <column_name> ... ]"
+note = "the list continued at least once"
+
+[[obligation]]
+id = "sf.functions.approx-count-distinct.approx-count-distinct-over.syntax.o026"
+kind = "option_absent"
+required = true
+target = "[ , <column_name> ... ]"
+
+[[obligation]]
 id = "sf.functions.approx-count-distinct.approx-count-distinct-over.syntax.o002"
 kind = "option_present"
 required = true
@@ -3549,6 +4175,18 @@ required = true
 note = "the form without its required ("
 
 [[obligation]]
+id = "sf.functions.approx-count-distinct.approx-count-distinct-over.syntax.o027"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) in [ { ILIKE '<pattern>' | EXCLUDE { <column_name> | ( <column_name> [ , <column_name> ... ] ) } } ]"
+
+[[obligation]]
+id = "sf.functions.approx-count-distinct.approx-count-distinct-over.syntax.o028"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { <column_name> | ( <column_name> [ , <column_name> ... ] ) } in [ { ILIKE '<pattern>' | EXCLUDE { <column_name> | ( <column_name> [ , <column_name> ... ] ) } } ]"
+
+[[obligation]]
 id = "sf.functions.approx-count-distinct.approx-count-distinct-over.syntax.o007"
 kind = "negative_neighbour"
 required = true
@@ -3565,6 +4203,44 @@ id = "sf.functions.approx-count-distinct.approx-count-distinct-over.syntax.o009"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required BY in [ PARTITION BY <expr2> ]"
+
+[[obligation]]
+id = "sf.functions.approx-count-distinct.approx-count-distinct-over.syntax.o029"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
+
+[[obligation]]
+id = "sf.functions.approx-count-distinct.approx-count-distinct-over.syntax.o030"
+kind = "identifier_class"
+required = true
+target = "<table_name>"
+anchor = "doc.identifiers-syntax"
+note = "quoted: a double-quoted identifier with blanks and mixed case"
+
+[[obligation]]
+id = "sf.functions.approx-count-distinct.approx-count-distinct-over.syntax.o031"
+kind = "identifier_class"
+required = true
+target = "<table_name>"
+anchor = "doc.identifiers-syntax"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.functions.approx-count-distinct.approx-count-distinct-over.syntax.o032"
+kind = "identifier_class"
+required = true
+target = "<column_name>"
+anchor = "doc.identifiers-syntax"
+note = "quoted: a double-quoted identifier with blanks and mixed case"
+
+[[obligation]]
+id = "sf.functions.approx-count-distinct.approx-count-distinct-over.syntax.o033"
+kind = "identifier_class"
+required = true
+target = "<column_name>"
+anchor = "doc.identifiers-syntax"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
 id = "sf.functions.approx-percentile-accumulate.o001"
@@ -4177,6 +4853,13 @@ required = true
 target = "[ , ... ]"
 
 [[obligation]]
+id = "sf.functions.approximate-jaccard-index.approximate-jaccard-index.o010"
+kind = "alternative"
+required = true
+target = "APPROXIMATE_JACCARD_INDEX(*)"
+note = "a documented production with no option or operand of its own (D118)"
+
+[[obligation]]
 id = "sf.functions.approximate-jaccard-index.approximate-jaccard-index.o008"
 kind = "negative_neighbour"
 required = true
@@ -4225,6 +4908,13 @@ id = "sf.functions.approximate-similarity.approximate-similarity.o007"
 kind = "option_absent"
 required = true
 target = "[ , ... ]"
+
+[[obligation]]
+id = "sf.functions.approximate-similarity.approximate-similarity.o010"
+kind = "alternative"
+required = true
+target = "APPROXIMATE_SIMILARITY(*)"
+note = "a documented production with no option or operand of its own (D118)"
 
 [[obligation]]
 id = "sf.functions.approximate-similarity.approximate-similarity.o008"
@@ -10037,6 +10727,34 @@ target = "<disable_auto_convert> in [ , <disable_auto_convert> ]"
 note = "a valid operand"
 
 [[obligation]]
+id = "sf.functions.check-xml.check-xml.o011"
+kind = "required_operand_missing"
+required = true
+target = "<string_containing_xml> #2"
+note = "omit <string_containing_xml>"
+
+[[obligation]]
+id = "sf.functions.check-xml.check-xml.o012"
+kind = "operand_type_class"
+required = true
+target = "<string_containing_xml> #2"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.functions.check-xml.check-xml.o013"
+kind = "required_operand_missing"
+required = true
+target = "<disable_auto_convert>"
+note = "omit <disable_auto_convert>"
+
+[[obligation]]
+id = "sf.functions.check-xml.check-xml.o014"
+kind = "operand_type_class"
+required = true
+target = "<disable_auto_convert>"
+note = "a valid operand"
+
+[[obligation]]
 id = "sf.functions.check-xml.check-xml.o009"
 kind = "negative_neighbour"
 required = true
@@ -10047,6 +10765,12 @@ id = "sf.functions.check-xml.check-xml.o010"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required )"
+
+[[obligation]]
+id = "sf.functions.check-xml.check-xml.o015"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required DISABLE_AUTO_CONVERT"
 
 [[obligation]]
 id = "sf.functions.check-xml.check-xml-str.o001"
@@ -12479,18 +13203,114 @@ required = true
 target = "[ , <expr2> ... ]"
 
 [[obligation]]
-id = "sf.functions.count.count.o015"
+id = "sf.functions.count.count.o016"
+kind = "option_present"
+required = true
+target = "[ <alias> . ]"
+
+[[obligation]]
+id = "sf.functions.count.count.o017"
+kind = "option_absent"
+required = true
+target = "[ <alias> . ]"
+
+[[obligation]]
+id = "sf.functions.count.count.o018"
 kind = "required_operand_missing"
 required = true
-target = "<alias>"
+target = "<alias> in [ <alias> . ]"
 note = "omit <alias>"
 
 [[obligation]]
-id = "sf.functions.count.count.o009"
+id = "sf.functions.count.count.o019"
 kind = "operand_type_class"
 required = true
-target = "<alias>"
+target = "<alias> in [ <alias> . ]"
 note = "a valid identifier"
+
+[[obligation]]
+id = "sf.functions.count.count.o020"
+kind = "option_present"
+required = true
+target = "[ { ILIKE '<pattern>' | EXCLUDE { <column_name> | ( <column_name> [ , <column_name> ... ] ) } } ]"
+
+[[obligation]]
+id = "sf.functions.count.count.o021"
+kind = "option_absent"
+required = true
+target = "[ { ILIKE '<pattern>' | EXCLUDE { <column_name> | ( <column_name> [ , <column_name> ... ] ) } } ]"
+
+[[obligation]]
+id = "sf.functions.count.count.o022"
+kind = "alternative"
+required = true
+target = "{ ILIKE '<pattern>' | EXCLUDE { <column_name> | ( <column_name> [ , <column_name> ... ] ) } } → ILIKE '<pattern>'"
+
+[[obligation]]
+id = "sf.functions.count.count.o023"
+kind = "alternative"
+required = true
+target = "{ ILIKE '<pattern>' | EXCLUDE { <column_name> | ( <column_n… → EXCLUDE { <column_name> | ( <column_name> [ , <column_name> ... ] ) }"
+
+[[obligation]]
+id = "sf.functions.count.count.o024"
+kind = "required_operand_missing"
+required = true
+target = "'<pattern>' in [ { ILIKE '<pattern>' | EXCLUDE { <column_name> | ( <column_name> [ , <column_name> ... ] ) } } ]"
+note = "omit '<pattern>'"
+
+[[obligation]]
+id = "sf.functions.count.count.o025"
+kind = "operand_type_class"
+required = true
+target = "'<pattern>' in [ { ILIKE '<pattern>' | EXCLUDE { <column_name> | ( <column_name> [ , <column_name> ... ] ) } } ]"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.functions.count.count.o026"
+kind = "alternative"
+required = true
+target = "{ <column_name> | ( <column_name> [ , <column_name> ... ] ) } → <column_name>"
+
+[[obligation]]
+id = "sf.functions.count.count.o027"
+kind = "alternative"
+required = true
+target = "{ <column_name> | ( <column_name> [ , <column_name> ... ] ) } → ( <column_name> [ , <column_name> ... ] )"
+
+[[obligation]]
+id = "sf.functions.count.count.o028"
+kind = "operand_type_class"
+required = true
+target = "<column_name> in [ { ILIKE '<pattern>' | EXCLUDE { <column_name> | ( <column_name> [ , <column_name> ... ] ) } } ]"
+note = "a valid identifier"
+
+[[obligation]]
+id = "sf.functions.count.count.o029"
+kind = "negative_neighbour"
+required = true
+target = "<column_name> in [ { ILIKE '<pattern>' | EXCLUDE { <column_name> | ( <column_name> [ , <column_name> ... ] ) } } ]"
+note = "a string literal in place of <column_name>"
+
+[[obligation]]
+id = "sf.functions.count.count.o030"
+kind = "operand_type_class"
+required = true
+target = "<column_name> in [ { ILIKE '<pattern>' | EXCLUDE { <column_name> | ( <column_name> [ , <column_name> ... ] ) } } ] #2"
+note = "a valid identifier"
+
+[[obligation]]
+id = "sf.functions.count.count.o031"
+kind = "option_present"
+required = true
+target = "[ , <column_name> ... ]"
+note = "the list continued at least once"
+
+[[obligation]]
+id = "sf.functions.count.count.o032"
+kind = "option_absent"
+required = true
+target = "[ , <column_name> ... ]"
 
 [[obligation]]
 id = "sf.functions.count.count.o011"
@@ -12505,6 +13325,24 @@ required = true
 note = "the form without its required )"
 
 [[obligation]]
+id = "sf.functions.count.count.o033"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) in [ { ILIKE '<pattern>' | EXCLUDE { <column_name> | ( <column_name> [ , <column_name> ... ] ) } } ]"
+
+[[obligation]]
+id = "sf.functions.count.count.o034"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { <column_name> | ( <column_name> [ , <column_name> ... ] ) } in [ { ILIKE '<pattern>' | EXCLUDE { <column_name> | ( <column_name> [ , <column_name> ... ] ) } } ]"
+
+[[obligation]]
+id = "sf.functions.count.count.o035"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
+
+[[obligation]]
 id = "sf.functions.count.count.o013"
 kind = "identifier_class"
 required = true
@@ -12517,6 +13355,22 @@ id = "sf.functions.count.count.o014"
 kind = "identifier_class"
 required = true
 target = "<alias>"
+anchor = "doc.identifiers-syntax"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.functions.count.count.o036"
+kind = "identifier_class"
+required = true
+target = "<column_name>"
+anchor = "doc.identifiers-syntax"
+note = "quoted: a double-quoted identifier with blanks and mixed case"
+
+[[obligation]]
+id = "sf.functions.count.count.o037"
+kind = "identifier_class"
+required = true
+target = "<column_name>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
@@ -15024,11 +15878,16 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "sf.functions.date-part.date-part-from.o009"
-kind = "required_operand_missing"
+id = "sf.functions.date-part.date-part-from.o010"
+kind = "alternative"
 required = true
-target = "<date_or_time_part>"
-note = "omit <date_or_time_part>"
+target = "{ <date_or_time_part> | '<date_or_time_part>' } → <date_or_time_part>"
+
+[[obligation]]
+id = "sf.functions.date-part.date-part-from.o011"
+kind = "alternative"
+required = true
+target = "{ <date_or_time_part> | '<date_or_time_part>' } → '<date_or_time_part>'"
 
 [[obligation]]
 id = "sf.functions.date-part.date-part-from.o003"
@@ -15036,6 +15895,13 @@ kind = "operand_type_class"
 required = true
 target = "<date_or_time_part>"
 note = "a valid operand"
+
+[[obligation]]
+id = "sf.functions.date-part.date-part-from.o012"
+kind = "operand_type_class"
+required = true
+target = "'<date_or_time_part>'"
+note = "a valid string_literal"
 
 [[obligation]]
 id = "sf.functions.date-part.date-part-from.o004"
@@ -15056,6 +15922,12 @@ id = "sf.functions.date-part.date-part-from.o006"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required ("
+
+[[obligation]]
+id = "sf.functions.date-part.date-part-from.o013"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { <date_or_time_part> | '<date_or_time_part>' }"
 
 [[obligation]]
 id = "sf.functions.date-part.date-part-from.o007"
@@ -28387,11 +29259,16 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "sf.functions.extract.extract-from.o009"
-kind = "required_operand_missing"
+id = "sf.functions.extract.extract-from.o010"
+kind = "alternative"
 required = true
-target = "<date_or_time_part>"
-note = "omit <date_or_time_part>"
+target = "{ <date_or_time_part> | '<date_or_time_part>' } → <date_or_time_part>"
+
+[[obligation]]
+id = "sf.functions.extract.extract-from.o011"
+kind = "alternative"
+required = true
+target = "{ <date_or_time_part> | '<date_or_time_part>' } → '<date_or_time_part>'"
 
 [[obligation]]
 id = "sf.functions.extract.extract-from.o003"
@@ -28399,6 +29276,13 @@ kind = "operand_type_class"
 required = true
 target = "<date_or_time_part>"
 note = "a valid operand"
+
+[[obligation]]
+id = "sf.functions.extract.extract-from.o012"
+kind = "operand_type_class"
+required = true
+target = "'<date_or_time_part>'"
+note = "a valid string_literal"
 
 [[obligation]]
 id = "sf.functions.extract.extract-from.o004"
@@ -28419,6 +29303,12 @@ id = "sf.functions.extract.extract-from.o006"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required ("
+
+[[obligation]]
+id = "sf.functions.extract.extract-from.o013"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { <date_or_time_part> | '<date_or_time_part>' }"
 
 [[obligation]]
 id = "sf.functions.extract.extract-from.o007"
@@ -28771,6 +29661,45 @@ id = "sf.functions.finetune-snowflake-cortex.o005"
 kind = "alternative"
 required = true
 target = "{ 'CREATE' | 'SHOW' | 'DESCRIBE' | 'CANCEL' } → 'CANCEL'"
+
+[[obligation]]
+id = "sf.functions.finetune-snowflake-cortex.o009"
+kind = "option_present"
+required = true
+target = "[ , <argument> [ , ... ] ]"
+
+[[obligation]]
+id = "sf.functions.finetune-snowflake-cortex.o010"
+kind = "option_absent"
+required = true
+target = "[ , <argument> [ , ... ] ]"
+
+[[obligation]]
+id = "sf.functions.finetune-snowflake-cortex.o011"
+kind = "required_operand_missing"
+required = true
+target = "<argument> in [ , <argument> [ , ... ] ]"
+note = "omit <argument>"
+
+[[obligation]]
+id = "sf.functions.finetune-snowflake-cortex.o012"
+kind = "operand_type_class"
+required = true
+target = "<argument> in [ , <argument> [ , ... ] ]"
+note = "a valid operand"
+
+[[obligation]]
+id = "sf.functions.finetune-snowflake-cortex.o013"
+kind = "option_present"
+required = true
+target = "[ , ... ]"
+note = "the list continued at least once"
+
+[[obligation]]
+id = "sf.functions.finetune-snowflake-cortex.o014"
+kind = "option_absent"
+required = true
+target = "[ , ... ]"
 
 [[obligation]]
 id = "sf.functions.finetune-snowflake-cortex.o006"
@@ -30964,30 +31893,35 @@ target = "'<object_type>'"
 note = "a valid string_literal"
 
 [[obligation]]
-id = "sf.functions.get-ddl.o005"
-kind = "option_present"
-required = true
-target = "[ , <use_fully_qualified_names_for_recreated_objects> ]"
-
-[[obligation]]
-id = "sf.functions.get-ddl.o006"
-kind = "option_absent"
-required = true
-target = "[ , <use_fully_qualified_names_for_recreated_objects> ]"
-
-[[obligation]]
-id = "sf.functions.get-ddl.o007"
-kind = "required_operand_missing"
-required = true
-target = "<use_fully_qualified_names_for_recreated_objects> in [ , <use_fully_qualified_names_for_recreated_objects> ]"
-note = "omit <use_fully_qualified_names_for_recreated_objects>"
-
-[[obligation]]
-id = "sf.functions.get-ddl.o008"
+id = "sf.functions.get-ddl.o014"
 kind = "operand_type_class"
 required = true
-target = "<use_fully_qualified_names_for_recreated_objects> in [ , <use_fully_qualified_names_for_recreated_objects> ]"
-note = "a valid identifier"
+target = "'<qualified_object_name>'"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.functions.get-ddl.o015"
+kind = "option_present"
+required = true
+target = "[ , { TRUE | FALSE } ]"
+
+[[obligation]]
+id = "sf.functions.get-ddl.o016"
+kind = "option_absent"
+required = true
+target = "[ , { TRUE | FALSE } ]"
+
+[[obligation]]
+id = "sf.functions.get-ddl.o017"
+kind = "alternative"
+required = true
+target = "{ TRUE | FALSE } → TRUE"
+
+[[obligation]]
+id = "sf.functions.get-ddl.o018"
+kind = "alternative"
+required = true
+target = "{ TRUE | FALSE } → FALSE"
 
 [[obligation]]
 id = "sf.functions.get-ddl.o010"
@@ -30996,26 +31930,16 @@ required = true
 note = "the form without its required ("
 
 [[obligation]]
+id = "sf.functions.get-ddl.o019"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { TRUE | FALSE } in [ , { TRUE | FALSE } ]"
+
+[[obligation]]
 id = "sf.functions.get-ddl.o011"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required )"
-
-[[obligation]]
-id = "sf.functions.get-ddl.o012"
-kind = "identifier_class"
-required = true
-target = "<use_fully_qualified_names_for_recreated_objects>"
-anchor = "doc.identifiers-syntax"
-note = "quoted: a double-quoted identifier with blanks and mixed case"
-
-[[obligation]]
-id = "sf.functions.get-ddl.o013"
-kind = "identifier_class"
-required = true
-target = "<use_fully_qualified_names_for_recreated_objects>"
-anchor = "doc.identifiers-syntax"
-note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
 id = "sf.functions.get-ignore-case.o001"
@@ -33616,6 +34540,116 @@ required = true
 target = "[ , <expr> ... ]"
 
 [[obligation]]
+id = "sf.functions.hash.o008"
+kind = "option_present"
+required = true
+target = "[ <table_name> . ]"
+
+[[obligation]]
+id = "sf.functions.hash.o009"
+kind = "option_absent"
+required = true
+target = "[ <table_name> . ]"
+
+[[obligation]]
+id = "sf.functions.hash.o010"
+kind = "required_operand_missing"
+required = true
+target = "<table_name> in [ <table_name> . ]"
+note = "omit <table_name>"
+
+[[obligation]]
+id = "sf.functions.hash.o011"
+kind = "operand_type_class"
+required = true
+target = "<table_name> in [ <table_name> . ]"
+note = "a valid identifier"
+
+[[obligation]]
+id = "sf.functions.hash.o012"
+kind = "option_present"
+required = true
+target = "[ { ILIKE '<pattern>' | EXCLUDE { <column_name> | ( <column_name> [ , <column_name> ... ] ) } } ]"
+
+[[obligation]]
+id = "sf.functions.hash.o013"
+kind = "option_absent"
+required = true
+target = "[ { ILIKE '<pattern>' | EXCLUDE { <column_name> | ( <column_name> [ , <column_name> ... ] ) } } ]"
+
+[[obligation]]
+id = "sf.functions.hash.o014"
+kind = "alternative"
+required = true
+target = "{ ILIKE '<pattern>' | EXCLUDE { <column_name> | ( <column_name> [ , <column_name> ... ] ) } } → ILIKE '<pattern>'"
+
+[[obligation]]
+id = "sf.functions.hash.o015"
+kind = "alternative"
+required = true
+target = "{ ILIKE '<pattern>' | EXCLUDE { <column_name> | ( <column_n… → EXCLUDE { <column_name> | ( <column_name> [ , <column_name> ... ] ) }"
+
+[[obligation]]
+id = "sf.functions.hash.o016"
+kind = "required_operand_missing"
+required = true
+target = "'<pattern>' in [ { ILIKE '<pattern>' | EXCLUDE { <column_name> | ( <column_name> [ , <column_name> ... ] ) } } ]"
+note = "omit '<pattern>'"
+
+[[obligation]]
+id = "sf.functions.hash.o017"
+kind = "operand_type_class"
+required = true
+target = "'<pattern>' in [ { ILIKE '<pattern>' | EXCLUDE { <column_name> | ( <column_name> [ , <column_name> ... ] ) } } ]"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.functions.hash.o018"
+kind = "alternative"
+required = true
+target = "{ <column_name> | ( <column_name> [ , <column_name> ... ] ) } → <column_name>"
+
+[[obligation]]
+id = "sf.functions.hash.o019"
+kind = "alternative"
+required = true
+target = "{ <column_name> | ( <column_name> [ , <column_name> ... ] ) } → ( <column_name> [ , <column_name> ... ] )"
+
+[[obligation]]
+id = "sf.functions.hash.o020"
+kind = "operand_type_class"
+required = true
+target = "<column_name> in [ { ILIKE '<pattern>' | EXCLUDE { <column_name> | ( <column_name> [ , <column_name> ... ] ) } } ]"
+note = "a valid identifier"
+
+[[obligation]]
+id = "sf.functions.hash.o021"
+kind = "negative_neighbour"
+required = true
+target = "<column_name> in [ { ILIKE '<pattern>' | EXCLUDE { <column_name> | ( <column_name> [ , <column_name> ... ] ) } } ]"
+note = "a string literal in place of <column_name>"
+
+[[obligation]]
+id = "sf.functions.hash.o022"
+kind = "operand_type_class"
+required = true
+target = "<column_name> in [ { ILIKE '<pattern>' | EXCLUDE { <column_name> | ( <column_name> [ , <column_name> ... ] ) } } ] #2"
+note = "a valid identifier"
+
+[[obligation]]
+id = "sf.functions.hash.o023"
+kind = "option_present"
+required = true
+target = "[ , <column_name> ... ]"
+note = "the list continued at least once"
+
+[[obligation]]
+id = "sf.functions.hash.o024"
+kind = "option_absent"
+required = true
+target = "[ , <column_name> ... ]"
+
+[[obligation]]
 id = "sf.functions.hash.o006"
 kind = "negative_neighbour"
 required = true
@@ -33626,6 +34660,56 @@ id = "sf.functions.hash.o007"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required )"
+
+[[obligation]]
+id = "sf.functions.hash.o025"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) in [ { ILIKE '<pattern>' | EXCLUDE { <column_name> | ( <column_name> [ , <column_name> ... ] ) } } ]"
+
+[[obligation]]
+id = "sf.functions.hash.o026"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { <column_name> | ( <column_name> [ , <column_name> ... ] ) } in [ { ILIKE '<pattern>' | EXCLUDE { <column_name> | ( <column_name> [ , <column_name> ... ] ) } } ]"
+
+[[obligation]]
+id = "sf.functions.hash.o027"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
+
+[[obligation]]
+id = "sf.functions.hash.o028"
+kind = "identifier_class"
+required = true
+target = "<table_name>"
+anchor = "doc.identifiers-syntax"
+note = "quoted: a double-quoted identifier with blanks and mixed case"
+
+[[obligation]]
+id = "sf.functions.hash.o029"
+kind = "identifier_class"
+required = true
+target = "<table_name>"
+anchor = "doc.identifiers-syntax"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.functions.hash.o030"
+kind = "identifier_class"
+required = true
+target = "<column_name>"
+anchor = "doc.identifiers-syntax"
+note = "quoted: a double-quoted identifier with blanks and mixed case"
+
+[[obligation]]
+id = "sf.functions.hash.o031"
+kind = "identifier_class"
+required = true
+target = "<column_name>"
+anchor = "doc.identifiers-syntax"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
 id = "sf.functions.hash-agg.hash-agg.o001"
@@ -33666,6 +34750,116 @@ required = true
 target = "[ , <expr2> ... ]"
 
 [[obligation]]
+id = "sf.functions.hash-agg.hash-agg.o010"
+kind = "option_present"
+required = true
+target = "[ <table_name> . ]"
+
+[[obligation]]
+id = "sf.functions.hash-agg.hash-agg.o011"
+kind = "option_absent"
+required = true
+target = "[ <table_name> . ]"
+
+[[obligation]]
+id = "sf.functions.hash-agg.hash-agg.o012"
+kind = "required_operand_missing"
+required = true
+target = "<table_name> in [ <table_name> . ]"
+note = "omit <table_name>"
+
+[[obligation]]
+id = "sf.functions.hash-agg.hash-agg.o013"
+kind = "operand_type_class"
+required = true
+target = "<table_name> in [ <table_name> . ]"
+note = "a valid identifier"
+
+[[obligation]]
+id = "sf.functions.hash-agg.hash-agg.o014"
+kind = "option_present"
+required = true
+target = "[ { ILIKE '<pattern>' | EXCLUDE { <column_name> | ( <column_name> [ , <column_name> ... ] ) } } ]"
+
+[[obligation]]
+id = "sf.functions.hash-agg.hash-agg.o015"
+kind = "option_absent"
+required = true
+target = "[ { ILIKE '<pattern>' | EXCLUDE { <column_name> | ( <column_name> [ , <column_name> ... ] ) } } ]"
+
+[[obligation]]
+id = "sf.functions.hash-agg.hash-agg.o016"
+kind = "alternative"
+required = true
+target = "{ ILIKE '<pattern>' | EXCLUDE { <column_name> | ( <column_name> [ , <column_name> ... ] ) } } → ILIKE '<pattern>'"
+
+[[obligation]]
+id = "sf.functions.hash-agg.hash-agg.o017"
+kind = "alternative"
+required = true
+target = "{ ILIKE '<pattern>' | EXCLUDE { <column_name> | ( <column_n… → EXCLUDE { <column_name> | ( <column_name> [ , <column_name> ... ] ) }"
+
+[[obligation]]
+id = "sf.functions.hash-agg.hash-agg.o018"
+kind = "required_operand_missing"
+required = true
+target = "'<pattern>' in [ { ILIKE '<pattern>' | EXCLUDE { <column_name> | ( <column_name> [ , <column_name> ... ] ) } } ]"
+note = "omit '<pattern>'"
+
+[[obligation]]
+id = "sf.functions.hash-agg.hash-agg.o019"
+kind = "operand_type_class"
+required = true
+target = "'<pattern>' in [ { ILIKE '<pattern>' | EXCLUDE { <column_name> | ( <column_name> [ , <column_name> ... ] ) } } ]"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.functions.hash-agg.hash-agg.o020"
+kind = "alternative"
+required = true
+target = "{ <column_name> | ( <column_name> [ , <column_name> ... ] ) } → <column_name>"
+
+[[obligation]]
+id = "sf.functions.hash-agg.hash-agg.o021"
+kind = "alternative"
+required = true
+target = "{ <column_name> | ( <column_name> [ , <column_name> ... ] ) } → ( <column_name> [ , <column_name> ... ] )"
+
+[[obligation]]
+id = "sf.functions.hash-agg.hash-agg.o022"
+kind = "operand_type_class"
+required = true
+target = "<column_name> in [ { ILIKE '<pattern>' | EXCLUDE { <column_name> | ( <column_name> [ , <column_name> ... ] ) } } ]"
+note = "a valid identifier"
+
+[[obligation]]
+id = "sf.functions.hash-agg.hash-agg.o023"
+kind = "negative_neighbour"
+required = true
+target = "<column_name> in [ { ILIKE '<pattern>' | EXCLUDE { <column_name> | ( <column_name> [ , <column_name> ... ] ) } } ]"
+note = "a string literal in place of <column_name>"
+
+[[obligation]]
+id = "sf.functions.hash-agg.hash-agg.o024"
+kind = "operand_type_class"
+required = true
+target = "<column_name> in [ { ILIKE '<pattern>' | EXCLUDE { <column_name> | ( <column_name> [ , <column_name> ... ] ) } } ] #2"
+note = "a valid identifier"
+
+[[obligation]]
+id = "sf.functions.hash-agg.hash-agg.o025"
+kind = "option_present"
+required = true
+target = "[ , <column_name> ... ]"
+note = "the list continued at least once"
+
+[[obligation]]
+id = "sf.functions.hash-agg.hash-agg.o026"
+kind = "option_absent"
+required = true
+target = "[ , <column_name> ... ]"
+
+[[obligation]]
 id = "sf.functions.hash-agg.hash-agg.o008"
 kind = "negative_neighbour"
 required = true
@@ -33676,6 +34870,56 @@ id = "sf.functions.hash-agg.hash-agg.o009"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required )"
+
+[[obligation]]
+id = "sf.functions.hash-agg.hash-agg.o027"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) in [ { ILIKE '<pattern>' | EXCLUDE { <column_name> | ( <column_name> [ , <column_name> ... ] ) } } ]"
+
+[[obligation]]
+id = "sf.functions.hash-agg.hash-agg.o028"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { <column_name> | ( <column_name> [ , <column_name> ... ] ) } in [ { ILIKE '<pattern>' | EXCLUDE { <column_name> | ( <column_name> [ , <column_name> ... ] ) } } ]"
+
+[[obligation]]
+id = "sf.functions.hash-agg.hash-agg.o029"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
+
+[[obligation]]
+id = "sf.functions.hash-agg.hash-agg.o030"
+kind = "identifier_class"
+required = true
+target = "<table_name>"
+anchor = "doc.identifiers-syntax"
+note = "quoted: a double-quoted identifier with blanks and mixed case"
+
+[[obligation]]
+id = "sf.functions.hash-agg.hash-agg.o031"
+kind = "identifier_class"
+required = true
+target = "<table_name>"
+anchor = "doc.identifiers-syntax"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.functions.hash-agg.hash-agg.o032"
+kind = "identifier_class"
+required = true
+target = "<column_name>"
+anchor = "doc.identifiers-syntax"
+note = "quoted: a double-quoted identifier with blanks and mixed case"
+
+[[obligation]]
+id = "sf.functions.hash-agg.hash-agg.o033"
+kind = "identifier_class"
+required = true
+target = "<column_name>"
+anchor = "doc.identifiers-syntax"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
 id = "sf.functions.hash-agg.hash-agg-over.o001"
@@ -33778,6 +35022,116 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
+id = "sf.functions.hash-agg.hash-agg-over.syntax.o010"
+kind = "option_present"
+required = true
+target = "[ <table_name> . ]"
+
+[[obligation]]
+id = "sf.functions.hash-agg.hash-agg-over.syntax.o011"
+kind = "option_absent"
+required = true
+target = "[ <table_name> . ]"
+
+[[obligation]]
+id = "sf.functions.hash-agg.hash-agg-over.syntax.o012"
+kind = "required_operand_missing"
+required = true
+target = "<table_name> in [ <table_name> . ]"
+note = "omit <table_name>"
+
+[[obligation]]
+id = "sf.functions.hash-agg.hash-agg-over.syntax.o013"
+kind = "operand_type_class"
+required = true
+target = "<table_name> in [ <table_name> . ]"
+note = "a valid identifier"
+
+[[obligation]]
+id = "sf.functions.hash-agg.hash-agg-over.syntax.o014"
+kind = "option_present"
+required = true
+target = "[ { ILIKE '<pattern>' | EXCLUDE { <column_name> | ( <column_name> [ , <column_name> ... ] ) } } ]"
+
+[[obligation]]
+id = "sf.functions.hash-agg.hash-agg-over.syntax.o015"
+kind = "option_absent"
+required = true
+target = "[ { ILIKE '<pattern>' | EXCLUDE { <column_name> | ( <column_name> [ , <column_name> ... ] ) } } ]"
+
+[[obligation]]
+id = "sf.functions.hash-agg.hash-agg-over.syntax.o016"
+kind = "alternative"
+required = true
+target = "{ ILIKE '<pattern>' | EXCLUDE { <column_name> | ( <column_name> [ , <column_name> ... ] ) } } → ILIKE '<pattern>'"
+
+[[obligation]]
+id = "sf.functions.hash-agg.hash-agg-over.syntax.o017"
+kind = "alternative"
+required = true
+target = "{ ILIKE '<pattern>' | EXCLUDE { <column_name> | ( <column_n… → EXCLUDE { <column_name> | ( <column_name> [ , <column_name> ... ] ) }"
+
+[[obligation]]
+id = "sf.functions.hash-agg.hash-agg-over.syntax.o018"
+kind = "required_operand_missing"
+required = true
+target = "'<pattern>' in [ { ILIKE '<pattern>' | EXCLUDE { <column_name> | ( <column_name> [ , <column_name> ... ] ) } } ]"
+note = "omit '<pattern>'"
+
+[[obligation]]
+id = "sf.functions.hash-agg.hash-agg-over.syntax.o019"
+kind = "operand_type_class"
+required = true
+target = "'<pattern>' in [ { ILIKE '<pattern>' | EXCLUDE { <column_name> | ( <column_name> [ , <column_name> ... ] ) } } ]"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.functions.hash-agg.hash-agg-over.syntax.o020"
+kind = "alternative"
+required = true
+target = "{ <column_name> | ( <column_name> [ , <column_name> ... ] ) } → <column_name>"
+
+[[obligation]]
+id = "sf.functions.hash-agg.hash-agg-over.syntax.o021"
+kind = "alternative"
+required = true
+target = "{ <column_name> | ( <column_name> [ , <column_name> ... ] ) } → ( <column_name> [ , <column_name> ... ] )"
+
+[[obligation]]
+id = "sf.functions.hash-agg.hash-agg-over.syntax.o022"
+kind = "operand_type_class"
+required = true
+target = "<column_name> in [ { ILIKE '<pattern>' | EXCLUDE { <column_name> | ( <column_name> [ , <column_name> ... ] ) } } ]"
+note = "a valid identifier"
+
+[[obligation]]
+id = "sf.functions.hash-agg.hash-agg-over.syntax.o023"
+kind = "negative_neighbour"
+required = true
+target = "<column_name> in [ { ILIKE '<pattern>' | EXCLUDE { <column_name> | ( <column_name> [ , <column_name> ... ] ) } } ]"
+note = "a string literal in place of <column_name>"
+
+[[obligation]]
+id = "sf.functions.hash-agg.hash-agg-over.syntax.o024"
+kind = "operand_type_class"
+required = true
+target = "<column_name> in [ { ILIKE '<pattern>' | EXCLUDE { <column_name> | ( <column_name> [ , <column_name> ... ] ) } } ] #2"
+note = "a valid identifier"
+
+[[obligation]]
+id = "sf.functions.hash-agg.hash-agg-over.syntax.o025"
+kind = "option_present"
+required = true
+target = "[ , <column_name> ... ]"
+note = "the list continued at least once"
+
+[[obligation]]
+id = "sf.functions.hash-agg.hash-agg-over.syntax.o026"
+kind = "option_absent"
+required = true
+target = "[ , <column_name> ... ]"
+
+[[obligation]]
 id = "sf.functions.hash-agg.hash-agg-over.syntax.o002"
 kind = "option_present"
 required = true
@@ -33810,6 +35164,18 @@ required = true
 note = "the form without its required ("
 
 [[obligation]]
+id = "sf.functions.hash-agg.hash-agg-over.syntax.o027"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) in [ { ILIKE '<pattern>' | EXCLUDE { <column_name> | ( <column_name> [ , <column_name> ... ] ) } } ]"
+
+[[obligation]]
+id = "sf.functions.hash-agg.hash-agg-over.syntax.o028"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { <column_name> | ( <column_name> [ , <column_name> ... ] ) } in [ { ILIKE '<pattern>' | EXCLUDE { <column_name> | ( <column_name> [ , <column_name> ... ] ) } } ]"
+
+[[obligation]]
 id = "sf.functions.hash-agg.hash-agg-over.syntax.o007"
 kind = "negative_neighbour"
 required = true
@@ -33826,6 +35192,44 @@ id = "sf.functions.hash-agg.hash-agg-over.syntax.o009"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required BY in [ PARTITION BY <expr3> ]"
+
+[[obligation]]
+id = "sf.functions.hash-agg.hash-agg-over.syntax.o029"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
+
+[[obligation]]
+id = "sf.functions.hash-agg.hash-agg-over.syntax.o030"
+kind = "identifier_class"
+required = true
+target = "<table_name>"
+anchor = "doc.identifiers-syntax"
+note = "quoted: a double-quoted identifier with blanks and mixed case"
+
+[[obligation]]
+id = "sf.functions.hash-agg.hash-agg-over.syntax.o031"
+kind = "identifier_class"
+required = true
+target = "<table_name>"
+anchor = "doc.identifiers-syntax"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.functions.hash-agg.hash-agg-over.syntax.o032"
+kind = "identifier_class"
+required = true
+target = "<column_name>"
+anchor = "doc.identifiers-syntax"
+note = "quoted: a double-quoted identifier with blanks and mixed case"
+
+[[obligation]]
+id = "sf.functions.hash-agg.hash-agg-over.syntax.o033"
+kind = "identifier_class"
+required = true
+target = "<column_name>"
+anchor = "doc.identifiers-syntax"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
 id = "sf.functions.haversine.o001"
@@ -34026,6 +35430,13 @@ kind = "operand_type_class"
 required = true
 target = "<expr>"
 note = "a valid expression"
+
+[[obligation]]
+id = "sf.functions.hll-accumulate.hll-accumulate.o008"
+kind = "alternative"
+required = true
+target = "HLL_ACCUMULATE(*)"
+note = "a documented production with no option or operand of its own (D118)"
 
 [[obligation]]
 id = "sf.functions.hll-accumulate.hll-accumulate.o006"
@@ -34595,6 +36006,13 @@ id = "sf.functions.hll.hll.o007"
 kind = "option_absent"
 required = true
 target = "[ , ... ]"
+
+[[obligation]]
+id = "sf.functions.hll.hll.o010"
+kind = "alternative"
+required = true
+target = "HLL(*)"
+note = "a documented production with no option or operand of its own (D118)"
 
 [[obligation]]
 id = "sf.functions.hll.hll.o008"
@@ -37841,43 +39259,55 @@ target = "<expr>"
 note = "a valid expression"
 
 [[obligation]]
-id = "sf.functions.lag.o004"
+id = "sf.functions.lag.o037"
 kind = "option_present"
 required = true
-target = "[ , <offset> , <default> ]"
+target = "[ , <offset> [ , <default> ] ]"
 
 [[obligation]]
-id = "sf.functions.lag.o005"
+id = "sf.functions.lag.o038"
 kind = "option_absent"
 required = true
-target = "[ , <offset> , <default> ]"
+target = "[ , <offset> [ , <default> ] ]"
 
 [[obligation]]
-id = "sf.functions.lag.o006"
+id = "sf.functions.lag.o039"
 kind = "required_operand_missing"
 required = true
-target = "<offset> in [ , <offset> , <default> ]"
+target = "<offset> in [ , <offset> [ , <default> ] ]"
 note = "omit <offset>"
 
 [[obligation]]
-id = "sf.functions.lag.o007"
+id = "sf.functions.lag.o040"
 kind = "operand_type_class"
 required = true
-target = "<offset> in [ , <offset> , <default> ]"
+target = "<offset> in [ , <offset> [ , <default> ] ]"
 note = "a valid operand"
 
 [[obligation]]
-id = "sf.functions.lag.o008"
+id = "sf.functions.lag.o041"
+kind = "option_present"
+required = true
+target = "[ , <default> ]"
+
+[[obligation]]
+id = "sf.functions.lag.o042"
+kind = "option_absent"
+required = true
+target = "[ , <default> ]"
+
+[[obligation]]
+id = "sf.functions.lag.o043"
 kind = "required_operand_missing"
 required = true
-target = "<default> in [ , <offset> , <default> ]"
+target = "<default> in [ , <default> ]"
 note = "omit <default>"
 
 [[obligation]]
-id = "sf.functions.lag.o009"
+id = "sf.functions.lag.o044"
 kind = "operand_type_class"
 required = true
-target = "<default> in [ , <offset> , <default> ]"
+target = "<default> in [ , <default> ]"
 note = "a valid expression"
 
 [[obligation]]
@@ -38060,30 +39490,30 @@ target = "<date_or_timestamp_expr>"
 note = "a valid expression"
 
 [[obligation]]
-id = "sf.functions.last-day.o004"
+id = "sf.functions.last-day.o010"
 kind = "option_present"
 required = true
-target = "[ , <date_part> ]"
+target = "[ , '<date_part>' ]"
 
 [[obligation]]
-id = "sf.functions.last-day.o005"
+id = "sf.functions.last-day.o011"
 kind = "option_absent"
 required = true
-target = "[ , <date_part> ]"
+target = "[ , '<date_part>' ]"
 
 [[obligation]]
-id = "sf.functions.last-day.o006"
+id = "sf.functions.last-day.o012"
 kind = "required_operand_missing"
 required = true
-target = "<date_part> in [ , <date_part> ]"
-note = "omit <date_part>"
+target = "'<date_part>' in [ , '<date_part>' ]"
+note = "omit '<date_part>'"
 
 [[obligation]]
-id = "sf.functions.last-day.o007"
+id = "sf.functions.last-day.o013"
 kind = "operand_type_class"
 required = true
-target = "<date_part> in [ , <date_part> ]"
-note = "a valid operand"
+target = "'<date_part>' in [ , '<date_part>' ]"
+note = "a valid string_literal"
 
 [[obligation]]
 id = "sf.functions.last-day.o008"
@@ -38395,43 +39825,55 @@ target = "<expr>"
 note = "a valid expression"
 
 [[obligation]]
-id = "sf.functions.lead.o004"
+id = "sf.functions.lead.o037"
 kind = "option_present"
 required = true
-target = "[ , <offset> , <default> ]"
+target = "[ , <offset> [ , <default> ] ]"
 
 [[obligation]]
-id = "sf.functions.lead.o005"
+id = "sf.functions.lead.o038"
 kind = "option_absent"
 required = true
-target = "[ , <offset> , <default> ]"
+target = "[ , <offset> [ , <default> ] ]"
 
 [[obligation]]
-id = "sf.functions.lead.o006"
+id = "sf.functions.lead.o039"
 kind = "required_operand_missing"
 required = true
-target = "<offset> in [ , <offset> , <default> ]"
+target = "<offset> in [ , <offset> [ , <default> ] ]"
 note = "omit <offset>"
 
 [[obligation]]
-id = "sf.functions.lead.o007"
+id = "sf.functions.lead.o040"
 kind = "operand_type_class"
 required = true
-target = "<offset> in [ , <offset> , <default> ]"
+target = "<offset> in [ , <offset> [ , <default> ] ]"
 note = "a valid operand"
 
 [[obligation]]
-id = "sf.functions.lead.o008"
+id = "sf.functions.lead.o041"
+kind = "option_present"
+required = true
+target = "[ , <default> ]"
+
+[[obligation]]
+id = "sf.functions.lead.o042"
+kind = "option_absent"
+required = true
+target = "[ , <default> ]"
+
+[[obligation]]
+id = "sf.functions.lead.o043"
 kind = "required_operand_missing"
 required = true
-target = "<default> in [ , <offset> , <default> ]"
+target = "<default> in [ , <default> ]"
 note = "omit <default>"
 
 [[obligation]]
-id = "sf.functions.lead.o009"
+id = "sf.functions.lead.o044"
 kind = "operand_type_class"
 required = true
-target = "<default> in [ , <offset> , <default> ]"
+target = "<default> in [ , <default> ]"
 note = "a valid expression"
 
 [[obligation]]
@@ -40885,6 +42327,12 @@ required = true
 note = "the form without its required ) in [ OVER ( [ PARTITION BY <expr1> ] [ ORDER BY <expr2> [ { ASC | DESC } ] [ NULLS { FIRST | LAST } ] [ <window_frame> ] ]…"
 
 [[obligation]]
+id = "sf.functions.max.max.syntax.o032"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
+
+[[obligation]]
 id = "sf.functions.md5-binary.o001"
 kind = "positive"
 required = true
@@ -41429,6 +42877,12 @@ id = "sf.functions.min.min.syntax.o031"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required ) in [ OVER ( [ PARTITION BY <expr1> ] [ ORDER BY <expr2> [ { ASC | DESC } ] [ NULLS { FIRST | LAST } ] [ <window_frame> ] ]…"
+
+[[obligation]]
+id = "sf.functions.min.min.syntax.o032"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
 
 [[obligation]]
 id = "sf.functions.minhash-combine.minhash-combine.o001"
@@ -42418,25 +43872,25 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "sf.functions.model-monitor-performance-metric.model-monitor-performance-metric.o002"
+id = "sf.functions.model-monitor-performance-metric.model-monitor-performance-metric.o030"
 kind = "required_operand_missing"
 required = true
-target = "<model_monitor_name>"
-note = "omit <model_monitor_name>"
+target = "'<model_monitor_name>'"
+note = "omit '<model_monitor_name>'"
 
 [[obligation]]
-id = "sf.functions.model-monitor-performance-metric.model-monitor-performance-metric.o003"
+id = "sf.functions.model-monitor-performance-metric.model-monitor-performance-metric.o031"
 kind = "operand_type_class"
 required = true
-target = "<model_monitor_name>"
-note = "a valid identifier"
+target = "'<model_monitor_name>'"
+note = "a valid string_literal"
 
 [[obligation]]
-id = "sf.functions.model-monitor-performance-metric.model-monitor-performance-metric.o006"
+id = "sf.functions.model-monitor-performance-metric.model-monitor-performance-metric.o032"
 kind = "operand_type_class"
 required = true
-target = "<performance_metric_name>"
-note = "a valid identifier"
+target = "'<performance_metric_name>'"
+note = "a valid string_literal"
 
 [[obligation]]
 id = "sf.functions.model-monitor-performance-metric.model-monitor-performance-metric.o008"
@@ -42555,70 +44009,38 @@ required = true
 note = "the form without its required )"
 
 [[obligation]]
-id = "sf.functions.model-monitor-performance-metric.model-monitor-performance-metric.o026"
-kind = "identifier_class"
-required = true
-target = "<model_monitor_name>"
-anchor = "doc.identifiers-syntax"
-note = "quoted: a double-quoted identifier with blanks and mixed case"
-
-[[obligation]]
-id = "sf.functions.model-monitor-performance-metric.model-monitor-performance-metric.o027"
-kind = "identifier_class"
-required = true
-target = "<model_monitor_name>"
-anchor = "doc.identifiers-syntax"
-note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
-
-[[obligation]]
-id = "sf.functions.model-monitor-performance-metric.model-monitor-performance-metric.o028"
-kind = "identifier_class"
-required = true
-target = "<performance_metric_name>"
-anchor = "doc.identifiers-syntax"
-note = "quoted: a double-quoted identifier with blanks and mixed case"
-
-[[obligation]]
-id = "sf.functions.model-monitor-performance-metric.model-monitor-performance-metric.o029"
-kind = "identifier_class"
-required = true
-target = "<performance_metric_name>"
-anchor = "doc.identifiers-syntax"
-note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
-
-[[obligation]]
 id = "sf.functions.model-monitor-performance-metric.model-monitor-performance-metric-service.o001"
 kind = "positive"
 required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "sf.functions.model-monitor-performance-metric.model-monitor-performance-metric-service.o002"
+id = "sf.functions.model-monitor-performance-metric.model-monitor-performance-metric-service.o032"
 kind = "required_operand_missing"
 required = true
-target = "<model_monitor_name>"
-note = "omit <model_monitor_name>"
+target = "'<model_monitor_name>'"
+note = "omit '<model_monitor_name>'"
 
 [[obligation]]
-id = "sf.functions.model-monitor-performance-metric.model-monitor-performance-metric-service.o003"
+id = "sf.functions.model-monitor-performance-metric.model-monitor-performance-metric-service.o033"
 kind = "operand_type_class"
 required = true
-target = "<model_monitor_name>"
-note = "a valid identifier"
+target = "'<model_monitor_name>'"
+note = "a valid string_literal"
 
 [[obligation]]
-id = "sf.functions.model-monitor-performance-metric.model-monitor-performance-metric-service.o005"
+id = "sf.functions.model-monitor-performance-metric.model-monitor-performance-metric-service.o034"
 kind = "required_operand_missing"
 required = true
-target = "<performance_metric_name>"
-note = "omit <performance_metric_name>"
+target = "'<performance_metric_name>'"
+note = "omit '<performance_metric_name>'"
 
 [[obligation]]
-id = "sf.functions.model-monitor-performance-metric.model-monitor-performance-metric-service.o006"
+id = "sf.functions.model-monitor-performance-metric.model-monitor-performance-metric-service.o035"
 kind = "operand_type_class"
 required = true
-target = "<performance_metric_name>"
-note = "a valid identifier"
+target = "'<performance_metric_name>'"
+note = "a valid string_literal"
 
 [[obligation]]
 id = "sf.functions.model-monitor-performance-metric.model-monitor-performance-metric-service.o008"
@@ -42729,38 +44151,6 @@ id = "sf.functions.model-monitor-performance-metric.model-monitor-performance-me
 kind = "negative_neighbour"
 required = true
 note = "the form without its required )"
-
-[[obligation]]
-id = "sf.functions.model-monitor-performance-metric.model-monitor-performance-metric-service.o026"
-kind = "identifier_class"
-required = true
-target = "<model_monitor_name>"
-anchor = "doc.identifiers-syntax"
-note = "quoted: a double-quoted identifier with blanks and mixed case"
-
-[[obligation]]
-id = "sf.functions.model-monitor-performance-metric.model-monitor-performance-metric-service.o027"
-kind = "identifier_class"
-required = true
-target = "<model_monitor_name>"
-anchor = "doc.identifiers-syntax"
-note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
-
-[[obligation]]
-id = "sf.functions.model-monitor-performance-metric.model-monitor-performance-metric-service.o028"
-kind = "identifier_class"
-required = true
-target = "<performance_metric_name>"
-anchor = "doc.identifiers-syntax"
-note = "quoted: a double-quoted identifier with blanks and mixed case"
-
-[[obligation]]
-id = "sf.functions.model-monitor-performance-metric.model-monitor-performance-metric-service.o029"
-kind = "identifier_class"
-required = true
-target = "<performance_metric_name>"
-anchor = "doc.identifiers-syntax"
-note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
 id = "sf.functions.model-monitor-performance-metric.model-monitor-performance-metric-service.o030"
@@ -44241,11 +45631,16 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "sf.functions.object-agg.object-agg.o002"
-kind = "required_operand_missing"
+id = "sf.functions.object-agg.object-agg.o008"
+kind = "option_present"
 required = true
-target = "<key>"
-note = "omit <key>"
+target = "[ DISTINCT ]"
+
+[[obligation]]
+id = "sf.functions.object-agg.object-agg.o009"
+kind = "option_absent"
+required = true
+target = "[ DISTINCT ]"
 
 [[obligation]]
 id = "sf.functions.object-agg.object-agg.o003"
@@ -44287,11 +45682,16 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "sf.functions.object-agg.object-agg-over.o002"
-kind = "required_operand_missing"
+id = "sf.functions.object-agg.object-agg-over.o014"
+kind = "option_present"
 required = true
-target = "<key>"
-note = "omit <key>"
+target = "[ DISTINCT ]"
+
+[[obligation]]
+id = "sf.functions.object-agg.object-agg-over.o015"
+kind = "option_absent"
+required = true
+target = "[ DISTINCT ]"
 
 [[obligation]]
 id = "sf.functions.object-agg.object-agg-over.o003"
@@ -44365,6 +45765,12 @@ required = true
 note = "the form without its required BY in [ PARTITION BY <expr2> ]"
 
 [[obligation]]
+id = "sf.functions.object-agg.object-agg-over.o016"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
+
+[[obligation]]
 id = "sf.functions.object-construct.o001"
 kind = "positive"
 required = true
@@ -44424,6 +45830,116 @@ required = true
 target = "[ , <key> , <value> , ... ]"
 
 [[obligation]]
+id = "sf.functions.object-construct.o012"
+kind = "option_present"
+required = true
+target = "[ <table_name> . ]"
+
+[[obligation]]
+id = "sf.functions.object-construct.o013"
+kind = "option_absent"
+required = true
+target = "[ <table_name> . ]"
+
+[[obligation]]
+id = "sf.functions.object-construct.o014"
+kind = "required_operand_missing"
+required = true
+target = "<table_name> in [ <table_name> . ]"
+note = "omit <table_name>"
+
+[[obligation]]
+id = "sf.functions.object-construct.o015"
+kind = "operand_type_class"
+required = true
+target = "<table_name> in [ <table_name> . ]"
+note = "a valid identifier"
+
+[[obligation]]
+id = "sf.functions.object-construct.o016"
+kind = "option_present"
+required = true
+target = "[ { ILIKE '<pattern>' | EXCLUDE { <column_name> | ( <column_name> [ , <column_name> ... ] ) } } ]"
+
+[[obligation]]
+id = "sf.functions.object-construct.o017"
+kind = "option_absent"
+required = true
+target = "[ { ILIKE '<pattern>' | EXCLUDE { <column_name> | ( <column_name> [ , <column_name> ... ] ) } } ]"
+
+[[obligation]]
+id = "sf.functions.object-construct.o018"
+kind = "alternative"
+required = true
+target = "{ ILIKE '<pattern>' | EXCLUDE { <column_name> | ( <column_name> [ , <column_name> ... ] ) } } → ILIKE '<pattern>'"
+
+[[obligation]]
+id = "sf.functions.object-construct.o019"
+kind = "alternative"
+required = true
+target = "{ ILIKE '<pattern>' | EXCLUDE { <column_name> | ( <column_n… → EXCLUDE { <column_name> | ( <column_name> [ , <column_name> ... ] ) }"
+
+[[obligation]]
+id = "sf.functions.object-construct.o020"
+kind = "required_operand_missing"
+required = true
+target = "'<pattern>' in [ { ILIKE '<pattern>' | EXCLUDE { <column_name> | ( <column_name> [ , <column_name> ... ] ) } } ]"
+note = "omit '<pattern>'"
+
+[[obligation]]
+id = "sf.functions.object-construct.o021"
+kind = "operand_type_class"
+required = true
+target = "'<pattern>' in [ { ILIKE '<pattern>' | EXCLUDE { <column_name> | ( <column_name> [ , <column_name> ... ] ) } } ]"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.functions.object-construct.o022"
+kind = "alternative"
+required = true
+target = "{ <column_name> | ( <column_name> [ , <column_name> ... ] ) } → <column_name>"
+
+[[obligation]]
+id = "sf.functions.object-construct.o023"
+kind = "alternative"
+required = true
+target = "{ <column_name> | ( <column_name> [ , <column_name> ... ] ) } → ( <column_name> [ , <column_name> ... ] )"
+
+[[obligation]]
+id = "sf.functions.object-construct.o024"
+kind = "operand_type_class"
+required = true
+target = "<column_name> in [ { ILIKE '<pattern>' | EXCLUDE { <column_name> | ( <column_name> [ , <column_name> ... ] ) } } ]"
+note = "a valid identifier"
+
+[[obligation]]
+id = "sf.functions.object-construct.o025"
+kind = "negative_neighbour"
+required = true
+target = "<column_name> in [ { ILIKE '<pattern>' | EXCLUDE { <column_name> | ( <column_name> [ , <column_name> ... ] ) } } ]"
+note = "a string literal in place of <column_name>"
+
+[[obligation]]
+id = "sf.functions.object-construct.o026"
+kind = "operand_type_class"
+required = true
+target = "<column_name> in [ { ILIKE '<pattern>' | EXCLUDE { <column_name> | ( <column_name> [ , <column_name> ... ] ) } } ] #2"
+note = "a valid identifier"
+
+[[obligation]]
+id = "sf.functions.object-construct.o027"
+kind = "option_present"
+required = true
+target = "[ , <column_name> ... ]"
+note = "the list continued at least once"
+
+[[obligation]]
+id = "sf.functions.object-construct.o028"
+kind = "option_absent"
+required = true
+target = "[ , <column_name> ... ]"
+
+[[obligation]]
 id = "sf.functions.object-construct.o010"
 kind = "negative_neighbour"
 required = true
@@ -44434,6 +45950,56 @@ id = "sf.functions.object-construct.o011"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required )"
+
+[[obligation]]
+id = "sf.functions.object-construct.o029"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) in [ { ILIKE '<pattern>' | EXCLUDE { <column_name> | ( <column_name> [ , <column_name> ... ] ) } } ]"
+
+[[obligation]]
+id = "sf.functions.object-construct.o030"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { <column_name> | ( <column_name> [ , <column_name> ... ] ) } in [ { ILIKE '<pattern>' | EXCLUDE { <column_name> | ( <column_name> [ , <column_name> ... ] ) } } ]"
+
+[[obligation]]
+id = "sf.functions.object-construct.o031"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
+
+[[obligation]]
+id = "sf.functions.object-construct.o032"
+kind = "identifier_class"
+required = true
+target = "<table_name>"
+anchor = "doc.identifiers-syntax"
+note = "quoted: a double-quoted identifier with blanks and mixed case"
+
+[[obligation]]
+id = "sf.functions.object-construct.o033"
+kind = "identifier_class"
+required = true
+target = "<table_name>"
+anchor = "doc.identifiers-syntax"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.functions.object-construct.o034"
+kind = "identifier_class"
+required = true
+target = "<column_name>"
+anchor = "doc.identifiers-syntax"
+note = "quoted: a double-quoted identifier with blanks and mixed case"
+
+[[obligation]]
+id = "sf.functions.object-construct.o035"
+kind = "identifier_class"
+required = true
+target = "<column_name>"
+anchor = "doc.identifiers-syntax"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
 id = "sf.functions.object-construct-keep-null.o001"
@@ -44495,6 +46061,116 @@ required = true
 target = "[ , <key> , <value> , ... ]"
 
 [[obligation]]
+id = "sf.functions.object-construct-keep-null.o012"
+kind = "option_present"
+required = true
+target = "[ <table_name> . ]"
+
+[[obligation]]
+id = "sf.functions.object-construct-keep-null.o013"
+kind = "option_absent"
+required = true
+target = "[ <table_name> . ]"
+
+[[obligation]]
+id = "sf.functions.object-construct-keep-null.o014"
+kind = "required_operand_missing"
+required = true
+target = "<table_name> in [ <table_name> . ]"
+note = "omit <table_name>"
+
+[[obligation]]
+id = "sf.functions.object-construct-keep-null.o015"
+kind = "operand_type_class"
+required = true
+target = "<table_name> in [ <table_name> . ]"
+note = "a valid identifier"
+
+[[obligation]]
+id = "sf.functions.object-construct-keep-null.o016"
+kind = "option_present"
+required = true
+target = "[ { ILIKE '<pattern>' | EXCLUDE { <column_name> | ( <column_name> [ , <column_name> ... ] ) } } ]"
+
+[[obligation]]
+id = "sf.functions.object-construct-keep-null.o017"
+kind = "option_absent"
+required = true
+target = "[ { ILIKE '<pattern>' | EXCLUDE { <column_name> | ( <column_name> [ , <column_name> ... ] ) } } ]"
+
+[[obligation]]
+id = "sf.functions.object-construct-keep-null.o018"
+kind = "alternative"
+required = true
+target = "{ ILIKE '<pattern>' | EXCLUDE { <column_name> | ( <column_name> [ , <column_name> ... ] ) } } → ILIKE '<pattern>'"
+
+[[obligation]]
+id = "sf.functions.object-construct-keep-null.o019"
+kind = "alternative"
+required = true
+target = "{ ILIKE '<pattern>' | EXCLUDE { <column_name> | ( <column_n… → EXCLUDE { <column_name> | ( <column_name> [ , <column_name> ... ] ) }"
+
+[[obligation]]
+id = "sf.functions.object-construct-keep-null.o020"
+kind = "required_operand_missing"
+required = true
+target = "'<pattern>' in [ { ILIKE '<pattern>' | EXCLUDE { <column_name> | ( <column_name> [ , <column_name> ... ] ) } } ]"
+note = "omit '<pattern>'"
+
+[[obligation]]
+id = "sf.functions.object-construct-keep-null.o021"
+kind = "operand_type_class"
+required = true
+target = "'<pattern>' in [ { ILIKE '<pattern>' | EXCLUDE { <column_name> | ( <column_name> [ , <column_name> ... ] ) } } ]"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.functions.object-construct-keep-null.o022"
+kind = "alternative"
+required = true
+target = "{ <column_name> | ( <column_name> [ , <column_name> ... ] ) } → <column_name>"
+
+[[obligation]]
+id = "sf.functions.object-construct-keep-null.o023"
+kind = "alternative"
+required = true
+target = "{ <column_name> | ( <column_name> [ , <column_name> ... ] ) } → ( <column_name> [ , <column_name> ... ] )"
+
+[[obligation]]
+id = "sf.functions.object-construct-keep-null.o024"
+kind = "operand_type_class"
+required = true
+target = "<column_name> in [ { ILIKE '<pattern>' | EXCLUDE { <column_name> | ( <column_name> [ , <column_name> ... ] ) } } ]"
+note = "a valid identifier"
+
+[[obligation]]
+id = "sf.functions.object-construct-keep-null.o025"
+kind = "negative_neighbour"
+required = true
+target = "<column_name> in [ { ILIKE '<pattern>' | EXCLUDE { <column_name> | ( <column_name> [ , <column_name> ... ] ) } } ]"
+note = "a string literal in place of <column_name>"
+
+[[obligation]]
+id = "sf.functions.object-construct-keep-null.o026"
+kind = "operand_type_class"
+required = true
+target = "<column_name> in [ { ILIKE '<pattern>' | EXCLUDE { <column_name> | ( <column_name> [ , <column_name> ... ] ) } } ] #2"
+note = "a valid identifier"
+
+[[obligation]]
+id = "sf.functions.object-construct-keep-null.o027"
+kind = "option_present"
+required = true
+target = "[ , <column_name> ... ]"
+note = "the list continued at least once"
+
+[[obligation]]
+id = "sf.functions.object-construct-keep-null.o028"
+kind = "option_absent"
+required = true
+target = "[ , <column_name> ... ]"
+
+[[obligation]]
 id = "sf.functions.object-construct-keep-null.o010"
 kind = "negative_neighbour"
 required = true
@@ -44505,6 +46181,56 @@ id = "sf.functions.object-construct-keep-null.o011"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required )"
+
+[[obligation]]
+id = "sf.functions.object-construct-keep-null.o029"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) in [ { ILIKE '<pattern>' | EXCLUDE { <column_name> | ( <column_name> [ , <column_name> ... ] ) } } ]"
+
+[[obligation]]
+id = "sf.functions.object-construct-keep-null.o030"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { <column_name> | ( <column_name> [ , <column_name> ... ] ) } in [ { ILIKE '<pattern>' | EXCLUDE { <column_name> | ( <column_name> [ , <column_name> ... ] ) } } ]"
+
+[[obligation]]
+id = "sf.functions.object-construct-keep-null.o031"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
+
+[[obligation]]
+id = "sf.functions.object-construct-keep-null.o032"
+kind = "identifier_class"
+required = true
+target = "<table_name>"
+anchor = "doc.identifiers-syntax"
+note = "quoted: a double-quoted identifier with blanks and mixed case"
+
+[[obligation]]
+id = "sf.functions.object-construct-keep-null.o033"
+kind = "identifier_class"
+required = true
+target = "<table_name>"
+anchor = "doc.identifiers-syntax"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.functions.object-construct-keep-null.o034"
+kind = "identifier_class"
+required = true
+target = "<column_name>"
+anchor = "doc.identifiers-syntax"
+note = "quoted: a double-quoted identifier with blanks and mixed case"
+
+[[obligation]]
+id = "sf.functions.object-construct-keep-null.o035"
+kind = "identifier_class"
+required = true
+target = "<column_name>"
+anchor = "doc.identifiers-syntax"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
 id = "sf.functions.object-construct-keep-null-structured.o001"
@@ -44547,6 +46273,116 @@ required = true
 target = "[ , <key> , <value> , ... ]"
 
 [[obligation]]
+id = "sf.functions.object-construct-keep-null-structured.o010"
+kind = "option_present"
+required = true
+target = "[ <table_name> . ]"
+
+[[obligation]]
+id = "sf.functions.object-construct-keep-null-structured.o011"
+kind = "option_absent"
+required = true
+target = "[ <table_name> . ]"
+
+[[obligation]]
+id = "sf.functions.object-construct-keep-null-structured.o012"
+kind = "required_operand_missing"
+required = true
+target = "<table_name> in [ <table_name> . ]"
+note = "omit <table_name>"
+
+[[obligation]]
+id = "sf.functions.object-construct-keep-null-structured.o013"
+kind = "operand_type_class"
+required = true
+target = "<table_name> in [ <table_name> . ]"
+note = "a valid identifier"
+
+[[obligation]]
+id = "sf.functions.object-construct-keep-null-structured.o014"
+kind = "option_present"
+required = true
+target = "[ { ILIKE '<pattern>' | EXCLUDE { <column_name> | ( <column_name> [ , <column_name> ... ] ) } } ]"
+
+[[obligation]]
+id = "sf.functions.object-construct-keep-null-structured.o015"
+kind = "option_absent"
+required = true
+target = "[ { ILIKE '<pattern>' | EXCLUDE { <column_name> | ( <column_name> [ , <column_name> ... ] ) } } ]"
+
+[[obligation]]
+id = "sf.functions.object-construct-keep-null-structured.o016"
+kind = "alternative"
+required = true
+target = "{ ILIKE '<pattern>' | EXCLUDE { <column_name> | ( <column_name> [ , <column_name> ... ] ) } } → ILIKE '<pattern>'"
+
+[[obligation]]
+id = "sf.functions.object-construct-keep-null-structured.o017"
+kind = "alternative"
+required = true
+target = "{ ILIKE '<pattern>' | EXCLUDE { <column_name> | ( <column_n… → EXCLUDE { <column_name> | ( <column_name> [ , <column_name> ... ] ) }"
+
+[[obligation]]
+id = "sf.functions.object-construct-keep-null-structured.o018"
+kind = "required_operand_missing"
+required = true
+target = "'<pattern>' in [ { ILIKE '<pattern>' | EXCLUDE { <column_name> | ( <column_name> [ , <column_name> ... ] ) } } ]"
+note = "omit '<pattern>'"
+
+[[obligation]]
+id = "sf.functions.object-construct-keep-null-structured.o019"
+kind = "operand_type_class"
+required = true
+target = "'<pattern>' in [ { ILIKE '<pattern>' | EXCLUDE { <column_name> | ( <column_name> [ , <column_name> ... ] ) } } ]"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.functions.object-construct-keep-null-structured.o020"
+kind = "alternative"
+required = true
+target = "{ <column_name> | ( <column_name> [ , <column_name> ... ] ) } → <column_name>"
+
+[[obligation]]
+id = "sf.functions.object-construct-keep-null-structured.o021"
+kind = "alternative"
+required = true
+target = "{ <column_name> | ( <column_name> [ , <column_name> ... ] ) } → ( <column_name> [ , <column_name> ... ] )"
+
+[[obligation]]
+id = "sf.functions.object-construct-keep-null-structured.o022"
+kind = "operand_type_class"
+required = true
+target = "<column_name> in [ { ILIKE '<pattern>' | EXCLUDE { <column_name> | ( <column_name> [ , <column_name> ... ] ) } } ]"
+note = "a valid identifier"
+
+[[obligation]]
+id = "sf.functions.object-construct-keep-null-structured.o023"
+kind = "negative_neighbour"
+required = true
+target = "<column_name> in [ { ILIKE '<pattern>' | EXCLUDE { <column_name> | ( <column_name> [ , <column_name> ... ] ) } } ]"
+note = "a string literal in place of <column_name>"
+
+[[obligation]]
+id = "sf.functions.object-construct-keep-null-structured.o024"
+kind = "operand_type_class"
+required = true
+target = "<column_name> in [ { ILIKE '<pattern>' | EXCLUDE { <column_name> | ( <column_name> [ , <column_name> ... ] ) } } ] #2"
+note = "a valid identifier"
+
+[[obligation]]
+id = "sf.functions.object-construct-keep-null-structured.o025"
+kind = "option_present"
+required = true
+target = "[ , <column_name> ... ]"
+note = "the list continued at least once"
+
+[[obligation]]
+id = "sf.functions.object-construct-keep-null-structured.o026"
+kind = "option_absent"
+required = true
+target = "[ , <column_name> ... ]"
+
+[[obligation]]
 id = "sf.functions.object-construct-keep-null-structured.o008"
 kind = "negative_neighbour"
 required = true
@@ -44557,6 +46393,56 @@ id = "sf.functions.object-construct-keep-null-structured.o009"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required )"
+
+[[obligation]]
+id = "sf.functions.object-construct-keep-null-structured.o027"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) in [ { ILIKE '<pattern>' | EXCLUDE { <column_name> | ( <column_name> [ , <column_name> ... ] ) } } ]"
+
+[[obligation]]
+id = "sf.functions.object-construct-keep-null-structured.o028"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { <column_name> | ( <column_name> [ , <column_name> ... ] ) } in [ { ILIKE '<pattern>' | EXCLUDE { <column_name> | ( <column_name> [ , <column_name> ... ] ) } } ]"
+
+[[obligation]]
+id = "sf.functions.object-construct-keep-null-structured.o029"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
+
+[[obligation]]
+id = "sf.functions.object-construct-keep-null-structured.o030"
+kind = "identifier_class"
+required = true
+target = "<table_name>"
+anchor = "doc.identifiers-syntax"
+note = "quoted: a double-quoted identifier with blanks and mixed case"
+
+[[obligation]]
+id = "sf.functions.object-construct-keep-null-structured.o031"
+kind = "identifier_class"
+required = true
+target = "<table_name>"
+anchor = "doc.identifiers-syntax"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.functions.object-construct-keep-null-structured.o032"
+kind = "identifier_class"
+required = true
+target = "<column_name>"
+anchor = "doc.identifiers-syntax"
+note = "quoted: a double-quoted identifier with blanks and mixed case"
+
+[[obligation]]
+id = "sf.functions.object-construct-keep-null-structured.o033"
+kind = "identifier_class"
+required = true
+target = "<column_name>"
+anchor = "doc.identifiers-syntax"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
 id = "sf.functions.object-delete.o001"
@@ -45227,22 +47113,29 @@ target = "<string>"
 note = "a valid string_literal"
 
 [[obligation]]
-id = "sf.functions.parse-url.o005"
+id = "sf.functions.parse-url.o010"
 kind = "option_present"
 required = true
-target = "[ <permissive> ]"
+target = "[ , <permissive> ]"
 
 [[obligation]]
-id = "sf.functions.parse-url.o006"
+id = "sf.functions.parse-url.o011"
 kind = "option_absent"
 required = true
-target = "[ <permissive> ]"
+target = "[ , <permissive> ]"
 
 [[obligation]]
-id = "sf.functions.parse-url.o007"
+id = "sf.functions.parse-url.o012"
+kind = "required_operand_missing"
+required = true
+target = "<permissive> in [ , <permissive> ]"
+note = "omit <permissive>"
+
+[[obligation]]
+id = "sf.functions.parse-url.o013"
 kind = "operand_type_class"
 required = true
-target = "<permissive> in [ <permissive> ]"
+target = "<permissive> in [ , <permissive> ]"
 note = "a valid operand"
 
 [[obligation]]
@@ -45297,6 +47190,34 @@ target = "<disable_auto_convert> in [ , <disable_auto_convert> ]"
 note = "a valid operand"
 
 [[obligation]]
+id = "sf.functions.parse-xml.parse-xml.o011"
+kind = "required_operand_missing"
+required = true
+target = "<string_containing_xml> #2"
+note = "omit <string_containing_xml>"
+
+[[obligation]]
+id = "sf.functions.parse-xml.parse-xml.o012"
+kind = "operand_type_class"
+required = true
+target = "<string_containing_xml> #2"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.functions.parse-xml.parse-xml.o013"
+kind = "required_operand_missing"
+required = true
+target = "<disable_auto_convert>"
+note = "omit <disable_auto_convert>"
+
+[[obligation]]
+id = "sf.functions.parse-xml.parse-xml.o014"
+kind = "operand_type_class"
+required = true
+target = "<disable_auto_convert>"
+note = "a valid operand"
+
+[[obligation]]
 id = "sf.functions.parse-xml.parse-xml.o009"
 kind = "negative_neighbour"
 required = true
@@ -45307,6 +47228,12 @@ id = "sf.functions.parse-xml.parse-xml.o010"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required )"
+
+[[obligation]]
+id = "sf.functions.parse-xml.parse-xml.o015"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required DISABLE_AUTO_CONVERT"
 
 [[obligation]]
 id = "sf.functions.parse-xml.parse-xml-str.o001"
@@ -45473,23 +47400,34 @@ required = true
 target = "{ FIRST | LAST } → LAST"
 
 [[obligation]]
-id = "sf.functions.percent-rank.o016"
+id = "sf.functions.percent-rank.o027"
 kind = "option_present"
 required = true
-target = "[ <fixedRangeFrame> ]"
+target = "[ { RANGE UNBOUNDED PRECEDING | RANGE BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW | RANGE BETWEEN CURRENT ROW AND UNBOU…"
 
 [[obligation]]
-id = "sf.functions.percent-rank.o017"
+id = "sf.functions.percent-rank.o028"
 kind = "option_absent"
 required = true
-target = "[ <fixedRangeFrame> ]"
+target = "[ { RANGE UNBOUNDED PRECEDING | RANGE BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW | RANGE BETWEEN CURRENT ROW AND UNBOU…"
 
 [[obligation]]
-id = "sf.functions.percent-rank.o018"
-kind = "operand_type_class"
+id = "sf.functions.percent-rank.o029"
+kind = "alternative"
 required = true
-target = "<fixedRangeFrame> in [ <fixedRangeFrame> ]"
-note = "a valid operand"
+target = "{ RANGE UNBOUNDED PRECEDING | RANGE BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW | RANGE BET… → RANGE UNBOUNDED PRECEDING"
+
+[[obligation]]
+id = "sf.functions.percent-rank.o030"
+kind = "alternative"
+required = true
+target = "{ RANGE UNBOUNDED PRECEDING | RANGE BETWEEN UNBOUNDED PRECEDING AND… → RANGE BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW"
+
+[[obligation]]
+id = "sf.functions.percent-rank.o031"
+kind = "alternative"
+required = true
+target = "{ RANGE UNBOUNDED PRECEDING | RANGE BETWEEN UNBOUNDED PRECEDING AND… → RANGE BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING"
 
 [[obligation]]
 id = "sf.functions.percent-rank.o019"
@@ -45532,6 +47470,48 @@ id = "sf.functions.percent-rank.o025"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required { FIRST | LAST } in [ NULLS { FIRST | LAST } ]"
+
+[[obligation]]
+id = "sf.functions.percent-rank.o032"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required UNBOUNDED in [ { RANGE UNBOUNDED PRECEDING | RANGE BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW | RANGE BETWEEN CURRENT ROW AND UNBOU…"
+
+[[obligation]]
+id = "sf.functions.percent-rank.o033"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required PRECEDING in [ { RANGE UNBOUNDED PRECEDING | RANGE BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW | RANGE BETWEEN CURRENT ROW AND UNBOU…"
+
+[[obligation]]
+id = "sf.functions.percent-rank.o034"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required BETWEEN in [ { RANGE UNBOUNDED PRECEDING | RANGE BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW | RANGE BETWEEN CURRENT ROW AND UNBOU…"
+
+[[obligation]]
+id = "sf.functions.percent-rank.o035"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required AND in [ { RANGE UNBOUNDED PRECEDING | RANGE BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW | RANGE BETWEEN CURRENT ROW AND UNBOU…"
+
+[[obligation]]
+id = "sf.functions.percent-rank.o036"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required CURRENT in [ { RANGE UNBOUNDED PRECEDING | RANGE BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW | RANGE BETWEEN CURRENT ROW AND UNBOU…"
+
+[[obligation]]
+id = "sf.functions.percent-rank.o037"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ROW in [ { RANGE UNBOUNDED PRECEDING | RANGE BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW | RANGE BETWEEN CURRENT ROW AND UNBOU…"
+
+[[obligation]]
+id = "sf.functions.percent-rank.o038"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required FOLLOWING in [ { RANGE UNBOUNDED PRECEDING | RANGE BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW | RANGE BETWEEN CURRENT ROW AND UNBOU…"
 
 [[obligation]]
 id = "sf.functions.percent-rank.o026"
@@ -48499,6 +50479,12 @@ id = "sf.functions.ratio-to-report.o037"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required ) in [ OVER ( [ PARTITION BY <expr2> ] [ ORDER BY <expr3> [ { ASC | DESC } ] [ NULLS { FIRST | LAST } ] ] ) ]"
+
+[[obligation]]
+id = "sf.functions.ratio-to-report.o038"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
 
 [[obligation]]
 id = "sf.functions.recommend-network-policy.o001"
@@ -52594,11 +54580,22 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "sf.functions.search.o002"
-kind = "required_operand_missing"
+id = "sf.functions.search.o024"
+kind = "alternative"
 required = true
-target = "<search_data>"
-note = "omit <search_data>"
+target = "{ <search_data> | ( <search_data> [ , <search_data> ... ] ) | ( [ <table_name> . ] * [ { ILIKE '<patter… → <search_data>"
+
+[[obligation]]
+id = "sf.functions.search.o025"
+kind = "alternative"
+required = true
+target = "{ <search_data> | ( <search_data> [ , <search_data> ... ] ) | ( [ <table_na… → ( <search_data> [ , <search_data> ... ] )"
+
+[[obligation]]
+id = "sf.functions.search.o026"
+kind = "alternative"
+required = true
+target = "{ <search_data> | ( <search_data> [ , <search_data> ... ] )… → ( [ <table_name> . ] * [ { ILIKE '<pattern>' | EXCLUDE { <column_name> | ( <column_name> [ , <column_name> ... ] ) } } ] )"
 
 [[obligation]]
 id = "sf.functions.search.o003"
@@ -52606,6 +54603,143 @@ kind = "operand_type_class"
 required = true
 target = "<search_data>"
 note = "a valid operand"
+
+[[obligation]]
+id = "sf.functions.search.o027"
+kind = "required_operand_missing"
+required = true
+target = "<search_data> #2"
+note = "omit <search_data>"
+
+[[obligation]]
+id = "sf.functions.search.o028"
+kind = "operand_type_class"
+required = true
+target = "<search_data> #2"
+note = "a valid operand"
+
+[[obligation]]
+id = "sf.functions.search.o029"
+kind = "option_present"
+required = true
+target = "[ , <search_data> ... ]"
+note = "the list continued at least once"
+
+[[obligation]]
+id = "sf.functions.search.o030"
+kind = "option_absent"
+required = true
+target = "[ , <search_data> ... ]"
+
+[[obligation]]
+id = "sf.functions.search.o031"
+kind = "option_present"
+required = true
+target = "[ <table_name> . ]"
+
+[[obligation]]
+id = "sf.functions.search.o032"
+kind = "option_absent"
+required = true
+target = "[ <table_name> . ]"
+
+[[obligation]]
+id = "sf.functions.search.o033"
+kind = "required_operand_missing"
+required = true
+target = "<table_name> in [ <table_name> . ]"
+note = "omit <table_name>"
+
+[[obligation]]
+id = "sf.functions.search.o034"
+kind = "operand_type_class"
+required = true
+target = "<table_name> in [ <table_name> . ]"
+note = "a valid identifier"
+
+[[obligation]]
+id = "sf.functions.search.o035"
+kind = "option_present"
+required = true
+target = "[ { ILIKE '<pattern>' | EXCLUDE { <column_name> | ( <column_name> [ , <column_name> ... ] ) } } ]"
+
+[[obligation]]
+id = "sf.functions.search.o036"
+kind = "option_absent"
+required = true
+target = "[ { ILIKE '<pattern>' | EXCLUDE { <column_name> | ( <column_name> [ , <column_name> ... ] ) } } ]"
+
+[[obligation]]
+id = "sf.functions.search.o037"
+kind = "alternative"
+required = true
+target = "{ ILIKE '<pattern>' | EXCLUDE { <column_name> | ( <column_name> [ , <column_name> ... ] ) } } → ILIKE '<pattern>'"
+
+[[obligation]]
+id = "sf.functions.search.o038"
+kind = "alternative"
+required = true
+target = "{ ILIKE '<pattern>' | EXCLUDE { <column_name> | ( <column_n… → EXCLUDE { <column_name> | ( <column_name> [ , <column_name> ... ] ) }"
+
+[[obligation]]
+id = "sf.functions.search.o039"
+kind = "required_operand_missing"
+required = true
+target = "'<pattern>' in [ { ILIKE '<pattern>' | EXCLUDE { <column_name> | ( <column_name> [ , <column_name> ... ] ) } } ]"
+note = "omit '<pattern>'"
+
+[[obligation]]
+id = "sf.functions.search.o040"
+kind = "operand_type_class"
+required = true
+target = "'<pattern>' in [ { ILIKE '<pattern>' | EXCLUDE { <column_name> | ( <column_name> [ , <column_name> ... ] ) } } ]"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.functions.search.o041"
+kind = "alternative"
+required = true
+target = "{ <column_name> | ( <column_name> [ , <column_name> ... ] ) } → <column_name>"
+
+[[obligation]]
+id = "sf.functions.search.o042"
+kind = "alternative"
+required = true
+target = "{ <column_name> | ( <column_name> [ , <column_name> ... ] ) } → ( <column_name> [ , <column_name> ... ] )"
+
+[[obligation]]
+id = "sf.functions.search.o043"
+kind = "operand_type_class"
+required = true
+target = "<column_name> in [ { ILIKE '<pattern>' | EXCLUDE { <column_name> | ( <column_name> [ , <column_name> ... ] ) } } ]"
+note = "a valid identifier"
+
+[[obligation]]
+id = "sf.functions.search.o044"
+kind = "negative_neighbour"
+required = true
+target = "<column_name> in [ { ILIKE '<pattern>' | EXCLUDE { <column_name> | ( <column_name> [ , <column_name> ... ] ) } } ]"
+note = "a string literal in place of <column_name>"
+
+[[obligation]]
+id = "sf.functions.search.o045"
+kind = "operand_type_class"
+required = true
+target = "<column_name> in [ { ILIKE '<pattern>' | EXCLUDE { <column_name> | ( <column_name> [ , <column_name> ... ] ) } } ] #2"
+note = "a valid identifier"
+
+[[obligation]]
+id = "sf.functions.search.o046"
+kind = "option_present"
+required = true
+target = "[ , <column_name> ... ]"
+note = "the list continued at least once"
+
+[[obligation]]
+id = "sf.functions.search.o047"
+kind = "option_absent"
+required = true
+target = "[ , <column_name> ... ]"
 
 [[obligation]]
 id = "sf.functions.search.o005"
@@ -52683,6 +54817,30 @@ required = true
 note = "the form without its required ("
 
 [[obligation]]
+id = "sf.functions.search.o022"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required )"
+
+[[obligation]]
+id = "sf.functions.search.o048"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) in [ { ILIKE '<pattern>' | EXCLUDE { <column_name> | ( <column_name> [ , <column_name> ... ] ) } } ]"
+
+[[obligation]]
+id = "sf.functions.search.o049"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { <column_name> | ( <column_name> [ , <column_name> ... ] ) } in [ { ILIKE '<pattern>' | EXCLUDE { <column_name> | ( <column_name> [ , <column_name> ... ] ) } } ]"
+
+[[obligation]]
+id = "sf.functions.search.o050"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { <search_data> | ( <search_data> [ , <search_data> ... ] ) | ( [ <table_name> . ] * [ { ILIKE '<pattern>' | EXCLUDE { <column_name> | ( <column_name> [ , <column_name> ... ] ) } } ] ) }"
+
+[[obligation]]
 id = "sf.functions.search.o019"
 kind = "negative_neighbour"
 required = true
@@ -52701,16 +54859,42 @@ required = true
 note = "the form without its required { 'OR' | 'AND' | 'PHRASE' | 'EXACT' } in [ , SEARCH_MODE => { 'OR' | 'AND' | 'PHRASE' | 'EXACT' } ]"
 
 [[obligation]]
-id = "sf.functions.search.o022"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required )"
-
-[[obligation]]
 id = "sf.functions.search.o023"
 kind = "interaction_all_options"
 required = true
 note = "every independent option of one production together"
+
+[[obligation]]
+id = "sf.functions.search.o051"
+kind = "identifier_class"
+required = true
+target = "<table_name>"
+anchor = "doc.identifiers-syntax"
+note = "quoted: a double-quoted identifier with blanks and mixed case"
+
+[[obligation]]
+id = "sf.functions.search.o052"
+kind = "identifier_class"
+required = true
+target = "<table_name>"
+anchor = "doc.identifiers-syntax"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.functions.search.o053"
+kind = "identifier_class"
+required = true
+target = "<column_name>"
+anchor = "doc.identifiers-syntax"
+note = "quoted: a double-quoted identifier with blanks and mixed case"
+
+[[obligation]]
+id = "sf.functions.search.o054"
+kind = "identifier_class"
+required = true
+target = "<column_name>"
+anchor = "doc.identifiers-syntax"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
 id = "sf.functions.search-ip.o001"
@@ -52719,11 +54903,28 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "sf.functions.search-ip.o002"
-kind = "required_operand_missing"
+id = "sf.functions.search-ip.o009"
+kind = "alternative"
 required = true
-target = "<search_data>"
-note = "omit <search_data>"
+target = "{ <search_data> | ( <search_data> [ , <search_data> ... ] ) | ( [ <table_name> . ] * [ { ILIKE '<patter… → <search_data>"
+
+[[obligation]]
+id = "sf.functions.search-ip.o010"
+kind = "alternative"
+required = true
+target = "{ <search_data> | ( <search_data> [ , <search_data> ... ] ) | ( [ <table_na… → ( <search_data> [ , <search_data> ... ] )"
+
+[[obligation]]
+id = "sf.functions.search-ip.o011"
+kind = "alternative"
+required = true
+target = "{ <search_data> | ( <search_data> [ , <search_data> ... ] )… → ( [ <table_name> . ] * [ { ILIKE '<pattern>' | EXCLUDE { <column_name> | ( <column_name> [ , <column_name> ... ] ) } } ] )"
+
+[[obligation]]
+id = "sf.functions.search-ip.o012"
+kind = "alternative"
+required = true
+target = "{ <search_data> | ( <search_data> [ , <search_data> ... ] ) | ( [ <table_name> . ] * [ { ILIKE '<… → * ILIKE '<pattern>'"
 
 [[obligation]]
 id = "sf.functions.search-ip.o003"
@@ -52731,6 +54932,157 @@ kind = "operand_type_class"
 required = true
 target = "<search_data>"
 note = "a valid operand"
+
+[[obligation]]
+id = "sf.functions.search-ip.o013"
+kind = "required_operand_missing"
+required = true
+target = "<search_data> #2"
+note = "omit <search_data>"
+
+[[obligation]]
+id = "sf.functions.search-ip.o014"
+kind = "operand_type_class"
+required = true
+target = "<search_data> #2"
+note = "a valid operand"
+
+[[obligation]]
+id = "sf.functions.search-ip.o015"
+kind = "option_present"
+required = true
+target = "[ , <search_data> ... ]"
+note = "the list continued at least once"
+
+[[obligation]]
+id = "sf.functions.search-ip.o016"
+kind = "option_absent"
+required = true
+target = "[ , <search_data> ... ]"
+
+[[obligation]]
+id = "sf.functions.search-ip.o017"
+kind = "option_present"
+required = true
+target = "[ <table_name> . ]"
+
+[[obligation]]
+id = "sf.functions.search-ip.o018"
+kind = "option_absent"
+required = true
+target = "[ <table_name> . ]"
+
+[[obligation]]
+id = "sf.functions.search-ip.o019"
+kind = "required_operand_missing"
+required = true
+target = "<table_name> in [ <table_name> . ]"
+note = "omit <table_name>"
+
+[[obligation]]
+id = "sf.functions.search-ip.o020"
+kind = "operand_type_class"
+required = true
+target = "<table_name> in [ <table_name> . ]"
+note = "a valid identifier"
+
+[[obligation]]
+id = "sf.functions.search-ip.o021"
+kind = "option_present"
+required = true
+target = "[ { ILIKE '<pattern>' | EXCLUDE { <column_name> | ( <column_name> [ , <column_name> ... ] ) } } ]"
+
+[[obligation]]
+id = "sf.functions.search-ip.o022"
+kind = "option_absent"
+required = true
+target = "[ { ILIKE '<pattern>' | EXCLUDE { <column_name> | ( <column_name> [ , <column_name> ... ] ) } } ]"
+
+[[obligation]]
+id = "sf.functions.search-ip.o023"
+kind = "alternative"
+required = true
+target = "{ ILIKE '<pattern>' | EXCLUDE { <column_name> | ( <column_name> [ , <column_name> ... ] ) } } → ILIKE '<pattern>'"
+
+[[obligation]]
+id = "sf.functions.search-ip.o024"
+kind = "alternative"
+required = true
+target = "{ ILIKE '<pattern>' | EXCLUDE { <column_name> | ( <column_n… → EXCLUDE { <column_name> | ( <column_name> [ , <column_name> ... ] ) }"
+
+[[obligation]]
+id = "sf.functions.search-ip.o025"
+kind = "required_operand_missing"
+required = true
+target = "'<pattern>' in [ { ILIKE '<pattern>' | EXCLUDE { <column_name> | ( <column_name> [ , <column_name> ... ] ) } } ]"
+note = "omit '<pattern>'"
+
+[[obligation]]
+id = "sf.functions.search-ip.o026"
+kind = "operand_type_class"
+required = true
+target = "'<pattern>' in [ { ILIKE '<pattern>' | EXCLUDE { <column_name> | ( <column_name> [ , <column_name> ... ] ) } } ]"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.functions.search-ip.o027"
+kind = "alternative"
+required = true
+target = "{ <column_name> | ( <column_name> [ , <column_name> ... ] ) } → <column_name>"
+
+[[obligation]]
+id = "sf.functions.search-ip.o028"
+kind = "alternative"
+required = true
+target = "{ <column_name> | ( <column_name> [ , <column_name> ... ] ) } → ( <column_name> [ , <column_name> ... ] )"
+
+[[obligation]]
+id = "sf.functions.search-ip.o029"
+kind = "operand_type_class"
+required = true
+target = "<column_name> in [ { ILIKE '<pattern>' | EXCLUDE { <column_name> | ( <column_name> [ , <column_name> ... ] ) } } ]"
+note = "a valid identifier"
+
+[[obligation]]
+id = "sf.functions.search-ip.o030"
+kind = "negative_neighbour"
+required = true
+target = "<column_name> in [ { ILIKE '<pattern>' | EXCLUDE { <column_name> | ( <column_name> [ , <column_name> ... ] ) } } ]"
+note = "a string literal in place of <column_name>"
+
+[[obligation]]
+id = "sf.functions.search-ip.o031"
+kind = "operand_type_class"
+required = true
+target = "<column_name> in [ { ILIKE '<pattern>' | EXCLUDE { <column_name> | ( <column_name> [ , <column_name> ... ] ) } } ] #2"
+note = "a valid identifier"
+
+[[obligation]]
+id = "sf.functions.search-ip.o032"
+kind = "option_present"
+required = true
+target = "[ , <column_name> ... ]"
+note = "the list continued at least once"
+
+[[obligation]]
+id = "sf.functions.search-ip.o033"
+kind = "option_absent"
+required = true
+target = "[ , <column_name> ... ]"
+
+[[obligation]]
+id = "sf.functions.search-ip.o034"
+kind = "required_operand_missing"
+required = true
+target = "'<pattern>'"
+note = "omit '<pattern>'"
+
+[[obligation]]
+id = "sf.functions.search-ip.o035"
+kind = "operand_type_class"
+required = true
+target = "'<pattern>'"
+note = "a valid string_literal"
 
 [[obligation]]
 id = "sf.functions.search-ip.o004"
@@ -52757,6 +55109,68 @@ id = "sf.functions.search-ip.o008"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required )"
+
+[[obligation]]
+id = "sf.functions.search-ip.o036"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) in [ { ILIKE '<pattern>' | EXCLUDE { <column_name> | ( <column_name> [ , <column_name> ... ] ) } } ]"
+
+[[obligation]]
+id = "sf.functions.search-ip.o037"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { <column_name> | ( <column_name> [ , <column_name> ... ] ) } in [ { ILIKE '<pattern>' | EXCLUDE { <column_name> | ( <column_name> [ , <column_name> ... ] ) } } ]"
+
+[[obligation]]
+id = "sf.functions.search-ip.o038"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ILIKE"
+
+[[obligation]]
+id = "sf.functions.search-ip.o039"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { <search_data> | ( <search_data> [ , <search_data> ... ] ) | ( [ <table_name> . ] * [ { ILIKE '<pattern>' | EXCLUDE { <column_name> | ( <column_name> [ , <column_name> ... ] ) } } ] ) | * ILIKE '<pattern>' }"
+
+[[obligation]]
+id = "sf.functions.search-ip.o040"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
+
+[[obligation]]
+id = "sf.functions.search-ip.o041"
+kind = "identifier_class"
+required = true
+target = "<table_name>"
+anchor = "doc.identifiers-syntax"
+note = "quoted: a double-quoted identifier with blanks and mixed case"
+
+[[obligation]]
+id = "sf.functions.search-ip.o042"
+kind = "identifier_class"
+required = true
+target = "<table_name>"
+anchor = "doc.identifiers-syntax"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.functions.search-ip.o043"
+kind = "identifier_class"
+required = true
+target = "<column_name>"
+anchor = "doc.identifiers-syntax"
+note = "quoted: a double-quoted identifier with blanks and mixed case"
+
+[[obligation]]
+id = "sf.functions.search-ip.o044"
+kind = "identifier_class"
+required = true
+target = "<column_name>"
+anchor = "doc.identifiers-syntax"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
 id = "sf.functions.search-optimization-history.o001"
@@ -58168,30 +60582,28 @@ target = "<tolerance>"
 note = "a valid operand"
 
 [[obligation]]
-id = "sf.functions.st-simplify.o006"
+id = "sf.functions.st-simplify.o019"
 kind = "option_present"
 required = true
-target = "[ , <preserve_collapsed> ]"
+target = "[ , { TRUE | FALSE } ]"
 
 [[obligation]]
-id = "sf.functions.st-simplify.o007"
+id = "sf.functions.st-simplify.o020"
 kind = "option_absent"
 required = true
-target = "[ , <preserve_collapsed> ]"
+target = "[ , { TRUE | FALSE } ]"
 
 [[obligation]]
-id = "sf.functions.st-simplify.o008"
-kind = "required_operand_missing"
+id = "sf.functions.st-simplify.o021"
+kind = "alternative"
 required = true
-target = "<preserve_collapsed> in [ , <preserve_collapsed> ]"
-note = "omit <preserve_collapsed>"
+target = "{ TRUE | FALSE } → TRUE"
 
 [[obligation]]
-id = "sf.functions.st-simplify.o009"
-kind = "operand_type_class"
+id = "sf.functions.st-simplify.o022"
+kind = "alternative"
 required = true
-target = "<preserve_collapsed> in [ , <preserve_collapsed> ]"
-note = "a valid identifier"
+target = "{ TRUE | FALSE } → FALSE"
 
 [[obligation]]
 id = "sf.functions.st-simplify.o011"
@@ -58228,26 +60640,16 @@ required = true
 note = "the form without its required ("
 
 [[obligation]]
+id = "sf.functions.st-simplify.o023"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { TRUE | FALSE } in [ , { TRUE | FALSE } ]"
+
+[[obligation]]
 id = "sf.functions.st-simplify.o016"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required )"
-
-[[obligation]]
-id = "sf.functions.st-simplify.o017"
-kind = "identifier_class"
-required = true
-target = "<preserve_collapsed>"
-anchor = "doc.identifiers-syntax"
-note = "quoted: a double-quoted identifier with blanks and mixed case"
-
-[[obligation]]
-id = "sf.functions.st-simplify.o018"
-kind = "identifier_class"
-required = true
-target = "<preserve_collapsed>"
-anchor = "doc.identifiers-syntax"
-note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
 id = "sf.functions.st-srid.o001"
@@ -62159,6 +64561,13 @@ target = "'<table_name>'"
 note = "a valid string_literal"
 
 [[obligation]]
+id = "sf.functions.system-clustering-depth.o012"
+kind = "operand_type_class"
+required = true
+target = "'<column_list>'"
+note = "a valid string_literal"
+
+[[obligation]]
 id = "sf.functions.system-clustering-depth.o005"
 kind = "option_present"
 required = true
@@ -62276,6 +64685,13 @@ id = "sf.functions.system-clustering-ratio.o003"
 kind = "operand_type_class"
 required = true
 target = "'<table_name>'"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.functions.system-clustering-ratio.o012"
+kind = "operand_type_class"
+required = true
+target = "'<column_list>'"
 note = "a valid string_literal"
 
 [[obligation]]
@@ -62856,6 +65272,20 @@ id = "sf.functions.system-data-metric-scan.o006"
 kind = "operand_type_class"
 required = true
 target = "'<data_metric_function>'"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.functions.system-data-metric-scan.o032"
+kind = "required_operand_missing"
+required = true
+target = "'<argument_columns>'"
+note = "omit '<argument_columns>'"
+
+[[obligation]]
+id = "sf.functions.system-data-metric-scan.o033"
+kind = "operand_type_class"
+required = true
+target = "'<argument_columns>'"
 note = "a valid string_literal"
 
 [[obligation]]
@@ -64059,16 +66489,30 @@ target = "'<table_name>'"
 note = "a valid string_literal"
 
 [[obligation]]
-id = "sf.functions.system-estimate-automatic-clustering-costs.o005"
+id = "sf.functions.system-estimate-automatic-clustering-costs.o009"
 kind = "option_present"
 required = true
-target = "[ '( <expr1> [ , <expr2> ... ] )' ]"
+target = "[ , '<clustering_key>' ]"
 
 [[obligation]]
-id = "sf.functions.system-estimate-automatic-clustering-costs.o006"
+id = "sf.functions.system-estimate-automatic-clustering-costs.o010"
 kind = "option_absent"
 required = true
-target = "[ '( <expr1> [ , <expr2> ... ] )' ]"
+target = "[ , '<clustering_key>' ]"
+
+[[obligation]]
+id = "sf.functions.system-estimate-automatic-clustering-costs.o011"
+kind = "required_operand_missing"
+required = true
+target = "'<clustering_key>' in [ , '<clustering_key>' ]"
+note = "omit '<clustering_key>'"
+
+[[obligation]]
+id = "sf.functions.system-estimate-automatic-clustering-costs.o012"
+kind = "operand_type_class"
+required = true
+target = "'<clustering_key>' in [ , '<clustering_key>' ]"
+note = "a valid string_literal"
 
 [[obligation]]
 id = "sf.functions.system-estimate-automatic-clustering-costs.o007"
@@ -67819,6 +70263,13 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
+id = "sf.functions.system-opt-out-malicious-ip-protection-by-category.o009"
+kind = "operand_type_class"
+required = true
+target = "'<categories>'"
+note = "a valid string_literal"
+
+[[obligation]]
 id = "sf.functions.system-opt-out-malicious-ip-protection-by-category.o002"
 kind = "option_present"
 required = true
@@ -67888,17 +70339,36 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "sf.functions.system-pipe-force-resume.o002"
-kind = "required_operand_missing"
-required = true
-target = "'<pipe_name>'"
-note = "omit '<pipe_name>'"
-
-[[obligation]]
 id = "sf.functions.system-pipe-force-resume.o003"
 kind = "operand_type_class"
 required = true
 target = "'<pipe_name>'"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.functions.system-pipe-force-resume.o007"
+kind = "option_present"
+required = true
+target = "[ , '<override_options>' ]"
+
+[[obligation]]
+id = "sf.functions.system-pipe-force-resume.o008"
+kind = "option_absent"
+required = true
+target = "[ , '<override_options>' ]"
+
+[[obligation]]
+id = "sf.functions.system-pipe-force-resume.o009"
+kind = "required_operand_missing"
+required = true
+target = "'<override_options>' in [ , '<override_options>' ]"
+note = "omit '<override_options>'"
+
+[[obligation]]
+id = "sf.functions.system-pipe-force-resume.o010"
+kind = "operand_type_class"
+required = true
+target = "'<override_options>' in [ , '<override_options>' ]"
 note = "a valid string_literal"
 
 [[obligation]]
@@ -72010,37 +74480,37 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "sf.functions.system-wait.o003"
+id = "sf.functions.system-wait.o010"
 kind = "operand_type_class"
 required = true
-target = "amount"
+target = "<amount>"
 note = "a valid operand"
 
 [[obligation]]
-id = "sf.functions.system-wait.o004"
+id = "sf.functions.system-wait.o011"
 kind = "option_present"
 required = true
-target = "[ , time_unit ]"
+target = "[ , '<time_unit>' ]"
 
 [[obligation]]
-id = "sf.functions.system-wait.o005"
+id = "sf.functions.system-wait.o012"
 kind = "option_absent"
 required = true
-target = "[ , time_unit ]"
+target = "[ , '<time_unit>' ]"
 
 [[obligation]]
-id = "sf.functions.system-wait.o006"
+id = "sf.functions.system-wait.o013"
 kind = "required_operand_missing"
 required = true
-target = "time_unit in [ , time_unit ]"
-note = "omit time_unit"
+target = "'<time_unit>' in [ , '<time_unit>' ]"
+note = "omit '<time_unit>'"
 
 [[obligation]]
-id = "sf.functions.system-wait.o007"
+id = "sf.functions.system-wait.o014"
 kind = "operand_type_class"
 required = true
-target = "time_unit in [ , time_unit ]"
-note = "a valid operand"
+target = "'<time_unit>' in [ , '<time_unit>' ]"
+note = "a valid string_literal"
 
 [[obligation]]
 id = "sf.functions.system-wait.o008"
@@ -73409,37 +75879,37 @@ target = "<slice_length>"
 note = "a valid operand"
 
 [[obligation]]
-id = "sf.functions.time-slice.o007"
+id = "sf.functions.time-slice.o014"
 kind = "operand_type_class"
 required = true
-target = "<date_or_time_part>"
-note = "a valid operand"
+target = "'<date_or_time_part>'"
+note = "a valid string_literal"
 
 [[obligation]]
-id = "sf.functions.time-slice.o008"
+id = "sf.functions.time-slice.o015"
 kind = "option_present"
 required = true
-target = "[ , <start_or_end> ]"
+target = "[ , '<start_or_end>' ]"
 
 [[obligation]]
-id = "sf.functions.time-slice.o009"
+id = "sf.functions.time-slice.o016"
 kind = "option_absent"
 required = true
-target = "[ , <start_or_end> ]"
+target = "[ , '<start_or_end>' ]"
 
 [[obligation]]
-id = "sf.functions.time-slice.o010"
+id = "sf.functions.time-slice.o017"
 kind = "required_operand_missing"
 required = true
-target = "<start_or_end> in [ , <start_or_end> ]"
-note = "omit <start_or_end>"
+target = "'<start_or_end>' in [ , '<start_or_end>' ]"
+note = "omit '<start_or_end>'"
 
 [[obligation]]
-id = "sf.functions.time-slice.o011"
+id = "sf.functions.time-slice.o018"
 kind = "operand_type_class"
 required = true
-target = "<start_or_end> in [ , <start_or_end> ]"
-note = "a valid expression"
+target = "'<start_or_end>' in [ , '<start_or_end>' ]"
+note = "a valid string_literal"
 
 [[obligation]]
 id = "sf.functions.time-slice.o012"
@@ -78991,6 +81461,18 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
+id = "sf.functions.var-samp.var-samp-over.o030"
+kind = "option_present"
+required = true
+target = "[ DISTINCT ]"
+
+[[obligation]]
+id = "sf.functions.var-samp.var-samp-over.o031"
+kind = "option_absent"
+required = true
+target = "[ DISTINCT ]"
+
+[[obligation]]
 id = "sf.functions.var-samp.var-samp-over.o003"
 kind = "operand_type_class"
 required = true
@@ -80210,6 +82692,65 @@ target = "'<string>' in [ , WAREHOUSE_NAME => '<string>' ]"
 note = "a valid string_literal"
 
 [[obligation]]
+id = "sf.functions.warehouse-metering-history.o019"
+kind = "operand_type_class"
+required = true
+target = "<constant_expr> #2"
+note = "a valid expression"
+
+[[obligation]]
+id = "sf.functions.warehouse-metering-history.o020"
+kind = "option_present"
+required = true
+target = "[ , <constant_expr> [ , '<string>' ] ]"
+
+[[obligation]]
+id = "sf.functions.warehouse-metering-history.o021"
+kind = "option_absent"
+required = true
+target = "[ , <constant_expr> [ , '<string>' ] ]"
+
+[[obligation]]
+id = "sf.functions.warehouse-metering-history.o022"
+kind = "required_operand_missing"
+required = true
+target = "<constant_expr> in [ , <constant_expr> [ , '<string>' ] ]"
+note = "omit <constant_expr>"
+
+[[obligation]]
+id = "sf.functions.warehouse-metering-history.o023"
+kind = "operand_type_class"
+required = true
+target = "<constant_expr> in [ , <constant_expr> [ , '<string>' ] ]"
+note = "a valid expression"
+
+[[obligation]]
+id = "sf.functions.warehouse-metering-history.o024"
+kind = "option_present"
+required = true
+target = "[ , '<string>' ]"
+
+[[obligation]]
+id = "sf.functions.warehouse-metering-history.o025"
+kind = "option_absent"
+required = true
+target = "[ , '<string>' ]"
+
+[[obligation]]
+id = "sf.functions.warehouse-metering-history.o026"
+kind = "required_operand_missing"
+required = true
+target = "'<string>' in [ , '<string>' ]"
+note = "omit '<string>'"
+
+[[obligation]]
+id = "sf.functions.warehouse-metering-history.o027"
+kind = "operand_type_class"
+required = true
+target = "'<string>' in [ , '<string>' ]"
+note = "a valid string_literal"
+
+[[obligation]]
 id = "sf.functions.warehouse-metering-history.o013"
 kind = "negative_neighbour"
 required = true
@@ -80340,11 +82881,11 @@ target = "<expression>"
 note = "a valid expression"
 
 [[obligation]]
-id = "sf.functions.xmlget.o005"
+id = "sf.functions.xmlget.o016"
 kind = "operand_type_class"
 required = true
-target = "<tag_name>"
-note = "a valid identifier"
+target = "'<tag_name>'"
+note = "a valid string_literal"
 
 [[obligation]]
 id = "sf.functions.xmlget.o007"
@@ -80383,22 +82924,6 @@ id = "sf.functions.xmlget.o013"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required )"
-
-[[obligation]]
-id = "sf.functions.xmlget.o014"
-kind = "identifier_class"
-required = true
-target = "<tag_name>"
-anchor = "doc.identifiers-syntax"
-note = "quoted: a double-quoted identifier with blanks and mixed case"
-
-[[obligation]]
-id = "sf.functions.xmlget.o015"
-kind = "identifier_class"
-required = true
-target = "<tag_name>"
-anchor = "doc.identifiers-syntax"
-note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
 id = "sf.functions.year.day.o001"

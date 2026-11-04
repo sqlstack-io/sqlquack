@@ -24285,6 +24285,12 @@ required = true
 note = "the form without its required { { ADD ROW ACCESS POLICY <policy_name> ON ( <col_name> [ , ... ] ) | DROP ROW ACCESS POLICY <policy_name> | DROP ROW ACCESS POLICY <policy_name> , ADD ROW ACCESS POLICY <policy_name> ON ( <col_name> [ , ... ] ) | DROP ALL ROW ACCESS POLICIES } | { SET AGGREGATION POLICY <policy_name> [ ENTITY KEY ( <col_name> [ , ... ] ) ] [ FORCE ] | UNSET AGGREGATION POLICY } | { { ALTER | MODIFY } [ COLUMN ] <col1_name> SET MASKING POLICY <policy_name> [ USING ( <col1_name> , <cond_col_1> , ... ) ] [ FORCE ] | UNSET MASKING POLICY } | { ALTER | MODIFY } [ COLUMN ] <col1_name> SET TAG <tag_name> = '<tag_value>' [ , <tag_name> = '<tag_value>' ... ] [ , [ COLUMN ] <col2_name> SET TAG <tag_name> = '<tag_value>' [ , <tag_name> = '<tag_value>' ... ] ] | { { ALTER | MODIFY } [ COLUMN ] <col1_name> SET PROJECTION POLICY <policy_name> [ FORCE ] | UNSET PROJECTION POLICY } | { ALTER | MODIFY } [ COLUMN ] <col1_name> UNSET TAG <tag_name> [ , <tag_name> ... ] [ , [ COLUMN ] <col2_name> UNSET TAG <tag_name> [ , <tag_name> ... ] ] | { { SET TAG <tag_name> = '<tag_value>' [ , <tag_name> = '<tag_value>' ... ] } | UNSET TAG <tag_name> [ , <tag_name> ... ] } }"
 
 [[obligation]]
+id = "sf.ddl.alter-dynamic-table.datagovnpolicytagaction.o273"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
+
+[[obligation]]
 id = "sf.ddl.alter-dynamic-table.datagovnpolicytagaction.o011"
 kind = "identifier_class"
 required = true
@@ -26705,6 +26711,12 @@ id = "sf.ddl.alter-dynamic-table.tablecolumncommentaction.o045"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required { { ALTER | MODIFY } [ COLUMN ] <col1_name> { COMMENT '<string>' | UNSET COMMENT } [ , [ COLUMN ] <col2_name> { COMMENT '<string>' | UNSET COMMENT } ] }"
+
+[[obligation]]
+id = "sf.ddl.alter-dynamic-table.tablecolumncommentaction.o050"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
 
 [[obligation]]
 id = "sf.ddl.alter-dynamic-table.tablecolumncommentaction.o014"
@@ -31078,6 +31090,12 @@ required = true
 note = "the form without its required )"
 
 [[obligation]]
+id = "sf.ddl.alter-external-volume.add-storage-location-name-cloudproviderparams.o087"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
+
+[[obligation]]
 id = "sf.ddl.alter-external-volume.add-storage-location-name-cloudproviderparams.o020"
 kind = "identifier_class"
 required = true
@@ -33053,6 +33071,12 @@ id = "sf.ddl.alter-file-format.set.o224"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required { [ [ COMPRESSION = { AUTO | GZIP | BZ2 | BROTLI | ZSTD | DEFLATE | RAW_DEFLATE | NONE } ] [ RECORD_DELIMITER = { '<string>' | NONE } ] [ FIELD_DELIMITER = { '<string>' | NONE } ] [ MULTI_LINE = { TRUE | FALSE } ] [ FILE_EXTENSION = '<string>' ] [ PARSE_HEADER = { TRUE | FALSE } ] [ SKIP_HEADER = <integer> ] [ SKIP_BLANK_LINES = { TRUE | FALSE } ] [ DATE_FORMAT = { '<string>' | AUTO } ] [ TIME_FORMAT = { '<string>' | AUTO } ] [ TIMESTAMP_FORMAT = { '<string>' | AUTO } ] [ BINARY_FORMAT = { HEX | BASE64 | UTF8 } ] [ ESCAPE = { '<character>' | NONE } ] [ ESCAPE_UNENCLOSED_FIELD = { '<character>' | NONE } ] [ TRIM_SPACE = { TRUE | FALSE } ] [ FIELD_OPTIONALLY_ENCLOSED_BY = { '<character>' | NONE } ] [ NULL_IF = ( '<string>' [ , '<string>' ... ] ) ] [ ERROR_ON_COLUMN_COUNT_MISMATCH = { TRUE | FALSE } ] [ REPLACE_INVALID_CHARACTERS = { TRUE | FALSE } ] [ EMPTY_FIELD_AS_NULL = { TRUE | FALSE } ] [ SKIP_BYTE_ORDER_MARK = { TRUE | FALSE } ] [ ENCODING = { '<string>' | UTF8 } ] [ ENABLE_OCTAL = { TRUE | FALSE } ] [ ALLOW_DUPLICATE = { TRUE | FALSE } ] [ STRIP_OUTER_ARRAY = { TRUE | FALSE } ] [ STRIP_NULL_VALUES = { TRUE | FALSE } ] [ IGNORE_UTF8_ERRORS = { TRUE | FALSE } ] [ SNAPPY_COMPRESSION = { TRUE | FALSE } ] [ BINARY_AS_TEXT = { TRUE | FALSE } ] [ USE_LOGICAL_TYPE = { TRUE | FALSE } ] [ USE_VECTORIZED_SCANNER = { TRUE | FALSE } ] [ PRESERVE_SPACE = { TRUE | FALSE } ] [ STRIP_OUTER_ELEMENT = { TRUE | FALSE } ] [ DISABLE_AUTO_CONVERT = { TRUE | FALSE } ] ] [ COMMENT = '<string_literal>' ] }"
+
+[[obligation]]
+id = "sf.ddl.alter-file-format.set.o231"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
 
 [[obligation]]
 id = "sf.ddl.alter-file-format.set.o020"
@@ -42958,6 +42982,12 @@ required = true
 note = "the form without its required { { { SET TAG <tag_name> = '<tag_value>' [ , <tag_name> = '<tag_value>' ... ] } | UNSET TAG <tag_name> [ , <tag_name> ... ] } | { ADD ROW ACCESS POLICY <policy_name> ON ( <col_name> [ , ... ] ) | DROP ROW ACCESS POLICY <policy_name> | DROP ROW ACCESS POLICY <policy_name> , ADD ROW ACCESS POLICY <policy_name> ON ( <col_name> [ , ... ] ) | DROP ALL ROW ACCESS POLICIES } | { SET AGGREGATION POLICY <policy_name> [ ENTITY KEY ( <col_name> [ , ... ] ) ] [ FORCE ] | UNSET AGGREGATION POLICY } | { SET JOIN POLICY <policy_name> [ FORCE ] | UNSET JOIN POLICY } | ADD [ COLUMN ] [ IF NOT EXISTS ] <col_name> <col_type> [ [ WITH ] MASKING POLICY <policy_name> [ USING ( <col1_name> , <cond_col_1> , ... ) ] ] [ [ WITH ] PROJECTION POLICY <policy_name> ] [ [ WITH ] TAG ( <tag_name> = '<tag_value>' [ , <tag_name> = '<tag_value>' , ... ] ) ] | { { ALTER | MODIFY } [ COLUMN ] <col1_name> SET MASKING POLICY <policy_name> [ USING ( <col1_name> , <cond_col_1> , ... ) ] [ FORCE ] | UNSET MASKING POLICY } | { { ALTER | MODIFY } [ COLUMN ] <col1_name> SET PROJECTION POLICY <policy_name> [ FORCE ] | UNSET PROJECTION POLICY } | { ALTER | MODIFY } [ COLUMN ] <col1_name> SET TAG <tag_name> = '<tag_value>' [ , <tag_name> = '<tag_value>' ... ] [ , [ COLUMN ] <col2_name> SET TAG <tag_name> = '<tag_value>' [ , <tag_name> = '<tag_value>' ... ] ] | { ALTER | MODIFY } [ COLUMN ] <col1_name> UNSET TAG <tag_name> [ , <tag_name> ... ] [ , [ COLUMN ] <col2_name> UNSET TAG <tag_name> [ , <tag_name> ... ] ] }"
 
 [[obligation]]
+id = "sf.ddl.alter-iceberg-table.datagovnpolicytagaction.o329"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
+
+[[obligation]]
 id = "sf.ddl.alter-iceberg-table.datagovnpolicytagaction.o300"
 kind = "identifier_class"
 required = true
@@ -45218,6 +45248,12 @@ required = true
 note = "the form without its required { ADD [ COLUMN ] [ IF NOT EXISTS ] <col_name> <col_type> [ DEFAULT <col_default> ] [ [ NOT NULL ] [ CONSTRAINT <constraint_name> ] { UNIQUE | PRIMARY KEY | [ FOREIGN KEY ] REFERENCES <ref_table_name> [ ( <ref_col_name> ) ] | CHECK ( <expr> ) } [ <constraint_properties> ] ] [ COLLATE '<collation_specification>' ] | RENAME COLUMN <col_name> TO <new_col_name> | { ALTER | MODIFY } [ COLUMN ] <col1_name> { { [ SET ] NOT NULL | DROP NOT NULL } | [ [ SET DATA ] TYPE ] <type> | COMMENT '<string>' | UNSET COMMENT | SET WRITE DEFAULT <col_write_default> | DROP WRITE DEFAULT } [ , [ COLUMN ] <col2_name> { { [ SET ] NOT NULL | DROP NOT NULL } | [ [ SET DATA ] TYPE ] <type> | COMMENT '<string>' | UNSET COMMENT | SET WRITE DEFAULT <col_write_default> | DROP WRITE DEFAULT } ] | DROP [ COLUMN ] [ IF EXISTS ] <col1_name> [ , <col2_name> ... ] }"
 
 [[obligation]]
+id = "sf.ddl.alter-iceberg-table.tablecolumnaction.o195"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
+
+[[obligation]]
 id = "sf.ddl.alter-iceberg-table.tablecolumnaction.o010"
 kind = "identifier_class"
 required = true
@@ -46736,6 +46772,12 @@ required = true
 note = "the form without its required { RENAME TO <new_name> | CLUSTER BY ( <expr1> [ , <expr2> ... ] ) | DROP CLUSTERING KEY | SUSPEND RECLUSTER | RESUME RECLUSTER | SUSPEND | RESUME | SET { [ SECURE ] [ CONTACT <purpose> = <contact_name> [ , <purpose> = <contact_name> ... ] ] [ COMMENT = '<comment>' ] } | UNSET { SECURE CONTACT <purpose> | COMMENT } }"
 
 [[obligation]]
+id = "sf.ddl.alter-materialized-view.rename-to-cluster-by.o096"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
+
+[[obligation]]
 id = "sf.ddl.alter-materialized-view.rename-to-cluster-by.o052"
 kind = "identifier_class"
 required = true
@@ -47268,6 +47310,12 @@ id = "sf.ddl.alter-model-add-version.internalstage.o052"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required { @ [ <namespace> . ] <int_stage_name> [ / <path> ] | @ [ <namespace> . ] % <table_name> [ / <path> ] | @ ~ [ / <path> ] }"
+
+[[obligation]]
+id = "sf.ddl.alter-model-add-version.internalstage.o075"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
 
 [[obligation]]
 id = "sf.ddl.alter-model-add-version.internalstage.o017"
@@ -54193,6 +54241,12 @@ required = true
 note = "the form without its required REFRESH"
 
 [[obligation]]
+id = "sf.ddl.alter-pipe.refresh.o022"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
+
+[[obligation]]
 id = "sf.ddl.alter-pipe.refresh.o020"
 kind = "identifier_class"
 required = true
@@ -54410,6 +54464,12 @@ id = "sf.ddl.alter-pipe.set.o039"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required { [ [ ERROR_INTEGRATION = <integration_name> ] [ PIPE_EXECUTION_PAUSED = { TRUE | FALSE } ] [ LOG_EVENT_LEVEL = <log_event_level> ] ] [ COMMENT = '<string_literal>' ] }"
+
+[[obligation]]
+id = "sf.ddl.alter-pipe.set.o042"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
 
 [[obligation]]
 id = "sf.ddl.alter-pipe.set.o019"
@@ -59490,6 +59550,13 @@ required = true
 target = "<purpose> in [ CONTACT <purpose> = <contact_name> [ , <purpose> = <contact_name> ... ] ]"
 anchor = "doc.sql.alter-schema / Syntax"
 note = "omit <purpose>, observed"
+
+[[obligation]]
+id = "sf.ddl.alter-schema.set.o262"
+kind = "interaction_all_options"
+required = true
+anchor = "doc.sql.alter-schema / Syntax"
+note = "every independent option of one production together, observed"
 
 [[obligation]]
 id = "sf.ddl.alter-schema.set-tag.o001"
@@ -71287,6 +71354,12 @@ required = true
 note = "the form without its required { [ { { URL = '<protocol>://<bucket>[/<path>/]' [ AWS_ACCESS_POINT_ARN = '<string>' ] [ { STORAGE_INTEGRATION = <integration_name> } | { CREDENTIALS = ( { { AWS_KEY_ID = '<string>' AWS_SECRET_KEY = '<string>' [ AWS_TOKEN = '<string>' ] } | { AWS_ROLE = '<string>' } } ) } ] [ ENCRYPTION = ( { [ TYPE = 'AWS_CSE' ] MASTER_KEY = '<string>' | TYPE = 'AWS_SSE_S3' | TYPE = 'AWS_SSE_KMS' [ KMS_KEY_ID = '<string>' ] | TYPE = 'NONE' } ) ] [ USE_PRIVATELINK_ENDPOINT = { TRUE | FALSE } ] } | { [ URL = 'gcs://<bucket>[/<path>/]' ] [ STORAGE_INTEGRATION = <integration_name> ] [ ENCRYPTION = ( { TYPE = 'GCS_SSE_KMS' [ KMS_KEY_ID = '<string>' ] | TYPE = 'NONE' } ) ] } | { [ URL = 'azure://<account>.blob.core.windows.net/<container>[/<path>/]' ] [ { STORAGE_INTEGRATION = <integration_name> } | { CREDENTIALS = ( [ AZURE_SAS_TOKEN = '<string>' ] ) } ] [ ENCRYPTION = ( { TYPE = 'AZURE_CSE' [ MASTER_KEY = '<string>' ] | TYPE = 'NONE' } ) ] [ USE_PRIVATELINK_ENDPOINT = { TRUE | FALSE } ] } } ] [ FILE_FORMAT = ( { FORMAT_NAME = '<file_format_name>' | { TYPE = CSV [ COMPRESSION = { AUTO | GZIP | BZ2 | BROTLI | ZSTD | DEFLATE | RAW_DEFLATE | NONE } ] [ RECORD_DELIMITER = { '<string>' | NONE } ] [ FIELD_DELIMITER = { '<string>' | NONE } ] [ MULTI_LINE = { TRUE | FALSE } ] [ FILE_EXTENSION = '<string>' ] [ PARSE_HEADER = { TRUE | FALSE } ] [ SKIP_HEADER = <integer> ] [ SKIP_BLANK_LINES = { TRUE | FALSE } ] [ DATE_FORMAT = { '<string>' | AUTO } ] [ TIME_FORMAT = { '<string>' | AUTO } ] [ TIMESTAMP_FORMAT = { '<string>' | AUTO } ] [ BINARY_FORMAT = { HEX | BASE64 | UTF8 } ] [ ESCAPE = { '<character>' | NONE } ] [ ESCAPE_UNENCLOSED_FIELD = { '<character>' | NONE } ] [ TRIM_SPACE = { TRUE | FALSE } ] [ FIELD_OPTIONALLY_ENCLOSED_BY = { '<character>' | NONE } ] [ NULL_IF = ( '<string>' [ , '<string>' ... ] ) ] [ ERROR_ON_COLUMN_COUNT_MISMATCH = { TRUE | FALSE } ] [ REPLACE_INVALID_CHARACTERS = { TRUE | FALSE } ] [ EMPTY_FIELD_AS_NULL = { TRUE | FALSE } ] [ SKIP_BYTE_ORDER_MARK = { TRUE | FALSE } ] [ ENCODING = { '<string>' | UTF8 } ] | TYPE = JSON [ COMPRESSION = { AUTO | GZIP | BZ2 | BROTLI | ZSTD | DEFLATE | RAW_DEFLATE | NONE } ] [ DATE_FORMAT = { '<string>' | AUTO } ] [ TIME_FORMAT = { '<string>' | AUTO } ] [ TIMESTAMP_FORMAT = { '<string>' | AUTO } ] [ BINARY_FORMAT = { HEX | BASE64 | UTF8 } ] [ TRIM_SPACE = { TRUE | FALSE } ] [ MULTI_LINE = { TRUE | FALSE } ] [ NULL_IF = ( '<string>' [ , '<string>' ... ] ) ] [ FILE_EXTENSION = '<string>' ] [ ENABLE_OCTAL = { TRUE | FALSE } ] [ ALLOW_DUPLICATE = { TRUE | FALSE } ] [ STRIP_OUTER_ARRAY = { TRUE | FALSE } ] [ STRIP_NULL_VALUES = { TRUE | FALSE } ] [ REPLACE_INVALID_CHARACTERS = { TRUE | FALSE } ] [ IGNORE_UTF8_ERRORS = { TRUE | FALSE } ] [ SKIP_BYTE_ORDER_MARK = { TRUE | FALSE } ] | TYPE = AVRO [ COMPRESSION = { AUTO | GZIP | BROTLI | ZSTD | DEFLATE | RAW_DEFLATE | NONE } ] [ TRIM_SPACE = { TRUE | FALSE } ] [ REPLACE_INVALID_CHARACTERS = { TRUE | FALSE } ] [ NULL_IF = ( '<string>' [ , '<string>' ... ] ) ] | TYPE = ORC [ TRIM_SPACE = { TRUE | FALSE } ] [ REPLACE_INVALID_CHARACTERS = { TRUE | FALSE } ] [ NULL_IF = ( '<string>' [ , '<string>' ... ] ) ] | TYPE = PARQUET [ COMPRESSION = { AUTO | LZO | SNAPPY | NONE } ] [ SNAPPY_COMPRESSION = { TRUE | FALSE } ] [ BINARY_AS_TEXT = { TRUE | FALSE } ] [ USE_LOGICAL_TYPE = { TRUE | FALSE } ] [ TRIM_SPACE = { TRUE | FALSE } ] [ USE_VECTORIZED_SCANNER = { TRUE | FALSE } ] [ REPLACE_INVALID_CHARACTERS = { TRUE | FALSE } ] [ NULL_IF = ( '<string>' [ , '<string>' ... ] ) ] | TYPE = XML [ COMPRESSION = { AUTO | GZIP | BZ2 | BROTLI | ZSTD | DEFLATE | RAW_DEFLATE | NONE } ] [ IGNORE_UTF8_ERRORS = { TRUE | FALSE } ] [ PRESERVE_SPACE = { TRUE | FALSE } ] [ STRIP_OUTER_ELEMENT = { TRUE | FALSE } ] [ DISABLE_AUTO_CONVERT = { TRUE | FALSE } ] [ REPLACE_INVALID_CHARACTERS = { TRUE | FALSE } ] [ SKIP_BYTE_ORDER_MARK = { TRUE | FALSE } ] | TYPE = CUSTOM } } ) ] [ COMMENT = '<string_literal>' ] }"
 
 [[obligation]]
+id = "sf.ddl.alter-stage.set.syntax.o588"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
+
+[[obligation]]
 id = "sf.ddl.alter-stage.set.syntax.o040"
 kind = "identifier_class"
 required = true
@@ -74198,6 +74271,12 @@ required = true
 note = "the form without its required { SET MASKING POLICY <policy_name> [ USING ( <col1_name> , <cond_col_1> , ... ) ] [ FORCE ] | UNSET MASKING POLICY | SET PROJECTION POLICY <policy_name> [ FORCE ] | UNSET PROJECTION POLICY | SET TAG <tag_name> = '<tag_value>' [ , <tag_name> = '<tag_value>' ... ] [ , [ COLUMN ] <col2_name> SET TAG <tag_name> = '<tag_value>' [ , <tag_name> = '<tag_value>' ... ] ] | UNSET TAG <tag_name> [ , <tag_name> ... ] [ , [ COLUMN ] <col2_name> UNSET TAG <tag_name> [ , <tag_name> ... ] ] }"
 
 [[obligation]]
+id = "sf.ddl.alter-table-column.datagovnpolicytagaction.o133"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
+
+[[obligation]]
 id = "sf.ddl.alter-table-column.datagovnpolicytagaction.o012"
 kind = "identifier_class"
 required = true
@@ -76162,6 +76241,12 @@ required = true
 note = "the form without its required { CLUSTER BY ( <expr> [ , <expr> , ... ] ) | RECLUSTER [ MAX_SIZE = <budget_in_bytes> ] [ WHERE <condition> ] | { SUSPEND | RESUME } RECLUSTER | DROP CLUSTERING KEY }"
 
 [[obligation]]
+id = "sf.ddl.alter-table.clusteringaction.o040"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
+
+[[obligation]]
 id = "sf.ddl.alter-table.clusteringaction.o011"
 kind = "identifier_class"
 required = true
@@ -76635,6 +76720,12 @@ id = "sf.ddl.alter-table.constraintaction.o125"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required { ADD [ CONSTRAINT <constraint_name> ] { UNIQUE [ ( <col_name> [ , <col_name> , ... ] ) ] | PRIMARY KEY [ ( <col_name> [ , <col_name> , ... ] ) ] | [ FOREIGN KEY ] [ ( <col_name> [ , <col_name> , ... ] ) ] REFERENCES <ref_table_name> [ ( <ref_col_name> [ , <ref_col_name> , ... ] ) ] | CHECK ( <expr> ) } [ <constraint_properties> ] | RENAME CONSTRAINT <constraint_name> TO <new_constraint_name> | { ALTER | MODIFY } { CONSTRAINT <constraint_name> | PRIMARY KEY | UNIQUE | FOREIGN KEY } ( <col_name> [ , ... ] ) [ [ NOT ] ENFORCED ] [ { VALIDATE | NOVALIDATE } ] [ { RELY | NORELY } ] | DROP { CONSTRAINT <constraint_name> | PRIMARY KEY | UNIQUE | FOREIGN KEY } ( <col_name> [ , ... ] ) [ { CASCADE | RESTRICT } ] }"
+
+[[obligation]]
+id = "sf.ddl.alter-table.constraintaction.o290"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
 
 [[obligation]]
 id = "sf.ddl.alter-table.constraintaction.o128"
@@ -78633,6 +78724,12 @@ id = "sf.ddl.alter-table.datagovnpolicytagaction.o296"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required { { { SET TAG <tag_name> = '<tag_value>' [ , <tag_name> = '<tag_value>' ... ] } | UNSET TAG <tag_name> [ , <tag_name> ... ] } | { ADD ROW ACCESS POLICY <policy_name> ON ( <col_name> [ , ... ] ) | DROP ROW ACCESS POLICY <policy_name> | DROP ROW ACCESS POLICY <policy_name> , ADD ROW ACCESS POLICY <policy_name> ON ( <col_name> [ , ... ] ) | DROP ALL ROW ACCESS POLICIES } | { SET AGGREGATION POLICY <policy_name> [ ENTITY KEY ( <col_name> [ , ... ] ) ] [ FORCE ] | UNSET AGGREGATION POLICY } | { SET JOIN POLICY <policy_name> [ FORCE ] | UNSET JOIN POLICY } | ADD [ COLUMN ] [ IF NOT EXISTS ] <col_name> <col_type> [ [ WITH ] MASKING POLICY <policy_name> [ USING ( <col1_name> , <cond_col_1> , ... ) ] ] [ [ WITH ] PROJECTION POLICY <policy_name> ] [ [ WITH ] TAG ( <tag_name> = '<tag_value>' [ , <tag_name> = '<tag_value>' , ... ] ) ] | { { ALTER | MODIFY } [ COLUMN ] <col1_name> SET MASKING POLICY <policy_name> [ USING ( <col1_name> , <cond_col_1> , ... ) ] [ FORCE ] | UNSET MASKING POLICY } | { { ALTER | MODIFY } [ COLUMN ] <col1_name> SET PROJECTION POLICY <policy_name> [ FORCE ] | UNSET PROJECTION POLICY } | { ALTER | MODIFY } [ COLUMN ] <col1_name> SET TAG <tag_name> = '<tag_value>' [ , <tag_name> = '<tag_value>' ... ] [ , [ COLUMN ] <col2_name> SET TAG <tag_name> = '<tag_value>' [ , <tag_name> = '<tag_value>' ... ] ] | { ALTER | MODIFY } [ COLUMN ] <col1_name> UNSET TAG <tag_name> [ , <tag_name> ... ] [ , [ COLUMN ] <col2_name> UNSET TAG <tag_name> [ , <tag_name> ... ] ] }"
+
+[[obligation]]
+id = "sf.ddl.alter-table.datagovnpolicytagaction.o380"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
 
 [[obligation]]
 id = "sf.ddl.alter-table.datagovnpolicytagaction.o011"
@@ -81321,6 +81418,12 @@ required = true
 note = "the form without its required { SET DATA_METRIC_SCHEDULE = { '<num> MINUTE' | 'USING CRON <expr> <time_zone>' | 'TRIGGER_ON_CHANGES' } | UNSET DATA_METRIC_SCHEDULE | ADD DATA METRIC FUNCTION <metric_name> ON ( <col_name> [ , ... ] [ , TABLE <table_name> ( <col_name> [ , ... ] ) ] ) [ WITHIN GROUP ( <group_col1> [ , <group_col2> ... ] ) [ GROUP LIMIT <integer> ] ] [ FILTER ( <predicate> ) ] [ EXPECTATION <expectation_name> ( <expression> ) [ , <expectation_name> ( <expression> ) [ , ... ] ] ] [ EXECUTE AS ROLE <role_name> ] [ ANOMALY_DETECTION = { TRUE | FALSE } ] [ SENSITIVITY = { 'LOW' | 'MEDIUM' | 'HIGH' } ] [ , <metric_name_2> ON ( <col_name> [ , ... ] [ , TABLE <table_name> ( <col_name> [ , ... ] ) ] ) ] [ WITHIN GROUP ( <group_col1> [ , <group_col2> ... ] ) [ GROUP LIMIT <integer> ] ] [ FILTER ( <predicate> ) ] [ EXPECTATION <expectation_name> ( <expression> ) [ , <expectation_name> ( <expression> ) [ , ... ] ] ] [ EXECUTE AS ROLE <role_name> ] [ ANOMALY_DETECTION = { TRUE | FALSE } ] [ SENSITIVITY = { 'LOW' | 'MEDIUM' | 'HIGH' } ] | DROP DATA METRIC FUNCTION <metric_name> ON ( <col_name> [ , ... ] [ , TABLE <table_name> ( <col_name> [ , ... ] ) ] ) [ , <metric_name_2> ON ( <col_name> [ , ... ] [ , TABLE <table_name> ( <col_name> [ , ... ] ) ] ) ] | MODIFY DATA METRIC FUNCTION <metric_name> ON ( <col_name> [ , ... ] [ , TABLE <table_name> ( <col_name> [ , ... ] ) ] ) { SUSPEND | RESUME } [ , <metric_name_2> ON ( <col_name> [ , ... ] [ , TABLE <table_name> ( <col_name> [ , ... ] ) ] ) { SUSPEND | RESUME } ] | MODIFY DATA METRIC FUNCTION <metric_name> ON ( <col_name> [ , ... ] [ , TABLE <table_name> ( <col_name> [ , ... ] ) ] ) { ADD | MODIFY } EXPECTATION <expectation_name> ( <expression> ) [ , <expectation_name> ( <expression> ) [ , ... ] ] | MODIFY DATA METRIC FUNCTION <metric_name> ON ( <col_name> [ , ... ] [ , TABLE <table_name> ( <col_name> [ , ... ] ) ] ) DROP EXPECTATION <expectation_name> [ , <expectation_name> [ , ... ] ] | MODIFY DATA METRIC FUNCTION <metric_name> ON ( <col_name> [ , ... ] [ , TABLE <table_name> ( <col_name> [ , ... ] ) ] ) FILTER ( [ <predicate> ] ) [ , <metric_name_2> ON ( <col_name> [ , ... ] [ , TABLE <table_name> ( <col_name> [ , ... ] ) ] ) FILTER ( [ <predicate> ] ) ] | MODIFY DATA METRIC FUNCTION <metric_name> SET <list_of_properties> }"
 
 [[obligation]]
+id = "sf.ddl.alter-table.datametricfunctionaction.o760"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
+
+[[obligation]]
 id = "sf.ddl.alter-table.datametricfunctionaction.o011"
 kind = "identifier_class"
 required = true
@@ -82345,6 +82448,12 @@ id = "sf.ddl.alter-table.exttablecolumnaction.o054"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required { ADD [ COLUMN ] [ IF NOT EXISTS ] <col_name> <col_type> AS ( <expr> ) | RENAME COLUMN <col_name> TO <new_col_name> | DROP [ COLUMN ] [ IF EXISTS ] <col1_name> [ , <col2_name> ... ] }"
+
+[[obligation]]
+id = "sf.ddl.alter-table.exttablecolumnaction.o061"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
 
 [[obligation]]
 id = "sf.ddl.alter-table.exttablecolumnaction.o012"
@@ -84553,6 +84662,12 @@ id = "sf.ddl.alter-table.tablecolumnaction.o202"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required { ADD [ COLUMN ] [ IF NOT EXISTS ] <col_name> <col_type> [ [ GENERATED ALWAYS ] AS ( <expr> ) [ VIRTUAL ] ] [ { DEFAULT <default_value> | { AUTOINCREMENT | IDENTITY } [ { ( <start_num> , <step_num> ) | START <num> INCREMENT <num> } ] [ { ORDER | NOORDER } ] } ] [ [ NOT NULL ] [ CONSTRAINT <constraint_name> ] { UNIQUE | PRIMARY KEY | [ FOREIGN KEY ] REFERENCES <ref_table_name> [ ( <ref_col_name> ) ] | CHECK ( <expr> ) } [ <constraint_properties> ] ] [ COLLATE '<collation_specification>' ] | RENAME COLUMN <col_name> TO <new_col_name> | { ALTER | MODIFY } [ COLUMN ] <col1_name> { DROP DEFAULT | SET DEFAULT <seq_name> . NEXTVAL | { [ SET ] NOT NULL | DROP NOT NULL } | [ [ SET DATA ] TYPE ] <type> | COMMENT '<string>' | UNSET COMMENT } [ , [ COLUMN ] <col2_name> { DROP DEFAULT | SET DEFAULT <seq_name> . NEXTVAL | { [ SET ] NOT NULL | DROP NOT NULL } | [ [ SET DATA ] TYPE ] <type> | COMMENT '<string>' | UNSET COMMENT } ] | DROP [ COLUMN ] [ IF EXISTS ] <col1_name> [ , <col2_name> ... ] }"
+
+[[obligation]]
+id = "sf.ddl.alter-table.tablecolumnaction.o235"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
 
 [[obligation]]
 id = "sf.ddl.alter-table.tablecolumnaction.o012"
@@ -91808,6 +91923,12 @@ required = true
 note = "the form without its required { { { SET TAG <tag_name> = '<tag_value>' [ , <tag_name> = '<tag_value>' ... ] } | UNSET TAG <tag_name> [ , <tag_name> ... ] } | { ADD ROW ACCESS POLICY <policy_name> ON ( <col_name> [ , ... ] ) | DROP ROW ACCESS POLICY <policy_name> | DROP ROW ACCESS POLICY <policy_name> , ADD ROW ACCESS POLICY <policy_name> ON ( <col_name> [ , ... ] ) | DROP ALL ROW ACCESS POLICIES } | { SET AGGREGATION POLICY <policy_name> [ ENTITY KEY ( <col_name> [ , ... ] ) ] [ FORCE ] | UNSET AGGREGATION POLICY } | { SET JOIN POLICY <policy_name> [ FORCE ] | UNSET JOIN POLICY } | ADD [ COLUMN ] [ IF NOT EXISTS ] <col_name> <col_type> [ [ WITH ] MASKING POLICY <policy_name> [ USING ( <col1_name> , <cond_col_1> , ... ) ] ] [ [ WITH ] PROJECTION POLICY <policy_name> ] [ [ WITH ] TAG ( <tag_name> = '<tag_value>' [ , <tag_name> = '<tag_value>' , ... ] ) ] | { { ALTER | MODIFY } [ COLUMN ] <col1_name> SET MASKING POLICY <policy_name> [ USING ( <col1_name> , <cond_col_1> , ... ) ] [ FORCE ] | UNSET MASKING POLICY } | { { ALTER | MODIFY } [ COLUMN ] <col1_name> SET PROJECTION POLICY <policy_name> [ FORCE ] | UNSET PROJECTION POLICY } | { ALTER | MODIFY } [ COLUMN ] <col1_name> SET TAG <tag_name> = '<tag_value>' [ , <tag_name> = '<tag_value>' ... ] [ , [ COLUMN ] <col2_name> SET TAG <tag_name> = '<tag_value>' [ , <tag_name> = '<tag_value>' ... ] ] | { ALTER | MODIFY } [ COLUMN ] <col1_name> UNSET TAG <tag_name> [ , <tag_name> ... ] [ , [ COLUMN ] <col2_name> UNSET TAG <tag_name> [ , <tag_name> ... ] ] }"
 
 [[obligation]]
+id = "sf.ddl.alter-view.datagovnpolicytagaction.o446"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
+
+[[obligation]]
 id = "sf.ddl.alter-view.datagovnpolicytagaction.o011"
 kind = "identifier_class"
 required = true
@@ -94692,6 +94813,12 @@ id = "sf.ddl.alter-view.datametricfunctionaction.o429"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required { SET DATA_METRIC_SCHEDULE = { '<num> MINUTE' | 'USING CRON <expr> <time_zone>' | 'TRIGGER_ON_CHANGES' } | UNSET DATA_METRIC_SCHEDULE | ADD DATA METRIC FUNCTION <metric_name> ON ( <col_name> [ , ... ] [ , TABLE <table_name> ( <col_name> [ , ... ] ) ] ) [ WITHIN GROUP ( <group_col1> [ , <group_col2> ... ] ) [ GROUP LIMIT <integer> ] ] [ FILTER ( <predicate> ) ] [ EXPECTATION <expectation_name> ( <expression> ) [ , <expectation_name> ( <expression> ) [ , ... ] ] ] [ EXECUTE AS ROLE <role_name> ] [ ANOMALY_DETECTION = { TRUE | FALSE } ] [ SENSITIVITY = { 'LOW' | 'MEDIUM' | 'HIGH' } ] [ , <metric_name_2> ON ( <col_name> [ , ... ] [ , TABLE <table_name> ( <col_name> [ , ... ] ) ] ) ] [ WITHIN GROUP ( <group_col1> [ , <group_col2> ... ] ) [ GROUP LIMIT <integer> ] ] [ FILTER ( <predicate> ) ] [ EXPECTATION <expectation_name> ( <expression> ) [ , <expectation_name> ( <expression> ) [ , ... ] ] ] [ EXECUTE AS ROLE <role_name> ] [ ANOMALY_DETECTION = { TRUE | FALSE } ] [ SENSITIVITY = { 'LOW' | 'MEDIUM' | 'HIGH' } ] | DROP DATA METRIC FUNCTION <metric_name> ON ( <col_name> [ , ... ] [ , TABLE <table_name> ( <col_name> [ , ... ] ) ] ) [ , <metric_name_2> ON ( <col_name> [ , ... ] [ , TABLE <table_name> ( <col_name> [ , ... ] ) ] ) ] | MODIFY DATA METRIC FUNCTION <metric_name> ON ( <col_name> [ , ... ] [ , TABLE <table_name> ( <col_name> [ , ... ] ) ] ) { SUSPEND | RESUME } [ , <metric_name_2> ON ( <col_name> [ , ... ] [ , TABLE <table_name> ( <col_name> [ , ... ] ) ] ) { SUSPEND | RESUME } ] | MODIFY DATA METRIC FUNCTION <metric_name> ON ( <col_name> [ , ... ] [ , TABLE <table_name> ( <col_name> [ , ... ] ) ] ) { ADD | MODIFY } EXPECTATION <expectation_name> ( <expression> ) [ , <expectation_name> ( <expression> ) [ , ... ] ] | MODIFY DATA METRIC FUNCTION <metric_name> ON ( <col_name> [ , ... ] [ , TABLE <table_name> ( <col_name> [ , ... ] ) ] ) DROP EXPECTATION <expectation_name> [ , <expectation_name> [ , ... ] ] | MODIFY DATA METRIC FUNCTION <metric_name> ON ( <col_name> [ , ... ] [ , TABLE <table_name> ( <col_name> [ , ... ] ) ] ) FILTER ( [ <predicate> ] ) [ , <metric_name_2> ON ( <col_name> [ , ... ] [ , TABLE <table_name> ( <col_name> [ , ... ] ) ] ) FILTER ( [ <predicate> ] ) ] | MODIFY DATA METRIC FUNCTION <metric_name> SET <list_of_properties> }"
+
+[[obligation]]
+id = "sf.ddl.alter-view.datametricfunctionaction.o758"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
 
 [[obligation]]
 id = "sf.ddl.alter-view.datametricfunctionaction.o008"
@@ -235326,6 +235453,12 @@ required = true
 note = "the form without its required )"
 
 [[obligation]]
+id = "sf.ddl.create-table-constraint.alter-table-add-column.o209"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
+
+[[obligation]]
 id = "sf.ddl.create-table-constraint.alter-table-add-column.o024"
 kind = "identifier_class"
 required = true
@@ -236364,6 +236497,12 @@ id = "sf.ddl.create-table-constraint.alter-table-add-outoflineuniquepk.o161"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required { [ CONSTRAINT <constraint_name> ] { UNIQUE | PRIMARY KEY } ( <col_name> [ , <col_name> , ... ] ) [ [ NOT ] ENFORCED ] [ [ NOT ] DEFERRABLE ] [ INITIALLY { DEFERRED | IMMEDIATE } ] [ { ENABLE | DISABLE } ] [ { VALIDATE | NOVALIDATE } ] [ { RELY | NORELY } ] [ COMMENT '<string_literal>' ] | [ CONSTRAINT <constraint_name> ] FOREIGN KEY ( <col_name> [ , <col_name> , ... ] ) REFERENCES <ref_table_name> [ ( <ref_col_name> [ , <ref_col_name> , ... ] ) ] [ MATCH { FULL | SIMPLE | PARTIAL } ] [ ON [ UPDATE { CASCADE | SET NULL | SET DEFAULT | RESTRICT | NO ACTION } ] [ DELETE { CASCADE | SET NULL | SET DEFAULT | RESTRICT | NO ACTION } ] ] [ [ NOT ] ENFORCED ] [ [ NOT ] DEFERRABLE ] [ INITIALLY { DEFERRED | IMMEDIATE } ] [ { ENABLE | DISABLE } ] [ { VALIDATE | NOVALIDATE } ] [ { RELY | NORELY } ] [ COMMENT '<string_literal>' ] | [ CONSTRAINT <constraint_name> ] CHECK ( <expr> ) [ ENABLE { VALIDATE | NOVALIDATE } ] }"
+
+[[obligation]]
+id = "sf.ddl.create-table-constraint.alter-table-add-outoflineuniquepk.o225"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
 
 [[obligation]]
 id = "sf.ddl.create-table-constraint.alter-table-add-outoflineuniquepk.o013"

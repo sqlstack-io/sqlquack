@@ -10381,13 +10381,6 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "sf.classes.custom-classifier.methods.list.o002"
-kind = "required_operand_missing"
-required = true
-target = "<custom_classifier>"
-note = "omit <custom_classifier>"
-
-[[obligation]]
 id = "sf.classes.custom-classifier.methods.list.o003"
 kind = "operand_type_class"
 required = true
@@ -10411,6 +10404,14 @@ id = "sf.classes.custom-classifier.methods.list.o006"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required )"
+
+[[obligation]]
+id = "sf.classes.custom-classifier.methods.list.o007"
+kind = "required_operand_missing"
+required = true
+target = "<custom_classifier>"
+anchor = "doc.classes.custom_classifier.methods.list / Syntax"
+note = "omit <custom_classifier>, observed"
 
 [[obligation]]
 id = "sf.classes.forecast.commands.create-forecast.forecast.o001"
@@ -11126,12 +11127,6 @@ required = true
 note = "the form without its required SNOWFLAKE"
 
 [[obligation]]
-id = "sf.classes.forecast.commands.show-forecast.o024"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ML"
-
-[[obligation]]
 id = "sf.classes.forecast.commands.show-forecast.o025"
 kind = "negative_neighbour"
 required = true
@@ -11180,6 +11175,13 @@ required = true
 target = "<schema_name>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.classes.forecast.commands.show-forecast.o032"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.classes.forecast.commands.show-forecast / Syntax"
+note = "the form without its required ML, observed"
 
 [[obligation]]
 id = "sf.classes.forecast.methods.explain-feature-importance.o001"
@@ -12488,12 +12490,6 @@ required = true
 note = "the form without its required SNOWFLAKE"
 
 [[obligation]]
-id = "sf.classes.top-insights.commands.show-top-insights.o024"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ML"
-
-[[obligation]]
 id = "sf.classes.top-insights.commands.show-top-insights.o025"
 kind = "negative_neighbour"
 required = true
@@ -12542,6 +12538,13 @@ required = true
 target = "<schema_name>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.classes.top-insights.commands.show-top-insights.o032"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.classes.top-insights.commands.show-top-insights / Syntax"
+note = "the form without its required ML, observed"
 
 [[obligation]]
 id = "sf.classes.top-insights.methods.get-drivers.o001"

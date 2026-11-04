@@ -12912,6 +12912,12 @@ required = true
 note = "the form without its required { { @ [ <namespace> . ] <int_stage_name> [ / <path> ] | @ [ <namespace> . ] % <table_name> [ / <path> ] | @ ~ [ / <path> ] } | @ [ <namespace> . ] <ext_stage_name> [ / <path> ] }"
 
 [[obligation]]
+id = "sf.dml.list.internalstage-externalstage.o083"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
+
+[[obligation]]
 id = "sf.dml.list.internalstage-externalstage.o066"
 kind = "positive"
 required = true
@@ -14521,6 +14527,12 @@ id = "sf.dml.remove.o057"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required { { @ [ <namespace> . ] <int_stage_name> [ / <path> ] | @ [ <namespace> . ] % <table_name> [ / <path> ] | @ ~ [ / <path> ] } | @ [ <namespace> . ] <ext_stage_name> [ / <path> ] }"
+
+[[obligation]]
+id = "sf.dml.remove.o083"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
 
 [[obligation]]
 id = "sf.dml.remove.o066"

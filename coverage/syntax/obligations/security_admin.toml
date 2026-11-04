@@ -3445,6 +3445,12 @@ required = true
 note = "the form without its required { [ LOGIN_IDP_REDIRECT = ( <interface> = <security_integration> [ , ... ] ) OBJECT_VISIBILITY = { <object_visibility_spec> | PRIVILEGED } ] | [ ALLOW_ID_TOKEN = { TRUE | FALSE } ALLOWED_SPCS_WORKLOAD_TYPES = { '<list_of_workload_types>' | 'ALL' } CLIENT_ENCRYPTION_KEY_SIZE = <integer> CORTEX_ENABLED_CROSS_REGION = { 'DISABLED' | 'ANY_REGION' | '<list_of_regions>' } DISALLOWED_SPCS_WORKLOAD_TYPES = { '<list_of_workload_types>' | 'ALL' } DISABLE_EXECUTE_DATA_METRIC_FUNCTION_GRANT_TO_PUBLIC = { TRUE | FALSE } DISABLE_USER_PRIVILEGE_GRANTS = { TRUE | FALSE } DEFAULT_DBT_VERSION = { '<version>' } ENABLE_EGRESS_COST_OPTIMIZER = { TRUE | FALSE } ENABLE_INTERNAL_STAGES_PRIVATELINK = { TRUE | FALSE } ENABLE_SNOWFLAKE_MANAGED_STORAGE_VOLUME_PRIVATELINK = { TRUE | FALSE } ENFORCE_NETWORK_RULES_FOR_INTERNAL_STAGES = { TRUE | FALSE } ENFORCE_NETWORK_RULES_FOR_SNOWFLAKE_MANAGED_STORAGE_VOLUME = { TRUE | FALSE } ENFORCE_TAG_PROPAGATION_FOR_DATA_MOVEMENT_POLICIES = { TRUE | FALSE } ENABLE_NOTEBOOK_CREATION_IN_PERSONAL_DB = { TRUE | FALSE } ENABLE_SPCS_BLOCK_STORAGE_SNOWFLAKE_FULL_ENCRYPTION_ENFORCEMENT = { TRUE | FALSE } EXTERNAL_OAUTH_ADD_PRIVILEGED_ROLES_TO_BLOCKED_LIST = { TRUE | FALSE } INITIAL_REPLICATION_SIZE_LIMIT_IN_TB = <num> LISTING_AUTO_FULFILLMENT_INITIAL_REFRESH_SIZE_LIMIT_IN_TB = <num> LISTING_AUTO_FULFILLMENT_REPLICATION_REFRESH_SCHEDULE = <schedule> LLM_INFERENCE_PARSE_DOCUMENT_PRESIGNED_URL_EXPIRY_SECONDS = <integer> MIN_STAGE_UNDROP_RETENTION_TIME_IN_DAYS = <integer> NETWORK_POLICY = <string> OAUTH_ADD_PRIVILEGED_ROLES_TO_BLOCKED_LIST = { TRUE | FALSE } PERIODIC_DATA_REKEYING = { TRUE | FALSE } READ_CONSISTENCY_MODE = { 'SESSION' | 'GLOBAL' } REQUIRE_STORAGE_INTEGRATION_FOR_STAGE_CREATION = { TRUE | FALSE } REQUIRE_STORAGE_INTEGRATION_FOR_STAGE_OPERATION = { TRUE | FALSE } SAML_IDENTITY_PROVIDER = <json_object> SQL_TRACE_QUERY_TEXT = { ON | OFF } SSO_LOGIN_PAGE = { TRUE | FALSE } USE_WORKSPACES_FOR_SQL = { 'always' | 'never' } ] | [ [ BASE_LOCATION_PREFIX = '<string>' ] [ CATALOG = <catalog_integration_name> ] [ CATALOG_SYNC = '<snowflake_open_catalog_integration_name>' ] [ CORTEX_MODELS_ALLOWLIST = { '<list_of_models>' | 'ALL' | 'NONE' } ] [ DATA_RETENTION_TIME_IN_DAYS = <integer> ] [ DEFAULT_DDL_COLLATION = '<collation_specification>' ] [ DEFAULT_NOTEBOOK_COMPUTE_POOL_CPU = <compute_pool_name> ] [ DEFAULT_NOTEBOOK_COMPUTE_POOL_GPU = <compute_pool_name> ] [ DEFAULT_STREAMLIT_COMPUTE_POOL = <compute_pool_name> ] [ DEFAULT_STREAMLIT_NOTEBOOK_WAREHOUSE = <warehouse_name> ] [ ENABLE_DATA_COMPACTION = { TRUE | FALSE } ] [ ICEBERG_MERGE_ON_READ_BEHAVIOR = { 'AUTO' | 'ENABLED' | 'DISABLED' } ] [ ENABLE_ICEBERG_MERGE_ON_READ = { TRUE | FALSE } ] [ ENABLE_TAG_PROPAGATION_EVENT_LOGGING = { TRUE | FALSE } ] [ ENABLE_UNREDACTED_QUERY_SYNTAX_ERROR = { TRUE | FALSE } ] [ ENABLE_UNREDACTED_SECURE_OBJECT_ERROR = { TRUE | FALSE } ] [ EVENT_TABLE = <string> ] [ EXTERNAL_VOLUME = <external_volume_name> ] [ ICEBERG_DEFAULT_DDL_COLLATION = '<collation_specification>' ] [ ICEBERG_VERSION_DEFAULT = <integer> ] [ LOG_LEVEL = <string> ] [ MAX_CONCURRENCY_LEVEL = <num> ] [ MAX_DATA_EXTENSION_TIME_IN_DAYS = <integer> ] [ METRIC_LEVEL = <string> ] [ NETWORK_POLICY = <string> ] [ OAUTH_AUTHORIZATION_SERVER = <integration_name> ] [ OAUTH_SCOPES_SUPPORTED = '<comma_separated_scopes>' ] [ PIPE_EXECUTION_PAUSED = { TRUE | FALSE } ] [ PREVENT_UNLOAD_TO_INLINE_URL = { TRUE | FALSE } ] [ PREVENT_UNLOAD_TO_INTERNAL_STAGES = { TRUE | FALSE } ] [ REPLACE_INVALID_CHARACTERS = { TRUE | FALSE } ] [ STAGE_UNDROP_RETENTION_TIME_IN_DAYS = <integer> ] [ STATEMENT_QUEUED_TIMEOUT_IN_SECONDS = <num> ] [ STATEMENT_TIMEOUT_IN_SECONDS = <num> ] [ STORAGE_SERIALIZATION_POLICY = { COMPATIBLE | OPTIMIZED } ] [ TRACE_LEVEL = <string> ] ] | [ ABORT_DETACHED_QUERY = { TRUE | FALSE } AUTOCOMMIT = { TRUE | FALSE } BINARY_INPUT_FORMAT = <string> BINARY_OUTPUT_FORMAT = <string> DATE_INPUT_FORMAT = <string> DATE_OUTPUT_FORMAT = <string> DEFAULT_NULL_ORDERING = <string> ENABLE_GET_DDL_USE_DATA_TYPE_ALIAS = { TRUE | FALSE } ERROR_ON_NONDETERMINISTIC_MERGE = { TRUE | FALSE } ERROR_ON_NONDETERMINISTIC_UPDATE = { TRUE | FALSE } JSON_INDENT = <num> LOCK_TIMEOUT = <num> OPT_OUT_ERROR_LOGGING = { TRUE | FALSE } QUERY_TAG = <string> ROWS_PER_RESULTSET = <num> S3_STAGE_VPCE_DNS_NAME = <string> SEARCH_PATH = <string> SIMULATED_DATA_SHARING_CONSUMER = <string> STATEMENT_TIMEOUT_IN_SECONDS = <num> STRICT_JSON_OUTPUT = { TRUE | FALSE } TIMESTAMP_DAY_IS_ALWAYS_24H = { TRUE | FALSE } TIMESTAMP_INPUT_FORMAT = <string> TIMESTAMP_LTZ_OUTPUT_FORMAT = <string> TIMESTAMP_NTZ_OUTPUT_FORMAT = <string> TIMESTAMP_OUTPUT_FORMAT = <string> TIMESTAMP_TYPE_MAPPING = <string> TIMESTAMP_TZ_OUTPUT_FORMAT = <string> TIMEZONE = <string> TIME_INPUT_FORMAT = <string> TIME_OUTPUT_FORMAT = <string> TRANSACTION_DEFAULT_ISOLATION_LEVEL = <string> TWO_DIGIT_CENTURY_START = <num> UNSUPPORTED_DDL_ACTION = <string> USE_CACHED_RESULT = { TRUE | FALSE } WEEK_OF_YEAR_POLICY = <num> WEEK_START = <num> ] }"
 
 [[obligation]]
+id = "sf.security_admin.alter-account.set.o468"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
+
+[[obligation]]
 id = "sf.security_admin.alter-account.set.o458"
 kind = "identifier_class"
 required = true
@@ -20158,6 +20164,12 @@ required = true
 note = "the form without its required { [ ALLOWED_NETWORK_RULE_LIST = ( '<network_rule>' [ , '<network_rule>' , ... ] ) ] [ BLOCKED_NETWORK_RULE_LIST = ( '<network_rule>' [ , '<network_rule>' , ... ] ) ] [ ALLOWED_IP_LIST = ( [ '<ip_address>' ] [ , '<ip_address>' ... ] ) ] [ BLOCKED_IP_LIST = ( [ '<ip_address>' ] [ , '<ip_address>' ... ] ) ] [ COMMENT = '<string_literal>' ] }"
 
 [[obligation]]
+id = "sf.security_admin.alter-network-policy.set.o058"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
+
+[[obligation]]
 id = "sf.security_admin.alter-network-policy.set.o056"
 kind = "identifier_class"
 required = true
@@ -21427,6 +21439,12 @@ id = "sf.security_admin.alter-notification-integration-email.unset-enabled-allow
 kind = "negative_neighbour"
 required = true
 note = "the form without its required ENABLED"
+
+[[obligation]]
+id = "sf.security_admin.alter-notification-integration-email.unset-enabled-allowed-recipients-default-recipients.o020"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
 
 [[obligation]]
 id = "sf.security_admin.alter-notification-integration-email.unset-enabled-allowed-recipients-default-recipients.o018"
@@ -25645,6 +25663,12 @@ id = "sf.security_admin.alter-organization-user.unset.o044"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required { PERSON | SERVICE } in [ TYPE = { PERSON | SERVICE } ]"
+
+[[obligation]]
+id = "sf.security_admin.alter-organization-user.unset.o047"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
 
 [[obligation]]
 id = "sf.security_admin.alter-organization-user.unset.o045"
@@ -44232,6 +44256,12 @@ id = "sf.security_admin.alter-share.set.o022"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required { [ ACCOUNTS = <consumer_account> [ , <consumer_account> ... ] ] [ COMMENT = '<string_literal>' ] }"
+
+[[obligation]]
+id = "sf.security_admin.alter-share.set.o025"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
 
 [[obligation]]
 id = "sf.security_admin.alter-share.set.o023"
