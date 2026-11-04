@@ -1,10 +1,11 @@
-//! Snowflake ALTER of object kinds with no statement of their own: EXPERIMENT, SNAPSHOT, SNAPSHOT SET, TAG, TASK and TASK GRAPH.
+//! Snowflake ALTER of object kinds that have no statement of their own, such as TASK, TAG or ALERT.
 
 use crate::expressions::names::models::Identifier;
 use crate::expressions::names::models::TableRef;
 use crate::expressions::schema_objects::models::AlterObject;
 use crate::expressions::schema_objects::models::ObjectProperty;
 use crate::expressions::tree::models::Expression;
+use crate::expressions::types::models::Tuple;
 use crate::parser::constants::SNOWFLAKE_ALTER_KINDS;
 use crate::parser::constants::TASK_ACTIONS;
 use crate::parser::models::Parser;
@@ -51,6 +52,28 @@ impl Parser {
         if self.match_identifier("EXPERIMENT") {
             return self.parse_alter_experiment().map(Some);
         }
+        if self.match_identifier("ALERT") {
+            return self.parse_alter_alert().map(Some);
+        }
+        if self.match_text_seq(&["ONLINE", "FEATURE", "TABLE"]) {
+            return self.parse_alter_online_feature_table().map(Some);
+        }
+        if self.check_identifier("ONLINE")
+            || self.check_identifier("FEATURE") && !self.check_next_identifier("POLICY")
+        {
+            return Err(self.parse_error(
+                "Snowflake has ALTER ONLINE FEATURE TABLE and ALTER FEATURE POLICY only",
+            ));
+        }
+        if self.match_identifier("VARIABLE") {
+            return self.parse_alter_variable().map(Some);
+        }
+        if self.match_token(TokenType::Function) || self.match_identifier("FUNCTION") {
+            return self.parse_alter_function().map(Some);
+        }
+        if let Some(alter) = self.parse_alter_snowflake_resource()? {
+            return Ok(Some(alter));
+        }
         if !self.is_at_end()
             && !SNOWFLAKE_ALTER_KINDS.contains(&self.peek_text().to_ascii_uppercase().as_str())
         {
@@ -63,20 +86,20 @@ impl Parser {
     }
 
     /// The uppercase text of the token `offset` tokens ahead, if there is one.
-    pub(crate) fn text_at(&self, offset: usize) -> Option<String> {
+    pub(super) fn text_at(&self, offset: usize) -> Option<String> {
         self.tokens
             .get(self.current + offset)
             .map(|token| token.text.to_ascii_uppercase())
     }
 
     /// Parse `[ IF EXISTS ] <name>` after the kind.
-    pub(crate) fn parse_alter_object_head(&mut self) -> Result<(TableRef, bool)> {
+    pub(super) fn parse_alter_object_head(&mut self) -> Result<(TableRef, bool)> {
         let if_exists = self.match_keywords(&[TokenType::If, TokenType::Exists]);
         Ok((self.parse_object_name()?, if_exists))
     }
 
     /// Parse an object name: an identifier, never a string or an unquoted reserved keyword.
-    pub(crate) fn parse_object_name(&mut self) -> Result<TableRef> {
+    pub(super) fn parse_object_name(&mut self) -> Result<TableRef> {
         if self.check(TokenType::String)
             || self.is_snowflake_reserved_keyword()
             || !self.is_object_name_start()
@@ -94,7 +117,7 @@ impl Parser {
     }
 
     /// Parse a simple name, such as a contact purpose or a property: an identifier, not a reserved keyword.
-    pub(crate) fn parse_simple_name(&mut self) -> Result<Identifier> {
+    pub(super) fn parse_simple_name(&mut self) -> Result<Identifier> {
         if self.check(TokenType::String)
             || self.is_snowflake_reserved_keyword()
             || !self.is_object_name_start()
@@ -105,7 +128,7 @@ impl Parser {
     }
 
     /// Parse a property value: a literal, TRUE, FALSE or a name.
-    pub(crate) fn parse_object_value(&mut self) -> Result<Expression> {
+    pub(super) fn parse_object_value(&mut self) -> Result<Expression> {
         if self.check(TokenType::String)
             || self.check(TokenType::Number)
             || self.check(TokenType::DollarString)
@@ -129,7 +152,7 @@ impl Parser {
     }
 
     /// Parse a string literal value.
-    pub(crate) fn parse_string_value(&mut self) -> Result<Expression> {
+    pub(super) fn parse_string_value(&mut self) -> Result<Expression> {
         if !self.check(TokenType::String) {
             return Err(self.parse_error("Expected a string"));
         }
@@ -137,7 +160,7 @@ impl Parser {
     }
 
     /// Consume one of `choices`, each a sequence of words, and return its words joined.
-    pub(crate) fn expect_alter_words(&mut self, choices: &[&[&str]]) -> Result<String> {
+    pub(super) fn expect_alter_words(&mut self, choices: &[&[&str]]) -> Result<String> {
         match choices.iter().find(|words| self.match_text_seq(words)) {
             Some(words) => Ok(words.join(" ")),
             None => Err(self.parse_error(format!(
@@ -152,7 +175,7 @@ impl Parser {
     }
 
     /// Parse a comma-separated list of object names.
-    fn parse_object_name_list(&mut self) -> Result<Vec<Expression>> {
+    pub(super) fn parse_object_name_list(&mut self) -> Result<Vec<Expression>> {
         let mut names = vec![Expression::Table(Box::new(self.parse_object_name()?))];
         while self.match_token(TokenType::Comma) {
             names.push(Expression::Table(Box::new(self.parse_object_name()?)));
@@ -161,7 +184,7 @@ impl Parser {
     }
 
     /// Parse the properties of a SET (`set`) or UNSET action; `graph` admits TASK_DEFAULTS and always reads CONTACT as contacts.
-    fn parse_alter_object_properties(
+    pub(super) fn parse_alter_object_properties(
         &mut self,
         set: bool,
         graph: bool,
@@ -248,7 +271,7 @@ impl Parser {
     }
 
     /// Parse a possibly qualified name, such as a tag name, as one identifier.
-    pub(crate) fn parse_simple_qualified_name(&mut self) -> Result<Identifier> {
+    pub(super) fn parse_simple_qualified_name(&mut self) -> Result<Identifier> {
         let mut name = self.parse_simple_name()?;
         while self.match_token(TokenType::Dot) {
             let part = self.parse_simple_name()?;
@@ -496,10 +519,214 @@ impl Parser {
             (operands, Vec::new()),
         ))
     }
+
+    /// Parse ALTER ALERT after its kind.
+    fn parse_alter_alert(&mut self) -> Result<Expression> {
+        let head = self.parse_alter_object_head()?;
+        let mut action = self.expect_alter_words(&[
+            &["RESUME"],
+            &["SUSPEND"],
+            &["FROM", "TEMPLATE"],
+            &["MODIFY", "CONDITION", "EXISTS"],
+            &["MODIFY", "ACTION"],
+            &["SET"],
+            &["UNSET"],
+        ])?;
+        let mut operands: Vec<Expression> = Vec::new();
+        let mut properties: Vec<ObjectProperty> = Vec::new();
+        match action.as_str() {
+            "FROM TEMPLATE" => {
+                operands.push(Expression::Table(Box::new(self.parse_object_name()?)));
+                action.push_str(&format!(" {}", self.expect_alter_words(&[&["SET"]])?));
+                properties = self.parse_alter_object_properties(true, false)?;
+            }
+            "MODIFY CONDITION EXISTS" => {
+                self.expect_token(TokenType::LParen)?;
+                operands.push(self.parse_statement()?);
+                self.expect_token(TokenType::RParen)?;
+            }
+            "MODIFY ACTION" => operands.push(self.parse_statement()?),
+            "SET" => properties = self.parse_alter_object_properties(true, false)?,
+            "UNSET" => properties = self.parse_alter_object_properties(false, false)?,
+            _ => {}
+        }
+        Ok(alter_object("ALERT", head, action, (operands, properties)))
+    }
+
+    /// Parse ALTER ONLINE FEATURE TABLE after its kind.
+    fn parse_alter_online_feature_table(&mut self) -> Result<Expression> {
+        let head = self.parse_alter_object_head()?;
+        let action = self.expect_alter_words(&[
+            &["SUSPEND"],
+            &["RESUME"],
+            &["REFRESH"],
+            &["RENAME", "TO"],
+            &["SET"],
+            &["UNSET"],
+        ])?;
+        let mut operands: Vec<Expression> = Vec::new();
+        let mut properties: Vec<ObjectProperty> = Vec::new();
+        match action.as_str() {
+            "RENAME TO" => operands.push(Expression::Table(Box::new(self.parse_object_name()?))),
+            "SET" => properties = self.parse_alter_object_properties(true, false)?,
+            "UNSET" => {
+                self.expect_alter_words(&[&["TAG"]])?;
+                loop {
+                    let name = self.parse_simple_qualified_name()?;
+                    properties.push(property("TAG", Some(name), None));
+                    if !self.match_token(TokenType::Comma) {
+                        break;
+                    }
+                }
+            }
+            _ => {}
+        }
+        Ok(alter_object(
+            "ONLINE FEATURE TABLE",
+            head,
+            action,
+            (operands, properties),
+        ))
+    }
+
+    /// Parse ALTER VARIABLE after its kind.
+    fn parse_alter_variable(&mut self) -> Result<Expression> {
+        let head = self.parse_alter_object_head()?;
+        let action = self.expect_alter_words(&[
+            &["RENAME", "TO"],
+            &["SET", "DEFAULT"],
+            &["DROP", "DEFAULT"],
+            &["SET", "COMMENT"],
+            &["UNSET", "COMMENT"],
+        ])?;
+        let mut operands: Vec<Expression> = Vec::new();
+        let mut properties: Vec<ObjectProperty> = Vec::new();
+        match action.as_str() {
+            "RENAME TO" => operands.push(Expression::Table(Box::new(self.parse_object_name()?))),
+            "SET DEFAULT" => operands.push(self.parse_expression()?),
+            "SET COMMENT" => {
+                self.expect_token(TokenType::Eq)?;
+                properties.push(property("COMMENT", None, Some(self.parse_string_value()?)));
+            }
+            _ => {}
+        }
+        Ok(alter_object(
+            "VARIABLE",
+            head,
+            action,
+            (operands, properties),
+        ))
+    }
+
+    /// Parse ALTER FUNCTION after its kind: UDF, external, service and data metric functions.
+    fn parse_alter_function(&mut self) -> Result<Expression> {
+        let head = self.parse_alter_object_head()?;
+        let arguments = self.parse_routine_signature()?;
+        let mut action = self.expect_alter_words(&[&["RENAME", "TO"], &["SET"], &["UNSET"]])?;
+        let mut operands: Vec<Expression> = Vec::new();
+        let mut properties: Vec<ObjectProperty> = Vec::new();
+        match action.as_str() {
+            "RENAME TO" => operands.push(Expression::Table(Box::new(self.parse_object_name()?))),
+            "SET" if self.check_identifier("SECURE") && self.is_statement_end_at(1) => {
+                self.skip();
+                action.push_str(" SECURE");
+            }
+            "SET" => properties = self.parse_routine_set_properties()?,
+            _ => properties = self.parse_alter_object_properties(false, false)?,
+        }
+        let Expression::AlterObject(mut alter) =
+            alter_object("FUNCTION", head, action, (operands, properties))
+        else {
+            return Err(self.parse_error("Expected an ALTER statement"));
+        };
+        alter.arguments = arguments;
+        Ok(Expression::AlterObject(alter))
+    }
+
+    /// Whether the token `offset` tokens ahead ends the statement.
+    pub(super) fn is_statement_end_at(&self, offset: usize) -> bool {
+        self.tokens
+            .get(self.current + offset)
+            .is_none_or(|token| token.token_type == TokenType::Semicolon)
+    }
+
+    /// Parse `( [ <type> , ... ] )` or `( TABLE( <type> , ... ) [ , TABLE( ... ) ] )` after a routine name.
+    pub(super) fn parse_routine_signature(&mut self) -> Result<Vec<Expression>> {
+        self.expect_token(TokenType::LParen)?;
+        let mut arguments: Vec<Expression> = Vec::new();
+        if self.match_token(TokenType::RParen) {
+            return Ok(arguments);
+        }
+        loop {
+            if self.check(TokenType::Table) && self.check_next(TokenType::LParen) {
+                self.current += 2;
+                let mut columns = vec![Expression::DataType(self.parse_data_type()?)];
+                while self.match_token(TokenType::Comma) {
+                    columns.push(Expression::DataType(self.parse_data_type()?));
+                }
+                self.expect_token(TokenType::RParen)?;
+                arguments.push(Expression::Tuple(Box::new(Tuple {
+                    expressions: columns,
+                })));
+            } else {
+                arguments.push(Expression::DataType(self.parse_data_type()?));
+            }
+            if !self.match_token(TokenType::Comma) {
+                break;
+            }
+        }
+        self.expect_token(TokenType::RParen)?;
+        Ok(arguments)
+    }
+
+    /// Parse the properties after a routine's SET: TAG pairs, or `<name> = <value>` with list values.
+    fn parse_routine_set_properties(&mut self) -> Result<Vec<ObjectProperty>> {
+        if self.check_identifier("TAG") && !self.check_next(TokenType::Eq) {
+            return self.parse_alter_object_properties(true, false);
+        }
+        let mut properties: Vec<ObjectProperty> = Vec::new();
+        loop {
+            let name = self.parse_simple_name()?;
+            self.expect_token(TokenType::Eq)?;
+            let value = if self.check(TokenType::LParen) {
+                self.parse_routine_value_list()?
+            } else {
+                self.parse_object_value()?
+            };
+            properties.push(property(&name.name.to_ascii_uppercase(), None, Some(value)));
+            self.match_token(TokenType::Comma);
+            if self.is_at_end() || self.check(TokenType::Semicolon) {
+                return Ok(properties);
+            }
+        }
+    }
+
+    /// Parse `( [ <item> [ , ... ] ] )`, each item a value or a `'<key>' = <value>` pair.
+    pub(super) fn parse_routine_value_list(&mut self) -> Result<Expression> {
+        self.expect_token(TokenType::LParen)?;
+        let mut items: Vec<Expression> = Vec::new();
+        if !self.check(TokenType::RParen) {
+            loop {
+                let item = self.parse_object_value()?;
+                items.push(if self.match_token(TokenType::Eq) {
+                    Expression::Tuple(Box::new(Tuple {
+                        expressions: vec![item, self.parse_object_value()?],
+                    }))
+                } else {
+                    item
+                });
+                if !self.match_token(TokenType::Comma) {
+                    break;
+                }
+            }
+        }
+        self.expect_token(TokenType::RParen)?;
+        Ok(Expression::Tuple(Box::new(Tuple { expressions: items })))
+    }
 }
 
 /// An ALTER of `kind` on the named object, with its action, operands and properties.
-pub(crate) fn alter_object(
+pub(super) fn alter_object(
     kind: &str,
     (name, if_exists): (TableRef, bool),
     action: String,
@@ -508,6 +735,7 @@ pub(crate) fn alter_object(
     Expression::AlterObject(Box::new(AlterObject {
         kind: kind.to_owned(),
         name,
+        arguments: Vec::new(),
         if_exists,
         action,
         operands,
@@ -516,7 +744,7 @@ pub(crate) fn alter_object(
 }
 
 /// One property of kind `kind`.
-pub(crate) fn property(
+pub(super) fn property(
     kind: &str,
     name: Option<Identifier>,
     value: Option<Expression>,
