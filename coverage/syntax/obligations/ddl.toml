@@ -14472,18 +14472,11 @@ target = "<workload_type> in [ OF TYPE <workload_type> [ , ... ] ]"
 note = "omit <workload_type>"
 
 [[obligation]]
-id = "sf.ddl.alter-compute-pool.stop-all.o010"
+id = "sf.ddl.alter-compute-pool.stop-all.o023"
 kind = "operand_type_class"
 required = true
 target = "<workload_type> in [ OF TYPE <workload_type> [ , ... ] ]"
-note = "a valid data_type"
-
-[[obligation]]
-id = "sf.ddl.alter-compute-pool.stop-all.o011"
-kind = "negative_neighbour"
-required = true
-target = "<workload_type> in [ OF TYPE <workload_type> [ , ... ] ]"
-note = "a string literal in place of <workload_type>"
+note = "a valid operand"
 
 [[obligation]]
 id = "sf.ddl.alter-compute-pool.stop-all.o012"
@@ -22739,88 +22732,59 @@ target = "<name>"
 note = "a string literal in place of <name>"
 
 [[obligation]]
-id = "sf.ddl.alter-dbt-project.unset.o039"
+id = "sf.ddl.alter-dbt-project.unset.o046"
+kind = "alternative"
+required = true
+target = "{ DBT_VERSION | DEFAULT_TARGET | DEFAULT_ENVIRONMENT | EXTERNAL_ACCESS_INTEGRATIONS | AUTO_COMPILE | DEFA… → DBT_VERSION"
+
+[[obligation]]
+id = "sf.ddl.alter-dbt-project.unset.o047"
+kind = "alternative"
+required = true
+target = "{ DBT_VERSION | DEFAULT_TARGET | DEFAULT_ENVIRONMENT | EXTERNAL_ACCESS_INTEGRATIONS | AUTO_COMPILE | D… → DEFAULT_TARGET"
+
+[[obligation]]
+id = "sf.ddl.alter-dbt-project.unset.o048"
+kind = "alternative"
+required = true
+target = "{ DBT_VERSION | DEFAULT_TARGET | DEFAULT_ENVIRONMENT | EXTERNAL_ACCESS_INTEGRATIONS | AUTO_COMPIL… → DEFAULT_ENVIRONMENT"
+
+[[obligation]]
+id = "sf.ddl.alter-dbt-project.unset.o049"
+kind = "alternative"
+required = true
+target = "{ DBT_VERSION | DEFAULT_TARGET | DEFAULT_ENVIRONMENT | EXTERNAL_ACCESS_INTEGRATIONS | AU… → EXTERNAL_ACCESS_INTEGRATIONS"
+
+[[obligation]]
+id = "sf.ddl.alter-dbt-project.unset.o050"
+kind = "alternative"
+required = true
+target = "{ DBT_VERSION | DEFAULT_TARGET | DEFAULT_ENVIRONMENT | EXTERNAL_ACCESS_INTEGRATIONS | AUTO_COMPILE | DEF… → AUTO_COMPILE"
+
+[[obligation]]
+id = "sf.ddl.alter-dbt-project.unset.o051"
+kind = "alternative"
+required = true
+target = "{ DBT_VERSION | DEFAULT_TARGET | DEFAULT_ENVIRONMENT | EXTERNAL_ACCESS_INTEGRATIONS | AUTO_COMPILE … → DEFAULT_WRITEBACK"
+
+[[obligation]]
+id = "sf.ddl.alter-dbt-project.unset.o052"
+kind = "alternative"
+required = true
+target = "{ DBT_VERSION | DEFAULT_TARGET | DEFAULT_ENVIRONMENT | EXTERNAL_ACCESS_INTEGRATIONS | AUTO_COMPILE | DEFAULT_… → COMMENT"
+
+[[obligation]]
+id = "sf.ddl.alter-dbt-project.unset.o053"
 kind = "option_present"
 required = true
-target = "[ DBT_VERSION ]"
+target = "[ , ... ]"
+note = "the list continued at least once"
 
 [[obligation]]
-id = "sf.ddl.alter-dbt-project.unset.o008"
+id = "sf.ddl.alter-dbt-project.unset.o054"
 kind = "option_absent"
 required = true
-target = "[ DBT_VERSION ]"
-
-[[obligation]]
-id = "sf.ddl.alter-dbt-project.unset.o040"
-kind = "option_present"
-required = true
-target = "[ DEFAULT_TARGET ]"
-
-[[obligation]]
-id = "sf.ddl.alter-dbt-project.unset.o010"
-kind = "option_absent"
-required = true
-target = "[ DEFAULT_TARGET ]"
-
-[[obligation]]
-id = "sf.ddl.alter-dbt-project.unset.o041"
-kind = "option_present"
-required = true
-target = "[ DEFAULT_ENVIRONMENT ]"
-
-[[obligation]]
-id = "sf.ddl.alter-dbt-project.unset.o012"
-kind = "option_absent"
-required = true
-target = "[ DEFAULT_ENVIRONMENT ]"
-
-[[obligation]]
-id = "sf.ddl.alter-dbt-project.unset.o042"
-kind = "option_present"
-required = true
-target = "[ EXTERNAL_ACCESS_INTEGRATIONS ]"
-
-[[obligation]]
-id = "sf.ddl.alter-dbt-project.unset.o014"
-kind = "option_absent"
-required = true
-target = "[ EXTERNAL_ACCESS_INTEGRATIONS ]"
-
-[[obligation]]
-id = "sf.ddl.alter-dbt-project.unset.o043"
-kind = "option_present"
-required = true
-target = "[ AUTO_COMPILE ]"
-
-[[obligation]]
-id = "sf.ddl.alter-dbt-project.unset.o016"
-kind = "option_absent"
-required = true
-target = "[ AUTO_COMPILE ]"
-
-[[obligation]]
-id = "sf.ddl.alter-dbt-project.unset.o044"
-kind = "option_present"
-required = true
-target = "[ DEFAULT_WRITEBACK ]"
-
-[[obligation]]
-id = "sf.ddl.alter-dbt-project.unset.o018"
-kind = "option_absent"
-required = true
-target = "[ DEFAULT_WRITEBACK ]"
-
-[[obligation]]
-id = "sf.ddl.alter-dbt-project.unset.o045"
-kind = "option_present"
-required = true
-target = "[ COMMENT ]"
-
-[[obligation]]
-id = "sf.ddl.alter-dbt-project.unset.o020"
-kind = "option_absent"
-required = true
-target = "[ COMMENT ]"
+target = "[ , ... ]"
 
 [[obligation]]
 id = "sf.ddl.alter-dbt-project.unset.o021"
@@ -22845,6 +22809,12 @@ id = "sf.ddl.alter-dbt-project.unset.o024"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required UNSET"
+
+[[obligation]]
+id = "sf.ddl.alter-dbt-project.unset.o055"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { DBT_VERSION | DEFAULT_TARGET | DEFAULT_ENVIRONMENT | EXTERNAL_ACCESS_INTEGRATIONS | AUTO_COMPILE | DEFAULT_WRITEBACK | COMMENT }"
 
 [[obligation]]
 id = "sf.ddl.alter-dbt-project.unset.o026"
@@ -23164,28 +23134,29 @@ target = "<name>"
 note = "a string literal in place of <name>"
 
 [[obligation]]
-id = "sf.ddl.alter-dcm-project.unset.o024"
+id = "sf.ddl.alter-dcm-project.unset.o026"
+kind = "alternative"
+required = true
+target = "{ LOG_LEVEL | COMMENT } → LOG_LEVEL"
+
+[[obligation]]
+id = "sf.ddl.alter-dcm-project.unset.o027"
+kind = "alternative"
+required = true
+target = "{ LOG_LEVEL | COMMENT } → COMMENT"
+
+[[obligation]]
+id = "sf.ddl.alter-dcm-project.unset.o028"
 kind = "option_present"
 required = true
-target = "[ LOG_LEVEL ]"
+target = "[ , ... ]"
+note = "the list continued at least once"
 
 [[obligation]]
-id = "sf.ddl.alter-dcm-project.unset.o008"
+id = "sf.ddl.alter-dcm-project.unset.o029"
 kind = "option_absent"
 required = true
-target = "[ LOG_LEVEL ]"
-
-[[obligation]]
-id = "sf.ddl.alter-dcm-project.unset.o025"
-kind = "option_present"
-required = true
-target = "[ COMMENT ]"
-
-[[obligation]]
-id = "sf.ddl.alter-dcm-project.unset.o010"
-kind = "option_absent"
-required = true
-target = "[ COMMENT ]"
+target = "[ , ... ]"
 
 [[obligation]]
 id = "sf.ddl.alter-dcm-project.unset.o011"
@@ -23210,6 +23181,12 @@ id = "sf.ddl.alter-dcm-project.unset.o014"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required UNSET"
+
+[[obligation]]
+id = "sf.ddl.alter-dcm-project.unset.o030"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { LOG_LEVEL | COMMENT }"
 
 [[obligation]]
 id = "sf.ddl.alter-dcm-project.unset.o016"
@@ -30059,6 +30036,27 @@ target = "<name>"
 note = "a string literal in place of <name>"
 
 [[obligation]]
+id = "sf.ddl.alter-external-table.add-files.o022"
+kind = "required_operand_missing"
+required = true
+target = "'<file_path>'"
+note = "omit '<file_path>'"
+
+[[obligation]]
+id = "sf.ddl.alter-external-table.add-files.o023"
+kind = "operand_type_class"
+required = true
+target = "'<file_path>'"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.ddl.alter-external-table.add-files.o024"
+kind = "negative_neighbour"
+required = true
+target = "'<file_path>'"
+note = "an unquoted identifier in place of '<file_path>'"
+
+[[obligation]]
 id = "sf.ddl.alter-external-table.add-files.o019"
 kind = "option_present"
 required = true
@@ -30669,16 +30667,38 @@ target = "<name>"
 note = "a string literal in place of <name>"
 
 [[obligation]]
-id = "sf.ddl.alter-external-table.remove-files.o007"
-kind = "option_present"
+id = "sf.ddl.alter-external-table.remove-files.o019"
+kind = "required_operand_missing"
 required = true
-target = "[ , '<path>/[<filename>]' ]"
+target = "'<file_path>'"
+note = "omit '<file_path>'"
 
 [[obligation]]
-id = "sf.ddl.alter-external-table.remove-files.o008"
+id = "sf.ddl.alter-external-table.remove-files.o020"
+kind = "operand_type_class"
+required = true
+target = "'<file_path>'"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.ddl.alter-external-table.remove-files.o021"
+kind = "negative_neighbour"
+required = true
+target = "'<file_path>'"
+note = "an unquoted identifier in place of '<file_path>'"
+
+[[obligation]]
+id = "sf.ddl.alter-external-table.remove-files.o022"
+kind = "option_present"
+required = true
+target = "[ , ... ]"
+note = "the list continued at least once"
+
+[[obligation]]
+id = "sf.ddl.alter-external-table.remove-files.o023"
 kind = "option_absent"
 required = true
-target = "[ , '<path>/[<filename>]' ]"
+target = "[ , ... ]"
 
 [[obligation]]
 id = "sf.ddl.alter-external-table.remove-files.o009"
@@ -290204,18 +290224,11 @@ target = "<workload_type> in [ OF TYPE <workload_type> [ , ... ] ]"
 note = "omit <workload_type>"
 
 [[obligation]]
-id = "sf.ddl.show-services.o046"
+id = "sf.ddl.show-services.o067"
 kind = "operand_type_class"
 required = true
 target = "<workload_type> in [ OF TYPE <workload_type> [ , ... ] ]"
-note = "a valid data_type"
-
-[[obligation]]
-id = "sf.ddl.show-services.o047"
-kind = "negative_neighbour"
-required = true
-target = "<workload_type> in [ OF TYPE <workload_type> [ , ... ] ]"
-note = "a string literal in place of <workload_type>"
+note = "a valid operand"
 
 [[obligation]]
 id = "sf.ddl.show-services.o048"
@@ -295375,11 +295388,16 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "sf.ddl.undrop-database.o002"
-kind = "required_operand_missing"
+id = "sf.ddl.undrop-database.o008"
+kind = "alternative"
 required = true
-target = "<name>"
-note = "omit <name>"
+target = "{ <name> | IDENTIFIER ( <id> ) } → <name>"
+
+[[obligation]]
+id = "sf.ddl.undrop-database.o009"
+kind = "alternative"
+required = true
+target = "{ <name> | IDENTIFIER ( <id> ) } → IDENTIFIER ( <id> )"
 
 [[obligation]]
 id = "sf.ddl.undrop-database.o003"
@@ -295396,10 +295414,42 @@ target = "<name>"
 note = "a string literal in place of <name>"
 
 [[obligation]]
+id = "sf.ddl.undrop-database.o010"
+kind = "required_operand_missing"
+required = true
+target = "<id>"
+note = "omit <id>"
+
+[[obligation]]
+id = "sf.ddl.undrop-database.o011"
+kind = "operand_type_class"
+required = true
+target = "<id>"
+note = "a valid operand"
+
+[[obligation]]
 id = "sf.ddl.undrop-database.o005"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required DATABASE"
+
+[[obligation]]
+id = "sf.ddl.undrop-database.o012"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ("
+
+[[obligation]]
+id = "sf.ddl.undrop-database.o013"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required )"
+
+[[obligation]]
+id = "sf.ddl.undrop-database.o014"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { <name> | IDENTIFIER ( <id> ) }"
 
 [[obligation]]
 id = "sf.ddl.undrop-database.o006"
@@ -295626,11 +295676,16 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "sf.ddl.undrop-schema.o002"
-kind = "required_operand_missing"
+id = "sf.ddl.undrop-schema.o008"
+kind = "alternative"
 required = true
-target = "<name>"
-note = "omit <name>"
+target = "{ <name> | IDENTIFIER ( <id> ) } → <name>"
+
+[[obligation]]
+id = "sf.ddl.undrop-schema.o009"
+kind = "alternative"
+required = true
+target = "{ <name> | IDENTIFIER ( <id> ) } → IDENTIFIER ( <id> )"
 
 [[obligation]]
 id = "sf.ddl.undrop-schema.o003"
@@ -295647,10 +295702,42 @@ target = "<name>"
 note = "a string literal in place of <name>"
 
 [[obligation]]
+id = "sf.ddl.undrop-schema.o010"
+kind = "required_operand_missing"
+required = true
+target = "<id>"
+note = "omit <id>"
+
+[[obligation]]
+id = "sf.ddl.undrop-schema.o011"
+kind = "operand_type_class"
+required = true
+target = "<id>"
+note = "a valid operand"
+
+[[obligation]]
 id = "sf.ddl.undrop-schema.o005"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required SCHEMA"
+
+[[obligation]]
+id = "sf.ddl.undrop-schema.o012"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ("
+
+[[obligation]]
+id = "sf.ddl.undrop-schema.o013"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required )"
+
+[[obligation]]
+id = "sf.ddl.undrop-schema.o014"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { <name> | IDENTIFIER ( <id> ) }"
 
 [[obligation]]
 id = "sf.ddl.undrop-schema.o006"
@@ -295810,6 +295897,20 @@ anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
+id = "sf.ddl.undrop-snapshot.o022"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.undrop-snapshot / Syntax"
+note = "the form without its required RENAME in [ RENAME TO <new_snapshot_name> ]"
+
+[[obligation]]
+id = "sf.ddl.undrop-snapshot.o023"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.undrop-snapshot / Syntax"
+note = "the form without its required IDENTIFIER in IDENTIFIER( <id> )"
+
+[[obligation]]
 id = "sf.ddl.undrop-stage.o001"
 kind = "positive"
 required = true
@@ -295914,11 +296015,16 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "sf.ddl.undrop-table.o002"
-kind = "required_operand_missing"
+id = "sf.ddl.undrop-table.o008"
+kind = "alternative"
 required = true
-target = "<name>"
-note = "omit <name>"
+target = "{ <name> | IDENTIFIER ( <id> ) } → <name>"
+
+[[obligation]]
+id = "sf.ddl.undrop-table.o009"
+kind = "alternative"
+required = true
+target = "{ <name> | IDENTIFIER ( <id> ) } → IDENTIFIER ( <id> )"
 
 [[obligation]]
 id = "sf.ddl.undrop-table.o003"
@@ -295935,10 +296041,42 @@ target = "<name>"
 note = "a string literal in place of <name>"
 
 [[obligation]]
+id = "sf.ddl.undrop-table.o010"
+kind = "required_operand_missing"
+required = true
+target = "<id>"
+note = "omit <id>"
+
+[[obligation]]
+id = "sf.ddl.undrop-table.o011"
+kind = "operand_type_class"
+required = true
+target = "<id>"
+note = "a valid operand"
+
+[[obligation]]
 id = "sf.ddl.undrop-table.o005"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required TABLE"
+
+[[obligation]]
+id = "sf.ddl.undrop-table.o012"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ("
+
+[[obligation]]
+id = "sf.ddl.undrop-table.o013"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required )"
+
+[[obligation]]
+id = "sf.ddl.undrop-table.o014"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { <name> | IDENTIFIER ( <id> ) }"
 
 [[obligation]]
 id = "sf.ddl.undrop-table.o006"

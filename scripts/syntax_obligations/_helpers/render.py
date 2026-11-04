@@ -54,6 +54,7 @@ from scripts.syntax_obligations.constants import (
     NAME_FILL,
     NODE_CHOICE,
     NODE_OPTIONAL,
+    NODE_TOKEN,
     OPEN_PAREN,
     OPENED,
     PROCEDURE_WRAPPER,
@@ -322,6 +323,9 @@ class _Renderer:
         for node in nodes:
             key: int = id(node)
             if key in choices.drop:
+                if dangling >= 0 and node.text == CLOSE_PAREN:
+                    del out[dangling]
+                    dangling = -1
                 continue
             emitted: int = len(out)
             if key in choices.replace:
@@ -364,7 +368,10 @@ class _Renderer:
         if is_repetition(branch) and not any(placeholder_name(n) for n in _tokens(branch)):
             start: int = _repeat_start(before=before, keywords=set(self._keywords))
             return [",", *(self._repeat(text) for text in before[start + 1 :])]
-        return self._sequence(nodes=branch, choices=choices)
+        rendered: list[str] = self._sequence(nodes=branch, choices=choices)
+        if is_repetition(branch) and _ends_in_continuation(branch) and rendered:
+            return [*rendered, LIST_SEPARATOR, *(self._repeat(text) for text in rendered)]
+        return rendered
 
     def _repeat(self, text: str) -> str:
         """A copied list item, continued with its REPEAT_FILLS value when one is declared."""
@@ -452,6 +459,17 @@ def _stage_glued(text: str) -> str:
         for pattern in STAGE_GLUES:
             text = pattern.sub(r"\1", text)
     return text
+
+
+def _ends_in_continuation(branch: tuple[Node, ...]) -> bool:
+    """Whether a list is `<item> , ...`, so that its rendered item stands for the whole list."""
+    tokens: list[Node] = [node for node in branch if node.kind == NODE_TOKEN]
+    texts: list[str] = [node.text for node in tokens]
+    return (
+        texts[:1] != [LIST_SEPARATOR]
+        and texts[-2:-1] == [LIST_SEPARATOR]
+        and [node.token_kind for node in tokens[-1:]] == [TOKEN_ELISION]
+    )
 
 
 def _dangling_separator(*, out: list[str], emitted: int, dangling: int, node: Node) -> int:

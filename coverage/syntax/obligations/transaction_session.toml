@@ -2167,16 +2167,16 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "sf.transaction_session.use-schema.o002"
-kind = "option_present"
+id = "sf.transaction_session.use-schema.o017"
+kind = "alternative"
 required = true
-target = "[ SCHEMA ]"
+target = "{ SCHEMA [ <db_name> . ] <name> | <db_name> . <name> } → SCHEMA [ <db_name> . ] <name>"
 
 [[obligation]]
-id = "sf.transaction_session.use-schema.o003"
-kind = "option_absent"
+id = "sf.transaction_session.use-schema.o018"
+kind = "alternative"
 required = true
-target = "[ SCHEMA ]"
+target = "{ SCHEMA [ <db_name> . ] <name> | <db_name> . <name> } → <db_name> . <name>"
 
 [[obligation]]
 id = "sf.transaction_session.use-schema.o004"
@@ -2233,10 +2233,52 @@ target = "<name>"
 note = "a string literal in place of <name>"
 
 [[obligation]]
-id = "sf.transaction_session.use-schema.o012"
-kind = "interaction_all_options"
+id = "sf.transaction_session.use-schema.o019"
+kind = "required_operand_missing"
 required = true
-note = "every independent option of one production together"
+target = "<db_name>"
+note = "omit <db_name>"
+
+[[obligation]]
+id = "sf.transaction_session.use-schema.o020"
+kind = "operand_type_class"
+required = true
+target = "<db_name>"
+note = "a valid identifier"
+
+[[obligation]]
+id = "sf.transaction_session.use-schema.o021"
+kind = "negative_neighbour"
+required = true
+target = "<db_name>"
+note = "a string literal in place of <db_name>"
+
+[[obligation]]
+id = "sf.transaction_session.use-schema.o022"
+kind = "required_operand_missing"
+required = true
+target = "<name> #2"
+note = "omit <name>"
+
+[[obligation]]
+id = "sf.transaction_session.use-schema.o023"
+kind = "operand_type_class"
+required = true
+target = "<name> #2"
+note = "a valid identifier"
+
+[[obligation]]
+id = "sf.transaction_session.use-schema.o024"
+kind = "negative_neighbour"
+required = true
+target = "<name> #2"
+note = "a string literal in place of <name>"
+
+[[obligation]]
+id = "sf.transaction_session.use-schema.o025"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { SCHEMA [ <db_name> . ] <name> | <db_name> . <name> }"
 
 [[obligation]]
 id = "sf.transaction_session.use-schema.o013"

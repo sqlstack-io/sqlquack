@@ -1005,18 +1005,18 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "sf.functions.ai-count-tokens.o002"
+id = "sf.functions.ai-count-tokens.o082"
 kind = "required_operand_missing"
 required = true
-target = "<function_name>"
-note = "omit <function_name>"
+target = "'<function_name>'"
+note = "omit '<function_name>'"
 
 [[obligation]]
-id = "sf.functions.ai-count-tokens.o003"
+id = "sf.functions.ai-count-tokens.o083"
 kind = "operand_type_class"
 required = true
-target = "<function_name>"
-note = "a valid identifier"
+target = "'<function_name>'"
+note = "a valid string_literal"
 
 [[obligation]]
 id = "sf.functions.ai-count-tokens.o006"
@@ -1052,32 +1052,32 @@ target = "<return_error_details> in [ , <return_error_details> ]"
 note = "a valid operand"
 
 [[obligation]]
-id = "sf.functions.ai-count-tokens.o011"
+id = "sf.functions.ai-count-tokens.o084"
 kind = "required_operand_missing"
 required = true
-target = "<function_name> #2"
-note = "omit <function_name>"
+target = "'<function_name>' #2"
+note = "omit '<function_name>'"
 
 [[obligation]]
-id = "sf.functions.ai-count-tokens.o012"
+id = "sf.functions.ai-count-tokens.o085"
 kind = "operand_type_class"
 required = true
-target = "<function_name> #2"
-note = "a valid identifier"
+target = "'<function_name>' #2"
+note = "a valid string_literal"
 
 [[obligation]]
-id = "sf.functions.ai-count-tokens.o014"
+id = "sf.functions.ai-count-tokens.o086"
 kind = "required_operand_missing"
 required = true
-target = "<model_name>"
-note = "omit <model_name>"
+target = "'<model_name>'"
+note = "omit '<model_name>'"
 
 [[obligation]]
-id = "sf.functions.ai-count-tokens.o015"
+id = "sf.functions.ai-count-tokens.o087"
 kind = "operand_type_class"
 required = true
-target = "<model_name>"
-note = "a valid identifier"
+target = "'<model_name>'"
+note = "a valid string_literal"
 
 [[obligation]]
 id = "sf.functions.ai-count-tokens.o018"
@@ -1113,18 +1113,18 @@ target = "<return_error_details> in [ , <return_error_details> ] #2"
 note = "a valid operand"
 
 [[obligation]]
-id = "sf.functions.ai-count-tokens.o023"
+id = "sf.functions.ai-count-tokens.o088"
 kind = "required_operand_missing"
 required = true
-target = "<function_name> #3"
-note = "omit <function_name>"
+target = "'<function_name>' #3"
+note = "omit '<function_name>'"
 
 [[obligation]]
-id = "sf.functions.ai-count-tokens.o024"
+id = "sf.functions.ai-count-tokens.o089"
 kind = "operand_type_class"
 required = true
-target = "<function_name> #3"
-note = "a valid identifier"
+target = "'<function_name>' #3"
+note = "a valid string_literal"
 
 [[obligation]]
 id = "sf.functions.ai-count-tokens.o026"
@@ -1174,32 +1174,32 @@ target = "<return_error_details> in [ , <return_error_details> ] #3"
 note = "a valid operand"
 
 [[obligation]]
-id = "sf.functions.ai-count-tokens.o034"
+id = "sf.functions.ai-count-tokens.o090"
 kind = "required_operand_missing"
 required = true
-target = "<function_name> #4"
-note = "omit <function_name>"
+target = "'<function_name>' #4"
+note = "omit '<function_name>'"
 
 [[obligation]]
-id = "sf.functions.ai-count-tokens.o035"
+id = "sf.functions.ai-count-tokens.o091"
 kind = "operand_type_class"
 required = true
-target = "<function_name> #4"
-note = "a valid identifier"
+target = "'<function_name>' #4"
+note = "a valid string_literal"
 
 [[obligation]]
-id = "sf.functions.ai-count-tokens.o037"
+id = "sf.functions.ai-count-tokens.o092"
 kind = "required_operand_missing"
 required = true
-target = "<model_name> #2"
-note = "omit <model_name>"
+target = "'<model_name>' #2"
+note = "omit '<model_name>'"
 
 [[obligation]]
-id = "sf.functions.ai-count-tokens.o038"
+id = "sf.functions.ai-count-tokens.o093"
 kind = "operand_type_class"
 required = true
-target = "<model_name> #2"
-note = "a valid identifier"
+target = "'<model_name>' #2"
+note = "a valid string_literal"
 
 [[obligation]]
 id = "sf.functions.ai-count-tokens.o040"
@@ -1428,38 +1428,6 @@ id = "sf.functions.ai-count-tokens.o077"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required )"
-
-[[obligation]]
-id = "sf.functions.ai-count-tokens.o078"
-kind = "identifier_class"
-required = true
-target = "<function_name>"
-anchor = "doc.identifiers-syntax"
-note = "quoted: a double-quoted identifier with blanks and mixed case"
-
-[[obligation]]
-id = "sf.functions.ai-count-tokens.o079"
-kind = "identifier_class"
-required = true
-target = "<function_name>"
-anchor = "doc.identifiers-syntax"
-note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
-
-[[obligation]]
-id = "sf.functions.ai-count-tokens.o080"
-kind = "identifier_class"
-required = true
-target = "<model_name>"
-anchor = "doc.identifiers-syntax"
-note = "quoted: a double-quoted identifier with blanks and mixed case"
-
-[[obligation]]
-id = "sf.functions.ai-count-tokens.o081"
-kind = "identifier_class"
-required = true
-target = "<model_name>"
-anchor = "doc.identifiers-syntax"
-note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
 id = "sf.functions.ai-embed.o001"
@@ -10367,43 +10335,83 @@ target = "<result1>"
 note = "a valid operand"
 
 [[obligation]]
-id = "sf.functions.case.end.o006"
+id = "sf.functions.case.end.o023"
 kind = "option_present"
 required = true
-target = "[ WHEN <condition2> THEN <result2> ]"
+target = "[ WHEN <condition2> THEN <result2> [ WHEN <condition_n> THEN <result_n> ] [ ... ] ]"
 
 [[obligation]]
-id = "sf.functions.case.end.o007"
+id = "sf.functions.case.end.o024"
 kind = "option_absent"
 required = true
-target = "[ WHEN <condition2> THEN <result2> ]"
+target = "[ WHEN <condition2> THEN <result2> [ WHEN <condition_n> THEN <result_n> ] [ ... ] ]"
 
 [[obligation]]
-id = "sf.functions.case.end.o008"
+id = "sf.functions.case.end.o025"
 kind = "required_operand_missing"
 required = true
-target = "<condition2> in [ WHEN <condition2> THEN <result2> ]"
+target = "<condition2> in [ WHEN <condition2> THEN <result2> [ WHEN <condition_n> THEN <result_n> ] [ ... ] ]"
 note = "omit <condition2>"
 
 [[obligation]]
-id = "sf.functions.case.end.o009"
+id = "sf.functions.case.end.o026"
 kind = "operand_type_class"
 required = true
-target = "<condition2> in [ WHEN <condition2> THEN <result2> ]"
+target = "<condition2> in [ WHEN <condition2> THEN <result2> [ WHEN <condition_n> THEN <result_n> ] [ ... ] ]"
 note = "a valid expression"
 
 [[obligation]]
-id = "sf.functions.case.end.o010"
+id = "sf.functions.case.end.o027"
 kind = "required_operand_missing"
 required = true
-target = "<result2> in [ WHEN <condition2> THEN <result2> ]"
+target = "<result2> in [ WHEN <condition2> THEN <result2> [ WHEN <condition_n> THEN <result_n> ] [ ... ] ]"
 note = "omit <result2>"
 
 [[obligation]]
-id = "sf.functions.case.end.o011"
+id = "sf.functions.case.end.o028"
 kind = "operand_type_class"
 required = true
-target = "<result2> in [ WHEN <condition2> THEN <result2> ]"
+target = "<result2> in [ WHEN <condition2> THEN <result2> [ WHEN <condition_n> THEN <result_n> ] [ ... ] ]"
+note = "a valid operand"
+
+[[obligation]]
+id = "sf.functions.case.end.o029"
+kind = "option_present"
+required = true
+target = "[ WHEN <condition_n> THEN <result_n> ]"
+
+[[obligation]]
+id = "sf.functions.case.end.o030"
+kind = "option_absent"
+required = true
+target = "[ WHEN <condition_n> THEN <result_n> ]"
+
+[[obligation]]
+id = "sf.functions.case.end.o031"
+kind = "required_operand_missing"
+required = true
+target = "<condition_n> in [ WHEN <condition_n> THEN <result_n> ]"
+note = "omit <condition_n>"
+
+[[obligation]]
+id = "sf.functions.case.end.o032"
+kind = "operand_type_class"
+required = true
+target = "<condition_n> in [ WHEN <condition_n> THEN <result_n> ]"
+note = "a valid expression"
+
+[[obligation]]
+id = "sf.functions.case.end.o033"
+kind = "required_operand_missing"
+required = true
+target = "<result_n> in [ WHEN <condition_n> THEN <result_n> ]"
+note = "omit <result_n>"
+
+[[obligation]]
+id = "sf.functions.case.end.o034"
+kind = "operand_type_class"
+required = true
+target = "<result_n> in [ WHEN <condition_n> THEN <result_n> ]"
 note = "a valid operand"
 
 [[obligation]]
@@ -10445,10 +10453,16 @@ required = true
 note = "the form without its required THEN"
 
 [[obligation]]
-id = "sf.functions.case.end.o018"
+id = "sf.functions.case.end.o035"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required THEN in [ WHEN <condition2> THEN <result2> ]"
+note = "the form without its required THEN in [ WHEN <condition2> THEN <result2> [ WHEN <condition_n> THEN <result_n> ] [ ... ] ]"
+
+[[obligation]]
+id = "sf.functions.case.end.o036"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required THEN in [ WHEN <condition_n> THEN <result_n> ]"
 
 [[obligation]]
 id = "sf.functions.case.end.o019"
@@ -10518,43 +10532,83 @@ target = "<result1>"
 note = "a valid operand"
 
 [[obligation]]
-id = "sf.functions.case.end.syntax.o007"
+id = "sf.functions.case.end.syntax.o022"
 kind = "option_present"
 required = true
-target = "[ WHEN <value2> THEN <result2> ]"
+target = "[ WHEN <value2> THEN <result2> [ WHEN <value_n> THEN <result_n> ] [ ... ] ]"
 
 [[obligation]]
-id = "sf.functions.case.end.syntax.o008"
+id = "sf.functions.case.end.syntax.o023"
 kind = "option_absent"
 required = true
-target = "[ WHEN <value2> THEN <result2> ]"
+target = "[ WHEN <value2> THEN <result2> [ WHEN <value_n> THEN <result_n> ] [ ... ] ]"
 
 [[obligation]]
-id = "sf.functions.case.end.syntax.o009"
+id = "sf.functions.case.end.syntax.o024"
 kind = "required_operand_missing"
 required = true
-target = "<value2> in [ WHEN <value2> THEN <result2> ]"
+target = "<value2> in [ WHEN <value2> THEN <result2> [ WHEN <value_n> THEN <result_n> ] [ ... ] ]"
 note = "omit <value2>"
 
 [[obligation]]
-id = "sf.functions.case.end.syntax.o010"
+id = "sf.functions.case.end.syntax.o025"
 kind = "operand_type_class"
 required = true
-target = "<value2> in [ WHEN <value2> THEN <result2> ]"
+target = "<value2> in [ WHEN <value2> THEN <result2> [ WHEN <value_n> THEN <result_n> ] [ ... ] ]"
 note = "a valid expression"
 
 [[obligation]]
-id = "sf.functions.case.end.syntax.o011"
+id = "sf.functions.case.end.syntax.o026"
 kind = "required_operand_missing"
 required = true
-target = "<result2> in [ WHEN <value2> THEN <result2> ]"
+target = "<result2> in [ WHEN <value2> THEN <result2> [ WHEN <value_n> THEN <result_n> ] [ ... ] ]"
 note = "omit <result2>"
 
 [[obligation]]
-id = "sf.functions.case.end.syntax.o012"
+id = "sf.functions.case.end.syntax.o027"
 kind = "operand_type_class"
 required = true
-target = "<result2> in [ WHEN <value2> THEN <result2> ]"
+target = "<result2> in [ WHEN <value2> THEN <result2> [ WHEN <value_n> THEN <result_n> ] [ ... ] ]"
+note = "a valid operand"
+
+[[obligation]]
+id = "sf.functions.case.end.syntax.o028"
+kind = "option_present"
+required = true
+target = "[ WHEN <value_n> THEN <result_n> ]"
+
+[[obligation]]
+id = "sf.functions.case.end.syntax.o029"
+kind = "option_absent"
+required = true
+target = "[ WHEN <value_n> THEN <result_n> ]"
+
+[[obligation]]
+id = "sf.functions.case.end.syntax.o030"
+kind = "required_operand_missing"
+required = true
+target = "<value_n> in [ WHEN <value_n> THEN <result_n> ]"
+note = "omit <value_n>"
+
+[[obligation]]
+id = "sf.functions.case.end.syntax.o031"
+kind = "operand_type_class"
+required = true
+target = "<value_n> in [ WHEN <value_n> THEN <result_n> ]"
+note = "a valid expression"
+
+[[obligation]]
+id = "sf.functions.case.end.syntax.o032"
+kind = "required_operand_missing"
+required = true
+target = "<result_n> in [ WHEN <value_n> THEN <result_n> ]"
+note = "omit <result_n>"
+
+[[obligation]]
+id = "sf.functions.case.end.syntax.o033"
+kind = "operand_type_class"
+required = true
+target = "<result_n> in [ WHEN <value_n> THEN <result_n> ]"
 note = "a valid operand"
 
 [[obligation]]
@@ -10596,10 +10650,16 @@ required = true
 note = "the form without its required THEN"
 
 [[obligation]]
-id = "sf.functions.case.end.syntax.o019"
+id = "sf.functions.case.end.syntax.o034"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required THEN in [ WHEN <value2> THEN <result2> ]"
+note = "the form without its required THEN in [ WHEN <value2> THEN <result2> [ WHEN <value_n> THEN <result_n> ] [ ... ] ]"
+
+[[obligation]]
+id = "sf.functions.case.end.syntax.o035"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required THEN in [ WHEN <value_n> THEN <result_n> ]"
 
 [[obligation]]
 id = "sf.functions.case.end.syntax.o020"
@@ -17065,17 +17125,37 @@ target = "<result1>"
 note = "a valid operand"
 
 [[obligation]]
-id = "sf.functions.decode.o008"
+id = "sf.functions.decode.o017"
 kind = "option_present"
 required = true
-target = "[ , <search2> , <result2> ... ]"
-note = "the list continued at least once"
+target = "[ , <search2> , <result2> [ ... ] ]"
 
 [[obligation]]
-id = "sf.functions.decode.o009"
+id = "sf.functions.decode.o018"
 kind = "option_absent"
 required = true
-target = "[ , <search2> , <result2> ... ]"
+target = "[ , <search2> , <result2> [ ... ] ]"
+
+[[obligation]]
+id = "sf.functions.decode.o019"
+kind = "required_operand_missing"
+required = true
+target = "<search2> in [ , <search2> , <result2> [ ... ] ]"
+note = "omit <search2>"
+
+[[obligation]]
+id = "sf.functions.decode.o020"
+kind = "operand_type_class"
+required = true
+target = "<search2> in [ , <search2> , <result2> [ ... ] ]"
+note = "a valid operand"
+
+[[obligation]]
+id = "sf.functions.decode.o021"
+kind = "operand_type_class"
+required = true
+target = "<result2> in [ , <search2> , <result2> [ ... ] ]"
+note = "a valid operand"
 
 [[obligation]]
 id = "sf.functions.decode.o010"
@@ -69478,18 +69558,18 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "sf.functions.system-get-service-logs.o002"
+id = "sf.functions.system-get-service-logs.o026"
 kind = "required_operand_missing"
 required = true
-target = "<service_name>"
-note = "omit <service_name>"
+target = "'<service_name>'"
+note = "omit '<service_name>'"
 
 [[obligation]]
-id = "sf.functions.system-get-service-logs.o003"
+id = "sf.functions.system-get-service-logs.o027"
 kind = "operand_type_class"
 required = true
-target = "<service_name>"
-note = "a valid identifier"
+target = "'<service_name>'"
+note = "a valid string_literal"
 
 [[obligation]]
 id = "sf.functions.system-get-service-logs.o005"
@@ -69506,11 +69586,11 @@ target = "<instance_id>"
 note = "a valid operand"
 
 [[obligation]]
-id = "sf.functions.system-get-service-logs.o008"
+id = "sf.functions.system-get-service-logs.o028"
 kind = "operand_type_class"
 required = true
-target = "<container_name>"
-note = "a valid identifier"
+target = "'<container_name>'"
+note = "a valid string_literal"
 
 [[obligation]]
 id = "sf.functions.system-get-service-logs.o010"
@@ -69574,38 +69654,6 @@ id = "sf.functions.system-get-service-logs.o021"
 kind = "interaction_all_options"
 required = true
 note = "every independent option of one production together"
-
-[[obligation]]
-id = "sf.functions.system-get-service-logs.o022"
-kind = "identifier_class"
-required = true
-target = "<service_name>"
-anchor = "doc.identifiers-syntax"
-note = "quoted: a double-quoted identifier with blanks and mixed case"
-
-[[obligation]]
-id = "sf.functions.system-get-service-logs.o023"
-kind = "identifier_class"
-required = true
-target = "<service_name>"
-anchor = "doc.identifiers-syntax"
-note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
-
-[[obligation]]
-id = "sf.functions.system-get-service-logs.o024"
-kind = "identifier_class"
-required = true
-target = "<container_name>"
-anchor = "doc.identifiers-syntax"
-note = "quoted: a double-quoted identifier with blanks and mixed case"
-
-[[obligation]]
-id = "sf.functions.system-get-service-logs.o025"
-kind = "identifier_class"
-required = true
-target = "<container_name>"
-anchor = "doc.identifiers-syntax"
-note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
 id = "sf.functions.system-get-service-status.o001"
@@ -73053,6 +73101,20 @@ target = "'<integration_name>'"
 note = "a valid string_literal"
 
 [[obligation]]
+id = "sf.functions.system-send-email.o017"
+kind = "required_operand_missing"
+required = true
+target = "'<email_address_list>'"
+note = "omit '<email_address_list>'"
+
+[[obligation]]
+id = "sf.functions.system-send-email.o018"
+kind = "operand_type_class"
+required = true
+target = "'<email_address_list>'"
+note = "a valid string_literal"
+
+[[obligation]]
 id = "sf.functions.system-send-email.o005"
 kind = "required_operand_missing"
 required = true
@@ -73067,13 +73129,6 @@ target = "'<email_subject>'"
 note = "a valid string_literal"
 
 [[obligation]]
-id = "sf.functions.system-send-email.o008"
-kind = "required_operand_missing"
-required = true
-target = "'<email_content>'"
-note = "omit '<email_content>'"
-
-[[obligation]]
 id = "sf.functions.system-send-email.o009"
 kind = "operand_type_class"
 required = true
@@ -73081,22 +73136,29 @@ target = "'<email_content>'"
 note = "a valid string_literal"
 
 [[obligation]]
-id = "sf.functions.system-send-email.o011"
+id = "sf.functions.system-send-email.o019"
 kind = "option_present"
 required = true
-target = "[ '<mime_type>' ]"
+target = "[ , '<mime_type>' ]"
 
 [[obligation]]
-id = "sf.functions.system-send-email.o012"
+id = "sf.functions.system-send-email.o020"
 kind = "option_absent"
 required = true
-target = "[ '<mime_type>' ]"
+target = "[ , '<mime_type>' ]"
 
 [[obligation]]
-id = "sf.functions.system-send-email.o013"
+id = "sf.functions.system-send-email.o021"
+kind = "required_operand_missing"
+required = true
+target = "'<mime_type>' in [ , '<mime_type>' ]"
+note = "omit '<mime_type>'"
+
+[[obligation]]
+id = "sf.functions.system-send-email.o022"
 kind = "operand_type_class"
 required = true
-target = "'<mime_type>' in [ '<mime_type>' ]"
+target = "'<mime_type>' in [ , '<mime_type>' ]"
 note = "a valid string_literal"
 
 [[obligation]]
@@ -74273,6 +74335,20 @@ id = "sf.functions.system-snowpipe-streaming-update-channel-offset-token.o001"
 kind = "positive"
 required = true
 note = "the documented form with every required part and no optional part"
+
+[[obligation]]
+id = "sf.functions.system-snowpipe-streaming-update-channel-offset-token.o010"
+kind = "required_operand_missing"
+required = true
+target = "'<qualified_table_name>'"
+note = "omit '<qualified_table_name>'"
+
+[[obligation]]
+id = "sf.functions.system-snowpipe-streaming-update-channel-offset-token.o011"
+kind = "operand_type_class"
+required = true
+target = "'<qualified_table_name>'"
+note = "a valid string_literal"
 
 [[obligation]]
 id = "sf.functions.system-snowpipe-streaming-update-channel-offset-token.o002"

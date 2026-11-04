@@ -11,7 +11,7 @@ reason = "D97: a whole argument of an ordinary function call is an <expr> to the
 [[withdrawn_class]]
 class = "identifier"
 derived_negative = "a string literal in place of an operand of class identifier"
-count = 88
+count = 80
 reason = "D97: a whole argument of an ordinary function call is an <expr> to the parser, so a wrong class there (an identifier, literal or query where the page names another) is a type or semantic question, not syntax, and is not lexically distinct under D82; class negatives stay where the slot is not an expression (keywords, types, @stage names, ON column lists, qualified-name parts, statement identifiers)"
 
 [[withdrawn_class]]
@@ -35,13 +35,13 @@ reason = "D97: a whole argument of an ordinary function call is an <expr> to the
 [[withdrawn_class]]
 class = "string_literal"
 derived_negative = "an unquoted identifier in place of an operand of class string_literal"
-count = 789
+count = 799
 reason = "D97: a whole argument of an ordinary function call is an <expr> to the parser, so a wrong class there (an identifier, literal or query where the page names another) is a type or semantic question, not syntax, and is not lexically distinct under D82; class negatives stay where the slot is not an expression (keywords, types, @stage names, ON column lists, qualified-name parts, statement identifiers)"
 
 [[withdrawn_class]]
 class = "arity"
 derived_negative = "an omitted argument that leaves a well-formed ordinary call"
-count = 928
+count = 931
 reason = "D97 extension (auditor 11406dcd, coordinator): an omission that leaves a well-formed ordinary call, such as VAR_POP ( ) or BITXOR ( 1 ), is an arity error found when the function name is resolved, not a syntax error; withdrawn from the syntax score and kept as unscored observe cases in arity/<family>.jsonl"
 
 [[withdrawn]]
@@ -56,18 +56,9 @@ reason = "the rejection renders SQL the documented grammar also accepts"
 [[withdrawn]]
 form = "sf.functions.ai-count-tokens"
 kind = "required_operand_missing"
-target = "<input_text> #2"
-note = "omit <input_text>"
-sql = "SELECT AI_COUNT_TOKENS ( v1 , v1 ) ;"
-valid_as = "sf.functions.ai-count-tokens positive the documented form with every required part and no optional part"
-reason = "the rejection renders SQL the documented grammar also accepts"
-
-[[withdrawn]]
-form = "sf.functions.ai-count-tokens"
-kind = "required_operand_missing"
 target = "<options>"
 note = "omit <options>"
-sql = "SELECT AI_COUNT_TOKENS ( v1 , v1 ) ;"
+sql = "SELECT AI_COUNT_TOKENS ( 'ai_complete' , v1 ) ;"
 valid_as = "sf.functions.ai-count-tokens positive the documented form with every required part and no optional part"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
@@ -76,8 +67,8 @@ form = "sf.functions.ai-count-tokens"
 kind = "required_operand_missing"
 target = "<options> #2"
 note = "omit <options>"
-sql = "SELECT AI_COUNT_TOKENS ( v1 , v1 , v1 ) ;"
-valid_as = "sf.functions.ai-count-tokens option_present [ , <return_error_details> ]"
+sql = "SELECT AI_COUNT_TOKENS ( 'ai_complete' , 'llama3.3-70b' , v1 ) ;"
+valid_as = "sf.functions.ai-count-tokens operand_type_class '<function_name>' #2"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
@@ -418,7 +409,7 @@ form = "sf.functions.system-get-service-logs"
 kind = "required_operand_missing"
 target = "<number_of_most_recent_lines> in [ , <number_of_most_recent_lines> ]"
 note = "omit <number_of_most_recent_lines>"
-sql = "SELECT SYSTEM$GET_SERVICE_LOGS ( svc1 , v1 , v1 ) ;"
+sql = "SELECT SYSTEM$GET_SERVICE_LOGS ( 'svc1' , v1 , 'echo' ) ;"
 valid_as = "sf.functions.system-get-service-logs positive the documented form with every required part and no optional part"
 reason = "the rejection renders SQL the documented grammar also accepts"
 

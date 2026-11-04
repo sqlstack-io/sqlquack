@@ -5486,8 +5486,8 @@ reason = "the page's `[ IN { ... }` lacks its closing `]`; read closed"
 [[reading]]
 form = "sf.ddl.alter-external-table.add-files"
 grammar_sha256 = "d24b1f900545c078d82dfc2cbf2576d0140c60766ea9bc28909f8927a641b586"
-grammar = ["ALTER EXTERNAL TABLE [ IF EXISTS ] <name> ADD FILES ( '<path>/[<filename>]' [ , ... ] )"]
-reason = "the page's `[ , '<path>/[<filename>'] ]` misplaces the closing quote; read as a comma-separated list of '<path>/[<filename>]' strings"
+grammar = ["ALTER EXTERNAL TABLE [ IF EXISTS ] <name> ADD FILES ( '<file_path>' [ , ... ] )"]
+reason = "the page's `[ , '<path>/[<filename>'] ]` misplaces the closing quote; read as a comma-separated list of strings, each '<path>/[<filename>]': a path optionally ending in a file name"
 
 [[reading]]
 form = "sf.ddl.create-image-repository"
@@ -64492,4 +64492,127 @@ note = "a string literal in place of <client_type>, observed"
 anchor = "doc.sql.create-authentication-policy / Variant syntax / CREATE OR ALTER AUTHENTICATION POLICY"
 sql = "CREATE OR ALTER AUTHENTICATION POLICY v1 CLIENT_POLICY = ( 'INT' = ( MINIMUM_VERSION = 'm' ) ) ;"
 expect = "observe"
+context = "raw"
+
+# D118 per-form review fixes (auditor 6ccfcae1 on catalogue 5f35885d): readings that quote the page, a
+# reserved-word row that no longer reads as a truncated query, and keyword negatives for UNDROP SNAPSHOT.
+
+[[reading]]
+form = "sf.functions.ai-count-tokens"
+grammar_sha256 = "fac436bbb74bb68c3e83c9a74f219b4a6280629495f6088764e216d8bc49388e"
+grammar = ["AI_COUNT_TOKENS( '<function_name>', <input_text> [, <return_error_details> ] )", "AI_COUNT_TOKENS( '<function_name>', '<model_name>', <input_text> [, <return_error_details> ] )", "AI_COUNT_TOKENS( '<function_name>', <input_text>, <options> [, <return_error_details> ] )", "AI_COUNT_TOKENS( '<function_name>', '<model_name>', <input_text>, <options> [, <return_error_details> ] )", "AI_COUNT_TOKENS( 'ai_similarity', <input_text_1>, <input_text_2>, <options> [, <return_error_details> ] )", "AI_COUNT_TOKENS( 'ai_classify', <input_text>, <categories> [, <return_error_details> ] )", "AI_COUNT_TOKENS( 'ai_translate', <input_text>, <source_language>, <target_language> [, <return_error_details> ] )"]
+reason = "<function_name> and <model_name> are string literals, as every example on the page passes them ('ai_complete', 'llama3.3-70b')"
+
+[[reading]]
+form = "sf.functions.system-get-service-logs"
+grammar_sha256 = "8ace533a2b2a7ca5aa6511179f404c5998bbe2c3298a18759f56e757c97166fd"
+grammar = ["SYSTEM$GET_SERVICE_LOGS( '<service_name>', <instance_id>, '<container_name>' [, <number_of_most_recent_lines> ] [, <retrieve_previous_logs> ])"]
+reason = "<service_name> and <container_name> are string literals, as the page's example passes them ('TUTORIAL_DB.data_schema.echo_service', 0, 'echo', 10)"
+
+[[reading]]
+form = "sf.functions.system-snowpipe-streaming-update-channel-offset-token"
+grammar_sha256 = "7d84ba64a3b33eaa159c8d94fa3de039b828aa1d02913416f7765a0e28932e54"
+grammar = ["SYSTEM$SNOWPIPE_STREAMING_UPDATE_CHANNEL_OFFSET_TOKEN('<qualified_table_name>', '<channelName>', '<new_offset_token>')"]
+reason = "'<dbName>.<schemaName>.<tableName>' is one string operand, the table's fully qualified name"
+
+[[reading]]
+form = "sf.functions.system-send-email"
+grammar_sha256 = "4d7f1dcac528f020d223b93ae096aa76dc21883a5caac92d7dba357dcf95ed4b"
+grammar = ["SYSTEM$SEND_EMAIL( '<integration_name>', '<email_address_list>', '<email_subject>', '<email_content>' [ , '<mime_type>' ] )"]
+reason = "'<email_address_1> [ , ... <email_address_N> ]' is one string operand holding a comma-separated address list; the comma before the optional '<mime_type>' belongs to it"
+
+[[reading]]
+form = "sf.functions.decode"
+grammar_sha256 = "c59fa7291053b46aa0aef0859c13bbcdc2b0543d4004d3c0d9b28e333b1ac5d1"
+grammar = ["DECODE( <expr> , <search1> , <result1> [ , <search2> , <result2> [ ... ] ] [ , <default> ] )"]
+reason = "<search2> , <result2> is the second search/result pair and the elision repeats pairs, so the pair's operands are operands of their own"
+
+[[reading]]
+form = "sf.functions.case.end"
+grammar_sha256 = "e8c48b4429ddb34a27db23b7b315e396cfeef64290fea35dfcd1f266d69a5792"
+grammar = ["CASE WHEN <condition1> THEN <result1> [ WHEN <condition2> THEN <result2> [ WHEN <condition_n> THEN <result_n> ] [ ... ] ] [ ELSE <result3> ] END"]
+reason = "the trailing [ ... ] repeats the WHEN branch, so a third and later WHEN is an option of its own"
+
+[[reading]]
+form = "sf.functions.case.end.syntax"
+grammar_sha256 = "36537b4de136f7611bbf3ef3183d5f98d041870e11986b34cf4bb9376d6e7000"
+grammar = ["CASE <expr> WHEN <value1> THEN <result1> [ WHEN <value2> THEN <result2> [ WHEN <value_n> THEN <result_n> ] [ ... ] ] [ ELSE <result3> ] END"]
+reason = "the trailing [ ... ] repeats the WHEN branch, so a third and later WHEN is an option of its own"
+
+[[reading]]
+form = "sf.transaction_session.use-schema"
+grammar_sha256 = "c14ba7392fcdea504667298abe0f0c4ac51bfef7c0422d8a3ebdc5a0308eef1a"
+grammar = ["USE { SCHEMA [<db_name>.]<name> | <db_name>.<name> }"]
+reason = "the page makes SCHEMA optional only when the name is qualified (db_name.schema_name); USE <name> alone is USE DATABASE"
+
+[[reading]]
+form = "sf.ddl.alter-dbt-project.unset"
+grammar_sha256 = "5e995ab12657f0a00af014f9bc183e315e42cb96563f849f0c47427f46145b5a"
+grammar = ["ALTER DBT PROJECT [ IF EXISTS ] <name> UNSET { DBT_VERSION | DEFAULT_TARGET | DEFAULT_ENVIRONMENT | EXTERNAL_ACCESS_INTEGRATIONS | AUTO_COMPILE | DEFAULT_WRITEBACK | COMMENT } [ , ... ]"]
+reason = "UNSET \"unsets one or more specified properties\": at least one of the listed properties, comma-separated as in every Snowflake UNSET"
+
+[[reading]]
+form = "sf.ddl.alter-dcm-project.unset"
+grammar_sha256 = "11caaf06e80b3b6047d3dcf2fb109fae8553f5488e0c5040010c7465de15ba88"
+grammar = ["ALTER DCM PROJECT [ IF EXISTS ] <name> UNSET { LOG_LEVEL | COMMENT } [ , ... ]"]
+reason = "UNSET \"unsets one or more specified properties or parameters\": at least one of the listed properties, comma-separated as in every Snowflake UNSET"
+
+[[reading]]
+form = "sf.ddl.alter-external-table.remove-files"
+grammar_sha256 = "c594f86ac1810413da5852a18fb8b15a0237b80d0f562fac2daef2f5a407d336"
+grammar = ["ALTER EXTERNAL TABLE [ IF EXISTS ] <name> REMOVE FILES ( '<file_path>' [ , ... ] )"]
+reason = "'<path>/[<filename>]' is one string operand, a path optionally ending in a file name; the list repeats it, as ADD FILES reads"
+
+[[reading]]
+form = "sf.ddl.undrop-database"
+grammar_sha256 = "fb5edf2f78105d74f3595683f7744acb784859016e260cf110dbbeed4b296962"
+grammar = ["UNDROP DATABASE { <name> | IDENTIFIER( <id> ) }"]
+reason = "the usage notes restore one of several dropped databases of the same name with the IDENTIFIER keyword and its system-generated id (example: UNDROP DATABASE IDENTIFIER(...)), as UNDROP SNAPSHOT's syntax shows"
+
+[[reading]]
+form = "sf.ddl.undrop-schema"
+grammar_sha256 = "531c19f8b655b7c02c48fe2ce3e25a9978c911f90f40b0d75b6101257b9ed0f5"
+grammar = ["UNDROP SCHEMA { <name> | IDENTIFIER( <id> ) }"]
+reason = "the usage notes restore one of several dropped schemas of the same name with the IDENTIFIER keyword and its system-generated id (example: UNDROP SCHEMA IDENTIFIER(...)), as UNDROP SNAPSHOT's syntax shows"
+
+[[reading]]
+form = "sf.ddl.undrop-table"
+grammar_sha256 = "714817b87fd3b065d279e62a3f7f6a997df50bd73c69af5b24c0a824f8115430"
+grammar = ["UNDROP TABLE { <name> | IDENTIFIER( <id> ) }"]
+reason = "the usage notes restore one of several dropped tables of the same name with the IDENTIFIER keyword and its system-generated id (example: UNDROP TABLE IDENTIFIER(...)), as UNDROP SNAPSHOT's syntax shows"
+
+[[suppress]]
+form = "sf.scripting.let.let-cursor-for.cursor-assignment-syntax"
+kind = "identifier_class"
+target = "<resultset_name>"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+reason = "LET c1 CURSOR FOR SELECT ; also reads as the sibling form with an incomplete <query>; the hand row uses FROM, a reserved keyword that starts no query"
+
+[[limit]]
+form = "sf.scripting.let.let-cursor-for.cursor-assignment-syntax"
+kind = "identifier_class"
+target = "<resultset_name>"
+note = "reserved: a reserved keyword that starts no query (FROM), unquoted (expected rejection) and double-quoted (expected acceptance)"
+anchor = "doc.snowflake-scripting.let / Syntax / Cursor assignment syntax"
+sql = "LET c1 CURSOR FOR FROM ;"
+expect = "reject"
+also_sql = "LET c1 CURSOR FOR \"FROM\" ;"
+also_expect = "accept"
+
+[[limit]]
+form = "sf.ddl.undrop-snapshot"
+kind = "negative_neighbour"
+note = "the form without its required RENAME in [ RENAME TO <new_snapshot_name> ]"
+anchor = "doc.sql.undrop-snapshot / Syntax"
+sql = "UNDROP SNAPSHOT v1 TO v1 ;"
+expect = "reject"
+context = "raw"
+
+[[limit]]
+form = "sf.ddl.undrop-snapshot"
+kind = "negative_neighbour"
+note = "the form without its required IDENTIFIER in IDENTIFIER( <id> )"
+anchor = "doc.sql.undrop-snapshot / Syntax"
+sql = "UNDROP SNAPSHOT ( 'q1' ) ;"
+expect = "reject"
 context = "raw"

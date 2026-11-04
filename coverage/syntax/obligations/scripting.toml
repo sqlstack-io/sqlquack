@@ -3242,14 +3242,6 @@ anchor = "doc.identifiers-syntax"
 note = "quoted: a double-quoted identifier with blanks and mixed case"
 
 [[obligation]]
-id = "sf.scripting.let.let-cursor-for.cursor-assignment-syntax.o013"
-kind = "identifier_class"
-required = true
-target = "<resultset_name>"
-anchor = "doc.identifiers-syntax"
-note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
-
-[[obligation]]
 id = "sf.scripting.let.let-cursor-for.cursor-assignment-syntax.o014"
 kind = "positive"
 required = true
@@ -3262,6 +3254,14 @@ kind = "negative_neighbour"
 required = true
 anchor = "doc.snowflake-scripting.let / Note"
 note = "at top level, outside any Snowflake Scripting block"
+
+[[obligation]]
+id = "sf.scripting.let.let-cursor-for.cursor-assignment-syntax.o016"
+kind = "identifier_class"
+required = true
+target = "<resultset_name>"
+anchor = "doc.snowflake-scripting.let / Syntax / Cursor assignment syntax"
+note = "reserved: a reserved keyword that starts no query (FROM), unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
 id = "sf.scripting.let.let-default.o001"

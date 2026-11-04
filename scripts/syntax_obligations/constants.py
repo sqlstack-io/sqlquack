@@ -83,6 +83,7 @@ CLASS_RULES: tuple[tuple[re.Pattern[str], str], ...] = (
     (re.compile(r"^(reference|array_construct)_statement$"), "expression"),
     (re.compile(r"statement"), "statement"),
     (re.compile(r"(^|_)(sub)?query$"), "query"),
+    (re.compile(r"^workload_type$"), "operand"),
     (re.compile(r"(^|_)(data_)?type$|_type$"), "data_type"),
     (re.compile(r"number$|^n$|^num|_count$|^count$|position$"), "integer_literal"),
     (re.compile(r"message|string|pattern|comment"), "string_literal"),
@@ -1012,9 +1013,19 @@ FUNCTIONS_LITERAL_FILLS: dict[str, str] = {
     "'/<dbName>/<schemaName>/<repositoryName>'": "'/d1/s1/r1'",
     "'<email_address_1> [ , ... <email_address_N> ]'": "'a@example.com'",
     "'<dbName>.<schemaName>.<tableName>'": "'d1.s1.t1'",
+    "'<email_address_list>'": "'a@example.com'",
+    "'<qualified_table_name>'": "'d1.s1.t1'",
+    "'<function_name>'": "'ai_complete'",
+    "'<model_name>'": "'llama3.3-70b'",
+    "'<service_name>'": "'svc1'",
+    "'<container_name>'": "'echo'",
+}
+FUNCTIONS_FORM_FILLS: dict[str, dict[str, str]] = {
+    "reduce": {"lambda_expression": "( acc , x ) -> acc + x"},
 }
 FUNCTIONS_FORM_CONTEXTS: dict[str, tuple[str, str]] = {
     "": ("SELECT ", " ;"),
+    **dict.fromkeys(FUNCTIONS_FORM_FILLS, ("SELECT ", " ;")),
     **dict.fromkeys(FUNCTIONS_TABLE_FORMS, ("SELECT * FROM TABLE ( ", " ) ;")),
     **dict.fromkeys(FUNCTIONS_STATEMENT_FORMS, ("", "")),
     **dict.fromkeys(FUNCTIONS_METRIC_ON_FORMS, ("ALTER TABLE t1 ADD DATA METRIC FUNCTION ", " ;")),
@@ -1023,7 +1034,7 @@ FUNCTIONS_STYLES: dict[str, FormStyle] = {
     f"sf.functions.{form}": FormStyle(
         prefix=prefix,
         suffix=suffix,
-        fills=FUNCTIONS_FILLS,
+        fills={**FUNCTIONS_FILLS, **FUNCTIONS_FORM_FILLS.get(form, {})},
         literal_fills=FUNCTIONS_LITERAL_FILLS,
         terminate=not suffix,
         embedded=bool(suffix),
@@ -1267,6 +1278,7 @@ DDL_LITERAL_FILLS: dict[str, str] = {
     "'{ AUTO | 16MB | 32MB | 64MB | 128MB }'": "'AUTO'",
     "'<path>/[<filename>]'": "'p1/f1.csv'",
     "'<path>/[<filename>'": "'p1/f1.csv'",
+    "'<file_path>'": "'p1/f1.csv'",
     "'<database>.<schema>.<tablename>'": "'d1.s1.t1'",
     "'{ <num> MINUTE | USING CRON <expr> <time_zone> }'": "'1 MINUTE'",
     "'{ <number> MINUTE | USING CRON <expr> <time_zone> }'": "'1 MINUTE'",
