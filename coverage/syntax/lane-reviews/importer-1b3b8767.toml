@@ -1,0 +1,19 @@
+# Lane C review of lane A's receipt importer: errno 4 that names the grammar to use instead (1b3b8767, imported as import-73 in a299d239).
+# Bound to the reviewed commit and the Git tree of scripts/syntax_receipts at that commit.
+
+[review]
+subject = "importer"
+reviewer_lane = "C"
+branch = "wip/syntax-evidence"
+commit = "1b3b87671b6c8ceb2b2e2339aa34fc235cd9d407"
+importer_tree = "b36e2477cff3f603aee32dafcc31f82313547368"
+reviewed_utc = "2026-11-04T19:12:00Z"
+verdict = "approved"
+not_reviewed = "the Snowflake runs behind import-73, which come from lane A's capture"
+
+[[agreed]]
+point = "errno 4 with SQLSTATE 0A000 is syntax_error only when the whole message is `Unsupported feature '<statement>'; use '<grammar>' instead.`: Snowflake matched the statement to a grammar it refuses and named the documented one, as for SHOW SERVICE { CONTAINERS | INSTANCES | VOLUMES } IN <name> without SERVICE"
+check = "95 importer tests pass at 1b3b8767; the anchored pattern matches the recorded SHOW SERVICE CONTAINERS message and refuses `Unsupported feature 'X'.`, a trailing second line, and a `SQL compilation error:` prefix"
+
+[[agreed]]
+point = "the rule sits after the errno 2 unsupported-feature rule and before the client-errno and incident rules, so no other errno changes phase, and any other errno 4 message stays unestablished (tested)"
