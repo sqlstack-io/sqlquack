@@ -14,7 +14,7 @@ use crate::formats::constants::{
 };
 use crate::formats::main::obligation_form::obligation_form;
 use crate::formats::models::{
-    Alias, Case, Definition, Exclusion, Form, FormKind, FormStatus, Index, Obligation,
+    Alias, Case, Definition, Exclusion, Expect, Form, FormKind, FormStatus, Index, Obligation,
     ObligationKind, Phase, Receipt, Review, Source, SourceStatus,
 };
 
@@ -251,6 +251,11 @@ pub(crate) fn check_case(case: &Case, family: &str) -> Vec<String> {
     {
         problems.push(format!(
             "case {id}: needs obligation ids of family {family}"
+        ));
+    }
+    if case.stage.is_some() && case.expect != Some(Expect::Accept) {
+        problems.push(format!(
+            "case {id}: a stage is only for a case expected to be accepted"
         ));
     }
     if case.sql_sha256 != sha256_hex(case.sql.as_bytes())

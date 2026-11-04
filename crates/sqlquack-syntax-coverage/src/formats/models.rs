@@ -207,6 +207,33 @@ pub struct Case {
     /// SHA-256 of `session` as compact JSON with sorted keys.
     pub session_sha256: String,
     pub capture: CaptureMethod,
+    /// What Snowflake must do with the SQL for the case to count as evidence.
+    #[serde(default)]
+    pub expect: Option<Expect>,
+    /// For an accepted case expected to fail later, where; informational, never compared.
+    #[serde(default)]
+    pub stage: Option<Stage>,
+}
+
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Deserialize, Serialize)]
+#[serde(rename_all = "snake_case")]
+pub enum Expect {
+    /// No syntax error: accepted, or refused after parsing.
+    Accept,
+    /// A syntax error.
+    Reject,
+}
+
+/// Where an accepted case is expected to fail after parsing.
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Deserialize, Serialize)]
+#[serde(rename_all = "snake_case")]
+pub enum Stage {
+    /// Any error after parsing.
+    Error,
+    /// Semantic analysis or later.
+    Semantic,
+    /// Execution only.
+    Runtime,
 }
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Deserialize, Serialize)]

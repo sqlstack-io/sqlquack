@@ -3,6 +3,7 @@ use std::path::Path;
 use sha2::{Digest, Sha256};
 
 use crate::formats::constants::FAMILIES;
+use crate::formats::models::Receipt;
 
 const SHA_A: &str = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
 const SHA_B: &str = "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb";
@@ -187,4 +188,11 @@ pub(crate) fn restated_page(root: &Path) {
         "source = \"doc.select\"\n",
         "source = \"doc.select\"\nalso_sources = [\"doc.select-copy\"]\n",
     );
+}
+
+/// The fixture receipt, superseding the line hashed as `supersedes` when there is one.
+pub(crate) fn superseding_receipt(supersedes: Option<&str>) -> Receipt {
+    let mut receipt: Receipt = serde_json::from_str(&receipt_line()).expect("receipt");
+    receipt.supersedes_receipt_sha256 = supersedes.map(str::to_owned);
+    receipt
 }

@@ -119,6 +119,13 @@ Each line is one JSON object. Blank lines are refused.
   placeholders `<run_database>`, `<run_nonce>` and `<case_schema>`, so the setup hash stays the
   same from run to run.
 
+- `expect`: optional, `accept` or `reject` (decision D84). `reject` means a syntax error. `accept`
+  means no syntax error: the statement was accepted, or refused only after parsing. A receipt whose
+  phase contradicts it makes the case `unexpected_outcome`, so it is no evidence.
+- `stage`: optional, only with `accept`. One of `semantic`, `runtime` or `error`: where the
+  accepted statement is expected to fail later. It is informational, and the syntax score never
+  compares it (decision D85).
+
 `setup_sha256` is the SHA-256 of the compact JSON array, which Python writes with
 `json.dumps(setup, separators=(",", ":"), ensure_ascii=False)`. `session_sha256` is the same over
 the object with sorted keys. Setup statements may create objects in the scratch schema. The setup
@@ -161,7 +168,7 @@ A receipt is evidence only while it is current. A later receipt can supersede it
 beside its file can withdraw it: the report's `withdrawn` list names withdrawn receipts by
 `receipt_sha256`. A retired receipt stays published but is dropped before checking. A
 supersession or withdrawal that names no published receipt, or a receipt of another case, is a
-format problem.
+format problem. So is a published receipt superseded more than once, and a supersession cycle.
 
 Any other field is refused. No account identifier, host, URL, user or email address may appear.
 A `compile_only_explain` receipt shows only that the statement compiled. Its `accepted` phase
@@ -193,6 +200,7 @@ agrees. A case agrees when all of these hold:
 - It has a receipt whose SQL, setup and session hashes and capture method equal the case's, and
   that has a query id or its hash. A receipt that is not bound this way is stale.
 - All of its admissible receipts record the same phase.
+- That phase is what the case's `expect` allows, when it has one.
 - The current parser's verdict matches that phase: a `syntax_error` receipt matches a local
   rejection, and every other phase matches a local acceptance.
 - An acceptance is structural: no statement contains a Command or Raw fallback node.
@@ -210,7 +218,7 @@ catalogued forms: 3,348 on the frozen catalogue `e863d7de` (decision D81).
 
 Anything missing, ambiguous, stale, mismatched or opaque fails closed with a named reason:
 `no_obligations`, `missing_case`, `missing_receipt`, `stale_receipt`, `ambiguous_receipts`,
-`disagreement`, `opaque_fallback`, `unreviewed` or `stale_review`. A reference that does not
+`unexpected_outcome`, `disagreement`, `opaque_fallback`, `unreviewed` or `stale_review`. A reference that does not
 resolve fails every check command. Examples are an obligation of an uncatalogued form, a case
 citing an undeclared obligation, an alias whose source is not absent or whose target is unknown,
 and an exclusion naming an unknown form or page.

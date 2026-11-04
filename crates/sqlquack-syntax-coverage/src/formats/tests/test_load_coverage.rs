@@ -459,6 +459,30 @@ fn given_a_format_fault_when_loading_then_the_problem_is_named() {
             expected_problem: "receipt query.select-18: supersedes",
         },
         FormatFaultTestCase {
+            description: "a receipt superseded twice",
+            mutate: |root| {
+                let later = superseding_line(&receipt_line());
+                let other = later.replace(
+                    "\"phase\":\"semantic_error\"",
+                    "\"phase\":\"runtime_error\"",
+                );
+                write(root, "receipts/later.jsonl", &format!("{later}\n{other}\n"));
+            },
+            expected_problem: "is superseded 2 times",
+        },
+        FormatFaultTestCase {
+            description: "a stage on a case expected to be rejected",
+            mutate: |root| {
+                replace(
+                    root,
+                    "cases/query.jsonl",
+                    "\"capture\":\"execute\"",
+                    "\"capture\":\"execute\",\"expect\":\"reject\",\"stage\":\"runtime\"",
+                )
+            },
+            expected_problem: "case query.select-17: a stage is only for a case expected to be accepted",
+        },
+        FormatFaultTestCase {
             description: "a withdrawal naming no published receipt",
             mutate: |root| {
                 write(

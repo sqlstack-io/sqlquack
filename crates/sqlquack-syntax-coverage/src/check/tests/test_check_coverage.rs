@@ -3,7 +3,7 @@ use crate::check::models::{FormState, Reason};
 use crate::check::tests::helpers::{
     OTHER_TREE, SETUP, TREE, append_receipt, case_in_zone, case_line, drop_lines, exclusion_review,
     form, obligation, opaque, read, receipt_line, rejecting, replace, rewrite_select_17, select_17,
-    select_17_setup_sha256, structural, verified_tree, write,
+    select_17_setup_sha256, sha256, structural, verified_tree, with_fields, write,
 };
 use crate::check::tests::test_types::CheckTestCase;
 use crate::formats::main::load_coverage::load_coverage;
@@ -277,6 +277,128 @@ fn given_a_changed_tree_when_checking_then_the_form_fails_closed_with_its_reason
             form: "sf.query.select.top",
             expected_state: FormState::Unverified,
             expected_reason: Some(Reason::NoObligations),
+            expected_problem: None,
+        },
+        CheckTestCase {
+            description: "a superseded receipt, which never votes",
+            mutate: |root| {
+                let first: String = receipt_line(&select_17(), "accepted");
+                let later: String = with_fields(
+                    &receipt_line(&select_17(), "syntax_error"),
+                    serde_json::json!({"supersedes_receipt_sha256": sha256(&first)}),
+                );
+                append_receipt(root, &later);
+            },
+            parse: structural,
+            parser_tree: Some(TREE),
+            form: "sf.query.select",
+            expected_state: FormState::Unverified,
+            expected_reason: Some(Reason::Disagreement),
+            expected_problem: None,
+        },
+        CheckTestCase {
+            description: "a case expected to be rejected that Snowflake accepted",
+            mutate: |root| {
+                rewrite_select_17(
+                    root,
+                    &with_fields(&select_17(), serde_json::json!({"expect": "reject"})),
+                )
+            },
+            parse: structural,
+            parser_tree: Some(TREE),
+            form: "sf.query.select",
+            expected_state: FormState::Unverified,
+            expected_reason: Some(Reason::UnexpectedOutcome),
+            expected_problem: None,
+        },
+        CheckTestCase {
+            description: "a case expected to be accepted that Snowflake rejected as syntax",
+            mutate: |root| {
+                let case: String =
+                    case_line("select-from", "sf.query.select.o002", "SELECT FROM", &[]);
+                replace(
+                    root,
+                    "cases/query.jsonl",
+                    &case,
+                    &with_fields(&case, serde_json::json!({"expect": "accept"})),
+                );
+            },
+            parse: structural,
+            parser_tree: Some(TREE),
+            form: "sf.query.select",
+            expected_state: FormState::Unverified,
+            expected_reason: Some(Reason::UnexpectedOutcome),
+            expected_problem: None,
+        },
+        CheckTestCase {
+            description: "an acceptance expected to fail at runtime that failed semantic analysis: stages never count",
+            mutate: |root| {
+                rewrite_select_17(
+                    root,
+                    &with_fields(
+                        &select_17(),
+                        serde_json::json!({"expect": "accept", "stage": "runtime"}),
+                    ),
+                );
+                replace(
+                    root,
+                    "receipts/run-1.jsonl",
+                    "\"phase\":\"accepted\"",
+                    "\"phase\":\"semantic_error\"",
+                );
+            },
+            parse: structural,
+            parser_tree: Some(TREE),
+            form: "sf.query.select",
+            expected_state: FormState::Verified,
+            expected_reason: None,
+            expected_problem: None,
+        },
+        CheckTestCase {
+            description: "a case expected to fail semantically or later that failed at runtime",
+            mutate: |root| {
+                rewrite_select_17(
+                    root,
+                    &with_fields(
+                        &select_17(),
+                        serde_json::json!({"expect": "accept", "stage": "semantic"}),
+                    ),
+                );
+                replace(
+                    root,
+                    "receipts/run-1.jsonl",
+                    "\"phase\":\"accepted\"",
+                    "\"phase\":\"runtime_error\"",
+                );
+            },
+            parse: structural,
+            parser_tree: Some(TREE),
+            form: "sf.query.select",
+            expected_state: FormState::Verified,
+            expected_reason: None,
+            expected_problem: None,
+        },
+        CheckTestCase {
+            description: "expectations met: a rejection expected and recorded, an acceptance too",
+            mutate: |root| {
+                let case: String =
+                    case_line("select-from", "sf.query.select.o002", "SELECT FROM", &[]);
+                replace(
+                    root,
+                    "cases/query.jsonl",
+                    &case,
+                    &with_fields(&case, serde_json::json!({"expect": "reject"})),
+                );
+                rewrite_select_17(
+                    root,
+                    &with_fields(&select_17(), serde_json::json!({"expect": "accept"})),
+                );
+            },
+            parse: structural,
+            parser_tree: Some(TREE),
+            form: "sf.query.select",
+            expected_state: FormState::Verified,
+            expected_reason: None,
             expected_problem: None,
         },
         CheckTestCase {

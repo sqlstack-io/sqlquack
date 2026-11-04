@@ -31,6 +31,8 @@ pub enum Reason {
     StaleReceipt,
     /// A citing case has admissible receipts of different phases.
     AmbiguousReceipts,
+    /// Snowflake's recorded phase contradicts what the case expects, so it is no evidence.
+    UnexpectedOutcome,
     /// The current parser's verdict differs from the receipt's phase.
     Disagreement,
     /// The current parser accepts a case only through a Command or Raw fallback.

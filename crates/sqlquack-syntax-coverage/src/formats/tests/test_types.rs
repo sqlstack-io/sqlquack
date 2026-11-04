@@ -1,5 +1,7 @@
 use std::path::Path;
 
+use crate::formats::models::Receipt;
+
 /// A change to a valid coverage tree, and a fragment of the problem it must cause.
 pub(crate) struct FormatFaultTestCase {
     pub(crate) description: &'static str,
@@ -34,4 +36,12 @@ pub(crate) struct LoadTestCase {
 pub(crate) struct CommittedTestCase {
     pub(crate) description: &'static str,
     pub(crate) expected_families: &'static [&'static str],
+}
+
+/// Receipts with their line hashes, and what retiring them must leave.
+pub(crate) struct RetireTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) receipts: Vec<(Receipt, String)>,
+    pub(crate) expected_kept: usize,
+    pub(crate) expected_problem: Option<&'static str>,
 }

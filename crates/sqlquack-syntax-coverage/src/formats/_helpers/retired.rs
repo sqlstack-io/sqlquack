@@ -49,6 +49,39 @@ fn withdrawn_problem(path: &Path) -> String {
     )
 }
 
+/// Supersession chains that fork or loop back on themselves; each would leave no single receipt.
+fn chain_problems(receipts: &[(Receipt, String)]) -> Vec<String> {
+    let mut supersedes: BTreeMap<&str, &str> = BTreeMap::new();
+    for (receipt, hash) in receipts {
+        if let Some(old) = &receipt.supersedes_receipt_sha256 {
+            supersedes.insert(hash.as_str(), old.as_str());
+        }
+    }
+    let mut problems: Vec<String> = Vec::new();
+    let mut successors: BTreeMap<&str, usize> = BTreeMap::new();
+    for old in supersedes.values() {
+        *successors.entry(old).or_insert(0) += 1;
+    }
+    problems.extend(
+        successors
+            .iter()
+            .filter(|(_, count)| **count > 1)
+            .map(|(old, count)| format!("receipt {old} is superseded {count} times")),
+    );
+    for start in supersedes.keys() {
+        let mut seen: BTreeSet<&str> = BTreeSet::from([*start]);
+        let mut next: Option<&&str> = supersedes.get(start);
+        while let Some(hash) = next {
+            if !seen.insert(hash) {
+                problems.push(format!("receipt {start} is in a supersession cycle"));
+                break;
+            }
+            next = supersedes.get(hash);
+        }
+    }
+    problems
+}
+
 /// The current receipts, the retired line hashes, and retirements naming no receipt of the case.
 pub(crate) fn retire(
     receipts: Vec<(Receipt, String)>,
@@ -72,6 +105,7 @@ pub(crate) fn retire(
         }
         retired.insert(old.clone());
     }
+    problems.extend(chain_problems(&receipts));
     problems.extend(
         withdrawn
             .iter()

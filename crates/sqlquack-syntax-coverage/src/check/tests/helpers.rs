@@ -273,3 +273,12 @@ pub(crate) fn exclusion_review(root: &Path, verdict: &str, tree: &str) {
 pub(crate) fn select_17_setup_sha256() -> String {
     sha256(&serde_json::to_string(&[SETUP]).expect("setup"))
 }
+
+/// `line`, a case or receipt line, with `fields` added or replaced.
+pub(crate) fn with_fields(line: &str, fields: Value) -> String {
+    let mut record: Value = serde_json::from_str(line).expect("line");
+    for (key, value) in fields.as_object().expect("fields") {
+        record[key] = value.clone();
+    }
+    record.to_string()
+}
