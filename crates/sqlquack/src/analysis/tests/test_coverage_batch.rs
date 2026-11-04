@@ -604,6 +604,38 @@ fn given_quoted_units_when_converting_timestampdiff_then_boundaries_are_counted(
 }
 
 #[test]
+fn given_dates_when_converting_dayofweekiso_then_monday_is_one_and_sunday_seven() {
+    let test_cases = [
+        FirstValueTestCase {
+            description: "a Sunday is 7",
+            sql: "SELECT DAYOFWEEKISO('2023-12-31'::DATE) AS v",
+            expected_outcome: Ok("7"),
+        },
+        FirstValueTestCase {
+            description: "a Monday is 1",
+            sql: "SELECT DAYOFWEEKISO('2024-01-01'::DATE) AS v",
+            expected_outcome: Ok("1"),
+        },
+        FirstValueTestCase {
+            description: "a timestamp just before midnight keeps its own day",
+            sql: "SELECT DAYOFWEEKISO('2024-02-29 23:59:59.999999999'::TIMESTAMP_NTZ(9)) AS v",
+            expected_outcome: Ok("4"),
+        },
+    ];
+    for test_case in test_cases {
+        assert_eq!(
+            shop_first_outcome(test_case.sql, test_case.expected_outcome),
+            test_case
+                .expected_outcome
+                .map(str::to_owned)
+                .map_err(str::to_owned),
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
 fn given_powers_of_ten_when_converting_power_then_the_nearest_double_is_kept() {
     let test_cases = [
         FirstValueTestCase {

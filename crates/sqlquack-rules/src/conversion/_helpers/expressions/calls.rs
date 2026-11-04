@@ -69,8 +69,8 @@ use crate::conversion::constants::MAX_KIND;
 use crate::conversion::constants::{
     AVERAGE, AVG_NAME, COUNT, GENERATOR_RULE, GENERATOR_SEQUENCE_COLUMN, LEAST_GREATEST,
     LOCAL_ZONE_SUFFIX, MIN_MAX, MIN_MAX_FLOAT, NOT_SNOWFLAKE_FUNCTIONS, NULLIF, NUMERIC_RANGE,
-    REGEXP_LIKE_NAME, RLIKE_PAIR, SORTED_ARRAY_FUNCTION, SUM, SUM_FLOAT, TIMESTAMPDIFF_PAIR,
-    TO_DATE_NAME, TRIM, TRY_PREFIX, VARIANT_MAX,
+    PART_FUNCTIONS_PAIR, REGEXP_LIKE_NAME, RLIKE_PAIR, SORTED_ARRAY_FUNCTION, SUM, SUM_FLOAT,
+    TIMESTAMPDIFF_PAIR, TO_DATE_NAME, TRIM, TRY_PREFIX, VARIANT_MAX,
 };
 
 /// SEQ4() or SEQ8() in a query level reading only a generator: the row's number from 0.
@@ -234,6 +234,11 @@ pub(crate) fn convert_function(payload: &Value, site: Site<'_>) -> Result<Emitte
             regexp(REGEXP_LIKE_NAME, parts, &construct, site)
         }
         ("DATE_PART", [unit, value]) => date_part(unit, value, &construct, site),
+        ("DAYOFWEEKISO", [value]) => {
+            site.context.log.equivalence(PART_FUNCTIONS_PAIR);
+            let unit = serde_json::json!({ "var": { "this": "DAYOFWEEKISO" } });
+            date_part(&unit, value, &construct, site)
+        }
         ("DATEDIFF", parts) => date_diff_call(parts, &construct, site),
         ("TIMESTAMPDIFF", parts) => {
             site.context.log.equivalence(TIMESTAMPDIFF_PAIR);

@@ -1008,7 +1008,7 @@ pub const SPELLING_PAIRS: &[SpellingPair] = &[
     },
     SpellingPair {
         id: PART_FUNCTIONS_PAIR,
-        source: "YEAR(x), QUARTER(x), MONTH(x), DAY(x), HOUR(x), MINUTE(x), SECOND(x)",
+        source: "YEAR(x), QUARTER(x), MONTH(x), DAY(x), HOUR(x), MINUTE(x), SECOND(x), DAYOFWEEKISO(x)",
         canonical: "DATE_PART(unit, x)",
         cases: "fidelity/part_functions.toml",
     },
