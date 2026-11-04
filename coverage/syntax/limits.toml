@@ -59648,3 +59648,1139 @@ anchor = "doc.sql.alter-dynamic-table / Syntax"
 sql = "ALTER DYNAMIC TABLE IF EXISTS v1 ADD SEARCH OPTIMIZATION ON EQUALITY ( v1 ) , EQUALITY ( v1 ) EQUALITY ;"
 expect = "observe"
 context = "raw"
+
+# D113 security_admin receipt triage (import 70): remaining contradictions observed, each reason names its category and receipt.
+
+[[suppress]]
+form = "sf.security_admin.alter-data-movement-policy.set-enforce-rules"
+kind = "negative_neighbour"
+target = "<rule_name>"
+note = "a string literal in place of <rule_name>"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 02000, phase semantic_error, import-20261104-69), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.alter-data-movement-policy.set-enforce-rules"
+kind = "negative_neighbour"
+target = "<rule_name>"
+note = "a string literal in place of <rule_name>, observed"
+anchor = "doc.sql.alter-data-movement-policy / Syntax"
+sql = "ALTER DATA MOVEMENT POLICY v1 SET ENFORCE_RULES = ( 'v1' ) ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-database-role.rename-to"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 02000, phase semantic_error, import-20261104-69), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.alter-database-role.rename-to"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>, observed"
+anchor = "doc.sql.alter-database-role / Syntax"
+sql = "ALTER DATABASE ROLE RENAME TO v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-database-role.set-comment"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 1003 SQLSTATE 42000, phase semantic_error, import-20261104-69), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.alter-database-role.set-comment"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>, observed"
+anchor = "doc.sql.alter-database-role / Syntax"
+sql = "ALTER DATABASE ROLE SET COMMENT = 'm' ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-database-role.set-tag"
+kind = "required_operand_missing"
+target = "<tag_name>"
+note = "omit <tag_name>"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 1420 SQLSTATE 22023, phase semantic_error, import-20261104-69), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.alter-database-role.set-tag"
+kind = "required_operand_missing"
+target = "<tag_name>"
+note = "omit <tag_name>, observed"
+anchor = "doc.sql.alter-database-role / Syntax"
+sql = "ALTER DATABASE ROLE v1 SET TAG = 'm' ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-database-role.set-tag"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 02000, phase semantic_error, import-20261104-69), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.alter-database-role.set-tag"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>, observed"
+anchor = "doc.sql.alter-database-role / Syntax"
+sql = "ALTER DATABASE ROLE SET TAG v1 = 'm' ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-database-role.set-tag"
+kind = "negative_neighbour"
+note = "the form without its required TAG"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 1420 SQLSTATE 22023, phase semantic_error, import-20261104-69), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.alter-database-role.set-tag"
+kind = "negative_neighbour"
+note = "the form without its required TAG, observed"
+anchor = "doc.sql.alter-database-role / Syntax"
+sql = "ALTER DATABASE ROLE v1 SET v1 = 'm' ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-database-role.unset-comment"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 1003 SQLSTATE 42000, phase semantic_error, import-20261104-69), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.alter-database-role.unset-comment"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>, observed"
+anchor = "doc.sql.alter-database-role / Syntax"
+sql = "ALTER DATABASE ROLE UNSET COMMENT ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-database-role.unset-tag"
+kind = "required_operand_missing"
+target = "<tag_name>"
+note = "omit <tag_name>"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 1420 SQLSTATE 22023, phase semantic_error, import-20261104-69), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.alter-database-role.unset-tag"
+kind = "required_operand_missing"
+target = "<tag_name>"
+note = "omit <tag_name>, observed"
+anchor = "doc.sql.alter-database-role / Syntax"
+sql = "ALTER DATABASE ROLE v1 UNSET TAG ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-database-role.unset-tag"
+kind = "negative_neighbour"
+note = "the form without its required TAG"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 1420 SQLSTATE 22023, phase semantic_error, import-20261104-69), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.alter-database-role.unset-tag"
+kind = "negative_neighbour"
+note = "the form without its required TAG, observed"
+anchor = "doc.sql.alter-database-role / Syntax"
+sql = "ALTER DATABASE ROLE v1 UNSET v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-database-role.unset-tag"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 02000, phase semantic_error, import-20261104-69), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.alter-database-role.unset-tag"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>, observed"
+anchor = "doc.sql.alter-database-role / Syntax"
+sql = "ALTER DATABASE ROLE UNSET TAG v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-external-access-integration.set"
+kind = "negative_neighbour"
+target = "<integration_name_1> in [ ALLOWED_API_AUTHENTICATION_INTEGRATIONS = { ( <integration_name_1> [ , <integration_name_2> ,…"
+note = "a string literal in place of <integration_name_1>"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 02000, phase semantic_error, import-20261104-69), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.alter-external-access-integration.set"
+kind = "negative_neighbour"
+target = "<integration_name_1> in [ ALLOWED_API_AUTHENTICATION_INTEGRATIONS = { ( <integration_name_1> [ , <integration_name_2> ,…"
+note = "a string literal in place of <integration_name_1>, observed"
+anchor = "doc.sql.alter-external-access-integration / Syntax"
+sql = "ALTER EXTERNAL ACCESS INTEGRATION v1 SET ALLOWED_API_AUTHENTICATION_INTEGRATIONS = ( 'v1' ) ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-external-access-integration.set"
+kind = "required_operand_missing"
+target = "<tag_name> in [ TAG <tag_name> = '<tag_value>' [ , <tag_name> = '<tag_value>' ... ] ]"
+note = "omit <tag_name>"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 1420 SQLSTATE 22023, phase semantic_error, import-20261104-69), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.alter-external-access-integration.set"
+kind = "required_operand_missing"
+target = "<tag_name> in [ TAG <tag_name> = '<tag_value>' [ , <tag_name> = '<tag_value>' ... ] ]"
+note = "omit <tag_name>, observed"
+anchor = "doc.sql.alter-external-access-integration / Syntax"
+sql = "ALTER EXTERNAL ACCESS INTEGRATION v1 SET TAG = 'm' ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-external-access-integration.set"
+kind = "negative_neighbour"
+target = "<secret_name> in [ ALLOWED_AUTHENTICATION_SECRETS = { ( <secret_name> [ , <secret_name> ... ] ) | all | none } ]"
+note = "a string literal in place of <secret_name>"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 02000, phase semantic_error, import-20261104-69), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.alter-external-access-integration.set"
+kind = "negative_neighbour"
+target = "<secret_name> in [ ALLOWED_AUTHENTICATION_SECRETS = { ( <secret_name> [ , <secret_name> ... ] ) | all | none } ]"
+note = "a string literal in place of <secret_name>, observed"
+anchor = "doc.sql.alter-external-access-integration / Syntax"
+sql = "ALTER EXTERNAL ACCESS INTEGRATION v1 SET ALLOWED_AUTHENTICATION_SECRETS = ( 'v1' ) ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-external-access-integration.set"
+kind = "operand_type_class"
+target = "none in [ ALLOWED_AUTHENTICATION_SECRETS = { ( <secret_name> [ , <secret_name> ... ] ) | all | none } ]"
+note = "a valid operand"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-69); observed, not flipped to reject"
+
+[[limit]]
+form = "sf.security_admin.alter-external-access-integration.set"
+kind = "operand_type_class"
+target = "none in [ ALLOWED_AUTHENTICATION_SECRETS = { ( <secret_name> [ , <secret_name> ... ] ) | all | none } ]"
+note = "a valid operand, observed"
+anchor = "doc.sql.alter-external-access-integration / Syntax"
+sql = "ALTER EXTERNAL ACCESS INTEGRATION IF EXISTS v1 SET ALLOWED_NETWORK_RULES = ( v1 , v1 ) ALLOWED_API_AUTHENTICATION_INTEGRATIONS = ( v1 , v1 ) ALLOWED_AUTHENTICATION_SECRETS = none ENABLED = TRUE COMMENT = 'm' TAG v1 = 'm' , v1 = 'm' ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-external-access-integration.set"
+kind = "negative_neighbour"
+target = "<rule_name> in [ ALLOWED_NETWORK_RULES = ( <rule_name> [ , <rule_name> ... ] ) ]"
+note = "a string literal in place of <rule_name>"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 02000, phase semantic_error, import-20261104-69), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.alter-external-access-integration.set"
+kind = "negative_neighbour"
+target = "<rule_name> in [ ALLOWED_NETWORK_RULES = ( <rule_name> [ , <rule_name> ... ] ) ]"
+note = "a string literal in place of <rule_name>, observed"
+anchor = "doc.sql.alter-external-access-integration / Syntax"
+sql = "ALTER EXTERNAL ACCESS INTEGRATION v1 SET ALLOWED_NETWORK_RULES = ( 'v1' ) ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-external-access-integration.set"
+kind = "option_present"
+target = "[ IF EXISTS ]"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-69); observed, not flipped to reject"
+
+[[limit]]
+form = "sf.security_admin.alter-external-access-integration.set"
+kind = "option_present"
+target = "[ IF EXISTS ]"
+note = "option present [ IF EXISTS ], observed"
+anchor = "doc.sql.alter-external-access-integration / Syntax"
+sql = "ALTER EXTERNAL ACCESS INTEGRATION IF EXISTS v1 SET ALLOWED_NETWORK_RULES = ( v1 , v1 ) ALLOWED_API_AUTHENTICATION_INTEGRATIONS = ( v1 , v1 ) ALLOWED_AUTHENTICATION_SECRETS = ( v1 , v1 ) ENABLED = TRUE COMMENT = 'm' TAG v1 = 'm' , v1 = 'm' ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-external-access-integration.set"
+kind = "option_present"
+target = "[ ALLOWED_NETWORK_RULES = ( <rule_name> [ , <rule_name> ... ] ) ]"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-69); observed, not flipped to reject"
+
+[[limit]]
+form = "sf.security_admin.alter-external-access-integration.set"
+kind = "option_present"
+target = "[ ALLOWED_NETWORK_RULES = ( <rule_name> [ , <rule_name> ... ] ) ]"
+note = "option present [ ALLOWED_NETWORK_RULES = ( <rule_name> [ , <rule_name> ... ] ) ], observed"
+anchor = "doc.sql.alter-external-access-integration / Syntax"
+sql = "ALTER EXTERNAL ACCESS INTEGRATION IF EXISTS v1 SET ALLOWED_NETWORK_RULES = ( v1 , v1 ) ALLOWED_API_AUTHENTICATION_INTEGRATIONS = ( v1 , v1 ) ALLOWED_AUTHENTICATION_SECRETS = ( v1 , v1 ) ENABLED = TRUE COMMENT = 'm' TAG v1 = 'm' , v1 = 'm' ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-external-access-integration.set"
+kind = "operand_type_class"
+target = "<rule_name> in [ ALLOWED_NETWORK_RULES = ( <rule_name> [ , <rule_name> ... ] ) ]"
+note = "a valid identifier"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-69); observed, not flipped to reject"
+
+[[limit]]
+form = "sf.security_admin.alter-external-access-integration.set"
+kind = "operand_type_class"
+target = "<rule_name> in [ ALLOWED_NETWORK_RULES = ( <rule_name> [ , <rule_name> ... ] ) ]"
+note = "a valid identifier, observed"
+anchor = "doc.sql.alter-external-access-integration / Syntax"
+sql = "ALTER EXTERNAL ACCESS INTEGRATION IF EXISTS v1 SET ALLOWED_NETWORK_RULES = ( v1 , v1 ) ALLOWED_API_AUTHENTICATION_INTEGRATIONS = ( v1 , v1 ) ALLOWED_AUTHENTICATION_SECRETS = ( v1 , v1 ) ENABLED = TRUE COMMENT = 'm' TAG v1 = 'm' , v1 = 'm' ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-external-access-integration.set"
+kind = "option_present"
+target = "[ , <rule_name> ... ]"
+note = "the list continued at least once"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-69); observed, not flipped to reject"
+
+[[limit]]
+form = "sf.security_admin.alter-external-access-integration.set"
+kind = "option_present"
+target = "[ , <rule_name> ... ]"
+note = "the list continued at least once, observed"
+anchor = "doc.sql.alter-external-access-integration / Syntax"
+sql = "ALTER EXTERNAL ACCESS INTEGRATION IF EXISTS v1 SET ALLOWED_NETWORK_RULES = ( v1 , v1 ) ALLOWED_API_AUTHENTICATION_INTEGRATIONS = ( v1 , v1 ) ALLOWED_AUTHENTICATION_SECRETS = ( v1 , v1 ) ENABLED = TRUE COMMENT = 'm' TAG v1 = 'm' , v1 = 'm' ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-external-access-integration.set"
+kind = "option_present"
+target = "[ ALLOWED_API_AUTHENTICATION_INTEGRATIONS = { ( <integration_name_1> [ , <integration_name_2> , ... ] ) | none } ]"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-69); observed, not flipped to reject"
+
+[[limit]]
+form = "sf.security_admin.alter-external-access-integration.set"
+kind = "option_present"
+target = "[ ALLOWED_API_AUTHENTICATION_INTEGRATIONS = { ( <integration_name_1> [ , <integration_name_2> , ... ] ) | none } ]"
+note = "option present [ ALLOWED_API_AUTHENTICATION_INTEGRATIONS = { ( <integration_name_1> [ , <integration_name_2> , ... ] ) | none } ], observed"
+anchor = "doc.sql.alter-external-access-integration / Syntax"
+sql = "ALTER EXTERNAL ACCESS INTEGRATION IF EXISTS v1 SET ALLOWED_NETWORK_RULES = ( v1 , v1 ) ALLOWED_API_AUTHENTICATION_INTEGRATIONS = ( v1 , v1 ) ALLOWED_AUTHENTICATION_SECRETS = ( v1 , v1 ) ENABLED = TRUE COMMENT = 'm' TAG v1 = 'm' , v1 = 'm' ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-external-access-integration.set"
+kind = "operand_type_class"
+target = "<integration_name_1> in [ ALLOWED_API_AUTHENTICATION_INTEGRATIONS = { ( <integration_name_1> [ , <integration_name_2> ,…"
+note = "a valid identifier"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-69); observed, not flipped to reject"
+
+[[limit]]
+form = "sf.security_admin.alter-external-access-integration.set"
+kind = "operand_type_class"
+target = "<integration_name_1> in [ ALLOWED_API_AUTHENTICATION_INTEGRATIONS = { ( <integration_name_1> [ , <integration_name_2> ,…"
+note = "a valid identifier, observed"
+anchor = "doc.sql.alter-external-access-integration / Syntax"
+sql = "ALTER EXTERNAL ACCESS INTEGRATION IF EXISTS v1 SET ALLOWED_NETWORK_RULES = ( v1 , v1 ) ALLOWED_API_AUTHENTICATION_INTEGRATIONS = ( v1 , v1 ) ALLOWED_AUTHENTICATION_SECRETS = ( v1 , v1 ) ENABLED = TRUE COMMENT = 'm' TAG v1 = 'm' , v1 = 'm' ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-external-access-integration.set"
+kind = "option_present"
+target = "[ , <integration_name_2> , ... ]"
+note = "the list continued at least once"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-69); observed, not flipped to reject"
+
+[[limit]]
+form = "sf.security_admin.alter-external-access-integration.set"
+kind = "option_present"
+target = "[ , <integration_name_2> , ... ]"
+note = "the list continued at least once, observed"
+anchor = "doc.sql.alter-external-access-integration / Syntax"
+sql = "ALTER EXTERNAL ACCESS INTEGRATION IF EXISTS v1 SET ALLOWED_NETWORK_RULES = ( v1 , v1 ) ALLOWED_API_AUTHENTICATION_INTEGRATIONS = ( v1 , v1 ) ALLOWED_AUTHENTICATION_SECRETS = ( v1 , v1 ) ENABLED = TRUE COMMENT = 'm' TAG v1 = 'm' , v1 = 'm' ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-external-access-integration.set"
+kind = "option_present"
+target = "[ ALLOWED_AUTHENTICATION_SECRETS = { ( <secret_name> [ , <secret_name> ... ] ) | all | none } ]"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-69); observed, not flipped to reject"
+
+[[limit]]
+form = "sf.security_admin.alter-external-access-integration.set"
+kind = "option_present"
+target = "[ ALLOWED_AUTHENTICATION_SECRETS = { ( <secret_name> [ , <secret_name> ... ] ) | all | none } ]"
+note = "option present [ ALLOWED_AUTHENTICATION_SECRETS = { ( <secret_name> [ , <secret_name> ... ] ) | all | none } ], observed"
+anchor = "doc.sql.alter-external-access-integration / Syntax"
+sql = "ALTER EXTERNAL ACCESS INTEGRATION IF EXISTS v1 SET ALLOWED_NETWORK_RULES = ( v1 , v1 ) ALLOWED_API_AUTHENTICATION_INTEGRATIONS = ( v1 , v1 ) ALLOWED_AUTHENTICATION_SECRETS = ( v1 , v1 ) ENABLED = TRUE COMMENT = 'm' TAG v1 = 'm' , v1 = 'm' ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-external-access-integration.set"
+kind = "operand_type_class"
+target = "<secret_name> in [ ALLOWED_AUTHENTICATION_SECRETS = { ( <secret_name> [ , <secret_name> ... ] ) | all | none } ]"
+note = "a valid identifier"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-69); observed, not flipped to reject"
+
+[[limit]]
+form = "sf.security_admin.alter-external-access-integration.set"
+kind = "operand_type_class"
+target = "<secret_name> in [ ALLOWED_AUTHENTICATION_SECRETS = { ( <secret_name> [ , <secret_name> ... ] ) | all | none } ]"
+note = "a valid identifier, observed"
+anchor = "doc.sql.alter-external-access-integration / Syntax"
+sql = "ALTER EXTERNAL ACCESS INTEGRATION IF EXISTS v1 SET ALLOWED_NETWORK_RULES = ( v1 , v1 ) ALLOWED_API_AUTHENTICATION_INTEGRATIONS = ( v1 , v1 ) ALLOWED_AUTHENTICATION_SECRETS = ( v1 , v1 ) ENABLED = TRUE COMMENT = 'm' TAG v1 = 'm' , v1 = 'm' ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-external-access-integration.set"
+kind = "option_present"
+target = "[ , <secret_name> ... ]"
+note = "the list continued at least once"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-69); observed, not flipped to reject"
+
+[[limit]]
+form = "sf.security_admin.alter-external-access-integration.set"
+kind = "option_present"
+target = "[ , <secret_name> ... ]"
+note = "the list continued at least once, observed"
+anchor = "doc.sql.alter-external-access-integration / Syntax"
+sql = "ALTER EXTERNAL ACCESS INTEGRATION IF EXISTS v1 SET ALLOWED_NETWORK_RULES = ( v1 , v1 ) ALLOWED_API_AUTHENTICATION_INTEGRATIONS = ( v1 , v1 ) ALLOWED_AUTHENTICATION_SECRETS = ( v1 , v1 ) ENABLED = TRUE COMMENT = 'm' TAG v1 = 'm' , v1 = 'm' ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-external-access-integration.set"
+kind = "option_present"
+target = "[ ENABLED = { TRUE | FALSE } ]"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-69); observed, not flipped to reject"
+
+[[limit]]
+form = "sf.security_admin.alter-external-access-integration.set"
+kind = "option_present"
+target = "[ ENABLED = { TRUE | FALSE } ]"
+note = "option present [ ENABLED = { TRUE | FALSE } ], observed"
+anchor = "doc.sql.alter-external-access-integration / Syntax"
+sql = "ALTER EXTERNAL ACCESS INTEGRATION IF EXISTS v1 SET ALLOWED_NETWORK_RULES = ( v1 , v1 ) ALLOWED_API_AUTHENTICATION_INTEGRATIONS = ( v1 , v1 ) ALLOWED_AUTHENTICATION_SECRETS = ( v1 , v1 ) ENABLED = TRUE COMMENT = 'm' TAG v1 = 'm' , v1 = 'm' ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-external-access-integration.set"
+kind = "option_present"
+target = "[ COMMENT = '<string_literal>' ]"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-69); observed, not flipped to reject"
+
+[[limit]]
+form = "sf.security_admin.alter-external-access-integration.set"
+kind = "option_present"
+target = "[ COMMENT = '<string_literal>' ]"
+note = "option present [ COMMENT = '<string_literal>' ], observed"
+anchor = "doc.sql.alter-external-access-integration / Syntax"
+sql = "ALTER EXTERNAL ACCESS INTEGRATION IF EXISTS v1 SET ALLOWED_NETWORK_RULES = ( v1 , v1 ) ALLOWED_API_AUTHENTICATION_INTEGRATIONS = ( v1 , v1 ) ALLOWED_AUTHENTICATION_SECRETS = ( v1 , v1 ) ENABLED = TRUE COMMENT = 'm' TAG v1 = 'm' , v1 = 'm' ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-external-access-integration.set"
+kind = "operand_type_class"
+target = "'<string_literal>' in [ COMMENT = '<string_literal>' ]"
+note = "a valid string_literal"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-69); observed, not flipped to reject"
+
+[[limit]]
+form = "sf.security_admin.alter-external-access-integration.set"
+kind = "operand_type_class"
+target = "'<string_literal>' in [ COMMENT = '<string_literal>' ]"
+note = "a valid string_literal, observed"
+anchor = "doc.sql.alter-external-access-integration / Syntax"
+sql = "ALTER EXTERNAL ACCESS INTEGRATION IF EXISTS v1 SET ALLOWED_NETWORK_RULES = ( v1 , v1 ) ALLOWED_API_AUTHENTICATION_INTEGRATIONS = ( v1 , v1 ) ALLOWED_AUTHENTICATION_SECRETS = ( v1 , v1 ) ENABLED = TRUE COMMENT = 'm' TAG v1 = 'm' , v1 = 'm' ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-external-access-integration.set"
+kind = "option_present"
+target = "[ TAG <tag_name> = '<tag_value>' [ , <tag_name> = '<tag_value>' ... ] ]"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-69); observed, not flipped to reject"
+
+[[limit]]
+form = "sf.security_admin.alter-external-access-integration.set"
+kind = "option_present"
+target = "[ TAG <tag_name> = '<tag_value>' [ , <tag_name> = '<tag_value>' ... ] ]"
+note = "option present [ TAG <tag_name> = '<tag_value>' [ , <tag_name> = '<tag_value>' ... ] ], observed"
+anchor = "doc.sql.alter-external-access-integration / Syntax"
+sql = "ALTER EXTERNAL ACCESS INTEGRATION IF EXISTS v1 SET ALLOWED_NETWORK_RULES = ( v1 , v1 ) ALLOWED_API_AUTHENTICATION_INTEGRATIONS = ( v1 , v1 ) ALLOWED_AUTHENTICATION_SECRETS = ( v1 , v1 ) ENABLED = TRUE COMMENT = 'm' TAG v1 = 'm' , v1 = 'm' ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-external-access-integration.set"
+kind = "operand_type_class"
+target = "<tag_name> in [ TAG <tag_name> = '<tag_value>' [ , <tag_name> = '<tag_value>' ... ] ]"
+note = "a valid identifier"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-69); observed, not flipped to reject"
+
+[[limit]]
+form = "sf.security_admin.alter-external-access-integration.set"
+kind = "operand_type_class"
+target = "<tag_name> in [ TAG <tag_name> = '<tag_value>' [ , <tag_name> = '<tag_value>' ... ] ]"
+note = "a valid identifier, observed"
+anchor = "doc.sql.alter-external-access-integration / Syntax"
+sql = "ALTER EXTERNAL ACCESS INTEGRATION IF EXISTS v1 SET ALLOWED_NETWORK_RULES = ( v1 , v1 ) ALLOWED_API_AUTHENTICATION_INTEGRATIONS = ( v1 , v1 ) ALLOWED_AUTHENTICATION_SECRETS = ( v1 , v1 ) ENABLED = TRUE COMMENT = 'm' TAG v1 = 'm' , v1 = 'm' ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-external-access-integration.set"
+kind = "operand_type_class"
+target = "'<tag_value>' in [ TAG <tag_name> = '<tag_value>' [ , <tag_name> = '<tag_value>' ... ] ]"
+note = "a valid string_literal"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-69); observed, not flipped to reject"
+
+[[limit]]
+form = "sf.security_admin.alter-external-access-integration.set"
+kind = "operand_type_class"
+target = "'<tag_value>' in [ TAG <tag_name> = '<tag_value>' [ , <tag_name> = '<tag_value>' ... ] ]"
+note = "a valid string_literal, observed"
+anchor = "doc.sql.alter-external-access-integration / Syntax"
+sql = "ALTER EXTERNAL ACCESS INTEGRATION IF EXISTS v1 SET ALLOWED_NETWORK_RULES = ( v1 , v1 ) ALLOWED_API_AUTHENTICATION_INTEGRATIONS = ( v1 , v1 ) ALLOWED_AUTHENTICATION_SECRETS = ( v1 , v1 ) ENABLED = TRUE COMMENT = 'm' TAG v1 = 'm' , v1 = 'm' ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-external-access-integration.set"
+kind = "option_present"
+target = "[ , <tag_name> = '<tag_value>' ... ]"
+note = "the list continued at least once"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-69); observed, not flipped to reject"
+
+[[limit]]
+form = "sf.security_admin.alter-external-access-integration.set"
+kind = "option_present"
+target = "[ , <tag_name> = '<tag_value>' ... ]"
+note = "the list continued at least once, observed"
+anchor = "doc.sql.alter-external-access-integration / Syntax"
+sql = "ALTER EXTERNAL ACCESS INTEGRATION IF EXISTS v1 SET ALLOWED_NETWORK_RULES = ( v1 , v1 ) ALLOWED_API_AUTHENTICATION_INTEGRATIONS = ( v1 , v1 ) ALLOWED_AUTHENTICATION_SECRETS = ( v1 , v1 ) ENABLED = TRUE COMMENT = 'm' TAG v1 = 'm' , v1 = 'm' ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-external-access-integration.set"
+kind = "interaction_all_options"
+note = "every independent option of one production together"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-69); observed, not flipped to reject"
+
+[[limit]]
+form = "sf.security_admin.alter-external-access-integration.set"
+kind = "interaction_all_options"
+note = "every independent option of one production together, observed"
+anchor = "doc.sql.alter-external-access-integration / Syntax"
+sql = "ALTER EXTERNAL ACCESS INTEGRATION IF EXISTS v1 SET ALLOWED_NETWORK_RULES = ( v1 , v1 ) ALLOWED_API_AUTHENTICATION_INTEGRATIONS = ( v1 , v1 ) ALLOWED_AUTHENTICATION_SECRETS = ( v1 , v1 ) ENABLED = TRUE COMMENT = 'm' TAG v1 = 'm' , v1 = 'm' ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-external-access-integration.set"
+kind = "operand_type_class"
+target = "none in [ ALLOWED_API_AUTHENTICATION_INTEGRATIONS = { ( <integration_name_1> [ , <integration_name_2> , ... ] ) | none …"
+note = "a valid operand"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-69); observed, not flipped to reject"
+
+[[limit]]
+form = "sf.security_admin.alter-external-access-integration.set"
+kind = "operand_type_class"
+target = "none in [ ALLOWED_API_AUTHENTICATION_INTEGRATIONS = { ( <integration_name_1> [ , <integration_name_2> , ... ] ) | none …"
+note = "a valid operand, observed"
+anchor = "doc.sql.alter-external-access-integration / Syntax"
+sql = "ALTER EXTERNAL ACCESS INTEGRATION IF EXISTS v1 SET ALLOWED_NETWORK_RULES = ( v1 , v1 ) ALLOWED_API_AUTHENTICATION_INTEGRATIONS = none ALLOWED_AUTHENTICATION_SECRETS = ( v1 , v1 ) ENABLED = TRUE COMMENT = 'm' TAG v1 = 'm' , v1 = 'm' ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-external-access-integration.set"
+kind = "operand_type_class"
+target = "all in [ ALLOWED_AUTHENTICATION_SECRETS = { ( <secret_name> [ , <secret_name> ... ] ) | all | none } ]"
+note = "a valid operand"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-69); observed, not flipped to reject"
+
+[[limit]]
+form = "sf.security_admin.alter-external-access-integration.set"
+kind = "operand_type_class"
+target = "all in [ ALLOWED_AUTHENTICATION_SECRETS = { ( <secret_name> [ , <secret_name> ... ] ) | all | none } ]"
+note = "a valid operand, observed"
+anchor = "doc.sql.alter-external-access-integration / Syntax"
+sql = "ALTER EXTERNAL ACCESS INTEGRATION IF EXISTS v1 SET ALLOWED_NETWORK_RULES = ( v1 , v1 ) ALLOWED_API_AUTHENTICATION_INTEGRATIONS = ( v1 , v1 ) ALLOWED_AUTHENTICATION_SECRETS = all ENABLED = TRUE COMMENT = 'm' TAG v1 = 'm' , v1 = 'm' ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-external-access-integration.unset-allowed-network-rules-allowed-api-authentication-integrations-allowed-authentication-secrets"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 1003 SQLSTATE 42000, phase semantic_error, import-20261104-69), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.alter-external-access-integration.unset-allowed-network-rules-allowed-api-authentication-integrations-allowed-authentication-secrets"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>, observed"
+anchor = "doc.sql.alter-external-access-integration / Syntax"
+sql = "ALTER EXTERNAL ACCESS INTEGRATION UNSET ALLOWED_NETWORK_RULES ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-external-access-integration.unset-allowed-network-rules-allowed-api-authentication-integrations-allowed-authentication-secrets"
+kind = "required_operand_missing"
+target = "<tag_name>"
+note = "omit <tag_name>"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 1420 SQLSTATE 22023, phase semantic_error, import-20261104-69), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.alter-external-access-integration.unset-allowed-network-rules-allowed-api-authentication-integrations-allowed-authentication-secrets"
+kind = "required_operand_missing"
+target = "<tag_name>"
+note = "omit <tag_name>, observed"
+anchor = "doc.sql.alter-external-access-integration / Syntax"
+sql = "ALTER EXTERNAL ACCESS INTEGRATION v1 UNSET TAG ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-failover-group.set-tag"
+kind = "negative_neighbour"
+note = "the form without its required TAG"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 1420 SQLSTATE 22023, phase semantic_error, import-20261104-70), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.alter-failover-group.set-tag"
+kind = "negative_neighbour"
+note = "the form without its required TAG, observed"
+anchor = "doc.sql.alter-failover-group / Syntax"
+sql = "ALTER FAILOVER GROUP v1 SET v1 = 'm' ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-failover-group.set-tag"
+kind = "required_operand_missing"
+target = "<tag_name>"
+note = "omit <tag_name>"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 1420 SQLSTATE 22023, phase semantic_error, import-20261104-70), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.alter-failover-group.set-tag"
+kind = "required_operand_missing"
+target = "<tag_name>"
+note = "omit <tag_name>, observed"
+anchor = "doc.sql.alter-failover-group / Syntax"
+sql = "ALTER FAILOVER GROUP v1 SET TAG = 'm' ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-failover-group.unset-tag"
+kind = "required_operand_missing"
+target = "<tag_name>"
+note = "omit <tag_name>"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 1420 SQLSTATE 22023, phase semantic_error, import-20261104-70), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.alter-failover-group.unset-tag"
+kind = "required_operand_missing"
+target = "<tag_name>"
+note = "omit <tag_name>, observed"
+anchor = "doc.sql.alter-failover-group / Syntax"
+sql = "ALTER FAILOVER GROUP v1 UNSET TAG ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-failover-group.unset-tag"
+kind = "negative_neighbour"
+note = "the form without its required TAG"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 1420 SQLSTATE 22023, phase semantic_error, import-20261104-70), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.alter-failover-group.unset-tag"
+kind = "negative_neighbour"
+note = "the form without its required TAG, observed"
+anchor = "doc.sql.alter-failover-group / Syntax"
+sql = "ALTER FAILOVER GROUP v1 UNSET v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-feature-policy.set-tag"
+kind = "required_operand_missing"
+target = "<tag_name>"
+note = "omit <tag_name>"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 1420 SQLSTATE 22023, phase semantic_error, import-20261104-70), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.alter-feature-policy.set-tag"
+kind = "required_operand_missing"
+target = "<tag_name>"
+note = "omit <tag_name>, observed"
+anchor = "doc.sql.alter-feature-policy / Syntax"
+sql = "ALTER FEATURE POLICY v1 SET TAG = 'm' ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-feature-policy.set-tag"
+kind = "negative_neighbour"
+note = "the form without its required TAG"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 1420 SQLSTATE 22023, phase semantic_error, import-20261104-70), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.alter-feature-policy.set-tag"
+kind = "negative_neighbour"
+note = "the form without its required TAG, observed"
+anchor = "doc.sql.alter-feature-policy / Syntax"
+sql = "ALTER FEATURE POLICY v1 SET v1 = 'm' ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-feature-policy.set"
+kind = "negative_neighbour"
+target = "<type> in [ <type> [ , <type> ... ] ]"
+note = "a string literal in place of <type>"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 02000, phase semantic_error, import-20261104-70), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.alter-feature-policy.set"
+kind = "negative_neighbour"
+target = "<type> in [ <type> [ , <type> ... ] ]"
+note = "a string literal in place of <type>, observed"
+anchor = "doc.sql.alter-feature-policy / Syntax"
+sql = "ALTER FEATURE POLICY v1 SET BLOCKED_OBJECT_TYPES_FOR_CREATION = ( 'INT' ) ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-feature-policy.unset-tag"
+kind = "negative_neighbour"
+note = "the form without its required TAG"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 1420 SQLSTATE 22023, phase semantic_error, import-20261104-70), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.alter-feature-policy.unset-tag"
+kind = "negative_neighbour"
+note = "the form without its required TAG, observed"
+anchor = "doc.sql.alter-feature-policy / Syntax"
+sql = "ALTER FEATURE POLICY v1 UNSET v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-feature-policy.unset-tag"
+kind = "required_operand_missing"
+target = "<tag_name>"
+note = "omit <tag_name>"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 1420 SQLSTATE 22023, phase semantic_error, import-20261104-70), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.alter-feature-policy.unset-tag"
+kind = "required_operand_missing"
+target = "<tag_name>"
+note = "omit <tag_name>, observed"
+anchor = "doc.sql.alter-feature-policy / Syntax"
+sql = "ALTER FEATURE POLICY v1 UNSET TAG ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-feature-policy.unset"
+kind = "option_present"
+target = "[ IF EXISTS ]"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-70); observed, not flipped to reject"
+
+[[limit]]
+form = "sf.security_admin.alter-feature-policy.unset"
+kind = "option_present"
+target = "[ IF EXISTS ]"
+note = "option present [ IF EXISTS ], observed"
+anchor = "doc.sql.alter-feature-policy / Syntax"
+sql = "ALTER FEATURE POLICY IF EXISTS v1 UNSET BLOCKED_OBJECT_TYPES_FOR_CREATION COMMENT POLICY_DEFINITION ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-feature-policy.unset"
+kind = "option_present"
+target = "[ BLOCKED_OBJECT_TYPES_FOR_CREATION ]"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-70); observed, not flipped to reject"
+
+[[limit]]
+form = "sf.security_admin.alter-feature-policy.unset"
+kind = "option_present"
+target = "[ BLOCKED_OBJECT_TYPES_FOR_CREATION ]"
+note = "option present [ BLOCKED_OBJECT_TYPES_FOR_CREATION ], observed"
+anchor = "doc.sql.alter-feature-policy / Syntax"
+sql = "ALTER FEATURE POLICY IF EXISTS v1 UNSET BLOCKED_OBJECT_TYPES_FOR_CREATION COMMENT POLICY_DEFINITION ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-feature-policy.unset"
+kind = "option_present"
+target = "[ COMMENT ]"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-70); observed, not flipped to reject"
+
+[[limit]]
+form = "sf.security_admin.alter-feature-policy.unset"
+kind = "option_present"
+target = "[ COMMENT ]"
+note = "option present [ COMMENT ], observed"
+anchor = "doc.sql.alter-feature-policy / Syntax"
+sql = "ALTER FEATURE POLICY IF EXISTS v1 UNSET BLOCKED_OBJECT_TYPES_FOR_CREATION COMMENT POLICY_DEFINITION ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-feature-policy.unset"
+kind = "option_present"
+target = "[ POLICY_DEFINITION ]"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-70); observed, not flipped to reject"
+
+[[limit]]
+form = "sf.security_admin.alter-feature-policy.unset"
+kind = "option_present"
+target = "[ POLICY_DEFINITION ]"
+note = "option present [ POLICY_DEFINITION ], observed"
+anchor = "doc.sql.alter-feature-policy / Syntax"
+sql = "ALTER FEATURE POLICY IF EXISTS v1 UNSET BLOCKED_OBJECT_TYPES_FOR_CREATION COMMENT POLICY_DEFINITION ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-feature-policy.unset"
+kind = "interaction_all_options"
+note = "every independent option of one production together"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-70); observed, not flipped to reject"
+
+[[limit]]
+form = "sf.security_admin.alter-feature-policy.unset"
+kind = "interaction_all_options"
+note = "every independent option of one production together, observed"
+anchor = "doc.sql.alter-feature-policy / Syntax"
+sql = "ALTER FEATURE POLICY IF EXISTS v1 UNSET BLOCKED_OBJECT_TYPES_FOR_CREATION COMMENT POLICY_DEFINITION ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-integration"
+kind = "required_operand_missing"
+target = "<object_name>"
+note = "omit <object_name>"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 1003 SQLSTATE 42000, phase semantic_error, import-20261104-70), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.alter-integration"
+kind = "required_operand_missing"
+target = "<object_name>"
+note = "omit <object_name>, observed"
+anchor = "doc.sql.alter-integration / Syntax"
+sql = "ALTER INTEGRATION SET COMMENT = 'm' ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-join-policy.set-comment"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 1003 SQLSTATE 42000, phase semantic_error, import-20261104-70), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.alter-join-policy.set-comment"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>, observed"
+anchor = "doc.sql.alter-join-policy / Syntax"
+sql = "ALTER JOIN POLICY SET COMMENT = 'm' ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-join-policy.set-tag"
+kind = "required_operand_missing"
+target = "<tag_name>"
+note = "omit <tag_name>"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 1420 SQLSTATE 22023, phase semantic_error, import-20261104-70), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.alter-join-policy.set-tag"
+kind = "required_operand_missing"
+target = "<tag_name>"
+note = "omit <tag_name>, observed"
+anchor = "doc.sql.alter-join-policy / Syntax"
+sql = "ALTER JOIN POLICY v1 SET TAG = 'm' ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-join-policy.set-tag"
+kind = "negative_neighbour"
+note = "the form without its required TAG"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 1420 SQLSTATE 22023, phase semantic_error, import-20261104-70), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.alter-join-policy.set-tag"
+kind = "negative_neighbour"
+note = "the form without its required TAG, observed"
+anchor = "doc.sql.alter-join-policy / Syntax"
+sql = "ALTER JOIN POLICY v1 SET v1 = 'm' ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-join-policy.unset-comment"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 1003 SQLSTATE 42000, phase semantic_error, import-20261104-70), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.alter-join-policy.unset-comment"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>, observed"
+anchor = "doc.sql.alter-join-policy / Syntax"
+sql = "ALTER JOIN POLICY UNSET COMMENT ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-join-policy.unset-tag"
+kind = "negative_neighbour"
+note = "the form without its required TAG"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 1420 SQLSTATE 22023, phase semantic_error, import-20261104-70), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.alter-join-policy.unset-tag"
+kind = "negative_neighbour"
+note = "the form without its required TAG, observed"
+anchor = "doc.sql.alter-join-policy / Syntax"
+sql = "ALTER JOIN POLICY v1 UNSET v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-join-policy.unset-tag"
+kind = "required_operand_missing"
+target = "<tag_name>"
+note = "omit <tag_name>"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 1420 SQLSTATE 22023, phase semantic_error, import-20261104-70), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.alter-join-policy.unset-tag"
+kind = "required_operand_missing"
+target = "<tag_name>"
+note = "omit <tag_name>, observed"
+anchor = "doc.sql.alter-join-policy / Syntax"
+sql = "ALTER JOIN POLICY v1 UNSET TAG ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-masking-policy.set-comment"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 1003 SQLSTATE 42000, phase semantic_error, import-20261104-70), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.alter-masking-policy.set-comment"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>, observed"
+anchor = "doc.sql.alter-masking-policy / Syntax"
+sql = "ALTER MASKING POLICY SET COMMENT = 'm' ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-masking-policy.set-tag"
+kind = "required_operand_missing"
+target = "<tag_name>"
+note = "omit <tag_name>"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 1420 SQLSTATE 22023, phase semantic_error, import-20261104-70), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.alter-masking-policy.set-tag"
+kind = "required_operand_missing"
+target = "<tag_name>"
+note = "omit <tag_name>, observed"
+anchor = "doc.sql.alter-masking-policy / Syntax"
+sql = "ALTER MASKING POLICY v1 SET TAG = 'm' ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-masking-policy.set-tag"
+kind = "negative_neighbour"
+note = "the form without its required TAG"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 1420 SQLSTATE 22023, phase semantic_error, import-20261104-70), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.alter-masking-policy.set-tag"
+kind = "negative_neighbour"
+note = "the form without its required TAG, observed"
+anchor = "doc.sql.alter-masking-policy / Syntax"
+sql = "ALTER MASKING POLICY v1 SET v1 = 'm' ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-masking-policy.unset-comment"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 1003 SQLSTATE 42000, phase semantic_error, import-20261104-70), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.alter-masking-policy.unset-comment"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>, observed"
+anchor = "doc.sql.alter-masking-policy / Syntax"
+sql = "ALTER MASKING POLICY UNSET COMMENT ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-masking-policy.unset-tag"
+kind = "required_operand_missing"
+target = "<tag_name>"
+note = "omit <tag_name>"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 1420 SQLSTATE 22023, phase semantic_error, import-20261104-70), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.alter-masking-policy.unset-tag"
+kind = "required_operand_missing"
+target = "<tag_name>"
+note = "omit <tag_name>, observed"
+anchor = "doc.sql.alter-masking-policy / Syntax"
+sql = "ALTER MASKING POLICY v1 UNSET TAG ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-masking-policy.unset-tag"
+kind = "negative_neighbour"
+note = "the form without its required TAG"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 1420 SQLSTATE 22023, phase semantic_error, import-20261104-70), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.alter-masking-policy.unset-tag"
+kind = "negative_neighbour"
+note = "the form without its required TAG, observed"
+anchor = "doc.sql.alter-masking-policy / Syntax"
+sql = "ALTER MASKING POLICY v1 UNSET v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-network-policy.set-tag"
+kind = "required_operand_missing"
+target = "<tag_name>"
+note = "omit <tag_name>"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 1420 SQLSTATE 22023, phase semantic_error, import-20261104-70), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.alter-network-policy.set-tag"
+kind = "required_operand_missing"
+target = "<tag_name>"
+note = "omit <tag_name>, observed"
+anchor = "doc.sql.alter-network-policy / Syntax"
+sql = "ALTER NETWORK POLICY v1 SET TAG = 'm' ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-network-policy.set-tag"
+kind = "negative_neighbour"
+note = "the form without its required TAG"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 1420 SQLSTATE 22023, phase semantic_error, import-20261104-70), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.alter-network-policy.set-tag"
+kind = "negative_neighbour"
+note = "the form without its required TAG, observed"
+anchor = "doc.sql.alter-network-policy / Syntax"
+sql = "ALTER NETWORK POLICY v1 SET v1 = 'm' ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-network-policy.unset-comment"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 1003 SQLSTATE 42000, phase semantic_error, import-20261104-70), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.alter-network-policy.unset-comment"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>, observed"
+anchor = "doc.sql.alter-network-policy / Syntax"
+sql = "ALTER NETWORK POLICY UNSET COMMENT ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-network-policy.unset-tag"
+kind = "required_operand_missing"
+target = "<tag_name>"
+note = "omit <tag_name>"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 1420 SQLSTATE 22023, phase semantic_error, import-20261104-70), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.alter-network-policy.unset-tag"
+kind = "required_operand_missing"
+target = "<tag_name>"
+note = "omit <tag_name>, observed"
+anchor = "doc.sql.alter-network-policy / Syntax"
+sql = "ALTER NETWORK POLICY v1 UNSET TAG ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-network-policy.unset-tag"
+kind = "negative_neighbour"
+note = "the form without its required TAG"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 1420 SQLSTATE 22023, phase semantic_error, import-20261104-70), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.alter-network-policy.unset-tag"
+kind = "negative_neighbour"
+note = "the form without its required TAG, observed"
+anchor = "doc.sql.alter-network-policy / Syntax"
+sql = "ALTER NETWORK POLICY v1 UNSET v1 ;"
+expect = "observe"
+context = "raw"

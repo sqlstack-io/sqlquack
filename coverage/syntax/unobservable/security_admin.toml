@@ -1,0 +1,15 @@
+# Documented obligations whose construct Snowflake answers only with an internal error (603), so no
+# capture can establish a phase (decision D87). Fields as in unobservable/scripting.toml. Each
+# obligation stays in the denominator, never counts as verified, and is reported as "unverifiable:
+# Snowflake internal error". Its case stays in cases/security_admin.jsonl.
+
+[[unobservable]]
+obligation = "sf.security_admin.alter-connection.primary.o002"
+form = "sf.security_admin.alter-connection.primary"
+construct = "ALTER CONNECTION with IF EXISTS before PRIMARY: ALTER CONNECTION IF EXISTS v1 PRIMARY"
+reason = "internal error 603 (300016:1294561867) on the original capture and on an exact re-run with the same SQL, setup and session in a fresh run database (incidents 6731031 and 6709243); no capture gives an established phase"
+cases = [
+  { case_id = "sf.security_admin.alter-connection.primary.k5d6f321077ba", sql_sha256 = "5d6f321077badc1bcdf55c1e166b7aeceb4d91a2f76f23b4bca7b51792c6af39" },
+]
+runs = ["sa-03", "sa-03r"]
+probes = []
