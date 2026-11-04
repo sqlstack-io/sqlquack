@@ -79,6 +79,7 @@ fn collected_conversion(
         typed: &typed,
         order: &order,
         free_projections: false,
+        fixture_body: false,
     };
     let (result, found) = collected(|| convert_query(&tree, None, &context, true));
     let refusal = typed
