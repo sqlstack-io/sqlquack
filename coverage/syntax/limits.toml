@@ -61856,3 +61856,1328 @@ anchor = "doc.sql.copy-files / Syntax / Copy from a query"
 sql = "COPY FILES INTO @s1 FROM ( SELECT v1 v1 ) ;"
 expect = "observe"
 context = "raw"
+
+# D113 ddl receipt triage (imports 71-73): remaining contradictions observed, each reason names its category and receipt.
+
+[[suppress]]
+form = "sf.ddl.alter-online-feature-table.table-set-comment"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 926 SQLSTATE 42601, phase semantic_error, import-20261104-79), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.ddl.alter-online-feature-table.table-set-comment"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>, observed"
+anchor = "doc.sql.alter-online-feature-table / Syntax"
+sql = "ALTER ONLINE FEATURE TABLE SET COMMENT = 'm' ;"
+expect = "observe"
+context = "raw"
+
+# D113 security_admin receipt triage (imports 71-73): remaining contradictions observed, each reason names its category and receipt.
+
+[[suppress]]
+form = "sf.security_admin.alter-security-integration-oauth-external.set"
+kind = "required_operand_missing"
+target = "'<string_literal>' in [ EXTERNAL_OAUTH_TOKEN_USER_MAPPING_CLAIM = { '<string_literal>' | ( '<string_literal>' , '<strin… #3"
+note = "omit '<string_literal>'"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 02000, phase semantic_error, import-20261104-74), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.alter-security-integration-oauth-external.set"
+kind = "required_operand_missing"
+target = "'<string_literal>' in [ EXTERNAL_OAUTH_TOKEN_USER_MAPPING_CLAIM = { '<string_literal>' | ( '<string_literal>' , '<strin… #3"
+note = "omit '<string_literal>', observed"
+anchor = "doc.sql.alter-security-integration-oauth-external / Syntax"
+sql = "ALTER INTEGRATION v1 SET EXTERNAL_OAUTH_TOKEN_USER_MAPPING_CLAIM = ( 'm' ) ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-security-integration-oauth-snowflake.refresh-oauth-client-secret-oauth-client-secret-2"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2029 SQLSTATE 42601, phase semantic_error, import-20261104-74), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.alter-security-integration-oauth-snowflake.refresh-oauth-client-secret-oauth-client-secret-2"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>, observed"
+anchor = "doc.sql.alter-security-integration-oauth-snowflake / Syntax"
+sql = "ALTER INTEGRATION REFRESH OAUTH_CLIENT_SECRET ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-security-integration-oauth-snowflake.refresh-oauth-client-secret-oauth-client-secret-2"
+kind = "negative_neighbour"
+note = "the form without its required { OAUTH_CLIENT_SECRET | OAUTH_CLIENT_SECRET_2 }"
+reason = "D113 [documented but Snowflake disagrees]: this SQL is also the documented SAML2 REFRESH positive (doc.sql.alter-security-integration-saml2), which Snowflake rejects as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-74) and which is observed there; one SQL text keeps one expectation, so this neighbour is observed with it instead of being withdrawn"
+
+[[limit]]
+form = "sf.security_admin.alter-security-integration-oauth-snowflake.refresh-oauth-client-secret-oauth-client-secret-2"
+kind = "negative_neighbour"
+note = "the form without its required { OAUTH_CLIENT_SECRET | OAUTH_CLIENT_SECRET_2 }, observed"
+anchor = "doc.sql.alter-security-integration-oauth-snowflake / Syntax"
+sql = "ALTER INTEGRATION v1 REFRESH ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-security-integration-oidc.unset-allowed-email-patterns-allowed-user-domains-comment"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 1003 SQLSTATE 42000, phase semantic_error, import-20261104-74), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.alter-security-integration-oidc.unset-allowed-email-patterns-allowed-user-domains-comment"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>, observed"
+anchor = "doc.sql.alter-security-integration-oidc / Syntax"
+sql = "ALTER INTEGRATION UNSET ALLOWED_EMAIL_PATTERNS ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-security-integration-saml2.refresh"
+kind = "identifier_class"
+target = "<name>"
+note = "quoted: a double-quoted identifier with blanks and mixed case"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-74); observed, not flipped to reject"
+
+[[limit]]
+form = "sf.security_admin.alter-security-integration-saml2.refresh"
+kind = "identifier_class"
+target = "<name>"
+note = "quoted: a double-quoted identifier with blanks and mixed case, observed"
+anchor = "doc.sql.alter-security-integration-saml2 / Syntax"
+sql = "ALTER INTEGRATION \"v1 Q\" REFRESH ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-security-integration-saml2.refresh"
+kind = "positive"
+note = "the documented form with every required part and no optional part"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-74); observed, not flipped to reject"
+
+[[limit]]
+form = "sf.security_admin.alter-security-integration-saml2.refresh"
+kind = "positive"
+note = "the documented form with every required part and no optional part, observed"
+anchor = "doc.sql.alter-security-integration-saml2 / Syntax"
+sql = "ALTER INTEGRATION v1 REFRESH ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-security-integration-saml2.refresh"
+kind = "option_absent"
+target = "[ SECURITY ]"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-74); observed, not flipped to reject"
+
+[[limit]]
+form = "sf.security_admin.alter-security-integration-saml2.refresh"
+kind = "option_absent"
+target = "[ SECURITY ]"
+note = "option absent [ SECURITY ], observed"
+anchor = "doc.sql.alter-security-integration-saml2 / Syntax"
+sql = "ALTER INTEGRATION v1 REFRESH ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-security-integration-saml2.refresh"
+kind = "operand_type_class"
+target = "<name>"
+note = "a valid identifier"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-74); observed, not flipped to reject"
+
+[[limit]]
+form = "sf.security_admin.alter-security-integration-saml2.refresh"
+kind = "operand_type_class"
+target = "<name>"
+note = "a valid identifier, observed"
+anchor = "doc.sql.alter-security-integration-saml2 / Syntax"
+sql = "ALTER INTEGRATION v1 REFRESH ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-security-integration-saml2.refresh"
+kind = "option_absent"
+target = "[ SAML2_SNOWFLAKE_PRIVATE_KEY ]"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-74); observed, not flipped to reject"
+
+[[limit]]
+form = "sf.security_admin.alter-security-integration-saml2.refresh"
+kind = "option_absent"
+target = "[ SAML2_SNOWFLAKE_PRIVATE_KEY ]"
+note = "option absent [ SAML2_SNOWFLAKE_PRIVATE_KEY ], observed"
+anchor = "doc.sql.alter-security-integration-saml2 / Syntax"
+sql = "ALTER INTEGRATION v1 REFRESH ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-security-integration-saml2.refresh"
+kind = "option_absent"
+target = "[ METADATA_URL ]"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-74); observed, not flipped to reject"
+
+[[limit]]
+form = "sf.security_admin.alter-security-integration-saml2.refresh"
+kind = "option_absent"
+target = "[ METADATA_URL ]"
+note = "option absent [ METADATA_URL ], observed"
+anchor = "doc.sql.alter-security-integration-saml2 / Syntax"
+sql = "ALTER INTEGRATION v1 REFRESH ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-security-integration-saml2.refresh"
+kind = "identifier_class"
+target = "<name>"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-74); observed, not flipped to reject"
+
+[[limit]]
+form = "sf.security_admin.alter-security-integration-saml2.refresh"
+kind = "identifier_class"
+target = "<name>"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance), observed"
+anchor = "doc.sql.alter-security-integration-saml2 / Syntax"
+sql = "ALTER INTEGRATION \"SELECT\" REFRESH ;"
+expect = "observe"
+also_sql = "ALTER INTEGRATION SELECT REFRESH ;"
+also_expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-security-integration-saml2.refresh"
+kind = "option_present"
+target = "[ SECURITY ]"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-74); observed, not flipped to reject"
+
+[[limit]]
+form = "sf.security_admin.alter-security-integration-saml2.refresh"
+kind = "option_present"
+target = "[ SECURITY ]"
+note = "option present [ SECURITY ], observed"
+anchor = "doc.sql.alter-security-integration-saml2 / Syntax"
+sql = "ALTER SECURITY INTEGRATION v1 REFRESH SAML2_SNOWFLAKE_PRIVATE_KEY METADATA_URL ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-security-integration-saml2.refresh"
+kind = "option_present"
+target = "[ SAML2_SNOWFLAKE_PRIVATE_KEY ]"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-74); observed, not flipped to reject"
+
+[[limit]]
+form = "sf.security_admin.alter-security-integration-saml2.refresh"
+kind = "option_present"
+target = "[ SAML2_SNOWFLAKE_PRIVATE_KEY ]"
+note = "option present [ SAML2_SNOWFLAKE_PRIVATE_KEY ], observed"
+anchor = "doc.sql.alter-security-integration-saml2 / Syntax"
+sql = "ALTER SECURITY INTEGRATION v1 REFRESH SAML2_SNOWFLAKE_PRIVATE_KEY METADATA_URL ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-security-integration-saml2.refresh"
+kind = "option_present"
+target = "[ METADATA_URL ]"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-74); observed, not flipped to reject"
+
+[[limit]]
+form = "sf.security_admin.alter-security-integration-saml2.refresh"
+kind = "option_present"
+target = "[ METADATA_URL ]"
+note = "option present [ METADATA_URL ], observed"
+anchor = "doc.sql.alter-security-integration-saml2 / Syntax"
+sql = "ALTER SECURITY INTEGRATION v1 REFRESH SAML2_SNOWFLAKE_PRIVATE_KEY METADATA_URL ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-security-integration-saml2.refresh"
+kind = "interaction_all_options"
+note = "every independent option of one production together"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-74); observed, not flipped to reject"
+
+[[limit]]
+form = "sf.security_admin.alter-security-integration-saml2.refresh"
+kind = "interaction_all_options"
+note = "every independent option of one production together, observed"
+anchor = "doc.sql.alter-security-integration-saml2 / Syntax"
+sql = "ALTER SECURITY INTEGRATION v1 REFRESH SAML2_SNOWFLAKE_PRIVATE_KEY METADATA_URL ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-security-integration-scim.unset-network-policy"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 1003 SQLSTATE 42000, phase semantic_error, import-20261104-74), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.alter-security-integration-scim.unset-network-policy"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>, observed"
+anchor = "doc.sql.alter-security-integration-scim / Syntax"
+sql = "ALTER INTEGRATION UNSET NETWORK_POLICY ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-security-integration.set"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 1003 SQLSTATE 42000, phase semantic_error, import-20261104-74), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.alter-security-integration.set"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>, observed"
+anchor = "doc.sql.alter-security-integration / Syntax"
+sql = "ALTER INTEGRATION SET ENABLED = TRUE ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-session-policy.set-tag"
+kind = "negative_neighbour"
+note = "the form without its required TAG"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 1420 SQLSTATE 22023, phase semantic_error, import-20261104-74), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.alter-session-policy.set-tag"
+kind = "negative_neighbour"
+note = "the form without its required TAG, observed"
+anchor = "doc.sql.alter-session-policy / Syntax"
+sql = "ALTER SESSION POLICY v1 SET v1 = 'm' ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-session-policy.set-tag"
+kind = "required_operand_missing"
+target = "<tag_name>"
+note = "omit <tag_name>"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 1420 SQLSTATE 22023, phase semantic_error, import-20261104-74), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.alter-session-policy.set-tag"
+kind = "required_operand_missing"
+target = "<tag_name>"
+note = "omit <tag_name>, observed"
+anchor = "doc.sql.alter-session-policy / Syntax"
+sql = "ALTER SESSION POLICY v1 SET TAG = 'm' ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-session-policy.unset-tag"
+kind = "negative_neighbour"
+note = "the form without its required TAG"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 1420 SQLSTATE 22023, phase semantic_error, import-20261104-74), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.alter-session-policy.unset-tag"
+kind = "negative_neighbour"
+note = "the form without its required TAG, observed"
+anchor = "doc.sql.alter-session-policy / Syntax"
+sql = "ALTER SESSION POLICY v1 UNSET v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-session-policy.unset-tag"
+kind = "required_operand_missing"
+target = "<tag_name>"
+note = "omit <tag_name>"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 1420 SQLSTATE 22023, phase semantic_error, import-20261104-74), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.alter-session-policy.unset-tag"
+kind = "required_operand_missing"
+target = "<tag_name>"
+note = "omit <tag_name>, observed"
+anchor = "doc.sql.alter-session-policy / Syntax"
+sql = "ALTER SESSION POLICY v1 UNSET TAG ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-session-policy.unset"
+kind = "option_present"
+target = "[ IF EXISTS ]"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-74); observed, not flipped to reject"
+
+[[limit]]
+form = "sf.security_admin.alter-session-policy.unset"
+kind = "option_present"
+target = "[ IF EXISTS ]"
+note = "option present [ IF EXISTS ], observed"
+anchor = "doc.sql.alter-session-policy / Syntax"
+sql = "ALTER SESSION POLICY IF EXISTS v1 UNSET SESSION_IDLE_TIMEOUT_MINS SESSION_UI_IDLE_TIMEOUT_MINS SESSION_MAX_LIFESPAN_MINS SESSION_UI_MAX_LIFESPAN_MINS ALLOWED_SECONDARY_ROLES BLOCKED_SECONDARY_ROLES AGENT_RESTRICTED_SESSION_SCOPE COMMENT ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-session-policy.unset"
+kind = "option_present"
+target = "[ SESSION_IDLE_TIMEOUT_MINS ]"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-74); observed, not flipped to reject"
+
+[[limit]]
+form = "sf.security_admin.alter-session-policy.unset"
+kind = "option_present"
+target = "[ SESSION_IDLE_TIMEOUT_MINS ]"
+note = "option present [ SESSION_IDLE_TIMEOUT_MINS ], observed"
+anchor = "doc.sql.alter-session-policy / Syntax"
+sql = "ALTER SESSION POLICY IF EXISTS v1 UNSET SESSION_IDLE_TIMEOUT_MINS SESSION_UI_IDLE_TIMEOUT_MINS SESSION_MAX_LIFESPAN_MINS SESSION_UI_MAX_LIFESPAN_MINS ALLOWED_SECONDARY_ROLES BLOCKED_SECONDARY_ROLES AGENT_RESTRICTED_SESSION_SCOPE COMMENT ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-session-policy.unset"
+kind = "option_present"
+target = "[ SESSION_UI_IDLE_TIMEOUT_MINS ]"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-74); observed, not flipped to reject"
+
+[[limit]]
+form = "sf.security_admin.alter-session-policy.unset"
+kind = "option_present"
+target = "[ SESSION_UI_IDLE_TIMEOUT_MINS ]"
+note = "option present [ SESSION_UI_IDLE_TIMEOUT_MINS ], observed"
+anchor = "doc.sql.alter-session-policy / Syntax"
+sql = "ALTER SESSION POLICY IF EXISTS v1 UNSET SESSION_IDLE_TIMEOUT_MINS SESSION_UI_IDLE_TIMEOUT_MINS SESSION_MAX_LIFESPAN_MINS SESSION_UI_MAX_LIFESPAN_MINS ALLOWED_SECONDARY_ROLES BLOCKED_SECONDARY_ROLES AGENT_RESTRICTED_SESSION_SCOPE COMMENT ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-session-policy.unset"
+kind = "option_present"
+target = "[ SESSION_MAX_LIFESPAN_MINS ]"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-74); observed, not flipped to reject"
+
+[[limit]]
+form = "sf.security_admin.alter-session-policy.unset"
+kind = "option_present"
+target = "[ SESSION_MAX_LIFESPAN_MINS ]"
+note = "option present [ SESSION_MAX_LIFESPAN_MINS ], observed"
+anchor = "doc.sql.alter-session-policy / Syntax"
+sql = "ALTER SESSION POLICY IF EXISTS v1 UNSET SESSION_IDLE_TIMEOUT_MINS SESSION_UI_IDLE_TIMEOUT_MINS SESSION_MAX_LIFESPAN_MINS SESSION_UI_MAX_LIFESPAN_MINS ALLOWED_SECONDARY_ROLES BLOCKED_SECONDARY_ROLES AGENT_RESTRICTED_SESSION_SCOPE COMMENT ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-session-policy.unset"
+kind = "option_present"
+target = "[ SESSION_UI_MAX_LIFESPAN_MINS ]"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-74); observed, not flipped to reject"
+
+[[limit]]
+form = "sf.security_admin.alter-session-policy.unset"
+kind = "option_present"
+target = "[ SESSION_UI_MAX_LIFESPAN_MINS ]"
+note = "option present [ SESSION_UI_MAX_LIFESPAN_MINS ], observed"
+anchor = "doc.sql.alter-session-policy / Syntax"
+sql = "ALTER SESSION POLICY IF EXISTS v1 UNSET SESSION_IDLE_TIMEOUT_MINS SESSION_UI_IDLE_TIMEOUT_MINS SESSION_MAX_LIFESPAN_MINS SESSION_UI_MAX_LIFESPAN_MINS ALLOWED_SECONDARY_ROLES BLOCKED_SECONDARY_ROLES AGENT_RESTRICTED_SESSION_SCOPE COMMENT ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-session-policy.unset"
+kind = "option_present"
+target = "[ ALLOWED_SECONDARY_ROLES ]"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-74); observed, not flipped to reject"
+
+[[limit]]
+form = "sf.security_admin.alter-session-policy.unset"
+kind = "option_present"
+target = "[ ALLOWED_SECONDARY_ROLES ]"
+note = "option present [ ALLOWED_SECONDARY_ROLES ], observed"
+anchor = "doc.sql.alter-session-policy / Syntax"
+sql = "ALTER SESSION POLICY IF EXISTS v1 UNSET SESSION_IDLE_TIMEOUT_MINS SESSION_UI_IDLE_TIMEOUT_MINS SESSION_MAX_LIFESPAN_MINS SESSION_UI_MAX_LIFESPAN_MINS ALLOWED_SECONDARY_ROLES BLOCKED_SECONDARY_ROLES AGENT_RESTRICTED_SESSION_SCOPE COMMENT ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-session-policy.unset"
+kind = "option_present"
+target = "[ BLOCKED_SECONDARY_ROLES ]"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-74); observed, not flipped to reject"
+
+[[limit]]
+form = "sf.security_admin.alter-session-policy.unset"
+kind = "option_present"
+target = "[ BLOCKED_SECONDARY_ROLES ]"
+note = "option present [ BLOCKED_SECONDARY_ROLES ], observed"
+anchor = "doc.sql.alter-session-policy / Syntax"
+sql = "ALTER SESSION POLICY IF EXISTS v1 UNSET SESSION_IDLE_TIMEOUT_MINS SESSION_UI_IDLE_TIMEOUT_MINS SESSION_MAX_LIFESPAN_MINS SESSION_UI_MAX_LIFESPAN_MINS ALLOWED_SECONDARY_ROLES BLOCKED_SECONDARY_ROLES AGENT_RESTRICTED_SESSION_SCOPE COMMENT ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-session-policy.unset"
+kind = "option_present"
+target = "[ AGENT_RESTRICTED_SESSION_SCOPE ]"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-74); observed, not flipped to reject"
+
+[[limit]]
+form = "sf.security_admin.alter-session-policy.unset"
+kind = "option_present"
+target = "[ AGENT_RESTRICTED_SESSION_SCOPE ]"
+note = "option present [ AGENT_RESTRICTED_SESSION_SCOPE ], observed"
+anchor = "doc.sql.alter-session-policy / Syntax"
+sql = "ALTER SESSION POLICY IF EXISTS v1 UNSET SESSION_IDLE_TIMEOUT_MINS SESSION_UI_IDLE_TIMEOUT_MINS SESSION_MAX_LIFESPAN_MINS SESSION_UI_MAX_LIFESPAN_MINS ALLOWED_SECONDARY_ROLES BLOCKED_SECONDARY_ROLES AGENT_RESTRICTED_SESSION_SCOPE COMMENT ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-session-policy.unset"
+kind = "option_present"
+target = "[ COMMENT ]"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-74); observed, not flipped to reject"
+
+[[limit]]
+form = "sf.security_admin.alter-session-policy.unset"
+kind = "option_present"
+target = "[ COMMENT ]"
+note = "option present [ COMMENT ], observed"
+anchor = "doc.sql.alter-session-policy / Syntax"
+sql = "ALTER SESSION POLICY IF EXISTS v1 UNSET SESSION_IDLE_TIMEOUT_MINS SESSION_UI_IDLE_TIMEOUT_MINS SESSION_MAX_LIFESPAN_MINS SESSION_UI_MAX_LIFESPAN_MINS ALLOWED_SECONDARY_ROLES BLOCKED_SECONDARY_ROLES AGENT_RESTRICTED_SESSION_SCOPE COMMENT ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-session-policy.unset"
+kind = "interaction_all_options"
+note = "every independent option of one production together"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-74); observed, not flipped to reject"
+
+[[limit]]
+form = "sf.security_admin.alter-session-policy.unset"
+kind = "interaction_all_options"
+note = "every independent option of one production together, observed"
+anchor = "doc.sql.alter-session-policy / Syntax"
+sql = "ALTER SESSION POLICY IF EXISTS v1 UNSET SESSION_IDLE_TIMEOUT_MINS SESSION_UI_IDLE_TIMEOUT_MINS SESSION_MAX_LIFESPAN_MINS SESSION_UI_MAX_LIFESPAN_MINS ALLOWED_SECONDARY_ROLES BLOCKED_SECONDARY_ROLES AGENT_RESTRICTED_SESSION_SCOPE COMMENT ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-share.add-remove-accounts"
+kind = "alternative"
+target = "{ TRUE | FALSE } → FALSE"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-74); observed, not flipped to reject"
+
+[[limit]]
+form = "sf.security_admin.alter-share.add-remove-accounts"
+kind = "alternative"
+target = "{ TRUE | FALSE } → FALSE"
+note = "alternative { TRUE | FALSE } → FALSE, observed"
+anchor = "doc.sql.alter-share / Syntax"
+sql = "ALTER SHARE v1 REMOVE ACCOUNTS = o1.a1 SHARE_RESTRICTIONS = FALSE ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-share.set-tag"
+kind = "negative_neighbour"
+note = "the form without its required TAG"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 1420 SQLSTATE 22023, phase semantic_error, import-20261104-74), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.alter-share.set-tag"
+kind = "negative_neighbour"
+note = "the form without its required TAG, observed"
+anchor = "doc.sql.alter-share / Syntax"
+sql = "ALTER SHARE v1 SET v1 = 'm' ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-share.set-tag"
+kind = "required_operand_missing"
+target = "<tag_name>"
+note = "omit <tag_name>"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 1420 SQLSTATE 22023, phase semantic_error, import-20261104-74), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.alter-share.set-tag"
+kind = "required_operand_missing"
+target = "<tag_name>"
+note = "omit <tag_name>, observed"
+anchor = "doc.sql.alter-share / Syntax"
+sql = "ALTER SHARE v1 SET TAG = 'm' ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-share.unset-tag"
+kind = "required_operand_missing"
+target = "<tag_name>"
+note = "omit <tag_name>"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 1420 SQLSTATE 22023, phase semantic_error, import-20261104-74), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.alter-share.unset-tag"
+kind = "required_operand_missing"
+target = "<tag_name>"
+note = "omit <tag_name>, observed"
+anchor = "doc.sql.alter-share / Syntax"
+sql = "ALTER SHARE v1 UNSET TAG ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-share.unset-tag"
+kind = "negative_neighbour"
+note = "the form without its required TAG"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 1420 SQLSTATE 22023, phase semantic_error, import-20261104-74), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.alter-share.unset-tag"
+kind = "negative_neighbour"
+note = "the form without its required TAG, observed"
+anchor = "doc.sql.alter-share / Syntax"
+sql = "ALTER SHARE v1 UNSET v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-snapshot-policy.set-tag"
+kind = "negative_neighbour"
+note = "the form without its required TAG"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 1420 SQLSTATE 22023, phase semantic_error, import-20261104-74), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.alter-snapshot-policy.set-tag"
+kind = "negative_neighbour"
+note = "the form without its required TAG, observed"
+anchor = "doc.sql.alter-snapshot-policy / Syntax"
+sql = "ALTER SNAPSHOT POLICY v1 SET v1 = 'm' ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-snapshot-policy.set-tag"
+kind = "required_operand_missing"
+target = "<tag_name>"
+note = "omit <tag_name>"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 1420 SQLSTATE 22023, phase semantic_error, import-20261104-74), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.alter-snapshot-policy.set-tag"
+kind = "required_operand_missing"
+target = "<tag_name>"
+note = "omit <tag_name>, observed"
+anchor = "doc.sql.alter-snapshot-policy / Syntax"
+sql = "ALTER SNAPSHOT POLICY v1 SET TAG = 'm' ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-snapshot-policy.unset-tag"
+kind = "negative_neighbour"
+note = "the form without its required TAG"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 1420 SQLSTATE 22023, phase semantic_error, import-20261104-74), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.alter-snapshot-policy.unset-tag"
+kind = "negative_neighbour"
+note = "the form without its required TAG, observed"
+anchor = "doc.sql.alter-snapshot-policy / Syntax"
+sql = "ALTER SNAPSHOT POLICY v1 UNSET v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-snapshot-policy.unset-tag"
+kind = "required_operand_missing"
+target = "<tag_name>"
+note = "omit <tag_name>"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 1420 SQLSTATE 22023, phase semantic_error, import-20261104-74), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.alter-snapshot-policy.unset-tag"
+kind = "required_operand_missing"
+target = "<tag_name>"
+note = "omit <tag_name>, observed"
+anchor = "doc.sql.alter-snapshot-policy / Syntax"
+sql = "ALTER SNAPSHOT POLICY v1 UNSET TAG ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-storage-lifecycle-policy.set-body-archive-tier-cool"
+kind = "required_operand_missing"
+target = "<tag_name> in [ TAG <tag_name> = '<tag_value>' [ , <tag_name> = '<tag_value>' ... ] ]"
+note = "omit <tag_name>"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 1420 SQLSTATE 22023, phase semantic_error, import-20261104-76), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.alter-storage-lifecycle-policy.set-body-archive-tier-cool"
+kind = "required_operand_missing"
+target = "<tag_name> in [ TAG <tag_name> = '<tag_value>' [ , <tag_name> = '<tag_value>' ... ] ]"
+note = "omit <tag_name>, observed"
+anchor = "doc.sql.alter-storage-lifecycle-policy / Syntax"
+sql = "ALTER STORAGE LIFECYCLE POLICY v1 SET TAG = 'm' ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-storage-lifecycle-policy.set-body-archive-tier-cool"
+kind = "option_present"
+target = "[ IF EXISTS ]"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-76); observed, not flipped to reject"
+
+[[limit]]
+form = "sf.security_admin.alter-storage-lifecycle-policy.set-body-archive-tier-cool"
+kind = "option_present"
+target = "[ IF EXISTS ]"
+note = "option present [ IF EXISTS ], observed"
+anchor = "doc.sql.alter-storage-lifecycle-policy / Syntax"
+sql = "ALTER STORAGE LIFECYCLE POLICY IF EXISTS v1 SET BODY -> TRUE ARCHIVE_TIER = COOL ARCHIVE_FOR_DAYS = 1 COMMENT = 'm' TAG v1 = 'm' , v1 = 'm' ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-storage-lifecycle-policy.set-body-archive-tier-cool"
+kind = "option_present"
+target = "[ , <tag_name> = '<tag_value>' ... ]"
+note = "the list continued at least once"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-76); observed, not flipped to reject"
+
+[[limit]]
+form = "sf.security_admin.alter-storage-lifecycle-policy.set-body-archive-tier-cool"
+kind = "option_present"
+target = "[ , <tag_name> = '<tag_value>' ... ]"
+note = "the list continued at least once, observed"
+anchor = "doc.sql.alter-storage-lifecycle-policy / Syntax"
+sql = "ALTER STORAGE LIFECYCLE POLICY IF EXISTS v1 SET BODY -> TRUE ARCHIVE_TIER = COOL ARCHIVE_FOR_DAYS = 1 COMMENT = 'm' TAG v1 = 'm' , v1 = 'm' ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-storage-lifecycle-policy.set-body-archive-tier-cool"
+kind = "option_present"
+target = "[ BODY -> <expression_on_arg_name> ]"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-76); observed, not flipped to reject"
+
+[[limit]]
+form = "sf.security_admin.alter-storage-lifecycle-policy.set-body-archive-tier-cool"
+kind = "option_present"
+target = "[ BODY -> <expression_on_arg_name> ]"
+note = "option present [ BODY -> <expression_on_arg_name> ], observed"
+anchor = "doc.sql.alter-storage-lifecycle-policy / Syntax"
+sql = "ALTER STORAGE LIFECYCLE POLICY IF EXISTS v1 SET BODY -> TRUE ARCHIVE_TIER = COOL ARCHIVE_FOR_DAYS = 1 COMMENT = 'm' TAG v1 = 'm' , v1 = 'm' ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-storage-lifecycle-policy.set-body-archive-tier-cool"
+kind = "operand_type_class"
+target = "<expression_on_arg_name> in [ BODY -> <expression_on_arg_name> ]"
+note = "a valid expression"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-76); observed, not flipped to reject"
+
+[[limit]]
+form = "sf.security_admin.alter-storage-lifecycle-policy.set-body-archive-tier-cool"
+kind = "operand_type_class"
+target = "<expression_on_arg_name> in [ BODY -> <expression_on_arg_name> ]"
+note = "a valid expression, observed"
+anchor = "doc.sql.alter-storage-lifecycle-policy / Syntax"
+sql = "ALTER STORAGE LIFECYCLE POLICY IF EXISTS v1 SET BODY -> TRUE ARCHIVE_TIER = COOL ARCHIVE_FOR_DAYS = 1 COMMENT = 'm' TAG v1 = 'm' , v1 = 'm' ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-storage-lifecycle-policy.set-body-archive-tier-cool"
+kind = "option_present"
+target = "[ ARCHIVE_TIER = { COOL | COLD } ]"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-76); observed, not flipped to reject"
+
+[[limit]]
+form = "sf.security_admin.alter-storage-lifecycle-policy.set-body-archive-tier-cool"
+kind = "option_present"
+target = "[ ARCHIVE_TIER = { COOL | COLD } ]"
+note = "option present [ ARCHIVE_TIER = { COOL | COLD } ], observed"
+anchor = "doc.sql.alter-storage-lifecycle-policy / Syntax"
+sql = "ALTER STORAGE LIFECYCLE POLICY IF EXISTS v1 SET BODY -> TRUE ARCHIVE_TIER = COOL ARCHIVE_FOR_DAYS = 1 COMMENT = 'm' TAG v1 = 'm' , v1 = 'm' ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-storage-lifecycle-policy.set-body-archive-tier-cool"
+kind = "option_present"
+target = "[ ARCHIVE_FOR_DAYS = <number_of_days> ]"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-76); observed, not flipped to reject"
+
+[[limit]]
+form = "sf.security_admin.alter-storage-lifecycle-policy.set-body-archive-tier-cool"
+kind = "option_present"
+target = "[ ARCHIVE_FOR_DAYS = <number_of_days> ]"
+note = "option present [ ARCHIVE_FOR_DAYS = <number_of_days> ], observed"
+anchor = "doc.sql.alter-storage-lifecycle-policy / Syntax"
+sql = "ALTER STORAGE LIFECYCLE POLICY IF EXISTS v1 SET BODY -> TRUE ARCHIVE_TIER = COOL ARCHIVE_FOR_DAYS = 1 COMMENT = 'm' TAG v1 = 'm' , v1 = 'm' ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-storage-lifecycle-policy.set-body-archive-tier-cool"
+kind = "operand_type_class"
+target = "<number_of_days> in [ ARCHIVE_FOR_DAYS = <number_of_days> ]"
+note = "a valid integer_literal"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-76); observed, not flipped to reject"
+
+[[limit]]
+form = "sf.security_admin.alter-storage-lifecycle-policy.set-body-archive-tier-cool"
+kind = "operand_type_class"
+target = "<number_of_days> in [ ARCHIVE_FOR_DAYS = <number_of_days> ]"
+note = "a valid integer_literal, observed"
+anchor = "doc.sql.alter-storage-lifecycle-policy / Syntax"
+sql = "ALTER STORAGE LIFECYCLE POLICY IF EXISTS v1 SET BODY -> TRUE ARCHIVE_TIER = COOL ARCHIVE_FOR_DAYS = 1 COMMENT = 'm' TAG v1 = 'm' , v1 = 'm' ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-storage-lifecycle-policy.set-body-archive-tier-cool"
+kind = "option_present"
+target = "[ COMMENT = '<string_literal>' ]"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-76); observed, not flipped to reject"
+
+[[limit]]
+form = "sf.security_admin.alter-storage-lifecycle-policy.set-body-archive-tier-cool"
+kind = "option_present"
+target = "[ COMMENT = '<string_literal>' ]"
+note = "option present [ COMMENT = '<string_literal>' ], observed"
+anchor = "doc.sql.alter-storage-lifecycle-policy / Syntax"
+sql = "ALTER STORAGE LIFECYCLE POLICY IF EXISTS v1 SET BODY -> TRUE ARCHIVE_TIER = COOL ARCHIVE_FOR_DAYS = 1 COMMENT = 'm' TAG v1 = 'm' , v1 = 'm' ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-storage-lifecycle-policy.set-body-archive-tier-cool"
+kind = "operand_type_class"
+target = "'<string_literal>' in [ COMMENT = '<string_literal>' ]"
+note = "a valid string_literal"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-76); observed, not flipped to reject"
+
+[[limit]]
+form = "sf.security_admin.alter-storage-lifecycle-policy.set-body-archive-tier-cool"
+kind = "operand_type_class"
+target = "'<string_literal>' in [ COMMENT = '<string_literal>' ]"
+note = "a valid string_literal, observed"
+anchor = "doc.sql.alter-storage-lifecycle-policy / Syntax"
+sql = "ALTER STORAGE LIFECYCLE POLICY IF EXISTS v1 SET BODY -> TRUE ARCHIVE_TIER = COOL ARCHIVE_FOR_DAYS = 1 COMMENT = 'm' TAG v1 = 'm' , v1 = 'm' ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-storage-lifecycle-policy.set-body-archive-tier-cool"
+kind = "option_present"
+target = "[ TAG <tag_name> = '<tag_value>' [ , <tag_name> = '<tag_value>' ... ] ]"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-76); observed, not flipped to reject"
+
+[[limit]]
+form = "sf.security_admin.alter-storage-lifecycle-policy.set-body-archive-tier-cool"
+kind = "option_present"
+target = "[ TAG <tag_name> = '<tag_value>' [ , <tag_name> = '<tag_value>' ... ] ]"
+note = "option present [ TAG <tag_name> = '<tag_value>' [ , <tag_name> = '<tag_value>' ... ] ], observed"
+anchor = "doc.sql.alter-storage-lifecycle-policy / Syntax"
+sql = "ALTER STORAGE LIFECYCLE POLICY IF EXISTS v1 SET BODY -> TRUE ARCHIVE_TIER = COOL ARCHIVE_FOR_DAYS = 1 COMMENT = 'm' TAG v1 = 'm' , v1 = 'm' ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-storage-lifecycle-policy.set-body-archive-tier-cool"
+kind = "operand_type_class"
+target = "<tag_name> in [ TAG <tag_name> = '<tag_value>' [ , <tag_name> = '<tag_value>' ... ] ]"
+note = "a valid identifier"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-76); observed, not flipped to reject"
+
+[[limit]]
+form = "sf.security_admin.alter-storage-lifecycle-policy.set-body-archive-tier-cool"
+kind = "operand_type_class"
+target = "<tag_name> in [ TAG <tag_name> = '<tag_value>' [ , <tag_name> = '<tag_value>' ... ] ]"
+note = "a valid identifier, observed"
+anchor = "doc.sql.alter-storage-lifecycle-policy / Syntax"
+sql = "ALTER STORAGE LIFECYCLE POLICY IF EXISTS v1 SET BODY -> TRUE ARCHIVE_TIER = COOL ARCHIVE_FOR_DAYS = 1 COMMENT = 'm' TAG v1 = 'm' , v1 = 'm' ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-storage-lifecycle-policy.set-body-archive-tier-cool"
+kind = "operand_type_class"
+target = "'<tag_value>' in [ TAG <tag_name> = '<tag_value>' [ , <tag_name> = '<tag_value>' ... ] ]"
+note = "a valid string_literal"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-76); observed, not flipped to reject"
+
+[[limit]]
+form = "sf.security_admin.alter-storage-lifecycle-policy.set-body-archive-tier-cool"
+kind = "operand_type_class"
+target = "'<tag_value>' in [ TAG <tag_name> = '<tag_value>' [ , <tag_name> = '<tag_value>' ... ] ]"
+note = "a valid string_literal, observed"
+anchor = "doc.sql.alter-storage-lifecycle-policy / Syntax"
+sql = "ALTER STORAGE LIFECYCLE POLICY IF EXISTS v1 SET BODY -> TRUE ARCHIVE_TIER = COOL ARCHIVE_FOR_DAYS = 1 COMMENT = 'm' TAG v1 = 'm' , v1 = 'm' ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-storage-lifecycle-policy.set-body-archive-tier-cool"
+kind = "interaction_all_options"
+note = "every independent option of one production together"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-76); observed, not flipped to reject"
+
+[[limit]]
+form = "sf.security_admin.alter-storage-lifecycle-policy.set-body-archive-tier-cool"
+kind = "interaction_all_options"
+note = "every independent option of one production together, observed"
+anchor = "doc.sql.alter-storage-lifecycle-policy / Syntax"
+sql = "ALTER STORAGE LIFECYCLE POLICY IF EXISTS v1 SET BODY -> TRUE ARCHIVE_TIER = COOL ARCHIVE_FOR_DAYS = 1 COMMENT = 'm' TAG v1 = 'm' , v1 = 'm' ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-storage-lifecycle-policy.unset-archive-for-days-comment-tag"
+kind = "required_operand_missing"
+target = "<tag_name>"
+note = "omit <tag_name>"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 1420 SQLSTATE 22023, phase semantic_error, import-20261104-76), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.alter-storage-lifecycle-policy.unset-archive-for-days-comment-tag"
+kind = "required_operand_missing"
+target = "<tag_name>"
+note = "omit <tag_name>, observed"
+anchor = "doc.sql.alter-storage-lifecycle-policy / Syntax"
+sql = "ALTER STORAGE LIFECYCLE POLICY v1 UNSET TAG ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-user-modify-workload-identity.rename-to"
+kind = "negative_neighbour"
+note = "the form without its required EXISTS in [ IF EXISTS ]"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 02000, phase semantic_error, import-20261104-76), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.alter-user-modify-workload-identity.rename-to"
+kind = "negative_neighbour"
+note = "the form without its required EXISTS in [ IF EXISTS ], observed"
+anchor = "doc.sql.alter-user-modify-workload-identity / Syntax"
+sql = "ALTER USER IF MODIFY WORKLOAD IDENTITY v1 RENAME TO v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-user-modify-workload-identity.unset"
+kind = "option_present"
+target = "[ IF EXISTS ]"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-76); observed, not flipped to reject"
+
+[[limit]]
+form = "sf.security_admin.alter-user-modify-workload-identity.unset"
+kind = "option_present"
+target = "[ IF EXISTS ]"
+note = "option present [ IF EXISTS ], observed"
+anchor = "doc.sql.alter-user-modify-workload-identity / Syntax"
+sql = "ALTER USER IF EXISTS v1 MODIFY WORKLOAD IDENTITY v1 UNSET DISABLED COMMENT ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-user-modify-workload-identity.unset"
+kind = "option_present"
+target = "[ <username> ]"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-76); observed, not flipped to reject"
+
+[[limit]]
+form = "sf.security_admin.alter-user-modify-workload-identity.unset"
+kind = "option_present"
+target = "[ <username> ]"
+note = "option present [ <username> ], observed"
+anchor = "doc.sql.alter-user-modify-workload-identity / Syntax"
+sql = "ALTER USER IF EXISTS v1 MODIFY WORKLOAD IDENTITY v1 UNSET DISABLED COMMENT ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-user-modify-workload-identity.unset"
+kind = "operand_type_class"
+target = "<username> in [ <username> ]"
+note = "a valid identifier"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-76); observed, not flipped to reject"
+
+[[limit]]
+form = "sf.security_admin.alter-user-modify-workload-identity.unset"
+kind = "operand_type_class"
+target = "<username> in [ <username> ]"
+note = "a valid identifier, observed"
+anchor = "doc.sql.alter-user-modify-workload-identity / Syntax"
+sql = "ALTER USER IF EXISTS v1 MODIFY WORKLOAD IDENTITY v1 UNSET DISABLED COMMENT ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-user-modify-workload-identity.unset"
+kind = "option_present"
+target = "[ DISABLED ]"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-76); observed, not flipped to reject"
+
+[[limit]]
+form = "sf.security_admin.alter-user-modify-workload-identity.unset"
+kind = "option_present"
+target = "[ DISABLED ]"
+note = "option present [ DISABLED ], observed"
+anchor = "doc.sql.alter-user-modify-workload-identity / Syntax"
+sql = "ALTER USER IF EXISTS v1 MODIFY WORKLOAD IDENTITY v1 UNSET DISABLED COMMENT ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-user-modify-workload-identity.unset"
+kind = "option_present"
+target = "[ COMMENT ]"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-76); observed, not flipped to reject"
+
+[[limit]]
+form = "sf.security_admin.alter-user-modify-workload-identity.unset"
+kind = "option_present"
+target = "[ COMMENT ]"
+note = "option present [ COMMENT ], observed"
+anchor = "doc.sql.alter-user-modify-workload-identity / Syntax"
+sql = "ALTER USER IF EXISTS v1 MODIFY WORKLOAD IDENTITY v1 UNSET DISABLED COMMENT ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-user-modify-workload-identity.unset"
+kind = "interaction_all_options"
+note = "every independent option of one production together"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-76); observed, not flipped to reject"
+
+[[limit]]
+form = "sf.security_admin.alter-user-modify-workload-identity.unset"
+kind = "interaction_all_options"
+note = "every independent option of one production together, observed"
+anchor = "doc.sql.alter-user-modify-workload-identity / Syntax"
+sql = "ALTER USER IF EXISTS v1 MODIFY WORKLOAD IDENTITY v1 UNSET DISABLED COMMENT ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-user-remove-key-pair"
+kind = "negative_neighbour"
+note = "the form without its required EXISTS in [ IF EXISTS ]"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 02000, phase semantic_error, import-20261104-76), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.alter-user-remove-key-pair"
+kind = "negative_neighbour"
+note = "the form without its required EXISTS in [ IF EXISTS ], observed"
+anchor = "doc.sql.alter-user-remove-key-pair / Syntax"
+sql = "ALTER USER IF REMOVE KEY PAIR v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-user-remove-programmatic-access-token"
+kind = "negative_neighbour"
+note = "the form without its required EXISTS in [ IF EXISTS ]"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 02000, phase semantic_error, import-20261104-76), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.alter-user-remove-programmatic-access-token"
+kind = "negative_neighbour"
+note = "the form without its required EXISTS in [ IF EXISTS ], observed"
+anchor = "doc.sql.alter-user-remove-programmatic-access-token / Syntax"
+sql = "ALTER USER IF REMOVE PROGRAMMATIC ACCESS TOKEN v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-user-remove-workload-identity"
+kind = "negative_neighbour"
+note = "the form without its required EXISTS in [ IF EXISTS ]"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 02000, phase semantic_error, import-20261104-76), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.alter-user-remove-workload-identity"
+kind = "negative_neighbour"
+note = "the form without its required EXISTS in [ IF EXISTS ], observed"
+anchor = "doc.sql.alter-user-remove-workload-identity / Syntax"
+sql = "ALTER USER IF REMOVE WORKLOAD IDENTITY v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-user-rotate-key-pair"
+kind = "negative_neighbour"
+note = "the form without its required EXISTS in [ IF EXISTS ]"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 02000, phase semantic_error, import-20261104-76), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.alter-user-rotate-key-pair"
+kind = "negative_neighbour"
+note = "the form without its required EXISTS in [ IF EXISTS ], observed"
+anchor = "doc.sql.alter-user-rotate-key-pair / Syntax"
+sql = "ALTER USER IF ROTATE KEY PAIR v1 PUBLIC_KEY = 'm' ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-user-rotate-programmatic-access-token"
+kind = "negative_neighbour"
+note = "the form without its required EXISTS in [ IF EXISTS ]"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 02000, phase semantic_error, import-20261104-76), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.alter-user-rotate-programmatic-access-token"
+kind = "negative_neighbour"
+note = "the form without its required EXISTS in [ IF EXISTS ], observed"
+anchor = "doc.sql.alter-user-rotate-programmatic-access-token / Syntax"
+sql = "ALTER USER IF ROTATE PROGRAMMATIC ACCESS TOKEN v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-user-set-ingress-policy.unset-ingress-policy"
+kind = "negative_neighbour"
+note = "the form without its required POLICY"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 1420 SQLSTATE 22023, phase semantic_error, import-20261104-76), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.alter-user-set-ingress-policy.unset-ingress-policy"
+kind = "negative_neighbour"
+note = "the form without its required POLICY, observed"
+anchor = "doc.sql.alter-user-set-ingress-policy / Syntax"
+sql = "ALTER USER v1 UNSET INGRESS ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-user-set-ingress-policy.unset-ingress-policy"
+kind = "negative_neighbour"
+note = "the form without its required INGRESS"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 1420 SQLSTATE 22023, phase semantic_error, import-20261104-76), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.alter-user-set-ingress-policy.unset-ingress-policy"
+kind = "negative_neighbour"
+note = "the form without its required INGRESS, observed"
+anchor = "doc.sql.alter-user-set-ingress-policy / Syntax"
+sql = "ALTER USER v1 UNSET POLICY ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-user.abort-all-queries"
+kind = "negative_neighbour"
+note = "the form without its required EXISTS in [ IF EXISTS ]"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 02000, phase semantic_error, import-20261104-76), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.alter-user.abort-all-queries"
+kind = "negative_neighbour"
+note = "the form without its required EXISTS in [ IF EXISTS ], observed"
+anchor = "doc.sql.alter-user / Syntax"
+sql = "ALTER USER IF ABORT ALL QUERIES ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-user.add-delegated-authorization-of"
+kind = "negative_neighbour"
+note = "the form without its required EXISTS in [ IF EXISTS ]"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 02000, phase semantic_error, import-20261104-76), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.alter-user.add-delegated-authorization-of"
+kind = "negative_neighbour"
+note = "the form without its required EXISTS in [ IF EXISTS ], observed"
+anchor = "doc.sql.alter-user / Syntax"
+sql = "ALTER USER IF ADD DELEGATED AUTHORIZATION OF ROLE v1 TO SECURITY INTEGRATION i1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-user.mfaactions"
+kind = "negative_neighbour"
+note = "the form without its required EXISTS in [ IF EXISTS ]"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 02000, phase semantic_error, import-20261104-76), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.alter-user.mfaactions"
+kind = "negative_neighbour"
+note = "the form without its required EXISTS in [ IF EXISTS ], observed"
+anchor = "doc.sql.alter-user / Syntax"
+sql = "ALTER USER IF ENROLL MFA ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-user.remove-delegated-authorization-of"
+kind = "negative_neighbour"
+note = "the form without its required EXISTS in [ IF EXISTS ]"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 02000, phase semantic_error, import-20261104-76), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.alter-user.remove-delegated-authorization-of"
+kind = "negative_neighbour"
+note = "the form without its required EXISTS in [ IF EXISTS ], observed"
+anchor = "doc.sql.alter-user / Syntax"
+sql = "ALTER USER IF REMOVE DELEGATED AUTHORIZATION OF ROLE v1 FROM SECURITY INTEGRATION i1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-user.remove-delegated-authorizations-of"
+kind = "negative_neighbour"
+note = "the form without its required EXISTS in [ IF EXISTS ]"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 02000, phase semantic_error, import-20261104-76), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.alter-user.remove-delegated-authorizations-of"
+kind = "negative_neighbour"
+note = "the form without its required EXISTS in [ IF EXISTS ], observed"
+anchor = "doc.sql.alter-user / Syntax"
+sql = "ALTER USER IF REMOVE DELEGATED AUTHORIZATIONS OF ANY ROLE FROM SECURITY INTEGRATION i1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-user.rename-to"
+kind = "negative_neighbour"
+note = "the form without its required EXISTS in [ IF EXISTS ]"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 02000, phase semantic_error, import-20261104-77), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.alter-user.rename-to"
+kind = "negative_neighbour"
+note = "the form without its required EXISTS in [ IF EXISTS ], observed"
+anchor = "doc.sql.alter-user / Syntax"
+sql = "ALTER USER IF RENAME TO v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-user.reset-password"
+kind = "negative_neighbour"
+note = "the form without its required EXISTS in [ IF EXISTS ]"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 02000, phase semantic_error, import-20261104-77), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.alter-user.reset-password"
+kind = "negative_neighbour"
+note = "the form without its required EXISTS in [ IF EXISTS ], observed"
+anchor = "doc.sql.alter-user / Syntax"
+sql = "ALTER USER IF RESET PASSWORD ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-user.set-authentication-password-session"
+kind = "negative_neighbour"
+note = "the form without its required EXISTS in [ IF EXISTS ]"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 02000, phase semantic_error, import-20261104-77), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.alter-user.set-authentication-password-session"
+kind = "negative_neighbour"
+note = "the form without its required EXISTS in [ IF EXISTS ], observed"
+anchor = "doc.sql.alter-user / Syntax"
+sql = "ALTER USER IF SET AUTHENTICATION POLICY v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-user.set-tag"
+kind = "negative_neighbour"
+note = "the form without its required EXISTS in [ IF EXISTS ]"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 02000, phase semantic_error, import-20261104-77), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.alter-user.set-tag"
+kind = "negative_neighbour"
+note = "the form without its required EXISTS in [ IF EXISTS ], observed"
+anchor = "doc.sql.alter-user / Syntax"
+sql = "ALTER USER IF SET TAG v1 = 'm' ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-user.unset-authentication-password-session"
+kind = "negative_neighbour"
+note = "the form without its required EXISTS in [ IF EXISTS ]"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 02000, phase semantic_error, import-20261104-77), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.alter-user.unset-authentication-password-session"
+kind = "negative_neighbour"
+note = "the form without its required EXISTS in [ IF EXISTS ], observed"
+anchor = "doc.sql.alter-user / Syntax"
+sql = "ALTER USER IF UNSET AUTHENTICATION POLICY ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-user.unset-tag"
+kind = "negative_neighbour"
+note = "the form without its required EXISTS in [ IF EXISTS ]"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 02000, phase semantic_error, import-20261104-77), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.alter-user.unset-tag"
+kind = "negative_neighbour"
+note = "the form without its required EXISTS in [ IF EXISTS ], observed"
+anchor = "doc.sql.alter-user / Syntax"
+sql = "ALTER USER IF UNSET TAG v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-user.unset"
+kind = "negative_neighbour"
+note = "the form without its required EXISTS in [ IF EXISTS ]"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 1420 SQLSTATE 22023, phase semantic_error, import-20261104-77), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.alter-user.unset"
+kind = "negative_neighbour"
+note = "the form without its required EXISTS in [ IF EXISTS ], observed"
+anchor = "doc.sql.alter-user / Syntax"
+sql = "ALTER USER IF UNSET v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.create-account"
+kind = "negative_neighbour"
+note = "the form without its required { ADMIN_PASSWORD = '<string_literal>' | ADMIN_RSA_PUBLIC_KEY = '<string_literal>' }"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 3001 SQLSTATE 42501, phase semantic_error, import-20261104-77), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.create-account"
+kind = "negative_neighbour"
+note = "the form without its required { ADMIN_PASSWORD = '<string_literal>' | ADMIN_RSA_PUBLIC_KEY = '<string_literal>' }, observed"
+anchor = "doc.sql.create-account / Syntax"
+sql = "CREATE ACCOUNT v1 ADMIN_NAME = 'm' EMAIL = 'm' EDITION = STANDARD ;"
+expect = "observe"
+context = "raw"

@@ -51224,13 +51224,6 @@ required = true
 target = "[ IF EXISTS ]"
 
 [[obligation]]
-id = "sf.ddl.alter-online-feature-table.table-set-comment.o004"
-kind = "required_operand_missing"
-required = true
-target = "<name>"
-note = "omit <name>"
-
-[[obligation]]
 id = "sf.ddl.alter-online-feature-table.table-set-comment.o005"
 kind = "operand_type_class"
 required = true
@@ -51316,6 +51309,14 @@ required = true
 target = "<name>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.ddl.alter-online-feature-table.table-set-comment.o018"
+kind = "required_operand_missing"
+required = true
+target = "<name>"
+anchor = "doc.sql.alter-online-feature-table / Syntax"
+note = "omit <name>, observed"
 
 [[obligation]]
 id = "sf.ddl.alter-online-feature-table.table-suspend-resume.o001"

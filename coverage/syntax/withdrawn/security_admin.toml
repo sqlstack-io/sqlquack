@@ -200,15 +200,6 @@ valid_as = "sf.security_admin.alter-organization-profile.add-version-from positi
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
-form = "sf.security_admin.alter-security-integration-oauth-snowflake.refresh-oauth-client-secret-oauth-client-secret-2"
-kind = "negative_neighbour"
-target = ""
-note = "the form without its required { OAUTH_CLIENT_SECRET | OAUTH_CLIENT_SECRET_2 }"
-sql = "ALTER INTEGRATION v1 REFRESH ;"
-valid_as = "sf.security_admin.alter-security-integration-saml2.refresh positive the documented form with every required part and no optional part"
-reason = "the rejection renders SQL the documented grammar also accepts"
-
-[[withdrawn]]
 form = "sf.security_admin.alter-session-policy.set"
 kind = "required_operand_missing"
 target = "<role_name> in [ { 'ALL' | <role_name> [ , <role_name> ... ] } ]"
