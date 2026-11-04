@@ -97,6 +97,31 @@ fn given_sql_snowflake_parses_then_rejects_when_refusing_then_each_rejection_is_
             expected_codes: vec!["SQ0203", "SQ0203"],
         },
         RejectionTestCase {
+            description: "REPLACE of a column ILIKE removes is rejected; one it keeps, in any case, is not",
+            sql: "SELECT * ILIKE '%_id' REPLACE (price * 2 AS price) FROM orders; \
+                  SELECT * ILIKE '%_id' REPLACE (order_id + 1 AS \"Order_Id\") FROM orders",
+            expected_rejections: vec!["star_filter_drops_named_column"],
+            expected_codes: vec!["SQ0204"],
+        },
+        RejectionTestCase {
+            description: "RENAME is checked too, and `_` matches exactly one character",
+            sql: "SELECT * ILIKE 'price_' RENAME (price AS amount) FROM orders; \
+                  SELECT * ILIKE '_rder%' RENAME (order_id AS id) FROM orders; \
+                  SELECT orders.* ILIKE 'o%' REPLACE (customer_id AS customer_id) FROM orders",
+            expected_rejections: vec![
+                "star_filter_drops_named_column",
+                "star_filter_drops_named_column",
+            ],
+            expected_codes: vec!["SQ0204", "SQ0204"],
+        },
+        RejectionTestCase {
+            description: "a star without ILIKE, or ILIKE without REPLACE or RENAME, is left to conversion",
+            sql: "SELECT * REPLACE (price * 2 AS price) FROM orders; \
+                  SELECT * ILIKE '%_id' FROM orders",
+            expected_rejections: vec![],
+            expected_codes: vec![],
+        },
+        RejectionTestCase {
             description: "a rejection nested in a CTE is found",
             sql: "WITH both_ids AS (SELECT 1 AS id EXCEPT ALL SELECT 2) SELECT id FROM both_ids",
             expected_rejections: vec!["set_operation_all"],

@@ -17,3 +17,4 @@ SQ0107 function_nesting_depth_exceeded
 SQ0201 set_operation_all
 SQ0202 lock_wait
 SQ0203 qualify_without_window
+SQ0204 star_filter_drops_named_column

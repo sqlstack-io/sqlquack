@@ -21,6 +21,14 @@ fn given_snowflake_sql_when_checked_then_problems_are_coded_and_the_exit_status_
             expected_stderr_mention: "error[SQ0203]",
         },
         CheckCommandTestCase {
+            description: "REPLACE of a column the star's ILIKE removes is SQ0204 and exits 1",
+            arguments: &["check"],
+            sql: "SELECT * ILIKE '%_id' REPLACE (price * 2 AS price) FROM orders",
+            expected_exit_code: Some(1),
+            expected_stdout_prefix: "",
+            expected_stderr_mention: "error[SQ0204]",
+        },
+        CheckCommandTestCase {
             description: "SQL that does not parse is SQ0001 and exits 1",
             arguments: &["check"],
             sql: "SELECT a,\n  FROM orders WHERE (b = 1\n",
