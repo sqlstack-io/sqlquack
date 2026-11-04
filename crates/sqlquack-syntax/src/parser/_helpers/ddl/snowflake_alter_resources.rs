@@ -12,6 +12,10 @@ use crate::tokens::types::Result;
 
 /// The object kinds this module parses, as the words that follow ALTER.
 const RESOURCE_KINDS: &[&[&str]] = &[
+    &["RESTRICTED", "SESSION", "SCOPE"],
+    &["ARTIFACT", "REPOSITORY"],
+    &["EXTERNAL", "VOLUME"],
+    &["MATERIALIZED", "VIEW"],
     &["COMPUTE", "POOL"],
     &["DBT", "PROJECT"],
     &["DCM", "PROJECT"],
@@ -22,6 +26,11 @@ const RESOURCE_KINDS: &[&[&str]] = &[
     &["GIT", "REPOSITORY"],
     &["MODEL", "MONITOR"],
     &["AGENT"],
+    &["DATASET"],
+    &["PIPE"],
+    &["RSS"],
+    &["STREAM"],
+    &["TYPE"],
     &["CONTACT"],
     &["GATEWAY"],
     &["LISTING"],
@@ -117,7 +126,35 @@ fn resource_actions(kind: &str) -> &'static [&'static [&'static str]] {
             &["SET"],
             &["UNSET"],
         ],
-        "STAGE" => &[&["REFRESH"], &["RENAME", "TO"], &["SET"], &["UNSET"]],
+        "STAGE" | "PIPE" => &[&["REFRESH"], &["RENAME", "TO"], &["SET"], &["UNSET"]],
+        "RESTRICTED SESSION SCOPE" | "RSS" => &[
+            &["ADD"],
+            &["REMOVE"],
+            &["AS"],
+            &["RENAME", "TO"],
+            &["SET"],
+            &["UNSET"],
+        ],
+        "EXTERNAL VOLUME" => &[
+            &["ADD", "STORAGE_LOCATION"],
+            &["REMOVE", "STORAGE_LOCATION"],
+            &["UPDATE", "STORAGE_LOCATION"],
+            &["RENAME", "TO"],
+            &["SET"],
+            &["UNSET"],
+        ],
+        "DATASET" => &[&["ADD", "VERSION"], &["DROP", "VERSION"]],
+        "MATERIALIZED VIEW" => &[
+            &["CLUSTER", "BY"],
+            &["DROP", "CLUSTERING", "KEY"],
+            &["SUSPEND", "RECLUSTER"],
+            &["RESUME", "RECLUSTER"],
+            &["SUSPEND"],
+            &["RESUME"],
+            &["RENAME", "TO"],
+            &["SET"],
+            &["UNSET"],
+        ],
         _ => &[&["RENAME", "TO"], &["SET"], &["UNSET"]],
     }
 }
@@ -164,9 +201,16 @@ impl Parser {
             | ("DBT" | "DCM", "PROJECT")
             | ("GIT", "REPOSITORY")
             | ("FILE", "FORMAT")
+            | ("ARTIFACT", "REPOSITORY")
+            | ("MATERIALIZED", "VIEW")
             | ("EXTERNAL", "AGENT" | "TABLE" | "VOLUME" | "CONSUMER" | "ACCESS") => true,
             ("EVENT", "ROUTING") => matches!(self.text_at(2).as_deref(), Some("TABLE")),
-            ("COMPUTE" | "DBT" | "DCM" | "GIT" | "FILE" | "EXTERNAL" | "EVENT", _) => false,
+            ("RESTRICTED", "SESSION") => matches!(self.text_at(2).as_deref(), Some("SCOPE")),
+            (
+                "COMPUTE" | "DBT" | "DCM" | "GIT" | "FILE" | "EXTERNAL" | "EVENT" | "ARTIFACT"
+                | "MATERIALIZED" | "RESTRICTED" | "VOLUME",
+                _,
+            ) => false,
             _ => return None,
         };
         (!complete).then(|| format!("{first} {second}").trim_end().to_owned())
@@ -180,6 +224,15 @@ impl Parser {
     ) -> Result<(String, ActionParts)> {
         let key = action.clone();
         let parts = match (kind, key.as_str()) {
+            ("MATERIALIZED VIEW", "SET") if self.check_identifier("SECURE") => {
+                self.skip();
+                let mut properties = vec![property("SECURE", None, None)];
+                properties.extend(self.parse_resource_properties()?);
+                (vec![], properties)
+            }
+            ("DATASET", "DROP VERSION") | (_, "REMOVE STORAGE_LOCATION") => {
+                (vec![self.parse_string_value()?], vec![])
+            }
             ("AGENT", "SET") if !self.check_identifier("TAG") => {
                 (vec![], vec![self.parse_literal_property()?])
             }
@@ -194,14 +247,28 @@ impl Parser {
             (_, "DEPLOY FROM" | "DROP PARTITION LOCATION") => {
                 (vec![self.parse_location_value()?], vec![])
             }
-            (_, "AS") => {
+            ("LISTING", "AS") => {
                 let manifest = self.parse_location_value()?;
                 (vec![manifest], self.parse_resource_properties()?)
             }
             (_, "FROM SPECIFICATION") => (vec![self.parse_object_value()?], vec![]),
             (_, "ADD FILES" | "REMOVE FILES") => (vec![self.parse_value_list()?], vec![]),
             (_, "ADD TARGETS" | "REMOVE TARGETS") => (vec![self.parse_resource_value()?], vec![]),
-            ("STAGE", "REFRESH") => (vec![], self.parse_resource_properties()?),
+            ("STAGE" | "PIPE", "REFRESH") => (vec![], self.parse_resource_properties()?),
+            ("RESTRICTED SESSION SCOPE" | "RSS", "ADD" | "REMOVE" | "AS") => {
+                (vec![self.parse_text_value()?], vec![])
+            }
+            ("DATASET", "ADD VERSION") => return self.parse_dataset_version(action),
+            (_, "ADD STORAGE_LOCATION") => {
+                self.expect_token(TokenType::Eq)?;
+                (vec![self.parse_value_list()?], vec![])
+            }
+            (_, "UPDATE STORAGE_LOCATION") => {
+                self.expect_token(TokenType::Eq)?;
+                let location = self.parse_object_value()?;
+                (vec![location], self.parse_resource_set()?)
+            }
+            (_, "CLUSTER BY") => (vec![self.parse_expression_list_in_parens()?], vec![]),
             (_, "REFRESH") if self.check(TokenType::String) => {
                 (vec![self.parse_string_value()?], vec![])
             }
@@ -217,6 +284,34 @@ impl Parser {
             _ => return self.parse_resource_clause(action),
         };
         Ok((action, parts))
+    }
+
+    /// Parse a dataset's ADD VERSION after its keywords: `'<version>' FROM ( <query> ) [ PARTITION BY <expr> ]` and properties.
+    fn parse_dataset_version(&mut self, mut action: String) -> Result<(String, ActionParts)> {
+        let mut operands = vec![self.parse_string_value()?];
+        self.expect_token(TokenType::From)?;
+        self.expect_token(TokenType::LParen)?;
+        if !self.check(TokenType::Select) && !self.check(TokenType::With) {
+            return Err(self.parse_error("Expected a query"));
+        }
+        operands.push(self.parse_statement()?);
+        self.expect_token(TokenType::RParen)?;
+        if self.match_keywords(&[TokenType::Partition, TokenType::By]) {
+            action.push_str(" PARTITION BY");
+            operands.push(self.parse_expression()?);
+        }
+        Ok((action, (operands, self.parse_resource_properties()?)))
+    }
+
+    /// Parse `( <expr> [ , ... ] )` as one tuple.
+    fn parse_expression_list_in_parens(&mut self) -> Result<Expression> {
+        self.expect_token(TokenType::LParen)?;
+        let mut expressions = vec![self.parse_expression()?];
+        while self.match_token(TokenType::Comma) {
+            expressions.push(self.parse_expression()?);
+        }
+        self.expect_token(TokenType::RParen)?;
+        Ok(Expression::Tuple(Box::new(Tuple { expressions })))
     }
 
     /// Parse an agent's SET: one property with a literal value.
@@ -385,6 +480,14 @@ impl Parser {
             return self.parse_stage_path();
         }
         self.parse_string_value()
+    }
+
+    /// Parse a string or dollar-quoted string.
+    fn parse_text_value(&mut self) -> Result<Expression> {
+        if !self.check(TokenType::String) && !self.check(TokenType::DollarString) {
+            return Err(self.parse_error("Expected a string"));
+        }
+        self.parse_primary()
     }
 
     /// Whether the current token starts a stage path.

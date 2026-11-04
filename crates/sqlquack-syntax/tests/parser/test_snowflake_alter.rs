@@ -234,6 +234,30 @@ fn given_a_snowflake_alter_of_an_object_kind_when_parsing_then_recorded_rejectio
             expected_accepted: false,
         },
         AcceptanceTestCase {
+            description: "a restricted session scope adds its body without AS; ADD AS is refused (recorded errno 1003)",
+            sql: "ALTER RESTRICTED SESSION SCOPE v1 ADD AS $$m: 1 $$ ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "a restricted session scope takes a dollar-quoted definition (recorded semantic error)",
+            sql: "ALTER RSS v1 AS $$v1 $$ ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "a dataset version comes from a query, not an expression (recorded errno 1003)",
+            sql: "ALTER DATASET v1 ADD VERSION 'm' FROM ( 1 ) ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "VOLUME alone is no kind (recorded errno 1003)",
+            sql: "ALTER VOLUME v1 REMOVE STORAGE_LOCATION 'm' ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
             description: "other dialects keep their ALTER fallback",
             sql: "ALTER v1 ADD RUN v1",
             dialect: Dialect::DuckDB,
