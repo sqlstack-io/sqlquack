@@ -34,7 +34,7 @@ MANIFEST_KEY: str = "manifest_sha256"
 PACKET_ACCEPTED_OUTCOMES: tuple[str, ...] = ("accepted_executed", "compiled")
 DIAGNOSTIC_ACCEPTED_OUTCOME: str = "rows"
 CANONICAL_ACCEPTED_OUTCOMES: tuple[str, ...] = ("rows", "types")
-DDL_ACCEPTED_OUTCOME: str = "accepted_executed"
+SETUP_FAILED_OUTCOME: str = "setup_failed"
 WHOLE_RUN_ROW: str = "*"
 UNKNOWN_ROW: str = "?"
 UNCATEGORIZED_PHASES: frozenset[str] = frozenset({"accepted", "syntax_error"})
@@ -44,7 +44,23 @@ TYPE_REASON: str = "type"
 OTHER_REASON: str = "other"
 REASON_BY_ERRNO: dict[int, str] = {
     **dict.fromkeys(
-        (709, 904, 2003, 2043, 2140, 2141, 2142, 2211, 3620, 90080, 91083, 91085, 91471, 392002),
+        (
+            709,
+            904,
+            1431,
+            2003,
+            2043,
+            2140,
+            2141,
+            2142,
+            2211,
+            3620,
+            90080,
+            91083,
+            91085,
+            91471,
+            392002,
+        ),
         MISSING_OBJECT,
     ),
     **dict.fromkeys(

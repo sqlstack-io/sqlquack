@@ -1,4 +1,4 @@
-"""DDL runs in a run-owned database: setup is the run's setup plus the case's own schema."""
+"""Runs in a run-owned database: setup is the run setup, the case schema and its packet setup."""
 
 from __future__ import annotations
 
@@ -15,10 +15,13 @@ from scripts.syntax_receipts._helpers.hashing import digest
 from scripts.syntax_receipts._helpers.receipts import input_row, receipt, refusal
 from scripts.syntax_receipts.constants import (
     CAPTURE_DDL,
+    CAPTURE_EXPLAIN,
     CASE_SCHEMA,
-    DDL_ACCEPTED_OUTCOME,
+    EXPLAIN_METHOD,
+    PACKET_ACCEPTED_OUTCOMES,
     RUN_DATABASE,
     RUN_NONCE,
+    SETUP_FAILED_OUTCOME,
     SHARED_SCHEMA_NOTE,
     UNKNOWN_ROW,
 )
@@ -31,6 +34,7 @@ def import_ddl_run(*, run: CaptureRun, index: dict[str, Path]) -> Imported:
     """Receipts for the raw lines whose SQL hash matches the bound packet's exact SQL."""
     start: Row = run.events[0]
     session: Row = {**start["parameters"], **start.get("safety", {})}
+    explain: bool = start.get("method") == EXPLAIN_METHOD
     packet: dict[str, Row] = packet_rows(index=index, sha=start.get("packet_sha256"))
     found: Imported = Imported()
     for position, line in enumerate(raw_lines(run=run)):
@@ -46,9 +50,18 @@ def import_ddl_run(*, run: CaptureRun, index: dict[str, Path]) -> Imported:
                 )
             )
             continue
-        setup: list[str] = _setup(start=start, raw=raw, position=position)
+        if raw.get("outcome") == SETUP_FAILED_OUTCOME:
+            found.refusals.append(
+                refusal(
+                    run_id=run.path.name,
+                    row_id=row_id,
+                    reason="fixture setup failed; the statement was not submitted",
+                )
+            )
+            continue
+        setup: list[str] = _setup(start=start, raw=raw, position=position) + case.get("setup", [])
         exact: Row = input_row(sql=case["sql"], setup=setup)
-        found.inputs.setdefault(exact["sql_sha256"], exact)
+        found.inputs.setdefault(exact["sql_sha256"] + exact["setup_sha256"], exact)
         errno, sqlstate, message = error_fields(raw=raw)
         results: list[Row] = raw.get("statement_results") or []
         observation: Observation = Observation(
@@ -60,20 +73,26 @@ def import_ddl_run(*, run: CaptureRun, index: dict[str, Path]) -> Imported:
             sql_sha=raw["sql_sha256"],
             setup=setup,
             session=session,
-            method=CAPTURE_DDL,
-            accepted=raw.get("outcome") == DDL_ACCEPTED_OUTCOME,
+            method=CAPTURE_EXPLAIN if explain else CAPTURE_DDL,
+            accepted=raw.get("outcome") in PACKET_ACCEPTED_OUTCOMES,
             errno=errno,
             sqlstate=sqlstate,
             message=message,
         )
         extra: Row = {
-            "query_id": (results[0]["query_id"] if results else None)
+            "query_id": (results[0]["query_id"] if results else raw.get("query_id"))
             or connector_query_id(raw=raw),
             "warehouse_version": raw.get("warehouse_version"),
             "recorded_at": raw.get("started_at"),
             "statements_in_request": raw.get("statements"),
             "completed_statements": raw.get("completed_statements"),
         }
+        if explain:
+            extra.update(
+                statement_index=raw.get("statement_index"),
+                statements_in_input=case.get("statements_in_input"),
+                input_sha256=case.get("input_sha256"),
+            )
         try:
             found.receipts.append(receipt(observation=observation, extra=extra))
         except RowRefused as error:

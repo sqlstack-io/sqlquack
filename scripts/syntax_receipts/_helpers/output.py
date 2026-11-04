@@ -25,7 +25,9 @@ def write_import(
         "refused": len(imported.refusals),
         "runs": imported.runs,
         "refusals": imported.refusals,
-        "inputs": sorted(imported.inputs.values(), key=lambda row: row["sql_sha256"]),
+        "inputs": sorted(
+            imported.inputs.values(), key=lambda row: (row["sql_sha256"], row["setup_sha256"])
+        ),
     }
     _write_new(path=receipts_path, data=lines)
     _write_new(

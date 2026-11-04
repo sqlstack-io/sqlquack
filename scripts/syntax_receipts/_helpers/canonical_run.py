@@ -42,7 +42,7 @@ def import_canonical_run(*, run: CaptureRun, index: dict[str, Path]) -> Imported
             continue
         setup: list[str] = list(case.get("setup_sql") or [])
         exact: Row = input_row(sql=sql, setup=setup)
-        found.inputs.setdefault(exact["sql_sha256"], exact)
+        found.inputs.setdefault(exact["sql_sha256"] + exact["setup_sha256"], exact)
         error: Row = result.get("error") or {}
         observation: Observation = Observation(
             run_id=run.path.name,

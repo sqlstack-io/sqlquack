@@ -30,7 +30,7 @@ def import_diagnostic_run(*, run: CaptureRun) -> Imported:
             found.refusals.append(refusal(run_id=run.path.name, row_id=row_id, reason=str(refused)))
             continue
         exact: Row = input_row(sql=sql, setup=[])
-        found.inputs.setdefault(exact["sql_sha256"], exact)
+        found.inputs.setdefault(exact["sql_sha256"] + exact["setup_sha256"], exact)
         errno, sqlstate, message = error_fields(raw=raw)
         observation: Observation = Observation(
             run_id=run.path.name,
