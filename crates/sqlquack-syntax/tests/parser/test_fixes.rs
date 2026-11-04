@@ -279,3 +279,60 @@ fn given_a_bare_trailing_limit_when_parsing_then_only_snowflake_accepts_it() {
         );
     }
 }
+
+#[test]
+fn given_a_set_operation_by_name_when_parsing_snowflake_then_only_union_takes_it() {
+    let test_cases = [
+        AcceptanceTestCase {
+            description: "Snowflake accepts UNION ALL BY NAME",
+            sql: "SELECT 3 AS id, 7 AS region UNION ALL BY NAME SELECT 11 AS region, 13 AS id",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "Snowflake rejects INTERSECT BY NAME (recorded errno 1003)",
+            sql: "SELECT 1 AS id INTERSECT BY NAME SELECT 2 AS id",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "Snowflake rejects MINUS BY NAME (recorded errno 1003)",
+            sql: "SELECT 1 AS id MINUS BY NAME SELECT 2 AS id",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "Snowflake rejects an ON column list after BY NAME (recorded errno 1003)",
+            sql: "SELECT 1 AS a, 2 AS b UNION ALL BY NAME ON (a) SELECT 3 AS b, 4 AS a",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "Snowflake rejects a LEFT set operation (recorded errno 1003)",
+            sql: "SELECT 1 AS a, 2 AS b LEFT UNION ALL BY NAME SELECT 3 AS b, 4 AS a",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "Snowflake keeps INTERSECT ALL for analysis to refuse (errno 2)",
+            sql: "SELECT 1 INTERSECT ALL SELECT 2",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "DuckDB keeps INTERSECT BY NAME",
+            sql: "SELECT 1 AS id INTERSECT BY NAME SELECT 2 AS id",
+            dialect: Dialect::DuckDB,
+            expected_accepted: true,
+        },
+    ];
+
+    for test_case in test_cases {
+        assert_eq!(
+            accepted(test_case.sql, test_case.dialect),
+            test_case.expected_accepted,
+            "{}",
+            test_case.description
+        );
+    }
+}
