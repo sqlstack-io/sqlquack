@@ -178,12 +178,62 @@ A `[[review]]` has these fields:
 ## Verification
 
 The checker joins the catalogue, obligations, cases and receipts with freshly computed parser
-results. A form is verified only when all of these hold:
+results. An obligation is satisfied only when at least one case cites it and every citing case
+agrees. A case agrees when all of these hold:
 
-- Every required obligation has a case with an admissible receipt.
-- The current parser verdict agrees with the receipt: a `syntax_error` receipt matches a local
+- It has a receipt whose SQL, setup and session hashes equal the case's and that has a query id or
+  its hash. A receipt that is not bound this way is stale.
+- All of its admissible receipts record the same phase.
+- The current parser's verdict matches that phase: a `syntax_error` receipt matches a local
   rejection, and every other phase matches a local acceptance.
-- The parse is structural.
-- An approved review matches the current file hashes and parser tree.
+- An acceptance is structural: no statement contains a Command or Raw fallback node.
 
-Anything missing, ambiguous, stale, mismatched or opaque fails closed with a named reason.
+A `semantic_error`, `runtime_error` or `unsupported_feature` receipt with a structural local
+acceptance satisfies the obligation for syntax and is counted as `semantic_only`.
+
+A form is verified only when it has at least one required obligation, every required obligation
+is satisfied, and an approved review of its family matches the current catalogue and obligation
+file hashes and the current parser tree. The parser tree is `git rev-parse
+HEAD:crates/sqlquack-syntax`, and none at all while that path has uncommitted changes, so every
+family review is stale then. A form is excluded only by an approved review that is current in the
+same way. Absent forms keep their ids and are never counted. The headline denominator is the
+catalogued forms: 3,348 on the frozen catalogue `e863d7de` (decision D81).
+
+Anything missing, ambiguous, stale, mismatched or opaque fails closed with a named reason:
+`no_obligations`, `missing_case`, `missing_receipt`, `stale_receipt`, `ambiguous_receipts`,
+`disagreement`, `opaque_fallback`, `unreviewed` or `stale_review`. A reference that does not
+resolve fails every check command. Examples are an obligation of an uncatalogued form, a case
+citing an undeclared obligation, an alias whose source is not absent or whose target is unknown,
+and an exclusion naming an unknown form or page.
+
+## Reports
+
+`cargo run -p sqlquack-syntax-coverage -- <command> [--root coverage/syntax] [--json]` prints
+results on stdout and progress on stderr:
+
+- `summary`: the verified share of catalogued forms, obligation completion, forms per reason, and
+  per-family scope.
+- `family <family>`: every form of one family with its state, completion and reasons. The JSON
+  lists each obligation with every citing case, its receipt phase and the local verdict.
+- `missing [--family <family>]`: every unsatisfied required obligation and its reason.
+- `pages [--family <family>]`: the page rollup, a secondary view. A form counts under its own
+  `source` only.
+- `boundaries --form <id>`: the form's boundary and nesting-depth obligations, with their bounds,
+  notes and cases.
+- `snapshot --catalogue-commit <commit>`: every form's state and every satisfied obligation as
+  JSON. It is refused unless the catalogue, `sources.toml` and `aliases.toml` in the working tree
+  equal those of the commit.
+- `diff BASE [HEAD]`: one snapshot against a later one, or against the current tree when HEAD is
+  omitted.
+
+## Baseline
+
+`coverage/syntax/baseline.json` is a snapshot on the frozen catalogue. `make syntax-coverage`,
+part of `make check-ci`, runs `diff` against it and fails in two cases. The first is a coverage
+regression: a form the baseline records as verified or excluded that no longer is, or a satisfied
+obligation that no longer is. The second is a catalogue change: a changed sources, aliases or
+catalogue file, or a form added or removed. Catalogue changes are reported separately from
+coverage changes. Gains pass. After a reviewed gain or catalogue change, re-record the baseline
+with `snapshot` and commit it with the change. A family review binds the parser tree, so any
+parser commit makes verified forms stale until their reviews are renewed. That shows up as a
+regression.
