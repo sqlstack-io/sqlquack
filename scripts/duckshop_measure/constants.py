@@ -31,7 +31,7 @@ SNOWFLAKE_LABEL: str = "matches Snowflake"
 CENSUS_TABLE_PREFIX: str = "__sqlquack_relation__"
 COMPILED_PREFIX: str = "target/compiled/"
 MISSING_TABLE: re.Pattern[str] = re.compile(
-    r"Table with name __sqlquack_relation__\w+ does not exist", re.IGNORECASE
+    r"Table with name (__sqlquack_relation__\w+) does not exist", re.IGNORECASE
 )
 MICROSECOND_SCALE: int = 6
 SCALED_TYPES: frozenset[str] = frozenset({"TIME", "TIMESTAMP_NTZ", "TIMESTAMP_LTZ", "TIMESTAMP_TZ"})
@@ -59,6 +59,7 @@ SCORE_EXCLUDED: frozenset[str] = frozenset(
         "unrecordable",
         "snowflake_error",
         "input_unrecorded",
+        "input_unloadable",
         "declared_divergence",
     }
 )

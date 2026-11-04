@@ -2,7 +2,8 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass
+import datetime
+from dataclasses import dataclass, field
 
 
 @dataclass(frozen=True)
@@ -46,6 +47,15 @@ class ModelTestCase:
     error: str | None
     expected_outcome: str
     declared: tuple[str, ...] = ()
+    unloadable: dict[str, str] = field(default_factory=dict)
+
+
+@dataclass(frozen=True)
+class LoadTestCase:
+    description: str
+    rows: tuple[datetime.datetime, ...]
+    expected_unloadable: tuple[str, ...]
+    expected_loaded: tuple[str, ...]
 
 
 @dataclass(frozen=True)

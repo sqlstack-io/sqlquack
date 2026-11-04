@@ -2,9 +2,13 @@
 
 from __future__ import annotations
 
+import datetime
 import json
 from pathlib import Path
 
+import duckdb
+import pyarrow
+import pyarrow.ipc
 import pytest
 
 from scripts.duckshop_measure._helpers.measures import unit_test_outcomes
@@ -12,10 +16,16 @@ from scripts.duckshop_measure._helpers.outcomes import unit_test_outcome
 from scripts.duckshop_measure._helpers.report import unit_tests_report
 from scripts.duckshop_measure._helpers.running import duckdb_rows
 from scripts.duckshop_measure._helpers.schema import census_schema
-from scripts.duckshop_measure._helpers.snowflake import model_result, orders_rows
+from scripts.duckshop_measure._helpers.snowflake import (
+    load_inputs,
+    model_result,
+    orders_rows,
+    with_unloadable_input,
+)
 from scripts.duckshop_measure.main.measure import run_measure
 from scripts.duckshop_measure.models import Conversion, ModelResult, UnitTestOutcome
 from tests.unit.scripts.duckshop_measure._test_types import (
+    LoadTestCase,
     ModelTestCase,
     OrderTestCase,
     OutcomeTestCase,
@@ -260,6 +270,30 @@ def test_given_compiled_sql_when_reading_its_order_then_only_a_top_level_order_b
             expected_outcome="input_unrecorded",
         ),
         ModelTestCase(
+            description="an input DuckDB could not hold at its declared type is input_unloadable",
+            sidecar=_ROWS,
+            refusals=None,
+            compared={
+                "outcome": "duckdb_error",
+                "detail": "Catalog Error: Table with name __sqlquack_relation__x does not exist!",
+            },
+            error=None,
+            expected_outcome="input_unloadable",
+            unloadable={"__sqlquack_relation__x": "ConversionException: out of range"},
+        ),
+        ModelTestCase(
+            description="another missing input stays input_unrecorded beside an unloadable one",
+            sidecar=_ROWS,
+            refusals=None,
+            compared={
+                "outcome": "duckdb_error",
+                "detail": "Catalog Error: Table with name __sqlquack_relation__y does not exist!",
+            },
+            error=None,
+            expected_outcome="input_unrecorded",
+            unloadable={"__sqlquack_relation__x": "ConversionException: out of range"},
+        ),
+        ModelTestCase(
             description="a microsecond-only match is its own outcome",
             sidecar=_ROWS,
             refusals=None,
@@ -276,11 +310,72 @@ def test_given_a_recorded_model_when_judging_it_then_only_comparable_runs_are_sc
     result: ModelResult = model_result(
         sidecar=test_case.sidecar,
         refusals=test_case.refusals,
-        compared=test_case.compared,
+        compared=with_unloadable_input(
+            compared=test_case.compared, unloadable=test_case.unloadable
+        ),
         error=test_case.error,
         declared=test_case.declared,
     )
     assert result.outcome == test_case.expected_outcome
+
+
+@pytest.mark.parametrize(
+    "test_case",
+    (
+        LoadTestCase(
+            description="nanosecond timestamps inside DuckDB's range load",
+            rows=(datetime.datetime(2026, 11, 4, 12, 0),),
+            expected_unloadable=(),
+            expected_loaded=("__sqlquack_relation__edge", "__sqlquack_relation__plain"),
+        ),
+        LoadTestCase(
+            description="year 0001 as TIMESTAMP_NS is unloadable and its neighbour still loads",
+            rows=(datetime.datetime(2026, 11, 4, 12, 0), datetime.datetime(1, 1, 1)),
+            expected_unloadable=("__sqlquack_relation__edge",),
+            expected_loaded=("__sqlquack_relation__plain",),
+        ),
+        LoadTestCase(
+            description="year 9999 as TIMESTAMP_NS is unloadable",
+            rows=(datetime.datetime(9999, 12, 31, 23, 59, 59),),
+            expected_unloadable=("__sqlquack_relation__edge",),
+            expected_loaded=("__sqlquack_relation__plain",),
+        ),
+    ),
+    ids=lambda case: case.description,
+)
+def test_given_recorded_inputs_when_loading_then_only_values_duckdb_cannot_hold_are_refused(
+    test_case: LoadTestCase, tmp_path: Path
+) -> None:
+    entries: list[dict[str, object]] = []
+    for name, values in (("edge", test_case.rows), ("plain", (datetime.datetime(2026, 1, 1),))):
+        table: pyarrow.Table = pyarrow.table(
+            {"SENT_AT": pyarrow.array(values, pyarrow.timestamp("us"))}
+        )
+        with pyarrow.ipc.new_file(tmp_path / f"k_{name}.arrow", table.schema) as writer:
+            writer.write_table(table)
+        scale: int = 9 if name == "edge" else 6
+        column: dict[str, object] = {
+            "name": "SENT_AT",
+            "type_name": "TIMESTAMP_NTZ",
+            "scale": scale,
+        }
+        (tmp_path / f"k_{name}.json").write_text(json.dumps({"columns": [column]}))
+        entries.append({"key": f"k_{name}", "unique_id": f"model.shop.{name}", "outcome": "rows"})
+    database: Path = tmp_path / "inputs.duckdb"
+    unloadable: dict[str, str] = load_inputs(entries=entries, results=tmp_path, database=database)
+    connection: duckdb.DuckDBPyConnection = duckdb.connect(str(database), read_only=True)
+    loaded: tuple[str, ...] = tuple(
+        sorted(
+            row[0]
+            for row in connection.execute("SELECT table_name FROM duckdb_tables()").fetchall()
+        )
+    )
+    connection.close()
+    assert (tuple(sorted(unloadable)), loaded) == (
+        test_case.expected_unloadable,
+        test_case.expected_loaded,
+    )
+    assert all(reason.startswith("ConversionException") for reason in unloadable.values())
 
 
 @pytest.mark.parametrize(

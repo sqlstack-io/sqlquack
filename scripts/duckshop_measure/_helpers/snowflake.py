@@ -99,11 +99,13 @@ def duckdb_type(column: dict[str, object]) -> str:
     return DUCKDB_TYPES[name]
 
 
-def load_inputs(*, entries: Iterable[dict[str, object]], results: Path, database: Path) -> int:
-    """Load each recorded result with rows as census names its relation, typed per the policy."""
+def load_inputs(
+    *, entries: Iterable[dict[str, object]], results: Path, database: Path
+) -> dict[str, str]:
+    """Load each recorded relation typed per the policy; return those DuckDB cannot hold."""
     database.unlink(missing_ok=True)
     connection: duckdb.DuckDBPyConnection = duckdb.connect(str(database))
-    loaded: int = 0
+    unloadable: dict[str, str] = {}
     try:
         for entry in entries:
             arrow: Path = results / f"{entry['key']}.arrow"
@@ -118,12 +120,14 @@ def load_inputs(*, entries: Iterable[dict[str, object]], results: Path, database
             )
             connection.register("recorded", table)
             name: str = relation_table(str(entry["unique_id"]))
-            connection.execute(f'CREATE TABLE "{name}" AS SELECT {typed} FROM recorded')
+            try:
+                connection.execute(f'CREATE TABLE "{name}" AS SELECT {typed} FROM recorded')
+            except (duckdb.ConversionException, duckdb.OutOfRangeException) as error:
+                unloadable[name] = f"{type(error).__name__}: {error}"
             connection.unregister("recorded")
-            loaded += 1
     finally:
         connection.close()
-    return loaded
+    return unloadable
 
 
 def duckdb_error(*, sql: str, database: Path) -> str | None:
@@ -159,6 +163,22 @@ def run_comparisons(
         env=environment,
     )
     return {str(item["id"]): item for item in json.loads(completed.stdout)}
+
+
+def with_unloadable_input(
+    *, compared: dict[str, str] | None, unloadable: dict[str, str]
+) -> dict[str, str] | None:
+    """`compared`, or input_unloadable when its missing table is an input load refused."""
+    detail: str = compared["detail"] if compared else ""
+    missing: re.Match[str] | None = MISSING_TABLE.search(detail)
+    refusal: str | None = unloadable.get(missing[1]) if missing else None
+    if compared is None or missing is None or refusal is None:
+        return compared
+    return {
+        **compared,
+        "outcome": ModelOutcome.INPUT_UNLOADABLE,
+        "detail": f"{missing[1]}: {refusal}",
+    }
 
 
 def model_result(

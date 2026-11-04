@@ -17,6 +17,7 @@ from scripts.duckshop_measure._helpers.snowflake import (
     load_inputs,
     model_result,
     orders_rows,
+    with_unloadable_input,
 )
 from scripts.duckshop_measure.constants import (
     JSON_SUFFIX,
@@ -88,14 +89,19 @@ def snowflake_results(*, inputs: SnowflakeInputs, run: Comparer) -> list[ModelRe
     sidecars: list[dict[str, object]] = []
     comparisons: list[dict[str, object]] = []
     errors: dict[str, str | None] = {}
+    unloadable: dict[str, dict[str, str]] = {}
     for target in TARGETS:
         entries: list[dict[str, object]] = json.loads(
             (results.parent / f"index-{target}.json").read_text()
         )
         database: Path = work / f"{target}.duckdb"
-        loaded: int = load_inputs(entries=entries, results=results, database=database)
-        print(f"duckshop measure: {loaded} recorded relations loaded for {target}", file=sys.stderr)
+        refused: dict[str, str] = load_inputs(entries=entries, results=results, database=database)
+        print(
+            f"duckshop measure: {len(refused)} recorded relations unloadable for {target}",
+            file=sys.stderr,
+        )
         for entry in entries:
+            unloadable[str(entry["key"])] = refused
             if not str(entry["unique_id"]).startswith(MODEL_PREFIX):
                 continue
             sidecar: dict[str, object] = json.loads((results / f"{entry['key']}.json").read_text())
@@ -144,7 +150,9 @@ def snowflake_results(*, inputs: SnowflakeInputs, run: Comparer) -> list[ModelRe
             model_result(
                 sidecar=sidecar,
                 refusals=refusals,
-                compared=compared.get(key),
+                compared=with_unloadable_input(
+                    compared=compared.get(key), unloadable=unloadable.get(key, {})
+                ),
                 error=errors.get(key),
                 declared=declared,
             )
