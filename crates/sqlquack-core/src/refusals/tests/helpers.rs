@@ -4,6 +4,7 @@ use crate::parsing::main::parse_source::parse_source;
 use crate::parsing::models::{SourceDialect, SourceLines};
 use crate::refusals::main::refuse_constructs::refuse_constructs;
 use crate::refusals::main::refuse_unparsed::refuse_unparsed;
+use crate::refusals::main::snowflake_rejections::snowflake_rejections;
 use crate::refusals::models::{Refusal, RefusalCategory};
 use crate::refusals::tests::test_types::DeclaringPolicy;
 
@@ -48,4 +49,15 @@ pub(crate) fn unparsed_refusal(sql: &str) -> Refusal {
         &parse_source(sql, SourceDialect::Snowflake).expect_err("test SQL does not parse"),
         &SourceLines::new(sql),
     )
+}
+
+/// The construct names of every Snowflake rejection in `sql`, in order.
+pub(crate) fn rejection_names(sql: &str) -> Vec<String> {
+    let lines = SourceLines::new(sql);
+    parse_source(sql, SourceDialect::Snowflake)
+        .expect("test SQL parses")
+        .iter()
+        .flat_map(|statement| snowflake_rejections(statement, &lines))
+        .filter_map(|refusal| refusal.construct.map(|construct| construct.name))
+        .collect()
 }

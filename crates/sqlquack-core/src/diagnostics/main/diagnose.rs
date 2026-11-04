@@ -18,7 +18,11 @@ pub fn diagnose(refusals: &[Refusal], source: &str) -> Vec<Diagnostic> {
         let (code, label) = code_and_label(refusal);
         let mut diagnostic = coded(code, label);
         diagnostic.span = refusal.location.map(|location| lines.span(location));
-        if let Some(construct) = &refusal.construct {
+        if let Some(construct) = refusal
+            .construct
+            .as_ref()
+            .filter(|_| refusal.category != RefusalCategory::SnowflakeRejects)
+        {
             diagnostic.message = format!("{}: `{construct}`", diagnostic.message);
         }
         diagnostics.push(diagnostic);
@@ -35,6 +39,11 @@ fn code_and_label(refusal: &Refusal) -> (&'static str, String) {
         RefusalCategory::UnresolvedName => UNRESOLVED_NAME,
         RefusalCategory::NotExpressible => NOT_EXPRESSIBLE,
         RefusalCategory::ConversionBudget => CONVERSION_BUDGET,
+        RefusalCategory::SnowflakeRejects => refusal
+            .construct
+            .as_ref()
+            .and_then(|construct| code_entry(&construct.name))
+            .map_or(MISSING_RULE, |entry| entry.code),
     };
     let Some(message) = refusal.reason.strip_prefix(UNPARSED_PREFIX) else {
         return (code, refusal.reason.clone());

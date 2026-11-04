@@ -55,7 +55,9 @@ With `--json`, each refusal also carries the same diagnostic: `code`, `name`, `a
 guard's former `E_GUARD_*` name), `message`, `span` (character `start` and `end`, one-based `line`,
 `column`, `end_line` and `end_column`), `label`, `notes` and `help`. Codes are `SQ` and four digits,
 listed with an explanation each in `crates/sqlquack-core/src/diagnostics/constants.rs`; a code is
-never reused or renumbered. `--session NAME=VALUE` passes the caller's Snowflake session parameters
+never reused or renumbered. SQL that Snowflake parses but then rejects, such as `INTERSECT ALL`,
+`FOR UPDATE WAIT` or `QUALIFY` without a window function, is refused with its own `SQ02xx` code
+instead of being converted. `--session NAME=VALUE` passes the caller's Snowflake session parameters
 (`function` takes it too):
 
 - Conversion runs under the recorded session profile they match (`utc-v1`, or `utc-qiic-v1` for

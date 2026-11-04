@@ -1244,6 +1244,16 @@ fn given_refused_sql_when_converting_then_text_and_json_carry_the_same_coded_dia
                 line)\nsqlquack convert: refused, 1 refusal under the built-in default\n",
             expected_json: ("SQ0004", "unresolved_name", 1, 15),
         },
+        ConvertDiagnosticTestCase {
+            description: "SQL Snowflake parses but rejects is refused with the rejection's code",
+            sql: "SELECT 1 QUALIFY TRUE",
+            expected_text: "error[SQ0203]: QUALIFY needs a window function\n --> <stdin>:1:1\n  |\n1 | \
+                SELECT 1 QUALIFY TRUE\n  | ^^^^^^^^^^^^^^^^^^^^^ QUALIFY is used without a window \
+                function in the SELECT list or QUALIFY\n  |\n  = help: move the condition to WHERE or \
+                HAVING, or filter on a window function's result\nsqlquack convert: refused, 1 refusal \
+                under the built-in default\n",
+            expected_json: ("SQ0203", "qualify_without_window", 1, 1),
+        },
     ];
     for test_case in test_cases {
         let (stdout, stderr) = convert_streams(test_case.sql, &["--builtin-policy"]);

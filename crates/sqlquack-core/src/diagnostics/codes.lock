@@ -14,3 +14,6 @@ SQ0104 parser_depth_exceeded
 SQ0105 ast_depth_exceeded
 SQ0106 ast_budget_exceeded
 SQ0107 function_nesting_depth_exceeded
+SQ0201 set_operation_all
+SQ0202 lock_wait
+SQ0203 qualify_without_window
