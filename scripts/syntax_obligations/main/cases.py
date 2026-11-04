@@ -11,6 +11,7 @@ from scripts.syntax_obligations._helpers.cases import (
     packet_text,
     receipt_phases,
     recorded_receipts,
+    run_database_setups,
     settled_cases,
 )
 from scripts.syntax_obligations.types import Row
@@ -22,9 +23,12 @@ def run_cases(argv: list[str] | None = None) -> int:
     root: Path = arguments.root
     phases: dict[tuple[str, str], str] = receipt_phases(arguments.receipts)
     recorded: set[tuple[str, str]] = recorded_receipts(arguments.receipts)
+    setups, flagged = run_database_setups(arguments.setups or arguments.receipts)
+    for case_id in flagged:
+        print(f"setup for review, receipts disagree across setups: {case_id}")
     to_capture: list[Row] = []
     for family in arguments.families:
-        cases, arity = settled_cases(root=root, family=family, phases=phases)
+        cases, arity = settled_cases(root=root, family=family, phases=phases, setups=setups)
         path: Path = root / "cases" / f"{family}.jsonl"
         path.parent.mkdir(parents=True, exist_ok=True)
         path.write_text(jsonl_text(cases))
@@ -58,6 +62,12 @@ def _parse_args(argv: list[str] | None) -> argparse.Namespace:
         type=Path,
         required=True,
         help="receipt directory: matches SQL hashes and gives accepted cases their stage",
+    )
+    parser.add_argument(
+        "--setups",
+        type=Path,
+        help="receipt directory whose run-database receipts give ddl cases their setup "
+        "(default: --receipts)",
     )
     parser.add_argument("--packet", type=Path, help="write the cases still to capture here")
     parser.add_argument("families", nargs="+")

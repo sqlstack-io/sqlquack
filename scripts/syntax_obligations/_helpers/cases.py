@@ -11,6 +11,8 @@ from scripts.syntax_obligations._helpers.render import style_of, submissions
 from scripts.syntax_obligations.constants import (
     CASE_CAPTURE,
     CASE_CAPTURE_DCM,
+    CASE_CAPTURE_RUN_DATABASE,
+    COUNTED_RUN_STATUSES,
     DCM_DEFINITION_FORM,
     DIGEST_WIDTH,
     DOUBLE_QUOTE,
@@ -22,6 +24,9 @@ from scripts.syntax_obligations.constants import (
     LANE_A_BLOCK_SESSION,
     MEASURE_KEY,
     PACKET_KEYS,
+    RUN_DATABASE_FAMILIES,
+    RUN_DATABASE_SETUP,
+    SHARED_SCHEMA_SETUP,
     STAGE_BY_RECEIPT_PHASE,
     STAGE_KEY,
     SYNTAX_ERROR_PHASE,
@@ -42,7 +47,7 @@ def canonical(value: object) -> str:
 
 
 def family_cases(
-    *, root: Path, family: str
+    *, root: Path, family: str, setups: dict[tuple[str, str], list[str]]
 ) -> tuple[list[Row], dict[str, set[str]], list[Row], set[str]]:
     """Cases with the obligations each satisfies, every obligation's outcomes, and arity cases."""
     numbered, trees, _, _, arity = family_obligations(root=root, family=family)
@@ -65,7 +70,6 @@ def family_cases(
     if conflicts:
         raise ObligationError("one SQL text with two expectations:\n" + "\n".join(conflicts))
     session_sha: str = digest(canonical(LANE_A_BLOCK_SESSION))
-    setup_sha: str = digest(canonical([]))
     cases: list[Row] = []
     for sql, (form, rendered, obligations) in by_sql.items():
         sha: str = digest(sql)
@@ -74,12 +78,10 @@ def family_cases(
             "obligations": sorted(set(obligations)),
             "sql": sql,
             "sql_sha256": sha,
-            "setup": [],
-            "setup_sha256": setup_sha,
             "session": LANE_A_BLOCK_SESSION,
             "session_sha256": session_sha,
-            "capture": _capture(form),
             "expect": rendered.expect,
+            **_binding(form=form, family=family, sql_sha=sha, setups=setups),
         }
         if rendered.stage:
             case[STAGE_KEY] = rendered.stage
@@ -88,14 +90,64 @@ def family_cases(
     return (
         sorted(cases, key=lambda case: case["case_id"]),
         expected,
-        _arity_cases(rows=arity, scored=scored),
+        _arity_cases(rows=arity, scored=scored, family=family, setups=setups),
         {identifier for identifier, draft in numbered if draft.kind == KIND_EXTREME},
     )
 
 
-def _capture(form: str) -> str:
-    """DEFINE forms are captured from a DCM definition file; every other form by executing."""
-    return CASE_CAPTURE_DCM if DCM_DEFINITION_FORM.search(form) else CASE_CAPTURE
+def _binding(
+    *, form: str, family: str, sql_sha: str, setups: dict[tuple[str, str], list[str]]
+) -> Row:
+    """Capture and setup: DEFINE from a DCM file, ddl in a run database, the rest bare (D110)."""
+    capture: str = CASE_CAPTURE
+    setup: list[str] = []
+    if DCM_DEFINITION_FORM.search(form):
+        capture = CASE_CAPTURE_DCM
+    elif family in RUN_DATABASE_FAMILIES:
+        capture = CASE_CAPTURE_RUN_DATABASE
+        case_id: str = f"{form}.k{sql_sha[:DIGEST_WIDTH]}"
+        setup = setups.get((case_id, sql_sha), list(RUN_DATABASE_SETUP))
+    return {"capture": capture, "setup": setup, "setup_sha256": digest(canonical(setup))}
+
+
+def run_database_setups(directory: Path) -> tuple[dict[tuple[str, str], list[str]], list[str]]:
+    """Each ddl case's setup from its latest counted receipt (D110a), and cases for review."""
+    inputs: dict[tuple[str, str], list[str]] = {}
+    counted_runs: set[str] = set()
+    for path in directory.glob("*.report.json"):
+        report: Row = json.loads(path.read_text())
+        for row in report.get("inputs", []):
+            setup: list[str] = list(row["setup"])
+            inputs[(str(row["sql_sha256"]), digest(canonical(setup)))] = setup
+        counted_runs |= {
+            str(run["run_id"])
+            for run in report.get("runs", [])
+            if run.get("status") in COUNTED_RUN_STATUSES
+        }
+    latest: dict[tuple[str, str], tuple[str, list[str]]] = {}
+    classes: dict[tuple[str, str], set[bool]] = {}
+    for path in sorted(directory.glob("*.jsonl")):
+        for line in path.read_text().splitlines():
+            receipt: Row = json.loads(line)
+            key: tuple[str, str] = (str(receipt["case_id"]), str(receipt["sql_sha256"]))
+            setup = inputs.get((key[1], str(receipt.get("setup_sha256", ""))), [])
+            if (
+                receipt.get("capture_method") != CASE_CAPTURE_RUN_DATABASE
+                or MEASURE_KEY in receipt
+                or str(receipt.get("run_id")) not in counted_runs
+                or not setup
+                or any(statement.startswith(SHARED_SCHEMA_SETUP) for statement in setup)
+            ):
+                continue
+            classes.setdefault(key, set()).add(receipt["phase"] == SYNTAX_ERROR_PHASE)
+            recorded: str = str(receipt["recorded_at"])
+            if key not in latest or recorded > latest[key][0]:
+                latest[key] = (recorded, setup)
+    flagged: list[str] = sorted(key[0] for key, seen in classes.items() if len(seen) > 1)
+    setups: dict[tuple[str, str], list[str]] = {
+        key: setup for key, (_, setup) in latest.items() if len(classes[key]) == 1
+    }
+    return setups, flagged
 
 
 def _omission(row: Row) -> str:
@@ -103,7 +155,9 @@ def _omission(row: Row) -> str:
     return f"{row['kind']} | {row['target']} | {row['note']}"
 
 
-def _arity_cases(*, rows: list[Row], scored: set[str]) -> list[Row]:
+def _arity_cases(
+    *, rows: list[Row], scored: set[str], family: str, setups: dict[tuple[str, str], list[str]]
+) -> list[Row]:
     """Unscored observe cases, one per distinct SQL text, naming the omissions they render."""
     by_sql: dict[str, list[Row]] = {}
     for row in rows:
@@ -120,12 +174,10 @@ def _arity_cases(*, rows: list[Row], scored: set[str]) -> list[Row]:
                 "omits": sorted(_omission(row) for row in found),
                 "sql": sql,
                 "sql_sha256": sha,
-                "setup": [],
-                "setup_sha256": digest(canonical([])),
                 "session": LANE_A_BLOCK_SESSION,
                 "session_sha256": session_sha,
-                "capture": _capture(str(found[0]["form"])),
                 "expect": EXPECT_OBSERVE,
+                **_binding(form=str(found[0]["form"]), family=family, sql_sha=sha, setups=setups),
             }
         )
     return sorted(cases, key=lambda case: case["case_id"])
@@ -251,10 +303,14 @@ def _observed_outcome(*, case: Row, phase: str | None, stage: str | None, extrem
 
 
 def settled_cases(
-    *, root: Path, family: str, phases: dict[tuple[str, str], str]
+    *,
+    root: Path,
+    family: str,
+    phases: dict[tuple[str, str], str],
+    setups: dict[tuple[str, str], list[str]],
 ) -> tuple[list[Row], list[Row]]:
     """The merged cases with the stages their receipts show, and the unscored arity cases."""
-    generated, expected, arity, extremes = family_cases(root=root, family=family)
+    generated, expected, arity, extremes = family_cases(root=root, family=family, setups=setups)
     cases, problems = merge_mapped(
         cases=generated, mapped=root / "mapped-cases" / f"{family}.jsonl", expected=expected
     )

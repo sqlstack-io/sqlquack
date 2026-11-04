@@ -13655,7 +13655,7 @@ form = "sf.ddl.alter-database-catalog-linked.unset-base-location-prefix-comment-
 kind = "required_operand_missing"
 target = "<name>"
 note = "omit <name>"
-reason = "D97: Snowflake ran this SQL (phase accepted, import-20261104-24), so the omission is not a syntax error; whether the name is optional is a catalogue question for the coordinator; the hand row below observes it"
+reason = "D97: Snowflake accepts this SQL (phase accepted, import-20261104-24), though the page requires the name: an undocumented acceptance, so the hand row below observes it (D110)"
 
 [[limit]]
 form = "sf.ddl.alter-database-catalog-linked.unset-base-location-prefix-comment-contact"
@@ -13704,7 +13704,7 @@ form = "sf.ddl.alter-database.unset-data-retention-time-in-days-max-data-extensi
 kind = "required_operand_missing"
 target = "<name>"
 note = "omit <name>"
-reason = "D97: Snowflake ran this SQL (phase accepted, import-20261104-36), so the omission is not a syntax error; whether the name is optional is a catalogue question for the coordinator; the hand row below observes it"
+reason = "D97: Snowflake accepts this SQL (phase accepted, import-20261104-36), though the page requires the name: an undocumented acceptance, so the hand row below observes it (D110)"
 
 [[limit]]
 form = "sf.ddl.alter-database.unset-data-retention-time-in-days-max-data-extension-time-in-days-stage-undrop-retention-time-in-days"
@@ -14721,7 +14721,7 @@ form = "sf.ddl.alter-schema.unset-data-retention-time-in-days-max-data-extension
 kind = "required_operand_missing"
 target = "<name>"
 note = "omit <name>"
-reason = "D97: Snowflake ran this SQL (phase accepted, import-20261104-38), so the omission is not a syntax error; whether the name is optional is a catalogue question for the coordinator; the hand row below observes it"
+reason = "D97: Snowflake accepts this SQL (phase accepted, import-20261104-38), though the page requires the name: an undocumented acceptance, so the hand row below observes it (D110)"
 
 [[limit]]
 form = "sf.ddl.alter-schema.unset-data-retention-time-in-days-max-data-extension-time-in-days-stage-undrop-retention-time-in-days"

@@ -238,6 +238,17 @@ BUILTIN_NAMES: frozenset[str] = frozenset(
 )
 CASE_CAPTURE: str = "execute"
 CASE_CAPTURE_DCM: str = "dcm_definition_file"
+CASE_CAPTURE_RUN_DATABASE: str = "execute_ddl_in_run_database"
+RUN_DATABASE_FAMILIES: frozenset[str] = frozenset({"ddl"})
+RUN_DATABASE_SETUP: tuple[str, ...] = (
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>",
+)
+SHARED_SCHEMA_SETUP: str = "-- shared schema;"
+COUNTED_RUN_STATUSES: frozenset[str] = frozenset({"imported", "reconciled"})
 DCM_DEFINITION_FORM: re.Pattern[str] = re.compile(r"\.create-[a-z0-9-]+\.define-")
 LANE_A_BLOCK_SESSION: dict[str, object] = {
     "ABORT_DETACHED_QUERY": True,
