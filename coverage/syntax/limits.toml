@@ -1255,3 +1255,55 @@ context = "raw"
 open = "DECLARE v{n} INT ; BEGIN"
 core = "DECLARE v0 INT ; BEGIN RETURN 1 ; END ;"
 close = "END ;"
+
+# Readings: how the obligations read a catalogued grammar whose documented text puts a `|` outside
+# any brackets, so the alternation's scope is not written down. Each [[reading]] keeps every token
+# of the documented grammar, adds only the braces that scope the alternation, gives the reason, and
+# binds the catalogue grammar it reads by grammar_sha256; a catalogue change invalidates it.
+
+[[reading]]
+form = "sf.query.pivot"
+grammar_sha256 = "f402923b11db685056626c70c8852e3e82b0df6546c3e49ff20948aa843f0134"
+grammar = ["SELECT ... FROM ... PIVOT ( <aggregate_function> ( <pivot_column> ) [ [ AS ] <alias> ] FOR <value_column> IN ( { <pivot_value_1> [ [ AS ] <alias> ] [ , <pivot_value_2> [ [ AS ] <alias> ] ... ] | ANY [ ORDER BY ... ] | <subquery> } ) [ DEFAULT ON NULL (<value>) ] ) [ ... ]"]
+reason = "the three IN ( ... ) alternatives (value list, ANY, subquery) sit inside IN ( ), as the page's examples show"
+
+[[reading]]
+form = "sf.query.changes"
+grammar_sha256 = "b498c88801e5298e732bc429ac85532ca5a3e1aa0a55146d94d190c4610c0606"
+grammar = ["SELECT ... FROM ... CHANGES ( INFORMATION => { DEFAULT | APPEND_ONLY } ) { AT ( { TIMESTAMP => <timestamp> | OFFSET => <time_difference> | STATEMENT => <id> | STREAM => '<name>' } ) | BEFORE ( STATEMENT => <id> ) } [ END( { TIMESTAMP => <timestamp> | OFFSET => <time_difference> | STATEMENT => <id> } ) ] [ ... ]"]
+reason = "AT ( ... ) and BEFORE ( ... ) are the two start points of CHANGES; the optional END ( ... ) follows either, as the page's examples show"
+
+[[reading]]
+form = "sf.query.constructs"
+grammar_sha256 = "35a514a2ffebae5dbda06f3276cab410609e0d38eaa771bc5d9d9a5463757e6e"
+grammar = ["[ WITH ... ] SELECT [ TOP <n> ] ... [ INTO ... ] [ FROM ... [ AT ... | BEFORE ... ] [ CHANGES ... ] [ CONNECT BY ... ] [ JOIN ... ] [ ASOF JOIN ... ] [ LATERAL ... ] [ MATCH_RECOGNIZE ... ] [ PIVOT ... | UNPIVOT ... ] [ VALUES ... ] [ SAMPLE ... ] [ RESAMPLE ... ] [ SEMANTIC_VIEW( ... ) ] ] [ WHERE ... ] [ GROUP BY ... ] [ HAVING ... ] [ QUALIFY ... ] [ ORDER BY ... ] [ LIMIT ... ] [ FOR UPDATE ... ]"]
+reason = "in [ AT | BEFORE ... ] and [ PIVOT | UNPIVOT ... ] each keyword is followed by its own elided clause body, so they read as [ AT ... | BEFORE ... ] and [ PIVOT ... | UNPIVOT ... ]"
+
+[[suppress]]
+form = "sf.query.constructs"
+kind = "interaction_all_options"
+reason = "the page is an outline of SELECT clauses; the items inside FROM (AT/BEFORE, CHANGES, CONNECT BY, JOIN, ASOF JOIN, LATERAL, MATCH_RECOGNIZE, PIVOT/UNPIVOT, VALUES, SAMPLE, RESAMPLE, SEMANTIC_VIEW) are separate constructs with their own forms, not documented as all co-occurring"
+
+[[reading]]
+form = "sf.query.join-lateral"
+grammar_sha256 = "6563d8dcfd53cef4f52ebf14885f35d0362ca4dfd2f04f2ed806daf1865ff059"
+grammar = ["SELECT ... FROM <left_hand_table_expression>, LATERAL ( <inline_view> ) [ ... ]"]
+reason = "the trailing ... is the rest of the query after the lateral view (further clauses), not part of LATERAL"
+
+[[suppress]]
+form = "sf.query.constructs"
+kind = "option_present"
+target = "[ LATERAL ... ]"
+reason = "the outline places it after the FROM source, where it is not valid as shown; its syntax and placement are carried by sf.query.join-lateral"
+
+[[suppress]]
+form = "sf.query.constructs"
+kind = "option_present"
+target = "[ VALUES ... ]"
+reason = "the outline places it after the FROM source, where it is not valid as shown; its syntax and placement are carried by sf.query.values"
+
+[[suppress]]
+form = "sf.query.constructs"
+kind = "option_present"
+target = "[ SEMANTIC_VIEW ( ... ) ]"
+reason = "the outline places it after the FROM source, where it is not valid as shown; its syntax and placement are carried by sf.query.semantic-view"

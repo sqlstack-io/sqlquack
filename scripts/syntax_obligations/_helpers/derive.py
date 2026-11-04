@@ -5,6 +5,7 @@ from __future__ import annotations
 from collections import Counter
 from dataclasses import replace
 
+from scripts.syntax_obligations._helpers.elisions import is_pure_elision
 from scripts.syntax_obligations._helpers.grammar import (
     is_repetition,
     parse,
@@ -55,6 +56,7 @@ from scripts.syntax_obligations.constants import (
     TOKEN_KEYWORD,
     TOKEN_LITERAL,
     TOKEN_PUNCT,
+    UNPACKED_FORMS,
 )
 from scripts.syntax_obligations.models import Draft, Node, Spec
 
@@ -181,11 +183,15 @@ class _Walk:
 
     def valid(self) -> Spec:
         """The packed positive case that contains the current position."""
+        if self.path and self.form in UNPACKED_FORMS:
+            return self.spec(action=ACTION_MIN_OPTIONS)
         if self.path:
             return self.spec(action=ACTION_ALL_OPTIONS)
         return self.spec(action=ACTION_MIN_OPTIONS)
 
     def optional(self, *, node: Node, where: str) -> list[str]:
+        if is_pure_elision(node):
+            return []
         text: str = render((node,))
         repeated: bool = all(is_repetition(branch) for branch in node.branches)
         present: str = self.target(text=text)
@@ -194,7 +200,9 @@ class _Walk:
             kind=KIND_OPTION_PRESENT,
             target=present,
             note=note,
-            spec=self.spec(action=ACTION_ALL_OPTIONS),
+            spec=replace(self.spec(action=ACTION_MIN_OPTIONS), path=self.path | {id(node)})
+            if self.form in UNPACKED_FORMS
+            else self.spec(action=ACTION_ALL_OPTIONS),
         )
         self.add(
             kind=KIND_OPTION_ABSENT,

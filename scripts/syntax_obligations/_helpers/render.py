@@ -6,6 +6,7 @@ import json
 from dataclasses import dataclass, field
 
 from scripts.syntax_obligations._helpers.derive import operand_class
+from scripts.syntax_obligations._helpers.elisions import elision_key, is_pure_elision
 from scripts.syntax_obligations._helpers.grammar import is_repetition, placeholder_name, render
 from scripts.syntax_obligations.constants import (
     ACTION_ALL_OPTIONS,
@@ -26,11 +27,14 @@ from scripts.syntax_obligations.constants import (
     DOUBLE_QUOTE,
     EXPECT_ACCEPT,
     EXPECT_REJECT,
+    FAMILY_STYLES,
+    GLUED_PREFIXES,
     HAND_ALSO_SQL,
     HAND_CORE,
     HAND_SIZE,
     HAND_SQL,
     LABEL_SLOT,
+    LIST_SEPARATOR,
     NAME_FILL,
     NODE_CHOICE,
     NODE_OPTIONAL,
@@ -44,6 +48,7 @@ from scripts.syntax_obligations.constants import (
     STATEMENT_TERMINATOR,
     STRING_CLASS,
     TOKEN_ELISION,
+    TOKEN_KEYWORD,
     TOKEN_LITERAL,
     TOKEN_PLACEHOLDER,
 )
@@ -76,6 +81,7 @@ class _Renderer:
         self.trees: list[tuple[Node, ...]] = trees
         self.style: FormStyle = style
         self._used: dict[str, list[str]] = {}
+        self._keywords: list[str] = []
 
     def submissions(self, *, spec: Spec, depths: tuple[int, ...] = ()) -> list[Rendered]:
         """The submissions of a case spec; most specs give one, some give several."""
@@ -135,7 +141,10 @@ class _Renderer:
     def text(self, *, production: int, choices: _Choices) -> str:
         """The rendered form text of one production; records the names it fills in."""
         self._used = {}
-        return " ".join(self._sequence(nodes=self.trees[production], choices=choices))
+        self._keywords = []
+        return GLUED_PREFIXES.sub(
+            r"\1", " ".join(self._sequence(nodes=self.trees[production], choices=choices))
+        )
 
     def _declarations(self) -> str:
         """Declarations, by `uses`, of the objects the form names, so the case is self-contained."""
@@ -214,6 +223,7 @@ class _Renderer:
         rendered: list[Rendered] = []
         for text, want, later in texts or [("", expect, stage)]:
             self._used = {}
+            self._keywords = []
             body: str = text or self.text(production=0, choices=_Choices())
             if context == CONTEXT_RAW:
                 sql: str = body
@@ -229,6 +239,7 @@ class _Renderer:
     def nested_hand(self, *, fields: dict[str, str], depth: int) -> str:
         """A hand limit `depth` deep: outer_open, open*(depth-1), core, closes; {n} counts."""
         self._used = {}
+        self._keywords = []
         inner: int = depth - 1
         opens: list[str] = [
             fields.get("open", "").replace(REPEAT_SLOT, str(level)) for level in range(1, depth)
@@ -271,21 +282,36 @@ class _Renderer:
                 out += self._sequence(
                     nodes=node.branches[choices.branch.get(key, 0)], choices=choices
                 )
-            elif node.token_kind != TOKEN_ELISION:
+            elif node.token_kind == TOKEN_ELISION and out and out[-1] == LIST_SEPARATOR:
+                out.pop()
+            elif node.token_kind == TOKEN_ELISION:
+                fill: str = self.style.elisions.get(
+                    elision_key(keywords=self._keywords, known=self.style.elisions), ""
+                )
+                out += [fill] if fill else []
+            else:
+                if node.token_kind == TOKEN_KEYWORD:
+                    self._keywords.append(node.text.upper())
                 out.append(self._token(node=node, choices=choices))
         return out
 
     def _optional(self, *, node: Node, choices: _Choices, before: list[str]) -> list[str]:
         key: int = id(node)
-        if not (choices.full or key in choices.path):
+        if is_pure_elision(node) or not (choices.full or key in choices.path):
             return []
         clause: str | None = self.style.clauses.get(render((node,)))
         if clause is not None:
             return [clause]
         branch: tuple[Node, ...] = node.branches[choices.branch.get(key, 0)]
         if is_repetition(branch) and not any(placeholder_name(n) for n in _tokens(branch)):
+            keywords: set[str] = set(self._keywords)
             start: int = max(
-                (i for i, text in enumerate(before) if text in CLOSE_REPEAT_AFTER), default=-1
+                (
+                    i
+                    for i, text in enumerate(before)
+                    if text in CLOSE_REPEAT_AFTER or text.upper() in keywords
+                ),
+                default=-1,
             )
             return [",", *before[start + 1 :]]
         return self._sequence(nodes=branch, choices=choices)
@@ -299,6 +325,8 @@ class _Renderer:
             )
             return node.text[1] if quoted and node.text[0] == DOUBLE_QUOTE else node.text
         fill: str = self.style.fills.get(name) or NAME_FILL.get(name) or ""
+        if node.token_kind == TOKEN_LITERAL and fill and not fill.startswith("'"):
+            fill = ""
         label: str = operand_class(name)
         if not fill:
             fill = CLASS_FILL.get(STRING_CLASS if node.token_kind == TOKEN_LITERAL else label, "v1")
@@ -327,3 +355,10 @@ def _groups(nodes: tuple[Node, ...]) -> list[Node]:
             for branch in node.branches:
                 found += _groups(branch)
     return found
+
+
+def style_of(*, family: str, form: str) -> FormStyle:
+    """The longest matching form-id prefix style of the family."""
+    styles: dict[str, FormStyle] = FAMILY_STYLES[family]
+    best: str = max((prefix for prefix in styles if form.startswith(prefix)), key=len)
+    return styles[best]

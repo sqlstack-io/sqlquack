@@ -295,4 +295,168 @@ SCRIPTING_SELF_DECLARING_BLOCKS: dict[str, FormStyle] = {
         prefix=BLOCK_OPEN, suffix=BLOCK_CLOSE, uses={"resultset_name": RESULTSET}
     ),
 }
-FAMILY_STYLES: dict[str, dict[str, FormStyle]] = {"scripting": SCRIPTING_SELF_DECLARING_BLOCKS}
+ELISION_START: str = "^"
+PURE_ELISION: str = "[ ... ]"
+LIST_SEPARATOR: str = ","
+GLUED_PREFIXES: re.Pattern[str] = re.compile(r"(?<![^ ])([$:]) (?=[^ =])")
+QUERY_FORMS: tuple[str, ...] = ("sf.query.constructs",)
+UNPACKED_FORMS: frozenset[str] = frozenset(QUERY_FORMS)
+QUERY_ELISIONS: dict[str, tuple[str, tuple[str, ...], str]] = {
+    PURE_ELISION: ("", QUERY_FORMS, "further clauses of the SELECT statement"),
+    ELISION_START: ("SELECT 1 FROM t1", QUERY_FORMS, "the query the clause belongs to"),
+    "SELECT": (
+        "1",
+        ("sf.query.select.select", "sf.query.select.select.selecting-specific-columns"),
+        "the select list",
+    ),
+    "TOP": (
+        "1",
+        ("sf.query.select.select", "sf.query.select.select.selecting-specific-columns"),
+        "the select list after TOP <n>",
+    ),
+    "FROM": ("t1", ("sf.query.from",), "the FROM source"),
+    "JOIN": ("t2", ("sf.query.join.join", "sf.query.join.join-2"), "the joined source"),
+    "WITH": ("w1 AS ( SELECT 1 )", ("sf.query.with.select",), "the common table expressions"),
+    "INTO": (":v1", ("sf.query.into",), "the INTO targets"),
+    "WHERE": ("TRUE", ("sf.query.where",), "the WHERE predicate"),
+    "GROUP BY": (
+        "1",
+        (
+            "sf.query.group-by.groupitem",
+            "sf.query.group-by.all",
+            "sf.query.group-by-cube",
+            "sf.query.group-by-rollup",
+            "sf.query.group-by-grouping-sets",
+        ),
+        "the grouping items",
+    ),
+    "HAVING": ("TRUE", ("sf.query.having",), "the HAVING predicate"),
+    "QUALIFY": ("TRUE", ("sf.query.qualify.select-from-qualify",), "the QUALIFY predicate"),
+    "ORDER BY": (
+        "1",
+        ("sf.query.order-by.orderitem", "sf.query.order-by.all"),
+        "the ordering items",
+    ),
+    "CONNECT BY": ("PRIOR c1 = c2", ("sf.query.connect-by",), "the hierarchy condition"),
+    "LIMIT": ("1", ("sf.query.limit.limit",), "the LIMIT count"),
+    "AT": ("( OFFSET => -60 )", ("sf.query.at-before",), "the time travel point"),
+    "BEFORE": ("( OFFSET => -60 )", ("sf.query.at-before",), "the time travel point"),
+    "PIVOT": (
+        "( SUM ( c1 ) FOR c2 IN ( 1 ) )",
+        ("sf.query.pivot",),
+        "the PIVOT body",
+    ),
+    "CHANGES": (
+        "( INFORMATION => DEFAULT ) AT ( OFFSET => -60 )",
+        ("sf.query.changes",),
+        "the change tracking clause",
+    ),
+    "LATERAL": (
+        "FLATTEN ( INPUT => ARRAY_CONSTRUCT ( 1 ) )",
+        ("sf.query.join-lateral",),
+        "the lateral view",
+    ),
+    "MATCH_RECOGNIZE": (
+        "( PATTERN ( a ) DEFINE a AS TRUE )",
+        ("sf.query.match-recognize.match-recognize-pattern-define-as",),
+        "the MATCH_RECOGNIZE body",
+    ),
+    "UNPIVOT": ("( v FOR n IN ( c1 ) )", ("sf.query.unpivot", "sf.query.pivot"), "the body"),
+    "VALUES": ("( 1 )", ("sf.query.values",), "the VALUES rows"),
+    "SAMPLE": ("( 10 )", ("sf.query.sample",), "the sampling clause"),
+    "RESAMPLE": (
+        "( USING ts INCREMENT BY INTERVAL '1 hour' )",
+        ("sf.query.resample",),
+        "the RESAMPLE body",
+    ),
+    "UPDATE": ("", ("sf.query.for-update",), "the FOR UPDATE options"),
+    "SEMANTIC_VIEW": ("sv1", ("sf.query.semantic-view",), "the semantic view arguments"),
+    "ASOF JOIN": (
+        "t2 MATCH_CONDITION ( t1.c1 >= t2.c1 )",
+        ("sf.query.asof-join",),
+        "the joined source and its match condition",
+    ),
+    "AND": ("t1.c1 = t2.c1", (), "further ON equalities; this form's own repetition"),
+    "PRIOR": ("", (), "repetition of the CONNECT BY condition list; this form's own list"),
+    "AS": ("", (), "repetition of the preceding aliased list item; this form's own list"),
+}
+FAMILY_ELISIONS: dict[str, dict[str, tuple[str, tuple[str, ...], str]]] = {
+    "query": QUERY_ELISIONS,
+}
+TOP_LEVEL_FAMILIES: tuple[str, ...] = (
+    "expressions",
+    "functions",
+    "dml",
+    "transaction_session",
+    "utility",
+    "ddl",
+    "security_admin",
+    "classes",
+)
+QUERY_FILLS: dict[str, str] = {rule: fill for rule, (fill, _, _) in QUERY_ELISIONS.items()}
+QUERY_PLACEHOLDER_FILLS: dict[str, str] = {
+    "left_table": "t1",
+    "right_table": "t2",
+    "left_table.timecol": "t1.c1",
+    "right_table.timecol": "t2.c1",
+    "table.col": "t1.c1",
+    "comparison_operator": ">=",
+    "timestamp": "TO_TIMESTAMP_LTZ ( '2026-01-01' )",
+    "time_difference": "-60",
+    "id": "'01c00000-0000-0000-0000-000000000000'",
+    "data_source": "t1",
+    "wait_time": "10",
+    "objectreference": "t1",
+    "groupitem": "c1",
+    "groupset": "( c1 )",
+    "orderitem": "c1",
+    "samplingmethod": "BERNOULLI ( 10 )",
+    "anchorclause": "SELECT 1",
+    "recursiveclause": "SELECT 1 FROM v1",
+    "left_hand_table_expression": "t1",
+    "inline_view": "SELECT 1",
+    "object_ref1": "t1",
+    "object_ref2": "t2",
+    "symbol": "a",
+    "pattern": "a",
+    "aggregate_function": "SUM",
+    "value_column": "c1",
+    "pivot_value_1": "1",
+    "pivot_value_2": "2",
+    "object_reference": "t1",
+    "time_series_constant": "INTERVAL '1 hour'",
+    "col_position": "1",
+    "level_expression": "LEVEL",
+}
+QUERY_CLAUSES: dict[str, str] = {"[ , ( ... ) ]": ", ( 2 )"}
+QUERY_FRAGMENT_PREFIXES: dict[str, str] = {
+    "sf.query.asof-join": "SELECT * ",
+    "sf.query.resample": "SELECT * ",
+    "sf.query.qualify.qualify": "SELECT 1 FROM t1 ",
+    "sf.query.match-recognize.match-recognize-pattern-define-as": "SELECT * FROM t1 ",
+    "sf.query.semantic-view": "SELECT * FROM ",
+}
+QUERY_STYLES: dict[str, FormStyle] = {
+    "sf.query.": FormStyle(
+        prefix="",
+        suffix="",
+        fills=QUERY_PLACEHOLDER_FILLS,
+        clauses=QUERY_CLAUSES,
+        elisions=QUERY_FILLS,
+    ),
+    **{
+        form: FormStyle(
+            prefix=prefix,
+            suffix="",
+            fills=QUERY_PLACEHOLDER_FILLS,
+            clauses=QUERY_CLAUSES,
+            elisions=QUERY_FILLS,
+        )
+        for form, prefix in QUERY_FRAGMENT_PREFIXES.items()
+    },
+}
+FAMILY_STYLES: dict[str, dict[str, FormStyle]] = {
+    "scripting": SCRIPTING_SELF_DECLARING_BLOCKS,
+    "query": QUERY_STYLES,
+    **{family: {f"sf.{family}.": FormStyle(prefix="", suffix="")} for family in TOP_LEVEL_FAMILIES},
+}

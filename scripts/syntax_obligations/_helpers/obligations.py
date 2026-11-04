@@ -8,6 +8,7 @@ from pathlib import Path
 
 from scripts.syntax_obligations._helpers.derive import derive_trees
 from scripts.syntax_obligations._helpers.ids import assign, existing_ids
+from scripts.syntax_obligations._helpers.render import style_of, submissions
 from scripts.syntax_obligations.constants import (
     ACTION_HAND,
     EXPECT_ACCEPT,
@@ -23,7 +24,7 @@ from scripts.syntax_obligations.constants import (
     STATUS_CATALOGUED,
 )
 from scripts.syntax_obligations.exceptions import ObligationError
-from scripts.syntax_obligations.models import Draft, Node, Spec
+from scripts.syntax_obligations.models import Draft, Node, Rendered, Spec
 from scripts.syntax_obligations.types import Row
 
 
@@ -132,7 +133,7 @@ def obligation_rows(numbered: list[tuple[str, Draft]]) -> list[Row]:
 
 def family_obligations(
     *, root: Path, family: str
-) -> tuple[list[tuple[str, Draft]], dict[str, list[tuple[Node, ...]]]]:
+) -> tuple[list[tuple[str, Draft]], dict[str, list[tuple[Node, ...]]], list[Row]]:
     """The family's numbered obligations (kept ids) and each form's parsed productions."""
     catalogue: list[Row] = tomllib.loads((root / "catalogue" / f"{family}.toml").read_text())[
         "form"
@@ -144,9 +145,10 @@ def family_obligations(
     ]
     drafts: list[Draft] = []
     trees: dict[str, list[tuple[Node, ...]]] = {}
+    readings: dict[str, Row] = _readings(path=root / "limits.toml")
     for form in forms:
         found, trees[str(form["id"])] = derive_trees(
-            form=str(form["id"]), grammar=list(form["grammar"])
+            form=str(form["id"]), grammar=_grammar_read(form=form, readings=readings)
         )
         drafts += found
     suppressed: list[Row] = suppressions(path=root / "limits.toml")
@@ -155,5 +157,77 @@ def family_obligations(
         path=root / "limits.toml", family=family, forms={str(form["id"]) for form in forms}
     )
     drafts.sort(key=lambda draft: draft.form)
+    drafts, withdrawn = _without_coincident_negatives(drafts=drafts, trees=trees, family=family)
     path: Path = root / "obligations" / f"{family}.toml"
-    return assign(drafts=drafts, kept=existing_ids(path)), trees
+    return assign(drafts=drafts, kept=existing_ids(path)), trees, withdrawn
+
+
+def _without_coincident_negatives(
+    *, drafts: list[Draft], trees: dict[str, list[tuple[Node, ...]]], family: str
+) -> tuple[list[Draft], list[Row]]:
+    """Drafts minus rejections whose SQL a form also renders as valid, with each withdrawal."""
+    accepted: dict[str, Draft] = {}
+    rendered: list[tuple[Draft, list[Rendered]]] = []
+    for draft in drafts:
+        found: list[Rendered] = _draft_submissions(draft=draft, trees=trees, family=family)
+        rendered.append((draft, found))
+        for case in found:
+            if case.expect == EXPECT_ACCEPT:
+                accepted.setdefault(case.sql, draft)
+    kept: list[Draft] = []
+    withdrawn: list[Row] = []
+    for draft, found in rendered:
+        clash: Rendered | None = next(
+            (c for c in found if c.expect == EXPECT_REJECT and c.sql in accepted), None
+        )
+        if clash is None:
+            kept.append(draft)
+            continue
+        valid: Draft = accepted[clash.sql]
+        withdrawn.append(
+            {
+                "form": draft.form,
+                "kind": draft.kind,
+                "target": draft.target,
+                "note": draft.note,
+                "sql": clash.sql,
+                "valid_as": f"{valid.form} {valid.kind} {valid.target or valid.note}".strip(),
+                "reason": "the rejection renders SQL the documented grammar also accepts",
+            }
+        )
+    return kept, withdrawn
+
+
+def _draft_submissions(
+    *, draft: Draft, trees: dict[str, list[tuple[Node, ...]]], family: str
+) -> list[Rendered]:
+    if draft.spec is None or draft.form not in trees:
+        return []
+    return submissions(
+        trees=trees[draft.form],
+        style=style_of(family=family, form=draft.form),
+        spec=draft.spec,
+        depths=draft.depths,
+    )
+
+
+def _readings(*, path: Path) -> dict[str, Row]:
+    """The [[reading]] entries of limits.toml by form; each needs a reason."""
+    if not path.exists():
+        return {}
+    rows: list[Row] = tomllib.loads(path.read_text()).get("reading", [])
+    if any(not str(row.get("reason", "")).strip() for row in rows):
+        raise ObligationError("every [[reading]] entry in limits.toml needs a reason")
+    return {str(row["form"]): row for row in rows}
+
+
+def _grammar_read(*, form: Row, readings: dict[str, Row]) -> list[str]:
+    """The form's grammar, or its reading when the reading binds the current catalogue grammar."""
+    reading: Row | None = readings.get(str(form["id"]))
+    if reading is None:
+        return list(form["grammar"])
+    if reading["grammar_sha256"] != form["grammar_sha256"]:
+        raise ObligationError(
+            f"reading of {form['id']} binds a grammar the catalogue no longer has"
+        )
+    return [str(line) for line in reading["grammar"]]

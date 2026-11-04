@@ -7,7 +7,7 @@ import json
 from pathlib import Path
 
 from scripts.syntax_obligations._helpers.obligations import family_obligations
-from scripts.syntax_obligations._helpers.render import submissions
+from scripts.syntax_obligations._helpers.render import style_of, submissions
 from scripts.syntax_obligations.constants import (
     CASE_CAPTURE,
     DIGEST_WIDTH,
@@ -16,7 +16,6 @@ from scripts.syntax_obligations.constants import (
     EXPECT_OBSERVE,
     EXPECT_REJECT,
     EXPECT_TERMINATES,
-    FAMILY_STYLES,
     LANE_A_BLOCK_SESSION,
     MEASURE_KEY,
     PACKET_KEYS,
@@ -25,7 +24,7 @@ from scripts.syntax_obligations.constants import (
     SYNTAX_ERROR_PHASE,
 )
 from scripts.syntax_obligations.exceptions import ObligationError
-from scripts.syntax_obligations.models import Draft, FormStyle, Node, Rendered
+from scripts.syntax_obligations.models import Draft, Node, Rendered
 from scripts.syntax_obligations.types import Row
 
 
@@ -39,16 +38,9 @@ def canonical(value: object) -> str:
     return json.dumps(value, sort_keys=True, separators=(",", ":"), ensure_ascii=False)
 
 
-def style_of(*, family: str, form: str) -> FormStyle:
-    """The longest matching form-id prefix style of the family."""
-    styles: dict[str, FormStyle] = FAMILY_STYLES[family]
-    best: str = max((prefix for prefix in styles if form.startswith(prefix)), key=len)
-    return styles[best]
-
-
 def family_cases(*, root: Path, family: str) -> tuple[list[Row], dict[str, set[str]]]:
     """Cases with the obligations each satisfies, and every obligation's expected outcomes."""
-    numbered, trees = family_obligations(root=root, family=family)
+    numbered, trees, _ = family_obligations(root=root, family=family)
     by_sql: dict[str, tuple[str, Rendered, list[str]]] = {}
     expected: dict[str, set[str]] = {}
     conflicts: list[str] = []

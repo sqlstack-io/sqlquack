@@ -54,6 +54,7 @@ class FormStyle:
     clauses: dict[str, str] = field(default_factory=dict)
     uses: dict[str, str] = field(default_factory=dict)
     opens: str = ""
+    elisions: dict[str, str] = field(default_factory=dict)
     default_label: str = "l0"
     terminate: bool = True
 
