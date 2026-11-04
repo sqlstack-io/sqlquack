@@ -171,7 +171,7 @@ impl Parser {
         } else {
             Vec::new()
         };
-        let mut metadata_columns = Vec::new();
+        let mut metadata_columns: Vec<(Expression, Option<Identifier>)> = Vec::new();
         if self.match_keyword("METADATA_COLUMNS") {
             loop {
                 let is_call = matches!(
