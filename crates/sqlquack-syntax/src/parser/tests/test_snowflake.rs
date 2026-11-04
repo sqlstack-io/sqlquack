@@ -541,6 +541,36 @@ fn given_unsupported_snowflake_sql_when_parsing_then_parsing_fails() {
             expected_error: "Parse error",
         },
         ParseErrorTestCase {
+            description: "a CTE name needs AS before its body",
+            dialect: Some(DialectType::Snowflake),
+            sql: "WITH t (SELECT 1 AS c) SELECT c FROM t",
+            expected_error: "Expected AS before the CTE body",
+        },
+        ParseErrorTestCase {
+            description: "prose read as a CTE needs AS before its body",
+            dialect: Some(DialectType::Snowflake),
+            sql: " with the correct AST shape.",
+            expected_error: "Expected AS before the CTE body",
+        },
+        ParseErrorTestCase {
+            description: "a reserved word cannot name a CTE",
+            dialect: Some(DialectType::Snowflake),
+            sql: "WITH all AS (SELECT 1 AS count) SELECT all.count FROM all",
+            expected_error: "Reserved word ALL cannot be an unquoted object name",
+        },
+        ParseErrorTestCase {
+            description: "a reserved word cannot name a truncated table",
+            dialect: Some(DialectType::Snowflake),
+            sql: "TRUNCATE TABLE table",
+            expected_error: "Reserved word TABLE cannot be an unquoted object name",
+        },
+        ParseErrorTestCase {
+            description: "an empty named argument between commas is rejected",
+            dialect: Some(DialectType::Snowflake),
+            sql: "SELECT ROUND(SCALE => 1, EXPR => 2.25, , ROUNDING_MODE => 'HALF_TO_EVEN') AS value",
+            expected_error: "Expected a function argument between commas",
+        },
+        ParseErrorTestCase {
             description: "an anonymous procedure needs RETURNS",
             dialect: Some(DialectType::Snowflake),
             sql: "WITH p1 AS PROCEDURE () LANGUAGE SQL AS $$ BEGIN RETURN 1; END $$ CALL p1()",

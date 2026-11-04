@@ -782,9 +782,51 @@ note = "Snowflake accepts a bare trailing LIMIT (recorded as accepted) and reads
 [[rejection]]
 id = "malformed_typed_type_text"
 sql = "SELECT __polyglot_typed(amount, 'NOT A TYPE (') FROM orders"
-dialects = ["Snowflake", "DuckDB"]
+dialects = ["DuckDB"]
 sqlquack_error = "Unexpected token after data type"
 note = "malformed typed-expression type text errors instead of degrading to an ordinary call"
+
+[[rejection]]
+id = "snowflake_reserved_type_name"
+sql = "SELECT __polyglot_typed(amount, 'NOT A TYPE (') FROM orders"
+dialects = ["Snowflake"]
+sqlquack_error = "Reserved word NOT cannot be an unquoted type name"
+note = "the same malformed type text fails earlier in Snowflake, where NOT is reserved and cannot name a type"
+
+[[rejection]]
+id = "snowflake_cte_without_as"
+sql = "WITH t (SELECT 1 AS c) SELECT c FROM t"
+dialects = ["Snowflake"]
+sqlquack_error = "Expected AS before the CTE body"
+note = "Snowflake needs AS between a CTE's name and its body: it refuses WITH v1 ( SELECT 1 ) SELECT 1 with syntax error 1003 (case sf.query.with.select.k8b29420d51a4)"
+
+[[rejection]]
+id = "snowflake_cte_without_as_prose"
+sql = " with the correct AST shape."
+dialects = ["Snowflake"]
+sqlquack_error = "Expected AS before the CTE body"
+note = "prose read as a CTE without AS; polyglot fails here too, with another error"
+
+[[rejection]]
+id = "snowflake_reserved_cte_name"
+sql = "WITH all AS (SELECT 1 AS count) SELECT all.count FROM all"
+dialects = ["Snowflake"]
+sqlquack_error = "Reserved word ALL cannot be an unquoted object name"
+note = "ALL is a Snowflake reserved word, so it cannot name a CTE unquoted; Snowflake refuses WITH SELECT AS ( SELECT 1 ) SELECT 1 with syntax error 1003"
+
+[[rejection]]
+id = "snowflake_reserved_truncate_target"
+sql = "TRUNCATE TABLE table"
+dialects = ["Snowflake"]
+sqlquack_error = "Reserved word TABLE cannot be an unquoted object name"
+note = "TABLE is a Snowflake reserved word, so it cannot name a table unquoted"
+
+[[rejection]]
+id = "snowflake_empty_call_argument"
+sql = "SELECT ROUND(SCALE => 1, EXPR => 2.25, , ROUNDING_MODE => 'HALF_TO_EVEN') AS value"
+dialects = ["Snowflake"]
+sqlquack_error = "Expected a function argument between commas"
+note = "Snowflake refuses an empty argument between commas with syntax error 1003; polyglot drops it"
 
 [[rejection]]
 id = "snowflake_bare_values_cte"
@@ -894,6 +936,16 @@ note = "BY NAME ON (...) after EXCEPT is BigQuery's; Snowflake takes BY NAME onl
 id = "star_exclude_quoted_name"
 marker = "EXCLUDE(\""
 note = "SELECT * EXCLUDE (\"note\") excludes the case-sensitive column note, not NOTE; polyglot drops the quotes of a star's EXCLUDE names"
+
+# Wrapper nodes SQLQuack keeps where polyglot drops them. The check counts an entry only when the
+# statement, without whitespace and ignoring case, contains `marker`, and both trees are equal once
+# every `{ "<node>": { "this": … } }` in SQLQuack's tree is replaced by its operand.
+
+[[kept_node]]
+id = "unary_plus"
+marker = "+"
+node = "pos"
+note = "SELECT + 1 keeps its unary plus, a documented Snowflake operator; polyglot drops it and keeps only the operand; crates/sqlquack-syntax/tests/parser/test_fixes.rs pins the tree"
 
 # Statements polyglot keeps as one opaque command where SQLQuack parses them into structured nodes.
 # The check counts an entry only when polyglot's tree is a single command, SQLQuack's tree starts
