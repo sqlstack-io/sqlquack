@@ -4,6 +4,7 @@ use std::collections::BTreeMap;
 
 use crate::check::models::{CaseResult, LocalVerdict, ObligationResult};
 use crate::formats::main::content_sha256::content_sha256;
+use crate::formats::models::{Form, Obligation};
 
 /// The local verdict as fingerprint text: `accepted` with its tree hash, `rejected`, or the failure.
 fn verdict_text(local: &LocalVerdict) -> String {
@@ -35,4 +36,10 @@ pub(crate) fn form_fingerprint(obligations: &[ObligationResult]) -> String {
         })
         .collect();
     content_sha256(text.as_bytes())
+}
+
+/// SHA-256 of the form's catalogue entry and own obligations as compact JSON; empty if unserializable.
+pub(crate) fn form_definition(form: &Form, obligations: &[&Obligation]) -> String {
+    serde_json::to_vec(&(form, obligations))
+        .map_or_else(|_| String::new(), |bytes| content_sha256(&bytes))
 }

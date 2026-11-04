@@ -136,13 +136,12 @@ tags = ["invalid"]
 
 [[case]]
 id = "typeof_parsed_guard_3"
-description = "TYPEOF(TRY_PARSE_JSON(s)) of one text the JSON guard raises for: '{bad'"
+description = "TYPEOF(TRY_PARSE_JSON(s)) of a document cut off before it closes: '{bad', which is NULL."
 columns = [{ name = "s", type = "VARCHAR" }]
 rows = [
   ["'{bad'"],
 ]
 expression = "TYPEOF(TRY_PARSE_JSON(s))"
-expected_divergence = "json_fidelity"
 tags = ["invalid"]
 
 [[case]]
@@ -180,13 +179,12 @@ tags = ["invalid"]
 
 [[case]]
 id = "parsed_to_json_guard_3"
-description = "TO_JSON(TRY_PARSE_JSON(s)) of one text the JSON guard raises for: '{bad'"
+description = "TO_JSON(TRY_PARSE_JSON(s)) of a document cut off before it closes: '{bad', which is NULL."
 columns = [{ name = "s", type = "VARCHAR" }]
 rows = [
   ["'{bad'"],
 ]
 expression = "TO_JSON(TRY_PARSE_JSON(s))"
-expected_divergence = "json_fidelity"
 tags = ["invalid"]
 
 [[case]]
@@ -274,24 +272,22 @@ tags = ["invalid"]
 
 [[case]]
 id = "parsed_to_varchar_guard_4"
-description = "TRY_PARSE_JSON(s)::VARCHAR of one text the JSON guard raises for: '{bad'"
+description = "TRY_PARSE_JSON(s)::VARCHAR of a document cut off before it closes: '{bad', which is NULL."
 columns = [{ name = "s", type = "VARCHAR" }]
 rows = [
   ["'{bad'"],
 ]
 expression = "TRY_PARSE_JSON(s)::VARCHAR"
-expected_divergence = "json_fidelity"
 tags = ["invalid"]
 
 [[case]]
 id = "parsed_path_guard_1"
-description = "TRY_PARSE_JSON(s):data.id::VARCHAR of one text the JSON guard raises for: '{bad'"
+description = "TRY_PARSE_JSON(s):data.id::VARCHAR of a document cut off before it closes: '{bad', which is NULL."
 columns = [{ name = "s", type = "VARCHAR" }]
 rows = [
   ["'{bad'"],
 ]
 expression = "TRY_PARSE_JSON(s):data.id::VARCHAR"
-expected_divergence = "json_fidelity"
 tags = ["invalid"]
 
 [[case]]

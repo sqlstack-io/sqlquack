@@ -9,6 +9,7 @@ use sqlquack_evidence::verify::models::Conversion;
 use sqlquack_evidence::verify::types::CaseConverter;
 use sqlquack_policy::policy::constants::POLICY_FILE_NAME;
 use sqlquack_policy::policy::main::load_policy::load_policy;
+use sqlquack_policy::policy::models::DivergenceMode;
 use sqlquack_rules::catalogue::main::builtin_catalogue::builtin_catalogue;
 use sqlquack_rules::catalogue::models::{NotExpressibleDeclaration, RuleCatalogue};
 use sqlquack_rules::conversion::constants::PROJECT_UDF;
@@ -206,8 +207,20 @@ pub(crate) fn function_body_results(name: &str, body: &str, call: &str) -> Vec<S
 
 /// Converts `sql` over the shop schema under the repository policy, and runs it on one event row.
 pub(crate) fn event_results(sql: &str, payload: &str) -> Vec<String> {
-    let policy =
+    event_results_allowing(sql, payload, &[])
+}
+
+/// As `event_results`, with the policy's default for each of `allowed` set to warn, as a user opts in.
+pub(crate) fn event_results_allowing(sql: &str, payload: &str, allowed: &[&str]) -> Vec<String> {
+    let mut policy =
         load_policy(&repository_root().join(POLICY_FILE_NAME)).expect("repository policy loads");
+    for id in allowed {
+        policy
+            .divergences
+            .get_mut(*id)
+            .expect("the divergence is in the policy")
+            .default = DivergenceMode::Warn;
+    }
     let analysis = analyze(
         sql,
         SourceDialect::Snowflake,

@@ -48,6 +48,18 @@ $ cargo run --release -p sqlquack -- convert query.sql --schema schema.json
 $ echo "SELECT 1 AS total" | cargo run --release -p sqlquack -- convert --json
 ```
 
+The binary links DuckDB's prebuilt shared library (`libduckdb.so`, `libduckdb.dylib` on macOS,
+`duckdb.dll` on Windows), which `cargo run` puts on the library path. To run
+`target/release/sqlquack` directly, point the library path at the directory the build downloaded it
+to, `target/duckdb-download/<target triple>/<DuckDB version>`:
+
+```console
+$ LD_LIBRARY_PATH=target/duckdb-download/x86_64-unknown-linux-gnu/v2.0.0 target/release/sqlquack convert query.sql
+```
+
+Use `DYLD_LIBRARY_PATH` on macOS and `PATH` on Windows. The Python module ships the library beside
+itself and needs neither.
+
 `convert` prints the DuckDB SQL for Snowflake SQL from a file or standard input, and names the known
 divergences and assumptions it relies on on standard error. A refused statement prints its refusals
 instead and exits 1; input holding no statement exits 2. Each refusal is a coded diagnostic,
@@ -96,6 +108,11 @@ They share the policy flags (`--policy`, `--builtin-policy`, `--strict`, `--utc-
 `--confirm-declared-offsets`, `--python-runtime` and `--loud-divergences-only`, which relies only
 on divergences whose converted SQL raises rather than returns another value). Every command with a report takes
 `--format text|json`; `--json` is short for `--format json`.
+
+HASH is refused by default: the converted SQL computes DuckDB's hash, which is consistent within one
+run but never Snowflake's value. A project that relies on HASH only for joins, grouping,
+deduplication or change detection can opt in by setting `default = "warn"` under
+`[divergences.hash]` in its `sqlquack.toml`.
 
 `function` converts a SQL project function's body, read from a file or from standard input with
 `-`, and prints the macro as JSON. A refused body prints `{"converted": false, "name": …,
