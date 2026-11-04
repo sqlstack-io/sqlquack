@@ -261,7 +261,7 @@ A `[[review]]` has these fields:
 
 - `id`, `reviewer_lane` (`a`, `b`, `c`, `backend` or `auditor`) and `family`.
 - A family review binds `catalogue_sha256` and `obligations_sha256`, the hashes of the reviewed
-  file bytes. A page review has an empty `family` and binds only `sources_sha256`, the hash of
+  file bytes, unless it binds each listed form's `definitions` instead (below). A page review has an empty `family` and binds only `sources_sha256`, the hash of
   `sources.toml`.
 - `parser_tree`: the full Git tree id of the reviewed parser source. A family review must have it.
   A page review verifies no parsing, so it may omit the field. The checker ignores it on page
@@ -278,6 +278,12 @@ A `[[review]]` has these fields:
   equals its current one, the review stays current for that form whatever the parser tree; when it
   differs, the review is stale for that form only. A review without `fingerprints` stays bound to
   `parser_tree` (decision D100).
+- `definitions` (optional, with `forms` and `fingerprints` only): each listed form's definition
+  hash when it was reviewed, as `{ "<form id>" = "<sha256>" }`, one for every listed form. A
+  review with `definitions` binds each form by its definition and fingerprint alone and has no
+  `catalogue_sha256`, `obligations_sha256` or exclusions. An edit to another form in the same
+  catalogue or obligations file leaves it current; any change to the form's own catalogue entry,
+  obligations or fingerprint makes it stale for that form (decision D118).
 - `[[review.exclusion]]`: exactly one of `form` (a form id of the review's family) or `source` (a
   page id, used for out-of-scope and syntax-less pages), plus a `reason`. A page review excludes
   pages only, and a family review excludes forms only.
@@ -307,8 +313,10 @@ parse failure, never a syntax rejection, and fails that case as `local_parse_fai
 on.
 
 A form is verified only when it has at least one required obligation, every required obligation
-is satisfied, and an approved review of its family matches the current catalogue and obligation
-file hashes and either the form's recorded fingerprint or, without one, the current parser tree.
+is satisfied, and an approved review of its family is current for it. A review with
+`definitions` is current when the form's recorded definition hash and fingerprint both equal its
+current ones. Any other review is current when it matches the current catalogue and obligation file
+hashes and either the form's recorded fingerprint or, without one, the current parser tree.
 The parser tree is `git rev-parse HEAD:crates/sqlquack-syntax`, and none at all while that path has
 uncommitted changes, so every review without fingerprints is stale then.
 
@@ -319,7 +327,9 @@ statements as compact JSON, exactly as serialised, `rejected` followed by a tab,
 followed by a tab. `family --json` prints each form's `fingerprint`. A parser change that leaves
 every case of a form parsing into the same tree, and every rejection still a rejection, leaves its
 fingerprint and so its review unchanged; a changed tree or verdict, or an added or removed case,
-changes it. A form is excluded only by an approved review that is current in the
+changes it. A form's definition hash is the SHA-256 of the compact JSON array of its catalogue
+entry and its own obligations in file order, as loaded; `family --json` prints it as
+`definition_sha256`. A form is excluded only by an approved review that is current in the
 same way. Absent forms keep their ids and are never counted. The headline denominator is the
 catalogued forms: 3,348 on the frozen catalogue `e863d7de` (decision D81).
 
@@ -342,7 +352,8 @@ results on stdout and progress on stderr:
   lists each obligation with every citing case, its receipt phase and the local verdict.
 - `missing [--family <family>]`: every unsatisfied required obligation and its reason.
 - `stale [--family <family>]`: every form whose reviews are all stale, with its current fingerprint
-  and each naming review's recorded fingerprint and parser tree.
+  and definition hash, and each naming review's recorded fingerprint, definition hash and parser
+  tree.
 - `pages [--family <family>]`: the page rollup, a secondary view. A form counts under its own
   `source` only.
 - `boundaries --form <id>`: the form's boundary and nesting-depth obligations, with their bounds,
