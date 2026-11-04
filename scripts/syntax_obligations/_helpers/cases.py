@@ -24,8 +24,7 @@ from scripts.syntax_obligations.constants import (
     LANE_A_BLOCK_SESSION,
     MEASURE_KEY,
     PACKET_KEYS,
-    RUN_DATABASE_FAMILIES,
-    RUN_DATABASE_SETUP,
+    RUN_DATABASE_SETUPS,
     SHARED_SCHEMA_SETUP,
     STAGE_BY_RECEIPT_PHASE,
     STAGE_KEY,
@@ -98,15 +97,15 @@ def family_cases(
 def _binding(
     *, form: str, family: str, sql_sha: str, setups: dict[tuple[str, str], list[str]]
 ) -> Row:
-    """Capture and setup: DEFINE from a DCM file, ddl in a run database, the rest bare (D110)."""
+    """Capture and setup: DEFINE from a DCM file, run-database families as run, the rest bare."""
     capture: str = CASE_CAPTURE
     setup: list[str] = []
     if DCM_DEFINITION_FORM.search(form):
         capture = CASE_CAPTURE_DCM
-    elif family in RUN_DATABASE_FAMILIES:
+    elif family in RUN_DATABASE_SETUPS:
         capture = CASE_CAPTURE_RUN_DATABASE
         case_id: str = f"{form}.k{sql_sha[:DIGEST_WIDTH]}"
-        setup = setups.get((case_id, sql_sha), list(RUN_DATABASE_SETUP))
+        setup = setups.get((case_id, sql_sha), list(RUN_DATABASE_SETUPS[family]))
     return {"capture": capture, "setup": setup, "setup_sha256": digest(canonical(setup))}
 
 

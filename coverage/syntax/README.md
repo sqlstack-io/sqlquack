@@ -81,13 +81,14 @@ obligations, not forms.
    name the defined object, and the schema-level objects it references, as `d1.s1.<name>`
    (`d1.<name>` for schemas and database roles); account-level names stay unqualified. References
    after AFTER, FINALIZE, ROOTS, FINALIZER, CORTEX SEARCH SERVICE, REFRESH USING ( DELETE FROM and
-   the secret objects in SECRETS = ( ... ) are qualified the same way. Other ddl cases are
-   executed in a run database (`capture = "execute_ddl_in_run_database"`), and each carries the
+   the secret objects in SECRETS = ( ... ) are qualified the same way. Other ddl, security_admin
+   and classes cases are executed in a run database (`capture = "execute_ddl_in_run_database"`), and each carries the
    exact setup its receipts were recorded under (D110), so the checker binds receipts strictly:
    the setup of the case's latest receipt from an imported or reconciled run, skipping
    measure-only receipts and shared-schema setups (whose outcome depends on run order). A case
    whose receipts disagree on syntax_error across setups is listed for review. A case without
-   such a receipt carries the ddl sweep's per-case-schema setup, which future captures use.
+   such a receipt carries its family's sweep setup with a per-case schema (the ddl sweep for
+   ddl, the d103 sweep for security_admin and classes), which future captures use.
 9. Pages whose syntax is written outside syntax blocks are catalogued from `hand.toml`; the
    page's `decisions` records the basis (HTML parsed-literal, table, heading, prose, inline code or
    examples, the last only for syntax shown by examples alone, such as `<expr>['<key>']`).
