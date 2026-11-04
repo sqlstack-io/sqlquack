@@ -930,6 +930,9 @@ DDL_FILLS: dict[str, str] = {
     "timestamp": "CURRENT_TIMESTAMP ( )",
     "dml_statement": "DELETE FROM t1",
     "copy_statement": "COPY INTO t1 FROM @s1",
+    "window_function": "SUM",
+    "windowFrameClause": "ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW",
+    "scoring_profile": "'{}'",
 }
 DDL_LITERAL_FILLS: dict[str, str] = {
     **UTILITY_LITERAL_FILLS,
@@ -951,6 +954,17 @@ DDL_LITERAL_FILLS: dict[str, str] = {
     "'<region_group>.<snowflake_region>'": "'PUBLIC.AWS_US_WEST_2'",
     "'<num> { hours | days }'": "'1 days'",
     "'<num> days'": "'1 days'",
+    "'{ S3 | S3CHINA | S3GOV }'": "'S3'",
+    "'azure://onelake.blob.fabric.microsoft.com/<workspace_id>/<item_id>/Files[/<path>/]'": "'azure://onelake.blob.fabric.microsoft.com/w1/i1/Files/p1/'",
+    "'s3compat://<bucket>[/<path>/]'": "'s3compat://b1/p1/'",
+    "'{string_literal}'": "'m'",
+    "'s3compat://{bucket}[/{path}/]'": "'s3compat://b1/p1/'",
+    "'<protocol>://<bucket>[/<path>/]'": "'s3://b1/p1/'",
+    "'gcs://<bucket>[/<path>/]'": "'gcs://b1/p1/'",
+    "'azure://<account>.blob.core.windows.net/<container>[/<path>/]'": (
+        "'azure://a1.blob.core.windows.net/c1/p1/'"
+    ),
+    "'( <purpose> = <contact> )'": "'( p1 = c1 )'",
 }
 FAMILY_STYLES: dict[str, dict[str, FormStyle]] = {
     "scripting": SCRIPTING_SELF_DECLARING_BLOCKS,
