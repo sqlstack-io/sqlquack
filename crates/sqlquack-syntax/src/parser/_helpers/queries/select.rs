@@ -89,6 +89,7 @@ impl Parser {
                     && !self.check_text_seq(&["GROUP", "BY"])
                     && !self.check_text_seq(&["ORDER", "BY"])
                     && !self.check(TokenType::Qualify)
+                    && !self.is_snowflake_reserved_keyword()
                     && !(self.check(TokenType::Window)
                         && self.peek_nth(1).is_some_and(|token| {
                             matches!(token.token_type, TokenType::Var | TokenType::Identifier)
