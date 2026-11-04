@@ -287589,12 +287589,6 @@ required = true
 note = "the form without its required IN"
 
 [[obligation]]
-id = "sf.ddl.show-schema-variables.o026"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required SCHEMA #2"
-
-[[obligation]]
 id = "sf.ddl.show-schema-variables.o021"
 kind = "identifier_class"
 required = true
@@ -287632,6 +287626,13 @@ kind = "negative_neighbour"
 required = true
 anchor = "doc.sql.show-schema-variables / Syntax"
 note = "the form without its required { <schema_name> | <database_name> . <schema_name> }, observed"
+
+[[obligation]]
+id = "sf.ddl.show-schema-variables.o027"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.show-schema-variables / Syntax"
+note = "the form without its required SCHEMA #2, observed"
 
 [[obligation]]
 id = "sf.ddl.show-schemas.o001"

@@ -573,12 +573,6 @@ required = true
 note = "the form without its required SELECT"
 
 [[obligation]]
-id = "sf.dml.copy-files.from-select-from.o054"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required FROM #2"
-
-[[obligation]]
 id = "sf.dml.copy-files.from-select-from.o030"
 kind = "negative_neighbour"
 required = true
@@ -706,6 +700,13 @@ required = true
 target = "<stage_name>"
 anchor = "doc.sql.copy-files / Syntax / Copy from a query"
 note = "quoted: a double-quoted identifier with blanks and mixed case, observed"
+
+[[obligation]]
+id = "sf.dml.copy-files.from-select-from.o055"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.copy-files / Syntax / Copy from a query"
+note = "the form without its required FROM #2, observed"
 
 [[obligation]]
 id = "sf.dml.copy-into-location.o001"
