@@ -56,15 +56,6 @@ valid_as = "sf.ddl.alter-application.upgrade positive the documented form with e
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
-form = "sf.ddl.alter-application.upgrade-using-version"
-kind = "negative_neighbour"
-target = ""
-note = "the form without its required VERSION"
-sql = "ALTER APPLICATION v1 UPGRADE USING v1 ;"
-valid_as = "sf.ddl.alter-application.upgrade-using positive the documented form with every required part and no optional part"
-reason = "the rejection renders SQL the documented grammar also accepts"
-
-[[withdrawn]]
 form = "sf.ddl.alter-database.unset-data-retention-time-in-days-max-data-extension-time-in-days-stage-undrop-retention-time-in-days"
 kind = "required_operand_missing"
 target = "<purpose>"
@@ -258,7 +249,7 @@ form = "sf.ddl.alter-listing.listing-add-version-from"
 kind = "required_operand_missing"
 target = "<version_name> in [ [ IF NOT EXISTS ] <version_name> ]"
 note = "omit <version_name>"
-sql = "ALTER LISTING v1 ADD VERSION FROM v1 ;"
+sql = "ALTER LISTING v1 ADD VERSION FROM @d1.s1.st1/p1 ;"
 valid_as = "sf.ddl.alter-listing.listing-add-version-from positive the documented form with every required part and no optional part"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
@@ -296,24 +287,6 @@ target = ""
 note = "the form without its required TAG"
 sql = "ALTER PIPE v1 UNSET v1 ;"
 valid_as = "sf.ddl.alter-pipe.unset-comment positive the documented form with every required part and no optional part"
-reason = "the rejection renders SQL the documented grammar also accepts"
-
-[[withdrawn]]
-form = "sf.ddl.alter-restricted-session-scope.add-as"
-kind = "negative_neighbour"
-target = ""
-note = "the form without its required ADD"
-sql = "ALTER RESTRICTED SESSION SCOPE v1 AS $$v1 $$ ;"
-valid_as = "sf.ddl.alter-restricted-session-scope.as positive the documented form with every required part and no optional part"
-reason = "the rejection renders SQL the documented grammar also accepts"
-
-[[withdrawn]]
-form = "sf.ddl.alter-restricted-session-scope.remove-as"
-kind = "negative_neighbour"
-target = ""
-note = "the form without its required REMOVE"
-sql = "ALTER RESTRICTED SESSION SCOPE v1 AS $$v1 $$ ;"
-valid_as = "sf.ddl.alter-restricted-session-scope.as positive the documented form with every required part and no optional part"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
@@ -411,7 +384,7 @@ form = "sf.ddl.alter-task-graph.modify-when"
 kind = "negative_neighbour"
 target = ""
 note = "the form without its required GRAPH"
-sql = "ALTER TASK v1 MODIFY WHEN 1 ;"
+sql = "ALTER TASK v1 MODIFY WHEN TRUE ;"
 valid_as = "sf.ddl.alter-task.modify-when positive the documented form with every required part and no optional part"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
@@ -434,20 +407,11 @@ valid_as = "sf.ddl.alter-task.resume-suspend positive the documented form with e
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
-form = "sf.ddl.alter-task-graph.set"
-kind = "negative_neighbour"
-target = ""
-note = "the form without its required GRAPH"
-sql = "ALTER TASK v1 SET v1 = 1 ;"
-valid_as = "sf.ddl.alter-task.set option_absent [ , <session_parameter> = <value> ... ]"
-reason = "the rejection renders SQL the documented grammar also accepts"
-
-[[withdrawn]]
 form = "sf.ddl.alter-task-graph.set-contact"
 kind = "negative_neighbour"
 target = ""
 note = "the form without its required GRAPH"
-sql = "ALTER TASK v1 SET CONTACT v1 = v1 ;"
+sql = "ALTER TASK v1 SET CONTACT STEWARD = v1 ;"
 valid_as = "sf.ddl.alter-task.set option_absent [ , <purpose> = <contact_name> ... ]"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
@@ -470,30 +434,12 @@ valid_as = "sf.ddl.alter-task.resume-suspend alternative { RESUME | SUSPEND } �
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
-form = "sf.ddl.alter-task-graph.unset"
-kind = "negative_neighbour"
-target = ""
-note = "the form without its required GRAPH"
-sql = "ALTER TASK v1 UNSET v1 ;"
-valid_as = "sf.ddl.alter-task.unset option_absent [ , <session_parameter> ... ]"
-reason = "the rejection renders SQL the documented grammar also accepts"
-
-[[withdrawn]]
 form = "sf.ddl.alter-task-graph.unset-contact"
 kind = "negative_neighbour"
 target = ""
 note = "the form without its required GRAPH"
-sql = "ALTER TASK v1 UNSET CONTACT v1 ;"
+sql = "ALTER TASK v1 UNSET CONTACT STEWARD ;"
 valid_as = "sf.ddl.alter-task.unset option_absent [ , ... ]"
-reason = "the rejection renders SQL the documented grammar also accepts"
-
-[[withdrawn]]
-form = "sf.ddl.alter-task-graph.unset-contact"
-kind = "negative_neighbour"
-target = ""
-note = "the form without its required CONTACT"
-sql = "ALTER TASK GRAPH v1 UNSET v1 ;"
-valid_as = "sf.ddl.alter-task-graph.unset positive the documented form with every required part and no optional part"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
@@ -506,39 +452,12 @@ valid_as = "sf.ddl.alter-task.unset-tag positive the documented form with every 
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
-form = "sf.ddl.alter-task-graph.unset-tag"
-kind = "negative_neighbour"
-target = ""
-note = "the form without its required TAG"
-sql = "ALTER TASK GRAPH v1 UNSET v1 ;"
-valid_as = "sf.ddl.alter-task-graph.unset positive the documented form with every required part and no optional part"
-reason = "the rejection renders SQL the documented grammar also accepts"
-
-[[withdrawn]]
-form = "sf.ddl.alter-task.unset-tag"
-kind = "negative_neighbour"
-target = ""
-note = "the form without its required TAG"
-sql = "ALTER TASK v1 UNSET v1 ;"
-valid_as = "sf.ddl.alter-task.unset option_absent [ , <session_parameter> ... ]"
-reason = "the rejection renders SQL the documented grammar also accepts"
-
-[[withdrawn]]
 form = "sf.ddl.alter-warehouse.unset-tag"
 kind = "negative_neighbour"
 target = ""
 note = "the form without its required TAG"
 sql = "ALTER WAREHOUSE v1 UNSET v1 ;"
 valid_as = "sf.ddl.alter-warehouse.unset positive the documented form with every required part and no optional part"
-reason = "the rejection renders SQL the documented grammar also accepts"
-
-[[withdrawn]]
-form = "sf.ddl.create-application.application-package-using-version"
-kind = "negative_neighbour"
-target = ""
-note = "the form without its required VERSION"
-sql = "CREATE APPLICATION v1 FROM APPLICATION PACKAGE v1 USING v1 ;"
-valid_as = "sf.ddl.create-application.application-package-using positive the documented form with every required part and no optional part"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
@@ -717,7 +636,7 @@ form = "sf.ddl.create-function-spcs.function-returns-service-endpoint"
 kind = "negative_neighbour"
 target = ""
 note = "the form without its required NULL in [ [ NOT ] NULL ]"
-sql = "CREATE FUNCTION v1 ( ) RETURNS INT SERVICE = v1 ENDPOINT = 1 AS 'm' ;"
+sql = "CREATE FUNCTION v1 ( ) RETURNS INT SERVICE = v1 ENDPOINT = e1 AS 'm' ;"
 valid_as = "sf.ddl.create-function-spcs.function-returns-service-endpoint positive the documented form with every required part and no optional part"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
@@ -753,7 +672,7 @@ form = "sf.ddl.create-function.create-function-returns-table-2"
 kind = "negative_neighbour"
 target = ""
 note = "the form without its required NULL in [ [ NOT ] NULL ]"
-sql = "CREATE FUNCTION v1 ( ) RETURNS INT LANGUAGE PYTHON RUNTIME_VERSION = v1 IMPORTS = ( 'm' ) HANDLER = 'm1.run' ;"
+sql = "CREATE FUNCTION v1 ( ) RETURNS INT LANGUAGE PYTHON RUNTIME_VERSION = '3.10' IMPORTS = ( 'm' ) HANDLER = 'm1.run' ;"
 valid_as = "sf.ddl.create-function.create-function-returns-table-2 positive the documented form with every required part and no optional part"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
@@ -780,7 +699,7 @@ form = "sf.ddl.create-function.create-function-returns-table.python-handler"
 kind = "negative_neighbour"
 target = ""
 note = "the form without its required NULL in [ [ NOT ] NULL ]"
-sql = "CREATE FUNCTION v1 ( ) RETURNS INT LANGUAGE PYTHON RUNTIME_VERSION = v1 HANDLER = 'm' AS 'm' ;"
+sql = "CREATE FUNCTION v1 ( ) RETURNS INT LANGUAGE PYTHON RUNTIME_VERSION = '3.10' HANDLER = 'm' AS 'm' ;"
 valid_as = "sf.ddl.create-function.create-function-returns-table.python-handler positive the documented form with every required part and no optional part"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
@@ -978,7 +897,7 @@ form = "sf.ddl.create-procedure.create-procedure-returns-table-2"
 kind = "negative_neighbour"
 target = ""
 note = "the form without its required NULL in [ [ NOT ] NULL ]"
-sql = "CREATE PROCEDURE v1 ( ) RETURNS INT LANGUAGE PYTHON RUNTIME_VERSION = 'm' HANDLER = 'm1.run' ;"
+sql = "CREATE PROCEDURE v1 ( ) RETURNS INT LANGUAGE PYTHON RUNTIME_VERSION = '3.10' HANDLER = 'm1.run' ;"
 valid_as = "sf.ddl.create-procedure.create-procedure-returns-table-2 positive the documented form with every required part and no optional part"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
@@ -1005,7 +924,7 @@ form = "sf.ddl.create-procedure.create-procedure-returns-table.python-handler"
 kind = "negative_neighbour"
 target = ""
 note = "the form without its required NULL in [ [ NOT ] NULL ]"
-sql = "CREATE PROCEDURE v1 ( ) RETURNS INT LANGUAGE PYTHON RUNTIME_VERSION = 'm' HANDLER = 'm' AS 'm' ;"
+sql = "CREATE PROCEDURE v1 ( ) RETURNS INT LANGUAGE PYTHON RUNTIME_VERSION = '3.10' HANDLER = 'm' AS 'm' ;"
 valid_as = "sf.ddl.create-procedure.create-procedure-returns-table.python-handler positive the documented form with every required part and no optional part"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
@@ -1618,25 +1537,25 @@ kind = "required_operand_missing"
 target = "<database_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name>…"
 note = "omit <database_name>"
 sql = "SHOW ALERTS IN DATABASE ;"
-valid_as = "sf.ddl.show-alerts alternative { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> APPLICATION … → DATABASE"
+valid_as = "sf.ddl.show-alerts alternative { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> | APPLICATIO… → DATABASE"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
 form = "sf.ddl.show-alerts"
 kind = "required_operand_missing"
-target = "<schema_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> A…"
+target = "<schema_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> |…"
 note = "omit <schema_name>"
 sql = "SHOW ALERTS IN SCHEMA ;"
-valid_as = "sf.ddl.show-alerts alternative { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> APPLICATION <a… → SCHEMA"
+valid_as = "sf.ddl.show-alerts alternative { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> | APPLICATION … → SCHEMA"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
 form = "sf.ddl.show-alerts"
 kind = "negative_neighbour"
 target = ""
-note = "the form without its required { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> APPLICATION <application_name> | APPLICATION PACKAGE <application_package_name> |  } in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> APPLICATION <appli…"
-sql = "SHOW ALERTS IN ;"
-valid_as = "sf.ddl.show-alerts alternative { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> APPLICATION <applica… →"
+note = "the form without its required PACKAGE in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> | APPLICATION <app…"
+sql = "SHOW ALERTS IN APPLICATION v1 ;"
+valid_as = "sf.ddl.show-alerts alternative { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <sch… → APPLICATION <application_name>"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
@@ -1745,15 +1664,6 @@ target = ""
 note = "the form without its required COMMITTED"
 sql = "SHOW TASKS ;"
 valid_as = "sf.ddl.show-tasks positive the documented form with every required part and no optional part"
-reason = "the rejection renders SQL the documented grammar also accepts"
-
-[[withdrawn]]
-form = "sf.ddl.show-committed-tasks"
-kind = "negative_neighbour"
-target = ""
-note = "the form without its required { GRAPH <graph_name> | ACCOUNT | DATABASE [ <db_name> ] | [ SCHEMA ] [ <schema_name> ] } in [ IN { GRAPH <graph_name> | ACCOUNT | DATABASE [ <db_name> ] | [ SCHEMA ] [ <schema_name> ] } ]"
-sql = "SHOW COMMITTED TASKS IN ;"
-valid_as = "sf.ddl.show-committed-tasks alternative { GRAPH <graph_name> | ACCOUNT | DATABASE [ <db_name> ] | [ SCHEMA ] [ <schema_name> ] } → [ SCHEMA ] [ <schema_name> ]"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
@@ -1924,16 +1834,16 @@ kind = "required_operand_missing"
 target = "<database_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name>…"
 note = "omit <database_name>"
 sql = "SHOW EXTERNAL TABLES IN DATABASE ;"
-valid_as = "sf.ddl.show-external-tables alternative { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> APPLICATION … → DATABASE"
+valid_as = "sf.ddl.show-external-tables alternative { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> | APPLICATIO… → DATABASE"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
 form = "sf.ddl.show-external-tables"
 kind = "required_operand_missing"
-target = "<schema_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> A…"
+target = "<schema_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> |…"
 note = "omit <schema_name>"
 sql = "SHOW EXTERNAL TABLES IN SCHEMA ;"
-valid_as = "sf.ddl.show-external-tables alternative { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> APPLICATION <a… → SCHEMA"
+valid_as = "sf.ddl.show-external-tables alternative { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> | APPLICATION … → SCHEMA"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
@@ -1949,9 +1859,9 @@ reason = "the rejection renders SQL the documented grammar also accepts"
 form = "sf.ddl.show-external-tables"
 kind = "negative_neighbour"
 target = ""
-note = "the form without its required { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> APPLICATION <application_name> | APPLICATION PACKAGE <application_package_name> |  } in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> APPLICATION <appli…"
-sql = "SHOW EXTERNAL TABLES IN ;"
-valid_as = "sf.ddl.show-external-tables alternative { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> APPLICATION <applica… →"
+note = "the form without its required PACKAGE in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> | APPLICATION <app…"
+sql = "SHOW EXTERNAL TABLES IN APPLICATION v1 ;"
+valid_as = "sf.ddl.show-external-tables alternative { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <sch… → APPLICATION <application_name>"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
@@ -1960,25 +1870,25 @@ kind = "required_operand_missing"
 target = "<database_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name>…"
 note = "omit <database_name>"
 sql = "SHOW FILE FORMATS IN DATABASE ;"
-valid_as = "sf.ddl.show-file-formats alternative { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> APPLICATION … → DATABASE"
+valid_as = "sf.ddl.show-file-formats alternative { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> | APPLICATIO… → DATABASE"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
 form = "sf.ddl.show-file-formats"
 kind = "required_operand_missing"
-target = "<schema_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> A…"
+target = "<schema_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> |…"
 note = "omit <schema_name>"
 sql = "SHOW FILE FORMATS IN SCHEMA ;"
-valid_as = "sf.ddl.show-file-formats alternative { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> APPLICATION <a… → SCHEMA"
+valid_as = "sf.ddl.show-file-formats alternative { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> | APPLICATION … → SCHEMA"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
 form = "sf.ddl.show-file-formats"
 kind = "negative_neighbour"
 target = ""
-note = "the form without its required { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> APPLICATION <application_name> | APPLICATION PACKAGE <application_package_name> |  } in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> APPLICATION <appli…"
-sql = "SHOW FILE FORMATS IN ;"
-valid_as = "sf.ddl.show-file-formats alternative { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> APPLICATION <applica… →"
+note = "the form without its required PACKAGE in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> | APPLICATION <app…"
+sql = "SHOW FILE FORMATS IN APPLICATION v1 ;"
+valid_as = "sf.ddl.show-file-formats alternative { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <sch… → APPLICATION <application_name>"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
@@ -2045,12 +1955,12 @@ valid_as = "sf.ddl.show-git-repositories alternative { ACCOUNT | DATABASE | DATA
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
-form = "sf.ddl.show-hybrid-tables"
+form = "sf.ddl.show-git-tags"
 kind = "negative_neighbour"
 target = ""
-note = "the form without its required { ACCOUNT | DATABASE [ <db_name> ] | SCHEMA [ <schema_name> ] } in [ IN { ACCOUNT | DATABASE [ <db_name> ] | SCHEMA [ <schema_name> ] } ]"
-sql = "SHOW TABLES IN ;"
-valid_as = "sf.ddl.show-tables alternative { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> APPLICATION <applica… →"
+note = "the form without its required GIT"
+sql = "SHOW TAGS IN v1 ;"
+valid_as = "sf.ddl.show-tags alternative { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> | APPLI… → <schema_name>"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
@@ -2069,15 +1979,6 @@ target = "<schema_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> 
 note = "omit <schema_name>"
 sql = "SHOW TABLES IN SCHEMA ;"
 valid_as = "sf.ddl.show-hybrid-tables alternative { ACCOUNT | DATABASE [ <db_name> ] | SCHEMA [ <schema_name> ] } → SCHEMA [ <schema_name> ]"
-reason = "the rejection renders SQL the documented grammar also accepts"
-
-[[withdrawn]]
-form = "sf.ddl.show-iceberg-tables"
-kind = "negative_neighbour"
-target = ""
-note = "the form without its required { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> } in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> } ]"
-sql = "SHOW TABLES IN ;"
-valid_as = "sf.ddl.show-tables alternative { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> APPLICATION <applica… →"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
@@ -2149,16 +2050,16 @@ kind = "required_operand_missing"
 target = "<database_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name>…"
 note = "omit <database_name>"
 sql = "SHOW MATERIALIZED VIEWS IN DATABASE ;"
-valid_as = "sf.ddl.show-materialized-views alternative { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> APPLICATION … → DATABASE"
+valid_as = "sf.ddl.show-materialized-views alternative { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> | APPLICATIO… → DATABASE"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
 form = "sf.ddl.show-materialized-views"
 kind = "required_operand_missing"
-target = "<schema_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> A…"
+target = "<schema_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> |…"
 note = "omit <schema_name>"
 sql = "SHOW MATERIALIZED VIEWS IN SCHEMA ;"
-valid_as = "sf.ddl.show-materialized-views alternative { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> APPLICATION <a… → SCHEMA"
+valid_as = "sf.ddl.show-materialized-views alternative { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> | APPLICATION … → SCHEMA"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
@@ -2174,9 +2075,9 @@ reason = "the rejection renders SQL the documented grammar also accepts"
 form = "sf.ddl.show-materialized-views"
 kind = "negative_neighbour"
 target = ""
-note = "the form without its required { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> APPLICATION <application_name> | APPLICATION PACKAGE <application_package_name> |  } in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> APPLICATION <appli…"
-sql = "SHOW MATERIALIZED VIEWS IN ;"
-valid_as = "sf.ddl.show-materialized-views alternative { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> APPLICATION <applica… →"
+note = "the form without its required PACKAGE in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> | APPLICATION <app…"
+sql = "SHOW MATERIALIZED VIEWS IN APPLICATION v1 ;"
+valid_as = "sf.ddl.show-materialized-views alternative { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <sch… → APPLICATION <application_name>"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
@@ -2239,25 +2140,25 @@ kind = "required_operand_missing"
 target = "<database_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name>…"
 note = "omit <database_name>"
 sql = "SHOW OBJECTS IN DATABASE ;"
-valid_as = "sf.ddl.show-objects alternative { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> APPLICATION … → DATABASE"
+valid_as = "sf.ddl.show-objects alternative { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> | APPLICATIO… → DATABASE"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
 form = "sf.ddl.show-objects"
 kind = "required_operand_missing"
-target = "<schema_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> A…"
+target = "<schema_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> |…"
 note = "omit <schema_name>"
 sql = "SHOW OBJECTS IN SCHEMA ;"
-valid_as = "sf.ddl.show-objects alternative { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> APPLICATION <a… → SCHEMA"
+valid_as = "sf.ddl.show-objects alternative { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> | APPLICATION … → SCHEMA"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
 form = "sf.ddl.show-objects"
 kind = "negative_neighbour"
 target = ""
-note = "the form without its required { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> APPLICATION <application_name> | APPLICATION PACKAGE <application_package_name> |  } in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> APPLICATION <appli…"
-sql = "SHOW OBJECTS IN ;"
-valid_as = "sf.ddl.show-objects alternative { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> APPLICATION <applica… →"
+note = "the form without its required PACKAGE in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> | APPLICATION <app…"
+sql = "SHOW OBJECTS IN APPLICATION v1 ;"
+valid_as = "sf.ddl.show-objects alternative { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <sch… → APPLICATION <application_name>"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
@@ -2279,48 +2180,30 @@ valid_as = "sf.ddl.show-online-feature-tables alternative { ACCOUNT | DATABASE |
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
-form = "sf.ddl.show-openflow-connectors"
-kind = "negative_neighbour"
-target = ""
-note = "the form without its required { ACCOUNT | DATABASE [ <db_name> ] | [ SCHEMA ] [ <schema_name> ] } in [ IN { ACCOUNT | DATABASE [ <db_name> ] | [ SCHEMA ] [ <schema_name> ] } ]"
-sql = "SHOW OPENFLOW CONNECTORS IN ;"
-valid_as = "sf.ddl.show-openflow-connectors alternative { ACCOUNT | DATABASE [ <db_name> ] | [ SCHEMA ] [ <schema_name> ] } → [ SCHEMA ] [ <schema_name> ]"
-reason = "the rejection renders SQL the documented grammar also accepts"
-
-[[withdrawn]]
-form = "sf.ddl.show-openflow-runtimes"
-kind = "negative_neighbour"
-target = ""
-note = "the form without its required { ACCOUNT | DATABASE [ <db_name> ] | [ SCHEMA ] [ <schema_name> ] } in [ IN { ACCOUNT | DATABASE [ <db_name> ] | [ SCHEMA ] [ <schema_name> ] } ]"
-sql = "SHOW OPENFLOW RUNTIMES IN ;"
-valid_as = "sf.ddl.show-openflow-runtimes alternative { ACCOUNT | DATABASE [ <db_name> ] | [ SCHEMA ] [ <schema_name> ] } → [ SCHEMA ] [ <schema_name> ]"
-reason = "the rejection renders SQL the documented grammar also accepts"
-
-[[withdrawn]]
 form = "sf.ddl.show-pipes"
 kind = "required_operand_missing"
 target = "<database_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name>…"
 note = "omit <database_name>"
 sql = "SHOW PIPES IN DATABASE ;"
-valid_as = "sf.ddl.show-pipes alternative { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> APPLICATION … → DATABASE"
+valid_as = "sf.ddl.show-pipes alternative { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> | APPLICATIO… → DATABASE"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
 form = "sf.ddl.show-pipes"
 kind = "required_operand_missing"
-target = "<schema_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> A…"
+target = "<schema_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> |…"
 note = "omit <schema_name>"
 sql = "SHOW PIPES IN SCHEMA ;"
-valid_as = "sf.ddl.show-pipes alternative { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> APPLICATION <a… → SCHEMA"
+valid_as = "sf.ddl.show-pipes alternative { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> | APPLICATION … → SCHEMA"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
 form = "sf.ddl.show-pipes"
 kind = "negative_neighbour"
 target = ""
-note = "the form without its required { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> APPLICATION <application_name> | APPLICATION PACKAGE <application_package_name> |  } in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> APPLICATION <appli…"
-sql = "SHOW PIPES IN ;"
-valid_as = "sf.ddl.show-pipes alternative { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> APPLICATION <applica… →"
+note = "the form without its required PACKAGE in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> | APPLICATION <app…"
+sql = "SHOW PIPES IN APPLICATION v1 ;"
+valid_as = "sf.ddl.show-pipes alternative { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <sch… → APPLICATION <application_name>"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
@@ -2345,9 +2228,9 @@ reason = "the rejection renders SQL the documented grammar also accepts"
 form = "sf.ddl.show-procedures"
 kind = "negative_neighbour"
 target = ""
-note = "the form without its required { ACCOUNT | CLASS <class_name> | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> APPLICATION <application_name> | APPLICATION PACKAGE <application_package_name> |  } in [ IN { ACCOUNT | CLASS <class_name> | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_nam…"
-sql = "SHOW PROCEDURES IN ;"
-valid_as = "sf.ddl.show-procedures alternative { ACCOUNT | CLASS <class_name> | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name>… →"
+note = "the form without its required PACKAGE in [ IN { ACCOUNT | CLASS <class_name> | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_nam…"
+sql = "SHOW PROCEDURES IN APPLICATION v1 ;"
+valid_as = "sf.ddl.show-procedures alternative { ACCOUNT | CLASS <class_name> | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA… → APPLICATION <application_name>"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
@@ -2428,25 +2311,25 @@ kind = "required_operand_missing"
 target = "<database_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name>…"
 note = "omit <database_name>"
 sql = "SHOW SEQUENCES IN DATABASE ;"
-valid_as = "sf.ddl.show-sequences alternative { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> APPLICATION … → DATABASE"
+valid_as = "sf.ddl.show-sequences alternative { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> | APPLICATIO… → DATABASE"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
 form = "sf.ddl.show-sequences"
 kind = "required_operand_missing"
-target = "<schema_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> A…"
+target = "<schema_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> |…"
 note = "omit <schema_name>"
 sql = "SHOW SEQUENCES IN SCHEMA ;"
-valid_as = "sf.ddl.show-sequences alternative { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> APPLICATION <a… → SCHEMA"
+valid_as = "sf.ddl.show-sequences alternative { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> | APPLICATION … → SCHEMA"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
 form = "sf.ddl.show-sequences"
 kind = "negative_neighbour"
 target = ""
-note = "the form without its required { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> APPLICATION <application_name> | APPLICATION PACKAGE <application_package_name> |  } in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> APPLICATION <appli…"
-sql = "SHOW SEQUENCES IN ;"
-valid_as = "sf.ddl.show-sequences alternative { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> APPLICATION <applica… →"
+note = "the form without its required PACKAGE in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> | APPLICATION <app…"
+sql = "SHOW SEQUENCES IN APPLICATION v1 ;"
+valid_as = "sf.ddl.show-sequences alternative { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <sch… → APPLICATION <application_name>"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
@@ -2491,25 +2374,16 @@ kind = "required_operand_missing"
 target = "<database_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name>…"
 note = "omit <database_name>"
 sql = "SHOW SNAPSHOTS IN DATABASE ;"
-valid_as = "sf.ddl.show-snapshots alternative { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> |  } → DATABASE"
+valid_as = "sf.ddl.show-snapshots alternative { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> } → DATABASE"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
 form = "sf.ddl.show-snapshots"
 kind = "required_operand_missing"
-target = "<schema_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> |…"
+target = "<schema_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> }…"
 note = "omit <schema_name>"
 sql = "SHOW SNAPSHOTS IN SCHEMA ;"
-valid_as = "sf.ddl.show-snapshots alternative { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> |  } → SCHEMA"
-reason = "the rejection renders SQL the documented grammar also accepts"
-
-[[withdrawn]]
-form = "sf.ddl.show-snapshots"
-kind = "negative_neighbour"
-target = ""
-note = "the form without its required { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> |  } in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> |  } ]"
-sql = "SHOW SNAPSHOTS IN ;"
-valid_as = "sf.ddl.show-snapshots alternative { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> |  } →"
+valid_as = "sf.ddl.show-snapshots alternative { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> } → SCHEMA"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
@@ -2518,25 +2392,25 @@ kind = "required_operand_missing"
 target = "<database_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name>…"
 note = "omit <database_name>"
 sql = "SHOW STAGES IN DATABASE ;"
-valid_as = "sf.ddl.show-stages alternative { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> APPLICATION … → DATABASE"
+valid_as = "sf.ddl.show-stages alternative { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> | APPLICATIO… → DATABASE"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
 form = "sf.ddl.show-stages"
 kind = "required_operand_missing"
-target = "<schema_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> A…"
+target = "<schema_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> |…"
 note = "omit <schema_name>"
 sql = "SHOW STAGES IN SCHEMA ;"
-valid_as = "sf.ddl.show-stages alternative { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> APPLICATION <a… → SCHEMA"
+valid_as = "sf.ddl.show-stages alternative { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> | APPLICATION … → SCHEMA"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
 form = "sf.ddl.show-stages"
 kind = "negative_neighbour"
 target = ""
-note = "the form without its required { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> APPLICATION <application_name> | APPLICATION PACKAGE <application_package_name> |  } in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> APPLICATION <appli…"
-sql = "SHOW STAGES IN ;"
-valid_as = "sf.ddl.show-stages alternative { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> APPLICATION <applica… →"
+note = "the form without its required PACKAGE in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> | APPLICATION <app…"
+sql = "SHOW STAGES IN APPLICATION v1 ;"
+valid_as = "sf.ddl.show-stages alternative { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <sch… → APPLICATION <application_name>"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
@@ -2561,18 +2435,9 @@ reason = "the rejection renders SQL the documented grammar also accepts"
 form = "sf.ddl.show-streams"
 kind = "negative_neighbour"
 target = ""
-note = "the form without its required PACKAGE in [ IN { ACCOUNT | DATABASE [ <db_name> ] | [ SCHEMA ] [ <schema_name> ] | APPLICATION <application_name> | APPLICATION P…"
+note = "the form without its required PACKAGE in [ IN { ACCOUNT | DATABASE [ <db_name> ] | { SCHEMA [ <schema_name> ] | <schema_name> } | APPLICATION <application_name>…"
 sql = "SHOW STREAMS IN APPLICATION v1 ;"
-valid_as = "sf.ddl.show-streams alternative { ACCOUNT | DATABASE [ <db_name> ] | [ SCHEMA ] [ <schema_name> ] | APPLICATION <appli… → APPLICATION <application_name>"
-reason = "the rejection renders SQL the documented grammar also accepts"
-
-[[withdrawn]]
-form = "sf.ddl.show-streams"
-kind = "negative_neighbour"
-target = ""
-note = "the form without its required { ACCOUNT | DATABASE [ <db_name> ] | [ SCHEMA ] [ <schema_name> ] | APPLICATION <application_name> | APPLICATION PACKAGE <application_package_name> } in [ IN { ACCOUNT | DATABASE [ <db_name> ] | [ SCHEMA ] [ <schema_name> ] | APPLICATION <application_name> | APPLICATION P…"
-sql = "SHOW STREAMS IN ;"
-valid_as = "sf.ddl.show-streams alternative { ACCOUNT | DATABASE [ <db_name> ] | [ SCHEMA ] [ <schema_name> ] | APPLICATION <applica… → [ SCHEMA ] [ <schema_name> ]"
+valid_as = "sf.ddl.show-streams alternative { ACCOUNT | DATABASE [ <db_name> ] | { SCHEMA [ <schema_name> ] | <schema_name> } | AP… → APPLICATION <application_name>"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
@@ -2587,7 +2452,7 @@ reason = "the rejection renders SQL the documented grammar also accepts"
 [[withdrawn]]
 form = "sf.ddl.show-tables"
 kind = "required_operand_missing"
-target = "<schema_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> A…"
+target = "<schema_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> |…"
 note = "omit <schema_name>"
 sql = "SHOW TABLES IN SCHEMA ;"
 valid_as = "sf.ddl.show-hybrid-tables alternative { ACCOUNT | DATABASE [ <db_name> ] | SCHEMA [ <schema_name> ] } → SCHEMA [ <schema_name> ]"
@@ -2597,9 +2462,9 @@ reason = "the rejection renders SQL the documented grammar also accepts"
 form = "sf.ddl.show-tables"
 kind = "negative_neighbour"
 target = ""
-note = "the form without its required { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> APPLICATION <application_name> | APPLICATION PACKAGE <application_package_name> |  } in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> APPLICATION <appli…"
-sql = "SHOW TABLES IN ;"
-valid_as = "sf.ddl.show-tables alternative { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> APPLICATION <applica… →"
+note = "the form without its required PACKAGE in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> | APPLICATION <app…"
+sql = "SHOW TABLES IN APPLICATION v1 ;"
+valid_as = "sf.ddl.show-tables alternative { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <sch… → APPLICATION <application_name>"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
@@ -2608,52 +2473,34 @@ kind = "required_operand_missing"
 target = "<database_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name>…"
 note = "omit <database_name>"
 sql = "SHOW TAGS IN DATABASE ;"
-valid_as = "sf.ddl.show-tags alternative { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> APPLICATION … → DATABASE"
+valid_as = "sf.ddl.show-tags alternative { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> | APPLICATIO… → DATABASE"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
 form = "sf.ddl.show-tags"
 kind = "required_operand_missing"
-target = "<schema_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> A…"
+target = "<schema_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> |…"
 note = "omit <schema_name>"
 sql = "SHOW TAGS IN SCHEMA ;"
-valid_as = "sf.ddl.show-tags alternative { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> APPLICATION <a… → SCHEMA"
+valid_as = "sf.ddl.show-tags alternative { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> | APPLICATION … → SCHEMA"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
 form = "sf.ddl.show-tags"
 kind = "negative_neighbour"
 target = ""
-note = "the form without its required { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> APPLICATION <application_name> | APPLICATION PACKAGE <application_package_name> |  } in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> APPLICATION <appli…"
-sql = "SHOW TAGS IN ;"
-valid_as = "sf.ddl.show-tags alternative { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> APPLICATION <applica… →"
-reason = "the rejection renders SQL the documented grammar also accepts"
-
-[[withdrawn]]
-form = "sf.ddl.show-task-graphs"
-kind = "negative_neighbour"
-target = ""
-note = "the form without its required { ACCOUNT | DATABASE [ <db_name> ] | [ SCHEMA ] [ <schema_name> ] } in [ IN { ACCOUNT | DATABASE [ <db_name> ] | [ SCHEMA ] [ <schema_name> ] } ]"
-sql = "SHOW TASK GRAPHS IN ;"
-valid_as = "sf.ddl.show-task-graphs alternative { ACCOUNT | DATABASE [ <db_name> ] | [ SCHEMA ] [ <schema_name> ] } → [ SCHEMA ] [ <schema_name> ]"
+note = "the form without its required PACKAGE in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> | APPLICATION <app…"
+sql = "SHOW TAGS IN APPLICATION v1 ;"
+valid_as = "sf.ddl.show-tags alternative { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <sch… → APPLICATION <application_name>"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
 form = "sf.ddl.show-tasks"
 kind = "negative_neighbour"
 target = ""
-note = "the form without its required PACKAGE in [ IN { ACCOUNT | DATABASE [ <db_name> ] | [ SCHEMA ] [ <schema_name> ] | APPLICATION <application_name> | APPLICATION P…"
+note = "the form without its required PACKAGE in [ IN { ACCOUNT | DATABASE [ <db_name> ] | { SCHEMA [ <schema_name> ] | <schema_name> } | APPLICATION <application_name>…"
 sql = "SHOW TASKS IN APPLICATION v1 ;"
-valid_as = "sf.ddl.show-tasks alternative { ACCOUNT | DATABASE [ <db_name> ] | [ SCHEMA ] [ <schema_name> ] | APPLICATION <appli… → APPLICATION <application_name>"
-reason = "the rejection renders SQL the documented grammar also accepts"
-
-[[withdrawn]]
-form = "sf.ddl.show-tasks"
-kind = "negative_neighbour"
-target = ""
-note = "the form without its required { ACCOUNT | DATABASE [ <db_name> ] | [ SCHEMA ] [ <schema_name> ] | APPLICATION <application_name> | APPLICATION PACKAGE <application_package_name> } in [ IN { ACCOUNT | DATABASE [ <db_name> ] | [ SCHEMA ] [ <schema_name> ] | APPLICATION <application_name> | APPLICATION P…"
-sql = "SHOW TASKS IN ;"
-valid_as = "sf.ddl.show-tasks alternative { ACCOUNT | DATABASE [ <db_name> ] | [ SCHEMA ] [ <schema_name> ] | APPLICATION <applica… → [ SCHEMA ] [ <schema_name> ]"
+valid_as = "sf.ddl.show-tasks alternative { ACCOUNT | DATABASE [ <db_name> ] | { SCHEMA [ <schema_name> ] | <schema_name> } | AP… → APPLICATION <application_name>"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
@@ -2662,43 +2509,34 @@ kind = "required_operand_missing"
 target = "<database_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name>…"
 note = "omit <database_name>"
 sql = "SHOW TYPES IN DATABASE ;"
-valid_as = "sf.ddl.show-types alternative { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> APPLICATION … → DATABASE"
+valid_as = "sf.ddl.show-types alternative { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> | APPLICATIO… → DATABASE"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
 form = "sf.ddl.show-types"
 kind = "required_operand_missing"
-target = "<schema_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> A…"
+target = "<schema_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> |…"
 note = "omit <schema_name>"
 sql = "SHOW TYPES IN SCHEMA ;"
-valid_as = "sf.ddl.show-types alternative { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> APPLICATION <a… → SCHEMA"
+valid_as = "sf.ddl.show-types alternative { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> | APPLICATION … → SCHEMA"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
 form = "sf.ddl.show-types"
 kind = "negative_neighbour"
 target = ""
-note = "the form without its required { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> APPLICATION <application_name> | APPLICATION PACKAGE <application_package_name> |  } in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> APPLICATION <appli…"
-sql = "SHOW TYPES IN ;"
-valid_as = "sf.ddl.show-types alternative { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> APPLICATION <applica… →"
+note = "the form without its required PACKAGE in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> | APPLICATION <app…"
+sql = "SHOW TYPES IN APPLICATION v1 ;"
+valid_as = "sf.ddl.show-types alternative { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <sch… → APPLICATION <application_name>"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
 form = "sf.ddl.show-views"
 kind = "negative_neighbour"
 target = ""
-note = "the form without its required PACKAGE in [ IN { ACCOUNT | DATABASE [ <db_name> ] | [ SCHEMA ] [ <schema_name> ] | APPLICATION <application_name> | APPLICATION P…"
+note = "the form without its required PACKAGE in [ IN { ACCOUNT | DATABASE [ <db_name> ] | { SCHEMA [ <schema_name> ] | <schema_name> } | APPLICATION <application_name>…"
 sql = "SHOW VIEWS IN APPLICATION v1 ;"
-valid_as = "sf.ddl.show-views alternative { ACCOUNT | DATABASE [ <db_name> ] | [ SCHEMA ] [ <schema_name> ] | APPLICATION <appli… → APPLICATION <application_name>"
-reason = "the rejection renders SQL the documented grammar also accepts"
-
-[[withdrawn]]
-form = "sf.ddl.show-views"
-kind = "negative_neighbour"
-target = ""
-note = "the form without its required { ACCOUNT | DATABASE [ <db_name> ] | [ SCHEMA ] [ <schema_name> ] | APPLICATION <application_name> | APPLICATION PACKAGE <application_package_name> } in [ IN { ACCOUNT | DATABASE [ <db_name> ] | [ SCHEMA ] [ <schema_name> ] | APPLICATION <application_name> | APPLICATION P…"
-sql = "SHOW VIEWS IN ;"
-valid_as = "sf.ddl.show-views alternative { ACCOUNT | DATABASE [ <db_name> ] | [ SCHEMA ] [ <schema_name> ] | APPLICATION <applica… → [ SCHEMA ] [ <schema_name> ]"
+valid_as = "sf.ddl.show-views alternative { ACCOUNT | DATABASE [ <db_name> ] | { SCHEMA [ <schema_name> ] | <schema_name> } | AP… → APPLICATION <application_name>"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]

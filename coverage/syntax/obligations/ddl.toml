@@ -11820,6 +11820,12 @@ required = true
 note = "the form without its required USING"
 
 [[obligation]]
+id = "sf.ddl.alter-application.upgrade-using-version.o019"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required VERSION"
+
+[[obligation]]
 id = "sf.ddl.alter-application.upgrade-using-version.o015"
 kind = "identifier_class"
 required = true
@@ -39389,13 +39395,6 @@ target = "<col_name> #2"
 note = "a valid identifier"
 
 [[obligation]]
-id = "sf.ddl.alter-iceberg-table-partition-evolution.add-partition-by.o033"
-kind = "negative_neighbour"
-required = true
-target = "<col_name> #2"
-note = "a string literal in place of <col_name>"
-
-[[obligation]]
 id = "sf.ddl.alter-iceberg-table-partition-evolution.add-partition-by.o034"
 kind = "required_operand_missing"
 required = true
@@ -39424,13 +39423,6 @@ target = "<col_name> #3"
 note = "a valid identifier"
 
 [[obligation]]
-id = "sf.ddl.alter-iceberg-table-partition-evolution.add-partition-by.o038"
-kind = "negative_neighbour"
-required = true
-target = "<col_name> #3"
-note = "a string literal in place of <col_name>"
-
-[[obligation]]
 id = "sf.ddl.alter-iceberg-table-partition-evolution.add-partition-by.o039"
 kind = "required_operand_missing"
 required = true
@@ -39443,13 +39435,6 @@ kind = "operand_type_class"
 required = true
 target = "<col_name> #4"
 note = "a valid identifier"
-
-[[obligation]]
-id = "sf.ddl.alter-iceberg-table-partition-evolution.add-partition-by.o041"
-kind = "negative_neighbour"
-required = true
-target = "<col_name> #4"
-note = "a string literal in place of <col_name>"
 
 [[obligation]]
 id = "sf.ddl.alter-iceberg-table-partition-evolution.add-partition-by.o042"
@@ -39466,13 +39451,6 @@ target = "<col_name> #5"
 note = "a valid identifier"
 
 [[obligation]]
-id = "sf.ddl.alter-iceberg-table-partition-evolution.add-partition-by.o044"
-kind = "negative_neighbour"
-required = true
-target = "<col_name> #5"
-note = "a string literal in place of <col_name>"
-
-[[obligation]]
 id = "sf.ddl.alter-iceberg-table-partition-evolution.add-partition-by.o045"
 kind = "required_operand_missing"
 required = true
@@ -39487,13 +39465,6 @@ target = "<col_name> #6"
 note = "a valid identifier"
 
 [[obligation]]
-id = "sf.ddl.alter-iceberg-table-partition-evolution.add-partition-by.o047"
-kind = "negative_neighbour"
-required = true
-target = "<col_name> #6"
-note = "a string literal in place of <col_name>"
-
-[[obligation]]
 id = "sf.ddl.alter-iceberg-table-partition-evolution.add-partition-by.o048"
 kind = "required_operand_missing"
 required = true
@@ -39506,13 +39477,6 @@ kind = "operand_type_class"
 required = true
 target = "<col_name> #7"
 note = "a valid identifier"
-
-[[obligation]]
-id = "sf.ddl.alter-iceberg-table-partition-evolution.add-partition-by.o050"
-kind = "negative_neighbour"
-required = true
-target = "<col_name> #7"
-note = "a string literal in place of <col_name>"
 
 [[obligation]]
 id = "sf.ddl.alter-iceberg-table-partition-evolution.add-partition-by.o009"
@@ -39599,6 +39563,48 @@ required = true
 target = "<col_name>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.ddl.alter-iceberg-table-partition-evolution.add-partition-by.o126"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.alter-iceberg-table-partition-evolution / Syntax"
+note = "a string literal in place of <col_name> (YEAR ( 'v1' )), observed"
+
+[[obligation]]
+id = "sf.ddl.alter-iceberg-table-partition-evolution.add-partition-by.o127"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.alter-iceberg-table-partition-evolution / Syntax"
+note = "a string literal in place of <col_name> (BUCKET ( 1 , 'v1' )), observed"
+
+[[obligation]]
+id = "sf.ddl.alter-iceberg-table-partition-evolution.add-partition-by.o128"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.alter-iceberg-table-partition-evolution / Syntax"
+note = "a string literal in place of <col_name> (HOUR ( 'v1' )), observed"
+
+[[obligation]]
+id = "sf.ddl.alter-iceberg-table-partition-evolution.add-partition-by.o129"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.alter-iceberg-table-partition-evolution / Syntax"
+note = "a string literal in place of <col_name> (DAY ( 'v1' )), observed"
+
+[[obligation]]
+id = "sf.ddl.alter-iceberg-table-partition-evolution.add-partition-by.o130"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.alter-iceberg-table-partition-evolution / Syntax"
+note = "a string literal in place of <col_name> (MONTH ( 'v1' )), observed"
+
+[[obligation]]
+id = "sf.ddl.alter-iceberg-table-partition-evolution.add-partition-by.o131"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.alter-iceberg-table-partition-evolution / Syntax"
+note = "a string literal in place of <col_name> (TRUNCATE ( 10 , 'v1' )), observed"
 
 [[obligation]]
 id = "sf.ddl.alter-iceberg-table-partition-evolution.drop-partition-by.o001"
@@ -39731,13 +39737,6 @@ target = "<col_name> #2"
 note = "a valid identifier"
 
 [[obligation]]
-id = "sf.ddl.alter-iceberg-table-partition-evolution.drop-partition-by.o033"
-kind = "negative_neighbour"
-required = true
-target = "<col_name> #2"
-note = "a string literal in place of <col_name>"
-
-[[obligation]]
 id = "sf.ddl.alter-iceberg-table-partition-evolution.drop-partition-by.o034"
 kind = "required_operand_missing"
 required = true
@@ -39766,13 +39765,6 @@ target = "<col_name> #3"
 note = "a valid identifier"
 
 [[obligation]]
-id = "sf.ddl.alter-iceberg-table-partition-evolution.drop-partition-by.o038"
-kind = "negative_neighbour"
-required = true
-target = "<col_name> #3"
-note = "a string literal in place of <col_name>"
-
-[[obligation]]
 id = "sf.ddl.alter-iceberg-table-partition-evolution.drop-partition-by.o039"
 kind = "required_operand_missing"
 required = true
@@ -39785,13 +39777,6 @@ kind = "operand_type_class"
 required = true
 target = "<col_name> #4"
 note = "a valid identifier"
-
-[[obligation]]
-id = "sf.ddl.alter-iceberg-table-partition-evolution.drop-partition-by.o041"
-kind = "negative_neighbour"
-required = true
-target = "<col_name> #4"
-note = "a string literal in place of <col_name>"
 
 [[obligation]]
 id = "sf.ddl.alter-iceberg-table-partition-evolution.drop-partition-by.o042"
@@ -39808,13 +39793,6 @@ target = "<col_name> #5"
 note = "a valid identifier"
 
 [[obligation]]
-id = "sf.ddl.alter-iceberg-table-partition-evolution.drop-partition-by.o044"
-kind = "negative_neighbour"
-required = true
-target = "<col_name> #5"
-note = "a string literal in place of <col_name>"
-
-[[obligation]]
 id = "sf.ddl.alter-iceberg-table-partition-evolution.drop-partition-by.o045"
 kind = "required_operand_missing"
 required = true
@@ -39829,13 +39807,6 @@ target = "<col_name> #6"
 note = "a valid identifier"
 
 [[obligation]]
-id = "sf.ddl.alter-iceberg-table-partition-evolution.drop-partition-by.o047"
-kind = "negative_neighbour"
-required = true
-target = "<col_name> #6"
-note = "a string literal in place of <col_name>"
-
-[[obligation]]
 id = "sf.ddl.alter-iceberg-table-partition-evolution.drop-partition-by.o048"
 kind = "required_operand_missing"
 required = true
@@ -39848,13 +39819,6 @@ kind = "operand_type_class"
 required = true
 target = "<col_name> #7"
 note = "a valid identifier"
-
-[[obligation]]
-id = "sf.ddl.alter-iceberg-table-partition-evolution.drop-partition-by.o050"
-kind = "negative_neighbour"
-required = true
-target = "<col_name> #7"
-note = "a string literal in place of <col_name>"
 
 [[obligation]]
 id = "sf.ddl.alter-iceberg-table-partition-evolution.drop-partition-by.o009"
@@ -39941,6 +39905,48 @@ required = true
 target = "<col_name>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.ddl.alter-iceberg-table-partition-evolution.drop-partition-by.o126"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.alter-iceberg-table-partition-evolution / Syntax"
+note = "a string literal in place of <col_name> (BUCKET ( 1 , 'v1' )), observed"
+
+[[obligation]]
+id = "sf.ddl.alter-iceberg-table-partition-evolution.drop-partition-by.o127"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.alter-iceberg-table-partition-evolution / Syntax"
+note = "a string literal in place of <col_name> (HOUR ( 'v1' )), observed"
+
+[[obligation]]
+id = "sf.ddl.alter-iceberg-table-partition-evolution.drop-partition-by.o128"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.alter-iceberg-table-partition-evolution / Syntax"
+note = "a string literal in place of <col_name> (MONTH ( 'v1' )), observed"
+
+[[obligation]]
+id = "sf.ddl.alter-iceberg-table-partition-evolution.drop-partition-by.o129"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.alter-iceberg-table-partition-evolution / Syntax"
+note = "a string literal in place of <col_name> (DAY ( 'v1' )), observed"
+
+[[obligation]]
+id = "sf.ddl.alter-iceberg-table-partition-evolution.drop-partition-by.o130"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.alter-iceberg-table-partition-evolution / Syntax"
+note = "a string literal in place of <col_name> (YEAR ( 'v1' )), observed"
+
+[[obligation]]
+id = "sf.ddl.alter-iceberg-table-partition-evolution.drop-partition-by.o131"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.alter-iceberg-table-partition-evolution / Syntax"
+note = "a string literal in place of <col_name> (TRUNCATE ( 10 , 'v1' )), observed"
 
 [[obligation]]
 id = "sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with.o001"
@@ -44301,13 +44307,6 @@ target = "'<collation_specification>' in [ COLLATE '<collation_specification>' ]
 note = "a valid string_literal"
 
 [[obligation]]
-id = "sf.ddl.alter-iceberg-table.tablecolumnaction.o064"
-kind = "negative_neighbour"
-required = true
-target = "'<collation_specification>' in [ COLLATE '<collation_specification>' ]"
-note = "an unquoted identifier in place of '<collation_specification>'"
-
-[[obligation]]
 id = "sf.ddl.alter-iceberg-table.tablecolumnaction.o065"
 kind = "required_operand_missing"
 required = true
@@ -45078,6 +45077,13 @@ required = true
 target = "<col2_name>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.ddl.alter-iceberg-table.tablecolumnaction.o191"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.alter-iceberg-table / Syntax"
+note = "an unquoted identifier in place of '<collation_specification>' (COLLATE m1), observed"
 
 [[obligation]]
 id = "sf.ddl.alter-iceberg-table.unset.o001"
@@ -57366,6 +57372,12 @@ required = true
 note = "the form without its required EXISTS in [ IF EXISTS ]"
 
 [[obligation]]
+id = "sf.ddl.alter-restricted-session-scope.add-as.o018"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ADD"
+
+[[obligation]]
 id = "sf.ddl.alter-restricted-session-scope.add-as.o015"
 kind = "negative_neighbour"
 required = true
@@ -57579,6 +57591,12 @@ id = "sf.ddl.alter-restricted-session-scope.remove-as.o014"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required EXISTS in [ IF EXISTS ]"
+
+[[obligation]]
+id = "sf.ddl.alter-restricted-session-scope.remove-as.o018"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required REMOVE"
 
 [[obligation]]
 id = "sf.ddl.alter-restricted-session-scope.remove-as.o015"
@@ -74800,12 +74818,6 @@ required = true
 target = "{ DATA_RETENTION_TIME_IN_DAYS | MAX_DATA_EXTENSION_TIME_IN_DAYS | CHANGE_TRACKING | CONTACT <purpose> | COMME… → COMMENT"
 
 [[obligation]]
-id = "sf.ddl.alter-table-event-table.unset-data-retention-time-in-days-max-data-extension-time-in-days-change-tracking.o012"
-kind = "alternative"
-required = true
-target = "{ DATA_RETENTION_TIME_IN_DAYS | MAX_DATA_EXTENSION_TIME_IN_DAYS | CHANGE_TRACKING | CONTACT <purpose> | COMMENT |  } → "
-
-[[obligation]]
 id = "sf.ddl.alter-table-event-table.unset-data-retention-time-in-days-max-data-extension-time-in-days-change-tracking.o013"
 kind = "required_operand_missing"
 required = true
@@ -74838,10 +74850,10 @@ required = true
 note = "the form without its required UNSET"
 
 [[obligation]]
-id = "sf.ddl.alter-table-event-table.unset-data-retention-time-in-days-max-data-extension-time-in-days-change-tracking.o020"
+id = "sf.ddl.alter-table-event-table.unset-data-retention-time-in-days-max-data-extension-time-in-days-change-tracking.o021"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required { DATA_RETENTION_TIME_IN_DAYS | MAX_DATA_EXTENSION_TIME_IN_DAYS | CHANGE_TRACKING | CONTACT <purpose> | COMMENT |  }"
+note = "the form without its required { DATA_RETENTION_TIME_IN_DAYS | MAX_DATA_EXTENSION_TIME_IN_DAYS | CHANGE_TRACKING | CONTACT <purpose> | COMMENT }"
 
 [[obligation]]
 id = "sf.ddl.alter-table-event-table.unset-data-retention-time-in-days-max-data-extension-time-in-days-change-tracking.o018"
@@ -82726,13 +82738,6 @@ target = "'<collation_specification>' in [ COLLATE '<collation_specification>' ]
 note = "a valid string_literal"
 
 [[obligation]]
-id = "sf.ddl.alter-table.tablecolumnaction.o096"
-kind = "negative_neighbour"
-required = true
-target = "'<collation_specification>' in [ COLLATE '<collation_specification>' ]"
-note = "an unquoted identifier in place of '<collation_specification>'"
-
-[[obligation]]
 id = "sf.ddl.alter-table.tablecolumnaction.o097"
 kind = "required_operand_missing"
 required = true
@@ -83576,6 +83581,13 @@ kind = "extreme"
 required = true
 anchor = "doc.sql.alter-table / Syntax"
 note = "1,000 columns in one DROP COLUMN; no documented bound"
+
+[[obligation]]
+id = "sf.ddl.alter-table.tablecolumnaction.o234"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.alter-table / Syntax"
+note = "an unquoted identifier in place of '<collation_specification>' (COLLATE m1), observed"
 
 [[obligation]]
 id = "sf.ddl.alter-table.unset-data-retention-time-in-days-max-data-extension-time-in-days-change-tracking.o001"
@@ -85586,6 +85598,12 @@ required = true
 note = "the form without its required TASK"
 
 [[obligation]]
+id = "sf.ddl.alter-task-graph.set.o018"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required GRAPH"
+
+[[obligation]]
 id = "sf.ddl.alter-task-graph.set.o014"
 kind = "negative_neighbour"
 required = true
@@ -86190,6 +86208,12 @@ required = true
 note = "the form without its required TASK"
 
 [[obligation]]
+id = "sf.ddl.alter-task-graph.unset.o016"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required GRAPH"
+
+[[obligation]]
 id = "sf.ddl.alter-task-graph.unset.o012"
 kind = "negative_neighbour"
 required = true
@@ -86302,6 +86326,12 @@ required = true
 note = "the form without its required UNSET"
 
 [[obligation]]
+id = "sf.ddl.alter-task-graph.unset-contact.o016"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required CONTACT"
+
+[[obligation]]
 id = "sf.ddl.alter-task-graph.unset-contact.o014"
 kind = "identifier_class"
 required = true
@@ -86407,6 +86437,12 @@ id = "sf.ddl.alter-task-graph.unset-tag.o014"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required UNSET"
+
+[[obligation]]
+id = "sf.ddl.alter-task-graph.unset-tag.o019"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required TAG"
 
 [[obligation]]
 id = "sf.ddl.alter-task-graph.unset-tag.o015"
@@ -88615,6 +88651,12 @@ id = "sf.ddl.alter-task.unset-tag.o014"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required UNSET"
+
+[[obligation]]
+id = "sf.ddl.alter-task.unset-tag.o019"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required TAG"
 
 [[obligation]]
 id = "sf.ddl.alter-task.unset-tag.o015"
@@ -101720,6 +101762,12 @@ required = true
 note = "the form without its required USING"
 
 [[obligation]]
+id = "sf.ddl.create-application.application-package-using-version.o078"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required VERSION"
+
+[[obligation]]
 id = "sf.ddl.create-application.application-package-using-version.o056"
 kind = "negative_neighbour"
 required = true
@@ -113830,13 +113878,6 @@ target = "<col_name> in [ PARTITION BY ( { <col_name> | BUCKET ( <num_buckets> ,
 note = "a valid identifier"
 
 [[obligation]]
-id = "sf.ddl.create-dynamic-table.create-dynamic-iceberg-table.o277"
-kind = "negative_neighbour"
-required = true
-target = "<col_name> in [ PARTITION BY ( { <col_name> | BUCKET ( <num_buckets> , <col_name> ) | TRUNCATE ( <width> , <col_name> )… #2"
-note = "a string literal in place of <col_name>"
-
-[[obligation]]
 id = "sf.ddl.create-dynamic-table.create-dynamic-iceberg-table.o278"
 kind = "required_operand_missing"
 required = true
@@ -113865,13 +113906,6 @@ target = "<col_name> in [ PARTITION BY ( { <col_name> | BUCKET ( <num_buckets> ,
 note = "a valid identifier"
 
 [[obligation]]
-id = "sf.ddl.create-dynamic-table.create-dynamic-iceberg-table.o282"
-kind = "negative_neighbour"
-required = true
-target = "<col_name> in [ PARTITION BY ( { <col_name> | BUCKET ( <num_buckets> , <col_name> ) | TRUNCATE ( <width> , <col_name> )… #3"
-note = "a string literal in place of <col_name>"
-
-[[obligation]]
 id = "sf.ddl.create-dynamic-table.create-dynamic-iceberg-table.o283"
 kind = "required_operand_missing"
 required = true
@@ -113884,13 +113918,6 @@ kind = "operand_type_class"
 required = true
 target = "<col_name> in [ PARTITION BY ( { <col_name> | BUCKET ( <num_buckets> , <col_name> ) | TRUNCATE ( <width> , <col_name> )… #4"
 note = "a valid identifier"
-
-[[obligation]]
-id = "sf.ddl.create-dynamic-table.create-dynamic-iceberg-table.o285"
-kind = "negative_neighbour"
-required = true
-target = "<col_name> in [ PARTITION BY ( { <col_name> | BUCKET ( <num_buckets> , <col_name> ) | TRUNCATE ( <width> , <col_name> )… #4"
-note = "a string literal in place of <col_name>"
 
 [[obligation]]
 id = "sf.ddl.create-dynamic-table.create-dynamic-iceberg-table.o286"
@@ -113907,13 +113934,6 @@ target = "<col_name> in [ PARTITION BY ( { <col_name> | BUCKET ( <num_buckets> ,
 note = "a valid identifier"
 
 [[obligation]]
-id = "sf.ddl.create-dynamic-table.create-dynamic-iceberg-table.o288"
-kind = "negative_neighbour"
-required = true
-target = "<col_name> in [ PARTITION BY ( { <col_name> | BUCKET ( <num_buckets> , <col_name> ) | TRUNCATE ( <width> , <col_name> )… #5"
-note = "a string literal in place of <col_name>"
-
-[[obligation]]
 id = "sf.ddl.create-dynamic-table.create-dynamic-iceberg-table.o289"
 kind = "required_operand_missing"
 required = true
@@ -113928,13 +113948,6 @@ target = "<col_name> in [ PARTITION BY ( { <col_name> | BUCKET ( <num_buckets> ,
 note = "a valid identifier"
 
 [[obligation]]
-id = "sf.ddl.create-dynamic-table.create-dynamic-iceberg-table.o291"
-kind = "negative_neighbour"
-required = true
-target = "<col_name> in [ PARTITION BY ( { <col_name> | BUCKET ( <num_buckets> , <col_name> ) | TRUNCATE ( <width> , <col_name> )… #6"
-note = "a string literal in place of <col_name>"
-
-[[obligation]]
 id = "sf.ddl.create-dynamic-table.create-dynamic-iceberg-table.o292"
 kind = "required_operand_missing"
 required = true
@@ -113947,13 +113960,6 @@ kind = "operand_type_class"
 required = true
 target = "<col_name> in [ PARTITION BY ( { <col_name> | BUCKET ( <num_buckets> , <col_name> ) | TRUNCATE ( <width> , <col_name> )… #7"
 note = "a valid identifier"
-
-[[obligation]]
-id = "sf.ddl.create-dynamic-table.create-dynamic-iceberg-table.o294"
-kind = "negative_neighbour"
-required = true
-target = "<col_name> in [ PARTITION BY ( { <col_name> | BUCKET ( <num_buckets> , <col_name> ) | TRUNCATE ( <width> , <col_name> )… #7"
-note = "a string literal in place of <col_name>"
 
 [[obligation]]
 id = "sf.ddl.create-dynamic-table.create-dynamic-iceberg-table.o295"
@@ -115195,6 +115201,48 @@ required = true
 target = "TARGET_LAG = '<num> { seconds | minutes | hours | days }'"
 anchor = "doc.sql.create-dynamic-table / Parameters"
 note = "TARGET_LAG = '61 seconds' against the documented minimum of 60 seconds"
+
+[[obligation]]
+id = "sf.ddl.create-dynamic-table.create-dynamic-iceberg-table.o379"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.create-dynamic-table / Syntax"
+note = "a string literal in place of <col_name> (MONTH ( 'v1' )), observed"
+
+[[obligation]]
+id = "sf.ddl.create-dynamic-table.create-dynamic-iceberg-table.o380"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.create-dynamic-table / Syntax"
+note = "a string literal in place of <col_name> (BUCKET ( 1 , 'v1' )), observed"
+
+[[obligation]]
+id = "sf.ddl.create-dynamic-table.create-dynamic-iceberg-table.o381"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.create-dynamic-table / Syntax"
+note = "a string literal in place of <col_name> (DAY ( 'v1' )), observed"
+
+[[obligation]]
+id = "sf.ddl.create-dynamic-table.create-dynamic-iceberg-table.o382"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.create-dynamic-table / Syntax"
+note = "a string literal in place of <col_name> (HOUR ( 'v1' )), observed"
+
+[[obligation]]
+id = "sf.ddl.create-dynamic-table.create-dynamic-iceberg-table.o383"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.create-dynamic-table / Syntax"
+note = "a string literal in place of <col_name> (YEAR ( 'v1' )), observed"
+
+[[obligation]]
+id = "sf.ddl.create-dynamic-table.create-dynamic-iceberg-table.o384"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.create-dynamic-table / Syntax"
+note = "a string literal in place of <col_name> (TRUNCATE ( 10 , 'v1' )), observed"
 
 [[obligation]]
 id = "sf.ddl.create-dynamic-table.create-dynamic-iceberg-table.create-dynamic-iceberg-table.o001"
@@ -117566,13 +117614,6 @@ target = "'<stream_name>' in [ START AT ( { STREAM => '<stream_name>' | TIMESTAM
 note = "a valid string_literal"
 
 [[obligation]]
-id = "sf.ddl.create-dynamic-table.create-dynamic-table-target-lag.o197"
-kind = "negative_neighbour"
-required = true
-target = "'<stream_name>' in [ START AT ( { STREAM => '<stream_name>' | TIMESTAMP => <timestamp> | STATEMENT => <query_id> | OFFS…"
-note = "an unquoted identifier in place of '<stream_name>'"
-
-[[obligation]]
 id = "sf.ddl.create-dynamic-table.create-dynamic-table-target-lag.o198"
 kind = "required_operand_missing"
 required = true
@@ -118401,6 +118442,13 @@ anchor = "doc.sql.create-dynamic-table / Parameters"
 note = "TARGET_LAG = '61 seconds' against the documented minimum of 60 seconds"
 
 [[obligation]]
+id = "sf.ddl.create-dynamic-table.create-dynamic-table-target-lag.o337"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.create-dynamic-table / Syntax"
+note = "an unquoted identifier in place of '<stream_name>' (AT ( STREAM => m1 )), observed"
+
+[[obligation]]
 id = "sf.ddl.create-dynamic-table.create-or-alter-dynamic.o001"
 kind = "positive"
 required = true
@@ -118506,13 +118554,6 @@ kind = "operand_type_class"
 required = true
 target = "'<collation_specification>' in [ COLLATE '<collation_specification>' ]"
 note = "a valid string_literal"
-
-[[obligation]]
-id = "sf.ddl.create-dynamic-table.create-or-alter-dynamic.o017"
-kind = "negative_neighbour"
-required = true
-target = "'<collation_specification>' in [ COLLATE '<collation_specification>' ]"
-note = "an unquoted identifier in place of '<collation_specification>'"
 
 [[obligation]]
 id = "sf.ddl.create-dynamic-table.create-or-alter-dynamic.o018"
@@ -119001,13 +119042,6 @@ kind = "operand_type_class"
 required = true
 target = "'<stream_name>' in [ START AT ( { STREAM => '<stream_name>' | TIMESTAMP => <timestamp> | STATEMENT => <query_id> | OFFS…"
 note = "a valid string_literal"
-
-[[obligation]]
-id = "sf.ddl.create-dynamic-table.create-or-alter-dynamic.o094"
-kind = "negative_neighbour"
-required = true
-target = "'<stream_name>' in [ START AT ( { STREAM => '<stream_name>' | TIMESTAMP => <timestamp> | STATEMENT => <query_id> | OFFS…"
-note = "an unquoted identifier in place of '<stream_name>'"
 
 [[obligation]]
 id = "sf.ddl.create-dynamic-table.create-or-alter-dynamic.o095"
@@ -119520,6 +119554,20 @@ required = true
 target = "TARGET_LAG = '<num> { seconds | minutes | hours | days }'"
 anchor = "doc.sql.create-dynamic-table / Parameters"
 note = "TARGET_LAG = '61 seconds' against the documented minimum of 60 seconds"
+
+[[obligation]]
+id = "sf.ddl.create-dynamic-table.create-or-alter-dynamic.o197"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.create-dynamic-table / Syntax"
+note = "an unquoted identifier in place of '<stream_name>' (AT ( STREAM => m1 )), observed"
+
+[[obligation]]
+id = "sf.ddl.create-dynamic-table.create-or-alter-dynamic.o198"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.create-dynamic-table / Syntax"
+note = "an unquoted identifier in place of '<collation_specification>' (COLLATE m1), observed"
 
 [[obligation]]
 id = "sf.ddl.create-event-routing-table.o001"
@@ -143421,13 +143469,6 @@ target = "'<collation_specification>' in [ COLLATE '<collation_specification>' ]
 note = "a valid string_literal"
 
 [[obligation]]
-id = "sf.ddl.create-hybrid-table.table.o050"
-kind = "negative_neighbour"
-required = true
-target = "'<collation_specification>' in [ COLLATE '<collation_specification>' ]"
-note = "an unquoted identifier in place of '<collation_specification>'"
-
-[[obligation]]
 id = "sf.ddl.create-hybrid-table.table.o051"
 kind = "option_present"
 required = true
@@ -144300,6 +144341,13 @@ required = true
 target = "<index_name>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.ddl.create-hybrid-table.table.o229"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.create-hybrid-table / Syntax"
+note = "an unquoted identifier in place of '<collation_specification>' (COLLATE m1), observed"
 
 [[obligation]]
 id = "sf.ddl.create-hybrid-table.table-as.o001"
@@ -147839,13 +147887,6 @@ target = "<col_name> in [ PARTITION BY ( { <col_name> | BUCKET ( <num_buckets> ,
 note = "a valid identifier"
 
 [[obligation]]
-id = "sf.ddl.create-iceberg-table.table.o444"
-kind = "negative_neighbour"
-required = true
-target = "<col_name> in [ PARTITION BY ( { <col_name> | BUCKET ( <num_buckets> , <col_name> ) | TRUNCATE ( <width> , <col_name> )… #2"
-note = "a string literal in place of <col_name>"
-
-[[obligation]]
 id = "sf.ddl.create-iceberg-table.table.o445"
 kind = "required_operand_missing"
 required = true
@@ -147874,13 +147915,6 @@ target = "<col_name> in [ PARTITION BY ( { <col_name> | BUCKET ( <num_buckets> ,
 note = "a valid identifier"
 
 [[obligation]]
-id = "sf.ddl.create-iceberg-table.table.o449"
-kind = "negative_neighbour"
-required = true
-target = "<col_name> in [ PARTITION BY ( { <col_name> | BUCKET ( <num_buckets> , <col_name> ) | TRUNCATE ( <width> , <col_name> )… #3"
-note = "a string literal in place of <col_name>"
-
-[[obligation]]
 id = "sf.ddl.create-iceberg-table.table.o450"
 kind = "required_operand_missing"
 required = true
@@ -147893,13 +147927,6 @@ kind = "operand_type_class"
 required = true
 target = "<col_name> in [ PARTITION BY ( { <col_name> | BUCKET ( <num_buckets> , <col_name> ) | TRUNCATE ( <width> , <col_name> )… #4"
 note = "a valid identifier"
-
-[[obligation]]
-id = "sf.ddl.create-iceberg-table.table.o452"
-kind = "negative_neighbour"
-required = true
-target = "<col_name> in [ PARTITION BY ( { <col_name> | BUCKET ( <num_buckets> , <col_name> ) | TRUNCATE ( <width> , <col_name> )… #4"
-note = "a string literal in place of <col_name>"
 
 [[obligation]]
 id = "sf.ddl.create-iceberg-table.table.o453"
@@ -147916,13 +147943,6 @@ target = "<col_name> in [ PARTITION BY ( { <col_name> | BUCKET ( <num_buckets> ,
 note = "a valid identifier"
 
 [[obligation]]
-id = "sf.ddl.create-iceberg-table.table.o455"
-kind = "negative_neighbour"
-required = true
-target = "<col_name> in [ PARTITION BY ( { <col_name> | BUCKET ( <num_buckets> , <col_name> ) | TRUNCATE ( <width> , <col_name> )… #5"
-note = "a string literal in place of <col_name>"
-
-[[obligation]]
 id = "sf.ddl.create-iceberg-table.table.o456"
 kind = "required_operand_missing"
 required = true
@@ -147937,13 +147957,6 @@ target = "<col_name> in [ PARTITION BY ( { <col_name> | BUCKET ( <num_buckets> ,
 note = "a valid identifier"
 
 [[obligation]]
-id = "sf.ddl.create-iceberg-table.table.o458"
-kind = "negative_neighbour"
-required = true
-target = "<col_name> in [ PARTITION BY ( { <col_name> | BUCKET ( <num_buckets> , <col_name> ) | TRUNCATE ( <width> , <col_name> )… #6"
-note = "a string literal in place of <col_name>"
-
-[[obligation]]
 id = "sf.ddl.create-iceberg-table.table.o459"
 kind = "required_operand_missing"
 required = true
@@ -147956,13 +147969,6 @@ kind = "operand_type_class"
 required = true
 target = "<col_name> in [ PARTITION BY ( { <col_name> | BUCKET ( <num_buckets> , <col_name> ) | TRUNCATE ( <width> , <col_name> )… #7"
 note = "a valid identifier"
-
-[[obligation]]
-id = "sf.ddl.create-iceberg-table.table.o461"
-kind = "negative_neighbour"
-required = true
-target = "<col_name> in [ PARTITION BY ( { <col_name> | BUCKET ( <num_buckets> , <col_name> ) | TRUNCATE ( <width> , <col_name> )… #7"
-note = "a string literal in place of <col_name>"
 
 [[obligation]]
 id = "sf.ddl.create-iceberg-table.table.o462"
@@ -149407,6 +149413,48 @@ required = true
 target = "<contact_name>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.ddl.create-iceberg-table.table.o571"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.create-iceberg-table / Syntax"
+note = "a string literal in place of <col_name> (MONTH ( 'v1' )), observed"
+
+[[obligation]]
+id = "sf.ddl.create-iceberg-table.table.o572"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.create-iceberg-table / Syntax"
+note = "a string literal in place of <col_name> (HOUR ( 'v1' )), observed"
+
+[[obligation]]
+id = "sf.ddl.create-iceberg-table.table.o573"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.create-iceberg-table / Syntax"
+note = "a string literal in place of <col_name> (YEAR ( 'v1' )), observed"
+
+[[obligation]]
+id = "sf.ddl.create-iceberg-table.table.o574"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.create-iceberg-table / Syntax"
+note = "a string literal in place of <col_name> (BUCKET ( 1 , 'v1' )), observed"
+
+[[obligation]]
+id = "sf.ddl.create-iceberg-table.table.o575"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.create-iceberg-table / Syntax"
+note = "a string literal in place of <col_name> (TRUNCATE ( 10 , 'v1' )), observed"
+
+[[obligation]]
+id = "sf.ddl.create-iceberg-table.table.o576"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.create-iceberg-table / Syntax"
+note = "a string literal in place of <col_name> (DAY ( 'v1' )), observed"
 
 [[obligation]]
 id = "sf.ddl.create-iceberg-table.table-as-select.o001"
@@ -155027,13 +155075,6 @@ target = "<col_name> in [ PARTITION BY ( { <col_name> | BUCKET ( <num_buckets> ,
 note = "a valid identifier"
 
 [[obligation]]
-id = "sf.ddl.create-iceberg-table.table.iceberg-rest-in-a-catalog-linked-database.o164"
-kind = "negative_neighbour"
-required = true
-target = "<col_name> in [ PARTITION BY ( { <col_name> | BUCKET ( <num_buckets> , <col_name> ) | TRUNCATE ( <width> , <col_name> )… #2"
-note = "a string literal in place of <col_name>"
-
-[[obligation]]
 id = "sf.ddl.create-iceberg-table.table.iceberg-rest-in-a-catalog-linked-database.o165"
 kind = "required_operand_missing"
 required = true
@@ -155062,13 +155103,6 @@ target = "<col_name> in [ PARTITION BY ( { <col_name> | BUCKET ( <num_buckets> ,
 note = "a valid identifier"
 
 [[obligation]]
-id = "sf.ddl.create-iceberg-table.table.iceberg-rest-in-a-catalog-linked-database.o169"
-kind = "negative_neighbour"
-required = true
-target = "<col_name> in [ PARTITION BY ( { <col_name> | BUCKET ( <num_buckets> , <col_name> ) | TRUNCATE ( <width> , <col_name> )… #3"
-note = "a string literal in place of <col_name>"
-
-[[obligation]]
 id = "sf.ddl.create-iceberg-table.table.iceberg-rest-in-a-catalog-linked-database.o170"
 kind = "required_operand_missing"
 required = true
@@ -155081,13 +155115,6 @@ kind = "operand_type_class"
 required = true
 target = "<col_name> in [ PARTITION BY ( { <col_name> | BUCKET ( <num_buckets> , <col_name> ) | TRUNCATE ( <width> , <col_name> )… #4"
 note = "a valid identifier"
-
-[[obligation]]
-id = "sf.ddl.create-iceberg-table.table.iceberg-rest-in-a-catalog-linked-database.o172"
-kind = "negative_neighbour"
-required = true
-target = "<col_name> in [ PARTITION BY ( { <col_name> | BUCKET ( <num_buckets> , <col_name> ) | TRUNCATE ( <width> , <col_name> )… #4"
-note = "a string literal in place of <col_name>"
 
 [[obligation]]
 id = "sf.ddl.create-iceberg-table.table.iceberg-rest-in-a-catalog-linked-database.o173"
@@ -155104,13 +155131,6 @@ target = "<col_name> in [ PARTITION BY ( { <col_name> | BUCKET ( <num_buckets> ,
 note = "a valid identifier"
 
 [[obligation]]
-id = "sf.ddl.create-iceberg-table.table.iceberg-rest-in-a-catalog-linked-database.o175"
-kind = "negative_neighbour"
-required = true
-target = "<col_name> in [ PARTITION BY ( { <col_name> | BUCKET ( <num_buckets> , <col_name> ) | TRUNCATE ( <width> , <col_name> )… #5"
-note = "a string literal in place of <col_name>"
-
-[[obligation]]
 id = "sf.ddl.create-iceberg-table.table.iceberg-rest-in-a-catalog-linked-database.o176"
 kind = "required_operand_missing"
 required = true
@@ -155125,13 +155145,6 @@ target = "<col_name> in [ PARTITION BY ( { <col_name> | BUCKET ( <num_buckets> ,
 note = "a valid identifier"
 
 [[obligation]]
-id = "sf.ddl.create-iceberg-table.table.iceberg-rest-in-a-catalog-linked-database.o178"
-kind = "negative_neighbour"
-required = true
-target = "<col_name> in [ PARTITION BY ( { <col_name> | BUCKET ( <num_buckets> , <col_name> ) | TRUNCATE ( <width> , <col_name> )… #6"
-note = "a string literal in place of <col_name>"
-
-[[obligation]]
 id = "sf.ddl.create-iceberg-table.table.iceberg-rest-in-a-catalog-linked-database.o179"
 kind = "required_operand_missing"
 required = true
@@ -155144,13 +155157,6 @@ kind = "operand_type_class"
 required = true
 target = "<col_name> in [ PARTITION BY ( { <col_name> | BUCKET ( <num_buckets> , <col_name> ) | TRUNCATE ( <width> , <col_name> )… #7"
 note = "a valid identifier"
-
-[[obligation]]
-id = "sf.ddl.create-iceberg-table.table.iceberg-rest-in-a-catalog-linked-database.o181"
-kind = "negative_neighbour"
-required = true
-target = "<col_name> in [ PARTITION BY ( { <col_name> | BUCKET ( <num_buckets> , <col_name> ) | TRUNCATE ( <width> , <col_name> )… #7"
-note = "a string literal in place of <col_name>"
 
 [[obligation]]
 id = "sf.ddl.create-iceberg-table.table.iceberg-rest-in-a-catalog-linked-database.o182"
@@ -155771,6 +155777,48 @@ required = true
 target = "<tag_name>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.ddl.create-iceberg-table.table.iceberg-rest-in-a-catalog-linked-database.o260"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.create-iceberg-table / Syntax"
+note = "a string literal in place of <col_name> (YEAR ( 'v1' )), observed"
+
+[[obligation]]
+id = "sf.ddl.create-iceberg-table.table.iceberg-rest-in-a-catalog-linked-database.o261"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.create-iceberg-table / Syntax"
+note = "a string literal in place of <col_name> (HOUR ( 'v1' )), observed"
+
+[[obligation]]
+id = "sf.ddl.create-iceberg-table.table.iceberg-rest-in-a-catalog-linked-database.o262"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.create-iceberg-table / Syntax"
+note = "a string literal in place of <col_name> (TRUNCATE ( 10 , 'v1' )), observed"
+
+[[obligation]]
+id = "sf.ddl.create-iceberg-table.table.iceberg-rest-in-a-catalog-linked-database.o263"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.create-iceberg-table / Syntax"
+note = "a string literal in place of <col_name> (MONTH ( 'v1' )), observed"
+
+[[obligation]]
+id = "sf.ddl.create-iceberg-table.table.iceberg-rest-in-a-catalog-linked-database.o264"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.create-iceberg-table / Syntax"
+note = "a string literal in place of <col_name> (BUCKET ( 1 , 'v1' )), observed"
+
+[[obligation]]
+id = "sf.ddl.create-iceberg-table.table.iceberg-rest-in-a-catalog-linked-database.o265"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.create-iceberg-table / Syntax"
+note = "a string literal in place of <col_name> (DAY ( 'v1' )), observed"
 
 [[obligation]]
 id = "sf.ddl.create-image-repository.o001"
@@ -200874,13 +200922,6 @@ target = "'<name>' in [ { AT | BEFORE } ( { TIMESTAMP => <timestamp> | OFFSET =>
 note = "a valid string_literal"
 
 [[obligation]]
-id = "sf.ddl.create-stream.create-stream-on-external.o042"
-kind = "negative_neighbour"
-required = true
-target = "'<name>' in [ { AT | BEFORE } ( { TIMESTAMP => <timestamp> | OFFSET => <time_difference> | STATEMENT => <id> | STREAM =…"
-note = "an unquoted identifier in place of '<name>'"
-
-[[obligation]]
 id = "sf.ddl.create-stream.create-stream-on-external.o043"
 kind = "option_present"
 required = true
@@ -201116,6 +201157,13 @@ required = true
 target = "'<tag_value>'"
 anchor = "doc.sql.create-stream / Parameters"
 note = "a tag value of 257 characters against the documented maximum of 256"
+
+[[obligation]]
+id = "sf.ddl.create-stream.create-stream-on-external.o091"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.create-stream / Syntax"
+note = "an unquoted identifier in place of '<name>' (AT ( STREAM => m1 )), observed"
 
 [[obligation]]
 id = "sf.ddl.create-stream.create-stream-on-stage.o001"
@@ -201749,13 +201797,6 @@ target = "'<name>' in [ { AT | BEFORE } ( { TIMESTAMP => <timestamp> | OFFSET =>
 note = "a valid string_literal"
 
 [[obligation]]
-id = "sf.ddl.create-stream.create-stream-on-table.o042"
-kind = "negative_neighbour"
-required = true
-target = "'<name>' in [ { AT | BEFORE } ( { TIMESTAMP => <timestamp> | OFFSET => <time_difference> | STATEMENT => <id> | STREAM =…"
-note = "an unquoted identifier in place of '<name>'"
-
-[[obligation]]
 id = "sf.ddl.create-stream.create-stream-on-table.o043"
 kind = "option_present"
 required = true
@@ -202035,6 +202076,13 @@ anchor = "doc.sql.create-stream / Parameters"
 note = "a tag value of 257 characters against the documented maximum of 256"
 
 [[obligation]]
+id = "sf.ddl.create-stream.create-stream-on-table.o098"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.create-stream / Syntax"
+note = "an unquoted identifier in place of '<name>' (AT ( STREAM => m1 )), observed"
+
+[[obligation]]
 id = "sf.ddl.create-stream.create-stream-on-view.o001"
 kind = "positive"
 required = true
@@ -202300,13 +202348,6 @@ kind = "operand_type_class"
 required = true
 target = "'<name>' in [ { AT | BEFORE } ( { TIMESTAMP => <timestamp> | OFFSET => <time_difference> | STATEMENT => <id> | STREAM =…"
 note = "a valid string_literal"
-
-[[obligation]]
-id = "sf.ddl.create-stream.create-stream-on-view.o042"
-kind = "negative_neighbour"
-required = true
-target = "'<name>' in [ { AT | BEFORE } ( { TIMESTAMP => <timestamp> | OFFSET => <time_difference> | STATEMENT => <id> | STREAM =…"
-note = "an unquoted identifier in place of '<name>'"
 
 [[obligation]]
 id = "sf.ddl.create-stream.create-stream-on-view.o043"
@@ -202586,6 +202627,13 @@ required = true
 target = "'<tag_value>'"
 anchor = "doc.sql.create-stream / Parameters"
 note = "a tag value of 257 characters against the documented maximum of 256"
+
+[[obligation]]
+id = "sf.ddl.create-stream.create-stream-on-view.o098"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.create-stream / Syntax"
+note = "an unquoted identifier in place of '<name>' (AT ( STREAM => m1 )), observed"
 
 [[obligation]]
 id = "sf.ddl.create-streamlit.create-streamlit.o001"
@@ -209708,13 +209756,6 @@ target = "'<collation_specification>' in [ COLLATE '<collation_specification>' ]
 note = "a valid string_literal"
 
 [[obligation]]
-id = "sf.ddl.create-table.create-or-alter-table.o029"
-kind = "negative_neighbour"
-required = true
-target = "'<collation_specification>' in [ COLLATE '<collation_specification>' ]"
-note = "an unquoted identifier in place of '<collation_specification>'"
-
-[[obligation]]
 id = "sf.ddl.create-table.create-or-alter-table.o030"
 kind = "option_present"
 required = true
@@ -210880,6 +210921,13 @@ anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
+id = "sf.ddl.create-table.create-or-alter-table.o252"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.create-table / Syntax"
+note = "an unquoted identifier in place of '<collation_specification>' (COLLATE m1), observed"
+
+[[obligation]]
 id = "sf.ddl.create-table.create-table.o001"
 kind = "positive"
 required = true
@@ -211287,13 +211335,6 @@ kind = "operand_type_class"
 required = true
 target = "'<collation_specification>' in [ COLLATE '<collation_specification>' ]"
 note = "a valid string_literal"
-
-[[obligation]]
-id = "sf.ddl.create-table.create-table.o042"
-kind = "negative_neighbour"
-required = true
-target = "'<collation_specification>' in [ COLLATE '<collation_specification>' ]"
-note = "an unquoted identifier in place of '<collation_specification>'"
 
 [[obligation]]
 id = "sf.ddl.create-table.create-table.o043"
@@ -213692,6 +213733,13 @@ kind = "extreme"
 required = true
 anchor = "doc.sql.create-table / Syntax"
 note = "100 out-of-line UNIQUE constraints; no documented bound"
+
+[[obligation]]
+id = "sf.ddl.create-table.create-table.o456"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.create-table / Syntax"
+note = "an unquoted identifier in place of '<collation_specification>' (COLLATE m1), observed"
 
 [[obligation]]
 id = "sf.ddl.create-table.create-table-as.o001"
@@ -232981,28 +233029,28 @@ target = "'<pattern>' in [ LIKE '<pattern>' ]"
 note = "an unquoted identifier in place of '<pattern>'"
 
 [[obligation]]
-id = "sf.ddl.show-alerts.o009"
+id = "sf.ddl.show-alerts.o059"
 kind = "option_present"
 required = true
-target = "[ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> APPLICATION <appli…"
+target = "[ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> | APPLICATION <app…"
 
 [[obligation]]
-id = "sf.ddl.show-alerts.o010"
+id = "sf.ddl.show-alerts.o060"
 kind = "option_absent"
 required = true
-target = "[ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> APPLICATION <appli…"
+target = "[ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> | APPLICATION <app…"
 
 [[obligation]]
-id = "sf.ddl.show-alerts.o011"
+id = "sf.ddl.show-alerts.o061"
 kind = "alternative"
 required = true
-target = "{ ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> APPLICATION <… → ACCOUNT"
+target = "{ ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> | APPLICATION… → ACCOUNT"
 
 [[obligation]]
-id = "sf.ddl.show-alerts.o012"
+id = "sf.ddl.show-alerts.o062"
 kind = "alternative"
 required = true
-target = "{ ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> APPLICATION … → DATABASE"
+target = "{ ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> | APPLICATIO… → DATABASE"
 
 [[obligation]]
 id = "sf.ddl.show-alerts.o013"
@@ -233011,10 +233059,10 @@ required = true
 target = "{ ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_na… → DATABASE <database_name>"
 
 [[obligation]]
-id = "sf.ddl.show-alerts.o014"
+id = "sf.ddl.show-alerts.o063"
 kind = "alternative"
 required = true
-target = "{ ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> APPLICATION <a… → SCHEMA"
+target = "{ ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> | APPLICATION … → SCHEMA"
 
 [[obligation]]
 id = "sf.ddl.show-alerts.o015"
@@ -233023,22 +233071,22 @@ required = true
 target = "{ ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> … → SCHEMA <schema_name>"
 
 [[obligation]]
-id = "sf.ddl.show-alerts.o016"
+id = "sf.ddl.show-alerts.o064"
 kind = "alternative"
 required = true
-target = "{ ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schem… → <schema_name> APPLICATION <application_name>"
+target = "{ ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> | APPLI… → <schema_name>"
+
+[[obligation]]
+id = "sf.ddl.show-alerts.o065"
+kind = "alternative"
+required = true
+target = "{ ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <sch… → APPLICATION <application_name>"
 
 [[obligation]]
 id = "sf.ddl.show-alerts.o017"
 kind = "alternative"
 required = true
 target = "{ ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <sch… → APPLICATION PACKAGE <application_package_name>"
-
-[[obligation]]
-id = "sf.ddl.show-alerts.o018"
-kind = "alternative"
-required = true
-target = "{ ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> APPLICATION <applica… → "
 
 [[obligation]]
 id = "sf.ddl.show-alerts.o019"
@@ -233055,38 +233103,31 @@ target = "<database_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name
 note = "a string literal in place of <database_name>"
 
 [[obligation]]
-id = "sf.ddl.show-alerts.o021"
+id = "sf.ddl.show-alerts.o066"
 kind = "operand_type_class"
 required = true
-target = "<schema_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> A…"
+target = "<schema_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> |…"
 note = "a valid identifier"
 
 [[obligation]]
-id = "sf.ddl.show-alerts.o022"
+id = "sf.ddl.show-alerts.o067"
 kind = "negative_neighbour"
 required = true
-target = "<schema_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> A…"
+target = "<schema_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> |…"
 note = "a string literal in place of <schema_name>"
 
 [[obligation]]
-id = "sf.ddl.show-alerts.o023"
-kind = "required_operand_missing"
-required = true
-target = "<schema_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> A… #2"
-note = "omit <schema_name>"
-
-[[obligation]]
-id = "sf.ddl.show-alerts.o024"
+id = "sf.ddl.show-alerts.o068"
 kind = "operand_type_class"
 required = true
-target = "<schema_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> A… #2"
+target = "<schema_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> |… #2"
 note = "a valid identifier"
 
 [[obligation]]
-id = "sf.ddl.show-alerts.o025"
+id = "sf.ddl.show-alerts.o069"
 kind = "negative_neighbour"
 required = true
-target = "<schema_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> A… #2"
+target = "<schema_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> |… #2"
 note = "a string literal in place of <schema_name>"
 
 [[obligation]]
@@ -233230,16 +233271,10 @@ required = true
 note = "the form without its required ALERTS"
 
 [[obligation]]
-id = "sf.ddl.show-alerts.o047"
+id = "sf.ddl.show-alerts.o070"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required APPLICATION in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> APPLICATION <appli…"
-
-[[obligation]]
-id = "sf.ddl.show-alerts.o048"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required PACKAGE in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> APPLICATION <appli…"
+note = "the form without its required { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> | APPLICATION <application_name> | APPLICATION PACKAGE <application_package_name> } in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> | APPLICATION <app…"
 
 [[obligation]]
 id = "sf.ddl.show-alerts.o049"
@@ -235614,60 +235649,60 @@ target = "'<pattern>' in [ LIKE '<pattern>' ]"
 note = "an unquoted identifier in place of '<pattern>'"
 
 [[obligation]]
-id = "sf.ddl.show-committed-tasks.o007"
+id = "sf.ddl.show-committed-tasks.o049"
 kind = "option_present"
 required = true
-target = "[ IN { GRAPH <graph_name> | ACCOUNT | DATABASE [ <db_name> ] | [ SCHEMA ] [ <schema_name> ] } ]"
+target = "[ IN { GRAPH <graph_name> | ACCOUNT | DATABASE [ <db_name> ] | { SCHEMA [ <schema_name> ] | <schema_name> } } ]"
 
 [[obligation]]
-id = "sf.ddl.show-committed-tasks.o008"
+id = "sf.ddl.show-committed-tasks.o050"
 kind = "option_absent"
 required = true
-target = "[ IN { GRAPH <graph_name> | ACCOUNT | DATABASE [ <db_name> ] | [ SCHEMA ] [ <schema_name> ] } ]"
+target = "[ IN { GRAPH <graph_name> | ACCOUNT | DATABASE [ <db_name> ] | { SCHEMA [ <schema_name> ] | <schema_name> } } ]"
 
 [[obligation]]
-id = "sf.ddl.show-committed-tasks.o009"
+id = "sf.ddl.show-committed-tasks.o051"
 kind = "alternative"
 required = true
-target = "{ GRAPH <graph_name> | ACCOUNT | DATABASE [ <db_name> ] | [ SCHEMA ] [ <schema_name> ] } → GRAPH <graph_name>"
+target = "{ GRAPH <graph_name> | ACCOUNT | DATABASE [ <db_name> ] | { SCHEMA [ <schema_name> ] | <schema_nam… → GRAPH <graph_name>"
 
 [[obligation]]
-id = "sf.ddl.show-committed-tasks.o010"
+id = "sf.ddl.show-committed-tasks.o052"
 kind = "alternative"
 required = true
-target = "{ GRAPH <graph_name> | ACCOUNT | DATABASE [ <db_name> ] | [ SCHEMA ] [ <schema_name> ] } → ACCOUNT"
+target = "{ GRAPH <graph_name> | ACCOUNT | DATABASE [ <db_name> ] | { SCHEMA [ <schema_name> ] | <schema_name> } } → ACCOUNT"
 
 [[obligation]]
-id = "sf.ddl.show-committed-tasks.o011"
+id = "sf.ddl.show-committed-tasks.o053"
 kind = "alternative"
 required = true
-target = "{ GRAPH <graph_name> | ACCOUNT | DATABASE [ <db_name> ] | [ SCHEMA ] [ <schema_name> ] } → DATABASE [ <db_name> ]"
+target = "{ GRAPH <graph_name> | ACCOUNT | DATABASE [ <db_name> ] | { SCHEMA [ <schema_name> ] | <schema… → DATABASE [ <db_name> ]"
 
 [[obligation]]
-id = "sf.ddl.show-committed-tasks.o012"
+id = "sf.ddl.show-committed-tasks.o054"
 kind = "alternative"
 required = true
-target = "{ GRAPH <graph_name> | ACCOUNT | DATABASE [ <db_name> ] | [ SCHEMA ] [ <schema_name> ] } → [ SCHEMA ] [ <schema_name> ]"
+target = "{ GRAPH <graph_name> | ACCOUNT | DATABASE [ <db_name> ] | { SCHEMA [ <sc… → { SCHEMA [ <schema_name> ] | <schema_name> }"
 
 [[obligation]]
-id = "sf.ddl.show-committed-tasks.o013"
+id = "sf.ddl.show-committed-tasks.o055"
 kind = "required_operand_missing"
 required = true
-target = "<graph_name> in [ IN { GRAPH <graph_name> | ACCOUNT | DATABASE [ <db_name> ] | [ SCHEMA ] [ <schema_name> ] } ]"
+target = "<graph_name> in [ IN { GRAPH <graph_name> | ACCOUNT | DATABASE [ <db_name> ] | { SCHEMA [ <schema_name> ] | <schema_nam…"
 note = "omit <graph_name>"
 
 [[obligation]]
-id = "sf.ddl.show-committed-tasks.o014"
+id = "sf.ddl.show-committed-tasks.o056"
 kind = "operand_type_class"
 required = true
-target = "<graph_name> in [ IN { GRAPH <graph_name> | ACCOUNT | DATABASE [ <db_name> ] | [ SCHEMA ] [ <schema_name> ] } ]"
+target = "<graph_name> in [ IN { GRAPH <graph_name> | ACCOUNT | DATABASE [ <db_name> ] | { SCHEMA [ <schema_name> ] | <schema_nam…"
 note = "a valid identifier"
 
 [[obligation]]
-id = "sf.ddl.show-committed-tasks.o015"
+id = "sf.ddl.show-committed-tasks.o057"
 kind = "negative_neighbour"
 required = true
-target = "<graph_name> in [ IN { GRAPH <graph_name> | ACCOUNT | DATABASE [ <db_name> ] | [ SCHEMA ] [ <schema_name> ] } ]"
+target = "<graph_name> in [ IN { GRAPH <graph_name> | ACCOUNT | DATABASE [ <db_name> ] | { SCHEMA [ <schema_name> ] | <schema_nam…"
 note = "a string literal in place of <graph_name>"
 
 [[obligation]]
@@ -235697,16 +235732,16 @@ target = "<db_name> in [ <db_name> ]"
 note = "a string literal in place of <db_name>"
 
 [[obligation]]
-id = "sf.ddl.show-committed-tasks.o020"
-kind = "option_present"
+id = "sf.ddl.show-committed-tasks.o058"
+kind = "alternative"
 required = true
-target = "[ SCHEMA ]"
+target = "{ SCHEMA [ <schema_name> ] | <schema_name> } → SCHEMA [ <schema_name> ]"
 
 [[obligation]]
-id = "sf.ddl.show-committed-tasks.o021"
-kind = "option_absent"
+id = "sf.ddl.show-committed-tasks.o059"
+kind = "alternative"
 required = true
-target = "[ SCHEMA ]"
+target = "{ SCHEMA [ <schema_name> ] | <schema_name> } → <schema_name>"
 
 [[obligation]]
 id = "sf.ddl.show-committed-tasks.o022"
@@ -235732,6 +235767,20 @@ id = "sf.ddl.show-committed-tasks.o025"
 kind = "negative_neighbour"
 required = true
 target = "<schema_name> in [ <schema_name> ]"
+note = "a string literal in place of <schema_name>"
+
+[[obligation]]
+id = "sf.ddl.show-committed-tasks.o060"
+kind = "operand_type_class"
+required = true
+target = "<schema_name> in [ IN { GRAPH <graph_name> | ACCOUNT | DATABASE [ <db_name> ] | { SCHEMA [ <schema_name> ] | <schema_na…"
+note = "a valid identifier"
+
+[[obligation]]
+id = "sf.ddl.show-committed-tasks.o061"
+kind = "negative_neighbour"
+required = true
+target = "<schema_name> in [ IN { GRAPH <graph_name> | ACCOUNT | DATABASE [ <db_name> ] | { SCHEMA [ <schema_name> ] | <schema_na…"
 note = "a string literal in place of <schema_name>"
 
 [[obligation]]
@@ -235831,6 +235880,12 @@ id = "sf.ddl.show-committed-tasks.o040"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required TASKS"
+
+[[obligation]]
+id = "sf.ddl.show-committed-tasks.o062"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { GRAPH <graph_name> | ACCOUNT | DATABASE [ <db_name> ] | { SCHEMA [ <schema_name> ] | <schema_name> } } in [ IN { GRAPH <graph_name> | ACCOUNT | DATABASE [ <db_name> ] | { SCHEMA [ <schema_name> ] | <schema_name> } } ]"
 
 [[obligation]]
 id = "sf.ddl.show-committed-tasks.o041"
@@ -240102,28 +240157,28 @@ target = "'<pattern>' in [ LIKE '<pattern>' ]"
 note = "an unquoted identifier in place of '<pattern>'"
 
 [[obligation]]
-id = "sf.ddl.show-external-tables.o009"
+id = "sf.ddl.show-external-tables.o059"
 kind = "option_present"
 required = true
-target = "[ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> APPLICATION <appli…"
+target = "[ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> | APPLICATION <app…"
 
 [[obligation]]
-id = "sf.ddl.show-external-tables.o010"
+id = "sf.ddl.show-external-tables.o060"
 kind = "option_absent"
 required = true
-target = "[ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> APPLICATION <appli…"
+target = "[ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> | APPLICATION <app…"
 
 [[obligation]]
-id = "sf.ddl.show-external-tables.o011"
+id = "sf.ddl.show-external-tables.o061"
 kind = "alternative"
 required = true
-target = "{ ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> APPLICATION <… → ACCOUNT"
+target = "{ ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> | APPLICATION… → ACCOUNT"
 
 [[obligation]]
-id = "sf.ddl.show-external-tables.o012"
+id = "sf.ddl.show-external-tables.o062"
 kind = "alternative"
 required = true
-target = "{ ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> APPLICATION … → DATABASE"
+target = "{ ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> | APPLICATIO… → DATABASE"
 
 [[obligation]]
 id = "sf.ddl.show-external-tables.o013"
@@ -240132,10 +240187,10 @@ required = true
 target = "{ ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_na… → DATABASE <database_name>"
 
 [[obligation]]
-id = "sf.ddl.show-external-tables.o014"
+id = "sf.ddl.show-external-tables.o063"
 kind = "alternative"
 required = true
-target = "{ ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> APPLICATION <a… → SCHEMA"
+target = "{ ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> | APPLICATION … → SCHEMA"
 
 [[obligation]]
 id = "sf.ddl.show-external-tables.o015"
@@ -240144,22 +240199,22 @@ required = true
 target = "{ ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> … → SCHEMA <schema_name>"
 
 [[obligation]]
-id = "sf.ddl.show-external-tables.o016"
+id = "sf.ddl.show-external-tables.o064"
 kind = "alternative"
 required = true
-target = "{ ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schem… → <schema_name> APPLICATION <application_name>"
+target = "{ ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> | APPLI… → <schema_name>"
+
+[[obligation]]
+id = "sf.ddl.show-external-tables.o065"
+kind = "alternative"
+required = true
+target = "{ ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <sch… → APPLICATION <application_name>"
 
 [[obligation]]
 id = "sf.ddl.show-external-tables.o017"
 kind = "alternative"
 required = true
 target = "{ ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <sch… → APPLICATION PACKAGE <application_package_name>"
-
-[[obligation]]
-id = "sf.ddl.show-external-tables.o018"
-kind = "alternative"
-required = true
-target = "{ ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> APPLICATION <applica… → "
 
 [[obligation]]
 id = "sf.ddl.show-external-tables.o019"
@@ -240176,38 +240231,31 @@ target = "<database_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name
 note = "a string literal in place of <database_name>"
 
 [[obligation]]
-id = "sf.ddl.show-external-tables.o021"
+id = "sf.ddl.show-external-tables.o066"
 kind = "operand_type_class"
 required = true
-target = "<schema_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> A…"
+target = "<schema_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> |…"
 note = "a valid identifier"
 
 [[obligation]]
-id = "sf.ddl.show-external-tables.o022"
+id = "sf.ddl.show-external-tables.o067"
 kind = "negative_neighbour"
 required = true
-target = "<schema_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> A…"
+target = "<schema_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> |…"
 note = "a string literal in place of <schema_name>"
 
 [[obligation]]
-id = "sf.ddl.show-external-tables.o023"
-kind = "required_operand_missing"
-required = true
-target = "<schema_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> A… #2"
-note = "omit <schema_name>"
-
-[[obligation]]
-id = "sf.ddl.show-external-tables.o024"
+id = "sf.ddl.show-external-tables.o068"
 kind = "operand_type_class"
 required = true
-target = "<schema_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> A… #2"
+target = "<schema_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> |… #2"
 note = "a valid identifier"
 
 [[obligation]]
-id = "sf.ddl.show-external-tables.o025"
+id = "sf.ddl.show-external-tables.o069"
 kind = "negative_neighbour"
 required = true
-target = "<schema_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> A… #2"
+target = "<schema_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> |… #2"
 note = "a string literal in place of <schema_name>"
 
 [[obligation]]
@@ -240351,16 +240399,10 @@ required = true
 note = "the form without its required TABLES"
 
 [[obligation]]
-id = "sf.ddl.show-external-tables.o047"
+id = "sf.ddl.show-external-tables.o070"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required APPLICATION in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> APPLICATION <appli…"
-
-[[obligation]]
-id = "sf.ddl.show-external-tables.o048"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required PACKAGE in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> APPLICATION <appli…"
+note = "the form without its required { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> | APPLICATION <application_name> | APPLICATION PACKAGE <application_package_name> } in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> | APPLICATION <app…"
 
 [[obligation]]
 id = "sf.ddl.show-external-tables.o049"
@@ -240529,28 +240571,28 @@ target = "'<pattern>' in [ LIKE '<pattern>' ]"
 note = "an unquoted identifier in place of '<pattern>'"
 
 [[obligation]]
-id = "sf.ddl.show-file-formats.o007"
+id = "sf.ddl.show-file-formats.o043"
 kind = "option_present"
 required = true
-target = "[ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> APPLICATION <appli…"
+target = "[ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> | APPLICATION <app…"
 
 [[obligation]]
-id = "sf.ddl.show-file-formats.o008"
+id = "sf.ddl.show-file-formats.o044"
 kind = "option_absent"
 required = true
-target = "[ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> APPLICATION <appli…"
+target = "[ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> | APPLICATION <app…"
 
 [[obligation]]
-id = "sf.ddl.show-file-formats.o009"
+id = "sf.ddl.show-file-formats.o045"
 kind = "alternative"
 required = true
-target = "{ ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> APPLICATION <… → ACCOUNT"
+target = "{ ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> | APPLICATION… → ACCOUNT"
 
 [[obligation]]
-id = "sf.ddl.show-file-formats.o010"
+id = "sf.ddl.show-file-formats.o046"
 kind = "alternative"
 required = true
-target = "{ ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> APPLICATION … → DATABASE"
+target = "{ ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> | APPLICATIO… → DATABASE"
 
 [[obligation]]
 id = "sf.ddl.show-file-formats.o011"
@@ -240559,10 +240601,10 @@ required = true
 target = "{ ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_na… → DATABASE <database_name>"
 
 [[obligation]]
-id = "sf.ddl.show-file-formats.o012"
+id = "sf.ddl.show-file-formats.o047"
 kind = "alternative"
 required = true
-target = "{ ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> APPLICATION <a… → SCHEMA"
+target = "{ ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> | APPLICATION … → SCHEMA"
 
 [[obligation]]
 id = "sf.ddl.show-file-formats.o013"
@@ -240571,22 +240613,22 @@ required = true
 target = "{ ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> … → SCHEMA <schema_name>"
 
 [[obligation]]
-id = "sf.ddl.show-file-formats.o014"
+id = "sf.ddl.show-file-formats.o048"
 kind = "alternative"
 required = true
-target = "{ ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schem… → <schema_name> APPLICATION <application_name>"
+target = "{ ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> | APPLI… → <schema_name>"
+
+[[obligation]]
+id = "sf.ddl.show-file-formats.o049"
+kind = "alternative"
+required = true
+target = "{ ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <sch… → APPLICATION <application_name>"
 
 [[obligation]]
 id = "sf.ddl.show-file-formats.o015"
 kind = "alternative"
 required = true
 target = "{ ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <sch… → APPLICATION PACKAGE <application_package_name>"
-
-[[obligation]]
-id = "sf.ddl.show-file-formats.o016"
-kind = "alternative"
-required = true
-target = "{ ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> APPLICATION <applica… → "
 
 [[obligation]]
 id = "sf.ddl.show-file-formats.o017"
@@ -240603,38 +240645,31 @@ target = "<database_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name
 note = "a string literal in place of <database_name>"
 
 [[obligation]]
-id = "sf.ddl.show-file-formats.o019"
+id = "sf.ddl.show-file-formats.o050"
 kind = "operand_type_class"
 required = true
-target = "<schema_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> A…"
+target = "<schema_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> |…"
 note = "a valid identifier"
 
 [[obligation]]
-id = "sf.ddl.show-file-formats.o020"
+id = "sf.ddl.show-file-formats.o051"
 kind = "negative_neighbour"
 required = true
-target = "<schema_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> A…"
+target = "<schema_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> |…"
 note = "a string literal in place of <schema_name>"
 
 [[obligation]]
-id = "sf.ddl.show-file-formats.o021"
-kind = "required_operand_missing"
-required = true
-target = "<schema_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> A… #2"
-note = "omit <schema_name>"
-
-[[obligation]]
-id = "sf.ddl.show-file-formats.o022"
+id = "sf.ddl.show-file-formats.o052"
 kind = "operand_type_class"
 required = true
-target = "<schema_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> A… #2"
+target = "<schema_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> |… #2"
 note = "a valid identifier"
 
 [[obligation]]
-id = "sf.ddl.show-file-formats.o023"
+id = "sf.ddl.show-file-formats.o053"
 kind = "negative_neighbour"
 required = true
-target = "<schema_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> A… #2"
+target = "<schema_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> |… #2"
 note = "a string literal in place of <schema_name>"
 
 [[obligation]]
@@ -240692,16 +240727,10 @@ required = true
 note = "the form without its required FORMATS"
 
 [[obligation]]
-id = "sf.ddl.show-file-formats.o032"
+id = "sf.ddl.show-file-formats.o054"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required APPLICATION in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> APPLICATION <appli…"
-
-[[obligation]]
-id = "sf.ddl.show-file-formats.o033"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required PACKAGE in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> APPLICATION <appli…"
+note = "the form without its required { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> | APPLICATION <application_name> | APPLICATION PACKAGE <application_package_name> } in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> | APPLICATION <app…"
 
 [[obligation]]
 id = "sf.ddl.show-file-formats.o034"
@@ -241982,12 +242011,6 @@ target = "<repository_name>"
 note = "a string literal in place of <repository_name>"
 
 [[obligation]]
-id = "sf.ddl.show-git-tags.o012"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required GIT"
-
-[[obligation]]
 id = "sf.ddl.show-git-tags.o013"
 kind = "negative_neighbour"
 required = true
@@ -242269,6 +242292,12 @@ id = "sf.ddl.show-hybrid-tables.o038"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required TABLES"
+
+[[obligation]]
+id = "sf.ddl.show-hybrid-tables.o045"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { ACCOUNT | DATABASE [ <db_name> ] | SCHEMA [ <schema_name> ] } in [ IN { ACCOUNT | DATABASE [ <db_name> ] | SCHEMA [ <schema_name> ] } ]"
 
 [[obligation]]
 id = "sf.ddl.show-hybrid-tables.o039"
@@ -242564,6 +242593,12 @@ id = "sf.ddl.show-iceberg-tables.o039"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required TABLES"
+
+[[obligation]]
+id = "sf.ddl.show-iceberg-tables.o046"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> } in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> } ]"
 
 [[obligation]]
 id = "sf.ddl.show-iceberg-tables.o040"
@@ -243704,28 +243739,28 @@ target = "'<pattern>' in [ LIKE '<pattern>' ]"
 note = "an unquoted identifier in place of '<pattern>'"
 
 [[obligation]]
-id = "sf.ddl.show-materialized-views.o007"
+id = "sf.ddl.show-materialized-views.o042"
 kind = "option_present"
 required = true
-target = "[ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> APPLICATION <appli…"
+target = "[ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> | APPLICATION <app…"
 
 [[obligation]]
-id = "sf.ddl.show-materialized-views.o008"
+id = "sf.ddl.show-materialized-views.o043"
 kind = "option_absent"
 required = true
-target = "[ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> APPLICATION <appli…"
+target = "[ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> | APPLICATION <app…"
 
 [[obligation]]
-id = "sf.ddl.show-materialized-views.o009"
+id = "sf.ddl.show-materialized-views.o044"
 kind = "alternative"
 required = true
-target = "{ ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> APPLICATION <… → ACCOUNT"
+target = "{ ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> | APPLICATION… → ACCOUNT"
 
 [[obligation]]
-id = "sf.ddl.show-materialized-views.o010"
+id = "sf.ddl.show-materialized-views.o045"
 kind = "alternative"
 required = true
-target = "{ ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> APPLICATION … → DATABASE"
+target = "{ ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> | APPLICATIO… → DATABASE"
 
 [[obligation]]
 id = "sf.ddl.show-materialized-views.o011"
@@ -243734,10 +243769,10 @@ required = true
 target = "{ ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_na… → DATABASE <database_name>"
 
 [[obligation]]
-id = "sf.ddl.show-materialized-views.o012"
+id = "sf.ddl.show-materialized-views.o046"
 kind = "alternative"
 required = true
-target = "{ ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> APPLICATION <a… → SCHEMA"
+target = "{ ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> | APPLICATION … → SCHEMA"
 
 [[obligation]]
 id = "sf.ddl.show-materialized-views.o013"
@@ -243746,22 +243781,22 @@ required = true
 target = "{ ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> … → SCHEMA <schema_name>"
 
 [[obligation]]
-id = "sf.ddl.show-materialized-views.o014"
+id = "sf.ddl.show-materialized-views.o047"
 kind = "alternative"
 required = true
-target = "{ ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schem… → <schema_name> APPLICATION <application_name>"
+target = "{ ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> | APPLI… → <schema_name>"
+
+[[obligation]]
+id = "sf.ddl.show-materialized-views.o048"
+kind = "alternative"
+required = true
+target = "{ ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <sch… → APPLICATION <application_name>"
 
 [[obligation]]
 id = "sf.ddl.show-materialized-views.o015"
 kind = "alternative"
 required = true
 target = "{ ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <sch… → APPLICATION PACKAGE <application_package_name>"
-
-[[obligation]]
-id = "sf.ddl.show-materialized-views.o016"
-kind = "alternative"
-required = true
-target = "{ ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> APPLICATION <applica… → "
 
 [[obligation]]
 id = "sf.ddl.show-materialized-views.o017"
@@ -243778,38 +243813,31 @@ target = "<database_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name
 note = "a string literal in place of <database_name>"
 
 [[obligation]]
-id = "sf.ddl.show-materialized-views.o019"
+id = "sf.ddl.show-materialized-views.o049"
 kind = "operand_type_class"
 required = true
-target = "<schema_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> A…"
+target = "<schema_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> |…"
 note = "a valid identifier"
 
 [[obligation]]
-id = "sf.ddl.show-materialized-views.o020"
+id = "sf.ddl.show-materialized-views.o050"
 kind = "negative_neighbour"
 required = true
-target = "<schema_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> A…"
+target = "<schema_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> |…"
 note = "a string literal in place of <schema_name>"
 
 [[obligation]]
-id = "sf.ddl.show-materialized-views.o021"
-kind = "required_operand_missing"
-required = true
-target = "<schema_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> A… #2"
-note = "omit <schema_name>"
-
-[[obligation]]
-id = "sf.ddl.show-materialized-views.o022"
+id = "sf.ddl.show-materialized-views.o051"
 kind = "operand_type_class"
 required = true
-target = "<schema_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> A… #2"
+target = "<schema_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> |… #2"
 note = "a valid identifier"
 
 [[obligation]]
-id = "sf.ddl.show-materialized-views.o023"
+id = "sf.ddl.show-materialized-views.o052"
 kind = "negative_neighbour"
 required = true
-target = "<schema_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> A… #2"
+target = "<schema_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> |… #2"
 note = "a string literal in place of <schema_name>"
 
 [[obligation]]
@@ -243861,16 +243889,10 @@ required = true
 note = "the form without its required VIEWS"
 
 [[obligation]]
-id = "sf.ddl.show-materialized-views.o031"
+id = "sf.ddl.show-materialized-views.o053"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required APPLICATION in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> APPLICATION <appli…"
-
-[[obligation]]
-id = "sf.ddl.show-materialized-views.o032"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required PACKAGE in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> APPLICATION <appli…"
+note = "the form without its required { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> | APPLICATION <application_name> | APPLICATION PACKAGE <application_package_name> } in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> | APPLICATION <app…"
 
 [[obligation]]
 id = "sf.ddl.show-materialized-views.o033"
@@ -245276,28 +245298,28 @@ target = "'<pattern>' in [ LIKE '<pattern>' ]"
 note = "an unquoted identifier in place of '<pattern>'"
 
 [[obligation]]
-id = "sf.ddl.show-objects.o009"
+id = "sf.ddl.show-objects.o059"
 kind = "option_present"
 required = true
-target = "[ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> APPLICATION <appli…"
+target = "[ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> | APPLICATION <app…"
 
 [[obligation]]
-id = "sf.ddl.show-objects.o010"
+id = "sf.ddl.show-objects.o060"
 kind = "option_absent"
 required = true
-target = "[ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> APPLICATION <appli…"
+target = "[ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> | APPLICATION <app…"
 
 [[obligation]]
-id = "sf.ddl.show-objects.o011"
+id = "sf.ddl.show-objects.o061"
 kind = "alternative"
 required = true
-target = "{ ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> APPLICATION <… → ACCOUNT"
+target = "{ ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> | APPLICATION… → ACCOUNT"
 
 [[obligation]]
-id = "sf.ddl.show-objects.o012"
+id = "sf.ddl.show-objects.o062"
 kind = "alternative"
 required = true
-target = "{ ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> APPLICATION … → DATABASE"
+target = "{ ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> | APPLICATIO… → DATABASE"
 
 [[obligation]]
 id = "sf.ddl.show-objects.o013"
@@ -245306,10 +245328,10 @@ required = true
 target = "{ ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_na… → DATABASE <database_name>"
 
 [[obligation]]
-id = "sf.ddl.show-objects.o014"
+id = "sf.ddl.show-objects.o063"
 kind = "alternative"
 required = true
-target = "{ ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> APPLICATION <a… → SCHEMA"
+target = "{ ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> | APPLICATION … → SCHEMA"
 
 [[obligation]]
 id = "sf.ddl.show-objects.o015"
@@ -245318,22 +245340,22 @@ required = true
 target = "{ ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> … → SCHEMA <schema_name>"
 
 [[obligation]]
-id = "sf.ddl.show-objects.o016"
+id = "sf.ddl.show-objects.o064"
 kind = "alternative"
 required = true
-target = "{ ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schem… → <schema_name> APPLICATION <application_name>"
+target = "{ ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> | APPLI… → <schema_name>"
+
+[[obligation]]
+id = "sf.ddl.show-objects.o065"
+kind = "alternative"
+required = true
+target = "{ ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <sch… → APPLICATION <application_name>"
 
 [[obligation]]
 id = "sf.ddl.show-objects.o017"
 kind = "alternative"
 required = true
 target = "{ ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <sch… → APPLICATION PACKAGE <application_package_name>"
-
-[[obligation]]
-id = "sf.ddl.show-objects.o018"
-kind = "alternative"
-required = true
-target = "{ ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> APPLICATION <applica… → "
 
 [[obligation]]
 id = "sf.ddl.show-objects.o019"
@@ -245350,38 +245372,31 @@ target = "<database_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name
 note = "a string literal in place of <database_name>"
 
 [[obligation]]
-id = "sf.ddl.show-objects.o021"
+id = "sf.ddl.show-objects.o066"
 kind = "operand_type_class"
 required = true
-target = "<schema_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> A…"
+target = "<schema_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> |…"
 note = "a valid identifier"
 
 [[obligation]]
-id = "sf.ddl.show-objects.o022"
+id = "sf.ddl.show-objects.o067"
 kind = "negative_neighbour"
 required = true
-target = "<schema_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> A…"
+target = "<schema_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> |…"
 note = "a string literal in place of <schema_name>"
 
 [[obligation]]
-id = "sf.ddl.show-objects.o023"
-kind = "required_operand_missing"
-required = true
-target = "<schema_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> A… #2"
-note = "omit <schema_name>"
-
-[[obligation]]
-id = "sf.ddl.show-objects.o024"
+id = "sf.ddl.show-objects.o068"
 kind = "operand_type_class"
 required = true
-target = "<schema_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> A… #2"
+target = "<schema_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> |… #2"
 note = "a valid identifier"
 
 [[obligation]]
-id = "sf.ddl.show-objects.o025"
+id = "sf.ddl.show-objects.o069"
 kind = "negative_neighbour"
 required = true
-target = "<schema_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> A… #2"
+target = "<schema_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> |… #2"
 note = "a string literal in place of <schema_name>"
 
 [[obligation]]
@@ -245525,16 +245540,10 @@ required = true
 note = "the form without its required OBJECTS"
 
 [[obligation]]
-id = "sf.ddl.show-objects.o047"
+id = "sf.ddl.show-objects.o070"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required APPLICATION in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> APPLICATION <appli…"
-
-[[obligation]]
-id = "sf.ddl.show-objects.o048"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required PACKAGE in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> APPLICATION <appli…"
+note = "the form without its required { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> | APPLICATION <application_name> | APPLICATION PACKAGE <application_package_name> } in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> | APPLICATION <app…"
 
 [[obligation]]
 id = "sf.ddl.show-objects.o049"
@@ -246240,34 +246249,34 @@ target = "'<pattern>' in [ LIKE '<pattern>' ]"
 note = "an unquoted identifier in place of '<pattern>'"
 
 [[obligation]]
-id = "sf.ddl.show-openflow-connectors.o007"
+id = "sf.ddl.show-openflow-connectors.o044"
 kind = "option_present"
 required = true
-target = "[ IN { ACCOUNT | DATABASE [ <db_name> ] | [ SCHEMA ] [ <schema_name> ] } ]"
+target = "[ IN { ACCOUNT | DATABASE [ <db_name> ] | { SCHEMA [ <schema_name> ] | <schema_name> } } ]"
 
 [[obligation]]
-id = "sf.ddl.show-openflow-connectors.o008"
+id = "sf.ddl.show-openflow-connectors.o045"
 kind = "option_absent"
 required = true
-target = "[ IN { ACCOUNT | DATABASE [ <db_name> ] | [ SCHEMA ] [ <schema_name> ] } ]"
+target = "[ IN { ACCOUNT | DATABASE [ <db_name> ] | { SCHEMA [ <schema_name> ] | <schema_name> } } ]"
 
 [[obligation]]
-id = "sf.ddl.show-openflow-connectors.o009"
+id = "sf.ddl.show-openflow-connectors.o046"
 kind = "alternative"
 required = true
-target = "{ ACCOUNT | DATABASE [ <db_name> ] | [ SCHEMA ] [ <schema_name> ] } → ACCOUNT"
+target = "{ ACCOUNT | DATABASE [ <db_name> ] | { SCHEMA [ <schema_name> ] | <schema_name> } } → ACCOUNT"
 
 [[obligation]]
-id = "sf.ddl.show-openflow-connectors.o010"
+id = "sf.ddl.show-openflow-connectors.o047"
 kind = "alternative"
 required = true
-target = "{ ACCOUNT | DATABASE [ <db_name> ] | [ SCHEMA ] [ <schema_name> ] } → DATABASE [ <db_name> ]"
+target = "{ ACCOUNT | DATABASE [ <db_name> ] | { SCHEMA [ <schema_name> ] | <schema_name> } } → DATABASE [ <db_name> ]"
 
 [[obligation]]
-id = "sf.ddl.show-openflow-connectors.o011"
+id = "sf.ddl.show-openflow-connectors.o048"
 kind = "alternative"
 required = true
-target = "{ ACCOUNT | DATABASE [ <db_name> ] | [ SCHEMA ] [ <schema_name> ] } → [ SCHEMA ] [ <schema_name> ]"
+target = "{ ACCOUNT | DATABASE [ <db_name> ] | { SCHEMA [ <schema_name> ] | <schem… → { SCHEMA [ <schema_name> ] | <schema_name> }"
 
 [[obligation]]
 id = "sf.ddl.show-openflow-connectors.o012"
@@ -246296,16 +246305,16 @@ target = "<db_name> in [ <db_name> ]"
 note = "a string literal in place of <db_name>"
 
 [[obligation]]
-id = "sf.ddl.show-openflow-connectors.o016"
-kind = "option_present"
+id = "sf.ddl.show-openflow-connectors.o049"
+kind = "alternative"
 required = true
-target = "[ SCHEMA ]"
+target = "{ SCHEMA [ <schema_name> ] | <schema_name> } → SCHEMA [ <schema_name> ]"
 
 [[obligation]]
-id = "sf.ddl.show-openflow-connectors.o017"
-kind = "option_absent"
+id = "sf.ddl.show-openflow-connectors.o050"
+kind = "alternative"
 required = true
-target = "[ SCHEMA ]"
+target = "{ SCHEMA [ <schema_name> ] | <schema_name> } → <schema_name>"
 
 [[obligation]]
 id = "sf.ddl.show-openflow-connectors.o018"
@@ -246331,6 +246340,20 @@ id = "sf.ddl.show-openflow-connectors.o021"
 kind = "negative_neighbour"
 required = true
 target = "<schema_name> in [ <schema_name> ]"
+note = "a string literal in place of <schema_name>"
+
+[[obligation]]
+id = "sf.ddl.show-openflow-connectors.o051"
+kind = "operand_type_class"
+required = true
+target = "<schema_name> in [ IN { ACCOUNT | DATABASE [ <db_name> ] | { SCHEMA [ <schema_name> ] | <schema_name> } } ]"
+note = "a valid identifier"
+
+[[obligation]]
+id = "sf.ddl.show-openflow-connectors.o052"
+kind = "negative_neighbour"
+required = true
+target = "<schema_name> in [ IN { ACCOUNT | DATABASE [ <db_name> ] | { SCHEMA [ <schema_name> ] | <schema_name> } } ]"
 note = "a string literal in place of <schema_name>"
 
 [[obligation]]
@@ -246436,6 +246459,12 @@ id = "sf.ddl.show-openflow-connectors.o037"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required CONNECTORS"
+
+[[obligation]]
+id = "sf.ddl.show-openflow-connectors.o053"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { ACCOUNT | DATABASE [ <db_name> ] | { SCHEMA [ <schema_name> ] | <schema_name> } } in [ IN { ACCOUNT | DATABASE [ <db_name> ] | { SCHEMA [ <schema_name> ] | <schema_name> } } ]"
 
 [[obligation]]
 id = "sf.ddl.show-openflow-connectors.o038"
@@ -246676,34 +246705,34 @@ target = "'<pattern>' in [ LIKE '<pattern>' ]"
 note = "an unquoted identifier in place of '<pattern>'"
 
 [[obligation]]
-id = "sf.ddl.show-openflow-runtimes.o007"
+id = "sf.ddl.show-openflow-runtimes.o044"
 kind = "option_present"
 required = true
-target = "[ IN { ACCOUNT | DATABASE [ <db_name> ] | [ SCHEMA ] [ <schema_name> ] } ]"
+target = "[ IN { ACCOUNT | DATABASE [ <db_name> ] | { SCHEMA [ <schema_name> ] | <schema_name> } } ]"
 
 [[obligation]]
-id = "sf.ddl.show-openflow-runtimes.o008"
+id = "sf.ddl.show-openflow-runtimes.o045"
 kind = "option_absent"
 required = true
-target = "[ IN { ACCOUNT | DATABASE [ <db_name> ] | [ SCHEMA ] [ <schema_name> ] } ]"
+target = "[ IN { ACCOUNT | DATABASE [ <db_name> ] | { SCHEMA [ <schema_name> ] | <schema_name> } } ]"
 
 [[obligation]]
-id = "sf.ddl.show-openflow-runtimes.o009"
+id = "sf.ddl.show-openflow-runtimes.o046"
 kind = "alternative"
 required = true
-target = "{ ACCOUNT | DATABASE [ <db_name> ] | [ SCHEMA ] [ <schema_name> ] } → ACCOUNT"
+target = "{ ACCOUNT | DATABASE [ <db_name> ] | { SCHEMA [ <schema_name> ] | <schema_name> } } → ACCOUNT"
 
 [[obligation]]
-id = "sf.ddl.show-openflow-runtimes.o010"
+id = "sf.ddl.show-openflow-runtimes.o047"
 kind = "alternative"
 required = true
-target = "{ ACCOUNT | DATABASE [ <db_name> ] | [ SCHEMA ] [ <schema_name> ] } → DATABASE [ <db_name> ]"
+target = "{ ACCOUNT | DATABASE [ <db_name> ] | { SCHEMA [ <schema_name> ] | <schema_name> } } → DATABASE [ <db_name> ]"
 
 [[obligation]]
-id = "sf.ddl.show-openflow-runtimes.o011"
+id = "sf.ddl.show-openflow-runtimes.o048"
 kind = "alternative"
 required = true
-target = "{ ACCOUNT | DATABASE [ <db_name> ] | [ SCHEMA ] [ <schema_name> ] } → [ SCHEMA ] [ <schema_name> ]"
+target = "{ ACCOUNT | DATABASE [ <db_name> ] | { SCHEMA [ <schema_name> ] | <schem… → { SCHEMA [ <schema_name> ] | <schema_name> }"
 
 [[obligation]]
 id = "sf.ddl.show-openflow-runtimes.o012"
@@ -246732,16 +246761,16 @@ target = "<db_name> in [ <db_name> ]"
 note = "a string literal in place of <db_name>"
 
 [[obligation]]
-id = "sf.ddl.show-openflow-runtimes.o016"
-kind = "option_present"
+id = "sf.ddl.show-openflow-runtimes.o049"
+kind = "alternative"
 required = true
-target = "[ SCHEMA ]"
+target = "{ SCHEMA [ <schema_name> ] | <schema_name> } → SCHEMA [ <schema_name> ]"
 
 [[obligation]]
-id = "sf.ddl.show-openflow-runtimes.o017"
-kind = "option_absent"
+id = "sf.ddl.show-openflow-runtimes.o050"
+kind = "alternative"
 required = true
-target = "[ SCHEMA ]"
+target = "{ SCHEMA [ <schema_name> ] | <schema_name> } → <schema_name>"
 
 [[obligation]]
 id = "sf.ddl.show-openflow-runtimes.o018"
@@ -246767,6 +246796,20 @@ id = "sf.ddl.show-openflow-runtimes.o021"
 kind = "negative_neighbour"
 required = true
 target = "<schema_name> in [ <schema_name> ]"
+note = "a string literal in place of <schema_name>"
+
+[[obligation]]
+id = "sf.ddl.show-openflow-runtimes.o051"
+kind = "operand_type_class"
+required = true
+target = "<schema_name> in [ IN { ACCOUNT | DATABASE [ <db_name> ] | { SCHEMA [ <schema_name> ] | <schema_name> } } ]"
+note = "a valid identifier"
+
+[[obligation]]
+id = "sf.ddl.show-openflow-runtimes.o052"
+kind = "negative_neighbour"
+required = true
+target = "<schema_name> in [ IN { ACCOUNT | DATABASE [ <db_name> ] | { SCHEMA [ <schema_name> ] | <schema_name> } } ]"
 note = "a string literal in place of <schema_name>"
 
 [[obligation]]
@@ -246872,6 +246915,12 @@ id = "sf.ddl.show-openflow-runtimes.o037"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required RUNTIMES"
+
+[[obligation]]
+id = "sf.ddl.show-openflow-runtimes.o053"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { ACCOUNT | DATABASE [ <db_name> ] | { SCHEMA [ <schema_name> ] | <schema_name> } } in [ IN { ACCOUNT | DATABASE [ <db_name> ] | { SCHEMA [ <schema_name> ] | <schema_name> } } ]"
 
 [[obligation]]
 id = "sf.ddl.show-openflow-runtimes.o038"
@@ -247089,28 +247138,28 @@ target = "'<pattern>' in [ LIKE '<pattern>' ]"
 note = "an unquoted identifier in place of '<pattern>'"
 
 [[obligation]]
-id = "sf.ddl.show-pipes.o007"
+id = "sf.ddl.show-pipes.o042"
 kind = "option_present"
 required = true
-target = "[ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> APPLICATION <appli…"
+target = "[ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> | APPLICATION <app…"
 
 [[obligation]]
-id = "sf.ddl.show-pipes.o008"
+id = "sf.ddl.show-pipes.o043"
 kind = "option_absent"
 required = true
-target = "[ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> APPLICATION <appli…"
+target = "[ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> | APPLICATION <app…"
 
 [[obligation]]
-id = "sf.ddl.show-pipes.o009"
+id = "sf.ddl.show-pipes.o044"
 kind = "alternative"
 required = true
-target = "{ ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> APPLICATION <… → ACCOUNT"
+target = "{ ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> | APPLICATION… → ACCOUNT"
 
 [[obligation]]
-id = "sf.ddl.show-pipes.o010"
+id = "sf.ddl.show-pipes.o045"
 kind = "alternative"
 required = true
-target = "{ ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> APPLICATION … → DATABASE"
+target = "{ ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> | APPLICATIO… → DATABASE"
 
 [[obligation]]
 id = "sf.ddl.show-pipes.o011"
@@ -247119,10 +247168,10 @@ required = true
 target = "{ ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_na… → DATABASE <database_name>"
 
 [[obligation]]
-id = "sf.ddl.show-pipes.o012"
+id = "sf.ddl.show-pipes.o046"
 kind = "alternative"
 required = true
-target = "{ ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> APPLICATION <a… → SCHEMA"
+target = "{ ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> | APPLICATION … → SCHEMA"
 
 [[obligation]]
 id = "sf.ddl.show-pipes.o013"
@@ -247131,22 +247180,22 @@ required = true
 target = "{ ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> … → SCHEMA <schema_name>"
 
 [[obligation]]
-id = "sf.ddl.show-pipes.o014"
+id = "sf.ddl.show-pipes.o047"
 kind = "alternative"
 required = true
-target = "{ ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schem… → <schema_name> APPLICATION <application_name>"
+target = "{ ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> | APPLI… → <schema_name>"
+
+[[obligation]]
+id = "sf.ddl.show-pipes.o048"
+kind = "alternative"
+required = true
+target = "{ ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <sch… → APPLICATION <application_name>"
 
 [[obligation]]
 id = "sf.ddl.show-pipes.o015"
 kind = "alternative"
 required = true
 target = "{ ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <sch… → APPLICATION PACKAGE <application_package_name>"
-
-[[obligation]]
-id = "sf.ddl.show-pipes.o016"
-kind = "alternative"
-required = true
-target = "{ ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> APPLICATION <applica… → "
 
 [[obligation]]
 id = "sf.ddl.show-pipes.o017"
@@ -247163,38 +247212,31 @@ target = "<database_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name
 note = "a string literal in place of <database_name>"
 
 [[obligation]]
-id = "sf.ddl.show-pipes.o019"
+id = "sf.ddl.show-pipes.o049"
 kind = "operand_type_class"
 required = true
-target = "<schema_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> A…"
+target = "<schema_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> |…"
 note = "a valid identifier"
 
 [[obligation]]
-id = "sf.ddl.show-pipes.o020"
+id = "sf.ddl.show-pipes.o050"
 kind = "negative_neighbour"
 required = true
-target = "<schema_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> A…"
+target = "<schema_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> |…"
 note = "a string literal in place of <schema_name>"
 
 [[obligation]]
-id = "sf.ddl.show-pipes.o021"
-kind = "required_operand_missing"
-required = true
-target = "<schema_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> A… #2"
-note = "omit <schema_name>"
-
-[[obligation]]
-id = "sf.ddl.show-pipes.o022"
+id = "sf.ddl.show-pipes.o051"
 kind = "operand_type_class"
 required = true
-target = "<schema_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> A… #2"
+target = "<schema_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> |… #2"
 note = "a valid identifier"
 
 [[obligation]]
-id = "sf.ddl.show-pipes.o023"
+id = "sf.ddl.show-pipes.o052"
 kind = "negative_neighbour"
 required = true
-target = "<schema_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> A… #2"
+target = "<schema_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> |… #2"
 note = "a string literal in place of <schema_name>"
 
 [[obligation]]
@@ -247246,16 +247288,10 @@ required = true
 note = "the form without its required PIPES"
 
 [[obligation]]
-id = "sf.ddl.show-pipes.o031"
+id = "sf.ddl.show-pipes.o053"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required APPLICATION in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> APPLICATION <appli…"
-
-[[obligation]]
-id = "sf.ddl.show-pipes.o032"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required PACKAGE in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> APPLICATION <appli…"
+note = "the form without its required { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> | APPLICATION <application_name> | APPLICATION PACKAGE <application_package_name> } in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> | APPLICATION <app…"
 
 [[obligation]]
 id = "sf.ddl.show-pipes.o033"
@@ -247864,22 +247900,22 @@ required = true
 target = "{ ACCOUNT | CLASS <class_name> | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_n… → SCHEMA <schema_name>"
 
 [[obligation]]
-id = "sf.ddl.show-procedures.o015"
+id = "sf.ddl.show-procedures.o048"
 kind = "alternative"
 required = true
-target = "{ ACCOUNT | CLASS <class_name> | DATABASE | DATABASE <database_name> | S… → <schema_name> APPLICATION <application_name>"
+target = "{ ACCOUNT | CLASS <class_name> | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | … → <schema_name>"
+
+[[obligation]]
+id = "sf.ddl.show-procedures.o049"
+kind = "alternative"
+required = true
+target = "{ ACCOUNT | CLASS <class_name> | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA… → APPLICATION <application_name>"
 
 [[obligation]]
 id = "sf.ddl.show-procedures.o016"
 kind = "alternative"
 required = true
 target = "{ ACCOUNT | CLASS <class_name> | DATABASE | DATABASE <database_name> |… → APPLICATION PACKAGE <application_package_name>"
-
-[[obligation]]
-id = "sf.ddl.show-procedures.o017"
-kind = "alternative"
-required = true
-target = "{ ACCOUNT | CLASS <class_name> | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name>… → "
 
 [[obligation]]
 id = "sf.ddl.show-procedures.o018"
@@ -247929,13 +247965,6 @@ kind = "negative_neighbour"
 required = true
 target = "<schema_name> in [ IN { ACCOUNT | CLASS <class_name> | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_na…"
 note = "a string literal in place of <schema_name>"
-
-[[obligation]]
-id = "sf.ddl.show-procedures.o025"
-kind = "required_operand_missing"
-required = true
-target = "<schema_name> in [ IN { ACCOUNT | CLASS <class_name> | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_na… #2"
-note = "omit <schema_name>"
 
 [[obligation]]
 id = "sf.ddl.show-procedures.o026"
@@ -248000,16 +248029,10 @@ required = true
 note = "the form without its required PROCEDURES"
 
 [[obligation]]
-id = "sf.ddl.show-procedures.o035"
+id = "sf.ddl.show-procedures.o050"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required APPLICATION in [ IN { ACCOUNT | CLASS <class_name> | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_nam…"
-
-[[obligation]]
-id = "sf.ddl.show-procedures.o036"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required PACKAGE in [ IN { ACCOUNT | CLASS <class_name> | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_nam…"
+note = "the form without its required { ACCOUNT | CLASS <class_name> | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> | APPLICATION <application_name> | APPLICATION PACKAGE <application_package_name> } in [ IN { ACCOUNT | CLASS <class_name> | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_nam…"
 
 [[obligation]]
 id = "sf.ddl.show-procedures.o037"
@@ -251428,28 +251451,28 @@ target = "'<pattern>' in [ LIKE '<pattern>' ]"
 note = "an unquoted identifier in place of '<pattern>'"
 
 [[obligation]]
-id = "sf.ddl.show-sequences.o007"
+id = "sf.ddl.show-sequences.o042"
 kind = "option_present"
 required = true
-target = "[ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> APPLICATION <appli…"
+target = "[ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> | APPLICATION <app…"
 
 [[obligation]]
-id = "sf.ddl.show-sequences.o008"
+id = "sf.ddl.show-sequences.o043"
 kind = "option_absent"
 required = true
-target = "[ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> APPLICATION <appli…"
+target = "[ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> | APPLICATION <app…"
 
 [[obligation]]
-id = "sf.ddl.show-sequences.o009"
+id = "sf.ddl.show-sequences.o044"
 kind = "alternative"
 required = true
-target = "{ ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> APPLICATION <… → ACCOUNT"
+target = "{ ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> | APPLICATION… → ACCOUNT"
 
 [[obligation]]
-id = "sf.ddl.show-sequences.o010"
+id = "sf.ddl.show-sequences.o045"
 kind = "alternative"
 required = true
-target = "{ ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> APPLICATION … → DATABASE"
+target = "{ ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> | APPLICATIO… → DATABASE"
 
 [[obligation]]
 id = "sf.ddl.show-sequences.o011"
@@ -251458,10 +251481,10 @@ required = true
 target = "{ ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_na… → DATABASE <database_name>"
 
 [[obligation]]
-id = "sf.ddl.show-sequences.o012"
+id = "sf.ddl.show-sequences.o046"
 kind = "alternative"
 required = true
-target = "{ ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> APPLICATION <a… → SCHEMA"
+target = "{ ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> | APPLICATION … → SCHEMA"
 
 [[obligation]]
 id = "sf.ddl.show-sequences.o013"
@@ -251470,22 +251493,22 @@ required = true
 target = "{ ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> … → SCHEMA <schema_name>"
 
 [[obligation]]
-id = "sf.ddl.show-sequences.o014"
+id = "sf.ddl.show-sequences.o047"
 kind = "alternative"
 required = true
-target = "{ ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schem… → <schema_name> APPLICATION <application_name>"
+target = "{ ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> | APPLI… → <schema_name>"
+
+[[obligation]]
+id = "sf.ddl.show-sequences.o048"
+kind = "alternative"
+required = true
+target = "{ ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <sch… → APPLICATION <application_name>"
 
 [[obligation]]
 id = "sf.ddl.show-sequences.o015"
 kind = "alternative"
 required = true
 target = "{ ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <sch… → APPLICATION PACKAGE <application_package_name>"
-
-[[obligation]]
-id = "sf.ddl.show-sequences.o016"
-kind = "alternative"
-required = true
-target = "{ ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> APPLICATION <applica… → "
 
 [[obligation]]
 id = "sf.ddl.show-sequences.o017"
@@ -251502,38 +251525,31 @@ target = "<database_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name
 note = "a string literal in place of <database_name>"
 
 [[obligation]]
-id = "sf.ddl.show-sequences.o019"
+id = "sf.ddl.show-sequences.o049"
 kind = "operand_type_class"
 required = true
-target = "<schema_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> A…"
+target = "<schema_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> |…"
 note = "a valid identifier"
 
 [[obligation]]
-id = "sf.ddl.show-sequences.o020"
+id = "sf.ddl.show-sequences.o050"
 kind = "negative_neighbour"
 required = true
-target = "<schema_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> A…"
+target = "<schema_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> |…"
 note = "a string literal in place of <schema_name>"
 
 [[obligation]]
-id = "sf.ddl.show-sequences.o021"
-kind = "required_operand_missing"
-required = true
-target = "<schema_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> A… #2"
-note = "omit <schema_name>"
-
-[[obligation]]
-id = "sf.ddl.show-sequences.o022"
+id = "sf.ddl.show-sequences.o051"
 kind = "operand_type_class"
 required = true
-target = "<schema_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> A… #2"
+target = "<schema_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> |… #2"
 note = "a valid identifier"
 
 [[obligation]]
-id = "sf.ddl.show-sequences.o023"
+id = "sf.ddl.show-sequences.o052"
 kind = "negative_neighbour"
 required = true
-target = "<schema_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> A… #2"
+target = "<schema_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> |… #2"
 note = "a string literal in place of <schema_name>"
 
 [[obligation]]
@@ -251585,16 +251601,10 @@ required = true
 note = "the form without its required SEQUENCES"
 
 [[obligation]]
-id = "sf.ddl.show-sequences.o031"
+id = "sf.ddl.show-sequences.o053"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required APPLICATION in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> APPLICATION <appli…"
-
-[[obligation]]
-id = "sf.ddl.show-sequences.o032"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required PACKAGE in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> APPLICATION <appli…"
+note = "the form without its required { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> | APPLICATION <application_name> | APPLICATION PACKAGE <application_package_name> } in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> | APPLICATION <app…"
 
 [[obligation]]
 id = "sf.ddl.show-sequences.o033"
@@ -252682,28 +252692,28 @@ target = "'<pattern>' in [ LIKE '<pattern>' ]"
 note = "an unquoted identifier in place of '<pattern>'"
 
 [[obligation]]
-id = "sf.ddl.show-snapshots.o007"
+id = "sf.ddl.show-snapshots.o043"
 kind = "option_present"
 required = true
-target = "[ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> |  } ]"
+target = "[ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> } ]"
 
 [[obligation]]
-id = "sf.ddl.show-snapshots.o008"
+id = "sf.ddl.show-snapshots.o044"
 kind = "option_absent"
 required = true
-target = "[ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> |  } ]"
+target = "[ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> } ]"
 
 [[obligation]]
-id = "sf.ddl.show-snapshots.o009"
+id = "sf.ddl.show-snapshots.o045"
 kind = "alternative"
 required = true
-target = "{ ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> |  } → ACCOUNT"
+target = "{ ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> } → ACCOUNT"
 
 [[obligation]]
-id = "sf.ddl.show-snapshots.o010"
+id = "sf.ddl.show-snapshots.o046"
 kind = "alternative"
 required = true
-target = "{ ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> |  } → DATABASE"
+target = "{ ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> } → DATABASE"
 
 [[obligation]]
 id = "sf.ddl.show-snapshots.o011"
@@ -252712,28 +252722,22 @@ required = true
 target = "{ ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_na… → DATABASE <database_name>"
 
 [[obligation]]
-id = "sf.ddl.show-snapshots.o012"
+id = "sf.ddl.show-snapshots.o047"
 kind = "alternative"
 required = true
-target = "{ ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> |  } → SCHEMA"
+target = "{ ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> } → SCHEMA"
 
 [[obligation]]
-id = "sf.ddl.show-snapshots.o013"
+id = "sf.ddl.show-snapshots.o048"
 kind = "alternative"
 required = true
-target = "{ ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> … → SCHEMA <schema_name>"
+target = "{ ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> } → SCHEMA <schema_name>"
 
 [[obligation]]
-id = "sf.ddl.show-snapshots.o014"
+id = "sf.ddl.show-snapshots.o049"
 kind = "alternative"
 required = true
-target = "{ ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> |  } → <schema_name>"
-
-[[obligation]]
-id = "sf.ddl.show-snapshots.o015"
-kind = "alternative"
-required = true
-target = "{ ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> |  } → "
+target = "{ ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> } → <schema_name>"
 
 [[obligation]]
 id = "sf.ddl.show-snapshots.o016"
@@ -252750,31 +252754,31 @@ target = "<database_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name
 note = "a string literal in place of <database_name>"
 
 [[obligation]]
-id = "sf.ddl.show-snapshots.o018"
+id = "sf.ddl.show-snapshots.o050"
 kind = "operand_type_class"
 required = true
-target = "<schema_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> |…"
+target = "<schema_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> }…"
 note = "a valid identifier"
 
 [[obligation]]
-id = "sf.ddl.show-snapshots.o019"
+id = "sf.ddl.show-snapshots.o051"
 kind = "negative_neighbour"
 required = true
-target = "<schema_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> |…"
+target = "<schema_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> }…"
 note = "a string literal in place of <schema_name>"
 
 [[obligation]]
-id = "sf.ddl.show-snapshots.o020"
+id = "sf.ddl.show-snapshots.o052"
 kind = "operand_type_class"
 required = true
-target = "<schema_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> |… #2"
+target = "<schema_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> }… #2"
 note = "a valid identifier"
 
 [[obligation]]
-id = "sf.ddl.show-snapshots.o021"
+id = "sf.ddl.show-snapshots.o053"
 kind = "negative_neighbour"
 required = true
-target = "<schema_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> |… #2"
+target = "<schema_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> }… #2"
 note = "a string literal in place of <schema_name>"
 
 [[obligation]]
@@ -252874,6 +252878,12 @@ id = "sf.ddl.show-snapshots.o036"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required SNAPSHOTS"
+
+[[obligation]]
+id = "sf.ddl.show-snapshots.o054"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> } in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> } ]"
 
 [[obligation]]
 id = "sf.ddl.show-snapshots.o037"
@@ -253129,28 +253139,28 @@ target = "'<pattern>' in [ LIKE '<pattern>' ]"
 note = "an unquoted identifier in place of '<pattern>'"
 
 [[obligation]]
-id = "sf.ddl.show-stages.o007"
+id = "sf.ddl.show-stages.o042"
 kind = "option_present"
 required = true
-target = "[ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> APPLICATION <appli…"
+target = "[ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> | APPLICATION <app…"
 
 [[obligation]]
-id = "sf.ddl.show-stages.o008"
+id = "sf.ddl.show-stages.o043"
 kind = "option_absent"
 required = true
-target = "[ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> APPLICATION <appli…"
+target = "[ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> | APPLICATION <app…"
 
 [[obligation]]
-id = "sf.ddl.show-stages.o009"
+id = "sf.ddl.show-stages.o044"
 kind = "alternative"
 required = true
-target = "{ ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> APPLICATION <… → ACCOUNT"
+target = "{ ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> | APPLICATION… → ACCOUNT"
 
 [[obligation]]
-id = "sf.ddl.show-stages.o010"
+id = "sf.ddl.show-stages.o045"
 kind = "alternative"
 required = true
-target = "{ ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> APPLICATION … → DATABASE"
+target = "{ ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> | APPLICATIO… → DATABASE"
 
 [[obligation]]
 id = "sf.ddl.show-stages.o011"
@@ -253159,10 +253169,10 @@ required = true
 target = "{ ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_na… → DATABASE <database_name>"
 
 [[obligation]]
-id = "sf.ddl.show-stages.o012"
+id = "sf.ddl.show-stages.o046"
 kind = "alternative"
 required = true
-target = "{ ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> APPLICATION <a… → SCHEMA"
+target = "{ ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> | APPLICATION … → SCHEMA"
 
 [[obligation]]
 id = "sf.ddl.show-stages.o013"
@@ -253171,22 +253181,22 @@ required = true
 target = "{ ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> … → SCHEMA <schema_name>"
 
 [[obligation]]
-id = "sf.ddl.show-stages.o014"
+id = "sf.ddl.show-stages.o047"
 kind = "alternative"
 required = true
-target = "{ ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schem… → <schema_name> APPLICATION <application_name>"
+target = "{ ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> | APPLI… → <schema_name>"
+
+[[obligation]]
+id = "sf.ddl.show-stages.o048"
+kind = "alternative"
+required = true
+target = "{ ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <sch… → APPLICATION <application_name>"
 
 [[obligation]]
 id = "sf.ddl.show-stages.o015"
 kind = "alternative"
 required = true
 target = "{ ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <sch… → APPLICATION PACKAGE <application_package_name>"
-
-[[obligation]]
-id = "sf.ddl.show-stages.o016"
-kind = "alternative"
-required = true
-target = "{ ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> APPLICATION <applica… → "
 
 [[obligation]]
 id = "sf.ddl.show-stages.o017"
@@ -253203,38 +253213,31 @@ target = "<database_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name
 note = "a string literal in place of <database_name>"
 
 [[obligation]]
-id = "sf.ddl.show-stages.o019"
+id = "sf.ddl.show-stages.o049"
 kind = "operand_type_class"
 required = true
-target = "<schema_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> A…"
+target = "<schema_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> |…"
 note = "a valid identifier"
 
 [[obligation]]
-id = "sf.ddl.show-stages.o020"
+id = "sf.ddl.show-stages.o050"
 kind = "negative_neighbour"
 required = true
-target = "<schema_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> A…"
+target = "<schema_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> |…"
 note = "a string literal in place of <schema_name>"
 
 [[obligation]]
-id = "sf.ddl.show-stages.o021"
-kind = "required_operand_missing"
-required = true
-target = "<schema_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> A… #2"
-note = "omit <schema_name>"
-
-[[obligation]]
-id = "sf.ddl.show-stages.o022"
+id = "sf.ddl.show-stages.o051"
 kind = "operand_type_class"
 required = true
-target = "<schema_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> A… #2"
+target = "<schema_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> |… #2"
 note = "a valid identifier"
 
 [[obligation]]
-id = "sf.ddl.show-stages.o023"
+id = "sf.ddl.show-stages.o052"
 kind = "negative_neighbour"
 required = true
-target = "<schema_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> A… #2"
+target = "<schema_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> |… #2"
 note = "a string literal in place of <schema_name>"
 
 [[obligation]]
@@ -253286,16 +253289,10 @@ required = true
 note = "the form without its required STAGES"
 
 [[obligation]]
-id = "sf.ddl.show-stages.o031"
+id = "sf.ddl.show-stages.o053"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required APPLICATION in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> APPLICATION <appli…"
-
-[[obligation]]
-id = "sf.ddl.show-stages.o032"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required PACKAGE in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> APPLICATION <appli…"
+note = "the form without its required { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> | APPLICATION <application_name> | APPLICATION PACKAGE <application_package_name> } in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> | APPLICATION <app…"
 
 [[obligation]]
 id = "sf.ddl.show-stages.o033"
@@ -253669,46 +253666,46 @@ target = "'<pattern>' in [ LIKE '<pattern>' ]"
 note = "an unquoted identifier in place of '<pattern>'"
 
 [[obligation]]
-id = "sf.ddl.show-streams.o009"
+id = "sf.ddl.show-streams.o057"
 kind = "option_present"
 required = true
-target = "[ IN { ACCOUNT | DATABASE [ <db_name> ] | [ SCHEMA ] [ <schema_name> ] | APPLICATION <application_name> | APPLICATION P…"
+target = "[ IN { ACCOUNT | DATABASE [ <db_name> ] | { SCHEMA [ <schema_name> ] | <schema_name> } | APPLICATION <application_name>…"
 
 [[obligation]]
-id = "sf.ddl.show-streams.o010"
+id = "sf.ddl.show-streams.o058"
 kind = "option_absent"
 required = true
-target = "[ IN { ACCOUNT | DATABASE [ <db_name> ] | [ SCHEMA ] [ <schema_name> ] | APPLICATION <application_name> | APPLICATION P…"
+target = "[ IN { ACCOUNT | DATABASE [ <db_name> ] | { SCHEMA [ <schema_name> ] | <schema_name> } | APPLICATION <application_name>…"
 
 [[obligation]]
-id = "sf.ddl.show-streams.o011"
+id = "sf.ddl.show-streams.o059"
 kind = "alternative"
 required = true
-target = "{ ACCOUNT | DATABASE [ <db_name> ] | [ SCHEMA ] [ <schema_name> ] | APPLICATION <application_name> | APPLICAT… → ACCOUNT"
+target = "{ ACCOUNT | DATABASE [ <db_name> ] | { SCHEMA [ <schema_name> ] | <schema_name> } | APPLICATION <application_… → ACCOUNT"
 
 [[obligation]]
-id = "sf.ddl.show-streams.o012"
+id = "sf.ddl.show-streams.o060"
 kind = "alternative"
 required = true
-target = "{ ACCOUNT | DATABASE [ <db_name> ] | [ SCHEMA ] [ <schema_name> ] | APPLICATION <application_n… → DATABASE [ <db_name> ]"
+target = "{ ACCOUNT | DATABASE [ <db_name> ] | { SCHEMA [ <schema_name> ] | <schema_name> } | APPLICATIO… → DATABASE [ <db_name> ]"
 
 [[obligation]]
-id = "sf.ddl.show-streams.o013"
+id = "sf.ddl.show-streams.o061"
 kind = "alternative"
 required = true
-target = "{ ACCOUNT | DATABASE [ <db_name> ] | [ SCHEMA ] [ <schema_name> ] | APPLICATION <applica… → [ SCHEMA ] [ <schema_name> ]"
+target = "{ ACCOUNT | DATABASE [ <db_name> ] | { SCHEMA [ <schema_name> ] | <schem… → { SCHEMA [ <schema_name> ] | <schema_name> }"
 
 [[obligation]]
-id = "sf.ddl.show-streams.o014"
+id = "sf.ddl.show-streams.o062"
 kind = "alternative"
 required = true
-target = "{ ACCOUNT | DATABASE [ <db_name> ] | [ SCHEMA ] [ <schema_name> ] | APPLICATION <appli… → APPLICATION <application_name>"
+target = "{ ACCOUNT | DATABASE [ <db_name> ] | { SCHEMA [ <schema_name> ] | <schema_name> } | AP… → APPLICATION <application_name>"
 
 [[obligation]]
-id = "sf.ddl.show-streams.o015"
+id = "sf.ddl.show-streams.o063"
 kind = "alternative"
 required = true
-target = "{ ACCOUNT | DATABASE [ <db_name> ] | [ SCHEMA ] [ <schema_name> ] | AP… → APPLICATION PACKAGE <application_package_name>"
+target = "{ ACCOUNT | DATABASE [ <db_name> ] | { SCHEMA [ <schema_name> ] | <sch… → APPLICATION PACKAGE <application_package_name>"
 
 [[obligation]]
 id = "sf.ddl.show-streams.o016"
@@ -253737,16 +253734,16 @@ target = "<db_name> in [ <db_name> ]"
 note = "a string literal in place of <db_name>"
 
 [[obligation]]
-id = "sf.ddl.show-streams.o020"
-kind = "option_present"
+id = "sf.ddl.show-streams.o064"
+kind = "alternative"
 required = true
-target = "[ SCHEMA ]"
+target = "{ SCHEMA [ <schema_name> ] | <schema_name> } → SCHEMA [ <schema_name> ]"
 
 [[obligation]]
-id = "sf.ddl.show-streams.o021"
-kind = "option_absent"
+id = "sf.ddl.show-streams.o065"
+kind = "alternative"
 required = true
-target = "[ SCHEMA ]"
+target = "{ SCHEMA [ <schema_name> ] | <schema_name> } → <schema_name>"
 
 [[obligation]]
 id = "sf.ddl.show-streams.o022"
@@ -253775,45 +253772,59 @@ target = "<schema_name> in [ <schema_name> ]"
 note = "a string literal in place of <schema_name>"
 
 [[obligation]]
-id = "sf.ddl.show-streams.o026"
+id = "sf.ddl.show-streams.o066"
+kind = "operand_type_class"
+required = true
+target = "<schema_name> in [ IN { ACCOUNT | DATABASE [ <db_name> ] | { SCHEMA [ <schema_name> ] | <schema_name> } | APPLICATION <…"
+note = "a valid identifier"
+
+[[obligation]]
+id = "sf.ddl.show-streams.o067"
+kind = "negative_neighbour"
+required = true
+target = "<schema_name> in [ IN { ACCOUNT | DATABASE [ <db_name> ] | { SCHEMA [ <schema_name> ] | <schema_name> } | APPLICATION <…"
+note = "a string literal in place of <schema_name>"
+
+[[obligation]]
+id = "sf.ddl.show-streams.o068"
 kind = "required_operand_missing"
 required = true
-target = "<application_name> in [ IN { ACCOUNT | DATABASE [ <db_name> ] | [ SCHEMA ] [ <schema_name> ] | APPLICATION <application…"
+target = "<application_name> in [ IN { ACCOUNT | DATABASE [ <db_name> ] | { SCHEMA [ <schema_name> ] | <schema_name> } | APPLICAT…"
 note = "omit <application_name>"
 
 [[obligation]]
-id = "sf.ddl.show-streams.o027"
+id = "sf.ddl.show-streams.o069"
 kind = "operand_type_class"
 required = true
-target = "<application_name> in [ IN { ACCOUNT | DATABASE [ <db_name> ] | [ SCHEMA ] [ <schema_name> ] | APPLICATION <application…"
+target = "<application_name> in [ IN { ACCOUNT | DATABASE [ <db_name> ] | { SCHEMA [ <schema_name> ] | <schema_name> } | APPLICAT…"
 note = "a valid identifier"
 
 [[obligation]]
-id = "sf.ddl.show-streams.o028"
+id = "sf.ddl.show-streams.o070"
 kind = "negative_neighbour"
 required = true
-target = "<application_name> in [ IN { ACCOUNT | DATABASE [ <db_name> ] | [ SCHEMA ] [ <schema_name> ] | APPLICATION <application…"
+target = "<application_name> in [ IN { ACCOUNT | DATABASE [ <db_name> ] | { SCHEMA [ <schema_name> ] | <schema_name> } | APPLICAT…"
 note = "a string literal in place of <application_name>"
 
 [[obligation]]
-id = "sf.ddl.show-streams.o029"
+id = "sf.ddl.show-streams.o071"
 kind = "required_operand_missing"
 required = true
-target = "<application_package_name> in [ IN { ACCOUNT | DATABASE [ <db_name> ] | [ SCHEMA ] [ <schema_name> ] | APPLICATION <app…"
+target = "<application_package_name> in [ IN { ACCOUNT | DATABASE [ <db_name> ] | { SCHEMA [ <schema_name> ] | <schema_name> } | …"
 note = "omit <application_package_name>"
 
 [[obligation]]
-id = "sf.ddl.show-streams.o030"
+id = "sf.ddl.show-streams.o072"
 kind = "operand_type_class"
 required = true
-target = "<application_package_name> in [ IN { ACCOUNT | DATABASE [ <db_name> ] | [ SCHEMA ] [ <schema_name> ] | APPLICATION <app…"
+target = "<application_package_name> in [ IN { ACCOUNT | DATABASE [ <db_name> ] | { SCHEMA [ <schema_name> ] | <schema_name> } | …"
 note = "a valid identifier"
 
 [[obligation]]
-id = "sf.ddl.show-streams.o031"
+id = "sf.ddl.show-streams.o073"
 kind = "negative_neighbour"
 required = true
-target = "<application_package_name> in [ IN { ACCOUNT | DATABASE [ <db_name> ] | [ SCHEMA ] [ <schema_name> ] | APPLICATION <app…"
+target = "<application_package_name> in [ IN { ACCOUNT | DATABASE [ <db_name> ] | { SCHEMA [ <schema_name> ] | <schema_name> } | …"
 note = "a string literal in place of <application_package_name>"
 
 [[obligation]]
@@ -253913,6 +253924,12 @@ id = "sf.ddl.show-streams.o046"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required STREAMS"
+
+[[obligation]]
+id = "sf.ddl.show-streams.o074"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { ACCOUNT | DATABASE [ <db_name> ] | { SCHEMA [ <schema_name> ] | <schema_name> } | APPLICATION <application_name> | APPLICATION PACKAGE <application_package_name> } in [ IN { ACCOUNT | DATABASE [ <db_name> ] | { SCHEMA [ <schema_name> ] | <schema_name> } | APPLICATION <application_name>…"
 
 [[obligation]]
 id = "sf.ddl.show-streams.o047"
@@ -254054,28 +254071,28 @@ target = "'<pattern>' in [ LIKE '<pattern>' ]"
 note = "an unquoted identifier in place of '<pattern>'"
 
 [[obligation]]
-id = "sf.ddl.show-tables.o011"
+id = "sf.ddl.show-tables.o061"
 kind = "option_present"
 required = true
-target = "[ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> APPLICATION <appli…"
+target = "[ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> | APPLICATION <app…"
 
 [[obligation]]
-id = "sf.ddl.show-tables.o012"
+id = "sf.ddl.show-tables.o062"
 kind = "option_absent"
 required = true
-target = "[ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> APPLICATION <appli…"
+target = "[ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> | APPLICATION <app…"
 
 [[obligation]]
-id = "sf.ddl.show-tables.o013"
+id = "sf.ddl.show-tables.o063"
 kind = "alternative"
 required = true
-target = "{ ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> APPLICATION <… → ACCOUNT"
+target = "{ ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> | APPLICATION… → ACCOUNT"
 
 [[obligation]]
-id = "sf.ddl.show-tables.o014"
+id = "sf.ddl.show-tables.o064"
 kind = "alternative"
 required = true
-target = "{ ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> APPLICATION … → DATABASE"
+target = "{ ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> | APPLICATIO… → DATABASE"
 
 [[obligation]]
 id = "sf.ddl.show-tables.o015"
@@ -254084,10 +254101,10 @@ required = true
 target = "{ ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_na… → DATABASE <database_name>"
 
 [[obligation]]
-id = "sf.ddl.show-tables.o016"
+id = "sf.ddl.show-tables.o065"
 kind = "alternative"
 required = true
-target = "{ ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> APPLICATION <a… → SCHEMA"
+target = "{ ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> | APPLICATION … → SCHEMA"
 
 [[obligation]]
 id = "sf.ddl.show-tables.o017"
@@ -254096,22 +254113,22 @@ required = true
 target = "{ ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> … → SCHEMA <schema_name>"
 
 [[obligation]]
-id = "sf.ddl.show-tables.o018"
+id = "sf.ddl.show-tables.o066"
 kind = "alternative"
 required = true
-target = "{ ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schem… → <schema_name> APPLICATION <application_name>"
+target = "{ ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> | APPLI… → <schema_name>"
+
+[[obligation]]
+id = "sf.ddl.show-tables.o067"
+kind = "alternative"
+required = true
+target = "{ ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <sch… → APPLICATION <application_name>"
 
 [[obligation]]
 id = "sf.ddl.show-tables.o019"
 kind = "alternative"
 required = true
 target = "{ ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <sch… → APPLICATION PACKAGE <application_package_name>"
-
-[[obligation]]
-id = "sf.ddl.show-tables.o020"
-kind = "alternative"
-required = true
-target = "{ ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> APPLICATION <applica… → "
 
 [[obligation]]
 id = "sf.ddl.show-tables.o021"
@@ -254128,38 +254145,31 @@ target = "<database_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name
 note = "a string literal in place of <database_name>"
 
 [[obligation]]
-id = "sf.ddl.show-tables.o023"
+id = "sf.ddl.show-tables.o068"
 kind = "operand_type_class"
 required = true
-target = "<schema_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> A…"
+target = "<schema_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> |…"
 note = "a valid identifier"
 
 [[obligation]]
-id = "sf.ddl.show-tables.o024"
+id = "sf.ddl.show-tables.o069"
 kind = "negative_neighbour"
 required = true
-target = "<schema_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> A…"
+target = "<schema_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> |…"
 note = "a string literal in place of <schema_name>"
 
 [[obligation]]
-id = "sf.ddl.show-tables.o025"
-kind = "required_operand_missing"
-required = true
-target = "<schema_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> A… #2"
-note = "omit <schema_name>"
-
-[[obligation]]
-id = "sf.ddl.show-tables.o026"
+id = "sf.ddl.show-tables.o070"
 kind = "operand_type_class"
 required = true
-target = "<schema_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> A… #2"
+target = "<schema_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> |… #2"
 note = "a valid identifier"
 
 [[obligation]]
-id = "sf.ddl.show-tables.o027"
+id = "sf.ddl.show-tables.o071"
 kind = "negative_neighbour"
 required = true
-target = "<schema_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> A… #2"
+target = "<schema_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> |… #2"
 note = "a string literal in place of <schema_name>"
 
 [[obligation]]
@@ -254303,16 +254313,10 @@ required = true
 note = "the form without its required TABLES"
 
 [[obligation]]
-id = "sf.ddl.show-tables.o049"
+id = "sf.ddl.show-tables.o072"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required APPLICATION in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> APPLICATION <appli…"
-
-[[obligation]]
-id = "sf.ddl.show-tables.o050"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required PACKAGE in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> APPLICATION <appli…"
+note = "the form without its required { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> | APPLICATION <application_name> | APPLICATION PACKAGE <application_package_name> } in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> | APPLICATION <app…"
 
 [[obligation]]
 id = "sf.ddl.show-tables.o051"
@@ -254430,28 +254434,28 @@ target = "'<pattern>' in [ LIKE '<pattern>' ]"
 note = "an unquoted identifier in place of '<pattern>'"
 
 [[obligation]]
-id = "sf.ddl.show-tags.o007"
+id = "sf.ddl.show-tags.o042"
 kind = "option_present"
 required = true
-target = "[ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> APPLICATION <appli…"
+target = "[ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> | APPLICATION <app…"
 
 [[obligation]]
-id = "sf.ddl.show-tags.o008"
+id = "sf.ddl.show-tags.o043"
 kind = "option_absent"
 required = true
-target = "[ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> APPLICATION <appli…"
+target = "[ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> | APPLICATION <app…"
 
 [[obligation]]
-id = "sf.ddl.show-tags.o009"
+id = "sf.ddl.show-tags.o044"
 kind = "alternative"
 required = true
-target = "{ ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> APPLICATION <… → ACCOUNT"
+target = "{ ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> | APPLICATION… → ACCOUNT"
 
 [[obligation]]
-id = "sf.ddl.show-tags.o010"
+id = "sf.ddl.show-tags.o045"
 kind = "alternative"
 required = true
-target = "{ ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> APPLICATION … → DATABASE"
+target = "{ ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> | APPLICATIO… → DATABASE"
 
 [[obligation]]
 id = "sf.ddl.show-tags.o011"
@@ -254460,10 +254464,10 @@ required = true
 target = "{ ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_na… → DATABASE <database_name>"
 
 [[obligation]]
-id = "sf.ddl.show-tags.o012"
+id = "sf.ddl.show-tags.o046"
 kind = "alternative"
 required = true
-target = "{ ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> APPLICATION <a… → SCHEMA"
+target = "{ ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> | APPLICATION … → SCHEMA"
 
 [[obligation]]
 id = "sf.ddl.show-tags.o013"
@@ -254472,22 +254476,22 @@ required = true
 target = "{ ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> … → SCHEMA <schema_name>"
 
 [[obligation]]
-id = "sf.ddl.show-tags.o014"
+id = "sf.ddl.show-tags.o047"
 kind = "alternative"
 required = true
-target = "{ ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schem… → <schema_name> APPLICATION <application_name>"
+target = "{ ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> | APPLI… → <schema_name>"
+
+[[obligation]]
+id = "sf.ddl.show-tags.o048"
+kind = "alternative"
+required = true
+target = "{ ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <sch… → APPLICATION <application_name>"
 
 [[obligation]]
 id = "sf.ddl.show-tags.o015"
 kind = "alternative"
 required = true
 target = "{ ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <sch… → APPLICATION PACKAGE <application_package_name>"
-
-[[obligation]]
-id = "sf.ddl.show-tags.o016"
-kind = "alternative"
-required = true
-target = "{ ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> APPLICATION <applica… → "
 
 [[obligation]]
 id = "sf.ddl.show-tags.o017"
@@ -254504,38 +254508,31 @@ target = "<database_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name
 note = "a string literal in place of <database_name>"
 
 [[obligation]]
-id = "sf.ddl.show-tags.o019"
+id = "sf.ddl.show-tags.o049"
 kind = "operand_type_class"
 required = true
-target = "<schema_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> A…"
+target = "<schema_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> |…"
 note = "a valid identifier"
 
 [[obligation]]
-id = "sf.ddl.show-tags.o020"
+id = "sf.ddl.show-tags.o050"
 kind = "negative_neighbour"
 required = true
-target = "<schema_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> A…"
+target = "<schema_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> |…"
 note = "a string literal in place of <schema_name>"
 
 [[obligation]]
-id = "sf.ddl.show-tags.o021"
-kind = "required_operand_missing"
-required = true
-target = "<schema_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> A… #2"
-note = "omit <schema_name>"
-
-[[obligation]]
-id = "sf.ddl.show-tags.o022"
+id = "sf.ddl.show-tags.o051"
 kind = "operand_type_class"
 required = true
-target = "<schema_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> A… #2"
+target = "<schema_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> |… #2"
 note = "a valid identifier"
 
 [[obligation]]
-id = "sf.ddl.show-tags.o023"
+id = "sf.ddl.show-tags.o052"
 kind = "negative_neighbour"
 required = true
-target = "<schema_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> A… #2"
+target = "<schema_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> |… #2"
 note = "a string literal in place of <schema_name>"
 
 [[obligation]]
@@ -254587,16 +254584,10 @@ required = true
 note = "the form without its required TAGS"
 
 [[obligation]]
-id = "sf.ddl.show-tags.o031"
+id = "sf.ddl.show-tags.o053"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required APPLICATION in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> APPLICATION <appli…"
-
-[[obligation]]
-id = "sf.ddl.show-tags.o032"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required PACKAGE in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> APPLICATION <appli…"
+note = "the form without its required { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> | APPLICATION <application_name> | APPLICATION PACKAGE <application_package_name> } in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> | APPLICATION <app…"
 
 [[obligation]]
 id = "sf.ddl.show-tags.o033"
@@ -254708,34 +254699,34 @@ target = "'<pattern>' in [ LIKE '<pattern>' ]"
 note = "an unquoted identifier in place of '<pattern>'"
 
 [[obligation]]
-id = "sf.ddl.show-task-graphs.o007"
+id = "sf.ddl.show-task-graphs.o044"
 kind = "option_present"
 required = true
-target = "[ IN { ACCOUNT | DATABASE [ <db_name> ] | [ SCHEMA ] [ <schema_name> ] } ]"
+target = "[ IN { ACCOUNT | DATABASE [ <db_name> ] | { SCHEMA [ <schema_name> ] | <schema_name> } } ]"
 
 [[obligation]]
-id = "sf.ddl.show-task-graphs.o008"
+id = "sf.ddl.show-task-graphs.o045"
 kind = "option_absent"
 required = true
-target = "[ IN { ACCOUNT | DATABASE [ <db_name> ] | [ SCHEMA ] [ <schema_name> ] } ]"
+target = "[ IN { ACCOUNT | DATABASE [ <db_name> ] | { SCHEMA [ <schema_name> ] | <schema_name> } } ]"
 
 [[obligation]]
-id = "sf.ddl.show-task-graphs.o009"
+id = "sf.ddl.show-task-graphs.o046"
 kind = "alternative"
 required = true
-target = "{ ACCOUNT | DATABASE [ <db_name> ] | [ SCHEMA ] [ <schema_name> ] } → ACCOUNT"
+target = "{ ACCOUNT | DATABASE [ <db_name> ] | { SCHEMA [ <schema_name> ] | <schema_name> } } → ACCOUNT"
 
 [[obligation]]
-id = "sf.ddl.show-task-graphs.o010"
+id = "sf.ddl.show-task-graphs.o047"
 kind = "alternative"
 required = true
-target = "{ ACCOUNT | DATABASE [ <db_name> ] | [ SCHEMA ] [ <schema_name> ] } → DATABASE [ <db_name> ]"
+target = "{ ACCOUNT | DATABASE [ <db_name> ] | { SCHEMA [ <schema_name> ] | <schema_name> } } → DATABASE [ <db_name> ]"
 
 [[obligation]]
-id = "sf.ddl.show-task-graphs.o011"
+id = "sf.ddl.show-task-graphs.o048"
 kind = "alternative"
 required = true
-target = "{ ACCOUNT | DATABASE [ <db_name> ] | [ SCHEMA ] [ <schema_name> ] } → [ SCHEMA ] [ <schema_name> ]"
+target = "{ ACCOUNT | DATABASE [ <db_name> ] | { SCHEMA [ <schema_name> ] | <schem… → { SCHEMA [ <schema_name> ] | <schema_name> }"
 
 [[obligation]]
 id = "sf.ddl.show-task-graphs.o012"
@@ -254764,16 +254755,16 @@ target = "<db_name> in [ <db_name> ]"
 note = "a string literal in place of <db_name>"
 
 [[obligation]]
-id = "sf.ddl.show-task-graphs.o016"
-kind = "option_present"
+id = "sf.ddl.show-task-graphs.o049"
+kind = "alternative"
 required = true
-target = "[ SCHEMA ]"
+target = "{ SCHEMA [ <schema_name> ] | <schema_name> } → SCHEMA [ <schema_name> ]"
 
 [[obligation]]
-id = "sf.ddl.show-task-graphs.o017"
-kind = "option_absent"
+id = "sf.ddl.show-task-graphs.o050"
+kind = "alternative"
 required = true
-target = "[ SCHEMA ]"
+target = "{ SCHEMA [ <schema_name> ] | <schema_name> } → <schema_name>"
 
 [[obligation]]
 id = "sf.ddl.show-task-graphs.o018"
@@ -254799,6 +254790,20 @@ id = "sf.ddl.show-task-graphs.o021"
 kind = "negative_neighbour"
 required = true
 target = "<schema_name> in [ <schema_name> ]"
+note = "a string literal in place of <schema_name>"
+
+[[obligation]]
+id = "sf.ddl.show-task-graphs.o051"
+kind = "operand_type_class"
+required = true
+target = "<schema_name> in [ IN { ACCOUNT | DATABASE [ <db_name> ] | { SCHEMA [ <schema_name> ] | <schema_name> } } ]"
+note = "a valid identifier"
+
+[[obligation]]
+id = "sf.ddl.show-task-graphs.o052"
+kind = "negative_neighbour"
+required = true
+target = "<schema_name> in [ IN { ACCOUNT | DATABASE [ <db_name> ] | { SCHEMA [ <schema_name> ] | <schema_name> } } ]"
 note = "a string literal in place of <schema_name>"
 
 [[obligation]]
@@ -254906,6 +254911,12 @@ required = true
 note = "the form without its required GRAPHS"
 
 [[obligation]]
+id = "sf.ddl.show-task-graphs.o053"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { ACCOUNT | DATABASE [ <db_name> ] | { SCHEMA [ <schema_name> ] | <schema_name> } } in [ IN { ACCOUNT | DATABASE [ <db_name> ] | { SCHEMA [ <schema_name> ] | <schema_name> } } ]"
+
+[[obligation]]
 id = "sf.ddl.show-task-graphs.o038"
 kind = "negative_neighbour"
 required = true
@@ -255001,46 +255012,46 @@ target = "'<pattern>' in [ LIKE '<pattern>' ]"
 note = "an unquoted identifier in place of '<pattern>'"
 
 [[obligation]]
-id = "sf.ddl.show-tasks.o009"
+id = "sf.ddl.show-tasks.o060"
 kind = "option_present"
 required = true
-target = "[ IN { ACCOUNT | DATABASE [ <db_name> ] | [ SCHEMA ] [ <schema_name> ] | APPLICATION <application_name> | APPLICATION P…"
+target = "[ IN { ACCOUNT | DATABASE [ <db_name> ] | { SCHEMA [ <schema_name> ] | <schema_name> } | APPLICATION <application_name>…"
 
 [[obligation]]
-id = "sf.ddl.show-tasks.o010"
+id = "sf.ddl.show-tasks.o061"
 kind = "option_absent"
 required = true
-target = "[ IN { ACCOUNT | DATABASE [ <db_name> ] | [ SCHEMA ] [ <schema_name> ] | APPLICATION <application_name> | APPLICATION P…"
+target = "[ IN { ACCOUNT | DATABASE [ <db_name> ] | { SCHEMA [ <schema_name> ] | <schema_name> } | APPLICATION <application_name>…"
 
 [[obligation]]
-id = "sf.ddl.show-tasks.o011"
+id = "sf.ddl.show-tasks.o062"
 kind = "alternative"
 required = true
-target = "{ ACCOUNT | DATABASE [ <db_name> ] | [ SCHEMA ] [ <schema_name> ] | APPLICATION <application_name> | APPLICAT… → ACCOUNT"
+target = "{ ACCOUNT | DATABASE [ <db_name> ] | { SCHEMA [ <schema_name> ] | <schema_name> } | APPLICATION <application_… → ACCOUNT"
 
 [[obligation]]
-id = "sf.ddl.show-tasks.o012"
+id = "sf.ddl.show-tasks.o063"
 kind = "alternative"
 required = true
-target = "{ ACCOUNT | DATABASE [ <db_name> ] | [ SCHEMA ] [ <schema_name> ] | APPLICATION <application_n… → DATABASE [ <db_name> ]"
+target = "{ ACCOUNT | DATABASE [ <db_name> ] | { SCHEMA [ <schema_name> ] | <schema_name> } | APPLICATIO… → DATABASE [ <db_name> ]"
 
 [[obligation]]
-id = "sf.ddl.show-tasks.o013"
+id = "sf.ddl.show-tasks.o064"
 kind = "alternative"
 required = true
-target = "{ ACCOUNT | DATABASE [ <db_name> ] | [ SCHEMA ] [ <schema_name> ] | APPLICATION <applica… → [ SCHEMA ] [ <schema_name> ]"
+target = "{ ACCOUNT | DATABASE [ <db_name> ] | { SCHEMA [ <schema_name> ] | <schem… → { SCHEMA [ <schema_name> ] | <schema_name> }"
 
 [[obligation]]
-id = "sf.ddl.show-tasks.o014"
+id = "sf.ddl.show-tasks.o065"
 kind = "alternative"
 required = true
-target = "{ ACCOUNT | DATABASE [ <db_name> ] | [ SCHEMA ] [ <schema_name> ] | APPLICATION <appli… → APPLICATION <application_name>"
+target = "{ ACCOUNT | DATABASE [ <db_name> ] | { SCHEMA [ <schema_name> ] | <schema_name> } | AP… → APPLICATION <application_name>"
 
 [[obligation]]
-id = "sf.ddl.show-tasks.o015"
+id = "sf.ddl.show-tasks.o066"
 kind = "alternative"
 required = true
-target = "{ ACCOUNT | DATABASE [ <db_name> ] | [ SCHEMA ] [ <schema_name> ] | AP… → APPLICATION PACKAGE <application_package_name>"
+target = "{ ACCOUNT | DATABASE [ <db_name> ] | { SCHEMA [ <schema_name> ] | <sch… → APPLICATION PACKAGE <application_package_name>"
 
 [[obligation]]
 id = "sf.ddl.show-tasks.o016"
@@ -255069,16 +255080,16 @@ target = "<db_name> in [ <db_name> ]"
 note = "a string literal in place of <db_name>"
 
 [[obligation]]
-id = "sf.ddl.show-tasks.o020"
-kind = "option_present"
+id = "sf.ddl.show-tasks.o067"
+kind = "alternative"
 required = true
-target = "[ SCHEMA ]"
+target = "{ SCHEMA [ <schema_name> ] | <schema_name> } → SCHEMA [ <schema_name> ]"
 
 [[obligation]]
-id = "sf.ddl.show-tasks.o021"
-kind = "option_absent"
+id = "sf.ddl.show-tasks.o068"
+kind = "alternative"
 required = true
-target = "[ SCHEMA ]"
+target = "{ SCHEMA [ <schema_name> ] | <schema_name> } → <schema_name>"
 
 [[obligation]]
 id = "sf.ddl.show-tasks.o022"
@@ -255107,45 +255118,59 @@ target = "<schema_name> in [ <schema_name> ]"
 note = "a string literal in place of <schema_name>"
 
 [[obligation]]
-id = "sf.ddl.show-tasks.o026"
+id = "sf.ddl.show-tasks.o069"
+kind = "operand_type_class"
+required = true
+target = "<schema_name> in [ IN { ACCOUNT | DATABASE [ <db_name> ] | { SCHEMA [ <schema_name> ] | <schema_name> } | APPLICATION <…"
+note = "a valid identifier"
+
+[[obligation]]
+id = "sf.ddl.show-tasks.o070"
+kind = "negative_neighbour"
+required = true
+target = "<schema_name> in [ IN { ACCOUNT | DATABASE [ <db_name> ] | { SCHEMA [ <schema_name> ] | <schema_name> } | APPLICATION <…"
+note = "a string literal in place of <schema_name>"
+
+[[obligation]]
+id = "sf.ddl.show-tasks.o071"
 kind = "required_operand_missing"
 required = true
-target = "<application_name> in [ IN { ACCOUNT | DATABASE [ <db_name> ] | [ SCHEMA ] [ <schema_name> ] | APPLICATION <application…"
+target = "<application_name> in [ IN { ACCOUNT | DATABASE [ <db_name> ] | { SCHEMA [ <schema_name> ] | <schema_name> } | APPLICAT…"
 note = "omit <application_name>"
 
 [[obligation]]
-id = "sf.ddl.show-tasks.o027"
+id = "sf.ddl.show-tasks.o072"
 kind = "operand_type_class"
 required = true
-target = "<application_name> in [ IN { ACCOUNT | DATABASE [ <db_name> ] | [ SCHEMA ] [ <schema_name> ] | APPLICATION <application…"
+target = "<application_name> in [ IN { ACCOUNT | DATABASE [ <db_name> ] | { SCHEMA [ <schema_name> ] | <schema_name> } | APPLICAT…"
 note = "a valid identifier"
 
 [[obligation]]
-id = "sf.ddl.show-tasks.o028"
+id = "sf.ddl.show-tasks.o073"
 kind = "negative_neighbour"
 required = true
-target = "<application_name> in [ IN { ACCOUNT | DATABASE [ <db_name> ] | [ SCHEMA ] [ <schema_name> ] | APPLICATION <application…"
+target = "<application_name> in [ IN { ACCOUNT | DATABASE [ <db_name> ] | { SCHEMA [ <schema_name> ] | <schema_name> } | APPLICAT…"
 note = "a string literal in place of <application_name>"
 
 [[obligation]]
-id = "sf.ddl.show-tasks.o029"
+id = "sf.ddl.show-tasks.o074"
 kind = "required_operand_missing"
 required = true
-target = "<application_package_name> in [ IN { ACCOUNT | DATABASE [ <db_name> ] | [ SCHEMA ] [ <schema_name> ] | APPLICATION <app…"
+target = "<application_package_name> in [ IN { ACCOUNT | DATABASE [ <db_name> ] | { SCHEMA [ <schema_name> ] | <schema_name> } | …"
 note = "omit <application_package_name>"
 
 [[obligation]]
-id = "sf.ddl.show-tasks.o030"
+id = "sf.ddl.show-tasks.o075"
 kind = "operand_type_class"
 required = true
-target = "<application_package_name> in [ IN { ACCOUNT | DATABASE [ <db_name> ] | [ SCHEMA ] [ <schema_name> ] | APPLICATION <app…"
+target = "<application_package_name> in [ IN { ACCOUNT | DATABASE [ <db_name> ] | { SCHEMA [ <schema_name> ] | <schema_name> } | …"
 note = "a valid identifier"
 
 [[obligation]]
-id = "sf.ddl.show-tasks.o031"
+id = "sf.ddl.show-tasks.o076"
 kind = "negative_neighbour"
 required = true
-target = "<application_package_name> in [ IN { ACCOUNT | DATABASE [ <db_name> ] | [ SCHEMA ] [ <schema_name> ] | APPLICATION <app…"
+target = "<application_package_name> in [ IN { ACCOUNT | DATABASE [ <db_name> ] | { SCHEMA [ <schema_name> ] | <schema_name> } | …"
 note = "a string literal in place of <application_package_name>"
 
 [[obligation]]
@@ -255257,6 +255282,12 @@ id = "sf.ddl.show-tasks.o048"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required TASKS"
+
+[[obligation]]
+id = "sf.ddl.show-tasks.o077"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { ACCOUNT | DATABASE [ <db_name> ] | { SCHEMA [ <schema_name> ] | <schema_name> } | APPLICATION <application_name> | APPLICATION PACKAGE <application_package_name> } in [ IN { ACCOUNT | DATABASE [ <db_name> ] | { SCHEMA [ <schema_name> ] | <schema_name> } | APPLICATION <application_name>…"
 
 [[obligation]]
 id = "sf.ddl.show-tasks.o049"
@@ -255453,28 +255484,28 @@ target = "'<pattern>' in [ LIKE '<pattern>' ]"
 note = "an unquoted identifier in place of '<pattern>'"
 
 [[obligation]]
-id = "sf.ddl.show-types.o007"
+id = "sf.ddl.show-types.o048"
 kind = "option_present"
 required = true
-target = "[ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> APPLICATION <appli…"
+target = "[ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> | APPLICATION <app…"
 
 [[obligation]]
-id = "sf.ddl.show-types.o008"
+id = "sf.ddl.show-types.o049"
 kind = "option_absent"
 required = true
-target = "[ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> APPLICATION <appli…"
+target = "[ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> | APPLICATION <app…"
 
 [[obligation]]
-id = "sf.ddl.show-types.o009"
+id = "sf.ddl.show-types.o050"
 kind = "alternative"
 required = true
-target = "{ ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> APPLICATION <… → ACCOUNT"
+target = "{ ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> | APPLICATION… → ACCOUNT"
 
 [[obligation]]
-id = "sf.ddl.show-types.o010"
+id = "sf.ddl.show-types.o051"
 kind = "alternative"
 required = true
-target = "{ ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> APPLICATION … → DATABASE"
+target = "{ ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> | APPLICATIO… → DATABASE"
 
 [[obligation]]
 id = "sf.ddl.show-types.o011"
@@ -255483,10 +255514,10 @@ required = true
 target = "{ ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_na… → DATABASE <database_name>"
 
 [[obligation]]
-id = "sf.ddl.show-types.o012"
+id = "sf.ddl.show-types.o052"
 kind = "alternative"
 required = true
-target = "{ ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> APPLICATION <a… → SCHEMA"
+target = "{ ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> | APPLICATION … → SCHEMA"
 
 [[obligation]]
 id = "sf.ddl.show-types.o013"
@@ -255495,22 +255526,22 @@ required = true
 target = "{ ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> … → SCHEMA <schema_name>"
 
 [[obligation]]
-id = "sf.ddl.show-types.o014"
+id = "sf.ddl.show-types.o053"
 kind = "alternative"
 required = true
-target = "{ ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schem… → <schema_name> APPLICATION <application_name>"
+target = "{ ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> | APPLI… → <schema_name>"
+
+[[obligation]]
+id = "sf.ddl.show-types.o054"
+kind = "alternative"
+required = true
+target = "{ ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <sch… → APPLICATION <application_name>"
 
 [[obligation]]
 id = "sf.ddl.show-types.o015"
 kind = "alternative"
 required = true
 target = "{ ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <sch… → APPLICATION PACKAGE <application_package_name>"
-
-[[obligation]]
-id = "sf.ddl.show-types.o016"
-kind = "alternative"
-required = true
-target = "{ ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> APPLICATION <applica… → "
 
 [[obligation]]
 id = "sf.ddl.show-types.o017"
@@ -255527,38 +255558,31 @@ target = "<database_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name
 note = "a string literal in place of <database_name>"
 
 [[obligation]]
-id = "sf.ddl.show-types.o019"
+id = "sf.ddl.show-types.o055"
 kind = "operand_type_class"
 required = true
-target = "<schema_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> A…"
+target = "<schema_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> |…"
 note = "a valid identifier"
 
 [[obligation]]
-id = "sf.ddl.show-types.o020"
+id = "sf.ddl.show-types.o056"
 kind = "negative_neighbour"
 required = true
-target = "<schema_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> A…"
+target = "<schema_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> |…"
 note = "a string literal in place of <schema_name>"
 
 [[obligation]]
-id = "sf.ddl.show-types.o021"
-kind = "required_operand_missing"
-required = true
-target = "<schema_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> A… #2"
-note = "omit <schema_name>"
-
-[[obligation]]
-id = "sf.ddl.show-types.o022"
+id = "sf.ddl.show-types.o057"
 kind = "operand_type_class"
 required = true
-target = "<schema_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> A… #2"
+target = "<schema_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> |… #2"
 note = "a valid identifier"
 
 [[obligation]]
-id = "sf.ddl.show-types.o023"
+id = "sf.ddl.show-types.o058"
 kind = "negative_neighbour"
 required = true
-target = "<schema_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> A… #2"
+target = "<schema_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> |… #2"
 note = "a string literal in place of <schema_name>"
 
 [[obligation]]
@@ -255643,16 +255667,10 @@ required = true
 note = "the form without its required TYPES"
 
 [[obligation]]
-id = "sf.ddl.show-types.o036"
+id = "sf.ddl.show-types.o059"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required APPLICATION in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> APPLICATION <appli…"
-
-[[obligation]]
-id = "sf.ddl.show-types.o037"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required PACKAGE in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> APPLICATION <appli…"
+note = "the form without its required { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> | APPLICATION <application_name> | APPLICATION PACKAGE <application_package_name> } in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> | APPLICATION <app…"
 
 [[obligation]]
 id = "sf.ddl.show-types.o038"
@@ -256537,46 +256555,46 @@ target = "'<pattern>' in [ LIKE '<pattern>' ]"
 note = "an unquoted identifier in place of '<pattern>'"
 
 [[obligation]]
-id = "sf.ddl.show-views.o009"
+id = "sf.ddl.show-views.o057"
 kind = "option_present"
 required = true
-target = "[ IN { ACCOUNT | DATABASE [ <db_name> ] | [ SCHEMA ] [ <schema_name> ] | APPLICATION <application_name> | APPLICATION P…"
+target = "[ IN { ACCOUNT | DATABASE [ <db_name> ] | { SCHEMA [ <schema_name> ] | <schema_name> } | APPLICATION <application_name>…"
 
 [[obligation]]
-id = "sf.ddl.show-views.o010"
+id = "sf.ddl.show-views.o058"
 kind = "option_absent"
 required = true
-target = "[ IN { ACCOUNT | DATABASE [ <db_name> ] | [ SCHEMA ] [ <schema_name> ] | APPLICATION <application_name> | APPLICATION P…"
+target = "[ IN { ACCOUNT | DATABASE [ <db_name> ] | { SCHEMA [ <schema_name> ] | <schema_name> } | APPLICATION <application_name>…"
 
 [[obligation]]
-id = "sf.ddl.show-views.o011"
+id = "sf.ddl.show-views.o059"
 kind = "alternative"
 required = true
-target = "{ ACCOUNT | DATABASE [ <db_name> ] | [ SCHEMA ] [ <schema_name> ] | APPLICATION <application_name> | APPLICAT… → ACCOUNT"
+target = "{ ACCOUNT | DATABASE [ <db_name> ] | { SCHEMA [ <schema_name> ] | <schema_name> } | APPLICATION <application_… → ACCOUNT"
 
 [[obligation]]
-id = "sf.ddl.show-views.o012"
+id = "sf.ddl.show-views.o060"
 kind = "alternative"
 required = true
-target = "{ ACCOUNT | DATABASE [ <db_name> ] | [ SCHEMA ] [ <schema_name> ] | APPLICATION <application_n… → DATABASE [ <db_name> ]"
+target = "{ ACCOUNT | DATABASE [ <db_name> ] | { SCHEMA [ <schema_name> ] | <schema_name> } | APPLICATIO… → DATABASE [ <db_name> ]"
 
 [[obligation]]
-id = "sf.ddl.show-views.o013"
+id = "sf.ddl.show-views.o061"
 kind = "alternative"
 required = true
-target = "{ ACCOUNT | DATABASE [ <db_name> ] | [ SCHEMA ] [ <schema_name> ] | APPLICATION <applica… → [ SCHEMA ] [ <schema_name> ]"
+target = "{ ACCOUNT | DATABASE [ <db_name> ] | { SCHEMA [ <schema_name> ] | <schem… → { SCHEMA [ <schema_name> ] | <schema_name> }"
 
 [[obligation]]
-id = "sf.ddl.show-views.o014"
+id = "sf.ddl.show-views.o062"
 kind = "alternative"
 required = true
-target = "{ ACCOUNT | DATABASE [ <db_name> ] | [ SCHEMA ] [ <schema_name> ] | APPLICATION <appli… → APPLICATION <application_name>"
+target = "{ ACCOUNT | DATABASE [ <db_name> ] | { SCHEMA [ <schema_name> ] | <schema_name> } | AP… → APPLICATION <application_name>"
 
 [[obligation]]
-id = "sf.ddl.show-views.o015"
+id = "sf.ddl.show-views.o063"
 kind = "alternative"
 required = true
-target = "{ ACCOUNT | DATABASE [ <db_name> ] | [ SCHEMA ] [ <schema_name> ] | AP… → APPLICATION PACKAGE <application_package_name>"
+target = "{ ACCOUNT | DATABASE [ <db_name> ] | { SCHEMA [ <schema_name> ] | <sch… → APPLICATION PACKAGE <application_package_name>"
 
 [[obligation]]
 id = "sf.ddl.show-views.o016"
@@ -256605,16 +256623,16 @@ target = "<db_name> in [ <db_name> ]"
 note = "a string literal in place of <db_name>"
 
 [[obligation]]
-id = "sf.ddl.show-views.o020"
-kind = "option_present"
+id = "sf.ddl.show-views.o064"
+kind = "alternative"
 required = true
-target = "[ SCHEMA ]"
+target = "{ SCHEMA [ <schema_name> ] | <schema_name> } → SCHEMA [ <schema_name> ]"
 
 [[obligation]]
-id = "sf.ddl.show-views.o021"
-kind = "option_absent"
+id = "sf.ddl.show-views.o065"
+kind = "alternative"
 required = true
-target = "[ SCHEMA ]"
+target = "{ SCHEMA [ <schema_name> ] | <schema_name> } → <schema_name>"
 
 [[obligation]]
 id = "sf.ddl.show-views.o022"
@@ -256643,45 +256661,59 @@ target = "<schema_name> in [ <schema_name> ]"
 note = "a string literal in place of <schema_name>"
 
 [[obligation]]
-id = "sf.ddl.show-views.o026"
+id = "sf.ddl.show-views.o066"
+kind = "operand_type_class"
+required = true
+target = "<schema_name> in [ IN { ACCOUNT | DATABASE [ <db_name> ] | { SCHEMA [ <schema_name> ] | <schema_name> } | APPLICATION <…"
+note = "a valid identifier"
+
+[[obligation]]
+id = "sf.ddl.show-views.o067"
+kind = "negative_neighbour"
+required = true
+target = "<schema_name> in [ IN { ACCOUNT | DATABASE [ <db_name> ] | { SCHEMA [ <schema_name> ] | <schema_name> } | APPLICATION <…"
+note = "a string literal in place of <schema_name>"
+
+[[obligation]]
+id = "sf.ddl.show-views.o068"
 kind = "required_operand_missing"
 required = true
-target = "<application_name> in [ IN { ACCOUNT | DATABASE [ <db_name> ] | [ SCHEMA ] [ <schema_name> ] | APPLICATION <application…"
+target = "<application_name> in [ IN { ACCOUNT | DATABASE [ <db_name> ] | { SCHEMA [ <schema_name> ] | <schema_name> } | APPLICAT…"
 note = "omit <application_name>"
 
 [[obligation]]
-id = "sf.ddl.show-views.o027"
+id = "sf.ddl.show-views.o069"
 kind = "operand_type_class"
 required = true
-target = "<application_name> in [ IN { ACCOUNT | DATABASE [ <db_name> ] | [ SCHEMA ] [ <schema_name> ] | APPLICATION <application…"
+target = "<application_name> in [ IN { ACCOUNT | DATABASE [ <db_name> ] | { SCHEMA [ <schema_name> ] | <schema_name> } | APPLICAT…"
 note = "a valid identifier"
 
 [[obligation]]
-id = "sf.ddl.show-views.o028"
+id = "sf.ddl.show-views.o070"
 kind = "negative_neighbour"
 required = true
-target = "<application_name> in [ IN { ACCOUNT | DATABASE [ <db_name> ] | [ SCHEMA ] [ <schema_name> ] | APPLICATION <application…"
+target = "<application_name> in [ IN { ACCOUNT | DATABASE [ <db_name> ] | { SCHEMA [ <schema_name> ] | <schema_name> } | APPLICAT…"
 note = "a string literal in place of <application_name>"
 
 [[obligation]]
-id = "sf.ddl.show-views.o029"
+id = "sf.ddl.show-views.o071"
 kind = "required_operand_missing"
 required = true
-target = "<application_package_name> in [ IN { ACCOUNT | DATABASE [ <db_name> ] | [ SCHEMA ] [ <schema_name> ] | APPLICATION <app…"
+target = "<application_package_name> in [ IN { ACCOUNT | DATABASE [ <db_name> ] | { SCHEMA [ <schema_name> ] | <schema_name> } | …"
 note = "omit <application_package_name>"
 
 [[obligation]]
-id = "sf.ddl.show-views.o030"
+id = "sf.ddl.show-views.o072"
 kind = "operand_type_class"
 required = true
-target = "<application_package_name> in [ IN { ACCOUNT | DATABASE [ <db_name> ] | [ SCHEMA ] [ <schema_name> ] | APPLICATION <app…"
+target = "<application_package_name> in [ IN { ACCOUNT | DATABASE [ <db_name> ] | { SCHEMA [ <schema_name> ] | <schema_name> } | …"
 note = "a valid identifier"
 
 [[obligation]]
-id = "sf.ddl.show-views.o031"
+id = "sf.ddl.show-views.o073"
 kind = "negative_neighbour"
 required = true
-target = "<application_package_name> in [ IN { ACCOUNT | DATABASE [ <db_name> ] | [ SCHEMA ] [ <schema_name> ] | APPLICATION <app…"
+target = "<application_package_name> in [ IN { ACCOUNT | DATABASE [ <db_name> ] | { SCHEMA [ <schema_name> ] | <schema_name> } | …"
 note = "a string literal in place of <application_package_name>"
 
 [[obligation]]
@@ -256781,6 +256813,12 @@ id = "sf.ddl.show-views.o046"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required VIEWS"
+
+[[obligation]]
+id = "sf.ddl.show-views.o074"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { ACCOUNT | DATABASE [ <db_name> ] | { SCHEMA [ <schema_name> ] | <schema_name> } | APPLICATION <application_name> | APPLICATION PACKAGE <application_package_name> } in [ IN { ACCOUNT | DATABASE [ <db_name> ] | { SCHEMA [ <schema_name> ] | <schema_name> } | APPLICATION <application_name>…"
 
 [[obligation]]
 id = "sf.ddl.show-views.o047"

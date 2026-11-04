@@ -26,6 +26,7 @@ from scripts.syntax_obligations.constants import (
     CONTEXT_RAW,
     CONTEXT_TOP,
     DOUBLE_QUOTE,
+    EMPTY_CLAUSE,
     EMPTY_PROPERTY_LIST,
     EXPECT_ACCEPT,
     EXPECT_OBSERVE,
@@ -80,8 +81,19 @@ class _Choices:
 def submissions(
     *, trees: list[tuple[Node, ...]], style: FormStyle, spec: Spec, depths: tuple[int, ...]
 ) -> list[Rendered]:
-    """The submissions of a case spec of one form; most specs give one, some give several."""
-    return _Renderer(trees=trees, style=style).submissions(spec=spec, depths=depths)
+    """A case spec's submissions, empty property lists and clauses observed where the style asks."""
+    rendered: list[Rendered] = _Renderer(trees=trees, style=style).submissions(
+        spec=spec, depths=depths
+    )
+    if not style.observe_empty_properties or spec.action == ACTION_HAND:
+        return rendered
+    return [
+        Rendered(r.sql, EXPECT_OBSERVE, r.stage)
+        if EMPTY_PROPERTY_LIST.search(r.sql)
+        or (r.expect == EXPECT_ACCEPT and EMPTY_CLAUSE.search(r.sql))
+        else r
+        for r in rendered
+    ]
 
 
 class _Renderer:
@@ -127,9 +139,7 @@ class _Renderer:
                 )
             ]
         text: str = self.text(production=spec.production, choices=self._choices(spec))
-        sql: str = self.wrap(text)
-        empty: bool = self.style.observe_empty_properties and bool(EMPTY_PROPERTY_LIST.search(sql))
-        return [Rendered(sql, EXPECT_OBSERVE if empty else spec.expect, spec.stage)]
+        return [Rendered(self.wrap(text), spec.expect, spec.stage)]
 
     def wrap(self, text: str) -> str:
         """Prefix, opened cursors, text and suffix (`{label}` filled), after the declarations."""

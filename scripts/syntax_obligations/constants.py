@@ -362,7 +362,7 @@ PURE_ELISION: str = "[ ... ]"
 LIST_SEPARATOR: str = ","
 OPENED: int = -2
 LIST_ITEM_KEYWORDS: frozenset[str] = frozenset(
-    {"AS", "NOT", "NULL", "ASC", "DESC", "NULLS", "FIRST", "LAST"}
+    {"AS", "NOT", "NULL", "ASC", "DESC", "NULLS", "FIRST", "LAST", "DEFAULT"}
 )
 GLUED_PREFIXES: re.Pattern[str] = re.compile(r"(?<![^ ])([$:@]) (?![a-z]+:/)(?=[^ =])")
 STAGE_TOKEN: str = r'(@(?:"[^"]*"|[^\s"])*'
@@ -373,7 +373,8 @@ STAGE_GLUES: tuple[re.Pattern[str], ...] = (
     re.compile(STAGE_TOKEN + r"/) (?![a-z]+:)(?=[a-z0-9\"'])"),
 )
 STAGE_KEYWORD: re.Pattern[str] = re.compile(r"(?<![^ ])(@[^ ]*?[%.]|@)([A-Z][A-Z0-9_]*)(?=[ ;]|$)")
-EMPTY_PROPERTY_LIST: re.Pattern[str] = re.compile(r"\b(?:SET|UNSET) ;$")
+EMPTY_PROPERTY_LIST: re.Pattern[str] = re.compile(r"\b(?:SET|UNSET|WITH) ;$")
+EMPTY_CLAUSE: re.Pattern[str] = re.compile(r"\bON ;$")
 GLUED_INFIX_RIGHT: re.Pattern[str] = re.compile(r"(?<![^ ])! (?=[A-Za-z_\"'])")
 GLUED_INFIX_LEFT: re.Pattern[str] = re.compile(r"(?<=[\w\"')]) !(?=[ A-Za-z_\"'])")
 QUERY_FORMS: tuple[str, ...] = ("sf.query.constructs",)
@@ -933,6 +934,65 @@ DDL_FILLS: dict[str, str] = {
     "window_function": "SUM",
     "windowFrameClause": "ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW",
     "scoring_profile": "'{}'",
+    "sql": "SELECT 1",
+    "procedure_definition": "$$ BEGIN RETURN 1 ; END $$",
+    "action": "SELECT 1",
+    "boolean": "TRUE",
+    "boolean_expr": "TRUE",
+    "budget_in_bytes": "1000000",
+    "comma_separated_instance_ids": "0 , 2",
+    "constraint_properties": "RELY",
+    "context_function_1": "CURRENT_USER",
+    "context_function_2": "CURRENT_ROLE",
+    "git_author_email": "'u1@example.com'",
+    "git_username": "'u1'",
+    "git_password": "'m'",
+    "hour_of_day": "3",
+    "instance_id": "0",
+    "snapshot_id": "1",
+    "transaction_id": "1",
+    "width": "10",
+    "java_jdk_version": "'11'",
+    "python_version": "'3.10'",
+    "scala_version": "'2.12'",
+    "log_event_level": "INFO",
+    "log_level": "INFO",
+    "list_of_properties": "ANOMALY_DETECTION = TRUE",
+    "manifest": "$$m: 1$$",
+    "specification": "'{}'",
+    "specification_object": "$$m: 1$$",
+    "specification_text": "$$m: 1$$",
+    "specification_yaml": "$$m: 1$$",
+    "yaml_fragment": "$$m: 1$$",
+    "yaml_spec": "$$m: 1$$",
+    "object_visibility_spec": "$$m: 1$$",
+    "authentication_properties": "ISSUER = 'm' AUDIENCE = 'm'",
+    "object_privilege": "USAGE",
+    "objectPrivilege": "USAGE",
+    "path_to_stage": "'@d1.s1.st1/p1'",
+    "path_to_version_directory": "'@d1.s1.st1/p1'",
+    "source_location": "'@d1.s1.st1'",
+    "yaml_manifest_stage_location": "@d1.s1.st1/p1",
+    "prefix": "'p1'",
+    "property": "SUSPEND_TASK_AFTER_NUM_FAILURES",
+    "default_property": "USER_TASK_TIMEOUT_MS",
+    "session_parameter": "LOCK_TIMEOUT",
+    "purpose": "STEWARD",
+    "region_group": "PUBLIC",
+    "search_method_with_target": "EQUALITY ( v1 )",
+    "arg_data_type_2": "INT",
+    "default_target": "'t1'",
+    "start_time": "'2026-01-01T00:00:00Z'",
+    "endpoint_name": "e1",
+    "start_column": "v1",
+    "end_column": "v1",
+}
+ALERT_PAGES: tuple[str, ...] = ("sf.ddl.create-alert", "sf.ddl.alter-alert")
+SECURITY_ADMIN_FILLS: dict[str, str] = {
+    **DDL_FILLS,
+    "client_type": "GO_DRIVER",
+    "integration_type": "SECURITY",
+    "actions": "SET COMMENT = 'm'",
 }
 DDL_LITERAL_FILLS: dict[str, str] = {
     **UTILITY_LITERAL_FILLS,
@@ -958,6 +1018,7 @@ DDL_LITERAL_FILLS: dict[str, str] = {
     "'azure://onelake.blob.fabric.microsoft.com/<workspace_id>/<item_id>/Files[/<path>/]'": "'azure://onelake.blob.fabric.microsoft.com/w1/i1/Files/p1/'",
     "'s3compat://<bucket>[/<path>/]'": "'s3compat://b1/p1/'",
     "'{string_literal}'": "'m'",
+    '"<volume_name>"': '"d1"',
     "'s3compat://{bucket}[/{path}/]'": "'s3compat://b1/p1/'",
     "'<protocol>://<bucket>[/<path>/]'": "'s3://b1/p1/'",
     "'gcs://<bucket>[/<path>/]'": "'gcs://b1/p1/'",
@@ -980,6 +1041,25 @@ FAMILY_STYLES: dict[str, dict[str, FormStyle]] = {
             prefix="",
             suffix="",
             fills=DDL_FILLS,
+            literal_fills=DDL_LITERAL_FILLS,
+            observe_empty_properties=True,
+        ),
+        **{
+            prefix: FormStyle(
+                prefix="",
+                suffix="",
+                fills={**DDL_FILLS, "condition": "SELECT 1"},
+                literal_fills=DDL_LITERAL_FILLS,
+                observe_empty_properties=True,
+            )
+            for prefix in ALERT_PAGES
+        },
+    },
+    "security_admin": {
+        "sf.security_admin.": FormStyle(
+            prefix="",
+            suffix="",
+            fills=SECURITY_ADMIN_FILLS,
             literal_fills=DDL_LITERAL_FILLS,
             observe_empty_properties=True,
         )
