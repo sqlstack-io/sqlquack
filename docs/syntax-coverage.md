@@ -396,3 +396,46 @@ with `snapshot` and commit it with the change. A review without fingerprints bin
 tree, so any parser commit makes its verified forms stale until it is renewed; a review with
 fingerprints goes stale only for the forms whose cases now parse differently. Either shows up as a
 regression.
+
+## Translation
+
+`syntax-coverage translation --sqlquack <binary> [--policy sqlquack.toml] [--family <family>]
+[--jobs 4] [--json]` measures what conversion makes of the syntax Snowflake parsed. It never
+changes a coverage verdict. The `sqlquack` binary must find `libduckdb.so`, for example through
+`LD_LIBRARY_PATH`.
+
+A case counts when its current receipt phase is `accepted`, `semantic_error` or `runtime_error`
+and it does not expect a rejection. Each counted case runs in its own
+`sqlquack convert --loud-divergences-only --json --policy <policy> -` process, bounded to 120
+seconds and 4 GiB. Its outcome is one of:
+
+- `translated`: convert converted it. For a query, that includes DuckDB parsing and binding the
+  printed SQL over the declared relations. `binds` is reported only for cases with an empty setup,
+  because a setup's tables are not replayed.
+- `by_design`: refused only for constructs in `coverage/translation/by-design.toml` whose entry
+  the auditor signed off in `coverage/translation/reviews/auditor-by-design.toml`. A sign-off names
+  the construct and the SHA-256 of the entry's reason, so a changed reason needs a new sign-off.
+  Until then the case counts as not yet translated.
+- `declared_value_divergence`: refused only because the policy refuses a known divergence that
+  can return another value.
+- `needs_schema`: refused only for unresolved names even with the case's census schema.
+- `no_relation_in_scope`: refused only for unresolved names, with no census entry. It is a syntax
+  probe and is never scored.
+- `did_not_finish`: conversion ran past its bound or gave no report. It counts as not translated.
+- `not_yet_translated`: anything else, with each refusal as `category: construct`.
+
+A form's state comes from its counted cases. It is `not_measurable` when Snowflake parsed none of
+them. It is `needs_schema` or `no_relation_in_scope` when none of its cases is measured. It
+`translates` when every measured case translates. Otherwise it is `by_design` or
+`declared_value_divergence` when every case that does not translate is, and `not_yet_translated`
+otherwise. The headline is "X of Y measurable forms translate", where the measurable forms
+exclude not-measurable, needs-schema and no-relation forms, followed by the refusals that block
+the most forms. Results-match stays "not measured: no recorded result" until syntax cases record
+Snowflake rows.
+
+`coverage/syntax/census/<family>.jsonl` holds one line per case that reads relations:
+`{"case_id": …, "relations": [{"name": …, "columns": [{"name": …, "type": …}]}]}`. It is passed
+to convert as `--schema`. An unknown case id, a duplicate or an empty relation or column list
+fails the command. `by-design.toml` holds `[[by_design]]` entries with `construct` (a construct
+key such as `fn:SYSTEM$WAIT`), `reason` and `duckdb_note`. The review file holds `[[signoff]]`
+entries with `construct`, `reason_sha256` and `reviewed_utc`. Both files are optional.
