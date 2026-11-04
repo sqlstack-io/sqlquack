@@ -103,7 +103,7 @@ def _binding(
     setups: dict[tuple[str, str], list[str]],
     held: frozenset[str],
 ) -> Row:
-    """Capture and setup: DEFINE from a DCM file, run-database families as run, the rest bare."""
+    """Capture and setup: DCM file for DEFINE, run database as receipted for ddl and held."""
     capture: str = CASE_CAPTURE
     setup: list[str] = []
     case_id: str = f"{form}.k{sql_sha[:DIGEST_WIDTH]}"
@@ -114,7 +114,7 @@ def _binding(
         setup = setups.get((case_id, sql_sha), list(RUN_DATABASE_SETUPS[family]))
     elif case_id in held:
         capture = CASE_CAPTURE_RUN_DATABASE
-        setup = list(HELD_RUN_DATABASE_SETUP)
+        setup = setups.get((case_id, sql_sha), list(HELD_RUN_DATABASE_SETUP))
     return {"capture": capture, "setup": setup, "setup_sha256": digest(canonical(setup))}
 
 

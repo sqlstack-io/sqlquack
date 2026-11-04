@@ -90,7 +90,8 @@ obligations, not forms.
    such a receipt carries its family's sweep setup with a per-case schema (the ddl sweep for
    ddl, the d103 sweep for security_admin and classes), which future captures use. Cases of
    other families on a held list (`--held`, the import's held-case file) run later under the
-   d103 runner and carry its setup too.
+   d103 runner and carry its setup too, unless they already have such a receipt, whose setup
+   they then carry like a ddl case.
 9. Pages whose syntax is written outside syntax blocks are catalogued from `hand.toml`; the
    page's `decisions` records the basis (HTML parsed-literal, table, heading, prose, inline code or
    examples, the last only for syntax shown by examples alone, such as `<expr>['<key>']`).

@@ -10878,22 +10878,11 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "sf.functions.concat.concat-subscript-dot.o002"
-kind = "alternative"
+id = "sf.functions.concat.concat-subscript-dot.o014"
+kind = "required_operand_missing"
 required = true
-target = "{ <expr> |  | <expr> [  |  | <expr> ... ] } → <expr>"
-
-[[obligation]]
-id = "sf.functions.concat.concat-subscript-dot.o003"
-kind = "alternative"
-required = true
-target = "{ <expr> |  | <expr> [  |  | <expr> ... ] } → "
-
-[[obligation]]
-id = "sf.functions.concat.concat-subscript-dot.o004"
-kind = "alternative"
-required = true
-target = "{ <expr> |  | <expr> [  |  | <expr> ... ] } → <expr> [  |  | <expr> ... ]"
+target = "<expr>"
+note = "omit <expr>"
 
 [[obligation]]
 id = "sf.functions.concat.concat-subscript-dot.o005"
@@ -10903,6 +10892,13 @@ target = "<expr>"
 note = "a valid expression"
 
 [[obligation]]
+id = "sf.functions.concat.concat-subscript-dot.o015"
+kind = "required_operand_missing"
+required = true
+target = "<expr> #2"
+note = "omit <expr>"
+
+[[obligation]]
 id = "sf.functions.concat.concat-subscript-dot.o006"
 kind = "operand_type_class"
 required = true
@@ -10910,41 +10906,17 @@ target = "<expr> #2"
 note = "a valid expression"
 
 [[obligation]]
-id = "sf.functions.concat.concat-subscript-dot.o007"
+id = "sf.functions.concat.concat-subscript-dot.o016"
 kind = "option_present"
 required = true
-target = "[  |  | <expr> ... ]"
+target = "[ || <expr> ... ]"
+note = "the list continued at least once"
 
 [[obligation]]
-id = "sf.functions.concat.concat-subscript-dot.o008"
+id = "sf.functions.concat.concat-subscript-dot.o017"
 kind = "option_absent"
 required = true
-target = "[  |  | <expr> ... ]"
-
-[[obligation]]
-id = "sf.functions.concat.concat-subscript-dot.o009"
-kind = "alternative"
-required = true
-target = "[  |  | <expr> ... ] → "
-
-[[obligation]]
-id = "sf.functions.concat.concat-subscript-dot.o010"
-kind = "alternative"
-required = true
-target = "[  |  | <expr> ... ] →  #2"
-
-[[obligation]]
-id = "sf.functions.concat.concat-subscript-dot.o011"
-kind = "alternative"
-required = true
-target = "[  |  | <expr> ... ] → <expr> ..."
-
-[[obligation]]
-id = "sf.functions.concat.concat-subscript-dot.o012"
-kind = "operand_type_class"
-required = true
-target = "<expr> in [  |  | <expr> ... ]"
-note = "a valid expression"
+target = "[ || <expr> ... ]"
 
 [[obligation]]
 id = "sf.functions.concat.concat-subscript-dot.o013"

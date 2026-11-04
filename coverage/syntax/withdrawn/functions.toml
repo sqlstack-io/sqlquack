@@ -162,24 +162,6 @@ valid_as = "sf.functions.case.end positive the documented form with every requir
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
-form = "sf.functions.concat.concat-subscript-dot"
-kind = "required_operand_missing"
-target = "<expr> #2"
-note = "omit <expr>"
-sql = "SELECT  ;"
-valid_as = "sf.functions.concat.concat-subscript-dot alternative { <expr> |  | <expr> [  |  | <expr> ... ] } →"
-reason = "the rejection renders SQL the documented grammar also accepts"
-
-[[withdrawn]]
-form = "sf.functions.concat.concat-subscript-dot"
-kind = "required_operand_missing"
-target = "<expr> in [  |  | <expr> ... ]"
-note = "omit <expr>"
-sql = "SELECT 1 ;"
-valid_as = "sf.functions.concat.concat-subscript-dot positive the documented form with every required part and no optional part"
-reason = "the rejection renders SQL the documented grammar also accepts"
-
-[[withdrawn]]
 form = "sf.functions.decrypt"
 kind = "required_operand_missing"
 target = "<encryption_method> in [ [ <additional_authenticated_data> , ] <encryption_method> ]"

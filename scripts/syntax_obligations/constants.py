@@ -73,7 +73,7 @@ IDENTIFIER_CLASSES: tuple[tuple[str, str], ...] = (
 
 TOKEN: re.Pattern[str] = re.compile(
     r"\s*(?:(?P<placeholder><[^<>]+>)|(?P<literal>'[^']*'|\"[^\"]*\")|(?P<elision>\.\.\.)"
-    r"|(?P<bracket>[\[\]{}|])|(?P<keyword>[A-Za-z_][A-Za-z0-9_$]*)"
+    r"|(?P<bracket>[\[\]{}]|\|(?!\|))|(?P<keyword>[A-Za-z_][A-Za-z0-9_$]*)"
     r"|(?P<punct>:=|::|=>|->>|->|<>|!=|<=|>=|\|\||\S))"
 )
 CLASS_RULES: tuple[tuple[re.Pattern[str], str], ...] = (
@@ -963,7 +963,9 @@ DDL_FILLS: dict[str, str] = {
     "id": "'q1'",
     "query_id": "'q1'",
     "timestamp": "CURRENT_TIMESTAMP ( )",
-    "dml_statement": "DELETE FROM t1",
+    "dml_statement": "INSERT INTO SELF SELECT 1",
+    "object_type": "TABLE",
+    "workload_type": "USER",
     "copy_statement": "COPY INTO t1 FROM @s1",
     "window_function": "SUM",
     "windowFrameClause": "ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW",
