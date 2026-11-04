@@ -695,6 +695,24 @@ fn given_a_snowflake_drop_of_another_object_kind_when_parsing_then_the_tree_name
             expected_value: serde_json::Value::Null,
         },
         ProjectionTestCase {
+            description: "a failover account keeps its organization as its own part",
+            sql: "ALTER FAILOVER GROUP g1 ADD \"o.1\" . a1 TO ALLOWED_ACCOUNTS",
+            pointer: "/0/alter_object/operands/0/table/schema/name",
+            expected_value: json!("o.1"),
+        },
+        ProjectionTestCase {
+            description: "a failover account keeps its quoting apart from its organization's",
+            sql: "ALTER FAILOVER GROUP g1 ADD o1 . \"a.1\" TO ALLOWED_ACCOUNTS",
+            pointer: "/0/alter_object/operands/0/table/name/quoted",
+            expected_value: json!(true),
+        },
+        ProjectionTestCase {
+            description: "a connection's failover account keeps its organization",
+            sql: "ALTER CONNECTION c1 DISABLE FAILOVER TO ACCOUNTS o1 . a1",
+            pointer: "/0/alter_object/operands/0/table/schema/name",
+            expected_value: json!("o1"),
+        },
+        ProjectionTestCase {
             description: "DROP SEQUENCE keeps RESTRICT apart from the default",
             sql: "DROP SEQUENCE v1 RESTRICT",
             pointer: "/0/drop_sequence/restrict",
