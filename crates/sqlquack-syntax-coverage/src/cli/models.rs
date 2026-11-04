@@ -59,4 +59,27 @@ pub enum Command {
         #[command(flatten)]
         common: Common,
     },
+    /// The boundary and nesting-depth obligations of one form, with every case and verdict.
+    Boundaries {
+        #[arg(long)]
+        form: String,
+        #[command(flatten)]
+        common: Common,
+    },
+    /// The current claims as JSON, bound to the frozen catalogue commit, as baseline.json holds.
+    Snapshot {
+        /// The commit whose catalogue must equal the working tree's.
+        #[arg(long)]
+        catalogue_commit: String,
+        #[command(flatten)]
+        common: Common,
+    },
+    /// A snapshot against a later one or the current tree; fails on any regression.
+    Diff {
+        base: PathBuf,
+        /// A later snapshot; the current tree when omitted.
+        head: Option<PathBuf>,
+        #[command(flatten)]
+        common: Common,
+    },
 }

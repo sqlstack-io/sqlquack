@@ -53,7 +53,7 @@ fn given_a_valid_tree_when_loading_then_every_record_is_kept() {
         cases: 1,
         receipts,
         reviews: 2,
-        file_hashes: 2 * FAMILIES.len() + 1,
+        file_hashes: 2 * FAMILIES.len() + 2,
     };
     let test_cases = [
         LoadTestCase {
@@ -164,6 +164,7 @@ fn given_a_valid_tree_when_loading_then_every_record_is_kept() {
             expected_counts: LoadedCounts {
                 aliases: 0,
                 reviews: 0,
+                file_hashes: 2 * FAMILIES.len() + 1,
                 ..counts(1)
             },
         },

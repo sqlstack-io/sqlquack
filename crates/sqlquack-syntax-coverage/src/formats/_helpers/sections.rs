@@ -80,9 +80,11 @@ pub(crate) fn load_aliases(root: &Path) -> Section<Vec<Alias>> {
         return Section::of(Vec::new(), Vec::new(), Vec::new());
     }
     match read_toml::<AliasesFile>(&path) {
-        Ok((file, _)) => {
+        Ok((file, hash)) => {
             let problems: Vec<String> = file.aliases.iter().flat_map(check_alias).collect();
-            Section::of(file.aliases, Vec::new(), problems)
+            let mut section: Section<Vec<Alias>> = Section::of(file.aliases, Vec::new(), problems);
+            section.hashes.insert(ALIASES_FILE.to_owned(), hash);
+            section
         }
         Err(problem) => Section::of(Vec::new(), Vec::new(), vec![problem]),
     }

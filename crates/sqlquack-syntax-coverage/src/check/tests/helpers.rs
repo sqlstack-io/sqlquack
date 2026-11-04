@@ -50,10 +50,10 @@ pub(crate) fn drop_lines(root: &Path, path: &str, fragment: &str) {
 
 /// SQLQuack as the fixture needs it: `SELECT FROM` is rejected, everything else is structural.
 pub(crate) fn structural(sql: &str) -> LocalVerdict {
-    match sql == "SELECT FROM" {
-        true => LocalVerdict::Rejected,
-        false => LocalVerdict::Accepted { opaque: false },
-    }
+    [
+        LocalVerdict::Accepted { opaque: false },
+        LocalVerdict::Rejected,
+    ][usize::from(sql == "SELECT FROM")]
 }
 
 /// A parser that accepts everything, through a Command or Raw fallback.
@@ -232,3 +232,28 @@ pub(crate) fn select_17() -> String {
 
 /// The setup of `select-17`.
 pub(crate) const SETUP: &str = "CREATE TABLE t (a INT)";
+
+/// Replaces the case line of `select-17` with `case`, leaving its receipt as recorded.
+pub(crate) fn rewrite_select_17(root: &Path, case: &str) {
+    replace(root, "cases/query.jsonl", &select_17(), case);
+}
+
+/// A second query review with `verdict` and `tree` that excludes `sf.query.select.top`.
+pub(crate) fn exclusion_review(root: &Path, verdict: &str, tree: &str) {
+    let first: String = std::fs::read_to_string(root.join("reviews/query.toml")).expect("read");
+    let second: String = first
+        .replace("id = \"query-1\"", "id = \"query-2\"")
+        .replace(
+            "verdict = \"approved\"",
+            &format!("verdict = \"{verdict}\""),
+        )
+        .replace(TREE, tree);
+    write(
+        root,
+        "reviews/excluding.toml",
+        &format!(
+            "{second}[[review.exclusion]]\nform = \"sf.query.select.top\"\n\
+             reason = \"valid only inside project files\"\n"
+        ),
+    );
+}

@@ -52,6 +52,10 @@ pub const OBLIGATION_ZERO: &str = "000";
 pub const INTERACTION_MEMBERS: usize = 2;
 /// The format every receipt declares.
 pub const RECEIPT_FORMAT: &str = "sqlquack-syntax-receipt/1";
+/// The format every coverage snapshot, `baseline.json` included, declares.
+pub const SNAPSHOT_FORMAT: &str = "sqlquack-syntax-coverage-snapshot/1";
+/// The committed baseline the CI gate diffs against, relative to the coverage root.
+pub const BASELINE_FILE: &str = "baseline.json";
 /// The importer's run report beside each receipts file.
 pub const RECEIPT_REPORT_SUFFIX: &str = ".report.json";
 /// The longest case id.

@@ -1,4 +1,4 @@
-//! Printing: JSON alone on stdout, or short text lines.
+//! Printing: JSON alone on stdout, or short text lines; progress on stderr.
 
 use std::io::Write;
 
@@ -17,4 +17,9 @@ pub(crate) fn print<T: Serialize>(json: bool, value: &T, text: &[String]) {
             let _ = writeln!(stdout, "{line}");
         }
     }
+}
+
+/// One progress or problem line on stderr.
+pub(crate) fn say(line: &str) {
+    let _ = writeln!(std::io::stderr().lock(), "syntax-coverage: {line}");
 }

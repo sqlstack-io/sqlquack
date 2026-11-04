@@ -324,8 +324,7 @@ pub struct Review {
     /// A page review binds `sources.toml`.
     #[serde(default)]
     pub sources_sha256: Option<String>,
-    /// The full Git tree id of the reviewed parser source; a page review, which verifies no
-    /// parsing, may omit it and never goes stale on a parser change.
+    /// The full Git tree id of the reviewed parser source; optional on a page review only.
     #[serde(default)]
     pub parser_tree: Option<String>,
     pub reviewed_utc: String,
@@ -377,6 +376,6 @@ pub struct SyntaxCoverage {
     pub cases: BTreeMap<String, Vec<Case>>,
     pub receipts: Vec<Receipt>,
     pub reviews: Vec<Review>,
-    /// SHA-256 of the sources, catalogue and obligation files' bytes, by path relative to the root.
+    /// SHA-256 of the sources, aliases, catalogue and obligation files, by relative path.
     pub file_hashes: BTreeMap<String, String>,
 }

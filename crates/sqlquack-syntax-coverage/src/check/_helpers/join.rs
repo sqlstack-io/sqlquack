@@ -3,7 +3,7 @@
 use std::collections::BTreeMap;
 
 use crate::check::_helpers::receipts::case_result;
-use crate::check::models::{Joined, LocalVerdict};
+use crate::check::models::{CaseResult, Joined, LocalVerdict};
 use crate::formats::main::obligation_form::obligation_form;
 use crate::formats::models::{Form, Obligation, Receipt, SyntaxCoverage};
 
@@ -57,7 +57,7 @@ pub(crate) fn join<'a>(
     parse: &dyn Fn(&str) -> LocalVerdict,
 ) -> Joined<'a> {
     let receipts: BTreeMap<&str, Vec<&Receipt>> = receipts_by_case(coverage);
-    let mut cases = BTreeMap::new();
+    let mut cases: BTreeMap<&str, CaseResult> = BTreeMap::new();
     for case in coverage.cases.values().flatten() {
         let found: &[&Receipt] = receipts
             .get(case.case_id.as_str())

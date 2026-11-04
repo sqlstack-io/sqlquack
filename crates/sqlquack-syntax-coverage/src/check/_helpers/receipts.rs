@@ -49,13 +49,19 @@ fn agreement(phase: Phase, local: LocalVerdict) -> Result<bool, Reason> {
 
 /// The case's result against its receipts and the current parser's verdict.
 pub(crate) fn case_result(case: &Case, receipts: &[&Receipt], local: LocalVerdict) -> CaseResult {
-    let phase: Result<Phase, Reason> = receipt_phase(case, receipts);
-    let outcome: Result<bool, Reason> = phase.and_then(|phase| agreement(phase, local));
+    let (phase, reason, semantic_only): (Option<Phase>, Option<Reason>, bool) =
+        match receipt_phase(case, receipts) {
+            Err(reason) => (None, Some(reason), false),
+            Ok(phase) => match agreement(phase, local) {
+                Ok(semantic_only) => (Some(phase), None, semantic_only),
+                Err(reason) => (Some(phase), Some(reason), false),
+            },
+        };
     CaseResult {
         case_id: case.case_id.clone(),
-        phase: phase.ok(),
+        phase,
         local,
-        reason: outcome.err(),
-        semantic_only: outcome == Ok(true),
+        reason,
+        semantic_only,
     }
 }

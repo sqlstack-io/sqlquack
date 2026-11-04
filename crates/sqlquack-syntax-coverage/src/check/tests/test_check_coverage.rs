@@ -1,36 +1,12 @@
 use crate::check::main::check_coverage::check_coverage;
 use crate::check::models::{FormState, Reason};
 use crate::check::tests::helpers::{
-    OTHER_TREE, SETUP, TREE, case_in_zone, case_line, drop_lines, form, obligation, opaque,
-    receipt_line, replace, select_17, structural, verified_tree, write,
+    OTHER_TREE, SETUP, TREE, case_in_zone, case_line, drop_lines, exclusion_review, form,
+    obligation, opaque, receipt_line, replace, rewrite_select_17, select_17, structural,
+    verified_tree, write,
 };
 use crate::check::tests::test_types::CheckTestCase;
 use crate::formats::main::load_coverage::load_coverage;
-
-/// Replaces the case line of `select-17` with `case`, leaving its receipt as recorded.
-fn rewrite_select_17(root: &std::path::Path, case: &str) {
-    replace(root, "cases/query.jsonl", &select_17(), case);
-}
-
-/// A second query review with `verdict` and `tree` that excludes `sf.query.select.top`.
-fn exclusion_review(root: &std::path::Path, verdict: &str, tree: &str) {
-    let first: String = std::fs::read_to_string(root.join("reviews/query.toml")).expect("read");
-    let second: String = first
-        .replace("id = \"query-1\"", "id = \"query-2\"")
-        .replace(
-            "verdict = \"approved\"",
-            &format!("verdict = \"{verdict}\""),
-        )
-        .replace(TREE, tree);
-    write(
-        root,
-        "reviews/excluding.toml",
-        &format!(
-            "{second}[[review.exclusion]]\nform = \"sf.query.select.top\"\n\
-             reason = \"valid only inside project files\"\n"
-        ),
-    );
-}
 
 #[test]
 fn given_a_changed_tree_when_checking_then_the_form_fails_closed_with_its_reason() {
@@ -283,33 +259,25 @@ fn given_a_changed_tree_when_checking_then_the_form_fails_closed_with_its_reason
             "{}: {form:#?}",
             test_case.description
         );
-        match test_case.expected_reason {
-            Some(reason) => assert!(
-                form.reasons.contains(&reason),
-                "{}: {:?}",
-                test_case.description,
-                form.reasons
-            ),
-            None => assert!(
-                form.reasons.is_empty(),
-                "{}: {:?}",
-                test_case.description,
-                form.reasons
-            ),
-        }
-        match test_case.expected_problem {
-            Some(problem) => assert!(
-                check.problems.iter().any(|found| found.contains(problem)),
-                "{}: {:?}",
-                test_case.description,
-                check.problems
-            ),
-            None => assert!(
-                check.problems.is_empty(),
-                "{}: {:?}",
-                test_case.description,
-                check.problems
-            ),
-        }
+        let reason_found: bool = test_case
+            .expected_reason
+            .map_or(form.reasons.is_empty(), |reason| {
+                form.reasons.contains(&reason)
+            });
+        assert!(
+            reason_found,
+            "{}: {:?}",
+            test_case.description, form.reasons
+        );
+        let problem_found: bool = test_case
+            .expected_problem
+            .map_or(check.problems.is_empty(), |problem| {
+                check.problems.iter().any(|found| found.contains(problem))
+            });
+        assert!(
+            problem_found,
+            "{}: {:?}",
+            test_case.description, check.problems
+        );
     }
 }

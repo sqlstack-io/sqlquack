@@ -1,0 +1,311 @@
+//! One function per subcommand; each prints its result and returns the exit code.
+
+use std::path::Path;
+use std::process::ExitCode;
+
+use serde_json::{Value, json};
+
+use crate::check::main::check_coverage::check_coverage;
+use crate::check::models::{CheckResult, FormResult, ObligationResult};
+use crate::cli::_helpers::local::{frozen_catalogue, parser_tree, snowflake_verdict};
+use crate::cli::_helpers::output::{print, say};
+use crate::cli::models::Common;
+use crate::formats::constants::SNAPSHOT_FORMAT;
+use crate::formats::main::load_coverage::load_coverage;
+use crate::formats::main::obligation_form::obligation_form;
+use crate::formats::models::{Obligation, ObligationKind, SyntaxCoverage};
+use crate::report::main::diff_snapshots::diff_snapshots;
+use crate::report::main::snapshot::snapshot;
+use crate::report::main::summarize::summarize;
+use crate::report::main::tally_by::tally_by;
+use crate::report::models::{Snapshot, SnapshotDiff, Summary};
+
+/// Kinds that test a limit; `boundaries` reports these.
+const BOUNDARY_KINDS: [ObligationKind; 4] = [
+    ObligationKind::BoundaryBelow,
+    ObligationKind::BoundaryAt,
+    ObligationKind::BoundaryAbove,
+    ObligationKind::NestingDepth,
+];
+
+fn load(root: &Path) -> Result<SyntaxCoverage, ExitCode> {
+    say(&format!("loading {}", root.display()));
+    load_coverage(root).map_err(|problems| {
+        for problem in &problems {
+            say(problem);
+        }
+        say(&format!("FAILED, {} problems", problems.len()));
+        ExitCode::FAILURE
+    })
+}
+
+fn checked(coverage: &SyntaxCoverage) -> Result<CheckResult, ExitCode> {
+    let tree: Option<String> = parser_tree().map_err(|problem| {
+        say(&format!("FAILED, cannot read the parser tree: {problem}"));
+        ExitCode::FAILURE
+    })?;
+    say(&format!(
+        "checking against parser tree {}",
+        tree.as_deref()
+            .unwrap_or("(uncommitted: every family review is stale)")
+    ));
+    let check: CheckResult = check_coverage(coverage, tree.as_deref(), &snowflake_verdict);
+    for problem in &check.problems {
+        say(problem);
+    }
+    say(&format!(
+        "checked {} forms, {} problems",
+        check.forms.len(),
+        check.problems.len()
+    ));
+    Ok(check)
+}
+
+fn exit(check: &CheckResult) -> ExitCode {
+    match check.problems.is_empty() {
+        true => ExitCode::SUCCESS,
+        false => ExitCode::FAILURE,
+    }
+}
+
+fn in_family(form: &FormResult, family: Option<&str>) -> bool {
+    family.is_none_or(|family| form.family == family)
+}
+
+fn unsatisfied(form: &FormResult) -> impl Iterator<Item = &ObligationResult> {
+    form.obligations
+        .iter()
+        .filter(|obligation| obligation.required && obligation.reason.is_some())
+}
+
+pub(crate) fn validate(common: &Common) -> Result<ExitCode, ExitCode> {
+    let coverage: SyntaxCoverage = load(&common.root)?;
+    let forms: usize = coverage.catalogue.values().map(Vec::len).sum();
+    let counts: Value = json!({"forms": forms, "receipts": coverage.receipts.len()});
+    let line: String = format!("valid, {forms} forms, {} receipts", coverage.receipts.len());
+    print(common.json, &counts, &[line]);
+    Ok(ExitCode::SUCCESS)
+}
+
+pub(crate) fn summary(common: &Common) -> Result<ExitCode, ExitCode> {
+    let check: CheckResult = checked(&load(&common.root)?)?;
+    let summary: Summary = summarize(&check);
+    let total = &summary.total;
+    let mut text: Vec<String> = vec![format!(
+        "{} of {} forms verified ({}%), {} excluded; obligations {}/{}",
+        total.verified,
+        total.forms,
+        summary.verified_percent,
+        total.excluded,
+        total.satisfied_obligations,
+        total.required_obligations
+    )];
+    text.extend(
+        summary
+            .forms_by_reason
+            .iter()
+            .map(|(reason, count)| format!("  {reason:?}: {count} forms")),
+    );
+    print(common.json, &summary, &text);
+    Ok(exit(&check))
+}
+
+pub(crate) fn family(family: &str, common: &Common) -> Result<ExitCode, ExitCode> {
+    let check: CheckResult = checked(&load(&common.root)?)?;
+    let forms: Vec<&FormResult> = check
+        .forms
+        .iter()
+        .filter(|form| form.family == family)
+        .collect();
+    let text: Vec<String> = forms
+        .iter()
+        .map(|form| {
+            format!(
+                "{} {:?} {}/{} {:?}",
+                form.id,
+                form.state,
+                form.satisfied_obligations,
+                form.required_obligations,
+                form.reasons
+            )
+        })
+        .collect();
+    print(common.json, &forms, &text);
+    Ok(exit(&check))
+}
+
+pub(crate) fn missing(family: Option<&str>, common: &Common) -> Result<ExitCode, ExitCode> {
+    let check: CheckResult = checked(&load(&common.root)?)?;
+    let missing: Vec<Value> = check
+        .forms
+        .iter()
+        .filter(|form| in_family(form, family))
+        .flat_map(unsatisfied)
+        .map(|obligation| json!({"obligation": obligation.id, "reason": obligation.reason}))
+        .collect();
+    let text: Vec<String> = missing.iter().map(Value::to_string).collect();
+    print(common.json, &missing, &text);
+    Ok(exit(&check))
+}
+
+pub(crate) fn pages(family: Option<&str>, common: &Common) -> Result<ExitCode, ExitCode> {
+    let check: CheckResult = checked(&load(&common.root)?)?;
+    let filtered: CheckResult = CheckResult {
+        forms: check
+            .forms
+            .iter()
+            .filter(|form| in_family(form, family))
+            .cloned()
+            .collect(),
+        ..check.clone()
+    };
+    let pages = tally_by(&filtered, |form| &form.source);
+    let text: Vec<String> = pages
+        .iter()
+        .map(|(page, tally)| format!("{page} {}/{} forms verified", tally.verified, tally.forms))
+        .collect();
+    print(common.json, &pages, &text);
+    Ok(exit(&check))
+}
+
+/// One boundary obligation as declared, with its result.
+fn boundary_row(obligation: &Obligation, form: &FormResult) -> Value {
+    let result: Option<&ObligationResult> = form
+        .obligations
+        .iter()
+        .find(|found| found.id == obligation.id);
+    json!({
+        "obligation": obligation.id,
+        "kind": obligation.kind,
+        "required": obligation.required,
+        "target": obligation.target,
+        "depths": obligation.depths,
+        "anchor": obligation.anchor,
+        "note": obligation.note,
+        "reason": result.and_then(|found| found.reason),
+        "cases": result.map(|found| &found.cases),
+    })
+}
+
+/// The boundary and nesting obligations of one form, each with its cases and verdicts.
+pub(crate) fn boundaries(form_id: &str, common: &Common) -> Result<ExitCode, ExitCode> {
+    let coverage: SyntaxCoverage = load(&common.root)?;
+    let check: CheckResult = checked(&coverage)?;
+    let Some(form) = check.forms.iter().find(|form| form.id == form_id) else {
+        say(&format!("FAILED, no form {form_id} is catalogued"));
+        return Err(ExitCode::FAILURE);
+    };
+    let declared = coverage.obligations.get(&form.family).into_iter().flatten();
+    let rows: Vec<Value> = declared
+        .filter(|obligation| obligation_form(&obligation.id, &form.family) == Some(form_id))
+        .filter(|obligation| BOUNDARY_KINDS.contains(&obligation.kind))
+        .map(|obligation| boundary_row(obligation, form))
+        .collect();
+    let mut text: Vec<String> = vec![format!(
+        "{form_id} {:?}: {} boundary obligations",
+        form.state,
+        rows.len()
+    )];
+    text.extend(rows.iter().map(Value::to_string));
+    print(common.json, &rows, &text);
+    Ok(exit(&check))
+}
+
+/// The current claims as a snapshot, bound to `catalogue_commit`; always JSON.
+pub(crate) fn snapshot_command(
+    catalogue_commit: &str,
+    common: &Common,
+) -> Result<ExitCode, ExitCode> {
+    let root: String = common.root.display().to_string();
+    let commit: String = frozen_catalogue(catalogue_commit, &root).map_err(|problem| {
+        say(&format!("FAILED, {problem}"));
+        ExitCode::FAILURE
+    })?;
+    let coverage: SyntaxCoverage = load(&common.root)?;
+    let check: CheckResult = checked(&coverage)?;
+    if !check.problems.is_empty() {
+        say("FAILED, a snapshot of a tree with problems claims nothing");
+        return Err(ExitCode::FAILURE);
+    }
+    print(true, &snapshot(&check, &coverage.file_hashes, &commit), &[]);
+    Ok(ExitCode::SUCCESS)
+}
+
+fn read_snapshot(path: &Path) -> Result<Snapshot, ExitCode> {
+    let text: String = std::fs::read_to_string(path).map_err(|error| {
+        say(&format!("FAILED, {}: {error}", path.display()));
+        ExitCode::FAILURE
+    })?;
+    let parsed: Snapshot = serde_json::from_str(&text).map_err(|error| {
+        say(&format!("FAILED, {}: {error}", path.display()));
+        ExitCode::FAILURE
+    })?;
+    if parsed.format != SNAPSHOT_FORMAT {
+        say(&format!(
+            "FAILED, {}: not {SNAPSHOT_FORMAT}",
+            path.display()
+        ));
+        return Err(ExitCode::FAILURE);
+    }
+    Ok(parsed)
+}
+
+/// Lines naming each non-empty list of the diff.
+fn diff_lines(diff: &SnapshotDiff) -> Vec<String> {
+    let lists: [(&str, &Vec<String>); 7] = [
+        ("REGRESSION forms lost", &diff.forms_lost),
+        ("REGRESSION obligations lost", &diff.obligations_lost),
+        ("CATALOGUE files changed", &diff.catalogue_files_changed),
+        ("CATALOGUE forms added", &diff.forms_added),
+        ("CATALOGUE forms removed", &diff.forms_removed),
+        ("forms gained", &diff.forms_gained),
+        ("obligations gained", &diff.obligations_gained),
+    ];
+    lists
+        .iter()
+        .filter(|(_, ids)| !ids.is_empty())
+        .map(|(label, ids)| format!("{label} ({}): {}", ids.len(), ids.join(" ")))
+        .collect()
+}
+
+/// BASE against HEAD, or against the current tree; fails on a regression or catalogue change.
+pub(crate) fn diff(
+    base: &Path,
+    head: Option<&Path>,
+    common: &Common,
+) -> Result<ExitCode, ExitCode> {
+    let base: Snapshot = read_snapshot(base)?;
+    let head: Snapshot = match head {
+        Some(path) => read_snapshot(path)?,
+        None => {
+            let coverage: SyntaxCoverage = load(&common.root)?;
+            let check: CheckResult = checked(&coverage)?;
+            if !check.problems.is_empty() {
+                return Err(ExitCode::FAILURE);
+            }
+            snapshot(&check, &coverage.file_hashes, &base.catalogue_commit)
+        }
+    };
+    let diff: SnapshotDiff = diff_snapshots(&base, &head);
+    let failing: bool = [
+        &diff.forms_lost,
+        &diff.obligations_lost,
+        &diff.catalogue_files_changed,
+        &diff.forms_added,
+        &diff.forms_removed,
+    ]
+    .iter()
+    .any(|ids| !ids.is_empty());
+    let mut text: Vec<String> = diff_lines(&diff);
+    if text.is_empty() {
+        text.push(format!(
+            "no change against catalogue {}",
+            base.catalogue_commit
+        ));
+    }
+    print(common.json, &diff, &text);
+    Ok(match failing {
+        true => ExitCode::FAILURE,
+        false => ExitCode::SUCCESS,
+    })
+}

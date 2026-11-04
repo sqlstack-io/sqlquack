@@ -1,6 +1,6 @@
 //! What the checker decides for each obligation, form and page.
 
-use std::collections::BTreeMap;
+use std::collections::{BTreeMap, BTreeSet};
 
 use serde::{Deserialize, Serialize};
 
@@ -111,6 +111,7 @@ pub struct CheckResult {
 }
 
 /// The files joined for checking, with every case already judged.
+#[derive(Debug)]
 pub(crate) struct Joined<'a> {
     /// Catalogued forms by id.
     pub(crate) forms: BTreeMap<&'a str, &'a Form>,
@@ -120,4 +121,14 @@ pub(crate) struct Joined<'a> {
     pub(crate) citing: BTreeMap<&'a str, Vec<&'a str>>,
     /// Each case's result by case id.
     pub(crate) cases: BTreeMap<&'a str, CaseResult>,
+}
+
+/// What every form of one family is judged against besides its own obligations.
+#[derive(Debug)]
+pub(crate) struct FamilyContext<'a> {
+    pub(crate) joined: &'a Joined<'a>,
+    /// Why the family lacks a current review, if it does.
+    pub(crate) review: Option<Reason>,
+    /// Form ids excluded by current approved reviews.
+    pub(crate) excluded: &'a BTreeSet<String>,
 }

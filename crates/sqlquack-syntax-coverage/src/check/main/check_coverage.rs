@@ -6,7 +6,7 @@ use crate::check::_helpers::forms::form_result;
 use crate::check::_helpers::join::join;
 use crate::check::_helpers::references::reference_problems;
 use crate::check::_helpers::reviews::{current_exclusions, review_reason, unexcluded_pages};
-use crate::check::models::{CheckResult, FormResult, Joined, LocalVerdict, Reason};
+use crate::check::models::{CheckResult, FamilyContext, FormResult, Joined, LocalVerdict};
 use crate::formats::models::SyntaxCoverage;
 
 /// Checks every catalogued form against `parse`, the current parser, built from `parser_tree`.
@@ -20,14 +20,18 @@ pub fn check_coverage(
         current_exclusions(&coverage.reviews, &coverage.file_hashes, parser_tree);
     let mut forms: Vec<FormResult> = Vec::new();
     for (family, family_forms) in &coverage.catalogue {
-        let review: Option<Reason> = review_reason(
-            family,
-            &coverage.reviews,
-            &coverage.file_hashes,
-            parser_tree,
-        );
+        let context: FamilyContext = FamilyContext {
+            joined: &joined,
+            review: review_reason(
+                family,
+                &coverage.reviews,
+                &coverage.file_hashes,
+                parser_tree,
+            ),
+            excluded: &excluded_forms,
+        };
         for form in family_forms {
-            forms.push(form_result(form, family, &joined, review, &excluded_forms));
+            forms.push(form_result(form, family, &context));
         }
     }
     CheckResult {

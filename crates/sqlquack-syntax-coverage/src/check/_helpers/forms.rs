@@ -1,8 +1,8 @@
 //! One form's result from its obligations' cases and its family review.
 
-use std::collections::BTreeSet;
-
-use crate::check::models::{CaseResult, FormResult, FormState, Joined, ObligationResult, Reason};
+use crate::check::models::{
+    CaseResult, FamilyContext, FormResult, FormState, Joined, ObligationResult, Reason,
+};
 use crate::formats::models::{Form, FormStatus, Obligation};
 
 /// Satisfied only when at least one case cites it and every citing case agrees.
@@ -46,24 +46,19 @@ fn form_reasons(obligations: &[ObligationResult], review: Option<Reason>) -> Vec
 }
 
 /// The form's state: absent, excluded by a current review, verified, or unverified.
-pub(crate) fn form_result(
-    form: &Form,
-    family: &str,
-    joined: &Joined,
-    review: Option<Reason>,
-    excluded: &BTreeSet<String>,
-) -> FormResult {
-    let obligations: Vec<ObligationResult> = joined
+pub(crate) fn form_result(form: &Form, family: &str, context: &FamilyContext) -> FormResult {
+    let obligations: Vec<ObligationResult> = context
+        .joined
         .obligations
         .get(form.id.as_str())
         .map_or(&[][..], Vec::as_slice)
         .iter()
-        .map(|obligation| obligation_result(obligation, joined))
+        .map(|obligation| obligation_result(obligation, context.joined))
         .collect();
-    let reasons: Vec<Reason> = form_reasons(&obligations, review);
+    let reasons: Vec<Reason> = form_reasons(&obligations, context.review);
     let state: FormState = match () {
         () if form.status == FormStatus::AbsentFromSource => FormState::Absent,
-        () if excluded.contains(&form.id) => FormState::Excluded,
+        () if context.excluded.contains(&form.id) => FormState::Excluded,
         () if reasons.is_empty() => FormState::Verified,
         () => FormState::Unverified,
     };
