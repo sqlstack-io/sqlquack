@@ -54,5 +54,10 @@ pub fn diff_snapshots(base: &Snapshot, head: &Snapshot) -> SnapshotDiff {
             head.satisfied_obligations
                 .difference(&base.satisfied_obligations),
         ),
+        parsed_cases_refused: base
+            .parsed_cases
+            .intersection(&head.refused_cases)
+            .cloned()
+            .collect(),
     }
 }

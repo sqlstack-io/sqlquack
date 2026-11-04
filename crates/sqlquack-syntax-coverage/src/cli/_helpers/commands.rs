@@ -339,9 +339,13 @@ fn read_snapshot(path: &Path) -> Result<Snapshot, ExitCode> {
 
 /// Lines naming each non-empty list of the diff.
 fn diff_lines(diff: &SnapshotDiff) -> Vec<String> {
-    let lists: [(&str, &Vec<String>); 7] = [
+    let lists: [(&str, &Vec<String>); 8] = [
         ("REGRESSION forms lost", &diff.forms_lost),
         ("REGRESSION obligations lost", &diff.obligations_lost),
+        (
+            "REGRESSION Snowflake-parsed cases the parser now rejects",
+            &diff.parsed_cases_refused,
+        ),
         ("CATALOGUE files changed", &diff.catalogue_files_changed),
         ("CATALOGUE forms added", &diff.forms_added),
         ("CATALOGUE forms removed", &diff.forms_removed),
@@ -377,6 +381,7 @@ pub(crate) fn diff(
     let failing: bool = [
         &diff.forms_lost,
         &diff.obligations_lost,
+        &diff.parsed_cases_refused,
         &diff.catalogue_files_changed,
         &diff.forms_added,
         &diff.forms_removed,

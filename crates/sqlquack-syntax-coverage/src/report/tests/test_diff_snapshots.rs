@@ -84,6 +84,28 @@ fn given_a_later_snapshot_when_diffing_then_regressions_and_catalogue_changes_ar
             },
         },
         DiffTestCase {
+            description: "a case Snowflake parsed and the base parser accepted is now rejected",
+            head: |mut head| {
+                head.parsed_cases.remove("sf.query.select.k1");
+                head.refused_cases.insert("sf.query.select.k1".to_owned());
+                head
+            },
+            expected_diff: SnapshotDiff {
+                parsed_cases_refused: ids(&["sf.query.select.k1"]),
+                ..SnapshotDiff::default()
+            },
+        },
+        DiffTestCase {
+            description: "a refused case now parsing, or one leaving the receipts, is no regression",
+            head: |mut head| {
+                head.refused_cases.remove("sf.query.with.k2");
+                head.parsed_cases.insert("sf.query.with.k2".to_owned());
+                head.parsed_cases.remove("sf.query.select.k1");
+                head
+            },
+            expected_diff: SnapshotDiff::default(),
+        },
+        DiffTestCase {
             description: "a verified form removed from the catalogue is also lost",
             head: |mut head| {
                 head.forms.remove("sf.query.select");
