@@ -9,15 +9,23 @@ cargo-fuzz = true
 
 [dependencies]
 libfuzzer-sys = "0.4"
+sqlquack-core = { path = "../crates/sqlquack-core" }
 sqlquack-syntax = { path = "../crates/sqlquack-syntax" }
 
-# Kept out of the SQLQuack workspace; run with `cargo +nightly fuzz run tolerant`.
+# Kept out of the SQLQuack workspace; run with `cargo +nightly fuzz run tolerant` or `diagnose`.
 [workspace]
 members = ["."]
 
 [[bin]]
 name = "tolerant"
 path = "fuzz_targets/tolerant.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "diagnose"
+path = "fuzz_targets/diagnose.rs"
 test = false
 doc = false
 bench = false
