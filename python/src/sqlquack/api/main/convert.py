@@ -25,6 +25,7 @@ def convert(
         "utc_session": chosen.utc_session,
         "confirm_declared_offsets": chosen.confirm_declared_offsets,
         "python_runtime": chosen.python_runtime,
+        "loud_divergences_only": chosen.loud_divergences_only,
         "overrides": path_argument(chosen.overrides),
         "verified_overrides": dict(chosen.verified_overrides),
     }
@@ -38,6 +39,7 @@ def convert(
         diagnostics=tuple(diagnostic(refusal) for refusal in report["refusals"]),
         divergences={name: tuple(uses) for name, uses in report["divergences"].items()},
         assumptions=tuple(report["assumptions"]),
+        divergence_failures=dict(report["divergence_failures"]),
         notes=tuple(report["notes"]),
         rendered=result["rendered"],
         report=report,

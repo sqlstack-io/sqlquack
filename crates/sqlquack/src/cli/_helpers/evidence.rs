@@ -12,7 +12,8 @@ use sqlquack_rules::conversion::models::ConversionOptions;
 use crate::analysis::main::confirm_assumption::confirm_assumption;
 use crate::analysis::main::confirm_utc_session::confirm_utc_session;
 use crate::analysis::main::conversion_options::conversion_options;
-use crate::cli::models::EvidencePaths;
+use crate::analysis::main::refuse_value_divergences::refuse_value_divergences;
+use crate::cli::models::{EvidencePaths, PolicyArguments};
 use sqlquack_rules::conversion::constants::{DECLARED_OFFSET, PROJECT_UDF};
 
 pub(crate) struct Evidence {
@@ -43,34 +44,38 @@ pub(crate) fn chosen_policy(path: &Path, builtin: bool) -> Result<Option<Policy>
         .map_err(|error| error.to_string())
 }
 
-/// The conversion options of `policy`, or the built-in default allowing no divergence.
+/// The conversion options of `policy` under the caller's choices, or the built-in default.
 pub(crate) fn divergence_options(
     policy: Option<&Policy>,
-    (strict, utc_session, confirmed): (bool, bool, (bool, bool)),
+    arguments: &PolicyArguments,
 ) -> ConversionOptions {
     let Some(policy) = policy else {
         return ConversionOptions::default();
     };
-    let options = conversion_options(policy, strict);
-    let options = match utc_session {
+    let options = conversion_options(policy, arguments.strict);
+    let options = match arguments.utc_session {
         true => confirm_utc_session(options, policy),
         false => options,
     };
-    confirmed_offsets(options, policy, confirmed)
+    caller_choices(options, policy, arguments)
 }
 
-/// `options` relying on `declared_offset` and `project_udf` in any mode when the caller confirmed.
-pub(crate) fn confirmed_offsets(
+/// `options` with the caller's confirmed assumptions, less value divergences if only loud ones.
+pub(crate) fn caller_choices(
     options: ConversionOptions,
     policy: &Policy,
-    (offsets, python_runtime): (bool, bool),
+    arguments: &PolicyArguments,
 ) -> ConversionOptions {
-    let options = match offsets {
+    let options = match arguments.confirm_declared_offsets {
         true => confirm_assumption(options, policy, DECLARED_OFFSET),
         false => options,
     };
-    match python_runtime {
+    let options = match arguments.python_runtime {
         true => confirm_assumption(options, policy, PROJECT_UDF),
+        false => options,
+    };
+    match arguments.loud_divergences_only {
+        true => refuse_value_divergences(options, policy),
         false => options,
     }
 }

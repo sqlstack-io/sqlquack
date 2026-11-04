@@ -6,8 +6,8 @@ use crate::helpers::{
 use crate::test_types::{
     ColumnNameTestCase, ConvertDiagnosticTestCase, ConvertOutcome, ConvertTestCase,
     ConvertedRunTestCase, CountedCallsTestCase, CrossingTestCase, DedicatedOverrideTestCase,
-    OutputFormatTestCase, OverrideFailureTestCase, OverrideTestCase, PolicyFreeTestCase,
-    PythonRefusalTestCase, PythonRunTestCase, RunErrorTestCase, ValueTestCase,
+    FailureKindTestCase, OutputFormatTestCase, OverrideFailureTestCase, OverrideTestCase,
+    PolicyFreeTestCase, PythonRefusalTestCase, PythonRunTestCase, RunErrorTestCase, ValueTestCase,
 };
 use sha2::{Digest, Sha256};
 
@@ -1345,6 +1345,83 @@ fn given_output_flags_when_running_then_format_json_and_json_agree_and_help_list
         assert!(
             test_case.arguments != ["--help"]
                 || stdout.contains("Exit status of convert, function, census and index:\n  0  the command succeeded"),
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_loud_divergences_only_when_converting_then_value_divergences_refuse_and_loud_ones_convert()
+{
+    let test_cases = [
+        FailureKindTestCase {
+            description: "HASH relies on a value divergence, and --json says so",
+            sql: "SELECT HASH(x) AS h FROM (SELECT 1 AS x) AS t",
+            flags: &[],
+            expected_converted: true,
+            expected_failures: &[("hash", "value")],
+        },
+        FailureKindTestCase {
+            description: "--loud-divergences-only refuses HASH",
+            sql: "SELECT HASH(x) AS h FROM (SELECT 1 AS x) AS t",
+            flags: &["--loud-divergences-only"],
+            expected_converted: false,
+            expected_failures: &[],
+        },
+        FailureKindTestCase {
+            description: "MODE relies only on loud divergences, so it still converts",
+            sql: "SELECT MODE(x) AS m FROM (SELECT 1 AS x) AS t",
+            flags: &["--loud-divergences-only"],
+            expected_converted: true,
+            expected_failures: &[("mode_of_no_rows", "loud"), ("mode_ties", "loud")],
+        },
+    ];
+    for test_case in test_cases {
+        let report = python_report(test_case.sql, test_case.flags);
+        let expected: serde_json::Map<String, serde_json::Value> = test_case
+            .expected_failures
+            .iter()
+            .map(|(id, failure)| ((*id).to_owned(), serde_json::json!(failure)))
+            .collect();
+        assert_eq!(
+            (
+                report["converted"].as_bool(),
+                report["divergence_failures"].clone()
+            ),
+            (
+                Some(test_case.expected_converted),
+                serde_json::Value::Object(expected)
+            ),
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_numbers_beyond_38_digits_when_running_then_duckdb_raises_a_numeric_range_error() {
+    let test_cases = [
+        RunErrorTestCase {
+            description: "a SUM near 2^127 overflows DuckDB's HUGEINT addition",
+            sql: "SELECT SUM(x) AS s FROM (SELECT \
+                  CAST('99999999999999999999999999999999999999' AS NUMBER(38,0)) AS x \
+                  UNION ALL SELECT \
+                  CAST('99999999999999999999999999999999999999' AS NUMBER(38,0))) AS t",
+            expected_mention: "Out of Range Error: Overflow in HUGEINT addition",
+        },
+        RunErrorTestCase {
+            description: "NUMBER(38,0) compared with NUMBER(10,5) casts to DECIMAL(38,5), which raises",
+            sql: "SELECT a = b AS same FROM (SELECT \
+              CAST('99999999999999999999999999999999999999' AS NUMBER(38,0)) AS a, \
+              CAST('1.5' AS NUMBER(10,5)) AS b) AS t",
+            expected_mention: "to type DECIMAL(38,5) failed: value is out of range!",
+        },
+    ];
+    for test_case in test_cases {
+        assert!(
+            converted_run_error(test_case.sql)
+                .is_some_and(|error| error.contains(test_case.expected_mention)),
             "{}",
             test_case.description
         );

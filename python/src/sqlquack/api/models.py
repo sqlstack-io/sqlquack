@@ -55,6 +55,7 @@ class Conversion:
     diagnostics: tuple[Diagnostic, ...]
     divergences: Mapping[str, tuple[str, ...]]
     assumptions: tuple[str, ...]
+    divergence_failures: Mapping[str, str]
     notes: tuple[str, ...]
     rendered: str
     report: Mapping[str, Any]
@@ -72,5 +73,6 @@ class ConvertOptions:
     utc_session: bool = False
     confirm_declared_offsets: bool = False
     python_runtime: bool = False
+    loud_divergences_only: bool = False
     overrides: str | os.PathLike[str] | None = None
     verified_overrides: Mapping[str, str] = field(default_factory=dict)

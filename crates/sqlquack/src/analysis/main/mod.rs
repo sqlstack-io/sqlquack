@@ -12,6 +12,7 @@ pub mod conversion_options;
 pub mod override_macros;
 pub mod parse_session;
 pub mod python_functions;
+pub mod refuse_value_divergences;
 pub mod refused_construct;
 pub mod session_conversion_options;
 pub mod with_overrides;

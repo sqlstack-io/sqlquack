@@ -12,7 +12,7 @@ use sqlquack_core::diagnostics::models::Diagnostic;
 use sqlquack_core::provenance::main::merge_provenance::merge_provenance;
 use sqlquack_core::refusals::models::Refusal;
 use sqlquack_policy::policy::constants::{SESSION_TIME_ZONE, TIMEZONE_PARAMETER};
-use sqlquack_policy::policy::models::Policy;
+use sqlquack_policy::policy::models::{DivergenceFailure, Policy};
 use sqlquack_rules::conversion::models::ConversionOptions;
 use sqlquack_semantics::types::models::Schema;
 use std::collections::{BTreeMap, BTreeSet};
@@ -24,7 +24,7 @@ use crate::analysis::main::python_functions::python_functions;
 use crate::analysis::main::refused_construct::refused_construct;
 use crate::analysis::main::with_overrides::with_overrides;
 use crate::analysis::models::Analysis;
-use crate::cli::_helpers::evidence::confirmed_offsets;
+use crate::cli::_helpers::evidence::caller_choices;
 use crate::cli::models::{
     CheckArguments, CheckReport, ConvertArguments, ConvertRefusal, ConvertReport, OverrideListing,
 };
@@ -202,6 +202,7 @@ pub(crate) fn refused_session(reason: String) -> ConvertReport {
         }],
         divergences: BTreeMap::new(),
         assumptions: Vec::new(),
+        divergence_failures: BTreeMap::new(),
         notes: Vec::new(),
         python_functions: Vec::new(),
         macros: Vec::new(),
@@ -216,14 +217,7 @@ pub(crate) fn chosen_options(
     options: ConversionOptions,
 ) -> Result<ConversionOptions, String> {
     let options = match policy {
-        Some(policy) => confirmed_offsets(
-            options,
-            policy,
-            (
-                arguments.conversion.confirm_declared_offsets,
-                arguments.conversion.python_runtime,
-            ),
-        ),
+        Some(policy) => caller_choices(options, policy, &arguments.conversion),
         None => options,
     };
     with_overrides(
@@ -254,6 +248,7 @@ pub(crate) fn analysis_report(
         })
         .cloned()
         .collect();
+    let divergence_failures = divergence_failures(policy, &provenance.divergences);
     let notes: Vec<String> = parameters
         .get(TIMEZONE_PARAMETER)
         .filter(|zone| *zone != SESSION_TIME_ZONE)
@@ -289,6 +284,7 @@ pub(crate) fn analysis_report(
         overrides: override_listings(options),
         divergences: listed(provenance.divergences),
         assumptions,
+        divergence_failures,
     })
 }
 
@@ -302,6 +298,23 @@ fn convert_refusal((refusal, diagnostic): (&Refusal, Diagnostic)) -> ConvertRefu
         column: refusal.location.map(|location| location.column),
         reason: refusal.reason.clone(),
     }
+}
+
+/// Each relied-on divergence's failure, as the policy declares it.
+fn divergence_failures(
+    policy: Option<&Policy>,
+    divergences: &BTreeMap<String, BTreeSet<String>>,
+) -> BTreeMap<String, DivergenceFailure> {
+    let Some(policy) = policy else {
+        return BTreeMap::new();
+    };
+    let mut failures: BTreeMap<String, DivergenceFailure> = BTreeMap::new();
+    for id in divergences.keys() {
+        if let Some(divergence) = policy.divergences.get(assumption_id(id)) {
+            failures.insert(id.clone(), divergence.failure);
+        }
+    }
+    failures
 }
 
 /// Each divergence with its constructs listed.

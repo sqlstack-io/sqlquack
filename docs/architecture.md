@@ -208,12 +208,17 @@ Until SQLBuild writes the `functions` section itself, the census-only script
 The policy lists known divergences, each with the constructs it covers and a treatment in the
 default and in strict mode. A rule that may diverge asks the policy first: allowed, the conversion
 records the divergence and its construct, and reports carry a warning naming both; otherwise the
-construct is refused. `numeric_range` covers SUM and AVG totals beyond 38 digits, `+`, `-` and `*` whose
+construct is refused. Each divergence declares its `failure`: `loud` where the converted SQL raises
+wherever DuckDB could differ and never returns another value, proven by a case expecting it or a
+test of its guard raising; `value` where it can return another value, as for HASH, RANDOM, the
+clock or any assumption. `convert --json` reports each relied-on divergence's failure under
+`divergence_failures`, and `--loud-divergences-only` refuses every `value` divergence, in any mode
+and whatever the caller confirms. `numeric_range` covers SUM and AVG totals beyond 38 digits, `+`, `-` and `*` whose
 capped result type may hold a 39-digit value (Snowflake keeps up to 128 bits under NUMBER(38)), and
 divisions whose exact intermediate exceeds 128 bits, where DuckDB raises an error and Snowflake
 returns a value. For `*`, the generated `*_range_edge` cases (products between 10^38 and 2^127)
 recorded Snowflake returning rows where DuckDB raises. A
-divergence never covers DuckDB returning a different value. `timestamp_range` covers TIMESTAMP_NTZ(7-9) values
+loud divergence never covers DuckDB returning a different value. `timestamp_range` covers TIMESTAMP_NTZ(7-9) values
 outside DuckDB's nanosecond range (1677-2262), and `timestamp_tz_submicro` covers TIMESTAMP_TZ and
 TIMESTAMP_LTZ(7-9) values with a non-zero sub-microsecond part, which DuckDB's microsecond
 TIMESTAMPTZ cannot hold; both raise at run time. Naive timestamps pair by precision: 0-6 with
@@ -285,7 +290,8 @@ formula reproduces, so the converted SQL returns a value only where the fraction
 (or between equal values) and raises otherwise. `date_text_spelling` covers TRY_TO_DATE and
 TRY_CAST to DATE of text in a spelling no recording shows.
 
-`hash` is the one divergence that returns a different value, by user decision: HASH
+`hash` is a `value` divergence by user decision, as are RANDOM, UUID_STRING, the sequences and
+the clock, which differ by nature, and every assumption: HASH
 converts to DuckDB's 64-bit hash shifted into the signed range, NUMBER(19,0), which is
 deterministic and equal for equal arguments in the same order within one run but never
 Snowflake's value. Integer NUMBERs hash by value whatever their precision, and a VARIANT by its
