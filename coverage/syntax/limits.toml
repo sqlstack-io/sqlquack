@@ -20622,8 +20622,8 @@ reason = "page definitions inlined: objectProperties; a definition the page give
 [[reading]]
 form = "sf.security_admin.alter-organization-user.unset"
 grammar_sha256 = "b48651a199847c0891a652c068fc0afc48380df27524300308b7ed7ca82dfd12"
-grammar = ["ALTER ORGANIZATION USER <name> UNSET { EMAIL | DISPLAY_NAME | FIRST_NAME | MIDDLE_NAME | LAST_NAME | TYPE | COMMENT } [ , ... ]"]
-reason = "page definitions inlined: objectProperties; a definition the page gives per cloud or variant becomes a choice of its variants; unbraced alternatives inside `( ... )` and in `KEY = a | b` properties are braced; D113: the page reuses `objectProperties`, whose items are `<property> = <value>`, after UNSET, so the rendering wrote `UNSET TYPE = PERSON` (import-72, errno 1003); the parameters say UNSET unsets object properties and the page's example is `UNSET TYPE;`, so read as the property names alone"
+grammar = ["ALTER ORGANIZATION USER <name> UNSET [ { EMAIL | DISPLAY_NAME | FIRST_NAME | MIDDLE_NAME | LAST_NAME | TYPE | COMMENT } ]"]
+reason = "page definitions inlined: objectProperties; a definition the page gives per cloud or variant becomes a choice of its variants; unbraced alternatives inside `( ... )` and in `KEY = a | b` properties are braced; D113: the page reuses `objectProperties`, whose items are `<property> = <value>`, after UNSET, so the rendering wrote `UNSET TYPE = PERSON` (import-72, errno 1003); the parameters say UNSET unsets object properties and the page's example is `UNSET TYPE;`, so read as one property name, kept optional as the page's `[ objectProperties ]` is, with no list separator since the page documents none"
 
 [[reading]]
 form = "sf.security_admin.alter-resource-monitor"
@@ -60798,14 +60798,14 @@ reason = "D113: the page lists the UNSET properties as unbraced `ENABLED | ... |
 [[reading]]
 form = "sf.security_admin.alter-storage-lifecycle-policy.set-body-archive-tier-cool"
 grammar_sha256 = "aa21e16124f3bffae762585fb382627112cde9861c313cae7dceb2f2a54c243b"
-grammar = ["ALTER STORAGE LIFECYCLE POLICY [ IF EXISTS ] <name> SET { BODY -> <expression_on_arg_name> | ARCHIVE_TIER = { COOL | COLD } | ARCHIVE_FOR_DAYS = <number_of_days> | COMMENT = '<string_literal>' | TAG <tag_name> = '<tag_value>' [ , <tag_name> = '<tag_value>' ... ] }"]
-reason = "D113: the page lists the SET properties as unbraced `BODY -> ... | ARCHIVE_TIER = ... | ...` across lines, which split the whole statement into bare `ARCHIVE_TIER = COOL ;`-style alternatives; read as a braced choice after SET"
+grammar = ["ALTER STORAGE LIFECYCLE POLICY [ IF EXISTS ] <name> SET [ BODY -> <expression_on_arg_name> ] [ ARCHIVE_TIER = { COOL | COLD } ] [ ARCHIVE_FOR_DAYS = <number_of_days> ] [ COMMENT = '<string_literal>' ] [ TAG <tag_name> = '<tag_value>' [ , <tag_name> = '<tag_value>' ... ] ]"]
+reason = "D113: the page lists the SET properties as unbraced `BODY -> ... | ARCHIVE_TIER = ... | ...` across lines, which split the whole statement into bare `ARCHIVE_TIER = COOL ;`-style alternatives; the parameters say SET \"Specifies one or more properties\" and name no separator, so each property is read as an optional clause after SET, as for the other SET lists"
 
 [[reading]]
 form = "sf.security_admin.alter-storage-lifecycle-policy.unset-archive-for-days-comment-tag"
 grammar_sha256 = "854655379bdb458530618efff335dbbdc276d32e961ba515622385a1d7be78c2"
-grammar = ["ALTER STORAGE LIFECYCLE POLICY [ IF EXISTS ] <name> UNSET { ARCHIVE_FOR_DAYS | COMMENT | TAG <tag_name> [ , <tag_name> ... ] }"]
-reason = "D113: the page lists the UNSET properties as unbraced `ARCHIVE_FOR_DAYS | COMMENT | TAG ...` across lines, which split the whole statement into bare `COMMENT ;` and `TAG v1 ;` alternatives; read as a braced choice after UNSET"
+grammar = ["ALTER STORAGE LIFECYCLE POLICY [ IF EXISTS ] <name> UNSET { ARCHIVE_FOR_DAYS | COMMENT | TAG <tag_name> [ , <tag_name> ... ] } [ , ... ]"]
+reason = "D113: the page lists the UNSET properties as unbraced `ARCHIVE_FOR_DAYS | COMMENT | TAG ...` across lines, which split the whole statement into bare `COMMENT ;` and `TAG v1 ;` alternatives; read as a braced choice after UNSET, repeated with commas as the usage notes say (\"To unset multiple properties ... separate each property or parameter with a comma\")"
 
 # D113 security_admin receipt triage (imports 71-73): remaining contradictions observed, each reason names its category and receipt.
 

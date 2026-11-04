@@ -26031,6 +26031,18 @@ target = "<name>"
 note = "a string literal in place of <name>"
 
 [[obligation]]
+id = "sf.security_admin.alter-organization-user.unset.o058"
+kind = "option_present"
+required = true
+target = "[ { EMAIL | DISPLAY_NAME | FIRST_NAME | MIDDLE_NAME | LAST_NAME | TYPE | COMMENT } ]"
+
+[[obligation]]
+id = "sf.security_admin.alter-organization-user.unset.o059"
+kind = "option_absent"
+required = true
+target = "[ { EMAIL | DISPLAY_NAME | FIRST_NAME | MIDDLE_NAME | LAST_NAME | TYPE | COMMENT } ]"
+
+[[obligation]]
 id = "sf.security_admin.alter-organization-user.unset.o048"
 kind = "alternative"
 required = true
@@ -26073,19 +26085,6 @@ required = true
 target = "{ EMAIL | DISPLAY_NAME | FIRST_NAME | MIDDLE_NAME | LAST_NAME | TYPE | COMMENT } → COMMENT"
 
 [[obligation]]
-id = "sf.security_admin.alter-organization-user.unset.o055"
-kind = "option_present"
-required = true
-target = "[ , ... ]"
-note = "the list continued at least once"
-
-[[obligation]]
-id = "sf.security_admin.alter-organization-user.unset.o056"
-kind = "option_absent"
-required = true
-target = "[ , ... ]"
-
-[[obligation]]
 id = "sf.security_admin.alter-organization-user.unset.o041"
 kind = "negative_neighbour"
 required = true
@@ -26102,12 +26101,6 @@ id = "sf.security_admin.alter-organization-user.unset.o043"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required UNSET"
-
-[[obligation]]
-id = "sf.security_admin.alter-organization-user.unset.o057"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required { EMAIL | DISPLAY_NAME | FIRST_NAME | MIDDLE_NAME | LAST_NAME | TYPE | COMMENT }"
 
 [[obligation]]
 id = "sf.security_admin.alter-organization-user.unset.o045"
@@ -47010,42 +47003,42 @@ target = "<name>"
 note = "a string literal in place of <name>"
 
 [[obligation]]
-id = "sf.security_admin.alter-storage-lifecycle-policy.set-body-archive-tier-cool.o045"
-kind = "alternative"
+id = "sf.security_admin.alter-storage-lifecycle-policy.set-body-archive-tier-cool.o050"
+kind = "option_present"
 required = true
-target = "{ BODY -> <expression_on_arg_name> | ARCHIVE_TIER = { COOL | COLD } | ARCHIVE_FOR_DA… → BODY -> <expression_on_arg_name>"
+target = "[ BODY -> <expression_on_arg_name> ]"
 
 [[obligation]]
-id = "sf.security_admin.alter-storage-lifecycle-policy.set-body-archive-tier-cool.o046"
-kind = "alternative"
+id = "sf.security_admin.alter-storage-lifecycle-policy.set-body-archive-tier-cool.o051"
+kind = "option_absent"
 required = true
-target = "{ BODY -> <expression_on_arg_name> | ARCHIVE_TIER = { COOL | COLD } | ARCHIVE_FOR_DAYS… → ARCHIVE_TIER = { COOL | COLD }"
+target = "[ BODY -> <expression_on_arg_name> ]"
 
 [[obligation]]
-id = "sf.security_admin.alter-storage-lifecycle-policy.set-body-archive-tier-cool.o047"
-kind = "alternative"
-required = true
-target = "{ BODY -> <expression_on_arg_name> | ARCHIVE_TIER = { COOL | COLD } | ARCHIVE_FOR… → ARCHIVE_FOR_DAYS = <number_of_days>"
-
-[[obligation]]
-id = "sf.security_admin.alter-storage-lifecycle-policy.set-body-archive-tier-cool.o048"
-kind = "alternative"
-required = true
-target = "{ BODY -> <expression_on_arg_name> | ARCHIVE_TIER = { COOL … → COMMENT = { '<string_literal>' | TAG } <tag_name> = '<tag_value>' [ , <tag_name> = '<tag_value>' ... ]"
-
-[[obligation]]
-id = "sf.security_admin.alter-storage-lifecycle-policy.set-body-archive-tier-cool.o011"
+id = "sf.security_admin.alter-storage-lifecycle-policy.set-body-archive-tier-cool.o052"
 kind = "required_operand_missing"
 required = true
-target = "<expression_on_arg_name>"
+target = "<expression_on_arg_name> in [ BODY -> <expression_on_arg_name> ]"
 note = "omit <expression_on_arg_name>"
 
 [[obligation]]
-id = "sf.security_admin.alter-storage-lifecycle-policy.set-body-archive-tier-cool.o012"
+id = "sf.security_admin.alter-storage-lifecycle-policy.set-body-archive-tier-cool.o053"
 kind = "operand_type_class"
 required = true
-target = "<expression_on_arg_name>"
+target = "<expression_on_arg_name> in [ BODY -> <expression_on_arg_name> ]"
 note = "a valid expression"
+
+[[obligation]]
+id = "sf.security_admin.alter-storage-lifecycle-policy.set-body-archive-tier-cool.o054"
+kind = "option_present"
+required = true
+target = "[ ARCHIVE_TIER = { COOL | COLD } ]"
+
+[[obligation]]
+id = "sf.security_admin.alter-storage-lifecycle-policy.set-body-archive-tier-cool.o055"
+kind = "option_absent"
+required = true
+target = "[ ARCHIVE_TIER = { COOL | COLD } ]"
 
 [[obligation]]
 id = "sf.security_admin.alter-storage-lifecycle-policy.set-body-archive-tier-cool.o013"
@@ -47060,92 +47053,123 @@ required = true
 target = "{ COOL | COLD } → COLD"
 
 [[obligation]]
-id = "sf.security_admin.alter-storage-lifecycle-policy.set-body-archive-tier-cool.o015"
+id = "sf.security_admin.alter-storage-lifecycle-policy.set-body-archive-tier-cool.o056"
+kind = "option_present"
+required = true
+target = "[ ARCHIVE_FOR_DAYS = <number_of_days> ]"
+
+[[obligation]]
+id = "sf.security_admin.alter-storage-lifecycle-policy.set-body-archive-tier-cool.o057"
+kind = "option_absent"
+required = true
+target = "[ ARCHIVE_FOR_DAYS = <number_of_days> ]"
+
+[[obligation]]
+id = "sf.security_admin.alter-storage-lifecycle-policy.set-body-archive-tier-cool.o058"
 kind = "required_operand_missing"
 required = true
-target = "<number_of_days>"
+target = "<number_of_days> in [ ARCHIVE_FOR_DAYS = <number_of_days> ]"
 note = "omit <number_of_days>"
 
 [[obligation]]
-id = "sf.security_admin.alter-storage-lifecycle-policy.set-body-archive-tier-cool.o016"
+id = "sf.security_admin.alter-storage-lifecycle-policy.set-body-archive-tier-cool.o059"
 kind = "operand_type_class"
 required = true
-target = "<number_of_days>"
+target = "<number_of_days> in [ ARCHIVE_FOR_DAYS = <number_of_days> ]"
 note = "a valid integer_literal"
 
 [[obligation]]
-id = "sf.security_admin.alter-storage-lifecycle-policy.set-body-archive-tier-cool.o017"
+id = "sf.security_admin.alter-storage-lifecycle-policy.set-body-archive-tier-cool.o060"
 kind = "negative_neighbour"
 required = true
-target = "<number_of_days>"
+target = "<number_of_days> in [ ARCHIVE_FOR_DAYS = <number_of_days> ]"
 note = "a string literal in place of <number_of_days>"
 
 [[obligation]]
-id = "sf.security_admin.alter-storage-lifecycle-policy.set-body-archive-tier-cool.o018"
-kind = "alternative"
+id = "sf.security_admin.alter-storage-lifecycle-policy.set-body-archive-tier-cool.o061"
+kind = "option_present"
 required = true
-target = "{ '<string_literal>' | TAG } → '<string_literal>'"
+target = "[ COMMENT = '<string_literal>' ]"
 
 [[obligation]]
-id = "sf.security_admin.alter-storage-lifecycle-policy.set-body-archive-tier-cool.o019"
-kind = "alternative"
+id = "sf.security_admin.alter-storage-lifecycle-policy.set-body-archive-tier-cool.o062"
+kind = "option_absent"
 required = true
-target = "{ '<string_literal>' | TAG } → TAG"
+target = "[ COMMENT = '<string_literal>' ]"
 
 [[obligation]]
-id = "sf.security_admin.alter-storage-lifecycle-policy.set-body-archive-tier-cool.o020"
+id = "sf.security_admin.alter-storage-lifecycle-policy.set-body-archive-tier-cool.o063"
+kind = "required_operand_missing"
+required = true
+target = "'<string_literal>' in [ COMMENT = '<string_literal>' ]"
+note = "omit '<string_literal>'"
+
+[[obligation]]
+id = "sf.security_admin.alter-storage-lifecycle-policy.set-body-archive-tier-cool.o064"
 kind = "operand_type_class"
 required = true
-target = "'<string_literal>'"
+target = "'<string_literal>' in [ COMMENT = '<string_literal>' ]"
 note = "a valid string_literal"
 
 [[obligation]]
-id = "sf.security_admin.alter-storage-lifecycle-policy.set-body-archive-tier-cool.o021"
+id = "sf.security_admin.alter-storage-lifecycle-policy.set-body-archive-tier-cool.o065"
 kind = "negative_neighbour"
 required = true
-target = "'<string_literal>'"
+target = "'<string_literal>' in [ COMMENT = '<string_literal>' ]"
 note = "an unquoted identifier in place of '<string_literal>'"
 
 [[obligation]]
-id = "sf.security_admin.alter-storage-lifecycle-policy.set-body-archive-tier-cool.o022"
+id = "sf.security_admin.alter-storage-lifecycle-policy.set-body-archive-tier-cool.o066"
+kind = "option_present"
+required = true
+target = "[ TAG <tag_name> = '<tag_value>' [ , <tag_name> = '<tag_value>' ... ] ]"
+
+[[obligation]]
+id = "sf.security_admin.alter-storage-lifecycle-policy.set-body-archive-tier-cool.o067"
+kind = "option_absent"
+required = true
+target = "[ TAG <tag_name> = '<tag_value>' [ , <tag_name> = '<tag_value>' ... ] ]"
+
+[[obligation]]
+id = "sf.security_admin.alter-storage-lifecycle-policy.set-body-archive-tier-cool.o068"
 kind = "required_operand_missing"
 required = true
-target = "<tag_name>"
+target = "<tag_name> in [ TAG <tag_name> = '<tag_value>' [ , <tag_name> = '<tag_value>' ... ] ]"
 note = "omit <tag_name>"
 
 [[obligation]]
-id = "sf.security_admin.alter-storage-lifecycle-policy.set-body-archive-tier-cool.o023"
+id = "sf.security_admin.alter-storage-lifecycle-policy.set-body-archive-tier-cool.o069"
 kind = "operand_type_class"
 required = true
-target = "<tag_name>"
+target = "<tag_name> in [ TAG <tag_name> = '<tag_value>' [ , <tag_name> = '<tag_value>' ... ] ]"
 note = "a valid identifier"
 
 [[obligation]]
-id = "sf.security_admin.alter-storage-lifecycle-policy.set-body-archive-tier-cool.o024"
+id = "sf.security_admin.alter-storage-lifecycle-policy.set-body-archive-tier-cool.o070"
 kind = "negative_neighbour"
 required = true
-target = "<tag_name>"
+target = "<tag_name> in [ TAG <tag_name> = '<tag_value>' [ , <tag_name> = '<tag_value>' ... ] ]"
 note = "a string literal in place of <tag_name>"
 
 [[obligation]]
-id = "sf.security_admin.alter-storage-lifecycle-policy.set-body-archive-tier-cool.o025"
+id = "sf.security_admin.alter-storage-lifecycle-policy.set-body-archive-tier-cool.o071"
 kind = "required_operand_missing"
 required = true
-target = "'<tag_value>'"
+target = "'<tag_value>' in [ TAG <tag_name> = '<tag_value>' [ , <tag_name> = '<tag_value>' ... ] ]"
 note = "omit '<tag_value>'"
 
 [[obligation]]
-id = "sf.security_admin.alter-storage-lifecycle-policy.set-body-archive-tier-cool.o026"
+id = "sf.security_admin.alter-storage-lifecycle-policy.set-body-archive-tier-cool.o072"
 kind = "operand_type_class"
 required = true
-target = "'<tag_value>'"
+target = "'<tag_value>' in [ TAG <tag_name> = '<tag_value>' [ , <tag_name> = '<tag_value>' ... ] ]"
 note = "a valid string_literal"
 
 [[obligation]]
-id = "sf.security_admin.alter-storage-lifecycle-policy.set-body-archive-tier-cool.o027"
+id = "sf.security_admin.alter-storage-lifecycle-policy.set-body-archive-tier-cool.o073"
 kind = "negative_neighbour"
 required = true
-target = "'<tag_value>'"
+target = "'<tag_value>' in [ TAG <tag_name> = '<tag_value>' [ , <tag_name> = '<tag_value>' ... ] ]"
 note = "an unquoted identifier in place of '<tag_value>'"
 
 [[obligation]]
@@ -47192,22 +47216,16 @@ required = true
 note = "the form without its required SET"
 
 [[obligation]]
-id = "sf.security_admin.alter-storage-lifecycle-policy.set-body-archive-tier-cool.o036"
+id = "sf.security_admin.alter-storage-lifecycle-policy.set-body-archive-tier-cool.o074"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required { COOL | COLD }"
+note = "the form without its required { COOL | COLD } in [ ARCHIVE_TIER = { COOL | COLD } ]"
 
 [[obligation]]
-id = "sf.security_admin.alter-storage-lifecycle-policy.set-body-archive-tier-cool.o037"
-kind = "negative_neighbour"
+id = "sf.security_admin.alter-storage-lifecycle-policy.set-body-archive-tier-cool.o075"
+kind = "interaction_all_options"
 required = true
-note = "the form without its required { '<string_literal>' | TAG }"
-
-[[obligation]]
-id = "sf.security_admin.alter-storage-lifecycle-policy.set-body-archive-tier-cool.o049"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required { BODY -> <expression_on_arg_name> | ARCHIVE_TIER = { COOL | COLD } | ARCHIVE_FOR_DAYS = <number_of_days> | COMMENT = { '<string_literal>' | TAG } <tag_name> = '<tag_value>' [ , <tag_name> = '<tag_value>' ... ] }"
+note = "every independent option of one production together"
 
 [[obligation]]
 id = "sf.security_admin.alter-storage-lifecycle-policy.set-body-archive-tier-cool.o038"
@@ -47357,6 +47375,19 @@ required = true
 target = "[ , <tag_name> ... ]"
 
 [[obligation]]
+id = "sf.security_admin.alter-storage-lifecycle-policy.unset-archive-for-days-comment-tag.o029"
+kind = "option_present"
+required = true
+target = "[ , ... ]"
+note = "the list continued at least once"
+
+[[obligation]]
+id = "sf.security_admin.alter-storage-lifecycle-policy.unset-archive-for-days-comment-tag.o030"
+kind = "option_absent"
+required = true
+target = "[ , ... ]"
+
+[[obligation]]
 id = "sf.security_admin.alter-storage-lifecycle-policy.unset-archive-for-days-comment-tag.o015"
 kind = "negative_neighbour"
 required = true
@@ -47391,6 +47422,12 @@ id = "sf.security_admin.alter-storage-lifecycle-policy.unset-archive-for-days-co
 kind = "negative_neighbour"
 required = true
 note = "the form without its required { ARCHIVE_FOR_DAYS | COMMENT | TAG <tag_name> [ , <tag_name> ... ] }"
+
+[[obligation]]
+id = "sf.security_admin.alter-storage-lifecycle-policy.unset-archive-for-days-comment-tag.o031"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
 
 [[obligation]]
 id = "sf.security_admin.alter-storage-lifecycle-policy.unset-archive-for-days-comment-tag.o021"
