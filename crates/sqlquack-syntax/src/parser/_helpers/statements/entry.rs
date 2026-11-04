@@ -1821,6 +1821,7 @@ impl Parser {
 
         let recursive = self.match_token(TokenType::Recursive);
         let mut ctes: Vec<Cte> = Vec::new();
+        let mut has_procedure = false;
 
         loop {
             let cte_start = self.current;
@@ -1844,11 +1845,39 @@ impl Parser {
                 Vec::new()
             };
 
-            let cte_comments = if self.match_token(TokenType::As) {
+            let has_as = self.match_token(TokenType::As);
+            let cte_comments = if has_as {
                 self.previous_trailing_comments().to_vec()
             } else {
                 Vec::new()
             };
+            if matches!(
+                self.config.dialect,
+                Some(crate::tokens::models::DialectType::Snowflake)
+            ) {
+                self.reject_reserved_name_part(&name)?;
+                if !has_as {
+                    return Err(self.parse_error("Expected AS before the CTE body"));
+                }
+            }
+            if has_as && columns.is_empty() && self.at_anonymous_procedure() {
+                let procedure = self.parse_anonymous_procedure(&name)?;
+                has_procedure = true;
+                ctes.push(Cte {
+                    alias: name,
+                    this: procedure,
+                    columns,
+                    materialized: None,
+                    key_expressions,
+                    alias_first: true,
+                    comments: cte_comments,
+                    span: self.source_range(cte_start),
+                });
+                if self.match_token(TokenType::Comma) {
+                    continue;
+                }
+                break;
+            }
 
             let materialized = if self.match_token(TokenType::Materialized) {
                 Some(true)
@@ -1900,6 +1929,18 @@ impl Parser {
         }
 
         let search = self.parse_recursive_with_search()?;
+
+        if has_procedure {
+            if !self.check_identifier("CALL") {
+                return Err(self.parse_error("Expected CALL after an anonymous procedure"));
+            }
+            return self.parse_call_with(With {
+                ctes,
+                recursive,
+                leading_comments,
+                search,
+            });
+        }
 
         let mut main_query = self.parse_statement()?;
 

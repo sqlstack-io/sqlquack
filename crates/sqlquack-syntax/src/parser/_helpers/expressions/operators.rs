@@ -373,6 +373,7 @@ impl Parser {
             with_options,
             has_parens,
             use_proc_keyword,
+            returns_table: None,
         })))
     }
 

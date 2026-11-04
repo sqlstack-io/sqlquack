@@ -464,6 +464,12 @@ pub struct Call {
     pub arguments: Vec<Expression>,
     pub asynchronous: bool,
     pub hints: Vec<Expression>,
+    /// Snowflake `WITH ... CALL`: the CTEs and anonymous procedures the call can name.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub with: Option<crate::expressions::queries::models::With>,
+    /// Snowflake scripting `INTO :variable` target of the call's result.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub into: Option<Identifier>,
 }
 
 /// Regex search options shared by predicates, extraction, replacement, and position calls.

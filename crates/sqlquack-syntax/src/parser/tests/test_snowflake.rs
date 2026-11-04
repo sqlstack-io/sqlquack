@@ -542,6 +542,54 @@ fn given_unsupported_snowflake_sql_when_parsing_then_parsing_fails() {
             expected_error: "Parse error",
         },
         ParseErrorTestCase {
+            description: "an anonymous procedure needs RETURNS",
+            dialect: Some(DialectType::Snowflake),
+            sql: "WITH p1 AS PROCEDURE () LANGUAGE SQL AS $$ BEGIN RETURN 1; END $$ CALL p1()",
+            expected_error: "Parse error",
+        },
+        ParseErrorTestCase {
+            description: "an anonymous procedure is followed by CALL",
+            dialect: Some(DialectType::Snowflake),
+            sql: "WITH p1 AS PROCEDURE () RETURNS INT LANGUAGE JAVASCRIPT AS 'm' SELECT 1",
+            expected_error: "Parse error",
+        },
+        ParseErrorTestCase {
+            description: "a SQL procedure body must parse as a block",
+            dialect: Some(DialectType::Snowflake),
+            sql: "WITH p1 AS PROCEDURE () RETURNS INT LANGUAGE SQL AS $$ BEGIN LOOP $$ CALL p1()",
+            expected_error: "Parse error",
+        },
+        ParseErrorTestCase {
+            description: "a reserved word is not a procedure parameter",
+            dialect: Some(DialectType::Snowflake),
+            sql: "WITH p1 AS PROCEDURE (SELECT INT) RETURNS INT LANGUAGE JAVASCRIPT AS 'm' CALL p1()",
+            expected_error: "Parse error",
+        },
+        ParseErrorTestCase {
+            description: "a reserved word is not a RETURNS TABLE column",
+            dialect: Some(DialectType::Snowflake),
+            sql: "WITH p1 AS PROCEDURE () RETURNS TABLE (SELECT INT) LANGUAGE JAVASCRIPT AS 'm' CALL p1()",
+            expected_error: "Parse error",
+        },
+        ParseErrorTestCase {
+            description: "a handler option is given once",
+            dialect: Some(DialectType::Snowflake),
+            sql: "WITH p1 AS PROCEDURE () RETURNS INT LANGUAGE PYTHON HANDLER = 'a' HANDLER = 'b' CALL p1()",
+            expected_error: "Parse error",
+        },
+        ParseErrorTestCase {
+            description: "a following CTE needs AS",
+            dialect: Some(DialectType::Snowflake),
+            sql: "WITH p1 AS PROCEDURE () RETURNS INT LANGUAGE JAVASCRIPT AS 'm', c1 (SELECT 1) CALL p1()",
+            expected_error: "Parse error",
+        },
+        ParseErrorTestCase {
+            description: "a following CTE needs a name",
+            dialect: Some(DialectType::Snowflake),
+            sql: "WITH p1 AS PROCEDURE () RETURNS INT LANGUAGE JAVASCRIPT AS 'm', AS (SELECT 1) CALL p1()",
+            expected_error: "Parse error",
+        },
+        ParseErrorTestCase {
             description: "an unquoted name% column is a known limitation",
             dialect: Some(DialectType::Snowflake),
             sql: "CREATE TABLE IF NOT EXISTS identifier(?) (name% TEXT, points NUMBER(38, 0)) /* Python:snowflake.connector.pandas_tools.write_pandas() */",
@@ -572,6 +620,8 @@ fn given_neighbours_of_rejected_snowflake_sql_when_parsing_then_they_parse() {
         "SELECT * FROM TABLE(FLATTEN(INPUT => ARRAY_CONSTRUCT(1)))",
         "CREATE PROCEDURE p1() RETURNS TABLE () LANGUAGE SQL AS $$ BEGIN RETURN 1; END $$",
         "DECLARE \"SELECT\" RESULTSET; BEGIN RETURN 1; END;",
+        "WITH p1 AS PROCEDURE (v1 INT, v2 INT DEFAULT 2) RETURNS INT NOT NULL LANGUAGE JAVASCRIPT CALLED ON NULL INPUT AS 'm', c1 AS (SELECT 1) CALL p1(v1 => 1) INTO :x",
+        "WITH p1 AS PROCEDURE () RETURNS INT LANGUAGE JAVA RUNTIME_VERSION = '11' PACKAGES = ('com.snowflake:snowpark:1.14.0') HANDLER = 'm' CALL p1()",
     ];
 
     for sql in accepted {
@@ -634,6 +684,42 @@ fn given_snowflake_string_escapes_when_tokenizing_then_they_decode_as_documented
         assert_eq!(
             first_token_text(test_case.dialect, test_case.sql, test_case.token_type),
             test_case.expected_text,
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_an_anonymous_procedure_call_when_parsing_snowflake_then_its_parts_are_kept() {
+    let test_cases = [
+        ParseKindTestCase {
+            description: "the statement is a call",
+            dialect: Some(DialectType::Snowflake),
+            sql: "WITH p1 AS PROCEDURE () RETURNS VARCHAR LANGUAGE SQL AS $$ BEGIN AWAIT ALL; END; $$ CALL p1()",
+            pointer: "/0",
+            expected_kind: Ok("call"),
+        },
+        ParseKindTestCase {
+            description: "the call keeps the procedure it names",
+            dialect: Some(DialectType::Snowflake),
+            sql: "WITH p1 AS PROCEDURE () RETURNS VARCHAR LANGUAGE SQL AS $$ BEGIN AWAIT ALL; END; $$ CALL p1()",
+            pointer: "/0/call/with/ctes/0/this",
+            expected_kind: Ok("create_procedure"),
+        },
+        ParseKindTestCase {
+            description: "a SQL body is parsed as a scripting block",
+            dialect: Some(DialectType::Snowflake),
+            sql: "WITH p1 AS PROCEDURE () RETURNS VARCHAR LANGUAGE SQL AS $$ BEGIN AWAIT ALL; END; $$ CALL p1()",
+            pointer: "/0/call/with/ctes/0/this/create_procedure/body/Statements/0",
+            expected_kind: Ok("scripting_block"),
+        },
+    ];
+
+    for test_case in test_cases {
+        assert_eq!(
+            kind_at(test_case.dialect, test_case.sql, test_case.pointer),
+            test_case.expected_kind.map(str::to_owned),
             "{}",
             test_case.description
         );
