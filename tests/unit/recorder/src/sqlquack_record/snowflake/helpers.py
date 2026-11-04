@@ -7,6 +7,7 @@ import json
 import re
 from collections import defaultdict
 from collections.abc import Callable, Sequence
+from decimal import Decimal
 from functools import partial
 from pathlib import Path
 from types import SimpleNamespace
@@ -403,6 +404,8 @@ class SubMicrosecondCheckConnection:
             "two rows": [tuple(counts), tuple(counts)],
             "null": [(None,) * len(counts)],
             "boolean": [(False,) * len(counts)],
+            "decimal": [tuple(Decimal(count) for count in counts)],
+            "fraction": [(Decimal("0.5"),) * len(counts)],
         }
         return answers[self._answer]
 

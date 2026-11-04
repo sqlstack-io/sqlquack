@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from collections.abc import Sequence
 from dataclasses import replace
+from decimal import Decimal
 from typing import Any
 
 import pyarrow as pa
@@ -92,11 +93,21 @@ def sub_microsecond_counts(
             f"{len(positions)} counts"
         )
     values: tuple[Any, ...] = tuple(rows[0])
-    if not all(type(value) is int for value in values):
+    counts: tuple[int | None, ...] = tuple(_whole_count(value) for value in values)
+    if None in counts:
         raise UnrecordableResultError(
             f"the sub-microsecond check returned {values!r} rather than integer counts"
         )
-    return values
+    return tuple(count for count in counts if count is not None)
+
+
+def _whole_count(value: object) -> int | None:
+    """A count as an int, from an int or a whole Decimal; None for anything else."""
+    if type(value) is int:
+        return value
+    if type(value) is Decimal and value.is_finite() and value == value.to_integral_value():
+        return int(value)
+    return None
 
 
 def require_recordable(error: ProgrammingError) -> None:
