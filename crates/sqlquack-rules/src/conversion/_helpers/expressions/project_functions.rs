@@ -55,7 +55,7 @@ pub(crate) fn project_call(
     if returns == SnowflakeType::SemiStructured {
         rely_on(JSON_FIDELITY, construct, site.context)?;
         return Ok(Emitted::new(
-            json_guarded(&format!("CAST({call} AS VARCHAR)"), log),
+            json_guarded(&format!("CAST({call} AS VARCHAR)"), false, log),
             returns,
         ));
     }

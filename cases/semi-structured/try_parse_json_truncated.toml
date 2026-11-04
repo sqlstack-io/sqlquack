@@ -30,7 +30,6 @@ rows = [
 ]
 expression = "TRY_PARSE_JSON(s) IS NULL"
 tags = ["null", "invalid"]
-expected_divergence = "json_fidelity"
 
 [[case]]
 id = "try_parse_json_markup_and_words"

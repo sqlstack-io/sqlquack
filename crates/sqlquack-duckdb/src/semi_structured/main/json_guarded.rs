@@ -3,15 +3,15 @@
 use sqlquack_core::provenance::models::ProvenanceLog;
 
 use crate::semi_structured::_helpers::guards::{
-    bound, fidelity_error, keys_repeated, long_decimal_pattern, zero_fractions_whole,
+    bound, fidelity_error, keys_repeated, long_decimal_pattern, unreadable, zero_fractions_whole,
 };
 use crate::semi_structured::constants::{
     JSON_GUARDED, JSON_NUMBER_PATTERN, JSON_STRING_PATTERN, JSON_SURROGATE_PATTERN,
     JSON_UNSAFE_TOKEN_PATTERN, JSON_WORD_PATTERN,
 };
 
-/// Text as DuckDB `JSON`, blank text NULL; text either parser may read differently raises.
-pub fn json_guarded(sql: &str, log: &ProvenanceLog) -> String {
+/// Text as DuckDB `JSON`, blank text NULL; text read differently raises, `trying` unfinished NULL.
+pub fn json_guarded(sql: &str, trying: bool, log: &ProvenanceLog) -> String {
     log.building_block(JSON_GUARDED);
     let text = format!("CAST({sql} AS VARCHAR)");
     let tokens = outside_strings("r['t']");
@@ -19,6 +19,7 @@ pub fn json_guarded(sql: &str, log: &ProvenanceLog) -> String {
         "regexp_extract_all({}, '{JSON_NUMBER_PATTERN}')",
         outside_strings("CAST(json(r['t']) AS VARCHAR)")
     );
+    let invalid = fidelity_error("text DuckDB does not read as JSON, which Snowflake may read");
     let duplicates =
         keys_repeated("(CASE WHEN json_valid(json_source) THEN json(json_source) ELSE '[]' END)");
     let body = format!(
@@ -31,7 +32,11 @@ pub fn json_guarded(sql: &str, log: &ProvenanceLog) -> String {
          WHEN regexp_matches(r['t'], '{surrogate}') THEN {surrogates} \
          WHEN r['repeated'] THEN {repeated} \
          ELSE json(r['t']) END)",
-        invalid = fidelity_error("text DuckDB does not read as JSON, which Snowflake may read"),
+        invalid = if trying {
+            format!("(CASE WHEN {} THEN NULL ELSE {invalid} END)", unreadable("json_source"))
+        } else {
+            invalid
+        },
         unsafe = quoted(JSON_UNSAFE_TOKEN_PATTERN),
         long = long_decimal_pattern(),
         rewritten = fidelity_error(

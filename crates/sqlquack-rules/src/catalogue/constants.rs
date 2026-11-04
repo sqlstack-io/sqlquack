@@ -504,7 +504,7 @@ pub const RULES: &[RuleSpec] = &[
     RuleSpec {
         id: PARSE_JSON_RULE,
         constructs: &["fn:PARSE_JSON", "fn:TRY_PARSE_JSON"],
-        conditions: "One VARCHAR argument. Empty or blank text is NULL; text DuckDB does not read as JSON, numbers with an exponent, -0 with an all-zero fraction, six leading fraction zeros, more than 15 decimal digits or 39 integer digits, NaN, Infinity, undefined, trailing commas, surrogate escapes and repeated keys raise, relying on json_fidelity; for TRY_PARSE_JSON too. A number whose fraction is all zeros, such as 2.0, is read as the integer Snowflake reads it as, as recorded. A VARIANT column of a base table is guarded the same way.",
+        conditions: "One VARCHAR argument. Empty or blank text is NULL; text DuckDB does not read as JSON, numbers with an exponent, -0 with an all-zero fraction, six leading fraction zeros, more than 15 decimal digits or 39 integer digits, NaN, Infinity, undefined, trailing commas, surrogate escapes and repeated keys raise, relying on json_fidelity; for TRY_PARSE_JSON too, except that TRY_PARSE_JSON of markup, and of a document cut off before its first value closes with only double-quoted strings, is NULL, as recorded. A number whose fraction is all zeros, such as 2.0, is read as the integer Snowflake reads it as, as recorded. A VARIANT column of a base table is guarded the same way.",
         failures: &[FailureMode {
             kind: ErrorKind::JsonParse,
             snowflake: &[JSON_NOT_PARSED],

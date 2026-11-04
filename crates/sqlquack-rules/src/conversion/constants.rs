@@ -339,6 +339,8 @@ pub const DATE_FORMAT_RULE: &str = "rule.date_format";
 pub const TIMESTAMP_FORMAT_RULE: &str = "rule.timestamp_format";
 /// The function DATE(x) converts as.
 pub const TO_DATE_NAME: &str = "TO_DATE";
+/// TRY_PARSE_JSON, whose text no JSON reader can finish is NULL.
+pub const TRY_PARSE_JSON_NAME: &str = "TRY_PARSE_JSON";
 /// The type name of a cast to VARIANT.
 pub const VARIANT_NAME: &str = "VARIANT";
 /// PARSE_JSON and TRY_PARSE_JSON.

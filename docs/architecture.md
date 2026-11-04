@@ -234,7 +234,10 @@ reads single quotes, NaN and undefined, rejects repeated keys and writes keys so
 read as JSON, numbers with an exponent, an all-zero fraction, six leading fraction zeros, more
 than 15 decimal digits or 39 integer digits, letters and trailing commas outside strings,
 surrogate escapes and repeated keys at any depth. PARSE_JSON and TRY_PARSE_JSON raise alike, so
-TRY_PARSE_JSON never returns NULL on one side and a value on the other. VARIANT columns of base
+TRY_PARSE_JSON never returns NULL on one side and a value on the other, with one exception that
+no reader can read: for TRY_PARSE_JSON, `duckdb.json_guarded` gives NULL for markup and for a
+document cut off before its first value closes, when only double-quoted strings could hide a
+bracket (recorded). VARIANT columns of base
 tables pass the same guard. VARIANT columns of source tables are assumed to hold JSON values, as loaded from JSON:
 `source_variant_json` names that assumption. Snowflake keeps a DATE, TIME, timestamp or BINARY
 typed inside a VARIANT, unequal to its text (recorded), where DuckDB's JSON holds only the text.
