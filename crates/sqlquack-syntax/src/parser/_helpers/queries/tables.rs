@@ -1176,10 +1176,17 @@ impl Parser {
 
         self.expect_token(TokenType::In)?;
         self.expect_token(TokenType::LParen)?;
+        let snowflake = matches!(
+            self.config.dialect,
+            Some(crate::tokens::models::DialectType::Snowflake)
+        );
         let columns = {
             let mut cols: Vec<Expression> = Vec::new();
             loop {
                 if self.check(TokenType::RParen) {
+                    if snowflake {
+                        return Err(self.parse_error("Expected a column in the UNPIVOT IN list"));
+                    }
                     break;
                 }
                 let col_expr = if self.check(TokenType::LParen) {
@@ -1213,6 +1220,10 @@ impl Parser {
                 };
 
                 if let Some(col) = col_expr {
+                    if snowflake && self.check(TokenType::As) && self.check_next(TokenType::String)
+                    {
+                        return Err(self.parse_error("Expected an identifier alias in UNPIVOT IN"));
+                    }
                     let col = if self.match_token(TokenType::As) {
                         let alias_expr = self.parse_bitwise()?.ok_or_else(|| {
                             self.parse_error("Expected expression after AS in UNPIVOT IN clause")
