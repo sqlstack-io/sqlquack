@@ -90,6 +90,7 @@ impl Expression {
             | Expression::CreateView(_)
             | Expression::DropView(_)
             | Expression::AlterView(_)
+            | Expression::AlterObject(_)
             | Expression::AlterIndex(_)
             | Expression::Truncate(_)
             | Expression::TruncateTable(_)

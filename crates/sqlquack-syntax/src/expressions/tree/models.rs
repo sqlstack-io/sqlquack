@@ -335,6 +335,7 @@ use crate::expressions::queries::models::WindowSpec;
 use crate::expressions::queries::models::With;
 use crate::expressions::queries::models::XmlNamespace;
 use crate::expressions::schema_objects::models::AlterIndex;
+use crate::expressions::schema_objects::models::AlterObject;
 use crate::expressions::schema_objects::models::AlterSequence;
 use crate::expressions::schema_objects::models::AlterView;
 use crate::expressions::schema_objects::models::CreateDatabase;
@@ -1174,6 +1175,7 @@ pub enum Expression {
     CreateView(Box<CreateView>),
     DropView(Box<DropView>),
     AlterView(Box<AlterView>),
+    AlterObject(Box<AlterObject>),
     AlterIndex(Box<AlterIndex>),
     Truncate(Box<Truncate>),
     Use(Box<Use>),
