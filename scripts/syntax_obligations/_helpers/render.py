@@ -51,6 +51,7 @@ from scripts.syntax_obligations.constants import (
     RESERVED_WORD,
     SINGLE_CHARACTER_LITERAL_LENGTH,
     STAGE_GLUES,
+    STAGE_KEYWORD,
     STATEMENT_CLASS,
     STATEMENT_TERMINATOR,
     STRING_CLASS,
@@ -153,7 +154,11 @@ class _Renderer:
         self._keywords = []
         joined: str = " ".join(self._sequence(nodes=self.trees[production], choices=choices))
         glued: str = GLUED_INFIX_RIGHT.sub("!", GLUED_PREFIXES.sub(r"\1", joined))
-        return _stage_glued(GLUED_INFIX_LEFT.sub("!", glued))
+        staged: str = _stage_glued(GLUED_INFIX_LEFT.sub("!", glued))
+        keywords: set[str] = set(self._keywords)
+        return STAGE_KEYWORD.sub(
+            lambda m: f"{m[1]} {m[2]}" if m[2] in keywords - {RESERVED_WORD} else m[0], staged
+        )
 
     def _declarations(self) -> str:
         """Declarations, by `uses`, of the objects the form names, so the case is self-contained."""
@@ -379,7 +384,12 @@ def _repeat_start(*, before: list[str], keywords: set[str]) -> int:
             depth -= 1
         elif depth == 0 and (
             text in CLOSE_REPEAT_AFTER
-            or (text.upper() in keywords and text.upper() not in LIST_ITEM_KEYWORDS and not calls)
+            or (
+                index < len(before) - 1
+                and text.upper() in keywords
+                and text.upper() not in LIST_ITEM_KEYWORDS
+                and not calls
+            )
         ):
             return index
     return -1

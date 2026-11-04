@@ -74,11 +74,12 @@ IDENTIFIER_CLASSES: tuple[tuple[str, str], ...] = (
 TOKEN: re.Pattern[str] = re.compile(
     r"\s*(?:(?P<placeholder><[^<>]+>)|(?P<literal>'[^']*'|\"[^\"]*\")|(?P<elision>\.\.\.)"
     r"|(?P<bracket>[\[\]{}|])|(?P<keyword>[A-Za-z_][A-Za-z0-9_$]*)"
-    r"|(?P<punct>:=|::|=>|->>|<>|!=|<=|>=|\|\||\S))"
+    r"|(?P<punct>:=|::|=>|->>|->|<>|!=|<=|>=|\|\||\S))"
 )
 CLASS_RULES: tuple[tuple[re.Pattern[str], str], ...] = (
     (re.compile(r"_(declaration|assignment|definition|handler)$"), "subgrammar"),
     (re.compile(r"^(session|bind|snowflake_scripting)_variable$"), "operand"),
+    (re.compile(r"^select_statement$"), "query"),
     (re.compile(r"statement"), "statement"),
     (re.compile(r"(^|_)(sub)?query$"), "query"),
     (re.compile(r"(^|_)(data_)?type$|_type$"), "data_type"),
@@ -371,6 +372,7 @@ STAGE_GLUES: tuple[re.Pattern[str], ...] = (
     re.compile(STAGE_TOKEN + r"~) (?=/)"),
     re.compile(STAGE_TOKEN + r"/) (?![a-z]+:)(?=[a-z0-9\"'])"),
 )
+STAGE_KEYWORD: re.Pattern[str] = re.compile(r"(?<![^ ])(@[^ ]*?[%.]|@)([A-Z][A-Z0-9_]*)(?=[ ;]|$)")
 GLUED_INFIX_RIGHT: re.Pattern[str] = re.compile(r"(?<![^ ])! (?=[A-Za-z_\"'])")
 GLUED_INFIX_LEFT: re.Pattern[str] = re.compile(r"(?<=[\w\"')]) !(?=[ A-Za-z_\"'])")
 QUERY_FORMS: tuple[str, ...] = ("sf.query.constructs",)
@@ -910,6 +912,45 @@ UTILITY_LITERAL_FILLS: dict[str, str] = {
     "'./<path>/<filename>'": "'./p1/f1.sql'",
     "'../<path>/<filename>'": "'../p1/f1.sql'",
 }
+DDL_FILLS: dict[str, str] = {
+    **DML_FILLS,
+    "rows": "1",
+    "patch_num": "1",
+    "storage_gb": "10",
+    "step_num": "1",
+    "start_num": "1",
+    "sequence_interval": "1",
+    "sequence_num": "1",
+    "timestamp_ms": "1",
+    "seconds": "60",
+    "time_difference": "-60",
+    "id": "'q1'",
+    "query_id": "'q1'",
+    "timestamp": "CURRENT_TIMESTAMP ( )",
+    "dml_statement": "DELETE FROM t1",
+    "copy_statement": "COPY INTO t1 FROM @s1",
+}
+DDL_LITERAL_FILLS: dict[str, str] = {
+    **UTILITY_LITERAL_FILLS,
+    "'<num> { seconds | minutes | hours | days }'": "'1 minute'",
+    "'<num> { HOURS | MINUTES | SECONDS }'": "'1 MINUTES'",
+    "'USING CRON <expr> <time_zone>'": "'USING CRON 0 9 * * * UTC'",
+    "'{ AUTO | 16MB | 32MB | 64MB | 128MB }'": "'AUTO'",
+    "'<path>/[<filename>]'": "'p1/f1.csv'",
+    "'<path>/[<filename>'": "'p1/f1.csv'",
+    "'<database>.<schema>.<tablename>'": "'d1.s1.t1'",
+    "'{ <num> MINUTE | USING CRON <expr> <time_zone> }'": "'1 MINUTE'",
+    "'{ <number> MINUTE | USING CRON <expr> <time_zone> }'": "'1 MINUTE'",
+    "'XSMALL | SMALL | MEDIUM | LARGE | XLARGE | XXLARGE'": "'XSMALL'",
+    "'{ XSMALL | SMALL | MEDIUM | LARGE | XLARGE | XXLARGE }'": "'XSMALL'",
+    "'snow://workspace/<workspace_path>'": "'snow://workspace/w1'",
+    "'@<database_name>.<schema_name>.<stage_name>'": "'@d1.s1.st1'",
+    "'<event_definition'": "'e1'",
+    "'<num> MINUTE'": "'1 MINUTE'",
+    "'<region_group>.<snowflake_region>'": "'PUBLIC.AWS_US_WEST_2'",
+    "'<num> { hours | days }'": "'1 days'",
+    "'<num> days'": "'1 days'",
+}
 FAMILY_STYLES: dict[str, dict[str, FormStyle]] = {
     "scripting": SCRIPTING_SELF_DECLARING_BLOCKS,
     "query": QUERY_STYLES,
@@ -918,6 +959,9 @@ FAMILY_STYLES: dict[str, dict[str, FormStyle]] = {
     **{family: {f"sf.{family}.": FormStyle(prefix="", suffix="")} for family in TOP_LEVEL_FAMILIES},
     "dml": {
         "sf.dml.": FormStyle(prefix="", suffix="", fills=DML_FILLS, literal_fills=DML_LITERAL_FILLS)
+    },
+    "ddl": {
+        "sf.ddl.": FormStyle(prefix="", suffix="", fills=DDL_FILLS, literal_fills=DDL_LITERAL_FILLS)
     },
     "utility": {
         "sf.utility.": FormStyle(
