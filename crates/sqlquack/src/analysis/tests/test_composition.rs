@@ -1,7 +1,7 @@
 use std::time::Duration;
 
 use crate::analysis::tests::helpers::{timed_conversion, unpacking_query};
-use crate::analysis::tests::test_types::CompositionTestCase;
+use crate::analysis::tests::test_types::{CompositionTestCase, LargeLiteralTestCase};
 
 #[test]
 fn given_composed_variant_text_when_converting_then_sql_and_time_grow_linearly() {
@@ -35,6 +35,45 @@ fn given_composed_variant_text_when_converting_then_sql_and_time_grow_linearly()
             (high - middle) * (second - first),
             (middle - low) * (third - second),
             "{}: each level must add the same SQL: {low}, {middle}, {high}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_large_literals_when_converting_then_time_stays_bounded() {
+    let rows = |count: usize| vec!["(1)"; count].join(", ");
+    let test_cases = [
+        LargeLiteralTestCase {
+            description: "an array literal of 250 elements converts",
+            sql: format!("SELECT [{}] AS v", vec!["1"; 250].join(", ")),
+            expected_converted: true,
+            expected_budget_seconds: 15,
+        },
+        LargeLiteralTestCase {
+            description: "VALUES of 1,000 rows converts",
+            sql: format!("SELECT x FROM (VALUES {}) AS t(x)", rows(1000)),
+            expected_converted: true,
+            expected_budget_seconds: 15,
+        },
+        LargeLiteralTestCase {
+            description: "VALUES of 100,000 rows refuses, not overflowing the stack",
+            sql: format!("SELECT x FROM (VALUES {}) AS t(x)", rows(100_000)),
+            expected_converted: false,
+            expected_budget_seconds: 15,
+        },
+    ];
+    for test_case in test_cases {
+        let (converted, elapsed) = timed_conversion(&test_case.sql);
+        assert_eq!(
+            converted.is_some(),
+            test_case.expected_converted,
+            "{}",
+            test_case.description
+        );
+        assert!(
+            elapsed < Duration::from_secs(test_case.expected_budget_seconds),
+            "{}: took {elapsed:?}",
             test_case.description
         );
     }

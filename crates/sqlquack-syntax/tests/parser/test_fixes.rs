@@ -666,3 +666,182 @@ fn given_a_snowflake_drop_of_another_object_kind_when_parsing_then_the_tree_name
         );
     }
 }
+
+#[test]
+fn given_a_snowflake_alter_of_an_application_database_or_service_kind_when_parsing_then_it_follows_the_grammar(
+) {
+    let test_cases = [
+        AcceptanceTestCase {
+            description: "a package adds a version from a stage (recorded semantic error)",
+            sql: "ALTER APPLICATION PACKAGE v1 ADD VERSION v1 USING '@d1.s1.st1/p1' LABEL = 'm' ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "a version needs USING (recorded errno 1003)",
+            sql: "ALTER APPLICATION PACKAGE v1 ADD VERSION '@d1.s1.st1/p1' ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "a release directive names its accounts, version and patch",
+            sql: "ALTER APPLICATION PACKAGE v1 SET RELEASE DIRECTIVE v1 ACCOUNTS = ( o1.a1 ) VERSION = v1 PATCH = 1 ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "an unquoted reserved account name is rejected (recorded errno 1003)",
+            sql: "ALTER APPLICATION PACKAGE v1 MODIFY RELEASE CHANNEL v1 ADD ACCOUNTS = ( v1 . SELECT ) ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "an application upgrades from a stage (recorded semantic error)",
+            sql: "ALTER APPLICATION v1 UPGRADE USING '@d1.s1.st1/p1' ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "UPGRADE USING needs a path (recorded errno 1003)",
+            sql: "ALTER APPLICATION v1 UPGRADE USING ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "a database replicates to accounts and may skip the edition check",
+            sql: "ALTER DATABASE v1 ENABLE REPLICATION TO ACCOUNTS o1.a1 , o1.a2 IGNORE EDITION CHECK ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "a linked catalog writes NONE or ALL",
+            sql: "ALTER DATABASE v1 UPDATE LINKED_CATALOG SET ALLOWED_WRITE_OPERATIONS = ALL ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "a linked catalog adds namespaces to a list",
+            sql: "ALTER DATABASE IF EXISTS v1 UPDATE LINKED_CATALOG ADD ( 'n1' , 'n2' ) TO BLOCKED_NAMESPACES ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "Cortex Search unsets its primary key (recorded accepted)",
+            sql: "ALTER CORTEX SEARCH SERVICE IF EXISTS v1 UNSET PRIMARY KEY ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "PRIMARY needs KEY (recorded errno 1003)",
+            sql: "ALTER CORTEX SEARCH SERVICE v1 UNSET PRIMARY ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "half of CORTEX SEARCH SERVICE is no kind (recorded errno 1003)",
+            sql: "ALTER CORTEX SEARCH v1 REFRESH ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "BACKUP needs SET (recorded errno 1003)",
+            sql: "ALTER BACKUP v1 ADD BACKUP ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "a backup set takes a legal hold",
+            sql: "ALTER BACKUP SET v1 MODIFY BACKUP IDENTIFIER 'm' ADD LEGAL HOLD ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "a semantic view adds a materialization",
+            sql: "ALTER SEMANTIC VIEW v1 ADD MATERIALIZATION v1 WAREHOUSE = v1 AS DIMENSIONS v1 METRICS v1 ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "SEMANTIC needs VIEW (recorded errno 1003)",
+            sql: "ALTER SEMANTIC v1 RENAME TO v1 ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "a Streamlit unsets several properties",
+            sql: "ALTER STREAMLIT v1 UNSET TITLE , COMMENT ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "a Streamlit name is no string (recorded errno 1003)",
+            sql: "ALTER STREAMLIT 'v1' COMMIT ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+    ];
+
+    for test_case in test_cases {
+        assert_eq!(
+            accepted(test_case.sql, test_case.dialect),
+            test_case.expected_accepted,
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_a_snowflake_alter_of_an_application_database_or_service_kind_when_parsing_then_the_tree_keeps_the_action(
+) {
+    let test_cases = [
+        ProjectionTestCase {
+            description: "the kind is named whole",
+            sql: "ALTER APPLICATION PACKAGE v1 DROP VERSION v1",
+            pointer: "/0/alter_object/kind",
+            expected_value: json!("APPLICATION PACKAGE"),
+        },
+        ProjectionTestCase {
+            description: "a release channel change keeps both levels",
+            sql: "ALTER APPLICATION PACKAGE v1 MODIFY RELEASE CHANNEL c1 DROP VERSION v1",
+            pointer: "/0/alter_object/action",
+            expected_value: json!("MODIFY RELEASE CHANNEL DROP VERSION"),
+        },
+        ProjectionTestCase {
+            description: "the edition check option is kept",
+            sql: "ALTER DATABASE v1 ENABLE REPLICATION TO ACCOUNTS o1.a1 IGNORE EDITION CHECK",
+            pointer: "/0/alter_object/action",
+            expected_value: json!("ENABLE REPLICATION IGNORE EDITION CHECK"),
+        },
+        ProjectionTestCase {
+            description: "a linked catalog change names its list",
+            sql: "ALTER DATABASE v1 UPDATE LINKED_CATALOG REMOVE ( 'n1' ) FROM ALLOWED_NAMESPACES",
+            pointer: "/0/alter_object/action",
+            expected_value: json!("UPDATE LINKED_CATALOG REMOVE FROM ALLOWED_NAMESPACES"),
+        },
+        ProjectionTestCase {
+            description: "IF EXISTS is kept",
+            sql: "ALTER STREAMLIT IF EXISTS v1 RENAME TO v2",
+            pointer: "/0/alter_object/if_exists",
+            expected_value: json!(true),
+        },
+        ProjectionTestCase {
+            description: "a suspended backup policy names which",
+            sql: "ALTER BACKUP SET v1 SUSPEND BACKUP EXPIRATION POLICY",
+            pointer: "/0/alter_object/action",
+            expected_value: json!("SUSPEND BACKUP EXPIRATION POLICY"),
+        },
+    ];
+
+    for test_case in test_cases {
+        assert_eq!(
+            statements(test_case.sql, Dialect::Snowflake, CallMode::Faithful)
+                .pointer(test_case.pointer)
+                .cloned()
+                .unwrap_or_default(),
+            test_case.expected_value,
+            "{}",
+            test_case.description
+        );
+    }
+}

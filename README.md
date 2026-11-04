@@ -82,6 +82,7 @@ listed with an explanation each in `crates/sqlquack-core/src/diagnostics/constan
 never reused or renumbered. SQL that Snowflake parses but then rejects, such as `INTERSECT ALL`,
 `FOR UPDATE WAIT`, `QUALIFY` without a window function, or a `* ILIKE` `REPLACE` or `RENAME` of
 a column the pattern removes, is refused with its own `SQ02xx` code instead of being converted.
+A `VALUES` list of more than 1,000 rows is refused for now.
 `--session NAME=VALUE` passes the caller's Snowflake session parameters
 (`function` takes it too):
 

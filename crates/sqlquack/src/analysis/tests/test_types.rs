@@ -70,6 +70,13 @@ pub(crate) struct GuardedConditionTestCase {
     pub(crate) expected_gated: bool,
 }
 
+pub(crate) struct LargeLiteralTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) sql: String,
+    pub(crate) expected_converted: bool,
+    pub(crate) expected_budget_seconds: u64,
+}
+
 pub(crate) struct CompositionTestCase {
     pub(crate) description: &'static str,
     pub(crate) columns: usize,

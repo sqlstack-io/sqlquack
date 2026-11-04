@@ -80,7 +80,7 @@ impl Parser {
             "ADD" | "REMOVE" => {
                 let accounts = self.is_account_list();
                 let names = match accounts {
-                    true => self.parse_account_list()?,
+                    true => self.parse_account_names()?,
                     false => self.parse_object_name_list()?,
                 };
                 let preposition: &[&[&str]] = match action.as_str() {
@@ -205,7 +205,7 @@ impl Parser {
     }
 
     /// Parse `<org_name>.<account_name> [ , ... ]`, refusing a reserved keyword as either part.
-    fn parse_account_list(&mut self) -> Result<Vec<Expression>> {
+    fn parse_account_names(&mut self) -> Result<Vec<Expression>> {
         let mut accounts: Vec<Expression> = Vec::new();
         loop {
             let name = self.parse_simple_qualified_name()?;
@@ -453,10 +453,10 @@ impl Parser {
             &["UNSET", "COMMENT"],
         ])?;
         let parts: ActionParts = match action.as_str() {
-            "ENABLE FAILOVER TO ACCOUNTS" => (self.parse_account_list()?, vec![]),
+            "ENABLE FAILOVER TO ACCOUNTS" => (self.parse_account_names()?, vec![]),
             "DISABLE FAILOVER" if self.match_text_seq(&["TO", "ACCOUNTS"]) => {
                 action.push_str(" TO ACCOUNTS");
-                (self.parse_account_list()?, vec![])
+                (self.parse_account_names()?, vec![])
             }
             "SET COMMENT" => {
                 self.expect_token(TokenType::Eq)?;
