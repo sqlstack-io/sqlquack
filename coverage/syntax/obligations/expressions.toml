@@ -4139,6 +4139,7 @@ note = "an unterminated double-quoted identifier"
 id = "sf.expressions.identifiers-syntax.double-quoted-identifier.o011"
 kind = "boundary_below"
 required = true
+target = "identifier length"
 anchor = "doc.identifiers-syntax / Double-quoted identifiers"
 note = "a 254-character double-quoted identifier, blanks included, against the documented maximum of 255"
 
@@ -4146,6 +4147,7 @@ note = "a 254-character double-quoted identifier, blanks included, against the d
 id = "sf.expressions.identifiers-syntax.double-quoted-identifier.o012"
 kind = "boundary_at"
 required = true
+target = "identifier length"
 anchor = "doc.identifiers-syntax / Double-quoted identifiers"
 note = "a 255-character double-quoted identifier, blanks included, against the documented maximum of 255"
 
@@ -4153,6 +4155,7 @@ note = "a 255-character double-quoted identifier, blanks included, against the d
 id = "sf.expressions.identifiers-syntax.double-quoted-identifier.o013"
 kind = "boundary_above"
 required = true
+target = "identifier length"
 anchor = "doc.identifiers-syntax / Double-quoted identifiers"
 note = "a 256-character double-quoted identifier, blanks included, against the documented maximum of 255"
 
@@ -4227,6 +4230,7 @@ note = "an unquoted identifier containing a blank"
 id = "sf.expressions.identifiers-syntax.unquoted-identifier.o012"
 kind = "boundary_below"
 required = true
+target = "identifier length"
 anchor = "doc.identifiers-syntax / Unquoted identifiers"
 note = "a 254-character unquoted identifier against the documented maximum of 255"
 
@@ -4234,6 +4238,7 @@ note = "a 254-character unquoted identifier against the documented maximum of 25
 id = "sf.expressions.identifiers-syntax.unquoted-identifier.o013"
 kind = "boundary_at"
 required = true
+target = "identifier length"
 anchor = "doc.identifiers-syntax / Unquoted identifiers"
 note = "a 255-character unquoted identifier against the documented maximum of 255"
 
@@ -4241,6 +4246,7 @@ note = "a 255-character unquoted identifier against the documented maximum of 25
 id = "sf.expressions.identifiers-syntax.unquoted-identifier.o014"
 kind = "boundary_above"
 required = true
+target = "identifier length"
 anchor = "doc.identifiers-syntax / Unquoted identifiers"
 note = "a 256-character unquoted identifier against the documented maximum of 255"
 

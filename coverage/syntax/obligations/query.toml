@@ -2465,6 +2465,10 @@ note = "a stage with its [/<path>] suffix"
 id = "sf.query.from.o153"
 kind = "interaction"
 required = true
+pair = [
+  "sf.query.from.o151",
+  "sf.query.from.o152",
+]
 anchor = "doc.constructs.from / Syntax"
 note = "a stage with both [<namespace>.] and [/<path>]"
 
