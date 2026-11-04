@@ -75,6 +75,16 @@ session parameters yet and convert under `utc-v1`.
 
 `convert`, `function`, `census` and `index` read `sqlquack.toml` (or `--policy`); without one they
 exit 2 unless `--builtin-policy` asks for the built-in default, which refuses every known divergence.
+They share the policy flags (`--policy`, `--builtin-policy`, `--strict`, `--utc-session`,
+`--confirm-declared-offsets` and `--python-runtime`). Every command with a report takes
+`--format text|json`; `--json` is short for `--format json`.
+
+`function` converts a SQL project function's body, read from a file or from standard input with
+`-`, and prints the macro as JSON. A refused body prints `{"converted": false, "name": …,
+"refusals": [diagnostics]}` instead, with the same diagnostics on standard error.
+
+`convert`, `function`, `census` and `index` exit 0 when they succeed, 1 when something is refused,
+and 2 when they cannot run: bad arguments, an unreadable file, or input without SQL.
 
 ## Census
 

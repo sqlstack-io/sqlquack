@@ -48,7 +48,7 @@ pub(crate) fn verify_command(
         }
     };
     let coverage = coverage(&arguments.coverage, &evidence, &report);
-    let rendered = if arguments.json {
+    let rendered = if arguments.output.json() {
         serde_json::to_string_pretty(&report).unwrap_or_default() + "\n"
     } else {
         render(&report) + &coverage.as_ref().map(render_coverage).unwrap_or_default()

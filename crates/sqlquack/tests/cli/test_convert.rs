@@ -1,13 +1,13 @@
 use crate::helpers::{
     convert_outcome, convert_streams, converted_column_names, converted_first_value,
     converted_run_error, converted_value_over, override_failure, override_outcome,
-    policy_free_exit_code, python_outcome, python_report, python_rows, run_convert,
+    policy_free_exit_code, python_outcome, python_report, python_rows, run_convert, run_with_input,
 };
 use crate::test_types::{
     ColumnNameTestCase, ConvertDiagnosticTestCase, ConvertOutcome, ConvertTestCase,
     ConvertedRunTestCase, CountedCallsTestCase, CrossingTestCase, DedicatedOverrideTestCase,
-    OverrideFailureTestCase, OverrideTestCase, PolicyFreeTestCase, PythonRefusalTestCase,
-    PythonRunTestCase, RunErrorTestCase, ValueTestCase,
+    OutputFormatTestCase, OverrideFailureTestCase, OverrideTestCase, PolicyFreeTestCase,
+    PythonRefusalTestCase, PythonRunTestCase, RunErrorTestCase, ValueTestCase,
 };
 use sha2::{Digest, Sha256};
 
@@ -1270,6 +1270,65 @@ fn given_refused_sql_when_converting_then_text_and_json_carry_the_same_coded_dia
                 Some(test_case.expected_json.2),
                 Some(test_case.expected_json.3),
             ),
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_output_flags_when_running_then_format_json_and_json_agree_and_help_lists_exit_status() {
+    let test_cases = [
+        OutputFormatTestCase {
+            description: "--format json prints the JSON report",
+            arguments: &["convert", "--builtin-policy", "--format", "json"],
+            expected_exit_code: Some(0),
+            expected_stdout_prefix: "{\n  \"converted\": true,",
+        },
+        OutputFormatTestCase {
+            description: "--json is the short form and prints the same report",
+            arguments: &["convert", "--builtin-policy", "--json"],
+            expected_exit_code: Some(0),
+            expected_stdout_prefix: "{\n  \"converted\": true,",
+        },
+        OutputFormatTestCase {
+            description: "--format text prints the DuckDB SQL",
+            arguments: &["convert", "--builtin-policy", "--format", "text"],
+            expected_exit_code: Some(0),
+            expected_stdout_prefix: "SELECT",
+        },
+        OutputFormatTestCase {
+            description: "asking for both is a usage error",
+            arguments: &["convert", "--builtin-policy", "--format", "text", "--json"],
+            expected_exit_code: Some(2),
+            expected_stdout_prefix: "",
+        },
+        OutputFormatTestCase {
+            description: "the top-level help explains each exit status",
+            arguments: &["--help"],
+            expected_exit_code: Some(0),
+            expected_stdout_prefix: "Snowflake-to-DuckDB SQL conversion that refuses to guess",
+        },
+    ];
+    let directory = tempfile::tempdir().expect("temporary directory");
+    for test_case in test_cases {
+        let (exit_code, stdout, _) = run_with_input(
+            directory.path(),
+            test_case.arguments,
+            "SELECT 1 + 2 AS total",
+        );
+        assert_eq!(
+            (
+                exit_code,
+                stdout.starts_with(test_case.expected_stdout_prefix)
+            ),
+            (test_case.expected_exit_code, true),
+            "{}: {stdout}",
+            test_case.description
+        );
+        assert!(
+            test_case.arguments != ["--help"]
+                || stdout.contains("Exit status of convert, function, census and index:\n  0  the command succeeded"),
             "{}",
             test_case.description
         );

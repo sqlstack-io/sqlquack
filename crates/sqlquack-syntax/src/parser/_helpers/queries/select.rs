@@ -338,6 +338,7 @@ impl Parser {
         } else {
             vec![Expression::Star(crate::expressions::names::models::Star {
                 table: None,
+                ilike: None,
                 except: None,
                 replace: None,
                 rename: None,

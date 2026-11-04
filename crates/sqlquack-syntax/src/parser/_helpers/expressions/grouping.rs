@@ -864,6 +864,7 @@ impl Parser {
             if self.match_token(TokenType::Star) {
                 elements.push(Expression::Star(crate::expressions::names::models::Star {
                     table: None,
+                    ilike: None,
                     except: None,
                     replace: None,
                     rename: None,
@@ -953,6 +954,7 @@ impl Parser {
             if self.match_token(TokenType::Star) {
                 elements.push(Expression::Star(crate::expressions::names::models::Star {
                     table: None,
+                    ilike: None,
                     except: None,
                     replace: None,
                     rename: None,
@@ -963,6 +965,7 @@ impl Parser {
                 if self.match_token(TokenType::Star) {
                     elements.push(Expression::Star(crate::expressions::names::models::Star {
                         table: None,
+                        ilike: None,
                         except: None,
                         replace: None,
                         rename: None,
