@@ -671,6 +671,18 @@ fn given_a_snowflake_drop_of_another_object_kind_when_parsing_then_the_tree_name
             expected_value: json!(true),
         },
         ProjectionTestCase {
+            description: "DROP SEQUENCE keeps RESTRICT apart from the default",
+            sql: "DROP SEQUENCE v1 RESTRICT",
+            pointer: "/0/drop_sequence/restrict",
+            expected_value: json!(true),
+        },
+        ProjectionTestCase {
+            description: "plain DROP SEQUENCE leaves RESTRICT out of the tree",
+            sql: "DROP SEQUENCE v1",
+            pointer: "/0/drop_sequence/restrict",
+            expected_value: serde_json::Value::Null,
+        },
+        ProjectionTestCase {
             description: "an external table keeps RESTRICT",
             sql: "DROP EXTERNAL TABLE v1 RESTRICT",
             pointer: "/0/drop_object/restrict",
@@ -1036,6 +1048,18 @@ fn given_statements_from_the_parser_only_disagreements_when_parsing_snowflake_th
             sql: "SELECT * FROM TABLE ( 't1' ) ;",
             dialect: Dialect::Snowflake,
             expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "a named argument takes TABLE( ) around a bare name",
+            sql: "SELECT * FROM TABLE ( m1!DETECT_ANOMALIES ( INPUT_DATA => TABLE ( v1 ) ) ) ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "a named argument still refuses an empty TABLE( )",
+            sql: "SELECT * FROM TABLE ( m1!DETECT_ANOMALIES ( INPUT_DATA => TABLE ( ) ) ) ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
         },
         AcceptanceTestCase {
             description: "IDENTIFIER( ) refuses a bare name",

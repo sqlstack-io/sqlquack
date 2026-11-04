@@ -926,6 +926,55 @@ dialects = ["Snowflake"]
 sqlquack_error = "Snowflake allows BY NAME only after UNION, without an ON column list"
 note = "BY NAME ON (...) after EXCEPT is BigQuery's; Snowflake takes BY NAME only after UNION (recorded errno 1003)"
 
+[[rejection]]
+id = "snowflake_string_part_extract"
+sql = "SELECT EXTRACT('{quoted}' FROM created_at) FROM events"
+dialects = ["Snowflake"]
+sqlquack_error = "Expected a date or time part keyword before FROM"
+note = "Snowflake refuses a string date part before FROM (recorded errno 1003 for EXTRACT ( 'm' FROM 1 ))"
+
+[[rejection]]
+id = "snowflake_string_part_date_part"
+sql = "SELECT DATE_PART('month' FROM CAST('2024-04-08' AS DATE))"
+dialects = ["Snowflake"]
+sqlquack_error = "Expected a date or time part keyword before FROM"
+note = "the same rule for DATE_PART (recorded errno 1003 for DATE_PART ( 'm' FROM 1 ))"
+
+[[rejection]]
+id = "snowflake_collate_needs_string"
+sql = "SELECT 1 || 2 COLLATE NOCASE * 3"
+dialects = ["Snowflake"]
+sqlquack_error = "Expected a collation specification string"
+note = "Snowflake's COLLATE takes a collation specification string such as 'en-ci' (recorded errno 1003 for 'm' COLLATE m1); NOCASE is SQLite's"
+
+[[rejection]]
+id = "snowflake_dot_after_literal"
+sql = "SELECT 1..2"
+dialects = ["Snowflake"]
+sqlquack_error = "A literal has no fields to read with a dot"
+note = "both parsers refuse it; polyglot says \"Expected field name after dot\""
+
+[[rejection]]
+id = "snowflake_frame_bare_preceding"
+sql = "SELECT SUM(x) OVER (PARTITION BY a ROWS BETWEEN UNBOUNDED PRECEDING AND PRECEDING)"
+dialects = ["Snowflake"]
+sqlquack_error = "Snowflake frame bounds need a value or UNBOUNDED before PRECEDING"
+note = "Snowflake needs a value or UNBOUNDED before PRECEDING (recorded errno 1003 for PERCENT_RANK ( ) OVER ( ORDER BY 1 RANGE PRECEDING ))"
+
+[[rejection]]
+id = "snowflake_frame_value_without_direction"
+sql = "SELECT SUM(x) OVER (PARTITION BY a RANGE BETWEEN 1 AND 3)"
+dialects = ["Snowflake"]
+sqlquack_error = "Expected PRECEDING or FOLLOWING after a frame bound value"
+note = "Snowflake needs PRECEDING or FOLLOWING after a frame bound value, as its window frame grammar documents"
+
+[[rejection]]
+id = "snowflake_frame_value_without_direction_end"
+sql = "SELECT SUM(x) OVER (PARTITION BY a RANGE BETWEEN 1 FOLLOWING AND 3)"
+dialects = ["Snowflake"]
+sqlquack_error = "Expected PRECEDING or FOLLOWING after a frame bound value"
+note = "the same rule at the frame's end"
+
 # Statements both parsers parse where polyglot drops the quoting of a name SQLQuack keeps quoted.
 # The check counts an entry as kept quoting only when the statement, without whitespace and ignoring
 # case, contains `marker`, and the trees differ in nothing but identifiers whose `quoted` is false in

@@ -294,24 +294,49 @@ impl Parser {
         }
 
         enforce_ast(&statements, &self.config.complexity_guard)?;
-        if self.config.dialect == Some(crate::tokens::models::DialectType::Snowflake) {
+        if self.applies_snowflake_context_rules() {
             self.reject_snowflake_name_wrappers(&statements)?;
         }
         Ok(statements)
     }
 
-    /// Snowflake's TABLE( ) and IDENTIFIER( ) need an argument other than a bare column name.
+    /// Whether Snowflake's statement-context rules apply: no bare expression as a statement, and
+    /// no bare name in TABLE( ) outside a named argument. The exact check's modes (lowered, and
+    /// faithful with call spans) parse both as polyglot does, because they parse expression
+    /// fixtures and calls lifted out of their statements.
+    fn applies_snowflake_context_rules(&self) -> bool {
+        self.config.dialect == Some(crate::tokens::models::DialectType::Snowflake)
+            && self.config.faithful_calls
+            && !self.config.record_call_spans
+    }
+
+    /// Snowflake's TABLE( ) and IDENTIFIER( ) need an argument other than a bare column name,
+    /// except TABLE(name) as a named argument's value, as in `INPUT_DATA => TABLE(v)`.
     fn reject_snowflake_name_wrappers(&self, statements: &[Expression]) -> Result<()> {
         use crate::traversal::types::ExpressionWalk;
-        let wrapper = |node: &Expression| {
-            matches!(node, Expression::Function(function)
-            if (function.name.eq_ignore_ascii_case("TABLE")
-                || function.name.eq_ignore_ascii_case("IDENTIFIER"))
-                && match function.args.as_slice() {
+        let named_values: Vec<&Expression> = statements
+            .iter()
+            .flat_map(|statement| statement.dfs())
+            .filter_map(|node| match node {
+                Expression::NamedArgument(argument) => Some(&argument.value),
+                _ => None,
+            })
+            .collect();
+        let wrapper = |node: &Expression| match node {
+            Expression::Function(function)
+                if function.name.eq_ignore_ascii_case("TABLE")
+                    || function.name.eq_ignore_ascii_case("IDENTIFIER") =>
+            {
+                match function.args.as_slice() {
                     [] => true,
-                    [Expression::Column(_)] => true,
+                    [Expression::Column(_)] => {
+                        !(function.name.eq_ignore_ascii_case("TABLE")
+                            && named_values.iter().any(|value| std::ptr::eq(*value, node)))
+                    }
                     _ => false,
-                })
+                }
+            }
+            _ => false,
         };
         match statements
             .iter()
@@ -930,10 +955,7 @@ impl Parser {
     }
 
     fn parse_statement_other(&mut self) -> Result<Expression> {
-        if matches!(
-            self.config.dialect,
-            Some(crate::tokens::models::DialectType::Snowflake)
-        ) {
+        if self.applies_snowflake_context_rules() {
             return Err(self.parse_error("Expected a statement, not an expression"));
         }
         let leading_comments = self.current_leading_comments().to_vec();
