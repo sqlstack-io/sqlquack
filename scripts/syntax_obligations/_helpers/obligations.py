@@ -11,8 +11,10 @@ from scripts.syntax_obligations._helpers.ids import assign, existing_ids
 from scripts.syntax_obligations.constants import (
     ACTION_HAND,
     EXPECT_ACCEPT,
+    EXPECT_OBSERVE,
     EXPECT_REJECT,
     HAND_CASE_KEYS,
+    KIND_EXTREME,
     KIND_NEGATIVE,
     KIND_OPTION_PRESENT,
     KIND_PROSE,
@@ -63,6 +65,12 @@ def _limit_expect(row: Row) -> str:
     """A limit's `expect`, else reject for a negative and accept otherwise; boundaries must say."""
     kind: str = str(row["kind"])
     expect: str = str(row.get("expect", ""))
+    if kind == KIND_EXTREME:
+        if expect:
+            raise ObligationError(
+                f"limit {row['form']}: an extreme takes its outcome from a receipt"
+            )
+        return EXPECT_OBSERVE
     if not expect and kind.startswith("boundary_"):
         raise ObligationError(f"limit {row['form']} {kind}: a boundary needs an explicit expect")
     for key in ("stage", "also_stage"):

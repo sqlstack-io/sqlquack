@@ -182,6 +182,34 @@ anchor = "doc.snowflake-scripting.begin / Usage notes"
 note = "BEGIN immediately followed by a semicolon, which starts a transaction instead of a block"
 
 [[obligation]]
+id = "sf.scripting.begin.o017"
+kind = "extreme"
+required = true
+anchor = "doc.snowflake-scripting.begin / Syntax"
+note = "BEGIN ... END blocks nested, 50 levels deep; no documented bound"
+
+[[obligation]]
+id = "sf.scripting.begin.o018"
+kind = "extreme"
+required = true
+anchor = "doc.snowflake-scripting.begin / Syntax"
+note = "BEGIN ... END blocks nested, 100 levels deep; no documented bound"
+
+[[obligation]]
+id = "sf.scripting.begin.o019"
+kind = "extreme"
+required = true
+anchor = "doc.snowflake-scripting.begin / Syntax"
+note = "1,000 statements in one block; no documented bound"
+
+[[obligation]]
+id = "sf.scripting.begin.o020"
+kind = "extreme"
+required = true
+anchor = "doc.snowflake-scripting.begin / Syntax"
+note = "5,000 statements in one block; no documented bound"
+
+[[obligation]]
 id = "sf.scripting.break.o001"
 kind = "positive"
 required = true
@@ -694,6 +722,34 @@ anchor = "doc.snowflake-scripting.case / Note"
 note = "at top level, outside any Snowflake Scripting block"
 
 [[obligation]]
+id = "sf.scripting.case.end.syntax.o027"
+kind = "extreme"
+required = true
+anchor = "doc.snowflake-scripting.case / Syntax"
+note = "searched CASE ... END CASE nested, 50 levels deep; no documented bound"
+
+[[obligation]]
+id = "sf.scripting.case.end.syntax.o028"
+kind = "extreme"
+required = true
+anchor = "doc.snowflake-scripting.case / Syntax"
+note = "searched CASE ... END CASE nested, 100 levels deep; no documented bound"
+
+[[obligation]]
+id = "sf.scripting.case.end.syntax.o029"
+kind = "extreme"
+required = true
+anchor = "doc.snowflake-scripting.case / Syntax"
+note = "1,000 WHEN branches in one searched CASE; no documented bound"
+
+[[obligation]]
+id = "sf.scripting.case.end.syntax.o030"
+kind = "extreme"
+required = true
+anchor = "doc.snowflake-scripting.case / Syntax"
+note = "5,000 WHEN branches in one searched CASE; no documented bound"
+
+[[obligation]]
 id = "sf.scripting.close.o001"
 kind = "positive"
 required = true
@@ -996,6 +1052,20 @@ kind = "negative_neighbour"
 required = true
 anchor = "doc.snowflake-scripting.declare / Syntax"
 note = "a declaration missing its terminating semicolon"
+
+[[obligation]]
+id = "sf.scripting.declare.declare.o013"
+kind = "extreme"
+required = true
+anchor = "doc.snowflake-scripting.declare / Syntax"
+note = "1,000 variable declarations in one DECLARE section; no documented bound"
+
+[[obligation]]
+id = "sf.scripting.declare.declare.o014"
+kind = "extreme"
+required = true
+anchor = "doc.snowflake-scripting.declare / Syntax"
+note = "5,000 variable declarations in one DECLARE section; no documented bound"
 
 [[obligation]]
 id = "sf.scripting.declare.exception.o001"
@@ -1931,6 +2001,20 @@ anchor = "doc.snowflake-scripting.exception / Syntax"
 note = "the built-in exception EXPRESSION_ERROR"
 
 [[obligation]]
+id = "sf.scripting.exception.o044"
+kind = "extreme"
+required = true
+anchor = "doc.snowflake-scripting.exception / Syntax"
+note = "blocks with an exception handler nested inside a handler, 50 levels deep; no documented bound"
+
+[[obligation]]
+id = "sf.scripting.exception.o045"
+kind = "extreme"
+required = true
+anchor = "doc.snowflake-scripting.exception / Syntax"
+note = "blocks with an exception handler nested inside a handler, 100 levels deep; no documented bound"
+
+[[obligation]]
 id = "sf.scripting.fetch.o001"
 kind = "positive"
 required = true
@@ -2512,6 +2596,20 @@ anchor = "doc.snowflake-scripting.for / Usage notes"
 note = "LOOP closed by END LOOP"
 
 [[obligation]]
+id = "sf.scripting.for.to-do-loop-end.o041"
+kind = "extreme"
+required = true
+anchor = "doc.snowflake-scripting.for / Syntax"
+note = "counter-based FOR ... END FOR nested, 50 levels deep; no documented bound"
+
+[[obligation]]
+id = "sf.scripting.for.to-do-loop-end.o042"
+kind = "extreme"
+required = true
+anchor = "doc.snowflake-scripting.for / Syntax"
+note = "counter-based FOR ... END FOR nested, 100 levels deep; no documented bound"
+
+[[obligation]]
 id = "sf.scripting.if.o001"
 kind = "positive"
 required = true
@@ -2770,6 +2868,34 @@ required = true
 target = "[ ELSEIF ( <condition> ) THEN <statement> ; [ <statement> ; ... ] ]"
 anchor = "doc.snowflake-scripting.if / Syntax"
 note = "two or more ELSEIF branches"
+
+[[obligation]]
+id = "sf.scripting.if.o040"
+kind = "extreme"
+required = true
+anchor = "doc.snowflake-scripting.if / Syntax"
+note = "IF ... END IF nested, 50 levels deep; no documented bound"
+
+[[obligation]]
+id = "sf.scripting.if.o041"
+kind = "extreme"
+required = true
+anchor = "doc.snowflake-scripting.if / Syntax"
+note = "IF ... END IF nested, 100 levels deep; no documented bound"
+
+[[obligation]]
+id = "sf.scripting.if.o042"
+kind = "extreme"
+required = true
+anchor = "doc.snowflake-scripting.if / Syntax"
+note = "1,000 ELSEIF branches in one IF; no documented bound"
+
+[[obligation]]
+id = "sf.scripting.if.o043"
+kind = "extreme"
+required = true
+anchor = "doc.snowflake-scripting.if / Syntax"
+note = "5,000 ELSEIF branches in one IF; no documented bound"
 
 [[obligation]]
 id = "sf.scripting.let.let.o001"
@@ -3444,6 +3570,20 @@ anchor = "doc.snowflake-scripting.loop / Note"
 note = "at top level, outside any Snowflake Scripting block"
 
 [[obligation]]
+id = "sf.scripting.loop.o018"
+kind = "extreme"
+required = true
+anchor = "doc.snowflake-scripting.loop / Syntax"
+note = "LOOP ... END LOOP nested, each level ending with BREAK, 50 levels deep; no documented bound"
+
+[[obligation]]
+id = "sf.scripting.loop.o019"
+kind = "extreme"
+required = true
+anchor = "doc.snowflake-scripting.loop / Syntax"
+note = "LOOP ... END LOOP nested, each level ending with BREAK, 100 levels deep; no documented bound"
+
+[[obligation]]
 id = "sf.scripting.null.o001"
 kind = "positive"
 required = true
@@ -3802,6 +3942,20 @@ anchor = "doc.snowflake-scripting.repeat / Note"
 note = "at top level, outside any Snowflake Scripting block"
 
 [[obligation]]
+id = "sf.scripting.repeat.o023"
+kind = "extreme"
+required = true
+anchor = "doc.snowflake-scripting.repeat / Syntax"
+note = "REPEAT ... END REPEAT nested, 50 levels deep; no documented bound"
+
+[[obligation]]
+id = "sf.scripting.repeat.o024"
+kind = "extreme"
+required = true
+anchor = "doc.snowflake-scripting.repeat / Syntax"
+note = "REPEAT ... END REPEAT nested, 100 levels deep; no documented bound"
+
+[[obligation]]
 id = "sf.scripting.return.o001"
 kind = "positive"
 required = true
@@ -4045,3 +4199,17 @@ kind = "positive"
 required = true
 anchor = "doc.snowflake-scripting.while / Usage notes"
 note = "LOOP closed by END LOOP"
+
+[[obligation]]
+id = "sf.scripting.while.o031"
+kind = "extreme"
+required = true
+anchor = "doc.snowflake-scripting.while / Syntax"
+note = "WHILE ... END WHILE nested, 50 levels deep; no documented bound"
+
+[[obligation]]
+id = "sf.scripting.while.o032"
+kind = "extreme"
+required = true
+anchor = "doc.snowflake-scripting.while / Syntax"
+note = "WHILE ... END WHILE nested, 100 levels deep; no documented bound"

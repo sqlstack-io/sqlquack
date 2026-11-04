@@ -824,3 +824,255 @@ note = "a double-quoted identifier containing a blank and mixed case, as a colum
 anchor = "doc.identifiers-syntax / Double-quoted identifiers"
 sql = "SELECT 1 AS \"a B\" ;"
 context = "raw"
+
+# Extreme-value checks (decision D90): sizes the documentation gives no bound for, as a bounded probe
+# set, never an exhaustive one. Each [[limit]] of kind extreme is one case of `size` levels or items;
+# it carries no expect, because its outcome is what Snowflake's receipt shows, and a local parser
+# crash, stack overflow or hang fails it. Scripting carries block nesting (50 and 100 levels) and
+# its own repetition lists (1,000 and 5,000 items); literals, identifiers, expressions, subqueries
+# and IN or column lists get theirs once on the shared forms when their families are built.
+[[limit]]
+form = "sf.scripting.begin"
+kind = "extreme"
+note = "BEGIN ... END blocks nested, 50 levels deep; no documented bound"
+anchor = "doc.snowflake-scripting.begin / Syntax"
+size = 50
+open = "BEGIN"
+core = "BEGIN NULL ; END ;"
+close = "END ;"
+
+[[limit]]
+form = "sf.scripting.begin"
+kind = "extreme"
+note = "BEGIN ... END blocks nested, 100 levels deep; no documented bound"
+anchor = "doc.snowflake-scripting.begin / Syntax"
+size = 100
+open = "BEGIN"
+core = "BEGIN NULL ; END ;"
+close = "END ;"
+
+[[limit]]
+form = "sf.scripting.if"
+kind = "extreme"
+note = "IF ... END IF nested, 50 levels deep; no documented bound"
+anchor = "doc.snowflake-scripting.if / Syntax"
+size = 50
+open = "IF ( TRUE ) THEN"
+core = "IF ( TRUE ) THEN NULL ; END IF ;"
+close = "END IF ;"
+
+[[limit]]
+form = "sf.scripting.if"
+kind = "extreme"
+note = "IF ... END IF nested, 100 levels deep; no documented bound"
+anchor = "doc.snowflake-scripting.if / Syntax"
+size = 100
+open = "IF ( TRUE ) THEN"
+core = "IF ( TRUE ) THEN NULL ; END IF ;"
+close = "END IF ;"
+
+[[limit]]
+form = "sf.scripting.loop"
+kind = "extreme"
+note = "LOOP ... END LOOP nested, each level ending with BREAK, 50 levels deep; no documented bound"
+anchor = "doc.snowflake-scripting.loop / Syntax"
+size = 50
+open = "LOOP"
+core = "LOOP BREAK ; END LOOP ;"
+close = "BREAK ; END LOOP ;"
+
+[[limit]]
+form = "sf.scripting.loop"
+kind = "extreme"
+note = "LOOP ... END LOOP nested, each level ending with BREAK, 100 levels deep; no documented bound"
+anchor = "doc.snowflake-scripting.loop / Syntax"
+size = 100
+open = "LOOP"
+core = "LOOP BREAK ; END LOOP ;"
+close = "BREAK ; END LOOP ;"
+
+[[limit]]
+form = "sf.scripting.while"
+kind = "extreme"
+note = "WHILE ... END WHILE nested, 50 levels deep; no documented bound"
+anchor = "doc.snowflake-scripting.while / Syntax"
+size = 50
+open = "WHILE ( TRUE ) DO"
+core = "WHILE ( FALSE ) DO NULL ; END WHILE ;"
+close = "BREAK ; END WHILE ;"
+
+[[limit]]
+form = "sf.scripting.while"
+kind = "extreme"
+note = "WHILE ... END WHILE nested, 100 levels deep; no documented bound"
+anchor = "doc.snowflake-scripting.while / Syntax"
+size = 100
+open = "WHILE ( TRUE ) DO"
+core = "WHILE ( FALSE ) DO NULL ; END WHILE ;"
+close = "BREAK ; END WHILE ;"
+
+[[limit]]
+form = "sf.scripting.for.to-do-loop-end"
+kind = "extreme"
+note = "counter-based FOR ... END FOR nested, 50 levels deep; no documented bound"
+anchor = "doc.snowflake-scripting.for / Syntax"
+size = 50
+open = "FOR i{n} IN 1 TO 1 DO"
+core = "FOR i0 IN 1 TO 1 DO NULL ; END FOR ;"
+close = "END FOR ;"
+
+[[limit]]
+form = "sf.scripting.for.to-do-loop-end"
+kind = "extreme"
+note = "counter-based FOR ... END FOR nested, 100 levels deep; no documented bound"
+anchor = "doc.snowflake-scripting.for / Syntax"
+size = 100
+open = "FOR i{n} IN 1 TO 1 DO"
+core = "FOR i0 IN 1 TO 1 DO NULL ; END FOR ;"
+close = "END FOR ;"
+
+[[limit]]
+form = "sf.scripting.repeat"
+kind = "extreme"
+note = "REPEAT ... END REPEAT nested, 50 levels deep; no documented bound"
+anchor = "doc.snowflake-scripting.repeat / Syntax"
+size = 50
+open = "REPEAT"
+core = "REPEAT NULL ; UNTIL ( TRUE ) END REPEAT ;"
+close = "UNTIL ( TRUE ) END REPEAT ;"
+
+[[limit]]
+form = "sf.scripting.repeat"
+kind = "extreme"
+note = "REPEAT ... END REPEAT nested, 100 levels deep; no documented bound"
+anchor = "doc.snowflake-scripting.repeat / Syntax"
+size = 100
+open = "REPEAT"
+core = "REPEAT NULL ; UNTIL ( TRUE ) END REPEAT ;"
+close = "UNTIL ( TRUE ) END REPEAT ;"
+
+[[limit]]
+form = "sf.scripting.case.end.syntax"
+kind = "extreme"
+note = "searched CASE ... END CASE nested, 50 levels deep; no documented bound"
+anchor = "doc.snowflake-scripting.case / Syntax"
+size = 50
+open = "CASE WHEN TRUE THEN"
+core = "CASE WHEN TRUE THEN NULL ; END CASE ;"
+close = "END CASE ;"
+
+[[limit]]
+form = "sf.scripting.case.end.syntax"
+kind = "extreme"
+note = "searched CASE ... END CASE nested, 100 levels deep; no documented bound"
+anchor = "doc.snowflake-scripting.case / Syntax"
+size = 100
+open = "CASE WHEN TRUE THEN"
+core = "CASE WHEN TRUE THEN NULL ; END CASE ;"
+close = "END CASE ;"
+
+[[limit]]
+form = "sf.scripting.exception"
+kind = "extreme"
+note = "blocks with an exception handler nested inside a handler, 50 levels deep; no documented bound"
+anchor = "doc.snowflake-scripting.exception / Syntax"
+size = 50
+open = "EXCEPTION WHEN OTHER THEN BEGIN NULL ;"
+core = "EXCEPTION WHEN OTHER THEN NULL ;"
+close = "END ;"
+
+[[limit]]
+form = "sf.scripting.exception"
+kind = "extreme"
+note = "blocks with an exception handler nested inside a handler, 100 levels deep; no documented bound"
+anchor = "doc.snowflake-scripting.exception / Syntax"
+size = 100
+open = "EXCEPTION WHEN OTHER THEN BEGIN NULL ;"
+core = "EXCEPTION WHEN OTHER THEN NULL ;"
+close = "END ;"
+
+[[limit]]
+form = "sf.scripting.begin"
+kind = "extreme"
+note = "1,000 statements in one block; no documented bound"
+anchor = "doc.snowflake-scripting.begin / Syntax"
+size = 1000
+outer_open = "BEGIN"
+open = "NULL ;"
+core = "NULL ;"
+outer_close = "END ;"
+
+[[limit]]
+form = "sf.scripting.begin"
+kind = "extreme"
+note = "5,000 statements in one block; no documented bound"
+anchor = "doc.snowflake-scripting.begin / Syntax"
+size = 5000
+outer_open = "BEGIN"
+open = "NULL ;"
+core = "NULL ;"
+outer_close = "END ;"
+
+[[limit]]
+form = "sf.scripting.if"
+kind = "extreme"
+note = "1,000 ELSEIF branches in one IF; no documented bound"
+anchor = "doc.snowflake-scripting.if / Syntax"
+size = 1000
+outer_open = "IF ( FALSE ) THEN NULL ;"
+open = "ELSEIF ( FALSE ) THEN NULL ;"
+core = "ELSEIF ( FALSE ) THEN NULL ;"
+outer_close = "END IF ;"
+
+[[limit]]
+form = "sf.scripting.if"
+kind = "extreme"
+note = "5,000 ELSEIF branches in one IF; no documented bound"
+anchor = "doc.snowflake-scripting.if / Syntax"
+size = 5000
+outer_open = "IF ( FALSE ) THEN NULL ;"
+open = "ELSEIF ( FALSE ) THEN NULL ;"
+core = "ELSEIF ( FALSE ) THEN NULL ;"
+outer_close = "END IF ;"
+
+[[limit]]
+form = "sf.scripting.case.end.syntax"
+kind = "extreme"
+note = "1,000 WHEN branches in one searched CASE; no documented bound"
+anchor = "doc.snowflake-scripting.case / Syntax"
+size = 1000
+outer_open = "CASE"
+open = "WHEN FALSE THEN NULL ;"
+core = "WHEN FALSE THEN NULL ;"
+outer_close = "END CASE ;"
+
+[[limit]]
+form = "sf.scripting.case.end.syntax"
+kind = "extreme"
+note = "5,000 WHEN branches in one searched CASE; no documented bound"
+anchor = "doc.snowflake-scripting.case / Syntax"
+size = 5000
+outer_open = "CASE"
+open = "WHEN FALSE THEN NULL ;"
+core = "WHEN FALSE THEN NULL ;"
+outer_close = "END CASE ;"
+
+[[limit]]
+form = "sf.scripting.declare.declare"
+kind = "extreme"
+note = "1,000 variable declarations in one DECLARE section; no documented bound"
+anchor = "doc.snowflake-scripting.declare / Syntax"
+size = 1000
+outer_open = "DECLARE"
+open = "v{n} INT ;"
+core = "v0 INT ;"
+
+[[limit]]
+form = "sf.scripting.declare.declare"
+kind = "extreme"
+note = "5,000 variable declarations in one DECLARE section; no documented bound"
+anchor = "doc.snowflake-scripting.declare / Syntax"
+size = 5000
+outer_open = "DECLARE"
+open = "v{n} INT ;"
+core = "v0 INT ;"

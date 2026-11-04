@@ -28,6 +28,7 @@ from scripts.syntax_obligations.constants import (
     EXPECT_REJECT,
     HAND_ALSO_SQL,
     HAND_CORE,
+    HAND_SIZE,
     HAND_SQL,
     LABEL_SLOT,
     NAME_FILL,
@@ -36,6 +37,7 @@ from scripts.syntax_obligations.constants import (
     PROCEDURE_WRAPPER,
     QUERY_CLASS,
     QUOTED_WITHOUT_BLANK_NAMES,
+    REPEAT_SLOT,
     RESERVED_WORD,
     SINGLE_CHARACTER_LITERAL_LENGTH,
     STATEMENT_CLASS,
@@ -192,9 +194,10 @@ class _Renderer:
         expect: str = fields.get("expect", spec.expect)
         stage: str = fields.get("stage", "")
         if HAND_CORE in fields:
+            sizes: tuple[int, ...] = (int(fields[HAND_SIZE]),) if HAND_SIZE in fields else depths
             return [
                 Rendered(self.nested_hand(fields=fields, depth=depth), expect, stage)
-                for depth in depths
+                for depth in sizes
             ]
         context: str = fields.get("context", CONTEXT_BLOCK)
         texts: list[tuple[str, str, str]] = []
@@ -224,17 +227,20 @@ class _Renderer:
         return rendered
 
     def nested_hand(self, *, fields: dict[str, str], depth: int) -> str:
-        """A hand limit nested `depth` levels: outer_open, open*(depth-1), core, closes."""
+        """A hand limit `depth` deep: outer_open, open*(depth-1), core, closes; {n} counts."""
         self._used = {}
         inner: int = depth - 1
-        parts: list[str] = [
-            fields["outer_open"],
-            *[fields["open"]] * inner,
-            fields[HAND_CORE],
-            *[fields["close"]] * inner,
-            fields["outer_close"],
+        opens: list[str] = [
+            fields.get("open", "").replace(REPEAT_SLOT, str(level)) for level in range(1, depth)
         ]
-        return self.wrap(" ".join(parts))
+        parts: list[str] = [
+            fields.get("outer_open", ""),
+            *opens,
+            fields[HAND_CORE],
+            *[fields.get("close", "")] * inner,
+            fields.get("outer_close", ""),
+        ]
+        return self.wrap(" ".join(part for part in parts if part))
 
     def _nest(self, *, label: str, depth: int) -> str:
         """An operand nested `depth` levels; a statement's innermost is the form's own fill."""

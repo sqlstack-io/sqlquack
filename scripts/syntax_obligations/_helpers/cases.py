@@ -13,6 +13,7 @@ from scripts.syntax_obligations.constants import (
     DIGEST_WIDTH,
     DOUBLE_QUOTE,
     EXPECT_ACCEPT,
+    EXPECT_OBSERVE,
     EXPECT_REJECT,
     FAMILY_STYLES,
     LANE_A_BLOCK_SESSION,
@@ -20,6 +21,7 @@ from scripts.syntax_obligations.constants import (
     PACKET_KEYS,
     STAGE_BY_RECEIPT_PHASE,
     STAGE_KEY,
+    SYNTAX_ERROR_PHASE,
 )
 from scripts.syntax_obligations.exceptions import ObligationError
 from scripts.syntax_obligations.models import Draft, FormStyle, Node, Rendered
@@ -177,6 +179,8 @@ def recorded_receipts(directory: Path) -> set[tuple[str, str]]:
 def observed_stage(*, case: Row, phase: str | None) -> Row:
     """Give an accepted case its receipt's later stage, reporting a contradicted declared one."""
     stage: str | None = STAGE_BY_RECEIPT_PHASE.get(phase or "")
+    if case["expect"] == EXPECT_OBSERVE:
+        return _observed_outcome(case=case, phase=phase, stage=stage)
     if case["expect"] != EXPECT_ACCEPT or stage is None or stage == case.get(STAGE_KEY, ""):
         return case
     if STAGE_KEY in case:
@@ -185,6 +189,17 @@ def observed_stage(*, case: Row, phase: str | None) -> Row:
         case[STAGE_KEY] = stage
     else:
         del case[STAGE_KEY]
+    return case
+
+
+def _observed_outcome(*, case: Row, phase: str | None, stage: str | None) -> Row:
+    """An extreme case's outcome as its receipt shows it; without an established phase it waits."""
+    if phase == SYNTAX_ERROR_PHASE:
+        case["expect"] = EXPECT_REJECT
+    elif stage is not None:
+        case["expect"] = EXPECT_ACCEPT
+        if stage:
+            case[STAGE_KEY] = stage
     return case
 
 

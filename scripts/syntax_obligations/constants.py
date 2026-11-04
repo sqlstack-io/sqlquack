@@ -20,6 +20,7 @@ KIND_INTERACTION_ALL: str = "interaction_all_options"
 KIND_BOUNDARY_BELOW: str = "boundary_below"
 KIND_BOUNDARY_AT: str = "boundary_at"
 KIND_BOUNDARY_ABOVE: str = "boundary_above"
+KIND_EXTREME: str = "extreme"
 
 NODE_OPTIONAL: str = "optional"
 NODE_CHOICE: str = "choice"
@@ -157,9 +158,13 @@ HAND_CASE_KEYS: tuple[str, ...] = (
     "stage",
     "also_expect",
     "also_stage",
+    "size",
 )
 EXPECT_ACCEPT: str = "accept"
 EXPECT_REJECT: str = "reject"
+EXPECT_OBSERVE: str = "observe"
+HAND_SIZE: str = "size"
+REPEAT_SLOT: str = "{n}"
 LATER_ERROR_STAGES: frozenset[str] = frozenset({"", "semantic", "runtime", "error"})
 LABEL_SLOT: str = "{label}"
 BUILTIN_NAMES: frozenset[str] = frozenset(
@@ -174,6 +179,7 @@ LANE_A_BLOCK_SESSION: dict[str, object] = {
     "USE_CACHED_RESULT": False,
 }
 
+SYNTAX_ERROR_PHASE: str = "syntax_error"
 STAGE_BY_RECEIPT_PHASE: dict[str, str] = {
     "accepted": "",
     "semantic_error": "semantic",
