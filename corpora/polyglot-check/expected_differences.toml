@@ -769,7 +769,13 @@ marker = "variant)->"
 polyglot_errors = ["Expected RParen, got Var ('NUMBER')"]
 note = "(acc NUMBER(18, 2), i VARIANT) -> ... is a lambda with several typed parameters, one parameterised; polyglot reads a parenthesized lambda's parameters as names only"
 
-# Statements SQLQuack rejects where polyglot parses them. The check counts an entry as rejected only
+[[fix]]
+id = "snowflake_bare_trailing_limit"
+marker = "1LIMIT"
+polyglot_errors = ["Unexpected token: Limit"]
+note = "Snowflake accepts a bare trailing LIMIT (recorded as accepted) and reads it as LIMIT NULL; polyglot needs a count"
+
+# Statements SQLQuack rejects where polyglot parses them or fails with another error. The check counts an entry as rejected only
 # for this exact statement in a listed dialect when SQLQuack's error contains `sqlquack_error`;
 # crates/sqlquack-syntax/src/parser/tests/test_typed_expressions.rs pins the error.
 
@@ -786,6 +792,97 @@ sql = "WITH RECURSIVE T(n) AS (VALUES (1) UNION ALL SELECT n + 1 FROM t WHERE n 
 dialects = ["Snowflake"]
 sqlquack_error = "Snowflake does not accept a bare VALUES list as the body of CTE 'T'"
 note = "Snowflake takes VALUES only in FROM; polyglot added this rule after SQLQuack's fork (rev 8767d68), with the same message"
+
+[[rejection]]
+id = "snowflake_empty_select_list"
+sql = "SELECT"
+dialects = ["Snowflake"]
+sqlquack_error = "Snowflake requires at least one select item"
+note = "Snowflake rejects a SELECT with no items (recorded errno 1003); polyglot parses it with an empty expression list"
+
+[[rejection]]
+id = "snowflake_empty_select_list_lower_case"
+sql = "select"
+dialects = ["Snowflake"]
+sqlquack_error = "Snowflake requires at least one select item"
+note = "the lower-case spelling of the empty SELECT above"
+
+[[rejection]]
+id = "snowflake_empty_select_list_trailing_space"
+sql = "SELECT "
+dialects = ["Snowflake"]
+sqlquack_error = "Snowflake requires at least one select item"
+note = "the empty SELECT above with a trailing space"
+
+[[rejection]]
+id = "snowflake_reserved_is_alias"
+sql = "SELECT 1 is"
+dialects = ["Snowflake"]
+sqlquack_error = "Invalid expression / Unexpected token"
+note = "IS is fully reserved in Snowflake, so it is no implicit alias; Snowflake rejects a reserved implicit alias (recorded errno 1003)"
+
+[[rejection]]
+id = "snowflake_empty_select_list_before_from"
+sql = "SELECT FROM users"
+dialects = ["Snowflake"]
+sqlquack_error = "Snowflake requires at least one select item"
+note = "SELECT FROM t has no select item; Snowflake rejects it (recorded errno 1003)"
+
+[[rejection]]
+id = "snowflake_empty_select_list_keyword_qualifier"
+sql = "SELECT from.x, date.x FROM orders"
+dialects = ["Snowflake"]
+sqlquack_error = "Snowflake requires at least one select item"
+note = "FROM is fully reserved in Snowflake, so this SELECT has no item; polyglot fails later, at the dot"
+
+[[rejection]]
+id = "snowflake_empty_select_list_trailing_order_by"
+sql = "SELECT FROM x ORDER BY"
+dialects = ["Snowflake"]
+sqlquack_error = "Snowflake requires at least one select item"
+note = "an empty SELECT with a dangling ORDER BY; SQLQuack reports the missing item, polyglot the dangling BY"
+
+[[rejection]]
+id = "snowflake_empty_select_list_stage_text"
+sql = "SELECT FROM dollar-quoted stage path failed: {:?}"
+dialects = ["Snowflake"]
+sqlquack_error = "Snowflake requires at least one select item"
+note = "a test's message text, not SQL; SQLQuack reports the missing select item, polyglot the dash"
+
+[[rejection]]
+id = "snowflake_reserved_distinct_alias"
+sql = "SELECT (a OR b) IS {}DISTINCT FROM (c AND d)"
+dialects = ["Snowflake"]
+sqlquack_error = "Invalid expression / Unexpected token"
+note = "a test's format template, not SQL; both reject it, SQLQuack where IS meets the braces"
+
+[[rejection]]
+id = "snowflake_reserved_window_alias"
+sql = "SELECT col window FROM t"
+dialects = ["Snowflake"]
+sqlquack_error = "Invalid expression / Unexpected token"
+note = "WINDOW is fully reserved in Snowflake (reserved by ANSI), so it is no implicit alias; reserved implicit aliases are recorded as errno 1003"
+
+[[rejection]]
+id = "snowflake_set_operation_join_side"
+sql = "SELECT 1 AS a INNER UNION ALL BY NAME SELECT 2 AS a"
+dialects = ["Snowflake"]
+sqlquack_error = "Snowflake set operations take no LEFT, RIGHT, FULL, INNER or OUTER"
+note = "INNER UNION ... BY NAME is BigQuery's; Snowflake rejects a join side before a set operation (recorded errno 1003)"
+
+[[rejection]]
+id = "snowflake_by_name_on_intersect"
+sql = "SELECT 1 AS a, 2 AS b INTERSECT DISTINCT BY NAME ON (b, a) SELECT 3 AS b, 4 AS a"
+dialects = ["Snowflake"]
+sqlquack_error = "Snowflake allows BY NAME only after UNION, without an ON column list"
+note = "BY NAME ON (...) after INTERSECT is BigQuery's; Snowflake takes BY NAME only after UNION (recorded errno 1003)"
+
+[[rejection]]
+id = "snowflake_by_name_on_except"
+sql = "SELECT 1 AS a, 2 AS b EXCEPT DISTINCT BY NAME ON (b, a) SELECT 3 AS b, 4 AS a"
+dialects = ["Snowflake"]
+sqlquack_error = "Snowflake allows BY NAME only after UNION, without an ON column list"
+note = "BY NAME ON (...) after EXCEPT is BigQuery's; Snowflake takes BY NAME only after UNION (recorded errno 1003)"
 
 # Statements both parsers parse where polyglot drops the quoting of a name SQLQuack keeps quoted.
 # The check counts an entry as kept quoting only when the statement, without whitespace and ignoring

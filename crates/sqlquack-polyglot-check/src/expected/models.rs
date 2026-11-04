@@ -1,7 +1,7 @@
 //! Expected differences.
 
 use crate::expected::_helpers::quoting::{compact, differ_only_by_kept_quoting};
-use crate::expected::constants::{ERROR_PREFIX, OK_PREFIX};
+use crate::expected::constants::ERROR_PREFIX;
 use std::collections::{BTreeMap, BTreeSet};
 
 use serde::Deserialize;
@@ -36,7 +36,7 @@ pub struct KeptQuoting {
     pub note: String,
 }
 
-/// A statement SQLQuack rejects and polyglot parses, recognised by its exact text and dialect.
+/// A statement SQLQuack rejects where polyglot parses it or fails differently, recognised by its exact text and dialect.
 #[derive(Clone, Debug, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct ParserRejection {
@@ -111,17 +111,15 @@ impl ExpectedDifferences {
         })
     }
 
-    /// The rejection explaining SQLQuack's error `sqlquack` on `sql` in `dialect` where polyglot parsed it.
+    /// The rejection explaining SQLQuack's error `sqlquack` on `sql` in `dialect`, whatever polyglot made of it.
     pub fn rejection_for(
         &self,
         sql: &str,
         dialect: &str,
-        polyglot: &str,
         sqlquack: &str,
     ) -> Option<&ParserRejection> {
         self.rejections.iter().find(|rejection| {
-            polyglot.starts_with(OK_PREFIX)
-                && sqlquack.starts_with(ERROR_PREFIX)
+            sqlquack.starts_with(ERROR_PREFIX)
                 && sqlquack.contains(&rejection.sqlquack_error)
                 && rejection.sql == sql
                 && rejection.dialects.contains(&dialect.to_owned())
