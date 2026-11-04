@@ -12,15 +12,17 @@
 # A [[suppress]] entry withdraws one derived obligation (form, kind, target, and note where the
 # target is empty) with a reason.
 
-# DECLARE exception: "The number must be an integer between -20000 and -20999." Receipts of run
-# b5-packet4-20261103T224644Z reject both documented ends (-20999 and -20000); the obligations keep
-# the documented bounds, and the receipts decide.
+# DECLARE exception: "The number must be an integer between -20000 and -20999." Receipts refuse
+# both documented ends (-20999 and -20000) and both values outside them (-21000, -19999) with
+# semantic error 92207, so the enforced range is -20998..-20001. Every one of them parses, so per
+# decisions D84 and D85 they are accept obligations here, and semantic-limits/scripting.toml
+# records the documented rule, the observed stage and the receipts outside the syntax score.
 
 [[limit]]
 form = "sf.scripting.declare.exception"
 kind = "boundary_below"
 target = "<exception_number>"
-note = "-21000, below the documented lower bound -20999"
+note = "-21000, below the documented lower bound -20999: a syntax-phase acceptance; Snowflake refuses the value only at the semantic stage (92207)"
 anchor = "doc.snowflake-scripting.declare / Exception declaration syntax"
 sql = "e1 EXCEPTION ( -21000 , 'm' ) ;"
 expect = "accept"
@@ -30,7 +32,7 @@ stage = "semantic"
 form = "sf.scripting.declare.exception"
 kind = "boundary_at"
 target = "<exception_number>"
-note = "-20999, the documented lower bound"
+note = "-20999, the documented lower bound; docs discrepancy: Snowflake refuses it (92207), so the enforced bound is exclusive"
 anchor = "doc.snowflake-scripting.declare / Exception declaration syntax"
 sql = "e1 EXCEPTION ( -20999 , 'm' ) ;"
 expect = "accept"
@@ -58,7 +60,7 @@ expect = "accept"
 form = "sf.scripting.declare.exception"
 kind = "boundary_at"
 target = "<exception_number>"
-note = "-20000, the documented upper bound and the default"
+note = "-20000, the documented upper bound and the default; docs discrepancy: Snowflake refuses it (92207), so the enforced bound is exclusive"
 anchor = "doc.snowflake-scripting.declare / Exception declaration syntax"
 sql = "e1 EXCEPTION ( -20000 , 'm' ) ;"
 expect = "accept"
@@ -68,7 +70,7 @@ stage = "semantic"
 form = "sf.scripting.declare.exception"
 kind = "boundary_above"
 target = "<exception_number>"
-note = "-19999, above the documented upper bound"
+note = "-19999, above the documented upper bound: a syntax-phase acceptance; Snowflake refuses the value only at the semantic stage (92207)"
 anchor = "doc.snowflake-scripting.declare / Exception declaration syntax"
 sql = "e1 EXCEPTION ( -19999 , 'm' ) ;"
 expect = "accept"
@@ -76,12 +78,11 @@ stage = "semantic"
 
 [[limit]]
 form = "sf.scripting.declare.exception"
-kind = "negative_neighbour"
-note = "an exception message containing a double quote character"
+kind = "positive"
+note = "an exception message containing a double quote character: a syntax-phase acceptance; Snowflake does not enforce the documented restriction"
 anchor = "doc.snowflake-scripting.declare / Exception declaration syntax"
 sql = "e1 EXCEPTION ( -20001 , 'a\"b' ) ;"
 expect = "accept"
-stage = "error"
 
 # BEGIN ... END: "The keyword END must be followed immediately by a semicolon, or followed
 # immediately by a label that is immediately followed by a semicolon. The keyword BEGIN must not be
@@ -603,12 +604,12 @@ context = "raw"
 
 [[limit]]
 form = "sf.scripting.raise"
-kind = "negative_neighbour"
-note = "RAISE; without a name outside an exception handler"
+kind = "positive"
+note = "RAISE; without a name outside an exception handler: a syntax-phase acceptance; Snowflake refuses it at the semantic stage (92204)"
 anchor = "doc.snowflake-scripting.raise / Syntax"
 sql = "RAISE ;"
 expect = "accept"
-stage = "error"
+stage = "semantic"
 
 # DO/LOOP pairing (finding 3): the documented pairs as positives; the crossed pairs are negatives above.
 
@@ -662,17 +663,16 @@ anchor = "doc.snowflake-scripting.if / Syntax"
 sql = "IF ( FALSE ) THEN NULL ; ELSEIF ( FALSE ) THEN NULL ; ELSEIF ( TRUE ) THEN NULL ; END IF ;"
 
 # RETURNS TABLE and GEOGRAPHY (finding 6): "in the RETURNS TABLE(...) clause, you can't specify
-# GEOGRAPHY as a column type". The page documents an execution error when the procedure is called.
+# GEOGRAPHY as a column type". Run d82-scripting-2 accepts the call with no error at all, so the
+# limit is an accept obligation and semantic-limits/scripting.toml records the discrepancy (D85).
 
 [[limit]]
 form = "sf.scripting.declare.procedure-returns-table-as"
-kind = "negative_neighbour"
-target = "<col_data_type>"
-note = "GEOGRAPHY as a column type in RETURNS TABLE ( ... )"
+kind = "positive"
+note = "GEOGRAPHY as a column type in RETURNS TABLE ( ... ): a syntax-phase acceptance; Snowflake does not enforce the documented restriction"
 anchor = "doc.snowflake-scripting.declare / Nested stored procedure declaration syntax"
 sql = "DECLARE p1 PROCEDURE ( ) RETURNS TABLE ( g GEOGRAPHY ) AS BEGIN LET r1 RESULTSET := ( SELECT TO_GEOGRAPHY ( 'POINT(1 1)' ) AS g ) ; RETURN TABLE ( r1 ) ; END ; BEGIN CALL p1 ( ) ; END ;"
 expect = "accept"
-stage = "runtime"
 context = "raw"
 
 # DECLARE with BEGIN (finding 7).

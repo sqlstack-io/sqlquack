@@ -1099,7 +1099,7 @@ kind = "boundary_below"
 required = true
 target = "<exception_number>"
 anchor = "doc.snowflake-scripting.declare / Exception declaration syntax"
-note = "-21000, below the documented lower bound -20999"
+note = "-21000, below the documented lower bound -20999: a syntax-phase acceptance; Snowflake refuses the value only at the semantic stage (92207)"
 
 [[obligation]]
 id = "sf.scripting.declare.exception.o017"
@@ -1107,7 +1107,7 @@ kind = "boundary_at"
 required = true
 target = "<exception_number>"
 anchor = "doc.snowflake-scripting.declare / Exception declaration syntax"
-note = "-20999, the documented lower bound"
+note = "-20999, the documented lower bound; docs discrepancy: Snowflake refuses it (92207), so the enforced bound is exclusive"
 
 [[obligation]]
 id = "sf.scripting.declare.exception.o018"
@@ -1131,7 +1131,7 @@ kind = "boundary_at"
 required = true
 target = "<exception_number>"
 anchor = "doc.snowflake-scripting.declare / Exception declaration syntax"
-note = "-20000, the documented upper bound and the default"
+note = "-20000, the documented upper bound and the default; docs discrepancy: Snowflake refuses it (92207), so the enforced bound is exclusive"
 
 [[obligation]]
 id = "sf.scripting.declare.exception.o021"
@@ -1139,14 +1139,14 @@ kind = "boundary_above"
 required = true
 target = "<exception_number>"
 anchor = "doc.snowflake-scripting.declare / Exception declaration syntax"
-note = "-19999, above the documented upper bound"
+note = "-19999, above the documented upper bound: a syntax-phase acceptance; Snowflake refuses the value only at the semantic stage (92207)"
 
 [[obligation]]
 id = "sf.scripting.declare.exception.o022"
-kind = "negative_neighbour"
+kind = "positive"
 required = true
 anchor = "doc.snowflake-scripting.declare / Exception declaration syntax"
-note = "an exception message containing a double quote character"
+note = "an exception message containing a double quote character: a syntax-phase acceptance; Snowflake does not enforce the documented restriction"
 
 [[obligation]]
 id = "sf.scripting.declare.procedure-returns-table-as.o001"
@@ -1414,11 +1414,10 @@ note = "reserved: a reserved keyword, unquoted (expected rejection) and double-q
 
 [[obligation]]
 id = "sf.scripting.declare.procedure-returns-table-as.o042"
-kind = "negative_neighbour"
+kind = "positive"
 required = true
-target = "<col_data_type>"
 anchor = "doc.snowflake-scripting.declare / Nested stored procedure declaration syntax"
-note = "GEOGRAPHY as a column type in RETURNS TABLE ( ... )"
+note = "GEOGRAPHY as a column type in RETURNS TABLE ( ... ): a syntax-phase acceptance; Snowflake does not enforce the documented restriction"
 
 [[obligation]]
 id = "sf.scripting.declare.resultset.o001"
@@ -3661,10 +3660,10 @@ note = "RAISE; without a name inside a WHEN clause of an exception handler, re-r
 
 [[obligation]]
 id = "sf.scripting.raise.o010"
-kind = "negative_neighbour"
+kind = "positive"
 required = true
 anchor = "doc.snowflake-scripting.raise / Syntax"
-note = "RAISE; without a name outside an exception handler"
+note = "RAISE; without a name outside an exception handler: a syntax-phase acceptance; Snowflake refuses it at the semantic stage (92204)"
 
 [[obligation]]
 id = "sf.scripting.repeat.o001"

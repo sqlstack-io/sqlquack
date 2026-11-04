@@ -13,6 +13,7 @@ from scripts.syntax_obligations.constants import (
     CASE_SESSION,
     EXPECT_ACCEPT,
     EXPECT_REJECT,
+    OBSERVED_STAGE,
 )
 from scripts.syntax_obligations.exceptions import ObligationError
 from scripts.syntax_obligations.main.build import family_obligations
@@ -124,26 +125,72 @@ def merge_mapped(
             continue
         case["expect"] = wants.pop()
         kept.append(case)
-    covered: set[str] = {str(o) for case in kept for o in case["obligations"]}
-    generated: list[Row] = [c for c in cases if not set(c["obligations"]) <= covered]
+    covered: set[tuple[str, str]] = {
+        (str(o), str(case["expect"])) for case in kept for o in case["obligations"]
+    }
+    generated: list[Row] = [
+        c for c in cases if not {(str(o), str(c["expect"])) for o in c["obligations"]} <= covered
+    ]
     return kept + generated, problems
+
+
+def _receipt_phases(directory: Path) -> dict[tuple[str, str], str]:
+    """The phase of each (case_id, sql_sha256) receipt, leaving out receipts an import report
+    withdrew, receipts a later receipt supersedes and receipts of a separate measure."""
+    gone: set[str] = set()
+    for path in directory.glob("*.report.json"):
+        gone |= {
+            str(x["receipt_sha256"]) for x in json.loads(path.read_text()).get("withdrawn", [])
+        }
+    receipts: list[tuple[str, Row]] = []
+    for path in sorted(directory.glob("*.jsonl")):
+        for line in path.read_text().splitlines():
+            receipt: Row = json.loads(line)
+            gone.add(str(receipt.get("supersedes_receipt_sha256", "")))
+            if "measure" not in receipt:  # a measure's receipts are never syntax evidence
+                receipts.append((_digest(line), receipt))
+    return {
+        (str(r["case_id"]), str(r["sql_sha256"])): str(r["phase"])
+        for sha, r in receipts
+        if sha not in gone
+    }
+
+
+def _observed_stage(case: Row, phase: str | None) -> None:
+    """Give an accepted case the later stage its receipt shows; a declared stage that the
+    receipt contradicts is reported and replaced, since the stage records what Snowflake did."""
+    stage: str | None = OBSERVED_STAGE.get(phase or "")
+    if case["expect"] != EXPECT_ACCEPT or stage is None or stage == case.get("stage", ""):
+        return
+    if "stage" in case:
+        print(f"stage of {case['case_id']}: declared {case['stage']}, receipt {phase}")
+    if stage:
+        case["stage"] = stage
+    else:
+        del case["stage"]
 
 
 def run_cases(argv: list[str] | None = None) -> int:
     """Regenerate the cases of the named families and list those that need a capture."""
     parser: argparse.ArgumentParser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--root", type=Path, default=Path("coverage/syntax"))
-    parser.add_argument("--receipts", type=Path, help="receipt directory to match SQL hashes")
+    parser.add_argument(
+        "--receipts",
+        type=Path,
+        required=True,
+        help="receipt directory: matches SQL hashes and gives accepted cases their stage",
+    )
     parser.add_argument("--packet", type=Path, help="write the cases still to capture here")
     parser.add_argument("families", nargs="+")
     arguments: argparse.Namespace = parser.parse_args(argv)
     root: Path = arguments.root
-    recorded: set[tuple[str, str]] = set()
-    if arguments.receipts:
-        for path in sorted(arguments.receipts.glob("*.jsonl")):
-            for line in path.read_text().splitlines():
-                receipt: Row = json.loads(line)
-                recorded.add((str(receipt["case_id"]), str(receipt["sql_sha256"])))
+    phases: dict[tuple[str, str], str] = _receipt_phases(arguments.receipts)
+    # A withdrawn receipt is not evidence, but recording the same SQL again would repeat it.
+    recorded: set[tuple[str, str]] = {
+        (str(r["case_id"]), str(r["sql_sha256"]))
+        for path in arguments.receipts.glob("*.jsonl")
+        for r in map(json.loads, path.read_text().splitlines())
+    }
     to_capture: list[Row] = []
     for family in arguments.families:
         generated, expected = family_cases(root=root, family=family)
@@ -152,6 +199,8 @@ def run_cases(argv: list[str] | None = None) -> int:
         )
         for problem in problems:
             print(f"mapped case left out: {problem}")
+        for case in cases:
+            _observed_stage(case, phases.get((case["case_id"], case["sql_sha256"])))
         path: Path = root / "cases" / f"{family}.jsonl"
         path.parent.mkdir(parents=True, exist_ok=True)
         path.write_text("".join(_canonical(case) + "\n" for case in cases))
