@@ -45,9 +45,6 @@ pub(crate) const ENGINE: &str = "ENGINE";
 /// The text "EXCLUDE", as comparisons test it.
 pub(crate) const EXCLUDE: &str = "EXCLUDE";
 
-/// The text "FILE", as comparisons test it.
-pub(crate) const FILE: &str = "FILE";
-
 /// The text "FIRST_VALUE", as comparisons test it.
 pub(crate) const FIRST_VALUE: &str = "FIRST_VALUE";
 
@@ -89,6 +86,9 @@ pub(crate) const NATIONAL: &str = "NATIONAL";
 
 /// The text "NCHAR", as comparisons test it.
 pub(crate) const NCHAR: &str = "NCHAR";
+
+/// The type name of `RETURNS TABLE (...)`, which may have an empty column list.
+pub(crate) const TABLE_TYPE: &str = "TABLE";
 
 /// The text "NVARCHAR", as comparisons test it.
 pub(crate) const NVARCHAR: &str = "NVARCHAR";
@@ -375,4 +375,57 @@ pub(crate) const SNOWFLAKE_ALTER_KINDS: &[&str] = &[
 /// The words that start an ALTER TASK action, so `ALTER TASK GRAPH <action>` alters the task named GRAPH.
 pub(crate) const TASK_ACTIONS: &[&str] = &[
     "ADD", "MODIFY", "REMOVE", "RESUME", "SET", "SUSPEND", "UNSET",
+];
+
+/// Snowflake DROP object kinds, each listed before any kind it prefixes.
+pub(crate) const SNOWFLAKE_DROP_KINDS: &[&[&str]] = &[
+    &["AGENT"],
+    &["ALERT"],
+    &["APPLICATION", "PACKAGE"],
+    &["APPLICATION", "SERVICE"],
+    &["APPLICATION"],
+    &["ARTIFACT", "REPOSITORY"],
+    &["BACKUP", "SET"],
+    &["COMPUTE", "POOL"],
+    &["CONTACT"],
+    &["CORTEX", "SEARCH", "SERVICE"],
+    &["DATA", "MOVEMENT", "RULE"],
+    &["DBT", "PROJECT"],
+    &["DCM", "PROJECT"],
+    &["DYNAMIC", "TABLE"],
+    &["EVENT", "ROUTING", "TABLE"],
+    &["EXPERIMENT"],
+    &["EXTERNAL", "AGENT"],
+    &["EXTERNAL", "CONSUMER"],
+    &["EXTERNAL", "TABLE"],
+    &["EXTERNAL", "VOLUME"],
+    &["FILE", "FORMAT"],
+    &["GATEWAY"],
+    &["GIT", "REPOSITORY"],
+    &["IMAGE", "REPOSITORY"],
+    &["LISTING"],
+    &["MCP", "SERVER"],
+    &["MODEL", "MONITOR"],
+    &["MODEL"],
+    &["NOTEBOOK"],
+    &["ONLINE", "FEATURE", "TABLE"],
+    &["OPENFLOW", "CONNECTOR"],
+    &["OPENFLOW", "DEPLOYMENT"],
+    &["OPENFLOW", "RUNTIME"],
+    &["PIPE"],
+    &["POSTGRES", "INSTANCE"],
+    &["RESTRICTED", "SESSION", "SCOPE"],
+    &["RSS"],
+    &["SEMANTIC", "VIEW"],
+    &["SERVICE"],
+    &["SNAPSHOT", "SET"],
+    &["SNAPSHOT"],
+    &["STAGE"],
+    &["STREAMLIT"],
+    &["STREAM"],
+    &["TAG"],
+    &["TASK", "GRAPH"],
+    &["TASK"],
+    &["VARIABLE"],
+    &["WAREHOUSE"],
 ];

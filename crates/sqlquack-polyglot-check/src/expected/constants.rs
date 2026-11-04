@@ -8,5 +8,7 @@ pub const OK_PREFIX: &str = "ok:";
 pub const COMMAND_TREE: &str = "[{\"command\":";
 /// The field naming an identifier in a serialised tree.
 pub const NAME_KEY: &str = "name";
+/// The field holding the operand of a wrapper node such as unary plus.
+pub const THIS_KEY: &str = "this";
 /// The field recording whether an identifier was quoted.
 pub const QUOTED_KEY: &str = "quoted";

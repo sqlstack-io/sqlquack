@@ -1201,7 +1201,7 @@ pub(crate) const VALUES_COLUMN_PREFIX: &str = "COLUMN";
 pub(crate) const NTILE_NAME: &str = "NTILE";
 /// RATIO_TO_REPORT, which the parser keeps as a generic call.
 pub(crate) const RATIO_TO_REPORT_NAME: &str = "RATIO_TO_REPORT";
-/// The most VALUES rows converted: each row nests one UNION ALL deeper.
+/// The most VALUES rows converted.
 pub(crate) const VALUES_ROWS_LIMIT: usize = 1000;
 /// DATEDIFF units whose boundaries every whole-minute UTC offset shares, counted on UTC instants.
 pub(crate) const OFFSET_FREE_UNITS: [&str; 2] = ["MINUTE", "SECOND"];

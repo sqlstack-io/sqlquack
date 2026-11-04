@@ -17,3 +17,15 @@ pub(crate) struct CheckTestCase {
     /// A fragment of a reference problem; none when there must be no problem.
     pub(crate) expected_problem: Option<&'static str>,
 }
+
+/// Account parameter names with their values.
+pub(crate) type Parameters<'a> = Vec<(&'a str, Option<&'a str>)>;
+
+/// A receipt `account_state` fragment and the account state each case must then carry.
+pub(crate) struct AccountStateTestCase {
+    pub(crate) description: &'static str,
+    /// Inserted after the first receipt's `phase_basis`, the receipt of `select-17`.
+    pub(crate) account_state: &'static str,
+    /// Each case id with its parameter names and values, in case-id order.
+    pub(crate) expected_cases: Vec<(&'static str, Parameters<'static>)>,
+}

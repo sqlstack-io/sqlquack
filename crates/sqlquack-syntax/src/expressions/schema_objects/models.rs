@@ -14,6 +14,7 @@ use crate::expressions::tables::models::RefreshTriggerProperty;
 use crate::expressions::tables::models::UniqueKeyProperty;
 use crate::expressions::tree::models::Expression;
 use crate::expressions::types::models::DataType;
+use crate::expressions::types::models::StructField;
 
 /// View column definition with optional COMMENT and OPTIONS (BigQuery)
 #[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
@@ -317,6 +318,9 @@ pub struct DropSchema {
     pub name: Identifier,
     pub if_exists: bool,
     pub cascade: bool,
+    /// RESTRICT, kept apart from the default; left out of the tree when absent
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    pub restrict: bool,
 }
 
 impl DropSchema {
@@ -325,6 +329,7 @@ impl DropSchema {
             name: Identifier::new(name),
             if_exists: false,
             cascade: false,
+            restrict: false,
         }
     }
 }
@@ -685,6 +690,9 @@ pub struct CreateProcedure {
     /// Whether the short form PROC was used (instead of PROCEDURE)
     #[serde(default, skip_serializing_if = "std::ops::Not::not")]
     pub use_proc_keyword: bool,
+    /// Snowflake `RETURNS TABLE (...)` columns, possibly none; `return_type` is then absent.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub returns_table: Option<Vec<StructField>>,
 }
 
 impl CreateProcedure {
@@ -703,6 +711,7 @@ impl CreateProcedure {
             with_options: Vec::new(),
             has_parens: true,
             use_proc_keyword: false,
+            returns_table: None,
         }
     }
 }
@@ -1113,6 +1122,9 @@ pub struct AlterObject {
     pub kind: String,
     /// The object name
     pub name: TableRef,
+    /// The argument types that identify a function or procedure; a TABLE( ... ) argument is a tuple
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub arguments: Vec<Expression>,
     /// IF EXISTS clause
     #[serde(default)]
     pub if_exists: bool,

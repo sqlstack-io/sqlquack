@@ -184,7 +184,10 @@ fn values_rows(payload: &Value) -> Result<Value, Refusal> {
     if list(values, "expressions").len() > VALUES_ROWS_LIMIT {
         return Err(outside_conditions(
             construct,
-            format!("VALUES with more than {VALUES_ROWS_LIMIT} rows, nested too deep to convert"),
+            format!(
+                "VALUES with more than {VALUES_ROWS_LIMIT} rows, beyond the rows the conversion is \
+                 checked with"
+            ),
         ));
     }
     let mut selects: Vec<Value> = Vec::new();
@@ -211,10 +214,23 @@ fn values_rows(payload: &Value) -> Result<Value, Refusal> {
             .collect();
         selects.push(json!({"select": {"expressions": expressions}}));
     }
-    selects
-        .into_iter()
-        .reduce(union_all)
-        .ok_or_else(|| missing(construct, "VALUES without rows".to_owned()))
+    balanced_union(selects).ok_or_else(|| missing(construct, "VALUES without rows".to_owned()))
+}
+
+/// The rows' UNION ALL in order, paired level by level so it nests log2(rows) deep, not one per row.
+fn balanced_union(mut selects: Vec<Value>) -> Option<Value> {
+    while selects.len() > 1 {
+        let mut rows = selects.into_iter();
+        let mut paired: Vec<Value> = Vec::new();
+        while let Some(left) = rows.next() {
+            paired.push(match rows.next() {
+                Some(right) => union_all(left, right),
+                None => left,
+            });
+        }
+        selects = paired;
+    }
+    selects.pop()
 }
 
 /// `left UNION ALL right`, moving both trees in: `json!` would copy `left`, once per row.

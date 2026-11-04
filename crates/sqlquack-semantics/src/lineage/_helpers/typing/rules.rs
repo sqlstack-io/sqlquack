@@ -152,7 +152,7 @@ fn generic_type(
         Expression::ListAgg(_) | Expression::StringAgg(_) | Expression::GroupConcat(_) => {
             (Some(Rc::from(TEXT_TYPE)), Nullability::Unknown)
         }
-        Expression::Neg(_) => (first_type(parts), Nullability::Unknown),
+        Expression::Neg(_) | Expression::Pos(_) => (first_type(parts), Nullability::Unknown),
         Expression::Upper(_) | Expression::Lower(_) => (
             Some(Rc::from(TEXT_TYPE)),
             ruled(NullabilityRule::FirstArgument, parts),

@@ -82,6 +82,7 @@ impl Expression {
             | Expression::CreateTable(_)
             | Expression::DropTable(_)
             | Expression::Undrop(_)
+            | Expression::DropObject(_)
             | Expression::AlterTable(_)
             | Expression::SplitTable(_)
             | Expression::FlashbackTable(_)
@@ -214,9 +215,10 @@ impl Expression {
             | Expression::BitwiseLeftShift(op)
             | Expression::BitwiseRightShift(op) => op.inferred_type.as_ref(),
 
-            Expression::Not(op) | Expression::Neg(op) | Expression::BitwiseNot(op) => {
-                op.inferred_type.as_ref()
-            }
+            Expression::Not(op)
+            | Expression::Neg(op)
+            | Expression::Pos(op)
+            | Expression::BitwiseNot(op) => op.inferred_type.as_ref(),
 
             Expression::Like(op) | Expression::ILike(op) => op.inferred_type.as_ref(),
 
@@ -443,9 +445,10 @@ impl Expression {
             | Expression::BitwiseLeftShift(op)
             | Expression::BitwiseRightShift(op) => op.inferred_type = Some(dt),
 
-            Expression::Not(op) | Expression::Neg(op) | Expression::BitwiseNot(op) => {
-                op.inferred_type = Some(dt)
-            }
+            Expression::Not(op)
+            | Expression::Neg(op)
+            | Expression::Pos(op)
+            | Expression::BitwiseNot(op) => op.inferred_type = Some(dt),
 
             Expression::Like(op) | Expression::ILike(op) => op.inferred_type = Some(dt),
 

@@ -79,6 +79,7 @@ impl Expression {
             Expression::ExtendsRight(_) => "extends_right",
             Expression::Not(_) => "not",
             Expression::Neg(_) => "neg",
+            Expression::Pos(_) => "pos",
             Expression::BitwiseNot(_) => "bitwise_not",
             Expression::In(_) => "in",
             Expression::Between(_) => "between",
@@ -396,6 +397,7 @@ impl Expression {
             Expression::CreateTable(_) => "create_table",
             Expression::DropTable(_) => "drop_table",
             Expression::Undrop(_) => "undrop",
+            Expression::DropObject(_) => "drop_object",
             Expression::AlterTable(_) => "alter_table",
             Expression::SplitTable(_) => "split_table",
             Expression::FlashbackTable(_) => "flashback_table",
@@ -963,7 +965,10 @@ impl Expression {
             Expression::JSONColumnDef(j) => j.this.as_deref(),
             Expression::Hierarchy(hierarchy) => Some(&hierarchy.source),
             Expression::Upsert(upsert) => Some(&upsert.source),
-            Expression::Not(u) | Expression::Neg(u) | Expression::BitwiseNot(u) => Some(&u.this),
+            Expression::Not(u)
+            | Expression::Neg(u)
+            | Expression::Pos(u)
+            | Expression::BitwiseNot(u) => Some(&u.this),
             Expression::Upper(f)
             | Expression::Lower(f)
             | Expression::Length(f)
