@@ -80,6 +80,16 @@ id = "connect_by_qualified_sides"
 description = "CONNECT BY and START WITH with both sides qualified by the walked relation's alias, PRIOR on either side."
 columns = [{ name = "id", type = "NUMBER(38,0)" }, { name = "parent", type = "NUMBER(38,0)" }]
 rows = [["1", "NULL"], ["2", "1"], ["3", "2"], ["4", "1"]]
+query = "SELECT c.id, LEVEL AS lvl FROM input AS c START WITH c.parent IS NULL CONNECT BY PRIOR c.id = c.parent"
+order = "bag"
+tags = []
+
+[[case]]
+id = "connect_by_order_by_qualified_column"
+description = "ORDER BY a column qualified by the walked relation's alias after CONNECT BY, which Snowflake was recorded rejecting as an invalid identifier."
+columns = [{ name = "id", type = "NUMBER(38,0)" }, { name = "parent", type = "NUMBER(38,0)" }]
+rows = [["1", "NULL"], ["2", "1"]]
 query = "SELECT c.id, LEVEL AS lvl FROM input AS c START WITH c.parent IS NULL CONNECT BY PRIOR c.id = c.parent ORDER BY c.id"
 order = "ordered"
+compile_error = true
 tags = []

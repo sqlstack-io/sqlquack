@@ -81,6 +81,11 @@ pub(crate) fn hierarchy(
     }) {
         return Err(refuse("CONNECT BY over a relation with a LEVEL column"));
     }
+    if select.get("order_by").is_some_and(has_qualified_column) {
+        return Err(refuse(
+            "ORDER BY a qualified column after CONNECT BY, which Snowflake rejects",
+        ));
+    }
     let mut carried: Vec<Carried> = Vec::new();
     let mut rewritten = select.clone();
     rewritten.remove("connect");
@@ -365,6 +370,18 @@ fn qualified(node: &Value, alias: &str, own: &str) -> Result<Value, String> {
     let mut column = column.clone();
     column.insert("table".to_owned(), json!({ "name": alias, "quoted": true }));
     Ok(json!({ "column": column }))
+}
+
+/// Whether `node` holds a column qualified by a relation name anywhere inside it.
+fn has_qualified_column(node: &Value) -> bool {
+    match node {
+        Value::Object(object) => object.iter().any(|(key, value)| {
+            (key == "column" && value.get("table").is_some_and(|table| !table.is_null()))
+                || has_qualified_column(value)
+        }),
+        Value::Array(items) => items.iter().any(has_qualified_column),
+        _ => false,
+    }
 }
 
 /// Whether the qualifier `table` names the relation aliased `own`, as Snowflake resolves names:

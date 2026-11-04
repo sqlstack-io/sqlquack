@@ -733,6 +733,14 @@ fn given_sides_qualified_by_the_walked_relation_when_converting_connect_by_then_
             walk("PRIOR x.id = c.parent"),
             Err("walked relation"),
         ),
+        (
+            "ORDER BY a qualified column after the walk refuses, as Snowflake rejects it",
+            "WITH t AS (SELECT * FROM (VALUES (1, NULL), (2, 1)) AS v(id, parent)) \
+             SELECT c.id AS v FROM t AS c START WITH c.parent IS NULL \
+             CONNECT BY PRIOR c.id = c.parent ORDER BY c.id"
+                .to_owned(),
+            Err("Snowflake rejects"),
+        ),
     ];
     for (description, sql, expected_outcome) in test_cases {
         assert_eq!(
