@@ -55,7 +55,7 @@ fn given_a_known_divergence_when_converting_then_default_mode_warns_and_strict_m
             expected_outcome: DivergenceModeOutcome {
                 converted: false,
                 divergences: vec![],
-                categories: vec![RefusalCategory::TypeCondition],
+                categories: vec![RefusalCategory::DivergenceRefused],
             },
         },
         DivergenceModeTestCase {
