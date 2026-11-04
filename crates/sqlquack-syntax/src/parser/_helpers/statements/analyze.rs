@@ -298,6 +298,18 @@ impl Parser {
         false
     }
 
+    /// Whether the current token is an unquoted Snowflake reserved keyword in a Snowflake parse.
+    pub(crate) fn is_snowflake_reserved_keyword(&self) -> bool {
+        matches!(
+            self.config.dialect,
+            Some(crate::tokens::models::DialectType::Snowflake)
+        ) && !self.is_at_end()
+            && self.peek().token_type != TokenType::QuotedIdentifier
+            && crate::parser::constants::SNOWFLAKE_RESERVED_KEYWORDS
+                .iter()
+                .any(|keyword| self.peek().text.eq_ignore_ascii_case(keyword))
+    }
+
     /// Whether a keyword may be a table alias; LEFT, RIGHT, OUTER and FULL may.
     pub(crate) fn can_be_alias_keyword(&self) -> bool {
         if self.is_at_end() {
