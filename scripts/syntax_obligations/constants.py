@@ -363,13 +363,13 @@ OPENED: int = -2
 LIST_ITEM_KEYWORDS: frozenset[str] = frozenset(
     {"AS", "NOT", "NULL", "ASC", "DESC", "NULLS", "FIRST", "LAST"}
 )
-GLUED_PREFIXES: re.Pattern[str] = re.compile(r"(?<![^ ])([$:@]) (?=[^ =])")
+GLUED_PREFIXES: re.Pattern[str] = re.compile(r"(?<![^ ])([$:@]) (?![a-z]+:/)(?=[^ =])")
 STAGE_TOKEN: str = r'(@(?:"[^"]*"|[^\s"])*'
 STAGE_GLUES: tuple[re.Pattern[str], ...] = (
     re.compile(STAGE_TOKEN + r") (?=[./%~])"),
-    re.compile(STAGE_TOKEN + r"[.%]) (?=\S)"),
+    re.compile(STAGE_TOKEN + r"[.%]) (?![a-z]+:)(?=\S)"),
     re.compile(STAGE_TOKEN + r"~) (?=/)"),
-    re.compile(STAGE_TOKEN + r"/) (?=[a-z0-9\"'])"),
+    re.compile(STAGE_TOKEN + r"/) (?![a-z]+:)(?=[a-z0-9\"'])"),
 )
 GLUED_INFIX_RIGHT: re.Pattern[str] = re.compile(r"(?<![^ ])! (?=[A-Za-z_\"'])")
 GLUED_INFIX_LEFT: re.Pattern[str] = re.compile(r"(?<=[\w\"')]) !(?=[ A-Za-z_\"'])")

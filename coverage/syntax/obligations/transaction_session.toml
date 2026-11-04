@@ -1110,6 +1110,13 @@ anchor = "doc.sql.show-parameters / Examples"
 note = "a QUERY_TAG of 2,001 characters against the documented limit of 2,000"
 
 [[obligation]]
+id = "sf.transaction_session.alter-session.set-sessionparams.o171"
+kind = "positive"
+required = true
+anchor = "doc.sql.alter-session / Syntax"
+note = "several parameters separated by commas (observed: the grammar separates them by blanks)"
+
+[[obligation]]
 id = "sf.transaction_session.alter-session.unset.o001"
 kind = "positive"
 required = true

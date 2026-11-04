@@ -698,6 +698,30 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
+id = "sf.dml.copy-into-location.o409"
+kind = "alternative"
+required = true
+target = "{ { { @ [ <namespace> . ] <int_stage_name> [ / <path> ] | @… → { { @ [ <namespace> . ] <int_stage_name> [ / <path> ] | @ [ <namespace> . ] % <table_name> [ / <path> ] | @ ~ [ / <path> ] } | @ [ <namespace> . ] <ext_stage_name> [ / <path> ] } FROM { [ <namespace> . ] <table_name> | ( <query> ) }"
+
+[[obligation]]
+id = "sf.dml.copy-into-location.o410"
+kind = "alternative"
+required = true
+target = "{ { { @ [ <namespace> . ] <int_stage_name> [ / <path> ] | @… → '<s3_url>' FROM { [ <namespace> . ] <table_name> | ( <query> ) } [ { STORAGE_INTEGRATION = <integration_name> | CREDENTIALS = ( AWS_KEY_ID = '<string>' AWS_SECRET_KEY = '<string>' [ AWS_TOKEN = '<string>' ] ) } ] [ ENCRYPTION = ( { [ TYPE = 'AWS_CSE' ] [ MASTER_KEY = '<string>' ] | TYPE = 'AWS_SSE_S3' | TYPE = 'AWS_SSE_KMS' [ KMS_KEY_ID = '<string>' ] | TYPE = 'NONE' } ) ]"
+
+[[obligation]]
+id = "sf.dml.copy-into-location.o411"
+kind = "alternative"
+required = true
+target = "{ { { @ [ <namespace> . ] <int_stage_name> [ / <path> ] | @… → '<gcs_url>' FROM { [ <namespace> . ] <table_name> | ( <query> ) } [ STORAGE_INTEGRATION = <integration_name> ] [ ENCRYPTION = ( { [ TYPE = 'GCS_SSE_KMS' ] [ KMS_KEY_ID = '<string>' ] | TYPE = 'NONE' } ) ]"
+
+[[obligation]]
+id = "sf.dml.copy-into-location.o412"
+kind = "alternative"
+required = true
+target = "{ { { @ [ <namespace> . ] <int_stage_name> [ / <path> ] | @… → '<azure_url>' FROM { [ <namespace> . ] <table_name> | ( <query> ) } [ { STORAGE_INTEGRATION = <integration_name> | CREDENTIALS = ( [ AZURE_SAS_TOKEN = '<string>' ] ) } ] [ ENCRYPTION = ( [ TYPE = { 'AZURE_CSE' | 'NONE' } ] [ MASTER_KEY = '<string>' ] ) ]"
+
+[[obligation]]
 id = "sf.dml.copy-into-location.o059"
 kind = "alternative"
 required = true
@@ -708,24 +732,6 @@ id = "sf.dml.copy-into-location.o060"
 kind = "alternative"
 required = true
 target = "{ { @ [ <namespace> . ] <int_stage_name> [ / <path> ] | @ [ <namesp… → @ [ <namespace> . ] <ext_stage_name> [ / <path> ]"
-
-[[obligation]]
-id = "sf.dml.copy-into-location.o377"
-kind = "alternative"
-required = true
-target = "{ { @ [ <namespace> . ] <int_stage_name> [ / <path> ] | @ [ <namespace> . ] % <table_name> [ / <path> ] | … → '<s3_url>'"
-
-[[obligation]]
-id = "sf.dml.copy-into-location.o378"
-kind = "alternative"
-required = true
-target = "{ { @ [ <namespace> . ] <int_stage_name> [ / <path> ] | @ [ <namespace> . ] % <table_name> [ / <path> ] |… → '<gcs_url>'"
-
-[[obligation]]
-id = "sf.dml.copy-into-location.o379"
-kind = "alternative"
-required = true
-target = "{ { @ [ <namespace> . ] <int_stage_name> [ / <path> ] | @ [ <namespace> . ] % <table_name> [ / <path> ]… → '<azure_url>'"
 
 [[obligation]]
 id = "sf.dml.copy-into-location.o062"
@@ -1012,48 +1018,6 @@ target = "<path> in [ / <path> ] #4"
 note = "a valid operand"
 
 [[obligation]]
-id = "sf.dml.copy-into-location.o101"
-kind = "operand_type_class"
-required = true
-target = "'<s3_url>'"
-note = "a valid string_literal"
-
-[[obligation]]
-id = "sf.dml.copy-into-location.o102"
-kind = "negative_neighbour"
-required = true
-target = "'<s3_url>'"
-note = "an unquoted identifier in place of '<s3_url>'"
-
-[[obligation]]
-id = "sf.dml.copy-into-location.o140"
-kind = "operand_type_class"
-required = true
-target = "'<gcs_url>'"
-note = "a valid string_literal"
-
-[[obligation]]
-id = "sf.dml.copy-into-location.o141"
-kind = "negative_neighbour"
-required = true
-target = "'<gcs_url>'"
-note = "an unquoted identifier in place of '<gcs_url>'"
-
-[[obligation]]
-id = "sf.dml.copy-into-location.o159"
-kind = "operand_type_class"
-required = true
-target = "'<azure_url>'"
-note = "a valid string_literal"
-
-[[obligation]]
-id = "sf.dml.copy-into-location.o160"
-kind = "negative_neighbour"
-required = true
-target = "'<azure_url>'"
-note = "an unquoted identifier in place of '<azure_url>'"
-
-[[obligation]]
 id = "sf.dml.copy-into-location.o008"
 kind = "alternative"
 required = true
@@ -1141,102 +1105,198 @@ target = "<query>"
 note = "a bare literal in place of <query>"
 
 [[obligation]]
-id = "sf.dml.copy-into-location.o380"
-kind = "option_present"
-required = true
-target = "[ { STORAGE_INTEGRATION = <integration_name> | CREDENTIALS = ( { AWS_KEY_ID = '<string>' AWS_SECRET_KEY = '<string>' [ …"
-
-[[obligation]]
-id = "sf.dml.copy-into-location.o381"
-kind = "option_absent"
-required = true
-target = "[ { STORAGE_INTEGRATION = <integration_name> | CREDENTIALS = ( { AWS_KEY_ID = '<string>' AWS_SECRET_KEY = '<string>' [ …"
-
-[[obligation]]
-id = "sf.dml.copy-into-location.o382"
-kind = "alternative"
-required = true
-target = "{ STORAGE_INTEGRATION = <integration_name> | CREDENTIALS = ( { AWS_KEY_ID = … → STORAGE_INTEGRATION = <integration_name>"
-
-[[obligation]]
-id = "sf.dml.copy-into-location.o383"
-kind = "alternative"
-required = true
-target = "{ STORAGE_INTEGRATION = <integration_name> | CREDENTIALS = … → CREDENTIALS = ( { AWS_KEY_ID = '<string>' AWS_SECRET_KEY = '<string>' [ AWS_TOKEN = '<string>' ] | AZURE_SAS_TOKEN = '<string>' } )"
-
-[[obligation]]
-id = "sf.dml.copy-into-location.o384"
+id = "sf.dml.copy-into-location.o413"
 kind = "required_operand_missing"
 required = true
-target = "<integration_name> in [ { STORAGE_INTEGRATION = <integration_name> | CREDENTIALS = ( { AWS_KEY_ID = '<string>' AWS_SECR…"
-note = "omit <integration_name>"
+target = "'<s3_url>'"
+note = "omit '<s3_url>'"
 
 [[obligation]]
-id = "sf.dml.copy-into-location.o385"
+id = "sf.dml.copy-into-location.o101"
 kind = "operand_type_class"
 required = true
-target = "<integration_name> in [ { STORAGE_INTEGRATION = <integration_name> | CREDENTIALS = ( { AWS_KEY_ID = '<string>' AWS_SECR…"
+target = "'<s3_url>'"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.dml.copy-into-location.o102"
+kind = "negative_neighbour"
+required = true
+target = "'<s3_url>'"
+note = "an unquoted identifier in place of '<s3_url>'"
+
+[[obligation]]
+id = "sf.dml.copy-into-location.o414"
+kind = "alternative"
+required = true
+target = "{ [ <namespace> . ] <table_name> | ( <query> ) } → [ <namespace> . ] <table_name> #2"
+
+[[obligation]]
+id = "sf.dml.copy-into-location.o415"
+kind = "alternative"
+required = true
+target = "{ [ <namespace> . ] <table_name> | ( <query> ) } → ( <query> ) #2"
+
+[[obligation]]
+id = "sf.dml.copy-into-location.o416"
+kind = "option_present"
+required = true
+target = "[ <namespace> . ] #5"
+
+[[obligation]]
+id = "sf.dml.copy-into-location.o417"
+kind = "option_absent"
+required = true
+target = "[ <namespace> . ] #5"
+
+[[obligation]]
+id = "sf.dml.copy-into-location.o418"
+kind = "required_operand_missing"
+required = true
+target = "<namespace> in [ <namespace> . ] #5"
+note = "omit <namespace>"
+
+[[obligation]]
+id = "sf.dml.copy-into-location.o419"
+kind = "operand_type_class"
+required = true
+target = "<namespace> in [ <namespace> . ] #5"
 note = "a valid identifier"
 
 [[obligation]]
-id = "sf.dml.copy-into-location.o386"
+id = "sf.dml.copy-into-location.o420"
 kind = "negative_neighbour"
 required = true
-target = "<integration_name> in [ { STORAGE_INTEGRATION = <integration_name> | CREDENTIALS = ( { AWS_KEY_ID = '<string>' AWS_SECR…"
+target = "<namespace> in [ <namespace> . ] #5"
+note = "a string literal in place of <namespace>"
+
+[[obligation]]
+id = "sf.dml.copy-into-location.o421"
+kind = "required_operand_missing"
+required = true
+target = "<table_name> #3"
+note = "omit <table_name>"
+
+[[obligation]]
+id = "sf.dml.copy-into-location.o422"
+kind = "operand_type_class"
+required = true
+target = "<table_name> #3"
+note = "a valid identifier"
+
+[[obligation]]
+id = "sf.dml.copy-into-location.o423"
+kind = "negative_neighbour"
+required = true
+target = "<table_name> #3"
+note = "a string literal in place of <table_name>"
+
+[[obligation]]
+id = "sf.dml.copy-into-location.o424"
+kind = "required_operand_missing"
+required = true
+target = "<query> #2"
+note = "omit <query>"
+
+[[obligation]]
+id = "sf.dml.copy-into-location.o425"
+kind = "operand_type_class"
+required = true
+target = "<query> #2"
+note = "a valid query"
+
+[[obligation]]
+id = "sf.dml.copy-into-location.o426"
+kind = "negative_neighbour"
+required = true
+target = "<query> #2"
+note = "a bare literal in place of <query>"
+
+[[obligation]]
+id = "sf.dml.copy-into-location.o427"
+kind = "option_present"
+required = true
+target = "[ { STORAGE_INTEGRATION = <integration_name> | CREDENTIALS = ( AWS_KEY_ID = '<string>' AWS_SECRET_KEY = '<string>' [ AW…"
+
+[[obligation]]
+id = "sf.dml.copy-into-location.o428"
+kind = "option_absent"
+required = true
+target = "[ { STORAGE_INTEGRATION = <integration_name> | CREDENTIALS = ( AWS_KEY_ID = '<string>' AWS_SECRET_KEY = '<string>' [ AW…"
+
+[[obligation]]
+id = "sf.dml.copy-into-location.o429"
+kind = "alternative"
+required = true
+target = "{ STORAGE_INTEGRATION = <integration_name> | CREDENTIALS = ( AWS_KEY_ID = '<… → STORAGE_INTEGRATION = <integration_name>"
+
+[[obligation]]
+id = "sf.dml.copy-into-location.o430"
+kind = "alternative"
+required = true
+target = "{ STORAGE_INTEGRATION = <integration_name> | CREDENTIALS = … → CREDENTIALS = ( AWS_KEY_ID = '<string>' AWS_SECRET_KEY = '<string>' [ AWS_TOKEN = '<string>' ] )"
+
+[[obligation]]
+id = "sf.dml.copy-into-location.o431"
+kind = "required_operand_missing"
+required = true
+target = "<integration_name> in [ { STORAGE_INTEGRATION = <integration_name> | CREDENTIALS = ( AWS_KEY_ID = '<string>' AWS_SECRET…"
+note = "omit <integration_name>"
+
+[[obligation]]
+id = "sf.dml.copy-into-location.o432"
+kind = "operand_type_class"
+required = true
+target = "<integration_name> in [ { STORAGE_INTEGRATION = <integration_name> | CREDENTIALS = ( AWS_KEY_ID = '<string>' AWS_SECRET…"
+note = "a valid identifier"
+
+[[obligation]]
+id = "sf.dml.copy-into-location.o433"
+kind = "negative_neighbour"
+required = true
+target = "<integration_name> in [ { STORAGE_INTEGRATION = <integration_name> | CREDENTIALS = ( AWS_KEY_ID = '<string>' AWS_SECRET…"
 note = "a string literal in place of <integration_name>"
 
 [[obligation]]
-id = "sf.dml.copy-into-location.o387"
-kind = "alternative"
-required = true
-target = "{ AWS_KEY_ID = '<string>' AWS_SECRET_KEY = '<string>' [ AWS… → AWS_KEY_ID = '<string>' AWS_SECRET_KEY = '<string>' [ AWS_TOKEN = '<string>' ]"
-
-[[obligation]]
-id = "sf.dml.copy-into-location.o388"
-kind = "alternative"
-required = true
-target = "{ AWS_KEY_ID = '<string>' AWS_SECRET_KEY = '<string>' [ AWS_TOKEN = '<string>' ] | AZURE… → AZURE_SAS_TOKEN = '<string>'"
-
-[[obligation]]
-id = "sf.dml.copy-into-location.o389"
+id = "sf.dml.copy-into-location.o434"
 kind = "required_operand_missing"
 required = true
-target = "'<string>' in [ { STORAGE_INTEGRATION = <integration_name> | CREDENTIALS = ( { AWS_KEY_ID = '<string>' AWS_SECRET_KEY =…"
+target = "'<string>' in [ { STORAGE_INTEGRATION = <integration_name> | CREDENTIALS = ( AWS_KEY_ID = '<string>' AWS_SECRET_KEY = '…"
 note = "omit '<string>'"
 
 [[obligation]]
-id = "sf.dml.copy-into-location.o390"
+id = "sf.dml.copy-into-location.o435"
 kind = "operand_type_class"
 required = true
-target = "'<string>' in [ { STORAGE_INTEGRATION = <integration_name> | CREDENTIALS = ( { AWS_KEY_ID = '<string>' AWS_SECRET_KEY =…"
+target = "'<string>' in [ { STORAGE_INTEGRATION = <integration_name> | CREDENTIALS = ( AWS_KEY_ID = '<string>' AWS_SECRET_KEY = '…"
 note = "a valid string_literal"
 
 [[obligation]]
-id = "sf.dml.copy-into-location.o391"
+id = "sf.dml.copy-into-location.o436"
 kind = "negative_neighbour"
 required = true
-target = "'<string>' in [ { STORAGE_INTEGRATION = <integration_name> | CREDENTIALS = ( { AWS_KEY_ID = '<string>' AWS_SECRET_KEY =…"
+target = "'<string>' in [ { STORAGE_INTEGRATION = <integration_name> | CREDENTIALS = ( AWS_KEY_ID = '<string>' AWS_SECRET_KEY = '…"
 note = "an unquoted identifier in place of '<string>'"
 
 [[obligation]]
-id = "sf.dml.copy-into-location.o392"
+id = "sf.dml.copy-into-location.o437"
 kind = "required_operand_missing"
 required = true
-target = "'<string>' in [ { STORAGE_INTEGRATION = <integration_name> | CREDENTIALS = ( { AWS_KEY_ID = '<string>' AWS_SECRET_KEY =… #2"
+target = "'<string>' in [ { STORAGE_INTEGRATION = <integration_name> | CREDENTIALS = ( AWS_KEY_ID = '<string>' AWS_SECRET_KEY = '… #2"
 note = "omit '<string>'"
 
 [[obligation]]
-id = "sf.dml.copy-into-location.o393"
+id = "sf.dml.copy-into-location.o438"
 kind = "operand_type_class"
 required = true
-target = "'<string>' in [ { STORAGE_INTEGRATION = <integration_name> | CREDENTIALS = ( { AWS_KEY_ID = '<string>' AWS_SECRET_KEY =… #2"
+target = "'<string>' in [ { STORAGE_INTEGRATION = <integration_name> | CREDENTIALS = ( AWS_KEY_ID = '<string>' AWS_SECRET_KEY = '… #2"
 note = "a valid string_literal"
 
 [[obligation]]
-id = "sf.dml.copy-into-location.o394"
+id = "sf.dml.copy-into-location.o439"
 kind = "negative_neighbour"
 required = true
-target = "'<string>' in [ { STORAGE_INTEGRATION = <integration_name> | CREDENTIALS = ( { AWS_KEY_ID = '<string>' AWS_SECRET_KEY =… #2"
+target = "'<string>' in [ { STORAGE_INTEGRATION = <integration_name> | CREDENTIALS = ( AWS_KEY_ID = '<string>' AWS_SECRET_KEY = '… #2"
 note = "an unquoted identifier in place of '<string>'"
 
 [[obligation]]
@@ -1273,27 +1333,6 @@ target = "'<string>' in [ AWS_TOKEN = '<string>' ]"
 note = "an unquoted identifier in place of '<string>'"
 
 [[obligation]]
-id = "sf.dml.copy-into-location.o395"
-kind = "required_operand_missing"
-required = true
-target = "'<string>' in [ { STORAGE_INTEGRATION = <integration_name> | CREDENTIALS = ( { AWS_KEY_ID = '<string>' AWS_SECRET_KEY =… #3"
-note = "omit '<string>'"
-
-[[obligation]]
-id = "sf.dml.copy-into-location.o396"
-kind = "operand_type_class"
-required = true
-target = "'<string>' in [ { STORAGE_INTEGRATION = <integration_name> | CREDENTIALS = ( { AWS_KEY_ID = '<string>' AWS_SECRET_KEY =… #3"
-note = "a valid string_literal"
-
-[[obligation]]
-id = "sf.dml.copy-into-location.o397"
-kind = "negative_neighbour"
-required = true
-target = "'<string>' in [ { STORAGE_INTEGRATION = <integration_name> | CREDENTIALS = ( { AWS_KEY_ID = '<string>' AWS_SECRET_KEY =… #3"
-note = "an unquoted identifier in place of '<string>'"
-
-[[obligation]]
 id = "sf.dml.copy-into-location.o121"
 kind = "option_present"
 required = true
@@ -1324,16 +1363,10 @@ required = true
 target = "{ [ TYPE = 'AWS_CSE' ] [ MASTER_KEY = '<string>' ] | TYPE = 'AWS_SSE… → TYPE = 'AWS_SSE_KMS' [ KMS_KEY_ID = '<string>' ]"
 
 [[obligation]]
-id = "sf.dml.copy-into-location.o398"
+id = "sf.dml.copy-into-location.o440"
 kind = "alternative"
 required = true
-target = "{ [ TYPE = 'AWS_CSE' ] [ MASTER_KEY = '<string>' ] | TYPE = 'AWS_SSE… → TYPE = 'GCS_SSE_KMS' [ KMS_KEY_ID = '<string>' ]"
-
-[[obligation]]
-id = "sf.dml.copy-into-location.o399"
-kind = "alternative"
-required = true
-target = "{ [ TYPE = 'AWS_CSE' ] [ MASTER_KEY = '<string>' ] | TYPE =… → TYPE = { 'AZURE_CSE' | 'NONE' } [ MASTER_KEY = '<string>' ]"
+target = "{ [ TYPE = 'AWS_CSE' ] [ MASTER_KEY = '<string>' ] | TYPE = 'AWS_SSE_S3' | TYPE = 'AWS_SSE_KMS' [ KMS_K… → TYPE = 'NONE'"
 
 [[obligation]]
 id = "sf.dml.copy-into-location.o127"
@@ -1414,6 +1447,183 @@ target = "'<string>' in [ KMS_KEY_ID = '<string>' ]"
 note = "an unquoted identifier in place of '<string>'"
 
 [[obligation]]
+id = "sf.dml.copy-into-location.o441"
+kind = "required_operand_missing"
+required = true
+target = "'<gcs_url>'"
+note = "omit '<gcs_url>'"
+
+[[obligation]]
+id = "sf.dml.copy-into-location.o140"
+kind = "operand_type_class"
+required = true
+target = "'<gcs_url>'"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.dml.copy-into-location.o141"
+kind = "negative_neighbour"
+required = true
+target = "'<gcs_url>'"
+note = "an unquoted identifier in place of '<gcs_url>'"
+
+[[obligation]]
+id = "sf.dml.copy-into-location.o442"
+kind = "alternative"
+required = true
+target = "{ [ <namespace> . ] <table_name> | ( <query> ) } → [ <namespace> . ] <table_name> #3"
+
+[[obligation]]
+id = "sf.dml.copy-into-location.o443"
+kind = "alternative"
+required = true
+target = "{ [ <namespace> . ] <table_name> | ( <query> ) } → ( <query> ) #3"
+
+[[obligation]]
+id = "sf.dml.copy-into-location.o444"
+kind = "option_present"
+required = true
+target = "[ <namespace> . ] #6"
+
+[[obligation]]
+id = "sf.dml.copy-into-location.o445"
+kind = "option_absent"
+required = true
+target = "[ <namespace> . ] #6"
+
+[[obligation]]
+id = "sf.dml.copy-into-location.o446"
+kind = "required_operand_missing"
+required = true
+target = "<namespace> in [ <namespace> . ] #6"
+note = "omit <namespace>"
+
+[[obligation]]
+id = "sf.dml.copy-into-location.o447"
+kind = "operand_type_class"
+required = true
+target = "<namespace> in [ <namespace> . ] #6"
+note = "a valid identifier"
+
+[[obligation]]
+id = "sf.dml.copy-into-location.o448"
+kind = "negative_neighbour"
+required = true
+target = "<namespace> in [ <namespace> . ] #6"
+note = "a string literal in place of <namespace>"
+
+[[obligation]]
+id = "sf.dml.copy-into-location.o449"
+kind = "required_operand_missing"
+required = true
+target = "<table_name> #4"
+note = "omit <table_name>"
+
+[[obligation]]
+id = "sf.dml.copy-into-location.o450"
+kind = "operand_type_class"
+required = true
+target = "<table_name> #4"
+note = "a valid identifier"
+
+[[obligation]]
+id = "sf.dml.copy-into-location.o451"
+kind = "negative_neighbour"
+required = true
+target = "<table_name> #4"
+note = "a string literal in place of <table_name>"
+
+[[obligation]]
+id = "sf.dml.copy-into-location.o452"
+kind = "required_operand_missing"
+required = true
+target = "<query> #3"
+note = "omit <query>"
+
+[[obligation]]
+id = "sf.dml.copy-into-location.o453"
+kind = "operand_type_class"
+required = true
+target = "<query> #3"
+note = "a valid query"
+
+[[obligation]]
+id = "sf.dml.copy-into-location.o454"
+kind = "negative_neighbour"
+required = true
+target = "<query> #3"
+note = "a bare literal in place of <query>"
+
+[[obligation]]
+id = "sf.dml.copy-into-location.o455"
+kind = "option_present"
+required = true
+target = "[ STORAGE_INTEGRATION = <integration_name> ]"
+
+[[obligation]]
+id = "sf.dml.copy-into-location.o456"
+kind = "option_absent"
+required = true
+target = "[ STORAGE_INTEGRATION = <integration_name> ]"
+
+[[obligation]]
+id = "sf.dml.copy-into-location.o457"
+kind = "required_operand_missing"
+required = true
+target = "<integration_name> in [ STORAGE_INTEGRATION = <integration_name> ]"
+note = "omit <integration_name>"
+
+[[obligation]]
+id = "sf.dml.copy-into-location.o458"
+kind = "operand_type_class"
+required = true
+target = "<integration_name> in [ STORAGE_INTEGRATION = <integration_name> ]"
+note = "a valid identifier"
+
+[[obligation]]
+id = "sf.dml.copy-into-location.o459"
+kind = "negative_neighbour"
+required = true
+target = "<integration_name> in [ STORAGE_INTEGRATION = <integration_name> ]"
+note = "a string literal in place of <integration_name>"
+
+[[obligation]]
+id = "sf.dml.copy-into-location.o460"
+kind = "option_present"
+required = true
+target = "[ ENCRYPTION = ( { [ TYPE = 'GCS_SSE_KMS' ] [ KMS_KEY_ID = '<string>' ] | TYPE = 'NONE' } ) ]"
+
+[[obligation]]
+id = "sf.dml.copy-into-location.o461"
+kind = "option_absent"
+required = true
+target = "[ ENCRYPTION = ( { [ TYPE = 'GCS_SSE_KMS' ] [ KMS_KEY_ID = '<string>' ] | TYPE = 'NONE' } ) ]"
+
+[[obligation]]
+id = "sf.dml.copy-into-location.o462"
+kind = "alternative"
+required = true
+target = "{ [ TYPE = 'GCS_SSE_KMS' ] [ KMS_KEY_ID = '<string>' ] | TYPE = … → [ TYPE = 'GCS_SSE_KMS' ] [ KMS_KEY_ID = '<string>' ]"
+
+[[obligation]]
+id = "sf.dml.copy-into-location.o463"
+kind = "alternative"
+required = true
+target = "{ [ TYPE = 'GCS_SSE_KMS' ] [ KMS_KEY_ID = '<string>' ] | TYPE = 'NONE' } → TYPE = 'NONE'"
+
+[[obligation]]
+id = "sf.dml.copy-into-location.o464"
+kind = "option_present"
+required = true
+target = "[ TYPE = 'GCS_SSE_KMS' ]"
+
+[[obligation]]
+id = "sf.dml.copy-into-location.o465"
+kind = "option_absent"
+required = true
+target = "[ TYPE = 'GCS_SSE_KMS' ]"
+
+[[obligation]]
 id = "sf.dml.copy-into-location.o153"
 kind = "option_present"
 required = true
@@ -1445,6 +1655,216 @@ kind = "negative_neighbour"
 required = true
 target = "'<string>' in [ KMS_KEY_ID = '<string>' ] #2"
 note = "an unquoted identifier in place of '<string>'"
+
+[[obligation]]
+id = "sf.dml.copy-into-location.o466"
+kind = "required_operand_missing"
+required = true
+target = "'<azure_url>'"
+note = "omit '<azure_url>'"
+
+[[obligation]]
+id = "sf.dml.copy-into-location.o159"
+kind = "operand_type_class"
+required = true
+target = "'<azure_url>'"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.dml.copy-into-location.o160"
+kind = "negative_neighbour"
+required = true
+target = "'<azure_url>'"
+note = "an unquoted identifier in place of '<azure_url>'"
+
+[[obligation]]
+id = "sf.dml.copy-into-location.o467"
+kind = "alternative"
+required = true
+target = "{ [ <namespace> . ] <table_name> | ( <query> ) } → [ <namespace> . ] <table_name> #4"
+
+[[obligation]]
+id = "sf.dml.copy-into-location.o468"
+kind = "alternative"
+required = true
+target = "{ [ <namespace> . ] <table_name> | ( <query> ) } → ( <query> ) #4"
+
+[[obligation]]
+id = "sf.dml.copy-into-location.o469"
+kind = "option_present"
+required = true
+target = "[ <namespace> . ] #7"
+
+[[obligation]]
+id = "sf.dml.copy-into-location.o470"
+kind = "option_absent"
+required = true
+target = "[ <namespace> . ] #7"
+
+[[obligation]]
+id = "sf.dml.copy-into-location.o471"
+kind = "required_operand_missing"
+required = true
+target = "<namespace> in [ <namespace> . ] #7"
+note = "omit <namespace>"
+
+[[obligation]]
+id = "sf.dml.copy-into-location.o472"
+kind = "operand_type_class"
+required = true
+target = "<namespace> in [ <namespace> . ] #7"
+note = "a valid identifier"
+
+[[obligation]]
+id = "sf.dml.copy-into-location.o473"
+kind = "negative_neighbour"
+required = true
+target = "<namespace> in [ <namespace> . ] #7"
+note = "a string literal in place of <namespace>"
+
+[[obligation]]
+id = "sf.dml.copy-into-location.o474"
+kind = "required_operand_missing"
+required = true
+target = "<table_name> #5"
+note = "omit <table_name>"
+
+[[obligation]]
+id = "sf.dml.copy-into-location.o475"
+kind = "operand_type_class"
+required = true
+target = "<table_name> #5"
+note = "a valid identifier"
+
+[[obligation]]
+id = "sf.dml.copy-into-location.o476"
+kind = "negative_neighbour"
+required = true
+target = "<table_name> #5"
+note = "a string literal in place of <table_name>"
+
+[[obligation]]
+id = "sf.dml.copy-into-location.o477"
+kind = "required_operand_missing"
+required = true
+target = "<query> #4"
+note = "omit <query>"
+
+[[obligation]]
+id = "sf.dml.copy-into-location.o478"
+kind = "operand_type_class"
+required = true
+target = "<query> #4"
+note = "a valid query"
+
+[[obligation]]
+id = "sf.dml.copy-into-location.o479"
+kind = "negative_neighbour"
+required = true
+target = "<query> #4"
+note = "a bare literal in place of <query>"
+
+[[obligation]]
+id = "sf.dml.copy-into-location.o480"
+kind = "option_present"
+required = true
+target = "[ { STORAGE_INTEGRATION = <integration_name> | CREDENTIALS = ( [ AZURE_SAS_TOKEN = '<string>' ] ) } ]"
+
+[[obligation]]
+id = "sf.dml.copy-into-location.o481"
+kind = "option_absent"
+required = true
+target = "[ { STORAGE_INTEGRATION = <integration_name> | CREDENTIALS = ( [ AZURE_SAS_TOKEN = '<string>' ] ) } ]"
+
+[[obligation]]
+id = "sf.dml.copy-into-location.o482"
+kind = "alternative"
+required = true
+target = "{ STORAGE_INTEGRATION = <integration_name> | CREDENTIALS = ( [ AZURE_SAS_TOK… → STORAGE_INTEGRATION = <integration_name>"
+
+[[obligation]]
+id = "sf.dml.copy-into-location.o483"
+kind = "alternative"
+required = true
+target = "{ STORAGE_INTEGRATION = <integration_name> | CREDENTIALS = ( [ AZU… → CREDENTIALS = ( [ AZURE_SAS_TOKEN = '<string>' ] )"
+
+[[obligation]]
+id = "sf.dml.copy-into-location.o484"
+kind = "required_operand_missing"
+required = true
+target = "<integration_name> in [ { STORAGE_INTEGRATION = <integration_name> | CREDENTIALS = ( [ AZURE_SAS_TOKEN = '<string>' ] )…"
+note = "omit <integration_name>"
+
+[[obligation]]
+id = "sf.dml.copy-into-location.o485"
+kind = "operand_type_class"
+required = true
+target = "<integration_name> in [ { STORAGE_INTEGRATION = <integration_name> | CREDENTIALS = ( [ AZURE_SAS_TOKEN = '<string>' ] )…"
+note = "a valid identifier"
+
+[[obligation]]
+id = "sf.dml.copy-into-location.o486"
+kind = "negative_neighbour"
+required = true
+target = "<integration_name> in [ { STORAGE_INTEGRATION = <integration_name> | CREDENTIALS = ( [ AZURE_SAS_TOKEN = '<string>' ] )…"
+note = "a string literal in place of <integration_name>"
+
+[[obligation]]
+id = "sf.dml.copy-into-location.o487"
+kind = "option_present"
+required = true
+target = "[ AZURE_SAS_TOKEN = '<string>' ]"
+
+[[obligation]]
+id = "sf.dml.copy-into-location.o488"
+kind = "option_absent"
+required = true
+target = "[ AZURE_SAS_TOKEN = '<string>' ]"
+
+[[obligation]]
+id = "sf.dml.copy-into-location.o489"
+kind = "required_operand_missing"
+required = true
+target = "'<string>' in [ AZURE_SAS_TOKEN = '<string>' ]"
+note = "omit '<string>'"
+
+[[obligation]]
+id = "sf.dml.copy-into-location.o490"
+kind = "operand_type_class"
+required = true
+target = "'<string>' in [ AZURE_SAS_TOKEN = '<string>' ]"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.dml.copy-into-location.o491"
+kind = "negative_neighbour"
+required = true
+target = "'<string>' in [ AZURE_SAS_TOKEN = '<string>' ]"
+note = "an unquoted identifier in place of '<string>'"
+
+[[obligation]]
+id = "sf.dml.copy-into-location.o492"
+kind = "option_present"
+required = true
+target = "[ ENCRYPTION = ( [ TYPE = { 'AZURE_CSE' | 'NONE' } ] [ MASTER_KEY = '<string>' ] ) ]"
+
+[[obligation]]
+id = "sf.dml.copy-into-location.o493"
+kind = "option_absent"
+required = true
+target = "[ ENCRYPTION = ( [ TYPE = { 'AZURE_CSE' | 'NONE' } ] [ MASTER_KEY = '<string>' ] ) ]"
+
+[[obligation]]
+id = "sf.dml.copy-into-location.o494"
+kind = "option_present"
+required = true
+target = "[ TYPE = { 'AZURE_CSE' | 'NONE' } ]"
+
+[[obligation]]
+id = "sf.dml.copy-into-location.o495"
+kind = "option_absent"
+required = true
+target = "[ TYPE = { 'AZURE_CSE' | 'NONE' } ]"
 
 [[obligation]]
 id = "sf.dml.copy-into-location.o177"
@@ -2396,12 +2816,6 @@ required = true
 note = "the form without its required INTO"
 
 [[obligation]]
-id = "sf.dml.copy-into-location.o400"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required { { @ [ <namespace> . ] <int_stage_name> [ / <path> ] | @ [ <namespace> . ] % <table_name> [ / <path> ] | @ ~ [ / <path> ] } | @ [ <namespace> . ] <ext_stage_name> [ / <path> ] | '<s3_url>' | '<gcs_url>' | '<azure_url>' }"
-
-[[obligation]]
 id = "sf.dml.copy-into-location.o044"
 kind = "negative_neighbour"
 required = true
@@ -2420,28 +2834,28 @@ required = true
 note = "the form without its required { [ <namespace> . ] <table_name> | ( <query> ) }"
 
 [[obligation]]
-id = "sf.dml.copy-into-location.o401"
+id = "sf.dml.copy-into-location.o496"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required ( in [ { STORAGE_INTEGRATION = <integration_name> | CREDENTIALS = ( { AWS_KEY_ID = '<string>' AWS_SECRET_KEY = '<string>' [ …"
+note = "the form without its required ( in [ { STORAGE_INTEGRATION = <integration_name> | CREDENTIALS = ( AWS_KEY_ID = '<string>' AWS_SECRET_KEY = '<string>' [ AW…"
 
 [[obligation]]
-id = "sf.dml.copy-into-location.o402"
+id = "sf.dml.copy-into-location.o497"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required AWS_SECRET_KEY in [ { STORAGE_INTEGRATION = <integration_name> | CREDENTIALS = ( { AWS_KEY_ID = '<string>' AWS_SECRET_KEY = '<string>' [ …"
+note = "the form without its required AWS_KEY_ID in [ { STORAGE_INTEGRATION = <integration_name> | CREDENTIALS = ( AWS_KEY_ID = '<string>' AWS_SECRET_KEY = '<string>' [ AW…"
 
 [[obligation]]
-id = "sf.dml.copy-into-location.o403"
+id = "sf.dml.copy-into-location.o498"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required { AWS_KEY_ID = '<string>' AWS_SECRET_KEY = '<string>' [ AWS_TOKEN = '<string>' ] | AZURE_SAS_TOKEN = '<string>' } in [ { STORAGE_INTEGRATION = <integration_name> | CREDENTIALS = ( { AWS_KEY_ID = '<string>' AWS_SECRET_KEY = '<string>' [ …"
+note = "the form without its required AWS_SECRET_KEY in [ { STORAGE_INTEGRATION = <integration_name> | CREDENTIALS = ( AWS_KEY_ID = '<string>' AWS_SECRET_KEY = '<string>' [ AW…"
 
 [[obligation]]
-id = "sf.dml.copy-into-location.o404"
+id = "sf.dml.copy-into-location.o499"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required ) in [ { STORAGE_INTEGRATION = <integration_name> | CREDENTIALS = ( { AWS_KEY_ID = '<string>' AWS_SECRET_KEY = '<string>' [ …"
+note = "the form without its required ) in [ { STORAGE_INTEGRATION = <integration_name> | CREDENTIALS = ( AWS_KEY_ID = '<string>' AWS_SECRET_KEY = '<string>' [ AW…"
 
 [[obligation]]
 id = "sf.dml.copy-into-location.o334"
@@ -2450,16 +2864,58 @@ required = true
 note = "the form without its required ( in [ ENCRYPTION = ( { [ TYPE = 'AWS_CSE' ] [ MASTER_KEY = '<string>' ] | TYPE = 'AWS_SSE_S3' | TYPE = 'AWS_SSE_KMS' [ KMS_…"
 
 [[obligation]]
-id = "sf.dml.copy-into-location.o405"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required { 'AZURE_CSE' | 'NONE' } in [ ENCRYPTION = ( { [ TYPE = 'AWS_CSE' ] [ MASTER_KEY = '<string>' ] | TYPE = 'AWS_SSE_S3' | TYPE = 'AWS_SSE_KMS' [ KMS_…"
-
-[[obligation]]
 id = "sf.dml.copy-into-location.o335"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required ) in [ ENCRYPTION = ( { [ TYPE = 'AWS_CSE' ] [ MASTER_KEY = '<string>' ] | TYPE = 'AWS_SSE_S3' | TYPE = 'AWS_SSE_KMS' [ KMS_…"
+
+[[obligation]]
+id = "sf.dml.copy-into-location.o500"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( in [ ENCRYPTION = ( { [ TYPE = 'GCS_SSE_KMS' ] [ KMS_KEY_ID = '<string>' ] | TYPE = 'NONE' } ) ]"
+
+[[obligation]]
+id = "sf.dml.copy-into-location.o501"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) in [ ENCRYPTION = ( { [ TYPE = 'GCS_SSE_KMS' ] [ KMS_KEY_ID = '<string>' ] | TYPE = 'NONE' } ) ]"
+
+[[obligation]]
+id = "sf.dml.copy-into-location.o502"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( in [ { STORAGE_INTEGRATION = <integration_name> | CREDENTIALS = ( [ AZURE_SAS_TOKEN = '<string>' ] ) } ]"
+
+[[obligation]]
+id = "sf.dml.copy-into-location.o503"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) in [ { STORAGE_INTEGRATION = <integration_name> | CREDENTIALS = ( [ AZURE_SAS_TOKEN = '<string>' ] ) } ]"
+
+[[obligation]]
+id = "sf.dml.copy-into-location.o504"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( in [ ENCRYPTION = ( [ TYPE = { 'AZURE_CSE' | 'NONE' } ] [ MASTER_KEY = '<string>' ] ) ]"
+
+[[obligation]]
+id = "sf.dml.copy-into-location.o505"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { 'AZURE_CSE' | 'NONE' } in [ TYPE = { 'AZURE_CSE' | 'NONE' } ]"
+
+[[obligation]]
+id = "sf.dml.copy-into-location.o506"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) in [ ENCRYPTION = ( [ TYPE = { 'AZURE_CSE' | 'NONE' } ] [ MASTER_KEY = '<string>' ] ) ]"
+
+[[obligation]]
+id = "sf.dml.copy-into-location.o507"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { { { @ [ <namespace> . ] <int_stage_name> [ / <path> ] | @ [ <namespace> . ] % <table_name> [ / <path> ] | @ ~ [ / <path> ] } | @ [ <namespace> . ] <ext_stage_name> [ / <path> ] } FROM { [ <namespace> . ] <table_name> | ( <query> ) } | '<s3_url>' FROM { [ <namespace> . ] <table_name> | ( <query> ) } [ { STORAGE_INTEGRATION = <integration_name> | CREDENTIALS = ( AWS_KEY_ID = '<string>' AWS_SECRET_KEY = '<string>' [ AWS_TOKEN = '<string>' ] ) } ] [ ENCRYPTION = ( { [ TYPE = 'AWS_CSE' ] [ MASTER_KEY = '<string>' ] | TYPE = 'AWS_SSE_S3' | TYPE = 'AWS_SSE_KMS' [ KMS_KEY_ID = '<string>' ] | TYPE = 'NONE' } ) ] | '<gcs_url>' FROM { [ <namespace> . ] <table_name> | ( <query> ) } [ STORAGE_INTEGRATION = <integration_name> ] [ ENCRYPTION = ( { [ TYPE = 'GCS_SSE_KMS' ] [ KMS_KEY_ID = '<string>' ] | TYPE = 'NONE' } ) ] | '<azure_url>' FROM { [ <namespace> . ] <table_name> | ( <query> ) } [ { STORAGE_INTEGRATION = <integration_name> | CREDENTIALS = ( [ AZURE_SAS_TOKEN = '<string>' ] ) } ] [ ENCRYPTION = ( [ TYPE = { 'AZURE_CSE' | 'NONE' } ] [ MASTER_KEY = '<string>' ] ) ] }"
 
 [[obligation]]
 id = "sf.dml.copy-into-location.o047"
@@ -2754,6 +3210,27 @@ required = true
 target = "MAX_FILE_SIZE = <num>"
 anchor = "doc.sql.copy-into-location / Copy options"
 note = "MAX_FILE_SIZE = 5,368,709,121 against the documented maximum of 5,368,709,120 (5 GB)"
+
+[[obligation]]
+id = "sf.dml.copy-into-location.o508"
+kind = "positive"
+required = true
+anchor = "doc.sql.copy-into-location / Syntax"
+note = "Amazon S3 location parameters before FROM, in the position the page's grammar shows (observed: its examples place them after FROM)"
+
+[[obligation]]
+id = "sf.dml.copy-into-location.o509"
+kind = "positive"
+required = true
+anchor = "doc.sql.copy-into-location / Syntax"
+note = "Google Cloud Storage location parameters before FROM, in the position the page's grammar shows (observed: its examples place them after FROM)"
+
+[[obligation]]
+id = "sf.dml.copy-into-location.o510"
+kind = "positive"
+required = true
+anchor = "doc.sql.copy-into-location / Syntax"
+note = "Microsoft Azure location parameters before FROM, in the position the page's grammar shows (observed: its examples place them after FROM)"
 
 [[obligation]]
 id = "sf.dml.copy-into-table.internalstage-externalstage-externallocation.o001"
