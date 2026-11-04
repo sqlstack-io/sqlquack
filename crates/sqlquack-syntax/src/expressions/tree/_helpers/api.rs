@@ -434,6 +434,7 @@ impl Expression {
             Expression::Describe(_) => "describe",
             Expression::Show(_) => "show",
             Expression::Command(_) => "command",
+            Expression::ScriptingBlock(_) => "scripting_block",
             Expression::TryCatch(_) => "try_catch",
             Expression::Kill(_) => "kill",
             Expression::Prepare(_) => "prepare",

@@ -1,7 +1,7 @@
 //! Expected differences.
 
 use crate::expected::_helpers::quoting::{compact, differ_only_by_kept_quoting};
-use crate::expected::constants::ERROR_PREFIX;
+use crate::expected::constants::{COMMAND_TREE, ERROR_PREFIX, OK_PREFIX};
 use std::collections::{BTreeMap, BTreeSet};
 
 use serde::Deserialize;
@@ -22,6 +22,23 @@ pub struct ExpectedFile {
     /// One entry per reviewed name whose quoting polyglot drops and SQLQuack keeps.
     #[serde(default, rename = "kept_quoting")]
     pub kept_quotings: Vec<KeptQuoting>,
+    /// One entry per reviewed statement polyglot keeps as a command and SQLQuack structures.
+    #[serde(default, rename = "structured")]
+    pub structured: Vec<StructuredStatement>,
+}
+
+/// A statement polyglot parses into an opaque command and SQLQuack parses into a structured node.
+#[derive(Clone, Debug, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct StructuredStatement {
+    /// A lower-case identifier.
+    pub id: String,
+    /// Text the statement contains, with whitespace removed and ignoring case, such as `BEGIN`.
+    pub marker: String,
+    /// The node SQLQuack's tree starts with, such as `scripting_block`.
+    pub sqlquack_node: String,
+    /// Why SQLQuack's structure is right; a test in sqlquack-syntax pins its tree.
+    pub note: String,
 }
 
 /// A statement both parsers parse, where polyglot drops the quoting of names SQLQuack keeps quoted.
@@ -89,6 +106,8 @@ pub struct ExpectedDifferences {
     pub rejections: Vec<ParserRejection>,
     /// The reviewed names whose quoting polyglot drops.
     pub kept_quotings: Vec<KeptQuoting>,
+    /// The reviewed statements polyglot keeps as a command and SQLQuack structures.
+    pub structured: Vec<StructuredStatement>,
 }
 
 impl ParserFix {
@@ -138,6 +157,21 @@ impl ExpectedDifferences {
             .iter()
             .find(|entry| compact.contains(&entry.marker.to_ascii_uppercase()))
             .filter(|_| differ_only_by_kept_quoting(polyglot, sqlquack))
+    }
+
+    /// The entry explaining where SQLQuack structures a statement polyglot keeps as a command.
+    pub fn structured_for(
+        &self,
+        sql: &str,
+        polyglot: &str,
+        sqlquack: &str,
+    ) -> Option<&StructuredStatement> {
+        let compact = compact(sql);
+        self.structured.iter().find(|entry| {
+            polyglot.starts_with(&format!("{OK_PREFIX}{COMMAND_TREE}"))
+                && sqlquack.starts_with(&format!("{OK_PREFIX}[{{\"{}\":", entry.sqlquack_node))
+                && compact.contains(&entry.marker.to_ascii_uppercase())
+        })
     }
 
     /// Whether keeping `name` where polyglot makes `polyglot` of it is listed.

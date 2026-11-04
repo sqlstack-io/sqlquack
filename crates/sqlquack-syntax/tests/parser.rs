@@ -6,5 +6,7 @@ mod test_faithful;
 mod test_fixes;
 #[path = "parser/test_located.rs"]
 mod test_located;
+#[path = "parser/test_scripting.rs"]
+mod test_scripting;
 #[path = "parser/test_types.rs"]
 mod test_types;
