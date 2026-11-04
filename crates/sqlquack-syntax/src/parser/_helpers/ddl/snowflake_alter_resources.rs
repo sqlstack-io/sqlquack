@@ -1,11 +1,11 @@
 //! Parser ddl: Snowflake ALTER of schemas, stages, file formats, routines, services and project objects.
 
-use super::snowflake_alter::alter_object;
-use super::snowflake_alter::property;
 use crate::expressions::names::models::Literal;
 use crate::expressions::schema_objects::models::ObjectProperty;
 use crate::expressions::tree::models::Expression;
 use crate::expressions::types::models::Tuple;
+use crate::parser::_helpers::ddl::snowflake_alter::alter_object;
+use crate::parser::_helpers::ddl::snowflake_alter::property;
 use crate::parser::models::Parser;
 use crate::tokens::models::TokenType;
 use crate::tokens::types::Result;
@@ -36,14 +36,98 @@ const RESOURCE_KINDS: &[&[&str]] = &[
 /// The operands and properties of one ALTER action.
 type ActionParts = (Vec<Expression>, Vec<ObjectProperty>);
 
+/// The actions an ALTER of `kind` takes, each as its words.
+fn resource_actions(kind: &str) -> &'static [&'static [&'static str]] {
+    match kind {
+        "AGENT" => &[&["MODIFY", "LIVE", "VERSION", "SET"], &["SET"], &["UNSET"]],
+        "COMPUTE POOL" => &[
+            &["STOP", "ALL"],
+            &["SUSPEND"],
+            &["RESUME"],
+            &["SET"],
+            &["UNSET"],
+        ],
+        "DBT PROJECT" => &[&["DEPLOY", "FROM"], &["RENAME", "TO"], &["SET"], &["UNSET"]],
+        "DCM PROJECT" => &[&["DROP", "DEPLOYMENT"], &["SET"], &["UNSET"]],
+        "EVENT ROUTING TABLE" => &[
+            &["MODIFY", "RULE"],
+            &["RENAME", "TO"],
+            &["FORCE", "SET", "RULES"],
+            &["FORCE", "SET", "RULE"],
+            &["FORCE", "UNSET", "RULE"],
+            &["SET", "RULES"],
+            &["SET", "RULE"],
+            &["UNSET", "RULE"],
+        ],
+        "EXTERNAL AGENT" => &[&["ADD", "VERSION"], &["SET"], &["UNSET"]],
+        "EXTERNAL TABLE" => &[
+            &["ADD", "FILES"],
+            &["REMOVE", "FILES"],
+            &["ADD", "PARTITION"],
+            &["DROP", "PARTITION", "LOCATION"],
+            &["REFRESH"],
+            &["SET"],
+            &["UNSET"],
+        ],
+        "GATEWAY" => &[&["FROM", "SPECIFICATION"]],
+        "GIT REPOSITORY" => &[&["FETCH"], &["SET"], &["UNSET"]],
+        "LISTING" => &[
+            &["PUBLISH"],
+            &["UNPUBLISH"],
+            &["REVIEW"],
+            &["ADD", "TARGETS"],
+            &["REMOVE", "TARGETS"],
+            &["ADD", "VERSION"],
+            &["AS"],
+            &["RENAME", "TO"],
+            &["SET"],
+            &["UNSET"],
+        ],
+        "MODEL" => &[
+            &["ADD", "VERSION"],
+            &["DROP", "VERSION"],
+            &["MODIFY", "VERSION"],
+            &["VERSION"],
+            &["RENAME", "TO"],
+            &["SET"],
+            &["UNSET"],
+        ],
+        "MODEL MONITOR" => &[
+            &["ADD"],
+            &["DROP"],
+            &["SUSPEND"],
+            &["RESUME"],
+            &["SET"],
+            &["UNSET"],
+        ],
+        "PROCEDURE" => &[&["EXECUTE", "AS"], &["RENAME", "TO"], &["SET"], &["UNSET"]],
+        "SCHEMA" => &[
+            &["ENABLE", "MANAGED", "ACCESS"],
+            &["DISABLE", "MANAGED", "ACCESS"],
+            &["RENAME", "TO"],
+            &["SWAP", "WITH"],
+            &["SET"],
+            &["UNSET"],
+        ],
+        "SERVICE" => &[
+            &["FROM"],
+            &["RESTORE", "VOLUME"],
+            &["SUSPEND"],
+            &["RESUME"],
+            &["SET"],
+            &["UNSET"],
+        ],
+        "STAGE" => &[&["REFRESH"], &["RENAME", "TO"], &["SET"], &["UNSET"]],
+        _ => &[&["RENAME", "TO"], &["SET"], &["UNSET"]],
+    }
+}
+
 impl Parser {
     /// Parse a Snowflake ALTER of a kind in RESOURCE_KINDS, or None when the next words name another kind.
     pub(super) fn parse_alter_snowflake_resource(&mut self) -> Result<Option<Expression>> {
         let model_named_monitor = self.check_identifier("MODEL")
             && self.check_next_identifier("MONITOR")
-            && self
-                .text_at(2)
-                .is_some_and(|text| text == "SET" || text == "UNSET");
+            && matches!(self.text_at(2).as_deref(), Some("SET" | "UNSET"));
         let words: &[&str] = if model_named_monitor && self.match_identifier("MODEL") {
             &["MODEL"]
         } else if let Some(words) = RESOURCE_KINDS
@@ -58,12 +142,12 @@ impl Parser {
         };
         let kind = words.join(" ");
         let head = self.parse_alter_object_head()?;
-        let arguments = if kind == "PROCEDURE" {
-            self.parse_routine_signature()?
-        } else {
-            Vec::new()
+        let arguments = match kind.as_str() {
+            "PROCEDURE" => self.parse_routine_signature()?,
+            _ => Vec::new(),
         };
-        let (action, parts) = self.parse_resource_action(&kind)?;
+        let action = self.expect_alter_words(resource_actions(&kind))?;
+        let (action, parts) = self.parse_resource_action(&kind, action)?;
         let Expression::AlterObject(mut alter) = alter_object(&kind, head, action, parts) else {
             return Err(self.parse_error("Expected an ALTER statement"));
         };
@@ -75,195 +159,110 @@ impl Parser {
     fn partial_resource_kind(&self) -> Option<String> {
         let first = self.text_at(0)?;
         let second = self.text_at(1).unwrap_or_default();
-        let complete: &[&str] = match first.as_str() {
-            "COMPUTE" => &["POOL"],
-            "DBT" | "DCM" => &["PROJECT"],
-            "GIT" => &["REPOSITORY"],
-            "FILE" => &["FORMAT"],
-            "EXTERNAL" => &["AGENT", "TABLE", "VOLUME", "CONSUMER", "ACCESS"],
-            "EVENT" => &["ROUTING"],
+        let complete = match (first.as_str(), second.as_str()) {
+            ("COMPUTE", "POOL")
+            | ("DBT" | "DCM", "PROJECT")
+            | ("GIT", "REPOSITORY")
+            | ("FILE", "FORMAT")
+            | ("EXTERNAL", "AGENT" | "TABLE" | "VOLUME" | "CONSUMER" | "ACCESS") => true,
+            ("EVENT", "ROUTING") => matches!(self.text_at(2).as_deref(), Some("TABLE")),
+            ("COMPUTE" | "DBT" | "DCM" | "GIT" | "FILE" | "EXTERNAL" | "EVENT", _) => false,
             _ => return None,
         };
-        let complete = complete.contains(&second.as_str())
-            && (first != "EVENT" || self.text_at(2).as_deref() == Some("TABLE"));
         (!complete).then(|| format!("{first} {second}").trim_end().to_owned())
     }
 
-    /// Parse the action of an ALTER of `kind` and return its keywords with its operands and properties.
-    fn parse_resource_action(&mut self, kind: &str) -> Result<(String, ActionParts)> {
-        let choices: &[&[&str]] = match kind {
-            "AGENT" => &[&["MODIFY", "LIVE", "VERSION", "SET"], &["SET"], &["UNSET"]],
-            "COMPUTE POOL" => &[
-                &["STOP", "ALL"],
-                &["SUSPEND"],
-                &["RESUME"],
-                &["SET"],
-                &["UNSET"],
-            ],
-            "DBT PROJECT" => &[&["DEPLOY", "FROM"], &["RENAME", "TO"], &["SET"], &["UNSET"]],
-            "DCM PROJECT" => &[&["DROP", "DEPLOYMENT"], &["SET"], &["UNSET"]],
-            "EVENT ROUTING TABLE" => &[
-                &["MODIFY", "RULE"],
-                &["RENAME", "TO"],
-                &["FORCE", "SET", "RULES"],
-                &["FORCE", "SET", "RULE"],
-                &["FORCE", "UNSET", "RULE"],
-                &["SET", "RULES"],
-                &["SET", "RULE"],
-                &["UNSET", "RULE"],
-            ],
-            "EXTERNAL AGENT" => &[&["ADD", "VERSION"], &["SET"], &["UNSET"]],
-            "EXTERNAL TABLE" => &[
-                &["ADD", "FILES"],
-                &["REMOVE", "FILES"],
-                &["ADD", "PARTITION"],
-                &["DROP", "PARTITION", "LOCATION"],
-                &["REFRESH"],
-                &["SET"],
-                &["UNSET"],
-            ],
-            "GATEWAY" => &[&["FROM", "SPECIFICATION"]],
-            "GIT REPOSITORY" => &[&["FETCH"], &["SET"], &["UNSET"]],
-            "LISTING" => &[
-                &["PUBLISH"],
-                &["UNPUBLISH"],
-                &["REVIEW"],
-                &["ADD", "TARGETS"],
-                &["REMOVE", "TARGETS"],
-                &["ADD", "VERSION"],
-                &["AS"],
-                &["RENAME", "TO"],
-                &["SET"],
-                &["UNSET"],
-            ],
-            "MODEL" => &[
-                &["ADD", "VERSION"],
-                &["DROP", "VERSION"],
-                &["MODIFY", "VERSION"],
-                &["VERSION"],
-                &["RENAME", "TO"],
-                &["SET"],
-                &["UNSET"],
-            ],
-            "MODEL MONITOR" => &[
-                &["ADD"],
-                &["DROP"],
-                &["SUSPEND"],
-                &["RESUME"],
-                &["SET"],
-                &["UNSET"],
-            ],
-            "PROCEDURE" => &[&["EXECUTE", "AS"], &["RENAME", "TO"], &["SET"], &["UNSET"]],
-            "SCHEMA" => &[
-                &["ENABLE", "MANAGED", "ACCESS"],
-                &["DISABLE", "MANAGED", "ACCESS"],
-                &["RENAME", "TO"],
-                &["SWAP", "WITH"],
-                &["SET"],
-                &["UNSET"],
-            ],
-            "SERVICE" => &[
-                &["FROM"],
-                &["RESTORE", "VOLUME"],
-                &["SUSPEND"],
-                &["RESUME"],
-                &["SET"],
-                &["UNSET"],
-            ],
-            "STAGE" => &[&["REFRESH"], &["RENAME", "TO"], &["SET"], &["UNSET"]],
-            _ => &[&["RENAME", "TO"], &["SET"], &["UNSET"]],
+    /// Parse the operands and properties of `action` on `kind`, extending `action` with its later keywords.
+    fn parse_resource_action(
+        &mut self,
+        kind: &str,
+        action: String,
+    ) -> Result<(String, ActionParts)> {
+        let key = action.clone();
+        let parts = match (kind, key.as_str()) {
+            ("AGENT", "SET") if !self.check_identifier("TAG") => {
+                (vec![], vec![self.parse_literal_property()?])
+            }
+            (_, "SET" | "MODIFY LIVE VERSION SET") => (vec![], self.parse_resource_set()?),
+            (_, "UNSET") => (vec![], self.parse_resource_unset()?),
+            (
+                _,
+                "RENAME TO" | "SWAP WITH" | "DROP DEPLOYMENT" | "DROP VERSION" | "UNSET RULE"
+                | "FORCE UNSET RULE",
+            )
+            | ("EXTERNAL AGENT", "ADD VERSION") => (vec![self.parse_name_operand()?], vec![]),
+            (_, "DEPLOY FROM" | "DROP PARTITION LOCATION") => {
+                (vec![self.parse_location_value()?], vec![])
+            }
+            (_, "AS") => {
+                let manifest = self.parse_location_value()?;
+                (vec![manifest], self.parse_resource_properties()?)
+            }
+            (_, "FROM SPECIFICATION") => (vec![self.parse_object_value()?], vec![]),
+            (_, "ADD FILES" | "REMOVE FILES") => (vec![self.parse_value_list()?], vec![]),
+            (_, "ADD TARGETS" | "REMOVE TARGETS") => (vec![self.parse_resource_value()?], vec![]),
+            ("STAGE", "REFRESH") => (vec![], self.parse_resource_properties()?),
+            (_, "REFRESH") if self.check(TokenType::String) => {
+                (vec![self.parse_string_value()?], vec![])
+            }
+            ("LISTING", "ADD VERSION") => return self.parse_listing_version(action),
+            (_, "ADD VERSION" | "MODIFY VERSION" | "VERSION") => {
+                return self.parse_model_version(action)
+            }
+            (_, "FROM") => self.parse_service_from()?,
+            (
+                _,
+                "MODIFY RULE" | "SET RULE" | "FORCE SET RULE" | "SET RULES" | "FORCE SET RULES",
+            ) => return self.parse_routing_rule(action),
+            _ => return self.parse_resource_clause(action),
         };
-        let mut action = self.expect_alter_words(choices)?;
+        Ok((action, parts))
+    }
+
+    /// Parse an agent's SET: one property with a literal value.
+    fn parse_literal_property(&mut self) -> Result<ObjectProperty> {
+        let name = self.parse_simple_name()?;
+        self.expect_token(TokenType::Eq)?;
+        if !self.is_literal_value() {
+            return Err(self.parse_error("Expected a literal value"));
+        }
+        let value = self.parse_object_value()?;
+        Ok(property(&name.name.to_ascii_uppercase(), None, Some(value)))
+    }
+
+    /// Parse a listing's ADD VERSION after its keywords: `[ [ IF NOT EXISTS ] <version> ] FROM <location>` and properties.
+    fn parse_listing_version(&mut self, mut action: String) -> Result<(String, ActionParts)> {
+        if self.match_keywords(&[TokenType::If, TokenType::Not, TokenType::Exists]) {
+            action.push_str(" IF NOT EXISTS");
+        }
         let mut operands: Vec<Expression> = Vec::new();
-        let mut properties: Vec<ObjectProperty> = Vec::new();
+        if !self.check(TokenType::From) {
+            operands.push(self.parse_name_operand()?);
+        }
+        self.expect_token(TokenType::From)?;
+        operands.push(self.parse_location_value()?);
+        Ok((action, (operands, self.parse_resource_properties()?)))
+    }
+
+    /// Parse a model's ADD VERSION, MODIFY VERSION or VERSION after its keywords.
+    fn parse_model_version(&mut self, mut action: String) -> Result<(String, ActionParts)> {
+        let mut operands = vec![self.parse_name_operand()?];
         match action.as_str() {
-            "RENAME TO" | "SWAP WITH" | "DROP DEPLOYMENT" | "DROP VERSION" => {
-                operands.push(self.parse_name_operand()?);
+            "MODIFY VERSION" => {
+                self.expect_alter_words(&[&["SET"]])?;
+                action.push_str(" SET");
+                return Ok((action, (operands, self.parse_resource_set()?)));
             }
-            "SET" if kind == "AGENT" && !self.check_identifier("TAG") => {
-                let name = self.parse_simple_name()?;
-                self.expect_token(TokenType::Eq)?;
-                if !self.is_literal_value() {
-                    return Err(self.parse_error("Expected a literal value"));
-                }
-                let value = self.parse_object_value()?;
-                properties.push(property(&name.name.to_ascii_uppercase(), None, Some(value)));
-            }
-            "SET" | "MODIFY LIVE VERSION SET" => properties = self.parse_resource_set()?,
-            "UNSET" => properties = self.parse_resource_unset()?,
-            "STOP ALL" => {
-                if self.match_text_seq(&["OF", "TYPE"]) {
-                    action.push_str(" OF TYPE");
-                    operands = self.parse_object_name_list()?;
-                }
-            }
-            "DEPLOY FROM" | "DROP PARTITION LOCATION" | "AS" => {
-                operands.push(self.parse_location_value()?);
-                if action == "AS" {
-                    properties = self.parse_resource_properties()?;
-                }
-            }
-            "FROM SPECIFICATION" => operands.push(self.parse_object_value()?),
-            "MODIFY RULE" => {
-                operands.push(self.parse_name_operand()?);
-                action.push(' ');
-                action.push_str(&self.expect_alter_words(&[&["RENAME", "TO"]])?);
-                operands.push(self.parse_name_operand()?);
-            }
-            "SET RULE" | "FORCE SET RULE" => {
-                operands.push(self.parse_name_operand()?);
-                properties = self.parse_resource_set()?;
-            }
-            "SET RULES" | "FORCE SET RULES" => loop {
-                let rule = self.parse_simple_name()?;
-                self.expect_token(TokenType::Eq)?;
-                properties.push(property("RULE", Some(rule), Some(self.parse_value_list()?)));
-                if !self.match_token(TokenType::Comma) {
-                    break;
-                }
-            },
-            "UNSET RULE" | "FORCE UNSET RULE" => operands.push(self.parse_name_operand()?),
-            "ADD FILES" | "REMOVE FILES" => operands.push(self.parse_value_list()?),
-            "ADD PARTITION" => {
-                self.expect_token(TokenType::LParen)?;
-                loop {
-                    let column = self.parse_simple_name()?;
+            "VERSION" => {
+                let alias = self.expect_alter_words(&[&["SET", "ALIAS"], &["UNSET", "ALIAS"]])?;
+                if let "SET ALIAS" = alias.as_str() {
                     self.expect_token(TokenType::Eq)?;
-                    properties.push(property(
-                        "PARTITION",
-                        Some(column),
-                        Some(self.parse_object_value()?),
-                    ));
-                    if !self.match_token(TokenType::Comma) {
-                        break;
-                    }
-                }
-                self.expect_token(TokenType::RParen)?;
-                action.push_str(" LOCATION");
-                self.expect_alter_words(&[&["LOCATION"]])?;
-                operands.push(self.parse_location_value()?);
-            }
-            "REFRESH" if kind == "STAGE" => properties = self.parse_resource_properties()?,
-            "REFRESH" => {
-                if self.check(TokenType::String) {
-                    operands.push(self.parse_string_value()?);
-                }
-            }
-            "ADD TARGETS" | "REMOVE TARGETS" => operands.push(self.parse_resource_value()?),
-            "ADD VERSION" if kind == "EXTERNAL AGENT" => operands.push(self.parse_name_operand()?),
-            "ADD VERSION" if kind == "LISTING" => {
-                if self.match_keywords(&[TokenType::If, TokenType::Not, TokenType::Exists]) {
-                    action.push_str(" IF NOT EXISTS");
-                }
-                if !self.check(TokenType::From) {
                     operands.push(self.parse_name_operand()?);
                 }
-                self.expect_token(TokenType::From)?;
-                operands.push(self.parse_location_value()?);
-                properties = self.parse_resource_properties()?;
+                action.push(' ');
+                action.push_str(&alias);
             }
-            "ADD VERSION" => {
-                operands.push(self.parse_name_operand()?);
+            _ => {
                 self.expect_token(TokenType::From)?;
                 if self.match_identifier("MODEL") {
                     action.push_str(" FROM MODEL");
@@ -275,47 +274,87 @@ impl Parser {
                     operands.push(self.parse_location_value()?);
                 }
             }
-            "MODIFY VERSION" => {
-                operands.push(self.parse_name_operand()?);
-                self.expect_alter_words(&[&["SET"]])?;
-                action.push_str(" SET");
-                properties = self.parse_resource_set()?;
-            }
-            "VERSION" => {
-                operands.push(self.parse_name_operand()?);
-                action.push(' ');
-                action
-                    .push_str(&self.expect_alter_words(&[&["SET", "ALIAS"], &["UNSET", "ALIAS"]])?);
-                if action.starts_with("VERSION SET") {
-                    self.expect_token(TokenType::Eq)?;
-                    operands.push(self.parse_name_operand()?);
+        }
+        Ok((action, (operands, vec![])))
+    }
+
+    /// Parse a service's FROM: an inline specification, or an optional stage path and the source's properties.
+    fn parse_service_from(&mut self) -> Result<ActionParts> {
+        let staged = self.is_stage_path();
+        if !staged && !self.check(TokenType::Identifier) && !self.check(TokenType::Var) {
+            return Ok((vec![self.parse_object_value()?], vec![]));
+        }
+        let operands = if staged {
+            vec![self.parse_stage_path()?]
+        } else {
+            Vec::new()
+        };
+        let properties = self.parse_service_source()?;
+        if properties.is_empty() && operands.is_empty() {
+            return Err(self.parse_error("Expected a specification"));
+        }
+        Ok((operands, properties))
+    }
+
+    /// Parse an event routing table's rule action after its keywords.
+    fn parse_routing_rule(&mut self, mut action: String) -> Result<(String, ActionParts)> {
+        if action.ends_with("RULES") {
+            let mut properties: Vec<ObjectProperty> = Vec::new();
+            loop {
+                let rule = self.parse_simple_name()?;
+                self.expect_token(TokenType::Eq)?;
+                properties.push(property("RULE", Some(rule), Some(self.parse_value_list()?)));
+                if !self.match_token(TokenType::Comma) {
+                    return Ok((action, (vec![], properties)));
                 }
             }
+        }
+        let mut operands = vec![self.parse_name_operand()?];
+        if action.starts_with("MODIFY") {
+            action.push(' ');
+            action.push_str(&self.expect_alter_words(&[&["RENAME", "TO"]])?);
+            operands.push(self.parse_name_operand()?);
+            return Ok((action, (operands, vec![])));
+        }
+        Ok((action, (operands, self.parse_resource_set()?)))
+    }
+
+    /// Parse the rest of the remaining actions: STOP ALL, EXECUTE AS, segment columns, partitions and volumes.
+    fn parse_resource_clause(&mut self, mut action: String) -> Result<(String, ActionParts)> {
+        let mut operands: Vec<Expression> = Vec::new();
+        let mut properties: Vec<ObjectProperty> = Vec::new();
+        match action.as_str() {
+            "STOP ALL" if self.match_text_seq(&["OF", "TYPE"]) => {
+                action.push_str(" OF TYPE");
+                operands = self.parse_object_name_list()?;
+            }
+            "EXECUTE AS" => {
+                let caller =
+                    self.expect_alter_words(&[&["OWNER"], &["CALLER"], &["RESTRICTED", "CALLER"]])?;
+                action.push(' ');
+                action.push_str(&caller);
+            }
             "ADD" | "DROP" => {
-                action.push_str(" SEGMENT_COLUMN");
                 self.expect_alter_words(&[&["SEGMENT_COLUMN"]])?;
+                action.push_str(" SEGMENT_COLUMN");
                 self.expect_token(TokenType::Eq)?;
                 operands.push(self.parse_object_value()?);
             }
-            "EXECUTE AS" => {
-                action.push(' ');
-                action.push_str(&self.expect_alter_words(&[
-                    &["OWNER"],
-                    &["CALLER"],
-                    &["RESTRICTED", "CALLER"],
-                ])?);
-            }
-            "FROM" => {
-                if self.is_stage_path() {
-                    operands.push(self.parse_stage_path()?);
-                } else if !self.check(TokenType::Identifier) && !self.check(TokenType::Var) {
-                    operands.push(self.parse_object_value()?);
-                    return Ok((action, (operands, properties)));
+            "ADD PARTITION" => {
+                self.expect_token(TokenType::LParen)?;
+                loop {
+                    let column = self.parse_simple_name()?;
+                    self.expect_token(TokenType::Eq)?;
+                    let value = self.parse_object_value()?;
+                    properties.push(property("PARTITION", Some(column), Some(value)));
+                    if !self.match_token(TokenType::Comma) {
+                        break;
+                    }
                 }
-                properties = self.parse_service_source()?;
-                if properties.is_empty() && operands.is_empty() {
-                    return Err(self.parse_error("Expected a specification"));
-                }
+                self.expect_token(TokenType::RParen)?;
+                self.expect_alter_words(&[&["LOCATION"]])?;
+                action.push_str(" LOCATION");
+                operands.push(self.parse_location_value()?);
             }
             "RESTORE VOLUME" => {
                 operands.push(self.parse_name_operand()?);
@@ -436,10 +475,9 @@ impl Parser {
                 loop {
                     let name = self.parse_simple_qualified_name()?;
                     self.expect_token(TokenType::Eq)?;
-                    let value = if word == "CONTACT" {
-                        self.parse_name_operand()?
-                    } else {
-                        self.parse_object_value()?
+                    let value = match word {
+                        "CONTACT" => self.parse_name_operand()?,
+                        _ => self.parse_object_value()?,
                     };
                     properties.push(property(word, Some(name), Some(value)));
                     if !self.match_token(TokenType::Comma) {
