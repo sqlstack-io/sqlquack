@@ -441,6 +441,9 @@ pub struct Truncate {
     /// Hive PARTITION clause: PARTITION(key=value, ...)
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub partition: Option<Box<Expression>>,
+    /// Snowflake `ERROR_TABLE ( <table> )`: the table's error table; left out of the tree when false
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    pub error_table: bool,
 }
 
 /// A table entry in a TRUNCATE statement, with optional ONLY modifier and * suffix
@@ -491,6 +494,7 @@ impl Truncate {
             identity: None,
             restrict: false,
             partition: None,
+            error_table: false,
         }
     }
 }

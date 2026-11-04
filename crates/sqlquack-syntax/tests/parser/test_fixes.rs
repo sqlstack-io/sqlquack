@@ -713,6 +713,18 @@ fn given_a_snowflake_drop_of_another_object_kind_when_parsing_then_the_tree_name
             expected_value: json!("o1"),
         },
         ProjectionTestCase {
+            description: "TRUNCATE ERROR_TABLE marks the error table",
+            sql: "TRUNCATE ERROR_TABLE ( v1 )",
+            pointer: "/0/truncate/error_table",
+            expected_value: json!(true),
+        },
+        ProjectionTestCase {
+            description: "a plain TRUNCATE leaves error_table out of the tree",
+            sql: "TRUNCATE TABLE v1",
+            pointer: "/0/truncate/error_table",
+            expected_value: serde_json::Value::Null,
+        },
+        ProjectionTestCase {
             description: "DROP SEQUENCE keeps RESTRICT apart from the default",
             sql: "DROP SEQUENCE v1 RESTRICT",
             pointer: "/0/drop_sequence/restrict",
@@ -1149,6 +1161,18 @@ fn given_statements_from_the_parser_only_disagreements_when_parsing_snowflake_th
         AcceptanceTestCase {
             description: "FIRST ( alias ) refuses a reserved keyword (recorded errno 1003)",
             sql: "SELECT * FROM t1 JOIN t2 FIRST ( SELECT ) ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "TRUNCATE takes ERROR_TABLE ( table ) (recorded semantic error)",
+            sql: "TRUNCATE TABLE IF EXISTS ERROR_TABLE ( \"v1 Q\" ) ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "TRUNCATE ( name ) is no statement (recorded errno 1003)",
+            sql: "TRUNCATE ( v1 ) ;",
             dialect: Dialect::Snowflake,
             expected_accepted: false,
         },

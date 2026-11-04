@@ -1250,7 +1250,17 @@ impl Parser {
         let if_exists = self.match_keywords(&[TokenType::If, TokenType::Exists]);
 
         let has_only = self.match_token(TokenType::Only);
+        let error_table = self.is_snowflake()
+            && self.check_identifier("ERROR_TABLE")
+            && self.check_next(TokenType::LParen);
+        if error_table {
+            self.skip();
+            self.skip();
+        }
         let mut table = self.parse_object_name_ref()?;
+        if error_table {
+            self.expect_token(TokenType::RParen)?;
+        }
         if has_only {
             table.only = true;
         }
@@ -1321,6 +1331,7 @@ impl Parser {
             identity,
             restrict,
             partition: partition.map(Box::new),
+            error_table,
         })))
     }
 

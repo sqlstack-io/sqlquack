@@ -398,7 +398,9 @@ impl Parser {
             TokenType::Alter => self.parse_alter(),
 
             TokenType::Truncate => {
-                if self.check_next(TokenType::LParen) {
+                if self.check_next(TokenType::LParen) && self.applies_snowflake_context_rules() {
+                    Err(self.parse_error("Expected a statement, not an expression"))
+                } else if self.check_next(TokenType::LParen) {
                     self.parse_expression()
                 } else {
                     self.parse_truncate()
