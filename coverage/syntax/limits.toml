@@ -13020,7 +13020,7 @@ context = "raw"
 form = "sf.ddl.show-external-volumes"
 kind = "negative_neighbour"
 note = "the form without its required EXTERNAL"
-reason = "D97: Snowflake parses SHOW VOLUMES and refuses it on privileges, errno 3001 'Insufficient privileges to operate on account' (import-20261104-32), so the omission is not a syntax error; the hand row below observes it"
+reason = "D97: Snowflake parses SHOW VOLUMES and refuses it on privileges, errno 3001 'Insufficient privileges to operate on account' (import-20261104-33), so the omission is not a syntax error; the hand row below observes it"
 
 [[limit]]
 form = "sf.ddl.show-external-volumes"
@@ -13036,7 +13036,7 @@ form = "sf.ddl.show-service-containers-in-service"
 kind = "required_operand_missing"
 target = "<name>"
 note = "omit <name>"
-reason = "D97: Snowflake answers the form without <name> with errno 4 'Unsupported feature … use … <service_name> instead' (import-20261104-33), a name check rather than a syntax error; the hand row below observes it"
+reason = "D97: Snowflake answers the form without <name> with errno 4 (import-20261104-33 refused the row: error phase not established), which is unruled, so the omission is not established as a syntax error; the hand row below observes it"
 
 [[limit]]
 form = "sf.ddl.show-service-containers-in-service"
@@ -13053,7 +13053,7 @@ form = "sf.ddl.show-service-instances-in-service"
 kind = "required_operand_missing"
 target = "<name>"
 note = "omit <name>"
-reason = "D97: Snowflake answers the form without <name> with errno 4 'Unsupported feature … use … <service_name> instead' (import-20261104-33), a name check rather than a syntax error; the hand row below observes it"
+reason = "D97: Snowflake answers the form without <name> with errno 4 (import-20261104-33 refused the row: error phase not established), which is unruled, so the omission is not established as a syntax error; the hand row below observes it"
 
 [[limit]]
 form = "sf.ddl.show-service-instances-in-service"
@@ -13062,6 +13062,2180 @@ target = "<name>"
 note = "omit <name>, observed"
 anchor = "doc.sql.show-service-instances-in-service / Syntax"
 sql = "SHOW SERVICE INSTANCES IN SERVICE ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-application-package.rename-to"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 2003 SQLSTATE 02000 (phase semantic_error, import-20261104-34), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.ddl.alter-application-package.rename-to"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>, observed"
+anchor = "doc.sql.alter-application-package / Syntax"
+sql = "ALTER APPLICATION PACKAGE RENAME TO v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-application-package.set-tag"
+kind = "negative_neighbour"
+note = "the form without its required TAG"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 1420 SQLSTATE 22023 (phase semantic_error, import-20261104-34), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.ddl.alter-application-package.set-tag"
+kind = "negative_neighbour"
+note = "the form without its required TAG, observed"
+anchor = "doc.sql.alter-application-package / Syntax"
+sql = "ALTER APPLICATION PACKAGE v1 SET v1 = 'm' ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-application-package.set-tag"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 2003 SQLSTATE 02000 (phase semantic_error, import-20261104-34), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.ddl.alter-application-package.set-tag"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>, observed"
+anchor = "doc.sql.alter-application-package / Syntax"
+sql = "ALTER APPLICATION PACKAGE SET TAG v1 = 'm' ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-application-package.set-tag"
+kind = "required_operand_missing"
+target = "<tag_name>"
+note = "omit <tag_name>"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 1420 SQLSTATE 22023 (phase semantic_error, import-20261104-34), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.ddl.alter-application-package.set-tag"
+kind = "required_operand_missing"
+target = "<tag_name>"
+note = "omit <tag_name>, observed"
+anchor = "doc.sql.alter-application-package / Syntax"
+sql = "ALTER APPLICATION PACKAGE v1 SET TAG = 'm' ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-application-package.unset-tag"
+kind = "required_operand_missing"
+target = "<tag_name>"
+note = "omit <tag_name>"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 1420 SQLSTATE 22023 (phase semantic_error, import-20261104-34), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.ddl.alter-application-package.unset-tag"
+kind = "required_operand_missing"
+target = "<tag_name>"
+note = "omit <tag_name>, observed"
+anchor = "doc.sql.alter-application-package / Syntax"
+sql = "ALTER APPLICATION PACKAGE v1 UNSET TAG ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-application-package.unset-tag"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 2003 SQLSTATE 02000 (phase semantic_error, import-20261104-34), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.ddl.alter-application-package.unset-tag"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>, observed"
+anchor = "doc.sql.alter-application-package / Syntax"
+sql = "ALTER APPLICATION PACKAGE UNSET TAG v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-application-package.unset-tag"
+kind = "negative_neighbour"
+note = "the form without its required TAG"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 1420 SQLSTATE 22023 (phase semantic_error, import-20261104-34), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.ddl.alter-application-package.unset-tag"
+kind = "negative_neighbour"
+note = "the form without its required TAG, observed"
+anchor = "doc.sql.alter-application-package / Syntax"
+sql = "ALTER APPLICATION PACKAGE v1 UNSET v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-application-service.set"
+kind = "negative_neighbour"
+target = "<integration_name> in [ EXTERNAL_ACCESS_INTEGRATIONS = ( <integration_name> [ , ... ] ) ]"
+note = "a string literal in place of <integration_name>"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 2003 SQLSTATE 02000 (phase semantic_error, import-20261104-34), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.ddl.alter-application-service.set"
+kind = "negative_neighbour"
+target = "<integration_name> in [ EXTERNAL_ACCESS_INTEGRATIONS = ( <integration_name> [ , ... ] ) ]"
+note = "a string literal in place of <integration_name>, observed"
+anchor = "doc.sql.alter-application-service / Syntax"
+sql = "ALTER APPLICATION SERVICE v1 SET EXTERNAL_ACCESS_INTEGRATIONS = ( 'v1' ) ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-application-service.unset-auto-resume-auto-suspend-secs-external-access-integrations"
+kind = "negative_neighbour"
+note = "the form without its required SERVICE"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 1420 SQLSTATE 22023 (phase semantic_error, import-20261104-34), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.ddl.alter-application-service.unset-auto-resume-auto-suspend-secs-external-access-integrations"
+kind = "negative_neighbour"
+note = "the form without its required SERVICE, observed"
+anchor = "doc.sql.alter-application-service / Syntax"
+sql = "ALTER APPLICATION v1 UNSET AUTO_RESUME ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-application-service.unset-auto-resume-auto-suspend-secs-external-access-integrations"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 1420 SQLSTATE 22023 (phase semantic_error, import-20261104-34), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.ddl.alter-application-service.unset-auto-resume-auto-suspend-secs-external-access-integrations"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>, observed"
+anchor = "doc.sql.alter-application-service / Syntax"
+sql = "ALTER APPLICATION SERVICE UNSET AUTO_RESUME ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-application-service.upgrade"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 2003 SQLSTATE 02000 (phase semantic_error, import-20261104-34), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.ddl.alter-application-service.upgrade"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>, observed"
+anchor = "doc.sql.alter-application-service / Syntax"
+sql = "ALTER APPLICATION SERVICE UPGRADE ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-application-unset-configuration"
+kind = "required_operand_missing"
+target = "<config>"
+note = "omit <config>"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 1420 SQLSTATE 22023 (phase semantic_error, import-20261104-35), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.ddl.alter-application-unset-configuration"
+kind = "required_operand_missing"
+target = "<config>"
+note = "omit <config>, observed"
+anchor = "doc.sql.alter-application-unset-configuration / Syntax"
+sql = "ALTER APPLICATION v1 UNSET CONFIGURATION ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-application-unset-configuration"
+kind = "negative_neighbour"
+note = "the form without its required CONFIGURATION"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 1420 SQLSTATE 22023 (phase semantic_error, import-20261104-35), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.ddl.alter-application-unset-configuration"
+kind = "negative_neighbour"
+note = "the form without its required CONFIGURATION, observed"
+anchor = "doc.sql.alter-application-unset-configuration / Syntax"
+sql = "ALTER APPLICATION v1 UNSET v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-application.unset-tag"
+kind = "negative_neighbour"
+note = "the form without its required TAG"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 1420 SQLSTATE 22023 (phase semantic_error, import-20261104-35), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.ddl.alter-application.unset-tag"
+kind = "negative_neighbour"
+note = "the form without its required TAG, observed"
+anchor = "doc.sql.alter-application / Syntax"
+sql = "ALTER APPLICATION v1 UNSET v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-application.set-tag"
+kind = "negative_neighbour"
+note = "the form without its required TAG"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 1420 SQLSTATE 22023 (phase semantic_error, import-20261104-35), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.ddl.alter-application.set-tag"
+kind = "negative_neighbour"
+note = "the form without its required TAG, observed"
+anchor = "doc.sql.alter-application / Syntax"
+sql = "ALTER APPLICATION v1 SET v1 = 'm' ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-application.set-tag"
+kind = "required_operand_missing"
+target = "<tag_name>"
+note = "omit <tag_name>"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 1420 SQLSTATE 22023 (phase semantic_error, import-20261104-35), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.ddl.alter-application.set-tag"
+kind = "required_operand_missing"
+target = "<tag_name>"
+note = "omit <tag_name>, observed"
+anchor = "doc.sql.alter-application / Syntax"
+sql = "ALTER APPLICATION v1 SET TAG = 'm' ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-application.unset-feature-policy"
+kind = "negative_neighbour"
+note = "the form without its required POLICY"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 1420 SQLSTATE 22023 (phase semantic_error, import-20261104-24), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.ddl.alter-application.unset-feature-policy"
+kind = "negative_neighbour"
+note = "the form without its required POLICY, observed"
+anchor = "doc.sql.alter-application / Syntax"
+sql = "ALTER APPLICATION v1 UNSET FEATURE ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-application.unset-feature-policy"
+kind = "negative_neighbour"
+note = "the form without its required FEATURE"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 1420 SQLSTATE 22023 (phase semantic_error, import-20261104-35), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.ddl.alter-application.unset-feature-policy"
+kind = "negative_neighbour"
+note = "the form without its required FEATURE, observed"
+anchor = "doc.sql.alter-application / Syntax"
+sql = "ALTER APPLICATION v1 UNSET POLICY ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-application.unset-maintenance-policy"
+kind = "negative_neighbour"
+note = "the form without its required MAINTENANCE"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 1420 SQLSTATE 22023 (phase semantic_error, import-20261104-35), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.ddl.alter-application.unset-maintenance-policy"
+kind = "negative_neighbour"
+note = "the form without its required MAINTENANCE, observed"
+anchor = "doc.sql.alter-application / Syntax"
+sql = "ALTER APPLICATION v1 UNSET POLICY ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-application.unset-maintenance-policy"
+kind = "negative_neighbour"
+note = "the form without its required POLICY"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 1420 SQLSTATE 22023 (phase semantic_error, import-20261104-35), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.ddl.alter-application.unset-maintenance-policy"
+kind = "negative_neighbour"
+note = "the form without its required POLICY, observed"
+anchor = "doc.sql.alter-application / Syntax"
+sql = "ALTER APPLICATION v1 UNSET MAINTENANCE ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-application.unset-tag"
+kind = "required_operand_missing"
+target = "<tag_name>"
+note = "omit <tag_name>"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 1420 SQLSTATE 22023 (phase semantic_error, import-20261104-35), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.ddl.alter-application.unset-tag"
+kind = "required_operand_missing"
+target = "<tag_name>"
+note = "omit <tag_name>, observed"
+anchor = "doc.sql.alter-application / Syntax"
+sql = "ALTER APPLICATION v1 UNSET TAG ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-artifact-repository.set-tag"
+kind = "negative_neighbour"
+note = "the form without its required TAG"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 1420 SQLSTATE 22023 (phase semantic_error, import-20261104-35), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.ddl.alter-artifact-repository.set-tag"
+kind = "negative_neighbour"
+note = "the form without its required TAG, observed"
+anchor = "doc.sql.alter-artifact-repository / Syntax"
+sql = "ALTER ARTIFACT REPOSITORY v1 SET v1 = 'm' ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-artifact-repository.set-tag"
+kind = "required_operand_missing"
+target = "<tag_name>"
+note = "omit <tag_name>"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 1420 SQLSTATE 22023 (phase semantic_error, import-20261104-35), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.ddl.alter-artifact-repository.set-tag"
+kind = "required_operand_missing"
+target = "<tag_name>"
+note = "omit <tag_name>, observed"
+anchor = "doc.sql.alter-artifact-repository / Syntax"
+sql = "ALTER ARTIFACT REPOSITORY v1 SET TAG = 'm' ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-artifact-repository.unset-tag"
+kind = "negative_neighbour"
+note = "the form without its required TAG"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 1420 SQLSTATE 22023 (phase semantic_error, import-20261104-24), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.ddl.alter-artifact-repository.unset-tag"
+kind = "negative_neighbour"
+note = "the form without its required TAG, observed"
+anchor = "doc.sql.alter-artifact-repository / Syntax"
+sql = "ALTER ARTIFACT REPOSITORY v1 UNSET v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-artifact-repository.unset-tag"
+kind = "required_operand_missing"
+target = "<tag_name>"
+note = "omit <tag_name>"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 1420 SQLSTATE 22023 (phase semantic_error, import-20261104-35), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.ddl.alter-artifact-repository.unset-tag"
+kind = "required_operand_missing"
+target = "<tag_name>"
+note = "omit <tag_name>, observed"
+anchor = "doc.sql.alter-artifact-repository / Syntax"
+sql = "ALTER ARTIFACT REPOSITORY v1 UNSET TAG ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-backup-set.set-tag"
+kind = "required_operand_missing"
+target = "<tag_name>"
+note = "omit <tag_name>"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 1420 SQLSTATE 22023 (phase semantic_error, import-20261104-36), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.ddl.alter-backup-set.set-tag"
+kind = "required_operand_missing"
+target = "<tag_name>"
+note = "omit <tag_name>, observed"
+anchor = "doc.sql.alter-backup-set / Syntax"
+sql = "ALTER BACKUP SET v1 SET TAG = 'm' ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-backup-set.set-tag"
+kind = "negative_neighbour"
+note = "the form without its required TAG"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 1420 SQLSTATE 22023 (phase semantic_error, import-20261104-36), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.ddl.alter-backup-set.set-tag"
+kind = "negative_neighbour"
+note = "the form without its required TAG, observed"
+anchor = "doc.sql.alter-backup-set / Syntax"
+sql = "ALTER BACKUP SET v1 SET v1 = 'm' ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-backup-set.unset-tag"
+kind = "required_operand_missing"
+target = "<tag_name>"
+note = "omit <tag_name>"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 1420 SQLSTATE 22023 (phase semantic_error, import-20261104-24), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.ddl.alter-backup-set.unset-tag"
+kind = "required_operand_missing"
+target = "<tag_name>"
+note = "omit <tag_name>, observed"
+anchor = "doc.sql.alter-backup-set / Syntax"
+sql = "ALTER BACKUP SET v1 UNSET TAG ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-backup-set.unset-tag"
+kind = "negative_neighbour"
+note = "the form without its required TAG"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 1420 SQLSTATE 22023 (phase semantic_error, import-20261104-36), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.ddl.alter-backup-set.unset-tag"
+kind = "negative_neighbour"
+note = "the form without its required TAG, observed"
+anchor = "doc.sql.alter-backup-set / Syntax"
+sql = "ALTER BACKUP SET v1 UNSET v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-compute-pool.set"
+kind = "required_operand_missing"
+target = "<tag_name> in [ TAG <tag_name> = '<tag_value>' [ , <tag_name> = '<tag_value>' , ... ] ]"
+note = "omit <tag_name>"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 1420 SQLSTATE 22023 (phase semantic_error, import-20261104-36), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.ddl.alter-compute-pool.set"
+kind = "required_operand_missing"
+target = "<tag_name> in [ TAG <tag_name> = '<tag_value>' [ , <tag_name> = '<tag_value>' , ... ] ]"
+note = "omit <tag_name>, observed"
+anchor = "doc.sql.alter-compute-pool / Syntax"
+sql = "ALTER COMPUTE POOL v1 SET TAG = 'm' ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-cortex-search.set-tag"
+kind = "negative_neighbour"
+note = "the form without its required TAG"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 1420 SQLSTATE 22023 (phase semantic_error, import-20261104-36), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.ddl.alter-cortex-search.set-tag"
+kind = "negative_neighbour"
+note = "the form without its required TAG, observed"
+anchor = "doc.sql.alter-cortex-search / Syntax"
+sql = "ALTER CORTEX SEARCH SERVICE v1 SET v1 = 'm' ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-cortex-search.set-tag"
+kind = "required_operand_missing"
+target = "<tag_name>"
+note = "omit <tag_name>"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 1420 SQLSTATE 22023 (phase semantic_error, import-20261104-36), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.ddl.alter-cortex-search.set-tag"
+kind = "required_operand_missing"
+target = "<tag_name>"
+note = "omit <tag_name>, observed"
+anchor = "doc.sql.alter-cortex-search / Syntax"
+sql = "ALTER CORTEX SEARCH SERVICE v1 SET TAG = 'm' ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-cortex-search.set"
+kind = "negative_neighbour"
+note = "the form without its required KEY in [ PRIMARY KEY = ( <col_name> [ , ... ] ) ]"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 1420 SQLSTATE 22023 (phase semantic_error, import-20261104-36), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.ddl.alter-cortex-search.set"
+kind = "negative_neighbour"
+note = "the form without its required KEY in [ PRIMARY KEY = ( <col_name> [ , ... ] ) ], observed"
+anchor = "doc.sql.alter-cortex-search / Syntax"
+sql = "ALTER CORTEX SEARCH SERVICE v1 SET PRIMARY = ( v1 ) ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-database-catalog-linked.set"
+kind = "required_operand_missing"
+target = "<purpose> in [ CONTACT <purpose> = <contact_name> [ , <purpose> = <contact_name> ... ] ]"
+note = "omit <purpose>"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 1420 SQLSTATE 22023 (phase semantic_error, import-20261104-36), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.ddl.alter-database-catalog-linked.set"
+kind = "required_operand_missing"
+target = "<purpose> in [ CONTACT <purpose> = <contact_name> [ , <purpose> = <contact_name> ... ] ]"
+note = "omit <purpose>, observed"
+anchor = "doc.sql.alter-database-catalog-linked / Syntax"
+sql = "ALTER DATABASE v1 SET CONTACT = v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-database.set"
+kind = "required_operand_missing"
+target = "<purpose> in [ CONTACT <purpose> = <contact_name> [ , <purpose> = <contact_name> ... ] ]"
+note = "omit <purpose>"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 1420 SQLSTATE 22023 (phase semantic_error, import-20261104-36), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.ddl.alter-database.set"
+kind = "required_operand_missing"
+target = "<purpose> in [ CONTACT <purpose> = <contact_name> [ , <purpose> = <contact_name> ... ] ]"
+note = "omit <purpose>, observed"
+anchor = "doc.sql.alter-database / Syntax"
+sql = "ALTER DATABASE v1 SET CONTACT = v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-database-catalog-linked.unset-base-location-prefix-comment-contact"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>"
+reason = "D97: Snowflake ran this SQL (phase accepted, import-20261104-24), so the omission is not a syntax error; whether the name is optional is a catalogue question for the coordinator; the hand row below observes it"
+
+[[limit]]
+form = "sf.ddl.alter-database-catalog-linked.unset-base-location-prefix-comment-contact"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>, observed"
+anchor = "doc.sql.alter-database-catalog-linked / Syntax"
+sql = "ALTER DATABASE UNSET BASE_LOCATION_PREFIX ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-database.set-tag"
+kind = "required_operand_missing"
+target = "<tag_name>"
+note = "omit <tag_name>"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 1420 SQLSTATE 22023 (phase semantic_error, import-20261104-24), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.ddl.alter-database.set-tag"
+kind = "required_operand_missing"
+target = "<tag_name>"
+note = "omit <tag_name>, observed"
+anchor = "doc.sql.alter-database / Syntax"
+sql = "ALTER DATABASE v1 SET TAG = 'm' ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-database.set-tag"
+kind = "negative_neighbour"
+note = "the form without its required TAG"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 1420 SQLSTATE 22023 (phase semantic_error, import-20261104-36), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.ddl.alter-database.set-tag"
+kind = "negative_neighbour"
+note = "the form without its required TAG, observed"
+anchor = "doc.sql.alter-database / Syntax"
+sql = "ALTER DATABASE v1 SET v1 = 'm' ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-database.unset-data-retention-time-in-days-max-data-extension-time-in-days-stage-undrop-retention-time-in-days"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>"
+reason = "D97: Snowflake ran this SQL (phase accepted, import-20261104-36), so the omission is not a syntax error; whether the name is optional is a catalogue question for the coordinator; the hand row below observes it"
+
+[[limit]]
+form = "sf.ddl.alter-database.unset-data-retention-time-in-days-max-data-extension-time-in-days-stage-undrop-retention-time-in-days"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>, observed"
+anchor = "doc.sql.alter-database / Syntax"
+sql = "ALTER DATABASE UNSET DATA_RETENTION_TIME_IN_DAYS ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-database.unset-feature-policy"
+kind = "negative_neighbour"
+note = "the form without its required POLICY"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 1420 SQLSTATE 22023 (phase semantic_error, import-20261104-24), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.ddl.alter-database.unset-feature-policy"
+kind = "negative_neighbour"
+note = "the form without its required POLICY, observed"
+anchor = "doc.sql.alter-database / Syntax"
+sql = "ALTER DATABASE v1 UNSET FEATURE ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-database.unset-feature-policy"
+kind = "negative_neighbour"
+note = "the form without its required FEATURE"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 1420 SQLSTATE 22023 (phase semantic_error, import-20261104-36), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.ddl.alter-database.unset-feature-policy"
+kind = "negative_neighbour"
+note = "the form without its required FEATURE, observed"
+anchor = "doc.sql.alter-database / Syntax"
+sql = "ALTER DATABASE v1 UNSET POLICY ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-database.unset-tag"
+kind = "required_operand_missing"
+target = "<tag_name>"
+note = "omit <tag_name>"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 1420 SQLSTATE 22023 (phase semantic_error, import-20261104-36), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.ddl.alter-database.unset-tag"
+kind = "required_operand_missing"
+target = "<tag_name>"
+note = "omit <tag_name>, observed"
+anchor = "doc.sql.alter-database / Syntax"
+sql = "ALTER DATABASE v1 UNSET TAG ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-database.unset-tag"
+kind = "negative_neighbour"
+note = "the form without its required TAG"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 1420 SQLSTATE 22023 (phase semantic_error, import-20261104-36), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.ddl.alter-database.unset-tag"
+kind = "negative_neighbour"
+note = "the form without its required TAG, observed"
+anchor = "doc.sql.alter-database / Syntax"
+sql = "ALTER DATABASE v1 UNSET v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-dataset-drop-version"
+kind = "negative_neighbour"
+target = "<version_name>"
+note = "a string literal in place of <version_name>"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 399019 SQLSTATE 02000 (phase runtime_error, import-20261104-36), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.ddl.alter-dataset-drop-version"
+kind = "negative_neighbour"
+target = "<version_name>"
+note = "a string literal in place of <version_name>, observed"
+anchor = "doc.sql.alter-dataset-drop-version / Syntax"
+sql = "ALTER DATASET v1 DROP VERSION 'v1' ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-dbt-project.set"
+kind = "negative_neighbour"
+target = "<integration_name> in [ EXTERNAL_ACCESS_INTEGRATIONS = ( <integration_name> [ , ... ] ) ]"
+note = "a string literal in place of <integration_name>"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 2003 SQLSTATE 02000 (phase semantic_error, import-20261104-36), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.ddl.alter-dbt-project.set"
+kind = "negative_neighbour"
+target = "<integration_name> in [ EXTERNAL_ACCESS_INTEGRATIONS = ( <integration_name> [ , ... ] ) ]"
+note = "a string literal in place of <integration_name>, observed"
+anchor = "doc.sql.alter-dbt-project / Syntax"
+sql = "ALTER DBT PROJECT v1 SET EXTERNAL_ACCESS_INTEGRATIONS = ( 'v1' ) ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-dynamic-table.datagovnpolicytagaction"
+kind = "required_operand_missing"
+target = "<tag_name> #4"
+note = "omit <tag_name>"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 1420 SQLSTATE 22023 (phase semantic_error, import-20261104-36), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.ddl.alter-dynamic-table.datagovnpolicytagaction"
+kind = "required_operand_missing"
+target = "<tag_name> #4"
+note = "omit <tag_name>, observed"
+anchor = "doc.sql.alter-dynamic-table / Syntax"
+sql = "ALTER DYNAMIC TABLE v1 UNSET TAG ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-dynamic-table.datagovnpolicytagaction"
+kind = "required_operand_missing"
+target = "<col_name>"
+note = "omit <col_name>"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 2003 SQLSTATE 42S02 (phase semantic_error, import-20261104-36), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.ddl.alter-dynamic-table.datagovnpolicytagaction"
+kind = "required_operand_missing"
+target = "<col_name>"
+note = "omit <col_name>, observed"
+anchor = "doc.sql.alter-dynamic-table / Syntax"
+sql = "ALTER DYNAMIC TABLE v1 ADD ROW ACCESS POLICY v1 ON ( ) ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-external-volume.add-storage-location-name-cloudproviderparams"
+kind = "negative_neighbour"
+note = "the form without its required { { STORAGE_PROVIDER = '{ S3 | S3CHINA | S3GOV }' STORAGE_AWS_ROLE_ARN = '<iam_role>' STORAGE_BASE_URL = '<protocol>://<bucket>[/<path>/]' [ STORAGE_AWS_ACCESS_POINT_ARN = '<string>' ] [ ENCRYPTION = ( { [ TYPE = 'AWS_SSE_S3' ] | [ TYPE = 'AWS_SSE_KMS' [ KMS_KEY_ID = '<string>' ] ] | [ TYPE = 'NONE' ] } ) ] [ USE_PRIVATELINK_ENDPOINT = { TRUE | FALSE } ] } | { STORAGE_PROVIDER = 'GCS' STORAGE_BASE_URL = 'gcs://<bucket>[/<path>/]' [ ENCRYPTION = ( { [ TYPE = 'GCS_SSE_KMS' ] [ KMS_KEY_ID = '<string>' ] | [ TYPE = 'NONE' ] } ) ] } | { STORAGE_PROVIDER = 'AZURE' AZURE_TENANT_ID = '<tenant_id>' [ USE_PRIVATELINK_ENDPOINT = { TRUE | FALSE } ] STORAGE_BASE_URL = 'azure://<account>.blob.core.windows.net/<container>[/<path>/]' } }"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 2003 SQLSTATE 02000 (phase semantic_error, import-20261104-24), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.ddl.alter-external-volume.add-storage-location-name-cloudproviderparams"
+kind = "negative_neighbour"
+note = "the form without its required { { STORAGE_PROVIDER = '{ S3 | S3CHINA | S3GOV }' STORAGE_AWS_ROLE_ARN = '<iam_role>' STORAGE_BASE_URL = '<protocol>://<bucket>[/<path>/]' [ STORAGE_AWS_ACCESS_POINT_ARN = '<string>' ] [ ENCRYPTION = ( { [ TYPE = 'AWS_SSE_S3' ] | [ TYPE = 'AWS_SSE_KMS' [ KMS_KEY_ID = '<string>' ] ] | [ TYPE = 'NONE' ] } ) ] [ USE_PRIVATELINK_ENDPOINT = { TRUE | FALSE } ] } | { STORAGE_PROVIDER = 'GCS' STORAGE_BASE_URL = 'gcs://<bucket>[/<path>/]' [ ENCRYPTION = ( { [ TYPE = 'GCS_SSE_KMS' ] [ KMS_KEY_ID = '<string>' ] | [ TYPE = 'NONE' ] } ) ] } | { STORAGE_PROVIDER = 'AZURE' AZURE_TENANT_ID = '<tenant_id>' [ USE_PRIVATELINK_ENDPOINT = { TRUE | FALSE } ] STORAGE_BASE_URL = 'azure://<account>.blob.core.windows.net/<container>[/<path>/]' } }, observed"
+anchor = "doc.sql.alter-external-volume / Syntax"
+sql = "ALTER EXTERNAL VOLUME v1 ADD STORAGE_LOCATION = ( NAME = 'm' ) ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-external-volume.set-allow-writes-true-false"
+kind = "negative_neighbour"
+note = "the form without its required EXTERNAL"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 2043 SQLSTATE 02000 (phase semantic_error, import-20261104-37), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.ddl.alter-external-volume.set-allow-writes-true-false"
+kind = "negative_neighbour"
+note = "the form without its required EXTERNAL, observed"
+anchor = "doc.sql.alter-external-volume / Syntax"
+sql = "ALTER VOLUME v1 SET ALLOW_WRITES = TRUE ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-external-volume.set-comment"
+kind = "negative_neighbour"
+note = "the form without its required EXTERNAL"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 2043 SQLSTATE 02000 (phase semantic_error, import-20261104-37), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.ddl.alter-external-volume.set-comment"
+kind = "negative_neighbour"
+note = "the form without its required EXTERNAL, observed"
+anchor = "doc.sql.alter-external-volume / Syntax"
+sql = "ALTER VOLUME v1 SET COMMENT = 'm' ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-function-dmf.set-tag"
+kind = "negative_neighbour"
+note = "the form without its required TAG"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 1420 SQLSTATE 22023 (phase semantic_error, import-20261104-37), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.ddl.alter-function-dmf.set-tag"
+kind = "negative_neighbour"
+note = "the form without its required TAG, observed"
+anchor = "doc.sql.alter-function-dmf / Syntax"
+sql = "ALTER FUNCTION v1 ( TABLE ( INT ) ) SET v1 = 'm' ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-function-dmf.set-tag"
+kind = "required_operand_missing"
+target = "<tag_name>"
+note = "omit <tag_name>"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 1420 SQLSTATE 22023 (phase semantic_error, import-20261104-37), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.ddl.alter-function-dmf.set-tag"
+kind = "required_operand_missing"
+target = "<tag_name>"
+note = "omit <tag_name>, observed"
+anchor = "doc.sql.alter-function-dmf / Syntax"
+sql = "ALTER FUNCTION v1 ( TABLE ( INT ) ) SET TAG = 'm' ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-function-dmf.unset-tag"
+kind = "required_operand_missing"
+target = "<tag_name>"
+note = "omit <tag_name>"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 1420 SQLSTATE 22023 (phase semantic_error, import-20261104-37), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.ddl.alter-function-dmf.unset-tag"
+kind = "required_operand_missing"
+target = "<tag_name>"
+note = "omit <tag_name>, observed"
+anchor = "doc.sql.alter-function-dmf / Syntax"
+sql = "ALTER FUNCTION v1 ( TABLE ( INT ) ) UNSET TAG ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-function-dmf.unset-tag"
+kind = "negative_neighbour"
+note = "the form without its required TAG"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 1420 SQLSTATE 22023 (phase semantic_error, import-20261104-37), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.ddl.alter-function-dmf.unset-tag"
+kind = "negative_neighbour"
+note = "the form without its required TAG, observed"
+anchor = "doc.sql.alter-function-dmf / Syntax"
+sql = "ALTER FUNCTION v1 ( TABLE ( INT ) ) UNSET v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-function.set-tag"
+kind = "required_operand_missing"
+target = "<tag_name>"
+note = "omit <tag_name>"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 1420 SQLSTATE 22023 (phase semantic_error, import-20261104-37), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.ddl.alter-function.set-tag"
+kind = "required_operand_missing"
+target = "<tag_name>"
+note = "omit <tag_name>, observed"
+anchor = "doc.sql.alter-function / Syntax / User-defined and external functions / Java handler"
+sql = "ALTER FUNCTION v1 ( ) SET TAG = 'm' ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-function.set-tag"
+kind = "negative_neighbour"
+note = "the form without its required TAG"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 1420 SQLSTATE 22023 (phase semantic_error, import-20261104-37), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.ddl.alter-function.set-tag"
+kind = "negative_neighbour"
+note = "the form without its required TAG, observed"
+anchor = "doc.sql.alter-function / Syntax / User-defined and external functions / Java handler"
+sql = "ALTER FUNCTION v1 ( ) SET v1 = 'm' ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-function.set"
+kind = "negative_neighbour"
+target = "<integration_name> in [ EXTERNAL_ACCESS_INTEGRATIONS = ( <integration_name> [ , <integration_name> ... ] ) ]"
+note = "a string literal in place of <integration_name>"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 1422 SQLSTATE 22023 (phase semantic_error, import-20261104-37), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.ddl.alter-function.set"
+kind = "negative_neighbour"
+target = "<integration_name> in [ EXTERNAL_ACCESS_INTEGRATIONS = ( <integration_name> [ , <integration_name> ... ] ) ]"
+note = "a string literal in place of <integration_name>, observed"
+anchor = "doc.sql.alter-function / Syntax / User-defined and external functions / Java handler"
+sql = "ALTER FUNCTION v1 ( ) SET EXTERNAL_ACCESS_INTEGRATIONS = ( 'v1' ) ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-function.unset-tag"
+kind = "required_operand_missing"
+target = "<tag_name>"
+note = "omit <tag_name>"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 1420 SQLSTATE 22023 (phase semantic_error, import-20261104-37), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.ddl.alter-function.unset-tag"
+kind = "required_operand_missing"
+target = "<tag_name>"
+note = "omit <tag_name>, observed"
+anchor = "doc.sql.alter-function / Syntax / User-defined and external functions / Java handler"
+sql = "ALTER FUNCTION v1 ( ) UNSET TAG ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-function.unset-tag"
+kind = "negative_neighbour"
+note = "the form without its required TAG"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 1420 SQLSTATE 22023 (phase semantic_error, import-20261104-37), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.ddl.alter-function.unset-tag"
+kind = "negative_neighbour"
+note = "the form without its required TAG, observed"
+anchor = "doc.sql.alter-function / Syntax / User-defined and external functions / Java handler"
+sql = "ALTER FUNCTION v1 ( ) UNSET v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-git-repository.set-tag"
+kind = "negative_neighbour"
+note = "the form without its required TAG"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 1420 SQLSTATE 22023 (phase semantic_error, import-20261104-37), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.ddl.alter-git-repository.set-tag"
+kind = "negative_neighbour"
+note = "the form without its required TAG, observed"
+anchor = "doc.sql.alter-git-repository / Syntax"
+sql = "ALTER GIT REPOSITORY v1 SET v1 = 'm' ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-git-repository.set-tag"
+kind = "required_operand_missing"
+target = "<tag_name>"
+note = "omit <tag_name>"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 1420 SQLSTATE 22023 (phase semantic_error, import-20261104-37), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.ddl.alter-git-repository.set-tag"
+kind = "required_operand_missing"
+target = "<tag_name>"
+note = "omit <tag_name>, observed"
+anchor = "doc.sql.alter-git-repository / Syntax"
+sql = "ALTER GIT REPOSITORY v1 SET TAG = 'm' ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-git-repository.unset-tag"
+kind = "negative_neighbour"
+note = "the form without its required TAG"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 1420 SQLSTATE 22023 (phase semantic_error, import-20261104-37), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.ddl.alter-git-repository.unset-tag"
+kind = "negative_neighbour"
+note = "the form without its required TAG, observed"
+anchor = "doc.sql.alter-git-repository / Syntax"
+sql = "ALTER GIT REPOSITORY v1 UNSET v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-git-repository.unset-tag"
+kind = "required_operand_missing"
+target = "<tag_name>"
+note = "omit <tag_name>"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 1420 SQLSTATE 22023 (phase semantic_error, import-20261104-37), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.ddl.alter-git-repository.unset-tag"
+kind = "required_operand_missing"
+target = "<tag_name>"
+note = "omit <tag_name>, observed"
+anchor = "doc.sql.alter-git-repository / Syntax"
+sql = "ALTER GIT REPOSITORY v1 UNSET TAG ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-iceberg-table-alter-column-set-data-type.type-rename-fields"
+kind = "negative_neighbour"
+note = "the form without its required COLUMN"
+reason = "D97: Snowflake answers this SQL with errno 2 SQLSTATE 0A000 (phase unsupported_feature, import-20261104-37), which is not a syntax error and is unruled; the hand row below observes it"
+
+[[limit]]
+form = "sf.ddl.alter-iceberg-table-alter-column-set-data-type.type-rename-fields"
+kind = "negative_neighbour"
+note = "the form without its required COLUMN, observed"
+anchor = "doc.sql.alter-iceberg-table-alter-column-set-data-type / Syntax"
+sql = "ALTER ICEBERG TABLE v1 ALTER v1 SET DATA TYPE INT RENAME FIELDS ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-iceberg-table-alter-column-set-data-type.type-rename-fields"
+kind = "negative_neighbour"
+note = "the form without its required FIELDS"
+reason = "D97: Snowflake answers this SQL with errno 2 SQLSTATE 0A000 (phase unsupported_feature, import-20261104-37), which is not a syntax error and is unruled; the hand row below observes it"
+
+[[limit]]
+form = "sf.ddl.alter-iceberg-table-alter-column-set-data-type.type-rename-fields"
+kind = "negative_neighbour"
+note = "the form without its required FIELDS, observed"
+anchor = "doc.sql.alter-iceberg-table-alter-column-set-data-type / Syntax"
+sql = "ALTER ICEBERG TABLE v1 ALTER COLUMN v1 SET DATA TYPE INT RENAME ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-iceberg-table-alter-column-set-data-type.type-rename-fields"
+kind = "negative_neighbour"
+note = "the form without its required ICEBERG"
+reason = "D97: Snowflake answers this SQL with errno 2 SQLSTATE 0A000 (phase unsupported_feature, import-20261104-37), which is not a syntax error and is unruled; the hand row below observes it"
+
+[[limit]]
+form = "sf.ddl.alter-iceberg-table-alter-column-set-data-type.type-rename-fields"
+kind = "negative_neighbour"
+note = "the form without its required ICEBERG, observed"
+anchor = "doc.sql.alter-iceberg-table-alter-column-set-data-type / Syntax"
+sql = "ALTER TABLE v1 ALTER COLUMN v1 SET DATA TYPE INT RENAME FIELDS ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-iceberg-table-alter-column-set-data-type.type"
+kind = "negative_neighbour"
+note = "the form without its required ICEBERG"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 2003 SQLSTATE 42S02 (phase semantic_error, import-20261104-37), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.ddl.alter-iceberg-table-alter-column-set-data-type.type"
+kind = "negative_neighbour"
+note = "the form without its required ICEBERG, observed"
+anchor = "doc.sql.alter-iceberg-table-alter-column-set-data-type / Syntax"
+sql = "ALTER TABLE v1 ALTER COLUMN v1 SET DATA TYPE INT ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-iceberg-table-alter-column-set-data-type.type"
+kind = "negative_neighbour"
+note = "the form without its required COLUMN"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 2003 SQLSTATE 42S02 (phase semantic_error, import-20261104-37), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.ddl.alter-iceberg-table-alter-column-set-data-type.type"
+kind = "negative_neighbour"
+note = "the form without its required COLUMN, observed"
+anchor = "doc.sql.alter-iceberg-table-alter-column-set-data-type / Syntax"
+sql = "ALTER ICEBERG TABLE v1 ALTER v1 SET DATA TYPE INT ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-iceberg-table-partition-evolution.add-partition-by"
+kind = "negative_neighbour"
+target = "<col_name>"
+note = "a string literal in place of <col_name>"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 2003 SQLSTATE 02000 (phase semantic_error, import-20261104-37), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.ddl.alter-iceberg-table-partition-evolution.add-partition-by"
+kind = "negative_neighbour"
+target = "<col_name>"
+note = "a string literal in place of <col_name>, observed"
+anchor = "doc.sql.alter-iceberg-table-partition-evolution / Syntax"
+sql = "ALTER ICEBERG TABLE v1 ADD PARTITION BY ( 'v1' ) ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-iceberg-table-partition-evolution.add-partition-by"
+kind = "required_operand_missing"
+target = "<col_name> #5"
+note = "omit <col_name>"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 2003 SQLSTATE 02000 (phase semantic_error, import-20261104-37), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.ddl.alter-iceberg-table-partition-evolution.add-partition-by"
+kind = "required_operand_missing"
+target = "<col_name> #5"
+note = "omit <col_name>, observed"
+anchor = "doc.sql.alter-iceberg-table-partition-evolution / Syntax"
+sql = "ALTER ICEBERG TABLE v1 ADD PARTITION BY ( MONTH ( ) ) ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-iceberg-table-partition-evolution.add-partition-by"
+kind = "required_operand_missing"
+target = "<col_name> #6"
+note = "omit <col_name>"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 2003 SQLSTATE 02000 (phase semantic_error, import-20261104-37), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.ddl.alter-iceberg-table-partition-evolution.add-partition-by"
+kind = "required_operand_missing"
+target = "<col_name> #6"
+note = "omit <col_name>, observed"
+anchor = "doc.sql.alter-iceberg-table-partition-evolution / Syntax"
+sql = "ALTER ICEBERG TABLE v1 ADD PARTITION BY ( DAY ( ) ) ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-iceberg-table-partition-evolution.add-partition-by"
+kind = "negative_neighbour"
+target = "<num_buckets>"
+note = "a string literal in place of <num_buckets>"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 2003 SQLSTATE 02000 (phase semantic_error, import-20261104-37), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.ddl.alter-iceberg-table-partition-evolution.add-partition-by"
+kind = "negative_neighbour"
+target = "<num_buckets>"
+note = "a string literal in place of <num_buckets>, observed"
+anchor = "doc.sql.alter-iceberg-table-partition-evolution / Syntax"
+sql = "ALTER ICEBERG TABLE v1 ADD PARTITION BY ( BUCKET ( 'x' , v1 ) ) ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-iceberg-table-partition-evolution.add-partition-by"
+kind = "required_operand_missing"
+target = "<col_name> #4"
+note = "omit <col_name>"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 2003 SQLSTATE 02000 (phase semantic_error, import-20261104-37), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.ddl.alter-iceberg-table-partition-evolution.add-partition-by"
+kind = "required_operand_missing"
+target = "<col_name> #4"
+note = "omit <col_name>, observed"
+anchor = "doc.sql.alter-iceberg-table-partition-evolution / Syntax"
+sql = "ALTER ICEBERG TABLE v1 ADD PARTITION BY ( YEAR ( ) ) ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-iceberg-table-partition-evolution.add-partition-by"
+kind = "required_operand_missing"
+target = "<col_name> #7"
+note = "omit <col_name>"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 2003 SQLSTATE 02000 (phase semantic_error, import-20261104-37), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.ddl.alter-iceberg-table-partition-evolution.add-partition-by"
+kind = "required_operand_missing"
+target = "<col_name> #7"
+note = "omit <col_name>, observed"
+anchor = "doc.sql.alter-iceberg-table-partition-evolution / Syntax"
+sql = "ALTER ICEBERG TABLE v1 ADD PARTITION BY ( HOUR ( ) ) ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-iceberg-table-partition-evolution.drop-partition-by"
+kind = "required_operand_missing"
+target = "<col_name> #7"
+note = "omit <col_name>"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 2003 SQLSTATE 02000 (phase semantic_error, import-20261104-24), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.ddl.alter-iceberg-table-partition-evolution.drop-partition-by"
+kind = "required_operand_missing"
+target = "<col_name> #7"
+note = "omit <col_name>, observed"
+anchor = "doc.sql.alter-iceberg-table-partition-evolution / Syntax"
+sql = "ALTER ICEBERG TABLE v1 DROP PARTITION BY ( HOUR ( ) ) ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-iceberg-table-partition-evolution.drop-partition-by"
+kind = "required_operand_missing"
+target = "<col_name> #4"
+note = "omit <col_name>"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 2003 SQLSTATE 02000 (phase semantic_error, import-20261104-37), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.ddl.alter-iceberg-table-partition-evolution.drop-partition-by"
+kind = "required_operand_missing"
+target = "<col_name> #4"
+note = "omit <col_name>, observed"
+anchor = "doc.sql.alter-iceberg-table-partition-evolution / Syntax"
+sql = "ALTER ICEBERG TABLE v1 DROP PARTITION BY ( YEAR ( ) ) ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-iceberg-table-partition-evolution.drop-partition-by"
+kind = "negative_neighbour"
+target = "<col_name>"
+note = "a string literal in place of <col_name>"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 2003 SQLSTATE 02000 (phase semantic_error, import-20261104-37), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.ddl.alter-iceberg-table-partition-evolution.drop-partition-by"
+kind = "negative_neighbour"
+target = "<col_name>"
+note = "a string literal in place of <col_name>, observed"
+anchor = "doc.sql.alter-iceberg-table-partition-evolution / Syntax"
+sql = "ALTER ICEBERG TABLE v1 DROP PARTITION BY ( 'v1' ) ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-iceberg-table-partition-evolution.drop-partition-by"
+kind = "negative_neighbour"
+target = "<num_buckets>"
+note = "a string literal in place of <num_buckets>"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 2003 SQLSTATE 02000 (phase semantic_error, import-20261104-37), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.ddl.alter-iceberg-table-partition-evolution.drop-partition-by"
+kind = "negative_neighbour"
+target = "<num_buckets>"
+note = "a string literal in place of <num_buckets>, observed"
+anchor = "doc.sql.alter-iceberg-table-partition-evolution / Syntax"
+sql = "ALTER ICEBERG TABLE v1 DROP PARTITION BY ( BUCKET ( 'x' , v1 ) ) ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-iceberg-table-partition-evolution.drop-partition-by"
+kind = "required_operand_missing"
+target = "<col_name> #6"
+note = "omit <col_name>"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 2003 SQLSTATE 02000 (phase semantic_error, import-20261104-37), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.ddl.alter-iceberg-table-partition-evolution.drop-partition-by"
+kind = "required_operand_missing"
+target = "<col_name> #6"
+note = "omit <col_name>, observed"
+anchor = "doc.sql.alter-iceberg-table-partition-evolution / Syntax"
+sql = "ALTER ICEBERG TABLE v1 DROP PARTITION BY ( DAY ( ) ) ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-iceberg-table-partition-evolution.drop-partition-by"
+kind = "required_operand_missing"
+target = "<col_name> #5"
+note = "omit <col_name>"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 2003 SQLSTATE 02000 (phase semantic_error, import-20261104-37), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.ddl.alter-iceberg-table-partition-evolution.drop-partition-by"
+kind = "required_operand_missing"
+target = "<col_name> #5"
+note = "omit <col_name>, observed"
+anchor = "doc.sql.alter-iceberg-table-partition-evolution / Syntax"
+sql = "ALTER ICEBERG TABLE v1 DROP PARTITION BY ( MONTH ( ) ) ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-iceberg-table-version-tag.drop-version-tag"
+kind = "required_operand_missing"
+target = "<tag_name>"
+note = "omit <tag_name>"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 2003 SQLSTATE 42S02 (phase semantic_error, import-20261104-24), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.ddl.alter-iceberg-table-version-tag.drop-version-tag"
+kind = "required_operand_missing"
+target = "<tag_name>"
+note = "omit <tag_name>, observed"
+anchor = "doc.sql.alter-iceberg-table-version-tag / Syntax"
+sql = "ALTER ICEBERG TABLE v1 DROP VERSION_TAG ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-iceberg-table.clusteringaction"
+kind = "negative_neighbour"
+note = "the form without its required CLUSTERING"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 2003 SQLSTATE 42S02 (phase semantic_error, import-20261104-37), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.ddl.alter-iceberg-table.clusteringaction"
+kind = "negative_neighbour"
+note = "the form without its required CLUSTERING, observed"
+anchor = "doc.sql.alter-iceberg-table / Syntax"
+sql = "ALTER ICEBERG TABLE v1 DROP KEY ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-iceberg-table.clusteringaction"
+kind = "negative_neighbour"
+note = "the form without its required KEY"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 2003 SQLSTATE 42S02 (phase semantic_error, import-20261104-37), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.ddl.alter-iceberg-table.clusteringaction"
+kind = "negative_neighbour"
+note = "the form without its required KEY, observed"
+anchor = "doc.sql.alter-iceberg-table / Syntax"
+sql = "ALTER ICEBERG TABLE v1 DROP CLUSTERING ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-iceberg-table.datagovnpolicytagaction"
+kind = "negative_neighbour"
+note = "the form without its required EXISTS in [ IF EXISTS ]"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 2003 SQLSTATE 42S02 (phase semantic_error, import-20261104-37), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.ddl.alter-iceberg-table.datagovnpolicytagaction"
+kind = "negative_neighbour"
+note = "the form without its required EXISTS in [ IF EXISTS ], observed"
+anchor = "doc.sql.alter-iceberg-table / Syntax"
+sql = "ALTER ICEBERG TABLE IF SET TAG v1 = 'm' ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-iceberg-table.searchoptimizationaction"
+kind = "negative_neighbour"
+target = "<column_name> in [ ON { <search_method_with_target> | <column_name> | <expression_id> } [ , ... ] ]"
+note = "a string literal in place of <column_name>"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 904 SQLSTATE 42000 (phase semantic_error, import-20261104-37), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.ddl.alter-iceberg-table.searchoptimizationaction"
+kind = "negative_neighbour"
+target = "<column_name> in [ ON { <search_method_with_target> | <column_name> | <expression_id> } [ , ... ] ]"
+note = "a string literal in place of <column_name>, observed"
+anchor = "doc.sql.alter-iceberg-table / Syntax"
+sql = "ALTER ICEBERG TABLE v1 DROP SEARCH OPTIMIZATION ON 'v1' ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-iceberg-table.tablecolumnaction"
+kind = "negative_neighbour"
+note = "the form without its required WRITE in [ , [ COLUMN ] <col2_name> { { [ SET ] NOT NULL | DROP NOT NULL } | [ [ SET DATA ] TYPE ] <type> | COMMENT '<string>' |…"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 2003 SQLSTATE 42S02 (phase semantic_error, import-20261104-37), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.ddl.alter-iceberg-table.tablecolumnaction"
+kind = "negative_neighbour"
+note = "the form without its required WRITE in [ , [ COLUMN ] <col2_name> { { [ SET ] NOT NULL | DROP NOT NULL } | [ [ SET DATA ] TYPE ] <type> | COMMENT '<string>' |…, observed"
+anchor = "doc.sql.alter-iceberg-table / Syntax"
+sql = "ALTER ICEBERG TABLE v1 ALTER v1 NOT NULL , v1 SET DEFAULT 1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-iceberg-table.tablecolumnaction"
+kind = "negative_neighbour"
+note = "the form without its required WRITE"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 2003 SQLSTATE 42S02 (phase semantic_error, import-20261104-37), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.ddl.alter-iceberg-table.tablecolumnaction"
+kind = "negative_neighbour"
+note = "the form without its required WRITE, observed"
+anchor = "doc.sql.alter-iceberg-table / Syntax"
+sql = "ALTER ICEBERG TABLE v1 ALTER v1 SET DEFAULT 1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-model-add-version.internalstage"
+kind = "required_operand_missing"
+target = "<table_name>"
+note = "omit <table_name>"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 1021 SQLSTATE 42601 (phase semantic_error, import-20261104-24), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.ddl.alter-model-add-version.internalstage"
+kind = "required_operand_missing"
+target = "<table_name>"
+note = "omit <table_name>, observed"
+anchor = "doc.sql.alter-model-add-version / Variant Syntax"
+sql = "ALTER MODEL v1 ADD VERSION v1 FROM @% ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-model-monitor.unset-baseline"
+kind = "required_operand_missing"
+target = "<monitor_name>"
+note = "omit <monitor_name>"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 1420 SQLSTATE 22023 (phase semantic_error, import-20261104-24), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.ddl.alter-model-monitor.unset-baseline"
+kind = "required_operand_missing"
+target = "<monitor_name>"
+note = "omit <monitor_name>, observed"
+anchor = "doc.sql.alter-model-monitor / Syntax / Model version monitor only"
+sql = "ALTER MODEL MONITOR UNSET BASELINE ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-openflow-deployment.unset-display-name-comment-event-table"
+kind = "negative_neighbour"
+note = "the form without its required OPENFLOW"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 1420 SQLSTATE 22023 (phase semantic_error, import-20261104-38), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.ddl.alter-openflow-deployment.unset-display-name-comment-event-table"
+kind = "negative_neighbour"
+note = "the form without its required OPENFLOW, observed"
+anchor = "doc.sql.alter-openflow-deployment / Syntax"
+sql = "ALTER DEPLOYMENT v1 UNSET DISPLAY_NAME ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-pipe.set-tag"
+kind = "negative_neighbour"
+note = "the form without its required TAG"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 1420 SQLSTATE 22023 (phase semantic_error, import-20261104-38), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.ddl.alter-pipe.set-tag"
+kind = "negative_neighbour"
+note = "the form without its required TAG, observed"
+anchor = "doc.sql.alter-pipe / Syntax"
+sql = "ALTER PIPE v1 SET v1 = 'm' ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-pipe.set-tag"
+kind = "required_operand_missing"
+target = "<tag_name>"
+note = "omit <tag_name>"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 1420 SQLSTATE 22023 (phase semantic_error, import-20261104-38), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.ddl.alter-pipe.set-tag"
+kind = "required_operand_missing"
+target = "<tag_name>"
+note = "omit <tag_name>, observed"
+anchor = "doc.sql.alter-pipe / Syntax"
+sql = "ALTER PIPE v1 SET TAG = 'm' ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-pipe.unset-tag"
+kind = "required_operand_missing"
+target = "<tag_name>"
+note = "omit <tag_name>"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 1420 SQLSTATE 22023 (phase semantic_error, import-20261104-38), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.ddl.alter-pipe.unset-tag"
+kind = "required_operand_missing"
+target = "<tag_name>"
+note = "omit <tag_name>, observed"
+anchor = "doc.sql.alter-pipe / Syntax"
+sql = "ALTER PIPE v1 UNSET TAG ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-procedure.set-tag"
+kind = "negative_neighbour"
+note = "the form without its required TAG"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 1420 SQLSTATE 22023 (phase semantic_error, import-20261104-38), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.ddl.alter-procedure.set-tag"
+kind = "negative_neighbour"
+note = "the form without its required TAG, observed"
+anchor = "doc.sql.alter-procedure / Syntax / Java handler"
+sql = "ALTER PROCEDURE v1 ( ) SET v1 = 'm' ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-procedure.set-tag"
+kind = "required_operand_missing"
+target = "<tag_name>"
+note = "omit <tag_name>"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 1420 SQLSTATE 22023 (phase semantic_error, import-20261104-38), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.ddl.alter-procedure.set-tag"
+kind = "required_operand_missing"
+target = "<tag_name>"
+note = "omit <tag_name>, observed"
+anchor = "doc.sql.alter-procedure / Syntax / Java handler"
+sql = "ALTER PROCEDURE v1 ( ) SET TAG = 'm' ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-procedure.unset-tag"
+kind = "required_operand_missing"
+target = "<tag_name>"
+note = "omit <tag_name>"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 1420 SQLSTATE 22023 (phase semantic_error, import-20261104-38), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.ddl.alter-procedure.unset-tag"
+kind = "required_operand_missing"
+target = "<tag_name>"
+note = "omit <tag_name>, observed"
+anchor = "doc.sql.alter-procedure / Syntax / Java handler"
+sql = "ALTER PROCEDURE v1 ( ) UNSET TAG ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-procedure.unset-tag"
+kind = "negative_neighbour"
+note = "the form without its required TAG"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 1420 SQLSTATE 22023 (phase semantic_error, import-20261104-38), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.ddl.alter-procedure.unset-tag"
+kind = "negative_neighbour"
+note = "the form without its required TAG, observed"
+anchor = "doc.sql.alter-procedure / Syntax / Java handler"
+sql = "ALTER PROCEDURE v1 ( ) UNSET v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-schema.set-tag"
+kind = "negative_neighbour"
+note = "the form without its required TAG"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 1420 SQLSTATE 22023 (phase semantic_error, import-20261104-24), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.ddl.alter-schema.set-tag"
+kind = "negative_neighbour"
+note = "the form without its required TAG, observed"
+anchor = "doc.sql.alter-schema / Syntax"
+sql = "ALTER SCHEMA v1 SET v1 = 'm' ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-schema.set-tag"
+kind = "required_operand_missing"
+target = "<tag_name>"
+note = "omit <tag_name>"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 1420 SQLSTATE 22023 (phase semantic_error, import-20261104-38), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.ddl.alter-schema.set-tag"
+kind = "required_operand_missing"
+target = "<tag_name>"
+note = "omit <tag_name>, observed"
+anchor = "doc.sql.alter-schema / Syntax"
+sql = "ALTER SCHEMA v1 SET TAG = 'm' ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-schema.set"
+kind = "required_operand_missing"
+target = "<purpose> in [ CONTACT <purpose> = <contact_name> [ , <purpose> = <contact_name> ... ] ]"
+note = "omit <purpose>"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 1420 SQLSTATE 22023 (phase semantic_error, import-20261104-38), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.ddl.alter-schema.set"
+kind = "required_operand_missing"
+target = "<purpose> in [ CONTACT <purpose> = <contact_name> [ , <purpose> = <contact_name> ... ] ]"
+note = "omit <purpose>, observed"
+anchor = "doc.sql.alter-schema / Syntax"
+sql = "ALTER SCHEMA v1 SET CONTACT = v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-schema.unset-data-retention-time-in-days-max-data-extension-time-in-days-stage-undrop-retention-time-in-days"
+kind = "required_operand_missing"
+target = "<purpose> #2"
+note = "omit <purpose>"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 1420 SQLSTATE 22023 (phase semantic_error, import-20261104-24), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.ddl.alter-schema.unset-data-retention-time-in-days-max-data-extension-time-in-days-stage-undrop-retention-time-in-days"
+kind = "required_operand_missing"
+target = "<purpose> #2"
+note = "omit <purpose>, observed"
+anchor = "doc.sql.alter-schema / Syntax"
+sql = "ALTER SCHEMA v1 UNSET CONTACT ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-schema.unset-data-retention-time-in-days-max-data-extension-time-in-days-stage-undrop-retention-time-in-days"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>"
+reason = "D97: Snowflake ran this SQL (phase accepted, import-20261104-38), so the omission is not a syntax error; whether the name is optional is a catalogue question for the coordinator; the hand row below observes it"
+
+[[limit]]
+form = "sf.ddl.alter-schema.unset-data-retention-time-in-days-max-data-extension-time-in-days-stage-undrop-retention-time-in-days"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>, observed"
+anchor = "doc.sql.alter-schema / Syntax"
+sql = "ALTER SCHEMA UNSET DATA_RETENTION_TIME_IN_DAYS ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-schema.unset-tag"
+kind = "required_operand_missing"
+target = "<tag_name>"
+note = "omit <tag_name>"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 1420 SQLSTATE 22023 (phase semantic_error, import-20261104-38), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.ddl.alter-schema.unset-tag"
+kind = "required_operand_missing"
+target = "<tag_name>"
+note = "omit <tag_name>, observed"
+anchor = "doc.sql.alter-schema / Syntax"
+sql = "ALTER SCHEMA v1 UNSET TAG ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-schema.unset-tag"
+kind = "negative_neighbour"
+note = "the form without its required TAG"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 1420 SQLSTATE 22023 (phase semantic_error, import-20261104-38), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.ddl.alter-schema.unset-tag"
+kind = "negative_neighbour"
+note = "the form without its required TAG, observed"
+anchor = "doc.sql.alter-schema / Syntax"
+sql = "ALTER SCHEMA v1 UNSET v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-semantic-view.set-comment-max-staleness"
+kind = "negative_neighbour"
+note = "the form without its required SEMANTIC"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 2003 SQLSTATE 42S02 (phase semantic_error, import-20261104-38), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.ddl.alter-semantic-view.set-comment-max-staleness"
+kind = "negative_neighbour"
+note = "the form without its required SEMANTIC, observed"
+anchor = "doc.sql.alter-semantic-view / Syntax"
+sql = "ALTER VIEW v1 SET COMMENT = 'm' ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-semantic-view.set-tag"
+kind = "required_operand_missing"
+target = "<tag_name>"
+note = "omit <tag_name>"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 1420 SQLSTATE 22023 (phase semantic_error, import-20261104-24), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.ddl.alter-semantic-view.set-tag"
+kind = "required_operand_missing"
+target = "<tag_name>"
+note = "omit <tag_name>, observed"
+anchor = "doc.sql.alter-semantic-view / Syntax"
+sql = "ALTER SEMANTIC VIEW v1 SET TAG = 'm' ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-semantic-view.set-tag"
+kind = "negative_neighbour"
+note = "the form without its required TAG"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 1420 SQLSTATE 22023 (phase semantic_error, import-20261104-38), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.ddl.alter-semantic-view.set-tag"
+kind = "negative_neighbour"
+note = "the form without its required TAG, observed"
+anchor = "doc.sql.alter-semantic-view / Syntax"
+sql = "ALTER SEMANTIC VIEW v1 SET v1 = 'm' ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-semantic-view.unset-comment-max-staleness"
+kind = "negative_neighbour"
+note = "the form without its required SEMANTIC"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 2003 SQLSTATE 42S02 (phase semantic_error, import-20261104-38), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.ddl.alter-semantic-view.unset-comment-max-staleness"
+kind = "negative_neighbour"
+note = "the form without its required SEMANTIC, observed"
+anchor = "doc.sql.alter-semantic-view / Syntax"
+sql = "ALTER VIEW v1 UNSET COMMENT ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-semantic-view.unset-tag"
+kind = "required_operand_missing"
+target = "<tag_name>"
+note = "omit <tag_name>"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 1420 SQLSTATE 22023 (phase semantic_error, import-20261104-38), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.ddl.alter-semantic-view.unset-tag"
+kind = "required_operand_missing"
+target = "<tag_name>"
+note = "omit <tag_name>, observed"
+anchor = "doc.sql.alter-semantic-view / Syntax"
+sql = "ALTER SEMANTIC VIEW v1 UNSET TAG ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-semantic-view.unset-tag"
+kind = "negative_neighbour"
+note = "the form without its required TAG"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 1420 SQLSTATE 22023 (phase semantic_error, import-20261104-38), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.ddl.alter-semantic-view.unset-tag"
+kind = "negative_neighbour"
+note = "the form without its required TAG, observed"
+anchor = "doc.sql.alter-semantic-view / Syntax"
+sql = "ALTER SEMANTIC VIEW v1 UNSET v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-service.set.syntax"
+kind = "required_operand_missing"
+target = "<tag_name> in [ TAG <tag_name> = '<tag_value>' [ , <tag_name> = '<tag_value>' ... ] ]"
+note = "omit <tag_name>"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 1420 SQLSTATE 22023 (phase semantic_error, import-20261104-24), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.ddl.alter-service.set.syntax"
+kind = "required_operand_missing"
+target = "<tag_name> in [ TAG <tag_name> = '<tag_value>' [ , <tag_name> = '<tag_value>' ... ] ]"
+note = "omit <tag_name>, observed"
+anchor = "doc.sql.alter-service / Syntax"
+sql = "ALTER SERVICE v1 SET TAG = 'm' ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-snapshot-set.unset-tag"
+kind = "required_operand_missing"
+target = "<tag_name>"
+note = "omit <tag_name>"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 1420 SQLSTATE 22023 (phase semantic_error, import-20261104-24), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.ddl.alter-snapshot-set.unset-tag"
+kind = "required_operand_missing"
+target = "<tag_name>"
+note = "omit <tag_name>, observed"
+anchor = "doc.sql.alter-snapshot-set / Syntax"
+sql = "ALTER SNAPSHOT SET v1 UNSET TAG ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-stage.unset-tag"
+kind = "required_operand_missing"
+target = "<tag_name>"
+note = "omit <tag_name>"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 2003 SQLSTATE 02000 (phase semantic_error, import-20261104-24), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.ddl.alter-stage.unset-tag"
+kind = "required_operand_missing"
+target = "<tag_name>"
+note = "omit <tag_name>, observed"
+anchor = "doc.sql.alter-stage / Syntax"
+sql = "ALTER STAGE v1 UNSET TAG ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-stream.unset-tag"
+kind = "required_operand_missing"
+target = "<tag_name>"
+note = "omit <tag_name>"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 1420 SQLSTATE 22023 (phase semantic_error, import-20261104-24), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.ddl.alter-stream.unset-tag"
+kind = "required_operand_missing"
+target = "<tag_name>"
+note = "omit <tag_name>, observed"
+anchor = "doc.sql.alter-stream / Syntax"
+sql = "ALTER STREAM v1 UNSET TAG ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-task-graph.set-tag"
+kind = "required_operand_missing"
+target = "<tag_name>"
+note = "omit <tag_name>"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 1420 SQLSTATE 22023 (phase semantic_error, import-20261104-24), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.ddl.alter-task-graph.set-tag"
+kind = "required_operand_missing"
+target = "<tag_name>"
+note = "omit <tag_name>, observed"
+anchor = "doc.sql.alter-task-graph / Syntax / ALTER TASK GRAPH ... SET / UNSET"
+sql = "ALTER TASK GRAPH v1 SET TAG = 'm' ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-task-graph.unset-tag"
+kind = "required_operand_missing"
+target = "<tag_name>"
+note = "omit <tag_name>"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 1420 SQLSTATE 22023 (phase semantic_error, import-20261104-24), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.ddl.alter-task-graph.unset-tag"
+kind = "required_operand_missing"
+target = "<tag_name>"
+note = "omit <tag_name>, observed"
+anchor = "doc.sql.alter-task-graph / Syntax / ALTER TASK GRAPH ... SET / UNSET"
+sql = "ALTER TASK GRAPH v1 UNSET TAG ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.create-dynamic-table.create-or-alter-dynamic-iceberg-table"
+kind = "required_operand_missing"
+target = "<col_type>"
+note = "omit <col_type>"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 90080 SQLSTATE 22000 (phase semantic_error, import-20261104-26), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.ddl.create-dynamic-table.create-or-alter-dynamic-iceberg-table"
+kind = "required_operand_missing"
+target = "<col_type>"
+note = "omit <col_type>, observed"
+anchor = "doc.sql.create-dynamic-table / CREATE OR ALTER DYNAMIC ICEBERG TABLE"
+sql = "CREATE OR ALTER DYNAMIC ICEBERG TABLE v1 ( v1 ) TARGET_LAG = '1 minute' WAREHOUSE = v1 AS SELECT 1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.create-dynamic-table.create-or-alter-dynamic-iceberg-table"
+kind = "required_operand_missing"
+target = "<col_name> in [ , <col_name> <col_type> [ ... ] ]"
+note = "omit <col_name>"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 90080 SQLSTATE 22000 (phase semantic_error, import-20261104-26), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.ddl.create-dynamic-table.create-or-alter-dynamic-iceberg-table"
+kind = "required_operand_missing"
+target = "<col_name> in [ , <col_name> <col_type> [ ... ] ]"
+note = "omit <col_name>, observed"
+anchor = "doc.sql.create-dynamic-table / CREATE OR ALTER DYNAMIC ICEBERG TABLE"
+sql = "CREATE OR ALTER DYNAMIC ICEBERG TABLE v1 ( v1 INT , INT ) TARGET_LAG = '1 minute' WAREHOUSE = v1 AS SELECT 1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.create-dynamic-table.create-or-alter-dynamic-iceberg-table"
+kind = "required_operand_missing"
+target = "<col_name>"
+note = "omit <col_name>"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 90080 SQLSTATE 22000 (phase semantic_error, import-20261104-26), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.ddl.create-dynamic-table.create-or-alter-dynamic-iceberg-table"
+kind = "required_operand_missing"
+target = "<col_name>"
+note = "omit <col_name>, observed"
+anchor = "doc.sql.create-dynamic-table / CREATE OR ALTER DYNAMIC ICEBERG TABLE"
+sql = "CREATE OR ALTER DYNAMIC ICEBERG TABLE v1 ( INT ) TARGET_LAG = '1 minute' WAREHOUSE = v1 AS SELECT 1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.create-dynamic-table.create-or-alter-dynamic-iceberg-table"
+kind = "required_operand_missing"
+target = "<col_type> in [ , <col_name> <col_type> [ ... ] ]"
+note = "omit <col_type>"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 90080 SQLSTATE 22000 (phase semantic_error, import-20261104-26), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.ddl.create-dynamic-table.create-or-alter-dynamic-iceberg-table"
+kind = "required_operand_missing"
+target = "<col_type> in [ , <col_name> <col_type> [ ... ] ]"
+note = "omit <col_type>, observed"
+anchor = "doc.sql.create-dynamic-table / CREATE OR ALTER DYNAMIC ICEBERG TABLE"
+sql = "CREATE OR ALTER DYNAMIC ICEBERG TABLE v1 ( v1 INT , v1 ) TARGET_LAG = '1 minute' WAREHOUSE = v1 AS SELECT 1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.create-external-table.cloudproviderparams-location-externalstage-file-format"
+kind = "required_operand_missing"
+target = "<col_type> in [ <col_name> <col_type> AS <expr> | <part_col_name> <col_type> AS <part_expr> ]"
+note = "omit <col_type>"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 1473 SQLSTATE 42601 (phase semantic_error, import-20261104-25), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.ddl.create-external-table.cloudproviderparams-location-externalstage-file-format"
+kind = "required_operand_missing"
+target = "<col_type> in [ <col_name> <col_type> AS <expr> | <part_col_name> <col_type> AS <part_expr> ]"
+note = "omit <col_type>, observed"
+anchor = "doc.sql.create-external-table / Syntax"
+sql = "CREATE EXTERNAL TABLE v1 ( v1 AS 1 ) LOCATION = @s1 FILE_FORMAT = ( FORMAT_NAME = 'm' ) ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.create-external-table.cloudproviderparams-location-externalstage-file-format"
+kind = "required_operand_missing"
+target = "<col_type> in [ <col_name> <col_type> AS <expr> | <part_col_name> <col_type> AS <part_expr> ] #2"
+note = "omit <col_type>"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 1473 SQLSTATE 42601 (phase semantic_error, import-20261104-25), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.ddl.create-external-table.cloudproviderparams-location-externalstage-file-format"
+kind = "required_operand_missing"
+target = "<col_type> in [ <col_name> <col_type> AS <expr> | <part_col_name> <col_type> AS <part_expr> ] #2"
+note = "omit <col_type>, observed"
+anchor = "doc.sql.create-external-table / Syntax"
+sql = "CREATE EXTERNAL TABLE v1 ( v1 AS 1 ) LOCATION = @s1 FILE_FORMAT = ( FORMAT_NAME = 'm' ) ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.create-external-table.cloudproviderparams-location-externalstage-file-format"
+kind = "required_operand_missing"
+target = "<col_type> in [ , <col_name> <col_type> AS <expr> | <part_col_name> <col_type> AS <part_expr> ... ]"
+note = "omit <col_type>"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 1473 SQLSTATE 42601 (phase semantic_error, import-20261104-25), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.ddl.create-external-table.cloudproviderparams-location-externalstage-file-format"
+kind = "required_operand_missing"
+target = "<col_type> in [ , <col_name> <col_type> AS <expr> | <part_col_name> <col_type> AS <part_expr> ... ]"
+note = "omit <col_type>, observed"
+anchor = "doc.sql.create-external-table / Syntax"
+sql = "CREATE EXTERNAL TABLE v1 ( v1 AS 1 ) LOCATION = @s1 FILE_FORMAT = ( FORMAT_NAME = 'm' ) ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.create-external-table.cloudproviderparams-location-externalstage-file-format"
+kind = "required_operand_missing"
+target = "<col_type> in [ , <col_name> <col_type> AS <expr> | <part_col_name> <col_type> AS <part_expr> ... ] #2"
+note = "omit <col_type>"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 1473 SQLSTATE 42601 (phase semantic_error, import-20261104-25), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.ddl.create-external-table.cloudproviderparams-location-externalstage-file-format"
+kind = "required_operand_missing"
+target = "<col_type> in [ , <col_name> <col_type> AS <expr> | <part_col_name> <col_type> AS <part_expr> ... ] #2"
+note = "omit <col_type>, observed"
+anchor = "doc.sql.create-external-table / Syntax"
+sql = "CREATE EXTERNAL TABLE v1 ( v1 AS 1 ) LOCATION = @s1 FILE_FORMAT = ( FORMAT_NAME = 'm' ) ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.desc-application-service"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 2003 SQLSTATE 02000 (phase semantic_error, import-20261104-30), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.ddl.desc-application-service"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>, observed"
+anchor = "doc.sql.desc-application-service / Syntax"
+sql = "DESC APPLICATION SERVICE ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.show-code-bundles.bundles-in-database"
+kind = "negative_neighbour"
+note = "the form without its required DATABASE"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 2043 SQLSTATE 02000 (phase semantic_error, import-20261104-31), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.ddl.show-code-bundles.bundles-in-database"
+kind = "negative_neighbour"
+note = "the form without its required DATABASE, observed"
+anchor = "doc.sql.show-code-bundles / Syntax"
+sql = "SHOW CODE BUNDLES IN v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.show-configurations"
+kind = "negative_neighbour"
+note = "the form without its required APPLICATION in [ IN APPLICATION <app> ]"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 2003 SQLSTATE 02000 (phase semantic_error, import-20261104-32), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.ddl.show-configurations"
+kind = "negative_neighbour"
+note = "the form without its required APPLICATION in [ IN APPLICATION <app> ], observed"
+anchor = "doc.sql.show-configurations / Syntax"
+sql = "SHOW CONFIGURATIONS IN v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.show-delegated-authorizations.authorizations-by-user"
+kind = "negative_neighbour"
+note = "the form without its required USER"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 390312 SQLSTATE 22023 (phase runtime_error, import-20261104-32), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.ddl.show-delegated-authorizations.authorizations-by-user"
+kind = "negative_neighbour"
+note = "the form without its required USER, observed"
+anchor = "doc.sql.show-delegated-authorizations / Syntax"
+sql = "SHOW DELEGATED AUTHORIZATIONS BY v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.show-endpoints"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 2003 SQLSTATE 02000 (phase semantic_error, import-20261104-32), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.ddl.show-endpoints"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>, observed"
+anchor = "doc.sql.show-endpoints / Syntax"
+sql = "SHOW ENDPOINTS IN SERVICE ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.show-external-tables"
+kind = "required_operand_missing"
+target = "<application_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_na…"
+note = "omit <application_name>"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 2043 SQLSTATE 02000 (phase semantic_error, import-20261104-32), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.ddl.show-external-tables"
+kind = "required_operand_missing"
+target = "<application_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_na…"
+note = "omit <application_name>, observed"
+anchor = "doc.sql.show-external-tables / Syntax"
+sql = "SHOW EXTERNAL TABLES IN APPLICATION ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.show-procedures"
+kind = "required_operand_missing"
+target = "<class_name> in [ IN { ACCOUNT | CLASS <class_name> | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_nam…"
+note = "omit <class_name>"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 2003 SQLSTATE 02000 (phase semantic_error, import-20261104-32), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.ddl.show-procedures"
+kind = "required_operand_missing"
+target = "<class_name> in [ IN { ACCOUNT | CLASS <class_name> | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_nam…"
+note = "omit <class_name>, observed"
+anchor = "doc.sql.show-procedures / Syntax"
+sql = "SHOW PROCEDURES IN CLASS ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.show-sequences"
+kind = "required_operand_missing"
+target = "<application_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_na…"
+note = "omit <application_name>"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 2003 SQLSTATE 02000 (phase semantic_error, import-20261104-33), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.ddl.show-sequences"
+kind = "required_operand_missing"
+target = "<application_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_na…"
+note = "omit <application_name>, observed"
+anchor = "doc.sql.show-sequences / Syntax"
+sql = "SHOW SEQUENCES IN APPLICATION ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.show-types"
+kind = "required_operand_missing"
+target = "<application_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_na…"
+note = "omit <application_name>"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 2003 SQLSTATE 02000 (phase semantic_error, import-20261104-33), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.ddl.show-types"
+kind = "required_operand_missing"
+target = "<application_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_na…"
+note = "omit <application_name>, observed"
+anchor = "doc.sql.show-types / Syntax"
+sql = "SHOW TYPES IN APPLICATION ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.show-versions-in-listing"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>"
+reason = "D97: Snowflake answers this SQL with errno 2 SQLSTATE 0A000 (phase unsupported_feature, import-20261104-33), which is not a syntax error and is unruled; the hand row below observes it"
+
+[[limit]]
+form = "sf.ddl.show-versions-in-listing"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>, observed"
+anchor = "doc.sql.show-versions-in-listing / Syntax"
+sql = "SHOW VERSIONS IN LISTING ;"
 expect = "observe"
 context = "raw"
 

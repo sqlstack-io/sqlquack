@@ -6251,13 +6251,6 @@ required = true
 target = "[ IF EXISTS ]"
 
 [[obligation]]
-id = "sf.ddl.alter-application-package.rename-to.o004"
-kind = "required_operand_missing"
-required = true
-target = "<name>"
-note = "omit <name>"
-
-[[obligation]]
 id = "sf.ddl.alter-application-package.rename-to.o005"
 kind = "operand_type_class"
 required = true
@@ -6347,6 +6340,14 @@ required = true
 target = "<new_package_name>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.ddl.alter-application-package.rename-to.o018"
+kind = "required_operand_missing"
+required = true
+target = "<name>"
+anchor = "doc.sql.alter-application-package / Syntax"
+note = "omit <name>, observed"
 
 [[obligation]]
 id = "sf.ddl.alter-application-package.set.o001"
@@ -6684,13 +6685,6 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "sf.ddl.alter-application-package.set-tag.o002"
-kind = "required_operand_missing"
-required = true
-target = "<name>"
-note = "omit <name>"
-
-[[obligation]]
 id = "sf.ddl.alter-application-package.set-tag.o003"
 kind = "operand_type_class"
 required = true
@@ -6703,13 +6697,6 @@ kind = "negative_neighbour"
 required = true
 target = "<name>"
 note = "a string literal in place of <name>"
-
-[[obligation]]
-id = "sf.ddl.alter-application-package.set-tag.o005"
-kind = "required_operand_missing"
-required = true
-target = "<tag_name>"
-note = "omit <tag_name>"
 
 [[obligation]]
 id = "sf.ddl.alter-application-package.set-tag.o006"
@@ -6772,12 +6759,6 @@ required = true
 note = "the form without its required SET"
 
 [[obligation]]
-id = "sf.ddl.alter-application-package.set-tag.o015"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required TAG"
-
-[[obligation]]
 id = "sf.ddl.alter-application-package.set-tag.o016"
 kind = "identifier_class"
 required = true
@@ -6808,6 +6789,29 @@ required = true
 target = "<tag_name>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.ddl.alter-application-package.set-tag.o020"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.alter-application-package / Syntax"
+note = "the form without its required TAG, observed"
+
+[[obligation]]
+id = "sf.ddl.alter-application-package.set-tag.o021"
+kind = "required_operand_missing"
+required = true
+target = "<name>"
+anchor = "doc.sql.alter-application-package / Syntax"
+note = "omit <name>, observed"
+
+[[obligation]]
+id = "sf.ddl.alter-application-package.set-tag.o022"
+kind = "required_operand_missing"
+required = true
+target = "<tag_name>"
+anchor = "doc.sql.alter-application-package / Syntax"
+note = "omit <tag_name>, observed"
 
 [[obligation]]
 id = "sf.ddl.alter-application-package.unset.o001"
@@ -7000,13 +7004,6 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "sf.ddl.alter-application-package.unset-tag.o002"
-kind = "required_operand_missing"
-required = true
-target = "<name>"
-note = "omit <name>"
-
-[[obligation]]
 id = "sf.ddl.alter-application-package.unset-tag.o003"
 kind = "operand_type_class"
 required = true
@@ -7019,13 +7016,6 @@ kind = "negative_neighbour"
 required = true
 target = "<name>"
 note = "a string literal in place of <name>"
-
-[[obligation]]
-id = "sf.ddl.alter-application-package.unset-tag.o005"
-kind = "required_operand_missing"
-required = true
-target = "<tag_name>"
-note = "omit <tag_name>"
 
 [[obligation]]
 id = "sf.ddl.alter-application-package.unset-tag.o006"
@@ -7067,12 +7057,6 @@ required = true
 note = "the form without its required UNSET"
 
 [[obligation]]
-id = "sf.ddl.alter-application-package.unset-tag.o012"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required TAG"
-
-[[obligation]]
 id = "sf.ddl.alter-application-package.unset-tag.o013"
 kind = "identifier_class"
 required = true
@@ -7103,6 +7087,29 @@ required = true
 target = "<tag_name>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.ddl.alter-application-package.unset-tag.o017"
+kind = "required_operand_missing"
+required = true
+target = "<tag_name>"
+anchor = "doc.sql.alter-application-package / Syntax"
+note = "omit <tag_name>, observed"
+
+[[obligation]]
+id = "sf.ddl.alter-application-package.unset-tag.o018"
+kind = "required_operand_missing"
+required = true
+target = "<name>"
+anchor = "doc.sql.alter-application-package / Syntax"
+note = "omit <name>, observed"
+
+[[obligation]]
+id = "sf.ddl.alter-application-package.unset-tag.o019"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.alter-application-package / Syntax"
+note = "the form without its required TAG, observed"
 
 [[obligation]]
 id = "sf.ddl.alter-application-sequence-number.o001"
@@ -7357,13 +7364,6 @@ target = "<integration_name> in [ EXTERNAL_ACCESS_INTEGRATIONS = ( <integration_
 note = "a valid identifier"
 
 [[obligation]]
-id = "sf.ddl.alter-application-service.set.o020"
-kind = "negative_neighbour"
-required = true
-target = "<integration_name> in [ EXTERNAL_ACCESS_INTEGRATIONS = ( <integration_name> [ , ... ] ) ]"
-note = "a string literal in place of <integration_name>"
-
-[[obligation]]
 id = "sf.ddl.alter-application-service.set.o021"
 kind = "option_present"
 required = true
@@ -7605,6 +7605,14 @@ anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
+id = "sf.ddl.alter-application-service.set.o057"
+kind = "negative_neighbour"
+required = true
+target = "<integration_name> in [ EXTERNAL_ACCESS_INTEGRATIONS = ( <integration_name> [ , ... ] ) ]"
+anchor = "doc.sql.alter-application-service / Syntax"
+note = "a string literal in place of <integration_name>, observed"
+
+[[obligation]]
 id = "sf.ddl.alter-application-service.suspend-resume.o001"
 kind = "positive"
 required = true
@@ -7708,13 +7716,6 @@ required = true
 target = "[ IF EXISTS ]"
 
 [[obligation]]
-id = "sf.ddl.alter-application-service.unset-auto-resume-auto-suspend-secs-external-access-integrations.o004"
-kind = "required_operand_missing"
-required = true
-target = "<name>"
-note = "omit <name>"
-
-[[obligation]]
 id = "sf.ddl.alter-application-service.unset-auto-resume-auto-suspend-secs-external-access-integrations.o005"
 kind = "operand_type_class"
 required = true
@@ -7784,12 +7785,6 @@ required = true
 target = "[ , ... ]"
 
 [[obligation]]
-id = "sf.ddl.alter-application-service.unset-auto-resume-auto-suspend-secs-external-access-integrations.o016"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required SERVICE"
-
-[[obligation]]
 id = "sf.ddl.alter-application-service.unset-auto-resume-auto-suspend-secs-external-access-integrations.o017"
 kind = "negative_neighbour"
 required = true
@@ -7824,6 +7819,21 @@ anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
+id = "sf.ddl.alter-application-service.unset-auto-resume-auto-suspend-secs-external-access-integrations.o022"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.alter-application-service / Syntax"
+note = "the form without its required SERVICE, observed"
+
+[[obligation]]
+id = "sf.ddl.alter-application-service.unset-auto-resume-auto-suspend-secs-external-access-integrations.o023"
+kind = "required_operand_missing"
+required = true
+target = "<name>"
+anchor = "doc.sql.alter-application-service / Syntax"
+note = "omit <name>, observed"
+
+[[obligation]]
 id = "sf.ddl.alter-application-service.upgrade.o001"
 kind = "positive"
 required = true
@@ -7840,13 +7850,6 @@ id = "sf.ddl.alter-application-service.upgrade.o003"
 kind = "option_absent"
 required = true
 target = "[ IF EXISTS ]"
-
-[[obligation]]
-id = "sf.ddl.alter-application-service.upgrade.o004"
-kind = "required_operand_missing"
-required = true
-target = "<name>"
-note = "omit <name>"
 
 [[obligation]]
 id = "sf.ddl.alter-application-service.upgrade.o005"
@@ -7956,6 +7959,14 @@ required = true
 target = "<version_alias>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.ddl.alter-application-service.upgrade.o021"
+kind = "required_operand_missing"
+required = true
+target = "<name>"
+anchor = "doc.sql.alter-application-service / Syntax"
+note = "omit <name>, observed"
 
 [[obligation]]
 id = "sf.ddl.alter-application-set-app-spec.connection-label-description-server-application.o001"
@@ -10158,13 +10169,6 @@ target = "<app>"
 note = "a valid operand"
 
 [[obligation]]
-id = "sf.ddl.alter-application-unset-configuration.o004"
-kind = "required_operand_missing"
-required = true
-target = "<config>"
-note = "omit <config>"
-
-[[obligation]]
 id = "sf.ddl.alter-application-unset-configuration.o005"
 kind = "operand_type_class"
 required = true
@@ -10184,10 +10188,19 @@ required = true
 note = "the form without its required UNSET"
 
 [[obligation]]
-id = "sf.ddl.alter-application-unset-configuration.o008"
+id = "sf.ddl.alter-application-unset-configuration.o009"
+kind = "required_operand_missing"
+required = true
+target = "<config>"
+anchor = "doc.sql.alter-application-unset-configuration / Syntax"
+note = "omit <config>, observed"
+
+[[obligation]]
+id = "sf.ddl.alter-application-unset-configuration.o010"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required CONFIGURATION"
+anchor = "doc.sql.alter-application-unset-configuration / Syntax"
+note = "the form without its required CONFIGURATION, observed"
 
 [[obligation]]
 id = "sf.ddl.alter-application.rename-to.o001"
@@ -10964,13 +10977,6 @@ target = "<name>"
 note = "a string literal in place of <name>"
 
 [[obligation]]
-id = "sf.ddl.alter-application.set-tag.o005"
-kind = "required_operand_missing"
-required = true
-target = "<tag_name>"
-note = "omit <tag_name>"
-
-[[obligation]]
 id = "sf.ddl.alter-application.set-tag.o006"
 kind = "operand_type_class"
 required = true
@@ -11031,12 +11037,6 @@ required = true
 note = "the form without its required SET"
 
 [[obligation]]
-id = "sf.ddl.alter-application.set-tag.o015"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required TAG"
-
-[[obligation]]
 id = "sf.ddl.alter-application.set-tag.o016"
 kind = "identifier_class"
 required = true
@@ -11091,6 +11091,21 @@ required = true
 target = "'<tag_value>'"
 anchor = "doc.sql.alter-application / Parameters"
 note = "a tag value of 257 characters against the documented maximum of 256"
+
+[[obligation]]
+id = "sf.ddl.alter-application.set-tag.o023"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.alter-application / Syntax"
+note = "the form without its required TAG, observed"
+
+[[obligation]]
+id = "sf.ddl.alter-application.set-tag.o024"
+kind = "required_operand_missing"
+required = true
+target = "<tag_name>"
+anchor = "doc.sql.alter-application / Syntax"
+note = "omit <tag_name>, observed"
 
 [[obligation]]
 id = "sf.ddl.alter-application.unset.o001"
@@ -11259,18 +11274,6 @@ required = true
 note = "the form without its required UNSET"
 
 [[obligation]]
-id = "sf.ddl.alter-application.unset-feature-policy.o007"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required FEATURE"
-
-[[obligation]]
-id = "sf.ddl.alter-application.unset-feature-policy.o008"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required POLICY"
-
-[[obligation]]
 id = "sf.ddl.alter-application.unset-feature-policy.o009"
 kind = "identifier_class"
 required = true
@@ -11285,6 +11288,20 @@ required = true
 target = "<name>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.ddl.alter-application.unset-feature-policy.o011"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.alter-application / Syntax"
+note = "the form without its required POLICY, observed"
+
+[[obligation]]
+id = "sf.ddl.alter-application.unset-feature-policy.o012"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.alter-application / Syntax"
+note = "the form without its required FEATURE, observed"
 
 [[obligation]]
 id = "sf.ddl.alter-application.unset-maintenance-policy.o001"
@@ -11326,18 +11343,6 @@ required = true
 note = "the form without its required UNSET"
 
 [[obligation]]
-id = "sf.ddl.alter-application.unset-maintenance-policy.o007"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required MAINTENANCE"
-
-[[obligation]]
-id = "sf.ddl.alter-application.unset-maintenance-policy.o008"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required POLICY"
-
-[[obligation]]
 id = "sf.ddl.alter-application.unset-maintenance-policy.o009"
 kind = "identifier_class"
 required = true
@@ -11352,6 +11357,20 @@ required = true
 target = "<name>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.ddl.alter-application.unset-maintenance-policy.o011"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.alter-application / Syntax"
+note = "the form without its required MAINTENANCE, observed"
+
+[[obligation]]
+id = "sf.ddl.alter-application.unset-maintenance-policy.o012"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.alter-application / Syntax"
+note = "the form without its required POLICY, observed"
 
 [[obligation]]
 id = "sf.ddl.alter-application.unset-references.o001"
@@ -11514,13 +11533,6 @@ target = "<name>"
 note = "a string literal in place of <name>"
 
 [[obligation]]
-id = "sf.ddl.alter-application.unset-tag.o005"
-kind = "required_operand_missing"
-required = true
-target = "<tag_name>"
-note = "omit <tag_name>"
-
-[[obligation]]
 id = "sf.ddl.alter-application.unset-tag.o006"
 kind = "operand_type_class"
 required = true
@@ -11560,12 +11572,6 @@ required = true
 note = "the form without its required UNSET"
 
 [[obligation]]
-id = "sf.ddl.alter-application.unset-tag.o012"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required TAG"
-
-[[obligation]]
 id = "sf.ddl.alter-application.unset-tag.o013"
 kind = "identifier_class"
 required = true
@@ -11596,6 +11602,21 @@ required = true
 target = "<tag_name>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.ddl.alter-application.unset-tag.o017"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.alter-application / Syntax"
+note = "the form without its required TAG, observed"
+
+[[obligation]]
+id = "sf.ddl.alter-application.unset-tag.o018"
+kind = "required_operand_missing"
+required = true
+target = "<tag_name>"
+anchor = "doc.sql.alter-application / Syntax"
+note = "omit <tag_name>, observed"
 
 [[obligation]]
 id = "sf.ddl.alter-application.upgrade.o001"
@@ -12121,13 +12142,6 @@ target = "<name>"
 note = "a string literal in place of <name>"
 
 [[obligation]]
-id = "sf.ddl.alter-artifact-repository.set-tag.o007"
-kind = "required_operand_missing"
-required = true
-target = "<tag_name>"
-note = "omit <tag_name>"
-
-[[obligation]]
 id = "sf.ddl.alter-artifact-repository.set-tag.o008"
 kind = "operand_type_class"
 required = true
@@ -12200,12 +12214,6 @@ required = true
 note = "the form without its required SET"
 
 [[obligation]]
-id = "sf.ddl.alter-artifact-repository.set-tag.o019"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required TAG"
-
-[[obligation]]
 id = "sf.ddl.alter-artifact-repository.set-tag.o020"
 kind = "identifier_class"
 required = true
@@ -12236,6 +12244,21 @@ required = true
 target = "<tag_name>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.ddl.alter-artifact-repository.set-tag.o024"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.alter-artifact-repository / Syntax"
+note = "the form without its required TAG, observed"
+
+[[obligation]]
+id = "sf.ddl.alter-artifact-repository.set-tag.o025"
+kind = "required_operand_missing"
+required = true
+target = "<tag_name>"
+anchor = "doc.sql.alter-artifact-repository / Syntax"
+note = "omit <tag_name>, observed"
 
 [[obligation]]
 id = "sf.ddl.alter-artifact-repository.unset-comment-authentication-secret-package-retention.o001"
@@ -12380,13 +12403,6 @@ target = "<name>"
 note = "a string literal in place of <name>"
 
 [[obligation]]
-id = "sf.ddl.alter-artifact-repository.unset-tag.o007"
-kind = "required_operand_missing"
-required = true
-target = "<tag_name>"
-note = "omit <tag_name>"
-
-[[obligation]]
 id = "sf.ddl.alter-artifact-repository.unset-tag.o008"
 kind = "operand_type_class"
 required = true
@@ -12438,12 +12454,6 @@ required = true
 note = "the form without its required UNSET"
 
 [[obligation]]
-id = "sf.ddl.alter-artifact-repository.unset-tag.o016"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required TAG"
-
-[[obligation]]
 id = "sf.ddl.alter-artifact-repository.unset-tag.o017"
 kind = "identifier_class"
 required = true
@@ -12474,6 +12484,21 @@ required = true
 target = "<tag_name>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.ddl.alter-artifact-repository.unset-tag.o021"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.alter-artifact-repository / Syntax"
+note = "the form without its required TAG, observed"
+
+[[obligation]]
+id = "sf.ddl.alter-artifact-repository.unset-tag.o022"
+kind = "required_operand_missing"
+required = true
+target = "<tag_name>"
+anchor = "doc.sql.alter-artifact-repository / Syntax"
+note = "omit <tag_name>, observed"
 
 [[obligation]]
 id = "sf.ddl.alter-backup-set.add-backup.o001"
@@ -13378,13 +13403,6 @@ target = "<name>"
 note = "a string literal in place of <name>"
 
 [[obligation]]
-id = "sf.ddl.alter-backup-set.set-tag.o005"
-kind = "required_operand_missing"
-required = true
-target = "<tag_name>"
-note = "omit <tag_name>"
-
-[[obligation]]
 id = "sf.ddl.alter-backup-set.set-tag.o006"
 kind = "operand_type_class"
 required = true
@@ -13445,12 +13463,6 @@ required = true
 note = "the form without its required SET"
 
 [[obligation]]
-id = "sf.ddl.alter-backup-set.set-tag.o015"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required TAG"
-
-[[obligation]]
 id = "sf.ddl.alter-backup-set.set-tag.o016"
 kind = "identifier_class"
 required = true
@@ -13505,6 +13517,21 @@ required = true
 target = "'<tag_value>'"
 anchor = "doc.sql.alter-backup-set / Parameters"
 note = "a tag value of 257 characters against the documented maximum of 256"
+
+[[obligation]]
+id = "sf.ddl.alter-backup-set.set-tag.o023"
+kind = "required_operand_missing"
+required = true
+target = "<tag_name>"
+anchor = "doc.sql.alter-backup-set / Syntax"
+note = "omit <tag_name>, observed"
+
+[[obligation]]
+id = "sf.ddl.alter-backup-set.set-tag.o024"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.alter-backup-set / Syntax"
+note = "the form without its required TAG, observed"
 
 [[obligation]]
 id = "sf.ddl.alter-backup-set.suspend-backup-policy.o001"
@@ -13692,13 +13719,6 @@ target = "<name>"
 note = "a string literal in place of <name>"
 
 [[obligation]]
-id = "sf.ddl.alter-backup-set.unset-tag.o005"
-kind = "required_operand_missing"
-required = true
-target = "<tag_name>"
-note = "omit <tag_name>"
-
-[[obligation]]
 id = "sf.ddl.alter-backup-set.unset-tag.o006"
 kind = "operand_type_class"
 required = true
@@ -13744,12 +13764,6 @@ required = true
 note = "the form without its required UNSET"
 
 [[obligation]]
-id = "sf.ddl.alter-backup-set.unset-tag.o013"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required TAG"
-
-[[obligation]]
 id = "sf.ddl.alter-backup-set.unset-tag.o014"
 kind = "identifier_class"
 required = true
@@ -13780,6 +13794,21 @@ required = true
 target = "<tag_name>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.ddl.alter-backup-set.unset-tag.o018"
+kind = "required_operand_missing"
+required = true
+target = "<tag_name>"
+anchor = "doc.sql.alter-backup-set / Syntax"
+note = "omit <tag_name>, observed"
+
+[[obligation]]
+id = "sf.ddl.alter-backup-set.unset-tag.o019"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.alter-backup-set / Syntax"
+note = "the form without its required TAG, observed"
 
 [[obligation]]
 id = "sf.ddl.alter-compute-pool.set.o001"
@@ -14068,13 +14097,6 @@ required = true
 target = "[ TAG <tag_name> = '<tag_value>' [ , <tag_name> = '<tag_value>' , ... ] ]"
 
 [[obligation]]
-id = "sf.ddl.alter-compute-pool.set.o045"
-kind = "required_operand_missing"
-required = true
-target = "<tag_name> in [ TAG <tag_name> = '<tag_value>' [ , <tag_name> = '<tag_value>' , ... ] ]"
-note = "omit <tag_name>"
-
-[[obligation]]
 id = "sf.ddl.alter-compute-pool.set.o046"
 kind = "operand_type_class"
 required = true
@@ -14274,6 +14296,14 @@ required = true
 target = "'<tag_value>'"
 anchor = "doc.sql.alter-compute-pool / Parameters"
 note = "a tag value of 257 characters against the documented maximum of 256"
+
+[[obligation]]
+id = "sf.ddl.alter-compute-pool.set.o075"
+kind = "required_operand_missing"
+required = true
+target = "<tag_name> in [ TAG <tag_name> = '<tag_value>' [ , <tag_name> = '<tag_value>' , ... ] ]"
+anchor = "doc.sql.alter-compute-pool / Syntax"
+note = "omit <tag_name>, observed"
 
 [[obligation]]
 id = "sf.ddl.alter-compute-pool.stop-all.o001"
@@ -15657,12 +15687,6 @@ required = true
 note = "the form without its required { '<num> { seconds | minutes | hours | days }' } in [ TARGET_LAG = { '<num> { seconds | minutes | hours | days }' } ]"
 
 [[obligation]]
-id = "sf.ddl.alter-cortex-search.set.o048"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required KEY in [ PRIMARY KEY = ( <col_name> [ , ... ] ) ]"
-
-[[obligation]]
 id = "sf.ddl.alter-cortex-search.set.o049"
 kind = "negative_neighbour"
 required = true
@@ -15763,6 +15787,13 @@ required = true
 target = "AUTO_SUSPEND = <num_seconds>"
 anchor = "doc.sql.alter-cortex-search / Parameters"
 note = "AUTO_SUSPEND = 1,801 against the documented minimum of 1,800"
+
+[[obligation]]
+id = "sf.ddl.alter-cortex-search.set.o063"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.alter-cortex-search / Syntax"
+note = "the form without its required KEY in [ PRIMARY KEY = ( <col_name> [ , ... ] ) ], observed"
 
 [[obligation]]
 id = "sf.ddl.alter-cortex-search.set-attributes.o001"
@@ -15957,13 +15988,6 @@ target = "<name>"
 note = "a string literal in place of <name>"
 
 [[obligation]]
-id = "sf.ddl.alter-cortex-search.set-tag.o007"
-kind = "required_operand_missing"
-required = true
-target = "<tag_name>"
-note = "omit <tag_name>"
-
-[[obligation]]
 id = "sf.ddl.alter-cortex-search.set-tag.o008"
 kind = "operand_type_class"
 required = true
@@ -16042,12 +16066,6 @@ required = true
 note = "the form without its required SET"
 
 [[obligation]]
-id = "sf.ddl.alter-cortex-search.set-tag.o020"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required TAG"
-
-[[obligation]]
 id = "sf.ddl.alter-cortex-search.set-tag.o021"
 kind = "identifier_class"
 required = true
@@ -16102,6 +16120,21 @@ required = true
 target = "'<tag_value>'"
 anchor = "doc.sql.alter-cortex-search / Parameters"
 note = "a tag value of 257 characters against the documented maximum of 256"
+
+[[obligation]]
+id = "sf.ddl.alter-cortex-search.set-tag.o028"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.alter-cortex-search / Syntax"
+note = "the form without its required TAG, observed"
+
+[[obligation]]
+id = "sf.ddl.alter-cortex-search.set-tag.o029"
+kind = "required_operand_missing"
+required = true
+target = "<tag_name>"
+anchor = "doc.sql.alter-cortex-search / Syntax"
+note = "omit <tag_name>, observed"
 
 [[obligation]]
 id = "sf.ddl.alter-cortex-search.suspend-resume.o001"
@@ -17350,13 +17383,6 @@ required = true
 target = "[ CONTACT <purpose> = <contact_name> [ , <purpose> = <contact_name> ... ] ]"
 
 [[obligation]]
-id = "sf.ddl.alter-database-catalog-linked.set.o019"
-kind = "required_operand_missing"
-required = true
-target = "<purpose> in [ CONTACT <purpose> = <contact_name> [ , <purpose> = <contact_name> ... ] ]"
-note = "omit <purpose>"
-
-[[obligation]]
 id = "sf.ddl.alter-database-catalog-linked.set.o020"
 kind = "operand_type_class"
 required = true
@@ -17546,6 +17572,14 @@ anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
+id = "sf.ddl.alter-database-catalog-linked.set.o049"
+kind = "required_operand_missing"
+required = true
+target = "<purpose> in [ CONTACT <purpose> = <contact_name> [ , <purpose> = <contact_name> ... ] ]"
+anchor = "doc.sql.alter-database-catalog-linked / Syntax"
+note = "omit <purpose>, observed"
+
+[[obligation]]
 id = "sf.ddl.alter-database-catalog-linked.suspend-discovery.o001"
 kind = "positive"
 required = true
@@ -17643,13 +17677,6 @@ required = true
 target = "[ IF EXISTS ]"
 
 [[obligation]]
-id = "sf.ddl.alter-database-catalog-linked.unset-base-location-prefix-comment-contact.o004"
-kind = "required_operand_missing"
-required = true
-target = "<name>"
-note = "omit <name>"
-
-[[obligation]]
 id = "sf.ddl.alter-database-catalog-linked.unset-base-location-prefix-comment-contact.o005"
 kind = "operand_type_class"
 required = true
@@ -17738,6 +17765,14 @@ required = true
 target = "<name>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.ddl.alter-database-catalog-linked.unset-base-location-prefix-comment-contact.o019"
+kind = "required_operand_missing"
+required = true
+target = "<name>"
+anchor = "doc.sql.alter-database-catalog-linked / Syntax"
+note = "omit <name>, observed"
 
 [[obligation]]
 id = "sf.ddl.alter-database-catalog-linked.update-linked-catalog-add-to.o001"
@@ -20317,13 +20352,6 @@ required = true
 target = "[ CONTACT <purpose> = <contact_name> [ , <purpose> = <contact_name> ... ] ]"
 
 [[obligation]]
-id = "sf.ddl.alter-database.set.o126"
-kind = "required_operand_missing"
-required = true
-target = "<purpose> in [ CONTACT <purpose> = <contact_name> [ , <purpose> = <contact_name> ... ] ]"
-note = "omit <purpose>"
-
-[[obligation]]
 id = "sf.ddl.alter-database.set.o127"
 kind = "operand_type_class"
 required = true
@@ -20659,6 +20687,14 @@ anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
+id = "sf.ddl.alter-database.set.o176"
+kind = "required_operand_missing"
+required = true
+target = "<purpose> in [ CONTACT <purpose> = <contact_name> [ , <purpose> = <contact_name> ... ] ]"
+anchor = "doc.sql.alter-database / Syntax"
+note = "omit <purpose>, observed"
+
+[[obligation]]
 id = "sf.ddl.alter-database.set-feature-policy.o001"
 kind = "positive"
 required = true
@@ -20826,13 +20862,6 @@ target = "<name>"
 note = "a string literal in place of <name>"
 
 [[obligation]]
-id = "sf.ddl.alter-database.set-tag.o005"
-kind = "required_operand_missing"
-required = true
-target = "<tag_name>"
-note = "omit <tag_name>"
-
-[[obligation]]
 id = "sf.ddl.alter-database.set-tag.o006"
 kind = "operand_type_class"
 required = true
@@ -20893,12 +20922,6 @@ required = true
 note = "the form without its required SET"
 
 [[obligation]]
-id = "sf.ddl.alter-database.set-tag.o015"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required TAG"
-
-[[obligation]]
 id = "sf.ddl.alter-database.set-tag.o016"
 kind = "identifier_class"
 required = true
@@ -20953,6 +20976,21 @@ required = true
 target = "'<tag_value>'"
 anchor = "doc.sql.alter-database / Parameters"
 note = "a tag value of 257 characters against the documented maximum of 256"
+
+[[obligation]]
+id = "sf.ddl.alter-database.set-tag.o023"
+kind = "required_operand_missing"
+required = true
+target = "<tag_name>"
+anchor = "doc.sql.alter-database / Syntax"
+note = "omit <tag_name>, observed"
+
+[[obligation]]
+id = "sf.ddl.alter-database.set-tag.o024"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.alter-database / Syntax"
+note = "the form without its required TAG, observed"
 
 [[obligation]]
 id = "sf.ddl.alter-database.swap-with.o001"
@@ -21087,13 +21125,6 @@ id = "sf.ddl.alter-database.unset-data-retention-time-in-days-max-data-extension
 kind = "option_absent"
 required = true
 target = "[ IF EXISTS ]"
-
-[[obligation]]
-id = "sf.ddl.alter-database.unset-data-retention-time-in-days-max-data-extension-time-in-days-stage-undrop-retention-time-in-days.o004"
-kind = "required_operand_missing"
-required = true
-target = "<name>"
-note = "omit <name>"
 
 [[obligation]]
 id = "sf.ddl.alter-database.unset-data-retention-time-in-days-max-data-extension-time-in-days-stage-undrop-retention-time-in-days.o005"
@@ -21357,6 +21388,14 @@ anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
+id = "sf.ddl.alter-database.unset-data-retention-time-in-days-max-data-extension-time-in-days-stage-undrop-retention-time-in-days.o046"
+kind = "required_operand_missing"
+required = true
+target = "<name>"
+anchor = "doc.sql.alter-database / Syntax"
+note = "omit <name>, observed"
+
+[[obligation]]
 id = "sf.ddl.alter-database.unset-feature-policy.o001"
 kind = "positive"
 required = true
@@ -21414,18 +21453,6 @@ required = true
 note = "the form without its required UNSET"
 
 [[obligation]]
-id = "sf.ddl.alter-database.unset-feature-policy.o010"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required FEATURE"
-
-[[obligation]]
-id = "sf.ddl.alter-database.unset-feature-policy.o011"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required POLICY"
-
-[[obligation]]
 id = "sf.ddl.alter-database.unset-feature-policy.o012"
 kind = "identifier_class"
 required = true
@@ -21440,6 +21467,20 @@ required = true
 target = "<name>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.ddl.alter-database.unset-feature-policy.o014"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.alter-database / Syntax"
+note = "the form without its required POLICY, observed"
+
+[[obligation]]
+id = "sf.ddl.alter-database.unset-feature-policy.o015"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.alter-database / Syntax"
+note = "the form without its required FEATURE, observed"
 
 [[obligation]]
 id = "sf.ddl.alter-database.unset-tag.o001"
@@ -21467,13 +21508,6 @@ kind = "negative_neighbour"
 required = true
 target = "<name>"
 note = "a string literal in place of <name>"
-
-[[obligation]]
-id = "sf.ddl.alter-database.unset-tag.o005"
-kind = "required_operand_missing"
-required = true
-target = "<tag_name>"
-note = "omit <tag_name>"
 
 [[obligation]]
 id = "sf.ddl.alter-database.unset-tag.o006"
@@ -21515,12 +21549,6 @@ required = true
 note = "the form without its required UNSET"
 
 [[obligation]]
-id = "sf.ddl.alter-database.unset-tag.o012"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required TAG"
-
-[[obligation]]
 id = "sf.ddl.alter-database.unset-tag.o013"
 kind = "identifier_class"
 required = true
@@ -21551,6 +21579,21 @@ required = true
 target = "<tag_name>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.ddl.alter-database.unset-tag.o017"
+kind = "required_operand_missing"
+required = true
+target = "<tag_name>"
+anchor = "doc.sql.alter-database / Syntax"
+note = "omit <tag_name>, observed"
+
+[[obligation]]
+id = "sf.ddl.alter-database.unset-tag.o018"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.alter-database / Syntax"
+note = "the form without its required TAG, observed"
 
 [[obligation]]
 id = "sf.ddl.alter-dataset-add-version.o001"
@@ -21852,13 +21895,6 @@ target = "<version_name>"
 note = "a valid identifier"
 
 [[obligation]]
-id = "sf.ddl.alter-dataset-drop-version.o009"
-kind = "negative_neighbour"
-required = true
-target = "<version_name>"
-note = "a string literal in place of <version_name>"
-
-[[obligation]]
 id = "sf.ddl.alter-dataset-drop-version.o010"
 kind = "negative_neighbour"
 required = true
@@ -21913,6 +21949,14 @@ required = true
 target = "<version_name>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.ddl.alter-dataset-drop-version.o018"
+kind = "negative_neighbour"
+required = true
+target = "<version_name>"
+anchor = "doc.sql.alter-dataset-drop-version / Syntax"
+note = "a string literal in place of <version_name>, observed"
 
 [[obligation]]
 id = "sf.ddl.alter-dbt-project.deploy-from.o001"
@@ -22289,13 +22333,6 @@ target = "<integration_name> in [ EXTERNAL_ACCESS_INTEGRATIONS = ( <integration_
 note = "a valid identifier"
 
 [[obligation]]
-id = "sf.ddl.alter-dbt-project.set.o026"
-kind = "negative_neighbour"
-required = true
-target = "<integration_name> in [ EXTERNAL_ACCESS_INTEGRATIONS = ( <integration_name> [ , ... ] ) ]"
-note = "a string literal in place of <integration_name>"
-
-[[obligation]]
 id = "sf.ddl.alter-dbt-project.set.o027"
 kind = "option_present"
 required = true
@@ -22474,6 +22511,14 @@ required = true
 target = "<integration_name>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.ddl.alter-dbt-project.set.o055"
+kind = "negative_neighbour"
+required = true
+target = "<integration_name> in [ EXTERNAL_ACCESS_INTEGRATIONS = ( <integration_name> [ , ... ] ) ]"
+anchor = "doc.sql.alter-dbt-project / Syntax"
+note = "a string literal in place of <integration_name>, observed"
 
 [[obligation]]
 id = "sf.ddl.alter-dbt-project.unset.o001"
@@ -23292,13 +23337,6 @@ kind = "negative_neighbour"
 required = true
 target = "<policy_name>"
 note = "a string literal in place of <policy_name>"
-
-[[obligation]]
-id = "sf.ddl.alter-dynamic-table.datagovnpolicytagaction.o028"
-kind = "required_operand_missing"
-required = true
-target = "<col_name>"
-note = "omit <col_name>"
 
 [[obligation]]
 id = "sf.ddl.alter-dynamic-table.datagovnpolicytagaction.o029"
@@ -24181,13 +24219,6 @@ required = true
 target = "[ , <tag_name> = '<tag_value>' ... ] #3"
 
 [[obligation]]
-id = "sf.ddl.alter-dynamic-table.datagovnpolicytagaction.o142"
-kind = "required_operand_missing"
-required = true
-target = "<tag_name> #4"
-note = "omit <tag_name>"
-
-[[obligation]]
 id = "sf.ddl.alter-dynamic-table.datagovnpolicytagaction.o143"
 kind = "operand_type_class"
 required = true
@@ -24511,6 +24542,22 @@ required = true
 target = "'<tag_value>'"
 anchor = "doc.sql.alter-dynamic-table / Parameters"
 note = "a tag value of 257 characters against the documented maximum of 256"
+
+[[obligation]]
+id = "sf.ddl.alter-dynamic-table.datagovnpolicytagaction.o229"
+kind = "required_operand_missing"
+required = true
+target = "<tag_name> #4"
+anchor = "doc.sql.alter-dynamic-table / Syntax"
+note = "omit <tag_name>, observed"
+
+[[obligation]]
+id = "sf.ddl.alter-dynamic-table.datagovnpolicytagaction.o230"
+kind = "required_operand_missing"
+required = true
+target = "<col_name>"
+anchor = "doc.sql.alter-dynamic-table / Syntax"
+note = "omit <col_name>, observed"
 
 [[obligation]]
 id = "sf.ddl.alter-dynamic-table.refresh.o001"
@@ -30953,12 +31000,6 @@ required = true
 note = "the form without its required { TRUE | FALSE } in [ USE_PRIVATELINK_ENDPOINT = { TRUE | FALSE } ] #2"
 
 [[obligation]]
-id = "sf.ddl.alter-external-volume.add-storage-location-name-cloudproviderparams.o085"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required { { STORAGE_PROVIDER = '{ S3 | S3CHINA | S3GOV }' STORAGE_AWS_ROLE_ARN = '<iam_role>' STORAGE_BASE_URL = '<protocol>://<bucket>[/<path>/]' [ STORAGE_AWS_ACCESS_POINT_ARN = '<string>' ] [ ENCRYPTION = ( { [ TYPE = 'AWS_SSE_S3' ] | [ TYPE = 'AWS_SSE_KMS' [ KMS_KEY_ID = '<string>' ] ] | [ TYPE = 'NONE' ] } ) ] [ USE_PRIVATELINK_ENDPOINT = { TRUE | FALSE } ] } | { STORAGE_PROVIDER = 'GCS' STORAGE_BASE_URL = 'gcs://<bucket>[/<path>/]' [ ENCRYPTION = ( { [ TYPE = 'GCS_SSE_KMS' ] [ KMS_KEY_ID = '<string>' ] | [ TYPE = 'NONE' ] } ) ] } | { STORAGE_PROVIDER = 'AZURE' AZURE_TENANT_ID = '<tenant_id>' [ USE_PRIVATELINK_ENDPOINT = { TRUE | FALSE } ] STORAGE_BASE_URL = 'azure://<account>.blob.core.windows.net/<container>[/<path>/]' } }"
-
-[[obligation]]
 id = "sf.ddl.alter-external-volume.add-storage-location-name-cloudproviderparams.o019"
 kind = "negative_neighbour"
 required = true
@@ -30979,6 +31020,13 @@ required = true
 target = "<name>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.ddl.alter-external-volume.add-storage-location-name-cloudproviderparams.o086"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.alter-external-volume / Syntax"
+note = "the form without its required { { STORAGE_PROVIDER = '{ S3 | S3CHINA | S3GOV }' STORAGE_AWS_ROLE_ARN = '<iam_role>' STORAGE_BASE_URL = '<protocol>://<bucket>[/<path>/]' [ STORAGE_AWS_ACCESS_POINT_ARN = '<string>' ] [ ENCRYPTION = ( { [ TYPE = 'AWS_SSE_S3' ] | [ TYPE = 'AWS_SSE_KMS' [ KMS_KEY_ID = '<string>' ] ] | [ TYPE = 'NONE' ] } ) ] [ USE_PRIVATELINK_ENDPOINT = { TRUE | FALSE } ] } | { STORAGE_PROVIDER = 'GCS' STORAGE_BASE_URL = 'gcs://<bucket>[/<path>/]' [ ENCRYPTION = ( { [ TYPE = 'GCS_SSE_KMS' ] [ KMS_KEY_ID = '<string>' ] | [ TYPE = 'NONE' ] } ) ] } | { STORAGE_PROVIDER = 'AZURE' AZURE_TENANT_ID = '<tenant_id>' [ USE_PRIVATELINK_ENDPOINT = { TRUE | FALSE } ] STORAGE_BASE_URL = 'azure://<account>.blob.core.windows.net/<container>[/<path>/]' } }, observed"
 
 [[obligation]]
 id = "sf.ddl.alter-external-volume.remove-storage-location.o001"
@@ -31138,12 +31186,6 @@ required = true
 target = "{ TRUE | FALSE } → FALSE"
 
 [[obligation]]
-id = "sf.ddl.alter-external-volume.set-allow-writes-true-false.o009"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required EXTERNAL"
-
-[[obligation]]
 id = "sf.ddl.alter-external-volume.set-allow-writes-true-false.o010"
 kind = "negative_neighbour"
 required = true
@@ -31188,6 +31230,13 @@ required = true
 target = "<name>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.ddl.alter-external-volume.set-allow-writes-true-false.o017"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.alter-external-volume / Syntax"
+note = "the form without its required EXTERNAL, observed"
 
 [[obligation]]
 id = "sf.ddl.alter-external-volume.set-comment.o001"
@@ -31250,12 +31299,6 @@ target = "'<string_literal>'"
 note = "an unquoted identifier in place of '<string_literal>'"
 
 [[obligation]]
-id = "sf.ddl.alter-external-volume.set-comment.o010"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required EXTERNAL"
-
-[[obligation]]
 id = "sf.ddl.alter-external-volume.set-comment.o011"
 kind = "negative_neighbour"
 required = true
@@ -31294,6 +31337,13 @@ required = true
 target = "<name>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.ddl.alter-external-volume.set-comment.o017"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.alter-external-volume / Syntax"
+note = "the form without its required EXTERNAL, observed"
 
 [[obligation]]
 id = "sf.ddl.alter-external-volume.update-storage-location-credentials-aws-key-id.o001"
@@ -33775,13 +33825,6 @@ required = true
 target = "[ , ... ] #2"
 
 [[obligation]]
-id = "sf.ddl.alter-function-dmf.set-tag.o019"
-kind = "required_operand_missing"
-required = true
-target = "<tag_name>"
-note = "omit <tag_name>"
-
-[[obligation]]
 id = "sf.ddl.alter-function-dmf.set-tag.o020"
 kind = "operand_type_class"
 required = true
@@ -33884,12 +33927,6 @@ required = true
 note = "the form without its required SET"
 
 [[obligation]]
-id = "sf.ddl.alter-function-dmf.set-tag.o036"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required TAG"
-
-[[obligation]]
 id = "sf.ddl.alter-function-dmf.set-tag.o037"
 kind = "interaction_all_options"
 required = true
@@ -33950,6 +33987,21 @@ required = true
 target = "'<tag_value>'"
 anchor = "doc.sql.alter-function-dmf / Parameters"
 note = "a tag value of 257 characters against the documented maximum of 256"
+
+[[obligation]]
+id = "sf.ddl.alter-function-dmf.set-tag.o045"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.alter-function-dmf / Syntax"
+note = "the form without its required TAG, observed"
+
+[[obligation]]
+id = "sf.ddl.alter-function-dmf.set-tag.o046"
+kind = "required_operand_missing"
+required = true
+target = "<tag_name>"
+anchor = "doc.sql.alter-function-dmf / Syntax"
+note = "omit <tag_name>, observed"
 
 [[obligation]]
 id = "sf.ddl.alter-function-dmf.unset-comment.o001"
@@ -34473,13 +34525,6 @@ required = true
 target = "[ , ... ] #2"
 
 [[obligation]]
-id = "sf.ddl.alter-function-dmf.unset-tag.o019"
-kind = "required_operand_missing"
-required = true
-target = "<tag_name>"
-note = "omit <tag_name>"
-
-[[obligation]]
 id = "sf.ddl.alter-function-dmf.unset-tag.o020"
 kind = "operand_type_class"
 required = true
@@ -34561,12 +34606,6 @@ required = true
 note = "the form without its required UNSET"
 
 [[obligation]]
-id = "sf.ddl.alter-function-dmf.unset-tag.o033"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required TAG"
-
-[[obligation]]
 id = "sf.ddl.alter-function-dmf.unset-tag.o034"
 kind = "interaction_all_options"
 required = true
@@ -34603,6 +34642,21 @@ required = true
 target = "<tag_name>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.ddl.alter-function-dmf.unset-tag.o039"
+kind = "required_operand_missing"
+required = true
+target = "<tag_name>"
+anchor = "doc.sql.alter-function-dmf / Syntax"
+note = "omit <tag_name>, observed"
+
+[[obligation]]
+id = "sf.ddl.alter-function-dmf.unset-tag.o040"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.alter-function-dmf / Syntax"
+note = "the form without its required TAG, observed"
 
 [[obligation]]
 id = "sf.ddl.alter-function-spcs.set-batch-timeout-secs.o001"
@@ -35837,13 +35891,6 @@ target = "<integration_name> in [ EXTERNAL_ACCESS_INTEGRATIONS = ( <integration_
 note = "a valid identifier"
 
 [[obligation]]
-id = "sf.ddl.alter-function.set.o023"
-kind = "negative_neighbour"
-required = true
-target = "<integration_name> in [ EXTERNAL_ACCESS_INTEGRATIONS = ( <integration_name> [ , <integration_name> ... ] ) ]"
-note = "a string literal in place of <integration_name>"
-
-[[obligation]]
 id = "sf.ddl.alter-function.set.o024"
 kind = "option_present"
 required = true
@@ -36063,6 +36110,14 @@ required = true
 target = "<secret_name>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.ddl.alter-function.set.o057"
+kind = "negative_neighbour"
+required = true
+target = "<integration_name> in [ EXTERNAL_ACCESS_INTEGRATIONS = ( <integration_name> [ , <integration_name> ... ] ) ]"
+anchor = "doc.sql.alter-function / Syntax / User-defined and external functions / Java handler"
+note = "a string literal in place of <integration_name>, observed"
 
 [[obligation]]
 id = "sf.ddl.alter-function.set-api-integration.o001"
@@ -37077,13 +37132,6 @@ required = true
 target = "[ <arg_data_type> , ... ]"
 
 [[obligation]]
-id = "sf.ddl.alter-function.set-tag.o009"
-kind = "required_operand_missing"
-required = true
-target = "<tag_name>"
-note = "omit <tag_name>"
-
-[[obligation]]
 id = "sf.ddl.alter-function.set-tag.o010"
 kind = "operand_type_class"
 required = true
@@ -37162,12 +37210,6 @@ required = true
 note = "the form without its required SET"
 
 [[obligation]]
-id = "sf.ddl.alter-function.set-tag.o022"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required TAG"
-
-[[obligation]]
 id = "sf.ddl.alter-function.set-tag.o023"
 kind = "identifier_class"
 required = true
@@ -37222,6 +37264,21 @@ required = true
 target = "'<tag_value>'"
 anchor = "doc.sql.alter-function / Parameters"
 note = "a tag value of 257 characters against the documented maximum of 256"
+
+[[obligation]]
+id = "sf.ddl.alter-function.set-tag.o030"
+kind = "required_operand_missing"
+required = true
+target = "<tag_name>"
+anchor = "doc.sql.alter-function / Syntax / User-defined and external functions / Java handler"
+note = "omit <tag_name>, observed"
+
+[[obligation]]
+id = "sf.ddl.alter-function.set-tag.o031"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.alter-function / Syntax / User-defined and external functions / Java handler"
+note = "the form without its required TAG, observed"
 
 [[obligation]]
 id = "sf.ddl.alter-function.set.javascript-handler.o001"
@@ -37759,13 +37816,6 @@ required = true
 target = "[ <arg_data_type> , ... ]"
 
 [[obligation]]
-id = "sf.ddl.alter-function.unset-tag.o009"
-kind = "required_operand_missing"
-required = true
-target = "<tag_name>"
-note = "omit <tag_name>"
-
-[[obligation]]
 id = "sf.ddl.alter-function.unset-tag.o010"
 kind = "operand_type_class"
 required = true
@@ -37823,12 +37873,6 @@ required = true
 note = "the form without its required UNSET"
 
 [[obligation]]
-id = "sf.ddl.alter-function.unset-tag.o019"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required TAG"
-
-[[obligation]]
 id = "sf.ddl.alter-function.unset-tag.o020"
 kind = "identifier_class"
 required = true
@@ -37859,6 +37903,21 @@ required = true
 target = "<tag_name>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.ddl.alter-function.unset-tag.o024"
+kind = "required_operand_missing"
+required = true
+target = "<tag_name>"
+anchor = "doc.sql.alter-function / Syntax / User-defined and external functions / Java handler"
+note = "omit <tag_name>, observed"
+
+[[obligation]]
+id = "sf.ddl.alter-function.unset-tag.o025"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.alter-function / Syntax / User-defined and external functions / Java handler"
+note = "the form without its required TAG, observed"
 
 [[obligation]]
 id = "sf.ddl.alter-gateway.o001"
@@ -38288,13 +38347,6 @@ target = "<name>"
 note = "a string literal in place of <name>"
 
 [[obligation]]
-id = "sf.ddl.alter-git-repository.set-tag.o007"
-kind = "required_operand_missing"
-required = true
-target = "<tag_name>"
-note = "omit <tag_name>"
-
-[[obligation]]
 id = "sf.ddl.alter-git-repository.set-tag.o008"
 kind = "operand_type_class"
 required = true
@@ -38367,12 +38419,6 @@ required = true
 note = "the form without its required SET"
 
 [[obligation]]
-id = "sf.ddl.alter-git-repository.set-tag.o019"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required TAG"
-
-[[obligation]]
 id = "sf.ddl.alter-git-repository.set-tag.o020"
 kind = "identifier_class"
 required = true
@@ -38427,6 +38473,21 @@ required = true
 target = "'<tag_value>'"
 anchor = "doc.sql.alter-git-repository / Parameters"
 note = "a tag value of 257 characters against the documented maximum of 256"
+
+[[obligation]]
+id = "sf.ddl.alter-git-repository.set-tag.o027"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.alter-git-repository / Syntax"
+note = "the form without its required TAG, observed"
+
+[[obligation]]
+id = "sf.ddl.alter-git-repository.set-tag.o028"
+kind = "required_operand_missing"
+required = true
+target = "<tag_name>"
+anchor = "doc.sql.alter-git-repository / Syntax"
+note = "omit <tag_name>, observed"
 
 [[obligation]]
 id = "sf.ddl.alter-git-repository.unset-git-credentials-comment.o001"
@@ -38578,13 +38639,6 @@ target = "<name>"
 note = "a string literal in place of <name>"
 
 [[obligation]]
-id = "sf.ddl.alter-git-repository.unset-tag.o007"
-kind = "required_operand_missing"
-required = true
-target = "<tag_name>"
-note = "omit <tag_name>"
-
-[[obligation]]
 id = "sf.ddl.alter-git-repository.unset-tag.o008"
 kind = "operand_type_class"
 required = true
@@ -38636,12 +38690,6 @@ required = true
 note = "the form without its required UNSET"
 
 [[obligation]]
-id = "sf.ddl.alter-git-repository.unset-tag.o016"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required TAG"
-
-[[obligation]]
 id = "sf.ddl.alter-git-repository.unset-tag.o017"
 kind = "identifier_class"
 required = true
@@ -38672,6 +38720,21 @@ required = true
 target = "<tag_name>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.ddl.alter-git-repository.unset-tag.o021"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.alter-git-repository / Syntax"
+note = "the form without its required TAG, observed"
+
+[[obligation]]
+id = "sf.ddl.alter-git-repository.unset-tag.o022"
+kind = "required_operand_missing"
+required = true
+target = "<tag_name>"
+anchor = "doc.sql.alter-git-repository / Syntax"
+note = "omit <tag_name>, observed"
 
 [[obligation]]
 id = "sf.ddl.alter-iceberg-table-alter-column-set-data-type.type.o001"
@@ -38755,12 +38818,6 @@ target = "<new_structured_type>"
 note = "a string literal in place of <new_structured_type>"
 
 [[obligation]]
-id = "sf.ddl.alter-iceberg-table-alter-column-set-data-type.type.o013"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ICEBERG"
-
-[[obligation]]
 id = "sf.ddl.alter-iceberg-table-alter-column-set-data-type.type.o014"
 kind = "negative_neighbour"
 required = true
@@ -38777,12 +38834,6 @@ id = "sf.ddl.alter-iceberg-table-alter-column-set-data-type.type.o016"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required ALTER"
-
-[[obligation]]
-id = "sf.ddl.alter-iceberg-table-alter-column-set-data-type.type.o017"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required COLUMN"
 
 [[obligation]]
 id = "sf.ddl.alter-iceberg-table-alter-column-set-data-type.type.o018"
@@ -38833,6 +38884,20 @@ required = true
 target = "<structured_column>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.ddl.alter-iceberg-table-alter-column-set-data-type.type.o025"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.alter-iceberg-table-alter-column-set-data-type / Syntax"
+note = "the form without its required ICEBERG, observed"
+
+[[obligation]]
+id = "sf.ddl.alter-iceberg-table-alter-column-set-data-type.type.o026"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.alter-iceberg-table-alter-column-set-data-type / Syntax"
+note = "the form without its required COLUMN, observed"
 
 [[obligation]]
 id = "sf.ddl.alter-iceberg-table-alter-column-set-data-type.type-rename-fields.o001"
@@ -38916,12 +38981,6 @@ target = "<new_structured_type>"
 note = "a string literal in place of <new_structured_type>"
 
 [[obligation]]
-id = "sf.ddl.alter-iceberg-table-alter-column-set-data-type.type-rename-fields.o013"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ICEBERG"
-
-[[obligation]]
 id = "sf.ddl.alter-iceberg-table-alter-column-set-data-type.type-rename-fields.o014"
 kind = "negative_neighbour"
 required = true
@@ -38938,12 +38997,6 @@ id = "sf.ddl.alter-iceberg-table-alter-column-set-data-type.type-rename-fields.o
 kind = "negative_neighbour"
 required = true
 note = "the form without its required ALTER"
-
-[[obligation]]
-id = "sf.ddl.alter-iceberg-table-alter-column-set-data-type.type-rename-fields.o017"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required COLUMN"
 
 [[obligation]]
 id = "sf.ddl.alter-iceberg-table-alter-column-set-data-type.type-rename-fields.o018"
@@ -38968,12 +39021,6 @@ id = "sf.ddl.alter-iceberg-table-alter-column-set-data-type.type-rename-fields.o
 kind = "negative_neighbour"
 required = true
 note = "the form without its required RENAME"
-
-[[obligation]]
-id = "sf.ddl.alter-iceberg-table-alter-column-set-data-type.type-rename-fields.o022"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required FIELDS"
 
 [[obligation]]
 id = "sf.ddl.alter-iceberg-table-alter-column-set-data-type.type-rename-fields.o023"
@@ -39006,6 +39053,27 @@ required = true
 target = "<structured_column>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.ddl.alter-iceberg-table-alter-column-set-data-type.type-rename-fields.o027"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.alter-iceberg-table-alter-column-set-data-type / Syntax"
+note = "the form without its required COLUMN, observed"
+
+[[obligation]]
+id = "sf.ddl.alter-iceberg-table-alter-column-set-data-type.type-rename-fields.o028"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.alter-iceberg-table-alter-column-set-data-type / Syntax"
+note = "the form without its required FIELDS, observed"
+
+[[obligation]]
+id = "sf.ddl.alter-iceberg-table-alter-column-set-data-type.type-rename-fields.o029"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.alter-iceberg-table-alter-column-set-data-type / Syntax"
+note = "the form without its required ICEBERG, observed"
 
 [[obligation]]
 id = "sf.ddl.alter-iceberg-table-convert-to-managed.o001"
@@ -39353,13 +39421,6 @@ target = "<col_name>"
 note = "a valid identifier"
 
 [[obligation]]
-id = "sf.ddl.alter-iceberg-table-partition-evolution.add-partition-by.o027"
-kind = "negative_neighbour"
-required = true
-target = "<col_name>"
-note = "a string literal in place of <col_name>"
-
-[[obligation]]
 id = "sf.ddl.alter-iceberg-table-partition-evolution.add-partition-by.o028"
 kind = "required_operand_missing"
 required = true
@@ -39372,13 +39433,6 @@ kind = "operand_type_class"
 required = true
 target = "<num_buckets>"
 note = "a valid integer_literal"
-
-[[obligation]]
-id = "sf.ddl.alter-iceberg-table-partition-evolution.add-partition-by.o030"
-kind = "negative_neighbour"
-required = true
-target = "<num_buckets>"
-note = "a string literal in place of <num_buckets>"
 
 [[obligation]]
 id = "sf.ddl.alter-iceberg-table-partition-evolution.add-partition-by.o031"
@@ -39423,25 +39477,11 @@ target = "<col_name> #3"
 note = "a valid identifier"
 
 [[obligation]]
-id = "sf.ddl.alter-iceberg-table-partition-evolution.add-partition-by.o039"
-kind = "required_operand_missing"
-required = true
-target = "<col_name> #4"
-note = "omit <col_name>"
-
-[[obligation]]
 id = "sf.ddl.alter-iceberg-table-partition-evolution.add-partition-by.o040"
 kind = "operand_type_class"
 required = true
 target = "<col_name> #4"
 note = "a valid identifier"
-
-[[obligation]]
-id = "sf.ddl.alter-iceberg-table-partition-evolution.add-partition-by.o042"
-kind = "required_operand_missing"
-required = true
-target = "<col_name> #5"
-note = "omit <col_name>"
 
 [[obligation]]
 id = "sf.ddl.alter-iceberg-table-partition-evolution.add-partition-by.o043"
@@ -39451,25 +39491,11 @@ target = "<col_name> #5"
 note = "a valid identifier"
 
 [[obligation]]
-id = "sf.ddl.alter-iceberg-table-partition-evolution.add-partition-by.o045"
-kind = "required_operand_missing"
-required = true
-target = "<col_name> #6"
-note = "omit <col_name>"
-
-[[obligation]]
 id = "sf.ddl.alter-iceberg-table-partition-evolution.add-partition-by.o046"
 kind = "operand_type_class"
 required = true
 target = "<col_name> #6"
 note = "a valid identifier"
-
-[[obligation]]
-id = "sf.ddl.alter-iceberg-table-partition-evolution.add-partition-by.o048"
-kind = "required_operand_missing"
-required = true
-target = "<col_name> #7"
-note = "omit <col_name>"
 
 [[obligation]]
 id = "sf.ddl.alter-iceberg-table-partition-evolution.add-partition-by.o049"
@@ -39607,6 +39633,54 @@ anchor = "doc.sql.alter-iceberg-table-partition-evolution / Syntax"
 note = "a string literal in place of <col_name> (TRUNCATE ( 10 , 'v1' )), observed"
 
 [[obligation]]
+id = "sf.ddl.alter-iceberg-table-partition-evolution.add-partition-by.o132"
+kind = "negative_neighbour"
+required = true
+target = "<col_name>"
+anchor = "doc.sql.alter-iceberg-table-partition-evolution / Syntax"
+note = "a string literal in place of <col_name>, observed"
+
+[[obligation]]
+id = "sf.ddl.alter-iceberg-table-partition-evolution.add-partition-by.o133"
+kind = "required_operand_missing"
+required = true
+target = "<col_name> #5"
+anchor = "doc.sql.alter-iceberg-table-partition-evolution / Syntax"
+note = "omit <col_name>, observed"
+
+[[obligation]]
+id = "sf.ddl.alter-iceberg-table-partition-evolution.add-partition-by.o134"
+kind = "required_operand_missing"
+required = true
+target = "<col_name> #6"
+anchor = "doc.sql.alter-iceberg-table-partition-evolution / Syntax"
+note = "omit <col_name>, observed"
+
+[[obligation]]
+id = "sf.ddl.alter-iceberg-table-partition-evolution.add-partition-by.o135"
+kind = "negative_neighbour"
+required = true
+target = "<num_buckets>"
+anchor = "doc.sql.alter-iceberg-table-partition-evolution / Syntax"
+note = "a string literal in place of <num_buckets>, observed"
+
+[[obligation]]
+id = "sf.ddl.alter-iceberg-table-partition-evolution.add-partition-by.o136"
+kind = "required_operand_missing"
+required = true
+target = "<col_name> #4"
+anchor = "doc.sql.alter-iceberg-table-partition-evolution / Syntax"
+note = "omit <col_name>, observed"
+
+[[obligation]]
+id = "sf.ddl.alter-iceberg-table-partition-evolution.add-partition-by.o137"
+kind = "required_operand_missing"
+required = true
+target = "<col_name> #7"
+anchor = "doc.sql.alter-iceberg-table-partition-evolution / Syntax"
+note = "omit <col_name>, observed"
+
+[[obligation]]
 id = "sf.ddl.alter-iceberg-table-partition-evolution.drop-partition-by.o001"
 kind = "positive"
 required = true
@@ -39695,13 +39769,6 @@ target = "<col_name>"
 note = "a valid identifier"
 
 [[obligation]]
-id = "sf.ddl.alter-iceberg-table-partition-evolution.drop-partition-by.o027"
-kind = "negative_neighbour"
-required = true
-target = "<col_name>"
-note = "a string literal in place of <col_name>"
-
-[[obligation]]
 id = "sf.ddl.alter-iceberg-table-partition-evolution.drop-partition-by.o028"
 kind = "required_operand_missing"
 required = true
@@ -39714,13 +39781,6 @@ kind = "operand_type_class"
 required = true
 target = "<num_buckets>"
 note = "a valid integer_literal"
-
-[[obligation]]
-id = "sf.ddl.alter-iceberg-table-partition-evolution.drop-partition-by.o030"
-kind = "negative_neighbour"
-required = true
-target = "<num_buckets>"
-note = "a string literal in place of <num_buckets>"
 
 [[obligation]]
 id = "sf.ddl.alter-iceberg-table-partition-evolution.drop-partition-by.o031"
@@ -39765,25 +39825,11 @@ target = "<col_name> #3"
 note = "a valid identifier"
 
 [[obligation]]
-id = "sf.ddl.alter-iceberg-table-partition-evolution.drop-partition-by.o039"
-kind = "required_operand_missing"
-required = true
-target = "<col_name> #4"
-note = "omit <col_name>"
-
-[[obligation]]
 id = "sf.ddl.alter-iceberg-table-partition-evolution.drop-partition-by.o040"
 kind = "operand_type_class"
 required = true
 target = "<col_name> #4"
 note = "a valid identifier"
-
-[[obligation]]
-id = "sf.ddl.alter-iceberg-table-partition-evolution.drop-partition-by.o042"
-kind = "required_operand_missing"
-required = true
-target = "<col_name> #5"
-note = "omit <col_name>"
 
 [[obligation]]
 id = "sf.ddl.alter-iceberg-table-partition-evolution.drop-partition-by.o043"
@@ -39793,25 +39839,11 @@ target = "<col_name> #5"
 note = "a valid identifier"
 
 [[obligation]]
-id = "sf.ddl.alter-iceberg-table-partition-evolution.drop-partition-by.o045"
-kind = "required_operand_missing"
-required = true
-target = "<col_name> #6"
-note = "omit <col_name>"
-
-[[obligation]]
 id = "sf.ddl.alter-iceberg-table-partition-evolution.drop-partition-by.o046"
 kind = "operand_type_class"
 required = true
 target = "<col_name> #6"
 note = "a valid identifier"
-
-[[obligation]]
-id = "sf.ddl.alter-iceberg-table-partition-evolution.drop-partition-by.o048"
-kind = "required_operand_missing"
-required = true
-target = "<col_name> #7"
-note = "omit <col_name>"
 
 [[obligation]]
 id = "sf.ddl.alter-iceberg-table-partition-evolution.drop-partition-by.o049"
@@ -39947,6 +39979,54 @@ kind = "negative_neighbour"
 required = true
 anchor = "doc.sql.alter-iceberg-table-partition-evolution / Syntax"
 note = "a string literal in place of <col_name> (TRUNCATE ( 10 , 'v1' )), observed"
+
+[[obligation]]
+id = "sf.ddl.alter-iceberg-table-partition-evolution.drop-partition-by.o132"
+kind = "required_operand_missing"
+required = true
+target = "<col_name> #7"
+anchor = "doc.sql.alter-iceberg-table-partition-evolution / Syntax"
+note = "omit <col_name>, observed"
+
+[[obligation]]
+id = "sf.ddl.alter-iceberg-table-partition-evolution.drop-partition-by.o133"
+kind = "required_operand_missing"
+required = true
+target = "<col_name> #4"
+anchor = "doc.sql.alter-iceberg-table-partition-evolution / Syntax"
+note = "omit <col_name>, observed"
+
+[[obligation]]
+id = "sf.ddl.alter-iceberg-table-partition-evolution.drop-partition-by.o134"
+kind = "negative_neighbour"
+required = true
+target = "<col_name>"
+anchor = "doc.sql.alter-iceberg-table-partition-evolution / Syntax"
+note = "a string literal in place of <col_name>, observed"
+
+[[obligation]]
+id = "sf.ddl.alter-iceberg-table-partition-evolution.drop-partition-by.o135"
+kind = "negative_neighbour"
+required = true
+target = "<num_buckets>"
+anchor = "doc.sql.alter-iceberg-table-partition-evolution / Syntax"
+note = "a string literal in place of <num_buckets>, observed"
+
+[[obligation]]
+id = "sf.ddl.alter-iceberg-table-partition-evolution.drop-partition-by.o136"
+kind = "required_operand_missing"
+required = true
+target = "<col_name> #6"
+anchor = "doc.sql.alter-iceberg-table-partition-evolution / Syntax"
+note = "omit <col_name>, observed"
+
+[[obligation]]
+id = "sf.ddl.alter-iceberg-table-partition-evolution.drop-partition-by.o137"
+kind = "required_operand_missing"
+required = true
+target = "<col_name> #5"
+anchor = "doc.sql.alter-iceberg-table-partition-evolution / Syntax"
+note = "omit <col_name>, observed"
 
 [[obligation]]
 id = "sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with.o001"
@@ -40830,13 +40910,6 @@ required = true
 target = "[ IF EXISTS ] #2"
 
 [[obligation]]
-id = "sf.ddl.alter-iceberg-table-version-tag.drop-version-tag.o009"
-kind = "required_operand_missing"
-required = true
-target = "<tag_name>"
-note = "omit <tag_name>"
-
-[[obligation]]
 id = "sf.ddl.alter-iceberg-table-version-tag.drop-version-tag.o010"
 kind = "operand_type_class"
 required = true
@@ -40917,6 +40990,14 @@ required = true
 target = "<tag_name>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.ddl.alter-iceberg-table-version-tag.drop-version-tag.o023"
+kind = "required_operand_missing"
+required = true
+target = "<tag_name>"
+anchor = "doc.sql.alter-iceberg-table-version-tag / Syntax"
+note = "omit <tag_name>, observed"
 
 [[obligation]]
 id = "sf.ddl.alter-iceberg-table-version-tag.replace-version-tag-as-of.o001"
@@ -41294,18 +41375,6 @@ required = true
 note = "the form without its required RECLUSTER"
 
 [[obligation]]
-id = "sf.ddl.alter-iceberg-table.clusteringaction.o025"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required CLUSTERING"
-
-[[obligation]]
-id = "sf.ddl.alter-iceberg-table.clusteringaction.o026"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required KEY"
-
-[[obligation]]
 id = "sf.ddl.alter-iceberg-table.clusteringaction.o027"
 kind = "negative_neighbour"
 required = true
@@ -41326,6 +41395,20 @@ required = true
 target = "<table_name>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.ddl.alter-iceberg-table.clusteringaction.o028"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.alter-iceberg-table / Syntax"
+note = "the form without its required CLUSTERING, observed"
+
+[[obligation]]
+id = "sf.ddl.alter-iceberg-table.clusteringaction.o029"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.alter-iceberg-table / Syntax"
+note = "the form without its required KEY, observed"
 
 [[obligation]]
 id = "sf.ddl.alter-iceberg-table.datagovnpolicytagaction.o001"
@@ -42712,12 +42795,6 @@ required = true
 note = "the form without its required TABLE"
 
 [[obligation]]
-id = "sf.ddl.alter-iceberg-table.datagovnpolicytagaction.o008"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required EXISTS in [ IF EXISTS ]"
-
-[[obligation]]
 id = "sf.ddl.alter-iceberg-table.datagovnpolicytagaction.o210"
 kind = "negative_neighbour"
 required = true
@@ -43060,6 +43137,13 @@ anchor = "doc.sql.alter-iceberg-table / Parameters"
 note = "a tag value of 257 characters against the documented maximum of 256"
 
 [[obligation]]
+id = "sf.ddl.alter-iceberg-table.datagovnpolicytagaction.o296"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.alter-iceberg-table / Syntax"
+note = "the form without its required EXISTS in [ IF EXISTS ], observed"
+
+[[obligation]]
 id = "sf.ddl.alter-iceberg-table.searchoptimizationaction.o001"
 kind = "positive"
 required = true
@@ -43194,13 +43278,6 @@ target = "<column_name> in [ ON { <search_method_with_target> | <column_name> | 
 note = "a valid identifier"
 
 [[obligation]]
-id = "sf.ddl.alter-iceberg-table.searchoptimizationaction.o027"
-kind = "negative_neighbour"
-required = true
-target = "<column_name> in [ ON { <search_method_with_target> | <column_name> | <expression_id> } [ , ... ] ]"
-note = "a string literal in place of <column_name>"
-
-[[obligation]]
 id = "sf.ddl.alter-iceberg-table.searchoptimizationaction.o028"
 kind = "operand_type_class"
 required = true
@@ -43287,6 +43364,14 @@ required = true
 target = "<column_name>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.ddl.alter-iceberg-table.searchoptimizationaction.o037"
+kind = "negative_neighbour"
+required = true
+target = "<column_name> in [ ON { <search_method_with_target> | <column_name> | <expression_id> } [ , ... ] ]"
+anchor = "doc.sql.alter-iceberg-table / Syntax"
+note = "a string literal in place of <column_name>, observed"
 
 [[obligation]]
 id = "sf.ddl.alter-iceberg-table.set.o001"
@@ -44879,12 +44964,6 @@ required = true
 note = "the form without its required COMMENT"
 
 [[obligation]]
-id = "sf.ddl.alter-iceberg-table.tablecolumnaction.o153"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required WRITE"
-
-[[obligation]]
 id = "sf.ddl.alter-iceberg-table.tablecolumnaction.o154"
 kind = "negative_neighbour"
 required = true
@@ -44919,12 +44998,6 @@ id = "sf.ddl.alter-iceberg-table.tablecolumnaction.o159"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required COMMENT in [ , [ COLUMN ] <col2_name> { { [ SET ] NOT NULL | DROP NOT NULL } | [ [ SET DATA ] TYPE ] <type> | COMMENT '<string>' |…"
-
-[[obligation]]
-id = "sf.ddl.alter-iceberg-table.tablecolumnaction.o160"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required WRITE in [ , [ COLUMN ] <col2_name> { { [ SET ] NOT NULL | DROP NOT NULL } | [ [ SET DATA ] TYPE ] <type> | COMMENT '<string>' |…"
 
 [[obligation]]
 id = "sf.ddl.alter-iceberg-table.tablecolumnaction.o161"
@@ -45084,6 +45157,20 @@ kind = "negative_neighbour"
 required = true
 anchor = "doc.sql.alter-iceberg-table / Syntax"
 note = "an unquoted identifier in place of '<collation_specification>' (COLLATE m1), observed"
+
+[[obligation]]
+id = "sf.ddl.alter-iceberg-table.tablecolumnaction.o192"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.alter-iceberg-table / Syntax"
+note = "the form without its required WRITE in [ , [ COLUMN ] <col2_name> { { [ SET ] NOT NULL | DROP NOT NULL } | [ [ SET DATA ] TYPE ] <type> | COMMENT '<string>' |…, observed"
+
+[[obligation]]
+id = "sf.ddl.alter-iceberg-table.tablecolumnaction.o193"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.alter-iceberg-table / Syntax"
+note = "the form without its required WRITE, observed"
 
 [[obligation]]
 id = "sf.ddl.alter-iceberg-table.unset.o001"
@@ -46886,13 +46973,6 @@ target = "<namespace> in [ <namespace> . ] #2"
 note = "a string literal in place of <namespace>"
 
 [[obligation]]
-id = "sf.ddl.alter-model-add-version.internalstage.o041"
-kind = "required_operand_missing"
-required = true
-target = "<table_name>"
-note = "omit <table_name>"
-
-[[obligation]]
 id = "sf.ddl.alter-model-add-version.internalstage.o042"
 kind = "operand_type_class"
 required = true
@@ -47073,6 +47153,14 @@ required = true
 target = "<table_name>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.ddl.alter-model-add-version.internalstage.o059"
+kind = "required_operand_missing"
+required = true
+target = "<table_name>"
+anchor = "doc.sql.alter-model-add-version / Variant Syntax"
+note = "omit <table_name>, observed"
 
 [[obligation]]
 id = "sf.ddl.alter-model-add-version.model.o001"
@@ -48250,13 +48338,6 @@ required = true
 target = "[ IF EXISTS ]"
 
 [[obligation]]
-id = "sf.ddl.alter-model-monitor.unset-baseline.o004"
-kind = "required_operand_missing"
-required = true
-target = "<monitor_name>"
-note = "omit <monitor_name>"
-
-[[obligation]]
 id = "sf.ddl.alter-model-monitor.unset-baseline.o005"
 kind = "operand_type_class"
 required = true
@@ -48315,6 +48396,14 @@ required = true
 target = "<monitor_name>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.ddl.alter-model-monitor.unset-baseline.o014"
+kind = "required_operand_missing"
+required = true
+target = "<monitor_name>"
+anchor = "doc.sql.alter-model-monitor / Syntax / Model version monitor only"
+note = "omit <monitor_name>, observed"
 
 [[obligation]]
 id = "sf.ddl.alter-model-monitor.unset-comment.o001"
@@ -52327,12 +52416,6 @@ required = true
 target = "[ , ... ]"
 
 [[obligation]]
-id = "sf.ddl.alter-openflow-deployment.unset-display-name-comment-event-table.o012"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required OPENFLOW"
-
-[[obligation]]
 id = "sf.ddl.alter-openflow-deployment.unset-display-name-comment-event-table.o013"
 kind = "negative_neighbour"
 required = true
@@ -52371,6 +52454,13 @@ required = true
 target = "<name>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.ddl.alter-openflow-deployment.unset-display-name-comment-event-table.o019"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.alter-openflow-deployment / Syntax"
+note = "the form without its required OPENFLOW, observed"
 
 [[obligation]]
 id = "sf.ddl.alter-openflow-deployment.upgrade.o001"
@@ -54151,13 +54241,6 @@ target = "<name>"
 note = "a string literal in place of <name>"
 
 [[obligation]]
-id = "sf.ddl.alter-pipe.set-tag.o005"
-kind = "required_operand_missing"
-required = true
-target = "<tag_name>"
-note = "omit <tag_name>"
-
-[[obligation]]
 id = "sf.ddl.alter-pipe.set-tag.o006"
 kind = "operand_type_class"
 required = true
@@ -54218,12 +54301,6 @@ required = true
 note = "the form without its required SET"
 
 [[obligation]]
-id = "sf.ddl.alter-pipe.set-tag.o015"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required TAG"
-
-[[obligation]]
 id = "sf.ddl.alter-pipe.set-tag.o016"
 kind = "identifier_class"
 required = true
@@ -54278,6 +54355,21 @@ required = true
 target = "'<tag_value>'"
 anchor = "doc.sql.alter-pipe / Parameters"
 note = "a tag value of 257 characters against the documented maximum of 256"
+
+[[obligation]]
+id = "sf.ddl.alter-pipe.set-tag.o023"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.alter-pipe / Syntax"
+note = "the form without its required TAG, observed"
+
+[[obligation]]
+id = "sf.ddl.alter-pipe.set-tag.o024"
+kind = "required_operand_missing"
+required = true
+target = "<tag_name>"
+anchor = "doc.sql.alter-pipe / Syntax"
+note = "omit <tag_name>, observed"
 
 [[obligation]]
 id = "sf.ddl.alter-pipe.unset-comment.o001"
@@ -54441,13 +54533,6 @@ target = "<name>"
 note = "a string literal in place of <name>"
 
 [[obligation]]
-id = "sf.ddl.alter-pipe.unset-tag.o005"
-kind = "required_operand_missing"
-required = true
-target = "<tag_name>"
-note = "omit <tag_name>"
-
-[[obligation]]
 id = "sf.ddl.alter-pipe.unset-tag.o006"
 kind = "operand_type_class"
 required = true
@@ -54517,6 +54602,14 @@ required = true
 target = "<tag_name>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.ddl.alter-pipe.unset-tag.o016"
+kind = "required_operand_missing"
+required = true
+target = "<tag_name>"
+anchor = "doc.sql.alter-pipe / Syntax"
+note = "omit <tag_name>, observed"
 
 [[obligation]]
 id = "sf.ddl.alter-postgres-instance.rename-to.o001"
@@ -56503,13 +56596,6 @@ required = true
 target = "[ <arg_data_type> , ... ]"
 
 [[obligation]]
-id = "sf.ddl.alter-procedure.set-tag.o009"
-kind = "required_operand_missing"
-required = true
-target = "<tag_name>"
-note = "omit <tag_name>"
-
-[[obligation]]
 id = "sf.ddl.alter-procedure.set-tag.o010"
 kind = "operand_type_class"
 required = true
@@ -56588,12 +56674,6 @@ required = true
 note = "the form without its required SET"
 
 [[obligation]]
-id = "sf.ddl.alter-procedure.set-tag.o022"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required TAG"
-
-[[obligation]]
 id = "sf.ddl.alter-procedure.set-tag.o023"
 kind = "identifier_class"
 required = true
@@ -56648,6 +56728,21 @@ required = true
 target = "'<tag_value>'"
 anchor = "doc.sql.alter-procedure / Parameters"
 note = "a tag value of 257 characters against the documented maximum of 256"
+
+[[obligation]]
+id = "sf.ddl.alter-procedure.set-tag.o030"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.alter-procedure / Syntax / Java handler"
+note = "the form without its required TAG, observed"
+
+[[obligation]]
+id = "sf.ddl.alter-procedure.set-tag.o031"
+kind = "required_operand_missing"
+required = true
+target = "<tag_name>"
+anchor = "doc.sql.alter-procedure / Syntax / Java handler"
+note = "omit <tag_name>, observed"
 
 [[obligation]]
 id = "sf.ddl.alter-procedure.set.javascript-handler.o001"
@@ -57245,13 +57340,6 @@ required = true
 target = "[ <arg_data_type> , ... ]"
 
 [[obligation]]
-id = "sf.ddl.alter-procedure.unset-tag.o009"
-kind = "required_operand_missing"
-required = true
-target = "<tag_name>"
-note = "omit <tag_name>"
-
-[[obligation]]
 id = "sf.ddl.alter-procedure.unset-tag.o010"
 kind = "operand_type_class"
 required = true
@@ -57309,12 +57397,6 @@ required = true
 note = "the form without its required UNSET"
 
 [[obligation]]
-id = "sf.ddl.alter-procedure.unset-tag.o019"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required TAG"
-
-[[obligation]]
 id = "sf.ddl.alter-procedure.unset-tag.o020"
 kind = "identifier_class"
 required = true
@@ -57345,6 +57427,21 @@ required = true
 target = "<tag_name>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.ddl.alter-procedure.unset-tag.o024"
+kind = "required_operand_missing"
+required = true
+target = "<tag_name>"
+anchor = "doc.sql.alter-procedure / Syntax / Java handler"
+note = "omit <tag_name>, observed"
+
+[[obligation]]
+id = "sf.ddl.alter-procedure.unset-tag.o025"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.alter-procedure / Syntax / Java handler"
+note = "the form without its required TAG, observed"
 
 [[obligation]]
 id = "sf.ddl.alter-restricted-session-scope.add-as.o001"
@@ -58841,13 +58938,6 @@ required = true
 target = "[ CONTACT <purpose> = <contact_name> [ , <purpose> = <contact_name> ... ] ]"
 
 [[obligation]]
-id = "sf.ddl.alter-schema.set.o112"
-kind = "required_operand_missing"
-required = true
-target = "<purpose> in [ CONTACT <purpose> = <contact_name> [ , <purpose> = <contact_name> ... ] ]"
-note = "omit <purpose>"
-
-[[obligation]]
 id = "sf.ddl.alter-schema.set.o113"
 kind = "operand_type_class"
 required = true
@@ -59137,6 +59227,14 @@ anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
+id = "sf.ddl.alter-schema.set.o160"
+kind = "required_operand_missing"
+required = true
+target = "<purpose> in [ CONTACT <purpose> = <contact_name> [ , <purpose> = <contact_name> ... ] ]"
+anchor = "doc.sql.alter-schema / Syntax"
+note = "omit <purpose>, observed"
+
+[[obligation]]
 id = "sf.ddl.alter-schema.set-tag.o001"
 kind = "positive"
 required = true
@@ -59174,13 +59272,6 @@ kind = "negative_neighbour"
 required = true
 target = "<name>"
 note = "a string literal in place of <name>"
-
-[[obligation]]
-id = "sf.ddl.alter-schema.set-tag.o007"
-kind = "required_operand_missing"
-required = true
-target = "<tag_name>"
-note = "omit <tag_name>"
 
 [[obligation]]
 id = "sf.ddl.alter-schema.set-tag.o008"
@@ -59249,12 +59340,6 @@ required = true
 note = "the form without its required SET"
 
 [[obligation]]
-id = "sf.ddl.alter-schema.set-tag.o018"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required TAG"
-
-[[obligation]]
 id = "sf.ddl.alter-schema.set-tag.o019"
 kind = "identifier_class"
 required = true
@@ -59309,6 +59394,21 @@ required = true
 target = "'<tag_value>'"
 anchor = "doc.sql.alter-schema / Parameters"
 note = "a tag value of 257 characters against the documented maximum of 256"
+
+[[obligation]]
+id = "sf.ddl.alter-schema.set-tag.o026"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.alter-schema / Syntax"
+note = "the form without its required TAG, observed"
+
+[[obligation]]
+id = "sf.ddl.alter-schema.set-tag.o027"
+kind = "required_operand_missing"
+required = true
+target = "<tag_name>"
+anchor = "doc.sql.alter-schema / Syntax"
+note = "omit <tag_name>, observed"
 
 [[obligation]]
 id = "sf.ddl.alter-schema.swap-with.o001"
@@ -59443,13 +59543,6 @@ id = "sf.ddl.alter-schema.unset-data-retention-time-in-days-max-data-extension-t
 kind = "option_absent"
 required = true
 target = "[ IF EXISTS ]"
-
-[[obligation]]
-id = "sf.ddl.alter-schema.unset-data-retention-time-in-days-max-data-extension-time-in-days-stage-undrop-retention-time-in-days.o004"
-kind = "required_operand_missing"
-required = true
-target = "<name>"
-note = "omit <name>"
 
 [[obligation]]
 id = "sf.ddl.alter-schema.unset-data-retention-time-in-days-max-data-extension-time-in-days-stage-undrop-retention-time-in-days.o005"
@@ -59630,13 +59723,6 @@ target = "<purpose>"
 note = "a valid operand"
 
 [[obligation]]
-id = "sf.ddl.alter-schema.unset-data-retention-time-in-days-max-data-extension-time-in-days-stage-undrop-retention-time-in-days.o034"
-kind = "required_operand_missing"
-required = true
-target = "<purpose> #2"
-note = "omit <purpose>"
-
-[[obligation]]
 id = "sf.ddl.alter-schema.unset-data-retention-time-in-days-max-data-extension-time-in-days-stage-undrop-retention-time-in-days.o035"
 kind = "operand_type_class"
 required = true
@@ -59709,6 +59795,22 @@ anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
+id = "sf.ddl.alter-schema.unset-data-retention-time-in-days-max-data-extension-time-in-days-stage-undrop-retention-time-in-days.o046"
+kind = "required_operand_missing"
+required = true
+target = "<purpose> #2"
+anchor = "doc.sql.alter-schema / Syntax"
+note = "omit <purpose>, observed"
+
+[[obligation]]
+id = "sf.ddl.alter-schema.unset-data-retention-time-in-days-max-data-extension-time-in-days-stage-undrop-retention-time-in-days.o047"
+kind = "required_operand_missing"
+required = true
+target = "<name>"
+anchor = "doc.sql.alter-schema / Syntax"
+note = "omit <name>, observed"
+
+[[obligation]]
 id = "sf.ddl.alter-schema.unset-tag.o001"
 kind = "positive"
 required = true
@@ -59746,13 +59848,6 @@ kind = "negative_neighbour"
 required = true
 target = "<name>"
 note = "a string literal in place of <name>"
-
-[[obligation]]
-id = "sf.ddl.alter-schema.unset-tag.o007"
-kind = "required_operand_missing"
-required = true
-target = "<tag_name>"
-note = "omit <tag_name>"
 
 [[obligation]]
 id = "sf.ddl.alter-schema.unset-tag.o008"
@@ -59800,12 +59895,6 @@ required = true
 note = "the form without its required UNSET"
 
 [[obligation]]
-id = "sf.ddl.alter-schema.unset-tag.o015"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required TAG"
-
-[[obligation]]
 id = "sf.ddl.alter-schema.unset-tag.o016"
 kind = "identifier_class"
 required = true
@@ -59836,6 +59925,21 @@ required = true
 target = "<tag_name>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.ddl.alter-schema.unset-tag.o020"
+kind = "required_operand_missing"
+required = true
+target = "<tag_name>"
+anchor = "doc.sql.alter-schema / Syntax"
+note = "omit <tag_name>, observed"
+
+[[obligation]]
+id = "sf.ddl.alter-schema.unset-tag.o021"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.alter-schema / Syntax"
+note = "the form without its required TAG, observed"
 
 [[obligation]]
 id = "sf.ddl.alter-semantic-view.add-materialization-warehouse-as.o001"
@@ -60741,12 +60845,6 @@ target = "<integer>"
 note = "a valid operand"
 
 [[obligation]]
-id = "sf.ddl.alter-semantic-view.set-comment-max-staleness.o014"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required SEMANTIC"
-
-[[obligation]]
 id = "sf.ddl.alter-semantic-view.set-comment-max-staleness.o015"
 kind = "negative_neighbour"
 required = true
@@ -60811,6 +60909,13 @@ anchor = "doc.sql.alter-semantic-view / Parameters"
 note = "MAX_STALENESS = 121 against the documented minimum of 120"
 
 [[obligation]]
+id = "sf.ddl.alter-semantic-view.set-comment-max-staleness.o024"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.alter-semantic-view / Syntax"
+note = "the form without its required SEMANTIC, observed"
+
+[[obligation]]
 id = "sf.ddl.alter-semantic-view.set-tag.o001"
 kind = "positive"
 required = true
@@ -60836,13 +60941,6 @@ kind = "negative_neighbour"
 required = true
 target = "<name>"
 note = "a string literal in place of <name>"
-
-[[obligation]]
-id = "sf.ddl.alter-semantic-view.set-tag.o005"
-kind = "required_operand_missing"
-required = true
-target = "<tag_name>"
-note = "omit <tag_name>"
 
 [[obligation]]
 id = "sf.ddl.alter-semantic-view.set-tag.o006"
@@ -60905,12 +61003,6 @@ required = true
 note = "the form without its required SET"
 
 [[obligation]]
-id = "sf.ddl.alter-semantic-view.set-tag.o016"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required TAG"
-
-[[obligation]]
 id = "sf.ddl.alter-semantic-view.set-tag.o017"
 kind = "identifier_class"
 required = true
@@ -60965,6 +61057,21 @@ required = true
 target = "'<tag_value>'"
 anchor = "doc.sql.alter-semantic-view / Parameters"
 note = "a tag value of 257 characters against the documented maximum of 256"
+
+[[obligation]]
+id = "sf.ddl.alter-semantic-view.set-tag.o024"
+kind = "required_operand_missing"
+required = true
+target = "<tag_name>"
+anchor = "doc.sql.alter-semantic-view / Syntax"
+note = "omit <tag_name>, observed"
+
+[[obligation]]
+id = "sf.ddl.alter-semantic-view.set-tag.o025"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.alter-semantic-view / Syntax"
+note = "the form without its required TAG, observed"
 
 [[obligation]]
 id = "sf.ddl.alter-semantic-view.suspend-materialization.o001"
@@ -61122,12 +61229,6 @@ required = true
 target = "{ COMMENT | MAX_STALENESS } → MAX_STALENESS"
 
 [[obligation]]
-id = "sf.ddl.alter-semantic-view.unset-comment-max-staleness.o009"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required SEMANTIC"
-
-[[obligation]]
 id = "sf.ddl.alter-semantic-view.unset-comment-max-staleness.o010"
 kind = "negative_neighbour"
 required = true
@@ -61168,6 +61269,13 @@ anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
+id = "sf.ddl.alter-semantic-view.unset-comment-max-staleness.o016"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.alter-semantic-view / Syntax"
+note = "the form without its required SEMANTIC, observed"
+
+[[obligation]]
 id = "sf.ddl.alter-semantic-view.unset-tag.o001"
 kind = "positive"
 required = true
@@ -61193,13 +61301,6 @@ kind = "negative_neighbour"
 required = true
 target = "<name>"
 note = "a string literal in place of <name>"
-
-[[obligation]]
-id = "sf.ddl.alter-semantic-view.unset-tag.o005"
-kind = "required_operand_missing"
-required = true
-target = "<tag_name>"
-note = "omit <tag_name>"
 
 [[obligation]]
 id = "sf.ddl.alter-semantic-view.unset-tag.o006"
@@ -61241,12 +61342,6 @@ required = true
 note = "the form without its required UNSET"
 
 [[obligation]]
-id = "sf.ddl.alter-semantic-view.unset-tag.o013"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required TAG"
-
-[[obligation]]
 id = "sf.ddl.alter-semantic-view.unset-tag.o014"
 kind = "identifier_class"
 required = true
@@ -61277,6 +61372,21 @@ required = true
 target = "<tag_name>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.ddl.alter-semantic-view.unset-tag.o018"
+kind = "required_operand_missing"
+required = true
+target = "<tag_name>"
+anchor = "doc.sql.alter-semantic-view / Syntax"
+note = "omit <tag_name>, observed"
+
+[[obligation]]
+id = "sf.ddl.alter-semantic-view.unset-tag.o019"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.alter-semantic-view / Syntax"
+note = "the form without its required TAG, observed"
 
 [[obligation]]
 id = "sf.ddl.alter-sequence.sequence.o001"
@@ -62813,13 +62923,6 @@ required = true
 target = "[ TAG <tag_name> = '<tag_value>' [ , <tag_name> = '<tag_value>' ... ] ]"
 
 [[obligation]]
-id = "sf.ddl.alter-service.set.syntax.o009"
-kind = "required_operand_missing"
-required = true
-target = "<tag_name> in [ TAG <tag_name> = '<tag_value>' [ , <tag_name> = '<tag_value>' ... ] ]"
-note = "omit <tag_name>"
-
-[[obligation]]
 id = "sf.ddl.alter-service.set.syntax.o010"
 kind = "operand_type_class"
 required = true
@@ -62946,6 +63049,14 @@ required = true
 target = "'<tag_value>'"
 anchor = "doc.sql.alter-service / Parameters"
 note = "a tag value of 257 characters against the documented maximum of 256"
+
+[[obligation]]
+id = "sf.ddl.alter-service.set.syntax.o028"
+kind = "required_operand_missing"
+required = true
+target = "<tag_name> in [ TAG <tag_name> = '<tag_value>' [ , <tag_name> = '<tag_value>' ... ] ]"
+anchor = "doc.sql.alter-service / Syntax"
+note = "omit <tag_name>, observed"
 
 [[obligation]]
 id = "sf.ddl.alter-service.suspend-resume.o001"
@@ -64385,13 +64496,6 @@ target = "<name>"
 note = "a string literal in place of <name>"
 
 [[obligation]]
-id = "sf.ddl.alter-snapshot-set.unset-tag.o005"
-kind = "required_operand_missing"
-required = true
-target = "<tag_name>"
-note = "omit <tag_name>"
-
-[[obligation]]
 id = "sf.ddl.alter-snapshot-set.unset-tag.o006"
 kind = "operand_type_class"
 required = true
@@ -64473,6 +64577,14 @@ required = true
 target = "<tag_name>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.ddl.alter-snapshot-set.unset-tag.o018"
+kind = "required_operand_missing"
+required = true
+target = "<tag_name>"
+anchor = "doc.sql.alter-snapshot-set / Syntax"
+note = "omit <tag_name>, observed"
 
 [[obligation]]
 id = "sf.ddl.alter-stage.refresh.o001"
@@ -71100,13 +71212,6 @@ target = "<name>"
 note = "a string literal in place of <name>"
 
 [[obligation]]
-id = "sf.ddl.alter-stage.unset-tag.o005"
-kind = "required_operand_missing"
-required = true
-target = "<tag_name>"
-note = "omit <tag_name>"
-
-[[obligation]]
 id = "sf.ddl.alter-stage.unset-tag.o006"
 kind = "operand_type_class"
 required = true
@@ -71182,6 +71287,14 @@ required = true
 target = "<tag_name>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.ddl.alter-stage.unset-tag.o017"
+kind = "required_operand_missing"
+required = true
+target = "<tag_name>"
+anchor = "doc.sql.alter-stage / Syntax"
+note = "omit <tag_name>, observed"
 
 [[obligation]]
 id = "sf.ddl.alter-stream.set-comment.o001"
@@ -71564,13 +71677,6 @@ target = "<name>"
 note = "a string literal in place of <name>"
 
 [[obligation]]
-id = "sf.ddl.alter-stream.unset-tag.o005"
-kind = "required_operand_missing"
-required = true
-target = "<tag_name>"
-note = "omit <tag_name>"
-
-[[obligation]]
 id = "sf.ddl.alter-stream.unset-tag.o006"
 kind = "operand_type_class"
 required = true
@@ -71646,6 +71752,14 @@ required = true
 target = "<tag_name>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.ddl.alter-stream.unset-tag.o017"
+kind = "required_operand_missing"
+required = true
+target = "<tag_name>"
+anchor = "doc.sql.alter-stream / Syntax"
+note = "omit <tag_name>, observed"
 
 [[obligation]]
 id = "sf.ddl.alter-streamlit.abort.o001"
@@ -85866,13 +85980,6 @@ target = "<name>"
 note = "a string literal in place of <name>"
 
 [[obligation]]
-id = "sf.ddl.alter-task-graph.set-tag.o007"
-kind = "required_operand_missing"
-required = true
-target = "<tag_name>"
-note = "omit <tag_name>"
-
-[[obligation]]
 id = "sf.ddl.alter-task-graph.set-tag.o008"
 kind = "operand_type_class"
 required = true
@@ -85975,6 +86082,14 @@ required = true
 target = "<tag_name>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.ddl.alter-task-graph.set-tag.o023"
+kind = "required_operand_missing"
+required = true
+target = "<tag_name>"
+anchor = "doc.sql.alter-task-graph / Syntax / ALTER TASK GRAPH ... SET / UNSET"
+note = "omit <tag_name>, observed"
 
 [[obligation]]
 id = "sf.ddl.alter-task-graph.set-task-defaults.o001"
@@ -86439,13 +86554,6 @@ target = "<name>"
 note = "a string literal in place of <name>"
 
 [[obligation]]
-id = "sf.ddl.alter-task-graph.unset-tag.o007"
-kind = "required_operand_missing"
-required = true
-target = "<tag_name>"
-note = "omit <tag_name>"
-
-[[obligation]]
 id = "sf.ddl.alter-task-graph.unset-tag.o008"
 kind = "operand_type_class"
 required = true
@@ -86527,6 +86635,14 @@ required = true
 target = "<tag_name>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.ddl.alter-task-graph.unset-tag.o020"
+kind = "required_operand_missing"
+required = true
+target = "<tag_name>"
+anchor = "doc.sql.alter-task-graph / Syntax / ALTER TASK GRAPH ... SET / UNSET"
+note = "omit <tag_name>, observed"
 
 [[obligation]]
 id = "sf.ddl.alter-task-graph.unset-task-defaults.o001"
@@ -121195,13 +121311,6 @@ target = "<name>"
 note = "a string literal in place of <name>"
 
 [[obligation]]
-id = "sf.ddl.create-dynamic-table.create-or-alter-dynamic-iceberg-table.o005"
-kind = "required_operand_missing"
-required = true
-target = "<col_name>"
-note = "omit <col_name>"
-
-[[obligation]]
 id = "sf.ddl.create-dynamic-table.create-or-alter-dynamic-iceberg-table.o006"
 kind = "operand_type_class"
 required = true
@@ -121214,13 +121323,6 @@ kind = "negative_neighbour"
 required = true
 target = "<col_name>"
 note = "a string literal in place of <col_name>"
-
-[[obligation]]
-id = "sf.ddl.create-dynamic-table.create-or-alter-dynamic-iceberg-table.o008"
-kind = "required_operand_missing"
-required = true
-target = "<col_type>"
-note = "omit <col_type>"
 
 [[obligation]]
 id = "sf.ddl.create-dynamic-table.create-or-alter-dynamic-iceberg-table.o009"
@@ -121282,13 +121384,6 @@ required = true
 target = "[ , <col_name> <col_type> [ ... ] ]"
 
 [[obligation]]
-id = "sf.ddl.create-dynamic-table.create-or-alter-dynamic-iceberg-table.o045"
-kind = "required_operand_missing"
-required = true
-target = "<col_name> in [ , <col_name> <col_type> [ ... ] ]"
-note = "omit <col_name>"
-
-[[obligation]]
 id = "sf.ddl.create-dynamic-table.create-or-alter-dynamic-iceberg-table.o046"
 kind = "operand_type_class"
 required = true
@@ -121301,13 +121396,6 @@ kind = "negative_neighbour"
 required = true
 target = "<col_name> in [ , <col_name> <col_type> [ ... ] ]"
 note = "a string literal in place of <col_name>"
-
-[[obligation]]
-id = "sf.ddl.create-dynamic-table.create-or-alter-dynamic-iceberg-table.o048"
-kind = "required_operand_missing"
-required = true
-target = "<col_type> in [ , <col_name> <col_type> [ ... ] ]"
-note = "omit <col_type>"
 
 [[obligation]]
 id = "sf.ddl.create-dynamic-table.create-or-alter-dynamic-iceberg-table.o049"
@@ -122359,6 +122447,38 @@ kind = "negative_neighbour"
 required = true
 anchor = "doc.sql.create-dynamic-table / Syntax"
 note = "a string literal in place of <col_name> (TRUNCATE ( 10 , 'v1' )), observed"
+
+[[obligation]]
+id = "sf.ddl.create-dynamic-table.create-or-alter-dynamic-iceberg-table.o305"
+kind = "required_operand_missing"
+required = true
+target = "<col_type>"
+anchor = "doc.sql.create-dynamic-table / CREATE OR ALTER DYNAMIC ICEBERG TABLE"
+note = "omit <col_type>, observed"
+
+[[obligation]]
+id = "sf.ddl.create-dynamic-table.create-or-alter-dynamic-iceberg-table.o306"
+kind = "required_operand_missing"
+required = true
+target = "<col_name> in [ , <col_name> <col_type> [ ... ] ]"
+anchor = "doc.sql.create-dynamic-table / CREATE OR ALTER DYNAMIC ICEBERG TABLE"
+note = "omit <col_name>, observed"
+
+[[obligation]]
+id = "sf.ddl.create-dynamic-table.create-or-alter-dynamic-iceberg-table.o307"
+kind = "required_operand_missing"
+required = true
+target = "<col_name>"
+anchor = "doc.sql.create-dynamic-table / CREATE OR ALTER DYNAMIC ICEBERG TABLE"
+note = "omit <col_name>, observed"
+
+[[obligation]]
+id = "sf.ddl.create-dynamic-table.create-or-alter-dynamic-iceberg-table.o308"
+kind = "required_operand_missing"
+required = true
+target = "<col_type> in [ , <col_name> <col_type> [ ... ] ]"
+anchor = "doc.sql.create-dynamic-table / CREATE OR ALTER DYNAMIC ICEBERG TABLE"
+note = "omit <col_type>, observed"
 
 [[obligation]]
 id = "sf.ddl.create-dynamic-table.create-or-alter-dynamic-iceberg-table.o302"
@@ -126168,13 +126288,6 @@ target = "<col_name> in [ <col_name> <col_type> AS <expr> | <part_col_name> <col
 note = "a string literal in place of <col_name>"
 
 [[obligation]]
-id = "sf.ddl.create-external-table.cloudproviderparams-location-externalstage-file-format.o016"
-kind = "required_operand_missing"
-required = true
-target = "<col_type> in [ <col_name> <col_type> AS <expr> | <part_col_name> <col_type> AS <part_expr> ]"
-note = "omit <col_type>"
-
-[[obligation]]
 id = "sf.ddl.create-external-table.cloudproviderparams-location-externalstage-file-format.o017"
 kind = "operand_type_class"
 required = true
@@ -126222,13 +126335,6 @@ kind = "negative_neighbour"
 required = true
 target = "<part_col_name> in [ <col_name> <col_type> AS <expr> | <part_col_name> <col_type> AS <part_expr> ]"
 note = "a string literal in place of <part_col_name>"
-
-[[obligation]]
-id = "sf.ddl.create-external-table.cloudproviderparams-location-externalstage-file-format.o024"
-kind = "required_operand_missing"
-required = true
-target = "<col_type> in [ <col_name> <col_type> AS <expr> | <part_col_name> <col_type> AS <part_expr> ] #2"
-note = "omit <col_type>"
 
 [[obligation]]
 id = "sf.ddl.create-external-table.cloudproviderparams-location-externalstage-file-format.o025"
@@ -126497,13 +126603,6 @@ target = "<col_name> in [ , <col_name> <col_type> AS <expr> | <part_col_name> <c
 note = "a string literal in place of <col_name>"
 
 [[obligation]]
-id = "sf.ddl.create-external-table.cloudproviderparams-location-externalstage-file-format.o039"
-kind = "required_operand_missing"
-required = true
-target = "<col_type> in [ , <col_name> <col_type> AS <expr> | <part_col_name> <col_type> AS <part_expr> ... ]"
-note = "omit <col_type>"
-
-[[obligation]]
 id = "sf.ddl.create-external-table.cloudproviderparams-location-externalstage-file-format.o040"
 kind = "operand_type_class"
 required = true
@@ -126551,13 +126650,6 @@ kind = "negative_neighbour"
 required = true
 target = "<part_col_name> in [ , <col_name> <col_type> AS <expr> | <part_col_name> <col_type> AS <part_expr> ... ]"
 note = "a string literal in place of <part_col_name>"
-
-[[obligation]]
-id = "sf.ddl.create-external-table.cloudproviderparams-location-externalstage-file-format.o047"
-kind = "required_operand_missing"
-required = true
-target = "<col_type> in [ , <col_name> <col_type> AS <expr> | <part_col_name> <col_type> AS <part_expr> ... ] #2"
-note = "omit <col_type>"
 
 [[obligation]]
 id = "sf.ddl.create-external-table.cloudproviderparams-location-externalstage-file-format.o048"
@@ -128711,6 +128803,38 @@ required = true
 target = "RECORD_DELIMITER = '<string>'"
 anchor = "doc.sql.create-external-table / Format type options"
 note = "a RECORD_DELIMITER of 21 characters against the documented maximum of 20"
+
+[[obligation]]
+id = "sf.ddl.create-external-table.cloudproviderparams-location-externalstage-file-format.o431"
+kind = "required_operand_missing"
+required = true
+target = "<col_type> in [ <col_name> <col_type> AS <expr> | <part_col_name> <col_type> AS <part_expr> ]"
+anchor = "doc.sql.create-external-table / Syntax"
+note = "omit <col_type>, observed"
+
+[[obligation]]
+id = "sf.ddl.create-external-table.cloudproviderparams-location-externalstage-file-format.o432"
+kind = "required_operand_missing"
+required = true
+target = "<col_type> in [ <col_name> <col_type> AS <expr> | <part_col_name> <col_type> AS <part_expr> ] #2"
+anchor = "doc.sql.create-external-table / Syntax"
+note = "omit <col_type>, observed"
+
+[[obligation]]
+id = "sf.ddl.create-external-table.cloudproviderparams-location-externalstage-file-format.o433"
+kind = "required_operand_missing"
+required = true
+target = "<col_type> in [ , <col_name> <col_type> AS <expr> | <part_col_name> <col_type> AS <part_expr> ... ]"
+anchor = "doc.sql.create-external-table / Syntax"
+note = "omit <col_type>, observed"
+
+[[obligation]]
+id = "sf.ddl.create-external-table.cloudproviderparams-location-externalstage-file-format.o434"
+kind = "required_operand_missing"
+required = true
+target = "<col_type> in [ , <col_name> <col_type> AS <expr> | <part_col_name> <col_type> AS <part_expr> ... ] #2"
+anchor = "doc.sql.create-external-table / Syntax"
+note = "omit <col_type>, observed"
 
 [[obligation]]
 id = "sf.ddl.create-external-table.cloudproviderparams-location-externalstage-partition-type.o001"
@@ -256470,13 +256594,6 @@ required = true
 target = "{ DESC | DESCRIBE } → DESCRIBE"
 
 [[obligation]]
-id = "sf.ddl.desc-application-service.o004"
-kind = "required_operand_missing"
-required = true
-target = "<name>"
-note = "omit <name>"
-
-[[obligation]]
 id = "sf.ddl.desc-application-service.o005"
 kind = "operand_type_class"
 required = true
@@ -256505,6 +256622,14 @@ required = true
 target = "<name>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.ddl.desc-application-service.o009"
+kind = "required_operand_missing"
+required = true
+target = "<name>"
+anchor = "doc.sql.desc-application-service / Syntax"
+note = "omit <name>, observed"
 
 [[obligation]]
 id = "sf.ddl.desc-artifact-repository.o001"
@@ -268159,12 +268284,6 @@ required = true
 note = "the form without its required IN"
 
 [[obligation]]
-id = "sf.ddl.show-code-bundles.bundles-in-database.o008"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required DATABASE"
-
-[[obligation]]
 id = "sf.ddl.show-code-bundles.bundles-in-database.o009"
 kind = "identifier_class"
 required = true
@@ -268179,6 +268298,13 @@ required = true
 target = "<database_name>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.ddl.show-code-bundles.bundles-in-database.o011"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.show-code-bundles / Syntax"
+note = "the form without its required DATABASE, observed"
 
 [[obligation]]
 id = "sf.ddl.show-code-bundles.bundles-in-schema.o001"
@@ -269217,10 +269343,11 @@ required = true
 note = "the form without its required CONFIGURATIONS"
 
 [[obligation]]
-id = "sf.ddl.show-configurations.o007"
+id = "sf.ddl.show-configurations.o008"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required APPLICATION in [ IN APPLICATION <app> ]"
+anchor = "doc.sql.show-configurations / Syntax"
+note = "the form without its required APPLICATION in [ IN APPLICATION <app> ], observed"
 
 [[obligation]]
 id = "sf.ddl.show-contacts.o001"
@@ -271376,12 +271503,6 @@ required = true
 note = "the form without its required BY"
 
 [[obligation]]
-id = "sf.ddl.show-delegated-authorizations.authorizations-by-user.o008"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required USER"
-
-[[obligation]]
 id = "sf.ddl.show-delegated-authorizations.authorizations-by-user.o009"
 kind = "identifier_class"
 required = true
@@ -271396,6 +271517,13 @@ required = true
 target = "<username>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.ddl.show-delegated-authorizations.authorizations-by-user.o011"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.show-delegated-authorizations / Syntax"
+note = "the form without its required USER, observed"
 
 [[obligation]]
 id = "sf.ddl.show-delegated-authorizations.authorizations-to-security-integration.o001"
@@ -271847,13 +271975,6 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "sf.ddl.show-endpoints.o002"
-kind = "required_operand_missing"
-required = true
-target = "<name>"
-note = "omit <name>"
-
-[[obligation]]
 id = "sf.ddl.show-endpoints.o003"
 kind = "operand_type_class"
 required = true
@@ -271900,6 +272021,14 @@ required = true
 target = "<name>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.ddl.show-endpoints.o010"
+kind = "required_operand_missing"
+required = true
+target = "<name>"
+anchor = "doc.sql.show-endpoints / Syntax"
+note = "omit <name>, observed"
 
 [[obligation]]
 id = "sf.ddl.show-entities-in-dcm-project.in-dcm-project.o001"
@@ -273319,13 +273448,6 @@ target = "<schema_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> 
 note = "a string literal in place of <schema_name>"
 
 [[obligation]]
-id = "sf.ddl.show-external-tables.o026"
-kind = "required_operand_missing"
-required = true
-target = "<application_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_na…"
-note = "omit <application_name>"
-
-[[obligation]]
 id = "sf.ddl.show-external-tables.o027"
 kind = "operand_type_class"
 required = true
@@ -273539,6 +273661,14 @@ required = true
 target = "<application_package_name>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.ddl.show-external-tables.o071"
+kind = "required_operand_missing"
+required = true
+target = "<application_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_na…"
+anchor = "doc.sql.show-external-tables / Syntax"
+note = "omit <application_name>, observed"
 
 [[obligation]]
 id = "sf.ddl.show-external-volumes.o001"
@@ -280979,13 +281109,6 @@ required = true
 target = "{ ACCOUNT | CLASS <class_name> | DATABASE | DATABASE <database_name> |… → APPLICATION PACKAGE <application_package_name>"
 
 [[obligation]]
-id = "sf.ddl.show-procedures.o018"
-kind = "required_operand_missing"
-required = true
-target = "<class_name> in [ IN { ACCOUNT | CLASS <class_name> | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_nam…"
-note = "omit <class_name>"
-
-[[obligation]]
 id = "sf.ddl.show-procedures.o019"
 kind = "operand_type_class"
 required = true
@@ -281180,6 +281303,14 @@ required = true
 target = "<application_package_name>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.ddl.show-procedures.o051"
+kind = "required_operand_missing"
+required = true
+target = "<class_name> in [ IN { ACCOUNT | CLASS <class_name> | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_nam…"
+anchor = "doc.sql.show-procedures / Syntax"
+note = "omit <class_name>, observed"
 
 [[obligation]]
 id = "sf.ddl.show-references.o001"
@@ -284614,13 +284745,6 @@ target = "<schema_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> 
 note = "a string literal in place of <schema_name>"
 
 [[obligation]]
-id = "sf.ddl.show-sequences.o024"
-kind = "required_operand_missing"
-required = true
-target = "<application_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_na…"
-note = "omit <application_name>"
-
-[[obligation]]
 id = "sf.ddl.show-sequences.o025"
 kind = "operand_type_class"
 required = true
@@ -284736,6 +284860,14 @@ required = true
 target = "<application_package_name>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.ddl.show-sequences.o054"
+kind = "required_operand_missing"
+required = true
+target = "<application_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_na…"
+anchor = "doc.sql.show-sequences / Syntax"
+note = "omit <application_name>, observed"
 
 [[obligation]]
 id = "sf.ddl.show-service-containers-in-service.o001"
@@ -288649,13 +288781,6 @@ target = "<schema_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> 
 note = "a string literal in place of <schema_name>"
 
 [[obligation]]
-id = "sf.ddl.show-types.o024"
-kind = "required_operand_missing"
-required = true
-target = "<application_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_na…"
-note = "omit <application_name>"
-
-[[obligation]]
 id = "sf.ddl.show-types.o025"
 kind = "operand_type_class"
 required = true
@@ -288810,6 +288935,14 @@ required = true
 target = "<application_package_name>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.ddl.show-types.o060"
+kind = "required_operand_missing"
+required = true
+target = "<application_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_na…"
+anchor = "doc.sql.show-types / Syntax"
+note = "omit <application_name>, observed"
 
 [[obligation]]
 id = "sf.ddl.show-versions.o001"
@@ -289325,13 +289458,6 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "sf.ddl.show-versions-in-listing.o002"
-kind = "required_operand_missing"
-required = true
-target = "<name>"
-note = "omit <name>"
-
-[[obligation]]
 id = "sf.ddl.show-versions-in-listing.o003"
 kind = "operand_type_class"
 required = true
@@ -289404,6 +289530,14 @@ required = true
 target = "<name>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.ddl.show-versions-in-listing.o014"
+kind = "required_operand_missing"
+required = true
+target = "<name>"
+anchor = "doc.sql.show-versions-in-listing / Syntax"
+note = "omit <name>, observed"
 
 [[obligation]]
 id = "sf.ddl.show-versions-in-model.o001"
