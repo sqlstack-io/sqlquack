@@ -58,7 +58,7 @@ fn rejections(sql: &str) -> Vec<Refusal> {
     parse_source(sql, SourceDialect::Snowflake)
         .expect("test SQL parses")
         .iter()
-        .flat_map(|statement| snowflake_rejections(statement, &lines))
+        .flat_map(|statement| snowflake_rejections(statement, (sql, &lines)))
         .collect()
 }
 

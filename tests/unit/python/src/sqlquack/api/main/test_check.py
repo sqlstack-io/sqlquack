@@ -36,7 +36,7 @@ from tests.unit.python.src.sqlquack.api.main.helpers import positions
             sql="SELECT 1 QUALIFY TRUE;\nSELECT 1 INTERSECT ALL SELECT 2",
             expected_ok=False,
             expected_codes=("SQ0203", "SQ0201"),
-            expected_positions=((1, 1), (2, 1)),
+            expected_positions=((1, 10), (2, 10)),
         ),
     ),
     ids=lambda case: case.description,
@@ -58,8 +58,8 @@ def test_given_sql_when_checked_then_diagnostics_carry_codes_and_positions(
             sql="SELECT 1 QUALIFY TRUE",
             path="query.sql",
             expected_rendered=(
-                "error[SQ0203]: QUALIFY needs a window function\n --> query.sql:1:1\n  |\n"
-                "1 | SELECT 1 QUALIFY TRUE\n  | ^^^^^^^^^^^^^^^^^^^^^ QUALIFY is used without a "
+                "error[SQ0203]: QUALIFY needs a window function\n --> query.sql:1:10\n  |\n"
+                "1 | SELECT 1 QUALIFY TRUE\n  |          ^^^^^^^ QUALIFY is used without a "
                 "window function in the SELECT list or QUALIFY\n  |\n  = help: move the condition "
                 "to WHERE or HAVING, or filter on a window function's result\n"
             ),

@@ -1,0 +1,117 @@
+category = "temporal"
+construct = "fn:TO_TIMESTAMP_NTZ"
+session_profile = "utc-v1"
+
+[[case]]
+id = "to_timestamp_ntz_of_ntz9"
+description = "TO_TIMESTAMP_NTZ of a TIMESTAMP_NTZ(9) within DuckDB's nanosecond range is the same timestamp."
+columns = [{ name = "t", type = "TIMESTAMP_NTZ(9)" }]
+rows = [
+  ["'2024-02-29 13:45:01.123456789'"],
+  ["'1970-01-01 00:00:00'"],
+  ["'1969-12-31 23:59:59.999999999'"],
+  ["'1677-09-22 00:00:00.000000001'"],
+  ["'2262-04-11 23:47:16.854775807'"],
+  ["NULL"],
+]
+expression = "TO_TIMESTAMP_NTZ(t)"
+tags = ["null", "boundary"]
+expected_divergence = "timestamp_range"
+
+[[case]]
+id = "to_timestamp_ntz_of_ntz9_outside_nanosecond_range"
+description = "TO_TIMESTAMP_NTZ of TIMESTAMP_NTZ(9) values outside a 64-bit nanosecond count equals its operand."
+columns = [{ name = "t", type = "TIMESTAMP_NTZ(9)" }]
+rows = [
+  ["'0001-01-01 00:00:00'"],
+  ["'1600-06-15 12:00:00.5'"],
+  ["'9999-12-31 23:59:59.999999999'"],
+  ["NULL"],
+]
+expression = "TO_TIMESTAMP_NTZ(t) = t"
+tags = ["null", "boundary"]
+expected_divergence = "timestamp_range"
+
+[[case]]
+id = "to_timestamp_ntz_of_lower_precisions"
+description = "TO_TIMESTAMP_NTZ of TIMESTAMP_NTZ(0), (3) and (6): the value and the result's precision."
+columns = [{ name = "t0", type = "TIMESTAMP_NTZ(0)" }, { name = "t3", type = "TIMESTAMP_NTZ(3)" }, { name = "t6", type = "TIMESTAMP_NTZ(6)" }]
+rows = [
+  ["'2024-02-29 13:45:01'", "'2024-02-29 13:45:01.123'", "'2024-02-29 13:45:01.123456'"],
+  ["'1969-12-31 23:59:59'", "'1969-12-31 23:59:59.999'", "'1969-12-31 23:59:59.999999'"],
+  ["NULL", "NULL", "NULL"],
+]
+expression = "ARRAY_CONSTRUCT(TO_TIMESTAMP_NTZ(t0), TO_TIMESTAMP_NTZ(t3), TO_TIMESTAMP_NTZ(t6))"
+tags = ["null", "boundary"]
+expected_divergence = "variant_typed_values"
+
+[[case]]
+id = "to_timestamp_ntz_of_ntz3_typed"
+description = "TO_TIMESTAMP_NTZ of a TIMESTAMP_NTZ(3) column on its own, so the result column's type is recorded."
+columns = [{ name = "t3", type = "TIMESTAMP_NTZ(3)" }]
+rows = [
+  ["'2024-02-29 13:45:01.123'"],
+  ["NULL"],
+]
+expression = "TO_TIMESTAMP_NTZ(t3)"
+tags = ["null"]
+
+[[case]]
+id = "to_timestamp_of_ntz9"
+description = "TO_TIMESTAMP, mapped to TIMESTAMP_NTZ, of a TIMESTAMP_NTZ(9)."
+columns = [{ name = "t", type = "TIMESTAMP_NTZ(9)" }]
+rows = [
+  ["'2024-02-29 13:45:01.123456789'"],
+  ["'1969-12-31 23:59:59.999999999'"],
+  ["NULL"],
+]
+expression = "TO_TIMESTAMP(t)"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "to_timestamp_ntz_of_date"
+description = "TO_TIMESTAMP_NTZ and TO_TIMESTAMP of a DATE are midnight."
+columns = [{ name = "d", type = "DATE" }]
+rows = [
+  ["'2024-02-29'"],
+  ["'1969-12-31'"],
+  ["'0001-01-01'"],
+  ["'9999-12-31'"],
+  ["NULL"],
+]
+expression = "ARRAY_CONSTRUCT(TO_TIMESTAMP_NTZ(d), TO_TIMESTAMP(d))"
+tags = ["null", "boundary"]
+expected_divergence = "json_fidelity"
+
+[[case]]
+id = "to_timestamp_ntz_of_date_typed"
+description = "TO_TIMESTAMP_NTZ of a DATE column on its own, so the result column's type is recorded."
+columns = [{ name = "d", type = "DATE" }]
+rows = [
+  ["'2024-02-29'"],
+  ["NULL"],
+]
+expression = "TO_TIMESTAMP_NTZ(d)"
+tags = ["null"]
+
+[[case]]
+id = "to_timestamp_ntz_of_zoned"
+description = "TO_TIMESTAMP_NTZ of a TIMESTAMP_TZ and a TIMESTAMP_LTZ under a UTC session."
+columns = [{ name = "tz", type = "TIMESTAMP_TZ(9)" }, { name = "ltz", type = "TIMESTAMP_LTZ(9)" }]
+rows = [
+  ["'2024-02-29 13:45:01.123456789 +02:00'", "'2024-02-29 13:45:01.123456789'"],
+  ["'2024-02-29 23:30:00 -05:00'", "'1969-12-31 23:59:59'"],
+  ["NULL", "NULL"],
+]
+expression = "ARRAY_CONSTRUCT(TO_TIMESTAMP_NTZ(tz), TO_TIMESTAMP_NTZ(ltz))"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "try_to_timestamp_ntz_of_ntz"
+description = "TRY_TO_TIMESTAMP_NTZ of a TIMESTAMP_NTZ, which Snowflake may reject as a non-text argument."
+columns = [{ name = "t", type = "TIMESTAMP_NTZ(9)" }]
+rows = [
+  ["'2024-02-29 13:45:01'"],
+]
+expression = "TRY_TO_TIMESTAMP_NTZ(t)"
+tags = ["invalid"]

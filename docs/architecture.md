@@ -88,6 +88,8 @@ else at the whole input.
 - **missing rule**: no verified rule converts the construct yet;
 - **not expressible in DuckDB**: declared in the catalogue with a reason and evidence;
 - **parse fidelity**: the SQL does not parse;
+- **divergence refused**: converting needs a known divergence that the policy refuses in this mode,
+  such as under `--strict` or `--builtin-policy`; the reason names the divergence;
 - **conversion budget exceeded**: converting the statement took longer, or emitted more DuckDB SQL
   relative to its source, than the `[conversion_budget]` in `sqlquack.toml` allows. The reason gives
   the measured time or size. A conversion that grows pathologically is refused, never kept.

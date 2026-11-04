@@ -16,7 +16,7 @@ pub fn check_source(sql: &str) -> Result<Vec<Diagnostic>, String> {
         }
         Ok(statements) => statements
             .iter()
-            .flat_map(|statement| snowflake_rejections(statement, &lines))
+            .flat_map(|statement| snowflake_rejections(statement, (sql, &lines)))
             .collect(),
         Err(failure) => vec![refuse_unparsed(&failure, &lines)],
     };

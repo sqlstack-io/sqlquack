@@ -263,6 +263,8 @@ pub struct RefusalTotals {
     pub unresolved_name: usize,
     /// Files with a statement whose conversion took too long or emitted too much SQL.
     pub conversion_budget: usize,
+    /// Files with a construct needing a known divergence the policy refuses.
+    pub divergence_refused: usize,
     /// Refusals by category and construct, counting each file once per pair, most frequent first.
     pub by_construct: Vec<RefusalCount>,
     /// Unit-testable files: no refusal, reading models as the schema file or their conversion types.

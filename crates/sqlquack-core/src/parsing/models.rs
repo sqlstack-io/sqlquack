@@ -94,6 +94,11 @@ impl SourceLines {
         }
     }
 
+    /// The location of the characters `start..end` of the source itself, not of the parsed text.
+    pub fn source_location(&self, start: usize, end: usize) -> SourceLocation {
+        self.location(start + self.shift, end + self.shift)
+    }
+
     /// The location of the whole source.
     pub fn whole(&self) -> SourceLocation {
         self.location(self.shift, self.shift + self.length)

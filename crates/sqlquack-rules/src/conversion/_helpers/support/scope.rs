@@ -161,6 +161,8 @@ pub(crate) struct Context<'a> {
     pub(crate) order: &'a OrderTrack,
     /// Whether query results may keep unordered arrays: CTE and FROM subquery bodies.
     pub(crate) free_projections: bool,
+    /// Whether this converts a case's input fixture, whose literals stand for source data.
+    pub(crate) fixture_body: bool,
 }
 
 /// How many unordered values were passed up unchecked, to positions where order cannot matter.

@@ -8,16 +8,16 @@ use sqlquack_core::refusals::models::{Refusal, RefusalCategory};
 use sqlquack_core::refusals::types::ConstructPolicy;
 use sqlquack_syntax::Expression;
 
-/// The constructs the policy declares inexpressible, then the nodes Snowflake rejects.
+/// The constructs the policy declares inexpressible, then the nodes of `source` Snowflake rejects.
 pub(crate) fn declared_refusals(
     statement: &Expression,
     occurrences: &[Occurrence],
     policy: &dyn ConstructPolicy,
-    lines: &SourceLines,
+    (source, lines): (&str, &SourceLines),
 ) -> Vec<Refusal> {
     refuse_constructs(occurrences, policy)
         .into_iter()
         .filter(|refusal| refusal.category == RefusalCategory::NotExpressible)
-        .chain(snowflake_rejections(statement, lines))
+        .chain(snowflake_rejections(statement, (source, lines)))
         .collect()
 }

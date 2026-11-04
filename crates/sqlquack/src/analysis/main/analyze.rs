@@ -56,7 +56,8 @@ pub fn analyze(
     };
     for statement in &statements {
         let occurrences = classify(statement, &lines, dialect);
-        let declared: Vec<Refusal> = declared_refusals(statement, &occurrences, policy, &lines);
+        let declared: Vec<Refusal> =
+            declared_refusals(statement, &occurrences, policy, (sql, &lines));
         let refused = !declared.is_empty();
         analysis.refusals.extend(declared);
         analysis.occurrences.extend(occurrences);
