@@ -4,7 +4,7 @@ use std::collections::BTreeMap;
 use std::path::PathBuf;
 
 use clap::{Args, Parser, Subcommand, ValueEnum};
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 use sqlquack_core::diagnostics::models::Diagnostic;
 
 use sqlquack_evidence::constants::{
@@ -49,6 +49,22 @@ pub enum Command {
     Convert(ConvertArguments),
     /// Check that Snowflake SQL parses and holds nothing Snowflake rejects, without converting it.
     Check(CheckArguments),
+    /// Replay converted SQL over a DuckDB inputs database and compare with recorded results.
+    Compare(CompareArguments),
+}
+
+/// Arguments of `sqlquack compare`.
+#[derive(Debug, Args)]
+pub struct CompareArguments {
+    /// A JSON list of comparisons; prints each one's outcome as JSON.
+    #[arg(long)]
+    pub manifest: PathBuf,
+    /// The policy file whose comparator and session profile the comparisons use.
+    #[arg(long, default_value = "sqlquack.toml")]
+    pub policy: PathBuf,
+    /// The session profile whose DuckDB time zone each replay runs in.
+    #[arg(long, default_value = "utc-v1")]
+    pub session_profile: String,
 }
 
 /// Arguments of `sqlquack check`.
@@ -397,4 +413,20 @@ pub struct CheckReport {
     pub ok: bool,
     /// Each problem found.
     pub diagnostics: Vec<Diagnostic>,
+}
+
+/// One `sqlquack compare` entry: a recording and the DuckDB SQL replayed over an inputs database.
+#[derive(Debug, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub(crate) struct Comparison {
+    /// Echoed in the outcome.
+    pub(crate) id: String,
+    /// The recorded result's sidecar, beside its `.arrow` file.
+    pub(crate) recorded: PathBuf,
+    /// The DuckDB database the SQL reads, attached read-only as `inputs`.
+    pub(crate) database: PathBuf,
+    /// The converted SQL file.
+    pub(crate) sql: PathBuf,
+    /// Whether the rows compare in order.
+    pub(crate) ordered: bool,
 }

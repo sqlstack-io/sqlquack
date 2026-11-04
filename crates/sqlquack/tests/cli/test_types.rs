@@ -239,3 +239,11 @@ pub(crate) struct FailureKindTestCase {
     pub(crate) expected_converted: bool,
     pub(crate) expected_failures: &'static [(&'static str, &'static str)],
 }
+
+pub(crate) struct CompareTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) sql: &'static str,
+    pub(crate) ordered: bool,
+    pub(crate) arrow_sha256: Option<&'static str>,
+    pub(crate) expected_outcome: &'static str,
+}

@@ -1,6 +1,8 @@
 use std::process::Command;
 
-use crate::test_types::{BinaryOutcome, DeclaredOutcome, SourceVariantOutcome, UpstreamOutcome};
+use crate::test_types::{
+    BinaryOutcome, ConvertedFile, DeclaredOutcome, SourceVariantOutcome, UpstreamOutcome,
+};
 
 const ORDERS_SQL: &str = "SELECT customer_id, COUNT(*) AS orders FROM __ref(\"orders\") \
                           GROUP BY customer_id";
@@ -251,4 +253,52 @@ pub(crate) fn run_on_declared_orders(declare_model: bool, flags: &[&str]) -> Dec
         model_declaration_refused: String::from_utf8_lossy(&output.stderr)
             .contains("offsets may be declared only for source columns"),
     }
+}
+
+const CUSTOMER_IDS_SQL: &str = "SELECT customer_id FROM customers";
+
+/// The files census writes under `SQLQUACK_CONVERTED_DIR` for a converted and a refused model.
+pub(crate) fn converted_files(set_variable: bool) -> Vec<ConvertedFile> {
+    let directory = tempfile::tempdir().expect("temporary directory");
+    let models = directory.path().join("models");
+    let converted = directory.path().join("converted");
+    std::fs::create_dir(&models).expect("models directory created");
+    std::fs::create_dir(&converted).expect("converted directory created");
+    std::fs::write(models.join("customer_ids.sql"), CUSTOMER_IDS_SQL).expect("fixture written");
+    std::fs::write(models.join("fuzzy_names.sql"), FUZZY_NAMES_SQL).expect("fixture written");
+    let schema = directory.path().join("schema.json");
+    std::fs::write(
+        &schema,
+        format!("{{\"relations\": {{{CUSTOMERS_SCHEMA}}}}}"),
+    )
+    .expect("schema written");
+    let mut command = Command::new(env!("CARGO_BIN_EXE_sqlquack"));
+    command
+        .args(["census", "--builtin-policy", "--json", "--schema"])
+        .arg(&schema)
+        .arg(&models)
+        .env_remove("SQLQUACK_CONVERTED_DIR")
+        .envs(set_variable.then_some(("SQLQUACK_CONVERTED_DIR", &converted)))
+        .output()
+        .expect("sqlquack runs");
+    let mut files: Vec<ConvertedFile> = std::fs::read_dir(&converted)
+        .expect("converted directory read")
+        .map(|entry| {
+            let path = entry.expect("directory entry").path();
+            let name = path
+                .file_name()
+                .expect("file name")
+                .to_string_lossy()
+                .into_owned();
+            ConvertedFile {
+                model: name.split("_models_").last().unwrap_or_default().to_owned(),
+                holds_select: std::fs::read_to_string(&path)
+                    .expect("converted SQL read")
+                    .to_ascii_uppercase()
+                    .contains("SELECT"),
+            }
+        })
+        .collect();
+    files.sort_by(|left, right| left.model.cmp(&right.model));
+    files
 }

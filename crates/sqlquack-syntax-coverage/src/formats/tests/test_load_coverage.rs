@@ -4,7 +4,8 @@ use std::path::Path;
 use crate::formats::constants::{COVERAGE_ROOT, FAMILIES};
 use crate::formats::main::load_coverage::load_coverage;
 use crate::formats::tests::helpers::{
-    line_sha256, receipt_line, replace, restated_page, superseding_line, valid_tree, write,
+    dcm_line, line_sha256, receipt_line, replace, restated_page, superseding_line, valid_tree,
+    write,
 };
 use crate::formats::tests::test_types::{
     CommittedTestCase, FormatFaultTestCase, LoadTestCase, LoadedCounts,
@@ -65,6 +66,19 @@ fn given_a_valid_tree_when_loading_then_every_record_is_kept() {
             expected_counts: counts(1),
         },
         LoadTestCase {
+            description: "an obligation numbered past 999 loads",
+            tree: |root| {
+                valid_tree(root);
+                replace(
+                    root,
+                    "obligations/query.toml",
+                    "sf.query.select.o002",
+                    "sf.query.select.o1002",
+                );
+            },
+            expected_counts: counts(1),
+        },
+        LoadTestCase {
             description: "a canonical-run receipt keeps only the query id hash and a Z time",
             tree: |root| {
                 valid_tree(root);
@@ -94,6 +108,39 @@ fn given_a_valid_tree_when_loading_then_every_record_is_kept() {
                          \"completed_statements\":2",
                     );
                 write(root, "receipts/ddl.jsonl", &format!("{ddl}\n"));
+            },
+            expected_counts: counts(2),
+        },
+        LoadTestCase {
+            description: "a receipt keeps the error the connector raised after the server ran it",
+            tree: |root| {
+                valid_tree(root);
+                let raised = receipt_line().replace(
+                    "\"errno\":null",
+                    "\"errno\":253006,\"connector_errno\":253006",
+                );
+                write(root, "receipts/client.jsonl", &format!("{raised}\n"));
+            },
+            expected_counts: counts(2),
+        },
+        LoadTestCase {
+            description: "a failed DCM PLAN keeps its inner error's line and position",
+            tree: |root| {
+                valid_tree(root);
+                let dcm = dcm_line(
+                    "SQL compilation error:\\nsyntax error line 1 at position 61 unexpected ')'.",
+                    ",\"definition_line\":1,\"definition_position\":61",
+                );
+                write(root, "receipts/dcm.jsonl", &format!("{dcm}\n"));
+            },
+            expected_counts: counts(2),
+        },
+        LoadTestCase {
+            description: "a failed DCM PLAN whose inner error gives no position has none",
+            tree: |root| {
+                valid_tree(root);
+                let dcm = dcm_line("Object 'T1' does not exist or not authorized.", "");
+                write(root, "receipts/dcm.jsonl", &format!("{dcm}\n"));
             },
             expected_counts: counts(2),
         },
@@ -743,6 +790,62 @@ fn given_a_format_fault_when_loading_then_the_problem_is_named() {
                 )
             },
             expected_problem: "takes no target, nor does extreme",
+        },
+        FormatFaultTestCase {
+            description: "a zero-padded spelling of an existing obligation number",
+            mutate: |root| {
+                replace(
+                    root,
+                    "obligations/query.toml",
+                    "sf.query.select.o002",
+                    "sf.query.select.o0001",
+                )
+            },
+            expected_problem: "obligation sf.query.select.o0001: not sf.query.<form>.o<NNN>",
+        },
+        FormatFaultTestCase {
+            description: "a DCM definition file other than the case SQL",
+            mutate: |root| {
+                let dcm = dcm_line("Object 'T1' does not exist or not authorized.", "").replace(
+                    "\"definition_file_sha256\":\"ef83",
+                    "\"definition_file_sha256\":\"ff83",
+                );
+                write(root, "receipts/dcm.jsonl", &format!("{dcm}\n"))
+            },
+            expected_problem: "receipt query.select-17: the definition file's sha256 must equal",
+        },
+        FormatFaultTestCase {
+            description: "a DCM inner message that does not end the whole message",
+            mutate: |root| {
+                let dcm = dcm_line("Object 'T1' does not exist or not authorized.", "").replace(
+                    "\"inner_message\":\"Object",
+                    "\"inner_message\":\"An object",
+                );
+                write(root, "receipts/dcm.jsonl", &format!("{dcm}\n"))
+            },
+            expected_problem: "an inner message belongs to a failed PLAN and ends its whole message",
+        },
+        FormatFaultTestCase {
+            description: "a DCM position other than the inner message's",
+            mutate: |root| {
+                let dcm = dcm_line(
+                    "SQL compilation error:\\nsyntax error line 1 at position 61 unexpected ')'.",
+                    ",\"definition_line\":1,\"definition_position\":60",
+                );
+                write(root, "receipts/dcm.jsonl", &format!("{dcm}\n"))
+            },
+            expected_problem: "definition_line and definition_position must be the line and position",
+        },
+        FormatFaultTestCase {
+            description: "DCM fields on an execute receipt",
+            mutate: |root| {
+                let execute = receipt_line().replace(
+                    "\"phase\":\"accepted\"",
+                    "\"phase\":\"accepted\",\"dcm_project\":\"P\"",
+                );
+                write(root, "receipts/dcm.jsonl", &format!("{execute}\n"))
+            },
+            expected_problem: "receipt query.select-17: DCM fields on a capture other than",
         },
         FormatFaultTestCase {
             description: "an obligation id declared twice",
