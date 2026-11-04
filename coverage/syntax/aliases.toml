@@ -1,0 +1,745 @@
+# Renamed, split and merged form ids. An old id stays in the catalogue with status
+# absent_from_source and is never reused; `to` lists the forms that now carry its grammar.
+
+[[alias]]
+from = "sf.ddl.alter-event-routing-table"
+to = ["sf.ddl.alter-event-routing-table.modify-rule-rename-to", "sf.ddl.alter-event-routing-table.rename-to", "sf.ddl.alter-event-routing-table.set-rule-region-group-regions", "sf.ddl.alter-event-routing-table.set-rules-region-group-regions", "sf.ddl.alter-event-routing-table.unset-rule"]
+reason = "one form held several documented statements or function names; split one form per statement or name (omission audit of 5f80b6cd)"
+
+[[alias]]
+from = "sf.dml.insert-multi-table"
+to = ["sf.dml.insert-multi-table.all-intoclause", "sf.dml.insert-multi-table.first-all-when-then"]
+reason = "one form held several documented statements or function names; split one form per statement or name (omission audit of 5f80b6cd)"
+
+[[alias]]
+from = "sf.functions.approx-count-distinct.approx-count-distinct.syntax"
+to = ["sf.functions.approx-count-distinct.approx-count-distinct", "sf.functions.approx-count-distinct.approx-count-distinct-over"]
+reason = "one form held several documented statements or function names; split one form per statement or name (omission audit of 5f80b6cd)"
+
+[[alias]]
+from = "sf.functions.approximate-jaccard-index.approximate-jaccard-index.syntax"
+to = ["sf.functions.approximate-jaccard-index.approximate-jaccard-index"]
+reason = "plain call signatures of one function name, or named-argument signatures of one function, merged into one form (omission audit of 5f80b6cd)"
+
+[[alias]]
+from = "sf.functions.approximate-similarity.approximate-similarity.syntax"
+to = ["sf.functions.approximate-similarity.approximate-similarity"]
+reason = "plain call signatures of one function name, or named-argument signatures of one function, merged into one form (omission audit of 5f80b6cd)"
+
+[[alias]]
+from = "sf.functions.case"
+to = ["sf.functions.case.end", "sf.functions.case.end.syntax"]
+reason = "one form held several documented statements or function names; split one form per statement or name (omission audit of 5f80b6cd)"
+
+[[alias]]
+from = "sf.functions.count.count.syntax"
+to = ["sf.functions.count.count", "sf.functions.count.count-over"]
+reason = "one form held several documented statements or function names; split one form per statement or name (omission audit of 5f80b6cd)"
+
+[[alias]]
+from = "sf.functions.hash-agg.hash-agg.syntax"
+to = ["sf.functions.hash-agg.hash-agg", "sf.functions.hash-agg.hash-agg-over"]
+reason = "one form held several documented statements or function names; split one form per statement or name (omission audit of 5f80b6cd)"
+
+[[alias]]
+from = "sf.functions.hll-accumulate.hll-accumulate.syntax"
+to = ["sf.functions.hll-accumulate.hll-accumulate", "sf.functions.hll-accumulate.hll-accumulate-over"]
+reason = "one form held several documented statements or function names; split one form per statement or name (omission audit of 5f80b6cd)"
+
+[[alias]]
+from = "sf.functions.hll.hll.syntax"
+to = ["sf.functions.hll.hll", "sf.functions.hll.hll-over"]
+reason = "one form held several documented statements or function names; split one form per statement or name (omission audit of 5f80b6cd)"
+
+[[alias]]
+from = "sf.functions.minhash.minhash-expr"
+to = ["sf.functions.minhash.minhash", "sf.functions.minhash.minhash-expr-over"]
+reason = "one form held several documented statements or function names; split one form per statement or name (omission audit of 5f80b6cd)"
+
+[[alias]]
+from = "sf.query.group-by"
+to = ["sf.query.group-by.all", "sf.query.group-by.groupitem"]
+reason = "one form held several documented statements or function names; split one form per statement or name (omission audit of 5f80b6cd)"
+
+[[alias]]
+from = "sf.query.join"
+to = ["sf.query.join.join", "sf.query.join.join-2", "sf.query.join.join.syntax"]
+reason = "one form held several documented statements or function names; split one form per statement or name (omission audit of 5f80b6cd)"
+
+[[alias]]
+from = "sf.query.match-recognize.after-match-skip-past"
+to = ["sf.query.match-recognize.match-recognize-pattern-define-as"]
+reason = "plain call signatures of one function name, or named-argument signatures of one function, merged into one form (omission audit of 5f80b6cd)"
+
+[[alias]]
+from = "sf.query.match-recognize.pattern"
+to = ["sf.query.match-recognize.match-recognize-pattern-define-as"]
+reason = "plain call signatures of one function name, or named-argument signatures of one function, merged into one form (omission audit of 5f80b6cd)"
+
+[[alias]]
+from = "sf.query.order-by"
+to = ["sf.query.order-by.all", "sf.query.order-by.orderitem"]
+reason = "one form held several documented statements or function names; split one form per statement or name (omission audit of 5f80b6cd)"
+
+[[alias]]
+from = "sf.query.qualify"
+to = ["sf.query.qualify.qualify", "sf.query.qualify.select-from-qualify"]
+reason = "one form held several documented statements or function names; split one form per statement or name (omission audit of 5f80b6cd)"
+
+[[alias]]
+from = "sf.security_admin.alter-security-integration-scim.unset-network-policy-alter-integration"
+to = ["sf.security_admin.alter-security-integration-scim.set-tag", "sf.security_admin.alter-security-integration-scim.unset-network-policy"]
+reason = "one form held several documented statements or function names; split one form per statement or name (omission audit of 5f80b6cd)"
+
+[[alias]]
+from = "sf.ddl.alter-service.fromspecification"
+to = ["sf.ddl.alter-service.fromspecification-fromspecificationtemplate"]
+reason = "alternatives of non-action sub-grammars are obligations of one form, not separate forms (rule 5; omission audit of 5f80b6cd)"
+
+[[alias]]
+from = "sf.ddl.alter-service.fromspecificationtemplate"
+to = ["sf.ddl.alter-service.fromspecification-fromspecificationtemplate"]
+reason = "alternatives of non-action sub-grammars are obligations of one form, not separate forms (rule 5; omission audit of 5f80b6cd)"
+
+[[alias]]
+from = "sf.utility.execute-dcm-project.fromdeployment"
+to = ["sf.utility.execute-dcm-project.deploy-fromsource-fromdeployment"]
+reason = "alternatives of non-action sub-grammars are obligations of one form, not separate forms (rule 5; omission audit of 5f80b6cd)"
+
+[[alias]]
+from = "sf.utility.execute-dcm-project.fromsource"
+to = ["sf.utility.execute-dcm-project.deploy-fromsource-fromdeployment"]
+reason = "alternatives of non-action sub-grammars are obligations of one form, not separate forms (rule 5; omission audit of 5f80b6cd)"
+
+[[alias]]
+from = "sf.expressions.data-types-datetime.daytimequalifier"
+to = ["sf.expressions.data-types-datetime.interval-yearmonthqualifier-daytimequalifier"]
+reason = "alternatives of non-action sub-grammars are obligations of one form, not separate forms (rule 5; omission audit of 5f80b6cd)"
+
+[[alias]]
+from = "sf.expressions.data-types-datetime.yearmonthqualifier"
+to = ["sf.expressions.data-types-datetime.interval-yearmonthqualifier-daytimequalifier"]
+reason = "alternatives of non-action sub-grammars are obligations of one form, not separate forms (rule 5; omission audit of 5f80b6cd)"
+
+[[alias]]
+from = "sf.ddl.create-table-constraint.inlinech"
+to = ["sf.ddl.create-table-constraint.alter-table-add-column"]
+reason = "alternatives of non-action sub-grammars are obligations of one form, not separate forms (rule 5; omission audit of 5f80b6cd)"
+
+[[alias]]
+from = "sf.ddl.create-table-constraint.inlinefk"
+to = ["sf.ddl.create-table-constraint.alter-table-add-column"]
+reason = "alternatives of non-action sub-grammars are obligations of one form, not separate forms (rule 5; omission audit of 5f80b6cd)"
+
+[[alias]]
+from = "sf.ddl.create-table-constraint.inlineuniquepk"
+to = ["sf.ddl.create-table-constraint.alter-table-add-column"]
+reason = "alternatives of non-action sub-grammars are obligations of one form, not separate forms (rule 5; omission audit of 5f80b6cd)"
+
+[[alias]]
+from = "sf.ddl.create-table-constraint.outoflinech"
+to = ["sf.ddl.create-table-constraint.alter-table-add-outoflineuniquepk"]
+reason = "alternatives of non-action sub-grammars are obligations of one form, not separate forms (rule 5; omission audit of 5f80b6cd)"
+
+[[alias]]
+from = "sf.ddl.create-table-constraint.outoflinefk"
+to = ["sf.ddl.create-table-constraint.alter-table-add-outoflineuniquepk"]
+reason = "alternatives of non-action sub-grammars are obligations of one form, not separate forms (rule 5; omission audit of 5f80b6cd)"
+
+[[alias]]
+from = "sf.ddl.create-table-constraint.outoflineuniquepk"
+to = ["sf.ddl.create-table-constraint.alter-table-add-outoflineuniquepk"]
+reason = "alternatives of non-action sub-grammars are obligations of one form, not separate forms (rule 5; omission audit of 5f80b6cd)"
+
+[[alias]]
+from = "sf.query.match-recognize.define-as"
+to = ["sf.query.match-recognize.match-recognize-pattern-define-as"]
+reason = "subclause block documented under Required/Optional subclauses is part of the MATCH_RECOGNIZE grammar; its alternatives are obligations of that form (omission audit of 5f80b6cd)"
+
+[[alias]]
+from = "sf.query.match-recognize.measures"
+to = ["sf.query.match-recognize.match-recognize-pattern-define-as"]
+reason = "subclause block documented under Required/Optional subclauses is part of the MATCH_RECOGNIZE grammar; its alternatives are obligations of that form (omission audit of 5f80b6cd)"
+
+[[alias]]
+from = "sf.query.match-recognize.one-row-per-match"
+to = ["sf.query.match-recognize.match-recognize-pattern-define-as"]
+reason = "subclause block documented under Required/Optional subclauses is part of the MATCH_RECOGNIZE grammar; its alternatives are obligations of that form (omission audit of 5f80b6cd)"
+
+[[alias]]
+from = "sf.classes.anomaly-detection.methods.explain-feature-importance"
+to = [
+  "sf.classes.forecast.methods.explain-feature-importance",
+]
+reason = "grammar repeated byte for byte on another page; counted once under the command's own page (D80)"
+
+[[alias]]
+from = "sf.classes.anomaly-detection.methods.show-evaluation-metrics.show-evaluation-metrics"
+to = [
+  "sf.classes.forecast.methods.show-evaluation-metrics.show-evaluation-metrics",
+]
+reason = "grammar repeated byte for byte on another page; counted once under the command's own page (D80)"
+
+[[alias]]
+from = "sf.classes.anomaly-detection.methods.show-training-logs"
+to = [
+  "sf.classes.forecast.methods.show-training-logs",
+]
+reason = "grammar repeated byte for byte on another page; counted once under the command's own page (D80)"
+
+[[alias]]
+from = "sf.classes.classification.methods.show-training-logs"
+to = [
+  "sf.classes.forecast.methods.show-training-logs",
+]
+reason = "grammar repeated byte for byte on another page; counted once under the command's own page (D80)"
+
+[[alias]]
+from = "sf.ddl.alter-function-spcs.rename-to"
+to = [
+  "sf.ddl.alter-function.rename-to",
+]
+reason = "grammar repeated byte for byte on another page; counted once under the command's own page (D80)"
+
+[[alias]]
+from = "sf.ddl.alter-function-spcs.set-max-batch-rows"
+to = [
+  "sf.ddl.alter-function.set-max-batch-rows",
+]
+reason = "grammar repeated byte for byte on another page; counted once under the command's own page (D80)"
+
+[[alias]]
+from = "sf.ddl.alter-table-event-table.clusteringaction"
+to = [
+  "sf.ddl.alter-table.clusteringaction",
+]
+reason = "grammar repeated byte for byte on another page; counted once under the command's own page (D80)"
+
+[[alias]]
+from = "sf.ddl.alter-table-event-table.datagovnpolicytagaction"
+to = [
+  "sf.ddl.alter-table.datagovnpolicytagaction",
+]
+reason = "grammar repeated byte for byte on another page; counted once under the command's own page (D80)"
+
+[[alias]]
+from = "sf.ddl.alter-table-event-table.rename-to"
+to = [
+  "sf.ddl.alter-table.rename-to",
+]
+reason = "grammar repeated byte for byte on another page; counted once under the command's own page (D80)"
+
+[[alias]]
+from = "sf.ddl.alter-table-event-table.searchoptimizationaction"
+to = [
+  "sf.ddl.alter-table.searchoptimizationaction",
+]
+reason = "grammar repeated byte for byte on another page; counted once under the command's own page (D80)"
+
+[[alias]]
+from = "sf.ddl.constraints-alter.alter-modify-constraint-primary"
+to = [
+  "sf.ddl.alter-table.constraintaction",
+]
+reason = "general-reference page restating syntax catalogued on its own page (omission audit of 9160085f, D80)"
+
+[[alias]]
+from = "sf.ddl.constraints-alter.rename-constraint-to"
+to = [
+  "sf.ddl.alter-table.constraintaction",
+]
+reason = "general-reference page restating syntax catalogued on its own page (omission audit of 9160085f, D80)"
+
+[[alias]]
+from = "sf.ddl.constraints-create.alter-table-add"
+to = [
+  "sf.ddl.alter-table.constraintaction",
+]
+reason = "general-reference page restating syntax catalogued on its own page (omission audit of 9160085f, D80)"
+
+[[alias]]
+from = "sf.ddl.constraints-create.alter-table-add-column"
+to = [
+  "sf.ddl.alter-table.tablecolumnaction",
+]
+reason = "general-reference page restating syntax catalogued on its own page (omission audit of 9160085f, D80)"
+
+[[alias]]
+from = "sf.ddl.constraints-create.create-table"
+to = [
+  "sf.ddl.create-table.create-table",
+]
+reason = "general-reference page restating syntax catalogued on its own page (omission audit of 9160085f, D80)"
+
+[[alias]]
+from = "sf.ddl.constraints-create.create-table.creating-constraints-out-of-line"
+to = [
+  "sf.ddl.create-table.create-table",
+]
+reason = "general-reference page restating syntax catalogued on its own page (omission audit of 9160085f, D80)"
+
+[[alias]]
+from = "sf.ddl.constraints-drop.alter-table-drop-column"
+to = [
+  "sf.ddl.alter-table.tablecolumnaction",
+]
+reason = "general-reference page restating syntax catalogued on its own page (omission audit of 9160085f, D80)"
+
+[[alias]]
+from = "sf.ddl.constraints-drop.alter-table-drop-constraint"
+to = [
+  "sf.ddl.alter-table.constraintaction",
+]
+reason = "general-reference page restating syntax catalogued on its own page (omission audit of 9160085f, D80)"
+
+[[alias]]
+from = "sf.ddl.constraints-drop.drop-table-schema-database"
+to = [
+  "sf.ddl.drop-database",
+  "sf.ddl.drop-schema",
+  "sf.ddl.drop-table",
+]
+reason = "general-reference page restating syntax catalogued on its own page (omission audit of 9160085f, D80)"
+
+[[alias]]
+from = "sf.ddl.create-function-spcs.function"
+to = [
+  "sf.ddl.create-function.create-function",
+]
+reason = "grammar repeated byte for byte on another page; counted once under the command's own page (D80)"
+
+[[alias]]
+from = "sf.ddl.create-iceberg-table-delta"
+to = [
+  "sf.ddl.create-iceberg-table.table-base-location",
+]
+reason = "grammar repeated byte for byte on another page; counted once under the command's own page (D80)"
+
+[[alias]]
+from = "sf.ddl.create-iceberg-table-iceberg-files"
+to = [
+  "sf.ddl.create-iceberg-table.table-metadata-file-path",
+]
+reason = "grammar repeated byte for byte on another page; counted once under the command's own page (D80)"
+
+[[alias]]
+from = "sf.ddl.create-iceberg-table-parquet"
+to = [
+  "sf.ddl.create-iceberg-table.table-base-location.parquet-files",
+]
+reason = "grammar repeated byte for byte on another page; counted once under the command's own page (D80)"
+
+[[alias]]
+from = "sf.ddl.create-iceberg-table-rest.table"
+to = [
+  "sf.ddl.create-iceberg-table.table.iceberg-rest-in-a-catalog-linked-database",
+]
+reason = "grammar repeated byte for byte on another page; counted once under the command's own page (D80)"
+
+[[alias]]
+from = "sf.ddl.create-iceberg-table-rest.table-catalog-table-name"
+to = [
+  "sf.ddl.create-iceberg-table.table-catalog-table-name",
+]
+reason = "grammar repeated byte for byte on another page; counted once under the command's own page (D80)"
+
+[[alias]]
+from = "sf.ddl.create-iceberg-table-snowflake.table"
+to = [
+  "sf.ddl.create-iceberg-table.table",
+]
+reason = "grammar repeated byte for byte on another page; counted once under the command's own page (D80)"
+
+[[alias]]
+from = "sf.ddl.create-iceberg-table-snowflake.table-as-select"
+to = [
+  "sf.ddl.create-iceberg-table.table-as-select",
+]
+reason = "grammar repeated byte for byte on another page; counted once under the command's own page (D80)"
+
+[[alias]]
+from = "sf.ddl.create-iceberg-table-snowflake.table-like"
+to = [
+  "sf.ddl.create-iceberg-table.table-like",
+]
+reason = "grammar repeated byte for byte on another page; counted once under the command's own page (D80)"
+
+[[alias]]
+from = "sf.ddl.drop-function-spcs"
+to = [
+  "sf.ddl.drop-function",
+]
+reason = "grammar repeated byte for byte on another page; counted once under the command's own page (D80)"
+
+[[alias]]
+from = "sf.expressions.collation.collate"
+to = [
+  "sf.functions.collate.collate",
+]
+reason = "general-reference page restating syntax catalogued on its own page (omission audit of 9160085f, D80)"
+
+[[alias]]
+from = "sf.expressions.collation.collate.collate-function"
+to = [
+  "sf.functions.collate.collate.syntax",
+]
+reason = "general-reference page restating syntax catalogued on its own page (omission audit of 9160085f, D80)"
+
+[[alias]]
+from = "sf.expressions.collation.collation"
+to = [
+  "sf.functions.collation",
+]
+reason = "general-reference page restating syntax catalogued on its own page (omission audit of 9160085f, D80)"
+
+[[alias]]
+from = "sf.expressions.collation.create-table-collate"
+to = [
+  "sf.ddl.create-table.create-table",
+]
+reason = "general-reference page restating syntax catalogued on its own page (omission audit of 9160085f, D80)"
+
+[[alias]]
+from = "sf.expressions.data-types-datetime.interval-formats"
+to = [
+  "sf.expressions.data-types-datetime.interval",
+]
+reason = "string content of an INTERVAL literal; an obligation of the interval literal form (omission audit of 9160085f, D80)"
+
+[[alias]]
+from = "sf.expressions.data-types-datetime.interval-formats.interval-formats"
+to = [
+  "sf.expressions.data-types-datetime.interval",
+]
+reason = "string content of an INTERVAL literal; an obligation of the interval literal form (omission audit of 9160085f, D80)"
+
+[[alias]]
+from = "sf.expressions.data-types-geospatial.st-geogfromwkb"
+to = [
+  "sf.functions.st-geographyfromwkb.st-geogfromwkb",
+]
+reason = "general-reference page restating syntax catalogued on its own page (omission audit of 9160085f, D80)"
+
+[[alias]]
+from = "sf.expressions.data-types-geospatial.st-geogfromwkt"
+to = [
+  "sf.functions.st-geographyfromwkt.st-geogfromwkt",
+]
+reason = "general-reference page restating syntax catalogued on its own page (omission audit of 9160085f, D80)"
+
+[[alias]]
+from = "sf.expressions.data-types-geospatial.st-geomfromwkb"
+to = [
+  "sf.functions.st-geometryfromwkb.st-geomfromwkb",
+]
+reason = "general-reference page restating syntax catalogued on its own page (omission audit of 9160085f, D80)"
+
+[[alias]]
+from = "sf.expressions.data-types-geospatial.st-geomfromwkt"
+to = [
+  "sf.functions.st-geometryfromwkt.st-geomfromwkt",
+]
+reason = "general-reference page restating syntax catalogued on its own page (omission audit of 9160085f, D80)"
+
+[[alias]]
+from = "sf.expressions.data-types-geospatial.to-geography"
+to = [
+  "sf.functions.to-geography",
+]
+reason = "general-reference page restating syntax catalogued on its own page (omission audit of 9160085f, D80)"
+
+[[alias]]
+from = "sf.expressions.data-types-geospatial.to-geometry"
+to = [
+  "sf.functions.to-geometry",
+]
+reason = "general-reference page restating syntax catalogued on its own page (omission audit of 9160085f, D80)"
+
+[[alias]]
+from = "sf.expressions.date-time-input-output.to-timestamp"
+to = [
+  "sf.functions.to-timestamp",
+]
+reason = "general-reference page restating syntax catalogued on its own page (omission audit of 9160085f, D80)"
+
+[[alias]]
+from = "sf.expressions.date-time-input-output.to-timestamp-to-number"
+to = [
+  "sf.functions.to-timestamp",
+  "sf.functions.to-decimal.to-number",
+]
+reason = "general-reference page restating syntax catalogued on its own page (omission audit of 9160085f, D80)"
+
+[[alias]]
+from = "sf.expressions.external-functions-translators.alter-function-set"
+to = [
+  "sf.ddl.alter-function.set-request-translator-response-translator",
+]
+reason = "general-reference page restating syntax catalogued on its own page (omission audit of 9160085f, D80)"
+
+[[alias]]
+from = "sf.expressions.external-functions-translators.alter-function-unset"
+to = [
+  "sf.ddl.alter-function.unset-comment-headers-context-headers",
+]
+reason = "general-reference page restating syntax catalogued on its own page (omission audit of 9160085f, D80)"
+
+[[alias]]
+from = "sf.expressions.external-functions-translators.create-external-function-f"
+to = [
+  "sf.ddl.create-external-function.function-returns-api-integration-as",
+]
+reason = "general-reference page restating syntax catalogued on its own page (omission audit of 9160085f, D80)"
+
+[[alias]]
+from = "sf.expressions.sql-format-models"
+to = [
+  "sf.functions.to-char.to-char",
+  "sf.functions.to-decimal.to-number",
+]
+reason = "format-string element inside conversion-function format arguments, not SQL syntax; an obligation of the forms that take a format (omission audit of 9160085f, D80)"
+
+[[alias]]
+from = "sf.expressions.virtual-columns.alter-table-add-as"
+to = [
+  "sf.ddl.alter-table.tablecolumnaction",
+]
+reason = "general-reference page restating syntax catalogued on its own page (omission audit of 9160085f, D80)"
+
+[[alias]]
+from = "sf.expressions.virtual-columns.create-or-replace-table"
+to = [
+  "sf.ddl.create-table.create-table",
+]
+reason = "general-reference page restating syntax catalogued on its own page (omission audit of 9160085f, D80)"
+
+[[alias]]
+from = "sf.functions.ai-function-optimization.execute-experiment"
+to = [
+  "sf.functions.ai-function-evaluation.execute-experiment",
+]
+reason = "grammar repeated byte for byte on another page; counted once under the command's own page (D80)"
+
+[[alias]]
+from = "sf.security_admin.alter-notification-integration-multi-queue.set-tag"
+to = [
+  "sf.security_admin.alter-notification-integration-email.set-tag",
+]
+reason = "grammar repeated byte for byte on another page; counted once under the command's own page (D80)"
+
+[[alias]]
+from = "sf.security_admin.alter-notification-integration-multi-queue.unset-tag"
+to = [
+  "sf.security_admin.alter-notification-integration-email.unset-tag",
+]
+reason = "grammar repeated byte for byte on another page; counted once under the command's own page (D80)"
+
+[[alias]]
+from = "sf.security_admin.alter-notification-integration-queue-inbound-azure.set"
+to = [
+  "sf.security_admin.alter-notification-integration-queue-inbound-gcp.set",
+]
+reason = "grammar repeated byte for byte on another page; counted once under the command's own page (D80)"
+
+[[alias]]
+from = "sf.security_admin.alter-notification-integration-queue-inbound-azure.set-tag"
+to = [
+  "sf.security_admin.alter-notification-integration-email.set-tag",
+]
+reason = "grammar repeated byte for byte on another page; counted once under the command's own page (D80)"
+
+[[alias]]
+from = "sf.security_admin.alter-notification-integration-queue-inbound-azure.unset-comment"
+to = [
+  "sf.security_admin.alter-notification-integration-queue-inbound-gcp.unset-comment",
+]
+reason = "grammar repeated byte for byte on another page; counted once under the command's own page (D80)"
+
+[[alias]]
+from = "sf.security_admin.alter-notification-integration-queue-inbound-azure.unset-tag"
+to = [
+  "sf.security_admin.alter-notification-integration-email.unset-tag",
+]
+reason = "grammar repeated byte for byte on another page; counted once under the command's own page (D80)"
+
+[[alias]]
+from = "sf.security_admin.alter-notification-integration-queue-inbound-gcp.set-tag"
+to = [
+  "sf.security_admin.alter-notification-integration-email.set-tag",
+]
+reason = "grammar repeated byte for byte on another page; counted once under the command's own page (D80)"
+
+[[alias]]
+from = "sf.security_admin.alter-notification-integration-queue-inbound-gcp.unset-tag"
+to = [
+  "sf.security_admin.alter-notification-integration-email.unset-tag",
+]
+reason = "grammar repeated byte for byte on another page; counted once under the command's own page (D80)"
+
+[[alias]]
+from = "sf.security_admin.alter-notification-integration-queue-outbound-aws.set-tag"
+to = [
+  "sf.security_admin.alter-notification-integration-email.set-tag",
+]
+reason = "grammar repeated byte for byte on another page; counted once under the command's own page (D80)"
+
+[[alias]]
+from = "sf.security_admin.alter-notification-integration-queue-outbound-aws.unset-comment"
+to = [
+  "sf.security_admin.alter-notification-integration-queue-inbound-gcp.unset-comment",
+]
+reason = "grammar repeated byte for byte on another page; counted once under the command's own page (D80)"
+
+[[alias]]
+from = "sf.security_admin.alter-notification-integration-queue-outbound-aws.unset-tag"
+to = [
+  "sf.security_admin.alter-notification-integration-email.unset-tag",
+]
+reason = "grammar repeated byte for byte on another page; counted once under the command's own page (D80)"
+
+[[alias]]
+from = "sf.security_admin.alter-notification-integration-queue-outbound-azure.set-tag"
+to = [
+  "sf.security_admin.alter-notification-integration-email.set-tag",
+]
+reason = "grammar repeated byte for byte on another page; counted once under the command's own page (D80)"
+
+[[alias]]
+from = "sf.security_admin.alter-notification-integration-queue-outbound-azure.unset-comment"
+to = [
+  "sf.security_admin.alter-notification-integration-queue-inbound-gcp.unset-comment",
+]
+reason = "grammar repeated byte for byte on another page; counted once under the command's own page (D80)"
+
+[[alias]]
+from = "sf.security_admin.alter-notification-integration-queue-outbound-azure.unset-tag"
+to = [
+  "sf.security_admin.alter-notification-integration-email.unset-tag",
+]
+reason = "grammar repeated byte for byte on another page; counted once under the command's own page (D80)"
+
+[[alias]]
+from = "sf.security_admin.alter-notification-integration-queue-outbound-gcp.set-tag"
+to = [
+  "sf.security_admin.alter-notification-integration-email.set-tag",
+]
+reason = "grammar repeated byte for byte on another page; counted once under the command's own page (D80)"
+
+[[alias]]
+from = "sf.security_admin.alter-notification-integration-queue-outbound-gcp.unset-comment"
+to = [
+  "sf.security_admin.alter-notification-integration-queue-inbound-gcp.unset-comment",
+]
+reason = "grammar repeated byte for byte on another page; counted once under the command's own page (D80)"
+
+[[alias]]
+from = "sf.security_admin.alter-notification-integration-queue-outbound-gcp.unset-tag"
+to = [
+  "sf.security_admin.alter-notification-integration-email.unset-tag",
+]
+reason = "grammar repeated byte for byte on another page; counted once under the command's own page (D80)"
+
+[[alias]]
+from = "sf.security_admin.alter-security-integration-api-auth.integration-set-tag"
+to = [
+  "sf.security_admin.alter-security-integration.set-tag",
+]
+reason = "grammar repeated byte for byte on another page; counted once under the command's own page (D80)"
+
+[[alias]]
+from = "sf.security_admin.alter-security-integration-api-auth.integration-unset-enabled"
+to = [
+  "sf.security_admin.alter-security-integration-saml2.unset-enabled",
+]
+reason = "grammar repeated byte for byte on another page; counted once under the command's own page (D80)"
+
+[[alias]]
+from = "sf.security_admin.alter-security-integration-api-auth.integration-unset-tag"
+to = [
+  "sf.security_admin.alter-security-integration.unset-tag",
+]
+reason = "grammar repeated byte for byte on another page; counted once under the command's own page (D80)"
+
+[[alias]]
+from = "sf.security_admin.alter-security-integration-aws-iam.set-tag"
+to = [
+  "sf.security_admin.alter-security-integration.set-tag",
+]
+reason = "grammar repeated byte for byte on another page; counted once under the command's own page (D80)"
+
+[[alias]]
+from = "sf.security_admin.alter-security-integration-aws-iam.unset-tag"
+to = [
+  "sf.security_admin.alter-security-integration.unset-tag",
+]
+reason = "grammar repeated byte for byte on another page; counted once under the command's own page (D80)"
+
+[[alias]]
+from = "sf.security_admin.alter-security-integration-oauth-external.set-tag"
+to = [
+  "sf.security_admin.alter-security-integration.set-tag",
+]
+reason = "grammar repeated byte for byte on another page; counted once under the command's own page (D80)"
+
+[[alias]]
+from = "sf.security_admin.alter-security-integration-oauth-external.unset-tag"
+to = [
+  "sf.security_admin.alter-security-integration.unset-tag",
+]
+reason = "grammar repeated byte for byte on another page; counted once under the command's own page (D80)"
+
+[[alias]]
+from = "sf.security_admin.alter-security-integration-oauth-snowflake.set-tag"
+to = [
+  "sf.security_admin.alter-security-integration.set-tag",
+]
+reason = "grammar repeated byte for byte on another page; counted once under the command's own page (D80)"
+
+[[alias]]
+from = "sf.security_admin.alter-security-integration-oauth-snowflake.unset-tag"
+to = [
+  "sf.security_admin.alter-security-integration.unset-tag",
+]
+reason = "grammar repeated byte for byte on another page; counted once under the command's own page (D80)"
+
+[[alias]]
+from = "sf.security_admin.alter-security-integration-oidc.set-tag"
+to = [
+  "sf.security_admin.alter-security-integration.set-tag",
+]
+reason = "grammar repeated byte for byte on another page; counted once under the command's own page (D80)"
+
+[[alias]]
+from = "sf.security_admin.alter-security-integration-oidc.unset-tag"
+to = [
+  "sf.security_admin.alter-security-integration.unset-tag",
+]
+reason = "grammar repeated byte for byte on another page; counted once under the command's own page (D80)"
+
+[[alias]]
+from = "sf.security_admin.alter-security-integration-saml2.set-tag"
+to = [
+  "sf.security_admin.alter-security-integration.set-tag",
+]
+reason = "grammar repeated byte for byte on another page; counted once under the command's own page (D80)"
+
+[[alias]]
+from = "sf.security_admin.alter-security-integration-saml2.unset-tag"
+to = [
+  "sf.security_admin.alter-security-integration.unset-tag",
+]
+reason = "grammar repeated byte for byte on another page; counted once under the command's own page (D80)"
+
+[[alias]]
+from = "sf.security_admin.alter-security-integration-scim.set-tag"
+to = [
+  "sf.security_admin.alter-security-integration.set-tag",
+]
+reason = "grammar repeated byte for byte on another page; counted once under the command's own page (D80)"
+
+[[alias]]
+from = "sf.security_admin.alter-security-integration-scim.unset-tag"
+to = [
+  "sf.security_admin.alter-security-integration.unset-tag",
+]
+reason = "grammar repeated byte for byte on another page; counted once under the command's own page (D80)"

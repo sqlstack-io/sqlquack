@@ -1,4 +1,8 @@
-# Documentation indexes the pinned page list was read from (llms.txt files).
+# Documentation indexes the pinned page list was read from (llms.txt files and the docs navigation tree).
+
+[[index]]
+name = "docs-nav-reference.json"
+sha256 = "be17dd7074e4ecc539950b574b7e14063d4e39270fedf41f4bd654540c8675cf"
 
 [[index]]
 name = "sql-reference-data-types.md"

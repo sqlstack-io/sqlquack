@@ -1,0 +1,1005 @@
+# Forms catalogued by hand: syntax the docs give outside sqlsyntax blocks (HTML-only parsed-literal
+# blocks, tables, headings and prose). Each form is bound to the Markdown or HTML hash of the page it
+# was read from; scripts/build_syntax_catalogue.py refuses a form whose page has changed since.
+# Fields: source, anchor (heading path below the title), kind, optional label (names the form id),
+# grammar (one entry per signature), basis and page_sha256.
+
+[[form]]
+source = "doc.functions.fl_get_content_type"
+anchor = "Syntax"
+kind = "call"
+label = "FL_GET_CONTENT_TYPE"
+grammar = [
+  "FL_GET_CONTENT_TYPE( <file_expression> )",
+  "FL_GET_CONTENT_TYPE( <variant_expression> )",
+]
+basis = "html_parsed_literal"
+page_sha256 = "68e18825c812e6d4f0bcb78ff22e388d70be00ada4e35fe77a95196602f6b048"
+
+[[form]]
+source = "doc.functions.fl_get_etag"
+anchor = "Syntax"
+kind = "call"
+label = "FL_GET_ETAG"
+grammar = [
+  "FL_GET_ETAG( <file_expression> )",
+  "FL_GET_ETAG( <variant_expression> )",
+]
+basis = "html_parsed_literal"
+page_sha256 = "fadb74914621d8fb9993b7ea0da78d9a8fc88d2818a36caf696e63eb490fffdf"
+
+[[form]]
+source = "doc.functions.fl_get_file_type"
+anchor = "Syntax"
+kind = "call"
+label = "FL_GET_FILE_TYPE"
+grammar = [
+  "FL_GET_FILE_TYPE( <file_expression> )",
+  "FL_GET_FILE_TYPE( <variant_expression> )",
+]
+basis = "html_parsed_literal"
+page_sha256 = "dbdb2fa5d040549c713dcbe4613eb942f3543877563a9e317cb36dbdd77c52a9"
+
+[[form]]
+source = "doc.functions.fl_get_last_modified"
+anchor = "Syntax"
+kind = "call"
+label = "FL_GET_LAST_MODIFIED"
+grammar = [
+  "FL_GET_LAST_MODIFIED( <file_expression> )",
+  "FL_GET_LAST_MODIFIED( <variant_expression> )",
+]
+basis = "html_parsed_literal"
+page_sha256 = "e2f9b20ec3629afd4a62f465cbdc6d3de5819394419bbc0f63e6938ca06ae4a8"
+
+[[form]]
+source = "doc.functions.fl_get_relative_path"
+anchor = "Syntax"
+kind = "call"
+label = "FL_GET_RELATIVE_PATH"
+grammar = [
+  "FL_GET_RELATIVE_PATH( <file_expression> )",
+  "FL_GET_RELATIVE_PATH( <variant_expression> )",
+]
+basis = "html_parsed_literal"
+page_sha256 = "a4b68acf891e42c9c4be1d3d9fb0dde4cc7d5674c25614dece79f0a8028c4c55"
+
+[[form]]
+source = "doc.functions.fl_get_scoped_file_url"
+anchor = "Syntax"
+kind = "call"
+label = "FL_GET_SCOPED_FILE_URL"
+grammar = [
+  "FL_GET_SCOPED_FILE_URL( <file_expression> )",
+  "FL_GET_SCOPED_FILE_URL( <variant_expression> )",
+]
+basis = "html_parsed_literal"
+page_sha256 = "51385f4f025a1ce570182467fc59050cddd72c8c95734f27fd41fea2a1a55d89"
+
+[[form]]
+source = "doc.functions.fl_get_size"
+anchor = "Syntax"
+kind = "call"
+label = "FL_GET_SIZE"
+grammar = [
+  "FL_GET_SIZE( <file_expression> )",
+  "FL_GET_SIZE( <variant_expression> )",
+]
+basis = "html_parsed_literal"
+page_sha256 = "8696dcba904bb87934d3dcebdfe1c5720cbb773455136cde4560f520d22f619c"
+
+[[form]]
+source = "doc.functions.fl_get_stage"
+anchor = "Syntax"
+kind = "call"
+label = "FL_GET_STAGE"
+grammar = [
+  "FL_GET_STAGE( <file_expression> )",
+  "FL_GET_STAGE( <variant_expression> )",
+]
+basis = "html_parsed_literal"
+page_sha256 = "ac1256ffa0f4ae371eb9062a01a2fd41089892eb2f461d60d3cb0a6977556646"
+
+[[form]]
+source = "doc.functions.fl_get_stage_file_url"
+anchor = "Syntax"
+kind = "call"
+label = "FL_GET_STAGE_FILE_URL"
+grammar = [
+  "FL_GET_STAGE_FILE_URL( <file_expression> )",
+  "FL_GET_STAGE_FILE_URL( <variant_expression> )",
+]
+basis = "html_parsed_literal"
+page_sha256 = "b7c69be83cbf2c77b2605d7fbeed3bc001a52b580487db0c34a4b89d51d728fc"
+
+[[form]]
+source = "doc.functions.fl_is_audio"
+anchor = "Syntax"
+kind = "call"
+label = "FL_IS_AUDIO"
+grammar = [
+  "FL_IS_AUDIO( <file_expression> )",
+  "FL_IS_AUDIO( <variant_expression> )",
+]
+basis = "html_parsed_literal"
+page_sha256 = "0e4fbdca1047606591110b2a7cfcf210d49480bc13ce65d9887c927324dc6df1"
+
+[[form]]
+source = "doc.functions.fl_is_compressed"
+anchor = "Syntax"
+kind = "call"
+label = "FL_IS_COMPRESSED"
+grammar = [
+  "FL_IS_COMPRESSED( <file_expression> )",
+  "FL_IS_COMPRESSED( <variant_expression> )",
+]
+basis = "html_parsed_literal"
+page_sha256 = "f2b9b408462ecb67059ff440fe10f60fc6482c70037758ead15a4a751feba186"
+
+[[form]]
+source = "doc.functions.fl_is_document"
+anchor = "Syntax"
+kind = "call"
+label = "FL_IS_DOCUMENT"
+grammar = [
+  "FL_IS_DOCUMENT( <file_expression> )",
+  "FL_IS_DOCUMENT( <variant_expression> )",
+]
+basis = "html_parsed_literal"
+page_sha256 = "e491f15b2f01903648a5ee735af40efda25f3dd0e13a56721b068b8ff68096c8"
+
+[[form]]
+source = "doc.functions.fl_is_image"
+anchor = "Syntax"
+kind = "call"
+label = "FL_IS_IMAGE"
+grammar = [
+  "FL_IS_IMAGE( <file_expression> )",
+  "FL_IS_IMAGE( <variant_expression> )",
+]
+basis = "html_parsed_literal"
+page_sha256 = "47e09759c4d874a19b50d049bf8166f3a15744fa129ba1ab38d5b1f6e347f3b3"
+
+[[form]]
+source = "doc.functions.fl_is_video"
+anchor = "Syntax"
+kind = "call"
+label = "FL_IS_VIDEO"
+grammar = [
+  "FL_IS_VIDEO( <file_expression> )",
+  "FL_IS_VIDEO( <variant_expression> )",
+]
+basis = "html_parsed_literal"
+page_sha256 = "39cba9905fe59d50f374dd3f8f30ac9efcb5c09338f59ae806b503fd127bf321"
+
+[[form]]
+source = "doc.functions.to_file"
+anchor = "Syntax"
+kind = "call"
+label = "TO_FILE"
+grammar = [
+  "TO_FILE( <stage_name>, <relative_path> )",
+  "TO_FILE( <file_url> )",
+  "TO_FILE( <metadata> )",
+]
+basis = "html_parsed_literal"
+page_sha256 = "726a50ddfd28b72e1a304b634fb95f2e63d4f21da2eef54452fef8c21a5a4170"
+
+[[form]]
+source = "doc.functions.try_to_file"
+anchor = "Syntax"
+kind = "call"
+label = "TRY_TO_FILE"
+grammar = [
+  "TRY_TO_FILE( <stage_name>, <relative_path> )",
+  "TRY_TO_FILE( <file_url> )",
+  "TRY_TO_FILE( <metadata> )",
+]
+basis = "html_parsed_literal"
+page_sha256 = "2eb1820cb9aae194240eaa1b6d952c8040c472cdf4787f25e094529068475098"
+
+[[form]]
+source = "doc.classes.classification.methods.show_confusion_matrix"
+anchor = "Syntax"
+kind = "special"
+grammar = [
+  "<model_name>!SHOW_CONFUSION_MATRIX()",
+]
+basis = "heading"
+page_sha256 = "2129cb0e54d5a6e92511c94730024411152fd002cb1a8d447d05063d8ca38723"
+
+[[form]]
+source = "doc.classes.classification.methods.show_evaluation_metrics"
+anchor = "Syntax"
+kind = "special"
+grammar = [
+  "<model_name>!SHOW_EVALUATION_METRICS()",
+]
+basis = "heading"
+page_sha256 = "b785879df0c1a63f399eb8775e6a4bb35b33bb72c5516f2fad128075c27b31dc"
+
+[[form]]
+source = "doc.classes.classification.methods.show_global_evaluation_metrics"
+anchor = "Syntax"
+kind = "special"
+grammar = [
+  "<model_name>!SHOW_GLOBAL_EVALUATION_METRICS()",
+]
+basis = "heading"
+page_sha256 = "174e8d813705f5ef6e03029afb1dbddbd64d91c83252e62856c4eca45b00b30e"
+
+[[form]]
+source = "doc.classes.classification.methods.show_threshold_metrics"
+anchor = "Syntax"
+kind = "special"
+grammar = [
+  "<model_name>!SHOW_THRESHOLD_METRICS()",
+]
+basis = "heading"
+page_sha256 = "5ae83f01871b45e384ce62b788e6cfe6406e145937f5d5a10ff102d6b1e8287f"
+
+[[form]]
+source = "doc.commands-model-function"
+anchor = "Calling model methods"
+kind = "statement"
+label = "model-default-version"
+grammar = [
+  "SELECT MODEL( <model_name> )!<method_name>( ... ) FROM <table_name>",
+]
+basis = "html_parsed_literal"
+page_sha256 = "e00a7493faeffddc6ff799870ef1c4a60bfc5cc761ed19a436342699f80dabc7"
+
+[[form]]
+source = "doc.commands-model-function"
+anchor = "Calling model methods"
+kind = "statement"
+label = "model-version-or-alias"
+grammar = [
+  "SELECT MODEL( <model_name> , <version_or_alias_name> )!<method_name>( ... ) FROM <table_name>",
+]
+basis = "html_parsed_literal"
+page_sha256 = "e00a7493faeffddc6ff799870ef1c4a60bfc5cc761ed19a436342699f80dabc7"
+
+[[form]]
+source = "doc.data-types-numeric"
+anchor = "Data types for fixed-point numbers / NUMBER"
+kind = "statement"
+label = "number"
+grammar = [
+  "NUMBER [ ( <precision> [ , <scale> ] ) ]",
+]
+basis = "heading"
+page_sha256 = "fa2bd8476962b9009f6e24e838dfde14c77542c70f6a7aff18389451d71bcf2c"
+
+[[form]]
+source = "doc.data-types-numeric"
+anchor = "Data types for fixed-point numbers / DECIMAL , DEC , NUMERIC"
+kind = "statement"
+label = "decimal"
+grammar = [
+  "{ DECIMAL | DEC | NUMERIC } [ ( <precision> [ , <scale> ] ) ]",
+]
+basis = "heading"
+page_sha256 = "fa2bd8476962b9009f6e24e838dfde14c77542c70f6a7aff18389451d71bcf2c"
+
+[[form]]
+source = "doc.data-types-numeric"
+anchor = "Data types for fixed-point numbers / INT , INTEGER , BIGINT , SMALLINT , TINYINT , BYTEINT"
+kind = "statement"
+label = "int"
+grammar = [
+  "{ INT | INTEGER | BIGINT | SMALLINT | TINYINT | BYTEINT }",
+]
+basis = "heading"
+page_sha256 = "fa2bd8476962b9009f6e24e838dfde14c77542c70f6a7aff18389451d71bcf2c"
+
+[[form]]
+source = "doc.data-types-numeric"
+anchor = "Data types for floating-point numbers / FLOAT , FLOAT4 , FLOAT8"
+kind = "statement"
+label = "float"
+grammar = [
+  "{ FLOAT | FLOAT4 | FLOAT8 }",
+]
+basis = "heading"
+page_sha256 = "fa2bd8476962b9009f6e24e838dfde14c77542c70f6a7aff18389451d71bcf2c"
+
+[[form]]
+source = "doc.data-types-numeric"
+anchor = "Data types for floating-point numbers / DOUBLE , DOUBLE PRECISION , REAL"
+kind = "statement"
+label = "double"
+grammar = [
+  "{ DOUBLE | DOUBLE PRECISION | REAL }",
+]
+basis = "heading"
+page_sha256 = "fa2bd8476962b9009f6e24e838dfde14c77542c70f6a7aff18389451d71bcf2c"
+
+[[form]]
+source = "doc.data-types-numeric"
+anchor = "Data types for floating-point numbers / DECFLOAT"
+kind = "statement"
+label = "decfloat"
+grammar = [
+  "DECFLOAT",
+]
+basis = "heading"
+page_sha256 = "fa2bd8476962b9009f6e24e838dfde14c77542c70f6a7aff18389451d71bcf2c"
+
+[[form]]
+source = "doc.data-types-numeric"
+anchor = "Numeric constants"
+kind = "statement"
+label = "numeric-constant"
+grammar = [
+  "[+-][digits][.digits][e[+-]digits]",
+]
+basis = "inline_code"
+page_sha256 = "fa2bd8476962b9009f6e24e838dfde14c77542c70f6a7aff18389451d71bcf2c"
+
+[[form]]
+source = "doc.data-types-text"
+anchor = "Data types for text strings / VARCHAR"
+kind = "statement"
+label = "varchar"
+grammar = [
+  "VARCHAR [ ( <length> ) ]",
+]
+basis = "heading"
+page_sha256 = "f3a8109d142d5ea5e0fa371fcc123a7b8437f5aa9c87a6a70f9d80d56259d7e0"
+
+[[form]]
+source = "doc.data-types-text"
+anchor = "Data types for text strings / CHAR, CHARACTER, NCHAR"
+kind = "statement"
+label = "char"
+grammar = [
+  "{ CHAR | CHARACTER | NCHAR } [ ( <length> ) ]",
+]
+basis = "heading"
+page_sha256 = "f3a8109d142d5ea5e0fa371fcc123a7b8437f5aa9c87a6a70f9d80d56259d7e0"
+
+[[form]]
+source = "doc.data-types-text"
+anchor = "Data types for text strings / STRING, TEXT, VARCHAR2, NVARCHAR, NVARCHAR2, CHAR VARYING, NCHAR VARYING"
+kind = "statement"
+label = "string"
+grammar = [
+  "{ STRING | TEXT | VARCHAR2 | NVARCHAR | NVARCHAR2 | CHAR VARYING | NCHAR VARYING } [ ( <length> ) ]",
+]
+basis = "heading"
+page_sha256 = "f3a8109d142d5ea5e0fa371fcc123a7b8437f5aa9c87a6a70f9d80d56259d7e0"
+
+[[form]]
+source = "doc.data-types-text"
+anchor = "Data types for binary strings / BINARY"
+kind = "statement"
+label = "binary"
+grammar = [
+  "BINARY [ ( <length> ) ]",
+]
+basis = "heading"
+page_sha256 = "f3a8109d142d5ea5e0fa371fcc123a7b8437f5aa9c87a6a70f9d80d56259d7e0"
+
+[[form]]
+source = "doc.data-types-text"
+anchor = "Data types for binary strings / VARBINARY"
+kind = "statement"
+label = "varbinary"
+grammar = [
+  "VARBINARY [ ( <length> ) ]",
+]
+basis = "heading"
+page_sha256 = "f3a8109d142d5ea5e0fa371fcc123a7b8437f5aa9c87a6a70f9d80d56259d7e0"
+
+[[form]]
+source = "doc.data-types-text"
+anchor = "String constants / Single-quoted string constants"
+kind = "statement"
+label = "single-quoted-string-constant"
+grammar = [
+  "'<characters>'",
+]
+basis = "prose"
+page_sha256 = "f3a8109d142d5ea5e0fa371fcc123a7b8437f5aa9c87a6a70f9d80d56259d7e0"
+
+[[form]]
+source = "doc.data-types-text"
+anchor = "String constants / Dollar-quoted string constants"
+kind = "statement"
+label = "dollar-quoted-string-constant"
+grammar = [
+  "$$<characters>$$",
+]
+basis = "prose"
+page_sha256 = "f3a8109d142d5ea5e0fa371fcc123a7b8437f5aa9c87a6a70f9d80d56259d7e0"
+
+[[form]]
+source = "doc.data-types-logical"
+anchor = "Data types / BOOLEAN"
+kind = "statement"
+label = "boolean"
+grammar = [
+  "BOOLEAN",
+]
+basis = "heading"
+page_sha256 = "2ac30c4572e5730c90c136a9e3ee7ab43f841a8e20e98cb3ab0864961dcbf5f0"
+
+[[form]]
+source = "doc.data-types-unknown"
+anchor = "UNKNOWN / Specifying an UNKNOWN column or field"
+kind = "statement"
+label = "unknown"
+grammar = [
+  "UNKNOWN",
+]
+basis = "heading"
+page_sha256 = "50f933ca9319b6d62765b1bc28fecc7764f41fae723bb41ca9232835ce63e478"
+
+[[form]]
+source = "doc.data-types-unstructured"
+anchor = "FILE data type"
+kind = "statement"
+label = "file"
+grammar = [
+  "FILE",
+]
+basis = "heading"
+page_sha256 = "022c104686a022a1845a5543d05defe32bf04f8598dded40db88762625d3c0f3"
+
+[[form]]
+source = "doc.data-types-user-defined"
+anchor = "Casting user-defined types / Explicit casting to and from user-defined types"
+kind = "statement"
+label = "user-defined-type"
+grammar = [
+  "<user_defined_type_name>",
+]
+basis = "prose"
+page_sha256 = "976e799e85f53225d0cb3d9956d60217609e03452309844fc5a920ed370c8ac5"
+
+[[form]]
+source = "doc.data-types-datetime"
+anchor = "Data types / DATE"
+kind = "statement"
+label = "date"
+grammar = [
+  "DATE",
+]
+basis = "heading"
+page_sha256 = "84e16693f5a71dc06224d6c1517f0a31b9911138df9f0e77e4e63c05f51746a2"
+
+[[form]]
+source = "doc.data-types-datetime"
+anchor = "Data types / DATETIME"
+kind = "statement"
+label = "datetime"
+grammar = [
+  "DATETIME",
+]
+basis = "heading"
+page_sha256 = "84e16693f5a71dc06224d6c1517f0a31b9911138df9f0e77e4e63c05f51746a2"
+
+[[form]]
+source = "doc.data-types-datetime"
+anchor = "Data types / TIME"
+kind = "statement"
+label = "time"
+grammar = [
+  "TIME [ ( <precision> ) ]",
+]
+basis = "heading"
+page_sha256 = "84e16693f5a71dc06224d6c1517f0a31b9911138df9f0e77e4e63c05f51746a2"
+
+[[form]]
+source = "doc.data-types-datetime"
+anchor = "Data types / TIMESTAMP_LTZ , TIMESTAMP_NTZ , TIMESTAMP_TZ"
+kind = "statement"
+label = "timestamp-variations"
+grammar = [
+  "{ TIMESTAMP_LTZ | TIMESTAMPLTZ | TIMESTAMP WITH LOCAL TIME ZONE | TIMESTAMP_NTZ | TIMESTAMPNTZ | TIMESTAMP WITHOUT TIME ZONE | TIMESTAMP_TZ | TIMESTAMPTZ | TIMESTAMP WITH TIME ZONE } [ ( <precision> ) ]",
+]
+basis = "heading"
+page_sha256 = "84e16693f5a71dc06224d6c1517f0a31b9911138df9f0e77e4e63c05f51746a2"
+
+[[form]]
+source = "doc.data-types-datetime"
+anchor = "Data types / TIMESTAMP_LTZ , TIMESTAMP_NTZ , TIMESTAMP_TZ / TIMESTAMP"
+kind = "statement"
+label = "timestamp"
+grammar = [
+  "TIMESTAMP [ ( <precision> ) ]",
+]
+basis = "heading"
+page_sha256 = "84e16693f5a71dc06224d6c1517f0a31b9911138df9f0e77e4e63c05f51746a2"
+
+[[form]]
+source = "doc.data-types-datetime"
+anchor = "Date and time constants"
+kind = "statement"
+label = "date-time-constant"
+grammar = [
+  "{ DATE | TIME | TIMESTAMP } '<string>'",
+]
+basis = "prose"
+page_sha256 = "84e16693f5a71dc06224d6c1517f0a31b9911138df9f0e77e4e63c05f51746a2"
+
+[[form]]
+source = "doc.data-types-semistructured"
+anchor = "VARIANT"
+kind = "statement"
+label = "variant"
+grammar = [
+  "VARIANT",
+]
+basis = "heading"
+page_sha256 = "354fefb657b3ed083830ad6f74d14d30f3a13d6fdb303829e38f44904d49af99"
+
+[[form]]
+source = "doc.data-types-semistructured"
+anchor = "OBJECT"
+kind = "statement"
+label = "object"
+grammar = [
+  "OBJECT",
+]
+basis = "heading"
+page_sha256 = "354fefb657b3ed083830ad6f74d14d30f3a13d6fdb303829e38f44904d49af99"
+
+[[form]]
+source = "doc.data-types-semistructured"
+anchor = "ARRAY"
+kind = "statement"
+label = "array"
+grammar = [
+  "ARRAY",
+]
+basis = "heading"
+page_sha256 = "354fefb657b3ed083830ad6f74d14d30f3a13d6fdb303829e38f44904d49af99"
+
+[[form]]
+source = "doc.data-types-period"
+anchor = "Construct PERIOD values / Typed literal"
+kind = "statement"
+label = "typed-literal"
+grammar = [
+  "PERIOD( <element_type> ) '<period_string>'",
+]
+basis = "prose"
+page_sha256 = "bae1f505b2570b7001274b972ab33a2a867d0aa0f0391a634ae13425b66e203d"
+
+[[form]]
+source = "doc.data-types-ipaddress"
+anchor = "Examples for the IPADDRESS data type / Use an ANSI literal"
+kind = "statement"
+label = "typed-literal"
+grammar = [
+  "IPADDRESS '<address>'",
+]
+basis = "prose"
+page_sha256 = "1fb068f98b2ad6d8c2d5a7067e120024b32ae998b6b3f6b578126c85d0e3dc7b"
+
+[[form]]
+source = "doc.operators-arithmetic"
+anchor = "Syntax table"
+kind = "statement"
+label = "unary-plus"
+grammar = [
+  "+ <a>",
+]
+basis = "table"
+page_sha256 = "338c0cf4ffa3f3be5b39a43cffd7b4900374004adc1c7782c2491117aa8e255a"
+
+[[form]]
+source = "doc.operators-arithmetic"
+anchor = "Syntax table"
+kind = "statement"
+label = "add"
+grammar = [
+  "<a> + <b>",
+]
+basis = "table"
+page_sha256 = "338c0cf4ffa3f3be5b39a43cffd7b4900374004adc1c7782c2491117aa8e255a"
+
+[[form]]
+source = "doc.operators-arithmetic"
+anchor = "Syntax table"
+kind = "statement"
+label = "unary-minus"
+grammar = [
+  "- <a>",
+]
+basis = "table"
+page_sha256 = "338c0cf4ffa3f3be5b39a43cffd7b4900374004adc1c7782c2491117aa8e255a"
+
+[[form]]
+source = "doc.operators-arithmetic"
+anchor = "Syntax table"
+kind = "statement"
+label = "subtract"
+grammar = [
+  "<a> - <b>",
+]
+basis = "table"
+page_sha256 = "338c0cf4ffa3f3be5b39a43cffd7b4900374004adc1c7782c2491117aa8e255a"
+
+[[form]]
+source = "doc.operators-arithmetic"
+anchor = "Syntax table"
+kind = "statement"
+label = "multiply"
+grammar = [
+  "<a> * <b>",
+]
+basis = "table"
+page_sha256 = "338c0cf4ffa3f3be5b39a43cffd7b4900374004adc1c7782c2491117aa8e255a"
+
+[[form]]
+source = "doc.operators-arithmetic"
+anchor = "Syntax table"
+kind = "statement"
+label = "divide"
+grammar = [
+  "<a> / <b>",
+]
+basis = "table"
+page_sha256 = "338c0cf4ffa3f3be5b39a43cffd7b4900374004adc1c7782c2491117aa8e255a"
+
+[[form]]
+source = "doc.operators-arithmetic"
+anchor = "Syntax table"
+kind = "statement"
+label = "modulo"
+grammar = [
+  "<a> % <b>",
+]
+basis = "table"
+page_sha256 = "338c0cf4ffa3f3be5b39a43cffd7b4900374004adc1c7782c2491117aa8e255a"
+
+[[form]]
+source = "doc.operators-comparison"
+anchor = "Syntax table"
+kind = "statement"
+label = "equal"
+grammar = [
+  "<a> = <b>",
+]
+basis = "table"
+page_sha256 = "1730291f4c1b04a0e17049bc2f287f29b195a442c68142024c9cc33d180c2a32"
+
+[[form]]
+source = "doc.operators-comparison"
+anchor = "Syntax table"
+kind = "statement"
+label = "not-equal-bang"
+grammar = [
+  "<a> != <b>",
+]
+basis = "table"
+page_sha256 = "1730291f4c1b04a0e17049bc2f287f29b195a442c68142024c9cc33d180c2a32"
+
+[[form]]
+source = "doc.operators-comparison"
+anchor = "Syntax table"
+kind = "statement"
+label = "not-equal-angle"
+grammar = [
+  "<a> <> <b>",
+]
+basis = "table"
+page_sha256 = "1730291f4c1b04a0e17049bc2f287f29b195a442c68142024c9cc33d180c2a32"
+
+[[form]]
+source = "doc.operators-comparison"
+anchor = "Syntax table"
+kind = "statement"
+label = "greater"
+grammar = [
+  "<a> > <b>",
+]
+basis = "table"
+page_sha256 = "1730291f4c1b04a0e17049bc2f287f29b195a442c68142024c9cc33d180c2a32"
+
+[[form]]
+source = "doc.operators-comparison"
+anchor = "Syntax table"
+kind = "statement"
+label = "greater-or-equal"
+grammar = [
+  "<a> >= <b>",
+]
+basis = "table"
+page_sha256 = "1730291f4c1b04a0e17049bc2f287f29b195a442c68142024c9cc33d180c2a32"
+
+[[form]]
+source = "doc.operators-comparison"
+anchor = "Syntax table"
+kind = "statement"
+label = "less"
+grammar = [
+  "<a> < <b>",
+]
+basis = "table"
+page_sha256 = "1730291f4c1b04a0e17049bc2f287f29b195a442c68142024c9cc33d180c2a32"
+
+[[form]]
+source = "doc.operators-comparison"
+anchor = "Syntax table"
+kind = "statement"
+label = "less-or-equal"
+grammar = [
+  "<a> <= <b>",
+]
+basis = "table"
+page_sha256 = "1730291f4c1b04a0e17049bc2f287f29b195a442c68142024c9cc33d180c2a32"
+
+[[form]]
+source = "doc.operators-logical"
+anchor = "Syntax table"
+kind = "statement"
+label = "and"
+grammar = [
+  "<a> AND <b>",
+]
+basis = "table"
+page_sha256 = "c53fadbd3c1f042481af45ddfc548fb0bd882413658f84fd66c3cf1da3ee21e4"
+
+[[form]]
+source = "doc.operators-logical"
+anchor = "Syntax table"
+kind = "statement"
+label = "not"
+grammar = [
+  "NOT <a>",
+]
+basis = "table"
+page_sha256 = "c53fadbd3c1f042481af45ddfc548fb0bd882413658f84fd66c3cf1da3ee21e4"
+
+[[form]]
+source = "doc.operators-logical"
+anchor = "Syntax table"
+kind = "statement"
+label = "or"
+grammar = [
+  "<a> OR <b>",
+]
+basis = "table"
+page_sha256 = "c53fadbd3c1f042481af45ddfc548fb0bd882413658f84fd66c3cf1da3ee21e4"
+
+[[form]]
+source = "doc.identifiers-syntax"
+anchor = "Unquoted identifiers"
+kind = "statement"
+label = "unquoted-identifier"
+grammar = [
+  "<letter_or_underscore>[<letter_digit_underscore_or_dollar>...]",
+]
+basis = "prose"
+page_sha256 = "99883f1b3719a895a798ede88d0232bdf7ce1dca1cebaf95302afb6112f382c9"
+
+[[form]]
+source = "doc.identifiers-syntax"
+anchor = "Double-quoted identifiers"
+kind = "statement"
+label = "double-quoted-identifier"
+grammar = [
+  "\"<any_characters_with_double_quotes_doubled>\"",
+]
+basis = "prose"
+page_sha256 = "99883f1b3719a895a798ede88d0232bdf7ce1dca1cebaf95302afb6112f382c9"
+
+[[form]]
+source = "doc.session-variables"
+anchor = "Using variables in SQL"
+kind = "statement"
+label = "variable-reference"
+grammar = [
+  "$<variable_name>",
+]
+basis = "prose"
+page_sha256 = "02f4d03d356b1d04390016e69f90e035872170ec6b32b8fcbc443c8ee8a090c8"
+
+[[form]]
+source = "doc.schema-variables"
+anchor = "Reading and writing values / Read a value"
+kind = "statement"
+label = "qualified-reference"
+grammar = [
+  "$[<database_name>.]<schema_name>.<variable_name>",
+]
+basis = "prose"
+page_sha256 = "6d61b55a24aee891f7742ead3d1d3262713e5be2faeef61715cf8335991bde1c"
+
+[[form]]
+source = "doc.bind-variables"
+anchor = "Overview of bind variables"
+kind = "statement"
+label = "placeholder"
+grammar = [
+  "{ ? | :<variable_name> | :<n> }",
+]
+basis = "prose"
+page_sha256 = "7ed495688c137d6c672ba12259120b48cff6ade7e4b81e3ec084f626c878d23d"
+
+[[form]]
+source = "doc.name-resolution"
+anchor = "Object name resolution"
+kind = "statement"
+label = "qualified-name"
+grammar = [
+  "{ <database_name>.<schema_name>.<object_name> | <schema_name>.<object_name> | <object_name> | <database_name>..<object_name> }",
+]
+basis = "prose"
+page_sha256 = "8f02abe65e4a0691620cdf9443ea1c7220a08af80dc7b3c9b415849cb2984de8"
+
+[[form]]
+source = "doc.data-types-semistructured"
+anchor = "OBJECT / Accessing elements of an OBJECT value by key"
+kind = "special"
+label = "object-key-access"
+grammar = [
+  "<object_expr> \"[\" '<key>' \"]\"",
+]
+basis = "example"
+page_sha256 = "354fefb657b3ed083830ad6f74d14d30f3a13d6fdb303829e38f44904d49af99"
+
+[[form]]
+source = "doc.data-types-semistructured"
+anchor = "ARRAY / Accessing elements of an array by index or by slice"
+kind = "special"
+label = "array-index-access"
+grammar = [
+  "<array_expr> \"[\" <index> \"]\" [ \"[\" <index> \"]\" ... ]",
+]
+basis = "example"
+page_sha256 = "354fefb657b3ed083830ad6f74d14d30f3a13d6fdb303829e38f44904d49af99"
+
+# Folds (D80): a form that restates syntax catalogued under another page's form is counted once.
+# The restating page becomes an also_sources entry of each canonical form in `into`; the folded id
+# stays absent_from_source with an alias. Byte-identical grammar across pages is folded by the
+# build without an entry here.
+
+[[fold]]
+form = "sf.expressions.data-types-geospatial.st-geogfromwkb"
+into = ["sf.functions.st-geographyfromwkb.st-geogfromwkb"]
+reason = "general-reference page restating syntax catalogued on its own page (omission audit of 9160085f, D80)"
+
+[[fold]]
+form = "sf.expressions.data-types-geospatial.st-geogfromwkt"
+into = ["sf.functions.st-geographyfromwkt.st-geogfromwkt"]
+reason = "general-reference page restating syntax catalogued on its own page (omission audit of 9160085f, D80)"
+
+[[fold]]
+form = "sf.expressions.data-types-geospatial.st-geomfromwkb"
+into = ["sf.functions.st-geometryfromwkb.st-geomfromwkb"]
+reason = "general-reference page restating syntax catalogued on its own page (omission audit of 9160085f, D80)"
+
+[[fold]]
+form = "sf.expressions.data-types-geospatial.st-geomfromwkt"
+into = ["sf.functions.st-geometryfromwkt.st-geomfromwkt"]
+reason = "general-reference page restating syntax catalogued on its own page (omission audit of 9160085f, D80)"
+
+[[fold]]
+form = "sf.expressions.data-types-geospatial.to-geography"
+into = ["sf.functions.to-geography"]
+reason = "general-reference page restating syntax catalogued on its own page (omission audit of 9160085f, D80)"
+
+[[fold]]
+form = "sf.expressions.data-types-geospatial.to-geometry"
+into = ["sf.functions.to-geometry"]
+reason = "general-reference page restating syntax catalogued on its own page (omission audit of 9160085f, D80)"
+
+[[fold]]
+form = "sf.expressions.date-time-input-output.to-timestamp"
+into = ["sf.functions.to-timestamp"]
+reason = "general-reference page restating syntax catalogued on its own page (omission audit of 9160085f, D80)"
+
+[[fold]]
+form = "sf.expressions.date-time-input-output.to-timestamp-to-number"
+into = ["sf.functions.to-timestamp", "sf.functions.to-decimal.to-number"]
+reason = "general-reference page restating syntax catalogued on its own page (omission audit of 9160085f, D80)"
+
+[[fold]]
+form = "sf.expressions.collation.collate"
+into = ["sf.functions.collate.collate"]
+reason = "general-reference page restating syntax catalogued on its own page (omission audit of 9160085f, D80)"
+
+[[fold]]
+form = "sf.expressions.collation.collate.collate-function"
+into = ["sf.functions.collate.collate.syntax"]
+reason = "general-reference page restating syntax catalogued on its own page (omission audit of 9160085f, D80)"
+
+[[fold]]
+form = "sf.expressions.collation.collation"
+into = ["sf.functions.collation"]
+reason = "general-reference page restating syntax catalogued on its own page (omission audit of 9160085f, D80)"
+
+[[fold]]
+form = "sf.expressions.collation.create-table-collate"
+into = ["sf.ddl.create-table.create-table"]
+reason = "general-reference page restating syntax catalogued on its own page (omission audit of 9160085f, D80)"
+
+[[fold]]
+form = "sf.ddl.constraints-create.alter-table-add"
+into = ["sf.ddl.alter-table.constraintaction"]
+reason = "general-reference page restating syntax catalogued on its own page (omission audit of 9160085f, D80)"
+
+[[fold]]
+form = "sf.ddl.constraints-create.alter-table-add-column"
+into = ["sf.ddl.alter-table.tablecolumnaction"]
+reason = "general-reference page restating syntax catalogued on its own page (omission audit of 9160085f, D80)"
+
+[[fold]]
+form = "sf.ddl.constraints-create.create-table"
+into = ["sf.ddl.create-table.create-table"]
+reason = "general-reference page restating syntax catalogued on its own page (omission audit of 9160085f, D80)"
+
+[[fold]]
+form = "sf.ddl.constraints-create.create-table.creating-constraints-out-of-line"
+into = ["sf.ddl.create-table.create-table"]
+reason = "general-reference page restating syntax catalogued on its own page (omission audit of 9160085f, D80)"
+
+[[fold]]
+form = "sf.ddl.constraints-alter.alter-modify-constraint-primary"
+into = ["sf.ddl.alter-table.constraintaction"]
+reason = "general-reference page restating syntax catalogued on its own page (omission audit of 9160085f, D80)"
+
+[[fold]]
+form = "sf.ddl.constraints-alter.rename-constraint-to"
+into = ["sf.ddl.alter-table.constraintaction"]
+reason = "general-reference page restating syntax catalogued on its own page (omission audit of 9160085f, D80)"
+
+[[fold]]
+form = "sf.ddl.constraints-drop.alter-table-drop-column"
+into = ["sf.ddl.alter-table.tablecolumnaction"]
+reason = "general-reference page restating syntax catalogued on its own page (omission audit of 9160085f, D80)"
+
+[[fold]]
+form = "sf.ddl.constraints-drop.alter-table-drop-constraint"
+into = ["sf.ddl.alter-table.constraintaction"]
+reason = "general-reference page restating syntax catalogued on its own page (omission audit of 9160085f, D80)"
+
+[[fold]]
+form = "sf.ddl.constraints-drop.drop-table-schema-database"
+into = ["sf.ddl.drop-database", "sf.ddl.drop-schema", "sf.ddl.drop-table"]
+reason = "general-reference page restating syntax catalogued on its own page (omission audit of 9160085f, D80)"
+
+[[fold]]
+form = "sf.expressions.virtual-columns.alter-table-add-as"
+into = ["sf.ddl.alter-table.tablecolumnaction"]
+reason = "general-reference page restating syntax catalogued on its own page (omission audit of 9160085f, D80)"
+
+[[fold]]
+form = "sf.expressions.virtual-columns.create-or-replace-table"
+into = ["sf.ddl.create-table.create-table"]
+reason = "general-reference page restating syntax catalogued on its own page (omission audit of 9160085f, D80)"
+
+[[fold]]
+form = "sf.expressions.external-functions-translators.alter-function-set"
+into = ["sf.ddl.alter-function.set-request-translator-response-translator"]
+reason = "general-reference page restating syntax catalogued on its own page (omission audit of 9160085f, D80)"
+
+[[fold]]
+form = "sf.expressions.external-functions-translators.alter-function-unset"
+into = ["sf.ddl.alter-function.unset-comment-headers-context-headers"]
+reason = "general-reference page restating syntax catalogued on its own page (omission audit of 9160085f, D80)"
+
+[[fold]]
+form = "sf.expressions.external-functions-translators.create-external-function-f"
+into = ["sf.ddl.create-external-function.function-returns-api-integration-as"]
+reason = "general-reference page restating syntax catalogued on its own page (omission audit of 9160085f, D80)"
+
+[[fold]]
+form = "sf.expressions.sql-format-models"
+into = ["sf.functions.to-char.to-char", "sf.functions.to-decimal.to-number"]
+reason = "format-string element inside conversion-function format arguments, not SQL syntax; an obligation of the forms that take a format (omission audit of 9160085f, D80)"
+
+[[fold]]
+form = "sf.expressions.data-types-datetime.interval-formats"
+into = ["sf.expressions.data-types-datetime.interval"]
+reason = "string content of an INTERVAL literal; an obligation of the interval literal form (omission audit of 9160085f, D80)"
+
+[[fold]]
+form = "sf.expressions.data-types-datetime.interval-formats.interval-formats"
+into = ["sf.expressions.data-types-datetime.interval"]
+reason = "string content of an INTERVAL literal; an obligation of the interval literal form (omission audit of 9160085f, D80)"
