@@ -48,8 +48,16 @@ PAIR_SEPARATOR: str = " & "
 
 IDENTIFIER_ANCHOR: str = "doc.identifiers-syntax"
 IDENTIFIER_RESERVED: str = "reserved"
+IDENTIFIER_QUOTED: str = "quoted"
+QUOTED_WITHOUT_BLANK: str = (
+    "a double-quoted identifier in mixed case without blanks; blanks inside quotes belong to "
+    "the double-quoted identifier form"
+)
+QUOTED_WITHOUT_BLANK_NAMES: frozenset[str] = frozenset(
+    {"label", "nested_procedure_name", "arg_name"}
+)
 IDENTIFIER_CLASSES: tuple[tuple[str, str], ...] = (
-    ("quoted", "a double-quoted identifier with blanks and mixed case"),
+    (IDENTIFIER_QUOTED, "a double-quoted identifier with blanks and mixed case"),
     (
         IDENTIFIER_RESERVED,
         "a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)",

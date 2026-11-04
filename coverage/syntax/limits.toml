@@ -811,3 +811,16 @@ form = "sf.scripting.for.do-end-for"
 kind = "negative_neighbour"
 target = "<cursor_name>"
 reason = "FOR <row_variable> IN <expression> also parses as a loop over an array or object expression, so a string literal reaches the loop and fails only when it runs: errno 92234 'Expression in variant for loop does not evaluate to an array or an object' (run d82-scripting-2-20261104T010552Z, refused as phase not established)"
+
+# Double-quoted identifiers (decision D87 follow-up): blanks inside quotes are tested once, here, in a
+# position where Snowflake answers them. Quoted labels and block-local procedure or argument names
+# containing a blank give internal error 603 (unobservable/scripting.toml diagnostics), so the
+# scripting forms test quoting without the blank.
+
+[[limit]]
+form = "sf.expressions.identifiers-syntax.double-quoted-identifier"
+kind = "positive"
+note = "a double-quoted identifier containing a blank and mixed case, as a column alias"
+anchor = "doc.identifiers-syntax / Double-quoted identifiers"
+sql = "SELECT 1 AS \"a B\" ;"
+context = "raw"

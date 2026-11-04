@@ -231,7 +231,7 @@ kind = "identifier_class"
 required = true
 target = "<label>"
 anchor = "doc.identifiers-syntax"
-note = "quoted: a double-quoted identifier with blanks and mixed case"
+note = "quoted: a double-quoted identifier in mixed case without blanks; blanks inside quotes belong to the double-quoted identifier form"
 
 [[obligation]]
 id = "sf.scripting.break.o009"
@@ -800,7 +800,7 @@ kind = "identifier_class"
 required = true
 target = "<label>"
 anchor = "doc.identifiers-syntax"
-note = "quoted: a double-quoted identifier with blanks and mixed case"
+note = "quoted: a double-quoted identifier in mixed case without blanks; blanks inside quotes belong to the double-quoted identifier form"
 
 [[obligation]]
 id = "sf.scripting.continue.o009"
@@ -1370,7 +1370,7 @@ kind = "identifier_class"
 required = true
 target = "<nested_procedure_name>"
 anchor = "doc.identifiers-syntax"
-note = "quoted: a double-quoted identifier with blanks and mixed case"
+note = "quoted: a double-quoted identifier in mixed case without blanks; blanks inside quotes belong to the double-quoted identifier form"
 
 [[obligation]]
 id = "sf.scripting.declare.procedure-returns-table-as.o037"
@@ -1386,7 +1386,7 @@ kind = "identifier_class"
 required = true
 target = "<arg_name>"
 anchor = "doc.identifiers-syntax"
-note = "quoted: a double-quoted identifier with blanks and mixed case"
+note = "quoted: a double-quoted identifier in mixed case without blanks; blanks inside quotes belong to the double-quoted identifier form"
 
 [[obligation]]
 id = "sf.scripting.declare.procedure-returns-table-as.o039"
@@ -2206,7 +2206,7 @@ kind = "identifier_class"
 required = true
 target = "<label>"
 anchor = "doc.identifiers-syntax"
-note = "quoted: a double-quoted identifier with blanks and mixed case"
+note = "quoted: a double-quoted identifier in mixed case without blanks; blanks inside quotes belong to the double-quoted identifier form"
 
 [[obligation]]
 id = "sf.scripting.for.do-end-for.o026"
@@ -2449,7 +2449,7 @@ kind = "identifier_class"
 required = true
 target = "<label>"
 anchor = "doc.identifiers-syntax"
-note = "quoted: a double-quoted identifier with blanks and mixed case"
+note = "quoted: a double-quoted identifier in mixed case without blanks; blanks inside quotes belong to the double-quoted identifier form"
 
 [[obligation]]
 id = "sf.scripting.for.to-do-loop-end.o033"
@@ -3409,7 +3409,7 @@ kind = "identifier_class"
 required = true
 target = "<label>"
 anchor = "doc.identifiers-syntax"
-note = "quoted: a double-quoted identifier with blanks and mixed case"
+note = "quoted: a double-quoted identifier in mixed case without blanks; blanks inside quotes belong to the double-quoted identifier form"
 
 [[obligation]]
 id = "sf.scripting.loop.o014"
@@ -3767,7 +3767,7 @@ kind = "identifier_class"
 required = true
 target = "<label>"
 anchor = "doc.identifiers-syntax"
-note = "quoted: a double-quoted identifier with blanks and mixed case"
+note = "quoted: a double-quoted identifier in mixed case without blanks; blanks inside quotes belong to the double-quoted identifier form"
 
 [[obligation]]
 id = "sf.scripting.repeat.o019"
@@ -3984,7 +3984,7 @@ kind = "identifier_class"
 required = true
 target = "<label>"
 anchor = "doc.identifiers-syntax"
-note = "quoted: a double-quoted identifier with blanks and mixed case"
+note = "quoted: a double-quoted identifier in mixed case without blanks; blanks inside quotes belong to the double-quoted identifier form"
 
 [[obligation]]
 id = "sf.scripting.while.o023"

@@ -26,6 +26,7 @@ from scripts.syntax_obligations.constants import (
     IDENTIFIER_ANCHOR,
     IDENTIFIER_CLASS,
     IDENTIFIER_CLASSES,
+    IDENTIFIER_QUOTED,
     IDENTIFIER_RESERVED,
     KIND_ALTERNATIVE,
     KIND_IDENTIFIER,
@@ -46,6 +47,8 @@ from scripts.syntax_obligations.constants import (
     NODE_CHOICE,
     NODE_OPTIONAL,
     PARENS,
+    QUOTED_WITHOUT_BLANK,
+    QUOTED_WITHOUT_BLANK_NAMES,
     STRING_CLASS,
     SUBGRAMMAR_CLASS,
     TARGET_WIDTH,
@@ -261,7 +264,7 @@ def derive_trees(*, form: str, grammar: list[str]) -> tuple[list[Draft], list[tu
                     form=form,
                     kind=KIND_IDENTIFIER,
                     target=placeholder,
-                    note=f"{label}: {description}",
+                    note=_class_note(label=label, description=description, placeholder=placeholder),
                     anchor=IDENTIFIER_ANCHOR,
                     spec=reserved
                     if label == IDENTIFIER_RESERVED
@@ -280,3 +283,10 @@ def derive_trees(*, form: str, grammar: list[str]) -> tuple[list[Draft], list[tu
             )
         )
     return walk.drafts, trees
+
+
+def _class_note(*, label: str, description: str, placeholder: str) -> str:
+    """The identifier class note, blank-free for names where a blank breaks Snowflake."""
+    if label == IDENTIFIER_QUOTED and placeholder.strip("<>") in QUOTED_WITHOUT_BLANK_NAMES:
+        return f"{label}: {QUOTED_WITHOUT_BLANK}"
+    return f"{label}: {description}"
