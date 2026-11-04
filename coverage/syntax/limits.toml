@@ -829,7 +829,8 @@ context = "raw"
 # set, never an exhaustive one. Each [[limit]] of kind extreme is one case of `size` levels or items;
 # it carries no expect, because its outcome is what Snowflake's receipt shows, and a local parser
 # crash, stack overflow or hang fails it. Scripting carries block nesting (50 and 100 levels) and
-# its own repetition lists (1,000 and 5,000 items); literals, identifiers, expressions, subqueries
+# its own repetition lists (1,000 and 5,000 items, branch lists 1,000 only: 5,000 branches hit
+# internal error 603 and are diagnostic records in unobservable/scripting.toml); literals, identifiers, expressions, subqueries
 # and IN or column lists get theirs once on the shared forms when their families are built.
 [[limit]]
 form = "sf.scripting.begin"
@@ -1025,33 +1026,11 @@ core = "ELSEIF ( FALSE ) THEN NULL ;"
 outer_close = "END IF ;"
 
 [[limit]]
-form = "sf.scripting.if"
-kind = "extreme"
-note = "5,000 ELSEIF branches in one IF; no documented bound"
-anchor = "doc.snowflake-scripting.if / Syntax"
-size = 5000
-outer_open = "IF ( FALSE ) THEN NULL ;"
-open = "ELSEIF ( FALSE ) THEN NULL ;"
-core = "ELSEIF ( FALSE ) THEN NULL ;"
-outer_close = "END IF ;"
-
-[[limit]]
 form = "sf.scripting.case.end.syntax"
 kind = "extreme"
 note = "1,000 WHEN branches in one searched CASE; no documented bound"
 anchor = "doc.snowflake-scripting.case / Syntax"
 size = 1000
-outer_open = "CASE"
-open = "WHEN FALSE THEN NULL ;"
-core = "WHEN FALSE THEN NULL ;"
-outer_close = "END CASE ;"
-
-[[limit]]
-form = "sf.scripting.case.end.syntax"
-kind = "extreme"
-note = "5,000 WHEN branches in one searched CASE; no documented bound"
-anchor = "doc.snowflake-scripting.case / Syntax"
-size = 5000
 outer_open = "CASE"
 open = "WHEN FALSE THEN NULL ;"
 core = "WHEN FALSE THEN NULL ;"
@@ -1076,3 +1055,203 @@ size = 5000
 outer_open = "DECLARE"
 open = "v{n} INT ;"
 core = "v0 INT ;"
+
+# Scripting-owned lists and nesting the omission audit of f6c6ebe0 listed (decision D92).
+
+[[limit]]
+form = "sf.scripting.exception"
+kind = "extreme"
+note = "500 WHEN clauses in one exception handler; no documented bound"
+anchor = "doc.snowflake-scripting.exception / Syntax"
+size = 500
+outer_open = "EXCEPTION"
+open = "WHEN STATEMENT_ERROR THEN NULL ;"
+core = "WHEN OTHER THEN NULL ;"
+
+[[limit]]
+form = "sf.scripting.exception"
+kind = "extreme"
+note = "1,000 WHEN clauses in one exception handler; no documented bound"
+anchor = "doc.snowflake-scripting.exception / Syntax"
+size = 1000
+outer_open = "EXCEPTION"
+open = "WHEN STATEMENT_ERROR THEN NULL ;"
+core = "WHEN OTHER THEN NULL ;"
+
+[[limit]]
+form = "sf.scripting.exception"
+kind = "extreme"
+note = "1,000 exception names joined by OR in one WHEN clause; no documented bound"
+anchor = "doc.snowflake-scripting.exception / Syntax"
+size = 1000
+outer_open = "EXCEPTION WHEN STATEMENT_ERROR"
+open = "OR EXPRESSION_ERROR"
+core = "THEN NULL ;"
+
+[[limit]]
+form = "sf.scripting.exception"
+kind = "extreme"
+note = "2,000 exception names joined by OR in one WHEN clause; no documented bound"
+anchor = "doc.snowflake-scripting.exception / Syntax"
+size = 2000
+outer_open = "EXCEPTION WHEN STATEMENT_ERROR"
+open = "OR EXPRESSION_ERROR"
+core = "THEN NULL ;"
+
+[[limit]]
+form = "sf.scripting.fetch"
+kind = "extreme"
+note = "1,000 variables in one FETCH ... INTO list; no documented bound"
+anchor = "doc.snowflake-scripting.fetch / Syntax"
+size = 1000
+context = "raw"
+outer_open = "DECLARE c1 CURSOR FOR SELECT 1 ; v0 INT ; BEGIN OPEN c1 ; FETCH c1 INTO"
+open = "v0 ,"
+core = "v0 ;"
+outer_close = "END ;"
+
+[[limit]]
+form = "sf.scripting.fetch"
+kind = "extreme"
+note = "5,000 variables in one FETCH ... INTO list; no documented bound"
+anchor = "doc.snowflake-scripting.fetch / Syntax"
+size = 5000
+context = "raw"
+outer_open = "DECLARE c1 CURSOR FOR SELECT 1 ; v0 INT ; BEGIN OPEN c1 ; FETCH c1 INTO"
+open = "v0 ,"
+core = "v0 ;"
+outer_close = "END ;"
+
+[[limit]]
+form = "sf.scripting.open"
+kind = "extreme"
+note = "1,000 bind variables in one OPEN ... USING list; no documented bound"
+anchor = "doc.snowflake-scripting.open / Syntax"
+size = 1000
+context = "raw"
+outer_open = "DECLARE c1 CURSOR FOR SELECT ? ; v0 INT DEFAULT 1 ; BEGIN OPEN c1 USING ("
+open = "v0 ,"
+core = "v0 ) ;"
+outer_close = "END ;"
+
+[[limit]]
+form = "sf.scripting.open"
+kind = "extreme"
+note = "5,000 bind variables in one OPEN ... USING list; no documented bound"
+anchor = "doc.snowflake-scripting.open / Syntax"
+size = 5000
+context = "raw"
+outer_open = "DECLARE c1 CURSOR FOR SELECT ? ; v0 INT DEFAULT 1 ; BEGIN OPEN c1 USING ("
+open = "v0 ,"
+core = "v0 ) ;"
+outer_close = "END ;"
+
+[[limit]]
+form = "sf.scripting.declare.procedure-returns-table-as"
+kind = "extreme"
+note = "1,000 arguments of one block-local procedure; no documented bound"
+anchor = "doc.snowflake-scripting.declare / Nested stored procedure declaration syntax"
+size = 1000
+outer_open = "p1 PROCEDURE ("
+open = "a{n} INT ,"
+core = "a0 INT ) RETURNS INT AS BEGIN RETURN 1 ; END ;"
+
+[[limit]]
+form = "sf.scripting.declare.procedure-returns-table-as"
+kind = "extreme"
+note = "4,000 arguments of one block-local procedure; no documented bound"
+anchor = "doc.snowflake-scripting.declare / Nested stored procedure declaration syntax"
+size = 4000
+outer_open = "p1 PROCEDURE ("
+open = "a{n} INT ,"
+core = "a0 INT ) RETURNS INT AS BEGIN RETURN 1 ; END ;"
+
+[[limit]]
+form = "sf.scripting.declare.procedure-returns-table-as"
+kind = "extreme"
+note = "1,000 columns in one RETURNS TABLE ( ... ) clause; no documented bound"
+anchor = "doc.snowflake-scripting.declare / Nested stored procedure declaration syntax"
+size = 1000
+outer_open = "p1 PROCEDURE ( ) RETURNS TABLE ("
+open = "c{n} INT ,"
+core = "c0 INT ) AS BEGIN RETURN 1 ; END ;"
+
+[[limit]]
+form = "sf.scripting.declare.procedure-returns-table-as"
+kind = "extreme"
+note = "4,000 columns in one RETURNS TABLE ( ... ) clause; no documented bound"
+anchor = "doc.snowflake-scripting.declare / Nested stored procedure declaration syntax"
+size = 4000
+outer_open = "p1 PROCEDURE ( ) RETURNS TABLE ("
+open = "c{n} INT ,"
+core = "c0 INT ) AS BEGIN RETURN 1 ; END ;"
+
+[[limit]]
+form = "sf.scripting.case.end"
+kind = "extreme"
+note = "500 WHEN branches in one simple CASE; no documented bound"
+anchor = "doc.snowflake-scripting.case / Syntax"
+size = 500
+outer_open = "CASE 1"
+open = "WHEN 2 THEN NULL ;"
+core = "WHEN 3 THEN NULL ;"
+outer_close = "END CASE ;"
+
+[[limit]]
+form = "sf.scripting.case.end"
+kind = "extreme"
+note = "1,000 WHEN branches in one simple CASE; no documented bound"
+anchor = "doc.snowflake-scripting.case / Syntax"
+size = 1000
+outer_open = "CASE 1"
+open = "WHEN 2 THEN NULL ;"
+core = "WHEN 3 THEN NULL ;"
+outer_close = "END CASE ;"
+
+[[limit]]
+form = "sf.scripting.for.do-end-for"
+kind = "extreme"
+note = "cursor-based FOR ... END FOR nested, 50 levels deep; no documented bound"
+anchor = "doc.snowflake-scripting.for / Syntax"
+size = 50
+context = "raw"
+outer_open = "DECLARE c1 CURSOR FOR SELECT 1 ; BEGIN"
+open = "FOR r{n} IN c1 DO"
+core = "FOR r0 IN c1 DO NULL ; END FOR ;"
+close = "END FOR ;"
+outer_close = "END ;"
+
+[[limit]]
+form = "sf.scripting.for.do-end-for"
+kind = "extreme"
+note = "cursor-based FOR ... END FOR nested, 100 levels deep; no documented bound"
+anchor = "doc.snowflake-scripting.for / Syntax"
+size = 100
+context = "raw"
+outer_open = "DECLARE c1 CURSOR FOR SELECT 1 ; BEGIN"
+open = "FOR r{n} IN c1 DO"
+core = "FOR r0 IN c1 DO NULL ; END FOR ;"
+close = "END FOR ;"
+outer_close = "END ;"
+
+[[limit]]
+form = "sf.scripting.declare.declare"
+kind = "extreme"
+note = "DECLARE ... BEGIN ... END blocks nested, 50 levels deep; no documented bound"
+anchor = "doc.snowflake-scripting.declare / Syntax"
+size = 50
+context = "raw"
+open = "DECLARE v{n} INT ; BEGIN"
+core = "DECLARE v0 INT ; BEGIN RETURN 1 ; END ;"
+close = "END ;"
+
+[[limit]]
+form = "sf.scripting.declare.declare"
+kind = "extreme"
+note = "DECLARE ... BEGIN ... END blocks nested, 100 levels deep; no documented bound"
+anchor = "doc.snowflake-scripting.declare / Syntax"
+size = 100
+context = "raw"
+open = "DECLARE v{n} INT ; BEGIN"
+core = "DECLARE v0 INT ; BEGIN RETURN 1 ; END ;"
+close = "END ;"

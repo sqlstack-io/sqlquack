@@ -550,6 +550,20 @@ anchor = "doc.snowflake-scripting.case / Note"
 note = "at top level, outside any Snowflake Scripting block"
 
 [[obligation]]
+id = "sf.scripting.case.end.o031"
+kind = "extreme"
+required = true
+anchor = "doc.snowflake-scripting.case / Syntax"
+note = "500 WHEN branches in one simple CASE; no documented bound"
+
+[[obligation]]
+id = "sf.scripting.case.end.o032"
+kind = "extreme"
+required = true
+anchor = "doc.snowflake-scripting.case / Syntax"
+note = "1,000 WHEN branches in one simple CASE; no documented bound"
+
+[[obligation]]
 id = "sf.scripting.case.end.syntax.o001"
 kind = "positive"
 required = true
@@ -741,13 +755,6 @@ kind = "extreme"
 required = true
 anchor = "doc.snowflake-scripting.case / Syntax"
 note = "1,000 WHEN branches in one searched CASE; no documented bound"
-
-[[obligation]]
-id = "sf.scripting.case.end.syntax.o030"
-kind = "extreme"
-required = true
-anchor = "doc.snowflake-scripting.case / Syntax"
-note = "5,000 WHEN branches in one searched CASE; no documented bound"
 
 [[obligation]]
 id = "sf.scripting.close.o001"
@@ -1066,6 +1073,20 @@ kind = "extreme"
 required = true
 anchor = "doc.snowflake-scripting.declare / Syntax"
 note = "5,000 variable declarations in one DECLARE section; no documented bound"
+
+[[obligation]]
+id = "sf.scripting.declare.declare.o015"
+kind = "extreme"
+required = true
+anchor = "doc.snowflake-scripting.declare / Syntax"
+note = "DECLARE ... BEGIN ... END blocks nested, 50 levels deep; no documented bound"
+
+[[obligation]]
+id = "sf.scripting.declare.declare.o016"
+kind = "extreme"
+required = true
+anchor = "doc.snowflake-scripting.declare / Syntax"
+note = "DECLARE ... BEGIN ... END blocks nested, 100 levels deep; no documented bound"
 
 [[obligation]]
 id = "sf.scripting.declare.exception.o001"
@@ -1488,6 +1509,34 @@ kind = "positive"
 required = true
 anchor = "doc.snowflake-scripting.declare / Nested stored procedure declaration syntax"
 note = "GEOGRAPHY as a column type in RETURNS TABLE ( ... ): a syntax-phase acceptance; Snowflake does not enforce the documented restriction"
+
+[[obligation]]
+id = "sf.scripting.declare.procedure-returns-table-as.o043"
+kind = "extreme"
+required = true
+anchor = "doc.snowflake-scripting.declare / Nested stored procedure declaration syntax"
+note = "1,000 arguments of one block-local procedure; no documented bound"
+
+[[obligation]]
+id = "sf.scripting.declare.procedure-returns-table-as.o044"
+kind = "extreme"
+required = true
+anchor = "doc.snowflake-scripting.declare / Nested stored procedure declaration syntax"
+note = "4,000 arguments of one block-local procedure; no documented bound"
+
+[[obligation]]
+id = "sf.scripting.declare.procedure-returns-table-as.o045"
+kind = "extreme"
+required = true
+anchor = "doc.snowflake-scripting.declare / Nested stored procedure declaration syntax"
+note = "1,000 columns in one RETURNS TABLE ( ... ) clause; no documented bound"
+
+[[obligation]]
+id = "sf.scripting.declare.procedure-returns-table-as.o046"
+kind = "extreme"
+required = true
+anchor = "doc.snowflake-scripting.declare / Nested stored procedure declaration syntax"
+note = "4,000 columns in one RETURNS TABLE ( ... ) clause; no documented bound"
 
 [[obligation]]
 id = "sf.scripting.declare.resultset.o001"
@@ -2015,6 +2064,34 @@ anchor = "doc.snowflake-scripting.exception / Syntax"
 note = "blocks with an exception handler nested inside a handler, 100 levels deep; no documented bound"
 
 [[obligation]]
+id = "sf.scripting.exception.o046"
+kind = "extreme"
+required = true
+anchor = "doc.snowflake-scripting.exception / Syntax"
+note = "500 WHEN clauses in one exception handler; no documented bound"
+
+[[obligation]]
+id = "sf.scripting.exception.o047"
+kind = "extreme"
+required = true
+anchor = "doc.snowflake-scripting.exception / Syntax"
+note = "1,000 WHEN clauses in one exception handler; no documented bound"
+
+[[obligation]]
+id = "sf.scripting.exception.o048"
+kind = "extreme"
+required = true
+anchor = "doc.snowflake-scripting.exception / Syntax"
+note = "1,000 exception names joined by OR in one WHEN clause; no documented bound"
+
+[[obligation]]
+id = "sf.scripting.exception.o049"
+kind = "extreme"
+required = true
+anchor = "doc.snowflake-scripting.exception / Syntax"
+note = "2,000 exception names joined by OR in one WHEN clause; no documented bound"
+
+[[obligation]]
 id = "sf.scripting.fetch.o001"
 kind = "positive"
 required = true
@@ -2126,6 +2203,20 @@ kind = "negative_neighbour"
 required = true
 anchor = "doc.snowflake-scripting.fetch / Note"
 note = "at top level, outside any Snowflake Scripting block"
+
+[[obligation]]
+id = "sf.scripting.fetch.o017"
+kind = "extreme"
+required = true
+anchor = "doc.snowflake-scripting.fetch / Syntax"
+note = "1,000 variables in one FETCH ... INTO list; no documented bound"
+
+[[obligation]]
+id = "sf.scripting.fetch.o018"
+kind = "extreme"
+required = true
+anchor = "doc.snowflake-scripting.fetch / Syntax"
+note = "5,000 variables in one FETCH ... INTO list; no documented bound"
 
 [[obligation]]
 id = "sf.scripting.for.do-end-for.o001"
@@ -2323,6 +2414,20 @@ kind = "negative_neighbour"
 required = true
 anchor = "doc.snowflake-scripting.for / Note"
 note = "at top level, outside any Snowflake Scripting block"
+
+[[obligation]]
+id = "sf.scripting.for.do-end-for.o030"
+kind = "extreme"
+required = true
+anchor = "doc.snowflake-scripting.for / Syntax"
+note = "cursor-based FOR ... END FOR nested, 50 levels deep; no documented bound"
+
+[[obligation]]
+id = "sf.scripting.for.do-end-for.o031"
+kind = "extreme"
+required = true
+anchor = "doc.snowflake-scripting.for / Syntax"
+note = "cursor-based FOR ... END FOR nested, 100 levels deep; no documented bound"
 
 [[obligation]]
 id = "sf.scripting.for.to-do-loop-end.o001"
@@ -2889,13 +2994,6 @@ kind = "extreme"
 required = true
 anchor = "doc.snowflake-scripting.if / Syntax"
 note = "1,000 ELSEIF branches in one IF; no documented bound"
-
-[[obligation]]
-id = "sf.scripting.if.o043"
-kind = "extreme"
-required = true
-anchor = "doc.snowflake-scripting.if / Syntax"
-note = "5,000 ELSEIF branches in one IF; no documented bound"
 
 [[obligation]]
 id = "sf.scripting.let.let.o001"
@@ -3726,6 +3824,20 @@ kind = "negative_neighbour"
 required = true
 anchor = "doc.snowflake-scripting.open / Note"
 note = "at top level, outside any Snowflake Scripting block"
+
+[[obligation]]
+id = "sf.scripting.open.o020"
+kind = "extreme"
+required = true
+anchor = "doc.snowflake-scripting.open / Syntax"
+note = "1,000 bind variables in one OPEN ... USING list; no documented bound"
+
+[[obligation]]
+id = "sf.scripting.open.o021"
+kind = "extreme"
+required = true
+anchor = "doc.snowflake-scripting.open / Syntax"
+note = "5,000 bind variables in one OPEN ... USING list; no documented bound"
 
 [[obligation]]
 id = "sf.scripting.raise.o001"

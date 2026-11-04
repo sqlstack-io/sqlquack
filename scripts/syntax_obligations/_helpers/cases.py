@@ -15,6 +15,7 @@ from scripts.syntax_obligations.constants import (
     EXPECT_ACCEPT,
     EXPECT_OBSERVE,
     EXPECT_REJECT,
+    EXPECT_TERMINATES,
     FAMILY_STYLES,
     LANE_A_BLOCK_SESSION,
     MEASURE_KEY,
@@ -193,9 +194,10 @@ def observed_stage(*, case: Row, phase: str | None) -> Row:
 
 
 def _observed_outcome(*, case: Row, phase: str | None, stage: str | None) -> Row:
-    """An extreme case's outcome as its receipt shows it; without an established phase it waits."""
+    """An extreme case's outcome (D92); a syntax error asks only for termination."""
     if phase == SYNTAX_ERROR_PHASE:
-        case["expect"] = EXPECT_REJECT
+        print(f"observed implementation limit, undocumented: {case['case_id']}")
+        case["expect"] = EXPECT_TERMINATES
     elif stage is not None:
         case["expect"] = EXPECT_ACCEPT
         if stage:

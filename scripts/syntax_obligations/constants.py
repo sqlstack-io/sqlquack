@@ -163,6 +163,7 @@ HAND_CASE_KEYS: tuple[str, ...] = (
 EXPECT_ACCEPT: str = "accept"
 EXPECT_REJECT: str = "reject"
 EXPECT_OBSERVE: str = "observe"
+EXPECT_TERMINATES: str = "terminates"
 HAND_SIZE: str = "size"
 REPEAT_SLOT: str = "{n}"
 LATER_ERROR_STAGES: frozenset[str] = frozenset({"", "semantic", "runtime", "error"})

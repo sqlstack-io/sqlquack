@@ -240,7 +240,8 @@ class _Renderer:
             *[fields.get("close", "")] * inner,
             fields.get("outer_close", ""),
         ]
-        return self.wrap(" ".join(part for part in parts if part))
+        text: str = " ".join(part for part in parts if part)
+        return text if fields.get("context") == CONTEXT_RAW else self.wrap(text)
 
     def _nest(self, *, label: str, depth: int) -> str:
         """An operand nested `depth` levels; a statement's innermost is the form's own fill."""
