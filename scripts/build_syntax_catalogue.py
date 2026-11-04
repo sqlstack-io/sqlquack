@@ -1,7 +1,4 @@
-"""Regenerate the documented Snowflake syntax catalogue from the private page cache.
-
-Usage: build_syntax_catalogue.py --cache CACHE [--out coverage/syntax]
-"""
+"""Regenerate the documented Snowflake syntax catalogue from the private page cache."""
 
 from __future__ import annotations
 

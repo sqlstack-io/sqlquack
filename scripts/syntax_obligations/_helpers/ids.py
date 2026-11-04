@@ -7,9 +7,7 @@ from pathlib import Path
 
 from scripts.syntax_obligations.constants import ID_WIDTH, PAIR_SEPARATOR
 from scripts.syntax_obligations.models import Draft
-from scripts.syntax_obligations.types import Row
-
-Key = tuple[str, str, str, str, str]
+from scripts.syntax_obligations.types import Key, Row
 
 
 def _key(*, form: str, kind: str, target: str, note: str, pair: str) -> Key:
@@ -41,7 +39,7 @@ def existing_ids(path: Path) -> dict[Key, str]:
     return kept
 
 
-def assign(drafts: list[Draft], kept: dict[Key, str]) -> list[tuple[str, Draft]]:
+def assign(*, drafts: list[Draft], kept: dict[Key, str]) -> list[tuple[str, Draft]]:
     """Each draft with its id: the kept id for a known key, else the form's next free number."""
     used: dict[str, int] = {}
     for identifier in kept.values():

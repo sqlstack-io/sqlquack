@@ -2085,13 +2085,6 @@ target = "<cursor_name>"
 note = "a valid identifier"
 
 [[obligation]]
-id = "sf.scripting.for.do-end-for.o007"
-kind = "negative_neighbour"
-required = true
-target = "<cursor_name>"
-note = "a string literal in place of <cursor_name>"
-
-[[obligation]]
 id = "sf.scripting.for.do-end-for.o008"
 kind = "required_operand_missing"
 required = true
@@ -3522,13 +3515,6 @@ kind = "operand_type_class"
 required = true
 target = "bind_variable_1 in [ USING ( bind_variable_1 [ , bind_variable_2 ... ] ) ]"
 note = "a valid identifier"
-
-[[obligation]]
-id = "sf.scripting.open.o009"
-kind = "negative_neighbour"
-required = true
-target = "bind_variable_1 in [ USING ( bind_variable_1 [ , bind_variable_2 ... ] ) ]"
-note = "a string literal in place of bind_variable_1"
 
 [[obligation]]
 id = "sf.scripting.open.o010"

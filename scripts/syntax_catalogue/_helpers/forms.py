@@ -111,7 +111,7 @@ def is_definition_variant(
         production.kind == KIND_DEFINITION
         and len(heading) >= MIN_VARIANT_DEPTH
         and bool(SYNTAX_HEADING.search(heading[1]))
-        and in_form_section(heading, syntax_sections_only=True)
+        and in_form_section(heading=heading, syntax_sections_only=True)
         and heading not in statement_headings
     )
 
@@ -223,7 +223,9 @@ def emit_forms(
         if form_id is None and natural in stale:
             form_id = natural
         if form_id is None:
-            form_id = next((old for old in stale if covers(existing, old=old, group=group)), None)
+            form_id = next(
+                (old for old in stale if covers(existing=existing, old=old, group=group)), None
+            )
         if form_id is not None and form_id in stale:
             stale.remove(form_id)
         if form_id is None:
@@ -235,7 +237,7 @@ def emit_forms(
     return forms, frozenset(taken)
 
 
-def covers(existing: Existing, *, old: str, group: FormGroup) -> bool:
+def covers(*, existing: Existing, old: str, group: FormGroup) -> bool:
     """True when every signature of an earlier form is still a signature of this form."""
     grammar: object = existing.forms[old]["grammar"]
     return isinstance(grammar, list) and bool(grammar) and set(grammar) <= set(group.grammars)

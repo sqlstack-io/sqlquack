@@ -796,3 +796,18 @@ form = "sf.scripting.let.let-resultset-default"
 kind = "negative_neighbour"
 note = "the form without its required RESULTSET"
 reason = "LET r1 DEFAULT ( SELECT 1 ) ; is the documented untyped LET form (accepted)"
+
+# Wrong-class negatives that Snowflake accepts as syntax (decision D82 keeps only lexically distinct
+# wrong classes); withdrawn on the receipts of runs d82-scripting-3 and d82-scripting-2.
+
+[[suppress]]
+form = "sf.scripting.open"
+kind = "negative_neighbour"
+target = "bind_variable_1 in [ USING ( bind_variable_1 [ , bind_variable_2 ... ] ) ]"
+reason = "OPEN ... USING takes expressions, so a string literal is valid syntax: Snowflake accepts OPEN c1 USING ( 'v1' ) (run d82-scripting-3-20261104T011650Z, receipt d5511dcf50f08a9437b56d42aa2359e78e51bc48830afd97a0e793e65db7ae2f)"
+
+[[suppress]]
+form = "sf.scripting.for.do-end-for"
+kind = "negative_neighbour"
+target = "<cursor_name>"
+reason = "FOR <row_variable> IN <expression> also parses as a loop over an array or object expression, so a string literal reaches the loop and fails only when it runs: errno 92234 'Expression in variant for loop does not evaluate to an array or an object' (run d82-scripting-2-20261104T010552Z, refused as phase not established)"

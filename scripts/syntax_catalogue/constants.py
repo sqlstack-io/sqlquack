@@ -42,6 +42,9 @@ FORMAT_MARKDOWN: str = "markdown"
 FORMAT_HTML: str = "html"
 NAV_INDEX_SUFFIX: str = ".json"
 UTC_FORMAT: str = "%Y-%m-%dT%H:%M:%SZ"
+FETCH_MIN_ARGUMENTS: int = 2
+FETCH_USAGE: str = "Usage: python -m scripts.fetch_syntax_docs CACHE INDEX_FILE [INDEX_FILE ...]"
+SOURCE_FIELD: str = "source"
 
 KIND_STATEMENT: str = "statement"
 KIND_DEFINITION: str = "definition"

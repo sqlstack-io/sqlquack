@@ -1,4 +1,4 @@
-"""Syntax obligation models: the grammar tree and obligation records."""
+"""Syntax obligation models: the grammar tree, obligation records and case rendering."""
 
 from __future__ import annotations
 
@@ -7,10 +7,7 @@ from dataclasses import dataclass, field
 
 @dataclass(frozen=True)
 class Node:
-    """A grammar token, an optional part `[ ... ]` or a choice `{ a | b }`.
-
-    Optional and choice nodes hold branches; an optional with one branch is a plain option.
-    """
+    """A grammar token, or an optional `[ ... ]` or choice `{ a | b }` holding branches."""
 
     kind: str
     text: str
@@ -20,15 +17,7 @@ class Node:
 
 @dataclass(frozen=True)
 class Spec:
-    """How to render an obligation's case from its form's grammar trees.
-
-    action: min (no option), max (every option), branch (choice branch `payload` everywhere),
-    drop or replace `node` (payload is the replacement), quote (every identifier quoted),
-    reserved (`node` as a reserved word), nest (statement or query operands nested).
-    `path` names the options that must be present to reach `node`, `chosen` the (choice,
-    branch) selections on the way. Nodes are `id()`s of the
-    trees `derive_trees` returns.
-    """
+    """A case recipe: an action on `node` (an `id()`) reached via `path` options and `chosen`."""
 
     action: str
     production: int = 0
@@ -53,3 +42,26 @@ class Draft:
     pair: tuple[str, str] | tuple[()] = ()
     required: bool = True
     spec: Spec | None = field(default=None, compare=False)
+
+
+@dataclass(frozen=True)
+class FormStyle:
+    """How a family wraps, fills, declares and opens what one form names to make a submission."""
+
+    prefix: str
+    suffix: str
+    fills: dict[str, str] = field(default_factory=dict)
+    clauses: dict[str, str] = field(default_factory=dict)
+    uses: dict[str, str] = field(default_factory=dict)
+    opens: str = ""
+    default_label: str = "l0"
+    terminate: bool = True
+
+
+@dataclass(frozen=True)
+class Rendered:
+    """A submission: accept (no syntax error) or reject (a syntax error), and an expected stage."""
+
+    sql: str
+    expect: str
+    stage: str = ""

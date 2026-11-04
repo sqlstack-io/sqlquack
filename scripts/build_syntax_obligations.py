@@ -1,7 +1,4 @@
-"""Regenerate syntax-coverage obligations from the catalogue grammar and the hand-written limits.
-
-Usage: build_syntax_obligations.py [--root coverage/syntax] FAMILY [FAMILY ...]
-"""
+"""Regenerate syntax-coverage obligations from the catalogue grammar and the hand-written limits."""
 
 from __future__ import annotations
 
