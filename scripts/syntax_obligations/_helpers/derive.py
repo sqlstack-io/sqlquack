@@ -21,9 +21,13 @@ from scripts.syntax_obligations.constants import (
     ACTION_QUOTE_IDENTIFIERS,
     ACTION_REPLACE_NODE,
     ACTION_RESERVED_WORD,
+    ARGUMENT_STARTS,
+    CALLEE_STARTS,
     CLASS_RULES,
+    CLOSE_PAREN,
     DEFAULT_CLASS,
     EXPECT_REJECT,
+    EXPRESSION_ARGUMENT_FAMILIES,
     IDENTIFIER_ANCHOR,
     IDENTIFIER_CLASS,
     IDENTIFIER_CLASSES,
@@ -47,6 +51,9 @@ from scripts.syntax_obligations.constants import (
     NO_BOUND,
     NODE_CHOICE,
     NODE_OPTIONAL,
+    NON_CALL_KEYWORDS,
+    OPEN_PAREN,
+    OPERAND_KEYWORDS,
     PARENS,
     QUOTED_WITHOUT_BLANK,
     QUOTED_WITHOUT_BLANK_NAMES,
@@ -85,6 +92,10 @@ class _Walk:
         self.quote_specs: dict[str, Spec] = {}
         self.nest_specs: dict[str, Spec] = {}
         self.chosen: tuple[tuple[int, int], ...] = ()
+        self.expression_arguments: bool = form.split(".")[1] in EXPRESSION_ARGUMENT_FAMILIES
+        self.calls: list[bool] = []
+        self.previous: str = ""
+        self.argument_classes: Counter[str] = Counter()
 
     def target(self, *, text: str, tail: str = "") -> str:
         """A per-form unique target, shortened before `tail`; repeats get `#2`, `#3` …"""
@@ -113,18 +124,48 @@ class _Walk:
         omission_is_absence: bool = len(nodes) == 1 and (branch or where.startswith("["))
         for position, node in enumerate(nodes):
             if node.kind == NODE_OPTIONAL:
+                before: str = self.previous
                 options += self.optional(node=node, where=where)
+                self.previous = before
                 continue
             if node.kind == NODE_CHOICE:
                 self.choice(node=node, where=where)
             else:
                 self.token(node=node, where=where, omission_is_absence=omission_is_absence)
+                self._track(node)
             if position > 0 and self._droppable(node):
                 inside: str = f" in {where}" if not top and where.startswith("[") else ""
                 self.dropped.setdefault(
                     render((node,)) + inside, self.reject(action=ACTION_DROP_NODE, node=node)
                 )
         return options
+
+    def _track(self, node: Node) -> None:
+        """Follow call parentheses and the token before the next one, in walk order."""
+        if node.text == OPEN_PAREN:
+            nested: bool = bool(self.calls) and self.calls[-1] and self._argument_start()
+            self.calls.append(nested or self._callee())
+        elif node.text == CLOSE_PAREN and self.calls:
+            self.calls.pop()
+        self.previous = node.text
+
+    def _callee(self) -> bool:
+        return (
+            bool(self.previous)
+            and (self.previous[0].isalpha() or self.previous[0] in CALLEE_STARTS)
+            and self.previous.upper() not in NON_CALL_KEYWORDS
+        )
+
+    def _argument_start(self) -> bool:
+        return self.previous.upper() in ARGUMENT_STARTS
+
+    def _whole_argument(self) -> bool:
+        """Whether the next operand fills a whole argument of a call, so it is an `<expr>`."""
+        if not self.expression_arguments:
+            return False
+        if not self.previous or self.previous.upper() in OPERAND_KEYWORDS:
+            return True
+        return bool(self.calls) and self.calls[-1] and self._argument_start()
 
     @staticmethod
     def _droppable(node: Node) -> bool:
@@ -169,7 +210,9 @@ class _Walk:
             self.add(
                 kind=KIND_OPERAND_CLASS, target=target, note=f"a valid {label}", spec=self.valid()
             )
-        if label in LEXICAL_WRONG:
+        if label in LEXICAL_WRONG and self._whole_argument():
+            self.argument_classes[label] += 1
+        elif label in LEXICAL_WRONG:
             self.add(
                 kind=KIND_NEGATIVE,
                 target=target,
@@ -228,7 +271,9 @@ class _Walk:
 
     def _branches(self, *, node: Node, where: str, top: bool, branch: bool) -> None:
         outer: tuple[tuple[int, int], ...] = self.chosen
+        before: str = self.previous
         for index, nodes in enumerate(node.branches):
+            self.previous = before
             self.chosen = (*outer, (id(node), index)) if len(node.branches) > 1 else outer
             self.sequence(nodes=nodes, where=where, top=top, branch=branch)
         self.chosen = outer
@@ -243,10 +288,12 @@ def derive(*, form: str, grammar: list[str]) -> list[Draft]:
     return derive_trees(form=form, grammar=grammar)[0]
 
 
-def derive_trees(*, form: str, grammar: list[str]) -> tuple[list[Draft], list[tuple[Node, ...]]]:
-    """The drafts with their case specs and parsed productions; an empty grammar derives none."""
+def derive_trees(
+    *, form: str, grammar: list[str]
+) -> tuple[list[Draft], list[tuple[Node, ...]], Counter[str]]:
+    """The drafts, parsed productions and the classes of skipped argument negatives (D97)."""
     if not grammar:
-        return [], []
+        return [], [], Counter()
     walk: _Walk = _Walk(form)
     note: str = "the documented form with every required part and no optional part"
     walk.add(kind=KIND_POSITIVE, target="", note=note, spec=walk.spec(action=ACTION_MIN_OPTIONS))
@@ -292,7 +339,7 @@ def derive_trees(*, form: str, grammar: list[str]) -> tuple[list[Draft], list[tu
                 spec=walk.nest_specs[label],
             )
         )
-    return walk.drafts, trees
+    return walk.drafts, trees, walk.argument_classes
 
 
 def _class_note(*, label: str, description: str, placeholder: str) -> str:

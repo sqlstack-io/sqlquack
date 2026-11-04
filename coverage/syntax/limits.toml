@@ -4049,3 +4049,148 @@ core = "'a'"
 outer_close = ";"
 size = 5000
 context = "raw"
+
+# Functions page typos (spot-check 2b9a74f1, D97): each reading renders the evidently intended grammar and quotes the page text.
+
+[[reading]]
+form = "sf.functions.zipf"
+grammar_sha256 = "cc3e04ce5d90d7af2ee2998744c152d16418b39400dcf46037bca57358e1d8b0"
+grammar = ["ZIPF( <s> , <N> , <gen> )"]
+reason = "the page shows `ZIPF( <s> ,  , <gen> )` with the middle argument missing; its usage notes name it N (\"the argument N is limited to [1, 16777215]\", \"the first two arguments (s and N) must be constants\") and the examples call zipf(1, 10, random())"
+
+[[reading]]
+form = "sf.functions.get-configuration-value"
+grammar_sha256 = "2068e63a7908efd5e9b8bb365f5bac1474072898214c32d87d599f55801cadd5"
+grammar = ["SYS_CONTEXT( 'SNOWFLAKE$APPLICATION' , 'GET_CONFIGURATION_VALUE' , '<config_name>' )"]
+reason = "the page shows a trailing comma, `'<config_name>' , )`, but lists only three arguments; read without the comma"
+
+[[reading]]
+form = "sf.functions.is-configuration-set"
+grammar_sha256 = "a40ea66885b4650ed939adaa0a3f67ddb4044f64db1fc56c8a9c79d6e422923c"
+grammar = ["SYS_CONTEXT( 'SNOWFLAKE$APPLICATION' , 'IS_CONFIGURATION_SET' , '<config_name>' )"]
+reason = "the page shows a trailing comma, `'<config_name>' , )`; its example is SYS_CONTEXT('SNOWFLAKE$APPLICATION', 'IS_CONFIGURATION_SET', 'my_config_name'); read without the comma"
+
+[[reading]]
+form = "sf.functions.system-generate-saml-csr"
+grammar_sha256 = "ac661b6b1cce817651b93a939e34f79e356015eeed3729e465f76351ffcf48c8"
+grammar = ["SYSTEM$GENERATE_SAML_CSR( <name> [ , '<dn>' ] )"]
+reason = "the page shows `SYSTEM$GENERATE_SAML_CSR( <name> ,  )` with the second argument missing; its arguments list name (required) and DN (optional, a string such as 'cn=juser, ou=dev, ou=people, o=eng, dc=com') and its examples call it with one and two arguments"
+
+[[reading]]
+form = "sf.functions.system-query-reference"
+grammar_sha256 = "b2adbc260b14f8bdc8b8fcd10781b62f5fda7ccf8e16247557d78b85c4857c78"
+grammar = ["SYSTEM$QUERY_REFERENCE( '<select_statement>' [ , <use_session_scope> ] )"]
+reason = "the page shows `'<select_statement>', [ , <use_session_scope> ] )`, a comma both before and inside the optional; read with the optional's comma only"
+
+[[reading]]
+form = "sf.functions.system-reference"
+grammar_sha256 = "0861b9938be8e59667f08ba7f699e378a2f8e23df7177b0b1f2557858ca23faf"
+grammar = ["SYSTEM$REFERENCE( '<object_type>' , '<object_identifier>' [ , '<reference_scope>' [ , '<privilege>' [ , '<privilege>' ... ] ] ] )"]
+reason = "the page shows `'<object_identifier>', [ , '<reference_scope>' ...`, a comma both before and inside the optional; read with the optional's comma only"
+
+[[reading]]
+form = "sf.functions.model-monitor-performance-metric.model-monitor-performance-metric"
+grammar_sha256 = "eff1dc33f7777e43c48a681815befad9fbbf7835dfde916998319dc9433ae576"
+grammar = ["MODEL_MONITOR_PERFORMANCE_METRIC( <model_monitor_name> , <performance_metric_name> [ , <granularity> [ , <start_time> [ , <end_time> [ , <extra_args> ] ] ] ] )"]
+reason = "the page shows `<performance_metric_name>, [, <granularity> ...`, a comma both before and inside the optional; the gateway variant on the same page writes `<performance_metric_name> [, <granularity> ...`; read with the optional's comma only"
+
+[[reading]]
+form = "sf.functions.system-provision-privatelink-endpoint"
+grammar_sha256 = "fd85162b180743c30808c77a9ac6ab224eb2a2396687a20e243e3c4791cc192b"
+grammar = ["SYSTEM$PROVISION_PRIVATELINK_ENDPOINT( '<provider_service_name>', '<host_name>' )", "SYSTEM$PROVISION_PRIVATELINK_ENDPOINT( '<provider_resource_id>' , '<host_name>' [ , '<subresource>' ] )", "SYSTEM$PROVISION_PRIVATELINK_ENDPOINT( '<target_service_id>', '<host_name>' )"]
+reason = "the Azure block shows `'<host_name>', [, '<subresource>' ]`, a comma both before and inside the optional; read with the optional's comma only"
+
+[[reading]]
+form = "sf.functions.split-text-recursive-character-snowflake-cortex"
+grammar_sha256 = "193eeb0cca0c62c836cee40270686e2b214ce943acab2875e9c359206a865434"
+grammar = ["SNOWFLAKE.CORTEX.SPLIT_TEXT_RECURSIVE_CHARACTER( '<text_to_split>' , '<format>' , <chunk_size> [ , <overlap> [ , <separators> ] ] )"]
+reason = "the page shows `<chunk_size>, [ <overlap> ], [ <separators> ] )`, which leaves a dangling comma when either is omitted; the arguments are positional, so separators follows overlap"
+
+[[reading]]
+form = "sf.functions.least"
+grammar_sha256 = "a9b22d4b43207f4d1c202dcb1975809ed61754a24d1ded71c7833a55bd79678c"
+grammar = ["LEAST( <expr1> [ , <expr2> ... ] )"]
+reason = "the page shows `LEAST(( <expr1> [ , <expr2> ... ] )` with an unmatched second parenthesis; its examples are LEAST(1, 3, 0, 4) and LEAST(col_1, col_2, col_3)"
+
+[[reading]]
+form = "sf.functions.policy-context"
+grammar_sha256 = "4a81cbc0516291b3c71e4f68cd7f82ef5d0081c1bc3da56b7645ed395bda033b"
+grammar = ["EXECUTE USING POLICY_CONTEXT( <arg> => '<string_literal>' [ , <arg> => '<string_literal>' , ... ] [ , <arg> => ( '<string_literal>' [ , '<string_literal>' , ... ] ) ] ) AS <query>"]
+reason = "the page shows `AS SELECT <query>`, where <query> is itself the SELECT statement to simulate (its example: execute using policy_context(current_account => '<consumer_account_name>') ... ;); read as AS <query> so the SQL is not SELECT SELECT"
+
+[[reading]]
+form = "sf.functions.ai-filter"
+grammar_sha256 = "72ac89feeb8f21907b1d378190ec4581c3cc2801b2f63f0ab7a5c44ab2c8cf47"
+grammar = ["AI_FILTER( <input> [, <return_error_details> ] )", "AI_FILTER( <predicate> , <input> [, <return_error_details> ] )", "AI_FILTER( PROMPT( '<template_string>' , <col_1> [ , <col_2> ... ] ) [ , <return_error_details> ] )"]
+reason = "the page shows `PROMPT('<template_string>',  <col_1>, \u2026 )`, a literal ellipsis after a comma; read as a list of one or more column arguments"
+
+[[reading]]
+form = "sf.functions.application-specification-status-history"
+grammar_sha256 = "9316a6fac94fd1aa7379a4414d42884e49b4155e8f1895cdb6ebaccd6a0acaf3"
+grammar = ["APPLICATION_SPECIFICATION_STATUS_HISTORY( [ APPLICATION_NAME => '<application_name>' ] [ , SPECIFICATION_NAME => '<specification_name>' ] [ , LIMIT => <number_of_rows> ] )"]
+reason = "the page closes the call before `[ LIMIT => <number_of_rows> ]`, but lists `LIMIT <number_of_rows>` among the function's arguments; read as a named argument inside the call (the receipt confirms the reading)"
+
+
+# D97: class negatives whose slot is not an ordinary call argument but may still be an expression to the parser;
+# Snowflake's answer settles them (syntax error: reject; otherwise withdrawn under D82).
+
+[[suppress]]
+form = "sf.functions.collate.collate.syntax"
+kind = "negative_neighbour"
+target = "'<collation_specification>'"
+note = "an unquoted identifier in place of '<collation_specification>'"
+reason = "D97: unsure whether the slot is literal-only, so the hand row below observes it instead of scoring a reject"
+
+[[limit]]
+form = "sf.functions.collate.collate.syntax"
+kind = "negative_neighbour"
+note = "an unquoted identifier in place of '<collation_specification>' (observed: the receipt decides whether the slot is literal-only)"
+anchor = "doc.functions.collate / Syntax"
+sql = "SELECT 'm' COLLATE m1 ;"
+expect = "observe"
+
+[[suppress]]
+form = "sf.functions.get-path.colon"
+kind = "negative_neighbour"
+target = "<path_name>"
+note = "a string literal in place of <path_name>"
+reason = "D97: unsure whether the slot is literal-only, so the hand row below observes it instead of scoring a reject"
+
+[[limit]]
+form = "sf.functions.get-path.colon"
+kind = "negative_neighbour"
+note = "a string literal in place of <path_name> (observed: the receipt decides whether the slot is literal-only)"
+anchor = "doc.functions.get_path / Syntax"
+sql = "SELECT v1 :'v1' ;"
+expect = "observe"
+
+[[suppress]]
+form = "sf.functions.get-path.colon.syntax"
+kind = "negative_neighbour"
+target = "<column_identifier>"
+note = "a string literal in place of <column_identifier>"
+reason = "D97: unsure whether the slot is literal-only, so the hand row below observes it instead of scoring a reject"
+
+[[limit]]
+form = "sf.functions.get-path.colon.syntax"
+kind = "negative_neighbour"
+note = "a string literal in place of <column_identifier> (observed: the receipt decides whether the slot is literal-only)"
+anchor = "doc.functions.get_path / Syntax"
+sql = "SELECT :( 'v1' , 'm' ) ;"
+expect = "observe"
+
+[[suppress]]
+form = "sf.functions.get-path.colon.syntax"
+kind = "negative_neighbour"
+target = "'<path_name>'"
+note = "an unquoted identifier in place of '<path_name>'"
+reason = "D97: unsure whether the slot is literal-only, so the hand row below observes it instead of scoring a reject"
+
+[[limit]]
+form = "sf.functions.get-path.colon.syntax"
+kind = "negative_neighbour"
+note = "an unquoted identifier in place of '<path_name>' (observed: the receipt decides whether the slot is literal-only)"
+anchor = "doc.functions.get_path / Syntax"
+sql = "SELECT :( v1 , m1 ) ;"
+expect = "observe"
+

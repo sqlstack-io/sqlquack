@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 import tomllib
+from collections import Counter
 from pathlib import Path
 
 from scripts.syntax_obligations._helpers.derive import derive_trees
@@ -11,6 +12,7 @@ from scripts.syntax_obligations._helpers.ids import assign, existing_ids
 from scripts.syntax_obligations._helpers.render import style_of, submissions
 from scripts.syntax_obligations.constants import (
     ACTION_HAND,
+    ARGUMENT_CLASS_REASON,
     EXPECT_ACCEPT,
     EXPECT_OBSERVE,
     EXPECT_REJECT,
@@ -20,6 +22,7 @@ from scripts.syntax_obligations.constants import (
     KIND_OPTION_PRESENT,
     KIND_PROSE,
     LATER_ERROR_STAGES,
+    LEXICAL_WRONG,
     PAIR_SIZE,
     STATUS_CATALOGUED,
 )
@@ -133,8 +136,8 @@ def obligation_rows(numbered: list[tuple[str, Draft]]) -> list[Row]:
 
 def family_obligations(
     *, root: Path, family: str
-) -> tuple[list[tuple[str, Draft]], dict[str, list[tuple[Node, ...]]], list[Row]]:
-    """The family's numbered obligations (kept ids) and each form's parsed productions."""
+) -> tuple[list[tuple[str, Draft]], dict[str, list[tuple[Node, ...]]], list[Row], list[Row]]:
+    """Numbered obligations (kept ids), parsed productions, withdrawals and withdrawn classes."""
     catalogue: list[Row] = tomllib.loads((root / "catalogue" / f"{family}.toml").read_text())[
         "form"
     ]
@@ -146,11 +149,13 @@ def family_obligations(
     drafts: list[Draft] = []
     trees: dict[str, list[tuple[Node, ...]]] = {}
     readings: dict[str, Row] = _readings(path=root / "limits.toml")
+    argument_classes: Counter[str] = Counter()
     for form in forms:
-        found, trees[str(form["id"])] = derive_trees(
+        found, trees[str(form["id"])], skipped = derive_trees(
             form=str(form["id"]), grammar=_grammar_read(form=form, readings=readings)
         )
         drafts += found
+        argument_classes.update(skipped)
     suppressed: list[Row] = suppressions(path=root / "limits.toml")
     drafts = [d for d in drafts if not _suppressed(draft=d, rows=suppressed)]
     drafts += limit_drafts(
@@ -159,7 +164,16 @@ def family_obligations(
     drafts.sort(key=lambda draft: draft.form)
     drafts, withdrawn = _without_coincident_negatives(drafts=drafts, trees=trees, family=family)
     path: Path = root / "obligations" / f"{family}.toml"
-    return assign(drafts=drafts, kept=existing_ids(path)), trees, withdrawn
+    classes: list[Row] = [
+        {
+            "class": label,
+            "derived_negative": f"{LEXICAL_WRONG[label]} in place of an operand of class {label}",
+            "count": count,
+            "reason": ARGUMENT_CLASS_REASON,
+        }
+        for label, count in sorted(argument_classes.items())
+    ]
+    return assign(drafts=drafts, kept=existing_ids(path)), trees, withdrawn, classes
 
 
 def _without_coincident_negatives(

@@ -40,7 +40,7 @@ def canonical(value: object) -> str:
 
 def family_cases(*, root: Path, family: str) -> tuple[list[Row], dict[str, set[str]]]:
     """Cases with the obligations each satisfies, and every obligation's expected outcomes."""
-    numbered, trees, _ = family_obligations(root=root, family=family)
+    numbered, trees, _, _ = family_obligations(root=root, family=family)
     by_sql: dict[str, tuple[str, Rendered, list[str]]] = {}
     expected: dict[str, set[str]] = {}
     conflicts: list[str] = []

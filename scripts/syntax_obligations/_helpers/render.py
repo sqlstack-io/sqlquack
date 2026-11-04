@@ -29,7 +29,8 @@ from scripts.syntax_obligations.constants import (
     EXPECT_ACCEPT,
     EXPECT_REJECT,
     FAMILY_STYLES,
-    GLUED_INFIXES,
+    GLUED_INFIX_LEFT,
+    GLUED_INFIX_RIGHT,
     GLUED_PREFIXES,
     HAND_ALSO_SQL,
     HAND_CORE,
@@ -135,6 +136,8 @@ class _Renderer:
             for name in dict.fromkeys(self._used.get(self.style.opens, []))
             if name != RESERVED_WORD
         )
+        if self.style.embedded:
+            text = text.rstrip().removesuffix(STATEMENT_TERMINATOR).rstrip()
         whole: str = f"{self.style.prefix}{opened}{self._terminated(text)}{suffix}".strip()
         declarations: str = self._declarations()
         if not declarations:
@@ -148,7 +151,8 @@ class _Renderer:
         self._used = {}
         self._keywords = []
         joined: str = " ".join(self._sequence(nodes=self.trees[production], choices=choices))
-        return GLUED_INFIXES.sub(r"\1", GLUED_PREFIXES.sub(r"\1", joined))
+        glued: str = GLUED_INFIX_RIGHT.sub(" !", GLUED_PREFIXES.sub(r"\1", joined))
+        return GLUED_INFIX_LEFT.sub("!", glued)
 
     def _declarations(self) -> str:
         """Declarations, by `uses`, of the objects the form names, so the case is self-contained."""

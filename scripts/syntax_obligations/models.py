@@ -58,6 +58,7 @@ class FormStyle:
     literal_fills: dict[str, str] = field(default_factory=dict)
     default_label: str = "l0"
     terminate: bool = True
+    embedded: bool = False
 
 
 @dataclass(frozen=True)
