@@ -997,6 +997,95 @@ SECURITY_ADMIN_FILLS: dict[str, str] = {
     "client_type": "GO_DRIVER",
     "integration_type": "SECURITY",
     "actions": "SET COMMENT = 'm'",
+    "expression_on_arg_name": "TRUE",
+    "expression_on_arg_name_to_mask": "'m'",
+    "value": "30",
+    "arg_1": "v2",
+    "arg_type_1": "VARCHAR",
+    "arg_type_to_mask": "VARCHAR",
+    "consumer_account": "o1.a1",
+    "days_integer": "7",
+    "idp_parameters": (
+        "SAML2_ISSUER = 'm' SAML2_SSO_URL = 'https://example.com/sso' SAML2_PROVIDER = "
+        "'OKTA' SAML2_X509_CERT = 'm'"
+    ),
+    "integration_type_params": (
+        "TYPE = OAUTH OAUTH_CLIENT = CUSTOM OAUTH_CLIENT_TYPE = 'CONFIDENTIAL' "
+        "OAUTH_REDIRECT_URI = 'https://example.com/cb'"
+    ),
+    "interface": "DEFAULT",
+    "json_object": "'{}'",
+    "list_of_interfaces": "'ALL'",
+    "schedule": "'60 MINUTE'",
+    "oauth_parameters": (
+        "OAUTH_CLIENT_ID = 'm' OAUTH_CLIENT_SECRET = 'm' OAUTH_TOKEN_ENDPOINT = "
+        "'https://example.com/token' OAUTH_AUTHORIZATION_ENDPOINT = "
+        "'https://example.com/auth'"
+    ),
+    "object_type_plural": "TABLES",
+    "policy_rules_yaml": (
+        "rules: [ { name: r1 , operations: [ MODIFY_MULTI_PARTY_APPROVAL ] , approvers: { "
+        "users: [ 'ADMIN1' ] } } ]"
+    ),
+    "parameters": "ENABLED = TRUE",
+    "parameter": "COMMENT",
+    "partner_application": "LOOKER",
+    "public_key1": "'MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA'",
+    "public_key2": "'MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEB'",
+    "queue": (
+        "( NAME = 'q1' NOTIFICATION_PROVIDER = AWS_SNS AWS_SNS_TOPIC_ARN = "
+        "'arn:aws:sns:us-west-1:12345:t1' )"
+    ),
+    "region_group_id": "PUBLIC",
+    "snowflake_region_id": "aws_us_west_2",
+    "threshold": "80",
+    "user_password": "'m'",
+    "yaml-body": "m: 1",
+    "yaml_body": "m: 1",
+    "yaml_definition": "m: 1",
+    "object_type": "TABLE",
+    "entity_type": "DATABASE",
+    "integration_type_name": "SECURITY INTEGRATIONS",
+    **{
+        word: word
+        for word in (
+            "artifact_repository_api",
+            "aws_api_gateway",
+            "aws_gov_api_gateway",
+            "aws_gov_private_api_gateway",
+            "aws_private_api_gateway",
+            "azure_api_management",
+            "external_mcp",
+            "git_https_api",
+            "google_api_gateway",
+            "all",
+            "none",
+        )
+    },
+}
+SECURITY_ADMIN_PAGE_FILLS: dict[str, dict[str, str]] = {
+    "sf.security_admin.create-aggregation-policy": {
+        "body": "AGGREGATION_CONSTRAINT ( MIN_GROUP_SIZE => 5 )"
+    },
+    "sf.security_admin.alter-aggregation-policy": {
+        "expression": "AGGREGATION_CONSTRAINT ( MIN_GROUP_SIZE => 5 )"
+    },
+    "sf.security_admin.create-join-policy": {"body": "JOIN_CONSTRAINT ( JOIN_REQUIRED => TRUE )"},
+    "sf.security_admin.create-privacy-policy": {"body": "PRIVACY_BUDGET ( BUDGET_NAME => 'b1' )"},
+    "sf.security_admin.alter-privacy-policy": {
+        "expression": "PRIVACY_BUDGET ( BUDGET_NAME => 'b1' )"
+    },
+    "sf.security_admin.create-projection-policy": {
+        "body": "PROJECTION_CONSTRAINT ( ALLOW => TRUE )"
+    },
+    "sf.security_admin.alter-projection-policy": {
+        "expression": "PROJECTION_CONSTRAINT ( ALLOW => TRUE )"
+    },
+    "sf.security_admin.create-feature-policy": {"type": "DATABASES"},
+    "sf.security_admin.alter-feature-policy": {"type": "DATABASES"},
+    "sf.security_admin.alter-join-policy": {
+        "expression": "JOIN_CONSTRAINT ( JOIN_REQUIRED => TRUE )"
+    },
 }
 DDL_LITERAL_FILLS: dict[str, str] = {
     **UTILITY_LITERAL_FILLS,
@@ -1019,7 +1108,9 @@ DDL_LITERAL_FILLS: dict[str, str] = {
     "'<num> { hours | days }'": "'1 days'",
     "'<num> days'": "'1 days'",
     "'{ S3 | S3CHINA | S3GOV }'": "'S3'",
-    "'azure://onelake.blob.fabric.microsoft.com/<workspace_id>/<item_id>/Files[/<path>/]'": "'azure://onelake.blob.fabric.microsoft.com/w1/i1/Files/p1/'",
+    "'azure://onelake.blob.fabric.microsoft.com/<workspace_id>/<item_id>/Files[/<path>/]'": (
+        "'azure://onelake.blob.fabric.microsoft.com/w1/i1/Files/p1/'"
+    ),
     "'s3compat://<bucket>[/<path>/]'": "'s3compat://b1/p1/'",
     "'{string_literal}'": "'m'",
     '"<volume_name>"': '"d1"',
@@ -1030,6 +1121,9 @@ DDL_LITERAL_FILLS: dict[str, str] = {
         "'azure://a1.blob.core.windows.net/c1/p1/'"
     ),
     "'( <purpose> = <contact> )'": "'( p1 = c1 )'",
+    "'{ <num> MINUTE | <num> HOUR | USING CRON <expr> <time_zone> }'": "'1 HOUR'",
+    "'https://example.com/<...>'": "'https://example.com/'",
+    "'<...>'": "'https://example.com/'",
 }
 FAMILY_STYLES: dict[str, dict[str, FormStyle]] = {
     "scripting": SCRIPTING_SELF_DECLARING_BLOCKS,
@@ -1066,7 +1160,17 @@ FAMILY_STYLES: dict[str, dict[str, FormStyle]] = {
             fills=SECURITY_ADMIN_FILLS,
             literal_fills=DDL_LITERAL_FILLS,
             observe_empty_properties=True,
-        )
+        ),
+        **{
+            prefix: FormStyle(
+                prefix="",
+                suffix="",
+                fills={**SECURITY_ADMIN_FILLS, **fills},
+                literal_fills=DDL_LITERAL_FILLS,
+                observe_empty_properties=True,
+            )
+            for prefix, fills in SECURITY_ADMIN_PAGE_FILLS.items()
+        },
     },
     "utility": {
         "sf.utility.": FormStyle(
