@@ -1044,6 +1044,67 @@ fn given_statements_from_the_parser_only_disagreements_when_parsing_snowflake_th
             expected_accepted: false,
         },
         AcceptanceTestCase {
+            description:
+                "a PIVOT aggregate is a call, not a parenthesised column (recorded errno 1003)",
+            sql: "SELECT 1 FROM t1 PIVOT ( ( v1 ) FOR c1 IN ( 1 ) ) ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "a PIVOT aggregate reads a column, not a string (recorded errno 1003)",
+            sql: "SELECT 1 FROM t1 PIVOT ( SUM ( 'v1' ) FOR c1 IN ( 1 ) ) ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "a PIVOT aggregate alias is no string",
+            sql: "SELECT 1 FROM t1 PIVOT ( SUM ( v1 ) 'v1' FOR c1 IN ( 1 ) ) ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "a PIVOT IN list is not empty",
+            sql: "SELECT 1 FROM t1 PIVOT ( SUM ( v1 ) FOR c1 IN ( ) ) ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "ANY ORDER needs BY (recorded errno 1003)",
+            sql: "SELECT 1 FROM t1 PIVOT ( SUM ( v1 ) FOR c1 IN ( ANY ORDER ) ) ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "ANY ORDER BY parses",
+            sql: "SELECT 1 FROM t1 PIVOT ( SUM ( v1 ) FOR c1 IN ( ANY ORDER BY c1 ) ) ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "a PIVOT IN value takes an alias without AS (recorded semantic error)",
+            sql: "SELECT 1 FROM t1 PIVOT ( SUM ( v1 ) FOR c1 IN ( 1 v1 ) ) ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "an UNPIVOT IN column takes a quoted alias without AS",
+            sql: "SELECT 1 FROM t1 UNPIVOT ( c1 FOR v1 IN ( v1 \"SELECT\" ) ) ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "an UNPIVOT IN list holds columns, not strings (recorded errno 1003)",
+            sql: "SELECT 1 FROM t1 UNPIVOT ( c1 FOR v1 IN ( 'v1' ) ) ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "an UNPIVOT name column is no reserved keyword",
+            sql: "SELECT 1 FROM t1 UNPIVOT ( c1 FOR SELECT IN ( v1 ) ) ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
             description: "TABLE( ) needs an argument",
             sql: "SELECT * FROM TABLE ( ) ;",
             dialect: Dialect::Snowflake,
