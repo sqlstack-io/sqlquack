@@ -40,3 +40,12 @@ class OverwriteTestCase:
     rows: list[dict[str, object]]
     packet: list[dict[str, object]]
     expected_error: type[Exception]
+
+
+@dataclass(frozen=True)
+class RepublishTestCase:
+    description: str
+    rows: list[dict[str, object]]
+    packet: list[dict[str, object]]
+    fields_added_later: tuple[str, ...]
+    expected_new_receipts: str

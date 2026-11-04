@@ -7,13 +7,15 @@ from pathlib import Path
 
 import pytest
 
-from scripts.syntax_receipts._helpers.receipts import classify
+from scripts.syntax_receipts._helpers.receipts import classify, reason_category
+from scripts.syntax_receipts.main.import_runs import run_import
 from scripts.syntax_receipts.models import Imported
 from tests.unit.scripts.syntax_receipts._test_types import (
     BindingTestCase,
     ClassifyTestCase,
     OverwriteTestCase,
     RefusedRunTestCase,
+    RepublishTestCase,
 )
 from tests.unit.scripts.syntax_receipts.helpers import (
     accepted_row,
@@ -22,6 +24,7 @@ from tests.unit.scripts.syntax_receipts.helpers import (
     imported_run,
     packet_case,
     sha,
+    write_run,
 )
 
 _GOOD: str = "BEGIN RETURN 1; END;"
@@ -91,6 +94,50 @@ def test_given_error_fields_when_classified_then_only_established_phases_are_nam
     classified: tuple[str, str] | None = classify(errno=test_case.errno, message=test_case.message)
 
     assert classified == test_case.expected_classification, test_case.description
+
+
+@pytest.mark.parametrize(
+    "test_case",
+    (
+        ClassifyTestCase(
+            description="a missing named object is a missing-object reason",
+            errno=2003,
+            message="SQL compilation error:\nSchema 'SALES' does not exist or not authorized.",
+            expected_classification=("missing_object", "errno 2003"),
+        ),
+        ClassifyTestCase(
+            description="a duplicated property is an invalid option or value",
+            errno=1424,
+            message="SQL compilation error:\nduplicate property 'COMMENT';",
+            expected_classification=("invalid_option_or_value", "errno 1424"),
+        ),
+        ClassifyTestCase(
+            description="a property of the wrong type is a type reason, not an invalid value",
+            errno=1421,
+            message="SQL compilation error:\ninvalid type of property '17' for 'ALLOWED_IP_LIST'",
+            expected_classification=("type", "errno 1421"),
+        ),
+        ClassifyTestCase(
+            description="an unlisted code whose message names a missing object is missing-object",
+            errno=100132,
+            message="Execution of multiple statements failed: Table 'T' does not exist.",
+            expected_classification=("missing_object", "message names a missing object"),
+        ),
+        ClassifyTestCase(
+            description="an existing object is not a missing one",
+            errno=2002,
+            message="SQL compilation error:\nObject 'T' already exists.",
+            expected_classification=("other", "errno 2002 has no more specific reason"),
+        ),
+    ),
+    ids=lambda case: case.description,
+)
+def test_given_non_syntax_errors_when_categorized_then_snowflake_reason_is_named(
+    test_case: ClassifyTestCase,
+) -> None:
+    category: tuple[str, str] = reason_category(errno=test_case.errno, message=test_case.message)
+
+    assert category == test_case.expected_classification, test_case.description
 
 
 @pytest.mark.parametrize(
@@ -174,3 +221,43 @@ def test_given_existing_receipts_when_imported_again_then_nothing_is_overwritten
 ) -> None:
     with pytest.raises(test_case.expected_error):
         import_twice(root=tmp_path, rows=test_case.rows, packet=test_case.packet)
+
+
+@pytest.mark.parametrize(
+    "test_case",
+    (
+        RepublishTestCase(
+            description="a semantic error published before the reason category existed",
+            rows=[
+                error_row(
+                    case_id="c1",
+                    sql=_GOOD,
+                    errno=2003,
+                    message="SQL compilation error:\nObject 'T' does not exist",
+                )
+            ],
+            packet=[packet_case(case_id="c1", sql=_GOOD)],
+            fields_added_later=("reason_category", "reason_category_basis"),
+            expected_new_receipts="",
+        ),
+    ),
+    ids=lambda case: case.description,
+)
+def test_given_receipt_published_before_a_field_was_added_when_imported_again_then_it_is_skipped(
+    test_case: RepublishTestCase, tmp_path: Path
+) -> None:
+    write_run(root=tmp_path, rows=test_case.rows, packet=test_case.packet)
+    runs, inputs = str(tmp_path / "runs"), str(tmp_path / "inputs")
+    first: Path = tmp_path / "first.jsonl"
+    run_import([runs, str(first), str(tmp_path / "first.json"), inputs])
+    older: dict[str, object] = json.loads(first.read_text())
+    for name in test_case.fields_added_later:
+        del older[name]
+    first.write_text(json.dumps(older) + "\n")
+    second: Path = tmp_path / "second.jsonl"
+
+    run_import(
+        [runs, str(second), str(tmp_path / "second.json"), inputs, "--published", str(first)]
+    )
+
+    assert second.read_text() == test_case.expected_new_receipts, test_case.description

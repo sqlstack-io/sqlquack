@@ -37,3 +37,41 @@ CANONICAL_ACCEPTED_OUTCOMES: tuple[str, ...] = ("rows", "types")
 DDL_ACCEPTED_OUTCOME: str = "accepted_executed"
 WHOLE_RUN_ROW: str = "*"
 UNKNOWN_ROW: str = "?"
+UNCATEGORIZED_PHASES: frozenset[str] = frozenset({"accepted", "syntax_error"})
+MISSING_OBJECT: str = "missing_object"
+INVALID_OPTION_OR_VALUE: str = "invalid_option_or_value"
+TYPE_REASON: str = "type"
+OTHER_REASON: str = "other"
+REASON_BY_ERRNO: dict[int, str] = {
+    **dict.fromkeys(
+        (709, 904, 2003, 2043, 2140, 2141, 2142, 2211, 3620, 90080, 91083, 91085, 91471, 392002),
+        MISSING_OBJECT,
+    ),
+    **dict.fromkeys(
+        (
+            1004,
+            1006,
+            1008,
+            1420,
+            1422,
+            1424,
+            1521,
+            1867,
+            2006,
+            2029,
+            2134,
+            2135,
+            2308,
+            3058,
+            3071,
+            3089,
+            3143,
+            3618,
+            4613,
+            92207,
+        ),
+        INVALID_OPTION_OR_VALUE,
+    ),
+    **dict.fromkeys((1007, 1044, 1421, 3551, 506034, 90201, 90207, 92229), TYPE_REASON),
+}
+MISSING_OBJECT_MESSAGE: str = r"does not exist|\bnonexistent\b|\bnot found\b"
