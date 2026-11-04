@@ -21,3 +21,23 @@ rows = [
 ]
 expression = "TRY_TO_TIMESTAMP_NTZ(x, 'DD-MON-YY HH24:MI')"
 tags = ["null", "boundary"]
+
+[[case]]
+id = "try_ntz_format_dd_mon_yy_hh24mi_other_spellings"
+description = "TRY_TO_TIMESTAMP_NTZ(x, 'DD-MON-YY HH24:MI') of text spelled in other layouts, as callback feeds mix them: ISO dates and timestamps, a T and Z, an offset, padding, fractions, an hour 24 and epoch digits."
+columns = [{ name = "x", type = "VARCHAR" }]
+rows = [
+  ["'2026-03-01T10:15:00Z'"],
+  ["'2026-03-01 10:00:00 +05:45'"],
+  ["'2026-03-01 23:59:59.9999995'"],
+  ["'2026-03-01 24:00:00'"],
+  ["'  2026-3-1 7:5:0  '"],
+  ["'2026-01-31'"],
+  ["'1772359200000'"],
+  ["'01-MAR-26 10:15:30'"],
+  ["'01-MAR-26'"],
+  ["' 01-MAR-26 10:15 '"],
+  ["'01 MAR 26 10:15'"],
+]
+expression = "TRY_TO_TIMESTAMP_NTZ(x, 'DD-MON-YY HH24:MI')"
+tags = ["boundary", "whitespace"]

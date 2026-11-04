@@ -28,6 +28,7 @@ use sqlquack_duckdb::temporal::main::utc_to_zone::utc_to_zone;
 use sqlquack_duckdb::temporal::main::utc_wall_time::utc_wall_time;
 use sqlquack_duckdb::temporal::main::zone_checked::zone_checked;
 use sqlquack_duckdb::temporal::main::zone_to_zone::zone_to_zone;
+use sqlquack_duckdb::temporal::models::TimestampField;
 use sqlquack_duckdb::times::constants::NANOS_PER_SECOND;
 use sqlquack_duckdb::times::main::text_to_time::text_to_time;
 use sqlquack_duckdb::times::main::time_add_value::time_add_value;
@@ -742,6 +743,16 @@ fn formatted_timestamp(
         ));
     };
     let known = timestamp_format(&written).map_err(refuse)?;
+    if !trying
+        && known
+            .fields
+            .iter()
+            .any(|field| matches!(field, TimestampField::ShortYear | TimestampField::MonthName))
+    {
+        return Err(refuse(format!(
+            "the format '{written}', recorded only under the TRY_ forms"
+        )));
+    }
     let operand = convert_expression(value, site)?;
     if !matches!(
         operand.data_type,

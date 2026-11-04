@@ -268,7 +268,7 @@ impl TypedLeaves {
             )),
             (_, true, _, Some(construct)) => Some(outside_conditions(
                 construct,
-                "TYPEOF of a VARIANT where a VARIANT may hold a whole NUMBER with a scale, which \
+                "TYPEOF, IS_DECIMAL or IS_INTEGER of a VARIANT where a VARIANT may hold a whole NUMBER with a scale, which \
                  Snowflake types DECIMAL and DuckDB's JSON holds as an integer"
                     .to_owned(),
             )),

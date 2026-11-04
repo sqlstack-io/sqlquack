@@ -829,3 +829,101 @@ fn given_zoned_timestamps_when_counting_seconds_and_minutes_then_utc_instants_ar
         );
     }
 }
+
+#[test]
+fn given_batch_two_constructs_when_converting_then_they_match_their_recordings() {
+    let test_cases = [
+        FirstValueTestCase {
+            description: "RATIO_TO_REPORT rounds 4/7 to six places, not truncating it",
+            sql: "SELECT r AS v FROM (SELECT x, RATIO_TO_REPORT(x) OVER () AS r \
+                  FROM (VALUES (4), (3)) AS t(x)) WHERE x = 4",
+            expected_outcome: Ok("0.571429"),
+        },
+        FirstValueTestCase {
+            description: "RATIO_TO_REPORT of a zero-sum partition is NULL, not a division error",
+            sql: "SELECT COALESCE(RATIO_TO_REPORT(x) OVER (), -1) AS v FROM (VALUES (0), (0)) AS t(x)",
+            expected_outcome: Ok("-1.000000"),
+        },
+        FirstValueTestCase {
+            description: "RATIO_TO_REPORT over an ordered window refuses",
+            sql: "SELECT RATIO_TO_REPORT(x) OVER (ORDER BY x) AS v FROM (VALUES (1), (2)) AS t(x)",
+            expected_outcome: Err("Snowflake rejects"),
+        },
+        FirstValueTestCase {
+            description: "IS_DECIMAL of a JSON fraction is true",
+            sql: "SELECT IS_DECIMAL(PARSE_JSON('12.5')) AS v",
+            expected_outcome: Ok("true"),
+        },
+        FirstValueTestCase {
+            description: "IS_INTEGER of a JSON fraction is false",
+            sql: "SELECT IS_INTEGER(PARSE_JSON('12.5')) AS v",
+            expected_outcome: Ok("false"),
+        },
+        FirstValueTestCase {
+            description: "IS_INTEGER of 2.0 is true, as PARSE_JSON reads it as an integer",
+            sql: "SELECT IS_INTEGER(PARSE_JSON('2.0')) AS v",
+            expected_outcome: Ok("true"),
+        },
+        FirstValueTestCase {
+            description: "IS_DECIMAL of numeric text in JSON is false",
+            sql: "SELECT IS_DECIMAL(PARSE_JSON('\"12\"')) AS v",
+            expected_outcome: Ok("false"),
+        },
+        FirstValueTestCase {
+            description: "\\b treats an underscore as a word character",
+            sql: "SELECT COALESCE(REGEXP_SUBSTR('_AB123_', '\\\\b[A-Z]{2}[0-9]{3}\\\\b'), 'none') AS v",
+            expected_outcome: Ok("none"),
+        },
+        FirstValueTestCase {
+            description: "\\b matches beside a non-ASCII letter",
+            sql: "SELECT REGEXP_SUBSTR('éAB123é', '\\\\b[A-Z]{2}[0-9]{3}\\\\b') AS v",
+            expected_outcome: Ok("AB123"),
+        },
+        FirstValueTestCase {
+            description: "a RANGE frame of 2 days spans the leap day and a later peer, unlike ROWS",
+            sql: "SELECT s AS v FROM (SELECT d, x, SUM(x) OVER (ORDER BY d RANGE BETWEEN \
+                  INTERVAL '2 days' PRECEDING AND CURRENT ROW) AS s FROM (VALUES \
+                  ('2024-02-26'::DATE, 1), ('2024-02-28'::DATE, 2), ('2024-03-01'::DATE, 4), \
+                  ('2024-03-01'::DATE, 8)) AS t(d, x)) WHERE x = 4",
+            expected_outcome: Ok("14"),
+        },
+        FirstValueTestCase {
+            description: "a RANGE frame over a descending key refuses",
+            sql: "SELECT SUM(x) OVER (ORDER BY d DESC RANGE BETWEEN INTERVAL '2 days' \
+                  PRECEDING AND CURRENT ROW) AS v FROM (VALUES ('2024-03-01'::DATE, 1)) AS t(d, x)",
+            expected_outcome: Err("one ascending DATE key"),
+        },
+        FirstValueTestCase {
+            description: "YY 69 is 2069 under DD-MON-YY",
+            sql: "SELECT YEAR(TRY_TO_TIMESTAMP_NTZ('05-mar-69 00:00', 'DD-MON-YY HH24:MI')) AS v",
+            expected_outcome: Ok("2069"),
+        },
+        FirstValueTestCase {
+            description: "YY 70 is 1970 and a full month name reads under MON",
+            sql: "SELECT YEAR(TRY_TO_TIMESTAMP_NTZ('31-December-70 23:59', \
+                  'DD-MON-YY HH24:MI')) AS v",
+            expected_outcome: Ok("1970"),
+        },
+        FirstValueTestCase {
+            description: "a four-digit year where YY reads two is NULL, as recorded, not a raise",
+            sql: "SELECT TRY_TO_TIMESTAMP_NTZ('05-Mar-2024 14:30', 'DD-MON-YY HH24:MI') IS NULL AS v",
+            expected_outcome: Ok("true"),
+        },
+        FirstValueTestCase {
+            description: "MON outside the TRY_ forms refuses",
+            sql: "SELECT TO_TIMESTAMP_NTZ('05-Mar-24 10:00', 'DD-MON-YY HH24:MI') AS v",
+            expected_outcome: Err("recorded only under the TRY_ forms"),
+        },
+    ];
+    for test_case in test_cases {
+        assert_eq!(
+            shop_first_outcome(test_case.sql, test_case.expected_outcome),
+            test_case
+                .expected_outcome
+                .map(str::to_owned)
+                .map_err(str::to_owned),
+            "{}",
+            test_case.description
+        );
+    }
+}

@@ -37,6 +37,8 @@ const LIKE_ANY: &str = "ANY";
 const TUPLE_KIND: &str = "tuple";
 /// The node kind of ILIKE, the one LIKE recorded with ANY.
 const ILIKE_KIND: &str = "i_like";
+/// `\b`, an ASCII word boundary in both engines, as REGEXP_SUBSTR was recorded.
+const WORD_BOUNDARY_ESCAPE: char = 'b';
 
 /// LPAD or RPAD: padded or cut to the length; an empty pad only cuts, as Snowflake documents.
 pub(crate) fn pad(
@@ -771,6 +773,7 @@ fn shared_pattern(pattern: &str, extracting: bool) -> Result<bool, String> {
                 Some(escaped) if REGEXP_SHORTHANDS.contains(escaped) => {}
                 Some(escaped) if extracting && REGEXP_CONTROL_ESCAPES.contains(escaped) => {}
                 Some(escaped) if escaped.is_ascii_punctuation() => {}
+                Some(WORD_BOUNDARY_ESCAPE) if extracting && !in_bracket => {}
                 Some(escaped) => return Err(format!("the regular expression escape \\{escaped}")),
                 None => return Err("a pattern ending in a backslash".to_owned()),
             },

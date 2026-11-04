@@ -654,8 +654,14 @@ pub const RULES: &[RuleSpec] = &[
     },
     RuleSpec {
         id: VARIANT_KIND_RULE,
-        constructs: &["fn:IS_OBJECT", "fn:IS_ARRAY", "fn:IS_BOOLEAN"],
-        conditions: "A VARIANT: whether it holds an object, an array or a boolean; JSON null is false and SQL NULL stays NULL.",
+        constructs: &[
+            "fn:IS_OBJECT",
+            "fn:IS_ARRAY",
+            "fn:IS_BOOLEAN",
+            "fn:IS_DECIMAL",
+            "fn:IS_INTEGER",
+        ],
+        conditions: "A VARIANT: whether it holds an object, an array or a boolean; JSON null is false and SQL NULL stays NULL. IS_DECIMAL of a VARIANT held as JSON is whether it holds a number, IS_INTEGER whether TYPEOF types it INTEGER, as recorded; numbers PARSE_JSON reads as doubles raise there. Where a NUMBER with a scale may have entered a VARIANT, or for a FLOAT held apart from JSON, they refuse.",
         failures: &[],
     },
     RuleSpec {
@@ -824,7 +830,7 @@ pub const RULES: &[RuleSpec] = &[
             "fn:TO_TIMESTAMP",
             "fn:TO_TIMESTAMP_NTZ",
         ],
-        conditions: "TO_TIMESTAMP_NTZ, TO_TIMESTAMP or their TRY_ forms of text with a literal format of YYYY, MM, DD, HH24, or HH12 with AM or PM, MI and SS, in any case, with punctuation (- : . / ,), quoted literals and letters that begin no format element as literal text: YYYY reads four digits, the other numbers one or two, AM and PM either in any case, a space in the format any run of spaces, including none, and everything else itself, case-sensitively, as recorded. Text so spelled is its TIMESTAMP_NTZ(9); a field out of range or an impossible date is NULL under the TRY_ forms and raises 100096 otherwise; NULL is NULL, and empty text and text without an ASCII digit (words such as now or epoch, and other scripts' digits, as recorded) are NULL under the TRY_ forms, and empty text raises 100096 otherwise, as recorded. Any other text raises, relying on date_text_spelling; timestamps rely on timestamp_range.",
+        conditions: "TO_TIMESTAMP_NTZ, TO_TIMESTAMP or their TRY_ forms of text with a literal format of YYYY, MM, DD, HH24, or HH12 with AM or PM, MI and SS, in any case, with punctuation (- : . / ,), quoted literals and letters that begin no format element as literal text: YYYY reads four digits, the other numbers one or two; under the TRY_ forms YY reads two digits, 00 to 69 as 2000 to 2069 and 70 to 99 as 1970 to 1999, and MON an English month name or abbreviation in any case, and text with a four-digit year in place of YY is NULL, as recorded; AM and PM either in any case, a space in the format any run of spaces, including none, and everything else itself, case-sensitively, as recorded. Text so spelled is its TIMESTAMP_NTZ(9); a field out of range or an impossible date is NULL under the TRY_ forms and raises 100096 otherwise; NULL is NULL, and empty text and text without an ASCII digit (words such as now or epoch, and other scripts' digits, as recorded) are NULL under the TRY_ forms, and empty text raises 100096 otherwise, as recorded. Any other text raises, relying on date_text_spelling; timestamps rely on timestamp_range.",
         failures: &[FailureMode {
             kind: ErrorKind::TimestampText,
             snowflake: &[TIMESTAMP_FORMAT_MISMATCH],
@@ -1037,7 +1043,7 @@ pub const RULES: &[RuleSpec] = &[
             "fn:REGEXP_SUBSTR",
             "node:regexp_like",
         ],
-        conditions: "A literal pattern without lookarounds, group modifiers, lazy quantifiers (except +?, *? and ?? in REGEXP_SUBSTR, recorded reading as optional greedy repetitions, so as *, * and ?), POSIX classes or escapes other than \\d \\s \\w (ASCII, as recorded), their negations, escaped punctuation and, in REGEXP_SUBSTR and REGEXP_SUBSTR_ALL, \\n, \\t and \\r. REGEXP_LIKE matches the whole text; REGEXP_REPLACE replaces every match, or only the first, from position 1, case-sensitively or with 'i', with group references only; REGEXP_SUBSTR from position 1, any occurrence, with parameters of c, i, m, s and e and a group, which implies e (1 with e and without one, 0 without either), NULL when there is no match; REGEXP_SUBSTR_ALL the same, every match as an ARRAY of strings, empty without one. A ':' opening a bracket expression is literal, and ']' first in one is literal. REGEXP_LIKE also takes a VARCHAR pattern from a column, with or without literal parameters, relying on regexp_pattern_syntax: it runs only where the pattern is literal characters, '.', groups, alternation, plain bracket expressions, single '*', '+' or '?' and anchors at its ends, and raises otherwise.",
+        conditions: "A literal pattern without lookarounds, group modifiers, lazy quantifiers (except +?, *? and ?? in REGEXP_SUBSTR, recorded reading as optional greedy repetitions, so as *, * and ?), POSIX classes or escapes other than \\d \\s \\w (ASCII, as recorded), their negations, escaped punctuation and, in REGEXP_SUBSTR and REGEXP_SUBSTR_ALL, \\n, \\t, \\r and, outside a bracket expression, the ASCII word boundary \\b, as recorded beside digits, underscores, punctuation and non-ASCII letters. REGEXP_LIKE matches the whole text; REGEXP_REPLACE replaces every match, or only the first, from position 1, case-sensitively or with 'i', with group references only; REGEXP_SUBSTR from position 1, any occurrence, with parameters of c, i, m, s and e and a group, which implies e (1 with e and without one, 0 without either), NULL when there is no match; REGEXP_SUBSTR_ALL the same, every match as an ARRAY of strings, empty without one. A ':' opening a bracket expression is literal, and ']' first in one is literal. REGEXP_LIKE also takes a VARCHAR pattern from a column, with or without literal parameters, relying on regexp_pattern_syntax: it runs only where the pattern is literal characters, '.', groups, alternation, plain bracket expressions, single '*', '+' or '?' and anchors at its ends, and raises otherwise.",
         failures: &[],
     },
     RuleSpec {
@@ -1295,9 +1301,10 @@ pub const RULES: &[RuleSpec] = &[
             "fn:SUM",
             "fn:MIN",
             "fn:MAX",
+            "fn:RATIO_TO_REPORT",
             "node:window_function",
         ],
-        conditions: "The aggregate's own conditions; without a frame, a running RANGE frame when ordered. In a query with GROUP BY its argument may be an aggregate, as recorded. BOOLOR_AGG and BOOLAND_AGG only over an unordered window, as Snowflake accepts them.",
+        conditions: "The aggregate's own conditions; without a frame, a running RANGE frame when ordered. In a query with GROUP BY its argument may be an aggregate, as recorded. BOOLOR_AGG and BOOLAND_AGG only over an unordered window, as Snowflake accepts them. A RANGE frame whose offsets are literal intervals of whole days over one ascending DATE key, peers and NULL keys framed together, as recorded. RATIO_TO_REPORT(x) over an unordered window is x divided by its partition's SUM, typed and rounded as that division, NULL where the sum is zero, as recorded.",
         failures: &[FailureMode {
             kind: ErrorKind::NumericOverflow,
             snowflake: &[NUMBER_OUT_OF_RANGE],

@@ -38,6 +38,8 @@ pub const NOT_AN_OBJECT_MESSAGE: &str = "Failed to cast variant value to OBJECT"
 pub const KEY_EXISTS_MESSAGE: &str = "Duplicate field key";
 /// IS_OBJECT, IS_ARRAY and IS_BOOLEAN: `duckdb.json_is_kind`.
 pub const JSON_IS_KIND: &str = "duckdb.json_is_kind";
+/// IS_DECIMAL and IS_INTEGER: `duckdb.json_is_number`.
+pub const JSON_IS_NUMBER: &str = "duckdb.json_is_number";
 /// ARRAY_CONSTRUCT: `duckdb.json_array_construct`.
 pub const JSON_ARRAY_CONSTRUCT: &str = "duckdb.json_array_construct";
 /// ARRAY_EXCEPT of arrays of strings: `duckdb.json_array_except`.

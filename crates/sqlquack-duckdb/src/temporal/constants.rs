@@ -142,6 +142,12 @@ pub const LITERAL_FORMAT_PUNCTUATION: &str = "-:./,";
 /// Format elements in matching order, each with its field and the text pattern it reads.
 pub const TIMESTAMP_FORMAT_ELEMENTS: &[(&str, TimestampField, &str)] = &[
     ("YYYY", TimestampField::Year, "([0-9]{4})"),
+    ("YY", TimestampField::ShortYear, "([0-9]{2})"),
+    (
+        "MON",
+        TimestampField::MonthName,
+        "((?i:january|february|march|april|june|july|august|september|october|november|december|jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec))",
+    ),
     ("HH24", TimestampField::Hour24, "([0-9]{1,2})"),
     ("HH12", TimestampField::Hour12, "([0-9]{1,2})"),
     ("MM", TimestampField::Month, "([0-9]{1,2})"),

@@ -22,8 +22,12 @@ pub struct DateFormat {
 pub enum TimestampField {
     /// Four-digit year.
     Year,
+    /// Two-digit year, read from TWO_DIGIT_CENTURY_START.
+    ShortYear,
     /// Month, one or two digits.
     Month,
+    /// Month as an English name or abbreviation, in ASCII letters of either case.
+    MonthName,
     /// Day of the month, one or two digits.
     Day,
     /// Hour 0-23, one or two digits.
@@ -45,4 +49,7 @@ pub struct TimestampFormat {
     pub pattern: String,
     /// Each group's field, in group order.
     pub fields: Vec<TimestampField>,
+    /// The whole-text pattern of text TRY_ forms were recorded reading as NULL: a four-digit year
+    /// where YY reads two.
+    pub rejected: Option<String>,
 }
