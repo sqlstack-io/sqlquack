@@ -3,7 +3,6 @@ use serde_json::json;
 use crate::parser::tests::helpers::first_token_text;
 use crate::parser::tests::helpers::kind_at;
 use crate::parser::tests::helpers::parse_error;
-use crate::parser::tests::helpers::parsed;
 use crate::parser::tests::helpers::value_at;
 use crate::parser::tests::test_types::DialectTokenTestCase;
 use crate::parser::tests::test_types::ParseErrorTestCase;
@@ -609,26 +608,99 @@ fn given_unsupported_snowflake_sql_when_parsing_then_parsing_fails() {
 
 #[test]
 fn given_neighbours_of_rejected_snowflake_sql_when_parsing_then_they_parse() {
-    let accepted = [
-        "SELECT CAST(NULL AS VARCHAR())",
-        "SELECT CAST(NULL AS CHAR())",
-        "SELECT CAST(NULL AS TIME(9))",
-        "SELECT CAST(NULL AS NUMBER(9, 2))",
-        "SELECT CAST(NULL AS VARBINARY(8))",
-        "DROP TABLE \"SELECT\"",
-        "USE \"SELECT\".v1",
-        "SELECT * FROM TABLE(FLATTEN(INPUT => ARRAY_CONSTRUCT(1)))",
-        "CREATE PROCEDURE p1() RETURNS TABLE () LANGUAGE SQL AS $$ BEGIN RETURN 1; END $$",
-        "DECLARE \"SELECT\" RESULTSET; BEGIN RETURN 1; END;",
-        "WITH p1 AS PROCEDURE (v1 INT, v2 INT DEFAULT 2) RETURNS INT NOT NULL LANGUAGE JAVASCRIPT CALLED ON NULL INPUT AS 'm', c1 AS (SELECT 1) CALL p1(v1 => 1) INTO :x",
-        "WITH p1 AS PROCEDURE () RETURNS INT LANGUAGE JAVA RUNTIME_VERSION = '11' PACKAGES = ('com.snowflake:snowpark:1.14.0') HANDLER = 'm' CALL p1()",
+    let test_cases = [
+        ParseKindTestCase {
+            description: "SELECT CAST(NULL AS VARCHAR()) parses",
+            dialect: Some(DialectType::Snowflake),
+            sql: "SELECT CAST(NULL AS VARCHAR())",
+            pointer: "/0",
+            expected_kind: Ok("select"),
+        },
+        ParseKindTestCase {
+            description: "SELECT CAST(NULL AS CHAR()) parses",
+            dialect: Some(DialectType::Snowflake),
+            sql: "SELECT CAST(NULL AS CHAR())",
+            pointer: "/0",
+            expected_kind: Ok("select"),
+        },
+        ParseKindTestCase {
+            description: "SELECT CAST(NULL AS TIME(9)) parses",
+            dialect: Some(DialectType::Snowflake),
+            sql: "SELECT CAST(NULL AS TIME(9))",
+            pointer: "/0",
+            expected_kind: Ok("select"),
+        },
+        ParseKindTestCase {
+            description: "SELECT CAST(NULL AS NUMBER(9, 2)) parses",
+            dialect: Some(DialectType::Snowflake),
+            sql: "SELECT CAST(NULL AS NUMBER(9, 2))",
+            pointer: "/0",
+            expected_kind: Ok("select"),
+        },
+        ParseKindTestCase {
+            description: "SELECT CAST(NULL AS VARBINARY(8)) parses",
+            dialect: Some(DialectType::Snowflake),
+            sql: "SELECT CAST(NULL AS VARBINARY(8))",
+            pointer: "/0",
+            expected_kind: Ok("select"),
+        },
+        ParseKindTestCase {
+            description: "DROP TABLE 'SELECT' parses",
+            dialect: Some(DialectType::Snowflake),
+            sql: "DROP TABLE \"SELECT\"",
+            pointer: "/0",
+            expected_kind: Ok("drop_table"),
+        },
+        ParseKindTestCase {
+            description: "USE 'SELECT'.v1 parses",
+            dialect: Some(DialectType::Snowflake),
+            sql: "USE \"SELECT\".v1",
+            pointer: "/0",
+            expected_kind: Ok("use"),
+        },
+        ParseKindTestCase {
+            description: "SELECT * FROM TABLE(FLATTEN(INPUT => ARRAY_CONSTRUCT(1))) parses",
+            dialect: Some(DialectType::Snowflake),
+            sql: "SELECT * FROM TABLE(FLATTEN(INPUT => ARRAY_CONSTRUCT(1)))",
+            pointer: "/0",
+            expected_kind: Ok("select"),
+        },
+        ParseKindTestCase {
+            description: "CREATE PROCEDURE p1() RETURNS TABLE parses",
+            dialect: Some(DialectType::Snowflake),
+            sql: "CREATE PROCEDURE p1() RETURNS TABLE () LANGUAGE SQL AS $$ BEGIN RETURN 1; END $$",
+            pointer: "/0",
+            expected_kind: Ok("create_procedure"),
+        },
+        ParseKindTestCase {
+            description: "DECLARE 'SELECT' RESULTSET; BEGIN RETURN 1; END; parses",
+            dialect: Some(DialectType::Snowflake),
+            sql: "DECLARE \"SELECT\" RESULTSET; BEGIN RETURN 1; END;",
+            pointer: "/0",
+            expected_kind: Ok("scripting_block"),
+        },
+        ParseKindTestCase {
+            description: "WITH p1 AS PROCEDURE parses",
+            dialect: Some(DialectType::Snowflake),
+            sql: "WITH p1 AS PROCEDURE (v1 INT, v2 INT DEFAULT 2) RETURNS INT NOT NULL LANGUAGE JAVASCRIPT CALLED ON NULL INPUT AS 'm', c1 AS (SELECT 1) CALL p1(v1 => 1) INTO :x",
+            pointer: "/0",
+            expected_kind: Ok("call"),
+        },
+        ParseKindTestCase {
+            description: "WITH p1 AS PROCEDURE parses",
+            dialect: Some(DialectType::Snowflake),
+            sql: "WITH p1 AS PROCEDURE () RETURNS INT LANGUAGE JAVA RUNTIME_VERSION = '11' PACKAGES = ('com.snowflake:snowpark:1.14.0') HANDLER = 'm' CALL p1()",
+            pointer: "/0",
+            expected_kind: Ok("call"),
+        },
     ];
 
-    for sql in accepted {
-        assert!(
-            parsed(Some(DialectType::Snowflake), sql).is_ok(),
-            "{sql}: {}",
-            parse_error(Some(DialectType::Snowflake), sql)
+    for test_case in test_cases {
+        assert_eq!(
+            kind_at(test_case.dialect, test_case.sql, test_case.pointer),
+            test_case.expected_kind.map(str::to_owned),
+            "{}",
+            test_case.description
         );
     }
 }

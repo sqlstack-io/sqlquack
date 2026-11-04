@@ -2,8 +2,10 @@ use serde_json::json;
 
 use sqlquack_syntax::Dialect;
 
-use crate::helpers::{accepted, cast_targets, projection_at};
-use crate::test_types::{AcceptanceTestCase, CastTargetTestCase, ProjectionTestCase};
+use crate::helpers::{accepted, cast_targets, projection_at, statement_at};
+use crate::test_types::{
+    AcceptanceTestCase, CastTargetTestCase, ProjectionTestCase, StatementTestCase,
+};
 
 #[test]
 fn given_an_index_followed_by_a_key_when_parsing_then_it_is_a_path_on_the_element() {
@@ -415,6 +417,102 @@ fn given_a_select_list_when_parsing_snowflake_then_it_needs_an_item_and_top_need
         assert_eq!(
             accepted(test_case.sql, test_case.dialect),
             test_case.expected_accepted,
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_auditor_tree_findings_when_parsing_faithfully_then_the_tree_records_what_was_written() {
+    let test_cases = [
+        ProjectionTestCase {
+            description: "DATEDIFF's date part is a date part, not a column",
+            sql: "SELECT DATEDIFF(DAY, 1, 1)",
+            pointer: "/function/args/0/var/this",
+            expected_value: json!("DAY"),
+        },
+        ProjectionTestCase {
+            description: "EXTRACT's comma form takes a date part",
+            sql: "SELECT EXTRACT(DAY, 1)",
+            pointer: "/function/args/0/var/this",
+            expected_value: json!("DAY"),
+        },
+        ProjectionTestCase {
+            description: "TIMEDIFF's date part is a date part",
+            sql: "SELECT TIMEDIFF(DAY, 1, 1)",
+            pointer: "/function/args/0/var/this",
+            expected_value: json!("DAY"),
+        },
+        ProjectionTestCase {
+            description: "TIMESTAMPDIFF's date part is a date part",
+            sql: "SELECT TIMESTAMPDIFF(DAY, 1, 1)",
+            pointer: "/function/args/0/var/this",
+            expected_value: json!("DAY"),
+        },
+        ProjectionTestCase {
+            description: "TRUNC's date part is a date part",
+            sql: "SELECT TRUNC(1, DAY)",
+            pointer: "/function/args/1/var/this",
+            expected_value: json!("DAY"),
+        },
+        ProjectionTestCase {
+            description: "TRUNC's numeric scale column stays a column",
+            sql: "SELECT TRUNC(1, c1)",
+            pointer: "/function/args/1/column/name/name",
+            expected_value: json!("c1"),
+        },
+        ProjectionTestCase {
+            description: "unary plus keeps its operator",
+            sql: "SELECT + 1",
+            pointer: "/pos/this/literal/value",
+            expected_value: json!("1"),
+        },
+        ProjectionTestCase {
+            description: "CURRENT_ORGANIZATION_USER without parentheses is a call",
+            sql: "SELECT CURRENT_ORGANIZATION_USER",
+            pointer: "/function/no_parens",
+            expected_value: json!(true),
+        },
+    ];
+
+    for test_case in test_cases {
+        assert_eq!(
+            projection_at(test_case.sql, test_case.pointer),
+            test_case.expected_value,
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_order_by_all_when_parsing_then_it_is_the_keyword_with_its_direction() {
+    let test_cases = [
+        StatementTestCase {
+            description: "ORDER BY ALL DESC keeps its direction",
+            sql: "SELECT 1 ORDER BY ALL DESC",
+            pointer: "/0/select/order_by/all/desc",
+            expected_value: json!(true),
+        },
+        StatementTestCase {
+            description: "ORDER BY ALL has no sort keys",
+            sql: "SELECT 1 ORDER BY ALL DESC",
+            pointer: "/0/select/order_by/expressions",
+            expected_value: json!([]),
+        },
+        StatementTestCase {
+            description: "a quoted ALL is a column, not the keyword",
+            sql: "SELECT 1 ORDER BY \"ALL\"",
+            pointer: "/0/select/order_by/all",
+            expected_value: json!(null),
+        },
+    ];
+
+    for test_case in test_cases {
+        assert_eq!(
+            statement_at(test_case.sql, test_case.pointer),
+            test_case.expected_value,
             "{}",
             test_case.description
         );

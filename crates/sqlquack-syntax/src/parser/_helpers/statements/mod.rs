@@ -6,3 +6,4 @@ pub(crate) mod entry;
 pub(crate) mod procedures;
 pub(crate) mod scripting;
 pub(crate) mod sessions;
+pub(crate) mod with_statement;

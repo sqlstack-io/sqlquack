@@ -56,14 +56,14 @@ impl Parser {
         procedure.return_type = return_type;
         procedure.returns_table = returns_table;
         procedure.language = Some(language);
-        self.parse_anonymous_procedure_options(&mut procedure)?;
+        let procedure = self.parse_anonymous_procedure_options(procedure)?;
         Ok(Expression::CreateProcedure(Box::new(procedure)))
     }
 
     /// `( [<name> <type> [DEFAULT <expr>]] [, ...] )` with no empty or trailing entries.
     fn parse_anonymous_procedure_parameters(&mut self) -> Result<Vec<FunctionParameter>> {
         self.expect_token(TokenType::LParen)?;
-        let mut parameters = Vec::new();
+        let mut parameters: Vec<FunctionParameter> = Vec::new();
         while !self.check(TokenType::RParen) {
             if !parameters.is_empty() {
                 self.expect_token(TokenType::Comma)?;
@@ -90,7 +90,7 @@ impl Parser {
     /// `( [<column> <type>] [, ...] )` after `RETURNS TABLE`.
     fn parse_procedure_table_columns(&mut self) -> Result<Vec<StructField>> {
         self.expect_token(TokenType::LParen)?;
-        let mut columns = Vec::new();
+        let mut columns: Vec<StructField> = Vec::new();
         while !self.check(TokenType::RParen) {
             if !columns.is_empty() {
                 self.expect_token(TokenType::Comma)?;
@@ -117,9 +117,13 @@ impl Parser {
     }
 
     /// Handler options and the `AS` body, in any order, each at most once.
-    fn parse_anonymous_procedure_options(&mut self, procedure: &mut CreateProcedure) -> Result<()> {
+    fn parse_anonymous_procedure_options(
+        &mut self,
+        mut procedure: CreateProcedure,
+    ) -> Result<CreateProcedure> {
         loop {
-            let option = if self.match_identifier("RUNTIME_VERSION") || self.match_identifier("HANDLER")
+            let option = if self.match_identifier("RUNTIME_VERSION")
+                || self.match_identifier("HANDLER")
             {
                 let key = self.previous_text().to_ascii_uppercase();
                 self.expect_token(TokenType::Eq)?;
@@ -127,7 +131,10 @@ impl Parser {
             } else if self.match_identifier("PACKAGES") || self.match_identifier("IMPORTS") {
                 let key = self.previous_text().to_ascii_uppercase();
                 self.expect_token(TokenType::Eq)?;
-                format!("{key} = ({})", self.parse_procedure_string_list()?.join(", "))
+                format!(
+                    "{key} = ({})",
+                    self.parse_procedure_string_list()?.join(", ")
+                )
             } else if self.match_text_seq(&["CALLED", "ON", "NULL", "INPUT"]) {
                 "CALLED ON NULL INPUT".to_string()
             } else if self.match_text_seq(&["RETURNS", "NULL", "ON", "NULL", "INPUT"]) {
@@ -139,10 +146,14 @@ impl Parser {
                 procedure.body = Some(body);
                 continue;
             } else {
-                return Ok(());
+                return Ok(procedure);
             };
             let key = option.split(' ').next().unwrap_or_default().to_string();
-            if procedure.with_options.iter().any(|seen| seen.starts_with(&key)) {
+            if procedure
+                .with_options
+                .iter()
+                .any(|seen| seen.starts_with(&key))
+            {
                 return Err(self.parse_error(format!("{key} is given more than once")));
             }
             procedure.with_options.push(option);
@@ -152,7 +163,7 @@ impl Parser {
     /// `( '<value>' [, ...] )`, possibly empty.
     fn parse_procedure_string_list(&mut self) -> Result<Vec<String>> {
         self.expect_token(TokenType::LParen)?;
-        let mut values = Vec::new();
+        let mut values: Vec<String> = Vec::new();
         while !self.check(TokenType::RParen) {
             if !values.is_empty() {
                 self.expect_token(TokenType::Comma)?;
@@ -188,6 +199,9 @@ impl Parser {
 
     /// `CALL <name> ( [[<arg> =>] <value>, ...] ) [INTO :<variable>]` after a WITH clause.
     pub(crate) fn parse_call_with(&mut self, with: With) -> Result<Expression> {
+        if !self.check_identifier("CALL") {
+            return Err(self.parse_error("Expected CALL after an anonymous procedure"));
+        }
         self.skip();
         let mut name = vec![self.expect_identifier_or_keyword_with_quoted()?];
         while self.match_token(TokenType::Dot) {

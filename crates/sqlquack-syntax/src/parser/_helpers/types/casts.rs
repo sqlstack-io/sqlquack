@@ -13,6 +13,7 @@ use crate::parser::constants::NATIONAL;
 use crate::parser::constants::NCHAR;
 use crate::parser::constants::NVARCHAR;
 use crate::parser::constants::REAL;
+use crate::parser::constants::TABLE_TYPE;
 use crate::parser::models::Parser;
 use crate::parser::models::ParserDepthScope;
 use crate::tokens::models::SourceSpan;
@@ -1110,7 +1111,7 @@ impl Parser {
             self.config.dialect,
             Some(crate::tokens::models::DialectType::Snowflake)
         ) && self.previous().token_type != TokenType::QuotedIdentifier
-            && name != "TABLE"
+            && name != TABLE_TYPE
             && crate::parser::constants::SNOWFLAKE_RESERVED_KEYWORDS.contains(&name.as_str())
         {
             return Err(self.parse_error(format!(
@@ -1129,7 +1130,7 @@ impl Parser {
                 let mut after_comma = true;
                 loop {
                     if self.check(TokenType::RParen) {
-                        if after_comma && !(args.is_empty() && name == "TABLE") {
+                        if after_comma && !(args.is_empty() && name == TABLE_TYPE) {
                             return Err(self.parse_error("Expected a type parameter"));
                         }
                         break;
