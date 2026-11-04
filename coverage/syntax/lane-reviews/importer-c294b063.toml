@@ -1,4 +1,4 @@
-# Lane C review of lane A's receipt importer: the D120 account state on Cortex/AI receipts.
+# Lane C review of lane A's receipt importer: the D120 account state on Cortex/AI receipts (c294b063, follow-up 89bc8d02).
 # Bound to the reviewed commit and the Git tree of scripts/syntax_receipts at that commit.
 
 [review]
@@ -8,23 +8,30 @@ branch = "wip/syntax-evidence"
 commit = "c294b06363f99d17e51d1b4a1df537f78c41f316"
 importer_tree = "49f8d32ef00f759ee31c8c0340496ea108625ca8"
 reviewed_utc = "2026-11-04T17:52:00Z"
-verdict = "changes_requested"
+verdict = "approved"
+follow_up_commit = "89bc8d02d7eb093872b5530151d985c66269d417"
+follow_up_importer_tree = "ed6933875d834bd49742cd01ec0f1b83e8da087d"
+follow_up_reviewed_utc = "2026-11-04T18:05:00Z"
 not_reviewed = "the D120 ruling itself and the sa-01 timeline behind the 17:10:12Z boundary, which come from lane A's report and the coordinator"
 
-[[open]]
+[[closed]]
 finding = "evidence e5b65ef2 no longer validates: the receipt format is closed, and main's checker (3b3e62d7, formats unchanged at 1e4ea229) refuses the 29 import-63 receipts that carry account_state (unknown field `account_state`, FAILED with 29 problems)"
 severity = "blocker"
 fix = "the checker owner admits account_state as an optional object of parameter -> {value, basis} before receipts carrying it are pushed, or the importer leaves it out until then"
 
-[[open]]
+[[closed]]
 finding = "CORTEX_CALL matches the core string function TRANSLATE(subject, from, to), so under D120 a parser disagreement on plain TRANSLATE would be routed as an account-state difference; it also matches inside string and dollar-quoted bodies, and it flags SNOWFLAKE.CORTEX.SPLIT_TEXT_RECURSIVE_CHARACTER, which uses no model"
 severity = "medium"
 fix = "match TRANSLATE only qualified as SNOWFLAKE.CORTEX.TRANSLATE, search the SQL with literal bodies blanked, and add plain TRANSLATE as a negative test"
 
-[[open]]
+[[closed]]
 finding = "a recorded_at without a UTC offset parses to a naive datetime, and comparing it with the aware boundary raises TypeError, which the ValueError handler does not catch"
 severity = "low"
 fix = "treat a naive recorded_at as having no recorded_at, or catch TypeError; every current receipt (42,966 at e5b65ef2) carries +00:00, so none is affected today"
+
+[[closed]]
+finding = "follow-up 89bc8d02: account_state is held out of receipts (ACCOUNT_STATE_IN_RECEIPTS = False) until the checker accepts it; TRANSLATE matches only SNOWFLAKE.CORTEX-qualified; SPLIT_TEXT_* excluded; a lookbehind refuses qualified bare names (v1.AI_COMPLETE); the search runs over the SQL with string and dollar bodies blanked; a naive recorded_at gives value null"
+check = "93 importer tests pass at 89bc8d02; probes: plain TRANSLATE False, SNOWFLAKE.CORTEX.TRANSLATE True, AS 'AI_X(1)' False, 'it''s AI_COMPLETE(1)' False, $$AI_COMPLETE(1)$$ False, v1.AI_COMPLETE False, SPLIT_TEXT_RECURSIVE_CHARACTER False, AI_AGG True, spaced snowflake . cortex . complete True; import-63 at 89bc8d02 equals e5b65ef2's 357 receipts with account_state removed and carries none; main checker 3b3e62d7 validate over catalogue bff4fe7f plus receipts at 89bc8d02: valid, 3476 forms, 42937 receipts"
 
 [[agreed]]
 point = "receipt() gets the case SQL from all four run kinds (canonical, ddl, diagnostic, packet), and the receipt is unchanged when the SQL is not a Cortex/AI call"
