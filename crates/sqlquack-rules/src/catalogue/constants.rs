@@ -1048,7 +1048,7 @@ pub const RULES: &[RuleSpec] = &[
     RuleSpec {
         id: MEDIAN_RULE,
         constructs: &["fn:MEDIAN"],
-        conditions: "MEDIAN as an aggregate, NULLs skipped, NULL over none: the middle value or the average of the two middle values. Of NUMBER(p,s) it is NUMBER(p+3,s+3), exact where both middles stay below 10^(12-s), as recorded; wider middles, where Snowflake's double average was recorded losing digits, raise percentile_interpolation. Scales above 12 refuse. Of FLOAT, the double average.",
+        conditions: "MEDIAN as an aggregate, NULLs skipped, NULL over none: the middle value or the average of the two middle values. Of NUMBER(p,s) it is NUMBER(p+3,s+3), its precision capped at 38, exact where both middles stay below 10^(12-s), as recorded; wider middles, where Snowflake's double average was recorded losing digits, raise percentile_interpolation. Scales above 12 refuse. Of FLOAT, the double average.",
         failures: &[],
     },
     RuleSpec {
