@@ -62,6 +62,19 @@ pub(crate) struct MicrosecondEvidenceTestCase {
     pub(crate) expected_floored: Option<i64>,
 }
 
+pub(crate) struct CheckedMicrosecondTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) checked: bool,
+    pub(crate) replayed_nanos: i64,
+    pub(crate) expected_verdict: &'static str,
+}
+
+pub(crate) struct SubMicrosecondMarkTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) json: &'static str,
+    pub(crate) expected_checked: bool,
+}
+
 pub(crate) struct CompileErrorTestCase {
     pub(crate) description: &'static str,
     pub(crate) sqlstate: &'static str,

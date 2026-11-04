@@ -4,8 +4,10 @@ from __future__ import annotations
 
 import hashlib
 import json
+import re
 from collections import defaultdict
 from collections.abc import Callable, Sequence
+from decimal import Decimal
 from functools import partial
 from pathlib import Path
 from types import SimpleNamespace
@@ -15,12 +17,17 @@ import pyarrow as pa
 import pytest
 from snowflake.connector.errors import NotSupportedError, ProgrammingError
 
-from sqlquack_record.recording.exceptions import RecorderError
+from sqlquack_record.recording.exceptions import RecorderError, UnrecordableResultError
 from sqlquack_record.recording.main.record_pending import record_pending
-from sqlquack_record.recording.models import PendingCase, RecordSummary
-from sqlquack_record.recording.types import SessionParameters, WarehouseSession
+from sqlquack_record.recording.models import PendingCase, RecordSummary, StatementResult
+from sqlquack_record.recording.types import (
+    SessionParameters,
+    SubMicrosecondCheck,
+    WarehouseSession,
+)
 from sqlquack_record.snowflake._helpers import connections
 from sqlquack_record.snowflake._helpers.connections import connect_arguments
+from sqlquack_record.snowflake._helpers.cursors import fetch_exact, sub_microsecond_counts
 from sqlquack_record.snowflake.classes.snowflake_session import SnowflakeSession
 from sqlquack_record.snowflake.models import ConnectionSettings
 
@@ -299,3 +306,137 @@ _OUTCOMES: dict[bool, Callable[[Path], str]] = {True: _stored_outcome, False: _r
 
 def _outcome(path: Path) -> str:
     return _OUTCOMES[path.exists()](path)
+
+
+SUB_MICROSECOND_QUERY_ID: str = "01b2c3d4-0000-4a5b-8c9d-0123456789ab"
+_SUB_MICROSECOND_TYPE_CODES: dict[str, int] = {
+    "TIMESTAMP_LTZ": 6,
+    "TIMESTAMP_TZ": 7,
+    "TIMESTAMP_NTZ": 8,
+    "TIME": 12,
+}
+_SUB_MICROSECOND_ZONES: dict[str, str | None] = {"TIMESTAMP_LTZ": "UTC", "TIMESTAMP_TZ": "+05:30"}
+_COUNTED_POSITION: re.Pattern[str] = re.compile(r"\$(\d+)\)")
+_CHECK_TEMPLATE: re.Pattern[str] = re.compile(
+    r"SELECT (COUNT_IF\(DATE_PART\(nanosecond, \$\d+\) % 1000 <> 0\)(, )?)+ "
+    rf"FROM TABLE\(RESULT_SCAN\('{SUB_MICROSECOND_QUERY_ID}'\)\)"
+)
+
+
+def microsecond_arrow_type(type_name: str) -> pa.DataType:
+    """The Arrow type the connector uses for a scale-9 column it downgrades to microseconds."""
+    return {"TIME": pa.time64("us")}.get(
+        type_name, pa.timestamp("us", tz=_SUB_MICROSECOND_ZONES.get(type_name))
+    )
+
+
+def _sub_microsecond_count(values: tuple[int | None, ...]) -> int:
+    present: list[int] = list(filter(lambda value: value is not None, values))
+    return sum(value % 1000 != 0 for value in present)
+
+
+def _micros(value: int | None) -> int | None:
+    return value and value // 1000
+
+
+def _expired() -> None:
+    raise ProgrammingError(msg="Result for query has expired", errno=2097, sqlstate="02000")
+
+
+def _answered() -> None:
+    """The check runs."""
+
+
+class MicrosecondResultCursor:
+    """A cursor holding Snowflake's nanosecond values, which the connector hands back in µs."""
+
+    def __init__(
+        self,
+        *,
+        type_name: str,
+        names: tuple[str, ...],
+        nanoseconds: tuple[tuple[int | None, ...], ...],
+    ) -> None:
+        self.sfqid: str = SUB_MICROSECOND_QUERY_ID
+        self.description: tuple[SimpleNamespace, ...] = tuple(
+            SimpleNamespace(
+                name=name,
+                type_code=_SUB_MICROSECOND_TYPE_CODES[type_name],
+                precision=0,
+                scale=9,
+                internal_size=None,
+                is_nullable=True,
+            )
+            for name in names
+        )
+        self._columns: tuple[tuple[int | None, ...], ...] = nanoseconds
+        self._type: pa.DataType = microsecond_arrow_type(type_name)
+
+    def fetch_arrow_all(self, force_return_table: bool) -> pa.Table:
+        arrays: list[pa.Array] = [
+            pa.array(list(map(_micros, values)), type=self._type) for values in self._columns
+        ]
+        return pa.Table.from_arrays(arrays, names=[f"C{i}" for i in range(len(arrays))])
+
+
+class SubMicrosecondCheckConnection:
+    """Answers the RESULT_SCAN check from Snowflake's own values, or as scripted."""
+
+    def __init__(self, *, nanoseconds: tuple[tuple[int | None, ...], ...], answer: str) -> None:
+        self._columns: tuple[tuple[int | None, ...], ...] = nanoseconds
+        self._answer: str = answer
+        self.statements: list[str] = []
+
+    def cursor(self) -> SubMicrosecondCheckConnection:
+        return self
+
+    def execute(self, statement: str) -> None:
+        self.statements.append(statement)
+        {"error": _expired}.get(self._answer, _answered)()
+
+    def fetchall(self) -> list[tuple[object, ...]]:
+        counts: list[int] = [
+            _sub_microsecond_count(self._columns[int(position) - 1])
+            for position in _COUNTED_POSITION.findall(self.statements[-1])
+        ]
+        answers: dict[str, list[tuple[object, ...]]] = {
+            "counts": [tuple(counts)],
+            "two rows": [tuple(counts), tuple(counts)],
+            "null": [(None,) * len(counts)],
+            "boolean": [(False,) * len(counts)],
+            "decimal": [tuple(Decimal(count) for count in counts)],
+            "fraction": [(Decimal("0.5"),) * len(counts)],
+        }
+        return answers[self._answer]
+
+    def close(self) -> None:
+        """Nothing to release."""
+
+
+def checked_or_refused(
+    *,
+    type_name: str,
+    names: tuple[str, ...],
+    nanoseconds: tuple[tuple[int | None, ...], ...],
+    answer: str,
+) -> tuple[tuple[bool, ...] | None, str | None, int]:
+    """Columns marked checked, or the refusal, and how many check statements ran."""
+    connection: SubMicrosecondCheckConnection = SubMicrosecondCheckConnection(
+        nanoseconds=nanoseconds, answer=answer
+    )
+    cursor: MicrosecondResultCursor = MicrosecondResultCursor(
+        type_name=type_name, names=names, nanoseconds=nanoseconds
+    )
+    checks: dict[str, SubMicrosecondCheck | None] = {"absent": None}
+    try:
+        result: StatementResult = fetch_exact(
+            cursor=cursor,
+            exact=checks.get(answer, partial(sub_microsecond_counts, connection=connection)),
+        )
+    except UnrecordableResultError as error:
+        return None, str(error), len(connection.statements)
+    assert all(_CHECK_TEMPLATE.fullmatch(statement) for statement in connection.statements)
+    assert result.table is not None
+    assert all(field.type == microsecond_arrow_type(type_name) for field in result.table.schema)
+    checked: tuple[bool, ...] = tuple(column.sub_microsecond_checked for column in result.columns)
+    return checked, None, len(connection.statements)

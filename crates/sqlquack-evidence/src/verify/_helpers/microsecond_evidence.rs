@@ -26,11 +26,14 @@ pub(crate) enum Truncation {
     TowardZero,
 }
 
-/// The columns declared with sub-microsecond scale but stored in a coarser Arrow unit.
+/// Sub-microsecond-scale columns stored in a coarser unit and not proven whole by the recorder.
 pub(crate) fn truncated_columns(recorded: &RecordedResult) -> Vec<usize> {
     let fields = recorded.rows.schema.fields();
     let mut columns: Vec<usize> = Vec::new();
     for (index, column) in recorded.columns.iter().enumerate() {
+        if column.sub_microsecond_checked {
+            continue;
+        }
         let declared = declared_scale(&column.snowflake_type).unwrap_or_default();
         let coarser = fields
             .get(index)

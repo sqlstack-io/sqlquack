@@ -85,6 +85,7 @@ fn recorded(columns: &[TestColumn]) -> RecordedResult {
             .map(|column| RecordedColumn {
                 name: column.name.to_owned(),
                 snowflake_type: column.snowflake_type.to_owned(),
+                sub_microsecond_checked: false,
             })
             .collect(),
         rows: result_set(columns),

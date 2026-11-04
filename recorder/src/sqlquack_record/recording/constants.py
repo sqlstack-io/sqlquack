@@ -37,6 +37,8 @@ NANOSECOND_TYPE_NAMES: frozenset[str] = frozenset(
 )
 MICROSECOND_SCALE: int = 6
 NANOSECOND_UNIT: str = "ns"
+NANOS_PER_MICRO: int = 1000
+QUERY_ID_CHARACTERS: frozenset[str] = frozenset("0123456789abcdefABCDEF-")
 HEX_DIGITS: frozenset[str] = frozenset("0123456789abcdef")
 PENDING_KEYS: frozenset[str] = frozenset(
     {

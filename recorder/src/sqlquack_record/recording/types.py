@@ -11,6 +11,14 @@ type SessionValue = bool | int | str
 type SessionParameters = tuple[tuple[str, SessionValue], ...]
 
 
+class SubMicrosecondCheck(Protocol):
+    """Counts, per 0-based result column position, a query's values with sub-microsecond digits."""
+
+    def __call__(self, *, query_id: str, positions: Sequence[int]) -> tuple[int, ...]:
+        """The counts, in `positions` order; raises `UnrecordableResultError` on any doubt."""
+        ...
+
+
 class WarehouseSession(Protocol):
     """A warehouse connection with fixed session parameters."""
 
