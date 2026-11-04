@@ -46,8 +46,8 @@ pub(crate) fn array_function(
         ("ARRAY_SORT", [array]) => {
             let _rule = log.rule(ARRAY_SORT_RULE);
             diverge(site.context, ARRAY_SORT_ORDER, construct)
-                .and_then(|()| variant(array, construct, site))
-                .map(|array| semi_structured(json_array_sort(&array, log)))
+                .and_then(|()| free_variant(array, construct, site))
+                .map(|(array, _)| semi_structured(json_array_sort(&array, log)))
         }
         ("ARRAY_FLATTEN", [array]) => {
             let _rule = log.rule(ARRAY_FLATTEN_RULE);
@@ -63,8 +63,8 @@ pub(crate) fn array_function(
         ("ARRAY_MAX" | "ARRAY_MIN", [array]) => {
             let _rule = log.rule(ARRAY_EXTREME_RULE);
             diverge(site.context, ARRAY_SORT_ORDER, construct)
-                .and_then(|()| variant(array, construct, site))
-                .map(|array| {
+                .and_then(|()| free_variant(array, construct, site))
+                .map(|(array, _)| {
                     semi_structured(json_array_extreme(&array, name == ARRAY_MAX_NAME, log))
                 })
         }
