@@ -12540,6 +12540,194 @@ sql = "CREATE EXPERIMENT v1 FROM SPECIFICATION $$$$ ;"
 expect = "observe"
 context = "raw"
 
+# DDL: DESC[RIBE] read as { DESC | DESCRIBE }.
+
+[[reading]]
+form = "sf.ddl.desc-alert"
+grammar_sha256 = "fc8f8254145bc1c4fe468885dd4e23424eb7889df70683b99ca4460b26f4765b"
+grammar = ["{ DESC | DESCRIBE } ALERT <name>"]
+reason = "the page writes the keyword as `DESC[RIBE]`, an optional suffix inside one word; read as the two keywords `{ DESC | DESCRIBE }`, since `DESC RIBE` is not a keyword pair"
+
+[[reading]]
+form = "sf.ddl.desc-application"
+grammar_sha256 = "e72d40ca8a3e0b5cac27b0000e49ea60eca891d7d1aee431d44e0f7f5389769f"
+grammar = ["{ DESC | DESCRIBE } APPLICATION <name>"]
+reason = "the page writes the keyword as `DESC[RIBE]`, an optional suffix inside one word; read as the two keywords `{ DESC | DESCRIBE }`, since `DESC RIBE` is not a keyword pair"
+
+[[reading]]
+form = "sf.ddl.desc-application-package"
+grammar_sha256 = "fe363d42e3157f882a6bb86029e7b3dc50b3ce3a1b1c1c76c6010618bcdecfd1"
+grammar = ["{ DESC | DESCRIBE } APPLICATION PACKAGE <name>"]
+reason = "the page writes the keyword as `DESC[RIBE]`, an optional suffix inside one word; read as the two keywords `{ DESC | DESCRIBE }`, since `DESC RIBE` is not a keyword pair"
+
+[[reading]]
+form = "sf.ddl.desc-backup-set"
+grammar_sha256 = "fd40fb351ebb43d7b2ac5785a4710c5f7b5ec32ac5f2f1e1a0b51800db3c6a06"
+grammar = ["{ DESC | DESCRIBE } BACKUP SET <name>"]
+reason = "the page writes the keyword as `DESC[RIBE]`, an optional suffix inside one word; read as the two keywords `{ DESC | DESCRIBE }`, since `DESC RIBE` is not a keyword pair"
+
+[[reading]]
+form = "sf.ddl.desc-committed-task"
+grammar_sha256 = "dd5776b1963a1c2a4c1a443e94e347014d00e92b66148298fbed23c21eeb8d11"
+grammar = ["{ DESC | DESCRIBE } COMMITTED TASK <name>"]
+reason = "the page writes the keyword as `DESC[RIBE]`, an optional suffix inside one word; read as the two keywords `{ DESC | DESCRIBE }`, since `DESC RIBE` is not a keyword pair"
+
+[[reading]]
+form = "sf.ddl.desc-compute-pool"
+grammar_sha256 = "acff5fed935b9205ff5979922e4340333abfc9b65cd177186ddd78dfb9eca26c"
+grammar = ["{ DESC | DESCRIBE } COMPUTE POOL <name>"]
+reason = "the page writes the keyword as `DESC[RIBE]`, an optional suffix inside one word; read as the two keywords `{ DESC | DESCRIBE }`, since `DESC RIBE` is not a keyword pair"
+
+[[reading]]
+form = "sf.ddl.desc-database"
+grammar_sha256 = "b51f36ebab4ded2928a8456dbfda2f4db4c3824b2e578fdf33d8c7ec67b448a9"
+grammar = ["{ DESC | DESCRIBE } DATABASE <database_name>"]
+reason = "the page writes the keyword as `DESC[RIBE]`, an optional suffix inside one word; read as the two keywords `{ DESC | DESCRIBE }`, since `DESC RIBE` is not a keyword pair"
+
+[[reading]]
+form = "sf.ddl.desc-dynamic-table"
+grammar_sha256 = "0948d779d987c8690fbf1064d67dcb622af4f1d2f3bbb850f07b0741e6b58498"
+grammar = ["{ DESC | DESCRIBE } DYNAMIC TABLE <name>"]
+reason = "the page writes the keyword as `DESC[RIBE]`, an optional suffix inside one word; read as the two keywords `{ DESC | DESCRIBE }`, since `DESC RIBE` is not a keyword pair"
+
+[[reading]]
+form = "sf.ddl.desc-event-table"
+grammar_sha256 = "507433e2d1498abab4c580476af15f1a70af2b5e849d635317e840a5aa38ca9d"
+grammar = ["{ DESC | DESCRIBE } EVENT TABLE <name>"]
+reason = "the page writes the keyword as `DESC[RIBE]`, an optional suffix inside one word; read as the two keywords `{ DESC | DESCRIBE }`, since `DESC RIBE` is not a keyword pair"
+
+[[reading]]
+form = "sf.ddl.desc-external-table"
+grammar_sha256 = "a9bcd72dccff3dd38a8075568dcfae5d4f97016515efed198e0e6564b74177ec"
+grammar = ["{ DESC | DESCRIBE } [ EXTERNAL ] TABLE <name> [ TYPE = { COLUMNS | STAGE } ]"]
+reason = "the page writes the keyword as `DESC[RIBE]`, an optional suffix inside one word; read as the two keywords `{ DESC | DESCRIBE }`, since `DESC RIBE` is not a keyword pair"
+
+[[reading]]
+form = "sf.ddl.desc-external-volume"
+grammar_sha256 = "70d9f4adc039478ca6c581b5359d1cdb63995b586d3015271f6bb9bb56835c31"
+grammar = ["{ DESC | DESCRIBE } EXTERNAL VOLUME <name>"]
+reason = "the page writes the keyword as `DESC[RIBE]`, an optional suffix inside one word; read as the two keywords `{ DESC | DESCRIBE }`, since `DESC RIBE` is not a keyword pair"
+
+[[reading]]
+form = "sf.ddl.desc-file-format"
+grammar_sha256 = "f9c9dda1ab1f521d9e387f5d744f0434adcf6df04f4eab3fd5796bb6f39e77ec"
+grammar = ["{ DESC | DESCRIBE } FILE FORMAT <name>"]
+reason = "the page writes the keyword as `DESC[RIBE]`, an optional suffix inside one word; read as the two keywords `{ DESC | DESCRIBE }`, since `DESC RIBE` is not a keyword pair"
+
+[[reading]]
+form = "sf.ddl.desc-function"
+grammar_sha256 = "2a64ce887d805deda352abd78ab8ab15a68dcb4651cc9135e5c29a96129c672c"
+grammar = ["{ DESC | DESCRIBE } FUNCTION <name> ( [ <arg_data_type> ] [ , ... ] )"]
+reason = "the page writes the keyword as `DESC[RIBE]`, an optional suffix inside one word; read as the two keywords `{ DESC | DESCRIBE }`, since `DESC RIBE` is not a keyword pair"
+
+[[reading]]
+form = "sf.ddl.desc-gateway"
+grammar_sha256 = "c89886fccde688b5d58d3a363c5fb3d562294f6ec2874b023349ae6393b3c11a"
+grammar = ["{ DESC | DESCRIBE } GATEWAY <name>"]
+reason = "the page writes the keyword as `DESC[RIBE]`, an optional suffix inside one word; read as the two keywords `{ DESC | DESCRIBE }`, since `DESC RIBE` is not a keyword pair"
+
+[[reading]]
+form = "sf.ddl.desc-iceberg-table"
+grammar_sha256 = "0e4446b0ca656b47f813c16cc49d526459cec3b100aa66b19d204a8e200cdf0c"
+grammar = ["{ DESC | DESCRIBE } [ ICEBERG ] TABLE <name> [ TYPE = { COLUMNS | STAGE } ]"]
+reason = "the page writes the keyword as `DESC[RIBE]`, an optional suffix inside one word; read as the two keywords `{ DESC | DESCRIBE }`, since `DESC RIBE` is not a keyword pair"
+
+[[reading]]
+form = "sf.ddl.desc-materialized-view"
+grammar_sha256 = "e4fada6654cc6ac9985a5742c0c6b13c6fd66962cd0530b93e0f54d3744b05f4"
+grammar = ["{ DESC | DESCRIBE } MATERIALIZED VIEW <name>"]
+reason = "the page writes the keyword as `DESC[RIBE]`, an optional suffix inside one word; read as the two keywords `{ DESC | DESCRIBE }`, since `DESC RIBE` is not a keyword pair"
+
+[[reading]]
+form = "sf.ddl.desc-pipe"
+grammar_sha256 = "cf277ea3d7e18d6f731a59f6bc060f768a35ff69a520c2e812285c87d86635d2"
+grammar = ["{ DESC | DESCRIBE } PIPE <name>"]
+reason = "the page writes the keyword as `DESC[RIBE]`, an optional suffix inside one word; read as the two keywords `{ DESC | DESCRIBE }`, since `DESC RIBE` is not a keyword pair"
+
+[[reading]]
+form = "sf.ddl.desc-procedure"
+grammar_sha256 = "6804d60e4fb792205ab94186d54c7fc831dac2ddc3bc77cac78cd7b9948cb898"
+grammar = ["{ DESC | DESCRIBE } PROCEDURE <procedure_name> ( [ <arg_data_type> [ , <arg_data_type_2> ... ] ] )"]
+reason = "the page writes the keyword as `DESC[RIBE]`, an optional suffix inside one word; read as the two keywords `{ DESC | DESCRIBE }`, since `DESC RIBE` is not a keyword pair"
+
+[[reading]]
+form = "sf.ddl.desc-schema"
+grammar_sha256 = "90520667789b695a80edb83cd61289386e17315f22e26df773e2afeea284af3d"
+grammar = ["{ DESC | DESCRIBE } SCHEMA <schema_name>"]
+reason = "the page writes the keyword as `DESC[RIBE]`, an optional suffix inside one word; read as the two keywords `{ DESC | DESCRIBE }`, since `DESC RIBE` is not a keyword pair"
+
+[[reading]]
+form = "sf.ddl.desc-search-optimization"
+grammar_sha256 = "b76885b44a3d8fbc2b3cc19caa731415ae50b9944d36812ad57a21caa3f48e90"
+grammar = ["{ DESC | DESCRIBE } SEARCH OPTIMIZATION ON <table_name>;"]
+reason = "the page writes the keyword as `DESC[RIBE]`, an optional suffix inside one word; read as the two keywords `{ DESC | DESCRIBE }`, since `DESC RIBE` is not a keyword pair"
+
+[[reading]]
+form = "sf.ddl.desc-sequence"
+grammar_sha256 = "0821096ac8f56fe8ac6953a36101b95adf7a3dc879c3c6df691518107f7dda23"
+grammar = ["{ DESC | DESCRIBE } SEQUENCE <name>"]
+reason = "the page writes the keyword as `DESC[RIBE]`, an optional suffix inside one word; read as the two keywords `{ DESC | DESCRIBE }`, since `DESC RIBE` is not a keyword pair"
+
+[[reading]]
+form = "sf.ddl.desc-service"
+grammar_sha256 = "1bd9d10bef34cdbbe48f1867934f0b5664c590a07d568371a46fda4234131228"
+grammar = ["{ DESC | DESCRIBE } SERVICE <name>"]
+reason = "the page writes the keyword as `DESC[RIBE]`, an optional suffix inside one word; read as the two keywords `{ DESC | DESCRIBE }`, since `DESC RIBE` is not a keyword pair"
+
+[[reading]]
+form = "sf.ddl.desc-snapshot-set"
+grammar_sha256 = "a122d88bd35e5b05a46271b4fef9396765948f322f85c88fa0f421b30ede03c5"
+grammar = ["{ DESC | DESCRIBE } SNAPSHOT SET <name>"]
+reason = "the page writes the keyword as `DESC[RIBE]`, an optional suffix inside one word; read as the two keywords `{ DESC | DESCRIBE }`, since `DESC RIBE` is not a keyword pair"
+
+[[reading]]
+form = "sf.ddl.desc-stage"
+grammar_sha256 = "7499bd97d0f8b214fec97d5eed79c9e64198e5ed1016b0ceb13458264abd41f3"
+grammar = ["{ DESC | DESCRIBE } STAGE <name>"]
+reason = "the page writes the keyword as `DESC[RIBE]`, an optional suffix inside one word; read as the two keywords `{ DESC | DESCRIBE }`, since `DESC RIBE` is not a keyword pair"
+
+[[reading]]
+form = "sf.ddl.desc-stream"
+grammar_sha256 = "9b917db6a59468b4e34b1c26f419cc86a699aeef8587230b2190e398fbbf660c"
+grammar = ["{ DESC | DESCRIBE } STREAM <name>"]
+reason = "the page writes the keyword as `DESC[RIBE]`, an optional suffix inside one word; read as the two keywords `{ DESC | DESCRIBE }`, since `DESC RIBE` is not a keyword pair"
+
+[[reading]]
+form = "sf.ddl.desc-streamlit"
+grammar_sha256 = "9b5466b7499f1b415cf570a204934a3102110d793145950cbc9b0c9aab5429d8"
+grammar = ["{ DESC | DESCRIBE } STREAMLIT <name>"]
+reason = "the page writes the keyword as `DESC[RIBE]`, an optional suffix inside one word; read as the two keywords `{ DESC | DESCRIBE }`, since `DESC RIBE` is not a keyword pair"
+
+[[reading]]
+form = "sf.ddl.desc-task"
+grammar_sha256 = "da8e135dfaacea1597673a35805ccbe0c9193cf652ea14a2709dd34bb5698d06"
+grammar = ["{ DESC | DESCRIBE } TASK <name>"]
+reason = "the page writes the keyword as `DESC[RIBE]`, an optional suffix inside one word; read as the two keywords `{ DESC | DESCRIBE }`, since `DESC RIBE` is not a keyword pair"
+
+[[reading]]
+form = "sf.ddl.desc-task-graph"
+grammar_sha256 = "3d6117914fc317c7738a100d1c8573940394245f2247166e3f253b2836d65417"
+grammar = ["{ DESC | DESCRIBE } TASK GRAPH <name>"]
+reason = "the page writes the keyword as `DESC[RIBE]`, an optional suffix inside one word; read as the two keywords `{ DESC | DESCRIBE }`, since `DESC RIBE` is not a keyword pair"
+
+[[reading]]
+form = "sf.ddl.desc-variable"
+grammar_sha256 = "e1ef8083f30137f2f59f53abf2353e75542b1952b562fd15b4a617620b5c2278"
+grammar = ["{ DESC | DESCRIBE } VARIABLE <name>"]
+reason = "the page writes the keyword as `DESC[RIBE]`, an optional suffix inside one word; read as the two keywords `{ DESC | DESCRIBE }`, since `DESC RIBE` is not a keyword pair"
+
+[[reading]]
+form = "sf.ddl.desc-view"
+grammar_sha256 = "cc3d1a3b77d55a0d03f4a20d2e8d42116ae1f5d5394c01a58778a2571ac6dc47"
+grammar = ["{ DESC | DESCRIBE } VIEW <name>"]
+reason = "the page writes the keyword as `DESC[RIBE]`, an optional suffix inside one word; read as the two keywords `{ DESC | DESCRIBE }`, since `DESC RIBE` is not a keyword pair"
+
+[[reading]]
+form = "sf.ddl.desc-warehouse"
+grammar_sha256 = "3f63389c98e6d91385f925095572bab3ff64cba98153d2c628c75e44b149e4aa"
+grammar = ["{ DESC | DESCRIBE } WAREHOUSE <name>"]
+reason = "the page writes the keyword as `DESC[RIBE]`, an optional suffix inside one word; read as the two keywords `{ DESC | DESCRIBE }`, since `DESC RIBE` is not a keyword pair"
+
 # security_admin: page-typo readings.
 
 [[reading]]

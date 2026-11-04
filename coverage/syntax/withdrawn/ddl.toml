@@ -1433,6 +1433,15 @@ valid_as = "sf.ddl.desc-procedure positive the documented form with every requir
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
+form = "sf.ddl.desc-semantic-view"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required SEMANTIC"
+sql = "DESCRIBE VIEW v1 ;"
+valid_as = "sf.ddl.desc-view alternative { DESC | DESCRIBE } → DESCRIBE"
+reason = "the rejection renders SQL the documented grammar also accepts"
+
+[[withdrawn]]
 form = "sf.ddl.desc-snapshot-set"
 kind = "negative_neighbour"
 target = ""

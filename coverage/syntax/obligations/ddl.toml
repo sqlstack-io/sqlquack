@@ -223186,16 +223186,16 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "sf.ddl.desc-alert.o002"
-kind = "option_present"
+id = "sf.ddl.desc-alert.o010"
+kind = "alternative"
 required = true
-target = "[ RIBE ]"
+target = "{ DESC | DESCRIBE } → DESC"
 
 [[obligation]]
-id = "sf.ddl.desc-alert.o003"
-kind = "option_absent"
+id = "sf.ddl.desc-alert.o011"
+kind = "alternative"
 required = true
-target = "[ RIBE ]"
+target = "{ DESC | DESCRIBE } → DESCRIBE"
 
 [[obligation]]
 id = "sf.ddl.desc-alert.o004"
@@ -223247,16 +223247,16 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "sf.ddl.desc-application.o002"
-kind = "option_present"
+id = "sf.ddl.desc-application.o010"
+kind = "alternative"
 required = true
-target = "[ RIBE ]"
+target = "{ DESC | DESCRIBE } → DESC"
 
 [[obligation]]
-id = "sf.ddl.desc-application.o003"
-kind = "option_absent"
+id = "sf.ddl.desc-application.o011"
+kind = "alternative"
 required = true
-target = "[ RIBE ]"
+target = "{ DESC | DESCRIBE } → DESCRIBE"
 
 [[obligation]]
 id = "sf.ddl.desc-application.o004"
@@ -223308,16 +223308,16 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "sf.ddl.desc-application-package.o002"
-kind = "option_present"
+id = "sf.ddl.desc-application-package.o010"
+kind = "alternative"
 required = true
-target = "[ RIBE ]"
+target = "{ DESC | DESCRIBE } → DESC"
 
 [[obligation]]
-id = "sf.ddl.desc-application-package.o003"
-kind = "option_absent"
+id = "sf.ddl.desc-application-package.o011"
+kind = "alternative"
 required = true
-target = "[ RIBE ]"
+target = "{ DESC | DESCRIBE } → DESCRIBE"
 
 [[obligation]]
 id = "sf.ddl.desc-application-package.o004"
@@ -223552,16 +223552,16 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "sf.ddl.desc-backup-set.o002"
-kind = "option_present"
+id = "sf.ddl.desc-backup-set.o011"
+kind = "alternative"
 required = true
-target = "[ RIBE ]"
+target = "{ DESC | DESCRIBE } → DESC"
 
 [[obligation]]
-id = "sf.ddl.desc-backup-set.o003"
-kind = "option_absent"
+id = "sf.ddl.desc-backup-set.o012"
+kind = "alternative"
 required = true
-target = "[ RIBE ]"
+target = "{ DESC | DESCRIBE } → DESCRIBE"
 
 [[obligation]]
 id = "sf.ddl.desc-backup-set.o004"
@@ -223619,16 +223619,16 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "sf.ddl.desc-committed-task.o002"
-kind = "option_present"
+id = "sf.ddl.desc-committed-task.o010"
+kind = "alternative"
 required = true
-target = "[ RIBE ]"
+target = "{ DESC | DESCRIBE } → DESC"
 
 [[obligation]]
-id = "sf.ddl.desc-committed-task.o003"
-kind = "option_absent"
+id = "sf.ddl.desc-committed-task.o011"
+kind = "alternative"
 required = true
-target = "[ RIBE ]"
+target = "{ DESC | DESCRIBE } → DESCRIBE"
 
 [[obligation]]
 id = "sf.ddl.desc-committed-task.o004"
@@ -223680,16 +223680,16 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "sf.ddl.desc-compute-pool.o002"
-kind = "option_present"
+id = "sf.ddl.desc-compute-pool.o011"
+kind = "alternative"
 required = true
-target = "[ RIBE ]"
+target = "{ DESC | DESCRIBE } → DESC"
 
 [[obligation]]
-id = "sf.ddl.desc-compute-pool.o003"
-kind = "option_absent"
+id = "sf.ddl.desc-compute-pool.o012"
+kind = "alternative"
 required = true
-target = "[ RIBE ]"
+target = "{ DESC | DESCRIBE } → DESCRIBE"
 
 [[obligation]]
 id = "sf.ddl.desc-compute-pool.o004"
@@ -223986,16 +223986,16 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "sf.ddl.desc-database.o002"
-kind = "option_present"
+id = "sf.ddl.desc-database.o010"
+kind = "alternative"
 required = true
-target = "[ RIBE ]"
+target = "{ DESC | DESCRIBE } → DESC"
 
 [[obligation]]
-id = "sf.ddl.desc-database.o003"
-kind = "option_absent"
+id = "sf.ddl.desc-database.o011"
+kind = "alternative"
 required = true
-target = "[ RIBE ]"
+target = "{ DESC | DESCRIBE } → DESCRIBE"
 
 [[obligation]]
 id = "sf.ddl.desc-database.o004"
@@ -224181,16 +224181,16 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "sf.ddl.desc-dynamic-table.o002"
-kind = "option_present"
+id = "sf.ddl.desc-dynamic-table.o010"
+kind = "alternative"
 required = true
-target = "[ RIBE ]"
+target = "{ DESC | DESCRIBE } → DESC"
 
 [[obligation]]
-id = "sf.ddl.desc-dynamic-table.o003"
-kind = "option_absent"
+id = "sf.ddl.desc-dynamic-table.o011"
+kind = "alternative"
 required = true
-target = "[ RIBE ]"
+target = "{ DESC | DESCRIBE } → DESCRIBE"
 
 [[obligation]]
 id = "sf.ddl.desc-dynamic-table.o004"
@@ -224242,16 +224242,16 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "sf.ddl.desc-event-table.o002"
-kind = "option_present"
+id = "sf.ddl.desc-event-table.o010"
+kind = "alternative"
 required = true
-target = "[ RIBE ]"
+target = "{ DESC | DESCRIBE } → DESC"
 
 [[obligation]]
-id = "sf.ddl.desc-event-table.o003"
-kind = "option_absent"
+id = "sf.ddl.desc-event-table.o011"
+kind = "alternative"
 required = true
-target = "[ RIBE ]"
+target = "{ DESC | DESCRIBE } → DESCRIBE"
 
 [[obligation]]
 id = "sf.ddl.desc-event-table.o004"
@@ -224431,16 +224431,16 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "sf.ddl.desc-external-table.o002"
-kind = "option_present"
+id = "sf.ddl.desc-external-table.o018"
+kind = "alternative"
 required = true
-target = "[ RIBE ]"
+target = "{ DESC | DESCRIBE } → DESC"
 
 [[obligation]]
-id = "sf.ddl.desc-external-table.o003"
-kind = "option_absent"
+id = "sf.ddl.desc-external-table.o019"
+kind = "alternative"
 required = true
-target = "[ RIBE ]"
+target = "{ DESC | DESCRIBE } → DESCRIBE"
 
 [[obligation]]
 id = "sf.ddl.desc-external-table.o004"
@@ -224540,16 +224540,16 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "sf.ddl.desc-external-volume.o002"
-kind = "option_present"
+id = "sf.ddl.desc-external-volume.o011"
+kind = "alternative"
 required = true
-target = "[ RIBE ]"
+target = "{ DESC | DESCRIBE } → DESC"
 
 [[obligation]]
-id = "sf.ddl.desc-external-volume.o003"
-kind = "option_absent"
+id = "sf.ddl.desc-external-volume.o012"
+kind = "alternative"
 required = true
-target = "[ RIBE ]"
+target = "{ DESC | DESCRIBE } → DESCRIBE"
 
 [[obligation]]
 id = "sf.ddl.desc-external-volume.o004"
@@ -224607,16 +224607,16 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "sf.ddl.desc-file-format.o002"
-kind = "option_present"
+id = "sf.ddl.desc-file-format.o011"
+kind = "alternative"
 required = true
-target = "[ RIBE ]"
+target = "{ DESC | DESCRIBE } → DESC"
 
 [[obligation]]
-id = "sf.ddl.desc-file-format.o003"
-kind = "option_absent"
+id = "sf.ddl.desc-file-format.o012"
+kind = "alternative"
 required = true
-target = "[ RIBE ]"
+target = "{ DESC | DESCRIBE } → DESCRIBE"
 
 [[obligation]]
 id = "sf.ddl.desc-file-format.o004"
@@ -224674,16 +224674,16 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "sf.ddl.desc-function.o002"
-kind = "option_present"
+id = "sf.ddl.desc-function.o019"
+kind = "alternative"
 required = true
-target = "[ RIBE ]"
+target = "{ DESC | DESCRIBE } → DESC"
 
 [[obligation]]
-id = "sf.ddl.desc-function.o003"
-kind = "option_absent"
+id = "sf.ddl.desc-function.o020"
+kind = "alternative"
 required = true
-target = "[ RIBE ]"
+target = "{ DESC | DESCRIBE } → DESCRIBE"
 
 [[obligation]]
 id = "sf.ddl.desc-function.o004"
@@ -224762,12 +224762,6 @@ id = "sf.ddl.desc-function.o015"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required )"
-
-[[obligation]]
-id = "sf.ddl.desc-function.o016"
-kind = "interaction_all_options"
-required = true
-note = "every independent option of one production together"
 
 [[obligation]]
 id = "sf.ddl.desc-function.o017"
@@ -225129,16 +225123,16 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "sf.ddl.desc-gateway.o002"
-kind = "option_present"
+id = "sf.ddl.desc-gateway.o010"
+kind = "alternative"
 required = true
-target = "[ RIBE ]"
+target = "{ DESC | DESCRIBE } → DESC"
 
 [[obligation]]
-id = "sf.ddl.desc-gateway.o003"
-kind = "option_absent"
+id = "sf.ddl.desc-gateway.o011"
+kind = "alternative"
 required = true
-target = "[ RIBE ]"
+target = "{ DESC | DESCRIBE } → DESCRIBE"
 
 [[obligation]]
 id = "sf.ddl.desc-gateway.o004"
@@ -225257,16 +225251,16 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "sf.ddl.desc-iceberg-table.o002"
-kind = "option_present"
+id = "sf.ddl.desc-iceberg-table.o018"
+kind = "alternative"
 required = true
-target = "[ RIBE ]"
+target = "{ DESC | DESCRIBE } → DESC"
 
 [[obligation]]
-id = "sf.ddl.desc-iceberg-table.o003"
-kind = "option_absent"
+id = "sf.ddl.desc-iceberg-table.o019"
+kind = "alternative"
 required = true
-target = "[ RIBE ]"
+target = "{ DESC | DESCRIBE } → DESCRIBE"
 
 [[obligation]]
 id = "sf.ddl.desc-iceberg-table.o004"
@@ -225457,16 +225451,16 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "sf.ddl.desc-materialized-view.o002"
-kind = "option_present"
+id = "sf.ddl.desc-materialized-view.o010"
+kind = "alternative"
 required = true
-target = "[ RIBE ]"
+target = "{ DESC | DESCRIBE } → DESC"
 
 [[obligation]]
-id = "sf.ddl.desc-materialized-view.o003"
-kind = "option_absent"
+id = "sf.ddl.desc-materialized-view.o011"
+kind = "alternative"
 required = true
-target = "[ RIBE ]"
+target = "{ DESC | DESCRIBE } → DESCRIBE"
 
 [[obligation]]
 id = "sf.ddl.desc-materialized-view.o004"
@@ -225951,16 +225945,16 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "sf.ddl.desc-pipe.o002"
-kind = "option_present"
+id = "sf.ddl.desc-pipe.o010"
+kind = "alternative"
 required = true
-target = "[ RIBE ]"
+target = "{ DESC | DESCRIBE } → DESC"
 
 [[obligation]]
-id = "sf.ddl.desc-pipe.o003"
-kind = "option_absent"
+id = "sf.ddl.desc-pipe.o011"
+kind = "alternative"
 required = true
-target = "[ RIBE ]"
+target = "{ DESC | DESCRIBE } → DESCRIBE"
 
 [[obligation]]
 id = "sf.ddl.desc-pipe.o004"
@@ -226079,16 +226073,16 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "sf.ddl.desc-procedure.o002"
-kind = "option_present"
+id = "sf.ddl.desc-procedure.o019"
+kind = "alternative"
 required = true
-target = "[ RIBE ]"
+target = "{ DESC | DESCRIBE } → DESC"
 
 [[obligation]]
-id = "sf.ddl.desc-procedure.o003"
-kind = "option_absent"
+id = "sf.ddl.desc-procedure.o020"
+kind = "alternative"
 required = true
-target = "[ RIBE ]"
+target = "{ DESC | DESCRIBE } → DESCRIBE"
 
 [[obligation]]
 id = "sf.ddl.desc-procedure.o004"
@@ -226167,12 +226161,6 @@ id = "sf.ddl.desc-procedure.o015"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required )"
-
-[[obligation]]
-id = "sf.ddl.desc-procedure.o016"
-kind = "interaction_all_options"
-required = true
-note = "every independent option of one production together"
 
 [[obligation]]
 id = "sf.ddl.desc-procedure.o017"
@@ -226282,16 +226270,16 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "sf.ddl.desc-schema.o002"
-kind = "option_present"
+id = "sf.ddl.desc-schema.o010"
+kind = "alternative"
 required = true
-target = "[ RIBE ]"
+target = "{ DESC | DESCRIBE } → DESC"
 
 [[obligation]]
-id = "sf.ddl.desc-schema.o003"
-kind = "option_absent"
+id = "sf.ddl.desc-schema.o011"
+kind = "alternative"
 required = true
-target = "[ RIBE ]"
+target = "{ DESC | DESCRIBE } → DESCRIBE"
 
 [[obligation]]
 id = "sf.ddl.desc-schema.o004"
@@ -226343,16 +226331,16 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "sf.ddl.desc-search-optimization.o002"
-kind = "option_present"
+id = "sf.ddl.desc-search-optimization.o012"
+kind = "alternative"
 required = true
-target = "[ RIBE ]"
+target = "{ DESC | DESCRIBE } → DESC"
 
 [[obligation]]
-id = "sf.ddl.desc-search-optimization.o003"
-kind = "option_absent"
+id = "sf.ddl.desc-search-optimization.o013"
+kind = "alternative"
 required = true
-target = "[ RIBE ]"
+target = "{ DESC | DESCRIBE } → DESCRIBE"
 
 [[obligation]]
 id = "sf.ddl.desc-search-optimization.o004"
@@ -226449,12 +226437,6 @@ target = "<name>"
 note = "a string literal in place of <name>"
 
 [[obligation]]
-id = "sf.ddl.desc-semantic-view.o007"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required SEMANTIC"
-
-[[obligation]]
 id = "sf.ddl.desc-semantic-view.o008"
 kind = "negative_neighbour"
 required = true
@@ -226483,16 +226465,16 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "sf.ddl.desc-sequence.o002"
-kind = "option_present"
+id = "sf.ddl.desc-sequence.o010"
+kind = "alternative"
 required = true
-target = "[ RIBE ]"
+target = "{ DESC | DESCRIBE } → DESC"
 
 [[obligation]]
-id = "sf.ddl.desc-sequence.o003"
-kind = "option_absent"
+id = "sf.ddl.desc-sequence.o011"
+kind = "alternative"
 required = true
-target = "[ RIBE ]"
+target = "{ DESC | DESCRIBE } → DESCRIBE"
 
 [[obligation]]
 id = "sf.ddl.desc-sequence.o004"
@@ -226544,16 +226526,16 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "sf.ddl.desc-service.o002"
-kind = "option_present"
+id = "sf.ddl.desc-service.o010"
+kind = "alternative"
 required = true
-target = "[ RIBE ]"
+target = "{ DESC | DESCRIBE } → DESC"
 
 [[obligation]]
-id = "sf.ddl.desc-service.o003"
-kind = "option_absent"
+id = "sf.ddl.desc-service.o011"
+kind = "alternative"
 required = true
-target = "[ RIBE ]"
+target = "{ DESC | DESCRIBE } → DESCRIBE"
 
 [[obligation]]
 id = "sf.ddl.desc-service.o004"
@@ -226666,16 +226648,16 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "sf.ddl.desc-snapshot-set.o002"
-kind = "option_present"
+id = "sf.ddl.desc-snapshot-set.o010"
+kind = "alternative"
 required = true
-target = "[ RIBE ]"
+target = "{ DESC | DESCRIBE } → DESC"
 
 [[obligation]]
-id = "sf.ddl.desc-snapshot-set.o003"
-kind = "option_absent"
+id = "sf.ddl.desc-snapshot-set.o011"
+kind = "alternative"
 required = true
-target = "[ RIBE ]"
+target = "{ DESC | DESCRIBE } → DESCRIBE"
 
 [[obligation]]
 id = "sf.ddl.desc-snapshot-set.o004"
@@ -226843,16 +226825,16 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "sf.ddl.desc-stage.o002"
-kind = "option_present"
+id = "sf.ddl.desc-stage.o010"
+kind = "alternative"
 required = true
-target = "[ RIBE ]"
+target = "{ DESC | DESCRIBE } → DESC"
 
 [[obligation]]
-id = "sf.ddl.desc-stage.o003"
-kind = "option_absent"
+id = "sf.ddl.desc-stage.o011"
+kind = "alternative"
 required = true
-target = "[ RIBE ]"
+target = "{ DESC | DESCRIBE } → DESCRIBE"
 
 [[obligation]]
 id = "sf.ddl.desc-stage.o004"
@@ -226904,16 +226886,16 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "sf.ddl.desc-stream.o002"
-kind = "option_present"
+id = "sf.ddl.desc-stream.o010"
+kind = "alternative"
 required = true
-target = "[ RIBE ]"
+target = "{ DESC | DESCRIBE } → DESC"
 
 [[obligation]]
-id = "sf.ddl.desc-stream.o003"
-kind = "option_absent"
+id = "sf.ddl.desc-stream.o011"
+kind = "alternative"
 required = true
-target = "[ RIBE ]"
+target = "{ DESC | DESCRIBE } → DESCRIBE"
 
 [[obligation]]
 id = "sf.ddl.desc-stream.o004"
@@ -226965,16 +226947,16 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "sf.ddl.desc-streamlit.o002"
-kind = "option_present"
+id = "sf.ddl.desc-streamlit.o010"
+kind = "alternative"
 required = true
-target = "[ RIBE ]"
+target = "{ DESC | DESCRIBE } → DESC"
 
 [[obligation]]
-id = "sf.ddl.desc-streamlit.o003"
-kind = "option_absent"
+id = "sf.ddl.desc-streamlit.o011"
+kind = "alternative"
 required = true
-target = "[ RIBE ]"
+target = "{ DESC | DESCRIBE } → DESCRIBE"
 
 [[obligation]]
 id = "sf.ddl.desc-streamlit.o004"
@@ -227117,16 +227099,16 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "sf.ddl.desc-task.o002"
-kind = "option_present"
+id = "sf.ddl.desc-task.o010"
+kind = "alternative"
 required = true
-target = "[ RIBE ]"
+target = "{ DESC | DESCRIBE } → DESC"
 
 [[obligation]]
-id = "sf.ddl.desc-task.o003"
-kind = "option_absent"
+id = "sf.ddl.desc-task.o011"
+kind = "alternative"
 required = true
-target = "[ RIBE ]"
+target = "{ DESC | DESCRIBE } → DESCRIBE"
 
 [[obligation]]
 id = "sf.ddl.desc-task.o004"
@@ -227178,16 +227160,16 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "sf.ddl.desc-task-graph.o002"
-kind = "option_present"
+id = "sf.ddl.desc-task-graph.o010"
+kind = "alternative"
 required = true
-target = "[ RIBE ]"
+target = "{ DESC | DESCRIBE } → DESC"
 
 [[obligation]]
-id = "sf.ddl.desc-task-graph.o003"
-kind = "option_absent"
+id = "sf.ddl.desc-task-graph.o011"
+kind = "alternative"
 required = true
-target = "[ RIBE ]"
+target = "{ DESC | DESCRIBE } → DESCRIBE"
 
 [[obligation]]
 id = "sf.ddl.desc-task-graph.o004"
@@ -227338,16 +227320,16 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "sf.ddl.desc-variable.o002"
-kind = "option_present"
+id = "sf.ddl.desc-variable.o010"
+kind = "alternative"
 required = true
-target = "[ RIBE ]"
+target = "{ DESC | DESCRIBE } → DESC"
 
 [[obligation]]
-id = "sf.ddl.desc-variable.o003"
-kind = "option_absent"
+id = "sf.ddl.desc-variable.o011"
+kind = "alternative"
 required = true
-target = "[ RIBE ]"
+target = "{ DESC | DESCRIBE } → DESCRIBE"
 
 [[obligation]]
 id = "sf.ddl.desc-variable.o004"
@@ -227399,16 +227381,16 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "sf.ddl.desc-view.o002"
-kind = "option_present"
+id = "sf.ddl.desc-view.o010"
+kind = "alternative"
 required = true
-target = "[ RIBE ]"
+target = "{ DESC | DESCRIBE } → DESC"
 
 [[obligation]]
-id = "sf.ddl.desc-view.o003"
-kind = "option_absent"
+id = "sf.ddl.desc-view.o011"
+kind = "alternative"
 required = true
-target = "[ RIBE ]"
+target = "{ DESC | DESCRIBE } → DESCRIBE"
 
 [[obligation]]
 id = "sf.ddl.desc-view.o004"
@@ -227460,16 +227442,16 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "sf.ddl.desc-warehouse.o002"
-kind = "option_present"
+id = "sf.ddl.desc-warehouse.o010"
+kind = "alternative"
 required = true
-target = "[ RIBE ]"
+target = "{ DESC | DESCRIBE } → DESC"
 
 [[obligation]]
-id = "sf.ddl.desc-warehouse.o003"
-kind = "option_absent"
+id = "sf.ddl.desc-warehouse.o011"
+kind = "alternative"
 required = true
-target = "[ RIBE ]"
+target = "{ DESC | DESCRIBE } → DESCRIBE"
 
 [[obligation]]
 id = "sf.ddl.desc-warehouse.o004"
