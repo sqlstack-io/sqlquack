@@ -94,3 +94,46 @@ rows = [
 ]
 expression = "a * b"
 tags = ["null", "zero", "negative", "boundary"]
+
+[[case]]
+id = "wide_product_scale_cut"
+description = "NUMBER(38,6) times NUMBER(18,8): the exact product needs 56 digits before Snowflake cuts its scale to 12, rounding the dropped digits."
+columns = [{ name = "a", type = "NUMBER(38,6)" }, { name = "b", type = "NUMBER(18,8)" }]
+rows = [
+  ["1.000001", "0.12345679"],
+  ["0.000005", "0.00000010"],
+  ["-0.000005", "0.00000010"],
+  ["0.000025", "0.00000010"],
+  ["-0.000025", "0.00000010"],
+  ["0.000001", "0.00000049"],
+  ["123456789012345678.123456", "1.23456789"],
+  ["0", "0.00000001"],
+  ["NULL", "1"],
+]
+expression = "a * b"
+tags = ["null", "zero", "negative", "boundary"]
+
+[[case]]
+id = "wide_product_whole_digits"
+description = "NUMBER(38,6) times NUMBER(18,8) with 26 whole digits, which NUMBER(38,12) holds but DuckDB's exact product at scale 14 does not."
+columns = [{ name = "a", type = "NUMBER(38,6)" }, { name = "b", type = "NUMBER(18,8)" }]
+rows = [
+  ["12345678901234567890123456.789012", "1.00000000"],
+]
+expression = "a * b"
+expected_divergence = "numeric_range"
+tags = ["boundary"]
+
+[[case]]
+id = "wide_product_ten_scales"
+description = "NUMBER(38,10) times NUMBER(38,10): the scale of 20 is cut to 12, rounding the dropped digits."
+columns = [{ name = "a", type = "NUMBER(38,10)" }, { name = "b", type = "NUMBER(38,10)" }]
+rows = [
+  ["0.1234567891", "0.8765432109"],
+  ["0.0000025000", "0.0000010000"],
+  ["-0.0000025000", "0.0000010000"],
+  ["0.0000000005", "0.0000000010"],
+  ["NULL", "1"],
+]
+expression = "a * b"
+tags = ["null", "negative", "boundary"]
