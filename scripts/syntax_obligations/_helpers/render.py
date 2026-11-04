@@ -29,6 +29,7 @@ from scripts.syntax_obligations.constants import (
     EXPECT_ACCEPT,
     EXPECT_REJECT,
     FAMILY_STYLES,
+    GLUED_INFIXES,
     GLUED_PREFIXES,
     HAND_ALSO_SQL,
     HAND_CORE,
@@ -41,6 +42,7 @@ from scripts.syntax_obligations.constants import (
     NODE_CHOICE,
     NODE_OPTIONAL,
     OPEN_PAREN,
+    OPENED,
     PROCEDURE_WRAPPER,
     QUERY_CLASS,
     QUOTED_WITHOUT_BLANK_NAMES,
@@ -145,9 +147,8 @@ class _Renderer:
         """The rendered form text of one production; records the names it fills in."""
         self._used = {}
         self._keywords = []
-        return GLUED_PREFIXES.sub(
-            r"\1", " ".join(self._sequence(nodes=self.trees[production], choices=choices))
-        )
+        joined: str = " ".join(self._sequence(nodes=self.trees[production], choices=choices))
+        return GLUED_INFIXES.sub(r"\1", GLUED_PREFIXES.sub(r"\1", joined))
 
     def _declarations(self) -> str:
         """Declarations, by `uses`, of the objects the form names, so the case is self-contained."""
@@ -267,10 +268,12 @@ class _Renderer:
     def _sequence(self, *, nodes: tuple[Node, ...], choices: _Choices) -> list[str]:
         """Rendered tokens; a replaced operand is still declared under its valid name."""
         out: list[str] = []
+        dangling: int = -1
         for node in nodes:
             key: int = id(node)
             if key in choices.drop:
                 continue
+            emitted: int = len(out)
             if key in choices.replace:
                 text: str = choices.replace[key]
                 name: str = placeholder_name(node)
@@ -296,6 +299,7 @@ class _Renderer:
                 if node.token_kind == TOKEN_KEYWORD:
                     self._keywords.append(node.text.upper())
                 out.append(self._token(node=node, choices=choices))
+            dangling = _dangling_separator(out=out, emitted=emitted, dangling=dangling, node=node)
         return out
 
     def _optional(self, *, node: Node, choices: _Choices, before: list[str]) -> list[str]:
@@ -312,6 +316,8 @@ class _Renderer:
         return self._sequence(nodes=branch, choices=choices)
 
     def _token(self, *, node: Node, choices: _Choices) -> str:
+        if node.token_kind == TOKEN_LITERAL and node.text in self.style.literal_fills:
+            return self.style.literal_fills[node.text]
         name: str = placeholder_name(node)
         if not name:
             quoted: bool = (
@@ -329,6 +335,21 @@ class _Renderer:
             fill = f'"{fill}Q"' if name in QUOTED_WITHOUT_BLANK_NAMES else f'"{fill} Q"'
         self._used.setdefault(name, []).append(fill)
         return fill
+
+
+def _dangling_separator(*, out: list[str], emitted: int, dangling: int, node: Node) -> int:
+    """Drop the `,` omitted optionals leave beside `(` or `)`; returns the pending comma index."""
+    if len(out) == emitted:
+        if node.kind != NODE_OPTIONAL or dangling >= 0:
+            return dangling
+        if out[-1:] == [LIST_SEPARATOR]:
+            return len(out) - 1
+        return OPENED if out[-1:] == [OPEN_PAREN] else dangling
+    if dangling == OPENED and out[emitted] == LIST_SEPARATOR:
+        del out[emitted]
+    elif dangling >= 0 and out[emitted] == CLOSE_PAREN:
+        del out[dangling]
+    return -1
 
 
 def _repeat_start(*, before: list[str], keywords: set[str]) -> int:

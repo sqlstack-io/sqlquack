@@ -5412,6 +5412,27 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
+id = "sf.expressions.snowflake-db-classes.o017"
+kind = "required_operand_missing"
+required = true
+target = "<instance_name>"
+note = "omit <instance_name>"
+
+[[obligation]]
+id = "sf.expressions.snowflake-db-classes.o018"
+kind = "operand_type_class"
+required = true
+target = "<instance_name>"
+note = "a valid identifier"
+
+[[obligation]]
+id = "sf.expressions.snowflake-db-classes.o019"
+kind = "negative_neighbour"
+required = true
+target = "<instance_name>"
+note = "a string literal in place of <instance_name>"
+
+[[obligation]]
 id = "sf.expressions.snowflake-db-classes.o002"
 kind = "required_operand_missing"
 required = true
@@ -5484,6 +5505,22 @@ required = true
 note = "the form without its required )"
 
 [[obligation]]
+id = "sf.expressions.snowflake-db-classes.o020"
+kind = "identifier_class"
+required = true
+target = "<instance_name>"
+anchor = "doc.identifiers-syntax"
+note = "quoted: a double-quoted identifier with blanks and mixed case"
+
+[[obligation]]
+id = "sf.expressions.snowflake-db-classes.o021"
+kind = "identifier_class"
+required = true
+target = "<instance_name>"
+anchor = "doc.identifiers-syntax"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
 id = "sf.expressions.snowflake-db-classes.o012"
 kind = "identifier_class"
 required = true
@@ -5498,3 +5535,17 @@ required = true
 target = "<method_name>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.expressions.snowflake-db-classes.o022"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.snowflake-db-classes / Selecting columns from SQL class instance methods that return tabular data"
+note = "a class method call without its instance"
+
+[[obligation]]
+id = "sf.expressions.snowflake-db-classes.o023"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.snowflake-db-classes / Selecting columns from SQL class instance methods that return tabular data"
+note = "a class method call without its method name"

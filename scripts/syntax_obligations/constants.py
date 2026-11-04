@@ -76,7 +76,7 @@ CLASS_RULES: tuple[tuple[re.Pattern[str], str], ...] = (
     (re.compile(r"_(declaration|assignment|definition|handler)$"), "subgrammar"),
     (re.compile(r"^(session|bind|snowflake_scripting)_variable$"), "operand"),
     (re.compile(r"statement"), "statement"),
-    (re.compile(r"query|subquery"), "query"),
+    (re.compile(r"(^|_)(sub)?query$"), "query"),
     (re.compile(r"(^|_)(data_)?type$|_type$"), "data_type"),
     (re.compile(r"number$|^n$|^num|_count$|^count$|position$"), "integer_literal"),
     (re.compile(r"message|string|pattern|comment"), "string_literal"),
@@ -301,10 +301,12 @@ SCRIPTING_SELF_DECLARING_BLOCKS: dict[str, FormStyle] = {
 ELISION_START: str = "^"
 PURE_ELISION: str = "[ ... ]"
 LIST_SEPARATOR: str = ","
+OPENED: int = -2
 LIST_ITEM_KEYWORDS: frozenset[str] = frozenset(
     {"AS", "NOT", "NULL", "ASC", "DESC", "NULLS", "FIRST", "LAST"}
 )
 GLUED_PREFIXES: re.Pattern[str] = re.compile(r"(?<![^ ])([$:@]) (?=[^ =])")
+GLUED_INFIXES: re.Pattern[str] = re.compile(r" (!) (?=[A-Za-z_\"])")
 QUERY_FORMS: tuple[str, ...] = ("sf.query.constructs",)
 UNPACKED_FORMS: frozenset[str] = frozenset(QUERY_FORMS)
 QUERY_ELISIONS: dict[str, tuple[str, tuple[str, ...], str]] = {
@@ -390,7 +392,6 @@ QUERY_ELISIONS: dict[str, tuple[str, tuple[str, ...], str]] = {
     "AS": ("", (), "repetition of the preceding aliased list item; this form's own list"),
 }
 TOP_LEVEL_FAMILIES: tuple[str, ...] = (
-    "functions",
     "dml",
     "transaction_session",
     "utility",
@@ -572,7 +573,7 @@ EXPRESSIONS_STATEMENT_FORMS: tuple[str, ...] = (
 )
 EXPRESSIONS_FORM_FILLS: dict[str, dict[str, str]] = {
     "data-types-datetime.interval": {"string": "'1'"},
-    "snowflake-db-classes": {"method_name": "i1!m1"},
+    "snowflake-db-classes": {"method_name": "m1", "instance_name": "i1"},
 }
 
 
@@ -597,9 +598,195 @@ EXPRESSIONS_STYLES: dict[str, FormStyle] = {
     )
     for form, (prefix, suffix) in EXPRESSIONS_FORM_CONTEXTS.items()
 }
+FUNCTIONS_TABLE_FORMS: tuple[str, ...] = (
+    "alert-history",
+    "application-callback-history",
+    "application-specification-status-history",
+    "auto-refresh-registration-history",
+    "automatic-clustering-history",
+    "available-listing-refresh-history",
+    "available-listings",
+    "bind-values",
+    "complete-task-graphs",
+    "copy-history",
+    "cortex-search-batch",
+    "cortex-search-data-scan",
+    "cortex-search-refresh-history",
+    "cumulative-privacy-losses",
+    "current-task-graphs",
+    "data-metric-function-expectations",
+    "data-metric-function-references.metric-name",
+    "data-metric-function-references.ref-entity-name-ref-entity-domain",
+    "data-quality-monitoring-expectation-status",
+    "data-quality-monitoring-results",
+    "data-transfer-history",
+    "database-refresh-history",
+    "database-refresh-progress.database-refresh-progress",
+    "database-refresh-progress.database-refresh-progress-by-job",
+    "database-replication-usage-history",
+    "database-storage-usage-history",
+    "dbt-project-execution-history",
+    "dcm-deployment-history",
+    "dynamic-table-graph-history",
+    "dynamic-table-refresh-history",
+    "dynamic-tables",
+    "estimate-hybrid-table-storage-usage",
+    "estimate-remaining-dp-aggregates",
+    "external-functions-history",
+    "external-table-files",
+    "external-table-registration-history",
+    "flatten",
+    "generator.generator",
+    "generator.generator-rowcount",
+    "get-ai-evaluation-data-snowflake-local",
+    "get-ai-observability-events-snowflake-local",
+    "get-ai-observability-logs-snowflake-local",
+    "get-ai-record-trace-snowflake-local",
+    "get-contacts",
+    "get-job-history",
+    "get-lineage-snowflake-core",
+    "get-object-references",
+    "get-query-operator-stats",
+    "get-table-version-refs",
+    "get-table-versions",
+    "iceberg-table-file-registration-history",
+    "iceberg-table-files",
+    "iceberg-table-snapshot-refresh-history",
+    "infer-schema",
+    "listing-refresh-history",
+    "login-history.login-history",
+    "login-history.login-history-by-user",
+    "materialized-view-refresh-history",
+    "my-budget-summary-snowflake-local",
+    "network-rule-references.container-name-container-type",
+    "network-rule-references.network-rule-name",
+    "notification-history",
+    "online-feature-table-refresh-history",
+    "pipe-usage-history",
+    "policy-references.policy-name",
+    "policy-references.policy-name-policy-kind",
+    "policy-references.ref-entity-name-ref-entity-domain",
+    "query-acceleration-history",
+    "query-history.query-history",
+    "query-history.query-history-by-session",
+    "query-history.query-history-by-user",
+    "query-history.query-history-by-warehouse",
+    "replication-group-dangling-references",
+    "replication-group-lag-history",
+    "replication-group-refresh-history.replication-group-refresh-history",
+    "replication-group-refresh-history.replication-group-refresh-history-all",
+    "replication-group-refresh-progress.replication-group-refresh-progress",
+    "replication-group-refresh-progress.replication-group-refresh-progress-all",
+    "replication-group-refresh-progress.replication-group-refresh-progress-by-job",
+    "replication-group-usage-history",
+    "replication-usage-history",
+    "rest-event-history",
+    "result-scan",
+    "search-optimization-history",
+    "semantic-view-materialization-refresh-history",
+    "serverless-alert-history",
+    "serverless-task-history",
+    "spcs-cancel-job",
+    "spcs-get-events",
+    "spcs-get-logs",
+    "spcs-get-metrics",
+    "split-to-table",
+    "stage-directory-file-registration-history",
+    "stage-storage-usage-history",
+    "storage-lifecycle-policy-history.policy-name",
+    "storage-lifecycle-policy-history.ref-entity-name-ref-entity-domain",
+    "strtok-split-to-table",
+    "system-data-metric-scan",
+    "system-evaluate-data-quality-expectations",
+    "system-stream-backlog",
+    "tag-references",
+    "tag-references-all-columns",
+    "tag-references-with-lineage",
+    "task-dependents",
+    "task-graph-changes",
+    "task-history",
+    "to-query",
+    "validate",
+    "validate-pipe-load",
+    "warehouse-load-history",
+    "warehouse-metering-history",
+)
+FUNCTIONS_STATEMENT_FORMS: tuple[str, ...] = (
+    "ai-function-evaluation.create-experiment-type-from",
+    "ai-function-evaluation.execute-experiment",
+    "ai-function-optimization.create-experiment-type-from",
+    "dmf-row-count-difference",
+    "dmf-seconds-since-row-count-change",
+    "dmf-source-target-lag.alter-table-add-data",
+    "policy-context",
+    "prompt",
+    "set-sys-context",
+    "system-create-evaluation-dataset",
+    "system-evaluate-data-quality-expectations-persist-result",
+    "system-get-classification-result",
+    "system-global-account-set-parameter",
+    "system-set-row-timestamp-on-all-supported-tables.select-system-set-row-timestamp-on-all-supported-tables",
+    "system-wait-for-openflow-connector-status",
+    "system-wait-for-openflow-deployment-status",
+    "system-wait-for-openflow-runtime-status",
+    "system-wait-for-stable-openflow-connectors",
+    "system-wait-for-stable-openflow-deployments",
+    "system-wait-for-stable-openflow-runtimes",
+)
+FUNCTIONS_METRIC_ON_FORMS: tuple[str, ...] = (
+    "dmf-accepted-values",
+    "dmf-accepted-values-percent",
+    "dmf-referential-integrity-count.table",
+    "dmf-referential-integrity-count.table.syntax",
+)
+FUNCTIONS_FILLS: dict[str, str] = {
+    "window_frame": "ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW",
+    "orderby_clause": "ORDER BY 1",
+    "order_by_expr": "1",
+    "partition_expr": "1",
+    "date_or_time_part": "DAY",
+    "query": "SELECT 1",
+    "subquery": "SELECT 1",
+    "service_name": "svc1",
+}
+FUNCTIONS_LITERAL_FILLS: dict[str, str] = {
+    "'<agent_name>[!<version>]'": "'a1'",
+    "'[<namespace>.]<object_name>'": "'d1.t1'",
+    "'{ internalStage | externalStage }'": "'@s1'",
+    "'@<stage>'": "'@s1'",
+    "'<schema_name>.<object_name>'": "'s1.t1'",
+    "'( <col1> [ , <col2> ... ] )'": "'( c1 , c2 )'",
+    "'( <expr1> [ , <expr2> ... ] )'": "'( c1 , c2 )'",
+    "'<column> [ , <column> ... ]'": "'c1 , c2'",
+    "'<object> [, <object> ...]'": "'o1, o2'",
+    "'<category>,<category>'": "'c1,c2'",
+    "'[ STALENESS_CHECK_OVERRIDE ] [ , OWNERSHIP_TRANSFER_CHECK_OVERRIDE ]'": (
+        "'STALENESS_CHECK_OVERRIDE'"
+    ),
+    "'/<dbName>/<schemaName>/<repositoryName>'": "'/d1/s1/r1'",
+    "'<email_address_1> [ , ... <email_address_N> ]'": "'a@example.com'",
+    "'<dbName>.<schemaName>.<tableName>'": "'d1.s1.t1'",
+}
+FUNCTIONS_FORM_CONTEXTS: dict[str, tuple[str, str]] = {
+    "": ("SELECT ", " ;"),
+    **dict.fromkeys(FUNCTIONS_TABLE_FORMS, ("SELECT * FROM TABLE ( ", " ) ;")),
+    **dict.fromkeys(FUNCTIONS_STATEMENT_FORMS, ("", "")),
+    **dict.fromkeys(FUNCTIONS_METRIC_ON_FORMS, ("ALTER TABLE t1 ADD DATA METRIC FUNCTION ", " ;")),
+}
+FUNCTIONS_STYLES: dict[str, FormStyle] = {
+    f"sf.functions.{form}": FormStyle(
+        prefix=prefix,
+        suffix=suffix,
+        fills=FUNCTIONS_FILLS,
+        literal_fills=FUNCTIONS_LITERAL_FILLS,
+        terminate=not suffix,
+    )
+    for form, (prefix, suffix) in FUNCTIONS_FORM_CONTEXTS.items()
+}
 FAMILY_STYLES: dict[str, dict[str, FormStyle]] = {
     "scripting": SCRIPTING_SELF_DECLARING_BLOCKS,
     "query": QUERY_STYLES,
     "expressions": EXPRESSIONS_STYLES,
+    "functions": FUNCTIONS_STYLES,
     **{family: {f"sf.{family}.": FormStyle(prefix="", suffix="")} for family in TOP_LEVEL_FAMILIES},
 }
