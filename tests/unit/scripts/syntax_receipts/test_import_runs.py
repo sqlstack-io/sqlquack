@@ -18,6 +18,7 @@ from tests.unit.scripts.syntax_receipts._test_types import (
     RefusedRunTestCase,
     RepublishTestCase,
     SetupRunTestCase,
+    SupersedeTestCase,
 )
 from tests.unit.scripts.syntax_receipts.helpers import (
     accepted_row,
@@ -64,16 +65,40 @@ _SYNTAX_ROW: dict[str, object] = error_row(
         ClassifyTestCase(
             description="a 100000-series code is raised while the statement executes",
             errno=100051,
+            sqlstate="22012",
             message="Division by zero",
             expected_classification=("runtime_error", "errno 100051 is an execution-time code"),
         ),
         ClassifyTestCase(
-            description="a syntax error raised while a block evaluates an expression ran past compilation",
+            description="a syntax error raised while a block runs is not established",
             errno=1003,
             message="Uncaught exception of type 'EXPRESSION_ERROR' : SQL compilation error",
+            expected_classification=None,
+        ),
+        ClassifyTestCase(
+            description="an uncaught exception with another errno ran past compilation",
+            errno=100183,
+            message="Uncaught exception of type 'STATEMENT_ERROR' on line 5",
             expected_classification=(
                 "runtime_error",
                 "uncaught exception raised while the block ran",
+            ),
+        ),
+        ClassifyTestCase(
+            description="a high errno with SQLSTATE class 42 and no review is not established",
+            errno=392032,
+            sqlstate="42601",
+            message="Streaming alert condition must not contain a show statement",
+            expected_classification=None,
+        ),
+        ClassifyTestCase(
+            description="a reviewed high errno with SQLSTATE class 42 is semantic",
+            errno=391858,
+            sqlstate="42601",
+            message="Projection policy must have exactly zero arguments, got 1 arguments.",
+            expected_classification=(
+                "semantic_error",
+                "errno 391858 SQLSTATE 42601, reviewed as semantic",
             ),
         ),
         ClassifyTestCase(
@@ -94,7 +119,9 @@ _SYNTAX_ROW: dict[str, object] = error_row(
 def test_given_error_fields_when_classified_then_only_established_phases_are_named(
     test_case: ClassifyTestCase,
 ) -> None:
-    classified: tuple[str, str] | None = classify(errno=test_case.errno, message=test_case.message)
+    classified: tuple[str, str] | None = classify(
+        errno=test_case.errno, message=test_case.message, sqlstate=test_case.sqlstate
+    )
 
     assert classified == test_case.expected_classification, test_case.description
 
@@ -324,3 +351,64 @@ def test_given_fixture_setup_per_item_when_imported_then_receipts_name_that_setu
     receipt_input: tuple[str, str] = (receipts[0]["sql_sha256"], receipts[0]["setup_sha256"])
     assert setups[receipt_input][-3:] == test_case.expected_setup_tail
     assert [r["row_id"] for r in report["refusals"]] == test_case.expected_refusals
+
+
+@pytest.mark.parametrize(
+    "test_case",
+    (
+        SupersedeTestCase(
+            description="a receipt published as runtime under the old rule is withdrawn",
+            rows=[
+                error_row(
+                    case_id="c1",
+                    sql=_GOOD,
+                    errno=1003,
+                    message="Uncaught exception of type 'EXPRESSION_ERROR' : SQL compilation error",
+                )
+            ],
+            packet=[packet_case(case_id="c1", sql=_GOOD)],
+            published_phase="runtime_error",
+            expected_new_receipts=0,
+            expected_withdrawn=[("c1", "runtime_error")],
+        ),
+        SupersedeTestCase(
+            description="a receipt whose phase changed is republished as superseding",
+            rows=[
+                error_row(case_id="c1", sql=_GOOD, errno=2003, message="SQL compilation error: x")
+            ],
+            packet=[packet_case(case_id="c1", sql=_GOOD)],
+            published_phase="runtime_error",
+            expected_new_receipts=1,
+            expected_withdrawn=[],
+        ),
+    ),
+    ids=lambda case: case.description,
+)
+def test_given_published_phase_changed_when_imported_then_it_is_superseded_explicitly(
+    test_case: SupersedeTestCase, tmp_path: Path
+) -> None:
+    write_run(root=tmp_path, rows=test_case.rows, packet=test_case.packet)
+    runs, inputs = str(tmp_path / "runs"), str(tmp_path / "inputs")
+    earlier: Path = tmp_path / "earlier.jsonl"
+    run_import([runs, str(earlier), str(tmp_path / "earlier.json"), inputs])
+    raw: dict[str, object] = json.loads(
+        (tmp_path / "runs").joinpath("b5-test-20261103T000000Z", "capture", "raw.jsonl").read_text()
+    )
+    published: dict[str, object] = {
+        "run_id": "b5-test-20261103T000000Z",
+        "case_id": raw["id"],
+        "raw_record_sha256": sha(json.dumps(raw).encode()),
+        "phase": test_case.published_phase,
+    }
+    earlier.write_text(json.dumps(published) + "\n")
+    later: Path = tmp_path / "later.jsonl"
+
+    run_import(
+        [runs, str(later), str(tmp_path / "later.json"), inputs, "--published", str(earlier)]
+    )
+
+    new: list[Row] = [json.loads(line) for line in later.read_text().splitlines()]
+    report: Row = json.loads((tmp_path / "later.json").read_text())
+    assert len(new) == test_case.expected_new_receipts, test_case.description
+    assert all("supersedes_receipt_sha256" in r for r in new), test_case.description
+    assert [(w["case_id"], w["phase"]) for w in report["withdrawn"]] == test_case.expected_withdrawn
