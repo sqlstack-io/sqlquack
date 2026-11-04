@@ -96,7 +96,7 @@ pub(crate) fn convert_command(
         }
     };
     let (report, sql) = report;
-    let rendered = match arguments.json {
+    let rendered = match arguments.output.json() {
         true => serde_json::to_string_pretty(&report).unwrap_or_default() + "\n",
         false if report.converted => {
             report
@@ -173,11 +173,17 @@ fn converted(arguments: &ConvertArguments, sql: &str) -> Result<ConvertReport, S
         .map(load_schema)
         .transpose()?
         .unwrap_or_default();
-    let policy = chosen_policy(&arguments.policy, arguments.builtin_policy)?;
+    let policy = chosen_policy(
+        &arguments.conversion.policy,
+        arguments.conversion.builtin_policy,
+    )?;
     let parameters = parse_session(&arguments.session)?;
     let (options, profile) = match session_conversion_options(
         policy.as_ref(),
-        (arguments.strict, arguments.utc_session),
+        (
+            arguments.conversion.strict,
+            arguments.conversion.utc_session,
+        ),
         &parameters,
     ) {
         Ok(matched) => matched,
@@ -207,7 +213,10 @@ fn converted(arguments: &ConvertArguments, sql: &str) -> Result<ConvertReport, S
         Some(policy) => confirmed_offsets(
             options,
             policy,
-            (arguments.confirm_declared_offsets, arguments.python_runtime),
+            (
+                arguments.conversion.confirm_declared_offsets,
+                arguments.conversion.python_runtime,
+            ),
         ),
         None => options,
     };

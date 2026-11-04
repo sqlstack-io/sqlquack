@@ -66,7 +66,7 @@ pub(crate) fn audit_compare_command(
             return ExitCode::FAILURE;
         }
     };
-    let rendered = if arguments.json {
+    let rendered = if arguments.output.json() {
         serde_json::to_string_pretty(&entries).unwrap_or_default() + "\n"
     } else {
         render(&entries)
