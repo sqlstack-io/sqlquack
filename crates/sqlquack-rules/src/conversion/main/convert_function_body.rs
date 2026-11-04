@@ -42,6 +42,7 @@ pub fn convert_function_body(
         typed: &typed,
         order: &order,
         free_projections: false,
+        fixture_body: false,
     };
     let (sql, columns) =
         converted_body(&tree, spec, &context).map_err(|refusal| locator.placed(refusal, &tree))?;

@@ -45,7 +45,7 @@ pub fn collect_all_refusals(
                 .into_iter()
                 .filter(|refusal| refusal.category == RefusalCategory::NotExpressible),
         );
-        let rejected = snowflake_rejections(statement, &lines);
+        let rejected = snowflake_rejections(statement, (sql, &lines));
         if !rejected.is_empty() {
             all.refusals.extend(rejected);
             continue;

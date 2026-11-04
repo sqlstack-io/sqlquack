@@ -4,6 +4,12 @@ use crate::diagnostics::models::CodeEntry;
 
 /// The prefix of a parse refusal's reason, before the parser's own message.
 pub const UNPARSED_PREFIX: &str = "the SQL does not parse: ";
+/// The words of an unresolved name's reason when it matches a declared name only ignoring case.
+pub const CASE_ONLY_MATCH: &str = "only without regard to case";
+/// The help for such a name, replacing SQ0004's own.
+pub const CASE_ONLY_MATCH_HELP: &str = "Snowflake folds unquoted names to upper case, so declare \
+    the relation or column in the schema as the SQL resolves it (`ORDERS` for `FROM orders`), or \
+    quote the name in the SQL to keep its case";
 /// The prefix of a complexity guard's message, before the rest of its `E_GUARD_*` name.
 pub const GUARD_PREFIX: &str = "E_GUARD_";
 /// The longest source line shown in full; longer lines show a window around the span.
@@ -25,6 +31,8 @@ pub const NOT_EXPRESSIBLE: &str = "SQ0005";
 pub const CONVERSION_BUDGET: &str = "SQ0006";
 /// The session parameters match no recorded session profile.
 pub const SESSION_PARAMETERS: &str = "SQ0007";
+/// The conversion needs a known divergence the policy refuses in this mode.
+pub const DIVERGENCE_REFUSED: &str = "SQ0008";
 
 /// Every diagnostic code, in the order issued.
 pub const CODES: &[CodeEntry] = &[
@@ -110,6 +118,23 @@ pub const CODES: &[CodeEntry] = &[
             session parameters given match none of them, so no conversion is proven for that \
             session. The label names the parameters; unset parameters take Snowflake's \
             documented defaults.",
+    },
+    CodeEntry {
+        code: DIVERGENCE_REFUSED,
+        name: "divergence_refused",
+        alias: None,
+        title: "the conversion needs a known divergence the policy refuses",
+        help: Some(
+            "allow the divergence under [divergences.<id>] in the policy file (--policy), drop \
+             --strict or --loud-divergences-only, or confirm its assumption (--utc-session, \
+             --confirm-declared-offsets, --python-runtime); --builtin-policy refuses every one",
+        ),
+        explanation: "The construct at the span converts only by relying on the known \
+            divergence the label names, where DuckDB may raise or differ from Snowflake as the \
+            policy file describes. The policy refuses that divergence in the current mode, so \
+            the statement is refused. Allow it in the policy file, use a mode that allows it, \
+            or confirm the assumption it rests on; otherwise rewrite the statement without the \
+            construct.",
     },
     CodeEntry {
         code: "SQ0101",

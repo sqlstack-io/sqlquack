@@ -52,7 +52,7 @@ pub fn analyze_function(
         }]);
     };
     let occurrences = classify(statement, &lines, dialect);
-    let declared: Vec<Refusal> = declared_refusals(statement, &occurrences, policy, &lines);
+    let declared: Vec<Refusal> = declared_refusals(statement, &occurrences, policy, (body, &lines));
     if !declared.is_empty() {
         return Err(declared);
     }

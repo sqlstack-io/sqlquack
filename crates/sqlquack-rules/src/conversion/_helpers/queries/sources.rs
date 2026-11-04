@@ -412,6 +412,7 @@ fn asof_join(
                 converted.data_type,
                 SnowflakeType::Number { .. }
                     | SnowflakeType::Float
+                    | SnowflakeType::Date
                     | SnowflakeType::TimestampNtz { .. }
             ) {
                 return Err(refuse(&format!(
