@@ -1,0 +1,26 @@
+# Lane C review of lane A's receipt importer: phase classification and reason categories (decision D75).
+# Bound to the reviewed commit, the Git tree of scripts/syntax_receipts and the sha256 of its constants.
+
+[review]
+subject = "importer"
+reviewer_lane = "C"
+branch = "wip/syntax-evidence"
+commit = "6e545d232252302332da369f70191bdd9305fda7"
+package_tree = "e1923f5e5b36e2912c18f833ec344ae5f3417402"
+constants_sha256 = "0c288d1b933b2c264f96624e6a73af8e05339e29ec51c6ac6e452ab80e1d684d"
+reviewed_utc = "2026-11-04T01:30:00Z"
+verdict = "approved"
+not_reviewed = "imports after 6e545d23 (ebdf5692, 8d5277f2) beyond the rules below"
+
+[[closed]]
+finding = "errno >= 100000 with SQLSTATE class 42 was labelled runtime_error"
+check = "classify(): such errors give no phase unless the errno is in the reviewed semantic list {391858, 392002, 506005, 506034, 506035}; 392030 and 392032 restrict a production and are refused; non-42 high errnos stay runtime_error"
+
+[[closed]]
+finding = "an uncaught exception wrapping errno 1003 was labelled runtime_error"
+check = "classify(): an Uncaught-prefixed message with errno 1003 gives no phase; other uncaught exceptions stay runtime_error; the 5 affected receipts are withdrawn and 6 superseded in the import report"
+
+[reason_categories]
+verdict = "approved"
+check = "REASON_BY_ERRNO read in full: 904 (invalid identifier) is a name-resolution failure, so missing_object is right; 2002 (already exists) is unlisted and falls to other, which is right; no listed errno is misplaced"
+sidecar = "not needed: the categories describe the semantic measure, and receipts published before them are not reclassified"

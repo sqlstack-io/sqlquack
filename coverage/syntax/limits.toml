@@ -1,0 +1,826 @@
+# Documented limits added by hand to the mechanically derived obligations: prose rules from the
+# Snowflake pages (usage notes, parameter descriptions) that the grammar does not show.
+# scripts/build_syntax_obligations.py appends each limit to its form's obligations and keeps its
+# id across rebuilds. Fields: form, kind, target (for targeted kinds), note, anchor (page id and
+# heading of the rule), and depths or pair where the kind takes them. `required` defaults to true.
+# Case fields for scripts/build_syntax_cases.py: `sql` (the form text, or with context = "raw" the
+# whole submission), `also_sql` (a second case), `context` (block by default, procedure, top or
+# raw), and for nested limits outer_open/open/core/close/outer_close, repeated per depth.
+# `expect` is accept (no syntax error) or reject (a syntax error); a negative defaults to reject,
+# anything else to accept, and a boundary must say. `stage` (semantic, runtime or error) names a
+# later error an accepted case is expected to reach; also_expect/also_stage apply to also_sql.
+# A [[suppress]] entry withdraws one derived obligation (form, kind, target, and note where the
+# target is empty) with a reason.
+
+# DECLARE exception: "The number must be an integer between -20000 and -20999." Receipts refuse
+# both documented ends (-20999 and -20000) and both values outside them (-21000, -19999) with
+# semantic error 92207, so the enforced range is -20998..-20001. Every one of them parses, so per
+# decisions D84 and D85 they are accept obligations here, and semantic-limits/scripting.toml
+# records the documented rule, the observed stage and the receipts outside the syntax score.
+
+[[limit]]
+form = "sf.scripting.declare.exception"
+kind = "boundary_below"
+target = "<exception_number>"
+note = "-21000, below the documented lower bound -20999: a syntax-phase acceptance; Snowflake refuses the value only at the semantic stage (92207)"
+anchor = "doc.snowflake-scripting.declare / Exception declaration syntax"
+sql = "e1 EXCEPTION ( -21000 , 'm' ) ;"
+expect = "accept"
+stage = "semantic"
+
+[[limit]]
+form = "sf.scripting.declare.exception"
+kind = "boundary_at"
+target = "<exception_number>"
+note = "-20999, the documented lower bound; docs discrepancy: Snowflake refuses it (92207), so the enforced bound is exclusive"
+anchor = "doc.snowflake-scripting.declare / Exception declaration syntax"
+sql = "e1 EXCEPTION ( -20999 , 'm' ) ;"
+expect = "accept"
+stage = "semantic"
+
+[[limit]]
+form = "sf.scripting.declare.exception"
+kind = "boundary_above"
+target = "<exception_number>"
+note = "-20998, just inside the documented lower bound"
+anchor = "doc.snowflake-scripting.declare / Exception declaration syntax"
+sql = "e1 EXCEPTION ( -20998 , 'm' ) ;"
+expect = "accept"
+
+[[limit]]
+form = "sf.scripting.declare.exception"
+kind = "boundary_below"
+target = "<exception_number>"
+note = "-20001, just inside the documented upper bound"
+anchor = "doc.snowflake-scripting.declare / Exception declaration syntax"
+sql = "e1 EXCEPTION ( -20001 , 'm' ) ;"
+expect = "accept"
+
+[[limit]]
+form = "sf.scripting.declare.exception"
+kind = "boundary_at"
+target = "<exception_number>"
+note = "-20000, the documented upper bound and the default; docs discrepancy: Snowflake refuses it (92207), so the enforced bound is exclusive"
+anchor = "doc.snowflake-scripting.declare / Exception declaration syntax"
+sql = "e1 EXCEPTION ( -20000 , 'm' ) ;"
+expect = "accept"
+stage = "semantic"
+
+[[limit]]
+form = "sf.scripting.declare.exception"
+kind = "boundary_above"
+target = "<exception_number>"
+note = "-19999, above the documented upper bound: a syntax-phase acceptance; Snowflake refuses the value only at the semantic stage (92207)"
+anchor = "doc.snowflake-scripting.declare / Exception declaration syntax"
+sql = "e1 EXCEPTION ( -19999 , 'm' ) ;"
+expect = "accept"
+stage = "semantic"
+
+[[limit]]
+form = "sf.scripting.declare.exception"
+kind = "positive"
+note = "an exception message containing a double quote character: a syntax-phase acceptance; Snowflake does not enforce the documented restriction"
+anchor = "doc.snowflake-scripting.declare / Exception declaration syntax"
+sql = "e1 EXCEPTION ( -20001 , 'a\"b' ) ;"
+expect = "accept"
+
+# BEGIN ... END: "The keyword END must be followed immediately by a semicolon, or followed
+# immediately by a label that is immediately followed by a semicolon. The keyword BEGIN must not be
+# followed immediately by a semicolon."
+
+[[limit]]
+form = "sf.scripting.begin"
+kind = "option_present"
+target = "END <label> ;"
+note = "END followed by a label and a semicolon"
+anchor = "doc.snowflake-scripting.begin / Usage notes"
+sql = "BEGIN NULL ; END l1 ;"
+
+[[limit]]
+form = "sf.scripting.begin"
+kind = "identifier_class"
+target = "END <label> ;"
+note = "reserved: a reserved keyword as the END label, unquoted and double-quoted"
+anchor = "doc.snowflake-scripting.begin / Usage notes"
+sql = "BEGIN NULL ; END SELECT ;"
+also_sql = "BEGIN NULL ; END \"SELECT\" ;"
+expect = "reject"
+also_expect = "accept"
+
+[[limit]]
+form = "sf.scripting.begin"
+kind = "negative_neighbour"
+note = "END followed by a token other than a semicolon or a label"
+anchor = "doc.snowflake-scripting.begin / Usage notes"
+sql = "BEGIN NULL ; END 1 ;"
+
+[[limit]]
+form = "sf.scripting.begin"
+kind = "negative_neighbour"
+note = "END <label> followed by a token other than a semicolon"
+anchor = "doc.snowflake-scripting.begin / Usage notes"
+sql = "BEGIN NULL ; END l1 x ;"
+
+[[limit]]
+form = "sf.scripting.begin"
+kind = "negative_neighbour"
+note = "BEGIN immediately followed by a semicolon, which starts a transaction instead of a block"
+anchor = "doc.snowflake-scripting.begin / Usage notes"
+sql = "BEGIN ; NULL ; END ;"
+context = "raw"
+
+# EXCEPTION: "Snowflake supports no more than one exception handler per block."
+
+[[limit]]
+form = "sf.scripting.exception"
+kind = "negative_neighbour"
+note = "a block with two EXCEPTION sections"
+anchor = "doc.snowflake-scripting.exception / Usage notes"
+sql = "BEGIN NULL ; EXCEPTION WHEN OTHER THEN NULL ; EXCEPTION WHEN OTHER THEN NULL ; END ;"
+context = "raw"
+
+# BREAK and CONTINUE: a label lets them leave or restart "more than one level of a nested loop or
+# a nested branch". No depth limit is documented.
+
+[[limit]]
+form = "sf.scripting.break"
+kind = "nesting_depth"
+note = "BREAK <label> naming a loop that encloses the current one by the given depth; no documented bound"
+anchor = "doc.snowflake-scripting.break / Syntax"
+depths = [2, 8]
+outer_open = "FOR i IN 1 TO 1 DO"
+open = "FOR j IN 1 TO 1 DO"
+close = "END FOR ;"
+outer_close = "END FOR l1 ;"
+core = "BREAK l1 ;"
+
+[[limit]]
+form = "sf.scripting.continue"
+kind = "nesting_depth"
+note = "CONTINUE <label> naming a loop that encloses the current one by the given depth; no documented bound"
+anchor = "doc.snowflake-scripting.continue / Syntax"
+depths = [2, 8]
+outer_open = "FOR i IN 1 TO 1 DO"
+open = "FOR j IN 1 TO 1 DO"
+close = "END FOR ;"
+outer_close = "END FOR l1 ;"
+core = "CONTINUE l1 ;"
+
+# EXCEPTION: "An EXCEPTION clause can have WHEN clauses of both types — EXIT and CONTINUE."
+
+[[limit]]
+form = "sf.scripting.exception"
+kind = "interaction"
+pair = ["[ { EXIT | CONTINUE } ]", "[ WHEN ... ]"]
+note = "WHEN clauses of both types, EXIT and CONTINUE, in one exception handler"
+anchor = "doc.snowflake-scripting.exception / Usage notes"
+sql = "EXCEPTION WHEN STATEMENT_ERROR EXIT THEN NULL ; WHEN EXPRESSION_ERROR CONTINUE THEN NULL ;"
+
+# IF: "The keyword THEN is required. ELSEIF is one word (no spaces). END IF is two words."
+
+[[limit]]
+form = "sf.scripting.if"
+kind = "negative_neighbour"
+note = "ELSE IF written as two words in place of ELSEIF"
+anchor = "doc.snowflake-scripting.if / Usage notes"
+sql = "IF ( TRUE ) THEN NULL ; ELSE IF ( FALSE ) THEN NULL ; END IF ;"
+
+[[limit]]
+form = "sf.scripting.if"
+kind = "negative_neighbour"
+note = "ENDIF written as one word in place of END IF"
+anchor = "doc.snowflake-scripting.if / Usage notes"
+sql = "IF ( TRUE ) THEN NULL ; ENDIF ;"
+
+# FOR and WHILE: "If you use the keyword DO, then use END FOR ... If you use the keyword LOOP, then
+# use END LOOP" (FOR); "Pair the keyword DO with END WHILE, and pair the keyword LOOP with END LOOP"
+# (WHILE).
+
+[[limit]]
+form = "sf.scripting.for.to-do-loop-end"
+kind = "negative_neighbour"
+note = "DO closed by END LOOP"
+anchor = "doc.snowflake-scripting.for / Usage notes"
+sql = "FOR i IN 1 TO 1 DO NULL ; END LOOP ;"
+
+[[limit]]
+form = "sf.scripting.for.to-do-loop-end"
+kind = "negative_neighbour"
+note = "LOOP closed by END FOR"
+anchor = "doc.snowflake-scripting.for / Usage notes"
+sql = "FOR i IN 1 TO 1 LOOP NULL ; END FOR ;"
+
+[[limit]]
+form = "sf.scripting.while"
+kind = "negative_neighbour"
+note = "DO closed by END LOOP"
+anchor = "doc.snowflake-scripting.while / Usage notes"
+sql = "WHILE ( FALSE ) DO NULL ; END LOOP ;"
+
+[[limit]]
+form = "sf.scripting.while"
+kind = "negative_neighbour"
+note = "LOOP closed by END WHILE"
+anchor = "doc.snowflake-scripting.while / Usage notes"
+sql = "WHILE ( FALSE ) LOOP NULL ; END WHILE ;"
+
+# RETURN: "A RETURN statement returns ... A table. Use TABLE(...) in the RETURN statement."
+
+[[limit]]
+form = "sf.scripting.return"
+kind = "operand_type_class"
+target = "<expression>"
+note = "TABLE ( <resultset_name> ) returning a RESULTSET as a table"
+anchor = "doc.snowflake-scripting.return / Usage notes"
+sql = "LET r1 RESULTSET := ( SELECT 1 ) ; RETURN TABLE ( r1 ) ;"
+
+# LET RESULTSET: the AWAIT page documents `LET res RESULTSET := ASYNC ( <query> )`, which the LET
+# grammar does not show.
+
+[[limit]]
+form = "sf.scripting.let.let-resultset-default"
+kind = "option_present"
+target = "ASYNC before ( <query> )"
+note = "an asynchronous child job: RESULTSET := ASYNC ( <query> )"
+anchor = "doc.snowflake-scripting.await / Usage notes"
+sql = "LET r1 RESULTSET := ASYNC ( SELECT 1 ) ;"
+
+# Block context (omission review cdf3b061, finding 1): pages saying "This Snowflake Scripting construct
+# is valid only within a Snowflake Scripting block". Inside an anonymous block is the positive
+# case of every form; these add a stored procedure body and a top-level statement.
+
+[[limit]]
+form = "sf.scripting.await"
+kind = "positive"
+note = "inside the body of a LANGUAGE SQL stored procedure"
+context = "procedure"
+anchor = "doc.snowflake-scripting.await / Note"
+
+[[limit]]
+form = "sf.scripting.await"
+kind = "negative_neighbour"
+note = "at top level, outside any Snowflake Scripting block"
+context = "top"
+anchor = "doc.snowflake-scripting.await / Note"
+
+[[limit]]
+form = "sf.scripting.break"
+kind = "positive"
+note = "inside the body of a LANGUAGE SQL stored procedure"
+context = "procedure"
+anchor = "doc.snowflake-scripting.break / Note"
+
+[[limit]]
+form = "sf.scripting.break"
+kind = "negative_neighbour"
+note = "at top level, outside any Snowflake Scripting block"
+context = "top"
+anchor = "doc.snowflake-scripting.break / Note"
+
+[[limit]]
+form = "sf.scripting.cancel"
+kind = "positive"
+note = "inside the body of a LANGUAGE SQL stored procedure"
+context = "procedure"
+anchor = "doc.snowflake-scripting.cancel / Note"
+
+[[limit]]
+form = "sf.scripting.cancel"
+kind = "negative_neighbour"
+note = "at top level, outside any Snowflake Scripting block"
+context = "top"
+anchor = "doc.snowflake-scripting.cancel / Note"
+
+[[limit]]
+form = "sf.scripting.case.end"
+kind = "positive"
+note = "inside the body of a LANGUAGE SQL stored procedure"
+context = "procedure"
+anchor = "doc.snowflake-scripting.case / Note"
+
+[[limit]]
+form = "sf.scripting.case.end"
+kind = "negative_neighbour"
+note = "at top level, outside any Snowflake Scripting block"
+context = "top"
+anchor = "doc.snowflake-scripting.case / Note"
+
+[[limit]]
+form = "sf.scripting.case.end.syntax"
+kind = "positive"
+note = "inside the body of a LANGUAGE SQL stored procedure"
+context = "procedure"
+anchor = "doc.snowflake-scripting.case / Note"
+
+[[limit]]
+form = "sf.scripting.case.end.syntax"
+kind = "negative_neighbour"
+note = "at top level, outside any Snowflake Scripting block"
+context = "top"
+anchor = "doc.snowflake-scripting.case / Note"
+
+[[limit]]
+form = "sf.scripting.close"
+kind = "positive"
+note = "inside the body of a LANGUAGE SQL stored procedure"
+context = "procedure"
+anchor = "doc.snowflake-scripting.close / Note"
+
+[[limit]]
+form = "sf.scripting.close"
+kind = "negative_neighbour"
+note = "at top level, outside any Snowflake Scripting block"
+context = "top"
+anchor = "doc.snowflake-scripting.close / Note"
+
+[[limit]]
+form = "sf.scripting.continue"
+kind = "positive"
+note = "inside the body of a LANGUAGE SQL stored procedure"
+context = "procedure"
+anchor = "doc.snowflake-scripting.continue / Note"
+
+[[limit]]
+form = "sf.scripting.continue"
+kind = "negative_neighbour"
+note = "at top level, outside any Snowflake Scripting block"
+context = "top"
+anchor = "doc.snowflake-scripting.continue / Note"
+
+[[limit]]
+form = "sf.scripting.fetch"
+kind = "positive"
+note = "inside the body of a LANGUAGE SQL stored procedure"
+context = "procedure"
+anchor = "doc.snowflake-scripting.fetch / Note"
+
+[[limit]]
+form = "sf.scripting.fetch"
+kind = "negative_neighbour"
+note = "at top level, outside any Snowflake Scripting block"
+context = "top"
+anchor = "doc.snowflake-scripting.fetch / Note"
+
+[[limit]]
+form = "sf.scripting.for.do-end-for"
+kind = "positive"
+note = "inside the body of a LANGUAGE SQL stored procedure"
+context = "procedure"
+anchor = "doc.snowflake-scripting.for / Note"
+
+[[limit]]
+form = "sf.scripting.for.do-end-for"
+kind = "negative_neighbour"
+note = "at top level, outside any Snowflake Scripting block"
+context = "top"
+anchor = "doc.snowflake-scripting.for / Note"
+
+[[limit]]
+form = "sf.scripting.for.to-do-loop-end"
+kind = "positive"
+note = "inside the body of a LANGUAGE SQL stored procedure"
+context = "procedure"
+anchor = "doc.snowflake-scripting.for / Note"
+
+[[limit]]
+form = "sf.scripting.for.to-do-loop-end"
+kind = "negative_neighbour"
+note = "at top level, outside any Snowflake Scripting block"
+context = "top"
+anchor = "doc.snowflake-scripting.for / Note"
+
+[[limit]]
+form = "sf.scripting.if"
+kind = "positive"
+note = "inside the body of a LANGUAGE SQL stored procedure"
+context = "procedure"
+anchor = "doc.snowflake-scripting.if / Note"
+
+[[limit]]
+form = "sf.scripting.if"
+kind = "negative_neighbour"
+note = "at top level, outside any Snowflake Scripting block"
+context = "top"
+anchor = "doc.snowflake-scripting.if / Note"
+
+[[limit]]
+form = "sf.scripting.let.let"
+kind = "positive"
+note = "inside the body of a LANGUAGE SQL stored procedure"
+context = "procedure"
+anchor = "doc.snowflake-scripting.let / Note"
+
+[[limit]]
+form = "sf.scripting.let.let"
+kind = "negative_neighbour"
+note = "at top level, outside any Snowflake Scripting block"
+context = "top"
+anchor = "doc.snowflake-scripting.let / Note"
+
+[[limit]]
+form = "sf.scripting.let.let-cursor-for"
+kind = "positive"
+note = "inside the body of a LANGUAGE SQL stored procedure"
+context = "procedure"
+anchor = "doc.snowflake-scripting.let / Note"
+
+[[limit]]
+form = "sf.scripting.let.let-cursor-for"
+kind = "negative_neighbour"
+note = "at top level, outside any Snowflake Scripting block"
+context = "top"
+anchor = "doc.snowflake-scripting.let / Note"
+
+[[limit]]
+form = "sf.scripting.let.let-cursor-for.cursor-assignment-syntax"
+kind = "positive"
+note = "inside the body of a LANGUAGE SQL stored procedure"
+context = "procedure"
+anchor = "doc.snowflake-scripting.let / Note"
+
+[[limit]]
+form = "sf.scripting.let.let-cursor-for.cursor-assignment-syntax"
+kind = "negative_neighbour"
+note = "at top level, outside any Snowflake Scripting block"
+context = "top"
+anchor = "doc.snowflake-scripting.let / Note"
+
+[[limit]]
+form = "sf.scripting.let.let-default"
+kind = "positive"
+note = "inside the body of a LANGUAGE SQL stored procedure"
+context = "procedure"
+anchor = "doc.snowflake-scripting.let / Note"
+
+[[limit]]
+form = "sf.scripting.let.let-default"
+kind = "negative_neighbour"
+note = "at top level, outside any Snowflake Scripting block"
+context = "top"
+anchor = "doc.snowflake-scripting.let / Note"
+
+[[limit]]
+form = "sf.scripting.let.let-default.variable-assignment-syntax"
+kind = "positive"
+note = "inside the body of a LANGUAGE SQL stored procedure"
+context = "procedure"
+anchor = "doc.snowflake-scripting.let / Note"
+
+[[limit]]
+form = "sf.scripting.let.let-default.variable-assignment-syntax"
+kind = "negative_neighbour"
+note = "at top level, outside any Snowflake Scripting block"
+context = "top"
+anchor = "doc.snowflake-scripting.let / Note"
+
+[[limit]]
+form = "sf.scripting.let.let-resultset-default"
+kind = "positive"
+note = "inside the body of a LANGUAGE SQL stored procedure"
+context = "procedure"
+anchor = "doc.snowflake-scripting.let / Note"
+
+[[limit]]
+form = "sf.scripting.let.let-resultset-default"
+kind = "negative_neighbour"
+note = "at top level, outside any Snowflake Scripting block"
+context = "top"
+anchor = "doc.snowflake-scripting.let / Note"
+
+[[limit]]
+form = "sf.scripting.loop"
+kind = "positive"
+note = "inside the body of a LANGUAGE SQL stored procedure"
+context = "procedure"
+anchor = "doc.snowflake-scripting.loop / Note"
+
+[[limit]]
+form = "sf.scripting.loop"
+kind = "negative_neighbour"
+note = "at top level, outside any Snowflake Scripting block"
+context = "top"
+anchor = "doc.snowflake-scripting.loop / Note"
+
+[[limit]]
+form = "sf.scripting.null"
+kind = "positive"
+note = "inside the body of a LANGUAGE SQL stored procedure"
+context = "procedure"
+anchor = "doc.snowflake-scripting.null / Note"
+
+[[limit]]
+form = "sf.scripting.null"
+kind = "negative_neighbour"
+note = "at top level, outside any Snowflake Scripting block"
+context = "top"
+anchor = "doc.snowflake-scripting.null / Note"
+
+[[limit]]
+form = "sf.scripting.open"
+kind = "positive"
+note = "inside the body of a LANGUAGE SQL stored procedure"
+context = "procedure"
+anchor = "doc.snowflake-scripting.open / Note"
+
+[[limit]]
+form = "sf.scripting.open"
+kind = "negative_neighbour"
+note = "at top level, outside any Snowflake Scripting block"
+context = "top"
+anchor = "doc.snowflake-scripting.open / Note"
+
+[[limit]]
+form = "sf.scripting.raise"
+kind = "positive"
+note = "inside the body of a LANGUAGE SQL stored procedure"
+context = "procedure"
+anchor = "doc.snowflake-scripting.raise / Note"
+
+[[limit]]
+form = "sf.scripting.raise"
+kind = "negative_neighbour"
+note = "at top level, outside any Snowflake Scripting block"
+context = "top"
+anchor = "doc.snowflake-scripting.raise / Note"
+
+[[limit]]
+form = "sf.scripting.repeat"
+kind = "positive"
+note = "inside the body of a LANGUAGE SQL stored procedure"
+context = "procedure"
+anchor = "doc.snowflake-scripting.repeat / Note"
+
+[[limit]]
+form = "sf.scripting.repeat"
+kind = "negative_neighbour"
+note = "at top level, outside any Snowflake Scripting block"
+context = "top"
+anchor = "doc.snowflake-scripting.repeat / Note"
+
+[[limit]]
+form = "sf.scripting.return"
+kind = "positive"
+note = "inside the body of a LANGUAGE SQL stored procedure"
+context = "procedure"
+anchor = "doc.snowflake-scripting.return / Note"
+
+[[limit]]
+form = "sf.scripting.return"
+kind = "negative_neighbour"
+note = "at top level, outside any Snowflake Scripting block"
+context = "top"
+anchor = "doc.snowflake-scripting.return / Note"
+
+[[limit]]
+form = "sf.scripting.while"
+kind = "positive"
+note = "inside the body of a LANGUAGE SQL stored procedure"
+context = "procedure"
+anchor = "doc.snowflake-scripting.while / Note"
+
+[[limit]]
+form = "sf.scripting.while"
+kind = "negative_neighbour"
+note = "at top level, outside any Snowflake Scripting block"
+context = "top"
+anchor = "doc.snowflake-scripting.while / Note"
+
+# RAISE (finding 2): "If you are handling an exception in an exception handler and you want to raise
+# the same exception again, omit this argument." Omitting the name is valid inside a handler.
+
+[[suppress]]
+form = "sf.scripting.raise"
+kind = "required_operand_missing"
+target = "<exception_name>"
+reason = "the page documents RAISE; without a name as a re-raise inside an exception handler"
+
+[[limit]]
+form = "sf.scripting.raise"
+kind = "positive"
+note = "RAISE; without a name inside a WHEN clause of an exception handler, re-raising the exception"
+anchor = "doc.snowflake-scripting.raise / Syntax"
+sql = "BEGIN BEGIN SELECT 1 / 0 ; EXCEPTION WHEN OTHER THEN RAISE ; END ; EXCEPTION WHEN OTHER THEN NULL ; END ;"
+context = "raw"
+
+[[limit]]
+form = "sf.scripting.raise"
+kind = "positive"
+note = "RAISE; without a name outside an exception handler: a syntax-phase acceptance; Snowflake refuses it at the semantic stage (92204)"
+anchor = "doc.snowflake-scripting.raise / Syntax"
+sql = "RAISE ;"
+expect = "accept"
+stage = "semantic"
+
+# DO/LOOP pairing (finding 3): the documented pairs as positives; the crossed pairs are negatives above.
+
+[[limit]]
+form = "sf.scripting.for.to-do-loop-end"
+kind = "positive"
+note = "DO closed by END FOR"
+anchor = "doc.snowflake-scripting.for / Usage notes"
+sql = "FOR i IN 1 TO 1 DO NULL ; END FOR ;"
+
+[[limit]]
+form = "sf.scripting.for.to-do-loop-end"
+kind = "positive"
+note = "LOOP closed by END LOOP"
+anchor = "doc.snowflake-scripting.for / Usage notes"
+sql = "FOR i IN 1 TO 1 LOOP NULL ; END LOOP ;"
+
+[[limit]]
+form = "sf.scripting.while"
+kind = "positive"
+note = "DO closed by END WHILE"
+anchor = "doc.snowflake-scripting.while / Usage notes"
+sql = "WHILE ( FALSE ) DO NULL ; END WHILE ;"
+
+[[limit]]
+form = "sf.scripting.while"
+kind = "positive"
+note = "LOOP closed by END LOOP"
+anchor = "doc.snowflake-scripting.while / Usage notes"
+sql = "WHILE ( FALSE ) LOOP NULL ; END LOOP ;"
+
+# RETURN TABLE with RETURNS TABLE (finding 4).
+
+[[limit]]
+form = "sf.scripting.return"
+kind = "operand_type_class"
+target = "<expression>"
+note = "TABLE ( <resultset_name> ) in a procedure declared RETURNS TABLE ( ... )"
+anchor = "doc.snowflake-scripting.return / Usage notes"
+sql = "WITH p1 AS PROCEDURE ( ) RETURNS TABLE ( ) LANGUAGE SQL AS $$ BEGIN LET r1 RESULTSET := ( SELECT 1 ) ; RETURN TABLE ( r1 ) ; END $$ CALL p1 ( ) ;"
+context = "raw"
+
+# IF (finding 5): several ELSEIF branches.
+
+[[limit]]
+form = "sf.scripting.if"
+kind = "option_present"
+target = "[ ELSEIF ( <condition> ) THEN <statement> ; [ <statement> ; ... ] ]"
+note = "two or more ELSEIF branches"
+anchor = "doc.snowflake-scripting.if / Syntax"
+sql = "IF ( FALSE ) THEN NULL ; ELSEIF ( FALSE ) THEN NULL ; ELSEIF ( TRUE ) THEN NULL ; END IF ;"
+
+# RETURNS TABLE and GEOGRAPHY (finding 6): "in the RETURNS TABLE(...) clause, you can't specify
+# GEOGRAPHY as a column type". Run d82-scripting-2 accepts the call with no error at all, so the
+# limit is an accept obligation and semantic-limits/scripting.toml records the discrepancy (D85).
+
+[[limit]]
+form = "sf.scripting.declare.procedure-returns-table-as"
+kind = "positive"
+note = "GEOGRAPHY as a column type in RETURNS TABLE ( ... ): a syntax-phase acceptance; Snowflake does not enforce the documented restriction"
+anchor = "doc.snowflake-scripting.declare / Nested stored procedure declaration syntax"
+sql = "DECLARE p1 PROCEDURE ( ) RETURNS TABLE ( g GEOGRAPHY ) AS BEGIN LET r1 RESULTSET := ( SELECT TO_GEOGRAPHY ( 'POINT(1 1)' ) AS g ) ; RETURN TABLE ( r1 ) ; END ; BEGIN CALL p1 ( ) ; END ;"
+expect = "accept"
+context = "raw"
+
+# DECLARE with BEGIN (finding 7).
+
+[[limit]]
+form = "sf.scripting.declare.declare"
+kind = "positive"
+note = "DECLARE section followed by BEGIN ... END"
+anchor = "doc.snowflake-scripting.declare / Syntax"
+sql = "DECLARE v1 INT ; BEGIN RETURN 1 ; END ;"
+context = "raw"
+
+[[limit]]
+form = "sf.scripting.declare.declare"
+kind = "negative_neighbour"
+note = "DECLARE section with no BEGIN ... END after it"
+anchor = "doc.snowflake-scripting.declare / Syntax"
+sql = "DECLARE v1 INT ;"
+context = "raw"
+
+[[limit]]
+form = "sf.scripting.declare.declare"
+kind = "negative_neighbour"
+note = "a declaration missing its terminating semicolon"
+anchor = "doc.snowflake-scripting.declare / Syntax"
+sql = "DECLARE v1 INT BEGIN RETURN 1 ; END ;"
+context = "raw"
+
+# EXCEPTION WHEN built-in exceptions (finding 8).
+
+[[limit]]
+form = "sf.scripting.exception"
+kind = "operand_type_class"
+target = "<exception_name>"
+note = "the built-in exception STATEMENT_ERROR"
+anchor = "doc.snowflake-scripting.exception / Syntax"
+sql = "EXCEPTION WHEN STATEMENT_ERROR THEN NULL ;"
+
+[[limit]]
+form = "sf.scripting.exception"
+kind = "operand_type_class"
+target = "<exception_name>"
+note = "the built-in exception EXPRESSION_ERROR"
+anchor = "doc.snowflake-scripting.exception / Syntax"
+sql = "EXCEPTION WHEN EXPRESSION_ERROR THEN NULL ;"
+
+# Omissions that land on a documented or recorded valid form are not negatives.
+
+[[suppress]]
+form = "sf.scripting.let.let-default"
+kind = "required_operand_missing"
+target = "<type>"
+reason = "omitting the type gives LET <variable_name> { DEFAULT | := } <expression>, the documented untyped LET form"
+
+[[suppress]]
+form = "sf.scripting.return"
+kind = "required_operand_missing"
+target = "<expression>"
+reason = "Snowflake accepts a bare RETURN; (receipt of case c-b5-c14), so omitting the expression is not a negative"
+
+# Omissions whose remainder is another valid form: dropping a name or keyword turns the next
+# word into a name (DECLARE EXCEPTION ; declares a variable called EXCEPTION) or leaves the
+# documented untyped declaration. Recorded by run d82-scripting-1 (accepted or semantic_error).
+
+[[suppress]]
+form = "sf.scripting.declare.exception"
+kind = "required_operand_missing"
+target = "<exception_name>"
+reason = "DECLARE EXCEPTION ; declares an untyped variable named EXCEPTION (semantic 92229, not a syntax error)"
+
+[[suppress]]
+form = "sf.scripting.declare.exception"
+kind = "negative_neighbour"
+note = "the form without its required EXCEPTION"
+reason = "DECLARE e1 ; is the documented untyped variable declaration"
+
+[[suppress]]
+form = "sf.scripting.declare.resultset"
+kind = "required_operand_missing"
+target = "<resultset_name>"
+reason = "DECLARE RESULTSET ; declares an untyped variable named RESULTSET (semantic 92229)"
+
+[[suppress]]
+form = "sf.scripting.declare.resultset"
+kind = "negative_neighbour"
+note = "the form without its required RESULTSET"
+reason = "DECLARE r1 ; is the documented untyped variable declaration"
+
+[[suppress]]
+form = "sf.scripting.declare.procedure-returns-table-as"
+kind = "required_operand_missing"
+target = "<col_name> in [ <col_name> <col_data_type> [ , ... ] ]"
+reason = "RETURNS TABLE ( INT ) parses with INT as a column name; Snowflake reports semantic 92225"
+
+[[suppress]]
+form = "sf.scripting.declare.procedure-returns-table-as"
+kind = "required_operand_missing"
+target = "<col_data_type> in [ <col_name> <col_data_type> [ , ... ] ]"
+reason = "RETURNS TABLE ( v1 ) parses; Snowflake reports the missing column type as semantic 92225"
+
+[[suppress]]
+form = "sf.scripting.exception"
+kind = "required_operand_missing"
+target = "<statement> #2"
+reason = "omitting the final handler statement leaves an empty statement after the previous one, which Snowflake accepts"
+
+[[suppress]]
+form = "sf.scripting.let.let-default"
+kind = "required_operand_missing"
+target = "<variable_name>"
+reason = "LET INT DEFAULT 1 ; is the untyped LET form with a variable named INT (accepted)"
+
+[[suppress]]
+form = "sf.scripting.let.let-resultset-default"
+kind = "required_operand_missing"
+target = "<resultset_name>"
+reason = "LET RESULTSET DEFAULT ( SELECT 1 ) ; is the untyped LET form with a variable named RESULTSET (accepted)"
+
+[[suppress]]
+form = "sf.scripting.let.let-resultset-default"
+kind = "negative_neighbour"
+note = "the form without its required RESULTSET"
+reason = "LET r1 DEFAULT ( SELECT 1 ) ; is the documented untyped LET form (accepted)"
+
+# Wrong-class negatives that Snowflake accepts as syntax (decision D82 keeps only lexically distinct
+# wrong classes); withdrawn on the receipts of runs d82-scripting-3 and d82-scripting-2.
+
+[[suppress]]
+form = "sf.scripting.open"
+kind = "negative_neighbour"
+target = "bind_variable_1 in [ USING ( bind_variable_1 [ , bind_variable_2 ... ] ) ]"
+reason = "OPEN ... USING takes expressions, so a string literal is valid syntax: Snowflake accepts OPEN c1 USING ( 'v1' ) (run d82-scripting-3-20261104T011650Z, receipt d5511dcf50f08a9437b56d42aa2359e78e51bc48830afd97a0e793e65db7ae2f)"
+
+[[suppress]]
+form = "sf.scripting.for.do-end-for"
+kind = "negative_neighbour"
+target = "<cursor_name>"
+reason = "FOR <row_variable> IN <expression> also parses as a loop over an array or object expression, so a string literal reaches the loop and fails only when it runs: errno 92234 'Expression in variant for loop does not evaluate to an array or an object' (run d82-scripting-2-20261104T010552Z, refused as phase not established)"
+
+# Double-quoted identifiers (decision D87 follow-up): blanks inside quotes are tested once, here, in a
+# position where Snowflake answers them. Quoted labels and block-local procedure or argument names
+# containing a blank give internal error 603 (unobservable/scripting.toml diagnostics), so the
+# scripting forms test quoting without the blank.
+
+[[limit]]
+form = "sf.expressions.identifiers-syntax.double-quoted-identifier"
+kind = "positive"
+note = "a double-quoted identifier containing a blank and mixed case, as a column alias"
+anchor = "doc.identifiers-syntax / Double-quoted identifiers"
+sql = "SELECT 1 AS \"a B\" ;"
+context = "raw"

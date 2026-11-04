@@ -23,7 +23,7 @@ PYTHON_TYPED := scripts tests/unit/scripts
 PYTHON_TESTS := tests/unit/scripts
 endif
 
-.PHONY: format rust-lint python-check fensu evidence-guard polyglot-guard generate-cases generated-cases generate-referee-cases referee-cases referee-pending check-ci test test-rust test-python verify-recorded polyglot-duckshop census-duckshop fuzz-smoke gate gate-parallel census duckshop-compiled
+.PHONY: format rust-lint python-check fensu syntax-coverage evidence-guard polyglot-guard generate-cases generated-cases generate-referee-cases referee-cases referee-pending check-ci test test-rust test-python verify-recorded polyglot-duckshop census-duckshop fuzz-smoke gate gate-parallel census duckshop-compiled
 
 format:
 	cargo fmt --all
@@ -40,6 +40,11 @@ python-check:
 
 fensu:
 	uv run fensu check
+
+# Fails on any unresolved coverage reference, a form or obligation the baseline claims and the
+# current parser no longer supports, or a catalogue change the baseline was not re-recorded for.
+syntax-coverage:
+	cargo run --locked -p sqlquack-syntax-coverage -- diff coverage/syntax/baseline.json
 
 # Fails when a change modifies or deletes a recorded result, or adds an invalid one.
 evidence-guard:
@@ -71,7 +76,7 @@ referee-pending:
 	uv run python -m scripts.write_referee_pending $(REFEREE_ARGS)
 
 # The static gate, the first step of `gate`.
-check-ci: rust-lint python-check fensu evidence-guard polyglot-guard generated-cases referee-cases
+check-ci: rust-lint python-check fensu syntax-coverage evidence-guard polyglot-guard generated-cases referee-cases
 
 # Rust tests build with the gate profile: release speed, debug assertions and overflow checks on.
 # Its test binaries run RUST_TEST_JOBS at a time; any failure fails the target.

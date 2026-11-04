@@ -265,6 +265,45 @@ def add_referee_catalogue(results: Path, _: str) -> None:
     (folder / f"{digest}.json").write_text(json.dumps(document), encoding="utf-8")
 
 
+def _syntax_receipts(results: Path) -> Path:
+    folder: Path = results.parents[1] / "coverage" / "syntax" / "receipts"
+    folder.mkdir(parents=True, exist_ok=True)
+    return folder
+
+
+def add_syntax_receipts(results: Path, _: str) -> None:
+    """Adds a new file of syntax-coverage receipts."""
+    (_syntax_receipts(results) / "new.jsonl").write_text('{"case_id": "query.new"}\n')
+
+
+def add_syntax_receipts_not_jsonl(results: Path, _: str) -> None:
+    """Adds syntax-coverage receipts in a file that is not JSON Lines."""
+    (_syntax_receipts(results) / "new.json").write_text('{"case_id": "query.new"}\n')
+
+
+def add_syntax_receipts_not_objects(results: Path, _: str) -> None:
+    """Adds a receipts file with a line that is not a JSON object."""
+    (_syntax_receipts(results) / "new.jsonl").write_text('{"case_id": "query.new"}\n[]\n')
+
+
+def add_syntax_receipts_with_report(results: Path, _: str) -> None:
+    """Adds a receipts file with the importer's run report beside it."""
+    folder: Path = _syntax_receipts(results)
+    (folder / "new.jsonl").write_text('{"case_id": "query.new"}\n')
+    (folder / "new.report.json").write_text('{"runs": []}')
+
+
+def add_syntax_report_not_object(results: Path, _: str) -> None:
+    """Adds a run report that is not a JSON object."""
+    (_syntax_receipts(results) / "new.report.json").write_text("[]")
+
+
+def append_syntax_receipt(results: Path, _: str) -> None:
+    """Appends a receipt to a committed receipts file."""
+    path: Path = _syntax_receipts(results) / "stored.jsonl"
+    path.write_text(path.read_text(encoding="utf-8") + '{"case_id": "query.later"}\n')
+
+
 def guard_after(*, repository: Path, change: Change) -> int:
     """Commit one recorded result as the base, apply `change` on top, and run the guard."""
     results: Path = repository / _RESULTS
@@ -277,6 +316,7 @@ def guard_after(*, repository: Path, change: Change) -> int:
     audit.mkdir(parents=True)
     _write_result(results=audit, seed="audited", recorder=_RECORDER, arrow=b"rows", claimed=b"rows")
     _referee_outcome(results=results, seed=b"stored referee", replaced=())
+    (_syntax_receipts(results) / "stored.jsonl").write_text('{"case_id": "query.stored"}\n')
     _git(repository, "add", "-A")
     _git(repository, "commit", "--quiet", "-m", "base")
     change(results, stored)

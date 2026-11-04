@@ -1414,6 +1414,19 @@ dependencies = [
 ]
 
 [[package]]
+name = "sqlquack-syntax-coverage"
+version = "0.2.0"
+dependencies = [
+ "clap",
+ "serde",
+ "serde_json",
+ "sha2",
+ "sqlquack-syntax",
+ "tempfile",
+ "toml",
+]
+
+[[package]]
 name = "sqlquack-syntax-derive"
 version = "0.2.0"
 dependencies = [
