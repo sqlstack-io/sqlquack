@@ -81,7 +81,15 @@ An `[[obligation]]` has these fields:
 - `id`: `<form id>.o<NNN>`, where `o000` is never used.
 - `kind`: one of `alternative`, `option_present`, `option_absent`, `required_operand_missing`,
   `operand_type_class`, `positive`, `negative_neighbour`, `boundary_below`, `boundary_at`,
-  `boundary_above`, `identifier_class`, `nesting_depth` or `interaction`.
+  `boundary_above`, `identifier_class`, `nesting_depth`, `interaction` or
+  `interaction_all_options`.
+  - `operand_type_class`: a valid operand of the named class parses. A wrong-class operand is a
+    `negative_neighbour` whose `target` names the operand.
+  - `interaction`: two options or alternatives whose combination a page's usage notes constrain.
+    It must carry the `anchor` of that note.
+  - `interaction_all_options`: one per form with two or more independent options. A case that
+    uses every option together satisfies it. It takes no `target`, `pair` or `depths`
+    (decision D82).
 - `required`.
 - `target`: the alternative or option id. It is required for the alternative, option, operand
   and boundary kinds.

@@ -107,7 +107,7 @@ pub(crate) fn valid_tree(root: &Path) {
         concat!(
             "[[obligation]]\nid = \"sf.query.select.o001\"\nkind = \"positive\"\nrequired = true\n",
             "[[obligation]]\nid = \"sf.query.select.o002\"\nkind = \"interaction\"\nrequired = true\n",
-            "pair = [\"DISTINCT\", \"TOP\"]\n",
+            "pair = [\"DISTINCT\", \"TOP\"]\nanchor = \"Usage notes\"\n",
             "[[obligation]]\nid = \"sf.query.select.o003\"\nkind = \"nesting_depth\"\n",
             "required = false\ndepths = [1, 8]\n",
             "[[obligation]]\nid = \"sf.query.select.o004\"\nkind = \"boundary_above\"\n",

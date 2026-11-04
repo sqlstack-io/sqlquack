@@ -199,12 +199,13 @@ pub(crate) fn check_obligation(obligation: &Obligation, family: &str) -> Vec<Str
                 && obligation.pair[0] != obligation.pair[1]
                 && !depths
         }
+        ObligationKind::InteractionAllOptions => !depths && !pair && obligation.target.is_none(),
         _ => !depths && !pair,
     };
     if !shaped {
         problems.push(format!(
             "obligation {id}: nesting_depth needs depths, interaction needs a pair of two, \
-             no other kind takes either"
+             no other kind takes either, and interaction_all_options takes no target"
         ));
     }
     let targeted: bool = matches!(
@@ -218,6 +219,13 @@ pub(crate) fn check_obligation(obligation: &Obligation, family: &str) -> Vec<Str
             | ObligationKind::BoundaryAt
             | ObligationKind::BoundaryAbove
     );
+    if obligation.kind == ObligationKind::Interaction
+        && obligation.anchor.as_deref().is_none_or(blank)
+    {
+        problems.push(format!(
+            "obligation {id}: interaction needs the anchor of the usage note constraining it"
+        ));
+    }
     if targeted && obligation.target.as_deref().is_none_or(blank) {
         problems.push(format!(
             "obligation {id}: {:?} needs a target",

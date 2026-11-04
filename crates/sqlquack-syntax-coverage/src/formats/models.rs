@@ -185,7 +185,10 @@ pub enum ObligationKind {
     BoundaryAbove,
     IdentifierClass,
     NestingDepth,
+    /// Two options or alternatives whose combination the usage notes constrain.
     Interaction,
+    /// One case using every independent option of the form together.
+    InteractionAllOptions,
 }
 
 /// One line of `cases/<family>.jsonl`.

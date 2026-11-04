@@ -129,6 +129,19 @@ fn given_a_valid_tree_when_loading_then_every_record_is_kept() {
             },
         },
         LoadTestCase {
+            description: "an all-options interaction without target, pair or depths",
+            tree: |root| {
+                valid_tree(root);
+                replace(
+                    root,
+                    "obligations/query.toml",
+                    "kind = \"positive\"",
+                    "kind = \"interaction_all_options\"",
+                );
+            },
+            expected_counts: counts(1),
+        },
+        LoadTestCase {
             description: "a tree without renames or reviews yet",
             tree: |root| {
                 valid_tree(root);
@@ -377,6 +390,30 @@ fn given_a_format_fault_when_loading_then_the_problem_is_named() {
             description: "an interaction with one member",
             mutate: |root| replace(root, "obligations/query.toml", "\"DISTINCT\", ", ""),
             expected_problem: "interaction needs a pair of two",
+        },
+        FormatFaultTestCase {
+            description: "an interaction without the anchor of its usage note",
+            mutate: |root| {
+                replace(
+                    root,
+                    "obligations/query.toml",
+                    "anchor = \"Usage notes\"\n",
+                    "",
+                )
+            },
+            expected_problem: "interaction needs the anchor of the usage note",
+        },
+        FormatFaultTestCase {
+            description: "an all-options interaction with a target",
+            mutate: |root| {
+                replace(
+                    root,
+                    "obligations/query.toml",
+                    "kind = \"boundary_above\"",
+                    "kind = \"interaction_all_options\"",
+                )
+            },
+            expected_problem: "interaction_all_options takes no target",
         },
         FormatFaultTestCase {
             description: "depths on a kind that takes none",
