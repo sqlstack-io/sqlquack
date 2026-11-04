@@ -783,7 +783,7 @@ impl Parser {
         })
     }
 
-    /// Parses star modifiers EXCLUDE/EXCEPT, REPLACE and RENAME in each dialect's syntax.
+    /// Parses star modifiers ILIKE 'pattern' (a string literal) or EXCLUDE/EXCEPT, then REPLACE and RENAME.
     pub(crate) fn parse_star_modifiers(&mut self, table: Option<Identifier>) -> Result<Star> {
         self.parse_star_modifiers_with_comments(table, Vec::new())
     }
@@ -794,11 +794,15 @@ impl Parser {
         table: Option<Identifier>,
         star_trailing_comments: Vec<String>,
     ) -> Result<Star> {
+        let mut ilike = None;
         let mut except = None;
         let mut replace = None;
         let mut rename = None;
 
-        if self.match_token(TokenType::Exclude) || self.match_token(TokenType::Except) {
+        if self.check(TokenType::ILike) && self.check_next(TokenType::String) {
+            self.skip();
+            ilike = Some(self.advance_text()?);
+        } else if self.match_token(TokenType::Exclude) || self.match_token(TokenType::Except) {
             let _ = self.match_text_seq(&["STRICT"]);
             let mut columns: Vec<Identifier> = Vec::new();
             if self.match_token(TokenType::LParen) {
@@ -893,6 +897,7 @@ impl Parser {
 
         Ok(Star {
             table,
+            ilike,
             except,
             replace,
             rename,

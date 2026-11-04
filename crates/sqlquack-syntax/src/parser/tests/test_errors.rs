@@ -106,6 +106,24 @@ fn given_incomplete_sql_when_parsing_then_parsing_fails() {
             expected_error: "error",
         },
         ParseErrorTestCase {
+            description: "a star's ILIKE without a pattern is rejected",
+            dialect: None,
+            sql: "SELECT * ILIKE",
+            expected_error: "error",
+        },
+        ParseErrorTestCase {
+            description: "a star's ILIKE pattern must be a string literal",
+            dialect: None,
+            sql: "SELECT * ILIKE m1",
+            expected_error: "error",
+        },
+        ParseErrorTestCase {
+            description: "a star takes ILIKE or EXCLUDE, not both",
+            dialect: None,
+            sql: "SELECT * ILIKE 'c%' EXCLUDE c1 FROM t1",
+            expected_error: "error",
+        },
+        ParseErrorTestCase {
             description: "an IN without a list is rejected",
             dialect: None,
             sql: "SELECT x IN",
