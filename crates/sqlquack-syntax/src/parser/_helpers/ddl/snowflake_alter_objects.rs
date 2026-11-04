@@ -172,6 +172,8 @@ impl Parser {
     /// Parse the properties of a SET (`set`) or UNSET: TAG and CONTACT lists, PRIMARY KEY, or named properties.
     fn parse_alter_settings(&mut self, set: bool) -> Result<Vec<ObjectProperty>> {
         let mut properties: Vec<ObjectProperty> = Vec::new();
+        // Snowflake ends the SET after a CONTACT list of several purposes.
+        let mut contact_list = false;
         loop {
             let named = self.check_next(TokenType::Eq) || self.check_next(TokenType::Comma) || {
                 let next = self.current + 1;
@@ -186,15 +188,22 @@ impl Parser {
                     } else {
                         self.parse_simple_name()?
                     };
-                    let value = if set {
-                        self.expect_token(TokenType::Eq)?;
-                        Some(self.parse_object_value()?)
-                    } else {
+                    let value = if !set {
                         None
+                    } else {
+                        self.expect_token(TokenType::Eq)?;
+                        Some(if kind == "CONTACT" {
+                            self.object_operand()?
+                        } else {
+                            self.parse_object_value()?
+                        })
                     };
                     properties.push(property(&kind, Some(name), value));
                     if !self.match_token(TokenType::Comma) {
                         break;
+                    }
+                    if kind == "CONTACT" {
+                        contact_list = true;
                     }
                 }
             } else if self.match_text_seq(&["PRIMARY", "KEY"]) {
@@ -207,9 +216,11 @@ impl Parser {
                 properties.push(property("PRIMARY KEY", None, value));
             } else {
                 let name = self.parse_simple_name()?;
-                let value = if set || self.check(TokenType::Eq) {
+                let value = if set {
                     self.expect_token(TokenType::Eq)?;
                     Some(self.parse_alter_value()?)
+                } else if self.match_token(TokenType::Eq) {
+                    Some(self.object_operand()?)
                 } else {
                     None
                 };
@@ -218,6 +229,9 @@ impl Parser {
             let comma = self.match_token(TokenType::Comma);
             if self.is_at_end() || self.check(TokenType::Semicolon) || !set && !comma {
                 return Ok(properties);
+            }
+            if contact_list {
+                return Err(self.parse_error("Expected the end of the statement after CONTACT"));
             }
         }
     }
@@ -478,7 +492,13 @@ impl Parser {
                 self.parse_release_directive(&change, &mut action)?
             }
             "SET" => self.parse_alter_set(true)?,
-            _ => self.parse_alter_set(false)?,
+            _ => {
+                let parts = self.parse_alter_set(false)?;
+                if parts.1.len() > 1 && parts.1.iter().any(|p| p.kind != "TAG") {
+                    return Err(self.parse_error("Snowflake unsets one package property at a time"));
+                }
+                parts
+            }
         };
         Ok(alter_object("APPLICATION PACKAGE", head, action, parts))
     }
@@ -527,8 +547,12 @@ impl Parser {
             properties.push(property("ACCOUNTS", None, Some(self.parse_account_list()?)));
         }
         if version_required || self.check_text_seq(&["VERSION"]) {
-            properties.push(self.parse_required_option("VERSION")?);
-            properties.push(self.parse_required_option("PATCH")?);
+            self.expect_alter_words(&[&["VERSION"]])?;
+            self.expect_token(TokenType::Eq)?;
+            properties.push(property("VERSION", None, Some(self.object_operand()?)));
+            self.expect_alter_words(&[&["PATCH"]])?;
+            self.expect_token(TokenType::Eq)?;
+            properties.push(property("PATCH", None, Some(self.number_operand()?)));
         }
         if version_required {
             properties.extend(self.parse_named_options(UPGRADE_OPTIONS)?);
