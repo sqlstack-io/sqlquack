@@ -16502,6 +16502,7 @@ note = "a tag value of 255 characters against the documented maximum of 256, obs
 anchor = "doc.sql.alter-organization-account / Parameters"
 sql = "ALTER ORGANIZATION ACCOUNT SET TAG v1 = 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx' ;"
 expect = "observe"
+documented = true
 context = "raw"
 
 # D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-72); observed, not flipped to reject
@@ -16513,6 +16514,7 @@ note = "a tag value of 256 characters against the documented maximum of 256, obs
 anchor = "doc.sql.alter-organization-account / Parameters"
 sql = "ALTER ORGANIZATION ACCOUNT SET TAG v1 = 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx' ;"
 expect = "observe"
+documented = true
 context = "raw"
 
 [[limit]]
@@ -22083,6 +22085,7 @@ note = "reserved: a reserved keyword, unquoted (expected rejection) and double-q
 anchor = "doc.sql.copy-into-table / Syntax"
 sql = "COPY INTO v1 FROM ( SELECT $SELECT FROM @s1 ) ;"
 expect = "observe"
+documented = true
 also_sql = "COPY INTO v1 FROM ( SELECT $\"SELECT\" FROM @s1 ) ;"
 also_expect = "observe"
 also_documented = true
@@ -24061,6 +24064,7 @@ note = "reserved: a reserved keyword, unquoted (expected rejection) and double-q
 anchor = "doc.bind-variables / Overview of bind variables"
 sql = "SELECT :SELECT ;"
 expect = "observe"
+documented = true
 also_sql = "SELECT :\"SELECT\" ;"
 also_expect = "observe"
 also_documented = true
@@ -34258,6 +34262,7 @@ note = "every independent option of one production together, with the page's com
 anchor = "doc.sql.alter-task / Syntax"
 sql = "ALTER TASK IF EXISTS v1 SET WAREHOUSE = 'm' SCHEDULE = '1 MINUTES' CONFIG = 'm' OVERLAP_POLICY = NO_OVERLAP USER_TASK_TIMEOUT_MS = 1 SUSPEND_TASK_AFTER_NUM_FAILURES = 1 ERROR_INTEGRATION = i1 SUCCESS_INTEGRATION = i1 LOG_LEVEL = 'm' COMMENT = 'm' LOCK_TIMEOUT = 1 , LOCK_TIMEOUT = 1 TASK_AUTO_RETRY_ATTEMPTS = 1 USER_TASK_MINIMUM_TRIGGER_INTERVAL_IN_SECONDS = 1 TARGET_COMPLETION_INTERVAL = '1 MINUTES' SERVERLESS_TASK_MIN_STATEMENT_SIZE = 'XSMALL' SERVERLESS_TASK_MAX_STATEMENT_SIZE = 'XSMALL' EXECUTE AS USER v1 ;"
 expect = "observe"
+documented = true
 context = "raw"
 
 # D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-50); observed, not flipped to reject
@@ -34269,6 +34274,7 @@ note = "every independent option of one production together, with the page's com
 anchor = "doc.sql.alter-task / Syntax"
 sql = "ALTER TASK IF EXISTS v1 UNSET WAREHOUSE SCHEDULE CONFIG OVERLAP_POLICY USER_TASK_TIMEOUT_MS SUSPEND_TASK_AFTER_NUM_FAILURES LOG_LEVEL COMMENT LOCK_TIMEOUT , LOCK_TIMEOUT TARGET_COMPLETION_INTERVAL SERVERLESS_TASK_MIN_STATEMENT_SIZE SERVERLESS_TASK_MAX_STATEMENT_SIZE , STEWARD EXECUTE AS USER ;"
 expect = "observe"
+documented = true
 context = "raw"
 
 # D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-50); observed, not flipped to reject
@@ -34280,6 +34286,7 @@ note = "every independent option of one production together, with the page's com
 anchor = "doc.sql.alter-view / Syntax"
 sql = "ALTER VIEW IF EXISTS v1 SET SECURE CHANGE_TRACKING = TRUE COMMENT = 'm' ;"
 expect = "observe"
+documented = true
 context = "raw"
 
 # D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-50); observed, not flipped to reject
@@ -34291,6 +34298,7 @@ note = "every independent option of one production together, with the page's com
 anchor = "doc.sql.create-artifact-repository / Syntax"
 sql = "CREATE OR REPLACE ARTIFACT REPOSITORY v1 TYPE = APPLICATION API_INTEGRATION = 'm' INDEX_URL = 'm' AUTHENTICATION_SECRET = v1 PACKAGE_RETENTION = ON_OBJECT_CREATION WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' ;"
 expect = "observe"
+documented = true
 context = "raw"
 
 # D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-50); observed, not flipped to reject
@@ -34302,6 +34310,7 @@ note = "every independent option of one production together, with the page's com
 anchor = "doc.sql.create-database / Syntax"
 sql = "CREATE OR REPLACE TRANSIENT DATABASE v1 CLONE v1 AT ( TIMESTAMP => CURRENT_TIMESTAMP ( ) ) IGNORE TABLES WITH INSUFFICIENT DATA RETENTION IGNORE HYBRID TABLES DATA_RETENTION_TIME_IN_DAYS = 1 MAX_DATA_EXTENSION_TIME_IN_DAYS = 1 STAGE_UNDROP_RETENTION_TIME_IN_DAYS = 1 EXTERNAL_VOLUME = v1 CATALOG = v1 ICEBERG_DEFAULT_DDL_COLLATION = 'm' ICEBERG_VERSION_DEFAULT = 1 ICEBERG_MERGE_ON_READ_BEHAVIOR = 'AUTO' ENABLE_ICEBERG_MERGE_ON_READ = TRUE REPLACE_INVALID_CHARACTERS = TRUE DEFAULT_DDL_COLLATION = 'm' STORAGE_SERIALIZATION_POLICY = COMPATIBLE COMMENT = 'm' CATALOG_SYNC = 'm' CATALOG_SYNC_NAMESPACE_MODE = NEST CATALOG_SYNC_NAMESPACE_FLATTEN_DELIMITER = 'm' WITH TAG ( v1 = 'm' , v1 = 'm' ) WITH CONTACT ( STEWARD = v1 , STEWARD = v1 ) OBJECT_VISIBILITY = $$m: 1$$ ENABLE_DATA_COMPACTION = TRUE OAUTH_AUTHORIZATION_SERVER = i1 OAUTH_SCOPES_SUPPORTED = 'm' ;"
 expect = "observe"
+documented = true
 context = "raw"
 
 # D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-50); observed, not flipped to reject
@@ -34313,6 +34322,7 @@ note = "every independent option of one production together, with the page's com
 anchor = "doc.sql.create-event-table / Variant syntax / CREATE EVENT TABLE ... CLONE"
 sql = "CREATE OR REPLACE EVENT TABLE v1 CLONE v1 AT ( TIMESTAMP => CURRENT_TIMESTAMP ( ) ) COPY GRANTS ;"
 expect = "observe"
+documented = true
 context = "raw"
 
 # D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-50); observed, not flipped to reject
@@ -34324,6 +34334,7 @@ note = "every independent option of one production together, with the page's com
 anchor = "doc.sql.create-event-table / Syntax"
 sql = "CREATE OR REPLACE EVENT TABLE v1 CLUSTER BY ( 1 , 1 ) DATA_RETENTION_TIME_IN_DAYS = 1 MAX_DATA_EXTENSION_TIME_IN_DAYS = 1 CHANGE_TRACKING = TRUE DEFAULT_DDL_COLLATION = 'm' COPY GRANTS COPY = ( GRANTS ) WITH COMMENT = 'm' WITH ROW ACCESS POLICY v1 ON ( v1 , v1 ) WITH TAG ( v1 = 'm' , v1 = 'm' ) WITH CONTACT ( STEWARD = v1 , STEWARD = v1 ) ;"
 expect = "observe"
+documented = true
 context = "raw"
 
 # D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-50); observed, not flipped to reject
@@ -34335,6 +34346,7 @@ note = "every independent option of one production together, with the page's com
 anchor = "doc.sql.create-external-agent / Syntax"
 sql = "CREATE OR REPLACE EXTERNAL AGENT v1 WITH VERSION v1 COMMENT = 'm' ;"
 expect = "observe"
+documented = true
 context = "raw"
 
 # D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-51); observed, not flipped to reject
@@ -34346,6 +34358,7 @@ note = "every independent option of one production together, with the page's com
 anchor = "doc.sql.create-hybrid-table / Syntax"
 sql = "CREATE OR REPLACE HYBRID TABLE v1 ( v1 INT DEFAULT 1 NOT NULL CONSTRAINT v1 UNIQUE RELY COLLATE 'm' COMMENT 'm' , v1 INT , CONSTRAINT v1 UNIQUE ( v1 , v1 ) RELY COMMENT 'm' , INDEX v1 ( v1 , v1 ) INCLUDE ( v1 , v1 ) , v1 ( v1 , v1 ) INCLUDE ( v1 , v1 ) ) COMMENT = 'm' ;"
 expect = "observe"
+documented = true
 context = "raw"
 
 # D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-51); observed, not flipped to reject
@@ -34357,6 +34370,7 @@ note = "every independent option of one production together, with the page's com
 anchor = "doc.sql.create-interactive-table / Syntax"
 sql = "CREATE OR REPLACE INTERACTIVE TABLE v1 ( v1 INT WITH MASKING POLICY v1 USING ( v1 , v1 ) , v1 INT ) CLUSTER BY ( 1 , 1 ) TARGET_LAG = '1 minute' WAREHOUSE = v1 INITIALIZATION_WAREHOUSE = v1 COMMENT = 'm' WITH TAG ( v1 = 'm' , v1 = 'm' ) WITH ROW ACCESS POLICY v1 ON ( v1 , v1 ) WITH AGGREGATION POLICY v1 ENTITY KEY ( v1 , v1 ) WITH JOIN POLICY v1 ALLOWED JOIN KEYS ( v1 , v1 ) WITH STORAGE LIFECYCLE POLICY v1 ON ( v1 , v1 ) AS SELECT 1 ;"
 expect = "observe"
+documented = true
 context = "raw"
 
 # D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-51); observed, not flipped to reject
@@ -34368,6 +34382,7 @@ note = "every independent option of one production together, with the page's com
 anchor = "doc.sql.create-materialized-view / Syntax"
 sql = "CREATE OR REPLACE SECURE INTERACTIVE MATERIALIZED VIEW v1 COPY GRANTS COPY = ( GRANTS ) ( v1 ) v1 WITH MASKING POLICY v1 USING ( v1 , v1 ) WITH PROJECTION POLICY v1 WITH TAG ( v1 = 'm' , v1 = 'm' ) , v1 COMMENT = 'm' WITH ROW ACCESS POLICY v1 ON ( v1 , v1 ) WITH AGGREGATION POLICY v1 ENTITY KEY ( v1 , v1 ) CLUSTER BY ( 1 , 1 ) WITH TAG ( v1 = 'm' , v1 = 'm' ) WITH CONTACT ( STEWARD = v1 , STEWARD = v1 ) AS SELECT 1 ;"
 expect = "observe"
+documented = true
 context = "raw"
 
 # D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-51); observed, not flipped to reject
@@ -34379,6 +34394,7 @@ note = "every independent option of one production together, with the page's com
 anchor = "doc.sql.create-table / Syntax"
 sql = "CREATE OR REPLACE LOCAL TEMP TABLE v1 ( v1 INT GENERATED ALWAYS AS ( 1 ) VIRTUAL CONSTRAINT v1 UNIQUE RELY NOT NULL COLLATE 'm' DEFAULT 1 WITH MASKING POLICY v1 USING ( v1 , v1 ) WITH PROJECTION POLICY v1 WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT 'm' , v1 INT GENERATED ALWAYS AS ( 1 ) VIRTUAL , CONSTRAINT v1 UNIQUE ( v1 , v1 ) RELY COMMENT 'm' ) CLUSTER BY ( 1 , 1 ) ENABLE_SCHEMA_EVOLUTION = TRUE DATA_RETENTION_TIME_IN_DAYS = 1 MAX_DATA_EXTENSION_TIME_IN_DAYS = 1 CHANGE_TRACKING = TRUE DEFAULT_DDL_COLLATION = 'm' ICEBERG_DEFAULT_DDL_COLLATION = 'm' COPY GRANTS ERROR_LOGGING = TRUE COPY TAGS COPY = ( COMMENTS , COMMENTS ) COMMENT = 'm' WITH ROW ACCESS POLICY v1 ON ( v1 , v1 ) WITH AGGREGATION POLICY v1 ENTITY KEY ( v1 , v1 ) WITH JOIN POLICY v1 ALLOWED JOIN KEYS ( v1 , v1 ) WITH STORAGE LIFECYCLE POLICY v1 ON ( v1 , v1 ) WITH TAG ( v1 = 'm' , v1 = 'm' ) WITH CONTACT ( STEWARD = v1 , STEWARD = v1 ) ROW_TIMESTAMP = TRUE ;"
 expect = "observe"
+documented = true
 context = "raw"
 
 # D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-51); observed, not flipped to reject
@@ -34390,6 +34406,7 @@ note = "every independent option of one production together, with the page's com
 anchor = "doc.sql.create-view / Syntax"
 sql = "CREATE OR REPLACE SECURE LOCAL TEMP RECURSIVE VIEW v1 ( v1 ) v1 WITH MASKING POLICY v1 USING ( v1 , v1 ) WITH PROJECTION POLICY v1 WITH TAG ( v1 = 'm' , v1 = 'm' ) , v1 WITH ROW ACCESS POLICY v1 ON ( v1 , v1 ) WITH TAG ( v1 = 'm' , v1 = 'm' ) CHANGE_TRACKING = TRUE COPY GRANTS COPY TAGS COPY = ( COMMENTS , COMMENTS ) COMMENT = 'm' WITH ROW ACCESS POLICY v1 ON ( v1 , v1 ) WITH AGGREGATION POLICY v1 ENTITY KEY ( v1 , v1 ) WITH JOIN POLICY v1 ALLOWED JOIN KEYS ( v1 , v1 ) WITH TAG ( v1 = 'm' , v1 = 'm' ) WITH CONTACT ( STEWARD = v1 , STEWARD = v1 ) AS SELECT 1 ;"
 expect = "observe"
+documented = true
 context = "raw"
 
 
@@ -56912,6 +56929,7 @@ note = "every independent option of one production together, with the page's com
 anchor = "doc.sql.alter-view / Syntax"
 sql = "ALTER VIEW IF EXISTS v1 UNSET SECURE COMMENT ;"
 expect = "observe"
+documented = true
 context = "raw"
 
 [[suppress]]
@@ -56928,6 +56946,7 @@ note = "every independent option of one production together, with the page's com
 anchor = "doc.sql.alter-application-package / Syntax"
 sql = "ALTER APPLICATION PACKAGE IF EXISTS v1 UNSET DATA_RETENTION_TIME_IN_DAYS , MAX_DATA_EXTENSION_TIME_IN_DAYS , DEFAULT_DDL_COLLATION , COMMENT , DISTRIBUTION ;"
 expect = "observe"
+documented = true
 context = "raw"
 
 # D113 ddl receipt triage: remaining contradictions observed, each reason names its category and receipt.
@@ -58574,6 +58593,7 @@ note = "alternative { <date_or_time_part> | '<date_or_time_part>' } → '<date_o
 anchor = "doc.functions.date_part / Syntax"
 sql = "SELECT DATE_PART ( 'm' FROM 1 ) ;"
 expect = "observe"
+documented = true
 context = "raw"
 
 [[suppress]]
@@ -58591,6 +58611,7 @@ note = "a valid string_literal, observed"
 anchor = "doc.functions.date_part / Syntax"
 sql = "SELECT DATE_PART ( 'm' FROM 1 ) ;"
 expect = "observe"
+documented = true
 context = "raw"
 
 [[suppress]]
@@ -58607,6 +58628,7 @@ note = "alternative { <date_or_time_part> | '<date_or_time_part>' } → '<date_o
 anchor = "doc.functions.extract / Syntax"
 sql = "SELECT EXTRACT ( 'm' FROM 1 ) ;"
 expect = "observe"
+documented = true
 context = "raw"
 
 [[suppress]]
@@ -58624,6 +58646,7 @@ note = "a valid string_literal, observed"
 anchor = "doc.functions.extract / Syntax"
 sql = "SELECT EXTRACT ( 'm' FROM 1 ) ;"
 expect = "observe"
+documented = true
 context = "raw"
 
 # D113 security_admin receipt triage (import 65): remaining contradictions observed, each reason names its category and receipt.
@@ -59211,6 +59234,7 @@ note = "option present [ IF EXISTS ], observed"
 anchor = "doc.sql.alter-authentication-policy / Syntax"
 sql = "ALTER AUTHENTICATION POLICY IF EXISTS v1 UNSET AUTHENTICATION_METHODS CLIENT_TYPES CLIENT_POLICY SECURITY_INTEGRATIONS MFA_ENROLLMENT MFA_POLICY PAT_POLICY WORKLOAD_IDENTITY_POLICY COMMENT ;"
 expect = "observe"
+documented = true
 context = "raw"
 
 [[suppress]]
@@ -59227,6 +59251,7 @@ note = "option present [ AUTHENTICATION_METHODS ], observed"
 anchor = "doc.sql.alter-authentication-policy / Syntax"
 sql = "ALTER AUTHENTICATION POLICY IF EXISTS v1 UNSET AUTHENTICATION_METHODS CLIENT_TYPES CLIENT_POLICY SECURITY_INTEGRATIONS MFA_ENROLLMENT MFA_POLICY PAT_POLICY WORKLOAD_IDENTITY_POLICY COMMENT ;"
 expect = "observe"
+documented = true
 context = "raw"
 
 [[suppress]]
@@ -59243,6 +59268,7 @@ note = "option present [ CLIENT_TYPES ], observed"
 anchor = "doc.sql.alter-authentication-policy / Syntax"
 sql = "ALTER AUTHENTICATION POLICY IF EXISTS v1 UNSET AUTHENTICATION_METHODS CLIENT_TYPES CLIENT_POLICY SECURITY_INTEGRATIONS MFA_ENROLLMENT MFA_POLICY PAT_POLICY WORKLOAD_IDENTITY_POLICY COMMENT ;"
 expect = "observe"
+documented = true
 context = "raw"
 
 [[suppress]]
@@ -59259,6 +59285,7 @@ note = "option present [ CLIENT_POLICY ], observed"
 anchor = "doc.sql.alter-authentication-policy / Syntax"
 sql = "ALTER AUTHENTICATION POLICY IF EXISTS v1 UNSET AUTHENTICATION_METHODS CLIENT_TYPES CLIENT_POLICY SECURITY_INTEGRATIONS MFA_ENROLLMENT MFA_POLICY PAT_POLICY WORKLOAD_IDENTITY_POLICY COMMENT ;"
 expect = "observe"
+documented = true
 context = "raw"
 
 [[suppress]]
@@ -59275,6 +59302,7 @@ note = "option present [ SECURITY_INTEGRATIONS ], observed"
 anchor = "doc.sql.alter-authentication-policy / Syntax"
 sql = "ALTER AUTHENTICATION POLICY IF EXISTS v1 UNSET AUTHENTICATION_METHODS CLIENT_TYPES CLIENT_POLICY SECURITY_INTEGRATIONS MFA_ENROLLMENT MFA_POLICY PAT_POLICY WORKLOAD_IDENTITY_POLICY COMMENT ;"
 expect = "observe"
+documented = true
 context = "raw"
 
 [[suppress]]
@@ -59291,6 +59319,7 @@ note = "option present [ MFA_ENROLLMENT ], observed"
 anchor = "doc.sql.alter-authentication-policy / Syntax"
 sql = "ALTER AUTHENTICATION POLICY IF EXISTS v1 UNSET AUTHENTICATION_METHODS CLIENT_TYPES CLIENT_POLICY SECURITY_INTEGRATIONS MFA_ENROLLMENT MFA_POLICY PAT_POLICY WORKLOAD_IDENTITY_POLICY COMMENT ;"
 expect = "observe"
+documented = true
 context = "raw"
 
 [[suppress]]
@@ -59307,6 +59336,7 @@ note = "option present [ MFA_POLICY ], observed"
 anchor = "doc.sql.alter-authentication-policy / Syntax"
 sql = "ALTER AUTHENTICATION POLICY IF EXISTS v1 UNSET AUTHENTICATION_METHODS CLIENT_TYPES CLIENT_POLICY SECURITY_INTEGRATIONS MFA_ENROLLMENT MFA_POLICY PAT_POLICY WORKLOAD_IDENTITY_POLICY COMMENT ;"
 expect = "observe"
+documented = true
 context = "raw"
 
 [[suppress]]
@@ -59323,6 +59353,7 @@ note = "option present [ PAT_POLICY ], observed"
 anchor = "doc.sql.alter-authentication-policy / Syntax"
 sql = "ALTER AUTHENTICATION POLICY IF EXISTS v1 UNSET AUTHENTICATION_METHODS CLIENT_TYPES CLIENT_POLICY SECURITY_INTEGRATIONS MFA_ENROLLMENT MFA_POLICY PAT_POLICY WORKLOAD_IDENTITY_POLICY COMMENT ;"
 expect = "observe"
+documented = true
 context = "raw"
 
 [[suppress]]
@@ -59339,6 +59370,7 @@ note = "option present [ WORKLOAD_IDENTITY_POLICY ], observed"
 anchor = "doc.sql.alter-authentication-policy / Syntax"
 sql = "ALTER AUTHENTICATION POLICY IF EXISTS v1 UNSET AUTHENTICATION_METHODS CLIENT_TYPES CLIENT_POLICY SECURITY_INTEGRATIONS MFA_ENROLLMENT MFA_POLICY PAT_POLICY WORKLOAD_IDENTITY_POLICY COMMENT ;"
 expect = "observe"
+documented = true
 context = "raw"
 
 [[suppress]]
@@ -59355,6 +59387,7 @@ note = "option present [ COMMENT ], observed"
 anchor = "doc.sql.alter-authentication-policy / Syntax"
 sql = "ALTER AUTHENTICATION POLICY IF EXISTS v1 UNSET AUTHENTICATION_METHODS CLIENT_TYPES CLIENT_POLICY SECURITY_INTEGRATIONS MFA_ENROLLMENT MFA_POLICY PAT_POLICY WORKLOAD_IDENTITY_POLICY COMMENT ;"
 expect = "observe"
+documented = true
 context = "raw"
 
 [[suppress]]
@@ -59370,6 +59403,7 @@ note = "every independent option of one production together, observed"
 anchor = "doc.sql.alter-authentication-policy / Syntax"
 sql = "ALTER AUTHENTICATION POLICY IF EXISTS v1 UNSET AUTHENTICATION_METHODS CLIENT_TYPES CLIENT_POLICY SECURITY_INTEGRATIONS MFA_ENROLLMENT MFA_POLICY PAT_POLICY WORKLOAD_IDENTITY_POLICY COMMENT ;"
 expect = "observe"
+documented = true
 context = "raw"
 
 [[suppress]]
@@ -59482,6 +59516,7 @@ note = "option present [ IF EXISTS ], observed"
 anchor = "doc.sql.alter-connection / Syntax"
 sql = "ALTER CONNECTION IF EXISTS v1 ENABLE FAILOVER TO ACCOUNTS v1 . v1 , v1 . v1 IGNORE EDITION CHECK ;"
 expect = "observe"
+documented = true
 context = "raw"
 
 [[suppress]]
@@ -59499,6 +59534,7 @@ note = "the list continued at least once, observed"
 anchor = "doc.sql.alter-connection / Syntax"
 sql = "ALTER CONNECTION IF EXISTS v1 ENABLE FAILOVER TO ACCOUNTS v1 . v1 , v1 . v1 IGNORE EDITION CHECK ;"
 expect = "observe"
+documented = true
 context = "raw"
 
 [[suppress]]
@@ -59515,6 +59551,7 @@ note = "option present [ IGNORE EDITION CHECK ], observed"
 anchor = "doc.sql.alter-connection / Syntax"
 sql = "ALTER CONNECTION IF EXISTS v1 ENABLE FAILOVER TO ACCOUNTS v1 . v1 , v1 . v1 IGNORE EDITION CHECK ;"
 expect = "observe"
+documented = true
 context = "raw"
 
 [[suppress]]
@@ -59530,6 +59567,7 @@ note = "every independent option of one production together, observed"
 anchor = "doc.sql.alter-connection / Syntax"
 sql = "ALTER CONNECTION IF EXISTS v1 ENABLE FAILOVER TO ACCOUNTS v1 . v1 , v1 . v1 IGNORE EDITION CHECK ;"
 expect = "observe"
+documented = true
 context = "raw"
 
 [[suppress]]
@@ -59632,6 +59670,7 @@ note = "every independent option of one production together, observed"
 anchor = "doc.functions.minhash / Syntax"
 sql = "SELECT MINHASH ( v1 , DISTINCT 1 , 1 ) ;"
 expect = "observe"
+documented = true
 context = "raw"
 
 # D113 ddl receipt triage (batch-5 interaction rows): remaining contradictions observed, each reason names its category and receipt.
@@ -59649,6 +59688,7 @@ note = "every independent option of one production together, observed"
 anchor = "doc.sql.alter-dynamic-table / Syntax"
 sql = "ALTER DYNAMIC TABLE IF EXISTS v1 ADD SEARCH OPTIMIZATION ON EQUALITY ( v1 ) , EQUALITY ( v1 ) EQUALITY ;"
 expect = "observe"
+documented = true
 context = "raw"
 
 # D113 security_admin receipt triage (import 70): remaining contradictions observed, each reason names its category and receipt.
@@ -59885,6 +59925,7 @@ note = "a valid operand, observed"
 anchor = "doc.sql.alter-external-access-integration / Syntax"
 sql = "ALTER EXTERNAL ACCESS INTEGRATION IF EXISTS v1 SET ALLOWED_NETWORK_RULES = ( v1 , v1 ) ALLOWED_API_AUTHENTICATION_INTEGRATIONS = ( v1 , v1 ) ALLOWED_AUTHENTICATION_SECRETS = none ENABLED = TRUE COMMENT = 'm' TAG v1 = 'm' , v1 = 'm' ;"
 expect = "observe"
+documented = true
 context = "raw"
 
 [[suppress]]
@@ -59918,6 +59959,7 @@ note = "option present [ IF EXISTS ], observed"
 anchor = "doc.sql.alter-external-access-integration / Syntax"
 sql = "ALTER EXTERNAL ACCESS INTEGRATION IF EXISTS v1 SET ALLOWED_NETWORK_RULES = ( v1 , v1 ) ALLOWED_API_AUTHENTICATION_INTEGRATIONS = ( v1 , v1 ) ALLOWED_AUTHENTICATION_SECRETS = ( v1 , v1 ) ENABLED = TRUE COMMENT = 'm' TAG v1 = 'm' , v1 = 'm' ;"
 expect = "observe"
+documented = true
 context = "raw"
 
 [[suppress]]
@@ -59934,6 +59976,7 @@ note = "option present [ ALLOWED_NETWORK_RULES = ( <rule_name> [ , <rule_name> .
 anchor = "doc.sql.alter-external-access-integration / Syntax"
 sql = "ALTER EXTERNAL ACCESS INTEGRATION IF EXISTS v1 SET ALLOWED_NETWORK_RULES = ( v1 , v1 ) ALLOWED_API_AUTHENTICATION_INTEGRATIONS = ( v1 , v1 ) ALLOWED_AUTHENTICATION_SECRETS = ( v1 , v1 ) ENABLED = TRUE COMMENT = 'm' TAG v1 = 'm' , v1 = 'm' ;"
 expect = "observe"
+documented = true
 context = "raw"
 
 [[suppress]]
@@ -59951,6 +59994,7 @@ note = "a valid identifier, observed"
 anchor = "doc.sql.alter-external-access-integration / Syntax"
 sql = "ALTER EXTERNAL ACCESS INTEGRATION IF EXISTS v1 SET ALLOWED_NETWORK_RULES = ( v1 , v1 ) ALLOWED_API_AUTHENTICATION_INTEGRATIONS = ( v1 , v1 ) ALLOWED_AUTHENTICATION_SECRETS = ( v1 , v1 ) ENABLED = TRUE COMMENT = 'm' TAG v1 = 'm' , v1 = 'm' ;"
 expect = "observe"
+documented = true
 context = "raw"
 
 [[suppress]]
@@ -59968,6 +60012,7 @@ note = "the list continued at least once, observed"
 anchor = "doc.sql.alter-external-access-integration / Syntax"
 sql = "ALTER EXTERNAL ACCESS INTEGRATION IF EXISTS v1 SET ALLOWED_NETWORK_RULES = ( v1 , v1 ) ALLOWED_API_AUTHENTICATION_INTEGRATIONS = ( v1 , v1 ) ALLOWED_AUTHENTICATION_SECRETS = ( v1 , v1 ) ENABLED = TRUE COMMENT = 'm' TAG v1 = 'm' , v1 = 'm' ;"
 expect = "observe"
+documented = true
 context = "raw"
 
 [[suppress]]
@@ -59984,6 +60029,7 @@ note = "option present [ ALLOWED_API_AUTHENTICATION_INTEGRATIONS = { ( <integrat
 anchor = "doc.sql.alter-external-access-integration / Syntax"
 sql = "ALTER EXTERNAL ACCESS INTEGRATION IF EXISTS v1 SET ALLOWED_NETWORK_RULES = ( v1 , v1 ) ALLOWED_API_AUTHENTICATION_INTEGRATIONS = ( v1 , v1 ) ALLOWED_AUTHENTICATION_SECRETS = ( v1 , v1 ) ENABLED = TRUE COMMENT = 'm' TAG v1 = 'm' , v1 = 'm' ;"
 expect = "observe"
+documented = true
 context = "raw"
 
 [[suppress]]
@@ -60001,6 +60047,7 @@ note = "a valid identifier, observed"
 anchor = "doc.sql.alter-external-access-integration / Syntax"
 sql = "ALTER EXTERNAL ACCESS INTEGRATION IF EXISTS v1 SET ALLOWED_NETWORK_RULES = ( v1 , v1 ) ALLOWED_API_AUTHENTICATION_INTEGRATIONS = ( v1 , v1 ) ALLOWED_AUTHENTICATION_SECRETS = ( v1 , v1 ) ENABLED = TRUE COMMENT = 'm' TAG v1 = 'm' , v1 = 'm' ;"
 expect = "observe"
+documented = true
 context = "raw"
 
 [[suppress]]
@@ -60018,6 +60065,7 @@ note = "the list continued at least once, observed"
 anchor = "doc.sql.alter-external-access-integration / Syntax"
 sql = "ALTER EXTERNAL ACCESS INTEGRATION IF EXISTS v1 SET ALLOWED_NETWORK_RULES = ( v1 , v1 ) ALLOWED_API_AUTHENTICATION_INTEGRATIONS = ( v1 , v1 ) ALLOWED_AUTHENTICATION_SECRETS = ( v1 , v1 ) ENABLED = TRUE COMMENT = 'm' TAG v1 = 'm' , v1 = 'm' ;"
 expect = "observe"
+documented = true
 context = "raw"
 
 [[suppress]]
@@ -60034,6 +60082,7 @@ note = "option present [ ALLOWED_AUTHENTICATION_SECRETS = { ( <secret_name> [ , 
 anchor = "doc.sql.alter-external-access-integration / Syntax"
 sql = "ALTER EXTERNAL ACCESS INTEGRATION IF EXISTS v1 SET ALLOWED_NETWORK_RULES = ( v1 , v1 ) ALLOWED_API_AUTHENTICATION_INTEGRATIONS = ( v1 , v1 ) ALLOWED_AUTHENTICATION_SECRETS = ( v1 , v1 ) ENABLED = TRUE COMMENT = 'm' TAG v1 = 'm' , v1 = 'm' ;"
 expect = "observe"
+documented = true
 context = "raw"
 
 [[suppress]]
@@ -60051,6 +60100,7 @@ note = "a valid identifier, observed"
 anchor = "doc.sql.alter-external-access-integration / Syntax"
 sql = "ALTER EXTERNAL ACCESS INTEGRATION IF EXISTS v1 SET ALLOWED_NETWORK_RULES = ( v1 , v1 ) ALLOWED_API_AUTHENTICATION_INTEGRATIONS = ( v1 , v1 ) ALLOWED_AUTHENTICATION_SECRETS = ( v1 , v1 ) ENABLED = TRUE COMMENT = 'm' TAG v1 = 'm' , v1 = 'm' ;"
 expect = "observe"
+documented = true
 context = "raw"
 
 [[suppress]]
@@ -60068,6 +60118,7 @@ note = "the list continued at least once, observed"
 anchor = "doc.sql.alter-external-access-integration / Syntax"
 sql = "ALTER EXTERNAL ACCESS INTEGRATION IF EXISTS v1 SET ALLOWED_NETWORK_RULES = ( v1 , v1 ) ALLOWED_API_AUTHENTICATION_INTEGRATIONS = ( v1 , v1 ) ALLOWED_AUTHENTICATION_SECRETS = ( v1 , v1 ) ENABLED = TRUE COMMENT = 'm' TAG v1 = 'm' , v1 = 'm' ;"
 expect = "observe"
+documented = true
 context = "raw"
 
 [[suppress]]
@@ -60084,6 +60135,7 @@ note = "option present [ ENABLED = { TRUE | FALSE } ], observed"
 anchor = "doc.sql.alter-external-access-integration / Syntax"
 sql = "ALTER EXTERNAL ACCESS INTEGRATION IF EXISTS v1 SET ALLOWED_NETWORK_RULES = ( v1 , v1 ) ALLOWED_API_AUTHENTICATION_INTEGRATIONS = ( v1 , v1 ) ALLOWED_AUTHENTICATION_SECRETS = ( v1 , v1 ) ENABLED = TRUE COMMENT = 'm' TAG v1 = 'm' , v1 = 'm' ;"
 expect = "observe"
+documented = true
 context = "raw"
 
 [[suppress]]
@@ -60100,6 +60152,7 @@ note = "option present [ COMMENT = '<string_literal>' ], observed"
 anchor = "doc.sql.alter-external-access-integration / Syntax"
 sql = "ALTER EXTERNAL ACCESS INTEGRATION IF EXISTS v1 SET ALLOWED_NETWORK_RULES = ( v1 , v1 ) ALLOWED_API_AUTHENTICATION_INTEGRATIONS = ( v1 , v1 ) ALLOWED_AUTHENTICATION_SECRETS = ( v1 , v1 ) ENABLED = TRUE COMMENT = 'm' TAG v1 = 'm' , v1 = 'm' ;"
 expect = "observe"
+documented = true
 context = "raw"
 
 [[suppress]]
@@ -60117,6 +60170,7 @@ note = "a valid string_literal, observed"
 anchor = "doc.sql.alter-external-access-integration / Syntax"
 sql = "ALTER EXTERNAL ACCESS INTEGRATION IF EXISTS v1 SET ALLOWED_NETWORK_RULES = ( v1 , v1 ) ALLOWED_API_AUTHENTICATION_INTEGRATIONS = ( v1 , v1 ) ALLOWED_AUTHENTICATION_SECRETS = ( v1 , v1 ) ENABLED = TRUE COMMENT = 'm' TAG v1 = 'm' , v1 = 'm' ;"
 expect = "observe"
+documented = true
 context = "raw"
 
 [[suppress]]
@@ -60133,6 +60187,7 @@ note = "option present [ TAG <tag_name> = '<tag_value>' [ , <tag_name> = '<tag_v
 anchor = "doc.sql.alter-external-access-integration / Syntax"
 sql = "ALTER EXTERNAL ACCESS INTEGRATION IF EXISTS v1 SET ALLOWED_NETWORK_RULES = ( v1 , v1 ) ALLOWED_API_AUTHENTICATION_INTEGRATIONS = ( v1 , v1 ) ALLOWED_AUTHENTICATION_SECRETS = ( v1 , v1 ) ENABLED = TRUE COMMENT = 'm' TAG v1 = 'm' , v1 = 'm' ;"
 expect = "observe"
+documented = true
 context = "raw"
 
 [[suppress]]
@@ -60150,6 +60205,7 @@ note = "a valid identifier, observed"
 anchor = "doc.sql.alter-external-access-integration / Syntax"
 sql = "ALTER EXTERNAL ACCESS INTEGRATION IF EXISTS v1 SET ALLOWED_NETWORK_RULES = ( v1 , v1 ) ALLOWED_API_AUTHENTICATION_INTEGRATIONS = ( v1 , v1 ) ALLOWED_AUTHENTICATION_SECRETS = ( v1 , v1 ) ENABLED = TRUE COMMENT = 'm' TAG v1 = 'm' , v1 = 'm' ;"
 expect = "observe"
+documented = true
 context = "raw"
 
 [[suppress]]
@@ -60167,6 +60223,7 @@ note = "a valid string_literal, observed"
 anchor = "doc.sql.alter-external-access-integration / Syntax"
 sql = "ALTER EXTERNAL ACCESS INTEGRATION IF EXISTS v1 SET ALLOWED_NETWORK_RULES = ( v1 , v1 ) ALLOWED_API_AUTHENTICATION_INTEGRATIONS = ( v1 , v1 ) ALLOWED_AUTHENTICATION_SECRETS = ( v1 , v1 ) ENABLED = TRUE COMMENT = 'm' TAG v1 = 'm' , v1 = 'm' ;"
 expect = "observe"
+documented = true
 context = "raw"
 
 [[suppress]]
@@ -60184,6 +60241,7 @@ note = "the list continued at least once, observed"
 anchor = "doc.sql.alter-external-access-integration / Syntax"
 sql = "ALTER EXTERNAL ACCESS INTEGRATION IF EXISTS v1 SET ALLOWED_NETWORK_RULES = ( v1 , v1 ) ALLOWED_API_AUTHENTICATION_INTEGRATIONS = ( v1 , v1 ) ALLOWED_AUTHENTICATION_SECRETS = ( v1 , v1 ) ENABLED = TRUE COMMENT = 'm' TAG v1 = 'm' , v1 = 'm' ;"
 expect = "observe"
+documented = true
 context = "raw"
 
 [[suppress]]
@@ -60199,6 +60257,7 @@ note = "every independent option of one production together, observed"
 anchor = "doc.sql.alter-external-access-integration / Syntax"
 sql = "ALTER EXTERNAL ACCESS INTEGRATION IF EXISTS v1 SET ALLOWED_NETWORK_RULES = ( v1 , v1 ) ALLOWED_API_AUTHENTICATION_INTEGRATIONS = ( v1 , v1 ) ALLOWED_AUTHENTICATION_SECRETS = ( v1 , v1 ) ENABLED = TRUE COMMENT = 'm' TAG v1 = 'm' , v1 = 'm' ;"
 expect = "observe"
+documented = true
 context = "raw"
 
 [[suppress]]
@@ -60216,6 +60275,7 @@ note = "a valid operand, observed"
 anchor = "doc.sql.alter-external-access-integration / Syntax"
 sql = "ALTER EXTERNAL ACCESS INTEGRATION IF EXISTS v1 SET ALLOWED_NETWORK_RULES = ( v1 , v1 ) ALLOWED_API_AUTHENTICATION_INTEGRATIONS = none ALLOWED_AUTHENTICATION_SECRETS = ( v1 , v1 ) ENABLED = TRUE COMMENT = 'm' TAG v1 = 'm' , v1 = 'm' ;"
 expect = "observe"
+documented = true
 context = "raw"
 
 [[suppress]]
@@ -60233,6 +60293,7 @@ note = "a valid operand, observed"
 anchor = "doc.sql.alter-external-access-integration / Syntax"
 sql = "ALTER EXTERNAL ACCESS INTEGRATION IF EXISTS v1 SET ALLOWED_NETWORK_RULES = ( v1 , v1 ) ALLOWED_API_AUTHENTICATION_INTEGRATIONS = ( v1 , v1 ) ALLOWED_AUTHENTICATION_SECRETS = all ENABLED = TRUE COMMENT = 'm' TAG v1 = 'm' , v1 = 'm' ;"
 expect = "observe"
+documented = true
 context = "raw"
 
 [[suppress]]
@@ -60428,6 +60489,7 @@ note = "option present [ IF EXISTS ], observed"
 anchor = "doc.sql.alter-feature-policy / Syntax"
 sql = "ALTER FEATURE POLICY IF EXISTS v1 UNSET BLOCKED_OBJECT_TYPES_FOR_CREATION COMMENT POLICY_DEFINITION ;"
 expect = "observe"
+documented = true
 context = "raw"
 
 [[suppress]]
@@ -60444,6 +60506,7 @@ note = "option present [ BLOCKED_OBJECT_TYPES_FOR_CREATION ], observed"
 anchor = "doc.sql.alter-feature-policy / Syntax"
 sql = "ALTER FEATURE POLICY IF EXISTS v1 UNSET BLOCKED_OBJECT_TYPES_FOR_CREATION COMMENT POLICY_DEFINITION ;"
 expect = "observe"
+documented = true
 context = "raw"
 
 [[suppress]]
@@ -60460,6 +60523,7 @@ note = "option present [ COMMENT ], observed"
 anchor = "doc.sql.alter-feature-policy / Syntax"
 sql = "ALTER FEATURE POLICY IF EXISTS v1 UNSET BLOCKED_OBJECT_TYPES_FOR_CREATION COMMENT POLICY_DEFINITION ;"
 expect = "observe"
+documented = true
 context = "raw"
 
 [[suppress]]
@@ -60476,6 +60540,7 @@ note = "option present [ POLICY_DEFINITION ], observed"
 anchor = "doc.sql.alter-feature-policy / Syntax"
 sql = "ALTER FEATURE POLICY IF EXISTS v1 UNSET BLOCKED_OBJECT_TYPES_FOR_CREATION COMMENT POLICY_DEFINITION ;"
 expect = "observe"
+documented = true
 context = "raw"
 
 [[suppress]]
@@ -60491,6 +60556,7 @@ note = "every independent option of one production together, observed"
 anchor = "doc.sql.alter-feature-policy / Syntax"
 sql = "ALTER FEATURE POLICY IF EXISTS v1 UNSET BLOCKED_OBJECT_TYPES_FOR_CREATION COMMENT POLICY_DEFINITION ;"
 expect = "observe"
+documented = true
 context = "raw"
 
 [[suppress]]
@@ -61028,6 +61094,7 @@ note = "quoted: a double-quoted identifier with blanks and mixed case, observed"
 anchor = "doc.sql.alter-organization-account / Syntax"
 sql = "ALTER ORGANIZATION ACCOUNT SET PASSWORD POLICY \"v1 Q\" ;"
 expect = "observe"
+documented = true
 context = "raw"
 
 [[suppress]]
@@ -61043,6 +61110,7 @@ note = "the documented form with every required part and no optional part, obser
 anchor = "doc.sql.alter-organization-account / Syntax"
 sql = "ALTER ORGANIZATION ACCOUNT SET PASSWORD POLICY v1 ;"
 expect = "observe"
+documented = true
 context = "raw"
 
 [[suppress]]
@@ -61059,6 +61127,7 @@ note = "alternative { PASSWORD | SESSION } → PASSWORD, observed"
 anchor = "doc.sql.alter-organization-account / Syntax"
 sql = "ALTER ORGANIZATION ACCOUNT SET PASSWORD POLICY v1 ;"
 expect = "observe"
+documented = true
 context = "raw"
 
 [[suppress]]
@@ -61076,6 +61145,7 @@ note = "a valid identifier, observed"
 anchor = "doc.sql.alter-organization-account / Syntax"
 sql = "ALTER ORGANIZATION ACCOUNT SET PASSWORD POLICY v1 ;"
 expect = "observe"
+documented = true
 context = "raw"
 
 [[suppress]]
@@ -61092,6 +61162,7 @@ note = "alternative { PASSWORD | SESSION } → SESSION, observed"
 anchor = "doc.sql.alter-organization-account / Syntax"
 sql = "ALTER ORGANIZATION ACCOUNT SET SESSION POLICY v1 ;"
 expect = "observe"
+documented = true
 context = "raw"
 
 [[suppress]]
@@ -61109,6 +61180,7 @@ note = "reserved: a reserved keyword, unquoted (expected rejection) and double-q
 anchor = "doc.sql.alter-organization-account / Syntax"
 sql = "ALTER ORGANIZATION ACCOUNT SET PASSWORD POLICY \"SELECT\" ;"
 expect = "observe"
+documented = true
 also_sql = "ALTER ORGANIZATION ACCOUNT SET PASSWORD POLICY SELECT ;"
 also_expect = "observe"
 context = "raw"
@@ -61143,6 +61215,7 @@ note = "the list continued at least once, observed"
 anchor = "doc.sql.alter-organization-account / Syntax"
 sql = "ALTER ORGANIZATION ACCOUNT SET TAG v1 = 'm' , v1 = 'm' ;"
 expect = "observe"
+documented = true
 context = "raw"
 
 [[suppress]]
@@ -61160,6 +61233,7 @@ note = "reserved: a reserved keyword, unquoted (expected rejection) and double-q
 anchor = "doc.sql.alter-organization-account / Syntax"
 sql = "ALTER ORGANIZATION ACCOUNT SET TAG \"SELECT\" = 'm' ;"
 expect = "observe"
+documented = true
 also_sql = "ALTER ORGANIZATION ACCOUNT SET TAG SELECT = 'm' ;"
 also_expect = "observe"
 context = "raw"
@@ -61192,6 +61266,7 @@ note = "the documented form with every required part and no optional part, obser
 anchor = "doc.sql.alter-organization-account / Syntax"
 sql = "ALTER ORGANIZATION ACCOUNT SET TAG v1 = 'm' ;"
 expect = "observe"
+documented = true
 context = "raw"
 
 [[suppress]]
@@ -61209,6 +61284,7 @@ note = "a valid identifier, observed"
 anchor = "doc.sql.alter-organization-account / Syntax"
 sql = "ALTER ORGANIZATION ACCOUNT SET TAG v1 = 'm' ;"
 expect = "observe"
+documented = true
 context = "raw"
 
 [[suppress]]
@@ -61226,6 +61302,7 @@ note = "a valid string_literal, observed"
 anchor = "doc.sql.alter-organization-account / Syntax"
 sql = "ALTER ORGANIZATION ACCOUNT SET TAG v1 = 'm' ;"
 expect = "observe"
+documented = true
 context = "raw"
 
 [[suppress]]
@@ -61242,6 +61319,7 @@ note = "option absent [ , <tag_name> = '<tag_value>' ... ], observed"
 anchor = "doc.sql.alter-organization-account / Syntax"
 sql = "ALTER ORGANIZATION ACCOUNT SET TAG v1 = 'm' ;"
 expect = "observe"
+documented = true
 context = "raw"
 
 [[suppress]]
@@ -61276,6 +61354,7 @@ note = "quoted: a double-quoted identifier with blanks and mixed case, observed"
 anchor = "doc.sql.alter-organization-account / Syntax"
 sql = "ALTER ORGANIZATION ACCOUNT SET TAG \"v1 Q\" = 'm' ;"
 expect = "observe"
+documented = true
 context = "raw"
 
 [[suppress]]
@@ -61292,6 +61371,7 @@ note = "option present [ accountParams ], observed"
 anchor = "doc.sql.alter-organization-account / Syntax"
 sql = "ALTER ORGANIZATION ACCOUNT SET v1 ;"
 expect = "observe"
+documented = true
 context = "raw"
 
 [[suppress]]
@@ -61309,6 +61389,7 @@ note = "a valid operand, observed"
 anchor = "doc.sql.alter-organization-account / Syntax"
 sql = "ALTER ORGANIZATION ACCOUNT SET v1 ;"
 expect = "observe"
+documented = true
 context = "raw"
 
 [[suppress]]
@@ -61325,6 +61406,7 @@ note = "option present [ objectParams ], observed"
 anchor = "doc.sql.alter-organization-account / Syntax"
 sql = "ALTER ORGANIZATION ACCOUNT SET v1 ;"
 expect = "observe"
+documented = true
 context = "raw"
 
 [[suppress]]
@@ -61342,6 +61424,7 @@ note = "a valid operand, observed"
 anchor = "doc.sql.alter-organization-account / Syntax"
 sql = "ALTER ORGANIZATION ACCOUNT SET v1 ;"
 expect = "observe"
+documented = true
 context = "raw"
 
 [[suppress]]
@@ -61358,6 +61441,7 @@ note = "option present [ sessionParams ], observed"
 anchor = "doc.sql.alter-organization-account / Syntax"
 sql = "ALTER ORGANIZATION ACCOUNT SET v1 ;"
 expect = "observe"
+documented = true
 context = "raw"
 
 [[suppress]]
@@ -61375,6 +61459,7 @@ note = "a valid operand, observed"
 anchor = "doc.sql.alter-organization-account / Syntax"
 sql = "ALTER ORGANIZATION ACCOUNT SET v1 ;"
 expect = "observe"
+documented = true
 context = "raw"
 
 [[suppress]]
@@ -61421,6 +61506,7 @@ note = "alternative { PASSWORD | SESSION } → SESSION, observed"
 anchor = "doc.sql.alter-organization-account / Syntax"
 sql = "ALTER ORGANIZATION ACCOUNT UNSET SESSION POLICY ;"
 expect = "observe"
+documented = true
 context = "raw"
 
 [[suppress]]
@@ -61436,6 +61522,7 @@ note = "the documented form with every required part and no optional part, obser
 anchor = "doc.sql.alter-organization-account / Syntax"
 sql = "ALTER ORGANIZATION ACCOUNT UNSET PASSWORD POLICY ;"
 expect = "observe"
+documented = true
 context = "raw"
 
 [[suppress]]
@@ -61452,6 +61539,7 @@ note = "alternative { PASSWORD | SESSION } → PASSWORD, observed"
 anchor = "doc.sql.alter-organization-account / Syntax"
 sql = "ALTER ORGANIZATION ACCOUNT UNSET PASSWORD POLICY ;"
 expect = "observe"
+documented = true
 context = "raw"
 
 [[suppress]]
@@ -61467,6 +61555,7 @@ note = "the documented form with every required part and no optional part, obser
 anchor = "doc.sql.alter-organization-account / Syntax"
 sql = "ALTER ORGANIZATION ACCOUNT UNSET TAG v1 ;"
 expect = "observe"
+documented = true
 context = "raw"
 
 [[suppress]]
@@ -61484,6 +61573,7 @@ note = "a valid identifier, observed"
 anchor = "doc.sql.alter-organization-account / Syntax"
 sql = "ALTER ORGANIZATION ACCOUNT UNSET TAG v1 ;"
 expect = "observe"
+documented = true
 context = "raw"
 
 [[suppress]]
@@ -61500,6 +61590,7 @@ note = "option absent [ , <tag_name> ... ], observed"
 anchor = "doc.sql.alter-organization-account / Syntax"
 sql = "ALTER ORGANIZATION ACCOUNT UNSET TAG v1 ;"
 expect = "observe"
+documented = true
 context = "raw"
 
 [[suppress]]
@@ -61517,6 +61608,7 @@ note = "the list continued at least once, observed"
 anchor = "doc.sql.alter-organization-account / Syntax"
 sql = "ALTER ORGANIZATION ACCOUNT UNSET TAG v1 , v1 ;"
 expect = "observe"
+documented = true
 context = "raw"
 
 [[suppress]]
@@ -61534,6 +61626,7 @@ note = "reserved: a reserved keyword, unquoted (expected rejection) and double-q
 anchor = "doc.sql.alter-organization-account / Syntax"
 sql = "ALTER ORGANIZATION ACCOUNT UNSET TAG \"SELECT\" ;"
 expect = "observe"
+documented = true
 also_sql = "ALTER ORGANIZATION ACCOUNT UNSET TAG SELECT ;"
 also_expect = "observe"
 context = "raw"
@@ -61553,6 +61646,7 @@ note = "quoted: a double-quoted identifier with blanks and mixed case, observed"
 anchor = "doc.sql.alter-organization-account / Syntax"
 sql = "ALTER ORGANIZATION ACCOUNT UNSET TAG \"v1 Q\" ;"
 expect = "observe"
+documented = true
 context = "raw"
 
 [[suppress]]
@@ -61680,6 +61774,7 @@ note = "option present [ IF EXISTS ], observed"
 anchor = "doc.sql.alter-packages-policy / Syntax"
 sql = "ALTER PACKAGES POLICY IF EXISTS v1 UNSET ALLOWLIST BLOCKLIST ADDITIONAL_CREATION_BLOCKLIST COMMENT ;"
 expect = "observe"
+documented = true
 context = "raw"
 
 [[suppress]]
@@ -61696,6 +61791,7 @@ note = "option present [ ALLOWLIST ], observed"
 anchor = "doc.sql.alter-packages-policy / Syntax"
 sql = "ALTER PACKAGES POLICY IF EXISTS v1 UNSET ALLOWLIST BLOCKLIST ADDITIONAL_CREATION_BLOCKLIST COMMENT ;"
 expect = "observe"
+documented = true
 context = "raw"
 
 [[suppress]]
@@ -61712,6 +61808,7 @@ note = "option present [ BLOCKLIST ], observed"
 anchor = "doc.sql.alter-packages-policy / Syntax"
 sql = "ALTER PACKAGES POLICY IF EXISTS v1 UNSET ALLOWLIST BLOCKLIST ADDITIONAL_CREATION_BLOCKLIST COMMENT ;"
 expect = "observe"
+documented = true
 context = "raw"
 
 [[suppress]]
@@ -61728,6 +61825,7 @@ note = "option present [ ADDITIONAL_CREATION_BLOCKLIST ], observed"
 anchor = "doc.sql.alter-packages-policy / Syntax"
 sql = "ALTER PACKAGES POLICY IF EXISTS v1 UNSET ALLOWLIST BLOCKLIST ADDITIONAL_CREATION_BLOCKLIST COMMENT ;"
 expect = "observe"
+documented = true
 context = "raw"
 
 [[suppress]]
@@ -61744,6 +61842,7 @@ note = "option present [ COMMENT ], observed"
 anchor = "doc.sql.alter-packages-policy / Syntax"
 sql = "ALTER PACKAGES POLICY IF EXISTS v1 UNSET ALLOWLIST BLOCKLIST ADDITIONAL_CREATION_BLOCKLIST COMMENT ;"
 expect = "observe"
+documented = true
 context = "raw"
 
 [[suppress]]
@@ -61759,6 +61858,7 @@ note = "every independent option of one production together, observed"
 anchor = "doc.sql.alter-packages-policy / Syntax"
 sql = "ALTER PACKAGES POLICY IF EXISTS v1 UNSET ALLOWLIST BLOCKLIST ADDITIONAL_CREATION_BLOCKLIST COMMENT ;"
 expect = "observe"
+documented = true
 context = "raw"
 
 [[suppress]]
@@ -61925,6 +62025,7 @@ note = "the form without its required { OAUTH_CLIENT_SECRET | OAUTH_CLIENT_SECRE
 anchor = "doc.sql.alter-security-integration-oauth-snowflake / Syntax"
 sql = "ALTER INTEGRATION v1 REFRESH ;"
 expect = "observe"
+documented = true
 context = "raw"
 
 [[suppress]]
@@ -61959,6 +62060,7 @@ note = "quoted: a double-quoted identifier with blanks and mixed case, observed"
 anchor = "doc.sql.alter-security-integration-saml2 / Syntax"
 sql = "ALTER INTEGRATION \"v1 Q\" REFRESH ;"
 expect = "observe"
+documented = true
 context = "raw"
 
 [[suppress]]
@@ -61974,6 +62076,7 @@ note = "the documented form with every required part and no optional part, obser
 anchor = "doc.sql.alter-security-integration-saml2 / Syntax"
 sql = "ALTER INTEGRATION v1 REFRESH ;"
 expect = "observe"
+documented = true
 context = "raw"
 
 [[suppress]]
@@ -61990,6 +62093,7 @@ note = "option absent [ SECURITY ], observed"
 anchor = "doc.sql.alter-security-integration-saml2 / Syntax"
 sql = "ALTER INTEGRATION v1 REFRESH ;"
 expect = "observe"
+documented = true
 context = "raw"
 
 [[suppress]]
@@ -62007,6 +62111,7 @@ note = "a valid identifier, observed"
 anchor = "doc.sql.alter-security-integration-saml2 / Syntax"
 sql = "ALTER INTEGRATION v1 REFRESH ;"
 expect = "observe"
+documented = true
 context = "raw"
 
 [[suppress]]
@@ -62023,6 +62128,7 @@ note = "option absent [ SAML2_SNOWFLAKE_PRIVATE_KEY ], observed"
 anchor = "doc.sql.alter-security-integration-saml2 / Syntax"
 sql = "ALTER INTEGRATION v1 REFRESH ;"
 expect = "observe"
+documented = true
 context = "raw"
 
 [[suppress]]
@@ -62039,6 +62145,7 @@ note = "option absent [ METADATA_URL ], observed"
 anchor = "doc.sql.alter-security-integration-saml2 / Syntax"
 sql = "ALTER INTEGRATION v1 REFRESH ;"
 expect = "observe"
+documented = true
 context = "raw"
 
 [[suppress]]
@@ -62056,6 +62163,7 @@ note = "reserved: a reserved keyword, unquoted (expected rejection) and double-q
 anchor = "doc.sql.alter-security-integration-saml2 / Syntax"
 sql = "ALTER INTEGRATION \"SELECT\" REFRESH ;"
 expect = "observe"
+documented = true
 also_sql = "ALTER INTEGRATION SELECT REFRESH ;"
 also_expect = "observe"
 context = "raw"
@@ -62074,6 +62182,7 @@ note = "option present [ SECURITY ], observed"
 anchor = "doc.sql.alter-security-integration-saml2 / Syntax"
 sql = "ALTER SECURITY INTEGRATION v1 REFRESH SAML2_SNOWFLAKE_PRIVATE_KEY METADATA_URL ;"
 expect = "observe"
+documented = true
 context = "raw"
 
 [[suppress]]
@@ -62090,6 +62199,7 @@ note = "option present [ SAML2_SNOWFLAKE_PRIVATE_KEY ], observed"
 anchor = "doc.sql.alter-security-integration-saml2 / Syntax"
 sql = "ALTER SECURITY INTEGRATION v1 REFRESH SAML2_SNOWFLAKE_PRIVATE_KEY METADATA_URL ;"
 expect = "observe"
+documented = true
 context = "raw"
 
 [[suppress]]
@@ -62106,6 +62216,7 @@ note = "option present [ METADATA_URL ], observed"
 anchor = "doc.sql.alter-security-integration-saml2 / Syntax"
 sql = "ALTER SECURITY INTEGRATION v1 REFRESH SAML2_SNOWFLAKE_PRIVATE_KEY METADATA_URL ;"
 expect = "observe"
+documented = true
 context = "raw"
 
 [[suppress]]
@@ -62121,6 +62232,7 @@ note = "every independent option of one production together, observed"
 anchor = "doc.sql.alter-security-integration-saml2 / Syntax"
 sql = "ALTER SECURITY INTEGRATION v1 REFRESH SAML2_SNOWFLAKE_PRIVATE_KEY METADATA_URL ;"
 expect = "observe"
+documented = true
 context = "raw"
 
 [[suppress]]
@@ -62235,6 +62347,7 @@ note = "option present [ IF EXISTS ], observed"
 anchor = "doc.sql.alter-session-policy / Syntax"
 sql = "ALTER SESSION POLICY IF EXISTS v1 UNSET SESSION_IDLE_TIMEOUT_MINS SESSION_UI_IDLE_TIMEOUT_MINS SESSION_MAX_LIFESPAN_MINS SESSION_UI_MAX_LIFESPAN_MINS ALLOWED_SECONDARY_ROLES BLOCKED_SECONDARY_ROLES AGENT_RESTRICTED_SESSION_SCOPE COMMENT ;"
 expect = "observe"
+documented = true
 context = "raw"
 
 [[suppress]]
@@ -62251,6 +62364,7 @@ note = "option present [ SESSION_IDLE_TIMEOUT_MINS ], observed"
 anchor = "doc.sql.alter-session-policy / Syntax"
 sql = "ALTER SESSION POLICY IF EXISTS v1 UNSET SESSION_IDLE_TIMEOUT_MINS SESSION_UI_IDLE_TIMEOUT_MINS SESSION_MAX_LIFESPAN_MINS SESSION_UI_MAX_LIFESPAN_MINS ALLOWED_SECONDARY_ROLES BLOCKED_SECONDARY_ROLES AGENT_RESTRICTED_SESSION_SCOPE COMMENT ;"
 expect = "observe"
+documented = true
 context = "raw"
 
 [[suppress]]
@@ -62267,6 +62381,7 @@ note = "option present [ SESSION_UI_IDLE_TIMEOUT_MINS ], observed"
 anchor = "doc.sql.alter-session-policy / Syntax"
 sql = "ALTER SESSION POLICY IF EXISTS v1 UNSET SESSION_IDLE_TIMEOUT_MINS SESSION_UI_IDLE_TIMEOUT_MINS SESSION_MAX_LIFESPAN_MINS SESSION_UI_MAX_LIFESPAN_MINS ALLOWED_SECONDARY_ROLES BLOCKED_SECONDARY_ROLES AGENT_RESTRICTED_SESSION_SCOPE COMMENT ;"
 expect = "observe"
+documented = true
 context = "raw"
 
 [[suppress]]
@@ -62283,6 +62398,7 @@ note = "option present [ SESSION_MAX_LIFESPAN_MINS ], observed"
 anchor = "doc.sql.alter-session-policy / Syntax"
 sql = "ALTER SESSION POLICY IF EXISTS v1 UNSET SESSION_IDLE_TIMEOUT_MINS SESSION_UI_IDLE_TIMEOUT_MINS SESSION_MAX_LIFESPAN_MINS SESSION_UI_MAX_LIFESPAN_MINS ALLOWED_SECONDARY_ROLES BLOCKED_SECONDARY_ROLES AGENT_RESTRICTED_SESSION_SCOPE COMMENT ;"
 expect = "observe"
+documented = true
 context = "raw"
 
 [[suppress]]
@@ -62299,6 +62415,7 @@ note = "option present [ SESSION_UI_MAX_LIFESPAN_MINS ], observed"
 anchor = "doc.sql.alter-session-policy / Syntax"
 sql = "ALTER SESSION POLICY IF EXISTS v1 UNSET SESSION_IDLE_TIMEOUT_MINS SESSION_UI_IDLE_TIMEOUT_MINS SESSION_MAX_LIFESPAN_MINS SESSION_UI_MAX_LIFESPAN_MINS ALLOWED_SECONDARY_ROLES BLOCKED_SECONDARY_ROLES AGENT_RESTRICTED_SESSION_SCOPE COMMENT ;"
 expect = "observe"
+documented = true
 context = "raw"
 
 [[suppress]]
@@ -62315,6 +62432,7 @@ note = "option present [ ALLOWED_SECONDARY_ROLES ], observed"
 anchor = "doc.sql.alter-session-policy / Syntax"
 sql = "ALTER SESSION POLICY IF EXISTS v1 UNSET SESSION_IDLE_TIMEOUT_MINS SESSION_UI_IDLE_TIMEOUT_MINS SESSION_MAX_LIFESPAN_MINS SESSION_UI_MAX_LIFESPAN_MINS ALLOWED_SECONDARY_ROLES BLOCKED_SECONDARY_ROLES AGENT_RESTRICTED_SESSION_SCOPE COMMENT ;"
 expect = "observe"
+documented = true
 context = "raw"
 
 [[suppress]]
@@ -62331,6 +62449,7 @@ note = "option present [ BLOCKED_SECONDARY_ROLES ], observed"
 anchor = "doc.sql.alter-session-policy / Syntax"
 sql = "ALTER SESSION POLICY IF EXISTS v1 UNSET SESSION_IDLE_TIMEOUT_MINS SESSION_UI_IDLE_TIMEOUT_MINS SESSION_MAX_LIFESPAN_MINS SESSION_UI_MAX_LIFESPAN_MINS ALLOWED_SECONDARY_ROLES BLOCKED_SECONDARY_ROLES AGENT_RESTRICTED_SESSION_SCOPE COMMENT ;"
 expect = "observe"
+documented = true
 context = "raw"
 
 [[suppress]]
@@ -62347,6 +62466,7 @@ note = "option present [ AGENT_RESTRICTED_SESSION_SCOPE ], observed"
 anchor = "doc.sql.alter-session-policy / Syntax"
 sql = "ALTER SESSION POLICY IF EXISTS v1 UNSET SESSION_IDLE_TIMEOUT_MINS SESSION_UI_IDLE_TIMEOUT_MINS SESSION_MAX_LIFESPAN_MINS SESSION_UI_MAX_LIFESPAN_MINS ALLOWED_SECONDARY_ROLES BLOCKED_SECONDARY_ROLES AGENT_RESTRICTED_SESSION_SCOPE COMMENT ;"
 expect = "observe"
+documented = true
 context = "raw"
 
 [[suppress]]
@@ -62363,6 +62483,7 @@ note = "option present [ COMMENT ], observed"
 anchor = "doc.sql.alter-session-policy / Syntax"
 sql = "ALTER SESSION POLICY IF EXISTS v1 UNSET SESSION_IDLE_TIMEOUT_MINS SESSION_UI_IDLE_TIMEOUT_MINS SESSION_MAX_LIFESPAN_MINS SESSION_UI_MAX_LIFESPAN_MINS ALLOWED_SECONDARY_ROLES BLOCKED_SECONDARY_ROLES AGENT_RESTRICTED_SESSION_SCOPE COMMENT ;"
 expect = "observe"
+documented = true
 context = "raw"
 
 [[suppress]]
@@ -62378,6 +62499,7 @@ note = "every independent option of one production together, observed"
 anchor = "doc.sql.alter-session-policy / Syntax"
 sql = "ALTER SESSION POLICY IF EXISTS v1 UNSET SESSION_IDLE_TIMEOUT_MINS SESSION_UI_IDLE_TIMEOUT_MINS SESSION_MAX_LIFESPAN_MINS SESSION_UI_MAX_LIFESPAN_MINS ALLOWED_SECONDARY_ROLES BLOCKED_SECONDARY_ROLES AGENT_RESTRICTED_SESSION_SCOPE COMMENT ;"
 expect = "observe"
+documented = true
 context = "raw"
 
 [[suppress]]
@@ -62394,6 +62516,7 @@ note = "alternative { TRUE | FALSE } → FALSE, observed"
 anchor = "doc.sql.alter-share / Syntax"
 sql = "ALTER SHARE v1 REMOVE ACCOUNTS = o1.a1 SHARE_RESTRICTIONS = FALSE ;"
 expect = "observe"
+documented = true
 context = "raw"
 
 [[suppress]]
@@ -62555,6 +62678,7 @@ note = "option present [ IF EXISTS ], observed"
 anchor = "doc.sql.alter-storage-lifecycle-policy / Syntax"
 sql = "ALTER STORAGE LIFECYCLE POLICY IF EXISTS v1 SET BODY -> TRUE ARCHIVE_TIER = COOL ARCHIVE_FOR_DAYS = 1 COMMENT = 'm' TAG v1 = 'm' , v1 = 'm' ;"
 expect = "observe"
+documented = true
 context = "raw"
 
 [[suppress]]
@@ -62572,6 +62696,7 @@ note = "the list continued at least once, observed"
 anchor = "doc.sql.alter-storage-lifecycle-policy / Syntax"
 sql = "ALTER STORAGE LIFECYCLE POLICY IF EXISTS v1 SET BODY -> TRUE ARCHIVE_TIER = COOL ARCHIVE_FOR_DAYS = 1 COMMENT = 'm' TAG v1 = 'm' , v1 = 'm' ;"
 expect = "observe"
+documented = true
 context = "raw"
 
 [[suppress]]
@@ -62588,6 +62713,7 @@ note = "option present [ BODY -> <expression_on_arg_name> ], observed"
 anchor = "doc.sql.alter-storage-lifecycle-policy / Syntax"
 sql = "ALTER STORAGE LIFECYCLE POLICY IF EXISTS v1 SET BODY -> TRUE ARCHIVE_TIER = COOL ARCHIVE_FOR_DAYS = 1 COMMENT = 'm' TAG v1 = 'm' , v1 = 'm' ;"
 expect = "observe"
+documented = true
 context = "raw"
 
 [[suppress]]
@@ -62605,6 +62731,7 @@ note = "a valid expression, observed"
 anchor = "doc.sql.alter-storage-lifecycle-policy / Syntax"
 sql = "ALTER STORAGE LIFECYCLE POLICY IF EXISTS v1 SET BODY -> TRUE ARCHIVE_TIER = COOL ARCHIVE_FOR_DAYS = 1 COMMENT = 'm' TAG v1 = 'm' , v1 = 'm' ;"
 expect = "observe"
+documented = true
 context = "raw"
 
 [[suppress]]
@@ -62621,6 +62748,7 @@ note = "option present [ ARCHIVE_TIER = { COOL | COLD } ], observed"
 anchor = "doc.sql.alter-storage-lifecycle-policy / Syntax"
 sql = "ALTER STORAGE LIFECYCLE POLICY IF EXISTS v1 SET BODY -> TRUE ARCHIVE_TIER = COOL ARCHIVE_FOR_DAYS = 1 COMMENT = 'm' TAG v1 = 'm' , v1 = 'm' ;"
 expect = "observe"
+documented = true
 context = "raw"
 
 [[suppress]]
@@ -62637,6 +62765,7 @@ note = "option present [ ARCHIVE_FOR_DAYS = <number_of_days> ], observed"
 anchor = "doc.sql.alter-storage-lifecycle-policy / Syntax"
 sql = "ALTER STORAGE LIFECYCLE POLICY IF EXISTS v1 SET BODY -> TRUE ARCHIVE_TIER = COOL ARCHIVE_FOR_DAYS = 1 COMMENT = 'm' TAG v1 = 'm' , v1 = 'm' ;"
 expect = "observe"
+documented = true
 context = "raw"
 
 [[suppress]]
@@ -62654,6 +62783,7 @@ note = "a valid integer_literal, observed"
 anchor = "doc.sql.alter-storage-lifecycle-policy / Syntax"
 sql = "ALTER STORAGE LIFECYCLE POLICY IF EXISTS v1 SET BODY -> TRUE ARCHIVE_TIER = COOL ARCHIVE_FOR_DAYS = 1 COMMENT = 'm' TAG v1 = 'm' , v1 = 'm' ;"
 expect = "observe"
+documented = true
 context = "raw"
 
 [[suppress]]
@@ -62670,6 +62800,7 @@ note = "option present [ COMMENT = '<string_literal>' ], observed"
 anchor = "doc.sql.alter-storage-lifecycle-policy / Syntax"
 sql = "ALTER STORAGE LIFECYCLE POLICY IF EXISTS v1 SET BODY -> TRUE ARCHIVE_TIER = COOL ARCHIVE_FOR_DAYS = 1 COMMENT = 'm' TAG v1 = 'm' , v1 = 'm' ;"
 expect = "observe"
+documented = true
 context = "raw"
 
 [[suppress]]
@@ -62687,6 +62818,7 @@ note = "a valid string_literal, observed"
 anchor = "doc.sql.alter-storage-lifecycle-policy / Syntax"
 sql = "ALTER STORAGE LIFECYCLE POLICY IF EXISTS v1 SET BODY -> TRUE ARCHIVE_TIER = COOL ARCHIVE_FOR_DAYS = 1 COMMENT = 'm' TAG v1 = 'm' , v1 = 'm' ;"
 expect = "observe"
+documented = true
 context = "raw"
 
 [[suppress]]
@@ -62703,6 +62835,7 @@ note = "option present [ TAG <tag_name> = '<tag_value>' [ , <tag_name> = '<tag_v
 anchor = "doc.sql.alter-storage-lifecycle-policy / Syntax"
 sql = "ALTER STORAGE LIFECYCLE POLICY IF EXISTS v1 SET BODY -> TRUE ARCHIVE_TIER = COOL ARCHIVE_FOR_DAYS = 1 COMMENT = 'm' TAG v1 = 'm' , v1 = 'm' ;"
 expect = "observe"
+documented = true
 context = "raw"
 
 [[suppress]]
@@ -62720,6 +62853,7 @@ note = "a valid identifier, observed"
 anchor = "doc.sql.alter-storage-lifecycle-policy / Syntax"
 sql = "ALTER STORAGE LIFECYCLE POLICY IF EXISTS v1 SET BODY -> TRUE ARCHIVE_TIER = COOL ARCHIVE_FOR_DAYS = 1 COMMENT = 'm' TAG v1 = 'm' , v1 = 'm' ;"
 expect = "observe"
+documented = true
 context = "raw"
 
 [[suppress]]
@@ -62737,6 +62871,7 @@ note = "a valid string_literal, observed"
 anchor = "doc.sql.alter-storage-lifecycle-policy / Syntax"
 sql = "ALTER STORAGE LIFECYCLE POLICY IF EXISTS v1 SET BODY -> TRUE ARCHIVE_TIER = COOL ARCHIVE_FOR_DAYS = 1 COMMENT = 'm' TAG v1 = 'm' , v1 = 'm' ;"
 expect = "observe"
+documented = true
 context = "raw"
 
 [[suppress]]
@@ -62752,6 +62887,7 @@ note = "every independent option of one production together, observed"
 anchor = "doc.sql.alter-storage-lifecycle-policy / Syntax"
 sql = "ALTER STORAGE LIFECYCLE POLICY IF EXISTS v1 SET BODY -> TRUE ARCHIVE_TIER = COOL ARCHIVE_FOR_DAYS = 1 COMMENT = 'm' TAG v1 = 'm' , v1 = 'm' ;"
 expect = "observe"
+documented = true
 context = "raw"
 
 [[suppress]]
@@ -62800,6 +62936,7 @@ note = "option present [ IF EXISTS ], observed"
 anchor = "doc.sql.alter-user-modify-workload-identity / Syntax"
 sql = "ALTER USER IF EXISTS v1 MODIFY WORKLOAD IDENTITY v1 UNSET DISABLED COMMENT ;"
 expect = "observe"
+documented = true
 context = "raw"
 
 [[suppress]]
@@ -62816,6 +62953,7 @@ note = "option present [ <username> ], observed"
 anchor = "doc.sql.alter-user-modify-workload-identity / Syntax"
 sql = "ALTER USER IF EXISTS v1 MODIFY WORKLOAD IDENTITY v1 UNSET DISABLED COMMENT ;"
 expect = "observe"
+documented = true
 context = "raw"
 
 [[suppress]]
@@ -62833,6 +62971,7 @@ note = "a valid identifier, observed"
 anchor = "doc.sql.alter-user-modify-workload-identity / Syntax"
 sql = "ALTER USER IF EXISTS v1 MODIFY WORKLOAD IDENTITY v1 UNSET DISABLED COMMENT ;"
 expect = "observe"
+documented = true
 context = "raw"
 
 [[suppress]]
@@ -62849,6 +62988,7 @@ note = "option present [ DISABLED ], observed"
 anchor = "doc.sql.alter-user-modify-workload-identity / Syntax"
 sql = "ALTER USER IF EXISTS v1 MODIFY WORKLOAD IDENTITY v1 UNSET DISABLED COMMENT ;"
 expect = "observe"
+documented = true
 context = "raw"
 
 [[suppress]]
@@ -62865,6 +63005,7 @@ note = "option present [ COMMENT ], observed"
 anchor = "doc.sql.alter-user-modify-workload-identity / Syntax"
 sql = "ALTER USER IF EXISTS v1 MODIFY WORKLOAD IDENTITY v1 UNSET DISABLED COMMENT ;"
 expect = "observe"
+documented = true
 context = "raw"
 
 [[suppress]]
@@ -62880,6 +63021,7 @@ note = "every independent option of one production together, observed"
 anchor = "doc.sql.alter-user-modify-workload-identity / Syntax"
 sql = "ALTER USER IF EXISTS v1 MODIFY WORKLOAD IDENTITY v1 UNSET DISABLED COMMENT ;"
 expect = "observe"
+documented = true
 context = "raw"
 
 [[suppress]]
