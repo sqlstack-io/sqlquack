@@ -15,6 +15,9 @@ use crate::tokens::types::Result;
 impl Parser {
     /// Parse a Snowflake ALTER of a kind this module owns, or None when the next words name another kind.
     pub(crate) fn parse_alter_snowflake_object(&mut self) -> Result<Option<Expression>> {
+        if let Some(expr) = self.parse_alter_snowflake_objects()? {
+            return Ok(Some(expr));
+        }
         if self.check_identifier("TASK")
             && self.check_next_identifier("GRAPH")
             && !self
