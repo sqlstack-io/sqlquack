@@ -65789,13 +65789,6 @@ target = "<rule_name> in [ ENFORCE_RULES = ( <rule_name> [ , <rule_name> , ... ]
 note = "a valid identifier"
 
 [[obligation]]
-id = "sf.security_admin.create-data-movement-policy.o013"
-kind = "negative_neighbour"
-required = true
-target = "<rule_name> in [ ENFORCE_RULES = ( <rule_name> [ , <rule_name> , ... ] ) ]"
-note = "a string literal in place of <rule_name>"
-
-[[obligation]]
 id = "sf.security_admin.create-data-movement-policy.o014"
 kind = "option_present"
 required = true
@@ -65833,13 +65826,6 @@ kind = "operand_type_class"
 required = true
 target = "<rule_name> in [ ALERT_RULES = ( <rule_name> [ , <rule_name> , ... ] ) ]"
 note = "a valid identifier"
-
-[[obligation]]
-id = "sf.security_admin.create-data-movement-policy.o020"
-kind = "negative_neighbour"
-required = true
-target = "<rule_name> in [ ALERT_RULES = ( <rule_name> [ , <rule_name> , ... ] ) ]"
-note = "a string literal in place of <rule_name>"
 
 [[obligation]]
 id = "sf.security_admin.create-data-movement-policy.o021"
@@ -65986,6 +65972,22 @@ anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
+id = "sf.security_admin.create-data-movement-policy.o043"
+kind = "negative_neighbour"
+required = true
+target = "<rule_name> in [ ENFORCE_RULES = ( <rule_name> [ , <rule_name> , ... ] ) ]"
+anchor = "doc.sql.create-data-movement-policy / Syntax"
+note = "a string literal in place of <rule_name>, observed"
+
+[[obligation]]
+id = "sf.security_admin.create-data-movement-policy.o044"
+kind = "negative_neighbour"
+required = true
+target = "<rule_name> in [ ALERT_RULES = ( <rule_name> [ , <rule_name> , ... ] ) ]"
+anchor = "doc.sql.create-data-movement-policy / Syntax"
+note = "a string literal in place of <rule_name>, observed"
+
+[[obligation]]
 id = "sf.security_admin.create-database-role.create-database-role.o001"
 kind = "positive"
 required = true
@@ -66014,13 +66016,6 @@ id = "sf.security_admin.create-database-role.create-database-role.o005"
 kind = "option_absent"
 required = true
 target = "[ IF NOT EXISTS ]"
-
-[[obligation]]
-id = "sf.security_admin.create-database-role.create-database-role.o006"
-kind = "required_operand_missing"
-required = true
-target = "<name>"
-note = "omit <name>"
 
 [[obligation]]
 id = "sf.security_admin.create-database-role.create-database-role.o007"
@@ -66117,17 +66112,18 @@ anchor = "doc.sql.create-database-role / Syntax"
 note = "the form without its required ROLE, observed"
 
 [[obligation]]
+id = "sf.security_admin.create-database-role.create-database-role.o038"
+kind = "required_operand_missing"
+required = true
+target = "<name>"
+anchor = "doc.sql.create-database-role / Syntax"
+note = "omit <name>, observed"
+
+[[obligation]]
 id = "sf.security_admin.create-database-role.create-or-alter-database.o001"
 kind = "positive"
 required = true
 note = "the documented form with every required part and no optional part"
-
-[[obligation]]
-id = "sf.security_admin.create-database-role.create-or-alter-database.o002"
-kind = "required_operand_missing"
-required = true
-target = "<name>"
-note = "omit <name>"
 
 [[obligation]]
 id = "sf.security_admin.create-database-role.create-or-alter-database.o003"
@@ -66210,6 +66206,14 @@ kind = "negative_neighbour"
 required = true
 anchor = "doc.sql.create-database-role / Syntax"
 note = "the form without its required ROLE, observed"
+
+[[obligation]]
+id = "sf.security_admin.create-database-role.create-or-alter-database.o032"
+kind = "required_operand_missing"
+required = true
+target = "<name>"
+anchor = "doc.sql.create-database-role / Variant syntax / CREATE OR ALTER DATABASE ROLE"
+note = "omit <name>, observed"
 
 [[obligation]]
 id = "sf.security_admin.create-database-role.define-database-role.o001"
@@ -66348,13 +66352,6 @@ target = "<rule_name_1>"
 note = "a valid identifier"
 
 [[obligation]]
-id = "sf.security_admin.create-external-access-integration.o009"
-kind = "negative_neighbour"
-required = true
-target = "<rule_name_1>"
-note = "a string literal in place of <rule_name_1>"
-
-[[obligation]]
 id = "sf.security_admin.create-external-access-integration.o010"
 kind = "option_present"
 required = true
@@ -66404,13 +66401,6 @@ kind = "operand_type_class"
 required = true
 target = "<integration_name_1> in [ ALLOWED_API_AUTHENTICATION_INTEGRATIONS = { ( <integration_name_1> [ , <integration_name_2> ,…"
 note = "a valid identifier"
-
-[[obligation]]
-id = "sf.security_admin.create-external-access-integration.o018"
-kind = "negative_neighbour"
-required = true
-target = "<integration_name_1> in [ ALLOWED_API_AUTHENTICATION_INTEGRATIONS = { ( <integration_name_1> [ , <integration_name_2> ,…"
-note = "a string literal in place of <integration_name_1>"
 
 [[obligation]]
 id = "sf.security_admin.create-external-access-integration.o019"
@@ -66475,13 +66465,6 @@ kind = "operand_type_class"
 required = true
 target = "<secret_name_1> in [ ALLOWED_AUTHENTICATION_SECRETS = { ( <secret_name_1> [ , <secret_name_2> , ... ] ) | all | none } ]"
 note = "a valid identifier"
-
-[[obligation]]
-id = "sf.security_admin.create-external-access-integration.o029"
-kind = "negative_neighbour"
-required = true
-target = "<secret_name_1> in [ ALLOWED_AUTHENTICATION_SECRETS = { ( <secret_name_1> [ , <secret_name_2> , ... ] ) | all | none } ]"
-note = "a string literal in place of <secret_name_1>"
 
 [[obligation]]
 id = "sf.security_admin.create-external-access-integration.o030"
@@ -66702,6 +66685,30 @@ required = true
 target = "<secret_name_1>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.security_admin.create-external-access-integration.o063"
+kind = "negative_neighbour"
+required = true
+target = "<integration_name_1> in [ ALLOWED_API_AUTHENTICATION_INTEGRATIONS = { ( <integration_name_1> [ , <integration_name_2> ,…"
+anchor = "doc.sql.create-external-access-integration / Syntax"
+note = "a string literal in place of <integration_name_1>, observed"
+
+[[obligation]]
+id = "sf.security_admin.create-external-access-integration.o064"
+kind = "negative_neighbour"
+required = true
+target = "<secret_name_1> in [ ALLOWED_AUTHENTICATION_SECRETS = { ( <secret_name_1> [ , <secret_name_2> , ... ] ) | all | none } ]"
+anchor = "doc.sql.create-external-access-integration / Syntax"
+note = "a string literal in place of <secret_name_1>, observed"
+
+[[obligation]]
+id = "sf.security_admin.create-external-access-integration.o065"
+kind = "negative_neighbour"
+required = true
+target = "<rule_name_1>"
+anchor = "doc.sql.create-external-access-integration / Syntax"
+note = "a string literal in place of <rule_name_1>, observed"
 
 [[obligation]]
 id = "sf.security_admin.create-failover-group.as-replica-of.o001"
@@ -67731,13 +67738,6 @@ target = "<type> in [ BLOCKED_OBJECT_TYPES_FOR_CREATION = ( <type> [ , ... ] ) ]
 note = "a valid data_type"
 
 [[obligation]]
-id = "sf.security_admin.create-feature-policy.o013"
-kind = "negative_neighbour"
-required = true
-target = "<type> in [ BLOCKED_OBJECT_TYPES_FOR_CREATION = ( <type> [ , ... ] ) ]"
-note = "a string literal in place of <type>"
-
-[[obligation]]
 id = "sf.security_admin.create-feature-policy.o014"
 kind = "option_present"
 required = true
@@ -67872,6 +67872,14 @@ kind = "negative_neighbour"
 required = true
 anchor = "doc.sql.create-feature-policy / Syntax"
 note = "omit <yaml-body> ($$$$), observed"
+
+[[obligation]]
+id = "sf.security_admin.create-feature-policy.o052"
+kind = "negative_neighbour"
+required = true
+target = "<type> in [ BLOCKED_OBJECT_TYPES_FOR_CREATION = ( <type> [ , ... ] ) ]"
+anchor = "doc.sql.create-feature-policy / Syntax"
+note = "a string literal in place of <type>, observed"
 
 [[obligation]]
 id = "sf.security_admin.create-ingress-policy.o001"

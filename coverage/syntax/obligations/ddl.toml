@@ -16423,18 +16423,6 @@ target = "<name>"
 note = "a string literal in place of <name>"
 
 [[obligation]]
-id = "sf.ddl.alter-cortex-search.unset.o007"
-kind = "option_present"
-required = true
-target = "[ PRIMARY KEY ]"
-
-[[obligation]]
-id = "sf.ddl.alter-cortex-search.unset.o008"
-kind = "option_absent"
-required = true
-target = "[ PRIMARY KEY ]"
-
-[[obligation]]
 id = "sf.ddl.alter-cortex-search.unset.o009"
 kind = "negative_neighbour"
 required = true
@@ -16465,16 +16453,16 @@ required = true
 note = "the form without its required UNSET"
 
 [[obligation]]
-id = "sf.ddl.alter-cortex-search.unset.o014"
+id = "sf.ddl.alter-cortex-search.unset.o018"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required KEY in [ PRIMARY KEY ]"
+note = "the form without its required PRIMARY"
 
 [[obligation]]
-id = "sf.ddl.alter-cortex-search.unset.o015"
-kind = "interaction_all_options"
+id = "sf.ddl.alter-cortex-search.unset.o019"
+kind = "negative_neighbour"
 required = true
-note = "every independent option of one production together"
+note = "the form without its required KEY"
 
 [[obligation]]
 id = "sf.ddl.alter-cortex-search.unset.o016"

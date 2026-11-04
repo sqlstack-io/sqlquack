@@ -52611,3 +52611,399 @@ cases = [
 ]
 runs = []
 probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.alter-function.set.o002"
+form = "sf.ddl.alter-function.set"
+construct = "option_present: ALTER FUNCTION IF EXISTS v1 ( INT , INT ) SET LOG_LEVEL = 'm' TRACE_LEVEL = 'm' EXTERNAL_ACCESS_INTEGRATIONS = ( i1 , i1 ) SECRETS = ( 'm' = v1 , 'm' = v1 ) COMMENT = 'm' ;"
+reason = "not submitted: held by the capture guard in packet d118c: credential or integration"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.alter-function.set.kb29b5415441d", sql_sha256 = "b29b5415441dc754cab3f2c86fc8c463c8166bc48d40857d11652ba5293b1100" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.alter-function.set.o007"
+form = "sf.ddl.alter-function.set"
+construct = "the list continued at least once: ALTER FUNCTION IF EXISTS v1 ( INT , INT ) SET LOG_LEVEL = 'm' TRACE_LEVEL = 'm' EXTERNAL_ACCESS_INTEGRATIONS = ( i1 , i1 ) SECRETS = ( 'm' = v1 , 'm' = v1 ) COMMENT = 'm' ;"
+reason = "not submitted: held by the capture guard in packet d118c: credential or integration"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.alter-function.set.kb29b5415441d", sql_sha256 = "b29b5415441dc754cab3f2c86fc8c463c8166bc48d40857d11652ba5293b1100" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.alter-function.set.o009"
+form = "sf.ddl.alter-function.set"
+construct = "option_present: ALTER FUNCTION IF EXISTS v1 ( INT , INT ) SET LOG_LEVEL = 'm' TRACE_LEVEL = 'm' EXTERNAL_ACCESS_INTEGRATIONS = ( i1 , i1 ) SECRETS = ( 'm' = v1 , 'm' = v1 ) COMMENT = 'm' ;"
+reason = "not submitted: held by the capture guard in packet d118c: credential or integration"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.alter-function.set.kb29b5415441d", sql_sha256 = "b29b5415441dc754cab3f2c86fc8c463c8166bc48d40857d11652ba5293b1100" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.alter-function.set.o012"
+form = "sf.ddl.alter-function.set"
+construct = "a valid string_literal: ALTER FUNCTION IF EXISTS v1 ( INT , INT ) SET LOG_LEVEL = 'm' TRACE_LEVEL = 'm' EXTERNAL_ACCESS_INTEGRATIONS = ( i1 , i1 ) SECRETS = ( 'm' = v1 , 'm' = v1 ) COMMENT = 'm' ;"
+reason = "not submitted: held by the capture guard in packet d118c: credential or integration"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.alter-function.set.kb29b5415441d", sql_sha256 = "b29b5415441dc754cab3f2c86fc8c463c8166bc48d40857d11652ba5293b1100" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.alter-function.set.o014"
+form = "sf.ddl.alter-function.set"
+construct = "option_present: ALTER FUNCTION IF EXISTS v1 ( INT , INT ) SET LOG_LEVEL = 'm' TRACE_LEVEL = 'm' EXTERNAL_ACCESS_INTEGRATIONS = ( i1 , i1 ) SECRETS = ( 'm' = v1 , 'm' = v1 ) COMMENT = 'm' ;"
+reason = "not submitted: held by the capture guard in packet d118c: credential or integration"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.alter-function.set.kb29b5415441d", sql_sha256 = "b29b5415441dc754cab3f2c86fc8c463c8166bc48d40857d11652ba5293b1100" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.alter-function.set.o017"
+form = "sf.ddl.alter-function.set"
+construct = "a valid string_literal: ALTER FUNCTION IF EXISTS v1 ( INT , INT ) SET LOG_LEVEL = 'm' TRACE_LEVEL = 'm' EXTERNAL_ACCESS_INTEGRATIONS = ( i1 , i1 ) SECRETS = ( 'm' = v1 , 'm' = v1 ) COMMENT = 'm' ;"
+reason = "not submitted: held by the capture guard in packet d118c: credential or integration"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.alter-function.set.kb29b5415441d", sql_sha256 = "b29b5415441dc754cab3f2c86fc8c463c8166bc48d40857d11652ba5293b1100" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.alter-function.set.o019"
+form = "sf.ddl.alter-function.set"
+construct = "option_present: ALTER FUNCTION IF EXISTS v1 ( INT , INT ) SET LOG_LEVEL = 'm' TRACE_LEVEL = 'm' EXTERNAL_ACCESS_INTEGRATIONS = ( i1 , i1 ) SECRETS = ( 'm' = v1 , 'm' = v1 ) COMMENT = 'm' ;"
+reason = "not submitted: held by the capture guard in packet d118c: credential or integration"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.alter-function.set.kb29b5415441d", sql_sha256 = "b29b5415441dc754cab3f2c86fc8c463c8166bc48d40857d11652ba5293b1100" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.alter-function.set.o022"
+form = "sf.ddl.alter-function.set"
+construct = "a valid identifier: ALTER FUNCTION IF EXISTS v1 ( INT , INT ) SET LOG_LEVEL = 'm' TRACE_LEVEL = 'm' EXTERNAL_ACCESS_INTEGRATIONS = ( i1 , i1 ) SECRETS = ( 'm' = v1 , 'm' = v1 ) COMMENT = 'm' ;"
+reason = "not submitted: held by the capture guard in packet d118c: credential or integration"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.alter-function.set.kb29b5415441d", sql_sha256 = "b29b5415441dc754cab3f2c86fc8c463c8166bc48d40857d11652ba5293b1100" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.alter-function.set.o024"
+form = "sf.ddl.alter-function.set"
+construct = "the list continued at least once: ALTER FUNCTION IF EXISTS v1 ( INT , INT ) SET LOG_LEVEL = 'm' TRACE_LEVEL = 'm' EXTERNAL_ACCESS_INTEGRATIONS = ( i1 , i1 ) SECRETS = ( 'm' = v1 , 'm' = v1 ) COMMENT = 'm' ;"
+reason = "not submitted: held by the capture guard in packet d118c: credential or integration"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.alter-function.set.kb29b5415441d", sql_sha256 = "b29b5415441dc754cab3f2c86fc8c463c8166bc48d40857d11652ba5293b1100" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.alter-function.set.o026"
+form = "sf.ddl.alter-function.set"
+construct = "option_present: ALTER FUNCTION IF EXISTS v1 ( INT , INT ) SET LOG_LEVEL = 'm' TRACE_LEVEL = 'm' EXTERNAL_ACCESS_INTEGRATIONS = ( i1 , i1 ) SECRETS = ( 'm' = v1 , 'm' = v1 ) COMMENT = 'm' ;"
+reason = "not submitted: held by the capture guard in packet d118c: credential or integration"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.alter-function.set.kb29b5415441d", sql_sha256 = "b29b5415441dc754cab3f2c86fc8c463c8166bc48d40857d11652ba5293b1100" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.alter-function.set.o029"
+form = "sf.ddl.alter-function.set"
+construct = "a valid string_literal: ALTER FUNCTION IF EXISTS v1 ( INT , INT ) SET LOG_LEVEL = 'm' TRACE_LEVEL = 'm' EXTERNAL_ACCESS_INTEGRATIONS = ( i1 , i1 ) SECRETS = ( 'm' = v1 , 'm' = v1 ) COMMENT = 'm' ;"
+reason = "not submitted: held by the capture guard in packet d118c: credential or integration"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.alter-function.set.kb29b5415441d", sql_sha256 = "b29b5415441dc754cab3f2c86fc8c463c8166bc48d40857d11652ba5293b1100" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.alter-function.set.o032"
+form = "sf.ddl.alter-function.set"
+construct = "a valid identifier: ALTER FUNCTION IF EXISTS v1 ( INT , INT ) SET LOG_LEVEL = 'm' TRACE_LEVEL = 'm' EXTERNAL_ACCESS_INTEGRATIONS = ( i1 , i1 ) SECRETS = ( 'm' = v1 , 'm' = v1 ) COMMENT = 'm' ;"
+reason = "not submitted: held by the capture guard in packet d118c: credential or integration"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.alter-function.set.kb29b5415441d", sql_sha256 = "b29b5415441dc754cab3f2c86fc8c463c8166bc48d40857d11652ba5293b1100" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.alter-function.set.o034"
+form = "sf.ddl.alter-function.set"
+construct = "the list continued at least once: ALTER FUNCTION IF EXISTS v1 ( INT , INT ) SET LOG_LEVEL = 'm' TRACE_LEVEL = 'm' EXTERNAL_ACCESS_INTEGRATIONS = ( i1 , i1 ) SECRETS = ( 'm' = v1 , 'm' = v1 ) COMMENT = 'm' ;"
+reason = "not submitted: held by the capture guard in packet d118c: credential or integration"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.alter-function.set.kb29b5415441d", sql_sha256 = "b29b5415441dc754cab3f2c86fc8c463c8166bc48d40857d11652ba5293b1100" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.alter-function.set.o036"
+form = "sf.ddl.alter-function.set"
+construct = "option_present: ALTER FUNCTION IF EXISTS v1 ( INT , INT ) SET LOG_LEVEL = 'm' TRACE_LEVEL = 'm' EXTERNAL_ACCESS_INTEGRATIONS = ( i1 , i1 ) SECRETS = ( 'm' = v1 , 'm' = v1 ) COMMENT = 'm' ;"
+reason = "not submitted: held by the capture guard in packet d118c: credential or integration"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.alter-function.set.kb29b5415441d", sql_sha256 = "b29b5415441dc754cab3f2c86fc8c463c8166bc48d40857d11652ba5293b1100" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.alter-function.set.o039"
+form = "sf.ddl.alter-function.set"
+construct = "a valid string_literal: ALTER FUNCTION IF EXISTS v1 ( INT , INT ) SET LOG_LEVEL = 'm' TRACE_LEVEL = 'm' EXTERNAL_ACCESS_INTEGRATIONS = ( i1 , i1 ) SECRETS = ( 'm' = v1 , 'm' = v1 ) COMMENT = 'm' ;"
+reason = "not submitted: held by the capture guard in packet d118c: credential or integration"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.alter-function.set.kb29b5415441d", sql_sha256 = "b29b5415441dc754cab3f2c86fc8c463c8166bc48d40857d11652ba5293b1100" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.alter-function.set.o050"
+form = "sf.ddl.alter-function.set"
+construct = "every independent option of one production together: ALTER FUNCTION IF EXISTS v1 ( INT , INT ) SET LOG_LEVEL = 'm' TRACE_LEVEL = 'm' EXTERNAL_ACCESS_INTEGRATIONS = ( i1 , i1 ) SECRETS = ( 'm' = v1 , 'm' = v1 ) COMMENT = 'm' ;"
+reason = "not submitted: held by the capture guard in packet d118c: credential or integration"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.alter-function.set.kb29b5415441d", sql_sha256 = "b29b5415441dc754cab3f2c86fc8c463c8166bc48d40857d11652ba5293b1100" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.alter-procedure.set.o002"
+form = "sf.ddl.alter-procedure.set"
+construct = "option_present: ALTER PROCEDURE IF EXISTS v1 ( INT , INT ) SET LOG_LEVEL = 'm' TRACE_LEVEL = 'm' EXTERNAL_ACCESS_INTEGRATIONS = 'm' , 'm' SECRETS = 'm' = v1 , 'm' = v1 COMMENT = 'm' ;"
+reason = "not submitted: held by the capture guard in packet d118c: credential or integration"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.alter-procedure.set.k65020488034f", sql_sha256 = "65020488034f03373bd1c46383061e9734b25f98a52cbede66347bf035e29356" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.alter-procedure.set.o007"
+form = "sf.ddl.alter-procedure.set"
+construct = "the list continued at least once: ALTER PROCEDURE IF EXISTS v1 ( INT , INT ) SET LOG_LEVEL = 'm' TRACE_LEVEL = 'm' EXTERNAL_ACCESS_INTEGRATIONS = 'm' , 'm' SECRETS = 'm' = v1 , 'm' = v1 COMMENT = 'm' ;"
+reason = "not submitted: held by the capture guard in packet d118c: credential or integration"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.alter-procedure.set.k65020488034f", sql_sha256 = "65020488034f03373bd1c46383061e9734b25f98a52cbede66347bf035e29356" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.alter-procedure.set.o009"
+form = "sf.ddl.alter-procedure.set"
+construct = "option_present: ALTER PROCEDURE IF EXISTS v1 ( INT , INT ) SET LOG_LEVEL = 'm' TRACE_LEVEL = 'm' EXTERNAL_ACCESS_INTEGRATIONS = 'm' , 'm' SECRETS = 'm' = v1 , 'm' = v1 COMMENT = 'm' ;"
+reason = "not submitted: held by the capture guard in packet d118c: credential or integration"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.alter-procedure.set.k65020488034f", sql_sha256 = "65020488034f03373bd1c46383061e9734b25f98a52cbede66347bf035e29356" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.alter-procedure.set.o012"
+form = "sf.ddl.alter-procedure.set"
+construct = "a valid string_literal: ALTER PROCEDURE IF EXISTS v1 ( INT , INT ) SET LOG_LEVEL = 'm' TRACE_LEVEL = 'm' EXTERNAL_ACCESS_INTEGRATIONS = 'm' , 'm' SECRETS = 'm' = v1 , 'm' = v1 COMMENT = 'm' ;"
+reason = "not submitted: held by the capture guard in packet d118c: credential or integration"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.alter-procedure.set.k65020488034f", sql_sha256 = "65020488034f03373bd1c46383061e9734b25f98a52cbede66347bf035e29356" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.alter-procedure.set.o014"
+form = "sf.ddl.alter-procedure.set"
+construct = "option_present: ALTER PROCEDURE IF EXISTS v1 ( INT , INT ) SET LOG_LEVEL = 'm' TRACE_LEVEL = 'm' EXTERNAL_ACCESS_INTEGRATIONS = 'm' , 'm' SECRETS = 'm' = v1 , 'm' = v1 COMMENT = 'm' ;"
+reason = "not submitted: held by the capture guard in packet d118c: credential or integration"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.alter-procedure.set.k65020488034f", sql_sha256 = "65020488034f03373bd1c46383061e9734b25f98a52cbede66347bf035e29356" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.alter-procedure.set.o017"
+form = "sf.ddl.alter-procedure.set"
+construct = "a valid string_literal: ALTER PROCEDURE IF EXISTS v1 ( INT , INT ) SET LOG_LEVEL = 'm' TRACE_LEVEL = 'm' EXTERNAL_ACCESS_INTEGRATIONS = 'm' , 'm' SECRETS = 'm' = v1 , 'm' = v1 COMMENT = 'm' ;"
+reason = "not submitted: held by the capture guard in packet d118c: credential or integration"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.alter-procedure.set.k65020488034f", sql_sha256 = "65020488034f03373bd1c46383061e9734b25f98a52cbede66347bf035e29356" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.alter-procedure.set.o019"
+form = "sf.ddl.alter-procedure.set"
+construct = "option_present: ALTER PROCEDURE IF EXISTS v1 ( INT , INT ) SET LOG_LEVEL = 'm' TRACE_LEVEL = 'm' EXTERNAL_ACCESS_INTEGRATIONS = 'm' , 'm' SECRETS = 'm' = v1 , 'm' = v1 COMMENT = 'm' ;"
+reason = "not submitted: held by the capture guard in packet d118c: credential or integration"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.alter-procedure.set.k65020488034f", sql_sha256 = "65020488034f03373bd1c46383061e9734b25f98a52cbede66347bf035e29356" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.alter-procedure.set.o022"
+form = "sf.ddl.alter-procedure.set"
+construct = "a valid string_literal: ALTER PROCEDURE IF EXISTS v1 ( INT , INT ) SET LOG_LEVEL = 'm' TRACE_LEVEL = 'm' EXTERNAL_ACCESS_INTEGRATIONS = 'm' , 'm' SECRETS = 'm' = v1 , 'm' = v1 COMMENT = 'm' ;"
+reason = "not submitted: held by the capture guard in packet d118c: credential or integration"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.alter-procedure.set.k65020488034f", sql_sha256 = "65020488034f03373bd1c46383061e9734b25f98a52cbede66347bf035e29356" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.alter-procedure.set.o024"
+form = "sf.ddl.alter-procedure.set"
+construct = "the list continued at least once: ALTER PROCEDURE IF EXISTS v1 ( INT , INT ) SET LOG_LEVEL = 'm' TRACE_LEVEL = 'm' EXTERNAL_ACCESS_INTEGRATIONS = 'm' , 'm' SECRETS = 'm' = v1 , 'm' = v1 COMMENT = 'm' ;"
+reason = "not submitted: held by the capture guard in packet d118c: credential or integration"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.alter-procedure.set.k65020488034f", sql_sha256 = "65020488034f03373bd1c46383061e9734b25f98a52cbede66347bf035e29356" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.alter-procedure.set.o026"
+form = "sf.ddl.alter-procedure.set"
+construct = "option_present: ALTER PROCEDURE IF EXISTS v1 ( INT , INT ) SET LOG_LEVEL = 'm' TRACE_LEVEL = 'm' EXTERNAL_ACCESS_INTEGRATIONS = 'm' , 'm' SECRETS = 'm' = v1 , 'm' = v1 COMMENT = 'm' ;"
+reason = "not submitted: held by the capture guard in packet d118c: credential or integration"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.alter-procedure.set.k65020488034f", sql_sha256 = "65020488034f03373bd1c46383061e9734b25f98a52cbede66347bf035e29356" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.alter-procedure.set.o029"
+form = "sf.ddl.alter-procedure.set"
+construct = "a valid string_literal: ALTER PROCEDURE IF EXISTS v1 ( INT , INT ) SET LOG_LEVEL = 'm' TRACE_LEVEL = 'm' EXTERNAL_ACCESS_INTEGRATIONS = 'm' , 'm' SECRETS = 'm' = v1 , 'm' = v1 COMMENT = 'm' ;"
+reason = "not submitted: held by the capture guard in packet d118c: credential or integration"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.alter-procedure.set.k65020488034f", sql_sha256 = "65020488034f03373bd1c46383061e9734b25f98a52cbede66347bf035e29356" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.alter-procedure.set.o032"
+form = "sf.ddl.alter-procedure.set"
+construct = "a valid identifier: ALTER PROCEDURE IF EXISTS v1 ( INT , INT ) SET LOG_LEVEL = 'm' TRACE_LEVEL = 'm' EXTERNAL_ACCESS_INTEGRATIONS = 'm' , 'm' SECRETS = 'm' = v1 , 'm' = v1 COMMENT = 'm' ;"
+reason = "not submitted: held by the capture guard in packet d118c: credential or integration"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.alter-procedure.set.k65020488034f", sql_sha256 = "65020488034f03373bd1c46383061e9734b25f98a52cbede66347bf035e29356" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.alter-procedure.set.o034"
+form = "sf.ddl.alter-procedure.set"
+construct = "the list continued at least once: ALTER PROCEDURE IF EXISTS v1 ( INT , INT ) SET LOG_LEVEL = 'm' TRACE_LEVEL = 'm' EXTERNAL_ACCESS_INTEGRATIONS = 'm' , 'm' SECRETS = 'm' = v1 , 'm' = v1 COMMENT = 'm' ;"
+reason = "not submitted: held by the capture guard in packet d118c: credential or integration"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.alter-procedure.set.k65020488034f", sql_sha256 = "65020488034f03373bd1c46383061e9734b25f98a52cbede66347bf035e29356" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.alter-procedure.set.o036"
+form = "sf.ddl.alter-procedure.set"
+construct = "option_present: ALTER PROCEDURE IF EXISTS v1 ( INT , INT ) SET LOG_LEVEL = 'm' TRACE_LEVEL = 'm' EXTERNAL_ACCESS_INTEGRATIONS = 'm' , 'm' SECRETS = 'm' = v1 , 'm' = v1 COMMENT = 'm' ;"
+reason = "not submitted: held by the capture guard in packet d118c: credential or integration"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.alter-procedure.set.k65020488034f", sql_sha256 = "65020488034f03373bd1c46383061e9734b25f98a52cbede66347bf035e29356" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.alter-procedure.set.o039"
+form = "sf.ddl.alter-procedure.set"
+construct = "a valid string_literal: ALTER PROCEDURE IF EXISTS v1 ( INT , INT ) SET LOG_LEVEL = 'm' TRACE_LEVEL = 'm' EXTERNAL_ACCESS_INTEGRATIONS = 'm' , 'm' SECRETS = 'm' = v1 , 'm' = v1 COMMENT = 'm' ;"
+reason = "not submitted: held by the capture guard in packet d118c: credential or integration"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.alter-procedure.set.k65020488034f", sql_sha256 = "65020488034f03373bd1c46383061e9734b25f98a52cbede66347bf035e29356" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.alter-procedure.set.o046"
+form = "sf.ddl.alter-procedure.set"
+construct = "every independent option of one production together: ALTER PROCEDURE IF EXISTS v1 ( INT , INT ) SET LOG_LEVEL = 'm' TRACE_LEVEL = 'm' EXTERNAL_ACCESS_INTEGRATIONS = 'm' , 'm' SECRETS = 'm' = v1 , 'm' = v1 COMMENT = 'm' ;"
+reason = "not submitted: held by the capture guard in packet d118c: credential or integration"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.alter-procedure.set.k65020488034f", sql_sha256 = "65020488034f03373bd1c46383061e9734b25f98a52cbede66347bf035e29356" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.show-services.o067"
+form = "sf.ddl.show-services"
+construct = "a valid operand: SHOW JOB SERVICES EXCLUDE JOBS LIKE 'm' IN ACCOUNT STARTS WITH 'm' LIMIT 1 FROM 'm' OF TYPE USER , USER ;"
+reason = "not submitted: held by the capture guard in chunk ux-08: account-level statement"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.show-services.ka2692659b33f", sql_sha256 = "a2692659b33fbba7450e65be0e17b22ce432cc2d8c12818279950f93a84cadad" },
+]
+runs = []
+probes = []

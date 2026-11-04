@@ -399,3 +399,5 @@
 {"case_id": "sf.utility.execute-immediate.immediate.syntax.kdb533353cc4a", "family": "utility", "reason": "D113b: held by the family guard (not a utility statement); runs in a run database"}
 {"case_id": "sf.utility.execute-immediate.immediate.syntax.kfe17a835df26", "family": "utility", "reason": "D113b: held by the family guard (not a utility statement); runs in a run database"}
 {"case_id": "sf.dml.remove.ke01f0b97d3cb", "family": "dml", "reason": "D113b: held by the family guard (REMOVE from the user stage); runs in a run database"}
+{"case_id": "sf.utility.call-with.table-language-sql-as.k5fb30861c6ab", "family": "utility", "reason": "D118c: held by the family guard (CALL WITH a procedure body is not inert); runs in a run database"}
+{"case_id": "sf.utility.call-with.table-language-sql-as.k65b59ea8cc0f", "family": "utility", "reason": "D118c: held by the family guard (CALL WITH a procedure body is not inert); runs in a run database"}

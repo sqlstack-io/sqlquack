@@ -64616,3 +64616,147 @@ anchor = "doc.sql.undrop-snapshot / Syntax"
 sql = "UNDROP SNAPSHOT ( 'q1' ) ;"
 expect = "reject"
 context = "raw"
+
+[[reading]]
+form = "sf.ddl.alter-cortex-search.unset"
+grammar_sha256 = "779e5a3b70ca01dbbd4c6ac6c1881c4b52172bb4e6faff5fe91f75570ab56b16"
+grammar = ["ALTER CORTEX SEARCH SERVICE [ IF EXISTS ] <name> UNSET PRIMARY KEY"]
+reason = "UNSET \"unsets one or more specified properties\" and PRIMARY KEY is the only one this production lists (UNSET ATTRIBUTES is its own production), so it is required"
+
+# D113 security_admin receipt triage (imports 84-86): remaining contradictions observed, each reason names its category and receipt.
+
+[[suppress]]
+form = "sf.security_admin.create-data-movement-policy"
+kind = "negative_neighbour"
+target = "<rule_name> in [ ENFORCE_RULES = ( <rule_name> [ , <rule_name> , ... ] ) ]"
+note = "a string literal in place of <rule_name>"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 02000, phase semantic_error, import-20261104-85), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.create-data-movement-policy"
+kind = "negative_neighbour"
+target = "<rule_name> in [ ENFORCE_RULES = ( <rule_name> [ , <rule_name> , ... ] ) ]"
+note = "a string literal in place of <rule_name>, observed"
+anchor = "doc.sql.create-data-movement-policy / Syntax"
+sql = "CREATE DATA MOVEMENT POLICY v1 ENFORCE_RULES = ( 'v1' ) ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.create-data-movement-policy"
+kind = "negative_neighbour"
+target = "<rule_name> in [ ALERT_RULES = ( <rule_name> [ , <rule_name> , ... ] ) ]"
+note = "a string literal in place of <rule_name>"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 02000, phase semantic_error, import-20261104-85), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.create-data-movement-policy"
+kind = "negative_neighbour"
+target = "<rule_name> in [ ALERT_RULES = ( <rule_name> [ , <rule_name> , ... ] ) ]"
+note = "a string literal in place of <rule_name>, observed"
+anchor = "doc.sql.create-data-movement-policy / Syntax"
+sql = "CREATE DATA MOVEMENT POLICY v1 ALERT_RULES = ( 'v1' ) ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.create-database-role.create-database-role"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>"
+reason = "D113 [undocumented acceptance]: Snowflake accepts this SQL (phase accepted, import-20261104-85), though the page requires the omitted part; observed (D110)"
+
+[[limit]]
+form = "sf.security_admin.create-database-role.create-database-role"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>, observed"
+anchor = "doc.sql.create-database-role / Syntax"
+sql = "CREATE DATABASE ROLE ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.create-database-role.create-or-alter-database"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>"
+reason = "D113 [undocumented acceptance]: Snowflake accepts this SQL (phase accepted, import-20261104-85), though the page requires the omitted part; observed (D110)"
+
+[[limit]]
+form = "sf.security_admin.create-database-role.create-or-alter-database"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>, observed"
+anchor = "doc.sql.create-database-role / Variant syntax / CREATE OR ALTER DATABASE ROLE"
+sql = "CREATE OR ALTER DATABASE ROLE ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.create-external-access-integration"
+kind = "negative_neighbour"
+target = "<integration_name_1> in [ ALLOWED_API_AUTHENTICATION_INTEGRATIONS = { ( <integration_name_1> [ , <integration_name_2> ,…"
+note = "a string literal in place of <integration_name_1>"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 509009 SQLSTATE 0A000, phase runtime_error, import-20261104-85), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.create-external-access-integration"
+kind = "negative_neighbour"
+target = "<integration_name_1> in [ ALLOWED_API_AUTHENTICATION_INTEGRATIONS = { ( <integration_name_1> [ , <integration_name_2> ,…"
+note = "a string literal in place of <integration_name_1>, observed"
+anchor = "doc.sql.create-external-access-integration / Syntax"
+sql = "CREATE EXTERNAL ACCESS INTEGRATION v1 ALLOWED_NETWORK_RULES = ( v1 ) ALLOWED_API_AUTHENTICATION_INTEGRATIONS = ( 'v1' ) ENABLED = TRUE ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.create-external-access-integration"
+kind = "negative_neighbour"
+target = "<secret_name_1> in [ ALLOWED_AUTHENTICATION_SECRETS = { ( <secret_name_1> [ , <secret_name_2> , ... ] ) | all | none } ]"
+note = "a string literal in place of <secret_name_1>"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 509009 SQLSTATE 0A000, phase runtime_error, import-20261104-85), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.create-external-access-integration"
+kind = "negative_neighbour"
+target = "<secret_name_1> in [ ALLOWED_AUTHENTICATION_SECRETS = { ( <secret_name_1> [ , <secret_name_2> , ... ] ) | all | none } ]"
+note = "a string literal in place of <secret_name_1>, observed"
+anchor = "doc.sql.create-external-access-integration / Syntax"
+sql = "CREATE EXTERNAL ACCESS INTEGRATION v1 ALLOWED_NETWORK_RULES = ( v1 ) ALLOWED_AUTHENTICATION_SECRETS = ( 'v1' ) ENABLED = TRUE ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.create-external-access-integration"
+kind = "negative_neighbour"
+target = "<rule_name_1>"
+note = "a string literal in place of <rule_name_1>"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 509009 SQLSTATE 0A000, phase runtime_error, import-20261104-85), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.create-external-access-integration"
+kind = "negative_neighbour"
+target = "<rule_name_1>"
+note = "a string literal in place of <rule_name_1>, observed"
+anchor = "doc.sql.create-external-access-integration / Syntax"
+sql = "CREATE EXTERNAL ACCESS INTEGRATION v1 ALLOWED_NETWORK_RULES = ( 'v1' ) ENABLED = TRUE ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.create-feature-policy"
+kind = "negative_neighbour"
+target = "<type> in [ BLOCKED_OBJECT_TYPES_FOR_CREATION = ( <type> [ , ... ] ) ]"
+note = "a string literal in place of <type>"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 1422 SQLSTATE 22023, phase semantic_error, import-20261104-85), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.create-feature-policy"
+kind = "negative_neighbour"
+target = "<type> in [ BLOCKED_OBJECT_TYPES_FOR_CREATION = ( <type> [ , ... ] ) ]"
+note = "a string literal in place of <type>, observed"
+anchor = "doc.sql.create-feature-policy / Syntax"
+sql = "CREATE FEATURE POLICY v1 BLOCKED_OBJECT_TYPES_FOR_CREATION = ( 'INT' ) ;"
+expect = "observe"
+context = "raw"

@@ -374,3 +374,111 @@ cases = [
 ]
 runs = []
 probes = []
+
+[[unobservable]]
+obligation = "sf.functions.system-send-email.o016"
+form = "sf.functions.system-send-email"
+construct = "the form without its required ): SELECT SYSTEM$SEND_EMAIL ( 'm' , 'a@example.com' , 'm' , 'm' ;"
+reason = "not submitted: held by the capture guard in packet d118c: billable or out-of-account: system function outside the account"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.functions.system-send-email.keb1c42c6249a", sql_sha256 = "eb1c42c6249ac2100aa02155967b6011ddb8834fec9592f9db1db435eb5e516b" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.functions.system-send-email.o017"
+form = "sf.functions.system-send-email"
+construct = "omit '<email_address_list>': SELECT SYSTEM$SEND_EMAIL ( 'm' , , 'm' , 'm' ) ;"
+reason = "not submitted: held by the capture guard in packet d118c: billable or out-of-account: system function outside the account"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.functions.system-send-email.k1c7681f16598", sql_sha256 = "1c7681f16598fbf9fb9dec9980fe115827916db74e324870b49b018ffdb95136" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.functions.system-send-email.o021"
+form = "sf.functions.system-send-email"
+construct = "omit '<mime_type>': SELECT SYSTEM$SEND_EMAIL ( 'm' , 'a@example.com' , 'm' , 'm' , ) ;"
+reason = "not submitted: held by the capture guard in packet d118c: billable or out-of-account: system function outside the account"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.functions.system-send-email.kba2b28e933f0", sql_sha256 = "ba2b28e933f0a46908ffce95ffebcb9165595ce1809d74c95e981b8b017b6d83" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.functions.system-send-snowflake-notification.o010"
+form = "sf.functions.system-send-snowflake-notification"
+construct = "the list continued at least once: SELECT SYSTEM$SEND_SNOWFLAKE_NOTIFICATION ( ( 'm' , 'm' , 'm' ) , v1 ) ;"
+reason = "not submitted: held by the capture guard in packet d118c: billable or out-of-account: system function outside the account"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.functions.system-send-snowflake-notification.k8f2c3177865d", sql_sha256 = "8f2c3177865d664c0625f013639ea53101150f376bb32e2d0381680cc8cc54b5" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.functions.system-wait-for-services.o001"
+form = "sf.functions.system-wait-for-services"
+construct = "the documented form with every required part and no optional part: SELECT SYSTEM$WAIT_FOR_SERVICES ( v1 , 'svc1' ) ;"
+reason = "not submitted: held by the capture guard in packet d118c: held system function (acts on services)"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.functions.system-wait-for-services.ke8eb27fa6a9f", sql_sha256 = "e8eb27fa6a9f77d3bb7cd572c2591a03bd51d73c8198bd4ccc5e04be6383d540" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.functions.system-wait-for-services.o003"
+form = "sf.functions.system-wait-for-services"
+construct = "a valid operand: SELECT SYSTEM$WAIT_FOR_SERVICES ( v1 , 'svc1' ) ;"
+reason = "not submitted: held by the capture guard in packet d118c: held system function (acts on services)"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.functions.system-wait-for-services.ke8eb27fa6a9f", sql_sha256 = "e8eb27fa6a9f77d3bb7cd572c2591a03bd51d73c8198bd4ccc5e04be6383d540" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.functions.system-wait-for-services.o005"
+form = "sf.functions.system-wait-for-services"
+construct = "a valid string_literal: SELECT SYSTEM$WAIT_FOR_SERVICES ( v1 , 'svc1' ) ;"
+reason = "not submitted: held by the capture guard in packet d118c: held system function (acts on services)"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.functions.system-wait-for-services.ke8eb27fa6a9f", sql_sha256 = "e8eb27fa6a9f77d3bb7cd572c2591a03bd51d73c8198bd4ccc5e04be6383d540" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.functions.system-wait-for-services.o007"
+form = "sf.functions.system-wait-for-services"
+construct = "the list continued at least once: SELECT SYSTEM$WAIT_FOR_SERVICES ( v1 , 'svc1' , 'svc1' ) ;"
+reason = "not submitted: held by the capture guard in packet d118c: held system function (acts on services)"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.functions.system-wait-for-services.k688a83b9b927", sql_sha256 = "688a83b9b9270d1a475e0ab1d450a07d50e7cc969a7acd79938060dca071d448" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.functions.system-wait-for-services.o008"
+form = "sf.functions.system-wait-for-services"
+construct = "option_absent: SELECT SYSTEM$WAIT_FOR_SERVICES ( v1 , 'svc1' ) ;"
+reason = "not submitted: held by the capture guard in packet d118c: held system function (acts on services)"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.functions.system-wait-for-services.ke8eb27fa6a9f", sql_sha256 = "e8eb27fa6a9f77d3bb7cd572c2591a03bd51d73c8198bd4ccc5e04be6383d540" },
+]
+runs = []
+probes = []
