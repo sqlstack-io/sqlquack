@@ -8,18 +8,18 @@ use crate::formats::_helpers::files::{
 };
 use crate::formats::_helpers::records::{
     check_alias, check_case, check_definition, check_diagnostic, check_form, check_index,
-    check_obligation, check_receipt, check_restatements, check_review, check_source,
+    check_obligation, check_reading, check_receipt, check_restatements, check_review, check_source,
     check_unobservable,
 };
 use crate::formats::_helpers::retired::{retire, withdrawn_receipts};
 use crate::formats::constants::{
-    ALIASES_FILE, CASES_DIR, CATALOGUE_DIR, INDEXES_FILE, OBLIGATIONS_DIR, RECEIPT_REPORT_SUFFIX,
-    RECEIPTS_DIR, REVIEWS_DIR, SOURCES_FILE, UNOBSERVABLE_DIR,
+    ALIASES_FILE, CASES_DIR, CATALOGUE_DIR, INDEXES_FILE, LIMITS_FILE, OBLIGATIONS_DIR,
+    RECEIPT_REPORT_SUFFIX, RECEIPTS_DIR, REVIEWS_DIR, SOURCES_FILE, UNOBSERVABLE_DIR,
 };
 use crate::formats::models::{
-    Alias, AliasesFile, Case, CatalogueFile, Diagnostic, Index, IndexesFile, Obligation,
-    ObligationsFile, Receipt, Review, ReviewsFile, Source, SourcesFile, Unobservable,
-    UnobservableFile,
+    Alias, AliasesFile, Case, CatalogueFile, Diagnostic, Index, IndexesFile, LimitsFile,
+    Obligation, ObligationsFile, Reading, Receipt, Review, ReviewsFile, Source, SourcesFile,
+    Unobservable, UnobservableFile,
 };
 use crate::formats::types::FamilyCatalogue;
 
@@ -249,6 +249,24 @@ pub(crate) fn load_unobservable(root: &Path) -> Section<(Vec<Unobservable>, Vec<
     Section::of((records, diagnostics), Vec::new(), problems)
 }
 
+/// The readings in `limits.toml`, which must exist: without it no form's definition holds its reading.
+pub(crate) fn load_readings(root: &Path) -> Section<Vec<Reading>> {
+    match read_toml::<LimitsFile>(&root.join(LIMITS_FILE)) {
+        Ok((file, _)) => {
+            let mut problems: Vec<String> = file.readings.iter().flat_map(check_reading).collect();
+            let mut seen: BTreeSet<&str> = BTreeSet::new();
+            problems.extend(
+                file.readings
+                    .iter()
+                    .filter(|reading| !seen.insert(reading.form.as_str()))
+                    .map(|reading| format!("reading {}: listed twice", reading.form)),
+            );
+            Section::of(file.readings, Vec::new(), problems)
+        }
+        Err(problem) => Section::of(Vec::new(), Vec::new(), vec![problem]),
+    }
+}
+
 pub(crate) fn load_reviews(root: &Path) -> Section<Vec<Review>> {
     let (paths, others) = listed(&root.join(REVIEWS_DIR), "toml");
     let mut problems: Vec<String> = others.iter().map(|path| stray(path, "toml")).collect();
@@ -277,6 +295,7 @@ pub(crate) struct Sections {
     pub(crate) receipts: Section<(Vec<Receipt>, Vec<String>)>,
     pub(crate) reviews: Section<Vec<Review>>,
     pub(crate) unobservable: Section<(Vec<Unobservable>, Vec<Diagnostic>)>,
+    pub(crate) readings: Section<Vec<Reading>>,
 }
 
 impl Sections {
@@ -292,6 +311,7 @@ impl Sections {
             &self.receipts.problems,
             &self.reviews.problems,
             &self.unobservable.problems,
+            &self.readings.problems,
         ]
         .into_iter()
         .flatten()
@@ -327,6 +347,7 @@ pub(crate) fn load_sections(root: &Path) -> Sections {
         receipts: load_receipts(root),
         reviews: load_reviews(root),
         unobservable: load_unobservable(root),
+        readings: load_readings(root),
         sources,
     }
 }

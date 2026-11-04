@@ -1379,6 +1379,34 @@ impl Parser {
         prev_token.span.end == curr_token.span.start
     }
 
+    /// An object name after DROP, UNDROP or TRUNCATE; Snowflake rejects unquoted reserved words.
+    pub(crate) fn parse_object_name_ref(&mut self) -> Result<TableRef> {
+        let name = self.parse_table_ref()?;
+        for part in [&name.catalog, &name.schema].into_iter().flatten() {
+            self.reject_reserved_name_part(part)?;
+        }
+        self.reject_reserved_name_part(&name.name)?;
+        Ok(name)
+    }
+
+    /// Fails on an unquoted Snowflake reserved word used as a name part in a Snowflake parse.
+    pub(crate) fn reject_reserved_name_part(&self, part: &Identifier) -> Result<()> {
+        if matches!(
+            self.config.dialect,
+            Some(crate::tokens::models::DialectType::Snowflake)
+        ) && !part.quoted
+            && crate::parser::constants::SNOWFLAKE_RESERVED_KEYWORDS
+                .iter()
+                .any(|keyword| part.name.eq_ignore_ascii_case(keyword))
+        {
+            return Err(self.parse_error(format!(
+                "Reserved word {} cannot be an unquoted object name",
+                part.name.to_ascii_uppercase()
+            )));
+        }
+        Ok(())
+    }
+
     /// Parse a table reference (schema.table format)
     pub(crate) fn parse_table_ref(&mut self) -> Result<TableRef> {
         let table_ref_leading_comments = self.current_leading_comments().to_vec();

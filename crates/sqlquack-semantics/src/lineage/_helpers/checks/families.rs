@@ -261,7 +261,7 @@ fn written_family(
         Expression::Literal(literal) => literal_family(literal),
         Expression::Boolean(_) => Family::Boolean,
         Expression::Alias(alias) => family(&alias.this),
-        Expression::Neg(unary) => family(&unary.this),
+        Expression::Neg(unary) | Expression::Pos(unary) => family(&unary.this),
         Expression::Add(operation) | Expression::Sub(operation) | Expression::Mul(operation) => {
             arithmetic_family(family(&operation.left), family(&operation.right))
         }

@@ -108,6 +108,13 @@ placeholder. Add prose-documented limits by hand, with their anchor. Where Snowf
 limit, the obligation's `note` says `no documented bound`, and its `depths` list the depths that
 were tested. Nothing claims to be exhaustive.
 
+`limits.toml` holds the hand-added `[[limit]]` and `[[suppress]]` rows the obligation builder
+reads, and the `[[reading]]` rows: how an ambiguous page grammar is read, with `form`,
+`grammar_sha256` (the form's grammar hash, or `prose:<heading>` for a prose form), `grammar` (its
+lines, none blank; empty for a lexical form the `reason` alone explains) and `reason`. The checker requires the
+file, refuses any other table, a reading of a form that is not catalogued, and a form read twice,
+and hashes each form's reading into its definition (below).
+
 ## Cases (`cases/<family>.jsonl`)
 
 Each line is one JSON object. Blank lines are refused.
@@ -168,6 +175,10 @@ committed one.
   `statements_in_request`, `completed_statements`, `after_sql` and `category`.
   `completed_statements` is the number of statements in the request that completed before it
   stopped. It is provenance only and does not change the phase.
+- Optional `account_state`: the account parameters the capture ran under, by name, each as
+  `{ "value": …, "basis": … }` with both non-empty, such as
+  `{ "CORTEX_MODELS_ALLOWLIST": { "value": "NONE", "basis": "D120: …" } }` (decision D120). It
+  is provenance only and does not change the phase; when present it names at least one parameter.
 - Optional `reason_category` and `reason_category_basis`, always together, and only on a phase
   after parsing (`semantic_error`, `runtime_error` or `unsupported_feature`). The category is one
   of `missing_object`, `invalid_option_or_value`, `type` or `other`. The basis says what the
@@ -250,7 +261,14 @@ internal error (603), so no capture can establish a phase (decision D87). It has
 family; each listed case must exist with that `sql_sha256` and cite the obligation; an obligation is
 listed at most once. Such an obligation stays in the denominator, never counts as satisfied, and is
 reported as `unverifiable_internal_error` ("unverifiable: Snowflake internal error"). Probe results
-are diagnostics, never syntax evidence. A `[[diagnostic]]` in the same file has the same fields,
+are diagnostics, never syntax evidence.
+
+An entry may set `cause = "not_submitted"` when its cases were never sent to Snowflake, such as
+side-effecting calls a capture guard holds. Such an entry has empty `runs` and `probes`, a
+`reason` naming the rule that holds the cases, and at least one case, checked as above. The
+obligation stays in the denominator, never counts as satisfied, and is reported as
+`unverifiable_not_submitted`. An absent `cause` means a 603 internal error; any other value is
+refused. A `[[diagnostic]]` in the same file has the same fields,
 with `captured` in place of `cases`: a 603 record on a construct no obligation requires any more,
 whose retired cases are not resolved against the cases file. Diagnostics are format-checked and
 listed, never scored. The checker ignores `semantic-limits/` and `lane-reviews/`.
@@ -282,8 +300,9 @@ A `[[review]]` has these fields:
   hash when it was reviewed, as `{ "<form id>" = "<sha256>" }`, one for every listed form. A
   review with `definitions` binds each form by its definition and fingerprint alone and has no
   `catalogue_sha256`, `obligations_sha256` or exclusions. An edit to another form in the same
-  catalogue or obligations file leaves it current; any change to the form's own catalogue entry,
-  obligations or fingerprint makes it stale for that form (decision D118).
+  catalogue or obligations file, or to another form's reading, leaves it current; any change to
+  the form's own catalogue entry, obligations, reading or fingerprint makes it stale for that form
+  (decision D118).
 - `[[review.exclusion]]`: exactly one of `form` (a form id of the review's family) or `source` (a
   page id, used for out-of-scope and syntax-less pages), plus a `reason`. A page review excludes
   pages only, and a family review excludes forms only.
@@ -328,7 +347,8 @@ followed by a tab. `family --json` prints each form's `fingerprint`. A parser ch
 every case of a form parsing into the same tree, and every rejection still a rejection, leaves its
 fingerprint and so its review unchanged; a changed tree or verdict, or an added or removed case,
 changes it. A form's definition hash is the SHA-256 of the compact JSON array of its catalogue
-entry and its own obligations in file order, as loaded; `family --json` prints it as
+entry and its own obligations in file order, as loaded, followed by its `[[reading]]` from
+`limits.toml` when it has one; `family --json` prints it as
 `definition_sha256`. A form is excluded only by an approved review that is current in the
 same way. Absent forms keep their ids and are never counted. The headline denominator is the
 catalogued forms: 3,348 on the frozen catalogue `e863d7de` (decision D81).

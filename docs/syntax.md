@@ -201,6 +201,12 @@ reason. The check counts it as kept quoting, not different, only when the marker
 two trees differ in nothing but identifiers that are unquoted in polyglot's tree and quoted in
 SQLQuack's. The only entry: a star's `EXCLUDE ("note")`, whose quotes make the name case-sensitive.
 
+A statement both parsers parse, where SQLQuack keeps a wrapper node polyglot drops, is a
+`[[kept_node]]` entry: an id, a marker, the node and a reason. The check counts it as a kept node,
+not different, only when the marker appears and the trees are equal once every
+`{ "<node>": { "this": … } }` in SQLQuack's tree is replaced by its operand. The only entry: unary
+plus (`pos`), which Snowflake documents and polyglot drops.
+
 The faithful parse also keeps a quoted variant path key that holds `.`, `[`, `]`, `"` or `:` in
 brackets (`v:a."x.y"` is the path `a["x.y"]`), where polyglot joins it with dots (`a.x.y`), which
 reads as two keys. The check compares variant paths written flat, so this bracketing is the only
