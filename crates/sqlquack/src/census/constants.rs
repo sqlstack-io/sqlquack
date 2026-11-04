@@ -99,8 +99,11 @@ pub const PLAN_SET_SIZE: usize = 3;
 pub const NEXT_ROOTS: usize = 20;
 
 /// The refusal categories a rule could resolve, the only roots plan steps support.
-pub const PLANNABLE_CATEGORIES: &[RefusalCategory] =
-    &[RefusalCategory::MissingRule, RefusalCategory::TypeCondition];
+pub const PLANNABLE_CATEGORIES: &[RefusalCategory] = &[
+    RefusalCategory::MissingRule,
+    RefusalCategory::TypeCondition,
+    RefusalCategory::DivergenceRefused,
+];
 
 /// How `--assume-supported` names a rule rather than a construct.
 pub const RULE_ID_PREFIX: &str = "rule.";

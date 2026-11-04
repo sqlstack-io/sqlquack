@@ -1,5 +1,6 @@
 //! `relation_columns`: the columns of the relation a name reads.
 
+use sqlquack_core::diagnostics::constants::CASE_ONLY_MATCH;
 use sqlquack_core::refusals::main::unresolved::unresolved;
 use sqlquack_core::refusals::models::Refusal;
 
@@ -33,14 +34,14 @@ pub fn relation_columns(
     if let Some(columns) = relation {
         return Ok(schema_columns(columns, typed));
     }
-    if ctes
+    if let Some(known) = ctes
         .iter()
         .map(|(cte, _)| cte.as_str())
         .chain(schema.relations.keys().map(String::as_str))
-        .any(|known| target.same_identifier(known, name))
+        .find(|known| target.same_identifier(known, name))
     {
         return Err(unresolved(format!(
-            "relation `{name}` matches another only without regard to case"
+            "relation `{name}` matches `{known}` {CASE_ONLY_MATCH}"
         )));
     }
     Err(unresolved(format!(

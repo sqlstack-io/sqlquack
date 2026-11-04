@@ -34,7 +34,7 @@ fn given_ctes_and_a_schema_when_reading_relations_then_the_innermost_name_wins()
             description: "a name differing from a schema relation only by case refuses",
             name: "CUSTOMERS",
             expected_outcome: Err(
-                "relation `CUSTOMERS` matches another only without regard to case",
+                "relation `CUSTOMERS` matches `customers` only without regard to case",
             ),
         },
         RelationColumnsTestCase {
