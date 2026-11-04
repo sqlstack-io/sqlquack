@@ -134,7 +134,10 @@ CLAUSE_CALLEES: frozenset[str] = frozenset(
         "ALL",
     }
 )
-DANGLING_CALL: re.Pattern[str] = re.compile(r"\( ,|, ,|, \)|=> ,|=> \)|=> $|, $|\( $|\( =>|, =>")
+DANGLING_CALL: re.Pattern[str] = re.compile(
+    r"\( ,|, ,|, \)|=> ,|=> \)|=> $|, $|\( $|\( =>|, =>"
+    r"|[(,] (?:AS|FROM|IN|FOR|USING|BY|ON)\b|[(,] \.|[-+*/%|&<>=] [,)]"
+)
 ARITY_CLASS: str = "arity"
 ARITY_REASON: str = (
     "D97 extension (auditor 11406dcd, coordinator): an omission that leaves a well-formed "

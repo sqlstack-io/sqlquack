@@ -87,6 +87,11 @@ def family_cases(*, root: Path, family: str) -> tuple[list[Row], dict[str, set[s
     )
 
 
+def _omission(row: Row) -> str:
+    """`kind | target | note` of one withdrawn arity draft."""
+    return f"{row['kind']} | {row['target']} | {row['note']}"
+
+
 def _arity_cases(*, rows: list[Row], scored: set[str]) -> list[Row]:
     """Unscored observe cases, one per distinct SQL text, naming the omissions they render."""
     by_sql: dict[str, list[Row]] = {}
@@ -101,7 +106,7 @@ def _arity_cases(*, rows: list[Row], scored: set[str]) -> list[Row]:
             {
                 "case_id": f"{found[0]['form']}.k{sha[:DIGEST_WIDTH]}",
                 "obligations": [],
-                "omits": sorted({f"{row['kind']} {row['note']}" for row in found}),
+                "omits": sorted(_omission(row) for row in found),
                 "sql": sql,
                 "sql_sha256": sha,
                 "setup": [],

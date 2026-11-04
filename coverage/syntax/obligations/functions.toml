@@ -9634,6 +9634,13 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
+id = "sf.functions.cast.cast-as.o015"
+kind = "required_operand_missing"
+required = true
+target = "<source_expr>"
+note = "omit <source_expr>"
+
+[[obligation]]
 id = "sf.functions.cast.cast-as.o003"
 kind = "operand_type_class"
 required = true
@@ -12426,6 +12433,13 @@ required = true
 target = "[ , <expr2> ... ]"
 
 [[obligation]]
+id = "sf.functions.count.count.o015"
+kind = "required_operand_missing"
+required = true
+target = "<alias>"
+note = "omit <alias>"
+
+[[obligation]]
 id = "sf.functions.count.count.o009"
 kind = "operand_type_class"
 required = true
@@ -14912,6 +14926,13 @@ id = "sf.functions.date-part.date-part-from.o001"
 kind = "positive"
 required = true
 note = "the documented form with every required part and no optional part"
+
+[[obligation]]
+id = "sf.functions.date-part.date-part-from.o009"
+kind = "required_operand_missing"
+required = true
+target = "<date_or_time_part>"
+note = "omit <date_or_time_part>"
 
 [[obligation]]
 id = "sf.functions.date-part.date-part-from.o003"
@@ -28033,6 +28054,13 @@ id = "sf.functions.extract.extract-from.o001"
 kind = "positive"
 required = true
 note = "the documented form with every required part and no optional part"
+
+[[obligation]]
+id = "sf.functions.extract.extract-from.o009"
+kind = "required_operand_missing"
+required = true
+target = "<date_or_time_part>"
+note = "omit <date_or_time_part>"
 
 [[obligation]]
 id = "sf.functions.extract.extract-from.o003"
@@ -41218,6 +41246,13 @@ required = true
 target = "[ DISTINCT ]"
 
 [[obligation]]
+id = "sf.functions.minhash.minhash.o012"
+kind = "required_operand_missing"
+required = true
+target = "expr"
+note = "omit expr"
+
+[[obligation]]
 id = "sf.functions.minhash.minhash.o007"
 kind = "operand_type_class"
 required = true
@@ -41281,6 +41316,13 @@ id = "sf.functions.minhash.minhash-expr-over.o005"
 kind = "option_absent"
 required = true
 target = "[ DISTINCT ]"
+
+[[obligation]]
+id = "sf.functions.minhash.minhash-expr-over.o017"
+kind = "required_operand_missing"
+required = true
+target = "expr"
+note = "omit expr"
 
 [[obligation]]
 id = "sf.functions.minhash.minhash-expr-over.o007"
@@ -46611,6 +46653,13 @@ id = "sf.functions.position.position-in.o001"
 kind = "positive"
 required = true
 note = "the documented form with every required part and no optional part"
+
+[[obligation]]
+id = "sf.functions.position.position-in.o009"
+kind = "required_operand_missing"
+required = true
+target = "<expr1>"
+note = "omit <expr1>"
 
 [[obligation]]
 id = "sf.functions.position.position-in.o003"
@@ -65697,6 +65746,13 @@ required = true
 target = "[ <db_name> . <schema_name> . ]"
 
 [[obligation]]
+id = "sf.functions.system-get-service-status.o026"
+kind = "required_operand_missing"
+required = true
+target = "<db_name> in [ <db_name> . <schema_name> . ]"
+note = "omit <db_name>"
+
+[[obligation]]
 id = "sf.functions.system-get-service-status.o005"
 kind = "operand_type_class"
 required = true
@@ -76207,6 +76263,13 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
+id = "sf.functions.try-cast.o011"
+kind = "required_operand_missing"
+required = true
+target = "<source_string_expr>"
+note = "omit <source_string_expr>"
+
+[[obligation]]
 id = "sf.functions.try-cast.o003"
 kind = "operand_type_class"
 required = true
@@ -78036,6 +78099,13 @@ id = "sf.functions.validate.o003"
 kind = "option_absent"
 required = true
 target = "[ <namespace> . ]"
+
+[[obligation]]
+id = "sf.functions.validate.o022"
+kind = "required_operand_missing"
+required = true
+target = "<namespace> in [ <namespace> . ]"
+note = "omit <namespace>"
 
 [[obligation]]
 id = "sf.functions.validate.o005"
