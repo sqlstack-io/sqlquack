@@ -1,0 +1,4 @@
+# The Python module builds against the project's interpreter (see .python-version), not the
+# system one; `uv sync` creates it.
+[env]
+PYO3_PYTHON = { value = ".venv/bin/python", relative = true }

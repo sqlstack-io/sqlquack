@@ -16,23 +16,38 @@ FUZZ_CORPUS ?= fuzz/corpus/tolerant
 FUZZ_SECONDS ?= 90
 FUZZ_TARGETS ?= tolerant diagnose
 
+# The Python module `make python-module` builds into its package, and the tests of its API.
+PYTHON_PACKAGE := python/src/sqlquack
+PYTHON_MODULE := $(PYTHON_PACKAGE)/_native.abi3.so
+PYTHON_BUILD_JSON = $(or $(CARGO_TARGET_DIR),target)/python-module-build.json
+PYTHON_API_TESTS := tests/unit/python
+
 ifeq ($(RECORDER),1)
 PYTHON_TYPED := .
 PYTHON_TESTS := tests
 else
-PYTHON_TYPED := scripts tests/unit/scripts
-PYTHON_TESTS := tests/unit/scripts
+PYTHON_TYPED := scripts tests/unit/scripts python/src $(PYTHON_API_TESTS)
+PYTHON_TESTS := tests/unit/scripts $(PYTHON_API_TESTS)
 endif
 
-.PHONY: format rust-lint python-check fensu syntax-coverage evidence-guard polyglot-guard generate-cases generated-cases generate-referee-cases referee-cases referee-pending check-ci check-merge test test-rust test-python verify-recorded polyglot-duckshop census-duckshop fuzz-smoke gate gate-parallel census duckshop-compiled
+.PHONY: format rust-lint python-check fensu syntax-coverage evidence-guard polyglot-guard generate-cases generated-cases generate-referee-cases referee-cases referee-pending check-ci check-merge test test-rust test-python python-module python-api python-wheel verify-recorded polyglot-duckshop census-duckshop fuzz-smoke gate gate-parallel census duckshop-compiled
 
 format:
 	cargo fmt --all
 	uv run ruff format .
 
-rust-lint:
+# Library and binary code reports failures as values and never panics; tests may.
+NO_PANIC_LINTS := -D clippy::unwrap_used -D clippy::expect_used -D clippy::panic \
+  -D clippy::unreachable -D clippy::todo -D clippy::unimplemented
+
+# The interpreter the Python module builds against (.cargo/config.toml), before any cargo build.
+.venv/bin/python:
+	uv venv
+
+rust-lint: | .venv/bin/python
 	cargo fmt --all --check
 	cargo clippy --workspace --all-targets --locked -- -D warnings
+	cargo clippy --workspace --lib --bins --locked -- -D warnings $(NO_PANIC_LINTS)
 
 python-check:
 	uv run ruff format --check .
@@ -76,8 +91,8 @@ referee-cases:
 referee-pending:
 	uv run python -m scripts.write_referee_pending $(REFEREE_ARGS)
 
-# The static gate, the first step of `gate`.
-check-ci: rust-lint python-check fensu syntax-coverage evidence-guard polyglot-guard generated-cases referee-cases
+# The static gate, the first step of `gate`, and the Python API's tests.
+check-ci: rust-lint python-check fensu syntax-coverage evidence-guard polyglot-guard generated-cases referee-cases python-api
 
 # Rust tests build with the gate profile: release speed, debug assertions and overflow checks on.
 # Its test binaries run RUST_TEST_JOBS at a time; any failure fails the target.
@@ -86,14 +101,35 @@ RUST_TEST_JOBS ?= 4
 
 test: test-rust test-python
 
-test-rust:
+test-rust: | .venv/bin/python
 	RUST_TEST_JOBS=$(RUST_TEST_JOBS) scripts/run_rust_tests.sh $(RUST_TEST_PROFILE)
 
 # What every merge to main must pass, on the exact head: the static gate and the Rust tests.
 check-merge: check-ci test-rust
 
-test-python:
-	uv run pytest $(PYTHON_TESTS) -n auto --dist loadfile
+test-python: python-api
+	uv run pytest $(filter-out $(PYTHON_API_TESTS),$(PYTHON_TESTS)) --ignore=$(PYTHON_API_TESTS) \
+	  -n auto --dist loadfile
+
+# The `sqlquack` Python module, built from the workspace into its package, where the tests import it.
+# The DuckDB library it links goes next to it, where its rpath looks.
+python-module: | .venv/bin/python
+	cargo build --locked --release -p sqlquack-python --features extension-module \
+	  --message-format=json-render-diagnostics > $(PYTHON_BUILD_JSON)
+	cp $(or $(CARGO_TARGET_DIR),target)/release/lib_native.so $(PYTHON_MODULE)
+	cp "$$(jq -r 'select(.reason == "build-script-executed" and (.package_id | contains("libduckdb-sys"))) \
+	  | .linked_paths[] | sub("^[a-z]*="; "")' $(PYTHON_BUILD_JSON) | head -1)/libduckdb.so" \
+	  $(PYTHON_PACKAGE)/
+
+# The API tests compare the module's reports with the release command line's.
+python-api: python-module
+	cargo build --locked --release -p sqlquack
+	SQLQUACK_BIN=$(abspath $(or $(CARGO_TARGET_DIR),target)/release/sqlquack) \
+	  LD_LIBRARY_PATH=$(abspath $(PYTHON_PACKAGE)) uv run pytest $(PYTHON_API_TESTS) -n auto --dist loadfile
+
+# A local wheel of the Python module in target/wheels; never published.
+python-wheel: | .venv/bin/python
+	cd python && uvx --from "maturin[patchelf]>=1.9,<2" maturin build --release --locked
 
 # Replays every recorded case on DuckDB; every rule and equivalence needs a passed case.
 # Backup pushes may drop --require-verified; failed cases and error findings still block.

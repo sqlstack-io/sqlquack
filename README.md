@@ -29,6 +29,18 @@ Converted SQL is proven only where both sessions run in UTC: Snowflake's `TIMEZO
 `session_timezone_utc` assumption; strict mode refuses them unless you confirm a UTC session with
 `--utc-session`.
 
+## Check
+
+```console
+$ cargo run --release -p sqlquack -- check query.sql
+$ echo "SELECT 1 QUALIFY TRUE" | cargo run --release -p sqlquack -- check --json
+```
+
+`check` parses Snowflake SQL and reports what Snowflake would reject, without a schema or a
+conversion. It prints coded diagnostics on standard error, and `--json` prints
+`{"ok": …, "diagnostics": [...]}`. It exits 0 when it finds nothing, 1 when it finds a problem and
+2 for input without SQL.
+
 ## Convert
 
 ```console
@@ -55,7 +67,10 @@ With `--json`, each refusal also carries the same diagnostic: `code`, `name`, `a
 guard's former `E_GUARD_*` name), `message`, `span` (character `start` and `end`, one-based `line`,
 `column`, `end_line` and `end_column`), `label`, `notes` and `help`. Codes are `SQ` and four digits,
 listed with an explanation each in `crates/sqlquack-core/src/diagnostics/constants.rs`; a code is
-never reused or renumbered. `--session NAME=VALUE` passes the caller's Snowflake session parameters
+never reused or renumbered. SQL that Snowflake parses but then rejects, such as `INTERSECT ALL`,
+`FOR UPDATE WAIT`, `QUALIFY` without a window function, or a `* ILIKE` `REPLACE` or `RENAME` of
+a column the pattern removes, is refused with its own `SQ02xx` code instead of being converted.
+`--session NAME=VALUE` passes the caller's Snowflake session parameters
 (`function` takes it too):
 
 - Conversion runs under the recorded session profile they match (`utc-v1`, or `utc-qiic-v1` for
@@ -76,7 +91,8 @@ session parameters yet and convert under `utc-v1`.
 `convert`, `function`, `census` and `index` read `sqlquack.toml` (or `--policy`); without one they
 exit 2 unless `--builtin-policy` asks for the built-in default, which refuses every known divergence.
 They share the policy flags (`--policy`, `--builtin-policy`, `--strict`, `--utc-session`,
-`--confirm-declared-offsets` and `--python-runtime`). Every command with a report takes
+`--confirm-declared-offsets`, `--python-runtime` and `--loud-divergences-only`, which relies only
+on divergences whose converted SQL raises rather than returns another value). Every command with a report takes
 `--format text|json`; `--json` is short for `--format json`.
 
 `function` converts a SQL project function's body, read from a file or from standard input with
@@ -132,6 +148,22 @@ Snowflake typing functions it called. `sqlquack index` inverts those records: bu
 rules → cases and files, and rule → cases and files, with refused constructs listed the same way.
 Every list is sorted, so the output of two revisions can be diffed to see which cases a change to
 one building block affects.
+
+## Python
+
+```python
+import sqlquack
+
+sqlquack.check(sql="SELECT 1 QUALIFY TRUE").diagnostics[0].code  # "SQ0203"
+result = sqlquack.convert(
+    sql="SELECT 1 AS total", options=sqlquack.ConvertOptions(builtin_policy=True)
+)
+```
+
+The `sqlquack` package (in `python/`, built with `make python-wheel`) runs the same code as the
+command line. `check` and `convert` return frozen results with typed `Diagnostic`s, the text the
+command line renders, and, for `convert`, its exact `--json` report. `ConvertOptions` has one field
+per `convert` flag. Where the command line exits 2, they raise `SqlQuackError`.
 
 ## Evidence
 

@@ -222,3 +222,20 @@ pub(crate) struct OutputFormatTestCase {
     pub(crate) expected_exit_code: Option<i32>,
     pub(crate) expected_stdout_prefix: &'static str,
 }
+
+pub(crate) struct CheckCommandTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) arguments: &'static [&'static str],
+    pub(crate) sql: &'static str,
+    pub(crate) expected_exit_code: Option<i32>,
+    pub(crate) expected_stdout_prefix: &'static str,
+    pub(crate) expected_stderr_mention: &'static str,
+}
+
+pub(crate) struct FailureKindTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) sql: &'static str,
+    pub(crate) flags: &'static [&'static str],
+    pub(crate) expected_converted: bool,
+    pub(crate) expected_failures: &'static [(&'static str, &'static str)],
+}

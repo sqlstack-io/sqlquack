@@ -181,4 +181,51 @@ pub const CODES: &[CodeEntry] = &[
             the span. Compute the innermost calls in a common table expression or a subquery \
             and refer to their results.",
     },
+    CodeEntry {
+        code: "SQ0201",
+        name: "set_operation_all",
+        alias: None,
+        title: "Snowflake does not support INTERSECT, EXCEPT or MINUS with ALL",
+        help: Some("drop ALL to compare distinct rows; only UNION accepts ALL in Snowflake"),
+        explanation: "Snowflake accepts ALL only after UNION. INTERSECT ALL, EXCEPT ALL and \
+            MINUS ALL parse, but Snowflake rejects them as an unsupported feature, so there is \
+            no Snowflake meaning to convert. Without ALL the \
+            operators compare distinct rows; keeping duplicates needs a rewrite, for example \
+            numbering each row with ROW_NUMBER() over all columns and comparing those pairs.",
+    },
+    CodeEntry {
+        code: "SQ0202",
+        name: "lock_wait",
+        alias: None,
+        title: "Snowflake does not support WAIT in FOR UPDATE",
+        help: Some("remove the WAIT clause"),
+        explanation: "FOR UPDATE WAIT n parses, but Snowflake rejects it as an unsupported \
+            feature, so the statement never runs there. Remove the WAIT clause; Snowflake's \
+            lock timeout comes from the LOCK_TIMEOUT session parameter instead.",
+    },
+    CodeEntry {
+        code: "SQ0203",
+        name: "qualify_without_window",
+        alias: None,
+        title: "QUALIFY needs a window function",
+        help: Some(
+            "move the condition to WHERE or HAVING, or filter on a window function's result",
+        ),
+        explanation: "Snowflake evaluates QUALIFY after window functions, and rejects a \
+            QUALIFY clause when neither the SELECT list nor QUALIFY itself calls a window \
+            function (Snowflake error 992). A window function the QUALIFY condition reaches \
+            through a SELECT-list alias counts. A condition on plain columns belongs in WHERE, \
+            and one on aggregates in HAVING.",
+    },
+    CodeEntry {
+        code: "SQ0204",
+        name: "star_filter_drops_named_column",
+        alias: None,
+        title: "REPLACE or RENAME names a column the star's ILIKE pattern removed",
+        help: Some("name a column the ILIKE pattern keeps, or widen the pattern"),
+        explanation: "In `* ILIKE 'pattern' REPLACE (...)` or `RENAME (...)`, Snowflake applies \
+            the pattern first, ignoring case, and rejects a REPLACE or RENAME of a column the \
+            pattern did not keep (Snowflake error 1431). A name that fails the pattern ignoring \
+            case fails it whatever the table holds, so no schema is needed to see it.",
+    },
 ];
