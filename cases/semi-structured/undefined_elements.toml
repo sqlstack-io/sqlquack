@@ -32,7 +32,6 @@ rows = [
 ]
 query = "SELECT ARRAY_CONSTRUCT(s, t)::VARCHAR AS v, ARRAY_TO_STRING(ARRAY_CONSTRUCT(s, t), '|') AS j FROM input ORDER BY ordinal"
 order = "ordered"
-expected_divergence = "json_fidelity"
 tags = ["null"]
 
 [[case]]

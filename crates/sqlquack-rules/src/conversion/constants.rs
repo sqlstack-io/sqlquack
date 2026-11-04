@@ -1175,6 +1175,8 @@ pub(crate) const TEXT_POSITION_LIMIT: &str = "2147483647";
 pub(crate) const ROUND_FUNCTION: &str = "ROUND";
 /// The node kind of a function call.
 pub(crate) const FUNCTION_KIND: &str = "function";
+/// ARRAY_CONSTRUCT, whose undefined elements text and ARRAY_TO_STRING write when it is direct.
+pub(crate) const ARRAY_CONSTRUCT_NAME: &str = "ARRAY_CONSTRUCT";
 /// Array builders whose ARRAY OBJECT_PICK was recorded picking by its elements.
 pub(crate) const PICKED_ARRAY_FUNCTIONS: [&str; 2] = ["ARRAY_CONSTRUCT", "ARRAY_EXCEPT"];
 /// The array builders ARRAY_SIZE reads through, counting a SQL NULL element as Snowflake does.

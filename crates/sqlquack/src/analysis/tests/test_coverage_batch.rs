@@ -927,3 +927,40 @@ fn given_batch_two_constructs_when_converting_then_they_match_their_recordings()
         );
     }
 }
+
+#[test]
+fn given_direct_array_constructs_when_writing_them_as_text_then_null_elements_are_undefined() {
+    let test_cases = [
+        FirstValueTestCase {
+            description: "a NULL first element is written undefined, a string quoted",
+            sql: "SELECT ARRAY_CONSTRUCT(NULL, 'G-2')::VARCHAR AS v",
+            expected_outcome: Ok("[undefined,\"G-2\"]"),
+        },
+        FirstValueTestCase {
+            description: "ARRAY_TO_STRING writes an undefined element as empty text",
+            sql: "SELECT ARRAY_TO_STRING(ARRAY_CONSTRUCT('gift', NULL), '|') AS v",
+            expected_outcome: Ok("gift|"),
+        },
+        FirstValueTestCase {
+            description: "a JSON null element is null, not undefined",
+            sql: "SELECT ARRAY_CONSTRUCT(PARSE_JSON('null'), NULL)::VARCHAR AS v",
+            expected_outcome: Ok("[null,undefined]"),
+        },
+        FirstValueTestCase {
+            description: "an ARRAY_CONSTRUCT not written directly in the cast still raises",
+            sql: "SELECT a::VARCHAR AS v FROM (SELECT ARRAY_CONSTRUCT(NULL, 'x') AS a)",
+            expected_outcome: Err("keeps as undefined"),
+        },
+    ];
+    for test_case in test_cases {
+        assert_eq!(
+            shop_first_outcome(test_case.sql, test_case.expected_outcome),
+            test_case
+                .expected_outcome
+                .map(str::to_owned)
+                .map_err(str::to_owned),
+            "{}",
+            test_case.description
+        );
+    }
+}

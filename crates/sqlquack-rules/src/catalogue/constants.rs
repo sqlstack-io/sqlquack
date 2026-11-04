@@ -624,7 +624,7 @@ pub const RULES: &[RuleSpec] = &[
     RuleSpec {
         id: ARRAY_CONSTRUCT_RULE,
         constructs: &["fn:ARRAY_CONSTRUCT", "node:array_func"],
-        conditions: "A bracket literal [a, b] builds as ARRAY_CONSTRUCT(a, b) does, as recorded. VARIANT, text, boolean or NUMBER(p,0) elements; a SQL NULL element, which Snowflake keeps as undefined, raises, relying on json_fidelity. NUMBER elements rely on json_fidelity.",
+        conditions: "A bracket literal [a, b] builds as ARRAY_CONSTRUCT(a, b) does, as recorded. VARIANT, text, boolean or NUMBER(p,0) elements; a SQL NULL element, which Snowflake keeps as undefined, raises, relying on json_fidelity, except where an ARRAY_CONSTRUCT call is written directly in a cast to VARCHAR, which writes it as undefined, or in ARRAY_TO_STRING, which writes it as empty text, as recorded. NUMBER elements rely on json_fidelity.",
         failures: &[],
     },
     RuleSpec {
