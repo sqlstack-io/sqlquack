@@ -1,0 +1,21 @@
+# Lane C review of lane A's receipt importer: run-database cases that declare their run setup.
+# Bound to the reviewed commit and the Git tree of scripts/syntax_receipts at that commit.
+
+[review]
+subject = "importer"
+reviewer_lane = "C"
+branch = "wip/syntax-evidence"
+commit = "033de1613ce89fc237ac338fdcf95ad4414dbeda"
+importer_tree = "e040362aac1ee04bec0dceaec43dba6e7b1d6933"
+reviewed_utc = "2026-11-04T14:10:00Z"
+verdict = "approved"
+not_reviewed = "importer changes after 033de161; the relaxed_sweep run setup is checked through its receipts only when they are imported"
+
+[[closed]]
+finding = "a case with capture execute_ddl_in_run_database declares the whole run setup, and the importer appended it after the run's own setup, so the five setup lines appeared twice and every D113b receipt would have been stale"
+check = "read _helpers/ddl_run.py: for that capture the receipt's setup is the run's setup alone, and a declared setup that differs from it is refused ('the case's declared setup is not the run's setup'); other captures still add their fixture setup"
+
+[method]
+tests = "tests/unit/scripts/syntax_receipts/test_import_runs.py at 033de161: 74 pass"
+mutation = "restoring the old append (setup += the case's setup, no comparison) fails test_given_cases_rendered_with_the_run_setup_when_imported_then_the_setup_is_named_once"
+binding = "import-20261104-50 at e68a34f7: all 1,193 receipts equal a case of catalogue 7522b4e6 on case_id, sql_sha256, setup_sha256 (d836f13a), session_sha256 and capture; the report's 18 refusals are earlier runs' unestablished error phases, none about setup"
