@@ -69,6 +69,14 @@ fn given_snowflake_sql_when_checked_then_problems_are_coded_and_the_exit_status_
             expected_stderr_mention: "error[SQ0001]",
         },
         CheckCommandTestCase {
+            description: "a bare expression is no Snowflake statement: SQ0001 and exits 1",
+            arguments: &["check"],
+            sql: "CAST(1 AS INT)",
+            expected_exit_code: Some(1),
+            expected_stdout_prefix: "",
+            expected_stderr_mention: "Expected a statement, not an expression",
+        },
+        CheckCommandTestCase {
             description: "input holding no statement cannot be checked and exits 2",
             arguments: &["check", "-"],
             sql: "-- nothing here",
