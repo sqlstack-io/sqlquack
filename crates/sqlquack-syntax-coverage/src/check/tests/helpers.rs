@@ -94,6 +94,35 @@ pub(crate) fn pin_fingerprints(root: &Path) {
     );
 }
 
+/// Rewrites the query review to bind each query form by its fingerprint and definition under
+/// `structural`, in place of the family's file hashes (decision D118).
+pub(crate) fn pin_definitions(root: &Path) {
+    let coverage = crate::formats::main::load_coverage::load_coverage(root).expect("load");
+    let check =
+        crate::check::main::check_coverage::check_coverage(&coverage, Some(TREE), &structural);
+    let query: Vec<&crate::check::models::FormResult> = check
+        .forms
+        .iter()
+        .filter(|form| form.family == "query")
+        .collect();
+    let pins = |value: fn(&crate::check::models::FormResult) -> &str| -> String {
+        query
+            .iter()
+            .map(|form| format!("\"{}\" = \"{}\"", form.id, value(form)))
+            .collect::<Vec<String>>()
+            .join(", ")
+    };
+    let review: String = format!(
+        "[[review]]\nid = \"query-1\"\nreviewer_lane = \"auditor\"\nfamily = \"query\"\n\
+         parser_tree = \"{TREE}\"\nreviewed_utc = \"2026-11-04T09:00:00Z\"\n\
+         verdict = \"approved\"\nforms = [\"sf.query.select\", \"sf.query.select.top\"]\n\
+         fingerprints = {{ {} }}\ndefinitions = {{ {} }}\n",
+        pins(|form| &form.fingerprint),
+        pins(|form| &form.definition_sha256),
+    );
+    write(root, "reviews/query.toml", &review);
+}
+
 /// A local parse that crashes on everything.
 pub(crate) fn crashing(_sql: &str) -> LocalVerdict {
     LocalVerdict::Failed {

@@ -204,10 +204,16 @@ fn stale_entry(form: &FormResult, reviews: &[Review]) -> Value {
         recorded.push(json!({
             "id": review.id,
             "fingerprint": review.fingerprints.get(&form.id),
+            "definition_sha256": review.definitions.get(&form.id),
             "parser_tree": review.parser_tree,
         }));
     }
-    json!({"form": form.id, "fingerprint": form.fingerprint, "reviews": recorded})
+    json!({
+        "form": form.id,
+        "fingerprint": form.fingerprint,
+        "definition_sha256": form.definition_sha256,
+        "reviews": recorded,
+    })
 }
 
 pub(crate) fn stale(family: Option<&str>, common: &Common) -> Result<ExitCode, ExitCode> {

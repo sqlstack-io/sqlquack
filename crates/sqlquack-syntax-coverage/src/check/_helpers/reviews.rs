@@ -6,13 +6,22 @@ use crate::check::models::{FamilyContext, Reason};
 use crate::formats::constants::{CATALOGUE_DIR, OBLIGATIONS_DIR, SOURCES_FILE};
 use crate::formats::models::{Review, ReviewVerdict, Source, SourceStatus};
 
-/// Whether `review` is approved and current: its files, then the form's fingerprint or the tree.
+/// Whether `review` is approved and current for `form`, its id, fingerprint and definition hash:
+/// with a recorded definition, that and its fingerprint (D118); else its files, then the form's
+/// fingerprint or the tree.
 fn current(
     review: &Review,
     hashes: &BTreeMap<String, String>,
     parser_tree: Option<&str>,
-    form: Option<(&str, &str)>,
+    form: Option<(&str, &str, &str)>,
 ) -> bool {
+    if let Some((form, fingerprint, definition)) = form
+        && let Some(recorded) = review.definitions.get(form)
+    {
+        return review.verdict == ReviewVerdict::Approved
+            && recorded == definition
+            && review.fingerprints.get(form).map(String::as_str) == Some(fingerprint);
+    }
     let bound = |hash: &Option<String>, path: String| {
         hash.as_ref()
             .is_some_and(|hash| hashes.get(&path) == Some(hash))
@@ -29,7 +38,7 @@ fn current(
             )
         }
     };
-    let recorded: Option<bool> = form.and_then(|(form, fingerprint)| {
+    let recorded: Option<bool> = form.and_then(|(form, fingerprint, _)| {
         review
             .fingerprints
             .get(form)
@@ -52,10 +61,10 @@ fn names(review: &Review, form: &str) -> bool {
             .is_none_or(|forms| forms.iter().any(|listed| listed == form))
 }
 
-/// Why `form`, whose fingerprint is `fingerprint`, lacks a current review, if it does.
+/// Why `form`, with its fingerprint and definition hash, lacks a current review, if it does.
 pub(crate) fn review_reason(
     form: &str,
-    fingerprint: &str,
+    (fingerprint, definition): (&str, &str),
     context: &FamilyContext,
 ) -> Option<Reason> {
     let (reviews, hashes, parser_tree) = (context.reviews, context.hashes, context.parser_tree);
@@ -66,8 +75,15 @@ pub(crate) fn review_reason(
     if named.peek().is_none() {
         return Some(Reason::Unreviewed);
     }
-    (!named.any(|review| current(review, hashes, parser_tree, Some((form, fingerprint)))))
-        .then_some(Reason::StaleReview)
+    (!named.any(|review| {
+        current(
+            review,
+            hashes,
+            parser_tree,
+            Some((form, fingerprint, definition)),
+        )
+    }))
+    .then_some(Reason::StaleReview)
 }
 
 /// The form and source ids that current approved reviews exclude.

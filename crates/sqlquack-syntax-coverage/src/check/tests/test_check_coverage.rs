@@ -1,11 +1,13 @@
+use std::path::Path;
+
 use crate::check::main::check_coverage::check_coverage;
 use crate::check::models::{FormState, Reason};
 use crate::check::tests::helpers::{
     OTHER_TREE, SETUP, TREE, append_receipt, case_in_zone, case_line, crashing,
     crashing_on_select_from, drop_lines, exclusion_review, form, hanging, obligation, opaque,
-    pin_fingerprints, read, receipt_line, rejecting, replace, reshaped, rewrite_select_17,
-    select_17, select_17_setup_sha256, sha256, structural, unobservable, verified_tree,
-    with_fields, write,
+    pin_definitions, pin_fingerprints, read, receipt_line, rejecting, replace, reshaped,
+    rewrite_select_17, select_17, select_17_setup_sha256, sha256, structural, unobservable,
+    verified_tree, with_fields, write,
 };
 use crate::check::tests::test_types::CheckTestCase;
 use crate::formats::main::load_coverage::load_coverage;
@@ -888,6 +890,164 @@ fn given_a_review_with_fingerprints_when_the_parser_changes_then_only_changed_fo
             reason_found,
             "{}: {:?}",
             test_case.description, form.reasons
+        );
+        assert!(
+            check.problems.is_empty(),
+            "{}: {:?}",
+            test_case.description,
+            check.problems
+        );
+    }
+}
+
+/// Adds a note to the obligation `id` of kind `kind`, an edit the obligations file alone sees.
+fn note_obligation(root: &Path, id: &str, kind: &str) {
+    let declared: String = format!("id = \"{id}\"\nkind = \"{kind}\"\nrequired = true\n");
+    replace(
+        root,
+        "obligations/query.toml",
+        &declared,
+        &format!("{declared}note = \"edited after review\"\n"),
+    );
+}
+
+/// Moves the catalogue form `id` to another anchor, an edit the catalogue file alone sees.
+fn move_form(root: &Path, id: &str) {
+    let declared: String = format!("id = \"{id}\"\nfamily = \"query\"\nsource = \"doc.select\"\n");
+    replace(
+        root,
+        "catalogue/query.toml",
+        &format!("{declared}anchor = \"Syntax\""),
+        &format!("{declared}anchor = \"Syntax, edited\""),
+    );
+}
+
+#[test]
+fn given_a_review_binding_each_form_when_its_family_files_change_then_only_that_form_goes_stale() {
+    let test_cases = [
+        CheckTestCase {
+            description: "a review binding each form, with nothing changed",
+            mutate: pin_definitions,
+            parse: structural,
+            parser_tree: Some(TREE),
+            form: "sf.query.select",
+            expected_state: FormState::Verified,
+            expected_reason: None,
+            expected_problem: None,
+        },
+        CheckTestCase {
+            description: "another form's obligation edited in the same obligations file",
+            mutate: |root| {
+                pin_definitions(root);
+                note_obligation(root, "sf.query.select.top.o001", "positive");
+            },
+            parse: structural,
+            parser_tree: Some(TREE),
+            form: "sf.query.select",
+            expected_state: FormState::Verified,
+            expected_reason: None,
+            expected_problem: None,
+        },
+        CheckTestCase {
+            description: "another form's entry edited in the same catalogue file",
+            mutate: |root| {
+                pin_definitions(root);
+                move_form(root, "sf.query.select.top");
+            },
+            parse: structural,
+            parser_tree: Some(TREE),
+            form: "sf.query.select",
+            expected_state: FormState::Verified,
+            expected_reason: None,
+            expected_problem: None,
+        },
+        CheckTestCase {
+            description: "one of the form's own obligations edited after review",
+            mutate: |root| {
+                pin_definitions(root);
+                note_obligation(root, "sf.query.select.o002", "negative_neighbour");
+            },
+            parse: structural,
+            parser_tree: Some(TREE),
+            form: "sf.query.select",
+            expected_state: FormState::Unverified,
+            expected_reason: Some(Reason::StaleReview),
+            expected_problem: None,
+        },
+        CheckTestCase {
+            description: "the form's own catalogue entry edited after review",
+            mutate: |root| {
+                pin_definitions(root);
+                move_form(root, "sf.query.select");
+            },
+            parse: structural,
+            parser_tree: Some(TREE),
+            form: "sf.query.select",
+            expected_state: FormState::Unverified,
+            expected_reason: Some(Reason::StaleReview),
+            expected_problem: None,
+        },
+        CheckTestCase {
+            description: "a case's SQL edited after review, with a bound receipt for the new SQL",
+            mutate: |root| {
+                pin_definitions(root);
+                let edited: String =
+                    case_line("select-17", "sf.query.select.o001", "SELECT 18", &[SETUP]);
+                rewrite_select_17(root, &edited);
+                append_receipt(root, &receipt_line(&edited, "accepted"));
+            },
+            parse: structural,
+            parser_tree: Some(TREE),
+            form: "sf.query.select",
+            expected_state: FormState::Unverified,
+            expected_reason: Some(Reason::StaleReview),
+            expected_problem: None,
+        },
+        CheckTestCase {
+            description: "a parser change to the tree of one of the form's cases",
+            mutate: pin_definitions,
+            parse: reshaped,
+            parser_tree: Some(TREE),
+            form: "sf.query.select",
+            expected_state: FormState::Unverified,
+            expected_reason: Some(Reason::StaleReview),
+            expected_problem: None,
+        },
+        CheckTestCase {
+            description: "a review binding the family's files still goes stale on another form's edit",
+            mutate: |root| note_obligation(root, "sf.query.select.top.o001", "positive"),
+            parse: structural,
+            parser_tree: Some(TREE),
+            form: "sf.query.select",
+            expected_state: FormState::Unverified,
+            expected_reason: Some(Reason::StaleReview),
+            expected_problem: None,
+        },
+    ];
+
+    for test_case in test_cases {
+        let directory = tempfile::tempdir().expect("temporary directory");
+        verified_tree(directory.path());
+        (test_case.mutate)(directory.path());
+        let coverage = load_coverage(directory.path())
+            .unwrap_or_else(|problems| panic!("{}: {problems:#?}", test_case.description));
+        let check = check_coverage(&coverage, test_case.parser_tree, &test_case.parse);
+        let form = check
+            .forms
+            .iter()
+            .find(|form| form.id == test_case.form)
+            .unwrap_or_else(|| panic!("{}: no form {}", test_case.description, test_case.form));
+        assert_eq!(
+            (form.state, form.reasons.clone()),
+            (
+                test_case.expected_state,
+                test_case
+                    .expected_reason
+                    .into_iter()
+                    .collect::<Vec<Reason>>()
+            ),
+            "{}",
+            test_case.description
         );
         assert!(
             check.problems.is_empty(),
