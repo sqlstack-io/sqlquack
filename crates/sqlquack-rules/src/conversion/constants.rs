@@ -1197,7 +1197,7 @@ pub(crate) const DOLLAR_PARAMETER: &str = "Dollar";
 pub const VALUES_ROWS: &str = "rule.values_rows";
 /// The column names Snowflake gives VALUES rows: COLUMN1, COLUMN2 and so on.
 pub(crate) const VALUES_COLUMN_PREFIX: &str = "COLUMN";
-/// The most VALUES rows converted: each row nests one UNION ALL deeper.
+/// The most VALUES rows converted.
 pub(crate) const VALUES_ROWS_LIMIT: usize = 1000;
 /// JOIN ... USING.
 pub const JOIN_USING: &str = "rule.join_using";

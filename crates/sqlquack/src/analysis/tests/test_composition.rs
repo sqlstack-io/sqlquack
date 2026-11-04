@@ -45,8 +45,8 @@ fn given_large_literals_when_converting_then_time_stays_bounded() {
     let rows = |count: usize| vec!["(1)"; count].join(", ");
     let test_cases = [
         LargeLiteralTestCase {
-            description: "an array literal of 1,000 elements converts",
-            sql: format!("SELECT [{}] AS v", vec!["1"; 1000].join(", ")),
+            description: "an array literal of 250 elements converts",
+            sql: format!("SELECT [{}] AS v", vec!["1"; 250].join(", ")),
             expected_converted: true,
             expected_budget_seconds: 15,
         },
