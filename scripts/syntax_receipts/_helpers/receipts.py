@@ -82,9 +82,14 @@ def receipt(*, observation: Observation, extra: Row) -> Row:
 
 
 def input_row(*, sql: str, setup: list[str]) -> Row:
-    """The exact input a receipt's SQL hash names."""
+    """The exact input and setup a receipt's SQL and setup hashes name."""
     sha: str = digest(sql.encode())
-    return {"sql_sha256": sha, "sql": sql, "setup": setup}
+    return {
+        "sql_sha256": sha,
+        "sql": sql,
+        "setup": setup,
+        "setup_sha256": digest(canonical_json(setup)),
+    }
 
 
 def refusal(*, run_id: str, row_id: str, reason: str) -> Row:

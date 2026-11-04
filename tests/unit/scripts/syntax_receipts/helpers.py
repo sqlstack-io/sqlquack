@@ -42,8 +42,9 @@ def write_run(
     rows: list[dict[str, object]],
     packet: list[dict[str, object]],
     raw_hash: str | None = None,
+    start: dict[str, object] | None = None,
 ) -> None:
-    """One anonymous-block run under `root`/runs bound to a packet under `root`/inputs."""
+    """One run under `root`/runs bound to a packet under `root`/inputs; scripting by default."""
     inputs: Path = root / "inputs"
     inputs.mkdir(parents=True, exist_ok=True)
     packet_bytes: bytes = b"".join(json.dumps(row).encode() + b"\n" for row in packet)
@@ -59,6 +60,7 @@ def write_run(
             "parameters": {"TIMEZONE": "UTC"},
             "safety": {},
             "submission": "anonymous block, as-is",
+            **(start or {}),
         },
         {"event": "recording_session", "identity_checked": True},
         {"event": "complete", "raw_sha256": raw_hash or sha(raw)},

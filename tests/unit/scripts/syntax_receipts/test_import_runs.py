@@ -10,12 +10,14 @@ import pytest
 from scripts.syntax_receipts._helpers.receipts import classify, reason_category
 from scripts.syntax_receipts.main.import_runs import run_import
 from scripts.syntax_receipts.models import Imported
+from scripts.syntax_receipts.types import Row
 from tests.unit.scripts.syntax_receipts._test_types import (
     BindingTestCase,
     ClassifyTestCase,
     OverwriteTestCase,
     RefusedRunTestCase,
     RepublishTestCase,
+    SetupRunTestCase,
 )
 from tests.unit.scripts.syntax_receipts.helpers import (
     accepted_row,
@@ -29,6 +31,7 @@ from tests.unit.scripts.syntax_receipts.helpers import (
 
 _GOOD: str = "BEGIN RETURN 1; END;"
 _OTHER: str = "BEGIN RETURN 2; END;"
+_FIXTURE: list[str] = ['CREATE TABLE "ORDERS" ("ID" INTEGER)']
 _SYNTAX_ROW: dict[str, object] = error_row(
     case_id="c1", sql=_GOOD, errno=1003, message="SQL compilation error:\nsyntax error"
 )
@@ -261,3 +264,63 @@ def test_given_receipt_published_before_a_field_was_added_when_imported_again_th
     )
 
     assert second.read_text() == test_case.expected_new_receipts, test_case.description
+
+
+@pytest.mark.parametrize(
+    "test_case",
+    (
+        SetupRunTestCase(
+            description="an EXPLAIN run in a run database with fixture setup per item",
+            rows=[
+                {
+                    **accepted_row(case_id="c1", sql="SELECT id FROM orders"),
+                    "outcome": "compiled",
+                    "case_schema": "C0000",
+                },
+                {
+                    **error_row(case_id="c2", sql="SELECT FROM orders", errno=2003, message="x"),
+                    "outcome": "setup_failed",
+                    "case_schema": "C0001",
+                },
+            ],
+            packet=[
+                {**packet_case(case_id="c1", sql="SELECT id FROM orders"), "setup": _FIXTURE},
+                {**packet_case(case_id="c2", sql="SELECT FROM orders"), "setup": _FIXTURE},
+            ],
+            start={
+                "run_database": "SQLQUACK_DDL_ABC123",
+                "setup": ["CREATE DATABASE SQLQUACK_DDL_ABC123"],
+                "method": "EXPLAIN USING TEXT, once",
+            },
+            expected_receipts=[("c1", "accepted", "compile_only_explain")],
+            expected_setup_tail=[
+                "CREATE SCHEMA <run_database>.<case_schema>",
+                "USE SCHEMA <run_database>.<case_schema>",
+                *_FIXTURE,
+            ],
+            expected_refusals=["c2"],
+        ),
+    ),
+    ids=lambda case: case.description,
+)
+def test_given_fixture_setup_per_item_when_imported_then_receipts_name_that_setup(
+    test_case: SetupRunTestCase, tmp_path: Path
+) -> None:
+    write_run(root=tmp_path, rows=test_case.rows, packet=test_case.packet, start=test_case.start)
+    out: Path = tmp_path / "out.jsonl"
+
+    run_import(
+        [str(tmp_path / "runs"), str(out), str(tmp_path / "out.json"), str(tmp_path / "inputs")]
+    )
+
+    receipts: list[Row] = [json.loads(line) for line in out.read_text().splitlines()]
+    report: Row = json.loads((tmp_path / "out.json").read_text())
+    setups: dict[tuple[str, str], list[str]] = {
+        (row["sql_sha256"], row["setup_sha256"]): row["setup"] for row in report["inputs"]
+    }
+    assert [(r["case_id"], r["phase"], r["capture_method"]) for r in receipts] == (
+        test_case.expected_receipts
+    )
+    receipt_input: tuple[str, str] = (receipts[0]["sql_sha256"], receipts[0]["setup_sha256"])
+    assert setups[receipt_input][-3:] == test_case.expected_setup_tail
+    assert [r["row_id"] for r in report["refusals"]] == test_case.expected_refusals

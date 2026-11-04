@@ -44,7 +44,7 @@ def import_packet_run(*, run: CaptureRun, index: dict[str, Path]) -> Imported:
             found.refusals.append(refusal(run_id=run.path.name, row_id=row_id, reason=str(refused)))
             continue
         sql: Row = input_row(sql=case["sql"], setup=[])
-        found.inputs.setdefault(sql["sql_sha256"], sql)
+        found.inputs.setdefault(sql["sql_sha256"] + sql["setup_sha256"], sql)
         errno, sqlstate, message = error_fields(raw=raw)
         observation: Observation = Observation(
             run_id=run.path.name,
