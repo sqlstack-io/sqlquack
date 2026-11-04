@@ -1,0 +1,79 @@
+{
+  "arrow_sha256": "3b7752351bb11158ee9555a01cedc51ebd10eea2071c65b98ed3258f950f2b45",
+  "case_hash": "0ba110a3294d7284a8a77c144fa93b91fa6ed0924bace7357dabb645488d5eb4",
+  "columns": [
+    {
+      "internal_size": null,
+      "name": "C2",
+      "nullable": true,
+      "precision": 18,
+      "scale": 2,
+      "type_code": 0,
+      "type_name": "FIXED"
+    },
+    {
+      "internal_size": null,
+      "name": "C6",
+      "nullable": true,
+      "precision": 18,
+      "scale": 6,
+      "type_code": 0,
+      "type_name": "FIXED"
+    },
+    {
+      "internal_size": null,
+      "name": "R2",
+      "nullable": true,
+      "precision": 18,
+      "scale": 2,
+      "type_code": 0,
+      "type_name": "FIXED"
+    }
+  ],
+  "connector": "snowflake-connector-python 4.7.2",
+  "duckdb_version": "v2.0.0",
+  "effective_parameters": {
+    "BINARY_INPUT_FORMAT": "HEX",
+    "BINARY_OUTPUT_FORMAT": "HEX",
+    "DATE_INPUT_FORMAT": "AUTO",
+    "DATE_OUTPUT_FORMAT": "YYYY-MM-DD",
+    "DEFAULT_NULL_ORDERING": "LAST",
+    "GEOGRAPHY_OUTPUT_FORMAT": "GeoJSON",
+    "GEOMETRY_OUTPUT_FORMAT": "GeoJSON",
+    "JSON_INDENT": "2",
+    "QUOTED_IDENTIFIERS_IGNORE_CASE": "false",
+    "STRICT_JSON_OUTPUT": "false",
+    "TIMESTAMP_DAY_IS_ALWAYS_24H": "false",
+    "TIMESTAMP_INPUT_FORMAT": "AUTO",
+    "TIMESTAMP_LTZ_OUTPUT_FORMAT": "",
+    "TIMESTAMP_NTZ_OUTPUT_FORMAT": "YYYY-MM-DD HH24:MI:SS.FF3",
+    "TIMESTAMP_OUTPUT_FORMAT": "YYYY-MM-DD HH24:MI:SS.FF3 TZHTZM",
+    "TIMESTAMP_TYPE_MAPPING": "TIMESTAMP_NTZ",
+    "TIMESTAMP_TZ_OUTPUT_FORMAT": "",
+    "TIMEZONE": "UTC",
+    "TIME_INPUT_FORMAT": "AUTO",
+    "TIME_OUTPUT_FORMAT": "HH24:MI:SS",
+    "TWO_DIGIT_CENTURY_START": "1970",
+    "USE_CACHED_RESULT": "false",
+    "WEEK_OF_YEAR_POLICY": "0",
+    "WEEK_START": "0"
+  },
+  "error": null,
+  "format": 1,
+  "outcome": "rows",
+  "parameters_sha256": "d094d15417903748055eca8fde8cf2884751253939f05ad5ad8d9bf14299ac61",
+  "query_id_sha256": "b1142788434a0c429b5a38fac8c91d534255735e91549a451b09f4af904ae4f9",
+  "recorded_at": "2026-11-04T11:21:02.500565+00:00",
+  "recorder": "sqlquack-record 0.1.0",
+  "row_count": 6,
+  "session_parameters": {
+    "DEFAULT_NULL_ORDERING": "LAST",
+    "QUOTED_IDENTIFIERS_IGNORE_CASE": false,
+    "TIMESTAMP_TYPE_MAPPING": "TIMESTAMP_NTZ",
+    "TIMEZONE": "UTC",
+    "USE_CACHED_RESULT": false,
+    "WEEK_OF_YEAR_POLICY": 0,
+    "WEEK_START": 0
+  },
+  "warehouse_version": "10.40.100"
+}

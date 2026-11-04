@@ -37,15 +37,18 @@ use crate::conversion::_helpers::expressions::strings::text_operand;
 use crate::conversion::_helpers::support::divergence::{allows, diverge};
 use crate::conversion::_helpers::support::scope::{Context, Emitted, Literal, VariantRoot};
 use crate::conversion::_helpers::support::site::{Placement, Site};
-use crate::conversion::_helpers::support::tree::{Payload, flag, list, node_kind};
+use crate::conversion::_helpers::support::tree::{
+    Payload, flag, function_construct, list, node_kind, require_understood,
+};
 use crate::conversion::_helpers::support::typed_leaves::compared_by_text;
 use crate::conversion::constants::DUPLICATE_VARIANTS;
 use crate::conversion::constants::{
-    ARRAY_AGG_RULE, ARRAY_CAT_RULE, ARRAY_COMPACT_RULE, ARRAY_CONSTRUCT_COMPACT_RULE,
-    ARRAY_CONSTRUCT_RULE, ARRAY_CONTAINS_RULE, ARRAY_EXCEPT_RULE, ARRAY_POSITION_RULE,
-    ARRAY_POSITION_TYPE, ARRAY_SIZE_RULE, ARRAY_TO_STRING_RULE, FUNCTION_KIND, OBJECT_KEYS_RULE,
-    OBJECT_PICK_RULE, PICKED_ARRAY_FUNCTIONS, SORTED_ARRAY_FUNCTION, SPLIT_RULE, TO_VARIANT_RULE,
-    TYPED_CHECKS, VARIANT_KIND_RULE, VARIANT_KINDS, VARIANT_TYPED_CHECK,
+    ARRAY_AGG_RULE, ARRAY_APPEND_RULE, ARRAY_CAT_RULE, ARRAY_COMPACT_RULE,
+    ARRAY_CONSTRUCT_COMPACT_RULE, ARRAY_CONSTRUCT_RULE, ARRAY_CONTAINS_RULE, ARRAY_EXCEPT_RULE,
+    ARRAY_POSITION_RULE, ARRAY_POSITION_TYPE, ARRAY_SIZE_RULE, ARRAY_TO_STRING_RULE,
+    COUNTED_ARRAY_FUNCTIONS, FUNCTION_KIND, OBJECT_KEYS_RULE, OBJECT_PICK_RULE,
+    PICKED_ARRAY_FUNCTIONS, SORTED_ARRAY_FUNCTION, SPLIT_RULE, TO_VARIANT_RULE, TYPED_CHECKS,
+    VARIANT_KIND_RULE, VARIANT_KINDS, VARIANT_TYPED_CHECK,
 };
 
 /// A VARIANT operand, or a NULL literal as a NULL VARIANT.
@@ -78,7 +81,7 @@ pub(crate) fn array_construct(
     let (values, held) = leaves(values, construct, site.context)?;
     let sql = match compact {
         true => json_array_construct_compact(&values, log),
-        false => json_array_construct(&values, log),
+        false => json_array_construct(&values, false, log),
     };
     Ok(built(sql, held, VariantRoot::Container, site.context))
 }
@@ -194,7 +197,7 @@ pub(crate) fn variant_function(
         ("ARRAY_SIZE", [array]) => {
             let _rule = log.rule(ARRAY_SIZE_RULE);
             let mark = site.context.order.mark();
-            let array = held_variant(array, construct, site.order_free(true))?;
+            let array = counted_array(array, construct, site.order_free(true))?;
             site.context.order.absorb(mark);
             Ok(Emitted::new(
                 json_array_size(&array, log),
@@ -322,6 +325,66 @@ pub(crate) fn to_variant(
     let (values, held) = leaves(vec![value], construct, context)?;
     let sql = values.into_iter().next().unwrap_or_default();
     Ok(built(sql, held, root, context))
+}
+
+/// ARRAY_SIZE's operand, ARRAY_CONSTRUCT, _APPEND and _CAT counting undefined elements as Snowflake.
+fn counted_array(node: &Value, construct: &Construct, site: Site<'_>) -> Result<String, Refusal> {
+    let Some(call) = node.get(FUNCTION_KIND).and_then(Value::as_object) else {
+        return held_variant(node, construct, site);
+    };
+    let name = call
+        .get("name")
+        .and_then(Value::as_str)
+        .unwrap_or_default()
+        .to_ascii_uppercase();
+    let shadowed = site.context.schema.functions.contains_key(&name)
+        || site.context.options.overrides.contains_key(&name);
+    if shadowed || !COUNTED_ARRAY_FUNCTIONS.contains(&name.as_str()) {
+        return held_variant(node, construct, site);
+    }
+    let called = function_construct(&name);
+    require_understood(call, &["name", "args"], &called)?;
+    let log = site.context.log;
+    match (name.as_str(), list(call, "args")) {
+        ("ARRAY_CONSTRUCT", values) => {
+            let _rule = log.rule(ARRAY_CONSTRUCT_RULE);
+            counted_elements(values, &called, site)
+        }
+        ("ARRAY_APPEND", [array, value]) => {
+            let _rule = log.rule(ARRAY_APPEND_RULE);
+            let array = counted_array(array, construct, site)?;
+            let appended = counted_elements(std::slice::from_ref(value), &called, site)?;
+            Ok(json_array_cat((&array, &appended), log))
+        }
+        ("ARRAY_CAT", [left, right]) => {
+            let _rule = log.rule(ARRAY_CAT_RULE);
+            let left = counted_array(left, construct, site)?;
+            let right = counted_array(right, construct, site)?;
+            Ok(json_array_cat((&left, &right), log))
+        }
+        _ => held_variant(node, construct, site),
+    }
+}
+
+/// The values as a JSON array whose length alone is read; a FLOAT held apart refuses.
+fn counted_elements(
+    values: &[Value],
+    construct: &Construct,
+    site: Site<'_>,
+) -> Result<String, Refusal> {
+    diverge(site.context, JSON_FIDELITY, construct)?;
+    let values = values
+        .iter()
+        .map(|value| convert_held(value, site))
+        .collect::<Result<Vec<Emitted>, Refusal>>()?;
+    let (values, held) = leaves(values, construct, site.context)?;
+    if held {
+        return Err(refused(
+            construct,
+            "an array element of a FLOAT, which DuckDB holds apart from JSON",
+        ));
+    }
+    Ok(json_array_construct(&values, true, site.context.log))
 }
 
 /// A VARIANT argument read as JSON, also when it is VARIANT-held.
