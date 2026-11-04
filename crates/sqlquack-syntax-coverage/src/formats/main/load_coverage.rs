@@ -21,6 +21,7 @@ pub fn load_coverage(root: &Path) -> Result<SyntaxCoverage, Vec<String>> {
     }
     let mut file_hashes: BTreeMap<String, String> = sections.catalogue.hashes;
     file_hashes.extend(sections.obligations.hashes);
+    file_hashes.extend(sections.sources.hashes);
     Ok(SyntaxCoverage {
         sources: sections.sources.records,
         indexes: sections.indexes.records,

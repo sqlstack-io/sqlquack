@@ -48,14 +48,16 @@ fn is_report(path: &Path) -> bool {
 
 pub(crate) fn load_sources(root: &Path) -> Section<Vec<Source>> {
     match read_toml::<SourcesFile>(&root.join(SOURCES_FILE)) {
-        Ok((file, _)) => {
+        Ok((file, hash)) => {
             let problems: Vec<String> = file.sources.iter().flat_map(check_source).collect();
             let declared: Vec<String> = file
                 .sources
                 .iter()
                 .map(|source| source.id.clone())
                 .collect();
-            Section::of(file.sources, declared, problems)
+            let mut section: Section<Vec<Source>> = Section::of(file.sources, declared, problems);
+            section.hashes.insert(SOURCES_FILE.to_owned(), hash);
+            section
         }
         Err(problem) => Section::of(Vec::new(), Vec::new(), vec![problem]),
     }

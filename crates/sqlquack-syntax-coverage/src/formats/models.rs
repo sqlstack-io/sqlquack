@@ -347,6 +347,6 @@ pub struct SyntaxCoverage {
     pub cases: BTreeMap<String, Vec<Case>>,
     pub receipts: Vec<Receipt>,
     pub reviews: Vec<Review>,
-    /// SHA-256 of each catalogue and obligation file's bytes, by path relative to the root.
+    /// SHA-256 of the sources, catalogue and obligation files' bytes, by path relative to the root.
     pub file_hashes: BTreeMap<String, String>,
 }

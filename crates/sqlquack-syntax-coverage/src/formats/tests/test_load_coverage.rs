@@ -53,7 +53,7 @@ fn given_a_valid_tree_when_loading_then_every_record_is_kept() {
         cases: 1,
         receipts,
         reviews: 2,
-        file_hashes: 2 * FAMILIES.len(),
+        file_hashes: 2 * FAMILIES.len() + 1,
     };
     let test_cases = [
         LoadTestCase {
