@@ -666,11 +666,11 @@ pub(crate) fn to_timestamp(
                 cast_to(&operand, DATE_NAME, false, (site.context, construct)).map_err(refuse)?;
             Ok(Emitted::new(sql, SnowflakeType::Date))
         }
-        (SnowflakeType::TimestampNtz { .. }, None, false) if !trying => {
+        (SnowflakeType::TimestampNtz { precision: 9 }, None, false) if !trying => {
             let _temporal = log.rule(TO_TIMESTAMP_TEMPORAL);
             Ok(operand)
         }
-        (SnowflakeType::Date, None, false) if !trying => {
+        (SnowflakeType::Date | SnowflakeType::TimestampNtz { .. }, None, false) if !trying => {
             let _temporal = log.rule(TO_TIMESTAMP_TEMPORAL);
             let sql = cast_to(
                 &operand,

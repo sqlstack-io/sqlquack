@@ -1541,7 +1541,7 @@ pub const RULES: &[RuleSpec] = &[
     RuleSpec {
         id: TO_TIMESTAMP_TEMPORAL,
         constructs: &["fn:TO_TIMESTAMP", "fn:TO_TIMESTAMP_NTZ"],
-        conditions: "A TIMESTAMP_NTZ(p) operand without a scale is the same timestamp, typed TIMESTAMP_NTZ(p); a DATE operand is its midnight, cast to TIMESTAMP_NTZ(9) as CAST does, relying on timestamp_range. TRY_ forms of these operands are not converted.",
+        conditions: "A DATE or TIMESTAMP_NTZ(p) operand without a scale, cast to TIMESTAMP_NTZ(9) as CAST does, as recorded: a DATE is its midnight, a timestamp keeps its value, and the result is TIMESTAMP_NTZ(9) whatever p is; values outside DuckDB's nanosecond range rely on timestamp_range. TRY_ forms of these operands are not converted, as Snowflake rejects them (error 1065).",
         failures: &[],
     },
     RuleSpec {
