@@ -737,14 +737,9 @@ impl Parser {
 
     fn parse_time_data_type(&mut self) -> Result<DataType> {
         let precision = if self.match_token(TokenType::LParen) {
-            if self.check(TokenType::RParen) {
-                self.skip();
-                None
-            } else {
-                let p = self.expect_number()? as u32;
-                self.expect_token(TokenType::RParen)?;
-                Some(p)
-            }
+            let p = self.expect_number()? as u32;
+            self.expect_token(TokenType::RParen)?;
+            Some(p)
         } else {
             None
         };
@@ -907,10 +902,7 @@ impl Parser {
 
     fn parse_varbinary_data_type(&mut self) -> Result<DataType> {
         if self.match_token(TokenType::LParen) {
-            if self.check(TokenType::RParen) {
-                self.skip();
-                Ok(DataType::VarBinary { length: None })
-            } else if self.check_identifier("MAX") {
+            if self.check_identifier("MAX") {
                 self.skip();
                 self.expect_token(TokenType::RParen)?;
                 Ok(DataType::Custom {
@@ -1126,6 +1118,9 @@ impl Parser {
                 let mut after_comma = true;
                 loop {
                     if self.check(TokenType::RParen) {
+                        if after_comma && !(args.is_empty() && name == "TABLE") {
+                            return Err(self.parse_error("Expected a type parameter"));
+                        }
                         break;
                     }
                     let token = self.advance()?;
