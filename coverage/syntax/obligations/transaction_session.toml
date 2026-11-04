@@ -1425,10 +1425,11 @@ required = true
 note = "the form without its required )"
 
 [[obligation]]
-id = "sf.transaction_session.desc-result.o011"
+id = "sf.transaction_session.desc-result.o014"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required { '<query_id>' | LAST_QUERY_ID ( ) }"
+anchor = "doc.sql.desc-result / Syntax"
+note = "the form without its required { '<query_id>' | LAST_QUERY_ID ( ) }, observed"
 
 [[obligation]]
 id = "sf.transaction_session.rollback.o001"
@@ -2100,13 +2101,6 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "sf.transaction_session.use-role.o002"
-kind = "required_operand_missing"
-required = true
-target = "<name>"
-note = "omit <name>"
-
-[[obligation]]
 id = "sf.transaction_session.use-role.o003"
 kind = "operand_type_class"
 required = true
@@ -2135,6 +2129,14 @@ required = true
 target = "<name>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.transaction_session.use-role.o007"
+kind = "required_operand_missing"
+required = true
+target = "<name>"
+anchor = "doc.sql.use-role / Syntax"
+note = "omit <name>, observed"
 
 [[obligation]]
 id = "sf.transaction_session.use-schema.o001"
@@ -2352,13 +2354,6 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "sf.transaction_session.use-warehouse.o002"
-kind = "required_operand_missing"
-required = true
-target = "<name>"
-note = "omit <name>"
-
-[[obligation]]
 id = "sf.transaction_session.use-warehouse.o003"
 kind = "operand_type_class"
 required = true
@@ -2387,3 +2382,11 @@ required = true
 target = "<name>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.transaction_session.use-warehouse.o007"
+kind = "required_operand_missing"
+required = true
+target = "<name>"
+anchor = "doc.sql.use-warehouse / Syntax"
+note = "omit <name>, observed"

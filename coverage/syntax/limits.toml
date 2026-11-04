@@ -21399,3 +21399,2558 @@ kind = "identifier_class"
 target = "<series_colname>"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 reason = "the argument is a column-name string, as the page's argument list quotes 'series_colname' (auditor review 53401a6a)"
+
+# dml: scored rejects whose receipt shows no syntax error, observed under D97 (auditor review e92ce262, applied family-wide).
+
+[[suppress]]
+form = "sf.dml.copy-files.from-select-from"
+kind = "negative_neighbour"
+note = "the form without its required FILES"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 90105 SQLSTATE 22000 (phase semantic_error, import-20261104-20), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.dml.copy-files.from-select-from"
+kind = "negative_neighbour"
+note = "the form without its required FILES, observed"
+anchor = "doc.sql.copy-files / Syntax / Copy from a query"
+sql = "COPY INTO @s1 FROM ( SELECT v1 FROM v1 ) ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.dml.copy-files.from-select-from"
+kind = "required_operand_missing"
+target = "<new_filename> in [ , <new_filename> ]"
+note = "omit <new_filename>"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 90105 SQLSTATE 22000 (phase semantic_error, import-20261104-20), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.dml.copy-files.from-select-from"
+kind = "required_operand_missing"
+target = "<new_filename> in [ , <new_filename> ]"
+note = "omit <new_filename>, observed"
+anchor = "doc.sql.copy-files / Syntax / Copy from a query"
+sql = "COPY FILES INTO @s1 FROM ( SELECT v1 , FROM v1 ) ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.dml.copy-files.from-select-from"
+kind = "identifier_class"
+target = "<namespace>"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 90105 SQLSTATE 22000 (phase semantic_error, import-20261104-20), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.dml.copy-files.from-select-from"
+kind = "identifier_class"
+target = "<namespace>"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance), observed"
+anchor = "doc.sql.copy-files / Syntax / Copy from a query"
+sql = "COPY FILES INTO @SELECT.s1 FROM ( SELECT v1 FROM v1 ) ;"
+expect = "observe"
+also_sql = "COPY FILES INTO @\"SELECT\".s1 FROM ( SELECT v1 FROM v1 ) ;"
+also_expect = "accept"
+context = "raw"
+
+[[suppress]]
+form = "sf.dml.copy-files.from-select-from"
+kind = "required_operand_missing"
+target = "<namespace> in [ <namespace> . ]"
+note = "omit <namespace>"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 90105 SQLSTATE 22000 (phase semantic_error, import-20261104-20), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.dml.copy-files.from-select-from"
+kind = "required_operand_missing"
+target = "<namespace> in [ <namespace> . ]"
+note = "omit <namespace>, observed"
+anchor = "doc.sql.copy-files / Syntax / Copy from a query"
+sql = "COPY FILES INTO @.s1 FROM ( SELECT v1 FROM v1 ) ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.dml.copy-files.from-select-from"
+kind = "identifier_class"
+target = "<stage_name>"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 90105 SQLSTATE 22000 (phase semantic_error, import-20261104-20), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.dml.copy-files.from-select-from"
+kind = "identifier_class"
+target = "<stage_name>"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance), observed"
+anchor = "doc.sql.copy-files / Syntax / Copy from a query"
+sql = "COPY FILES INTO @SELECT FROM ( SELECT v1 FROM v1 ) ;"
+expect = "observe"
+also_sql = "COPY FILES INTO @\"SELECT\" FROM ( SELECT v1 FROM v1 ) ;"
+also_expect = "accept"
+context = "raw"
+
+[[suppress]]
+form = "sf.dml.copy-files.from-select-from"
+kind = "negative_neighbour"
+target = "<new_filename> in [ , <new_filename> ]"
+note = "a string literal in place of <new_filename>"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 90105 SQLSTATE 22000 (phase semantic_error, import-20261104-20), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.dml.copy-files.from-select-from"
+kind = "negative_neighbour"
+target = "<new_filename> in [ , <new_filename> ]"
+note = "a string literal in place of <new_filename>, observed"
+anchor = "doc.sql.copy-files / Syntax / Copy from a query"
+sql = "COPY FILES INTO @s1 FROM ( SELECT v1 , 'v1' FROM v1 ) ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.dml.copy-files.from-select-from"
+kind = "required_operand_missing"
+target = "<stage_name>"
+note = "omit <stage_name>"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 1012 SQLSTATE 42601 (phase semantic_error, import-20261104-20), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.dml.copy-files.from-select-from"
+kind = "required_operand_missing"
+target = "<stage_name>"
+note = "omit <stage_name>, observed"
+anchor = "doc.sql.copy-files / Syntax / Copy from a query"
+sql = "COPY FILES INTO @ FROM ( SELECT v1 FROM v1 ) ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.dml.copy-files.from-select-from"
+kind = "negative_neighbour"
+target = "<table_name>"
+note = "a string literal in place of <table_name>"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 1011 SQLSTATE 42601 (phase semantic_error, import-20261104-20), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.dml.copy-files.from-select-from"
+kind = "negative_neighbour"
+target = "<table_name>"
+note = "a string literal in place of <table_name>, observed"
+anchor = "doc.sql.copy-files / Syntax / Copy from a query"
+sql = "COPY FILES INTO @s1 FROM ( SELECT v1 FROM 'v1' ) ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.dml.copy-files.from"
+kind = "required_operand_missing"
+target = "<stage_name>"
+note = "omit <stage_name>"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 1012 SQLSTATE 42601 (phase semantic_error, import-20261104-20), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.dml.copy-files.from"
+kind = "required_operand_missing"
+target = "<stage_name>"
+note = "omit <stage_name>, observed"
+anchor = "doc.sql.copy-files / Syntax / Copy from a stage"
+sql = "COPY FILES INTO @ FROM @s1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.dml.copy-files.from"
+kind = "required_operand_missing"
+target = "<stage_name> #2"
+note = "omit <stage_name>"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 1012 SQLSTATE 42601 (phase semantic_error, import-20261104-20), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.dml.copy-files.from"
+kind = "required_operand_missing"
+target = "<stage_name> #2"
+note = "omit <stage_name>, observed"
+anchor = "doc.sql.copy-files / Syntax / Copy from a stage"
+sql = "COPY FILES INTO @s1 FROM @ ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.dml.copy-files.from"
+kind = "identifier_class"
+target = "<namespace>"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 90105 SQLSTATE 22000 (phase semantic_error, import-20261104-20), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.dml.copy-files.from"
+kind = "identifier_class"
+target = "<namespace>"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance), observed"
+anchor = "doc.sql.copy-files / Syntax / Copy from a stage"
+sql = "COPY FILES INTO @SELECT.s1 FROM @s1 ;"
+expect = "observe"
+also_sql = "COPY FILES INTO @\"SELECT\".s1 FROM @s1 ;"
+also_expect = "accept"
+context = "raw"
+
+[[suppress]]
+form = "sf.dml.copy-files.from"
+kind = "required_operand_missing"
+target = "<namespace> in [ <namespace> . ] #2"
+note = "omit <namespace>"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 90105 SQLSTATE 22000 (phase semantic_error, import-20261104-20), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.dml.copy-files.from"
+kind = "required_operand_missing"
+target = "<namespace> in [ <namespace> . ] #2"
+note = "omit <namespace>, observed"
+anchor = "doc.sql.copy-files / Syntax / Copy from a stage"
+sql = "COPY FILES INTO @s1 FROM @.s1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.dml.copy-files.from"
+kind = "required_operand_missing"
+target = "<namespace> in [ <namespace> . ]"
+note = "omit <namespace>"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 90105 SQLSTATE 22000 (phase semantic_error, import-20261104-20), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.dml.copy-files.from"
+kind = "required_operand_missing"
+target = "<namespace> in [ <namespace> . ]"
+note = "omit <namespace>, observed"
+anchor = "doc.sql.copy-files / Syntax / Copy from a stage"
+sql = "COPY FILES INTO @.s1 FROM @s1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.dml.copy-files.from"
+kind = "identifier_class"
+target = "<stage_name>"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 90105 SQLSTATE 22000 (phase semantic_error, import-20261104-20), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.dml.copy-files.from"
+kind = "identifier_class"
+target = "<stage_name>"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance), observed"
+anchor = "doc.sql.copy-files / Syntax / Copy from a stage"
+sql = "COPY FILES INTO @SELECT FROM @s1 ;"
+expect = "observe"
+also_sql = "COPY FILES INTO @\"SELECT\" FROM @s1 ;"
+also_expect = "accept"
+context = "raw"
+
+[[suppress]]
+form = "sf.dml.copy-into-location"
+kind = "identifier_class"
+target = "<int_stage_name>"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 90105 SQLSTATE 22000 (phase semantic_error, import-20261104-20), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.dml.copy-into-location"
+kind = "identifier_class"
+target = "<int_stage_name>"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance), observed"
+anchor = "doc.sql.copy-into-location / Syntax"
+sql = "COPY INTO @SELECT FROM v1 ;"
+expect = "observe"
+also_sql = "COPY INTO @\"SELECT\" FROM v1 ;"
+also_expect = "accept"
+context = "raw"
+
+[[suppress]]
+form = "sf.dml.copy-into-location"
+kind = "identifier_class"
+target = "<ext_stage_name>"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 90105 SQLSTATE 22000 (phase semantic_error, import-20261104-20), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.dml.copy-into-location"
+kind = "identifier_class"
+target = "<ext_stage_name>"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance), observed"
+anchor = "doc.sql.copy-into-location / Syntax"
+sql = "COPY INTO @SELECT FROM v1 ;"
+expect = "observe"
+also_sql = "COPY INTO @\"SELECT\" FROM v1 ;"
+also_expect = "accept"
+context = "raw"
+
+[[suppress]]
+form = "sf.dml.copy-into-location"
+kind = "required_operand_missing"
+target = "<namespace> in [ <namespace> . ] #2"
+note = "omit <namespace>"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 2003 SQLSTATE 42S02 (phase semantic_error, import-20261104-20), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.dml.copy-into-location"
+kind = "required_operand_missing"
+target = "<namespace> in [ <namespace> . ] #2"
+note = "omit <namespace>, observed"
+anchor = "doc.sql.copy-into-location / Syntax"
+sql = "COPY INTO @.%v1 FROM v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.dml.copy-into-location"
+kind = "required_operand_missing"
+target = "<namespace> in [ <namespace> . ]"
+note = "omit <namespace>"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 90105 SQLSTATE 22000 (phase semantic_error, import-20261104-20), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.dml.copy-into-location"
+kind = "required_operand_missing"
+target = "<namespace> in [ <namespace> . ]"
+note = "omit <namespace>, observed"
+anchor = "doc.sql.copy-into-location / Syntax"
+sql = "COPY INTO @.s1 FROM v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.dml.copy-into-location"
+kind = "required_operand_missing"
+target = "<namespace> in [ <namespace> . ] #3"
+note = "omit <namespace>"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 90105 SQLSTATE 22000 (phase semantic_error, import-20261104-20), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.dml.copy-into-location"
+kind = "required_operand_missing"
+target = "<namespace> in [ <namespace> . ] #3"
+note = "omit <namespace>, observed"
+anchor = "doc.sql.copy-into-location / Syntax"
+sql = "COPY INTO @.s1 FROM v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.dml.copy-into-location"
+kind = "identifier_class"
+target = "<table_name>"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 2003 SQLSTATE 42S02 (phase semantic_error, import-20261104-20), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.dml.copy-into-location"
+kind = "identifier_class"
+target = "<table_name>"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance), observed"
+anchor = "doc.sql.copy-into-location / Syntax"
+sql = "COPY INTO @%SELECT FROM v1 ;"
+expect = "observe"
+also_sql = "COPY INTO @%\"SELECT\" FROM v1 ;"
+also_expect = "accept"
+context = "raw"
+
+[[suppress]]
+form = "sf.dml.copy-into-location"
+kind = "required_operand_missing"
+target = "<int_stage_name>"
+note = "omit <int_stage_name>"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 2003 SQLSTATE 42S02 (phase semantic_error, import-20261104-20), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.dml.copy-into-location"
+kind = "required_operand_missing"
+target = "<int_stage_name>"
+note = "omit <int_stage_name>, observed"
+anchor = "doc.sql.copy-into-location / Syntax"
+sql = "COPY INTO @ FROM v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.dml.copy-into-location"
+kind = "required_operand_missing"
+target = "<ext_stage_name>"
+note = "omit <ext_stage_name>"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 2003 SQLSTATE 42S02 (phase semantic_error, import-20261104-20), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.dml.copy-into-location"
+kind = "required_operand_missing"
+target = "<ext_stage_name>"
+note = "omit <ext_stage_name>, observed"
+anchor = "doc.sql.copy-into-location / Syntax"
+sql = "COPY INTO @ FROM v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.dml.copy-into-location"
+kind = "required_operand_missing"
+target = "<table_name>"
+note = "omit <table_name>"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 2003 SQLSTATE 42S02 (phase semantic_error, import-20261104-20), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.dml.copy-into-location"
+kind = "required_operand_missing"
+target = "<table_name>"
+note = "omit <table_name>, observed"
+anchor = "doc.sql.copy-into-location / Syntax"
+sql = "COPY INTO @% FROM v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.dml.copy-into-location"
+kind = "identifier_class"
+target = "<namespace>"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 90105 SQLSTATE 22000 (phase semantic_error, import-20261104-20), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.dml.copy-into-location"
+kind = "identifier_class"
+target = "<namespace>"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance), observed"
+anchor = "doc.sql.copy-into-location / Syntax"
+sql = "COPY INTO @SELECT.s1 FROM v1 ;"
+expect = "observe"
+also_sql = "COPY INTO @\"SELECT\".s1 FROM v1 ;"
+also_expect = "accept"
+context = "raw"
+
+[[suppress]]
+form = "sf.dml.copy-into-table.internalstage-externalstage-externallocation"
+kind = "required_operand_missing"
+target = "<table_name> #2"
+note = "omit <table_name>"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 1757 SQLSTATE 42601 (phase semantic_error, import-20261104-20), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.dml.copy-into-table.internalstage-externalstage-externallocation"
+kind = "required_operand_missing"
+target = "<table_name> #2"
+note = "omit <table_name>, observed"
+anchor = "doc.sql.copy-into-table / Syntax"
+sql = "COPY INTO v1 FROM @% ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.dml.copy-into-table.internalstage-externalstage-externallocation"
+kind = "required_operand_missing"
+target = "<int_stage_name>"
+note = "omit <int_stage_name>"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 1757 SQLSTATE 42601 (phase semantic_error, import-20261104-20), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.dml.copy-into-table.internalstage-externalstage-externallocation"
+kind = "required_operand_missing"
+target = "<int_stage_name>"
+note = "omit <int_stage_name>, observed"
+anchor = "doc.sql.copy-into-table / Syntax"
+sql = "COPY INTO v1 FROM @ ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.dml.copy-into-table.internalstage-externalstage-externallocation"
+kind = "required_operand_missing"
+target = "<ext_stage_name>"
+note = "omit <ext_stage_name>"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 1757 SQLSTATE 42601 (phase semantic_error, import-20261104-20), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.dml.copy-into-table.internalstage-externalstage-externallocation"
+kind = "required_operand_missing"
+target = "<ext_stage_name>"
+note = "omit <ext_stage_name>, observed"
+anchor = "doc.sql.copy-into-table / Syntax"
+sql = "COPY INTO v1 FROM @ ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.dml.copy-into-table.internalstage-externalstage-externallocation"
+kind = "identifier_class"
+target = "<int_stage_name>"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 1757 SQLSTATE 42601 (phase semantic_error, import-20261104-20), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.dml.copy-into-table.internalstage-externalstage-externallocation"
+kind = "identifier_class"
+target = "<int_stage_name>"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance), observed"
+anchor = "doc.sql.copy-into-table / Syntax"
+sql = "COPY INTO v1 FROM @SELECT ;"
+expect = "observe"
+also_sql = "COPY INTO v1 FROM @\"SELECT\" ;"
+also_expect = "accept"
+context = "raw"
+
+[[suppress]]
+form = "sf.dml.copy-into-table.internalstage-externalstage-externallocation"
+kind = "identifier_class"
+target = "<ext_stage_name>"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 1757 SQLSTATE 42601 (phase semantic_error, import-20261104-20), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.dml.copy-into-table.internalstage-externalstage-externallocation"
+kind = "identifier_class"
+target = "<ext_stage_name>"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance), observed"
+anchor = "doc.sql.copy-into-table / Syntax"
+sql = "COPY INTO v1 FROM @SELECT ;"
+expect = "observe"
+also_sql = "COPY INTO v1 FROM @\"SELECT\" ;"
+also_expect = "accept"
+context = "raw"
+
+[[suppress]]
+form = "sf.dml.copy-into-table.internalstage-externalstage-externallocation"
+kind = "required_operand_missing"
+target = "<namespace> in [ <namespace> . ] #2"
+note = "omit <namespace>"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 1757 SQLSTATE 42601 (phase semantic_error, import-20261104-20), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.dml.copy-into-table.internalstage-externalstage-externallocation"
+kind = "required_operand_missing"
+target = "<namespace> in [ <namespace> . ] #2"
+note = "omit <namespace>, observed"
+anchor = "doc.sql.copy-into-table / Syntax"
+sql = "COPY INTO v1 FROM @.s1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.dml.copy-into-table.internalstage-externalstage-externallocation"
+kind = "required_operand_missing"
+target = "<namespace> in [ <namespace> . ] #4"
+note = "omit <namespace>"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 1757 SQLSTATE 42601 (phase semantic_error, import-20261104-20), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.dml.copy-into-table.internalstage-externalstage-externallocation"
+kind = "required_operand_missing"
+target = "<namespace> in [ <namespace> . ] #4"
+note = "omit <namespace>, observed"
+anchor = "doc.sql.copy-into-table / Syntax"
+sql = "COPY INTO v1 FROM @.s1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.dml.copy-into-table.internalstage-externalstage-externallocation"
+kind = "negative_neighbour"
+target = "<column_name> in [ INCLUDE_METADATA = ( <column_name> = { METADATA$FILENAME | METADATA$FILE_ROW_NUMBER | METADATA$FILE_…"
+note = "a string literal in place of <column_name>"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 1757 SQLSTATE 42601 (phase semantic_error, import-20261104-20), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.dml.copy-into-table.internalstage-externalstage-externallocation"
+kind = "negative_neighbour"
+target = "<column_name> in [ INCLUDE_METADATA = ( <column_name> = { METADATA$FILENAME | METADATA$FILE_ROW_NUMBER | METADATA$FILE_…"
+note = "a string literal in place of <column_name>, observed"
+anchor = "doc.sql.copy-into-table / Syntax"
+sql = "COPY INTO v1 FROM @s1 INCLUDE_METADATA = ( 'v1' = METADATA$FILENAME ) ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.dml.copy-into-table.internalstage-externalstage-externallocation"
+kind = "required_operand_missing"
+target = "<namespace> in [ <namespace> . ] #3"
+note = "omit <namespace>"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 1757 SQLSTATE 42601 (phase semantic_error, import-20261104-20), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.dml.copy-into-table.internalstage-externalstage-externallocation"
+kind = "required_operand_missing"
+target = "<namespace> in [ <namespace> . ] #3"
+note = "omit <namespace>, observed"
+anchor = "doc.sql.copy-into-table / Syntax"
+sql = "COPY INTO v1 FROM @.%v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.dml.copy-into-table.select-from-internalstage-externalstage"
+kind = "identifier_class"
+target = "<file_col_num>"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 2211 SQLSTATE 02000 (phase semantic_error, import-20261104-20), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.dml.copy-into-table.select-from-internalstage-externalstage"
+kind = "identifier_class"
+target = "<file_col_num>"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance), observed"
+anchor = "doc.sql.copy-into-table / Syntax"
+sql = "COPY INTO v1 FROM ( SELECT $SELECT FROM @s1 ) ;"
+expect = "observe"
+also_sql = "COPY INTO v1 FROM ( SELECT $\"SELECT\" FROM @s1 ) ;"
+also_expect = "accept"
+context = "raw"
+
+[[suppress]]
+form = "sf.dml.copy-into-table.select-from-internalstage-externalstage"
+kind = "identifier_class"
+target = "<int_stage_name>"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 1757 SQLSTATE 42601 (phase semantic_error, import-20261104-20), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.dml.copy-into-table.select-from-internalstage-externalstage"
+kind = "identifier_class"
+target = "<int_stage_name>"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance), observed"
+anchor = "doc.sql.copy-into-table / Syntax"
+sql = "COPY INTO v1 FROM ( SELECT $1 FROM @SELECT ) ;"
+expect = "observe"
+also_sql = "COPY INTO v1 FROM ( SELECT $1 FROM @\"SELECT\" ) ;"
+also_expect = "accept"
+context = "raw"
+
+[[suppress]]
+form = "sf.dml.copy-into-table.select-from-internalstage-externalstage"
+kind = "identifier_class"
+target = "<ext_stage_name>"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 1757 SQLSTATE 42601 (phase semantic_error, import-20261104-20), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.dml.copy-into-table.select-from-internalstage-externalstage"
+kind = "identifier_class"
+target = "<ext_stage_name>"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance), observed"
+anchor = "doc.sql.copy-into-table / Syntax"
+sql = "COPY INTO v1 FROM ( SELECT $1 FROM @SELECT ) ;"
+expect = "observe"
+also_sql = "COPY INTO v1 FROM ( SELECT $1 FROM @\"SELECT\" ) ;"
+also_expect = "accept"
+context = "raw"
+
+[[suppress]]
+form = "sf.dml.copy-into-table.select-from-internalstage-externalstage"
+kind = "required_operand_missing"
+target = "<namespace> in [ <namespace> . ] #2"
+note = "omit <namespace>"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 1757 SQLSTATE 42601 (phase semantic_error, import-20261104-20), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.dml.copy-into-table.select-from-internalstage-externalstage"
+kind = "required_operand_missing"
+target = "<namespace> in [ <namespace> . ] #2"
+note = "omit <namespace>, observed"
+anchor = "doc.sql.copy-into-table / Syntax"
+sql = "COPY INTO v1 FROM ( SELECT $1 FROM @.s1 ) ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.dml.copy-into-table.select-from-internalstage-externalstage"
+kind = "required_operand_missing"
+target = "<namespace> in [ <namespace> . ] #4"
+note = "omit <namespace>"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 1757 SQLSTATE 42601 (phase semantic_error, import-20261104-20), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.dml.copy-into-table.select-from-internalstage-externalstage"
+kind = "required_operand_missing"
+target = "<namespace> in [ <namespace> . ] #4"
+note = "omit <namespace>, observed"
+anchor = "doc.sql.copy-into-table / Syntax"
+sql = "COPY INTO v1 FROM ( SELECT $1 FROM @.s1 ) ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.dml.copy-into-table.select-from-internalstage-externalstage"
+kind = "negative_neighbour"
+target = "<column_name> in [ INCLUDE_METADATA = ( <column_name> = { METADATA$FILENAME | METADATA$FILE_ROW_NUMBER | METADATA$FILE_…"
+note = "a string literal in place of <column_name>"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 2171 SQLSTATE 0A000 (phase semantic_error, import-20261104-20), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.dml.copy-into-table.select-from-internalstage-externalstage"
+kind = "negative_neighbour"
+target = "<column_name> in [ INCLUDE_METADATA = ( <column_name> = { METADATA$FILENAME | METADATA$FILE_ROW_NUMBER | METADATA$FILE_…"
+note = "a string literal in place of <column_name>, observed"
+anchor = "doc.sql.copy-into-table / Syntax"
+sql = "COPY INTO v1 FROM ( SELECT $1 FROM @s1 ) INCLUDE_METADATA = ( 'v1' = METADATA$FILENAME ) ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.dml.copy-into-table.select-from-internalstage-externalstage"
+kind = "required_operand_missing"
+target = "<namespace> in [ <namespace> . ] #3"
+note = "omit <namespace>"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 1757 SQLSTATE 42601 (phase semantic_error, import-20261104-20), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.dml.copy-into-table.select-from-internalstage-externalstage"
+kind = "required_operand_missing"
+target = "<namespace> in [ <namespace> . ] #3"
+note = "omit <namespace>, observed"
+anchor = "doc.sql.copy-into-table / Syntax"
+sql = "COPY INTO v1 FROM ( SELECT $1 FROM @.%v1 ) ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.dml.copy-into-table.select-from-internalstage-externalstage"
+kind = "negative_neighbour"
+target = "<table_name>"
+note = "a string literal in place of <table_name>"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 90105 SQLSTATE 22000 (phase semantic_error, import-20261104-20), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.dml.copy-into-table.select-from-internalstage-externalstage"
+kind = "negative_neighbour"
+target = "<table_name>"
+note = "a string literal in place of <table_name>, observed"
+anchor = "doc.sql.copy-into-table / Syntax"
+sql = "COPY INTO 'v1' FROM ( SELECT $1 FROM @s1 ) ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.dml.copy-into-table.select-from-internalstage-externalstage"
+kind = "required_operand_missing"
+target = "<table_name> #2"
+note = "omit <table_name>"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 1012 SQLSTATE 42601 (phase semantic_error, import-20261104-20), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.dml.copy-into-table.select-from-internalstage-externalstage"
+kind = "required_operand_missing"
+target = "<table_name> #2"
+note = "omit <table_name>, observed"
+anchor = "doc.sql.copy-into-table / Syntax"
+sql = "COPY INTO v1 FROM ( SELECT $1 FROM @%) ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.dml.copy-into-table.select-from-internalstage-externalstage"
+kind = "required_operand_missing"
+target = "<int_stage_name>"
+note = "omit <int_stage_name>"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 1012 SQLSTATE 42601 (phase semantic_error, import-20261104-20), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.dml.copy-into-table.select-from-internalstage-externalstage"
+kind = "required_operand_missing"
+target = "<int_stage_name>"
+note = "omit <int_stage_name>, observed"
+anchor = "doc.sql.copy-into-table / Syntax"
+sql = "COPY INTO v1 FROM ( SELECT $1 FROM @) ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.dml.copy-into-table.select-from-internalstage-externalstage"
+kind = "required_operand_missing"
+target = "<ext_stage_name>"
+note = "omit <ext_stage_name>"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 1012 SQLSTATE 42601 (phase semantic_error, import-20261104-20), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.dml.copy-into-table.select-from-internalstage-externalstage"
+kind = "required_operand_missing"
+target = "<ext_stage_name>"
+note = "omit <ext_stage_name>, observed"
+anchor = "doc.sql.copy-into-table / Syntax"
+sql = "COPY INTO v1 FROM ( SELECT $1 FROM @) ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.dml.delete"
+kind = "negative_neighbour"
+note = "the form without its required { <additional_table> | ( <query> ) } in [ USING { <additional_table> | ( <query> ) } [ , { <additional_table> | ( <query> ) } ] ]"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 2003 SQLSTATE 42S02 (phase semantic_error, import-20261104-20), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.dml.delete"
+kind = "negative_neighbour"
+note = "the form without its required { <additional_table> | ( <query> ) } in [ USING { <additional_table> | ( <query> ) } [ , { <additional_table> | ( <query> ) } ] ], observed"
+anchor = "doc.sql.delete / Syntax"
+sql = "DELETE FROM v1 USING ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.dml.get"
+kind = "identifier_class"
+target = "<table_name>"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 90105 SQLSTATE 22000 (phase semantic_error, import-20261104-20), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.dml.get"
+kind = "identifier_class"
+target = "<table_name>"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance), observed"
+anchor = "doc.sql.get / Syntax"
+sql = "GET @%SELECT file:///tmp/d1/ ;"
+expect = "observe"
+also_sql = "GET @%\"SELECT\" file:///tmp/d1/ ;"
+also_expect = "accept"
+context = "raw"
+
+[[suppress]]
+form = "sf.dml.get"
+kind = "required_operand_missing"
+target = "<namespace> in [ <namespace> . ]"
+note = "omit <namespace>"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 90105 SQLSTATE 22000 (phase semantic_error, import-20261104-20), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.dml.get"
+kind = "required_operand_missing"
+target = "<namespace> in [ <namespace> . ]"
+note = "omit <namespace>, observed"
+anchor = "doc.sql.get / Syntax"
+sql = "GET @.s1 file:///tmp/d1/ ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.dml.get"
+kind = "required_operand_missing"
+target = "<table_name>"
+note = "omit <table_name>"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 1012 SQLSTATE 42601 (phase semantic_error, import-20261104-20), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.dml.get"
+kind = "required_operand_missing"
+target = "<table_name>"
+note = "omit <table_name>, observed"
+anchor = "doc.sql.get / Syntax"
+sql = "GET @% file:///tmp/d1/ ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.dml.get"
+kind = "identifier_class"
+target = "<namespace>"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 90105 SQLSTATE 22000 (phase semantic_error, import-20261104-20), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.dml.get"
+kind = "identifier_class"
+target = "<namespace>"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance), observed"
+anchor = "doc.sql.get / Syntax"
+sql = "GET @SELECT.s1 file:///tmp/d1/ ;"
+expect = "observe"
+also_sql = "GET @\"SELECT\".s1 file:///tmp/d1/ ;"
+also_expect = "accept"
+context = "raw"
+
+[[suppress]]
+form = "sf.dml.get"
+kind = "identifier_class"
+target = "<int_stage_name>"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 90105 SQLSTATE 22000 (phase semantic_error, import-20261104-20), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.dml.get"
+kind = "identifier_class"
+target = "<int_stage_name>"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance), observed"
+anchor = "doc.sql.get / Syntax"
+sql = "GET @SELECT file:///tmp/d1/ ;"
+expect = "observe"
+also_sql = "GET @\"SELECT\" file:///tmp/d1/ ;"
+also_expect = "accept"
+context = "raw"
+
+[[suppress]]
+form = "sf.dml.get"
+kind = "required_operand_missing"
+target = "<namespace> in [ <namespace> . ] #2"
+note = "omit <namespace>"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 90105 SQLSTATE 22000 (phase semantic_error, import-20261104-20), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.dml.get"
+kind = "required_operand_missing"
+target = "<namespace> in [ <namespace> . ] #2"
+note = "omit <namespace>, observed"
+anchor = "doc.sql.get / Syntax"
+sql = "GET @.%v1 file:///tmp/d1/ ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.dml.get"
+kind = "required_operand_missing"
+target = "<int_stage_name>"
+note = "omit <int_stage_name>"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 1012 SQLSTATE 42601 (phase semantic_error, import-20261104-20), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.dml.get"
+kind = "required_operand_missing"
+target = "<int_stage_name>"
+note = "omit <int_stage_name>, observed"
+anchor = "doc.sql.get / Syntax"
+sql = "GET @ file:///tmp/d1/ ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.dml.insert-multi-table.all-intoclause"
+kind = "negative_neighbour"
+target = "<source_col_name> in [ VALUES ( { <source_col_name> | DEFAULT | NULL } [ , ... ] ) ]"
+note = "a string literal in place of <source_col_name>"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 2003 SQLSTATE 42S02 (phase semantic_error, import-20261104-20), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.dml.insert-multi-table.all-intoclause"
+kind = "negative_neighbour"
+target = "<source_col_name> in [ VALUES ( { <source_col_name> | DEFAULT | NULL } [ , ... ] ) ]"
+note = "a string literal in place of <source_col_name>, observed"
+anchor = "doc.sql.insert-multi-table / Syntax"
+sql = "INSERT ALL INTO v1 VALUES ( 'v1' ) SELECT 1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.dml.insert-multi-table.first-all-when-then"
+kind = "negative_neighbour"
+target = "<source_col_name> in [ VALUES ( { <source_col_name> | DEFAULT | NULL } [ , ... ] ) ]"
+note = "a string literal in place of <source_col_name>"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 2003 SQLSTATE 42S02 (phase semantic_error, import-20261104-20), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.dml.insert-multi-table.first-all-when-then"
+kind = "negative_neighbour"
+target = "<source_col_name> in [ VALUES ( { <source_col_name> | DEFAULT | NULL } [ , ... ] ) ]"
+note = "a string literal in place of <source_col_name>, observed"
+anchor = "doc.sql.insert-multi-table / Syntax"
+sql = "INSERT FIRST WHEN TRUE THEN INTO v1 VALUES ( 'v1' ) SELECT 1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.dml.list.internalstage-externalstage"
+kind = "required_operand_missing"
+target = "<int_stage_name>"
+note = "omit <int_stage_name>"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 1012 SQLSTATE 42601 (phase semantic_error, import-20261104-20), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.dml.list.internalstage-externalstage"
+kind = "required_operand_missing"
+target = "<int_stage_name>"
+note = "omit <int_stage_name>, observed"
+anchor = "doc.sql.list / Syntax / For a stage"
+sql = "LIST @ ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.dml.list.internalstage-externalstage"
+kind = "required_operand_missing"
+target = "<ext_stage_name>"
+note = "omit <ext_stage_name>"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 1012 SQLSTATE 42601 (phase semantic_error, import-20261104-20), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.dml.list.internalstage-externalstage"
+kind = "required_operand_missing"
+target = "<ext_stage_name>"
+note = "omit <ext_stage_name>, observed"
+anchor = "doc.sql.list / Syntax / For a stage"
+sql = "LIST @ ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.dml.list.internalstage-externalstage"
+kind = "required_operand_missing"
+target = "<namespace> in [ <namespace> . ]"
+note = "omit <namespace>"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 90105 SQLSTATE 22000 (phase semantic_error, import-20261104-20), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.dml.list.internalstage-externalstage"
+kind = "required_operand_missing"
+target = "<namespace> in [ <namespace> . ]"
+note = "omit <namespace>, observed"
+anchor = "doc.sql.list / Syntax / For a stage"
+sql = "LIST @.s1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.dml.list.internalstage-externalstage"
+kind = "required_operand_missing"
+target = "<namespace> in [ <namespace> . ] #3"
+note = "omit <namespace>"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 90105 SQLSTATE 22000 (phase semantic_error, import-20261104-20), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.dml.list.internalstage-externalstage"
+kind = "required_operand_missing"
+target = "<namespace> in [ <namespace> . ] #3"
+note = "omit <namespace>, observed"
+anchor = "doc.sql.list / Syntax / For a stage"
+sql = "LIST @.s1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.dml.list.internalstage-externalstage"
+kind = "identifier_class"
+target = "<int_stage_name>"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 90105 SQLSTATE 22000 (phase semantic_error, import-20261104-20), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.dml.list.internalstage-externalstage"
+kind = "identifier_class"
+target = "<int_stage_name>"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance), observed"
+anchor = "doc.sql.list / Syntax / For a stage"
+sql = "LIST @SELECT ;"
+expect = "observe"
+also_sql = "LIST @\"SELECT\" ;"
+also_expect = "accept"
+context = "raw"
+
+[[suppress]]
+form = "sf.dml.list.internalstage-externalstage"
+kind = "identifier_class"
+target = "<ext_stage_name>"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 90105 SQLSTATE 22000 (phase semantic_error, import-20261104-20), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.dml.list.internalstage-externalstage"
+kind = "identifier_class"
+target = "<ext_stage_name>"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance), observed"
+anchor = "doc.sql.list / Syntax / For a stage"
+sql = "LIST @SELECT ;"
+expect = "observe"
+also_sql = "LIST @\"SELECT\" ;"
+also_expect = "accept"
+context = "raw"
+
+[[suppress]]
+form = "sf.dml.list.internalstage-externalstage"
+kind = "required_operand_missing"
+target = "<table_name>"
+note = "omit <table_name>"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 1012 SQLSTATE 42601 (phase semantic_error, import-20261104-20), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.dml.list.internalstage-externalstage"
+kind = "required_operand_missing"
+target = "<table_name>"
+note = "omit <table_name>, observed"
+anchor = "doc.sql.list / Syntax / For a stage"
+sql = "LIST @% ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.dml.list.internalstage-externalstage"
+kind = "required_operand_missing"
+target = "<namespace> in [ <namespace> . ] #2"
+note = "omit <namespace>"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 90105 SQLSTATE 22000 (phase semantic_error, import-20261104-20), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.dml.list.internalstage-externalstage"
+kind = "required_operand_missing"
+target = "<namespace> in [ <namespace> . ] #2"
+note = "omit <namespace>, observed"
+anchor = "doc.sql.list / Syntax / For a stage"
+sql = "LIST @.%v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.dml.list.internalstage-externalstage"
+kind = "identifier_class"
+target = "<namespace>"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 90105 SQLSTATE 22000 (phase semantic_error, import-20261104-20), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.dml.list.internalstage-externalstage"
+kind = "identifier_class"
+target = "<namespace>"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance), observed"
+anchor = "doc.sql.list / Syntax / For a stage"
+sql = "LIST @SELECT.s1 ;"
+expect = "observe"
+also_sql = "LIST @\"SELECT\".s1 ;"
+also_expect = "accept"
+context = "raw"
+
+[[suppress]]
+form = "sf.dml.list.internalstage-externalstage"
+kind = "identifier_class"
+target = "<table_name>"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 90105 SQLSTATE 22000 (phase semantic_error, import-20261104-20), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.dml.list.internalstage-externalstage"
+kind = "identifier_class"
+target = "<table_name>"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance), observed"
+anchor = "doc.sql.list / Syntax / For a stage"
+sql = "LIST @%SELECT ;"
+expect = "observe"
+also_sql = "LIST @%\"SELECT\" ;"
+also_expect = "accept"
+context = "raw"
+
+[[suppress]]
+form = "sf.dml.list.repositoryclone"
+kind = "required_operand_missing"
+target = "<repository_clone>"
+note = "omit <repository_clone>"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 1012 SQLSTATE 42601 (phase semantic_error, import-20261104-20), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.dml.list.repositoryclone"
+kind = "required_operand_missing"
+target = "<repository_clone>"
+note = "omit <repository_clone>, observed"
+anchor = "doc.sql.list / Syntax / For a Git repository clone"
+sql = "LIST @/branches/main ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.dml.list.repositoryclone"
+kind = "identifier_class"
+target = "<namespace>"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 90105 SQLSTATE 22000 (phase semantic_error, import-20261104-20), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.dml.list.repositoryclone"
+kind = "identifier_class"
+target = "<namespace>"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance), observed"
+anchor = "doc.sql.list / Syntax / For a Git repository clone"
+sql = "LIST @SELECT.r1/branches/main ;"
+expect = "observe"
+also_sql = "LIST @\"SELECT\".r1/branches/main ;"
+also_expect = "accept"
+context = "raw"
+
+[[suppress]]
+form = "sf.dml.list.repositoryclone"
+kind = "required_operand_missing"
+target = "<namespace> in [ <namespace> . ]"
+note = "omit <namespace>"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 90105 SQLSTATE 22000 (phase semantic_error, import-20261104-20), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.dml.list.repositoryclone"
+kind = "required_operand_missing"
+target = "<namespace> in [ <namespace> . ]"
+note = "omit <namespace>, observed"
+anchor = "doc.sql.list / Syntax / For a Git repository clone"
+sql = "LIST @.r1/branches/main ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.dml.merge"
+kind = "negative_neighbour"
+note = "the form without its required NOT"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 2047 SQLSTATE 42601 (phase semantic_error, import-20261104-20), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.dml.merge"
+kind = "negative_neighbour"
+note = "the form without its required NOT, observed"
+anchor = "doc.sql.merge / Syntax"
+sql = "MERGE INTO v1 USING t2 ON v1.c1 = t2.c1 WHEN MATCHED THEN INSERT ALL BY NAME ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.dml.merge"
+kind = "negative_neighbour"
+note = "the form without its required NOT in [ { WHEN MATCHED AND <case_predicate> THEN DELETE | WHEN NOT MATCHED AND <case_predicate> THEN INSERT ALL BY NAME } ]"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 2047 SQLSTATE 42601 (phase semantic_error, import-20261104-20), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.dml.merge"
+kind = "negative_neighbour"
+note = "the form without its required NOT in [ { WHEN MATCHED AND <case_predicate> THEN DELETE | WHEN NOT MATCHED AND <case_predicate> THEN INSERT ALL BY NAME } ], observed"
+anchor = "doc.sql.merge / Syntax"
+sql = "MERGE INTO v1 USING t2 ON v1.c1 = t2.c1 WHEN MATCHED THEN UPDATE ALL BY NAME WHEN MATCHED AND 1 THEN INSERT ALL BY NAME ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.dml.put"
+kind = "identifier_class"
+target = "<table_name>"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 90105 SQLSTATE 22000 (phase semantic_error, import-20261104-20), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.dml.put"
+kind = "identifier_class"
+target = "<table_name>"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance), observed"
+anchor = "doc.sql.put / Syntax"
+sql = "PUT file:///tmp/d1/f1.csv @%SELECT ;"
+expect = "observe"
+also_sql = "PUT file:///tmp/d1/f1.csv @%\"SELECT\" ;"
+also_expect = "accept"
+context = "raw"
+
+[[suppress]]
+form = "sf.dml.put"
+kind = "required_operand_missing"
+target = "<namespace> in [ <namespace> . ]"
+note = "omit <namespace>"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 90105 SQLSTATE 22000 (phase semantic_error, import-20261104-20), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.dml.put"
+kind = "required_operand_missing"
+target = "<namespace> in [ <namespace> . ]"
+note = "omit <namespace>, observed"
+anchor = "doc.sql.put / Syntax"
+sql = "PUT file:///tmp/d1/f1.csv @.s1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.dml.put"
+kind = "required_operand_missing"
+target = "<table_name>"
+note = "omit <table_name>"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 1012 SQLSTATE 42601 (phase semantic_error, import-20261104-20), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.dml.put"
+kind = "required_operand_missing"
+target = "<table_name>"
+note = "omit <table_name>, observed"
+anchor = "doc.sql.put / Syntax"
+sql = "PUT file:///tmp/d1/f1.csv @% ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.dml.put"
+kind = "identifier_class"
+target = "<int_stage_name>"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 90105 SQLSTATE 22000 (phase semantic_error, import-20261104-20), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.dml.put"
+kind = "identifier_class"
+target = "<int_stage_name>"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance), observed"
+anchor = "doc.sql.put / Syntax"
+sql = "PUT file:///tmp/d1/f1.csv @SELECT ;"
+expect = "observe"
+also_sql = "PUT file:///tmp/d1/f1.csv @\"SELECT\" ;"
+also_expect = "accept"
+context = "raw"
+
+[[suppress]]
+form = "sf.dml.put"
+kind = "required_operand_missing"
+target = "<int_stage_name>"
+note = "omit <int_stage_name>"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 1012 SQLSTATE 42601 (phase semantic_error, import-20261104-20), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.dml.put"
+kind = "required_operand_missing"
+target = "<int_stage_name>"
+note = "omit <int_stage_name>, observed"
+anchor = "doc.sql.put / Syntax"
+sql = "PUT file:///tmp/d1/f1.csv @ ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.dml.put"
+kind = "identifier_class"
+target = "<namespace>"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 90105 SQLSTATE 22000 (phase semantic_error, import-20261104-20), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.dml.put"
+kind = "identifier_class"
+target = "<namespace>"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance), observed"
+anchor = "doc.sql.put / Syntax"
+sql = "PUT file:///tmp/d1/f1.csv @SELECT.s1 ;"
+expect = "observe"
+also_sql = "PUT file:///tmp/d1/f1.csv @\"SELECT\".s1 ;"
+also_expect = "accept"
+context = "raw"
+
+[[suppress]]
+form = "sf.dml.put"
+kind = "required_operand_missing"
+target = "<namespace> in [ <namespace> . ] #2"
+note = "omit <namespace>"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 90105 SQLSTATE 22000 (phase semantic_error, import-20261104-20), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.dml.put"
+kind = "required_operand_missing"
+target = "<namespace> in [ <namespace> . ] #2"
+note = "omit <namespace>, observed"
+anchor = "doc.sql.put / Syntax"
+sql = "PUT file:///tmp/d1/f1.csv @.%v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.dml.remove"
+kind = "required_operand_missing"
+target = "<int_stage_name>"
+note = "omit <int_stage_name>"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 1012 SQLSTATE 42601 (phase semantic_error, import-20261104-20), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.dml.remove"
+kind = "required_operand_missing"
+target = "<int_stage_name>"
+note = "omit <int_stage_name>, observed"
+anchor = "doc.sql.remove / Syntax"
+sql = "REMOVE @ ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.dml.remove"
+kind = "required_operand_missing"
+target = "<ext_stage_name>"
+note = "omit <ext_stage_name>"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 1012 SQLSTATE 42601 (phase semantic_error, import-20261104-20), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.dml.remove"
+kind = "required_operand_missing"
+target = "<ext_stage_name>"
+note = "omit <ext_stage_name>, observed"
+anchor = "doc.sql.remove / Syntax"
+sql = "REMOVE @ ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.dml.remove"
+kind = "identifier_class"
+target = "<table_name>"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 90105 SQLSTATE 22000 (phase semantic_error, import-20261104-20), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.dml.remove"
+kind = "identifier_class"
+target = "<table_name>"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance), observed"
+anchor = "doc.sql.remove / Syntax"
+sql = "REMOVE @%SELECT ;"
+expect = "observe"
+also_sql = "REMOVE @%\"SELECT\" ;"
+also_expect = "accept"
+context = "raw"
+
+[[suppress]]
+form = "sf.dml.remove"
+kind = "identifier_class"
+target = "<namespace>"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 90105 SQLSTATE 22000 (phase semantic_error, import-20261104-20), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.dml.remove"
+kind = "identifier_class"
+target = "<namespace>"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance), observed"
+anchor = "doc.sql.remove / Syntax"
+sql = "REMOVE @SELECT.s1 ;"
+expect = "observe"
+also_sql = "REMOVE @\"SELECT\".s1 ;"
+also_expect = "accept"
+context = "raw"
+
+[[suppress]]
+form = "sf.dml.remove"
+kind = "required_operand_missing"
+target = "<namespace> in [ <namespace> . ]"
+note = "omit <namespace>"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 90105 SQLSTATE 22000 (phase semantic_error, import-20261104-20), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.dml.remove"
+kind = "required_operand_missing"
+target = "<namespace> in [ <namespace> . ]"
+note = "omit <namespace>, observed"
+anchor = "doc.sql.remove / Syntax"
+sql = "REMOVE @.s1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.dml.remove"
+kind = "required_operand_missing"
+target = "<namespace> in [ <namespace> . ] #3"
+note = "omit <namespace>"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 90105 SQLSTATE 22000 (phase semantic_error, import-20261104-20), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.dml.remove"
+kind = "required_operand_missing"
+target = "<namespace> in [ <namespace> . ] #3"
+note = "omit <namespace>, observed"
+anchor = "doc.sql.remove / Syntax"
+sql = "REMOVE @.s1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.dml.remove"
+kind = "identifier_class"
+target = "<int_stage_name>"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 90105 SQLSTATE 22000 (phase semantic_error, import-20261104-20), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.dml.remove"
+kind = "identifier_class"
+target = "<int_stage_name>"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance), observed"
+anchor = "doc.sql.remove / Syntax"
+sql = "REMOVE @SELECT ;"
+expect = "observe"
+also_sql = "REMOVE @\"SELECT\" ;"
+also_expect = "accept"
+context = "raw"
+
+[[suppress]]
+form = "sf.dml.remove"
+kind = "identifier_class"
+target = "<ext_stage_name>"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 90105 SQLSTATE 22000 (phase semantic_error, import-20261104-20), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.dml.remove"
+kind = "identifier_class"
+target = "<ext_stage_name>"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance), observed"
+anchor = "doc.sql.remove / Syntax"
+sql = "REMOVE @SELECT ;"
+expect = "observe"
+also_sql = "REMOVE @\"SELECT\" ;"
+also_expect = "accept"
+context = "raw"
+
+[[suppress]]
+form = "sf.dml.remove"
+kind = "required_operand_missing"
+target = "<namespace> in [ <namespace> . ] #2"
+note = "omit <namespace>"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 90105 SQLSTATE 22000 (phase semantic_error, import-20261104-20), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.dml.remove"
+kind = "required_operand_missing"
+target = "<namespace> in [ <namespace> . ] #2"
+note = "omit <namespace>, observed"
+anchor = "doc.sql.remove / Syntax"
+sql = "REMOVE @.%v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.dml.remove"
+kind = "required_operand_missing"
+target = "<table_name>"
+note = "omit <table_name>"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 1012 SQLSTATE 42601 (phase semantic_error, import-20261104-20), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.dml.remove"
+kind = "required_operand_missing"
+target = "<table_name>"
+note = "omit <table_name>, observed"
+anchor = "doc.sql.remove / Syntax"
+sql = "REMOVE @% ;"
+expect = "observe"
+context = "raw"
+
+# utility: scored rejects whose receipt shows no syntax error, observed under D97 (auditor review e92ce262, applied family-wide).
+
+[[suppress]]
+form = "sf.utility.call-with.language-javascript-as-call"
+kind = "required_operand_missing"
+target = "<arg_data_type> in [ <arg_name> <arg_data_type> [ , <arg_name> <arg_data_type> ... ] ]"
+note = "omit <arg_data_type>"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 90201 SQLSTATE 42601 (phase semantic_error, import-20261104-22), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.utility.call-with.language-javascript-as-call"
+kind = "required_operand_missing"
+target = "<arg_data_type> in [ <arg_name> <arg_data_type> [ , <arg_name> <arg_data_type> ... ] ]"
+note = "omit <arg_data_type>, observed"
+anchor = "doc.sql.call-with / Syntax / JavaScript"
+sql = "WITH v1 AS PROCEDURE ( v1 ) RETURNS INT LANGUAGE JAVASCRIPT AS 'm' CALL v1 ( ) ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.utility.call-with.language-javascript-as-call"
+kind = "required_operand_missing"
+target = "<arg_name> in [ <arg_name> <arg_data_type> [ , <arg_name> <arg_data_type> ... ] ]"
+note = "omit <arg_name>"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 90201 SQLSTATE 42601 (phase semantic_error, import-20261104-22), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.utility.call-with.language-javascript-as-call"
+kind = "required_operand_missing"
+target = "<arg_name> in [ <arg_name> <arg_data_type> [ , <arg_name> <arg_data_type> ... ] ]"
+note = "omit <arg_name>, observed"
+anchor = "doc.sql.call-with / Syntax / JavaScript"
+sql = "WITH v1 AS PROCEDURE ( INT ) RETURNS INT LANGUAGE JAVASCRIPT AS 'm' CALL v1 ( ) ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.utility.call-with.language-javascript-as-call"
+kind = "negative_neighbour"
+target = "<query> in [ , <cte_nameN> [ ( <cte_column_list> ) ] AS ( <query> ) ]"
+note = "a bare literal in place of <query>"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 100132 SQLSTATE P0000 (phase runtime_error, import-20261104-21), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.utility.call-with.language-javascript-as-call"
+kind = "negative_neighbour"
+target = "<query> in [ , <cte_nameN> [ ( <cte_column_list> ) ] AS ( <query> ) ]"
+note = "a bare literal in place of <query>, observed"
+anchor = "doc.sql.call-with / Syntax / JavaScript"
+sql = "WITH v1 AS PROCEDURE ( ) RETURNS INT LANGUAGE JAVASCRIPT AS 'm' , v1 AS ( 1 ) CALL v1 ( ) ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.utility.call-with.table-language-java-runtime-version.java"
+kind = "required_operand_missing"
+target = "<arg_data_type> in [ <arg_name> <arg_data_type> [ , <arg_name> <arg_data_type> ... ] ]"
+note = "omit <arg_data_type>"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 1422 SQLSTATE 22023 (phase semantic_error, import-20261104-21), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.utility.call-with.table-language-java-runtime-version.java"
+kind = "required_operand_missing"
+target = "<arg_data_type> in [ <arg_name> <arg_data_type> [ , <arg_name> <arg_data_type> ... ] ]"
+note = "omit <arg_data_type>, observed"
+anchor = "doc.sql.call-with / Syntax / Java"
+sql = "WITH v1 AS PROCEDURE ( v1 ) RETURNS INT LANGUAGE JAVA RUNTIME_VERSION = 'm' PACKAGES = ( 'com.snowflake:snowpark:1.14.0' ) HANDLER = 'm' CALL v1 ( ) ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.utility.call-with.table-language-java-runtime-version"
+kind = "required_operand_missing"
+target = "<arg_data_type> in [ <arg_name> <arg_data_type> [ , <arg_name> <arg_data_type> ... ] ]"
+note = "omit <arg_data_type>"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 1422 SQLSTATE 22023 (phase semantic_error, import-20261104-21), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.utility.call-with.table-language-java-runtime-version"
+kind = "required_operand_missing"
+target = "<arg_data_type> in [ <arg_name> <arg_data_type> [ , <arg_name> <arg_data_type> ... ] ]"
+note = "omit <arg_data_type>, observed"
+anchor = "doc.sql.call-with / Syntax / Java"
+sql = "WITH v1 AS PROCEDURE ( v1 ) RETURNS INT LANGUAGE JAVA RUNTIME_VERSION = 'm' PACKAGES = ( 'com.snowflake:snowpark:1.14.0' ) HANDLER = 'm' CALL v1 ( ) ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.utility.call-with.table-language-java-runtime-version.java"
+kind = "negative_neighbour"
+target = "<query> in [ , <cte_nameN> [ ( <cte_column_list> ) ] AS ( <query> ) ]"
+note = "a bare literal in place of <query>"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 1422 SQLSTATE 22023 (phase semantic_error, import-20261104-21), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.utility.call-with.table-language-java-runtime-version.java"
+kind = "negative_neighbour"
+target = "<query> in [ , <cte_nameN> [ ( <cte_column_list> ) ] AS ( <query> ) ]"
+note = "a bare literal in place of <query>, observed"
+anchor = "doc.sql.call-with / Syntax / Java"
+sql = "WITH v1 AS PROCEDURE ( ) RETURNS INT LANGUAGE JAVA RUNTIME_VERSION = 'm' PACKAGES = ( 'com.snowflake:snowpark:1.14.0' ) HANDLER = 'm' , v1 AS ( 1 ) CALL v1 ( ) ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.utility.call-with.table-language-java-runtime-version"
+kind = "negative_neighbour"
+target = "<query> in [ , <cte_nameN> [ ( <cte_column_list> ) ] AS ( <query> ) ]"
+note = "a bare literal in place of <query>"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 1422 SQLSTATE 22023 (phase semantic_error, import-20261104-21), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.utility.call-with.table-language-java-runtime-version"
+kind = "negative_neighbour"
+target = "<query> in [ , <cte_nameN> [ ( <cte_column_list> ) ] AS ( <query> ) ]"
+note = "a bare literal in place of <query>, observed"
+anchor = "doc.sql.call-with / Syntax / Java"
+sql = "WITH v1 AS PROCEDURE ( ) RETURNS INT LANGUAGE JAVA RUNTIME_VERSION = 'm' PACKAGES = ( 'com.snowflake:snowpark:1.14.0' ) HANDLER = 'm' , v1 AS ( 1 ) CALL v1 ( ) ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.utility.call-with.table-language-java-runtime-version.java"
+kind = "required_operand_missing"
+target = "<col_data_type> in [ <col_name> <col_data_type> [ , ... ] ]"
+note = "omit <col_data_type>"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 1422 SQLSTATE 22023 (phase semantic_error, import-20261104-21), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.utility.call-with.table-language-java-runtime-version.java"
+kind = "required_operand_missing"
+target = "<col_data_type> in [ <col_name> <col_data_type> [ , ... ] ]"
+note = "omit <col_data_type>, observed"
+anchor = "doc.sql.call-with / Syntax / Java"
+sql = "WITH v1 AS PROCEDURE ( ) RETURNS TABLE ( v1 ) LANGUAGE JAVA RUNTIME_VERSION = 'm' PACKAGES = ( 'com.snowflake:snowpark:1.14.0' ) HANDLER = 'm' CALL v1 ( ) ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.utility.call-with.table-language-java-runtime-version"
+kind = "required_operand_missing"
+target = "<col_data_type> in [ <col_name> <col_data_type> [ , ... ] ]"
+note = "omit <col_data_type>"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 1422 SQLSTATE 22023 (phase semantic_error, import-20261104-21), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.utility.call-with.table-language-java-runtime-version"
+kind = "required_operand_missing"
+target = "<col_data_type> in [ <col_name> <col_data_type> [ , ... ] ]"
+note = "omit <col_data_type>, observed"
+anchor = "doc.sql.call-with / Syntax / Java"
+sql = "WITH v1 AS PROCEDURE ( ) RETURNS TABLE ( v1 ) LANGUAGE JAVA RUNTIME_VERSION = 'm' PACKAGES = ( 'com.snowflake:snowpark:1.14.0' ) HANDLER = 'm' CALL v1 ( ) ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.utility.call-with.table-language-java-runtime-version.java"
+kind = "required_operand_missing"
+target = "<arg_name> in [ <arg_name> <arg_data_type> [ , <arg_name> <arg_data_type> ... ] ]"
+note = "omit <arg_name>"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 1422 SQLSTATE 22023 (phase semantic_error, import-20261104-21), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.utility.call-with.table-language-java-runtime-version.java"
+kind = "required_operand_missing"
+target = "<arg_name> in [ <arg_name> <arg_data_type> [ , <arg_name> <arg_data_type> ... ] ]"
+note = "omit <arg_name>, observed"
+anchor = "doc.sql.call-with / Syntax / Java"
+sql = "WITH v1 AS PROCEDURE ( INT ) RETURNS INT LANGUAGE JAVA RUNTIME_VERSION = 'm' PACKAGES = ( 'com.snowflake:snowpark:1.14.0' ) HANDLER = 'm' CALL v1 ( ) ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.utility.call-with.table-language-java-runtime-version"
+kind = "required_operand_missing"
+target = "<arg_name> in [ <arg_name> <arg_data_type> [ , <arg_name> <arg_data_type> ... ] ]"
+note = "omit <arg_name>"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 1422 SQLSTATE 22023 (phase semantic_error, import-20261104-21), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.utility.call-with.table-language-java-runtime-version"
+kind = "required_operand_missing"
+target = "<arg_name> in [ <arg_name> <arg_data_type> [ , <arg_name> <arg_data_type> ... ] ]"
+note = "omit <arg_name>, observed"
+anchor = "doc.sql.call-with / Syntax / Java"
+sql = "WITH v1 AS PROCEDURE ( INT ) RETURNS INT LANGUAGE JAVA RUNTIME_VERSION = 'm' PACKAGES = ( 'com.snowflake:snowpark:1.14.0' ) HANDLER = 'm' CALL v1 ( ) ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.utility.call-with.table-language-java-runtime-version.java"
+kind = "required_operand_missing"
+target = "<col_name> in [ <col_name> <col_data_type> [ , ... ] ]"
+note = "omit <col_name>"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 1422 SQLSTATE 22023 (phase semantic_error, import-20261104-21), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.utility.call-with.table-language-java-runtime-version.java"
+kind = "required_operand_missing"
+target = "<col_name> in [ <col_name> <col_data_type> [ , ... ] ]"
+note = "omit <col_name>, observed"
+anchor = "doc.sql.call-with / Syntax / Java"
+sql = "WITH v1 AS PROCEDURE ( ) RETURNS TABLE ( INT ) LANGUAGE JAVA RUNTIME_VERSION = 'm' PACKAGES = ( 'com.snowflake:snowpark:1.14.0' ) HANDLER = 'm' CALL v1 ( ) ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.utility.call-with.table-language-java-runtime-version"
+kind = "required_operand_missing"
+target = "<col_name> in [ <col_name> <col_data_type> [ , ... ] ]"
+note = "omit <col_name>"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 1422 SQLSTATE 22023 (phase semantic_error, import-20261104-21), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.utility.call-with.table-language-java-runtime-version"
+kind = "required_operand_missing"
+target = "<col_name> in [ <col_name> <col_data_type> [ , ... ] ]"
+note = "omit <col_name>, observed"
+anchor = "doc.sql.call-with / Syntax / Java"
+sql = "WITH v1 AS PROCEDURE ( ) RETURNS TABLE ( INT ) LANGUAGE JAVA RUNTIME_VERSION = 'm' PACKAGES = ( 'com.snowflake:snowpark:1.14.0' ) HANDLER = 'm' CALL v1 ( ) ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.utility.call-with.table-language-python-runtime-version"
+kind = "negative_neighbour"
+target = "<query> in [ , <cte_nameN> [ ( <cte_column_list> ) ] AS ( <query> ) ]"
+note = "a bare literal in place of <query>"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 1422 SQLSTATE 22023 (phase semantic_error, import-20261104-22), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.utility.call-with.table-language-python-runtime-version"
+kind = "negative_neighbour"
+target = "<query> in [ , <cte_nameN> [ ( <cte_column_list> ) ] AS ( <query> ) ]"
+note = "a bare literal in place of <query>, observed"
+anchor = "doc.sql.call-with / Syntax / Python"
+sql = "WITH v1 AS PROCEDURE ( ) RETURNS INT LANGUAGE PYTHON RUNTIME_VERSION = 'm' PACKAGES = ( 'snowflake-snowpark-python' ) HANDLER = 'm' AS 'm' , v1 AS ( 1 ) CALL v1 ( ) ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.utility.call-with.table-language-python-runtime-version"
+kind = "required_operand_missing"
+target = "<arg_data_type> in [ <arg_name> <arg_data_type> [ , <arg_name> <arg_data_type> ... ] ]"
+note = "omit <arg_data_type>"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 1422 SQLSTATE 22023 (phase semantic_error, import-20261104-22), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.utility.call-with.table-language-python-runtime-version"
+kind = "required_operand_missing"
+target = "<arg_data_type> in [ <arg_name> <arg_data_type> [ , <arg_name> <arg_data_type> ... ] ]"
+note = "omit <arg_data_type>, observed"
+anchor = "doc.sql.call-with / Syntax / Python"
+sql = "WITH v1 AS PROCEDURE ( v1 ) RETURNS INT LANGUAGE PYTHON RUNTIME_VERSION = 'm' PACKAGES = ( 'snowflake-snowpark-python' ) HANDLER = 'm' AS 'm' CALL v1 ( ) ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.utility.call-with.table-language-python-runtime-version"
+kind = "required_operand_missing"
+target = "<col_name> in [ <col_name> <col_data_type> [ , ... ] ]"
+note = "omit <col_name>"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 1422 SQLSTATE 22023 (phase semantic_error, import-20261104-22), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.utility.call-with.table-language-python-runtime-version"
+kind = "required_operand_missing"
+target = "<col_name> in [ <col_name> <col_data_type> [ , ... ] ]"
+note = "omit <col_name>, observed"
+anchor = "doc.sql.call-with / Syntax / Python"
+sql = "WITH v1 AS PROCEDURE ( ) RETURNS TABLE ( INT ) LANGUAGE PYTHON RUNTIME_VERSION = 'm' PACKAGES = ( 'snowflake-snowpark-python' ) HANDLER = 'm' AS 'm' CALL v1 ( ) ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.utility.call-with.table-language-python-runtime-version"
+kind = "required_operand_missing"
+target = "<arg_name> in [ <arg_name> <arg_data_type> [ , <arg_name> <arg_data_type> ... ] ]"
+note = "omit <arg_name>"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 1422 SQLSTATE 22023 (phase semantic_error, import-20261104-22), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.utility.call-with.table-language-python-runtime-version"
+kind = "required_operand_missing"
+target = "<arg_name> in [ <arg_name> <arg_data_type> [ , <arg_name> <arg_data_type> ... ] ]"
+note = "omit <arg_name>, observed"
+anchor = "doc.sql.call-with / Syntax / Python"
+sql = "WITH v1 AS PROCEDURE ( INT ) RETURNS INT LANGUAGE PYTHON RUNTIME_VERSION = 'm' PACKAGES = ( 'snowflake-snowpark-python' ) HANDLER = 'm' AS 'm' CALL v1 ( ) ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.utility.call-with.table-language-python-runtime-version"
+kind = "required_operand_missing"
+target = "<col_data_type> in [ <col_name> <col_data_type> [ , ... ] ]"
+note = "omit <col_data_type>"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 1422 SQLSTATE 22023 (phase semantic_error, import-20261104-22), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.utility.call-with.table-language-python-runtime-version"
+kind = "required_operand_missing"
+target = "<col_data_type> in [ <col_name> <col_data_type> [ , ... ] ]"
+note = "omit <col_data_type>, observed"
+anchor = "doc.sql.call-with / Syntax / Python"
+sql = "WITH v1 AS PROCEDURE ( ) RETURNS TABLE ( v1 ) LANGUAGE PYTHON RUNTIME_VERSION = 'm' PACKAGES = ( 'snowflake-snowpark-python' ) HANDLER = 'm' AS 'm' CALL v1 ( ) ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.utility.call-with.table-language-python-runtime-version.python"
+kind = "required_operand_missing"
+target = "<col_name> in [ <col_name> <col_data_type> [ , ... ] ]"
+note = "omit <col_name>"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 1422 SQLSTATE 22023 (phase semantic_error, import-20261104-22), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.utility.call-with.table-language-python-runtime-version.python"
+kind = "required_operand_missing"
+target = "<col_name> in [ <col_name> <col_data_type> [ , ... ] ]"
+note = "omit <col_name>, observed"
+anchor = "doc.sql.call-with / Syntax / Python"
+sql = "WITH v1 AS PROCEDURE ( ) RETURNS TABLE ( INT ) LANGUAGE PYTHON RUNTIME_VERSION = 'm' PACKAGES = ( 'snowflake-snowpark-python' ) HANDLER = 'm1.run' CALL v1 ( ) ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.utility.call-with.table-language-python-runtime-version.python"
+kind = "required_operand_missing"
+target = "<arg_data_type> in [ <arg_name> <arg_data_type> [ , <arg_name> <arg_data_type> ... ] ]"
+note = "omit <arg_data_type>"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 1422 SQLSTATE 22023 (phase semantic_error, import-20261104-22), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.utility.call-with.table-language-python-runtime-version.python"
+kind = "required_operand_missing"
+target = "<arg_data_type> in [ <arg_name> <arg_data_type> [ , <arg_name> <arg_data_type> ... ] ]"
+note = "omit <arg_data_type>, observed"
+anchor = "doc.sql.call-with / Syntax / Python"
+sql = "WITH v1 AS PROCEDURE ( v1 ) RETURNS INT LANGUAGE PYTHON RUNTIME_VERSION = 'm' PACKAGES = ( 'snowflake-snowpark-python' ) HANDLER = 'm1.run' CALL v1 ( ) ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.utility.call-with.table-language-python-runtime-version.python"
+kind = "required_operand_missing"
+target = "<arg_name> in [ <arg_name> <arg_data_type> [ , <arg_name> <arg_data_type> ... ] ]"
+note = "omit <arg_name>"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 1422 SQLSTATE 22023 (phase semantic_error, import-20261104-22), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.utility.call-with.table-language-python-runtime-version.python"
+kind = "required_operand_missing"
+target = "<arg_name> in [ <arg_name> <arg_data_type> [ , <arg_name> <arg_data_type> ... ] ]"
+note = "omit <arg_name>, observed"
+anchor = "doc.sql.call-with / Syntax / Python"
+sql = "WITH v1 AS PROCEDURE ( INT ) RETURNS INT LANGUAGE PYTHON RUNTIME_VERSION = 'm' PACKAGES = ( 'snowflake-snowpark-python' ) HANDLER = 'm1.run' CALL v1 ( ) ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.utility.call-with.table-language-python-runtime-version.python"
+kind = "negative_neighbour"
+target = "<query> in [ , <cte_nameN> [ ( <cte_column_list> ) ] AS ( <query> ) ]"
+note = "a bare literal in place of <query>"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 1422 SQLSTATE 22023 (phase semantic_error, import-20261104-22), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.utility.call-with.table-language-python-runtime-version.python"
+kind = "negative_neighbour"
+target = "<query> in [ , <cte_nameN> [ ( <cte_column_list> ) ] AS ( <query> ) ]"
+note = "a bare literal in place of <query>, observed"
+anchor = "doc.sql.call-with / Syntax / Python"
+sql = "WITH v1 AS PROCEDURE ( ) RETURNS INT LANGUAGE PYTHON RUNTIME_VERSION = 'm' PACKAGES = ( 'snowflake-snowpark-python' ) HANDLER = 'm1.run' , v1 AS ( 1 ) CALL v1 ( ) ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.utility.call-with.table-language-python-runtime-version.python"
+kind = "required_operand_missing"
+target = "<col_data_type> in [ <col_name> <col_data_type> [ , ... ] ]"
+note = "omit <col_data_type>"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 1422 SQLSTATE 22023 (phase semantic_error, import-20261104-22), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.utility.call-with.table-language-python-runtime-version.python"
+kind = "required_operand_missing"
+target = "<col_data_type> in [ <col_name> <col_data_type> [ , ... ] ]"
+note = "omit <col_data_type>, observed"
+anchor = "doc.sql.call-with / Syntax / Python"
+sql = "WITH v1 AS PROCEDURE ( ) RETURNS TABLE ( v1 ) LANGUAGE PYTHON RUNTIME_VERSION = 'm' PACKAGES = ( 'snowflake-snowpark-python' ) HANDLER = 'm1.run' CALL v1 ( ) ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.utility.call-with.table-language-scala-runtime-version"
+kind = "required_operand_missing"
+target = "<arg_data_type> in [ <arg_name> <arg_data_type> [ , <arg_name> <arg_data_type> ... ] ]"
+note = "omit <arg_data_type>"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 1422 SQLSTATE 22023 (phase semantic_error, import-20261104-21), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.utility.call-with.table-language-scala-runtime-version"
+kind = "required_operand_missing"
+target = "<arg_data_type> in [ <arg_name> <arg_data_type> [ , <arg_name> <arg_data_type> ... ] ]"
+note = "omit <arg_data_type>, observed"
+anchor = "doc.sql.call-with / Syntax / Scala"
+sql = "WITH v1 AS PROCEDURE ( v1 ) RETURNS INT LANGUAGE SCALA RUNTIME_VERSION = 'm' PACKAGES = ( 'com.snowflake:snowpark_2.12:1.14.0' ) HANDLER = 'm' CALL v1 ( ) ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.utility.call-with.table-language-scala-runtime-version.scala"
+kind = "required_operand_missing"
+target = "<arg_data_type> in [ <arg_name> <arg_data_type> [ , <arg_name> <arg_data_type> ... ] ]"
+note = "omit <arg_data_type>"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 1422 SQLSTATE 22023 (phase semantic_error, import-20261104-21), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.utility.call-with.table-language-scala-runtime-version.scala"
+kind = "required_operand_missing"
+target = "<arg_data_type> in [ <arg_name> <arg_data_type> [ , <arg_name> <arg_data_type> ... ] ]"
+note = "omit <arg_data_type>, observed"
+anchor = "doc.sql.call-with / Syntax / Scala"
+sql = "WITH v1 AS PROCEDURE ( v1 ) RETURNS INT LANGUAGE SCALA RUNTIME_VERSION = 'm' PACKAGES = ( 'com.snowflake:snowpark_2.12:1.14.0' ) HANDLER = 'm' CALL v1 ( ) ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.utility.call-with.table-language-scala-runtime-version"
+kind = "required_operand_missing"
+target = "<col_data_type> in [ <col_name> <col_data_type> [ , ... ] ]"
+note = "omit <col_data_type>"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 1422 SQLSTATE 22023 (phase semantic_error, import-20261104-21), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.utility.call-with.table-language-scala-runtime-version"
+kind = "required_operand_missing"
+target = "<col_data_type> in [ <col_name> <col_data_type> [ , ... ] ]"
+note = "omit <col_data_type>, observed"
+anchor = "doc.sql.call-with / Syntax / Scala"
+sql = "WITH v1 AS PROCEDURE ( ) RETURNS TABLE ( v1 ) LANGUAGE SCALA RUNTIME_VERSION = 'm' PACKAGES = ( 'com.snowflake:snowpark_2.12:1.14.0' ) HANDLER = 'm' CALL v1 ( ) ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.utility.call-with.table-language-scala-runtime-version.scala"
+kind = "required_operand_missing"
+target = "<col_data_type> in [ <col_name> <col_data_type> [ , ... ] ]"
+note = "omit <col_data_type>"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 1422 SQLSTATE 22023 (phase semantic_error, import-20261104-21), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.utility.call-with.table-language-scala-runtime-version.scala"
+kind = "required_operand_missing"
+target = "<col_data_type> in [ <col_name> <col_data_type> [ , ... ] ]"
+note = "omit <col_data_type>, observed"
+anchor = "doc.sql.call-with / Syntax / Scala"
+sql = "WITH v1 AS PROCEDURE ( ) RETURNS TABLE ( v1 ) LANGUAGE SCALA RUNTIME_VERSION = 'm' PACKAGES = ( 'com.snowflake:snowpark_2.12:1.14.0' ) HANDLER = 'm' CALL v1 ( ) ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.utility.call-with.table-language-scala-runtime-version"
+kind = "negative_neighbour"
+target = "<query> in [ , <cte_nameN> [ ( <cte_column_list> ) ] AS ( <query> ) ]"
+note = "a bare literal in place of <query>"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 1422 SQLSTATE 22023 (phase semantic_error, import-20261104-21), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.utility.call-with.table-language-scala-runtime-version"
+kind = "negative_neighbour"
+target = "<query> in [ , <cte_nameN> [ ( <cte_column_list> ) ] AS ( <query> ) ]"
+note = "a bare literal in place of <query>, observed"
+anchor = "doc.sql.call-with / Syntax / Scala"
+sql = "WITH v1 AS PROCEDURE ( ) RETURNS INT LANGUAGE SCALA RUNTIME_VERSION = 'm' PACKAGES = ( 'com.snowflake:snowpark_2.12:1.14.0' ) HANDLER = 'm' , v1 AS ( 1 ) CALL v1 ( ) ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.utility.call-with.table-language-scala-runtime-version.scala"
+kind = "negative_neighbour"
+target = "<query> in [ , <cte_nameN> [ ( <cte_column_list> ) ] AS ( <query> ) ]"
+note = "a bare literal in place of <query>"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 1422 SQLSTATE 22023 (phase semantic_error, import-20261104-21), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.utility.call-with.table-language-scala-runtime-version.scala"
+kind = "negative_neighbour"
+target = "<query> in [ , <cte_nameN> [ ( <cte_column_list> ) ] AS ( <query> ) ]"
+note = "a bare literal in place of <query>, observed"
+anchor = "doc.sql.call-with / Syntax / Scala"
+sql = "WITH v1 AS PROCEDURE ( ) RETURNS INT LANGUAGE SCALA RUNTIME_VERSION = 'm' PACKAGES = ( 'com.snowflake:snowpark_2.12:1.14.0' ) HANDLER = 'm' , v1 AS ( 1 ) CALL v1 ( ) ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.utility.call-with.table-language-scala-runtime-version"
+kind = "required_operand_missing"
+target = "<col_name> in [ <col_name> <col_data_type> [ , ... ] ]"
+note = "omit <col_name>"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 1422 SQLSTATE 22023 (phase semantic_error, import-20261104-21), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.utility.call-with.table-language-scala-runtime-version"
+kind = "required_operand_missing"
+target = "<col_name> in [ <col_name> <col_data_type> [ , ... ] ]"
+note = "omit <col_name>, observed"
+anchor = "doc.sql.call-with / Syntax / Scala"
+sql = "WITH v1 AS PROCEDURE ( ) RETURNS TABLE ( INT ) LANGUAGE SCALA RUNTIME_VERSION = 'm' PACKAGES = ( 'com.snowflake:snowpark_2.12:1.14.0' ) HANDLER = 'm' CALL v1 ( ) ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.utility.call-with.table-language-scala-runtime-version.scala"
+kind = "required_operand_missing"
+target = "<col_name> in [ <col_name> <col_data_type> [ , ... ] ]"
+note = "omit <col_name>"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 1422 SQLSTATE 22023 (phase semantic_error, import-20261104-21), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.utility.call-with.table-language-scala-runtime-version.scala"
+kind = "required_operand_missing"
+target = "<col_name> in [ <col_name> <col_data_type> [ , ... ] ]"
+note = "omit <col_name>, observed"
+anchor = "doc.sql.call-with / Syntax / Scala"
+sql = "WITH v1 AS PROCEDURE ( ) RETURNS TABLE ( INT ) LANGUAGE SCALA RUNTIME_VERSION = 'm' PACKAGES = ( 'com.snowflake:snowpark_2.12:1.14.0' ) HANDLER = 'm' CALL v1 ( ) ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.utility.call-with.table-language-scala-runtime-version"
+kind = "required_operand_missing"
+target = "<arg_name> in [ <arg_name> <arg_data_type> [ , <arg_name> <arg_data_type> ... ] ]"
+note = "omit <arg_name>"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 1422 SQLSTATE 22023 (phase semantic_error, import-20261104-21), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.utility.call-with.table-language-scala-runtime-version"
+kind = "required_operand_missing"
+target = "<arg_name> in [ <arg_name> <arg_data_type> [ , <arg_name> <arg_data_type> ... ] ]"
+note = "omit <arg_name>, observed"
+anchor = "doc.sql.call-with / Syntax / Scala"
+sql = "WITH v1 AS PROCEDURE ( INT ) RETURNS INT LANGUAGE SCALA RUNTIME_VERSION = 'm' PACKAGES = ( 'com.snowflake:snowpark_2.12:1.14.0' ) HANDLER = 'm' CALL v1 ( ) ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.utility.call-with.table-language-scala-runtime-version.scala"
+kind = "required_operand_missing"
+target = "<arg_name> in [ <arg_name> <arg_data_type> [ , <arg_name> <arg_data_type> ... ] ]"
+note = "omit <arg_name>"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 1422 SQLSTATE 22023 (phase semantic_error, import-20261104-21), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.utility.call-with.table-language-scala-runtime-version.scala"
+kind = "required_operand_missing"
+target = "<arg_name> in [ <arg_name> <arg_data_type> [ , <arg_name> <arg_data_type> ... ] ]"
+note = "omit <arg_name>, observed"
+anchor = "doc.sql.call-with / Syntax / Scala"
+sql = "WITH v1 AS PROCEDURE ( INT ) RETURNS INT LANGUAGE SCALA RUNTIME_VERSION = 'm' PACKAGES = ( 'com.snowflake:snowpark_2.12:1.14.0' ) HANDLER = 'm' CALL v1 ( ) ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.utility.call-with.table-language-sql-as"
+kind = "required_operand_missing"
+target = "<arg_data_type> in [ <arg_name> <arg_data_type> [ , <arg_name> <arg_data_type> ... ] ]"
+note = "omit <arg_data_type>"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 90201 SQLSTATE 42601 (phase semantic_error, import-20261104-22), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.utility.call-with.table-language-sql-as"
+kind = "required_operand_missing"
+target = "<arg_data_type> in [ <arg_name> <arg_data_type> [ , <arg_name> <arg_data_type> ... ] ]"
+note = "omit <arg_data_type>, observed"
+anchor = "doc.sql.call-with / Syntax / Snowflake Scripting"
+sql = "WITH v1 AS PROCEDURE ( v1 ) RETURNS INT LANGUAGE SQL AS 'm' CALL v1 ( ) ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.utility.call-with.table-language-sql-as"
+kind = "required_operand_missing"
+target = "<arg_name> in [ <arg_name> <arg_data_type> [ , <arg_name> <arg_data_type> ... ] ]"
+note = "omit <arg_name>"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 90201 SQLSTATE 42601 (phase semantic_error, import-20261104-22), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.utility.call-with.table-language-sql-as"
+kind = "required_operand_missing"
+target = "<arg_name> in [ <arg_name> <arg_data_type> [ , <arg_name> <arg_data_type> ... ] ]"
+note = "omit <arg_name>, observed"
+anchor = "doc.sql.call-with / Syntax / Snowflake Scripting"
+sql = "WITH v1 AS PROCEDURE ( INT ) RETURNS INT LANGUAGE SQL AS 'm' CALL v1 ( ) ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.utility.call-with.table-language-sql-as"
+kind = "required_operand_missing"
+target = "<col_data_type> in [ <col_name> <col_data_type> [ , ... ] ]"
+note = "omit <col_data_type>"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 90214 SQLSTATE 42601 (phase semantic_error, import-20261104-22), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.utility.call-with.table-language-sql-as"
+kind = "required_operand_missing"
+target = "<col_data_type> in [ <col_name> <col_data_type> [ , ... ] ]"
+note = "omit <col_data_type>, observed"
+anchor = "doc.sql.call-with / Syntax / Snowflake Scripting"
+sql = "WITH v1 AS PROCEDURE ( ) RETURNS TABLE ( v1 ) LANGUAGE SQL AS 'm' CALL v1 ( ) ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.utility.execute-dbt-project.project-2"
+kind = "negative_neighbour"
+note = "the form without its required EXISTS in [ IF EXISTS ]"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 90105 SQLSTATE 22000 (phase semantic_error, import-20261104-21), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.utility.execute-dbt-project.project-2"
+kind = "negative_neighbour"
+note = "the form without its required EXISTS in [ IF EXISTS ], observed"
+anchor = "doc.sql.execute-dbt-project / Variant syntax"
+sql = "EXECUTE DBT PROJECT IF ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.utility.execute-dbt-project.project"
+kind = "negative_neighbour"
+target = "<integration_name> in [ EXTERNAL_ACCESS_INTEGRATIONS = ( <integration_name> [ , ... ] ) ]"
+note = "a string literal in place of <integration_name>"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 90105 SQLSTATE 22000 (phase semantic_error, import-20261104-21), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.utility.execute-dbt-project.project"
+kind = "negative_neighbour"
+target = "<integration_name> in [ EXTERNAL_ACCESS_INTEGRATIONS = ( <integration_name> [ , ... ] ) ]"
+note = "a string literal in place of <integration_name>, observed"
+anchor = "doc.sql.execute-dbt-project / Syntax"
+sql = "EXECUTE DBT PROJECT v1 EXTERNAL_ACCESS_INTEGRATIONS = ( 'v1' ) ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.utility.execute-immediate-from"
+kind = "identifier_class"
+target = "<stage_name>"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 90105 SQLSTATE 22000 (phase semantic_error, import-20261104-21), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.utility.execute-immediate-from"
+kind = "identifier_class"
+target = "<stage_name>"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance), observed"
+anchor = "doc.sql.execute-immediate-from / Syntax"
+sql = "EXECUTE IMMEDIATE FROM @SELECT/p1/f1.sql ;"
+expect = "observe"
+also_sql = "EXECUTE IMMEDIATE FROM @\"SELECT\"/p1/f1.sql ;"
+also_expect = "accept"
+context = "raw"
+
+[[suppress]]
+form = "sf.utility.execute-immediate-from"
+kind = "identifier_class"
+target = "<namespace>"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 90105 SQLSTATE 22000 (phase semantic_error, import-20261104-21), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.utility.execute-immediate-from"
+kind = "identifier_class"
+target = "<namespace>"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance), observed"
+anchor = "doc.sql.execute-immediate-from / Syntax"
+sql = "EXECUTE IMMEDIATE FROM @SELECT.s1/p1/f1.sql ;"
+expect = "observe"
+also_sql = "EXECUTE IMMEDIATE FROM @\"SELECT\".s1/p1/f1.sql ;"
+also_expect = "accept"
+context = "raw"
+
+[[suppress]]
+form = "sf.utility.execute-immediate-from"
+kind = "required_operand_missing"
+target = "<stage_name>"
+note = "omit <stage_name>"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 1012 SQLSTATE 42601 (phase semantic_error, import-20261104-21), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.utility.execute-immediate-from"
+kind = "required_operand_missing"
+target = "<stage_name>"
+note = "omit <stage_name>, observed"
+anchor = "doc.sql.execute-immediate-from / Syntax"
+sql = "EXECUTE IMMEDIATE FROM @/p1/f1.sql ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.utility.execute-immediate-from"
+kind = "required_operand_missing"
+target = "<namespace> in [ <namespace> . ]"
+note = "omit <namespace>"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 90105 SQLSTATE 22000 (phase semantic_error, import-20261104-21), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.utility.execute-immediate-from"
+kind = "required_operand_missing"
+target = "<namespace> in [ <namespace> . ]"
+note = "omit <namespace>, observed"
+anchor = "doc.sql.execute-immediate-from / Syntax"
+sql = "EXECUTE IMMEDIATE FROM @.s1/p1/f1.sql ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.utility.execute-inference-job-service"
+kind = "required_operand_missing"
+target = "<namespace> in [ <namespace> . ]"
+note = "omit <namespace>"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 2003 SQLSTATE 02000 (phase semantic_error, import-20261104-21), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.utility.execute-inference-job-service"
+kind = "required_operand_missing"
+target = "<namespace> in [ <namespace> . ]"
+note = "omit <namespace>, observed"
+anchor = "doc.sql.execute-inference-job-service / Syntax"
+sql = "EXECUTE INFERENCE JOB SERVICE IN COMPUTE POOL v1 WITH SPECIFICATION $$ m $$ FROM @.s1 MODEL = v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.utility.execute-inference-job-service"
+kind = "required_operand_missing"
+target = "<schema> in [ <db> . <schema> . ]"
+note = "omit <schema>"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 2003 SQLSTATE 02000 (phase semantic_error, import-20261104-21), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.utility.execute-inference-job-service"
+kind = "required_operand_missing"
+target = "<schema> in [ <db> . <schema> . ]"
+note = "omit <schema>, observed"
+anchor = "doc.sql.execute-inference-job-service / Syntax"
+sql = "EXECUTE INFERENCE JOB SERVICE IN COMPUTE POOL v1 WITH SPECIFICATION $$ m $$ FROM ( SELECT 1 ) MODEL = v1 . . v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.utility.execute-inference-job-service"
+kind = "identifier_class"
+target = "<namespace>"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 2003 SQLSTATE 02000 (phase semantic_error, import-20261104-21), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.utility.execute-inference-job-service"
+kind = "identifier_class"
+target = "<namespace>"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance), observed"
+anchor = "doc.sql.execute-inference-job-service / Syntax"
+sql = "EXECUTE INFERENCE JOB SERVICE IN COMPUTE POOL v1 WITH SPECIFICATION $$ m $$ FROM @SELECT.s1 MODEL = v1 ;"
+expect = "observe"
+also_sql = "EXECUTE INFERENCE JOB SERVICE IN COMPUTE POOL v1 WITH SPECIFICATION $$ m $$ FROM @\"SELECT\".s1 MODEL = v1 ;"
+also_expect = "accept"
+context = "raw"
+
+[[suppress]]
+form = "sf.utility.execute-inference-job-service"
+kind = "required_operand_missing"
+target = "<schema> in [ <db> . <schema> . ] #2"
+note = "omit <schema>"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 2003 SQLSTATE 02000 (phase semantic_error, import-20261104-21), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.utility.execute-inference-job-service"
+kind = "required_operand_missing"
+target = "<schema> in [ <db> . <schema> . ] #2"
+note = "omit <schema>, observed"
+anchor = "doc.sql.execute-inference-job-service / Syntax"
+sql = "EXECUTE INFERENCE JOB SERVICE IN COMPUTE POOL v1 WITH SPECIFICATION $$ m $$ FROM ( SELECT 1 ) MODEL = v1 NAME = v1 . . v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.utility.execute-inference-job-service"
+kind = "required_operand_missing"
+target = "<stage_name>"
+note = "omit <stage_name>"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 2003 SQLSTATE 02000 (phase semantic_error, import-20261104-21), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.utility.execute-inference-job-service"
+kind = "required_operand_missing"
+target = "<stage_name>"
+note = "omit <stage_name>, observed"
+anchor = "doc.sql.execute-inference-job-service / Syntax"
+sql = "EXECUTE INFERENCE JOB SERVICE IN COMPUTE POOL v1 WITH SPECIFICATION $$ m $$ FROM @ MODEL = v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.utility.execute-inference-job-service"
+kind = "identifier_class"
+target = "<stage_name>"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 2003 SQLSTATE 02000 (phase semantic_error, import-20261104-21), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.utility.execute-inference-job-service"
+kind = "identifier_class"
+target = "<stage_name>"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance), observed"
+anchor = "doc.sql.execute-inference-job-service / Syntax"
+sql = "EXECUTE INFERENCE JOB SERVICE IN COMPUTE POOL v1 WITH SPECIFICATION $$ m $$ FROM @SELECT MODEL = v1 ;"
+expect = "observe"
+also_sql = "EXECUTE INFERENCE JOB SERVICE IN COMPUTE POOL v1 WITH SPECIFICATION $$ m $$ FROM @\"SELECT\" MODEL = v1 ;"
+also_expect = "accept"
+context = "raw"
+
+[[suppress]]
+form = "sf.utility.execute-job-service"
+kind = "negative_neighbour"
+target = "<EAI_name> in [ EXTERNAL_ACCESS_INTEGRATIONS = ( <EAI_name> [ , ... ] ) ]"
+note = "a string literal in place of <EAI_name>"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 1422 SQLSTATE 22023 (phase semantic_error, import-20261104-21), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.utility.execute-job-service"
+kind = "negative_neighbour"
+target = "<EAI_name> in [ EXTERNAL_ACCESS_INTEGRATIONS = ( <EAI_name> [ , ... ] ) ]"
+note = "a string literal in place of <EAI_name>, observed"
+anchor = "doc.sql.execute-job-service / Syntax"
+sql = "EXECUTE JOB SERVICE IN COMPUTE POOL v1 FROM @s1 SPECIFICATION_FILE = 'm' EXTERNAL_ACCESS_INTEGRATIONS = ( 'v1' ) ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.utility.execute-job-service"
+kind = "required_operand_missing"
+target = "<stage>"
+note = "omit <stage>"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 1012 SQLSTATE 42601 (phase semantic_error, import-20261104-21), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.utility.execute-job-service"
+kind = "required_operand_missing"
+target = "<stage>"
+note = "omit <stage>, observed"
+anchor = "doc.sql.execute-job-service / Syntax"
+sql = "EXECUTE JOB SERVICE IN COMPUTE POOL v1 FROM @ SPECIFICATION_FILE = 'm' ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.utility.execute-job-service"
+kind = "required_operand_missing"
+target = "<stage> #2"
+note = "omit <stage>"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 1012 SQLSTATE 42601 (phase semantic_error, import-20261104-21), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.utility.execute-job-service"
+kind = "required_operand_missing"
+target = "<stage> #2"
+note = "omit <stage>, observed"
+anchor = "doc.sql.execute-job-service / Syntax"
+sql = "EXECUTE JOB SERVICE IN COMPUTE POOL v1 FROM @ SPECIFICATION_TEMPLATE_FILE = 'm' USING ( v1 => 1 ) ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.utility.execute-notebook-project"
+kind = "negative_neighbour"
+target = "<repository_name> in [ ARTIFACT_REPOSITORIES = ( <repository_name> [ , ... ] ) ]"
+note = "a string literal in place of <repository_name>"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 2003 SQLSTATE 02000 (phase semantic_error, import-20261104-21), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.utility.execute-notebook-project"
+kind = "negative_neighbour"
+target = "<repository_name> in [ ARTIFACT_REPOSITORIES = ( <repository_name> [ , ... ] ) ]"
+note = "a string literal in place of <repository_name>, observed"
+anchor = "doc.sql.execute-notebook-project / Syntax"
+sql = "EXECUTE NOTEBOOK PROJECT v1 . v1 . v1 MAIN_FILE = 'notebook.ipynb' COMPUTE_POOL = 'm' QUERY_WAREHOUSE = 'm' RUNTIME = 'm' ARTIFACT_REPOSITORIES = ( 'v1' ) ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.utility.execute-notebook-project"
+kind = "required_operand_missing"
+target = "<schema_name>"
+note = "omit <schema_name>"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 2003 SQLSTATE 02000 (phase semantic_error, import-20261104-21), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.utility.execute-notebook-project"
+kind = "required_operand_missing"
+target = "<schema_name>"
+note = "omit <schema_name>, observed"
+anchor = "doc.sql.execute-notebook-project / Syntax"
+sql = "EXECUTE NOTEBOOK PROJECT v1 . . v1 MAIN_FILE = 'notebook.ipynb' COMPUTE_POOL = 'm' QUERY_WAREHOUSE = 'm' RUNTIME = 'm' ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.utility.execute-notebook-project"
+kind = "negative_neighbour"
+target = "<integration_name> in [ EXTERNAL_ACCESS_INTEGRATIONS = ( <integration_name> [ , ... ] ) ]"
+note = "a string literal in place of <integration_name>"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 2003 SQLSTATE 02000 (phase semantic_error, import-20261104-21), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.utility.execute-notebook-project"
+kind = "negative_neighbour"
+target = "<integration_name> in [ EXTERNAL_ACCESS_INTEGRATIONS = ( <integration_name> [ , ... ] ) ]"
+note = "a string literal in place of <integration_name>, observed"
+anchor = "doc.sql.execute-notebook-project / Syntax"
+sql = "EXECUTE NOTEBOOK PROJECT v1 . v1 . v1 MAIN_FILE = 'notebook.ipynb' COMPUTE_POOL = 'm' QUERY_WAREHOUSE = 'm' RUNTIME = 'm' EXTERNAL_ACCESS_INTEGRATIONS = ( 'v1' ) ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.utility.execute-notebook-project"
+kind = "negative_neighbour"
+note = "the form without its required PROJECT"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 1420 SQLSTATE 22023 (phase semantic_error, import-20261104-21), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.utility.execute-notebook-project"
+kind = "negative_neighbour"
+note = "the form without its required PROJECT, observed"
+anchor = "doc.sql.execute-notebook-project / Syntax"
+sql = "EXECUTE NOTEBOOK v1 . v1 . v1 MAIN_FILE = 'notebook.ipynb' COMPUTE_POOL = 'm' QUERY_WAREHOUSE = 'm' RUNTIME = 'm' ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.utility.execute-task-graph.graph-retry-graph-run"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 90105 SQLSTATE 22000 (phase semantic_error, import-20261104-21), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.utility.execute-task-graph.graph-retry-graph-run"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>, observed"
+anchor = "doc.sql.execute-task-graph / Syntax"
+sql = "EXECUTE TASK GRAPH RETRY GRAPH RUN GROUP 'm' ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.utility.execute-task-graph.graph-retry-last"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 90105 SQLSTATE 22000 (phase semantic_error, import-20261104-21), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.utility.execute-task-graph.graph-retry-last"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>, observed"
+anchor = "doc.sql.execute-task-graph / Syntax"
+sql = "EXECUTE TASK GRAPH RETRY LAST ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.utility.execute-task-graph.graph"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 90105 SQLSTATE 22000 (phase semantic_error, import-20261104-21), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.utility.execute-task-graph.graph"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>, observed"
+anchor = "doc.sql.execute-task-graph / Syntax"
+sql = "EXECUTE TASK GRAPH ;"
+expect = "observe"
+context = "raw"
+
+# transaction_session: scored rejects whose receipt shows no syntax error, observed under D97 (auditor review e92ce262, applied family-wide).
+
+[[suppress]]
+form = "sf.transaction_session.desc-result"
+kind = "negative_neighbour"
+note = "the form without its required { '<query_id>' | LAST_QUERY_ID ( ) }"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 2003 SQLSTATE 42S02 (phase semantic_error, import-20261104-20), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.transaction_session.desc-result"
+kind = "negative_neighbour"
+note = "the form without its required { '<query_id>' | LAST_QUERY_ID ( ) }, observed"
+anchor = "doc.sql.desc-result / Syntax"
+sql = "DESC RESULT ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.transaction_session.use-role"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 2043 SQLSTATE 02000 (phase semantic_error, import-20261104-20), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.transaction_session.use-role"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>, observed"
+anchor = "doc.sql.use-role / Syntax"
+sql = "USE ROLE ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.transaction_session.use-warehouse"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 2043 SQLSTATE 02000 (phase semantic_error, import-20261104-20), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.transaction_session.use-warehouse"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>, observed"
+anchor = "doc.sql.use-warehouse / Syntax"
+sql = "USE WAREHOUSE ;"
+expect = "observe"
+context = "raw"

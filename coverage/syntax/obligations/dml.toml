@@ -20,13 +20,6 @@ required = true
 target = "[ <namespace> . ]"
 
 [[obligation]]
-id = "sf.dml.copy-files.from.o004"
-kind = "required_operand_missing"
-required = true
-target = "<namespace> in [ <namespace> . ]"
-note = "omit <namespace>"
-
-[[obligation]]
 id = "sf.dml.copy-files.from.o005"
 kind = "operand_type_class"
 required = true
@@ -39,13 +32,6 @@ kind = "negative_neighbour"
 required = true
 target = "<namespace> in [ <namespace> . ]"
 note = "a string literal in place of <namespace>"
-
-[[obligation]]
-id = "sf.dml.copy-files.from.o007"
-kind = "required_operand_missing"
-required = true
-target = "<stage_name>"
-note = "omit <stage_name>"
 
 [[obligation]]
 id = "sf.dml.copy-files.from.o008"
@@ -100,13 +86,6 @@ required = true
 target = "[ <namespace> . ] #2"
 
 [[obligation]]
-id = "sf.dml.copy-files.from.o016"
-kind = "required_operand_missing"
-required = true
-target = "<namespace> in [ <namespace> . ] #2"
-note = "omit <namespace>"
-
-[[obligation]]
 id = "sf.dml.copy-files.from.o017"
 kind = "operand_type_class"
 required = true
@@ -119,13 +98,6 @@ kind = "negative_neighbour"
 required = true
 target = "<namespace> in [ <namespace> . ] #2"
 note = "a string literal in place of <namespace>"
-
-[[obligation]]
-id = "sf.dml.copy-files.from.o019"
-kind = "required_operand_missing"
-required = true
-target = "<stage_name> #2"
-note = "omit <stage_name>"
 
 [[obligation]]
 id = "sf.dml.copy-files.from.o020"
@@ -347,28 +319,12 @@ anchor = "doc.identifiers-syntax"
 note = "quoted: a double-quoted identifier with blanks and mixed case"
 
 [[obligation]]
-id = "sf.dml.copy-files.from.o054"
-kind = "identifier_class"
-required = true
-target = "<namespace>"
-anchor = "doc.identifiers-syntax"
-note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
-
-[[obligation]]
 id = "sf.dml.copy-files.from.o055"
 kind = "identifier_class"
 required = true
 target = "<stage_name>"
 anchor = "doc.identifiers-syntax"
 note = "quoted: a double-quoted identifier with blanks and mixed case"
-
-[[obligation]]
-id = "sf.dml.copy-files.from.o056"
-kind = "identifier_class"
-required = true
-target = "<stage_name>"
-anchor = "doc.identifiers-syntax"
-note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
 id = "sf.dml.copy-files.from.o057"
@@ -402,6 +358,54 @@ anchor = "doc.sql.copy-files / Usage notes"
 note = "a SQL variable as the INTO location, which the page says must be a literal constant"
 
 [[obligation]]
+id = "sf.dml.copy-files.from.o061"
+kind = "required_operand_missing"
+required = true
+target = "<stage_name>"
+anchor = "doc.sql.copy-files / Syntax / Copy from a stage"
+note = "omit <stage_name>, observed"
+
+[[obligation]]
+id = "sf.dml.copy-files.from.o062"
+kind = "required_operand_missing"
+required = true
+target = "<stage_name> #2"
+anchor = "doc.sql.copy-files / Syntax / Copy from a stage"
+note = "omit <stage_name>, observed"
+
+[[obligation]]
+id = "sf.dml.copy-files.from.o063"
+kind = "identifier_class"
+required = true
+target = "<namespace>"
+anchor = "doc.sql.copy-files / Syntax / Copy from a stage"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance), observed"
+
+[[obligation]]
+id = "sf.dml.copy-files.from.o064"
+kind = "required_operand_missing"
+required = true
+target = "<namespace> in [ <namespace> . ] #2"
+anchor = "doc.sql.copy-files / Syntax / Copy from a stage"
+note = "omit <namespace>, observed"
+
+[[obligation]]
+id = "sf.dml.copy-files.from.o065"
+kind = "required_operand_missing"
+required = true
+target = "<namespace> in [ <namespace> . ]"
+anchor = "doc.sql.copy-files / Syntax / Copy from a stage"
+note = "omit <namespace>, observed"
+
+[[obligation]]
+id = "sf.dml.copy-files.from.o066"
+kind = "identifier_class"
+required = true
+target = "<stage_name>"
+anchor = "doc.sql.copy-files / Syntax / Copy from a stage"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance), observed"
+
+[[obligation]]
 id = "sf.dml.copy-files.from-select-from.o001"
 kind = "positive"
 required = true
@@ -420,13 +424,6 @@ required = true
 target = "[ <namespace> . ]"
 
 [[obligation]]
-id = "sf.dml.copy-files.from-select-from.o004"
-kind = "required_operand_missing"
-required = true
-target = "<namespace> in [ <namespace> . ]"
-note = "omit <namespace>"
-
-[[obligation]]
 id = "sf.dml.copy-files.from-select-from.o005"
 kind = "operand_type_class"
 required = true
@@ -439,13 +436,6 @@ kind = "negative_neighbour"
 required = true
 target = "<namespace> in [ <namespace> . ]"
 note = "a string literal in place of <namespace>"
-
-[[obligation]]
-id = "sf.dml.copy-files.from-select-from.o007"
-kind = "required_operand_missing"
-required = true
-target = "<stage_name>"
-note = "omit <stage_name>"
 
 [[obligation]]
 id = "sf.dml.copy-files.from-select-from.o008"
@@ -514,25 +504,11 @@ required = true
 target = "[ , <new_filename> ]"
 
 [[obligation]]
-id = "sf.dml.copy-files.from-select-from.o018"
-kind = "required_operand_missing"
-required = true
-target = "<new_filename> in [ , <new_filename> ]"
-note = "omit <new_filename>"
-
-[[obligation]]
 id = "sf.dml.copy-files.from-select-from.o019"
 kind = "operand_type_class"
 required = true
 target = "<new_filename> in [ , <new_filename> ]"
 note = "a valid identifier"
-
-[[obligation]]
-id = "sf.dml.copy-files.from-select-from.o020"
-kind = "negative_neighbour"
-required = true
-target = "<new_filename> in [ , <new_filename> ]"
-note = "a string literal in place of <new_filename>"
 
 [[obligation]]
 id = "sf.dml.copy-files.from-select-from.o039"
@@ -547,13 +523,6 @@ kind = "operand_type_class"
 required = true
 target = "<table_name>"
 note = "a valid identifier"
-
-[[obligation]]
-id = "sf.dml.copy-files.from-select-from.o041"
-kind = "negative_neighbour"
-required = true
-target = "<table_name>"
-note = "a string literal in place of <table_name>"
 
 [[obligation]]
 id = "sf.dml.copy-files.from-select-from.o021"
@@ -578,12 +547,6 @@ id = "sf.dml.copy-files.from-select-from.o024"
 kind = "alternative"
 required = true
 target = "{ TRUE | FALSE } → FALSE"
-
-[[obligation]]
-id = "sf.dml.copy-files.from-select-from.o025"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required FILES"
 
 [[obligation]]
 id = "sf.dml.copy-files.from-select-from.o026"
@@ -636,28 +599,12 @@ anchor = "doc.identifiers-syntax"
 note = "quoted: a double-quoted identifier with blanks and mixed case"
 
 [[obligation]]
-id = "sf.dml.copy-files.from-select-from.o034"
-kind = "identifier_class"
-required = true
-target = "<namespace>"
-anchor = "doc.identifiers-syntax"
-note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
-
-[[obligation]]
 id = "sf.dml.copy-files.from-select-from.o035"
 kind = "identifier_class"
 required = true
 target = "<stage_name>"
 anchor = "doc.identifiers-syntax"
 note = "quoted: a double-quoted identifier with blanks and mixed case"
-
-[[obligation]]
-id = "sf.dml.copy-files.from-select-from.o036"
-kind = "identifier_class"
-required = true
-target = "<stage_name>"
-anchor = "doc.identifiers-syntax"
-note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
 id = "sf.dml.copy-files.from-select-from.o037"
@@ -690,6 +637,69 @@ required = true
 target = "<table_name>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.dml.copy-files.from-select-from.o044"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.copy-files / Syntax / Copy from a query"
+note = "the form without its required FILES, observed"
+
+[[obligation]]
+id = "sf.dml.copy-files.from-select-from.o045"
+kind = "required_operand_missing"
+required = true
+target = "<new_filename> in [ , <new_filename> ]"
+anchor = "doc.sql.copy-files / Syntax / Copy from a query"
+note = "omit <new_filename>, observed"
+
+[[obligation]]
+id = "sf.dml.copy-files.from-select-from.o046"
+kind = "identifier_class"
+required = true
+target = "<namespace>"
+anchor = "doc.sql.copy-files / Syntax / Copy from a query"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance), observed"
+
+[[obligation]]
+id = "sf.dml.copy-files.from-select-from.o047"
+kind = "required_operand_missing"
+required = true
+target = "<namespace> in [ <namespace> . ]"
+anchor = "doc.sql.copy-files / Syntax / Copy from a query"
+note = "omit <namespace>, observed"
+
+[[obligation]]
+id = "sf.dml.copy-files.from-select-from.o048"
+kind = "identifier_class"
+required = true
+target = "<stage_name>"
+anchor = "doc.sql.copy-files / Syntax / Copy from a query"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance), observed"
+
+[[obligation]]
+id = "sf.dml.copy-files.from-select-from.o049"
+kind = "negative_neighbour"
+required = true
+target = "<new_filename> in [ , <new_filename> ]"
+anchor = "doc.sql.copy-files / Syntax / Copy from a query"
+note = "a string literal in place of <new_filename>, observed"
+
+[[obligation]]
+id = "sf.dml.copy-files.from-select-from.o050"
+kind = "required_operand_missing"
+required = true
+target = "<stage_name>"
+anchor = "doc.sql.copy-files / Syntax / Copy from a query"
+note = "omit <stage_name>, observed"
+
+[[obligation]]
+id = "sf.dml.copy-files.from-select-from.o051"
+kind = "negative_neighbour"
+required = true
+target = "<table_name>"
+anchor = "doc.sql.copy-files / Syntax / Copy from a query"
+note = "a string literal in place of <table_name>, observed"
 
 [[obligation]]
 id = "sf.dml.copy-into-location.o001"
@@ -764,13 +774,6 @@ required = true
 target = "[ <namespace> . ]"
 
 [[obligation]]
-id = "sf.dml.copy-into-location.o012"
-kind = "required_operand_missing"
-required = true
-target = "<namespace> in [ <namespace> . ]"
-note = "omit <namespace>"
-
-[[obligation]]
 id = "sf.dml.copy-into-location.o013"
 kind = "operand_type_class"
 required = true
@@ -783,13 +786,6 @@ kind = "negative_neighbour"
 required = true
 target = "<namespace> in [ <namespace> . ]"
 note = "a string literal in place of <namespace>"
-
-[[obligation]]
-id = "sf.dml.copy-into-location.o065"
-kind = "required_operand_missing"
-required = true
-target = "<int_stage_name>"
-note = "omit <int_stage_name>"
 
 [[obligation]]
 id = "sf.dml.copy-into-location.o066"
@@ -844,13 +840,6 @@ required = true
 target = "[ <namespace> . ] #2"
 
 [[obligation]]
-id = "sf.dml.copy-into-location.o074"
-kind = "required_operand_missing"
-required = true
-target = "<namespace> in [ <namespace> . ] #2"
-note = "omit <namespace>"
-
-[[obligation]]
 id = "sf.dml.copy-into-location.o075"
 kind = "operand_type_class"
 required = true
@@ -863,13 +852,6 @@ kind = "negative_neighbour"
 required = true
 target = "<namespace> in [ <namespace> . ] #2"
 note = "a string literal in place of <namespace>"
-
-[[obligation]]
-id = "sf.dml.copy-into-location.o015"
-kind = "required_operand_missing"
-required = true
-target = "<table_name>"
-note = "omit <table_name>"
 
 [[obligation]]
 id = "sf.dml.copy-into-location.o016"
@@ -950,13 +932,6 @@ required = true
 target = "[ <namespace> . ] #3"
 
 [[obligation]]
-id = "sf.dml.copy-into-location.o087"
-kind = "required_operand_missing"
-required = true
-target = "<namespace> in [ <namespace> . ] #3"
-note = "omit <namespace>"
-
-[[obligation]]
 id = "sf.dml.copy-into-location.o088"
 kind = "operand_type_class"
 required = true
@@ -969,13 +944,6 @@ kind = "negative_neighbour"
 required = true
 target = "<namespace> in [ <namespace> . ] #3"
 note = "a string literal in place of <namespace>"
-
-[[obligation]]
-id = "sf.dml.copy-into-location.o090"
-kind = "required_operand_missing"
-required = true
-target = "<ext_stage_name>"
-note = "omit <ext_stage_name>"
 
 [[obligation]]
 id = "sf.dml.copy-into-location.o091"
@@ -3106,28 +3074,12 @@ anchor = "doc.identifiers-syntax"
 note = "quoted: a double-quoted identifier with blanks and mixed case"
 
 [[obligation]]
-id = "sf.dml.copy-into-location.o055"
-kind = "identifier_class"
-required = true
-target = "<namespace>"
-anchor = "doc.identifiers-syntax"
-note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
-
-[[obligation]]
 id = "sf.dml.copy-into-location.o371"
 kind = "identifier_class"
 required = true
 target = "<int_stage_name>"
 anchor = "doc.identifiers-syntax"
 note = "quoted: a double-quoted identifier with blanks and mixed case"
-
-[[obligation]]
-id = "sf.dml.copy-into-location.o372"
-kind = "identifier_class"
-required = true
-target = "<int_stage_name>"
-anchor = "doc.identifiers-syntax"
-note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
 id = "sf.dml.copy-into-location.o056"
@@ -3138,28 +3090,12 @@ anchor = "doc.identifiers-syntax"
 note = "quoted: a double-quoted identifier with blanks and mixed case"
 
 [[obligation]]
-id = "sf.dml.copy-into-location.o057"
-kind = "identifier_class"
-required = true
-target = "<table_name>"
-anchor = "doc.identifiers-syntax"
-note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
-
-[[obligation]]
 id = "sf.dml.copy-into-location.o373"
 kind = "identifier_class"
 required = true
 target = "<ext_stage_name>"
 anchor = "doc.identifiers-syntax"
 note = "quoted: a double-quoted identifier with blanks and mixed case"
-
-[[obligation]]
-id = "sf.dml.copy-into-location.o374"
-kind = "identifier_class"
-required = true
-target = "<ext_stage_name>"
-anchor = "doc.identifiers-syntax"
-note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
 id = "sf.dml.copy-into-location.o375"
@@ -3231,6 +3167,86 @@ kind = "positive"
 required = true
 anchor = "doc.sql.copy-into-location / Syntax"
 note = "Microsoft Azure location parameters before FROM, in the position the page's grammar shows (observed: its examples place them after FROM)"
+
+[[obligation]]
+id = "sf.dml.copy-into-location.o511"
+kind = "identifier_class"
+required = true
+target = "<int_stage_name>"
+anchor = "doc.sql.copy-into-location / Syntax"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance), observed"
+
+[[obligation]]
+id = "sf.dml.copy-into-location.o512"
+kind = "identifier_class"
+required = true
+target = "<ext_stage_name>"
+anchor = "doc.sql.copy-into-location / Syntax"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance), observed"
+
+[[obligation]]
+id = "sf.dml.copy-into-location.o513"
+kind = "required_operand_missing"
+required = true
+target = "<namespace> in [ <namespace> . ] #2"
+anchor = "doc.sql.copy-into-location / Syntax"
+note = "omit <namespace>, observed"
+
+[[obligation]]
+id = "sf.dml.copy-into-location.o514"
+kind = "required_operand_missing"
+required = true
+target = "<namespace> in [ <namespace> . ]"
+anchor = "doc.sql.copy-into-location / Syntax"
+note = "omit <namespace>, observed"
+
+[[obligation]]
+id = "sf.dml.copy-into-location.o515"
+kind = "required_operand_missing"
+required = true
+target = "<namespace> in [ <namespace> . ] #3"
+anchor = "doc.sql.copy-into-location / Syntax"
+note = "omit <namespace>, observed"
+
+[[obligation]]
+id = "sf.dml.copy-into-location.o516"
+kind = "identifier_class"
+required = true
+target = "<table_name>"
+anchor = "doc.sql.copy-into-location / Syntax"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance), observed"
+
+[[obligation]]
+id = "sf.dml.copy-into-location.o517"
+kind = "required_operand_missing"
+required = true
+target = "<int_stage_name>"
+anchor = "doc.sql.copy-into-location / Syntax"
+note = "omit <int_stage_name>, observed"
+
+[[obligation]]
+id = "sf.dml.copy-into-location.o518"
+kind = "required_operand_missing"
+required = true
+target = "<ext_stage_name>"
+anchor = "doc.sql.copy-into-location / Syntax"
+note = "omit <ext_stage_name>, observed"
+
+[[obligation]]
+id = "sf.dml.copy-into-location.o519"
+kind = "required_operand_missing"
+required = true
+target = "<table_name>"
+anchor = "doc.sql.copy-into-location / Syntax"
+note = "omit <table_name>, observed"
+
+[[obligation]]
+id = "sf.dml.copy-into-location.o520"
+kind = "identifier_class"
+required = true
+target = "<namespace>"
+anchor = "doc.sql.copy-into-location / Syntax"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance), observed"
 
 [[obligation]]
 id = "sf.dml.copy-into-table.internalstage-externalstage-externallocation.o001"
@@ -3341,13 +3357,6 @@ required = true
 target = "[ <namespace> . ] #2"
 
 [[obligation]]
-id = "sf.dml.copy-into-table.internalstage-externalstage-externallocation.o080"
-kind = "required_operand_missing"
-required = true
-target = "<namespace> in [ <namespace> . ] #2"
-note = "omit <namespace>"
-
-[[obligation]]
 id = "sf.dml.copy-into-table.internalstage-externalstage-externallocation.o081"
 kind = "operand_type_class"
 required = true
@@ -3360,13 +3369,6 @@ kind = "negative_neighbour"
 required = true
 target = "<namespace> in [ <namespace> . ] #2"
 note = "a string literal in place of <namespace>"
-
-[[obligation]]
-id = "sf.dml.copy-into-table.internalstage-externalstage-externallocation.o083"
-kind = "required_operand_missing"
-required = true
-target = "<int_stage_name>"
-note = "omit <int_stage_name>"
 
 [[obligation]]
 id = "sf.dml.copy-into-table.internalstage-externalstage-externallocation.o084"
@@ -3421,13 +3423,6 @@ required = true
 target = "[ <namespace> . ] #3"
 
 [[obligation]]
-id = "sf.dml.copy-into-table.internalstage-externalstage-externallocation.o092"
-kind = "required_operand_missing"
-required = true
-target = "<namespace> in [ <namespace> . ] #3"
-note = "omit <namespace>"
-
-[[obligation]]
 id = "sf.dml.copy-into-table.internalstage-externalstage-externallocation.o093"
 kind = "operand_type_class"
 required = true
@@ -3440,13 +3435,6 @@ kind = "negative_neighbour"
 required = true
 target = "<namespace> in [ <namespace> . ] #3"
 note = "a string literal in place of <namespace>"
-
-[[obligation]]
-id = "sf.dml.copy-into-table.internalstage-externalstage-externallocation.o095"
-kind = "required_operand_missing"
-required = true
-target = "<table_name> #2"
-note = "omit <table_name>"
 
 [[obligation]]
 id = "sf.dml.copy-into-table.internalstage-externalstage-externallocation.o096"
@@ -3527,13 +3515,6 @@ required = true
 target = "[ <namespace> . ] #4"
 
 [[obligation]]
-id = "sf.dml.copy-into-table.internalstage-externalstage-externallocation.o108"
-kind = "required_operand_missing"
-required = true
-target = "<namespace> in [ <namespace> . ] #4"
-note = "omit <namespace>"
-
-[[obligation]]
 id = "sf.dml.copy-into-table.internalstage-externalstage-externallocation.o109"
 kind = "operand_type_class"
 required = true
@@ -3546,13 +3527,6 @@ kind = "negative_neighbour"
 required = true
 target = "<namespace> in [ <namespace> . ] #4"
 note = "a string literal in place of <namespace>"
-
-[[obligation]]
-id = "sf.dml.copy-into-table.internalstage-externalstage-externallocation.o111"
-kind = "required_operand_missing"
-required = true
-target = "<ext_stage_name>"
-note = "omit <ext_stage_name>"
 
 [[obligation]]
 id = "sf.dml.copy-into-table.internalstage-externalstage-externallocation.o112"
@@ -6266,13 +6240,6 @@ target = "<column_name> in [ INCLUDE_METADATA = ( <column_name> = { METADATA$FIL
 note = "a valid identifier"
 
 [[obligation]]
-id = "sf.dml.copy-into-table.internalstage-externalstage-externallocation.o531"
-kind = "negative_neighbour"
-required = true
-target = "<column_name> in [ INCLUDE_METADATA = ( <column_name> = { METADATA$FILENAME | METADATA$FILE_ROW_NUMBER | METADATA$FILE_…"
-note = "a string literal in place of <column_name>"
-
-[[obligation]]
 id = "sf.dml.copy-into-table.internalstage-externalstage-externallocation.o532"
 kind = "alternative"
 required = true
@@ -7255,28 +7222,12 @@ anchor = "doc.identifiers-syntax"
 note = "quoted: a double-quoted identifier with blanks and mixed case"
 
 [[obligation]]
-id = "sf.dml.copy-into-table.internalstage-externalstage-externallocation.o684"
-kind = "identifier_class"
-required = true
-target = "<int_stage_name>"
-anchor = "doc.identifiers-syntax"
-note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
-
-[[obligation]]
 id = "sf.dml.copy-into-table.internalstage-externalstage-externallocation.o685"
 kind = "identifier_class"
 required = true
 target = "<ext_stage_name>"
 anchor = "doc.identifiers-syntax"
 note = "quoted: a double-quoted identifier with blanks and mixed case"
-
-[[obligation]]
-id = "sf.dml.copy-into-table.internalstage-externalstage-externallocation.o686"
-kind = "identifier_class"
-required = true
-target = "<ext_stage_name>"
-anchor = "doc.identifiers-syntax"
-note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
 id = "sf.dml.copy-into-table.internalstage-externalstage-externallocation.o687"
@@ -7380,6 +7331,78 @@ anchor = "doc.sql.copy-into-table / Usage notes"
 note = "a SQL variable as the FROM location, which the page says must be a literal constant"
 
 [[obligation]]
+id = "sf.dml.copy-into-table.internalstage-externalstage-externallocation.o700"
+kind = "required_operand_missing"
+required = true
+target = "<table_name> #2"
+anchor = "doc.sql.copy-into-table / Syntax"
+note = "omit <table_name>, observed"
+
+[[obligation]]
+id = "sf.dml.copy-into-table.internalstage-externalstage-externallocation.o701"
+kind = "required_operand_missing"
+required = true
+target = "<int_stage_name>"
+anchor = "doc.sql.copy-into-table / Syntax"
+note = "omit <int_stage_name>, observed"
+
+[[obligation]]
+id = "sf.dml.copy-into-table.internalstage-externalstage-externallocation.o702"
+kind = "required_operand_missing"
+required = true
+target = "<ext_stage_name>"
+anchor = "doc.sql.copy-into-table / Syntax"
+note = "omit <ext_stage_name>, observed"
+
+[[obligation]]
+id = "sf.dml.copy-into-table.internalstage-externalstage-externallocation.o703"
+kind = "identifier_class"
+required = true
+target = "<int_stage_name>"
+anchor = "doc.sql.copy-into-table / Syntax"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance), observed"
+
+[[obligation]]
+id = "sf.dml.copy-into-table.internalstage-externalstage-externallocation.o704"
+kind = "identifier_class"
+required = true
+target = "<ext_stage_name>"
+anchor = "doc.sql.copy-into-table / Syntax"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance), observed"
+
+[[obligation]]
+id = "sf.dml.copy-into-table.internalstage-externalstage-externallocation.o705"
+kind = "required_operand_missing"
+required = true
+target = "<namespace> in [ <namespace> . ] #2"
+anchor = "doc.sql.copy-into-table / Syntax"
+note = "omit <namespace>, observed"
+
+[[obligation]]
+id = "sf.dml.copy-into-table.internalstage-externalstage-externallocation.o706"
+kind = "required_operand_missing"
+required = true
+target = "<namespace> in [ <namespace> . ] #4"
+anchor = "doc.sql.copy-into-table / Syntax"
+note = "omit <namespace>, observed"
+
+[[obligation]]
+id = "sf.dml.copy-into-table.internalstage-externalstage-externallocation.o707"
+kind = "negative_neighbour"
+required = true
+target = "<column_name> in [ INCLUDE_METADATA = ( <column_name> = { METADATA$FILENAME | METADATA$FILE_ROW_NUMBER | METADATA$FILE_…"
+anchor = "doc.sql.copy-into-table / Syntax"
+note = "a string literal in place of <column_name>, observed"
+
+[[obligation]]
+id = "sf.dml.copy-into-table.internalstage-externalstage-externallocation.o708"
+kind = "required_operand_missing"
+required = true
+target = "<namespace> in [ <namespace> . ] #3"
+anchor = "doc.sql.copy-into-table / Syntax"
+note = "omit <namespace>, observed"
+
+[[obligation]]
 id = "sf.dml.copy-into-table.select-from-internalstage-externalstage.o001"
 kind = "positive"
 required = true
@@ -7431,13 +7454,6 @@ kind = "operand_type_class"
 required = true
 target = "<table_name>"
 note = "a valid identifier"
-
-[[obligation]]
-id = "sf.dml.copy-into-table.select-from-internalstage-externalstage.o009"
-kind = "negative_neighbour"
-required = true
-target = "<table_name>"
-note = "a string literal in place of <table_name>"
 
 [[obligation]]
 id = "sf.dml.copy-into-table.select-from-internalstage-externalstage.o010"
@@ -7621,13 +7637,6 @@ required = true
 target = "[ <namespace> . ] #2"
 
 [[obligation]]
-id = "sf.dml.copy-into-table.select-from-internalstage-externalstage.o098"
-kind = "required_operand_missing"
-required = true
-target = "<namespace> in [ <namespace> . ] #2"
-note = "omit <namespace>"
-
-[[obligation]]
 id = "sf.dml.copy-into-table.select-from-internalstage-externalstage.o099"
 kind = "operand_type_class"
 required = true
@@ -7640,13 +7649,6 @@ kind = "negative_neighbour"
 required = true
 target = "<namespace> in [ <namespace> . ] #2"
 note = "a string literal in place of <namespace>"
-
-[[obligation]]
-id = "sf.dml.copy-into-table.select-from-internalstage-externalstage.o101"
-kind = "required_operand_missing"
-required = true
-target = "<int_stage_name>"
-note = "omit <int_stage_name>"
 
 [[obligation]]
 id = "sf.dml.copy-into-table.select-from-internalstage-externalstage.o102"
@@ -7701,13 +7703,6 @@ required = true
 target = "[ <namespace> . ] #3"
 
 [[obligation]]
-id = "sf.dml.copy-into-table.select-from-internalstage-externalstage.o110"
-kind = "required_operand_missing"
-required = true
-target = "<namespace> in [ <namespace> . ] #3"
-note = "omit <namespace>"
-
-[[obligation]]
 id = "sf.dml.copy-into-table.select-from-internalstage-externalstage.o111"
 kind = "operand_type_class"
 required = true
@@ -7720,13 +7715,6 @@ kind = "negative_neighbour"
 required = true
 target = "<namespace> in [ <namespace> . ] #3"
 note = "a string literal in place of <namespace>"
-
-[[obligation]]
-id = "sf.dml.copy-into-table.select-from-internalstage-externalstage.o113"
-kind = "required_operand_missing"
-required = true
-target = "<table_name> #2"
-note = "omit <table_name>"
 
 [[obligation]]
 id = "sf.dml.copy-into-table.select-from-internalstage-externalstage.o114"
@@ -7807,13 +7795,6 @@ required = true
 target = "[ <namespace> . ] #4"
 
 [[obligation]]
-id = "sf.dml.copy-into-table.select-from-internalstage-externalstage.o126"
-kind = "required_operand_missing"
-required = true
-target = "<namespace> in [ <namespace> . ] #4"
-note = "omit <namespace>"
-
-[[obligation]]
 id = "sf.dml.copy-into-table.select-from-internalstage-externalstage.o127"
 kind = "operand_type_class"
 required = true
@@ -7826,13 +7807,6 @@ kind = "negative_neighbour"
 required = true
 target = "<namespace> in [ <namespace> . ] #4"
 note = "a string literal in place of <namespace>"
-
-[[obligation]]
-id = "sf.dml.copy-into-table.select-from-internalstage-externalstage.o129"
-kind = "required_operand_missing"
-required = true
-target = "<ext_stage_name>"
-note = "omit <ext_stage_name>"
 
 [[obligation]]
 id = "sf.dml.copy-into-table.select-from-internalstage-externalstage.o130"
@@ -9982,13 +9956,6 @@ target = "<column_name> in [ INCLUDE_METADATA = ( <column_name> = { METADATA$FIL
 note = "a valid identifier"
 
 [[obligation]]
-id = "sf.dml.copy-into-table.select-from-internalstage-externalstage.o462"
-kind = "negative_neighbour"
-required = true
-target = "<column_name> in [ INCLUDE_METADATA = ( <column_name> = { METADATA$FILENAME | METADATA$FILE_ROW_NUMBER | METADATA$FILE_…"
-note = "a string literal in place of <column_name>"
-
-[[obligation]]
 id = "sf.dml.copy-into-table.select-from-internalstage-externalstage.o463"
 kind = "alternative"
 required = true
@@ -10913,14 +10880,6 @@ anchor = "doc.identifiers-syntax"
 note = "quoted: a double-quoted identifier with blanks and mixed case"
 
 [[obligation]]
-id = "sf.dml.copy-into-table.select-from-internalstage-externalstage.o090"
-kind = "identifier_class"
-required = true
-target = "<file_col_num>"
-anchor = "doc.identifiers-syntax"
-note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
-
-[[obligation]]
 id = "sf.dml.copy-into-table.select-from-internalstage-externalstage.o595"
 kind = "identifier_class"
 required = true
@@ -10929,28 +10888,12 @@ anchor = "doc.identifiers-syntax"
 note = "quoted: a double-quoted identifier with blanks and mixed case"
 
 [[obligation]]
-id = "sf.dml.copy-into-table.select-from-internalstage-externalstage.o596"
-kind = "identifier_class"
-required = true
-target = "<int_stage_name>"
-anchor = "doc.identifiers-syntax"
-note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
-
-[[obligation]]
 id = "sf.dml.copy-into-table.select-from-internalstage-externalstage.o597"
 kind = "identifier_class"
 required = true
 target = "<ext_stage_name>"
 anchor = "doc.identifiers-syntax"
 note = "quoted: a double-quoted identifier with blanks and mixed case"
-
-[[obligation]]
-id = "sf.dml.copy-into-table.select-from-internalstage-externalstage.o598"
-kind = "identifier_class"
-required = true
-target = "<ext_stage_name>"
-anchor = "doc.identifiers-syntax"
-note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
 id = "sf.dml.copy-into-table.select-from-internalstage-externalstage.o599"
@@ -10974,6 +10917,94 @@ kind = "extreme"
 required = true
 anchor = "doc.sql.copy-into-table / Syntax"
 note = "1,000 staged columns in the transformation SELECT; no documented bound"
+
+[[obligation]]
+id = "sf.dml.copy-into-table.select-from-internalstage-externalstage.o602"
+kind = "identifier_class"
+required = true
+target = "<file_col_num>"
+anchor = "doc.sql.copy-into-table / Syntax"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance), observed"
+
+[[obligation]]
+id = "sf.dml.copy-into-table.select-from-internalstage-externalstage.o603"
+kind = "identifier_class"
+required = true
+target = "<int_stage_name>"
+anchor = "doc.sql.copy-into-table / Syntax"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance), observed"
+
+[[obligation]]
+id = "sf.dml.copy-into-table.select-from-internalstage-externalstage.o604"
+kind = "identifier_class"
+required = true
+target = "<ext_stage_name>"
+anchor = "doc.sql.copy-into-table / Syntax"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance), observed"
+
+[[obligation]]
+id = "sf.dml.copy-into-table.select-from-internalstage-externalstage.o605"
+kind = "required_operand_missing"
+required = true
+target = "<namespace> in [ <namespace> . ] #2"
+anchor = "doc.sql.copy-into-table / Syntax"
+note = "omit <namespace>, observed"
+
+[[obligation]]
+id = "sf.dml.copy-into-table.select-from-internalstage-externalstage.o606"
+kind = "required_operand_missing"
+required = true
+target = "<namespace> in [ <namespace> . ] #4"
+anchor = "doc.sql.copy-into-table / Syntax"
+note = "omit <namespace>, observed"
+
+[[obligation]]
+id = "sf.dml.copy-into-table.select-from-internalstage-externalstage.o607"
+kind = "negative_neighbour"
+required = true
+target = "<column_name> in [ INCLUDE_METADATA = ( <column_name> = { METADATA$FILENAME | METADATA$FILE_ROW_NUMBER | METADATA$FILE_…"
+anchor = "doc.sql.copy-into-table / Syntax"
+note = "a string literal in place of <column_name>, observed"
+
+[[obligation]]
+id = "sf.dml.copy-into-table.select-from-internalstage-externalstage.o608"
+kind = "required_operand_missing"
+required = true
+target = "<namespace> in [ <namespace> . ] #3"
+anchor = "doc.sql.copy-into-table / Syntax"
+note = "omit <namespace>, observed"
+
+[[obligation]]
+id = "sf.dml.copy-into-table.select-from-internalstage-externalstage.o609"
+kind = "negative_neighbour"
+required = true
+target = "<table_name>"
+anchor = "doc.sql.copy-into-table / Syntax"
+note = "a string literal in place of <table_name>, observed"
+
+[[obligation]]
+id = "sf.dml.copy-into-table.select-from-internalstage-externalstage.o610"
+kind = "required_operand_missing"
+required = true
+target = "<table_name> #2"
+anchor = "doc.sql.copy-into-table / Syntax"
+note = "omit <table_name>, observed"
+
+[[obligation]]
+id = "sf.dml.copy-into-table.select-from-internalstage-externalstage.o611"
+kind = "required_operand_missing"
+required = true
+target = "<int_stage_name>"
+anchor = "doc.sql.copy-into-table / Syntax"
+note = "omit <int_stage_name>, observed"
+
+[[obligation]]
+id = "sf.dml.copy-into-table.select-from-internalstage-externalstage.o612"
+kind = "required_operand_missing"
+required = true
+target = "<ext_stage_name>"
+anchor = "doc.sql.copy-into-table / Syntax"
+note = "omit <ext_stage_name>, observed"
 
 [[obligation]]
 id = "sf.dml.delete.o001"
@@ -11145,12 +11176,6 @@ required = true
 note = "the form without its required ) in [ USING { <additional_table> | ( <query> ) } [ , { <additional_table> | ( <query> ) } ] ]"
 
 [[obligation]]
-id = "sf.dml.delete.o041"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required { <additional_table> | ( <query> ) } in [ USING { <additional_table> | ( <query> ) } [ , { <additional_table> | ( <query> ) } ] ]"
-
-[[obligation]]
 id = "sf.dml.delete.o042"
 kind = "negative_neighbour"
 required = true
@@ -11202,6 +11227,13 @@ anchor = "doc.sql.delete / Syntax"
 note = "100 tables in USING; no documented bound"
 
 [[obligation]]
+id = "sf.dml.delete.o045"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.delete / Syntax"
+note = "the form without its required { <additional_table> | ( <query> ) } in [ USING { <additional_table> | ( <query> ) } [ , { <additional_table> | ( <query> ) } ] ], observed"
+
+[[obligation]]
 id = "sf.dml.get.o001"
 kind = "positive"
 required = true
@@ -11238,13 +11270,6 @@ required = true
 target = "[ <namespace> . ]"
 
 [[obligation]]
-id = "sf.dml.get.o023"
-kind = "required_operand_missing"
-required = true
-target = "<namespace> in [ <namespace> . ]"
-note = "omit <namespace>"
-
-[[obligation]]
 id = "sf.dml.get.o024"
 kind = "operand_type_class"
 required = true
@@ -11257,13 +11282,6 @@ kind = "negative_neighbour"
 required = true
 target = "<namespace> in [ <namespace> . ]"
 note = "a string literal in place of <namespace>"
-
-[[obligation]]
-id = "sf.dml.get.o026"
-kind = "required_operand_missing"
-required = true
-target = "<int_stage_name>"
-note = "omit <int_stage_name>"
 
 [[obligation]]
 id = "sf.dml.get.o027"
@@ -11318,13 +11336,6 @@ required = true
 target = "[ <namespace> . ] #2"
 
 [[obligation]]
-id = "sf.dml.get.o035"
-kind = "required_operand_missing"
-required = true
-target = "<namespace> in [ <namespace> . ] #2"
-note = "omit <namespace>"
-
-[[obligation]]
 id = "sf.dml.get.o036"
 kind = "operand_type_class"
 required = true
@@ -11337,13 +11348,6 @@ kind = "negative_neighbour"
 required = true
 target = "<namespace> in [ <namespace> . ] #2"
 note = "a string literal in place of <namespace>"
-
-[[obligation]]
-id = "sf.dml.get.o038"
-kind = "required_operand_missing"
-required = true
-target = "<table_name>"
-note = "omit <table_name>"
 
 [[obligation]]
 id = "sf.dml.get.o039"
@@ -11505,14 +11509,6 @@ anchor = "doc.identifiers-syntax"
 note = "quoted: a double-quoted identifier with blanks and mixed case"
 
 [[obligation]]
-id = "sf.dml.get.o058"
-kind = "identifier_class"
-required = true
-target = "<namespace>"
-anchor = "doc.identifiers-syntax"
-note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
-
-[[obligation]]
 id = "sf.dml.get.o059"
 kind = "identifier_class"
 required = true
@@ -11521,28 +11517,12 @@ anchor = "doc.identifiers-syntax"
 note = "quoted: a double-quoted identifier with blanks and mixed case"
 
 [[obligation]]
-id = "sf.dml.get.o060"
-kind = "identifier_class"
-required = true
-target = "<int_stage_name>"
-anchor = "doc.identifiers-syntax"
-note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
-
-[[obligation]]
 id = "sf.dml.get.o061"
 kind = "identifier_class"
 required = true
 target = "<table_name>"
 anchor = "doc.identifiers-syntax"
 note = "quoted: a double-quoted identifier with blanks and mixed case"
-
-[[obligation]]
-id = "sf.dml.get.o062"
-kind = "identifier_class"
-required = true
-target = "<table_name>"
-anchor = "doc.identifiers-syntax"
-note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
 id = "sf.dml.get.o063"
@@ -11605,6 +11585,62 @@ kind = "negative_neighbour"
 required = true
 anchor = "doc.sql.get / Required parameters"
 note = "a file URI with a space, not enclosed in single quotes"
+
+[[obligation]]
+id = "sf.dml.get.o071"
+kind = "identifier_class"
+required = true
+target = "<table_name>"
+anchor = "doc.sql.get / Syntax"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance), observed"
+
+[[obligation]]
+id = "sf.dml.get.o072"
+kind = "required_operand_missing"
+required = true
+target = "<namespace> in [ <namespace> . ]"
+anchor = "doc.sql.get / Syntax"
+note = "omit <namespace>, observed"
+
+[[obligation]]
+id = "sf.dml.get.o073"
+kind = "required_operand_missing"
+required = true
+target = "<table_name>"
+anchor = "doc.sql.get / Syntax"
+note = "omit <table_name>, observed"
+
+[[obligation]]
+id = "sf.dml.get.o074"
+kind = "identifier_class"
+required = true
+target = "<namespace>"
+anchor = "doc.sql.get / Syntax"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance), observed"
+
+[[obligation]]
+id = "sf.dml.get.o075"
+kind = "identifier_class"
+required = true
+target = "<int_stage_name>"
+anchor = "doc.sql.get / Syntax"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance), observed"
+
+[[obligation]]
+id = "sf.dml.get.o076"
+kind = "required_operand_missing"
+required = true
+target = "<namespace> in [ <namespace> . ] #2"
+anchor = "doc.sql.get / Syntax"
+note = "omit <namespace>, observed"
+
+[[obligation]]
+id = "sf.dml.get.o077"
+kind = "required_operand_missing"
+required = true
+target = "<int_stage_name>"
+anchor = "doc.sql.get / Syntax"
+note = "omit <int_stage_name>, observed"
 
 [[obligation]]
 id = "sf.dml.insert.o001"
@@ -12021,13 +12057,6 @@ target = "<source_col_name> in [ VALUES ( { <source_col_name> | DEFAULT | NULL }
 note = "a valid identifier"
 
 [[obligation]]
-id = "sf.dml.insert-multi-table.all-intoclause.o026"
-kind = "negative_neighbour"
-required = true
-target = "<source_col_name> in [ VALUES ( { <source_col_name> | DEFAULT | NULL } [ , ... ] ) ]"
-note = "a string literal in place of <source_col_name>"
-
-[[obligation]]
 id = "sf.dml.insert-multi-table.all-intoclause.o027"
 kind = "option_present"
 required = true
@@ -12180,6 +12209,14 @@ anchor = "doc.sql.insert-multi-table / Syntax"
 note = "1,000 INTO clauses; no documented bound"
 
 [[obligation]]
+id = "sf.dml.insert-multi-table.all-intoclause.o045"
+kind = "negative_neighbour"
+required = true
+target = "<source_col_name> in [ VALUES ( { <source_col_name> | DEFAULT | NULL } [ , ... ] ) ]"
+anchor = "doc.sql.insert-multi-table / Syntax"
+note = "a string literal in place of <source_col_name>, observed"
+
+[[obligation]]
 id = "sf.dml.insert-multi-table.first-all-when-then.o001"
 kind = "positive"
 required = true
@@ -12319,13 +12356,6 @@ kind = "operand_type_class"
 required = true
 target = "<source_col_name> in [ VALUES ( { <source_col_name> | DEFAULT | NULL } [ , ... ] ) ]"
 note = "a valid identifier"
-
-[[obligation]]
-id = "sf.dml.insert-multi-table.first-all-when-then.o038"
-kind = "negative_neighbour"
-required = true
-target = "<source_col_name> in [ VALUES ( { <source_col_name> | DEFAULT | NULL } [ , ... ] ) ]"
-note = "a string literal in place of <source_col_name>"
 
 [[obligation]]
 id = "sf.dml.insert-multi-table.first-all-when-then.o039"
@@ -12575,6 +12605,14 @@ anchor = "doc.sql.insert-multi-table / Syntax"
 note = "1,000 WHEN ... THEN branches; no documented bound"
 
 [[obligation]]
+id = "sf.dml.insert-multi-table.first-all-when-then.o069"
+kind = "negative_neighbour"
+required = true
+target = "<source_col_name> in [ VALUES ( { <source_col_name> | DEFAULT | NULL } [ , ... ] ) ]"
+anchor = "doc.sql.insert-multi-table / Syntax"
+note = "a string literal in place of <source_col_name>, observed"
+
+[[obligation]]
 id = "sf.dml.list.internalstage-externalstage.o001"
 kind = "positive"
 required = true
@@ -12623,13 +12661,6 @@ required = true
 target = "[ <namespace> . ]"
 
 [[obligation]]
-id = "sf.dml.list.internalstage-externalstage.o019"
-kind = "required_operand_missing"
-required = true
-target = "<namespace> in [ <namespace> . ]"
-note = "omit <namespace>"
-
-[[obligation]]
 id = "sf.dml.list.internalstage-externalstage.o020"
 kind = "operand_type_class"
 required = true
@@ -12642,13 +12673,6 @@ kind = "negative_neighbour"
 required = true
 target = "<namespace> in [ <namespace> . ]"
 note = "a string literal in place of <namespace>"
-
-[[obligation]]
-id = "sf.dml.list.internalstage-externalstage.o022"
-kind = "required_operand_missing"
-required = true
-target = "<int_stage_name>"
-note = "omit <int_stage_name>"
 
 [[obligation]]
 id = "sf.dml.list.internalstage-externalstage.o023"
@@ -12703,13 +12727,6 @@ required = true
 target = "[ <namespace> . ] #2"
 
 [[obligation]]
-id = "sf.dml.list.internalstage-externalstage.o031"
-kind = "required_operand_missing"
-required = true
-target = "<namespace> in [ <namespace> . ] #2"
-note = "omit <namespace>"
-
-[[obligation]]
 id = "sf.dml.list.internalstage-externalstage.o032"
 kind = "operand_type_class"
 required = true
@@ -12722,13 +12739,6 @@ kind = "negative_neighbour"
 required = true
 target = "<namespace> in [ <namespace> . ] #2"
 note = "a string literal in place of <namespace>"
-
-[[obligation]]
-id = "sf.dml.list.internalstage-externalstage.o034"
-kind = "required_operand_missing"
-required = true
-target = "<table_name>"
-note = "omit <table_name>"
 
 [[obligation]]
 id = "sf.dml.list.internalstage-externalstage.o035"
@@ -12809,13 +12819,6 @@ required = true
 target = "[ <namespace> . ] #3"
 
 [[obligation]]
-id = "sf.dml.list.internalstage-externalstage.o047"
-kind = "required_operand_missing"
-required = true
-target = "<namespace> in [ <namespace> . ] #3"
-note = "omit <namespace>"
-
-[[obligation]]
 id = "sf.dml.list.internalstage-externalstage.o048"
 kind = "operand_type_class"
 required = true
@@ -12828,13 +12831,6 @@ kind = "negative_neighbour"
 required = true
 target = "<namespace> in [ <namespace> . ] #3"
 note = "a string literal in place of <namespace>"
-
-[[obligation]]
-id = "sf.dml.list.internalstage-externalstage.o050"
-kind = "required_operand_missing"
-required = true
-target = "<ext_stage_name>"
-note = "omit <ext_stage_name>"
 
 [[obligation]]
 id = "sf.dml.list.internalstage-externalstage.o051"
@@ -12924,28 +12920,12 @@ anchor = "doc.identifiers-syntax"
 note = "quoted: a double-quoted identifier with blanks and mixed case"
 
 [[obligation]]
-id = "sf.dml.list.internalstage-externalstage.o059"
-kind = "identifier_class"
-required = true
-target = "<namespace>"
-anchor = "doc.identifiers-syntax"
-note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
-
-[[obligation]]
 id = "sf.dml.list.internalstage-externalstage.o060"
 kind = "identifier_class"
 required = true
 target = "<int_stage_name>"
 anchor = "doc.identifiers-syntax"
 note = "quoted: a double-quoted identifier with blanks and mixed case"
-
-[[obligation]]
-id = "sf.dml.list.internalstage-externalstage.o061"
-kind = "identifier_class"
-required = true
-target = "<int_stage_name>"
-anchor = "doc.identifiers-syntax"
-note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
 id = "sf.dml.list.internalstage-externalstage.o062"
@@ -12956,28 +12936,12 @@ anchor = "doc.identifiers-syntax"
 note = "quoted: a double-quoted identifier with blanks and mixed case"
 
 [[obligation]]
-id = "sf.dml.list.internalstage-externalstage.o063"
-kind = "identifier_class"
-required = true
-target = "<table_name>"
-anchor = "doc.identifiers-syntax"
-note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
-
-[[obligation]]
 id = "sf.dml.list.internalstage-externalstage.o064"
 kind = "identifier_class"
 required = true
 target = "<ext_stage_name>"
 anchor = "doc.identifiers-syntax"
 note = "quoted: a double-quoted identifier with blanks and mixed case"
-
-[[obligation]]
-id = "sf.dml.list.internalstage-externalstage.o065"
-kind = "identifier_class"
-required = true
-target = "<ext_stage_name>"
-anchor = "doc.identifiers-syntax"
-note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
 id = "sf.dml.list.internalstage-externalstage.o066"
@@ -13001,6 +12965,86 @@ anchor = "doc.sql.list / Parameters"
 note = "a stage path with a space, not enclosed in single quotes"
 
 [[obligation]]
+id = "sf.dml.list.internalstage-externalstage.o069"
+kind = "required_operand_missing"
+required = true
+target = "<int_stage_name>"
+anchor = "doc.sql.list / Syntax / For a stage"
+note = "omit <int_stage_name>, observed"
+
+[[obligation]]
+id = "sf.dml.list.internalstage-externalstage.o070"
+kind = "required_operand_missing"
+required = true
+target = "<ext_stage_name>"
+anchor = "doc.sql.list / Syntax / For a stage"
+note = "omit <ext_stage_name>, observed"
+
+[[obligation]]
+id = "sf.dml.list.internalstage-externalstage.o071"
+kind = "required_operand_missing"
+required = true
+target = "<namespace> in [ <namespace> . ]"
+anchor = "doc.sql.list / Syntax / For a stage"
+note = "omit <namespace>, observed"
+
+[[obligation]]
+id = "sf.dml.list.internalstage-externalstage.o072"
+kind = "required_operand_missing"
+required = true
+target = "<namespace> in [ <namespace> . ] #3"
+anchor = "doc.sql.list / Syntax / For a stage"
+note = "omit <namespace>, observed"
+
+[[obligation]]
+id = "sf.dml.list.internalstage-externalstage.o073"
+kind = "identifier_class"
+required = true
+target = "<int_stage_name>"
+anchor = "doc.sql.list / Syntax / For a stage"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance), observed"
+
+[[obligation]]
+id = "sf.dml.list.internalstage-externalstage.o074"
+kind = "identifier_class"
+required = true
+target = "<ext_stage_name>"
+anchor = "doc.sql.list / Syntax / For a stage"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance), observed"
+
+[[obligation]]
+id = "sf.dml.list.internalstage-externalstage.o075"
+kind = "required_operand_missing"
+required = true
+target = "<table_name>"
+anchor = "doc.sql.list / Syntax / For a stage"
+note = "omit <table_name>, observed"
+
+[[obligation]]
+id = "sf.dml.list.internalstage-externalstage.o076"
+kind = "required_operand_missing"
+required = true
+target = "<namespace> in [ <namespace> . ] #2"
+anchor = "doc.sql.list / Syntax / For a stage"
+note = "omit <namespace>, observed"
+
+[[obligation]]
+id = "sf.dml.list.internalstage-externalstage.o077"
+kind = "identifier_class"
+required = true
+target = "<namespace>"
+anchor = "doc.sql.list / Syntax / For a stage"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance), observed"
+
+[[obligation]]
+id = "sf.dml.list.internalstage-externalstage.o078"
+kind = "identifier_class"
+required = true
+target = "<table_name>"
+anchor = "doc.sql.list / Syntax / For a stage"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance), observed"
+
+[[obligation]]
 id = "sf.dml.list.repositoryclone.o001"
 kind = "positive"
 required = true
@@ -13019,13 +13063,6 @@ required = true
 target = "[ <namespace> . ]"
 
 [[obligation]]
-id = "sf.dml.list.repositoryclone.o011"
-kind = "required_operand_missing"
-required = true
-target = "<namespace> in [ <namespace> . ]"
-note = "omit <namespace>"
-
-[[obligation]]
 id = "sf.dml.list.repositoryclone.o012"
 kind = "operand_type_class"
 required = true
@@ -13038,13 +13075,6 @@ kind = "negative_neighbour"
 required = true
 target = "<namespace> in [ <namespace> . ]"
 note = "a string literal in place of <namespace>"
-
-[[obligation]]
-id = "sf.dml.list.repositoryclone.o014"
-kind = "required_operand_missing"
-required = true
-target = "<repository_clone>"
-note = "omit <repository_clone>"
 
 [[obligation]]
 id = "sf.dml.list.repositoryclone.o015"
@@ -13115,14 +13145,6 @@ anchor = "doc.identifiers-syntax"
 note = "quoted: a double-quoted identifier with blanks and mixed case"
 
 [[obligation]]
-id = "sf.dml.list.repositoryclone.o020"
-kind = "identifier_class"
-required = true
-target = "<namespace>"
-anchor = "doc.identifiers-syntax"
-note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
-
-[[obligation]]
 id = "sf.dml.list.repositoryclone.o021"
 kind = "alternative"
 required = true
@@ -13144,6 +13166,30 @@ kind = "negative_neighbour"
 required = true
 anchor = "doc.sql.list / Parameters"
 note = "a path that begins with none of branches/, tags/ or commits/"
+
+[[obligation]]
+id = "sf.dml.list.repositoryclone.o024"
+kind = "required_operand_missing"
+required = true
+target = "<repository_clone>"
+anchor = "doc.sql.list / Syntax / For a Git repository clone"
+note = "omit <repository_clone>, observed"
+
+[[obligation]]
+id = "sf.dml.list.repositoryclone.o025"
+kind = "identifier_class"
+required = true
+target = "<namespace>"
+anchor = "doc.sql.list / Syntax / For a Git repository clone"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance), observed"
+
+[[obligation]]
+id = "sf.dml.list.repositoryclone.o026"
+kind = "required_operand_missing"
+required = true
+target = "<namespace> in [ <namespace> . ]"
+anchor = "doc.sql.list / Syntax / For a Git repository clone"
+note = "omit <namespace>, observed"
 
 [[obligation]]
 id = "sf.dml.merge.o001"
@@ -13521,12 +13567,6 @@ required = true
 note = "the form without its required { UPDATE { ALL BY NAME | SET <col_name> = <expr> [ , <col_name> = <expr> ... ] } | DELETE }"
 
 [[obligation]]
-id = "sf.dml.merge.o064"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required NOT"
-
-[[obligation]]
 id = "sf.dml.merge.o065"
 kind = "negative_neighbour"
 required = true
@@ -13591,12 +13631,6 @@ id = "sf.dml.merge.o075"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required DELETE in [ { WHEN MATCHED AND <case_predicate> THEN DELETE | WHEN NOT MATCHED AND <case_predicate> THEN INSERT ALL BY NAME } ]"
-
-[[obligation]]
-id = "sf.dml.merge.o076"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required NOT in [ { WHEN MATCHED AND <case_predicate> THEN DELETE | WHEN NOT MATCHED AND <case_predicate> THEN INSERT ALL BY NAME } ]"
 
 [[obligation]]
 id = "sf.dml.merge.o077"
@@ -13674,6 +13708,20 @@ anchor = "doc.sql.merge / Syntax"
 note = "1,000 WHEN MATCHED AND ... clauses; no documented bound"
 
 [[obligation]]
+id = "sf.dml.merge.o088"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.merge / Syntax"
+note = "the form without its required NOT, observed"
+
+[[obligation]]
+id = "sf.dml.merge.o089"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.merge / Syntax"
+note = "the form without its required NOT in [ { WHEN MATCHED AND <case_predicate> THEN DELETE | WHEN NOT MATCHED AND <case_predicate> THEN INSERT ALL BY NAME } ], observed"
+
+[[obligation]]
 id = "sf.dml.put.o001"
 kind = "positive"
 required = true
@@ -13724,13 +13772,6 @@ required = true
 target = "[ <namespace> . ]"
 
 [[obligation]]
-id = "sf.dml.put.o067"
-kind = "required_operand_missing"
-required = true
-target = "<namespace> in [ <namespace> . ]"
-note = "omit <namespace>"
-
-[[obligation]]
 id = "sf.dml.put.o068"
 kind = "operand_type_class"
 required = true
@@ -13743,13 +13784,6 @@ kind = "negative_neighbour"
 required = true
 target = "<namespace> in [ <namespace> . ]"
 note = "a string literal in place of <namespace>"
-
-[[obligation]]
-id = "sf.dml.put.o070"
-kind = "required_operand_missing"
-required = true
-target = "<int_stage_name>"
-note = "omit <int_stage_name>"
 
 [[obligation]]
 id = "sf.dml.put.o071"
@@ -13804,13 +13838,6 @@ required = true
 target = "[ <namespace> . ] #2"
 
 [[obligation]]
-id = "sf.dml.put.o079"
-kind = "required_operand_missing"
-required = true
-target = "<namespace> in [ <namespace> . ] #2"
-note = "omit <namespace>"
-
-[[obligation]]
 id = "sf.dml.put.o080"
 kind = "operand_type_class"
 required = true
@@ -13823,13 +13850,6 @@ kind = "negative_neighbour"
 required = true
 target = "<namespace> in [ <namespace> . ] #2"
 note = "a string literal in place of <namespace>"
-
-[[obligation]]
-id = "sf.dml.put.o082"
-kind = "required_operand_missing"
-required = true
-target = "<table_name>"
-note = "omit <table_name>"
 
 [[obligation]]
 id = "sf.dml.put.o083"
@@ -14070,14 +14090,6 @@ anchor = "doc.identifiers-syntax"
 note = "quoted: a double-quoted identifier with blanks and mixed case"
 
 [[obligation]]
-id = "sf.dml.put.o095"
-kind = "identifier_class"
-required = true
-target = "<namespace>"
-anchor = "doc.identifiers-syntax"
-note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
-
-[[obligation]]
 id = "sf.dml.put.o096"
 kind = "identifier_class"
 required = true
@@ -14086,28 +14098,12 @@ anchor = "doc.identifiers-syntax"
 note = "quoted: a double-quoted identifier with blanks and mixed case"
 
 [[obligation]]
-id = "sf.dml.put.o097"
-kind = "identifier_class"
-required = true
-target = "<int_stage_name>"
-anchor = "doc.identifiers-syntax"
-note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
-
-[[obligation]]
 id = "sf.dml.put.o098"
 kind = "identifier_class"
 required = true
 target = "<table_name>"
 anchor = "doc.identifiers-syntax"
 note = "quoted: a double-quoted identifier with blanks and mixed case"
-
-[[obligation]]
-id = "sf.dml.put.o099"
-kind = "identifier_class"
-required = true
-target = "<table_name>"
-anchor = "doc.identifiers-syntax"
-note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
 id = "sf.dml.put.o100"
@@ -14172,6 +14168,62 @@ anchor = "doc.sql.put / Required parameters"
 note = "a file URI with a space, not enclosed in single quotes"
 
 [[obligation]]
+id = "sf.dml.put.o108"
+kind = "identifier_class"
+required = true
+target = "<table_name>"
+anchor = "doc.sql.put / Syntax"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance), observed"
+
+[[obligation]]
+id = "sf.dml.put.o109"
+kind = "required_operand_missing"
+required = true
+target = "<namespace> in [ <namespace> . ]"
+anchor = "doc.sql.put / Syntax"
+note = "omit <namespace>, observed"
+
+[[obligation]]
+id = "sf.dml.put.o110"
+kind = "required_operand_missing"
+required = true
+target = "<table_name>"
+anchor = "doc.sql.put / Syntax"
+note = "omit <table_name>, observed"
+
+[[obligation]]
+id = "sf.dml.put.o111"
+kind = "identifier_class"
+required = true
+target = "<int_stage_name>"
+anchor = "doc.sql.put / Syntax"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance), observed"
+
+[[obligation]]
+id = "sf.dml.put.o112"
+kind = "required_operand_missing"
+required = true
+target = "<int_stage_name>"
+anchor = "doc.sql.put / Syntax"
+note = "omit <int_stage_name>, observed"
+
+[[obligation]]
+id = "sf.dml.put.o113"
+kind = "identifier_class"
+required = true
+target = "<namespace>"
+anchor = "doc.sql.put / Syntax"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance), observed"
+
+[[obligation]]
+id = "sf.dml.put.o114"
+kind = "required_operand_missing"
+required = true
+target = "<namespace> in [ <namespace> . ] #2"
+anchor = "doc.sql.put / Syntax"
+note = "omit <namespace>, observed"
+
+[[obligation]]
 id = "sf.dml.remove.o001"
 kind = "positive"
 required = true
@@ -14220,13 +14272,6 @@ required = true
 target = "[ <namespace> . ]"
 
 [[obligation]]
-id = "sf.dml.remove.o019"
-kind = "required_operand_missing"
-required = true
-target = "<namespace> in [ <namespace> . ]"
-note = "omit <namespace>"
-
-[[obligation]]
 id = "sf.dml.remove.o020"
 kind = "operand_type_class"
 required = true
@@ -14239,13 +14284,6 @@ kind = "negative_neighbour"
 required = true
 target = "<namespace> in [ <namespace> . ]"
 note = "a string literal in place of <namespace>"
-
-[[obligation]]
-id = "sf.dml.remove.o022"
-kind = "required_operand_missing"
-required = true
-target = "<int_stage_name>"
-note = "omit <int_stage_name>"
 
 [[obligation]]
 id = "sf.dml.remove.o023"
@@ -14300,13 +14338,6 @@ required = true
 target = "[ <namespace> . ] #2"
 
 [[obligation]]
-id = "sf.dml.remove.o031"
-kind = "required_operand_missing"
-required = true
-target = "<namespace> in [ <namespace> . ] #2"
-note = "omit <namespace>"
-
-[[obligation]]
 id = "sf.dml.remove.o032"
 kind = "operand_type_class"
 required = true
@@ -14319,13 +14350,6 @@ kind = "negative_neighbour"
 required = true
 target = "<namespace> in [ <namespace> . ] #2"
 note = "a string literal in place of <namespace>"
-
-[[obligation]]
-id = "sf.dml.remove.o034"
-kind = "required_operand_missing"
-required = true
-target = "<table_name>"
-note = "omit <table_name>"
 
 [[obligation]]
 id = "sf.dml.remove.o035"
@@ -14406,13 +14430,6 @@ required = true
 target = "[ <namespace> . ] #3"
 
 [[obligation]]
-id = "sf.dml.remove.o047"
-kind = "required_operand_missing"
-required = true
-target = "<namespace> in [ <namespace> . ] #3"
-note = "omit <namespace>"
-
-[[obligation]]
 id = "sf.dml.remove.o048"
 kind = "operand_type_class"
 required = true
@@ -14425,13 +14442,6 @@ kind = "negative_neighbour"
 required = true
 target = "<namespace> in [ <namespace> . ] #3"
 note = "a string literal in place of <namespace>"
-
-[[obligation]]
-id = "sf.dml.remove.o050"
-kind = "required_operand_missing"
-required = true
-target = "<ext_stage_name>"
-note = "omit <ext_stage_name>"
 
 [[obligation]]
 id = "sf.dml.remove.o051"
@@ -14521,28 +14531,12 @@ anchor = "doc.identifiers-syntax"
 note = "quoted: a double-quoted identifier with blanks and mixed case"
 
 [[obligation]]
-id = "sf.dml.remove.o059"
-kind = "identifier_class"
-required = true
-target = "<namespace>"
-anchor = "doc.identifiers-syntax"
-note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
-
-[[obligation]]
 id = "sf.dml.remove.o060"
 kind = "identifier_class"
 required = true
 target = "<int_stage_name>"
 anchor = "doc.identifiers-syntax"
 note = "quoted: a double-quoted identifier with blanks and mixed case"
-
-[[obligation]]
-id = "sf.dml.remove.o061"
-kind = "identifier_class"
-required = true
-target = "<int_stage_name>"
-anchor = "doc.identifiers-syntax"
-note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
 id = "sf.dml.remove.o062"
@@ -14553,28 +14547,12 @@ anchor = "doc.identifiers-syntax"
 note = "quoted: a double-quoted identifier with blanks and mixed case"
 
 [[obligation]]
-id = "sf.dml.remove.o063"
-kind = "identifier_class"
-required = true
-target = "<table_name>"
-anchor = "doc.identifiers-syntax"
-note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
-
-[[obligation]]
 id = "sf.dml.remove.o064"
 kind = "identifier_class"
 required = true
 target = "<ext_stage_name>"
 anchor = "doc.identifiers-syntax"
 note = "quoted: a double-quoted identifier with blanks and mixed case"
-
-[[obligation]]
-id = "sf.dml.remove.o065"
-kind = "identifier_class"
-required = true
-target = "<ext_stage_name>"
-anchor = "doc.identifiers-syntax"
-note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
 id = "sf.dml.remove.o066"
@@ -14596,6 +14574,86 @@ kind = "negative_neighbour"
 required = true
 anchor = "doc.sql.remove / Parameters"
 note = "a stage path with a space, not enclosed in single quotes"
+
+[[obligation]]
+id = "sf.dml.remove.o069"
+kind = "required_operand_missing"
+required = true
+target = "<int_stage_name>"
+anchor = "doc.sql.remove / Syntax"
+note = "omit <int_stage_name>, observed"
+
+[[obligation]]
+id = "sf.dml.remove.o070"
+kind = "required_operand_missing"
+required = true
+target = "<ext_stage_name>"
+anchor = "doc.sql.remove / Syntax"
+note = "omit <ext_stage_name>, observed"
+
+[[obligation]]
+id = "sf.dml.remove.o071"
+kind = "identifier_class"
+required = true
+target = "<table_name>"
+anchor = "doc.sql.remove / Syntax"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance), observed"
+
+[[obligation]]
+id = "sf.dml.remove.o072"
+kind = "identifier_class"
+required = true
+target = "<namespace>"
+anchor = "doc.sql.remove / Syntax"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance), observed"
+
+[[obligation]]
+id = "sf.dml.remove.o073"
+kind = "required_operand_missing"
+required = true
+target = "<namespace> in [ <namespace> . ]"
+anchor = "doc.sql.remove / Syntax"
+note = "omit <namespace>, observed"
+
+[[obligation]]
+id = "sf.dml.remove.o074"
+kind = "required_operand_missing"
+required = true
+target = "<namespace> in [ <namespace> . ] #3"
+anchor = "doc.sql.remove / Syntax"
+note = "omit <namespace>, observed"
+
+[[obligation]]
+id = "sf.dml.remove.o075"
+kind = "identifier_class"
+required = true
+target = "<int_stage_name>"
+anchor = "doc.sql.remove / Syntax"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance), observed"
+
+[[obligation]]
+id = "sf.dml.remove.o076"
+kind = "identifier_class"
+required = true
+target = "<ext_stage_name>"
+anchor = "doc.sql.remove / Syntax"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance), observed"
+
+[[obligation]]
+id = "sf.dml.remove.o077"
+kind = "required_operand_missing"
+required = true
+target = "<namespace> in [ <namespace> . ] #2"
+anchor = "doc.sql.remove / Syntax"
+note = "omit <namespace>, observed"
+
+[[obligation]]
+id = "sf.dml.remove.o078"
+kind = "required_operand_missing"
+required = true
+target = "<table_name>"
+anchor = "doc.sql.remove / Syntax"
+note = "omit <table_name>, observed"
 
 [[obligation]]
 id = "sf.dml.truncate-table.truncate.o001"
