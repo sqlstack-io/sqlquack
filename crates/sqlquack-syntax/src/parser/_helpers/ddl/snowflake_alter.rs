@@ -1,4 +1,5 @@
 //! Snowflake ALTER of object kinds with no statement of their own: EXPERIMENT, SNAPSHOT, SNAPSHOT SET, TAG, TASK and TASK GRAPH.
+//! The application, backup, Cortex Search, database, semantic view and Streamlit kinds are in `snowflake_alter_objects`.
 
 use crate::expressions::names::models::Identifier;
 use crate::expressions::names::models::TableRef;
@@ -14,6 +15,9 @@ use crate::tokens::types::Result;
 impl Parser {
     /// Parse a Snowflake ALTER of a kind this module owns, or None when the next words name another kind.
     pub(crate) fn parse_alter_snowflake_object(&mut self) -> Result<Option<Expression>> {
+        if let Some(expr) = self.parse_alter_snowflake_objects()? {
+            return Ok(Some(expr));
+        }
         if self.check_identifier("TASK")
             && self.check_next_identifier("GRAPH")
             && !self
@@ -60,20 +64,20 @@ impl Parser {
     }
 
     /// The uppercase text of the token `offset` tokens ahead, if there is one.
-    fn text_at(&self, offset: usize) -> Option<String> {
+    pub(crate) fn text_at(&self, offset: usize) -> Option<String> {
         self.tokens
             .get(self.current + offset)
             .map(|token| token.text.to_ascii_uppercase())
     }
 
     /// Parse `[ IF EXISTS ] <name>` after the kind.
-    fn parse_alter_object_head(&mut self) -> Result<(TableRef, bool)> {
+    pub(crate) fn parse_alter_object_head(&mut self) -> Result<(TableRef, bool)> {
         let if_exists = self.match_keywords(&[TokenType::If, TokenType::Exists]);
         Ok((self.parse_object_name()?, if_exists))
     }
 
     /// Parse an object name: an identifier, never a string or an unquoted reserved keyword.
-    fn parse_object_name(&mut self) -> Result<TableRef> {
+    pub(crate) fn parse_object_name(&mut self) -> Result<TableRef> {
         if self.check(TokenType::String)
             || self.is_snowflake_reserved_keyword()
             || !self.is_object_name_start()
@@ -91,7 +95,7 @@ impl Parser {
     }
 
     /// Parse a simple name, such as a contact purpose or a property: an identifier, not a reserved keyword.
-    fn parse_simple_name(&mut self) -> Result<Identifier> {
+    pub(crate) fn parse_simple_name(&mut self) -> Result<Identifier> {
         if self.check(TokenType::String)
             || self.is_snowflake_reserved_keyword()
             || !self.is_object_name_start()
@@ -102,7 +106,7 @@ impl Parser {
     }
 
     /// Parse a property value: a literal, TRUE, FALSE or a name.
-    fn parse_object_value(&mut self) -> Result<Expression> {
+    pub(crate) fn parse_object_value(&mut self) -> Result<Expression> {
         if self.check(TokenType::String)
             || self.check(TokenType::Number)
             || self.check(TokenType::DollarString)
@@ -126,7 +130,7 @@ impl Parser {
     }
 
     /// Parse a string literal value.
-    fn parse_string_value(&mut self) -> Result<Expression> {
+    pub(crate) fn parse_string_value(&mut self) -> Result<Expression> {
         if !self.check(TokenType::String) {
             return Err(self.parse_error("Expected a string"));
         }
@@ -134,7 +138,7 @@ impl Parser {
     }
 
     /// Consume one of `choices`, each a sequence of words, and return its words joined.
-    fn expect_alter_words(&mut self, choices: &[&[&str]]) -> Result<String> {
+    pub(crate) fn expect_alter_words(&mut self, choices: &[&[&str]]) -> Result<String> {
         match choices.iter().find(|words| self.match_text_seq(words)) {
             Some(words) => Ok(words.join(" ")),
             None => Err(self.parse_error(format!(
@@ -245,7 +249,7 @@ impl Parser {
     }
 
     /// Parse a possibly qualified name, such as a tag name, as one identifier.
-    fn parse_simple_qualified_name(&mut self) -> Result<Identifier> {
+    pub(crate) fn parse_simple_qualified_name(&mut self) -> Result<Identifier> {
         let mut name = self.parse_simple_name()?;
         while self.match_token(TokenType::Dot) {
             let part = self.parse_simple_name()?;
@@ -496,7 +500,7 @@ impl Parser {
 }
 
 /// An ALTER of `kind` on the named object, with its action, operands and properties.
-fn alter_object(
+pub(crate) fn alter_object(
     kind: &str,
     (name, if_exists): (TableRef, bool),
     action: String,
@@ -513,7 +517,11 @@ fn alter_object(
 }
 
 /// One property of kind `kind`.
-fn property(kind: &str, name: Option<Identifier>, value: Option<Expression>) -> ObjectProperty {
+pub(crate) fn property(
+    kind: &str,
+    name: Option<Identifier>,
+    value: Option<Expression>,
+) -> ObjectProperty {
     ObjectProperty {
         kind: kind.to_owned(),
         name,
