@@ -1,5 +1,6 @@
 //! `resolve_name`: what a possibly qualified name means in a scope.
 
+use sqlquack_core::diagnostics::constants::CASE_ONLY_MATCH;
 use sqlquack_core::refusals::main::unresolved::unresolved;
 use sqlquack_core::refusals::models::Refusal;
 
@@ -44,7 +45,7 @@ pub fn resolve_name<'s, A>(
                     .is_some_and(|qualifier| !source.same_identifier(&relation.alias, qualifier))
             {
                 return Err(unresolved(format!(
-                    "`{name}` matches `{}` only without regard to case, which {} cannot tell apart",
+                    "`{name}` matches `{}` {CASE_ONLY_MATCH}, which {} cannot tell apart",
                     column.name,
                     target.name()
                 )));

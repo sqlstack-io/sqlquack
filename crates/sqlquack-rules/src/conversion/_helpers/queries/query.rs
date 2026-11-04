@@ -485,7 +485,10 @@ pub(crate) fn convert_with<'a>(
         let (sql, mut columns) = convert_query(
             field(cte, "this", &construct)?,
             outer,
-            &extended.projecting(true),
+            &Context {
+                fixture_body: extended.fixture_body || fixture(&name),
+                ..extended.projecting(true)
+            },
             true,
         )?;
         let renamed = list(cte, "columns");

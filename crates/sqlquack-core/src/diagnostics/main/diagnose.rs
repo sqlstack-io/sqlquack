@@ -4,8 +4,9 @@ use crate::diagnostics::_helpers::code_entry::code_entry;
 use crate::diagnostics::_helpers::coded::coded;
 use crate::diagnostics::_helpers::line_index::LineIndex;
 use crate::diagnostics::constants::{
-    CONVERSION_BUDGET, GUARD_PREFIX, MISSING_RULE, NOT_EXPRESSIBLE, PARSE_FIDELITY, TYPE_CONDITION,
-    UNPARSED_PREFIX, UNRESOLVED_NAME,
+    CASE_ONLY_MATCH, CASE_ONLY_MATCH_HELP, CONVERSION_BUDGET, DIVERGENCE_REFUSED, GUARD_PREFIX,
+    MISSING_RULE, NOT_EXPRESSIBLE, PARSE_FIDELITY, TYPE_CONDITION, UNPARSED_PREFIX,
+    UNRESOLVED_NAME,
 };
 use crate::diagnostics::models::Diagnostic;
 use crate::refusals::models::{Refusal, RefusalCategory};
@@ -18,6 +19,11 @@ pub fn diagnose(refusals: &[Refusal], source: &str) -> Vec<Diagnostic> {
         let (code, label) = code_and_label(refusal);
         let mut diagnostic = coded(code, label);
         diagnostic.span = refusal.location.map(|location| lines.span(location));
+        if refusal.category == RefusalCategory::UnresolvedName
+            && refusal.reason.contains(CASE_ONLY_MATCH)
+        {
+            diagnostic.help = Some(CASE_ONLY_MATCH_HELP.to_owned());
+        }
         if let Some(construct) = refusal
             .construct
             .as_ref()
@@ -39,6 +45,7 @@ fn code_and_label(refusal: &Refusal) -> (&'static str, String) {
         RefusalCategory::UnresolvedName => UNRESOLVED_NAME,
         RefusalCategory::NotExpressible => NOT_EXPRESSIBLE,
         RefusalCategory::ConversionBudget => CONVERSION_BUDGET,
+        RefusalCategory::DivergenceRefused => DIVERGENCE_REFUSED,
         RefusalCategory::SnowflakeRejects => refusal
             .construct
             .as_ref()

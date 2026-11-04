@@ -58,7 +58,15 @@ pub(crate) fn timestamp_literal(
             let parsed = parse_timestamp(text, false).ok_or_else(unproven)?;
             fits(&parsed, precision).ok_or_else(unproven)?;
             if precision > MICROSECOND_DIGITS && !in_nanosecond_range(parsed.date) {
-                diverge(context, TIMESTAMP_RANGE, construct).map_err(|refusal| refusal.reason)?;
+                if context.fixture_body {
+                    diverge(context, TIMESTAMP_RANGE, construct)
+                        .map_err(|refusal| refusal.reason)?;
+                } else {
+                    return Err(format!(
+                        "the text '{text}' cast to {to} lies outside DuckDB's nanosecond timestamp range, \
+                     1677-09-22 to 2262-04-10, so the converted cast would always raise"
+                    ));
+                }
             }
             let spelled = match parsed.fraction.is_empty() {
                 true => parsed.whole.replacen('T', " ", 1),
