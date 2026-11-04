@@ -56,6 +56,20 @@ anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
+id = "sf.scripting.await.o009"
+kind = "positive"
+required = true
+anchor = "doc.snowflake-scripting.await / Note"
+note = "inside the body of a LANGUAGE SQL stored procedure"
+
+[[obligation]]
+id = "sf.scripting.await.o010"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.snowflake-scripting.await / Note"
+note = "at top level, outside any Snowflake Scripting block"
+
+[[obligation]]
 id = "sf.scripting.begin.o001"
 kind = "positive"
 required = true
@@ -239,6 +253,20 @@ anchor = "doc.snowflake-scripting.break / Syntax"
 note = "BREAK <label> naming a loop that encloses the current one by the given depth; no documented bound"
 
 [[obligation]]
+id = "sf.scripting.break.o011"
+kind = "positive"
+required = true
+anchor = "doc.snowflake-scripting.break / Note"
+note = "inside the body of a LANGUAGE SQL stored procedure"
+
+[[obligation]]
+id = "sf.scripting.break.o012"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.snowflake-scripting.break / Note"
+note = "at top level, outside any Snowflake Scripting block"
+
+[[obligation]]
 id = "sf.scripting.cancel.o001"
 kind = "positive"
 required = true
@@ -280,6 +308,20 @@ required = true
 target = "<result_set_name>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.scripting.cancel.o007"
+kind = "positive"
+required = true
+anchor = "doc.snowflake-scripting.cancel / Note"
+note = "inside the body of a LANGUAGE SQL stored procedure"
+
+[[obligation]]
+id = "sf.scripting.cancel.o008"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.snowflake-scripting.cancel / Note"
+note = "at top level, outside any Snowflake Scripting block"
 
 [[obligation]]
 id = "sf.scripting.case.end.o001"
@@ -466,6 +508,20 @@ depths = [
 note = "statement operands nested; no documented bound"
 
 [[obligation]]
+id = "sf.scripting.case.end.o029"
+kind = "positive"
+required = true
+anchor = "doc.snowflake-scripting.case / Note"
+note = "inside the body of a LANGUAGE SQL stored procedure"
+
+[[obligation]]
+id = "sf.scripting.case.end.o030"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.snowflake-scripting.case / Note"
+note = "at top level, outside any Snowflake Scripting block"
+
+[[obligation]]
 id = "sf.scripting.case.end.syntax.o001"
 kind = "positive"
 required = true
@@ -624,6 +680,20 @@ depths = [
 note = "statement operands nested; no documented bound"
 
 [[obligation]]
+id = "sf.scripting.case.end.syntax.o025"
+kind = "positive"
+required = true
+anchor = "doc.snowflake-scripting.case / Note"
+note = "inside the body of a LANGUAGE SQL stored procedure"
+
+[[obligation]]
+id = "sf.scripting.case.end.syntax.o026"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.snowflake-scripting.case / Note"
+note = "at top level, outside any Snowflake Scripting block"
+
+[[obligation]]
 id = "sf.scripting.close.o001"
 kind = "positive"
 required = true
@@ -665,6 +735,20 @@ required = true
 target = "<cursor_name>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.scripting.close.o007"
+kind = "positive"
+required = true
+anchor = "doc.snowflake-scripting.close / Note"
+note = "inside the body of a LANGUAGE SQL stored procedure"
+
+[[obligation]]
+id = "sf.scripting.close.o008"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.snowflake-scripting.close / Note"
+note = "at top level, outside any Snowflake Scripting block"
 
 [[obligation]]
 id = "sf.scripting.continue.o001"
@@ -736,6 +820,20 @@ depths = [
 ]
 anchor = "doc.snowflake-scripting.continue / Syntax"
 note = "CONTINUE <label> naming a loop that encloses the current one by the given depth; no documented bound"
+
+[[obligation]]
+id = "sf.scripting.continue.o011"
+kind = "positive"
+required = true
+anchor = "doc.snowflake-scripting.continue / Note"
+note = "inside the body of a LANGUAGE SQL stored procedure"
+
+[[obligation]]
+id = "sf.scripting.continue.o012"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.snowflake-scripting.continue / Note"
+note = "at top level, outside any Snowflake Scripting block"
 
 [[obligation]]
 id = "sf.scripting.declare.cursor-declaration.o001"
@@ -879,6 +977,27 @@ required = true
 note = "the form without its required { <variable_declaration> | <cursor_declaration> | <resultset_declaration> | <nested_stored_procedure_declaration> | <exception_declaration> }"
 
 [[obligation]]
+id = "sf.scripting.declare.declare.o010"
+kind = "positive"
+required = true
+anchor = "doc.snowflake-scripting.declare / Syntax"
+note = "DECLARE section followed by BEGIN ... END"
+
+[[obligation]]
+id = "sf.scripting.declare.declare.o011"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.snowflake-scripting.declare / Syntax"
+note = "DECLARE section with no BEGIN ... END after it"
+
+[[obligation]]
+id = "sf.scripting.declare.declare.o012"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.snowflake-scripting.declare / Syntax"
+note = "a declaration missing its terminating semicolon"
+
+[[obligation]]
 id = "sf.scripting.declare.exception.o001"
 kind = "positive"
 required = true
@@ -964,6 +1083,12 @@ id = "sf.scripting.declare.exception.o013"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required EXCEPTION"
+
+[[obligation]]
+id = "sf.scripting.declare.exception.o023"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) in [ ( <exception_number> , '<exception_message>' ) ]"
 
 [[obligation]]
 id = "sf.scripting.declare.exception.o014"
@@ -1315,6 +1440,14 @@ anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
+id = "sf.scripting.declare.procedure-returns-table-as.o042"
+kind = "negative_neighbour"
+required = true
+target = "<col_data_type>"
+anchor = "doc.snowflake-scripting.declare / Nested stored procedure declaration syntax"
+note = "GEOGRAPHY as a column type in RETURNS TABLE ( ... )"
+
+[[obligation]]
 id = "sf.scripting.declare.resultset.o001"
 kind = "positive"
 required = true
@@ -1403,6 +1536,18 @@ id = "sf.scripting.declare.resultset.o014"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required RESULTSET"
+
+[[obligation]]
+id = "sf.scripting.declare.resultset.o018"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( in [ { DEFAULT | := } [ ASYNC ] ( <query> ) ]"
+
+[[obligation]]
+id = "sf.scripting.declare.resultset.o019"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) in [ { DEFAULT | := } [ ASYNC ] ( <query> ) ]"
 
 [[obligation]]
 id = "sf.scripting.declare.resultset.o015"
@@ -1756,6 +1901,18 @@ required = true
 note = "the form without its required THEN"
 
 [[obligation]]
+id = "sf.scripting.exception.o040"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required OTHER in [ WHEN OTHER [ { EXIT | CONTINUE } ] THEN ]"
+
+[[obligation]]
+id = "sf.scripting.exception.o041"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required THEN in [ WHEN OTHER [ { EXIT | CONTINUE } ] THEN ]"
+
+[[obligation]]
 id = "sf.scripting.exception.o034"
 kind = "interaction_all_options"
 required = true
@@ -1804,6 +1961,22 @@ pair = [
 ]
 anchor = "doc.snowflake-scripting.exception / Usage notes"
 note = "WHEN clauses of both types, EXIT and CONTINUE, in one exception handler"
+
+[[obligation]]
+id = "sf.scripting.exception.o042"
+kind = "operand_type_class"
+required = true
+target = "<exception_name>"
+anchor = "doc.snowflake-scripting.exception / Syntax"
+note = "the built-in exception STATEMENT_ERROR"
+
+[[obligation]]
+id = "sf.scripting.exception.o043"
+kind = "operand_type_class"
+required = true
+target = "<exception_name>"
+anchor = "doc.snowflake-scripting.exception / Syntax"
+note = "the built-in exception EXPRESSION_ERROR"
 
 [[obligation]]
 id = "sf.scripting.fetch.o001"
@@ -1903,6 +2076,20 @@ required = true
 target = "<variable>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.scripting.fetch.o015"
+kind = "positive"
+required = true
+anchor = "doc.snowflake-scripting.fetch / Note"
+note = "inside the body of a LANGUAGE SQL stored procedure"
+
+[[obligation]]
+id = "sf.scripting.fetch.o016"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.snowflake-scripting.fetch / Note"
+note = "at top level, outside any Snowflake Scripting block"
 
 [[obligation]]
 id = "sf.scripting.for.do-end-for.o001"
@@ -2093,6 +2280,20 @@ depths = [
   8,
 ]
 note = "statement operands nested; no documented bound"
+
+[[obligation]]
+id = "sf.scripting.for.do-end-for.o028"
+kind = "positive"
+required = true
+anchor = "doc.snowflake-scripting.for / Note"
+note = "inside the body of a LANGUAGE SQL stored procedure"
+
+[[obligation]]
+id = "sf.scripting.for.do-end-for.o029"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.snowflake-scripting.for / Note"
+note = "at top level, outside any Snowflake Scripting block"
 
 [[obligation]]
 id = "sf.scripting.for.to-do-loop-end.o001"
@@ -2338,6 +2539,34 @@ anchor = "doc.snowflake-scripting.for / Usage notes"
 note = "LOOP closed by END FOR"
 
 [[obligation]]
+id = "sf.scripting.for.to-do-loop-end.o037"
+kind = "positive"
+required = true
+anchor = "doc.snowflake-scripting.for / Note"
+note = "inside the body of a LANGUAGE SQL stored procedure"
+
+[[obligation]]
+id = "sf.scripting.for.to-do-loop-end.o038"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.snowflake-scripting.for / Note"
+note = "at top level, outside any Snowflake Scripting block"
+
+[[obligation]]
+id = "sf.scripting.for.to-do-loop-end.o039"
+kind = "positive"
+required = true
+anchor = "doc.snowflake-scripting.for / Usage notes"
+note = "DO closed by END FOR"
+
+[[obligation]]
+id = "sf.scripting.for.to-do-loop-end.o040"
+kind = "positive"
+required = true
+anchor = "doc.snowflake-scripting.for / Usage notes"
+note = "LOOP closed by END LOOP"
+
+[[obligation]]
 id = "sf.scripting.if.o001"
 kind = "positive"
 required = true
@@ -2516,6 +2745,24 @@ required = true
 note = "the form without its required THEN"
 
 [[obligation]]
+id = "sf.scripting.if.o034"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( in [ ELSEIF ( <condition> ) THEN <statement> ; [ <statement> ; ... ] ]"
+
+[[obligation]]
+id = "sf.scripting.if.o035"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) in [ ELSEIF ( <condition> ) THEN <statement> ; [ <statement> ; ... ] ]"
+
+[[obligation]]
+id = "sf.scripting.if.o036"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required THEN in [ ELSEIF ( <condition> ) THEN <statement> ; [ <statement> ; ... ] ]"
+
+[[obligation]]
 id = "sf.scripting.if.o028"
 kind = "negative_neighbour"
 required = true
@@ -2558,6 +2805,28 @@ anchor = "doc.snowflake-scripting.if / Usage notes"
 note = "ENDIF written as one word in place of END IF"
 
 [[obligation]]
+id = "sf.scripting.if.o037"
+kind = "positive"
+required = true
+anchor = "doc.snowflake-scripting.if / Note"
+note = "inside the body of a LANGUAGE SQL stored procedure"
+
+[[obligation]]
+id = "sf.scripting.if.o038"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.snowflake-scripting.if / Note"
+note = "at top level, outside any Snowflake Scripting block"
+
+[[obligation]]
+id = "sf.scripting.if.o039"
+kind = "option_present"
+required = true
+target = "[ ELSEIF ( <condition> ) THEN <statement> ; [ <statement> ; ... ] ]"
+anchor = "doc.snowflake-scripting.if / Syntax"
+note = "two or more ELSEIF branches"
+
+[[obligation]]
 id = "sf.scripting.let.let.o001"
 kind = "positive"
 required = true
@@ -2586,6 +2855,20 @@ id = "sf.scripting.let.let.o005"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required { <variable_assignment> | <cursor_assignment> | <resultset_assignment> }"
+
+[[obligation]]
+id = "sf.scripting.let.let.o006"
+kind = "positive"
+required = true
+anchor = "doc.snowflake-scripting.let / Note"
+note = "inside the body of a LANGUAGE SQL stored procedure"
+
+[[obligation]]
+id = "sf.scripting.let.let.o007"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.snowflake-scripting.let / Note"
+note = "at top level, outside any Snowflake Scripting block"
 
 [[obligation]]
 id = "sf.scripting.let.let-cursor-for.o001"
@@ -2672,6 +2955,20 @@ depths = [
   8,
 ]
 note = "query operands nested; no documented bound"
+
+[[obligation]]
+id = "sf.scripting.let.let-cursor-for.o013"
+kind = "positive"
+required = true
+anchor = "doc.snowflake-scripting.let / Note"
+note = "inside the body of a LANGUAGE SQL stored procedure"
+
+[[obligation]]
+id = "sf.scripting.let.let-cursor-for.o014"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.snowflake-scripting.let / Note"
+note = "at top level, outside any Snowflake Scripting block"
 
 [[obligation]]
 id = "sf.scripting.let.let-cursor-for.cursor-assignment-syntax.o001"
@@ -2764,6 +3061,20 @@ required = true
 target = "<resultset_name>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.scripting.let.let-cursor-for.cursor-assignment-syntax.o014"
+kind = "positive"
+required = true
+anchor = "doc.snowflake-scripting.let / Note"
+note = "inside the body of a LANGUAGE SQL stored procedure"
+
+[[obligation]]
+id = "sf.scripting.let.let-cursor-for.cursor-assignment-syntax.o015"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.snowflake-scripting.let / Note"
+note = "at top level, outside any Snowflake Scripting block"
 
 [[obligation]]
 id = "sf.scripting.let.let-default.o001"
@@ -2862,6 +3173,20 @@ anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
+id = "sf.scripting.let.let-default.o015"
+kind = "positive"
+required = true
+anchor = "doc.snowflake-scripting.let / Note"
+note = "inside the body of a LANGUAGE SQL stored procedure"
+
+[[obligation]]
+id = "sf.scripting.let.let-default.o016"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.snowflake-scripting.let / Note"
+note = "at top level, outside any Snowflake Scripting block"
+
+[[obligation]]
 id = "sf.scripting.let.let-default.variable-assignment-syntax.o001"
 kind = "positive"
 required = true
@@ -2935,6 +3260,20 @@ required = true
 target = "<variable_name>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.scripting.let.let-default.variable-assignment-syntax.o012"
+kind = "positive"
+required = true
+anchor = "doc.snowflake-scripting.let / Note"
+note = "inside the body of a LANGUAGE SQL stored procedure"
+
+[[obligation]]
+id = "sf.scripting.let.let-default.variable-assignment-syntax.o013"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.snowflake-scripting.let / Note"
+note = "at top level, outside any Snowflake Scripting block"
 
 [[obligation]]
 id = "sf.scripting.let.let-resultset-default.o001"
@@ -3055,6 +3394,20 @@ anchor = "doc.snowflake-scripting.await / Usage notes"
 note = "an asynchronous child job: RESULTSET := ASYNC ( <query> )"
 
 [[obligation]]
+id = "sf.scripting.let.let-resultset-default.o018"
+kind = "positive"
+required = true
+anchor = "doc.snowflake-scripting.let / Note"
+note = "inside the body of a LANGUAGE SQL stored procedure"
+
+[[obligation]]
+id = "sf.scripting.let.let-resultset-default.o019"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.snowflake-scripting.let / Note"
+note = "at top level, outside any Snowflake Scripting block"
+
+[[obligation]]
 id = "sf.scripting.loop.o001"
 kind = "positive"
 required = true
@@ -3159,10 +3512,38 @@ depths = [
 note = "statement operands nested; no documented bound"
 
 [[obligation]]
+id = "sf.scripting.loop.o016"
+kind = "positive"
+required = true
+anchor = "doc.snowflake-scripting.loop / Note"
+note = "inside the body of a LANGUAGE SQL stored procedure"
+
+[[obligation]]
+id = "sf.scripting.loop.o017"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.snowflake-scripting.loop / Note"
+note = "at top level, outside any Snowflake Scripting block"
+
+[[obligation]]
 id = "sf.scripting.null.o001"
 kind = "positive"
 required = true
 note = "the documented form with every required part and no optional part"
+
+[[obligation]]
+id = "sf.scripting.null.o002"
+kind = "positive"
+required = true
+anchor = "doc.snowflake-scripting.null / Note"
+note = "inside the body of a LANGUAGE SQL stored procedure"
+
+[[obligation]]
+id = "sf.scripting.null.o003"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.snowflake-scripting.null / Note"
+note = "at top level, outside any Snowflake Scripting block"
 
 [[obligation]]
 id = "sf.scripting.open.o001"
@@ -3238,6 +3619,18 @@ required = true
 target = "[ , bind_variable_2 ... ]"
 
 [[obligation]]
+id = "sf.scripting.open.o016"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( in [ USING ( bind_variable_1 [ , bind_variable_2 ... ] ) ]"
+
+[[obligation]]
+id = "sf.scripting.open.o017"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) in [ USING ( bind_variable_1 [ , bind_variable_2 ... ] ) ]"
+
+[[obligation]]
 id = "sf.scripting.open.o012"
 kind = "identifier_class"
 required = true
@@ -3270,17 +3663,24 @@ anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
+id = "sf.scripting.open.o018"
+kind = "positive"
+required = true
+anchor = "doc.snowflake-scripting.open / Note"
+note = "inside the body of a LANGUAGE SQL stored procedure"
+
+[[obligation]]
+id = "sf.scripting.open.o019"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.snowflake-scripting.open / Note"
+note = "at top level, outside any Snowflake Scripting block"
+
+[[obligation]]
 id = "sf.scripting.raise.o001"
 kind = "positive"
 required = true
 note = "the documented form with every required part and no optional part"
-
-[[obligation]]
-id = "sf.scripting.raise.o002"
-kind = "required_operand_missing"
-required = true
-target = "<exception_name>"
-note = "omit <exception_name>"
 
 [[obligation]]
 id = "sf.scripting.raise.o003"
@@ -3311,6 +3711,34 @@ required = true
 target = "<exception_name>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.scripting.raise.o007"
+kind = "positive"
+required = true
+anchor = "doc.snowflake-scripting.raise / Note"
+note = "inside the body of a LANGUAGE SQL stored procedure"
+
+[[obligation]]
+id = "sf.scripting.raise.o008"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.snowflake-scripting.raise / Note"
+note = "at top level, outside any Snowflake Scripting block"
+
+[[obligation]]
+id = "sf.scripting.raise.o009"
+kind = "positive"
+required = true
+anchor = "doc.snowflake-scripting.raise / Syntax"
+note = "RAISE; without a name inside a WHEN clause of an exception handler, re-raising the exception"
+
+[[obligation]]
+id = "sf.scripting.raise.o010"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.snowflake-scripting.raise / Syntax"
+note = "RAISE; without a name outside an exception handler"
 
 [[obligation]]
 id = "sf.scripting.repeat.o001"
@@ -3449,6 +3877,20 @@ depths = [
 note = "statement operands nested; no documented bound"
 
 [[obligation]]
+id = "sf.scripting.repeat.o021"
+kind = "positive"
+required = true
+anchor = "doc.snowflake-scripting.repeat / Note"
+note = "inside the body of a LANGUAGE SQL stored procedure"
+
+[[obligation]]
+id = "sf.scripting.repeat.o022"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.snowflake-scripting.repeat / Note"
+note = "at top level, outside any Snowflake Scripting block"
+
+[[obligation]]
 id = "sf.scripting.return.o001"
 kind = "positive"
 required = true
@@ -3475,6 +3917,28 @@ required = true
 target = "<expression>"
 anchor = "doc.snowflake-scripting.return / Usage notes"
 note = "TABLE ( <resultset_name> ) returning a RESULTSET as a table"
+
+[[obligation]]
+id = "sf.scripting.return.o005"
+kind = "positive"
+required = true
+anchor = "doc.snowflake-scripting.return / Note"
+note = "inside the body of a LANGUAGE SQL stored procedure"
+
+[[obligation]]
+id = "sf.scripting.return.o006"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.snowflake-scripting.return / Note"
+note = "at top level, outside any Snowflake Scripting block"
+
+[[obligation]]
+id = "sf.scripting.return.o007"
+kind = "operand_type_class"
+required = true
+target = "<expression>"
+anchor = "doc.snowflake-scripting.return / Usage notes"
+note = "TABLE ( <resultset_name> ) in a procedure declared RETURNS TABLE ( ... )"
 
 [[obligation]]
 id = "sf.scripting.while.o001"
@@ -3649,3 +4113,31 @@ kind = "negative_neighbour"
 required = true
 anchor = "doc.snowflake-scripting.while / Usage notes"
 note = "LOOP closed by END WHILE"
+
+[[obligation]]
+id = "sf.scripting.while.o027"
+kind = "positive"
+required = true
+anchor = "doc.snowflake-scripting.while / Note"
+note = "inside the body of a LANGUAGE SQL stored procedure"
+
+[[obligation]]
+id = "sf.scripting.while.o028"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.snowflake-scripting.while / Note"
+note = "at top level, outside any Snowflake Scripting block"
+
+[[obligation]]
+id = "sf.scripting.while.o029"
+kind = "positive"
+required = true
+anchor = "doc.snowflake-scripting.while / Usage notes"
+note = "DO closed by END WHILE"
+
+[[obligation]]
+id = "sf.scripting.while.o030"
+kind = "positive"
+required = true
+anchor = "doc.snowflake-scripting.while / Usage notes"
+note = "LOOP closed by END LOOP"

@@ -75,6 +75,14 @@ STRING_CLASS: str = "string_literal"
 # Wrong-class negatives only where the wrong operand is lexically distinct, so the error should be
 # a syntax error (1003) rather than a semantic one (D82). Expression operands get none: nearly any
 # lexical class is an expression.
+WRONG_FILL: dict[str, str] = {
+    "identifier": "'v1'",
+    "integer_literal": "'x'",
+    "string_literal": "m1",
+    "data_type": "'INT'",
+    "statement": "1",
+    "query": "1",
+}
 LEXICAL_WRONG: dict[str, str] = {
     "identifier": "a string literal",
     "integer_literal": "a string literal",
@@ -84,3 +92,63 @@ LEXICAL_WRONG: dict[str, str] = {
     "query": "a bare literal",
 }
 SUBGRAMMAR_CLASS: str = "subgrammar"
+
+# Case rendering (D82): fills for placeholders by name, then by operand class.
+STATEMENT_TERMINATOR: str = ";"
+RESERVED_WORD: str = "SELECT"
+CLOSE_REPEAT_AFTER: frozenset[str] = frozenset({"(", ","})
+PROCEDURE_WRAPPER: str = (
+    "WITH p1 AS PROCEDURE ( ) RETURNS VARCHAR LANGUAGE SQL AS $$ {block} $$ CALL p1 ( ) ;"
+)
+CLASS_FILL: dict[str, str] = {
+    "statement": "NULL",
+    "query": "SELECT 1",
+    "data_type": "INT",
+    "integer_literal": "1",
+    "string_literal": "'m'",
+    "expression": "1",
+    "identifier": "v1",
+    "operand": "v1",
+}
+NAME_FILL: dict[str, str] = {
+    "cursor_name": "c1",
+    "resultset_name": "r1",
+    "result_set_name": "r1",
+    "exception_name": "e1",
+    "label": "l1",
+    "counter_variable": "i",
+    "row_variable": "row1",
+    "nested_procedure_name": "p1",
+    "exception_number": "-20001",
+    "condition": "TRUE",
+    "boolean_expression": "TRUE",
+    "variable_declaration": "v1 INT",
+    "cursor_declaration": "c1 CURSOR FOR SELECT 1",
+    "resultset_declaration": "r1 RESULTSET",
+    "nested_stored_procedure_declaration": ("p1 PROCEDURE ( ) RETURNS INT AS BEGIN RETURN 1 ; END"),
+    "exception_declaration": "e1 EXCEPTION",
+    "exception_handler": "WHEN OTHER THEN NULL ;",
+    "variable_assignment": "v1 := 1",
+    "cursor_assignment": "c1 CURSOR FOR SELECT 1",
+    "resultset_assignment": "r1 RESULTSET := ( SELECT 1 )",
+    "nested_procedure_definition": "BEGIN RETURN 1 ; END",
+}
+HAND_CASE_KEYS: tuple[str, ...] = (
+    "sql",
+    "also_sql",
+    "context",
+    "outer_open",
+    "open",
+    "core",
+    "close",
+    "outer_close",
+)
+CASE_CAPTURE: str = "execute"
+# The session lane A's anonymous-block runs record (packets 1-5); a receipt binds its hash.
+CASE_SESSION: dict[str, object] = {
+    "ABORT_DETACHED_QUERY": True,
+    "STATEMENT_QUEUED_TIMEOUT_IN_SECONDS": 30,
+    "STATEMENT_TIMEOUT_IN_SECONDS": 30,
+    "TIMEZONE": "UTC",
+    "USE_CACHED_RESULT": False,
+}
