@@ -5,6 +5,7 @@ use std::collections::{BTreeMap, BTreeSet};
 use serde::{Deserialize, Serialize};
 
 use crate::check::models::{FormState, Reason};
+use crate::report::_helpers::obligation_order::in_obligation_order;
 
 /// Forms counted in one family or on one page.
 #[derive(Clone, Debug, Default, PartialEq, Serialize)]
@@ -54,7 +55,8 @@ pub struct Snapshot {
     pub parser_tree: Option<String>,
     /// Every form's state, absent forms included.
     pub forms: BTreeMap<String, FormState>,
-    /// Required obligations the checker found satisfied.
+    /// Required obligations the checker found satisfied, written in obligation order.
+    #[serde(serialize_with = "in_obligation_order")]
     pub satisfied_obligations: BTreeSet<String>,
 }
 
