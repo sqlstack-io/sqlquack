@@ -362,6 +362,9 @@ pub struct Review {
     pub parser_tree: Option<String>,
     pub reviewed_utc: String,
     pub verdict: ReviewVerdict,
+    /// The forms of the family this review verifies; none for the whole family. Never empty.
+    #[serde(default)]
+    pub forms: Option<Vec<String>>,
     /// Form ids this review accepts as excluded, each with its reason.
     #[serde(default, rename = "exclusion")]
     pub exclusions: Vec<Exclusion>,

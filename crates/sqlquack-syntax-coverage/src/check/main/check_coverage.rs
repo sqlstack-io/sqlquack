@@ -20,17 +20,18 @@ pub fn check_coverage(
         current_exclusions(&coverage.reviews, &coverage.file_hashes, parser_tree);
     let mut forms: Vec<FormResult> = Vec::new();
     for (family, family_forms) in &coverage.catalogue {
-        let context: FamilyContext = FamilyContext {
-            joined: &joined,
-            review: review_reason(
-                family,
-                &coverage.reviews,
-                &coverage.file_hashes,
-                parser_tree,
-            ),
-            excluded: &excluded_forms,
-        };
         for form in family_forms {
+            let context: FamilyContext = FamilyContext {
+                joined: &joined,
+                review: review_reason(
+                    &form.id,
+                    family,
+                    &coverage.reviews,
+                    &coverage.file_hashes,
+                    parser_tree,
+                ),
+                excluded: &excluded_forms,
+            };
             forms.push(form_result(form, family, &context));
         }
     }

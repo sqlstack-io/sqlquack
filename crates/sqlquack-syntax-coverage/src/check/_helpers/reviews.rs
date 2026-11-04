@@ -31,8 +31,10 @@ fn current(review: &Review, hashes: &BTreeMap<String, String>, parser_tree: Opti
     review.verdict == ReviewVerdict::Approved && files && tree
 }
 
-/// Why `family` lacks a current review, if it does.
+/// Why `form` of `family` lacks a current review, if it does. A review with `forms` names only
+/// those forms; one without names the whole family.
 pub(crate) fn review_reason(
+    form: &str,
     family: &str,
     reviews: &[Review],
     hashes: &BTreeMap<String, String>,
@@ -40,7 +42,13 @@ pub(crate) fn review_reason(
 ) -> Option<Reason> {
     let mut named = reviews
         .iter()
-        .filter(|review| review.family == family)
+        .filter(|review| {
+            review.family == family
+                && review
+                    .forms
+                    .as_ref()
+                    .is_none_or(|forms| forms.iter().any(|listed| listed == form))
+        })
         .peekable();
     if named.peek().is_none() {
         return Some(Reason::Unreviewed);

@@ -58,6 +58,14 @@ pub(crate) fn reference_problems(
         .map(|source| source.id.as_str())
         .collect();
     for review in &coverage.reviews {
+        for form in review.forms.iter().flatten() {
+            if !forms.contains_key(form.as_str()) {
+                problems.push(format!(
+                    "review {}: form {form} is not catalogued",
+                    review.id
+                ));
+            }
+        }
         for exclusion in &review.exclusions {
             let known: bool = match (&exclusion.form, &exclusion.source) {
                 (Some(form), _) => forms.contains_key(form.as_str()),

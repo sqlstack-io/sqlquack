@@ -419,6 +419,80 @@ fn given_a_changed_tree_when_checking_then_the_form_fails_closed_with_its_reason
             expected_problem: None,
         },
         CheckTestCase {
+            description: "a review listing only another form leaves this one unreviewed",
+            mutate: |root| {
+                replace(
+                    root,
+                    "reviews/query.toml",
+                    "verdict = \"approved\"\n",
+                    "verdict = \"approved\"\nforms = [\"sf.query.select.top\"]\n",
+                );
+            },
+            parse: structural,
+            parser_tree: Some(TREE),
+            form: "sf.query.select",
+            expected_state: FormState::Unverified,
+            expected_reason: Some(Reason::Unreviewed),
+            expected_problem: None,
+        },
+        CheckTestCase {
+            description: "a current review listing the form reviews it",
+            mutate: |root| {
+                replace(
+                    root,
+                    "reviews/query.toml",
+                    "verdict = \"approved\"\n",
+                    "verdict = \"approved\"\nforms = [\"sf.query.select\"]\n",
+                );
+            },
+            parse: structural,
+            parser_tree: Some(TREE),
+            form: "sf.query.select",
+            expected_state: FormState::Verified,
+            expected_reason: None,
+            expected_problem: None,
+        },
+        CheckTestCase {
+            description: "two current reviews listing the same form at the same binding",
+            mutate: |root| {
+                replace(
+                    root,
+                    "reviews/query.toml",
+                    "verdict = \"approved\"\n",
+                    "verdict = \"approved\"\nforms = [\"sf.query.select\"]\n",
+                );
+                let first = read(root, "reviews/query.toml");
+                write(
+                    root,
+                    "reviews/second.toml",
+                    &first.replace("query-1", "query-2"),
+                );
+            },
+            parse: structural,
+            parser_tree: Some(TREE),
+            form: "sf.query.select",
+            expected_state: FormState::Verified,
+            expected_reason: None,
+            expected_problem: None,
+        },
+        CheckTestCase {
+            description: "a review listing a form that is not catalogued",
+            mutate: |root| {
+                replace(
+                    root,
+                    "reviews/query.toml",
+                    "verdict = \"approved\"\n",
+                    "verdict = \"approved\"\nforms = [\"sf.query.select\", \"sf.query.nowhere\"]\n",
+                );
+            },
+            parse: structural,
+            parser_tree: Some(TREE),
+            form: "sf.query.select",
+            expected_state: FormState::Verified,
+            expected_reason: None,
+            expected_problem: Some("review query-1: form sf.query.nowhere is not catalogued"),
+        },
+        CheckTestCase {
             description: "a parser tree other than the reviewed one",
             mutate: |_| {},
             parse: structural,

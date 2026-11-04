@@ -188,6 +188,12 @@ A `[[review]]` has these fields:
   A page review verifies no parsing, so it may omit the field. The checker ignores it on page
   reviews, so a parser change never makes a page review stale.
 - `reviewed_utc`, plus a `verdict` of `approved` or `changes_requested`.
+- `forms` (optional, family reviews only): the form ids of the family this review verifies. A
+  review with `forms` marks only the listed forms as reviewed, still bound to the catalogue and
+  obligation hashes and the parser tree; forms it does not list stay `unreviewed`. A review without
+  `forms` covers the whole family. An empty list, a form of another family or an uncatalogued form
+  is an error. Two current reviews may list the same form; a review id declared twice is an error
+  (decision D88).
 - `[[review.exclusion]]`: exactly one of `form` (a form id of the review's family) or `source` (a
   page id, used for out-of-scope and syntax-less pages), plus a `reason`. A page review excludes
   pages only, and a family review excludes forms only.

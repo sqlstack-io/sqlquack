@@ -598,6 +598,50 @@ fn given_a_format_fault_when_loading_then_the_problem_is_named() {
             expected_problem: "unknown variant `weighted`",
         },
         FormatFaultTestCase {
+            description: "a review listing no forms",
+            mutate: |root| {
+                replace(
+                    root,
+                    "reviews/query.toml",
+                    "verdict = \"approved\"\n",
+                    "verdict = \"approved\"\nforms = []\n",
+                )
+            },
+            expected_problem: "review query-1: forms, when present, lists at least one form",
+        },
+        FormatFaultTestCase {
+            description: "a review listing a form of another family",
+            mutate: |root| {
+                replace(
+                    root,
+                    "reviews/query.toml",
+                    "verdict = \"approved\"\n",
+                    "verdict = \"approved\"\nforms = [\"sf.dml.insert\"]\n",
+                )
+            },
+            expected_problem: "review query-1: form sf.dml.insert is not of family query",
+        },
+        FormatFaultTestCase {
+            description: "a page review listing forms",
+            mutate: |root| {
+                replace(
+                    root,
+                    "reviews/exclusions.toml",
+                    "verdict = \"approved\"\n",
+                    "verdict = \"approved\"\nforms = [\"sf.query.select\"]\n",
+                )
+            },
+            expected_problem: "review pages-1: forms, when present, lists at least one form",
+        },
+        FormatFaultTestCase {
+            description: "a review id declared twice, in two files",
+            mutate: |root| {
+                let first = std::fs::read_to_string(root.join("reviews/query.toml")).expect("read");
+                write(root, "reviews/again.toml", &first);
+            },
+            expected_problem: "query-1: declared twice",
+        },
+        FormatFaultTestCase {
             description: "an obligation id declared twice",
             mutate: |root| replace(root, "obligations/query.toml", "o002", "o001"),
             expected_problem: "sf.query.select.o001: declared twice",

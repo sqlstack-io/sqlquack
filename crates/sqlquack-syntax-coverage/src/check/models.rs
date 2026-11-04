@@ -37,7 +37,7 @@ pub enum Reason {
     Disagreement,
     /// The current parser accepts a case only through a Command or Raw fallback.
     OpaqueFallback,
-    /// No review names the form's family.
+    /// No review names the form, by its family or in its `forms` list.
     Unreviewed,
     /// No approved review matches the current catalogue, obligations and parser tree.
     StaleReview,
@@ -129,7 +129,7 @@ pub(crate) struct Joined<'a> {
 #[derive(Debug)]
 pub(crate) struct FamilyContext<'a> {
     pub(crate) joined: &'a Joined<'a>,
-    /// Why the family lacks a current review, if it does.
+    /// Why the form lacks a current review of its family, if it does.
     pub(crate) review: Option<Reason>,
     /// Form ids excluded by current approved reviews.
     pub(crate) excluded: &'a BTreeSet<String>,

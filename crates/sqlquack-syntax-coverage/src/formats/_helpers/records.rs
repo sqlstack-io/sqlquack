@@ -399,6 +399,24 @@ pub(crate) fn check_review(review: &Review) -> Vec<String> {
             "review {id}: parser_tree is not a Git tree id; only a page review may omit it"
         ));
     }
+    if let Some(forms) = &review.forms {
+        if forms.is_empty() || review.family.is_empty() {
+            problems.push(format!(
+                "review {id}: forms, when present, lists at least one form of a family review"
+            ));
+        }
+        problems.extend(
+            forms
+                .iter()
+                .filter(|form| !is_form_id(form, &review.family))
+                .map(|form| {
+                    format!(
+                        "review {id}: form {form} is not of family {}",
+                        review.family
+                    )
+                }),
+        );
+    }
     if !is_utc(&review.reviewed_utc) {
         problems.push(format!(
             "review {id}: reviewed_utc is not YYYY-MM-DDTHH:MM:SSZ"
