@@ -1,0 +1,94 @@
+# POWER and POW over NUMBER and FLOAT: the FLOAT result, exact powers of ten, and domain errors.
+category = "numeric"
+construct = "fn:POWER"
+session_profile = "utc-v1"
+
+[[case]]
+id = "power_of_ten_integer_exponents"
+description = "POWER(10, n) for whole exponents from -3 to 38, NULL where either side is NULL."
+columns = [{ name = "n", type = "NUMBER(38,0)" }]
+rows = [
+  ["0"], ["1"], ["2"], ["3"], ["6"], ["9"], ["15"], ["18"], ["22"], ["23"], ["30"], ["38"],
+  ["-1"], ["-2"], ["-3"],
+  ["NULL"],
+]
+expression = "POWER(10, n)"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "power_of_ten_to_number"
+description = "POWER(10, n) cast to NUMBER(38,0) and used as a divisor of a NUMBER, as minor-unit scaling does."
+columns = [{ name = "n", type = "NUMBER(38,0)" }, { name = "m", type = "NUMBER(38,0)" }]
+rows = [
+  ["0", "12345"],
+  ["2", "12345"],
+  ["3", "-12345"],
+  ["NULL", "12345"],
+]
+expression = "ARRAY_CONSTRUCT(POWER(10, n)::NUMBER(38, 0), m / NULLIF(POWER(10, n)::NUMBER(38, 0), 0))"
+expected_divergence = "json_fidelity"
+tags = ["null"]
+
+[[case]]
+id = "power_of_ten_times_number"
+description = "A NUMBER(18,3) times POWER(10, n), rounded: the product's type and value."
+columns = [{ name = "x", type = "NUMBER(18,3)" }, { name = "n", type = "NUMBER(38,0)" }]
+rows = [
+  ["12.345", "2"],
+  ["0.005", "2"],
+  ["-0.005", "2"],
+  ["99999.999", "3"],
+  ["NULL", "2"],
+]
+expression = "ROUND(x * POWER(10, n))"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "power_number_and_float_bases"
+description = "POWER of NUMBER and FLOAT bases with fractional and negative exponents."
+columns = [{ name = "b", type = "FLOAT" }, { name = "e", type = "FLOAT" }]
+rows = [
+  ["2", "0.5"],
+  ["2", "-1"],
+  ["1.5", "2"],
+  ["0", "0"],
+  ["-2", "3"],
+  ["-2", "2"],
+  ["1e300", "2"],
+  ["0", "-1"],
+]
+expression = "POWER(b, e)"
+tags = ["boundary", "zero", "negative"]
+
+[[case]]
+id = "power_negative_base_fraction"
+description = "POWER of a negative base to a fractional exponent."
+columns = [{ name = "b", type = "FLOAT" }, { name = "e", type = "FLOAT" }]
+rows = [
+  ["-8", "0.5"],
+]
+expression = "POWER(b, e)"
+tags = ["invalid"]
+
+[[case]]
+id = "pow_spelling"
+description = "POW is POWER."
+columns = [{ name = "b", type = "NUMBER(10,2)" }, { name = "e", type = "NUMBER(10,0)" }]
+rows = [
+  ["1.5", "2"],
+  ["10", "3"],
+  ["NULL", "1"],
+]
+expression = "ARRAY_CONSTRUCT(POW(b, e), POWER(b, e))"
+tags = ["null"]
+
+[[case]]
+id = "power_typed"
+description = "POWER of NUMBER columns on its own, so the result column's type is recorded."
+columns = [{ name = "b", type = "NUMBER(10,0)" }, { name = "e", type = "NUMBER(10,0)" }]
+rows = [
+  ["10", "2"],
+  ["NULL", "2"],
+]
+expression = "POWER(b, e)"
+tags = ["null"]

@@ -31,7 +31,7 @@ use crate::conversion::_helpers::expressions::conditionals::{
 use crate::conversion::_helpers::expressions::hashing::hash_call;
 use crate::conversion::_helpers::expressions::lambdas::{lambda_call, reduce_call};
 use crate::conversion::_helpers::expressions::numeric_functions::{
-    absolute, bitwise, logarithm, rounding, sign,
+    absolute, bitwise, logarithm, power, rounding, sign,
 };
 use crate::conversion::_helpers::expressions::objects::{
     object_construct, object_delete, object_insert,
@@ -213,6 +213,7 @@ pub(crate) fn convert_function(payload: &Value, site: Site<'_>) -> Result<Emitte
         ("DIV0NULL", parts) => div0(parts, true, &construct, site),
         ("NULLIFZERO", parts) => null_if_zero(parts, &construct, site),
         ("LN" | "EXP" | "SQRT", parts) => logarithm(&name, parts, &construct, site),
+        ("POWER", parts) => power(parts, &construct, site),
         ("EQUAL_NULL", parts) => equal_null(parts, &construct, site),
         ("ROUND" | "CEIL" | "FLOOR" | "TRUNC" | "TRUNCATE", parts) => {
             rounding(&name, parts, &construct, site)
