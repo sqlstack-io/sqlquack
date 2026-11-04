@@ -318,6 +318,9 @@ pub struct DropSchema {
     pub name: Identifier,
     pub if_exists: bool,
     pub cascade: bool,
+    /// RESTRICT, kept apart from the default; left out of the tree when absent
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    pub restrict: bool,
 }
 
 impl DropSchema {
@@ -326,6 +329,7 @@ impl DropSchema {
             name: Identifier::new(name),
             if_exists: false,
             cascade: false,
+            restrict: false,
         }
     }
 }
