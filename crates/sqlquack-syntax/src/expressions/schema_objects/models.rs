@@ -1113,6 +1113,9 @@ pub struct AlterObject {
     pub kind: String,
     /// The object name
     pub name: TableRef,
+    /// The argument types that identify a function or procedure; a TABLE( ... ) argument is a tuple
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub arguments: Vec<Expression>,
     /// IF EXISTS clause
     #[serde(default)]
     pub if_exists: bool,
