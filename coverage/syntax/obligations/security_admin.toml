@@ -7304,12 +7304,6 @@ target = "<name>"
 note = "a string literal in place of <name>"
 
 [[obligation]]
-id = "sf.security_admin.alter-application-role.unset-comment.o007"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ROLE"
-
-[[obligation]]
 id = "sf.security_admin.alter-application-role.unset-comment.o008"
 kind = "negative_neighbour"
 required = true
@@ -11130,12 +11124,6 @@ kind = "negative_neighbour"
 required = true
 target = "'<string_literal>'"
 note = "an unquoted identifier in place of '<string_literal>'"
-
-[[obligation]]
-id = "sf.security_admin.alter-database-role.set-comment.o010"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ROLE"
 
 [[obligation]]
 id = "sf.security_admin.alter-database-role.set-comment.o011"

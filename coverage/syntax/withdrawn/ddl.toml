@@ -362,6 +362,15 @@ valid_as = "sf.ddl.alter-view.datagovnpolicytagaction positive the documented fo
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
+form = "sf.ddl.alter-semantic-view.unset-comment-max-staleness"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required SEMANTIC, observed"
+sql = "ALTER VIEW v1 UNSET COMMENT ;"
+valid_as = "sf.ddl.alter-view.unset option_present [ COMMENT ]"
+reason = "the rejection renders SQL the documented grammar also accepts"
+
+[[withdrawn]]
 form = "sf.ddl.alter-semantic-view.unset-tag"
 kind = "negative_neighbour"
 target = ""
@@ -394,7 +403,7 @@ kind = "negative_neighbour"
 target = ""
 note = "the form without its required TYPE in [ [ SET DATA ] TYPE ] #2"
 sql = "ALTER TABLE v1 ALTER v1 DROP DEFAULT , v1 SET DEFAULT v1 . NEXTVAL , v1 NOT NULL , v1 INT , v1 COMMENT 'm' , v1 UNSET COMMENT ;"
-valid_as = "sf.ddl.alter-table-column.drop-default-set-default option_absent [ COLUMN ] #7"
+valid_as = "sf.ddl.alter-table-column.drop-default-set-default option_absent [ COLUMN ] #8"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]

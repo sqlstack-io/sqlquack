@@ -11527,19 +11527,19 @@ reason = "page definitions inlined: partitionExpression; a definition the page g
 form = "sf.ddl.create-external-table.cloudproviderparams-location-externalstage-file-format"
 grammar_sha256 = "e092358dfea3a5cc2bcb2276f5e732e99bd2b95d3ecd6596246635046640e201"
 grammar = ["CREATE [ OR REPLACE ] EXTERNAL TABLE [ IF NOT EXISTS ] <table_name> ( { <col_name> <col_type> AS <expr> | <part_col_name> <col_type> AS <part_expr> } [ [ NOT NULL ] [ CONSTRAINT <constraint_name> ] { UNIQUE | PRIMARY KEY | [ FOREIGN KEY ] REFERENCES <ref_table_name> [ ( <ref_col_name> [ , <ref_col_name> ] ) ] } [ <constraint_properties> ] ] [ , { <col_name> <col_type> AS <expr> | <part_col_name> <col_type> AS <part_expr> ... } ] [ , ... ] ) [ INTEGRATION = '<integration_name>' ] [ PARTITION BY ( <part_col_name> [ , <part_col_name> ... ] ) ] [ WITH ] LOCATION = @ [ <namespace> . ] <ext_stage_name> [ / <path> ] [ REFRESH_ON_CREATE = { TRUE | FALSE } ] [ AUTO_REFRESH = { TRUE | FALSE } ] [ PATTERN = '<regex_pattern>' ] FILE_FORMAT = ( { FORMAT_NAME = '<file_format_name>' | { TYPE = CSV [ COMPRESSION = { AUTO | GZIP | BZ2 | BROTLI | ZSTD | DEFLATE | RAW_DEFLATE | NONE } ] [ RECORD_DELIMITER = { '<string>' | NONE } ] [ FIELD_DELIMITER = { '<string>' | NONE } ] [ MULTI_LINE = { TRUE | FALSE } ] [ SKIP_HEADER = <integer> ] [ SKIP_BLANK_LINES = { TRUE | FALSE } ] [ ESCAPE_UNENCLOSED_FIELD = { '<character>' | NONE } ] [ TRIM_SPACE = { TRUE | FALSE } ] [ FIELD_OPTIONALLY_ENCLOSED_BY = { '<character>' | NONE } ] [ NULL_IF = ( '<string1>' [ , '<string2>' , ... ] ) ] [ EMPTY_FIELD_AS_NULL = { TRUE | FALSE } ] [ ENCODING = '<string>' ] | TYPE = JSON [ COMPRESSION = { AUTO | GZIP | BZ2 | BROTLI | ZSTD | DEFLATE | RAW_DEFLATE | NONE } ] [ MULTI_LINE = { TRUE | FALSE } ] [ ALLOW_DUPLICATE = { TRUE | FALSE } ] [ STRIP_OUTER_ARRAY = { TRUE | FALSE } ] [ STRIP_NULL_VALUES = { TRUE | FALSE } ] [ REPLACE_INVALID_CHARACTERS = { TRUE | FALSE } ] | TYPE = AVRO [ COMPRESSION = { AUTO | GZIP | BZ2 | BROTLI | ZSTD | DEFLATE | RAW_DEFLATE | NONE } ] [ REPLACE_INVALID_CHARACTERS = { TRUE | FALSE } ] | TYPE = ORC [ TRIM_SPACE = { TRUE | FALSE } ] [ REPLACE_INVALID_CHARACTERS = { TRUE | FALSE } ] [ NULL_IF = ( '<string>' [ , '<string>' ... ] ) ] | TYPE = PARQUET [ COMPRESSION = { AUTO | SNAPPY | NONE } ] [ BINARY_AS_TEXT = { TRUE | FALSE } ] [ REPLACE_INVALID_CHARACTERS = { TRUE | FALSE } ] } } ) [ AWS_SNS_TOPIC = '<string>' ] [ COPY GRANTS ] [ COPY = ( GRANTS ) ] [ COMMENT = '<string_literal>' ] [ [ WITH ] ROW ACCESS POLICY <policy_name> ON ( VALUE ) ] [ [ WITH ] TAG ( <tag_name> = '<tag_value>' [ , <tag_name> = '<tag_value>' , ... ] ) ] [ WITH CONTACT ( <purpose> = <contact_name> [ , <purpose> = <contact_name> ... ] ) ]"]
-reason = "page definitions inlined: cloudProviderParams, externalStage, formatTypeOptions, inlineConstraint; a definition the page gives per cloud or variant becomes a choice of its variants; unbraced alternatives inside `( ... )` and in `KEY = a | b` properties are braced; formatTypeOptions inlined per TYPE from the page's `-- If TYPE = ...` sections, each option optional and its `KEY = a | b` braced; a TYPE with no section takes no options D113 [renderer or setup defect]: The block brackets the first column definition inside the parentheses, which would allow an empty `( )`. The reading requires a column definition when the parentheses are present so every other option is tested on a column list Snowflake parses; the empty list itself stays as one observed row (Snowflake rejects `( )` with errno 1003). D113: [page misreading] The block writes `[ , <col_name> <col_type> ... | <col_name> <col_type> AS <expr> | ... ]`; the alternatives are further column definitions, each after the comma (the page's examples separate every column with a comma), so the reading braces them after the comma; the earlier reading rendered `( v1 INT v1 INT AS 1 )`."
+reason = "page definitions inlined: cloudProviderParams, externalStage, formatTypeOptions, inlineConstraint; a definition the page gives per cloud or variant becomes a choice of its variants; unbraced alternatives inside `( ... )` and in `KEY = a | b` properties are braced; formatTypeOptions inlined per TYPE from the page's `-- If TYPE = ...` sections, each option optional and its `KEY = a | b` braced; a TYPE with no section takes no options D113 [renderer or setup defect]: The block brackets the first column definition inside the parentheses, which would allow an empty `( )`. The reading requires a column definition when the parentheses are present so every other option is tested on a column list Snowflake parses; the empty list itself stays as one observed row (Snowflake rejects `( )` with errno 1003). D113 [page misreading] The block writes `[ , <col_name> <col_type> ... | <col_name> <col_type> AS <expr> | ... ]`; the alternatives are further column definitions, each after the comma (the page's examples separate every column with a comma), so the reading braces them after the comma; the earlier reading rendered `( v1 INT v1 INT AS 1 )`."
 
 [[reading]]
 form = "sf.ddl.create-external-table.cloudproviderparams-location-externalstage-partition-type"
 grammar_sha256 = "175c357e958c352b85f2bdbecb10a267d198e442776915b3dd0d40f76f6d042d"
 grammar = ["CREATE [ OR REPLACE ] EXTERNAL TABLE [ IF NOT EXISTS ] <table_name> ( { <col_name> <col_type> AS <expr> | <part_col_name> <col_type> AS <part_expr> } [ [ NOT NULL ] [ CONSTRAINT <constraint_name> ] { UNIQUE | PRIMARY KEY | [ FOREIGN KEY ] REFERENCES <ref_table_name> [ ( <ref_col_name> [ , <ref_col_name> ] ) ] } [ <constraint_properties> ] ] [ , { <col_name> <col_type> AS <expr> | <part_col_name> <col_type> AS <part_expr> ... } ] [ , ... ] ) [ INTEGRATION = '<integration_name>' ] [ PARTITION BY ( <part_col_name> [ , <part_col_name> ... ] ) ] [ WITH ] LOCATION = @ [ <namespace> . ] <ext_stage_name> [ / <path> ] PARTITION_TYPE = USER_SPECIFIED FILE_FORMAT = ( { FORMAT_NAME = '<file_format_name>' | { TYPE = CSV [ COMPRESSION = { AUTO | GZIP | BZ2 | BROTLI | ZSTD | DEFLATE | RAW_DEFLATE | NONE } ] [ RECORD_DELIMITER = { '<string>' | NONE } ] [ FIELD_DELIMITER = { '<string>' | NONE } ] [ MULTI_LINE = { TRUE | FALSE } ] [ SKIP_HEADER = <integer> ] [ SKIP_BLANK_LINES = { TRUE | FALSE } ] [ ESCAPE_UNENCLOSED_FIELD = { '<character>' | NONE } ] [ TRIM_SPACE = { TRUE | FALSE } ] [ FIELD_OPTIONALLY_ENCLOSED_BY = { '<character>' | NONE } ] [ NULL_IF = ( '<string1>' [ , '<string2>' , ... ] ) ] [ EMPTY_FIELD_AS_NULL = { TRUE | FALSE } ] [ ENCODING = '<string>' ] | TYPE = JSON [ COMPRESSION = { AUTO | GZIP | BZ2 | BROTLI | ZSTD | DEFLATE | RAW_DEFLATE | NONE } ] [ MULTI_LINE = { TRUE | FALSE } ] [ ALLOW_DUPLICATE = { TRUE | FALSE } ] [ STRIP_OUTER_ARRAY = { TRUE | FALSE } ] [ STRIP_NULL_VALUES = { TRUE | FALSE } ] [ REPLACE_INVALID_CHARACTERS = { TRUE | FALSE } ] | TYPE = AVRO [ COMPRESSION = { AUTO | GZIP | BZ2 | BROTLI | ZSTD | DEFLATE | RAW_DEFLATE | NONE } ] [ REPLACE_INVALID_CHARACTERS = { TRUE | FALSE } ] | TYPE = ORC [ TRIM_SPACE = { TRUE | FALSE } ] [ REPLACE_INVALID_CHARACTERS = { TRUE | FALSE } ] [ NULL_IF = ( '<string>' [ , '<string>' ... ] ) ] | TYPE = PARQUET [ COMPRESSION = { AUTO | SNAPPY | NONE } ] [ BINARY_AS_TEXT = { TRUE | FALSE } ] [ REPLACE_INVALID_CHARACTERS = { TRUE | FALSE } ] } } ) [ COPY GRANTS ] [ COPY = ( GRANTS ) ] [ COMMENT = '<string_literal>' ] [ [ WITH ] ROW ACCESS POLICY <policy_name> ON ( VALUE ) ] [ [ WITH ] TAG ( <tag_name> = '<tag_value>' [ , <tag_name> = '<tag_value>' , ... ] ) ] [ WITH CONTACT ( <purpose> = <contact_name> [ , <purpose> = <contact_name> ... ] ) ]"]
-reason = "page definitions inlined: cloudProviderParams, externalStage, formatTypeOptions, inlineConstraint; a definition the page gives per cloud or variant becomes a choice of its variants; unbraced alternatives inside `( ... )` and in `KEY = a | b` properties are braced; formatTypeOptions inlined per TYPE from the page's `-- If TYPE = ...` sections, each option optional and its `KEY = a | b` braced; a TYPE with no section takes no options D113 [renderer or setup defect]: The block brackets the first column definition inside the parentheses, which would allow an empty `( )`. The reading requires a column definition when the parentheses are present so every other option is tested on a column list Snowflake parses; the empty list itself stays as one observed row (Snowflake rejects `( )` with errno 1003). D113: [page misreading] The block writes `[ , <col_name> <col_type> ... | <col_name> <col_type> AS <expr> | ... ]`; the alternatives are further column definitions, each after the comma (the page's examples separate every column with a comma), so the reading braces them after the comma; the earlier reading rendered `( v1 INT v1 INT AS 1 )`."
+reason = "page definitions inlined: cloudProviderParams, externalStage, formatTypeOptions, inlineConstraint; a definition the page gives per cloud or variant becomes a choice of its variants; unbraced alternatives inside `( ... )` and in `KEY = a | b` properties are braced; formatTypeOptions inlined per TYPE from the page's `-- If TYPE = ...` sections, each option optional and its `KEY = a | b` braced; a TYPE with no section takes no options D113 [renderer or setup defect]: The block brackets the first column definition inside the parentheses, which would allow an empty `( )`. The reading requires a column definition when the parentheses are present so every other option is tested on a column list Snowflake parses; the empty list itself stays as one observed row (Snowflake rejects `( )` with errno 1003). D113 [page misreading] The block writes `[ , <col_name> <col_type> ... | <col_name> <col_type> AS <expr> | ... ]`; the alternatives are further column definitions, each after the comma (the page's examples separate every column with a comma), so the reading braces them after the comma; the earlier reading rendered `( v1 INT v1 INT AS 1 )`."
 
 [[reading]]
 form = "sf.ddl.create-external-table.cloudproviderparams-location-externalstage-partition-type.syntax"
 grammar_sha256 = "d0155f35d16a6161fbaa5e2d5826c4852db07ee229680f78513a19474aecce5a"
 grammar = ["CREATE [ OR REPLACE ] EXTERNAL TABLE [ IF NOT EXISTS ] <table_name> ( { <col_name> <col_type> AS <expr> | <part_col_name> <col_type> AS <part_expr> } [ [ NOT NULL ] [ CONSTRAINT <constraint_name> ] { UNIQUE | PRIMARY KEY | [ FOREIGN KEY ] REFERENCES <ref_table_name> [ ( <ref_col_name> [ , <ref_col_name> ] ) ] } [ <constraint_properties> ] ] [ , { <col_name> <col_type> AS <expr> | <part_col_name> <col_type> AS <part_expr> ... } ] [ , ... ] ) [ INTEGRATION = '<integration_name>' ] [ PARTITION BY ( <part_col_name> [ , <part_col_name> ... ] ) ] [ WITH ] LOCATION = @ [ <namespace> . ] <ext_stage_name> [ / <path> ] PARTITION_TYPE = USER_SPECIFIED FILE_FORMAT = ( { FORMAT_NAME = '<file_format_name>' | { TYPE = CSV [ COMPRESSION = { AUTO | GZIP | BZ2 | BROTLI | ZSTD | DEFLATE | RAW_DEFLATE | NONE } ] [ RECORD_DELIMITER = { '<string>' | NONE } ] [ FIELD_DELIMITER = { '<string>' | NONE } ] [ MULTI_LINE = { TRUE | FALSE } ] [ SKIP_HEADER = <integer> ] [ SKIP_BLANK_LINES = { TRUE | FALSE } ] [ ESCAPE_UNENCLOSED_FIELD = { '<character>' | NONE } ] [ TRIM_SPACE = { TRUE | FALSE } ] [ FIELD_OPTIONALLY_ENCLOSED_BY = { '<character>' | NONE } ] [ NULL_IF = ( '<string1>' [ , '<string2>' , ... ] ) ] [ EMPTY_FIELD_AS_NULL = { TRUE | FALSE } ] [ ENCODING = '<string>' ] | TYPE = JSON [ COMPRESSION = { AUTO | GZIP | BZ2 | BROTLI | ZSTD | DEFLATE | RAW_DEFLATE | NONE } ] [ MULTI_LINE = { TRUE | FALSE } ] [ ALLOW_DUPLICATE = { TRUE | FALSE } ] [ STRIP_OUTER_ARRAY = { TRUE | FALSE } ] [ STRIP_NULL_VALUES = { TRUE | FALSE } ] [ REPLACE_INVALID_CHARACTERS = { TRUE | FALSE } ] | TYPE = AVRO [ COMPRESSION = { AUTO | GZIP | BZ2 | BROTLI | ZSTD | DEFLATE | RAW_DEFLATE | NONE } ] [ REPLACE_INVALID_CHARACTERS = { TRUE | FALSE } ] | TYPE = ORC [ TRIM_SPACE = { TRUE | FALSE } ] [ REPLACE_INVALID_CHARACTERS = { TRUE | FALSE } ] [ NULL_IF = ( '<string>' [ , '<string>' ... ] ) ] | TYPE = PARQUET [ COMPRESSION = { AUTO | SNAPPY | NONE } ] [ BINARY_AS_TEXT = { TRUE | FALSE } ] [ REPLACE_INVALID_CHARACTERS = { TRUE | FALSE } ] } } ) [ TABLE_FORMAT = DELTA ] [ COPY GRANTS ] [ COPY = ( GRANTS ) ] [ COMMENT = '<string_literal>' ] [ [ WITH ] ROW ACCESS POLICY <policy_name> ON ( VALUE ) ] [ [ WITH ] TAG ( <tag_name> = '<tag_value>' [ , <tag_name> = '<tag_value>' , ... ] ) ] [ WITH CONTACT ( <purpose> = <contact_name> [ , <purpose> = <contact_name> ... ] ) ]"]
-reason = "page definitions inlined: cloudProviderParams, externalStage, formatTypeOptions, inlineConstraint; a definition the page gives per cloud or variant becomes a choice of its variants; unbraced alternatives inside `( ... )` and in `KEY = a | b` properties are braced; formatTypeOptions inlined per TYPE from the page's `-- If TYPE = ...` sections, each option optional and its `KEY = a | b` braced; a TYPE with no section takes no options D113 [renderer or setup defect]: The block brackets the first column definition inside the parentheses, which would allow an empty `( )`. The reading requires a column definition when the parentheses are present so every other option is tested on a column list Snowflake parses; the empty list itself stays as one observed row (Snowflake rejects `( )` with errno 1003). D113: [page misreading] The block writes `[ , <col_name> <col_type> ... | <col_name> <col_type> AS <expr> | ... ]`; the alternatives are further column definitions, each after the comma (the page's examples separate every column with a comma), so the reading braces them after the comma; the earlier reading rendered `( v1 INT v1 INT AS 1 )`."
+reason = "page definitions inlined: cloudProviderParams, externalStage, formatTypeOptions, inlineConstraint; a definition the page gives per cloud or variant becomes a choice of its variants; unbraced alternatives inside `( ... )` and in `KEY = a | b` properties are braced; formatTypeOptions inlined per TYPE from the page's `-- If TYPE = ...` sections, each option optional and its `KEY = a | b` braced; a TYPE with no section takes no options D113 [renderer or setup defect]: The block brackets the first column definition inside the parentheses, which would allow an empty `( )`. The reading requires a column definition when the parentheses are present so every other option is tested on a column list Snowflake parses; the empty list itself stays as one observed row (Snowflake rejects `( )` with errno 1003). D113 [page misreading] The block writes `[ , <col_name> <col_type> ... | <col_name> <col_type> AS <expr> | ... ]`; the alternatives are further column definitions, each after the comma (the page's examples separate every column with a comma), so the reading braces them after the comma; the earlier reading rendered `( v1 INT v1 INT AS 1 )`."
 
 [[reading]]
 form = "sf.ddl.create-external-volume"
@@ -11575,7 +11575,7 @@ reason = "page definitions inlined: inlineConstraint, outoflineConstraint, parti
 form = "sf.ddl.create-iceberg-table.table-base-location.parquet-files"
 grammar_sha256 = "b2e8b3968f4fc155839ec9b4a05781792ceb6f0ed4622db3b71bdb38f1d585c9"
 grammar = ["CREATE [ OR REPLACE ] ICEBERG TABLE [ IF NOT EXISTS ] <table_name> [ ( <col_name> <col_type> [ NOT NULL ] [ [ WITH ] MASKING POLICY <policy_name> [ USING ( <col_name> , <cond_col1> , ... ) ] ] [ [ WITH ] TAG ( <tag_name> = '<tag_value>' [ , <tag_name> = '<tag_value>' , ... ] ) ] [ COMMENT '<string_literal>' ] [ { { [ CONSTRAINT <constraint_name> ] { UNIQUE | PRIMARY KEY | [ FOREIGN KEY ] REFERENCES <ref_table_name> [ ( <ref_col_name> ) ] | CHECK ( <expr> ) } [ <constraint_properties> ] } | { [ CONSTRAINT <constraint_name> ] { UNIQUE | PRIMARY KEY | [ FOREIGN KEY ] REFERENCES <ref_table_name> [ ( <ref_col_name> ) ] } [ <constraint_properties> ] } } ] [ , { <col_name> <col_type> ... | <col_name> <col_type> AS <expr> | <part_col_name> <col_type> AS <part_expr> [ { { [ CONSTRAINT <constraint_name> ] { UNIQUE | PRIMARY KEY | [ FOREIGN KEY ] REFERENCES <ref_table_name> [ ( <ref_col_name> ) ] | CHECK ( <expr> ) } [ <constraint_properties> ] } | { [ CONSTRAINT <constraint_name> ] { UNIQUE | PRIMARY KEY | [ FOREIGN KEY ] REFERENCES <ref_table_name> [ ( <ref_col_name> ) ] } [ <constraint_properties> ] } } ] [ , ... ] } ] [ , { { [ CONSTRAINT <constraint_name> ] { UNIQUE [ ( <col_name> [ , <col_name> , ... ] ) ] | PRIMARY KEY [ ( <col_name> [ , <col_name> , ... ] ) ] | [ FOREIGN KEY ] [ ( <col_name> [ , <col_name> , ... ] ) ] REFERENCES <ref_table_name> [ ( <ref_col_name> [ , <ref_col_name> , ... ] ) ] | CHECK ( <expr> ) } [ <constraint_properties> ] } | { [ CONSTRAINT <constraint_name> ] { UNIQUE [ ( <col_name> [ , <col_name> , ... ] ) ] | PRIMARY KEY [ ( <col_name> [ , <col_name> , ... ] ) ] | [ FOREIGN KEY ] [ ( <col_name> [ , <col_name> , ... ] ) ] REFERENCES <ref_table_name> [ ( <ref_col_name> [ , <ref_col_name> , ... ] ) ] } [ <constraint_properties> ] } } [ ... ] ] ) ] [ PARTITION BY ( <part_col_name> [ , <part_col_name> ... ] ) ] [ EXTERNAL_VOLUME = '<external_volume_name>' ] [ CATALOG = '<catalog_integration_name>' ] BASE_LOCATION = '<relative_path_from_external_volume>' [ ENABLE_SCHEMA_INFERENCE = { TRUE | FALSE } ] [ ENABLE_SCHEMA_EVOLUTION = { TRUE | FALSE } ] [ MATCH_BY_COLUMN_NAME = { CASE_INSENSITIVE | CASE_SENSITIVE } ] [ AUTO_REFRESH = { TRUE | FALSE } ] [ REFRESH_ON_CREATE = { TRUE | FALSE } ] [ PATTERN = '<regex_pattern>' ] [ REPLACE_INVALID_CHARACTERS = { TRUE | FALSE } ] [ [ WITH ] ROW ACCESS POLICY <policy_name> ON ( <col_name> [ , <col_name> ... ] ) ] [ [ WITH ] TAG ( <tag_name> = '<tag_value>' [ , <tag_name> = '<tag_value>' , ... ] ) ] [ COMMENT = '<string_literal>' ]"]
-reason = "page definitions inlined: inlineConstraint, outoflineConstraint; a definition the page gives per cloud or variant becomes a choice of its variants; unbraced alternatives inside `( ... )` and in `KEY = a | b` properties are braced D113 [page misreading]: The block lists the optional column definitions directly after <table_name> without parentheses; the page's other blocks and examples write the column list in parentheses (for example `<table_name> [ ( <col_name> [ <col_type> ] , ... ) ]`, `CREATE ICEBERG TABLE my_parquet_table (`), so the reading parenthesises the optional column list. D113: [page misreading] The block writes `[ , <col_name> <col_type> ... | <col_name> <col_type> AS <expr> | ... ]`; the alternatives are further column definitions, each after the comma (the page's examples separate every column with a comma), so the reading braces them after the comma; the earlier reading rendered `( v1 INT v1 INT AS 1 )`."
+reason = "page definitions inlined: inlineConstraint, outoflineConstraint; a definition the page gives per cloud or variant becomes a choice of its variants; unbraced alternatives inside `( ... )` and in `KEY = a | b` properties are braced D113 [page misreading]: The block lists the optional column definitions directly after <table_name> without parentheses; the page's other blocks and examples write the column list in parentheses (for example `<table_name> [ ( <col_name> [ <col_type> ] , ... ) ]`, `CREATE ICEBERG TABLE my_parquet_table (`), so the reading parenthesises the optional column list. D113 [page misreading] The block writes `[ , <col_name> <col_type> ... | <col_name> <col_type> AS <expr> | ... ]`; the alternatives are further column definitions, each after the comma (the page's examples separate every column with a comma), so the reading braces them after the comma; the earlier reading rendered `( v1 INT v1 INT AS 1 )`."
 
 [[reading]]
 form = "sf.ddl.create-iceberg-table.table.iceberg-rest-in-a-catalog-linked-database"
@@ -30222,7 +30222,7 @@ reason = "D113 [page misreading]: The block's two LIMIT lines (`[ LIMIT <rows> ]
 form = "sf.ddl.create-iceberg-table-parquet"
 grammar_sha256 = "b2e8b3968f4fc155839ec9b4a05781792ceb6f0ed4622db3b71bdb38f1d585c9"
 grammar = ["CREATE [ OR REPLACE ] ICEBERG TABLE [ IF NOT EXISTS ] <table_name> [ ( <col_name> <col_type> [ NOT NULL ] [ [ WITH ] MASKING POLICY <policy_name> [ USING ( <col_name> , <cond_col1> , ... ) ] ] [ [ WITH ] TAG ( <tag_name> = '<tag_value>' [ , <tag_name> = '<tag_value>' , ... ] ) ] [ COMMENT '<string_literal>' ] [ inlineConstraint ] [ , { <col_name> <col_type> ... | <col_name> <col_type> AS <expr> | <part_col_name> <col_type> AS <part_expr> [ inlineConstraint ] [ , ... ] } ] [ , outoflineConstraint [ ... ] ] ) ] [ PARTITION BY ( <part_col_name> [, <part_col_name> ... ] ) ] [ EXTERNAL_VOLUME = '<external_volume_name>' ] [ CATALOG = '<catalog_integration_name>' ] BASE_LOCATION = '<relative_path_from_external_volume>' [ ENABLE_SCHEMA_INFERENCE = { TRUE | FALSE } ] [ ENABLE_SCHEMA_EVOLUTION = { TRUE | FALSE } ] [ MATCH_BY_COLUMN_NAME = { CASE_INSENSITIVE | CASE_SENSITIVE } ] [ AUTO_REFRESH = { TRUE | FALSE } ] [ REFRESH_ON_CREATE = { TRUE | FALSE } ] [ PATTERN = '<regex_pattern>' ] [ REPLACE_INVALID_CHARACTERS = { TRUE | FALSE } ] [ [ WITH ] ROW ACCESS POLICY <policy_name> ON ( <col_name> [ , <col_name> ... ] ) ] [ [ WITH ] TAG ( <tag_name> = '<tag_value>' [ , <tag_name> = '<tag_value>' , ... ] ) ] [ COMMENT = '<string_literal>' ]"]
-reason = "D113 [page misreading]: The block lists the optional column definitions directly after <table_name> without parentheses; the page's other blocks and examples write the column list in parentheses (for example `<table_name> [ ( <col_name> [ <col_type> ] , ... ) ]`, `CREATE ICEBERG TABLE my_parquet_table (`), so the reading parenthesises the optional column list. D113: [page misreading] The block writes `[ , <col_name> <col_type> ... | <col_name> <col_type> AS <expr> | ... ]`; the alternatives are further column definitions, each after the comma (the page's examples separate every column with a comma), so the reading braces them after the comma; the earlier reading rendered `( v1 INT v1 INT AS 1 )`."
+reason = "D113 [page misreading]: The block lists the optional column definitions directly after <table_name> without parentheses; the page's other blocks and examples write the column list in parentheses (for example `<table_name> [ ( <col_name> [ <col_type> ] , ... ) ]`, `CREATE ICEBERG TABLE my_parquet_table (`), so the reading parenthesises the optional column list. D113 [page misreading] The block writes `[ , <col_name> <col_type> ... | <col_name> <col_type> AS <expr> | ... ]`; the alternatives are further column definitions, each after the comma (the page's examples separate every column with a comma), so the reading braces them after the comma; the earlier reading rendered `( v1 INT v1 INT AS 1 )`."
 
 [[reading]]
 form = "sf.ddl.show-columns"
@@ -30443,22 +30443,6 @@ kind = "interaction_all_options"
 note = "every independent option of one production together, observed"
 anchor = "doc.sql.alter-application-package / Syntax"
 sql = "ALTER APPLICATION PACKAGE IF EXISTS v1 SET DATA_RETENTION_TIME_IN_DAYS = 1 MAX_DATA_EXTENSION_TIME_IN_DAYS = 1 DEFAULT_DDL_COLLATION = 'm' COMMENT = 'm' DISTRIBUTION = INTERNAL MULTIPLE_INSTANCES = TRUE ENABLE_RELEASE_CHANNELS = TRUE LISTING_AUTO_REFRESH = TRUE AUTOMATIC_APPLICATION_MAINTENANCE = TRUE ;"
-expect = "observe"
-documented = true
-context = "raw"
-
-[[suppress]]
-form = "sf.ddl.alter-application-package.unset"
-kind = "interaction_all_options"
-note = "every independent option of one production together"
-reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-24); observed, not flipped to reject"
-
-[[limit]]
-form = "sf.ddl.alter-application-package.unset"
-kind = "interaction_all_options"
-note = "every independent option of one production together, observed"
-anchor = "doc.sql.alter-application-package / Syntax"
-sql = "ALTER APPLICATION PACKAGE IF EXISTS v1 UNSET DATA_RETENTION_TIME_IN_DAYS MAX_DATA_EXTENSION_TIME_IN_DAYS DEFAULT_DDL_COLLATION COMMENT = 'm' DISTRIBUTION = INTERNAL ;"
 expect = "observe"
 documented = true
 context = "raw"
@@ -31851,21 +31835,6 @@ kind = "required_operand_missing"
 target = "<purpose> in [ CONTACT <purpose> ]"
 note = "omit <purpose>"
 reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 1420 SQLSTATE 22023, phase semantic_error, import-20261104-41), so it is not a syntax error; observed (D97 settle rule)"
-
-[[suppress]]
-form = "sf.ddl.alter-view.unset"
-kind = "interaction_all_options"
-note = "every independent option of one production together"
-reason = "D113 [page misreading]: the all-options row combines options the page forbids together (a corrected row applies the page's rule), and Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-24); observed, not flipped to reject"
-
-[[limit]]
-form = "sf.ddl.alter-view.unset"
-kind = "interaction_all_options"
-note = "every independent option of one production together, observed"
-anchor = "doc.sql.alter-view / Syntax"
-sql = "ALTER VIEW IF EXISTS v1 UNSET SECURE CONTACT STEWARD COMMENT = 'm' ;"
-expect = "observe"
-context = "raw"
 
 [[suppress]]
 form = "sf.ddl.create-ai-function.as"
@@ -34336,17 +34305,6 @@ expect = "observe"
 context = "raw"
 
 # D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-50); observed, not flipped to reject
-# D113 [page misreading]: the all-options row combined options the page forbids together (the page says “You cannot set (or unset) the CONTACT property with other properties in the same statement”); this row applies the rule, and the observed row above stays observed.
-[[limit]]
-form = "sf.ddl.alter-view.unset"
-kind = "interaction_all_options"
-note = "every independent option of one production together, with the page's combination rules applied, observed"
-anchor = "doc.sql.alter-view / Syntax"
-sql = "ALTER VIEW IF EXISTS v1 UNSET SECURE COMMENT = 'm' ;"
-expect = "observe"
-context = "raw"
-
-# D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-50); observed, not flipped to reject
 # D113 [page misreading]: the all-options row combined options the page forbids together (the page says “The OR REPLACE and IF NOT EXISTS clauses are mutually exclusive”); this row applies the rule, and the observed row above stays observed.
 [[limit]]
 form = "sf.ddl.create-artifact-repository"
@@ -34516,57 +34474,6 @@ note = "the form without its required { <col_name> <col_type> AS <expr> | <part_
 reason = "D113 [documented but Snowflake disagrees]: the neighbour renders an empty `( )`, which the block's brackets document; it is not scored as a reject"
 
 # D113 ddl receipt triage: remaining contradictions observed, each reason names its category and receipt.
-
-[[suppress]]
-form = "sf.ddl.alter-application-package.unset"
-kind = "option_present"
-target = "[ DISTRIBUTION = { INTERNAL | EXTERNAL } ]"
-reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-24); observed, not flipped to reject"
-
-[[limit]]
-form = "sf.ddl.alter-application-package.unset"
-kind = "option_present"
-target = "[ DISTRIBUTION = { INTERNAL | EXTERNAL } ]"
-note = "option present [ DISTRIBUTION = { INTERNAL | EXTERNAL } ], observed"
-anchor = "doc.sql.alter-application-package / Syntax"
-sql = "ALTER APPLICATION PACKAGE v1 UNSET DISTRIBUTION = INTERNAL ;"
-expect = "observe"
-documented = true
-context = "raw"
-
-[[suppress]]
-form = "sf.ddl.alter-application-package.unset"
-kind = "alternative"
-target = "{ INTERNAL | EXTERNAL } → INTERNAL"
-reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-24); observed, not flipped to reject"
-
-[[limit]]
-form = "sf.ddl.alter-application-package.unset"
-kind = "alternative"
-target = "{ INTERNAL | EXTERNAL } → INTERNAL"
-note = "alternative { INTERNAL | EXTERNAL } → INTERNAL, observed"
-anchor = "doc.sql.alter-application-package / Syntax"
-sql = "ALTER APPLICATION PACKAGE v1 UNSET DISTRIBUTION = INTERNAL ;"
-expect = "observe"
-documented = true
-context = "raw"
-
-[[suppress]]
-form = "sf.ddl.alter-application-package.unset"
-kind = "alternative"
-target = "{ INTERNAL | EXTERNAL } → EXTERNAL"
-reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-24); observed, not flipped to reject"
-
-[[limit]]
-form = "sf.ddl.alter-application-package.unset"
-kind = "alternative"
-target = "{ INTERNAL | EXTERNAL } → EXTERNAL"
-note = "alternative { INTERNAL | EXTERNAL } → EXTERNAL, observed"
-anchor = "doc.sql.alter-application-package / Syntax"
-sql = "ALTER APPLICATION PACKAGE v1 UNSET DISTRIBUTION = EXTERNAL ;"
-expect = "observe"
-documented = true
-context = "raw"
 
 [[suppress]]
 form = "sf.ddl.alter-application.set-shared-telemetry-events"
@@ -50858,8 +50765,8 @@ context = "raw"
 [[reading]]
 form = "sf.ddl.alter-table-column.drop-default-set-default"
 grammar_sha256 = "048199ee0e3bacb06e82911da2ef340fa38aa0acfc55e4051b23b60723ab9697"
-grammar = ["ALTER TABLE <name> { ALTER | MODIFY } { ( [ COLUMN ] <col1_name> DROP DEFAULT , [ COLUMN ] <col1_name> SET DEFAULT <seq_name>.NEXTVAL , [ COLUMN ] <col1_name> { [ SET ] NOT NULL | DROP NOT NULL } , [ COLUMN ] <col1_name> [ [ SET DATA ] TYPE ] <type> , [ COLUMN ] <col1_name> COMMENT '<string>' , [ COLUMN ] <col1_name> UNSET COMMENT [ , [ COLUMN ] <col2_name> ... ] [ , ... ] ) | [ COLUMN ] <col1_name> DROP DEFAULT , [ COLUMN ] <col1_name> SET DEFAULT <seq_name>.NEXTVAL , [ COLUMN ] <col1_name> { [ SET ] NOT NULL | DROP NOT NULL } , [ COLUMN ] <col1_name> [ [ SET DATA ] TYPE ] <type> , [ COLUMN ] <col1_name> COMMENT '<string>' , [ COLUMN ] <col1_name> UNSET COMMENT [ , [ COLUMN ] <col2_name> ... ] [ , ... ] }"]
-reason = "D113: [page misreading] The block writes the action list between `[ ( ]` and `[ ) ]`; the brackets are one optional pair (the page's examples write `ALTER TABLE t1 ALTER ( c1 DROP DEFAULT, c2 SET DEFAULT ... )` and the list without parentheses), so the reading renders either both parentheses or neither."
+grammar = ["ALTER TABLE <name> { ALTER | MODIFY } { ( [ COLUMN ] <col1_name> DROP DEFAULT , [ COLUMN ] <col1_name> SET DEFAULT <seq_name>.NEXTVAL , [ COLUMN ] <col1_name> { [ SET ] NOT NULL | DROP NOT NULL } , [ COLUMN ] <col1_name> [ [ SET DATA ] TYPE ] <type> , [ COLUMN ] <col1_name> COMMENT '<string>' , [ COLUMN ] <col1_name> UNSET COMMENT [ , [ COLUMN ] <col2_name> DROP DEFAULT ] ) | [ COLUMN ] <col1_name> DROP DEFAULT , [ COLUMN ] <col1_name> SET DEFAULT <seq_name>.NEXTVAL , [ COLUMN ] <col1_name> { [ SET ] NOT NULL | DROP NOT NULL } , [ COLUMN ] <col1_name> [ [ SET DATA ] TYPE ] <type> , [ COLUMN ] <col1_name> COMMENT '<string>' , [ COLUMN ] <col1_name> UNSET COMMENT [ , [ COLUMN ] <col2_name> DROP DEFAULT ] }"]
+reason = "D113 [page misreading] The block writes the action list between `[ ( ]` and `[ ) ]`; the brackets are one optional pair (the page's examples write `ALTER TABLE t1 ALTER ( c1 DROP DEFAULT, c2 SET DEFAULT ... )` and the list without parentheses), so the reading renders either both parentheses or neither. D113 [page misreading] `[ , [ COLUMN ] <col2_name> ... ] [ , ... ]` elides further column actions of the forms listed above; rendered literally they gave `, v1` and `, COMMENT`, so the reading writes one concrete continuation, another column's DROP DEFAULT."
 
 # D113 functions receipt triage: remaining contradictions observed, each reason names its category and receipt.
 
@@ -51394,41 +51301,6 @@ documented = true
 context = "raw"
 
 # D113 ddl receipt triage: remaining contradictions observed, each reason names its category and receipt.
-
-[[suppress]]
-form = "sf.ddl.alter-application-package.unset"
-kind = "option_present"
-target = "[ COMMENT = <string-literal> ]"
-reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-50); observed, not flipped to reject"
-
-[[limit]]
-form = "sf.ddl.alter-application-package.unset"
-kind = "option_present"
-target = "[ COMMENT = <string-literal> ]"
-note = "option present [ COMMENT = <string-literal> ], observed"
-anchor = "doc.sql.alter-application-package / Syntax"
-sql = "ALTER APPLICATION PACKAGE v1 UNSET COMMENT = 'm' ;"
-expect = "observe"
-documented = true
-context = "raw"
-
-[[suppress]]
-form = "sf.ddl.alter-application-package.unset"
-kind = "operand_type_class"
-target = "<string-literal> in [ COMMENT = <string-literal> ]"
-note = "a valid string_literal"
-reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-50); observed, not flipped to reject"
-
-[[limit]]
-form = "sf.ddl.alter-application-package.unset"
-kind = "operand_type_class"
-target = "<string-literal> in [ COMMENT = <string-literal> ]"
-note = "a valid string_literal, observed"
-anchor = "doc.sql.alter-application-package / Syntax"
-sql = "ALTER APPLICATION PACKAGE v1 UNSET COMMENT = 'm' ;"
-expect = "observe"
-documented = true
-context = "raw"
 
 [[suppress]]
 form = "sf.ddl.alter-dynamic-table.datagovnpolicytagaction"
@@ -52590,42 +52462,6 @@ documented = true
 context = "raw"
 
 [[suppress]]
-form = "sf.ddl.alter-table-column.drop-default-set-default"
-kind = "option_present"
-target = "[ , [ COLUMN ] <col2_name> ... ] #2"
-note = "the list continued at least once"
-reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-50); observed, not flipped to reject"
-
-[[limit]]
-form = "sf.ddl.alter-table-column.drop-default-set-default"
-kind = "option_present"
-target = "[ , [ COLUMN ] <col2_name> ... ] #2"
-note = "the list continued at least once, observed"
-anchor = "doc.sql.alter-table-column / Syntax"
-sql = "ALTER TABLE v1 ALTER v1 DROP DEFAULT , v1 SET DEFAULT v1 . NEXTVAL , v1 NOT NULL , v1 INT , v1 COMMENT 'm' , v1 UNSET COMMENT , v1 ;"
-expect = "observe"
-documented = true
-context = "raw"
-
-[[suppress]]
-form = "sf.ddl.alter-table-column.drop-default-set-default"
-kind = "option_present"
-target = "[ , ... ] #2"
-note = "the list continued at least once"
-reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-50); observed, not flipped to reject"
-
-[[limit]]
-form = "sf.ddl.alter-table-column.drop-default-set-default"
-kind = "option_present"
-target = "[ , ... ] #2"
-note = "the list continued at least once, observed"
-anchor = "doc.sql.alter-table-column / Syntax"
-sql = "ALTER TABLE v1 ALTER v1 DROP DEFAULT , v1 SET DEFAULT v1 . NEXTVAL , v1 NOT NULL , v1 INT , v1 COMMENT 'm' , v1 UNSET COMMENT , COMMENT ;"
-expect = "observe"
-documented = true
-context = "raw"
-
-[[suppress]]
 form = "sf.ddl.alter-table.constraintaction"
 kind = "option_present"
 target = "[ CONSTRAINT <constraint_name> ]"
@@ -53365,41 +53201,6 @@ target = "[ , ... ] #2"
 note = "the list continued at least once, observed"
 anchor = "doc.sql.alter-view / Syntax"
 sql = "ALTER VIEW v1 ADD DATA METRIC FUNCTION v1 ON ( v1 , TABLE v1 ( v1 , v1 ) ) ;"
-expect = "observe"
-documented = true
-context = "raw"
-
-[[suppress]]
-form = "sf.ddl.alter-view.unset"
-kind = "option_present"
-target = "[ COMMENT = '<string_literal>' ]"
-reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-50); observed, not flipped to reject"
-
-[[limit]]
-form = "sf.ddl.alter-view.unset"
-kind = "option_present"
-target = "[ COMMENT = '<string_literal>' ]"
-note = "option present [ COMMENT = '<string_literal>' ], observed"
-anchor = "doc.sql.alter-view / Syntax"
-sql = "ALTER VIEW v1 UNSET COMMENT = 'm' ;"
-expect = "observe"
-documented = true
-context = "raw"
-
-[[suppress]]
-form = "sf.ddl.alter-view.unset"
-kind = "operand_type_class"
-target = "'<string_literal>' in [ COMMENT = '<string_literal>' ]"
-note = "a valid string_literal"
-reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-50); observed, not flipped to reject"
-
-[[limit]]
-form = "sf.ddl.alter-view.unset"
-kind = "operand_type_class"
-target = "'<string_literal>' in [ COMMENT = '<string_literal>' ]"
-note = "a valid string_literal, observed"
-anchor = "doc.sql.alter-view / Syntax"
-sql = "ALTER VIEW v1 UNSET COMMENT = 'm' ;"
 expect = "observe"
 documented = true
 context = "raw"
@@ -57242,84 +57043,63 @@ expect = "observe"
 documented = true
 context = "raw"
 
-# expressions: neighbours observed under D97 (the shape of an accepted statement, or a wrong-class call argument).
-
-[[suppress]]
-form = "sf.expressions.data-types-datetime.interval-yearmonthqualifier-daytimequalifier"
-kind = "boundary_above"
-target = "<fractional_seconds_precision>"
-note = "fractional seconds precision 10, above the documented range 0 to 9"
-reason = "D97: the neighbour has the shape of an accepted statement (sf.expressions.data-types-datetime.interval-yearmonthqualifier-daytimequalifier), so the hand row below observes it instead of scoring a reject"
-
-[[limit]]
-form = "sf.expressions.data-types-datetime.interval-yearmonthqualifier-daytimequalifier"
-kind = "negative_neighbour"
-note = "fractional seconds precision 10, above the documented range 0 to 9, observed"
-anchor = "doc.sql.-types-datetime / Syntax"
-sql = "SELECT CAST ( NULL AS INTERVAL DAY TO SECOND ( 10 ) ) ;"
-expect = "observe"
-context = "raw"
-
-[[suppress]]
-form = "sf.expressions.data-types-datetime.interval-yearmonthqualifier-daytimequalifier"
-kind = "boundary_below"
-target = "<precision>"
-note = "precision 0, below the documented range 1 to 9"
-reason = "D97: the neighbour has the shape of an accepted statement (sf.expressions.data-types-datetime.interval-yearmonthqualifier-daytimequalifier), so the hand row below observes it instead of scoring a reject"
-
-[[limit]]
-form = "sf.expressions.data-types-datetime.interval-yearmonthqualifier-daytimequalifier"
-kind = "negative_neighbour"
-note = "precision 0, below the documented range 1 to 9, observed"
-anchor = "doc.sql.-types-datetime / Syntax"
-sql = "SELECT CAST ( NULL AS INTERVAL YEAR ( 0 ) ) ;"
-expect = "observe"
-context = "raw"
-
-[[suppress]]
-form = "sf.expressions.data-types-datetime.interval-yearmonthqualifier-daytimequalifier"
-kind = "boundary_above"
-target = "<precision>"
-note = "precision 10, above the documented range"
-reason = "D97: the neighbour has the shape of an accepted statement (sf.expressions.data-types-datetime.interval-yearmonthqualifier-daytimequalifier), so the hand row below observes it instead of scoring a reject"
-
-[[limit]]
-form = "sf.expressions.data-types-datetime.interval-yearmonthqualifier-daytimequalifier"
-kind = "negative_neighbour"
-note = "precision 10, above the documented range, observed"
-anchor = "doc.sql.-types-datetime / Syntax"
-sql = "SELECT CAST ( NULL AS INTERVAL YEAR ( 10 ) ) ;"
-expect = "observe"
-context = "raw"
-
-# security_admin: neighbours observed under D97 (the shape of an accepted statement, or a wrong-class call argument).
+# D110b (auditor, fad28aa4 medium): neighbours whose SQL is another family's documented form say nothing about the form under test; withdrawn.
 
 [[suppress]]
 form = "sf.security_admin.alter-application-role.unset-comment"
 kind = "negative_neighbour"
 note = "the form without its required ROLE"
-reason = "D97: the neighbour has the shape of an accepted statement (sf.ddl.alter-application.unset), so the hand row below observes it instead of scoring a reject"
-
-[[limit]]
-form = "sf.security_admin.alter-application-role.unset-comment"
-kind = "negative_neighbour"
-note = "the form without its required ROLE, observed"
-anchor = "doc.sql.alter-application-role / Syntax"
-sql = "ALTER APPLICATION v1 UNSET COMMENT ;"
-expect = "observe"
-context = "raw"
+reason = "D110b: the neighbour renders `ALTER APPLICATION v1 UNSET COMMENT ;`, which is the documented sf.ddl.alter-application.unset form, so it is withdrawn rather than scored or observed"
 
 [[suppress]]
 form = "sf.security_admin.alter-database-role.set-comment"
 kind = "negative_neighbour"
 note = "the form without its required ROLE"
-reason = "D97: the neighbour has the shape of an accepted statement (sf.ddl.alter-database-catalog-linked.set), so the hand row below observes it instead of scoring a reject"
+reason = "D110b: the neighbour renders `ALTER DATABASE v1 SET COMMENT = 'm' ;`, which is the documented sf.ddl.alter-database-catalog-linked.set form, so it is withdrawn rather than scored or observed"
+
+
+# ddl and other families: page-misreading fixes found by the receipt triage (D113).
+
+[[reading]]
+form = "sf.ddl.alter-application-package.unset"
+grammar_sha256 = "655827166b2c567765a3f7cdd7b61711b428269da38a26a7fcbd07e36fbe990f"
+grammar = ["ALTER APPLICATION PACKAGE [ IF EXISTS ] <name> UNSET [ DATA_RETENTION_TIME_IN_DAYS ] [ MAX_DATA_EXTENSION_TIME_IN_DAYS ] [ DEFAULT_DDL_COLLATION ] [ COMMENT ] [ DISTRIBUTION ]"]
+reason = "D113 [page misreading] The block writes `UNSET ... [ COMMENT = <string-literal> ] [ DISTRIBUTION = { INTERNAL | EXTERNAL } ]`, but the page says “When resetting a property/parameter, specify only the name; specifying a value for the property will return an error.”, so the reading names COMMENT and DISTRIBUTION alone."
+
+[[reading]]
+form = "sf.ddl.alter-view.unset"
+grammar_sha256 = "52db4b9d72f7ebe3b323c51faf1893033d5b9678dafd4fdfbce479533f2a6f32"
+grammar = ["ALTER VIEW [ IF EXISTS ] <name> UNSET [ SECURE ] [ CONTACT <purpose> ] [ COMMENT ]"]
+reason = "D113 [page misreading] The block writes `UNSET ... [ COMMENT = '<string_literal>' ]`, but the page says “When resetting a property, specify only the name; specifying a value for the property will return an error.”, so the reading names COMMENT alone."
+
+# D113 (auditor, fad28aa4 low 2): UNSET names only, so the all-options rows are rebuilt with the page's rules.
+
+[[suppress]]
+form = "sf.ddl.alter-view.unset"
+kind = "interaction_all_options"
+note = "every independent option of one production together"
+reason = "D113 [page misreading]: the all-options row combines options as the page forbids (the page says “You cannot set (or unset) the CONTACT property with other properties in the same statement”); the corrected row below applies the rule"
 
 [[limit]]
-form = "sf.security_admin.alter-database-role.set-comment"
-kind = "negative_neighbour"
-note = "the form without its required ROLE, observed"
-anchor = "doc.sql.alter-database-role / Syntax"
-sql = "ALTER DATABASE v1 SET COMMENT = 'm' ;"
-expect = "observe"
+form = "sf.ddl.alter-view.unset"
+kind = "interaction_all_options"
+note = "every independent option of one production together, with the page's combination rules applied"
+anchor = "doc.sql.alter-view / Syntax"
+sql = "ALTER VIEW IF EXISTS v1 UNSET SECURE COMMENT ;"
+expect = "accept"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-application-package.unset"
+kind = "interaction_all_options"
+note = "every independent option of one production together"
+reason = "D113 [page misreading]: the all-options row combines options as the page forbids (the page says “You can reset multiple properties/parameters with a single ALTER statement; however, each property/parameter must be separated by a comma”); the corrected row below applies the rule"
+
+[[limit]]
+form = "sf.ddl.alter-application-package.unset"
+kind = "interaction_all_options"
+note = "every independent option of one production together, with the page's combination rules applied"
+anchor = "doc.sql.alter-application-package / Syntax"
+sql = "ALTER APPLICATION PACKAGE IF EXISTS v1 UNSET DATA_RETENTION_TIME_IN_DAYS , MAX_DATA_EXTENSION_TIME_IN_DAYS , DEFAULT_DDL_COLLATION , COMMENT , DISTRIBUTION ;"
+expect = "accept"
 context = "raw"

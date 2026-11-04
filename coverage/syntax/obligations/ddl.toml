@@ -6900,30 +6900,28 @@ required = true
 target = "[ DEFAULT_DDL_COLLATION ]"
 
 [[obligation]]
-id = "sf.ddl.alter-application-package.unset.o014"
+id = "sf.ddl.alter-application-package.unset.o054"
+kind = "option_present"
+required = true
+target = "[ COMMENT ]"
+
+[[obligation]]
+id = "sf.ddl.alter-application-package.unset.o055"
 kind = "option_absent"
 required = true
-target = "[ COMMENT = <string-literal> ]"
+target = "[ COMMENT ]"
 
 [[obligation]]
-id = "sf.ddl.alter-application-package.unset.o015"
-kind = "required_operand_missing"
+id = "sf.ddl.alter-application-package.unset.o056"
+kind = "option_present"
 required = true
-target = "<string-literal> in [ COMMENT = <string-literal> ]"
-note = "omit <string-literal>"
+target = "[ DISTRIBUTION ]"
 
 [[obligation]]
-id = "sf.ddl.alter-application-package.unset.o017"
-kind = "negative_neighbour"
-required = true
-target = "<string-literal> in [ COMMENT = <string-literal> ]"
-note = "an unquoted identifier in place of <string-literal>"
-
-[[obligation]]
-id = "sf.ddl.alter-application-package.unset.o019"
+id = "sf.ddl.alter-application-package.unset.o057"
 kind = "option_absent"
 required = true
-target = "[ DISTRIBUTION = { INTERNAL | EXTERNAL } ]"
+target = "[ DISTRIBUTION ]"
 
 [[obligation]]
 id = "sf.ddl.alter-application-package.unset.o022"
@@ -6950,12 +6948,6 @@ required = true
 note = "the form without its required UNSET"
 
 [[obligation]]
-id = "sf.ddl.alter-application-package.unset.o025"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required { INTERNAL | EXTERNAL } in [ DISTRIBUTION = { INTERNAL | EXTERNAL } ]"
-
-[[obligation]]
 id = "sf.ddl.alter-application-package.unset.o027"
 kind = "identifier_class"
 required = true
@@ -6972,51 +6964,11 @@ anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
-id = "sf.ddl.alter-application-package.unset.o038"
+id = "sf.ddl.alter-application-package.unset.o059"
 kind = "interaction_all_options"
 required = true
 anchor = "doc.sql.alter-application-package / Syntax"
-note = "every independent option of one production together, observed"
-
-[[obligation]]
-id = "sf.ddl.alter-application-package.unset.o049"
-kind = "option_present"
-required = true
-target = "[ DISTRIBUTION = { INTERNAL | EXTERNAL } ]"
-anchor = "doc.sql.alter-application-package / Syntax"
-note = "option present [ DISTRIBUTION = { INTERNAL | EXTERNAL } ], observed"
-
-[[obligation]]
-id = "sf.ddl.alter-application-package.unset.o050"
-kind = "alternative"
-required = true
-target = "{ INTERNAL | EXTERNAL } → INTERNAL"
-anchor = "doc.sql.alter-application-package / Syntax"
-note = "alternative { INTERNAL | EXTERNAL } → INTERNAL, observed"
-
-[[obligation]]
-id = "sf.ddl.alter-application-package.unset.o051"
-kind = "alternative"
-required = true
-target = "{ INTERNAL | EXTERNAL } → EXTERNAL"
-anchor = "doc.sql.alter-application-package / Syntax"
-note = "alternative { INTERNAL | EXTERNAL } → EXTERNAL, observed"
-
-[[obligation]]
-id = "sf.ddl.alter-application-package.unset.o052"
-kind = "option_present"
-required = true
-target = "[ COMMENT = <string-literal> ]"
-anchor = "doc.sql.alter-application-package / Syntax"
-note = "option present [ COMMENT = <string-literal> ], observed"
-
-[[obligation]]
-id = "sf.ddl.alter-application-package.unset.o053"
-kind = "operand_type_class"
-required = true
-target = "<string-literal> in [ COMMENT = <string-literal> ]"
-anchor = "doc.sql.alter-application-package / Syntax"
-note = "a valid string_literal, observed"
+note = "every independent option of one production together, with the page's combination rules applied"
 
 [[obligation]]
 id = "sf.ddl.alter-application-package.unset-tag.o001"
@@ -61563,13 +61515,6 @@ anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
-id = "sf.ddl.alter-semantic-view.unset-comment-max-staleness.o016"
-kind = "negative_neighbour"
-required = true
-anchor = "doc.sql.alter-semantic-view / Syntax"
-note = "the form without its required SEMANTIC, observed"
-
-[[obligation]]
 id = "sf.ddl.alter-semantic-view.unset-tag.o001"
 kind = "positive"
 required = true
@@ -74504,16 +74449,16 @@ required = true
 target = "{ ALTER | MODIFY } → MODIFY"
 
 [[obligation]]
-id = "sf.ddl.alter-table-column.drop-default-set-default.o109"
+id = "sf.ddl.alter-table-column.drop-default-set-default.o167"
 kind = "alternative"
 required = true
-target = "{ ( [ COLUMN ] <col1_name> DROP DEFAULT , [ COLUMN ] <col1_… → ( [ COLUMN ] <col1_name> DROP DEFAULT , [ COLUMN ] <col1_name> SET DEFAULT <seq_name> . NEXTVAL , [ COLUMN ] <col1_name> { [ SET ] NOT NULL | DROP NOT NULL } , [ COLUMN ] <col1_name> [ [ SET DATA ] TYPE ] <type> , [ COLUMN ] <col1_name> COMMENT '<string>' , [ COLUMN ] <col1_name> UNSET COMMENT [ , [ COLUMN ] <col2_name> ... ] [ , ... ] )"
+target = "{ ( [ COLUMN ] <col1_name> DROP DEFAULT , [ COLUMN ] <col1_… → ( [ COLUMN ] <col1_name> DROP DEFAULT , [ COLUMN ] <col1_name> SET DEFAULT <seq_name> . NEXTVAL , [ COLUMN ] <col1_name> { [ SET ] NOT NULL | DROP NOT NULL } , [ COLUMN ] <col1_name> [ [ SET DATA ] TYPE ] <type> , [ COLUMN ] <col1_name> COMMENT '<string>' , [ COLUMN ] <col1_name> UNSET COMMENT [ , [ COLUMN ] <col2_name> DROP DEFAULT ] )"
 
 [[obligation]]
-id = "sf.ddl.alter-table-column.drop-default-set-default.o110"
+id = "sf.ddl.alter-table-column.drop-default-set-default.o168"
 kind = "alternative"
 required = true
-target = "{ ( [ COLUMN ] <col1_name> DROP DEFAULT , [ COLUMN ] <col1_… → [ COLUMN ] <col1_name> DROP DEFAULT , [ COLUMN ] <col1_name> SET DEFAULT <seq_name> . NEXTVAL , [ COLUMN ] <col1_name> { [ SET ] NOT NULL | DROP NOT NULL } , [ COLUMN ] <col1_name> [ [ SET DATA ] TYPE ] <type> , [ COLUMN ] <col1_name> COMMENT '<string>' , [ COLUMN ] <col1_name> UNSET COMMENT [ , [ COLUMN ] <col2_name> ... ] [ , ... ]"
+target = "{ ( [ COLUMN ] <col1_name> DROP DEFAULT , [ COLUMN ] <col1_… → [ COLUMN ] <col1_name> DROP DEFAULT , [ COLUMN ] <col1_name> SET DEFAULT <seq_name> . NEXTVAL , [ COLUMN ] <col1_name> { [ SET ] NOT NULL | DROP NOT NULL } , [ COLUMN ] <col1_name> [ [ SET DATA ] TYPE ] <type> , [ COLUMN ] <col1_name> COMMENT '<string>' , [ COLUMN ] <col1_name> UNSET COMMENT [ , [ COLUMN ] <col2_name> DROP DEFAULT ]"
 
 [[obligation]]
 id = "sf.ddl.alter-table-column.drop-default-set-default.o097"
@@ -74825,30 +74770,16 @@ target = "<col1_name> #6"
 note = "a string literal in place of <col1_name>"
 
 [[obligation]]
-id = "sf.ddl.alter-table-column.drop-default-set-default.o106"
+id = "sf.ddl.alter-table-column.drop-default-set-default.o169"
 kind = "option_present"
 required = true
-target = "[ , [ COLUMN ] <col2_name> ... ]"
-note = "the list continued at least once"
+target = "[ , [ COLUMN ] <col2_name> DROP DEFAULT ]"
 
 [[obligation]]
-id = "sf.ddl.alter-table-column.drop-default-set-default.o057"
+id = "sf.ddl.alter-table-column.drop-default-set-default.o170"
 kind = "option_absent"
 required = true
-target = "[ , [ COLUMN ] <col2_name> ... ]"
-
-[[obligation]]
-id = "sf.ddl.alter-table-column.drop-default-set-default.o107"
-kind = "option_present"
-required = true
-target = "[ , ... ]"
-note = "the list continued at least once"
-
-[[obligation]]
-id = "sf.ddl.alter-table-column.drop-default-set-default.o059"
-kind = "option_absent"
-required = true
-target = "[ , ... ]"
+target = "[ , [ COLUMN ] <col2_name> DROP DEFAULT ]"
 
 [[obligation]]
 id = "sf.ddl.alter-table-column.drop-default-set-default.o111"
@@ -74861,6 +74792,39 @@ id = "sf.ddl.alter-table-column.drop-default-set-default.o112"
 kind = "option_absent"
 required = true
 target = "[ COLUMN ] #7"
+
+[[obligation]]
+id = "sf.ddl.alter-table-column.drop-default-set-default.o171"
+kind = "required_operand_missing"
+required = true
+target = "<col2_name> in [ , [ COLUMN ] <col2_name> DROP DEFAULT ]"
+note = "omit <col2_name>"
+
+[[obligation]]
+id = "sf.ddl.alter-table-column.drop-default-set-default.o172"
+kind = "operand_type_class"
+required = true
+target = "<col2_name> in [ , [ COLUMN ] <col2_name> DROP DEFAULT ]"
+note = "a valid identifier"
+
+[[obligation]]
+id = "sf.ddl.alter-table-column.drop-default-set-default.o173"
+kind = "negative_neighbour"
+required = true
+target = "<col2_name> in [ , [ COLUMN ] <col2_name> DROP DEFAULT ]"
+note = "a string literal in place of <col2_name>"
+
+[[obligation]]
+id = "sf.ddl.alter-table-column.drop-default-set-default.o116"
+kind = "option_present"
+required = true
+target = "[ COLUMN ] #8"
+
+[[obligation]]
+id = "sf.ddl.alter-table-column.drop-default-set-default.o117"
+kind = "option_absent"
+required = true
+target = "[ COLUMN ] #8"
 
 [[obligation]]
 id = "sf.ddl.alter-table-column.drop-default-set-default.o113"
@@ -74884,16 +74848,16 @@ target = "<col1_name> #7"
 note = "a string literal in place of <col1_name>"
 
 [[obligation]]
-id = "sf.ddl.alter-table-column.drop-default-set-default.o116"
+id = "sf.ddl.alter-table-column.drop-default-set-default.o124"
 kind = "option_present"
 required = true
-target = "[ COLUMN ] #8"
+target = "[ COLUMN ] #9"
 
 [[obligation]]
-id = "sf.ddl.alter-table-column.drop-default-set-default.o117"
+id = "sf.ddl.alter-table-column.drop-default-set-default.o125"
 kind = "option_absent"
 required = true
-target = "[ COLUMN ] #8"
+target = "[ COLUMN ] #9"
 
 [[obligation]]
 id = "sf.ddl.alter-table-column.drop-default-set-default.o118"
@@ -74938,16 +74902,16 @@ target = "<seq_name> #2"
 note = "a string literal in place of <seq_name>"
 
 [[obligation]]
-id = "sf.ddl.alter-table-column.drop-default-set-default.o124"
+id = "sf.ddl.alter-table-column.drop-default-set-default.o133"
 kind = "option_present"
 required = true
-target = "[ COLUMN ] #9"
+target = "[ COLUMN ] #10"
 
 [[obligation]]
-id = "sf.ddl.alter-table-column.drop-default-set-default.o125"
+id = "sf.ddl.alter-table-column.drop-default-set-default.o134"
 kind = "option_absent"
 required = true
-target = "[ COLUMN ] #9"
+target = "[ COLUMN ] #10"
 
 [[obligation]]
 id = "sf.ddl.alter-table-column.drop-default-set-default.o126"
@@ -74995,16 +74959,16 @@ required = true
 target = "[ SET ] #2"
 
 [[obligation]]
-id = "sf.ddl.alter-table-column.drop-default-set-default.o133"
+id = "sf.ddl.alter-table-column.drop-default-set-default.o145"
 kind = "option_present"
 required = true
-target = "[ COLUMN ] #10"
+target = "[ COLUMN ] #11"
 
 [[obligation]]
-id = "sf.ddl.alter-table-column.drop-default-set-default.o134"
+id = "sf.ddl.alter-table-column.drop-default-set-default.o146"
 kind = "option_absent"
 required = true
-target = "[ COLUMN ] #10"
+target = "[ COLUMN ] #11"
 
 [[obligation]]
 id = "sf.ddl.alter-table-column.drop-default-set-default.o135"
@@ -75073,16 +75037,16 @@ target = "<type> #2"
 note = "a string literal in place of <type>"
 
 [[obligation]]
-id = "sf.ddl.alter-table-column.drop-default-set-default.o145"
+id = "sf.ddl.alter-table-column.drop-default-set-default.o153"
 kind = "option_present"
 required = true
-target = "[ COLUMN ] #11"
+target = "[ COLUMN ] #12"
 
 [[obligation]]
-id = "sf.ddl.alter-table-column.drop-default-set-default.o146"
+id = "sf.ddl.alter-table-column.drop-default-set-default.o154"
 kind = "option_absent"
 required = true
-target = "[ COLUMN ] #11"
+target = "[ COLUMN ] #12"
 
 [[obligation]]
 id = "sf.ddl.alter-table-column.drop-default-set-default.o147"
@@ -75127,16 +75091,16 @@ target = "'<string>' #2"
 note = "an unquoted identifier in place of '<string>'"
 
 [[obligation]]
-id = "sf.ddl.alter-table-column.drop-default-set-default.o153"
+id = "sf.ddl.alter-table-column.drop-default-set-default.o174"
 kind = "option_present"
 required = true
-target = "[ COLUMN ] #12"
+target = "[ COLUMN ] #13"
 
 [[obligation]]
-id = "sf.ddl.alter-table-column.drop-default-set-default.o154"
+id = "sf.ddl.alter-table-column.drop-default-set-default.o175"
 kind = "option_absent"
 required = true
-target = "[ COLUMN ] #12"
+target = "[ COLUMN ] #13"
 
 [[obligation]]
 id = "sf.ddl.alter-table-column.drop-default-set-default.o155"
@@ -75160,16 +75124,49 @@ target = "<col1_name> #12"
 note = "a string literal in place of <col1_name>"
 
 [[obligation]]
-id = "sf.ddl.alter-table-column.drop-default-set-default.o159"
-kind = "option_absent"
+id = "sf.ddl.alter-table-column.drop-default-set-default.o176"
+kind = "option_present"
 required = true
-target = "[ , [ COLUMN ] <col2_name> ... ] #2"
+target = "[ , [ COLUMN ] <col2_name> DROP DEFAULT ] #2"
 
 [[obligation]]
-id = "sf.ddl.alter-table-column.drop-default-set-default.o161"
+id = "sf.ddl.alter-table-column.drop-default-set-default.o177"
 kind = "option_absent"
 required = true
-target = "[ , ... ] #2"
+target = "[ , [ COLUMN ] <col2_name> DROP DEFAULT ] #2"
+
+[[obligation]]
+id = "sf.ddl.alter-table-column.drop-default-set-default.o178"
+kind = "option_present"
+required = true
+target = "[ COLUMN ] #14"
+
+[[obligation]]
+id = "sf.ddl.alter-table-column.drop-default-set-default.o179"
+kind = "option_absent"
+required = true
+target = "[ COLUMN ] #14"
+
+[[obligation]]
+id = "sf.ddl.alter-table-column.drop-default-set-default.o180"
+kind = "required_operand_missing"
+required = true
+target = "<col2_name> in [ , [ COLUMN ] <col2_name> DROP DEFAULT ] #2"
+note = "omit <col2_name>"
+
+[[obligation]]
+id = "sf.ddl.alter-table-column.drop-default-set-default.o181"
+kind = "operand_type_class"
+required = true
+target = "<col2_name> in [ , [ COLUMN ] <col2_name> DROP DEFAULT ] #2"
+note = "a valid identifier"
+
+[[obligation]]
+id = "sf.ddl.alter-table-column.drop-default-set-default.o182"
+kind = "negative_neighbour"
+required = true
+target = "<col2_name> in [ , [ COLUMN ] <col2_name> DROP DEFAULT ] #2"
+note = "a string literal in place of <col2_name>"
 
 [[obligation]]
 id = "sf.ddl.alter-table-column.drop-default-set-default.o062"
@@ -75238,6 +75235,18 @@ required = true
 note = "the form without its required UNSET"
 
 [[obligation]]
+id = "sf.ddl.alter-table-column.drop-default-set-default.o183"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required DROP in [ , [ COLUMN ] <col2_name> DROP DEFAULT ]"
+
+[[obligation]]
+id = "sf.ddl.alter-table-column.drop-default-set-default.o184"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required DEFAULT in [ , [ COLUMN ] <col2_name> DROP DEFAULT ]"
+
+[[obligation]]
 id = "sf.ddl.alter-table-column.drop-default-set-default.o162"
 kind = "negative_neighbour"
 required = true
@@ -75250,10 +75259,22 @@ required = true
 note = "the form without its required DATA in [ SET DATA ] #2"
 
 [[obligation]]
-id = "sf.ddl.alter-table-column.drop-default-set-default.o164"
+id = "sf.ddl.alter-table-column.drop-default-set-default.o185"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required { ( [ COLUMN ] <col1_name> DROP DEFAULT , [ COLUMN ] <col1_name> SET DEFAULT <seq_name> . NEXTVAL , [ COLUMN ] <col1_name> { [ SET ] NOT NULL | DROP NOT NULL } , [ COLUMN ] <col1_name> [ [ SET DATA ] TYPE ] <type> , [ COLUMN ] <col1_name> COMMENT '<string>' , [ COLUMN ] <col1_name> UNSET COMMENT [ , [ COLUMN ] <col2_name> ... ] [ , ... ] ) | [ COLUMN ] <col1_name> DROP DEFAULT , [ COLUMN ] <col1_name> SET DEFAULT <seq_name> . NEXTVAL , [ COLUMN ] <col1_name> { [ SET ] NOT NULL | DROP NOT NULL } , [ COLUMN ] <col1_name> [ [ SET DATA ] TYPE ] <type> , [ COLUMN ] <col1_name> COMMENT '<string>' , [ COLUMN ] <col1_name> UNSET COMMENT [ , [ COLUMN ] <col2_name> ... ] [ , ... ] }"
+note = "the form without its required DROP in [ , [ COLUMN ] <col2_name> DROP DEFAULT ] #2"
+
+[[obligation]]
+id = "sf.ddl.alter-table-column.drop-default-set-default.o186"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required DEFAULT in [ , [ COLUMN ] <col2_name> DROP DEFAULT ] #2"
+
+[[obligation]]
+id = "sf.ddl.alter-table-column.drop-default-set-default.o187"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { ( [ COLUMN ] <col1_name> DROP DEFAULT , [ COLUMN ] <col1_name> SET DEFAULT <seq_name> . NEXTVAL , [ COLUMN ] <col1_name> { [ SET ] NOT NULL | DROP NOT NULL } , [ COLUMN ] <col1_name> [ [ SET DATA ] TYPE ] <type> , [ COLUMN ] <col1_name> COMMENT '<string>' , [ COLUMN ] <col1_name> UNSET COMMENT [ , [ COLUMN ] <col2_name> DROP DEFAULT ] ) | [ COLUMN ] <col1_name> DROP DEFAULT , [ COLUMN ] <col1_name> SET DEFAULT <seq_name> . NEXTVAL , [ COLUMN ] <col1_name> { [ SET ] NOT NULL | DROP NOT NULL } , [ COLUMN ] <col1_name> [ [ SET DATA ] TYPE ] <type> , [ COLUMN ] <col1_name> COMMENT '<string>' , [ COLUMN ] <col1_name> UNSET COMMENT [ , [ COLUMN ] <col2_name> DROP DEFAULT ] }"
 
 [[obligation]]
 id = "sf.ddl.alter-table-column.drop-default-set-default.o075"
@@ -75304,6 +75325,22 @@ anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
+id = "sf.ddl.alter-table-column.drop-default-set-default.o188"
+kind = "identifier_class"
+required = true
+target = "<col2_name>"
+anchor = "doc.identifiers-syntax"
+note = "quoted: a double-quoted identifier with blanks and mixed case"
+
+[[obligation]]
+id = "sf.ddl.alter-table-column.drop-default-set-default.o189"
+kind = "identifier_class"
+required = true
+target = "<col2_name>"
+anchor = "doc.identifiers-syntax"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
 id = "sf.ddl.alter-table-column.drop-default-set-default.o095"
 kind = "interaction_all_options"
 required = true
@@ -75316,22 +75353,6 @@ kind = "negative_neighbour"
 required = true
 anchor = "doc.sql.alter-table-column / Syntax"
 note = "the form without its required SET, observed"
-
-[[obligation]]
-id = "sf.ddl.alter-table-column.drop-default-set-default.o165"
-kind = "option_present"
-required = true
-target = "[ , [ COLUMN ] <col2_name> ... ] #2"
-anchor = "doc.sql.alter-table-column / Syntax"
-note = "the list continued at least once, observed"
-
-[[obligation]]
-id = "sf.ddl.alter-table-column.drop-default-set-default.o166"
-kind = "option_present"
-required = true
-target = "[ , ... ] #2"
-anchor = "doc.sql.alter-table-column / Syntax"
-note = "the list continued at least once, observed"
 
 [[obligation]]
 id = "sf.ddl.alter-table-event-table.set.o001"
@@ -95723,24 +95744,16 @@ target = "<purpose> in [ CONTACT <purpose> ]"
 note = "a valid operand"
 
 [[obligation]]
-id = "sf.ddl.alter-view.unset.o014"
+id = "sf.ddl.alter-view.unset.o042"
+kind = "option_present"
+required = true
+target = "[ COMMENT ]"
+
+[[obligation]]
+id = "sf.ddl.alter-view.unset.o043"
 kind = "option_absent"
 required = true
-target = "[ COMMENT = '<string_literal>' ]"
-
-[[obligation]]
-id = "sf.ddl.alter-view.unset.o015"
-kind = "required_operand_missing"
-required = true
-target = "'<string_literal>' in [ COMMENT = '<string_literal>' ]"
-note = "omit '<string_literal>'"
-
-[[obligation]]
-id = "sf.ddl.alter-view.unset.o017"
-kind = "negative_neighbour"
-required = true
-target = "'<string_literal>' in [ COMMENT = '<string_literal>' ]"
-note = "an unquoted identifier in place of '<string_literal>'"
+target = "[ COMMENT ]"
 
 [[obligation]]
 id = "sf.ddl.alter-view.unset.o018"
@@ -95777,13 +95790,6 @@ anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
-id = "sf.ddl.alter-view.unset.o031"
-kind = "interaction_all_options"
-required = true
-anchor = "doc.sql.alter-view / Syntax"
-note = "every independent option of one production together, observed"
-
-[[obligation]]
 id = "sf.ddl.alter-view.unset.o024"
 kind = "required_operand_missing"
 required = true
@@ -95792,27 +95798,11 @@ anchor = "doc.sql.alter-view / Syntax"
 note = "omit <purpose>, observed"
 
 [[obligation]]
-id = "sf.ddl.alter-view.unset.o039"
+id = "sf.ddl.alter-view.unset.o045"
 kind = "interaction_all_options"
 required = true
 anchor = "doc.sql.alter-view / Syntax"
-note = "every independent option of one production together, with the page's combination rules applied, observed"
-
-[[obligation]]
-id = "sf.ddl.alter-view.unset.o040"
-kind = "option_present"
-required = true
-target = "[ COMMENT = '<string_literal>' ]"
-anchor = "doc.sql.alter-view / Syntax"
-note = "option present [ COMMENT = '<string_literal>' ], observed"
-
-[[obligation]]
-id = "sf.ddl.alter-view.unset.o041"
-kind = "operand_type_class"
-required = true
-target = "'<string_literal>' in [ COMMENT = '<string_literal>' ]"
-anchor = "doc.sql.alter-view / Syntax"
-note = "a valid string_literal, observed"
+note = "every independent option of one production together, with the page's combination rules applied"
 
 [[obligation]]
 id = "sf.ddl.alter-warehouse.abort-all-queries.o001"
