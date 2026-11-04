@@ -23,6 +23,7 @@ use sqlquack_duckdb::temporal::main::text_to_timestamp::text_to_timestamp;
 use sqlquack_duckdb::temporal::main::text_to_zoned::text_to_zoned;
 use sqlquack_duckdb::temporal::main::timestamp_format::timestamp_format;
 use sqlquack_duckdb::temporal::main::timestamp_from_parts::timestamp_from_parts;
+use sqlquack_duckdb::temporal::main::truncate_timestamp_to_date::truncate_timestamp_to_date;
 use sqlquack_duckdb::temporal::main::utc_to_zone::utc_to_zone;
 use sqlquack_duckdb::temporal::main::utc_wall_time::utc_wall_time;
 use sqlquack_duckdb::temporal::main::zone_checked::zone_checked;
@@ -56,13 +57,14 @@ use crate::conversion::_helpers::support::tree::{
 use crate::conversion::constants::{
     BARE_FRACTION, BARE_FRACTION_PATTERNS, CLOCK_FORMAT_FIELDS, CURRENT_TIME, CURRENT_TIME_RULE,
     DATE_ARITHMETIC, DATE_FORMAT_RULE, DATE_NAME, DATE_PART_RULE, DATE_PARTS, DATE_TEXT_SPELLING,
-    DAY_NAME_RULE, DECIMAL_EPOCH_RULE, FRACTIONAL_DATE_AMOUNT, FROM_PARTS, MAX_FRACTION_DIGITS_U8,
-    MICROSECOND_DIGITS, NULL_BRANCHES, NUMBER_TEXT_FORMAT, OFFSET_FREE_UNITS, RECORDED_TIME_ZONES,
-    SCALE_DIGITS, SESSION_TIMEZONE_UTC, TEMPORAL_TEXT_FIELDS, TEMPORAL_TEXT_FORMAT,
-    TEMPORAL_TEXT_SEPARATORS, TEXT_TO_TIME_RULE, TEXT_TO_TIMESTAMP_RULE, TIME_ARITHMETIC,
-    TIME_ZONE_CONVERSION, TIME_ZONE_SPELLING, TIMESTAMP_FORMAT_RULE, TIMESTAMP_NTZ_NAME,
-    TIMESTAMP_RANGE, TIMESTAMP_TIME_RULE, TO_DATE_TEMPORAL, TO_TIMESTAMP_TEMPORAL,
-    UTC_OFFSET_ARITHMETIC, UTC_ZONE, ZONE_COLUMNS, ZONED_PARTS,
+    DAY_NAME_RULE, DECIMAL_EPOCH_RULE, FRACTIONAL_DATE_AMOUNT, FROM_PARTS, LAST_DAY_RULE,
+    MAX_FRACTION_DIGITS_U8, MICROSECOND_DIGITS, NULL_BRANCHES, NUMBER_TEXT_FORMAT,
+    OFFSET_FREE_UNITS, RECORDED_TIME_ZONES, SCALE_DIGITS, SESSION_TIMEZONE_UTC,
+    TEMPORAL_TEXT_FIELDS, TEMPORAL_TEXT_FORMAT, TEMPORAL_TEXT_SEPARATORS, TEXT_TO_TIME_RULE,
+    TEXT_TO_TIMESTAMP_RULE, TIME_ARITHMETIC, TIME_ZONE_CONVERSION, TIME_ZONE_SPELLING,
+    TIMESTAMP_FORMAT_RULE, TIMESTAMP_NTZ_NAME, TIMESTAMP_RANGE, TIMESTAMP_TIME_RULE,
+    TO_DATE_TEMPORAL, TO_TIMESTAMP_TEMPORAL, UTC_OFFSET_ARITHMETIC, UTC_ZONE, ZONE_COLUMNS,
+    ZONED_PARTS,
 };
 use sqlquack_duckdb::raises::main::raised::raised;
 
@@ -312,6 +314,33 @@ pub(crate) fn day_name(
         format!("strftime({}, '%a')", operand.sql),
         SnowflakeType::Varchar,
     ))
+}
+
+/// LAST_DAY of a DATE or TIMESTAMP_NTZ at the default MONTH unit: the month's last DATE.
+pub(crate) fn last_day(
+    arguments: &[Value],
+    construct: &Construct,
+    site: Site<'_>,
+) -> Result<Emitted, Refusal> {
+    let _rule = site.context.log.rule(LAST_DAY_RULE);
+    let refuse = |reason: String| outside_conditions(construct.clone(), reason);
+    let value = match arguments {
+        [value] => value,
+        [value, unit] if unit_name(unit).as_deref() == Some("MONTH") => value,
+        _ => return Err(refuse("LAST_DAY of a unit other than MONTH".to_owned())),
+    };
+    let (operand, _) =
+        temporal_or_refused(convert_expression(value, site)?, construct, site.context)?;
+    let date = match operand.data_type {
+        SnowflakeType::TimestampNtz { precision } => {
+            truncate_timestamp_to_date(&operand.sql, precision, site.context.log)
+        }
+        _ => operand.sql.clone(),
+    };
+    Ok(Emitted {
+        declared: operand.declared,
+        ..Emitted::new(format!("last_day({date})"), SnowflakeType::Date)
+    })
 }
 
 /// DATEADD(unit, amount, value) with a NUMBER(p,0) amount, keeping the value's type.

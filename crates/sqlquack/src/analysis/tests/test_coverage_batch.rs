@@ -671,6 +671,44 @@ fn given_ordered_rows_when_converting_ntile_then_extra_rows_go_to_the_first_buck
 }
 
 #[test]
+fn given_dates_when_converting_last_day_then_the_month_end_is_kept() {
+    let test_cases = [
+        FirstValueTestCase {
+            description: "a leap February ends on the 29th",
+            sql: "SELECT LAST_DAY('2024-02-10'::DATE) = '2024-02-29'::DATE AS v",
+            expected_outcome: Ok("true"),
+        },
+        FirstValueTestCase {
+            description: "a timestamp just before midnight keeps its own month",
+            sql: "SELECT LAST_DAY('2024-01-31 23:59:59.999999999'::TIMESTAMP_NTZ(9)) \
+                  = '2024-01-31'::DATE AS v",
+            expected_outcome: Ok("true"),
+        },
+        FirstValueTestCase {
+            description: "a quoted month unit is the default",
+            sql: "SELECT LAST_DAY('2023-02-10'::DATE, 'month') = '2023-02-28'::DATE AS v",
+            expected_outcome: Ok("true"),
+        },
+        FirstValueTestCase {
+            description: "a week unit refuses",
+            sql: "SELECT LAST_DAY('2024-02-10'::DATE, week) AS v",
+            expected_outcome: Err("other than MONTH"),
+        },
+    ];
+    for test_case in test_cases {
+        assert_eq!(
+            shop_first_outcome(test_case.sql, test_case.expected_outcome),
+            test_case
+                .expected_outcome
+                .map(str::to_owned)
+                .map_err(str::to_owned),
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
 fn given_powers_of_ten_when_converting_power_then_the_nearest_double_is_kept() {
     let test_cases = [
         FirstValueTestCase {

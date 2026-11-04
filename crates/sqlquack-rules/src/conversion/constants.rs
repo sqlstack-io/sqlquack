@@ -1282,6 +1282,8 @@ pub(crate) const TRYING_HEX_DECODE: &str = "TRY_HEX_DECODE_STRING";
 pub(crate) const HEX_DECODE_MESSAGE: &str = "The following string is not a legal hex-encoded value";
 /// DAYNAME.
 pub const DAY_NAME_RULE: &str = "rule.day_name";
+/// LAST_DAY of a DATE or TIMESTAMP_NTZ in its month.
+pub const LAST_DAY_RULE: &str = "rule.last_day";
 /// SQRT's name, beside LN and EXP.
 pub(crate) const SQRT_NAME: &str = "SQRT";
 /// TRY_TO_DOUBLE of a FLOAT, the value itself.
