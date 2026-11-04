@@ -185,6 +185,8 @@ committed one.
   (`DCM Project compilation failed in file …`) is no evidence of a parse: its receipt carries a
   `measure`, such as `dcm_precheck`, so it never counts as syntax evidence.
 - Optional `message`: the warehouse's whole error message.
+- Optional `connector_errno`: an error number the connector raised in the client after the server
+  ran the statement, as query history shows. It is provenance only and does not change the phase.
 - Optional `measure`: the measure other than syntax the receipt was recorded for, such as
   `d73_missing_object_with_setup`. Such a receipt is never syntax evidence.
 - Optional `supersedes_receipt_sha256`: the SHA-256 of a published receipt line of the same case,

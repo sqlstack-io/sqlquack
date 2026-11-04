@@ -112,6 +112,18 @@ fn given_a_valid_tree_when_loading_then_every_record_is_kept() {
             expected_counts: counts(2),
         },
         LoadTestCase {
+            description: "a receipt keeps the error the connector raised after the server ran it",
+            tree: |root| {
+                valid_tree(root);
+                let raised = receipt_line().replace(
+                    "\"errno\":null",
+                    "\"errno\":253006,\"connector_errno\":253006",
+                );
+                write(root, "receipts/client.jsonl", &format!("{raised}\n"));
+            },
+            expected_counts: counts(2),
+        },
+        LoadTestCase {
             description: "a failed DCM PLAN keeps its inner error's line and position",
             tree: |root| {
                 valid_tree(root);

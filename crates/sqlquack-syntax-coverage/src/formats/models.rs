@@ -323,6 +323,10 @@ pub struct Receipt {
     /// The warehouse's whole error message.
     #[serde(default)]
     pub message: Option<String>,
+    /// An error number the connector raised in the client after the server ran the statement, as
+    /// query history shows; provenance only, never the phase.
+    #[serde(default)]
+    pub connector_errno: Option<i64>,
     /// The DCM project a `dcm_definition_file` receipt planned in.
     #[serde(default)]
     pub dcm_project: Option<String>,
