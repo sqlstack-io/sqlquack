@@ -143,7 +143,10 @@ class _Walk:
                 node.text, self.spec(action=ACTION_RESERVED_WORD, node=node)
             )
             self.quote_specs.setdefault(
-                node.text, self.spec(action=ACTION_QUOTE_IDENTIFIERS, node=node)
+                node.text,
+                self.spec(
+                    action=ACTION_QUOTE_IDENTIFIERS, node=node, payload=placeholder_name(node)
+                ),
             )
         target: str = self.target(text=f"{node.text}{suffix}")
         if label in NESTED_CLASSES:

@@ -29,7 +29,6 @@ from scripts.syntax_obligations.constants import (
     HAND_ALSO_SQL,
     HAND_CORE,
     HAND_SQL,
-    IDENTIFIER_CLASS,
     LABEL_SLOT,
     NAME_FILL,
     NODE_CHOICE,
@@ -57,7 +56,7 @@ class _Choices:
     branch: dict[int, int] = field(default_factory=dict)
     replace: dict[int, str] = field(default_factory=dict)
     drop: frozenset[int] = frozenset()
-    quote: bool = False
+    quote: str = ""
 
 
 def submissions(
@@ -166,7 +165,7 @@ class _Renderer:
         elif spec.action == ACTION_REPLACE_NODE:
             choices.replace[spec.node] = spec.payload
         elif spec.action == ACTION_QUOTE_IDENTIFIERS:
-            choices.quote = True
+            choices.quote = spec.payload
         return choices
 
     @staticmethod
@@ -295,7 +294,7 @@ class _Renderer:
         label: str = operand_class(name)
         if not fill:
             fill = CLASS_FILL.get(STRING_CLASS if node.token_kind == TOKEN_LITERAL else label, "v1")
-        if choices.quote and label == IDENTIFIER_CLASS and node.token_kind == TOKEN_PLACEHOLDER:
+        if choices.quote == name and node.token_kind == TOKEN_PLACEHOLDER:
             fill = f'"{fill} Q"'
         self._used.setdefault(name, []).append(fill)
         return fill

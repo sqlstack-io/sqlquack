@@ -1,0 +1,25 @@
+# Lane C review of lane B's syntax-coverage checker: fail-closed behaviour (decision D75).
+# Bound to the reviewed commit and the Git tree of the checker crate at that commit.
+
+[review]
+subject = "checker"
+reviewer_lane = "C"
+branch = "wip/syntax-coverage"
+commit = "47e67f292b89c65b8be7849a8127f2cb917b0bf1"
+crate_tree = "2024a5939268993712075364e012eaa5212bf732"
+supersedes = "2f49f1fd"
+reviewed_utc = "2026-11-04T01:30:00Z"
+verdict = "approved"
+not_reviewed = "later checker revisions (expect/stage, unexpected_outcome, measure receipts, supersession chains) from 28294d37 on"
+
+[[closed]]
+finding = "admissible() did not compare the receipt's capture method with the case's capture"
+check = "read check/_helpers/receipts.rs: admissible() now requires receipt.capture_method == case.capture; mutation: replacing the comparison with true fails the capture test"
+
+[[closed]]
+finding = "a family review could exclude a source page"
+check = "read formats/_helpers/records.rs exclusion_problem(): a source target is valid only when the review's family is empty, so a family review naming a source is a format problem"
+
+[method]
+tests = "cargo test -p sqlquack-syntax-coverage: all pass; the negative tests in check/tests start from a fully verifying tree and each expects one named failure reason"
+mutation = "capture comparison removed from admissible(): the suite fails with 'a receipt of another capture method than its case's'"
