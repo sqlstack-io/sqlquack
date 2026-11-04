@@ -61,7 +61,7 @@ _YEAR_9999: int = 253_402_300_799 * 10**9
             nanoseconds=((1_000_001_000, 1_000_001_001),),
             check_answer="counts",
             expected_checked=None,
-            expected_message="1 of its values have sub-microsecond digits",
+            expected_message="(1 of its values)",
             expected_checks=1,
         ),
         SubMicrosecondTestCase(
@@ -71,7 +71,7 @@ _YEAR_9999: int = 253_402_300_799 * 10**9
             nanoseconds=((1_000_001_000, 1_000_001_001),),
             check_answer="counts",
             expected_checked=None,
-            expected_message="1 of its values have sub-microsecond digits",
+            expected_message="(1 of its values)",
             expected_checks=1,
         ),
         SubMicrosecondTestCase(
@@ -81,7 +81,7 @@ _YEAR_9999: int = 253_402_300_799 * 10**9
             nanoseconds=((1_000_001_000, 1_000_001_001),),
             check_answer="counts",
             expected_checked=None,
-            expected_message="1 of its values have sub-microsecond digits",
+            expected_message="(1 of its values)",
             expected_checks=1,
         ),
         SubMicrosecondTestCase(
@@ -91,7 +91,7 @@ _YEAR_9999: int = 253_402_300_799 * 10**9
             nanoseconds=((1_000_001_000, 1_000_001_001),),
             check_answer="counts",
             expected_checked=None,
-            expected_message="1 of its values have sub-microsecond digits",
+            expected_message="(1 of its values)",
             expected_checks=1,
         ),
         SubMicrosecondTestCase(
@@ -111,7 +111,7 @@ _YEAR_9999: int = 253_402_300_799 * 10**9
             nanoseconds=((_YEAR_ONE, 1_700_000_000_123_456_789),),
             check_answer="counts",
             expected_checked=None,
-            expected_message="1 of its values have sub-microsecond digits",
+            expected_message="(1 of its values)",
             expected_checks=1,
         ),
         SubMicrosecondTestCase(
@@ -131,7 +131,17 @@ _YEAR_9999: int = 253_402_300_799 * 10**9
             nanoseconds=((1_000, 2_000), (3_000, 3_001)),
             check_answer="counts",
             expected_checked=None,
-            expected_message="T TIMESTAMP_NTZ(9) in microseconds, and 1 of its values",
+            expected_message="sub-microsecond digits that unit would drop: T TIMESTAMP_NTZ(9) (1 of its values)",
+            expected_checks=1,
+        ),
+        SubMicrosecondTestCase(
+            description="every column with sub-microsecond digits is named in one refusal",
+            type_name="TIMESTAMP_NTZ",
+            names=("A", "B"),
+            nanoseconds=((1, 2_000), (3_001, 3_002)),
+            check_answer="counts",
+            expected_checked=None,
+            expected_message="A TIMESTAMP_NTZ(9) (1 of its values), B TIMESTAMP_NTZ(9) (2 of its values)",
             expected_checks=1,
         ),
         SubMicrosecondTestCase(
@@ -201,7 +211,7 @@ _YEAR_9999: int = 253_402_300_799 * 10**9
             nanoseconds=((1_001,),),
             check_answer="decimal",
             expected_checked=None,
-            expected_message="1 of its values have sub-microsecond digits",
+            expected_message="(1 of its values)",
             expected_checks=1,
         ),
         SubMicrosecondTestCase(

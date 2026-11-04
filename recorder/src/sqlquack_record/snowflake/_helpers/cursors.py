@@ -192,14 +192,17 @@ def _require_exact_units(
         counts: tuple[int, ...] = exact(query_id=query_id, positions=downgraded)
     except UnrecordableResultError as error:
         raise UnrecordableResultError(f"{truncating}; {error}") from error
-    for index, count in zip(downgraded, counts, strict=True):
-        if count != 0:
-            column: ColumnDescription = columns[index]
-            raise UnrecordableResultError(
-                f"the connector returned {column.name} {column.type_name}({column.scale}) in "
-                f"microseconds, and {count} of its values have sub-microsecond digits that "
-                "unit would drop"
-            )
+    lossy: list[str] = [
+        f"{columns[index].name} {columns[index].type_name}({columns[index].scale}) "
+        f"({count} of its values)"
+        for index, count in zip(downgraded, counts, strict=True)
+        if count != 0
+    ]
+    if lossy:
+        raise UnrecordableResultError(
+            "the connector returned in microseconds columns with sub-microsecond digits that "
+            f"unit would drop: {', '.join(lossy)}"
+        )
     return tuple(
         replace(column, sub_microsecond_checked=True) if index in downgraded else column
         for index, column in enumerate(columns)
