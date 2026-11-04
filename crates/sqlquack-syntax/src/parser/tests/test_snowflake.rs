@@ -586,7 +586,7 @@ fn given_unsupported_snowflake_sql_when_parsing_then_parsing_fails() {
             description: "empty parentheses are not a call argument",
             dialect: Some(DialectType::Snowflake),
             sql: "SELECT SEARCH((), 'm')",
-            expected_error: "Snowflake takes no empty parentheses as an argument",
+            expected_error: "Expected an expression in the parentheses",
         },
         ParseErrorTestCase {
             description: "PRECEDING needs a value or UNBOUNDED",

@@ -501,15 +501,6 @@ impl Parser {
                 Some(lambda) => lambda,
                 None => self.parse_single_function_argument()?,
             });
-            let empty_parentheses = matches!(
-                args.last(),
-                Some(Expression::Tuple(tuple)) if tuple.expressions.is_empty()
-            );
-            if empty_parentheses
-                && self.config.dialect == Some(crate::tokens::models::DialectType::Snowflake)
-            {
-                return Err(self.parse_error("Snowflake takes no empty parentheses as an argument"));
-            }
 
             if !self.match_token(TokenType::Comma) {
                 break;
