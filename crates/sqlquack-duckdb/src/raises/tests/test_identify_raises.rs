@@ -1,7 +1,7 @@
 use crate::raises::main::identify_raises::identify_raises;
 use crate::raises::main::raised::raised;
 use crate::raises::tests::helpers::{guarded, read_back, same_ids};
-use crate::raises::tests::test_types::{ReadBackTestCase, SameIdTestCase};
+use crate::raises::tests::test_types::{ManyRaisesTestCase, ReadBackTestCase, SameIdTestCase};
 
 #[test]
 fn given_guarded_sql_when_identifying_raises_then_ids_follow_the_expression_content() {
@@ -70,6 +70,44 @@ fn given_an_identified_raise_when_duckdb_reports_it_then_its_id_reads_back() {
         assert_eq!(
             read_back(&test_case.sql),
             test_case.expected_read,
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_an_expression_with_many_raises_when_identifying_them_then_time_grows_linearly() {
+    let test_cases = [
+        ManyRaisesTestCase {
+            description: "20,000 raises of one tag in one expression",
+            sql: vec![guarded("b"); 20_000].join(" + "),
+            expected_ids: 1,
+            expected_budget_seconds: 2,
+        },
+        ManyRaisesTestCase {
+            description: "20,000 raises of two tags in one expression",
+            sql: format!(
+                "{} + {}",
+                vec![guarded("b"); 10_000].join(" + "),
+                vec![raised("numeric_range: x"); 10_000].join(" + ")
+            ),
+            expected_ids: 2,
+            expected_budget_seconds: 2,
+        },
+    ];
+    for test_case in test_cases {
+        let started = std::time::Instant::now();
+        let (_, ids) = identify_raises(&test_case.sql);
+        let elapsed = started.elapsed();
+        assert!(
+            elapsed < std::time::Duration::from_secs(test_case.expected_budget_seconds),
+            "{}: took {elapsed:?}",
+            test_case.description
+        );
+        assert_eq!(
+            ids.len(),
+            test_case.expected_ids,
             "{}",
             test_case.description
         );

@@ -1,6 +1,6 @@
 //! Queries: SELECT with its projection and clauses, and WITH.
 
-use serde_json::{Value, json};
+use serde_json::{Map, Value, json};
 use sqlquack_core::classification::models::Construct;
 use sqlquack_core::provenance::constants::QUERY_CONSTRUCT;
 use sqlquack_core::provenance::models::ShapeArgument;
@@ -32,7 +32,7 @@ use crate::conversion::constants::{
     ALIAS, COMMENT, COMMON_TABLE, DISTINCT, GENERATOR_SEQUENCE_COLUMN, GROUP_BY, HAVING,
     HIERARCHY_COLUMN_PREFIX, QUALIFY, SELECT, STAR, USING_ALIAS_PREFIX, VARIANT_HELD_UNREAD, WHERE,
 };
-use crate::conversion::constants::{VALUES_COLUMN_PREFIX, VALUES_ROWS};
+use crate::conversion::constants::{VALUES_COLUMN_PREFIX, VALUES_ROWS, VALUES_ROWS_LIMIT};
 use sqlquack_semantics::dialects::constants::SNOWFLAKE_TO_DUCKDB;
 use sqlquack_semantics::scopes::main::star_relations::star_relations;
 use sqlquack_semantics::scopes::models::ScopeRelation;
@@ -181,6 +181,12 @@ fn values_rows(payload: &Value) -> Result<Value, Refusal> {
     let construct = node_construct("values");
     let values = payload_object(payload, &construct)?;
     require_understood(values, &["expressions"], &construct)?;
+    if list(values, "expressions").len() > VALUES_ROWS_LIMIT {
+        return Err(outside_conditions(
+            construct,
+            format!("VALUES with more than {VALUES_ROWS_LIMIT} rows, nested too deep to convert"),
+        ));
+    }
     let mut selects: Vec<Value> = Vec::new();
     let mut width: Option<usize> = None;
     for row in list(values, "expressions") {
@@ -207,8 +213,18 @@ fn values_rows(payload: &Value) -> Result<Value, Refusal> {
     }
     selects
         .into_iter()
-        .reduce(|left, right| json!({"union": {"all": true, "left": left, "right": right}}))
+        .reduce(union_all)
         .ok_or_else(|| missing(construct, "VALUES without rows".to_owned()))
+}
+
+/// `left UNION ALL right`, moving both trees in: `json!` would copy `left`, once per row.
+fn union_all(left: Value, right: Value) -> Value {
+    let union = Map::from_iter([
+        ("all".to_owned(), Value::Bool(true)),
+        ("left".to_owned(), left),
+        ("right".to_owned(), right),
+    ]);
+    Value::Object(Map::from_iter([("union".to_owned(), Value::Object(union))]))
 }
 
 fn convert_select(
