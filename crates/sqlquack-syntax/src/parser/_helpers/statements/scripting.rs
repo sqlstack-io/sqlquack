@@ -21,8 +21,72 @@ use crate::tokens::types::Result;
 /// Words that end a statement list; the enclosing construct decides which one it accepts.
 const BODY_TERMINATORS: [&str; 6] = ["END", "ELSE", "ELSEIF", "WHEN", "UNTIL", "EXCEPTION"];
 
-/// Unquoted words Snowflake refuses as labels; IF, CASE, LOOP and WHILE are recorded as accepted.
-const RESERVED_LABELS: [&str; 1] = ["FOR"];
+/// Unquoted words Snowflake refuses as labels and scripting names, as recorded in C audit packet 5;
+/// IF, CASE, LOOP, WHILE, WHEN, EXCEPTION, DECLARE, RETURN and BREAK are recorded as accepted.
+const RESERVED_NAMES: [&str; 62] = [
+    "ALL",
+    "ALTER",
+    "AND",
+    "ANY",
+    "AS",
+    "BEGIN",
+    "BETWEEN",
+    "BY",
+    "CHECK",
+    "COLUMN",
+    "CONNECT",
+    "CREATE",
+    "CURRENT",
+    "DELETE",
+    "DISTINCT",
+    "DROP",
+    "ELSE",
+    "EXISTS",
+    "FOLLOWING",
+    "FOR",
+    "FROM",
+    "GRANT",
+    "GROUP",
+    "HAVING",
+    "ILIKE",
+    "IN",
+    "INCREMENT",
+    "INSERT",
+    "INTERSECT",
+    "INTO",
+    "IS",
+    "LIKE",
+    "MINUS",
+    "NOT",
+    "NULL",
+    "OF",
+    "ON",
+    "OR",
+    "ORDER",
+    "QUALIFY",
+    "REGEXP",
+    "REVOKE",
+    "RLIKE",
+    "ROW",
+    "ROWS",
+    "SAMPLE",
+    "SELECT",
+    "SET",
+    "SOME",
+    "START",
+    "TABLE",
+    "TABLESAMPLE",
+    "THEN",
+    "TO",
+    "TRIGGER",
+    "UNION",
+    "UNIQUE",
+    "UPDATE",
+    "VALUES",
+    "WHENEVER",
+    "WHERE",
+    "WITH",
+];
 
 /// Words that keep `BEGIN` a transaction statement rather than a block.
 const TRANSACTION_CONTINUATIONS: [&str; 10] = [
@@ -105,9 +169,7 @@ impl Parser {
         if self.match_text_seq(&["CURSOR", "FOR"]) {
             let source = match self.peek_nth(1) {
                 Some(end)
-                    if is_let
-                        && self.is_identifier_token()
-                        && end.token_type == TokenType::Semicolon =>
+                    if self.is_identifier_token() && end.token_type == TokenType::Semicolon =>
                 {
                     ScriptingCursorSource::Resultset(self.expect_identifier_with_quoted()?)
                 }
@@ -227,10 +289,17 @@ impl Parser {
         self.parse_expression()
     }
 
-    /// An ordinary statement member, spanned like a top-level statement.
+    /// An ordinary statement member, spanned like a top-level statement; never empty or a bare
+    /// expression.
     fn parse_scripting_sql_statement(&mut self) -> Result<Expression> {
+        if self.is_at_end() || self.check(TokenType::Semicolon) {
+            return Err(self.parse_error("Expected a statement"));
+        }
         let start = self.current;
         let statement = self.parse_statement()?;
+        if !statement.is_statement() {
+            return Err(self.parse_error("Expected a statement, not a bare expression"));
+        }
         Ok(self.spanned(start, statement))
     }
 
@@ -284,10 +353,10 @@ impl Parser {
             "LET" => {
                 self.skip();
                 let declaration = self.parse_scripting_declaration(true)?;
-                Ok(ScriptingStatement::Let(ScriptingLet {
+                Ok(ScriptingStatement::Let(Box::new(ScriptingLet {
                     span: self.source_range(start),
                     declaration,
-                }))
+                })))
             }
             "IF" => self.parse_scripting_if(start),
             "CASE" => self.parse_scripting_case(start),
@@ -328,7 +397,7 @@ impl Parser {
             }
             "OPEN" => {
                 self.skip();
-                let cursor = self.expect_identifier_or_keyword_with_quoted()?;
+                let cursor = self.expect_scripting_name()?;
                 let using = if self.match_token(TokenType::Using) {
                     self.expect_token(TokenType::LParen)?;
                     let binds = self.parse_expression_list()?;
@@ -345,7 +414,7 @@ impl Parser {
             }
             "FETCH" => {
                 self.skip();
-                let cursor = self.expect_identifier_or_keyword_with_quoted()?;
+                let cursor = self.expect_scripting_name()?;
                 self.expect_token(TokenType::Into)?;
                 let mut targets = vec![self.expect_identifier_or_keyword_with_quoted()?];
                 while self.match_token(TokenType::Comma) {
@@ -360,7 +429,7 @@ impl Parser {
             "CLOSE" | "CANCEL" => {
                 self.skip();
                 let name = ScriptingName {
-                    name: self.expect_identifier_or_keyword_with_quoted()?,
+                    name: self.expect_scripting_name()?,
                     span: self.source_range(start),
                 };
                 Ok(if keyword == "CLOSE" {
@@ -374,9 +443,7 @@ impl Parser {
                 let target = if self.match_text_seq(&["ALL"]) {
                     ScriptingAwaitTarget::All
                 } else {
-                    ScriptingAwaitTarget::Resultset(
-                        self.expect_identifier_or_keyword_with_quoted()?,
-                    )
+                    ScriptingAwaitTarget::Resultset(self.expect_scripting_name()?)
                 };
                 Ok(ScriptingStatement::Await(ScriptingAwait {
                     span: self.source_range(start),
@@ -394,7 +461,7 @@ impl Parser {
                 let exception = if self.check(TokenType::Semicolon) {
                     None
                 } else {
-                    Some(self.expect_identifier_or_keyword_with_quoted()?)
+                    Some(self.expect_scripting_name()?)
                 };
                 Ok(ScriptingStatement::Raise(ScriptingRaise {
                     span: self.source_range(start),
@@ -540,7 +607,7 @@ impl Parser {
 
     fn parse_scripting_for(&mut self, start: usize) -> Result<ScriptingStatement> {
         self.skip();
-        let variable = self.expect_identifier_or_keyword_with_quoted()?;
+        let variable = self.expect_scripting_name()?;
         self.expect_token(TokenType::In)?;
         let rows = self.is_identifier_token()
             && self.peek_nth(1).is_some_and(|next| {
@@ -552,11 +619,11 @@ impl Parser {
             let reverse = self.match_text_seq(&["REVERSE"]);
             let range_start = self.parse_expression()?;
             self.expect_scripting_words(&["TO"])?;
-            ScriptingForIteration::Range(ScriptingRange {
+            ScriptingForIteration::Range(Box::new(ScriptingRange {
                 reverse,
                 start: range_start,
                 end: self.parse_expression()?,
-            })
+            }))
         };
         let keyword = self.parse_scripting_loop_keyword()?;
         let body = self.parse_scripting_body()?;
@@ -616,9 +683,9 @@ impl Parser {
             let exceptions = if self.match_text_seq(&["OTHER"]) {
                 ScriptingHandledExceptions::Other
             } else {
-                let mut names = vec![self.expect_identifier_or_keyword_with_quoted()?];
+                let mut names = vec![self.expect_scripting_name()?];
                 while self.match_token(TokenType::Or) {
-                    names.push(self.expect_identifier_or_keyword_with_quoted()?);
+                    names.push(self.expect_scripting_name()?);
                 }
                 ScriptingHandledExceptions::Named(names)
             };
@@ -649,13 +716,19 @@ impl Parser {
         if self.is_at_end() || self.check(TokenType::Semicolon) {
             return Ok(None);
         }
-        if RESERVED_LABELS
-            .iter()
-            .any(|word| self.check_text_seq(&[word]))
+        self.expect_scripting_name().map(Some)
+    }
+
+    /// A label, variable, cursor, result set or exception name; unquoted reserved words fail.
+    fn expect_scripting_name(&mut self) -> Result<Identifier> {
+        if self.current_token_allows_text_match()
+            && RESERVED_NAMES
+                .iter()
+                .any(|word| self.peek_text().eq_ignore_ascii_case(word))
         {
-            return Err(self.parse_error("Expected a label, not a reserved word"));
+            return Err(self.parse_error("Expected a name, not a reserved word"));
         }
-        self.expect_identifier_or_keyword_with_quoted().map(Some)
+        self.expect_identifier_or_keyword_with_quoted()
     }
 
     /// Unquoted keywords in order, so a quoted `"END"` never closes a construct.

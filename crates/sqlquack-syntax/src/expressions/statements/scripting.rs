@@ -109,7 +109,7 @@ pub struct ScriptingException {
 pub enum ScriptingStatement {
     Sql(ScriptingSql),
     Block(ScriptingBlock),
-    Let(ScriptingLet),
+    Let(Box<ScriptingLet>),
     Assignment(ScriptingAssignment),
     If(ScriptingIf),
     Case(ScriptingCase),
@@ -214,7 +214,7 @@ pub struct ScriptingFor {
 pub enum ScriptingForIteration {
     /// A cursor or RESULTSET name; which one is not resolved here.
     Rows(Identifier),
-    Range(ScriptingRange),
+    Range(Box<ScriptingRange>),
 }
 
 #[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]

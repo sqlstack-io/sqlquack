@@ -253,7 +253,13 @@ fn given_recorded_block_verdicts_when_parsing_then_acceptance_matches_snowflake(
         ScriptingVerdictTestCase { description: "recorded accepted: block closed by END IF", sql: "BEGIN\n  RETURN 17;\nEND IF;", expected_error: None },
         ScriptingVerdictTestCase { description: "recorded accepted: block closed by END CASE", sql: "BEGIN\n  RETURN 17;\nEND CASE;", expected_error: None },
         ScriptingVerdictTestCase { description: "recorded accepted: keyword label after END LOOP", sql: "BEGIN\n  LOOP\n    BREAK;\n  END LOOP WHILE;\n  RETURN 17;\nEND;", expected_error: None },
-        ScriptingVerdictTestCase { description: "recorded rejected: block closed by END FOR", sql: "BEGIN\n  RETURN 17;\nEND FOR;", expected_error: Some("Expected a label, not a reserved word") },
+        ScriptingVerdictTestCase { description: "recorded rejected: block closed by END FOR", sql: "BEGIN\n  RETURN 17;\nEND FOR;", expected_error: Some("not a reserved word") },
+        ScriptingVerdictTestCase { description: "recorded rejected: a reserved word as a block end label", sql: "BEGIN\n  RETURN 17;\nEND SELECT;", expected_error: Some("not a reserved word") },
+        ScriptingVerdictTestCase { description: "recorded rejected: a reserved word as a loop variable", sql: "BEGIN FOR SELECT IN 1 TO 1 DO NULL ; END FOR ; END ;", expected_error: Some("not a reserved word") },
+        ScriptingVerdictTestCase { description: "recorded rejected: a reserved word as a handled exception", sql: "BEGIN NULL ; EXCEPTION WHEN SELECT THEN NULL ; NULL ; END ;", expected_error: Some("not a reserved word") },
+        ScriptingVerdictTestCase { description: "recorded rejected: a bare expression as a statement", sql: "BEGIN IF ( TRUE ) THEN 1 ; END IF ; END ;", expected_error: Some("not a bare expression") },
+        ScriptingVerdictTestCase { description: "recorded rejected: an empty statement", sql: "BEGIN NULL ; EXCEPTION WHEN STATEMENT_ERROR THEN ; NULL ; END ;", expected_error: Some("Expected a statement") },
+        ScriptingVerdictTestCase { description: "recorded accepted: a declared cursor over a result set name", sql: "DECLARE\n  rs RESULTSET DEFAULT (SELECT 17 AS a);\n  c CURSOR FOR rs;\nBEGIN\n  RETURN 17;\nEND;", expected_error: None },
         ScriptingVerdictTestCase { description: "recorded accepted: cursor FOR with LOOP and END LOOP", sql: "DECLARE\n  orders_cursor CURSOR FOR SELECT 17 AS amount;\nBEGIN\n  FOR order_row IN orders_cursor LOOP\n    NULL;\n  END LOOP;\n  RETURN 17;\nEND;", expected_error: None },
         ScriptingVerdictTestCase { description: "cursor FOR with LOOP still needs END LOOP", sql: "DECLARE\n  orders_cursor CURSOR FOR SELECT 17 AS amount;\nBEGIN\n  FOR order_row IN orders_cursor LOOP\n    NULL;\n  END FOR;\nEND;", expected_error: Some("Expected END LOOP") },
         ScriptingVerdictTestCase { description: "recorded accepted: LET with a type and no value", sql: "BEGIN\n  LET amount NUMBER;\n  RETURN 17;\nEND;", expected_error: None },
@@ -268,7 +274,7 @@ fn given_recorded_block_verdicts_when_parsing_then_acceptance_matches_snowflake(
         ScriptingVerdictTestCase { description: "exception number below the documented range", sql: "DECLARE\n  e EXCEPTION (-21000, 'west');\nBEGIN\n  RETURN 17;\nEND;", expected_error: Some("between -20998 and -20001") },
         ScriptingVerdictTestCase { description: "exception number above the documented range", sql: "DECLARE\n  e EXCEPTION (-1, 'west');\nBEGIN\n  RETURN 17;\nEND;", expected_error: Some("between -20998 and -20001") },
         ScriptingVerdictTestCase { description: "recorded accepted -20001 and unrecorded -20998 are accepted", sql: "DECLARE\n  low EXCEPTION (-20998, 'west');\n  high EXCEPTION (-20001, 'east');\nBEGIN\n  RETURN 17;\nEND;", expected_error: None },
-        ScriptingVerdictTestCase { description: "quoted END cannot close a block", sql: "BEGIN\n  RETURN 17;\n\"END\";", expected_error: Some("Expected END") },
+        ScriptingVerdictTestCase { description: "quoted END cannot close a block", sql: "BEGIN\n  RETURN 17;\n\"END\";", expected_error: Some("not a bare expression") },
         ScriptingVerdictTestCase { description: "label must not swallow an adjacent statement", sql: "BEGIN\n  RETURN 17;\nEND inner_block SELECT 31;", expected_error: Some("Unexpected token") },
     ];
     for test_case in test_cases {
