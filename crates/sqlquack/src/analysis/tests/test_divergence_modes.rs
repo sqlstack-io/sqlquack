@@ -240,13 +240,23 @@ fn given_a_known_divergence_when_converting_then_default_mode_warns_and_strict_m
             },
         },
         DivergenceModeTestCase {
-            description: "a year-1 literal at precision 9 converts by default, relying on timestamp_range",
+            description: "a year-1 literal at precision 9 always raises in DuckDB, so it is refused by default",
             sql: "SELECT CAST('0001-01-01 00:00:00' AS TIMESTAMP_NTZ(9)) AS t",
             strict: false,
             expected_outcome: DivergenceModeOutcome {
-                converted: true,
-                divergences: vec![("timestamp_range".to_owned(), vec!["node:cast".to_owned()])],
-                categories: vec![],
+                converted: false,
+                divergences: vec![],
+                categories: vec![RefusalCategory::TypeCondition],
+            },
+        },
+        DivergenceModeTestCase {
+            description: "a far-future sentinel default is refused by default, not left to raise at run time",
+            sql: "SELECT COALESCE(NULL::TIMESTAMP_NTZ, '9999-12-31'::TIMESTAMP_NTZ) AS t",
+            strict: false,
+            expected_outcome: DivergenceModeOutcome {
+                converted: false,
+                divergences: vec![],
+                categories: vec![RefusalCategory::TypeCondition],
             },
         },
         DivergenceModeTestCase {
