@@ -1,5 +1,7 @@
 //! One form's result from its obligations' cases and its family review.
 
+use crate::check::_helpers::fingerprints::form_fingerprint;
+use crate::check::_helpers::reviews::review_reason;
 use crate::check::models::{
     CaseResult, FamilyContext, FormResult, FormState, Joined, ObligationResult, Reason,
 };
@@ -58,7 +60,9 @@ pub(crate) fn form_result(form: &Form, family: &str, context: &FamilyContext) ->
         .iter()
         .map(|obligation| obligation_result(obligation, context.joined))
         .collect();
-    let reasons: Vec<Reason> = form_reasons(&obligations, context.review);
+    let fingerprint: String = form_fingerprint(&obligations);
+    let review: Option<Reason> = review_reason(&form.id, &fingerprint, context);
+    let reasons: Vec<Reason> = form_reasons(&obligations, review);
     let state: FormState = match () {
         () if form.status == FormStatus::AbsentFromSource => FormState::Absent,
         () if context.excluded.contains(&form.id) => FormState::Excluded,
@@ -75,6 +79,7 @@ pub(crate) fn form_result(form: &Form, family: &str, context: &FamilyContext) ->
         satisfied_obligations: required.iter().filter(|o| o.reason.is_none()).count(),
         required_obligations: required.len(),
         reasons,
+        fingerprint,
         obligations,
     }
 }

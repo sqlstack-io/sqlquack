@@ -374,6 +374,9 @@ pub struct Review {
     /// Form ids this review accepts as excluded, each with its reason.
     #[serde(default, rename = "exclusion")]
     pub exclusions: Vec<Exclusion>,
+    /// Each listed form's fingerprint when reviewed; while it matches, the parser tree may change.
+    #[serde(default, skip_serializing_if = "BTreeMap::is_empty")]
+    pub fingerprints: BTreeMap<String, String>,
     #[serde(default)]
     pub note: Option<String>,
 }

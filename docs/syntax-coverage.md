@@ -215,6 +215,11 @@ A `[[review]]` has these fields:
   `forms` covers the whole family. An empty list, a form of another family or an uncatalogued form
   is an error. Two current reviews may list the same form; a review id declared twice is an error
   (decision D88).
+- `fingerprints` (optional, with `forms` only): each listed form's fingerprint when it was reviewed,
+  as `{ "<form id>" = "<sha256>" }`, one for every listed form. While a form's recorded fingerprint
+  equals its current one, the review stays current for that form whatever the parser tree; when it
+  differs, the review is stale for that form only. A review without `fingerprints` stays bound to
+  `parser_tree` (decision D100).
 - `[[review.exclusion]]`: exactly one of `form` (a form id of the review's family) or `source` (a
   page id, used for out-of-scope and syntax-less pages), plus a `reason`. A page review excludes
   pages only, and a family review excludes forms only.
@@ -245,9 +250,18 @@ on.
 
 A form is verified only when it has at least one required obligation, every required obligation
 is satisfied, and an approved review of its family matches the current catalogue and obligation
-file hashes and the current parser tree. The parser tree is `git rev-parse
-HEAD:crates/sqlquack-syntax`, and none at all while that path has uncommitted changes, so every
-family review is stale then. A form is excluded only by an approved review that is current in the
+file hashes and either the form's recorded fingerprint or, without one, the current parser tree.
+The parser tree is `git rev-parse HEAD:crates/sqlquack-syntax`, and none at all while that path has
+uncommitted changes, so every review without fingerprints is stale then.
+
+A form's fingerprint is the SHA-256 of one line per distinct case citing any of its obligations,
+sorted by case id: the case id, its `sql_sha256` and its local verdict, tab-separated, each line
+ending in a newline. The verdict is `accepted` followed by a tab and the SHA-256 of the parsed
+statements as compact JSON, exactly as serialised, `rejected` followed by a tab, or `failed:<Failure>`
+followed by a tab. `family --json` prints each form's `fingerprint`. A parser change that leaves
+every case of a form parsing into the same tree, and every rejection still a rejection, leaves its
+fingerprint and so its review unchanged; a changed tree or verdict, or an added or removed case,
+changes it. A form is excluded only by an approved review that is current in the
 same way. Absent forms keep their ids and are never counted. The headline denominator is the
 catalogued forms: 3,348 on the frozen catalogue `e863d7de` (decision D81).
 
@@ -269,6 +283,8 @@ results on stdout and progress on stderr:
 - `family <family>`: every form of one family with its state, completion and reasons. The JSON
   lists each obligation with every citing case, its receipt phase and the local verdict.
 - `missing [--family <family>]`: every unsatisfied required obligation and its reason.
+- `stale [--family <family>]`: every form whose reviews are all stale, with its current fingerprint
+  and each naming review's recorded fingerprint and parser tree.
 - `pages [--family <family>]`: the page rollup, a secondary view. A form counts under its own
   `source` only.
 - `boundaries --form <id>`: the form's boundary and nesting-depth obligations, with their bounds,
@@ -287,6 +303,7 @@ regression: a form the baseline records as verified or excluded that no longer i
 obligation that no longer is. The second is a catalogue change: a changed sources, aliases or
 catalogue file, or a form added or removed. Catalogue changes are reported separately from
 coverage changes. Gains pass. After a reviewed gain or catalogue change, re-record the baseline
-with `snapshot` and commit it with the change. A family review binds the parser tree, so any
-parser commit makes verified forms stale until their reviews are renewed. That shows up as a
+with `snapshot` and commit it with the change. A review without fingerprints binds the parser
+tree, so any parser commit makes its verified forms stale until it is renewed; a review with
+fingerprints goes stale only for the forms whose cases now parse differently. Either shows up as a
 regression.

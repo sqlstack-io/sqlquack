@@ -1,3 +1,4 @@
+pub(crate) mod fingerprints;
 pub(crate) mod forms;
 pub(crate) mod join;
 pub(crate) mod receipts;

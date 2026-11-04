@@ -427,6 +427,25 @@ pub(crate) fn check_review(review: &Review) -> Vec<String> {
                 }),
         );
     }
+    let listed: Vec<&String> = review.forms.iter().flatten().collect();
+    problems.extend(
+        review
+            .fingerprints
+            .iter()
+            .filter(|(form, fingerprint)| !listed.contains(form) || !is_sha256(fingerprint))
+            .map(|(form, _)| {
+                format!("review {id}: fingerprint of {form} is not a SHA-256 of a form it lists")
+            }),
+    );
+    if !review.fingerprints.is_empty()
+        && listed
+            .iter()
+            .any(|form| !review.fingerprints.contains_key(*form))
+    {
+        problems.push(format!(
+            "review {id}: fingerprints, when present, give one for every form it lists"
+        ));
+    }
     if !is_utc(&review.reviewed_utc) {
         problems.push(format!(
             "review {id}: reviewed_utc is not YYYY-MM-DDTHH:MM:SSZ"

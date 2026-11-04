@@ -5,7 +5,8 @@ use std::process::ExitCode;
 use clap::Parser;
 
 use crate::cli::_helpers::commands::{
-    boundaries, diff, family, missing, pages, parse_worker, snapshot_command, summary, validate,
+    boundaries, diff, family, missing, pages, parse_worker, snapshot_command, stale, summary,
+    validate,
 };
 use crate::cli::models::{Arguments, Command};
 
@@ -19,6 +20,7 @@ pub fn run_cli() -> ExitCode {
             common,
         } => family(&name, &common),
         Command::Missing { family, common } => missing(family.as_deref(), &common),
+        Command::Stale { family, common } => stale(family.as_deref(), &common),
         Command::Pages { family, common } => pages(family.as_deref(), &common),
         Command::Boundaries { form, common } => boundaries(&form, &common),
         Command::Snapshot {

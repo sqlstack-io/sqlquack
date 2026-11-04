@@ -4,15 +4,18 @@ use std::collections::{BTreeMap, BTreeSet};
 
 use serde::{Deserialize, Serialize};
 
-use crate::formats::models::{Form, Obligation, ObligationKind, Phase};
+use crate::formats::models::{Form, Obligation, ObligationKind, Phase, Review};
 
 /// The current parser's verdict on one case's SQL.
-#[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(tag = "verdict", rename_all = "snake_case")]
 pub enum LocalVerdict {
     /// Parsed; `opaque` when a statement or any node in it is a Command or Raw fallback.
     Accepted {
         opaque: bool,
+        /// SHA-256 of the parsed statements as compact JSON: what a review fingerprint covers.
+        #[serde(default, skip_serializing_if = "Option::is_none")]
+        tree_sha256: Option<String>,
     },
     Rejected,
     /// The parse did not end in a verdict of its own.
@@ -63,7 +66,7 @@ pub enum Reason {
     OpaqueFallback,
     /// No review names the form, by its family or in its `forms` list.
     Unreviewed,
-    /// No approved review matches the current catalogue, obligations and parser tree.
+    /// No approved review matches the files and the form's fingerprint, or else the parser tree.
     StaleReview,
     /// Reserved for a capture hold; no current form is held.
     BlockedByHold,
@@ -73,6 +76,8 @@ pub enum Reason {
 #[derive(Clone, Debug, PartialEq, Eq, Serialize)]
 pub struct CaseResult {
     pub case_id: String,
+    /// The case's declared SQL hash, part of its form's fingerprint.
+    pub sql_sha256: String,
     /// The phase its admissible receipts agree on; none when there is no such single phase.
     pub phase: Option<Phase>,
     pub local: LocalVerdict,
@@ -121,6 +126,8 @@ pub struct FormResult {
     pub reasons: Vec<Reason>,
     pub required_obligations: usize,
     pub satisfied_obligations: usize,
+    /// SHA-256 over the form's cases, sorted by case id: what a review's `fingerprints` binds.
+    pub fingerprint: String,
     pub obligations: Vec<ObligationResult>,
 }
 
@@ -155,8 +162,12 @@ pub(crate) struct Joined<'a> {
 #[derive(Debug)]
 pub(crate) struct FamilyContext<'a> {
     pub(crate) joined: &'a Joined<'a>,
-    /// Why the form lacks a current review of its family, if it does.
-    pub(crate) review: Option<Reason>,
+    /// Every review, judged against each form with its fingerprint.
+    pub(crate) reviews: &'a [Review],
+    /// Each coverage file's SHA-256 by its path under the root.
+    pub(crate) hashes: &'a BTreeMap<String, String>,
+    /// The parser source tree the verdicts came from; none when it is uncommitted.
+    pub(crate) parser_tree: Option<&'a str>,
     /// Form ids excluded by current approved reviews.
     pub(crate) excluded: &'a BTreeSet<String>,
 }
