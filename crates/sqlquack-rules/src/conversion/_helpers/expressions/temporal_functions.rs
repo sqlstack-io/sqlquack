@@ -57,12 +57,12 @@ use crate::conversion::constants::{
     BARE_FRACTION, BARE_FRACTION_PATTERNS, CLOCK_FORMAT_FIELDS, CURRENT_TIME, CURRENT_TIME_RULE,
     DATE_ARITHMETIC, DATE_FORMAT_RULE, DATE_NAME, DATE_PART_RULE, DATE_PARTS, DATE_TEXT_SPELLING,
     DAY_NAME_RULE, DECIMAL_EPOCH_RULE, FRACTIONAL_DATE_AMOUNT, FROM_PARTS, MAX_FRACTION_DIGITS_U8,
-    MICROSECOND_DIGITS, NULL_BRANCHES, NUMBER_TEXT_FORMAT, RECORDED_TIME_ZONES, SCALE_DIGITS,
-    SESSION_TIMEZONE_UTC, TEMPORAL_TEXT_FIELDS, TEMPORAL_TEXT_FORMAT, TEMPORAL_TEXT_SEPARATORS,
-    TEXT_TO_TIME_RULE, TEXT_TO_TIMESTAMP_RULE, TIME_ARITHMETIC, TIME_ZONE_CONVERSION,
-    TIME_ZONE_SPELLING, TIMESTAMP_FORMAT_RULE, TIMESTAMP_NTZ_NAME, TIMESTAMP_RANGE,
-    TIMESTAMP_TIME_RULE, TO_DATE_TEMPORAL, TO_TIMESTAMP_TEMPORAL, UTC_OFFSET_ARITHMETIC, UTC_ZONE,
-    ZONE_COLUMNS, ZONED_PARTS,
+    MICROSECOND_DIGITS, NULL_BRANCHES, NUMBER_TEXT_FORMAT, OFFSET_FREE_UNITS, RECORDED_TIME_ZONES,
+    SCALE_DIGITS, SESSION_TIMEZONE_UTC, TEMPORAL_TEXT_FIELDS, TEMPORAL_TEXT_FORMAT,
+    TEMPORAL_TEXT_SEPARATORS, TEXT_TO_TIME_RULE, TEXT_TO_TIMESTAMP_RULE, TIME_ARITHMETIC,
+    TIME_ZONE_CONVERSION, TIME_ZONE_SPELLING, TIMESTAMP_FORMAT_RULE, TIMESTAMP_NTZ_NAME,
+    TIMESTAMP_RANGE, TIMESTAMP_TIME_RULE, TO_DATE_TEMPORAL, TO_TIMESTAMP_TEMPORAL,
+    UTC_OFFSET_ARITHMETIC, UTC_ZONE, ZONE_COLUMNS, ZONED_PARTS,
 };
 use sqlquack_duckdb::raises::main::raised::raised;
 
@@ -422,7 +422,16 @@ fn date_diff_of(
     let start = date_diff_operand(start, construct, site)?;
     let end = date_diff_operand(end, construct, site)?;
     let log = site.context.log;
+    let zoned = |emitted: &Emitted| matches!(emitted.data_type, SnowflakeType::TimestampTz { .. });
     let (start, end) = match (start.utc_offset, end.utc_offset) {
+        _ if zoned(&start) && zoned(&end) && OFFSET_FREE_UNITS.contains(&unit.as_str()) => {
+            (utc_wall(start, log), utc_wall(end, log))
+        }
+        (false, false) if zoned(&start) || zoned(&end) => {
+            return Err(refuse(format!(
+                "a TIMESTAMP_TZ in {unit}, whose boundaries no recording places"
+            )));
+        }
         (false, false) => (start, end),
         (true, true) => {
             let _zoned = log.rule(UTC_OFFSET_ARITHMETIC);
@@ -484,7 +493,7 @@ fn date_diff_operand(
             SnowflakeType::Date | SnowflakeType::TimestampNtz { .. } | SnowflakeType::Time { .. },
             _,
         ) => Ok(emitted),
-        (SnowflakeType::TimestampTz { .. }, _) if emitted.utc_offset => Ok(emitted),
+        (SnowflakeType::TimestampTz { .. }, _) => Ok(emitted),
         (SnowflakeType::Varchar, Some(Literal::Text(text))) if is_iso_date(text) => {
             Ok(Emitted::new(
                 cast(&emitted.sql, SnowflakeType::Date, site.context.log)

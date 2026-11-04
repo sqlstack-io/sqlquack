@@ -1199,6 +1199,8 @@ pub const VALUES_ROWS: &str = "rule.values_rows";
 pub(crate) const VALUES_COLUMN_PREFIX: &str = "COLUMN";
 /// The most VALUES rows converted: each row nests one UNION ALL deeper.
 pub(crate) const VALUES_ROWS_LIMIT: usize = 1000;
+/// DATEDIFF units whose boundaries every whole-minute UTC offset shares, counted on UTC instants.
+pub(crate) const OFFSET_FREE_UNITS: [&str; 2] = ["MINUTE", "SECOND"];
 /// JOIN ... USING.
 pub const JOIN_USING: &str = "rule.join_using";
 /// ASOF JOIN ... MATCH_CONDITION.
