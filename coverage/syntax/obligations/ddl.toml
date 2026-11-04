@@ -57365,12 +57365,6 @@ required = true
 note = "the form without its required EXISTS in [ IF EXISTS ]"
 
 [[obligation]]
-id = "sf.ddl.alter-restricted-session-scope.add-as.o018"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ADD"
-
-[[obligation]]
 id = "sf.ddl.alter-restricted-session-scope.add-as.o015"
 kind = "negative_neighbour"
 required = true
@@ -57584,12 +57578,6 @@ id = "sf.ddl.alter-restricted-session-scope.remove-as.o014"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required EXISTS in [ IF EXISTS ]"
-
-[[obligation]]
-id = "sf.ddl.alter-restricted-session-scope.remove-as.o018"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required REMOVE"
 
 [[obligation]]
 id = "sf.ddl.alter-restricted-session-scope.remove-as.o015"

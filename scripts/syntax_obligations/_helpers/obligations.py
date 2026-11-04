@@ -16,6 +16,8 @@ from scripts.syntax_obligations.constants import (
     ARITY_CLASS,
     ARITY_REASON,
     DANGLING_CALL,
+    DOLLAR_BODY,
+    DOLLAR_BODY_KEY,
     EXPECT_ACCEPT,
     EXPECT_OBSERVE,
     EXPECT_REJECT,
@@ -229,16 +231,22 @@ def _without_coincident_negatives(
         for case in found:
             if case.expect == EXPECT_ACCEPT:
                 accepted.setdefault(case.sql, draft)
+                accepted.setdefault(_syntax_key(case.sql), draft)
     kept: list[Draft] = []
     withdrawn: list[Row] = []
     for draft, found in rendered:
         clash: Rendered | None = next(
-            (c for c in found if c.expect in REJECTING and c.sql in accepted), None
+            (
+                c
+                for c in found
+                if c.expect in REJECTING and _clash_key(sql=c.sql, draft=draft) in accepted
+            ),
+            None,
         )
         if clash is None:
             kept.append(draft)
             continue
-        valid: Draft = accepted[clash.sql]
+        valid: Draft = accepted[_clash_key(sql=clash.sql, draft=draft)]
         withdrawn.append(
             {
                 "form": draft.form,
@@ -251,6 +259,16 @@ def _without_coincident_negatives(
             }
         )
     return kept, withdrawn
+
+
+def _clash_key(*, sql: str, draft: Draft) -> str:
+    """A neighbour's SQL compared without its dollar bodies; other kinds compare it exactly."""
+    return _syntax_key(sql) if draft.kind == KIND_NEGATIVE else sql
+
+
+def _syntax_key(sql: str) -> str:
+    """The SQL with each non-empty dollar-quoted body replaced, since its text is not syntax."""
+    return DOLLAR_BODY.sub(DOLLAR_BODY_KEY, sql)
 
 
 def _draft_submissions(

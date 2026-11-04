@@ -290,6 +290,24 @@ valid_as = "sf.ddl.alter-pipe.unset-comment positive the documented form with ev
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
+form = "sf.ddl.alter-restricted-session-scope.add-as"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required ADD"
+sql = "ALTER RESTRICTED SESSION SCOPE v1 AS $$m: 1 $$ ;"
+valid_as = "sf.ddl.alter-restricted-session-scope.as positive the documented form with every required part and no optional part"
+reason = "the rejection renders SQL the documented grammar also accepts"
+
+[[withdrawn]]
+form = "sf.ddl.alter-restricted-session-scope.remove-as"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required REMOVE"
+sql = "ALTER RESTRICTED SESSION SCOPE v1 AS $$m: 1 $$ ;"
+valid_as = "sf.ddl.alter-restricted-session-scope.as positive the documented form with every required part and no optional part"
+reason = "the rejection renders SQL the documented grammar also accepts"
+
+[[withdrawn]]
 form = "sf.ddl.alter-semantic-view.rename-to"
 kind = "negative_neighbour"
 target = ""
