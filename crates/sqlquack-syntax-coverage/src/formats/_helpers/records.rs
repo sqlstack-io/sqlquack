@@ -739,18 +739,23 @@ pub(crate) fn check_restatements<'a>(
     problems
 }
 
-/// A reading pins the page grammar it reads and gives a non-empty reading and reason.
+/// A reading pins the page grammar it reads, by hash or prose heading, and gives its reason.
 pub(crate) fn check_reading(reading: &Reading) -> Vec<String> {
     let id: &str = &reading.form;
     let mut problems: Vec<String> = Vec::new();
-    if !is_sha256(&reading.grammar_sha256) {
-        problems.push(format!("reading {id}: grammar_sha256 is not a SHA-256"));
+    let prose: bool = reading
+        .grammar_sha256
+        .strip_prefix(PROSE_HASH_PREFIX)
+        .is_some_and(|heading| !blank(heading));
+    if !prose && !is_sha256(&reading.grammar_sha256) {
+        problems.push(format!(
+            "reading {id}: grammar_sha256 is neither a SHA-256 nor a prose heading"
+        ));
     }
-    if reading.grammar.is_empty()
-        || reading.grammar.iter().any(|line| blank(line))
-        || blank(&reading.reason)
-    {
-        problems.push(format!("reading {id}: needs a grammar and a reason"));
+    if reading.grammar.iter().any(|line| blank(line)) || blank(&reading.reason) {
+        problems.push(format!(
+            "reading {id}: needs a reason and no blank grammar line"
+        ));
     }
     problems
 }

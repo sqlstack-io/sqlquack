@@ -110,7 +110,8 @@ were tested. Nothing claims to be exhaustive.
 
 `limits.toml` holds the hand-added `[[limit]]` and `[[suppress]]` rows the obligation builder
 reads, and the `[[reading]]` rows: how an ambiguous page grammar is read, with `form`,
-`grammar_sha256`, `grammar` (a non-empty list of lines) and `reason`. The checker requires the
+`grammar_sha256` (the form's grammar hash, or `prose:<heading>` for a prose form), `grammar` (its
+lines, none blank; empty for a lexical form the `reason` alone explains) and `reason`. The checker requires the
 file, refuses any other table, a reading of a form that is not catalogued, and a form read twice,
 and hashes each form's reading into its definition (below).
 
