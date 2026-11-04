@@ -1182,6 +1182,14 @@ impl Parser {
         };
 
         let expressions = self.parse_select_expressions()?;
+        if expressions.is_empty()
+            && matches!(
+                self.config.dialect,
+                Some(crate::tokens::models::DialectType::Snowflake)
+            )
+        {
+            return Err(self.parse_error("Snowflake requires at least one select item"));
+        }
 
         let exclude = { None };
 
@@ -1252,10 +1260,23 @@ impl Parser {
         }))
     }
 
+    /// Whether TOP starts a row count: in Snowflake only before an integer or a parenthesis.
+    fn top_takes_count(&self) -> bool {
+        !matches!(
+            self.config.dialect,
+            Some(crate::tokens::models::DialectType::Snowflake)
+        ) || self.check_next(TokenType::LParen)
+            || self.peek_nth(1).is_some_and(|token| {
+                token.token_type == TokenType::Number
+                    && token.text.bytes().all(|byte| byte.is_ascii_digit())
+            })
+    }
+
     fn parse_select_top(&mut self) -> Result<Option<Top>> {
         Ok(
             if self.check(TokenType::Top)
                 && !self.check_next(TokenType::Dot)
+                && self.top_takes_count()
                 && self.match_token(TokenType::Top)
             {
                 let (amount, parenthesized) = if self.match_token(TokenType::LParen) {
@@ -1306,6 +1327,7 @@ impl Parser {
             if top.is_none()
                 && self.check(TokenType::Top)
                 && !self.check_next(TokenType::Dot)
+                && self.top_takes_count()
                 && self.match_token(TokenType::Top)
             {
                 let (amount, parenthesized) = if self.match_token(TokenType::LParen) {

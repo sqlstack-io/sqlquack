@@ -375,3 +375,48 @@ fn given_a_reserved_keyword_after_a_select_item_when_parsing_snowflake_then_it_i
         );
     }
 }
+
+#[test]
+fn given_a_select_list_when_parsing_snowflake_then_it_needs_an_item_and_top_needs_an_integer() {
+    let test_cases = [
+        AcceptanceTestCase {
+            description: "Snowflake rejects SELECT with no items (recorded errno 1003)",
+            sql: "SELECT FROM orders",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "Snowflake rejects TOP with a string count (recorded errno 1003)",
+            sql: "SELECT TOP 'x' 1 FROM t1 ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "Snowflake rejects TOP 1 with no select item (recorded errno 1003)",
+            sql: "SELECT TOP 1 FROM t1 ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "Snowflake reads TOP before a name as a column (recorded semantic error)",
+            sql: "SELECT TOP v1 ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "Snowflake keeps TOP with an integer count",
+            sql: "SELECT TOP 5 c1 FROM t1 ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+    ];
+
+    for test_case in test_cases {
+        assert_eq!(
+            accepted(test_case.sql, test_case.dialect),
+            test_case.expected_accepted,
+            "{}",
+            test_case.description
+        );
+    }
+}
