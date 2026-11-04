@@ -131,3 +131,21 @@ rows = [
 query = "WITH a AS (SELECT ARRAY_AGG(x) AS xs, ARRAY_AGG(DISTINCT x) AS ds FROM input WHERE g = 'zz'), b AS (SELECT ARRAY_AGG(x) AS xs FROM input) SELECT ARRAY_SIZE(a.xs) AS s, ARRAY_SIZE(ARRAY_INTERSECTION(a.ds, b.xs)) AS i, ARRAY_SIZE(b.xs) AS n FROM a CROSS JOIN b"
 order = "ordered"
 tags = ["null", "empty-input"]
+
+[[case]]
+id = "order_free_sorted_and_extremes"
+description = "Unordered ARRAY_AGG of text and whole numbers through a CTE, read by ARRAY_SORT, ARRAY_MAX and ARRAY_MIN, and sorted after ARRAY_CAT and ARRAY_DISTINCT."
+columns = [{ name = "g", type = "VARCHAR" }, { name = "x", type = "VARCHAR" }, { name = "n", type = "NUMBER(10,0)" }]
+rows = [
+  ["'a'", "'pear'", "2"],
+  ["'a'", "'fig'", "10"],
+  ["'a'", "'pear'", "-3"],
+  ["'a'", "NULL", "NULL"],
+  ["'b'", "'gift'", "4"],
+  ["'b'", "'bath'", "4"],
+  ["'c'", "'Zed'", "0"],
+  ["'c'", "'apple'", "1"],
+]
+query = "WITH a AS (SELECT g, ARRAY_AGG(x) AS xs, ARRAY_AGG(n) AS ns FROM input GROUP BY g) SELECT g, ARRAY_SORT(xs) AS sx, ARRAY_SORT(ns) AS sn, ARRAY_MAX(ns) AS mx, ARRAY_MIN(xs) AS mn, ARRAY_SORT(ARRAY_DISTINCT(ARRAY_CAT(xs, ARRAY_CONSTRUCT('gift')))) AS tags FROM a ORDER BY g"
+order = "ordered"
+tags = ["null", "duplicates"]

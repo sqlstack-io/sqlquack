@@ -486,6 +486,49 @@ fn given_ordered_array_agg_when_rows_tie_on_its_keys_then_only_equal_tied_values
 }
 
 #[test]
+fn given_arrays_built_with_sql_nulls_when_sizing_them_then_undefined_elements_count() {
+    let test_cases = [
+        FirstValueTestCase {
+            description: "ARRAY_APPEND of a SQL NULL adds one element",
+            sql: "SELECT ARRAY_SIZE(ARRAY_APPEND(SPLIT('a,b', ','), NULL::NUMBER)) AS v",
+            expected_outcome: Ok("3"),
+        },
+        FirstValueTestCase {
+            description: "ARRAY_CAT of constructed arrays with SQL NULLs counts each",
+            sql: "SELECT ARRAY_SIZE(ARRAY_CAT(ARRAY_CONSTRUCT(NULL::VARCHAR), \
+                  ARRAY_CONSTRUCT(NULL::VARCHAR, 'b'))) AS v",
+            expected_outcome: Ok("3"),
+        },
+        FirstValueTestCase {
+            description: "an array read by ARRAY_DISTINCT before ARRAY_SIZE keeps its guard",
+            sql: "SELECT ARRAY_SIZE(ARRAY_DISTINCT(ARRAY_CONSTRUCT(NULL::VARCHAR, 'b'))) AS v",
+            expected_outcome: Err("keeps as undefined"),
+        },
+        FirstValueTestCase {
+            description: "a FLOAT padded to ten digits at scale 6 rounds exactly",
+            sql: "SELECT (1649.73::FLOAT)::NUMBER(18,6) AS v",
+            expected_outcome: Ok("1649.730000"),
+        },
+        FirstValueTestCase {
+            description: "a FLOAT reaching eleven digits once scaled still raises",
+            sql: "SELECT (1649.73::FLOAT)::NUMBER(38,8) AS v",
+            expected_outcome: Err("float_decimal_digits"),
+        },
+    ];
+    for test_case in test_cases {
+        assert_eq!(
+            shop_first_outcome(test_case.sql, test_case.expected_outcome),
+            test_case
+                .expected_outcome
+                .map(str::to_owned)
+                .map_err(str::to_owned),
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
 fn given_dates_and_naive_timestamps_when_converting_to_timestamp_then_values_are_kept() {
     let test_cases = [
         FirstValueTestCase {
