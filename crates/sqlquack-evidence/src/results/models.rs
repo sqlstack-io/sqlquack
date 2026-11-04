@@ -76,6 +76,9 @@ pub struct WarehouseColumn {
     pub internal_size: Option<i64>,
     /// Whether NULL is allowed.
     pub nullable: Option<bool>,
+    /// Whether the recorder proved this microsecond-held nanosecond column has no sub-µs digits.
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    pub sub_microsecond_checked: bool,
 }
 
 /// A warehouse error recorded as the case outcome.

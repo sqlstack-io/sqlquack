@@ -1,0 +1,39 @@
+category = "semi-structured"
+construct = "fn:REDUCE"
+session_profile = "utc-v1"
+
+[[case]]
+id = "reduce_integer_initial_sum_of_fields"
+description = "REDUCE from the integer 0 over objects' amounts cast to INT, as fee lists are summed: empty, NULL and JSON-null arrays and elements, a missing or differently cased key, a nested object; the first element by index; the result type."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('[{\"amount_minor\":150},{\"amount_minor\":25}]')"],
+  ["PARSE_JSON('[{\"amount_minor\":\"7\"},{\"amount_minor\":3.6}]')"],
+  ["PARSE_JSON('[]')"],
+  ["PARSE_JSON('[{\"other\":1}]')"],
+  ["PARSE_JSON('[{\"amount_minor\":4},null,{\"Amount_minor\":9}]')"],
+  ["PARSE_JSON('[{\"amount_minor\":{\"v\":1}}]')"],
+  ["PARSE_JSON('null')"],
+  ["NULL"],
+]
+query = "SELECT REDUCE(v::ARRAY, 0, (acc, f) -> acc + f:amount_minor::INT) AS s, v[0]:amount_minor::INT AS first, COALESCE(REDUCE(v::ARRAY, 0, (acc, f) -> acc + f:amount_minor::INT), 0)::INT AS s0 FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "boundary", "json-null", "missing-key", "nested", "array-index", "case-sensitive-key"]
+
+[[case]]
+id = "reduce_integer_initial_sum_of_scalar_fields"
+description = "The same REDUCE without the nested object, which makes Snowflake fail the whole query: the sums, the first element and the result type for scalar, missing, cased and JSON-null fields."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('[{\"amount_minor\":150},{\"amount_minor\":25}]')"],
+  ["PARSE_JSON('[{\"amount_minor\":\"7\"},{\"amount_minor\":3.6}]')"],
+  ["PARSE_JSON('[]')"],
+  ["PARSE_JSON('[{\"other\":1}]')"],
+  ["PARSE_JSON('[{\"amount_minor\":4},null,{\"Amount_minor\":9}]')"],
+  ["PARSE_JSON('[{\"amount_minor\":null}]')"],
+  ["PARSE_JSON('null')"],
+  ["NULL"],
+]
+query = "SELECT REDUCE(v::ARRAY, 0, (acc, f) -> acc + f:amount_minor::INT) AS s, v[0]:amount_minor::INT AS first, COALESCE(REDUCE(v::ARRAY, 0, (acc, f) -> acc + f:amount_minor::INT), 0)::INT AS s0 FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "boundary", "json-null", "missing-key", "array-index", "case-sensitive-key"]

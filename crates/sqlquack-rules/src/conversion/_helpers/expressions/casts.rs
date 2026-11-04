@@ -23,6 +23,7 @@ use sqlquack_duckdb::semi_structured::constants::JSON_FIDELITY;
 use sqlquack_duckdb::semi_structured::main::json_text::json_text;
 use sqlquack_duckdb::temporal::main::text_to_timestamp::text_to_timestamp;
 use sqlquack_duckdb::temporal::main::text_to_zoned::text_to_zoned;
+use sqlquack_duckdb::temporal::main::utc_to_zone::utc_to_zone;
 use sqlquack_duckdb::temporal::main::utc_wall_time::utc_wall_time;
 use sqlquack_duckdb::times::main::text_to_time::text_to_time;
 use sqlquack_duckdb::times::main::time_text::time_text;
@@ -396,6 +397,22 @@ fn cast_sql(
             temporal_cast(
                 &utc_wall_time(&operand.sql, log),
                 (SnowflakeType::TimestampNtz { precision }, to),
+                (context, construct),
+            )
+        }
+        (
+            SnowflakeType::TimestampTz { precision },
+            SnowflakeType::TimestampNtz { .. } | SnowflakeType::Date,
+            _,
+        ) if operand.zone.is_some() => {
+            let _rule = cast_rule(CAST_UTC_ZONED, log);
+            let zone = operand.zone.as_deref().unwrap_or_default();
+            let wall = SnowflakeType::TimestampNtz {
+                precision: precision.min(MICROSECOND_DIGITS),
+            };
+            temporal_cast(
+                &utc_to_zone(&utc_wall_time(&operand.sql, log), zone, wall, log),
+                (wall, to),
                 (context, construct),
             )
         }

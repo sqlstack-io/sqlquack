@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from collections.abc import Sequence
+from functools import partial
 from importlib.metadata import version
 from typing import Any
 
@@ -27,8 +28,10 @@ from sqlquack_record.snowflake._helpers.cursors import (
     describe_column,
     error_message,
     fetch,
+    fetch_exact,
     require_batch_recordable,
     require_recordable,
+    sub_microsecond_counts,
 )
 
 
@@ -76,7 +79,9 @@ class SnowflakeSession:
         cursor: Any = self._connection.cursor()
         try:
             cursor.execute(statement)
-            return fetch(cursor)
+            return fetch_exact(
+                cursor=cursor, exact=partial(sub_microsecond_counts, connection=self._connection)
+            )
         except UnrecordableResultError as error:
             return StatementResult(
                 query_id=cursor.sfqid, columns=(), table=None, failure=None, refusal=str(error)

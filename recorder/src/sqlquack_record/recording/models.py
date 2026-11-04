@@ -31,7 +31,7 @@ class PendingCase:
 
 @dataclass(frozen=True)
 class ColumnDescription:
-    """One result column as the connector describes it."""
+    """One result column as the connector describes it; µs values may be proven whole."""
 
     name: str
     type_code: int
@@ -40,6 +40,7 @@ class ColumnDescription:
     scale: int | None
     internal_size: int | None
     nullable: bool | None
+    sub_microsecond_checked: bool = False
 
 
 @dataclass(frozen=True)

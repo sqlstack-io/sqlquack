@@ -178,3 +178,33 @@ rows = [
 expression = "SECOND(t)"
 canonical = "DATE_PART(SECOND, t)"
 tags = ["null", "boundary"]
+
+[[case]]
+id = "dayofweekiso_of_dates"
+description = "DAYOFWEEKISO(d) of dates is DATE_PART(DAYOFWEEKISO, d): Monday 1 to Sunday 7, around year ends and a leap day."
+columns = [{ name = "d", type = "DATE" }]
+rows = [
+  ["'2024-02-29'"],
+  ["'2024-01-01'"],
+  ["'2023-12-31'"],
+  ["'2021-01-03'"],
+  ["'1969-12-31'"],
+  ["NULL"],
+]
+expression = "DAYOFWEEKISO(d)"
+canonical = "DATE_PART(DAYOFWEEKISO, d)"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "dayofweekiso_of_timestamps"
+description = "DAYOFWEEKISO(t) of naive timestamps is DATE_PART(DAYOFWEEKISO, t), just before and after midnight."
+columns = [{ name = "t", type = "TIMESTAMP_NTZ(9)" }]
+rows = [
+  ["'2023-12-31 23:59:59.999999999'"],
+  ["'2024-01-01 00:00:00'"],
+  ["'2024-03-03 12:00:00'"],
+  ["NULL"],
+]
+expression = "DAYOFWEEKISO(t)"
+canonical = "DATE_PART(DAYOFWEEKISO, t)"
+tags = ["null", "boundary"]

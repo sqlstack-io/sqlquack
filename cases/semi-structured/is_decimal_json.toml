@@ -1,0 +1,44 @@
+category = "semi-structured-typed"
+construct = "fn:IS_DECIMAL"
+session_profile = "utc-v1"
+
+[[case]]
+id = "is_decimal_of_parsed_json"
+description = "IS_DECIMAL and IS_INTEGER of values parsed from JSON: integers, fractions, exponents, numeric text, booleans, JSON null and nesting."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('12')"],
+  ["PARSE_JSON('12.50')"],
+  ["PARSE_JSON('1e3')"],
+  ["PARSE_JSON('-0.0')"],
+  ["PARSE_JSON('12345678901234567890123')"],
+  ["PARSE_JSON('\"12.5\"')"],
+  ["PARSE_JSON('true')"],
+  ["PARSE_JSON('null')"],
+  ["PARSE_JSON('[1]')"],
+  ["NULL"],
+]
+query = "SELECT IS_DECIMAL(v) AS d, IS_INTEGER(v) AS i FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "boundary"]
+expected_divergence = "json_fidelity"
+
+[[case]]
+id = "is_decimal_of_parsed_json_read_numbers"
+description = "IS_DECIMAL and IS_INTEGER of the numbers PARSE_JSON reads exactly: integers, fractions, a whole number written with a zero fraction, a negative and a 38-digit integer, beside text, a boolean, JSON null and an object."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('12')"],
+  ["PARSE_JSON('12.50')"],
+  ["PARSE_JSON('2.0')"],
+  ["PARSE_JSON('-7.25')"],
+  ["PARSE_JSON('12345678901234567890123456789012345678')"],
+  ["PARSE_JSON('\"7\"')"],
+  ["PARSE_JSON('false')"],
+  ["PARSE_JSON('null')"],
+  ["PARSE_JSON('{\"a\":1}')"],
+  ["NULL"],
+]
+query = "SELECT IS_DECIMAL(v) AS d, IS_INTEGER(v) AS i FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "boundary"]
