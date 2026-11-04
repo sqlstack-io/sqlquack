@@ -1390,16 +1390,23 @@ fn given_loud_divergences_only_when_converting_then_value_divergences_refuse_and
 {
     let test_cases = [
         FailureKindTestCase {
-            description: "HASH relies on a value divergence, and --json says so",
-            sql: "SELECT HASH(x) AS h FROM (SELECT 1 AS x) AS t",
+            description: "CURRENT_DATE relies on value divergences, and --json says so",
+            sql: "SELECT CURRENT_DATE() AS d",
             flags: &[],
             expected_converted: true,
-            expected_failures: &[("hash", "value")],
+            expected_failures: &[("current_time", "value"), ("session_timezone_utc", "value")],
         },
         FailureKindTestCase {
-            description: "--loud-divergences-only refuses HASH",
-            sql: "SELECT HASH(x) AS h FROM (SELECT 1 AS x) AS t",
+            description: "--loud-divergences-only refuses CURRENT_DATE",
+            sql: "SELECT CURRENT_DATE() AS d",
             flags: &["--loud-divergences-only"],
+            expected_converted: false,
+            expected_failures: &[],
+        },
+        FailureKindTestCase {
+            description: "HASH is refused by default, as its value is never Snowflake's",
+            sql: "SELECT HASH(x) AS h FROM (SELECT 1 AS x) AS t",
+            flags: &[],
             expected_converted: false,
             expected_failures: &[],
         },

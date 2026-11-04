@@ -295,8 +295,10 @@ formula reproduces, so the converted SQL returns a value only where the fraction
 (or between equal values) and raises otherwise. `date_text_spelling` covers TRY_TO_DATE and
 TRY_CAST to DATE of text in a spelling no recording shows.
 
-`hash` is a `value` divergence by user decision, as are RANDOM, UUID_STRING, the sequences and
-the clock, which differ by nature, and every assumption: HASH
+`hash` is a `value` divergence, as are RANDOM, UUID_STRING, the sequences and the clock, which
+differ by nature, and every assumption. Unlike them it is refused by default, since a wrong hash
+looks like a right one; a project that needs only internal consistency opts in with
+`default = "warn"` under `[divergences.hash]` in its policy. HASH
 converts to DuckDB's 64-bit hash shifted into the signed range, NUMBER(19,0), which is
 deterministic and equal for equal arguments in the same order within one run but never
 Snowflake's value. Integer NUMBERs hash by value whatever their precision, and a VARIANT by its
