@@ -39,6 +39,8 @@ pub struct Source {
 #[serde(rename_all = "snake_case")]
 pub enum SourceStatus {
     Forms,
+    /// Its grammar is fully covered by a form elsewhere that lists it in `also_sources`.
+    Restated,
     NoSyntaxBlock,
     OutOfScope,
 }
@@ -94,6 +96,9 @@ pub struct Form {
     pub family: String,
     /// A source id.
     pub source: String,
+    /// Other pages restating the same grammar, sorted; the form still counts once, under `source`.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub also_sources: Vec<String>,
     /// The heading on the page.
     pub anchor: String,
     pub kind: FormKind,
@@ -301,8 +306,10 @@ pub struct Review {
     /// A page review binds `sources.toml`.
     #[serde(default)]
     pub sources_sha256: Option<String>,
-    /// The full Git tree id of the reviewed parser source.
-    pub parser_tree: String,
+    /// The full Git tree id of the reviewed parser source; a page review, which verifies no
+    /// parsing, may omit it and never goes stale on a parser change.
+    #[serde(default)]
+    pub parser_tree: Option<String>,
     pub reviewed_utc: String,
     pub verdict: ReviewVerdict,
     /// Form ids this review accepts as excluded, each with its reason.

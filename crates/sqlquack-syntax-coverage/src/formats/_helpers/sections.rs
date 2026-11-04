@@ -6,7 +6,7 @@ use std::path::Path;
 use crate::formats::_helpers::files::{family_files, listed, read_jsonl, read_toml, stray};
 use crate::formats::_helpers::records::{
     check_alias, check_case, check_definition, check_form, check_index, check_obligation,
-    check_receipt, check_review, check_source,
+    check_receipt, check_restatements, check_review, check_source,
 };
 use crate::formats::constants::{
     ALIASES_FILE, CASES_DIR, CATALOGUE_DIR, INDEXES_FILE, OBLIGATIONS_DIR, RECEIPT_REPORT_SUFFIX,
@@ -119,6 +119,10 @@ pub(crate) fn load_catalogue(root: &Path, sources: &[Source]) -> Section<FamilyC
         hashes.insert(format!("{CATALOGUE_DIR}/{family}.toml"), hash);
         records.insert(family, (file.forms, file.definitions));
     }
+    problems.extend(check_restatements(
+        sources,
+        records.values().flat_map(|(forms, _)| forms),
+    ));
     Section {
         records,
         declared,

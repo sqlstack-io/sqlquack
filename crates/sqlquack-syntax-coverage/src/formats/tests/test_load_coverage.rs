@@ -3,7 +3,7 @@ use std::path::Path;
 
 use crate::formats::constants::{COVERAGE_ROOT, FAMILIES};
 use crate::formats::main::load_coverage::load_coverage;
-use crate::formats::tests::helpers::{receipt_line, replace, valid_tree, write};
+use crate::formats::tests::helpers::{receipt_line, replace, restated_page, valid_tree, write};
 use crate::formats::tests::test_types::{
     CommittedTestCase, FormatFaultTestCase, LoadTestCase, LoadedCounts,
 };
@@ -93,6 +93,23 @@ fn given_a_valid_tree_when_loading_then_every_record_is_kept() {
                 write(root, "receipts/ddl.jsonl", &format!("{ddl}\n"));
             },
             expected_counts: counts(2),
+        },
+        LoadTestCase {
+            description: "a restated page on a form's also_sources, and a page review without a tree",
+            tree: |root| {
+                valid_tree(root);
+                restated_page(root);
+                replace(
+                    root,
+                    "reviews/exclusions.toml",
+                    "parser_tree = \"0123456789abcdef0123456789abcdef01234567\"\n",
+                    "",
+                );
+            },
+            expected_counts: LoadedCounts {
+                sources: 3,
+                ..counts(1)
+            },
         },
         LoadTestCase {
             description: "a tree without renames or reviews yet",
@@ -659,6 +676,83 @@ fn given_a_format_fault_when_loading_then_the_problem_is_named() {
                 )
             },
             expected_problem: "review query-1: a family review binds its catalogue",
+        },
+        FormatFaultTestCase {
+            description: "a family review without a parser tree",
+            mutate: |root| {
+                replace(
+                    root,
+                    "reviews/query.toml",
+                    "parser_tree = \"0123456789abcdef0123456789abcdef01234567\"\n",
+                    "",
+                )
+            },
+            expected_problem: "review query-1: parser_tree is not a Git tree id; only a page review",
+        },
+        FormatFaultTestCase {
+            description: "a restated page that no form lists",
+            mutate: |root| {
+                restated_page(root);
+                replace(
+                    root,
+                    "catalogue/query.toml",
+                    "also_sources = [\"doc.select-copy\"]\n",
+                    "",
+                );
+            },
+            expected_problem: "source doc.select-copy: restated, but no form lists it",
+        },
+        FormatFaultTestCase {
+            description: "a form whose own page is restated",
+            mutate: |root| {
+                restated_page(root);
+                replace(
+                    root,
+                    "catalogue/query.toml",
+                    "source = \"doc.select\"\nalso_sources = [\"doc.select-copy\"]",
+                    "source = \"doc.select-copy\"\nalso_sources = [\"doc.select\"]",
+                );
+            },
+            expected_problem: "form sf.query.select: its source doc.select-copy is restated",
+        },
+        FormatFaultTestCase {
+            description: "a form listing its own page as a restatement",
+            mutate: |root| {
+                restated_page(root);
+                replace(
+                    root,
+                    "catalogue/query.toml",
+                    "[\"doc.select-copy\"]",
+                    "[\"doc.select\", \"doc.select-copy\"]",
+                );
+            },
+            expected_problem: "form sf.query.select: also_sources must be sorted, distinct",
+        },
+        FormatFaultTestCase {
+            description: "a form restated on an unpinned page",
+            mutate: |root| {
+                restated_page(root);
+                replace(
+                    root,
+                    "catalogue/query.toml",
+                    "[\"doc.select-copy\"]",
+                    "[\"doc.nowhere\", \"doc.select-copy\"]",
+                );
+            },
+            expected_problem: "form sf.query.select: unknown also_source doc.nowhere",
+        },
+        FormatFaultTestCase {
+            description: "a form restated on an out-of-scope page",
+            mutate: |root| {
+                restated_page(root);
+                replace(
+                    root,
+                    "catalogue/query.toml",
+                    "[\"doc.select-copy\"]",
+                    "[\"doc.billing\", \"doc.select-copy\"]",
+                );
+            },
+            expected_problem: "form sf.query.select: also_source doc.billing has no in-scope syntax",
         },
     ];
     for test_case in test_cases {

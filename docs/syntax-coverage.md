@@ -39,7 +39,10 @@ There is one `[[source]]` per documentation page:
 - `retrieved_utc`: in `YYYY-MM-DDTHH:MM:SSZ` form.
 - `page_sha256` and `syntax_sha256`: the hashes of the fetched page and of its syntax blocks.
 - `syntax_blocks`.
-- `status`: one of `forms`, `no_syntax_block` or `out_of_scope`.
+- `status`: one of `forms`, `restated`, `no_syntax_block` or `out_of_scope`. A `restated` page
+  repeats grammar that a form on another page already covers in full (decision D80). It has no
+  form of its own and adds nothing to the denominator. At least one form must list it in
+  `also_sources`.
 - `decisions`: the extraction rules that changed the page's form count.
 
 `indexes.toml` lists each documentation index the pages were read from, by `name` and `sha256`.
@@ -54,7 +57,12 @@ inside it are obligations, not forms.
   as `o001`. Ids are never reused. A rename is recorded in the optional `aliases.toml` as
   `[[alias]] from`, `to` and `reason`.
 - `family`: the file's family.
-- `source` and `anchor`: a pinned source id, and the heading on its page.
+- `source` and `anchor`: a pinned source id, and the heading on its page. `source` may not be a
+  `restated` page.
+- `also_sources`: optional. A sorted list of distinct pinned source ids for the other pages that
+  restate the same grammar byte for byte. It never contains `source`, and it never names a
+  `no_syntax_block` or `out_of_scope` page. It is not part of `grammar_sha256`. The form counts
+  once, under `source`, in the summary and in the page rollup.
 - `kind`: one of `statement`, `call`, `special` or `prose`.
 - `grammar`: the normalized productions. It is empty only for a prose form.
 - `grammar_sha256`: the SHA-256 of the productions joined by `" || "`, or `prose:<heading>` for a
@@ -146,7 +154,9 @@ A `[[review]]` has these fields:
 - A family review binds `catalogue_sha256` and `obligations_sha256`, the hashes of the reviewed
   file bytes. A page review has an empty `family` and binds only `sources_sha256`, the hash of
   `sources.toml`.
-- `parser_tree`: the full Git tree id of the reviewed parser source.
+- `parser_tree`: the full Git tree id of the reviewed parser source. A family review must have it.
+  A page review verifies no parsing, so it may omit the field. The checker ignores it on page
+  reviews, so a parser change never makes a page review stale.
 - `reviewed_utc`, plus a `verdict` of `approved` or `changes_requested`.
 - `[[review.exclusion]]`: exactly one of `form` (a form id of the review's family) or `source` (a
   page id, used for out-of-scope and syntax-less pages), plus a `reason`. A page review excludes

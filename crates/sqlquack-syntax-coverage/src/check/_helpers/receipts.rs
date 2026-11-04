@@ -1,8 +1,8 @@
-//! One case's outcome: its receipts against the current parser verdict.
+//! One case's result: its receipts against the current parser verdict.
 
 use std::collections::BTreeSet;
 
-use crate::check::models::{LocalVerdict, Reason};
+use crate::check::models::{CaseResult, LocalVerdict, Reason};
 use crate::formats::models::{Case, Phase, Receipt};
 
 /// A receipt bound to exactly this case's SQL, setup and session, with a query identity.
@@ -17,12 +17,8 @@ fn admissible(case: &Case, receipt: &Receipt) -> bool {
             || receipt.query_id_sha256.is_some())
 }
 
-/// Whether the case agrees, and whether only syntax agrees (Snowflake stopped after parsing).
-pub(crate) fn case_outcome(
-    case: &Case,
-    receipts: &[&Receipt],
-    local: LocalVerdict,
-) -> Result<bool, Reason> {
+/// The single phase of the admissible receipts, or why there is none.
+fn receipt_phase(case: &Case, receipts: &[&Receipt]) -> Result<Phase, Reason> {
     if receipts.is_empty() {
         return Err(Reason::MissingReceipt);
     }
@@ -31,15 +27,15 @@ pub(crate) fn case_outcome(
         .filter(|receipt| admissible(case, receipt))
         .map(|receipt| format!("{:?}", receipt.phase))
         .collect();
-    let phase: Phase = match receipts
-        .iter()
-        .find(|receipt| admissible(case, receipt))
-        .map(|receipt| receipt.phase)
-    {
-        None => return Err(Reason::StaleReceipt),
-        Some(_) if phases.len() > 1 => return Err(Reason::AmbiguousReceipts),
-        Some(phase) => phase,
-    };
+    match receipts.iter().find(|receipt| admissible(case, receipt)) {
+        None => Err(Reason::StaleReceipt),
+        Some(_) if phases.len() > 1 => Err(Reason::AmbiguousReceipts),
+        Some(receipt) => Ok(receipt.phase),
+    }
+}
+
+/// Whether the local verdict agrees with the phase, and whether only syntax agrees.
+fn agreement(phase: Phase, local: LocalVerdict) -> Result<bool, Reason> {
     match (phase, local) {
         (Phase::SyntaxError, LocalVerdict::Rejected) => Ok(false),
         (Phase::SyntaxError, LocalVerdict::Accepted { .. }) | (_, LocalVerdict::Rejected) => {
@@ -48,5 +44,18 @@ pub(crate) fn case_outcome(
         (_, LocalVerdict::Accepted { opaque: true }) => Err(Reason::OpaqueFallback),
         (Phase::Accepted, LocalVerdict::Accepted { opaque: false }) => Ok(false),
         (_, LocalVerdict::Accepted { opaque: false }) => Ok(true),
+    }
+}
+
+/// The case's result against its receipts and the current parser's verdict.
+pub(crate) fn case_result(case: &Case, receipts: &[&Receipt], local: LocalVerdict) -> CaseResult {
+    let phase: Result<Phase, Reason> = receipt_phase(case, receipts);
+    let outcome: Result<bool, Reason> = phase.and_then(|phase| agreement(phase, local));
+    CaseResult {
+        case_id: case.case_id.clone(),
+        phase: phase.ok(),
+        local,
+        reason: outcome.err(),
+        semantic_only: outcome == Ok(true),
     }
 }

@@ -2,11 +2,10 @@
 
 use std::collections::{BTreeMap, BTreeSet};
 
-use crate::formats::_helpers::ids::obligation_form;
+use crate::formats::main::obligation_form::obligation_form;
 use crate::formats::models::{Form, FormStatus, SyntaxCoverage};
 
-/// Every unresolved reference: obligations of uncatalogued forms, cases citing undeclared
-/// obligations, aliases and exclusions naming unknown or still-documented forms.
+/// Every unresolved reference between the catalogue, obligations, cases, aliases and reviews.
 pub(crate) fn reference_problems(
     coverage: &SyntaxCoverage,
     forms: &BTreeMap<&str, &Form>,

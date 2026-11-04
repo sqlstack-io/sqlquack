@@ -4,9 +4,9 @@ use std::collections::{BTreeMap, BTreeSet};
 
 use crate::check::models::Reason;
 use crate::formats::constants::{CATALOGUE_DIR, OBLIGATIONS_DIR, SOURCES_FILE};
-use crate::formats::models::{Review, ReviewVerdict};
+use crate::formats::models::{Review, ReviewVerdict, Source, SourceStatus};
 
-/// Whether `review` is approved and bound to the current files and parser tree.
+/// Whether `review` is approved and bound to the current files, and a family review to the tree.
 fn current(review: &Review, hashes: &BTreeMap<String, String>, parser_tree: Option<&str>) -> bool {
     let bound = |hash: &Option<String>, path: String| {
         hash.as_ref()
@@ -24,9 +24,11 @@ fn current(review: &Review, hashes: &BTreeMap<String, String>, parser_tree: Opti
             )
         }
     };
-    review.verdict == ReviewVerdict::Approved
-        && files
-        && parser_tree == Some(review.parser_tree.as_str())
+    let tree: bool = match review.family.as_str() {
+        "" => true,
+        _ => parser_tree.is_some() && parser_tree == review.parser_tree.as_deref(),
+    };
+    review.verdict == ReviewVerdict::Approved && files && tree
 }
 
 /// Why `family` lacks a current review, if it does.
@@ -59,4 +61,16 @@ pub(crate) fn current_exclusions(
     let forms: BTreeSet<String> = exclusions.clone().filter_map(|e| e.form.clone()).collect();
     let sources: BTreeSet<String> = exclusions.filter_map(|e| e.source.clone()).collect();
     (forms, sources)
+}
+
+/// Pages without forms of their own or a restating form that no current review excludes.
+pub(crate) fn unexcluded_pages(sources: &[Source], excluded: &BTreeSet<String>) -> Vec<String> {
+    sources
+        .iter()
+        .filter(|source| {
+            !matches!(source.status, SourceStatus::Forms | SourceStatus::Restated)
+                && !excluded.contains(&source.id)
+        })
+        .map(|source| source.id.clone())
+        .collect()
 }

@@ -1,13 +1,14 @@
 //! Format checks of single records; joins across files belong to the checker.
 
-use std::collections::BTreeSet;
+use std::collections::{BTreeMap, BTreeSet};
 
 use crate::formats::_helpers::hashes::{
     is_git_tree, is_sha256, session_sha256, setup_sha256, sha256_hex,
 };
 use crate::formats::_helpers::ids::{
-    is_case_id, is_form_id, is_rfc3339_utc, is_segment, is_source_id, is_utc, obligation_form,
+    is_case_id, is_form_id, is_rfc3339_utc, is_segment, is_source_id, is_utc,
 };
+use crate::formats::main::obligation_form::obligation_form;
 use crate::formats::constants::{
     DEFINITION_SEPARATOR, FAMILIES, GRAMMAR_JOIN, HTTPS, INTERACTION_MEMBERS, PROSE_HASH_PREFIX,
     RECEIPT_FORBIDDEN_TEXT, RECEIPT_FORMAT,
@@ -53,7 +54,7 @@ pub(crate) fn check_source(source: &Source) -> Vec<String> {
     }
     let family_valid: bool = match source.status {
         SourceStatus::OutOfScope => source.family.is_empty(),
-        SourceStatus::Forms | SourceStatus::NoSyntaxBlock => {
+        SourceStatus::Forms | SourceStatus::Restated | SourceStatus::NoSyntaxBlock => {
             FAMILIES.contains(&source.family.as_str())
         }
     };
@@ -137,6 +138,18 @@ pub(crate) fn check_form(
     }
     if !sources.contains(form.source.as_str()) {
         problems.push(format!("form {id}: unknown source {}", form.source));
+    }
+    if !form.also_sources.is_sorted_by(|left, right| left < right)
+        || form.also_sources.contains(&form.source)
+    {
+        problems.push(format!(
+            "form {id}: also_sources must be sorted, distinct and without its own source"
+        ));
+    }
+    for also in &form.also_sources {
+        if !sources.contains(also.as_str()) {
+            problems.push(format!("form {id}: unknown also_source {also}"));
+        }
     }
     if blank(&form.anchor) {
         problems.push(format!("form {id}: no anchor"));
@@ -348,8 +361,14 @@ pub(crate) fn check_review(review: &Review) -> Vec<String> {
              (empty family) binds only sources_sha256"
         ));
     }
-    if !is_git_tree(&review.parser_tree) {
-        problems.push(format!("review {id}: parser_tree is not a Git tree id"));
+    let tree_valid: bool = match (&review.parser_tree, review.family.as_str()) {
+        (Some(tree), _) => is_git_tree(tree),
+        (None, family) => family.is_empty(),
+    };
+    if !tree_valid {
+        problems.push(format!(
+            "review {id}: parser_tree is not a Git tree id; only a page review may omit it"
+        ));
     }
     if !is_utc(&review.reviewed_utc) {
         problems.push(format!(
@@ -362,6 +381,48 @@ pub(crate) fn check_review(review: &Review) -> Vec<String> {
             .iter()
             .filter_map(|exclusion| exclusion_problem(exclusion, &review.family))
             .map(|problem| format!("review {id}: {problem}")),
+    );
+    problems
+}
+
+/// Restated pages against the forms: each is cited by an `also_sources`, and none has a form.
+pub(crate) fn check_restatements<'a>(
+    sources: &[Source],
+    forms: impl Iterator<Item = &'a Form>,
+) -> Vec<String> {
+    let status: BTreeMap<&str, SourceStatus> = sources
+        .iter()
+        .map(|source| (source.id.as_str(), source.status))
+        .collect();
+    let mut problems: Vec<String> = Vec::new();
+    let mut cited: BTreeSet<&str> = BTreeSet::new();
+    for form in forms {
+        if status.get(form.source.as_str()) == Some(&SourceStatus::Restated) {
+            problems.push(format!(
+                "form {}: its source {} is restated, so it has no form of its own",
+                form.id, form.source
+            ));
+        }
+        for also in &form.also_sources {
+            cited.insert(also.as_str());
+            if matches!(
+                status.get(also.as_str()),
+                Some(SourceStatus::NoSyntaxBlock | SourceStatus::OutOfScope)
+            ) {
+                problems.push(format!(
+                    "form {}: also_source {also} has no in-scope syntax to restate",
+                    form.id
+                ));
+            }
+        }
+    }
+    problems.extend(
+        sources
+            .iter()
+            .filter(|source| {
+                source.status == SourceStatus::Restated && !cited.contains(source.id.as_str())
+            })
+            .map(|source| format!("source {}: restated, but no form lists it in also_sources", source.id)),
     );
     problems
 }

@@ -2,7 +2,7 @@
 
 use crate::formats::constants::{
     CASE_ID_LIMIT, DIGIT_PLACEHOLDER, FORM_ID_MIN_PARTS, FORM_PREFIX, OBLIGATION_DIGITS,
-    OBLIGATION_MARKER, OBLIGATION_ZERO, SOURCE_PREFIX, UTC_SHAPE, UTC_SUFFIXES,
+    OBLIGATION_MARKER, SOURCE_PREFIX, UTC_SHAPE, UTC_SUFFIXES,
 };
 
 /// A lower-case name segment: letters, digits and inner hyphens or underscores.
@@ -22,7 +22,7 @@ pub(crate) fn is_segment(text: &str) -> bool {
 }
 
 /// Whether `text` is an obligation number such as `o001`.
-fn is_obligation_number(text: &str) -> bool {
+pub(crate) fn is_obligation_number(text: &str) -> bool {
     text.strip_prefix(OBLIGATION_MARKER).is_some_and(|digits| {
         digits.len() == OBLIGATION_DIGITS && digits.bytes().all(|byte| byte.is_ascii_digit())
     })
@@ -44,13 +44,6 @@ pub(crate) fn is_source_id(id: &str) -> bool {
     id.strip_prefix(SOURCE_PREFIX)
         .and_then(|rest| rest.strip_prefix('.'))
         .is_some_and(|rest| rest.split('.').all(is_segment))
-}
-
-/// The form an obligation id `<form>.o<NNN>` belongs to, when it is well formed for `family`.
-pub(crate) fn obligation_form<'a>(id: &'a str, family: &str) -> Option<&'a str> {
-    let (form, number) = id.rsplit_once('.')?;
-    (is_obligation_number(number) && !number.ends_with(OBLIGATION_ZERO) && is_form_id(form, family))
-        .then_some(form)
 }
 
 /// A non-empty case id without whitespace or control characters.

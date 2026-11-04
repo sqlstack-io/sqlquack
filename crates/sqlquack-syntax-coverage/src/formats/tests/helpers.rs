@@ -146,3 +146,24 @@ pub(crate) fn valid_tree(root: &Path) {
         ),
     );
 }
+
+/// Adds `doc.select-copy`, a page restating SELECT, and lists it on `sf.query.select`.
+pub(crate) fn restated_page(root: &Path) {
+    let sources = std::fs::read_to_string(root.join("sources.toml")).expect("read");
+    write(
+        root,
+        "sources.toml",
+        &format!(
+            "{sources}[[source]]\nid = \"doc.select-copy\"\nurl = \"https://docs.example.com/c\"\n\
+             title = \"SELECT, again\"\nfamily = \"query\"\nretrieved_utc = \"2026-11-03T20:00:00Z\"\n\
+             page_sha256 = \"{SHA_A}\"\nsyntax_sha256 = \"{SHA_B}\"\nsyntax_blocks = 1\n\
+             status = \"restated\"\ndecisions = []\n"
+        ),
+    );
+    replace(
+        root,
+        "catalogue/query.toml",
+        "source = \"doc.select\"\n",
+        "source = \"doc.select\"\nalso_sources = [\"doc.select-copy\"]\n",
+    );
+}
