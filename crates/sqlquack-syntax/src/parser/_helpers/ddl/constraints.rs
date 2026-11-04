@@ -1458,7 +1458,7 @@ impl Parser {
     /// Parse a Snowflake DROP of `kind`, already consumed: the name and the options that kind takes.
     fn parse_drop_snowflake_object(&mut self, kind: String) -> Result<Expression> {
         let if_exists = self.match_keywords(&[TokenType::If, TokenType::Exists]);
-        let name = self.parse_table_ref()?;
+        let name = self.parse_object_name()?;
         let (cascade, restrict, force) = match kind.as_str() {
             "APPLICATION" | "OPENFLOW RUNTIME" => {
                 (self.match_token(TokenType::Cascade), false, false)
