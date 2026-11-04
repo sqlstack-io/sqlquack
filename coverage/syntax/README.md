@@ -24,6 +24,12 @@ translation-equivalence measure.
   removed as a fragment (not a form) has no alias.
 - `reviews/exclusions.toml`: the reviewed reason for every page that catalogues no form
   (`out_of_scope` and `no_syntax_block`), bound to the sha256 of `sources.toml`.
+- `census/<family>.jsonl` (D107c): for each counted case that `sqlquack convert` refuses only
+  with `unresolved name`, the smallest schema that resolves its names, one line per case sorted
+  by case id: `{"case_id", "relations": [{"name", "columns": [{"name", "type"}]}]}`. Names are
+  spelled as the case SQL spells them (unquoted, or with their double or single quotes); types
+  are Snowflake type names. Cases that no schema resolves (a column with no relation in scope,
+  `CONNECT BY PRIOR`) have no line. The checker does not read this directory.
 
 Families: `query`, `dml`, `ddl`, `transaction_session`, `security_admin`, `utility`, `scripting`,
 `functions`, `expressions`, `classes`.
