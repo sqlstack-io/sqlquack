@@ -189,7 +189,7 @@ impl Parser {
             CallMode::Lowered
         };
         let statements = Dialect::get(DialectType::Snowflake)
-            .parse_with_config(&body, self.config.complexity_guard.clone(), mode)
+            .parse_with_config(&body, self.config.complexity_guard, mode)
             .map_err(|error| self.parse_error(format!("In the procedure body: {error}")))?;
         if statements.is_empty() {
             return Err(self.parse_error("Expected a procedure body"));
