@@ -58423,3 +58423,159 @@ anchor = "doc.sql.alter-account / Syntax / Altering a different account"
 sql = "ALTER ACCOUNT SET TENANT_TYPE = INTERNAL ;"
 expect = "observe"
 context = "raw"
+
+[[reading]]
+form = "sf.functions.ai-function-evaluation.create-experiment-type-from"
+grammar_sha256 = "a5a401dbd0d702cddb73ff09eda5a565134e1bf4ef048b29b7b9e47a2a056ec9"
+grammar = ["CREATE [ OR REPLACE ] EXPERIMENT <experiment_name> TYPE = 'AI_FUNCTION_EVALUATION' FROM SPECIFICATION $$ <evaluation_specification> $$"]
+reason = "D118: the page ends the call with a statement-terminating `;`, which is not part of the function call; read without it"
+
+[[reading]]
+form = "sf.functions.ai-function-evaluation.execute-experiment"
+grammar_sha256 = "77703817bb5256d700cdba68a554ec7373294af2c1076165c477cf9d50880492"
+grammar = ["EXECUTE EXPERIMENT <experiment_name>"]
+reason = "D118: the page ends the call with a statement-terminating `;`, which is not part of the function call; read without it"
+
+[[reading]]
+form = "sf.functions.ai-function-optimization.create-experiment-type-from"
+grammar_sha256 = "612712973529254616511c1635cf337ce67c1ab4d8a073f169b0fd1a41eb1347"
+grammar = ["CREATE [ OR REPLACE ] EXPERIMENT <experiment_name> TYPE = 'AI_FUNCTION_OPTIMIZATION' FROM SPECIFICATION $$ <optimization_specification> $$"]
+reason = "D118: the page ends the call with a statement-terminating `;`, which is not part of the function call; read without it"
+
+[[reading]]
+form = "sf.functions.get-auto-enablement-status"
+grammar_sha256 = "4d1cf43490c826c369c4f7e807a1983ddad1d5c6a9317a93c435e0820a9dfbbc"
+grammar = ["SNOWFLAKE.TRUST_CENTER.GET_AUTO_ENABLEMENT_STATUS()"]
+reason = "D118: the page ends the call with a statement-terminating `;`, which is not part of the function call; read without it"
+
+[[reading]]
+form = "sf.functions.prompt"
+grammar_sha256 = "50f96c44aa4ed59e3bb126232a5e65b54bf293908fe106b6d67ace569b23d2d2"
+grammar = ["SELECT PROMPT('<template_string>', <expr_1> [ , <expr_2>, ... ] ) FROM <table>"]
+reason = "D118: the page ends the call with a statement-terminating `;`, which is not part of the function call; read without it"
+
+[[reading]]
+form = "sf.functions.spcs-cancel-job"
+grammar_sha256 = "7ab84fd60734781727b001fadd796821eaa194f9584890b4c2b8d91766e02d07"
+grammar = ["<service_name>!SPCS_CANCEL_JOB()"]
+reason = "D118: the page ends the call with a statement-terminating `;`, which is not part of the function call; read without it"
+
+[[reading]]
+form = "sf.functions.spcs-wait-for"
+grammar_sha256 = "013eefbd2780422b24a77e3dfd98ef830d461353203a61ba8a549bac0197b34b"
+grammar = ["<service_name>!SPCS_WAIT_FOR( <status>, <timeout_sec> )"]
+reason = "D118: the page ends the call with a statement-terminating `;`, which is not part of the function call; read without it"
+
+[[reading]]
+form = "sf.functions.st-transform"
+grammar_sha256 = "c8bb84c7db20d319cc25f2e7d950306e677f98821b1a48d0acea4e6f284b8a42"
+grammar = ["ST_TRANSFORM( <geometry_expression> [ , <from_srid> ] , <to_srid> )"]
+reason = "D118: the page ends the call with a statement-terminating `;`, which is not part of the function call; read without it"
+
+[[reading]]
+form = "sf.functions.system-add-event"
+grammar_sha256 = "711968e5f1106263cab77a41adb0ccbd63f90e8c19634d8b91c88b2b259d0de7"
+grammar = ["SYSTEM$ADD_EVENT('<name>', '<object>')"]
+reason = "D118: the page ends the call with a statement-terminating `;`, which is not part of the function call; read without it"
+
+[[reading]]
+form = "sf.functions.system-create-evaluation-dataset"
+grammar_sha256 = "144f19e46686eeb661888a6fd6d68a04689568161197ee1595aae428e959e6bf"
+grammar = ["CALL SYSTEM$CREATE_EVALUATION_DATASET( '<agent_dataset_type>' , '<source_table_name>' , '<dataset_name>' , <column_mapping> )"]
+reason = "D118: the page ends the call with a statement-terminating `;`, which is not part of the function call; read without it"
+
+[[reading]]
+form = "sf.functions.system-deprovision-privatelink-endpoint"
+grammar_sha256 = "a3a6296d8c26baeb3c9d682ec9c691d981c53a99be52e06bff9e768dc07e56f0"
+grammar = ["SYSTEM$DEPROVISION_PRIVATELINK_ENDPOINT( '<provider_service_name>' )", "SYSTEM$DEPROVISION_PRIVATELINK_ENDPOINT( '<provider_resource_id>' [, '<subresource>' ] )", "SYSTEM$DEPROVISION_PRIVATELINK_ENDPOINT( '<service_attachment_id>' )"]
+reason = "D118: the page ends the call with a statement-terminating `;`, which is not part of the function call; read without it"
+
+[[reading]]
+form = "sf.functions.system-deregister-cmk-info"
+grammar_sha256 = "bfa5da8b36ab95231f132dac5e0514f8b1c2256cd472f207c81d1dd219526c97"
+grammar = ["SYSTEM$DEREGISTER_CMK_INFO()"]
+reason = "D118: the page ends the call with a statement-terminating `;`, which is not part of the function call; read without it"
+
+[[reading]]
+form = "sf.functions.system-deregister-cmk-info-postgres"
+grammar_sha256 = "acdd0f9adf233fa98f9e6899443cdf89a8cb2b453cf1c613c498726967d6cd46"
+grammar = ["SYSTEM$DEREGISTER_CMK_INFO_POSTGRES()"]
+reason = "D118: the page ends the call with a statement-terminating `;`, which is not part of the function call; read without it"
+
+[[reading]]
+form = "sf.functions.system-disable-database-replication"
+grammar_sha256 = "d2a53c0206668d9a60ae638b8f7afd1bcede2ce55d5c50472c1620bd55ae86d1"
+grammar = ["SYSTEM$DISABLE_DATABASE_REPLICATION('<db_name>')"]
+reason = "D118: the page ends the call with a statement-terminating `;`, which is not part of the function call; read without it"
+
+[[reading]]
+form = "sf.functions.system-get-catalog-linked-database-config"
+grammar_sha256 = "80702adf2cfdf3e220f078c145bb22174b6132eb8c06c5c1a5ac1afc15e80f06"
+grammar = ["SYSTEM$GET_CATALOG_LINKED_DATABASE_CONFIG('<catalog_linked_database_name>')"]
+reason = "D118: the page ends the call with a statement-terminating `;`, which is not part of the function call; read without it"
+
+[[reading]]
+form = "sf.functions.system-global-account-set-parameter"
+grammar_sha256 = "bd5294a444f2f771573198068b524adf71532bdae6b63c6027e6c9c29d81c589"
+grammar = ["SELECT SYSTEM$GLOBAL_ACCOUNT_SET_PARAMETER('<account_identifier>', 'ENABLE_ACCOUNT_DATABASE_REPLICATION', 'true')"]
+reason = "D118: the page ends the call with a statement-terminating `;`, which is not part of the function call; read without it"
+
+[[reading]]
+form = "sf.functions.system-log.system-log"
+grammar_sha256 = "bfbbb151708d3366e14e51f51fb90a965e04e4d13e207bfe0f83bc30afc1abb3"
+grammar = ["SYSTEM$LOG('<level>', <message>)"]
+reason = "D118: the page ends the call with a statement-terminating `;`, which is not part of the function call; read without it"
+
+[[reading]]
+form = "sf.functions.system-restore-privatelink-endpoint"
+grammar_sha256 = "285fa734e2b8976e03e3f4d4418a3a48f037dc79850790e02909274724a38eef"
+grammar = ["SYSTEM$RESTORE_PRIVATELINK_ENDPOINT( '<provider_service_name>' )", "SYSTEM$RESTORE_PRIVATELINK_ENDPOINT( '<provider_resource_id>' [, '<subresource>' ] )", "SYSTEM$RESTORE_PRIVATELINK_ENDPOINT( '<service_attachment_id>' )"]
+reason = "D118: the page ends the call with a statement-terminating `;`, which is not part of the function call; read without it"
+
+[[reading]]
+form = "sf.functions.system-set-span-attributes"
+grammar_sha256 = "c17ca163f31097d8eaee62d10e1a7ab5e0a58a6862652165c6adcaffe365bc37"
+grammar = ["SYSTEM$SET_SPAN_ATTRIBUTES('<object>')"]
+reason = "D118: the page ends the call with a statement-terminating `;`, which is not part of the function call; read without it"
+
+[[reading]]
+form = "sf.functions.system-wait-for-openflow-connector-status"
+grammar_sha256 = "df02541d1016b4a572ad5918efe541afb80809bbeb96b2990c4a0786251df2d4"
+grammar = ["SELECT SYSTEM$WAIT_FOR_OPENFLOW_CONNECTOR_STATUS( <timeout_seconds>, '<allowed_statuses>', '<connector_name>' [ , '<connector_name>' ... ] )"]
+reason = "D118: the page ends the call with a statement-terminating `;`, which is not part of the function call; read without it"
+
+[[reading]]
+form = "sf.functions.system-wait-for-openflow-deployment-status"
+grammar_sha256 = "255e160b355aa2781dfbbe5ccbf995114749dfaec2105bad40b8f913ed34e045"
+grammar = ["SELECT SYSTEM$WAIT_FOR_OPENFLOW_DEPLOYMENT_STATUS( <timeout_seconds>, '<allowed_statuses>', '<deployment_name>' [ , '<deployment_name>' ... ] )"]
+reason = "D118: the page ends the call with a statement-terminating `;`, which is not part of the function call; read without it"
+
+[[reading]]
+form = "sf.functions.system-wait-for-openflow-runtime-status"
+grammar_sha256 = "343d5d934a69b2bc1a9327ae08532170fab08fe9d50492abeb5e4f9b785d4963"
+grammar = ["SELECT SYSTEM$WAIT_FOR_OPENFLOW_RUNTIME_STATUS( <timeout_seconds>, '<allowed_statuses>', '<runtime_name>' [ , '<runtime_name>' ... ] )"]
+reason = "D118: the page ends the call with a statement-terminating `;`, which is not part of the function call; read without it"
+
+[[reading]]
+form = "sf.functions.system-wait-for-stable-openflow-connectors"
+grammar_sha256 = "a0175231e6a10cdf7efd5a01cd97fc6873620b054df890e93619b66e08f9d673"
+grammar = ["SELECT SYSTEM$WAIT_FOR_STABLE_OPENFLOW_CONNECTORS( <timeout_seconds>, '<connector_name>' [ , '<connector_name>' ... ] )"]
+reason = "D118: the page ends the call with a statement-terminating `;`, which is not part of the function call; read without it"
+
+[[reading]]
+form = "sf.functions.system-wait-for-stable-openflow-deployments"
+grammar_sha256 = "baa48ab641ddbe61a91c87c049c3f321fcdf4c147a13417e01205e9b51ff8ae7"
+grammar = ["SELECT SYSTEM$WAIT_FOR_STABLE_OPENFLOW_DEPLOYMENTS( <timeout_seconds>, '<deployment_name>' [ , '<deployment_name>' ... ] )"]
+reason = "D118: the page ends the call with a statement-terminating `;`, which is not part of the function call; read without it"
+
+[[reading]]
+form = "sf.functions.system-wait-for-stable-openflow-runtimes"
+grammar_sha256 = "7c1cc00f00ff74729e73b91afd33b57ebe10faa512f13af243d3b8ad558713d0"
+grammar = ["SELECT SYSTEM$WAIT_FOR_STABLE_OPENFLOW_RUNTIMES( <timeout_seconds>, '<runtime_name>' [ , '<runtime_name>' ... ] )"]
+reason = "D118: the page ends the call with a statement-terminating `;`, which is not part of the function call; read without it"
+
+[[reading]]
+form = "sf.functions.update-auto-enablement-status"
+grammar_sha256 = "33cfeaffac73b2485d4fa38f504b9349d4da6801783feb8e3295f5719abba537"
+grammar = ["SNOWFLAKE.TRUST_CENTER.UPDATE_AUTO_ENABLEMENT_STATUS( <is_enabled> [ , '<comment>' ] )"]
+reason = "D118: the page ends the call with a statement-terminating `;`, which is not part of the function call; read without it"
