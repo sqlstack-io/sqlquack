@@ -80,3 +80,9 @@ pub const GIT_TREE_LENGTH: usize = 40;
 pub const HTTPS: &str = "https://";
 /// Text that would identify an account, host or person; never allowed in a receipt.
 pub const RECEIPT_FORBIDDEN_TEXT: [&str; 3] = ["@", "snowflakecomputing", "://"];
+
+/// What precedes the line number in a DCM inner error, as in `syntax error line 1 at position 61`.
+pub const DCM_LINE: &str = "line ";
+
+/// What separates an inner error's line from its position.
+pub const DCM_POSITION: &str = " at position ";
