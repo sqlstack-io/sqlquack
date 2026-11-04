@@ -216,12 +216,11 @@ fn median(
     let refuse = |reason: String| outside_conditions(construct.clone(), reason);
     match value.data_type {
         SnowflakeType::Number { precision, scale }
-            if precision + MEDIAN_EXTRA_DIGITS <= MAX_PRECISION
-                && scale + MEDIAN_EXTRA_DIGITS < MEDIAN_EXACT_DIGITS =>
+            if scale + MEDIAN_EXTRA_DIGITS < MEDIAN_EXACT_DIGITS =>
         {
             diverge(context, PERCENTILE_INTERPOLATION, construct)?;
             let data_type = SnowflakeType::Number {
-                precision: precision + MEDIAN_EXTRA_DIGITS,
+                precision: (precision + MEDIAN_EXTRA_DIGITS).min(MAX_PRECISION),
                 scale: scale + MEDIAN_EXTRA_DIGITS,
             };
             let held = column_type(data_type, log).map_err(refuse)?;

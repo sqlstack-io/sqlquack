@@ -1296,7 +1296,7 @@ pub const OBJECT_TYPE_NAME: &str = "OBJECT";
 pub const DIV0_RULE: &str = "rule.div0";
 /// MEDIAN.
 pub const MEDIAN_RULE: &str = "rule.median";
-/// MEDIAN of NUMBER(p,s) is NUMBER(p+3,s+3), as recorded.
+/// MEDIAN of NUMBER(p,s) is NUMBER(p+3,s+3), its precision capped at 38, as recorded.
 pub const MEDIAN_EXTRA_DIGITS: u8 = 3;
 /// Significant digits at the result scale up to which a double average rounds back exactly.
 pub const MEDIAN_EXACT_DIGITS: u8 = 15;
