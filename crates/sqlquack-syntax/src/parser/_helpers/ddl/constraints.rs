@@ -1587,7 +1587,7 @@ impl Parser {
             TokenType::View => self.parse_alter_view_with_modifiers(None, None, None),
             TokenType::Index => self.parse_alter_index(),
             TokenType::Sequence => self.parse_alter_sequence(),
-            _ if self.check_identifier("SESSION") => {
+            _ if self.check_identifier("SESSION") && !self.check_next_identifier("POLICY") => {
                 self.skip();
                 match self.parse_alter_session()? {
                     Some(expr) => Ok(expr),
