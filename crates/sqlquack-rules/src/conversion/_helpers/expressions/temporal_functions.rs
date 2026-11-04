@@ -60,8 +60,9 @@ use crate::conversion::constants::{
     MICROSECOND_DIGITS, NULL_BRANCHES, NUMBER_TEXT_FORMAT, RECORDED_TIME_ZONES, SCALE_DIGITS,
     SESSION_TIMEZONE_UTC, TEMPORAL_TEXT_FIELDS, TEMPORAL_TEXT_FORMAT, TEMPORAL_TEXT_SEPARATORS,
     TEXT_TO_TIME_RULE, TEXT_TO_TIMESTAMP_RULE, TIME_ARITHMETIC, TIME_ZONE_CONVERSION,
-    TIME_ZONE_SPELLING, TIMESTAMP_FORMAT_RULE, TIMESTAMP_RANGE, TIMESTAMP_TIME_RULE,
-    TO_DATE_TEMPORAL, UTC_OFFSET_ARITHMETIC, UTC_ZONE, ZONE_COLUMNS, ZONED_PARTS,
+    TIME_ZONE_SPELLING, TIMESTAMP_FORMAT_RULE, TIMESTAMP_NTZ_NAME, TIMESTAMP_RANGE,
+    TIMESTAMP_TIME_RULE, TO_DATE_TEMPORAL, TO_TIMESTAMP_TEMPORAL, UTC_OFFSET_ARITHMETIC, UTC_ZONE,
+    ZONE_COLUMNS, ZONED_PARTS,
 };
 use sqlquack_duckdb::raises::main::raised::raised;
 
@@ -664,6 +665,24 @@ pub(crate) fn to_timestamp(
             let sql =
                 cast_to(&operand, DATE_NAME, false, (site.context, construct)).map_err(refuse)?;
             Ok(Emitted::new(sql, SnowflakeType::Date))
+        }
+        (SnowflakeType::TimestampNtz { precision: 9 }, None, false) if !trying => {
+            let _temporal = log.rule(TO_TIMESTAMP_TEMPORAL);
+            Ok(operand)
+        }
+        (SnowflakeType::Date | SnowflakeType::TimestampNtz { .. }, None, false) if !trying => {
+            let _temporal = log.rule(TO_TIMESTAMP_TEMPORAL);
+            let sql = cast_to(
+                &operand,
+                TIMESTAMP_NTZ_NAME,
+                false,
+                (site.context, construct),
+            )
+            .map_err(refuse)?;
+            Ok(Emitted::new(
+                sql,
+                SnowflakeType::TimestampNtz { precision: 9 },
+            ))
         }
         (other, _, _) => Err(refuse(format!("{name} of {other} with these arguments"))),
     }
