@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from collections import Counter
+from dataclasses import replace
 
 from scripts.syntax_obligations._helpers.grammar import (
     is_repetition,
@@ -13,6 +14,7 @@ from scripts.syntax_obligations._helpers.grammar import (
 from scripts.syntax_obligations.constants import (
     CLASS_RULES,
     DEFAULT_CLASS,
+    EXPECT_REJECT,
     IDENTIFIER_ANCHOR,
     IDENTIFIER_CLASSES,
     KIND_ALTERNATIVE,
@@ -65,6 +67,7 @@ class _Walk:
         self.path: frozenset[int] = frozenset()
         self.identifier_nodes: dict[str, Spec] = {}
         self.quote_specs: dict[str, Spec] = {}
+        self.nest_specs: dict[str, Spec] = {}
         self.chosen: tuple[tuple[int, int], ...] = ()
 
     def target(self, text: str, tail: str = "") -> str:
@@ -76,6 +79,10 @@ class _Walk:
 
     def add(self, kind: str, target: str, note: str, spec: Spec | None = None) -> None:
         self.drafts.append(Draft(form=self.form, kind=kind, target=target, note=note, spec=spec))
+
+    def reject(self, action: str, node: Node, payload: str = "") -> Spec:
+        """A spec whose case is expected to be a syntax error."""
+        return replace(self.spec(action, node, payload), expect=EXPECT_REJECT)
 
     def spec(self, action: str, node: Node | None = None, payload: str = "") -> Spec:
         """A case spec at the current production and option path."""
@@ -101,7 +108,7 @@ class _Walk:
                 self.token(node, where, lone=lone)
             if position > 0 and self._droppable(node):
                 inside: str = f" in {where}" if not top and where.startswith("[") else ""
-                self.dropped.setdefault(render((node,)) + inside, self.spec("drop", node))
+                self.dropped.setdefault(render((node,)) + inside, self.reject("drop", node))
         return options
 
     @staticmethod
@@ -124,12 +131,14 @@ class _Walk:
             self.identifier_nodes.setdefault(node.text, self.spec("reserved", node))
             self.quote_specs.setdefault(node.text, self.spec("quote", node))
         target: str = self.target(f"{node.text}{suffix}")
+        if label in NESTED_CLASSES:
+            self.nest_specs.setdefault(label, self.spec("nest", node, label))
         if not lone:
-            self.add(KIND_OPERAND_MISSING, target, f"omit {node.text}", self.spec("drop", node))
+            self.add(KIND_OPERAND_MISSING, target, f"omit {node.text}", self.reject("drop", node))
         if label != SUBGRAMMAR_CLASS:
             self.add(KIND_OPERAND_CLASS, target, f"a valid {label}", self.valid())
         if label in LEXICAL_WRONG:
-            wrong: Spec = self.spec("replace", node, WRONG_FILL[label])
+            wrong: Spec = self.reject("replace", node, WRONG_FILL[label])
             self.add(
                 KIND_NEGATIVE, target, f"{LEXICAL_WRONG[label]} in place of {node.text}", wrong
             )
@@ -214,7 +223,7 @@ def derive_trees(form: str, grammar: list[str]) -> tuple[list[Draft], list[tuple
                 target="",
                 note=f"{label} operands nested; {NO_BOUND}",
                 depths=NESTING_DEPTHS,
-                spec=Spec("nest", payload=label),
+                spec=walk.nest_specs[label],
             )
         )
     return walk.drafts, trees

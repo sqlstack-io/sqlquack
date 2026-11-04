@@ -6,7 +6,11 @@
 # Case fields for scripts/build_syntax_cases.py: `sql` (the form text, or with context = "raw" the
 # whole submission), `also_sql` (a second case), `context` (block by default, procedure, top or
 # raw), and for nested limits outer_open/open/core/close/outer_close, repeated per depth.
-# A [[suppress]] entry withdraws one derived obligation (form, kind, target) with a reason.
+# `expect` is accept (no syntax error) or reject (a syntax error); a negative defaults to reject,
+# anything else to accept, and a boundary must say. `stage` (semantic, runtime or error) names a
+# later error an accepted case is expected to reach; also_expect/also_stage apply to also_sql.
+# A [[suppress]] entry withdraws one derived obligation (form, kind, target, and note where the
+# target is empty) with a reason.
 
 # DECLARE exception: "The number must be an integer between -20000 and -20999." Receipts of run
 # b5-packet4-20261103T224644Z reject both documented ends (-20999 and -20000); the obligations keep
@@ -19,6 +23,8 @@ target = "<exception_number>"
 note = "-21000, below the documented lower bound -20999"
 anchor = "doc.snowflake-scripting.declare / Exception declaration syntax"
 sql = "e1 EXCEPTION ( -21000 , 'm' ) ;"
+expect = "accept"
+stage = "semantic"
 
 [[limit]]
 form = "sf.scripting.declare.exception"
@@ -27,6 +33,8 @@ target = "<exception_number>"
 note = "-20999, the documented lower bound"
 anchor = "doc.snowflake-scripting.declare / Exception declaration syntax"
 sql = "e1 EXCEPTION ( -20999 , 'm' ) ;"
+expect = "accept"
+stage = "semantic"
 
 [[limit]]
 form = "sf.scripting.declare.exception"
@@ -35,6 +43,7 @@ target = "<exception_number>"
 note = "-20998, just inside the documented lower bound"
 anchor = "doc.snowflake-scripting.declare / Exception declaration syntax"
 sql = "e1 EXCEPTION ( -20998 , 'm' ) ;"
+expect = "accept"
 
 [[limit]]
 form = "sf.scripting.declare.exception"
@@ -43,6 +52,7 @@ target = "<exception_number>"
 note = "-20001, just inside the documented upper bound"
 anchor = "doc.snowflake-scripting.declare / Exception declaration syntax"
 sql = "e1 EXCEPTION ( -20001 , 'm' ) ;"
+expect = "accept"
 
 [[limit]]
 form = "sf.scripting.declare.exception"
@@ -51,6 +61,8 @@ target = "<exception_number>"
 note = "-20000, the documented upper bound and the default"
 anchor = "doc.snowflake-scripting.declare / Exception declaration syntax"
 sql = "e1 EXCEPTION ( -20000 , 'm' ) ;"
+expect = "accept"
+stage = "semantic"
 
 [[limit]]
 form = "sf.scripting.declare.exception"
@@ -59,6 +71,8 @@ target = "<exception_number>"
 note = "-19999, above the documented upper bound"
 anchor = "doc.snowflake-scripting.declare / Exception declaration syntax"
 sql = "e1 EXCEPTION ( -19999 , 'm' ) ;"
+expect = "accept"
+stage = "semantic"
 
 [[limit]]
 form = "sf.scripting.declare.exception"
@@ -66,6 +80,8 @@ kind = "negative_neighbour"
 note = "an exception message containing a double quote character"
 anchor = "doc.snowflake-scripting.declare / Exception declaration syntax"
 sql = "e1 EXCEPTION ( -20001 , 'a\"b' ) ;"
+expect = "accept"
+stage = "error"
 
 # BEGIN ... END: "The keyword END must be followed immediately by a semicolon, or followed
 # immediately by a label that is immediately followed by a semicolon. The keyword BEGIN must not be
@@ -87,6 +103,8 @@ note = "reserved: a reserved keyword as the END label, unquoted and double-quote
 anchor = "doc.snowflake-scripting.begin / Usage notes"
 sql = "BEGIN NULL ; END SELECT ;"
 also_sql = "BEGIN NULL ; END \"SELECT\" ;"
+expect = "reject"
+also_expect = "accept"
 
 [[limit]]
 form = "sf.scripting.begin"
@@ -155,7 +173,7 @@ kind = "interaction"
 pair = ["[ { EXIT | CONTINUE } ]", "[ WHEN ... ]"]
 note = "WHEN clauses of both types, EXIT and CONTINUE, in one exception handler"
 anchor = "doc.snowflake-scripting.exception / Usage notes"
-sql = "EXCEPTION WHEN e1 EXIT THEN NULL ; WHEN e2 CONTINUE THEN NULL ;"
+sql = "EXCEPTION WHEN STATEMENT_ERROR EXIT THEN NULL ; WHEN EXPRESSION_ERROR CONTINUE THEN NULL ;"
 
 # IF: "The keyword THEN is required. ELSEIF is one word (no spaces). END IF is two words."
 
@@ -580,7 +598,7 @@ form = "sf.scripting.raise"
 kind = "positive"
 note = "RAISE; without a name inside a WHEN clause of an exception handler, re-raising the exception"
 anchor = "doc.snowflake-scripting.raise / Syntax"
-sql = "BEGIN SELECT 1 / 0 ; EXCEPTION WHEN OTHER THEN RAISE ; END ;"
+sql = "BEGIN BEGIN SELECT 1 / 0 ; EXCEPTION WHEN OTHER THEN RAISE ; END ; EXCEPTION WHEN OTHER THEN NULL ; END ;"
 context = "raw"
 
 [[limit]]
@@ -589,6 +607,8 @@ kind = "negative_neighbour"
 note = "RAISE; without a name outside an exception handler"
 anchor = "doc.snowflake-scripting.raise / Syntax"
 sql = "RAISE ;"
+expect = "accept"
+stage = "error"
 
 # DO/LOOP pairing (finding 3): the documented pairs as positives; the crossed pairs are negatives above.
 
@@ -650,7 +670,10 @@ kind = "negative_neighbour"
 target = "<col_data_type>"
 note = "GEOGRAPHY as a column type in RETURNS TABLE ( ... )"
 anchor = "doc.snowflake-scripting.declare / Nested stored procedure declaration syntax"
-sql = "p1 PROCEDURE ( ) RETURNS TABLE ( g GEOGRAPHY ) AS BEGIN RETURN TABLE ( r1 ) ; END"
+sql = "DECLARE p1 PROCEDURE ( ) RETURNS TABLE ( g GEOGRAPHY ) AS BEGIN LET r1 RESULTSET := ( SELECT TO_GEOGRAPHY ( 'POINT(1 1)' ) AS g ) ; RETURN TABLE ( r1 ) ; END ; BEGIN CALL p1 ( ) ; END ;"
+expect = "accept"
+stage = "runtime"
+context = "raw"
 
 # DECLARE with BEGIN (finding 7).
 
@@ -695,3 +718,81 @@ target = "<exception_name>"
 note = "the built-in exception EXPRESSION_ERROR"
 anchor = "doc.snowflake-scripting.exception / Syntax"
 sql = "EXCEPTION WHEN EXPRESSION_ERROR THEN NULL ;"
+
+# Omissions that land on a documented or recorded valid form are not negatives.
+
+[[suppress]]
+form = "sf.scripting.let.let-default"
+kind = "required_operand_missing"
+target = "<type>"
+reason = "omitting the type gives LET <variable_name> { DEFAULT | := } <expression>, the documented untyped LET form"
+
+[[suppress]]
+form = "sf.scripting.return"
+kind = "required_operand_missing"
+target = "<expression>"
+reason = "Snowflake accepts a bare RETURN; (receipt of case c-b5-c14), so omitting the expression is not a negative"
+
+# Omissions whose remainder is another valid form: dropping a name or keyword turns the next
+# word into a name (DECLARE EXCEPTION ; declares a variable called EXCEPTION) or leaves the
+# documented untyped declaration. Recorded by run d82-scripting-1 (accepted or semantic_error).
+
+[[suppress]]
+form = "sf.scripting.declare.exception"
+kind = "required_operand_missing"
+target = "<exception_name>"
+reason = "DECLARE EXCEPTION ; declares an untyped variable named EXCEPTION (semantic 92229, not a syntax error)"
+
+[[suppress]]
+form = "sf.scripting.declare.exception"
+kind = "negative_neighbour"
+note = "the form without its required EXCEPTION"
+reason = "DECLARE e1 ; is the documented untyped variable declaration"
+
+[[suppress]]
+form = "sf.scripting.declare.resultset"
+kind = "required_operand_missing"
+target = "<resultset_name>"
+reason = "DECLARE RESULTSET ; declares an untyped variable named RESULTSET (semantic 92229)"
+
+[[suppress]]
+form = "sf.scripting.declare.resultset"
+kind = "negative_neighbour"
+note = "the form without its required RESULTSET"
+reason = "DECLARE r1 ; is the documented untyped variable declaration"
+
+[[suppress]]
+form = "sf.scripting.declare.procedure-returns-table-as"
+kind = "required_operand_missing"
+target = "<col_name> in [ <col_name> <col_data_type> [ , ... ] ]"
+reason = "RETURNS TABLE ( INT ) parses with INT as a column name; Snowflake reports semantic 92225"
+
+[[suppress]]
+form = "sf.scripting.declare.procedure-returns-table-as"
+kind = "required_operand_missing"
+target = "<col_data_type> in [ <col_name> <col_data_type> [ , ... ] ]"
+reason = "RETURNS TABLE ( v1 ) parses; Snowflake reports the missing column type as semantic 92225"
+
+[[suppress]]
+form = "sf.scripting.exception"
+kind = "required_operand_missing"
+target = "<statement> #2"
+reason = "omitting the final handler statement leaves an empty statement after the previous one, which Snowflake accepts"
+
+[[suppress]]
+form = "sf.scripting.let.let-default"
+kind = "required_operand_missing"
+target = "<variable_name>"
+reason = "LET INT DEFAULT 1 ; is the untyped LET form with a variable named INT (accepted)"
+
+[[suppress]]
+form = "sf.scripting.let.let-resultset-default"
+kind = "required_operand_missing"
+target = "<resultset_name>"
+reason = "LET RESULTSET DEFAULT ( SELECT 1 ) ; is the untyped LET form with a variable named RESULTSET (accepted)"
+
+[[suppress]]
+form = "sf.scripting.let.let-resultset-default"
+kind = "negative_neighbour"
+note = "the form without its required RESULTSET"
+reason = "LET r1 DEFAULT ( SELECT 1 ) ; is the documented untyped LET form (accepted)"
