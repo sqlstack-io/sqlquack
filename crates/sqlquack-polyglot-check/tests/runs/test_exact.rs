@@ -21,6 +21,24 @@ fn given_committed_corpora_when_parsed_by_both_parsers_then_results_are_identica
                 rejected: BTreeMap::from([
                     ("malformed_typed_type_text".to_owned(), 2),
                     ("snowflake_bare_values_cte".to_owned(), 1),
+                    ("snowflake_by_name_on_except".to_owned(), 1),
+                    ("snowflake_by_name_on_intersect".to_owned(), 1),
+                    ("snowflake_empty_select_list".to_owned(), 1),
+                    ("snowflake_empty_select_list_before_from".to_owned(), 1),
+                    (
+                        "snowflake_empty_select_list_keyword_qualifier".to_owned(),
+                        1,
+                    ),
+                    ("snowflake_empty_select_list_lower_case".to_owned(), 1),
+                    ("snowflake_empty_select_list_stage_text".to_owned(), 1),
+                    (
+                        "snowflake_empty_select_list_trailing_order_by".to_owned(),
+                        1,
+                    ),
+                    ("snowflake_empty_select_list_trailing_space".to_owned(), 1),
+                    ("snowflake_reserved_distinct_alias".to_owned(), 1),
+                    ("snowflake_reserved_is_alias".to_owned(), 1),
+                    ("snowflake_set_operation_join_side".to_owned(), 1),
                 ]),
                 differences: Vec::new(),
                 tokens_lost: Vec::new(),
@@ -35,7 +53,13 @@ fn given_committed_corpora_when_parsed_by_both_parsers_then_results_are_identica
             entries: load_corpus(&corpora.join("sqlglot.json")),
             expected_outcome: ExactOutcome {
                 loaded: true,
-                rejected: BTreeMap::new(),
+                rejected: BTreeMap::from([
+                    (
+                        "snowflake_empty_select_list_trailing_order_by".to_owned(),
+                        1,
+                    ),
+                    ("snowflake_reserved_window_alias".to_owned(), 1),
+                ]),
                 differences: Vec::new(),
                 tokens_lost: Vec::new(),
                 type_names: Vec::new(),

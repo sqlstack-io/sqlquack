@@ -1,0 +1,16 @@
+# Every diagnostic code ever issued, with the name it was issued under. Append only:
+# a code listed here must stay in the registry under the same name, and is never reused.
+SQ0001 parse_fidelity
+SQ0002 missing_rule
+SQ0003 type_condition
+SQ0004 unresolved_name
+SQ0005 not_expressible
+SQ0006 conversion_budget
+SQ0007 session_parameters
+SQ0101 input_too_large
+SQ0102 token_budget_exceeded
+SQ0103 nesting_depth_exceeded
+SQ0104 parser_depth_exceeded
+SQ0105 ast_depth_exceeded
+SQ0106 ast_budget_exceeded
+SQ0107 function_nesting_depth_exceeded

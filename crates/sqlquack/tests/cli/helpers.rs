@@ -843,3 +843,27 @@ pub(crate) fn convert_outcome(exit_code: i32, printed_sql: bool) -> ConvertOutco
         stderr_mentions: true,
     }
 }
+
+/// The standard output and standard error of `sqlquack convert` on `sql` from standard input.
+pub(crate) fn convert_streams(sql: &str, flags: &[&str]) -> (String, String) {
+    use std::io::Write;
+    let mut child = Command::new(env!("CARGO_BIN_EXE_sqlquack"))
+        .arg("convert")
+        .args(flags)
+        .stdin(std::process::Stdio::piped())
+        .stdout(std::process::Stdio::piped())
+        .stderr(std::process::Stdio::piped())
+        .spawn()
+        .expect("sqlquack runs");
+    child
+        .stdin
+        .take()
+        .expect("standard input")
+        .write_all(sql.as_bytes())
+        .expect("SQL written");
+    let output = child.wait_with_output().expect("sqlquack finishes");
+    (
+        String::from_utf8_lossy(&output.stdout).into_owned(),
+        String::from_utf8_lossy(&output.stderr).into_owned(),
+    )
+}

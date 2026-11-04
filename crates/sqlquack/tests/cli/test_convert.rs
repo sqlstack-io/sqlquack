@@ -1,13 +1,13 @@
 use crate::helpers::{
-    convert_outcome, converted_column_names, converted_first_value, converted_run_error,
-    converted_value_over, override_failure, override_outcome, policy_free_exit_code,
-    python_outcome, python_report, python_rows, run_convert,
+    convert_outcome, convert_streams, converted_column_names, converted_first_value,
+    converted_run_error, converted_value_over, override_failure, override_outcome,
+    policy_free_exit_code, python_outcome, python_report, python_rows, run_convert,
 };
 use crate::test_types::{
-    ColumnNameTestCase, ConvertOutcome, ConvertTestCase, ConvertedRunTestCase,
-    CountedCallsTestCase, CrossingTestCase, DedicatedOverrideTestCase, OverrideFailureTestCase,
-    OverrideTestCase, PolicyFreeTestCase, PythonRefusalTestCase, PythonRunTestCase,
-    RunErrorTestCase, ValueTestCase,
+    ColumnNameTestCase, ConvertDiagnosticTestCase, ConvertOutcome, ConvertTestCase,
+    ConvertedRunTestCase, CountedCallsTestCase, CrossingTestCase, DedicatedOverrideTestCase,
+    OverrideFailureTestCase, OverrideTestCase, PolicyFreeTestCase, PythonRefusalTestCase,
+    PythonRunTestCase, RunErrorTestCase, ValueTestCase,
 };
 use sha2::{Digest, Sha256};
 
@@ -85,10 +85,10 @@ fn given_snowflake_sql_when_converting_then_duckdb_sql_or_named_refusals_are_pri
             expected_outcome: convert_outcome(1, false),
         },
         ConvertTestCase {
-            description: "a refused statement prints no SQL, names the refusal and exits 1",
+            description: "a refused statement prints no SQL, renders the refusal at its place and exits 1",
             sql: QUOTED_ALIAS,
             flags: &[],
-            mention: "refused statement",
+            mention: " --> <stdin>:1:",
             expected_outcome: convert_outcome(1, false),
         },
         ConvertTestCase {
@@ -1218,6 +1218,58 @@ fn given_a_union_of_a_float_variant_and_a_json_decimal_when_running_then_it_rais
         assert!(
             converted_run_error(test_case.sql)
                 .is_some_and(|error| error.contains(test_case.expected_mention)),
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_refused_sql_when_converting_then_text_and_json_carry_the_same_coded_diagnostic() {
+    let test_cases = [
+        ConvertDiagnosticTestCase {
+            description: "a parse failure is rendered at the parser's position with its code",
+            sql: "SELECT a,\n  FROM orders WHERE (b = 1\n",
+            expected_text: "error[SQ0001]: the SQL does not parse\n --> <stdin>:2:26\n  |\n2 |   FROM \
+                orders WHERE (b = 1\n  |                          ^ Expected RParen, got end of input \
+                ('') near [b = 1]\nsqlquack convert: refused, 1 refusal under the built-in default\n",
+            expected_json: ("SQ0001", "parse_fidelity", 2, 26),
+        },
+        ConvertDiagnosticTestCase {
+            description: "an unknown relation is underlined with the fix as help",
+            sql: "SELECT a FROM orders",
+            expected_text: "error[SQ0004]: a name does not resolve\n --> <stdin>:1:15\n  |\n1 | SELECT a \
+                FROM orders\n  |               ^^^^^^ relation `ORDERS` has no known columns\n  |\n  \
+                = help: declare the relation and its columns in the schema (`--schema` on the command \
+                line)\nsqlquack convert: refused, 1 refusal under the built-in default\n",
+            expected_json: ("SQ0004", "unresolved_name", 1, 15),
+        },
+    ];
+    for test_case in test_cases {
+        let (stdout, stderr) = convert_streams(test_case.sql, &["--builtin-policy"]);
+        assert_eq!(stdout, "", "{}", test_case.description);
+        assert_eq!(
+            stderr.trim_start_matches("sqlquack convert: converting…\n"),
+            test_case.expected_text,
+            "{}",
+            test_case.description
+        );
+        let (json, _) = convert_streams(test_case.sql, &["--builtin-policy", "--json"]);
+        let report: serde_json::Value = serde_json::from_str(&json).expect("a JSON report");
+        let refusal = &report["refusals"][0];
+        assert_eq!(
+            (
+                refusal["code"].as_str(),
+                refusal["name"].as_str(),
+                refusal["span"]["line"].as_u64(),
+                refusal["span"]["column"].as_u64(),
+            ),
+            (
+                Some(test_case.expected_json.0),
+                Some(test_case.expected_json.1),
+                Some(test_case.expected_json.2),
+                Some(test_case.expected_json.3),
+            ),
             "{}",
             test_case.description
         );

@@ -38,8 +38,25 @@ $ echo "SELECT 1 AS total" | cargo run --release -p sqlquack -- convert --json
 
 `convert` prints the DuckDB SQL for Snowflake SQL from a file or standard input, and names the known
 divergences and assumptions it relies on on standard error. A refused statement prints its refusals
-instead and exits 1; input holding no statement exits 2. `--session NAME=VALUE` passes the caller's
-Snowflake session parameters (`function` takes it too):
+instead and exits 1; input holding no statement exits 2. Each refusal is a coded diagnostic,
+underlined in the source as rustc does:
+
+```console
+error[SQ0004]: a name does not resolve
+ --> query.sql:1:15
+  |
+1 | SELECT a FROM orders
+  |               ^^^^^^ relation `ORDERS` has no known columns
+  |
+  = help: declare the relation and its columns in the schema (`--schema` on the command line)
+```
+
+With `--json`, each refusal also carries the same diagnostic: `code`, `name`, `alias` (a parser
+guard's former `E_GUARD_*` name), `message`, `span` (character `start` and `end`, one-based `line`,
+`column`, `end_line` and `end_column`), `label`, `notes` and `help`. Codes are `SQ` and four digits,
+listed with an explanation each in `crates/sqlquack-core/src/diagnostics/constants.rs`; a code is
+never reused or renumbered. `--session NAME=VALUE` passes the caller's Snowflake session parameters
+(`function` takes it too):
 
 - Conversion runs under the recorded session profile they match (`utc-v1`, or `utc-qiic-v1` for
   `QUOTED_IDENTIFIERS_IGNORE_CASE = true`) and refuses, naming the parameters, when they match none.

@@ -5,6 +5,11 @@ use std::io::{Read, Write};
 use std::process::ExitCode;
 
 use serde::Serialize;
+use sqlquack_core::diagnostics::constants::SESSION_PARAMETERS;
+use sqlquack_core::diagnostics::main::diagnose::diagnose;
+use sqlquack_core::diagnostics::main::render_diagnostics::render_diagnostics;
+use sqlquack_core::diagnostics::main::unplaced_diagnostic::unplaced_diagnostic;
+use sqlquack_core::diagnostics::models::Diagnostic;
 use sqlquack_core::parsing::models::SourceDialect;
 use sqlquack_core::provenance::main::merge_provenance::merge_provenance;
 use sqlquack_core::refusals::models::Refusal;
@@ -28,6 +33,8 @@ use crate::cli::models::ConvertArguments;
 
 /// The path naming standard input.
 const STDIN_PATH: &str = "-";
+/// How diagnostics name standard input.
+const STDIN_NAME: &str = "<stdin>";
 
 /// What `convert --json` prints.
 #[derive(Serialize)]
@@ -61,7 +68,7 @@ struct OverrideListing {
     sha256: String,
 }
 
-/// One refusal as `convert --json` prints it.
+/// One refusal as `convert --json` prints it: the original fields, then its diagnostic's.
 #[derive(Serialize)]
 struct ConvertRefusal {
     category: String,
@@ -69,6 +76,8 @@ struct ConvertRefusal {
     line: Option<usize>,
     column: Option<usize>,
     reason: String,
+    #[serde(flatten)]
+    diagnostic: Option<Diagnostic>,
 }
 
 pub(crate) fn convert_command(
@@ -77,13 +86,16 @@ pub(crate) fn convert_command(
     stderr: &mut dyn Write,
 ) -> ExitCode {
     let _ = writeln!(stderr, "sqlquack convert: converting…");
-    let report = match converted(arguments) {
+    let report = match read_sql(arguments)
+        .and_then(|sql| converted(arguments, &sql).map(|report| (report, sql)))
+    {
         Ok(report) => report,
         Err(error) => {
             let _ = writeln!(stderr, "sqlquack convert: failed: {error}");
             return ExitCode::from(2);
         }
     };
+    let (report, sql) = report;
     let rendered = match arguments.json {
         true => serde_json::to_string_pretty(&report).unwrap_or_default() + "\n",
         false if report.converted => {
@@ -114,16 +126,17 @@ pub(crate) fn convert_command(
             constructs.join(", ")
         );
     }
-    for refusal in &report.refusals {
-        let at = match (refusal.line, refusal.column) {
-            (Some(line), Some(column)) => format!(" at {line}:{column}"),
-            _ => String::new(),
+    let diagnostics: Vec<Diagnostic> = report
+        .refusals
+        .iter()
+        .filter_map(|refusal| refusal.diagnostic.clone())
+        .collect();
+    if !diagnostics.is_empty() {
+        let path = match arguments.path.as_deref() {
+            Some(path) if path.as_os_str() != STDIN_PATH => path.display().to_string(),
+            _ => STDIN_NAME.to_owned(),
         };
-        let _ = writeln!(
-            stderr,
-            "sqlquack convert: refused {}{at} ({}): {}",
-            refusal.construct, refusal.category, refusal.reason
-        );
+        let _ = write!(stderr, "{}", render_diagnostics(&diagnostics, &sql, &path));
     }
     match report.converted {
         true => {
@@ -139,18 +152,21 @@ pub(crate) fn convert_command(
                 true => "no matching session profile".to_owned(),
                 false => report.profile.clone(),
             };
+            let count = report.refusals.len();
+            let noun = match count {
+                1 => "refusal",
+                _ => "refusals",
+            };
             let _ = writeln!(
                 stderr,
-                "sqlquack convert: refused, {} refusals under {profile}",
-                report.refusals.len()
+                "sqlquack convert: refused, {count} {noun} under {profile}"
             );
             ExitCode::FAILURE
         }
     }
 }
 
-fn converted(arguments: &ConvertArguments) -> Result<ConvertReport, String> {
-    let sql = read_sql(arguments)?;
+fn converted(arguments: &ConvertArguments, sql: &str) -> Result<ConvertReport, String> {
     let schema = arguments
         .schema
         .as_deref()
@@ -175,6 +191,7 @@ fn converted(arguments: &ConvertArguments) -> Result<ConvertReport, String> {
                     construct: "statement".to_owned(),
                     line: None,
                     column: None,
+                    diagnostic: unplaced_diagnostic(SESSION_PARAMETERS, reason.clone()),
                     reason,
                 }],
                 divergences: BTreeMap::new(),
@@ -202,7 +219,7 @@ fn converted(arguments: &ConvertArguments) -> Result<ConvertReport, String> {
         ),
     )?;
     let analysis = analyze(
-        &sql,
+        sql,
         SourceDialect::Snowflake,
         &builtin_catalogue(),
         (&schema, &options),
@@ -247,7 +264,12 @@ fn converted(arguments: &ConvertArguments) -> Result<ConvertReport, String> {
                 .join(";\n"),
             false => String::new(),
         },
-        refusals: analysis.refusals.iter().map(convert_refusal).collect(),
+        refusals: analysis
+            .refusals
+            .iter()
+            .zip(diagnose(&analysis.refusals, sql))
+            .map(convert_refusal)
+            .collect(),
         python_functions: python_functions(&provenance.divergences, &schema)?,
         macros: override_macros(&provenance.divergences, &options),
         overrides: override_listings(&options),
@@ -256,9 +278,10 @@ fn converted(arguments: &ConvertArguments) -> Result<ConvertReport, String> {
     })
 }
 
-/// A refusal as `convert` reports it.
-fn convert_refusal(refusal: &Refusal) -> ConvertRefusal {
+/// A refusal as `convert` reports it, with its diagnostic.
+fn convert_refusal((refusal, diagnostic): (&Refusal, Diagnostic)) -> ConvertRefusal {
     ConvertRefusal {
+        diagnostic: Some(diagnostic),
         category: refusal.category.label().to_owned(),
         construct: refused_construct(refusal),
         line: refusal.location.map(|location| location.line),
