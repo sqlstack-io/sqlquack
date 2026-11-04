@@ -1,7 +1,6 @@
 //! `analyze_function`: a SQL project function's body as a DuckDB macro body, or its refusals.
 
 use sqlquack_core::classification::main::classify::classify;
-use sqlquack_core::parsing::main::node_location::node_location;
 use sqlquack_core::parsing::main::parse_source::parse_source;
 use sqlquack_core::parsing::models::{SourceDialect, SourceLines};
 use sqlquack_core::provenance::models::ProvenanceLog;
@@ -15,6 +14,7 @@ use sqlquack_semantics::types::models::{FunctionReturns, FunctionSpec, Schema};
 use sqlquack_snowflake::typing::models::SnowflakeType;
 
 use crate::analysis::_helpers::declared_refusals::declared_refusals;
+use crate::analysis::_helpers::placed::placed;
 use crate::analysis::constants::SCALAR_RESULT_COLUMN;
 
 /// Converts `body` as `spec` declares it; a NUMBER scalar's body must be of the declared type.
@@ -62,10 +62,5 @@ pub fn analyze_function(
         (schema, options, &lines),
         ProvenanceLog::default(),
     )
-    .map_err(|mut refusal| {
-        if refusal.location.is_none() {
-            refusal.location = node_location(statement, &lines);
-        }
-        vec![refusal]
-    })
+    .map_err(|refusal| vec![placed(refusal, statement, &lines)])
 }
