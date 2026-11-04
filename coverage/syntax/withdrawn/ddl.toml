@@ -272,6 +272,24 @@ valid_as = "sf.ddl.alter-materialized-view.rename-to-cluster-by alternative { RE
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
+form = "sf.ddl.alter-materialized-view.set-data-metric-schedule"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required MATERIALIZED"
+sql = "ALTER VIEW v1 SET DATA_METRIC_SCHEDULE = '1 MINUTE' ;"
+valid_as = "sf.ddl.alter-view.datametricfunctionaction positive the documented form with every required part and no optional part"
+reason = "the rejection renders SQL the documented grammar also accepts"
+
+[[withdrawn]]
+form = "sf.ddl.alter-materialized-view.unset-data-metric-schedule"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required MATERIALIZED"
+sql = "ALTER VIEW v1 UNSET DATA_METRIC_SCHEDULE ;"
+valid_as = "sf.ddl.alter-view.datametricfunctionaction alternative { SET DATA_METRIC_SCHEDULE = { '<num> MINUTE' | 'USING CRON <expr> <time_zone>' | 'TRIGGER… → UNSET DATA_METRIC_SCHEDULE"
+reason = "the rejection renders SQL the documented grammar also accepts"
+
+[[withdrawn]]
 form = "sf.ddl.alter-pipe.refresh"
 kind = "negative_neighbour"
 target = ""

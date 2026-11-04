@@ -19013,3 +19013,15 @@ kind = "negative_neighbour"
 target = ""
 note = "the form without its required DATABASE"
 reason = "with DEFINE names qualified for DCM (errno 1540), dropping DATABASE gives DEFINE ROLE d1.v1; unqualified it is the documented DEFINE ROLE v1, and whether a database-qualified role name fails in the parser or in name checks is not documented (D97)"
+
+[[reading]]
+form = "sf.ddl.alter-materialized-view.set-data-metric-schedule"
+grammar_sha256 = "3a31c2796c65ffd32ad10eb43f6c991cbb44e07829929e6cf52f6b6df59d25ac"
+grammar = ["ALTER MATERIALIZED VIEW <name> SET DATA_METRIC_SCHEDULE = { '<num> MINUTE' | 'USING CRON <expr> <time_zone>' }"]
+reason = "the page's block names no view, unlike the page's first block `ALTER MATERIALIZED VIEW <name> { ... }`; executing the block as written fails with errno 926 'MATERIALIZED_VIEW identifier cannot be empty' (sweep 510fb2fd), so the reading names the view as the first block does"
+
+[[reading]]
+form = "sf.ddl.alter-materialized-view.unset-data-metric-schedule"
+grammar_sha256 = "cafb1fb3ebdfe0539e2cd3b28316d1c61aa3c9c6e1792c4339386d551a541009"
+grammar = ["ALTER MATERIALIZED VIEW <name> UNSET DATA_METRIC_SCHEDULE"]
+reason = "the page's block names no view, unlike the page's first block `ALTER MATERIALIZED VIEW <name> { ... }`; executing the block as written fails with errno 926 'MATERIALIZED_VIEW identifier cannot be empty' (sweep 510fb2fd), so the reading names the view as the first block does"

@@ -46559,6 +46559,27 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
+id = "sf.ddl.alter-materialized-view.set-data-metric-schedule.o009"
+kind = "required_operand_missing"
+required = true
+target = "<name>"
+note = "omit <name>"
+
+[[obligation]]
+id = "sf.ddl.alter-materialized-view.set-data-metric-schedule.o010"
+kind = "operand_type_class"
+required = true
+target = "<name>"
+note = "a valid identifier"
+
+[[obligation]]
+id = "sf.ddl.alter-materialized-view.set-data-metric-schedule.o011"
+kind = "negative_neighbour"
+required = true
+target = "<name>"
+note = "a string literal in place of <name>"
+
+[[obligation]]
 id = "sf.ddl.alter-materialized-view.set-data-metric-schedule.o002"
 kind = "alternative"
 required = true
@@ -46569,12 +46590,6 @@ id = "sf.ddl.alter-materialized-view.set-data-metric-schedule.o003"
 kind = "alternative"
 required = true
 target = "{ '<num> MINUTE' | 'USING CRON <expr> <time_zone>' } → 'USING CRON <expr> <time_zone>'"
-
-[[obligation]]
-id = "sf.ddl.alter-materialized-view.set-data-metric-schedule.o004"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required MATERIALIZED"
 
 [[obligation]]
 id = "sf.ddl.alter-materialized-view.set-data-metric-schedule.o005"
@@ -46601,16 +46616,47 @@ required = true
 note = "the form without its required { '<num> MINUTE' | 'USING CRON <expr> <time_zone>' }"
 
 [[obligation]]
+id = "sf.ddl.alter-materialized-view.set-data-metric-schedule.o012"
+kind = "identifier_class"
+required = true
+target = "<name>"
+anchor = "doc.identifiers-syntax"
+note = "quoted: a double-quoted identifier with blanks and mixed case"
+
+[[obligation]]
+id = "sf.ddl.alter-materialized-view.set-data-metric-schedule.o013"
+kind = "identifier_class"
+required = true
+target = "<name>"
+anchor = "doc.identifiers-syntax"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
 id = "sf.ddl.alter-materialized-view.unset-data-metric-schedule.o001"
 kind = "positive"
 required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "sf.ddl.alter-materialized-view.unset-data-metric-schedule.o002"
+id = "sf.ddl.alter-materialized-view.unset-data-metric-schedule.o006"
+kind = "required_operand_missing"
+required = true
+target = "<name>"
+note = "omit <name>"
+
+[[obligation]]
+id = "sf.ddl.alter-materialized-view.unset-data-metric-schedule.o007"
+kind = "operand_type_class"
+required = true
+target = "<name>"
+note = "a valid identifier"
+
+[[obligation]]
+id = "sf.ddl.alter-materialized-view.unset-data-metric-schedule.o008"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required MATERIALIZED"
+target = "<name>"
+note = "a string literal in place of <name>"
 
 [[obligation]]
 id = "sf.ddl.alter-materialized-view.unset-data-metric-schedule.o003"
@@ -46629,6 +46675,22 @@ id = "sf.ddl.alter-materialized-view.unset-data-metric-schedule.o005"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required DATA_METRIC_SCHEDULE"
+
+[[obligation]]
+id = "sf.ddl.alter-materialized-view.unset-data-metric-schedule.o009"
+kind = "identifier_class"
+required = true
+target = "<name>"
+anchor = "doc.identifiers-syntax"
+note = "quoted: a double-quoted identifier with blanks and mixed case"
+
+[[obligation]]
+id = "sf.ddl.alter-materialized-view.unset-data-metric-schedule.o010"
+kind = "identifier_class"
+required = true
+target = "<name>"
+anchor = "doc.identifiers-syntax"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
 id = "sf.ddl.alter-model-add-version.internalstage.o001"
