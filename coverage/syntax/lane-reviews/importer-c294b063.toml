@@ -1,0 +1,38 @@
+# Lane C review of lane A's receipt importer: the D120 account state on Cortex/AI receipts.
+# Bound to the reviewed commit and the Git tree of scripts/syntax_receipts at that commit.
+
+[review]
+subject = "importer"
+reviewer_lane = "C"
+branch = "wip/syntax-evidence"
+commit = "c294b06363f99d17e51d1b4a1df537f78c41f316"
+importer_tree = "49f8d32ef00f759ee31c8c0340496ea108625ca8"
+reviewed_utc = "2026-11-04T17:52:00Z"
+verdict = "changes_requested"
+not_reviewed = "the D120 ruling itself and the sa-01 timeline behind the 17:10:12Z boundary, which come from lane A's report and the coordinator"
+
+[[open]]
+finding = "evidence e5b65ef2 no longer validates: the receipt format is closed, and main's checker (3b3e62d7, formats unchanged at 1e4ea229) refuses the 29 import-63 receipts that carry account_state (unknown field `account_state`, FAILED with 29 problems)"
+severity = "blocker"
+fix = "the checker owner admits account_state as an optional object of parameter -> {value, basis} before receipts carrying it are pushed, or the importer leaves it out until then"
+
+[[open]]
+finding = "CORTEX_CALL matches the core string function TRANSLATE(subject, from, to), so under D120 a parser disagreement on plain TRANSLATE would be routed as an account-state difference; it also matches inside string and dollar-quoted bodies, and it flags SNOWFLAKE.CORTEX.SPLIT_TEXT_RECURSIVE_CHARACTER, which uses no model"
+severity = "medium"
+fix = "match TRANSLATE only qualified as SNOWFLAKE.CORTEX.TRANSLATE, search the SQL with literal bodies blanked, and add plain TRANSLATE as a negative test"
+
+[[open]]
+finding = "a recorded_at without a UTC offset parses to a naive datetime, and comparing it with the aware boundary raises TypeError, which the ValueError handler does not catch"
+severity = "low"
+fix = "treat a naive recorded_at as having no recorded_at, or catch TypeError; every current receipt (42,966 at e5b65ef2) carries +00:00, so none is affected today"
+
+[[agreed]]
+point = "receipt() gets the case SQL from all four run kinds (canonical, ddl, diagnostic, packet), and the receipt is unchanged when the SQL is not a Cortex/AI call"
+
+[[agreed]]
+point = "errno 1173 (Expected non-empty set of columns supporting full-text search) is semantic_error: a check on resolved column types after parsing"
+
+[method]
+tests = "tests/unit/scripts/syntax_receipts at c294b063: 85 pass"
+probe = "CORTEX_CALL at c294b063 against: TRANSLATE('abc','a','b') True; SNOWFLAKE.CORTEX.TRANSLATE(...) True; AI_COMPLETE(v1,v1) True; EXTRACT(DAY FROM d) False; complete_orders(1) False; a string body 'AI_X(1)' True"
+binding = "main checker 3b3e62d7 validate over catalogue dbb2c848 plus every receipt at e5b65ef2: 29 problems, each `unknown field account_state` in import-20261104-63; all 29 such receipts carry CORTEX_MODELS_ALLOWLIST NONE and phase syntax_error (1003, 23) or semantic_error (904, 6)"
