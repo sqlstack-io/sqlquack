@@ -56,7 +56,10 @@ pub(crate) fn load_census(
 /// A name as the census writes it, as Snowflake resolves it: a quoted name keeps its case, an
 /// unquoted one is upper-cased.
 fn resolved(name: &str) -> String {
-    match name.strip_prefix('"').and_then(|rest| rest.strip_suffix('"')) {
+    match name
+        .strip_prefix('"')
+        .and_then(|rest| rest.strip_suffix('"'))
+    {
         Some(quoted) => quoted.replace("\"\"", "\""),
         None => name.to_uppercase(),
     }
