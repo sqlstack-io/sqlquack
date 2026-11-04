@@ -640,6 +640,9 @@ impl Parser {
                         span: SourceSpan::default(),
                     }))
                 } else if self.check(TokenType::RParen) {
+                    if self.config.dialect == Some(crate::tokens::models::DialectType::Snowflake) {
+                        return Err(self.parse_error("Expected a value list after IN"));
+                    }
                     self.skip();
                     Expression::In(Box::new(In {
                         this: left,
@@ -797,6 +800,9 @@ impl Parser {
                         span: SourceSpan::default(),
                     }))
                 } else if self.check(TokenType::RParen) {
+                    if self.config.dialect == Some(crate::tokens::models::DialectType::Snowflake) {
+                        return Err(self.parse_error("Expected a value list after IN"));
+                    }
                     self.skip();
                     Expression::In(Box::new(In {
                         this: left,

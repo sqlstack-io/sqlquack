@@ -514,10 +514,19 @@ impl<'a, C: TokenizerCursor, T: TokenOutput> TokenizerState<'a, C, T> {
 
         let content = self.text_from_range(start, self.current);
 
-        if !self.is_at_end() {
-            self.advance();
-            self.advance();
+        if self.is_at_end() {
+            return Err(Error::tokenize(
+                "Unterminated dollar-quoted string",
+                Span {
+                    start: self.start,
+                    end: self.current,
+                    line: self.line,
+                    column: self.column,
+                },
+            ));
         }
+        self.advance();
+        self.advance();
 
         self.add_token_with_text(TokenType::DollarString, content);
         Ok(())

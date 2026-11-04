@@ -1070,6 +1070,11 @@ impl Parser {
             }))
         };
 
+        if self.check(TokenType::String)
+            && self.config.dialect == Some(crate::tokens::models::DialectType::Snowflake)
+        {
+            return Err(self.parse_error("Snowflake does not join adjacent string literals"));
+        }
         if self.check(TokenType::String) {
             let mut expressions = vec![first_literal];
             while self.check(TokenType::String) {

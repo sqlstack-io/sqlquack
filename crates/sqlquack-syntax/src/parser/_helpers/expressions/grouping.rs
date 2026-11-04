@@ -1602,6 +1602,12 @@ impl Parser {
                     let expr = self.try_clickhouse_func_arg_alias(expr);
                     args.push(expr);
                 }
+                Ok(None)
+                    if self.config.dialect
+                        == Some(crate::tokens::models::DialectType::Snowflake) =>
+                {
+                    return Err(self.parse_error("Expected an argument after the comma"));
+                }
                 Ok(None) => break,
                 Err(e) => return Err(e),
             }

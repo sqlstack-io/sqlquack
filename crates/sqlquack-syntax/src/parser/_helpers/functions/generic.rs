@@ -912,6 +912,11 @@ impl Parser {
             } else if self.match_token(TokenType::Dot) {
                 expr = self.parse_subscript_dot_access(expr)?;
             } else if self.match_token(TokenType::Collate) {
+                if self.config.dialect == Some(crate::tokens::models::DialectType::Snowflake)
+                    && !self.check(TokenType::String)
+                {
+                    return Err(self.parse_error("Expected a collation specification string"));
+                }
                 let (collation, quoted, double_quoted) = if self.check(TokenType::String) {
                     (self.advance_text()?, true, false)
                 } else if self.check(TokenType::QuotedIdentifier) {
@@ -1115,6 +1120,11 @@ impl Parser {
     }
 
     fn parse_subscript_index_or_slice(&mut self, mut expr: Expression) -> Result<Expression> {
+        if self.config.dialect == Some(crate::tokens::models::DialectType::Snowflake)
+            && self.check(TokenType::RBracket)
+        {
+            return Err(self.parse_error("Expected an index in the brackets"));
+        }
         if self.check(TokenType::Colon) {
             self.skip();
             let end = self.parse_slice_element()?;
@@ -1167,6 +1177,11 @@ impl Parser {
     }
 
     fn parse_subscript_dot_access(&mut self, mut expr: Expression) -> Result<Expression> {
+        if self.config.dialect == Some(crate::tokens::models::DialectType::Snowflake)
+            && matches!(&expr, Expression::Literal(_))
+        {
+            return Err(self.parse_error("A literal has no fields to read with a dot"));
+        }
         if self.match_token(TokenType::Star) {
             let mut table_name = match &expr {
                 Expression::Column(col) => {

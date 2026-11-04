@@ -294,7 +294,35 @@ impl Parser {
         }
 
         enforce_ast(&statements, &self.config.complexity_guard)?;
+        if self.config.dialect == Some(crate::tokens::models::DialectType::Snowflake) {
+            self.reject_snowflake_name_wrappers(&statements)?;
+        }
         Ok(statements)
+    }
+
+    /// Snowflake's TABLE( ) and IDENTIFIER( ) need an argument other than a bare column name.
+    fn reject_snowflake_name_wrappers(&self, statements: &[Expression]) -> Result<()> {
+        use crate::traversal::types::ExpressionWalk;
+        let wrapper = |node: &Expression| {
+            matches!(node, Expression::Function(function)
+            if (function.name.eq_ignore_ascii_case("TABLE")
+                || function.name.eq_ignore_ascii_case("IDENTIFIER"))
+                && match function.args.as_slice() {
+                    [] => true,
+                    [Expression::Column(_)] => true,
+                    _ => false,
+                })
+        };
+        match statements
+            .iter()
+            .find_map(|statement| statement.find(wrapper))
+        {
+            Some(Expression::Function(function)) => Err(self.parse_error(format!(
+                "{} needs a string, a variable or a call",
+                function.name.to_ascii_uppercase()
+            ))),
+            _ => Ok(()),
+        }
     }
 
     /// Parses a standalone data type when the first token can start one, and `None` otherwise.
@@ -1248,6 +1276,31 @@ impl Parser {
                     expressions: target_expressions,
                 })
             }
+        } else if self.config.dialect == Some(crate::tokens::models::DialectType::Snowflake)
+            && self.check(TokenType::Into)
+            && self.check_next(TokenType::Colon)
+        {
+            self.skip();
+            let mut target_expressions = vec![self.parse_primary()?];
+            while self.match_token(TokenType::Comma) {
+                target_expressions.push(self.parse_primary()?);
+            }
+            Some(match target_expressions.len() {
+                1 => SelectInto {
+                    this: target_expressions.remove(0),
+                    temporary: false,
+                    unlogged: false,
+                    bulk_collect: false,
+                    expressions: Vec::new(),
+                },
+                _ => SelectInto {
+                    this: Expression::Null(Null),
+                    temporary: false,
+                    unlogged: false,
+                    bulk_collect: false,
+                    expressions: target_expressions,
+                },
+            })
         } else if self.match_token(TokenType::Into) {
             let temporary = self.match_token(TokenType::Temporary) || self.match_identifier("TEMP");
             let unlogged = !temporary && self.match_identifier("UNLOGGED");
