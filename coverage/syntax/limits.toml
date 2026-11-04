@@ -1563,7 +1563,8 @@ open = "(1),(1),(1),(1),(1),"
 core = "(1)"
 outer_close = ") ;"
 context = "raw"
-expect = "reject"
+expect = "accept"
+stage = "semantic"
 
 [[limit]]
 form = "sf.query.sample"

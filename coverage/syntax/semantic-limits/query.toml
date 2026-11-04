@@ -1,0 +1,18 @@
+# Documented limits that Snowflake enforces only after parsing, or not at all (decision D85).
+# Each obligation named here is an accept obligation in obligations/<family>.toml: the parser must
+# not reject the input. This list is reported as a separate semantic measure and never counts
+# towards the syntax numerator or denominator. Fields as in semantic-limits/scripting.toml.
+
+[[semantic_limit]]
+obligation = "sf.query.values.o038"
+form = "sf.query.values"
+anchor = "doc.constructs.values / Syntax"
+rule = "The VALUES clause is limited to 200,000 rows."
+input = "200,001 rows of (1)"
+documented = "reject"
+observed = "semantic_error"
+errno = 1795
+agrees = true
+receipts = [
+  { case_id = "sf.query.values.k536feaba01a5", run_id = "d91-query-2-20261104T022942Z", receipt_sha256 = "15a7a728d01d8b6995282559f02211f853107f68e88287857c9445637c3c5e1c" },
+]
