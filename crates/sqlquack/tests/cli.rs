@@ -1,5 +1,7 @@
 #[path = "cli/helpers.rs"]
 mod helpers;
+#[path = "cli/test_check.rs"]
+mod test_check;
 #[path = "cli/test_convert.rs"]
 mod test_convert;
 #[path = "cli/test_coverage.rs"]

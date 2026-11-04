@@ -1,8 +1,11 @@
 //! Command-line arguments.
 
+use std::collections::BTreeMap;
 use std::path::PathBuf;
 
 use clap::{Args, Parser, Subcommand, ValueEnum};
+use serde::Serialize;
+use sqlquack_core::diagnostics::models::Diagnostic;
 
 use sqlquack_evidence::constants::{
     AUDIT_PENDING_DIR, AUDIT_RESULTS_DIR, CASES_DIR, PENDING_DIR, RESULTS_DIR,
@@ -10,6 +13,7 @@ use sqlquack_evidence::constants::{
 use sqlquack_evidence::coverage::constants::{DOMAINS_DIR, HAZARDS_FILE};
 use sqlquack_policy::policy::constants::POLICY_FILE_NAME;
 
+use crate::analysis::models::PythonSignature;
 use crate::census::constants::DEFAULT_TEXT_LIMIT;
 use crate::census::models::CursorType;
 use crate::cli::constants::EXIT_STATUS_HELP;
@@ -42,6 +46,18 @@ pub enum Command {
     Function(FunctionArguments),
     /// Convert Snowflake SQL from a file or standard input into DuckDB SQL, or refuse it.
     Convert(ConvertArguments),
+    /// Check that Snowflake SQL parses and holds nothing Snowflake rejects, without converting it.
+    Check(CheckArguments),
+}
+
+/// Arguments of `sqlquack check`.
+#[derive(Debug, Args)]
+pub struct CheckArguments {
+    /// The SQL file; standard input when absent or `-`.
+    pub path: Option<PathBuf>,
+    /// How to print the report on standard output.
+    #[command(flatten)]
+    pub output: OutputArguments,
 }
 
 /// Arguments of `sqlquack convert`.
@@ -312,4 +328,67 @@ impl OutputArguments {
     pub fn json(&self) -> bool {
         self.json || self.format == OutputFormat::Json
     }
+}
+
+/// What `convert --json` prints.
+#[derive(Clone, Debug, Serialize)]
+pub struct ConvertReport {
+    /// Whether every statement converted.
+    pub converted: bool,
+    /// The session profile conversion ran under.
+    pub profile: String,
+    /// The DuckDB SQL, one statement after another; empty when refused.
+    pub sql: String,
+    /// Each refusal.
+    pub refusals: Vec<ConvertRefusal>,
+    /// Known divergences relied on, with the constructs relying on each.
+    pub divergences: BTreeMap<String, Vec<String>>,
+    /// Of those, the named assumptions.
+    pub assumptions: Vec<String>,
+    /// What the session parameters changed about conversion.
+    pub notes: Vec<String>,
+    /// The Python functions the SQL calls, which the caller registers before running it.
+    pub python_functions: Vec<PythonSignature>,
+    /// The macros of the user overrides the SQL calls, which the caller runs before it.
+    pub macros: Vec<String>,
+    /// Every user override loaded: its name, the function it replaces and its body's hash.
+    pub overrides: Vec<OverrideListing>,
+}
+
+/// A user override loaded for conversion.
+#[derive(Clone, Debug, Serialize)]
+pub struct OverrideListing {
+    /// The override's name.
+    pub name: String,
+    /// The function it replaces.
+    pub replaces: String,
+    /// The hash of its body.
+    pub sha256: String,
+}
+
+/// One refusal as `convert --json` prints it: the original fields, then its diagnostic's.
+#[derive(Clone, Debug, Serialize)]
+pub struct ConvertRefusal {
+    /// The refusal category, as reports name it.
+    pub category: String,
+    /// The refused construct, or `statement`.
+    pub construct: String,
+    /// The one-based line of the refusal, when placed.
+    pub line: Option<usize>,
+    /// The one-based column of the refusal, when placed.
+    pub column: Option<usize>,
+    /// Why it is refused.
+    pub reason: String,
+    /// The refusal's diagnostic, flattened into it.
+    #[serde(flatten)]
+    pub diagnostic: Option<Diagnostic>,
+}
+
+/// What `check --json` prints.
+#[derive(Clone, Debug, Serialize)]
+pub struct CheckReport {
+    /// Whether the SQL holds no problem.
+    pub ok: bool,
+    /// Each problem found.
+    pub diagnostics: Vec<Diagnostic>,
 }

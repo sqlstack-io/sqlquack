@@ -29,6 +29,18 @@ Converted SQL is proven only where both sessions run in UTC: Snowflake's `TIMEZO
 `session_timezone_utc` assumption; strict mode refuses them unless you confirm a UTC session with
 `--utc-session`.
 
+## Check
+
+```console
+$ cargo run --release -p sqlquack -- check query.sql
+$ echo "SELECT 1 QUALIFY TRUE" | cargo run --release -p sqlquack -- check --json
+```
+
+`check` parses Snowflake SQL and reports what Snowflake would reject, without a schema or a
+conversion. It prints coded diagnostics on standard error, and `--json` prints
+`{"ok": …, "diagnostics": [...]}`. It exits 0 when it finds nothing, 1 when it finds a problem and
+2 for input without SQL.
+
 ## Convert
 
 ```console
@@ -134,6 +146,22 @@ Snowflake typing functions it called. `sqlquack index` inverts those records: bu
 rules → cases and files, and rule → cases and files, with refused constructs listed the same way.
 Every list is sorted, so the output of two revisions can be diffed to see which cases a change to
 one building block affects.
+
+## Python
+
+```python
+import sqlquack
+
+sqlquack.check(sql="SELECT 1 QUALIFY TRUE").diagnostics[0].code  # "SQ0203"
+result = sqlquack.convert(
+    sql="SELECT 1 AS total", options=sqlquack.ConvertOptions(builtin_policy=True)
+)
+```
+
+The `sqlquack` package (in `python/`, built with `make python-wheel`) runs the same code as the
+command line. `check` and `convert` return frozen results with typed `Diagnostic`s, the text the
+command line renders, and, for `convert`, its exact `--json` report. `ConvertOptions` has one field
+per `convert` flag. Where the command line exits 2, they raise `SqlQuackError`.
 
 ## Evidence
 
