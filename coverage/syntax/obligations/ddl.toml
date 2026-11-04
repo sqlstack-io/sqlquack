@@ -273580,16 +273580,17 @@ target = "'<pattern>' in [ LIKE '<pattern>' ]"
 note = "an unquoted identifier in place of '<pattern>'"
 
 [[obligation]]
-id = "sf.ddl.show-external-volumes.o007"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required EXTERNAL"
-
-[[obligation]]
 id = "sf.ddl.show-external-volumes.o008"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required VOLUMES"
+
+[[obligation]]
+id = "sf.ddl.show-external-volumes.o009"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.show-external-volumes / Syntax"
+note = "the form without its required EXTERNAL, observed"
 
 [[obligation]]
 id = "sf.ddl.show-file-formats.o001"
@@ -284743,13 +284744,6 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "sf.ddl.show-service-containers-in-service.o002"
-kind = "required_operand_missing"
-required = true
-target = "<name>"
-note = "omit <name>"
-
-[[obligation]]
 id = "sf.ddl.show-service-containers-in-service.o003"
 kind = "operand_type_class"
 required = true
@@ -284798,17 +284792,18 @@ anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
+id = "sf.ddl.show-service-containers-in-service.o010"
+kind = "required_operand_missing"
+required = true
+target = "<name>"
+anchor = "doc.sql.show-service-containers-in-service / Syntax"
+note = "omit <name>, observed"
+
+[[obligation]]
 id = "sf.ddl.show-service-instances-in-service.o001"
 kind = "positive"
 required = true
 note = "the documented form with every required part and no optional part"
-
-[[obligation]]
-id = "sf.ddl.show-service-instances-in-service.o002"
-kind = "required_operand_missing"
-required = true
-target = "<name>"
-note = "omit <name>"
 
 [[obligation]]
 id = "sf.ddl.show-service-instances-in-service.o003"
@@ -284857,6 +284852,14 @@ required = true
 target = "<name>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.ddl.show-service-instances-in-service.o010"
+kind = "required_operand_missing"
+required = true
+target = "<name>"
+anchor = "doc.sql.show-service-instances-in-service / Syntax"
+note = "omit <name>, observed"
 
 [[obligation]]
 id = "sf.ddl.show-service-volumes-in-service.o001"

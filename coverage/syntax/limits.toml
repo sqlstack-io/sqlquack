@@ -13016,6 +13016,55 @@ sql = "DEFINE TABLE d1.s1.v1 ( v1 INT COLLATE m1 ) ;"
 expect = "observe"
 context = "raw"
 
+[[suppress]]
+form = "sf.ddl.show-external-volumes"
+kind = "negative_neighbour"
+note = "the form without its required EXTERNAL"
+reason = "D97: Snowflake parses SHOW VOLUMES and refuses it on privileges, errno 3001 'Insufficient privileges to operate on account' (import-20261104-32), so the omission is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.ddl.show-external-volumes"
+kind = "negative_neighbour"
+note = "the form without its required EXTERNAL, observed"
+anchor = "doc.sql.show-external-volumes / Syntax"
+sql = "SHOW VOLUMES ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.show-service-containers-in-service"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>"
+reason = "D97: Snowflake answers the form without <name> with errno 4 'Unsupported feature … use … <service_name> instead' (import-20261104-33), a name check rather than a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.ddl.show-service-containers-in-service"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>, observed"
+anchor = "doc.sql.show-service-containers-in-service / Syntax"
+sql = "SHOW SERVICE CONTAINERS IN SERVICE ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.show-service-instances-in-service"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>"
+reason = "D97: Snowflake answers the form without <name> with errno 4 'Unsupported feature … use … <service_name> instead' (import-20261104-33), a name check rather than a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.ddl.show-service-instances-in-service"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>, observed"
+anchor = "doc.sql.show-service-instances-in-service / Syntax"
+sql = "SHOW SERVICE INSTANCES IN SERVICE ;"
+expect = "observe"
+context = "raw"
+
 # ddl: base-form suppress and limit rows inherited by the D104 prose forms, with the statement head rewritten.
 
 [[limit]]
