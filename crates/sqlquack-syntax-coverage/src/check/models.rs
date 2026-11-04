@@ -128,6 +128,8 @@ pub struct FormResult {
     pub satisfied_obligations: usize,
     /// SHA-256 over the form's cases, sorted by case id: what a review's `fingerprints` binds.
     pub fingerprint: String,
+    /// SHA-256 of the form's catalogue entry and its own obligations: what `definitions` binds.
+    pub definition_sha256: String,
     pub obligations: Vec<ObligationResult>,
 }
 
