@@ -15,7 +15,7 @@ use crate::formats::constants::{
 use crate::formats::main::obligation_form::obligation_form;
 use crate::formats::models::{
     Alias, Case, Definition, Exclusion, Form, FormKind, FormStatus, Index, Obligation,
-    ObligationKind, Receipt, Review, Source, SourceStatus,
+    ObligationKind, Phase, Receipt, Review, Source, SourceStatus,
 };
 
 fn blank(text: &str) -> bool {
@@ -309,7 +309,19 @@ pub(crate) fn check_receipt(receipt: &Receipt) -> Vec<String> {
             "receipt {id}: run, version, outcome and phase basis are required"
         ));
     }
-    let text: [Option<&String>; 8] = [
+    let categorized: bool = match (&receipt.reason_category, &receipt.reason_category_basis) {
+        (None, None) => true,
+        (Some(_), Some(basis)) => {
+            !blank(basis) && !matches!(receipt.phase, Phase::Accepted | Phase::SyntaxError)
+        }
+        _ => false,
+    };
+    if !categorized {
+        problems.push(format!(
+            "receipt {id}: a reason category needs its basis and a phase after parsing"
+        ));
+    }
+    let text: [Option<&String>; 9] = [
         Some(&receipt.run_id),
         receipt.query_id.as_ref(),
         Some(&receipt.warehouse_version),
@@ -318,6 +330,7 @@ pub(crate) fn check_receipt(receipt: &Receipt) -> Vec<String> {
         receipt.sqlstate.as_ref(),
         receipt.after_sql.as_ref(),
         receipt.category.as_ref(),
+        receipt.reason_category_basis.as_ref(),
     ];
     if text.iter().flatten().any(|field| identifying(field)) {
         problems.push(format!(

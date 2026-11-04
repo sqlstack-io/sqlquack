@@ -142,6 +142,19 @@ fn given_a_valid_tree_when_loading_then_every_record_is_kept() {
             expected_counts: counts(1),
         },
         LoadTestCase {
+            description: "a semantic refusal with its reason category and basis",
+            tree: |root| {
+                valid_tree(root);
+                let refused = receipt_line().replace(
+                    "\"phase\":\"accepted\"",
+                    "\"phase\":\"semantic_error\",\"reason_category\":\"missing_object\",\
+                     \"reason_category_basis\":\"errno 2003\"",
+                );
+                write(root, "receipts/refused.jsonl", &format!("{refused}\n"));
+            },
+            expected_counts: counts(2),
+        },
+        LoadTestCase {
             description: "a tree without renames or reviews yet",
             tree: |root| {
                 valid_tree(root);
@@ -402,6 +415,31 @@ fn given_a_format_fault_when_loading_then_the_problem_is_named() {
                 )
             },
             expected_problem: "interaction needs the anchor of the usage note",
+        },
+        FormatFaultTestCase {
+            description: "a reason category on an accepted receipt",
+            mutate: |root| {
+                replace(
+                    root,
+                    "receipts/first.jsonl",
+                    "\"phase\":\"accepted\"",
+                    "\"phase\":\"accepted\",\"reason_category\":\"type\",\
+                     \"reason_category_basis\":\"errno 1004\"",
+                )
+            },
+            expected_problem: "receipt query.select-17: a reason category needs its basis",
+        },
+        FormatFaultTestCase {
+            description: "a reason category without its basis",
+            mutate: |root| {
+                replace(
+                    root,
+                    "receipts/first.jsonl",
+                    "\"phase\":\"accepted\"",
+                    "\"phase\":\"runtime_error\",\"reason_category\":\"other\"",
+                )
+            },
+            expected_problem: "receipt query.select-17: a reason category needs its basis",
         },
         FormatFaultTestCase {
             description: "an all-options interaction with a target",

@@ -149,6 +149,10 @@ committed one.
   `statements_in_request`, `completed_statements`, `after_sql` and `category`.
   `completed_statements` is the number of statements in the request that completed before it
   stopped. It is provenance only and does not change the phase.
+- Optional `reason_category` and `reason_category_basis`, always together, and only on a phase
+  after parsing (`semantic_error`, `runtime_error` or `unsupported_feature`). The category is one
+  of `missing_object`, `invalid_option_or_value`, `type` or `other`. The basis says what the
+  importer read it from, such as `errno 2003`. Older receipts have neither.
 
 Any other field is refused. No account identifier, host, URL, user or email address may appear.
 A `compile_only_explain` receipt shows only that the statement compiled. Its `accepted` phase

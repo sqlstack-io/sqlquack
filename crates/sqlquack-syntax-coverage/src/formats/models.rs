@@ -272,6 +272,21 @@ pub struct Receipt {
     pub after_sql: Option<String>,
     #[serde(default)]
     pub category: Option<String>,
+    /// Why Snowflake refused a statement it parsed; only on a phase after parsing.
+    #[serde(default)]
+    pub reason_category: Option<ReasonCategory>,
+    /// What the importer read the reason category from, such as the error number.
+    #[serde(default)]
+    pub reason_category_basis: Option<String>,
+}
+
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Deserialize, Serialize)]
+#[serde(rename_all = "snake_case")]
+pub enum ReasonCategory {
+    MissingObject,
+    InvalidOptionOrValue,
+    Type,
+    Other,
 }
 
 /// Where Snowflake stopped, if anywhere.
