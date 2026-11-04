@@ -35,3 +35,9 @@ pub(crate) struct UnparsedTestCase {
     pub(crate) expected_category: RefusalCategory,
     pub(crate) expected_located: bool,
 }
+
+pub(crate) struct RejectionTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) sql: &'static str,
+    pub(crate) expected_rejections: Vec<&'static str>,
+}

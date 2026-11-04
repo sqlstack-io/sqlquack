@@ -5,6 +5,7 @@ use sqlquack_core::parsing::main::parse_source::parse_source;
 use sqlquack_core::parsing::models::{SourceDialect, SourceLines};
 use sqlquack_core::refusals::main::refuse_constructs::refuse_constructs;
 use sqlquack_core::refusals::main::refuse_unparsed::refuse_unparsed;
+use sqlquack_core::refusals::main::snowflake_rejections::snowflake_rejections;
 use sqlquack_core::refusals::models::RefusalCategory;
 use sqlquack_core::refusals::types::ConstructPolicy;
 use sqlquack_rules::conversion::main::collect_refusals::collect_refusals;
@@ -42,6 +43,11 @@ pub fn collect_all_refusals(
                 .into_iter()
                 .filter(|refusal| refusal.category == RefusalCategory::NotExpressible),
         );
+        let rejected = snowflake_rejections(statement, &lines);
+        if !rejected.is_empty() {
+            all.refusals.extend(rejected);
+            continue;
+        }
         let collected = collect_refusals(statement, (schema, options, &lines));
         all.refusals.extend(collected.refusals);
         all.possibly_incomplete |= collected.possibly_incomplete;

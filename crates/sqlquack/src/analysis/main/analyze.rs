@@ -7,7 +7,6 @@ use std::time::{Duration, Instant};
 
 use sqlquack_core::parsing::main::node_location::node_location;
 use sqlquack_core::parsing::models::{SourceDialect, SourceLines};
-use sqlquack_core::refusals::main::refuse_constructs::refuse_constructs;
 use sqlquack_core::refusals::main::refuse_unparsed::refuse_unparsed;
 use sqlquack_core::refusals::types::ConstructPolicy;
 
@@ -18,6 +17,7 @@ use sqlquack_rules::conversion::main::quoted_exclusions::quoted_exclusions;
 use sqlquack_rules::conversion::models::{ConversionOptions, Converted};
 use sqlquack_semantics::types::models::Schema;
 
+use crate::analysis::_helpers::declared_refusals::declared_refusals;
 use crate::analysis::_helpers::override_calls::overrides_applied;
 use crate::analysis::_helpers::volatile_calls::volatile_calls_kept;
 use crate::analysis::models::Analysis;
@@ -56,10 +56,7 @@ pub fn analyze(
     };
     for statement in &statements {
         let occurrences = classify(statement, &lines, dialect);
-        let declared: Vec<Refusal> = refuse_constructs(&occurrences, policy)
-            .into_iter()
-            .filter(|refusal| refusal.category == RefusalCategory::NotExpressible)
-            .collect();
+        let declared: Vec<Refusal> = declared_refusals(statement, &occurrences, policy, &lines);
         let refused = !declared.is_empty();
         analysis.refusals.extend(declared);
         analysis.occurrences.extend(occurrences);
