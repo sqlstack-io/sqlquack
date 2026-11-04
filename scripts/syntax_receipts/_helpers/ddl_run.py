@@ -21,6 +21,7 @@ from scripts.syntax_receipts.constants import (
     EXPLAIN_METHOD,
     MEASURE_KEY,
     PACKET_ACCEPTED_OUTCOMES,
+    QUERY_HISTORY_FAILED,
     QUERY_HISTORY_SOURCE,
     QUERY_HISTORY_SUCCESS,
     RUN_DATABASE,
@@ -42,21 +43,9 @@ def import_ddl_run(*, run: CaptureRun, index: dict[str, Path]) -> Imported:
     explain: bool = start.get("method") == EXPLAIN_METHOD
     packet: dict[str, Row] = packet_rows(index=index, sha=start.get("packet_sha256"))
     found: Imported = Imported()
-    lines: list[bytes] = raw_lines(run=run)
-    records: list[tuple[bytes, Row]] = [(line, json.loads(line)) for line in lines]
-    unrecorded: Row | None = (run.reconciliation or {}).get(UNRECORDED_KEY)
-    if unrecorded is not None:
-        try:
-            records.append(_unrecorded(entry=unrecorded, packet=packet, records=records))
-        except RowRefused as error:
-            found.refusals.append(
-                refusal(
-                    run_id=run.path.name,
-                    row_id=str(unrecorded.get("case_id", UNKNOWN_ROW)),
-                    reason=str(error),
-                )
-            )
-    for position, (line, raw) in enumerate(records):
+    records, refused = _records(run=run, packet=packet)
+    found.refusals.extend(refused)
+    for position, line, raw in records:
         row_id: str = raw.get("id", UNKNOWN_ROW)
         case: Row | None = packet.get(row_id)
         if case is None or digest(case["sql"].encode()) != raw.get("sql_sha256"):
@@ -120,49 +109,109 @@ def import_ddl_run(*, run: CaptureRun, index: dict[str, Path]) -> Imported:
             continue
         if raw.get("source") == QUERY_HISTORY_SOURCE:
             row["phase_basis"] += (
-                f"; from query history {row['query_id']}, the run stopped before its raw record;"
-                " warehouse version from the run's last raw record"
+                f"; from query history {row['query_id']}, the run stopped before its raw record"
             )
         found.receipts.append(row)
     return found
 
 
+def _records(
+    *, run: CaptureRun, packet: dict[str, Row]
+) -> tuple[list[tuple[int, bytes, Row]], list[Row]]:
+    """The run's raw records and any reconciled submission, with positions, and refused lines."""
+    lines: list[bytes] = raw_lines(run=run)
+    records: list[tuple[int, bytes, Row]] = []
+    refused: list[Row] = []
+    for position, line in enumerate(lines):
+        try:
+            parsed: object = json.loads(line)
+        except ValueError:
+            parsed = None
+        if not isinstance(parsed, dict):
+            refused.append(
+                refusal(run_id=run.path.name, row_id=UNKNOWN_ROW, reason="raw record is not JSON")
+            )
+            continue
+        records.append((position, line, parsed))
+    reconciliation: Row = run.reconciliation or {}
+    if UNRECORDED_KEY in reconciliation:
+        unrecorded: object = reconciliation[UNRECORDED_KEY]
+        try:
+            line, raw = _unrecorded(entry=unrecorded, packet=packet, records=records)
+            records.append((len(lines), line, raw))
+        except RowRefused as error:
+            case_id: object = unrecorded.get("case_id") if isinstance(unrecorded, dict) else None
+            refused.append(
+                refusal(
+                    run_id=run.path.name,
+                    row_id=case_id if isinstance(case_id, str) else UNKNOWN_ROW,
+                    reason=str(error),
+                )
+            )
+    return records, refused
+
+
 def _unrecorded(
-    *, entry: Row, packet: dict[str, Row], records: list[tuple[bytes, Row]]
+    *, entry: object, packet: dict[str, Row], records: list[tuple[int, bytes, Row]]
 ) -> tuple[bytes, Row]:
-    """A reconciled submission without a raw record, as a raw record from query history."""
-    case: Row | None = packet.get(entry.get("case_id", ""))
-    if entry.get("source") != QUERY_HISTORY_SOURCE or not entry.get("query_id"):
+    """A reconciled submission without a raw record, as a raw record from its query-history row."""
+    if not isinstance(entry, dict):
+        raise RowRefused("unrecorded submission is not an object")
+    case_id: object = entry.get("case_id")
+    case: Row | None = packet.get(case_id) if isinstance(case_id, str) else None
+    if entry.get("source") != QUERY_HISTORY_SOURCE:
+        raise RowRefused("unrecorded submission is not from query history")
+    if not _text(entry.get("query_id")):
         raise RowRefused("unrecorded submission carries no query-history query id")
     if case is None or not (
         entry.get("sql_sha256") == entry.get("query_text_sha256") == digest(case["sql"].encode())
     ):
         raise RowRefused("unrecorded submission SQL hash does not match the packet's exact SQL")
-    if any(raw.get("id") == entry["case_id"] for _, raw in records):
+    if any(raw.get("id") == case_id for _, _, raw in records):
         raise RowRefused("unrecorded submission has a raw record")
-    if not records:
-        raise RowRefused("unrecorded submission has no raw record to take a warehouse version from")
+    if entry.get("sqlstate") is not None:
+        raise RowRefused("unrecorded submission carries a SQLSTATE, which query history lacks")
+    if not _text(entry.get("release_version")):
+        raise RowRefused("unrecorded submission carries no query-history release_version")
+    status: object = entry.get("execution_status")
+    errno: object = entry.get("errno")
+    succeeded: bool = status == QUERY_HISTORY_SUCCESS and errno is None
+    failed: bool = (
+        status == QUERY_HISTORY_FAILED and type(errno) is int and _text(entry.get("error_message"))
+    )
+    if not (succeeded or failed):
+        raise RowRefused(
+            f"unrecorded submission status {status!r} with errno {errno!r} is not a finished query"
+        )
+    start_time: object = entry.get("start_time")
     try:
-        started_at: str = datetime.fromisoformat(entry["start_time"]).isoformat()
-    except (KeyError, TypeError, ValueError) as error:
-        raise RowRefused("unrecorded submission has no readable start time") from error
-    succeeded: bool = entry.get("execution_status") == QUERY_HISTORY_SUCCESS
+        started_at: str = (
+            datetime.fromisoformat(start_time).isoformat() if isinstance(start_time, str) else ""
+        )
+    except ValueError:
+        started_at = ""
+    if not started_at:
+        raise RowRefused("unrecorded submission has no readable start time")
     raw: Row = {
-        "id": entry["case_id"],
+        "id": case_id,
         "sql_sha256": entry["sql_sha256"],
         "outcome": PACKET_ACCEPTED_OUTCOMES[0] if succeeded else "error",
         "connector_fields": {
-            "errno": entry.get("errno"),
-            "sqlstate": entry.get("sqlstate"),
+            "errno": errno,
+            "sqlstate": None,
             "raw_msg": entry.get("error_message") or "",
         },
         "query_id": entry["query_id"],
         "case_schema": entry.get("case_schema"),
         "started_at": started_at,
-        "warehouse_version": records[-1][1].get("warehouse_version"),
+        "warehouse_version": entry["release_version"],
         "source": QUERY_HISTORY_SOURCE,
     }
     return canonical_json(entry), raw
+
+
+def _text(value: object) -> bool:
+    return isinstance(value, str) and bool(value)
 
 
 def _setup(*, start: Row, raw: Row, position: int) -> list[str]:

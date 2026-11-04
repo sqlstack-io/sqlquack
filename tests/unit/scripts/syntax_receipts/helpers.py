@@ -2,9 +2,14 @@
 
 from __future__ import annotations
 
+import copy
+import functools
 import hashlib
 import json
+import operator
+import re
 from pathlib import Path
+from typing import Any
 
 from scripts.syntax_receipts._helpers.runs import import_runs
 from scripts.syntax_receipts.main.import_runs import run_import
@@ -44,7 +49,7 @@ def write_run(
     packet: list[dict[str, object]],
     raw_hash: str | None = None,
     start: dict[str, object] | None = None,
-    complete: bool = True,
+    audit_events: int = 3,
 ) -> Path:
     """One run under `root`/runs bound to a packet under `root`/inputs; scripting by default."""
     inputs: Path = root / "inputs"
@@ -66,16 +71,16 @@ def write_run(
         },
         {"event": "recording_session", "identity_checked": True, "session_id": "S1"},
         {"event": "complete", "raw_sha256": raw_hash or sha(raw)},
-    ][: 3 if complete else 2]
+    ][:audit_events]
     (run / "audit.jsonl").write_text("".join(json.dumps(e) + "\n" for e in events))
     return run
 
 
-def write_reconciliation(*, run: Path, unrecorded: Row | None) -> Row:
+def write_reconciliation(*, run: Path, unrecorded: Row) -> Row:
     """A reconciliation record binding `run` as it stands, listing each raw line by hash."""
     audit: bytes = (run / "audit.jsonl").read_bytes()
     raw: bytes = (run / "capture" / "raw.jsonl").read_bytes()
-    lines: list[bytes] = [line for line in raw.split(b"\n") if line.strip()]
+    lines: list[bytes] = raw.splitlines()
     record: Row = {
         "format": "sqlquack-run-reconciliation/1",
         "status": "reconciled",
@@ -94,13 +99,12 @@ def write_reconciliation(*, run: Path, unrecorded: Row | None) -> Row:
             "count": len(lines),
             "file_sha256": sha(raw),
             "records": [
-                {"index": index, "id": json.loads(line)["id"], "sha256": sha(line)}
+                {"index": index, "id": _case_id(line), "sha256": sha(line)}
                 for index, line in enumerate(lines)
             ],
         },
+        "unrecorded_submission": unrecorded,
     }
-    if unrecorded is not None:
-        record["unrecorded_submission"] = unrecorded
     return record
 
 
@@ -116,8 +120,30 @@ def unrecorded_submission(*, case_id: str, sql: str) -> Row:
         "execution_status": "FAILED_WITH_ERROR",
         "errno": 1003,
         "error_message": "SQL compilation error:\nsyntax error line 1 at position 7",
+        "release_version": "10.40.100",
         "source": "query_history",
     }
+
+
+def replaced(record: Row, path: tuple[str | int, ...], value: object) -> Row:
+    """A deep copy of `record` with the value at `path` replaced."""
+    copied: Row = copy.deepcopy(record)
+    parent: Any = functools.reduce(operator.getitem, path[:-1], copied)
+    parent[path[-1]] = value
+    return copied
+
+
+def removed(record: Row, path: tuple[str, ...]) -> Row:
+    """A deep copy of `record` without the key at `path`."""
+    copied: Row = copy.deepcopy(record)
+    parent: Any = functools.reduce(operator.getitem, path[:-1], copied)
+    del parent[path[-1]]
+    return copied
+
+
+def _case_id(line: bytes) -> str:
+    """The case id at the start of a raw line, read even from a truncated line."""
+    return re.findall(rb'^\{"id": "([^"]*)"', line)[0].decode()
 
 
 def imported_run(

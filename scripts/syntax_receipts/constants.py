@@ -35,13 +35,8 @@ RECONCILED_STATUS: str = "reconciled"
 UNRECORDED_KEY: str = "unrecorded_submission"
 QUERY_HISTORY_SOURCE: str = "query_history"
 QUERY_HISTORY_SUCCESS: str = "SUCCESS"
-RECONCILIATION_EVIDENCE: tuple[str, ...] = (
-    "failure",
-    "observed_cleanup",
-    "inventory_check",
-    "raw_records",
-)
-CLEANUP_EVIDENCE: tuple[str, ...] = ("drop_query_id", "drop_status", "dropped")
+QUERY_HISTORY_FAILED: str = "FAILED_WITH_ERROR"
+CLEANUP_SUCCESS: str = "SUCCESS"
 SQL_KEY: str = "sql"
 RUN_DATABASE_KEY: str = "run_database"
 PROPOSAL_KEY: str = "proposal_sha256"

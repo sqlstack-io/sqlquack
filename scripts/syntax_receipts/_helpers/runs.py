@@ -37,7 +37,9 @@ def import_runs(*, runs: Path, input_dirs: list[Path]) -> Imported:
             status: Row = {"run_id": path.name, "status": "imported", "audit_sha256": run.audit_sha}
             if run.reconciliation is not None:
                 found = _reconciled(run=run, found=found)
-                status["status"] = RECONCILED_STATUS
+                status.update(
+                    status=RECONCILED_STATUS, reconciliation_sha256=run.reconciliation_sha
+                )
         except RunRefused as error:
             found = Imported(
                 refusals=[refusal(run_id=path.name, row_id=WHOLE_RUN_ROW, reason=str(error))]
@@ -56,8 +58,6 @@ def _import_run(*, run: CaptureRun, index: dict[str, Path]) -> Imported:
     start: Row = run.events[0]
     if RUN_DATABASE_KEY in start:
         return import_ddl_run(run=run, index=index)
-    if UNRECORDED_KEY in (run.reconciliation or {}):
-        raise RunRefused("only a DDL run can reconcile a submission without a raw record")
     if start.get("submission") == SCRIPTING_SUBMISSION or start.get("method") == EXPLAIN_METHOD:
         return import_packet_run(run=run, index=index)
     if PROPOSAL_KEY in start:
@@ -73,8 +73,8 @@ def _reconciled(*, run: CaptureRun, found: Imported) -> Imported:
     listed: dict[str, str] = {
         str(entry.get("id")): str(entry.get("sha256")) for entry in record["raw_records"]["records"]
     }
-    if UNRECORDED_KEY in record:
-        unrecorded: Row = record[UNRECORDED_KEY]
+    unrecorded: object = record.get(UNRECORDED_KEY)
+    if isinstance(unrecorded, dict):
         listed.setdefault(str(unrecorded.get("case_id")), digest(canonical_json(unrecorded)))
     kept: Imported = Imported(inputs=found.inputs, refusals=list(found.refusals))
     seen: set[str] = {row["row_id"] for row in found.refusals}
