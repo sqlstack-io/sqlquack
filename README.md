@@ -230,6 +230,13 @@ $ uv sync --locked --no-group recorder
 $ RECORDER=0 UV_NO_SYNC=1 make gate VERIFY_FLAGS="--require-verified --strict-errors"
 ```
 
+`make duckshop-measure DUCKSHOP_RESULTS=<dir>` measures DuckShop with the checkout's own binary
+and `sqlquack.toml`. It runs the compiled unit tests on DuckDB, then converts each model and runs
+it over Snowflake's recorded inputs, comparing the result with Snowflake's recorded rows.
+`DUCKSHOP_RESULTS` is a directory of DuckShop results recorded on Snowflake, with its
+`index-<target>.json` files beside it. The reports are written to `DUCKSHOP_MEASURE_DIR`, which
+defaults to `target/duckshop-measure`.
+
 A change lands on `main` as one squashed commit whose tree is exactly a tree that passed
 `make gate`.
 
