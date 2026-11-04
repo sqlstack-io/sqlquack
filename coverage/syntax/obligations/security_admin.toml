@@ -8214,58 +8214,71 @@ target = "<name>"
 note = "a string literal in place of <name>"
 
 [[obligation]]
-id = "sf.security_admin.alter-authentication-policy.unset.o008"
-kind = "option_absent"
+id = "sf.security_admin.alter-authentication-policy.unset.o043"
+kind = "alternative"
 required = true
-target = "[ AUTHENTICATION_METHODS ]"
+target = "{ AUTHENTICATION_METHODS | CLIENT_TYPES | CLIENT_POLICY | SECURITY_INTEGRATIONS | MFA_ENROLLME… → AUTHENTICATION_METHODS"
 
 [[obligation]]
-id = "sf.security_admin.alter-authentication-policy.unset.o010"
-kind = "option_absent"
+id = "sf.security_admin.alter-authentication-policy.unset.o044"
+kind = "alternative"
 required = true
-target = "[ CLIENT_TYPES ]"
+target = "{ AUTHENTICATION_METHODS | CLIENT_TYPES | CLIENT_POLICY | SECURITY_INTEGRATIONS | MFA_ENROLLMENT | MFA_P… → CLIENT_TYPES"
 
 [[obligation]]
-id = "sf.security_admin.alter-authentication-policy.unset.o012"
-kind = "option_absent"
+id = "sf.security_admin.alter-authentication-policy.unset.o045"
+kind = "alternative"
 required = true
-target = "[ CLIENT_POLICY ]"
+target = "{ AUTHENTICATION_METHODS | CLIENT_TYPES | CLIENT_POLICY | SECURITY_INTEGRATIONS | MFA_ENROLLMENT | MFA_… → CLIENT_POLICY"
 
 [[obligation]]
-id = "sf.security_admin.alter-authentication-policy.unset.o014"
-kind = "option_absent"
+id = "sf.security_admin.alter-authentication-policy.unset.o046"
+kind = "alternative"
 required = true
-target = "[ SECURITY_INTEGRATIONS ]"
+target = "{ AUTHENTICATION_METHODS | CLIENT_TYPES | CLIENT_POLICY | SECURITY_INTEGRATIONS | MFA_ENROLLMEN… → SECURITY_INTEGRATIONS"
 
 [[obligation]]
-id = "sf.security_admin.alter-authentication-policy.unset.o016"
-kind = "option_absent"
+id = "sf.security_admin.alter-authentication-policy.unset.o047"
+kind = "alternative"
 required = true
-target = "[ MFA_ENROLLMENT ]"
+target = "{ AUTHENTICATION_METHODS | CLIENT_TYPES | CLIENT_POLICY | SECURITY_INTEGRATIONS | MFA_ENROLLMENT | MFA… → MFA_ENROLLMENT"
 
 [[obligation]]
-id = "sf.security_admin.alter-authentication-policy.unset.o018"
-kind = "option_absent"
+id = "sf.security_admin.alter-authentication-policy.unset.o048"
+kind = "alternative"
 required = true
-target = "[ MFA_POLICY ]"
+target = "{ AUTHENTICATION_METHODS | CLIENT_TYPES | CLIENT_POLICY | SECURITY_INTEGRATIONS | MFA_ENROLLMENT | MFA_POL… → MFA_POLICY"
 
 [[obligation]]
-id = "sf.security_admin.alter-authentication-policy.unset.o020"
-kind = "option_absent"
+id = "sf.security_admin.alter-authentication-policy.unset.o049"
+kind = "alternative"
 required = true
-target = "[ PAT_POLICY ]"
+target = "{ AUTHENTICATION_METHODS | CLIENT_TYPES | CLIENT_POLICY | SECURITY_INTEGRATIONS | MFA_ENROLLMENT | MFA_POL… → PAT_POLICY"
 
 [[obligation]]
-id = "sf.security_admin.alter-authentication-policy.unset.o022"
-kind = "option_absent"
+id = "sf.security_admin.alter-authentication-policy.unset.o050"
+kind = "alternative"
 required = true
-target = "[ WORKLOAD_IDENTITY_POLICY ]"
+target = "{ AUTHENTICATION_METHODS | CLIENT_TYPES | CLIENT_POLICY | SECURITY_INTEGRATIONS | MFA_ENROLL… → WORKLOAD_IDENTITY_POLICY"
 
 [[obligation]]
-id = "sf.security_admin.alter-authentication-policy.unset.o024"
+id = "sf.security_admin.alter-authentication-policy.unset.o051"
+kind = "alternative"
+required = true
+target = "{ AUTHENTICATION_METHODS | CLIENT_TYPES | CLIENT_POLICY | SECURITY_INTEGRATIONS | MFA_ENROLLMENT | MFA_POLICY… → COMMENT"
+
+[[obligation]]
+id = "sf.security_admin.alter-authentication-policy.unset.o052"
+kind = "option_present"
+required = true
+target = "[ , ... ]"
+note = "the list continued at least once"
+
+[[obligation]]
+id = "sf.security_admin.alter-authentication-policy.unset.o053"
 kind = "option_absent"
 required = true
-target = "[ COMMENT ]"
+target = "[ , ... ]"
 
 [[obligation]]
 id = "sf.security_admin.alter-authentication-policy.unset.o025"
@@ -8290,6 +8303,12 @@ id = "sf.security_admin.alter-authentication-policy.unset.o028"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required UNSET"
+
+[[obligation]]
+id = "sf.security_admin.alter-authentication-policy.unset.o054"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { AUTHENTICATION_METHODS | CLIENT_TYPES | CLIENT_POLICY | SECURITY_INTEGRATIONS | MFA_ENROLLMENT | MFA_POLICY | PAT_POLICY | WORKLOAD_IDENTITY_POLICY | COMMENT }"
 
 [[obligation]]
 id = "sf.security_admin.alter-authentication-policy.unset.o030"
@@ -17154,22 +17173,35 @@ target = "<name>"
 note = "a string literal in place of <name>"
 
 [[obligation]]
-id = "sf.security_admin.alter-feature-policy.unset.o008"
-kind = "option_absent"
+id = "sf.security_admin.alter-feature-policy.unset.o025"
+kind = "alternative"
 required = true
-target = "[ BLOCKED_OBJECT_TYPES_FOR_CREATION ]"
+target = "{ BLOCKED_OBJECT_TYPES_FOR_CREATION | COMMENT | POLICY_DEFINITION } → BLOCKED_OBJECT_TYPES_FOR_CREATION"
 
 [[obligation]]
-id = "sf.security_admin.alter-feature-policy.unset.o010"
-kind = "option_absent"
+id = "sf.security_admin.alter-feature-policy.unset.o026"
+kind = "alternative"
 required = true
-target = "[ COMMENT ]"
+target = "{ BLOCKED_OBJECT_TYPES_FOR_CREATION | COMMENT | POLICY_DEFINITION } → COMMENT"
 
 [[obligation]]
-id = "sf.security_admin.alter-feature-policy.unset.o012"
+id = "sf.security_admin.alter-feature-policy.unset.o027"
+kind = "alternative"
+required = true
+target = "{ BLOCKED_OBJECT_TYPES_FOR_CREATION | COMMENT | POLICY_DEFINITION } → POLICY_DEFINITION"
+
+[[obligation]]
+id = "sf.security_admin.alter-feature-policy.unset.o028"
+kind = "option_present"
+required = true
+target = "[ , ... ]"
+note = "the list continued at least once"
+
+[[obligation]]
+id = "sf.security_admin.alter-feature-policy.unset.o029"
 kind = "option_absent"
 required = true
-target = "[ POLICY_DEFINITION ]"
+target = "[ , ... ]"
 
 [[obligation]]
 id = "sf.security_admin.alter-feature-policy.unset.o013"
@@ -17194,6 +17226,12 @@ id = "sf.security_admin.alter-feature-policy.unset.o016"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required UNSET"
+
+[[obligation]]
+id = "sf.security_admin.alter-feature-policy.unset.o030"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { BLOCKED_OBJECT_TYPES_FOR_CREATION | COMMENT | POLICY_DEFINITION }"
 
 [[obligation]]
 id = "sf.security_admin.alter-feature-policy.unset.o018"
@@ -18903,18 +18941,6 @@ target = "<name>"
 note = "a string literal in place of <name>"
 
 [[obligation]]
-id = "sf.security_admin.alter-maintenance-policy.unset.o007"
-kind = "option_present"
-required = true
-target = "[ COMMENT ]"
-
-[[obligation]]
-id = "sf.security_admin.alter-maintenance-policy.unset.o008"
-kind = "option_absent"
-required = true
-target = "[ COMMENT ]"
-
-[[obligation]]
 id = "sf.security_admin.alter-maintenance-policy.unset.o009"
 kind = "negative_neighbour"
 required = true
@@ -18939,10 +18965,10 @@ required = true
 note = "the form without its required UNSET"
 
 [[obligation]]
-id = "sf.security_admin.alter-maintenance-policy.unset.o013"
-kind = "interaction_all_options"
+id = "sf.security_admin.alter-maintenance-policy.unset.o016"
+kind = "negative_neighbour"
 required = true
-note = "every independent option of one production together"
+note = "the form without its required COMMENT"
 
 [[obligation]]
 id = "sf.security_admin.alter-maintenance-policy.unset.o014"
@@ -26031,18 +26057,6 @@ target = "<name>"
 note = "a string literal in place of <name>"
 
 [[obligation]]
-id = "sf.security_admin.alter-organization-user.unset.o058"
-kind = "option_present"
-required = true
-target = "[ { EMAIL | DISPLAY_NAME | FIRST_NAME | MIDDLE_NAME | LAST_NAME | TYPE | COMMENT } ]"
-
-[[obligation]]
-id = "sf.security_admin.alter-organization-user.unset.o059"
-kind = "option_absent"
-required = true
-target = "[ { EMAIL | DISPLAY_NAME | FIRST_NAME | MIDDLE_NAME | LAST_NAME | TYPE | COMMENT } ]"
-
-[[obligation]]
 id = "sf.security_admin.alter-organization-user.unset.o048"
 kind = "alternative"
 required = true
@@ -26101,6 +26115,12 @@ id = "sf.security_admin.alter-organization-user.unset.o043"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required UNSET"
+
+[[obligation]]
+id = "sf.security_admin.alter-organization-user.unset.o060"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { EMAIL | DISPLAY_NAME | FIRST_NAME | MIDDLE_NAME | LAST_NAME | TYPE | COMMENT }"
 
 [[obligation]]
 id = "sf.security_admin.alter-organization-user.unset.o045"
@@ -26595,28 +26615,41 @@ target = "<name>"
 note = "a string literal in place of <name>"
 
 [[obligation]]
-id = "sf.security_admin.alter-packages-policy.unset.o008"
-kind = "option_absent"
+id = "sf.security_admin.alter-packages-policy.unset.o028"
+kind = "alternative"
 required = true
-target = "[ ALLOWLIST ]"
+target = "{ ALLOWLIST | BLOCKLIST | ADDITIONAL_CREATION_BLOCKLIST | COMMENT } → ALLOWLIST"
 
 [[obligation]]
-id = "sf.security_admin.alter-packages-policy.unset.o010"
-kind = "option_absent"
+id = "sf.security_admin.alter-packages-policy.unset.o029"
+kind = "alternative"
 required = true
-target = "[ BLOCKLIST ]"
+target = "{ ALLOWLIST | BLOCKLIST | ADDITIONAL_CREATION_BLOCKLIST | COMMENT } → BLOCKLIST"
 
 [[obligation]]
-id = "sf.security_admin.alter-packages-policy.unset.o012"
-kind = "option_absent"
+id = "sf.security_admin.alter-packages-policy.unset.o030"
+kind = "alternative"
 required = true
-target = "[ ADDITIONAL_CREATION_BLOCKLIST ]"
+target = "{ ALLOWLIST | BLOCKLIST | ADDITIONAL_CREATION_BLOCKLIST | COMMENT } → ADDITIONAL_CREATION_BLOCKLIST"
 
 [[obligation]]
-id = "sf.security_admin.alter-packages-policy.unset.o014"
+id = "sf.security_admin.alter-packages-policy.unset.o031"
+kind = "alternative"
+required = true
+target = "{ ALLOWLIST | BLOCKLIST | ADDITIONAL_CREATION_BLOCKLIST | COMMENT } → COMMENT"
+
+[[obligation]]
+id = "sf.security_admin.alter-packages-policy.unset.o032"
+kind = "option_present"
+required = true
+target = "[ , ... ]"
+note = "the list continued at least once"
+
+[[obligation]]
+id = "sf.security_admin.alter-packages-policy.unset.o033"
 kind = "option_absent"
 required = true
-target = "[ COMMENT ]"
+target = "[ , ... ]"
 
 [[obligation]]
 id = "sf.security_admin.alter-packages-policy.unset.o015"
@@ -26641,6 +26674,12 @@ id = "sf.security_admin.alter-packages-policy.unset.o018"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required UNSET"
+
+[[obligation]]
+id = "sf.security_admin.alter-packages-policy.unset.o034"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { ALLOWLIST | BLOCKLIST | ADDITIONAL_CREATION_BLOCKLIST | COMMENT }"
 
 [[obligation]]
 id = "sf.security_admin.alter-packages-policy.unset.o020"
@@ -27963,148 +28002,89 @@ target = "<name>"
 note = "a string literal in place of <name>"
 
 [[obligation]]
-id = "sf.security_admin.alter-password-policy.unset.o007"
+id = "sf.security_admin.alter-password-policy.unset.o038"
+kind = "alternative"
+required = true
+target = "{ PASSWORD_MIN_LENGTH | PASSWORD_MAX_LENGTH | PASSWORD_MIN_UPPER_CASE_CHARS | PASSWORD_MIN_LOWER_… → PASSWORD_MIN_LENGTH"
+
+[[obligation]]
+id = "sf.security_admin.alter-password-policy.unset.o039"
+kind = "alternative"
+required = true
+target = "{ PASSWORD_MIN_LENGTH | PASSWORD_MAX_LENGTH | PASSWORD_MIN_UPPER_CASE_CHARS | PASSWORD_MIN_LOWER_… → PASSWORD_MAX_LENGTH"
+
+[[obligation]]
+id = "sf.security_admin.alter-password-policy.unset.o040"
+kind = "alternative"
+required = true
+target = "{ PASSWORD_MIN_LENGTH | PASSWORD_MAX_LENGTH | PASSWORD_MIN_UPPER_CASE_CHARS | PASSWORD_… → PASSWORD_MIN_UPPER_CASE_CHARS"
+
+[[obligation]]
+id = "sf.security_admin.alter-password-policy.unset.o041"
+kind = "alternative"
+required = true
+target = "{ PASSWORD_MIN_LENGTH | PASSWORD_MAX_LENGTH | PASSWORD_MIN_UPPER_CASE_CHARS | PASSWORD_… → PASSWORD_MIN_LOWER_CASE_CHARS"
+
+[[obligation]]
+id = "sf.security_admin.alter-password-policy.unset.o042"
+kind = "alternative"
+required = true
+target = "{ PASSWORD_MIN_LENGTH | PASSWORD_MAX_LENGTH | PASSWORD_MIN_UPPER_CASE_CHARS | PASSWORD_MIN… → PASSWORD_MIN_NUMERIC_CHARS"
+
+[[obligation]]
+id = "sf.security_admin.alter-password-policy.unset.o043"
+kind = "alternative"
+required = true
+target = "{ PASSWORD_MIN_LENGTH | PASSWORD_MAX_LENGTH | PASSWORD_MIN_UPPER_CASE_CHARS | PASSWORD_MIN… → PASSWORD_MIN_SPECIAL_CHARS"
+
+[[obligation]]
+id = "sf.security_admin.alter-password-policy.unset.o044"
+kind = "alternative"
+required = true
+target = "{ PASSWORD_MIN_LENGTH | PASSWORD_MAX_LENGTH | PASSWORD_MIN_UPPER_CASE_CHARS | PASSWORD_MIN_LOWE… → PASSWORD_MIN_AGE_DAYS"
+
+[[obligation]]
+id = "sf.security_admin.alter-password-policy.unset.o045"
+kind = "alternative"
+required = true
+target = "{ PASSWORD_MIN_LENGTH | PASSWORD_MAX_LENGTH | PASSWORD_MIN_UPPER_CASE_CHARS | PASSWORD_MIN_LOWE… → PASSWORD_MAX_AGE_DAYS"
+
+[[obligation]]
+id = "sf.security_admin.alter-password-policy.unset.o046"
+kind = "alternative"
+required = true
+target = "{ PASSWORD_MIN_LENGTH | PASSWORD_MAX_LENGTH | PASSWORD_MIN_UPPER_CASE_CHARS | PASSWORD_MIN_LOWER… → PASSWORD_MAX_RETRIES"
+
+[[obligation]]
+id = "sf.security_admin.alter-password-policy.unset.o047"
+kind = "alternative"
+required = true
+target = "{ PASSWORD_MIN_LENGTH | PASSWORD_MAX_LENGTH | PASSWORD_MIN_UPPER_CASE_CHARS | PASSWORD_MIN… → PASSWORD_LOCKOUT_TIME_MINS"
+
+[[obligation]]
+id = "sf.security_admin.alter-password-policy.unset.o048"
+kind = "alternative"
+required = true
+target = "{ PASSWORD_MIN_LENGTH | PASSWORD_MAX_LENGTH | PASSWORD_MIN_UPPER_CASE_CHARS | PASSWORD_MIN_LOWER_CAS… → PASSWORD_HISTORY"
+
+[[obligation]]
+id = "sf.security_admin.alter-password-policy.unset.o049"
+kind = "alternative"
+required = true
+target = "{ PASSWORD_MIN_LENGTH | PASSWORD_MAX_LENGTH | PASSWORD_MIN_UPPER_CASE_CHARS | PASSWORD_MIN_LOWER_CASE_CHARS |… → COMMENT"
+
+[[obligation]]
+id = "sf.security_admin.alter-password-policy.unset.o050"
 kind = "option_present"
 required = true
-target = "[ PASSWORD_MIN_LENGTH ]"
+target = "[ , ... ]"
+note = "the list continued at least once"
 
 [[obligation]]
-id = "sf.security_admin.alter-password-policy.unset.o008"
+id = "sf.security_admin.alter-password-policy.unset.o051"
 kind = "option_absent"
 required = true
-target = "[ PASSWORD_MIN_LENGTH ]"
-
-[[obligation]]
-id = "sf.security_admin.alter-password-policy.unset.o009"
-kind = "option_present"
-required = true
-target = "[ PASSWORD_MAX_LENGTH ]"
-
-[[obligation]]
-id = "sf.security_admin.alter-password-policy.unset.o010"
-kind = "option_absent"
-required = true
-target = "[ PASSWORD_MAX_LENGTH ]"
-
-[[obligation]]
-id = "sf.security_admin.alter-password-policy.unset.o011"
-kind = "option_present"
-required = true
-target = "[ PASSWORD_MIN_UPPER_CASE_CHARS ]"
-
-[[obligation]]
-id = "sf.security_admin.alter-password-policy.unset.o012"
-kind = "option_absent"
-required = true
-target = "[ PASSWORD_MIN_UPPER_CASE_CHARS ]"
-
-[[obligation]]
-id = "sf.security_admin.alter-password-policy.unset.o013"
-kind = "option_present"
-required = true
-target = "[ PASSWORD_MIN_LOWER_CASE_CHARS ]"
-
-[[obligation]]
-id = "sf.security_admin.alter-password-policy.unset.o014"
-kind = "option_absent"
-required = true
-target = "[ PASSWORD_MIN_LOWER_CASE_CHARS ]"
-
-[[obligation]]
-id = "sf.security_admin.alter-password-policy.unset.o015"
-kind = "option_present"
-required = true
-target = "[ PASSWORD_MIN_NUMERIC_CHARS ]"
-
-[[obligation]]
-id = "sf.security_admin.alter-password-policy.unset.o016"
-kind = "option_absent"
-required = true
-target = "[ PASSWORD_MIN_NUMERIC_CHARS ]"
-
-[[obligation]]
-id = "sf.security_admin.alter-password-policy.unset.o017"
-kind = "option_present"
-required = true
-target = "[ PASSWORD_MIN_SPECIAL_CHARS ]"
-
-[[obligation]]
-id = "sf.security_admin.alter-password-policy.unset.o018"
-kind = "option_absent"
-required = true
-target = "[ PASSWORD_MIN_SPECIAL_CHARS ]"
-
-[[obligation]]
-id = "sf.security_admin.alter-password-policy.unset.o019"
-kind = "option_present"
-required = true
-target = "[ PASSWORD_MIN_AGE_DAYS ]"
-
-[[obligation]]
-id = "sf.security_admin.alter-password-policy.unset.o020"
-kind = "option_absent"
-required = true
-target = "[ PASSWORD_MIN_AGE_DAYS ]"
-
-[[obligation]]
-id = "sf.security_admin.alter-password-policy.unset.o021"
-kind = "option_present"
-required = true
-target = "[ PASSWORD_MAX_AGE_DAYS ]"
-
-[[obligation]]
-id = "sf.security_admin.alter-password-policy.unset.o022"
-kind = "option_absent"
-required = true
-target = "[ PASSWORD_MAX_AGE_DAYS ]"
-
-[[obligation]]
-id = "sf.security_admin.alter-password-policy.unset.o023"
-kind = "option_present"
-required = true
-target = "[ PASSWORD_MAX_RETRIES ]"
-
-[[obligation]]
-id = "sf.security_admin.alter-password-policy.unset.o024"
-kind = "option_absent"
-required = true
-target = "[ PASSWORD_MAX_RETRIES ]"
-
-[[obligation]]
-id = "sf.security_admin.alter-password-policy.unset.o025"
-kind = "option_present"
-required = true
-target = "[ PASSWORD_LOCKOUT_TIME_MINS ]"
-
-[[obligation]]
-id = "sf.security_admin.alter-password-policy.unset.o026"
-kind = "option_absent"
-required = true
-target = "[ PASSWORD_LOCKOUT_TIME_MINS ]"
-
-[[obligation]]
-id = "sf.security_admin.alter-password-policy.unset.o027"
-kind = "option_present"
-required = true
-target = "[ PASSWORD_HISTORY ]"
-
-[[obligation]]
-id = "sf.security_admin.alter-password-policy.unset.o028"
-kind = "option_absent"
-required = true
-target = "[ PASSWORD_HISTORY ]"
-
-[[obligation]]
-id = "sf.security_admin.alter-password-policy.unset.o029"
-kind = "option_present"
-required = true
-target = "[ COMMENT ]"
-
-[[obligation]]
-id = "sf.security_admin.alter-password-policy.unset.o030"
-kind = "option_absent"
-required = true
-target = "[ COMMENT ]"
+target = "[ , ... ]"
 
 [[obligation]]
 id = "sf.security_admin.alter-password-policy.unset.o031"
@@ -28129,6 +28109,12 @@ id = "sf.security_admin.alter-password-policy.unset.o034"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required UNSET"
+
+[[obligation]]
+id = "sf.security_admin.alter-password-policy.unset.o052"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { PASSWORD_MIN_LENGTH | PASSWORD_MAX_LENGTH | PASSWORD_MIN_UPPER_CASE_CHARS | PASSWORD_MIN_LOWER_CASE_CHARS | PASSWORD_MIN_NUMERIC_CHARS | PASSWORD_MIN_SPECIAL_CHARS | PASSWORD_MIN_AGE_DAYS | PASSWORD_MAX_AGE_DAYS | PASSWORD_MAX_RETRIES | PASSWORD_LOCKOUT_TIME_MINS | PASSWORD_HISTORY | COMMENT }"
 
 [[obligation]]
 id = "sf.security_admin.alter-password-policy.unset.o035"
@@ -44330,52 +44316,65 @@ target = "<name>"
 note = "a string literal in place of <name>"
 
 [[obligation]]
-id = "sf.security_admin.alter-session-policy.unset.o008"
-kind = "option_absent"
+id = "sf.security_admin.alter-session-policy.unset.o040"
+kind = "alternative"
 required = true
-target = "[ SESSION_IDLE_TIMEOUT_MINS ]"
+target = "{ SESSION_IDLE_TIMEOUT_MINS | SESSION_UI_IDLE_TIMEOUT_MINS | SESSION_MAX_LIFESPAN_MINS | SE… → SESSION_IDLE_TIMEOUT_MINS"
 
 [[obligation]]
-id = "sf.security_admin.alter-session-policy.unset.o010"
-kind = "option_absent"
+id = "sf.security_admin.alter-session-policy.unset.o041"
+kind = "alternative"
 required = true
-target = "[ SESSION_UI_IDLE_TIMEOUT_MINS ]"
+target = "{ SESSION_IDLE_TIMEOUT_MINS | SESSION_UI_IDLE_TIMEOUT_MINS | SESSION_MAX_LIFESPAN_MINS |… → SESSION_UI_IDLE_TIMEOUT_MINS"
 
 [[obligation]]
-id = "sf.security_admin.alter-session-policy.unset.o012"
-kind = "option_absent"
+id = "sf.security_admin.alter-session-policy.unset.o042"
+kind = "alternative"
 required = true
-target = "[ SESSION_MAX_LIFESPAN_MINS ]"
+target = "{ SESSION_IDLE_TIMEOUT_MINS | SESSION_UI_IDLE_TIMEOUT_MINS | SESSION_MAX_LIFESPAN_MINS | SE… → SESSION_MAX_LIFESPAN_MINS"
 
 [[obligation]]
-id = "sf.security_admin.alter-session-policy.unset.o014"
-kind = "option_absent"
+id = "sf.security_admin.alter-session-policy.unset.o043"
+kind = "alternative"
 required = true
-target = "[ SESSION_UI_MAX_LIFESPAN_MINS ]"
+target = "{ SESSION_IDLE_TIMEOUT_MINS | SESSION_UI_IDLE_TIMEOUT_MINS | SESSION_MAX_LIFESPAN_MINS |… → SESSION_UI_MAX_LIFESPAN_MINS"
 
 [[obligation]]
-id = "sf.security_admin.alter-session-policy.unset.o016"
-kind = "option_absent"
+id = "sf.security_admin.alter-session-policy.unset.o044"
+kind = "alternative"
 required = true
-target = "[ ALLOWED_SECONDARY_ROLES ]"
+target = "{ SESSION_IDLE_TIMEOUT_MINS | SESSION_UI_IDLE_TIMEOUT_MINS | SESSION_MAX_LIFESPAN_MINS | SESS… → ALLOWED_SECONDARY_ROLES"
 
 [[obligation]]
-id = "sf.security_admin.alter-session-policy.unset.o018"
-kind = "option_absent"
+id = "sf.security_admin.alter-session-policy.unset.o045"
+kind = "alternative"
 required = true
-target = "[ BLOCKED_SECONDARY_ROLES ]"
+target = "{ SESSION_IDLE_TIMEOUT_MINS | SESSION_UI_IDLE_TIMEOUT_MINS | SESSION_MAX_LIFESPAN_MINS | SESS… → BLOCKED_SECONDARY_ROLES"
 
 [[obligation]]
-id = "sf.security_admin.alter-session-policy.unset.o020"
-kind = "option_absent"
+id = "sf.security_admin.alter-session-policy.unset.o046"
+kind = "alternative"
 required = true
-target = "[ AGENT_RESTRICTED_SESSION_SCOPE ]"
+target = "{ SESSION_IDLE_TIMEOUT_MINS | SESSION_UI_IDLE_TIMEOUT_MINS | SESSION_MAX_LIFESPAN_MINS… → AGENT_RESTRICTED_SESSION_SCOPE"
 
 [[obligation]]
-id = "sf.security_admin.alter-session-policy.unset.o022"
+id = "sf.security_admin.alter-session-policy.unset.o047"
+kind = "alternative"
+required = true
+target = "{ SESSION_IDLE_TIMEOUT_MINS | SESSION_UI_IDLE_TIMEOUT_MINS | SESSION_MAX_LIFESPAN_MINS | SESSION_UI_MAX_LIFES… → COMMENT"
+
+[[obligation]]
+id = "sf.security_admin.alter-session-policy.unset.o048"
+kind = "option_present"
+required = true
+target = "[ , ... ]"
+note = "the list continued at least once"
+
+[[obligation]]
+id = "sf.security_admin.alter-session-policy.unset.o049"
 kind = "option_absent"
 required = true
-target = "[ COMMENT ]"
+target = "[ , ... ]"
 
 [[obligation]]
 id = "sf.security_admin.alter-session-policy.unset.o023"
@@ -44400,6 +44399,12 @@ id = "sf.security_admin.alter-session-policy.unset.o026"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required UNSET"
+
+[[obligation]]
+id = "sf.security_admin.alter-session-policy.unset.o050"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { SESSION_IDLE_TIMEOUT_MINS | SESSION_UI_IDLE_TIMEOUT_MINS | SESSION_MAX_LIFESPAN_MINS | SESSION_UI_MAX_LIFESPAN_MINS | ALLOWED_SECONDARY_ROLES | BLOCKED_SECONDARY_ROLES | AGENT_RESTRICTED_SESSION_SCOPE | COMMENT }"
 
 [[obligation]]
 id = "sf.security_admin.alter-session-policy.unset.o028"
@@ -49007,28 +49012,29 @@ target = "<key_pair_name>"
 note = "a string literal in place of <key_pair_name>"
 
 [[obligation]]
-id = "sf.security_admin.alter-user-modify-key-pair.unset.o011"
+id = "sf.security_admin.alter-user-modify-key-pair.unset.o026"
+kind = "alternative"
+required = true
+target = "{ DISABLED | COMMENT } → DISABLED"
+
+[[obligation]]
+id = "sf.security_admin.alter-user-modify-key-pair.unset.o027"
+kind = "alternative"
+required = true
+target = "{ DISABLED | COMMENT } → COMMENT"
+
+[[obligation]]
+id = "sf.security_admin.alter-user-modify-key-pair.unset.o028"
 kind = "option_present"
 required = true
-target = "[ DISABLED ]"
+target = "[ , ... ]"
+note = "the list continued at least once"
 
 [[obligation]]
-id = "sf.security_admin.alter-user-modify-key-pair.unset.o012"
+id = "sf.security_admin.alter-user-modify-key-pair.unset.o029"
 kind = "option_absent"
 required = true
-target = "[ DISABLED ]"
-
-[[obligation]]
-id = "sf.security_admin.alter-user-modify-key-pair.unset.o013"
-kind = "option_present"
-required = true
-target = "[ COMMENT ]"
-
-[[obligation]]
-id = "sf.security_admin.alter-user-modify-key-pair.unset.o014"
-kind = "option_absent"
-required = true
-target = "[ COMMENT ]"
+target = "[ , ... ]"
 
 [[obligation]]
 id = "sf.security_admin.alter-user-modify-key-pair.unset.o015"
@@ -49065,6 +49071,12 @@ id = "sf.security_admin.alter-user-modify-key-pair.unset.o020"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required UNSET"
+
+[[obligation]]
+id = "sf.security_admin.alter-user-modify-key-pair.unset.o030"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { DISABLED | COMMENT }"
 
 [[obligation]]
 id = "sf.security_admin.alter-user-modify-key-pair.unset.o021"
@@ -49724,40 +49736,35 @@ target = "<token_name>"
 note = "a string literal in place of <token_name>"
 
 [[obligation]]
-id = "sf.security_admin.alter-user-modify-programmatic-access-token.unset.o015"
+id = "sf.security_admin.alter-user-modify-programmatic-access-token.unset.o034"
+kind = "alternative"
+required = true
+target = "{ DISABLED | MINS_TO_BYPASS_NETWORK_POLICY_REQUIREMENT | COMMENT } → DISABLED"
+
+[[obligation]]
+id = "sf.security_admin.alter-user-modify-programmatic-access-token.unset.o035"
+kind = "alternative"
+required = true
+target = "{ DISABLED | MINS_TO_BYPASS_NETWORK_POLICY_REQUIREMENT | COMMENT } → MINS_TO_BYPASS_NETWORK_POLICY_REQUIREMENT"
+
+[[obligation]]
+id = "sf.security_admin.alter-user-modify-programmatic-access-token.unset.o036"
+kind = "alternative"
+required = true
+target = "{ DISABLED | MINS_TO_BYPASS_NETWORK_POLICY_REQUIREMENT | COMMENT } → COMMENT"
+
+[[obligation]]
+id = "sf.security_admin.alter-user-modify-programmatic-access-token.unset.o037"
 kind = "option_present"
 required = true
-target = "[ DISABLED ]"
+target = "[ , ... ]"
+note = "the list continued at least once"
 
 [[obligation]]
-id = "sf.security_admin.alter-user-modify-programmatic-access-token.unset.o016"
+id = "sf.security_admin.alter-user-modify-programmatic-access-token.unset.o038"
 kind = "option_absent"
 required = true
-target = "[ DISABLED ]"
-
-[[obligation]]
-id = "sf.security_admin.alter-user-modify-programmatic-access-token.unset.o017"
-kind = "option_present"
-required = true
-target = "[ MINS_TO_BYPASS_NETWORK_POLICY_REQUIREMENT ]"
-
-[[obligation]]
-id = "sf.security_admin.alter-user-modify-programmatic-access-token.unset.o018"
-kind = "option_absent"
-required = true
-target = "[ MINS_TO_BYPASS_NETWORK_POLICY_REQUIREMENT ]"
-
-[[obligation]]
-id = "sf.security_admin.alter-user-modify-programmatic-access-token.unset.o019"
-kind = "option_present"
-required = true
-target = "[ COMMENT ]"
-
-[[obligation]]
-id = "sf.security_admin.alter-user-modify-programmatic-access-token.unset.o020"
-kind = "option_absent"
-required = true
-target = "[ COMMENT ]"
+target = "[ , ... ]"
 
 [[obligation]]
 id = "sf.security_admin.alter-user-modify-programmatic-access-token.unset.o021"
@@ -49806,6 +49813,12 @@ id = "sf.security_admin.alter-user-modify-programmatic-access-token.unset.o028"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required UNSET"
+
+[[obligation]]
+id = "sf.security_admin.alter-user-modify-programmatic-access-token.unset.o039"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { DISABLED | MINS_TO_BYPASS_NETWORK_POLICY_REQUIREMENT | COMMENT }"
 
 [[obligation]]
 id = "sf.security_admin.alter-user-modify-programmatic-access-token.unset.o029"
@@ -50277,16 +50290,29 @@ target = "<workload_identity_name>"
 note = "a string literal in place of <workload_identity_name>"
 
 [[obligation]]
-id = "sf.security_admin.alter-user-modify-workload-identity.unset.o012"
-kind = "option_absent"
+id = "sf.security_admin.alter-user-modify-workload-identity.unset.o032"
+kind = "alternative"
 required = true
-target = "[ DISABLED ]"
+target = "{ DISABLED | COMMENT } → DISABLED"
 
 [[obligation]]
-id = "sf.security_admin.alter-user-modify-workload-identity.unset.o014"
+id = "sf.security_admin.alter-user-modify-workload-identity.unset.o033"
+kind = "alternative"
+required = true
+target = "{ DISABLED | COMMENT } → COMMENT"
+
+[[obligation]]
+id = "sf.security_admin.alter-user-modify-workload-identity.unset.o034"
+kind = "option_present"
+required = true
+target = "[ , ... ]"
+note = "the list continued at least once"
+
+[[obligation]]
+id = "sf.security_admin.alter-user-modify-workload-identity.unset.o035"
 kind = "option_absent"
 required = true
-target = "[ COMMENT ]"
+target = "[ , ... ]"
 
 [[obligation]]
 id = "sf.security_admin.alter-user-modify-workload-identity.unset.o015"
@@ -50323,6 +50349,12 @@ id = "sf.security_admin.alter-user-modify-workload-identity.unset.o020"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required UNSET"
+
+[[obligation]]
+id = "sf.security_admin.alter-user-modify-workload-identity.unset.o036"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { DISABLED | COMMENT }"
 
 [[obligation]]
 id = "sf.security_admin.alter-user-modify-workload-identity.unset.o022"
@@ -77774,34 +77806,34 @@ target = "<name>"
 note = "a string literal in place of <name>"
 
 [[obligation]]
-id = "sf.security_admin.create-resource-monitor.o090"
+id = "sf.security_admin.create-resource-monitor.o152"
 kind = "alternative"
 required = true
-target = "{ CREDIT_QUOTA = <number> | FREQUENCY = { MONTHLY | DAILY | WEEKLY | YEARLY | NEVER } | START… → CREDIT_QUOTA = <number>"
+target = "{ CREDIT_QUOTA = <number> [ FREQUENCY = { MONTHLY | DAILY |… → CREDIT_QUOTA = <number> [ FREQUENCY = { MONTHLY | DAILY | WEEKLY | YEARLY | NEVER } ] [ START_TIMESTAMP = { <timestamp> | IMMEDIATELY } ] [ END_TIMESTAMP = <timestamp> ] [ NOTIFY_USERS = ( <user_name> [ , <user_name> , ... ] ) ]"
 
 [[obligation]]
-id = "sf.security_admin.create-resource-monitor.o091"
+id = "sf.security_admin.create-resource-monitor.o153"
 kind = "alternative"
 required = true
-target = "{ CREDIT_QUOTA = <number> | FREQUENCY = { MONTHLY | DAILY |… → FREQUENCY = { MONTHLY | DAILY | WEEKLY | YEARLY | NEVER }"
+target = "{ CREDIT_QUOTA = <number> [ FREQUENCY = { MONTHLY | DAILY |… → FREQUENCY = { MONTHLY | DAILY | WEEKLY | YEARLY | NEVER } [ START_TIMESTAMP = { <timestamp> | IMMEDIATELY } ] [ END_TIMESTAMP = <timestamp> ] [ NOTIFY_USERS = ( <user_name> [ , <user_name> , ... ] ) ]"
 
 [[obligation]]
-id = "sf.security_admin.create-resource-monitor.o092"
+id = "sf.security_admin.create-resource-monitor.o154"
 kind = "alternative"
 required = true
-target = "{ CREDIT_QUOTA = <number> | FREQUENCY = { MONTHLY | DAILY | WEEKLY | … → START_TIMESTAMP = { <timestamp> | IMMEDIATELY }"
+target = "{ CREDIT_QUOTA = <number> [ FREQUENCY = { MONTHLY | DAILY |… → START_TIMESTAMP = { <timestamp> | IMMEDIATELY } [ END_TIMESTAMP = <timestamp> ] [ NOTIFY_USERS = ( <user_name> [ , <user_name> , ... ] ) ]"
 
 [[obligation]]
-id = "sf.security_admin.create-resource-monitor.o093"
+id = "sf.security_admin.create-resource-monitor.o155"
 kind = "alternative"
 required = true
-target = "{ CREDIT_QUOTA = <number> | FREQUENCY = { MONTHLY | DAILY | WEEKLY | YEARLY | NEVER } | S… → END_TIMESTAMP = <timestamp>"
+target = "{ CREDIT_QUOTA = <number> [ FREQUENCY = { MONTHLY | DAILY |… → END_TIMESTAMP = <timestamp> [ NOTIFY_USERS = ( <user_name> [ , <user_name> , ... ] ) ]"
 
 [[obligation]]
-id = "sf.security_admin.create-resource-monitor.o094"
+id = "sf.security_admin.create-resource-monitor.o156"
 kind = "alternative"
 required = true
-target = "{ CREDIT_QUOTA = <number> | FREQUENCY = { MONTHLY | DAILY | WE… → NOTIFY_USERS = ( <user_name> [ , <user_name> , ... ] )"
+target = "{ CREDIT_QUOTA = <number> [ FREQUENCY = { MONTHLY | DAILY | WE… → NOTIFY_USERS = ( <user_name> [ , <user_name> , ... ] )"
 
 [[obligation]]
 id = "sf.security_admin.create-resource-monitor.o095"
@@ -77823,6 +77855,18 @@ kind = "negative_neighbour"
 required = true
 target = "<number>"
 note = "a string literal in place of <number>"
+
+[[obligation]]
+id = "sf.security_admin.create-resource-monitor.o014"
+kind = "option_present"
+required = true
+target = "[ FREQUENCY = { MONTHLY | DAILY | WEEKLY | YEARLY | NEVER } ]"
+
+[[obligation]]
+id = "sf.security_admin.create-resource-monitor.o015"
+kind = "option_absent"
+required = true
+target = "[ FREQUENCY = { MONTHLY | DAILY | WEEKLY | YEARLY | NEVER } ]"
 
 [[obligation]]
 id = "sf.security_admin.create-resource-monitor.o016"
@@ -77855,141 +77899,6 @@ required = true
 target = "{ MONTHLY | DAILY | WEEKLY | YEARLY | NEVER } → NEVER"
 
 [[obligation]]
-id = "sf.security_admin.create-resource-monitor.o023"
-kind = "alternative"
-required = true
-target = "{ <timestamp> | IMMEDIATELY } → <timestamp>"
-
-[[obligation]]
-id = "sf.security_admin.create-resource-monitor.o024"
-kind = "alternative"
-required = true
-target = "{ <timestamp> | IMMEDIATELY } → IMMEDIATELY"
-
-[[obligation]]
-id = "sf.security_admin.create-resource-monitor.o098"
-kind = "operand_type_class"
-required = true
-target = "<timestamp>"
-note = "a valid operand"
-
-[[obligation]]
-id = "sf.security_admin.create-resource-monitor.o099"
-kind = "required_operand_missing"
-required = true
-target = "<timestamp> #2"
-note = "omit <timestamp>"
-
-[[obligation]]
-id = "sf.security_admin.create-resource-monitor.o100"
-kind = "operand_type_class"
-required = true
-target = "<timestamp> #2"
-note = "a valid operand"
-
-[[obligation]]
-id = "sf.security_admin.create-resource-monitor.o101"
-kind = "required_operand_missing"
-required = true
-target = "<user_name>"
-note = "omit <user_name>"
-
-[[obligation]]
-id = "sf.security_admin.create-resource-monitor.o102"
-kind = "operand_type_class"
-required = true
-target = "<user_name>"
-note = "a valid identifier"
-
-[[obligation]]
-id = "sf.security_admin.create-resource-monitor.o035"
-kind = "option_present"
-required = true
-target = "[ , <user_name> , ... ]"
-note = "the list continued at least once"
-
-[[obligation]]
-id = "sf.security_admin.create-resource-monitor.o036"
-kind = "option_absent"
-required = true
-target = "[ , <user_name> , ... ]"
-
-[[obligation]]
-id = "sf.security_admin.create-resource-monitor.o009"
-kind = "option_present"
-required = true
-target = "[ CREDIT_QUOTA = <number> ]"
-
-[[obligation]]
-id = "sf.security_admin.create-resource-monitor.o010"
-kind = "option_absent"
-required = true
-target = "[ CREDIT_QUOTA = <number> ]"
-
-[[obligation]]
-id = "sf.security_admin.create-resource-monitor.o011"
-kind = "required_operand_missing"
-required = true
-target = "<number> in [ CREDIT_QUOTA = <number> ]"
-note = "omit <number>"
-
-[[obligation]]
-id = "sf.security_admin.create-resource-monitor.o012"
-kind = "operand_type_class"
-required = true
-target = "<number> in [ CREDIT_QUOTA = <number> ]"
-note = "a valid integer_literal"
-
-[[obligation]]
-id = "sf.security_admin.create-resource-monitor.o013"
-kind = "negative_neighbour"
-required = true
-target = "<number> in [ CREDIT_QUOTA = <number> ]"
-note = "a string literal in place of <number>"
-
-[[obligation]]
-id = "sf.security_admin.create-resource-monitor.o014"
-kind = "option_present"
-required = true
-target = "[ FREQUENCY = { MONTHLY | DAILY | WEEKLY | YEARLY | NEVER } ]"
-
-[[obligation]]
-id = "sf.security_admin.create-resource-monitor.o015"
-kind = "option_absent"
-required = true
-target = "[ FREQUENCY = { MONTHLY | DAILY | WEEKLY | YEARLY | NEVER } ]"
-
-[[obligation]]
-id = "sf.security_admin.create-resource-monitor.o104"
-kind = "alternative"
-required = true
-target = "{ MONTHLY | DAILY | WEEKLY | YEARLY | NEVER } → MONTHLY #2"
-
-[[obligation]]
-id = "sf.security_admin.create-resource-monitor.o105"
-kind = "alternative"
-required = true
-target = "{ MONTHLY | DAILY | WEEKLY | YEARLY | NEVER } → DAILY #2"
-
-[[obligation]]
-id = "sf.security_admin.create-resource-monitor.o106"
-kind = "alternative"
-required = true
-target = "{ MONTHLY | DAILY | WEEKLY | YEARLY | NEVER } → WEEKLY #2"
-
-[[obligation]]
-id = "sf.security_admin.create-resource-monitor.o107"
-kind = "alternative"
-required = true
-target = "{ MONTHLY | DAILY | WEEKLY | YEARLY | NEVER } → YEARLY #2"
-
-[[obligation]]
-id = "sf.security_admin.create-resource-monitor.o108"
-kind = "alternative"
-required = true
-target = "{ MONTHLY | DAILY | WEEKLY | YEARLY | NEVER } → NEVER #2"
-
-[[obligation]]
 id = "sf.security_admin.create-resource-monitor.o021"
 kind = "option_present"
 required = true
@@ -78002,16 +77911,16 @@ required = true
 target = "[ START_TIMESTAMP = { <timestamp> | IMMEDIATELY } ]"
 
 [[obligation]]
-id = "sf.security_admin.create-resource-monitor.o109"
+id = "sf.security_admin.create-resource-monitor.o023"
 kind = "alternative"
 required = true
-target = "{ <timestamp> | IMMEDIATELY } → <timestamp> #2"
+target = "{ <timestamp> | IMMEDIATELY } → <timestamp>"
 
 [[obligation]]
-id = "sf.security_admin.create-resource-monitor.o110"
+id = "sf.security_admin.create-resource-monitor.o024"
 kind = "alternative"
 required = true
-target = "{ <timestamp> | IMMEDIATELY } → IMMEDIATELY #2"
+target = "{ <timestamp> | IMMEDIATELY } → IMMEDIATELY"
 
 [[obligation]]
 id = "sf.security_admin.create-resource-monitor.o025"
@@ -78073,11 +77982,130 @@ target = "<user_name> in [ NOTIFY_USERS = ( <user_name> [ , <user_name> , ... ] 
 note = "a valid identifier"
 
 [[obligation]]
-id = "sf.security_admin.create-resource-monitor.o111"
-kind = "negative_neighbour"
+id = "sf.security_admin.create-resource-monitor.o035"
+kind = "option_present"
 required = true
-target = "<user_name> in [ NOTIFY_USERS = ( <user_name> [ , <user_name> , ... ] ) ]"
-note = "a string literal in place of <user_name>"
+target = "[ , <user_name> , ... ]"
+note = "the list continued at least once"
+
+[[obligation]]
+id = "sf.security_admin.create-resource-monitor.o036"
+kind = "option_absent"
+required = true
+target = "[ , <user_name> , ... ]"
+
+[[obligation]]
+id = "sf.security_admin.create-resource-monitor.o104"
+kind = "alternative"
+required = true
+target = "{ MONTHLY | DAILY | WEEKLY | YEARLY | NEVER } → MONTHLY #2"
+
+[[obligation]]
+id = "sf.security_admin.create-resource-monitor.o105"
+kind = "alternative"
+required = true
+target = "{ MONTHLY | DAILY | WEEKLY | YEARLY | NEVER } → DAILY #2"
+
+[[obligation]]
+id = "sf.security_admin.create-resource-monitor.o106"
+kind = "alternative"
+required = true
+target = "{ MONTHLY | DAILY | WEEKLY | YEARLY | NEVER } → WEEKLY #2"
+
+[[obligation]]
+id = "sf.security_admin.create-resource-monitor.o107"
+kind = "alternative"
+required = true
+target = "{ MONTHLY | DAILY | WEEKLY | YEARLY | NEVER } → YEARLY #2"
+
+[[obligation]]
+id = "sf.security_admin.create-resource-monitor.o108"
+kind = "alternative"
+required = true
+target = "{ MONTHLY | DAILY | WEEKLY | YEARLY | NEVER } → NEVER #2"
+
+[[obligation]]
+id = "sf.security_admin.create-resource-monitor.o157"
+kind = "option_present"
+required = true
+target = "[ START_TIMESTAMP = { <timestamp> | IMMEDIATELY } ] #2"
+
+[[obligation]]
+id = "sf.security_admin.create-resource-monitor.o158"
+kind = "option_absent"
+required = true
+target = "[ START_TIMESTAMP = { <timestamp> | IMMEDIATELY } ] #2"
+
+[[obligation]]
+id = "sf.security_admin.create-resource-monitor.o109"
+kind = "alternative"
+required = true
+target = "{ <timestamp> | IMMEDIATELY } → <timestamp> #2"
+
+[[obligation]]
+id = "sf.security_admin.create-resource-monitor.o110"
+kind = "alternative"
+required = true
+target = "{ <timestamp> | IMMEDIATELY } → IMMEDIATELY #2"
+
+[[obligation]]
+id = "sf.security_admin.create-resource-monitor.o159"
+kind = "operand_type_class"
+required = true
+target = "<timestamp> in [ START_TIMESTAMP = { <timestamp> | IMMEDIATELY } ] #2"
+note = "a valid operand"
+
+[[obligation]]
+id = "sf.security_admin.create-resource-monitor.o160"
+kind = "option_present"
+required = true
+target = "[ END_TIMESTAMP = <timestamp> ] #2"
+
+[[obligation]]
+id = "sf.security_admin.create-resource-monitor.o161"
+kind = "option_absent"
+required = true
+target = "[ END_TIMESTAMP = <timestamp> ] #2"
+
+[[obligation]]
+id = "sf.security_admin.create-resource-monitor.o162"
+kind = "required_operand_missing"
+required = true
+target = "<timestamp> in [ END_TIMESTAMP = <timestamp> ] #2"
+note = "omit <timestamp>"
+
+[[obligation]]
+id = "sf.security_admin.create-resource-monitor.o163"
+kind = "operand_type_class"
+required = true
+target = "<timestamp> in [ END_TIMESTAMP = <timestamp> ] #2"
+note = "a valid operand"
+
+[[obligation]]
+id = "sf.security_admin.create-resource-monitor.o164"
+kind = "option_present"
+required = true
+target = "[ NOTIFY_USERS = ( <user_name> [ , <user_name> , ... ] ) ] #2"
+
+[[obligation]]
+id = "sf.security_admin.create-resource-monitor.o165"
+kind = "option_absent"
+required = true
+target = "[ NOTIFY_USERS = ( <user_name> [ , <user_name> , ... ] ) ] #2"
+
+[[obligation]]
+id = "sf.security_admin.create-resource-monitor.o166"
+kind = "required_operand_missing"
+required = true
+target = "<user_name> in [ NOTIFY_USERS = ( <user_name> [ , <user_name> , ... ] ) ] #2"
+note = "omit <user_name>"
+
+[[obligation]]
+id = "sf.security_admin.create-resource-monitor.o167"
+kind = "operand_type_class"
+required = true
+target = "<user_name> in [ NOTIFY_USERS = ( <user_name> [ , <user_name> , ... ] ) ] #2"
+note = "a valid identifier"
 
 [[obligation]]
 id = "sf.security_admin.create-resource-monitor.o112"
@@ -78091,6 +78119,170 @@ id = "sf.security_admin.create-resource-monitor.o113"
 kind = "option_absent"
 required = true
 target = "[ , <user_name> , ... ] #2"
+
+[[obligation]]
+id = "sf.security_admin.create-resource-monitor.o169"
+kind = "alternative"
+required = true
+target = "{ <timestamp> | IMMEDIATELY } → <timestamp> #3"
+
+[[obligation]]
+id = "sf.security_admin.create-resource-monitor.o170"
+kind = "alternative"
+required = true
+target = "{ <timestamp> | IMMEDIATELY } → IMMEDIATELY #3"
+
+[[obligation]]
+id = "sf.security_admin.create-resource-monitor.o098"
+kind = "operand_type_class"
+required = true
+target = "<timestamp>"
+note = "a valid operand"
+
+[[obligation]]
+id = "sf.security_admin.create-resource-monitor.o171"
+kind = "option_present"
+required = true
+target = "[ END_TIMESTAMP = <timestamp> ] #3"
+
+[[obligation]]
+id = "sf.security_admin.create-resource-monitor.o172"
+kind = "option_absent"
+required = true
+target = "[ END_TIMESTAMP = <timestamp> ] #3"
+
+[[obligation]]
+id = "sf.security_admin.create-resource-monitor.o173"
+kind = "required_operand_missing"
+required = true
+target = "<timestamp> in [ END_TIMESTAMP = <timestamp> ] #3"
+note = "omit <timestamp>"
+
+[[obligation]]
+id = "sf.security_admin.create-resource-monitor.o174"
+kind = "operand_type_class"
+required = true
+target = "<timestamp> in [ END_TIMESTAMP = <timestamp> ] #3"
+note = "a valid operand"
+
+[[obligation]]
+id = "sf.security_admin.create-resource-monitor.o175"
+kind = "option_present"
+required = true
+target = "[ NOTIFY_USERS = ( <user_name> [ , <user_name> , ... ] ) ] #3"
+
+[[obligation]]
+id = "sf.security_admin.create-resource-monitor.o176"
+kind = "option_absent"
+required = true
+target = "[ NOTIFY_USERS = ( <user_name> [ , <user_name> , ... ] ) ] #3"
+
+[[obligation]]
+id = "sf.security_admin.create-resource-monitor.o177"
+kind = "required_operand_missing"
+required = true
+target = "<user_name> in [ NOTIFY_USERS = ( <user_name> [ , <user_name> , ... ] ) ] #3"
+note = "omit <user_name>"
+
+[[obligation]]
+id = "sf.security_admin.create-resource-monitor.o178"
+kind = "operand_type_class"
+required = true
+target = "<user_name> in [ NOTIFY_USERS = ( <user_name> [ , <user_name> , ... ] ) ] #3"
+note = "a valid identifier"
+
+[[obligation]]
+id = "sf.security_admin.create-resource-monitor.o180"
+kind = "option_present"
+required = true
+target = "[ , <user_name> , ... ] #3"
+note = "the list continued at least once"
+
+[[obligation]]
+id = "sf.security_admin.create-resource-monitor.o181"
+kind = "option_absent"
+required = true
+target = "[ , <user_name> , ... ] #3"
+
+[[obligation]]
+id = "sf.security_admin.create-resource-monitor.o099"
+kind = "required_operand_missing"
+required = true
+target = "<timestamp> #2"
+note = "omit <timestamp>"
+
+[[obligation]]
+id = "sf.security_admin.create-resource-monitor.o100"
+kind = "operand_type_class"
+required = true
+target = "<timestamp> #2"
+note = "a valid operand"
+
+[[obligation]]
+id = "sf.security_admin.create-resource-monitor.o182"
+kind = "option_present"
+required = true
+target = "[ NOTIFY_USERS = ( <user_name> [ , <user_name> , ... ] ) ] #4"
+
+[[obligation]]
+id = "sf.security_admin.create-resource-monitor.o183"
+kind = "option_absent"
+required = true
+target = "[ NOTIFY_USERS = ( <user_name> [ , <user_name> , ... ] ) ] #4"
+
+[[obligation]]
+id = "sf.security_admin.create-resource-monitor.o184"
+kind = "required_operand_missing"
+required = true
+target = "<user_name> in [ NOTIFY_USERS = ( <user_name> [ , <user_name> , ... ] ) ] #4"
+note = "omit <user_name>"
+
+[[obligation]]
+id = "sf.security_admin.create-resource-monitor.o185"
+kind = "operand_type_class"
+required = true
+target = "<user_name> in [ NOTIFY_USERS = ( <user_name> [ , <user_name> , ... ] ) ] #4"
+note = "a valid identifier"
+
+[[obligation]]
+id = "sf.security_admin.create-resource-monitor.o187"
+kind = "option_present"
+required = true
+target = "[ , <user_name> , ... ] #4"
+note = "the list continued at least once"
+
+[[obligation]]
+id = "sf.security_admin.create-resource-monitor.o188"
+kind = "option_absent"
+required = true
+target = "[ , <user_name> , ... ] #4"
+
+[[obligation]]
+id = "sf.security_admin.create-resource-monitor.o101"
+kind = "required_operand_missing"
+required = true
+target = "<user_name>"
+note = "omit <user_name>"
+
+[[obligation]]
+id = "sf.security_admin.create-resource-monitor.o102"
+kind = "operand_type_class"
+required = true
+target = "<user_name>"
+note = "a valid identifier"
+
+[[obligation]]
+id = "sf.security_admin.create-resource-monitor.o189"
+kind = "option_present"
+required = true
+target = "[ , <user_name> , ... ] #5"
+note = "the list continued at least once"
+
+[[obligation]]
+id = "sf.security_admin.create-resource-monitor.o190"
+kind = "option_absent"
+required = true
+target = "[ , <user_name> , ... ] #5"
 
 [[obligation]]
 id = "sf.security_admin.create-resource-monitor.o131"
@@ -78211,42 +78403,6 @@ required = true
 note = "the form without its required EXISTS in [ IF NOT EXISTS ]"
 
 [[obligation]]
-id = "sf.security_admin.create-resource-monitor.o120"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required WITH"
-
-[[obligation]]
-id = "sf.security_admin.create-resource-monitor.o121"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required { MONTHLY | DAILY | WEEKLY | YEARLY | NEVER }"
-
-[[obligation]]
-id = "sf.security_admin.create-resource-monitor.o122"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required { <timestamp> | IMMEDIATELY }"
-
-[[obligation]]
-id = "sf.security_admin.create-resource-monitor.o123"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ("
-
-[[obligation]]
-id = "sf.security_admin.create-resource-monitor.o124"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required )"
-
-[[obligation]]
-id = "sf.security_admin.create-resource-monitor.o125"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required { CREDIT_QUOTA = <number> | FREQUENCY = { MONTHLY | DAILY | WEEKLY | YEARLY | NEVER } | START_TIMESTAMP = { <timestamp> | IMMEDIATELY } | END_TIMESTAMP = <timestamp> | NOTIFY_USERS = ( <user_name> [ , <user_name> , ... ] ) }"
-
-[[obligation]]
 id = "sf.security_admin.create-resource-monitor.o057"
 kind = "negative_neighbour"
 required = true
@@ -78269,6 +78425,78 @@ id = "sf.security_admin.create-resource-monitor.o060"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required ) in [ NOTIFY_USERS = ( <user_name> [ , <user_name> , ... ] ) ]"
+
+[[obligation]]
+id = "sf.security_admin.create-resource-monitor.o121"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { MONTHLY | DAILY | WEEKLY | YEARLY | NEVER }"
+
+[[obligation]]
+id = "sf.security_admin.create-resource-monitor.o191"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { <timestamp> | IMMEDIATELY } in [ START_TIMESTAMP = { <timestamp> | IMMEDIATELY } ] #2"
+
+[[obligation]]
+id = "sf.security_admin.create-resource-monitor.o192"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( in [ NOTIFY_USERS = ( <user_name> [ , <user_name> , ... ] ) ] #2"
+
+[[obligation]]
+id = "sf.security_admin.create-resource-monitor.o193"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) in [ NOTIFY_USERS = ( <user_name> [ , <user_name> , ... ] ) ] #2"
+
+[[obligation]]
+id = "sf.security_admin.create-resource-monitor.o122"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { <timestamp> | IMMEDIATELY }"
+
+[[obligation]]
+id = "sf.security_admin.create-resource-monitor.o194"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( in [ NOTIFY_USERS = ( <user_name> [ , <user_name> , ... ] ) ] #3"
+
+[[obligation]]
+id = "sf.security_admin.create-resource-monitor.o195"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) in [ NOTIFY_USERS = ( <user_name> [ , <user_name> , ... ] ) ] #3"
+
+[[obligation]]
+id = "sf.security_admin.create-resource-monitor.o196"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( in [ NOTIFY_USERS = ( <user_name> [ , <user_name> , ... ] ) ] #4"
+
+[[obligation]]
+id = "sf.security_admin.create-resource-monitor.o197"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) in [ NOTIFY_USERS = ( <user_name> [ , <user_name> , ... ] ) ] #4"
+
+[[obligation]]
+id = "sf.security_admin.create-resource-monitor.o123"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ("
+
+[[obligation]]
+id = "sf.security_admin.create-resource-monitor.o124"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required )"
+
+[[obligation]]
+id = "sf.security_admin.create-resource-monitor.o198"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { CREDIT_QUOTA = <number> [ FREQUENCY = { MONTHLY | DAILY | WEEKLY | YEARLY | NEVER } ] [ START_TIMESTAMP = { <timestamp> | IMMEDIATELY } ] [ END_TIMESTAMP = <timestamp> ] [ NOTIFY_USERS = ( <user_name> [ , <user_name> , ... ] ) ] | FREQUENCY = { MONTHLY | DAILY | WEEKLY | YEARLY | NEVER } [ START_TIMESTAMP = { <timestamp> | IMMEDIATELY } ] [ END_TIMESTAMP = <timestamp> ] [ NOTIFY_USERS = ( <user_name> [ , <user_name> , ... ] ) ] | START_TIMESTAMP = { <timestamp> | IMMEDIATELY } [ END_TIMESTAMP = <timestamp> ] [ NOTIFY_USERS = ( <user_name> [ , <user_name> , ... ] ) ] | END_TIMESTAMP = <timestamp> [ NOTIFY_USERS = ( <user_name> [ , <user_name> , ... ] ) ] | NOTIFY_USERS = ( <user_name> [ , <user_name> , ... ] ) }"
 
 [[obligation]]
 id = "sf.security_admin.create-resource-monitor.o145"
@@ -78375,20 +78603,20 @@ anchor = "doc.sql.create-resource-monitor / Usage notes"
 note = "6 users in NOTIFY_USERS against the documented maximum of 5 non-administrator users"
 
 [[obligation]]
-id = "sf.security_admin.create-resource-monitor.o128"
+id = "sf.security_admin.create-resource-monitor.o199"
 kind = "boundary_below"
 required = true
 target = "TRIGGERS ON <threshold> PERCENT DO NOTIFY [ ... ]"
 anchor = "doc.sql.create-resource-monitor / Usage notes"
-note = "4 NOTIFY triggers against the documented maximum of 5, observed"
+note = "4 NOTIFY triggers against the documented maximum of 5"
 
 [[obligation]]
-id = "sf.security_admin.create-resource-monitor.o129"
+id = "sf.security_admin.create-resource-monitor.o200"
 kind = "boundary_at"
 required = true
 target = "TRIGGERS ON <threshold> PERCENT DO NOTIFY [ ... ]"
 anchor = "doc.sql.create-resource-monitor / Usage notes"
-note = "5 NOTIFY triggers against the documented maximum of 5, observed"
+note = "5 NOTIFY triggers against the documented maximum of 5"
 
 [[obligation]]
 id = "sf.security_admin.create-resource-monitor.o078"
@@ -78405,6 +78633,13 @@ required = true
 target = "<user_name>"
 anchor = "doc.sql.create-resource-monitor / Syntax"
 note = "a string literal in place of <user_name>, observed"
+
+[[obligation]]
+id = "sf.security_admin.create-resource-monitor.o201"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.create-resource-monitor / Syntax"
+note = "the form without its required WITH, observed"
 
 [[obligation]]
 id = "sf.security_admin.create-role.create-or-alter-role.o001"

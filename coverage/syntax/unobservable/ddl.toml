@@ -3333,18 +3333,6 @@ runs = []
 probes = []
 
 [[unobservable]]
-obligation = "sf.ddl.alter-external-consumer.unset.o002"
-form = "sf.ddl.alter-external-consumer.unset"
-construct = "option_present: ALTER EXTERNAL CONSUMER IF EXISTS v1 UNSET COMMENT EMAIL ;"
-reason = "not submitted: held by the capture guard in chunk ux-01: account-level EXTERNAL CONSUMER names not listed"
-cause = "not_submitted"
-cases = [
-  { case_id = "sf.ddl.alter-external-consumer.unset.k752ff2d97071", sql_sha256 = "752ff2d97071c91d39c2bb1d86aa18427a8608d052c0cafcc786dce0a2908ac8" },
-]
-runs = []
-probes = []
-
-[[unobservable]]
 obligation = "sf.ddl.alter-external-consumer.unset.o003"
 form = "sf.ddl.alter-external-consumer.unset"
 construct = "option_absent: ALTER EXTERNAL CONSUMER v1 UNSET ;"
@@ -3352,18 +3340,6 @@ reason = "not submitted: held by the capture guard in chunk ux-01: account-level
 cause = "not_submitted"
 cases = [
   { case_id = "sf.ddl.alter-external-consumer.unset.k8e486352c0e1", sql_sha256 = "8e486352c0e1723bd0de0e3218c43c24c04c75df7e86792e44a12648ecce568b" },
-]
-runs = []
-probes = []
-
-[[unobservable]]
-obligation = "sf.ddl.alter-external-consumer.unset.o004"
-form = "sf.ddl.alter-external-consumer.unset"
-construct = "omit <name>: ALTER EXTERNAL CONSUMER UNSET ;"
-reason = "not submitted: held by the capture guard in chunk ux-01: account-level EXTERNAL CONSUMER names not listed"
-cause = "not_submitted"
-cases = [
-  { case_id = "sf.ddl.alter-external-consumer.unset.k3be36b8b26f3", sql_sha256 = "3be36b8b26f37d32baab71d1c7f4bfcbbb6c4ffeddccce02738b7dc189e5c3c0" },
 ]
 runs = []
 probes = []
@@ -3381,78 +3357,6 @@ runs = []
 probes = []
 
 [[unobservable]]
-obligation = "sf.ddl.alter-external-consumer.unset.o006"
-form = "sf.ddl.alter-external-consumer.unset"
-construct = "a string literal in place of <name>: ALTER EXTERNAL CONSUMER 'v1' UNSET ;"
-reason = "not submitted: held by the capture guard in chunk ux-01: account-level EXTERNAL CONSUMER names not listed"
-cause = "not_submitted"
-cases = [
-  { case_id = "sf.ddl.alter-external-consumer.unset.k19e13a4ffccf", sql_sha256 = "19e13a4ffccffd6f212988cdd5c45d12b694865ec926e36e2f3d2ffd913c241e" },
-]
-runs = []
-probes = []
-
-[[unobservable]]
-obligation = "sf.ddl.alter-external-consumer.unset.o007"
-form = "sf.ddl.alter-external-consumer.unset"
-construct = "option_present: ALTER EXTERNAL CONSUMER IF EXISTS v1 UNSET COMMENT EMAIL ;"
-reason = "not submitted: held by the capture guard in chunk ux-01: account-level EXTERNAL CONSUMER names not listed"
-cause = "not_submitted"
-cases = [
-  { case_id = "sf.ddl.alter-external-consumer.unset.k752ff2d97071", sql_sha256 = "752ff2d97071c91d39c2bb1d86aa18427a8608d052c0cafcc786dce0a2908ac8" },
-]
-runs = []
-probes = []
-
-[[unobservable]]
-obligation = "sf.ddl.alter-external-consumer.unset.o008"
-form = "sf.ddl.alter-external-consumer.unset"
-construct = "option_absent: ALTER EXTERNAL CONSUMER v1 UNSET ;"
-reason = "not submitted: held by the capture guard in chunk ux-01: account-level EXTERNAL CONSUMER names not listed"
-cause = "not_submitted"
-cases = [
-  { case_id = "sf.ddl.alter-external-consumer.unset.k8e486352c0e1", sql_sha256 = "8e486352c0e1723bd0de0e3218c43c24c04c75df7e86792e44a12648ecce568b" },
-]
-runs = []
-probes = []
-
-[[unobservable]]
-obligation = "sf.ddl.alter-external-consumer.unset.o009"
-form = "sf.ddl.alter-external-consumer.unset"
-construct = "option_present: ALTER EXTERNAL CONSUMER IF EXISTS v1 UNSET COMMENT EMAIL ;"
-reason = "not submitted: held by the capture guard in chunk ux-01: account-level EXTERNAL CONSUMER names not listed"
-cause = "not_submitted"
-cases = [
-  { case_id = "sf.ddl.alter-external-consumer.unset.k752ff2d97071", sql_sha256 = "752ff2d97071c91d39c2bb1d86aa18427a8608d052c0cafcc786dce0a2908ac8" },
-]
-runs = []
-probes = []
-
-[[unobservable]]
-obligation = "sf.ddl.alter-external-consumer.unset.o010"
-form = "sf.ddl.alter-external-consumer.unset"
-construct = "option_absent: ALTER EXTERNAL CONSUMER v1 UNSET ;"
-reason = "not submitted: held by the capture guard in chunk ux-01: account-level EXTERNAL CONSUMER names not listed"
-cause = "not_submitted"
-cases = [
-  { case_id = "sf.ddl.alter-external-consumer.unset.k8e486352c0e1", sql_sha256 = "8e486352c0e1723bd0de0e3218c43c24c04c75df7e86792e44a12648ecce568b" },
-]
-runs = []
-probes = []
-
-[[unobservable]]
-obligation = "sf.ddl.alter-external-consumer.unset.o013"
-form = "sf.ddl.alter-external-consumer.unset"
-construct = "the form without its required EXISTS in [ IF EXISTS ]: ALTER EXTERNAL CONSUMER IF v1 UNSET ;"
-reason = "not submitted: held by the capture guard in chunk ux-01: account-level EXTERNAL CONSUMER names not listed"
-cause = "not_submitted"
-cases = [
-  { case_id = "sf.ddl.alter-external-consumer.unset.k9b8279edfce0", sql_sha256 = "9b8279edfce02345d18f8a9123d6e6b9fe5cb143911c76a4a7e7a1ede2b1f0eb" },
-]
-runs = []
-probes = []
-
-[[unobservable]]
 obligation = "sf.ddl.alter-external-consumer.unset.o014"
 form = "sf.ddl.alter-external-consumer.unset"
 construct = "the form without its required UNSET: ALTER EXTERNAL CONSUMER v1 ;"
@@ -3460,43 +3364,6 @@ reason = "not submitted: held by the capture guard in chunk ux-01: account-level
 cause = "not_submitted"
 cases = [
   { case_id = "sf.ddl.alter-external-consumer.set.ke178bc2cc9f3", sql_sha256 = "e178bc2cc9f371e6feda13d4f3d5c1ee25e67429ddca814b298cc25cab2b01b4" },
-]
-runs = []
-probes = []
-
-[[unobservable]]
-obligation = "sf.ddl.alter-external-consumer.unset.o015"
-form = "sf.ddl.alter-external-consumer.unset"
-construct = "every independent option of one production together: ALTER EXTERNAL CONSUMER IF EXISTS v1 UNSET COMMENT EMAIL ;"
-reason = "not submitted: held by the capture guard in chunk ux-01: account-level EXTERNAL CONSUMER names not listed"
-cause = "not_submitted"
-cases = [
-  { case_id = "sf.ddl.alter-external-consumer.unset.k752ff2d97071", sql_sha256 = "752ff2d97071c91d39c2bb1d86aa18427a8608d052c0cafcc786dce0a2908ac8" },
-]
-runs = []
-probes = []
-
-[[unobservable]]
-obligation = "sf.ddl.alter-external-consumer.unset.o016"
-form = "sf.ddl.alter-external-consumer.unset"
-construct = "quoted: a double-quoted identifier with blanks and mixed case: ALTER EXTERNAL CONSUMER \"v1 Q\" UNSET ;"
-reason = "not submitted: held by the capture guard in chunk ux-01: account-level EXTERNAL CONSUMER names not listed"
-cause = "not_submitted"
-cases = [
-  { case_id = "sf.ddl.alter-external-consumer.unset.k8ef56e2de17d", sql_sha256 = "8ef56e2de17d59106d76864d24ac4466d1516de055fc65742b62d956cd0619f5" },
-]
-runs = []
-probes = []
-
-[[unobservable]]
-obligation = "sf.ddl.alter-external-consumer.unset.o017"
-form = "sf.ddl.alter-external-consumer.unset"
-construct = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance): ALTER EXTERNAL CONSUMER \"SELECT\" UNSET ;"
-reason = "not submitted: held by the capture guard in chunk ux-01: account-level EXTERNAL CONSUMER names not listed"
-cause = "not_submitted"
-cases = [
-  { case_id = "sf.ddl.alter-external-consumer.unset.ka64e861cff88", sql_sha256 = "a64e861cff88e1d3c62f064ec6db2c3e4c03e50e16e27ddb3caa0fb1404625bd" },
-  { case_id = "sf.ddl.alter-external-consumer.unset.kc9447d54d4bf", sql_sha256 = "c9447d54d4bfa4330abe75e42c4bec8a78b57283dc0779810c258bb0a1413c73" },
 ]
 runs = []
 probes = []
@@ -53004,6 +52871,30 @@ reason = "not submitted: held by the capture guard in chunk ux-08: account-level
 cause = "not_submitted"
 cases = [
   { case_id = "sf.ddl.show-services.ka2692659b33f", sql_sha256 = "a2692659b33fbba7450e65be0e17b22ce432cc2d8c12818279950f93a84cadad" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.alter-cortex-search.unset.o012"
+form = "sf.ddl.alter-cortex-search.unset"
+construct = "the form without its required EXISTS in [ IF EXISTS ]: ALTER CORTEX SEARCH SERVICE IF v1 UNSET PRIMARY KEY ;"
+reason = "not submitted: held by the capture guard in packet d118d-ddl: billable or out-of-account: compute pool or service (final: the f290f26 SET/UNSET exemption does not cover IF without EXISTS)"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.alter-cortex-search.unset.k3a715c23ee40", sql_sha256 = "3a715c23ee40da470d076372a66da037554bd1e5acea72f4a7f142ff7202916c" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.alter-external-consumer.unset.o022"
+form = "sf.ddl.alter-external-consumer.unset"
+construct = "the form without its required { COMMENT | EMAIL }: ALTER EXTERNAL CONSUMER v1 UNSET ;"
+reason = "not submitted: held by the capture guard in chunk ux-01: account-level EXTERNAL CONSUMER names not listed"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.alter-external-consumer.unset.k8e486352c0e1", sql_sha256 = "8e486352c0e1723bd0de0e3218c43c24c04c75df7e86792e44a12648ecce568b" },
 ]
 runs = []
 probes = []

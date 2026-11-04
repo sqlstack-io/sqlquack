@@ -1262,6 +1262,90 @@ close = "END ;"
 # binds the catalogue grammar it reads by grammar_sha256; a catalogue change invalidates it.
 
 [[reading]]
+form = "sf.ddl.alter-alert.unset"
+grammar_sha256 = "9f0a6437f712a3aa046920ece15825e8b521eef764a0b56f30074c168e2735f4"
+grammar = ["ALTER ALERT [ IF EXISTS ] <name> UNSET { WAREHOUSE | COMMENT | CONFIG | RUNBOOK | SUSPEND_ALERT_AFTER_NUM_FAILURES } [ , ... ]"]
+reason = "UNSET \"unsets one or more specified properties\": at least one of the listed properties, comma-separated as in every Snowflake UNSET"
+
+[[reading]]
+form = "sf.ddl.alter-application.unset"
+grammar_sha256 = "9703965e1af0ff9c42167d6af67453d449acefb178934321e5bdb64a0ab788ae"
+grammar = ["ALTER APPLICATION [ IF EXISTS ] <name> UNSET { COMMENT | SHARE_EVENTS_WITH_PROVIDER | DEBUG_MODE | AUTHORIZE_RESTRICTED_PROVIDER_REMOTE_OPERATIONS_UNTIL } [ , ... ]"]
+reason = "UNSET \"unsets one or more specified properties\": at least one of the listed properties, comma-separated as in every Snowflake UNSET"
+
+[[reading]]
+form = "sf.ddl.alter-external-consumer.unset"
+grammar_sha256 = "5e9231a7223100b3f0aa2d845a4eb597a6c76c86664b6462aa0617910d8c7343"
+grammar = ["ALTER EXTERNAL CONSUMER [ IF EXISTS ] <name> UNSET { COMMENT | EMAIL } [ , ... ]"]
+reason = "UNSET \"unsets one or more specified properties\": at least one of the listed properties, comma-separated as in every Snowflake UNSET"
+
+[[reading]]
+form = "sf.ddl.alter-iceberg-table.unset"
+grammar_sha256 = "7ea83ed6a2a7a5009febe3129552a9d9d05bf3ca785269288c9a5f37b6254994"
+grammar = ["ALTER ICEBERG TABLE [ IF EXISTS ] <table_name> UNSET { REPLACE_INVALID_CHARACTERS | PATH_LAYOUT | LOG_EVENT_LEVEL | ERROR_LOGGING | ENABLE_DATA_COMPACTION | ICEBERG_MERGE_ON_READ_BEHAVIOR | ENABLE_ICEBERG_MERGE_ON_READ | ENABLE_SCHEMA_EVOLUTION | ALLOW_V3_EXPRESSION_DEFAULTS } [ , ... ]"]
+reason = "UNSET \"unsets one or more specified properties\": at least one of the listed properties, comma-separated as in every Snowflake UNSET"
+
+[[reading]]
+form = "sf.ddl.alter-task.unset"
+grammar_sha256 = "f8ef4f3cff9d1562dedd8206c9ea056b4fa979eb5439a73991208f8fbc49ba87"
+grammar = ["ALTER TASK [ IF EXISTS ] <name> UNSET { WAREHOUSE | SCHEDULE | CONFIG | OVERLAP_POLICY | USER_TASK_TIMEOUT_MS | SUSPEND_TASK_AFTER_NUM_FAILURES | LOG_LEVEL | COMMENT | <session_parameter> [ , <session_parameter> ... ] | TARGET_COMPLETION_INTERVAL | SERVERLESS_TASK_MIN_STATEMENT_SIZE | SERVERLESS_TASK_MAX_STATEMENT_SIZE | CONTACT <purpose> [ , ... ] | EXECUTE AS USER } [ , ... ]"]
+reason = "UNSET \"unsets one or more specified properties\": at least one of the listed properties, comma-separated as in every Snowflake UNSET"
+
+[[reading]]
+form = "sf.security_admin.alter-authentication-policy.unset"
+grammar_sha256 = "710a3b23d48dde5100631d836d94715082768e400da5e0107ed84e6a1bfcf8ef"
+grammar = ["ALTER AUTHENTICATION POLICY [ IF EXISTS ] <name> UNSET { AUTHENTICATION_METHODS | CLIENT_TYPES | CLIENT_POLICY | SECURITY_INTEGRATIONS | MFA_ENROLLMENT | MFA_POLICY | PAT_POLICY | WORKLOAD_IDENTITY_POLICY | COMMENT } [ , ... ]"]
+reason = "UNSET \"unsets one or more specified properties\": at least one of the listed properties, comma-separated as in every Snowflake UNSET"
+
+[[reading]]
+form = "sf.security_admin.alter-feature-policy.unset"
+grammar_sha256 = "2ab4e3d8d5599be6ead7f3a162447d1ca6d9db7e135554237fcc682eaf3c2514"
+grammar = ["ALTER FEATURE POLICY [ IF EXISTS ] <name> UNSET { BLOCKED_OBJECT_TYPES_FOR_CREATION | COMMENT | POLICY_DEFINITION } [ , ... ]"]
+reason = "UNSET \"unsets one or more specified properties\": at least one of the listed properties, comma-separated as in every Snowflake UNSET"
+
+[[reading]]
+form = "sf.security_admin.alter-maintenance-policy.unset"
+grammar_sha256 = "d19fe892c2666cfaac7cfa79f866dd8cdff58c886c755746f323e7380136cb56"
+grammar = ["ALTER MAINTENANCE POLICY [ IF EXISTS ] <name> UNSET COMMENT"]
+reason = "UNSET names the property it unsets, so the only one listed is required"
+
+[[reading]]
+form = "sf.security_admin.alter-packages-policy.unset"
+grammar_sha256 = "8433e043ddea133ee5c833accfeb79fa9d146241509d6814f08210f20346d568"
+grammar = ["ALTER PACKAGES POLICY [ IF EXISTS ] <name> UNSET { ALLOWLIST | BLOCKLIST | ADDITIONAL_CREATION_BLOCKLIST | COMMENT } [ , ... ]"]
+reason = "UNSET \"unsets one or more specified properties\": at least one of the listed properties, comma-separated as in every Snowflake UNSET"
+
+[[reading]]
+form = "sf.security_admin.alter-password-policy.unset"
+grammar_sha256 = "f2173295005a67cbe11b03fe2a53fda7d418be31c00344b2e916c9767598f36f"
+grammar = ["ALTER PASSWORD POLICY [ IF EXISTS ] <name> UNSET { PASSWORD_MIN_LENGTH | PASSWORD_MAX_LENGTH | PASSWORD_MIN_UPPER_CASE_CHARS | PASSWORD_MIN_LOWER_CASE_CHARS | PASSWORD_MIN_NUMERIC_CHARS | PASSWORD_MIN_SPECIAL_CHARS | PASSWORD_MIN_AGE_DAYS | PASSWORD_MAX_AGE_DAYS | PASSWORD_MAX_RETRIES | PASSWORD_LOCKOUT_TIME_MINS | PASSWORD_HISTORY | COMMENT } [ , ... ]"]
+reason = "UNSET \"unsets one or more specified properties\": at least one of the listed properties, comma-separated as in every Snowflake UNSET"
+
+[[reading]]
+form = "sf.security_admin.alter-session-policy.unset"
+grammar_sha256 = "cb72e64e93e8ee9fd53ec9d0c2054082c7de581187ee2576b611037d57c8421e"
+grammar = ["ALTER SESSION POLICY [ IF EXISTS ] <name> UNSET { SESSION_IDLE_TIMEOUT_MINS | SESSION_UI_IDLE_TIMEOUT_MINS | SESSION_MAX_LIFESPAN_MINS | SESSION_UI_MAX_LIFESPAN_MINS | ALLOWED_SECONDARY_ROLES | BLOCKED_SECONDARY_ROLES | AGENT_RESTRICTED_SESSION_SCOPE | COMMENT } [ , ... ]"]
+reason = "UNSET \"unsets one or more specified properties\": at least one of the listed properties, comma-separated as in every Snowflake UNSET"
+
+[[reading]]
+form = "sf.security_admin.alter-user-modify-key-pair.unset"
+grammar_sha256 = "cb73ff595d682138097f8d483f17cb89fbb3a6702a27a8628a22abe30fe62d91"
+grammar = ["ALTER USER [ IF EXISTS ] [ <username> ] MODIFY KEY PAIR <key_pair_name> UNSET { DISABLED | COMMENT } [ , ... ]"]
+reason = "UNSET \"unsets one or more specified properties\": at least one of the listed properties, comma-separated as in every Snowflake UNSET"
+
+[[reading]]
+form = "sf.security_admin.alter-user-modify-programmatic-access-token.unset"
+grammar_sha256 = "cd459d09995d29f7b1628249eadaac5e99d63ffedc20b4559cd570e11677e59d"
+grammar = ["ALTER USER [ IF EXISTS ] [ <username> ] MODIFY { PROGRAMMATIC ACCESS TOKEN | PAT } [ IF EXISTS ] <token_name> UNSET { DISABLED | MINS_TO_BYPASS_NETWORK_POLICY_REQUIREMENT | COMMENT } [ , ... ]"]
+reason = "UNSET \"unsets one or more specified properties\": at least one of the listed properties, comma-separated as in every Snowflake UNSET"
+
+[[reading]]
+form = "sf.security_admin.alter-user-modify-workload-identity.unset"
+grammar_sha256 = "a0ba29dd047e4aa0bf72c51b32c57ffb72e37cce520c74728ceddf8456627cbe"
+grammar = ["ALTER USER [ IF EXISTS ] [ <username> ] MODIFY WORKLOAD IDENTITY <workload_identity_name> UNSET { DISABLED | COMMENT } [ , ... ]"]
+reason = "UNSET \"unsets one or more specified properties\": at least one of the listed properties, comma-separated as in every Snowflake UNSET"
+
+[[reading]]
 form = "sf.query.pivot"
 grammar_sha256 = "f402923b11db685056626c70c8852e3e82b0df6546c3e49ff20948aa843f0134"
 grammar = ["SELECT ... FROM ... PIVOT ( <aggregate_function> ( <pivot_column> ) [ [ AS ] <alias> ] FOR <value_column> IN ( { <pivot_value_1> [ [ AS ] <alias> ] [ , <pivot_value_2> [ [ AS ] <alias> ] ... ] | ANY [ ORDER BY ... ] | <subquery> } ) [ DEFAULT ON NULL (<value>) ] ) [ ... ]"]
@@ -20157,28 +20241,24 @@ sql = "ALTER RESOURCE MONITOR v1 SET NOTIFY_USERS = ( u1 , u2 , u3 , u4 , u5 , u
 expect = "observe"
 context = "raw"
 
-# D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-87); observed, not flipped to reject
 [[limit]]
 form = "sf.security_admin.create-resource-monitor"
 kind = "boundary_below"
 target = "TRIGGERS ON <threshold> PERCENT DO NOTIFY [ ... ]"
-note = "4 NOTIFY triggers against the documented maximum of 5, observed"
+note = "4 NOTIFY triggers against the documented maximum of 5"
 anchor = "doc.sql.create-resource-monitor / Usage notes"
-sql = "CREATE RESOURCE MONITOR v1 WITH TRIGGERS ON 51 PERCENT DO NOTIFY ON 52 PERCENT DO NOTIFY ON 53 PERCENT DO NOTIFY ON 54 PERCENT DO NOTIFY ;"
-expect = "observe"
-documented = true
+sql = "CREATE RESOURCE MONITOR v1 WITH CREDIT_QUOTA = 1 TRIGGERS ON 51 PERCENT DO NOTIFY ON 52 PERCENT DO NOTIFY ON 53 PERCENT DO NOTIFY ON 54 PERCENT DO NOTIFY ;"
+expect = "accept"
 context = "raw"
 
-# D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-87); observed, not flipped to reject
 [[limit]]
 form = "sf.security_admin.create-resource-monitor"
 kind = "boundary_at"
 target = "TRIGGERS ON <threshold> PERCENT DO NOTIFY [ ... ]"
-note = "5 NOTIFY triggers against the documented maximum of 5, observed"
+note = "5 NOTIFY triggers against the documented maximum of 5"
 anchor = "doc.sql.create-resource-monitor / Usage notes"
-sql = "CREATE RESOURCE MONITOR v1 WITH TRIGGERS ON 51 PERCENT DO NOTIFY ON 52 PERCENT DO NOTIFY ON 53 PERCENT DO NOTIFY ON 54 PERCENT DO NOTIFY ON 55 PERCENT DO NOTIFY ;"
-expect = "observe"
-documented = true
+sql = "CREATE RESOURCE MONITOR v1 WITH CREDIT_QUOTA = 1 TRIGGERS ON 51 PERCENT DO NOTIFY ON 52 PERCENT DO NOTIFY ON 53 PERCENT DO NOTIFY ON 54 PERCENT DO NOTIFY ON 55 PERCENT DO NOTIFY ;"
+expect = "accept"
 context = "raw"
 
 [[limit]]
@@ -20187,7 +20267,7 @@ kind = "boundary_above"
 target = "TRIGGERS ON <threshold> PERCENT DO NOTIFY [ ... ]"
 note = "6 NOTIFY triggers against the documented maximum of 5"
 anchor = "doc.sql.create-resource-monitor / Usage notes"
-sql = "CREATE RESOURCE MONITOR v1 WITH TRIGGERS ON 51 PERCENT DO NOTIFY ON 52 PERCENT DO NOTIFY ON 53 PERCENT DO NOTIFY ON 54 PERCENT DO NOTIFY ON 55 PERCENT DO NOTIFY ON 56 PERCENT DO NOTIFY ;"
+sql = "CREATE RESOURCE MONITOR v1 WITH CREDIT_QUOTA = 1 TRIGGERS ON 51 PERCENT DO NOTIFY ON 52 PERCENT DO NOTIFY ON 53 PERCENT DO NOTIFY ON 54 PERCENT DO NOTIFY ON 55 PERCENT DO NOTIFY ON 56 PERCENT DO NOTIFY ;"
 expect = "observe"
 context = "raw"
 
@@ -20628,8 +20708,8 @@ reason = "page definitions inlined: objectProperties; a definition the page give
 [[reading]]
 form = "sf.security_admin.alter-organization-user.unset"
 grammar_sha256 = "b48651a199847c0891a652c068fc0afc48380df27524300308b7ed7ca82dfd12"
-grammar = ["ALTER ORGANIZATION USER <name> UNSET [ { EMAIL | DISPLAY_NAME | FIRST_NAME | MIDDLE_NAME | LAST_NAME | TYPE | COMMENT } ]"]
-reason = "page definitions inlined: objectProperties; a definition the page gives per cloud or variant becomes a choice of its variants; unbraced alternatives inside `( ... )` and in `KEY = a | b` properties are braced; D113: the page reuses `objectProperties`, whose items are `<property> = <value>`, after UNSET, so the rendering wrote `UNSET TYPE = PERSON` (import-72, errno 1003); the parameters say UNSET unsets object properties and the page's example is `UNSET TYPE;`, so read as one property name, kept optional as the page's `[ objectProperties ]` is, with no list separator since the page documents none"
+grammar = ["ALTER ORGANIZATION USER <name> UNSET { EMAIL | DISPLAY_NAME | FIRST_NAME | MIDDLE_NAME | LAST_NAME | TYPE | COMMENT }"]
+reason = "page definitions inlined: objectProperties; a definition the page gives per cloud or variant becomes a choice of its variants; unbraced alternatives inside `( ... )` and in `KEY = a | b` properties are braced; D113: the page reuses `objectProperties`, whose items are `<property> = <value>`, after UNSET, so the rendering wrote `UNSET TYPE = PERSON` (import-72, errno 1003); the parameters say UNSET unsets object properties and the page's example is `UNSET TYPE;`, so read as one property name, kept optional as the page's `[ objectProperties ]` is, with no list separator since the page documents none; UNSET names the property it unsets, so the only one listed is required"
 
 [[reading]]
 form = "sf.security_admin.alter-resource-monitor"
@@ -20682,8 +20762,8 @@ reason = "page definitions inlined: objectProperties; a definition the page give
 [[reading]]
 form = "sf.security_admin.create-resource-monitor"
 grammar_sha256 = "3adcb055167662305b6f37d1f3214695b73603c14176b549abcd93b1ab853602"
-grammar = ["CREATE [ OR REPLACE ] RESOURCE MONITOR [ IF NOT EXISTS ] <name> WITH { CREDIT_QUOTA = <number> | FREQUENCY = { MONTHLY | DAILY | WEEKLY | YEARLY | NEVER } | START_TIMESTAMP = { <timestamp> | IMMEDIATELY } | END_TIMESTAMP = <timestamp> | NOTIFY_USERS = ( <user_name> [ , <user_name> , ... ] ) } [ CREDIT_QUOTA = <number> ] [ FREQUENCY = { MONTHLY | DAILY | WEEKLY | YEARLY | NEVER } ] [ START_TIMESTAMP = { <timestamp> | IMMEDIATELY } ] [ END_TIMESTAMP = <timestamp> ] [ NOTIFY_USERS = ( <user_name> [ , <user_name> , ... ] ) ] [ TRIGGERS ON <threshold> PERCENT DO { SUSPEND | SUSPEND_IMMEDIATE | NOTIFY } [ ON <threshold> PERCENT DO { SUSPEND | SUSPEND_IMMEDIATE | NOTIFY } ... ] ]"]
-reason = "page definitions inlined: triggerDefinition; a definition the page gives per cloud or variant becomes a choice of its variants; unbraced alternatives inside `( ... )` and in `KEY = a | b` properties are braced; WITH takes at least one property before TRIGGERS, as every example on the page writes it (WITH CREDIT_QUOTA = 5000 TRIGGERS ...), and import 87 refuses WITH ; and WITH TRIGGERS ... (errno 1003)"
+grammar = ["CREATE [ OR REPLACE ] RESOURCE MONITOR [ IF NOT EXISTS ] <name> WITH { CREDIT_QUOTA = <number> [ FREQUENCY = { MONTHLY | DAILY | WEEKLY | YEARLY | NEVER } ] [ START_TIMESTAMP = { <timestamp> | IMMEDIATELY } ] [ END_TIMESTAMP = <timestamp> ] [ NOTIFY_USERS = ( <user_name> [ , <user_name> , ... ] ) ] | FREQUENCY = { MONTHLY | DAILY | WEEKLY | YEARLY | NEVER } [ START_TIMESTAMP = { <timestamp> | IMMEDIATELY } ] [ END_TIMESTAMP = <timestamp> ] [ NOTIFY_USERS = ( <user_name> [ , <user_name> , ... ] ) ] | START_TIMESTAMP = { <timestamp> | IMMEDIATELY } [ END_TIMESTAMP = <timestamp> ] [ NOTIFY_USERS = ( <user_name> [ , <user_name> , ... ] ) ] | END_TIMESTAMP = <timestamp> [ NOTIFY_USERS = ( <user_name> [ , <user_name> , ... ] ) ] | NOTIFY_USERS = ( <user_name> [ , <user_name> , ... ] ) } [ TRIGGERS ON <threshold> PERCENT DO { SUSPEND | SUSPEND_IMMEDIATE | NOTIFY } [ ON <threshold> PERCENT DO { SUSPEND | SUSPEND_IMMEDIATE | NOTIFY } ... ] ]"]
+reason = "page definitions inlined: triggerDefinition; a definition the page gives per cloud or variant becomes a choice of its variants; unbraced alternatives inside `( ... )` and in `KEY = a | b` properties are braced; WITH takes at least one property before TRIGGERS, each property at most once in the page's order (the alternative names the first property present and the later ones stay optional), as every example on the page writes it (WITH CREDIT_QUOTA = 5000 TRIGGERS ...), and import 87 refuses WITH ; and WITH TRIGGERS ... (errno 1003)"
 
 [[reading]]
 form = "sf.security_admin.create-storage-integration"
@@ -31685,7 +31765,7 @@ context = "raw"
 [[suppress]]
 form = "sf.ddl.alter-task.unset"
 kind = "required_operand_missing"
-target = "<purpose> in [ CONTACT <purpose> [ , ... ] ]"
+target = "<purpose>"
 note = "omit <purpose>"
 reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 1420 SQLSTATE 22023, phase semantic_error, import-20261104-41), so it is not a syntax error; observed (D97 settle rule)"
 
@@ -31818,7 +31898,7 @@ reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it
 [[suppress]]
 form = "sf.ddl.alter-view.unset"
 kind = "required_operand_missing"
-target = "<purpose> in [ CONTACT <purpose> ]"
+target = "<purpose>"
 note = "omit <purpose>"
 reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 1420 SQLSTATE 22023, phase semantic_error, import-20261104-41), so it is not a syntax error; observed (D97 settle rule)"
 
@@ -33838,7 +33918,7 @@ context = "raw"
 [[limit]]
 form = "sf.ddl.alter-task.unset"
 kind = "required_operand_missing"
-target = "<purpose> in [ CONTACT <purpose> [ , ... ] ]"
+target = "<purpose>"
 note = "omit <purpose>, observed"
 anchor = "doc.sql.alter-task / Syntax"
 sql = "ALTER TASK v1 UNSET CONTACT ;"
@@ -34007,7 +34087,7 @@ context = "raw"
 [[limit]]
 form = "sf.ddl.alter-view.unset"
 kind = "required_operand_missing"
-target = "<purpose> in [ CONTACT <purpose> ]"
+target = "<purpose>"
 note = "omit <purpose>, observed"
 anchor = "doc.sql.alter-view / Syntax"
 sql = "ALTER VIEW v1 UNSET CONTACT ;"
@@ -56908,14 +56988,14 @@ reason = "D110b: the neighbour renders `ALTER DATABASE v1 SET COMMENT = 'm' ;`, 
 [[reading]]
 form = "sf.ddl.alter-application-package.unset"
 grammar_sha256 = "655827166b2c567765a3f7cdd7b61711b428269da38a26a7fcbd07e36fbe990f"
-grammar = ["ALTER APPLICATION PACKAGE [ IF EXISTS ] <name> UNSET [ DATA_RETENTION_TIME_IN_DAYS ] [ MAX_DATA_EXTENSION_TIME_IN_DAYS ] [ DEFAULT_DDL_COLLATION ] [ COMMENT ] [ DISTRIBUTION ]"]
-reason = "D113 [page misreading] The block writes `UNSET ... [ COMMENT = <string-literal> ] [ DISTRIBUTION = { INTERNAL | EXTERNAL } ]`, but the page says “When resetting a property/parameter, specify only the name; specifying a value for the property will return an error.”, so the reading names COMMENT and DISTRIBUTION alone."
+grammar = ["ALTER APPLICATION PACKAGE [ IF EXISTS ] <name> UNSET { DATA_RETENTION_TIME_IN_DAYS | MAX_DATA_EXTENSION_TIME_IN_DAYS | DEFAULT_DDL_COLLATION | COMMENT | DISTRIBUTION } [ , ... ]"]
+reason = "D113 [page misreading] The block writes `UNSET ... [ COMMENT = <string-literal> ] [ DISTRIBUTION = { INTERNAL | EXTERNAL } ]`, but the page says “When resetting a property/parameter, specify only the name; specifying a value for the property will return an error.”, so the reading names COMMENT and DISTRIBUTION alone. UNSET \"unsets one or more specified properties\": at least one of the listed properties, comma-separated as in every Snowflake UNSET"
 
 [[reading]]
 form = "sf.ddl.alter-view.unset"
 grammar_sha256 = "52db4b9d72f7ebe3b323c51faf1893033d5b9678dafd4fdfbce479533f2a6f32"
-grammar = ["ALTER VIEW [ IF EXISTS ] <name> UNSET [ SECURE ] [ CONTACT <purpose> ] [ COMMENT ]"]
-reason = "D113 [page misreading] The block writes `UNSET ... [ COMMENT = '<string_literal>' ]`, but the page says “When resetting a property, specify only the name; specifying a value for the property will return an error.”, so the reading names COMMENT alone."
+grammar = ["ALTER VIEW [ IF EXISTS ] <name> UNSET { SECURE | CONTACT <purpose> | COMMENT } [ , ... ]"]
+reason = "D113 [page misreading] The block writes `UNSET ... [ COMMENT = '<string_literal>' ]`, but the page says “When resetting a property, specify only the name; specifying a value for the property will return an error.”, so the reading names COMMENT alone. UNSET \"unsets one or more specified properties\": at least one of the listed properties, comma-separated as in every Snowflake UNSET"
 
 # D113 (auditor, fad28aa4 low 2): UNSET names only, so the all-options rows are rebuilt with the page's rules.
 
@@ -64776,6 +64856,34 @@ target = "<user_name>"
 note = "a string literal in place of <user_name>"
 reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 90268 SQLSTATE 22023, phase semantic_error, import-20261104-88), so it is not a syntax error; observed (D97 settle rule)"
 
+[[suppress]]
+form = "sf.security_admin.create-resource-monitor"
+kind = "negative_neighbour"
+target = "<user_name> in [ NOTIFY_USERS = ( <user_name> [ , <user_name> , ... ] ) ]"
+note = "a string literal in place of <user_name>"
+reason = "D113 [undocumented acceptance]: Snowflake parses a string literal in NOTIFY_USERS and fails it later (errno 90268 SQLSTATE 22023, phase semantic_error, import-20261104-88), whichever property precedes it, so it is not a syntax error; the hand row below observes it (D97 settle rule)"
+
+[[suppress]]
+form = "sf.security_admin.create-resource-monitor"
+kind = "negative_neighbour"
+target = "<user_name> in [ NOTIFY_USERS = ( <user_name> [ , <user_name> , ... ] ) ] #2"
+note = "a string literal in place of <user_name>"
+reason = "D113 [undocumented acceptance]: Snowflake parses a string literal in NOTIFY_USERS and fails it later (errno 90268 SQLSTATE 22023, phase semantic_error, import-20261104-88), whichever property precedes it, so it is not a syntax error; the hand row below observes it (D97 settle rule)"
+
+[[suppress]]
+form = "sf.security_admin.create-resource-monitor"
+kind = "negative_neighbour"
+target = "<user_name> in [ NOTIFY_USERS = ( <user_name> [ , <user_name> , ... ] ) ] #3"
+note = "a string literal in place of <user_name>"
+reason = "D113 [undocumented acceptance]: Snowflake parses a string literal in NOTIFY_USERS and fails it later (errno 90268 SQLSTATE 22023, phase semantic_error, import-20261104-88), whichever property precedes it, so it is not a syntax error; the hand row below observes it (D97 settle rule)"
+
+[[suppress]]
+form = "sf.security_admin.create-resource-monitor"
+kind = "negative_neighbour"
+target = "<user_name> in [ NOTIFY_USERS = ( <user_name> [ , <user_name> , ... ] ) ] #4"
+note = "a string literal in place of <user_name>"
+reason = "D113 [undocumented acceptance]: Snowflake parses a string literal in NOTIFY_USERS and fails it later (errno 90268 SQLSTATE 22023, phase semantic_error, import-20261104-88), whichever property precedes it, so it is not a syntax error; the hand row below observes it (D97 settle rule)"
+
 [[limit]]
 form = "sf.security_admin.create-resource-monitor"
 kind = "negative_neighbour"
@@ -64851,5 +64959,58 @@ target = "<arg_name>"
 note = "omit <arg_name>, observed"
 anchor = "doc.sql.create-row-access-policy / Syntax"
 sql = "CREATE ROW ACCESS POLICY v1 AS ( INT ) RETURNS BOOLEAN -> v1 ;"
+expect = "observe"
+context = "raw"
+
+# D113 transaction_session receipt triage (imports 89-89): remaining contradictions observed, each reason names its category and receipt.
+
+[[suppress]]
+form = "sf.transaction_session.use-schema"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2043 SQLSTATE 02000, phase semantic_error, import-20261104-89), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.transaction_session.use-schema"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>, observed"
+anchor = "doc.sql.use-schema / Syntax"
+sql = "USE SCHEMA ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.transaction_session.use-schema"
+kind = "required_operand_missing"
+target = "<db_name> in [ <db_name> . ]"
+note = "omit <db_name>"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2043 SQLSTATE 02000, phase semantic_error, import-20261104-89), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.transaction_session.use-schema"
+kind = "required_operand_missing"
+target = "<db_name> in [ <db_name> . ]"
+note = "omit <db_name>, observed"
+anchor = "doc.sql.use-schema / Syntax"
+sql = "USE SCHEMA . v1 ;"
+expect = "observe"
+context = "raw"
+
+# D113 security_admin receipt triage (imports 91-94): remaining contradictions observed, each reason names its category and receipt.
+
+[[suppress]]
+form = "sf.security_admin.create-resource-monitor"
+kind = "negative_neighbour"
+note = "the form without its required WITH"
+reason = "D113 [undocumented acceptance]: Snowflake accepts this SQL (phase accepted, import-20261104-93), though the page requires the omitted part; observed (D110)"
+
+[[limit]]
+form = "sf.security_admin.create-resource-monitor"
+kind = "negative_neighbour"
+note = "the form without its required WITH, observed"
+anchor = "doc.sql.create-resource-monitor / Syntax"
+sql = "CREATE RESOURCE MONITOR v1 CREDIT_QUOTA = 1 ;"
 expect = "observe"
 context = "raw"

@@ -1620,64 +1620,47 @@ target = "<name>"
 note = "a string literal in place of <name>"
 
 [[obligation]]
-id = "sf.ddl.alter-alert.unset.o031"
+id = "sf.ddl.alter-alert.unset.o036"
+kind = "alternative"
+required = true
+target = "{ WAREHOUSE | COMMENT | CONFIG | RUNBOOK | SUSPEND_ALERT_AFTER_NUM_FAILURES } → WAREHOUSE"
+
+[[obligation]]
+id = "sf.ddl.alter-alert.unset.o037"
+kind = "alternative"
+required = true
+target = "{ WAREHOUSE | COMMENT | CONFIG | RUNBOOK | SUSPEND_ALERT_AFTER_NUM_FAILURES } → COMMENT"
+
+[[obligation]]
+id = "sf.ddl.alter-alert.unset.o038"
+kind = "alternative"
+required = true
+target = "{ WAREHOUSE | COMMENT | CONFIG | RUNBOOK | SUSPEND_ALERT_AFTER_NUM_FAILURES } → CONFIG"
+
+[[obligation]]
+id = "sf.ddl.alter-alert.unset.o039"
+kind = "alternative"
+required = true
+target = "{ WAREHOUSE | COMMENT | CONFIG | RUNBOOK | SUSPEND_ALERT_AFTER_NUM_FAILURES } → RUNBOOK"
+
+[[obligation]]
+id = "sf.ddl.alter-alert.unset.o040"
+kind = "alternative"
+required = true
+target = "{ WAREHOUSE | COMMENT | CONFIG | RUNBOOK | SUSPEND_ALERT_AFTER_NUM_FAILURES } → SUSPEND_ALERT_AFTER_NUM_FAILURES"
+
+[[obligation]]
+id = "sf.ddl.alter-alert.unset.o041"
 kind = "option_present"
 required = true
-target = "[ WAREHOUSE ]"
+target = "[ , ... ]"
+note = "the list continued at least once"
 
 [[obligation]]
-id = "sf.ddl.alter-alert.unset.o008"
+id = "sf.ddl.alter-alert.unset.o042"
 kind = "option_absent"
 required = true
-target = "[ WAREHOUSE ]"
-
-[[obligation]]
-id = "sf.ddl.alter-alert.unset.o032"
-kind = "option_present"
-required = true
-target = "[ COMMENT ]"
-
-[[obligation]]
-id = "sf.ddl.alter-alert.unset.o010"
-kind = "option_absent"
-required = true
-target = "[ COMMENT ]"
-
-[[obligation]]
-id = "sf.ddl.alter-alert.unset.o033"
-kind = "option_present"
-required = true
-target = "[ CONFIG ]"
-
-[[obligation]]
-id = "sf.ddl.alter-alert.unset.o012"
-kind = "option_absent"
-required = true
-target = "[ CONFIG ]"
-
-[[obligation]]
-id = "sf.ddl.alter-alert.unset.o034"
-kind = "option_present"
-required = true
-target = "[ RUNBOOK ]"
-
-[[obligation]]
-id = "sf.ddl.alter-alert.unset.o014"
-kind = "option_absent"
-required = true
-target = "[ RUNBOOK ]"
-
-[[obligation]]
-id = "sf.ddl.alter-alert.unset.o035"
-kind = "option_present"
-required = true
-target = "[ SUSPEND_ALERT_AFTER_NUM_FAILURES ]"
-
-[[obligation]]
-id = "sf.ddl.alter-alert.unset.o016"
-kind = "option_absent"
-required = true
-target = "[ SUSPEND_ALERT_AFTER_NUM_FAILURES ]"
+target = "[ , ... ]"
 
 [[obligation]]
 id = "sf.ddl.alter-alert.unset.o017"
@@ -1696,6 +1679,12 @@ id = "sf.ddl.alter-alert.unset.o019"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required UNSET"
+
+[[obligation]]
+id = "sf.ddl.alter-alert.unset.o043"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { WAREHOUSE | COMMENT | CONFIG | RUNBOOK | SUSPEND_ALERT_AFTER_NUM_FAILURES }"
 
 [[obligation]]
 id = "sf.ddl.alter-alert.unset.o021"
@@ -6900,64 +6889,47 @@ target = "<name>"
 note = "a string literal in place of <name>"
 
 [[obligation]]
-id = "sf.ddl.alter-application-package.unset.o041"
+id = "sf.ddl.alter-application-package.unset.o061"
+kind = "alternative"
+required = true
+target = "{ DATA_RETENTION_TIME_IN_DAYS | MAX_DATA_EXTENSION_TIME_IN_DAYS | DEFAULT_DDL_COLLATION |… → DATA_RETENTION_TIME_IN_DAYS"
+
+[[obligation]]
+id = "sf.ddl.alter-application-package.unset.o062"
+kind = "alternative"
+required = true
+target = "{ DATA_RETENTION_TIME_IN_DAYS | MAX_DATA_EXTENSION_TIME_IN_DAYS | DEFAULT_DDL_COLLATI… → MAX_DATA_EXTENSION_TIME_IN_DAYS"
+
+[[obligation]]
+id = "sf.ddl.alter-application-package.unset.o063"
+kind = "alternative"
+required = true
+target = "{ DATA_RETENTION_TIME_IN_DAYS | MAX_DATA_EXTENSION_TIME_IN_DAYS | DEFAULT_DDL_COLLATION | COMME… → DEFAULT_DDL_COLLATION"
+
+[[obligation]]
+id = "sf.ddl.alter-application-package.unset.o064"
+kind = "alternative"
+required = true
+target = "{ DATA_RETENTION_TIME_IN_DAYS | MAX_DATA_EXTENSION_TIME_IN_DAYS | DEFAULT_DDL_COLLATION | COMMENT | DISTRIBUT… → COMMENT"
+
+[[obligation]]
+id = "sf.ddl.alter-application-package.unset.o065"
+kind = "alternative"
+required = true
+target = "{ DATA_RETENTION_TIME_IN_DAYS | MAX_DATA_EXTENSION_TIME_IN_DAYS | DEFAULT_DDL_COLLATION | COMMENT | DIST… → DISTRIBUTION"
+
+[[obligation]]
+id = "sf.ddl.alter-application-package.unset.o066"
 kind = "option_present"
 required = true
-target = "[ DATA_RETENTION_TIME_IN_DAYS ]"
+target = "[ , ... ]"
+note = "the list continued at least once"
 
 [[obligation]]
-id = "sf.ddl.alter-application-package.unset.o008"
+id = "sf.ddl.alter-application-package.unset.o067"
 kind = "option_absent"
 required = true
-target = "[ DATA_RETENTION_TIME_IN_DAYS ]"
-
-[[obligation]]
-id = "sf.ddl.alter-application-package.unset.o042"
-kind = "option_present"
-required = true
-target = "[ MAX_DATA_EXTENSION_TIME_IN_DAYS ]"
-
-[[obligation]]
-id = "sf.ddl.alter-application-package.unset.o010"
-kind = "option_absent"
-required = true
-target = "[ MAX_DATA_EXTENSION_TIME_IN_DAYS ]"
-
-[[obligation]]
-id = "sf.ddl.alter-application-package.unset.o043"
-kind = "option_present"
-required = true
-target = "[ DEFAULT_DDL_COLLATION ]"
-
-[[obligation]]
-id = "sf.ddl.alter-application-package.unset.o012"
-kind = "option_absent"
-required = true
-target = "[ DEFAULT_DDL_COLLATION ]"
-
-[[obligation]]
-id = "sf.ddl.alter-application-package.unset.o054"
-kind = "option_present"
-required = true
-target = "[ COMMENT ]"
-
-[[obligation]]
-id = "sf.ddl.alter-application-package.unset.o055"
-kind = "option_absent"
-required = true
-target = "[ COMMENT ]"
-
-[[obligation]]
-id = "sf.ddl.alter-application-package.unset.o056"
-kind = "option_present"
-required = true
-target = "[ DISTRIBUTION ]"
-
-[[obligation]]
-id = "sf.ddl.alter-application-package.unset.o057"
-kind = "option_absent"
-required = true
-target = "[ DISTRIBUTION ]"
+target = "[ , ... ]"
 
 [[obligation]]
 id = "sf.ddl.alter-application-package.unset.o022"
@@ -6982,6 +6954,12 @@ id = "sf.ddl.alter-application-package.unset.o024"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required UNSET"
+
+[[obligation]]
+id = "sf.ddl.alter-application-package.unset.o068"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { DATA_RETENTION_TIME_IN_DAYS | MAX_DATA_EXTENSION_TIME_IN_DAYS | DEFAULT_DDL_COLLATION | COMMENT | DISTRIBUTION }"
 
 [[obligation]]
 id = "sf.ddl.alter-application-package.unset.o027"
@@ -11175,52 +11153,41 @@ target = "<name>"
 note = "a string literal in place of <name>"
 
 [[obligation]]
-id = "sf.ddl.alter-application.unset.o028"
+id = "sf.ddl.alter-application.unset.o032"
+kind = "alternative"
+required = true
+target = "{ COMMENT | SHARE_EVENTS_WITH_PROVIDER | DEBUG_MODE | AUTHORIZE_RESTRICTED_PROVIDER_REMOTE_OPERATIONS_UNTIL } → COMMENT"
+
+[[obligation]]
+id = "sf.ddl.alter-application.unset.o033"
+kind = "alternative"
+required = true
+target = "{ COMMENT | SHARE_EVENTS_WITH_PROVIDER | DEBUG_MODE | AUTHORIZE_RESTRICTED_PROVIDER_REMOTE… → SHARE_EVENTS_WITH_PROVIDER"
+
+[[obligation]]
+id = "sf.ddl.alter-application.unset.o034"
+kind = "alternative"
+required = true
+target = "{ COMMENT | SHARE_EVENTS_WITH_PROVIDER | DEBUG_MODE | AUTHORIZE_RESTRICTED_PROVIDER_REMOTE_OPERATIONS_UNTI… → DEBUG_MODE"
+
+[[obligation]]
+id = "sf.ddl.alter-application.unset.o035"
+kind = "alternative"
+required = true
+target = "{ COMMENT | SHARE_EVENTS_WITH_PROVIDER | DEBUG_MODE | AUTHORIZE… → AUTHORIZE_RESTRICTED_PROVIDER_REMOTE_OPERATIONS_UNTIL"
+
+[[obligation]]
+id = "sf.ddl.alter-application.unset.o036"
 kind = "option_present"
 required = true
-target = "[ COMMENT ]"
+target = "[ , ... ]"
+note = "the list continued at least once"
 
 [[obligation]]
-id = "sf.ddl.alter-application.unset.o008"
+id = "sf.ddl.alter-application.unset.o037"
 kind = "option_absent"
 required = true
-target = "[ COMMENT ]"
-
-[[obligation]]
-id = "sf.ddl.alter-application.unset.o029"
-kind = "option_present"
-required = true
-target = "[ SHARE_EVENTS_WITH_PROVIDER ]"
-
-[[obligation]]
-id = "sf.ddl.alter-application.unset.o010"
-kind = "option_absent"
-required = true
-target = "[ SHARE_EVENTS_WITH_PROVIDER ]"
-
-[[obligation]]
-id = "sf.ddl.alter-application.unset.o030"
-kind = "option_present"
-required = true
-target = "[ DEBUG_MODE ]"
-
-[[obligation]]
-id = "sf.ddl.alter-application.unset.o012"
-kind = "option_absent"
-required = true
-target = "[ DEBUG_MODE ]"
-
-[[obligation]]
-id = "sf.ddl.alter-application.unset.o031"
-kind = "option_present"
-required = true
-target = "[ AUTHORIZE_RESTRICTED_PROVIDER_REMOTE_OPERATIONS_UNTIL ]"
-
-[[obligation]]
-id = "sf.ddl.alter-application.unset.o014"
-kind = "option_absent"
-required = true
-target = "[ AUTHORIZE_RESTRICTED_PROVIDER_REMOTE_OPERATIONS_UNTIL ]"
+target = "[ , ... ]"
 
 [[obligation]]
 id = "sf.ddl.alter-application.unset.o015"
@@ -11239,6 +11206,12 @@ id = "sf.ddl.alter-application.unset.o017"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required UNSET"
+
+[[obligation]]
+id = "sf.ddl.alter-application.unset.o038"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { COMMENT | SHARE_EVENTS_WITH_PROVIDER | DEBUG_MODE | AUTHORIZE_RESTRICTED_PROVIDER_REMOTE_OPERATIONS_UNTIL }"
 
 [[obligation]]
 id = "sf.ddl.alter-application.unset.o019"
@@ -29915,28 +29888,29 @@ target = "<name>"
 note = "a string literal in place of <name>"
 
 [[obligation]]
-id = "sf.ddl.alter-external-consumer.unset.o007"
+id = "sf.ddl.alter-external-consumer.unset.o018"
+kind = "alternative"
+required = true
+target = "{ COMMENT | EMAIL } → COMMENT"
+
+[[obligation]]
+id = "sf.ddl.alter-external-consumer.unset.o019"
+kind = "alternative"
+required = true
+target = "{ COMMENT | EMAIL } → EMAIL"
+
+[[obligation]]
+id = "sf.ddl.alter-external-consumer.unset.o020"
 kind = "option_present"
 required = true
-target = "[ COMMENT ]"
+target = "[ , ... ]"
+note = "the list continued at least once"
 
 [[obligation]]
-id = "sf.ddl.alter-external-consumer.unset.o008"
+id = "sf.ddl.alter-external-consumer.unset.o021"
 kind = "option_absent"
 required = true
-target = "[ COMMENT ]"
-
-[[obligation]]
-id = "sf.ddl.alter-external-consumer.unset.o009"
-kind = "option_present"
-required = true
-target = "[ EMAIL ]"
-
-[[obligation]]
-id = "sf.ddl.alter-external-consumer.unset.o010"
-kind = "option_absent"
-required = true
-target = "[ EMAIL ]"
+target = "[ , ... ]"
 
 [[obligation]]
 id = "sf.ddl.alter-external-consumer.unset.o011"
@@ -29961,6 +29935,12 @@ id = "sf.ddl.alter-external-consumer.unset.o014"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required UNSET"
+
+[[obligation]]
+id = "sf.ddl.alter-external-consumer.unset.o022"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { COMMENT | EMAIL }"
 
 [[obligation]]
 id = "sf.ddl.alter-external-consumer.unset.o015"
@@ -45991,112 +45971,71 @@ target = "<table_name>"
 note = "a string literal in place of <table_name>"
 
 [[obligation]]
-id = "sf.ddl.alter-iceberg-table.unset.o044"
+id = "sf.ddl.alter-iceberg-table.unset.o053"
+kind = "alternative"
+required = true
+target = "{ REPLACE_INVALID_CHARACTERS | PATH_LAYOUT | LOG_EVENT_LEVEL | ERROR_LOGGING | ENABLE_DATA… → REPLACE_INVALID_CHARACTERS"
+
+[[obligation]]
+id = "sf.ddl.alter-iceberg-table.unset.o054"
+kind = "alternative"
+required = true
+target = "{ REPLACE_INVALID_CHARACTERS | PATH_LAYOUT | LOG_EVENT_LEVEL | ERROR_LOGGING | ENABLE_DATA_COMPACTION | I… → PATH_LAYOUT"
+
+[[obligation]]
+id = "sf.ddl.alter-iceberg-table.unset.o055"
+kind = "alternative"
+required = true
+target = "{ REPLACE_INVALID_CHARACTERS | PATH_LAYOUT | LOG_EVENT_LEVEL | ERROR_LOGGING | ENABLE_DATA_COMPACTION… → LOG_EVENT_LEVEL"
+
+[[obligation]]
+id = "sf.ddl.alter-iceberg-table.unset.o056"
+kind = "alternative"
+required = true
+target = "{ REPLACE_INVALID_CHARACTERS | PATH_LAYOUT | LOG_EVENT_LEVEL | ERROR_LOGGING | ENABLE_DATA_COMPACTION |… → ERROR_LOGGING"
+
+[[obligation]]
+id = "sf.ddl.alter-iceberg-table.unset.o057"
+kind = "alternative"
+required = true
+target = "{ REPLACE_INVALID_CHARACTERS | PATH_LAYOUT | LOG_EVENT_LEVEL | ERROR_LOGGING | ENABLE_DATA_COM… → ENABLE_DATA_COMPACTION"
+
+[[obligation]]
+id = "sf.ddl.alter-iceberg-table.unset.o058"
+kind = "alternative"
+required = true
+target = "{ REPLACE_INVALID_CHARACTERS | PATH_LAYOUT | LOG_EVENT_LEVEL | ERROR_LOGGING | ENABLE_… → ICEBERG_MERGE_ON_READ_BEHAVIOR"
+
+[[obligation]]
+id = "sf.ddl.alter-iceberg-table.unset.o059"
+kind = "alternative"
+required = true
+target = "{ REPLACE_INVALID_CHARACTERS | PATH_LAYOUT | LOG_EVENT_LEVEL | ERROR_LOGGING | ENABLE_DA… → ENABLE_ICEBERG_MERGE_ON_READ"
+
+[[obligation]]
+id = "sf.ddl.alter-iceberg-table.unset.o060"
+kind = "alternative"
+required = true
+target = "{ REPLACE_INVALID_CHARACTERS | PATH_LAYOUT | LOG_EVENT_LEVEL | ERROR_LOGGING | ENABLE_DATA_CO… → ENABLE_SCHEMA_EVOLUTION"
+
+[[obligation]]
+id = "sf.ddl.alter-iceberg-table.unset.o061"
+kind = "alternative"
+required = true
+target = "{ REPLACE_INVALID_CHARACTERS | PATH_LAYOUT | LOG_EVENT_LEVEL | ERROR_LOGGING | ENABLE_DA… → ALLOW_V3_EXPRESSION_DEFAULTS"
+
+[[obligation]]
+id = "sf.ddl.alter-iceberg-table.unset.o062"
 kind = "option_present"
 required = true
-target = "[ REPLACE_INVALID_CHARACTERS ]"
+target = "[ , ... ]"
+note = "the list continued at least once"
 
 [[obligation]]
-id = "sf.ddl.alter-iceberg-table.unset.o008"
+id = "sf.ddl.alter-iceberg-table.unset.o063"
 kind = "option_absent"
 required = true
-target = "[ REPLACE_INVALID_CHARACTERS ]"
-
-[[obligation]]
-id = "sf.ddl.alter-iceberg-table.unset.o045"
-kind = "option_present"
-required = true
-target = "[ PATH_LAYOUT ]"
-
-[[obligation]]
-id = "sf.ddl.alter-iceberg-table.unset.o010"
-kind = "option_absent"
-required = true
-target = "[ PATH_LAYOUT ]"
-
-[[obligation]]
-id = "sf.ddl.alter-iceberg-table.unset.o046"
-kind = "option_present"
-required = true
-target = "[ LOG_EVENT_LEVEL ]"
-
-[[obligation]]
-id = "sf.ddl.alter-iceberg-table.unset.o012"
-kind = "option_absent"
-required = true
-target = "[ LOG_EVENT_LEVEL ]"
-
-[[obligation]]
-id = "sf.ddl.alter-iceberg-table.unset.o047"
-kind = "option_present"
-required = true
-target = "[ ERROR_LOGGING ]"
-
-[[obligation]]
-id = "sf.ddl.alter-iceberg-table.unset.o014"
-kind = "option_absent"
-required = true
-target = "[ ERROR_LOGGING ]"
-
-[[obligation]]
-id = "sf.ddl.alter-iceberg-table.unset.o048"
-kind = "option_present"
-required = true
-target = "[ ENABLE_DATA_COMPACTION ]"
-
-[[obligation]]
-id = "sf.ddl.alter-iceberg-table.unset.o016"
-kind = "option_absent"
-required = true
-target = "[ ENABLE_DATA_COMPACTION ]"
-
-[[obligation]]
-id = "sf.ddl.alter-iceberg-table.unset.o049"
-kind = "option_present"
-required = true
-target = "[ ICEBERG_MERGE_ON_READ_BEHAVIOR ]"
-
-[[obligation]]
-id = "sf.ddl.alter-iceberg-table.unset.o018"
-kind = "option_absent"
-required = true
-target = "[ ICEBERG_MERGE_ON_READ_BEHAVIOR ]"
-
-[[obligation]]
-id = "sf.ddl.alter-iceberg-table.unset.o050"
-kind = "option_present"
-required = true
-target = "[ ENABLE_ICEBERG_MERGE_ON_READ ]"
-
-[[obligation]]
-id = "sf.ddl.alter-iceberg-table.unset.o020"
-kind = "option_absent"
-required = true
-target = "[ ENABLE_ICEBERG_MERGE_ON_READ ]"
-
-[[obligation]]
-id = "sf.ddl.alter-iceberg-table.unset.o051"
-kind = "option_present"
-required = true
-target = "[ ENABLE_SCHEMA_EVOLUTION ]"
-
-[[obligation]]
-id = "sf.ddl.alter-iceberg-table.unset.o022"
-kind = "option_absent"
-required = true
-target = "[ ENABLE_SCHEMA_EVOLUTION ]"
-
-[[obligation]]
-id = "sf.ddl.alter-iceberg-table.unset.o052"
-kind = "option_present"
-required = true
-target = "[ ALLOW_V3_EXPRESSION_DEFAULTS ]"
-
-[[obligation]]
-id = "sf.ddl.alter-iceberg-table.unset.o024"
-kind = "option_absent"
-required = true
-target = "[ ALLOW_V3_EXPRESSION_DEFAULTS ]"
+target = "[ , ... ]"
 
 [[obligation]]
 id = "sf.ddl.alter-iceberg-table.unset.o030"
@@ -46121,6 +46060,12 @@ id = "sf.ddl.alter-iceberg-table.unset.o031"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required UNSET"
+
+[[obligation]]
+id = "sf.ddl.alter-iceberg-table.unset.o064"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { REPLACE_INVALID_CHARACTERS | PATH_LAYOUT | LOG_EVENT_LEVEL | ERROR_LOGGING | ENABLE_DATA_COMPACTION | ICEBERG_MERGE_ON_READ_BEHAVIOR | ENABLE_ICEBERG_MERGE_ON_READ | ENABLE_SCHEMA_EVOLUTION | ALLOW_V3_EXPRESSION_DEFAULTS }"
 
 [[obligation]]
 id = "sf.ddl.alter-iceberg-table.unset.o028"
@@ -90360,125 +90305,101 @@ target = "<name>"
 note = "a string literal in place of <name>"
 
 [[obligation]]
-id = "sf.ddl.alter-task.unset.o074"
-kind = "option_present"
+id = "sf.ddl.alter-task.unset.o093"
+kind = "alternative"
 required = true
-target = "[ WAREHOUSE ]"
+target = "{ WAREHOUSE | SCHEDULE | CONFIG | OVERLAP_POLICY | USER_TASK_TIMEOUT_MS | SUSPEND_TASK_AFTER_NUM_FAILURES |… → WAREHOUSE"
 
 [[obligation]]
-id = "sf.ddl.alter-task.unset.o008"
-kind = "option_absent"
+id = "sf.ddl.alter-task.unset.o094"
+kind = "alternative"
 required = true
-target = "[ WAREHOUSE ]"
+target = "{ WAREHOUSE | SCHEDULE | CONFIG | OVERLAP_POLICY | USER_TASK_TIMEOUT_MS | SUSPEND_TASK_AFTER_NUM_FAILURES | … → SCHEDULE"
 
 [[obligation]]
-id = "sf.ddl.alter-task.unset.o075"
-kind = "option_present"
+id = "sf.ddl.alter-task.unset.o095"
+kind = "alternative"
 required = true
-target = "[ SCHEDULE ]"
+target = "{ WAREHOUSE | SCHEDULE | CONFIG | OVERLAP_POLICY | USER_TASK_TIMEOUT_MS | SUSPEND_TASK_AFTER_NUM_FAILURES | LO… → CONFIG"
 
 [[obligation]]
-id = "sf.ddl.alter-task.unset.o010"
-kind = "option_absent"
+id = "sf.ddl.alter-task.unset.o096"
+kind = "alternative"
 required = true
-target = "[ SCHEDULE ]"
+target = "{ WAREHOUSE | SCHEDULE | CONFIG | OVERLAP_POLICY | USER_TASK_TIMEOUT_MS | SUSPEND_TASK_AFTER_NUM_FAILU… → OVERLAP_POLICY"
 
 [[obligation]]
-id = "sf.ddl.alter-task.unset.o076"
-kind = "option_present"
+id = "sf.ddl.alter-task.unset.o097"
+kind = "alternative"
 required = true
-target = "[ CONFIG ]"
+target = "{ WAREHOUSE | SCHEDULE | CONFIG | OVERLAP_POLICY | USER_TASK_TIMEOUT_MS | SUSPEND_TASK_AFTER_NUM… → USER_TASK_TIMEOUT_MS"
 
 [[obligation]]
-id = "sf.ddl.alter-task.unset.o012"
-kind = "option_absent"
+id = "sf.ddl.alter-task.unset.o098"
+kind = "alternative"
 required = true
-target = "[ CONFIG ]"
+target = "{ WAREHOUSE | SCHEDULE | CONFIG | OVERLAP_POLICY | USER_TASK_TIMEOUT_MS | SUSPEND_TAS… → SUSPEND_TASK_AFTER_NUM_FAILURES"
 
 [[obligation]]
-id = "sf.ddl.alter-task.unset.o077"
-kind = "option_present"
+id = "sf.ddl.alter-task.unset.o099"
+kind = "alternative"
 required = true
-target = "[ OVERLAP_POLICY ]"
+target = "{ WAREHOUSE | SCHEDULE | CONFIG | OVERLAP_POLICY | USER_TASK_TIMEOUT_MS | SUSPEND_TASK_AFTER_NUM_FAILURES |… → LOG_LEVEL"
 
 [[obligation]]
-id = "sf.ddl.alter-task.unset.o014"
-kind = "option_absent"
+id = "sf.ddl.alter-task.unset.o100"
+kind = "alternative"
 required = true
-target = "[ OVERLAP_POLICY ]"
+target = "{ WAREHOUSE | SCHEDULE | CONFIG | OVERLAP_POLICY | USER_TASK_TIMEOUT_MS | SUSPEND_TASK_AFTER_NUM_FAILURES | L… → COMMENT"
 
 [[obligation]]
-id = "sf.ddl.alter-task.unset.o078"
-kind = "option_present"
+id = "sf.ddl.alter-task.unset.o101"
+kind = "alternative"
 required = true
-target = "[ USER_TASK_TIMEOUT_MS ]"
+target = "{ WAREHOUSE | SCHEDULE | CONFIG | OVERLAP_POLICY | USER_TASK_TIMEOU… → <session_parameter> [ , <session_parameter> ... ]"
 
 [[obligation]]
-id = "sf.ddl.alter-task.unset.o016"
-kind = "option_absent"
+id = "sf.ddl.alter-task.unset.o102"
+kind = "alternative"
 required = true
-target = "[ USER_TASK_TIMEOUT_MS ]"
+target = "{ WAREHOUSE | SCHEDULE | CONFIG | OVERLAP_POLICY | USER_TASK_TIMEOUT_MS | SUSPEND_TASK_AFT… → TARGET_COMPLETION_INTERVAL"
 
 [[obligation]]
-id = "sf.ddl.alter-task.unset.o079"
-kind = "option_present"
+id = "sf.ddl.alter-task.unset.o103"
+kind = "alternative"
 required = true
-target = "[ SUSPEND_TASK_AFTER_NUM_FAILURES ]"
+target = "{ WAREHOUSE | SCHEDULE | CONFIG | OVERLAP_POLICY | USER_TASK_TIMEOUT_MS | SUSPEND_… → SERVERLESS_TASK_MIN_STATEMENT_SIZE"
 
 [[obligation]]
-id = "sf.ddl.alter-task.unset.o018"
-kind = "option_absent"
+id = "sf.ddl.alter-task.unset.o104"
+kind = "alternative"
 required = true
-target = "[ SUSPEND_TASK_AFTER_NUM_FAILURES ]"
+target = "{ WAREHOUSE | SCHEDULE | CONFIG | OVERLAP_POLICY | USER_TASK_TIMEOUT_MS | SUSPEND_… → SERVERLESS_TASK_MAX_STATEMENT_SIZE"
 
 [[obligation]]
-id = "sf.ddl.alter-task.unset.o080"
-kind = "option_present"
+id = "sf.ddl.alter-task.unset.o105"
+kind = "alternative"
 required = true
-target = "[ LOG_LEVEL ]"
+target = "{ WAREHOUSE | SCHEDULE | CONFIG | OVERLAP_POLICY | USER_TASK_TIMEOUT_MS | SUSPEND_TASK_AF… → CONTACT <purpose> [ , ... ]"
 
 [[obligation]]
-id = "sf.ddl.alter-task.unset.o020"
-kind = "option_absent"
+id = "sf.ddl.alter-task.unset.o106"
+kind = "alternative"
 required = true
-target = "[ LOG_LEVEL ]"
+target = "{ WAREHOUSE | SCHEDULE | CONFIG | OVERLAP_POLICY | USER_TASK_TIMEOUT_MS | SUSPEND_TASK_AFTER_NUM_FAIL… → EXECUTE AS USER"
 
 [[obligation]]
-id = "sf.ddl.alter-task.unset.o081"
-kind = "option_present"
-required = true
-target = "[ COMMENT ]"
-
-[[obligation]]
-id = "sf.ddl.alter-task.unset.o022"
-kind = "option_absent"
-required = true
-target = "[ COMMENT ]"
-
-[[obligation]]
-id = "sf.ddl.alter-task.unset.o082"
-kind = "option_present"
-required = true
-target = "[ <session_parameter> [ , <session_parameter> ... ] ]"
-
-[[obligation]]
-id = "sf.ddl.alter-task.unset.o024"
-kind = "option_absent"
-required = true
-target = "[ <session_parameter> [ , <session_parameter> ... ] ]"
-
-[[obligation]]
-id = "sf.ddl.alter-task.unset.o050"
+id = "sf.ddl.alter-task.unset.o107"
 kind = "required_operand_missing"
 required = true
-target = "<session_parameter> in [ <session_parameter> [ , <session_parameter> ... ] ]"
+target = "<session_parameter>"
 note = "omit <session_parameter>"
 
 [[obligation]]
-id = "sf.ddl.alter-task.unset.o083"
+id = "sf.ddl.alter-task.unset.o108"
 kind = "operand_type_class"
 required = true
-target = "<session_parameter> in [ <session_parameter> [ , <session_parameter> ... ] ]"
+target = "<session_parameter>"
 note = "a valid operand"
 
 [[obligation]]
@@ -90495,58 +90416,10 @@ required = true
 target = "[ , <session_parameter> ... ]"
 
 [[obligation]]
-id = "sf.ddl.alter-task.unset.o085"
-kind = "option_present"
-required = true
-target = "[ TARGET_COMPLETION_INTERVAL ]"
-
-[[obligation]]
-id = "sf.ddl.alter-task.unset.o029"
-kind = "option_absent"
-required = true
-target = "[ TARGET_COMPLETION_INTERVAL ]"
-
-[[obligation]]
-id = "sf.ddl.alter-task.unset.o086"
-kind = "option_present"
-required = true
-target = "[ SERVERLESS_TASK_MIN_STATEMENT_SIZE ]"
-
-[[obligation]]
-id = "sf.ddl.alter-task.unset.o031"
-kind = "option_absent"
-required = true
-target = "[ SERVERLESS_TASK_MIN_STATEMENT_SIZE ]"
-
-[[obligation]]
-id = "sf.ddl.alter-task.unset.o087"
-kind = "option_present"
-required = true
-target = "[ SERVERLESS_TASK_MAX_STATEMENT_SIZE ]"
-
-[[obligation]]
-id = "sf.ddl.alter-task.unset.o033"
-kind = "option_absent"
-required = true
-target = "[ SERVERLESS_TASK_MAX_STATEMENT_SIZE ]"
-
-[[obligation]]
-id = "sf.ddl.alter-task.unset.o088"
-kind = "option_present"
-required = true
-target = "[ CONTACT <purpose> [ , ... ] ]"
-
-[[obligation]]
-id = "sf.ddl.alter-task.unset.o035"
-kind = "option_absent"
-required = true
-target = "[ CONTACT <purpose> [ , ... ] ]"
-
-[[obligation]]
-id = "sf.ddl.alter-task.unset.o089"
+id = "sf.ddl.alter-task.unset.o110"
 kind = "operand_type_class"
 required = true
-target = "<purpose> in [ CONTACT <purpose> [ , ... ] ]"
+target = "<purpose>"
 note = "a valid operand"
 
 [[obligation]]
@@ -90563,16 +90436,17 @@ required = true
 target = "[ , ... ]"
 
 [[obligation]]
-id = "sf.ddl.alter-task.unset.o091"
+id = "sf.ddl.alter-task.unset.o111"
 kind = "option_present"
 required = true
-target = "[ EXECUTE AS USER ]"
+target = "[ , ... ] #2"
+note = "the list continued at least once"
 
 [[obligation]]
-id = "sf.ddl.alter-task.unset.o041"
+id = "sf.ddl.alter-task.unset.o112"
 kind = "option_absent"
 required = true
-target = "[ EXECUTE AS USER ]"
+target = "[ , ... ] #2"
 
 [[obligation]]
 id = "sf.ddl.alter-task.unset.o042"
@@ -90593,16 +90467,22 @@ required = true
 note = "the form without its required UNSET"
 
 [[obligation]]
-id = "sf.ddl.alter-task.unset.o045"
+id = "sf.ddl.alter-task.unset.o113"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required AS in [ EXECUTE AS USER ]"
+note = "the form without its required AS"
 
 [[obligation]]
-id = "sf.ddl.alter-task.unset.o046"
+id = "sf.ddl.alter-task.unset.o114"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required USER in [ EXECUTE AS USER ]"
+note = "the form without its required USER"
+
+[[obligation]]
+id = "sf.ddl.alter-task.unset.o115"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { WAREHOUSE | SCHEDULE | CONFIG | OVERLAP_POLICY | USER_TASK_TIMEOUT_MS | SUSPEND_TASK_AFTER_NUM_FAILURES | LOG_LEVEL | COMMENT | <session_parameter> [ , <session_parameter> ... ] | TARGET_COMPLETION_INTERVAL | SERVERLESS_TASK_MIN_STATEMENT_SIZE | SERVERLESS_TASK_MAX_STATEMENT_SIZE | CONTACT <purpose> [ , ... ] | EXECUTE AS USER }"
 
 [[obligation]]
 id = "sf.ddl.alter-task.unset.o048"
@@ -90628,10 +90508,10 @@ anchor = "doc.sql.alter-task / Syntax"
 note = "every independent option of one production together, observed"
 
 [[obligation]]
-id = "sf.ddl.alter-task.unset.o071"
+id = "sf.ddl.alter-task.unset.o116"
 kind = "required_operand_missing"
 required = true
-target = "<purpose> in [ CONTACT <purpose> [ , ... ] ]"
+target = "<purpose>"
 anchor = "doc.sql.alter-task / Syntax"
 note = "omit <purpose>, observed"
 
@@ -96777,47 +96657,42 @@ target = "<name>"
 note = "a string literal in place of <name>"
 
 [[obligation]]
-id = "sf.ddl.alter-view.unset.o034"
-kind = "option_present"
+id = "sf.ddl.alter-view.unset.o047"
+kind = "alternative"
 required = true
-target = "[ SECURE ]"
+target = "{ SECURE | CONTACT <purpose> | COMMENT } → SECURE"
 
 [[obligation]]
-id = "sf.ddl.alter-view.unset.o008"
-kind = "option_absent"
+id = "sf.ddl.alter-view.unset.o048"
+kind = "alternative"
 required = true
-target = "[ SECURE ]"
+target = "{ SECURE | CONTACT <purpose> | COMMENT } → CONTACT <purpose>"
 
 [[obligation]]
-id = "sf.ddl.alter-view.unset.o035"
-kind = "option_present"
+id = "sf.ddl.alter-view.unset.o049"
+kind = "alternative"
 required = true
-target = "[ CONTACT <purpose> ]"
+target = "{ SECURE | CONTACT <purpose> | COMMENT } → COMMENT"
 
 [[obligation]]
-id = "sf.ddl.alter-view.unset.o010"
-kind = "option_absent"
-required = true
-target = "[ CONTACT <purpose> ]"
-
-[[obligation]]
-id = "sf.ddl.alter-view.unset.o036"
+id = "sf.ddl.alter-view.unset.o051"
 kind = "operand_type_class"
 required = true
-target = "<purpose> in [ CONTACT <purpose> ]"
+target = "<purpose>"
 note = "a valid operand"
 
 [[obligation]]
-id = "sf.ddl.alter-view.unset.o042"
+id = "sf.ddl.alter-view.unset.o052"
 kind = "option_present"
 required = true
-target = "[ COMMENT ]"
+target = "[ , ... ]"
+note = "the list continued at least once"
 
 [[obligation]]
-id = "sf.ddl.alter-view.unset.o043"
+id = "sf.ddl.alter-view.unset.o053"
 kind = "option_absent"
 required = true
-target = "[ COMMENT ]"
+target = "[ , ... ]"
 
 [[obligation]]
 id = "sf.ddl.alter-view.unset.o018"
@@ -96838,6 +96713,12 @@ required = true
 note = "the form without its required UNSET"
 
 [[obligation]]
+id = "sf.ddl.alter-view.unset.o054"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { SECURE | CONTACT <purpose> | COMMENT }"
+
+[[obligation]]
 id = "sf.ddl.alter-view.unset.o022"
 kind = "identifier_class"
 required = true
@@ -96854,10 +96735,10 @@ anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
-id = "sf.ddl.alter-view.unset.o024"
+id = "sf.ddl.alter-view.unset.o055"
 kind = "required_operand_missing"
 required = true
-target = "<purpose> in [ CONTACT <purpose> ]"
+target = "<purpose>"
 anchor = "doc.sql.alter-view / Syntax"
 note = "omit <purpose>, observed"
 

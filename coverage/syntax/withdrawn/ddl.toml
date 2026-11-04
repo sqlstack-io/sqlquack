@@ -367,7 +367,7 @@ kind = "negative_neighbour"
 target = ""
 note = "the form without its required SEMANTIC, observed"
 sql = "ALTER VIEW v1 UNSET COMMENT ;"
-valid_as = "sf.ddl.alter-view.unset option_present [ COMMENT ]"
+valid_as = "sf.ddl.alter-view.unset alternative { SECURE | CONTACT <purpose> | COMMENT } → COMMENT"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
@@ -502,7 +502,7 @@ kind = "negative_neighbour"
 target = ""
 note = "the form without its required GRAPH, observed"
 sql = "ALTER TASK v1 UNSET SUSPEND_TASK_AFTER_NUM_FAILURES ;"
-valid_as = "sf.ddl.alter-task.unset option_present [ SUSPEND_TASK_AFTER_NUM_FAILURES ]"
+valid_as = "sf.ddl.alter-task.unset alternative { WAREHOUSE | SCHEDULE | CONFIG | OVERLAP_POLICY | USER_TASK_TIMEOUT_MS | SUSPEND_TAS… → SUSPEND_TASK_AFTER_NUM_FAILURES"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
@@ -511,7 +511,7 @@ kind = "negative_neighbour"
 target = ""
 note = "the form without its required GRAPH"
 sql = "ALTER TASK v1 UNSET CONTACT STEWARD ;"
-valid_as = "sf.ddl.alter-task.unset option_present [ CONTACT <purpose> [ , ... ] ]"
+valid_as = "sf.ddl.alter-task.unset alternative { WAREHOUSE | SCHEDULE | CONFIG | OVERLAP_POLICY | USER_TASK_TIMEOUT_MS | SUSPEND_TASK_AF… → CONTACT <purpose> [ , ... ]"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]

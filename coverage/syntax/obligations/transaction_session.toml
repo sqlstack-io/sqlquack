@@ -2299,7 +2299,7 @@ anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
-id = "sf.transaction_session.use-schema.o026"
+id = "sf.transaction_session.use-schema.o030"
 kind = "required_operand_missing"
 required = true
 target = "<name>"
@@ -2307,7 +2307,7 @@ anchor = "doc.sql.use-schema / Syntax"
 note = "omit <name>, observed"
 
 [[obligation]]
-id = "sf.transaction_session.use-schema.o027"
+id = "sf.transaction_session.use-schema.o031"
 kind = "required_operand_missing"
 required = true
 target = "<db_name> in [ <db_name> . ]"
