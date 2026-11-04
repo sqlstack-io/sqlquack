@@ -6,7 +6,7 @@ import json
 from pathlib import Path
 
 from scripts.syntax_receipts._helpers.hashing import canonical_json, digest
-from scripts.syntax_receipts.constants import RECEIPT_FORMAT, SUPERSEDES_KEY
+from scripts.syntax_receipts.constants import RECEIPT_FORMAT, RECONCILED_STATUS, SUPERSEDES_KEY
 from scripts.syntax_receipts.models import Imported
 from scripts.syntax_receipts.types import Row
 
@@ -38,11 +38,16 @@ def write_import(
         if (key[0], key[1]) in reasons
     ]
     lines: bytes = b"".join(canonical_json(r) + b"\n" for r in receipts)
+    reconciled_runs: set[str] = {
+        run["run_id"] for run in imported.runs if run["status"] == RECONCILED_STATUS
+    }
+    reconciled: int = sum(r["run_id"] in reconciled_runs for r in receipts)
     report: Row = {
         "format": RECEIPT_FORMAT,
         "receipts_file_sha256": digest(lines),
         "receipts": len(receipts),
         "superseding": sum(SUPERSEDES_KEY in r for r in receipts),
+        "reconciled_receipts": reconciled,
         "withdrawn": withdrawn,
         "refused": len(imported.refusals),
         "runs": imported.runs,
@@ -58,6 +63,7 @@ def write_import(
     )
     return {
         "receipts": len(receipts),
+        "reconciled_receipts": reconciled,
         "withdrawn": len(withdrawn),
         "refused": len(imported.refusals),
     }

@@ -78,7 +78,9 @@ that names the form and its reason.
 
 An `[[obligation]]` has these fields:
 
-- `id`: `<form id>.o<NNN>`, where `o000` is never used.
+- `id`: `<form id>.o<NNN>`, where `o000` is never used. Numbers past `o999` take more digits
+  without a leading zero (`o1000`), so each number has one spelling; ids keep their meaning and are
+  listed by number, `o999` before `o1000`.
 - `kind`: one of `alternative`, `option_present`, `option_absent`, `required_operand_missing`,
   `operand_type_class`, `positive`, `negative_neighbour`, `boundary_below`, `boundary_at`,
   `boundary_above`, `identifier_class`, `nesting_depth`, `interaction`,
@@ -116,11 +118,14 @@ Each line is one JSON object. Blank lines are refused.
 - `sql` and `sql_sha256`.
 - `setup` and `setup_sha256`: the ordered setup statements.
 - `session` and `session_sha256`: the session parameters, with JSON values.
-- `capture`: one of `execute`, `compile_only_explain`, `execute_canonical_recorder`, `describe`
-  or `execute_ddl_in_run_database`. The last runs DDL inside a database that the run creates and
-  drops. Its setup names that database, the run nonce and the per-case schema with the
-  placeholders `<run_database>`, `<run_nonce>` and `<case_schema>`, so the setup hash stays the
-  same from run to run.
+- `capture`: one of `execute`, `compile_only_explain`, `execute_canonical_recorder`, `describe`,
+  `execute_ddl_in_run_database` or `dcm_definition_file`. `execute_ddl_in_run_database` runs DDL
+  inside a database that the run creates and drops. Its setup names that database, the run nonce
+  and the per-case schema with the placeholders `<run_database>`, `<run_nonce>` and
+  `<case_schema>`, so the setup hash stays the same from run to run. `dcm_definition_file` writes
+  the case SQL as one definition file and plans it with `EXECUTE DCM PROJECT … PLAN` in a project
+  the run owns and discloses. A receipt counts for a case only when its `capture_method` is the
+  case's `capture`, so a standalone execute receipt never satisfies a DCM case.
 
 - `expect`: optional, `accept` or `reject` (decision D84). `reject` means a syntax error. `accept`
   means no syntax error: the statement was accepted, or refused only after parsing. A receipt whose
@@ -168,10 +173,63 @@ committed one.
   of `missing_object`, `invalid_option_or_value`, `type` or `other`. The basis says what the
   importer read it from, such as `errno 2003`. Older receipts have neither.
 
+- DCM fields, only on a `dcm_definition_file` receipt: `dcm_project`, the disclosed project, and
+  `definition_file_sha256`, which equals `sql_sha256`, are required. A failed PLAN keeps its
+  whole text in `message` and the inner error, the text after its `… in file …:` line, in
+  `inner_message`, which ends `message`. `errno` and `sqlstate` are the code the warehouse
+  returned, which is the inner error's. `definition_line` and `definition_position` are the `line <n> at position <m>` the
+  inner error states, or, when it states none, absent or those the whole message states.
+  `inner_errno` is present only when the inner text itself carries a number. A changeset
+  (`accepted`) has no inner error. The phase comes from the inner error: `syntax error` is
+  `syntax_error`, any other failure after parsing is `semantic_error`. DCM's own pre-check
+  (`DCM Project compilation failed in file …`) is no evidence of a parse: its receipt carries a
+  `measure`, such as `dcm_precheck`, so it never counts as syntax evidence.
+- Optional `message`: the warehouse's whole error message.
+- Optional `connector_errno`: an error number the connector raised in the client after the server
+  ran the statement, as query history shows. It is provenance only and does not change the phase.
 - Optional `measure`: the measure other than syntax the receipt was recorded for, such as
   `d73_missing_object_with_setup`. Such a receipt is never syntax evidence.
 - Optional `supersedes_receipt_sha256`: the SHA-256 of a published receipt line of the same case,
   hashed without its newline, that this receipt replaces.
+
+### Reconciled runs
+
+The importer reads a run only when its audit has one `complete` event whose `raw_sha256` is the
+hash of `capture/raw.jsonl`. A DDL run that stopped before writing that event can instead carry a
+`reconciliation.json` in the format `sqlquack-run-reconciliation/1` (decision D108). The importer
+then reports the run as `reconciled` instead of `imported`, with the file's hash as
+`reconciliation_sha256`, and its report counts `reconciled_receipts`. It refuses the whole run
+when:
+
+- the audit also has a `complete` event, or the run is not a DDL run;
+- the file is not a JSON object;
+- `format`, `status`, `run_id`, `audit_sha256`, `packet_sha256` or `recording_session_id` do not
+  bind this run's audit;
+- `failure` is empty;
+- `observed_cleanup` lacks a `drop_query_id`, its `drop_status` is not `SUCCESS`, or `dropped` is
+  not the start event's run database;
+- `inventory_check.counts_equal` is not `true`, or `run_owned_names_remaining` is not empty;
+- `raw_records.file_sha256` is not the hash of `capture/raw.jsonl`, or `raw_records.records`
+  are not counted by `count`, indexed 0, 1, 2 and so on, and listed once each by `id` with a
+  `sha256`.
+
+Each raw line must be listed under its case `id`, with `sha256` equal to the line's hash without
+its newline (the receipt's `raw_record_sha256`). A line that is not JSON, an unlisted line, a line
+whose hash differs and a listed record with no line are refused one by one.
+
+The record may hold one `unrecorded_submission`, from query history, for a case the run submitted
+without writing a raw record. It becomes a receipt only when:
+
+- its `source` is `query_history` and it carries a `query_id`;
+- both `sql_sha256` and `query_text_sha256` equal the hash of the case SQL, and the case has no
+  raw record;
+- it carries no `sqlstate`, since query history has none (the receipt's is null);
+- it carries the query's own `release_version`, which becomes the receipt's warehouse version;
+- its `execution_status` is `SUCCESS` with no `errno`, or `FAILED_WITH_ERROR` with an integer
+  `errno` and an `error_message`;
+- its `start_time` is readable.
+
+Its `raw_record_sha256` is the hash of the entry as canonical JSON.
 
 A receipt is evidence only while it is current. A later receipt can supersede it, or the run report
 beside its file can withdraw it: the report's `withdrawn` list names withdrawn receipts by

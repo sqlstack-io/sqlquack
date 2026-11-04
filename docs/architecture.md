@@ -323,7 +323,8 @@ in greedy order (each next rule is the one that completes the most files). SQLBu
 (`__ref`, `__source`, `__seed`, `__udf`, `__table_fn`, cursor bounds) are replaced with neutral
 placeholders before parsing; each model, source or seed reference becomes a relation named after its
 arguments, so a `--schema` file can type it. The report holds counts and construct keys only. With
-`SQLQUACK_GUARDS_DIR` set, census also writes each converted file's known divergences there.
+`SQLQUACK_GUARDS_DIR` set, census also writes each converted file's known divergences there, and
+with `SQLQUACK_CONVERTED_DIR` set, each converted file's DuckDB SQL, named after its path.
 Progress goes to stderr every few seconds, and the conversion times of the slowest files, over every
 pass, are listed there at the end. `--names` adds file, model and relation names: the slowest
 files' paths, the blockers' model names and the relation in each `model:` and `relation:` root.
@@ -368,6 +369,25 @@ END`, so a guard is evaluated only for rows the other conjuncts keep, whatever o
 optimizer chooses; the free conjuncts stay plain so filters still push down. A guard inside an OR
 or a single guarded condition is evaluated for every row reaching it, which may raise for a row
 whose value Snowflake would not need: a loud failure, never a different value.
+
+### Comparing converted models with recorded results
+
+`sqlquack compare --manifest <file>` replays converted SQL on DuckDB and judges each result against a
+recording with the strict comparator (decision D101). The manifest is a JSON list of entries
+`{id, recorded, database, sql, ordered}`: a recording's sidecar, beside its `.arrow` file; a DuckDB
+database attached read-only as `inputs`, holding the recorded inputs the SQL reads; the converted
+SQL file; and whether rows compare in order or as a bag. The sidecar must record `rows`, and the
+Arrow file must match its `arrow_sha256`, column count and `row_count`. Each replay runs in the
+policy's session profile (`--session-profile`, `utc-v1` by default) with its null ordering. Each
+entry prints `{id, outcome, detail}`. The outcome is one of:
+
+- `matches`;
+- `matches_at_microseconds`: the recording kept declared nanosecond columns in microseconds, and the
+  replay matches once its own sub-microsecond digits are dropped. This never counts as a full
+  match;
+- `differs`, with the first difference;
+- `duckdb_error`;
+- `unreadable`: the recording or the SQL file cannot be read.
 
 ### Guard measurement
 
