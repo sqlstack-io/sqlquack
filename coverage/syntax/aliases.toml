@@ -88,7 +88,7 @@ reason = "one form held several documented statements or function names; split o
 
 [[alias]]
 from = "sf.security_admin.alter-security-integration-scim.unset-network-policy-alter-integration"
-to = ["sf.security_admin.alter-security-integration-scim.set-tag", "sf.security_admin.alter-security-integration-scim.unset-network-policy"]
+to = ["sf.security_admin.alter-security-integration-scim.unset-network-policy", "sf.security_admin.alter-security-integration.set-tag"]
 reason = "one form held several documented statements or function names; split one form per statement or name (omission audit of 5f80b6cd)"
 
 [[alias]]
