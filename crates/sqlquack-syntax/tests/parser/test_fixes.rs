@@ -240,3 +240,42 @@ fn given_an_unpivot_in_list_when_parsing_snowflake_then_recorded_rejections_are_
         );
     }
 }
+
+#[test]
+fn given_a_bare_trailing_limit_when_parsing_then_only_snowflake_accepts_it() {
+    let test_cases = [
+        AcceptanceTestCase {
+            description: "Snowflake accepts a bare LIMIT at the end (recorded as accepted)",
+            sql: "SELECT 1 LIMIT",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "Snowflake accepts a bare LIMIT before the statement's semicolon",
+            sql: "WITH t AS (SELECT 1 AS a) SELECT a FROM t LIMIT;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "Snowflake rejects LIMIT with no count before OFFSET (recorded errno 1003)",
+            sql: "WITH t AS (SELECT 1 AS a) SELECT a FROM t LIMIT OFFSET 1",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "DuckDB still needs a LIMIT count",
+            sql: "SELECT 1 LIMIT",
+            dialect: Dialect::DuckDB,
+            expected_accepted: false,
+        },
+    ];
+
+    for test_case in test_cases {
+        assert_eq!(
+            accepted(test_case.sql, test_case.dialect),
+            test_case.expected_accepted,
+            "{}",
+            test_case.description
+        );
+    }
+}
