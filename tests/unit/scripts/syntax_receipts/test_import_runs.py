@@ -318,6 +318,7 @@ def test_given_receipt_published_before_a_field_was_added_when_imported_again_th
                 "run_database": "SQLQUACK_DDL_ABC123",
                 "setup": ["CREATE DATABASE SQLQUACK_DDL_ABC123"],
                 "method": "EXPLAIN USING TEXT, once",
+                "measure": "d73_missing_object_with_setup",
             },
             expected_receipts=[("c1", "accepted", "compile_only_explain")],
             expected_setup_tail=[
@@ -351,6 +352,7 @@ def test_given_fixture_setup_per_item_when_imported_then_receipts_name_that_setu
     receipt_input: tuple[str, str] = (receipts[0]["sql_sha256"], receipts[0]["setup_sha256"])
     assert setups[receipt_input][-3:] == test_case.expected_setup_tail
     assert [r["row_id"] for r in report["refusals"]] == test_case.expected_refusals
+    assert receipts[0]["measure"] == test_case.start["measure"]
 
 
 @pytest.mark.parametrize(

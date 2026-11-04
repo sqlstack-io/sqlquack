@@ -18,6 +18,7 @@ from scripts.syntax_receipts.constants import (
     CAPTURE_EXPLAIN,
     CASE_SCHEMA,
     EXPLAIN_METHOD,
+    MEASURE_KEY,
     PACKET_ACCEPTED_OUTCOMES,
     RUN_DATABASE,
     RUN_NONCE,
@@ -87,6 +88,8 @@ def import_ddl_run(*, run: CaptureRun, index: dict[str, Path]) -> Imported:
             "statements_in_request": raw.get("statements"),
             "completed_statements": raw.get("completed_statements"),
         }
+        if start.get(MEASURE_KEY):
+            extra[MEASURE_KEY] = start[MEASURE_KEY]
         if explain:
             extra.update(
                 statement_index=raw.get("statement_index"),

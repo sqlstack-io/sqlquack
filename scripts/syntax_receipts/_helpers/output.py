@@ -56,7 +56,11 @@ def write_import(
         path=report_path,
         data=json.dumps(report, indent=1, sort_keys=True, ensure_ascii=False).encode() + b"\n",
     )
-    return {"receipts": len(receipts), "withdrawn": len(withdrawn), "refused": len(imported.refusals)}
+    return {
+        "receipts": len(receipts),
+        "withdrawn": len(withdrawn),
+        "refused": len(imported.refusals),
+    }
 
 
 def _published_observations(*, paths: list[Path]) -> dict[tuple[str, str, str], Row]:
