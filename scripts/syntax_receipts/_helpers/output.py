@@ -15,8 +15,8 @@ def write_import(
     *, imported: Imported, published: list[Path], receipts_path: Path, report_path: Path
 ) -> Row:
     """Write the receipts absent from `published` and the report; the counts written."""
-    known: set[bytes] = _published_lines(paths=published)
-    receipts: list[Row] = [r for r in imported.receipts if canonical_json(r) not in known]
+    known: set[tuple[str, str, str]] = _published_observations(paths=published)
+    receipts: list[Row] = [r for r in imported.receipts if _observation(receipt=r) not in known]
     lines: bytes = b"".join(canonical_json(r) + b"\n" for r in receipts)
     report: Row = {
         "format": RECEIPT_FORMAT,
@@ -35,11 +35,18 @@ def write_import(
     return {"receipts": len(receipts), "refused": len(imported.refusals)}
 
 
-def _published_lines(*, paths: list[Path]) -> set[bytes]:
-    known: set[bytes] = set()
+def _published_observations(*, paths: list[Path]) -> set[tuple[str, str, str]]:
+    """Published receipts by recorded observation, so a field added later does not republish one."""
+    known: set[tuple[str, str, str]] = set()
     for path in paths:
-        known.update(line.strip() for line in path.read_bytes().splitlines() if line.strip())
+        for line in path.read_bytes().splitlines():
+            if line.strip():
+                known.add(_observation(receipt=json.loads(line)))
     return known
+
+
+def _observation(*, receipt: Row) -> tuple[str, str, str]:
+    return receipt["run_id"], receipt["case_id"], receipt["raw_record_sha256"]
 
 
 def _write_new(*, path: Path, data: bytes) -> None:

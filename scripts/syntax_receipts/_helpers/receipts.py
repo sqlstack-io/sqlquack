@@ -2,13 +2,20 @@
 
 from __future__ import annotations
 
+import re
+
 from scripts.syntax_receipts._helpers.hashing import canonical_json, digest
 from scripts.syntax_receipts.constants import (
     CAPTURE_EXPLAIN,
     COMPILATION_PREFIX,
+    MISSING_OBJECT,
+    MISSING_OBJECT_MESSAGE,
+    OTHER_REASON,
+    REASON_BY_ERRNO,
     RECEIPT_FORMAT,
     RUNTIME_ERRNO_FLOOR,
     SYNTAX_ERRNO,
+    UNCATEGORIZED_PHASES,
     UNCAUGHT_PREFIX,
     UNSUPPORTED_ERRNO,
     UNSUPPORTED_PREFIX,
@@ -34,9 +41,24 @@ def classify(*, errno: int | None, message: str) -> tuple[str, str] | None:
     return None
 
 
+def reason_category(*, errno: int | None, message: str) -> tuple[str, str]:
+    """Snowflake's reason for a non-syntax error: missing object, option or value, type, other."""
+    if errno in REASON_BY_ERRNO:
+        return REASON_BY_ERRNO[errno], f"errno {errno}"
+    if re.search(MISSING_OBJECT_MESSAGE, message, re.IGNORECASE):
+        return MISSING_OBJECT, "message names a missing object"
+    return OTHER_REASON, f"errno {errno} has no more specific reason"
+
+
 def receipt(*, observation: Observation, extra: Row) -> Row:
     """The receipt for `observation`, refused when its error phase is not established."""
     phase, basis = _phase(observation=observation)
+    reason: Row = {}
+    if phase not in UNCATEGORIZED_PHASES:
+        category, category_basis = reason_category(
+            errno=observation.errno, message=observation.message
+        )
+        reason = {"reason_category": category, "reason_category_basis": category_basis}
     return {
         "format": RECEIPT_FORMAT,
         "case_id": observation.case_id,
@@ -54,6 +76,7 @@ def receipt(*, observation: Observation, extra: Row) -> Row:
         "phase_basis": basis,
         "raw_record_sha256": digest(observation.raw_bytes),
         "run_audit_sha256": observation.audit_sha,
+        **reason,
         **extra,
     }
 
