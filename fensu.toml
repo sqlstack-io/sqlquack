@@ -1,6 +1,6 @@
 [targets.python]
 analyzer = "python"
-roots = ["recorder/src/sqlquack_record"]
+roots = ["recorder/src/sqlquack_record", "python/src/sqlquack"]
 tests = ["tests"]
 tooling = ["scripts"]
 select = ["FF"]
@@ -18,7 +18,7 @@ select = ["FPRS"]
 analyzer = "rust"
 roots = ["crates"]
 tests = []
-tooling = ["crates/sqlquack", "crates/sqlquack-polyglot-check"]
+tooling = ["crates/sqlquack", "crates/sqlquack-polyglot-check", "crates/sqlquack-python"]
 rule_packs = ["rust"]
 select = ["FPRSL301"]
 
@@ -33,6 +33,7 @@ tests = []
 tooling = [
   "crates/sqlquack",
   "crates/sqlquack-polyglot-check",
+  "crates/sqlquack-python",
   "crates/sqlquack-rules",
   "crates/sqlquack-duckdb",
   "crates/sqlquack-evidence",

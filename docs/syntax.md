@@ -254,7 +254,7 @@ exact-check corpus entry: SQLQuack must parse it exactly as polyglot does.
 
 **Our fork's typed-marker tests** that need only the parser came with the copy
 (`typed_expression`); those that need polyglot's analysis are rewritten against SQLQuack's tree
-when the analysis API (CHI-852) needs them.
+when the analysis API needs them.
 
 ## Steps and their checks
 

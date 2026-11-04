@@ -46,6 +46,7 @@ constructs = ["fn:HASH"]
 default = "warn"
 strict = "refuse"
 reason = "values differ, consistently"
+failure = "value"
 "#;
 
 pub(crate) fn observed_error(replace: &str, with: &str, fragment: Option<&str>) -> Option<String> {
