@@ -323,6 +323,11 @@ impl Parser {
         self.expect_token(TokenType::Show)?;
 
         let terse = self.match_identifier("TERSE");
+        if self.is_snowflake() {
+            if let Some(show) = self.parse_snowflake_show(terse)? {
+                return Ok(show);
+            }
+        }
 
         let (this_parts, target, mutex) = self.parse_show_object_kind()?;
 
