@@ -7302,3 +7302,691 @@ cases = [
 ]
 runs = []
 probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.alter-organization-user.unset.o002"
+form = "sf.security_admin.alter-organization-user.unset"
+construct = "omit <name>: ALTER ORGANIZATION USER UNSET EMAIL ;"
+reason = "not submitted: held by the capture guard in packet rmu-3cd2b776 (relaxed_sweep): billable or out-of-account: account"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.alter-organization-user.unset.k796924dc28c1", sql_sha256 = "796924dc28c1d2ad424b323339443e06bb9caf34f7834012d656540e5cacf23f" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.alter-organization-user.unset.o004"
+form = "sf.security_admin.alter-organization-user.unset"
+construct = "a string literal in place of <name>: ALTER ORGANIZATION USER 'v1' UNSET EMAIL ;"
+reason = "not submitted: held by the capture guard in packet rmu-3cd2b776 (relaxed_sweep): billable or out-of-account: account"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.alter-organization-user.unset.ke0be8b484ce5", sql_sha256 = "e0be8b484ce514043aa1fc9a99f11aa4447d193350996b8abbbed973f31b30da" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.alter-organization-user.unset.o042"
+form = "sf.security_admin.alter-organization-user.unset"
+construct = "the form without its required USER: ALTER ORGANIZATION v1 UNSET EMAIL ;"
+reason = "not submitted: held by the capture guard in packet rmu-3cd2b776 (relaxed_sweep): billable or out-of-account: account"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.alter-organization-user.unset.k996ab4d41cd1", sql_sha256 = "996ab4d41cd16c456993d4ef3b7caa51b3995d723927146392fefb27a5e33cba" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.alter-organization-user.unset.o043"
+form = "sf.security_admin.alter-organization-user.unset"
+construct = "the form without its required UNSET: ALTER ORGANIZATION USER v1 EMAIL ;"
+reason = "not submitted: held by the capture guard in packet rmu-3cd2b776 (relaxed_sweep): billable or out-of-account: account"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.alter-organization-user.unset.kdd3d6cb8fe1e", sql_sha256 = "dd3d6cb8fe1ed321423779405cbac631e17043932686d48c7191f810efac8c5b" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.alter-organization-user.unset.o045"
+form = "sf.security_admin.alter-organization-user.unset"
+construct = "quoted: a double-quoted identifier with blanks and mixed case: ALTER ORGANIZATION USER \"v1 Q\" UNSET EMAIL ;"
+reason = "not submitted: held by the capture guard in packet rmu-3cd2b776 (relaxed_sweep): billable or out-of-account: account"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.alter-organization-user.unset.kb035f670ea1e", sql_sha256 = "b035f670ea1e8db41fbb9c240045bc5d1a1b1dfcecc8e31dbf3fab2a723275be" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.alter-organization-user.unset.o046"
+form = "sf.security_admin.alter-organization-user.unset"
+construct = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance): ALTER ORGANIZATION USER \"SELECT\" UNSET EMAIL ;"
+reason = "not submitted: held by the capture guard in packet rmu-3cd2b776 (relaxed_sweep): billable or out-of-account: account"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.alter-organization-user.unset.k9b7a20e662a7", sql_sha256 = "9b7a20e662a7d31e1a61faadd0bb20e1eac31e9391034275def37ece121e1fb6" },
+  { case_id = "sf.security_admin.alter-organization-user.unset.kf228d47ddaf0", sql_sha256 = "f228d47ddaf02ed97772efe7fda207a7700ec3012ca3f6d3ec84e4cf133fc1e2" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.alter-user-modify-key-pair.unset.o001"
+form = "sf.security_admin.alter-user-modify-key-pair.unset"
+construct = "the documented form with every required part and no optional part: ALTER USER MODIFY KEY PAIR v1 UNSET DISABLED ;"
+reason = "not submitted: held by the capture guard in packet rmu-3cd2b776 (relaxed_sweep): alters the current user"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.alter-user-modify-key-pair.unset.kb8741caaea90", sql_sha256 = "b8741caaea9077c88f009cfb782972c45238ced6624cabc816625583d7da8f97" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.alter-user-modify-key-pair.unset.o003"
+form = "sf.security_admin.alter-user-modify-key-pair.unset"
+construct = "option_absent: ALTER USER MODIFY KEY PAIR v1 UNSET DISABLED ;"
+reason = "not submitted: held by the capture guard in packet rmu-3cd2b776 (relaxed_sweep): alters the current user"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.alter-user-modify-key-pair.unset.kb8741caaea90", sql_sha256 = "b8741caaea9077c88f009cfb782972c45238ced6624cabc816625583d7da8f97" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.alter-user-modify-key-pair.unset.o005"
+form = "sf.security_admin.alter-user-modify-key-pair.unset"
+construct = "option_absent: ALTER USER MODIFY KEY PAIR v1 UNSET DISABLED ;"
+reason = "not submitted: held by the capture guard in packet rmu-3cd2b776 (relaxed_sweep): alters the current user"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.alter-user-modify-key-pair.unset.kb8741caaea90", sql_sha256 = "b8741caaea9077c88f009cfb782972c45238ced6624cabc816625583d7da8f97" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.alter-user-modify-key-pair.unset.o008"
+form = "sf.security_admin.alter-user-modify-key-pair.unset"
+construct = "omit <key_pair_name>: ALTER USER MODIFY KEY PAIR UNSET DISABLED ;"
+reason = "not submitted: held by the capture guard in packet rmu-3cd2b776 (relaxed_sweep): alters the current user"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.alter-user-modify-key-pair.unset.ka8dd3bd0952c", sql_sha256 = "a8dd3bd0952c1ee66c72f5c8410699fd998f181d96a9fa219c0cb6fff331843a" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.alter-user-modify-key-pair.unset.o009"
+form = "sf.security_admin.alter-user-modify-key-pair.unset"
+construct = "a valid identifier: ALTER USER MODIFY KEY PAIR v1 UNSET DISABLED ;"
+reason = "not submitted: held by the capture guard in packet rmu-3cd2b776 (relaxed_sweep): alters the current user"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.alter-user-modify-key-pair.unset.kb8741caaea90", sql_sha256 = "b8741caaea9077c88f009cfb782972c45238ced6624cabc816625583d7da8f97" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.alter-user-modify-key-pair.unset.o010"
+form = "sf.security_admin.alter-user-modify-key-pair.unset"
+construct = "a string literal in place of <key_pair_name>: ALTER USER MODIFY KEY PAIR 'v1' UNSET DISABLED ;"
+reason = "not submitted: held by the capture guard in packet rmu-3cd2b776 (relaxed_sweep): alters the current user"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.alter-user-modify-key-pair.unset.kdd3701edb56e", sql_sha256 = "dd3701edb56e2bf783724e14f4cdd0653cfeb7ec977e71b8c955b1dce7c52d9b" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.alter-user-modify-key-pair.unset.o018"
+form = "sf.security_admin.alter-user-modify-key-pair.unset"
+construct = "the form without its required KEY: ALTER USER MODIFY PAIR v1 UNSET DISABLED ;"
+reason = "not submitted: held by the capture guard in packet rmu-3cd2b776 (relaxed_sweep): alters the current user"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.alter-user-modify-key-pair.unset.ka9a6e9667e8d", sql_sha256 = "a9a6e9667e8d06f1d99c7c6b621f4690b9ddda395a2645c670937d515614d297" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.alter-user-modify-key-pair.unset.o019"
+form = "sf.security_admin.alter-user-modify-key-pair.unset"
+construct = "the form without its required PAIR: ALTER USER MODIFY KEY v1 UNSET DISABLED ;"
+reason = "not submitted: held by the capture guard in packet rmu-3cd2b776 (relaxed_sweep): alters the current user"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.alter-user-modify-key-pair.unset.k4ab13bbc34db", sql_sha256 = "4ab13bbc34db76e24d2d9e325fa6d0b6d80f5e69ae74db3dad7de119dd2f5d95" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.alter-user-modify-key-pair.unset.o020"
+form = "sf.security_admin.alter-user-modify-key-pair.unset"
+construct = "the form without its required UNSET: ALTER USER MODIFY KEY PAIR v1 DISABLED ;"
+reason = "not submitted: held by the capture guard in packet rmu-3cd2b776 (relaxed_sweep): alters the current user"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.alter-user-modify-key-pair.unset.k610557e2b324", sql_sha256 = "610557e2b324714e90733ba76d84382953a4dbe027f865cbcfcd9a5ce7f61fd3" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.alter-user-modify-key-pair.unset.o024"
+form = "sf.security_admin.alter-user-modify-key-pair.unset"
+construct = "quoted: a double-quoted identifier with blanks and mixed case: ALTER USER MODIFY KEY PAIR \"v1 Q\" UNSET DISABLED ;"
+reason = "not submitted: held by the capture guard in packet rmu-3cd2b776 (relaxed_sweep): alters the current user"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.alter-user-modify-key-pair.unset.k07cc83ec2cc9", sql_sha256 = "07cc83ec2cc9e8c4b867f2b26d3d7debbd8bd983bb1dadd72bd3beef8b5978aa" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.alter-user-modify-key-pair.unset.o025"
+form = "sf.security_admin.alter-user-modify-key-pair.unset"
+construct = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance): ALTER USER MODIFY KEY PAIR SELECT UNSET DISABLED ;"
+reason = "not submitted: held by the capture guard in packet rmu-3cd2b776 (relaxed_sweep): alters the current user"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.alter-user-modify-key-pair.unset.k9a75ed6bd91a", sql_sha256 = "9a75ed6bd91a93a41c5cd91812fb1fc151ef143f803bbc055cb26c33658c3564" },
+  { case_id = "sf.security_admin.alter-user-modify-key-pair.unset.k9e3f5954f265", sql_sha256 = "9e3f5954f265be775af372c55bb76c52633e442b94fe9857978b8a1e86627f6c" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.alter-user-modify-key-pair.unset.o026"
+form = "sf.security_admin.alter-user-modify-key-pair.unset"
+construct = "alternative: ALTER USER MODIFY KEY PAIR v1 UNSET DISABLED ;"
+reason = "not submitted: held by the capture guard in packet rmu-3cd2b776 (relaxed_sweep): alters the current user"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.alter-user-modify-key-pair.unset.kb8741caaea90", sql_sha256 = "b8741caaea9077c88f009cfb782972c45238ced6624cabc816625583d7da8f97" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.alter-user-modify-key-pair.unset.o027"
+form = "sf.security_admin.alter-user-modify-key-pair.unset"
+construct = "alternative: ALTER USER MODIFY KEY PAIR v1 UNSET COMMENT ;"
+reason = "not submitted: held by the capture guard in packet rmu-3cd2b776 (relaxed_sweep): alters the current user"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.alter-user-modify-key-pair.unset.k6dae78d0a623", sql_sha256 = "6dae78d0a623abcd2ae00ad16d180601005bd18216b1b250ef28e60db5823ee5" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.alter-user-modify-key-pair.unset.o029"
+form = "sf.security_admin.alter-user-modify-key-pair.unset"
+construct = "option_absent: ALTER USER MODIFY KEY PAIR v1 UNSET DISABLED ;"
+reason = "not submitted: held by the capture guard in packet rmu-3cd2b776 (relaxed_sweep): alters the current user"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.alter-user-modify-key-pair.unset.kb8741caaea90", sql_sha256 = "b8741caaea9077c88f009cfb782972c45238ced6624cabc816625583d7da8f97" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.alter-user-modify-key-pair.unset.o030"
+form = "sf.security_admin.alter-user-modify-key-pair.unset"
+construct = "the form without its required { DISABLED | COMMENT }: ALTER USER MODIFY KEY PAIR v1 UNSET ;"
+reason = "not submitted: held by the capture guard in packet rmu-3cd2b776 (relaxed_sweep): alters the current user"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.alter-user-modify-key-pair.unset.k19cb1abf5217", sql_sha256 = "19cb1abf52176f4c18733d92c4783d0ee07d635463c38e8e0fe6d058f9ada83f" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.alter-user-modify-programmatic-access-token.unset.o001"
+form = "sf.security_admin.alter-user-modify-programmatic-access-token.unset"
+construct = "the documented form with every required part and no optional part: ALTER USER MODIFY PROGRAMMATIC ACCESS TOKEN v1 UNSET DISABLED ;"
+reason = "not submitted: held by the capture guard in packet rmu-3cd2b776 (relaxed_sweep): alters the current user"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.alter-user-modify-programmatic-access-token.unset.k47de596cdaa3", sql_sha256 = "47de596cdaa3bd8d16198bac04a12f1e47302e4b304b564c437a1e5eba79de9f" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.alter-user-modify-programmatic-access-token.unset.o003"
+form = "sf.security_admin.alter-user-modify-programmatic-access-token.unset"
+construct = "option_absent: ALTER USER MODIFY PROGRAMMATIC ACCESS TOKEN v1 UNSET DISABLED ;"
+reason = "not submitted: held by the capture guard in packet rmu-3cd2b776 (relaxed_sweep): alters the current user"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.alter-user-modify-programmatic-access-token.unset.k47de596cdaa3", sql_sha256 = "47de596cdaa3bd8d16198bac04a12f1e47302e4b304b564c437a1e5eba79de9f" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.alter-user-modify-programmatic-access-token.unset.o005"
+form = "sf.security_admin.alter-user-modify-programmatic-access-token.unset"
+construct = "option_absent: ALTER USER MODIFY PROGRAMMATIC ACCESS TOKEN v1 UNSET DISABLED ;"
+reason = "not submitted: held by the capture guard in packet rmu-3cd2b776 (relaxed_sweep): alters the current user"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.alter-user-modify-programmatic-access-token.unset.k47de596cdaa3", sql_sha256 = "47de596cdaa3bd8d16198bac04a12f1e47302e4b304b564c437a1e5eba79de9f" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.alter-user-modify-programmatic-access-token.unset.o008"
+form = "sf.security_admin.alter-user-modify-programmatic-access-token.unset"
+construct = "alternative: ALTER USER MODIFY PROGRAMMATIC ACCESS TOKEN v1 UNSET DISABLED ;"
+reason = "not submitted: held by the capture guard in packet rmu-3cd2b776 (relaxed_sweep): alters the current user"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.alter-user-modify-programmatic-access-token.unset.k47de596cdaa3", sql_sha256 = "47de596cdaa3bd8d16198bac04a12f1e47302e4b304b564c437a1e5eba79de9f" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.alter-user-modify-programmatic-access-token.unset.o009"
+form = "sf.security_admin.alter-user-modify-programmatic-access-token.unset"
+construct = "alternative: ALTER USER MODIFY PAT v1 UNSET DISABLED ;"
+reason = "not submitted: held by the capture guard in packet rmu-3cd2b776 (relaxed_sweep): alters the current user"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.alter-user-modify-programmatic-access-token.unset.k969cb8eb9514", sql_sha256 = "969cb8eb95142ef000bfec2d05287d2008c987fa5308e367129c551a2960b6f7" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.alter-user-modify-programmatic-access-token.unset.o011"
+form = "sf.security_admin.alter-user-modify-programmatic-access-token.unset"
+construct = "option_absent: ALTER USER MODIFY PROGRAMMATIC ACCESS TOKEN v1 UNSET DISABLED ;"
+reason = "not submitted: held by the capture guard in packet rmu-3cd2b776 (relaxed_sweep): alters the current user"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.alter-user-modify-programmatic-access-token.unset.k47de596cdaa3", sql_sha256 = "47de596cdaa3bd8d16198bac04a12f1e47302e4b304b564c437a1e5eba79de9f" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.alter-user-modify-programmatic-access-token.unset.o012"
+form = "sf.security_admin.alter-user-modify-programmatic-access-token.unset"
+construct = "omit <token_name>: ALTER USER MODIFY PROGRAMMATIC ACCESS TOKEN UNSET DISABLED ;"
+reason = "not submitted: held by the capture guard in packet rmu-3cd2b776 (relaxed_sweep): alters the current user"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.alter-user-modify-programmatic-access-token.unset.k289a054cb81d", sql_sha256 = "289a054cb81da8689dfb482bed059954fd4acaf423cf807e9d06c30dad21fc78" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.alter-user-modify-programmatic-access-token.unset.o013"
+form = "sf.security_admin.alter-user-modify-programmatic-access-token.unset"
+construct = "a valid identifier: ALTER USER MODIFY PROGRAMMATIC ACCESS TOKEN v1 UNSET DISABLED ;"
+reason = "not submitted: held by the capture guard in packet rmu-3cd2b776 (relaxed_sweep): alters the current user"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.alter-user-modify-programmatic-access-token.unset.k47de596cdaa3", sql_sha256 = "47de596cdaa3bd8d16198bac04a12f1e47302e4b304b564c437a1e5eba79de9f" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.alter-user-modify-programmatic-access-token.unset.o014"
+form = "sf.security_admin.alter-user-modify-programmatic-access-token.unset"
+construct = "a string literal in place of <token_name>: ALTER USER MODIFY PROGRAMMATIC ACCESS TOKEN 'v1' UNSET DISABLED ;"
+reason = "not submitted: held by the capture guard in packet rmu-3cd2b776 (relaxed_sweep): alters the current user"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.alter-user-modify-programmatic-access-token.unset.ke379fa1131e2", sql_sha256 = "e379fa1131e2ee7afde60bc0ce522fc2ada64aef3807f6effea29387111faa28" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.alter-user-modify-programmatic-access-token.unset.o024"
+form = "sf.security_admin.alter-user-modify-programmatic-access-token.unset"
+construct = "the form without its required ACCESS: ALTER USER MODIFY PROGRAMMATIC TOKEN v1 UNSET DISABLED ;"
+reason = "not submitted: held by the capture guard in packet rmu-3cd2b776 (relaxed_sweep): alters the current user"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.alter-user-modify-programmatic-access-token.unset.k47c4c95f00d5", sql_sha256 = "47c4c95f00d55153ac696edf0fae3d1997efb8b8facf19fd1eb0ef73c61dee9b" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.alter-user-modify-programmatic-access-token.unset.o025"
+form = "sf.security_admin.alter-user-modify-programmatic-access-token.unset"
+construct = "the form without its required TOKEN: ALTER USER MODIFY PROGRAMMATIC ACCESS v1 UNSET DISABLED ;"
+reason = "not submitted: held by the capture guard in packet rmu-3cd2b776 (relaxed_sweep): alters the current user"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.alter-user-modify-programmatic-access-token.unset.k020a41cd16e2", sql_sha256 = "020a41cd16e24ce5e44c1fef9dd132163c81db221d33fb899ec05f9a023e7907" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.alter-user-modify-programmatic-access-token.unset.o026"
+form = "sf.security_admin.alter-user-modify-programmatic-access-token.unset"
+construct = "the form without its required { PROGRAMMATIC ACCESS TOKEN | PAT }: ALTER USER MODIFY v1 UNSET DISABLED ;"
+reason = "not submitted: held by the capture guard in packet rmu-3cd2b776 (relaxed_sweep): alters the current user"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.alter-user-modify-programmatic-access-token.unset.k739bf0ccf35c", sql_sha256 = "739bf0ccf35cfd7c575d5840d8b4cac2da64cd630e9e86fbb3d63639a816f2e5" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.alter-user-modify-programmatic-access-token.unset.o027"
+form = "sf.security_admin.alter-user-modify-programmatic-access-token.unset"
+construct = "the form without its required EXISTS in [ IF EXISTS ] #2: ALTER USER MODIFY PROGRAMMATIC ACCESS TOKEN IF v1 UNSET DISABLED ;"
+reason = "not submitted: held by the capture guard in packet rmu-3cd2b776 (relaxed_sweep): alters the current user"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.alter-user-modify-programmatic-access-token.unset.kb533ad8e9038", sql_sha256 = "b533ad8e903800d605ca1d58f16b1ce1c360c7867926762b2cdc95594bbf1647" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.alter-user-modify-programmatic-access-token.unset.o028"
+form = "sf.security_admin.alter-user-modify-programmatic-access-token.unset"
+construct = "the form without its required UNSET: ALTER USER MODIFY PROGRAMMATIC ACCESS TOKEN v1 DISABLED ;"
+reason = "not submitted: held by the capture guard in packet rmu-3cd2b776 (relaxed_sweep): alters the current user"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.alter-user-modify-programmatic-access-token.unset.kf8aec00a43f8", sql_sha256 = "f8aec00a43f81f2baa515fad6222c797da539578404e8f8819945e657b3fb45a" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.alter-user-modify-programmatic-access-token.unset.o032"
+form = "sf.security_admin.alter-user-modify-programmatic-access-token.unset"
+construct = "quoted: a double-quoted identifier with blanks and mixed case: ALTER USER MODIFY PROGRAMMATIC ACCESS TOKEN \"v1 Q\" UNSET DISABLED ;"
+reason = "not submitted: held by the capture guard in packet rmu-3cd2b776 (relaxed_sweep): alters the current user"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.alter-user-modify-programmatic-access-token.unset.k2d6f8e819d0f", sql_sha256 = "2d6f8e819d0fab226095c44e018257dd04f65c7b6e6e27cbbc76c87d0df4f063" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.alter-user-modify-programmatic-access-token.unset.o033"
+form = "sf.security_admin.alter-user-modify-programmatic-access-token.unset"
+construct = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance): ALTER USER MODIFY PROGRAMMATIC ACCESS TOKEN SELECT UNSET DISABLED ;"
+reason = "not submitted: held by the capture guard in packet rmu-3cd2b776 (relaxed_sweep): alters the current user"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.alter-user-modify-programmatic-access-token.unset.k4dc42274dc01", sql_sha256 = "4dc42274dc01f9993196bb43517509792613770189954752c4bf1da58a56b620" },
+  { case_id = "sf.security_admin.alter-user-modify-programmatic-access-token.unset.kaf046cc002a2", sql_sha256 = "af046cc002a28cebd1f09087fcecf85fe4d93fa53607ff05b3c2ba3a1b30029f" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.alter-user-modify-programmatic-access-token.unset.o034"
+form = "sf.security_admin.alter-user-modify-programmatic-access-token.unset"
+construct = "alternative: ALTER USER MODIFY PROGRAMMATIC ACCESS TOKEN v1 UNSET DISABLED ;"
+reason = "not submitted: held by the capture guard in packet rmu-3cd2b776 (relaxed_sweep): alters the current user"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.alter-user-modify-programmatic-access-token.unset.k47de596cdaa3", sql_sha256 = "47de596cdaa3bd8d16198bac04a12f1e47302e4b304b564c437a1e5eba79de9f" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.alter-user-modify-programmatic-access-token.unset.o035"
+form = "sf.security_admin.alter-user-modify-programmatic-access-token.unset"
+construct = "alternative: ALTER USER MODIFY PROGRAMMATIC ACCESS TOKEN v1 UNSET MINS_TO_BYPASS_NETWORK_POLICY_REQUIREMENT ;"
+reason = "not submitted: held by the capture guard in packet rmu-3cd2b776 (relaxed_sweep): alters the current user"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.alter-user-modify-programmatic-access-token.unset.kee519d1b2aad", sql_sha256 = "ee519d1b2aadbc40e8bdffd9873d917a468dcb69f138e70e627463abd64ecb46" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.alter-user-modify-programmatic-access-token.unset.o036"
+form = "sf.security_admin.alter-user-modify-programmatic-access-token.unset"
+construct = "alternative: ALTER USER MODIFY PROGRAMMATIC ACCESS TOKEN v1 UNSET COMMENT ;"
+reason = "not submitted: held by the capture guard in packet rmu-3cd2b776 (relaxed_sweep): alters the current user"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.alter-user-modify-programmatic-access-token.unset.k2bffc9e40ff5", sql_sha256 = "2bffc9e40ff5d40fdba2d48a7e8c67a77f71c70ad7901f8c041b28d716bc7edd" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.alter-user-modify-programmatic-access-token.unset.o038"
+form = "sf.security_admin.alter-user-modify-programmatic-access-token.unset"
+construct = "option_absent: ALTER USER MODIFY PROGRAMMATIC ACCESS TOKEN v1 UNSET DISABLED ;"
+reason = "not submitted: held by the capture guard in packet rmu-3cd2b776 (relaxed_sweep): alters the current user"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.alter-user-modify-programmatic-access-token.unset.k47de596cdaa3", sql_sha256 = "47de596cdaa3bd8d16198bac04a12f1e47302e4b304b564c437a1e5eba79de9f" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.alter-user-modify-programmatic-access-token.unset.o039"
+form = "sf.security_admin.alter-user-modify-programmatic-access-token.unset"
+construct = "the form without its required { DISABLED | MINS_TO_BYPASS_NETWORK_POLICY_REQUIREMENT | COMMENT }: ALTER USER MODIFY PROGRAMMATIC ACCESS TOKEN v1 UNSET ;"
+reason = "not submitted: held by the capture guard in packet rmu-3cd2b776 (relaxed_sweep): alters the current user"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.alter-user-modify-programmatic-access-token.unset.k3f5d92742fc8", sql_sha256 = "3f5d92742fc8c25fc673dfd0bcb0946dc7a373ac11b63b47796f496ec495bc41" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.alter-user-modify-workload-identity.unset.o001"
+form = "sf.security_admin.alter-user-modify-workload-identity.unset"
+construct = "the documented form with every required part and no optional part: ALTER USER MODIFY WORKLOAD IDENTITY v1 UNSET DISABLED ;"
+reason = "not submitted: held by the capture guard in packet rmu-3cd2b776 (relaxed_sweep): alters the current user"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.alter-user-modify-workload-identity.unset.k7ef05dfb4a3d", sql_sha256 = "7ef05dfb4a3d38a6d744ede1d6056e46a9ccbb70881cf0a8b6e0851b19736a6e" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.alter-user-modify-workload-identity.unset.o003"
+form = "sf.security_admin.alter-user-modify-workload-identity.unset"
+construct = "option_absent: ALTER USER MODIFY WORKLOAD IDENTITY v1 UNSET DISABLED ;"
+reason = "not submitted: held by the capture guard in packet rmu-3cd2b776 (relaxed_sweep): alters the current user"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.alter-user-modify-workload-identity.unset.k7ef05dfb4a3d", sql_sha256 = "7ef05dfb4a3d38a6d744ede1d6056e46a9ccbb70881cf0a8b6e0851b19736a6e" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.alter-user-modify-workload-identity.unset.o005"
+form = "sf.security_admin.alter-user-modify-workload-identity.unset"
+construct = "option_absent: ALTER USER MODIFY WORKLOAD IDENTITY v1 UNSET DISABLED ;"
+reason = "not submitted: held by the capture guard in packet rmu-3cd2b776 (relaxed_sweep): alters the current user"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.alter-user-modify-workload-identity.unset.k7ef05dfb4a3d", sql_sha256 = "7ef05dfb4a3d38a6d744ede1d6056e46a9ccbb70881cf0a8b6e0851b19736a6e" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.alter-user-modify-workload-identity.unset.o008"
+form = "sf.security_admin.alter-user-modify-workload-identity.unset"
+construct = "omit <workload_identity_name>: ALTER USER MODIFY WORKLOAD IDENTITY UNSET DISABLED ;"
+reason = "not submitted: held by the capture guard in packet rmu-3cd2b776 (relaxed_sweep): alters the current user"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.alter-user-modify-workload-identity.unset.ka48ae7500ea7", sql_sha256 = "a48ae7500ea7b54aee337890279415a7828df47446cb1f1ad8c0e44370c23502" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.alter-user-modify-workload-identity.unset.o009"
+form = "sf.security_admin.alter-user-modify-workload-identity.unset"
+construct = "a valid identifier: ALTER USER MODIFY WORKLOAD IDENTITY v1 UNSET DISABLED ;"
+reason = "not submitted: held by the capture guard in packet rmu-3cd2b776 (relaxed_sweep): alters the current user"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.alter-user-modify-workload-identity.unset.k7ef05dfb4a3d", sql_sha256 = "7ef05dfb4a3d38a6d744ede1d6056e46a9ccbb70881cf0a8b6e0851b19736a6e" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.alter-user-modify-workload-identity.unset.o010"
+form = "sf.security_admin.alter-user-modify-workload-identity.unset"
+construct = "a string literal in place of <workload_identity_name>: ALTER USER MODIFY WORKLOAD IDENTITY 'v1' UNSET DISABLED ;"
+reason = "not submitted: held by the capture guard in packet rmu-3cd2b776 (relaxed_sweep): alters the current user"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.alter-user-modify-workload-identity.unset.k121a0639e414", sql_sha256 = "121a0639e414627821f1d5ca77ef1365614e037ea94bb2e57c4fc39b63b580c3" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.alter-user-modify-workload-identity.unset.o018"
+form = "sf.security_admin.alter-user-modify-workload-identity.unset"
+construct = "the form without its required WORKLOAD: ALTER USER MODIFY IDENTITY v1 UNSET DISABLED ;"
+reason = "not submitted: held by the capture guard in packet rmu-3cd2b776 (relaxed_sweep): alters the current user"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.alter-user-modify-workload-identity.unset.kc1298ceb6745", sql_sha256 = "c1298ceb67454516df14a81a11349e53ed6ca2f896d9e1093fc81ddc1dd6a2c4" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.alter-user-modify-workload-identity.unset.o019"
+form = "sf.security_admin.alter-user-modify-workload-identity.unset"
+construct = "the form without its required IDENTITY: ALTER USER MODIFY WORKLOAD v1 UNSET DISABLED ;"
+reason = "not submitted: held by the capture guard in packet rmu-3cd2b776 (relaxed_sweep): alters the current user"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.alter-user-modify-workload-identity.unset.kd5098cf785e8", sql_sha256 = "d5098cf785e879e326147029ebde3aca6c14b6c0e118af700315a84b650dd22d" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.alter-user-modify-workload-identity.unset.o020"
+form = "sf.security_admin.alter-user-modify-workload-identity.unset"
+construct = "the form without its required UNSET: ALTER USER MODIFY WORKLOAD IDENTITY v1 DISABLED ;"
+reason = "not submitted: held by the capture guard in packet rmu-3cd2b776 (relaxed_sweep): alters the current user"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.alter-user-modify-workload-identity.unset.k414b5ef96118", sql_sha256 = "414b5ef96118aa277a258439c39e8e6f3977214337891fef008dadb228ec6464" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.alter-user-modify-workload-identity.unset.o024"
+form = "sf.security_admin.alter-user-modify-workload-identity.unset"
+construct = "quoted: a double-quoted identifier with blanks and mixed case: ALTER USER MODIFY WORKLOAD IDENTITY \"v1 Q\" UNSET DISABLED ;"
+reason = "not submitted: held by the capture guard in packet rmu-3cd2b776 (relaxed_sweep): alters the current user"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.alter-user-modify-workload-identity.unset.k45d59932c82f", sql_sha256 = "45d59932c82f035ed24f2e2ef1fb1ff850e339f464fe22990de2ad743abe8963" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.alter-user-modify-workload-identity.unset.o025"
+form = "sf.security_admin.alter-user-modify-workload-identity.unset"
+construct = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance): ALTER USER MODIFY WORKLOAD IDENTITY SELECT UNSET DISABLED ;"
+reason = "not submitted: held by the capture guard in packet rmu-3cd2b776 (relaxed_sweep): alters the current user"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.alter-user-modify-workload-identity.unset.k4a66b9250574", sql_sha256 = "4a66b92505748681c1d14120620552c9e99d9db8faa8703870f3b1df7084ff1b" },
+  { case_id = "sf.security_admin.alter-user-modify-workload-identity.unset.k6d867bf872f4", sql_sha256 = "6d867bf872f4912721213bc8c070c37d440bf5112427bce7be861115f3ef77c6" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.alter-user-modify-workload-identity.unset.o032"
+form = "sf.security_admin.alter-user-modify-workload-identity.unset"
+construct = "alternative: ALTER USER MODIFY WORKLOAD IDENTITY v1 UNSET DISABLED ;"
+reason = "not submitted: held by the capture guard in packet rmu-3cd2b776 (relaxed_sweep): alters the current user"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.alter-user-modify-workload-identity.unset.k7ef05dfb4a3d", sql_sha256 = "7ef05dfb4a3d38a6d744ede1d6056e46a9ccbb70881cf0a8b6e0851b19736a6e" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.alter-user-modify-workload-identity.unset.o033"
+form = "sf.security_admin.alter-user-modify-workload-identity.unset"
+construct = "alternative: ALTER USER MODIFY WORKLOAD IDENTITY v1 UNSET COMMENT ;"
+reason = "not submitted: held by the capture guard in packet rmu-3cd2b776 (relaxed_sweep): alters the current user"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.alter-user-modify-workload-identity.unset.k6b3f0e49c3d3", sql_sha256 = "6b3f0e49c3d3318ecda2433f2ccdb1b9e061ee938e77f1d81ebce02eb62f3e32" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.alter-user-modify-workload-identity.unset.o035"
+form = "sf.security_admin.alter-user-modify-workload-identity.unset"
+construct = "option_absent: ALTER USER MODIFY WORKLOAD IDENTITY v1 UNSET DISABLED ;"
+reason = "not submitted: held by the capture guard in packet rmu-3cd2b776 (relaxed_sweep): alters the current user"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.alter-user-modify-workload-identity.unset.k7ef05dfb4a3d", sql_sha256 = "7ef05dfb4a3d38a6d744ede1d6056e46a9ccbb70881cf0a8b6e0851b19736a6e" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.alter-user-modify-workload-identity.unset.o036"
+form = "sf.security_admin.alter-user-modify-workload-identity.unset"
+construct = "the form without its required { DISABLED | COMMENT }: ALTER USER MODIFY WORKLOAD IDENTITY v1 UNSET ;"
+reason = "not submitted: held by the capture guard in packet rmu-3cd2b776 (relaxed_sweep): alters the current user"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.alter-user-modify-workload-identity.unset.k74d5735637f8", sql_sha256 = "74d5735637f8ad4184cc509dce866cfe8fe050fecb171705299667bd1598ca6b" },
+]
+runs = []
+probes = []

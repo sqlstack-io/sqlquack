@@ -52898,3 +52898,136 @@ cases = [
 ]
 runs = []
 probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.alter-external-consumer.unset.o002"
+form = "sf.ddl.alter-external-consumer.unset"
+construct = "option_present: ALTER EXTERNAL CONSUMER IF EXISTS v1 UNSET COMMENT , COMMENT ;"
+reason = "not submitted: held by the capture guard in packet rmu-3cd2b776 (ddl_sweep): billable or out-of-account: listing or external sharing"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.alter-external-consumer.unset.k934650030311", sql_sha256 = "9346500303118e5a7e00ccfa0a94f671a3b3378770529ff5ba9bef4e1a03debc" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.alter-external-consumer.unset.o004"
+form = "sf.ddl.alter-external-consumer.unset"
+construct = "omit <name>: ALTER EXTERNAL CONSUMER UNSET COMMENT ;"
+reason = "not submitted: held by the capture guard in packet rmu-3cd2b776 (ddl_sweep): billable or out-of-account: listing or external sharing"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.alter-external-consumer.unset.k9a61bec0c413", sql_sha256 = "9a61bec0c4132fbe7ba6488d1ef53832573c8792018894a9f0853e775a3ae87a" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.alter-external-consumer.unset.o006"
+form = "sf.ddl.alter-external-consumer.unset"
+construct = "a string literal in place of <name>: ALTER EXTERNAL CONSUMER 'v1' UNSET COMMENT ;"
+reason = "not submitted: held by the capture guard in packet rmu-3cd2b776 (ddl_sweep): billable or out-of-account: listing or external sharing"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.alter-external-consumer.unset.kd98654202c5c", sql_sha256 = "d98654202c5c022b5b4b5b5c99c8f465fd749f6ee86681dc8cf5e5653e5ecbe7" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.alter-external-consumer.unset.o013"
+form = "sf.ddl.alter-external-consumer.unset"
+construct = "the form without its required EXISTS in [ IF EXISTS ]: ALTER EXTERNAL CONSUMER IF v1 UNSET COMMENT ;"
+reason = "not submitted: held by the capture guard in packet rmu-3cd2b776 (ddl_sweep): billable or out-of-account: listing or external sharing"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.alter-external-consumer.unset.ked8b6fc82058", sql_sha256 = "ed8b6fc820583cb093d301bb39b5526713f7de1c6b79c5d7bc34d0dbd508273f" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.alter-external-consumer.unset.o015"
+form = "sf.ddl.alter-external-consumer.unset"
+construct = "every independent option of one production together: ALTER EXTERNAL CONSUMER IF EXISTS v1 UNSET COMMENT , COMMENT ;"
+reason = "not submitted: held by the capture guard in packet rmu-3cd2b776 (ddl_sweep): billable or out-of-account: listing or external sharing"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.alter-external-consumer.unset.k934650030311", sql_sha256 = "9346500303118e5a7e00ccfa0a94f671a3b3378770529ff5ba9bef4e1a03debc" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.alter-external-consumer.unset.o016"
+form = "sf.ddl.alter-external-consumer.unset"
+construct = "quoted: a double-quoted identifier with blanks and mixed case: ALTER EXTERNAL CONSUMER \"v1 Q\" UNSET COMMENT ;"
+reason = "not submitted: held by the capture guard in packet rmu-3cd2b776 (ddl_sweep): billable or out-of-account: listing or external sharing"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.alter-external-consumer.unset.k1707bcaeffa9", sql_sha256 = "1707bcaeffa90fd3664d4ee2ef1655a7f315af544c12119ea5f34755d3092b0f" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.alter-external-consumer.unset.o017"
+form = "sf.ddl.alter-external-consumer.unset"
+construct = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance): ALTER EXTERNAL CONSUMER \"SELECT\" UNSET COMMENT ;"
+reason = "not submitted: held by the capture guard in packet rmu-3cd2b776 (ddl_sweep): billable or out-of-account: listing or external sharing"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.alter-external-consumer.unset.k25b06d3a5642", sql_sha256 = "25b06d3a564299a02b0739f00d10fdc028b0ae529298ae906cd4f98af0653f60" },
+  { case_id = "sf.ddl.alter-external-consumer.unset.k52a3ec912412", sql_sha256 = "52a3ec912412d0b4a370aa561193486ca4f3cbd62faf1254a67ec52b2ad013ed" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.alter-external-consumer.unset.o018"
+form = "sf.ddl.alter-external-consumer.unset"
+construct = "alternative: ALTER EXTERNAL CONSUMER v1 UNSET COMMENT ;"
+reason = "not submitted: held by the capture guard in packet rmu-3cd2b776 (ddl_sweep): billable or out-of-account: listing or external sharing"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.alter-external-consumer.unset.k1e8243043346", sql_sha256 = "1e8243043346b1d02afd5851fb460f447d97f3cb5df21f7e22634c6040ee7a27" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.alter-external-consumer.unset.o019"
+form = "sf.ddl.alter-external-consumer.unset"
+construct = "alternative: ALTER EXTERNAL CONSUMER v1 UNSET EMAIL ;"
+reason = "not submitted: held by the capture guard in packet rmu-3cd2b776 (ddl_sweep): billable or out-of-account: listing or external sharing"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.alter-external-consumer.unset.k1ee916181dd6", sql_sha256 = "1ee916181dd6de554f34bb3934759b4ef3815856bd839781bd3b46a47f394cd5" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.alter-external-consumer.unset.o020"
+form = "sf.ddl.alter-external-consumer.unset"
+construct = "the list continued at least once: ALTER EXTERNAL CONSUMER IF EXISTS v1 UNSET COMMENT , COMMENT ;"
+reason = "not submitted: held by the capture guard in packet rmu-3cd2b776 (ddl_sweep): billable or out-of-account: listing or external sharing"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.alter-external-consumer.unset.k934650030311", sql_sha256 = "9346500303118e5a7e00ccfa0a94f671a3b3378770529ff5ba9bef4e1a03debc" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.alter-external-consumer.unset.o021"
+form = "sf.ddl.alter-external-consumer.unset"
+construct = "option_absent: ALTER EXTERNAL CONSUMER v1 UNSET COMMENT ;"
+reason = "not submitted: held by the capture guard in packet rmu-3cd2b776 (ddl_sweep): billable or out-of-account: listing or external sharing"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.alter-external-consumer.unset.k1e8243043346", sql_sha256 = "1e8243043346b1d02afd5851fb460f447d97f3cb5df21f7e22634c6040ee7a27" },
+]
+runs = []
+probes = []
