@@ -297,6 +297,23 @@ fn given_a_changed_tree_when_checking_then_the_form_fails_closed_with_its_reason
             expected_problem: None,
         },
         CheckTestCase {
+            description: "a receipt recorded for another measure than syntax",
+            mutate: |root| {
+                let other: String = with_fields(
+                    &receipt_line(&select_17(), "accepted"),
+                    serde_json::json!({"measure": "d73_missing_object_with_setup"}),
+                );
+                drop_lines(root, "receipts/run-1.jsonl", "\"select-17\"");
+                append_receipt(root, &other);
+            },
+            parse: structural,
+            parser_tree: Some(TREE),
+            form: "sf.query.select",
+            expected_state: FormState::Unverified,
+            expected_reason: Some(Reason::StaleReceipt),
+            expected_problem: None,
+        },
+        CheckTestCase {
             description: "a case expected to be rejected that Snowflake accepted",
             mutate: |root| {
                 rewrite_select_17(

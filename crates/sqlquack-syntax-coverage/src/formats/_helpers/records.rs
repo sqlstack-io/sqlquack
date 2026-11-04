@@ -327,7 +327,7 @@ pub(crate) fn check_receipt(receipt: &Receipt) -> Vec<String> {
             "receipt {id}: a reason category needs its basis and a phase after parsing"
         ));
     }
-    let text: [Option<&String>; 9] = [
+    let text: [Option<&String>; 10] = [
         Some(&receipt.run_id),
         receipt.query_id.as_ref(),
         Some(&receipt.warehouse_version),
@@ -337,6 +337,7 @@ pub(crate) fn check_receipt(receipt: &Receipt) -> Vec<String> {
         receipt.after_sql.as_ref(),
         receipt.category.as_ref(),
         receipt.reason_category_basis.as_ref(),
+        receipt.measure.as_ref(),
     ];
     if text.iter().flatten().any(|field| identifying(field)) {
         problems.push(format!(

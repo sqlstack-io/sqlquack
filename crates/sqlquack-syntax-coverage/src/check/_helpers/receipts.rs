@@ -5,9 +5,10 @@ use std::collections::BTreeSet;
 use crate::check::models::{CaseResult, LocalVerdict, Reason};
 use crate::formats::models::{Case, Expect, Phase, Receipt};
 
-/// A receipt bound to exactly this case's SQL, setup, session and capture, with a query identity.
+/// A syntax receipt bound to exactly this case's SQL, setup, session and capture, with a query id.
 fn admissible(case: &Case, receipt: &Receipt) -> bool {
-    receipt.capture_method == case.capture
+    receipt.measure.is_none()
+        && receipt.capture_method == case.capture
         && receipt.sql_sha256 == case.sql_sha256
         && receipt.setup_sha256 == case.setup_sha256
         && receipt.session_sha256 == case.session_sha256

@@ -308,6 +308,9 @@ pub struct Receipt {
     /// SHA-256 of the published receipt line this one replaces, for the same case.
     #[serde(default)]
     pub supersedes_receipt_sha256: Option<String>,
+    /// A measure other than syntax the receipt was recorded for; never syntax evidence.
+    #[serde(default)]
+    pub measure: Option<String>,
 }
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Deserialize, Serialize)]

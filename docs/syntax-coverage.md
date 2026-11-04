@@ -161,6 +161,8 @@ committed one.
   of `missing_object`, `invalid_option_or_value`, `type` or `other`. The basis says what the
   importer read it from, such as `errno 2003`. Older receipts have neither.
 
+- Optional `measure`: the measure other than syntax the receipt was recorded for, such as
+  `d73_missing_object_with_setup`. Such a receipt is never syntax evidence.
 - Optional `supersedes_receipt_sha256`: the SHA-256 of a published receipt line of the same case,
   hashed without its newline, that this receipt replaces.
 
