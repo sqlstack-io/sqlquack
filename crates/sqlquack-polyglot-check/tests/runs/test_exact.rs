@@ -19,8 +19,10 @@ fn given_committed_corpora_when_parsed_by_both_parsers_then_results_are_identica
             expected_outcome: ExactOutcome {
                 loaded: true,
                 rejected: BTreeMap::from([
-                    ("malformed_typed_type_text".to_owned(), 2),
+                    ("malformed_typed_type_text".to_owned(), 1),
                     ("snowflake_bare_values_cte".to_owned(), 1),
+                    ("snowflake_cte_without_as_prose".to_owned(), 1),
+                    ("snowflake_reserved_type_name".to_owned(), 1),
                     ("snowflake_by_name_on_except".to_owned(), 1),
                     ("snowflake_by_name_on_intersect".to_owned(), 1),
                     ("snowflake_empty_select_list".to_owned(), 1),
@@ -54,6 +56,10 @@ fn given_committed_corpora_when_parsed_by_both_parsers_then_results_are_identica
             expected_outcome: ExactOutcome {
                 loaded: true,
                 rejected: BTreeMap::from([
+                    ("snowflake_cte_without_as".to_owned(), 1),
+                    ("snowflake_empty_call_argument".to_owned(), 1),
+                    ("snowflake_reserved_cte_name".to_owned(), 1),
+                    ("snowflake_reserved_truncate_target".to_owned(), 1),
                     (
                         "snowflake_empty_select_list_trailing_order_by".to_owned(),
                         1,

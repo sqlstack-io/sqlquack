@@ -14,9 +14,9 @@ use crate::formats::constants::{
 };
 use crate::formats::main::obligation_form::obligation_form;
 use crate::formats::models::{
-    Alias, CaptureMethod, Case, Definition, Diagnostic, Exclusion, Expect, Form, FormKind,
-    FormStatus, Index, Obligation, ObligationKind, Phase, Receipt, Review, Source, SourceStatus,
-    Unobservable, UnobservableCase, UnobservableProbe,
+    AccountSetting, Alias, CaptureMethod, Case, Definition, Diagnostic, Exclusion, Expect, Form,
+    FormKind, FormStatus, Index, Obligation, ObligationKind, Phase, Reading, Receipt, Review,
+    Source, SourceStatus, Unobservable, UnobservableCase, UnobservableCause, UnobservableProbe,
 };
 
 fn blank(text: &str) -> bool {
@@ -354,7 +354,31 @@ pub(crate) fn check_receipt(receipt: &Receipt) -> Vec<String> {
         receipt.inner_message.as_ref(),
         receipt.dcm_project.as_ref(),
     ];
-    if text.iter().flatten().any(|field| identifying(field)) {
+    let settings: Vec<(&String, &AccountSetting)> =
+        receipt.account_state.iter().flatten().collect();
+    if receipt
+        .account_state
+        .as_ref()
+        .is_some_and(BTreeMap::is_empty)
+        || settings.iter().any(|(name, setting)| {
+            blank(name) || setting.value.as_deref().is_some_and(blank) || blank(&setting.basis)
+        })
+    {
+        problems.push(format!(
+            "receipt {id}: account_state names at least one parameter, each with a value and basis"
+        ));
+    }
+    let account_text = settings
+        .iter()
+        .flat_map(|(name, setting)| [Some(*name), setting.value.as_ref(), Some(&setting.basis)])
+        .flatten();
+    if text
+        .iter()
+        .flatten()
+        .copied()
+        .chain(account_text)
+        .any(|field| identifying(field))
+    {
         problems.push(format!(
             "receipt {id}: holds an account, host, URL or address"
         ));
@@ -567,6 +591,9 @@ pub(crate) fn check_review(review: &Review) -> Vec<String> {
 }
 
 pub(crate) fn check_unobservable(entry: &Unobservable, family: &str) -> Vec<String> {
+    if entry.cause == Some(UnobservableCause::NotSubmitted) {
+        return check_not_submitted(entry, family);
+    }
     check_record(
         &UnobservableRecord {
             obligation: &entry.obligation,
@@ -596,6 +623,32 @@ pub(crate) fn check_diagnostic(entry: &Diagnostic, family: &str) -> Vec<String> 
         family,
         "diagnostic",
     )
+}
+
+/// A never-submitted entry: a reason and cases, but no runs or probes, since nothing ran.
+fn check_not_submitted(entry: &Unobservable, family: &str) -> Vec<String> {
+    let id: &str = &entry.obligation;
+    let mut problems: Vec<String> = Vec::new();
+    if obligation_form(id, family) != Some(entry.form.as_str()) {
+        problems.push(format!(
+            "unobservable {id}: not an obligation of form {} in family {family}",
+            entry.form
+        ));
+    }
+    if blank(&entry.construct) || blank(&entry.reason) || entry.cases.is_empty() {
+        problems.push(format!(
+            "unobservable {id}: needs a construct, a reason and at least one case"
+        ));
+    }
+    if !entry.runs.is_empty() || !entry.probes.is_empty() {
+        problems.push(format!(
+            "unobservable {id}: a not_submitted entry has no runs or probes"
+        ));
+    }
+    if entry.cases.iter().any(|case| !is_sha256(&case.sql_sha256)) {
+        problems.push(format!("unobservable {id}: a sql_sha256 is not a SHA-256"));
+    }
+    problems
 }
 
 /// The fields an unobservable entry and a diagnostic share.
@@ -683,5 +736,26 @@ pub(crate) fn check_restatements<'a>(
                 )
             }),
     );
+    problems
+}
+
+/// A reading pins the page grammar it reads, by hash or prose heading, and gives its reason.
+pub(crate) fn check_reading(reading: &Reading) -> Vec<String> {
+    let id: &str = &reading.form;
+    let mut problems: Vec<String> = Vec::new();
+    let prose: bool = reading
+        .grammar_sha256
+        .strip_prefix(PROSE_HASH_PREFIX)
+        .is_some_and(|heading| !blank(heading));
+    if !prose && !is_sha256(&reading.grammar_sha256) {
+        problems.push(format!(
+            "reading {id}: grammar_sha256 is neither a SHA-256 nor a prose heading"
+        ));
+    }
+    if reading.grammar.iter().any(|line| blank(line)) || blank(&reading.reason) {
+        problems.push(format!(
+            "reading {id}: needs a reason and no blank grammar line"
+        ));
+    }
     problems
 }

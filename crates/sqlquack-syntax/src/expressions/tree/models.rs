@@ -809,6 +809,8 @@ pub enum Expression {
 
     Not(Box<UnaryOp>),
     Neg(Box<UnaryOp>),
+    /// Unary `+`, kept so the tree records the operator as written.
+    Pos(Box<UnaryOp>),
     BitwiseNot(Box<UnaryOp>),
 
     In(Box<In>),

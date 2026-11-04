@@ -77,6 +77,11 @@ pub(crate) fn reference_problems(
             }
         }
     }
+    for reading in &coverage.readings {
+        if !forms.contains_key(reading.form.as_str()) {
+            problems.push(format!("reading {}: form is not catalogued", reading.form));
+        }
+    }
     let sources: BTreeSet<&str> = coverage
         .sources
         .iter()

@@ -21,6 +21,13 @@ pub(crate) struct ProjectionTestCase {
     pub(crate) expected_value: Value,
 }
 
+pub(crate) struct StatementTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) sql: &'static str,
+    pub(crate) pointer: &'static str,
+    pub(crate) expected_value: Value,
+}
+
 pub(crate) struct LocatedTestCase {
     pub(crate) description: &'static str,
     pub(crate) sql: &'static str,

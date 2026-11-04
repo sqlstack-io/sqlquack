@@ -1792,7 +1792,7 @@ impl Parser {
     ) -> Result<Expression> {
         for token in prefixes.into_iter().rev() {
             expr = match token {
-                TokenType::Plus => expr,
+                TokenType::Plus => Expression::Pos(Box::new(UnaryOp::new(expr))),
                 TokenType::Dash => Expression::Neg(Box::new(UnaryOp::new(expr))),
                 TokenType::Not => Expression::Not(Box::new(UnaryOp::new(expr))),
                 TokenType::Tilde => Expression::BitwiseNot(Box::new(UnaryOp::new(expr))),

@@ -505,8 +505,8 @@ impl Parser {
             if !self.match_token(TokenType::Comma) {
                 break;
             }
-            while self.check(TokenType::Comma) {
-                self.skip();
+            if self.check(TokenType::Comma) {
+                return Err(self.parse_error("Expected a function argument between commas"));
             }
         }
 

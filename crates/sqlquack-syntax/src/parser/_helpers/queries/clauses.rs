@@ -30,6 +30,7 @@ use crate::expressions::queries::models::MatchRecognizeSemantics;
 use crate::expressions::queries::models::NamedWindow;
 use crate::expressions::queries::models::Offset;
 use crate::expressions::queries::models::OrderBy;
+use crate::expressions::queries::models::OrderByAll;
 use crate::expressions::queries::models::Ordered;
 use crate::expressions::queries::models::Over;
 use crate::expressions::queries::models::Prior;
@@ -482,30 +483,36 @@ impl Parser {
             }
         }
 
-        self.mark_order_by_all(&mut expressions);
+        let (expressions, all) = self.take_order_by_all(expressions);
         Ok(OrderBy {
             expressions,
             siblings,
             comments: Vec::new(),
+            all,
         })
     }
 
-    /// Marks a query-level ORDER BY ALL as the keyword, not an identifier.
-    pub(crate) fn mark_order_by_all(&self, expressions: &mut [Ordered]) {
-        if !self
+    /// Takes a lone unquoted `ALL` sort key as the ORDER BY ALL keyword, not an identifier.
+    pub(crate) fn take_order_by_all(
+        &self,
+        mut expressions: Vec<Ordered>,
+    ) -> (Vec<Ordered>, Option<OrderByAll>) {
+        let supported = self
             .config
             .dialect
-            .is_some_and(|d| d.supports_order_by_all())
-        {
-            return;
+            .is_some_and(|d| d.supports_order_by_all());
+        let lone_all = matches!(expressions.as_slice(), [ordered] if matches!(&ordered.this,
+            Expression::Column(c)
+                if c.table.is_none() && !c.name.quoted && c.name.name.eq_ignore_ascii_case("all")));
+        if !(supported && lone_all) {
+            return (expressions, None);
         }
-        if let [ordered] = expressions {
-            if matches!(&ordered.this, Expression::Column(c)
-                if c.table.is_none() && !c.name.quoted && c.name.name.eq_ignore_ascii_case("all"))
-            {
-                ordered.this = Expression::Var(Box::new(Var { this: "ALL".into() }));
-            }
-        }
+        let all = expressions.pop().map(|ordered| OrderByAll {
+            desc: ordered.desc,
+            nulls_first: ordered.nulls_first,
+            explicit_asc: ordered.explicit_asc,
+        });
+        (expressions, all)
     }
 
     /// Parse a LIMIT count without mistaking a trailing percent sign for modulo.

@@ -409,6 +409,7 @@ fn scalar_subqueries(node: &Expression, level: NodeLevel<'_, '_>) -> Vec<NameFin
         | Expression::Or(_)
         | Expression::Not(_)
         | Expression::Neg(_)
+        | Expression::Pos(_)
         | Expression::Like(_)
         | Expression::ILike(_)
         | Expression::Cast(_)

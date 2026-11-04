@@ -4,8 +4,8 @@ use std::path::Path;
 use crate::formats::constants::{COVERAGE_ROOT, FAMILIES};
 use crate::formats::main::load_coverage::load_coverage;
 use crate::formats::tests::helpers::{
-    dcm_line, line_sha256, receipt_line, replace, restated_page, superseding_line, valid_tree,
-    write,
+    ACCOUNT_STATE_AT, account_state, dcm_line, line_sha256, receipt_line, replace, restated_page,
+    superseding_line, valid_tree, write,
 };
 use crate::formats::tests::test_types::{
     CommittedTestCase, FormatFaultTestCase, LoadTestCase, LoadedCounts,
@@ -233,6 +233,18 @@ fn given_a_valid_tree_when_loading_then_every_record_is_kept() {
                 retired_receipts: 1,
                 ..counts(0)
             },
+        },
+        LoadTestCase {
+            description: "a receipt recording the account parameter its capture ran under",
+            tree: |root| {
+                valid_tree(root);
+                write(
+                    root,
+                    "receipts/first.jsonl",
+                    &receipt_line().replace(ACCOUNT_STATE_AT, &account_state("D120")),
+                );
+            },
+            expected_counts: counts(1),
         },
         LoadTestCase {
             description: "a tree without renames or reviews yet",
@@ -756,6 +768,32 @@ fn given_a_format_fault_when_loading_then_the_problem_is_named() {
             expected_problem: "query-1: declared twice",
         },
         FormatFaultTestCase {
+            description: "no limits.toml, so no form's reading can be hashed",
+            mutate: |root| std::fs::remove_file(root.join("limits.toml")).expect("remove"),
+            expected_problem: "limits.toml: No such file",
+        },
+        FormatFaultTestCase {
+            description: "a form read twice",
+            mutate: |root| {
+                let limits = std::fs::read_to_string(root.join("limits.toml")).expect("read");
+                let reading = &limits[limits.find("[[reading]]").expect("reading")..];
+                write(root, "limits.toml", &format!("{limits}{reading}"));
+            },
+            expected_problem: "reading sf.query.select: listed twice",
+        },
+        FormatFaultTestCase {
+            description: "a misspelt table in limits.toml",
+            mutate: |root| {
+                let limits = std::fs::read_to_string(root.join("limits.toml")).expect("read");
+                write(
+                    root,
+                    "limits.toml",
+                    &limits.replace("[[reading]]", "[[readings]]"),
+                );
+            },
+            expected_problem: "unknown field `readings`",
+        },
+        FormatFaultTestCase {
             description: "an unobservable obligation of another form",
             mutate: |root| {
                 write(
@@ -783,6 +821,39 @@ fn given_a_format_fault_when_loading_then_the_problem_is_named() {
                 )
             },
             expected_problem: "unobservable sf.query.select.o001: a sql_sha256 is not a SHA-256",
+        },
+        FormatFaultTestCase {
+            description: "an unobservable entry with an unknown cause",
+            mutate: |root| {
+                write(
+                    root,
+                    "unobservable/query.toml",
+                    "[[unobservable]]\nobligation = \"sf.query.select.o001\"\nform = \"sf.query.select\"\nconstruct = \"c\"\nreason = \"held\"\ncause = \"held_by_guard\"\ncases = [{ case_id = \"query.select-17\", sql_sha256 = \"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\" }]\nruns = []\nprobes = []\n",
+                )
+            },
+            expected_problem: "unknown variant `held_by_guard`",
+        },
+        FormatFaultTestCase {
+            description: "a never-submitted entry that lists a run",
+            mutate: |root| {
+                write(
+                    root,
+                    "unobservable/query.toml",
+                    "[[unobservable]]\nobligation = \"sf.query.select.o001\"\nform = \"sf.query.select\"\nconstruct = \"c\"\nreason = \"held\"\ncause = \"not_submitted\"\ncases = [{ case_id = \"query.select-17\", sql_sha256 = \"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\" }]\nruns = [\"run-1\"]\nprobes = []\n",
+                )
+            },
+            expected_problem: "unobservable sf.query.select.o001: a not_submitted entry has no runs or probes",
+        },
+        FormatFaultTestCase {
+            description: "a 603 entry without runs",
+            mutate: |root| {
+                write(
+                    root,
+                    "unobservable/query.toml",
+                    "[[unobservable]]\nobligation = \"sf.query.select.o001\"\nform = \"sf.query.select\"\nconstruct = \"c\"\nreason = \"603\"\ncases = [{ case_id = \"query.select-17\", sql_sha256 = \"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\" }]\nruns = []\nprobes = []\n",
+                )
+            },
+            expected_problem: "unobservable sf.query.select.o001: needs at least one case and one run",
         },
         FormatFaultTestCase {
             description: "an unobservable entry without cases",
@@ -963,6 +1034,44 @@ fn given_a_format_fault_when_loading_then_the_problem_is_named() {
                 write(root, "cases/query.jsonl", &format!("\n{line}"));
             },
             expected_problem: "cases/query.jsonl:1:",
+        },
+        FormatFaultTestCase {
+            description: "an account parameter without its basis",
+            mutate: |root| {
+                write(
+                    root,
+                    "receipts/first.jsonl",
+                    &receipt_line().replace(ACCOUNT_STATE_AT, &account_state(" ")),
+                )
+            },
+            expected_problem: "receipt query.select-17: account_state names at least one parameter",
+        },
+        FormatFaultTestCase {
+            description: "an account parameter whose basis holds an address",
+            mutate: |root| {
+                write(
+                    root,
+                    "receipts/first.jsonl",
+                    &receipt_line().replace(
+                        ACCOUNT_STATE_AT,
+                        &account_state("set by someone@example.com"),
+                    ),
+                )
+            },
+            expected_problem: "receipt query.select-17: holds an account, host, URL or address",
+        },
+        FormatFaultTestCase {
+            description: "an account parameter with an unknown field",
+            mutate: |root| {
+                write(
+                    root,
+                    "receipts/first.jsonl",
+                    &receipt_line()
+                        .replace(ACCOUNT_STATE_AT, &account_state("D120"))
+                        .replace("\"value\":\"NONE\"", "\"value\":\"NONE\",\"scope\":\"x\""),
+                )
+            },
+            expected_problem: "unknown field `scope`",
         },
         FormatFaultTestCase {
             description: "a receipt holding an address",

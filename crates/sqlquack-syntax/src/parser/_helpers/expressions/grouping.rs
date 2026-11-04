@@ -1383,11 +1383,12 @@ impl Parser {
             }
         }
 
-        self.mark_order_by_all(&mut expressions);
+        let (expressions, all) = self.take_order_by_all(expressions);
         Ok(Some(Expression::OrderBy(Box::new(OrderBy {
             expressions,
             siblings: false,
             comments: Vec::new(),
+            all,
         }))))
     }
 
@@ -1915,6 +1916,16 @@ impl Parser {
         let unit_index: Option<usize> = match dialect {
             DT::Snowflake => match upper.as_str() {
                 "DATE_TRUNC" | "DATETRUNC" if !args.is_empty() => Some(0),
+                "DATEDIFF" | "TIMEDIFF" | "TIMESTAMPDIFF" if args.len() == TERNARY_ARITY => Some(0),
+                "EXTRACT" if args.len() == BINARY_ARITY => Some(0),
+                "TRUNC" | "TRUNCATE"
+                    if args.len() == BINARY_ARITY
+                        && matches!(&args[1], Expression::Column(c)
+                            if c.table.is_none() && !c.name.quoted)
+                        && self.try_parse_date_part_unit_expr(&args[1]).is_some() =>
+                {
+                    Some(1)
+                }
                 _ => None,
             },
             _ => None,
