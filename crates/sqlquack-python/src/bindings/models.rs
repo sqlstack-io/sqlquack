@@ -32,6 +32,8 @@ pub struct ConvertRequest {
     pub confirm_declared_offsets: bool,
     /// `--python-runtime`.
     pub python_runtime: bool,
+    /// `--loud-divergences-only`.
+    pub loud_divergences_only: bool,
     /// `--overrides`.
     pub overrides: Option<PathBuf>,
     /// `--verified-override NAME=SHA256`, by name.

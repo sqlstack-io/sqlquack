@@ -32,6 +32,7 @@ pub(crate) fn convert_json(sql: &str, request: &str, path: &str) -> PyResult<Str
             utc_session: request.utc_session,
             confirm_declared_offsets: request.confirm_declared_offsets,
             python_runtime: request.python_runtime,
+            loud_divergences_only: request.loud_divergences_only,
         },
     };
     let report = convert_report(&arguments, sql).map_err(PyValueError::new_err)?;

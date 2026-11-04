@@ -19,8 +19,8 @@ use sqlquack_rules::conversion::models::ConvertedFunction;
 use crate::analysis::main::analyze_function::analyze_function;
 use crate::analysis::main::parse_session::parse_session;
 use crate::analysis::main::session_conversion_options::session_conversion_options;
+use crate::cli::_helpers::evidence::caller_choices;
 use crate::cli::_helpers::evidence::chosen_policy;
-use crate::cli::_helpers::evidence::confirmed_offsets;
 use crate::cli::_helpers::schema::load_schema;
 use crate::cli::models::FunctionArguments;
 
@@ -162,14 +162,7 @@ fn convert(
         }
     };
     let options = match policy {
-        Some(policy) => confirmed_offsets(
-            options,
-            policy,
-            (
-                arguments.conversion.confirm_declared_offsets,
-                arguments.conversion.python_runtime,
-            ),
-        ),
+        Some(policy) => caller_choices(options, policy, &arguments.conversion),
         None => options,
     };
     analyze_function(

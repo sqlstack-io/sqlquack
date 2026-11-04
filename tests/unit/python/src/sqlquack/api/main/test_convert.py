@@ -15,6 +15,9 @@ from tests.unit.python.src.sqlquack.api.main._test_types import (
 )
 from tests.unit.python.src.sqlquack.api.main.helpers import command_report, schema_file
 
+POLICY: str = str(Path(__file__).resolve().parents[7] / "sqlquack.toml")
+HASHED: str = "SELECT HASH(order_id) AS h FROM orders"
+
 
 @pytest.mark.parametrize(
     "test_case",
@@ -42,6 +45,20 @@ from tests.unit.python.src.sqlquack.api.main.helpers import command_report, sche
             ),
             expected_converted=False,
         ),
+        CommandLineTestCase(
+            description="HASH relies on a value divergence the report names",
+            sql=HASHED,
+            arguments=("--policy", POLICY, "--schema", "schema.json"),
+            options=ConvertOptions(policy=POLICY, schema="schema.json"),
+            expected_converted=True,
+        ),
+        CommandLineTestCase(
+            description="HASH refused when relying only on loud divergences",
+            sql=HASHED,
+            arguments=("--policy", POLICY, "--schema", "schema.json", "--loud-divergences-only"),
+            options=ConvertOptions(policy=POLICY, schema="schema.json", loud_divergences_only=True),
+            expected_converted=False,
+        ),
     ),
     ids=lambda case: case.description,
 )
@@ -54,6 +71,7 @@ def test_given_the_same_options_when_converting_then_the_report_is_the_command_l
     assert conversion.report == command_report(test_case.sql, test_case.arguments, tmp_path)
     assert conversion.converted is test_case.expected_converted
     assert len(conversion.diagnostics) == len(conversion.report["refusals"])
+    assert conversion.divergence_failures == conversion.report["divergence_failures"]
 
 
 @pytest.mark.parametrize(

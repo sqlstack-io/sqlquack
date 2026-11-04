@@ -12,6 +12,7 @@ use sqlquack_evidence::constants::{
 };
 use sqlquack_evidence::coverage::constants::{DOMAINS_DIR, HAZARDS_FILE};
 use sqlquack_policy::policy::constants::POLICY_FILE_NAME;
+use sqlquack_policy::policy::models::DivergenceFailure;
 
 use crate::analysis::models::PythonSignature;
 use crate::census::constants::DEFAULT_TEXT_LIMIT;
@@ -300,6 +301,9 @@ pub struct PolicyArguments {
     /// Confirm a Python runtime registers the project's Python functions with SQLQuack's runtime.
     #[arg(long)]
     pub python_runtime: bool,
+    /// Refuse every known divergence that can return a different value rather than raise.
+    #[arg(long)]
+    pub loud_divergences_only: bool,
 }
 
 /// How a report is printed.
@@ -345,6 +349,8 @@ pub struct ConvertReport {
     pub divergences: BTreeMap<String, Vec<String>>,
     /// Of those, the named assumptions.
     pub assumptions: Vec<String>,
+    /// Each divergence relied on and its failure: `loud` raises, `value` can return another value.
+    pub divergence_failures: BTreeMap<String, DivergenceFailure>,
     /// What the session parameters changed about conversion.
     pub notes: Vec<String>,
     /// The Python functions the SQL calls, which the caller registers before running it.
