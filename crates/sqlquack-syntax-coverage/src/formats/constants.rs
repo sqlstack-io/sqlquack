@@ -20,6 +20,8 @@ pub const RECEIPTS_DIR: &str = "receipts";
 pub const REVIEWS_DIR: &str = "reviews";
 /// Obligations Snowflake answers only with an internal error, one optional TOML file per family.
 pub const UNOBSERVABLE_DIR: &str = "unobservable";
+/// Hand-added limits, suppressions and grammar readings; the checker loads the readings.
+pub const LIMITS_FILE: &str = "limits.toml";
 /// Every family, each with a catalogue, an obligation and a case file.
 pub const FAMILIES: [&str; 10] = [
     "query",

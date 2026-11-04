@@ -1247,7 +1247,7 @@ impl Parser {
         let if_exists = self.match_keywords(&[TokenType::If, TokenType::Exists]);
 
         let has_only = self.match_token(TokenType::Only);
-        let mut table = self.parse_table_ref()?;
+        let mut table = self.parse_object_name_ref()?;
         if has_only {
             table.only = true;
         }
@@ -1452,9 +1452,11 @@ impl Parser {
         };
 
         let mut ident = self.expect_identifier_or_keyword_with_quoted()?;
+        self.reject_reserved_name_part(&ident)?;
 
         if self.match_token(TokenType::Dot) {
             let second_part = self.expect_identifier_or_keyword_with_quoted()?;
+            self.reject_reserved_name_part(&second_part)?;
             ident.name = format!("{}.{}", ident.name, second_part.name);
         }
 

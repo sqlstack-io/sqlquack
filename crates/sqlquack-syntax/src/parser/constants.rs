@@ -87,6 +87,9 @@ pub(crate) const NATIONAL: &str = "NATIONAL";
 /// The text "NCHAR", as comparisons test it.
 pub(crate) const NCHAR: &str = "NCHAR";
 
+/// The type name of `RETURNS TABLE (...)`, which may have an empty column list.
+pub(crate) const TABLE_TYPE: &str = "TABLE";
+
 /// The text "NVARCHAR", as comparisons test it.
 pub(crate) const NVARCHAR: &str = "NVARCHAR";
 

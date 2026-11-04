@@ -215,9 +215,10 @@ impl Expression {
             | Expression::BitwiseLeftShift(op)
             | Expression::BitwiseRightShift(op) => op.inferred_type.as_ref(),
 
-            Expression::Not(op) | Expression::Neg(op) | Expression::BitwiseNot(op) => {
-                op.inferred_type.as_ref()
-            }
+            Expression::Not(op)
+            | Expression::Neg(op)
+            | Expression::Pos(op)
+            | Expression::BitwiseNot(op) => op.inferred_type.as_ref(),
 
             Expression::Like(op) | Expression::ILike(op) => op.inferred_type.as_ref(),
 
@@ -444,9 +445,10 @@ impl Expression {
             | Expression::BitwiseLeftShift(op)
             | Expression::BitwiseRightShift(op) => op.inferred_type = Some(dt),
 
-            Expression::Not(op) | Expression::Neg(op) | Expression::BitwiseNot(op) => {
-                op.inferred_type = Some(dt)
-            }
+            Expression::Not(op)
+            | Expression::Neg(op)
+            | Expression::Pos(op)
+            | Expression::BitwiseNot(op) => op.inferred_type = Some(dt),
 
             Expression::Like(op) | Expression::ILike(op) => op.inferred_type = Some(dt),
 

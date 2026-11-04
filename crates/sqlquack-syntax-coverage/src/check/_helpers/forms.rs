@@ -16,11 +16,10 @@ fn obligation_result(obligation: &Obligation, joined: &Joined) -> ObligationResu
         .iter()
         .filter_map(|case_id| joined.cases.get(case_id).cloned())
         .collect();
+    let unobservable: Option<Reason> = joined.unobservable.get(obligation.id.as_str()).copied();
     let reason: Option<Reason> = match () {
         () if cases.is_empty() => Some(Reason::MissingCase),
-        () if joined.unobservable.contains(obligation.id.as_str()) => {
-            Some(Reason::UnverifiableInternalError)
-        }
+        () if unobservable.is_some() => unobservable,
         () => cases.iter().filter_map(|case| case.reason).min(),
     };
     ObligationResult {
@@ -62,7 +61,8 @@ pub(crate) fn form_result(form: &Form, family: &str, context: &FamilyContext) ->
         .map(|obligation| obligation_result(obligation, context.joined))
         .collect();
     let fingerprint: String = form_fingerprint(&obligations);
-    let definition_sha256: String = form_definition(form, declared);
+    let reading = context.joined.readings.get(form.id.as_str()).copied();
+    let definition_sha256: String = form_definition(form, declared, reading);
     let review: Option<Reason> =
         review_reason(&form.id, (&fingerprint, &definition_sha256), context);
     let reasons: Vec<Reason> = form_reasons(&obligations, review);

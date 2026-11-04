@@ -1,5 +1,6 @@
 //! Expected differences.
 
+use crate::expected::_helpers::nodes::differ_only_by_kept_node;
 use crate::expected::_helpers::quoting::{compact, differ_only_by_kept_quoting};
 use crate::expected::constants::{COMMAND_TREE, ERROR_PREFIX, OK_PREFIX};
 use std::collections::{BTreeMap, BTreeSet};
@@ -22,6 +23,9 @@ pub struct ExpectedFile {
     /// One entry per reviewed name whose quoting polyglot drops and SQLQuack keeps.
     #[serde(default, rename = "kept_quoting")]
     pub kept_quotings: Vec<KeptQuoting>,
+    /// One entry per reviewed wrapper node SQLQuack keeps and polyglot drops.
+    #[serde(default, rename = "kept_node")]
+    pub kept_nodes: Vec<KeptNode>,
     /// One entry per reviewed statement polyglot keeps as a command and SQLQuack structures.
     #[serde(default, rename = "structured")]
     pub structured: Vec<StructuredStatement>,
@@ -50,6 +54,20 @@ pub struct KeptQuoting {
     /// Text the statement contains, with whitespace removed and ignoring case, such as `EXCLUDE("`.
     pub marker: String,
     /// Why SQLQuack's quoting is right; the trees may differ in nothing else.
+    pub note: String,
+}
+
+/// A statement both parsers parse, where SQLQuack keeps a wrapper node, such as unary plus, polyglot drops.
+#[derive(Clone, Debug, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct KeptNode {
+    /// A lower-case identifier.
+    pub id: String,
+    /// Text the statement contains, with whitespace removed and ignoring case, such as `+`.
+    pub marker: String,
+    /// The wrapper node SQLQuack keeps, such as `pos`; its only field is `this`.
+    pub node: String,
+    /// Why SQLQuack keeps it; without its wrappers the trees may differ in nothing.
     pub note: String,
 }
 
@@ -106,6 +124,8 @@ pub struct ExpectedDifferences {
     pub rejections: Vec<ParserRejection>,
     /// The reviewed names whose quoting polyglot drops.
     pub kept_quotings: Vec<KeptQuoting>,
+    /// The reviewed wrapper nodes SQLQuack keeps and polyglot drops.
+    pub kept_nodes: Vec<KeptNode>,
     /// The reviewed statements polyglot keeps as a command and SQLQuack structures.
     pub structured: Vec<StructuredStatement>,
 }
@@ -157,6 +177,15 @@ impl ExpectedDifferences {
             .iter()
             .find(|entry| compact.contains(&entry.marker.to_ascii_uppercase()))
             .filter(|_| differ_only_by_kept_quoting(polyglot, sqlquack))
+    }
+
+    /// The entry explaining where SQLQuack keeps a wrapper node polyglot drops.
+    pub fn kept_node_for(&self, sql: &str, polyglot: &str, sqlquack: &str) -> Option<&KeptNode> {
+        let compact = compact(sql);
+        self.kept_nodes.iter().find(|entry| {
+            compact.contains(&entry.marker.to_ascii_uppercase())
+                && differ_only_by_kept_node(polyglot, sqlquack, &entry.node)
+        })
     }
 
     /// The entry explaining where SQLQuack structures a statement polyglot keeps as a command.

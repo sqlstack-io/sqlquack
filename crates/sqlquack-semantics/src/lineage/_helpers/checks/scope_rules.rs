@@ -170,6 +170,9 @@ fn order_by_all(order: &OrderBy, _level: RuleLevel<'_, '_>) -> bool {
     if order.siblings {
         return false;
     }
+    if order.all.is_some() {
+        return true;
+    }
     let [ordered] = order.expressions.as_slice() else {
         return false;
     };

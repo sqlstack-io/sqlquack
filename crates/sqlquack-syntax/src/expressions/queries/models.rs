@@ -197,6 +197,7 @@ impl Select {
             expressions,
             siblings: false,
             comments: Vec::new(),
+            all: None,
         });
         self
     }
@@ -765,6 +766,21 @@ pub struct OrderBy {
     /// Leading comments that appeared before the ORDER BY keyword
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub comments: Vec<String>,
+    /// DuckDB and Snowflake `ORDER BY ALL`, which sorts by every output column; `expressions` is then empty.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub all: Option<OrderByAll>,
+}
+
+/// The direction and null placement of `ORDER BY ALL`.
+#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct OrderByAll {
+    /// Whether the sort direction is descending.
+    pub desc: bool,
+    /// `Some(true)` = NULLS FIRST, `Some(false)` = NULLS LAST, `None` = unspecified.
+    pub nulls_first: Option<bool>,
+    /// Whether ASC was explicitly written.
+    #[serde(default)]
+    pub explicit_asc: bool,
 }
 
 /// A sort key: ascending unless `desc`; `nulls_first` is `None` when unspecified.
