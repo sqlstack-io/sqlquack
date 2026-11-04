@@ -9,7 +9,7 @@ use std::time::Duration;
 use serde_json::{Value, json};
 
 use crate::check::main::check_coverage::check_coverage;
-use crate::check::models::{CheckResult, FormResult, ObligationResult};
+use crate::check::models::{CheckResult, FormResult, ObligationResult, Reason};
 use crate::cli::_helpers::local::{frozen_catalogue, parser_tree, snowflake_verdict};
 use crate::cli::_helpers::output::{print, say};
 use crate::cli::_helpers::worker::Worker;
@@ -17,7 +17,7 @@ use crate::cli::models::Common;
 use crate::formats::constants::SNAPSHOT_FORMAT;
 use crate::formats::main::load_coverage::load_coverage;
 use crate::formats::main::obligation_form::obligation_form;
-use crate::formats::models::{Obligation, ObligationKind, SyntaxCoverage};
+use crate::formats::models::{Obligation, ObligationKind, Review, SyntaxCoverage};
 use crate::report::main::diff_snapshots::diff_snapshots;
 use crate::report::main::snapshot::snapshot;
 use crate::report::main::summarize::summarize;
@@ -185,6 +185,42 @@ pub(crate) fn missing(family: Option<&str>, common: &Common) -> Result<ExitCode,
         .collect();
     let text: Vec<String> = missing.iter().map(Value::to_string).collect();
     print(common.json, &missing, &text);
+    Ok(exit(&check))
+}
+
+/// Whether `review` names `form`: of its family, in its `forms` list or with none.
+fn names_form(review: &Review, form: &FormResult) -> bool {
+    review.family == form.family
+        && review
+            .forms
+            .as_ref()
+            .is_none_or(|forms| forms.contains(&form.id))
+}
+
+/// A stale form, with its current fingerprint and what each review naming it recorded.
+fn stale_entry(form: &FormResult, reviews: &[Review]) -> Value {
+    let mut recorded: Vec<Value> = Vec::new();
+    for review in reviews.iter().filter(|review| names_form(review, form)) {
+        recorded.push(json!({
+            "id": review.id,
+            "fingerprint": review.fingerprints.get(&form.id),
+            "parser_tree": review.parser_tree,
+        }));
+    }
+    json!({"form": form.id, "fingerprint": form.fingerprint, "reviews": recorded})
+}
+
+pub(crate) fn stale(family: Option<&str>, common: &Common) -> Result<ExitCode, ExitCode> {
+    let coverage: SyntaxCoverage = load(&common.root)?;
+    let check: CheckResult = checked(&coverage)?;
+    let stale: Vec<Value> = check
+        .forms
+        .iter()
+        .filter(|form| in_family(form, family) && form.reasons.contains(&Reason::StaleReview))
+        .map(|form| stale_entry(form, &coverage.reviews))
+        .collect();
+    let text: Vec<String> = stale.iter().map(Value::to_string).collect();
+    print(common.json, &stale, &text);
     Ok(exit(&check))
 }
 

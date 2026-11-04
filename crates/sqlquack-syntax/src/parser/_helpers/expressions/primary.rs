@@ -507,6 +507,7 @@ impl Parser {
                 let this_expr = count_expr.this.clone().unwrap_or_else(|| {
                     Expression::Star(crate::expressions::names::models::Star {
                         table: None,
+                        ilike: None,
                         except: None,
                         replace: None,
                         rename: None,
@@ -625,6 +626,7 @@ impl Parser {
                         negated: false,
                         left: Expression::Star(Star {
                             table: None,
+                            ilike: None,
                             except: None,
                             replace: None,
                             rename: None,
@@ -1108,6 +1110,7 @@ impl Parser {
                 self.skip();
                 Expression::Star(Star {
                     table: None,
+                    ilike: None,
                     except: None,
                     replace: None,
                     rename: None,

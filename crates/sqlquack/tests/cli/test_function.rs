@@ -1,5 +1,7 @@
-use crate::helpers::run_function_macro;
-use crate::test_types::{FunctionMacroOutcome, FunctionMacroTestCase};
+use crate::helpers::{function_from_stdin, run_function_macro};
+use crate::test_types::{
+    FunctionMacroOutcome, FunctionMacroTestCase, FunctionStdinOutcome, FunctionStdinTestCase,
+};
 
 #[test]
 fn given_a_schema_declared_sql_function_when_converting_then_its_macro_runs_in_duckdb() {
@@ -67,6 +69,48 @@ fn given_a_schema_declared_sql_function_when_converting_then_its_macro_runs_in_d
                 test_case.call,
                 test_case.flags
             ),
+            test_case.expected_outcome,
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_a_body_on_standard_input_when_converting_then_refusals_print_as_json_and_diagnostics() {
+    let test_cases = [
+        FunctionStdinTestCase {
+            description: "a refused body prints a JSON refusal report and an underlined diagnostic",
+            name: "DOUBLED",
+            body: "price > 1 AND\n  'x'",
+            expected_outcome: FunctionStdinOutcome {
+                exit_code: Some(1),
+                converted: Some(false),
+                first_code: Some("SQ0003".to_owned()),
+                stderr_lines: vec![
+                    "error[SQ0003]: the operand types fall outside every rule's proven conditions: `node:and`"
+                        .to_owned(),
+                    " --> <stdin>:1:1".to_owned(),
+                ],
+            },
+        },
+        FunctionStdinTestCase {
+            description: "a function the schema does not declare is a usage error, exit 2",
+            name: "TRIPLED",
+            body: "price * 3",
+            expected_outcome: FunctionStdinOutcome {
+                exit_code: Some(2),
+                converted: None,
+                first_code: None,
+                stderr_lines: vec![
+                    "sqlquack function: failed: the schema declares no function TRIPLED".to_owned(),
+                ],
+            },
+        },
+    ];
+    for test_case in test_cases {
+        assert_eq!(
+            function_from_stdin(test_case.name, test_case.body),
             test_case.expected_outcome,
             "{}",
             test_case.description

@@ -14,6 +14,7 @@ DUCKSHOP_COMPILED ?= $(DUCKSHOP_DIR)/sqlbuild/benchmarks/duckshop/project/target
 FUZZ_CARGO ?= cargo +nightly fuzz
 FUZZ_CORPUS ?= fuzz/corpus/tolerant
 FUZZ_SECONDS ?= 90
+FUZZ_TARGETS ?= tolerant diagnose
 
 ifeq ($(RECORDER),1)
 PYTHON_TYPED := .
@@ -23,7 +24,7 @@ PYTHON_TYPED := scripts tests/unit/scripts
 PYTHON_TESTS := tests/unit/scripts
 endif
 
-.PHONY: format rust-lint python-check fensu syntax-coverage evidence-guard polyglot-guard generate-cases generated-cases generate-referee-cases referee-cases referee-pending check-ci test test-rust test-python verify-recorded polyglot-duckshop census-duckshop fuzz-smoke gate gate-parallel census duckshop-compiled
+.PHONY: format rust-lint python-check fensu syntax-coverage evidence-guard polyglot-guard generate-cases generated-cases generate-referee-cases referee-cases referee-pending check-ci check-merge test test-rust test-python verify-recorded polyglot-duckshop census-duckshop fuzz-smoke gate gate-parallel census duckshop-compiled
 
 format:
 	cargo fmt --all
@@ -88,6 +89,9 @@ test: test-rust test-python
 test-rust:
 	RUST_TEST_JOBS=$(RUST_TEST_JOBS) scripts/run_rust_tests.sh $(RUST_TEST_PROFILE)
 
+# What every merge to main must pass, on the exact head: the static gate and the Rust tests.
+check-merge: check-ci test-rust
+
 test-python:
 	uv run pytest $(PYTHON_TESTS) -n auto --dist loadfile
 
@@ -145,11 +149,14 @@ census-duckshop:
 	    || { echo "census-duckshop: converting $$compiled failed or took over $(DUCKSHOP_CENSUS_SECONDS) s" >&2; exit 1; }; \
 	done
 
-# Fuzzes tolerant parsing from the exact check's statements for FUZZ_SECONDS.
+# Fuzzes each of FUZZ_TARGETS from the exact check's statements for FUZZ_SECONDS: tolerant parsing,
+# and strict parsing through to rendered diagnostics.
 fuzz-smoke:
 	uv run python -m scripts.seed_fuzz_corpus --out $(FUZZ_CORPUS)
-	cd fuzz && $(FUZZ_CARGO) run --target x86_64-unknown-linux-gnu tolerant $(abspath $(FUZZ_CORPUS)) -- \
-	  -max_total_time=$(FUZZ_SECONDS) -max_len=4096 -timeout=10 -rss_limit_mb=2048
+	for target in $(FUZZ_TARGETS); do \
+	  (cd fuzz && $(FUZZ_CARGO) run --target x86_64-unknown-linux-gnu $$target $(abspath $(FUZZ_CORPUS)) -- \
+	    -max_total_time=$(FUZZ_SECONDS) -max_len=4096 -timeout=10 -rss_limit_mb=2048) || exit 1; \
+	done
 
 # Everything CI runs: the static gate, the tests, the recorded-case replay, the exact check and the
 # timed conversion on DuckShop, and the fuzz smoke. The pre-push verify hook runs this.

@@ -30,7 +30,10 @@ pub(crate) fn index_command(
     stderr: &mut dyn Write,
 ) -> ExitCode {
     let _ = writeln!(stderr, "sqlquack index: converting cases and SQL files…");
-    let policy = match chosen_policy(&arguments.policy, arguments.builtin_policy) {
+    let policy = match chosen_policy(
+        &arguments.conversion.policy,
+        arguments.conversion.builtin_policy,
+    ) {
         Ok(policy) => policy,
         Err(error) => {
             let _ = writeln!(stderr, "sqlquack index: failed: {error}");
@@ -44,7 +47,7 @@ pub(crate) fn index_command(
             return ExitCode::FAILURE;
         }
     };
-    let rendered = match arguments.json {
+    let rendered = match arguments.output.json() {
         true => serde_json::to_string_pretty(&index).unwrap_or_default() + "\n",
         false => render_index_text(&index),
     };
@@ -67,9 +70,12 @@ fn index(arguments: &IndexArguments, policy: Option<&Policy>) -> Result<Provenan
     let conversion = divergence_options(
         policy,
         (
-            arguments.strict,
-            arguments.utc_session,
-            (arguments.confirm_declared_offsets, arguments.python_runtime),
+            arguments.conversion.strict,
+            arguments.conversion.utc_session,
+            (
+                arguments.conversion.confirm_declared_offsets,
+                arguments.conversion.python_runtime,
+            ),
         ),
     );
     let converter = PipelineConverter {

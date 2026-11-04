@@ -676,6 +676,7 @@ impl Expression {
     pub fn star() -> Self {
         Expression::Star(Star {
             table: None,
+            ilike: None,
             except: None,
             replace: None,
             rename: None,

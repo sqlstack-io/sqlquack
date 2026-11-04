@@ -130,6 +130,7 @@ impl Parser {
                 let args = if self.match_token(TokenType::Star) {
                     vec![Expression::Star(Star {
                         table: None,
+                        ilike: None,
                         except: None,
                         replace: None,
                         rename: None,

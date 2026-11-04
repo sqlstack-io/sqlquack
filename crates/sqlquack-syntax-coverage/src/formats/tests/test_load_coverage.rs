@@ -610,6 +610,32 @@ fn given_a_format_fault_when_loading_then_the_problem_is_named() {
             expected_problem: "review query-1: forms, when present, lists at least one form",
         },
         FormatFaultTestCase {
+            description: "a review fingerprinting a form it does not list",
+            mutate: |root| {
+                replace(
+                    root,
+                    "reviews/query.toml",
+                    "verdict = \"approved\"\n",
+                    "verdict = \"approved\"\nforms = [\"sf.query.select\"]\n\
+                     fingerprints = { \"sf.query.select.top\" = \"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\" }\n",
+                )
+            },
+            expected_problem: "review query-1: fingerprint of sf.query.select.top is not a SHA-256 of a form it lists",
+        },
+        FormatFaultTestCase {
+            description: "a review fingerprinting only some of the forms it lists",
+            mutate: |root| {
+                replace(
+                    root,
+                    "reviews/query.toml",
+                    "verdict = \"approved\"\n",
+                    "verdict = \"approved\"\nforms = [\"sf.query.select\", \"sf.query.select.top\"]\n\
+                     fingerprints = { \"sf.query.select\" = \"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\" }\n",
+                )
+            },
+            expected_problem: "review query-1: fingerprints, when present, give one for every form it lists",
+        },
+        FormatFaultTestCase {
             description: "a review listing a form of another family",
             mutate: |root| {
                 replace(
