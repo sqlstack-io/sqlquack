@@ -25,6 +25,8 @@ pub enum RefusalCategory {
     ConversionBudget,
     /// Snowflake parses the statement but rejects it, so there is nothing to convert.
     SnowflakeRejects,
+    /// The conversion needs a known divergence the policy refuses in this mode.
+    DivergenceRefused,
 }
 
 impl RefusalCategory {
@@ -38,6 +40,7 @@ impl RefusalCategory {
             Self::UnresolvedName => "unresolved name",
             Self::ConversionBudget => "conversion budget exceeded",
             Self::SnowflakeRejects => "rejected by Snowflake",
+            Self::DivergenceRefused => "a known divergence the policy refuses",
         }
     }
 }

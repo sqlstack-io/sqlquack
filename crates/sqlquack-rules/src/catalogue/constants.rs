@@ -457,7 +457,7 @@ pub const RULES: &[RuleSpec] = &[
     RuleSpec {
         id: CAST_TEXT_LITERAL,
         constructs: &["node:cast", "node:try_cast"],
-        conditions: "A string literal in a form both engines read the same: plain decimal for NUMBER, decimal with exponent for FLOAT, true or false for BOOLEAN, YYYY-MM-DD for DATE; YYYY-MM-DD[ HH:MI:SS[.f]] for timestamps, with a ' ±HH:MM' offset for TIMESTAMP_TZ and TIMESTAMP_LTZ, and no more fractional digits than the target precision. An NTZ(7-9) literal outside 1677-09-22..2262-04-10 relies on timestamp_range; a zoned literal with a non-zero sub-microsecond part relies on timestamp_tz_submicro and raises.",
+        conditions: "A string literal in a form both engines read the same: plain decimal for NUMBER, decimal with exponent for FLOAT, true or false for BOOLEAN, YYYY-MM-DD for DATE; YYYY-MM-DD[ HH:MI:SS[.f]] for timestamps, with a ' ±HH:MM' offset for TIMESTAMP_TZ and TIMESTAMP_LTZ, and no more fractional digits than the target precision. An NTZ(7-9) literal outside 1677-09-22..2262-04-10 is refused, since DuckDB's nanosecond timestamp would always raise; a zoned literal with a non-zero sub-microsecond part relies on timestamp_tz_submicro and raises.",
         failures: &[FailureMode {
             kind: ErrorKind::StringTooLong,
             snowflake: &[STRING_TOO_LONG],

@@ -91,6 +91,7 @@ fn refusal_totals(files: &[FileCensus]) -> RefusalTotals {
         type_condition: count(RefusalCategory::TypeCondition),
         unresolved_name: count(RefusalCategory::UnresolvedName),
         conversion_budget: count(RefusalCategory::ConversionBudget),
+        divergence_refused: count(RefusalCategory::DivergenceRefused),
         by_construct: refusal_counts(files),
         convertible: files
             .iter()
