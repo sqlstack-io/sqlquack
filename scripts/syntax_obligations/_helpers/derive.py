@@ -55,6 +55,7 @@ from scripts.syntax_obligations.constants import (
     NODE_CHOICE,
     NODE_OPTIONAL,
     NON_CALL_KEYWORDS,
+    OBSERVED_WRONG,
     OPEN_PAREN,
     OPERAND_KEYWORDS,
     OPTION_ASSIGNMENTS,
@@ -251,18 +252,19 @@ class _Walk:
         if label in LEXICAL_WRONG and self._whole_argument():
             self.argument_classes[label] += 1
         elif label in LEXICAL_WRONG:
+            wrong: Spec = self._unsure(
+                spec=self.reject(
+                    action=ACTION_REPLACE_NODE,
+                    node=node,
+                    payload=LEXICALLY_DISTINCT_WRONG_FILL[label],
+                ),
+                after=OPTION_ASSIGNMENTS,
+            )
             self.add(
                 kind=KIND_NEGATIVE,
                 target=target,
                 note=f"{LEXICAL_WRONG[label]} in place of {node.text}",
-                spec=self._unsure(
-                    spec=self.reject(
-                        action=ACTION_REPLACE_NODE,
-                        node=node,
-                        payload=LEXICALLY_DISTINCT_WRONG_FILL[label],
-                    ),
-                    after=OPTION_ASSIGNMENTS,
-                ),
+                spec=replace(wrong, expect=EXPECT_OBSERVE) if label in OBSERVED_WRONG else wrong,
             )
 
     def valid(self) -> Spec:

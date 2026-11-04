@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import re
 from dataclasses import dataclass, field, replace
 
 from scripts.syntax_obligations._helpers.derive import operand_class
@@ -26,6 +27,9 @@ from scripts.syntax_obligations.constants import (
     CONTEXT_RAW,
     CONTEXT_TOP,
     DEFINE_QUALIFIED_NAMES,
+    DEFINE_REFERENCE_CLAUSES,
+    DEFINE_REFERENCE_ITEM,
+    DEFINE_SECRETS_CLAUSE,
     DOLLAR_QUOTE,
     DOUBLE_QUOTE,
     EMPTY_CLAUSE,
@@ -92,12 +96,19 @@ def submissions(
     rendered: list[Rendered] = _Renderer(trees=trees, style=style).submissions(
         spec=spec, depths=depths
     )
-    if not style.observe_empty_properties or spec.action == ACTION_HAND:
+    if style.qualify_references:
+        rendered = [Rendered(_qualified_references(r.sql), r.expect, r.stage) for r in rendered]
+    if spec.action == ACTION_HAND:
         return rendered
     return [
         Rendered(r.sql, EXPECT_OBSERVE, r.stage)
-        if EMPTY_PROPERTY_LIST.search(r.sql)
-        or (r.expect == EXPECT_ACCEPT and EMPTY_CLAUSE.search(r.sql))
+        if (
+            style.observe_empty_properties
+            and (
+                EMPTY_PROPERTY_LIST.search(r.sql)
+                or (r.expect == EXPECT_ACCEPT and EMPTY_CLAUSE.search(r.sql))
+            )
+        )
         or (
             r.expect == EXPECT_REJECT
             and spec.action == ACTION_DROP_NODE
@@ -386,6 +397,33 @@ class _Renderer:
         return fill
 
 
+def _qualified_item(item: str) -> str:
+    """A rendered schema-level reference in d1.s1; keywords and qualified names stay as they are."""
+    bare: bool = not item.startswith((SINGLE_QUOTE, DOUBLE_QUOTE))
+    if item.lower().startswith(("d1.", "'d1.")) or (bare and item == item.upper()):
+        return item
+    return _qualified(prefix=SCHEMA_QUALIFIER, text=item)
+
+
+def _qualified_references(sql: str) -> str:
+    """DEFINE SQL with the references after its reference clauses and in SECRETS qualified."""
+    item: str = DEFINE_REFERENCE_ITEM
+    for clause in DEFINE_REFERENCE_CLAUSES:
+        sql = re.sub(
+            rf"(?<![\w$]){re.escape(clause)} ({item}(?: , {item})*)",
+            lambda m: (
+                m[0][: len(m[0]) - len(m[1])]
+                + " , ".join(_qualified_item(x) for x in m[1].split(" , "))
+            ),
+            sql,
+        )
+    return re.sub(
+        rf"(?<={re.escape(DEFINE_SECRETS_CLAUSE)} )[^)]*",
+        lambda m: re.sub(rf"(?<=' = )({item})", lambda n: _qualified_item(n[1]), m[0]),
+        sql,
+    )
+
+
 def _qualified(*, prefix: str, text: str) -> str:
     """`text` behind a database or schema qualifier; inside the quotes of a string-literal name."""
     if not prefix:
@@ -482,4 +520,4 @@ def style_of(*, family: str, form: str) -> FormStyle:
     qualify: dict[str, str] = dict.fromkeys(SCHEMA_REFERENCES, SCHEMA_QUALIFIER)
     if own:
         qualify[own] = qualifier
-    return replace(styles[best], qualify=qualify)
+    return replace(styles[best], qualify=qualify, qualify_references=True)

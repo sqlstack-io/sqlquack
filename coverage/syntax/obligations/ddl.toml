@@ -46559,13 +46559,6 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "sf.ddl.alter-materialized-view.set-data-metric-schedule.o009"
-kind = "required_operand_missing"
-required = true
-target = "<name>"
-note = "omit <name>"
-
-[[obligation]]
 id = "sf.ddl.alter-materialized-view.set-data-metric-schedule.o010"
 kind = "operand_type_class"
 required = true
@@ -46632,17 +46625,18 @@ anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
+id = "sf.ddl.alter-materialized-view.set-data-metric-schedule.o014"
+kind = "required_operand_missing"
+required = true
+target = "<name>"
+anchor = "doc.sql.alter-materialized-view / Syntax"
+note = "omit <name>, observed"
+
+[[obligation]]
 id = "sf.ddl.alter-materialized-view.unset-data-metric-schedule.o001"
 kind = "positive"
 required = true
 note = "the documented form with every required part and no optional part"
-
-[[obligation]]
-id = "sf.ddl.alter-materialized-view.unset-data-metric-schedule.o006"
-kind = "required_operand_missing"
-required = true
-target = "<name>"
-note = "omit <name>"
 
 [[obligation]]
 id = "sf.ddl.alter-materialized-view.unset-data-metric-schedule.o007"
@@ -46691,6 +46685,14 @@ required = true
 target = "<name>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.ddl.alter-materialized-view.unset-data-metric-schedule.o011"
+kind = "required_operand_missing"
+required = true
+target = "<name>"
+anchor = "doc.sql.alter-materialized-view / Syntax"
+note = "omit <name>, observed"
 
 [[obligation]]
 id = "sf.ddl.alter-model-add-version.internalstage.o001"

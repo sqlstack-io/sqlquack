@@ -62,6 +62,7 @@ class FormStyle:
     embedded: bool = False
     observe_empty_properties: bool = False
     qualify: dict[str, str] = field(default_factory=dict)
+    qualify_references: bool = False
 
 
 @dataclass(frozen=True)

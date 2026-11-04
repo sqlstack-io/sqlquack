@@ -19025,3 +19025,79 @@ form = "sf.ddl.alter-materialized-view.unset-data-metric-schedule"
 grammar_sha256 = "cafb1fb3ebdfe0539e2cd3b28316d1c61aa3c9c6e1792c4339386d551a541009"
 grammar = ["ALTER MATERIALIZED VIEW <name> UNSET DATA_METRIC_SCHEDULE"]
 reason = "the page's block names no view, unlike the page's first block `ALTER MATERIALIZED VIEW <name> { ... }`; executing the block as written fails with errno 926 'MATERIALIZED_VIEW identifier cannot be empty' (sweep 510fb2fd), so the reading names the view as the first block does"
+
+[[suppress]]
+form = "sf.ddl.alter-materialized-view.set-data-metric-schedule"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>"
+reason = "D97: the page's own block omits <name>, and Snowflake answers it with errno 926 'MATERIALIZED_VIEW identifier cannot be empty' (sweep 510fb2fd), a name check rather than a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.ddl.alter-materialized-view.set-data-metric-schedule"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>, observed"
+anchor = "doc.sql.alter-materialized-view / Syntax"
+sql = "ALTER MATERIALIZED VIEW SET DATA_METRIC_SCHEDULE = '1 MINUTE' ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-materialized-view.unset-data-metric-schedule"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>"
+reason = "D97: the page's own block omits <name>, and Snowflake answers it with errno 926 'MATERIALIZED_VIEW identifier cannot be empty' (sweep 510fb2fd), a name check rather than a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.ddl.alter-materialized-view.unset-data-metric-schedule"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>, observed"
+anchor = "doc.sql.alter-materialized-view / Syntax"
+sql = "ALTER MATERIALIZED VIEW UNSET DATA_METRIC_SCHEDULE ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.classes.anomaly-insights.methods.get-daily-consumption-anomaly-data"
+kind = "identifier_class"
+target = "<account_name>"
+note = "quoted: a double-quoted identifier with blanks and mixed case"
+reason = "the argument is an expression, not an identifier: the page's examples pass a string ('prod_acct1'), NULL or CURRENT_ACCOUNT_NAME() (auditor review 53401a6a)"
+
+[[suppress]]
+form = "sf.classes.anomaly-insights.methods.get-daily-consumption-anomaly-data"
+kind = "identifier_class"
+target = "<account_name>"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+reason = "the argument is an expression, not an identifier: the page's examples pass a string ('prod_acct1'), NULL or CURRENT_ACCOUNT_NAME() (auditor review 53401a6a)"
+
+[[suppress]]
+form = "sf.classes.anomaly-insights.methods.get-top-warehouses-on-date"
+kind = "identifier_class"
+target = "<account_name>"
+note = "quoted: a double-quoted identifier with blanks and mixed case"
+reason = "the argument is an expression, not an identifier: the page's examples pass a string ('prod_acct1'), NULL or CURRENT_ACCOUNT_NAME() (auditor review 53401a6a)"
+
+[[suppress]]
+form = "sf.classes.anomaly-insights.methods.get-top-warehouses-on-date"
+kind = "identifier_class"
+target = "<account_name>"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+reason = "the argument is an expression, not an identifier: the page's examples pass a string ('prod_acct1'), NULL or CURRENT_ACCOUNT_NAME() (auditor review 53401a6a)"
+
+[[suppress]]
+form = "sf.classes.forecast.methods.forecast.series-value-series-colname-input-data-timestamp-colname"
+kind = "identifier_class"
+target = "<series_colname>"
+note = "quoted: a double-quoted identifier with blanks and mixed case"
+reason = "the argument is a column-name string, as the page's argument list quotes 'series_colname' (auditor review 53401a6a)"
+
+[[suppress]]
+form = "sf.classes.forecast.methods.forecast.series-value-series-colname-input-data-timestamp-colname"
+kind = "identifier_class"
+target = "<series_colname>"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+reason = "the argument is a column-name string, as the page's argument list quotes 'series_colname' (auditor review 53401a6a)"

@@ -79,7 +79,9 @@ obligations, not forms.
    definition file (`capture = "dcm_definition_file"`), never by executing them. DCM refuses
    unqualified schema-level names before it reports parse errors (errno 1540), so DEFINE cases
    name the defined object, and the schema-level objects it references, as `d1.s1.<name>`
-   (`d1.<name>` for schemas and database roles); account-level names stay unqualified.
+   (`d1.<name>` for schemas and database roles); account-level names stay unqualified. References
+   after AFTER, FINALIZE, ROOTS, FINALIZER, CORTEX SEARCH SERVICE, REFRESH USING ( DELETE FROM and
+   the secret objects in SECRETS = ( ... ) are qualified the same way.
 9. Pages whose syntax is written outside syntax blocks are catalogued from `hand.toml`; the
    page's `decisions` records the basis (HTML parsed-literal, table, heading, prose, inline code or
    examples, the last only for syntax shown by examples alone, such as `<expr>['<key>']`).
@@ -103,13 +105,19 @@ collision the heading is appended, then a number.
   prose-only variants, each read from its page's substitution rule (rule 8); DEFINE STAGE is held
   as prose without a reading until the checker accepts obligation numbers above 999. The DCM
   `DEFINE` variants are valid only inside DCM project files, not as standalone SQL.
+- An unquoted identifier in place of a string literal is an observed neighbour, not a scored
+  rejection (D106): Snowflake parses an identifier there and fails it later (OAUTH_ALLOWED_SCOPES,
+  IMPORTS, FROM LISTING), so a receipt decides it. An observed neighbour still settles as a
+  rejection when its receipt is a syntax error.
 - A rejection that only empties a list (`= ( )`) is observed, not scored: Snowflake parses
   `ENCRYPTION = ( )` and accepts `BLOCKED_NETWORK_RULE_LIST = ( )`, and pages document empty
   lists such as `BLOCKED_OBJECT_TYPES_FOR_CREATION = ()`.
 - `classes` methods are called as `CALL <instance>!<METHOD>( ... )`, as the SQL classes page
   says, except DESCRIBE and LIST, whose pages call them only with SELECT. Reference, object and
   array arguments are filled from each page's examples (`SYSTEM$REFERENCE( ... )`,
-  `OBJECT_CONSTRUCT( ... )`).
+  `OBJECT_CONSTRUCT( ... )`). Method and constructor arguments are expressions, as function
+  arguments are: a wrong-class whole argument is withdrawn by class and an omitted one is an arity
+  case, as in `functions`.
 - Data types: each documented type heading is one form whose synonyms are alternatives
   (`{ DECIMAL | DEC | NUMERIC }`); a heading that names several types with different semantics
   (TIMESTAMP_LTZ/NTZ/TZ) is one form with each spelling an alternative.

@@ -113,8 +113,9 @@ LEXICAL_WRONG: dict[str, str] = {
     "statement": "a bare literal",
     "query": "a bare literal",
 }
+OBSERVED_WRONG: frozenset[str] = frozenset({"string_literal"})
 SUBGRAMMAR_CLASS: str = "subgrammar"
-EXPRESSION_ARGUMENT_FAMILIES: frozenset[str] = frozenset({"functions"})
+EXPRESSION_ARGUMENT_FAMILIES: frozenset[str] = frozenset({"functions", "classes"})
 ARGUMENT_STARTS: frozenset[str] = frozenset({"(", ",", "=>", "=", "BY"})
 OPERAND_KEYWORDS: frozenset[str] = frozenset({"LIKE", "ILIKE", "RLIKE", "REGEXP", "ESCAPE"})
 CALLEE_STARTS: str = "<_$"
@@ -136,6 +137,7 @@ CLAUSE_CALLEES: frozenset[str] = frozenset(
         "ON",
         "ANY",
         "ALL",
+        "TAG",
     }
 )
 DANGLING_CALL: re.Pattern[str] = re.compile(
@@ -1182,12 +1184,16 @@ CLASSES_FILLS: dict[str, str] = {
     "warehouse_id": "838",
     "forecasting_periods": "3",
     "regular_expression": "'m'",
+    "account_name": "'a1'",
 }
 CLASS_PROCEDURE_REFERENCE: str = (
     "SYSTEM$REFERENCE ( 'PROCEDURE' , 'd1.s1.p1(STRING)' , 'SESSION' , 'USAGE' )"
 )
 CLASS_TABLE_REFERENCE: str = (
     "( SELECT SYSTEM$REFERENCE ( 'TABLE' , 't1' , 'SESSION' , 'APPLYBUDGET' ) )"
+)
+CLASS_FORECAST_SERIES_COLUMN: str = (
+    "sf.classes.forecast.methods.forecast.series-value-series-colname-input-data-timestamp-colname"
 )
 CLASSES_PAGE_FILLS: dict[str, dict[str, str]] = {
     "sf.classes.budget.methods.add-custom-action": {
@@ -1200,6 +1206,7 @@ CLASSES_PAGE_FILLS: dict[str, dict[str, str]] = {
     "sf.classes.budget.methods.remove-resource": {"reference_statement": CLASS_TABLE_REFERENCE},
     "sf.classes.budget.methods.add-resource-tag": {"reference_statement": CLASS_TAG_REFERENCE},
     "sf.classes.budget.methods.remove-resource-tag": {"reference_statement": CLASS_TAG_REFERENCE},
+    CLASS_FORECAST_SERIES_COLUMN: {"series_colname": "'m'"},
     "sf.classes.classification-profile.commands.create-classification-profile": {
         "config_object": "OBJECT_CONSTRUCT ( 'auto_tag' , FALSE )"
     },
@@ -1208,6 +1215,7 @@ CLASSES_LITERAL_FILLS: dict[str, str] = {
     **DDL_LITERAL_FILLS,
     "'<email_address> [, <email_address> ... ]'": "'u1@example.com, u2@example.com'",
     "'<email> [ , <email> [ , ... ] ]'": "'u1@example.com, u2@example.com'",
+    "'<refresh_interval>'": "'TIER_1H'",
 }
 CLASS_METHODS_WITH_SELECT: tuple[str, ...] = (
     "sf.classes.classification-profile.methods.describe",
@@ -1318,7 +1326,6 @@ SCHEMA_REFERENCES: tuple[str, ...] = (
     "network_rule",
     "root_task_name",
     "finalizer_task_name",
-    "snowflake_secret_name",
     "search_service_name",
 )
 DEFINE_QUALIFIED_NAMES: dict[str, tuple[str, str]] = {
@@ -1355,3 +1362,15 @@ DEFINE_QUALIFIED_NAMES: dict[str, tuple[str, str]] = {
     "sf.security_admin.create-role.define-role": ("", ""),
     "sf.security_admin.create-share.define-share": ("", ""),
 }
+DEFINE_REFERENCE_CLAUSES: tuple[str, ...] = (
+    "AFTER",
+    "FINALIZE =",
+    "ROOTS = (",
+    "FINALIZER =",
+    "CORTEX SEARCH SERVICE",
+    "REFRESH USING ( DELETE FROM",
+)
+DEFINE_SECRETS_CLAUSE: str = "SECRETS = ("
+DEFINE_REFERENCE_ITEM: str = (
+    r"(?:'[^']*'|(?:[A-Za-z_][A-Za-z0-9_$]*\.)*(?:\"[^\"]*\"|[A-Za-z_][A-Za-z0-9_$]*))"
+)
