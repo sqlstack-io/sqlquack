@@ -900,7 +900,7 @@ pub const NOT_SNOWFLAKE_FUNCTIONS: &[&str] = &[
     "ENDS_WITH",
     "DATE_DIFF",
 ];
-/// The pair behind converting `t RLIKE p` through the `REGEXP_LIKE` rule.
+/// The pair behind converting `t RLIKE p` and `RLIKE(t, p)` through the `REGEXP_LIKE` rule.
 pub const RLIKE_PAIR: &str = "rlike_to_regexp_like";
 /// A computed `v[i]` spelled as GET.
 pub const SUBSCRIPT_PAIR: &str = "subscript_to_get";
@@ -954,7 +954,7 @@ pub const SPELLING_PAIRS: &[SpellingPair] = &[
     },
     SpellingPair {
         id: RLIKE_PAIR,
-        source: "t RLIKE p",
+        source: "t RLIKE p, RLIKE(t, p [, flags])",
         canonical: "REGEXP_LIKE(t, p)",
         cases: "fidelity/rlike.toml",
     },
