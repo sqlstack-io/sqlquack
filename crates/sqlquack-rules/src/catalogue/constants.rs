@@ -120,7 +120,7 @@ pub const RULES: &[RuleSpec] = &[
     RuleSpec {
         id: VALUES_ROWS,
         constructs: &["node:values"],
-        conditions: "VALUES rows of one width, as a query or FROM source: the UNION ALL of one SELECT per row, so each column takes the set operation's common type; columns are named COLUMN1, COLUMN2 and so on unless an alias list renames them.",
+        conditions: "VALUES rows of one width, as a query or FROM source: the UNION ALL of one SELECT per row, so each column takes the set operation's common type; columns are named COLUMN1, COLUMN2 and so on unless an alias list renames them. More than 1,000 rows refuse for now.",
         failures: &[],
     },
     RuleSpec {

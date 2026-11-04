@@ -36,6 +36,9 @@ pub(crate) const COLUMNS: &str = "COLUMNS";
 /// The text "COMPOUND", as comparisons test it.
 pub(crate) const COMPOUND: &str = "COMPOUND";
 
+/// The text "CONTACT", as comparisons test it.
+pub(crate) const CONTACT: &str = "CONTACT";
+
 /// The text "DEFINER", as comparisons test it.
 pub(crate) const DEFINER: &str = "DEFINER";
 
@@ -142,6 +145,9 @@ pub(crate) const STATUS: &str = "STATUS";
 
 /// The text "STRUCT", as comparisons test it.
 pub(crate) const STRUCT: &str = "STRUCT";
+
+/// The text "TAG", as comparisons test it.
+pub(crate) const TAG: &str = "TAG";
 
 /// The text "TIME_TO_TIME_STR", as comparisons test it.
 pub(crate) const TIME_TO_TIME_STR: &str = "TIME_TO_TIME_STR";
