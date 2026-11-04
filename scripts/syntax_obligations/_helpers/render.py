@@ -34,7 +34,8 @@ class FormStyle:
     fills override the default placeholder fills; clauses replace `[ KEYWORD ... ]` repeats;
     prefix and suffix make the form text a complete submission (a suffix may hold `{label}`,
     the label the form used, else `default_label`); uses maps a placeholder that names an
-    existing object to the declaration that creates it, so the case is self-contained.
+    existing object to the declaration that creates it, so the case is self-contained; opens
+    names the cursor placeholder whose cursors the block opens before the form runs.
     """
 
     prefix: str
@@ -42,6 +43,7 @@ class FormStyle:
     fills: dict[str, str] = field(default_factory=dict)
     clauses: dict[str, str] = field(default_factory=dict)
     uses: dict[str, str] = field(default_factory=dict)
+    opens: str = ""
     default_label: str = "l0"
     terminate: bool = True
 
@@ -106,7 +108,12 @@ class Renderer:
         suffix: str = self.style.suffix.replace(
             LABEL_SLOT, labels[0] if labels else self.style.default_label
         )
-        whole: str = f"{self.style.prefix}{self._terminated(text)}{suffix}".strip()
+        opened: str = "".join(
+            f"OPEN {name} ; "
+            for name in dict.fromkeys(self._used.get(self.style.opens, []))
+            if name != RESERVED_WORD
+        )
+        whole: str = f"{self.style.prefix}{opened}{self._terminated(text)}{suffix}".strip()
         declarations: str = self._declarations()
         if not declarations:
             return whole
@@ -232,8 +239,12 @@ class Renderer:
             if key in choices.replace:
                 text: str = choices.replace[key]
                 name: str = placeholder_name(node)
-                if name:
+                if text in (RESERVED_WORD, f'"{RESERVED_WORD}"'):
                     self._used.setdefault(name, []).append(text)
+                elif name:
+                    # The wrapper declares the object under its valid name, so a negative
+                    # differs from its positive only in the operand under test.
+                    self._token(node, _Choices())
                 out.append(text)
             elif node.kind == NODE_OPTIONAL:
                 out += self._optional(node, choices, out)

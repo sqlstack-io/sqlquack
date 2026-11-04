@@ -23,6 +23,7 @@ def _block(
     fills: dict[str, str] | None = None,
     clauses: dict[str, str] | None = None,
     uses: dict[str, str] | None = None,
+    opens: str = "",
 ) -> FormStyle:
     return FormStyle(
         prefix=BLOCK_OPEN,
@@ -30,6 +31,7 @@ def _block(
         fills=fills or {},
         clauses=clauses or {},
         uses=uses or {},
+        opens=opens,
     )
 
 
@@ -42,6 +44,7 @@ def _in_loop() -> FormStyle:
 # exception and variable they name, so Snowflake compiles them in full under execute capture.
 # Loops get fills that stop them at once: LOOP's statement is BREAK, WHILE's condition is FALSE
 # and REPEAT's is TRUE. RAISE runs inside a handler, so a raised exception ends the run cleanly.
+# FETCH and CLOSE open their cursor first, since Snowflake refuses an unopened one when it runs.
 SCRIPTING: dict[str, FormStyle] = {
     "sf.scripting.": _block(),
     "sf.scripting.begin": FormStyle(prefix="", suffix=""),
@@ -70,8 +73,10 @@ SCRIPTING: dict[str, FormStyle] = {
     "sf.scripting.open": _block(
         uses={"cursor_name": CURSOR, "bind_variable_1": VARIABLE, "bind_variable_2": VARIABLE}
     ),
-    "sf.scripting.fetch": _block(uses={"cursor_name": CURSOR, "variable": VARIABLE}),
-    "sf.scripting.close": _block(uses={"cursor_name": CURSOR}),
+    "sf.scripting.fetch": _block(
+        uses={"cursor_name": CURSOR, "variable": VARIABLE}, opens="cursor_name"
+    ),
+    "sf.scripting.close": _block(uses={"cursor_name": CURSOR}, opens="cursor_name"),
     "sf.scripting.for.do-end-for": _block(uses={"cursor_name": CURSOR}),
     "sf.scripting.await": _block(uses={"result_set_name": ASYNC_RESULTSET}),
     "sf.scripting.cancel": _block(uses={"result_set_name": ASYNC_RESULTSET}),

@@ -165,3 +165,10 @@ CASE_SESSION: dict[str, object] = {
     "TIMEZONE": "UTC",
     "USE_CACHED_RESULT": False,
 }
+
+# The stage an accepted case reached, by receipt phase; other phases give no stage.
+OBSERVED_STAGE: dict[str, str] = {
+    "accepted": "",
+    "semantic_error": "semantic",
+    "runtime_error": "runtime",
+}
