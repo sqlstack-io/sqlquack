@@ -57334,13 +57334,6 @@ target = "<name>"
 note = "a string literal in place of <name>"
 
 [[obligation]]
-id = "sf.ddl.alter-restricted-session-scope.add-as.o009"
-kind = "required_operand_missing"
-required = true
-target = "<yaml_fragment>"
-note = "omit <yaml_fragment>"
-
-[[obligation]]
 id = "sf.ddl.alter-restricted-session-scope.add-as.o010"
 kind = "operand_type_class"
 required = true
@@ -57400,6 +57393,13 @@ anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
+id = "sf.ddl.alter-restricted-session-scope.add-as.o019"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.alter-restricted-session-scope / Syntax"
+note = "omit <yaml_fragment> ($$$$), observed"
+
+[[obligation]]
 id = "sf.ddl.alter-restricted-session-scope.as.o001"
 kind = "positive"
 required = true
@@ -57451,13 +57451,6 @@ target = "<name>"
 note = "a string literal in place of <name>"
 
 [[obligation]]
-id = "sf.ddl.alter-restricted-session-scope.as.o009"
-kind = "required_operand_missing"
-required = true
-target = "<yaml_definition>"
-note = "omit <yaml_definition>"
-
-[[obligation]]
 id = "sf.ddl.alter-restricted-session-scope.as.o010"
 kind = "negative_neighbour"
 required = true
@@ -57502,6 +57495,13 @@ required = true
 target = "<name>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.ddl.alter-restricted-session-scope.as.o017"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.alter-restricted-session-scope / Syntax"
+note = "omit <yaml_definition> ($$$$), observed"
 
 [[obligation]]
 id = "sf.ddl.alter-restricted-session-scope.remove-as.o001"
@@ -57553,13 +57553,6 @@ kind = "negative_neighbour"
 required = true
 target = "<name>"
 note = "a string literal in place of <name>"
-
-[[obligation]]
-id = "sf.ddl.alter-restricted-session-scope.remove-as.o009"
-kind = "required_operand_missing"
-required = true
-target = "<yaml_fragment>"
-note = "omit <yaml_fragment>"
 
 [[obligation]]
 id = "sf.ddl.alter-restricted-session-scope.remove-as.o010"
@@ -57619,6 +57612,13 @@ required = true
 target = "<name>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.ddl.alter-restricted-session-scope.remove-as.o019"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.alter-restricted-session-scope / Syntax"
+note = "omit <yaml_fragment> ($$$$), observed"
 
 [[obligation]]
 id = "sf.ddl.alter-restricted-session-scope.set.o001"
@@ -96883,13 +96883,6 @@ target = "'<profile_object>' in [ PROFILE = '<profile_object>' ]"
 note = "an unquoted identifier in place of '<profile_object>'"
 
 [[obligation]]
-id = "sf.ddl.create-agent.o031"
-kind = "required_operand_missing"
-required = true
-target = "<specification_object>"
-note = "omit <specification_object>"
-
-[[obligation]]
 id = "sf.ddl.create-agent.o032"
 kind = "operand_type_class"
 required = true
@@ -96965,6 +96958,13 @@ required = true
 target = "<name>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.ddl.create-agent.o044"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.create-agent / Syntax"
+note = "omit <specification_object> ($$$$), observed"
 
 [[obligation]]
 id = "sf.ddl.create-ai-function.as.o001"
@@ -97139,13 +97139,6 @@ target = "'<string_literal>' in [ COMMENT = '<string_literal>' ]"
 note = "an unquoted identifier in place of '<string_literal>'"
 
 [[obligation]]
-id = "sf.ddl.create-ai-function.as.o027"
-kind = "required_operand_missing"
-required = true
-target = "<sql_expression_calling_an_ai_function>"
-note = "omit <sql_expression_calling_an_ai_function>"
-
-[[obligation]]
 id = "sf.ddl.create-ai-function.as.o028"
 kind = "operand_type_class"
 required = true
@@ -97157,12 +97150,6 @@ id = "sf.ddl.create-ai-function.as.o029"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required REPLACE in [ OR REPLACE ]"
-
-[[obligation]]
-id = "sf.ddl.create-ai-function.as.o030"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required AI"
 
 [[obligation]]
 id = "sf.ddl.create-ai-function.as.o031"
@@ -97243,6 +97230,20 @@ required = true
 target = "<arg_name>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.ddl.create-ai-function.as.o043"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.create-ai-function / Syntax"
+note = "the form without its required AI, observed"
+
+[[obligation]]
+id = "sf.ddl.create-ai-function.as.o044"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.create-ai-function / Syntax"
+note = "omit <sql_expression_calling_an_ai_function> ($$$$), observed"
 
 [[obligation]]
 id = "sf.ddl.create-ai-function.from-experiment-run.o001"
@@ -160814,13 +160815,6 @@ target = "<name>"
 note = "a string literal in place of <name>"
 
 [[obligation]]
-id = "sf.ddl.create-mcp-server.o009"
-kind = "required_operand_missing"
-required = true
-target = "<specification_yaml>"
-note = "omit <specification_yaml>"
-
-[[obligation]]
 id = "sf.ddl.create-mcp-server.o010"
 kind = "operand_type_class"
 required = true
@@ -160890,6 +160884,13 @@ required = true
 target = "<name>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.ddl.create-mcp-server.o021"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.create-mcp-server / Syntax"
+note = "omit <specification_yaml> ($$$$), observed"
 
 [[obligation]]
 id = "sf.ddl.create-model-monitor.gateway-function-warehouse-refresh-interval.o001"
@@ -174072,13 +174073,6 @@ target = "'<string_literal>' in [ COMMENT = '<string_literal>' ]"
 note = "an unquoted identifier in place of '<string_literal>'"
 
 [[obligation]]
-id = "sf.ddl.create-restricted-session-scope.or-alter-restricted-session.o012"
-kind = "required_operand_missing"
-required = true
-target = "<yaml_definition>"
-note = "omit <yaml_definition>"
-
-[[obligation]]
 id = "sf.ddl.create-restricted-session-scope.or-alter-restricted-session.o013"
 kind = "negative_neighbour"
 required = true
@@ -174129,6 +174123,13 @@ required = true
 target = "<name>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.ddl.create-restricted-session-scope.or-alter-restricted-session.o021"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.create-restricted-session-scope / Syntax"
+note = "omit <yaml_definition> ($$$$), observed"
 
 [[obligation]]
 id = "sf.ddl.create-restricted-session-scope.restricted-session-scope-rss.o001"
@@ -174215,13 +174216,6 @@ target = "'<string_literal>' in [ COMMENT = '<string_literal>' ]"
 note = "an unquoted identifier in place of '<string_literal>'"
 
 [[obligation]]
-id = "sf.ddl.create-restricted-session-scope.restricted-session-scope-rss.o014"
-kind = "required_operand_missing"
-required = true
-target = "<yaml_definition>"
-note = "omit <yaml_definition>"
-
-[[obligation]]
 id = "sf.ddl.create-restricted-session-scope.restricted-session-scope-rss.o015"
 kind = "negative_neighbour"
 required = true
@@ -174278,6 +174272,13 @@ required = true
 target = "<name>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.ddl.create-restricted-session-scope.restricted-session-scope-rss.o024"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.create-restricted-session-scope / Syntax"
+note = "omit <yaml_definition> ($$$$), observed"
 
 [[obligation]]
 id = "sf.ddl.create-schema.create-or-alter-schema.o001"
@@ -232152,13 +232153,6 @@ required = true
 target = "[ FROM SPECIFICATION $ $ <specification> $ $ ]"
 
 [[obligation]]
-id = "sf.ddl.experiment.create-experiment.o016"
-kind = "required_operand_missing"
-required = true
-target = "<specification> in [ FROM SPECIFICATION $ $ <specification> $ $ ]"
-note = "omit <specification>"
-
-[[obligation]]
 id = "sf.ddl.experiment.create-experiment.o017"
 kind = "operand_type_class"
 required = true
@@ -232216,6 +232210,13 @@ required = true
 target = "<name>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.ddl.experiment.create-experiment.o026"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.experiment / Syntax"
+note = "omit <specification> ($$$$), observed"
 
 [[obligation]]
 id = "sf.ddl.experiment.describe-desc-experiment.o001"

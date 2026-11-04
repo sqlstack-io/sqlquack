@@ -25,6 +25,7 @@ from scripts.syntax_obligations.constants import (
     CONTEXT_PROCEDURE,
     CONTEXT_RAW,
     CONTEXT_TOP,
+    DOLLAR_QUOTE,
     DOUBLE_QUOTE,
     EMPTY_CLAUSE,
     EMPTY_PROPERTY_LIST,
@@ -53,6 +54,7 @@ from scripts.syntax_obligations.constants import (
     REPEAT_SLOT,
     RESERVED_WORD,
     SINGLE_CHARACTER_LITERAL_LENGTH,
+    SINGLE_QUOTE,
     STAGE_GLUES,
     STAGE_KEYWORD,
     STATEMENT_CLASS,
@@ -322,7 +324,8 @@ class _Renderer:
             else:
                 if node.token_kind == TOKEN_KEYWORD:
                     self._keywords.append(node.text.upper())
-                out.append(self._token(node=node, choices=choices))
+                quoted: bool = "".join(out[-2:]).endswith(DOLLAR_QUOTE)
+                out.append(self._token(node=node, choices=choices, dollar_quoted=quoted))
             dangling = _dangling_separator(out=out, emitted=emitted, dangling=dangling, node=node)
         return out
 
@@ -339,7 +342,7 @@ class _Renderer:
             return [",", *before[start + 1 :]]
         return self._sequence(nodes=branch, choices=choices)
 
-    def _token(self, *, node: Node, choices: _Choices) -> str:
+    def _token(self, *, node: Node, choices: _Choices, dollar_quoted: bool = False) -> str:
         if node.token_kind == TOKEN_LITERAL and node.text in self.style.literal_fills:
             return self.style.literal_fills[node.text]
         name: str = placeholder_name(node)
@@ -357,8 +360,18 @@ class _Renderer:
             fill = CLASS_FILL.get(STRING_CLASS if node.token_kind == TOKEN_LITERAL else label, "v1")
         if choices.quote == name and node.token_kind == TOKEN_PLACEHOLDER:
             fill = f'"{fill}Q"' if name in QUOTED_WITHOUT_BLANK_NAMES else f'"{fill} Q"'
+        if dollar_quoted:
+            fill = _dollar_body(fill)
         self._used.setdefault(name, []).append(fill)
         return fill
+
+
+def _dollar_body(fill: str) -> str:
+    """A fill written inside the page's own `$$ … $$`, without its own dollar or single quotes."""
+    for quote in (DOLLAR_QUOTE, SINGLE_QUOTE):
+        if len(fill) > 2 * len(quote) and fill.startswith(quote) and fill.endswith(quote):
+            return fill[len(quote) : -len(quote)].strip()
+    return fill
 
 
 def _stage_glued(text: str) -> str:

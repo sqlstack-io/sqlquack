@@ -12378,3 +12378,164 @@ anchor = "doc.sql.create-table / Syntax"
 sql = "CREATE TABLE v1 ( v1 INT COLLATE m1 ) ;"
 expect = "observe"
 context = "raw"
+
+# DDL: empty dollar-quoted bodies and CREATE AI FUNCTION without AI, observed under D97 (audit 510fb2fd).
+
+[[suppress]]
+form = "sf.ddl.create-ai-function.as"
+kind = "negative_neighbour"
+note = "the form without its required AI"
+reason = "dropping AI leaves a well-formed SQL UDF (CREATE FUNCTION ... AS $$ <expression> $$), so the hand row below observes it instead of scoring a reject"
+
+[[limit]]
+form = "sf.ddl.create-ai-function.as"
+kind = "negative_neighbour"
+note = "the form without its required AI, observed"
+anchor = "doc.sql.create-ai-function / Syntax"
+sql = "CREATE FUNCTION v1 ( ) RETURNS INT AS $$1 $$ ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-restricted-session-scope.add-as"
+kind = "required_operand_missing"
+target = "<yaml_fragment>"
+note = "omit <yaml_fragment>"
+reason = "D97: omitting the body leaves an empty dollar-quoted string, which is well formed, so the hand row below observes it instead of scoring a reject"
+
+[[limit]]
+form = "sf.ddl.alter-restricted-session-scope.add-as"
+kind = "negative_neighbour"
+note = "omit <yaml_fragment> ($$$$), observed"
+anchor = "doc.sql.alter-restricted-session-scope / Syntax"
+sql = "ALTER RESTRICTED SESSION SCOPE v1 ADD AS $$$$ ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-restricted-session-scope.as"
+kind = "required_operand_missing"
+target = "<yaml_definition>"
+note = "omit <yaml_definition>"
+reason = "D97: omitting the body leaves an empty dollar-quoted string, which is well formed, so the hand row below observes it instead of scoring a reject"
+
+[[limit]]
+form = "sf.ddl.alter-restricted-session-scope.as"
+kind = "negative_neighbour"
+note = "omit <yaml_definition> ($$$$), observed"
+anchor = "doc.sql.alter-restricted-session-scope / Syntax"
+sql = "ALTER RESTRICTED SESSION SCOPE v1 AS $$$$ ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-restricted-session-scope.remove-as"
+kind = "required_operand_missing"
+target = "<yaml_fragment>"
+note = "omit <yaml_fragment>"
+reason = "D97: omitting the body leaves an empty dollar-quoted string, which is well formed, so the hand row below observes it instead of scoring a reject"
+
+[[limit]]
+form = "sf.ddl.alter-restricted-session-scope.remove-as"
+kind = "negative_neighbour"
+note = "omit <yaml_fragment> ($$$$), observed"
+anchor = "doc.sql.alter-restricted-session-scope / Syntax"
+sql = "ALTER RESTRICTED SESSION SCOPE v1 REMOVE AS $$$$ ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.create-agent"
+kind = "required_operand_missing"
+target = "<specification_object>"
+note = "omit <specification_object>"
+reason = "D97: omitting the body leaves an empty dollar-quoted string, which is well formed, so the hand row below observes it instead of scoring a reject"
+
+[[limit]]
+form = "sf.ddl.create-agent"
+kind = "negative_neighbour"
+note = "omit <specification_object> ($$$$), observed"
+anchor = "doc.sql.create-agent / Syntax"
+sql = "CREATE AGENT v1 FROM SPECIFICATION $$$$;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.create-ai-function.as"
+kind = "required_operand_missing"
+target = "<sql_expression_calling_an_ai_function>"
+note = "omit <sql_expression_calling_an_ai_function>"
+reason = "D97: omitting the body leaves an empty dollar-quoted string, which is well formed, so the hand row below observes it instead of scoring a reject"
+
+[[limit]]
+form = "sf.ddl.create-ai-function.as"
+kind = "negative_neighbour"
+note = "omit <sql_expression_calling_an_ai_function> ($$$$), observed"
+anchor = "doc.sql.create-ai-function / Syntax"
+sql = "CREATE AI FUNCTION v1 ( ) RETURNS INT AS $$$$ ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.create-mcp-server"
+kind = "required_operand_missing"
+target = "<specification_yaml>"
+note = "omit <specification_yaml>"
+reason = "D97: omitting the body leaves an empty dollar-quoted string, which is well formed, so the hand row below observes it instead of scoring a reject"
+
+[[limit]]
+form = "sf.ddl.create-mcp-server"
+kind = "negative_neighbour"
+note = "omit <specification_yaml> ($$$$), observed"
+anchor = "doc.sql.create-mcp-server / Syntax"
+sql = "CREATE MCP SERVER v1 FROM SPECIFICATION $$$$ ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.create-restricted-session-scope.or-alter-restricted-session"
+kind = "required_operand_missing"
+target = "<yaml_definition>"
+note = "omit <yaml_definition>"
+reason = "D97: omitting the body leaves an empty dollar-quoted string, which is well formed, so the hand row below observes it instead of scoring a reject"
+
+[[limit]]
+form = "sf.ddl.create-restricted-session-scope.or-alter-restricted-session"
+kind = "negative_neighbour"
+note = "omit <yaml_definition> ($$$$), observed"
+anchor = "doc.sql.create-restricted-session-scope / Syntax"
+sql = "CREATE OR ALTER RESTRICTED SESSION SCOPE v1 AS $$$$ ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.create-restricted-session-scope.restricted-session-scope-rss"
+kind = "required_operand_missing"
+target = "<yaml_definition>"
+note = "omit <yaml_definition>"
+reason = "D97: omitting the body leaves an empty dollar-quoted string, which is well formed, so the hand row below observes it instead of scoring a reject"
+
+[[limit]]
+form = "sf.ddl.create-restricted-session-scope.restricted-session-scope-rss"
+kind = "negative_neighbour"
+note = "omit <yaml_definition> ($$$$), observed"
+anchor = "doc.sql.create-restricted-session-scope / Syntax"
+sql = "CREATE RESTRICTED SESSION SCOPE v1 AS $$$$ ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.experiment.create-experiment"
+kind = "required_operand_missing"
+target = "<specification> in [ FROM SPECIFICATION $ $ <specification> $ $ ]"
+note = "omit <specification>"
+reason = "D97: omitting the body leaves an empty dollar-quoted string, which is well formed, so the hand row below observes it instead of scoring a reject"
+
+[[limit]]
+form = "sf.ddl.experiment.create-experiment"
+kind = "negative_neighbour"
+note = "omit <specification> ($$$$), observed"
+anchor = "doc.sql.experiment / Syntax"
+sql = "CREATE EXPERIMENT v1 FROM SPECIFICATION $$$$ ;"
+expect = "observe"
+context = "raw"
