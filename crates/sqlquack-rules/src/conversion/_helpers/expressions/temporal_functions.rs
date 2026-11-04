@@ -577,6 +577,7 @@ pub(crate) fn convert_timezone(
                     .literal
                     .as_deref()
                     .is_some_and(|zone| zone == UTC_ZONE),
+                zone: Some(target.sql.clone()),
                 ..Emitted::new(zone_checked(&zoned.0, &target.sql, log), zoned.1)
             })
         }
