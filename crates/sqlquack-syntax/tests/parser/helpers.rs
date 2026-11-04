@@ -46,6 +46,14 @@ pub(crate) fn projection_at(sql: &str, pointer: &str) -> Value {
         .unwrap_or_default()
 }
 
+/// The value at `pointer` in the faithful Snowflake parse of `sql`, or null.
+pub(crate) fn statement_at(sql: &str, pointer: &str) -> Value {
+    statements(sql, Dialect::Snowflake, CallMode::Faithful)
+        .pointer(pointer)
+        .cloned()
+        .unwrap_or_default()
+}
+
 /// The source text a located parse records for the node at `pointer`, or why there is none.
 pub(crate) fn located_text(sql: &str, pointer: &str) -> Result<String, String> {
     let tree = statements(sql, Dialect::Snowflake, CallMode::FaithfulLocated);

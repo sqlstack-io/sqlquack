@@ -36,6 +36,7 @@ pub fn load_coverage(root: &Path) -> Result<SyntaxCoverage, Vec<String>> {
         reviews: sections.reviews.records,
         unobservable: sections.unobservable.records.0,
         diagnostics: sections.unobservable.records.1,
+        readings: sections.readings.records,
         file_hashes,
     })
 }

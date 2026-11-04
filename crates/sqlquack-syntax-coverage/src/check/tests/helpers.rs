@@ -316,6 +316,16 @@ pub(crate) fn verified_tree(root: &Path) {
         "receipts/run-1.jsonl",
         &format!("{}\n", receipts.join("\n")),
     );
+    write(
+        root,
+        "limits.toml",
+        &format!(
+            "[[reading]]\nform = \"sf.query.select\"\ngrammar_sha256 = \"{SHA_A}\"\n\
+             grammar = [\"SELECT <expr> read as one expression\"]\nreason = \"r\"\n\
+             [[reading]]\nform = \"sf.query.select.top\"\ngrammar_sha256 = \"{SHA_A}\"\n\
+             grammar = [\"SELECT TOP <n> <expr> read as one count\"]\nreason = \"r\"\n"
+        ),
+    );
     review(root);
 }
 
@@ -376,6 +386,22 @@ pub(crate) fn unobservable(root: &Path, obligation: &str, case_id: &str, sql: &s
              construct = \"a construct\"\nreason = \"internal error 603 on every capture\"\n\
              cases = [{{ case_id = \"{case_id}\", sql_sha256 = \"{}\" }}]\n\
              runs = [\"run-1\"]\nprobes = []\n",
+            sha256(sql)
+        ),
+    );
+}
+
+/// Lists `obligation` as never submitted, citing `case_id` with the hash of `sql`, with `runs`.
+pub(crate) fn not_submitted(root: &Path, obligation: &str, case_id: &str, sql: &str, runs: &str) {
+    write(
+        root,
+        "unobservable/query.toml",
+        &format!(
+            "[[unobservable]]\nobligation = \"{obligation}\"\nform = \"sf.query.select\"\n\
+             construct = \"a construct\"\nreason = \"not submitted: held by the capture guard\"\n\
+             cause = \"not_submitted\"\n\
+             cases = [{{ case_id = \"{case_id}\", sql_sha256 = \"{}\" }}]\n\
+             runs = [{runs}]\nprobes = []\n",
             sha256(sql)
         ),
     );

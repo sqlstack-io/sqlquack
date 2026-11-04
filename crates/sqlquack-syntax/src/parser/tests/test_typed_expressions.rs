@@ -99,6 +99,12 @@ fn given_a_typed_expression_with_a_malformed_type_when_parsing_then_the_statemen
             expected_error: "Unexpected token after data type",
         },
         ParseErrorTestCase {
+            description: "a reserved word as the type fails first in Snowflake",
+            dialect: Some(DialectType::Snowflake),
+            sql: "SELECT __polyglot_typed(amount, 'NOT A TYPE (') FROM orders",
+            expected_error: "Reserved word NOT cannot be an unquoted type name",
+        },
+        ParseErrorTestCase {
             description: "a type with trailing tokens fails",
             dialect: Some(DialectType::DuckDB),
             sql: "SELECT __polyglot_typed(amount, 'BIGINT extra') FROM orders",

@@ -729,9 +729,9 @@ impl Parser {
             ));
         };
         let if_exists = self.match_keywords(&[TokenType::If, TokenType::Exists]);
-        let name = self.parse_table_ref()?;
+        let name = self.parse_object_name_ref()?;
         let rename_to = if self.match_keywords(&[TokenType::Rename, TokenType::To]) {
-            Some(self.parse_table_ref()?)
+            Some(self.parse_object_name_ref()?)
         } else {
             None
         };
@@ -1821,6 +1821,7 @@ impl Parser {
 
         let recursive = self.match_token(TokenType::Recursive);
         let mut ctes: Vec<Cte> = Vec::new();
+        let mut has_procedure = false;
 
         loop {
             let cte_start = self.current;
@@ -1844,11 +1845,39 @@ impl Parser {
                 Vec::new()
             };
 
-            let cte_comments = if self.match_token(TokenType::As) {
+            let has_as = self.match_token(TokenType::As);
+            let cte_comments = if has_as {
                 self.previous_trailing_comments().to_vec()
             } else {
                 Vec::new()
             };
+            if matches!(
+                self.config.dialect,
+                Some(crate::tokens::models::DialectType::Snowflake)
+            ) {
+                self.reject_reserved_name_part(&name)?;
+                if !has_as {
+                    return Err(self.parse_error("Expected AS before the CTE body"));
+                }
+            }
+            if has_as && columns.is_empty() && self.at_anonymous_procedure() {
+                let procedure = self.parse_anonymous_procedure(&name)?;
+                has_procedure = true;
+                ctes.push(Cte {
+                    alias: name,
+                    this: procedure,
+                    columns,
+                    materialized: None,
+                    key_expressions,
+                    alias_first: true,
+                    comments: cte_comments,
+                    span: self.source_range(cte_start),
+                });
+                if self.match_token(TokenType::Comma) {
+                    continue;
+                }
+                break;
+            }
 
             let materialized = if self.match_token(TokenType::Materialized) {
                 Some(true)
@@ -1901,69 +1930,14 @@ impl Parser {
 
         let search = self.parse_recursive_with_search()?;
 
-        let mut main_query = self.parse_statement()?;
-
-        loop {
-            match main_query {
-                Expression::Paren(paren) => {
-                    main_query = paren.this;
-                }
-                Expression::Subquery(ref sub)
-                    if sub.alias.is_none()
-                        && sub.order_by.is_none()
-                        && sub.limit.is_none()
-                        && sub.offset.is_none() =>
-                {
-                    if let Expression::Subquery(sub) = main_query {
-                        main_query = sub.this;
-                    } else {
-                        break;
-                    }
-                }
-                _ => break,
-            }
-        }
-
-        let with_clause = With {
-            ctes,
-            recursive,
-            leading_comments,
-            search,
-        };
-        match &mut main_query {
-            Expression::Select(ref mut select) => {
-                select.with = Some(with_clause);
-            }
-            Expression::Union(ref mut union) => {
-                union.with = Some(with_clause);
-            }
-            Expression::Intersect(ref mut intersect) => {
-                intersect.with = Some(with_clause);
-            }
-            Expression::Except(ref mut except) => {
-                except.with = Some(with_clause);
-            }
-            Expression::Update(ref mut update) => {
-                update.with = Some(with_clause);
-            }
-            Expression::Insert(ref mut insert) => {
-                insert.with = Some(with_clause);
-            }
-            Expression::Delete(ref mut delete) => {
-                delete.with = Some(with_clause);
-            }
-            Expression::CreateTable(ref mut ct) => {
-                ct.with_cte = Some(with_clause);
-            }
-            Expression::Pivot(ref mut pivot) => {
-                pivot.with = Some(with_clause);
-            }
-            Expression::Merge(ref mut merge) => {
-                merge.with_ = Some(Box::new(Expression::With(Box::new(with_clause))));
-            }
-            _ => {}
-        }
-
-        Ok(main_query)
+        self.parse_with_statement(
+            With {
+                ctes,
+                recursive,
+                leading_comments,
+                search,
+            },
+            has_procedure,
+        )
     }
 }
