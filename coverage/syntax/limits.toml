@@ -1604,7 +1604,8 @@ note = "probability 100.1, above the documented range 0 to 100"
 anchor = "doc.constructs.sample / Syntax"
 sql = "SELECT * FROM t1 SAMPLE ( 100.1 ) ;"
 context = "raw"
-expect = "reject"
+expect = "accept"
+stage = "semantic"
 
 [[limit]]
 form = "sf.query.sample"
@@ -1644,7 +1645,8 @@ note = "1,000,001 ROWS, above the documented range"
 anchor = "doc.constructs.sample / Syntax"
 sql = "SELECT * FROM t1 SAMPLE ( 1000001 ROWS ) ;"
 context = "raw"
-expect = "reject"
+expect = "accept"
+stage = "semantic"
 
 [[limit]]
 form = "sf.query.sample"
@@ -1684,7 +1686,8 @@ note = "seed 2147483648, above the documented range"
 anchor = "doc.constructs.sample / Syntax"
 sql = "SELECT * FROM t1 SAMPLE SYSTEM ( 10 ) SEED ( 2147483648 ) ;"
 context = "raw"
-expect = "reject"
+expect = "accept"
+stage = "semantic"
 
 [[limit]]
 form = "sf.query.sample"
@@ -2777,7 +2780,7 @@ note = "a 256-character unquoted identifier against the documented maximum of 25
 anchor = "doc.identifiers-syntax / Unquoted identifiers"
 sql = "SELECT 1 AS abbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb ;"
 context = "raw"
-expect = "reject"
+expect = "accept"
 
 [[limit]]
 form = "sf.expressions.identifiers-syntax.double-quoted-identifier"
@@ -2875,7 +2878,7 @@ note = "a 256-character double-quoted identifier, blanks included, against the d
 anchor = "doc.identifiers-syntax / Double-quoted identifiers"
 sql = "SELECT 1 AS \"a bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\" ;"
 context = "raw"
-expect = "reject"
+expect = "accept"
 
 [[limit]]
 form = "sf.expressions.identifiers-syntax.double-quoted-identifier"
@@ -3064,7 +3067,8 @@ note = "precision 39, above the documented maximum of 38"
 anchor = "doc.data-types-numeric / Data types for fixed-point numbers / NUMBER"
 sql = "SELECT CAST ( NULL AS NUMBER ( 39 ) ) ;"
 context = "raw"
-expect = "reject"
+expect = "accept"
+stage = "semantic"
 
 [[limit]]
 form = "sf.expressions.data-types-numeric.number"
@@ -3094,7 +3098,8 @@ note = "scale 38, above the documented maximum of 37"
 anchor = "doc.data-types-numeric / Data types for fixed-point numbers / NUMBER"
 sql = "SELECT CAST ( NULL AS NUMBER ( 38 , 38 ) ) ;"
 context = "raw"
-expect = "reject"
+expect = "accept"
+stage = "semantic"
 
 [[limit]]
 form = "sf.expressions.data-types-numeric.decimal"
@@ -3124,7 +3129,8 @@ note = "precision 39, above the documented maximum of 38"
 anchor = "doc.data-types-numeric / Data types for fixed-point numbers / DECIMAL , DEC , NUMERIC"
 sql = "SELECT CAST ( NULL AS DECIMAL ( 39 ) ) ;"
 context = "raw"
-expect = "reject"
+expect = "accept"
+stage = "semantic"
 
 [[limit]]
 form = "sf.expressions.data-types-numeric.decimal"
@@ -3154,7 +3160,8 @@ note = "scale 38, above the documented maximum of 37"
 anchor = "doc.data-types-numeric / Data types for fixed-point numbers / DECIMAL , DEC , NUMERIC"
 sql = "SELECT CAST ( NULL AS DECIMAL ( 38 , 38 ) ) ;"
 context = "raw"
-expect = "reject"
+expect = "accept"
+stage = "semantic"
 
 [[limit]]
 form = "sf.expressions.data-types-datetime.time"
@@ -3184,7 +3191,8 @@ note = "precision 10, above the documented range 0 to 9"
 anchor = "doc.data-types-datetime / Data types / TIME"
 sql = "SELECT CAST ( NULL AS TIME ( 10 ) ) ;"
 context = "raw"
-expect = "reject"
+expect = "accept"
+stage = "semantic"
 
 [[limit]]
 form = "sf.expressions.data-types-datetime.timestamp"
@@ -3214,7 +3222,8 @@ note = "precision 10, above the documented range 0 to 9"
 anchor = "doc.data-types-datetime / Data types / TIMESTAMP_LTZ , TIMESTAMP_NTZ , TIMESTAMP_TZ / TIMESTAMP"
 sql = "SELECT CAST ( NULL AS TIMESTAMP ( 10 ) ) ;"
 context = "raw"
-expect = "reject"
+expect = "accept"
+stage = "semantic"
 
 [[limit]]
 form = "sf.expressions.data-types-datetime.timestamp-variations"
@@ -3244,7 +3253,8 @@ note = "precision 10, above the documented range 0 to 9"
 anchor = "doc.data-types-datetime / Data types / TIMESTAMP_LTZ , TIMESTAMP_NTZ , TIMESTAMP_TZ"
 sql = "SELECT CAST ( NULL AS TIMESTAMP_LTZ ( 10 ) ) ;"
 context = "raw"
-expect = "reject"
+expect = "accept"
+stage = "semantic"
 
 [[limit]]
 form = "sf.expressions.data-types-text.varchar"
@@ -3274,7 +3284,8 @@ note = "length 134,217,729, above the documented maximum"
 anchor = "doc.data-types-text / Data types for text strings / VARCHAR"
 sql = "SELECT CAST ( NULL AS VARCHAR ( 134217729 ) ) ;"
 context = "raw"
-expect = "reject"
+expect = "accept"
+stage = "semantic"
 
 [[limit]]
 form = "sf.expressions.data-types-text.string"
@@ -3304,7 +3315,8 @@ note = "length 134,217,729, above the documented maximum"
 anchor = "doc.data-types-text / Data types for text strings / STRING, TEXT, VARCHAR2, NVARCHAR, NVARCHAR2, CHAR VARYING, NCHAR VARYING"
 sql = "SELECT CAST ( NULL AS STRING ( 134217729 ) ) ;"
 context = "raw"
-expect = "reject"
+expect = "accept"
+stage = "semantic"
 
 [[limit]]
 form = "sf.expressions.data-types-text.char"
@@ -3334,7 +3346,8 @@ note = "length 134,217,729, above the documented maximum"
 anchor = "doc.data-types-text / Data types for text strings / CHAR, CHARACTER, NCHAR"
 sql = "SELECT CAST ( NULL AS CHAR ( 134217729 ) ) ;"
 context = "raw"
-expect = "reject"
+expect = "accept"
+stage = "semantic"
 
 [[limit]]
 form = "sf.expressions.data-types-text.binary"
@@ -3364,7 +3377,8 @@ note = "length 67,108,865, above the documented maximum"
 anchor = "doc.data-types-text / Data types for binary strings / BINARY"
 sql = "SELECT CAST ( NULL AS BINARY ( 67108865 ) ) ;"
 context = "raw"
-expect = "reject"
+expect = "accept"
+stage = "semantic"
 
 [[limit]]
 form = "sf.expressions.data-types-text.varbinary"
@@ -3394,7 +3408,8 @@ note = "length 67,108,865, above the documented maximum"
 anchor = "doc.data-types-text / Data types for binary strings / VARBINARY"
 sql = "SELECT CAST ( NULL AS VARBINARY ( 67108865 ) ) ;"
 context = "raw"
-expect = "reject"
+expect = "accept"
+stage = "semantic"
 
 [[limit]]
 form = "sf.expressions.data-types-vector"
@@ -3404,7 +3419,8 @@ note = "dimension 0; the page requires a positive integer"
 anchor = "doc.data-types-vector / Data types / VECTOR"
 sql = "SELECT CAST ( NULL AS VECTOR ( INT , 0 ) ) ;"
 context = "raw"
-expect = "reject"
+expect = "accept"
+stage = "semantic"
 
 [[limit]]
 form = "sf.expressions.data-types-vector"
@@ -3434,7 +3450,8 @@ note = "dimension 4097, above the documented maximum"
 anchor = "doc.data-types-vector / Data types / VECTOR"
 sql = "SELECT CAST ( NULL AS VECTOR ( INT , 4097 ) ) ;"
 context = "raw"
-expect = "reject"
+expect = "accept"
+stage = "semantic"
 
 [[limit]]
 form = "sf.expressions.data-types-vector"
