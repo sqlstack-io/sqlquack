@@ -5394,3 +5394,126 @@ anchor = "doc.sql.execute-dcm-project / Syntax"
 sql = "EXECUTE DCM PROJECT v1 PREVIEW v1 USING CONFIGURATION v1 FROM 'm' LIMIT 'x' ;"
 expect = "observe"
 context = "raw"
+
+# DDL readings.
+
+[[reading]]
+form = "sf.ddl.alter-dynamic-table.set"
+grammar_sha256 = "2bc0f876b26c5d0bfca8a2aa9712af1cf6ec0d3e85212abc36eae6eb0f853e01"
+grammar = ["ALTER DYNAMIC TABLE [ IF EXISTS ] <name> SET [ TARGET_LAG = { '<num> { seconds | minutes | hours | days }' | DOWNSTREAM } ] [ SCHEDULER = DISABLE | ENABLE ] [ WAREHOUSE = <warehouse_name> ] [ INITIALIZATION_WAREHOUSE = <warehouse_name> ] [ DATA_RETENTION_TIME_IN_DAYS = <integer> ] [ MAX_DATA_EXTENSION_TIME_IN_DAYS = <integer> ] [ DEFAULT_DDL_COLLATION = '<collation_specification>' ] [ LOG_LEVEL = '<log_level>' ] [ CONTACT ( <purpose> = <contact_name> [ , <purpose> = <contact_name> ... ] ) ] [ FROZEN WHERE ( <expr> ) ] [ EXECUTE AS USER <user_name> [ USE SECONDARY ROLES { ALL | NONE | <role> [ , ... ] } ] ] [ ROW_TIMESTAMP = { TRUE | FALSE } ]"]
+reason = "the page writes the optional properties as `[ TARGET_LAG = ... ], [ SCHEDULER = ... ], ...`; read blank-separated, as the page's examples (ALTER DYNAMIC TABLE my_dynamic_table SET TARGET_LAG = '1 hour') and every other ALTER ... SET write them; a hand row observes the page's commas"
+
+[[limit]]
+form = "sf.ddl.alter-dynamic-table.set"
+kind = "positive"
+note = "the page's own comma between two properties"
+anchor = "doc.sql.alter-dynamic-table / Syntax"
+sql = "ALTER DYNAMIC TABLE t1 SET TARGET_LAG = '1 minute' , WAREHOUSE = w1 ;"
+expect = "observe"
+context = "raw"
+
+[[reading]]
+form = "sf.ddl.alter-dynamic-table.unset"
+grammar_sha256 = "0db5bea1dcbf8a7bb813c7142d5bbd54216e20d9e4635b9d374e392513d854c4"
+grammar = ["ALTER DYNAMIC TABLE [ IF EXISTS ] <name> UNSET { INITIALIZATION_WAREHOUSE | DATA_RETENTION_TIME_IN_DAYS | MAX_DATA_EXTENSION_TIME_IN_DAYS | DEFAULT_DDL_COLLATION | LOG_LEVEL | CONTACT <purpose> | FROZEN WHERE | EXECUTE AS USER | ROW_TIMESTAMP }"]
+reason = "the page lists `[ INITIALIZATION_WAREHOUSE ], [ DATA_RETENTION_TIME_IN_DAYS ], ... [ ROW_TIMESTAMP ],` with a trailing comma; read as one property per statement, as the page's example (ALTER DYNAMIC TABLE my_dynamic_table UNSET FROZEN WHERE) does; a hand row observes two comma-separated properties"
+
+[[limit]]
+form = "sf.ddl.alter-dynamic-table.unset"
+kind = "positive"
+note = "two properties separated by the page's comma"
+anchor = "doc.sql.alter-dynamic-table / Syntax"
+sql = "ALTER DYNAMIC TABLE t1 UNSET LOG_LEVEL , ROW_TIMESTAMP ;"
+expect = "observe"
+context = "raw"
+
+[[reading]]
+form = "sf.ddl.create-database-catalog-linked"
+grammar_sha256 = "73e9a261761c4461aeffb353ebb25bf81bc71137ed4242e1b0135d011db34a5d"
+grammar = ["CREATE DATABASE <name> LINKED_CATALOG = ( catalogParams ) [ EXTERNAL_VOLUME = '<external_vol>' ] [ COMMENT = '<string_literal>' ] [ [ WITH ] TAG ( <tag_name> = '<tag_value>' [ , <tag_name> = '<tag_value>' , ... ] ) ] [ CATALOG_CASE_SENSITIVITY = { CASE_SENSITIVE | CASE_INSENSITIVE } ] [ WITH CONTACT ( <purpose> = <contact_name> [ , <purpose> = <contact_name> ... ] ) ]"]
+reason = "the page writes `LINKED_CATALOG = ( catalogParams ),` with a comma before the next optional property; properties are blank-separated, as in the page's examples"
+
+[[reading]]
+form = "sf.ddl.alter-schema.set"
+grammar_sha256 = "be5a5a260e8466bd4cb5a1c671b4c47b1a112f2792a5773098703ce335b60193"
+grammar = ["ALTER SCHEMA [ IF EXISTS ] <name> SET { [ DATA_RETENTION_TIME_IN_DAYS = <integer> ] [ MAX_DATA_EXTENSION_TIME_IN_DAYS = <integer> ] [ STAGE_UNDROP_RETENTION_TIME_IN_DAYS = <integer> ] [ EXTERNAL_VOLUME = <external_volume_name> ] [ CATALOG = <catalog_integration_name> ] [ ICEBERG_DEFAULT_DDL_COLLATION = '<collation_specification>' ] [ ICEBERG_VERSION_DEFAULT = <integer> ] [ ICEBERG_MERGE_ON_READ_BEHAVIOR = { 'AUTO' | 'ENABLED' | 'DISABLED' } ] [ ENABLE_ICEBERG_MERGE_ON_READ = { TRUE | FALSE } ] [ REPLACE_INVALID_CHARACTERS = { TRUE | FALSE } ] [ DEFAULT_DDL_COLLATION = '<collation_specification>' ] [ DEFAULT_NOTEBOOK_COMPUTE_POOL_CPU = '<compute_pool_name>' ] [ DEFAULT_NOTEBOOK_COMPUTE_POOL_GPU = '<compute_pool_name>' ] [ LOG_LEVEL = '<log_level>' ] [ TRACE_LEVEL = '<trace_level>' ] [ STORAGE_SERIALIZATION_POLICY = { COMPATIBLE | OPTIMIZED } ] [ CLASSIFICATION_PROFILE = '<profile_name>' ] [ COMMENT = '<string_literal>' ] [ CATALOG_SYNC = '<snowflake_open_catalog_integration_name>' ] [ REPLICABLE_WITH_FAILOVER_GROUPS = { 'YES' | 'NO' } ] [ BASE_LOCATION_PREFIX = '<string>'] [ DEFAULT_STREAMLIT_NOTEBOOK_WAREHOUSE = '<warehouse_name>'] [ CONTACT <purpose> = <contact_name> [ , <purpose> = <contact_name> ... ] ] [ OBJECT_VISIBILITY = PRIVILEGED ] [ ENABLE_DATA_COMPACTION = { TRUE | FALSE } ] [ OAUTH_AUTHORIZATION_SERVER = <integration_name> ] [ OAUTH_SCOPES_SUPPORTED = '<comma_separated_scopes>' ] }"]
+reason = "the page's `[ OBJECT_VISIBILITY = PRIVILEGED } ]` has a stray `}` with no opening brace; read without it"
+
+[[reading]]
+form = "sf.ddl.show-snapshot-sets"
+grammar_sha256 = "9b194eb9c775c355011c967b5b3d7879c767d4378bac3e410f239f354614cc45"
+grammar = ["SHOW SNAPSHOT SETS [ LIKE '<pattern>' ] [ IN { ACCOUNT | DATABASE | DATABASE <db_name> | SCHEMA | SCHEMA <schema_name> } ] [ STARTS WITH '<name_string>' ] [ LIMIT <rows> [ FROM '<name_string>' ] ]"]
+reason = "the page's `[ IN { ... }` lacks its closing `]`; read closed before STARTS WITH, as every other SHOW command's IN clause"
+
+[[reading]]
+form = "sf.ddl.show-streamlits"
+grammar_sha256 = "beb5b2277c98ca9c20086a8eebc60227fa7c89f2a17e15ad7a928f74006d042d"
+grammar = ["SHOW [ TERSE ] STREAMLITS [ LIKE '<pattern>' ] [ IN { ACCOUNT | DATABASE | DATABASE <db_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> } ] [ LIMIT <rows> [ FROM '<name_string>' ] ]"]
+reason = "the page writes `SCHEMA SCHEMA <schema_name> | <schema_name> | }`, a doubled SCHEMA and an empty last alternative, and leaves `[ LIMIT ...` unclosed; read as SHOW's usual `SCHEMA | SCHEMA <schema_name> | <schema_name>` with LIMIT closed"
+
+[[reading]]
+form = "sf.ddl.show-workspaces"
+grammar_sha256 = "4b0f0ed0791bd34faee775393c38bbe90968c71c50139d052476c0ff75912b7f"
+grammar = ["SHOW WORKSPACES [ LIKE '<pattern>' ] [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> } ]"]
+reason = "the page's `[ IN { ... }` lacks its closing `]`; read closed"
+
+[[reading]]
+form = "sf.ddl.alter-external-table.add-files"
+grammar_sha256 = "d24b1f900545c078d82dfc2cbf2576d0140c60766ea9bc28909f8927a641b586"
+grammar = ["ALTER EXTERNAL TABLE [ IF EXISTS ] <name> ADD FILES ( '<path>/[<filename>]' [ , ... ] )"]
+reason = "the page's `[ , '<path>/[<filename>'] ]` misplaces the closing quote; read as a comma-separated list of '<path>/[<filename>]' strings"
+
+[[reading]]
+form = "sf.ddl.create-image-repository"
+grammar_sha256 = "d215973d04763991b1b345698c5c53890d809430482707e79176d4560d1931eb"
+grammar = ["CREATE [ OR REPLACE ] IMAGE REPOSITORY [ IF NOT EXISTS ] <name> [ ENCRYPTION = ( { TYPE = 'SNOWFLAKE_FULL' | TYPE = 'SNOWFLAKE_SSE' } ) ] [ COMMENT = '<string_literal>' ] [ [ WITH ] TAG ( <tag_name> = '<tag_value>' [ , <tag_name> = '<tag_value>' , ... ] ) ]"]
+reason = "the two TYPE alternatives inside ENCRYPTION = ( ... ) are braced so the choice stays inside the parentheses"
+
+[[reading]]
+form = "sf.ddl.create-iceberg-table-rest.table-as-select"
+grammar_sha256 = "b784f1e0d8bcf19a75bc0b443551b103336c04f86768e3203b7f2205df2af2d5"
+grammar = ["CREATE [ OR REPLACE ] ICEBERG TABLE <table_name> [ ( <col_name> [ <col_type> ] , <col_name> [ <col_type> ] , ... ) ] [ ... ] [ PURGE ] AS <query>"]
+reason = "the page writes `AS SELECT <query>`, where <query> is itself a SELECT; read as `AS <query>`, as CREATE TABLE ... AS <query> does"
+
+[[reading]]
+form = "sf.ddl.create-iceberg-table-rest.table-masking-policy-as"
+grammar_sha256 = "08d8f6112b38abd230bad0849c9ecc354f47511f35d3d99ef3c2166e88a2eca4"
+grammar = ["CREATE [ OR REPLACE ] ICEBERG TABLE <table_name> ( <col1> <data_type> [ WITH ] MASKING POLICY <policy_name> [ , ... ] ) [ ... ] [ PURGE ] AS <query>"]
+reason = "the page writes `AS SELECT <query>`, where <query> is itself a SELECT; read as `AS <query>`, as CREATE TABLE ... AS <query> does"
+
+[[reading]]
+form = "sf.ddl.create-iceberg-table-snowflake.table-masking-policy-row"
+grammar_sha256 = "0ad61355b8e26428463e8c652df71bf9205b1d9aaf92985eb5cb5e4ee5da957e"
+grammar = ["CREATE ICEBERG TABLE <table_name> ( <col1> <data_type> [ DEFAULT <col_default> ] [ WITH ] MASKING POLICY <policy_name> [ , ... ] ) [ EXTERNAL_VOLUME = '<external_volume_name>' ] [ CATALOG = 'SNOWFLAKE' ] [ BASE_LOCATION = '<directory_for_table_files>' ] [ ICEBERG_VERSION = <integer> ] [ ICEBERG_MERGE_ON_READ_BEHAVIOR = { 'AUTO' | 'ENABLED' | 'DISABLED' } ] [ ENABLE_ICEBERG_MERGE_ON_READ = { TRUE | FALSE } ] [ WITH ] ROW ACCESS POLICY <policy_name> ON ( <col1> [ , ... ] ) [ ... ] AS <query>"]
+reason = "the page writes `AS SELECT <query>`, where <query> is itself a SELECT; read as `AS <query>`, as CREATE TABLE ... AS <query> does"
+
+[[reading]]
+form = "sf.ddl.create-iceberg-table.table-as-select"
+grammar_sha256 = "8e60e2f7999d9d203247552cf4bd98176db9ca038a84a19d26bba84a5e5d115d"
+grammar = ["CREATE [ OR REPLACE ] [ TRANSIENT ] ICEBERG TABLE <table_name> [ ( <col_name> [ <col_type> ] [ DEFAULT <col_default> ] , <col_name> [ <col_type> ] [ DEFAULT <col_default> ] , ... ) ] [ CLUSTER BY ( <expr> [ , <expr> , ... ] ) ] [ EXTERNAL_VOLUME = '<external_volume_name>' ] [ CATALOG = 'SNOWFLAKE' ] [ BASE_LOCATION = '<relative_path_from_external_volume>' ] [ COPY GRANTS ] [ COPY TAGS ] [ COPY = ( { COMMENTS | TAGS | GRANTS } [ , ... ] ) ] [ ICEBERG_VERSION = <integer> ] [ ICEBERG_MERGE_ON_READ_BEHAVIOR = { 'AUTO' | 'ENABLED' | 'DISABLED' } ] [ ENABLE_ICEBERG_MERGE_ON_READ = { TRUE | FALSE } ] [ ... ] AS <query>"]
+reason = "the page writes `AS SELECT <query>`, where <query> is itself a SELECT; read as `AS <query>`, as CREATE TABLE ... AS <query> does"
+
+[[suppress]]
+form = "sf.ddl.create-dynamic-table.create-dynamic-iceberg-table"
+kind = "nesting_depth"
+reason = "the statement operand (a DML statement in REFRESH USING, a COPY statement in a pipe) is one statement of a fixed kind and does not nest; nesting inside it belongs to the DML family"
+
+[[suppress]]
+form = "sf.ddl.create-dynamic-table.create-dynamic-table-target-lag"
+kind = "nesting_depth"
+reason = "the statement operand (a DML statement in REFRESH USING, a COPY statement in a pipe) is one statement of a fixed kind and does not nest; nesting inside it belongs to the DML family"
+
+[[suppress]]
+form = "sf.ddl.create-dynamic-table.create-or-alter-dynamic"
+kind = "nesting_depth"
+reason = "the statement operand (a DML statement in REFRESH USING, a COPY statement in a pipe) is one statement of a fixed kind and does not nest; nesting inside it belongs to the DML family"
+
+[[suppress]]
+form = "sf.ddl.create-pipe.create-or-alter-pipe"
+kind = "nesting_depth"
+reason = "the statement operand (a DML statement in REFRESH USING, a COPY statement in a pipe) is one statement of a fixed kind and does not nest; nesting inside it belongs to the DML family"
+
+[[suppress]]
+form = "sf.ddl.create-pipe.create-pipe-as"
+kind = "nesting_depth"
+reason = "the statement operand (a DML statement in REFRESH USING, a COPY statement in a pipe) is one statement of a fixed kind and does not nest; nesting inside it belongs to the DML family"

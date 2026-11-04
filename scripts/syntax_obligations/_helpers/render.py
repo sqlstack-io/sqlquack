@@ -26,7 +26,9 @@ from scripts.syntax_obligations.constants import (
     CONTEXT_RAW,
     CONTEXT_TOP,
     DOUBLE_QUOTE,
+    EMPTY_PROPERTY_LIST,
     EXPECT_ACCEPT,
+    EXPECT_OBSERVE,
     EXPECT_REJECT,
     FAMILY_STYLES,
     GLUED_INFIX_LEFT,
@@ -125,7 +127,9 @@ class _Renderer:
                 )
             ]
         text: str = self.text(production=spec.production, choices=self._choices(spec))
-        return [Rendered(self.wrap(text), spec.expect, spec.stage)]
+        sql: str = self.wrap(text)
+        empty: bool = self.style.observe_empty_properties and bool(EMPTY_PROPERTY_LIST.search(sql))
+        return [Rendered(sql, EXPECT_OBSERVE if empty else spec.expect, spec.stage)]
 
     def wrap(self, text: str) -> str:
         """Prefix, opened cursors, text and suffix (`{label}` filled), after the declarations."""

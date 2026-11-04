@@ -60,6 +60,7 @@ class FormStyle:
     default_label: str = "l0"
     terminate: bool = True
     embedded: bool = False
+    observe_empty_properties: bool = False
 
 
 @dataclass(frozen=True)

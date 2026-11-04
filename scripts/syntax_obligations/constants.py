@@ -373,6 +373,7 @@ STAGE_GLUES: tuple[re.Pattern[str], ...] = (
     re.compile(STAGE_TOKEN + r"/) (?![a-z]+:)(?=[a-z0-9\"'])"),
 )
 STAGE_KEYWORD: re.Pattern[str] = re.compile(r"(?<![^ ])(@[^ ]*?[%.]|@)([A-Z][A-Z0-9_]*)(?=[ ;]|$)")
+EMPTY_PROPERTY_LIST: re.Pattern[str] = re.compile(r"\b(?:SET|UNSET) ;$")
 GLUED_INFIX_RIGHT: re.Pattern[str] = re.compile(r"(?<![^ ])! (?=[A-Za-z_\"'])")
 GLUED_INFIX_LEFT: re.Pattern[str] = re.compile(r"(?<=[\w\"')]) !(?=[ A-Za-z_\"'])")
 QUERY_FORMS: tuple[str, ...] = ("sf.query.constructs",)
@@ -961,7 +962,13 @@ FAMILY_STYLES: dict[str, dict[str, FormStyle]] = {
         "sf.dml.": FormStyle(prefix="", suffix="", fills=DML_FILLS, literal_fills=DML_LITERAL_FILLS)
     },
     "ddl": {
-        "sf.ddl.": FormStyle(prefix="", suffix="", fills=DDL_FILLS, literal_fills=DDL_LITERAL_FILLS)
+        "sf.ddl.": FormStyle(
+            prefix="",
+            suffix="",
+            fills=DDL_FILLS,
+            literal_fills=DDL_LITERAL_FILLS,
+            observe_empty_properties=True,
+        )
     },
     "utility": {
         "sf.utility.": FormStyle(
