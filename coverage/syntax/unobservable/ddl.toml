@@ -41802,6 +41802,343 @@ runs = []
 probes = []
 
 [[unobservable]]
+obligation = "sf.ddl.create-streamlit.define-streamlit.o005"
+form = "sf.ddl.create-streamlit.define-streamlit"
+construct = "option_present: DEFINE STREAMLIT d1.s1.v1 FROM 'asset://a1/' MAIN_FILE = 'm' QUERY_WAREHOUSE = v1 RUNTIME_NAME = 'm' COMPUTE_POOL = v1 COMMENT = 'm' TITLE = 'm' IMPORTS = ( 'm' , 'm' ) EXTERNAL_ACCESS_INTEGRATIONS = ( i1 , i1 ) SECRETS = ( 'm' = d1.s1.v1 , 'm' = d1.s1.v1 ) ;"
+reason = "not submitted: held by capture guard f187c2c in the define-stage packet udq-08.jsonl: billable or out-of-account: compute pool or service"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.create-streamlit.define-streamlit.kd5fc596eaaca", sql_sha256 = "d5fc596eaaca94b885013dde68a1dc15ab1926e48a043a835741aa81caebc2e1" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.create-streamlit.define-streamlit.o007"
+form = "sf.ddl.create-streamlit.define-streamlit"
+construct = "option_present: DEFINE STREAMLIT d1.s1.v1 FROM 'asset://a1/' MAIN_FILE = 'm' QUERY_WAREHOUSE = v1 RUNTIME_NAME = 'm' COMPUTE_POOL = v1 COMMENT = 'm' TITLE = 'm' IMPORTS = ( 'm' , 'm' ) EXTERNAL_ACCESS_INTEGRATIONS = ( i1 , i1 ) SECRETS = ( 'm' = d1.s1.v1 , 'm' = d1.s1.v1 ) ;"
+reason = "not submitted: held by capture guard f187c2c in the define-stage packet udq-08.jsonl: billable or out-of-account: compute pool or service"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.create-streamlit.define-streamlit.kd5fc596eaaca", sql_sha256 = "d5fc596eaaca94b885013dde68a1dc15ab1926e48a043a835741aa81caebc2e1" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.create-streamlit.define-streamlit.o010"
+form = "sf.ddl.create-streamlit.define-streamlit"
+construct = "a valid string_literal: DEFINE STREAMLIT d1.s1.v1 FROM 'asset://a1/' MAIN_FILE = 'm' QUERY_WAREHOUSE = v1 RUNTIME_NAME = 'm' COMPUTE_POOL = v1 COMMENT = 'm' TITLE = 'm' IMPORTS = ( 'm' , 'm' ) EXTERNAL_ACCESS_INTEGRATIONS = ( i1 , i1 ) SECRETS = ( 'm' = d1.s1.v1 , 'm' = d1.s1.v1 ) ;"
+reason = "not submitted: held by capture guard f187c2c in the define-stage packet udq-08.jsonl: billable or out-of-account: compute pool or service"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.create-streamlit.define-streamlit.kd5fc596eaaca", sql_sha256 = "d5fc596eaaca94b885013dde68a1dc15ab1926e48a043a835741aa81caebc2e1" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.create-streamlit.define-streamlit.o012"
+form = "sf.ddl.create-streamlit.define-streamlit"
+construct = "option_present: DEFINE STREAMLIT d1.s1.v1 FROM 'asset://a1/' MAIN_FILE = 'm' QUERY_WAREHOUSE = v1 RUNTIME_NAME = 'm' COMPUTE_POOL = v1 COMMENT = 'm' TITLE = 'm' IMPORTS = ( 'm' , 'm' ) EXTERNAL_ACCESS_INTEGRATIONS = ( i1 , i1 ) SECRETS = ( 'm' = d1.s1.v1 , 'm' = d1.s1.v1 ) ;"
+reason = "not submitted: held by capture guard f187c2c in the define-stage packet udq-08.jsonl: billable or out-of-account: compute pool or service"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.create-streamlit.define-streamlit.kd5fc596eaaca", sql_sha256 = "d5fc596eaaca94b885013dde68a1dc15ab1926e48a043a835741aa81caebc2e1" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.create-streamlit.define-streamlit.o015"
+form = "sf.ddl.create-streamlit.define-streamlit"
+construct = "a valid identifier: DEFINE STREAMLIT d1.s1.v1 FROM 'asset://a1/' MAIN_FILE = 'm' QUERY_WAREHOUSE = v1 RUNTIME_NAME = 'm' COMPUTE_POOL = v1 COMMENT = 'm' TITLE = 'm' IMPORTS = ( 'm' , 'm' ) EXTERNAL_ACCESS_INTEGRATIONS = ( i1 , i1 ) SECRETS = ( 'm' = d1.s1.v1 , 'm' = d1.s1.v1 ) ;"
+reason = "not submitted: held by capture guard f187c2c in the define-stage packet udq-08.jsonl: billable or out-of-account: compute pool or service"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.create-streamlit.define-streamlit.kd5fc596eaaca", sql_sha256 = "d5fc596eaaca94b885013dde68a1dc15ab1926e48a043a835741aa81caebc2e1" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.create-streamlit.define-streamlit.o017"
+form = "sf.ddl.create-streamlit.define-streamlit"
+construct = "option_present: DEFINE STREAMLIT d1.s1.v1 FROM 'asset://a1/' MAIN_FILE = 'm' QUERY_WAREHOUSE = v1 RUNTIME_NAME = 'm' COMPUTE_POOL = v1 COMMENT = 'm' TITLE = 'm' IMPORTS = ( 'm' , 'm' ) EXTERNAL_ACCESS_INTEGRATIONS = ( i1 , i1 ) SECRETS = ( 'm' = d1.s1.v1 , 'm' = d1.s1.v1 ) ;"
+reason = "not submitted: held by capture guard f187c2c in the define-stage packet udq-08.jsonl: billable or out-of-account: compute pool or service"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.create-streamlit.define-streamlit.kd5fc596eaaca", sql_sha256 = "d5fc596eaaca94b885013dde68a1dc15ab1926e48a043a835741aa81caebc2e1" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.create-streamlit.define-streamlit.o020"
+form = "sf.ddl.create-streamlit.define-streamlit"
+construct = "a valid string_literal: DEFINE STREAMLIT d1.s1.v1 FROM 'asset://a1/' MAIN_FILE = 'm' QUERY_WAREHOUSE = v1 RUNTIME_NAME = 'm' COMPUTE_POOL = v1 COMMENT = 'm' TITLE = 'm' IMPORTS = ( 'm' , 'm' ) EXTERNAL_ACCESS_INTEGRATIONS = ( i1 , i1 ) SECRETS = ( 'm' = d1.s1.v1 , 'm' = d1.s1.v1 ) ;"
+reason = "not submitted: held by capture guard f187c2c in the define-stage packet udq-08.jsonl: billable or out-of-account: compute pool or service"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.create-streamlit.define-streamlit.kd5fc596eaaca", sql_sha256 = "d5fc596eaaca94b885013dde68a1dc15ab1926e48a043a835741aa81caebc2e1" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.create-streamlit.define-streamlit.o022"
+form = "sf.ddl.create-streamlit.define-streamlit"
+construct = "option_present: DEFINE STREAMLIT d1.s1.v1 FROM 'asset://a1/' MAIN_FILE = 'm' QUERY_WAREHOUSE = v1 RUNTIME_NAME = 'm' COMPUTE_POOL = v1 COMMENT = 'm' TITLE = 'm' IMPORTS = ( 'm' , 'm' ) EXTERNAL_ACCESS_INTEGRATIONS = ( i1 , i1 ) SECRETS = ( 'm' = d1.s1.v1 , 'm' = d1.s1.v1 ) ;"
+reason = "not submitted: held by capture guard f187c2c in the define-stage packet udq-08.jsonl: billable or out-of-account: compute pool or service"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.create-streamlit.define-streamlit.kd5fc596eaaca", sql_sha256 = "d5fc596eaaca94b885013dde68a1dc15ab1926e48a043a835741aa81caebc2e1" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.create-streamlit.define-streamlit.o024"
+form = "sf.ddl.create-streamlit.define-streamlit"
+construct = "omit <compute_pool_name>: DEFINE STREAMLIT d1.s1.v1 COMPUTE_POOL = ;"
+reason = "not submitted: held by capture guard f187c2c in the define-stage packet udq-08.jsonl: billable or out-of-account: compute pool or service"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.create-streamlit.define-streamlit.ka243336aec82", sql_sha256 = "a243336aec824d86e3cf21211150af1d77b8a9e8ba723035000894ca07fd885e" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.create-streamlit.define-streamlit.o025"
+form = "sf.ddl.create-streamlit.define-streamlit"
+construct = "a valid identifier: DEFINE STREAMLIT d1.s1.v1 FROM 'asset://a1/' MAIN_FILE = 'm' QUERY_WAREHOUSE = v1 RUNTIME_NAME = 'm' COMPUTE_POOL = v1 COMMENT = 'm' TITLE = 'm' IMPORTS = ( 'm' , 'm' ) EXTERNAL_ACCESS_INTEGRATIONS = ( i1 , i1 ) SECRETS = ( 'm' = d1.s1.v1 , 'm' = d1.s1.v1 ) ;"
+reason = "not submitted: held by capture guard f187c2c in the define-stage packet udq-08.jsonl: billable or out-of-account: compute pool or service"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.create-streamlit.define-streamlit.kd5fc596eaaca", sql_sha256 = "d5fc596eaaca94b885013dde68a1dc15ab1926e48a043a835741aa81caebc2e1" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.create-streamlit.define-streamlit.o026"
+form = "sf.ddl.create-streamlit.define-streamlit"
+construct = "a string literal in place of <compute_pool_name>: DEFINE STREAMLIT d1.s1.v1 COMPUTE_POOL = 'v1' ;"
+reason = "not submitted: held by capture guard f187c2c in the define-stage packet udq-08.jsonl: billable or out-of-account: compute pool or service"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.create-streamlit.define-streamlit.k73cbba671da4", sql_sha256 = "73cbba671da4ecebfebdc96802676a533782fc0e6f3fdedf47a693e32029b645" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.create-streamlit.define-streamlit.o027"
+form = "sf.ddl.create-streamlit.define-streamlit"
+construct = "option_present: DEFINE STREAMLIT d1.s1.v1 FROM 'asset://a1/' MAIN_FILE = 'm' QUERY_WAREHOUSE = v1 RUNTIME_NAME = 'm' COMPUTE_POOL = v1 COMMENT = 'm' TITLE = 'm' IMPORTS = ( 'm' , 'm' ) EXTERNAL_ACCESS_INTEGRATIONS = ( i1 , i1 ) SECRETS = ( 'm' = d1.s1.v1 , 'm' = d1.s1.v1 ) ;"
+reason = "not submitted: held by capture guard f187c2c in the define-stage packet udq-08.jsonl: billable or out-of-account: compute pool or service"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.create-streamlit.define-streamlit.kd5fc596eaaca", sql_sha256 = "d5fc596eaaca94b885013dde68a1dc15ab1926e48a043a835741aa81caebc2e1" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.create-streamlit.define-streamlit.o030"
+form = "sf.ddl.create-streamlit.define-streamlit"
+construct = "a valid string_literal: DEFINE STREAMLIT d1.s1.v1 FROM 'asset://a1/' MAIN_FILE = 'm' QUERY_WAREHOUSE = v1 RUNTIME_NAME = 'm' COMPUTE_POOL = v1 COMMENT = 'm' TITLE = 'm' IMPORTS = ( 'm' , 'm' ) EXTERNAL_ACCESS_INTEGRATIONS = ( i1 , i1 ) SECRETS = ( 'm' = d1.s1.v1 , 'm' = d1.s1.v1 ) ;"
+reason = "not submitted: held by capture guard f187c2c in the define-stage packet udq-08.jsonl: billable or out-of-account: compute pool or service"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.create-streamlit.define-streamlit.kd5fc596eaaca", sql_sha256 = "d5fc596eaaca94b885013dde68a1dc15ab1926e48a043a835741aa81caebc2e1" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.create-streamlit.define-streamlit.o032"
+form = "sf.ddl.create-streamlit.define-streamlit"
+construct = "option_present: DEFINE STREAMLIT d1.s1.v1 FROM 'asset://a1/' MAIN_FILE = 'm' QUERY_WAREHOUSE = v1 RUNTIME_NAME = 'm' COMPUTE_POOL = v1 COMMENT = 'm' TITLE = 'm' IMPORTS = ( 'm' , 'm' ) EXTERNAL_ACCESS_INTEGRATIONS = ( i1 , i1 ) SECRETS = ( 'm' = d1.s1.v1 , 'm' = d1.s1.v1 ) ;"
+reason = "not submitted: held by capture guard f187c2c in the define-stage packet udq-08.jsonl: billable or out-of-account: compute pool or service"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.create-streamlit.define-streamlit.kd5fc596eaaca", sql_sha256 = "d5fc596eaaca94b885013dde68a1dc15ab1926e48a043a835741aa81caebc2e1" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.create-streamlit.define-streamlit.o035"
+form = "sf.ddl.create-streamlit.define-streamlit"
+construct = "a valid string_literal: DEFINE STREAMLIT d1.s1.v1 FROM 'asset://a1/' MAIN_FILE = 'm' QUERY_WAREHOUSE = v1 RUNTIME_NAME = 'm' COMPUTE_POOL = v1 COMMENT = 'm' TITLE = 'm' IMPORTS = ( 'm' , 'm' ) EXTERNAL_ACCESS_INTEGRATIONS = ( i1 , i1 ) SECRETS = ( 'm' = d1.s1.v1 , 'm' = d1.s1.v1 ) ;"
+reason = "not submitted: held by capture guard f187c2c in the define-stage packet udq-08.jsonl: billable or out-of-account: compute pool or service"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.create-streamlit.define-streamlit.kd5fc596eaaca", sql_sha256 = "d5fc596eaaca94b885013dde68a1dc15ab1926e48a043a835741aa81caebc2e1" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.create-streamlit.define-streamlit.o037"
+form = "sf.ddl.create-streamlit.define-streamlit"
+construct = "option_present: DEFINE STREAMLIT d1.s1.v1 FROM 'asset://a1/' MAIN_FILE = 'm' QUERY_WAREHOUSE = v1 RUNTIME_NAME = 'm' COMPUTE_POOL = v1 COMMENT = 'm' TITLE = 'm' IMPORTS = ( 'm' , 'm' ) EXTERNAL_ACCESS_INTEGRATIONS = ( i1 , i1 ) SECRETS = ( 'm' = d1.s1.v1 , 'm' = d1.s1.v1 ) ;"
+reason = "not submitted: held by capture guard f187c2c in the define-stage packet udq-08.jsonl: billable or out-of-account: compute pool or service"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.create-streamlit.define-streamlit.kd5fc596eaaca", sql_sha256 = "d5fc596eaaca94b885013dde68a1dc15ab1926e48a043a835741aa81caebc2e1" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.create-streamlit.define-streamlit.o040"
+form = "sf.ddl.create-streamlit.define-streamlit"
+construct = "a valid string_literal: DEFINE STREAMLIT d1.s1.v1 FROM 'asset://a1/' MAIN_FILE = 'm' QUERY_WAREHOUSE = v1 RUNTIME_NAME = 'm' COMPUTE_POOL = v1 COMMENT = 'm' TITLE = 'm' IMPORTS = ( 'm' , 'm' ) EXTERNAL_ACCESS_INTEGRATIONS = ( i1 , i1 ) SECRETS = ( 'm' = d1.s1.v1 , 'm' = d1.s1.v1 ) ;"
+reason = "not submitted: held by capture guard f187c2c in the define-stage packet udq-08.jsonl: billable or out-of-account: compute pool or service"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.create-streamlit.define-streamlit.kd5fc596eaaca", sql_sha256 = "d5fc596eaaca94b885013dde68a1dc15ab1926e48a043a835741aa81caebc2e1" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.create-streamlit.define-streamlit.o042"
+form = "sf.ddl.create-streamlit.define-streamlit"
+construct = "the list continued at least once: DEFINE STREAMLIT d1.s1.v1 FROM 'asset://a1/' MAIN_FILE = 'm' QUERY_WAREHOUSE = v1 RUNTIME_NAME = 'm' COMPUTE_POOL = v1 COMMENT = 'm' TITLE = 'm' IMPORTS = ( 'm' , 'm' ) EXTERNAL_ACCESS_INTEGRATIONS = ( i1 , i1 ) SECRETS = ( 'm' = d1.s1.v1 , 'm' = d1.s1.v1 ) ;"
+reason = "not submitted: held by capture guard f187c2c in the define-stage packet udq-08.jsonl: billable or out-of-account: compute pool or service"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.create-streamlit.define-streamlit.kd5fc596eaaca", sql_sha256 = "d5fc596eaaca94b885013dde68a1dc15ab1926e48a043a835741aa81caebc2e1" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.create-streamlit.define-streamlit.o044"
+form = "sf.ddl.create-streamlit.define-streamlit"
+construct = "option_present: DEFINE STREAMLIT d1.s1.v1 FROM 'asset://a1/' MAIN_FILE = 'm' QUERY_WAREHOUSE = v1 RUNTIME_NAME = 'm' COMPUTE_POOL = v1 COMMENT = 'm' TITLE = 'm' IMPORTS = ( 'm' , 'm' ) EXTERNAL_ACCESS_INTEGRATIONS = ( i1 , i1 ) SECRETS = ( 'm' = d1.s1.v1 , 'm' = d1.s1.v1 ) ;"
+reason = "not submitted: held by capture guard f187c2c in the define-stage packet udq-08.jsonl: billable or out-of-account: compute pool or service"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.create-streamlit.define-streamlit.kd5fc596eaaca", sql_sha256 = "d5fc596eaaca94b885013dde68a1dc15ab1926e48a043a835741aa81caebc2e1" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.create-streamlit.define-streamlit.o047"
+form = "sf.ddl.create-streamlit.define-streamlit"
+construct = "a valid identifier: DEFINE STREAMLIT d1.s1.v1 FROM 'asset://a1/' MAIN_FILE = 'm' QUERY_WAREHOUSE = v1 RUNTIME_NAME = 'm' COMPUTE_POOL = v1 COMMENT = 'm' TITLE = 'm' IMPORTS = ( 'm' , 'm' ) EXTERNAL_ACCESS_INTEGRATIONS = ( i1 , i1 ) SECRETS = ( 'm' = d1.s1.v1 , 'm' = d1.s1.v1 ) ;"
+reason = "not submitted: held by capture guard f187c2c in the define-stage packet udq-08.jsonl: billable or out-of-account: compute pool or service"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.create-streamlit.define-streamlit.kd5fc596eaaca", sql_sha256 = "d5fc596eaaca94b885013dde68a1dc15ab1926e48a043a835741aa81caebc2e1" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.create-streamlit.define-streamlit.o049"
+form = "sf.ddl.create-streamlit.define-streamlit"
+construct = "the list continued at least once: DEFINE STREAMLIT d1.s1.v1 FROM 'asset://a1/' MAIN_FILE = 'm' QUERY_WAREHOUSE = v1 RUNTIME_NAME = 'm' COMPUTE_POOL = v1 COMMENT = 'm' TITLE = 'm' IMPORTS = ( 'm' , 'm' ) EXTERNAL_ACCESS_INTEGRATIONS = ( i1 , i1 ) SECRETS = ( 'm' = d1.s1.v1 , 'm' = d1.s1.v1 ) ;"
+reason = "not submitted: held by capture guard f187c2c in the define-stage packet udq-08.jsonl: billable or out-of-account: compute pool or service"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.create-streamlit.define-streamlit.kd5fc596eaaca", sql_sha256 = "d5fc596eaaca94b885013dde68a1dc15ab1926e48a043a835741aa81caebc2e1" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.create-streamlit.define-streamlit.o051"
+form = "sf.ddl.create-streamlit.define-streamlit"
+construct = "option_present: DEFINE STREAMLIT d1.s1.v1 FROM 'asset://a1/' MAIN_FILE = 'm' QUERY_WAREHOUSE = v1 RUNTIME_NAME = 'm' COMPUTE_POOL = v1 COMMENT = 'm' TITLE = 'm' IMPORTS = ( 'm' , 'm' ) EXTERNAL_ACCESS_INTEGRATIONS = ( i1 , i1 ) SECRETS = ( 'm' = d1.s1.v1 , 'm' = d1.s1.v1 ) ;"
+reason = "not submitted: held by capture guard f187c2c in the define-stage packet udq-08.jsonl: billable or out-of-account: compute pool or service"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.create-streamlit.define-streamlit.kd5fc596eaaca", sql_sha256 = "d5fc596eaaca94b885013dde68a1dc15ab1926e48a043a835741aa81caebc2e1" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.create-streamlit.define-streamlit.o054"
+form = "sf.ddl.create-streamlit.define-streamlit"
+construct = "a valid string_literal: DEFINE STREAMLIT d1.s1.v1 FROM 'asset://a1/' MAIN_FILE = 'm' QUERY_WAREHOUSE = v1 RUNTIME_NAME = 'm' COMPUTE_POOL = v1 COMMENT = 'm' TITLE = 'm' IMPORTS = ( 'm' , 'm' ) EXTERNAL_ACCESS_INTEGRATIONS = ( i1 , i1 ) SECRETS = ( 'm' = d1.s1.v1 , 'm' = d1.s1.v1 ) ;"
+reason = "not submitted: held by capture guard f187c2c in the define-stage packet udq-08.jsonl: billable or out-of-account: compute pool or service"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.create-streamlit.define-streamlit.kd5fc596eaaca", sql_sha256 = "d5fc596eaaca94b885013dde68a1dc15ab1926e48a043a835741aa81caebc2e1" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.create-streamlit.define-streamlit.o057"
+form = "sf.ddl.create-streamlit.define-streamlit"
+construct = "a valid operand: DEFINE STREAMLIT d1.s1.v1 FROM 'asset://a1/' MAIN_FILE = 'm' QUERY_WAREHOUSE = v1 RUNTIME_NAME = 'm' COMPUTE_POOL = v1 COMMENT = 'm' TITLE = 'm' IMPORTS = ( 'm' , 'm' ) EXTERNAL_ACCESS_INTEGRATIONS = ( i1 , i1 ) SECRETS = ( 'm' = d1.s1.v1 , 'm' = d1.s1.v1 ) ;"
+reason = "not submitted: held by capture guard f187c2c in the define-stage packet udq-08.jsonl: billable or out-of-account: compute pool or service"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.create-streamlit.define-streamlit.kd5fc596eaaca", sql_sha256 = "d5fc596eaaca94b885013dde68a1dc15ab1926e48a043a835741aa81caebc2e1" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.create-streamlit.define-streamlit.o058"
+form = "sf.ddl.create-streamlit.define-streamlit"
+construct = "the list continued at least once: DEFINE STREAMLIT d1.s1.v1 FROM 'asset://a1/' MAIN_FILE = 'm' QUERY_WAREHOUSE = v1 RUNTIME_NAME = 'm' COMPUTE_POOL = v1 COMMENT = 'm' TITLE = 'm' IMPORTS = ( 'm' , 'm' ) EXTERNAL_ACCESS_INTEGRATIONS = ( i1 , i1 ) SECRETS = ( 'm' = d1.s1.v1 , 'm' = d1.s1.v1 ) ;"
+reason = "not submitted: held by capture guard f187c2c in the define-stage packet udq-08.jsonl: billable or out-of-account: compute pool or service"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.create-streamlit.define-streamlit.kd5fc596eaaca", sql_sha256 = "d5fc596eaaca94b885013dde68a1dc15ab1926e48a043a835741aa81caebc2e1" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.create-streamlit.define-streamlit.o067"
+form = "sf.ddl.create-streamlit.define-streamlit"
+construct = "every independent option of one production together: DEFINE STREAMLIT d1.s1.v1 FROM 'asset://a1/' MAIN_FILE = 'm' QUERY_WAREHOUSE = v1 RUNTIME_NAME = 'm' COMPUTE_POOL = v1 COMMENT = 'm' TITLE = 'm' IMPORTS = ( 'm' , 'm' ) EXTERNAL_ACCESS_INTEGRATIONS = ( i1 , i1 ) SECRETS = ( 'm' = d1.s1.v1 , 'm' = d1.s1.v1 ) ;"
+reason = "not submitted: held by capture guard f187c2c in the define-stage packet udq-08.jsonl: billable or out-of-account: compute pool or service"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.create-streamlit.define-streamlit.kd5fc596eaaca", sql_sha256 = "d5fc596eaaca94b885013dde68a1dc15ab1926e48a043a835741aa81caebc2e1" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.create-streamlit.define-streamlit.o072"
+form = "sf.ddl.create-streamlit.define-streamlit"
+construct = "quoted: a double-quoted identifier with blanks and mixed case: DEFINE STREAMLIT d1.s1.v1 COMPUTE_POOL = \"v1 Q\" ;"
+reason = "not submitted: held by capture guard f187c2c in the define-stage packet udq-08.jsonl: billable or out-of-account: compute pool or service"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.create-streamlit.define-streamlit.kdf2e75630247", sql_sha256 = "df2e756302473d403db7d7da0b33dabc462e76c185122f6a369146f5f42b7b55" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.create-streamlit.define-streamlit.o073"
+form = "sf.ddl.create-streamlit.define-streamlit"
+construct = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance): DEFINE STREAMLIT d1.s1.v1 COMPUTE_POOL = SELECT ;"
+reason = "not submitted: held by capture guard f187c2c in the define-stage packet udq-08.jsonl: billable or out-of-account: compute pool or service"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.create-streamlit.define-streamlit.k37d4063d87b6", sql_sha256 = "37d4063d87b6d23a5b7953974a5c4c028e005a9cd83052341228b5e222c9f16d" },
+  { case_id = "sf.ddl.create-streamlit.define-streamlit.k91126944f6c9", sql_sha256 = "91126944f6c90324b9666287974848886d407fce7ee55f315927a8fe7639f910" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
 obligation = "sf.ddl.create-table.create-or-alter-table.o118"
 form = "sf.ddl.create-table.create-or-alter-table"
 construct = "the form without its required OR: CREATE ALTER TABLE v1 ( v1 INT ) ;"
@@ -42061,6 +42398,66 @@ reason = "not submitted: held by the capture guard in chunk ux-07: CREATE of an 
 cause = "not_submitted"
 cases = [
   { case_id = "sf.ddl.create-task.create-or-alter-task.k6c26388d7bb5", sql_sha256 = "6c26388d7bb503089bca21a0d2090ce911ec95dd36c3968bb91ab252d57a49b4" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.create-task.define-task.o008"
+form = "sf.ddl.create-task.define-task"
+construct = "alternative: DEFINE TASK d1.s1.v1 USER_TASK_MANAGED_INITIAL_WAREHOUSE_SIZE = 'm' AS SELECT 1 ;"
+reason = "not submitted: held by capture guard f187c2c in the define-stage packet udq-09.jsonl: billable or out-of-account: compute larger than X-Small"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.create-task.define-task.kf8876d8ce07e", sql_sha256 = "f8876d8ce07e4d22e07bfe9a7070e0a1255e03dc5e0a93a364d6b0967ed76aed" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.create-task.define-task.o013"
+form = "sf.ddl.create-task.define-task"
+construct = "alternative: DEFINE TASK d1.s1.v1 USER_TASK_MANAGED_INITIAL_WAREHOUSE_SIZE = 'm' AS SELECT 1 ;"
+reason = "not submitted: held by capture guard f187c2c in the define-stage packet udq-09.jsonl: billable or out-of-account: compute larger than X-Small"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.create-task.define-task.kf8876d8ce07e", sql_sha256 = "f8876d8ce07e4d22e07bfe9a7070e0a1255e03dc5e0a93a364d6b0967ed76aed" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.create-task.define-task.o014"
+form = "sf.ddl.create-task.define-task"
+construct = "omit <string>: DEFINE TASK d1.s1.v1 USER_TASK_MANAGED_INITIAL_WAREHOUSE_SIZE = AS SELECT 1 ;"
+reason = "not submitted: held by capture guard f187c2c in the define-stage packet udq-09.jsonl: billable or out-of-account: compute larger than X-Small"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.create-task.define-task.k70f2150e1ad4", sql_sha256 = "70f2150e1ad4debf105ebc7cd867c7974050f7a159010b1c0a861d461c93f61f" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.create-task.define-task.o015"
+form = "sf.ddl.create-task.define-task"
+construct = "a valid string_literal: DEFINE TASK d1.s1.v1 USER_TASK_MANAGED_INITIAL_WAREHOUSE_SIZE = 'm' SCHEDULE = '1 MINUTES' CONFIG = 'm' OVERLAP_POLICY = NO_OVERLAP USER_TASK_TIMEOUT_MS = 1 LOCK_TIMEOUT = 1 , LOCK_TIMEOUT = 1 SUSPEND_TASK_AFTER_NUM_FAILURES = 1 ERROR_INTEGRATION = i1 SUCCESS_INTEGRATION = i1 COMMENT = 'm' FINALIZE = 'd1.s1.m' TASK_AUTO_RETRY_ATTEMPTS = 1 AFTER d1.s1.v1 , d1.s1.v1 EXECUTE AS USER v1 WHEN TRUE STARTED AS SELECT 1 ;"
+reason = "not submitted: held by capture guard f187c2c in the define-stage packet define.jsonl: billable or out-of-account: compute larger than X-Small"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.create-task.define-task.k36d2be1f931c", sql_sha256 = "36d2be1f931cc6103bc36b3c74b6a1f3f6915af258908f2611a8746b66f7d1c4" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.create-task.define-task.o016"
+form = "sf.ddl.create-task.define-task"
+construct = "an unquoted identifier in place of <string>: DEFINE TASK d1.s1.v1 USER_TASK_MANAGED_INITIAL_WAREHOUSE_SIZE = m1 AS SELECT 1 ;"
+reason = "not submitted: held by capture guard f187c2c in the define-stage packet udq-09.jsonl: billable or out-of-account: compute larger than X-Small"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.create-task.define-task.k661bbc61453f", sql_sha256 = "661bbc61453f536af08255df6b7f1337af7fa309dcd0267550b03da6a9bbd353" },
 ]
 runs = []
 probes = []
@@ -43852,6 +44249,702 @@ reason = "not submitted: held by the capture guard in chunk ux-08: warehouse cha
 cause = "not_submitted"
 cases = [
   { case_id = "sf.ddl.create-warehouse.create-warehouse.k9e09a1aeb7d9", sql_sha256 = "9e09a1aeb7d9f8fa49c29fc9af1855b1613916ddf56ba451a9c3147be68f456d" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.create-warehouse.define-warehouse.o005"
+form = "sf.ddl.create-warehouse.define-warehouse"
+construct = "option_present: DEFINE WAREHOUSE v1 WITH WAREHOUSE_TYPE = STANDARD WAREHOUSE_SIZE = XSMALL GENERATION = '1' RESOURCE_CONSTRAINT = STANDARD_GEN_1 MAX_CLUSTER_COUNT = 1 MIN_CLUSTER_COUNT = 1 SCALING_POLICY = STANDARD AUTO_SUSPEND = 1 AUTO_RESUME = TRUE INITIALLY_SUSPENDED = TRUE RESOURCE_MONITOR = v1 COMMENT = 'm' ENABLE_QUERY_ACCELERATION = TRUE QUERY_ACCELERATION_MAX_SCALE_FACTOR = 1 MAX_CONCURRENCY_LEVEL = 1 STATEMENT_QUEUED_TIMEOUT_IN_SECONDS = 1 STATEMENT_TIMEOUT_IN_SECONDS = 1 ;"
+reason = "not submitted: held by capture guard f187c2c in the define-stage packet udq-09.jsonl: billable or out-of-account: paid feature"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.create-warehouse.define-warehouse.kc36ff0e17ae7", sql_sha256 = "c36ff0e17ae7e2bfd75576ef83eec46e43b8d70102283e8279c6ff2d40de287b" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.create-warehouse.define-warehouse.o007"
+form = "sf.ddl.create-warehouse.define-warehouse"
+construct = "option_present: DEFINE WAREHOUSE v1 WITH WAREHOUSE_TYPE = STANDARD WAREHOUSE_SIZE = XSMALL GENERATION = '1' RESOURCE_CONSTRAINT = STANDARD_GEN_1 MAX_CLUSTER_COUNT = 1 MIN_CLUSTER_COUNT = 1 SCALING_POLICY = STANDARD AUTO_SUSPEND = 1 AUTO_RESUME = TRUE INITIALLY_SUSPENDED = TRUE RESOURCE_MONITOR = v1 COMMENT = 'm' ENABLE_QUERY_ACCELERATION = TRUE QUERY_ACCELERATION_MAX_SCALE_FACTOR = 1 MAX_CONCURRENCY_LEVEL = 1 STATEMENT_QUEUED_TIMEOUT_IN_SECONDS = 1 STATEMENT_TIMEOUT_IN_SECONDS = 1 ;"
+reason = "not submitted: held by capture guard f187c2c in the define-stage packet udq-09.jsonl: billable or out-of-account: paid feature"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.create-warehouse.define-warehouse.kc36ff0e17ae7", sql_sha256 = "c36ff0e17ae7e2bfd75576ef83eec46e43b8d70102283e8279c6ff2d40de287b" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.create-warehouse.define-warehouse.o009"
+form = "sf.ddl.create-warehouse.define-warehouse"
+construct = "option_present: DEFINE WAREHOUSE v1 WITH WAREHOUSE_TYPE = STANDARD WAREHOUSE_SIZE = XSMALL GENERATION = '1' RESOURCE_CONSTRAINT = STANDARD_GEN_1 MAX_CLUSTER_COUNT = 1 MIN_CLUSTER_COUNT = 1 SCALING_POLICY = STANDARD AUTO_SUSPEND = 1 AUTO_RESUME = TRUE INITIALLY_SUSPENDED = TRUE RESOURCE_MONITOR = v1 COMMENT = 'm' ENABLE_QUERY_ACCELERATION = TRUE QUERY_ACCELERATION_MAX_SCALE_FACTOR = 1 MAX_CONCURRENCY_LEVEL = 1 STATEMENT_QUEUED_TIMEOUT_IN_SECONDS = 1 STATEMENT_TIMEOUT_IN_SECONDS = 1 ;"
+reason = "not submitted: held by capture guard f187c2c in the define-stage packet udq-09.jsonl: billable or out-of-account: paid feature"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.create-warehouse.define-warehouse.kc36ff0e17ae7", sql_sha256 = "c36ff0e17ae7e2bfd75576ef83eec46e43b8d70102283e8279c6ff2d40de287b" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.create-warehouse.define-warehouse.o012"
+form = "sf.ddl.create-warehouse.define-warehouse"
+construct = "alternative: DEFINE WAREHOUSE v1 WAREHOUSE_TYPE = 'SNOWPARK-OPTIMIZED' ;"
+reason = "not submitted: held by capture guard f187c2c in the define-stage packet udq-09.jsonl: billable or out-of-account: compute other than standard single-cluster"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.create-warehouse.define-warehouse.kd5001c31c95b", sql_sha256 = "d5001c31c95bd5f6e1c6feb935e11bd1c2a64538024070f8436e60ecd5103015" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.create-warehouse.define-warehouse.o013"
+form = "sf.ddl.create-warehouse.define-warehouse"
+construct = "alternative: DEFINE WAREHOUSE v1 WAREHOUSE_TYPE = ADAPTIVE ;"
+reason = "not submitted: held by capture guard f187c2c in the define-stage packet udq-09.jsonl: billable or out-of-account: compute other than standard single-cluster"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.create-warehouse.define-warehouse.ke0485ba6af96", sql_sha256 = "e0485ba6af96b2b7abf7a532ea26ec871280090cd43f917a7917876355d54dc6" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.create-warehouse.define-warehouse.o014"
+form = "sf.ddl.create-warehouse.define-warehouse"
+construct = "option_present: DEFINE WAREHOUSE v1 WITH WAREHOUSE_TYPE = STANDARD WAREHOUSE_SIZE = XSMALL GENERATION = '1' RESOURCE_CONSTRAINT = STANDARD_GEN_1 MAX_CLUSTER_COUNT = 1 MIN_CLUSTER_COUNT = 1 SCALING_POLICY = STANDARD AUTO_SUSPEND = 1 AUTO_RESUME = TRUE INITIALLY_SUSPENDED = TRUE RESOURCE_MONITOR = v1 COMMENT = 'm' ENABLE_QUERY_ACCELERATION = TRUE QUERY_ACCELERATION_MAX_SCALE_FACTOR = 1 MAX_CONCURRENCY_LEVEL = 1 STATEMENT_QUEUED_TIMEOUT_IN_SECONDS = 1 STATEMENT_TIMEOUT_IN_SECONDS = 1 ;"
+reason = "not submitted: held by capture guard f187c2c in the define-stage packet udq-09.jsonl: billable or out-of-account: paid feature"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.create-warehouse.define-warehouse.kc36ff0e17ae7", sql_sha256 = "c36ff0e17ae7e2bfd75576ef83eec46e43b8d70102283e8279c6ff2d40de287b" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.create-warehouse.define-warehouse.o017"
+form = "sf.ddl.create-warehouse.define-warehouse"
+construct = "alternative: DEFINE WAREHOUSE v1 WAREHOUSE_SIZE = SMALL ;"
+reason = "not submitted: held by capture guard f187c2c in the define-stage packet udq-09.jsonl: billable or out-of-account: compute larger than X-Small"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.create-warehouse.define-warehouse.k3e57bbc67a48", sql_sha256 = "3e57bbc67a487ebbb74030912e4a9d46b65b48abd8f2b898a3bf9762751a251b" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.create-warehouse.define-warehouse.o018"
+form = "sf.ddl.create-warehouse.define-warehouse"
+construct = "alternative: DEFINE WAREHOUSE v1 WAREHOUSE_SIZE = MEDIUM ;"
+reason = "not submitted: held by capture guard f187c2c in the define-stage packet udq-09.jsonl: billable or out-of-account: compute larger than X-Small"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.create-warehouse.define-warehouse.k101c1564bbfc", sql_sha256 = "101c1564bbfc72f86277ede29483cc7f423711a9564cc69d304717b51dea757f" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.create-warehouse.define-warehouse.o019"
+form = "sf.ddl.create-warehouse.define-warehouse"
+construct = "alternative: DEFINE WAREHOUSE v1 WAREHOUSE_SIZE = LARGE ;"
+reason = "not submitted: held by capture guard f187c2c in the define-stage packet udq-09.jsonl: billable or out-of-account: compute larger than X-Small"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.create-warehouse.define-warehouse.k5bd9693d5a7d", sql_sha256 = "5bd9693d5a7d8b59877ad880266a38440c0855040726728fdc413b663b58bf49" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.create-warehouse.define-warehouse.o020"
+form = "sf.ddl.create-warehouse.define-warehouse"
+construct = "alternative: DEFINE WAREHOUSE v1 WAREHOUSE_SIZE = XLARGE ;"
+reason = "not submitted: held by capture guard f187c2c in the define-stage packet udq-09.jsonl: billable or out-of-account: compute larger than X-Small"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.create-warehouse.define-warehouse.ke46f1b9c18e6", sql_sha256 = "e46f1b9c18e61d75ae6cd3dc8b77661ed95617c5d9f513addc0f48d8a06c7b16" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.create-warehouse.define-warehouse.o021"
+form = "sf.ddl.create-warehouse.define-warehouse"
+construct = "alternative: DEFINE WAREHOUSE v1 WAREHOUSE_SIZE = XXLARGE ;"
+reason = "not submitted: held by capture guard f187c2c in the define-stage packet udq-09.jsonl: billable or out-of-account: compute larger than X-Small"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.create-warehouse.define-warehouse.k28fcffadb7fb", sql_sha256 = "28fcffadb7fbc9d7cbdce1532b36b80f6a429c89e054c13e426ba428c1bbaa99" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.create-warehouse.define-warehouse.o022"
+form = "sf.ddl.create-warehouse.define-warehouse"
+construct = "alternative: DEFINE WAREHOUSE v1 WAREHOUSE_SIZE = XXXLARGE ;"
+reason = "not submitted: held by capture guard f187c2c in the define-stage packet udq-09.jsonl: billable or out-of-account: compute larger than X-Small"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.create-warehouse.define-warehouse.k35d23d394569", sql_sha256 = "35d23d3945699867954344f69c39980b0020be6029e6bca0d86876b396569134" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.create-warehouse.define-warehouse.o023"
+form = "sf.ddl.create-warehouse.define-warehouse"
+construct = "alternative: DEFINE WAREHOUSE v1 WAREHOUSE_SIZE = X4LARGE ;"
+reason = "not submitted: held by capture guard f187c2c in the define-stage packet udq-09.jsonl: billable or out-of-account: compute larger than X-Small"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.create-warehouse.define-warehouse.k3f7db6f9ffe8", sql_sha256 = "3f7db6f9ffe87dc38c720dbb63053bf87fb61814f921b9db6b89aa4488c55558" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.create-warehouse.define-warehouse.o024"
+form = "sf.ddl.create-warehouse.define-warehouse"
+construct = "alternative: DEFINE WAREHOUSE v1 WAREHOUSE_SIZE = X5LARGE ;"
+reason = "not submitted: held by capture guard f187c2c in the define-stage packet udq-09.jsonl: billable or out-of-account: compute larger than X-Small"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.create-warehouse.define-warehouse.k01a98e74ca96", sql_sha256 = "01a98e74ca96c8234732c694f5abb9e50eb5dc3531847523118b6555b94d1207" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.create-warehouse.define-warehouse.o025"
+form = "sf.ddl.create-warehouse.define-warehouse"
+construct = "alternative: DEFINE WAREHOUSE v1 WAREHOUSE_SIZE = X6LARGE ;"
+reason = "not submitted: held by capture guard f187c2c in the define-stage packet udq-09.jsonl: billable or out-of-account: compute larger than X-Small"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.create-warehouse.define-warehouse.k06dad35aaa55", sql_sha256 = "06dad35aaa554969fe5b14ceea47023d315550cf7ba8cfad30564dbd5c4db82e" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.create-warehouse.define-warehouse.o026"
+form = "sf.ddl.create-warehouse.define-warehouse"
+construct = "option_present: DEFINE WAREHOUSE v1 WITH WAREHOUSE_TYPE = STANDARD WAREHOUSE_SIZE = XSMALL GENERATION = '1' RESOURCE_CONSTRAINT = STANDARD_GEN_1 MAX_CLUSTER_COUNT = 1 MIN_CLUSTER_COUNT = 1 SCALING_POLICY = STANDARD AUTO_SUSPEND = 1 AUTO_RESUME = TRUE INITIALLY_SUSPENDED = TRUE RESOURCE_MONITOR = v1 COMMENT = 'm' ENABLE_QUERY_ACCELERATION = TRUE QUERY_ACCELERATION_MAX_SCALE_FACTOR = 1 MAX_CONCURRENCY_LEVEL = 1 STATEMENT_QUEUED_TIMEOUT_IN_SECONDS = 1 STATEMENT_TIMEOUT_IN_SECONDS = 1 ;"
+reason = "not submitted: held by capture guard f187c2c in the define-stage packet udq-09.jsonl: billable or out-of-account: paid feature"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.create-warehouse.define-warehouse.kc36ff0e17ae7", sql_sha256 = "c36ff0e17ae7e2bfd75576ef83eec46e43b8d70102283e8279c6ff2d40de287b" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.create-warehouse.define-warehouse.o029"
+form = "sf.ddl.create-warehouse.define-warehouse"
+construct = "alternative: DEFINE WAREHOUSE v1 GENERATION = '2' ;"
+reason = "not submitted: held by capture guard f187c2c in the define-stage packet udq-09.jsonl: billable or out-of-account: compute other than standard single-cluster"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.create-warehouse.define-warehouse.k53e1ed7c96be", sql_sha256 = "53e1ed7c96bec74a68db06dfb26348c351afabc53ba06f8fe4e1dee683660511" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.create-warehouse.define-warehouse.o030"
+form = "sf.ddl.create-warehouse.define-warehouse"
+construct = "option_present: DEFINE WAREHOUSE v1 WITH WAREHOUSE_TYPE = STANDARD WAREHOUSE_SIZE = XSMALL GENERATION = '1' RESOURCE_CONSTRAINT = STANDARD_GEN_1 MAX_CLUSTER_COUNT = 1 MIN_CLUSTER_COUNT = 1 SCALING_POLICY = STANDARD AUTO_SUSPEND = 1 AUTO_RESUME = TRUE INITIALLY_SUSPENDED = TRUE RESOURCE_MONITOR = v1 COMMENT = 'm' ENABLE_QUERY_ACCELERATION = TRUE QUERY_ACCELERATION_MAX_SCALE_FACTOR = 1 MAX_CONCURRENCY_LEVEL = 1 STATEMENT_QUEUED_TIMEOUT_IN_SECONDS = 1 STATEMENT_TIMEOUT_IN_SECONDS = 1 ;"
+reason = "not submitted: held by capture guard f187c2c in the define-stage packet udq-09.jsonl: billable or out-of-account: paid feature"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.create-warehouse.define-warehouse.kc36ff0e17ae7", sql_sha256 = "c36ff0e17ae7e2bfd75576ef83eec46e43b8d70102283e8279c6ff2d40de287b" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.create-warehouse.define-warehouse.o032"
+form = "sf.ddl.create-warehouse.define-warehouse"
+construct = "alternative: DEFINE WAREHOUSE v1 RESOURCE_CONSTRAINT = STANDARD_GEN_1 ;"
+reason = "not submitted: held by capture guard f187c2c in the define-stage packet udq-09.jsonl: billable or out-of-account: compute other than standard single-cluster"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.create-warehouse.define-warehouse.k94bc8f822abe", sql_sha256 = "94bc8f822abeb5b9b5799ef20eadd797ba824b36047101f79a786b3401eae86a" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.create-warehouse.define-warehouse.o033"
+form = "sf.ddl.create-warehouse.define-warehouse"
+construct = "alternative: DEFINE WAREHOUSE v1 RESOURCE_CONSTRAINT = STANDARD_GEN_2 ;"
+reason = "not submitted: held by capture guard f187c2c in the define-stage packet udq-09.jsonl: billable or out-of-account: compute other than standard single-cluster"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.create-warehouse.define-warehouse.k16ec65dda4e6", sql_sha256 = "16ec65dda4e64f21b7746221cb63a28f90c1d279df0a8f3ebc6c12c43dee0a2a" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.create-warehouse.define-warehouse.o034"
+form = "sf.ddl.create-warehouse.define-warehouse"
+construct = "alternative: DEFINE WAREHOUSE v1 RESOURCE_CONSTRAINT = MEMORY_1X ;"
+reason = "not submitted: held by capture guard f187c2c in the define-stage packet udq-09.jsonl: billable or out-of-account: compute other than standard single-cluster"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.create-warehouse.define-warehouse.k4c0cb1519881", sql_sha256 = "4c0cb1519881e2e52febf0fdfd4b963a9164e9e1fc21b9dd281be8127aba843f" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.create-warehouse.define-warehouse.o035"
+form = "sf.ddl.create-warehouse.define-warehouse"
+construct = "alternative: DEFINE WAREHOUSE v1 RESOURCE_CONSTRAINT = v1 ;"
+reason = "not submitted: held by capture guard f187c2c in the define-stage packet udq-09.jsonl: billable or out-of-account: compute other than standard single-cluster"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.create-warehouse.define-warehouse.kdf5675113c15", sql_sha256 = "df5675113c1596760e2cd1128ee17ee130a38623db8d64b9fb7bce5d6cbb5572" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.create-warehouse.define-warehouse.o036"
+form = "sf.ddl.create-warehouse.define-warehouse"
+construct = "alternative: DEFINE WAREHOUSE v1 RESOURCE_CONSTRAINT = MEMORY_16X ;"
+reason = "not submitted: held by capture guard f187c2c in the define-stage packet udq-09.jsonl: billable or out-of-account: compute other than standard single-cluster"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.create-warehouse.define-warehouse.k7e48c591152f", sql_sha256 = "7e48c591152fc45d6a98f92e3b1c67ac1b0237672cd2f25de09b2dd605709842" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.create-warehouse.define-warehouse.o037"
+form = "sf.ddl.create-warehouse.define-warehouse"
+construct = "alternative: DEFINE WAREHOUSE v1 RESOURCE_CONSTRAINT = v1 ;"
+reason = "not submitted: held by capture guard f187c2c in the define-stage packet udq-09.jsonl: billable or out-of-account: compute other than standard single-cluster"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.create-warehouse.define-warehouse.kdf5675113c15", sql_sha256 = "df5675113c1596760e2cd1128ee17ee130a38623db8d64b9fb7bce5d6cbb5572" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.create-warehouse.define-warehouse.o038"
+form = "sf.ddl.create-warehouse.define-warehouse"
+construct = "alternative: DEFINE WAREHOUSE v1 RESOURCE_CONSTRAINT = MEMORY_64X ;"
+reason = "not submitted: held by capture guard f187c2c in the define-stage packet udq-09.jsonl: billable or out-of-account: compute other than standard single-cluster"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.create-warehouse.define-warehouse.k5e5cf536a3aa", sql_sha256 = "5e5cf536a3aa3e3f2d9e34a40a24b7c18c6194872084e56ec51ea0372be62de8" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.create-warehouse.define-warehouse.o039"
+form = "sf.ddl.create-warehouse.define-warehouse"
+construct = "alternative: DEFINE WAREHOUSE v1 RESOURCE_CONSTRAINT = v1 ;"
+reason = "not submitted: held by capture guard f187c2c in the define-stage packet udq-09.jsonl: billable or out-of-account: compute other than standard single-cluster"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.create-warehouse.define-warehouse.kdf5675113c15", sql_sha256 = "df5675113c1596760e2cd1128ee17ee130a38623db8d64b9fb7bce5d6cbb5572" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.create-warehouse.define-warehouse.o040"
+form = "sf.ddl.create-warehouse.define-warehouse"
+construct = "a valid operand: DEFINE WAREHOUSE v1 WITH WAREHOUSE_TYPE = STANDARD WAREHOUSE_SIZE = XSMALL GENERATION = '1' RESOURCE_CONSTRAINT = v1 MAX_CLUSTER_COUNT = 1 MIN_CLUSTER_COUNT = 1 SCALING_POLICY = STANDARD AUTO_SUSPEND = 1 AUTO_RESUME = TRUE INITIALLY_SUSPENDED = TRUE RESOURCE_MONITOR = v1 COMMENT = 'm' ENABLE_QUERY_ACCELERATION = TRUE QUERY_ACCELERATION_MAX_SCALE_FACTOR = 1 MAX_CONCURRENCY_LEVEL = 1 STATEMENT_QUEUED_TIMEOUT_IN_SECONDS = 1 STATEMENT_TIMEOUT_IN_SECONDS = 1 ;"
+reason = "not submitted: held by capture guard f187c2c in the define-stage packet udq-09.jsonl: billable or out-of-account: paid feature"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.create-warehouse.define-warehouse.kc75bca8bcefa", sql_sha256 = "c75bca8bcefa0d80ca3c8b864498adea759e423732c9171436ac9ede2bff97bf" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.create-warehouse.define-warehouse.o041"
+form = "sf.ddl.create-warehouse.define-warehouse"
+construct = "a valid operand: DEFINE WAREHOUSE v1 WITH WAREHOUSE_TYPE = STANDARD WAREHOUSE_SIZE = XSMALL GENERATION = '1' RESOURCE_CONSTRAINT = v1 MAX_CLUSTER_COUNT = 1 MIN_CLUSTER_COUNT = 1 SCALING_POLICY = STANDARD AUTO_SUSPEND = 1 AUTO_RESUME = TRUE INITIALLY_SUSPENDED = TRUE RESOURCE_MONITOR = v1 COMMENT = 'm' ENABLE_QUERY_ACCELERATION = TRUE QUERY_ACCELERATION_MAX_SCALE_FACTOR = 1 MAX_CONCURRENCY_LEVEL = 1 STATEMENT_QUEUED_TIMEOUT_IN_SECONDS = 1 STATEMENT_TIMEOUT_IN_SECONDS = 1 ;"
+reason = "not submitted: held by capture guard f187c2c in the define-stage packet udq-09.jsonl: billable or out-of-account: paid feature"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.create-warehouse.define-warehouse.kc75bca8bcefa", sql_sha256 = "c75bca8bcefa0d80ca3c8b864498adea759e423732c9171436ac9ede2bff97bf" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.create-warehouse.define-warehouse.o042"
+form = "sf.ddl.create-warehouse.define-warehouse"
+construct = "a valid operand: DEFINE WAREHOUSE v1 WITH WAREHOUSE_TYPE = STANDARD WAREHOUSE_SIZE = XSMALL GENERATION = '1' RESOURCE_CONSTRAINT = v1 MAX_CLUSTER_COUNT = 1 MIN_CLUSTER_COUNT = 1 SCALING_POLICY = STANDARD AUTO_SUSPEND = 1 AUTO_RESUME = TRUE INITIALLY_SUSPENDED = TRUE RESOURCE_MONITOR = v1 COMMENT = 'm' ENABLE_QUERY_ACCELERATION = TRUE QUERY_ACCELERATION_MAX_SCALE_FACTOR = 1 MAX_CONCURRENCY_LEVEL = 1 STATEMENT_QUEUED_TIMEOUT_IN_SECONDS = 1 STATEMENT_TIMEOUT_IN_SECONDS = 1 ;"
+reason = "not submitted: held by capture guard f187c2c in the define-stage packet udq-09.jsonl: billable or out-of-account: paid feature"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.create-warehouse.define-warehouse.kc75bca8bcefa", sql_sha256 = "c75bca8bcefa0d80ca3c8b864498adea759e423732c9171436ac9ede2bff97bf" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.create-warehouse.define-warehouse.o043"
+form = "sf.ddl.create-warehouse.define-warehouse"
+construct = "option_present: DEFINE WAREHOUSE v1 WITH WAREHOUSE_TYPE = STANDARD WAREHOUSE_SIZE = XSMALL GENERATION = '1' RESOURCE_CONSTRAINT = STANDARD_GEN_1 MAX_CLUSTER_COUNT = 1 MIN_CLUSTER_COUNT = 1 SCALING_POLICY = STANDARD AUTO_SUSPEND = 1 AUTO_RESUME = TRUE INITIALLY_SUSPENDED = TRUE RESOURCE_MONITOR = v1 COMMENT = 'm' ENABLE_QUERY_ACCELERATION = TRUE QUERY_ACCELERATION_MAX_SCALE_FACTOR = 1 MAX_CONCURRENCY_LEVEL = 1 STATEMENT_QUEUED_TIMEOUT_IN_SECONDS = 1 STATEMENT_TIMEOUT_IN_SECONDS = 1 ;"
+reason = "not submitted: held by capture guard f187c2c in the define-stage packet udq-09.jsonl: billable or out-of-account: paid feature"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.create-warehouse.define-warehouse.kc36ff0e17ae7", sql_sha256 = "c36ff0e17ae7e2bfd75576ef83eec46e43b8d70102283e8279c6ff2d40de287b" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.create-warehouse.define-warehouse.o046"
+form = "sf.ddl.create-warehouse.define-warehouse"
+construct = "a valid integer_literal: DEFINE WAREHOUSE v1 WITH WAREHOUSE_TYPE = STANDARD WAREHOUSE_SIZE = XSMALL GENERATION = '1' RESOURCE_CONSTRAINT = STANDARD_GEN_1 MAX_CLUSTER_COUNT = 1 MIN_CLUSTER_COUNT = 1 SCALING_POLICY = STANDARD AUTO_SUSPEND = 1 AUTO_RESUME = TRUE INITIALLY_SUSPENDED = TRUE RESOURCE_MONITOR = v1 COMMENT = 'm' ENABLE_QUERY_ACCELERATION = TRUE QUERY_ACCELERATION_MAX_SCALE_FACTOR = 1 MAX_CONCURRENCY_LEVEL = 1 STATEMENT_QUEUED_TIMEOUT_IN_SECONDS = 1 STATEMENT_TIMEOUT_IN_SECONDS = 1 ;"
+reason = "not submitted: held by capture guard f187c2c in the define-stage packet udq-09.jsonl: billable or out-of-account: paid feature"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.create-warehouse.define-warehouse.kc36ff0e17ae7", sql_sha256 = "c36ff0e17ae7e2bfd75576ef83eec46e43b8d70102283e8279c6ff2d40de287b" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.create-warehouse.define-warehouse.o047"
+form = "sf.ddl.create-warehouse.define-warehouse"
+construct = "a string literal in place of <num>: DEFINE WAREHOUSE v1 MAX_CLUSTER_COUNT = 'x' ;"
+reason = "not submitted: held by capture guard f187c2c in the define-stage packet udq-09.jsonl: billable or out-of-account: compute other than standard single-cluster"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.create-warehouse.define-warehouse.kcab6cf070dfb", sql_sha256 = "cab6cf070dfb1f891d9841bb9982b2fd60ce3b066bbb62327495815e8d3919d3" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.create-warehouse.define-warehouse.o048"
+form = "sf.ddl.create-warehouse.define-warehouse"
+construct = "option_present: DEFINE WAREHOUSE v1 WITH WAREHOUSE_TYPE = STANDARD WAREHOUSE_SIZE = XSMALL GENERATION = '1' RESOURCE_CONSTRAINT = STANDARD_GEN_1 MAX_CLUSTER_COUNT = 1 MIN_CLUSTER_COUNT = 1 SCALING_POLICY = STANDARD AUTO_SUSPEND = 1 AUTO_RESUME = TRUE INITIALLY_SUSPENDED = TRUE RESOURCE_MONITOR = v1 COMMENT = 'm' ENABLE_QUERY_ACCELERATION = TRUE QUERY_ACCELERATION_MAX_SCALE_FACTOR = 1 MAX_CONCURRENCY_LEVEL = 1 STATEMENT_QUEUED_TIMEOUT_IN_SECONDS = 1 STATEMENT_TIMEOUT_IN_SECONDS = 1 ;"
+reason = "not submitted: held by capture guard f187c2c in the define-stage packet udq-09.jsonl: billable or out-of-account: paid feature"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.create-warehouse.define-warehouse.kc36ff0e17ae7", sql_sha256 = "c36ff0e17ae7e2bfd75576ef83eec46e43b8d70102283e8279c6ff2d40de287b" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.create-warehouse.define-warehouse.o051"
+form = "sf.ddl.create-warehouse.define-warehouse"
+construct = "a valid integer_literal: DEFINE WAREHOUSE v1 WITH WAREHOUSE_TYPE = STANDARD WAREHOUSE_SIZE = XSMALL GENERATION = '1' RESOURCE_CONSTRAINT = STANDARD_GEN_1 MAX_CLUSTER_COUNT = 1 MIN_CLUSTER_COUNT = 1 SCALING_POLICY = STANDARD AUTO_SUSPEND = 1 AUTO_RESUME = TRUE INITIALLY_SUSPENDED = TRUE RESOURCE_MONITOR = v1 COMMENT = 'm' ENABLE_QUERY_ACCELERATION = TRUE QUERY_ACCELERATION_MAX_SCALE_FACTOR = 1 MAX_CONCURRENCY_LEVEL = 1 STATEMENT_QUEUED_TIMEOUT_IN_SECONDS = 1 STATEMENT_TIMEOUT_IN_SECONDS = 1 ;"
+reason = "not submitted: held by capture guard f187c2c in the define-stage packet udq-09.jsonl: billable or out-of-account: paid feature"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.create-warehouse.define-warehouse.kc36ff0e17ae7", sql_sha256 = "c36ff0e17ae7e2bfd75576ef83eec46e43b8d70102283e8279c6ff2d40de287b" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.create-warehouse.define-warehouse.o052"
+form = "sf.ddl.create-warehouse.define-warehouse"
+construct = "a string literal in place of <num>: DEFINE WAREHOUSE v1 MIN_CLUSTER_COUNT = 'x' ;"
+reason = "not submitted: held by capture guard f187c2c in the define-stage packet udq-09.jsonl: billable or out-of-account: compute other than standard single-cluster"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.create-warehouse.define-warehouse.k1deffeb69c20", sql_sha256 = "1deffeb69c20c43ba0a42547baf7805d7df4b7bcb73577a6666735df0ba783a4" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.create-warehouse.define-warehouse.o053"
+form = "sf.ddl.create-warehouse.define-warehouse"
+construct = "option_present: DEFINE WAREHOUSE v1 WITH WAREHOUSE_TYPE = STANDARD WAREHOUSE_SIZE = XSMALL GENERATION = '1' RESOURCE_CONSTRAINT = STANDARD_GEN_1 MAX_CLUSTER_COUNT = 1 MIN_CLUSTER_COUNT = 1 SCALING_POLICY = STANDARD AUTO_SUSPEND = 1 AUTO_RESUME = TRUE INITIALLY_SUSPENDED = TRUE RESOURCE_MONITOR = v1 COMMENT = 'm' ENABLE_QUERY_ACCELERATION = TRUE QUERY_ACCELERATION_MAX_SCALE_FACTOR = 1 MAX_CONCURRENCY_LEVEL = 1 STATEMENT_QUEUED_TIMEOUT_IN_SECONDS = 1 STATEMENT_TIMEOUT_IN_SECONDS = 1 ;"
+reason = "not submitted: held by capture guard f187c2c in the define-stage packet udq-09.jsonl: billable or out-of-account: paid feature"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.create-warehouse.define-warehouse.kc36ff0e17ae7", sql_sha256 = "c36ff0e17ae7e2bfd75576ef83eec46e43b8d70102283e8279c6ff2d40de287b" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.create-warehouse.define-warehouse.o057"
+form = "sf.ddl.create-warehouse.define-warehouse"
+construct = "option_present: DEFINE WAREHOUSE v1 WITH WAREHOUSE_TYPE = STANDARD WAREHOUSE_SIZE = XSMALL GENERATION = '1' RESOURCE_CONSTRAINT = STANDARD_GEN_1 MAX_CLUSTER_COUNT = 1 MIN_CLUSTER_COUNT = 1 SCALING_POLICY = STANDARD AUTO_SUSPEND = 1 AUTO_RESUME = TRUE INITIALLY_SUSPENDED = TRUE RESOURCE_MONITOR = v1 COMMENT = 'm' ENABLE_QUERY_ACCELERATION = TRUE QUERY_ACCELERATION_MAX_SCALE_FACTOR = 1 MAX_CONCURRENCY_LEVEL = 1 STATEMENT_QUEUED_TIMEOUT_IN_SECONDS = 1 STATEMENT_TIMEOUT_IN_SECONDS = 1 ;"
+reason = "not submitted: held by capture guard f187c2c in the define-stage packet udq-09.jsonl: billable or out-of-account: paid feature"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.create-warehouse.define-warehouse.kc36ff0e17ae7", sql_sha256 = "c36ff0e17ae7e2bfd75576ef83eec46e43b8d70102283e8279c6ff2d40de287b" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.create-warehouse.define-warehouse.o061"
+form = "sf.ddl.create-warehouse.define-warehouse"
+construct = "a valid integer_literal: DEFINE WAREHOUSE v1 WITH WAREHOUSE_TYPE = STANDARD WAREHOUSE_SIZE = XSMALL GENERATION = '1' RESOURCE_CONSTRAINT = STANDARD_GEN_1 MAX_CLUSTER_COUNT = 1 MIN_CLUSTER_COUNT = 1 SCALING_POLICY = STANDARD AUTO_SUSPEND = 1 AUTO_RESUME = TRUE INITIALLY_SUSPENDED = TRUE RESOURCE_MONITOR = v1 COMMENT = 'm' ENABLE_QUERY_ACCELERATION = TRUE QUERY_ACCELERATION_MAX_SCALE_FACTOR = 1 MAX_CONCURRENCY_LEVEL = 1 STATEMENT_QUEUED_TIMEOUT_IN_SECONDS = 1 STATEMENT_TIMEOUT_IN_SECONDS = 1 ;"
+reason = "not submitted: held by capture guard f187c2c in the define-stage packet udq-09.jsonl: billable or out-of-account: paid feature"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.create-warehouse.define-warehouse.kc36ff0e17ae7", sql_sha256 = "c36ff0e17ae7e2bfd75576ef83eec46e43b8d70102283e8279c6ff2d40de287b" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.create-warehouse.define-warehouse.o063"
+form = "sf.ddl.create-warehouse.define-warehouse"
+construct = "option_present: DEFINE WAREHOUSE v1 WITH WAREHOUSE_TYPE = STANDARD WAREHOUSE_SIZE = XSMALL GENERATION = '1' RESOURCE_CONSTRAINT = STANDARD_GEN_1 MAX_CLUSTER_COUNT = 1 MIN_CLUSTER_COUNT = 1 SCALING_POLICY = STANDARD AUTO_SUSPEND = 1 AUTO_RESUME = TRUE INITIALLY_SUSPENDED = TRUE RESOURCE_MONITOR = v1 COMMENT = 'm' ENABLE_QUERY_ACCELERATION = TRUE QUERY_ACCELERATION_MAX_SCALE_FACTOR = 1 MAX_CONCURRENCY_LEVEL = 1 STATEMENT_QUEUED_TIMEOUT_IN_SECONDS = 1 STATEMENT_TIMEOUT_IN_SECONDS = 1 ;"
+reason = "not submitted: held by capture guard f187c2c in the define-stage packet udq-09.jsonl: billable or out-of-account: paid feature"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.create-warehouse.define-warehouse.kc36ff0e17ae7", sql_sha256 = "c36ff0e17ae7e2bfd75576ef83eec46e43b8d70102283e8279c6ff2d40de287b" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.create-warehouse.define-warehouse.o067"
+form = "sf.ddl.create-warehouse.define-warehouse"
+construct = "option_present: DEFINE WAREHOUSE v1 WITH WAREHOUSE_TYPE = STANDARD WAREHOUSE_SIZE = XSMALL GENERATION = '1' RESOURCE_CONSTRAINT = STANDARD_GEN_1 MAX_CLUSTER_COUNT = 1 MIN_CLUSTER_COUNT = 1 SCALING_POLICY = STANDARD AUTO_SUSPEND = 1 AUTO_RESUME = TRUE INITIALLY_SUSPENDED = TRUE RESOURCE_MONITOR = v1 COMMENT = 'm' ENABLE_QUERY_ACCELERATION = TRUE QUERY_ACCELERATION_MAX_SCALE_FACTOR = 1 MAX_CONCURRENCY_LEVEL = 1 STATEMENT_QUEUED_TIMEOUT_IN_SECONDS = 1 STATEMENT_TIMEOUT_IN_SECONDS = 1 ;"
+reason = "not submitted: held by capture guard f187c2c in the define-stage packet udq-09.jsonl: billable or out-of-account: paid feature"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.create-warehouse.define-warehouse.kc36ff0e17ae7", sql_sha256 = "c36ff0e17ae7e2bfd75576ef83eec46e43b8d70102283e8279c6ff2d40de287b" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.create-warehouse.define-warehouse.o071"
+form = "sf.ddl.create-warehouse.define-warehouse"
+construct = "option_present: DEFINE WAREHOUSE v1 WITH WAREHOUSE_TYPE = STANDARD WAREHOUSE_SIZE = XSMALL GENERATION = '1' RESOURCE_CONSTRAINT = STANDARD_GEN_1 MAX_CLUSTER_COUNT = 1 MIN_CLUSTER_COUNT = 1 SCALING_POLICY = STANDARD AUTO_SUSPEND = 1 AUTO_RESUME = TRUE INITIALLY_SUSPENDED = TRUE RESOURCE_MONITOR = v1 COMMENT = 'm' ENABLE_QUERY_ACCELERATION = TRUE QUERY_ACCELERATION_MAX_SCALE_FACTOR = 1 MAX_CONCURRENCY_LEVEL = 1 STATEMENT_QUEUED_TIMEOUT_IN_SECONDS = 1 STATEMENT_TIMEOUT_IN_SECONDS = 1 ;"
+reason = "not submitted: held by capture guard f187c2c in the define-stage packet udq-09.jsonl: billable or out-of-account: paid feature"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.create-warehouse.define-warehouse.kc36ff0e17ae7", sql_sha256 = "c36ff0e17ae7e2bfd75576ef83eec46e43b8d70102283e8279c6ff2d40de287b" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.create-warehouse.define-warehouse.o074"
+form = "sf.ddl.create-warehouse.define-warehouse"
+construct = "a valid identifier: DEFINE WAREHOUSE v1 WITH WAREHOUSE_TYPE = STANDARD WAREHOUSE_SIZE = XSMALL GENERATION = '1' RESOURCE_CONSTRAINT = STANDARD_GEN_1 MAX_CLUSTER_COUNT = 1 MIN_CLUSTER_COUNT = 1 SCALING_POLICY = STANDARD AUTO_SUSPEND = 1 AUTO_RESUME = TRUE INITIALLY_SUSPENDED = TRUE RESOURCE_MONITOR = v1 COMMENT = 'm' ENABLE_QUERY_ACCELERATION = TRUE QUERY_ACCELERATION_MAX_SCALE_FACTOR = 1 MAX_CONCURRENCY_LEVEL = 1 STATEMENT_QUEUED_TIMEOUT_IN_SECONDS = 1 STATEMENT_TIMEOUT_IN_SECONDS = 1 ;"
+reason = "not submitted: held by capture guard f187c2c in the define-stage packet udq-09.jsonl: billable or out-of-account: paid feature"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.create-warehouse.define-warehouse.kc36ff0e17ae7", sql_sha256 = "c36ff0e17ae7e2bfd75576ef83eec46e43b8d70102283e8279c6ff2d40de287b" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.create-warehouse.define-warehouse.o076"
+form = "sf.ddl.create-warehouse.define-warehouse"
+construct = "option_present: DEFINE WAREHOUSE v1 WITH WAREHOUSE_TYPE = STANDARD WAREHOUSE_SIZE = XSMALL GENERATION = '1' RESOURCE_CONSTRAINT = STANDARD_GEN_1 MAX_CLUSTER_COUNT = 1 MIN_CLUSTER_COUNT = 1 SCALING_POLICY = STANDARD AUTO_SUSPEND = 1 AUTO_RESUME = TRUE INITIALLY_SUSPENDED = TRUE RESOURCE_MONITOR = v1 COMMENT = 'm' ENABLE_QUERY_ACCELERATION = TRUE QUERY_ACCELERATION_MAX_SCALE_FACTOR = 1 MAX_CONCURRENCY_LEVEL = 1 STATEMENT_QUEUED_TIMEOUT_IN_SECONDS = 1 STATEMENT_TIMEOUT_IN_SECONDS = 1 ;"
+reason = "not submitted: held by capture guard f187c2c in the define-stage packet udq-09.jsonl: billable or out-of-account: paid feature"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.create-warehouse.define-warehouse.kc36ff0e17ae7", sql_sha256 = "c36ff0e17ae7e2bfd75576ef83eec46e43b8d70102283e8279c6ff2d40de287b" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.create-warehouse.define-warehouse.o079"
+form = "sf.ddl.create-warehouse.define-warehouse"
+construct = "a valid string_literal: DEFINE WAREHOUSE v1 WITH WAREHOUSE_TYPE = STANDARD WAREHOUSE_SIZE = XSMALL GENERATION = '1' RESOURCE_CONSTRAINT = STANDARD_GEN_1 MAX_CLUSTER_COUNT = 1 MIN_CLUSTER_COUNT = 1 SCALING_POLICY = STANDARD AUTO_SUSPEND = 1 AUTO_RESUME = TRUE INITIALLY_SUSPENDED = TRUE RESOURCE_MONITOR = v1 COMMENT = 'm' ENABLE_QUERY_ACCELERATION = TRUE QUERY_ACCELERATION_MAX_SCALE_FACTOR = 1 MAX_CONCURRENCY_LEVEL = 1 STATEMENT_QUEUED_TIMEOUT_IN_SECONDS = 1 STATEMENT_TIMEOUT_IN_SECONDS = 1 ;"
+reason = "not submitted: held by capture guard f187c2c in the define-stage packet udq-09.jsonl: billable or out-of-account: paid feature"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.create-warehouse.define-warehouse.kc36ff0e17ae7", sql_sha256 = "c36ff0e17ae7e2bfd75576ef83eec46e43b8d70102283e8279c6ff2d40de287b" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.create-warehouse.define-warehouse.o081"
+form = "sf.ddl.create-warehouse.define-warehouse"
+construct = "option_present: DEFINE WAREHOUSE v1 WITH WAREHOUSE_TYPE = STANDARD WAREHOUSE_SIZE = XSMALL GENERATION = '1' RESOURCE_CONSTRAINT = STANDARD_GEN_1 MAX_CLUSTER_COUNT = 1 MIN_CLUSTER_COUNT = 1 SCALING_POLICY = STANDARD AUTO_SUSPEND = 1 AUTO_RESUME = TRUE INITIALLY_SUSPENDED = TRUE RESOURCE_MONITOR = v1 COMMENT = 'm' ENABLE_QUERY_ACCELERATION = TRUE QUERY_ACCELERATION_MAX_SCALE_FACTOR = 1 MAX_CONCURRENCY_LEVEL = 1 STATEMENT_QUEUED_TIMEOUT_IN_SECONDS = 1 STATEMENT_TIMEOUT_IN_SECONDS = 1 ;"
+reason = "not submitted: held by capture guard f187c2c in the define-stage packet udq-09.jsonl: billable or out-of-account: paid feature"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.create-warehouse.define-warehouse.kc36ff0e17ae7", sql_sha256 = "c36ff0e17ae7e2bfd75576ef83eec46e43b8d70102283e8279c6ff2d40de287b" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.create-warehouse.define-warehouse.o083"
+form = "sf.ddl.create-warehouse.define-warehouse"
+construct = "alternative: DEFINE WAREHOUSE v1 ENABLE_QUERY_ACCELERATION = TRUE ;"
+reason = "not submitted: held by capture guard f187c2c in the define-stage packet udq-09.jsonl: billable or out-of-account: paid feature"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.create-warehouse.define-warehouse.k7c92254f4171", sql_sha256 = "7c92254f4171a310e8ccfbf6ed1b5c1d0fc185c87f82a919675bb994f811a6db" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.create-warehouse.define-warehouse.o085"
+form = "sf.ddl.create-warehouse.define-warehouse"
+construct = "option_present: DEFINE WAREHOUSE v1 WITH WAREHOUSE_TYPE = STANDARD WAREHOUSE_SIZE = XSMALL GENERATION = '1' RESOURCE_CONSTRAINT = STANDARD_GEN_1 MAX_CLUSTER_COUNT = 1 MIN_CLUSTER_COUNT = 1 SCALING_POLICY = STANDARD AUTO_SUSPEND = 1 AUTO_RESUME = TRUE INITIALLY_SUSPENDED = TRUE RESOURCE_MONITOR = v1 COMMENT = 'm' ENABLE_QUERY_ACCELERATION = TRUE QUERY_ACCELERATION_MAX_SCALE_FACTOR = 1 MAX_CONCURRENCY_LEVEL = 1 STATEMENT_QUEUED_TIMEOUT_IN_SECONDS = 1 STATEMENT_TIMEOUT_IN_SECONDS = 1 ;"
+reason = "not submitted: held by capture guard f187c2c in the define-stage packet udq-09.jsonl: billable or out-of-account: paid feature"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.create-warehouse.define-warehouse.kc36ff0e17ae7", sql_sha256 = "c36ff0e17ae7e2bfd75576ef83eec46e43b8d70102283e8279c6ff2d40de287b" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.create-warehouse.define-warehouse.o087"
+form = "sf.ddl.create-warehouse.define-warehouse"
+construct = "omit <num>: DEFINE WAREHOUSE v1 QUERY_ACCELERATION_MAX_SCALE_FACTOR = ;"
+reason = "not submitted: held by capture guard f187c2c in the define-stage packet udq-09.jsonl: billable or out-of-account: paid feature"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.create-warehouse.define-warehouse.k883bfed6dda5", sql_sha256 = "883bfed6dda59f7ecc744ab3b3418b8584204b41704f9abaf5ef78674af26a23" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.create-warehouse.define-warehouse.o088"
+form = "sf.ddl.create-warehouse.define-warehouse"
+construct = "a valid integer_literal: DEFINE WAREHOUSE v1 WITH WAREHOUSE_TYPE = STANDARD WAREHOUSE_SIZE = XSMALL GENERATION = '1' RESOURCE_CONSTRAINT = STANDARD_GEN_1 MAX_CLUSTER_COUNT = 1 MIN_CLUSTER_COUNT = 1 SCALING_POLICY = STANDARD AUTO_SUSPEND = 1 AUTO_RESUME = TRUE INITIALLY_SUSPENDED = TRUE RESOURCE_MONITOR = v1 COMMENT = 'm' ENABLE_QUERY_ACCELERATION = TRUE QUERY_ACCELERATION_MAX_SCALE_FACTOR = 1 MAX_CONCURRENCY_LEVEL = 1 STATEMENT_QUEUED_TIMEOUT_IN_SECONDS = 1 STATEMENT_TIMEOUT_IN_SECONDS = 1 ;"
+reason = "not submitted: held by capture guard f187c2c in the define-stage packet udq-09.jsonl: billable or out-of-account: paid feature"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.create-warehouse.define-warehouse.kc36ff0e17ae7", sql_sha256 = "c36ff0e17ae7e2bfd75576ef83eec46e43b8d70102283e8279c6ff2d40de287b" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.create-warehouse.define-warehouse.o089"
+form = "sf.ddl.create-warehouse.define-warehouse"
+construct = "a string literal in place of <num>: DEFINE WAREHOUSE v1 QUERY_ACCELERATION_MAX_SCALE_FACTOR = 'x' ;"
+reason = "not submitted: held by capture guard f187c2c in the define-stage packet udq-09.jsonl: billable or out-of-account: paid feature"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.create-warehouse.define-warehouse.k216bccb92158", sql_sha256 = "216bccb921589f7dd5d8352c121f3a824cf836321d332b5849260f61d8b54563" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.create-warehouse.define-warehouse.o090"
+form = "sf.ddl.create-warehouse.define-warehouse"
+construct = "option_present: DEFINE WAREHOUSE v1 WITH WAREHOUSE_TYPE = STANDARD WAREHOUSE_SIZE = XSMALL GENERATION = '1' RESOURCE_CONSTRAINT = STANDARD_GEN_1 MAX_CLUSTER_COUNT = 1 MIN_CLUSTER_COUNT = 1 SCALING_POLICY = STANDARD AUTO_SUSPEND = 1 AUTO_RESUME = TRUE INITIALLY_SUSPENDED = TRUE RESOURCE_MONITOR = v1 COMMENT = 'm' ENABLE_QUERY_ACCELERATION = TRUE QUERY_ACCELERATION_MAX_SCALE_FACTOR = 1 MAX_CONCURRENCY_LEVEL = 1 STATEMENT_QUEUED_TIMEOUT_IN_SECONDS = 1 STATEMENT_TIMEOUT_IN_SECONDS = 1 ;"
+reason = "not submitted: held by capture guard f187c2c in the define-stage packet udq-09.jsonl: billable or out-of-account: paid feature"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.create-warehouse.define-warehouse.kc36ff0e17ae7", sql_sha256 = "c36ff0e17ae7e2bfd75576ef83eec46e43b8d70102283e8279c6ff2d40de287b" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.create-warehouse.define-warehouse.o092"
+form = "sf.ddl.create-warehouse.define-warehouse"
+construct = "option_present: DEFINE WAREHOUSE v1 WITH WAREHOUSE_TYPE = STANDARD WAREHOUSE_SIZE = XSMALL GENERATION = '1' RESOURCE_CONSTRAINT = STANDARD_GEN_1 MAX_CLUSTER_COUNT = 1 MIN_CLUSTER_COUNT = 1 SCALING_POLICY = STANDARD AUTO_SUSPEND = 1 AUTO_RESUME = TRUE INITIALLY_SUSPENDED = TRUE RESOURCE_MONITOR = v1 COMMENT = 'm' ENABLE_QUERY_ACCELERATION = TRUE QUERY_ACCELERATION_MAX_SCALE_FACTOR = 1 MAX_CONCURRENCY_LEVEL = 1 STATEMENT_QUEUED_TIMEOUT_IN_SECONDS = 1 STATEMENT_TIMEOUT_IN_SECONDS = 1 ;"
+reason = "not submitted: held by capture guard f187c2c in the define-stage packet udq-09.jsonl: billable or out-of-account: paid feature"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.create-warehouse.define-warehouse.kc36ff0e17ae7", sql_sha256 = "c36ff0e17ae7e2bfd75576ef83eec46e43b8d70102283e8279c6ff2d40de287b" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.create-warehouse.define-warehouse.o095"
+form = "sf.ddl.create-warehouse.define-warehouse"
+construct = "a valid integer_literal: DEFINE WAREHOUSE v1 WITH WAREHOUSE_TYPE = STANDARD WAREHOUSE_SIZE = XSMALL GENERATION = '1' RESOURCE_CONSTRAINT = STANDARD_GEN_1 MAX_CLUSTER_COUNT = 1 MIN_CLUSTER_COUNT = 1 SCALING_POLICY = STANDARD AUTO_SUSPEND = 1 AUTO_RESUME = TRUE INITIALLY_SUSPENDED = TRUE RESOURCE_MONITOR = v1 COMMENT = 'm' ENABLE_QUERY_ACCELERATION = TRUE QUERY_ACCELERATION_MAX_SCALE_FACTOR = 1 MAX_CONCURRENCY_LEVEL = 1 STATEMENT_QUEUED_TIMEOUT_IN_SECONDS = 1 STATEMENT_TIMEOUT_IN_SECONDS = 1 ;"
+reason = "not submitted: held by capture guard f187c2c in the define-stage packet udq-09.jsonl: billable or out-of-account: paid feature"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.create-warehouse.define-warehouse.kc36ff0e17ae7", sql_sha256 = "c36ff0e17ae7e2bfd75576ef83eec46e43b8d70102283e8279c6ff2d40de287b" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.create-warehouse.define-warehouse.o097"
+form = "sf.ddl.create-warehouse.define-warehouse"
+construct = "option_present: DEFINE WAREHOUSE v1 WITH WAREHOUSE_TYPE = STANDARD WAREHOUSE_SIZE = XSMALL GENERATION = '1' RESOURCE_CONSTRAINT = STANDARD_GEN_1 MAX_CLUSTER_COUNT = 1 MIN_CLUSTER_COUNT = 1 SCALING_POLICY = STANDARD AUTO_SUSPEND = 1 AUTO_RESUME = TRUE INITIALLY_SUSPENDED = TRUE RESOURCE_MONITOR = v1 COMMENT = 'm' ENABLE_QUERY_ACCELERATION = TRUE QUERY_ACCELERATION_MAX_SCALE_FACTOR = 1 MAX_CONCURRENCY_LEVEL = 1 STATEMENT_QUEUED_TIMEOUT_IN_SECONDS = 1 STATEMENT_TIMEOUT_IN_SECONDS = 1 ;"
+reason = "not submitted: held by capture guard f187c2c in the define-stage packet udq-09.jsonl: billable or out-of-account: paid feature"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.create-warehouse.define-warehouse.kc36ff0e17ae7", sql_sha256 = "c36ff0e17ae7e2bfd75576ef83eec46e43b8d70102283e8279c6ff2d40de287b" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.create-warehouse.define-warehouse.o100"
+form = "sf.ddl.create-warehouse.define-warehouse"
+construct = "a valid integer_literal: DEFINE WAREHOUSE v1 WITH WAREHOUSE_TYPE = STANDARD WAREHOUSE_SIZE = XSMALL GENERATION = '1' RESOURCE_CONSTRAINT = STANDARD_GEN_1 MAX_CLUSTER_COUNT = 1 MIN_CLUSTER_COUNT = 1 SCALING_POLICY = STANDARD AUTO_SUSPEND = 1 AUTO_RESUME = TRUE INITIALLY_SUSPENDED = TRUE RESOURCE_MONITOR = v1 COMMENT = 'm' ENABLE_QUERY_ACCELERATION = TRUE QUERY_ACCELERATION_MAX_SCALE_FACTOR = 1 MAX_CONCURRENCY_LEVEL = 1 STATEMENT_QUEUED_TIMEOUT_IN_SECONDS = 1 STATEMENT_TIMEOUT_IN_SECONDS = 1 ;"
+reason = "not submitted: held by capture guard f187c2c in the define-stage packet udq-09.jsonl: billable or out-of-account: paid feature"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.create-warehouse.define-warehouse.kc36ff0e17ae7", sql_sha256 = "c36ff0e17ae7e2bfd75576ef83eec46e43b8d70102283e8279c6ff2d40de287b" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.create-warehouse.define-warehouse.o102"
+form = "sf.ddl.create-warehouse.define-warehouse"
+construct = "option_present: DEFINE WAREHOUSE v1 WITH WAREHOUSE_TYPE = STANDARD WAREHOUSE_SIZE = XSMALL GENERATION = '1' RESOURCE_CONSTRAINT = STANDARD_GEN_1 MAX_CLUSTER_COUNT = 1 MIN_CLUSTER_COUNT = 1 SCALING_POLICY = STANDARD AUTO_SUSPEND = 1 AUTO_RESUME = TRUE INITIALLY_SUSPENDED = TRUE RESOURCE_MONITOR = v1 COMMENT = 'm' ENABLE_QUERY_ACCELERATION = TRUE QUERY_ACCELERATION_MAX_SCALE_FACTOR = 1 MAX_CONCURRENCY_LEVEL = 1 STATEMENT_QUEUED_TIMEOUT_IN_SECONDS = 1 STATEMENT_TIMEOUT_IN_SECONDS = 1 ;"
+reason = "not submitted: held by capture guard f187c2c in the define-stage packet udq-09.jsonl: billable or out-of-account: paid feature"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.create-warehouse.define-warehouse.kc36ff0e17ae7", sql_sha256 = "c36ff0e17ae7e2bfd75576ef83eec46e43b8d70102283e8279c6ff2d40de287b" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.create-warehouse.define-warehouse.o105"
+form = "sf.ddl.create-warehouse.define-warehouse"
+construct = "a valid integer_literal: DEFINE WAREHOUSE v1 WITH WAREHOUSE_TYPE = STANDARD WAREHOUSE_SIZE = XSMALL GENERATION = '1' RESOURCE_CONSTRAINT = STANDARD_GEN_1 MAX_CLUSTER_COUNT = 1 MIN_CLUSTER_COUNT = 1 SCALING_POLICY = STANDARD AUTO_SUSPEND = 1 AUTO_RESUME = TRUE INITIALLY_SUSPENDED = TRUE RESOURCE_MONITOR = v1 COMMENT = 'm' ENABLE_QUERY_ACCELERATION = TRUE QUERY_ACCELERATION_MAX_SCALE_FACTOR = 1 MAX_CONCURRENCY_LEVEL = 1 STATEMENT_QUEUED_TIMEOUT_IN_SECONDS = 1 STATEMENT_TIMEOUT_IN_SECONDS = 1 ;"
+reason = "not submitted: held by capture guard f187c2c in the define-stage packet udq-09.jsonl: billable or out-of-account: paid feature"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.create-warehouse.define-warehouse.kc36ff0e17ae7", sql_sha256 = "c36ff0e17ae7e2bfd75576ef83eec46e43b8d70102283e8279c6ff2d40de287b" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.create-warehouse.define-warehouse.o117"
+form = "sf.ddl.create-warehouse.define-warehouse"
+construct = "every independent option of one production together: DEFINE WAREHOUSE v1 WITH WAREHOUSE_TYPE = STANDARD WAREHOUSE_SIZE = XSMALL GENERATION = '1' RESOURCE_CONSTRAINT = STANDARD_GEN_1 MAX_CLUSTER_COUNT = 1 MIN_CLUSTER_COUNT = 1 SCALING_POLICY = STANDARD AUTO_SUSPEND = 1 AUTO_RESUME = TRUE INITIALLY_SUSPENDED = TRUE RESOURCE_MONITOR = v1 COMMENT = 'm' ENABLE_QUERY_ACCELERATION = TRUE QUERY_ACCELERATION_MAX_SCALE_FACTOR = 1 MAX_CONCURRENCY_LEVEL = 1 STATEMENT_QUEUED_TIMEOUT_IN_SECONDS = 1 STATEMENT_TIMEOUT_IN_SECONDS = 1 ;"
+reason = "not submitted: held by capture guard f187c2c in the define-stage packet udq-09.jsonl: billable or out-of-account: paid feature"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.create-warehouse.define-warehouse.kc36ff0e17ae7", sql_sha256 = "c36ff0e17ae7e2bfd75576ef83eec46e43b8d70102283e8279c6ff2d40de287b" },
 ]
 runs = []
 probes = []

@@ -56282,13 +56282,6 @@ target = "<secret_name> in [ ALLOWED_AUTHENTICATION_SECRETS = { ( <secret_name> 
 note = "a valid identifier"
 
 [[obligation]]
-id = "sf.security_admin.create-api-integration.artifact-repository-api-api-allowed-prefixes-enabled-true.o026"
-kind = "negative_neighbour"
-required = true
-target = "<secret_name> in [ ALLOWED_AUTHENTICATION_SECRETS = { ( <secret_name> [ , <secret_name> , ... ] ) | all | none } ]"
-note = "a string literal in place of <secret_name>"
-
-[[obligation]]
 id = "sf.security_admin.create-api-integration.artifact-repository-api-api-allowed-prefixes-enabled-true.o027"
 kind = "option_present"
 required = true
@@ -56370,13 +56363,6 @@ kind = "operand_type_class"
 required = true
 target = "<secret_name> in [ TLS_TRUSTED_CERTIFICATES = ( { <secret_name> [ , <secret_name> , ... ] } ) ]"
 note = "a valid identifier"
-
-[[obligation]]
-id = "sf.security_admin.create-api-integration.artifact-repository-api-api-allowed-prefixes-enabled-true.o040"
-kind = "negative_neighbour"
-required = true
-target = "<secret_name> in [ TLS_TRUSTED_CERTIFICATES = ( { <secret_name> [ , <secret_name> , ... ] } ) ]"
-note = "a string literal in place of <secret_name>"
 
 [[obligation]]
 id = "sf.security_admin.create-api-integration.artifact-repository-api-api-allowed-prefixes-enabled-true.o041"
@@ -56587,6 +56573,22 @@ required = true
 target = "<secret_name>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.security_admin.create-api-integration.artifact-repository-api-api-allowed-prefixes-enabled-true.o074"
+kind = "negative_neighbour"
+required = true
+target = "<secret_name> in [ TLS_TRUSTED_CERTIFICATES = ( { <secret_name> [ , <secret_name> , ... ] } ) ]"
+anchor = "doc.sql.create-api-integration / Syntax / For artifact repository"
+note = "a string literal in place of <secret_name>, observed"
+
+[[obligation]]
+id = "sf.security_admin.create-api-integration.artifact-repository-api-api-allowed-prefixes-enabled-true.o075"
+kind = "negative_neighbour"
+required = true
+target = "<secret_name> in [ ALLOWED_AUTHENTICATION_SECRETS = { ( <secret_name> [ , <secret_name> , ... ] ) | all | none } ]"
+anchor = "doc.sql.create-api-integration / Syntax / For artifact repository"
+note = "a string literal in place of <secret_name>, observed"
 
 [[obligation]]
 id = "sf.security_admin.create-api-integration.aws-api-gateway-aws-private-api-gateway-aws-gov-api-gateway-aws-gov-private-api-gateway.o001"
@@ -58419,13 +58421,6 @@ target = "'<...>' in [ API_BLOCKED_PREFIXES = ( '<...>' ) ]"
 note = "an unquoted identifier in place of '<...>'"
 
 [[obligation]]
-id = "sf.security_admin.create-api-integration.git-https-api-api-allowed-prefixes-api-user-authentication-type.for-git-repository.o016"
-kind = "required_operand_missing"
-required = true
-target = "<oauth_parameters>"
-note = "omit <oauth_parameters>"
-
-[[obligation]]
 id = "sf.security_admin.create-api-integration.git-https-api-api-allowed-prefixes-api-user-authentication-type.for-git-repository.o017"
 kind = "operand_type_class"
 required = true
@@ -58608,6 +58603,14 @@ anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
+id = "sf.security_admin.create-api-integration.git-https-api-api-allowed-prefixes-api-user-authentication-type.for-git-repository.o046"
+kind = "required_operand_missing"
+required = true
+target = "<oauth_parameters>"
+anchor = "doc.sql.create-api-integration / Syntax / For Git repository"
+note = "omit <oauth_parameters>, observed"
+
+[[obligation]]
 id = "sf.security_admin.create-api-integration.git-https-api-api-allowed-prefixes-enabled-true.o001"
 kind = "positive"
 required = true
@@ -58769,13 +58772,6 @@ kind = "operand_type_class"
 required = true
 target = "<secret_name> in [ ALLOWED_AUTHENTICATION_SECRETS = { ( <secret_name> [ , <secret_name> , ... ] ) | all | none } ]"
 note = "a valid identifier"
-
-[[obligation]]
-id = "sf.security_admin.create-api-integration.git-https-api-api-allowed-prefixes-enabled-true.o026"
-kind = "negative_neighbour"
-required = true
-target = "<secret_name> in [ ALLOWED_AUTHENTICATION_SECRETS = { ( <secret_name> [ , <secret_name> , ... ] ) | all | none } ]"
-note = "a string literal in place of <secret_name>"
 
 [[obligation]]
 id = "sf.security_admin.create-api-integration.git-https-api-api-allowed-prefixes-enabled-true.o027"
@@ -58976,6 +58972,14 @@ required = true
 target = "<secret_name>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.security_admin.create-api-integration.git-https-api-api-allowed-prefixes-enabled-true.o058"
+kind = "negative_neighbour"
+required = true
+target = "<secret_name> in [ ALLOWED_AUTHENTICATION_SECRETS = { ( <secret_name> [ , <secret_name> , ... ] ) | all | none } ]"
+anchor = "doc.sql.create-api-integration / Syntax / For Git repository"
+note = "a string literal in place of <secret_name>, observed"
 
 [[obligation]]
 id = "sf.security_admin.create-api-integration.git-https-api-api-allowed-prefixes-use-privatelink-endpoint-true.o001"

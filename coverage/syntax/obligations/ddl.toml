@@ -27446,24 +27446,11 @@ anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
-id = "sf.ddl.alter-event-routing-table.set-rule-region-group-regions.o001"
-kind = "positive"
-required = true
-note = "the documented form with every required part and no optional part"
-
-[[obligation]]
 id = "sf.ddl.alter-event-routing-table.set-rule-region-group-regions.o002"
 kind = "required_operand_missing"
 required = true
 target = "<table_name>"
 note = "omit <table_name>"
-
-[[obligation]]
-id = "sf.ddl.alter-event-routing-table.set-rule-region-group-regions.o003"
-kind = "operand_type_class"
-required = true
-target = "<table_name>"
-note = "a valid identifier"
 
 [[obligation]]
 id = "sf.ddl.alter-event-routing-table.set-rule-region-group-regions.o004"
@@ -27473,30 +27460,11 @@ target = "<table_name>"
 note = "a string literal in place of <table_name>"
 
 [[obligation]]
-id = "sf.ddl.alter-event-routing-table.set-rule-region-group-regions.o005"
-kind = "option_present"
-required = true
-target = "[ FORCE ]"
-
-[[obligation]]
-id = "sf.ddl.alter-event-routing-table.set-rule-region-group-regions.o006"
-kind = "option_absent"
-required = true
-target = "[ FORCE ]"
-
-[[obligation]]
 id = "sf.ddl.alter-event-routing-table.set-rule-region-group-regions.o007"
 kind = "required_operand_missing"
 required = true
 target = "<rule_name>"
 note = "omit <rule_name>"
-
-[[obligation]]
-id = "sf.ddl.alter-event-routing-table.set-rule-region-group-regions.o008"
-kind = "operand_type_class"
-required = true
-target = "<rule_name>"
-note = "a valid identifier"
 
 [[obligation]]
 id = "sf.ddl.alter-event-routing-table.set-rule-region-group-regions.o009"
@@ -27513,25 +27481,11 @@ target = "<region_group>"
 note = "omit <region_group>"
 
 [[obligation]]
-id = "sf.ddl.alter-event-routing-table.set-rule-region-group-regions.o011"
-kind = "operand_type_class"
-required = true
-target = "<region_group>"
-note = "a valid operand"
-
-[[obligation]]
 id = "sf.ddl.alter-event-routing-table.set-rule-region-group-regions.o012"
 kind = "required_operand_missing"
 required = true
 target = "'<region1>'"
 note = "omit '<region1>'"
-
-[[obligation]]
-id = "sf.ddl.alter-event-routing-table.set-rule-region-group-regions.o013"
-kind = "operand_type_class"
-required = true
-target = "'<region1>'"
-note = "a valid string_literal"
 
 [[obligation]]
 id = "sf.ddl.alter-event-routing-table.set-rule-region-group-regions.o014"
@@ -27548,13 +27502,6 @@ target = "'<region2>'"
 note = "omit '<region2>'"
 
 [[obligation]]
-id = "sf.ddl.alter-event-routing-table.set-rule-region-group-regions.o016"
-kind = "operand_type_class"
-required = true
-target = "'<region2>'"
-note = "a valid string_literal"
-
-[[obligation]]
 id = "sf.ddl.alter-event-routing-table.set-rule-region-group-regions.o017"
 kind = "negative_neighbour"
 required = true
@@ -27569,25 +27516,11 @@ target = "<organization>"
 note = "omit <organization>"
 
 [[obligation]]
-id = "sf.ddl.alter-event-routing-table.set-rule-region-group-regions.o019"
-kind = "operand_type_class"
-required = true
-target = "<organization>"
-note = "a valid operand"
-
-[[obligation]]
 id = "sf.ddl.alter-event-routing-table.set-rule-region-group-regions.o020"
 kind = "required_operand_missing"
 required = true
 target = "<account_name>"
 note = "omit <account_name>"
-
-[[obligation]]
-id = "sf.ddl.alter-event-routing-table.set-rule-region-group-regions.o021"
-kind = "operand_type_class"
-required = true
-target = "<account_name>"
-note = "a valid identifier"
 
 [[obligation]]
 id = "sf.ddl.alter-event-routing-table.set-rule-region-group-regions.o022"
@@ -27657,58 +27590,131 @@ required = true
 note = "the form without its required DESTINATION_ACCOUNT"
 
 [[obligation]]
-id = "sf.ddl.alter-event-routing-table.set-rule-region-group-regions.o033"
+id = "sf.ddl.alter-event-routing-table.set-rule-region-group-regions.o039"
+kind = "option_present"
+required = true
+target = "[ FORCE ]"
+anchor = "doc.sql.alter-event-routing-table / Syntax"
+note = "option present [ FORCE ], observed"
+
+[[obligation]]
+id = "sf.ddl.alter-event-routing-table.set-rule-region-group-regions.o040"
 kind = "identifier_class"
 required = true
 target = "<table_name>"
-anchor = "doc.identifiers-syntax"
-note = "quoted: a double-quoted identifier with blanks and mixed case"
+anchor = "doc.sql.alter-event-routing-table / Syntax"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance), observed"
 
 [[obligation]]
-id = "sf.ddl.alter-event-routing-table.set-rule-region-group-regions.o034"
+id = "sf.ddl.alter-event-routing-table.set-rule-region-group-regions.o041"
+kind = "identifier_class"
+required = true
+target = "<account_name>"
+anchor = "doc.sql.alter-event-routing-table / Syntax"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance), observed"
+
+[[obligation]]
+id = "sf.ddl.alter-event-routing-table.set-rule-region-group-regions.o042"
+kind = "identifier_class"
+required = true
+target = "<rule_name>"
+anchor = "doc.sql.alter-event-routing-table / Syntax"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance), observed"
+
+[[obligation]]
+id = "sf.ddl.alter-event-routing-table.set-rule-region-group-regions.o043"
 kind = "identifier_class"
 required = true
 target = "<table_name>"
-anchor = "doc.identifiers-syntax"
-note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+anchor = "doc.sql.alter-event-routing-table / Syntax"
+note = "quoted: a double-quoted identifier with blanks and mixed case, observed"
 
 [[obligation]]
-id = "sf.ddl.alter-event-routing-table.set-rule-region-group-regions.o035"
+id = "sf.ddl.alter-event-routing-table.set-rule-region-group-regions.o044"
 kind = "identifier_class"
 required = true
 target = "<rule_name>"
-anchor = "doc.identifiers-syntax"
-note = "quoted: a double-quoted identifier with blanks and mixed case"
+anchor = "doc.sql.alter-event-routing-table / Syntax"
+note = "quoted: a double-quoted identifier with blanks and mixed case, observed"
 
 [[obligation]]
-id = "sf.ddl.alter-event-routing-table.set-rule-region-group-regions.o036"
-kind = "identifier_class"
-required = true
-target = "<rule_name>"
-anchor = "doc.identifiers-syntax"
-note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
-
-[[obligation]]
-id = "sf.ddl.alter-event-routing-table.set-rule-region-group-regions.o037"
-kind = "identifier_class"
-required = true
-target = "<account_name>"
-anchor = "doc.identifiers-syntax"
-note = "quoted: a double-quoted identifier with blanks and mixed case"
-
-[[obligation]]
-id = "sf.ddl.alter-event-routing-table.set-rule-region-group-regions.o038"
-kind = "identifier_class"
-required = true
-target = "<account_name>"
-anchor = "doc.identifiers-syntax"
-note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
-
-[[obligation]]
-id = "sf.ddl.alter-event-routing-table.set-rules-region-group-regions.o001"
+id = "sf.ddl.alter-event-routing-table.set-rule-region-group-regions.o045"
 kind = "positive"
 required = true
-note = "the documented form with every required part and no optional part"
+anchor = "doc.sql.alter-event-routing-table / Syntax"
+note = "the documented form with every required part and no optional part, observed"
+
+[[obligation]]
+id = "sf.ddl.alter-event-routing-table.set-rule-region-group-regions.o046"
+kind = "operand_type_class"
+required = true
+target = "<table_name>"
+anchor = "doc.sql.alter-event-routing-table / Syntax"
+note = "a valid identifier, observed"
+
+[[obligation]]
+id = "sf.ddl.alter-event-routing-table.set-rule-region-group-regions.o047"
+kind = "option_absent"
+required = true
+target = "[ FORCE ]"
+anchor = "doc.sql.alter-event-routing-table / Syntax"
+note = "option absent [ FORCE ], observed"
+
+[[obligation]]
+id = "sf.ddl.alter-event-routing-table.set-rule-region-group-regions.o048"
+kind = "operand_type_class"
+required = true
+target = "<rule_name>"
+anchor = "doc.sql.alter-event-routing-table / Syntax"
+note = "a valid identifier, observed"
+
+[[obligation]]
+id = "sf.ddl.alter-event-routing-table.set-rule-region-group-regions.o049"
+kind = "operand_type_class"
+required = true
+target = "<region_group>"
+anchor = "doc.sql.alter-event-routing-table / Syntax"
+note = "a valid operand, observed"
+
+[[obligation]]
+id = "sf.ddl.alter-event-routing-table.set-rule-region-group-regions.o050"
+kind = "operand_type_class"
+required = true
+target = "'<region1>'"
+anchor = "doc.sql.alter-event-routing-table / Syntax"
+note = "a valid string_literal, observed"
+
+[[obligation]]
+id = "sf.ddl.alter-event-routing-table.set-rule-region-group-regions.o051"
+kind = "operand_type_class"
+required = true
+target = "'<region2>'"
+anchor = "doc.sql.alter-event-routing-table / Syntax"
+note = "a valid string_literal, observed"
+
+[[obligation]]
+id = "sf.ddl.alter-event-routing-table.set-rule-region-group-regions.o052"
+kind = "operand_type_class"
+required = true
+target = "<organization>"
+anchor = "doc.sql.alter-event-routing-table / Syntax"
+note = "a valid operand, observed"
+
+[[obligation]]
+id = "sf.ddl.alter-event-routing-table.set-rule-region-group-regions.o053"
+kind = "operand_type_class"
+required = true
+target = "<account_name>"
+anchor = "doc.sql.alter-event-routing-table / Syntax"
+note = "a valid identifier, observed"
+
+[[obligation]]
+id = "sf.ddl.alter-event-routing-table.set-rule-region-group-regions.o054"
+kind = "identifier_class"
+required = true
+target = "<account_name>"
+anchor = "doc.sql.alter-event-routing-table / Syntax"
+note = "quoted: a double-quoted identifier with blanks and mixed case, observed"
 
 [[obligation]]
 id = "sf.ddl.alter-event-routing-table.set-rules-region-group-regions.o002"
@@ -27718,13 +27724,6 @@ target = "<table_name>"
 note = "omit <table_name>"
 
 [[obligation]]
-id = "sf.ddl.alter-event-routing-table.set-rules-region-group-regions.o003"
-kind = "operand_type_class"
-required = true
-target = "<table_name>"
-note = "a valid identifier"
-
-[[obligation]]
 id = "sf.ddl.alter-event-routing-table.set-rules-region-group-regions.o004"
 kind = "negative_neighbour"
 required = true
@@ -27732,30 +27731,11 @@ target = "<table_name>"
 note = "a string literal in place of <table_name>"
 
 [[obligation]]
-id = "sf.ddl.alter-event-routing-table.set-rules-region-group-regions.o005"
-kind = "option_present"
-required = true
-target = "[ FORCE ]"
-
-[[obligation]]
-id = "sf.ddl.alter-event-routing-table.set-rules-region-group-regions.o006"
-kind = "option_absent"
-required = true
-target = "[ FORCE ]"
-
-[[obligation]]
 id = "sf.ddl.alter-event-routing-table.set-rules-region-group-regions.o007"
 kind = "required_operand_missing"
 required = true
 target = "<rule_name>"
 note = "omit <rule_name>"
-
-[[obligation]]
-id = "sf.ddl.alter-event-routing-table.set-rules-region-group-regions.o008"
-kind = "operand_type_class"
-required = true
-target = "<rule_name>"
-note = "a valid identifier"
 
 [[obligation]]
 id = "sf.ddl.alter-event-routing-table.set-rules-region-group-regions.o009"
@@ -27772,25 +27752,11 @@ target = "<region_group>"
 note = "omit <region_group>"
 
 [[obligation]]
-id = "sf.ddl.alter-event-routing-table.set-rules-region-group-regions.o011"
-kind = "operand_type_class"
-required = true
-target = "<region_group>"
-note = "a valid operand"
-
-[[obligation]]
 id = "sf.ddl.alter-event-routing-table.set-rules-region-group-regions.o012"
 kind = "required_operand_missing"
 required = true
 target = "'<region1>'"
 note = "omit '<region1>'"
-
-[[obligation]]
-id = "sf.ddl.alter-event-routing-table.set-rules-region-group-regions.o013"
-kind = "operand_type_class"
-required = true
-target = "'<region1>'"
-note = "a valid string_literal"
 
 [[obligation]]
 id = "sf.ddl.alter-event-routing-table.set-rules-region-group-regions.o014"
@@ -27807,13 +27773,6 @@ target = "'<region2>'"
 note = "omit '<region2>'"
 
 [[obligation]]
-id = "sf.ddl.alter-event-routing-table.set-rules-region-group-regions.o016"
-kind = "operand_type_class"
-required = true
-target = "'<region2>'"
-note = "a valid string_literal"
-
-[[obligation]]
 id = "sf.ddl.alter-event-routing-table.set-rules-region-group-regions.o017"
 kind = "negative_neighbour"
 required = true
@@ -27828,25 +27787,11 @@ target = "<organization>"
 note = "omit <organization>"
 
 [[obligation]]
-id = "sf.ddl.alter-event-routing-table.set-rules-region-group-regions.o019"
-kind = "operand_type_class"
-required = true
-target = "<organization>"
-note = "a valid operand"
-
-[[obligation]]
 id = "sf.ddl.alter-event-routing-table.set-rules-region-group-regions.o020"
 kind = "required_operand_missing"
 required = true
 target = "<account_name>"
 note = "omit <account_name>"
-
-[[obligation]]
-id = "sf.ddl.alter-event-routing-table.set-rules-region-group-regions.o021"
-kind = "operand_type_class"
-required = true
-target = "<account_name>"
-note = "a valid identifier"
 
 [[obligation]]
 id = "sf.ddl.alter-event-routing-table.set-rules-region-group-regions.o022"
@@ -27928,52 +27873,131 @@ required = true
 note = "the form without its required ) #2"
 
 [[obligation]]
-id = "sf.ddl.alter-event-routing-table.set-rules-region-group-regions.o033"
+id = "sf.ddl.alter-event-routing-table.set-rules-region-group-regions.o041"
 kind = "identifier_class"
 required = true
 target = "<table_name>"
-anchor = "doc.identifiers-syntax"
-note = "quoted: a double-quoted identifier with blanks and mixed case"
+anchor = "doc.sql.alter-event-routing-table / Syntax"
+note = "quoted: a double-quoted identifier with blanks and mixed case, observed"
 
 [[obligation]]
-id = "sf.ddl.alter-event-routing-table.set-rules-region-group-regions.o034"
+id = "sf.ddl.alter-event-routing-table.set-rules-region-group-regions.o042"
+kind = "positive"
+required = true
+anchor = "doc.sql.alter-event-routing-table / Syntax"
+note = "the documented form with every required part and no optional part, observed"
+
+[[obligation]]
+id = "sf.ddl.alter-event-routing-table.set-rules-region-group-regions.o043"
+kind = "operand_type_class"
+required = true
+target = "<table_name>"
+anchor = "doc.sql.alter-event-routing-table / Syntax"
+note = "a valid identifier, observed"
+
+[[obligation]]
+id = "sf.ddl.alter-event-routing-table.set-rules-region-group-regions.o044"
+kind = "option_absent"
+required = true
+target = "[ FORCE ]"
+anchor = "doc.sql.alter-event-routing-table / Syntax"
+note = "option absent [ FORCE ], observed"
+
+[[obligation]]
+id = "sf.ddl.alter-event-routing-table.set-rules-region-group-regions.o045"
+kind = "operand_type_class"
+required = true
+target = "<rule_name>"
+anchor = "doc.sql.alter-event-routing-table / Syntax"
+note = "a valid identifier, observed"
+
+[[obligation]]
+id = "sf.ddl.alter-event-routing-table.set-rules-region-group-regions.o046"
+kind = "operand_type_class"
+required = true
+target = "<region_group>"
+anchor = "doc.sql.alter-event-routing-table / Syntax"
+note = "a valid operand, observed"
+
+[[obligation]]
+id = "sf.ddl.alter-event-routing-table.set-rules-region-group-regions.o047"
+kind = "operand_type_class"
+required = true
+target = "'<region1>'"
+anchor = "doc.sql.alter-event-routing-table / Syntax"
+note = "a valid string_literal, observed"
+
+[[obligation]]
+id = "sf.ddl.alter-event-routing-table.set-rules-region-group-regions.o048"
+kind = "operand_type_class"
+required = true
+target = "'<region2>'"
+anchor = "doc.sql.alter-event-routing-table / Syntax"
+note = "a valid string_literal, observed"
+
+[[obligation]]
+id = "sf.ddl.alter-event-routing-table.set-rules-region-group-regions.o049"
+kind = "operand_type_class"
+required = true
+target = "<organization>"
+anchor = "doc.sql.alter-event-routing-table / Syntax"
+note = "a valid operand, observed"
+
+[[obligation]]
+id = "sf.ddl.alter-event-routing-table.set-rules-region-group-regions.o050"
+kind = "operand_type_class"
+required = true
+target = "<account_name>"
+anchor = "doc.sql.alter-event-routing-table / Syntax"
+note = "a valid identifier, observed"
+
+[[obligation]]
+id = "sf.ddl.alter-event-routing-table.set-rules-region-group-regions.o051"
+kind = "identifier_class"
+required = true
+target = "<account_name>"
+anchor = "doc.sql.alter-event-routing-table / Syntax"
+note = "quoted: a double-quoted identifier with blanks and mixed case, observed"
+
+[[obligation]]
+id = "sf.ddl.alter-event-routing-table.set-rules-region-group-regions.o052"
+kind = "identifier_class"
+required = true
+target = "<account_name>"
+anchor = "doc.sql.alter-event-routing-table / Syntax"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance), observed"
+
+[[obligation]]
+id = "sf.ddl.alter-event-routing-table.set-rules-region-group-regions.o053"
+kind = "identifier_class"
+required = true
+target = "<rule_name>"
+anchor = "doc.sql.alter-event-routing-table / Syntax"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance), observed"
+
+[[obligation]]
+id = "sf.ddl.alter-event-routing-table.set-rules-region-group-regions.o054"
+kind = "option_present"
+required = true
+target = "[ FORCE ]"
+anchor = "doc.sql.alter-event-routing-table / Syntax"
+note = "option present [ FORCE ], observed"
+
+[[obligation]]
+id = "sf.ddl.alter-event-routing-table.set-rules-region-group-regions.o055"
+kind = "identifier_class"
+required = true
+target = "<rule_name>"
+anchor = "doc.sql.alter-event-routing-table / Syntax"
+note = "quoted: a double-quoted identifier with blanks and mixed case, observed"
+
+[[obligation]]
+id = "sf.ddl.alter-event-routing-table.set-rules-region-group-regions.o056"
 kind = "identifier_class"
 required = true
 target = "<table_name>"
-anchor = "doc.identifiers-syntax"
-note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
-
-[[obligation]]
-id = "sf.ddl.alter-event-routing-table.set-rules-region-group-regions.o035"
-kind = "identifier_class"
-required = true
-target = "<rule_name>"
-anchor = "doc.identifiers-syntax"
-note = "quoted: a double-quoted identifier with blanks and mixed case"
-
-[[obligation]]
-id = "sf.ddl.alter-event-routing-table.set-rules-region-group-regions.o036"
-kind = "identifier_class"
-required = true
-target = "<rule_name>"
-anchor = "doc.identifiers-syntax"
-note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
-
-[[obligation]]
-id = "sf.ddl.alter-event-routing-table.set-rules-region-group-regions.o037"
-kind = "identifier_class"
-required = true
-target = "<account_name>"
-anchor = "doc.identifiers-syntax"
-note = "quoted: a double-quoted identifier with blanks and mixed case"
-
-[[obligation]]
-id = "sf.ddl.alter-event-routing-table.set-rules-region-group-regions.o038"
-kind = "identifier_class"
-required = true
-target = "<account_name>"
-anchor = "doc.identifiers-syntax"
-note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+anchor = "doc.sql.alter-event-routing-table / Syntax"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance), observed"
 
 [[obligation]]
 id = "sf.ddl.alter-event-routing-table.unset-rule.o001"
@@ -126317,24 +126341,11 @@ anchor = "doc.sql.create-dynamic-table / Parameters"
 note = "TARGET_LAG = '61 seconds' against the documented minimum of 60 seconds"
 
 [[obligation]]
-id = "sf.ddl.create-event-routing-table.o001"
-kind = "positive"
-required = true
-note = "the documented form with every required part and no optional part"
-
-[[obligation]]
 id = "sf.ddl.create-event-routing-table.o002"
 kind = "required_operand_missing"
 required = true
 target = "<table_name>"
 note = "omit <table_name>"
-
-[[obligation]]
-id = "sf.ddl.create-event-routing-table.o003"
-kind = "operand_type_class"
-required = true
-target = "<table_name>"
-note = "a valid identifier"
 
 [[obligation]]
 id = "sf.ddl.create-event-routing-table.o004"
@@ -126351,13 +126362,6 @@ target = "<rule_name>"
 note = "omit <rule_name>"
 
 [[obligation]]
-id = "sf.ddl.create-event-routing-table.o042"
-kind = "operand_type_class"
-required = true
-target = "<rule_name>"
-note = "a valid identifier"
-
-[[obligation]]
 id = "sf.ddl.create-event-routing-table.o043"
 kind = "negative_neighbour"
 required = true
@@ -126372,25 +126376,11 @@ target = "<region_group>"
 note = "omit <region_group>"
 
 [[obligation]]
-id = "sf.ddl.create-event-routing-table.o045"
-kind = "operand_type_class"
-required = true
-target = "<region_group>"
-note = "a valid operand"
-
-[[obligation]]
 id = "sf.ddl.create-event-routing-table.o046"
 kind = "required_operand_missing"
 required = true
 target = "'<region1>'"
 note = "omit '<region1>'"
-
-[[obligation]]
-id = "sf.ddl.create-event-routing-table.o047"
-kind = "operand_type_class"
-required = true
-target = "'<region1>'"
-note = "a valid string_literal"
 
 [[obligation]]
 id = "sf.ddl.create-event-routing-table.o048"
@@ -126400,31 +126390,11 @@ target = "'<region1>'"
 note = "an unquoted identifier in place of '<region1>'"
 
 [[obligation]]
-id = "sf.ddl.create-event-routing-table.o049"
-kind = "option_present"
-required = true
-target = "[ , '<region2>' , ... ]"
-note = "the list continued at least once"
-
-[[obligation]]
-id = "sf.ddl.create-event-routing-table.o050"
-kind = "option_absent"
-required = true
-target = "[ , '<region2>' , ... ]"
-
-[[obligation]]
 id = "sf.ddl.create-event-routing-table.o051"
 kind = "required_operand_missing"
 required = true
 target = "<organization>"
 note = "omit <organization>"
-
-[[obligation]]
-id = "sf.ddl.create-event-routing-table.o052"
-kind = "operand_type_class"
-required = true
-target = "<organization>"
-note = "a valid operand"
 
 [[obligation]]
 id = "sf.ddl.create-event-routing-table.o053"
@@ -126434,13 +126404,6 @@ target = "<account_name>"
 note = "omit <account_name>"
 
 [[obligation]]
-id = "sf.ddl.create-event-routing-table.o054"
-kind = "operand_type_class"
-required = true
-target = "<account_name>"
-note = "a valid identifier"
-
-[[obligation]]
 id = "sf.ddl.create-event-routing-table.o055"
 kind = "negative_neighbour"
 required = true
@@ -126448,30 +126411,11 @@ target = "<account_name>"
 note = "a string literal in place of <account_name>"
 
 [[obligation]]
-id = "sf.ddl.create-event-routing-table.o056"
-kind = "option_present"
-required = true
-target = "[ <rule_name> = ( REGION_GROUP = <region_group> , REGIONS = ( '<region1>' [ , '<region2>' , ... ] ) , DESTINATION_ACCOU…"
-
-[[obligation]]
-id = "sf.ddl.create-event-routing-table.o057"
-kind = "option_absent"
-required = true
-target = "[ <rule_name> = ( REGION_GROUP = <region_group> , REGIONS = ( '<region1>' [ , '<region2>' , ... ] ) , DESTINATION_ACCOU…"
-
-[[obligation]]
 id = "sf.ddl.create-event-routing-table.o058"
 kind = "required_operand_missing"
 required = true
 target = "<rule_name> in [ <rule_name> = ( REGION_GROUP = <region_group> , REGIONS = ( '<region1>' [ , '<region2>' , ... ] ) , DE…"
 note = "omit <rule_name>"
-
-[[obligation]]
-id = "sf.ddl.create-event-routing-table.o059"
-kind = "operand_type_class"
-required = true
-target = "<rule_name> in [ <rule_name> = ( REGION_GROUP = <region_group> , REGIONS = ( '<region1>' [ , '<region2>' , ... ] ) , DE…"
-note = "a valid identifier"
 
 [[obligation]]
 id = "sf.ddl.create-event-routing-table.o060"
@@ -126488,25 +126432,11 @@ target = "<region_group> in [ <rule_name> = ( REGION_GROUP = <region_group> , RE
 note = "omit <region_group>"
 
 [[obligation]]
-id = "sf.ddl.create-event-routing-table.o062"
-kind = "operand_type_class"
-required = true
-target = "<region_group> in [ <rule_name> = ( REGION_GROUP = <region_group> , REGIONS = ( '<region1>' [ , '<region2>' , ... ] ) ,…"
-note = "a valid operand"
-
-[[obligation]]
 id = "sf.ddl.create-event-routing-table.o063"
 kind = "required_operand_missing"
 required = true
 target = "'<region1>' in [ <rule_name> = ( REGION_GROUP = <region_group> , REGIONS = ( '<region1>' [ , '<region2>' , ... ] ) , DE…"
 note = "omit '<region1>'"
-
-[[obligation]]
-id = "sf.ddl.create-event-routing-table.o064"
-kind = "operand_type_class"
-required = true
-target = "'<region1>' in [ <rule_name> = ( REGION_GROUP = <region_group> , REGIONS = ( '<region1>' [ , '<region2>' , ... ] ) , DE…"
-note = "a valid string_literal"
 
 [[obligation]]
 id = "sf.ddl.create-event-routing-table.o065"
@@ -126516,19 +126446,6 @@ target = "'<region1>' in [ <rule_name> = ( REGION_GROUP = <region_group> , REGIO
 note = "an unquoted identifier in place of '<region1>'"
 
 [[obligation]]
-id = "sf.ddl.create-event-routing-table.o066"
-kind = "option_present"
-required = true
-target = "[ , '<region2>' , ... ] #2"
-note = "the list continued at least once"
-
-[[obligation]]
-id = "sf.ddl.create-event-routing-table.o067"
-kind = "option_absent"
-required = true
-target = "[ , '<region2>' , ... ] #2"
-
-[[obligation]]
 id = "sf.ddl.create-event-routing-table.o068"
 kind = "required_operand_missing"
 required = true
@@ -126536,25 +126453,11 @@ target = "<organization> in [ <rule_name> = ( REGION_GROUP = <region_group> , RE
 note = "omit <organization>"
 
 [[obligation]]
-id = "sf.ddl.create-event-routing-table.o069"
-kind = "operand_type_class"
-required = true
-target = "<organization> in [ <rule_name> = ( REGION_GROUP = <region_group> , REGIONS = ( '<region1>' [ , '<region2>' , ... ] ) ,…"
-note = "a valid operand"
-
-[[obligation]]
 id = "sf.ddl.create-event-routing-table.o070"
 kind = "required_operand_missing"
 required = true
 target = "<account_name> in [ <rule_name> = ( REGION_GROUP = <region_group> , REGIONS = ( '<region1>' [ , '<region2>' , ... ] ) ,…"
 note = "omit <account_name>"
-
-[[obligation]]
-id = "sf.ddl.create-event-routing-table.o071"
-kind = "operand_type_class"
-required = true
-target = "<account_name> in [ <rule_name> = ( REGION_GROUP = <region_group> , REGIONS = ( '<region1>' [ , '<region2>' , ... ] ) ,…"
-note = "a valid identifier"
 
 [[obligation]]
 id = "sf.ddl.create-event-routing-table.o072"
@@ -126678,58 +126581,202 @@ required = true
 note = "the form without its required ) in [ <rule_name> = ( REGION_GROUP = <region_group> , REGIONS = ( '<region1>' [ , '<region2>' , ... ] ) , DESTINATION_ACCOU… #2"
 
 [[obligation]]
-id = "sf.ddl.create-event-routing-table.o086"
+id = "sf.ddl.create-event-routing-table.o087"
+kind = "identifier_class"
+required = true
+target = "<table_name>"
+anchor = "doc.sql.create-event-routing-table / Syntax"
+note = "quoted: a double-quoted identifier with blanks and mixed case, observed"
+
+[[obligation]]
+id = "sf.ddl.create-event-routing-table.o088"
+kind = "positive"
+required = true
+anchor = "doc.sql.create-event-routing-table / Syntax"
+note = "the documented form with every required part and no optional part, observed"
+
+[[obligation]]
+id = "sf.ddl.create-event-routing-table.o089"
+kind = "operand_type_class"
+required = true
+target = "<table_name>"
+anchor = "doc.sql.create-event-routing-table / Syntax"
+note = "a valid identifier, observed"
+
+[[obligation]]
+id = "sf.ddl.create-event-routing-table.o090"
+kind = "operand_type_class"
+required = true
+target = "<rule_name>"
+anchor = "doc.sql.create-event-routing-table / Syntax"
+note = "a valid identifier, observed"
+
+[[obligation]]
+id = "sf.ddl.create-event-routing-table.o091"
+kind = "operand_type_class"
+required = true
+target = "<region_group>"
+anchor = "doc.sql.create-event-routing-table / Syntax"
+note = "a valid operand, observed"
+
+[[obligation]]
+id = "sf.ddl.create-event-routing-table.o092"
+kind = "operand_type_class"
+required = true
+target = "'<region1>'"
+anchor = "doc.sql.create-event-routing-table / Syntax"
+note = "a valid string_literal, observed"
+
+[[obligation]]
+id = "sf.ddl.create-event-routing-table.o093"
+kind = "option_absent"
+required = true
+target = "[ , '<region2>' , ... ]"
+anchor = "doc.sql.create-event-routing-table / Syntax"
+note = "option absent [ , '<region2>' , ... ], observed"
+
+[[obligation]]
+id = "sf.ddl.create-event-routing-table.o094"
+kind = "operand_type_class"
+required = true
+target = "<organization>"
+anchor = "doc.sql.create-event-routing-table / Syntax"
+note = "a valid operand, observed"
+
+[[obligation]]
+id = "sf.ddl.create-event-routing-table.o095"
+kind = "operand_type_class"
+required = true
+target = "<account_name>"
+anchor = "doc.sql.create-event-routing-table / Syntax"
+note = "a valid identifier, observed"
+
+[[obligation]]
+id = "sf.ddl.create-event-routing-table.o096"
+kind = "option_absent"
+required = true
+target = "[ <rule_name> = ( REGION_GROUP = <region_group> , REGIONS = ( '<region1>' [ , '<region2>' , ... ] ) , DESTINATION_ACCOU…"
+anchor = "doc.sql.create-event-routing-table / Syntax"
+note = "option absent [ <rule_name> = ( REGION_GROUP = <region_group> , REGIONS = ( '<region1>' [ , '<region2>' , ... ] ) , DESTINATION_ACCOU…, observed"
+
+[[obligation]]
+id = "sf.ddl.create-event-routing-table.o097"
+kind = "identifier_class"
+required = true
+target = "<table_name>"
+anchor = "doc.sql.create-event-routing-table / Syntax"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance), observed"
+
+[[obligation]]
+id = "sf.ddl.create-event-routing-table.o098"
+kind = "option_present"
+required = true
+target = "[ , '<region2>' , ... ]"
+anchor = "doc.sql.create-event-routing-table / Syntax"
+note = "the list continued at least once, observed"
+
+[[obligation]]
+id = "sf.ddl.create-event-routing-table.o099"
+kind = "option_present"
+required = true
+target = "[ <rule_name> = ( REGION_GROUP = <region_group> , REGIONS = ( '<region1>' [ , '<region2>' , ... ] ) , DESTINATION_ACCOU…"
+anchor = "doc.sql.create-event-routing-table / Syntax"
+note = "option present [ <rule_name> = ( REGION_GROUP = <region_group> , REGIONS = ( '<region1>' [ , '<region2>' , ... ] ) , DESTINATION_ACCOU…, observed"
+
+[[obligation]]
+id = "sf.ddl.create-event-routing-table.o100"
+kind = "operand_type_class"
+required = true
+target = "<rule_name> in [ <rule_name> = ( REGION_GROUP = <region_group> , REGIONS = ( '<region1>' [ , '<region2>' , ... ] ) , DE…"
+anchor = "doc.sql.create-event-routing-table / Syntax"
+note = "a valid identifier, observed"
+
+[[obligation]]
+id = "sf.ddl.create-event-routing-table.o101"
+kind = "operand_type_class"
+required = true
+target = "<region_group> in [ <rule_name> = ( REGION_GROUP = <region_group> , REGIONS = ( '<region1>' [ , '<region2>' , ... ] ) ,…"
+anchor = "doc.sql.create-event-routing-table / Syntax"
+note = "a valid operand, observed"
+
+[[obligation]]
+id = "sf.ddl.create-event-routing-table.o102"
+kind = "operand_type_class"
+required = true
+target = "'<region1>' in [ <rule_name> = ( REGION_GROUP = <region_group> , REGIONS = ( '<region1>' [ , '<region2>' , ... ] ) , DE…"
+anchor = "doc.sql.create-event-routing-table / Syntax"
+note = "a valid string_literal, observed"
+
+[[obligation]]
+id = "sf.ddl.create-event-routing-table.o103"
+kind = "option_present"
+required = true
+target = "[ , '<region2>' , ... ] #2"
+anchor = "doc.sql.create-event-routing-table / Syntax"
+note = "the list continued at least once, observed"
+
+[[obligation]]
+id = "sf.ddl.create-event-routing-table.o104"
+kind = "operand_type_class"
+required = true
+target = "<organization> in [ <rule_name> = ( REGION_GROUP = <region_group> , REGIONS = ( '<region1>' [ , '<region2>' , ... ] ) ,…"
+anchor = "doc.sql.create-event-routing-table / Syntax"
+note = "a valid operand, observed"
+
+[[obligation]]
+id = "sf.ddl.create-event-routing-table.o105"
+kind = "operand_type_class"
+required = true
+target = "<account_name> in [ <rule_name> = ( REGION_GROUP = <region_group> , REGIONS = ( '<region1>' [ , '<region2>' , ... ] ) ,…"
+anchor = "doc.sql.create-event-routing-table / Syntax"
+note = "a valid identifier, observed"
+
+[[obligation]]
+id = "sf.ddl.create-event-routing-table.o106"
 kind = "interaction_all_options"
 required = true
-note = "every independent option of one production together"
+anchor = "doc.sql.create-event-routing-table / Syntax"
+note = "every independent option of one production together, observed"
 
 [[obligation]]
-id = "sf.ddl.create-event-routing-table.o035"
-kind = "identifier_class"
-required = true
-target = "<table_name>"
-anchor = "doc.identifiers-syntax"
-note = "quoted: a double-quoted identifier with blanks and mixed case"
-
-[[obligation]]
-id = "sf.ddl.create-event-routing-table.o036"
-kind = "identifier_class"
-required = true
-target = "<table_name>"
-anchor = "doc.identifiers-syntax"
-note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
-
-[[obligation]]
-id = "sf.ddl.create-event-routing-table.o078"
-kind = "identifier_class"
-required = true
-target = "<rule_name>"
-anchor = "doc.identifiers-syntax"
-note = "quoted: a double-quoted identifier with blanks and mixed case"
-
-[[obligation]]
-id = "sf.ddl.create-event-routing-table.o079"
-kind = "identifier_class"
-required = true
-target = "<rule_name>"
-anchor = "doc.identifiers-syntax"
-note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
-
-[[obligation]]
-id = "sf.ddl.create-event-routing-table.o080"
+id = "sf.ddl.create-event-routing-table.o107"
 kind = "identifier_class"
 required = true
 target = "<account_name>"
-anchor = "doc.identifiers-syntax"
-note = "quoted: a double-quoted identifier with blanks and mixed case"
+anchor = "doc.sql.create-event-routing-table / Syntax"
+note = "quoted: a double-quoted identifier with blanks and mixed case, observed"
 
 [[obligation]]
-id = "sf.ddl.create-event-routing-table.o081"
+id = "sf.ddl.create-event-routing-table.o108"
 kind = "identifier_class"
 required = true
 target = "<account_name>"
-anchor = "doc.identifiers-syntax"
-note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+anchor = "doc.sql.create-event-routing-table / Syntax"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance), observed"
+
+[[obligation]]
+id = "sf.ddl.create-event-routing-table.o109"
+kind = "option_absent"
+required = true
+target = "[ , '<region2>' , ... ] #2"
+anchor = "doc.sql.create-event-routing-table / Syntax"
+note = "option absent [ , '<region2>' , ... ] #2, observed"
+
+[[obligation]]
+id = "sf.ddl.create-event-routing-table.o110"
+kind = "identifier_class"
+required = true
+target = "<rule_name>"
+anchor = "doc.sql.create-event-routing-table / Syntax"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance), observed"
+
+[[obligation]]
+id = "sf.ddl.create-event-routing-table.o111"
+kind = "identifier_class"
+required = true
+target = "<rule_name>"
+anchor = "doc.sql.create-event-routing-table / Syntax"
+note = "quoted: a double-quoted identifier with blanks and mixed case, observed"
 
 [[obligation]]
 id = "sf.ddl.create-event-table.table.o001"

@@ -61957,7 +61957,7 @@ sql = "COPY FILES INTO @s1 FROM ( SELECT v1 v1 ) ;"
 expect = "observe"
 context = "raw"
 
-# D113 ddl receipt triage (imports 71-73): remaining contradictions observed, each reason names its category and receipt.
+# D113 ddl receipt triage (imports 74-79): remaining contradictions observed, each reason names its category and receipt.
 
 [[suppress]]
 form = "sf.ddl.alter-online-feature-table.table-set-comment"
@@ -61976,7 +61976,7 @@ sql = "ALTER ONLINE FEATURE TABLE SET COMMENT = 'm' ;"
 expect = "observe"
 context = "raw"
 
-# D113 security_admin receipt triage (imports 71-73): remaining contradictions observed, each reason names its category and receipt.
+# D113 security_admin receipt triage (imports 74-79): remaining contradictions observed, each reason names its category and receipt.
 
 [[suppress]]
 form = "sf.security_admin.alter-security-integration-oauth-external.set"
@@ -63321,5 +63321,1105 @@ kind = "negative_neighbour"
 note = "the form without its required { ADMIN_PASSWORD = '<string_literal>' | ADMIN_RSA_PUBLIC_KEY = '<string_literal>' }, observed"
 anchor = "doc.sql.create-account / Syntax"
 sql = "CREATE ACCOUNT v1 ADMIN_NAME = 'm' EMAIL = 'm' EDITION = STANDARD ;"
+expect = "observe"
+context = "raw"
+
+# D113 ddl receipt triage (imports 80-81): remaining contradictions observed, each reason names its category and receipt.
+
+[[suppress]]
+form = "sf.ddl.alter-event-routing-table.set-rule-region-group-regions"
+kind = "option_present"
+target = "[ FORCE ]"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-81); observed, not flipped to reject"
+
+[[limit]]
+form = "sf.ddl.alter-event-routing-table.set-rule-region-group-regions"
+kind = "option_present"
+target = "[ FORCE ]"
+note = "option present [ FORCE ], observed"
+anchor = "doc.sql.alter-event-routing-table / Syntax"
+sql = "ALTER EVENT ROUTING TABLE v1 FORCE SET RULE v1 REGION_GROUP = g1 REGIONS = ( 'm' , 'm' ) DESTINATION_ACCOUNT = v1 . v1 ;"
+expect = "observe"
+documented = true
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-event-routing-table.set-rule-region-group-regions"
+kind = "identifier_class"
+target = "<table_name>"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-81); observed, not flipped to reject"
+
+[[limit]]
+form = "sf.ddl.alter-event-routing-table.set-rule-region-group-regions"
+kind = "identifier_class"
+target = "<table_name>"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance), observed"
+anchor = "doc.sql.alter-event-routing-table / Syntax"
+sql = "ALTER EVENT ROUTING TABLE \"SELECT\" SET RULE v1 REGION_GROUP = g1 REGIONS = ( 'm' , 'm' ) DESTINATION_ACCOUNT = v1 . v1 ;"
+expect = "observe"
+documented = true
+also_sql = "ALTER EVENT ROUTING TABLE SELECT SET RULE v1 REGION_GROUP = g1 REGIONS = ( 'm' , 'm' ) DESTINATION_ACCOUNT = v1 . v1 ;"
+also_expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-event-routing-table.set-rule-region-group-regions"
+kind = "identifier_class"
+target = "<account_name>"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-81); observed, not flipped to reject"
+
+[[limit]]
+form = "sf.ddl.alter-event-routing-table.set-rule-region-group-regions"
+kind = "identifier_class"
+target = "<account_name>"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance), observed"
+anchor = "doc.sql.alter-event-routing-table / Syntax"
+sql = "ALTER EVENT ROUTING TABLE v1 SET RULE v1 REGION_GROUP = g1 REGIONS = ( 'm' , 'm' ) DESTINATION_ACCOUNT = v1 . \"SELECT\" ;"
+expect = "observe"
+documented = true
+also_sql = "ALTER EVENT ROUTING TABLE v1 SET RULE v1 REGION_GROUP = g1 REGIONS = ( 'm' , 'm' ) DESTINATION_ACCOUNT = v1 . SELECT ;"
+also_expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-event-routing-table.set-rule-region-group-regions"
+kind = "identifier_class"
+target = "<rule_name>"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-81); observed, not flipped to reject"
+
+[[limit]]
+form = "sf.ddl.alter-event-routing-table.set-rule-region-group-regions"
+kind = "identifier_class"
+target = "<rule_name>"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance), observed"
+anchor = "doc.sql.alter-event-routing-table / Syntax"
+sql = "ALTER EVENT ROUTING TABLE v1 SET RULE \"SELECT\" REGION_GROUP = g1 REGIONS = ( 'm' , 'm' ) DESTINATION_ACCOUNT = v1 . v1 ;"
+expect = "observe"
+documented = true
+also_sql = "ALTER EVENT ROUTING TABLE v1 SET RULE SELECT REGION_GROUP = g1 REGIONS = ( 'm' , 'm' ) DESTINATION_ACCOUNT = v1 . v1 ;"
+also_expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-event-routing-table.set-rule-region-group-regions"
+kind = "identifier_class"
+target = "<table_name>"
+note = "quoted: a double-quoted identifier with blanks and mixed case"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-81); observed, not flipped to reject"
+
+[[limit]]
+form = "sf.ddl.alter-event-routing-table.set-rule-region-group-regions"
+kind = "identifier_class"
+target = "<table_name>"
+note = "quoted: a double-quoted identifier with blanks and mixed case, observed"
+anchor = "doc.sql.alter-event-routing-table / Syntax"
+sql = "ALTER EVENT ROUTING TABLE \"v1 Q\" SET RULE v1 REGION_GROUP = g1 REGIONS = ( 'm' , 'm' ) DESTINATION_ACCOUNT = v1 . v1 ;"
+expect = "observe"
+documented = true
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-event-routing-table.set-rule-region-group-regions"
+kind = "identifier_class"
+target = "<rule_name>"
+note = "quoted: a double-quoted identifier with blanks and mixed case"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-81); observed, not flipped to reject"
+
+[[limit]]
+form = "sf.ddl.alter-event-routing-table.set-rule-region-group-regions"
+kind = "identifier_class"
+target = "<rule_name>"
+note = "quoted: a double-quoted identifier with blanks and mixed case, observed"
+anchor = "doc.sql.alter-event-routing-table / Syntax"
+sql = "ALTER EVENT ROUTING TABLE v1 SET RULE \"v1 Q\" REGION_GROUP = g1 REGIONS = ( 'm' , 'm' ) DESTINATION_ACCOUNT = v1 . v1 ;"
+expect = "observe"
+documented = true
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-event-routing-table.set-rule-region-group-regions"
+kind = "positive"
+note = "the documented form with every required part and no optional part"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-81); observed, not flipped to reject"
+
+[[limit]]
+form = "sf.ddl.alter-event-routing-table.set-rule-region-group-regions"
+kind = "positive"
+note = "the documented form with every required part and no optional part, observed"
+anchor = "doc.sql.alter-event-routing-table / Syntax"
+sql = "ALTER EVENT ROUTING TABLE v1 SET RULE v1 REGION_GROUP = g1 REGIONS = ( 'm' , 'm' ) DESTINATION_ACCOUNT = v1 . v1 ;"
+expect = "observe"
+documented = true
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-event-routing-table.set-rule-region-group-regions"
+kind = "operand_type_class"
+target = "<table_name>"
+note = "a valid identifier"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-81); observed, not flipped to reject"
+
+[[limit]]
+form = "sf.ddl.alter-event-routing-table.set-rule-region-group-regions"
+kind = "operand_type_class"
+target = "<table_name>"
+note = "a valid identifier, observed"
+anchor = "doc.sql.alter-event-routing-table / Syntax"
+sql = "ALTER EVENT ROUTING TABLE v1 SET RULE v1 REGION_GROUP = g1 REGIONS = ( 'm' , 'm' ) DESTINATION_ACCOUNT = v1 . v1 ;"
+expect = "observe"
+documented = true
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-event-routing-table.set-rule-region-group-regions"
+kind = "option_absent"
+target = "[ FORCE ]"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-81); observed, not flipped to reject"
+
+[[limit]]
+form = "sf.ddl.alter-event-routing-table.set-rule-region-group-regions"
+kind = "option_absent"
+target = "[ FORCE ]"
+note = "option absent [ FORCE ], observed"
+anchor = "doc.sql.alter-event-routing-table / Syntax"
+sql = "ALTER EVENT ROUTING TABLE v1 SET RULE v1 REGION_GROUP = g1 REGIONS = ( 'm' , 'm' ) DESTINATION_ACCOUNT = v1 . v1 ;"
+expect = "observe"
+documented = true
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-event-routing-table.set-rule-region-group-regions"
+kind = "operand_type_class"
+target = "<rule_name>"
+note = "a valid identifier"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-81); observed, not flipped to reject"
+
+[[limit]]
+form = "sf.ddl.alter-event-routing-table.set-rule-region-group-regions"
+kind = "operand_type_class"
+target = "<rule_name>"
+note = "a valid identifier, observed"
+anchor = "doc.sql.alter-event-routing-table / Syntax"
+sql = "ALTER EVENT ROUTING TABLE v1 SET RULE v1 REGION_GROUP = g1 REGIONS = ( 'm' , 'm' ) DESTINATION_ACCOUNT = v1 . v1 ;"
+expect = "observe"
+documented = true
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-event-routing-table.set-rule-region-group-regions"
+kind = "operand_type_class"
+target = "<region_group>"
+note = "a valid operand"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-81); observed, not flipped to reject"
+
+[[limit]]
+form = "sf.ddl.alter-event-routing-table.set-rule-region-group-regions"
+kind = "operand_type_class"
+target = "<region_group>"
+note = "a valid operand, observed"
+anchor = "doc.sql.alter-event-routing-table / Syntax"
+sql = "ALTER EVENT ROUTING TABLE v1 SET RULE v1 REGION_GROUP = g1 REGIONS = ( 'm' , 'm' ) DESTINATION_ACCOUNT = v1 . v1 ;"
+expect = "observe"
+documented = true
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-event-routing-table.set-rule-region-group-regions"
+kind = "operand_type_class"
+target = "'<region1>'"
+note = "a valid string_literal"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-81); observed, not flipped to reject"
+
+[[limit]]
+form = "sf.ddl.alter-event-routing-table.set-rule-region-group-regions"
+kind = "operand_type_class"
+target = "'<region1>'"
+note = "a valid string_literal, observed"
+anchor = "doc.sql.alter-event-routing-table / Syntax"
+sql = "ALTER EVENT ROUTING TABLE v1 SET RULE v1 REGION_GROUP = g1 REGIONS = ( 'm' , 'm' ) DESTINATION_ACCOUNT = v1 . v1 ;"
+expect = "observe"
+documented = true
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-event-routing-table.set-rule-region-group-regions"
+kind = "operand_type_class"
+target = "'<region2>'"
+note = "a valid string_literal"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-81); observed, not flipped to reject"
+
+[[limit]]
+form = "sf.ddl.alter-event-routing-table.set-rule-region-group-regions"
+kind = "operand_type_class"
+target = "'<region2>'"
+note = "a valid string_literal, observed"
+anchor = "doc.sql.alter-event-routing-table / Syntax"
+sql = "ALTER EVENT ROUTING TABLE v1 SET RULE v1 REGION_GROUP = g1 REGIONS = ( 'm' , 'm' ) DESTINATION_ACCOUNT = v1 . v1 ;"
+expect = "observe"
+documented = true
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-event-routing-table.set-rule-region-group-regions"
+kind = "operand_type_class"
+target = "<organization>"
+note = "a valid operand"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-81); observed, not flipped to reject"
+
+[[limit]]
+form = "sf.ddl.alter-event-routing-table.set-rule-region-group-regions"
+kind = "operand_type_class"
+target = "<organization>"
+note = "a valid operand, observed"
+anchor = "doc.sql.alter-event-routing-table / Syntax"
+sql = "ALTER EVENT ROUTING TABLE v1 SET RULE v1 REGION_GROUP = g1 REGIONS = ( 'm' , 'm' ) DESTINATION_ACCOUNT = v1 . v1 ;"
+expect = "observe"
+documented = true
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-event-routing-table.set-rule-region-group-regions"
+kind = "operand_type_class"
+target = "<account_name>"
+note = "a valid identifier"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-81); observed, not flipped to reject"
+
+[[limit]]
+form = "sf.ddl.alter-event-routing-table.set-rule-region-group-regions"
+kind = "operand_type_class"
+target = "<account_name>"
+note = "a valid identifier, observed"
+anchor = "doc.sql.alter-event-routing-table / Syntax"
+sql = "ALTER EVENT ROUTING TABLE v1 SET RULE v1 REGION_GROUP = g1 REGIONS = ( 'm' , 'm' ) DESTINATION_ACCOUNT = v1 . v1 ;"
+expect = "observe"
+documented = true
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-event-routing-table.set-rule-region-group-regions"
+kind = "identifier_class"
+target = "<account_name>"
+note = "quoted: a double-quoted identifier with blanks and mixed case"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-81); observed, not flipped to reject"
+
+[[limit]]
+form = "sf.ddl.alter-event-routing-table.set-rule-region-group-regions"
+kind = "identifier_class"
+target = "<account_name>"
+note = "quoted: a double-quoted identifier with blanks and mixed case, observed"
+anchor = "doc.sql.alter-event-routing-table / Syntax"
+sql = "ALTER EVENT ROUTING TABLE v1 SET RULE v1 REGION_GROUP = g1 REGIONS = ( 'm' , 'm' ) DESTINATION_ACCOUNT = v1 . \"v1 Q\" ;"
+expect = "observe"
+documented = true
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-event-routing-table.set-rules-region-group-regions"
+kind = "identifier_class"
+target = "<table_name>"
+note = "quoted: a double-quoted identifier with blanks and mixed case"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-81); observed, not flipped to reject"
+
+[[limit]]
+form = "sf.ddl.alter-event-routing-table.set-rules-region-group-regions"
+kind = "identifier_class"
+target = "<table_name>"
+note = "quoted: a double-quoted identifier with blanks and mixed case, observed"
+anchor = "doc.sql.alter-event-routing-table / Syntax"
+sql = "ALTER EVENT ROUTING TABLE \"v1 Q\" SET RULES v1 = ( REGION_GROUP = g1 , REGIONS = ( 'm' , 'm' ) , DESTINATION_ACCOUNT = v1 . v1 ) ;"
+expect = "observe"
+documented = true
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-event-routing-table.set-rules-region-group-regions"
+kind = "positive"
+note = "the documented form with every required part and no optional part"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-81); observed, not flipped to reject"
+
+[[limit]]
+form = "sf.ddl.alter-event-routing-table.set-rules-region-group-regions"
+kind = "positive"
+note = "the documented form with every required part and no optional part, observed"
+anchor = "doc.sql.alter-event-routing-table / Syntax"
+sql = "ALTER EVENT ROUTING TABLE v1 SET RULES v1 = ( REGION_GROUP = g1 , REGIONS = ( 'm' , 'm' ) , DESTINATION_ACCOUNT = v1 . v1 ) ;"
+expect = "observe"
+documented = true
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-event-routing-table.set-rules-region-group-regions"
+kind = "operand_type_class"
+target = "<table_name>"
+note = "a valid identifier"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-81); observed, not flipped to reject"
+
+[[limit]]
+form = "sf.ddl.alter-event-routing-table.set-rules-region-group-regions"
+kind = "operand_type_class"
+target = "<table_name>"
+note = "a valid identifier, observed"
+anchor = "doc.sql.alter-event-routing-table / Syntax"
+sql = "ALTER EVENT ROUTING TABLE v1 SET RULES v1 = ( REGION_GROUP = g1 , REGIONS = ( 'm' , 'm' ) , DESTINATION_ACCOUNT = v1 . v1 ) ;"
+expect = "observe"
+documented = true
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-event-routing-table.set-rules-region-group-regions"
+kind = "option_absent"
+target = "[ FORCE ]"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-81); observed, not flipped to reject"
+
+[[limit]]
+form = "sf.ddl.alter-event-routing-table.set-rules-region-group-regions"
+kind = "option_absent"
+target = "[ FORCE ]"
+note = "option absent [ FORCE ], observed"
+anchor = "doc.sql.alter-event-routing-table / Syntax"
+sql = "ALTER EVENT ROUTING TABLE v1 SET RULES v1 = ( REGION_GROUP = g1 , REGIONS = ( 'm' , 'm' ) , DESTINATION_ACCOUNT = v1 . v1 ) ;"
+expect = "observe"
+documented = true
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-event-routing-table.set-rules-region-group-regions"
+kind = "operand_type_class"
+target = "<rule_name>"
+note = "a valid identifier"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-81); observed, not flipped to reject"
+
+[[limit]]
+form = "sf.ddl.alter-event-routing-table.set-rules-region-group-regions"
+kind = "operand_type_class"
+target = "<rule_name>"
+note = "a valid identifier, observed"
+anchor = "doc.sql.alter-event-routing-table / Syntax"
+sql = "ALTER EVENT ROUTING TABLE v1 SET RULES v1 = ( REGION_GROUP = g1 , REGIONS = ( 'm' , 'm' ) , DESTINATION_ACCOUNT = v1 . v1 ) ;"
+expect = "observe"
+documented = true
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-event-routing-table.set-rules-region-group-regions"
+kind = "operand_type_class"
+target = "<region_group>"
+note = "a valid operand"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-81); observed, not flipped to reject"
+
+[[limit]]
+form = "sf.ddl.alter-event-routing-table.set-rules-region-group-regions"
+kind = "operand_type_class"
+target = "<region_group>"
+note = "a valid operand, observed"
+anchor = "doc.sql.alter-event-routing-table / Syntax"
+sql = "ALTER EVENT ROUTING TABLE v1 SET RULES v1 = ( REGION_GROUP = g1 , REGIONS = ( 'm' , 'm' ) , DESTINATION_ACCOUNT = v1 . v1 ) ;"
+expect = "observe"
+documented = true
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-event-routing-table.set-rules-region-group-regions"
+kind = "operand_type_class"
+target = "'<region1>'"
+note = "a valid string_literal"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-81); observed, not flipped to reject"
+
+[[limit]]
+form = "sf.ddl.alter-event-routing-table.set-rules-region-group-regions"
+kind = "operand_type_class"
+target = "'<region1>'"
+note = "a valid string_literal, observed"
+anchor = "doc.sql.alter-event-routing-table / Syntax"
+sql = "ALTER EVENT ROUTING TABLE v1 SET RULES v1 = ( REGION_GROUP = g1 , REGIONS = ( 'm' , 'm' ) , DESTINATION_ACCOUNT = v1 . v1 ) ;"
+expect = "observe"
+documented = true
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-event-routing-table.set-rules-region-group-regions"
+kind = "operand_type_class"
+target = "'<region2>'"
+note = "a valid string_literal"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-81); observed, not flipped to reject"
+
+[[limit]]
+form = "sf.ddl.alter-event-routing-table.set-rules-region-group-regions"
+kind = "operand_type_class"
+target = "'<region2>'"
+note = "a valid string_literal, observed"
+anchor = "doc.sql.alter-event-routing-table / Syntax"
+sql = "ALTER EVENT ROUTING TABLE v1 SET RULES v1 = ( REGION_GROUP = g1 , REGIONS = ( 'm' , 'm' ) , DESTINATION_ACCOUNT = v1 . v1 ) ;"
+expect = "observe"
+documented = true
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-event-routing-table.set-rules-region-group-regions"
+kind = "operand_type_class"
+target = "<organization>"
+note = "a valid operand"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-81); observed, not flipped to reject"
+
+[[limit]]
+form = "sf.ddl.alter-event-routing-table.set-rules-region-group-regions"
+kind = "operand_type_class"
+target = "<organization>"
+note = "a valid operand, observed"
+anchor = "doc.sql.alter-event-routing-table / Syntax"
+sql = "ALTER EVENT ROUTING TABLE v1 SET RULES v1 = ( REGION_GROUP = g1 , REGIONS = ( 'm' , 'm' ) , DESTINATION_ACCOUNT = v1 . v1 ) ;"
+expect = "observe"
+documented = true
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-event-routing-table.set-rules-region-group-regions"
+kind = "operand_type_class"
+target = "<account_name>"
+note = "a valid identifier"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-81); observed, not flipped to reject"
+
+[[limit]]
+form = "sf.ddl.alter-event-routing-table.set-rules-region-group-regions"
+kind = "operand_type_class"
+target = "<account_name>"
+note = "a valid identifier, observed"
+anchor = "doc.sql.alter-event-routing-table / Syntax"
+sql = "ALTER EVENT ROUTING TABLE v1 SET RULES v1 = ( REGION_GROUP = g1 , REGIONS = ( 'm' , 'm' ) , DESTINATION_ACCOUNT = v1 . v1 ) ;"
+expect = "observe"
+documented = true
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-event-routing-table.set-rules-region-group-regions"
+kind = "identifier_class"
+target = "<account_name>"
+note = "quoted: a double-quoted identifier with blanks and mixed case"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-81); observed, not flipped to reject"
+
+[[limit]]
+form = "sf.ddl.alter-event-routing-table.set-rules-region-group-regions"
+kind = "identifier_class"
+target = "<account_name>"
+note = "quoted: a double-quoted identifier with blanks and mixed case, observed"
+anchor = "doc.sql.alter-event-routing-table / Syntax"
+sql = "ALTER EVENT ROUTING TABLE v1 SET RULES v1 = ( REGION_GROUP = g1 , REGIONS = ( 'm' , 'm' ) , DESTINATION_ACCOUNT = v1 . \"v1 Q\" ) ;"
+expect = "observe"
+documented = true
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-event-routing-table.set-rules-region-group-regions"
+kind = "identifier_class"
+target = "<account_name>"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-81); observed, not flipped to reject"
+
+[[limit]]
+form = "sf.ddl.alter-event-routing-table.set-rules-region-group-regions"
+kind = "identifier_class"
+target = "<account_name>"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance), observed"
+anchor = "doc.sql.alter-event-routing-table / Syntax"
+sql = "ALTER EVENT ROUTING TABLE v1 SET RULES v1 = ( REGION_GROUP = g1 , REGIONS = ( 'm' , 'm' ) , DESTINATION_ACCOUNT = v1 . \"SELECT\" ) ;"
+expect = "observe"
+documented = true
+also_sql = "ALTER EVENT ROUTING TABLE v1 SET RULES v1 = ( REGION_GROUP = g1 , REGIONS = ( 'm' , 'm' ) , DESTINATION_ACCOUNT = v1 . SELECT ) ;"
+also_expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-event-routing-table.set-rules-region-group-regions"
+kind = "identifier_class"
+target = "<rule_name>"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-81); observed, not flipped to reject"
+
+[[limit]]
+form = "sf.ddl.alter-event-routing-table.set-rules-region-group-regions"
+kind = "identifier_class"
+target = "<rule_name>"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance), observed"
+anchor = "doc.sql.alter-event-routing-table / Syntax"
+sql = "ALTER EVENT ROUTING TABLE v1 SET RULES \"SELECT\" = ( REGION_GROUP = g1 , REGIONS = ( 'm' , 'm' ) , DESTINATION_ACCOUNT = v1 . v1 ) ;"
+expect = "observe"
+documented = true
+also_sql = "ALTER EVENT ROUTING TABLE v1 SET RULES SELECT = ( REGION_GROUP = g1 , REGIONS = ( 'm' , 'm' ) , DESTINATION_ACCOUNT = v1 . v1 ) ;"
+also_expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-event-routing-table.set-rules-region-group-regions"
+kind = "option_present"
+target = "[ FORCE ]"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-81); observed, not flipped to reject"
+
+[[limit]]
+form = "sf.ddl.alter-event-routing-table.set-rules-region-group-regions"
+kind = "option_present"
+target = "[ FORCE ]"
+note = "option present [ FORCE ], observed"
+anchor = "doc.sql.alter-event-routing-table / Syntax"
+sql = "ALTER EVENT ROUTING TABLE v1 FORCE SET RULES v1 = ( REGION_GROUP = g1 , REGIONS = ( 'm' , 'm' ) , DESTINATION_ACCOUNT = v1 . v1 ) ;"
+expect = "observe"
+documented = true
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-event-routing-table.set-rules-region-group-regions"
+kind = "identifier_class"
+target = "<rule_name>"
+note = "quoted: a double-quoted identifier with blanks and mixed case"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-81); observed, not flipped to reject"
+
+[[limit]]
+form = "sf.ddl.alter-event-routing-table.set-rules-region-group-regions"
+kind = "identifier_class"
+target = "<rule_name>"
+note = "quoted: a double-quoted identifier with blanks and mixed case, observed"
+anchor = "doc.sql.alter-event-routing-table / Syntax"
+sql = "ALTER EVENT ROUTING TABLE v1 SET RULES \"v1 Q\" = ( REGION_GROUP = g1 , REGIONS = ( 'm' , 'm' ) , DESTINATION_ACCOUNT = v1 . v1 ) ;"
+expect = "observe"
+documented = true
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-event-routing-table.set-rules-region-group-regions"
+kind = "identifier_class"
+target = "<table_name>"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-81); observed, not flipped to reject"
+
+[[limit]]
+form = "sf.ddl.alter-event-routing-table.set-rules-region-group-regions"
+kind = "identifier_class"
+target = "<table_name>"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance), observed"
+anchor = "doc.sql.alter-event-routing-table / Syntax"
+sql = "ALTER EVENT ROUTING TABLE \"SELECT\" SET RULES v1 = ( REGION_GROUP = g1 , REGIONS = ( 'm' , 'm' ) , DESTINATION_ACCOUNT = v1 . v1 ) ;"
+expect = "observe"
+documented = true
+also_sql = "ALTER EVENT ROUTING TABLE SELECT SET RULES v1 = ( REGION_GROUP = g1 , REGIONS = ( 'm' , 'm' ) , DESTINATION_ACCOUNT = v1 . v1 ) ;"
+also_expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.create-event-routing-table"
+kind = "identifier_class"
+target = "<table_name>"
+note = "quoted: a double-quoted identifier with blanks and mixed case"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-81); observed, not flipped to reject"
+
+[[limit]]
+form = "sf.ddl.create-event-routing-table"
+kind = "identifier_class"
+target = "<table_name>"
+note = "quoted: a double-quoted identifier with blanks and mixed case, observed"
+anchor = "doc.sql.create-event-routing-table / Syntax"
+sql = "CREATE EVENT ROUTING TABLE \"v1 Q\" WITH RULES v1 = ( REGION_GROUP = g1 , REGIONS = ( 'm' ) , DESTINATION_ACCOUNT = v1 . v1 ) ;"
+expect = "observe"
+documented = true
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.create-event-routing-table"
+kind = "positive"
+note = "the documented form with every required part and no optional part"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-81); observed, not flipped to reject"
+
+[[limit]]
+form = "sf.ddl.create-event-routing-table"
+kind = "positive"
+note = "the documented form with every required part and no optional part, observed"
+anchor = "doc.sql.create-event-routing-table / Syntax"
+sql = "CREATE EVENT ROUTING TABLE v1 WITH RULES v1 = ( REGION_GROUP = g1 , REGIONS = ( 'm' ) , DESTINATION_ACCOUNT = v1 . v1 ) ;"
+expect = "observe"
+documented = true
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.create-event-routing-table"
+kind = "operand_type_class"
+target = "<table_name>"
+note = "a valid identifier"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-81); observed, not flipped to reject"
+
+[[limit]]
+form = "sf.ddl.create-event-routing-table"
+kind = "operand_type_class"
+target = "<table_name>"
+note = "a valid identifier, observed"
+anchor = "doc.sql.create-event-routing-table / Syntax"
+sql = "CREATE EVENT ROUTING TABLE v1 WITH RULES v1 = ( REGION_GROUP = g1 , REGIONS = ( 'm' ) , DESTINATION_ACCOUNT = v1 . v1 ) ;"
+expect = "observe"
+documented = true
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.create-event-routing-table"
+kind = "operand_type_class"
+target = "<rule_name>"
+note = "a valid identifier"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-81); observed, not flipped to reject"
+
+[[limit]]
+form = "sf.ddl.create-event-routing-table"
+kind = "operand_type_class"
+target = "<rule_name>"
+note = "a valid identifier, observed"
+anchor = "doc.sql.create-event-routing-table / Syntax"
+sql = "CREATE EVENT ROUTING TABLE v1 WITH RULES v1 = ( REGION_GROUP = g1 , REGIONS = ( 'm' ) , DESTINATION_ACCOUNT = v1 . v1 ) ;"
+expect = "observe"
+documented = true
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.create-event-routing-table"
+kind = "operand_type_class"
+target = "<region_group>"
+note = "a valid operand"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-81); observed, not flipped to reject"
+
+[[limit]]
+form = "sf.ddl.create-event-routing-table"
+kind = "operand_type_class"
+target = "<region_group>"
+note = "a valid operand, observed"
+anchor = "doc.sql.create-event-routing-table / Syntax"
+sql = "CREATE EVENT ROUTING TABLE v1 WITH RULES v1 = ( REGION_GROUP = g1 , REGIONS = ( 'm' ) , DESTINATION_ACCOUNT = v1 . v1 ) ;"
+expect = "observe"
+documented = true
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.create-event-routing-table"
+kind = "operand_type_class"
+target = "'<region1>'"
+note = "a valid string_literal"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-81); observed, not flipped to reject"
+
+[[limit]]
+form = "sf.ddl.create-event-routing-table"
+kind = "operand_type_class"
+target = "'<region1>'"
+note = "a valid string_literal, observed"
+anchor = "doc.sql.create-event-routing-table / Syntax"
+sql = "CREATE EVENT ROUTING TABLE v1 WITH RULES v1 = ( REGION_GROUP = g1 , REGIONS = ( 'm' ) , DESTINATION_ACCOUNT = v1 . v1 ) ;"
+expect = "observe"
+documented = true
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.create-event-routing-table"
+kind = "option_absent"
+target = "[ , '<region2>' , ... ]"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-81); observed, not flipped to reject"
+
+[[limit]]
+form = "sf.ddl.create-event-routing-table"
+kind = "option_absent"
+target = "[ , '<region2>' , ... ]"
+note = "option absent [ , '<region2>' , ... ], observed"
+anchor = "doc.sql.create-event-routing-table / Syntax"
+sql = "CREATE EVENT ROUTING TABLE v1 WITH RULES v1 = ( REGION_GROUP = g1 , REGIONS = ( 'm' ) , DESTINATION_ACCOUNT = v1 . v1 ) ;"
+expect = "observe"
+documented = true
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.create-event-routing-table"
+kind = "operand_type_class"
+target = "<organization>"
+note = "a valid operand"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-81); observed, not flipped to reject"
+
+[[limit]]
+form = "sf.ddl.create-event-routing-table"
+kind = "operand_type_class"
+target = "<organization>"
+note = "a valid operand, observed"
+anchor = "doc.sql.create-event-routing-table / Syntax"
+sql = "CREATE EVENT ROUTING TABLE v1 WITH RULES v1 = ( REGION_GROUP = g1 , REGIONS = ( 'm' ) , DESTINATION_ACCOUNT = v1 . v1 ) ;"
+expect = "observe"
+documented = true
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.create-event-routing-table"
+kind = "operand_type_class"
+target = "<account_name>"
+note = "a valid identifier"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-81); observed, not flipped to reject"
+
+[[limit]]
+form = "sf.ddl.create-event-routing-table"
+kind = "operand_type_class"
+target = "<account_name>"
+note = "a valid identifier, observed"
+anchor = "doc.sql.create-event-routing-table / Syntax"
+sql = "CREATE EVENT ROUTING TABLE v1 WITH RULES v1 = ( REGION_GROUP = g1 , REGIONS = ( 'm' ) , DESTINATION_ACCOUNT = v1 . v1 ) ;"
+expect = "observe"
+documented = true
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.create-event-routing-table"
+kind = "option_absent"
+target = "[ <rule_name> = ( REGION_GROUP = <region_group> , REGIONS = ( '<region1>' [ , '<region2>' , ... ] ) , DESTINATION_ACCOU…"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-81); observed, not flipped to reject"
+
+[[limit]]
+form = "sf.ddl.create-event-routing-table"
+kind = "option_absent"
+target = "[ <rule_name> = ( REGION_GROUP = <region_group> , REGIONS = ( '<region1>' [ , '<region2>' , ... ] ) , DESTINATION_ACCOU…"
+note = "option absent [ <rule_name> = ( REGION_GROUP = <region_group> , REGIONS = ( '<region1>' [ , '<region2>' , ... ] ) , DESTINATION_ACCOU…, observed"
+anchor = "doc.sql.create-event-routing-table / Syntax"
+sql = "CREATE EVENT ROUTING TABLE v1 WITH RULES v1 = ( REGION_GROUP = g1 , REGIONS = ( 'm' ) , DESTINATION_ACCOUNT = v1 . v1 ) ;"
+expect = "observe"
+documented = true
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.create-event-routing-table"
+kind = "identifier_class"
+target = "<table_name>"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-81); observed, not flipped to reject"
+
+[[limit]]
+form = "sf.ddl.create-event-routing-table"
+kind = "identifier_class"
+target = "<table_name>"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance), observed"
+anchor = "doc.sql.create-event-routing-table / Syntax"
+sql = "CREATE EVENT ROUTING TABLE \"SELECT\" WITH RULES v1 = ( REGION_GROUP = g1 , REGIONS = ( 'm' ) , DESTINATION_ACCOUNT = v1 . v1 ) ;"
+expect = "observe"
+documented = true
+also_sql = "CREATE EVENT ROUTING TABLE SELECT WITH RULES v1 = ( REGION_GROUP = g1 , REGIONS = ( 'm' ) , DESTINATION_ACCOUNT = v1 . v1 ) ;"
+also_expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.create-event-routing-table"
+kind = "option_present"
+target = "[ , '<region2>' , ... ]"
+note = "the list continued at least once"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-81); observed, not flipped to reject"
+
+[[limit]]
+form = "sf.ddl.create-event-routing-table"
+kind = "option_present"
+target = "[ , '<region2>' , ... ]"
+note = "the list continued at least once, observed"
+anchor = "doc.sql.create-event-routing-table / Syntax"
+sql = "CREATE EVENT ROUTING TABLE v1 WITH RULES v1 = ( REGION_GROUP = g1 , REGIONS = ( 'm' , 'm' ) , DESTINATION_ACCOUNT = v1 . v1 ) v1 = ( REGION_GROUP = g1 , REGIONS = ( 'm' , 'm' ) , DESTINATION_ACCOUNT = v1 . v1 ) ;"
+expect = "observe"
+documented = true
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.create-event-routing-table"
+kind = "option_present"
+target = "[ <rule_name> = ( REGION_GROUP = <region_group> , REGIONS = ( '<region1>' [ , '<region2>' , ... ] ) , DESTINATION_ACCOU…"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-81); observed, not flipped to reject"
+
+[[limit]]
+form = "sf.ddl.create-event-routing-table"
+kind = "option_present"
+target = "[ <rule_name> = ( REGION_GROUP = <region_group> , REGIONS = ( '<region1>' [ , '<region2>' , ... ] ) , DESTINATION_ACCOU…"
+note = "option present [ <rule_name> = ( REGION_GROUP = <region_group> , REGIONS = ( '<region1>' [ , '<region2>' , ... ] ) , DESTINATION_ACCOU…, observed"
+anchor = "doc.sql.create-event-routing-table / Syntax"
+sql = "CREATE EVENT ROUTING TABLE v1 WITH RULES v1 = ( REGION_GROUP = g1 , REGIONS = ( 'm' , 'm' ) , DESTINATION_ACCOUNT = v1 . v1 ) v1 = ( REGION_GROUP = g1 , REGIONS = ( 'm' , 'm' ) , DESTINATION_ACCOUNT = v1 . v1 ) ;"
+expect = "observe"
+documented = true
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.create-event-routing-table"
+kind = "operand_type_class"
+target = "<rule_name> in [ <rule_name> = ( REGION_GROUP = <region_group> , REGIONS = ( '<region1>' [ , '<region2>' , ... ] ) , DE…"
+note = "a valid identifier"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-81); observed, not flipped to reject"
+
+[[limit]]
+form = "sf.ddl.create-event-routing-table"
+kind = "operand_type_class"
+target = "<rule_name> in [ <rule_name> = ( REGION_GROUP = <region_group> , REGIONS = ( '<region1>' [ , '<region2>' , ... ] ) , DE…"
+note = "a valid identifier, observed"
+anchor = "doc.sql.create-event-routing-table / Syntax"
+sql = "CREATE EVENT ROUTING TABLE v1 WITH RULES v1 = ( REGION_GROUP = g1 , REGIONS = ( 'm' , 'm' ) , DESTINATION_ACCOUNT = v1 . v1 ) v1 = ( REGION_GROUP = g1 , REGIONS = ( 'm' , 'm' ) , DESTINATION_ACCOUNT = v1 . v1 ) ;"
+expect = "observe"
+documented = true
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.create-event-routing-table"
+kind = "operand_type_class"
+target = "<region_group> in [ <rule_name> = ( REGION_GROUP = <region_group> , REGIONS = ( '<region1>' [ , '<region2>' , ... ] ) ,…"
+note = "a valid operand"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-81); observed, not flipped to reject"
+
+[[limit]]
+form = "sf.ddl.create-event-routing-table"
+kind = "operand_type_class"
+target = "<region_group> in [ <rule_name> = ( REGION_GROUP = <region_group> , REGIONS = ( '<region1>' [ , '<region2>' , ... ] ) ,…"
+note = "a valid operand, observed"
+anchor = "doc.sql.create-event-routing-table / Syntax"
+sql = "CREATE EVENT ROUTING TABLE v1 WITH RULES v1 = ( REGION_GROUP = g1 , REGIONS = ( 'm' , 'm' ) , DESTINATION_ACCOUNT = v1 . v1 ) v1 = ( REGION_GROUP = g1 , REGIONS = ( 'm' , 'm' ) , DESTINATION_ACCOUNT = v1 . v1 ) ;"
+expect = "observe"
+documented = true
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.create-event-routing-table"
+kind = "operand_type_class"
+target = "'<region1>' in [ <rule_name> = ( REGION_GROUP = <region_group> , REGIONS = ( '<region1>' [ , '<region2>' , ... ] ) , DE…"
+note = "a valid string_literal"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-81); observed, not flipped to reject"
+
+[[limit]]
+form = "sf.ddl.create-event-routing-table"
+kind = "operand_type_class"
+target = "'<region1>' in [ <rule_name> = ( REGION_GROUP = <region_group> , REGIONS = ( '<region1>' [ , '<region2>' , ... ] ) , DE…"
+note = "a valid string_literal, observed"
+anchor = "doc.sql.create-event-routing-table / Syntax"
+sql = "CREATE EVENT ROUTING TABLE v1 WITH RULES v1 = ( REGION_GROUP = g1 , REGIONS = ( 'm' , 'm' ) , DESTINATION_ACCOUNT = v1 . v1 ) v1 = ( REGION_GROUP = g1 , REGIONS = ( 'm' , 'm' ) , DESTINATION_ACCOUNT = v1 . v1 ) ;"
+expect = "observe"
+documented = true
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.create-event-routing-table"
+kind = "option_present"
+target = "[ , '<region2>' , ... ] #2"
+note = "the list continued at least once"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-81); observed, not flipped to reject"
+
+[[limit]]
+form = "sf.ddl.create-event-routing-table"
+kind = "option_present"
+target = "[ , '<region2>' , ... ] #2"
+note = "the list continued at least once, observed"
+anchor = "doc.sql.create-event-routing-table / Syntax"
+sql = "CREATE EVENT ROUTING TABLE v1 WITH RULES v1 = ( REGION_GROUP = g1 , REGIONS = ( 'm' , 'm' ) , DESTINATION_ACCOUNT = v1 . v1 ) v1 = ( REGION_GROUP = g1 , REGIONS = ( 'm' , 'm' ) , DESTINATION_ACCOUNT = v1 . v1 ) ;"
+expect = "observe"
+documented = true
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.create-event-routing-table"
+kind = "operand_type_class"
+target = "<organization> in [ <rule_name> = ( REGION_GROUP = <region_group> , REGIONS = ( '<region1>' [ , '<region2>' , ... ] ) ,…"
+note = "a valid operand"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-81); observed, not flipped to reject"
+
+[[limit]]
+form = "sf.ddl.create-event-routing-table"
+kind = "operand_type_class"
+target = "<organization> in [ <rule_name> = ( REGION_GROUP = <region_group> , REGIONS = ( '<region1>' [ , '<region2>' , ... ] ) ,…"
+note = "a valid operand, observed"
+anchor = "doc.sql.create-event-routing-table / Syntax"
+sql = "CREATE EVENT ROUTING TABLE v1 WITH RULES v1 = ( REGION_GROUP = g1 , REGIONS = ( 'm' , 'm' ) , DESTINATION_ACCOUNT = v1 . v1 ) v1 = ( REGION_GROUP = g1 , REGIONS = ( 'm' , 'm' ) , DESTINATION_ACCOUNT = v1 . v1 ) ;"
+expect = "observe"
+documented = true
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.create-event-routing-table"
+kind = "operand_type_class"
+target = "<account_name> in [ <rule_name> = ( REGION_GROUP = <region_group> , REGIONS = ( '<region1>' [ , '<region2>' , ... ] ) ,…"
+note = "a valid identifier"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-81); observed, not flipped to reject"
+
+[[limit]]
+form = "sf.ddl.create-event-routing-table"
+kind = "operand_type_class"
+target = "<account_name> in [ <rule_name> = ( REGION_GROUP = <region_group> , REGIONS = ( '<region1>' [ , '<region2>' , ... ] ) ,…"
+note = "a valid identifier, observed"
+anchor = "doc.sql.create-event-routing-table / Syntax"
+sql = "CREATE EVENT ROUTING TABLE v1 WITH RULES v1 = ( REGION_GROUP = g1 , REGIONS = ( 'm' , 'm' ) , DESTINATION_ACCOUNT = v1 . v1 ) v1 = ( REGION_GROUP = g1 , REGIONS = ( 'm' , 'm' ) , DESTINATION_ACCOUNT = v1 . v1 ) ;"
+expect = "observe"
+documented = true
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.create-event-routing-table"
+kind = "interaction_all_options"
+note = "every independent option of one production together"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-81); observed, not flipped to reject"
+
+[[limit]]
+form = "sf.ddl.create-event-routing-table"
+kind = "interaction_all_options"
+note = "every independent option of one production together, observed"
+anchor = "doc.sql.create-event-routing-table / Syntax"
+sql = "CREATE EVENT ROUTING TABLE v1 WITH RULES v1 = ( REGION_GROUP = g1 , REGIONS = ( 'm' , 'm' ) , DESTINATION_ACCOUNT = v1 . v1 ) v1 = ( REGION_GROUP = g1 , REGIONS = ( 'm' , 'm' ) , DESTINATION_ACCOUNT = v1 . v1 ) ;"
+expect = "observe"
+documented = true
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.create-event-routing-table"
+kind = "identifier_class"
+target = "<account_name>"
+note = "quoted: a double-quoted identifier with blanks and mixed case"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-81); observed, not flipped to reject"
+
+[[limit]]
+form = "sf.ddl.create-event-routing-table"
+kind = "identifier_class"
+target = "<account_name>"
+note = "quoted: a double-quoted identifier with blanks and mixed case, observed"
+anchor = "doc.sql.create-event-routing-table / Syntax"
+sql = "CREATE EVENT ROUTING TABLE v1 WITH RULES v1 = ( REGION_GROUP = g1 , REGIONS = ( 'm' ) , DESTINATION_ACCOUNT = v1 . \"v1 Q\" ) ;"
+expect = "observe"
+documented = true
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.create-event-routing-table"
+kind = "identifier_class"
+target = "<account_name>"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-81); observed, not flipped to reject"
+
+[[limit]]
+form = "sf.ddl.create-event-routing-table"
+kind = "identifier_class"
+target = "<account_name>"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance), observed"
+anchor = "doc.sql.create-event-routing-table / Syntax"
+sql = "CREATE EVENT ROUTING TABLE v1 WITH RULES v1 = ( REGION_GROUP = g1 , REGIONS = ( 'm' ) , DESTINATION_ACCOUNT = v1 . \"SELECT\" ) ;"
+expect = "observe"
+documented = true
+also_sql = "CREATE EVENT ROUTING TABLE v1 WITH RULES v1 = ( REGION_GROUP = g1 , REGIONS = ( 'm' ) , DESTINATION_ACCOUNT = v1 . SELECT ) ;"
+also_expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.create-event-routing-table"
+kind = "option_absent"
+target = "[ , '<region2>' , ... ] #2"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-81); observed, not flipped to reject"
+
+[[limit]]
+form = "sf.ddl.create-event-routing-table"
+kind = "option_absent"
+target = "[ , '<region2>' , ... ] #2"
+note = "option absent [ , '<region2>' , ... ] #2, observed"
+anchor = "doc.sql.create-event-routing-table / Syntax"
+sql = "CREATE EVENT ROUTING TABLE v1 WITH RULES v1 = ( REGION_GROUP = g1 , REGIONS = ( 'm' ) , DESTINATION_ACCOUNT = v1 . v1 ) v1 = ( REGION_GROUP = g1 , REGIONS = ( 'm' ) , DESTINATION_ACCOUNT = v1 . v1 ) ;"
+expect = "observe"
+documented = true
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.create-event-routing-table"
+kind = "identifier_class"
+target = "<rule_name>"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-81); observed, not flipped to reject"
+
+[[limit]]
+form = "sf.ddl.create-event-routing-table"
+kind = "identifier_class"
+target = "<rule_name>"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance), observed"
+anchor = "doc.sql.create-event-routing-table / Syntax"
+sql = "CREATE EVENT ROUTING TABLE v1 WITH RULES \"SELECT\" = ( REGION_GROUP = g1 , REGIONS = ( 'm' ) , DESTINATION_ACCOUNT = v1 . v1 ) ;"
+expect = "observe"
+documented = true
+also_sql = "CREATE EVENT ROUTING TABLE v1 WITH RULES SELECT = ( REGION_GROUP = g1 , REGIONS = ( 'm' ) , DESTINATION_ACCOUNT = v1 . v1 ) ;"
+also_expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.create-event-routing-table"
+kind = "identifier_class"
+target = "<rule_name>"
+note = "quoted: a double-quoted identifier with blanks and mixed case"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-81); observed, not flipped to reject"
+
+[[limit]]
+form = "sf.ddl.create-event-routing-table"
+kind = "identifier_class"
+target = "<rule_name>"
+note = "quoted: a double-quoted identifier with blanks and mixed case, observed"
+anchor = "doc.sql.create-event-routing-table / Syntax"
+sql = "CREATE EVENT ROUTING TABLE v1 WITH RULES \"v1 Q\" = ( REGION_GROUP = g1 , REGIONS = ( 'm' ) , DESTINATION_ACCOUNT = v1 . v1 ) ;"
+expect = "observe"
+documented = true
+context = "raw"
+
+# D113 security_admin receipt triage (imports 80-81): remaining contradictions observed, each reason names its category and receipt.
+
+[[suppress]]
+form = "sf.security_admin.create-api-integration.artifact-repository-api-api-allowed-prefixes-enabled-true"
+kind = "negative_neighbour"
+target = "<secret_name> in [ TLS_TRUSTED_CERTIFICATES = ( { <secret_name> [ , <secret_name> , ... ] } ) ]"
+note = "a string literal in place of <secret_name>"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 02000, phase semantic_error, import-20261104-80), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.create-api-integration.artifact-repository-api-api-allowed-prefixes-enabled-true"
+kind = "negative_neighbour"
+target = "<secret_name> in [ TLS_TRUSTED_CERTIFICATES = ( { <secret_name> [ , <secret_name> , ... ] } ) ]"
+note = "a string literal in place of <secret_name>, observed"
+anchor = "doc.sql.create-api-integration / Syntax / For artifact repository"
+sql = "CREATE API INTEGRATION i1 API_PROVIDER = artifact_repository_api API_ALLOWED_PREFIXES = ( 'https://example.com/' ) TLS_TRUSTED_CERTIFICATES = ( 'v1' ) ENABLED = TRUE ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.create-api-integration.artifact-repository-api-api-allowed-prefixes-enabled-true"
+kind = "negative_neighbour"
+target = "<secret_name> in [ ALLOWED_AUTHENTICATION_SECRETS = { ( <secret_name> [ , <secret_name> , ... ] ) | all | none } ]"
+note = "a string literal in place of <secret_name>"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 02000, phase semantic_error, import-20261104-80), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.create-api-integration.artifact-repository-api-api-allowed-prefixes-enabled-true"
+kind = "negative_neighbour"
+target = "<secret_name> in [ ALLOWED_AUTHENTICATION_SECRETS = { ( <secret_name> [ , <secret_name> , ... ] ) | all | none } ]"
+note = "a string literal in place of <secret_name>, observed"
+anchor = "doc.sql.create-api-integration / Syntax / For artifact repository"
+sql = "CREATE API INTEGRATION i1 API_PROVIDER = artifact_repository_api API_ALLOWED_PREFIXES = ( 'https://example.com/' ) ALLOWED_AUTHENTICATION_SECRETS = ( 'v1' ) ENABLED = TRUE ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.create-api-integration.git-https-api-api-allowed-prefixes-api-user-authentication-type.for-git-repository"
+kind = "required_operand_missing"
+target = "<oauth_parameters>"
+note = "omit <oauth_parameters>"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2029 SQLSTATE 42601, phase semantic_error, import-20261104-80), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.create-api-integration.git-https-api-api-allowed-prefixes-api-user-authentication-type.for-git-repository"
+kind = "required_operand_missing"
+target = "<oauth_parameters>"
+note = "omit <oauth_parameters>, observed"
+anchor = "doc.sql.create-api-integration / Syntax / For Git repository"
+sql = "CREATE API INTEGRATION i1 API_PROVIDER = git_https_api API_ALLOWED_PREFIXES = ( 'https://example.com/' ) API_USER_AUTHENTICATION = ( TYPE = OAUTH2 ) ENABLED = TRUE ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.create-api-integration.git-https-api-api-allowed-prefixes-enabled-true"
+kind = "negative_neighbour"
+target = "<secret_name> in [ ALLOWED_AUTHENTICATION_SECRETS = { ( <secret_name> [ , <secret_name> , ... ] ) | all | none } ]"
+note = "a string literal in place of <secret_name>"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 02000, phase semantic_error, import-20261104-80), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.create-api-integration.git-https-api-api-allowed-prefixes-enabled-true"
+kind = "negative_neighbour"
+target = "<secret_name> in [ ALLOWED_AUTHENTICATION_SECRETS = { ( <secret_name> [ , <secret_name> , ... ] ) | all | none } ]"
+note = "a string literal in place of <secret_name>, observed"
+anchor = "doc.sql.create-api-integration / Syntax / For Git repository"
+sql = "CREATE API INTEGRATION i1 API_PROVIDER = git_https_api API_ALLOWED_PREFIXES = ( 'https://example.com/' ) ALLOWED_AUTHENTICATION_SECRETS = ( 'v1' ) ENABLED = TRUE ;"
 expect = "observe"
 context = "raw"
