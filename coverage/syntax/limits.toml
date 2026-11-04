@@ -57668,3 +57668,67 @@ anchor = "doc.sql.alter-view / Syntax"
 sql = "ALTER VIEW SET DATA_METRIC_SCHEDULE = '1 MINUTE' ;"
 expect = "observe"
 context = "raw"
+
+# D113 classes receipt triage: remaining contradictions observed, each reason names its category and receipt.
+
+[[suppress]]
+form = "sf.classes.classification-profile.commands.show-classification-profile"
+kind = "negative_neighbour"
+note = "the form without its required DATA_PRIVACY"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 02000, phase semantic_error, import-20261104-56), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.classes.classification-profile.commands.show-classification-profile"
+kind = "negative_neighbour"
+note = "the form without its required DATA_PRIVACY, observed"
+anchor = "doc.classes.classification_profile.commands.show-classification-profile / Syntax"
+sql = "SHOW SNOWFLAKE . . CLASSIFICATION_PROFILE ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.classes.classification-profile.methods.describe"
+kind = "required_operand_missing"
+target = "<classification_profile_name>"
+note = "omit <classification_profile_name>"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2139 SQLSTATE 02000, phase semantic_error, import-20261104-56), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.classes.classification-profile.methods.describe"
+kind = "required_operand_missing"
+target = "<classification_profile_name>"
+note = "omit <classification_profile_name>, observed"
+anchor = "doc.classes.classification_profile.methods.describe / Syntax"
+sql = "SELECT !DESCRIBE ( ) ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.classes.classification.commands.show-classification"
+kind = "negative_neighbour"
+note = "the form without its required ML"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 02000, phase semantic_error, import-20261104-57), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.classes.classification.commands.show-classification"
+kind = "negative_neighbour"
+note = "the form without its required ML, observed"
+anchor = "doc.classes.classification.commands.show-classification / Syntax"
+sql = "SHOW SNOWFLAKE . . CLASSIFICATION ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.classes.custom-classifier.commands.show-custom-classifiers"
+kind = "negative_neighbour"
+note = "the form without its required DATA_PRIVACY"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 02000, phase semantic_error, import-20261104-57), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.classes.custom-classifier.commands.show-custom-classifiers"
+kind = "negative_neighbour"
+note = "the form without its required DATA_PRIVACY, observed"
+anchor = "doc.classes.custom_classifier.commands.show-custom-classifiers / Syntax"
+sql = "SHOW SNOWFLAKE . . CUSTOM_CLASSIFIER ;"
+expect = "observe"
+context = "raw"

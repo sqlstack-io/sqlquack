@@ -7203,12 +7203,6 @@ required = true
 note = "the form without its required SNOWFLAKE"
 
 [[obligation]]
-id = "sf.classes.classification-profile.commands.show-classification-profile.o022"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required DATA_PRIVACY"
-
-[[obligation]]
 id = "sf.classes.classification-profile.commands.show-classification-profile.o023"
 kind = "negative_neighbour"
 required = true
@@ -7259,17 +7253,17 @@ anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
+id = "sf.classes.classification-profile.commands.show-classification-profile.o030"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.classes.classification_profile.commands.show-classification-profile / Syntax"
+note = "the form without its required DATA_PRIVACY, observed"
+
+[[obligation]]
 id = "sf.classes.classification-profile.methods.describe.o001"
 kind = "positive"
 required = true
 note = "the documented form with every required part and no optional part"
-
-[[obligation]]
-id = "sf.classes.classification-profile.methods.describe.o002"
-kind = "required_operand_missing"
-required = true
-target = "<classification_profile_name>"
-note = "omit <classification_profile_name>"
 
 [[obligation]]
 id = "sf.classes.classification-profile.methods.describe.o003"
@@ -7311,6 +7305,14 @@ required = true
 target = "<classification_profile_name>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.classes.classification-profile.methods.describe.o010"
+kind = "required_operand_missing"
+required = true
+target = "<classification_profile_name>"
+anchor = "doc.classes.classification_profile.methods.describe / Syntax"
+note = "omit <classification_profile_name>, observed"
 
 [[obligation]]
 id = "sf.classes.classification-profile.methods.enable-auto-scheduling-mode.o001"
@@ -9294,12 +9296,6 @@ required = true
 note = "the form without its required SNOWFLAKE"
 
 [[obligation]]
-id = "sf.classes.classification.commands.show-classification.o024"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ML"
-
-[[obligation]]
 id = "sf.classes.classification.commands.show-classification.o025"
 kind = "negative_neighbour"
 required = true
@@ -9348,6 +9344,13 @@ required = true
 target = "<schema_name>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.classes.classification.commands.show-classification.o032"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.classes.classification.commands.show-classification / Syntax"
+note = "the form without its required ML, observed"
 
 [[obligation]]
 id = "sf.classes.classification.methods.predict.o001"
@@ -10060,12 +10063,6 @@ required = true
 note = "the form without its required SNOWFLAKE"
 
 [[obligation]]
-id = "sf.classes.custom-classifier.commands.show-custom-classifiers.o024"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required DATA_PRIVACY"
-
-[[obligation]]
 id = "sf.classes.custom-classifier.commands.show-custom-classifiers.o025"
 kind = "negative_neighbour"
 required = true
@@ -10114,6 +10111,13 @@ required = true
 target = "<schema_name>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.classes.custom-classifier.commands.show-custom-classifiers.o032"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.classes.custom_classifier.commands.show-custom-classifiers / Syntax"
+note = "the form without its required DATA_PRIVACY, observed"
 
 [[obligation]]
 id = "sf.classes.custom-classifier.methods.add-regex.o001"
