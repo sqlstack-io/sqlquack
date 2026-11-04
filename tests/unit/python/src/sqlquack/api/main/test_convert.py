@@ -17,6 +17,7 @@ from tests.unit.python.src.sqlquack.api.main.helpers import command_report, sche
 
 POLICY: str = str(Path(__file__).resolve().parents[7] / "sqlquack.toml")
 HASHED: str = "SELECT HASH(order_id) AS h FROM orders"
+DATED: str = "SELECT CURRENT_DATE() AS d"
 
 
 @pytest.mark.parametrize(
@@ -46,15 +47,22 @@ HASHED: str = "SELECT HASH(order_id) AS h FROM orders"
             expected_converted=False,
         ),
         CommandLineTestCase(
-            description="HASH relies on a value divergence the report names",
+            description="HASH is refused by default, as its value is never Snowflake's",
             sql=HASHED,
+            arguments=("--policy", POLICY, "--schema", "schema.json"),
+            options=ConvertOptions(policy=POLICY, schema="schema.json"),
+            expected_converted=False,
+        ),
+        CommandLineTestCase(
+            description="CURRENT_DATE relies on value divergences the report names",
+            sql=DATED,
             arguments=("--policy", POLICY, "--schema", "schema.json"),
             options=ConvertOptions(policy=POLICY, schema="schema.json"),
             expected_converted=True,
         ),
         CommandLineTestCase(
-            description="HASH refused when relying only on loud divergences",
-            sql=HASHED,
+            description="CURRENT_DATE refused when relying only on loud divergences",
+            sql=DATED,
             arguments=("--policy", POLICY, "--schema", "schema.json", "--loud-divergences-only"),
             options=ConvertOptions(policy=POLICY, schema="schema.json", loud_divergences_only=True),
             expected_converted=False,
