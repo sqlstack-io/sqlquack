@@ -15,5 +15,5 @@ pub fn json_decimal(sql: &str, log: &ProvenanceLog) -> String {
         "(CASE WHEN d = trunc(d) THEN CAST(CAST(trunc(d) AS DECIMAL(38,0)) AS VARCHAR) \
          ELSE rtrim(CAST(d AS VARCHAR), '0') END)",
     );
-    json_guarded(&text, log)
+    json_guarded(&text, false, log)
 }
