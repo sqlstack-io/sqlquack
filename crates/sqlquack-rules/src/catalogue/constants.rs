@@ -37,7 +37,7 @@ use crate::conversion::constants::{
     NULL_BRANCHES, NULL_IF_ZERO_RULE, NULL_SAFE_COMPARISON, NULLIF, NUMBER_LITERAL,
     NUMBER_TEXT_FORMAT, NUMERIC_FUNCTION, OBJECT_CONSTRUCT_RULE, OBJECT_DELETE_RULE,
     OBJECT_INSERT_RULE, OBJECT_KEYS_RULE, OBJECT_PICK_RULE, ORDER_BY, PARENTHESES, PARSE_JSON_RULE,
-    PARSE_JSON_VARIANT, PERCENTILE_RULE, POSITIONAL_COLUMN, PROJECT_FUNCTION_CALL,
+    PARSE_JSON_VARIANT, PERCENTILE_RULE, POSITIONAL_COLUMN, POWER_RULE, PROJECT_FUNCTION_CALL,
     PROJECT_TABLE_FUNCTION, QUALIFY, REDUCE_RULE, REGEXP, REGEXP_COLUMN_PATTERN, REGEXP_COUNTING,
     REGEXP_PARAMETERS, REGEXP_POSIX_SPACE, ROUNDING, SCALAR_SUBQUERY, SELECT, SET_OPERATION,
     SIGN_RULE, SPLIT_RULE, SPLIT_TO_TABLE_RULE, STAR, SUM, SUM_FLOAT, TEMPORAL_TEXT_FORMAT,
@@ -114,7 +114,7 @@ pub const RULES: &[RuleSpec] = &[
     RuleSpec {
         id: ASOF_JOIN,
         constructs: &["join:asof"],
-        conditions: "ASOF JOIN with a MATCH_CONDITION of one comparison (>, >=, < or <=) and an ON of equalities joined by AND: each left row with the nearest right row the comparison admits among those whose ON equalities hold, or NULLs where none does (DuckDB's ASOF LEFT JOIN). Rows whose compared values are NULL match nothing. Both sides of the comparison are NUMBER, FLOAT or TIMESTAMP_NTZ expressions, as Snowflake requires and as recorded; others refuse.",
+        conditions: "ASOF JOIN with a MATCH_CONDITION of one comparison (>, >=, < or <=) and an ON of equalities joined by AND: each left row with the nearest right row the comparison admits among those whose ON equalities hold, or NULLs where none does (DuckDB's ASOF LEFT JOIN). Rows whose compared values are NULL match nothing. Both sides of the comparison are NUMBER, FLOAT, DATE or TIMESTAMP_NTZ expressions, as Snowflake requires and as recorded; others refuse.",
         failures: &[],
     },
     RuleSpec {
@@ -880,6 +880,12 @@ pub const RULES: &[RuleSpec] = &[
         constructs: &["fn:LN", "fn:EXP", "fn:SQRT"],
         conditions: "LN, EXP and SQRT of a NUMBER or FLOAT, as a FLOAT computed in double precision. LN of zero or a negative number fails with error 100043 and SQRT of a negative number with error 100044, as recorded; EXP beyond the double range raises numeric_range, as no recording shows what Snowflake returns.",
         failures: LOGARITHM_FAILURES,
+    },
+    RuleSpec {
+        id: POWER_RULE,
+        constructs: &["fn:POWER"],
+        conditions: "POWER of the constant 10 to a whole NUMBER exponent, as the FLOAT nearest the power, ties to even, as recorded from 10^-3 to 10^38 (10^23 is the tie DuckDB's pow rounds the other way); far out of range inf or 0. NULL is NULL. Other bases refuse: DuckDB's pow is not correctly rounded, and no recording shows Snowflake's rounding.",
+        failures: &[],
     },
     RuleSpec {
         id: FLOAT_TO_DOUBLE,

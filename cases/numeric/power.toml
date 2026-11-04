@@ -26,6 +26,7 @@ rows = [
   ["NULL", "12345"],
 ]
 expression = "ARRAY_CONSTRUCT(POWER(10, n)::NUMBER(38, 0), m / NULLIF(POWER(10, n)::NUMBER(38, 0), 0))"
+expected_divergence = "json_fidelity"
 tags = ["null"]
 
 [[case]]
