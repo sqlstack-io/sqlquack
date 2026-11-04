@@ -1,0 +1,118 @@
+# Documented limits added by hand to the mechanically derived obligations: prose rules from the
+# Snowflake pages (usage notes, parameter descriptions) that the grammar does not show.
+# scripts/build_syntax_obligations.py appends each limit to its form's obligations and keeps its
+# id across rebuilds. Fields: form, kind, target (for targeted kinds), note, anchor (page id and
+# heading of the rule), and depths or pair where the kind takes them. `required` defaults to true.
+
+# DECLARE exception: "The number must be an integer between -20000 and -20999." Receipts of run
+# b5-packet4-20261103T224644Z reject both documented ends (-20999 and -20000); the obligations keep
+# the documented bounds, and the receipts decide.
+
+[[limit]]
+form = "sf.scripting.declare.exception"
+kind = "boundary_below"
+target = "<exception_number>"
+note = "-21000, below the documented lower bound -20999"
+anchor = "doc.snowflake-scripting.declare / Exception declaration syntax"
+
+[[limit]]
+form = "sf.scripting.declare.exception"
+kind = "boundary_at"
+target = "<exception_number>"
+note = "-20999, the documented lower bound"
+anchor = "doc.snowflake-scripting.declare / Exception declaration syntax"
+
+[[limit]]
+form = "sf.scripting.declare.exception"
+kind = "boundary_above"
+target = "<exception_number>"
+note = "-20998, just inside the documented lower bound"
+anchor = "doc.snowflake-scripting.declare / Exception declaration syntax"
+
+[[limit]]
+form = "sf.scripting.declare.exception"
+kind = "boundary_below"
+target = "<exception_number>"
+note = "-20001, just inside the documented upper bound"
+anchor = "doc.snowflake-scripting.declare / Exception declaration syntax"
+
+[[limit]]
+form = "sf.scripting.declare.exception"
+kind = "boundary_at"
+target = "<exception_number>"
+note = "-20000, the documented upper bound and the default"
+anchor = "doc.snowflake-scripting.declare / Exception declaration syntax"
+
+[[limit]]
+form = "sf.scripting.declare.exception"
+kind = "boundary_above"
+target = "<exception_number>"
+note = "-19999, above the documented upper bound"
+anchor = "doc.snowflake-scripting.declare / Exception declaration syntax"
+
+[[limit]]
+form = "sf.scripting.declare.exception"
+kind = "negative_neighbour"
+note = "an exception message containing a double quote character"
+anchor = "doc.snowflake-scripting.declare / Exception declaration syntax"
+
+# BEGIN ... END: "The keyword END must be followed immediately by a semicolon, or followed
+# immediately by a label that is immediately followed by a semicolon. The keyword BEGIN must not be
+# followed immediately by a semicolon."
+
+[[limit]]
+form = "sf.scripting.begin"
+kind = "option_present"
+target = "END <label> ;"
+note = "END followed by a label and a semicolon"
+anchor = "doc.snowflake-scripting.begin / Usage notes"
+
+[[limit]]
+form = "sf.scripting.begin"
+kind = "identifier_class"
+target = "END <label> ;"
+note = "reserved: a reserved keyword as the END label, unquoted and double-quoted"
+anchor = "doc.snowflake-scripting.begin / Usage notes"
+
+[[limit]]
+form = "sf.scripting.begin"
+kind = "negative_neighbour"
+note = "END followed by a token other than a semicolon or a label"
+anchor = "doc.snowflake-scripting.begin / Usage notes"
+
+[[limit]]
+form = "sf.scripting.begin"
+kind = "negative_neighbour"
+note = "END <label> followed by a token other than a semicolon"
+anchor = "doc.snowflake-scripting.begin / Usage notes"
+
+[[limit]]
+form = "sf.scripting.begin"
+kind = "negative_neighbour"
+note = "BEGIN immediately followed by a semicolon, which starts a transaction instead of a block"
+anchor = "doc.snowflake-scripting.begin / Usage notes"
+
+# EXCEPTION: "Snowflake supports no more than one exception handler per block."
+
+[[limit]]
+form = "sf.scripting.exception"
+kind = "negative_neighbour"
+note = "a block with two EXCEPTION sections"
+anchor = "doc.snowflake-scripting.exception / Usage notes"
+
+# BREAK and CONTINUE: a label lets them leave or restart "more than one level of a nested loop or
+# a nested branch". No depth limit is documented.
+
+[[limit]]
+form = "sf.scripting.break"
+kind = "nesting_depth"
+note = "BREAK <label> naming a loop that encloses the current one by the given depth; no documented bound"
+anchor = "doc.snowflake-scripting.break / Syntax"
+depths = [2, 8]
+
+[[limit]]
+form = "sf.scripting.continue"
+kind = "nesting_depth"
+note = "CONTINUE <label> naming a loop that encloses the current one by the given depth; no documented bound"
+anchor = "doc.snowflake-scripting.continue / Syntax"
+depths = [2, 8]
