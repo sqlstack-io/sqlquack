@@ -710,43 +710,45 @@ fn given_dates_when_converting_last_day_then_the_month_end_is_kept() {
 
 #[test]
 fn given_sides_qualified_by_the_walked_relation_when_converting_connect_by_then_it_walks() {
-    let walk = |condition: &str| {
-        format!(
-            "WITH t AS (SELECT * FROM (VALUES (1, NULL), (2, 1), (3, 2), (4, 1)) AS v(id, parent)) \
-             SELECT SUM(id * 10 + depth) AS v FROM (SELECT c.id, LEVEL AS depth FROM t AS c \
-             START WITH c.parent IS NULL CONNECT BY {condition})"
-        )
-    };
     let test_cases = [
-        (
-            "PRIOR on the left, both sides qualified",
-            walk("PRIOR c.id = c.parent"),
-            Ok("108"),
-        ),
-        (
-            "PRIOR on the right, the alias in another case",
-            walk("C.parent = PRIOR C.id"),
-            Ok("108"),
-        ),
-        (
-            "a qualifier naming another relation refuses",
-            walk("PRIOR x.id = c.parent"),
-            Err("walked relation"),
-        ),
-        (
-            "ORDER BY a qualified column after the walk refuses, as Snowflake rejects it",
-            "WITH t AS (SELECT * FROM (VALUES (1, NULL), (2, 1)) AS v(id, parent)) \
-             SELECT c.id AS v FROM t AS c START WITH c.parent IS NULL \
-             CONNECT BY PRIOR c.id = c.parent ORDER BY c.id"
-                .to_owned(),
-            Err("Snowflake rejects"),
-        ),
+        FirstValueTestCase {
+            description: "PRIOR on the left, both sides qualified",
+            sql: "WITH t AS (SELECT * FROM (VALUES (1, NULL), (2, 1), (3, 2), (4, 1)) AS v(id, parent)) \
+                  SELECT SUM(id * 10 + depth) AS v FROM (SELECT c.id, LEVEL AS depth FROM t AS c \
+                  START WITH c.parent IS NULL CONNECT BY PRIOR c.id = c.parent)",
+            expected_outcome: Ok("108"),
+        },
+        FirstValueTestCase {
+            description: "PRIOR on the right, the alias in another case",
+            sql: "WITH t AS (SELECT * FROM (VALUES (1, NULL), (2, 1), (3, 2), (4, 1)) AS v(id, parent)) \
+                  SELECT SUM(id * 10 + depth) AS v FROM (SELECT c.id, LEVEL AS depth FROM t AS c \
+                  START WITH c.parent IS NULL CONNECT BY C.parent = PRIOR C.id)",
+            expected_outcome: Ok("108"),
+        },
+        FirstValueTestCase {
+            description: "a qualifier naming another relation refuses",
+            sql: "WITH t AS (SELECT * FROM (VALUES (1, NULL), (2, 1), (3, 2), (4, 1)) AS v(id, parent)) \
+                  SELECT SUM(id * 10 + depth) AS v FROM (SELECT c.id, LEVEL AS depth FROM t AS c \
+                  START WITH c.parent IS NULL CONNECT BY PRIOR x.id = c.parent)",
+            expected_outcome: Err("walked relation"),
+        },
+        FirstValueTestCase {
+            description: "ORDER BY a qualified column after the walk refuses, as Snowflake rejects it",
+            sql: "WITH t AS (SELECT * FROM (VALUES (1, NULL), (2, 1)) AS v(id, parent)) \
+                  SELECT c.id AS v FROM t AS c START WITH c.parent IS NULL \
+                  CONNECT BY PRIOR c.id = c.parent ORDER BY c.id",
+            expected_outcome: Err("Snowflake rejects"),
+        },
     ];
-    for (description, sql, expected_outcome) in test_cases {
+    for test_case in test_cases {
         assert_eq!(
-            shop_first_outcome(&sql, expected_outcome),
-            expected_outcome.map(str::to_owned).map_err(str::to_owned),
-            "{description}"
+            shop_first_outcome(test_case.sql, test_case.expected_outcome),
+            test_case
+                .expected_outcome
+                .map(str::to_owned)
+                .map_err(str::to_owned),
+            "{}",
+            test_case.description
         );
     }
 }

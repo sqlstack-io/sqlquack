@@ -49,16 +49,8 @@ pub(crate) fn hierarchy(
     let log = context.log;
     let _rule = log.rule(HIERARCHY_RULE);
     let refuse = |reason: &str| outside_conditions(construct.clone(), reason.to_owned());
-    for clause in ["where_clause", "group_by", "having", "qualify", "joins"] {
-        if select
-            .get(clause)
-            .is_some_and(|value| !value.is_null() && value != &json!([]))
-        {
-            return Err(refuse(&format!(
-                "CONNECT BY with {}, which no recording shows",
-                clause.replace('_', " ").to_ascii_uppercase()
-            )));
-        }
+    if let Some(reason) = unsupported_shape(select) {
+        return Err(refuse(&reason));
     }
     let connect = select
         .get("connect")
@@ -80,11 +72,6 @@ pub(crate) fn hierarchy(
             || column.name.starts_with(HIERARCHY_COLUMN_PREFIX)
     }) {
         return Err(refuse("CONNECT BY over a relation with a LEVEL column"));
-    }
-    if select.get("order_by").is_some_and(has_qualified_column) {
-        return Err(refuse(
-            "ORDER BY a qualified column after CONNECT BY, which Snowflake rejects",
-        ));
     }
     let mut carried: Vec<Carried> = Vec::new();
     let mut rewritten = select.clone();
@@ -322,8 +309,7 @@ fn carried_value(object: &Map<String, Value>) -> Result<Option<Carried>, String>
     Ok(None)
 }
 
-/// A CONNECT BY condition of `child = PRIOR parent` conjunctions, PRIOR read from the parent row;
-/// a side may be qualified by `own`, the walked relation's alias.
+/// A CONNECT BY condition of `child = PRIOR parent` conjunctions; sides may be qualified by `own`.
 fn prior_condition(condition: &Value, alias: &str, own: &str) -> Result<Value, String> {
     let object = condition
         .as_object()
@@ -372,20 +358,41 @@ fn qualified(node: &Value, alias: &str, own: &str) -> Result<Value, String> {
     Ok(json!({ "column": column }))
 }
 
+/// Why the clauses beside CONNECT BY keep `select` from converting, if they do.
+fn unsupported_shape(select: &Payload) -> Option<String> {
+    for clause in ["where_clause", "group_by", "having", "qualify", "joins"] {
+        if select
+            .get(clause)
+            .is_some_and(|value| !value.is_null() && value != &json!([]))
+        {
+            return Some(format!(
+                "CONNECT BY with {}, which no recording shows",
+                clause.replace('_', " ").to_ascii_uppercase()
+            ));
+        }
+    }
+    select
+        .get("order_by")
+        .is_some_and(has_qualified_column)
+        .then(|| "ORDER BY a qualified column after CONNECT BY, which Snowflake rejects".to_owned())
+}
+
 /// Whether `node` holds a column qualified by a relation name anywhere inside it.
 fn has_qualified_column(node: &Value) -> bool {
     match node {
-        Value::Object(object) => object.iter().any(|(key, value)| {
-            (key == "column" && value.get("table").is_some_and(|table| !table.is_null()))
-                || has_qualified_column(value)
-        }),
+        Value::Object(object) => {
+            object
+                .get("column")
+                .and_then(|column| column.get("table"))
+                .is_some_and(|table| !table.is_null())
+                || object.values().any(has_qualified_column)
+        }
         Value::Array(items) => items.iter().any(has_qualified_column),
         _ => false,
     }
 }
 
-/// Whether the qualifier `table` names the relation aliased `own`, as Snowflake resolves names:
-/// an unquoted name in any case, a quoted one exactly.
+/// Whether `table` names the relation aliased `own`: unquoted in any case, quoted exactly.
 fn names_relation(table: &Value, own: &str) -> bool {
     let Some(name) = table.get("name").and_then(Value::as_str) else {
         return false;
