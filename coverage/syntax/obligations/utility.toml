@@ -5982,12 +5982,6 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "sf.utility.execute-dbt-project.project.o002"
-kind = "option_present"
-required = true
-target = "[ IF EXISTS ]"
-
-[[obligation]]
 id = "sf.utility.execute-dbt-project.project.o003"
 kind = "option_absent"
 required = true
@@ -6420,10 +6414,12 @@ anchor = "doc.sql.execute-dbt-project / Syntax"
 note = "every independent option of one production together, observed"
 
 [[obligation]]
-id = "sf.utility.execute-dbt-project.project-2.o002"
+id = "sf.utility.execute-dbt-project.project.o096"
 kind = "option_present"
 required = true
 target = "[ IF EXISTS ]"
+anchor = "doc.sql.execute-dbt-project / Syntax"
+note = "option present [ IF EXISTS ], observed"
 
 [[obligation]]
 id = "sf.utility.execute-dbt-project.project-2.o004"
@@ -6453,12 +6449,6 @@ target = "<name> in [ FROM WORKSPACE <name> ]"
 note = "a string literal in place of <name>"
 
 [[obligation]]
-id = "sf.utility.execute-dbt-project.project-2.o009"
-kind = "option_present"
-required = true
-target = "[ ARGS = '<dbt_args>' ]"
-
-[[obligation]]
 id = "sf.utility.execute-dbt-project.project-2.o011"
 kind = "required_operand_missing"
 required = true
@@ -6466,24 +6456,11 @@ target = "'<dbt_args>' in [ ARGS = '<dbt_args>' ]"
 note = "omit '<dbt_args>'"
 
 [[obligation]]
-id = "sf.utility.execute-dbt-project.project-2.o012"
-kind = "operand_type_class"
-required = true
-target = "'<dbt_args>' in [ ARGS = '<dbt_args>' ]"
-note = "a valid string_literal"
-
-[[obligation]]
 id = "sf.utility.execute-dbt-project.project-2.o013"
 kind = "negative_neighbour"
 required = true
 target = "'<dbt_args>' in [ ARGS = '<dbt_args>' ]"
 note = "an unquoted identifier in place of '<dbt_args>'"
-
-[[obligation]]
-id = "sf.utility.execute-dbt-project.project-2.o014"
-kind = "option_present"
-required = true
-target = "[ DBT_VERSION = 'version_number' ]"
 
 [[obligation]]
 id = "sf.utility.execute-dbt-project.project-2.o018"
@@ -6500,31 +6477,11 @@ target = "<integration_name> in [ EXTERNAL_ACCESS_INTEGRATIONS = ( <integration_
 note = "a string literal in place of <integration_name>"
 
 [[obligation]]
-id = "sf.utility.execute-dbt-project.project-2.o021"
-kind = "option_present"
-required = true
-target = "[ , ... ]"
-note = "the list continued at least once"
-
-[[obligation]]
-id = "sf.utility.execute-dbt-project.project-2.o023"
-kind = "option_present"
-required = true
-target = "[ ENVIRONMENT = '<environment_name>' ]"
-
-[[obligation]]
 id = "sf.utility.execute-dbt-project.project-2.o025"
 kind = "required_operand_missing"
 required = true
 target = "'<environment_name>' in [ ENVIRONMENT = '<environment_name>' ]"
 note = "omit '<environment_name>'"
-
-[[obligation]]
-id = "sf.utility.execute-dbt-project.project-2.o026"
-kind = "operand_type_class"
-required = true
-target = "'<environment_name>' in [ ENVIRONMENT = '<environment_name>' ]"
-note = "a valid string_literal"
 
 [[obligation]]
 id = "sf.utility.execute-dbt-project.project-2.o027"
@@ -6562,31 +6519,11 @@ target = "'<value>' in [ ENV_VARS = ( '<key>' = '<value>' [ , ... ] ) ]"
 note = "an unquoted identifier in place of '<value>'"
 
 [[obligation]]
-id = "sf.utility.execute-dbt-project.project-2.o036"
-kind = "option_present"
-required = true
-target = "[ , ... ] #2"
-note = "the list continued at least once"
-
-[[obligation]]
-id = "sf.utility.execute-dbt-project.project-2.o038"
-kind = "option_present"
-required = true
-target = "[ PROJECT_ROOT = '<subdirectory_path>' ]"
-
-[[obligation]]
 id = "sf.utility.execute-dbt-project.project-2.o040"
 kind = "required_operand_missing"
 required = true
 target = "'<subdirectory_path>' in [ PROJECT_ROOT = '<subdirectory_path>' ]"
 note = "omit '<subdirectory_path>'"
-
-[[obligation]]
-id = "sf.utility.execute-dbt-project.project-2.o041"
-kind = "operand_type_class"
-required = true
-target = "'<subdirectory_path>' in [ PROJECT_ROOT = '<subdirectory_path>' ]"
-note = "a valid string_literal"
 
 [[obligation]]
 id = "sf.utility.execute-dbt-project.project-2.o042"
@@ -6811,6 +6748,86 @@ anchor = "doc.sql.execute-dbt-project / Variant syntax"
 note = "every independent option of one production together, observed"
 
 [[obligation]]
+id = "sf.utility.execute-dbt-project.project-2.o076"
+kind = "option_present"
+required = true
+target = "[ IF EXISTS ]"
+anchor = "doc.sql.execute-dbt-project / Variant syntax"
+note = "option present [ IF EXISTS ], observed"
+
+[[obligation]]
+id = "sf.utility.execute-dbt-project.project-2.o077"
+kind = "option_present"
+required = true
+target = "[ PROJECT_ROOT = '<subdirectory_path>' ]"
+anchor = "doc.sql.execute-dbt-project / Variant syntax"
+note = "option present [ PROJECT_ROOT = '<subdirectory_path>' ], observed"
+
+[[obligation]]
+id = "sf.utility.execute-dbt-project.project-2.o078"
+kind = "operand_type_class"
+required = true
+target = "'<subdirectory_path>' in [ PROJECT_ROOT = '<subdirectory_path>' ]"
+anchor = "doc.sql.execute-dbt-project / Variant syntax"
+note = "a valid string_literal, observed"
+
+[[obligation]]
+id = "sf.utility.execute-dbt-project.project-2.o079"
+kind = "option_present"
+required = true
+target = "[ DBT_VERSION = 'version_number' ]"
+anchor = "doc.sql.execute-dbt-project / Variant syntax"
+note = "option present [ DBT_VERSION = 'version_number' ], observed"
+
+[[obligation]]
+id = "sf.utility.execute-dbt-project.project-2.o080"
+kind = "option_present"
+required = true
+target = "[ ENVIRONMENT = '<environment_name>' ]"
+anchor = "doc.sql.execute-dbt-project / Variant syntax"
+note = "option present [ ENVIRONMENT = '<environment_name>' ], observed"
+
+[[obligation]]
+id = "sf.utility.execute-dbt-project.project-2.o081"
+kind = "operand_type_class"
+required = true
+target = "'<environment_name>' in [ ENVIRONMENT = '<environment_name>' ]"
+anchor = "doc.sql.execute-dbt-project / Variant syntax"
+note = "a valid string_literal, observed"
+
+[[obligation]]
+id = "sf.utility.execute-dbt-project.project-2.o082"
+kind = "option_present"
+required = true
+target = "[ ARGS = '<dbt_args>' ]"
+anchor = "doc.sql.execute-dbt-project / Variant syntax"
+note = "option present [ ARGS = '<dbt_args>' ], observed"
+
+[[obligation]]
+id = "sf.utility.execute-dbt-project.project-2.o083"
+kind = "operand_type_class"
+required = true
+target = "'<dbt_args>' in [ ARGS = '<dbt_args>' ]"
+anchor = "doc.sql.execute-dbt-project / Variant syntax"
+note = "a valid string_literal, observed"
+
+[[obligation]]
+id = "sf.utility.execute-dbt-project.project-2.o084"
+kind = "option_present"
+required = true
+target = "[ , ... ] #2"
+anchor = "doc.sql.execute-dbt-project / Variant syntax"
+note = "the list continued at least once, observed"
+
+[[obligation]]
+id = "sf.utility.execute-dbt-project.project-2.o085"
+kind = "option_present"
+required = true
+target = "[ , ... ]"
+anchor = "doc.sql.execute-dbt-project / Variant syntax"
+note = "the list continued at least once, observed"
+
+[[obligation]]
 id = "sf.utility.execute-dcm-project.deploy-fromsource-fromdeployment.o001"
 kind = "positive"
 required = true
@@ -6914,31 +6931,11 @@ target = "<expr> in [ ( <expr> [ , <expr> ... ] ) ]"
 note = "omit <expr>"
 
 [[obligation]]
-id = "sf.utility.execute-dcm-project.deploy-fromsource-fromdeployment.o032"
-kind = "option_present"
-required = true
-target = "[ , <expr> ... ]"
-note = "the list continued at least once"
-
-[[obligation]]
 id = "sf.utility.execute-dcm-project.deploy-fromsource-fromdeployment.o034"
 kind = "required_operand_missing"
 required = true
 target = "<expr> in [ USING { CONFIGURATION <config_name> [ ( <expr> [ , <expr> ... ] ) ] | ( <expr> [ , <expr> ... ] ) } ]"
 note = "omit <expr>"
-
-[[obligation]]
-id = "sf.utility.execute-dcm-project.deploy-fromsource-fromdeployment.o036"
-kind = "option_present"
-required = true
-target = "[ , <expr> ... ] #2"
-note = "the list continued at least once"
-
-[[obligation]]
-id = "sf.utility.execute-dcm-project.deploy-fromsource-fromdeployment.o038"
-kind = "option_present"
-required = true
-target = "[ ENVIRONMENT ( <bind_variable> ) ]"
 
 [[obligation]]
 id = "sf.utility.execute-dcm-project.deploy-fromsource-fromdeployment.o039"
@@ -6952,13 +6949,6 @@ kind = "required_operand_missing"
 required = true
 target = "<bind_variable> in [ ENVIRONMENT ( <bind_variable> ) ]"
 note = "omit <bind_variable>"
-
-[[obligation]]
-id = "sf.utility.execute-dcm-project.deploy-fromsource-fromdeployment.o041"
-kind = "operand_type_class"
-required = true
-target = "<bind_variable> in [ ENVIRONMENT ( <bind_variable> ) ]"
-note = "a valid operand"
 
 [[obligation]]
 id = "sf.utility.execute-dcm-project.deploy-fromsource-fromdeployment.o042"
@@ -7189,6 +7179,38 @@ anchor = "doc.sql.execute-dcm-project / Syntax"
 note = "option absent [ , <expr> ... ], observed"
 
 [[obligation]]
+id = "sf.utility.execute-dcm-project.deploy-fromsource-fromdeployment.o071"
+kind = "option_present"
+required = true
+target = "[ ENVIRONMENT ( <bind_variable> ) ]"
+anchor = "doc.sql.execute-dcm-project / Syntax"
+note = "option present [ ENVIRONMENT ( <bind_variable> ) ], observed"
+
+[[obligation]]
+id = "sf.utility.execute-dcm-project.deploy-fromsource-fromdeployment.o072"
+kind = "operand_type_class"
+required = true
+target = "<bind_variable> in [ ENVIRONMENT ( <bind_variable> ) ]"
+anchor = "doc.sql.execute-dcm-project / Syntax"
+note = "a valid operand, observed"
+
+[[obligation]]
+id = "sf.utility.execute-dcm-project.deploy-fromsource-fromdeployment.o073"
+kind = "option_present"
+required = true
+target = "[ , <expr> ... ]"
+anchor = "doc.sql.execute-dcm-project / Syntax"
+note = "the list continued at least once, observed"
+
+[[obligation]]
+id = "sf.utility.execute-dcm-project.deploy-fromsource-fromdeployment.o074"
+kind = "option_present"
+required = true
+target = "[ , <expr> ... ] #2"
+anchor = "doc.sql.execute-dcm-project / Syntax"
+note = "the list continued at least once, observed"
+
+[[obligation]]
 id = "sf.utility.execute-dcm-project.plan-fromsource-fromdeployment.o001"
 kind = "positive"
 required = true
@@ -7292,31 +7314,11 @@ target = "<expr> in [ ( <expr> [ , <expr> ... ] ) ]"
 note = "omit <expr>"
 
 [[obligation]]
-id = "sf.utility.execute-dcm-project.plan-fromsource-fromdeployment.o036"
-kind = "option_present"
-required = true
-target = "[ , <expr> ... ]"
-note = "the list continued at least once"
-
-[[obligation]]
 id = "sf.utility.execute-dcm-project.plan-fromsource-fromdeployment.o038"
 kind = "required_operand_missing"
 required = true
 target = "<expr> in [ USING { CONFIGURATION <config_name> [ ( <expr> [ , <expr> ... ] ) ] | ( <expr> [ , <expr> ... ] ) } ]"
 note = "omit <expr>"
-
-[[obligation]]
-id = "sf.utility.execute-dcm-project.plan-fromsource-fromdeployment.o040"
-kind = "option_present"
-required = true
-target = "[ , <expr> ... ] #2"
-note = "the list continued at least once"
-
-[[obligation]]
-id = "sf.utility.execute-dcm-project.plan-fromsource-fromdeployment.o042"
-kind = "option_present"
-required = true
-target = "[ ENVIRONMENT ( <bind_variable> ) ]"
 
 [[obligation]]
 id = "sf.utility.execute-dcm-project.plan-fromsource-fromdeployment.o043"
@@ -7330,13 +7332,6 @@ kind = "required_operand_missing"
 required = true
 target = "<bind_variable> in [ ENVIRONMENT ( <bind_variable> ) ]"
 note = "omit <bind_variable>"
-
-[[obligation]]
-id = "sf.utility.execute-dcm-project.plan-fromsource-fromdeployment.o045"
-kind = "operand_type_class"
-required = true
-target = "<bind_variable> in [ ENVIRONMENT ( <bind_variable> ) ]"
-note = "a valid operand"
 
 [[obligation]]
 id = "sf.utility.execute-dcm-project.plan-fromsource-fromdeployment.o046"
@@ -7607,6 +7602,38 @@ anchor = "doc.sql.execute-dcm-project / Syntax"
 note = "every independent option of one production together, observed"
 
 [[obligation]]
+id = "sf.utility.execute-dcm-project.plan-fromsource-fromdeployment.o076"
+kind = "option_present"
+required = true
+target = "[ ENVIRONMENT ( <bind_variable> ) ]"
+anchor = "doc.sql.execute-dcm-project / Syntax"
+note = "option present [ ENVIRONMENT ( <bind_variable> ) ], observed"
+
+[[obligation]]
+id = "sf.utility.execute-dcm-project.plan-fromsource-fromdeployment.o077"
+kind = "operand_type_class"
+required = true
+target = "<bind_variable> in [ ENVIRONMENT ( <bind_variable> ) ]"
+anchor = "doc.sql.execute-dcm-project / Syntax"
+note = "a valid operand, observed"
+
+[[obligation]]
+id = "sf.utility.execute-dcm-project.plan-fromsource-fromdeployment.o078"
+kind = "option_present"
+required = true
+target = "[ , <expr> ... ]"
+anchor = "doc.sql.execute-dcm-project / Syntax"
+note = "the list continued at least once, observed"
+
+[[obligation]]
+id = "sf.utility.execute-dcm-project.plan-fromsource-fromdeployment.o079"
+kind = "option_present"
+required = true
+target = "[ , <expr> ... ] #2"
+anchor = "doc.sql.execute-dcm-project / Syntax"
+note = "the list continued at least once, observed"
+
+[[obligation]]
 id = "sf.utility.execute-dcm-project.preview-using-configuration-from.o001"
 kind = "positive"
 required = true
@@ -7676,12 +7703,6 @@ target = "<config_name>"
 note = "a string literal in place of <config_name>"
 
 [[obligation]]
-id = "sf.utility.execute-dcm-project.preview-using-configuration-from.o011"
-kind = "option_present"
-required = true
-target = "[ ENVIRONMENT ( <bind_variable> ) ]"
-
-[[obligation]]
 id = "sf.utility.execute-dcm-project.preview-using-configuration-from.o012"
 kind = "option_absent"
 required = true
@@ -7693,13 +7714,6 @@ kind = "required_operand_missing"
 required = true
 target = "<bind_variable> in [ ENVIRONMENT ( <bind_variable> ) ]"
 note = "omit <bind_variable>"
-
-[[obligation]]
-id = "sf.utility.execute-dcm-project.preview-using-configuration-from.o014"
-kind = "operand_type_class"
-required = true
-target = "<bind_variable> in [ ENVIRONMENT ( <bind_variable> ) ]"
-note = "a valid operand"
 
 [[obligation]]
 id = "sf.utility.execute-dcm-project.preview-using-configuration-from.o015"
@@ -7857,6 +7871,22 @@ kind = "interaction_all_options"
 required = true
 anchor = "doc.sql.execute-dcm-project / Syntax"
 note = "every independent option of one production together, observed"
+
+[[obligation]]
+id = "sf.utility.execute-dcm-project.preview-using-configuration-from.o040"
+kind = "option_present"
+required = true
+target = "[ ENVIRONMENT ( <bind_variable> ) ]"
+anchor = "doc.sql.execute-dcm-project / Syntax"
+note = "option present [ ENVIRONMENT ( <bind_variable> ) ], observed"
+
+[[obligation]]
+id = "sf.utility.execute-dcm-project.preview-using-configuration-from.o041"
+kind = "operand_type_class"
+required = true
+target = "<bind_variable> in [ ENVIRONMENT ( <bind_variable> ) ]"
+anchor = "doc.sql.execute-dcm-project / Syntax"
+note = "a valid operand, observed"
 
 [[obligation]]
 id = "sf.utility.execute-dcm-project.purge.o001"

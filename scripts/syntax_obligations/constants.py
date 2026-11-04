@@ -417,6 +417,7 @@ GLUED_INFIX_RIGHT: re.Pattern[str] = re.compile(r"(?<![^ ])! (?=[A-Za-z_\"'])")
 GLUED_INFIX_LEFT: re.Pattern[str] = re.compile(r"(?<=[\w\"')]) !(?=[ A-Za-z_\"'])")
 QUERY_FORMS: tuple[str, ...] = ("sf.query.constructs",)
 RECEIPT_UNPACKED_FORMS: tuple[str, ...] = (
+    "sf.ddl.alter-iceberg-table.datagovnpolicytagaction",
     "sf.ddl.alter-agent.set",
     "sf.ddl.alter-alert.unset",
     "sf.ddl.alter-application-package.set",

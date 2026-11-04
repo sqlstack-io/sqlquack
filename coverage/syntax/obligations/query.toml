@@ -822,13 +822,6 @@ target = "<col3_identifier> in [ { , | AND } { PRIOR <col3_identifier> = <col4_i
 note = "omit <col3_identifier>"
 
 [[obligation]]
-id = "sf.query.connect-by.o072"
-kind = "operand_type_class"
-required = true
-target = "<col3_identifier> in [ { , | AND } { PRIOR <col3_identifier> = <col4_identifier> | <col3_identifier> = PRIOR <col4_iden… #2"
-note = "a valid identifier"
-
-[[obligation]]
 id = "sf.query.connect-by.o073"
 kind = "negative_neighbour"
 required = true
@@ -841,13 +834,6 @@ kind = "required_operand_missing"
 required = true
 target = "<col4_identifier> in [ { , | AND } { PRIOR <col3_identifier> = <col4_identifier> | <col3_identifier> = PRIOR <col4_iden… #2"
 note = "omit <col4_identifier>"
-
-[[obligation]]
-id = "sf.query.connect-by.o075"
-kind = "operand_type_class"
-required = true
-target = "<col4_identifier> in [ { , | AND } { PRIOR <col3_identifier> = <col4_identifier> | <col3_identifier> = PRIOR <col4_iden… #2"
-note = "a valid identifier"
 
 [[obligation]]
 id = "sf.query.connect-by.o076"
@@ -1105,6 +1091,22 @@ id = "sf.query.connect-by.o101"
 kind = "operand_type_class"
 required = true
 target = "<col4_identifier> in [ { , | AND } { PRIOR <col3_identifier> = <col4_identifier> | <col3_identifier> = PRIOR <col4_iden…"
+anchor = "doc.constructs.connect-by / Syntax"
+note = "a valid identifier, observed"
+
+[[obligation]]
+id = "sf.query.connect-by.o102"
+kind = "operand_type_class"
+required = true
+target = "<col3_identifier> in [ { , | AND } { PRIOR <col3_identifier> = <col4_identifier> | <col3_identifier> = PRIOR <col4_iden… #2"
+anchor = "doc.constructs.connect-by / Syntax"
+note = "a valid identifier, observed"
+
+[[obligation]]
+id = "sf.query.connect-by.o103"
+kind = "operand_type_class"
+required = true
+target = "<col4_identifier> in [ { , | AND } { PRIOR <col3_identifier> = <col4_identifier> | <col3_identifier> = PRIOR <col4_iden… #2"
 anchor = "doc.constructs.connect-by / Syntax"
 note = "a valid identifier, observed"
 

@@ -384,8 +384,17 @@ form = "sf.ddl.alter-table-column.drop-default-set-default"
 kind = "negative_neighbour"
 target = ""
 note = "the form without its required TYPE in [ [ SET DATA ] TYPE ]"
-sql = "ALTER TABLE v1 ALTER v1 DROP DEFAULT , v1 SET DEFAULT v1 . NEXTVAL , v1 NOT NULL , v1 INT , v1 COMMENT 'm' , v1 UNSET COMMENT ;"
+sql = "ALTER TABLE v1 ALTER ( v1 DROP DEFAULT , v1 SET DEFAULT v1 . NEXTVAL , v1 NOT NULL , v1 INT , v1 COMMENT 'm' , v1 UNSET COMMENT ) ;"
 valid_as = "sf.ddl.alter-table-column.drop-default-set-default positive the documented form with every required part and no optional part"
+reason = "the rejection renders SQL the documented grammar also accepts"
+
+[[withdrawn]]
+form = "sf.ddl.alter-table-column.drop-default-set-default"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required TYPE in [ [ SET DATA ] TYPE ] #2"
+sql = "ALTER TABLE v1 ALTER v1 DROP DEFAULT , v1 SET DEFAULT v1 . NEXTVAL , v1 NOT NULL , v1 INT , v1 COMMENT 'm' , v1 UNSET COMMENT ;"
+valid_as = "sf.ddl.alter-table-column.drop-default-set-default option_absent [ COLUMN ] #7"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
@@ -650,7 +659,34 @@ valid_as = "sf.ddl.create-external-table.cloudproviderparams-location-externalst
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
+form = "sf.ddl.create-external-table.cloudproviderparams-location-externalstage-file-format"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required { <col_name> <col_type> AS <expr> | <part_col_name> <col_type> AS <part_expr> ... } in [ , { <col_name> <col_type> AS <expr> | <part_col_name> <col_type> AS <part_expr> ... } ]"
+sql = "CREATE EXTERNAL TABLE v1 ( v1 INT AS 1 ) LOCATION = @s1 FILE_FORMAT = ( FORMAT_NAME = 'm' ) ;"
+valid_as = "sf.ddl.create-external-table.cloudproviderparams-location-externalstage-file-format positive the documented form with every required part and no optional part"
+reason = "the rejection renders SQL the documented grammar also accepts"
+
+[[withdrawn]]
 form = "sf.ddl.create-external-table.cloudproviderparams-location-externalstage-partition-type"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required { UNIQUE | PRIMARY KEY | [ FOREIGN KEY ] REFERENCES <ref_table_name> [ ( <ref_col_name> [ , <ref_col_name> ] ) ] } in [ [ NOT NULL ] [ CONSTRAINT <constraint_name> ] { UNIQUE | PRIMARY KEY | [ FOREIGN KEY ] REFERENCES <ref_table_name> [ …"
+sql = "CREATE EXTERNAL TABLE v1 ( v1 INT AS 1 ) LOCATION = @s1 PARTITION_TYPE = USER_SPECIFIED FILE_FORMAT = ( FORMAT_NAME = 'm' ) ;"
+valid_as = "sf.ddl.create-external-table.cloudproviderparams-location-externalstage-partition-type positive the documented form with every required part and no optional part"
+reason = "the rejection renders SQL the documented grammar also accepts"
+
+[[withdrawn]]
+form = "sf.ddl.create-external-table.cloudproviderparams-location-externalstage-partition-type"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required { <col_name> <col_type> AS <expr> | <part_col_name> <col_type> AS <part_expr> ... } in [ , { <col_name> <col_type> AS <expr> | <part_col_name> <col_type> AS <part_expr> ... } ]"
+sql = "CREATE EXTERNAL TABLE v1 ( v1 INT AS 1 ) LOCATION = @s1 PARTITION_TYPE = USER_SPECIFIED FILE_FORMAT = ( FORMAT_NAME = 'm' ) ;"
+valid_as = "sf.ddl.create-external-table.cloudproviderparams-location-externalstage-partition-type positive the documented form with every required part and no optional part"
+reason = "the rejection renders SQL the documented grammar also accepts"
+
+[[withdrawn]]
+form = "sf.ddl.create-external-table.cloudproviderparams-location-externalstage-partition-type.syntax"
 kind = "negative_neighbour"
 target = ""
 note = "the form without its required { UNIQUE | PRIMARY KEY | [ FOREIGN KEY ] REFERENCES <ref_table_name> [ ( <ref_col_name> [ , <ref_col_name> ] ) ] } in [ [ NOT NULL ] [ CONSTRAINT <constraint_name> ] { UNIQUE | PRIMARY KEY | [ FOREIGN KEY ] REFERENCES <ref_table_name> [ …"
@@ -662,7 +698,7 @@ reason = "the rejection renders SQL the documented grammar also accepts"
 form = "sf.ddl.create-external-table.cloudproviderparams-location-externalstage-partition-type.syntax"
 kind = "negative_neighbour"
 target = ""
-note = "the form without its required { UNIQUE | PRIMARY KEY | [ FOREIGN KEY ] REFERENCES <ref_table_name> [ ( <ref_col_name> [ , <ref_col_name> ] ) ] } in [ [ NOT NULL ] [ CONSTRAINT <constraint_name> ] { UNIQUE | PRIMARY KEY | [ FOREIGN KEY ] REFERENCES <ref_table_name> [ …"
+note = "the form without its required { <col_name> <col_type> AS <expr> | <part_col_name> <col_type> AS <part_expr> ... } in [ , { <col_name> <col_type> AS <expr> | <part_col_name> <col_type> AS <part_expr> ... } ]"
 sql = "CREATE EXTERNAL TABLE v1 ( v1 INT AS 1 ) LOCATION = @s1 PARTITION_TYPE = USER_SPECIFIED FILE_FORMAT = ( FORMAT_NAME = 'm' ) ;"
 valid_as = "sf.ddl.create-external-table.cloudproviderparams-location-externalstage-partition-type positive the documented form with every required part and no optional part"
 reason = "the rejection renders SQL the documented grammar also accepts"
@@ -978,8 +1014,8 @@ form = "sf.ddl.create-iceberg-table.table-base-location.parquet-files"
 kind = "negative_neighbour"
 target = ""
 note = "the form without its required { UNIQUE | PRIMARY KEY | [ FOREIGN KEY ] REFERENCES <ref_table_name> [ ( <ref_col_name> ) ] | CHECK ( <expr> ) } in [ { { [ CONSTRAINT <constraint_name> ] { UNIQUE | PRIMARY KEY | [ FOREIGN KEY ] REFERENCES <ref_table_name> [ ( <ref_co… #2"
-sql = "CREATE ICEBERG TABLE v1 ( v1 INT v1 INT AS 1 ) BASE_LOCATION = 'm' ;"
-valid_as = "sf.ddl.create-iceberg-table.table-base-location.parquet-files alternative [ , <col_name> <col_type> ... | <col_name> <col_type> AS <expr> | <part_col_name> <co… → <col_name> <col_type> AS <expr>"
+sql = "CREATE ICEBERG TABLE v1 ( v1 INT , v1 INT AS 1 ) BASE_LOCATION = 'm' ;"
+valid_as = "sf.ddl.create-iceberg-table.table-base-location.parquet-files alternative { <col_name> <col_type> ... | <col_name> <col_type> AS <expr> | <part_col_name> <col_… → <col_name> <col_type> AS <expr>"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
@@ -987,8 +1023,17 @@ form = "sf.ddl.create-iceberg-table.table-base-location.parquet-files"
 kind = "negative_neighbour"
 target = ""
 note = "the form without its required { UNIQUE | PRIMARY KEY | [ FOREIGN KEY ] REFERENCES <ref_table_name> [ ( <ref_col_name> ) ] } in [ { { [ CONSTRAINT <constraint_name> ] { UNIQUE | PRIMARY KEY | [ FOREIGN KEY ] REFERENCES <ref_table_name> [ ( <ref_co… #2"
-sql = "CREATE ICEBERG TABLE v1 ( v1 INT v1 INT AS 1 ) BASE_LOCATION = 'm' ;"
-valid_as = "sf.ddl.create-iceberg-table.table-base-location.parquet-files alternative [ , <col_name> <col_type> ... | <col_name> <col_type> AS <expr> | <part_col_name> <co… → <col_name> <col_type> AS <expr>"
+sql = "CREATE ICEBERG TABLE v1 ( v1 INT , v1 INT AS 1 ) BASE_LOCATION = 'm' ;"
+valid_as = "sf.ddl.create-iceberg-table.table-base-location.parquet-files alternative { <col_name> <col_type> ... | <col_name> <col_type> AS <expr> | <part_col_name> <col_… → <col_name> <col_type> AS <expr>"
+reason = "the rejection renders SQL the documented grammar also accepts"
+
+[[withdrawn]]
+form = "sf.ddl.create-iceberg-table.table-base-location.parquet-files"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required { <col_name> <col_type> ... | <col_name> <col_type> AS <expr> | <part_col_name> <col_type> AS <part_expr> [ { { [ CONSTRAINT <constraint_name> ] { UNIQUE | PRIMARY KEY | [ FOREIGN KEY ] REFERENCES <ref_table_name> [ ( <ref_col_name> ) ] | CHECK ( <expr> ) } [ <constraint_properties> ] } | { [ CONSTRAINT <constraint_name> ] { UNIQUE | PRIMARY KEY | [ FOREIGN KEY ] REFERENCES <ref_table_name> [ ( <ref_col_name> ) ] } [ <constraint_properties> ] } } ] [ , ... ] } in [ , { <col_name> <col_type> ... | <col_name> <col_type> AS <expr> | <part_col_name> <col_type> AS <part_expr> [ { { [ C…"
+sql = "CREATE ICEBERG TABLE v1 ( v1 INT ) BASE_LOCATION = 'm' ;"
+valid_as = "sf.ddl.create-iceberg-table.table option_present [ BASE_LOCATION = '<directory_for_table_files>' ]"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]

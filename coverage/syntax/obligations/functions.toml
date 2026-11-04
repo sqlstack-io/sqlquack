@@ -41457,12 +41457,6 @@ target = "<k>"
 note = "a valid operand"
 
 [[obligation]]
-id = "sf.functions.minhash.minhash.o004"
-kind = "option_present"
-required = true
-target = "[ DISTINCT ]"
-
-[[obligation]]
 id = "sf.functions.minhash.minhash.o005"
 kind = "option_absent"
 required = true
@@ -41474,13 +41468,6 @@ kind = "operand_type_class"
 required = true
 target = "<expr>"
 note = "a valid expression"
-
-[[obligation]]
-id = "sf.functions.minhash.minhash.o014"
-kind = "option_present"
-required = true
-target = "[ , <expr> ... ]"
-note = "the list continued at least once"
 
 [[obligation]]
 id = "sf.functions.minhash.minhash.o015"
@@ -41515,6 +41502,22 @@ required = true
 note = "the form without its required )"
 
 [[obligation]]
+id = "sf.functions.minhash.minhash.o016"
+kind = "option_present"
+required = true
+target = "[ DISTINCT ]"
+anchor = "doc.functions.minhash / Syntax"
+note = "option present [ DISTINCT ], observed"
+
+[[obligation]]
+id = "sf.functions.minhash.minhash.o017"
+kind = "option_present"
+required = true
+target = "[ , <expr> ... ]"
+anchor = "doc.functions.minhash / Syntax"
+note = "the list continued at least once, observed"
+
+[[obligation]]
 id = "sf.functions.minhash.minhash-expr-over.o001"
 kind = "positive"
 required = true
@@ -41535,12 +41538,6 @@ target = "<k>"
 note = "a valid operand"
 
 [[obligation]]
-id = "sf.functions.minhash.minhash-expr-over.o004"
-kind = "option_present"
-required = true
-target = "[ DISTINCT ]"
-
-[[obligation]]
 id = "sf.functions.minhash.minhash-expr-over.o005"
 kind = "option_absent"
 required = true
@@ -41554,23 +41551,10 @@ target = "<expr>"
 note = "a valid expression"
 
 [[obligation]]
-id = "sf.functions.minhash.minhash-expr-over.o019"
-kind = "option_present"
-required = true
-target = "[ , <expr> ... ]"
-note = "the list continued at least once"
-
-[[obligation]]
 id = "sf.functions.minhash.minhash-expr-over.o020"
 kind = "option_absent"
 required = true
 target = "[ , <expr> ... ]"
-
-[[obligation]]
-id = "sf.functions.minhash.minhash-expr-over.o008"
-kind = "option_present"
-required = true
-target = "[ PARTITION BY <expr1> ]"
 
 [[obligation]]
 id = "sf.functions.minhash.minhash-expr-over.o009"
@@ -41584,13 +41568,6 @@ kind = "required_operand_missing"
 required = true
 target = "<expr1> in [ PARTITION BY <expr1> ]"
 note = "omit <expr1>"
-
-[[obligation]]
-id = "sf.functions.minhash.minhash-expr-over.o011"
-kind = "operand_type_class"
-required = true
-target = "<expr1> in [ PARTITION BY <expr1> ]"
-note = "a valid expression"
 
 [[obligation]]
 id = "sf.functions.minhash.minhash-expr-over.o012"
@@ -41617,10 +41594,43 @@ required = true
 note = "the form without its required BY in [ PARTITION BY <expr1> ]"
 
 [[obligation]]
-id = "sf.functions.minhash.minhash-expr-over.o016"
+id = "sf.functions.minhash.minhash-expr-over.o021"
+kind = "option_present"
+required = true
+target = "[ DISTINCT ]"
+anchor = "doc.functions.minhash / Syntax"
+note = "option present [ DISTINCT ], observed"
+
+[[obligation]]
+id = "sf.functions.minhash.minhash-expr-over.o022"
+kind = "option_present"
+required = true
+target = "[ PARTITION BY <expr1> ]"
+anchor = "doc.functions.minhash / Syntax"
+note = "option present [ PARTITION BY <expr1> ], observed"
+
+[[obligation]]
+id = "sf.functions.minhash.minhash-expr-over.o023"
+kind = "operand_type_class"
+required = true
+target = "<expr1> in [ PARTITION BY <expr1> ]"
+anchor = "doc.functions.minhash / Syntax"
+note = "a valid expression, observed"
+
+[[obligation]]
+id = "sf.functions.minhash.minhash-expr-over.o024"
 kind = "interaction_all_options"
 required = true
-note = "every independent option of one production together"
+anchor = "doc.functions.minhash / Syntax"
+note = "every independent option of one production together, observed"
+
+[[obligation]]
+id = "sf.functions.minhash.minhash-expr-over.o025"
+kind = "option_present"
+required = true
+target = "[ , <expr> ... ]"
+anchor = "doc.functions.minhash / Syntax"
+note = "the list continued at least once, observed"
 
 [[obligation]]
 id = "sf.functions.minhash.minhash-over.o001"
