@@ -45,3 +45,16 @@ rows = [
 expression = "TIMESTAMPDIFF(DAY, a, b)"
 canonical = "DATEDIFF(DAY, a, b)"
 tags = ["null", "boundary"]
+
+[[case]]
+id = "timestampdiff_quoted_units"
+description = "TIMESTAMPDIFF with its unit written as a quoted string, as DATEDIFF reads it."
+columns = [{ name = "a", type = "TIMESTAMP_NTZ(9)" }, { name = "b", type = "TIMESTAMP_NTZ(9)" }]
+rows = [
+  ["'2024-01-31 23:59:59'", "'2024-02-01 00:00:01'"],
+  ["'2024-02-29 12:00:30'", "'2024-02-28 13:59:00'"],
+  ["NULL", "'2024-01-01 00:00:00'"],
+]
+expression = "TIMESTAMPDIFF('minute', a, b)::VARCHAR || '|' || TIMESTAMPDIFF('HOUR', a, b)::VARCHAR || '|' || TIMESTAMPDIFF('Day', a, b)::VARCHAR"
+canonical = "DATEDIFF(MINUTE, a, b)::VARCHAR || '|' || DATEDIFF(HOUR, a, b)::VARCHAR || '|' || DATEDIFF(DAY, a, b)::VARCHAR"
+tags = ["null", "boundary"]

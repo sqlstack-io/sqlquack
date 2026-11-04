@@ -69,8 +69,8 @@ use crate::conversion::constants::MAX_KIND;
 use crate::conversion::constants::{
     AVERAGE, AVG_NAME, COUNT, GENERATOR_RULE, GENERATOR_SEQUENCE_COLUMN, LEAST_GREATEST,
     LOCAL_ZONE_SUFFIX, MIN_MAX, MIN_MAX_FLOAT, NOT_SNOWFLAKE_FUNCTIONS, NULLIF, NUMERIC_RANGE,
-    REGEXP_LIKE_NAME, RLIKE_PAIR, SORTED_ARRAY_FUNCTION, SUM, SUM_FLOAT, TO_DATE_NAME, TRIM,
-    TRY_PREFIX, VARIANT_MAX,
+    REGEXP_LIKE_NAME, RLIKE_PAIR, SORTED_ARRAY_FUNCTION, SUM, SUM_FLOAT, TIMESTAMPDIFF_PAIR,
+    TO_DATE_NAME, TRIM, TRY_PREFIX, VARIANT_MAX,
 };
 
 /// SEQ4() or SEQ8() in a query level reading only a generator: the row's number from 0.
@@ -235,6 +235,10 @@ pub(crate) fn convert_function(payload: &Value, site: Site<'_>) -> Result<Emitte
         }
         ("DATE_PART", [unit, value]) => date_part(unit, value, &construct, site),
         ("DATEDIFF", parts) => date_diff_call(parts, &construct, site),
+        ("TIMESTAMPDIFF", parts) => {
+            site.context.log.equivalence(TIMESTAMPDIFF_PAIR);
+            date_diff_call(parts, &construct, site)
+        }
         ("TO_TIME" | "TRY_TO_TIME" | "TIME", parts) => to_time(&name, parts, &construct, site),
         ("DATE_FROM_PARTS", parts) => date_from_parts_call(parts, &construct, site),
         ("TIMESTAMP_NTZ_FROM_PARTS", parts) => timestamp_from_parts_call(parts, &construct, site),

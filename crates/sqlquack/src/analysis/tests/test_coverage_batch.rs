@@ -569,6 +569,41 @@ fn given_dates_and_naive_timestamps_when_converting_to_timestamp_then_values_are
 }
 
 #[test]
+fn given_quoted_units_when_converting_timestampdiff_then_boundaries_are_counted() {
+    let test_cases = [
+        FirstValueTestCase {
+            description: "a quoted minute counts the boundary crossed, not whole minutes elapsed",
+            sql: "SELECT TIMESTAMPDIFF('minute', '2024-01-31 23:59:59'::TIMESTAMP_NTZ, \
+                  '2024-02-01 00:00:01'::TIMESTAMP_NTZ) AS v",
+            expected_outcome: Ok("1"),
+        },
+        FirstValueTestCase {
+            description: "a quoted unit in mixed case reads as the unit",
+            sql: "SELECT TIMESTAMPDIFF('Day', '2024-02-29 23:00:00'::TIMESTAMP_NTZ, \
+                  '2024-02-28 01:00:00'::TIMESTAMP_NTZ) AS v",
+            expected_outcome: Ok("-1"),
+        },
+        FirstValueTestCase {
+            description: "a quoted unknown unit refuses",
+            sql: "SELECT TIMESTAMPDIFF('fortnight', '2024-01-01'::TIMESTAMP_NTZ, \
+                  '2024-02-01'::TIMESTAMP_NTZ) AS v",
+            expected_outcome: Err("FORTNIGHT"),
+        },
+    ];
+    for test_case in test_cases {
+        assert_eq!(
+            shop_first_outcome(test_case.sql, test_case.expected_outcome),
+            test_case
+                .expected_outcome
+                .map(str::to_owned)
+                .map_err(str::to_owned),
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
 fn given_powers_of_ten_when_converting_power_then_the_nearest_double_is_kept() {
     let test_cases = [
         FirstValueTestCase {
