@@ -779,6 +779,24 @@ fn given_a_snowflake_alter_of_an_application_database_or_service_kind_when_parsi
             dialect: Dialect::Snowflake,
             expected_accepted: false,
         },
+        AcceptanceTestCase {
+            description: "a database role is no database (recorded accepted)",
+            sql: "ALTER DATABASE ROLE v1 RENAME TO v1 ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "a database role unsets a tag (recorded accepted)",
+            sql: "ALTER DATABASE ROLE IF EXISTS v1 UNSET TAG v1 ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "an application role is no application (recorded accepted)",
+            sql: "ALTER APPLICATION ROLE v1 SET COMMENT = 'm' ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
     ];
 
     for test_case in test_cases {

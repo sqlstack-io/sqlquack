@@ -25,6 +25,11 @@ type Parts = (Vec<Expression>, Vec<ObjectProperty>);
 impl Parser {
     /// Parse a Snowflake ALTER of a kind this module owns, or None when the next words name another kind.
     pub(crate) fn parse_alter_snowflake_objects(&mut self) -> Result<Option<Expression>> {
+        if self.check_text_seq(&["APPLICATION", "ROLE"])
+            || self.check_text_seq(&["DATABASE", "ROLE"])
+        {
+            return Ok(None);
+        }
         if self.match_text_seq(&["APPLICATION", "PACKAGE"]) {
             return self.parse_alter_application_package().map(Some);
         }
