@@ -30,6 +30,18 @@ tags = ["null", "json-null", "nested"]
 origin = "generated: hazards@1"
 
 [[case]]
+id = "fn_to_json_combination_2_variant"
+description = "fn:TO_JSON over benign values of each declared argument kind."
+columns = [{ name = "x0", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('{\"a\":1}')"],
+  ["PARSE_JSON('{\"a\":2}')"],
+]
+expression = "STRIP_NULL_VALUE(x0) IS NULL"
+tags = ["null", "json-null", "nested"]
+origin = "generated: hazards@1"
+
+[[case]]
 id = "fn_to_json_0_variant_hazards"
 description = "fn:TO_JSON with the hazards null, json_null, empty_containers, case_keys, path_keys, nesting, scalars in argument 0, variant."
 columns = [{ name = "x0", type = "VARIANT" }]
