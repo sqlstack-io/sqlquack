@@ -1908,78 +1908,6 @@ runs = []
 probes = []
 
 [[unobservable]]
-obligation = "sf.ddl.alter-external-consumer-modify-programmatic-access-token.o012"
-form = "sf.ddl.alter-external-consumer-modify-programmatic-access-token"
-construct = "option_present: ALTER EXTERNAL CONSUMER v1 MODIFY PROGRAMMATIC ACCESS TOKEN IF EXISTS v1 SET DAYS_TO_EXPIRY = 1 COMMENT = 'm' UNSET COMMENT ;"
-reason = "not submitted: held by the capture guard in chunk ux-01: programmatic access token"
-cause = "not_submitted"
-cases = [
-  { case_id = "sf.ddl.alter-external-consumer-modify-programmatic-access-token.k80752baf07f1", sql_sha256 = "80752baf07f1cbdfb44bb11bfc8f4d6ba798caa88837607f08f4dc7a6fc89d40" },
-]
-runs = []
-probes = []
-
-[[unobservable]]
-obligation = "sf.ddl.alter-external-consumer-modify-programmatic-access-token.o013"
-form = "sf.ddl.alter-external-consumer-modify-programmatic-access-token"
-construct = "option_absent: ALTER EXTERNAL CONSUMER v1 MODIFY PROGRAMMATIC ACCESS TOKEN v1 ;"
-reason = "not submitted: held by the capture guard in chunk ux-01: programmatic access token"
-cause = "not_submitted"
-cases = [
-  { case_id = "sf.ddl.alter-external-consumer-modify-programmatic-access-token.kfa6aba050fbe", sql_sha256 = "fa6aba050fbe872bf35a78443d4bcb196d12e4c429559eb30d6b08d6c9335cd7" },
-]
-runs = []
-probes = []
-
-[[unobservable]]
-obligation = "sf.ddl.alter-external-consumer-modify-programmatic-access-token.o014"
-form = "sf.ddl.alter-external-consumer-modify-programmatic-access-token"
-construct = "option_present: ALTER EXTERNAL CONSUMER v1 MODIFY PROGRAMMATIC ACCESS TOKEN IF EXISTS v1 SET DAYS_TO_EXPIRY = 1 COMMENT = 'm' UNSET COMMENT ;"
-reason = "not submitted: held by the capture guard in chunk ux-01: programmatic access token"
-cause = "not_submitted"
-cases = [
-  { case_id = "sf.ddl.alter-external-consumer-modify-programmatic-access-token.k80752baf07f1", sql_sha256 = "80752baf07f1cbdfb44bb11bfc8f4d6ba798caa88837607f08f4dc7a6fc89d40" },
-]
-runs = []
-probes = []
-
-[[unobservable]]
-obligation = "sf.ddl.alter-external-consumer-modify-programmatic-access-token.o015"
-form = "sf.ddl.alter-external-consumer-modify-programmatic-access-token"
-construct = "option_absent: ALTER EXTERNAL CONSUMER v1 MODIFY PROGRAMMATIC ACCESS TOKEN v1 SET ;"
-reason = "not submitted: held by the capture guard in chunk ux-01: programmatic access token"
-cause = "not_submitted"
-cases = [
-  { case_id = "sf.ddl.alter-external-consumer-modify-programmatic-access-token.ka7fefcc3ffdc", sql_sha256 = "a7fefcc3ffdcb488687af3b431892bafc3b3b54cc511d6a60354f7c2114548db" },
-]
-runs = []
-probes = []
-
-[[unobservable]]
-obligation = "sf.ddl.alter-external-consumer-modify-programmatic-access-token.o016"
-form = "sf.ddl.alter-external-consumer-modify-programmatic-access-token"
-construct = "omit <integer>: ALTER EXTERNAL CONSUMER v1 MODIFY PROGRAMMATIC ACCESS TOKEN v1 SET DAYS_TO_EXPIRY = ;"
-reason = "not submitted: held by the capture guard in chunk ux-00: programmatic access token"
-cause = "not_submitted"
-cases = [
-  { case_id = "sf.ddl.alter-external-consumer-modify-programmatic-access-token.k0d28b831899b", sql_sha256 = "0d28b831899b38bd4f6e0d86354e78012c3f091882114aab2934d326a35c6db3" },
-]
-runs = []
-probes = []
-
-[[unobservable]]
-obligation = "sf.ddl.alter-external-consumer-modify-programmatic-access-token.o017"
-form = "sf.ddl.alter-external-consumer-modify-programmatic-access-token"
-construct = "a valid operand: ALTER EXTERNAL CONSUMER v1 MODIFY PROGRAMMATIC ACCESS TOKEN IF EXISTS v1 SET DAYS_TO_EXPIRY = 1 COMMENT = 'm' UNSET COMMENT ;"
-reason = "not submitted: held by the capture guard in chunk ux-01: programmatic access token"
-cause = "not_submitted"
-cases = [
-  { case_id = "sf.ddl.alter-external-consumer-modify-programmatic-access-token.k80752baf07f1", sql_sha256 = "80752baf07f1cbdfb44bb11bfc8f4d6ba798caa88837607f08f4dc7a6fc89d40" },
-]
-runs = []
-probes = []
-
-[[unobservable]]
 obligation = "sf.ddl.alter-external-consumer-modify-programmatic-access-token.o018"
 form = "sf.ddl.alter-external-consumer-modify-programmatic-access-token"
 construct = "option_present: ALTER EXTERNAL CONSUMER v1 MODIFY PROGRAMMATIC ACCESS TOKEN IF EXISTS v1 SET DAYS_TO_EXPIRY = 1 COMMENT = 'm' UNSET COMMENT ;"
@@ -1992,30 +1920,6 @@ runs = []
 probes = []
 
 [[unobservable]]
-obligation = "sf.ddl.alter-external-consumer-modify-programmatic-access-token.o019"
-form = "sf.ddl.alter-external-consumer-modify-programmatic-access-token"
-construct = "option_absent: ALTER EXTERNAL CONSUMER v1 MODIFY PROGRAMMATIC ACCESS TOKEN v1 SET ;"
-reason = "not submitted: held by the capture guard in chunk ux-01: programmatic access token"
-cause = "not_submitted"
-cases = [
-  { case_id = "sf.ddl.alter-external-consumer-modify-programmatic-access-token.ka7fefcc3ffdc", sql_sha256 = "a7fefcc3ffdcb488687af3b431892bafc3b3b54cc511d6a60354f7c2114548db" },
-]
-runs = []
-probes = []
-
-[[unobservable]]
-obligation = "sf.ddl.alter-external-consumer-modify-programmatic-access-token.o020"
-form = "sf.ddl.alter-external-consumer-modify-programmatic-access-token"
-construct = "omit '<string_literal>': ALTER EXTERNAL CONSUMER v1 MODIFY PROGRAMMATIC ACCESS TOKEN v1 SET COMMENT = ;"
-reason = "not submitted: held by the capture guard in chunk ux-01: programmatic access token"
-cause = "not_submitted"
-cases = [
-  { case_id = "sf.ddl.alter-external-consumer-modify-programmatic-access-token.k2ed70a0ebea2", sql_sha256 = "2ed70a0ebea2578065f7804f10737ce6dc2eaea1302f553ab6bb478bce4827b8" },
-]
-runs = []
-probes = []
-
-[[unobservable]]
 obligation = "sf.ddl.alter-external-consumer-modify-programmatic-access-token.o021"
 form = "sf.ddl.alter-external-consumer-modify-programmatic-access-token"
 construct = "a valid string_literal: ALTER EXTERNAL CONSUMER v1 MODIFY PROGRAMMATIC ACCESS TOKEN IF EXISTS v1 SET DAYS_TO_EXPIRY = 1 COMMENT = 'm' UNSET COMMENT ;"
@@ -2023,66 +1927,6 @@ reason = "not submitted: held by the capture guard in chunk ux-01: programmatic 
 cause = "not_submitted"
 cases = [
   { case_id = "sf.ddl.alter-external-consumer-modify-programmatic-access-token.k80752baf07f1", sql_sha256 = "80752baf07f1cbdfb44bb11bfc8f4d6ba798caa88837607f08f4dc7a6fc89d40" },
-]
-runs = []
-probes = []
-
-[[unobservable]]
-obligation = "sf.ddl.alter-external-consumer-modify-programmatic-access-token.o022"
-form = "sf.ddl.alter-external-consumer-modify-programmatic-access-token"
-construct = "an unquoted identifier in place of '<string_literal>': ALTER EXTERNAL CONSUMER v1 MODIFY PROGRAMMATIC ACCESS TOKEN v1 SET COMMENT = m1 ;"
-reason = "not submitted: held by the capture guard in chunk ux-01: programmatic access token"
-cause = "not_submitted"
-cases = [
-  { case_id = "sf.ddl.alter-external-consumer-modify-programmatic-access-token.k916fc589a1f6", sql_sha256 = "916fc589a1f696159ab1f1b63bdf560e25a9f563de6785764977fac7a45bc07e" },
-]
-runs = []
-probes = []
-
-[[unobservable]]
-obligation = "sf.ddl.alter-external-consumer-modify-programmatic-access-token.o023"
-form = "sf.ddl.alter-external-consumer-modify-programmatic-access-token"
-construct = "option_present: ALTER EXTERNAL CONSUMER v1 MODIFY PROGRAMMATIC ACCESS TOKEN IF EXISTS v1 SET DAYS_TO_EXPIRY = 1 COMMENT = 'm' UNSET COMMENT ;"
-reason = "not submitted: held by the capture guard in chunk ux-01: programmatic access token"
-cause = "not_submitted"
-cases = [
-  { case_id = "sf.ddl.alter-external-consumer-modify-programmatic-access-token.k80752baf07f1", sql_sha256 = "80752baf07f1cbdfb44bb11bfc8f4d6ba798caa88837607f08f4dc7a6fc89d40" },
-]
-runs = []
-probes = []
-
-[[unobservable]]
-obligation = "sf.ddl.alter-external-consumer-modify-programmatic-access-token.o024"
-form = "sf.ddl.alter-external-consumer-modify-programmatic-access-token"
-construct = "option_absent: ALTER EXTERNAL CONSUMER v1 MODIFY PROGRAMMATIC ACCESS TOKEN v1 ;"
-reason = "not submitted: held by the capture guard in chunk ux-01: programmatic access token"
-cause = "not_submitted"
-cases = [
-  { case_id = "sf.ddl.alter-external-consumer-modify-programmatic-access-token.kfa6aba050fbe", sql_sha256 = "fa6aba050fbe872bf35a78443d4bcb196d12e4c429559eb30d6b08d6c9335cd7" },
-]
-runs = []
-probes = []
-
-[[unobservable]]
-obligation = "sf.ddl.alter-external-consumer-modify-programmatic-access-token.o025"
-form = "sf.ddl.alter-external-consumer-modify-programmatic-access-token"
-construct = "option_present: ALTER EXTERNAL CONSUMER v1 MODIFY PROGRAMMATIC ACCESS TOKEN IF EXISTS v1 SET DAYS_TO_EXPIRY = 1 COMMENT = 'm' UNSET COMMENT ;"
-reason = "not submitted: held by the capture guard in chunk ux-01: programmatic access token"
-cause = "not_submitted"
-cases = [
-  { case_id = "sf.ddl.alter-external-consumer-modify-programmatic-access-token.k80752baf07f1", sql_sha256 = "80752baf07f1cbdfb44bb11bfc8f4d6ba798caa88837607f08f4dc7a6fc89d40" },
-]
-runs = []
-probes = []
-
-[[unobservable]]
-obligation = "sf.ddl.alter-external-consumer-modify-programmatic-access-token.o026"
-form = "sf.ddl.alter-external-consumer-modify-programmatic-access-token"
-construct = "option_absent: ALTER EXTERNAL CONSUMER v1 MODIFY PROGRAMMATIC ACCESS TOKEN v1 UNSET ;"
-reason = "not submitted: held by the capture guard in chunk ux-01: programmatic access token"
-cause = "not_submitted"
-cases = [
-  { case_id = "sf.ddl.alter-external-consumer-modify-programmatic-access-token.kef85945c101b", sql_sha256 = "ef85945c101b2de77cdb8bf035c26ee665291d2d44fc7ada962f21dd8ecacaea" },
 ]
 runs = []
 probes = []
@@ -3316,54 +3160,6 @@ cause = "not_submitted"
 cases = [
   { case_id = "sf.ddl.alter-external-consumer.set.k50e37add4600", sql_sha256 = "50e37add4600003fbf7b3c7603ac57034dc7ee22337fd10c3659a3017ccfb614" },
   { case_id = "sf.ddl.alter-external-consumer.set.kd3dc1c11f5d2", sql_sha256 = "d3dc1c11f5d2712b4c70d5144d7d1407bd1d651db9d3bfb02cadd55fd71de1db" },
-]
-runs = []
-probes = []
-
-[[unobservable]]
-obligation = "sf.ddl.alter-external-consumer.unset.o001"
-form = "sf.ddl.alter-external-consumer.unset"
-construct = "the documented form with every required part and no optional part: ALTER EXTERNAL CONSUMER v1 UNSET ;"
-reason = "not submitted: held by the capture guard in chunk ux-01: account-level EXTERNAL CONSUMER names not listed"
-cause = "not_submitted"
-cases = [
-  { case_id = "sf.ddl.alter-external-consumer.unset.k8e486352c0e1", sql_sha256 = "8e486352c0e1723bd0de0e3218c43c24c04c75df7e86792e44a12648ecce568b" },
-]
-runs = []
-probes = []
-
-[[unobservable]]
-obligation = "sf.ddl.alter-external-consumer.unset.o003"
-form = "sf.ddl.alter-external-consumer.unset"
-construct = "option_absent: ALTER EXTERNAL CONSUMER v1 UNSET ;"
-reason = "not submitted: held by the capture guard in chunk ux-01: account-level EXTERNAL CONSUMER names not listed"
-cause = "not_submitted"
-cases = [
-  { case_id = "sf.ddl.alter-external-consumer.unset.k8e486352c0e1", sql_sha256 = "8e486352c0e1723bd0de0e3218c43c24c04c75df7e86792e44a12648ecce568b" },
-]
-runs = []
-probes = []
-
-[[unobservable]]
-obligation = "sf.ddl.alter-external-consumer.unset.o005"
-form = "sf.ddl.alter-external-consumer.unset"
-construct = "a valid identifier: ALTER EXTERNAL CONSUMER v1 UNSET ;"
-reason = "not submitted: held by the capture guard in chunk ux-01: account-level EXTERNAL CONSUMER names not listed"
-cause = "not_submitted"
-cases = [
-  { case_id = "sf.ddl.alter-external-consumer.unset.k8e486352c0e1", sql_sha256 = "8e486352c0e1723bd0de0e3218c43c24c04c75df7e86792e44a12648ecce568b" },
-]
-runs = []
-probes = []
-
-[[unobservable]]
-obligation = "sf.ddl.alter-external-consumer.unset.o014"
-form = "sf.ddl.alter-external-consumer.unset"
-construct = "the form without its required UNSET: ALTER EXTERNAL CONSUMER v1 ;"
-reason = "not submitted: held by the capture guard in chunk ux-01: account-level EXTERNAL CONSUMER names not listed"
-cause = "not_submitted"
-cases = [
-  { case_id = "sf.ddl.alter-external-consumer.set.ke178bc2cc9f3", sql_sha256 = "e178bc2cc9f371e6feda13d4f3d5c1ee25e67429ddca814b298cc25cab2b01b4" },
 ]
 runs = []
 probes = []
@@ -53028,6 +52824,246 @@ reason = "not submitted: held by the capture guard in packet rmu-3cd2b776 (ddl_s
 cause = "not_submitted"
 cases = [
   { case_id = "sf.ddl.alter-external-consumer.unset.k1e8243043346", sql_sha256 = "1e8243043346b1d02afd5851fb460f447d97f3cb5df21f7e22634c6040ee7a27" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.alter-external-consumer-modify-programmatic-access-token.o019"
+form = "sf.ddl.alter-external-consumer-modify-programmatic-access-token"
+construct = "option_absent: ALTER EXTERNAL CONSUMER v1 MODIFY PROGRAMMATIC ACCESS TOKEN v1 SET DAYS_TO_EXPIRY = 1 ;"
+reason = "not submitted: held by the capture guard in the 944fb462 screen (ddl_sweep): programmatic access token"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.alter-external-consumer-modify-programmatic-access-token.kbcb765fa5177", sql_sha256 = "bcb765fa51774a0a487a0ece28c25a5d724195331ed360ab1805d3abdaabd00b" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.alter-external-consumer-modify-programmatic-access-token.o020"
+form = "sf.ddl.alter-external-consumer-modify-programmatic-access-token"
+construct = "omit '<string_literal>': ALTER EXTERNAL CONSUMER v1 MODIFY PROGRAMMATIC ACCESS TOKEN v1 SET DAYS_TO_EXPIRY = 1 COMMENT = ;"
+reason = "not submitted: held by the capture guard in the 944fb462 screen (ddl_sweep): programmatic access token"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.alter-external-consumer-modify-programmatic-access-token.kdc53cfb20b88", sql_sha256 = "dc53cfb20b881047b21ffe6eac818db135940327fc041b743834bcacfbfc1899" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.alter-external-consumer-modify-programmatic-access-token.o022"
+form = "sf.ddl.alter-external-consumer-modify-programmatic-access-token"
+construct = "an unquoted identifier in place of '<string_literal>': ALTER EXTERNAL CONSUMER v1 MODIFY PROGRAMMATIC ACCESS TOKEN v1 SET DAYS_TO_EXPIRY = 1 COMMENT = m1 ;"
+reason = "not submitted: held by the capture guard in the 944fb462 screen (ddl_sweep): programmatic access token"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.alter-external-consumer-modify-programmatic-access-token.kaa65fb8e204e", sql_sha256 = "aa65fb8e204e7ff8427843d5686921f779aafd16099ee45a400a4c02dd4ce7eb" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.alter-external-consumer-modify-programmatic-access-token.o039"
+form = "sf.ddl.alter-external-consumer-modify-programmatic-access-token"
+construct = "option_present: ALTER EXTERNAL CONSUMER v1 MODIFY PROGRAMMATIC ACCESS TOKEN IF EXISTS v1 SET DAYS_TO_EXPIRY = 1 COMMENT = 'm' UNSET COMMENT ;"
+reason = "not submitted: held by the capture guard in chunk ux-01: programmatic access token"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.alter-external-consumer-modify-programmatic-access-token.k80752baf07f1", sql_sha256 = "80752baf07f1cbdfb44bb11bfc8f4d6ba798caa88837607f08f4dc7a6fc89d40" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.alter-external-consumer-modify-programmatic-access-token.o040"
+form = "sf.ddl.alter-external-consumer-modify-programmatic-access-token"
+construct = "option_absent: ALTER EXTERNAL CONSUMER v1 MODIFY PROGRAMMATIC ACCESS TOKEN v1 ;"
+reason = "not submitted: held by the capture guard in chunk ux-01: programmatic access token"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.alter-external-consumer-modify-programmatic-access-token.kfa6aba050fbe", sql_sha256 = "fa6aba050fbe872bf35a78443d4bcb196d12e4c429559eb30d6b08d6c9335cd7" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.alter-external-consumer-modify-programmatic-access-token.o041"
+form = "sf.ddl.alter-external-consumer-modify-programmatic-access-token"
+construct = "alternative: ALTER EXTERNAL CONSUMER v1 MODIFY PROGRAMMATIC ACCESS TOKEN v1 SET DAYS_TO_EXPIRY = 1 ;"
+reason = "not submitted: held by the capture guard in the 944fb462 screen (ddl_sweep): programmatic access token"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.alter-external-consumer-modify-programmatic-access-token.kbcb765fa5177", sql_sha256 = "bcb765fa51774a0a487a0ece28c25a5d724195331ed360ab1805d3abdaabd00b" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.alter-external-consumer-modify-programmatic-access-token.o042"
+form = "sf.ddl.alter-external-consumer-modify-programmatic-access-token"
+construct = "alternative: ALTER EXTERNAL CONSUMER v1 MODIFY PAT v1 SET COMMENT = 'm' ;"
+reason = "not submitted: held by the capture guard in the 944fb462 screen (ddl_sweep): billable or out-of-account: listing or external sharing"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.alter-external-consumer-modify-programmatic-access-token.k13a9633ec154", sql_sha256 = "13a9633ec154eddfbb6c08ff11e349c3e813bcec8a40783215732200f219d72b" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.alter-external-consumer-modify-programmatic-access-token.o043"
+form = "sf.ddl.alter-external-consumer-modify-programmatic-access-token"
+construct = "omit <integer>: ALTER EXTERNAL CONSUMER v1 MODIFY PROGRAMMATIC ACCESS TOKEN v1 SET DAYS_TO_EXPIRY = ;"
+reason = "not submitted: held by the capture guard in chunk ux-00: programmatic access token"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.alter-external-consumer-modify-programmatic-access-token.k0d28b831899b", sql_sha256 = "0d28b831899b38bd4f6e0d86354e78012c3f091882114aab2934d326a35c6db3" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.alter-external-consumer-modify-programmatic-access-token.o044"
+form = "sf.ddl.alter-external-consumer-modify-programmatic-access-token"
+construct = "a valid operand: ALTER EXTERNAL CONSUMER v1 MODIFY PROGRAMMATIC ACCESS TOKEN IF EXISTS v1 SET DAYS_TO_EXPIRY = 1 COMMENT = 'm' UNSET COMMENT ;"
+reason = "not submitted: held by the capture guard in chunk ux-01: programmatic access token"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.alter-external-consumer-modify-programmatic-access-token.k80752baf07f1", sql_sha256 = "80752baf07f1cbdfb44bb11bfc8f4d6ba798caa88837607f08f4dc7a6fc89d40" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.alter-external-consumer-modify-programmatic-access-token.o045"
+form = "sf.ddl.alter-external-consumer-modify-programmatic-access-token"
+construct = "omit '<string_literal>': ALTER EXTERNAL CONSUMER v1 MODIFY PROGRAMMATIC ACCESS TOKEN v1 SET COMMENT = ;"
+reason = "not submitted: held by the capture guard in chunk ux-01: programmatic access token"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.alter-external-consumer-modify-programmatic-access-token.k2ed70a0ebea2", sql_sha256 = "2ed70a0ebea2578065f7804f10737ce6dc2eaea1302f553ab6bb478bce4827b8" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.alter-external-consumer-modify-programmatic-access-token.o046"
+form = "sf.ddl.alter-external-consumer-modify-programmatic-access-token"
+construct = "a valid string_literal: ALTER EXTERNAL CONSUMER v1 MODIFY PROGRAMMATIC ACCESS TOKEN IF EXISTS v1 SET COMMENT = 'm' UNSET COMMENT ;"
+reason = "not submitted: held by the capture guard in the 944fb462 screen (ddl_sweep): programmatic access token"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.alter-external-consumer-modify-programmatic-access-token.k6ff5e53d24fa", sql_sha256 = "6ff5e53d24faa206cecb9cc07e3cd78504584283296eaa990b76339881b998fe" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.alter-external-consumer-modify-programmatic-access-token.o047"
+form = "sf.ddl.alter-external-consumer-modify-programmatic-access-token"
+construct = "an unquoted identifier in place of '<string_literal>': ALTER EXTERNAL CONSUMER v1 MODIFY PROGRAMMATIC ACCESS TOKEN v1 SET COMMENT = m1 ;"
+reason = "not submitted: held by the capture guard in chunk ux-01: programmatic access token"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.alter-external-consumer-modify-programmatic-access-token.k916fc589a1f6", sql_sha256 = "916fc589a1f696159ab1f1b63bdf560e25a9f563de6785764977fac7a45bc07e" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.alter-external-consumer-modify-programmatic-access-token.o048"
+form = "sf.ddl.alter-external-consumer-modify-programmatic-access-token"
+construct = "option_present: ALTER EXTERNAL CONSUMER v1 MODIFY PROGRAMMATIC ACCESS TOKEN IF EXISTS v1 SET DAYS_TO_EXPIRY = 1 COMMENT = 'm' UNSET COMMENT ;"
+reason = "not submitted: held by the capture guard in chunk ux-01: programmatic access token"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.alter-external-consumer-modify-programmatic-access-token.k80752baf07f1", sql_sha256 = "80752baf07f1cbdfb44bb11bfc8f4d6ba798caa88837607f08f4dc7a6fc89d40" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.alter-external-consumer-modify-programmatic-access-token.o049"
+form = "sf.ddl.alter-external-consumer-modify-programmatic-access-token"
+construct = "option_absent: ALTER EXTERNAL CONSUMER v1 MODIFY PROGRAMMATIC ACCESS TOKEN v1 ;"
+reason = "not submitted: held by the capture guard in chunk ux-01: programmatic access token"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.alter-external-consumer-modify-programmatic-access-token.kfa6aba050fbe", sql_sha256 = "fa6aba050fbe872bf35a78443d4bcb196d12e4c429559eb30d6b08d6c9335cd7" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.alter-external-consumer-modify-programmatic-access-token.o050"
+form = "sf.ddl.alter-external-consumer-modify-programmatic-access-token"
+construct = "the form without its required { DAYS_TO_EXPIRY = <integer> [ COMMENT = '<string_literal>' ] | COMMENT = '<string_literal>' } in [ SET { DAYS_TO_EXPIRY = <integer> [ COMMENT = '<string_literal>' ] | COMMENT = '<string_literal>' } ]: ALTER EXTERNAL CONSUMER v1 MODIFY PROGRAMMATIC ACCESS TOKEN v1 SET ;"
+reason = "not submitted: held by the capture guard in chunk ux-01: programmatic access token"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.alter-external-consumer-modify-programmatic-access-token.ka7fefcc3ffdc", sql_sha256 = "a7fefcc3ffdcb488687af3b431892bafc3b3b54cc511d6a60354f7c2114548db" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.alter-external-consumer-modify-programmatic-access-token.o051"
+form = "sf.ddl.alter-external-consumer-modify-programmatic-access-token"
+construct = "the form without its required COMMENT in [ UNSET COMMENT ]: ALTER EXTERNAL CONSUMER v1 MODIFY PROGRAMMATIC ACCESS TOKEN v1 UNSET ;"
+reason = "not submitted: held by the capture guard in chunk ux-01: programmatic access token"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.alter-external-consumer-modify-programmatic-access-token.kef85945c101b", sql_sha256 = "ef85945c101b2de77cdb8bf035c26ee665291d2d44fc7ada962f21dd8ecacaea" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.alter-external-consumer.unset.o001"
+form = "sf.ddl.alter-external-consumer.unset"
+construct = "the documented form with every required part and no optional part: ALTER EXTERNAL CONSUMER v1 UNSET COMMENT ;"
+reason = "not submitted: held by the capture guard in packet rmu-3cd2b776 (ddl_sweep): billable or out-of-account: listing or external sharing"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.alter-external-consumer.unset.k1e8243043346", sql_sha256 = "1e8243043346b1d02afd5851fb460f447d97f3cb5df21f7e22634c6040ee7a27" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.alter-external-consumer.unset.o003"
+form = "sf.ddl.alter-external-consumer.unset"
+construct = "option_absent: ALTER EXTERNAL CONSUMER v1 UNSET COMMENT ;"
+reason = "not submitted: held by the capture guard in packet rmu-3cd2b776 (ddl_sweep): billable or out-of-account: listing or external sharing"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.alter-external-consumer.unset.k1e8243043346", sql_sha256 = "1e8243043346b1d02afd5851fb460f447d97f3cb5df21f7e22634c6040ee7a27" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.alter-external-consumer.unset.o005"
+form = "sf.ddl.alter-external-consumer.unset"
+construct = "a valid identifier: ALTER EXTERNAL CONSUMER v1 UNSET COMMENT ;"
+reason = "not submitted: held by the capture guard in packet rmu-3cd2b776 (ddl_sweep): billable or out-of-account: listing or external sharing"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.alter-external-consumer.unset.k1e8243043346", sql_sha256 = "1e8243043346b1d02afd5851fb460f447d97f3cb5df21f7e22634c6040ee7a27" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.alter-external-consumer.unset.o014"
+form = "sf.ddl.alter-external-consumer.unset"
+construct = "the form without its required UNSET: ALTER EXTERNAL CONSUMER v1 COMMENT ;"
+reason = "not submitted: held by the capture guard in packet rmu-3cd2b776 (ddl_sweep): billable or out-of-account: listing or external sharing"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.alter-external-consumer.unset.kb9f12498b8d7", sql_sha256 = "b9f12498b8d7764db06f8687f715a5174ac1ade459b25c3093da8da53db129a9" },
 ]
 runs = []
 probes = []
