@@ -316,6 +316,16 @@ pub(crate) fn verified_tree(root: &Path) {
         "receipts/run-1.jsonl",
         &format!("{}\n", receipts.join("\n")),
     );
+    write(
+        root,
+        "limits.toml",
+        &format!(
+            "[[reading]]\nform = \"sf.query.select\"\ngrammar_sha256 = \"{SHA_A}\"\n\
+             grammar = [\"SELECT <expr> read as one expression\"]\nreason = \"r\"\n\
+             [[reading]]\nform = \"sf.query.select.top\"\ngrammar_sha256 = \"{SHA_A}\"\n\
+             grammar = [\"SELECT TOP <n> <expr> read as one count\"]\nreason = \"r\"\n"
+        ),
+    );
     review(root);
 }
 

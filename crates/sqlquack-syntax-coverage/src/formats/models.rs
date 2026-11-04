@@ -343,6 +343,9 @@ pub struct Receipt {
     /// The position the inner error points at, when its text gives one.
     #[serde(default)]
     pub definition_position: Option<u32>,
+    /// Account parameters the capture ran under, by name (decision D120); provenance, never phase.
+    #[serde(default)]
+    pub account_state: Option<BTreeMap<String, AccountSetting>>,
 }
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Deserialize, Serialize)]
@@ -449,6 +452,37 @@ pub struct UnobservableFile {
     pub diagnostics: Vec<Diagnostic>,
 }
 
+/// One account parameter a receipt's capture ran under, and why it held that value.
+#[derive(Clone, Debug, PartialEq, Eq, Deserialize, Serialize)]
+#[serde(deny_unknown_fields)]
+pub struct AccountSetting {
+    /// Null when the receipt has no usable `recorded_at` to read the value at.
+    pub value: Option<String>,
+    pub basis: String,
+}
+
+/// `limits.toml`. The checker reads only the readings; the obligation builder owns the other tables.
+#[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
+#[serde(deny_unknown_fields)]
+pub struct LimitsFile {
+    #[serde(default, rename = "limit")]
+    pub limits: Vec<toml::Table>,
+    #[serde(default, rename = "suppress")]
+    pub suppressions: Vec<toml::Table>,
+    #[serde(default, rename = "reading")]
+    pub readings: Vec<Reading>,
+}
+
+/// How a form's page grammar is read where it is ambiguous; part of the form's definition (D118).
+#[derive(Clone, Debug, PartialEq, Eq, Deserialize, Serialize)]
+#[serde(deny_unknown_fields)]
+pub struct Reading {
+    pub form: String,
+    pub grammar_sha256: String,
+    pub grammar: Vec<String>,
+    pub reason: String,
+}
+
 /// An obligation no capture can establish a phase for; never verified (decision D87).
 #[derive(Clone, Debug, PartialEq, Eq, Deserialize, Serialize)]
 #[serde(deny_unknown_fields)]
@@ -523,6 +557,8 @@ pub struct SyntaxCoverage {
     pub reviews: Vec<Review>,
     pub unobservable: Vec<Unobservable>,
     pub diagnostics: Vec<Diagnostic>,
+    /// Each form's reading from `limits.toml`, hashed into its definition.
+    pub readings: Vec<Reading>,
     /// SHA-256 of the sources, aliases, catalogue and obligation files, by relative path.
     pub file_hashes: BTreeMap<String, String>,
 }

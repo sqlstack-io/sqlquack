@@ -4,7 +4,9 @@ use std::collections::{BTreeMap, BTreeSet};
 
 use serde::{Deserialize, Serialize};
 
-use crate::formats::models::{Form, Obligation, ObligationKind, Phase, Review};
+use crate::formats::models::{
+    AccountSetting, Form, Obligation, ObligationKind, Phase, Reading, Review,
+};
 
 /// The current parser's verdict on one case's SQL.
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
@@ -87,6 +89,9 @@ pub struct CaseResult {
     pub reason: Option<Reason>,
     /// Agrees, while Snowflake stopped after parsing (semantic, runtime or unsupported phase).
     pub semantic_only: bool,
+    /// The account parameters its admissible receipts ran under (decision D120).
+    #[serde(skip_serializing_if = "BTreeMap::is_empty")]
+    pub account_state: BTreeMap<String, AccountSetting>,
 }
 
 /// One obligation's result.
@@ -160,6 +165,8 @@ pub(crate) struct Joined<'a> {
     pub(crate) cases: BTreeMap<&'a str, CaseResult>,
     /// Obligations listed as unobservable, with the reason they report; never satisfied.
     pub(crate) unobservable: BTreeMap<&'a str, Reason>,
+    /// Each form's reading by form id.
+    pub(crate) readings: BTreeMap<&'a str, &'a Reading>,
 }
 
 /// What every form of one family is judged against besides its own obligations.

@@ -7,7 +7,7 @@ use crate::check::tests::helpers::{
     rejecting, replace, reshaped, rewrite_select_17, select_17, select_17_setup_sha256, sha256,
     structural, unobservable, verified_tree, with_fields, write,
 };
-use crate::check::tests::test_types::CheckTestCase;
+use crate::check::tests::test_types::{AccountStateTestCase, CheckTestCase, Parameters};
 use crate::formats::main::load_coverage::load_coverage;
 
 #[test]
@@ -546,6 +546,23 @@ fn given_a_changed_tree_when_checking_then_the_form_fails_closed_with_its_reason
             expected_problem: Some("case select-17 is not a case with that sql_sha256"),
         },
         CheckTestCase {
+            description: "a reading of a form that is not catalogued",
+            mutate: |root| {
+                replace(
+                    root,
+                    "limits.toml",
+                    "form = \"sf.query.select.top\"",
+                    "form = \"sf.query.tops\"",
+                )
+            },
+            parse: structural,
+            parser_tree: Some(TREE),
+            form: "sf.query.select",
+            expected_state: FormState::Verified,
+            expected_reason: None,
+            expected_problem: Some("reading sf.query.tops: form is not catalogued"),
+        },
+        CheckTestCase {
             description: "an unobservable entry naming an undeclared obligation",
             mutate: |root| unobservable(root, "sf.query.select.o009", "select-17", "SELECT 17"),
             parse: structural,
@@ -1014,6 +1031,37 @@ fn given_a_review_binding_each_form_when_its_family_files_change_then_only_that_
             expected_problem: None,
         },
         CheckTestCase {
+            description: "the form's own reading edited after review",
+            mutate: |root| {
+                pin_definitions(root);
+                replace(
+                    root,
+                    "limits.toml",
+                    "read as one expression",
+                    "read as a list",
+                );
+            },
+            parse: structural,
+            parser_tree: Some(TREE),
+            form: "sf.query.select",
+            expected_state: FormState::Unverified,
+            expected_reason: Some(Reason::StaleReview),
+            expected_problem: None,
+        },
+        CheckTestCase {
+            description: "another form's reading edited in the same limits file",
+            mutate: |root| {
+                pin_definitions(root);
+                replace(root, "limits.toml", "read as one count", "read as a list");
+            },
+            parse: structural,
+            parser_tree: Some(TREE),
+            form: "sf.query.select",
+            expected_state: FormState::Verified,
+            expected_reason: None,
+            expected_problem: None,
+        },
+        CheckTestCase {
             description: "a review binding the family's files still goes stale on another form's edit",
             mutate: |root| note_obligation(root, "sf.query.select.top.o001", "positive"),
             parse: structural,
@@ -1054,6 +1102,70 @@ fn given_a_review_binding_each_form_when_its_family_files_change_then_only_that_
             "{}: {:?}",
             test_case.description,
             check.problems
+        );
+    }
+}
+
+#[test]
+fn given_a_receipt_with_account_state_when_checking_then_only_its_case_carries_it() {
+    let test_cases = [
+        AccountStateTestCase {
+            description: "a parameter with its value",
+            account_state: ",\"account_state\":{\"CORTEX_MODELS_ALLOWLIST\":\
+                            {\"value\":\"NONE\",\"basis\":\"D120: set by sa-01\"}}",
+            expected_cases: vec![
+                ("select-17", vec![("CORTEX_MODELS_ALLOWLIST", Some("NONE"))]),
+                ("select-from", vec![]),
+                ("select-top", vec![]),
+            ],
+        },
+        AccountStateTestCase {
+            description: "a parameter whose value is null for want of a usable recorded_at",
+            account_state: ",\"account_state\":{\"CORTEX_MODELS_ALLOWLIST\":\
+                            {\"value\":null,\"basis\":\"D120: no usable recorded_at\"}}",
+            expected_cases: vec![
+                ("select-17", vec![("CORTEX_MODELS_ALLOWLIST", None)]),
+                ("select-from", vec![]),
+                ("select-top", vec![]),
+            ],
+        },
+    ];
+
+    for test_case in test_cases {
+        let directory = tempfile::tempdir().expect("temporary directory");
+        verified_tree(directory.path());
+        replace(
+            directory.path(),
+            "receipts/run-1.jsonl",
+            "\"phase_basis\":\"errno\"",
+            &format!("\"phase_basis\":\"errno\"{}", test_case.account_state),
+        );
+        let coverage = load_coverage(directory.path())
+            .unwrap_or_else(|problems| panic!("{}: {problems:#?}", test_case.description));
+        let check = check_coverage(&coverage, Some(TREE), &structural);
+        let cases: Vec<(&str, Parameters)> = check
+            .forms
+            .iter()
+            .flat_map(|form| &form.obligations)
+            .flat_map(|obligation| &obligation.cases)
+            .map(|case| {
+                let state = case
+                    .account_state
+                    .iter()
+                    .map(|(name, setting)| (name.as_str(), setting.value.as_deref()))
+                    .collect();
+                (case.case_id.as_str(), state)
+            })
+            .collect();
+        assert_eq!(cases, test_case.expected_cases, "{}", test_case.description);
+        assert!(
+            check
+                .forms
+                .iter()
+                .filter(|form| form.family == "query")
+                .all(|form| form.state == FormState::Verified),
+            "{}: account state is provenance and changes no verdict",
+            test_case.description
         );
     }
 }

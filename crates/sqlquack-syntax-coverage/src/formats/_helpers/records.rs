@@ -14,9 +14,9 @@ use crate::formats::constants::{
 };
 use crate::formats::main::obligation_form::obligation_form;
 use crate::formats::models::{
-    Alias, CaptureMethod, Case, Definition, Diagnostic, Exclusion, Expect, Form, FormKind,
-    FormStatus, Index, Obligation, ObligationKind, Phase, Receipt, Review, Source, SourceStatus,
-    Unobservable, UnobservableCase, UnobservableCause, UnobservableProbe,
+    AccountSetting, Alias, CaptureMethod, Case, Definition, Diagnostic, Exclusion, Expect, Form,
+    FormKind, FormStatus, Index, Obligation, ObligationKind, Phase, Reading, Receipt, Review,
+    Source, SourceStatus, Unobservable, UnobservableCase, UnobservableCause, UnobservableProbe,
 };
 
 fn blank(text: &str) -> bool {
@@ -354,7 +354,31 @@ pub(crate) fn check_receipt(receipt: &Receipt) -> Vec<String> {
         receipt.inner_message.as_ref(),
         receipt.dcm_project.as_ref(),
     ];
-    if text.iter().flatten().any(|field| identifying(field)) {
+    let settings: Vec<(&String, &AccountSetting)> =
+        receipt.account_state.iter().flatten().collect();
+    if receipt
+        .account_state
+        .as_ref()
+        .is_some_and(BTreeMap::is_empty)
+        || settings.iter().any(|(name, setting)| {
+            blank(name) || setting.value.as_deref().is_some_and(blank) || blank(&setting.basis)
+        })
+    {
+        problems.push(format!(
+            "receipt {id}: account_state names at least one parameter, each with a value and basis"
+        ));
+    }
+    let account_text = settings
+        .iter()
+        .flat_map(|(name, setting)| [Some(*name), setting.value.as_ref(), Some(&setting.basis)])
+        .flatten();
+    if text
+        .iter()
+        .flatten()
+        .copied()
+        .chain(account_text)
+        .any(|field| identifying(field))
+    {
         problems.push(format!(
             "receipt {id}: holds an account, host, URL or address"
         ));
@@ -712,5 +736,21 @@ pub(crate) fn check_restatements<'a>(
                 )
             }),
     );
+    problems
+}
+
+/// A reading pins the page grammar it reads and gives a non-empty reading and reason.
+pub(crate) fn check_reading(reading: &Reading) -> Vec<String> {
+    let id: &str = &reading.form;
+    let mut problems: Vec<String> = Vec::new();
+    if !is_sha256(&reading.grammar_sha256) {
+        problems.push(format!("reading {id}: grammar_sha256 is not a SHA-256"));
+    }
+    if reading.grammar.is_empty()
+        || reading.grammar.iter().any(|line| blank(line))
+        || blank(&reading.reason)
+    {
+        problems.push(format!("reading {id}: needs a grammar and a reason"));
+    }
     problems
 }

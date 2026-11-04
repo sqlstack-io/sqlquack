@@ -83,5 +83,10 @@ pub(crate) fn join<'a>(
                 (entry.obligation.as_str(), reason)
             })
             .collect(),
+        readings: coverage
+            .readings
+            .iter()
+            .map(|reading| (reading.form.as_str(), reading))
+            .collect(),
     }
 }

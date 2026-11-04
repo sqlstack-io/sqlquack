@@ -61,7 +61,8 @@ pub(crate) fn form_result(form: &Form, family: &str, context: &FamilyContext) ->
         .map(|obligation| obligation_result(obligation, context.joined))
         .collect();
     let fingerprint: String = form_fingerprint(&obligations);
-    let definition_sha256: String = form_definition(form, declared);
+    let reading = context.joined.readings.get(form.id.as_str()).copied();
+    let definition_sha256: String = form_definition(form, declared, reading);
     let review: Option<Reason> =
         review_reason(&form.id, (&fingerprint, &definition_sha256), context);
     let reasons: Vec<Reason> = form_reasons(&obligations, review);
