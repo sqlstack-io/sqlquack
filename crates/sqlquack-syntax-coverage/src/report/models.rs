@@ -2,10 +2,10 @@
 
 use std::collections::{BTreeMap, BTreeSet};
 
-use serde::{Deserialize, Serialize, Serializer};
+use serde::{Deserialize, Serialize};
 
 use crate::check::models::{FormState, Reason};
-use crate::formats::main::obligation_form::obligation_order;
+use crate::report::_helpers::obligation_order::in_obligation_order;
 
 /// Forms counted in one family or on one page.
 #[derive(Clone, Debug, Default, PartialEq, Serialize)]
@@ -74,18 +74,4 @@ pub struct SnapshotDiff {
     /// Obligations satisfied in the base that no longer are: regressions.
     pub obligations_lost: Vec<String>,
     pub obligations_gained: Vec<String>,
-}
-
-/// The ids in obligation order, `o999` before `o1000`.
-pub(crate) fn sorted_obligations<'a>(ids: impl IntoIterator<Item = &'a String>) -> Vec<String> {
-    let mut sorted: Vec<&String> = ids.into_iter().collect();
-    sorted.sort_by(|left, right| obligation_order(left).cmp(&obligation_order(right)));
-    sorted.into_iter().cloned().collect()
-}
-
-fn in_obligation_order<S: Serializer>(
-    ids: &BTreeSet<String>,
-    serializer: S,
-) -> Result<S::Ok, S::Error> {
-    serializer.collect_seq(sorted_obligations(ids))
 }

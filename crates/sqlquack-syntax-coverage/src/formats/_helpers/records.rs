@@ -369,7 +369,10 @@ fn inner_position(text: &str) -> Option<(u32, u32)> {
     let position: &str = rest
         .split(|character: char| !character.is_ascii_digit())
         .next()?;
-    Some((line.parse().ok()?, position.parse().ok()?))
+    match (line.parse::<u32>(), position.parse::<u32>()) {
+        (Ok(line), Ok(position)) => Some((line, position)),
+        _ => None,
+    }
 }
 
 /// The rules of a `dcm_definition_file` receipt, and that no other receipt carries its fields.

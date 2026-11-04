@@ -9,9 +9,3 @@ pub fn obligation_form<'a>(id: &'a str, family: &str) -> Option<&'a str> {
     (is_obligation_number(number) && &number[1..] != OBLIGATION_ZERO && is_form_id(form, family))
         .then_some(form)
 }
-
-/// The order obligation ids are listed in: by form, then by number, so `o999` precedes `o1000`.
-pub fn obligation_order(id: &str) -> (&str, usize, &str) {
-    let (form, number) = id.rsplit_once('.').unwrap_or((id, ""));
-    (form, number.len(), number)
-}
