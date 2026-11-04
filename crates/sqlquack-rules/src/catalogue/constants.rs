@@ -273,7 +273,7 @@ pub const RULES: &[RuleSpec] = &[
     RuleSpec {
         id: DECIMAL_ARITHMETIC,
         constructs: &["node:add", "node:sub", "node:mul"],
-        conditions: "NUMBER operands; `+`, `-` and `*` whose exact result type needs more than 38 digits rely on `numeric_range`; `*` refuses when a scale cut would need more than 38 intermediate digits.",
+        conditions: "NUMBER operands; `+`, `-` and `*` whose exact result type needs more than 38 digits rely on `numeric_range`. A `*` whose exact product needs more than 38 digits before Snowflake cuts its scale is computed exactly at the summed scale and rounded half away from zero to Snowflake's scale, as recorded; DuckDB raises where the product's whole digits exceed what the summed scale leaves, which also relies on `numeric_range`. A `*` whose scales sum to more than 38 refuses.",
         failures: &[FailureMode {
             kind: ErrorKind::NumericOverflow,
             snowflake: &[NUMBER_OUT_OF_RANGE],
