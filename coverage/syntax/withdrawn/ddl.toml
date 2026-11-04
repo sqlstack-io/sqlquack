@@ -1136,6 +1136,15 @@ valid_as = "sf.ddl.create-stage.create-stage-internalstageparams-directorytablep
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
+form = "sf.ddl.create-stage.define-stage"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required { { URL = '<protocol>://<bucket>[/<path>/]' [ AWS_ACCESS_POINT_ARN = '<string>' ] [ { STORAGE_INTEGRATION = <integration_name> } | { CREDENTIALS = ( { { AWS_KEY_ID = '<string>' AWS_SECRET_KEY = '<string>' [ AWS_TOKEN = '<string>' ] } | { AWS_ROLE = '<string>' } } ) } ] [ ENCRYPTION = ( { [ TYPE = 'AWS_CSE' ] MASTER_KEY = '<string>' | TYPE = 'AWS_SSE_S3' | TYPE = 'AWS_SSE_KMS' [ KMS_KEY_ID = '<string>' ] | TYPE = 'NONE' } ) ] [ USE_PRIVATELINK_ENDPOINT = { TRUE | FALSE } ] [ DIRECTORY = ( ENABLE = { TRUE | FALSE } [ REFRESH_ON_CREATE = { TRUE | FALSE } ] [ AUTO_REFRESH = { TRUE | FALSE } ] [ AWS_SNS_TOPIC = '<sns_topic_arn>' ] ) ] } | { URL = 's3compat://{bucket}[/{path}/]' ENDPOINT = '<s3_api_compatible_endpoint>' [ { CREDENTIALS = ( AWS_KEY_ID = '<string>' AWS_SECRET_KEY = '<string>' ) } ] } | { URL = 'gcs://<bucket>[/<path>/]' [ STORAGE_INTEGRATION = <integration_name> ] [ ENCRYPTION = ( { TYPE = 'GCS_SSE_KMS' [ KMS_KEY_ID = '<string>' ] | TYPE = 'NONE' } ) ] [ USE_PRIVATELINK_ENDPOINT = { TRUE | FALSE } ] [ DIRECTORY = ( ENABLE = { TRUE | FALSE } [ AUTO_REFRESH = { TRUE | FALSE } ] [ REFRESH_ON_CREATE = { TRUE | FALSE } ] [ NOTIFICATION_INTEGRATION = '<notification_integration_name>' ] ) ] } | { URL = 'azure://<account>.blob.core.windows.net/<container>[/<path>/]' [ { STORAGE_INTEGRATION = <integration_name> } | { CREDENTIALS = ( [ AZURE_SAS_TOKEN = '<string>' ] ) } ] [ ENCRYPTION = ( { TYPE = 'AZURE_CSE' MASTER_KEY = '<string>' | TYPE = 'NONE' } ) ] [ USE_PRIVATELINK_ENDPOINT = { TRUE | FALSE } ] [ DIRECTORY = ( ENABLE = { TRUE | FALSE } [ REFRESH_ON_CREATE = { TRUE | FALSE } ] [ AUTO_REFRESH = { TRUE | FALSE } ] [ NOTIFICATION_INTEGRATION = '<notification_integration_name>' ] ) ] } | { URL = 'azure://onelake.blob.fabric.microsoft.com/<workspace_id>/<item_id>/Files[/<path>/]' [ { STORAGE_INTEGRATION = <integration_name> } | { CREDENTIALS = ( [ AZURE_SAS_TOKEN = '<string>' ] ) } ] [ ENCRYPTION = ( { TYPE = 'AZURE_CSE' MASTER_KEY = '<string>' | TYPE = 'NONE' } ) ] } }"
+sql = "DEFINE STAGE d1.s1.v1 ;"
+valid_as = "sf.ddl.create-stage.define-stage positive the documented form with every required part and no optional part"
+reason = "the rejection renders SQL the documented grammar also accepts"
+
+[[withdrawn]]
 form = "sf.ddl.create-stream.create-stream-on-dynamic"
 kind = "negative_neighbour"
 target = ""

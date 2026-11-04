@@ -102,8 +102,8 @@ collision the heading is appended, then a number.
 
 - Every page where a rule above changed the form count lists that rule in `decisions`.
 - `prose` forms (30, after CREATE OR ALTER WAREHOUSE was catalogued from its syntax block):
-  prose-only variants, each read from its page's substitution rule (rule 8); DEFINE STAGE is held
-  as prose without a reading until the checker accepts obligation numbers above 999. The DCM
+  prose-only variants, each read from its page's substitution rule (rule 8). DEFINE STAGE needs
+  obligation numbers above 999, which the checker accepts as `o1000` onwards, unpadded. The DCM
   `DEFINE` variants are valid only inside DCM project files, not as standalone SQL.
 - An unquoted identifier in place of a string literal is an observed neighbour, not a scored
   rejection (D106): Snowflake parses an identifier there and fails it later (OAUTH_ALLOWED_SCOPES,

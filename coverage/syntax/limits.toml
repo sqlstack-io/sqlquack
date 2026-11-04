@@ -12864,6 +12864,12 @@ grammar_sha256 = "prose:DEFINE WAREHOUSE"
 grammar = ["DEFINE WAREHOUSE <name> [ [ WITH ] [ WAREHOUSE_TYPE = { STANDARD | 'SNOWPARK-OPTIMIZED' | ADAPTIVE } ] [ WAREHOUSE_SIZE = { XSMALL | SMALL | MEDIUM | LARGE | XLARGE | XXLARGE | XXXLARGE | X4LARGE | X5LARGE | X6LARGE } ] [ GENERATION = { '1' | '2' } ] [ RESOURCE_CONSTRAINT = { STANDARD_GEN_1 | STANDARD_GEN_2 | MEMORY_1X | MEMORY_1X_x86 | MEMORY_16X | MEMORY_16X_x86 | MEMORY_64X | MEMORY_64X_x86 } ] [ MAX_CLUSTER_COUNT = <num> ] [ MIN_CLUSTER_COUNT = <num> ] [ SCALING_POLICY = { STANDARD | ECONOMY } ] [ AUTO_SUSPEND = { <num> | NULL } ] [ AUTO_RESUME = { TRUE | FALSE } ] [ INITIALLY_SUSPENDED = { TRUE | FALSE } ] [ RESOURCE_MONITOR = <monitor_name> ] [ COMMENT = '<string_literal>' ] [ ENABLE_QUERY_ACCELERATION = { TRUE | FALSE } ] [ QUERY_ACCELERATION_MAX_SCALE_FACTOR = <num> ] ] [ [ MAX_CONCURRENCY_LEVEL = <num> ] [ STATEMENT_QUEUED_TIMEOUT_IN_SECONDS = <num> ] [ STATEMENT_TIMEOUT_IN_SECONDS = <num> ] ]"]
 reason = "D104: the CREATE OR ALTER grammar with DEFINE in place of CREATE OR ALTER; derived from create-warehouse.create-or-alter-warehouse. The page says: A `DEFINE WAREHOUSE` statement uses the same syntax as CREATE OR ALTER WAREHOUSE, with the keyword `DEFINE` in place of `CREATE OR ALTER`. You can use `DEFINE WAREHOUSE` only inside DCM project definition files, not as standalone SQL."
 
+[[reading]]
+form = "sf.ddl.create-stage.define-stage"
+grammar_sha256 = "prose:DEFINE STAGE"
+grammar = ["DEFINE [ { TEMP | TEMPORARY } ] STAGE <internal_stage_name> [ ENCRYPTION = ( { TYPE = 'SNOWFLAKE_FULL' | TYPE = 'SNOWFLAKE_SSE' } ) ] [ DIRECTORY = ( ENABLE = { TRUE | FALSE } [ AUTO_REFRESH = { TRUE | FALSE } ] ) ] [ FILE_FORMAT = ( { FORMAT_NAME = '<file_format_name>' | { TYPE = CSV [ COMPRESSION = { AUTO | GZIP | BZ2 | BROTLI | ZSTD | DEFLATE | RAW_DEFLATE | NONE } ] [ RECORD_DELIMITER = { '<string>' | NONE } ] [ FIELD_DELIMITER = { '<string>' | NONE } ] [ MULTI_LINE = { TRUE | FALSE } ] [ FILE_EXTENSION = '<string>' ] [ PARSE_HEADER = { TRUE | FALSE } ] [ SKIP_HEADER = <integer> ] [ SKIP_BLANK_LINES = { TRUE | FALSE } ] [ DATE_FORMAT = { '<string>' | AUTO } ] [ TIME_FORMAT = { '<string>' | AUTO } ] [ TIMESTAMP_FORMAT = { '<string>' | AUTO } ] [ BINARY_FORMAT = { HEX | BASE64 | UTF8 } ] [ ESCAPE = { '<character>' | NONE } ] [ ESCAPE_UNENCLOSED_FIELD = { '<character>' | NONE } ] [ TRIM_SPACE = { TRUE | FALSE } ] [ FIELD_OPTIONALLY_ENCLOSED_BY = { '<character>' | NONE } ] [ NULL_IF = ( '<string>' [ , '<string>' ... ] ) ] [ ERROR_ON_COLUMN_COUNT_MISMATCH = { TRUE | FALSE } ] [ REPLACE_INVALID_CHARACTERS = { TRUE | FALSE } ] [ EMPTY_FIELD_AS_NULL = { TRUE | FALSE } ] [ SKIP_BYTE_ORDER_MARK = { TRUE | FALSE } ] [ ENCODING = { '<string>' | UTF8 } ] | TYPE = JSON [ COMPRESSION = { AUTO | GZIP | BZ2 | BROTLI | ZSTD | DEFLATE | RAW_DEFLATE | NONE } ] [ DATE_FORMAT = { '<string>' | AUTO } ] [ TIME_FORMAT = { '<string>' | AUTO } ] [ TIMESTAMP_FORMAT = { '<string>' | AUTO } ] [ BINARY_FORMAT = { HEX | BASE64 | UTF8 } ] [ TRIM_SPACE = { TRUE | FALSE } ] [ MULTI_LINE = { TRUE | FALSE } ] [ NULL_IF = ( '<string>' [ , '<string>' ... ] ) ] [ FILE_EXTENSION = '<string>' ] [ ENABLE_OCTAL = { TRUE | FALSE } ] [ ALLOW_DUPLICATE = { TRUE | FALSE } ] [ STRIP_OUTER_ARRAY = { TRUE | FALSE } ] [ STRIP_NULL_VALUES = { TRUE | FALSE } ] [ REPLACE_INVALID_CHARACTERS = { TRUE | FALSE } ] [ IGNORE_UTF8_ERRORS = { TRUE | FALSE } ] [ SKIP_BYTE_ORDER_MARK = { TRUE | FALSE } ] | TYPE = AVRO [ COMPRESSION = { AUTO | GZIP | BROTLI | ZSTD | DEFLATE | RAW_DEFLATE | NONE } ] [ TRIM_SPACE = { TRUE | FALSE } ] [ REPLACE_INVALID_CHARACTERS = { TRUE | FALSE } ] [ NULL_IF = ( '<string>' [ , '<string>' ... ] ) ] | TYPE = ORC [ TRIM_SPACE = { TRUE | FALSE } ] [ REPLACE_INVALID_CHARACTERS = { TRUE | FALSE } ] [ NULL_IF = ( '<string>' [ , '<string>' ... ] ) ] | TYPE = PARQUET [ COMPRESSION = { AUTO | LZO | SNAPPY | NONE } ] [ SNAPPY_COMPRESSION = { TRUE | FALSE } ] [ BINARY_AS_TEXT = { TRUE | FALSE } ] [ USE_LOGICAL_TYPE = { TRUE | FALSE } ] [ TRIM_SPACE = { TRUE | FALSE } ] [ USE_VECTORIZED_SCANNER = { TRUE | FALSE } ] [ REPLACE_INVALID_CHARACTERS = { TRUE | FALSE } ] [ NULL_IF = ( '<string>' [ , '<string>' ... ] ) ] | TYPE = XML [ COMPRESSION = { AUTO | GZIP | BZ2 | BROTLI | ZSTD | DEFLATE | RAW_DEFLATE | NONE } ] [ IGNORE_UTF8_ERRORS = { TRUE | FALSE } ] [ PRESERVE_SPACE = { TRUE | FALSE } ] [ STRIP_OUTER_ELEMENT = { TRUE | FALSE } ] [ DISABLE_AUTO_CONVERT = { TRUE | FALSE } ] [ REPLACE_INVALID_CHARACTERS = { TRUE | FALSE } ] [ SKIP_BYTE_ORDER_MARK = { TRUE | FALSE } ] | TYPE = CUSTOM } } ) ] [ COMMENT = '<string_literal>' ]", "DEFINE [ { TEMP | TEMPORARY } ] STAGE <external_stage_name> { { URL = '<protocol>://<bucket>[/<path>/]' [ AWS_ACCESS_POINT_ARN = '<string>' ] [ { STORAGE_INTEGRATION = <integration_name> } | { CREDENTIALS = ( { { AWS_KEY_ID = '<string>' AWS_SECRET_KEY = '<string>' [ AWS_TOKEN = '<string>' ] } | { AWS_ROLE = '<string>' } } ) } ] [ ENCRYPTION = ( { [ TYPE = 'AWS_CSE' ] MASTER_KEY = '<string>' | TYPE = 'AWS_SSE_S3' | TYPE = 'AWS_SSE_KMS' [ KMS_KEY_ID = '<string>' ] | TYPE = 'NONE' } ) ] [ USE_PRIVATELINK_ENDPOINT = { TRUE | FALSE } ] [ DIRECTORY = ( ENABLE = { TRUE | FALSE } [ REFRESH_ON_CREATE = { TRUE | FALSE } ] [ AUTO_REFRESH = { TRUE | FALSE } ] [ AWS_SNS_TOPIC = '<sns_topic_arn>' ] ) ] } | { URL = 's3compat://{bucket}[/{path}/]' ENDPOINT = '<s3_api_compatible_endpoint>' [ { CREDENTIALS = ( AWS_KEY_ID = '<string>' AWS_SECRET_KEY = '<string>' ) } ] } | { URL = 'gcs://<bucket>[/<path>/]' [ STORAGE_INTEGRATION = <integration_name> ] [ ENCRYPTION = ( { TYPE = 'GCS_SSE_KMS' [ KMS_KEY_ID = '<string>' ] | TYPE = 'NONE' } ) ] [ USE_PRIVATELINK_ENDPOINT = { TRUE | FALSE } ] [ DIRECTORY = ( ENABLE = { TRUE | FALSE } [ AUTO_REFRESH = { TRUE | FALSE } ] [ REFRESH_ON_CREATE = { TRUE | FALSE } ] [ NOTIFICATION_INTEGRATION = '<notification_integration_name>' ] ) ] } | { URL = 'azure://<account>.blob.core.windows.net/<container>[/<path>/]' [ { STORAGE_INTEGRATION = <integration_name> } | { CREDENTIALS = ( [ AZURE_SAS_TOKEN = '<string>' ] ) } ] [ ENCRYPTION = ( { TYPE = 'AZURE_CSE' MASTER_KEY = '<string>' | TYPE = 'NONE' } ) ] [ USE_PRIVATELINK_ENDPOINT = { TRUE | FALSE } ] [ DIRECTORY = ( ENABLE = { TRUE | FALSE } [ REFRESH_ON_CREATE = { TRUE | FALSE } ] [ AUTO_REFRESH = { TRUE | FALSE } ] [ NOTIFICATION_INTEGRATION = '<notification_integration_name>' ] ) ] } | { URL = 'azure://onelake.blob.fabric.microsoft.com/<workspace_id>/<item_id>/Files[/<path>/]' [ { STORAGE_INTEGRATION = <integration_name> } | { CREDENTIALS = ( [ AZURE_SAS_TOKEN = '<string>' ] ) } ] [ ENCRYPTION = ( { TYPE = 'AZURE_CSE' MASTER_KEY = '<string>' | TYPE = 'NONE' } ) ] } } [ FILE_FORMAT = ( { FORMAT_NAME = '<file_format_name>' | { TYPE = CSV [ COMPRESSION = { AUTO | GZIP | BZ2 | BROTLI | ZSTD | DEFLATE | RAW_DEFLATE | NONE } ] [ RECORD_DELIMITER = { '<string>' | NONE } ] [ FIELD_DELIMITER = { '<string>' | NONE } ] [ MULTI_LINE = { TRUE | FALSE } ] [ FILE_EXTENSION = '<string>' ] [ PARSE_HEADER = { TRUE | FALSE } ] [ SKIP_HEADER = <integer> ] [ SKIP_BLANK_LINES = { TRUE | FALSE } ] [ DATE_FORMAT = { '<string>' | AUTO } ] [ TIME_FORMAT = { '<string>' | AUTO } ] [ TIMESTAMP_FORMAT = { '<string>' | AUTO } ] [ BINARY_FORMAT = { HEX | BASE64 | UTF8 } ] [ ESCAPE = { '<character>' | NONE } ] [ ESCAPE_UNENCLOSED_FIELD = { '<character>' | NONE } ] [ TRIM_SPACE = { TRUE | FALSE } ] [ FIELD_OPTIONALLY_ENCLOSED_BY = { '<character>' | NONE } ] [ NULL_IF = ( '<string>' [ , '<string>' ... ] ) ] [ ERROR_ON_COLUMN_COUNT_MISMATCH = { TRUE | FALSE } ] [ REPLACE_INVALID_CHARACTERS = { TRUE | FALSE } ] [ EMPTY_FIELD_AS_NULL = { TRUE | FALSE } ] [ SKIP_BYTE_ORDER_MARK = { TRUE | FALSE } ] [ ENCODING = { '<string>' | UTF8 } ] | TYPE = JSON [ COMPRESSION = { AUTO | GZIP | BZ2 | BROTLI | ZSTD | DEFLATE | RAW_DEFLATE | NONE } ] [ DATE_FORMAT = { '<string>' | AUTO } ] [ TIME_FORMAT = { '<string>' | AUTO } ] [ TIMESTAMP_FORMAT = { '<string>' | AUTO } ] [ BINARY_FORMAT = { HEX | BASE64 | UTF8 } ] [ TRIM_SPACE = { TRUE | FALSE } ] [ MULTI_LINE = { TRUE | FALSE } ] [ NULL_IF = ( '<string>' [ , '<string>' ... ] ) ] [ FILE_EXTENSION = '<string>' ] [ ENABLE_OCTAL = { TRUE | FALSE } ] [ ALLOW_DUPLICATE = { TRUE | FALSE } ] [ STRIP_OUTER_ARRAY = { TRUE | FALSE } ] [ STRIP_NULL_VALUES = { TRUE | FALSE } ] [ REPLACE_INVALID_CHARACTERS = { TRUE | FALSE } ] [ IGNORE_UTF8_ERRORS = { TRUE | FALSE } ] [ SKIP_BYTE_ORDER_MARK = { TRUE | FALSE } ] | TYPE = AVRO [ COMPRESSION = { AUTO | GZIP | BROTLI | ZSTD | DEFLATE | RAW_DEFLATE | NONE } ] [ TRIM_SPACE = { TRUE | FALSE } ] [ REPLACE_INVALID_CHARACTERS = { TRUE | FALSE } ] [ NULL_IF = ( '<string>' [ , '<string>' ... ] ) ] | TYPE = ORC [ TRIM_SPACE = { TRUE | FALSE } ] [ REPLACE_INVALID_CHARACTERS = { TRUE | FALSE } ] [ NULL_IF = ( '<string>' [ , '<string>' ... ] ) ] | TYPE = PARQUET [ COMPRESSION = { AUTO | LZO | SNAPPY | NONE } ] [ SNAPPY_COMPRESSION = { TRUE | FALSE } ] [ BINARY_AS_TEXT = { TRUE | FALSE } ] [ USE_LOGICAL_TYPE = { TRUE | FALSE } ] [ TRIM_SPACE = { TRUE | FALSE } ] [ USE_VECTORIZED_SCANNER = { TRUE | FALSE } ] [ REPLACE_INVALID_CHARACTERS = { TRUE | FALSE } ] [ NULL_IF = ( '<string>' [ , '<string>' ... ] ) ] | TYPE = XML [ COMPRESSION = { AUTO | GZIP | BZ2 | BROTLI | ZSTD | DEFLATE | RAW_DEFLATE | NONE } ] [ IGNORE_UTF8_ERRORS = { TRUE | FALSE } ] [ PRESERVE_SPACE = { TRUE | FALSE } ] [ STRIP_OUTER_ELEMENT = { TRUE | FALSE } ] [ DISABLE_AUTO_CONVERT = { TRUE | FALSE } ] [ REPLACE_INVALID_CHARACTERS = { TRUE | FALSE } ] [ SKIP_BYTE_ORDER_MARK = { TRUE | FALSE } ] | TYPE = CUSTOM } } ) ] [ COMMENT = '<string_literal>' ]"]
+reason = "D104: the CREATE OR ALTER grammar with DEFINE in place of CREATE OR ALTER; derived from create-stage.create-or-alter-stage, create-stage.create-or-alter-stage.create-or-alter-stage. The page says: A `DEFINE STAGE` statement uses the same syntax as CREATE OR ALTER STAGE, with the keyword `DEFINE` in place of `CREATE OR ALTER`. You can use `DEFINE STAGE` only inside DCM project definition files, not as standalone SQL."
+
 # ddl: neighbours observed under D97 (the shape of an accepted statement, or a wrong-class call argument).
 
 [[suppress]]
@@ -13594,6 +13600,75 @@ target = "AFTER <string> [ , <string> , ... ]"
 note = "101 predecessor tasks against the documented maximum of 100"
 anchor = "doc.sql.create-task / Usage notes"
 sql = "DEFINE TASK d1.s1.v1 AFTER 'p1' , 'p2' , 'p3' , 'p4' , 'p5' , 'p6' , 'p7' , 'p8' , 'p9' , 'p10' , 'p11' , 'p12' , 'p13' , 'p14' , 'p15' , 'p16' , 'p17' , 'p18' , 'p19' , 'p20' , 'p21' , 'p22' , 'p23' , 'p24' , 'p25' , 'p26' , 'p27' , 'p28' , 'p29' , 'p30' , 'p31' , 'p32' , 'p33' , 'p34' , 'p35' , 'p36' , 'p37' , 'p38' , 'p39' , 'p40' , 'p41' , 'p42' , 'p43' , 'p44' , 'p45' , 'p46' , 'p47' , 'p48' , 'p49' , 'p50' , 'p51' , 'p52' , 'p53' , 'p54' , 'p55' , 'p56' , 'p57' , 'p58' , 'p59' , 'p60' , 'p61' , 'p62' , 'p63' , 'p64' , 'p65' , 'p66' , 'p67' , 'p68' , 'p69' , 'p70' , 'p71' , 'p72' , 'p73' , 'p74' , 'p75' , 'p76' , 'p77' , 'p78' , 'p79' , 'p80' , 'p81' , 'p82' , 'p83' , 'p84' , 'p85' , 'p86' , 'p87' , 'p88' , 'p89' , 'p90' , 'p91' , 'p92' , 'p93' , 'p94' , 'p95' , 'p96' , 'p97' , 'p98' , 'p99' , 'p100' , 'p101' AS SELECT 1 ;"
+expect = "observe"
+context = "raw"
+
+[[limit]]
+form = "sf.ddl.create-stage.define-stage"
+kind = "boundary_below"
+target = "FIELD_DELIMITER = '<string>'"
+note = "a FIELD_DELIMITER of 19 characters against the documented maximum of 20"
+anchor = "doc.sql.create-stage / Format type options"
+sql = "DEFINE STAGE d1.s1.v1 FILE_FORMAT = ( TYPE = CSV FIELD_DELIMITER = '|||||||||||||||||||' ) ;"
+expect = "accept"
+context = "raw"
+
+[[limit]]
+form = "sf.ddl.create-stage.define-stage"
+kind = "boundary_at"
+target = "FIELD_DELIMITER = '<string>'"
+note = "a FIELD_DELIMITER of 20 characters against the documented maximum of 20"
+anchor = "doc.sql.create-stage / Format type options"
+sql = "DEFINE STAGE d1.s1.v1 FILE_FORMAT = ( TYPE = CSV FIELD_DELIMITER = '||||||||||||||||||||' ) ;"
+expect = "accept"
+context = "raw"
+
+[[limit]]
+form = "sf.ddl.create-stage.define-stage"
+kind = "boundary_above"
+target = "FIELD_DELIMITER = '<string>'"
+note = "a FIELD_DELIMITER of 21 characters against the documented maximum of 20"
+anchor = "doc.sql.create-stage / Format type options"
+sql = "DEFINE STAGE d1.s1.v1 FILE_FORMAT = ( TYPE = CSV FIELD_DELIMITER = '|||||||||||||||||||||' ) ;"
+expect = "observe"
+context = "raw"
+
+[[limit]]
+form = "sf.ddl.create-stage.define-stage"
+kind = "boundary_below"
+target = "RECORD_DELIMITER = '<string>'"
+note = "a RECORD_DELIMITER of 19 characters against the documented maximum of 20"
+anchor = "doc.sql.create-stage / Format type options"
+sql = "DEFINE STAGE d1.s1.v1 FILE_FORMAT = ( TYPE = CSV RECORD_DELIMITER = '~~~~~~~~~~~~~~~~~~~' ) ;"
+expect = "accept"
+context = "raw"
+
+[[limit]]
+form = "sf.ddl.create-stage.define-stage"
+kind = "boundary_at"
+target = "RECORD_DELIMITER = '<string>'"
+note = "a RECORD_DELIMITER of 20 characters against the documented maximum of 20"
+anchor = "doc.sql.create-stage / Format type options"
+sql = "DEFINE STAGE d1.s1.v1 FILE_FORMAT = ( TYPE = CSV RECORD_DELIMITER = '~~~~~~~~~~~~~~~~~~~~' ) ;"
+expect = "accept"
+context = "raw"
+
+[[limit]]
+form = "sf.ddl.create-stage.define-stage"
+kind = "boundary_above"
+target = "RECORD_DELIMITER = '<string>'"
+note = "a RECORD_DELIMITER of 21 characters against the documented maximum of 20"
+anchor = "doc.sql.create-stage / Format type options"
+sql = "DEFINE STAGE d1.s1.v1 FILE_FORMAT = ( TYPE = CSV RECORD_DELIMITER = '~~~~~~~~~~~~~~~~~~~~~' ) ;"
+expect = "observe"
+context = "raw"
+
+[[limit]]
+form = "sf.ddl.create-stage.define-stage"
+kind = "negative_neighbour"
+note = "the form without its required { { AWS_KEY_ID = '<string>' AWS_SECRET_KEY = '<string>' [ AWS_TOKEN = '<string>' ] } | { AWS_ROLE = '<string>' } }, observed"
+anchor = "doc.sql.create-stage / Syntax"
+sql = "DEFINE STAGE d1.s1.v1 URL = 's3://b1/p1/' CREDENTIALS = ( ) ;"
 expect = "observe"
 context = "raw"
 

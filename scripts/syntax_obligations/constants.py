@@ -1328,6 +1328,7 @@ SCHEMA_REFERENCES: tuple[str, ...] = (
     "root_task_name",
     "finalizer_task_name",
     "search_service_name",
+    "external_stage_name",
 )
 DEFINE_QUALIFIED_NAMES: dict[str, tuple[str, str]] = {
     **dict.fromkeys(
@@ -1354,6 +1355,7 @@ DEFINE_QUALIFIED_NAMES: dict[str, tuple[str, str]] = {
         ("name", SCHEMA_QUALIFIER),
     ),
     "sf.ddl.create-table.define-table": ("table_name", SCHEMA_QUALIFIER),
+    "sf.ddl.create-stage.define-stage": ("internal_stage_name", SCHEMA_QUALIFIER),
     "sf.ddl.create-schema.define-schema": ("name", DATABASE_QUALIFIER),
     "sf.security_admin.create-database-role.define-database-role": ("name", DATABASE_QUALIFIER),
     "sf.ddl.create-database.define-database": ("", ""),
