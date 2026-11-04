@@ -894,3 +894,13 @@ note = "BY NAME ON (...) after EXCEPT is BigQuery's; Snowflake takes BY NAME onl
 id = "star_exclude_quoted_name"
 marker = "EXCLUDE(\""
 note = "SELECT * EXCLUDE (\"note\") excludes the case-sensitive column note, not NOTE; polyglot drops the quotes of a star's EXCLUDE names"
+
+# Statements polyglot keeps as one opaque command where SQLQuack parses them into structured nodes.
+# The check counts an entry only when polyglot's tree is a single command, SQLQuack's tree starts
+# with `sqlquack_node`, and the statement, without whitespace and ignoring case, contains `marker`.
+
+[[structured]]
+id = "snowflake_scripting_block"
+marker = "BEGIN"
+sqlquack_node = "scripting_block"
+note = "a Snowflake Scripting block parses into its declarations, statements and handlers; crates/sqlquack-syntax/tests/parser/test_scripting.rs pins the tree"

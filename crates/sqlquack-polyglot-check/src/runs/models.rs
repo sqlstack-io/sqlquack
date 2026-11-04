@@ -29,6 +29,8 @@ pub struct RunSummary {
     pub rejected: BTreeMap<String, usize>,
     /// Entries whose trees differ only by quoting polyglot drops, as a reviewed entry explains.
     pub kept_quoting: BTreeMap<String, usize>,
+    /// Entries polyglot keeps as a command and SQLQuack structures, as a reviewed entry explains.
+    pub structured: BTreeMap<String, usize>,
     /// Entries whose results differ.
     pub differences: Vec<Finding>,
     /// Entries whose lossless tokens do not reproduce the input.
