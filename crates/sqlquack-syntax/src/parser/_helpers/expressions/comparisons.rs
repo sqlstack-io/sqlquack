@@ -1537,7 +1537,11 @@ impl Parser {
     #[inline(never)]
     pub(crate) fn parse_power_tail(&mut self, mut left: Expression) -> Result<Expression> {
         loop {
-            if self.match_token(TokenType::DStar) {
+            if !matches!(
+                self.config.dialect,
+                Some(crate::tokens::models::DialectType::Snowflake)
+            ) && self.match_token(TokenType::DStar)
+            {
                 let right = self.parse_unary()?;
                 left = Expression::Power(Box::new(BinaryFunc {
                     original_name: Some("**".to_string()),

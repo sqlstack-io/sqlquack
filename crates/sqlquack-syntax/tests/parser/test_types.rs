@@ -40,3 +40,10 @@ pub(crate) struct CastTargetTestCase {
     pub(crate) type_text: &'static str,
     pub(crate) expected_same: bool,
 }
+
+pub(crate) struct AcceptanceTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) sql: &'static str,
+    pub(crate) dialect: Dialect,
+    pub(crate) expected_accepted: bool,
+}
