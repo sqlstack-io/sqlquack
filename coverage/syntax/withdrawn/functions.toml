@@ -11,7 +11,7 @@ reason = "D97: a whole argument of an ordinary function call is an <expr> to the
 [[withdrawn_class]]
 class = "identifier"
 derived_negative = "a string literal in place of an operand of class identifier"
-count = 100
+count = 88
 reason = "D97: a whole argument of an ordinary function call is an <expr> to the parser, so a wrong class there (an identifier, literal or query where the page names another) is a type or semantic question, not syntax, and is not lexically distinct under D82; class negatives stay where the slot is not an expression (keywords, types, @stage names, ON column lists, qualified-name parts, statement identifiers)"
 
 [[withdrawn_class]]
@@ -35,7 +35,7 @@ reason = "D97: a whole argument of an ordinary function call is an <expr> to the
 [[withdrawn_class]]
 class = "string_literal"
 derived_negative = "an unquoted identifier in place of an operand of class string_literal"
-count = 776
+count = 788
 reason = "D97: a whole argument of an ordinary function call is an <expr> to the parser, so a wrong class there (an identifier, literal or query where the page names another) is a type or semantic question, not syntax, and is not lexically distinct under D82; class negatives stay where the slot is not an expression (keywords, types, @stage names, ON column lists, qualified-name parts, statement identifiers)"
 
 [[withdrawn_class]]

@@ -105,10 +105,11 @@ required = true
 note = "the form without its required INGRESS"
 
 [[obligation]]
-id = "sf.security_admin.alter-account-set-ingress-policy.unset-ingress-policy.o005"
+id = "sf.security_admin.alter-account-set-ingress-policy.unset-ingress-policy.o006"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required POLICY"
+anchor = "doc.sql.alter-account-set-ingress-policy / Syntax"
+note = "the form without its required POLICY, observed"
 
 [[obligation]]
 id = "sf.security_admin.alter-account.add-organization-user-group.o001"
@@ -3682,13 +3683,6 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "sf.security_admin.alter-account.set-contact.o002"
-kind = "required_operand_missing"
-required = true
-target = "<purpose>"
-note = "omit <purpose>"
-
-[[obligation]]
 id = "sf.security_admin.alter-account.set-contact.o003"
 kind = "operand_type_class"
 required = true
@@ -3742,12 +3736,6 @@ required = true
 note = "the form without its required SET"
 
 [[obligation]]
-id = "sf.security_admin.alter-account.set-contact.o011"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required CONTACT"
-
-[[obligation]]
 id = "sf.security_admin.alter-account.set-contact.o012"
 kind = "identifier_class"
 required = true
@@ -3762,6 +3750,21 @@ required = true
 target = "<contact_name>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.security_admin.alter-account.set-contact.o014"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.alter-account / Syntax / Altering the current account"
+note = "the form without its required CONTACT, observed"
+
+[[obligation]]
+id = "sf.security_admin.alter-account.set-contact.o015"
+kind = "required_operand_missing"
+required = true
+target = "<purpose>"
+anchor = "doc.sql.alter-account / Syntax / Altering the current account"
+note = "omit <purpose>, observed"
 
 [[obligation]]
 id = "sf.security_admin.alter-account.set-data-movement-policy.o001"
@@ -3853,13 +3856,6 @@ id = "sf.security_admin.alter-account.set-domain-names.o001"
 kind = "positive"
 required = true
 note = "the documented form with every required part and no optional part"
-
-[[obligation]]
-id = "sf.security_admin.alter-account.set-domain-names.o002"
-kind = "required_operand_missing"
-required = true
-target = "<name>"
-note = "omit <name>"
 
 [[obligation]]
 id = "sf.security_admin.alter-account.set-domain-names.o003"
@@ -3956,17 +3952,18 @@ anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
+id = "sf.security_admin.alter-account.set-domain-names.o017"
+kind = "required_operand_missing"
+required = true
+target = "<name>"
+anchor = "doc.sql.alter-account / Syntax / Altering a different account"
+note = "omit <name>, observed"
+
+[[obligation]]
 id = "sf.security_admin.alter-account.set-edition.o001"
 kind = "positive"
 required = true
 note = "the documented form with every required part and no optional part"
-
-[[obligation]]
-id = "sf.security_admin.alter-account.set-edition.o002"
-kind = "required_operand_missing"
-required = true
-target = "<name>"
-note = "omit <name>"
 
 [[obligation]]
 id = "sf.security_admin.alter-account.set-edition.o003"
@@ -4039,6 +4036,14 @@ required = true
 target = "<name>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.security_admin.alter-account.set-edition.o014"
+kind = "required_operand_missing"
+required = true
+target = "<name>"
+anchor = "doc.sql.alter-account / Syntax / Altering a different account"
+note = "omit <name>, observed"
 
 [[obligation]]
 id = "sf.security_admin.alter-account.set-feature-policy-for.o001"
@@ -4338,13 +4343,6 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "sf.security_admin.alter-account.set-is-org-admin-true-false.o002"
-kind = "required_operand_missing"
-required = true
-target = "<name>"
-note = "omit <name>"
-
-[[obligation]]
 id = "sf.security_admin.alter-account.set-is-org-admin-true-false.o003"
 kind = "operand_type_class"
 required = true
@@ -4409,6 +4407,14 @@ required = true
 target = "<name>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.security_admin.alter-account.set-is-org-admin-true-false.o013"
+kind = "required_operand_missing"
+required = true
+target = "<name>"
+anchor = "doc.sql.alter-account / Syntax / Altering a different account"
+note = "omit <name>, observed"
 
 [[obligation]]
 id = "sf.security_admin.alter-account.set-maintenance-policy-for.o001"
@@ -4684,13 +4690,6 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "sf.security_admin.alter-account.set-tag.o002"
-kind = "required_operand_missing"
-required = true
-target = "<tag_name>"
-note = "omit <tag_name>"
-
-[[obligation]]
 id = "sf.security_admin.alter-account.set-tag.o003"
 kind = "operand_type_class"
 required = true
@@ -4751,12 +4750,6 @@ required = true
 note = "the form without its required SET"
 
 [[obligation]]
-id = "sf.security_admin.alter-account.set-tag.o012"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required TAG"
-
-[[obligation]]
 id = "sf.security_admin.alter-account.set-tag.o013"
 kind = "identifier_class"
 required = true
@@ -4797,17 +4790,25 @@ anchor = "doc.sql.alter-account / Parameters"
 note = "a tag value of 257 characters against the documented maximum of 256"
 
 [[obligation]]
+id = "sf.security_admin.alter-account.set-tag.o018"
+kind = "required_operand_missing"
+required = true
+target = "<tag_name>"
+anchor = "doc.sql.alter-account / Syntax / Altering the current account"
+note = "omit <tag_name>, observed"
+
+[[obligation]]
+id = "sf.security_admin.alter-account.set-tag.o019"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.alter-account / Syntax / Altering the current account"
+note = "the form without its required TAG, observed"
+
+[[obligation]]
 id = "sf.security_admin.alter-account.set-tenant-type-internal-external.o001"
 kind = "positive"
 required = true
 note = "the documented form with every required part and no optional part"
-
-[[obligation]]
-id = "sf.security_admin.alter-account.set-tenant-type-internal-external.o002"
-kind = "required_operand_missing"
-required = true
-target = "<name>"
-note = "omit <name>"
 
 [[obligation]]
 id = "sf.security_admin.alter-account.set-tenant-type-internal-external.o003"
@@ -4874,6 +4875,14 @@ required = true
 target = "<name>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.security_admin.alter-account.set-tenant-type-internal-external.o013"
+kind = "required_operand_missing"
+required = true
+target = "<name>"
+anchor = "doc.sql.alter-account / Syntax / Altering a different account"
+note = "omit <name>, observed"
 
 [[obligation]]
 id = "sf.security_admin.alter-account.unset.o001"

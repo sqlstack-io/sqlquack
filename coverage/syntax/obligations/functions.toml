@@ -43409,39 +43409,39 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "sf.functions.model-monitor-drift-metric.model-monitor-drift-metric.o002"
+id = "sf.functions.model-monitor-drift-metric.model-monitor-drift-metric.o035"
 kind = "required_operand_missing"
 required = true
-target = "<model_monitor_name>"
-note = "omit <model_monitor_name>"
+target = "'<model_monitor_name>'"
+note = "omit '<model_monitor_name>'"
 
 [[obligation]]
-id = "sf.functions.model-monitor-drift-metric.model-monitor-drift-metric.o003"
+id = "sf.functions.model-monitor-drift-metric.model-monitor-drift-metric.o036"
 kind = "operand_type_class"
 required = true
-target = "<model_monitor_name>"
-note = "a valid identifier"
+target = "'<model_monitor_name>'"
+note = "a valid string_literal"
 
 [[obligation]]
-id = "sf.functions.model-monitor-drift-metric.model-monitor-drift-metric.o005"
+id = "sf.functions.model-monitor-drift-metric.model-monitor-drift-metric.o037"
 kind = "required_operand_missing"
 required = true
-target = "<drift_metric_name>"
-note = "omit <drift_metric_name>"
+target = "'<drift_metric_name>'"
+note = "omit '<drift_metric_name>'"
 
 [[obligation]]
-id = "sf.functions.model-monitor-drift-metric.model-monitor-drift-metric.o006"
+id = "sf.functions.model-monitor-drift-metric.model-monitor-drift-metric.o038"
 kind = "operand_type_class"
 required = true
-target = "<drift_metric_name>"
-note = "a valid identifier"
+target = "'<drift_metric_name>'"
+note = "a valid string_literal"
 
 [[obligation]]
-id = "sf.functions.model-monitor-drift-metric.model-monitor-drift-metric.o009"
+id = "sf.functions.model-monitor-drift-metric.model-monitor-drift-metric.o039"
 kind = "operand_type_class"
 required = true
-target = "<column_name>"
-note = "a valid identifier"
+target = "'<column_name>'"
+note = "a valid string_literal"
 
 [[obligation]]
 id = "sf.functions.model-monitor-drift-metric.model-monitor-drift-metric.o011"
@@ -43560,100 +43560,52 @@ required = true
 note = "the form without its required )"
 
 [[obligation]]
-id = "sf.functions.model-monitor-drift-metric.model-monitor-drift-metric.o029"
-kind = "identifier_class"
-required = true
-target = "<model_monitor_name>"
-anchor = "doc.identifiers-syntax"
-note = "quoted: a double-quoted identifier with blanks and mixed case"
-
-[[obligation]]
-id = "sf.functions.model-monitor-drift-metric.model-monitor-drift-metric.o030"
-kind = "identifier_class"
-required = true
-target = "<model_monitor_name>"
-anchor = "doc.identifiers-syntax"
-note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
-
-[[obligation]]
-id = "sf.functions.model-monitor-drift-metric.model-monitor-drift-metric.o031"
-kind = "identifier_class"
-required = true
-target = "<drift_metric_name>"
-anchor = "doc.identifiers-syntax"
-note = "quoted: a double-quoted identifier with blanks and mixed case"
-
-[[obligation]]
-id = "sf.functions.model-monitor-drift-metric.model-monitor-drift-metric.o032"
-kind = "identifier_class"
-required = true
-target = "<drift_metric_name>"
-anchor = "doc.identifiers-syntax"
-note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
-
-[[obligation]]
-id = "sf.functions.model-monitor-drift-metric.model-monitor-drift-metric.o033"
-kind = "identifier_class"
-required = true
-target = "<column_name>"
-anchor = "doc.identifiers-syntax"
-note = "quoted: a double-quoted identifier with blanks and mixed case"
-
-[[obligation]]
-id = "sf.functions.model-monitor-drift-metric.model-monitor-drift-metric.o034"
-kind = "identifier_class"
-required = true
-target = "<column_name>"
-anchor = "doc.identifiers-syntax"
-note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
-
-[[obligation]]
 id = "sf.functions.model-monitor-drift-metric.model-monitor-drift-metric-service-base-service.o001"
 kind = "positive"
 required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "sf.functions.model-monitor-drift-metric.model-monitor-drift-metric-service-base-service.o002"
+id = "sf.functions.model-monitor-drift-metric.model-monitor-drift-metric-service-base-service.o043"
 kind = "required_operand_missing"
 required = true
-target = "<model_monitor_name>"
-note = "omit <model_monitor_name>"
+target = "'<model_monitor_name>'"
+note = "omit '<model_monitor_name>'"
 
 [[obligation]]
-id = "sf.functions.model-monitor-drift-metric.model-monitor-drift-metric-service-base-service.o003"
+id = "sf.functions.model-monitor-drift-metric.model-monitor-drift-metric-service-base-service.o044"
 kind = "operand_type_class"
 required = true
-target = "<model_monitor_name>"
-note = "a valid identifier"
+target = "'<model_monitor_name>'"
+note = "a valid string_literal"
 
 [[obligation]]
-id = "sf.functions.model-monitor-drift-metric.model-monitor-drift-metric-service-base-service.o005"
+id = "sf.functions.model-monitor-drift-metric.model-monitor-drift-metric-service-base-service.o045"
 kind = "required_operand_missing"
 required = true
-target = "<drift_metric_name>"
-note = "omit <drift_metric_name>"
+target = "'<drift_metric_name>'"
+note = "omit '<drift_metric_name>'"
 
 [[obligation]]
-id = "sf.functions.model-monitor-drift-metric.model-monitor-drift-metric-service-base-service.o006"
+id = "sf.functions.model-monitor-drift-metric.model-monitor-drift-metric-service-base-service.o046"
 kind = "operand_type_class"
 required = true
-target = "<drift_metric_name>"
-note = "a valid identifier"
+target = "'<drift_metric_name>'"
+note = "a valid string_literal"
 
 [[obligation]]
-id = "sf.functions.model-monitor-drift-metric.model-monitor-drift-metric-service-base-service.o008"
+id = "sf.functions.model-monitor-drift-metric.model-monitor-drift-metric-service-base-service.o047"
 kind = "required_operand_missing"
 required = true
-target = "<column_name>"
-note = "omit <column_name>"
+target = "'<column_name>'"
+note = "omit '<column_name>'"
 
 [[obligation]]
-id = "sf.functions.model-monitor-drift-metric.model-monitor-drift-metric-service-base-service.o009"
+id = "sf.functions.model-monitor-drift-metric.model-monitor-drift-metric-service-base-service.o048"
 kind = "operand_type_class"
 required = true
-target = "<column_name>"
-note = "a valid identifier"
+target = "'<column_name>'"
+note = "a valid string_literal"
 
 [[obligation]]
 id = "sf.functions.model-monitor-drift-metric.model-monitor-drift-metric-service-base-service.o011"
@@ -43784,54 +43736,6 @@ id = "sf.functions.model-monitor-drift-metric.model-monitor-drift-metric-service
 kind = "negative_neighbour"
 required = true
 note = "the form without its required )"
-
-[[obligation]]
-id = "sf.functions.model-monitor-drift-metric.model-monitor-drift-metric-service-base-service.o033"
-kind = "identifier_class"
-required = true
-target = "<model_monitor_name>"
-anchor = "doc.identifiers-syntax"
-note = "quoted: a double-quoted identifier with blanks and mixed case"
-
-[[obligation]]
-id = "sf.functions.model-monitor-drift-metric.model-monitor-drift-metric-service-base-service.o034"
-kind = "identifier_class"
-required = true
-target = "<model_monitor_name>"
-anchor = "doc.identifiers-syntax"
-note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
-
-[[obligation]]
-id = "sf.functions.model-monitor-drift-metric.model-monitor-drift-metric-service-base-service.o035"
-kind = "identifier_class"
-required = true
-target = "<drift_metric_name>"
-anchor = "doc.identifiers-syntax"
-note = "quoted: a double-quoted identifier with blanks and mixed case"
-
-[[obligation]]
-id = "sf.functions.model-monitor-drift-metric.model-monitor-drift-metric-service-base-service.o036"
-kind = "identifier_class"
-required = true
-target = "<drift_metric_name>"
-anchor = "doc.identifiers-syntax"
-note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
-
-[[obligation]]
-id = "sf.functions.model-monitor-drift-metric.model-monitor-drift-metric-service-base-service.o037"
-kind = "identifier_class"
-required = true
-target = "<column_name>"
-anchor = "doc.identifiers-syntax"
-note = "quoted: a double-quoted identifier with blanks and mixed case"
-
-[[obligation]]
-id = "sf.functions.model-monitor-drift-metric.model-monitor-drift-metric-service-base-service.o038"
-kind = "identifier_class"
-required = true
-target = "<column_name>"
-anchor = "doc.identifiers-syntax"
-note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
 id = "sf.functions.model-monitor-drift-metric.model-monitor-drift-metric-service-base-service.o039"
@@ -44175,39 +44079,39 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "sf.functions.model-monitor-stat-metric.model-monitor-stat-metric.o002"
+id = "sf.functions.model-monitor-stat-metric.model-monitor-stat-metric.o035"
 kind = "required_operand_missing"
 required = true
-target = "<model_monitor_name>"
-note = "omit <model_monitor_name>"
+target = "'<model_monitor_name>'"
+note = "omit '<model_monitor_name>'"
 
 [[obligation]]
-id = "sf.functions.model-monitor-stat-metric.model-monitor-stat-metric.o003"
+id = "sf.functions.model-monitor-stat-metric.model-monitor-stat-metric.o036"
 kind = "operand_type_class"
 required = true
-target = "<model_monitor_name>"
-note = "a valid identifier"
+target = "'<model_monitor_name>'"
+note = "a valid string_literal"
 
 [[obligation]]
-id = "sf.functions.model-monitor-stat-metric.model-monitor-stat-metric.o005"
+id = "sf.functions.model-monitor-stat-metric.model-monitor-stat-metric.o037"
 kind = "required_operand_missing"
 required = true
-target = "<stat_metric_name>"
-note = "omit <stat_metric_name>"
+target = "'<stat_metric_name>'"
+note = "omit '<stat_metric_name>'"
 
 [[obligation]]
-id = "sf.functions.model-monitor-stat-metric.model-monitor-stat-metric.o006"
+id = "sf.functions.model-monitor-stat-metric.model-monitor-stat-metric.o038"
 kind = "operand_type_class"
 required = true
-target = "<stat_metric_name>"
-note = "a valid identifier"
+target = "'<stat_metric_name>'"
+note = "a valid string_literal"
 
 [[obligation]]
-id = "sf.functions.model-monitor-stat-metric.model-monitor-stat-metric.o009"
+id = "sf.functions.model-monitor-stat-metric.model-monitor-stat-metric.o039"
 kind = "operand_type_class"
 required = true
-target = "<column_name>"
-note = "a valid identifier"
+target = "'<column_name>'"
+note = "a valid string_literal"
 
 [[obligation]]
 id = "sf.functions.model-monitor-stat-metric.model-monitor-stat-metric.o011"
@@ -44326,100 +44230,52 @@ required = true
 note = "the form without its required )"
 
 [[obligation]]
-id = "sf.functions.model-monitor-stat-metric.model-monitor-stat-metric.o029"
-kind = "identifier_class"
-required = true
-target = "<model_monitor_name>"
-anchor = "doc.identifiers-syntax"
-note = "quoted: a double-quoted identifier with blanks and mixed case"
-
-[[obligation]]
-id = "sf.functions.model-monitor-stat-metric.model-monitor-stat-metric.o030"
-kind = "identifier_class"
-required = true
-target = "<model_monitor_name>"
-anchor = "doc.identifiers-syntax"
-note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
-
-[[obligation]]
-id = "sf.functions.model-monitor-stat-metric.model-monitor-stat-metric.o031"
-kind = "identifier_class"
-required = true
-target = "<stat_metric_name>"
-anchor = "doc.identifiers-syntax"
-note = "quoted: a double-quoted identifier with blanks and mixed case"
-
-[[obligation]]
-id = "sf.functions.model-monitor-stat-metric.model-monitor-stat-metric.o032"
-kind = "identifier_class"
-required = true
-target = "<stat_metric_name>"
-anchor = "doc.identifiers-syntax"
-note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
-
-[[obligation]]
-id = "sf.functions.model-monitor-stat-metric.model-monitor-stat-metric.o033"
-kind = "identifier_class"
-required = true
-target = "<column_name>"
-anchor = "doc.identifiers-syntax"
-note = "quoted: a double-quoted identifier with blanks and mixed case"
-
-[[obligation]]
-id = "sf.functions.model-monitor-stat-metric.model-monitor-stat-metric.o034"
-kind = "identifier_class"
-required = true
-target = "<column_name>"
-anchor = "doc.identifiers-syntax"
-note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
-
-[[obligation]]
 id = "sf.functions.model-monitor-stat-metric.model-monitor-stat-metric-service.o001"
 kind = "positive"
 required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "sf.functions.model-monitor-stat-metric.model-monitor-stat-metric-service.o002"
+id = "sf.functions.model-monitor-stat-metric.model-monitor-stat-metric-service.o037"
 kind = "required_operand_missing"
 required = true
-target = "<model_monitor_name>"
-note = "omit <model_monitor_name>"
+target = "'<model_monitor_name>'"
+note = "omit '<model_monitor_name>'"
 
 [[obligation]]
-id = "sf.functions.model-monitor-stat-metric.model-monitor-stat-metric-service.o003"
+id = "sf.functions.model-monitor-stat-metric.model-monitor-stat-metric-service.o038"
 kind = "operand_type_class"
 required = true
-target = "<model_monitor_name>"
-note = "a valid identifier"
+target = "'<model_monitor_name>'"
+note = "a valid string_literal"
 
 [[obligation]]
-id = "sf.functions.model-monitor-stat-metric.model-monitor-stat-metric-service.o005"
+id = "sf.functions.model-monitor-stat-metric.model-monitor-stat-metric-service.o039"
 kind = "required_operand_missing"
 required = true
-target = "<stat_metric_name>"
-note = "omit <stat_metric_name>"
+target = "'<stat_metric_name>'"
+note = "omit '<stat_metric_name>'"
 
 [[obligation]]
-id = "sf.functions.model-monitor-stat-metric.model-monitor-stat-metric-service.o006"
+id = "sf.functions.model-monitor-stat-metric.model-monitor-stat-metric-service.o040"
 kind = "operand_type_class"
 required = true
-target = "<stat_metric_name>"
-note = "a valid identifier"
+target = "'<stat_metric_name>'"
+note = "a valid string_literal"
 
 [[obligation]]
-id = "sf.functions.model-monitor-stat-metric.model-monitor-stat-metric-service.o008"
+id = "sf.functions.model-monitor-stat-metric.model-monitor-stat-metric-service.o041"
 kind = "required_operand_missing"
 required = true
-target = "<column_name>"
-note = "omit <column_name>"
+target = "'<column_name>'"
+note = "omit '<column_name>'"
 
 [[obligation]]
-id = "sf.functions.model-monitor-stat-metric.model-monitor-stat-metric-service.o009"
+id = "sf.functions.model-monitor-stat-metric.model-monitor-stat-metric-service.o042"
 kind = "operand_type_class"
 required = true
-target = "<column_name>"
-note = "a valid identifier"
+target = "'<column_name>'"
+note = "a valid string_literal"
 
 [[obligation]]
 id = "sf.functions.model-monitor-stat-metric.model-monitor-stat-metric-service.o011"
@@ -44530,54 +44386,6 @@ id = "sf.functions.model-monitor-stat-metric.model-monitor-stat-metric-service.o
 kind = "negative_neighbour"
 required = true
 note = "the form without its required )"
-
-[[obligation]]
-id = "sf.functions.model-monitor-stat-metric.model-monitor-stat-metric-service.o029"
-kind = "identifier_class"
-required = true
-target = "<model_monitor_name>"
-anchor = "doc.identifiers-syntax"
-note = "quoted: a double-quoted identifier with blanks and mixed case"
-
-[[obligation]]
-id = "sf.functions.model-monitor-stat-metric.model-monitor-stat-metric-service.o030"
-kind = "identifier_class"
-required = true
-target = "<model_monitor_name>"
-anchor = "doc.identifiers-syntax"
-note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
-
-[[obligation]]
-id = "sf.functions.model-monitor-stat-metric.model-monitor-stat-metric-service.o031"
-kind = "identifier_class"
-required = true
-target = "<stat_metric_name>"
-anchor = "doc.identifiers-syntax"
-note = "quoted: a double-quoted identifier with blanks and mixed case"
-
-[[obligation]]
-id = "sf.functions.model-monitor-stat-metric.model-monitor-stat-metric-service.o032"
-kind = "identifier_class"
-required = true
-target = "<stat_metric_name>"
-anchor = "doc.identifiers-syntax"
-note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
-
-[[obligation]]
-id = "sf.functions.model-monitor-stat-metric.model-monitor-stat-metric-service.o033"
-kind = "identifier_class"
-required = true
-target = "<column_name>"
-anchor = "doc.identifiers-syntax"
-note = "quoted: a double-quoted identifier with blanks and mixed case"
-
-[[obligation]]
-id = "sf.functions.model-monitor-stat-metric.model-monitor-stat-metric-service.o034"
-kind = "identifier_class"
-required = true
-target = "<column_name>"
-anchor = "doc.identifiers-syntax"
-note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
 id = "sf.functions.model-monitor-stat-metric.model-monitor-stat-metric-service.o035"

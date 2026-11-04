@@ -58250,3 +58250,176 @@ anchor = "doc.classes.top-insights.commands.show-top-insights / Syntax"
 sql = "SHOW SNOWFLAKE . . TOP_INSIGHTS ;"
 expect = "observe"
 context = "raw"
+
+[[reading]]
+form = "sf.functions.model-monitor-drift-metric.model-monitor-drift-metric"
+grammar_sha256 = "77ca5bf0ff6ee1a58d2baf72a2123e1b7790451c30bd9129a478792944c59841"
+grammar = ["MODEL_MONITOR_DRIFT_METRIC( '<model_monitor_name>' , '<drift_metric_name>' , '<column_name>' [ , <granularity> [ , <start_time> [ , <end_time> [ , <extra_args> ] ] ] ] )"]
+reason = "D118: the monitor, metric and column names are strings: the page lists metrics as quoted values and its examples pass 'MY_MONITOR', 'DIFFERENCE_OF_MEANS', 'MODEL_PREDICTION'"
+
+[[reading]]
+form = "sf.functions.model-monitor-drift-metric.model-monitor-drift-metric-service-base-service"
+grammar_sha256 = "ed35e1182a792a3f94b4b17608b77557f2245a24bf44779c5a75e59b116e9ec5"
+grammar = ["MODEL_MONITOR_DRIFT_METRIC( '<model_monitor_name>' , '<drift_metric_name>' , '<column_name>' [ , <granularity> [ , <start_time> [ , <end_time> ] ] ] , SERVICE => <service_name> , BASE_SERVICE => <base_service_name> )"]
+reason = "D118: the monitor, metric and column names are strings: the page lists metrics as quoted values and its examples pass 'MY_MONITOR', 'DIFFERENCE_OF_MEANS', 'MODEL_PREDICTION'"
+
+[[reading]]
+form = "sf.functions.model-monitor-stat-metric.model-monitor-stat-metric"
+grammar_sha256 = "4b6d77ed3dcf2cbb5c49e5ef95d1dbc5653761074b6445ebe6179a0511c62bc9"
+grammar = ["MODEL_MONITOR_STAT_METRIC( '<model_monitor_name>' , '<stat_metric_name>' , '<column_name>' [ , <granularity> [ , <start_time> [ , <end_time> [ , <extra_args> ] ] ] ] )"]
+reason = "D118: the monitor, metric and column names are strings: the page lists metrics as quoted values and its examples pass 'MY_MONITOR', 'COUNT', 'MODEL_PREDICTION'"
+
+[[reading]]
+form = "sf.functions.model-monitor-stat-metric.model-monitor-stat-metric-service"
+grammar_sha256 = "7de697c65685fa9509393c0b3a93c1f1ac7b190061e28f0daa8770b6787b9b28"
+grammar = ["MODEL_MONITOR_STAT_METRIC( '<model_monitor_name>' , '<stat_metric_name>' , '<column_name>' [ , <granularity> [ , <start_time> [ , <end_time> ] ] ] , SERVICE => <service_name> )"]
+reason = "D118: the monitor, metric and column names are strings: the page lists metrics as quoted values and its examples pass 'MY_MONITOR', 'COUNT', 'MODEL_PREDICTION'"
+
+# D113 security_admin receipt triage (import 61): remaining contradictions observed, each reason names its category and receipt.
+
+[[suppress]]
+form = "sf.security_admin.alter-account-set-ingress-policy.unset-ingress-policy"
+kind = "negative_neighbour"
+note = "the form without its required POLICY"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 1420 SQLSTATE 22023, phase semantic_error, import-20261104-61), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.alter-account-set-ingress-policy.unset-ingress-policy"
+kind = "negative_neighbour"
+note = "the form without its required POLICY, observed"
+anchor = "doc.sql.alter-account-set-ingress-policy / Syntax"
+sql = "ALTER ACCOUNT UNSET INGRESS ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-account.set-contact"
+kind = "negative_neighbour"
+note = "the form without its required CONTACT"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 1420 SQLSTATE 22023, phase semantic_error, import-20261104-61), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.alter-account.set-contact"
+kind = "negative_neighbour"
+note = "the form without its required CONTACT, observed"
+anchor = "doc.sql.alter-account / Syntax / Altering the current account"
+sql = "ALTER ACCOUNT SET STEWARD = v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-account.set-contact"
+kind = "required_operand_missing"
+target = "<purpose>"
+note = "omit <purpose>"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 1420 SQLSTATE 22023, phase semantic_error, import-20261104-61), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.alter-account.set-contact"
+kind = "required_operand_missing"
+target = "<purpose>"
+note = "omit <purpose>, observed"
+anchor = "doc.sql.alter-account / Syntax / Altering the current account"
+sql = "ALTER ACCOUNT SET CONTACT = v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-account.set-domain-names"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 02000, phase semantic_error, import-20261104-61), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.alter-account.set-domain-names"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>, observed"
+anchor = "doc.sql.alter-account / Syntax / Altering a different account"
+sql = "ALTER ACCOUNT SET DOMAIN_NAMES = ( 'm' ) ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-account.set-edition"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 02000, phase semantic_error, import-20261104-61), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.alter-account.set-edition"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>, observed"
+anchor = "doc.sql.alter-account / Syntax / Altering a different account"
+sql = "ALTER ACCOUNT SET EDITION = 'STANDARD' ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-account.set-is-org-admin-true-false"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 02000, phase semantic_error, import-20261104-61), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.alter-account.set-is-org-admin-true-false"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>, observed"
+anchor = "doc.sql.alter-account / Syntax / Altering a different account"
+sql = "ALTER ACCOUNT SET IS_ORG_ADMIN = TRUE ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-account.set-tag"
+kind = "required_operand_missing"
+target = "<tag_name>"
+note = "omit <tag_name>"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 1420 SQLSTATE 22023, phase semantic_error, import-20261104-61), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.alter-account.set-tag"
+kind = "required_operand_missing"
+target = "<tag_name>"
+note = "omit <tag_name>, observed"
+anchor = "doc.sql.alter-account / Syntax / Altering the current account"
+sql = "ALTER ACCOUNT SET TAG = 'm' ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-account.set-tag"
+kind = "negative_neighbour"
+note = "the form without its required TAG"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 1420 SQLSTATE 22023, phase semantic_error, import-20261104-61), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.alter-account.set-tag"
+kind = "negative_neighbour"
+note = "the form without its required TAG, observed"
+anchor = "doc.sql.alter-account / Syntax / Altering the current account"
+sql = "ALTER ACCOUNT SET v1 = 'm' ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-account.set-tenant-type-internal-external"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 02000, phase semantic_error, import-20261104-61), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.alter-account.set-tenant-type-internal-external"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>, observed"
+anchor = "doc.sql.alter-account / Syntax / Altering a different account"
+sql = "ALTER ACCOUNT SET TENANT_TYPE = INTERNAL ;"
+expect = "observe"
+context = "raw"
