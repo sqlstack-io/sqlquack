@@ -4,10 +4,12 @@ use std::process::Command;
 
 use sqlquack_syntax::{CallMode, Dialect, Expression, ExpressionWalk, ParseOptions};
 
-use crate::check::models::LocalVerdict;
+use crate::check::models::{LocalFailure, LocalVerdict};
 
 /// The parser crate, relative to the repository root.
 const PARSER_PATH: &str = "crates/sqlquack-syntax";
+/// The code prefix of every complexity-guard error, which is never a syntax verdict.
+const GUARD_PREFIX: &str = "E_GUARD_";
 
 /// SQLQuack's Snowflake verdict; a Command or Raw node anywhere makes the parse opaque.
 pub(crate) fn snowflake_verdict(sql: &str) -> LocalVerdict {
@@ -23,6 +25,11 @@ pub(crate) fn snowflake_verdict(sql: &str) -> LocalVerdict {
                     .contains(|node| matches!(node, Expression::Command(_) | Expression::Raw(_)))
             }),
         },
+        Err(sqlquack_syntax::Error::Parse { message, .. }) if message.starts_with(GUARD_PREFIX) => {
+            LocalVerdict::Failed {
+                failure: LocalFailure::Guard,
+            }
+        }
         Err(_) => LocalVerdict::Rejected,
     }
 }

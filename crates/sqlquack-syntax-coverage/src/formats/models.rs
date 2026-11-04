@@ -189,6 +189,8 @@ pub enum ObligationKind {
     Interaction,
     /// One case using every independent option of the form together.
     InteractionAllOptions,
+    /// A size or nesting value with no documented bound (decision D90).
+    Extreme,
 }
 
 /// One line of `cases/<family>.jsonl`.
@@ -222,6 +224,10 @@ pub enum Expect {
     Accept,
     /// A syntax error.
     Reject,
+    /// An extreme case Snowflake has not answered yet; never satisfied (decision D90).
+    Observe,
+    /// An extreme case Snowflake refused: any clean local verdict passes (decision D92).
+    Terminates,
 }
 
 /// Where an accepted case is expected to fail after parsing.

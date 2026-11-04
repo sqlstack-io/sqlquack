@@ -695,6 +695,30 @@ fn given_a_format_fault_when_loading_then_the_problem_is_named() {
             expected_problem: "diagnostic sf.query.select.o001: not an obligation of form",
         },
         FormatFaultTestCase {
+            description: "an extreme obligation without its note",
+            mutate: |root| {
+                replace(
+                    root,
+                    "obligations/query.toml",
+                    "kind = \"positive\"",
+                    "kind = \"extreme\"",
+                )
+            },
+            expected_problem: "obligation sf.query.select.o001: extreme is required and needs a note",
+        },
+        FormatFaultTestCase {
+            description: "an extreme obligation with a target",
+            mutate: |root| {
+                replace(
+                    root,
+                    "obligations/query.toml",
+                    "kind = \"positive\"",
+                    "kind = \"extreme\"\nnote = \"no documented bound\"\ntarget = \"x\"",
+                )
+            },
+            expected_problem: "takes no target, nor does extreme",
+        },
+        FormatFaultTestCase {
             description: "an obligation id declared twice",
             mutate: |root| replace(root, "obligations/query.toml", "o002", "o001"),
             expected_problem: "sf.query.select.o001: declared twice",

@@ -81,8 +81,8 @@ An `[[obligation]]` has these fields:
 - `id`: `<form id>.o<NNN>`, where `o000` is never used.
 - `kind`: one of `alternative`, `option_present`, `option_absent`, `required_operand_missing`,
   `operand_type_class`, `positive`, `negative_neighbour`, `boundary_below`, `boundary_at`,
-  `boundary_above`, `identifier_class`, `nesting_depth`, `interaction` or
-  `interaction_all_options`.
+  `boundary_above`, `identifier_class`, `nesting_depth`, `interaction`,
+  `interaction_all_options` or `extreme`.
   - `operand_type_class`: a valid operand of the named class parses. A wrong-class operand is a
     `negative_neighbour` whose `target` names the operand.
   - `interaction`: two options or alternatives whose combination a page's usage notes constrain.
@@ -90,6 +90,9 @@ An `[[obligation]]` has these fields:
   - `interaction_all_options`: one per form with two or more independent options. A case that
     uses every option together satisfies it. It takes no `target`, `pair` or `depths`
     (decision D82).
+  - `extreme`: a size or nesting value with no documented bound, such as 100 nested blocks or
+    5,000 list items (decision D90). It takes no `target`, `pair` or `depths`, is required, and has
+    a `note`. Its case takes its expectation from Snowflake's receipt (decision D92).
 - `required`.
 - `target`: the alternative or option id. It is required for the alternative, option, operand
   and boundary kinds.
@@ -122,6 +125,10 @@ Each line is one JSON object. Blank lines are refused.
 - `expect`: optional, `accept` or `reject` (decision D84). `reject` means a syntax error. `accept`
   means no syntax error: the statement was accepted, or refused only after parsing. A receipt whose
   phase contradicts it makes the case `unexpected_outcome`, so it is no evidence.
+- `expect` is `observe` on an extreme case Snowflake has not answered yet; the case fails as
+  `awaiting_observation` whatever its receipts. It is `terminates` on an extreme case Snowflake
+  refused with a syntax error: any clean local verdict, an acceptance or a rejection, agrees, and
+  only a local parse failure fails it. No receipt phase contradicts `terminates` (decision D92).
 - `stage`: optional, only with `accept`. One of `semantic`, `runtime` or `error`: where the
   accepted statement is expected to fail later. It is informational, and the syntax score never
   compares it (decision D85).
@@ -230,6 +237,12 @@ agrees. A case agrees when all of these hold:
 A `semantic_error`, `runtime_error` or `unsupported_feature` receipt with a structural local
 acceptance satisfies the obligation for syntax and is counted as `semantic_only`.
 
+Every local parse runs in a worker child process of the checker, bounded to 10 seconds and 4 GiB of
+virtual memory, and restarted after any failure (decisions D90 and D92). A panic, a crash such as a
+stack overflow or the memory bound, a timeout, or a complexity-guard error (`E_GUARD_*`) is a local
+parse failure, never a syntax rejection, and fails that case as `local_parse_failure`; the run goes
+on.
+
 A form is verified only when it has at least one required obligation, every required obligation
 is satisfied, and an approved review of its family matches the current catalogue and obligation
 file hashes and the current parser tree. The parser tree is `git rev-parse
@@ -239,8 +252,9 @@ same way. Absent forms keep their ids and are never counted. The headline denomi
 catalogued forms: 3,348 on the frozen catalogue `e863d7de` (decision D81).
 
 Anything missing, ambiguous, stale, mismatched or opaque fails closed with a named reason:
-`no_obligations`, `missing_case`, `unverifiable_internal_error`, `missing_receipt`, `stale_receipt`, `ambiguous_receipts`,
-`unexpected_outcome`, `disagreement`, `opaque_fallback`, `unreviewed` or `stale_review`. A reference that does not
+`no_obligations`, `missing_case`, `unverifiable_internal_error`, `missing_receipt`,
+`awaiting_observation`, `stale_receipt`, `ambiguous_receipts`, `unexpected_outcome`,
+`local_parse_failure`, `disagreement`, `opaque_fallback`, `unreviewed` or `stale_review`. A reference that does not
 resolve fails every check command. Examples are an obligation of an uncatalogued form, a case
 citing an undeclared obligation, an alias whose source is not absent or whose target is unknown,
 and an exclusion naming an unknown form or page.

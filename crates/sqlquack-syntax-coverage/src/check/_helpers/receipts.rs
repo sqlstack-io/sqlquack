@@ -39,15 +39,18 @@ fn receipt_phase(case: &Case, receipts: &[&Receipt]) -> Result<Phase, Reason> {
 /// Whether the recorded phase is the syntax verdict the case expects; stages are never compared.
 fn expected(case: &Case, phase: Phase) -> bool {
     match case.expect {
-        None => true,
+        None | Some(Expect::Terminates) => true,
         Some(Expect::Reject) => phase == Phase::SyntaxError,
         Some(Expect::Accept) => phase != Phase::SyntaxError,
+        Some(Expect::Observe) => false,
     }
 }
 
-/// Whether the local verdict agrees with the phase, and whether only syntax agrees.
-fn agreement(phase: Phase, local: LocalVerdict) -> Result<bool, Reason> {
+/// Whether the local verdict agrees with the phase (any clean one for `terminates`), syntax only.
+fn agreement(phase: Phase, local: LocalVerdict, terminates: bool) -> Result<bool, Reason> {
     match (phase, local) {
+        (_, LocalVerdict::Failed { .. }) => Err(Reason::LocalParseFailure),
+        _ if terminates => Ok(false),
         (Phase::SyntaxError, LocalVerdict::Rejected) => Ok(false),
         (Phase::SyntaxError, LocalVerdict::Accepted { .. }) | (_, LocalVerdict::Rejected) => {
             Err(Reason::Disagreement)
@@ -62,11 +65,14 @@ fn agreement(phase: Phase, local: LocalVerdict) -> Result<bool, Reason> {
 pub(crate) fn case_result(case: &Case, receipts: &[&Receipt], local: LocalVerdict) -> CaseResult {
     let (phase, reason, semantic_only): (Option<Phase>, Option<Reason>, bool) =
         match receipt_phase(case, receipts) {
+            _ if case.expect == Some(Expect::Observe) => {
+                (None, Some(Reason::AwaitingObservation), false)
+            }
             Err(reason) => (None, Some(reason), false),
             Ok(phase) if !expected(case, phase) => {
                 (Some(phase), Some(Reason::UnexpectedOutcome), false)
             }
-            Ok(phase) => match agreement(phase, local) {
+            Ok(phase) => match agreement(phase, local, case.expect == Some(Expect::Terminates)) {
                 Ok(semantic_only) => (Some(phase), None, semantic_only),
                 Err(reason) => (Some(phase), Some(reason), false),
             },
