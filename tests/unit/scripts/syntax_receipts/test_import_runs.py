@@ -2,128 +2,175 @@
 
 from __future__ import annotations
 
-import hashlib
 import json
 from pathlib import Path
 
 import pytest
 
-from scripts.syntax_receipts.main.import_runs import classify, import_runs, run_import
+from scripts.syntax_receipts._helpers.receipts import classify
+from scripts.syntax_receipts.models import Imported
+from tests.unit.scripts.syntax_receipts._test_types import (
+    BindingTestCase,
+    ClassifyTestCase,
+    OverwriteTestCase,
+    RefusedRunTestCase,
+)
+from tests.unit.scripts.syntax_receipts.helpers import (
+    accepted_row,
+    error_row,
+    import_twice,
+    imported_run,
+    packet_case,
+    sha,
+)
 
-
-def sha(data: bytes) -> str:
-    return hashlib.sha256(data).hexdigest()
-
-
-def write_run(
-    root: Path, rows: list[dict], packet: list[dict], *, raw_hash: str | None = None
-) -> None:
-    inputs = root / "inputs"
-    inputs.mkdir(parents=True, exist_ok=True)
-    packet_bytes = b"".join(json.dumps(row).encode() + b"\n" for row in packet)
-    (inputs / "packet.jsonl").write_bytes(packet_bytes)
-    run = root / "runs" / "b5-test-20261103T000000Z"
-    (run / "capture").mkdir(parents=True)
-    raw = b"".join(json.dumps(row).encode() + b"\n" for row in rows)
-    (run / "capture" / "raw.jsonl").write_bytes(raw)
-    events = [
-        {
-            "event": "start",
-            "packet_sha256": sha(packet_bytes),
-            "parameters": {"TIMEZONE": "UTC"},
-            "safety": {},
-            "submission": "anonymous block, as-is",
-        },
-        {"event": "recording_session", "identity_checked": True},
-        {"event": "complete", "raw_sha256": raw_hash or sha(raw)},
-    ]
-    (run / "audit.jsonl").write_text("".join(json.dumps(e) + "\n" for e in events))
-
-
-def case(case_id: str, sql: str) -> dict:
-    return {"id": case_id, "sql": sql, "sql_sha256": sha(sql.encode())}
-
-
-def error_row(case_id: str, sql: str, errno: int, message: str) -> dict:
-    return {
-        "id": case_id,
-        "sql_sha256": sha(sql.encode()),
-        "outcome": "error",
-        "connector_fields": {"errno": errno, "sqlstate": "42000", "raw_msg": message},
-    }
+_GOOD: str = "BEGIN RETURN 1; END;"
+_OTHER: str = "BEGIN RETURN 2; END;"
+_SYNTAX_ROW: dict[str, object] = error_row(
+    case_id="c1", sql=_GOOD, errno=1003, message="SQL compilation error:\nsyntax error"
+)
 
 
 @pytest.mark.parametrize(
-    ("errno", "message", "expected"),
+    "test_case",
     (
-        (1003, "SQL compilation error:\nsyntax error line 1", "syntax_error"),
-        (2003, "SQL compilation error:\nObject 'T' does not exist", "semantic_error"),
-        (2, "Unsupported feature 'MINUS ALL'.", "unsupported_feature"),
-        (100051, "Division by zero", "runtime_error"),
-        # A syntax error raised while a block evaluates an expression ran past compilation.
-        (
-            1003,
-            "Uncaught exception of type 'EXPRESSION_ERROR' : SQL compilation error",
-            "runtime_error",
+        ClassifyTestCase(
+            description="errno 1003 with the compilation prefix is a syntax error",
+            errno=1003,
+            message="SQL compilation error:\nsyntax error line 1",
+            expected_classification=("syntax_error", "errno 1003 SQL compilation syntax error"),
         ),
-        (1003, "syntax error without the compilation prefix", None),
-        (None, "", None),
+        ClassifyTestCase(
+            description="another compilation error is semantic",
+            errno=2003,
+            message="SQL compilation error:\nObject 'T' does not exist",
+            expected_classification=(
+                "semantic_error",
+                "errno 2003 compilation error after parsing",
+            ),
+        ),
+        ClassifyTestCase(
+            description="errno 2 Unsupported feature is an unsupported feature",
+            errno=2,
+            message="Unsupported feature 'MINUS ALL'.",
+            expected_classification=("unsupported_feature", "errno 2 Unsupported feature"),
+        ),
+        ClassifyTestCase(
+            description="a 100000-series code is raised while the statement executes",
+            errno=100051,
+            message="Division by zero",
+            expected_classification=("runtime_error", "errno 100051 is an execution-time code"),
+        ),
+        ClassifyTestCase(
+            description="a syntax error raised while a block evaluates an expression ran past compilation",
+            errno=1003,
+            message="Uncaught exception of type 'EXPRESSION_ERROR' : SQL compilation error",
+            expected_classification=(
+                "runtime_error",
+                "uncaught exception raised while the block ran",
+            ),
+        ),
+        ClassifyTestCase(
+            description="a syntax error without the compilation prefix is not established",
+            errno=1003,
+            message="syntax error without the compilation prefix",
+            expected_classification=None,
+        ),
+        ClassifyTestCase(
+            description="no error number and no message is not established",
+            errno=None,
+            message="",
+            expected_classification=None,
+        ),
     ),
+    ids=lambda case: case.description,
 )
 def test_given_error_fields_when_classified_then_only_established_phases_are_named(
-    errno: int | None, message: str, expected: str | None
+    test_case: ClassifyTestCase,
 ) -> None:
-    result = classify(errno, message)
-    assert (result[0] if result else None) == expected
+    classified: tuple[str, str] | None = classify(errno=test_case.errno, message=test_case.message)
+
+    assert classified == test_case.expected_classification, test_case.description
 
 
-def test_given_bound_rows_when_imported_then_unbindable_rows_are_refused(tmp_path: Path) -> None:
-    good, other = "BEGIN RETURN 1; END;", "BEGIN RETURN 2; END;"
-    rows = [
-        error_row("c1", good, 1003, "SQL compilation error:\nsyntax error"),
-        {"id": "c2", "sql_sha256": sha(b"something else"), "outcome": "accepted_executed"},
-        {"id": "c9", "sql_sha256": sha(good.encode()), "outcome": "accepted_executed"},
-        error_row("c3", other, 1003, "no prefix"),
-    ]
-    write_run(tmp_path, rows, [case("c1", good), case("c2", other), case("c3", other)])
-
-    imported = import_runs(tmp_path / "runs", [tmp_path / "inputs"])
-
-    assert [(r["case_id"], r["phase"]) for r in imported.receipts] == [("c1", "syntax_error")]
-    assert sorted((r["row_id"], r["reason"].split()[0]) for r in imported.refusals) == [
-        ("c2", "raw"),
-        ("c3", "error"),
-        ("c9", "row"),
-    ]
-    receipt = imported.receipts[0]
-    assert receipt["sql_sha256"] == sha(good.encode())
-    assert receipt["raw_record_sha256"] == sha(json.dumps(rows[0]).encode())
-
-
-def test_given_raw_changed_after_audit_when_imported_then_the_whole_run_is_refused(
-    tmp_path: Path,
+@pytest.mark.parametrize(
+    "test_case",
+    (
+        BindingTestCase(
+            description="rows with another hash, an unknown id or no phase are refused",
+            rows=[
+                _SYNTAX_ROW,
+                {"id": "c2", "sql_sha256": sha(b"something else"), "outcome": "accepted_executed"},
+                accepted_row(case_id="c9", sql=_GOOD),
+                error_row(case_id="c3", sql=_OTHER, errno=1003, message="no prefix"),
+            ],
+            packet=[
+                packet_case(case_id="c1", sql=_GOOD),
+                packet_case(case_id="c2", sql=_OTHER),
+                packet_case(case_id="c3", sql=_OTHER),
+            ],
+            expected_receipts=[("c1", "syntax_error")],
+            expected_refusals=[("c2", "raw"), ("c3", "error"), ("c9", "row")],
+            expected_sql_sha256=sha(_GOOD.encode()),
+            expected_raw_record_sha256=sha(json.dumps(_SYNTAX_ROW).encode()),
+        ),
+    ),
+    ids=lambda case: case.description,
+)
+def test_given_bound_rows_when_imported_then_unbindable_rows_are_refused(
+    test_case: BindingTestCase, tmp_path: Path
 ) -> None:
-    sql = "BEGIN RETURN 1; END;"
-    write_run(tmp_path, [error_row("c1", sql, 1003, "x")], [case("c1", sql)], raw_hash="0" * 64)
+    imported: Imported = imported_run(root=tmp_path, rows=test_case.rows, packet=test_case.packet)
 
-    imported = import_runs(tmp_path / "runs", [tmp_path / "inputs"])
-
-    assert imported.receipts == []
-    assert imported.runs[0]["status"] == "refused"
-    assert "differs from the audit" in imported.runs[0]["reason"]
-
-
-def test_given_existing_receipts_when_imported_again_then_nothing_is_overwritten(
-    tmp_path: Path,
-) -> None:
-    sql = "BEGIN RETURN 1; END;"
-    write_run(
-        tmp_path,
-        [{"id": "c1", "sql_sha256": sha(sql.encode()), "outcome": "accepted_executed"}],
-        [case("c1", sql)],
+    assert [(r["case_id"], r["phase"]) for r in imported.receipts] == test_case.expected_receipts
+    assert (
+        sorted((r["row_id"], r["reason"].split()[0]) for r in imported.refusals)
+        == test_case.expected_refusals
     )
-    receipts, report = tmp_path / "out" / "r.jsonl", tmp_path / "out" / "report.json"
-    run_import(tmp_path / "runs", [tmp_path / "inputs"], receipts, report)
+    assert imported.receipts[0]["sql_sha256"] == test_case.expected_sql_sha256
+    assert imported.receipts[0]["raw_record_sha256"] == test_case.expected_raw_record_sha256
 
-    with pytest.raises(FileExistsError):
-        run_import(tmp_path / "runs", [tmp_path / "inputs"], receipts, report)
+
+@pytest.mark.parametrize(
+    "test_case",
+    (
+        RefusedRunTestCase(
+            description="a raw file whose hash differs from the complete event",
+            rows=[error_row(case_id="c1", sql=_GOOD, errno=1003, message="x")],
+            packet=[packet_case(case_id="c1", sql=_GOOD)],
+            raw_hash="0" * 64,
+            expected_status="refused",
+            expected_reason_fragment="differs from the audit",
+        ),
+    ),
+    ids=lambda case: case.description,
+)
+def test_given_raw_changed_after_audit_when_imported_then_the_whole_run_is_refused(
+    test_case: RefusedRunTestCase, tmp_path: Path
+) -> None:
+    imported: Imported = imported_run(
+        root=tmp_path, rows=test_case.rows, packet=test_case.packet, raw_hash=test_case.raw_hash
+    )
+
+    assert imported.receipts == [], test_case.description
+    assert imported.runs[0]["status"] == test_case.expected_status, test_case.description
+    assert test_case.expected_reason_fragment in imported.runs[0]["reason"], test_case.description
+
+
+@pytest.mark.parametrize(
+    "test_case",
+    (
+        OverwriteTestCase(
+            description="a second import into the same files",
+            rows=[accepted_row(case_id="c1", sql=_GOOD)],
+            packet=[packet_case(case_id="c1", sql=_GOOD)],
+            expected_error=FileExistsError,
+        ),
+    ),
+    ids=lambda case: case.description,
+)
+def test_given_existing_receipts_when_imported_again_then_nothing_is_overwritten(
+    test_case: OverwriteTestCase, tmp_path: Path
+) -> None:
+    with pytest.raises(test_case.expected_error):
+        import_twice(root=tmp_path, rows=test_case.rows, packet=test_case.packet)
