@@ -188,6 +188,8 @@ fn join_constructs(join: &Join) -> Vec<Construct> {
         comments: _,
         nesting_group: _,
         directed,
+        first_last,
+        first_last_alias: _,
         span: _,
     } = join;
     let mut constructs = vec![Construct::new(
@@ -200,6 +202,7 @@ fn join_constructs(join: &Join) -> Vec<Construct> {
         (match_condition.is_some(), "match_condition"),
         (!pivots.is_empty(), "join_pivot"),
         (*directed, "join_directed"),
+        (first_last.is_some(), "join_first_last"),
     ]);
     constructs.extend(
         names

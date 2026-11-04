@@ -683,6 +683,18 @@ fn given_a_snowflake_drop_of_another_object_kind_when_parsing_then_the_tree_name
             expected_value: json!(true),
         },
         ProjectionTestCase {
+            description: "a join keeps LAST apart from FIRST",
+            sql: "SELECT * FROM t1 JOIN t2 ON TRUE LAST ( a1 )",
+            pointer: "/0/select/joins/0/first_last",
+            expected_value: json!("LAST"),
+        },
+        ProjectionTestCase {
+            description: "a join without FIRST or LAST leaves both out of the tree",
+            sql: "SELECT * FROM t1 JOIN t2 ON TRUE",
+            pointer: "/0/select/joins/0/first_last",
+            expected_value: serde_json::Value::Null,
+        },
+        ProjectionTestCase {
             description: "DROP SEQUENCE keeps RESTRICT apart from the default",
             sql: "DROP SEQUENCE v1 RESTRICT",
             pointer: "/0/drop_sequence/restrict",
@@ -1101,6 +1113,24 @@ fn given_statements_from_the_parser_only_disagreements_when_parsing_snowflake_th
         AcceptanceTestCase {
             description: "an UNPIVOT name column is no reserved keyword",
             sql: "SELECT 1 FROM t1 UNPIVOT ( c1 FOR SELECT IN ( v1 ) ) ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "a join takes FIRST ( alias ) (recorded semantic error)",
+            sql: "SELECT * FROM t1 JOIN t2 FIRST ( v1 ) ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "a directed join takes LAST ( alias ) after USING",
+            sql: "SELECT * FROM t1 INNER DIRECTED JOIN t2 USING ( v1 ) LAST ( v1 ) ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "FIRST ( alias ) refuses a reserved keyword (recorded errno 1003)",
+            sql: "SELECT * FROM t1 JOIN t2 FIRST ( SELECT ) ;",
             dialect: Dialect::Snowflake,
             expected_accepted: false,
         },
