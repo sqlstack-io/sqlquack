@@ -1,0 +1,48 @@
+# Documented obligations whose construct Snowflake answers only with an internal error (603), so no
+# capture can establish a phase (decision D87). Fields as in unobservable/scripting.toml. Each
+# obligation stays in the denominator, never counts as verified, and is reported as "unverifiable:
+# Snowflake internal error". Its case stays in cases/ddl.jsonl.
+
+[[unobservable]]
+obligation = "sf.ddl.alter-database-catalog-linked.resume-discovery.o002"
+form = "sf.ddl.alter-database-catalog-linked.resume-discovery"
+construct = "ALTER DATABASE with IF EXISTS before RESUME DISCOVERY: ALTER DATABASE IF EXISTS v1 RESUME DISCOVERY"
+reason = "internal error 603 (300016:1294561867) on the original capture and on an exact re-run with the same SQL, setup and session in a fresh run database (incident 3801589 on the re-run); no capture gives an established phase"
+cases = [
+  { case_id = "sf.ddl.alter-database-catalog-linked.resume-discovery.k55ecc27f1316", sql_sha256 = "55ecc27f13168ed0c12c2d164342050d0c922d3af914d62f74ba6b29b19d99c4" },
+]
+runs = ["alt-00", "alt-00r"]
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.alter-database-catalog-linked.suspend-discovery.o002"
+form = "sf.ddl.alter-database-catalog-linked.suspend-discovery"
+construct = "ALTER DATABASE with IF EXISTS before SUSPEND DISCOVERY: ALTER DATABASE IF EXISTS v1 SUSPEND DISCOVERY"
+reason = "internal error 603 (300016:1294561867) on the original capture and on an exact re-run with the same SQL, setup and session in a fresh run database (incident 2747531 on the re-run); no capture gives an established phase"
+cases = [
+  { case_id = "sf.ddl.alter-database-catalog-linked.suspend-discovery.k8f5efb6ea749", sql_sha256 = "8f5efb6ea74902b27dcc590f1930f0a40b8acc1d71517aad4526d423700a20a5" },
+]
+runs = ["alt-00", "alt-00r"]
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.alter-semantic-view.set-comment-max-staleness.o002"
+form = "sf.ddl.alter-semantic-view.set-comment-max-staleness"
+construct = "ALTER SEMANTIC VIEW with IF EXISTS before SET: ALTER SEMANTIC VIEW IF EXISTS v1 SET COMMENT = 'm'"
+reason = "internal error 603 (370001:4227142259) on the original capture and on an exact re-run with the same SQL, setup and session in a fresh run database (incident 6210738 on the re-run); no capture gives an established phase"
+cases = [
+  { case_id = "sf.ddl.alter-semantic-view.set-comment-max-staleness.ka405a658d50e", sql_sha256 = "a405a658d50ee495d8abf308ca73249d0b54fff3ee7c2a17a89537728a3cf6d3" },
+]
+runs = ["alt-00", "alt-00r"]
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.alter-semantic-view.unset-comment-max-staleness.o002"
+form = "sf.ddl.alter-semantic-view.unset-comment-max-staleness"
+construct = "ALTER SEMANTIC VIEW with IF EXISTS before UNSET: ALTER SEMANTIC VIEW IF EXISTS v1 UNSET COMMENT"
+reason = "internal error 603 (370001:4227142259) on the original capture and on an exact re-run with the same SQL, setup and session in a fresh run database (incident 9740529 on the re-run); no capture gives an established phase"
+cases = [
+  { case_id = "sf.ddl.alter-semantic-view.unset-comment-max-staleness.k1ab62cc8923a", sql_sha256 = "1ab62cc8923aabe7047e312d7006de2b0f97cac7cc250f48815f5cfe65a3df1b" },
+]
+runs = ["alt-00", "alt-00r"]
+probes = []

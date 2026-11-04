@@ -1145,7 +1145,7 @@ DDL_FILLS: dict[str, str] = {
     "default_property": "USER_TASK_TIMEOUT_MS",
     "session_parameter": "LOCK_TIMEOUT",
     "purpose": "STEWARD",
-    "region_group": "PUBLIC",
+    "region_group": "g1",
     "search_method_with_target": "EQUALITY ( v1 )",
     "arg_data_type_2": "INT",
     "default_target": "'t1'",
@@ -1204,7 +1204,7 @@ SECURITY_ADMIN_FILLS: dict[str, str] = {
         "( NAME = 'q1' NOTIFICATION_PROVIDER = AWS_SNS AWS_SNS_TOPIC_ARN = "
         "'arn:aws:sns:us-west-1:12345:t1' )"
     ),
-    "region_group_id": "PUBLIC",
+    "region_group_id": "g1",
     "snowflake_region_id": "aws_us_west_2",
     "threshold": "80",
     "user_password": "'m'",
