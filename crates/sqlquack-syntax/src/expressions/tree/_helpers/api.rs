@@ -119,6 +119,7 @@ impl Expression {
             Expression::Prior(_) => "prior",
             Expression::ConnectByRoot(_) => "connect_by_root",
             Expression::MatchRecognize(_) => "match_recognize",
+            Expression::Resample(_) => "resample",
             Expression::Ordered(_) => "ordered",
             Expression::Window(_) => "window",
             Expression::Over(_) => "over",
