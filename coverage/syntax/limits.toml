@@ -1307,3 +1307,823 @@ form = "sf.query.constructs"
 kind = "option_present"
 target = "[ SEMANTIC_VIEW ( ... ) ]"
 reason = "the outline places it after the FROM source, where it is not valid as shown; its syntax and placement are carried by sf.query.semantic-view"
+
+# Query review d0f32dba: sub-grammar readings, documented constraints and bounds.
+[[reading]]
+form = "sf.query.group-by.groupitem"
+grammar_sha256 = "4b0da8061763a05856b305e14992323633d0644165e69fc747771e03a5d757b7"
+grammar = ["SELECT ... FROM ... [ ... ] GROUP BY { <column_alias> | <position> | <expr> } [ , { <column_alias> | <position> | <expr> } [ , ... ] ] [ ... ]"]
+reason = "groupItem ::= { <column_alias> | <position> | <expr> } inlined from the page"
+
+[[reading]]
+form = "sf.query.group-by-cube"
+grammar_sha256 = "666637d596b967d921d090f3e3a5a0e5f7dada24478aac1cf17f8153ffc627bb"
+grammar = ["SELECT ... FROM ... [ ... ] GROUP BY [ { <column_alias> | <position> | <expr> } [ , { <column_alias> | <position> | <expr> } [ , ... ] ] , ] CUBE ( { <column_alias> | <position> | <expr> } [ , { <column_alias> | <position> | <expr> } [ , ... ] ] ) [ ... ]"]
+reason = "groupItem ::= { <column_alias> | <position> | <expr> } inlined from the page"
+
+[[reading]]
+form = "sf.query.group-by-rollup"
+grammar_sha256 = "7d180724a90aa9ba658742d89e47bf58fb275ca690361af6b791ed1f1943c833"
+grammar = ["SELECT ... FROM ... [ ... ] GROUP BY [ { <column_alias> | <position> | <expr> } [ , { <column_alias> | <position> | <expr> } [ , ... ] ] , ] ROLLUP ( { <column_alias> | <position> | <expr> } [ , { <column_alias> | <position> | <expr> } [ , ... ] ] ) [ ... ]"]
+reason = "groupItem ::= { <column_alias> | <position> | <expr> } inlined from the page"
+
+[[reading]]
+form = "sf.query.group-by-grouping-sets"
+grammar_sha256 = "5af30ca9cd0c7aba1219e3eb69feae4bebfff76de74242ee6048acf8221bc2dc"
+grammar = ["SELECT ... FROM ... [ ... ] GROUP BY [ { <column_alias> | <position> | <expr> } [ , { <column_alias> | <position> | <expr> } [ , ... ] ] , ] GROUPING SETS ( { { <column_alias> | <position> | <expr> } | ( { <column_alias> | <position> | <expr> } [ , { <column_alias> | <position> | <expr> } [ , ... ] ] ) } [ , { { <column_alias> | <position> | <expr> } | ( { <column_alias> | <position> | <expr> } [ , { <column_alias> | <position> | <expr> } [ , ... ] ] ) } [ , ... ] ] ) [ ... ]"]
+reason = "groupItem ::= { <column_alias> | <position> | <expr> } inlined from the page, and groupSet ::= groupItem | ( groupItem [ , groupItem [ , ... ] ] )"
+
+[[reading]]
+form = "sf.query.order-by.orderitem"
+grammar_sha256 = "0f493cfabf5104dc397885583377c86b800ece36aace527f3b0a9786cab4b4e2"
+grammar = ["SELECT ... FROM ... ORDER BY { <column_alias> | <position> | <expr> } [ { ASC | DESC } ] [ NULLS { FIRST | LAST } ] [ , { <column_alias> | <position> | <expr> } [ { ASC | DESC } ] [ NULLS { FIRST | LAST } ] , ... ] [ ... ]"]
+reason = "orderItem ::= { <column_alias> | <position> | <expr> } [ { ASC | DESC } ] [ NULLS { FIRST | LAST } ] inlined from the page"
+
+[[reading]]
+form = "sf.query.sample"
+grammar_sha256 = "709d6dff0d127baec6351db1ca9011a9cf4ead28678fc590eccc65e18b98e289"
+grammar = ["SELECT ... FROM ... { SAMPLE | TABLESAMPLE } { [ { BERNOULLI | ROW } ] ( { <probability> | <num> ROWS } ) | { SYSTEM | BLOCK } ( <probability> ) [ { REPEATABLE | SEED } ( <seed> ) ] } [ ... ]"]
+reason = "samplingMethod inlined; the page makes the method optional (default BERNOULLI) while the parenthesised probability or num ROWS is always given, as in every example, so the brackets sit on the method keyword"
+
+[[reading]]
+form = "sf.query.with.select.syntax"
+grammar_sha256 = "e25622c60e3699f4b6112feea8dd1a4a5cbe6a2238de4728e2949af9fe0e8271"
+grammar = ["[ WITH [ RECURSIVE ] <cte_name1> ( <cte_column_list> ) AS ( SELECT <anchor_column_list> FROM ... UNION ALL SELECT <recursive_column_list> FROM ... [ JOIN ... ] ) [ , <cte_name2> ( <cte_column_list> ) AS ( SELECT <anchor_column_list> FROM ... UNION ALL SELECT <recursive_column_list> FROM ... [ JOIN ... ] ) ] [ , <cte_nameN> ( <cte_column_list> ) AS ( SELECT <anchor_column_list> FROM ... UNION ALL SELECT <recursive_column_list> FROM ... [ JOIN ... ] ) ] ] SELECT ..."]
+reason = "anchorClause ::= SELECT <anchor_column_list> FROM ... and recursiveClause ::= SELECT <recursive_column_list> FROM ... [ JOIN ... ] inlined from the page"
+
+[[reading]]
+form = "sf.query.from"
+grammar_sha256 = "075e22647848691aace15d1321934b31d5490fd29c90d4dbea00774fba2ea207"
+grammar = ["SELECT ... FROM { [ <namespace> . ] <object_name> [ { AT | BEFORE } ( <object_state> ) ] [ CHANGES ( <change_tracking_type> ) ] [ MATCH_RECOGNIZE ... ] [ PIVOT ... | UNPIVOT ... ] [ [ AS ] <alias_name> ] [ SAMPLE ... ] | <table_function> [ PIVOT ... | UNPIVOT ... ] [ [ AS ] <alias_name> ] [ SAMPLE ... ] | ( VALUES ... ) [ SAMPLE ... ] | [ LATERAL ] ( <subquery> ) [ [ AS ] <alias_name> ] | @<stage_name> [ ( FILE_FORMAT => <format_name> , PATTERN => '<regex_pattern>' ) ] [ [ AS ] <alias_name> ] | DIRECTORY ( @<stage_name> ) | SEMANTIC_VIEW ( ... ) | ERROR_TABLE ( <base_table_name> ) | DYNAMIC_TABLE_REFRESH_BOUNDARY ( <object_name> ) [ { AT | BEFORE } ( <object_state> ) ] [ CHANGES ( <change_tracking_type> ) ] [ [ AS ] <alias_name> ] } [ JOIN ... ] [ ... ]"]
+reason = "objectReference inlined from the page; [ AT | BEFORE ( ... ) ] reads as either keyword before the parenthesis; the bare MATCH_RECOGNIZE, PIVOT | UNPIVOT and SAMPLE name clauses whose bodies their own forms carry; ( VALUES (...) ) elides the rows; the JOIN operand is the same objectReference and joins are carried by the join forms; the stage's [<namespace>.] and [/<path>] are lexical and carried by hand limits"
+
+[[reading]]
+form = "sf.query.connect-by"
+grammar_sha256 = "e5aabfd8c188129103f16706073ea734f1284ccc687cd99e05301ee2981c07a8"
+grammar = ["SELECT <column_list> [ , <level_expression> ] FROM <data_source> START WITH <predicate> CONNECT BY { PRIOR <col1_identifier> = <col2_identifier> | <col1_identifier> = PRIOR <col2_identifier> } [ { , | AND } { PRIOR <col3_identifier> = <col4_identifier> | <col3_identifier> = PRIOR <col4_identifier> } ] [ ... ]"]
+reason = "the page requires exactly one PRIOR in each CONNECT BY expression, on either side; the grammar joins further expressions with a comma and the page's example with AND, so both are read; the trailing ... is the rest of the query"
+
+[[reading]]
+form = "sf.query.asof-join"
+grammar_sha256 = "ad4599b97f797dd536d119059794abd884e9394154a359528c4a438eb31a7738"
+grammar = ["FROM <left_table> ASOF JOIN <right_table> MATCH_CONDITION ( <left_table.timecol> { >= | > | < | <= } <right_table.timecol> ) [ ON <table.col> = <table.col> [ AND ... ] | USING ( <column_list> ) ]"]
+reason = "the page lists the comparison operators as >=, <=, > and <; = is documented as unsupported"
+
+[[reading]]
+form = "sf.query.select.select"
+grammar_sha256 = "a2011f4c24ce5b8264e3f99308d933ef097191e76c17436cdc73129b3f8194e9"
+grammar = ["[ ... ] SELECT [ { ALL | DISTINCT } ] [ TOP <n> ] [{<object_name>|<alias>}.]* [ { ILIKE '<pattern>' | EXCLUDE { <col_name> | ( <col_name>, <col_name>, ... ) } } ] [ REPLACE { ( <expr> AS <col_name> [ , <expr> AS <col_name>, ... ] ) } ] [ RENAME { <col_name> AS <col_alias> | ( <col_name> AS <col_alias>, <col_name> AS <col_alias>, ... ) } ]"]
+reason = "the page says ILIKE and EXCLUDE can't both be specified; the keyword order (ILIKE or EXCLUDE, then REPLACE, then RENAME) is the grammar's own"
+
+[[reading]]
+form = "sf.query.semantic-view"
+grammar_sha256 = "363eb41608693068409cfd32f53c0428a45fc477f025ead79f95ec622bd0d68a"
+grammar = ["SEMANTIC_VIEW( [<namespace>.]<semantic_view_name> { { METRICS <metric_expr> [ [ AS ] <alias> ] [ , ... ] | FACTS <fact_expr> [ , ... ] } [ DIMENSIONS <dimension_expr> [ [ AS ] <alias> ] [ , ... ] ] | DIMENSIONS <dimension_expr> [ [ AS ] <alias> ] [ , ... ] } [ WHERE <predicate> ] )"]
+reason = "the page requires at least one of METRICS, DIMENSIONS and FACTS, and FACTS can't be combined with METRICS"
+
+[[reading]]
+form = "sf.query.match-recognize.match-recognize-pattern-define-as"
+grammar_sha256 = "04a6994472f0599baaf683de5b47998a327e09f69a8486991fda0b7d192eb436"
+grammar = ["MATCH_RECOGNIZE ( [ PARTITION BY <expr> [, ... ] ] [ ORDER BY <expr> [, ... ] ] [ MEASURES <expr> [AS] <alias> [, ... ] ] [ ONE ROW PER MATCH | ALL ROWS PER MATCH [ { SHOW EMPTY MATCHES | OMIT EMPTY MATCHES | WITH UNMATCHED ROWS } ] ] [ AFTER MATCH SKIP { PAST LAST ROW | TO NEXT ROW | TO [ { FIRST | LAST} ] <symbol> } ] PATTERN ( <symbols_and_operators> ) DEFINE <symbol> AS <expr> [, ... ] )"]
+reason = "<pattern> is the row pattern language (symbols, operators and quantifiers), not a string literal; its constructs are carried by hand limits"
+
+[[limit]]
+form = "sf.query.connect-by"
+kind = "negative_neighbour"
+note = "PRIOR on both sides of one expression; the page allows exactly one"
+anchor = "doc.constructs.connect-by / Syntax"
+sql = "SELECT c1 FROM t1 START WITH TRUE CONNECT BY PRIOR c1 = PRIOR c2 ;"
+context = "raw"
+
+[[limit]]
+form = "sf.query.connect-by"
+kind = "negative_neighbour"
+note = "an expression without PRIOR; the page requires exactly one"
+anchor = "doc.constructs.connect-by / Syntax"
+sql = "SELECT c1 FROM t1 START WITH TRUE CONNECT BY c1 = c2 ;"
+context = "raw"
+
+[[limit]]
+form = "sf.query.connect-by"
+kind = "negative_neighbour"
+note = "NOCYCLE, which the page documents as unsupported"
+anchor = "doc.constructs.connect-by / Syntax"
+sql = "SELECT c1 FROM t1 START WITH TRUE CONNECT BY NOCYCLE PRIOR c1 = c2 ;"
+context = "raw"
+
+[[limit]]
+form = "sf.query.asof-join"
+kind = "negative_neighbour"
+note = "= in MATCH_CONDITION, which the page documents as unsupported"
+anchor = "doc.constructs.asof-join / Syntax"
+sql = "SELECT * FROM t1 ASOF JOIN t2 MATCH_CONDITION ( t1.c1 = t2.c1 ) ;"
+context = "raw"
+
+[[limit]]
+form = "sf.query.select.select"
+kind = "negative_neighbour"
+note = "ILIKE together with EXCLUDE, which the page forbids"
+anchor = "doc.sql.select / Syntax / Selecting all columns"
+sql = "SELECT * ILIKE 'c%' EXCLUDE c1 FROM t1 ;"
+context = "raw"
+
+[[limit]]
+form = "sf.query.select.select"
+kind = "negative_neighbour"
+note = "EXCLUDE after REPLACE; the page requires EXCLUDE first"
+anchor = "doc.sql.select / Syntax / Selecting all columns"
+sql = "SELECT * REPLACE ( 1 AS c1 ) EXCLUDE c2 FROM t1 ;"
+context = "raw"
+
+[[limit]]
+form = "sf.query.select.select"
+kind = "negative_neighbour"
+note = "RENAME before REPLACE; the page requires REPLACE first"
+anchor = "doc.sql.select / Syntax / Selecting all columns"
+sql = "SELECT * RENAME c1 AS c2 REPLACE ( 1 AS c1 ) FROM t1 ;"
+context = "raw"
+
+[[limit]]
+form = "sf.query.select.select"
+kind = "negative_neighbour"
+note = "ILIKE after REPLACE; the page requires ILIKE first"
+anchor = "doc.sql.select / Syntax / Selecting all columns"
+sql = "SELECT * REPLACE ( 1 AS c1 ) ILIKE 'c%' FROM t1 ;"
+context = "raw"
+
+[[limit]]
+form = "sf.query.semantic-view"
+kind = "negative_neighbour"
+note = "none of METRICS, DIMENSIONS and FACTS; the page requires at least one"
+anchor = "doc.constructs.semantic_view / Syntax"
+sql = "SELECT * FROM SEMANTIC_VIEW ( sv1 ) ;"
+context = "raw"
+
+[[limit]]
+form = "sf.query.semantic-view"
+kind = "negative_neighbour"
+note = "FACTS together with METRICS, which the page forbids"
+anchor = "doc.constructs.semantic_view / Syntax"
+sql = "SELECT * FROM SEMANTIC_VIEW ( sv1 METRICS m1 FACTS f1 ) ;"
+context = "raw"
+
+[[limit]]
+form = "sf.query.top-n"
+kind = "boundary_below"
+target = "<n>"
+note = "TOP -1, below the documented non-negative bound"
+anchor = "doc.constructs.top_n / Syntax"
+sql = "SELECT TOP -1 1 ;"
+context = "raw"
+expect = "reject"
+
+[[limit]]
+form = "sf.query.top-n"
+kind = "boundary_at"
+target = "<n>"
+note = "TOP 0, the documented lower bound"
+anchor = "doc.constructs.top_n / Syntax"
+sql = "SELECT TOP 0 1 ;"
+context = "raw"
+expect = "accept"
+
+[[limit]]
+form = "sf.query.top-n"
+kind = "boundary_above"
+target = "<n>"
+note = "TOP 1, just above the documented lower bound"
+anchor = "doc.constructs.top_n / Syntax"
+sql = "SELECT TOP 1 1 ;"
+context = "raw"
+expect = "accept"
+
+[[limit]]
+form = "sf.query.top-n"
+kind = "negative_neighbour"
+target = "<n>"
+note = "a non-integer n; the page requires an integer constant"
+anchor = "doc.constructs.top_n / Syntax"
+sql = "SELECT TOP 1.5 1 ;"
+context = "raw"
+
+[[limit]]
+form = "sf.query.top-n"
+kind = "negative_neighbour"
+target = "<n>"
+note = "a column in place of n; the page requires a constant"
+anchor = "doc.constructs.top_n / Syntax"
+sql = "SELECT TOP c1 1 FROM t1 ;"
+context = "raw"
+
+[[limit]]
+form = "sf.query.values"
+kind = "negative_neighbour"
+note = "DEFAULT inside a FROM-clause VALUES, which the page forbids"
+anchor = "doc.constructs.values / Syntax"
+sql = "SELECT * FROM ( VALUES ( DEFAULT ) ) ;"
+context = "raw"
+
+[[limit]]
+form = "sf.query.values"
+kind = "boundary_below"
+target = "( <expr> ... )"
+note = "199,999 rows against the documented limit of 200,000 rows"
+anchor = "doc.constructs.values / Syntax"
+size = 40000
+outer_open = "SELECT * FROM ( VALUES"
+open = "(1),(1),(1),(1),(1),"
+core = "(1),(1),(1),(1)"
+outer_close = ") ;"
+context = "raw"
+expect = "accept"
+
+[[limit]]
+form = "sf.query.values"
+kind = "boundary_at"
+target = "( <expr> ... )"
+note = "200,000 rows against the documented limit of 200,000 rows"
+anchor = "doc.constructs.values / Syntax"
+size = 40000
+outer_open = "SELECT * FROM ( VALUES"
+open = "(1),(1),(1),(1),(1),"
+core = "(1),(1),(1),(1),(1)"
+outer_close = ") ;"
+context = "raw"
+expect = "accept"
+
+[[limit]]
+form = "sf.query.values"
+kind = "boundary_above"
+target = "( <expr> ... )"
+note = "200,001 rows against the documented limit of 200,000 rows"
+anchor = "doc.constructs.values / Syntax"
+size = 40001
+outer_open = "SELECT * FROM ( VALUES"
+open = "(1),(1),(1),(1),(1),"
+core = "(1)"
+outer_close = ") ;"
+context = "raw"
+expect = "reject"
+
+[[limit]]
+form = "sf.query.sample"
+kind = "boundary_below"
+target = "<probability>"
+note = "probability -1, below the documented range 0 to 100"
+anchor = "doc.constructs.sample / Syntax"
+sql = "SELECT * FROM t1 SAMPLE ( -1 ) ;"
+context = "raw"
+expect = "reject"
+
+[[limit]]
+form = "sf.query.sample"
+kind = "boundary_at"
+target = "<probability>"
+note = "probability 0, the documented lower bound"
+anchor = "doc.constructs.sample / Syntax"
+sql = "SELECT * FROM t1 SAMPLE ( 0 ) ;"
+context = "raw"
+expect = "accept"
+
+[[limit]]
+form = "sf.query.sample"
+kind = "boundary_at"
+target = "<probability>"
+note = "probability 100, the documented upper bound"
+anchor = "doc.constructs.sample / Syntax"
+sql = "SELECT * FROM t1 SAMPLE ( 100 ) ;"
+context = "raw"
+expect = "accept"
+
+[[limit]]
+form = "sf.query.sample"
+kind = "boundary_above"
+target = "<probability>"
+note = "probability 100.1, above the documented range 0 to 100"
+anchor = "doc.constructs.sample / Syntax"
+sql = "SELECT * FROM t1 SAMPLE ( 100.1 ) ;"
+context = "raw"
+expect = "reject"
+
+[[limit]]
+form = "sf.query.sample"
+kind = "boundary_below"
+target = "<num>"
+note = "-1 ROWS, below the documented range 0 to 1,000,000"
+anchor = "doc.constructs.sample / Syntax"
+sql = "SELECT * FROM t1 SAMPLE ( -1 ROWS ) ;"
+context = "raw"
+expect = "reject"
+
+[[limit]]
+form = "sf.query.sample"
+kind = "boundary_at"
+target = "<num>"
+note = "0 ROWS, the documented lower bound"
+anchor = "doc.constructs.sample / Syntax"
+sql = "SELECT * FROM t1 SAMPLE ( 0 ROWS ) ;"
+context = "raw"
+expect = "accept"
+
+[[limit]]
+form = "sf.query.sample"
+kind = "boundary_at"
+target = "<num>"
+note = "1,000,000 ROWS, the documented upper bound"
+anchor = "doc.constructs.sample / Syntax"
+sql = "SELECT * FROM t1 SAMPLE ( 1000000 ROWS ) ;"
+context = "raw"
+expect = "accept"
+
+[[limit]]
+form = "sf.query.sample"
+kind = "boundary_above"
+target = "<num>"
+note = "1,000,001 ROWS, above the documented range"
+anchor = "doc.constructs.sample / Syntax"
+sql = "SELECT * FROM t1 SAMPLE ( 1000001 ROWS ) ;"
+context = "raw"
+expect = "reject"
+
+[[limit]]
+form = "sf.query.sample"
+kind = "boundary_below"
+target = "<seed>"
+note = "seed -1, below the documented range 0 to 2147483647"
+anchor = "doc.constructs.sample / Syntax"
+sql = "SELECT * FROM t1 SAMPLE SYSTEM ( 10 ) SEED ( -1 ) ;"
+context = "raw"
+expect = "reject"
+
+[[limit]]
+form = "sf.query.sample"
+kind = "boundary_at"
+target = "<seed>"
+note = "seed 0, the documented lower bound"
+anchor = "doc.constructs.sample / Syntax"
+sql = "SELECT * FROM t1 SAMPLE SYSTEM ( 10 ) SEED ( 0 ) ;"
+context = "raw"
+expect = "accept"
+
+[[limit]]
+form = "sf.query.sample"
+kind = "boundary_at"
+target = "<seed>"
+note = "seed 2147483647, the documented upper bound"
+anchor = "doc.constructs.sample / Syntax"
+sql = "SELECT * FROM t1 SAMPLE SYSTEM ( 10 ) SEED ( 2147483647 ) ;"
+context = "raw"
+expect = "accept"
+
+[[limit]]
+form = "sf.query.sample"
+kind = "boundary_above"
+target = "<seed>"
+note = "seed 2147483648, above the documented range"
+anchor = "doc.constructs.sample / Syntax"
+sql = "SELECT * FROM t1 SAMPLE SYSTEM ( 10 ) SEED ( 2147483648 ) ;"
+context = "raw"
+expect = "reject"
+
+[[limit]]
+form = "sf.query.sample"
+kind = "negative_neighbour"
+note = "SYSTEM with fixed-size sampling, which the page documents as unsupported"
+anchor = "doc.constructs.sample / Syntax"
+sql = "SELECT * FROM t1 SAMPLE SYSTEM ( 10 ROWS ) ;"
+context = "raw"
+
+[[limit]]
+form = "sf.query.sample"
+kind = "negative_neighbour"
+note = "SEED with fixed-size sampling, which the page documents as unsupported"
+anchor = "doc.constructs.sample / Syntax"
+sql = "SELECT * FROM t1 SAMPLE ROW ( 10 ROWS ) SEED ( 99 ) ;"
+context = "raw"
+
+[[limit]]
+form = "sf.query.sample"
+kind = "negative_neighbour"
+note = "SEED on a subquery, which the page documents as unsupported"
+anchor = "doc.constructs.sample / Syntax"
+sql = "SELECT * FROM ( SELECT 1 ) SAMPLE SYSTEM ( 1 ) SEED ( 99 ) ;"
+context = "raw"
+
+[[limit]]
+form = "sf.query.from"
+kind = "option_present"
+target = "[<namespace>.]"
+note = "a stage with its [<namespace>.] prefix"
+anchor = "doc.constructs.from / Syntax"
+sql = "SELECT * FROM @d1.s1 ;"
+context = "raw"
+
+[[limit]]
+form = "sf.query.from"
+kind = "option_present"
+target = "[/<path>]"
+note = "a stage with its [/<path>] suffix"
+anchor = "doc.constructs.from / Syntax"
+sql = "SELECT * FROM @s1/p1 ;"
+context = "raw"
+
+[[limit]]
+form = "sf.query.from"
+kind = "interaction"
+note = "a stage with both [<namespace>.] and [/<path>]"
+anchor = "doc.constructs.from / Syntax"
+sql = "SELECT * FROM @d1.s1/p1/ ;"
+context = "raw"
+
+[[limit]]
+form = "sf.query.match-recognize.match-recognize-pattern-define-as"
+kind = "alternative"
+target = "<symbols_and_operators>"
+note = "row pattern: concatenation of two symbols"
+anchor = "doc.constructs.match_recognize / Syntax"
+sql = "SELECT * FROM t1 MATCH_RECOGNIZE ( ORDER BY c1 PATTERN ( a b ) DEFINE a AS TRUE , b AS TRUE ) ;"
+context = "raw"
+
+[[limit]]
+form = "sf.query.match-recognize.match-recognize-pattern-define-as"
+kind = "alternative"
+target = "<symbols_and_operators>"
+note = "row pattern: the alternative operator"
+anchor = "doc.constructs.match_recognize / Syntax"
+sql = "SELECT * FROM t1 MATCH_RECOGNIZE ( ORDER BY c1 PATTERN ( a | b ) DEFINE a AS TRUE , b AS TRUE ) ;"
+context = "raw"
+
+[[limit]]
+form = "sf.query.match-recognize.match-recognize-pattern-define-as"
+kind = "alternative"
+target = "<symbols_and_operators>"
+note = "row pattern: grouping"
+anchor = "doc.constructs.match_recognize / Syntax"
+sql = "SELECT * FROM t1 MATCH_RECOGNIZE ( ORDER BY c1 PATTERN ( ( a b ) ) DEFINE a AS TRUE , b AS TRUE ) ;"
+context = "raw"
+
+[[limit]]
+form = "sf.query.match-recognize.match-recognize-pattern-define-as"
+kind = "alternative"
+target = "<symbols_and_operators>"
+note = "row pattern: the * quantifier (0 or more)"
+anchor = "doc.constructs.match_recognize / Syntax"
+sql = "SELECT * FROM t1 MATCH_RECOGNIZE ( ORDER BY c1 PATTERN ( a* ) DEFINE a AS TRUE , b AS TRUE ) ;"
+context = "raw"
+
+[[limit]]
+form = "sf.query.match-recognize.match-recognize-pattern-define-as"
+kind = "alternative"
+target = "<symbols_and_operators>"
+note = "row pattern: the + quantifier (1 or more)"
+anchor = "doc.constructs.match_recognize / Syntax"
+sql = "SELECT * FROM t1 MATCH_RECOGNIZE ( ORDER BY c1 PATTERN ( a+ ) DEFINE a AS TRUE , b AS TRUE ) ;"
+context = "raw"
+
+[[limit]]
+form = "sf.query.match-recognize.match-recognize-pattern-define-as"
+kind = "alternative"
+target = "<symbols_and_operators>"
+note = "row pattern: the ? quantifier (0 or 1)"
+anchor = "doc.constructs.match_recognize / Syntax"
+sql = "SELECT * FROM t1 MATCH_RECOGNIZE ( ORDER BY c1 PATTERN ( a? ) DEFINE a AS TRUE , b AS TRUE ) ;"
+context = "raw"
+
+[[limit]]
+form = "sf.query.match-recognize.match-recognize-pattern-define-as"
+kind = "alternative"
+target = "<symbols_and_operators>"
+note = "row pattern: the {n} quantifier"
+anchor = "doc.constructs.match_recognize / Syntax"
+sql = "SELECT * FROM t1 MATCH_RECOGNIZE ( ORDER BY c1 PATTERN ( a{2} ) DEFINE a AS TRUE , b AS TRUE ) ;"
+context = "raw"
+
+[[limit]]
+form = "sf.query.match-recognize.match-recognize-pattern-define-as"
+kind = "alternative"
+target = "<symbols_and_operators>"
+note = "row pattern: the {n,} quantifier"
+anchor = "doc.constructs.match_recognize / Syntax"
+sql = "SELECT * FROM t1 MATCH_RECOGNIZE ( ORDER BY c1 PATTERN ( a{2,} ) DEFINE a AS TRUE , b AS TRUE ) ;"
+context = "raw"
+
+[[limit]]
+form = "sf.query.match-recognize.match-recognize-pattern-define-as"
+kind = "alternative"
+target = "<symbols_and_operators>"
+note = "row pattern: the {,m} quantifier"
+anchor = "doc.constructs.match_recognize / Syntax"
+sql = "SELECT * FROM t1 MATCH_RECOGNIZE ( ORDER BY c1 PATTERN ( a{,2} ) DEFINE a AS TRUE , b AS TRUE ) ;"
+context = "raw"
+
+[[limit]]
+form = "sf.query.match-recognize.match-recognize-pattern-define-as"
+kind = "alternative"
+target = "<symbols_and_operators>"
+note = "row pattern: the {n, m} quantifier"
+anchor = "doc.constructs.match_recognize / Syntax"
+sql = "SELECT * FROM t1 MATCH_RECOGNIZE ( ORDER BY c1 PATTERN ( a{1,2} ) DEFINE a AS TRUE , b AS TRUE ) ;"
+context = "raw"
+
+[[limit]]
+form = "sf.query.match-recognize.match-recognize-pattern-define-as"
+kind = "alternative"
+target = "<symbols_and_operators>"
+note = "row pattern: a reluctant quantifier (? after the quantifier)"
+anchor = "doc.constructs.match_recognize / Syntax"
+sql = "SELECT * FROM t1 MATCH_RECOGNIZE ( ORDER BY c1 PATTERN ( a*? b ) DEFINE a AS TRUE , b AS TRUE ) ;"
+context = "raw"
+
+[[limit]]
+form = "sf.query.match-recognize.match-recognize-pattern-define-as"
+kind = "alternative"
+target = "<symbols_and_operators>"
+note = "row pattern: PERMUTE"
+anchor = "doc.constructs.match_recognize / Syntax"
+sql = "SELECT * FROM t1 MATCH_RECOGNIZE ( ORDER BY c1 PATTERN ( PERMUTE ( a , b ) ) DEFINE a AS TRUE , b AS TRUE ) ;"
+context = "raw"
+
+[[limit]]
+form = "sf.query.match-recognize.match-recognize-pattern-define-as"
+kind = "alternative"
+target = "<symbols_and_operators>"
+note = "row pattern: the ^ start-of-partition anchor"
+anchor = "doc.constructs.match_recognize / Syntax"
+sql = "SELECT * FROM t1 MATCH_RECOGNIZE ( ORDER BY c1 PATTERN ( ^ a b ) DEFINE a AS TRUE , b AS TRUE ) ;"
+context = "raw"
+
+[[limit]]
+form = "sf.query.match-recognize.match-recognize-pattern-define-as"
+kind = "alternative"
+target = "<symbols_and_operators>"
+note = "row pattern: the $ end-of-partition anchor"
+anchor = "doc.constructs.match_recognize / Syntax"
+sql = "SELECT * FROM t1 MATCH_RECOGNIZE ( ORDER BY c1 PATTERN ( a b $ ) DEFINE a AS TRUE , b AS TRUE ) ;"
+context = "raw"
+
+[[limit]]
+form = "sf.query.match-recognize.match-recognize-pattern-define-as"
+kind = "alternative"
+target = "<symbols_and_operators>"
+note = "row pattern: the {- ... -} exclusion"
+anchor = "doc.constructs.match_recognize / Syntax"
+sql = "SELECT * FROM t1 MATCH_RECOGNIZE ( ORDER BY c1 PATTERN ( {- a -} b ) DEFINE a AS TRUE , b AS TRUE ) ;"
+context = "raw"
+
+[[limit]]
+form = "sf.query.match-recognize.match-recognize-pattern-define-as"
+kind = "alternative"
+target = "<symbols_and_operators>"
+note = "row pattern: the page's combined pattern example"
+anchor = "doc.constructs.match_recognize / Syntax"
+sql = "SELECT * FROM t1 MATCH_RECOGNIZE ( ORDER BY c1 PATTERN ( ^ a b*? ( {- a -} b )+ | PERMUTE ( a , b ){1,2} $ ) DEFINE a AS TRUE , b AS TRUE ) ;"
+context = "raw"
+
+[[limit]]
+form = "sf.query.match-recognize.match-recognize-pattern-define-as"
+kind = "negative_neighbour"
+target = "<symbols_and_operators>"
+note = "row pattern with an unclosed group"
+anchor = "doc.constructs.match_recognize / Syntax"
+sql = "SELECT * FROM t1 MATCH_RECOGNIZE ( ORDER BY c1 PATTERN ( ( a b ) DEFINE a AS TRUE , b AS TRUE ) ;"
+context = "raw"
+
+[[limit]]
+form = "sf.query.match-recognize.match-recognize-pattern-define-as"
+kind = "negative_neighbour"
+target = "<symbols_and_operators>"
+note = "row pattern with an unclosed exclusion"
+anchor = "doc.constructs.match_recognize / Syntax"
+sql = "SELECT * FROM t1 MATCH_RECOGNIZE ( ORDER BY c1 PATTERN ( {- a b ) DEFINE a AS TRUE , b AS TRUE ) ;"
+context = "raw"
+
+[[limit]]
+form = "sf.query.match-recognize.match-recognize-pattern-define-as"
+kind = "option_present"
+target = "[ { RUNNING | FINAL } ]"
+note = "FINAL before a window function in MEASURES"
+anchor = "doc.constructs.match_recognize / Syntax"
+sql = "SELECT * FROM t1 MATCH_RECOGNIZE ( ORDER BY c1 MEASURES FINAL COUNT ( * ) AS n1 PATTERN ( a b ) DEFINE a AS TRUE , b AS TRUE ) ;"
+context = "raw"
+
+[[limit]]
+form = "sf.query.match-recognize.match-recognize-pattern-define-as"
+kind = "option_present"
+target = "[ { RUNNING | FINAL } ]"
+note = "RUNNING before a window function in MEASURES"
+anchor = "doc.constructs.match_recognize / Syntax"
+sql = "SELECT * FROM t1 MATCH_RECOGNIZE ( ORDER BY c1 MEASURES RUNNING COUNT ( * ) AS n1 PATTERN ( a b ) DEFINE a AS TRUE , b AS TRUE ) ;"
+context = "raw"
+
+[[limit]]
+form = "sf.query.match-recognize.match-recognize-pattern-define-as"
+kind = "option_present"
+target = "<symbol>.<column>"
+note = "a predicated column reference <symbol>.<column> in MEASURES"
+anchor = "doc.constructs.match_recognize / Syntax"
+sql = "SELECT * FROM t1 MATCH_RECOGNIZE ( ORDER BY c1 MEASURES FIRST ( a.c1 ) AS f1 PATTERN ( a b ) DEFINE a AS TRUE , b AS TRUE ) ;"
+context = "raw"
+
+[[limit]]
+form = "sf.query.match-recognize.match-recognize-pattern-define-as"
+kind = "negative_neighbour"
+note = "FINAL in DEFINE; the page allows FINAL only in MEASURES"
+anchor = "doc.constructs.match_recognize / Syntax"
+sql = "SELECT * FROM t1 MATCH_RECOGNIZE ( ORDER BY c1 PATTERN ( a b ) DEFINE a AS TRUE , b AS TRUE , c AS FINAL COUNT ( * ) > 1 ) ;"
+context = "raw"
+
+[[reading]]
+form = "sf.query.into"
+grammar_sha256 = "c3020cdb5eaa04a8c14a31003b532410d46dbf545250632944fb4248733ce6b6"
+grammar = ["SELECT <expression1> [ , <expression2> ] [ , <expressionN> ] [ INTO :<variable1> [ , :<variable2> ] [ , :<variableN> ] ] FROM ... WHERE ... [ ... ]"]
+reason = "the further :<variable> targets continue the INTO list; outside INTO they are not part of this form"
+
+[[reading]]
+form = "sf.query.limit.fetch"
+grammar_sha256 = "5f37a3d498c55fa1e0e7c06c3bfa257a88f10a8e17e087b51ea17ac4fb2926cb"
+grammar = ["SELECT ... FROM ... [ ORDER BY ... ] [ OFFSET <start> [ { ROW | ROWS } ] ] FETCH [ { FIRST | NEXT } ] <count> [ { ROW | ROWS } ] [ ONLY ] [ ... ]"]
+reason = "ROW | ROWS follows the OFFSET count, as in the ANSI OFFSET <start> { ROW | ROWS } clause the page shows"
+
+# Derived cases the d91-query-1 receipts contradict (D82/D85): withdrawn with the receipt as the reason.
+
+[[suppress]]
+form = "sf.query.at-before"
+kind = "negative_neighbour"
+target = "'<name>'"
+note = "an unquoted identifier in place of '<name>'"
+reason = "Snowflake parses SELECT 1 FROM t1 AT ( STREAM => m1 ) ; (d91-query-1, semantic_error, errno 2003), so the derived reject case does not hold"
+
+[[suppress]]
+form = "sf.query.changes"
+kind = "negative_neighbour"
+target = "'<name>'"
+note = "an unquoted identifier in place of '<name>'"
+reason = "Snowflake parses SELECT 1 FROM t1 CHANGES ( INFORMATION => DEFAULT ) AT ( STREAM => m1 ) ; (d91-query-1, semantic_error, errno 2003), so the derived reject case does not hold"
+
+[[suppress]]
+form = "sf.query.changes"
+kind = "negative_neighbour"
+note = "the form without its required { AT ( { TIMESTAMP => <timestamp> | OFFSET => <time_difference> | STATEMENT => <id> | STREAM => '<name>' } ) | BEFORE ( STATEMENT => <id> ) }"
+reason = "Snowflake parses SELECT 1 FROM t1 CHANGES ( INFORMATION => DEFAULT ) ; (d91-query-1, semantic_error, errno 2003), so the derived reject case does not hold"
+
+[[suppress]]
+form = "sf.query.into"
+kind = "identifier_class"
+target = "<variable1>"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+reason = "Snowflake rejects SELECT 1 INTO :\"SELECT\" FROM t1 WHERE TRUE ; (d91-query-1, syntax_error, errno 1003), so the derived accept case does not hold"
+
+[[suppress]]
+form = "sf.query.into"
+kind = "required_operand_missing"
+target = "<expression2> in [ , <expression2> ]"
+note = "omit <expression2>"
+reason = "Snowflake parses SELECT 1 , FROM t1 WHERE TRUE ; (d91-query-1, semantic_error, errno 2003), so the derived reject case does not hold"
+
+[[suppress]]
+form = "sf.query.into"
+kind = "required_operand_missing"
+target = "<expressionN> in [ , <expressionN> ]"
+note = "omit <expressionN>"
+reason = "Snowflake parses SELECT 1 , FROM t1 WHERE TRUE ; (d91-query-1, semantic_error, errno 2003), so the derived reject case does not hold"
+
+[[suppress]]
+form = "sf.query.into"
+kind = "identifier_class"
+target = "<variable1>"
+note = "quoted: a double-quoted identifier with blanks and mixed case"
+reason = "Snowflake rejects SELECT 1 INTO :\"v1 Q\" FROM t1 WHERE TRUE ; (d91-query-1, syntax_error, errno 1003), so the derived accept case does not hold"
+
+[[suppress]]
+form = "sf.query.into"
+kind = "negative_neighbour"
+note = "the form without its required WHERE"
+reason = "Snowflake parses SELECT 1 FROM t1 t1 ; (d91-query-1, semantic_error, errno 2003), so the derived reject case does not hold"
+
+[[suppress]]
+form = "sf.query.join-lateral"
+kind = "negative_neighbour"
+note = "the form without its required FROM"
+reason = "Snowflake parses SELECT 1 t1 , LATERAL ( SELECT 1 ) ; (d91-query-1, semantic_error, errno 2139), so the derived reject case does not hold"
+
+[[suppress]]
+form = "sf.query.join-lateral"
+kind = "negative_neighbour"
+note = "the form without its required LATERAL"
+reason = "Snowflake parses SELECT 1 FROM t1 , ( SELECT 1 ) ; (d91-query-1, semantic_error, errno 2003), so the derived reject case does not hold"
+
+[[suppress]]
+form = "sf.query.join.join-2"
+kind = "negative_neighbour"
+note = "the form without its required JOIN"
+reason = "Snowflake parses SELECT 1 FROM t1 t2 ; (d91-query-1, semantic_error, errno 2003), so the derived reject case does not hold"
+
+[[suppress]]
+form = "sf.query.join.join"
+kind = "negative_neighbour"
+note = "the form without its required JOIN"
+reason = "Snowflake parses SELECT 1 FROM t1 t2 ; (d91-query-1, semantic_error, errno 2003), so the derived reject case does not hold"
+
+[[suppress]]
+form = "sf.query.join.join.syntax"
+kind = "negative_neighbour"
+note = "the form without its required JOIN"
+reason = "Snowflake parses SELECT * FROM t1 t2 ; (d91-query-1, semantic_error, errno 2003), so the derived reject case does not hold"
+
+[[suppress]]
+form = "sf.query.limit.fetch"
+kind = "required_operand_missing"
+target = "<count>"
+note = "omit <count>"
+reason = "Snowflake parses SELECT 1 FROM t1 FETCH ; (d91-query-1, semantic_error, errno 2003), so the derived reject case does not hold"
+
+[[suppress]]
+form = "sf.query.limit.fetch"
+kind = "required_operand_missing"
+target = "<start> in [ OFFSET <start> [ { ROW | ROWS } ] ]"
+note = "omit <start>"
+reason = "Snowflake parses SELECT 1 FROM t1 OFFSET FETCH 1 ; (d91-query-1, semantic_error, errno 2003), so the derived reject case does not hold"
+
+[[suppress]]
+form = "sf.query.limit.limit"
+kind = "required_operand_missing"
+target = "<count>"
+note = "omit <count>"
+reason = "Snowflake parses SELECT 1 FROM t1 LIMIT ; (d91-query-1, semantic_error, errno 2003), so the derived reject case does not hold"
+
+[[suppress]]
+form = "sf.query.operators-query.except"
+kind = "required_operand_missing"
+target = "<query> #2"
+note = "omit <query>"
+reason = "Snowflake parses SELECT 1 EXCEPT ; (d91-query-1, accepted), so the derived reject case does not hold"
+
+[[suppress]]
+form = "sf.query.qualify.select-from-qualify"
+kind = "negative_neighbour"
+note = "the form without its required FROM"
+reason = "Snowflake parses SELECT v1 t1 QUALIFY 1 ; (d91-query-1, semantic_error, errno 904), so the derived reject case does not hold"
+
+[[suppress]]
+form = "sf.query.qualify.select-from-qualify"
+kind = "negative_neighbour"
+target = "<column_list>"
+note = "a string literal in place of <column_list>"
+reason = "Snowflake parses SELECT 'v1' FROM t1 QUALIFY 1 ; (d91-query-1, semantic_error, errno 2003), so the derived reject case does not hold"
+
+[[suppress]]
+form = "sf.query.resample"
+kind = "negative_neighbour"
+target = "<partition_column> in [ PARTITION BY <partition_column> [ , ... ] ]"
+note = "a string literal in place of <partition_column>"
+reason = "Snowflake parses SELECT * FROM t1 RESAMPLE ( USING v1 INCREMENT BY INTERVAL '1 hour' PARTITION BY 'v1' ) ; (d91-query-1, semantic_error, errno 2003), so the derived reject case does not hold"
+
+[[suppress]]
+form = "sf.query.select.select.selecting-specific-columns"
+kind = "required_operand_missing"
+target = "<n> in [ TOP <n> ]"
+note = "omit <n>"
+reason = "Snowflake parses SELECT TOP v1 ; (d91-query-1, semantic_error, errno 904), so the derived reject case does not hold"
+
+[[suppress]]
+form = "sf.query.select.select.selecting-specific-columns"
+kind = "negative_neighbour"
+target = "<col_name>"
+note = "a string literal in place of <col_name>"
+reason = "Snowflake parses SELECT 'v1' ; (d91-query-1, accepted), so the derived reject case does not hold"
+
+[[suppress]]
+form = "sf.query.select.select.selecting-specific-columns"
+kind = "negative_neighbour"
+target = "<col_alias> in [ [ AS ] <col_alias> ]"
+note = "a string literal in place of <col_alias>"
+reason = "Snowflake parses SELECT v1 'v1' ; (d91-query-1, semantic_error, errno 2121), so the derived reject case does not hold"
+
+
+[[suppress]]
+form = "sf.query.into"
+kind = "identifier_class"
+target = "<variable2>"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+reason = "Snowflake rejects a double-quoted name after the colon of an INTO target (d91-query-1: SELECT 1 INTO :\"v1 Q\" ... and :\"SELECT\" give syntax_error, errno 1003), the same construct as <variable1>"
+
+[[suppress]]
+form = "sf.query.into"
+kind = "identifier_class"
+target = "<variable2>"
+note = "quoted: a double-quoted identifier with blanks and mixed case"
+reason = "Snowflake rejects a double-quoted name after the colon of an INTO target (d91-query-1: SELECT 1 INTO :\"v1 Q\" ... and :\"SELECT\" give syntax_error, errno 1003), the same construct as <variable1>"
+
+[[suppress]]
+form = "sf.query.into"
+kind = "identifier_class"
+target = "<variableN>"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+reason = "Snowflake rejects a double-quoted name after the colon of an INTO target (d91-query-1: SELECT 1 INTO :\"v1 Q\" ... and :\"SELECT\" give syntax_error, errno 1003), the same construct as <variable1>"
+
+[[suppress]]
+form = "sf.query.into"
+kind = "identifier_class"
+target = "<variableN>"
+note = "quoted: a double-quoted identifier with blanks and mixed case"
+reason = "Snowflake rejects a double-quoted name after the colon of an INTO target (d91-query-1: SELECT 1 INTO :\"v1 Q\" ... and :\"SELECT\" give syntax_error, errno 1003), the same construct as <variable1>"

@@ -37,7 +37,9 @@ OPEN_CHOICE: str = "{"
 CLOSE_CHOICE: str = "}"
 BAR: str = "|"
 ELISION: str = "..."
-PARENS: frozenset[str] = frozenset({"(", ")"})
+OPEN_PAREN: str = "("
+CLOSE_PAREN: str = ")"
+PARENS: frozenset[str] = frozenset({OPEN_PAREN, CLOSE_PAREN})
 TARGET_WIDTH: int = 120
 NO_BOUND: str = "no documented bound"
 NESTING_DEPTHS: tuple[int, ...] = (2, 8)
@@ -75,7 +77,7 @@ CLASS_RULES: tuple[tuple[re.Pattern[str], str], ...] = (
     (re.compile(r"statement"), "statement"),
     (re.compile(r"query|subquery"), "query"),
     (re.compile(r"(^|_)(data_)?type$|_type$"), "data_type"),
-    (re.compile(r"number$|^n$|^num|_count$|^count$"), "integer_literal"),
+    (re.compile(r"number$|^n$|^num|_count$|^count$|position$"), "integer_literal"),
     (re.compile(r"message|string|pattern|comment"), "string_literal"),
     (re.compile(r"expr|expression|condition|predicate|value|start|end|default"), "expression"),
     (
@@ -298,7 +300,8 @@ SCRIPTING_SELF_DECLARING_BLOCKS: dict[str, FormStyle] = {
 ELISION_START: str = "^"
 PURE_ELISION: str = "[ ... ]"
 LIST_SEPARATOR: str = ","
-GLUED_PREFIXES: re.Pattern[str] = re.compile(r"(?<![^ ])([$:]) (?=[^ =])")
+LIST_ITEM_KEYWORDS: frozenset[str] = frozenset({"AS"})
+GLUED_PREFIXES: re.Pattern[str] = re.compile(r"(?<![^ ])([$:@]) (?=[^ =])")
 QUERY_FORMS: tuple[str, ...] = ("sf.query.constructs",)
 UNPACKED_FORMS: frozenset[str] = frozenset(QUERY_FORMS)
 QUERY_ELISIONS: dict[str, tuple[str, tuple[str, ...], str]] = {
@@ -370,14 +373,17 @@ QUERY_ELISIONS: dict[str, tuple[str, tuple[str, ...], str]] = {
         "the RESAMPLE body",
     ),
     "UPDATE": ("", ("sf.query.for-update",), "the FOR UPDATE options"),
-    "SEMANTIC_VIEW": ("sv1", ("sf.query.semantic-view",), "the semantic view arguments"),
+    "SEMANTIC_VIEW": (
+        "sv1 DIMENSIONS d1",
+        ("sf.query.semantic-view",),
+        "the semantic view arguments",
+    ),
     "ASOF JOIN": (
         "t2 MATCH_CONDITION ( t1.c1 >= t2.c1 )",
         ("sf.query.asof-join",),
         "the joined source and its match condition",
     ),
     "AND": ("t1.c1 = t2.c1", (), "further ON equalities; this form's own repetition"),
-    "PRIOR": ("", (), "repetition of the CONNECT BY condition list; this form's own list"),
     "AS": ("", (), "repetition of the preceding aliased list item; this form's own list"),
 }
 FAMILY_ELISIONS: dict[str, dict[str, tuple[str, tuple[str, ...], str]]] = {
@@ -400,25 +406,16 @@ QUERY_PLACEHOLDER_FILLS: dict[str, str] = {
     "left_table.timecol": "t1.c1",
     "right_table.timecol": "t2.c1",
     "table.col": "t1.c1",
-    "comparison_operator": ">=",
     "timestamp": "TO_TIMESTAMP_LTZ ( '2026-01-01' )",
     "time_difference": "-60",
     "id": "'01c00000-0000-0000-0000-000000000000'",
     "data_source": "t1",
     "wait_time": "10",
-    "objectreference": "t1",
-    "groupitem": "c1",
-    "groupset": "( c1 )",
-    "orderitem": "c1",
-    "samplingmethod": "BERNOULLI ( 10 )",
-    "anchorclause": "SELECT 1",
-    "recursiveclause": "SELECT 1 FROM v1",
     "left_hand_table_expression": "t1",
     "inline_view": "SELECT 1",
     "object_ref1": "t1",
     "object_ref2": "t2",
     "symbol": "a",
-    "pattern": "a",
     "aggregate_function": "SUM",
     "value_column": "c1",
     "pivot_value_1": "1",
@@ -427,6 +424,22 @@ QUERY_PLACEHOLDER_FILLS: dict[str, str] = {
     "time_series_constant": "INTERVAL '1 hour'",
     "col_position": "1",
     "level_expression": "LEVEL",
+    "symbols_and_operators": "a",
+    "position": "1",
+    "namespace": "d1",
+    "object_state": "OFFSET => -60",
+    "change_tracking_type": "INFORMATION => DEFAULT",
+    "table_function": "TABLE ( FLATTEN ( INPUT => ARRAY_CONSTRUCT ( 1 ) ) )",
+    "subquery": "SELECT 1",
+    "stage_name": "s1",
+    "format_name": "f1",
+    "regex_pattern": "'.*'",
+    "base_table_name": "t1",
+    "anchor_column_list": "c1",
+    "recursive_column_list": "c1",
+    "probability": "10",
+    "num": "10",
+    "seed": "1",
 }
 QUERY_CLAUSES: dict[str, str] = {"[ , ( ... ) ]": ", ( 2 )"}
 QUERY_FRAGMENT_PREFIXES: dict[str, str] = {

@@ -74,18 +74,12 @@ reason = "further clauses of the SELECT statement"
 [[elision]]
 form = "sf.query.connect-by"
 production = 0
-after = "PRIOR"
+after = "[ ... ]"
 fill = ""
-defers_to = []
-reason = "repetition of the CONNECT BY condition list; this form's own list"
-
-[[elision]]
-form = "sf.query.connect-by"
-production = 0
-after = "PRIOR"
-fill = ""
-defers_to = []
-reason = "repetition of the CONNECT BY condition list; this form's own list"
+defers_to = [
+  "sf.query.constructs",
+]
+reason = "further clauses of the SELECT statement"
 
 [[elision]]
 form = "sf.query.constructs"
@@ -264,7 +258,7 @@ reason = "the RESAMPLE body"
 form = "sf.query.constructs"
 production = 0
 after = "SEMANTIC_VIEW"
-fill = "sv1"
+fill = "sv1 DIMENSIONS d1"
 defers_to = [
   "sf.query.semantic-view",
 ]
@@ -390,12 +384,115 @@ reason = "the select list"
 [[elision]]
 form = "sf.query.from"
 production = 0
-after = "[ ... ]"
-fill = ""
+after = "MATCH_RECOGNIZE"
+fill = "( PATTERN ( a ) DEFINE a AS TRUE )"
 defers_to = [
-  "sf.query.constructs",
+  "sf.query.match-recognize.match-recognize-pattern-define-as",
 ]
-reason = "further clauses of the SELECT statement"
+reason = "the MATCH_RECOGNIZE body"
+
+[[elision]]
+form = "sf.query.from"
+production = 0
+after = "PIVOT"
+fill = "( SUM ( c1 ) FOR c2 IN ( 1 ) )"
+defers_to = [
+  "sf.query.pivot",
+]
+reason = "the PIVOT body"
+
+[[elision]]
+form = "sf.query.from"
+production = 0
+after = "UNPIVOT"
+fill = "( v FOR n IN ( c1 ) )"
+defers_to = [
+  "sf.query.unpivot",
+  "sf.query.pivot",
+]
+reason = "the body"
+
+[[elision]]
+form = "sf.query.from"
+production = 0
+after = "SAMPLE"
+fill = "( 10 )"
+defers_to = [
+  "sf.query.sample",
+]
+reason = "the sampling clause"
+
+[[elision]]
+form = "sf.query.from"
+production = 0
+after = "PIVOT"
+fill = "( SUM ( c1 ) FOR c2 IN ( 1 ) )"
+defers_to = [
+  "sf.query.pivot",
+]
+reason = "the PIVOT body"
+
+[[elision]]
+form = "sf.query.from"
+production = 0
+after = "UNPIVOT"
+fill = "( v FOR n IN ( c1 ) )"
+defers_to = [
+  "sf.query.unpivot",
+  "sf.query.pivot",
+]
+reason = "the body"
+
+[[elision]]
+form = "sf.query.from"
+production = 0
+after = "SAMPLE"
+fill = "( 10 )"
+defers_to = [
+  "sf.query.sample",
+]
+reason = "the sampling clause"
+
+[[elision]]
+form = "sf.query.from"
+production = 0
+after = "VALUES"
+fill = "( 1 )"
+defers_to = [
+  "sf.query.values",
+]
+reason = "the VALUES rows"
+
+[[elision]]
+form = "sf.query.from"
+production = 0
+after = "SAMPLE"
+fill = "( 10 )"
+defers_to = [
+  "sf.query.sample",
+]
+reason = "the sampling clause"
+
+[[elision]]
+form = "sf.query.from"
+production = 0
+after = "SEMANTIC_VIEW"
+fill = "sv1 DIMENSIONS d1"
+defers_to = [
+  "sf.query.semantic-view",
+]
+reason = "the semantic view arguments"
+
+[[elision]]
+form = "sf.query.from"
+production = 0
+after = "JOIN"
+fill = "t2"
+defers_to = [
+  "sf.query.join.join",
+  "sf.query.join.join-2",
+]
+reason = "the joined source"
 
 [[elision]]
 form = "sf.query.from"
@@ -1245,6 +1342,99 @@ defers_to = [
   "sf.query.select.select.selecting-specific-columns",
 ]
 reason = "the select list"
+
+[[elision]]
+form = "sf.query.with.select.syntax"
+production = 0
+after = "FROM"
+fill = "t1"
+defers_to = [
+  "sf.query.from",
+]
+reason = "the FROM source"
+
+[[elision]]
+form = "sf.query.with.select.syntax"
+production = 0
+after = "FROM"
+fill = "t1"
+defers_to = [
+  "sf.query.from",
+]
+reason = "the FROM source"
+
+[[elision]]
+form = "sf.query.with.select.syntax"
+production = 0
+after = "JOIN"
+fill = "t2"
+defers_to = [
+  "sf.query.join.join",
+  "sf.query.join.join-2",
+]
+reason = "the joined source"
+
+[[elision]]
+form = "sf.query.with.select.syntax"
+production = 0
+after = "FROM"
+fill = "t1"
+defers_to = [
+  "sf.query.from",
+]
+reason = "the FROM source"
+
+[[elision]]
+form = "sf.query.with.select.syntax"
+production = 0
+after = "FROM"
+fill = "t1"
+defers_to = [
+  "sf.query.from",
+]
+reason = "the FROM source"
+
+[[elision]]
+form = "sf.query.with.select.syntax"
+production = 0
+after = "JOIN"
+fill = "t2"
+defers_to = [
+  "sf.query.join.join",
+  "sf.query.join.join-2",
+]
+reason = "the joined source"
+
+[[elision]]
+form = "sf.query.with.select.syntax"
+production = 0
+after = "FROM"
+fill = "t1"
+defers_to = [
+  "sf.query.from",
+]
+reason = "the FROM source"
+
+[[elision]]
+form = "sf.query.with.select.syntax"
+production = 0
+after = "FROM"
+fill = "t1"
+defers_to = [
+  "sf.query.from",
+]
+reason = "the FROM source"
+
+[[elision]]
+form = "sf.query.with.select.syntax"
+production = 0
+after = "JOIN"
+fill = "t2"
+defers_to = [
+  "sf.query.join.join",
+  "sf.query.join.join-2",
+]
+reason = "the joined source"
 
 [[elision]]
 form = "sf.query.with.select.syntax"

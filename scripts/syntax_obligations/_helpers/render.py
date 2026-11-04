@@ -19,6 +19,7 @@ from scripts.syntax_obligations.constants import (
     ACTION_RESERVED_WORD,
     BUILTIN_NAMES,
     CLASS_FILL,
+    CLOSE_PAREN,
     CLOSE_REPEAT_AFTER,
     CONTEXT_BLOCK,
     CONTEXT_PROCEDURE,
@@ -34,10 +35,12 @@ from scripts.syntax_obligations.constants import (
     HAND_SIZE,
     HAND_SQL,
     LABEL_SLOT,
+    LIST_ITEM_KEYWORDS,
     LIST_SEPARATOR,
     NAME_FILL,
     NODE_CHOICE,
     NODE_OPTIONAL,
+    OPEN_PAREN,
     PROCEDURE_WRAPPER,
     QUERY_CLASS,
     QUOTED_WITHOUT_BLANK_NAMES,
@@ -304,15 +307,7 @@ class _Renderer:
             return [clause]
         branch: tuple[Node, ...] = node.branches[choices.branch.get(key, 0)]
         if is_repetition(branch) and not any(placeholder_name(n) for n in _tokens(branch)):
-            keywords: set[str] = set(self._keywords)
-            start: int = max(
-                (
-                    i
-                    for i, text in enumerate(before)
-                    if text in CLOSE_REPEAT_AFTER or text.upper() in keywords
-                ),
-                default=-1,
-            )
+            start: int = _repeat_start(before=before, keywords=set(self._keywords))
             return [",", *before[start + 1 :]]
         return self._sequence(nodes=branch, choices=choices)
 
@@ -334,6 +329,23 @@ class _Renderer:
             fill = f'"{fill}Q"' if name in QUOTED_WITHOUT_BLANK_NAMES else f'"{fill} Q"'
         self._used.setdefault(name, []).append(fill)
         return fill
+
+
+def _repeat_start(*, before: list[str], keywords: set[str]) -> int:
+    """Where the repeated list item starts: after the nearest open `(`, `,` or clause keyword."""
+    depth: int = 0
+    for index in range(len(before) - 1, -1, -1):
+        text: str = before[index]
+        if text == CLOSE_PAREN:
+            depth += 1
+        elif text == OPEN_PAREN and depth:
+            depth -= 1
+        elif depth == 0 and (
+            text in CLOSE_REPEAT_AFTER
+            or (text.upper() in keywords and text.upper() not in LIST_ITEM_KEYWORDS)
+        ):
+            return index
+    return -1
 
 
 def _tokens(nodes: tuple[Node, ...]) -> list[Node]:

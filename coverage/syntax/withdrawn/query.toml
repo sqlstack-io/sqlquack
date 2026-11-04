@@ -11,6 +11,51 @@ valid_as = "sf.query.constructs option_present [ FROM ... [ AT ... | BEFORE ... 
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
+form = "sf.query.from"
+kind = "required_operand_missing"
+target = "<alias_name> in [ [ AS ] <alias_name> ]"
+note = "omit <alias_name>"
+sql = "SELECT 1 FROM v1 ;"
+valid_as = "sf.query.from positive the documented form with every required part and no optional part"
+reason = "the rejection renders SQL the documented grammar also accepts"
+
+[[withdrawn]]
+form = "sf.query.from"
+kind = "required_operand_missing"
+target = "<alias_name> in [ [ AS ] <alias_name> ] #2"
+note = "omit <alias_name>"
+sql = "SELECT 1 FROM TABLE ( FLATTEN ( INPUT => ARRAY_CONSTRUCT ( 1 ) ) ) ;"
+valid_as = "sf.query.from alternative { [ <namespace> . ] <object_name> [ { AT | BEFORE } ( <obje… → <table_function> [ PIVOT ... | UNPIVOT ... ] [ [ AS ] <alias_name> ] [ SAMPLE ... ]"
+reason = "the rejection renders SQL the documented grammar also accepts"
+
+[[withdrawn]]
+form = "sf.query.from"
+kind = "required_operand_missing"
+target = "<alias_name> in [ [ AS ] <alias_name> ] #3"
+note = "omit <alias_name>"
+sql = "SELECT 1 FROM ( SELECT 1 ) ;"
+valid_as = "sf.query.from alternative { [ <namespace> . ] <object_name> [ { AT | BEFORE } ( <object_stat… → [ LATERAL ] ( <subquery> ) [ [ AS ] <alias_name> ]"
+reason = "the rejection renders SQL the documented grammar also accepts"
+
+[[withdrawn]]
+form = "sf.query.from"
+kind = "required_operand_missing"
+target = "<alias_name> in [ [ AS ] <alias_name> ] #4"
+note = "omit <alias_name>"
+sql = "SELECT 1 FROM @s1 ;"
+valid_as = "sf.query.from alternative { [ <namespace> . ] <object_name> [ { AT | BEFORE } ( <obje… → @ <stage_name> [ ( FILE_FORMAT => <format_name> , PATTERN => '<regex_pattern>' ) ] [ [ AS ] <alias_name> ]"
+reason = "the rejection renders SQL the documented grammar also accepts"
+
+[[withdrawn]]
+form = "sf.query.from"
+kind = "required_operand_missing"
+target = "<alias_name> in [ [ AS ] <alias_name> ] #5"
+note = "omit <alias_name>"
+sql = "SELECT 1 FROM DYNAMIC_TABLE_REFRESH_BOUNDARY ( v1 ) ;"
+valid_as = "sf.query.from alternative { [ <namespace> . ] <object_name> [ { AT | BEFORE } ( <obje… → DYNAMIC_TABLE_REFRESH_BOUNDARY ( <object_name> ) [ { AT | BEFORE } ( <object_state> ) ] [ CHANGES ( <change_tracking_type> ) ] [ [ AS ] <alias_name> ]"
+reason = "the rejection renders SQL the documented grammar also accepts"
+
+[[withdrawn]]
 form = "sf.query.pivot"
 kind = "required_operand_missing"
 target = "<alias> in [ [ AS ] <alias> ]"
@@ -59,9 +104,9 @@ reason = "the rejection renders SQL the documented grammar also accepts"
 form = "sf.query.sample"
 kind = "negative_neighbour"
 target = ""
-note = "the form without its required { SAMPLE | TABLESAMPLE }"
-sql = "SELECT 1 FROM t1 ;"
-valid_as = "sf.query.constructs option_present [ FROM ... [ AT ... | BEFORE ... ] [ CHANGES ... ] [ CONNECT BY ... ] [ JOIN ... ] [ ASOF JOIN ... ] [ LATERAL ... ] [ …"
+note = "the form without its required ROWS"
+sql = "SELECT 1 FROM t1 SAMPLE ( 10 ) ;"
+valid_as = "sf.query.constructs option_present [ SAMPLE ... ]"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
@@ -79,7 +124,7 @@ kind = "required_operand_missing"
 target = "<alias> in [ [ AS ] <alias> ]"
 note = "omit <alias>"
 sql = "SELECT * FROM SEMANTIC_VIEW ( v1 METRICS 1 ) ;"
-valid_as = "sf.query.semantic-view alternative { METRICS <metric_expr> [ [ AS ] <alias> ] [ , ... ] | FACTS <fact… → METRICS <metric_expr> [ [ AS ] <alias> ] [ , ... ]"
+valid_as = "sf.query.semantic-view positive the documented form with every required part and no optional part"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
@@ -87,8 +132,17 @@ form = "sf.query.semantic-view"
 kind = "required_operand_missing"
 target = "<alias> in [ [ AS ] <alias> ] #2"
 note = "omit <alias>"
-sql = "SELECT * FROM SEMANTIC_VIEW ( v1 DIMENSIONS 1 ) ;"
+sql = "SELECT * FROM SEMANTIC_VIEW ( v1 METRICS 1 DIMENSIONS 1 ) ;"
 valid_as = "sf.query.semantic-view option_absent [ [ AS ] <alias> ] #2"
+reason = "the rejection renders SQL the documented grammar also accepts"
+
+[[withdrawn]]
+form = "sf.query.semantic-view"
+kind = "required_operand_missing"
+target = "<alias> in [ [ AS ] <alias> ] #3"
+note = "omit <alias>"
+sql = "SELECT * FROM SEMANTIC_VIEW ( v1 DIMENSIONS 1 ) ;"
+valid_as = "sf.query.semantic-view alternative { { METRICS <metric_expr> [ [ AS ] <alias> ] [ , ... ] | FAC… → DIMENSIONS <dimension_expr> [ [ AS ] <alias> ] [ , ... ]"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
@@ -106,7 +160,7 @@ kind = "required_operand_missing"
 target = "<table_alias> in [ [ AS ] <table_alias> [ ( <column_alias> [ , ... ] ) ] ]"
 note = "omit <table_alias>"
 sql = "SELECT 1 FROM ( VALUES ( 1 ) ) ;"
-valid_as = "sf.query.values positive the documented form with every required part and no optional part"
+valid_as = "sf.query.from alternative { [ <namespace> . ] <object_name> [ { AT | BEFORE } ( <object_state> ) ] [ CHANGES ( <c… → ( VALUES ... ) [ SAMPLE ... ]"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
