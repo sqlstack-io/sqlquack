@@ -474,6 +474,42 @@ fn given_auditor_tree_findings_when_parsing_faithfully_then_the_tree_records_wha
             pointer: "/function/no_parens",
             expected_value: json!(true),
         },
+        ProjectionTestCase {
+            description: "COUNT takes a star with a quoted EXCLUDE name",
+            sql: "SELECT COUNT(* EXCLUDE \"v1 Q\") FROM t1",
+            pointer: "/aggregate_function/args/0/star/except/0/name",
+            expected_value: json!("v1 Q"),
+        },
+        ProjectionTestCase {
+            description: "COUNT takes a star with an EXCLUDE list",
+            sql: "SELECT COUNT(* EXCLUDE (v1)) FROM t1",
+            pointer: "/aggregate_function/args/0/star/except/0/name",
+            expected_value: json!("v1"),
+        },
+        ProjectionTestCase {
+            description: "a bare COUNT star is unchanged",
+            sql: "SELECT COUNT(*) FROM t1",
+            pointer: "/aggregate_function/args/0/star/except",
+            expected_value: json!(null),
+        },
+        ProjectionTestCase {
+            description: "HASH_AGG takes DISTINCT over several arguments",
+            sql: "SELECT HASH_AGG(DISTINCT 1, 2)",
+            pointer: "/aggregate_function/distinct",
+            expected_value: json!(true),
+        },
+        ProjectionTestCase {
+            description: "OBJECT_AGG takes DISTINCT over its key and value",
+            sql: "SELECT OBJECT_AGG(DISTINCT v1, 1) FROM t1",
+            pointer: "/aggregate_function/args/1/literal/value",
+            expected_value: json!("1"),
+        },
+        ProjectionTestCase {
+            description: "OBJECT_AGG without DISTINCT stays not distinct",
+            sql: "SELECT OBJECT_AGG(v1, 1) FROM t1",
+            pointer: "/aggregate_function/distinct",
+            expected_value: json!(false),
+        },
     ];
 
     for test_case in test_cases {

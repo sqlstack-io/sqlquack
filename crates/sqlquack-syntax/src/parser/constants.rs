@@ -57,6 +57,8 @@ pub(crate) const FUNCTION: &str = "FUNCTION";
 /// The text "GROUP", as comparisons test it.
 pub(crate) const GROUP: &str = "GROUP";
 
+/// The text "OBJECT_AGG", as comparisons test it.
+pub(crate) const OBJECT_AGG: &str = "OBJECT_AGG";
 /// The text "HASH_AGG", as comparisons test it.
 pub(crate) const HASH_AGG: &str = "HASH_AGG";
 

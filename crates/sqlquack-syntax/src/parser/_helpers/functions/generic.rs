@@ -501,6 +501,15 @@ impl Parser {
                 Some(lambda) => lambda,
                 None => self.parse_single_function_argument()?,
             });
+            let empty_parentheses = matches!(
+                args.last(),
+                Some(Expression::Tuple(tuple)) if tuple.expressions.is_empty()
+            );
+            if empty_parentheses
+                && self.config.dialect == Some(crate::tokens::models::DialectType::Snowflake)
+            {
+                return Err(self.parse_error("Snowflake takes no empty parentheses as an argument"));
+            }
 
             if !self.match_token(TokenType::Comma) {
                 break;
@@ -1433,6 +1442,8 @@ impl Parser {
     pub(crate) fn parse_window_frame_bound(
         &mut self,
     ) -> Result<(WindowFrameBound, Option<String>)> {
+        let snowflake: bool =
+            self.config.dialect == Some(crate::tokens::models::DialectType::Snowflake);
         if self.match_token(TokenType::Current) {
             self.expect_token(TokenType::Row)?;
             Ok((WindowFrameBound::CurrentRow, None))
@@ -1448,7 +1459,11 @@ impl Parser {
             }
         } else if self.match_token(TokenType::Preceding) {
             let text = self.tokens[self.current - 1].text.to_string();
-            if self.check(TokenType::RParen) || self.check(TokenType::Comma) {
+            if snowflake {
+                Err(self.parse_error(
+                    "Snowflake frame bounds need a value or UNBOUNDED before PRECEDING",
+                ))
+            } else if self.check(TokenType::RParen) || self.check(TokenType::Comma) {
                 Ok((WindowFrameBound::BarePreceding, Some(text)))
             } else {
                 let expr = self.parse_primary()?;
@@ -1456,7 +1471,11 @@ impl Parser {
             }
         } else if self.match_token(TokenType::Following) {
             let text = self.tokens[self.current - 1].text.to_string();
-            if self.check(TokenType::RParen) || self.check(TokenType::Comma) {
+            if snowflake {
+                Err(self.parse_error(
+                    "Snowflake frame bounds need a value or UNBOUNDED before FOLLOWING",
+                ))
+            } else if self.check(TokenType::RParen) || self.check(TokenType::Comma) {
                 Ok((WindowFrameBound::BareFollowing, Some(text)))
             } else {
                 let expr = self.parse_primary()?;
@@ -1470,6 +1489,8 @@ impl Parser {
             } else if self.match_token(TokenType::Following) {
                 let text = self.tokens[self.current - 1].text.to_string();
                 Ok((WindowFrameBound::Following(Box::new(expr)), Some(text)))
+            } else if snowflake {
+                Err(self.parse_error("Expected PRECEDING or FOLLOWING after a frame bound value"))
             } else {
                 Ok((WindowFrameBound::Value(Box::new(expr)), None))
             }

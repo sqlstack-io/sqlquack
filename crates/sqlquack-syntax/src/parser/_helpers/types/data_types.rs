@@ -21,6 +21,7 @@ use crate::parser::constants::ROW;
 use crate::parser::constants::STRUCT;
 use crate::parser::models::Parser;
 use crate::tokens::errors::Error;
+use crate::tokens::models::DialectType;
 use crate::tokens::models::ParserToken;
 use crate::tokens::models::SourceSpan;
 use crate::tokens::models::Span;
@@ -804,11 +805,17 @@ impl Parser {
             ilike = Some(self.advance_text()?);
         } else if self.match_token(TokenType::Exclude) || self.match_token(TokenType::Except) {
             let _ = self.match_text_seq(&["STRICT"]);
+            let strings: bool = self.config.dialect != Some(DialectType::Snowflake);
             let mut columns: Vec<Identifier> = Vec::new();
             if self.match_token(TokenType::LParen) {
                 loop {
                     let start = self.peek().span;
                     let quoted = self.check(TokenType::QuotedIdentifier);
+                    if !strings && self.check(TokenType::String) {
+                        return Err(
+                            self.parse_error("Snowflake EXCLUDE names columns, not strings")
+                        );
+                    }
                     let col =
                         if self.check(TokenType::String) || self.is_safe_keyword_as_identifier() {
                             self.advance_text()?
@@ -839,6 +846,9 @@ impl Parser {
             } else {
                 let start = self.peek().span;
                 let quoted = self.check(TokenType::QuotedIdentifier);
+                if !strings && self.check(TokenType::String) {
+                    return Err(self.parse_error("Snowflake EXCLUDE names columns, not strings"));
+                }
                 let col = if self.check(TokenType::String) || self.is_safe_keyword_as_identifier() {
                     self.advance_text()?
                 } else {
