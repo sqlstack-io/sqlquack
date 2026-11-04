@@ -192,6 +192,23 @@ fn given_a_changed_tree_when_checking_then_the_form_fails_closed_with_its_reason
             expected_problem: None,
         },
         CheckTestCase {
+            description: "an execute receipt never satisfies a case captured as a DCM definition file",
+            mutate: |root| {
+                replace(
+                    root,
+                    "cases/query.jsonl",
+                    "\"capture\":\"execute\"",
+                    "\"capture\":\"dcm_definition_file\"",
+                )
+            },
+            parse: structural,
+            parser_tree: Some(TREE),
+            form: "sf.query.select",
+            expected_state: FormState::Unverified,
+            expected_reason: Some(Reason::StaleReceipt),
+            expected_problem: None,
+        },
+        CheckTestCase {
             description: "an inadmissible receipt of another phase does not make it ambiguous",
             mutate: |root| {
                 let stale: String = receipt_line(&select_17(), "syntax_error")

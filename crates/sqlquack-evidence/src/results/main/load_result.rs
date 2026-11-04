@@ -51,7 +51,12 @@ pub fn load_result(directory: &Path, hash: &str) -> Result<Option<StoredResult>,
                     "{hash}: the Arrow file does not match the hash in its metadata"
                 )));
             }
-            Some(recorded_result(&metadata, read_arrow(hash, bytes)?)?)
+            Some(recorded_result(
+                &metadata.case_hash,
+                &metadata.columns,
+                metadata.row_count,
+                read_arrow(hash, bytes)?,
+            )?)
         }
     };
     Ok(Some(StoredResult { metadata, rows }))

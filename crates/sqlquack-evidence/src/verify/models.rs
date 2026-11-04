@@ -4,6 +4,7 @@ use std::collections::BTreeMap;
 use std::path::Path;
 
 use serde::Serialize;
+use sqlquack_compare::comparison::models::Mismatch;
 use sqlquack_core::failures::models::ErrorKind;
 use sqlquack_core::parsing::models::SourceLocation;
 use sqlquack_core::provenance::models::Provenance;
@@ -199,4 +200,15 @@ pub struct VerifyReport {
     pub unreferenced_results: Vec<String>,
     /// Results recorded before pinning while no account defaults are recorded to vouch for them.
     pub unproven_sessions: usize,
+}
+
+/// How a replay compares with a recording under the strict comparator.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub enum RecordingMatch {
+    /// Every name, declared type and value matches.
+    Matches,
+    /// The recording kept declared nanosecond columns in microseconds; the replay matches there.
+    MatchesAtMicroseconds,
+    /// The first difference.
+    Differs(Mismatch),
 }
