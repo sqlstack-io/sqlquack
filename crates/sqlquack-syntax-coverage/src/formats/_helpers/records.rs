@@ -344,14 +344,15 @@ pub(crate) fn check_receipt(receipt: &Receipt) -> Vec<String> {
 fn exclusion_problem(exclusion: &Exclusion, family: &str) -> Option<&'static str> {
     let target_valid: bool = match (&exclusion.form, &exclusion.source) {
         (Some(form), None) => !family.is_empty() && is_form_id(form, family),
-        (None, Some(source)) => is_source_id(source),
+        (None, Some(source)) => family.is_empty() && is_source_id(source),
         _ => false,
     };
     match (target_valid, blank(&exclusion.reason)) {
         (true, false) => None,
-        (false, _) => {
-            Some("an exclusion needs exactly one of a form id of its family or a source id")
-        }
+        (false, _) => Some(
+            "an exclusion needs exactly one target: a form id of its family, or a source id in a \
+                 page review",
+        ),
         (true, true) => Some("an exclusion needs a reason"),
     }
 }

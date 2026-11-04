@@ -406,6 +406,18 @@ fn given_a_format_fault_when_loading_then_the_problem_is_named() {
             expected_problem: "interaction needs a pair of two",
         },
         FormatFaultTestCase {
+            description: "a family review excluding a page",
+            mutate: |root| {
+                replace(
+                    root,
+                    "reviews/query.toml",
+                    "form = \"sf.query.select.define-view\"",
+                    "source = \"doc.billing\"",
+                )
+            },
+            expected_problem: "review query-1: an exclusion needs exactly one target",
+        },
+        FormatFaultTestCase {
             description: "an interaction without the anchor of its usage note",
             mutate: |root| {
                 replace(
@@ -686,7 +698,7 @@ fn given_a_format_fault_when_loading_then_the_problem_is_named() {
                     "sf.dml.insert",
                 )
             },
-            expected_problem: "an exclusion needs exactly one of a form id of its family or a source id",
+            expected_problem: "an exclusion needs exactly one target: a form id of its family",
         },
         FormatFaultTestCase {
             description: "a review accepting an exclusion without a reason",

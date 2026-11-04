@@ -56,6 +56,17 @@ pub(crate) fn structural(sql: &str) -> LocalVerdict {
     ][usize::from(sql == "SELECT FROM")]
 }
 
+/// A parser that rejects everything.
+pub(crate) fn rejecting(_sql: &str) -> LocalVerdict {
+    LocalVerdict::Rejected
+}
+
+/// Appends `line` to the receipts file.
+pub(crate) fn append_receipt(root: &Path, line: &str) {
+    let receipts: String = read(root, "receipts/run-1.jsonl");
+    write(root, "receipts/run-1.jsonl", &format!("{receipts}{line}\n"));
+}
+
 /// A parser that accepts everything, through a Command or Raw fallback.
 pub(crate) fn opaque(_sql: &str) -> LocalVerdict {
     LocalVerdict::Accepted { opaque: true }
@@ -256,4 +267,9 @@ pub(crate) fn exclusion_review(root: &Path, verdict: &str, tree: &str) {
              reason = \"valid only inside project files\"\n"
         ),
     );
+}
+
+/// The setup hash of `select-17`.
+pub(crate) fn select_17_setup_sha256() -> String {
+    sha256(&serde_json::to_string(&[SETUP]).expect("setup"))
 }

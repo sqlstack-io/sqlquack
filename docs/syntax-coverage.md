@@ -172,7 +172,7 @@ A `[[review]]` has these fields:
 - `reviewed_utc`, plus a `verdict` of `approved` or `changes_requested`.
 - `[[review.exclusion]]`: exactly one of `form` (a form id of the review's family) or `source` (a
   page id, used for out-of-scope and syntax-less pages), plus a `reason`. A page review excludes
-  pages only.
+  pages only, and a family review excludes forms only.
 - `note`.
 
 ## Verification
@@ -181,8 +181,8 @@ The checker joins the catalogue, obligations, cases and receipts with freshly co
 results. An obligation is satisfied only when at least one case cites it and every citing case
 agrees. A case agrees when all of these hold:
 
-- It has a receipt whose SQL, setup and session hashes equal the case's and that has a query id or
-  its hash. A receipt that is not bound this way is stale.
+- It has a receipt whose SQL, setup and session hashes and capture method equal the case's, and
+  that has a query id or its hash. A receipt that is not bound this way is stale.
 - All of its admissible receipts record the same phase.
 - The current parser's verdict matches that phase: a `syntax_error` receipt matches a local
   rejection, and every other phase matches a local acceptance.

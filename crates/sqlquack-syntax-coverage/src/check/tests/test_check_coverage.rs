@@ -1,9 +1,9 @@
 use crate::check::main::check_coverage::check_coverage;
 use crate::check::models::{FormState, Reason};
 use crate::check::tests::helpers::{
-    OTHER_TREE, SETUP, TREE, case_in_zone, case_line, drop_lines, exclusion_review, form,
-    obligation, opaque, receipt_line, replace, rewrite_select_17, select_17, structural,
-    verified_tree, write,
+    OTHER_TREE, SETUP, TREE, append_receipt, case_in_zone, case_line, drop_lines, exclusion_review,
+    form, obligation, opaque, read, receipt_line, rejecting, replace, rewrite_select_17, select_17,
+    select_17_setup_sha256, structural, verified_tree, write,
 };
 use crate::check::tests::test_types::CheckTestCase;
 use crate::formats::main::load_coverage::load_coverage;
@@ -170,6 +170,113 @@ fn given_a_changed_tree_when_checking_then_the_form_fails_closed_with_its_reason
             form: "sf.query.select",
             expected_state: FormState::Unverified,
             expected_reason: Some(Reason::AmbiguousReceipts),
+            expected_problem: None,
+        },
+        CheckTestCase {
+            description: "a receipt of another capture method than its case's",
+            mutate: |root| {
+                replace(
+                    root,
+                    "receipts/run-1.jsonl",
+                    "\"capture_method\":\"execute\"",
+                    "\"capture_method\":\"compile_only_explain\"",
+                )
+            },
+            parse: structural,
+            parser_tree: Some(TREE),
+            form: "sf.query.select",
+            expected_state: FormState::Unverified,
+            expected_reason: Some(Reason::StaleReceipt),
+            expected_problem: None,
+        },
+        CheckTestCase {
+            description: "an inadmissible receipt of another phase does not make it ambiguous",
+            mutate: |root| {
+                let stale: String = receipt_line(&select_17(), "syntax_error")
+                    .replace(&select_17_setup_sha256(), &"b".repeat(64));
+                append_receipt(root, &stale);
+            },
+            parse: structural,
+            parser_tree: Some(TREE),
+            form: "sf.query.select",
+            expected_state: FormState::Verified,
+            expected_reason: None,
+            expected_problem: None,
+        },
+        CheckTestCase {
+            description: "a required obligation that no case cites",
+            mutate: |root| drop_lines(root, "cases/query.jsonl", "\"select-17\""),
+            parse: structural,
+            parser_tree: Some(TREE),
+            form: "sf.query.select",
+            expected_state: FormState::Unverified,
+            expected_reason: Some(Reason::MissingCase),
+            expected_problem: None,
+        },
+        CheckTestCase {
+            description: "a second case citing a satisfied obligation, without a receipt",
+            mutate: |root| {
+                let cases: String = read(root, "cases/query.jsonl");
+                let second: String =
+                    case_line("select-18", "sf.query.select.o001", "SELECT 18", &[]);
+                write(root, "cases/query.jsonl", &format!("{cases}{second}\n"));
+            },
+            parse: structural,
+            parser_tree: Some(TREE),
+            form: "sf.query.select",
+            expected_state: FormState::Unverified,
+            expected_reason: Some(Reason::MissingReceipt),
+            expected_problem: None,
+        },
+        CheckTestCase {
+            description: "a semantic refusal the parser rejects",
+            mutate: |root| {
+                replace(
+                    root,
+                    "receipts/run-1.jsonl",
+                    "\"phase\":\"accepted\"",
+                    "\"phase\":\"semantic_error\"",
+                )
+            },
+            parse: rejecting,
+            parser_tree: Some(TREE),
+            form: "sf.query.select",
+            expected_state: FormState::Unverified,
+            expected_reason: Some(Reason::Disagreement),
+            expected_problem: None,
+        },
+        CheckTestCase {
+            description: "a runtime failure the parser rejects",
+            mutate: |root| {
+                replace(
+                    root,
+                    "receipts/run-1.jsonl",
+                    "\"phase\":\"accepted\"",
+                    "\"phase\":\"runtime_error\"",
+                )
+            },
+            parse: rejecting,
+            parser_tree: Some(TREE),
+            form: "sf.query.select",
+            expected_state: FormState::Unverified,
+            expected_reason: Some(Reason::Disagreement),
+            expected_problem: None,
+        },
+        CheckTestCase {
+            description: "a form whose only obligation is optional",
+            mutate: |root| {
+                replace(
+                    root,
+                    "obligations/query.toml",
+                    "id = \"sf.query.select.top.o001\"\nkind = \"positive\"\nrequired = true",
+                    "id = \"sf.query.select.top.o001\"\nkind = \"positive\"\nrequired = false",
+                )
+            },
+            parse: structural,
+            parser_tree: Some(TREE),
+            form: "sf.query.select.top",
+            expected_state: FormState::Unverified,
+            expected_reason: Some(Reason::NoObligations),
             expected_problem: None,
         },
         CheckTestCase {
