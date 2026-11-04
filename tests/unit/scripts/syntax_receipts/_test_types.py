@@ -11,6 +11,7 @@ class ClassifyTestCase:
     errno: int | None
     message: str
     expected_classification: tuple[str, str] | None
+    sqlstate: str | None = None
 
 
 @dataclass(frozen=True)
@@ -60,3 +61,13 @@ class SetupRunTestCase:
     expected_receipts: list[tuple[str, str, str]]
     expected_setup_tail: list[str]
     expected_refusals: list[str]
+
+
+@dataclass(frozen=True)
+class SupersedeTestCase:
+    description: str
+    rows: list[dict[str, object]]
+    packet: list[dict[str, object]]
+    published_phase: str
+    expected_new_receipts: int
+    expected_withdrawn: list[tuple[str, str]]

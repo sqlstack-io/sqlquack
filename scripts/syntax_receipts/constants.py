@@ -12,6 +12,8 @@ COMPILATION_PREFIX: str = "SQL compilation error"
 UNCAUGHT_PREFIX: str = "Uncaught exception of type"
 UNSUPPORTED_PREFIX: str = "Unsupported feature"
 RUNTIME_ERRNO_FLOOR: int = 100000
+SYNTAX_OR_ACCESS_SQLSTATE_CLASS: str = "42"
+REVIEWED_SEMANTIC_ERRNOS: frozenset[int] = frozenset({391858, 392002, 506005, 506034, 506035})
 SCRIPTING_SUBMISSION: str = "anonymous block, as-is"
 EXPLAIN_METHOD: str = "EXPLAIN USING TEXT, once"
 CAPTURE_EXECUTE: str = "execute"
@@ -91,3 +93,4 @@ REASON_BY_ERRNO: dict[int, str] = {
     **dict.fromkeys((1007, 1044, 1421, 3551, 506034, 90201, 90207, 92229), TYPE_REASON),
 }
 MISSING_OBJECT_MESSAGE: str = r"does not exist|\bnonexistent\b|\bnot found\b"
+SUPERSEDES_KEY: str = "supersedes_receipt_sha256"

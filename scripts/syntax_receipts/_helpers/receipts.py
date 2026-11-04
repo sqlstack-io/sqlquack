@@ -13,8 +13,10 @@ from scripts.syntax_receipts.constants import (
     OTHER_REASON,
     REASON_BY_ERRNO,
     RECEIPT_FORMAT,
+    REVIEWED_SEMANTIC_ERRNOS,
     RUNTIME_ERRNO_FLOOR,
     SYNTAX_ERRNO,
+    SYNTAX_OR_ACCESS_SQLSTATE_CLASS,
     UNCATEGORIZED_PHASES,
     UNCAUGHT_PREFIX,
     UNSUPPORTED_ERRNO,
@@ -25,13 +27,21 @@ from scripts.syntax_receipts.models import Observation
 from scripts.syntax_receipts.types import Row
 
 
-def classify(*, errno: int | None, message: str) -> tuple[str, str] | None:
+def classify(
+    *, errno: int | None, message: str, sqlstate: str | None = None
+) -> tuple[str, str] | None:
     """The phase of a Snowflake error, or None when the recorded fields do not establish one."""
     if message.startswith(UNCAUGHT_PREFIX):
+        if errno == SYNTAX_ERRNO:
+            return None
         return "runtime_error", "uncaught exception raised while the block ran"
     if errno == UNSUPPORTED_ERRNO and message.startswith(UNSUPPORTED_PREFIX):
         return "unsupported_feature", "errno 2 Unsupported feature"
     if errno is not None and errno >= RUNTIME_ERRNO_FLOOR:
+        if (sqlstate or "").startswith(SYNTAX_OR_ACCESS_SQLSTATE_CLASS):
+            if errno in REVIEWED_SEMANTIC_ERRNOS:
+                return "semantic_error", f"errno {errno} SQLSTATE {sqlstate}, reviewed as semantic"
+            return None
         return "runtime_error", f"errno {errno} is an execution-time code"
     compiled: bool = message.lower().startswith(COMPILATION_PREFIX.lower())
     if errno == SYNTAX_ERRNO and compiled:
@@ -101,7 +111,7 @@ def _phase(*, observation: Observation) -> tuple[str, str]:
     if observation.accepted:
         return "accepted", "statement compiled" if observation.method == CAPTURE_EXPLAIN else "ran"
     classified: tuple[str, str] | None = classify(
-        errno=observation.errno, message=observation.message
+        errno=observation.errno, message=observation.message, sqlstate=observation.sqlstate
     )
     if classified is None:
         raise RowRefused(f"error phase not established (errno {observation.errno})")
