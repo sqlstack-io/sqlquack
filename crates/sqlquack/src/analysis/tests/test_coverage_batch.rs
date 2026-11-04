@@ -566,3 +566,38 @@ fn given_powers_of_ten_when_converting_power_then_the_nearest_double_is_kept() {
         );
     }
 }
+
+#[test]
+fn given_zoned_timestamps_when_counting_seconds_and_minutes_then_utc_instants_are_compared() {
+    let test_cases = [
+        FirstValueTestCase {
+            description: "seconds between +02:00 and +00:00 values are those between the instants",
+            sql: "SELECT DATEDIFF('second', '2024-06-01 12:00:00 +02:00'::TIMESTAMP_TZ, \
+                  '2024-06-01 10:00:30 +00:00'::TIMESTAMP_TZ) AS v",
+            expected_outcome: Ok("30"),
+        },
+        FirstValueTestCase {
+            description: "a minute boundary crossed at a +05:30 offset, as recorded",
+            sql: "SELECT DATEDIFF('minute', '2024-06-01 15:29:59 +05:30'::TIMESTAMP_TZ, \
+                  '2024-06-01 10:00:01 +00:00'::TIMESTAMP_TZ) AS v",
+            expected_outcome: Ok("1"),
+        },
+        FirstValueTestCase {
+            description: "hours between zoned values refuse",
+            sql: "SELECT DATEDIFF('hour', '2024-06-01 10:59:00 +05:30'::TIMESTAMP_TZ, \
+                  '2024-06-01 11:01:00 +05:30'::TIMESTAMP_TZ) AS v",
+            expected_outcome: Err("whose boundaries no recording places"),
+        },
+    ];
+    for test_case in test_cases {
+        assert_eq!(
+            shop_first_outcome(test_case.sql, test_case.expected_outcome),
+            test_case
+                .expected_outcome
+                .map(str::to_owned)
+                .map_err(str::to_owned),
+            "{}",
+            test_case.description
+        );
+    }
+}

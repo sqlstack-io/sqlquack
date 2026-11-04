@@ -1192,6 +1192,8 @@ pub(crate) const DOLLAR_PARAMETER: &str = "Dollar";
 pub const VALUES_ROWS: &str = "rule.values_rows";
 /// The column names Snowflake gives VALUES rows: COLUMN1, COLUMN2 and so on.
 pub(crate) const VALUES_COLUMN_PREFIX: &str = "COLUMN";
+/// DATEDIFF units whose boundaries every whole-minute UTC offset shares, counted on UTC instants.
+pub(crate) const OFFSET_FREE_UNITS: [&str; 2] = ["MINUTE", "SECOND"];
 /// JOIN ... USING.
 pub const JOIN_USING: &str = "rule.join_using";
 /// ASOF JOIN ... MATCH_CONDITION.
