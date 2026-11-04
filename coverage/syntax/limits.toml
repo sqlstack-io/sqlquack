@@ -12765,8 +12765,8 @@ reason = "D104: the CREATE OR ALTER grammar with DEFINE in place of CREATE OR AL
 [[reading]]
 form = "sf.ddl.create-dynamic-table.create-or-alter-dynamic-iceberg-table"
 grammar_sha256 = "prose:CREATE OR ALTER DYNAMIC ICEBERG TABLE"
-grammar = ["CREATE OR ALTER DYNAMIC ICEBERG TABLE <name> ( <col_name> <col_type> [ [ WITH ] MASKING POLICY <policy_name> [ USING ( <col_name> , <cond_col1> , ... ) ] ] [ [ WITH ] TAG ( <tag_name> = '<tag_value>' [ , <tag_name> = '<tag_value>' , ... ] ) ] [ COMMENT '<string_literal>' ] [ , <col_name> <col_type> [ ... ] ] ) TARGET_LAG = { '<num> { seconds | minutes | hours | days }' | DOWNSTREAM } WAREHOUSE = <warehouse_name> [ EXTERNAL_VOLUME = '<external_volume_name>' ] [ CATALOG = 'SNOWFLAKE' ] [ BASE_LOCATION = '<optional_directory_for_table_files>' ] [ TARGET_FILE_SIZE = '{ AUTO | 16MB | 32MB | 64MB | 128MB }' ] [ PARTITION BY ( { <col_name> | BUCKET ( <num_buckets> , <col_name> ) | TRUNCATE ( <width> , <col_name> ) | YEAR ( <col_name> ) | MONTH ( <col_name> ) | DAY ( <col_name> ) | HOUR ( <col_name> ) } [ , { <col_name> | BUCKET ( <num_buckets> , <col_name> ) | TRUNCATE ( <width> , <col_name> ) | YEAR ( <col_name> ) | MONTH ( <col_name> ) | DAY ( <col_name> ) | HOUR ( <col_name> ) } , ... ] ) ] [ PATH_LAYOUT = { FLAT | HIERARCHICAL } ] [ ICEBERG_VERSION = <integer> ] [ REFRESH_MODE = { AUTO | FULL | INCREMENTAL | ADAPTIVE | CUSTOM_INCREMENTAL } ] [ FROZEN WHERE ( <expr> ) ] [ INITIALIZE = { ON_CREATE | ON_SCHEDULE } ] [ CLUSTER BY ( <expr> [ , <expr> , ... ] ) ] [ DATA_RETENTION_TIME_IN_DAYS = <integer> ] [ MAX_DATA_EXTENSION_TIME_IN_DAYS = <integer> ] [ COMMENT = '<string_literal>' ] [ COPY GRANTS ] [ COPY TAGS ] [ COPY = ( { COMMENTS | TAGS | GRANTS } [ , ... ] ) ] [ [ WITH ] ROW ACCESS POLICY <policy_name> ON ( <col_name> [ , <col_name> ... ] ) ] [ [ WITH ] STORAGE LIFECYCLE POLICY <policy_name> ON ( <col_name> [ , <col_name> ... ] ) ] [ [ WITH ] TAG ( <tag_name> = '<tag_value>' [ , <tag_name> = '<tag_value>' , ... ] ) ] [ REQUIRE USER ] [ EXECUTE AS USER <user_name> [ USE SECONDARY ROLES { ALL | NONE | <role> [ , ... ] } ] ] { AS <query> | REFRESH USING ( <dml_statement> ) }"]
-reason = "D104: the CREATE DYNAMIC ICEBERG TABLE grammar with CREATE OR ALTER in place of `CREATE [ OR REPLACE ]` (D104); derived from create-dynamic-table.create-dynamic-iceberg-table. The page says: It follows the same rules as CREATE OR ALTER DYNAMIC TABLE, with the additional Iceberg-specific limitations in the CREATE OR ALTER DYNAMIC TABLE usage notes."
+grammar = ["CREATE OR ALTER DYNAMIC ICEBERG TABLE <name> ( <col_name> <col_type> [ COMMENT '<string_literal>' ] [ , <col_name> <col_type> [ ... ] ] ) TARGET_LAG = { '<num> { seconds | minutes | hours | days }' | DOWNSTREAM } WAREHOUSE = <warehouse_name> [ EXTERNAL_VOLUME = '<external_volume_name>' ] [ CATALOG = 'SNOWFLAKE' ] [ BASE_LOCATION = '<optional_directory_for_table_files>' ] [ TARGET_FILE_SIZE = '{ AUTO | 16MB | 32MB | 64MB | 128MB }' ] [ PARTITION BY ( { <col_name> | BUCKET ( <num_buckets> , <col_name> ) | TRUNCATE ( <width> , <col_name> ) | YEAR ( <col_name> ) | MONTH ( <col_name> ) | DAY ( <col_name> ) | HOUR ( <col_name> ) } [ , { <col_name> | BUCKET ( <num_buckets> , <col_name> ) | TRUNCATE ( <width> , <col_name> ) | YEAR ( <col_name> ) | MONTH ( <col_name> ) | DAY ( <col_name> ) | HOUR ( <col_name> ) } , ... ] ) ] [ PATH_LAYOUT = { FLAT | HIERARCHICAL } ] [ ICEBERG_VERSION = <integer> ] [ REFRESH_MODE = { AUTO | FULL | INCREMENTAL | ADAPTIVE | CUSTOM_INCREMENTAL } ] [ FROZEN WHERE ( <expr> ) ] [ INITIALIZE = { ON_CREATE | ON_SCHEDULE } ] [ CLUSTER BY ( <expr> [ , <expr> , ... ] ) ] [ DATA_RETENTION_TIME_IN_DAYS = <integer> ] [ MAX_DATA_EXTENSION_TIME_IN_DAYS = <integer> ] [ COMMENT = '<string_literal>' ] [ REQUIRE USER ] [ EXECUTE AS USER <user_name> [ USE SECONDARY ROLES { ALL | NONE | <role> [ , ... ] } ] ] { AS <query> | REFRESH USING ( <dml_statement> ) }"]
+reason = "D104: the CREATE DYNAMIC ICEBERG TABLE grammar with CREATE OR ALTER in place of `CREATE [ OR REPLACE ]` (D104); the page says it follows the same rules as CREATE OR ALTER DYNAMIC TABLE, which leaves out masking policies, tags, the COPY options, row access and storage lifecycle policies, so those clauses are dropped and the Iceberg parameters kept (auditor 5c16011e); derived from create-dynamic-table.create-dynamic-iceberg-table. The page says: It follows the same rules as CREATE OR ALTER DYNAMIC TABLE, with the additional Iceberg-specific limitations in the CREATE OR ALTER DYNAMIC TABLE usage notes."
 
 [[reading]]
 form = "sf.ddl.create-dynamic-table.define-dynamic-table"
@@ -13076,36 +13076,6 @@ context = "raw"
 form = "sf.ddl.create-dynamic-table.create-or-alter-dynamic-iceberg-table"
 kind = "nesting_depth"
 reason = "the statement operand (a DML statement in REFRESH USING, a COPY statement in a pipe) is one statement of a fixed kind and does not nest; nesting inside it belongs to the DML family (inherited from create-dynamic-table.create-dynamic-iceberg-table under D104)"
-
-[[limit]]
-form = "sf.ddl.create-dynamic-table.create-or-alter-dynamic-iceberg-table"
-kind = "boundary_below"
-target = "'<tag_value>'"
-note = "a tag value of 255 characters against the documented maximum of 256"
-anchor = "doc.sql.create-dynamic-table / Parameters"
-sql = "CREATE OR ALTER DYNAMIC ICEBERG TABLE v1 ( v1 INT ) TARGET_LAG = '1 minute' WAREHOUSE = v1 TAG ( v1 = 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx' ) AS SELECT 1 ;"
-expect = "accept"
-context = "raw"
-
-[[limit]]
-form = "sf.ddl.create-dynamic-table.create-or-alter-dynamic-iceberg-table"
-kind = "boundary_at"
-target = "'<tag_value>'"
-note = "a tag value of 256 characters against the documented maximum of 256"
-anchor = "doc.sql.create-dynamic-table / Parameters"
-sql = "CREATE OR ALTER DYNAMIC ICEBERG TABLE v1 ( v1 INT ) TARGET_LAG = '1 minute' WAREHOUSE = v1 TAG ( v1 = 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx' ) AS SELECT 1 ;"
-expect = "accept"
-context = "raw"
-
-[[limit]]
-form = "sf.ddl.create-dynamic-table.create-or-alter-dynamic-iceberg-table"
-kind = "boundary_above"
-target = "'<tag_value>'"
-note = "a tag value of 257 characters against the documented maximum of 256"
-anchor = "doc.sql.create-dynamic-table / Parameters"
-sql = "CREATE OR ALTER DYNAMIC ICEBERG TABLE v1 ( v1 INT ) TARGET_LAG = '1 minute' WAREHOUSE = v1 TAG ( v1 = 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx' ) AS SELECT 1 ;"
-expect = "observe"
-context = "raw"
 
 [[limit]]
 form = "sf.ddl.create-dynamic-table.create-or-alter-dynamic-iceberg-table"
@@ -16997,7 +16967,7 @@ kind = "boundary_below"
 target = "REPLICATION_SCHEDULE = '<num> MINUTE'"
 note = "REPLICATION_SCHEDULE = '11,519 MINUTE' against the documented maximum of 11,520"
 anchor = "doc.sql.create-failover-group / Parameters"
-sql = "CREATE FAILOVER GROUP IF NOT EXISTS v1 OBJECT_TYPES = DATABASES , DATABASES ALLOWED_DATABASES = v1 , v1 ALLOWED_EXTERNAL_VOLUMES = v1 , v1 ALLOWED_SHARES = v1 , v1 ALLOWED_INTEGRATION_TYPES = SECURITY INTEGRATIONS , API INTEGRATIONS ALLOWED_ACCOUNTS = v1 . v1 , v1 . v1 IGNORE EDITION CHECK REPLICATION_SCHEDULE = '11519 MINUTE' OPTIMIZED_REFRESH = TRUE WITH TAG ( v1 = 'm' , v1 = 'm' ) ERROR_INTEGRATION = i1 ;"
+sql = "CREATE FAILOVER GROUP IF NOT EXISTS v1 OBJECT_TYPES = DATABASES , SHARES ALLOWED_DATABASES = v1 , v1 ALLOWED_EXTERNAL_VOLUMES = v1 , v1 ALLOWED_SHARES = v1 , v1 ALLOWED_INTEGRATION_TYPES = SECURITY INTEGRATIONS , API INTEGRATIONS ALLOWED_ACCOUNTS = v1 . v1 , v1 . v1 IGNORE EDITION CHECK REPLICATION_SCHEDULE = '11519 MINUTE' OPTIMIZED_REFRESH = TRUE WITH TAG ( v1 = 'm' , v1 = 'm' ) ERROR_INTEGRATION = i1 ;"
 expect = "accept"
 context = "raw"
 
@@ -17007,7 +16977,7 @@ kind = "boundary_at"
 target = "REPLICATION_SCHEDULE = '<num> MINUTE'"
 note = "REPLICATION_SCHEDULE = '11,520 MINUTE' against the documented maximum of 11,520"
 anchor = "doc.sql.create-failover-group / Parameters"
-sql = "CREATE FAILOVER GROUP IF NOT EXISTS v1 OBJECT_TYPES = DATABASES , DATABASES ALLOWED_DATABASES = v1 , v1 ALLOWED_EXTERNAL_VOLUMES = v1 , v1 ALLOWED_SHARES = v1 , v1 ALLOWED_INTEGRATION_TYPES = SECURITY INTEGRATIONS , API INTEGRATIONS ALLOWED_ACCOUNTS = v1 . v1 , v1 . v1 IGNORE EDITION CHECK REPLICATION_SCHEDULE = '11520 MINUTE' OPTIMIZED_REFRESH = TRUE WITH TAG ( v1 = 'm' , v1 = 'm' ) ERROR_INTEGRATION = i1 ;"
+sql = "CREATE FAILOVER GROUP IF NOT EXISTS v1 OBJECT_TYPES = DATABASES , SHARES ALLOWED_DATABASES = v1 , v1 ALLOWED_EXTERNAL_VOLUMES = v1 , v1 ALLOWED_SHARES = v1 , v1 ALLOWED_INTEGRATION_TYPES = SECURITY INTEGRATIONS , API INTEGRATIONS ALLOWED_ACCOUNTS = v1 . v1 , v1 . v1 IGNORE EDITION CHECK REPLICATION_SCHEDULE = '11520 MINUTE' OPTIMIZED_REFRESH = TRUE WITH TAG ( v1 = 'm' , v1 = 'm' ) ERROR_INTEGRATION = i1 ;"
 expect = "accept"
 context = "raw"
 
@@ -17017,7 +16987,7 @@ kind = "boundary_above"
 target = "REPLICATION_SCHEDULE = '<num> MINUTE'"
 note = "REPLICATION_SCHEDULE = '11,521 MINUTE' against the documented maximum of 11,520"
 anchor = "doc.sql.create-failover-group / Parameters"
-sql = "CREATE FAILOVER GROUP IF NOT EXISTS v1 OBJECT_TYPES = DATABASES , DATABASES ALLOWED_DATABASES = v1 , v1 ALLOWED_EXTERNAL_VOLUMES = v1 , v1 ALLOWED_SHARES = v1 , v1 ALLOWED_INTEGRATION_TYPES = SECURITY INTEGRATIONS , API INTEGRATIONS ALLOWED_ACCOUNTS = v1 . v1 , v1 . v1 IGNORE EDITION CHECK REPLICATION_SCHEDULE = '11521 MINUTE' OPTIMIZED_REFRESH = TRUE WITH TAG ( v1 = 'm' , v1 = 'm' ) ERROR_INTEGRATION = i1 ;"
+sql = "CREATE FAILOVER GROUP IF NOT EXISTS v1 OBJECT_TYPES = DATABASES , SHARES ALLOWED_DATABASES = v1 , v1 ALLOWED_EXTERNAL_VOLUMES = v1 , v1 ALLOWED_SHARES = v1 , v1 ALLOWED_INTEGRATION_TYPES = SECURITY INTEGRATIONS , API INTEGRATIONS ALLOWED_ACCOUNTS = v1 . v1 , v1 . v1 IGNORE EDITION CHECK REPLICATION_SCHEDULE = '11521 MINUTE' OPTIMIZED_REFRESH = TRUE WITH TAG ( v1 = 'm' , v1 = 'm' ) ERROR_INTEGRATION = i1 ;"
 expect = "observe"
 context = "raw"
 
@@ -17057,7 +17027,7 @@ kind = "boundary_below"
 target = "REPLICATION_SCHEDULE = '<num> MINUTE'"
 note = "REPLICATION_SCHEDULE = '11,519 MINUTE' against the documented maximum of 11,520"
 anchor = "doc.sql.create-replication-group / Parameters"
-sql = "CREATE REPLICATION GROUP IF NOT EXISTS v1 OBJECT_TYPES = DATABASES , DATABASES ALLOWED_DATABASES = v1 , v1 ALLOWED_EXTERNAL_VOLUMES = v1 , v1 ALLOWED_SHARES = v1 , v1 ALLOWED_INTEGRATION_TYPES = SECURITY INTEGRATIONS , API INTEGRATIONS ALLOWED_ACCOUNTS = v1 . v1 , v1 . v1 IGNORE EDITION CHECK REPLICATION_SCHEDULE = '11519 MINUTE' WITH TAG ( v1 = 'm' , v1 = 'm' ) ERROR_INTEGRATION = i1 ;"
+sql = "CREATE REPLICATION GROUP IF NOT EXISTS v1 OBJECT_TYPES = DATABASES , SHARES ALLOWED_DATABASES = v1 , v1 ALLOWED_EXTERNAL_VOLUMES = v1 , v1 ALLOWED_SHARES = v1 , v1 ALLOWED_INTEGRATION_TYPES = SECURITY INTEGRATIONS , API INTEGRATIONS ALLOWED_ACCOUNTS = v1 . v1 , v1 . v1 IGNORE EDITION CHECK REPLICATION_SCHEDULE = '11519 MINUTE' WITH TAG ( v1 = 'm' , v1 = 'm' ) ERROR_INTEGRATION = i1 ;"
 expect = "accept"
 context = "raw"
 
@@ -17067,7 +17037,7 @@ kind = "boundary_at"
 target = "REPLICATION_SCHEDULE = '<num> MINUTE'"
 note = "REPLICATION_SCHEDULE = '11,520 MINUTE' against the documented maximum of 11,520"
 anchor = "doc.sql.create-replication-group / Parameters"
-sql = "CREATE REPLICATION GROUP IF NOT EXISTS v1 OBJECT_TYPES = DATABASES , DATABASES ALLOWED_DATABASES = v1 , v1 ALLOWED_EXTERNAL_VOLUMES = v1 , v1 ALLOWED_SHARES = v1 , v1 ALLOWED_INTEGRATION_TYPES = SECURITY INTEGRATIONS , API INTEGRATIONS ALLOWED_ACCOUNTS = v1 . v1 , v1 . v1 IGNORE EDITION CHECK REPLICATION_SCHEDULE = '11520 MINUTE' WITH TAG ( v1 = 'm' , v1 = 'm' ) ERROR_INTEGRATION = i1 ;"
+sql = "CREATE REPLICATION GROUP IF NOT EXISTS v1 OBJECT_TYPES = DATABASES , SHARES ALLOWED_DATABASES = v1 , v1 ALLOWED_EXTERNAL_VOLUMES = v1 , v1 ALLOWED_SHARES = v1 , v1 ALLOWED_INTEGRATION_TYPES = SECURITY INTEGRATIONS , API INTEGRATIONS ALLOWED_ACCOUNTS = v1 . v1 , v1 . v1 IGNORE EDITION CHECK REPLICATION_SCHEDULE = '11520 MINUTE' WITH TAG ( v1 = 'm' , v1 = 'm' ) ERROR_INTEGRATION = i1 ;"
 expect = "accept"
 context = "raw"
 
@@ -17077,7 +17047,7 @@ kind = "boundary_above"
 target = "REPLICATION_SCHEDULE = '<num> MINUTE'"
 note = "REPLICATION_SCHEDULE = '11,521 MINUTE' against the documented maximum of 11,520"
 anchor = "doc.sql.create-replication-group / Parameters"
-sql = "CREATE REPLICATION GROUP IF NOT EXISTS v1 OBJECT_TYPES = DATABASES , DATABASES ALLOWED_DATABASES = v1 , v1 ALLOWED_EXTERNAL_VOLUMES = v1 , v1 ALLOWED_SHARES = v1 , v1 ALLOWED_INTEGRATION_TYPES = SECURITY INTEGRATIONS , API INTEGRATIONS ALLOWED_ACCOUNTS = v1 . v1 , v1 . v1 IGNORE EDITION CHECK REPLICATION_SCHEDULE = '11521 MINUTE' WITH TAG ( v1 = 'm' , v1 = 'm' ) ERROR_INTEGRATION = i1 ;"
+sql = "CREATE REPLICATION GROUP IF NOT EXISTS v1 OBJECT_TYPES = DATABASES , SHARES ALLOWED_DATABASES = v1 , v1 ALLOWED_EXTERNAL_VOLUMES = v1 , v1 ALLOWED_SHARES = v1 , v1 ALLOWED_INTEGRATION_TYPES = SECURITY INTEGRATIONS , API INTEGRATIONS ALLOWED_ACCOUNTS = v1 . v1 , v1 . v1 IGNORE EDITION CHECK REPLICATION_SCHEDULE = '11521 MINUTE' WITH TAG ( v1 = 'm' , v1 = 'm' ) ERROR_INTEGRATION = i1 ;"
 expect = "observe"
 context = "raw"
 

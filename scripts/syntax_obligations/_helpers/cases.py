@@ -10,6 +10,8 @@ from scripts.syntax_obligations._helpers.obligations import family_obligations
 from scripts.syntax_obligations._helpers.render import style_of, submissions
 from scripts.syntax_obligations.constants import (
     CASE_CAPTURE,
+    CASE_CAPTURE_DCM,
+    DCM_DEFINITION_FORM,
     DIGEST_WIDTH,
     DOUBLE_QUOTE,
     EXPECT_ACCEPT,
@@ -76,7 +78,7 @@ def family_cases(
             "setup_sha256": setup_sha,
             "session": LANE_A_BLOCK_SESSION,
             "session_sha256": session_sha,
-            "capture": CASE_CAPTURE,
+            "capture": _capture(form),
             "expect": rendered.expect,
         }
         if rendered.stage:
@@ -89,6 +91,11 @@ def family_cases(
         _arity_cases(rows=arity, scored=scored),
         {identifier for identifier, draft in numbered if draft.kind == KIND_EXTREME},
     )
+
+
+def _capture(form: str) -> str:
+    """DEFINE forms are captured from a DCM definition file; every other form by executing."""
+    return CASE_CAPTURE_DCM if DCM_DEFINITION_FORM.search(form) else CASE_CAPTURE
 
 
 def _omission(row: Row) -> str:
@@ -117,7 +124,7 @@ def _arity_cases(*, rows: list[Row], scored: set[str]) -> list[Row]:
                 "setup_sha256": digest(canonical([])),
                 "session": LANE_A_BLOCK_SESSION,
                 "session_sha256": session_sha,
-                "capture": CASE_CAPTURE,
+                "capture": _capture(str(found[0]["form"])),
                 "expect": EXPECT_OBSERVE,
             }
         )

@@ -340,8 +340,15 @@ class _Renderer:
         branch: tuple[Node, ...] = node.branches[choices.branch.get(key, 0)]
         if is_repetition(branch) and not any(placeholder_name(n) for n in _tokens(branch)):
             start: int = _repeat_start(before=before, keywords=set(self._keywords))
-            return [",", *before[start + 1 :]]
+            return [",", *(self._repeat(text) for text in before[start + 1 :])]
         return self._sequence(nodes=branch, choices=choices)
+
+    def _repeat(self, text: str) -> str:
+        """A copied list item, continued with its REPEAT_FILLS value when one is declared."""
+        for (name, first), second in REPEAT_FILLS.items():
+            if first == text and text in self._used.get(name, []):
+                return second
+        return text
 
     def _token(self, *, node: Node, choices: _Choices, dollar_quoted: bool = False) -> str:
         if node.token_kind == TOKEN_LITERAL and node.text in self.style.literal_fills:
@@ -359,8 +366,8 @@ class _Renderer:
         label: str = operand_class(name)
         if not fill:
             fill = CLASS_FILL.get(STRING_CLASS if node.token_kind == TOKEN_LITERAL else label, "v1")
-        if name in REPEAT_FILLS and self._used.get(name):
-            fill = REPEAT_FILLS[name]
+        if self._used.get(name):
+            fill = REPEAT_FILLS.get((name, fill), fill)
         if choices.quote == name and node.token_kind == TOKEN_PLACEHOLDER:
             fill = f'"{fill}Q"' if name in QUOTED_WITHOUT_BLANK_NAMES else f'"{fill} Q"'
         if dollar_quoted:

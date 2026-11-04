@@ -234,6 +234,8 @@ BUILTIN_NAMES: frozenset[str] = frozenset(
     {"STATEMENT_ERROR", "EXPRESSION_ERROR", "OTHER", "SQLCODE", "SQLERRM", "SQLSTATE"}
 )
 CASE_CAPTURE: str = "execute"
+CASE_CAPTURE_DCM: str = "dcm_definition_file"
+DCM_DEFINITION_FORM: re.Pattern[str] = re.compile(r"\.create-[a-z0-9-]+\.define-")
 LANE_A_BLOCK_SESSION: dict[str, object] = {
     "ABORT_DETACHED_QUERY": True,
     "STATEMENT_QUEUED_TIMEOUT_IN_SECONDS": 30,
@@ -991,7 +993,11 @@ DDL_FILLS: dict[str, str] = {
     "start_column": "v1",
     "end_column": "v1",
 }
-REPEAT_FILLS: dict[str, str] = {"integration_type_name": "API INTEGRATIONS"}
+REPEAT_FILLS: dict[tuple[str, str], str] = {
+    ("integration_type_name", "SECURITY INTEGRATIONS"): "API INTEGRATIONS",
+    ("object_type", "DATABASES"): "SHARES",
+    ("type", "DATABASES"): "DYNAMIC_TABLES",
+}
 ALERT_PAGES: tuple[str, ...] = ("sf.ddl.create-alert", "sf.ddl.alter-alert")
 SECURITY_ADMIN_FILLS: dict[str, str] = {
     **DDL_FILLS,

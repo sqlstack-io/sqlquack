@@ -72,7 +72,11 @@ obligations, not forms.
    named arguments `=>`, keyword arguments) is a separate `special` form per signature; `DISTINCT`
    and `ALL` inside the parentheses are options of the plain call.
 8. A variant heading with no syntax block (the DCM `DEFINE <object>` variants, some CREATE OR
-   ALTER variants) is a `prose` form with an empty grammar. Its grammar is added by hand.
+   ALTER variants) is a `prose` form with an empty grammar. Its grammar is a `[[reading]]` in
+   `limits.toml` derived from the page's substitution rule (decision D104): CREATE OR ALTER X takes
+   the CREATE X grammar with OR ALTER, DEFINE X takes the CREATE OR ALTER X grammar with DEFINE in
+   its place, and each reading quotes the page. DEFINE cases are captured from a DCM project
+   definition file (`capture = "dcm_definition_file"`), never by executing them.
 9. Pages whose syntax is written outside syntax blocks are catalogued from `hand.toml`; the
    page's `decisions` records the basis (HTML parsed-literal, table, heading, prose, inline code or
    examples, the last only for syntax shown by examples alone, such as `<expr>['<key>']`).
@@ -92,8 +96,10 @@ collision the heading is appended, then a number.
 ## Recorded ambiguity and known gaps
 
 - Every page where a rule above changed the form count lists that rule in `decisions`.
-- `prose` forms (31): prose-only variants; the DCM `DEFINE` variants are valid only inside DCM
-  project files, not as standalone SQL.
+- `prose` forms (30, after CREATE OR ALTER WAREHOUSE was catalogued from its syntax block):
+  prose-only variants, each read from its page's substitution rule (rule 8); DEFINE STAGE is held
+  as prose without a reading until the checker accepts obligation numbers above 999. The DCM
+  `DEFINE` variants are valid only inside DCM project files, not as standalone SQL.
 - Data types: each documented type heading is one form whose synonyms are alternatives
   (`{ DECIMAL | DEC | NUMERIC }`); a heading that names several types with different semantics
   (TIMESTAMP_LTZ/NTZ/TZ) is one form with each spelling an alternative.
