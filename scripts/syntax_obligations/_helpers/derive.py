@@ -28,6 +28,7 @@ from scripts.syntax_obligations.constants import (
     CLAUSE_CALLEES,
     CLOSE_PAREN,
     DEFAULT_CLASS,
+    EXPECT_OBSERVE,
     EXPECT_REJECT,
     EXPRESSION_ARGUMENT_FAMILIES,
     IDENTIFIER_ANCHOR,
@@ -56,7 +57,9 @@ from scripts.syntax_obligations.constants import (
     NON_CALL_KEYWORDS,
     OPEN_PAREN,
     OPERAND_KEYWORDS,
+    OPTION_ASSIGNMENTS,
     PARENS,
+    PATH_SEPARATORS,
     QUOTED_WITHOUT_BLANK,
     QUOTED_WITHOUT_BLANK_NAMES,
     STRING_CLASS,
@@ -65,6 +68,7 @@ from scripts.syntax_obligations.constants import (
     TOKEN_KEYWORD,
     TOKEN_LITERAL,
     TOKEN_PUNCT,
+    TOP_LEVEL_FAMILIES,
     UNPACKED_FORMS,
 )
 from scripts.syntax_obligations.models import Draft, Node, Spec
@@ -95,6 +99,7 @@ class _Walk:
         self.nest_specs: dict[str, Spec] = {}
         self.chosen: tuple[tuple[int, int], ...] = ()
         self.expression_arguments: bool = form.split(".")[1] in EXPRESSION_ARGUMENT_FAMILIES
+        self.statements: bool = form.split(".")[1] in TOP_LEVEL_FAMILIES
         self.calls: list[bool] = []
         self.callees: list[str] = []
         self.named: bool = False
@@ -170,6 +175,12 @@ class _Walk:
             and self.previous.upper() not in NON_CALL_KEYWORDS
         )
 
+    def _unsure(self, *, spec: Spec, after: frozenset[str]) -> Spec:
+        """A statement-level rejection observed instead of scored when it follows `after` (D97)."""
+        if self.statements and self.previous in after:
+            return replace(spec, expect=EXPECT_OBSERVE)
+        return spec
+
     def _call_argument(self) -> bool:
         """Whether the next node is a whole argument of an ordinary call (D97 arity)."""
         return (
@@ -228,7 +239,9 @@ class _Walk:
                 kind=KIND_OPERAND_MISSING,
                 target=target,
                 note=f"omit {node.text}",
-                spec=self.reject(action=ACTION_DROP_NODE, node=node),
+                spec=self._unsure(
+                    spec=self.reject(action=ACTION_DROP_NODE, node=node), after=PATH_SEPARATORS
+                ),
                 arity=self._call_argument(),
             )
         if label != SUBGRAMMAR_CLASS:
@@ -242,10 +255,13 @@ class _Walk:
                 kind=KIND_NEGATIVE,
                 target=target,
                 note=f"{LEXICAL_WRONG[label]} in place of {node.text}",
-                spec=self.reject(
-                    action=ACTION_REPLACE_NODE,
-                    node=node,
-                    payload=LEXICALLY_DISTINCT_WRONG_FILL[label],
+                spec=self._unsure(
+                    spec=self.reject(
+                        action=ACTION_REPLACE_NODE,
+                        node=node,
+                        payload=LEXICALLY_DISTINCT_WRONG_FILL[label],
+                    ),
+                    after=OPTION_ASSIGNMENTS,
                 ),
             )
 

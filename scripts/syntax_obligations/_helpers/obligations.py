@@ -27,6 +27,7 @@ from scripts.syntax_obligations.constants import (
     LATER_ERROR_STAGES,
     LEXICAL_WRONG,
     PAIR_SIZE,
+    REJECTING,
     STATUS_CATALOGUED,
 )
 from scripts.syntax_obligations.exceptions import ObligationError
@@ -232,7 +233,7 @@ def _without_coincident_negatives(
     withdrawn: list[Row] = []
     for draft, found in rendered:
         clash: Rendered | None = next(
-            (c for c in found if c.expect == EXPECT_REJECT and c.sql in accepted), None
+            (c for c in found if c.expect in REJECTING and c.sql in accepted), None
         )
         if clash is None:
             kept.append(draft)

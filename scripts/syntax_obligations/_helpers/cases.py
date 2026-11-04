@@ -16,6 +16,7 @@ from scripts.syntax_obligations.constants import (
     EXPECT_OBSERVE,
     EXPECT_REJECT,
     EXPECT_TERMINATES,
+    KIND_EXTREME,
     LANE_A_BLOCK_SESSION,
     MEASURE_KEY,
     PACKET_KEYS,
@@ -38,7 +39,9 @@ def canonical(value: object) -> str:
     return json.dumps(value, sort_keys=True, separators=(",", ":"), ensure_ascii=False)
 
 
-def family_cases(*, root: Path, family: str) -> tuple[list[Row], dict[str, set[str]], list[Row]]:
+def family_cases(
+    *, root: Path, family: str
+) -> tuple[list[Row], dict[str, set[str]], list[Row], set[str]]:
     """Cases with the obligations each satisfies, every obligation's outcomes, and arity cases."""
     numbered, trees, _, _, arity = family_obligations(root=root, family=family)
     by_sql: dict[str, tuple[str, Rendered, list[str]]] = {}
@@ -84,6 +87,7 @@ def family_cases(*, root: Path, family: str) -> tuple[list[Row], dict[str, set[s
         sorted(cases, key=lambda case: case["case_id"]),
         expected,
         _arity_cases(rows=arity, scored=scored),
+        {identifier for identifier, draft in numbered if draft.kind == KIND_EXTREME},
     )
 
 
@@ -207,11 +211,11 @@ def recorded_receipts(directory: Path) -> set[tuple[str, str]]:
     return recorded
 
 
-def observed_stage(*, case: Row, phase: str | None) -> Row:
+def observed_stage(*, case: Row, phase: str | None, extreme: bool = True) -> Row:
     """Give an accepted case its receipt's later stage, reporting a contradicted declared one."""
     stage: str | None = STAGE_BY_RECEIPT_PHASE.get(phase or "")
     if case["expect"] == EXPECT_OBSERVE:
-        return _observed_outcome(case=case, phase=phase, stage=stage)
+        return _observed_outcome(case=case, phase=phase, stage=stage, extreme=extreme)
     if case["expect"] != EXPECT_ACCEPT or stage is None or stage == case.get(STAGE_KEY, ""):
         return case
     if STAGE_KEY in case:
@@ -223,8 +227,12 @@ def observed_stage(*, case: Row, phase: str | None) -> Row:
     return case
 
 
-def _observed_outcome(*, case: Row, phase: str | None, stage: str | None) -> Row:
-    """An extreme case's outcome (D92); a syntax error asks only for termination."""
+def _observed_outcome(*, case: Row, phase: str | None, stage: str | None, extreme: bool) -> Row:
+    """An extreme's outcome (D92); an observed negative settles only on a syntax error (D97)."""
+    if not extreme:
+        if phase == SYNTAX_ERROR_PHASE:
+            case["expect"] = EXPECT_REJECT
+        return case
     if phase == SYNTAX_ERROR_PHASE:
         print(f"observed implementation limit, undocumented: {case['case_id']}")
         case["expect"] = EXPECT_TERMINATES
@@ -239,14 +247,18 @@ def settled_cases(
     *, root: Path, family: str, phases: dict[tuple[str, str], str]
 ) -> tuple[list[Row], list[Row]]:
     """The merged cases with the stages their receipts show, and the unscored arity cases."""
-    generated, expected, arity = family_cases(root=root, family=family)
+    generated, expected, arity, extremes = family_cases(root=root, family=family)
     cases, problems = merge_mapped(
         cases=generated, mapped=root / "mapped-cases" / f"{family}.jsonl", expected=expected
     )
     for problem in problems:
         print(f"mapped case left out: {problem}")
     settled: list[Row] = [
-        observed_stage(case=case, phase=phases.get((case["case_id"], case["sql_sha256"])))
+        observed_stage(
+            case=case,
+            phase=phases.get((case["case_id"], case["sql_sha256"])),
+            extreme=bool(extremes & set(case["obligations"])),
+        )
         for case in cases
     ]
     return settled, arity

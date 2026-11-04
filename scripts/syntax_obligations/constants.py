@@ -116,6 +116,8 @@ EXPRESSION_ARGUMENT_FAMILIES: frozenset[str] = frozenset({"functions"})
 ARGUMENT_STARTS: frozenset[str] = frozenset({"(", ",", "=>", "=", "BY"})
 OPERAND_KEYWORDS: frozenset[str] = frozenset({"LIKE", "ILIKE", "RLIKE", "REGEXP", "ESCAPE"})
 CALLEE_STARTS: str = "<_$"
+OPTION_ASSIGNMENTS: frozenset[str] = frozenset({"="})
+PATH_SEPARATORS: frozenset[str] = frozenset({"/"})
 CALL_SEPARATORS: frozenset[str] = frozenset({"(", ","})
 CLAUSE_CALLEES: frozenset[str] = frozenset(
     {
@@ -221,6 +223,7 @@ HAND_CASE_KEYS: tuple[str, ...] = (
 EXPECT_ACCEPT: str = "accept"
 EXPECT_REJECT: str = "reject"
 EXPECT_OBSERVE: str = "observe"
+REJECTING: frozenset[str] = frozenset({"reject", EXPECT_OBSERVE})
 EXPECT_TERMINATES: str = "terminates"
 HAND_SIZE: str = "size"
 REPEAT_SLOT: str = "{n}"
@@ -361,6 +364,13 @@ LIST_ITEM_KEYWORDS: frozenset[str] = frozenset(
     {"AS", "NOT", "NULL", "ASC", "DESC", "NULLS", "FIRST", "LAST"}
 )
 GLUED_PREFIXES: re.Pattern[str] = re.compile(r"(?<![^ ])([$:@]) (?=[^ =])")
+STAGE_TOKEN: str = r'(@(?:"[^"]*"|[^\s"])*'
+STAGE_GLUES: tuple[re.Pattern[str], ...] = (
+    re.compile(STAGE_TOKEN + r") (?=[./%~])"),
+    re.compile(STAGE_TOKEN + r"[.%]) (?=\S)"),
+    re.compile(STAGE_TOKEN + r"~) (?=/)"),
+    re.compile(STAGE_TOKEN + r"/) (?=[a-z0-9\"'])"),
+)
 GLUED_INFIX_RIGHT: re.Pattern[str] = re.compile(r"(?<![^ ])! (?=[A-Za-z_\"'])")
 GLUED_INFIX_LEFT: re.Pattern[str] = re.compile(r"(?<=[\w\"')]) !(?=[ A-Za-z_\"'])")
 QUERY_FORMS: tuple[str, ...] = ("sf.query.constructs",)
@@ -853,10 +863,37 @@ FUNCTIONS_STYLES: dict[str, FormStyle] = {
     )
     for form, (prefix, suffix) in FUNCTIONS_FORM_CONTEXTS.items()
 }
+DML_FILLS: dict[str, str] = {
+    "file_url": "file:///tmp/d1/f1.csv",
+    "file_directory_url": "file:///tmp/d1/",
+    "integer": "1",
+    "int_stage_name": "s1",
+    "ext_stage_name": "s1",
+    "stage_name": "s1",
+    "path": "p1",
+    "branch_path": "branches/main",
+    "repository_clone": "r1",
+    "file_col_num": "1",
+    "element": "e1",
+    "additional_table": "t2",
+    "additional_tables": "t2",
+    "integration_name": "i1",
+    "source": "t2",
+    "join_expr": "v1.c1 = t2.c1",
+}
+DML_LITERAL_FILLS: dict[str, str] = {
+    "'<s3_url>'": "'s3://b1/p1/'",
+    "'<gcs_url>'": "'gcs://b1/p1/'",
+    "'<azure_url>'": "'azure://a1.blob.core.windows.net/c1/p1/'",
+    "'<file_format_name_ref>'": "'f1'",
+}
 FAMILY_STYLES: dict[str, dict[str, FormStyle]] = {
     "scripting": SCRIPTING_SELF_DECLARING_BLOCKS,
     "query": QUERY_STYLES,
     "expressions": EXPRESSIONS_STYLES,
     "functions": FUNCTIONS_STYLES,
     **{family: {f"sf.{family}.": FormStyle(prefix="", suffix="")} for family in TOP_LEVEL_FAMILIES},
+    "dml": {
+        "sf.dml.": FormStyle(prefix="", suffix="", fills=DML_FILLS, literal_fills=DML_LITERAL_FILLS)
+    },
 }

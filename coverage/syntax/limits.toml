@@ -4205,3 +4205,648 @@ form = "sf.functions.system-explain-plan-json"
 kind = "nesting_depth"
 note = "statement operands nested; no documented bound"
 reason = "<sql_statement_expression> is a string expression holding the statement text, not a statement, so nesting raw statements inside the call tests nothing the page documents (auditor 11406dcd)"
+
+# DML: readings that inline the page sub-grammars (internalStage, externalStage, externalLocation,
+# formatTypeOptions, copyOptions, intoClause, matchedClause, notMatchedClause, repositoryClone) and page typos.
+
+[[reading]]
+form = "sf.dml.copy-into-location"
+grammar_sha256 = "7257ab1eb586ec61c4dc5aec2fb00990ffd2b23a2854602bba1b1517c88a2ed3"
+grammar = ["COPY INTO { { @[<namespace>.]<int_stage_name>[/<path>] | @[<namespace>.]%<table_name>[/<path>] | @~[/<path>] } | @[<namespace>.]<ext_stage_name>[/<path>] | '<s3_url>' | '<gcs_url>' | '<azure_url>' } FROM { [<namespace>.]<table_name> | ( <query> ) } [ { STORAGE_INTEGRATION = <integration_name> | CREDENTIALS = ( { AWS_KEY_ID = '<string>' AWS_SECRET_KEY = '<string>' [ AWS_TOKEN = '<string>' ] | AZURE_SAS_TOKEN = '<string>' } ) } ] [ ENCRYPTION = ( { [ TYPE = 'AWS_CSE' ] [ MASTER_KEY = '<string>' ] | TYPE = 'AWS_SSE_S3' | TYPE = 'AWS_SSE_KMS' [ KMS_KEY_ID = '<string>' ] | TYPE = 'GCS_SSE_KMS' [ KMS_KEY_ID = '<string>' ] | TYPE = { 'AZURE_CSE' | 'NONE' } [ MASTER_KEY = '<string>' ] } ) ] [ PARTITION BY <expr> ] [ FILE_FORMAT = ( { FORMAT_NAME = '<file_format_name_ref>' | TYPE = CSV [ COMPRESSION = { AUTO | GZIP | BZ2 | BROTLI | ZSTD | DEFLATE | RAW_DEFLATE | NONE } ] [ RECORD_DELIMITER = { '<string>' | NONE } ] [ FIELD_DELIMITER = { '<string>' | NONE } ] [ FILE_EXTENSION = '<string>' ] [ ESCAPE = { '<character>' | NONE } ] [ ESCAPE_UNENCLOSED_FIELD = { '<character>' | NONE } ] [ DATE_FORMAT = { '<string>' | AUTO } ] [ TIME_FORMAT = { '<string>' | AUTO } ] [ TIMESTAMP_FORMAT = { '<string>' | AUTO } ] [ BINARY_FORMAT = { HEX | BASE64 | UTF8 } ] [ FIELD_OPTIONALLY_ENCLOSED_BY = { '<character>' | NONE } ] [ NULL_IF = ( '<string1>' [ , '<string2>' , ... ] ) ] [ EMPTY_FIELD_AS_NULL = { TRUE | FALSE } ] | TYPE = JSON [ COMPRESSION = { AUTO | GZIP | BZ2 | BROTLI | ZSTD | DEFLATE | RAW_DEFLATE | NONE } ] [ FILE_EXTENSION = '<string>' ] | TYPE = PARQUET [ COMPRESSION = { AUTO | LZO | SNAPPY | NONE } ] [ SNAPPY_COMPRESSION = { TRUE | FALSE } ] } ) ] [ OVERWRITE = { TRUE | FALSE } ] [ SINGLE = { TRUE | FALSE } ] [ MAX_FILE_SIZE = <num> ] [ INCLUDE_QUERY_ID = { TRUE | FALSE } ] [ DETAILED_OUTPUT = { TRUE | FALSE } ] [ VALIDATION_MODE = RETURN_ROWS ] [ HEADER = { TRUE | FALSE } ]"]
+reason = "internalStage ::= @[<namespace>.]<int_stage_name>[/<path>] | @[<namespace>.]%<table_name>[/<path>] | @~[/<path>] and externalStage ::= @[<namespace>.]<ext_stage_name>[/<path>] inlined from the page; externalLocation inlined from the page's three definitions, each URL one quoted literal; its STORAGE_INTEGRATION, CREDENTIALS and ENCRYPTION follow FROM <table>, as in all five of the page's unload examples (e.g. COPY INTO 's3://mybucket/unload/' FROM mytable STORAGE_INTEGRATION = myint ...), with the three clouds' alternatives merged; formatTypeOptions inlined per TYPE and copyOptions as independent options, each `KEY = a | b` braced; the page's grammar ends `[ HEADER ]` but its parameter list documents `HEADER = TRUE | FALSE`"
+
+[[reading]]
+form = "sf.dml.copy-into-table.internalstage-externalstage-externallocation"
+grammar_sha256 = "140ad7e910d61741cf56f9bdd0690b090ecedfb6e5d03d064049f1093206ad11"
+grammar = ["COPY INTO [<namespace>.]<table_name> FROM { { @[<namespace>.]<int_stage_name>[/<path>] | @[<namespace>.]%<table_name>[/<path>] | @~[/<path>] } | @[<namespace>.]<ext_stage_name>[/<path>] | { '<s3_url>' [ { STORAGE_INTEGRATION = <integration_name> | CREDENTIALS = ( AWS_KEY_ID = '<string>' AWS_SECRET_KEY = '<string>' [ AWS_TOKEN = '<string>' ] ) } ] [ ENCRYPTION = ( { [ TYPE = 'AWS_CSE' ] [ MASTER_KEY = '<string>' ] | TYPE = 'AWS_SSE_S3' | TYPE = 'AWS_SSE_KMS' [ KMS_KEY_ID = '<string>' ] | TYPE = 'NONE' } ) ] | '<gcs_url>' [ STORAGE_INTEGRATION = <integration_name> ] [ ENCRYPTION = ( { [ TYPE = 'GCS_SSE_KMS' ] [ KMS_KEY_ID = '<string>' ] | TYPE = 'NONE' } ) ] | '<azure_url>' [ { STORAGE_INTEGRATION = <integration_name> | CREDENTIALS = ( [ AZURE_SAS_TOKEN = '<string>' ] ) } ] [ ENCRYPTION = ( [ TYPE = { 'AZURE_CSE' | 'NONE' } ] [ MASTER_KEY = '<string>' ] ) ] } } [ FILES = ( '<file_name>' [ , '<file_name>' ] [ , ... ] ) ] [ PATTERN = '<regex_pattern>' ] [ FILE_FORMAT = ( { FORMAT_NAME = '<file_format_name_ref>' | TYPE = CSV [ COMPRESSION = { AUTO | GZIP | BZ2 | BROTLI | ZSTD | DEFLATE | RAW_DEFLATE | NONE } ] [ RECORD_DELIMITER = { '<string>' | NONE } ] [ FIELD_DELIMITER = { '<string>' | NONE } ] [ MULTI_LINE = { TRUE | FALSE } ] [ PARSE_HEADER = { TRUE | FALSE } ] [ SKIP_HEADER = <integer> ] [ SKIP_BLANK_LINES = { TRUE | FALSE } ] [ DATE_FORMAT = { '<string>' | AUTO } ] [ TIME_FORMAT = { '<string>' | AUTO } ] [ TIMESTAMP_FORMAT = { '<string>' | AUTO } ] [ BINARY_FORMAT = { HEX | BASE64 | UTF8 } ] [ ESCAPE = { '<character>' | NONE } ] [ ESCAPE_UNENCLOSED_FIELD = { '<character>' | NONE } ] [ TRIM_SPACE = { TRUE | FALSE } ] [ FIELD_OPTIONALLY_ENCLOSED_BY = { '<character>' | NONE } ] [ NULL_IF = ( [ '<string>' [ , '<string>' ... ] ] ) ] [ ERROR_ON_COLUMN_COUNT_MISMATCH = { TRUE | FALSE } ] [ REPLACE_INVALID_CHARACTERS = { TRUE | FALSE } ] [ EMPTY_FIELD_AS_NULL = { TRUE | FALSE } ] [ SKIP_BYTE_ORDER_MARK = { TRUE | FALSE } ] [ ENCODING = { '<string>' | UTF8 } ] | TYPE = JSON [ COMPRESSION = { AUTO | GZIP | BZ2 | BROTLI | ZSTD | DEFLATE | RAW_DEFLATE | NONE } ] [ DATE_FORMAT = { '<string>' | AUTO } ] [ TIME_FORMAT = { '<string>' | AUTO } ] [ TIMESTAMP_FORMAT = { '<string>' | AUTO } ] [ BINARY_FORMAT = { HEX | BASE64 | UTF8 } ] [ TRIM_SPACE = { TRUE | FALSE } ] [ MULTI_LINE = { TRUE | FALSE } ] [ NULL_IF = ( [ '<string>' [ , '<string>' ... ] ] ) ] [ ENABLE_OCTAL = { TRUE | FALSE } ] [ ALLOW_DUPLICATE = { TRUE | FALSE } ] [ STRIP_OUTER_ARRAY = { TRUE | FALSE } ] [ STRIP_NULL_VALUES = { TRUE | FALSE } ] [ REPLACE_INVALID_CHARACTERS = { TRUE | FALSE } ] [ IGNORE_UTF8_ERRORS = { TRUE | FALSE } ] [ SKIP_BYTE_ORDER_MARK = { TRUE | FALSE } ] | TYPE = AVRO [ COMPRESSION = { AUTO | GZIP | BROTLI | ZSTD | DEFLATE | RAW_DEFLATE | NONE } ] [ TRIM_SPACE = { TRUE | FALSE } ] [ REPLACE_INVALID_CHARACTERS = { TRUE | FALSE } ] [ NULL_IF = ( [ '<string>' [ , '<string>' ... ] ] ) ] | TYPE = ORC [ TRIM_SPACE = { TRUE | FALSE } ] [ REPLACE_INVALID_CHARACTERS = { TRUE | FALSE } ] [ NULL_IF = ( [ '<string>' [ , '<string>' ... ] ] ) ] | TYPE = PARQUET [ COMPRESSION = { AUTO | SNAPPY | NONE } ] [ BINARY_AS_TEXT = { TRUE | FALSE } ] [ USE_LOGICAL_TYPE = { TRUE | FALSE } ] [ TRIM_SPACE = { TRUE | FALSE } ] [ USE_VECTORIZED_SCANNER = { TRUE | FALSE } ] [ REPLACE_INVALID_CHARACTERS = { TRUE | FALSE } ] [ NULL_IF = ( [ '<string>' [ , '<string>' ... ] ] ) ] | TYPE = XML [ COMPRESSION = { AUTO | GZIP | BZ2 | BROTLI | ZSTD | DEFLATE | RAW_DEFLATE | NONE } ] [ IGNORE_UTF8_ERRORS = { TRUE | FALSE } ] [ PRESERVE_SPACE = { TRUE | FALSE } ] [ STRIP_OUTER_ELEMENT = { TRUE | FALSE } ] [ DISABLE_AUTO_CONVERT = { TRUE | FALSE } ] [ REPLACE_INVALID_CHARACTERS = { TRUE | FALSE } ] [ SKIP_BYTE_ORDER_MARK = { TRUE | FALSE } ] } ) ] [ CLUSTER_AT_INGEST_TIME = { TRUE | FALSE } ] [ ENFORCE_LENGTH = { TRUE | FALSE } ] [ FORCE = { TRUE | FALSE } ] [ INCLUDE_METADATA = ( <column_name> = { METADATA$FILENAME | METADATA$FILE_ROW_NUMBER | METADATA$FILE_CONTENT_KEY | METADATA$FILE_LAST_MODIFIED | METADATA$START_SCAN_TIME } [ , <column_name> = METADATA$FILENAME ... ] ) ] [ LOAD_MODE = { FULL_INGEST | ADD_FILES_COPY } ] [ LOAD_UNCERTAIN_FILES = { TRUE | FALSE } ] [ MATCH_BY_COLUMN_NAME = { CASE_SENSITIVE | CASE_INSENSITIVE | NONE } ] [ ON_ERROR = { CONTINUE | SKIP_FILE | SKIP_FILE_10 | 'SKIP_FILE_10%' | ABORT_STATEMENT } ] [ PURGE = { TRUE | FALSE } ] [ RETURN_FAILED_ONLY = { TRUE | FALSE } ] [ SIZE_LIMIT = <num> ] [ TRUNCATECOLUMNS = { TRUE | FALSE } ] [ VALIDATION_MODE = { RETURN_10_ROWS | RETURN_ERRORS | RETURN_ALL_ERRORS } ]"]
+reason = "internalStage ::= @[<namespace>.]<int_stage_name>[/<path>] | @[<namespace>.]%<table_name>[/<path>] | @~[/<path>] and externalStage ::= @[<namespace>.]<ext_stage_name>[/<path>] inlined from the page; externalLocation inlined from the page's three definitions (Amazon S3, Google Cloud Storage, Microsoft Azure), with each URL one quoted literal ('<protocol>://<bucket>[/<path>]', 'gcs://<bucket>[/<path>]', 'azure://<account>.blob.core.windows.net/<container>[/<path>]'); the unbraced alternatives inside CREDENTIALS = ( ... ) and ENCRYPTION = ( ... ) are braced as the page's examples use them; formatTypeOptions inlined per TYPE and copyOptions as independent options, each `KEY = a | b` braced; `RETURN_<n>_ROWS` is one keyword with a number in it, written RETURN_10_ROWS as the page's example does, and `ON_ERROR = SKIP_FILE_<num> | 'SKIP_FILE_<num>%'` likewise as SKIP_FILE_10 and 'SKIP_FILE_10%'"
+
+[[reading]]
+form = "sf.dml.copy-into-table.select-from-internalstage-externalstage"
+grammar_sha256 = "5b3644cf2f2a532b35bc7ab9827988ebef9579472f0f8b5019183ea73f1f355e"
+grammar = ["COPY INTO [<namespace>.]<table_name> [ ( <col_name> [ , <col_name> ... ] ) ] FROM ( SELECT [<alias>.]$<file_col_num>[.<element>] [ , [<alias>.]$<file_col_num>[.<element>] ... ] FROM { { @[<namespace>.]<int_stage_name>[/<path>] | @[<namespace>.]%<table_name>[/<path>] | @~[/<path>] } | @[<namespace>.]<ext_stage_name>[/<path>] } ) [ FILES = ( '<file_name>' [ , '<file_name>' ] [ , ... ] ) ] [ PATTERN = '<regex_pattern>' ] [ FILE_FORMAT = ( { FORMAT_NAME = '<file_format_name_ref>' | TYPE = CSV [ COMPRESSION = { AUTO | GZIP | BZ2 | BROTLI | ZSTD | DEFLATE | RAW_DEFLATE | NONE } ] [ RECORD_DELIMITER = { '<string>' | NONE } ] [ FIELD_DELIMITER = { '<string>' | NONE } ] [ MULTI_LINE = { TRUE | FALSE } ] [ PARSE_HEADER = { TRUE | FALSE } ] [ SKIP_HEADER = <integer> ] [ SKIP_BLANK_LINES = { TRUE | FALSE } ] [ DATE_FORMAT = { '<string>' | AUTO } ] [ TIME_FORMAT = { '<string>' | AUTO } ] [ TIMESTAMP_FORMAT = { '<string>' | AUTO } ] [ BINARY_FORMAT = { HEX | BASE64 | UTF8 } ] [ ESCAPE = { '<character>' | NONE } ] [ ESCAPE_UNENCLOSED_FIELD = { '<character>' | NONE } ] [ TRIM_SPACE = { TRUE | FALSE } ] [ FIELD_OPTIONALLY_ENCLOSED_BY = { '<character>' | NONE } ] [ NULL_IF = ( [ '<string>' [ , '<string>' ... ] ] ) ] [ ERROR_ON_COLUMN_COUNT_MISMATCH = { TRUE | FALSE } ] [ REPLACE_INVALID_CHARACTERS = { TRUE | FALSE } ] [ EMPTY_FIELD_AS_NULL = { TRUE | FALSE } ] [ SKIP_BYTE_ORDER_MARK = { TRUE | FALSE } ] [ ENCODING = { '<string>' | UTF8 } ] | TYPE = JSON [ COMPRESSION = { AUTO | GZIP | BZ2 | BROTLI | ZSTD | DEFLATE | RAW_DEFLATE | NONE } ] [ DATE_FORMAT = { '<string>' | AUTO } ] [ TIME_FORMAT = { '<string>' | AUTO } ] [ TIMESTAMP_FORMAT = { '<string>' | AUTO } ] [ BINARY_FORMAT = { HEX | BASE64 | UTF8 } ] [ TRIM_SPACE = { TRUE | FALSE } ] [ MULTI_LINE = { TRUE | FALSE } ] [ NULL_IF = ( [ '<string>' [ , '<string>' ... ] ] ) ] [ ENABLE_OCTAL = { TRUE | FALSE } ] [ ALLOW_DUPLICATE = { TRUE | FALSE } ] [ STRIP_OUTER_ARRAY = { TRUE | FALSE } ] [ STRIP_NULL_VALUES = { TRUE | FALSE } ] [ REPLACE_INVALID_CHARACTERS = { TRUE | FALSE } ] [ IGNORE_UTF8_ERRORS = { TRUE | FALSE } ] [ SKIP_BYTE_ORDER_MARK = { TRUE | FALSE } ] | TYPE = AVRO [ COMPRESSION = { AUTO | GZIP | BROTLI | ZSTD | DEFLATE | RAW_DEFLATE | NONE } ] [ TRIM_SPACE = { TRUE | FALSE } ] [ REPLACE_INVALID_CHARACTERS = { TRUE | FALSE } ] [ NULL_IF = ( [ '<string>' [ , '<string>' ... ] ] ) ] | TYPE = ORC [ TRIM_SPACE = { TRUE | FALSE } ] [ REPLACE_INVALID_CHARACTERS = { TRUE | FALSE } ] [ NULL_IF = ( [ '<string>' [ , '<string>' ... ] ] ) ] | TYPE = PARQUET [ COMPRESSION = { AUTO | SNAPPY | NONE } ] [ BINARY_AS_TEXT = { TRUE | FALSE } ] [ USE_LOGICAL_TYPE = { TRUE | FALSE } ] [ TRIM_SPACE = { TRUE | FALSE } ] [ USE_VECTORIZED_SCANNER = { TRUE | FALSE } ] [ REPLACE_INVALID_CHARACTERS = { TRUE | FALSE } ] [ NULL_IF = ( [ '<string>' [ , '<string>' ... ] ] ) ] | TYPE = XML [ COMPRESSION = { AUTO | GZIP | BZ2 | BROTLI | ZSTD | DEFLATE | RAW_DEFLATE | NONE } ] [ IGNORE_UTF8_ERRORS = { TRUE | FALSE } ] [ PRESERVE_SPACE = { TRUE | FALSE } ] [ STRIP_OUTER_ELEMENT = { TRUE | FALSE } ] [ DISABLE_AUTO_CONVERT = { TRUE | FALSE } ] [ REPLACE_INVALID_CHARACTERS = { TRUE | FALSE } ] [ SKIP_BYTE_ORDER_MARK = { TRUE | FALSE } ] } ) ] [ CLUSTER_AT_INGEST_TIME = { TRUE | FALSE } ] [ ENFORCE_LENGTH = { TRUE | FALSE } ] [ FORCE = { TRUE | FALSE } ] [ INCLUDE_METADATA = ( <column_name> = { METADATA$FILENAME | METADATA$FILE_ROW_NUMBER | METADATA$FILE_CONTENT_KEY | METADATA$FILE_LAST_MODIFIED | METADATA$START_SCAN_TIME } [ , <column_name> = METADATA$FILENAME ... ] ) ] [ LOAD_MODE = { FULL_INGEST | ADD_FILES_COPY } ] [ LOAD_UNCERTAIN_FILES = { TRUE | FALSE } ] [ MATCH_BY_COLUMN_NAME = { CASE_SENSITIVE | CASE_INSENSITIVE | NONE } ] [ ON_ERROR = { CONTINUE | SKIP_FILE | SKIP_FILE_10 | 'SKIP_FILE_10%' | ABORT_STATEMENT } ] [ PURGE = { TRUE | FALSE } ] [ RETURN_FAILED_ONLY = { TRUE | FALSE } ] [ SIZE_LIMIT = <num> ] [ TRUNCATECOLUMNS = { TRUE | FALSE } ]"]
+reason = "internalStage ::= @[<namespace>.]<int_stage_name>[/<path>] | @[<namespace>.]%<table_name>[/<path>] | @~[/<path>] and externalStage ::= @[<namespace>.]<ext_stage_name>[/<path>] inlined from the page; formatTypeOptions inlined per TYPE and copyOptions as independent options, each `KEY = a | b` braced"
+
+[[reading]]
+form = "sf.dml.copy-files.from-select-from"
+grammar_sha256 = "198e42835691cd4e5df3bbf5eb2af916106d06a7a82ec394777202ed141047f3"
+grammar = ["COPY FILES INTO @[<namespace>.]<stage_name>[/<path>/] FROM ( SELECT <existing_url> [ , <new_filename> ] FROM <table_name> ) [ DETAILED_OUTPUT = { TRUE | FALSE } ]"]
+reason = "the page's `FROM ... )` elides the source of the query; the examples select from a table (`FROM ( SELECT existing_url, new_filename FROM urls_table )`), so it reads as FROM <table_name>"
+
+[[reading]]
+form = "sf.dml.delete"
+grammar_sha256 = "e15bbe334425386192222a7872271b53d86ab947e26cba2b370ed447a7fad947"
+grammar = ["DELETE FROM <table_name> [ USING { <additional_table> | ( <query> ) } [ , { <additional_table> | ( <query> ) } ] ] [ WHERE <condition> ]"]
+reason = "the page's `USING <additional_table_or_query>` names a table or a subquery; a subquery in USING is parenthesized, as in the page's examples"
+
+[[reading]]
+form = "sf.dml.get"
+grammar_sha256 = "8050f14cbfebca73ba6678203a4bd0a2ec6079d49f08aaae37c31419bbfcacae"
+grammar = ["GET { @[<namespace>.]<int_stage_name>[/<path>] | @[<namespace>.]%<table_name>[/<path>] | @~[/<path>] } <file_directory_url> [ PARALLEL = <integer> ] [ PATTERN = '<regex_pattern>' ]"]
+reason = "internalStage ::= @[<namespace>.]<int_stage_name>[/<path>] | @[<namespace>.]%<table_name>[/<path>] | @~[/<path>] and externalStage ::= @[<namespace>.]<ext_stage_name>[/<path>] inlined from the page; `file://<local_directory_path>` is one URI token, filled as file:///tmp/d1/ (the page's example is file:///tmp/load); the page writes `PATTERN = '<regex_pattern>''` with a stray quote, read as `PATTERN = '<regex_pattern>'`"
+
+[[reading]]
+form = "sf.dml.put"
+grammar_sha256 = "a7be39f233e33db4fbff5f4cfc76731f8bb611f444c2f5045bc5741a9bc59e91"
+grammar = ["PUT <file_url> { @[<namespace>.]<int_stage_name>[/<path>] | @[<namespace>.]%<table_name>[/<path>] | @~[/<path>] } [ PARALLEL = <integer> ] [ AUTO_COMPRESS = { TRUE | FALSE } ] [ SOURCE_COMPRESSION = { AUTO_DETECT | GZIP | BZ2 | BROTLI | ZSTD | DEFLATE | RAW_DEFLATE | NONE } ] [ OVERWRITE = { TRUE | FALSE } ]"]
+reason = "internalStage ::= @[<namespace>.]<int_stage_name>[/<path>] | @[<namespace>.]%<table_name>[/<path>] | @~[/<path>] and externalStage ::= @[<namespace>.]<ext_stage_name>[/<path>] inlined from the page; `file://<absolute_path_to_file>/<filename>` is one URI token, filled as file:///tmp/d1/f1.csv (the page's example is file:///my/file/path/my-data.csv)"
+
+[[reading]]
+form = "sf.dml.list.internalstage-externalstage"
+grammar_sha256 = "b593c892791f292a86137e53723dde2d644fed18167dd1b4f757a5f7b212642e"
+grammar = ["LIST { { @[<namespace>.]<int_stage_name>[/<path>] | @[<namespace>.]%<table_name>[/<path>] | @~[/<path>] } | @[<namespace>.]<ext_stage_name>[/<path>] } [ PATTERN = '<regex_pattern>' ]"]
+reason = "internalStage ::= @[<namespace>.]<int_stage_name>[/<path>] | @[<namespace>.]%<table_name>[/<path>] | @~[/<path>] and externalStage ::= @[<namespace>.]<ext_stage_name>[/<path>] inlined from the page"
+
+[[reading]]
+form = "sf.dml.remove"
+grammar_sha256 = "03fdc6b54d09a2c6522999fb3e119f6be97973a91f0b4615f31bba3ddffa7cdc"
+grammar = ["REMOVE { { @[<namespace>.]<int_stage_name>[/<path>] | @[<namespace>.]%<table_name>[/<path>] | @~[/<path>] } | @[<namespace>.]<ext_stage_name>[/<path>] } [ PATTERN = '<regex_pattern>' ]"]
+reason = "internalStage ::= @[<namespace>.]<int_stage_name>[/<path>] | @[<namespace>.]%<table_name>[/<path>] | @~[/<path>] and externalStage ::= @[<namespace>.]<ext_stage_name>[/<path>] inlined from the page"
+
+[[reading]]
+form = "sf.dml.list.repositoryclone"
+grammar_sha256 = "b108e3d8bf3685d2a0f8b45accbce59137cd53b1971909dbcb9d770bafd1b8eb"
+grammar = ["LIST @[<namespace>.]<repository_clone>/<branch_path> [ PATTERN = '<regex_pattern>' ]"]
+reason = "repositoryClone ::= @[<namespace>.]<repository_clone>/<path> inlined from the page; the path is a branch, tag or commit path such as branches/main"
+
+[[reading]]
+form = "sf.dml.insert-multi-table.all-intoclause"
+grammar_sha256 = "48d5f0acf01836120de55d2e28378fac6e7c52dc8872f5365f566f0f198c5054"
+grammar = ["INSERT [ OVERWRITE ] ALL INTO <target_table> [ ( <target_col_name> [ , ... ] ) ] [ VALUES ( { <source_col_name> | DEFAULT | NULL } [ , ... ] ) ] [ INTO <target_table> ] <subquery>"]
+reason = "intoClause ::= INTO <target_table> [ ( <target_col_name> [ , ... ] ) ] [ VALUES ( { <source_col_name> | DEFAULT | NULL } [ , ... ] ) ] inlined from the page; its repetition `[ ... ]` is one further INTO <target_table> clause, so the clause's own options are tested once"
+
+[[reading]]
+form = "sf.dml.insert-multi-table.first-all-when-then"
+grammar_sha256 = "0b38fc25c699b1adf7dcff1c22e7297ce56b975e55c4d23055f7e67ca1bd9a78"
+grammar = ["INSERT [ OVERWRITE ] { FIRST | ALL } WHEN <condition> THEN INTO <target_table> [ ( <target_col_name> [ , ... ] ) ] [ VALUES ( { <source_col_name> | DEFAULT | NULL } [ , ... ] ) ] [ INTO <target_table> ] [ WHEN <condition> THEN INTO <target_table> ] [ ELSE INTO <target_table> ] <subquery>"]
+reason = "intoClause ::= INTO <target_table> [ ( <target_col_name> [ , ... ] ) ] [ VALUES ( { <source_col_name> | DEFAULT | NULL } [ , ... ] ) ] inlined from the page; its repetition `[ ... ]` is one further INTO <target_table> clause, so the clause's own options are tested once; the repeated WHEN ... THEN group and the ELSE clause each take one INTO <target_table>"
+
+[[reading]]
+form = "sf.dml.merge"
+grammar_sha256 = "ac26ecbb05d68227fd3127d8f5b504a5f37dfcfeab127585445337014e2f4111"
+grammar = ["MERGE INTO <target_table> USING <source> ON <join_expr> { WHEN MATCHED [ AND <case_predicate> ] THEN { UPDATE { ALL BY NAME | SET <col_name> = <expr> [ , <col_name> = <expr> ... ] } | DELETE } | WHEN NOT MATCHED [ AND <case_predicate> ] THEN INSERT { ALL BY NAME | [ ( <col_name> [ , ... ] ) ] VALUES ( <expr> [ , ... ] ) } } [ { WHEN MATCHED AND <case_predicate> THEN DELETE | WHEN NOT MATCHED AND <case_predicate> THEN INSERT ALL BY NAME } ]"]
+reason = "matchedClause and notMatchedClause inlined from the page; the repetition `[ ... ]` is one further clause of either kind, minimal and with AND <case_predicate> as the page requires for all but the last clause of a kind"
+
+[[reading]]
+form = "sf.dml.insert"
+grammar_sha256 = "60546e7649c4cb35b2478bfb20b774ea289ea70ea3b005f187d5dabbf78546d9"
+grammar = ["INSERT [ OVERWRITE ] INTO <target_table> [ ( <target_col_name> [ , ... ] ) ] { VALUES ( { <value> | DEFAULT | NULL } [ , ... ] ) [ , ( { <value> | DEFAULT | NULL } [ , ... ] ) ] | <query> }"]
+reason = "the page's `[ , ( ... ) ]` repeats the parenthesized row of values, not the VALUES keyword"
+
+
+# DML: documented bounds and rules (hand limits) and the D90 extremes, each under 50 KB.
+
+[[limit]]
+form = "sf.dml.copy-files.from"
+kind = "boundary_below"
+target = "'<file_name>' [ , '<file_name>' ] [ , ... ]"
+note = "999 file names against the documented maximum of 1,000"
+anchor = "doc.sql.copy-files / Optional parameters"
+size = 999
+outer_open = "COPY FILES INTO @s1 FROM @s1 FILES = ("
+open = "'f{n}' ,"
+core = "'f0'"
+outer_close = ") ;"
+expect = "accept"
+context = "raw"
+
+[[limit]]
+form = "sf.dml.copy-files.from"
+kind = "boundary_at"
+target = "'<file_name>' [ , '<file_name>' ] [ , ... ]"
+note = "1,000 file names against the documented maximum of 1,000"
+anchor = "doc.sql.copy-files / Optional parameters"
+size = 1000
+outer_open = "COPY FILES INTO @s1 FROM @s1 FILES = ("
+open = "'f{n}' ,"
+core = "'f0'"
+outer_close = ") ;"
+expect = "accept"
+context = "raw"
+
+[[limit]]
+form = "sf.dml.copy-files.from"
+kind = "boundary_above"
+target = "'<file_name>' [ , '<file_name>' ] [ , ... ]"
+note = "1,001 file names against the documented maximum of 1,000"
+anchor = "doc.sql.copy-files / Optional parameters"
+size = 1001
+outer_open = "COPY FILES INTO @s1 FROM @s1 FILES = ("
+open = "'f{n}' ,"
+core = "'f0'"
+outer_close = ") ;"
+expect = "reject"
+context = "raw"
+
+[[limit]]
+form = "sf.dml.copy-into-table.internalstage-externalstage-externallocation"
+kind = "boundary_below"
+target = "'<file_name>' [ , '<file_name>' ] [ , ... ]"
+note = "999 file names against the documented maximum of 1,000"
+anchor = "doc.sql.copy-into-table / Optional parameters"
+size = 999
+outer_open = "COPY INTO t1 FROM @s1 FILES = ("
+open = "'f{n}' ,"
+core = "'f0'"
+outer_close = ") ;"
+expect = "accept"
+context = "raw"
+
+[[limit]]
+form = "sf.dml.copy-into-table.internalstage-externalstage-externallocation"
+kind = "boundary_at"
+target = "'<file_name>' [ , '<file_name>' ] [ , ... ]"
+note = "1,000 file names against the documented maximum of 1,000"
+anchor = "doc.sql.copy-into-table / Optional parameters"
+size = 1000
+outer_open = "COPY INTO t1 FROM @s1 FILES = ("
+open = "'f{n}' ,"
+core = "'f0'"
+outer_close = ") ;"
+expect = "accept"
+context = "raw"
+
+[[limit]]
+form = "sf.dml.copy-into-table.internalstage-externalstage-externallocation"
+kind = "boundary_above"
+target = "'<file_name>' [ , '<file_name>' ] [ , ... ]"
+note = "1,001 file names against the documented maximum of 1,000"
+anchor = "doc.sql.copy-into-table / Optional parameters"
+size = 1001
+outer_open = "COPY INTO t1 FROM @s1 FILES = ("
+open = "'f{n}' ,"
+core = "'f0'"
+outer_close = ") ;"
+expect = "reject"
+context = "raw"
+
+[[limit]]
+form = "sf.dml.put"
+kind = "boundary_below"
+target = "PARALLEL = <integer>"
+note = "PARALLEL = 0 against the documented range 1 to 99"
+anchor = "doc.sql.put / Optional parameters"
+sql = "PUT file:///tmp/d1/f1.csv @s1 PARALLEL = 0 ;"
+expect = "reject"
+context = "raw"
+
+[[limit]]
+form = "sf.dml.put"
+kind = "boundary_at"
+target = "PARALLEL = <integer>"
+note = "PARALLEL = 1 against the documented range 1 to 99"
+anchor = "doc.sql.put / Optional parameters"
+sql = "PUT file:///tmp/d1/f1.csv @s1 PARALLEL = 1 ;"
+expect = "accept"
+context = "raw"
+
+[[limit]]
+form = "sf.dml.put"
+kind = "boundary_above"
+target = "PARALLEL = <integer>"
+note = "PARALLEL = 2 against the documented range 1 to 99"
+anchor = "doc.sql.put / Optional parameters"
+sql = "PUT file:///tmp/d1/f1.csv @s1 PARALLEL = 2 ;"
+expect = "accept"
+context = "raw"
+
+[[limit]]
+form = "sf.dml.put"
+kind = "boundary_below"
+target = "PARALLEL = <integer>"
+note = "PARALLEL = 98 against the documented range 1 to 99"
+anchor = "doc.sql.put / Optional parameters"
+sql = "PUT file:///tmp/d1/f1.csv @s1 PARALLEL = 98 ;"
+expect = "accept"
+context = "raw"
+
+[[limit]]
+form = "sf.dml.put"
+kind = "boundary_at"
+target = "PARALLEL = <integer>"
+note = "PARALLEL = 99 against the documented range 1 to 99"
+anchor = "doc.sql.put / Optional parameters"
+sql = "PUT file:///tmp/d1/f1.csv @s1 PARALLEL = 99 ;"
+expect = "accept"
+context = "raw"
+
+[[limit]]
+form = "sf.dml.put"
+kind = "boundary_above"
+target = "PARALLEL = <integer>"
+note = "PARALLEL = 100 against the documented range 1 to 99"
+anchor = "doc.sql.put / Optional parameters"
+sql = "PUT file:///tmp/d1/f1.csv @s1 PARALLEL = 100 ;"
+expect = "reject"
+context = "raw"
+
+[[limit]]
+form = "sf.dml.get"
+kind = "boundary_below"
+target = "PARALLEL = <integer>"
+note = "PARALLEL = 0 against the documented range 1 to 99"
+anchor = "doc.sql.get / Optional parameters"
+sql = "GET @s1 file:///tmp/d1/ PARALLEL = 0 ;"
+expect = "reject"
+context = "raw"
+
+[[limit]]
+form = "sf.dml.get"
+kind = "boundary_at"
+target = "PARALLEL = <integer>"
+note = "PARALLEL = 1 against the documented range 1 to 99"
+anchor = "doc.sql.get / Optional parameters"
+sql = "GET @s1 file:///tmp/d1/ PARALLEL = 1 ;"
+expect = "accept"
+context = "raw"
+
+[[limit]]
+form = "sf.dml.get"
+kind = "boundary_above"
+target = "PARALLEL = <integer>"
+note = "PARALLEL = 2 against the documented range 1 to 99"
+anchor = "doc.sql.get / Optional parameters"
+sql = "GET @s1 file:///tmp/d1/ PARALLEL = 2 ;"
+expect = "accept"
+context = "raw"
+
+[[limit]]
+form = "sf.dml.get"
+kind = "boundary_below"
+target = "PARALLEL = <integer>"
+note = "PARALLEL = 98 against the documented range 1 to 99"
+anchor = "doc.sql.get / Optional parameters"
+sql = "GET @s1 file:///tmp/d1/ PARALLEL = 98 ;"
+expect = "accept"
+context = "raw"
+
+[[limit]]
+form = "sf.dml.get"
+kind = "boundary_at"
+target = "PARALLEL = <integer>"
+note = "PARALLEL = 99 against the documented range 1 to 99"
+anchor = "doc.sql.get / Optional parameters"
+sql = "GET @s1 file:///tmp/d1/ PARALLEL = 99 ;"
+expect = "accept"
+context = "raw"
+
+[[limit]]
+form = "sf.dml.get"
+kind = "boundary_above"
+target = "PARALLEL = <integer>"
+note = "PARALLEL = 100 against the documented range 1 to 99"
+anchor = "doc.sql.get / Optional parameters"
+sql = "GET @s1 file:///tmp/d1/ PARALLEL = 100 ;"
+expect = "reject"
+context = "raw"
+
+[[limit]]
+form = "sf.dml.copy-into-table.internalstage-externalstage-externallocation"
+kind = "boundary_below"
+target = "FIELD_DELIMITER = '<string>'"
+note = "a FIELD_DELIMITER of 19 characters against the documented maximum of 20"
+anchor = "doc.sql.copy-into-table / Format type options"
+sql = "COPY INTO t1 FROM @s1 FILE_FORMAT = ( TYPE = CSV FIELD_DELIMITER = '|||||||||||||||||||' ) ;"
+expect = "accept"
+context = "raw"
+
+[[limit]]
+form = "sf.dml.copy-into-table.internalstage-externalstage-externallocation"
+kind = "boundary_at"
+target = "FIELD_DELIMITER = '<string>'"
+note = "a FIELD_DELIMITER of 20 characters against the documented maximum of 20"
+anchor = "doc.sql.copy-into-table / Format type options"
+sql = "COPY INTO t1 FROM @s1 FILE_FORMAT = ( TYPE = CSV FIELD_DELIMITER = '||||||||||||||||||||' ) ;"
+expect = "accept"
+context = "raw"
+
+[[limit]]
+form = "sf.dml.copy-into-table.internalstage-externalstage-externallocation"
+kind = "boundary_above"
+target = "FIELD_DELIMITER = '<string>'"
+note = "a FIELD_DELIMITER of 21 characters against the documented maximum of 20"
+anchor = "doc.sql.copy-into-table / Format type options"
+sql = "COPY INTO t1 FROM @s1 FILE_FORMAT = ( TYPE = CSV FIELD_DELIMITER = '|||||||||||||||||||||' ) ;"
+expect = "reject"
+context = "raw"
+
+[[limit]]
+form = "sf.dml.copy-into-location"
+kind = "boundary_below"
+target = "MAX_FILE_SIZE = <num>"
+note = "MAX_FILE_SIZE = 5,368,709,119 against the documented maximum of 5,368,709,120 (5 GB)"
+anchor = "doc.sql.copy-into-location / Copy options"
+sql = "COPY INTO @s1 FROM t1 MAX_FILE_SIZE = 5368709119 ;"
+expect = "accept"
+context = "raw"
+
+[[limit]]
+form = "sf.dml.copy-into-location"
+kind = "boundary_at"
+target = "MAX_FILE_SIZE = <num>"
+note = "MAX_FILE_SIZE = 5,368,709,120 against the documented maximum of 5,368,709,120 (5 GB)"
+anchor = "doc.sql.copy-into-location / Copy options"
+sql = "COPY INTO @s1 FROM t1 MAX_FILE_SIZE = 5368709120 ;"
+expect = "accept"
+context = "raw"
+
+[[limit]]
+form = "sf.dml.copy-into-location"
+kind = "boundary_above"
+target = "MAX_FILE_SIZE = <num>"
+note = "MAX_FILE_SIZE = 5,368,709,121 against the documented maximum of 5,368,709,120 (5 GB)"
+anchor = "doc.sql.copy-into-location / Copy options"
+sql = "COPY INTO @s1 FROM t1 MAX_FILE_SIZE = 5368709121 ;"
+expect = "reject"
+context = "raw"
+
+[[limit]]
+form = "sf.dml.merge"
+kind = "negative_neighbour"
+note = "a matching clause without AND before another matching clause; the page: a clause that omits AND must be the last of its clause type"
+anchor = "doc.sql.merge / Usage notes"
+sql = "MERGE INTO t1 USING t2 ON t1.c1 = t2.c1 WHEN MATCHED THEN DELETE WHEN MATCHED AND TRUE THEN UPDATE SET c1 = 1 ;"
+context = "raw"
+
+[[limit]]
+form = "sf.dml.merge"
+kind = "negative_neighbour"
+note = "a not-matching clause without AND before another not-matching clause"
+anchor = "doc.sql.merge / Usage notes"
+sql = "MERGE INTO t1 USING t2 ON t1.c1 = t2.c1 WHEN NOT MATCHED THEN INSERT ALL BY NAME WHEN NOT MATCHED AND TRUE THEN INSERT ALL BY NAME ;"
+context = "raw"
+
+[[limit]]
+form = "sf.dml.merge"
+kind = "positive"
+note = "several matching and not-matching clauses, each without AND only as the last of its type"
+anchor = "doc.sql.merge / Usage notes"
+sql = "MERGE INTO t1 USING t2 ON t1.c1 = t2.c1 WHEN MATCHED AND t2.c1 > 0 THEN DELETE WHEN MATCHED THEN UPDATE SET c1 = 1 WHEN NOT MATCHED AND t2.c1 > 0 THEN INSERT ( c1 ) VALUES ( 1 ) WHEN NOT MATCHED THEN INSERT ALL BY NAME ;"
+context = "raw"
+
+[[limit]]
+form = "sf.dml.copy-into-table.internalstage-externalstage-externallocation"
+kind = "negative_neighbour"
+note = "SKIP_HEADER together with PARSE_HEADER = TRUE, which the page says is not supported"
+anchor = "doc.sql.copy-into-table / Format type options"
+sql = "COPY INTO t1 FROM @s1 FILE_FORMAT = ( TYPE = CSV PARSE_HEADER = TRUE SKIP_HEADER = 1 ) ;"
+context = "raw"
+
+[[limit]]
+form = "sf.dml.copy-into-table.internalstage-externalstage-externallocation"
+kind = "negative_neighbour"
+note = "a FIELD_DELIMITER that is a substring of the RECORD_DELIMITER, the page's example of what is not allowed"
+anchor = "doc.sql.copy-into-table / Format type options"
+sql = "COPY INTO t1 FROM @s1 FILE_FORMAT = ( TYPE = CSV FIELD_DELIMITER = 'aa' RECORD_DELIMITER = 'aabb' ) ;"
+context = "raw"
+
+[[limit]]
+form = "sf.dml.copy-into-table.internalstage-externalstage-externallocation"
+kind = "negative_neighbour"
+note = "a SQL variable as the FROM location, which the page says must be a literal constant"
+anchor = "doc.sql.copy-into-table / Usage notes"
+sql = "COPY INTO t1 FROM $v1 ;"
+context = "raw"
+
+[[limit]]
+form = "sf.dml.copy-files.from"
+kind = "negative_neighbour"
+note = "a SQL variable as the INTO location, which the page says must be a literal constant"
+anchor = "doc.sql.copy-files / Usage notes"
+sql = "COPY FILES INTO $v1 FROM @s1 ;"
+context = "raw"
+
+[[limit]]
+form = "sf.dml.insert-multi-table.all-intoclause"
+kind = "negative_neighbour"
+note = "fewer VALUES than target columns; the page: the number of values must match the number of columns"
+anchor = "doc.sql.insert-multi-table / Usage notes"
+sql = "INSERT ALL INTO t1 ( c1 , c2 ) VALUES ( c1 ) SELECT 1 AS c1 ;"
+context = "raw"
+
+[[limit]]
+form = "sf.dml.list.internalstage-externalstage"
+kind = "positive"
+note = "a stage name with a space, enclosed in single quotes as the page requires ('@\"my stage\"')"
+anchor = "doc.sql.list / Parameters"
+sql = "LIST '@\"s1 Q\"' ;"
+context = "raw"
+
+[[limit]]
+form = "sf.dml.list.internalstage-externalstage"
+kind = "positive"
+note = "a stage name and path enclosed in single quotes"
+anchor = "doc.sql.list / Parameters"
+sql = "LIST '@\"s1 Q\"/p 1/' ;"
+context = "raw"
+
+[[limit]]
+form = "sf.dml.list.internalstage-externalstage"
+kind = "negative_neighbour"
+note = "a stage path with a space, not enclosed in single quotes"
+anchor = "doc.sql.list / Parameters"
+sql = "LIST @s1/p 1/ ;"
+context = "raw"
+
+[[limit]]
+form = "sf.dml.remove"
+kind = "positive"
+note = "a stage name with a space, enclosed in single quotes as the page requires ('@\"my stage\"')"
+anchor = "doc.sql.remove / Parameters"
+sql = "REMOVE '@\"s1 Q\"' ;"
+context = "raw"
+
+[[limit]]
+form = "sf.dml.remove"
+kind = "positive"
+note = "a stage name and path enclosed in single quotes"
+anchor = "doc.sql.remove / Parameters"
+sql = "REMOVE '@\"s1 Q\"/p 1/' ;"
+context = "raw"
+
+[[limit]]
+form = "sf.dml.remove"
+kind = "negative_neighbour"
+note = "a stage path with a space, not enclosed in single quotes"
+anchor = "doc.sql.remove / Parameters"
+sql = "REMOVE @s1/p 1/ ;"
+context = "raw"
+
+[[limit]]
+form = "sf.dml.put"
+kind = "positive"
+note = "a file URI with a space, enclosed in single quotes as the page requires"
+anchor = "doc.sql.put / Required parameters"
+sql = "PUT 'file:///tmp/d 1/f1.csv' @s1 ;"
+context = "raw"
+
+[[limit]]
+form = "sf.dml.put"
+kind = "negative_neighbour"
+note = "a file URI with a space, not enclosed in single quotes"
+anchor = "doc.sql.put / Required parameters"
+sql = "PUT file:///tmp/d 1/f1.csv @s1 ;"
+context = "raw"
+
+[[limit]]
+form = "sf.dml.get"
+kind = "positive"
+note = "a file URI with a space, enclosed in single quotes as the page requires"
+anchor = "doc.sql.get / Required parameters"
+sql = "GET @s1 'file:///tmp/d 1/' ;"
+context = "raw"
+
+[[limit]]
+form = "sf.dml.get"
+kind = "negative_neighbour"
+note = "a file URI with a space, not enclosed in single quotes"
+anchor = "doc.sql.get / Required parameters"
+sql = "GET @s1 file:///tmp/d 1/ ;"
+context = "raw"
+
+[[limit]]
+form = "sf.dml.list.repositoryclone"
+kind = "alternative"
+target = "<path>"
+note = "a tag path; the page: the path must begin with branches/, tags/ or commits/"
+anchor = "doc.sql.list / Parameters"
+sql = "LIST @r1/tags/v1 ;"
+context = "raw"
+
+[[limit]]
+form = "sf.dml.list.repositoryclone"
+kind = "alternative"
+target = "<path>"
+note = "a commit path; the page: the path must begin with branches/, tags/ or commits/"
+anchor = "doc.sql.list / Parameters"
+sql = "LIST @r1/commits/0a1b2c3 ;"
+context = "raw"
+
+[[limit]]
+form = "sf.dml.list.repositoryclone"
+kind = "negative_neighbour"
+note = "a path that begins with none of branches/, tags/ or commits/"
+anchor = "doc.sql.list / Parameters"
+sql = "LIST @r1/p1 ;"
+context = "raw"
+
+[[limit]]
+form = "sf.dml.insert"
+kind = "extreme"
+note = "1,000 rows in one VALUES clause; no documented bound"
+anchor = "doc.sql.insert / Syntax"
+size = 1000
+outer_open = "INSERT INTO t1 VALUES"
+open = "( 1 ) ,"
+core = "( 1 )"
+outer_close = ";"
+context = "raw"
+
+[[limit]]
+form = "sf.dml.insert"
+kind = "extreme"
+note = "5,000 rows in one VALUES clause; no documented bound"
+anchor = "doc.sql.insert / Syntax"
+size = 5000
+outer_open = "INSERT INTO t1 VALUES"
+open = "( 1 ) ,"
+core = "( 1 )"
+outer_close = ";"
+context = "raw"
+
+[[limit]]
+form = "sf.dml.insert"
+kind = "extreme"
+note = "1,000 target columns; no documented bound"
+anchor = "doc.sql.insert / Syntax"
+size = 1000
+outer_open = "INSERT INTO t1 ("
+open = "c{n} ,"
+core = "c0"
+outer_close = ") SELECT 1 ;"
+context = "raw"
+
+[[limit]]
+form = "sf.dml.update"
+kind = "extreme"
+note = "1,000 SET assignments; no documented bound"
+anchor = "doc.sql.update / Syntax"
+size = 1000
+outer_open = "UPDATE t1 SET"
+open = "c{n} = 1 ,"
+core = "c0 = 1"
+outer_close = ";"
+context = "raw"
+
+[[limit]]
+form = "sf.dml.delete"
+kind = "extreme"
+note = "100 tables in USING; no documented bound"
+anchor = "doc.sql.delete / Syntax"
+size = 100
+outer_open = "DELETE FROM t1 USING"
+open = "t{n} ,"
+core = "t0"
+outer_close = ";"
+context = "raw"
+
+[[limit]]
+form = "sf.dml.merge"
+kind = "extreme"
+note = "100 WHEN MATCHED AND ... clauses; no documented bound"
+anchor = "doc.sql.merge / Syntax"
+size = 100
+outer_open = "MERGE INTO t1 USING t2 ON t1.c1 = t2.c1"
+open = "WHEN MATCHED AND t2.c1 = {n} THEN DELETE"
+core = "WHEN MATCHED THEN DELETE"
+outer_close = ";"
+context = "raw"
+
+[[limit]]
+form = "sf.dml.merge"
+kind = "extreme"
+note = "1,000 WHEN MATCHED AND ... clauses; no documented bound"
+anchor = "doc.sql.merge / Syntax"
+size = 1000
+outer_open = "MERGE INTO t1 USING t2 ON t1.c1 = t2.c1"
+open = "WHEN MATCHED AND t2.c1 = {n} THEN DELETE"
+core = "WHEN MATCHED THEN DELETE"
+outer_close = ";"
+context = "raw"
+
+[[limit]]
+form = "sf.dml.insert-multi-table.all-intoclause"
+kind = "extreme"
+note = "1,000 INTO clauses; no documented bound"
+anchor = "doc.sql.insert-multi-table / Syntax"
+size = 1000
+outer_open = "INSERT ALL"
+open = "INTO t{n}"
+core = "INTO t0"
+outer_close = "SELECT 1 ;"
+context = "raw"
+
+[[limit]]
+form = "sf.dml.insert-multi-table.first-all-when-then"
+kind = "extreme"
+note = "1,000 WHEN ... THEN branches; no documented bound"
+anchor = "doc.sql.insert-multi-table / Syntax"
+size = 1000
+outer_open = "INSERT FIRST"
+open = "WHEN c1 = {n} THEN INTO t1"
+core = "ELSE INTO t1"
+outer_close = "SELECT 1 AS c1 ;"
+context = "raw"
+
+[[limit]]
+form = "sf.dml.copy-into-table.select-from-internalstage-externalstage"
+kind = "extreme"
+note = "1,000 staged columns in the transformation SELECT; no documented bound"
+anchor = "doc.sql.copy-into-table / Syntax"
+size = 1000
+outer_open = "COPY INTO t1 FROM ( SELECT"
+open = "${n} ,"
+core = "$1000"
+outer_close = "FROM @s1 ) ;"
+context = "raw"
+

@@ -50,6 +50,7 @@ from scripts.syntax_obligations.constants import (
     REPEAT_SLOT,
     RESERVED_WORD,
     SINGLE_CHARACTER_LITERAL_LENGTH,
+    STAGE_GLUES,
     STATEMENT_CLASS,
     STATEMENT_TERMINATOR,
     STRING_CLASS,
@@ -152,7 +153,7 @@ class _Renderer:
         self._keywords = []
         joined: str = " ".join(self._sequence(nodes=self.trees[production], choices=choices))
         glued: str = GLUED_INFIX_RIGHT.sub("!", GLUED_PREFIXES.sub(r"\1", joined))
-        return GLUED_INFIX_LEFT.sub("!", glued)
+        return _stage_glued(GLUED_INFIX_LEFT.sub("!", glued))
 
     def _declarations(self) -> str:
         """Declarations, by `uses`, of the objects the form names, so the case is self-contained."""
@@ -339,6 +340,16 @@ class _Renderer:
             fill = f'"{fill}Q"' if name in QUOTED_WITHOUT_BLANK_NAMES else f'"{fill} Q"'
         self._used.setdefault(name, []).append(fill)
         return fill
+
+
+def _stage_glued(text: str) -> str:
+    """`@ns . stage / path /` written as the one token `@ns.stage/path/`."""
+    previous: str = ""
+    while previous != text:
+        previous = text
+        for pattern in STAGE_GLUES:
+            text = pattern.sub(r"\1", text)
+    return text
 
 
 def _dangling_separator(*, out: list[str], emitted: int, dangling: int, node: Node) -> int:
