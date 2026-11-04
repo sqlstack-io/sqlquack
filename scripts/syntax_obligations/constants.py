@@ -142,6 +142,19 @@ HAND_CASE_KEYS: tuple[str, ...] = (
     "core",
     "close",
     "outer_close",
+    "expect",
+    "stage",
+    "also_expect",
+    "also_stage",
+)
+# Expected outcomes: accept means no syntax error (an accepted, semantic or runtime phase);
+# reject means a syntax error. STAGES name a later error an accepted case is expected to reach.
+EXPECT_ACCEPT: str = "accept"
+EXPECT_REJECT: str = "reject"
+STAGES: frozenset[str] = frozenset({"", "semantic", "runtime", "error"})
+LABEL_SLOT: str = "{label}"
+BUILTIN_NAMES: frozenset[str] = frozenset(
+    {"STATEMENT_ERROR", "EXPRESSION_ERROR", "OTHER", "SQLCODE", "SQLERRM", "SQLSTATE"}
 )
 CASE_CAPTURE: str = "execute"
 # The session lane A's anonymous-block runs record (packets 1-5); a receipt binds its hash.

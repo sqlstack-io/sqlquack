@@ -10,7 +10,14 @@ from pathlib import Path
 from scripts.syntax_catalogue._helpers.toml_out import write_tables
 from scripts.syntax_obligations._helpers.derive import derive_trees
 from scripts.syntax_obligations._helpers.ids import assign, existing_ids
-from scripts.syntax_obligations.constants import HAND_CASE_KEYS, KIND_PROSE, STATUS_CATALOGUED
+from scripts.syntax_obligations.constants import (
+    EXPECT_ACCEPT,
+    EXPECT_REJECT,
+    HAND_CASE_KEYS,
+    KIND_PROSE,
+    STAGES,
+    STATUS_CATALOGUED,
+)
 from scripts.syntax_obligations.exceptions import ObligationError
 from scripts.syntax_obligations.models import Draft, Node, Spec
 from scripts.syntax_obligations.types import Row
@@ -43,20 +50,43 @@ def limit_drafts(*, path: Path, family: str, forms: set[str]) -> list[Draft]:
                     payload=json.dumps(
                         {key: row[key] for key in HAND_CASE_KEYS if key in row}, sort_keys=True
                     ),
+                    expect=_limit_expect(row),
                 ),
             )
         )
     return drafts
 
 
-def suppressions(*, path: Path) -> set[tuple[str, str, str]]:
-    """(form, kind, target) of derived obligations that limits.toml withdraws, with a reason."""
+def _limit_expect(row: Row) -> str:
+    """A limit's expected outcome: its `expect`, else reject for a negative and accept otherwise.
+    Boundary limits must say which side they expect."""
+    kind: str = str(row["kind"])
+    expect: str = str(row.get("expect", ""))
+    if not expect and kind.startswith("boundary_"):
+        raise ObligationError(f"limit {row['form']} {kind}: a boundary needs an explicit expect")
+    for key in ("stage", "also_stage"):
+        if str(row.get(key, "")) not in STAGES:
+            raise ObligationError(f"limit {row['form']}: unknown {key} {row[key]!r}")
+    return expect or (EXPECT_REJECT if kind == "negative_neighbour" else EXPECT_ACCEPT)
+
+
+def suppressions(*, path: Path) -> list[Row]:
+    """Derived obligations that limits.toml withdraws, each with a reason: form, kind and target,
+    and a note where the target alone is ambiguous (dropped-token negatives)."""
     if not path.exists():
-        return set()
+        return []
     rows: list[Row] = tomllib.loads(path.read_text()).get("suppress", [])
     if any(not str(row.get("reason", "")).strip() for row in rows):
         raise ObligationError("every [[suppress]] entry in limits.toml needs a reason")
-    return {(str(row["form"]), str(row["kind"]), str(row["target"])) for row in rows}
+    return rows
+
+
+def _suppressed(draft: Draft, rows: list[Row]) -> bool:
+    return any(
+        (draft.form, draft.kind, draft.target) == (row["form"], row["kind"], row.get("target", ""))
+        and row.get("note", draft.note) == draft.note
+        for row in rows
+    )
 
 
 def obligation_rows(numbered: list[tuple[str, Draft]]) -> list[Row]:
@@ -110,8 +140,8 @@ def family_obligations(
     for form in forms:
         found, trees[str(form["id"])] = derive_trees(str(form["id"]), list(form["grammar"]))
         drafts += found
-    suppressed: set[tuple[str, str, str]] = suppressions(path=root / "limits.toml")
-    drafts = [d for d in drafts if (d.form, d.kind, d.target) not in suppressed]
+    suppressed: list[Row] = suppressions(path=root / "limits.toml")
+    drafts = [d for d in drafts if not _suppressed(d, suppressed)]
     drafts += limit_drafts(
         path=root / "limits.toml", family=family, forms={str(form["id"]) for form in forms}
     )

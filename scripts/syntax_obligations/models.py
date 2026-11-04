@@ -36,6 +36,8 @@ class Spec:
     path: frozenset[int] = frozenset()
     payload: str = ""
     chosen: tuple[tuple[int, int], ...] = ()
+    expect: str = "accept"
+    stage: str = ""
 
 
 @dataclass(frozen=True)

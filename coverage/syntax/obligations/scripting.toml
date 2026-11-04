@@ -1004,13 +1004,6 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "sf.scripting.declare.exception.o002"
-kind = "required_operand_missing"
-required = true
-target = "<exception_name>"
-note = "omit <exception_name>"
-
-[[obligation]]
 id = "sf.scripting.declare.exception.o003"
 kind = "operand_type_class"
 required = true
@@ -1077,12 +1070,6 @@ kind = "negative_neighbour"
 required = true
 target = "'<exception_message>' in [ ( <exception_number> , '<exception_message>' ) ]"
 note = "an unquoted identifier in place of '<exception_message>'"
-
-[[obligation]]
-id = "sf.scripting.declare.exception.o013"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required EXCEPTION"
 
 [[obligation]]
 id = "sf.scripting.declare.exception.o023"
@@ -1294,13 +1281,6 @@ required = true
 target = "[ <col_name> <col_data_type> [ , ... ] ]"
 
 [[obligation]]
-id = "sf.scripting.declare.procedure-returns-table-as.o021"
-kind = "required_operand_missing"
-required = true
-target = "<col_name> in [ <col_name> <col_data_type> [ , ... ] ]"
-note = "omit <col_name>"
-
-[[obligation]]
 id = "sf.scripting.declare.procedure-returns-table-as.o022"
 kind = "operand_type_class"
 required = true
@@ -1313,13 +1293,6 @@ kind = "negative_neighbour"
 required = true
 target = "<col_name> in [ <col_name> <col_data_type> [ , ... ] ]"
 note = "a string literal in place of <col_name>"
-
-[[obligation]]
-id = "sf.scripting.declare.procedure-returns-table-as.o024"
-kind = "required_operand_missing"
-required = true
-target = "<col_data_type> in [ <col_name> <col_data_type> [ , ... ] ]"
-note = "omit <col_data_type>"
 
 [[obligation]]
 id = "sf.scripting.declare.procedure-returns-table-as.o025"
@@ -1454,13 +1427,6 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "sf.scripting.declare.resultset.o002"
-kind = "required_operand_missing"
-required = true
-target = "<resultset_name>"
-note = "omit <resultset_name>"
-
-[[obligation]]
 id = "sf.scripting.declare.resultset.o003"
 kind = "operand_type_class"
 required = true
@@ -1530,12 +1496,6 @@ kind = "negative_neighbour"
 required = true
 target = "<query> in [ { DEFAULT | := } [ ASYNC ] ( <query> ) ]"
 note = "a bare literal in place of <query>"
-
-[[obligation]]
-id = "sf.scripting.declare.resultset.o014"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required RESULTSET"
 
 [[obligation]]
 id = "sf.scripting.declare.resultset.o018"
@@ -1853,13 +1813,6 @@ id = "sf.scripting.exception.o026"
 kind = "alternative"
 required = true
 target = "{ EXIT | CONTINUE } → CONTINUE #2"
-
-[[obligation]]
-id = "sf.scripting.exception.o027"
-kind = "required_operand_missing"
-required = true
-target = "<statement> #2"
-note = "omit <statement>"
 
 [[obligation]]
 id = "sf.scripting.exception.o028"
@@ -3083,13 +3036,6 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "sf.scripting.let.let-default.o002"
-kind = "required_operand_missing"
-required = true
-target = "<variable_name>"
-note = "omit <variable_name>"
-
-[[obligation]]
 id = "sf.scripting.let.let-default.o003"
 kind = "operand_type_class"
 required = true
@@ -3102,13 +3048,6 @@ kind = "negative_neighbour"
 required = true
 target = "<variable_name>"
 note = "a string literal in place of <variable_name>"
-
-[[obligation]]
-id = "sf.scripting.let.let-default.o005"
-kind = "required_operand_missing"
-required = true
-target = "<type>"
-note = "omit <type>"
 
 [[obligation]]
 id = "sf.scripting.let.let-default.o006"
@@ -3282,13 +3221,6 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "sf.scripting.let.let-resultset-default.o002"
-kind = "required_operand_missing"
-required = true
-target = "<resultset_name>"
-note = "omit <resultset_name>"
-
-[[obligation]]
 id = "sf.scripting.let.let-resultset-default.o003"
 kind = "operand_type_class"
 required = true
@@ -3334,12 +3266,6 @@ kind = "negative_neighbour"
 required = true
 target = "<query>"
 note = "a bare literal in place of <query>"
-
-[[obligation]]
-id = "sf.scripting.let.let-resultset-default.o010"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required RESULTSET"
 
 [[obligation]]
 id = "sf.scripting.let.let-resultset-default.o011"
@@ -3895,13 +3821,6 @@ id = "sf.scripting.return.o001"
 kind = "positive"
 required = true
 note = "the documented form with every required part and no optional part"
-
-[[obligation]]
-id = "sf.scripting.return.o002"
-kind = "required_operand_missing"
-required = true
-target = "<expression>"
-note = "omit <expression>"
 
 [[obligation]]
 id = "sf.scripting.return.o003"

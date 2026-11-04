@@ -7,8 +7,13 @@ import hashlib
 import json
 from pathlib import Path
 
-from scripts.syntax_obligations._helpers.render import FormStyle, Renderer
-from scripts.syntax_obligations.constants import CASE_CAPTURE, CASE_SESSION
+from scripts.syntax_obligations._helpers.render import FormStyle, Rendered, Renderer
+from scripts.syntax_obligations.constants import (
+    CASE_CAPTURE,
+    CASE_SESSION,
+    EXPECT_ACCEPT,
+    EXPECT_REJECT,
+)
 from scripts.syntax_obligations.exceptions import ObligationError
 from scripts.syntax_obligations.main.build import family_obligations
 from scripts.syntax_obligations.models import Draft, Node
@@ -33,38 +38,54 @@ def style_of(*, family: str, form: str) -> FormStyle:
     return styles[best]
 
 
-def family_cases(*, root: Path, family: str) -> list[Row]:
-    """Cases with SQL, hashes and the obligation ids each one satisfies, in SQL-first order."""
+def family_cases(*, root: Path, family: str) -> tuple[list[Row], dict[str, set[str]]]:
+    """Cases with SQL, hashes, expected outcome and the obligation ids each one satisfies, and
+    every obligation's expected outcomes. One SQL text never carries two expectations."""
     numbered, trees = family_obligations(root=root, family=family)
-    by_sql: dict[str, tuple[str, list[str]]] = {}
+    by_sql: dict[str, tuple[str, Rendered, list[str]]] = {}
+    expected: dict[str, set[str]] = {}
+    conflicts: list[str] = []
     for identifier, draft in numbered:
-        texts: list[str] = _texts(draft=draft, trees=trees, family=family)
-        if not texts:
+        found: list[Rendered] = _rendered(draft=draft, trees=trees, family=family)
+        if not found:
             raise ObligationError(f"{identifier}: no case could be rendered")
-        for sql in texts:
-            by_sql.setdefault(sql, (draft.form, []))[1].append(identifier)
+        for rendered in found:
+            expected.setdefault(identifier, set()).add(rendered.expect)
+            form, earlier, cited = by_sql.setdefault(rendered.sql, (draft.form, rendered, []))
+            if (earlier.expect, earlier.stage) != (rendered.expect, rendered.stage):
+                conflicts.append(
+                    f"{identifier} expects {rendered.expect} {rendered.stage} where "
+                    f"{cited[0]} expects {earlier.expect} {earlier.stage}: {rendered.sql}"
+                )
+            cited.append(identifier)
+    if conflicts:
+        raise ObligationError("one SQL text with two expectations:\n" + "\n".join(conflicts))
     session_sha: str = _digest(_canonical(CASE_SESSION))
     setup_sha: str = _digest(_canonical([]))
     cases: list[Row] = []
-    for sql, (form, obligations) in by_sql.items():
+    for sql, (form, rendered, obligations) in by_sql.items():
         sha: str = _digest(sql)
-        cases.append(
-            {
-                "case_id": f"{form}.k{sha[:DIGEST_WIDTH]}",
-                "obligations": sorted(set(obligations)),
-                "sql": sql,
-                "sql_sha256": sha,
-                "setup": [],
-                "setup_sha256": setup_sha,
-                "session": CASE_SESSION,
-                "session_sha256": session_sha,
-                "capture": CASE_CAPTURE,
-            }
-        )
-    return sorted(cases, key=lambda case: case["case_id"])
+        case: Row = {
+            "case_id": f"{form}.k{sha[:DIGEST_WIDTH]}",
+            "obligations": sorted(set(obligations)),
+            "sql": sql,
+            "sql_sha256": sha,
+            "setup": [],
+            "setup_sha256": setup_sha,
+            "session": CASE_SESSION,
+            "session_sha256": session_sha,
+            "capture": CASE_CAPTURE,
+            "expect": rendered.expect,
+        }
+        if rendered.stage:
+            case["stage"] = rendered.stage
+        cases.append(case)
+    return sorted(cases, key=lambda case: case["case_id"]), expected
 
 
-def _texts(*, draft: Draft, trees: dict[str, list[tuple[Node, ...]]], family: str) -> list[str]:
+def _rendered(
+    *, draft: Draft, trees: dict[str, list[tuple[Node, ...]]], family: str
+) -> list[Rendered]:
     if draft.spec is None:
         return []
     style: FormStyle = style_of(family=family, form=draft.form)
@@ -72,14 +93,40 @@ def _texts(*, draft: Draft, trees: dict[str, list[tuple[Node, ...]]], family: st
     return renderer.submissions(draft.spec, draft.depths)
 
 
-def merge_mapped(*, cases: list[Row], mapped: Path) -> list[Row]:
-    """Existing mapped cases first, verbatim; a generated case is dropped when every one of its
-    obligations is already covered by a mapped case."""
+def merge_mapped(
+    *, cases: list[Row], mapped: Path, expected: dict[str, set[str]]
+) -> tuple[list[Row], list[str]]:
+    """Existing mapped cases first, with the expected outcome their obligations share and any
+    citation that contradicts it reported; a generated case is dropped when every one of its
+    obligations is already covered by a mapped case with the same expectation."""
     if not mapped.exists():
-        return cases
-    kept: list[Row] = [json.loads(line) for line in mapped.read_text().splitlines() if line]
+        return cases, []
+    kept: list[Row] = []
+    problems: list[str] = []
+    for line in mapped.read_text().splitlines():
+        case: Row = json.loads(line)
+        withdrawn: list[str] = [str(o) for o in case["obligations"] if str(o) not in expected]
+        if withdrawn:
+            problems.append(f"{case['case_id']}: citations of withdrawn {withdrawn} dropped")
+            case["obligations"] = [o for o in case["obligations"] if str(o) in expected]
+        if not case["obligations"]:
+            continue
+        wants: set[str] = set()
+        for obligation in case["obligations"]:
+            single: set[str] = expected.get(str(obligation), set())
+            wants |= single if len(single) == 1 else set()
+        if not wants:
+            # Only reserved-word identifier obligations, which have a quoted case expected to
+            # be accepted and an unquoted one expected to be rejected.
+            wants = {EXPECT_ACCEPT if '"' in str(case["sql"]) else EXPECT_REJECT}
+        if len(wants) != 1:
+            problems.append(f"{case['case_id']}: cites obligations expecting {sorted(wants)}")
+            continue
+        case["expect"] = wants.pop()
+        kept.append(case)
     covered: set[str] = {str(o) for case in kept for o in case["obligations"]}
-    return kept + [case for case in cases if not set(case["obligations"]) <= covered]
+    generated: list[Row] = [c for c in cases if not set(c["obligations"]) <= covered]
+    return kept + generated, problems
 
 
 def run_cases(argv: list[str] | None = None) -> int:
@@ -99,10 +146,12 @@ def run_cases(argv: list[str] | None = None) -> int:
                 recorded.add((str(receipt["case_id"]), str(receipt["sql_sha256"])))
     to_capture: list[Row] = []
     for family in arguments.families:
-        cases: list[Row] = merge_mapped(
-            cases=family_cases(root=root, family=family),
-            mapped=root / "mapped-cases" / f"{family}.jsonl",
+        generated, expected = family_cases(root=root, family=family)
+        cases, problems = merge_mapped(
+            cases=generated, mapped=root / "mapped-cases" / f"{family}.jsonl", expected=expected
         )
+        for problem in problems:
+            print(f"mapped case left out: {problem}")
         path: Path = root / "cases" / f"{family}.jsonl"
         path.parent.mkdir(parents=True, exist_ok=True)
         path.write_text("".join(_canonical(case) + "\n" for case in cases))
@@ -111,7 +160,12 @@ def run_cases(argv: list[str] | None = None) -> int:
     if arguments.packet:
         arguments.packet.write_text(
             "".join(
-                _canonical({key: case[key] for key in ("case_id", "sql", "sql_sha256", "capture")})
+                _canonical(
+                    {
+                        key: case[key]
+                        for key in ("case_id", "sql", "sql_sha256", "capture", "expect")
+                    }
+                )
                 + "\n"
                 for case in to_capture
             )
