@@ -57649,3 +57649,22 @@ anchor = "doc.classes.budget.commands.show-budget / Syntax"
 sql = "SHOW SNOWFLAKE . . BUDGET ;"
 expect = "observe"
 context = "raw"
+
+# D113 ddl receipt triage: remaining contradictions observed, each reason names its category and receipt.
+
+[[suppress]]
+form = "sf.ddl.alter-view.datametricfunctionaction"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 1003 SQLSTATE 42000, phase semantic_error, import-20261104-55, filed under the same SQL's former id sf.ddl.alter-materialized-view.set-data-metric-schedule.k814110f099cf), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.ddl.alter-view.datametricfunctionaction"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>, observed"
+anchor = "doc.sql.alter-view / Syntax"
+sql = "ALTER VIEW SET DATA_METRIC_SCHEDULE = '1 MINUTE' ;"
+expect = "observe"
+context = "raw"

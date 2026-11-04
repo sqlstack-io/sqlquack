@@ -92365,13 +92365,6 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "sf.ddl.alter-view.datametricfunctionaction.o002"
-kind = "required_operand_missing"
-required = true
-target = "<name>"
-note = "omit <name>"
-
-[[obligation]]
 id = "sf.ddl.alter-view.datametricfunctionaction.o003"
 kind = "operand_type_class"
 required = true
@@ -95331,6 +95324,14 @@ required = true
 target = "[ , ... ] #2"
 anchor = "doc.sql.alter-view / Syntax"
 note = "the list continued at least once, observed"
+
+[[obligation]]
+id = "sf.ddl.alter-view.datametricfunctionaction.o757"
+kind = "required_operand_missing"
+required = true
+target = "<name>"
+anchor = "doc.sql.alter-view / Syntax"
+note = "omit <name>, observed"
 
 [[obligation]]
 id = "sf.ddl.alter-view.rename-to.o001"
