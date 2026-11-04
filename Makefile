@@ -23,7 +23,7 @@ PYTHON_TYPED := scripts tests/unit/scripts
 PYTHON_TESTS := tests/unit/scripts
 endif
 
-.PHONY: format rust-lint python-check fensu syntax-coverage evidence-guard polyglot-guard generate-cases generated-cases generate-referee-cases referee-cases referee-pending check-ci test test-rust test-python verify-recorded polyglot-duckshop census-duckshop fuzz-smoke gate gate-parallel census duckshop-compiled
+.PHONY: format rust-lint python-check fensu syntax-coverage evidence-guard polyglot-guard generate-cases generated-cases generate-referee-cases referee-cases referee-pending check-ci check-merge test test-rust test-python verify-recorded polyglot-duckshop census-duckshop fuzz-smoke gate gate-parallel census duckshop-compiled
 
 format:
 	cargo fmt --all
@@ -87,6 +87,9 @@ test: test-rust test-python
 
 test-rust:
 	RUST_TEST_JOBS=$(RUST_TEST_JOBS) scripts/run_rust_tests.sh $(RUST_TEST_PROFILE)
+
+# What every merge to main must pass, on the exact head: the static gate and the Rust tests.
+check-merge: check-ci test-rust
 
 test-python:
 	uv run pytest $(PYTHON_TESTS) -n auto --dist loadfile
