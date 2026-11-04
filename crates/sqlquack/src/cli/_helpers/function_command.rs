@@ -4,6 +4,10 @@ use std::collections::BTreeMap;
 use std::io::Write;
 use std::process::ExitCode;
 
+use sqlquack_core::diagnostics::constants::SESSION_PARAMETERS;
+use sqlquack_core::diagnostics::main::diagnose::diagnose;
+use sqlquack_core::diagnostics::main::render_diagnostics::render_diagnostics;
+use sqlquack_core::diagnostics::main::unplaced_diagnostic::unplaced_diagnostic;
 use sqlquack_core::parsing::models::SourceDialect;
 use sqlquack_policy::policy::models::Policy;
 use sqlquack_rules::catalogue::main::builtin_catalogue::builtin_catalogue;
@@ -44,8 +48,12 @@ pub(crate) fn function_command(
             );
             ExitCode::SUCCESS
         }
-        Err(error) => {
-            let _ = writeln!(stderr, "sqlquack function: refused: {error}");
+        Err(rendered) => {
+            let _ = match rendered.ends_with('\n') {
+                true => write!(stderr, "{rendered}"),
+                false => writeln!(stderr, "sqlquack function: {rendered}"),
+            };
+            let _ = writeln!(stderr, "sqlquack function: refused {}", arguments.name);
             ExitCode::FAILURE
         }
     }
@@ -63,11 +71,17 @@ fn convert(
     arguments: &FunctionArguments,
     (policy, parameters): &(Option<Policy>, BTreeMap<String, String>),
 ) -> Result<ConvertedFunction, String> {
+    let body_path = arguments.body.display().to_string();
     let (options, _) = session_conversion_options(
         policy.as_ref(),
         (arguments.strict, arguments.utc_session),
         parameters,
-    )?;
+    )
+    .map_err(|reason| {
+        unplaced_diagnostic(SESSION_PARAMETERS, reason.clone()).map_or(reason, |diagnostic| {
+            render_diagnostics(&[diagnostic], "", &body_path)
+        })
+    })?;
     let options = match policy {
         Some(policy) => confirmed_offsets(
             options,
@@ -89,11 +103,5 @@ fn convert(
         &builtin_catalogue(),
         (&schema, &options),
     )
-    .map_err(|refusals| {
-        refusals
-            .iter()
-            .map(|refusal| refusal.reason.clone())
-            .collect::<Vec<String>>()
-            .join("; ")
-    })
+    .map_err(|refusals| render_diagnostics(&diagnose(&refusals, &body), &body, &body_path))
 }
