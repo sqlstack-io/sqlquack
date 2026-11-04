@@ -654,13 +654,6 @@ target = "<column_list>"
 note = "a valid identifier"
 
 [[obligation]]
-id = "sf.query.connect-by.o004"
-kind = "negative_neighbour"
-required = true
-target = "<column_list>"
-note = "a string literal in place of <column_list>"
-
-[[obligation]]
 id = "sf.query.connect-by.o005"
 kind = "option_present"
 required = true
@@ -671,13 +664,6 @@ id = "sf.query.connect-by.o006"
 kind = "option_absent"
 required = true
 target = "[ , <level_expression> ]"
-
-[[obligation]]
-id = "sf.query.connect-by.o007"
-kind = "required_operand_missing"
-required = true
-target = "<level_expression> in [ , <level_expression> ]"
-note = "omit <level_expression>"
 
 [[obligation]]
 id = "sf.query.connect-by.o008"
@@ -727,13 +713,6 @@ required = true
 target = "{ PRIOR <col1_identifier> = <col2_identifier> | <col1_identifier> = PRIOR… → <col1_identifier> = PRIOR <col2_identifier>"
 
 [[obligation]]
-id = "sf.query.connect-by.o015"
-kind = "required_operand_missing"
-required = true
-target = "<col1_identifier>"
-note = "omit <col1_identifier>"
-
-[[obligation]]
 id = "sf.query.connect-by.o016"
 kind = "operand_type_class"
 required = true
@@ -762,13 +741,6 @@ target = "<col2_identifier>"
 note = "a valid identifier"
 
 [[obligation]]
-id = "sf.query.connect-by.o022"
-kind = "negative_neighbour"
-required = true
-target = "<col2_identifier>"
-note = "a string literal in place of <col2_identifier>"
-
-[[obligation]]
 id = "sf.query.connect-by.o053"
 kind = "required_operand_missing"
 required = true
@@ -781,20 +753,6 @@ kind = "operand_type_class"
 required = true
 target = "<col1_identifier> #2"
 note = "a valid identifier"
-
-[[obligation]]
-id = "sf.query.connect-by.o055"
-kind = "negative_neighbour"
-required = true
-target = "<col1_identifier> #2"
-note = "a string literal in place of <col1_identifier>"
-
-[[obligation]]
-id = "sf.query.connect-by.o056"
-kind = "required_operand_missing"
-required = true
-target = "<col2_identifier> #2"
-note = "omit <col2_identifier>"
 
 [[obligation]]
 id = "sf.query.connect-by.o057"
@@ -931,12 +889,6 @@ target = "<col4_identifier> in [ { , | AND } { PRIOR <col3_identifier> = <col4_i
 note = "a string literal in place of <col4_identifier>"
 
 [[obligation]]
-id = "sf.query.connect-by.o035"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required FROM"
-
-[[obligation]]
 id = "sf.query.connect-by.o036"
 kind = "negative_neighbour"
 required = true
@@ -959,12 +911,6 @@ id = "sf.query.connect-by.o039"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required BY"
-
-[[obligation]]
-id = "sf.query.connect-by.o077"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required PRIOR"
 
 [[obligation]]
 id = "sf.query.connect-by.o078"
@@ -1090,6 +1036,68 @@ kind = "negative_neighbour"
 required = true
 anchor = "doc.constructs.connect-by / Syntax"
 note = "NOCYCLE, which the page documents as unsupported"
+
+[[obligation]]
+id = "sf.query.connect-by.o084"
+kind = "required_operand_missing"
+required = true
+target = "<col2_identifier> #2"
+anchor = "doc.constructs.connect-by / Syntax"
+note = "omit <col2_identifier>, observed"
+
+[[obligation]]
+id = "sf.query.connect-by.o085"
+kind = "required_operand_missing"
+required = true
+target = "<col1_identifier>"
+anchor = "doc.constructs.connect-by / Syntax"
+note = "omit <col1_identifier>, observed"
+
+[[obligation]]
+id = "sf.query.connect-by.o086"
+kind = "negative_neighbour"
+required = true
+target = "<column_list>"
+anchor = "doc.constructs.connect-by / Syntax"
+note = "a string literal in place of <column_list>, observed"
+
+[[obligation]]
+id = "sf.query.connect-by.o087"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.constructs.connect-by / Syntax"
+note = "the form without its required PRIOR, observed"
+
+[[obligation]]
+id = "sf.query.connect-by.o088"
+kind = "negative_neighbour"
+required = true
+target = "<col2_identifier>"
+anchor = "doc.constructs.connect-by / Syntax"
+note = "a string literal in place of <col2_identifier>, observed"
+
+[[obligation]]
+id = "sf.query.connect-by.o089"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.constructs.connect-by / Syntax"
+note = "the form without its required FROM, observed"
+
+[[obligation]]
+id = "sf.query.connect-by.o090"
+kind = "negative_neighbour"
+required = true
+target = "<col1_identifier> #2"
+anchor = "doc.constructs.connect-by / Syntax"
+note = "a string literal in place of <col1_identifier>, observed"
+
+[[obligation]]
+id = "sf.query.connect-by.o091"
+kind = "required_operand_missing"
+required = true
+target = "<level_expression> in [ , <level_expression> ]"
+anchor = "doc.constructs.connect-by / Syntax"
+note = "omit <level_expression>, observed"
 
 [[obligation]]
 id = "sf.query.constructs.o001"
@@ -1612,13 +1620,6 @@ target = "<object_name>"
 note = "a valid identifier"
 
 [[obligation]]
-id = "sf.query.from.o025"
-kind = "negative_neighbour"
-required = true
-target = "<object_name>"
-note = "a string literal in place of <object_name>"
-
-[[obligation]]
 id = "sf.query.from.o026"
 kind = "option_present"
 required = true
@@ -1667,13 +1668,6 @@ id = "sf.query.from.o033"
 kind = "option_absent"
 required = true
 target = "[ CHANGES ( <change_tracking_type> ) ]"
-
-[[obligation]]
-id = "sf.query.from.o034"
-kind = "required_operand_missing"
-required = true
-target = "<change_tracking_type> in [ CHANGES ( <change_tracking_type> ) ]"
-note = "omit <change_tracking_type>"
 
 [[obligation]]
 id = "sf.query.from.o035"
@@ -1947,13 +1941,6 @@ target = "<alias_name> in [ [ AS ] <alias_name> ] #3"
 note = "a string literal in place of <alias_name>"
 
 [[obligation]]
-id = "sf.query.from.o078"
-kind = "required_operand_missing"
-required = true
-target = "<stage_name>"
-note = "omit <stage_name>"
-
-[[obligation]]
 id = "sf.query.from.o079"
 kind = "operand_type_class"
 required = true
@@ -1992,13 +1979,6 @@ kind = "operand_type_class"
 required = true
 target = "<format_name> in [ ( FILE_FORMAT => <format_name> , PATTERN => '<regex_pattern>' ) ]"
 note = "a valid identifier"
-
-[[obligation]]
-id = "sf.query.from.o085"
-kind = "negative_neighbour"
-required = true
-target = "<format_name> in [ ( FILE_FORMAT => <format_name> , PATTERN => '<regex_pattern>' ) ]"
-note = "a string literal in place of <format_name>"
 
 [[obligation]]
 id = "sf.query.from.o086"
@@ -2058,13 +2038,6 @@ kind = "negative_neighbour"
 required = true
 target = "<alias_name> in [ [ AS ] <alias_name> ] #4"
 note = "a string literal in place of <alias_name>"
-
-[[obligation]]
-id = "sf.query.from.o095"
-kind = "required_operand_missing"
-required = true
-target = "<stage_name> #2"
-note = "omit <stage_name>"
 
 [[obligation]]
 id = "sf.query.from.o096"
@@ -2173,13 +2146,6 @@ required = true
 target = "[ CHANGES ( <change_tracking_type> ) ] #2"
 
 [[obligation]]
-id = "sf.query.from.o112"
-kind = "required_operand_missing"
-required = true
-target = "<change_tracking_type> in [ CHANGES ( <change_tracking_type> ) ] #2"
-note = "omit <change_tracking_type>"
-
-[[obligation]]
 id = "sf.query.from.o113"
 kind = "operand_type_class"
 required = true
@@ -2244,12 +2210,6 @@ required = true
 target = "[ JOIN ... ]"
 
 [[obligation]]
-id = "sf.query.from.o008"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required FROM"
-
-[[obligation]]
 id = "sf.query.from.o123"
 kind = "negative_neighbour"
 required = true
@@ -2272,12 +2232,6 @@ id = "sf.query.from.o126"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required ) in [ CHANGES ( <change_tracking_type> ) ]"
-
-[[obligation]]
-id = "sf.query.from.o127"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required VALUES"
 
 [[obligation]]
 id = "sf.query.from.o128"
@@ -2396,14 +2350,6 @@ anchor = "doc.identifiers-syntax"
 note = "quoted: a double-quoted identifier with blanks and mixed case"
 
 [[obligation]]
-id = "sf.query.from.o145"
-kind = "identifier_class"
-required = true
-target = "<stage_name>"
-anchor = "doc.identifiers-syntax"
-note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
-
-[[obligation]]
 id = "sf.query.from.o146"
 kind = "identifier_class"
 required = true
@@ -2473,6 +2419,76 @@ anchor = "doc.constructs.from / Syntax"
 note = "a stage with both [<namespace>.] and [/<path>]"
 
 [[obligation]]
+id = "sf.query.from.o162"
+kind = "identifier_class"
+required = true
+target = "<stage_name>"
+anchor = "doc.constructs.from / Syntax"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance), observed"
+
+[[obligation]]
+id = "sf.query.from.o154"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.constructs.from / Syntax"
+note = "the form without its required VALUES, observed"
+
+[[obligation]]
+id = "sf.query.from.o155"
+kind = "required_operand_missing"
+required = true
+target = "<stage_name>"
+anchor = "doc.constructs.from / Syntax"
+note = "omit <stage_name>, observed"
+
+[[obligation]]
+id = "sf.query.from.o156"
+kind = "required_operand_missing"
+required = true
+target = "<stage_name> #2"
+anchor = "doc.constructs.from / Syntax"
+note = "omit <stage_name>, observed"
+
+[[obligation]]
+id = "sf.query.from.o157"
+kind = "negative_neighbour"
+required = true
+target = "<format_name> in [ ( FILE_FORMAT => <format_name> , PATTERN => '<regex_pattern>' ) ]"
+anchor = "doc.constructs.from / Syntax"
+note = "a string literal in place of <format_name>, observed"
+
+[[obligation]]
+id = "sf.query.from.o158"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.constructs.from / Syntax"
+note = "the form without its required FROM, accepted as documented"
+
+[[obligation]]
+id = "sf.query.from.o159"
+kind = "negative_neighbour"
+required = true
+target = "<object_name>"
+anchor = "doc.constructs.from / Syntax"
+note = "a string literal in place of <object_name>, observed"
+
+[[obligation]]
+id = "sf.query.from.o160"
+kind = "required_operand_missing"
+required = true
+target = "<change_tracking_type> in [ CHANGES ( <change_tracking_type> ) ] #2"
+anchor = "doc.constructs.from / Syntax"
+note = "omit <change_tracking_type>, observed"
+
+[[obligation]]
+id = "sf.query.from.o161"
+kind = "required_operand_missing"
+required = true
+target = "<change_tracking_type> in [ CHANGES ( <change_tracking_type> ) ]"
+anchor = "doc.constructs.from / Syntax"
+note = "omit <change_tracking_type>, observed"
+
+[[obligation]]
 id = "sf.query.group-by-cube.o001"
 kind = "positive"
 required = true
@@ -2516,25 +2532,11 @@ target = "<column_alias> in [ { <column_alias> | <position> | <expr> } [ , { <co
 note = "a valid identifier"
 
 [[obligation]]
-id = "sf.query.group-by-cube.o033"
-kind = "negative_neighbour"
-required = true
-target = "<column_alias> in [ { <column_alias> | <position> | <expr> } [ , { <column_alias> | <position> | <expr> } [ , ... ] ] ,…"
-note = "a string literal in place of <column_alias>"
-
-[[obligation]]
 id = "sf.query.group-by-cube.o066"
 kind = "operand_type_class"
 required = true
 target = "<position> in [ { <column_alias> | <position> | <expr> } [ , { <column_alias> | <position> | <expr> } [ , ... ] ] , ]"
 note = "a valid integer_literal"
-
-[[obligation]]
-id = "sf.query.group-by-cube.o067"
-kind = "negative_neighbour"
-required = true
-target = "<position> in [ { <column_alias> | <position> | <expr> } [ , { <column_alias> | <position> | <expr> } [ , ... ] ] , ]"
-note = "a string literal in place of <position>"
 
 [[obligation]]
 id = "sf.query.group-by-cube.o035"
@@ -2581,25 +2583,11 @@ target = "<column_alias> in [ , { <column_alias> | <position> | <expr> } [ , ...
 note = "a valid identifier"
 
 [[obligation]]
-id = "sf.query.group-by-cube.o042"
-kind = "negative_neighbour"
-required = true
-target = "<column_alias> in [ , { <column_alias> | <position> | <expr> } [ , ... ] ]"
-note = "a string literal in place of <column_alias>"
-
-[[obligation]]
 id = "sf.query.group-by-cube.o068"
 kind = "operand_type_class"
 required = true
 target = "<position> in [ , { <column_alias> | <position> | <expr> } [ , ... ] ]"
 note = "a valid integer_literal"
-
-[[obligation]]
-id = "sf.query.group-by-cube.o069"
-kind = "negative_neighbour"
-required = true
-target = "<position> in [ , { <column_alias> | <position> | <expr> } [ , ... ] ]"
-note = "a string literal in place of <position>"
 
 [[obligation]]
 id = "sf.query.group-by-cube.o044"
@@ -2647,25 +2635,11 @@ target = "<column_alias>"
 note = "a valid identifier"
 
 [[obligation]]
-id = "sf.query.group-by-cube.o049"
-kind = "negative_neighbour"
-required = true
-target = "<column_alias>"
-note = "a string literal in place of <column_alias>"
-
-[[obligation]]
 id = "sf.query.group-by-cube.o070"
 kind = "operand_type_class"
 required = true
 target = "<position>"
 note = "a valid integer_literal"
-
-[[obligation]]
-id = "sf.query.group-by-cube.o071"
-kind = "negative_neighbour"
-required = true
-target = "<position>"
-note = "a string literal in place of <position>"
 
 [[obligation]]
 id = "sf.query.group-by-cube.o051"
@@ -2712,25 +2686,11 @@ target = "<column_alias> in [ , { <column_alias> | <position> | <expr> } [ , ...
 note = "a valid identifier"
 
 [[obligation]]
-id = "sf.query.group-by-cube.o058"
-kind = "negative_neighbour"
-required = true
-target = "<column_alias> in [ , { <column_alias> | <position> | <expr> } [ , ... ] ] #2"
-note = "a string literal in place of <column_alias>"
-
-[[obligation]]
 id = "sf.query.group-by-cube.o072"
 kind = "operand_type_class"
 required = true
 target = "<position> in [ , { <column_alias> | <position> | <expr> } [ , ... ] ] #2"
 note = "a valid integer_literal"
-
-[[obligation]]
-id = "sf.query.group-by-cube.o073"
-kind = "negative_neighbour"
-required = true
-target = "<position> in [ , { <column_alias> | <position> | <expr> } [ , ... ] ] #2"
-note = "a string literal in place of <position>"
 
 [[obligation]]
 id = "sf.query.group-by-cube.o060"
@@ -2775,12 +2735,6 @@ id = "sf.query.group-by-cube.o061"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required { <column_alias> | <position> | <expr> } in [ , { <column_alias> | <position> | <expr> } [ , ... ] ]"
-
-[[obligation]]
-id = "sf.query.group-by-cube.o023"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required CUBE"
 
 [[obligation]]
 id = "sf.query.group-by-cube.o024"
@@ -2829,6 +2783,77 @@ anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
+id = "sf.query.group-by-cube.o074"
+kind = "negative_neighbour"
+required = true
+target = "<column_alias> in [ , { <column_alias> | <position> | <expr> } [ , ... ] ] #2"
+anchor = "doc.constructs.group-by-cube / Syntax"
+note = "a string literal in place of <column_alias>, observed"
+
+[[obligation]]
+id = "sf.query.group-by-cube.o075"
+kind = "negative_neighbour"
+required = true
+target = "<column_alias>"
+anchor = "doc.constructs.group-by-cube / Syntax"
+note = "a string literal in place of <column_alias>, observed"
+
+[[obligation]]
+id = "sf.query.group-by-cube.o076"
+kind = "negative_neighbour"
+required = true
+target = "<column_alias> in [ { <column_alias> | <position> | <expr> } [ , { <column_alias> | <position> | <expr> } [ , ... ] ] ,…"
+anchor = "doc.constructs.group-by-cube / Syntax"
+note = "a string literal in place of <column_alias>, observed"
+
+[[obligation]]
+id = "sf.query.group-by-cube.o077"
+kind = "negative_neighbour"
+required = true
+target = "<column_alias> in [ , { <column_alias> | <position> | <expr> } [ , ... ] ]"
+anchor = "doc.constructs.group-by-cube / Syntax"
+note = "a string literal in place of <column_alias>, observed"
+
+[[obligation]]
+id = "sf.query.group-by-cube.o078"
+kind = "negative_neighbour"
+required = true
+target = "<position> in [ , { <column_alias> | <position> | <expr> } [ , ... ] ] #2"
+anchor = "doc.constructs.group-by-cube / Syntax"
+note = "a string literal in place of <position>, observed"
+
+[[obligation]]
+id = "sf.query.group-by-cube.o079"
+kind = "negative_neighbour"
+required = true
+target = "<position> in [ , { <column_alias> | <position> | <expr> } [ , ... ] ]"
+anchor = "doc.constructs.group-by-cube / Syntax"
+note = "a string literal in place of <position>, observed"
+
+[[obligation]]
+id = "sf.query.group-by-cube.o080"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.constructs.group-by-cube / Syntax"
+note = "the form without its required CUBE, observed"
+
+[[obligation]]
+id = "sf.query.group-by-cube.o081"
+kind = "negative_neighbour"
+required = true
+target = "<position>"
+anchor = "doc.constructs.group-by-cube / Syntax"
+note = "a string literal in place of <position>, observed"
+
+[[obligation]]
+id = "sf.query.group-by-cube.o082"
+kind = "negative_neighbour"
+required = true
+target = "<position> in [ { <column_alias> | <position> | <expr> } [ , { <column_alias> | <position> | <expr> } [ , ... ] ] , ]"
+anchor = "doc.constructs.group-by-cube / Syntax"
+note = "a string literal in place of <position>, observed"
+
+[[obligation]]
 id = "sf.query.group-by-grouping-sets.o001"
 kind = "positive"
 required = true
@@ -2872,25 +2897,11 @@ target = "<column_alias> in [ { <column_alias> | <position> | <expr> } [ , { <co
 note = "a valid identifier"
 
 [[obligation]]
-id = "sf.query.group-by-grouping-sets.o034"
-kind = "negative_neighbour"
-required = true
-target = "<column_alias> in [ { <column_alias> | <position> | <expr> } [ , { <column_alias> | <position> | <expr> } [ , ... ] ] ,…"
-note = "a string literal in place of <column_alias>"
-
-[[obligation]]
 id = "sf.query.group-by-grouping-sets.o112"
 kind = "operand_type_class"
 required = true
 target = "<position> in [ { <column_alias> | <position> | <expr> } [ , { <column_alias> | <position> | <expr> } [ , ... ] ] , ]"
 note = "a valid integer_literal"
-
-[[obligation]]
-id = "sf.query.group-by-grouping-sets.o113"
-kind = "negative_neighbour"
-required = true
-target = "<position> in [ { <column_alias> | <position> | <expr> } [ , { <column_alias> | <position> | <expr> } [ , ... ] ] , ]"
-note = "a string literal in place of <position>"
 
 [[obligation]]
 id = "sf.query.group-by-grouping-sets.o036"
@@ -2937,25 +2948,11 @@ target = "<column_alias> in [ , { <column_alias> | <position> | <expr> } [ , ...
 note = "a valid identifier"
 
 [[obligation]]
-id = "sf.query.group-by-grouping-sets.o043"
-kind = "negative_neighbour"
-required = true
-target = "<column_alias> in [ , { <column_alias> | <position> | <expr> } [ , ... ] ]"
-note = "a string literal in place of <column_alias>"
-
-[[obligation]]
 id = "sf.query.group-by-grouping-sets.o114"
 kind = "operand_type_class"
 required = true
 target = "<position> in [ , { <column_alias> | <position> | <expr> } [ , ... ] ]"
 note = "a valid integer_literal"
-
-[[obligation]]
-id = "sf.query.group-by-grouping-sets.o115"
-kind = "negative_neighbour"
-required = true
-target = "<position> in [ , { <column_alias> | <position> | <expr> } [ , ... ] ]"
-note = "a string literal in place of <position>"
 
 [[obligation]]
 id = "sf.query.group-by-grouping-sets.o045"
@@ -3015,25 +3012,11 @@ target = "<column_alias>"
 note = "a valid identifier"
 
 [[obligation]]
-id = "sf.query.group-by-grouping-sets.o052"
-kind = "negative_neighbour"
-required = true
-target = "<column_alias>"
-note = "a string literal in place of <column_alias>"
-
-[[obligation]]
 id = "sf.query.group-by-grouping-sets.o116"
 kind = "operand_type_class"
 required = true
 target = "<position>"
 note = "a valid integer_literal"
-
-[[obligation]]
-id = "sf.query.group-by-grouping-sets.o117"
-kind = "negative_neighbour"
-required = true
-target = "<position>"
-note = "a string literal in place of <position>"
 
 [[obligation]]
 id = "sf.query.group-by-grouping-sets.o054"
@@ -3068,25 +3051,11 @@ target = "<column_alias> #2"
 note = "a valid identifier"
 
 [[obligation]]
-id = "sf.query.group-by-grouping-sets.o059"
-kind = "negative_neighbour"
-required = true
-target = "<column_alias> #2"
-note = "a string literal in place of <column_alias>"
-
-[[obligation]]
 id = "sf.query.group-by-grouping-sets.o118"
 kind = "operand_type_class"
 required = true
 target = "<position> #2"
 note = "a valid integer_literal"
-
-[[obligation]]
-id = "sf.query.group-by-grouping-sets.o119"
-kind = "negative_neighbour"
-required = true
-target = "<position> #2"
-note = "a string literal in place of <position>"
 
 [[obligation]]
 id = "sf.query.group-by-grouping-sets.o061"
@@ -3133,25 +3102,11 @@ target = "<column_alias> in [ , { <column_alias> | <position> | <expr> } [ , ...
 note = "a valid identifier"
 
 [[obligation]]
-id = "sf.query.group-by-grouping-sets.o068"
-kind = "negative_neighbour"
-required = true
-target = "<column_alias> in [ , { <column_alias> | <position> | <expr> } [ , ... ] ] #2"
-note = "a string literal in place of <column_alias>"
-
-[[obligation]]
 id = "sf.query.group-by-grouping-sets.o120"
 kind = "operand_type_class"
 required = true
 target = "<position> in [ , { <column_alias> | <position> | <expr> } [ , ... ] ] #2"
 note = "a valid integer_literal"
-
-[[obligation]]
-id = "sf.query.group-by-grouping-sets.o121"
-kind = "negative_neighbour"
-required = true
-target = "<position> in [ , { <column_alias> | <position> | <expr> } [ , ... ] ] #2"
-note = "a string literal in place of <position>"
 
 [[obligation]]
 id = "sf.query.group-by-grouping-sets.o070"
@@ -3223,25 +3178,11 @@ target = "<column_alias> in [ , { { <column_alias> | <position> | <expr> } | ( {
 note = "a valid identifier"
 
 [[obligation]]
-id = "sf.query.group-by-grouping-sets.o079"
-kind = "negative_neighbour"
-required = true
-target = "<column_alias> in [ , { { <column_alias> | <position> | <expr> } | ( { <column_alias> | <position> | <expr> } [ , { <co…"
-note = "a string literal in place of <column_alias>"
-
-[[obligation]]
 id = "sf.query.group-by-grouping-sets.o122"
 kind = "operand_type_class"
 required = true
 target = "<position> in [ , { { <column_alias> | <position> | <expr> } | ( { <column_alias> | <position> | <expr> } [ , { <column…"
 note = "a valid integer_literal"
-
-[[obligation]]
-id = "sf.query.group-by-grouping-sets.o123"
-kind = "negative_neighbour"
-required = true
-target = "<position> in [ , { { <column_alias> | <position> | <expr> } | ( { <column_alias> | <position> | <expr> } [ , { <column…"
-note = "a string literal in place of <position>"
 
 [[obligation]]
 id = "sf.query.group-by-grouping-sets.o081"
@@ -3276,25 +3217,11 @@ target = "<column_alias> in [ , { { <column_alias> | <position> | <expr> } | ( {
 note = "a valid identifier"
 
 [[obligation]]
-id = "sf.query.group-by-grouping-sets.o086"
-kind = "negative_neighbour"
-required = true
-target = "<column_alias> in [ , { { <column_alias> | <position> | <expr> } | ( { <column_alias> | <position> | <expr> } [ , { <co… #2"
-note = "a string literal in place of <column_alias>"
-
-[[obligation]]
 id = "sf.query.group-by-grouping-sets.o124"
 kind = "operand_type_class"
 required = true
 target = "<position> in [ , { { <column_alias> | <position> | <expr> } | ( { <column_alias> | <position> | <expr> } [ , { <column… #2"
 note = "a valid integer_literal"
-
-[[obligation]]
-id = "sf.query.group-by-grouping-sets.o125"
-kind = "negative_neighbour"
-required = true
-target = "<position> in [ , { { <column_alias> | <position> | <expr> } | ( { <column_alias> | <position> | <expr> } [ , { <column… #2"
-note = "a string literal in place of <position>"
 
 [[obligation]]
 id = "sf.query.group-by-grouping-sets.o088"
@@ -3341,25 +3268,11 @@ target = "<column_alias> in [ , { <column_alias> | <position> | <expr> } [ , ...
 note = "a valid identifier"
 
 [[obligation]]
-id = "sf.query.group-by-grouping-sets.o095"
-kind = "negative_neighbour"
-required = true
-target = "<column_alias> in [ , { <column_alias> | <position> | <expr> } [ , ... ] ] #3"
-note = "a string literal in place of <column_alias>"
-
-[[obligation]]
 id = "sf.query.group-by-grouping-sets.o126"
 kind = "operand_type_class"
 required = true
 target = "<position> in [ , { <column_alias> | <position> | <expr> } [ , ... ] ] #3"
 note = "a valid integer_literal"
-
-[[obligation]]
-id = "sf.query.group-by-grouping-sets.o127"
-kind = "negative_neighbour"
-required = true
-target = "<position> in [ , { <column_alias> | <position> | <expr> } [ , ... ] ] #3"
-note = "a string literal in place of <position>"
 
 [[obligation]]
 id = "sf.query.group-by-grouping-sets.o097"
@@ -3419,28 +3332,10 @@ required = true
 note = "the form without its required { <column_alias> | <position> | <expr> } in [ , { <column_alias> | <position> | <expr> } [ , ... ] ]"
 
 [[obligation]]
-id = "sf.query.group-by-grouping-sets.o023"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required GROUPING"
-
-[[obligation]]
-id = "sf.query.group-by-grouping-sets.o024"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required SETS"
-
-[[obligation]]
 id = "sf.query.group-by-grouping-sets.o025"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required ("
-
-[[obligation]]
-id = "sf.query.group-by-grouping-sets.o103"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required { <column_alias> | <position> | <expr> }"
 
 [[obligation]]
 id = "sf.query.group-by-grouping-sets.o104"
@@ -3459,12 +3354,6 @@ id = "sf.query.group-by-grouping-sets.o105"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required { { <column_alias> | <position> | <expr> } | ( { <column_alias> | <position> | <expr> } [ , { <column_alias> | <position> | <expr> } [ , ... ] ] ) }"
-
-[[obligation]]
-id = "sf.query.group-by-grouping-sets.o106"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required { <column_alias> | <position> | <expr> } in [ , { { <column_alias> | <position> | <expr> } | ( { <column_alias> | <position> | <expr> } [ , { <column_alias> | <pos…"
 
 [[obligation]]
 id = "sf.query.group-by-grouping-sets.o107"
@@ -3505,6 +3394,162 @@ required = true
 target = "<column_alias>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.query.group-by-grouping-sets.o128"
+kind = "negative_neighbour"
+required = true
+target = "<column_alias> in [ { <column_alias> | <position> | <expr> } [ , { <column_alias> | <position> | <expr> } [ , ... ] ] ,…"
+anchor = "doc.constructs.group-by-grouping-sets / Syntax"
+note = "a string literal in place of <column_alias>, observed"
+
+[[obligation]]
+id = "sf.query.group-by-grouping-sets.o129"
+kind = "negative_neighbour"
+required = true
+target = "<column_alias> #2"
+anchor = "doc.constructs.group-by-grouping-sets / Syntax"
+note = "a string literal in place of <column_alias>, observed"
+
+[[obligation]]
+id = "sf.query.group-by-grouping-sets.o130"
+kind = "negative_neighbour"
+required = true
+target = "<column_alias> in [ , { { <column_alias> | <position> | <expr> } | ( { <column_alias> | <position> | <expr> } [ , { <co… #2"
+anchor = "doc.constructs.group-by-grouping-sets / Syntax"
+note = "a string literal in place of <column_alias>, observed"
+
+[[obligation]]
+id = "sf.query.group-by-grouping-sets.o131"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.constructs.group-by-grouping-sets / Syntax"
+note = "the form without its required SETS, observed"
+
+[[obligation]]
+id = "sf.query.group-by-grouping-sets.o132"
+kind = "negative_neighbour"
+required = true
+target = "<position> #2"
+anchor = "doc.constructs.group-by-grouping-sets / Syntax"
+note = "a string literal in place of <position>, observed"
+
+[[obligation]]
+id = "sf.query.group-by-grouping-sets.o133"
+kind = "negative_neighbour"
+required = true
+target = "<position> in [ , { <column_alias> | <position> | <expr> } [ , ... ] ]"
+anchor = "doc.constructs.group-by-grouping-sets / Syntax"
+note = "a string literal in place of <position>, observed"
+
+[[obligation]]
+id = "sf.query.group-by-grouping-sets.o134"
+kind = "negative_neighbour"
+required = true
+target = "<column_alias> in [ , { <column_alias> | <position> | <expr> } [ , ... ] ]"
+anchor = "doc.constructs.group-by-grouping-sets / Syntax"
+note = "a string literal in place of <column_alias>, observed"
+
+[[obligation]]
+id = "sf.query.group-by-grouping-sets.o135"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.constructs.group-by-grouping-sets / Syntax"
+note = "the form without its required { <column_alias> | <position> | <expr> }, observed"
+
+[[obligation]]
+id = "sf.query.group-by-grouping-sets.o136"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.constructs.group-by-grouping-sets / Syntax"
+note = "the form without its required { <column_alias> | <position> | <expr> } in [ , { { <column_alias> | <position> | <expr> } | ( { <column_alias> | <position> | <expr> } [ , { <column_alias> | <pos…, observed"
+
+[[obligation]]
+id = "sf.query.group-by-grouping-sets.o137"
+kind = "negative_neighbour"
+required = true
+target = "<column_alias> in [ , { { <column_alias> | <position> | <expr> } | ( { <column_alias> | <position> | <expr> } [ , { <co…"
+anchor = "doc.constructs.group-by-grouping-sets / Syntax"
+note = "a string literal in place of <column_alias>, observed"
+
+[[obligation]]
+id = "sf.query.group-by-grouping-sets.o138"
+kind = "negative_neighbour"
+required = true
+target = "<column_alias>"
+anchor = "doc.constructs.group-by-grouping-sets / Syntax"
+note = "a string literal in place of <column_alias>, observed"
+
+[[obligation]]
+id = "sf.query.group-by-grouping-sets.o139"
+kind = "negative_neighbour"
+required = true
+target = "<position> in [ , { <column_alias> | <position> | <expr> } [ , ... ] ] #2"
+anchor = "doc.constructs.group-by-grouping-sets / Syntax"
+note = "a string literal in place of <position>, observed"
+
+[[obligation]]
+id = "sf.query.group-by-grouping-sets.o140"
+kind = "negative_neighbour"
+required = true
+target = "<position> in [ , { { <column_alias> | <position> | <expr> } | ( { <column_alias> | <position> | <expr> } [ , { <column…"
+anchor = "doc.constructs.group-by-grouping-sets / Syntax"
+note = "a string literal in place of <position>, observed"
+
+[[obligation]]
+id = "sf.query.group-by-grouping-sets.o141"
+kind = "negative_neighbour"
+required = true
+target = "<column_alias> in [ , { <column_alias> | <position> | <expr> } [ , ... ] ] #2"
+anchor = "doc.constructs.group-by-grouping-sets / Syntax"
+note = "a string literal in place of <column_alias>, observed"
+
+[[obligation]]
+id = "sf.query.group-by-grouping-sets.o142"
+kind = "negative_neighbour"
+required = true
+target = "<position>"
+anchor = "doc.constructs.group-by-grouping-sets / Syntax"
+note = "a string literal in place of <position>, observed"
+
+[[obligation]]
+id = "sf.query.group-by-grouping-sets.o143"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.constructs.group-by-grouping-sets / Syntax"
+note = "the form without its required GROUPING, observed"
+
+[[obligation]]
+id = "sf.query.group-by-grouping-sets.o144"
+kind = "negative_neighbour"
+required = true
+target = "<column_alias> in [ , { <column_alias> | <position> | <expr> } [ , ... ] ] #3"
+anchor = "doc.constructs.group-by-grouping-sets / Syntax"
+note = "a string literal in place of <column_alias>, observed"
+
+[[obligation]]
+id = "sf.query.group-by-grouping-sets.o145"
+kind = "negative_neighbour"
+required = true
+target = "<position> in [ { <column_alias> | <position> | <expr> } [ , { <column_alias> | <position> | <expr> } [ , ... ] ] , ]"
+anchor = "doc.constructs.group-by-grouping-sets / Syntax"
+note = "a string literal in place of <position>, observed"
+
+[[obligation]]
+id = "sf.query.group-by-grouping-sets.o146"
+kind = "negative_neighbour"
+required = true
+target = "<position> in [ , { { <column_alias> | <position> | <expr> } | ( { <column_alias> | <position> | <expr> } [ , { <column… #2"
+anchor = "doc.constructs.group-by-grouping-sets / Syntax"
+note = "a string literal in place of <position>, observed"
+
+[[obligation]]
+id = "sf.query.group-by-grouping-sets.o147"
+kind = "negative_neighbour"
+required = true
+target = "<position> in [ , { <column_alias> | <position> | <expr> } [ , ... ] ] #3"
+anchor = "doc.constructs.group-by-grouping-sets / Syntax"
+note = "a string literal in place of <position>, observed"
 
 [[obligation]]
 id = "sf.query.group-by-rollup.o001"
@@ -3550,25 +3595,11 @@ target = "<column_alias> in [ { <column_alias> | <position> | <expr> } [ , { <co
 note = "a valid identifier"
 
 [[obligation]]
-id = "sf.query.group-by-rollup.o033"
-kind = "negative_neighbour"
-required = true
-target = "<column_alias> in [ { <column_alias> | <position> | <expr> } [ , { <column_alias> | <position> | <expr> } [ , ... ] ] ,…"
-note = "a string literal in place of <column_alias>"
-
-[[obligation]]
 id = "sf.query.group-by-rollup.o066"
 kind = "operand_type_class"
 required = true
 target = "<position> in [ { <column_alias> | <position> | <expr> } [ , { <column_alias> | <position> | <expr> } [ , ... ] ] , ]"
 note = "a valid integer_literal"
-
-[[obligation]]
-id = "sf.query.group-by-rollup.o067"
-kind = "negative_neighbour"
-required = true
-target = "<position> in [ { <column_alias> | <position> | <expr> } [ , { <column_alias> | <position> | <expr> } [ , ... ] ] , ]"
-note = "a string literal in place of <position>"
 
 [[obligation]]
 id = "sf.query.group-by-rollup.o035"
@@ -3615,25 +3646,11 @@ target = "<column_alias> in [ , { <column_alias> | <position> | <expr> } [ , ...
 note = "a valid identifier"
 
 [[obligation]]
-id = "sf.query.group-by-rollup.o042"
-kind = "negative_neighbour"
-required = true
-target = "<column_alias> in [ , { <column_alias> | <position> | <expr> } [ , ... ] ]"
-note = "a string literal in place of <column_alias>"
-
-[[obligation]]
 id = "sf.query.group-by-rollup.o068"
 kind = "operand_type_class"
 required = true
 target = "<position> in [ , { <column_alias> | <position> | <expr> } [ , ... ] ]"
 note = "a valid integer_literal"
-
-[[obligation]]
-id = "sf.query.group-by-rollup.o069"
-kind = "negative_neighbour"
-required = true
-target = "<position> in [ , { <column_alias> | <position> | <expr> } [ , ... ] ]"
-note = "a string literal in place of <position>"
 
 [[obligation]]
 id = "sf.query.group-by-rollup.o044"
@@ -3681,25 +3698,11 @@ target = "<column_alias>"
 note = "a valid identifier"
 
 [[obligation]]
-id = "sf.query.group-by-rollup.o049"
-kind = "negative_neighbour"
-required = true
-target = "<column_alias>"
-note = "a string literal in place of <column_alias>"
-
-[[obligation]]
 id = "sf.query.group-by-rollup.o070"
 kind = "operand_type_class"
 required = true
 target = "<position>"
 note = "a valid integer_literal"
-
-[[obligation]]
-id = "sf.query.group-by-rollup.o071"
-kind = "negative_neighbour"
-required = true
-target = "<position>"
-note = "a string literal in place of <position>"
 
 [[obligation]]
 id = "sf.query.group-by-rollup.o051"
@@ -3746,25 +3749,11 @@ target = "<column_alias> in [ , { <column_alias> | <position> | <expr> } [ , ...
 note = "a valid identifier"
 
 [[obligation]]
-id = "sf.query.group-by-rollup.o058"
-kind = "negative_neighbour"
-required = true
-target = "<column_alias> in [ , { <column_alias> | <position> | <expr> } [ , ... ] ] #2"
-note = "a string literal in place of <column_alias>"
-
-[[obligation]]
 id = "sf.query.group-by-rollup.o072"
 kind = "operand_type_class"
 required = true
 target = "<position> in [ , { <column_alias> | <position> | <expr> } [ , ... ] ] #2"
 note = "a valid integer_literal"
-
-[[obligation]]
-id = "sf.query.group-by-rollup.o073"
-kind = "negative_neighbour"
-required = true
-target = "<position> in [ , { <column_alias> | <position> | <expr> } [ , ... ] ] #2"
-note = "a string literal in place of <position>"
 
 [[obligation]]
 id = "sf.query.group-by-rollup.o060"
@@ -3811,12 +3800,6 @@ required = true
 note = "the form without its required { <column_alias> | <position> | <expr> } in [ , { <column_alias> | <position> | <expr> } [ , ... ] ]"
 
 [[obligation]]
-id = "sf.query.group-by-rollup.o023"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ROLLUP"
-
-[[obligation]]
 id = "sf.query.group-by-rollup.o024"
 kind = "negative_neighbour"
 required = true
@@ -3861,6 +3844,77 @@ required = true
 target = "<column_alias>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.query.group-by-rollup.o074"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.constructs.group-by-rollup / Syntax"
+note = "the form without its required ROLLUP, observed"
+
+[[obligation]]
+id = "sf.query.group-by-rollup.o075"
+kind = "negative_neighbour"
+required = true
+target = "<column_alias> in [ { <column_alias> | <position> | <expr> } [ , { <column_alias> | <position> | <expr> } [ , ... ] ] ,…"
+anchor = "doc.constructs.group-by-rollup / Syntax"
+note = "a string literal in place of <column_alias>, observed"
+
+[[obligation]]
+id = "sf.query.group-by-rollup.o076"
+kind = "negative_neighbour"
+required = true
+target = "<column_alias> in [ , { <column_alias> | <position> | <expr> } [ , ... ] ]"
+anchor = "doc.constructs.group-by-rollup / Syntax"
+note = "a string literal in place of <column_alias>, observed"
+
+[[obligation]]
+id = "sf.query.group-by-rollup.o077"
+kind = "negative_neighbour"
+required = true
+target = "<column_alias>"
+anchor = "doc.constructs.group-by-rollup / Syntax"
+note = "a string literal in place of <column_alias>, observed"
+
+[[obligation]]
+id = "sf.query.group-by-rollup.o078"
+kind = "negative_neighbour"
+required = true
+target = "<column_alias> in [ , { <column_alias> | <position> | <expr> } [ , ... ] ] #2"
+anchor = "doc.constructs.group-by-rollup / Syntax"
+note = "a string literal in place of <column_alias>, observed"
+
+[[obligation]]
+id = "sf.query.group-by-rollup.o079"
+kind = "negative_neighbour"
+required = true
+target = "<position> in [ { <column_alias> | <position> | <expr> } [ , { <column_alias> | <position> | <expr> } [ , ... ] ] , ]"
+anchor = "doc.constructs.group-by-rollup / Syntax"
+note = "a string literal in place of <position>, observed"
+
+[[obligation]]
+id = "sf.query.group-by-rollup.o080"
+kind = "negative_neighbour"
+required = true
+target = "<position> in [ , { <column_alias> | <position> | <expr> } [ , ... ] ] #2"
+anchor = "doc.constructs.group-by-rollup / Syntax"
+note = "a string literal in place of <position>, observed"
+
+[[obligation]]
+id = "sf.query.group-by-rollup.o081"
+kind = "negative_neighbour"
+required = true
+target = "<position>"
+anchor = "doc.constructs.group-by-rollup / Syntax"
+note = "a string literal in place of <position>, observed"
+
+[[obligation]]
+id = "sf.query.group-by-rollup.o082"
+kind = "negative_neighbour"
+required = true
+target = "<position> in [ , { <column_alias> | <position> | <expr> } [ , ... ] ]"
+anchor = "doc.constructs.group-by-rollup / Syntax"
+note = "a string literal in place of <position>, observed"
 
 [[obligation]]
 id = "sf.query.group-by.all.o001"
@@ -3924,25 +3978,11 @@ target = "<column_alias>"
 note = "a valid identifier"
 
 [[obligation]]
-id = "sf.query.group-by.groupitem.o017"
-kind = "negative_neighbour"
-required = true
-target = "<column_alias>"
-note = "a string literal in place of <column_alias>"
-
-[[obligation]]
 id = "sf.query.group-by.groupitem.o033"
 kind = "operand_type_class"
 required = true
 target = "<position>"
 note = "a valid integer_literal"
-
-[[obligation]]
-id = "sf.query.group-by.groupitem.o034"
-kind = "negative_neighbour"
-required = true
-target = "<position>"
-note = "a string literal in place of <position>"
 
 [[obligation]]
 id = "sf.query.group-by.groupitem.o019"
@@ -3989,25 +4029,11 @@ target = "<column_alias> in [ , { <column_alias> | <position> | <expr> } [ , ...
 note = "a valid identifier"
 
 [[obligation]]
-id = "sf.query.group-by.groupitem.o026"
-kind = "negative_neighbour"
-required = true
-target = "<column_alias> in [ , { <column_alias> | <position> | <expr> } [ , ... ] ]"
-note = "a string literal in place of <column_alias>"
-
-[[obligation]]
 id = "sf.query.group-by.groupitem.o035"
 kind = "operand_type_class"
 required = true
 target = "<position> in [ , { <column_alias> | <position> | <expr> } [ , ... ] ]"
 note = "a valid integer_literal"
-
-[[obligation]]
-id = "sf.query.group-by.groupitem.o036"
-kind = "negative_neighbour"
-required = true
-target = "<position> in [ , { <column_alias> | <position> | <expr> } [ , ... ] ]"
-note = "a string literal in place of <position>"
 
 [[obligation]]
 id = "sf.query.group-by.groupitem.o028"
@@ -4074,6 +4100,38 @@ required = true
 target = "<column_alias>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.query.group-by.groupitem.o037"
+kind = "negative_neighbour"
+required = true
+target = "<position>"
+anchor = "doc.constructs.group-by / Syntax"
+note = "a string literal in place of <position>, observed"
+
+[[obligation]]
+id = "sf.query.group-by.groupitem.o038"
+kind = "negative_neighbour"
+required = true
+target = "<column_alias> in [ , { <column_alias> | <position> | <expr> } [ , ... ] ]"
+anchor = "doc.constructs.group-by / Syntax"
+note = "a string literal in place of <column_alias>, observed"
+
+[[obligation]]
+id = "sf.query.group-by.groupitem.o039"
+kind = "negative_neighbour"
+required = true
+target = "<column_alias>"
+anchor = "doc.constructs.group-by / Syntax"
+note = "a string literal in place of <column_alias>, observed"
+
+[[obligation]]
+id = "sf.query.group-by.groupitem.o040"
+kind = "negative_neighbour"
+required = true
+target = "<position> in [ , { <column_alias> | <position> | <expr> } [ , ... ] ]"
+anchor = "doc.constructs.group-by / Syntax"
+note = "a string literal in place of <position>, observed"
 
 [[obligation]]
 id = "sf.query.having.o001"
@@ -6679,25 +6737,11 @@ target = "<column_alias>"
 note = "a valid identifier"
 
 [[obligation]]
-id = "sf.query.order-by.orderitem.o013"
-kind = "negative_neighbour"
-required = true
-target = "<column_alias>"
-note = "a string literal in place of <column_alias>"
-
-[[obligation]]
 id = "sf.query.order-by.orderitem.o031"
 kind = "operand_type_class"
 required = true
 target = "<position>"
 note = "a valid integer_literal"
-
-[[obligation]]
-id = "sf.query.order-by.orderitem.o032"
-kind = "negative_neighbour"
-required = true
-target = "<position>"
-note = "a string literal in place of <position>"
 
 [[obligation]]
 id = "sf.query.order-by.orderitem.o015"
@@ -6818,6 +6862,22 @@ required = true
 target = "<column_alias>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.query.order-by.orderitem.o033"
+kind = "negative_neighbour"
+required = true
+target = "<position>"
+anchor = "doc.constructs.order-by / Syntax"
+note = "a string literal in place of <position>, observed"
+
+[[obligation]]
+id = "sf.query.order-by.orderitem.o034"
+kind = "negative_neighbour"
+required = true
+target = "<column_alias>"
+anchor = "doc.constructs.order-by / Syntax"
+note = "a string literal in place of <column_alias>, observed"
 
 [[obligation]]
 id = "sf.query.pivot.o001"
@@ -10411,13 +10471,6 @@ target = "<anchor_column_list> in [ WITH [ RECURSIVE ] <cte_name1> ( <cte_column
 note = "a valid identifier"
 
 [[obligation]]
-id = "sf.query.with.select.syntax.o073"
-kind = "negative_neighbour"
-required = true
-target = "<anchor_column_list> in [ WITH [ RECURSIVE ] <cte_name1> ( <cte_column_list> ) AS ( SELECT <anchor_column_list> FROM ..…"
-note = "a string literal in place of <anchor_column_list>"
-
-[[obligation]]
 id = "sf.query.with.select.syntax.o074"
 kind = "required_operand_missing"
 required = true
@@ -10430,13 +10483,6 @@ kind = "operand_type_class"
 required = true
 target = "<recursive_column_list> in [ WITH [ RECURSIVE ] <cte_name1> ( <cte_column_list> ) AS ( SELECT <anchor_column_list> FROM…"
 note = "a valid identifier"
-
-[[obligation]]
-id = "sf.query.with.select.syntax.o076"
-kind = "negative_neighbour"
-required = true
-target = "<recursive_column_list> in [ WITH [ RECURSIVE ] <cte_name1> ( <cte_column_list> ) AS ( SELECT <anchor_column_list> FROM…"
-note = "a string literal in place of <recursive_column_list>"
 
 [[obligation]]
 id = "sf.query.with.select.syntax.o077"
@@ -10519,13 +10565,6 @@ target = "<anchor_column_list> in [ , <cte_name2> ( <cte_column_list> ) AS ( SEL
 note = "a valid identifier"
 
 [[obligation]]
-id = "sf.query.with.select.syntax.o089"
-kind = "negative_neighbour"
-required = true
-target = "<anchor_column_list> in [ , <cte_name2> ( <cte_column_list> ) AS ( SELECT <anchor_column_list> FROM ... UNION ALL SELEC…"
-note = "a string literal in place of <anchor_column_list>"
-
-[[obligation]]
 id = "sf.query.with.select.syntax.o090"
 kind = "required_operand_missing"
 required = true
@@ -10538,13 +10577,6 @@ kind = "operand_type_class"
 required = true
 target = "<recursive_column_list> in [ , <cte_name2> ( <cte_column_list> ) AS ( SELECT <anchor_column_list> FROM ... UNION ALL SE…"
 note = "a valid identifier"
-
-[[obligation]]
-id = "sf.query.with.select.syntax.o092"
-kind = "negative_neighbour"
-required = true
-target = "<recursive_column_list> in [ , <cte_name2> ( <cte_column_list> ) AS ( SELECT <anchor_column_list> FROM ... UNION ALL SE…"
-note = "a string literal in place of <recursive_column_list>"
 
 [[obligation]]
 id = "sf.query.with.select.syntax.o093"
@@ -10627,13 +10659,6 @@ target = "<anchor_column_list> in [ , <cte_nameN> ( <cte_column_list> ) AS ( SEL
 note = "a valid identifier"
 
 [[obligation]]
-id = "sf.query.with.select.syntax.o105"
-kind = "negative_neighbour"
-required = true
-target = "<anchor_column_list> in [ , <cte_nameN> ( <cte_column_list> ) AS ( SELECT <anchor_column_list> FROM ... UNION ALL SELEC…"
-note = "a string literal in place of <anchor_column_list>"
-
-[[obligation]]
 id = "sf.query.with.select.syntax.o106"
 kind = "required_operand_missing"
 required = true
@@ -10646,13 +10671,6 @@ kind = "operand_type_class"
 required = true
 target = "<recursive_column_list> in [ , <cte_nameN> ( <cte_column_list> ) AS ( SELECT <anchor_column_list> FROM ... UNION ALL SE…"
 note = "a valid identifier"
-
-[[obligation]]
-id = "sf.query.with.select.syntax.o108"
-kind = "negative_neighbour"
-required = true
-target = "<recursive_column_list> in [ , <cte_nameN> ( <cte_column_list> ) AS ( SELECT <anchor_column_list> FROM ... UNION ALL SE…"
-note = "a string literal in place of <recursive_column_list>"
 
 [[obligation]]
 id = "sf.query.with.select.syntax.o109"
@@ -10703,12 +10721,6 @@ required = true
 note = "the form without its required UNION in [ WITH [ RECURSIVE ] <cte_name1> ( <cte_column_list> ) AS ( SELECT <anchor_column_list> FROM ... UNION ALL SELECT <recu…"
 
 [[obligation]]
-id = "sf.query.with.select.syntax.o117"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ALL in [ WITH [ RECURSIVE ] <cte_name1> ( <cte_column_list> ) AS ( SELECT <anchor_column_list> FROM ... UNION ALL SELECT <recu…"
-
-[[obligation]]
 id = "sf.query.with.select.syntax.o118"
 kind = "negative_neighbour"
 required = true
@@ -10745,12 +10757,6 @@ required = true
 note = "the form without its required UNION in [ , <cte_name2> ( <cte_column_list> ) AS ( SELECT <anchor_column_list> FROM ... UNION ALL SELECT <recursive_column_list…"
 
 [[obligation]]
-id = "sf.query.with.select.syntax.o124"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ALL in [ , <cte_name2> ( <cte_column_list> ) AS ( SELECT <anchor_column_list> FROM ... UNION ALL SELECT <recursive_column_list…"
-
-[[obligation]]
 id = "sf.query.with.select.syntax.o125"
 kind = "negative_neighbour"
 required = true
@@ -10785,12 +10791,6 @@ id = "sf.query.with.select.syntax.o130"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required UNION in [ , <cte_nameN> ( <cte_column_list> ) AS ( SELECT <anchor_column_list> FROM ... UNION ALL SELECT <recursive_column_list…"
-
-[[obligation]]
-id = "sf.query.with.select.syntax.o131"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ALL in [ , <cte_nameN> ( <cte_column_list> ) AS ( SELECT <anchor_column_list> FROM ... UNION ALL SELECT <recursive_column_list…"
 
 [[obligation]]
 id = "sf.query.with.select.syntax.o055"
@@ -10887,3 +10887,72 @@ required = true
 target = "<cte_nameN>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.query.with.select.syntax.o136"
+kind = "negative_neighbour"
+required = true
+target = "<recursive_column_list> in [ , <cte_name2> ( <cte_column_list> ) AS ( SELECT <anchor_column_list> FROM ... UNION ALL SE…"
+anchor = "doc.constructs.with / Syntax"
+note = "a string literal in place of <recursive_column_list>, observed"
+
+[[obligation]]
+id = "sf.query.with.select.syntax.o137"
+kind = "negative_neighbour"
+required = true
+target = "<recursive_column_list> in [ , <cte_nameN> ( <cte_column_list> ) AS ( SELECT <anchor_column_list> FROM ... UNION ALL SE…"
+anchor = "doc.constructs.with / Syntax"
+note = "a string literal in place of <recursive_column_list>, observed"
+
+[[obligation]]
+id = "sf.query.with.select.syntax.o138"
+kind = "negative_neighbour"
+required = true
+target = "<anchor_column_list> in [ , <cte_name2> ( <cte_column_list> ) AS ( SELECT <anchor_column_list> FROM ... UNION ALL SELEC…"
+anchor = "doc.constructs.with / Syntax"
+note = "a string literal in place of <anchor_column_list>, observed"
+
+[[obligation]]
+id = "sf.query.with.select.syntax.o139"
+kind = "negative_neighbour"
+required = true
+target = "<anchor_column_list> in [ , <cte_nameN> ( <cte_column_list> ) AS ( SELECT <anchor_column_list> FROM ... UNION ALL SELEC…"
+anchor = "doc.constructs.with / Syntax"
+note = "a string literal in place of <anchor_column_list>, observed"
+
+[[obligation]]
+id = "sf.query.with.select.syntax.o140"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.constructs.with / Syntax"
+note = "the form without its required ALL in [ , <cte_name2> ( <cte_column_list> ) AS ( SELECT <anchor_column_list> FROM ... UNION ALL SELECT <recursive_column_list…, observed"
+
+[[obligation]]
+id = "sf.query.with.select.syntax.o141"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.constructs.with / Syntax"
+note = "the form without its required ALL in [ , <cte_nameN> ( <cte_column_list> ) AS ( SELECT <anchor_column_list> FROM ... UNION ALL SELECT <recursive_column_list…, observed"
+
+[[obligation]]
+id = "sf.query.with.select.syntax.o142"
+kind = "negative_neighbour"
+required = true
+target = "<recursive_column_list> in [ WITH [ RECURSIVE ] <cte_name1> ( <cte_column_list> ) AS ( SELECT <anchor_column_list> FROM…"
+anchor = "doc.constructs.with / Syntax"
+note = "a string literal in place of <recursive_column_list>, observed"
+
+[[obligation]]
+id = "sf.query.with.select.syntax.o143"
+kind = "negative_neighbour"
+required = true
+target = "<anchor_column_list> in [ WITH [ RECURSIVE ] <cte_name1> ( <cte_column_list> ) AS ( SELECT <anchor_column_list> FROM ..…"
+anchor = "doc.constructs.with / Syntax"
+note = "a string literal in place of <anchor_column_list>, observed"
+
+[[obligation]]
+id = "sf.query.with.select.syntax.o144"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.constructs.with / Syntax"
+note = "the form without its required ALL in [ WITH [ RECURSIVE ] <cte_name1> ( <cte_column_list> ) AS ( SELECT <anchor_column_list> FROM ... UNION ALL SELECT <recu…, observed"

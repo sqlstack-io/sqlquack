@@ -76,12 +76,12 @@ anchor = "doc.identifiers-syntax"
 note = "quoted: a double-quoted identifier with blanks and mixed case"
 
 [[obligation]]
-id = "sf.expressions.bind-variables.o012"
+id = "sf.expressions.bind-variables.o013"
 kind = "identifier_class"
 required = true
 target = "<variable_name>"
-anchor = "doc.identifiers-syntax"
-note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+anchor = "doc.bind-variables / Overview of bind variables"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance), observed"
 
 [[obligation]]
 id = "sf.expressions.commands-model-function.model-default-version.o001"
@@ -146,13 +146,6 @@ target = "<table_name>"
 note = "a valid identifier"
 
 [[obligation]]
-id = "sf.expressions.commands-model-function.model-default-version.o010"
-kind = "negative_neighbour"
-required = true
-target = "<table_name>"
-note = "a string literal in place of <table_name>"
-
-[[obligation]]
 id = "sf.expressions.commands-model-function.model-default-version.o011"
 kind = "negative_neighbour"
 required = true
@@ -169,12 +162,6 @@ id = "sf.expressions.commands-model-function.model-default-version.o013"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required )"
-
-[[obligation]]
-id = "sf.expressions.commands-model-function.model-default-version.o014"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required FROM"
 
 [[obligation]]
 id = "sf.expressions.commands-model-function.model-default-version.o015"
@@ -223,6 +210,21 @@ required = true
 target = "<table_name>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.expressions.commands-model-function.model-default-version.o021"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.commands-model-function / Calling model methods"
+note = "the form without its required FROM, observed"
+
+[[obligation]]
+id = "sf.expressions.commands-model-function.model-default-version.o022"
+kind = "negative_neighbour"
+required = true
+target = "<table_name>"
+anchor = "doc.commands-model-function / Calling model methods"
+note = "a string literal in place of <table_name>, observed"
 
 [[obligation]]
 id = "sf.expressions.commands-model-function.model-version-or-alias.o001"
@@ -308,13 +310,6 @@ target = "<table_name>"
 note = "a valid identifier"
 
 [[obligation]]
-id = "sf.expressions.commands-model-function.model-version-or-alias.o013"
-kind = "negative_neighbour"
-required = true
-target = "<table_name>"
-note = "a string literal in place of <table_name>"
-
-[[obligation]]
 id = "sf.expressions.commands-model-function.model-version-or-alias.o014"
 kind = "negative_neighbour"
 required = true
@@ -331,12 +326,6 @@ id = "sf.expressions.commands-model-function.model-version-or-alias.o016"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required )"
-
-[[obligation]]
-id = "sf.expressions.commands-model-function.model-version-or-alias.o017"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required FROM"
 
 [[obligation]]
 id = "sf.expressions.commands-model-function.model-version-or-alias.o018"
@@ -403,6 +392,21 @@ anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
+id = "sf.expressions.commands-model-function.model-version-or-alias.o026"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.commands-model-function / Calling model methods"
+note = "the form without its required FROM, observed"
+
+[[obligation]]
+id = "sf.expressions.commands-model-function.model-version-or-alias.o027"
+kind = "negative_neighbour"
+required = true
+target = "<table_name>"
+anchor = "doc.commands-model-function / Calling model methods"
+note = "a string literal in place of <table_name>, observed"
+
+[[obligation]]
 id = "sf.expressions.data-types-datetime.date.o001"
 kind = "positive"
 required = true
@@ -433,13 +437,6 @@ required = true
 target = "{ DATE | TIME | TIMESTAMP } → TIMESTAMP"
 
 [[obligation]]
-id = "sf.expressions.data-types-datetime.date-time-constant.o007"
-kind = "required_operand_missing"
-required = true
-target = "'<string>'"
-note = "omit '<string>'"
-
-[[obligation]]
 id = "sf.expressions.data-types-datetime.date-time-constant.o005"
 kind = "operand_type_class"
 required = true
@@ -454,6 +451,14 @@ target = "'<string>'"
 note = "an unquoted identifier in place of '<string>'"
 
 [[obligation]]
+id = "sf.expressions.data-types-datetime.date-time-constant.o008"
+kind = "required_operand_missing"
+required = true
+target = "'<string>'"
+anchor = "doc.data-types-datetime / Date and time constants"
+note = "omit '<string>', observed"
+
+[[obligation]]
 id = "sf.expressions.data-types-datetime.datetime.o001"
 kind = "positive"
 required = true
@@ -464,13 +469,6 @@ id = "sf.expressions.data-types-datetime.interval.o001"
 kind = "positive"
 required = true
 note = "the documented form with every required part and no optional part"
-
-[[obligation]]
-id = "sf.expressions.data-types-datetime.interval.o007"
-kind = "required_operand_missing"
-required = true
-target = "'<string>'"
-note = "omit '<string>'"
 
 [[obligation]]
 id = "sf.expressions.data-types-datetime.interval.o008"
@@ -951,12 +949,6 @@ required = true
 note = "the form without its required ) in [ , ( <fractional_seconds_precision> ) ]"
 
 [[obligation]]
-id = "sf.expressions.data-types-datetime.interval.o084"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required { YEAR [ ( <precision> ) ] [ TO MONTH ] | MONTH [ ( <precision> ) ] | DAY [ ( <precision> ) ] [ TO { HOUR | MINUTE | SECOND [ ( <fractional_seconds_precision> ) ] } ] | HOUR [ ( <precision> ) ] [ TO { MINUTE | SECOND [ ( <fractional_seconds_precision> ) ] } ] | MINUTE [ ( <precision> ) ] [ TO SECOND [ ( <fractional_seconds_precision> ) ] ] | SECOND [ ( <precision> ) [ , ( <fractional_seconds_precision> ) ] ] }"
-
-[[obligation]]
 id = "sf.expressions.data-types-datetime.interval.o085"
 kind = "option_present"
 required = true
@@ -971,6 +963,21 @@ required = true
 target = "[ <sign> ]"
 anchor = "doc.data-types-datetime / Data types / Interval data types / Representing interval values / Interval literals"
 note = "a - sign inside the interval literal string"
+
+[[obligation]]
+id = "sf.expressions.data-types-datetime.interval.o087"
+kind = "required_operand_missing"
+required = true
+target = "'<string>'"
+anchor = "doc.data-types-datetime / Data types / Interval data types / Representing interval values / Interval literals"
+note = "omit '<string>', observed"
+
+[[obligation]]
+id = "sf.expressions.data-types-datetime.interval.o088"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.data-types-datetime / Data types / Interval data types / Representing interval values / Interval literals"
+note = "the form without its required { YEAR [ ( <precision> ) ] [ TO MONTH ] | MONTH [ ( <precision> ) ] | DAY [ ( <precision> ) ] [ TO { HOUR | MINUTE | SECOND [ ( <fractional_seconds_precision> ) ] } ] | HOUR [ ( <precision> ) ] [ TO { MINUTE | SECOND [ ( <fractional_seconds_precision> ) ] } ] | MINUTE [ ( <precision> ) ] [ TO SECOND [ ( <fractional_seconds_precision> ) ] ] | SECOND [ ( <precision> ) [ , ( <fractional_seconds_precision> ) ] ] }, observed"
 
 [[obligation]]
 id = "sf.expressions.data-types-datetime.interval-yearmonthqualifier-daytimequalifier.o001"
@@ -1869,13 +1876,6 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "sf.expressions.data-types-ipaddress.typed-literal.o002"
-kind = "required_operand_missing"
-required = true
-target = "'<address>'"
-note = "omit '<address>'"
-
-[[obligation]]
 id = "sf.expressions.data-types-ipaddress.typed-literal.o003"
 kind = "operand_type_class"
 required = true
@@ -1888,6 +1888,14 @@ kind = "negative_neighbour"
 required = true
 target = "'<address>'"
 note = "an unquoted identifier in place of '<address>'"
+
+[[obligation]]
+id = "sf.expressions.data-types-ipaddress.typed-literal.o005"
+kind = "required_operand_missing"
+required = true
+target = "'<address>'"
+anchor = "doc.data-types-ipaddress / Examples for the IPADDRESS data type / Use an ANSI literal"
+note = "omit '<address>', observed"
 
 [[obligation]]
 id = "sf.expressions.data-types-logical.o001"
@@ -2456,20 +2464,6 @@ target = "<element_type>"
 note = "a valid data_type"
 
 [[obligation]]
-id = "sf.expressions.data-types-period.typed-literal.o004"
-kind = "negative_neighbour"
-required = true
-target = "<element_type>"
-note = "a string literal in place of <element_type>"
-
-[[obligation]]
-id = "sf.expressions.data-types-period.typed-literal.o009"
-kind = "required_operand_missing"
-required = true
-target = "'<period_string>'"
-note = "omit '<period_string>'"
-
-[[obligation]]
 id = "sf.expressions.data-types-period.typed-literal.o005"
 kind = "operand_type_class"
 required = true
@@ -2496,6 +2490,22 @@ required = true
 note = "the form without its required )"
 
 [[obligation]]
+id = "sf.expressions.data-types-period.typed-literal.o010"
+kind = "negative_neighbour"
+required = true
+target = "<element_type>"
+anchor = "doc.data-types-period / Construct PERIOD values / Typed literal"
+note = "a string literal in place of <element_type>, observed"
+
+[[obligation]]
+id = "sf.expressions.data-types-period.typed-literal.o011"
+kind = "required_operand_missing"
+required = true
+target = "'<period_string>'"
+anchor = "doc.data-types-period / Construct PERIOD values / Typed literal"
+note = "omit '<period_string>', observed"
+
+[[obligation]]
 id = "sf.expressions.data-types-semistructured.array.o001"
 kind = "positive"
 required = true
@@ -2506,13 +2516,6 @@ id = "sf.expressions.data-types-semistructured.array-index-access.o001"
 kind = "positive"
 required = true
 note = "the documented form with every required part and no optional part"
-
-[[obligation]]
-id = "sf.expressions.data-types-semistructured.array-index-access.o002"
-kind = "required_operand_missing"
-required = true
-target = "<array_expr>"
-note = "omit <array_expr>"
 
 [[obligation]]
 id = "sf.expressions.data-types-semistructured.array-index-access.o003"
@@ -2547,6 +2550,14 @@ id = "sf.expressions.data-types-semistructured.array-index-access.o007"
 kind = "option_absent"
 required = true
 target = "[ \"[\" <index> \"]\" ... ]"
+
+[[obligation]]
+id = "sf.expressions.data-types-semistructured.array-index-access.o008"
+kind = "required_operand_missing"
+required = true
+target = "<array_expr>"
+anchor = "doc.data-types-semistructured / ARRAY / Accessing elements of an array by index or by slice"
+note = "omit <array_expr>, accepted as documented"
 
 [[obligation]]
 id = "sf.expressions.data-types-semistructured.colon-subscript-dot.o010"
@@ -2605,13 +2616,6 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "sf.expressions.data-types-semistructured.object-key-access.o002"
-kind = "required_operand_missing"
-required = true
-target = "<object_expr>"
-note = "omit <object_expr>"
-
-[[obligation]]
 id = "sf.expressions.data-types-semistructured.object-key-access.o003"
 kind = "operand_type_class"
 required = true
@@ -2638,6 +2642,14 @@ kind = "negative_neighbour"
 required = true
 target = "'<key>'"
 note = "an unquoted identifier in place of '<key>'"
+
+[[obligation]]
+id = "sf.expressions.data-types-semistructured.object-key-access.o007"
+kind = "required_operand_missing"
+required = true
+target = "<object_expr>"
+anchor = "doc.data-types-semistructured / OBJECT / Accessing elements of an OBJECT value by key"
+note = "omit <object_expr>, accepted as documented"
 
 [[obligation]]
 id = "sf.expressions.data-types-semistructured.subscript-dot.o007"
@@ -3083,13 +3095,6 @@ required = true
 target = "[ ( <length> ) ]"
 
 [[obligation]]
-id = "sf.expressions.data-types-text.char.o007"
-kind = "required_operand_missing"
-required = true
-target = "<length> in [ ( <length> ) ]"
-note = "omit <length>"
-
-[[obligation]]
 id = "sf.expressions.data-types-text.char.o008"
 kind = "operand_type_class"
 required = true
@@ -3125,6 +3130,14 @@ required = true
 target = "<length>"
 anchor = "doc.data-types-text / Data types for text strings / CHAR, CHARACTER, NCHAR"
 note = "length 134,217,729, above the documented maximum"
+
+[[obligation]]
+id = "sf.expressions.data-types-text.char.o013"
+kind = "required_operand_missing"
+required = true
+target = "<length> in [ ( <length> ) ]"
+anchor = "doc.data-types-text / Data types for text strings / CHAR, CHARACTER, NCHAR"
+note = "omit <length>, observed"
 
 [[obligation]]
 id = "sf.expressions.data-types-text.dollar-quoted-string-constant.o004"
@@ -3405,13 +3418,6 @@ required = true
 target = "[ ( <length> ) ]"
 
 [[obligation]]
-id = "sf.expressions.data-types-text.string.o011"
-kind = "required_operand_missing"
-required = true
-target = "<length> in [ ( <length> ) ]"
-note = "omit <length>"
-
-[[obligation]]
 id = "sf.expressions.data-types-text.string.o012"
 kind = "operand_type_class"
 required = true
@@ -3447,6 +3453,14 @@ required = true
 target = "<length>"
 anchor = "doc.data-types-text / Data types for text strings / STRING, TEXT, VARCHAR2, NVARCHAR, NVARCHAR2, CHAR VARYING, NCHAR VARYING"
 note = "length 134,217,729, above the documented maximum"
+
+[[obligation]]
+id = "sf.expressions.data-types-text.string.o017"
+kind = "required_operand_missing"
+required = true
+target = "<length> in [ ( <length> ) ]"
+anchor = "doc.data-types-text / Data types for text strings / STRING, TEXT, VARCHAR2, NVARCHAR, NVARCHAR2, CHAR VARYING, NCHAR VARYING"
+note = "omit <length>, observed"
 
 [[obligation]]
 id = "sf.expressions.data-types-text.varbinary.o001"
@@ -3529,13 +3543,6 @@ required = true
 target = "[ ( <length> ) ]"
 
 [[obligation]]
-id = "sf.expressions.data-types-text.varchar.o004"
-kind = "required_operand_missing"
-required = true
-target = "<length> in [ ( <length> ) ]"
-note = "omit <length>"
-
-[[obligation]]
 id = "sf.expressions.data-types-text.varchar.o005"
 kind = "operand_type_class"
 required = true
@@ -3571,6 +3578,14 @@ required = true
 target = "<length>"
 anchor = "doc.data-types-text / Data types for text strings / VARCHAR"
 note = "length 134,217,729, above the documented maximum"
+
+[[obligation]]
+id = "sf.expressions.data-types-text.varchar.o010"
+kind = "required_operand_missing"
+required = true
+target = "<length> in [ ( <length> ) ]"
+anchor = "doc.data-types-text / Data types for text strings / VARCHAR"
+note = "omit <length>, observed"
 
 [[obligation]]
 id = "sf.expressions.data-types-unknown.o001"
@@ -5151,23 +5166,10 @@ target = "<query>"
 note = "a valid query"
 
 [[obligation]]
-id = "sf.expressions.operators-subquery.comparisonoperator-all-any.o010"
-kind = "negative_neighbour"
-required = true
-target = "<query>"
-note = "a bare literal in place of <query>"
-
-[[obligation]]
 id = "sf.expressions.operators-subquery.comparisonoperator-all-any.o021"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required { = | != | > | >= | < | <= }"
-
-[[obligation]]
-id = "sf.expressions.operators-subquery.comparisonoperator-all-any.o011"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required { ALL | ANY }"
 
 [[obligation]]
 id = "sf.expressions.operators-subquery.comparisonoperator-all-any.o012"
@@ -5190,6 +5192,21 @@ depths = [
   8,
 ]
 note = "query operands nested; no documented bound"
+
+[[obligation]]
+id = "sf.expressions.operators-subquery.comparisonoperator-all-any.o022"
+kind = "negative_neighbour"
+required = true
+target = "<query>"
+anchor = "doc.operators-subquery / ALL / ANY / Syntax"
+note = "a bare literal in place of <query>, observed"
+
+[[obligation]]
+id = "sf.expressions.operators-subquery.comparisonoperator-all-any.o023"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.operators-subquery / ALL / ANY / Syntax"
+note = "the form without its required { ALL | ANY }, accepted as documented"
 
 [[obligation]]
 id = "sf.expressions.operators-subquery.exists.o001"
@@ -5231,12 +5248,6 @@ target = "<query>"
 note = "a bare literal in place of <query>"
 
 [[obligation]]
-id = "sf.expressions.operators-subquery.exists.o007"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required EXISTS"
-
-[[obligation]]
 id = "sf.expressions.operators-subquery.exists.o008"
 kind = "negative_neighbour"
 required = true
@@ -5271,6 +5282,13 @@ kind = "extreme"
 required = true
 anchor = "doc.operators-subquery / [ NOT ] EXISTS / Syntax"
 note = "EXISTS subqueries nested 100 levels deep; no documented bound"
+
+[[obligation]]
+id = "sf.expressions.operators-subquery.exists.o013"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.operators-subquery / [ NOT ] EXISTS / Syntax"
+note = "the form without its required EXISTS, accepted as documented"
 
 [[obligation]]
 id = "sf.expressions.operators-subquery.in.o001"
@@ -5319,13 +5337,6 @@ target = "<query>"
 note = "a valid query"
 
 [[obligation]]
-id = "sf.expressions.operators-subquery.in.o008"
-kind = "negative_neighbour"
-required = true
-target = "<query>"
-note = "a bare literal in place of <query>"
-
-[[obligation]]
 id = "sf.expressions.operators-subquery.in.o009"
 kind = "negative_neighbour"
 required = true
@@ -5366,6 +5377,14 @@ kind = "extreme"
 required = true
 anchor = "doc.operators-subquery / [ NOT ] IN / Syntax"
 note = "IN subqueries nested 100 levels deep; no documented bound"
+
+[[obligation]]
+id = "sf.expressions.operators-subquery.in.o015"
+kind = "negative_neighbour"
+required = true
+target = "<query>"
+anchor = "doc.operators-subquery / [ NOT ] IN / Syntax"
+note = "a bare literal in place of <query>, accepted as documented"
 
 [[obligation]]
 id = "sf.expressions.schema-variables.o019"
@@ -5460,13 +5479,6 @@ target = "<method_name>"
 note = "a string literal in place of <method_name>"
 
 [[obligation]]
-id = "sf.expressions.snowflake-db-classes.o014"
-kind = "required_operand_missing"
-required = true
-target = "<arg>"
-note = "omit <arg>"
-
-[[obligation]]
 id = "sf.expressions.snowflake-db-classes.o005"
 kind = "operand_type_class"
 required = true
@@ -5555,3 +5567,11 @@ kind = "negative_neighbour"
 required = true
 anchor = "doc.snowflake-db-classes / Selecting columns from SQL class instance methods that return tabular data"
 note = "a class method call without its method name"
+
+[[obligation]]
+id = "sf.expressions.snowflake-db-classes.o024"
+kind = "required_operand_missing"
+required = true
+target = "<arg>"
+anchor = "doc.snowflake-db-classes / Selecting columns from SQL class instance methods that return tabular data"
+note = "omit <arg>, observed"
