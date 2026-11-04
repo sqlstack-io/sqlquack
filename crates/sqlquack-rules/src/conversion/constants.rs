@@ -54,6 +54,8 @@ pub const FILTER_FUNCTION: &str = "FILTER";
 pub const TEXT_PARAMETER_TYPES: &[&str] = &["var_char", "string", "text"];
 /// The type name TO_DATE casts to.
 pub const DATE_NAME: &str = "DATE";
+/// The type name TO_TIMESTAMP_NTZ casts a DATE to.
+pub const TIMESTAMP_NTZ_NAME: &str = "TIMESTAMP_NTZ(9)";
 /// The node kind of a lambda.
 pub const LAMBDA_KIND: &str = "lambda";
 /// What a lambda parameter's DuckDB name starts with.
@@ -273,6 +275,8 @@ pub const ZONED_PARTS: &str = "rule.zoned_parts";
 pub const UTC_OFFSET_ARITHMETIC: &str = "rule.utc_offset_arithmetic";
 /// TO_DATE of dates and timestamps.
 pub const TO_DATE_TEMPORAL: &str = "rule.to_date_temporal";
+/// TO_TIMESTAMP and TO_TIMESTAMP_NTZ of dates and naive timestamps.
+pub const TO_TIMESTAMP_TEMPORAL: &str = "rule.to_timestamp_temporal";
 /// CONVERT_TIMEZONE with zone columns.
 pub const ZONE_COLUMNS: &str = "rule.zone_columns";
 /// MOD and % with a FLOAT and a literal divisor.
