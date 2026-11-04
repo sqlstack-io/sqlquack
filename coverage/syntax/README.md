@@ -7,13 +7,21 @@ translation-equivalence measure.
 
 ## Files
 
-- `indexes.toml`: the documentation indexes (`llms.txt`) the page list was read from, by sha256.
+- `indexes.toml`: the documentation indexes (`llms.txt` files and the docs navigation tree
+  `reference.json`) the page list was read from, by sha256.
 - `sources.toml`: one record per pinned documentation page: id, URL, retrieval time (UTC), sha256
-  of the fetched Markdown and of its `sqlsyntax` blocks, family, status and the extraction
-  decisions taken on that page. The pages themselves are not tracked.
+  of the fetched page and of its syntax blocks, family, status and the extraction decisions taken
+  on that page. The pages themselves are not tracked.
 - `catalogue/<family>.toml`: `[[form]]` records (id, family, source page, anchor heading, kind,
   normalized grammar, grammar sha256, sub-grammars used, status) and the page's `[[definition]]`
   sub-grammars (`name ::= ...`).
+- `hand.toml`: forms catalogued by hand from pages whose syntax is not in a syntax block (data
+  types, operator tables, literals, identifiers, variables, and pages whose syntax is only in the
+  HTML). Each is bound to the page's hash; the build refuses a hand form whose page has changed.
+- `aliases.toml`: old form ids that were split or merged, with the forms that now carry their
+  grammar. The old id stays catalogued as `absent_from_source` and is never reused.
+- `reviews/exclusions.toml`: the reviewed reason for every page that catalogues no form
+  (`out_of_scope` and `no_syntax_block`), bound to the sha256 of `sources.toml`.
 
 Families: `query`, `dml`, `ddl`, `transaction_session`, `security_admin`, `utility`, `scripting`,
 `functions`, `expressions`, `classes`.
@@ -21,62 +29,62 @@ Families: `query`, `dml`, `ddl`, `transaction_session`, `security_admin`, `utili
 ## Regenerating
 
 ```sh
-python -m scripts.syntax_catalogue.fetch CACHE idx/*.txt   # private cache, never committed
-python -m scripts.syntax_catalogue.build --cache CACHE --out coverage/syntax
+python -m scripts.fetch_syntax_docs CACHE CACHE/idx/*      # private cache, never committed
+python -m scripts.build_syntax_catalogue --cache CACHE --out coverage/syntax
 ```
 
-A rebuild keeps every existing id whose (page, grammar) is unchanged. A form whose grammar no
-longer appears keeps its id with `status = "absent_from_source"`; ids are never reused, and a
-rename goes through `aliases.toml`.
+Pages with no Markdown export (the per-category command hubs) are fetched as HTML and catalogue
+no form. A rebuild keeps every existing id whose (page, grammar) is unchanged. A form whose
+grammar changed keeps its id when its natural id is unchanged or when all its earlier signatures
+are still among its signatures. A form whose grammar no longer appears keeps its id with
+`status = "absent_from_source"`; ids are never reused, and splits and renames go through
+`aliases.toml`.
 
 ## Form rules (decision D62)
 
 A form is one documented syntax block or variant. Options and alternatives inside it are its
 obligations, not forms.
 
-1. Only fenced `sqlsyntax` blocks are read. A block is split into productions at blank lines where
-   every bracket is closed, and before each `name ::=`.
-2. `name ::= ...` is a sub-grammar definition. It runs to the next definition in its block.
+1. Fenced `sqlsyntax` blocks, and `sql` blocks titled "Syntax", are read. A block is split into
+   productions where every bracket is closed: at blank lines, before each `name ::=`, and before
+   a line that repeats the current statement's first two keywords.
+2. `name ::= ...` is a sub-grammar definition. It runs to the next definition in its block. A
+   definition under its own heading inside the Syntax section (DECLARE's variable and cursor
+   declarations) is also a form.
 3. On command pages a statement starts with a statement keyword (the first words of the command
    page titles, plus DESC/LS/RM). A chunk that does not start one continues the previous
-   production. Blocks under Parameters, Usage notes, Examples or `... actions (`name`)` headings
-   are fragments, not forms.
-4. Each statement production is a form. Each variant heading under Syntax/Variant syntax is a form.
-5. A statement whose tail is `{ aAction | bAction | ... }` of sub-grammars the page defines (ALTER
-   TABLE) becomes one form per action.
-6. A block that elides with a `...` line, under the same heading as an earlier statement,
-   elaborates that statement and is merged into it.
-7. Identical grammar documented under several headings (per-language ALTER FUNCTION blocks) is one
+   production. Blocks under Parameters, Usage notes, Examples, Access control or
+   `... actions (`name`)` headings are fragments, not forms. On construct pages only blocks under
+   a Syntax heading (or under the title) are forms. List items, lone labels such as `Aggregate:`
+   and keyword-order illustrations (`SELECT * EXCLUDE ... RENAME ...`) are fragments.
+4. Each statement production is a form, including each of several statements in one block or in
+   several blocks under the same heading (JOIN, GROUP BY ALL, INSERT ALL/FIRST). Each variant
+   heading under Syntax/Variant syntax is a form.
+5. A statement whose tail is `{ aAction | bAction | ... }` of `*Action` sub-grammars the page
+   defines (ALTER TABLE) becomes one form per action.
+6. Identical grammar documented under several headings (per-language ALTER FUNCTION blocks) is one
    form.
-8. Functions and class methods: plain call signatures of one function name form one `call` form
-   whose signatures become obligations. A syntax with its own grammar (`CAST ... AS`, `::`, OVER,
-   WITHIN GROUP, DISTINCT, named arguments `=>`, keyword arguments) is a separate `special` form.
-9. A variant heading with no syntax block (the DCM `DEFINE <object>` variants, some CREATE OR
+7. Functions and class methods: plain call signatures of one function name form one `call` form
+   whose signatures become obligations; a block listing several functions, or `{ NAME1 | NAME2 }`,
+   gives one form per name. A syntax with its own grammar (`CAST ... AS`, `::`, OVER, WITHIN GROUP,
+   named arguments `=>`, keyword arguments) is a separate `special` form per signature; `DISTINCT`
+   and `ALL` inside the parentheses are options of the plain call.
+8. A variant heading with no syntax block (the DCM `DEFINE <object>` variants, some CREATE OR
    ALTER variants) is a `prose` form with an empty grammar. Its grammar is added by hand.
+9. Pages whose syntax is written outside syntax blocks are catalogued from `hand.toml`; the
+   page's `decisions` records the basis (HTML parsed-literal, table, heading, prose or inline code).
 
 Variant ids come from the words that distinguish the form's required skeleton (the grammar without
-`[ ]` parts and placeholders) from the page's other forms. On a collision the heading is appended,
-then a number.
+`[ ]` parts and placeholders) from the page's other forms, or from a hand form's label. On a
+collision the heading is appended, then a number.
 
-## Recorded ambiguity and known gaps (v1 skeleton)
+## Recorded ambiguity and known gaps
 
 - Every page where a rule above changed the form count lists that rule in `decisions`.
 - `prose` forms (31): prose-only variants; the DCM `DEFINE` variants are valid only inside DCM
   project files, not as standalone SQL.
-- Hub pages with no syntax block of their own (`ALTER`, `CREATE`, `CREATE OR ALTER`, `DESC`,
-  `DROP`, `SHOW`, `UNDROP`, `USE`) catalogue no form; their commands have their own pages.
-- `no_syntax_block` pages that still document syntax, to be catalogued by hand before the
-  denominator is final:
-  - Data types and literals written as tables, not syntax blocks: `data-types-numeric`,
-    `data-types-text`, `data-types-logical`, `data-types-unstructured`, `data-types-user-defined`,
-    and the operator pages `operators-arithmetic`, `operators-comparison`, `operators-logical`,
-    plus `expressions-conditional` and `expressions-byte-bit`.
-  - Function pages whose syntax is in a plain code block (`FL_*` file functions, `DMF_*`,
-    `AI_COMPLETE`, `TO_FILE`/`TRY_TO_FILE`, `AS_*` and `IS_*` hub pages, and others listed with
-    status `no_syntax_block`).
-  - Class hub pages whose methods have their own pages.
-- `out_of_scope` pages (27): views and usage pages (billing, data sharing usage, local, monitoring,
-  telemetry, trust center), which document columns, not syntax. Each still needs a reviewed
-  exclusion record.
+- Data types: each documented type heading is one form whose synonyms are alternatives
+  (`{ DECIMAL | DEC | NUMERIC }`); a heading that names several types with different semantics
+  (TIMESTAMP_LTZ/NTZ/TZ) is one form with each spelling an alternative.
 - The `ddl`/`security_admin` split is by title words (users, roles, policies, integrations,
   accounts, grants, shares, ...); it is a reporting split, not part of a form's identity.

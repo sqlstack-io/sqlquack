@@ -132,7 +132,9 @@ def page_groups(
     prods: list[Production] = page_productions(page=page, path=record.path, lead=lead)
     statements, decisions = unique_statements([p for p in prods if p.kind == KIND_STATEMENT])
     groups, grouping = group_forms(family=family, productions=prods, statements=statements)
-    hand_list: list[FormGroup] = hand_groups(forms=hand, title=page.title, page_sha256=record.sha256)
+    hand_list: list[FormGroup] = hand_groups(
+        forms=hand, title=page.title, page_sha256=record.sha256
+    )
     prose, prose_decisions = prose_groups(page=page, hand_list=hand_list)
     hand_decisions: set[str] = {DECISION_HAND.format(basis=form.basis) for form in hand}
     definitions: dict[str, str] = {p.name: p.grammar for p in prods if p.kind == KIND_DEFINITION}
@@ -206,7 +208,9 @@ def build_catalogue(*, cache: Path, out: Path, hand_path: Path) -> Catalogue:
             for name, grammar in result.definitions
         )
         names: tuple[str, ...] = tuple(name for name, _ in result.definitions)
-        context: PageContext = PageContext(f"sf.{family}.{page_slug(record.path)}", family, sid, names)
+        context: PageContext = PageContext(
+            f"sf.{family}.{page_slug(record.path)}", family, sid, names
+        )
         forms, used_ids = emit_forms(
             context=context, groups=result.groups, existing=existing, used_ids=used_ids
         )

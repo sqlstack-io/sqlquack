@@ -97,7 +97,9 @@ def is_non_grammar(text: str) -> bool:
     return bool(BULLET_CHUNK.match(text) or LABEL_CHUNK.match(text) or illustration)
 
 
-def block_productions(block: Block, *, leading_words: set[str] | None, form_section: bool) -> list[Production]:
+def block_productions(
+    block: Block, *, leading_words: set[str] | None, form_section: bool
+) -> list[Production]:
     """Classify one block's chunks; a chunk that starts no statement continues the one before."""
     pending: list[tuple[str, list[str], str]] = []
     for text in split_productions(block.text):

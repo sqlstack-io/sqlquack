@@ -1,0 +1,2520 @@
+# Reviewed page exclusions: every documentation page that catalogues no form, with its reason.
+# Bound to sources.toml by sha256; any change to sources.toml makes this review stale.
+
+[[review]]
+id = "c-page-exclusions-1"
+reviewer_lane = "c"
+family = ""
+sources_sha256 = "a9df3ea57e45e6e422dc828a55174843bbbe812cf7b83b0572ae8d2939fd9acc"
+reviewed_utc = "2026-11-04T00:09:24Z"
+parser_tree = "02250357e9eb979f37deb92221e8d382917f3701"
+verdict = "approved"
+note = "627 pages: every out_of_scope and no_syntax_block source. Pages that document syntax outside sqlsyntax blocks are catalogued from coverage/syntax/hand.toml instead of being excluded. parser_tree is the sqlquack-syntax tree at review time; page exclusions do not depend on it."
+
+[[review.exclusion]]
+source = "doc.sql-reference-classes"
+reason = "index page: lists commands or functions that are catalogued on their own pages; no syntax of its own"
+
+[[review.exclusion]]
+source = "doc.sql-reference-commands"
+reason = "index page: lists commands or functions that are catalogued on their own pages; no syntax of its own"
+
+[[review.exclusion]]
+source = "doc.sql-reference-data-types"
+reason = "index page: lists commands or functions that are catalogued on their own pages; no syntax of its own"
+
+[[review.exclusion]]
+source = "doc.sql-reference-functions"
+reason = "index page: lists commands or functions that are catalogued on their own pages; no syntax of its own"
+
+[[review.exclusion]]
+source = "doc.sql-reference-snowflake-scripting"
+reason = "index page: lists commands or functions that are catalogued on their own pages; no syntax of its own"
+
+[[review.exclusion]]
+source = "doc.sql-reference-stored-procedures"
+reason = "index page: lists commands or functions that are catalogued on their own pages; no syntax of its own"
+
+[[review.exclusion]]
+source = "doc.sql-reference"
+reason = "top-level index of the SQL reference; no syntax of its own"
+
+[[review.exclusion]]
+source = "doc.account-usage"
+reason = "index page: lists commands or functions that are catalogued on their own pages; no syntax of its own"
+
+[[review.exclusion]]
+source = "doc.account-usage.access_history"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.account-usage.aggregate_access_history"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.account-usage.aggregate_query_history"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.account-usage.aggregation_policies"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.account-usage.ai_gateway_usage_history"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.account-usage.alert_history"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.account-usage.anomalies_daily"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.account-usage.application_callback_history"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.account-usage.application_configuration_value_history"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.account-usage.application_configurations"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.account-usage.application_daily_usage_history"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.account-usage.application_remote_operation_history"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.account-usage.application_specification_status_history"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.account-usage.application_specifications"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.account-usage.archive_storage_data_retrieval_usage_history"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.account-usage.automatic_clustering_history"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.account-usage.backup_operation_history"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.account-usage.backup_policies"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.account-usage.backup_sets"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.account-usage.backup_storage_usage"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.account-usage.backups"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.account-usage.block_storage_history"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.account-usage.block_storage_snapshots"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.account-usage.catalog_linked_database_usage_history"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.account-usage.class_instances"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.account-usage.classes"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.account-usage.column_query_pruning_history"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.account-usage.columns"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.account-usage.complete_task_graphs"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.account-usage.compute_pools"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.account-usage.contact_references"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.account-usage.contacts"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.account-usage.copy_files_history"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.account-usage.copy_history"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.account-usage.cortex_agent_usage_history"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.account-usage.cortex_ai_functions_usage_history"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.account-usage.cortex_ai_guardrails_usage_history"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.account-usage.cortex_aisql_usage_history"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.account-usage.cortex_analyst_usage_history"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.account-usage.cortex_code_cli_usage_history"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.account-usage.cortex_code_desktop_usage_history"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.account-usage.cortex_code_snowsight_usage_history"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.account-usage.cortex_document_processing_usage_history"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.account-usage.cortex_fine_tuning_usage_history"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.account-usage.cortex_functions_query_usage_history"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.account-usage.cortex_functions_usage_history"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.account-usage.cortex_provisioned_throughput_usage_history"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.account-usage.cortex_rest_api_rate_limit_policies"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.account-usage.cortex_rest_api_usage_history"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.account-usage.cortex_search_batch_query_usage_history"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.account-usage.cortex_search_daily_usage_history"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.account-usage.cortex_search_serving_usage_history"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.account-usage.credentials"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.account-usage.data_classification_history"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.account-usage.data_classification_latest"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.account-usage.data_metric_function_expectations"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.account-usage.data_metric_function_references"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.account-usage.data_movement_policies"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.account-usage.data_movement_policy_rules"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.account-usage.data_movement_rule_references"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.account-usage.data_movement_violations"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.account-usage.data_quality_monitoring_usage_history"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.account-usage.data_transfer_history"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.account-usage.database_replication_usage_history"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.account-usage.database_storage_usage_history"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.account-usage.databases"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.account-usage.dbt_project_execution_history"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.account-usage.document_ai_usage_history"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.account-usage.dynamic_table_refresh_history"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.account-usage.element_types"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.account-usage.event_routing_tables"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.account-usage.event_usage_history"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.account-usage.external_access_history"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.account-usage.feature_policies"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.account-usage.fields"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.account-usage.file_formats"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.account-usage.functions"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.account-usage.grants_to_roles"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.account-usage.grants_to_shares"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.account-usage.grants_to_users"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.account-usage.hybrid_table_usage_history"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.account-usage.hybrid_tables"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.account-usage.iceberg_storage_optimization_history"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.account-usage.index_columns"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.account-usage.indexes"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.account-usage.ingress_network_access_history"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.account-usage.internal_data_transfer_history"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.account-usage.internal_stage_network_access_history"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.account-usage.join_policies"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.account-usage.listings"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.account-usage.load_history"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.account-usage.lock_wait_history"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.account-usage.login_history"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.account-usage.masking_policies"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.account-usage.materialized_view_refresh_history"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.account-usage.metering_daily_history"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.account-usage.metering_history"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.account-usage.model_serving_usage_history"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.account-usage.multi_party_approval_policies"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.account-usage.multi_party_approval_requests"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.account-usage.network_policies"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.account-usage.network_rule_references"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.account-usage.network_rules"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.account-usage.notebooks_container_runtime_history"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.account-usage.object_access_request_history"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.account-usage.object_dependencies"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.account-usage.online_feature_table_refresh_history"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.account-usage.openflow_usage_history"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.account-usage.outbound_privatelink_endpoints"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.account-usage.password_policies"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.account-usage.pipe_usage_history"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.account-usage.pipes"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.account-usage.policy_references"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.account-usage.postgres_compute_usage_history"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.account-usage.postgres_storage_usage_history"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.account-usage.privacy_budgets"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.account-usage.privacy_policies"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.account-usage.procedures"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.account-usage.projection_policies"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.account-usage.query_acceleration_eligible"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.account-usage.query_acceleration_history"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.account-usage.query_attribution_history"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.account-usage.query_history"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.account-usage.query_insights"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.account-usage.query_metering_history"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.account-usage.referential_constraints"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.account-usage.replication_group_refresh_history"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.account-usage.replication_group_usage_history"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.account-usage.replication_groups"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.account-usage.replication_usage_history"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.account-usage.resource_monitors"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.account-usage.roles"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.account-usage.row_access_policies"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.account-usage.schemata"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.account-usage.search_optimization_benefits"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.account-usage.search_optimization_history"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.account-usage.secrets"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.account-usage.semantic_dimensions"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.account-usage.semantic_facts"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.account-usage.semantic_metrics"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.account-usage.semantic_relationships"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.account-usage.semantic_tables"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.account-usage.semantic_variables"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.account-usage.semantic_view_imports"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.account-usage.semantic_views"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.account-usage.sequences"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.account-usage.serverless_alert_history"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.account-usage.serverless_task_history"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.account-usage.services"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.account-usage.session_policies"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.account-usage.sessions"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.account-usage.shares"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.account-usage.snapshot_operation_history"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.account-usage.snapshot_policies"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.account-usage.snapshot_sets"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.account-usage.snapshot_storage_usage"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.account-usage.snapshots"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.account-usage.snowflake_app_runtime_compute_history"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.account-usage.snowflake_coco_usage_history"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.account-usage.snowflake_cowork_usage_history_view"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.account-usage.snowpark_container_services_history"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.account-usage.snowpipe_streaming_channel_history"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.account-usage.snowpipe_streaming_client_history"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.account-usage.snowpipe_streaming_file_migration_history"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.account-usage.stage_storage_usage_details"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.account-usage.stage_storage_usage_history"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.account-usage.stages"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.account-usage.storage_lifecycle_policies"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.account-usage.storage_lifecycle_policy_history"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.account-usage.storage_request_history"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.account-usage.storage_usage"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.account-usage.streams"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.account-usage.table_constraints"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.account-usage.table_dml_history"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.account-usage.table_optima_features"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.account-usage.table_pruning_history"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.account-usage.table_query_pruning_history"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.account-usage.table_storage_metrics"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.account-usage.tables"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.account-usage.tag_references"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.account-usage.tags"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.account-usage.task_history"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.account-usage.task_versions"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.account-usage.tasks"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.account-usage.tri-secret-secure-history"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.account-usage.trust_center_findings"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.account-usage.types"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.account-usage.users"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.account-usage.views"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.account-usage.warehouse_events_history"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.account-usage.warehouse_load_history"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.account-usage.warehouse_metering_history"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.billing"
+reason = "index page: lists commands or functions that are catalogued on their own pages; no syntax of its own"
+
+[[review.exclusion]]
+source = "doc.billing.collaboration_rebate_contribution"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.billing.focus_cost_usage_v1_3"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.billing.partner_contract_items"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.billing.partner_rate_sheet_daily"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.billing.partner_remaining_balance_daily"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.billing.partner_usage_in_currency_daily"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.binary-examples"
+reason = "guide page: explains usage with examples of statements that are catalogued on their own command pages"
+
+[[review.exclusion]]
+source = "doc.binary-input-output"
+reason = "explains binary input and output formats: parameter values, not syntax"
+
+[[review.exclusion]]
+source = "doc.classes.anomaly_detection"
+reason = "class overview page; its commands and methods have their own catalogued pages"
+
+[[review.exclusion]]
+source = "doc.classes.anomaly_insights"
+reason = "class overview page; its commands and methods have their own catalogued pages"
+
+[[review.exclusion]]
+source = "doc.classes.budget"
+reason = "class overview page; its commands and methods have their own catalogued pages"
+
+[[review.exclusion]]
+source = "doc.classes.classification"
+reason = "class overview page; its commands and methods have their own catalogued pages"
+
+[[review.exclusion]]
+source = "doc.classes.classification_profile"
+reason = "class overview page; its commands and methods have their own catalogued pages"
+
+[[review.exclusion]]
+source = "doc.classes.custom_classifier"
+reason = "class overview page; its commands and methods have their own catalogued pages"
+
+[[review.exclusion]]
+source = "doc.classes.forecast"
+reason = "class overview page; its commands and methods have their own catalogued pages"
+
+[[review.exclusion]]
+source = "doc.classes.top-insights"
+reason = "class overview page; its commands and methods have their own catalogued pages"
+
+[[review.exclusion]]
+source = "doc.collation-locales"
+reason = "lists collation locale names: values of a string argument, not syntax"
+
+[[review.exclusion]]
+source = "doc.commands-account"
+reason = "index page: lists commands or functions that are catalogued on their own pages; no syntax of its own"
+
+[[review.exclusion]]
+source = "doc.commands-alert"
+reason = "index page: lists commands or functions that are catalogued on their own pages; no syntax of its own"
+
+[[review.exclusion]]
+source = "doc.commands-class"
+reason = "index page: lists commands or functions that are catalogued on their own pages; no syntax of its own"
+
+[[review.exclusion]]
+source = "doc.commands-cortex-agent"
+reason = "index page: lists commands or functions that are catalogued on their own pages; no syntax of its own"
+
+[[review.exclusion]]
+source = "doc.commands-cortex-base-models"
+reason = "index page: lists commands or functions that are catalogued on their own pages; no syntax of its own"
+
+[[review.exclusion]]
+source = "doc.commands-cortex-search"
+reason = "index page: lists commands or functions that are catalogued on their own pages; no syntax of its own"
+
+[[review.exclusion]]
+source = "doc.commands-cortex"
+reason = "index page: lists commands or functions that are catalogued on their own pages; no syntax of its own"
+
+[[review.exclusion]]
+source = "doc.commands-data-governance"
+reason = "index page: lists commands or functions that are catalogued on their own pages; no syntax of its own"
+
+[[review.exclusion]]
+source = "doc.commands-data-loading"
+reason = "index page: lists commands or functions that are catalogued on their own pages; no syntax of its own"
+
+[[review.exclusion]]
+source = "doc.commands-database"
+reason = "index page: lists commands or functions that are catalogued on their own pages; no syntax of its own"
+
+[[review.exclusion]]
+source = "doc.commands-dataset-version"
+reason = "index page: lists commands or functions that are catalogued on their own pages; no syntax of its own"
+
+[[review.exclusion]]
+source = "doc.commands-dataset"
+reason = "index page: lists commands or functions that are catalogued on their own pages; no syntax of its own"
+
+[[review.exclusion]]
+source = "doc.commands-dbt-projects-on-snowflake"
+reason = "index page: lists commands or functions that are catalogued on their own pages; no syntax of its own"
+
+[[review.exclusion]]
+source = "doc.commands-dcm-projects"
+reason = "index page: lists commands or functions that are catalogued on their own pages; no syntax of its own"
+
+[[review.exclusion]]
+source = "doc.commands-experiments"
+reason = "index page: lists commands or functions that are catalogued on their own pages; no syntax of its own"
+
+[[review.exclusion]]
+source = "doc.commands-external-agent"
+reason = "index page: lists commands or functions that are catalogued on their own pages; no syntax of its own"
+
+[[review.exclusion]]
+source = "doc.commands-feature-store"
+reason = "index page: lists commands or functions that are catalogued on their own pages; no syntax of its own"
+
+[[review.exclusion]]
+source = "doc.commands-file"
+reason = "index page: lists commands or functions that are catalogued on their own pages; no syntax of its own"
+
+[[review.exclusion]]
+source = "doc.commands-function"
+reason = "index page: lists commands or functions that are catalogued on their own pages; no syntax of its own"
+
+[[review.exclusion]]
+source = "doc.commands-git"
+reason = "index page: lists commands or functions that are catalogued on their own pages; no syntax of its own"
+
+[[review.exclusion]]
+source = "doc.commands-integration"
+reason = "index page: lists commands or functions that are catalogued on their own pages; no syntax of its own"
+
+[[review.exclusion]]
+source = "doc.commands-listings"
+reason = "index page: lists commands or functions that are catalogued on their own pages; no syntax of its own"
+
+[[review.exclusion]]
+source = "doc.commands-mcp-server"
+reason = "index page: lists commands or functions that are catalogued on their own pages; no syntax of its own"
+
+[[review.exclusion]]
+source = "doc.commands-ml"
+reason = "index page: lists commands or functions that are catalogued on their own pages; no syntax of its own"
+
+[[review.exclusion]]
+source = "doc.commands-model-monitor"
+reason = "index page: lists commands or functions that are catalogued on their own pages; no syntax of its own"
+
+[[review.exclusion]]
+source = "doc.commands-model-version"
+reason = "index page: lists commands or functions that are catalogued on their own pages; no syntax of its own"
+
+[[review.exclusion]]
+source = "doc.commands-model"
+reason = "index page: lists commands or functions that are catalogued on their own pages; no syntax of its own"
+
+[[review.exclusion]]
+source = "doc.commands-native-apps"
+reason = "index page: lists commands or functions that are catalogued on their own pages; no syntax of its own"
+
+[[review.exclusion]]
+source = "doc.commands-notebook"
+reason = "index page: lists commands or functions that are catalogued on their own pages; no syntax of its own"
+
+[[review.exclusion]]
+source = "doc.commands-ofdata-plane"
+reason = "index page: lists commands or functions that are catalogued on their own pages; no syntax of its own"
+
+[[review.exclusion]]
+source = "doc.commands-openflow-gen2"
+reason = "index page: lists commands or functions that are catalogued on their own pages; no syntax of its own"
+
+[[review.exclusion]]
+source = "doc.commands-organization-profiles"
+reason = "index page: lists commands or functions that are catalogued on their own pages; no syntax of its own"
+
+[[review.exclusion]]
+source = "doc.commands-privacy"
+reason = "index page: lists commands or functions that are catalogued on their own pages; no syntax of its own"
+
+[[review.exclusion]]
+source = "doc.commands-replication"
+reason = "index page: lists commands or functions that are catalogued on their own pages; no syntax of its own"
+
+[[review.exclusion]]
+source = "doc.commands-security"
+reason = "index page: lists commands or functions that are catalogued on their own pages; no syntax of its own"
+
+[[review.exclusion]]
+source = "doc.commands-session"
+reason = "index page: lists commands or functions that are catalogued on their own pages; no syntax of its own"
+
+[[review.exclusion]]
+source = "doc.commands-snowflake-apps"
+reason = "index page: lists commands or functions that are catalogued on their own pages; no syntax of its own"
+
+[[review.exclusion]]
+source = "doc.commands-snowpark-container-services"
+reason = "index page: lists commands or functions that are catalogued on their own pages; no syntax of its own"
+
+[[review.exclusion]]
+source = "doc.commands-storage-lifecycle-policies"
+reason = "index page: lists commands or functions that are catalogued on their own pages; no syntax of its own"
+
+[[review.exclusion]]
+source = "doc.commands-stream"
+reason = "index page: lists commands or functions that are catalogued on their own pages; no syntax of its own"
+
+[[review.exclusion]]
+source = "doc.commands-streamlit"
+reason = "index page: lists commands or functions that are catalogued on their own pages; no syntax of its own"
+
+[[review.exclusion]]
+source = "doc.commands-table"
+reason = "index page: lists commands or functions that are catalogued on their own pages; no syntax of its own"
+
+[[review.exclusion]]
+source = "doc.commands-transaction"
+reason = "index page: lists commands or functions that are catalogued on their own pages; no syntax of its own"
+
+[[review.exclusion]]
+source = "doc.commands-user-role"
+reason = "index page: lists commands or functions that are catalogued on their own pages; no syntax of its own"
+
+[[review.exclusion]]
+source = "doc.commands-warehouse"
+reason = "index page: lists commands or functions that are catalogued on their own pages; no syntax of its own"
+
+[[review.exclusion]]
+source = "doc.constraints-overview"
+reason = "concept page; constraint syntax is catalogued on the constraints-create/alter/drop and CREATE TABLE constraint pages"
+
+[[review.exclusion]]
+source = "doc.constraints"
+reason = "index page linking to the constraint pages, which are catalogued"
+
+[[review.exclusion]]
+source = "doc.conventions"
+reason = "explains the notation used in syntax blocks; documents no syntax"
+
+[[review.exclusion]]
+source = "doc.data-sharing-usage"
+reason = "index page: lists commands or functions that are catalogued on their own pages; no syntax of its own"
+
+[[review.exclusion]]
+source = "doc.data-sharing-usage.application-state-view"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.data-sharing-usage.listing-access-history"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.data-sharing-usage.listing-auto-fulfillment-database-storage-daily"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.data-sharing-usage.listing-auto-fulfillment-refresh-daily"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.data-sharing-usage.listing-consumption-daily"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.data-sharing-usage.listing-events-daily"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.data-sharing-usage.listing-telemetry-daily"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.data-sharing-usage.paid-listing-access-change-log"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.data-sharing-usage.provider-application-daily-usage-history"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.data-sharing-usage.reshared-listing-consumption-daily"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.data-type-conversion"
+reason = "explains casting and coercion rules; the CAST and :: syntax is catalogued on the CAST page"
+
+[[review.exclusion]]
+source = "doc.data-types-unsupported"
+reason = "lists types Snowflake does not support (BLOB, CLOB, ENUM, ...) and their replacements; documents no accepted syntax"
+
+[[review.exclusion]]
+source = "doc.date-time-examples"
+reason = "guide page: explains usage with examples of statements that are catalogued on their own command pages"
+
+[[review.exclusion]]
+source = "doc.ddl-database"
+reason = "index page: lists commands or functions that are catalogued on their own pages; no syntax of its own"
+
+[[review.exclusion]]
+source = "doc.ddl-listings"
+reason = "index page: lists commands or functions that are catalogued on their own pages; no syntax of its own"
+
+[[review.exclusion]]
+source = "doc.ddl-model"
+reason = "index page: lists commands or functions that are catalogued on their own pages; no syntax of its own"
+
+[[review.exclusion]]
+source = "doc.ddl-other"
+reason = "index page: lists commands or functions that are catalogued on their own pages; no syntax of its own"
+
+[[review.exclusion]]
+source = "doc.ddl-pipeline"
+reason = "index page: lists commands or functions that are catalogued on their own pages; no syntax of its own"
+
+[[review.exclusion]]
+source = "doc.ddl-stage"
+reason = "index page: lists commands or functions that are catalogued on their own pages; no syntax of its own"
+
+[[review.exclusion]]
+source = "doc.ddl-table"
+reason = "index page: lists commands or functions that are catalogued on their own pages; no syntax of its own"
+
+[[review.exclusion]]
+source = "doc.ddl-udf"
+reason = "index page: lists commands or functions that are catalogued on their own pages; no syntax of its own"
+
+[[review.exclusion]]
+source = "doc.ddl-user-security"
+reason = "index page: lists commands or functions that are catalogued on their own pages; no syntax of its own"
+
+[[review.exclusion]]
+source = "doc.ddl-virtual-warehouse"
+reason = "index page: lists commands or functions that are catalogued on their own pages; no syntax of its own"
+
+[[review.exclusion]]
+source = "doc.expressions-byte-bit"
+reason = "index page: lists commands or functions that are catalogued on their own pages; no syntax of its own"
+
+[[review.exclusion]]
+source = "doc.expressions-conditional"
+reason = "index page: lists commands or functions that are catalogued on their own pages; no syntax of its own"
+
+[[review.exclusion]]
+source = "doc.external-functions-best-practices"
+reason = "guide page for building external functions; CREATE EXTERNAL FUNCTION and CREATE API INTEGRATION are catalogued on their own pages"
+
+[[review.exclusion]]
+source = "doc.external-functions-creating-aws-call"
+reason = "guide page for building external functions; CREATE EXTERNAL FUNCTION and CREATE API INTEGRATION are catalogued on their own pages"
+
+[[review.exclusion]]
+source = "doc.external-functions-creating-aws-common-api-integration-proxy-link"
+reason = "guide page for building external functions; CREATE EXTERNAL FUNCTION and CREATE API INTEGRATION are catalogued on their own pages"
+
+[[review.exclusion]]
+source = "doc.external-functions-creating-aws-common-api-integration"
+reason = "guide page for building external functions; CREATE EXTERNAL FUNCTION and CREATE API INTEGRATION are catalogued on their own pages"
+
+[[review.exclusion]]
+source = "doc.external-functions-creating-aws-common-ext-function"
+reason = "guide page for building external functions; CREATE EXTERNAL FUNCTION and CREATE API INTEGRATION are catalogued on their own pages"
+
+[[review.exclusion]]
+source = "doc.external-functions-creating-aws-planning"
+reason = "guide page for building external functions; CREATE EXTERNAL FUNCTION and CREATE API INTEGRATION are catalogued on their own pages"
+
+[[review.exclusion]]
+source = "doc.external-functions-creating-aws-sample-asynchronous"
+reason = "guide page for building external functions; CREATE EXTERNAL FUNCTION and CREATE API INTEGRATION are catalogued on their own pages"
+
+[[review.exclusion]]
+source = "doc.external-functions-creating-aws-sample-synchronous"
+reason = "guide page for building external functions; CREATE EXTERNAL FUNCTION and CREATE API INTEGRATION are catalogued on their own pages"
+
+[[review.exclusion]]
+source = "doc.external-functions-creating-aws-template-gateway-url"
+reason = "guide page for building external functions; CREATE EXTERNAL FUNCTION and CREATE API INTEGRATION are catalogued on their own pages"
+
+[[review.exclusion]]
+source = "doc.external-functions-creating-aws-template-services"
+reason = "guide page for building external functions; CREATE EXTERNAL FUNCTION and CREATE API INTEGRATION are catalogued on their own pages"
+
+[[review.exclusion]]
+source = "doc.external-functions-creating-aws-template"
+reason = "guide page for building external functions; CREATE EXTERNAL FUNCTION and CREATE API INTEGRATION are catalogued on their own pages"
+
+[[review.exclusion]]
+source = "doc.external-functions-creating-aws-troubleshooting"
+reason = "guide page for building external functions; CREATE EXTERNAL FUNCTION and CREATE API INTEGRATION are catalogued on their own pages"
+
+[[review.exclusion]]
+source = "doc.external-functions-creating-aws-ui-proxy-service"
+reason = "guide page for building external functions; CREATE EXTERNAL FUNCTION and CREATE API INTEGRATION are catalogued on their own pages"
+
+[[review.exclusion]]
+source = "doc.external-functions-creating-aws-ui-remote-service"
+reason = "guide page for building external functions; CREATE EXTERNAL FUNCTION and CREATE API INTEGRATION are catalogued on their own pages"
+
+[[review.exclusion]]
+source = "doc.external-functions-creating-aws-ui"
+reason = "guide page for building external functions; CREATE EXTERNAL FUNCTION and CREATE API INTEGRATION are catalogued on their own pages"
+
+[[review.exclusion]]
+source = "doc.external-functions-creating-aws"
+reason = "guide page for building external functions; CREATE EXTERNAL FUNCTION and CREATE API INTEGRATION are catalogued on their own pages"
+
+[[review.exclusion]]
+source = "doc.external-functions-creating-azure-asynchronous"
+reason = "guide page for building external functions; CREATE EXTERNAL FUNCTION and CREATE API INTEGRATION are catalogued on their own pages"
+
+[[review.exclusion]]
+source = "doc.external-functions-creating-azure-call"
+reason = "guide page for building external functions; CREATE EXTERNAL FUNCTION and CREATE API INTEGRATION are catalogued on their own pages"
+
+[[review.exclusion]]
+source = "doc.external-functions-creating-azure-common-api-integration-proxy-link"
+reason = "guide page for building external functions; CREATE EXTERNAL FUNCTION and CREATE API INTEGRATION are catalogued on their own pages"
+
+[[review.exclusion]]
+source = "doc.external-functions-creating-azure-common-api-integration"
+reason = "guide page for building external functions; CREATE EXTERNAL FUNCTION and CREATE API INTEGRATION are catalogued on their own pages"
+
+[[review.exclusion]]
+source = "doc.external-functions-creating-azure-common-ext-function"
+reason = "guide page for building external functions; CREATE EXTERNAL FUNCTION and CREATE API INTEGRATION are catalogued on their own pages"
+
+[[review.exclusion]]
+source = "doc.external-functions-creating-azure-planning"
+reason = "guide page for building external functions; CREATE EXTERNAL FUNCTION and CREATE API INTEGRATION are catalogued on their own pages"
+
+[[review.exclusion]]
+source = "doc.external-functions-creating-azure-template-apps"
+reason = "guide page for building external functions; CREATE EXTERNAL FUNCTION and CREATE API INTEGRATION are catalogued on their own pages"
+
+[[review.exclusion]]
+source = "doc.external-functions-creating-azure-template-private-connect"
+reason = "guide page for building external functions; CREATE EXTERNAL FUNCTION and CREATE API INTEGRATION are catalogued on their own pages"
+
+[[review.exclusion]]
+source = "doc.external-functions-creating-azure-template-security-policy"
+reason = "guide page for building external functions; CREATE EXTERNAL FUNCTION and CREATE API INTEGRATION are catalogued on their own pages"
+
+[[review.exclusion]]
+source = "doc.external-functions-creating-azure-template-services"
+reason = "guide page for building external functions; CREATE EXTERNAL FUNCTION and CREATE API INTEGRATION are catalogued on their own pages"
+
+[[review.exclusion]]
+source = "doc.external-functions-creating-azure-template"
+reason = "guide page for building external functions; CREATE EXTERNAL FUNCTION and CREATE API INTEGRATION are catalogued on their own pages"
+
+[[review.exclusion]]
+source = "doc.external-functions-creating-azure-troubleshooting"
+reason = "guide page for building external functions; CREATE EXTERNAL FUNCTION and CREATE API INTEGRATION are catalogued on their own pages"
+
+[[review.exclusion]]
+source = "doc.external-functions-creating-azure-ui-private-connect"
+reason = "guide page for building external functions; CREATE EXTERNAL FUNCTION and CREATE API INTEGRATION are catalogued on their own pages"
+
+[[review.exclusion]]
+source = "doc.external-functions-creating-azure-ui-proxy-service"
+reason = "guide page for building external functions; CREATE EXTERNAL FUNCTION and CREATE API INTEGRATION are catalogued on their own pages"
+
+[[review.exclusion]]
+source = "doc.external-functions-creating-azure-ui-remote-service"
+reason = "guide page for building external functions; CREATE EXTERNAL FUNCTION and CREATE API INTEGRATION are catalogued on their own pages"
+
+[[review.exclusion]]
+source = "doc.external-functions-creating-azure-ui-security-policy"
+reason = "guide page for building external functions; CREATE EXTERNAL FUNCTION and CREATE API INTEGRATION are catalogued on their own pages"
+
+[[review.exclusion]]
+source = "doc.external-functions-creating-azure-ui"
+reason = "guide page for building external functions; CREATE EXTERNAL FUNCTION and CREATE API INTEGRATION are catalogued on their own pages"
+
+[[review.exclusion]]
+source = "doc.external-functions-creating-azure"
+reason = "guide page for building external functions; CREATE EXTERNAL FUNCTION and CREATE API INTEGRATION are catalogued on their own pages"
+
+[[review.exclusion]]
+source = "doc.external-functions-creating-gcp-call"
+reason = "guide page for building external functions; CREATE EXTERNAL FUNCTION and CREATE API INTEGRATION are catalogued on their own pages"
+
+[[review.exclusion]]
+source = "doc.external-functions-creating-gcp-common-api-integration"
+reason = "guide page for building external functions; CREATE EXTERNAL FUNCTION and CREATE API INTEGRATION are catalogued on their own pages"
+
+[[review.exclusion]]
+source = "doc.external-functions-creating-gcp-common-ext-function"
+reason = "guide page for building external functions; CREATE EXTERNAL FUNCTION and CREATE API INTEGRATION are catalogued on their own pages"
+
+[[review.exclusion]]
+source = "doc.external-functions-creating-gcp-planning"
+reason = "guide page for building external functions; CREATE EXTERNAL FUNCTION and CREATE API INTEGRATION are catalogued on their own pages"
+
+[[review.exclusion]]
+source = "doc.external-functions-creating-gcp-troubleshooting"
+reason = "guide page for building external functions; CREATE EXTERNAL FUNCTION and CREATE API INTEGRATION are catalogued on their own pages"
+
+[[review.exclusion]]
+source = "doc.external-functions-creating-gcp-ui-proxy-service"
+reason = "guide page for building external functions; CREATE EXTERNAL FUNCTION and CREATE API INTEGRATION are catalogued on their own pages"
+
+[[review.exclusion]]
+source = "doc.external-functions-creating-gcp-ui-remote-service"
+reason = "guide page for building external functions; CREATE EXTERNAL FUNCTION and CREATE API INTEGRATION are catalogued on their own pages"
+
+[[review.exclusion]]
+source = "doc.external-functions-creating-gcp-ui-security-policy"
+reason = "guide page for building external functions; CREATE EXTERNAL FUNCTION and CREATE API INTEGRATION are catalogued on their own pages"
+
+[[review.exclusion]]
+source = "doc.external-functions-creating-gcp-ui"
+reason = "guide page for building external functions; CREATE EXTERNAL FUNCTION and CREATE API INTEGRATION are catalogued on their own pages"
+
+[[review.exclusion]]
+source = "doc.external-functions-creating-gcp"
+reason = "guide page for building external functions; CREATE EXTERNAL FUNCTION and CREATE API INTEGRATION are catalogued on their own pages"
+
+[[review.exclusion]]
+source = "doc.external-functions-data-format"
+reason = "guide page for building external functions; CREATE EXTERNAL FUNCTION and CREATE API INTEGRATION are catalogued on their own pages"
+
+[[review.exclusion]]
+source = "doc.external-functions-implementation"
+reason = "guide page for building external functions; CREATE EXTERNAL FUNCTION and CREATE API INTEGRATION are catalogued on their own pages"
+
+[[review.exclusion]]
+source = "doc.external-functions-introduction"
+reason = "guide page for building external functions; CREATE EXTERNAL FUNCTION and CREATE API INTEGRATION are catalogued on their own pages"
+
+[[review.exclusion]]
+source = "doc.external-functions-security"
+reason = "guide page for building external functions; CREATE EXTERNAL FUNCTION and CREATE API INTEGRATION are catalogued on their own pages"
+
+[[review.exclusion]]
+source = "doc.external-functions"
+reason = "guide page for building external functions; CREATE EXTERNAL FUNCTION and CREATE API INTEGRATION are catalogued on their own pages"
+
+[[review.exclusion]]
+source = "doc.functions-aggregation"
+reason = "index page: lists commands or functions that are catalogued on their own pages; no syntax of its own"
+
+[[review.exclusion]]
+source = "doc.functions-all"
+reason = "index page: lists commands or functions that are catalogued on their own pages; no syntax of its own"
+
+[[review.exclusion]]
+source = "doc.functions-context"
+reason = "index page: lists commands or functions that are catalogued on their own pages; no syntax of its own"
+
+[[review.exclusion]]
+source = "doc.functions-conversion"
+reason = "index page: lists commands or functions that are catalogued on their own pages; no syntax of its own"
+
+[[review.exclusion]]
+source = "doc.functions-data-generation"
+reason = "index page: lists commands or functions that are catalogued on their own pages; no syntax of its own"
+
+[[review.exclusion]]
+source = "doc.functions-data-metric"
+reason = "index page: lists commands or functions that are catalogued on their own pages; no syntax of its own"
+
+[[review.exclusion]]
+source = "doc.functions-date-time"
+reason = "index page: lists commands or functions that are catalogued on their own pages; no syntax of its own"
+
+[[review.exclusion]]
+source = "doc.functions-differential-privacy"
+reason = "index page: lists commands or functions that are catalogued on their own pages; no syntax of its own"
+
+[[review.exclusion]]
+source = "doc.functions-encryption"
+reason = "index page: lists commands or functions that are catalogued on their own pages; no syntax of its own"
+
+[[review.exclusion]]
+source = "doc.functions-file"
+reason = "index page: lists commands or functions that are catalogued on their own pages; no syntax of its own"
+
+[[review.exclusion]]
+source = "doc.functions-geospatial"
+reason = "index page: lists commands or functions that are catalogued on their own pages; no syntax of its own"
+
+[[review.exclusion]]
+source = "doc.functions-hash-scalar"
+reason = "index page: lists commands or functions that are catalogued on their own pages; no syntax of its own"
+
+[[review.exclusion]]
+source = "doc.functions-ipaddress"
+reason = "index page: lists commands or functions that are catalogued on their own pages; no syntax of its own"
+
+[[review.exclusion]]
+source = "doc.functions-metadata"
+reason = "index page: lists commands or functions that are catalogued on their own pages; no syntax of its own"
+
+[[review.exclusion]]
+source = "doc.functions-model-monitors"
+reason = "index page: lists commands or functions that are catalogued on their own pages; no syntax of its own"
+
+[[review.exclusion]]
+source = "doc.functions-notification"
+reason = "index page: lists commands or functions that are catalogued on their own pages; no syntax of its own"
+
+[[review.exclusion]]
+source = "doc.functions-numeric"
+reason = "index page: lists commands or functions that are catalogued on their own pages; no syntax of its own"
+
+[[review.exclusion]]
+source = "doc.functions-organization-users"
+reason = "index page: lists commands or functions that are catalogued on their own pages; no syntax of its own"
+
+[[review.exclusion]]
+source = "doc.functions-period"
+reason = "index page: lists commands or functions that are catalogued on their own pages; no syntax of its own"
+
+[[review.exclusion]]
+source = "doc.functions-regexp"
+reason = "index page: lists commands or functions that are catalogued on their own pages; no syntax of its own"
+
+[[review.exclusion]]
+source = "doc.functions-semistructured"
+reason = "index page: lists commands or functions that are catalogued on their own pages; no syntax of its own"
+
+[[review.exclusion]]
+source = "doc.functions-spcs"
+reason = "index page: lists commands or functions that are catalogued on their own pages; no syntax of its own"
+
+[[review.exclusion]]
+source = "doc.functions-string"
+reason = "index page: lists commands or functions that are catalogued on their own pages; no syntax of its own"
+
+[[review.exclusion]]
+source = "doc.functions-system"
+reason = "index page: lists commands or functions that are catalogued on their own pages; no syntax of its own"
+
+[[review.exclusion]]
+source = "doc.functions-vector"
+reason = "index page: lists commands or functions that are catalogued on their own pages; no syntax of its own"
+
+[[review.exclusion]]
+source = "doc.functions-window"
+reason = "index page: lists commands or functions that are catalogued on their own pages; no syntax of its own"
+
+[[review.exclusion]]
+source = "doc.functions"
+reason = "index page: lists commands or functions that are catalogued on their own pages; no syntax of its own"
+
+[[review.exclusion]]
+source = "doc.functions.ai_complete-structured-outputs"
+reason = "guide page: explains the response_format argument of AI_COMPLETE with examples; the call syntax is catalogued on the AI_COMPLETE variant pages"
+
+[[review.exclusion]]
+source = "doc.functions.ai_complete"
+reason = "overview page: its Syntax section only links to the AI_COMPLETE single-string, single-image and prompt-object pages, which are catalogued"
+
+[[review.exclusion]]
+source = "doc.functions.as"
+reason = "index page for the AS_<object_type> family; each AS_* function has its own catalogued page"
+
+[[review.exclusion]]
+source = "doc.functions.dmf_row_count"
+reason = "system data metric function: the page states the syntax is \"Not applicable\"; it is attached with ALTER TABLE ... ADD DATA METRIC FUNCTION, which is catalogued"
+
+[[review.exclusion]]
+source = "doc.functions.dmf_schema_change_add_count"
+reason = "system data metric function: the page states the syntax is \"Not applicable\"; it is attached with ALTER TABLE ... ADD DATA METRIC FUNCTION, which is catalogued"
+
+[[review.exclusion]]
+source = "doc.functions.dmf_schema_change_count"
+reason = "system data metric function: the page states the syntax is \"Not applicable\"; it is attached with ALTER TABLE ... ADD DATA METRIC FUNCTION, which is catalogued"
+
+[[review.exclusion]]
+source = "doc.functions.dmf_schema_change_drop_count"
+reason = "system data metric function: the page states the syntax is \"Not applicable\"; it is attached with ALTER TABLE ... ADD DATA METRIC FUNCTION, which is catalogued"
+
+[[review.exclusion]]
+source = "doc.functions.dmf_schema_change_type_count"
+reason = "system data metric function: the page states the syntax is \"Not applicable\"; it is attached with ALTER TABLE ... ADD DATA METRIC FUNCTION, which is catalogued"
+
+[[review.exclusion]]
+source = "doc.functions.dmf_table_size_bytes"
+reason = "system data metric function: the page states the syntax is \"Not applicable\"; it is attached with ALTER TABLE ... ADD DATA METRIC FUNCTION, which is catalogued"
+
+[[review.exclusion]]
+source = "doc.functions.is"
+reason = "index page for the IS_<object_type> family; each IS_* function has its own catalogued page"
+
+[[review.exclusion]]
+source = "doc.identifiers"
+reason = "index page linking to identifier requirements and IDENTIFIER(), which are catalogued"
+
+[[review.exclusion]]
+source = "doc.info-schema"
+reason = "index page: lists commands or functions that are catalogued on their own pages; no syntax of its own"
+
+[[review.exclusion]]
+source = "doc.info-schema.applicable_roles"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.info-schema.application_configurations"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.info-schema.application_specifications"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.info-schema.backup_policies"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.info-schema.backup_sets"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.info-schema.backups"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.info-schema.check_constraints"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.info-schema.class_instance_functions"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.info-schema.class_instance_procedures"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.info-schema.class_instances"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.info-schema.classes"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.info-schema.columns"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.info-schema.cortex_search"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.info-schema.cortex_search_service_scoring_profiles"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.info-schema.current_packages_policy"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.info-schema.databases"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.info-schema.element_types"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.info-schema.enabled_roles"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.info-schema.event_tables"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.info-schema.external_tables"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.info-schema.fields"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.info-schema.file_formats"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.info-schema.functions"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.info-schema.hybrid_tables"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.info-schema.index_columns"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.info-schema.indexes"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.info-schema.information_schema_catalog_name"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.info-schema.listings"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.info-schema.load_history"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.info-schema.model_versions"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.info-schema.object_privileges"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.info-schema.packages"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.info-schema.pipes"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.info-schema.procedures"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.info-schema.referential_constraints"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.info-schema.replication_databases"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.info-schema.replication_groups"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.info-schema.schemata"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.info-schema.semantic_dimensions"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.info-schema.semantic_facts"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.info-schema.semantic_metrics"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.info-schema.semantic_relationships"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.info-schema.semantic_tables"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.info-schema.semantic_views"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.info-schema.sequences"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.info-schema.services"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.info-schema.shares"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.info-schema.snapshot_policies"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.info-schema.snapshot_sets"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.info-schema.snapshots"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.info-schema.stages"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.info-schema.table_constraints"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.info-schema.table_privileges"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.info-schema.table_storage_metrics"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.info-schema.tables"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.info-schema.types"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.info-schema.usage_privileges"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.info-schema.variables"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.info-schema.views"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.intro-summary-data-types"
+reason = "index page: lists commands or functions that are catalogued on their own pages; no syntax of its own"
+
+[[review.exclusion]]
+source = "doc.intro-summary-operators-functions"
+reason = "index page: lists commands or functions that are catalogued on their own pages; no syntax of its own"
+
+[[review.exclusion]]
+source = "doc.local"
+reason = "index page: lists commands or functions that are catalogued on their own pages; no syntax of its own"
+
+[[review.exclusion]]
+source = "doc.local.ai_observability_events"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.local.automatic_data_quality_monitoring_results"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.local.cortex_analyst_requests_v"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.local.data_quality_monitoring_anomaly_detection_status"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.local.data_quality_monitoring_expectation_status"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.local.data_quality_monitoring_logs"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.local.data_quality_monitoring_results"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.metadata"
+reason = "lists which object fields are metadata for data-governance purposes; documents no syntax"
+
+[[review.exclusion]]
+source = "doc.monitoring"
+reason = "index page: lists commands or functions that are catalogued on their own pages; no syntax of its own"
+
+[[review.exclusion]]
+source = "doc.monitoring.iceberg_access_errors"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.operators"
+reason = "index page: lists commands or functions that are catalogued on their own pages; no syntax of its own"
+
+[[review.exclusion]]
+source = "doc.organization-usage"
+reason = "index page: lists commands or functions that are catalogued on their own pages; no syntax of its own"
+
+[[review.exclusion]]
+source = "doc.organization-usage.access_history"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.organization-usage.accounts"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.organization-usage.aggregate_query_history"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.organization-usage.aggregation_policies"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.organization-usage.ai_gateway_usage_history"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.organization-usage.alert_history"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.organization-usage.anomalies_in_currency_daily"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.organization-usage.automatic_clustering_history"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.organization-usage.backup_operation_history"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.organization-usage.backup_policies"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.organization-usage.backup_sets"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.organization-usage.backups"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.organization-usage.block_storage_history"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.organization-usage.catalog_linked_database_usage_history"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.organization-usage.class_instances"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.organization-usage.classes"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.organization-usage.column_query_pruning_history"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.organization-usage.columns"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.organization-usage.complete_task_graphs"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.organization-usage.compute_pools"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.organization-usage.contact_references"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.organization-usage.contacts"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.organization-usage.contract_items"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.organization-usage.copy_history"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.organization-usage.cortex_agent_usage_history"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.organization-usage.cortex_ai_functions_usage_history"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.organization-usage.cortex_code_cli_usage_history"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.organization-usage.cortex_code_desktop_usage_history"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.organization-usage.cortex_code_snowsight_usage_history"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.organization-usage.cortex_search_serving_usage_history"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.organization-usage.credentials"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.organization-usage.data_classification_history"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.organization-usage.data_classification_latest"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.organization-usage.data_transfer_daily_history"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.organization-usage.data_transfer_history"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.organization-usage.database_storage_usage_history"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.organization-usage.databases"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.organization-usage.dynamic_table_refresh_history"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.organization-usage.external_access_history"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.organization-usage.feature_policies"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.organization-usage.file_formats"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.organization-usage.functions"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.organization-usage.grants_to_roles"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.organization-usage.grants_to_shares"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.organization-usage.grants_to_users"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.organization-usage.hybrid_tables"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.organization-usage.index_columns"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.organization-usage.indexes"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.organization-usage.join_policies"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.organization-usage.listing_auto_fulfillment_usage_history"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.organization-usage.listings"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.organization-usage.load_history"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.organization-usage.lock_wait_history"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.organization-usage.login_history"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.organization-usage.masking_policies"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.organization-usage.materialized_view_refresh_history"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.organization-usage.metering_daily_history"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.organization-usage.metering_history"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.organization-usage.model_serving_usage_history"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.organization-usage.multi_party_approval_policies"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.organization-usage.multi_party_approval_requests"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.organization-usage.network_policies"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.organization-usage.network_rule_references"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.organization-usage.network_rules"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.organization-usage.notebooks_container_runtime_history"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.organization-usage.object_access_request_history"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.organization-usage.object_dependencies"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.organization-usage.organization_usage_storage_history"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.organization-usage.outbound_privatelink_endpoints"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.organization-usage.password_policies"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.organization-usage.pipe_usage_history"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.organization-usage.pipes"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.organization-usage.policy_references"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.organization-usage.postgres_compute_usage_history"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.organization-usage.privacy_policies"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.organization-usage.procedures"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.organization-usage.projection_policies"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.organization-usage.query_acceleration_eligible"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.organization-usage.query_acceleration_history"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.organization-usage.query_attribution_history"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.organization-usage.query_history"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.organization-usage.query_insights"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.organization-usage.query_metering_history"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.organization-usage.rate_sheet_daily"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.organization-usage.referential_constraints"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.organization-usage.remaining_balance_daily"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.organization-usage.replication_group_refresh_history"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.organization-usage.replication_group_usage_history"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.organization-usage.replication_groups"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.organization-usage.replication_usage_history"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.organization-usage.resource_monitors"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.organization-usage.roles"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.organization-usage.row_access_policies"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.organization-usage.schemata"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.organization-usage.search_optimization_benefits"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.organization-usage.search_optimization_history"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.organization-usage.secrets"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.organization-usage.semantic_dimensions"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.organization-usage.semantic_facts"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.organization-usage.semantic_metrics"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.organization-usage.semantic_relationships"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.organization-usage.semantic_tables"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.organization-usage.semantic_variables"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.organization-usage.semantic_view_imports"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.organization-usage.semantic_views"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.organization-usage.sequences"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.organization-usage.services"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.organization-usage.session_policies"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.organization-usage.sessions"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.organization-usage.shares"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.organization-usage.snapshot_operation_history"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.organization-usage.snapshot_policies"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.organization-usage.snapshot_sets"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.organization-usage.snapshots"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.organization-usage.snowflake_coco_usage_history"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.organization-usage.snowflake_cowork_usage_history"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.organization-usage.snowpark_container_services_history"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.organization-usage.snowpipe_streaming_channel_history"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.organization-usage.snowpipe_streaming_client_history"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.organization-usage.snowpipe_streaming_file_migration_history"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.organization-usage.stage_storage_usage_history"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.organization-usage.stages"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.organization-usage.storage_daily_history"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.organization-usage.storage_lifecycle_policies"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.organization-usage.storage_lifecycle_policy_history"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.organization-usage.storage_usage"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.organization-usage.table_constraints"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.organization-usage.table_dml_history"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.organization-usage.table_pruning_history"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.organization-usage.table_query_pruning_history"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.organization-usage.table_storage_metrics"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.organization-usage.tables"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.organization-usage.tag_references"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.organization-usage.tags"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.organization-usage.task_history"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.organization-usage.task_versions"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.organization-usage.tasks"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.organization-usage.tri-secret-secure-history"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.organization-usage.trust_center_findings"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.organization-usage.types"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.organization-usage.usage_in_currency_daily"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.organization-usage.users"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.organization-usage.views"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.organization-usage.warehouse_events_history"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.organization-usage.warehouse_load_history"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.organization-usage.warehouse_metering_history"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.parameters"
+reason = "lists account, session and object parameters; set with ALTER ACCOUNT/SESSION/<object> SET, which are catalogued"
+
+[[review.exclusion]]
+source = "doc.references"
+reason = "guide to SYSTEM$REFERENCE; the function is catalogued on its own page"
+
+[[review.exclusion]]
+source = "doc.reserved-keywords"
+reason = "lists reserved and limited keywords; used for identifier_class obligations, not a form"
+
+[[review.exclusion]]
+source = "doc.service-types"
+reason = "lists service type names: values, not syntax"
+
+[[review.exclusion]]
+source = "doc.snowflake-db-roles"
+reason = "index page: lists commands or functions that are catalogued on their own pages; no syntax of its own"
+
+[[review.exclusion]]
+source = "doc.snowflake-db"
+reason = "index page: lists commands or functions that are catalogued on their own pages; no syntax of its own"
+
+[[review.exclusion]]
+source = "doc.sql-all"
+reason = "index page: lists commands or functions that are catalogued on their own pages; no syntax of its own"
+
+[[review.exclusion]]
+source = "doc.sql-ddl-summary"
+reason = "index page: lists commands or functions that are catalogued on their own pages; no syntax of its own"
+
+[[review.exclusion]]
+source = "doc.sql-dml"
+reason = "index page: lists commands or functions that are catalogued on their own pages; no syntax of its own"
+
+[[review.exclusion]]
+source = "doc.sql.alter-dataset"
+reason = "hub page: links to the ALTER DATASET variant pages, which are catalogued"
+
+[[review.exclusion]]
+source = "doc.sql.alter-notification-integration"
+reason = "hub page: links to the per-service ALTER NOTIFICATION INTEGRATION pages, which are catalogued"
+
+[[review.exclusion]]
+source = "doc.sql.alter"
+reason = "generic hub page for one verb; every object-specific command has its own catalogued page"
+
+[[review.exclusion]]
+source = "doc.sql.create-catalog-integration"
+reason = "hub page: links to the per-catalog CREATE CATALOG INTEGRATION pages, which are catalogued"
+
+[[review.exclusion]]
+source = "doc.sql.create-notification-integration"
+reason = "hub page: links to the per-service CREATE NOTIFICATION INTEGRATION pages, which are catalogued"
+
+[[review.exclusion]]
+source = "doc.sql.create-or-alter"
+reason = "generic hub page for one verb; every object-specific command has its own catalogued page"
+
+[[review.exclusion]]
+source = "doc.sql.create"
+reason = "generic hub page for one verb; every object-specific command has its own catalogued page"
+
+[[review.exclusion]]
+source = "doc.sql.desc"
+reason = "generic hub page for one verb; every object-specific command has its own catalogued page"
+
+[[review.exclusion]]
+source = "doc.sql.drop"
+reason = "generic hub page for one verb; every object-specific command has its own catalogued page"
+
+[[review.exclusion]]
+source = "doc.sql.show"
+reason = "generic hub page for one verb; every object-specific command has its own catalogued page"
+
+[[review.exclusion]]
+source = "doc.sql.undrop"
+reason = "generic hub page for one verb; every object-specific command has its own catalogued page"
+
+[[review.exclusion]]
+source = "doc.sql.use"
+reason = "generic hub page for one verb; every object-specific command has its own catalogued page"
+
+[[review.exclusion]]
+source = "doc.telemetry"
+reason = "index page: lists commands or functions that are catalogued on their own pages; no syntax of its own"
+
+[[review.exclusion]]
+source = "doc.telemetry.events_view"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"
+
+[[review.exclusion]]
+source = "doc.ternary-logic"
+reason = "explains NULL truth tables for operators catalogued on the operator pages"
+
+[[review.exclusion]]
+source = "doc.transactions"
+reason = "concept page; BEGIN, COMMIT, ROLLBACK and related statements are catalogued on their own pages"
+
+[[review.exclusion]]
+source = "doc.trust_center"
+reason = "index page: lists commands or functions that are catalogued on their own pages; no syntax of its own"
+
+[[review.exclusion]]
+source = "doc.trust_center.extensions"
+reason = "view or table reference page: documents the columns of a system view queried with ordinary SELECT; it introduces no syntax"

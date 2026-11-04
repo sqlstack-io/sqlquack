@@ -41,7 +41,7 @@ def command_family(title: str) -> str:
     return "security_admin" if ADMIN_WORDS.search(text) else "ddl"
 
 
-def family_of(path: str, title: str) -> str | None:
+def family_of(*, path: str, title: str) -> str | None:
     """The page's family, or None for pages outside the syntax reference."""
     parts: list[str] = path.removesuffix(MARKDOWN_SUFFIX).split("/")
     if parts[0] != REFERENCE_ROOT or len(parts) < TOP_LEVEL_PARTS:

@@ -61,14 +61,14 @@ def call_pieces(statements: list[Production]) -> tuple[list[tuple[str, tuple[str
 
 
 def group_calls(statements: list[Production]) -> tuple[list[FormGroup], set[str]]:
-    """Plain call signatures of one name form one call form; each other syntax kind its own."""
+    """Plain call signatures of one name form one call form; each special syntax is its own."""
     pieces, decisions = call_pieces(statements)
     plain: dict[str, list[str]] = {}
     special: dict[tuple[str, str], list[str]] = {}
     headings: dict[object, tuple[str, ...]] = {}
     for grammar, heading in pieces:
         kind: str = special_kind(grammar)
-        key: tuple[str, str] = (call_name(grammar) or grammar, kind)
+        key: tuple[str, str] = (call_name(grammar) or grammar, grammar if kind else "")
         target: list[str] = (
             plain.setdefault(key[0], []) if not kind else special.setdefault(key, [])
         )
@@ -77,7 +77,7 @@ def group_calls(statements: list[Production]) -> tuple[list[FormGroup], set[str]
             target.append(grammar)
     if any(len(grammars) > 1 for grammars in plain.values()):
         decisions.add(DECISION_CALL_SIGNATURES)
-    if plain and any(kind == SPECIAL_KIND_NAMED for _, kind in special):
+    if plain and any(special_kind(grammar) == SPECIAL_KIND_NAMED for _, grammar in special):
         decisions.add(DECISION_NAMED_AND_POSITIONAL)
     groups: list[FormGroup] = [
         FormGroup(KIND_CALL, name, tuple(grammars), headings[name])
@@ -101,7 +101,9 @@ def action_alternatives(*, grammar: str, definitions: set[str]) -> list[tuple[st
     return [(name, grammar[: match.start()] + name) for name in names]
 
 
-def is_definition_variant(production: Production, *, statement_headings: set[tuple[str, ...]]) -> bool:
+def is_definition_variant(
+    *, production: Production, statement_headings: set[tuple[str, ...]]
+) -> bool:
     """True for a definition under its own heading inside the syntax section."""
     heading: tuple[str, ...] = production.heading
     return (
@@ -135,7 +137,7 @@ def group_forms(
     variants: list[FormGroup] = [
         FormGroup(KIND_STATEMENT, p.name, (p.grammar,), p.heading)
         for p in productions
-        if is_definition_variant(p, statement_headings=headings)
+        if is_definition_variant(production=p, statement_headings=headings)
     ]
     if variants:
         decisions.add(DECISION_DEFINITION_VARIANT)
@@ -218,8 +220,11 @@ def emit_forms(
         form_id: str | None = existing.by_key.get(key)
         natural: str = f"{context.base}.{name}" if len(groups) > 1 else context.base
         if form_id is None and natural in stale:
-            stale.remove(natural)
             form_id = natural
+        if form_id is None:
+            form_id = next((old for old in stale if covers(existing, old=old, group=group)), None)
+        if form_id is not None and form_id in stale:
+            stale.remove(form_id)
         if form_id is None:
             form_id = new_form_id(
                 context=context, name=name, group=group, used_ids=taken, multi=len(groups) > 1
@@ -229,7 +234,13 @@ def emit_forms(
     return forms, frozenset(taken)
 
 
-def refers_to(name: str, *, grammars: tuple[str, ...]) -> bool:
+def covers(existing: Existing, *, old: str, group: FormGroup) -> bool:
+    """True when every signature of an earlier form is still a signature of this form."""
+    grammar: object = existing.forms[old]["grammar"]
+    return isinstance(grammar, list) and bool(grammar) and set(grammar) <= set(group.grammars)
+
+
+def refers_to(*, name: str, grammars: tuple[str, ...]) -> bool:
     """True when any grammar names the sub-grammar as a whole word."""
     pattern: re.Pattern[str] = re.compile(rf"\b{re.escape(name)}\b")
     return any(pattern.search(grammar) for grammar in grammars)
@@ -237,4 +248,4 @@ def refers_to(name: str, *, grammars: tuple[str, ...]) -> bool:
 
 def uses(*, definitions: tuple[str, ...], grammars: tuple[str, ...]) -> list[str]:
     """The page's sub-grammar names a form's grammar refers to."""
-    return sorted(name for name in definitions if refers_to(name, grammars=grammars))
+    return sorted(name for name in definitions if refers_to(name=name, grammars=grammars))

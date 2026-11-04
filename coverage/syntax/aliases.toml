@@ -1,0 +1,167 @@
+# Renamed, split and merged form ids. An old id stays in the catalogue with status
+# absent_from_source and is never reused; `to` lists the forms that now carry its grammar.
+
+[[alias]]
+from = "sf.ddl.alter-event-routing-table"
+to = ["sf.ddl.alter-event-routing-table.modify-rule-rename-to", "sf.ddl.alter-event-routing-table.rename-to", "sf.ddl.alter-event-routing-table.set-rule-region-group-regions", "sf.ddl.alter-event-routing-table.set-rules-region-group-regions", "sf.ddl.alter-event-routing-table.unset-rule"]
+reason = "one form held several documented statements or function names; split one form per statement or name (omission audit of 5f80b6cd)"
+
+[[alias]]
+from = "sf.dml.insert-multi-table"
+to = ["sf.dml.insert-multi-table.all-intoclause", "sf.dml.insert-multi-table.first-all-when-then"]
+reason = "one form held several documented statements or function names; split one form per statement or name (omission audit of 5f80b6cd)"
+
+[[alias]]
+from = "sf.functions.approx-count-distinct.approx-count-distinct.syntax"
+to = ["sf.functions.approx-count-distinct.approx-count-distinct", "sf.functions.approx-count-distinct.approx-count-distinct-over"]
+reason = "one form held several documented statements or function names; split one form per statement or name (omission audit of 5f80b6cd)"
+
+[[alias]]
+from = "sf.functions.approximate-jaccard-index.approximate-jaccard-index.syntax"
+to = ["sf.functions.approximate-jaccard-index.approximate-jaccard-index"]
+reason = "plain call signatures of one function name, or named-argument signatures of one function, merged into one form (omission audit of 5f80b6cd)"
+
+[[alias]]
+from = "sf.functions.approximate-similarity.approximate-similarity.syntax"
+to = ["sf.functions.approximate-similarity.approximate-similarity"]
+reason = "plain call signatures of one function name, or named-argument signatures of one function, merged into one form (omission audit of 5f80b6cd)"
+
+[[alias]]
+from = "sf.functions.case"
+to = ["sf.functions.case.end", "sf.functions.case.end.syntax"]
+reason = "one form held several documented statements or function names; split one form per statement or name (omission audit of 5f80b6cd)"
+
+[[alias]]
+from = "sf.functions.count.count.syntax"
+to = ["sf.functions.count.count", "sf.functions.count.count-over"]
+reason = "one form held several documented statements or function names; split one form per statement or name (omission audit of 5f80b6cd)"
+
+[[alias]]
+from = "sf.functions.hash-agg.hash-agg.syntax"
+to = ["sf.functions.hash-agg.hash-agg", "sf.functions.hash-agg.hash-agg-over"]
+reason = "one form held several documented statements or function names; split one form per statement or name (omission audit of 5f80b6cd)"
+
+[[alias]]
+from = "sf.functions.hll-accumulate.hll-accumulate.syntax"
+to = ["sf.functions.hll-accumulate.hll-accumulate", "sf.functions.hll-accumulate.hll-accumulate-over"]
+reason = "one form held several documented statements or function names; split one form per statement or name (omission audit of 5f80b6cd)"
+
+[[alias]]
+from = "sf.functions.hll.hll.syntax"
+to = ["sf.functions.hll.hll", "sf.functions.hll.hll-over"]
+reason = "one form held several documented statements or function names; split one form per statement or name (omission audit of 5f80b6cd)"
+
+[[alias]]
+from = "sf.functions.minhash.minhash-expr"
+to = ["sf.functions.minhash.minhash", "sf.functions.minhash.minhash-expr-over"]
+reason = "one form held several documented statements or function names; split one form per statement or name (omission audit of 5f80b6cd)"
+
+[[alias]]
+from = "sf.query.group-by"
+to = ["sf.query.group-by.all", "sf.query.group-by.groupitem"]
+reason = "one form held several documented statements or function names; split one form per statement or name (omission audit of 5f80b6cd)"
+
+[[alias]]
+from = "sf.query.join"
+to = ["sf.query.join.join", "sf.query.join.join-2", "sf.query.join.join.syntax"]
+reason = "one form held several documented statements or function names; split one form per statement or name (omission audit of 5f80b6cd)"
+
+[[alias]]
+from = "sf.query.match-recognize.after-match-skip-past"
+to = ["sf.query.match-recognize.match-recognize-pattern-define-as"]
+reason = "plain call signatures of one function name, or named-argument signatures of one function, merged into one form (omission audit of 5f80b6cd)"
+
+[[alias]]
+from = "sf.query.match-recognize.pattern"
+to = ["sf.query.match-recognize.match-recognize-pattern-define-as"]
+reason = "plain call signatures of one function name, or named-argument signatures of one function, merged into one form (omission audit of 5f80b6cd)"
+
+[[alias]]
+from = "sf.query.order-by"
+to = ["sf.query.order-by.all", "sf.query.order-by.orderitem"]
+reason = "one form held several documented statements or function names; split one form per statement or name (omission audit of 5f80b6cd)"
+
+[[alias]]
+from = "sf.query.qualify"
+to = ["sf.query.qualify.qualify", "sf.query.qualify.select-from-qualify"]
+reason = "one form held several documented statements or function names; split one form per statement or name (omission audit of 5f80b6cd)"
+
+[[alias]]
+from = "sf.security_admin.alter-security-integration-scim.unset-network-policy-alter-integration"
+to = ["sf.security_admin.alter-security-integration-scim.set-tag", "sf.security_admin.alter-security-integration-scim.unset-network-policy"]
+reason = "one form held several documented statements or function names; split one form per statement or name (omission audit of 5f80b6cd)"
+
+[[alias]]
+from = "sf.ddl.alter-service.fromspecification"
+to = ["sf.ddl.alter-service.fromspecification-fromspecificationtemplate"]
+reason = "alternatives of non-action sub-grammars are obligations of one form, not separate forms (rule 5; omission audit of 5f80b6cd)"
+
+[[alias]]
+from = "sf.ddl.alter-service.fromspecificationtemplate"
+to = ["sf.ddl.alter-service.fromspecification-fromspecificationtemplate"]
+reason = "alternatives of non-action sub-grammars are obligations of one form, not separate forms (rule 5; omission audit of 5f80b6cd)"
+
+[[alias]]
+from = "sf.utility.execute-dcm-project.fromdeployment"
+to = ["sf.utility.execute-dcm-project.deploy-fromsource-fromdeployment"]
+reason = "alternatives of non-action sub-grammars are obligations of one form, not separate forms (rule 5; omission audit of 5f80b6cd)"
+
+[[alias]]
+from = "sf.utility.execute-dcm-project.fromsource"
+to = ["sf.utility.execute-dcm-project.deploy-fromsource-fromdeployment"]
+reason = "alternatives of non-action sub-grammars are obligations of one form, not separate forms (rule 5; omission audit of 5f80b6cd)"
+
+[[alias]]
+from = "sf.expressions.data-types-datetime.daytimequalifier"
+to = ["sf.expressions.data-types-datetime.interval-yearmonthqualifier-daytimequalifier"]
+reason = "alternatives of non-action sub-grammars are obligations of one form, not separate forms (rule 5; omission audit of 5f80b6cd)"
+
+[[alias]]
+from = "sf.expressions.data-types-datetime.yearmonthqualifier"
+to = ["sf.expressions.data-types-datetime.interval-yearmonthqualifier-daytimequalifier"]
+reason = "alternatives of non-action sub-grammars are obligations of one form, not separate forms (rule 5; omission audit of 5f80b6cd)"
+
+[[alias]]
+from = "sf.ddl.create-table-constraint.inlinech"
+to = ["sf.ddl.create-table-constraint.alter-table-add-column"]
+reason = "alternatives of non-action sub-grammars are obligations of one form, not separate forms (rule 5; omission audit of 5f80b6cd)"
+
+[[alias]]
+from = "sf.ddl.create-table-constraint.inlinefk"
+to = ["sf.ddl.create-table-constraint.alter-table-add-column"]
+reason = "alternatives of non-action sub-grammars are obligations of one form, not separate forms (rule 5; omission audit of 5f80b6cd)"
+
+[[alias]]
+from = "sf.ddl.create-table-constraint.inlineuniquepk"
+to = ["sf.ddl.create-table-constraint.alter-table-add-column"]
+reason = "alternatives of non-action sub-grammars are obligations of one form, not separate forms (rule 5; omission audit of 5f80b6cd)"
+
+[[alias]]
+from = "sf.ddl.create-table-constraint.outoflinech"
+to = ["sf.ddl.create-table-constraint.alter-table-add-outoflineuniquepk"]
+reason = "alternatives of non-action sub-grammars are obligations of one form, not separate forms (rule 5; omission audit of 5f80b6cd)"
+
+[[alias]]
+from = "sf.ddl.create-table-constraint.outoflinefk"
+to = ["sf.ddl.create-table-constraint.alter-table-add-outoflineuniquepk"]
+reason = "alternatives of non-action sub-grammars are obligations of one form, not separate forms (rule 5; omission audit of 5f80b6cd)"
+
+[[alias]]
+from = "sf.ddl.create-table-constraint.outoflineuniquepk"
+to = ["sf.ddl.create-table-constraint.alter-table-add-outoflineuniquepk"]
+reason = "alternatives of non-action sub-grammars are obligations of one form, not separate forms (rule 5; omission audit of 5f80b6cd)"
+
+[[alias]]
+from = "sf.query.match-recognize.define-as"
+to = ["sf.query.match-recognize.match-recognize-pattern-define-as"]
+reason = "subclause block documented under Required/Optional subclauses is part of the MATCH_RECOGNIZE grammar; its alternatives are obligations of that form (omission audit of 5f80b6cd)"
+
+[[alias]]
+from = "sf.query.match-recognize.measures"
+to = ["sf.query.match-recognize.match-recognize-pattern-define-as"]
+reason = "subclause block documented under Required/Optional subclauses is part of the MATCH_RECOGNIZE grammar; its alternatives are obligations of that form (omission audit of 5f80b6cd)"
+
+[[alias]]
+from = "sf.query.match-recognize.one-row-per-match"
+to = ["sf.query.match-recognize.match-recognize-pattern-define-as"]
+reason = "subclause block documented under Required/Optional subclauses is part of the MATCH_RECOGNIZE grammar; its alternatives are obligations of that form (omission audit of 5f80b6cd)"
