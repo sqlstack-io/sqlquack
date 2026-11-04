@@ -35401,7 +35401,7 @@ context = "raw"
 form = "sf.ddl.alter-iceberg-table.set"
 kind = "interaction_all_options"
 note = "every independent option of one production together"
-reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-24); observed, not flipped to reject"
+reason = "D113 [page misreading]: the all-options row combines options the page forbids together (a corrected row applies the page's rule), and Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-24); observed, not flipped to reject"
 
 [[limit]]
 form = "sf.ddl.alter-iceberg-table.set"
@@ -35410,7 +35410,6 @@ note = "every independent option of one production together, observed"
 anchor = "doc.sql.alter-iceberg-table / Syntax"
 sql = "ALTER ICEBERG TABLE IF EXISTS v1 SET REPLACE_INVALID_CHARACTERS = TRUE CATALOG_SYNC = 'm' DATA_RETENTION_TIME_IN_DAYS = 1 AUTO_REFRESH = TRUE TARGET_FILE_SIZE = AUTO PATH_LAYOUT = FLAT CONTACT ( STEWARD = v1 , STEWARD = v1 ) LOG_EVENT_LEVEL = ERROR ERROR_LOGGING = TRUE ENABLE_DATA_COMPACTION = TRUE ICEBERG_MERGE_ON_READ_BEHAVIOR = 'AUTO' ENABLE_ICEBERG_MERGE_ON_READ = TRUE ENABLE_SCHEMA_EVOLUTION = TRUE MATCH_BY_COLUMN_NAME = CASE_INSENSITIVE ALLOW_V3_EXPRESSION_DEFAULTS = TRUE TIME_TRAVEL_TIMESTAMP_SOURCE = 'SNOWFLAKE_METADATA' ;"
 expect = "observe"
-documented = true
 context = "raw"
 
 [[suppress]]
@@ -50767,5 +50766,74 @@ target = "<application_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_n
 note = "omit <application_name>, observed"
 anchor = "doc.sql.show-pipes / Syntax"
 sql = "SHOW PIPES IN APPLICATION ;"
+expect = "observe"
+context = "raw"
+
+# D113 (auditor, 6d30f37b low 2): two more all-options rows set CONTACT with other properties.
+
+# D113 [page misreading]: the all-options row combined options the page forbids together (the page says “You cannot set the CONTACT property with other properties in the same statement”); this row applies the rule, and the observed row above stays observed.
+[[limit]]
+form = "sf.ddl.alter-iceberg-table.set"
+kind = "interaction_all_options"
+note = "every independent option of one production together, with the page's combination rules applied"
+anchor = "doc.sql.alter-iceberg-table / Syntax"
+sql = "ALTER ICEBERG TABLE IF EXISTS v1 SET REPLACE_INVALID_CHARACTERS = TRUE CATALOG_SYNC = 'm' DATA_RETENTION_TIME_IN_DAYS = 1 AUTO_REFRESH = TRUE TARGET_FILE_SIZE = AUTO PATH_LAYOUT = FLAT LOG_EVENT_LEVEL = ERROR ERROR_LOGGING = TRUE ENABLE_DATA_COMPACTION = TRUE ICEBERG_MERGE_ON_READ_BEHAVIOR = 'AUTO' ENABLE_ICEBERG_MERGE_ON_READ = TRUE ENABLE_SCHEMA_EVOLUTION = TRUE MATCH_BY_COLUMN_NAME = CASE_INSENSITIVE ALLOW_V3_EXPRESSION_DEFAULTS = TRUE TIME_TRAVEL_TIMESTAMP_SOURCE = 'SNOWFLAKE_METADATA' ;"
+expect = "accept"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-dynamic-table.set"
+kind = "interaction_all_options"
+note = "every independent option of one production together"
+reason = "D113 [page misreading]: the all-options row combines options the page forbids together (a corrected row applies the page rule); the page says “You cannot set the CONTACT property with other properties in the same statement”; the combined SQL is observed, not scored"
+
+[[limit]]
+form = "sf.ddl.alter-dynamic-table.set"
+kind = "interaction_all_options"
+note = "every independent option of one production together, observed"
+anchor = "doc.sql.alter-dynamic-table / Syntax"
+sql = "ALTER DYNAMIC TABLE IF EXISTS v1 SET TARGET_LAG = '1 minute' SCHEDULER = DISABLE WAREHOUSE = v1 INITIALIZATION_WAREHOUSE = v1 DATA_RETENTION_TIME_IN_DAYS = 1 MAX_DATA_EXTENSION_TIME_IN_DAYS = 1 DEFAULT_DDL_COLLATION = 'm' LOG_LEVEL = 'm' CONTACT ( STEWARD = v1 , STEWARD = v1 ) FROZEN WHERE ( 1 ) EXECUTE AS USER v1 USE SECONDARY ROLES ALL ROW_TIMESTAMP = TRUE ;"
+expect = "observe"
+context = "raw"
+
+# D113 [page misreading]: the all-options row combined options the page forbids together (the page says “You cannot set the CONTACT property with other properties in the same statement”); this row applies the rule, and the observed row above stays observed.
+[[limit]]
+form = "sf.ddl.alter-dynamic-table.set"
+kind = "interaction_all_options"
+note = "every independent option of one production together, with the page's combination rules applied"
+anchor = "doc.sql.alter-dynamic-table / Syntax"
+sql = "ALTER DYNAMIC TABLE IF EXISTS v1 SET TARGET_LAG = '1 minute' SCHEDULER = DISABLE WAREHOUSE = v1 INITIALIZATION_WAREHOUSE = v1 DATA_RETENTION_TIME_IN_DAYS = 1 MAX_DATA_EXTENSION_TIME_IN_DAYS = 1 DEFAULT_DDL_COLLATION = 'm' LOG_LEVEL = 'm' FROZEN WHERE ( 1 ) EXECUTE AS USER v1 USE SECONDARY ROLES ALL ROW_TIMESTAMP = TRUE ;"
+expect = "accept"
+context = "raw"
+
+# D113 (auditor, 6d30f37b low 1): the neighbour without EXTERNAL parses; observed (D97 settle rule).
+
+[[suppress]]
+form = "sf.ddl.create-external-function.function"
+kind = "negative_neighbour"
+note = "the form without its required EXTERNAL"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 1420 (phase semantic_error, import-20261104-42, receipted under the sibling case id sf.ddl.create-external-function.function-returns-api-integration-as.ke098a77f66b4), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.ddl.create-external-function.function"
+kind = "negative_neighbour"
+note = "the form without its required EXTERNAL, observed"
+anchor = "doc.sql.create-external-function / Syntax"
+sql = "CREATE FUNCTION v1 ( ) RETURNS INT API_INTEGRATION = v1 AS 'm' ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.create-external-function.function-returns-api-integration-as"
+kind = "negative_neighbour"
+note = "the form without its required EXTERNAL"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 1420 (phase semantic_error, import-20261104-42, receipted under the sibling case id sf.ddl.create-external-function.function-returns-api-integration-as.ke098a77f66b4), so it is not a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.ddl.create-external-function.function-returns-api-integration-as"
+kind = "negative_neighbour"
+note = "the form without its required EXTERNAL, observed"
+anchor = "doc.sql.create-external-function / Syntax"
+sql = "CREATE FUNCTION v1 ( ) RETURNS INT API_INTEGRATION = v1 AS 'm' ;"
 expect = "observe"
 context = "raw"

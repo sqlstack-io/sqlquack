@@ -25846,12 +25846,6 @@ required = true
 note = "the form without its required { TRUE | FALSE } in [ ROW_TIMESTAMP = { TRUE | FALSE } ]"
 
 [[obligation]]
-id = "sf.ddl.alter-dynamic-table.set.o091"
-kind = "interaction_all_options"
-required = true
-note = "every independent option of one production together"
-
-[[obligation]]
 id = "sf.ddl.alter-dynamic-table.set.o092"
 kind = "identifier_class"
 required = true
@@ -25977,6 +25971,20 @@ required = true
 target = "<contact_name>"
 anchor = "doc.sql.alter-dynamic-table / Syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance), observed"
+
+[[obligation]]
+id = "sf.ddl.alter-dynamic-table.set.o117"
+kind = "interaction_all_options"
+required = true
+anchor = "doc.sql.alter-dynamic-table / Syntax"
+note = "every independent option of one production together, observed"
+
+[[obligation]]
+id = "sf.ddl.alter-dynamic-table.set.o118"
+kind = "interaction_all_options"
+required = true
+anchor = "doc.sql.alter-dynamic-table / Syntax"
+note = "every independent option of one production together, with the page's combination rules applied"
 
 [[obligation]]
 id = "sf.ddl.alter-dynamic-table.set-unset-comment.o001"
@@ -44194,6 +44202,13 @@ required = true
 target = "[ , <purpose> = <contact_name> ... ]"
 anchor = "doc.sql.alter-iceberg-table / Syntax"
 note = "option absent [ , <purpose> = <contact_name> ... ], observed"
+
+[[obligation]]
+id = "sf.ddl.alter-iceberg-table.set.o142"
+kind = "interaction_all_options"
+required = true
+anchor = "doc.sql.alter-iceberg-table / Syntax"
+note = "every independent option of one production together, with the page's combination rules applied"
 
 [[obligation]]
 id = "sf.ddl.alter-iceberg-table.tablecolumnaction.o001"
@@ -126589,12 +126604,6 @@ required = true
 note = "the form without its required ALTER in [ OR ALTER ]"
 
 [[obligation]]
-id = "sf.ddl.create-external-function.function.o018"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required EXTERNAL"
-
-[[obligation]]
 id = "sf.ddl.create-external-function.function.o005"
 kind = "negative_neighbour"
 required = true
@@ -126661,6 +126670,13 @@ required = true
 target = "<api_integration_name>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.ddl.create-external-function.function.o028"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.create-external-function / Syntax"
+note = "the form without its required EXTERNAL, observed"
 
 [[obligation]]
 id = "sf.ddl.create-external-function.function-returns-api-integration-as.o001"
@@ -127184,12 +127200,6 @@ required = true
 note = "the form without its required REPLACE in [ OR REPLACE ]"
 
 [[obligation]]
-id = "sf.ddl.create-external-function.function-returns-api-integration-as.o083"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required EXTERNAL"
-
-[[obligation]]
 id = "sf.ddl.create-external-function.function-returns-api-integration-as.o084"
 kind = "negative_neighbour"
 required = true
@@ -127368,6 +127378,13 @@ required = true
 target = "<arg_name> in [ <arg_name> <arg_data_type> ]"
 anchor = "doc.sql.create-external-function / Syntax"
 note = "omit <arg_name>, observed"
+
+[[obligation]]
+id = "sf.ddl.create-external-function.function-returns-api-integration-as.o110"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.create-external-function / Syntax"
+note = "the form without its required EXTERNAL, observed"
 
 [[obligation]]
 id = "sf.ddl.create-external-table.cloudproviderparams-location-externalstage-file-format.o001"
