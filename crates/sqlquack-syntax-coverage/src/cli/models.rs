@@ -52,6 +52,13 @@ pub enum Command {
         #[command(flatten)]
         common: Common,
     },
+    /// Every form whose reviews are all stale, with its fingerprint and what each review recorded.
+    Stale {
+        #[arg(long)]
+        family: Option<String>,
+        #[command(flatten)]
+        common: Common,
+    },
     /// Counts per documentation page, a secondary view of the same forms.
     Pages {
         #[arg(long)]

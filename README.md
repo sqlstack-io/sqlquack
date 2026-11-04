@@ -167,6 +167,9 @@ See [docs/architecture.md](docs/architecture.md).
 evidence guard) and `make test` runs the tests. CI runs both with `RECORDER=0`, which leaves the
 recorder out.
 
+`make check-merge RECORDER=0` is what a merge to main must pass on its exact head: the static gate
+and the Rust tests.
+
 `make gate` runs everything CI runs: the static gate, the tests, the replay of every recorded case,
 the exact parser check and timed conversion over DuckShop and DuckShop 10K, and a fuzz smoke run.
 It needs a nightly toolchain with `cargo-fuzz` for the fuzz step, and fetches and compiles the

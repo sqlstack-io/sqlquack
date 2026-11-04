@@ -47,3 +47,29 @@ pub(crate) struct AcceptanceTestCase {
     pub(crate) dialect: Dialect,
     pub(crate) expected_accepted: bool,
 }
+
+pub(crate) struct ScriptingStructureTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) sql: &'static str,
+    pub(crate) expected_fields: Vec<(&'static str, Value)>,
+}
+
+pub(crate) struct ScriptingVerdictTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) sql: &'static str,
+    pub(crate) expected_error: Option<&'static str>,
+}
+
+pub(crate) struct ScriptingDialectTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) sql: &'static str,
+    pub(crate) dialect: Dialect,
+    pub(crate) expected_root: Result<&'static str, ()>,
+}
+
+pub(crate) struct ScriptingWalkTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) sql: &'static str,
+    pub(crate) expected_literals: Vec<&'static str>,
+    pub(crate) expected_columns: Vec<&'static str>,
+}

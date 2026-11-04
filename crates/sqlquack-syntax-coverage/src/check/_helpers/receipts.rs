@@ -47,7 +47,7 @@ fn expected(case: &Case, phase: Phase) -> bool {
 }
 
 /// Whether the local verdict agrees with the phase (any clean one for `terminates`), syntax only.
-fn agreement(phase: Phase, local: LocalVerdict, terminates: bool) -> Result<bool, Reason> {
+fn agreement(phase: Phase, local: &LocalVerdict, terminates: bool) -> Result<bool, Reason> {
     match (phase, local) {
         (_, LocalVerdict::Failed { .. }) => Err(Reason::LocalParseFailure),
         _ if terminates => Ok(false),
@@ -55,9 +55,9 @@ fn agreement(phase: Phase, local: LocalVerdict, terminates: bool) -> Result<bool
         (Phase::SyntaxError, LocalVerdict::Accepted { .. }) | (_, LocalVerdict::Rejected) => {
             Err(Reason::Disagreement)
         }
-        (_, LocalVerdict::Accepted { opaque: true }) => Err(Reason::OpaqueFallback),
-        (Phase::Accepted, LocalVerdict::Accepted { opaque: false }) => Ok(false),
-        (_, LocalVerdict::Accepted { opaque: false }) => Ok(true),
+        (_, LocalVerdict::Accepted { opaque: true, .. }) => Err(Reason::OpaqueFallback),
+        (Phase::Accepted, LocalVerdict::Accepted { opaque: false, .. }) => Ok(false),
+        (_, LocalVerdict::Accepted { opaque: false, .. }) => Ok(true),
     }
 }
 
@@ -72,13 +72,14 @@ pub(crate) fn case_result(case: &Case, receipts: &[&Receipt], local: LocalVerdic
             Ok(phase) if !expected(case, phase) => {
                 (Some(phase), Some(Reason::UnexpectedOutcome), false)
             }
-            Ok(phase) => match agreement(phase, local, case.expect == Some(Expect::Terminates)) {
+            Ok(phase) => match agreement(phase, &local, case.expect == Some(Expect::Terminates)) {
                 Ok(semantic_only) => (Some(phase), None, semantic_only),
                 Err(reason) => (Some(phase), Some(reason), false),
             },
         };
     CaseResult {
         case_id: case.case_id.clone(),
+        sql_sha256: case.sql_sha256.clone(),
         phase,
         local,
         reason,

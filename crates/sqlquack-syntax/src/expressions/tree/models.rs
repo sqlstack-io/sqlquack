@@ -412,6 +412,7 @@ use crate::expressions::statements::models::ReplacePartition;
 use crate::expressions::statements::models::Revoke;
 use crate::expressions::statements::models::Rollback;
 use crate::expressions::statements::models::Schema;
+use crate::expressions::statements::models::ScriptingBlock;
 use crate::expressions::statements::models::SequenceProperties;
 use crate::expressions::statements::models::SessionParameter;
 use crate::expressions::statements::models::Set;
@@ -1203,6 +1204,7 @@ pub enum Expression {
     Show(Box<Show>),
 
     Command(Box<Command>),
+    ScriptingBlock(Box<ScriptingBlock>),
     Kill(Box<Kill>),
     /// PREPARE statement (PostgreSQL/generic prepared statement definition)
     Prepare(Box<PrepareStatement>),

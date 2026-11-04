@@ -43,3 +43,11 @@ pub(crate) struct QuotingTreesTestCase {
     pub(crate) sqlquack: String,
     pub(crate) expected_match: bool,
 }
+
+pub(crate) struct StructuredTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) sql: &'static str,
+    pub(crate) polyglot: &'static str,
+    pub(crate) sqlquack: &'static str,
+    pub(crate) expected_match: bool,
+}

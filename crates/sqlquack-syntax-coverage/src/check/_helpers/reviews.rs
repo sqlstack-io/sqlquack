@@ -2,12 +2,17 @@
 
 use std::collections::{BTreeMap, BTreeSet};
 
-use crate::check::models::Reason;
+use crate::check::models::{FamilyContext, Reason};
 use crate::formats::constants::{CATALOGUE_DIR, OBLIGATIONS_DIR, SOURCES_FILE};
 use crate::formats::models::{Review, ReviewVerdict, Source, SourceStatus};
 
-/// Whether `review` is approved and bound to the current files, and a family review to the tree.
-fn current(review: &Review, hashes: &BTreeMap<String, String>, parser_tree: Option<&str>) -> bool {
+/// Whether `review` is approved and current: its files, then the form's fingerprint or the tree.
+fn current(
+    review: &Review,
+    hashes: &BTreeMap<String, String>,
+    parser_tree: Option<&str>,
+    form: Option<(&str, &str)>,
+) -> bool {
     let bound = |hash: &Option<String>, path: String| {
         hash.as_ref()
             .is_some_and(|hash| hashes.get(&path) == Some(hash))
@@ -24,9 +29,16 @@ fn current(review: &Review, hashes: &BTreeMap<String, String>, parser_tree: Opti
             )
         }
     };
+    let recorded: Option<bool> = form.and_then(|(form, fingerprint)| {
+        review
+            .fingerprints
+            .get(form)
+            .map(|recorded| recorded == fingerprint)
+    });
     let tree: bool = match review.family.as_str() {
         "" => true,
-        _ => parser_tree.is_some() && parser_tree == review.parser_tree.as_deref(),
+        _ => recorded
+            .unwrap_or(parser_tree.is_some() && parser_tree == review.parser_tree.as_deref()),
     };
     review.verdict == ReviewVerdict::Approved && files && tree
 }
@@ -40,13 +52,13 @@ fn names(review: &Review, form: &str) -> bool {
             .is_none_or(|forms| forms.iter().any(|listed| listed == form))
 }
 
-/// Why `form` lacks a current review, if it does.
+/// Why `form`, whose fingerprint is `fingerprint`, lacks a current review, if it does.
 pub(crate) fn review_reason(
     form: &str,
-    reviews: &[Review],
-    hashes: &BTreeMap<String, String>,
-    parser_tree: Option<&str>,
+    fingerprint: &str,
+    context: &FamilyContext,
 ) -> Option<Reason> {
+    let (reviews, hashes, parser_tree) = (context.reviews, context.hashes, context.parser_tree);
     let mut named = reviews
         .iter()
         .filter(|review| names(review, form))
@@ -54,7 +66,8 @@ pub(crate) fn review_reason(
     if named.peek().is_none() {
         return Some(Reason::Unreviewed);
     }
-    (!named.any(|review| current(review, hashes, parser_tree))).then_some(Reason::StaleReview)
+    (!named.any(|review| current(review, hashes, parser_tree, Some((form, fingerprint)))))
+        .then_some(Reason::StaleReview)
 }
 
 /// The form and source ids that current approved reviews exclude.
@@ -65,7 +78,7 @@ pub(crate) fn current_exclusions(
 ) -> (BTreeSet<String>, BTreeSet<String>) {
     let exclusions = reviews
         .iter()
-        .filter(|review| current(review, hashes, parser_tree))
+        .filter(|review| current(review, hashes, parser_tree, None))
         .flat_map(|review| &review.exclusions);
     let forms: BTreeSet<String> = exclusions.clone().filter_map(|e| e.form.clone()).collect();
     let sources: BTreeSet<String> = exclusions.filter_map(|e| e.source.clone()).collect();

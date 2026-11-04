@@ -5,7 +5,6 @@ use crate::expressions::names::models::TableRef;
 use crate::expressions::queries::models::Join;
 use crate::expressions::queries::models::Where;
 use crate::expressions::schema_objects::models::FunctionSecurity;
-use crate::expressions::statements::models::Command;
 use crate::expressions::statements::models::Delete;
 use crate::expressions::statements::models::Paren;
 use crate::expressions::statements::models::Raw;
@@ -518,51 +517,13 @@ impl Parser {
         }
     }
 
+    /// In Snowflake every DECLARE opens a scripting block; there is no standalone DECLARE.
     pub(crate) fn check_snowflake_scripting_block(&self) -> bool {
         self.check(TokenType::Declare)
-            && (1..self.tokens.len().saturating_sub(self.current))
-                .take(128)
-                .any(|i| {
-                    self.peek_nth(i)
-                        .is_some_and(|t| t.token_type == TokenType::Begin)
-                })
     }
 
+    /// The structured block, parsed by its own owner.
     pub(crate) fn parse_raw_scripting_block(&mut self) -> Result<Expression> {
-        let start = self.current;
-        let start_pos = self.peek().span.start;
-        let mut depth = 0usize;
-        let mut seen_begin = false;
-
-        while !self.is_at_end() {
-            if self.check(TokenType::Begin) {
-                seen_begin = true;
-                depth += 1;
-            } else if self.check(TokenType::End) && seen_begin {
-                depth = depth.saturating_sub(1);
-                self.skip();
-                if depth == 0 {
-                    break;
-                }
-                continue;
-            }
-
-            self.skip();
-        }
-
-        let command_text = if self.source.is_some() {
-            let end_pos = if self.current > start {
-                self.tokens[self.current - 1].span.end
-            } else {
-                start_pos
-            };
-            self.source_text_range(start_pos, end_pos)
-        } else {
-            self.tokens_to_sql(start, self.current)
-        };
-
-        Ok(Expression::Command(Box::new(Command {
-            this: command_text,
-        })))
+        self.parse_scripting_block()
     }
 }
