@@ -173,6 +173,34 @@ committed one.
 - Optional `supersedes_receipt_sha256`: the SHA-256 of a published receipt line of the same case,
   hashed without its newline, that this receipt replaces.
 
+### Reconciled runs
+
+The importer reads a run only when its audit has one `complete` event whose `raw_sha256` is the
+hash of `capture/raw.jsonl`. A run that stopped before writing that event can instead carry a
+`reconciliation.json` in the format `sqlquack-run-reconciliation/1` (decision D108). The importer
+then reports the run as `reconciled` instead of `imported`, and its report counts
+`reconciled_receipts`. It refuses the whole run when:
+
+- the audit also has a `complete` event;
+- the record's `format`, `status`, `run_id`, `audit_sha256`, `packet_sha256` or
+  `recording_session_id` do not bind this run's audit;
+- it lacks the `failure`, `inventory_check` or `raw_records` evidence, or `observed_cleanup` with
+  its `drop_query_id`, `drop_status` and `dropped`. The importer checks that this evidence is
+  present but does not score it;
+- `raw_records.count` is not the number of `raw_records.records`, or their `index` is not 0, 1, 2
+  and so on.
+
+Each raw line must be listed in `raw_records.records` under its case `id`, with `sha256` equal to
+the line's hash without its newline (the receipt's `raw_record_sha256`). An unlisted line, a
+line whose hash differs and a listed record with no line are refused one by one.
+
+A DDL run's record may hold one `unrecorded_submission` from query history, for a case it
+submitted without writing a raw record. It becomes a receipt only when its `source` is
+`query_history`, it has a `query_id`, and both `sql_sha256` and `query_text_sha256` equal the
+hash of the case SQL. Its `raw_record_sha256` is the hash of the entry as canonical JSON. Query
+history has no SQLSTATE, so `sqlstate` is null. The warehouse version comes from the run's last
+raw record, and `phase_basis` says so.
+
 A receipt is evidence only while it is current. A later receipt can supersede it, or the run report
 beside its file can withdraw it: the report's `withdrawn` list names withdrawn receipts by
 `receipt_sha256`. A retired receipt stays published but is dropped before checking. A

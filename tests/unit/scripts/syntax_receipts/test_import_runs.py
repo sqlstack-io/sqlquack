@@ -7,6 +7,7 @@ from pathlib import Path
 
 import pytest
 
+from scripts.syntax_receipts._helpers.hashing import canonical_json
 from scripts.syntax_receipts._helpers.receipts import classify, reason_category
 from scripts.syntax_receipts.main.import_runs import run_import
 from scripts.syntax_receipts.models import Imported
@@ -15,6 +16,7 @@ from tests.unit.scripts.syntax_receipts._test_types import (
     BindingTestCase,
     ClassifyTestCase,
     OverwriteTestCase,
+    ReconciledRunTestCase,
     RefusedRunTestCase,
     RepublishTestCase,
     SetupRunTestCase,
@@ -27,11 +29,14 @@ from tests.unit.scripts.syntax_receipts.helpers import (
     imported_run,
     packet_case,
     sha,
+    unrecorded_submission,
+    write_reconciliation,
     write_run,
 )
 
 _GOOD: str = "BEGIN RETURN 1; END;"
 _OTHER: str = "BEGIN RETURN 2; END;"
+_BROKEN: str = "CREATE mTASK t AS SELECT 1"
 _FIXTURE: list[str] = ['CREATE TABLE "ORDERS" ("ID" INTEGER)']
 _SYNTAX_ROW: dict[str, object] = error_row(
     case_id="c1", sql=_GOOD, errno=1003, message="SQL compilation error:\nsyntax error"
@@ -414,3 +419,158 @@ def test_given_published_phase_changed_when_imported_then_it_is_superseded_expli
     assert len(new) == test_case.expected_new_receipts, test_case.description
     assert all("supersedes_receipt_sha256" in r for r in new), test_case.description
     assert [(w["case_id"], w["phase"]) for w in report["withdrawn"]] == test_case.expected_withdrawn
+
+
+def _unlist_second(record: Row) -> None:
+    raw: Row = record["raw_records"]
+    raw["records"] = raw["records"][:1]
+    raw["count"] = 1
+
+
+def _change_first_hash(record: Row) -> None:
+    record["raw_records"]["records"][0]["sha256"] = "0" * 64
+
+
+def _list_absent(record: Row) -> None:
+    raw: Row = record["raw_records"]
+    raw["records"].append({"index": 2, "id": "c9", "sha256": "0" * 64})
+    raw["count"] = 3
+
+
+@pytest.mark.parametrize(
+    "test_case",
+    (
+        ReconciledRunTestCase(
+            description="a stalled run's listed records and its query-history submission",
+            edit=lambda record: None,
+            expected_receipts=["c1", "c2", "c3"],
+            expected_refusals=[],
+        ),
+        ReconciledRunTestCase(
+            description="a raw record the reconciliation does not list",
+            edit=_unlist_second,
+            expected_receipts=["c1", "c3"],
+            expected_refusals=[("c2", "raw record is not listed in the run's reconciliation")],
+        ),
+        ReconciledRunTestCase(
+            description="a raw record whose hash differs from the reconciliation",
+            edit=_change_first_hash,
+            expected_receipts=["c2", "c3"],
+            expected_refusals=[("c1", "raw record hash differs from the run's reconciliation")],
+        ),
+        ReconciledRunTestCase(
+            description="a listed record the run never recorded",
+            edit=_list_absent,
+            expected_receipts=["c1", "c2", "c3"],
+            expected_refusals=[("c9", "listed in the run's reconciliation but absent")],
+        ),
+        ReconciledRunTestCase(
+            description="a query-history submission without a query id",
+            edit=lambda record: record["unrecorded_submission"].pop("query_id"),
+            expected_receipts=["c1", "c2"],
+            expected_refusals=[("c3", "carries no query-history query id")],
+        ),
+        ReconciledRunTestCase(
+            description="a query-history submission whose SQL hash is not the case SQL",
+            edit=lambda record: record["unrecorded_submission"].update(
+                sql_sha256=sha(_OTHER.encode()), query_text_sha256=sha(_OTHER.encode())
+            ),
+            expected_receipts=["c1", "c2"],
+            expected_refusals=[("c3", "SQL hash does not match the packet's exact SQL")],
+        ),
+        ReconciledRunTestCase(
+            description="a query-history submission whose query text is not the case SQL",
+            edit=lambda record: record["unrecorded_submission"].update(
+                query_text_sha256=sha(_OTHER.encode())
+            ),
+            expected_receipts=["c1", "c2"],
+            expected_refusals=[("c3", "unrecorded submission SQL hash does not match")],
+        ),
+        ReconciledRunTestCase(
+            description="a run with both a complete event and a reconciliation",
+            edit=lambda record: None,
+            complete=True,
+            expected_receipts=[],
+            expected_refusals=[("*", "a complete event and a reconciliation record")],
+        ),
+        ReconciledRunTestCase(
+            description="a reconciliation bound to another audit",
+            edit=lambda record: record.update(audit_sha256="0" * 64),
+            expected_receipts=[],
+            expected_refusals=[("*", "does not bind this run: audit_sha256")],
+        ),
+        ReconciledRunTestCase(
+            description="a reconciliation without cleanup evidence",
+            edit=lambda record: record["observed_cleanup"].pop("drop_query_id"),
+            expected_receipts=[],
+            expected_refusals=[("*", "has no observed_cleanup.drop_query_id")],
+        ),
+        ReconciledRunTestCase(
+            description="a reconciliation without an inventory check",
+            edit=lambda record: record.pop("inventory_check"),
+            expected_receipts=[],
+            expected_refusals=[("*", "has no inventory_check")],
+        ),
+        ReconciledRunTestCase(
+            description="a stalled run with neither a complete event nor a reconciliation",
+            edit=lambda record: None,
+            reconcile=False,
+            expected_receipts=[],
+            expected_refusals=[("*", "0 complete events")],
+        ),
+    ),
+    ids=lambda case: case.description,
+)
+def test_given_a_run_without_a_complete_event_when_reconciled_then_only_listed_records_import(
+    test_case: ReconciledRunTestCase, tmp_path: Path
+) -> None:
+    run: Path = write_run(
+        root=tmp_path,
+        rows=[
+            {**accepted_row(case_id="c1", sql=_GOOD), "case_schema": "C0000"},
+            {**error_row(case_id="c2", sql=_OTHER, errno=2003, message="SQL compilation error: x")},
+        ],
+        packet=[
+            packet_case(case_id="c1", sql=_GOOD),
+            packet_case(case_id="c2", sql=_OTHER),
+            packet_case(case_id="c3", sql=_BROKEN),
+        ],
+        start={"run_database": "SQLQUACK_DDL_ABC123", "setup": []},
+        complete=test_case.complete,
+    )
+    record: Row = write_reconciliation(
+        run=run, unrecorded=unrecorded_submission(case_id="c3", sql=_BROKEN)
+    )
+    test_case.edit(record)
+    if test_case.reconcile:
+        (run / "reconciliation.json").write_text(json.dumps(record))
+    out: Path = tmp_path / "out"
+
+    run_import(
+        [
+            str(tmp_path / "runs"),
+            str(out / "r.jsonl"),
+            str(out / "report.json"),
+            str(tmp_path / "inputs"),
+        ]
+    )
+
+    receipts: list[Row] = [json.loads(line) for line in (out / "r.jsonl").read_text().splitlines()]
+    report: Row = json.loads((out / "report.json").read_text())
+    assert [r["case_id"] for r in receipts] == test_case.expected_receipts
+    assert len(report["refusals"]) == len(test_case.expected_refusals), report["refusals"]
+    for refused, (row_id, fragment) in zip(
+        report["refusals"], test_case.expected_refusals, strict=True
+    ):
+        assert (refused["row_id"], fragment in refused["reason"]) == (row_id, True), refused
+    reconciled: bool = report["runs"][0]["status"] == "reconciled"
+    assert report["reconciled_receipts"] == (len(receipts) if reconciled else 0)
+    for row in receipts:
+        if row["case_id"] == "c3":
+            assert (row["phase"], row["sqlstate"], row["query_id"], row["recorded_at"]) == (
+                "syntax_error",
+                None,
+                "q-unrecorded",
+                "2026-11-04T08:18:07.366000+00:00",
+            )
+            assert row["raw_record_sha256"] == sha(canonical_json(record["unrecorded_submission"]))

@@ -2,7 +2,10 @@
 
 from __future__ import annotations
 
+from collections.abc import Callable
 from dataclasses import dataclass
+
+from scripts.syntax_receipts.types import Row
 
 
 @dataclass(frozen=True)
@@ -71,3 +74,13 @@ class SupersedeTestCase:
     published_phase: str
     expected_new_receipts: int
     expected_withdrawn: list[tuple[str, str]]
+
+
+@dataclass(frozen=True)
+class ReconciledRunTestCase:
+    description: str
+    edit: Callable[[Row], object]
+    expected_receipts: list[str]
+    expected_refusals: list[tuple[str, str]]
+    complete: bool = False
+    reconcile: bool = True

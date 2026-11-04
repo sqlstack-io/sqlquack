@@ -29,6 +29,19 @@ PACKET_SUFFIXES: tuple[str, ...] = (".jsonl", ".json")
 START_EVENT: str = "start"
 RECORDING_SESSION_EVENT: str = "recording_session"
 COMPLETE_EVENT: str = "complete"
+RECONCILIATION_FILE: str = "reconciliation.json"
+RECONCILIATION_FORMAT: str = "sqlquack-run-reconciliation/1"
+RECONCILED_STATUS: str = "reconciled"
+UNRECORDED_KEY: str = "unrecorded_submission"
+QUERY_HISTORY_SOURCE: str = "query_history"
+QUERY_HISTORY_SUCCESS: str = "SUCCESS"
+RECONCILIATION_EVIDENCE: tuple[str, ...] = (
+    "failure",
+    "observed_cleanup",
+    "inventory_check",
+    "raw_records",
+)
+CLEANUP_EVIDENCE: tuple[str, ...] = ("drop_query_id", "drop_status", "dropped")
 SQL_KEY: str = "sql"
 RUN_DATABASE_KEY: str = "run_database"
 PROPOSAL_KEY: str = "proposal_sha256"

@@ -20,11 +20,12 @@ class Imported:
 
 @dataclass(frozen=True)
 class CaptureRun:
-    """A run directory with its audit events and the hash of its audit bytes."""
+    """A run directory with its audit events, the hash of its audit bytes and any reconciliation."""
 
     path: Path
     events: list[Row]
     audit_sha: str
+    reconciliation: Row | None = None
 
 
 @dataclass(frozen=True)

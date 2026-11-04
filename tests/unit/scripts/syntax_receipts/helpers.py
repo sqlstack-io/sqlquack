@@ -9,6 +9,7 @@ from pathlib import Path
 from scripts.syntax_receipts._helpers.runs import import_runs
 from scripts.syntax_receipts.main.import_runs import run_import
 from scripts.syntax_receipts.models import Imported
+from scripts.syntax_receipts.types import Row
 
 
 def sha(data: bytes) -> str:
@@ -43,7 +44,8 @@ def write_run(
     packet: list[dict[str, object]],
     raw_hash: str | None = None,
     start: dict[str, object] | None = None,
-) -> None:
+    complete: bool = True,
+) -> Path:
     """One run under `root`/runs bound to a packet under `root`/inputs; scripting by default."""
     inputs: Path = root / "inputs"
     inputs.mkdir(parents=True, exist_ok=True)
@@ -53,7 +55,7 @@ def write_run(
     (run / "capture").mkdir(parents=True)
     raw: bytes = b"".join(json.dumps(row).encode() + b"\n" for row in rows)
     (run / "capture" / "raw.jsonl").write_bytes(raw)
-    events: list[dict[str, object]] = [
+    events: list[Row] = [
         {
             "event": "start",
             "packet_sha256": sha(packet_bytes),
@@ -62,10 +64,60 @@ def write_run(
             "submission": "anonymous block, as-is",
             **(start or {}),
         },
-        {"event": "recording_session", "identity_checked": True},
+        {"event": "recording_session", "identity_checked": True, "session_id": "S1"},
         {"event": "complete", "raw_sha256": raw_hash or sha(raw)},
-    ]
+    ][: 3 if complete else 2]
     (run / "audit.jsonl").write_text("".join(json.dumps(e) + "\n" for e in events))
+    return run
+
+
+def write_reconciliation(*, run: Path, unrecorded: Row | None) -> Row:
+    """A reconciliation record binding `run` as it stands, listing each raw line by hash."""
+    audit: bytes = (run / "audit.jsonl").read_bytes()
+    raw: bytes = (run / "capture" / "raw.jsonl").read_bytes()
+    lines: list[bytes] = [line for line in raw.split(b"\n") if line.strip()]
+    record: Row = {
+        "format": "sqlquack-run-reconciliation/1",
+        "status": "reconciled",
+        "run_id": run.name,
+        "audit_sha256": sha(audit),
+        "packet_sha256": json.loads(audit.splitlines()[0])["packet_sha256"],
+        "recording_session_id": "S1",
+        "failure": {"cause": "client-side stall"},
+        "observed_cleanup": {
+            "drop_query_id": "q-drop",
+            "drop_status": "SUCCESS",
+            "dropped": "SQLQUACK_DDL_ABC123",
+        },
+        "inventory_check": {"counts_equal": True, "run_owned_names_remaining": []},
+        "raw_records": {
+            "count": len(lines),
+            "file_sha256": sha(raw),
+            "records": [
+                {"index": index, "id": json.loads(line)["id"], "sha256": sha(line)}
+                for index, line in enumerate(lines)
+            ],
+        },
+    }
+    if unrecorded is not None:
+        record["unrecorded_submission"] = unrecorded
+    return record
+
+
+def unrecorded_submission(*, case_id: str, sql: str) -> Row:
+    """A query-history entry for a case the run submitted but did not record."""
+    return {
+        "case_id": case_id,
+        "case_schema": "C0002",
+        "sql_sha256": sha(sql.encode()),
+        "query_text_sha256": sha(sql.encode()),
+        "query_id": "q-unrecorded",
+        "start_time": "2026-11-04 08:18:07.366000+00:00",
+        "execution_status": "FAILED_WITH_ERROR",
+        "errno": 1003,
+        "error_message": "SQL compilation error:\nsyntax error line 1 at position 7",
+        "source": "query_history",
+    }
 
 
 def imported_run(
