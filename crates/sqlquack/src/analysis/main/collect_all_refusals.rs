@@ -13,6 +13,8 @@ use sqlquack_rules::conversion::main::quoted_exclusions::quoted_exclusions;
 use sqlquack_rules::conversion::models::{CollectedRefusals, ConversionOptions};
 use sqlquack_semantics::types::models::Schema;
 
+use crate::analysis::_helpers::placed::placed;
+
 /// The refusals of every statement; the conversions found on the way are discarded.
 pub fn collect_all_refusals(
     sql: &str,
@@ -49,7 +51,12 @@ pub fn collect_all_refusals(
             continue;
         }
         let collected = collect_refusals(statement, (schema, options, &lines));
-        all.refusals.extend(collected.refusals);
+        all.refusals.extend(
+            collected
+                .refusals
+                .into_iter()
+                .map(|refusal| placed(refusal, statement, &lines)),
+        );
         all.possibly_incomplete |= collected.possibly_incomplete;
         all.columns = match statements.len() {
             1 => collected.columns,

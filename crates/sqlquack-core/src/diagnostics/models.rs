@@ -53,8 +53,9 @@ pub struct DiagnosticSpan {
     pub end_column: usize,
 }
 
-/// One diagnostic, the same for the command line and the Python API.
+/// One diagnostic, the same for the command line and the Python API; built only from the registry.
 #[derive(Clone, Debug, PartialEq, Eq, Serialize)]
+#[non_exhaustive]
 pub struct Diagnostic {
     /// How serious it is.
     pub severity: Severity,

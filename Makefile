@@ -30,9 +30,14 @@ format:
 	cargo fmt --all
 	uv run ruff format .
 
+# Library and binary code reports failures as values and never panics; tests may.
+NO_PANIC_LINTS := -D clippy::unwrap_used -D clippy::expect_used -D clippy::panic \
+  -D clippy::unreachable -D clippy::todo -D clippy::unimplemented
+
 rust-lint:
 	cargo fmt --all --check
 	cargo clippy --workspace --all-targets --locked -- -D warnings
+	cargo clippy --workspace --lib --bins --locked -- -D warnings $(NO_PANIC_LINTS)
 
 python-check:
 	uv run ruff format --check .

@@ -620,6 +620,12 @@ fn given_a_python_call_the_conversion_would_repeat_or_batch_when_converting_then
             "{}",
             test_case.description
         );
+        assert_eq!(
+            report["refusals"][0]["span"]["line"].as_u64(),
+            Some(1),
+            "{}: the refusal points into the statement",
+            test_case.description
+        );
     }
 }
 

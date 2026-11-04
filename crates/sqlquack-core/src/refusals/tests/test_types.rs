@@ -40,4 +40,5 @@ pub(crate) struct RejectionTestCase {
     pub(crate) description: &'static str,
     pub(crate) sql: &'static str,
     pub(crate) expected_rejections: Vec<&'static str>,
+    pub(crate) expected_codes: Vec<&'static str>,
 }

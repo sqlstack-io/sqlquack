@@ -172,7 +172,7 @@ pub(crate) fn violations_of(input: &str, limit: Duration) -> Vec<String> {
                     })
                 })
             }),
-            "a diagnostic span falls outside the input",
+            "a parse diagnostic has no span or one outside the input",
         ),
         (
             rendered.as_ref().is_some_and(|(_, text)| {

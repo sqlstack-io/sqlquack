@@ -5,7 +5,6 @@ use sqlquack_core::parsing::main::parse_source::parse_source;
 use sqlquack_syntax::Expression;
 use std::time::{Duration, Instant};
 
-use sqlquack_core::parsing::main::node_location::node_location;
 use sqlquack_core::parsing::models::{SourceDialect, SourceLines};
 use sqlquack_core::refusals::main::refuse_unparsed::refuse_unparsed;
 use sqlquack_core::refusals::types::ConstructPolicy;
@@ -19,6 +18,7 @@ use sqlquack_semantics::types::models::Schema;
 
 use crate::analysis::_helpers::declared_refusals::declared_refusals;
 use crate::analysis::_helpers::override_calls::overrides_applied;
+use crate::analysis::_helpers::placed::placed;
 use crate::analysis::_helpers::volatile_calls::volatile_calls_kept;
 use crate::analysis::models::Analysis;
 
@@ -66,14 +66,14 @@ pub fn analyze(
                 .and_then(|converted| overrides_applied(converted, statement, options))
             {
                 Ok(converted) => analysis.conversions.push(converted),
-                Err(refusal) => analysis.refusals.push(refusal),
+                Err(refusal) => analysis.refusals.push(placed(refusal, statement, &lines)),
             }
         }
     }
     analysis
 }
 
-/// The statement converted within the budget, or its refusal placed at least at the statement.
+/// The statement converted within the budget, or the refusal that stopped it.
 fn convert_within_budget(
     statement: &Expression,
     sql: &str,
@@ -86,14 +86,7 @@ fn convert_within_budget(
         ProvenanceLog::default(),
     );
     let elapsed = started.elapsed();
-    converted
-        .and_then(|converted| within_budget(converted, (sql, elapsed), options))
-        .map_err(|mut refusal| {
-            if refusal.location.is_none() {
-                refusal.location = node_location(statement, lines);
-            }
-            refusal
-        })
+    converted.and_then(|converted| within_budget(converted, (sql, elapsed), options))
 }
 
 /// `converted`, or a refusal when converting it outran the time or size budget.

@@ -1,5 +1,6 @@
 use crate::classification::main::classify::classify;
 use crate::classification::models::Occurrence;
+use crate::diagnostics::main::diagnose::diagnose;
 use crate::parsing::main::parse_source::parse_source;
 use crate::parsing::models::{SourceDialect, SourceLines};
 use crate::refusals::main::refuse_constructs::refuse_constructs;
@@ -51,13 +52,28 @@ pub(crate) fn unparsed_refusal(sql: &str) -> Refusal {
     )
 }
 
-/// The construct names of every Snowflake rejection in `sql`, in order.
-pub(crate) fn rejection_names(sql: &str) -> Vec<String> {
+/// Every Snowflake rejection in `sql`, in order.
+fn rejections(sql: &str) -> Vec<Refusal> {
     let lines = SourceLines::new(sql);
     parse_source(sql, SourceDialect::Snowflake)
         .expect("test SQL parses")
         .iter()
         .flat_map(|statement| snowflake_rejections(statement, &lines))
+        .collect()
+}
+
+/// The construct names of every Snowflake rejection in `sql`, in order.
+pub(crate) fn rejection_names(sql: &str) -> Vec<String> {
+    rejections(sql)
+        .into_iter()
         .filter_map(|refusal| refusal.construct.map(|construct| construct.name))
+        .collect()
+}
+
+/// The diagnostic code of every Snowflake rejection in `sql`, in order.
+pub(crate) fn rejection_codes(sql: &str) -> Vec<&'static str> {
+    diagnose(&rejections(sql), sql)
+        .into_iter()
+        .map(|diagnostic| diagnostic.code)
         .collect()
 }

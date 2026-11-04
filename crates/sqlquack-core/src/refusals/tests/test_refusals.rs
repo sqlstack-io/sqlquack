@@ -1,6 +1,6 @@
 use crate::refusals::models::RefusalCategory;
 use crate::refusals::tests::helpers::{
-    not_expressible_reasons, rejection_names, unmatched_refusals, unparsed_refusal,
+    not_expressible_reasons, rejection_codes, rejection_names, unmatched_refusals, unparsed_refusal,
 };
 use crate::refusals::tests::test_types::{
     ConstructRefusalTestCase, RejectionTestCase, UnparsedTestCase,
@@ -77,12 +77,14 @@ fn given_sql_snowflake_parses_then_rejects_when_refusing_then_each_rejection_is_
             sql: "SELECT 1 INTERSECT ALL SELECT 2; SELECT 1 MINUS ALL SELECT 2; \
                   SELECT 1 UNION ALL SELECT 2; SELECT 1 INTERSECT SELECT 2",
             expected_rejections: vec!["set_operation_all", "set_operation_all"],
+            expected_codes: vec!["SQ0201", "SQ0201"],
         },
         RejectionTestCase {
             description: "FOR UPDATE WAIT is rejected, a plain FOR UPDATE is left to conversion",
             sql: "SELECT order_id FROM orders FOR UPDATE WAIT 7; \
                   SELECT order_id FROM orders FOR UPDATE",
             expected_rejections: vec!["lock_wait"],
+            expected_codes: vec!["SQ0202"],
         },
         RejectionTestCase {
             description: "QUALIFY needs a window in the SELECT list or QUALIFY, not one in a subquery",
@@ -92,17 +94,26 @@ fn given_sql_snowflake_parses_then_rejects_when_refusing_then_each_rejection_is_
                   SELECT order_id FROM orders \
                   QUALIFY (SELECT MAX(price) OVER () FROM orders LIMIT 1) > 1",
             expected_rejections: vec!["qualify_without_window", "qualify_without_window"],
+            expected_codes: vec!["SQ0203", "SQ0203"],
         },
         RejectionTestCase {
             description: "a rejection nested in a CTE is found",
             sql: "WITH both_ids AS (SELECT 1 AS id EXCEPT ALL SELECT 2) SELECT id FROM both_ids",
             expected_rejections: vec!["set_operation_all"],
+
+            expected_codes: vec!["SQ0201"],
         },
     ];
     for test_case in test_cases {
         assert_eq!(
             rejection_names(test_case.sql),
             test_case.expected_rejections,
+            "{}",
+            test_case.description
+        );
+        assert_eq!(
+            rejection_codes(test_case.sql),
+            test_case.expected_codes,
             "{}",
             test_case.description
         );
