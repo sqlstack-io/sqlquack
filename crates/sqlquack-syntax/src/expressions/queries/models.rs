@@ -956,6 +956,23 @@ pub struct ConnectByRoot {
     pub this: Expression,
 }
 
+/// Snowflake RESAMPLE clause on a table: generates rows for gaps in a time series.
+#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct Resample {
+    /// The table being resampled, with its alias
+    pub this: Box<Expression>,
+    /// USING column, the time or number column to resample on
+    pub using: Identifier,
+    /// INCREMENT BY expression, the gap between generated rows
+    pub increment: Expression,
+    /// PARTITION BY expressions
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub partition_by: Vec<Expression>,
+    /// METADATA_COLUMNS calls, each with its optional alias
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub metadata_columns: Vec<(Expression, Option<Identifier>)>,
+}
+
 /// MATCH_RECOGNIZE clause for row pattern matching (Oracle/Snowflake/Presto/Trino)
 #[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct MatchRecognize {

@@ -321,6 +321,7 @@ use crate::expressions::queries::models::PreWhere;
 use crate::expressions::queries::models::Prior;
 use crate::expressions::queries::models::Pseudocolumn;
 use crate::expressions::queries::models::Qualify;
+use crate::expressions::queries::models::Resample;
 use crate::expressions::queries::models::Select;
 use crate::expressions::queries::models::SortBy;
 use crate::expressions::queries::models::Stream;
@@ -853,6 +854,7 @@ pub enum Expression {
     ConnectByRoot(Box<ConnectByRoot>),
 
     MatchRecognize(Box<MatchRecognize>),
+    Resample(Box<Resample>),
 
     Ordered(Box<Ordered>),
 
