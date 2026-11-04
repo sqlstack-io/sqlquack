@@ -217,4 +217,15 @@ pub const CODES: &[CodeEntry] = &[
             through a SELECT-list alias counts. A condition on plain columns belongs in WHERE, \
             and one on aggregates in HAVING.",
     },
+    CodeEntry {
+        code: "SQ0204",
+        name: "star_filter_drops_named_column",
+        alias: None,
+        title: "REPLACE or RENAME names a column the star's ILIKE pattern removed",
+        help: Some("name a column the ILIKE pattern keeps, or widen the pattern"),
+        explanation: "In `* ILIKE 'pattern' REPLACE (...)` or `RENAME (...)`, Snowflake applies \
+            the pattern first, ignoring case, and rejects a REPLACE or RENAME of a column the \
+            pattern did not keep (Snowflake error 1431). A name that fails the pattern ignoring \
+            case fails it whatever the table holds, so no schema is needed to see it.",
+    },
 ];
