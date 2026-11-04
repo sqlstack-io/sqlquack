@@ -24,8 +24,7 @@ def run_cases(argv: list[str] | None = None) -> int:
     phases: dict[tuple[str, str], str] = receipt_phases(arguments.receipts)
     recorded: set[tuple[str, str]] = recorded_receipts(arguments.receipts)
     setups, flagged = run_database_setups(arguments.setups or arguments.receipts)
-    for case_id in flagged:
-        print(f"setup for review, receipts disagree across setups: {case_id}")
+    print(json.dumps({"setup_review": flagged}))
     to_capture: list[Row] = []
     for family in arguments.families:
         cases, arity = settled_cases(root=root, family=family, phases=phases, setups=setups)

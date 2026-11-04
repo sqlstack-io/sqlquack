@@ -2552,14 +2552,6 @@ required = true
 target = "[ \"[\" <index> \"]\" ... ]"
 
 [[obligation]]
-id = "sf.expressions.data-types-semistructured.array-index-access.o008"
-kind = "required_operand_missing"
-required = true
-target = "<array_expr>"
-anchor = "doc.data-types-semistructured / ARRAY / Accessing elements of an array by index or by slice"
-note = "omit <array_expr>, accepted as documented"
-
-[[obligation]]
 id = "sf.expressions.data-types-semistructured.colon-subscript-dot.o010"
 kind = "positive"
 required = true
@@ -2642,14 +2634,6 @@ kind = "negative_neighbour"
 required = true
 target = "'<key>'"
 note = "an unquoted identifier in place of '<key>'"
-
-[[obligation]]
-id = "sf.expressions.data-types-semistructured.object-key-access.o007"
-kind = "required_operand_missing"
-required = true
-target = "<object_expr>"
-anchor = "doc.data-types-semistructured / OBJECT / Accessing elements of an OBJECT value by key"
-note = "omit <object_expr>, accepted as documented"
 
 [[obligation]]
 id = "sf.expressions.data-types-semistructured.subscript-dot.o007"
@@ -5202,13 +5186,6 @@ anchor = "doc.operators-subquery / ALL / ANY / Syntax"
 note = "a bare literal in place of <query>, observed"
 
 [[obligation]]
-id = "sf.expressions.operators-subquery.comparisonoperator-all-any.o023"
-kind = "negative_neighbour"
-required = true
-anchor = "doc.operators-subquery / ALL / ANY / Syntax"
-note = "the form without its required { ALL | ANY }, accepted as documented"
-
-[[obligation]]
 id = "sf.expressions.operators-subquery.exists.o001"
 kind = "positive"
 required = true
@@ -5282,13 +5259,6 @@ kind = "extreme"
 required = true
 anchor = "doc.operators-subquery / [ NOT ] EXISTS / Syntax"
 note = "EXISTS subqueries nested 100 levels deep; no documented bound"
-
-[[obligation]]
-id = "sf.expressions.operators-subquery.exists.o013"
-kind = "negative_neighbour"
-required = true
-anchor = "doc.operators-subquery / [ NOT ] EXISTS / Syntax"
-note = "the form without its required EXISTS, accepted as documented"
 
 [[obligation]]
 id = "sf.expressions.operators-subquery.in.o001"
@@ -5377,14 +5347,6 @@ kind = "extreme"
 required = true
 anchor = "doc.operators-subquery / [ NOT ] IN / Syntax"
 note = "IN subqueries nested 100 levels deep; no documented bound"
-
-[[obligation]]
-id = "sf.expressions.operators-subquery.in.o015"
-kind = "negative_neighbour"
-required = true
-target = "<query>"
-anchor = "doc.operators-subquery / [ NOT ] IN / Syntax"
-note = "a bare literal in place of <query>, accepted as documented"
 
 [[obligation]]
 id = "sf.expressions.schema-variables.o019"

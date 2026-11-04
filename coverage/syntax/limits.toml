@@ -24167,34 +24167,14 @@ form = "sf.expressions.data-types-semistructured.array-index-access"
 kind = "required_operand_missing"
 target = "<array_expr>"
 note = "omit <array_expr>"
-reason = "D97: Snowflake accepts this SQL (phase accepted, import-20261104-13) and it is documented: SELECT [ 0 ] is an ARRAY constant, documented on the semi-structured data types page; scored accept (D110)"
-
-[[limit]]
-form = "sf.expressions.data-types-semistructured.array-index-access"
-kind = "required_operand_missing"
-target = "<array_expr>"
-note = "omit <array_expr>, accepted as documented"
-anchor = "doc.data-types-semistructured / ARRAY / Accessing elements of an array by index or by slice"
-sql = "SELECT [ 0 ] ;"
-expect = "accept"
-context = "raw"
+reason = "D110b: withdrawn, the remainder is another form (SELECT [ 0 ] is an ARRAY constant, documented on the semi-structured data types page), so Snowflake accepting it (phase accepted, import-20261104-13) says nothing about this form"
 
 [[suppress]]
 form = "sf.expressions.data-types-semistructured.object-key-access"
 kind = "required_operand_missing"
 target = "<object_expr>"
 note = "omit <object_expr>"
-reason = "D97: Snowflake accepts this SQL (phase accepted, import-20261104-13) and it is documented: SELECT [ 'm' ] is an ARRAY constant, documented on the semi-structured data types page; scored accept (D110)"
-
-[[limit]]
-form = "sf.expressions.data-types-semistructured.object-key-access"
-kind = "required_operand_missing"
-target = "<object_expr>"
-note = "omit <object_expr>, accepted as documented"
-anchor = "doc.data-types-semistructured / OBJECT / Accessing elements of an OBJECT value by key"
-sql = "SELECT [ 'm' ] ;"
-expect = "accept"
-context = "raw"
+reason = "D110b: withdrawn, the remainder is another form (SELECT [ 'm' ] is an ARRAY constant, documented on the semi-structured data types page), so Snowflake accepting it (phase accepted, import-20261104-13) says nothing about this form"
 
 [[suppress]]
 form = "sf.expressions.data-types-text.char"
@@ -24268,48 +24248,20 @@ context = "raw"
 form = "sf.expressions.operators-subquery.comparisonoperator-all-any"
 kind = "negative_neighbour"
 note = "the form without its required { ALL | ANY }"
-reason = "D97: Snowflake accepts this SQL (phase accepted, import-20261104-13) and it is documented: the remainder compares with a scalar subquery, documented on the subquery operators page; scored accept (D110)"
-
-[[limit]]
-form = "sf.expressions.operators-subquery.comparisonoperator-all-any"
-kind = "negative_neighbour"
-note = "the form without its required { ALL | ANY }, accepted as documented"
-anchor = "doc.operators-subquery / ALL / ANY / Syntax"
-sql = "SELECT 1 = ( SELECT 1 ) ;"
-expect = "accept"
-context = "raw"
+reason = "D110b: withdrawn, the remainder is another form (the remainder compares with a scalar subquery, documented on the subquery operators page), so Snowflake accepting it (phase accepted, import-20261104-13) says nothing about this form"
 
 [[suppress]]
 form = "sf.expressions.operators-subquery.exists"
 kind = "negative_neighbour"
 note = "the form without its required EXISTS"
-reason = "D97: Snowflake accepts this SQL (phase accepted, import-20261104-13) and it is documented: the remainder is a scalar subquery, documented on the subquery operators page; scored accept (D110)"
-
-[[limit]]
-form = "sf.expressions.operators-subquery.exists"
-kind = "negative_neighbour"
-note = "the form without its required EXISTS, accepted as documented"
-anchor = "doc.operators-subquery / [ NOT ] EXISTS / Syntax"
-sql = "SELECT ( SELECT 1 ) ;"
-expect = "accept"
-context = "raw"
+reason = "D110b: withdrawn, the remainder is another form (the remainder is a scalar subquery, documented on the subquery operators page), so Snowflake accepting it (phase accepted, import-20261104-13) says nothing about this form"
 
 [[suppress]]
 form = "sf.expressions.operators-subquery.in"
 kind = "negative_neighbour"
 target = "<query>"
 note = "a bare literal in place of <query>"
-reason = "D97: Snowflake accepts this SQL (phase accepted, import-20261104-13) and it is documented: the remainder is IN with a value list, documented on the IN page; scored accept (D110)"
-
-[[limit]]
-form = "sf.expressions.operators-subquery.in"
-kind = "negative_neighbour"
-target = "<query>"
-note = "a bare literal in place of <query>, accepted as documented"
-anchor = "doc.operators-subquery / [ NOT ] IN / Syntax"
-sql = "SELECT 1 IN ( 1 ) ;"
-expect = "accept"
-context = "raw"
+reason = "D110b: withdrawn, the remainder is another form (the remainder is IN with a value list, documented on the IN page), so Snowflake accepting it (phase accepted, import-20261104-13) says nothing about this form"
 
 [[suppress]]
 form = "sf.expressions.snowflake-db-classes"
@@ -24551,16 +24503,7 @@ context = "raw"
 form = "sf.query.from"
 kind = "negative_neighbour"
 note = "the form without its required FROM"
-reason = "D97: Snowflake accepts this SQL (phase accepted, import-20261104-12) and it is documented: the remainder is SELECT without FROM with a column alias, both documented on the SELECT page; scored accept (D110)"
-
-[[limit]]
-form = "sf.query.from"
-kind = "negative_neighbour"
-note = "the form without its required FROM, accepted as documented"
-anchor = "doc.constructs.from / Syntax"
-sql = "SELECT 1 v1 ;"
-expect = "accept"
-context = "raw"
+reason = "D110b: withdrawn, the remainder is another form (the remainder is SELECT without FROM with a column alias, both documented on the SELECT page), so Snowflake accepting it (phase accepted, import-20261104-12) says nothing about this form"
 
 [[suppress]]
 form = "sf.query.from"
@@ -25630,16 +25573,7 @@ context = "raw"
 form = "sf.functions.cast.cast-as"
 kind = "negative_neighbour"
 note = "the form without its required FIELDS in [ RENAME FIELDS | ADD FIELDS ]"
-reason = "D97: Snowflake accepts this SQL (phase accepted, import-20261104-18) and it is documented: RENAME is not a reserved keyword, so the remainder is CAST with a column alias (SELECT page); scored accept (D110)"
-
-[[limit]]
-form = "sf.functions.cast.cast-as"
-kind = "negative_neighbour"
-note = "the form without its required FIELDS in [ RENAME FIELDS | ADD FIELDS ], accepted as documented"
-anchor = "doc.functions.cast / Syntax"
-sql = "SELECT CAST ( 1 AS INT ) RENAME ;"
-expect = "accept"
-context = "raw"
+reason = "D110b: withdrawn, the remainder is another form (RENAME is not a reserved keyword, so the remainder is CAST with a column alias (SELECT page)), so Snowflake accepting it (phase accepted, import-20261104-18) says nothing about this form"
 
 [[suppress]]
 form = "sf.functions.classify-text-snowflake-cortex"
@@ -25661,17 +25595,7 @@ form = "sf.functions.collate.collate.syntax"
 kind = "required_operand_missing"
 target = "'<collation_specification>'"
 note = "omit '<collation_specification>'"
-reason = "D97: Snowflake accepts this SQL (phase accepted, import-20261104-18) and it is documented: COLLATE is not a reserved keyword, so the remainder is a string literal with a column alias (SELECT page); scored accept (D110)"
-
-[[limit]]
-form = "sf.functions.collate.collate.syntax"
-kind = "required_operand_missing"
-target = "'<collation_specification>'"
-note = "omit '<collation_specification>', accepted as documented"
-anchor = "doc.functions.collate / Syntax"
-sql = "SELECT 'm' COLLATE ;"
-expect = "accept"
-context = "raw"
+reason = "D110b: withdrawn, the remainder is another form (COLLATE is not a reserved keyword, so the remainder is a string literal with a column alias (SELECT page)), so Snowflake accepting it (phase accepted, import-20261104-18) says nothing about this form"
 
 [[suppress]]
 form = "sf.functions.complete-snowflake-cortex-multimodal.from"
@@ -25798,17 +25722,7 @@ form = "sf.functions.datediff.syntax"
 kind = "required_operand_missing"
 target = "<date_expr2>"
 note = "omit <date_expr2>"
-reason = "D97: Snowflake accepts this SQL (phase accepted, import-20261104-17) and it is documented: the remainder is a unary minus on a literal, documented on the arithmetic operators page; scored accept (D110)"
-
-[[limit]]
-form = "sf.functions.datediff.syntax"
-kind = "required_operand_missing"
-target = "<date_expr2>"
-note = "omit <date_expr2>, accepted as documented"
-anchor = "doc.functions.datediff / Syntax"
-sql = "SELECT - 1 ;"
-expect = "accept"
-context = "raw"
+reason = "D110b: withdrawn, the remainder is another form (the remainder is a unary minus on a literal, documented on the arithmetic operators page), so Snowflake accepting it (phase accepted, import-20261104-17) says nothing about this form"
 
 [[suppress]]
 form = "sf.functions.dbt-project-execution-history"
@@ -29493,16 +29407,7 @@ context = "raw"
 form = "sf.functions.prompt"
 kind = "negative_neighbour"
 note = "the form without its required FROM"
-reason = "D97: Snowflake accepts this SQL (phase accepted, import-20261104-18) and it is documented: the remainder is a PROMPT call with a column alias, both documented; scored accept (D110)"
-
-[[limit]]
-form = "sf.functions.prompt"
-kind = "negative_neighbour"
-note = "the form without its required FROM, accepted as documented"
-anchor = "doc.functions.prompt / Syntax"
-sql = "SELECT PROMPT ( 'm' , 1 ) v1 ;"
-expect = "accept"
-context = "raw"
+reason = "D110b: withdrawn, the remainder is another form (the remainder is a PROMPT call with a column alias, both documented), so Snowflake accepting it (phase accepted, import-20261104-18) says nothing about this form"
 
 [[suppress]]
 form = "sf.functions.recommend-network-policy"
@@ -29735,84 +29640,35 @@ context = "raw"
 form = "sf.functions.system-get-classification-result"
 kind = "negative_neighbour"
 note = "the form without its required SYSTEM$GET_CLASSIFICATION_RESULT"
-reason = "D97: Snowflake accepts this SQL (phase accepted, import-20261104-18) and it is documented: the remainder is a parenthesised literal, a documented expression; scored accept (D110)"
-
-[[limit]]
-form = "sf.functions.system-get-classification-result"
-kind = "negative_neighbour"
-note = "the form without its required SYSTEM$GET_CLASSIFICATION_RESULT, accepted as documented"
-anchor = "doc.functions.system_get_classification_result / Syntax"
-sql = "SELECT ( 'm' ) ;"
-expect = "accept"
-context = "raw"
+reason = "D110b: withdrawn, the remainder is another form (the remainder is a parenthesised literal, a documented expression), so Snowflake accepting it (phase accepted, import-20261104-18) says nothing about this form"
 
 [[suppress]]
 form = "sf.functions.to-timestamp"
 kind = "required_operand_missing"
 target = "timestampFunction #4"
 note = "omit timestampFunction"
-reason = "D97: Snowflake accepts this SQL (phase accepted, import-20261104-18) and it is documented: the remainder is a parenthesised literal, a documented expression; scored accept (D110)"
-
-[[limit]]
-form = "sf.functions.to-timestamp"
-kind = "required_operand_missing"
-target = "timestampFunction #4"
-note = "omit timestampFunction, accepted as documented"
-anchor = "doc.functions.to_timestamp / Syntax"
-sql = "SELECT ( 'm' ) ;"
-expect = "accept"
-context = "raw"
+reason = "D110b: withdrawn, the remainder is another form (the remainder is a parenthesised literal, a documented expression), so Snowflake accepting it (phase accepted, import-20261104-18) says nothing about this form"
 
 [[suppress]]
 form = "sf.functions.to-timestamp"
 kind = "required_operand_missing"
 target = "timestampFunction #5"
 note = "omit timestampFunction"
-reason = "D97: Snowflake accepts this SQL (phase accepted, import-20261104-18) and it is documented: the remainder is a parenthesised literal, a documented expression; scored accept (D110)"
-
-[[limit]]
-form = "sf.functions.to-timestamp"
-kind = "required_operand_missing"
-target = "timestampFunction #5"
-note = "omit timestampFunction, accepted as documented"
-anchor = "doc.functions.to_timestamp / Syntax"
-sql = "SELECT ( 'm' ) ;"
-expect = "accept"
-context = "raw"
+reason = "D110b: withdrawn, the remainder is another form (the remainder is a parenthesised literal, a documented expression), so Snowflake accepting it (phase accepted, import-20261104-18) says nothing about this form"
 
 [[suppress]]
 form = "sf.functions.try-to-timestamp"
 kind = "required_operand_missing"
 target = "timestampFunction"
 note = "omit timestampFunction"
-reason = "D97: Snowflake accepts this SQL (phase accepted, import-20261104-18) and it is documented: the remainder is a parenthesised literal, a documented expression; scored accept (D110)"
-
-[[limit]]
-form = "sf.functions.try-to-timestamp"
-kind = "required_operand_missing"
-target = "timestampFunction"
-note = "omit timestampFunction, accepted as documented"
-anchor = "doc.functions.try_to_timestamp / Syntax"
-sql = "SELECT ( 'm' ) ;"
-expect = "accept"
-context = "raw"
+reason = "D110b: withdrawn, the remainder is another form (the remainder is a parenthesised literal, a documented expression), so Snowflake accepting it (phase accepted, import-20261104-18) says nothing about this form"
 
 [[suppress]]
 form = "sf.functions.try-to-timestamp"
 kind = "required_operand_missing"
 target = "timestampFunction #2"
 note = "omit timestampFunction"
-reason = "D97: Snowflake accepts this SQL (phase accepted, import-20261104-18) and it is documented: the remainder is a parenthesised literal, a documented expression; scored accept (D110)"
-
-[[limit]]
-form = "sf.functions.try-to-timestamp"
-kind = "required_operand_missing"
-target = "timestampFunction #2"
-note = "omit timestampFunction, accepted as documented"
-anchor = "doc.functions.try_to_timestamp / Syntax"
-sql = "SELECT ( 'm' ) ;"
-expect = "accept"
-context = "raw"
+reason = "D110b: withdrawn, the remainder is another form (the remainder is a parenthesised literal, a documented expression), so Snowflake accepting it (phase accepted, import-20261104-18) says nothing about this form"
 
 [[suppress]]
 form = "sf.functions.system-global-account-set-parameter"
@@ -29984,68 +29840,28 @@ form = "sf.functions.to-timestamp"
 kind = "required_operand_missing"
 target = "timestampFunction"
 note = "omit timestampFunction"
-reason = "D97: Snowflake accepts this SQL (phase accepted, import-20261104-18) and it is documented: the remainder is a parenthesised literal, a documented expression; scored accept (D110)"
-
-[[limit]]
-form = "sf.functions.to-timestamp"
-kind = "required_operand_missing"
-target = "timestampFunction"
-note = "omit timestampFunction, accepted as documented"
-anchor = "doc.functions.to_timestamp / Syntax"
-sql = "SELECT ( 1 ) ;"
-expect = "accept"
-context = "raw"
+reason = "D110b: withdrawn, the remainder is another form (the remainder is a parenthesised literal, a documented expression), so Snowflake accepting it (phase accepted, import-20261104-18) says nothing about this form"
 
 [[suppress]]
 form = "sf.functions.to-timestamp"
 kind = "required_operand_missing"
 target = "timestampFunction #2"
 note = "omit timestampFunction"
-reason = "D97: Snowflake accepts this SQL (phase accepted, import-20261104-18) and it is documented: the remainder is a parenthesised literal, a documented expression; scored accept (D110)"
-
-[[limit]]
-form = "sf.functions.to-timestamp"
-kind = "required_operand_missing"
-target = "timestampFunction #2"
-note = "omit timestampFunction, accepted as documented"
-anchor = "doc.functions.to_timestamp / Syntax"
-sql = "SELECT ( 1 ) ;"
-expect = "accept"
-context = "raw"
+reason = "D110b: withdrawn, the remainder is another form (the remainder is a parenthesised literal, a documented expression), so Snowflake accepting it (phase accepted, import-20261104-18) says nothing about this form"
 
 [[suppress]]
 form = "sf.functions.to-timestamp"
 kind = "required_operand_missing"
 target = "timestampFunction #3"
 note = "omit timestampFunction"
-reason = "D97: Snowflake accepts this SQL (phase accepted, import-20261104-18) and it is documented: the remainder is a parenthesised literal, a documented expression; scored accept (D110)"
-
-[[limit]]
-form = "sf.functions.to-timestamp"
-kind = "required_operand_missing"
-target = "timestampFunction #3"
-note = "omit timestampFunction, accepted as documented"
-anchor = "doc.functions.to_timestamp / Syntax"
-sql = "SELECT ( 1 ) ;"
-expect = "accept"
-context = "raw"
+reason = "D110b: withdrawn, the remainder is another form (the remainder is a parenthesised literal, a documented expression), so Snowflake accepting it (phase accepted, import-20261104-18) says nothing about this form"
 
 [[suppress]]
 form = "sf.functions.to-timestamp"
 kind = "required_operand_missing"
 target = "timestampFunction #6"
 note = "omit timestampFunction"
-reason = "D97: Snowflake accepts this SQL (phase accepted, import-20261104-18) and it is documented: the remainder is a parenthesised literal, a documented expression; scored accept (D110)"
-
-[[limit]]
-form = "sf.functions.to-timestamp"
-kind = "required_operand_missing"
-target = "timestampFunction #6"
-note = "omit timestampFunction, accepted as documented"
-anchor = "doc.functions.to_timestamp / Syntax"
-sql = "SELECT ( 1 ) ;"
-expect = "accept"
-context = "raw"
+reason = "D110b: withdrawn, the remainder is another form (the remainder is a parenthesised literal, a documented expression), so Snowflake accepting it (phase accepted, import-20261104-18) says nothing about this form"
 
 [[suppress]]
 form = "sf.functions.to-timestamp"

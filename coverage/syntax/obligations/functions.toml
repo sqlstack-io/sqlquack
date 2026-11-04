@@ -9719,13 +9719,6 @@ required = true
 note = "the form without its required )"
 
 [[obligation]]
-id = "sf.functions.cast.cast-as.o016"
-kind = "negative_neighbour"
-required = true
-anchor = "doc.functions.cast / Syntax"
-note = "the form without its required FIELDS in [ RENAME FIELDS | ADD FIELDS ], accepted as documented"
-
-[[obligation]]
 id = "sf.functions.cast.double-colon.o001"
 kind = "positive"
 required = true
@@ -10307,14 +10300,6 @@ kind = "negative_neighbour"
 required = true
 anchor = "doc.functions.collate / Syntax"
 note = "an unquoted identifier in place of '<collation_specification>' (observed: the receipt decides whether the slot is literal-only)"
-
-[[obligation]]
-id = "sf.functions.collate.collate.syntax.o010"
-kind = "required_operand_missing"
-required = true
-target = "'<collation_specification>'"
-anchor = "doc.functions.collate / Syntax"
-note = "omit '<collation_specification>', accepted as documented"
 
 [[obligation]]
 id = "sf.functions.collation.o001"
@@ -15184,14 +15169,6 @@ kind = "operand_type_class"
 required = true
 target = "<date_expr1>"
 note = "a valid expression"
-
-[[obligation]]
-id = "sf.functions.datediff.syntax.o006"
-kind = "required_operand_missing"
-required = true
-target = "<date_expr2>"
-anchor = "doc.functions.datediff / Syntax"
-note = "omit <date_expr2>, accepted as documented"
 
 [[obligation]]
 id = "sf.functions.dayname.o001"
@@ -47171,13 +47148,6 @@ anchor = "doc.functions.prompt / Syntax"
 note = "the form without its required PROMPT, observed"
 
 [[obligation]]
-id = "sf.functions.prompt.o016"
-kind = "negative_neighbour"
-required = true
-anchor = "doc.functions.prompt / Syntax"
-note = "the form without its required FROM, accepted as documented"
-
-[[obligation]]
 id = "sf.functions.query-acceleration-history.o001"
 kind = "positive"
 required = true
@@ -64828,13 +64798,6 @@ required = true
 note = "the form without its required )"
 
 [[obligation]]
-id = "sf.functions.system-get-classification-result.o008"
-kind = "negative_neighbour"
-required = true
-anchor = "doc.functions.system_get_classification_result / Syntax"
-note = "the form without its required SYSTEM$GET_CLASSIFICATION_RESULT, accepted as documented"
-
-[[obligation]]
 id = "sf.functions.system-get-cmk-akv-consent-url.o001"
 kind = "positive"
 required = true
@@ -75909,54 +75872,6 @@ required = true
 note = "the form without its required )"
 
 [[obligation]]
-id = "sf.functions.to-timestamp.o045"
-kind = "required_operand_missing"
-required = true
-target = "timestampFunction #4"
-anchor = "doc.functions.to_timestamp / Syntax"
-note = "omit timestampFunction, accepted as documented"
-
-[[obligation]]
-id = "sf.functions.to-timestamp.o046"
-kind = "required_operand_missing"
-required = true
-target = "timestampFunction #5"
-anchor = "doc.functions.to_timestamp / Syntax"
-note = "omit timestampFunction, accepted as documented"
-
-[[obligation]]
-id = "sf.functions.to-timestamp.o047"
-kind = "required_operand_missing"
-required = true
-target = "timestampFunction"
-anchor = "doc.functions.to_timestamp / Syntax"
-note = "omit timestampFunction, accepted as documented"
-
-[[obligation]]
-id = "sf.functions.to-timestamp.o048"
-kind = "required_operand_missing"
-required = true
-target = "timestampFunction #2"
-anchor = "doc.functions.to_timestamp / Syntax"
-note = "omit timestampFunction, accepted as documented"
-
-[[obligation]]
-id = "sf.functions.to-timestamp.o049"
-kind = "required_operand_missing"
-required = true
-target = "timestampFunction #3"
-anchor = "doc.functions.to_timestamp / Syntax"
-note = "omit timestampFunction, accepted as documented"
-
-[[obligation]]
-id = "sf.functions.to-timestamp.o050"
-kind = "required_operand_missing"
-required = true
-target = "timestampFunction #6"
-anchor = "doc.functions.to_timestamp / Syntax"
-note = "omit timestampFunction, accepted as documented"
-
-[[obligation]]
 id = "sf.functions.to-timestamp.o051"
 kind = "required_operand_missing"
 required = true
@@ -78088,22 +78003,6 @@ id = "sf.functions.try-to-timestamp.o017"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required )"
-
-[[obligation]]
-id = "sf.functions.try-to-timestamp.o020"
-kind = "required_operand_missing"
-required = true
-target = "timestampFunction"
-anchor = "doc.functions.try_to_timestamp / Syntax"
-note = "omit timestampFunction, accepted as documented"
-
-[[obligation]]
-id = "sf.functions.try-to-timestamp.o021"
-kind = "required_operand_missing"
-required = true
-target = "timestampFunction #2"
-anchor = "doc.functions.try_to_timestamp / Syntax"
-note = "omit timestampFunction, accepted as documented"
 
 [[obligation]]
 id = "sf.functions.try-to-timestamp.o022"

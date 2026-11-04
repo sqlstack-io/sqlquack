@@ -2458,13 +2458,6 @@ anchor = "doc.constructs.from / Syntax"
 note = "a string literal in place of <format_name>, observed"
 
 [[obligation]]
-id = "sf.query.from.o158"
-kind = "negative_neighbour"
-required = true
-anchor = "doc.constructs.from / Syntax"
-note = "the form without its required FROM, accepted as documented"
-
-[[obligation]]
 id = "sf.query.from.o159"
 kind = "negative_neighbour"
 required = true
