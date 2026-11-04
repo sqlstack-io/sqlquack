@@ -6,15 +6,21 @@ use std::path::Path;
 use serde_json::{Value, json};
 
 use crate::formats::constants::FAMILIES;
+use crate::formats::models::SyntaxCoverage;
 use crate::translation::constants::CENSUS_DIR;
-use crate::translation::models::CensusEntry;
+use crate::translation::models::{CensusColumn, CensusEntry};
 
-/// Every sidecar entry by case id, or every problem: an unknown case id, a duplicate, or an empty
-/// relation list or column list.
+/// Every sidecar entry by case id, or every problem: an unknown case, a duplicate, or an empty list.
 pub(crate) fn load_census(
     root: &Path,
-    known: &BTreeSet<&str>,
+    coverage: &SyntaxCoverage,
 ) -> Result<BTreeMap<String, CensusEntry>, Vec<String>> {
+    let known: BTreeSet<&str> = coverage
+        .cases
+        .values()
+        .flatten()
+        .map(|case| case.case_id.as_str())
+        .collect();
     let mut entries: BTreeMap<String, CensusEntry> = BTreeMap::new();
     let mut problems: Vec<String> = Vec::new();
     for family in FAMILIES {
@@ -53,8 +59,7 @@ pub(crate) fn load_census(
     }
 }
 
-/// A name as the census writes it, as Snowflake resolves it: a quoted name keeps its case, an
-/// unquoted one is upper-cased.
+/// A census name as Snowflake resolves it: quoted keeps its case, unquoted is upper-cased.
 fn resolved(name: &str) -> String {
     match name
         .strip_prefix('"')
@@ -65,6 +70,11 @@ fn resolved(name: &str) -> String {
     }
 }
 
+/// A column as convert's schema pair: its resolved name and its type.
+fn column_pair(column: &CensusColumn) -> Value {
+    json!([resolved(&column.name), column.column_type])
+}
+
 /// The entry as convert's `--schema` JSON: each resolved relation to its `[column, type]` pairs.
 pub(crate) fn schema_json(entry: &CensusEntry) -> Value {
     Value::Object(
@@ -72,11 +82,7 @@ pub(crate) fn schema_json(entry: &CensusEntry) -> Value {
             .relations
             .iter()
             .map(|relation| {
-                let columns: Vec<Value> = relation
-                    .columns
-                    .iter()
-                    .map(|column| json!([resolved(&column.name), column.column_type]))
-                    .collect();
+                let columns: Vec<Value> = relation.columns.iter().map(column_pair).collect();
                 (resolved(&relation.name), Value::Array(columns))
             })
             .collect(),

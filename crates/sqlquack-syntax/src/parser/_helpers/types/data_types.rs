@@ -789,6 +789,18 @@ impl Parser {
         self.parse_star_modifiers_with_comments(table, Vec::new())
     }
 
+    /// One EXCLUDE name; Snowflake names columns there, never strings.
+    fn parse_star_exclude_name(&mut self) -> Result<String> {
+        if self.config.dialect == Some(DialectType::Snowflake) && self.check(TokenType::String) {
+            return Err(self.parse_error("Snowflake EXCLUDE names columns, not strings"));
+        }
+        if self.check(TokenType::String) || self.is_safe_keyword_as_identifier() {
+            self.advance_text()
+        } else {
+            self.expect_identifier()
+        }
+    }
+
     /// Parse star modifiers with explicit trailing comments from the star token
     pub(crate) fn parse_star_modifiers_with_comments(
         &mut self,
@@ -805,23 +817,12 @@ impl Parser {
             ilike = Some(self.advance_text()?);
         } else if self.match_token(TokenType::Exclude) || self.match_token(TokenType::Except) {
             let _ = self.match_text_seq(&["STRICT"]);
-            let strings: bool = self.config.dialect != Some(DialectType::Snowflake);
             let mut columns: Vec<Identifier> = Vec::new();
             if self.match_token(TokenType::LParen) {
                 loop {
                     let start = self.peek().span;
                     let quoted = self.check(TokenType::QuotedIdentifier);
-                    if !strings && self.check(TokenType::String) {
-                        return Err(
-                            self.parse_error("Snowflake EXCLUDE names columns, not strings")
-                        );
-                    }
-                    let col =
-                        if self.check(TokenType::String) || self.is_safe_keyword_as_identifier() {
-                            self.advance_text()?
-                        } else {
-                            self.expect_identifier()?
-                        };
+                    let col = self.parse_star_exclude_name()?;
                     if self.match_token(TokenType::Dot) {
                         let subcol = if self.is_safe_keyword_as_identifier() {
                             self.advance_text()?
@@ -846,14 +847,7 @@ impl Parser {
             } else {
                 let start = self.peek().span;
                 let quoted = self.check(TokenType::QuotedIdentifier);
-                if !strings && self.check(TokenType::String) {
-                    return Err(self.parse_error("Snowflake EXCLUDE names columns, not strings"));
-                }
-                let col = if self.check(TokenType::String) || self.is_safe_keyword_as_identifier() {
-                    self.advance_text()?
-                } else {
-                    self.expect_identifier()?
-                };
+                let col = self.parse_star_exclude_name()?;
                 let mut column =
                     Identifier::new(col).with_span(start.through(self.previous().span));
                 column.quoted = quoted;

@@ -380,6 +380,9 @@ pub(crate) const SNOWFLAKE_ALTER_KINDS: &[&str] = &[
     "WAREHOUSE",
 ];
 
+/// The kind of `EXECUTE DCM PROJECT`, whose actions differ from a task's.
+pub(crate) const EXECUTE_DCM_PROJECT: &str = "DCM PROJECT";
+
 /// The words that start an ALTER TASK action, so `ALTER TASK GRAPH <action>` alters the task named GRAPH.
 pub(crate) const TASK_ACTIONS: &[&str] = &[
     "ADD", "MODIFY", "REMOVE", "RESUME", "SET", "SUSPEND", "UNSET",

@@ -300,56 +300,6 @@ impl Parser {
         Ok(statements)
     }
 
-    /// Whether Snowflake's statement-context rules apply: no bare expression as a statement, and
-    /// no bare name in TABLE( ) outside a named argument. The exact check's modes (lowered, and
-    /// faithful with call spans) parse both as polyglot does, because they parse expression
-    /// fixtures and calls lifted out of their statements.
-    fn applies_snowflake_context_rules(&self) -> bool {
-        self.config.dialect == Some(crate::tokens::models::DialectType::Snowflake)
-            && self.config.faithful_calls
-            && !self.config.record_call_spans
-    }
-
-    /// Snowflake's TABLE( ) and IDENTIFIER( ) need an argument other than a bare column name,
-    /// except TABLE(name) as a named argument's value, as in `INPUT_DATA => TABLE(v)`.
-    fn reject_snowflake_name_wrappers(&self, statements: &[Expression]) -> Result<()> {
-        use crate::traversal::types::ExpressionWalk;
-        let named_values: Vec<&Expression> = statements
-            .iter()
-            .flat_map(|statement| statement.dfs())
-            .filter_map(|node| match node {
-                Expression::NamedArgument(argument) => Some(&argument.value),
-                _ => None,
-            })
-            .collect();
-        let wrapper = |node: &Expression| match node {
-            Expression::Function(function)
-                if function.name.eq_ignore_ascii_case("TABLE")
-                    || function.name.eq_ignore_ascii_case("IDENTIFIER") =>
-            {
-                match function.args.as_slice() {
-                    [] => true,
-                    [Expression::Column(_)] => {
-                        !(function.name.eq_ignore_ascii_case("TABLE")
-                            && named_values.iter().any(|value| std::ptr::eq(*value, node)))
-                    }
-                    _ => false,
-                }
-            }
-            _ => false,
-        };
-        match statements
-            .iter()
-            .find_map(|statement| statement.find(wrapper))
-        {
-            Some(Expression::Function(function)) => Err(self.parse_error(format!(
-                "{} needs a string, a variable or a call",
-                function.name.to_ascii_uppercase()
-            ))),
-            _ => Ok(()),
-        }
-    }
-
     /// Parses a standalone data type when the first token can start one, and `None` otherwise.
     pub(crate) fn parse_standalone_data_type_if_present(&mut self) -> Result<Option<DataType>> {
         let starts_type = !self.is_at_end()

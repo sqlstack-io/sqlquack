@@ -27,6 +27,22 @@ pub struct Common {
     pub json: bool,
 }
 
+/// What the translation measure converts with, and how much of the catalogue.
+#[derive(Debug, Args)]
+pub struct TranslationArguments {
+    /// The `sqlquack` binary whose `convert` is measured.
+    #[arg(long)]
+    pub sqlquack: PathBuf,
+    /// The policy conversion relies on.
+    #[arg(long, default_value = "sqlquack.toml")]
+    pub policy: PathBuf,
+    #[arg(long)]
+    pub family: Option<String>,
+    /// Conversions run at once.
+    #[arg(long, default_value_t = 4)]
+    pub jobs: usize,
+}
+
 #[derive(Debug, Subcommand)]
 pub enum Command {
     /// Load every coverage file and report format problems.
@@ -86,17 +102,8 @@ pub enum Command {
     ParseWorker,
     /// What conversion makes of every case Snowflake parsed, by form and family (decision D107).
     Translation {
-        /// The `sqlquack` binary whose `convert` is measured.
-        #[arg(long)]
-        sqlquack: PathBuf,
-        /// The policy conversion relies on.
-        #[arg(long, default_value = "sqlquack.toml")]
-        policy: PathBuf,
-        #[arg(long)]
-        family: Option<String>,
-        /// Conversions run at once.
-        #[arg(long, default_value_t = 4)]
-        jobs: usize,
+        #[command(flatten)]
+        arguments: TranslationArguments,
         #[command(flatten)]
         common: Common,
     },

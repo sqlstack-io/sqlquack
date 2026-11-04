@@ -1,93 +1,12 @@
 use std::collections::BTreeSet;
-use std::os::unix::fs::PermissionsExt;
-use std::path::Path;
 
-use crate::check::tests::helpers::{sha256, verified_tree, write};
-use crate::formats::main::load_coverage::load_coverage;
+use crate::check::tests::helpers::{verified_tree, write};
 use crate::translation::main::load_translation_files::load_translation_files;
-use crate::translation::main::measure_translation::{TranslationInputs, measure_translation};
-use crate::translation::models::{FormState, TranslationReport};
-use crate::translation::tests::test_types::TranslationTestCase;
-
-const WAIT_REASON: &str = "DuckDB has no session to suspend";
-
-/// A fake `sqlquack` that converts `SELECT 17` and runs `convert` for any other SQL.
-fn fake_sqlquack(directory: &Path, convert: &str) -> std::path::PathBuf {
-    let path = directory.join("sqlquack");
-    std::fs::write(
-        &path,
-        format!(
-            "#!/bin/sh\nsql=$(cat)\nschema=\nwhile [ $# -gt 0 ]; do [ \"$1\" = --schema ] && schema=$2; shift; done\n\
-             if [ \"$sql\" = 'SELECT 17' ]; then echo '{{\"converted\":true,\"refusals\":[]}}'; exit 0; fi\n{convert}\n"
-        ),
-    )
-    .expect("fake");
-    std::fs::set_permissions(&path, std::fs::Permissions::from_mode(0o755)).expect("mode");
-    path
-}
-
-fn refused(category: &str, construct: &str) -> String {
-    format!(
-        "echo '{{\"converted\":false,\"refusals\":[{{\"category\":\"{category}\",\"construct\":\"{construct}\"}}]}}'; exit 1"
-    )
-}
-
-fn no_by_design(_: &Path) {}
-
-fn by_design_entry(directory: &Path) {
-    write(
-        directory,
-        "by-design.toml",
-        &format!(
-            "[[by_design]]\nconstruct = \"fn:SYSTEM$WAIT\"\nreason = \"{WAIT_REASON}\"\nduckdb_note = \"none\"\n"
-        ),
-    );
-}
-
-fn signed_off(directory: &Path) {
-    by_design_entry(directory);
-    write(
-        directory,
-        "reviews/auditor-by-design.toml",
-        &format!(
-            "[[signoff]]\nconstruct = \"fn:SYSTEM$WAIT\"\nreason_sha256 = \"{}\"\nreviewed_utc = \"2026-11-04T10:00:00Z\"\n",
-            sha256(WAIT_REASON)
-        ),
-    );
-}
-
-/// A sign-off of an earlier reason: the entry's reason has changed since the auditor read it.
-fn stale_signoff(directory: &Path) {
-    by_design_entry(directory);
-    write(
-        directory,
-        "reviews/auditor-by-design.toml",
-        &format!(
-            "[[signoff]]\nconstruct = \"fn:SYSTEM$WAIT\"\nreason_sha256 = \"{}\"\nreviewed_utc = \"2026-11-04T10:00:00Z\"\n",
-            sha256("an earlier reason")
-        ),
-    );
-}
-
-fn measure(
-    root: &Path,
-    by_design: &BTreeSet<String>,
-    binary: &Path,
-) -> Result<TranslationReport, Vec<String>> {
-    let coverage = load_coverage(root).expect("coverage loads");
-    let work = tempfile::tempdir().expect("work");
-    let policy = root.join("policy.toml");
-    measure_translation(&TranslationInputs {
-        coverage: &coverage,
-        root,
-        by_design,
-        binary,
-        policy: &policy,
-        work: work.path(),
-        family: None,
-        jobs: 2,
-    })
-}
+use crate::translation::models::FormState;
+use crate::translation::tests::helpers::{
+    fake_sqlquack, measure, no_by_design, refused, signed_off, stale_signoff,
+};
+use crate::translation::tests::test_types::{CensusRefusalTestCase, TranslationTestCase};
 
 #[test]
 fn given_a_conversion_report_when_measuring_then_the_form_takes_its_state() {
@@ -114,7 +33,10 @@ fn given_a_conversion_report_when_measuring_then_the_form_takes_its_state() {
         TranslationTestCase {
             description: "an unresolved name even with its census schema",
             convert: unresolved.clone(),
-            census: r#"{"case_id":"select-top","relations":[{"name":"t","columns":[{"name":"a","type":"NUMBER"},{"name":"\"b \"\"q\"","type":"TEXT"}]}]}"#,
+            census: concat!(
+                r#"{"case_id":"select-top","relations":[{"name":"t","columns":[{"name":"a","type":"NUMBER"},{"name":"\"b \"\"q\"","type":"TEXT"}]}]}"#,
+                "\n"
+            ),
             by_design: no_by_design,
             expected_state: FormState::NeedsSchema,
             expected_refusals: &[],
@@ -125,7 +47,10 @@ fn given_a_conversion_report_when_measuring_then_the_form_takes_its_state() {
             convert: format!(
                 "grep -q '\"T\":\\[\\[\"A\",\"NUMBER\"\\],\\[\"b \\\\\"q\",\"TEXT\"\\]\\]' \"$schema\" && {{ echo '{{\"converted\":true,\"refusals\":[]}}'; exit 0; }}\n{unresolved}"
             ),
-            census: r#"{"case_id":"select-top","relations":[{"name":"t","columns":[{"name":"a","type":"NUMBER"},{"name":"\"b \"\"q\"","type":"TEXT"}]}]}"#,
+            census: concat!(
+                r#"{"case_id":"select-top","relations":[{"name":"t","columns":[{"name":"a","type":"NUMBER"},{"name":"\"b \"\"q\"","type":"TEXT"}]}]}"#,
+                "\n"
+            ),
             by_design: no_by_design,
             expected_state: FormState::Translates,
             expected_refusals: &[],
@@ -172,13 +97,7 @@ fn given_a_conversion_report_when_measuring_then_the_form_takes_its_state() {
         let directory = tempfile::tempdir().expect("tempdir");
         let root = directory.path().join("syntax");
         verified_tree(&root);
-        if !test_case.census.is_empty() {
-            write(
-                &root,
-                "census/query.jsonl",
-                &format!("{}\n", test_case.census),
-            );
-        }
+        write(&root, "census/query.jsonl", test_case.census);
         let translation = directory.path().join("translation");
         (test_case.by_design)(&translation);
         let by_design = load_translation_files(&translation).expect(test_case.description);
@@ -235,21 +154,37 @@ fn given_a_conversion_report_when_measuring_then_the_form_takes_its_state() {
 }
 
 #[test]
-fn given_a_census_entry_for_an_unknown_case_when_measuring_then_it_is_refused() {
-    let directory = tempfile::tempdir().expect("tempdir");
-    let root = directory.path().join("syntax");
-    verified_tree(&root);
-    write(
-        &root,
-        "census/query.jsonl",
-        "{\"case_id\":\"no-such-case\",\"relations\":[{\"name\":\"T\",\"columns\":[{\"name\":\"A\",\"type\":\"NUMBER\"}]}]}\n",
-    );
-    let binary = fake_sqlquack(directory.path(), "exit 3");
-    let problems = measure(&root, &BTreeSet::new(), &binary).expect_err("refused");
-    assert!(
-        problems
-            .iter()
-            .any(|problem| problem.contains("no-such-case does not exist")),
-        "{problems:?}"
-    );
+fn given_a_malformed_census_when_measuring_then_it_is_refused() {
+    let test_cases = [
+        CensusRefusalTestCase {
+            description: "an entry for an unknown case",
+            census: "{\"case_id\":\"no-such-case\",\"relations\":[{\"name\":\"T\",\"columns\":[{\"name\":\"A\",\"type\":\"NUMBER\"}]}]}\n",
+            expected_problem: "case no-such-case does not exist",
+        },
+        CensusRefusalTestCase {
+            description: "a case listed twice",
+            census: "{\"case_id\":\"select-top\",\"relations\":[{\"name\":\"T\",\"columns\":[{\"name\":\"A\",\"type\":\"NUMBER\"}]}]}\n{\"case_id\":\"select-top\",\"relations\":[{\"name\":\"T\",\"columns\":[{\"name\":\"A\",\"type\":\"NUMBER\"}]}]}\n",
+            expected_problem: "case select-top listed twice",
+        },
+        CensusRefusalTestCase {
+            description: "a relation without columns",
+            census: "{\"case_id\":\"select-top\",\"relations\":[{\"name\":\"T\",\"columns\":[]}]}\n",
+            expected_problem: "a relation list or column list is empty",
+        },
+    ];
+    for test_case in test_cases {
+        let directory = tempfile::tempdir().expect("tempdir");
+        let root = directory.path().join("syntax");
+        verified_tree(&root);
+        write(&root, "census/query.jsonl", test_case.census);
+        let binary = fake_sqlquack(directory.path(), "exit 3");
+        let problems = measure(&root, &BTreeSet::new(), &binary).expect_err(test_case.description);
+        assert!(
+            problems
+                .iter()
+                .any(|problem| problem.contains(test_case.expected_problem)),
+            "{}: {problems:?}",
+            test_case.description
+        );
+    }
 }

@@ -5,10 +5,10 @@ use std::path::Path;
 
 use serde::de::DeserializeOwned;
 
-use crate::formats::_helpers::hashes::sha256_hex;
-use crate::formats::_helpers::ids::is_utc;
+use crate::formats::main::content_sha256::content_sha256;
+use crate::formats::main::is_utc_timestamp::is_utc_timestamp;
 use crate::translation::constants::{BY_DESIGN_FILE, BY_DESIGN_REVIEW_FILE};
-use crate::translation::models::{ByDesignFile, ByDesignReviewFile};
+use crate::translation::models::{ByDesignEntry, ByDesignFile, ByDesignReviewFile};
 
 /// A TOML file, its default when absent, or the problem reading it.
 fn read_optional<T: DeserializeOwned + Default>(path: &Path) -> Result<T, String> {
@@ -24,6 +24,15 @@ fn is_construct(key: &str) -> bool {
     key.split_once(':').is_some_and(|(kind, name)| {
         !kind.is_empty() && !name.is_empty() && !key.chars().any(char::is_whitespace)
     })
+}
+
+/// Whether the auditor signed off `entry` with its current reason.
+fn has_current_signoff(entry: &ByDesignEntry, review: &ByDesignReviewFile) -> bool {
+    let reason: String = content_sha256(entry.reason.as_bytes());
+    review
+        .signoffs
+        .iter()
+        .any(|signoff| signoff.construct == entry.construct && signoff.reason_sha256 == reason)
 }
 
 /// The constructs with a current sign-off, or every format problem in either file.
@@ -49,7 +58,7 @@ pub(crate) fn signed_off(directory: &Path) -> Result<BTreeSet<String>, Vec<Strin
         }
     }
     for signoff in &review.signoffs {
-        if !is_utc(&signoff.reviewed_utc) {
+        if !is_utc_timestamp(&signoff.reviewed_utc) {
             problems.push(format!(
                 "signoff {}: reviewed_utc is not UTC",
                 signoff.construct
@@ -62,12 +71,7 @@ pub(crate) fn signed_off(directory: &Path) -> Result<BTreeSet<String>, Vec<Strin
     Ok(entries
         .entries
         .iter()
-        .filter(|entry| {
-            let reason: String = sha256_hex(entry.reason.as_bytes());
-            review.signoffs.iter().any(|signoff| {
-                signoff.construct == entry.construct && signoff.reason_sha256 == reason
-            })
-        })
+        .filter(|entry| has_current_signoff(entry, &review))
         .map(|entry| entry.construct.clone())
         .collect())
 }

@@ -347,13 +347,15 @@ def test_given_recorded_inputs_when_loading_then_only_values_duckdb_cannot_hold_
     test_case: LoadTestCase, tmp_path: Path
 ) -> None:
     entries: list[dict[str, object]] = []
-    for name, values in (("edge", test_case.rows), ("plain", (datetime.datetime(2026, 1, 1),))):
+    for name, values, scale in (
+        ("edge", test_case.rows, 9),
+        ("plain", (datetime.datetime(2026, 1, 1),), 6),
+    ):
         table: pyarrow.Table = pyarrow.table(
             {"SENT_AT": pyarrow.array(values, pyarrow.timestamp("us"))}
         )
         with pyarrow.ipc.new_file(tmp_path / f"k_{name}.arrow", table.schema) as writer:
             writer.write_table(table)
-        scale: int = 9 if name == "edge" else 6
         column: dict[str, object] = {
             "name": "SENT_AT",
             "type_name": "TIMESTAMP_NTZ",

@@ -297,7 +297,6 @@ impl Parser {
         })
     }
 
-    /// `TIME ZONE` after `WITH [LOCAL]` or `WITHOUT`: both words in Snowflake, either elsewhere.
     /// Snowflake's VECTOR holds INT or FLOAT elements only.
     pub(crate) fn expect_snowflake_vector_element(&self) -> Result<()> {
         if self.config.dialect == Some(crate::tokens::models::DialectType::Snowflake)
@@ -311,6 +310,7 @@ impl Parser {
         Ok(())
     }
 
+    /// `TIME ZONE` after `WITH [LOCAL]` or `WITHOUT`: both words in Snowflake, either elsewhere.
     pub(crate) fn match_time_zone_words(&mut self) -> Result<()> {
         let time = self.match_keyword("TIME");
         let zone = self.match_keyword("ZONE");

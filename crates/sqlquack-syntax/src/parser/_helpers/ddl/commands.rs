@@ -39,6 +39,7 @@ use crate::expressions::tables::models::CollateProperty;
 use crate::expressions::tables::models::Property;
 use crate::expressions::tree::models::Expression;
 use crate::expressions::types::models::DataType;
+use crate::parser::constants::EXECUTE_DCM_PROJECT;
 use crate::parser::constants::FUNCTION;
 use crate::parser::constants::PROCEDURE;
 use crate::parser::constants::QUALIFIED_NAME_PARTS;
@@ -155,14 +156,13 @@ impl Parser {
         )
     }
 
-    /// Snowflake `EXECUTE ALERT | TASK [ GRAPH ] | DCM PROJECT <name>` with its action, or none
-    /// for any other EXECUTE, which keeps the general parse.
+    /// Snowflake `EXECUTE ALERT | TASK [ GRAPH ] | DCM PROJECT <name>` with its action, or none.
     fn parse_snowflake_execute_object(&mut self) -> Result<Option<Expression>> {
         let start = self.current;
         let kind = if self.match_text_seq(&["ALERT"]) {
             "ALERT"
         } else if self.match_text_seq(&["DCM", "PROJECT"]) {
-            "DCM PROJECT"
+            EXECUTE_DCM_PROJECT
         } else if self.match_text_seq(&["TASK", "GRAPH"]) {
             "TASK GRAPH"
         } else if self.match_text_seq(&["TASK"]) {
@@ -192,7 +192,7 @@ impl Parser {
                 self.expect_token(TokenType::Eq)?;
                 node.config = Some(self.parse_primary()?);
             }
-        } else if kind == "DCM PROJECT" {
+        } else if kind == EXECUTE_DCM_PROJECT {
             if self.match_text_seq(&["PURGE"]) {
                 node.action = Some("PURGE".to_owned());
                 if self.match_token(TokenType::As) {
@@ -752,7 +752,6 @@ impl Parser {
         })))
     }
 
-    /// Parse SET statement
     /// Snowflake `UNSET name` or `UNSET ( name [ , ... ] )`.
     pub(crate) fn parse_unset(&mut self) -> Result<Expression> {
         self.skip();
@@ -770,6 +769,7 @@ impl Parser {
         })))
     }
 
+    /// Parse SET statement
     pub(crate) fn parse_set(&mut self) -> Result<Expression> {
         self.expect_token(TokenType::Set)?;
 

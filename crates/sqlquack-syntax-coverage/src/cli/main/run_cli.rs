@@ -27,13 +27,7 @@ pub fn run_cli() -> ExitCode {
             catalogue_commit,
             common,
         } => snapshot_command(&catalogue_commit, &common),
-        Command::Translation {
-            sqlquack,
-            policy,
-            family,
-            jobs,
-            common,
-        } => translation(&sqlquack, &policy, family.as_deref(), jobs, &common),
+        Command::Translation { arguments, common } => translation(&arguments, &common),
         Command::Diff { base, head, common } => diff(&base, head.as_deref(), &common),
         Command::ParseWorker => parse_worker(),
     };

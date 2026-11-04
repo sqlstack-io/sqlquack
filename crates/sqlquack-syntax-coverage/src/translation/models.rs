@@ -1,6 +1,27 @@
 //! What conversion made of each counted case, each form, and each family.
 
+use std::collections::BTreeSet;
+use std::path::Path;
+
 use serde::{Deserialize, Serialize};
+
+use crate::formats::models::SyntaxCoverage;
+
+/// Where the measure's inputs are and how conversion runs.
+#[derive(Debug)]
+pub struct TranslationInputs<'a> {
+    pub coverage: &'a SyntaxCoverage,
+    /// The coverage root, holding the census sidecars.
+    pub root: &'a Path,
+    /// Constructs with a current by-design sign-off.
+    pub by_design: &'a BTreeSet<String>,
+    pub binary: &'a Path,
+    pub policy: &'a Path,
+    /// A scratch directory for each case's schema file.
+    pub work: &'a Path,
+    pub family: Option<&'a str>,
+    pub jobs: usize,
+}
 
 /// What conversion made of one case Snowflake parsed.
 #[derive(Clone, Debug, PartialEq, Eq, Serialize)]

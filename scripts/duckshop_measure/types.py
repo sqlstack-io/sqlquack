@@ -32,7 +32,6 @@ class ModelOutcome(StrEnum):
     REFUSED = "refused"
     DECLARED_DIVERGENCE = "declared_divergence"
     INPUT_UNRECORDED = "input_unrecorded"
-    # A recorded input DuckDB cannot hold at its declared type, such as year 0001 as TIMESTAMP_NS.
     INPUT_UNLOADABLE = "input_unloadable"
     UNREADABLE = "unreadable"
     NONDETERMINISTIC = "nondeterministic"
