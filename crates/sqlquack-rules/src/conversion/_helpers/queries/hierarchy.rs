@@ -109,7 +109,8 @@ pub(crate) fn hierarchy(
         placement: Placement::ROW,
     };
     let on = condition_sql(
-        &prior_condition(condition, &relation.alias).map_err(|reason| refuse(&reason))?,
+        &prior_condition(condition, &relation.alias, &relation.alias)
+            .map_err(|reason| refuse(&reason))?,
         joined.placed(Placement::FILTER),
     )?;
     let start = condition_sql(start, site.placed(Placement::FILTER))?;
@@ -316,14 +317,15 @@ fn carried_value(object: &Map<String, Value>) -> Result<Option<Carried>, String>
     Ok(None)
 }
 
-/// A CONNECT BY condition of `child = PRIOR parent` conjunctions, PRIOR read from the parent row.
-fn prior_condition(condition: &Value, alias: &str) -> Result<Value, String> {
+/// A CONNECT BY condition of `child = PRIOR parent` conjunctions, PRIOR read from the parent row;
+/// a side may be qualified by `own`, the walked relation's alias.
+fn prior_condition(condition: &Value, alias: &str, own: &str) -> Result<Value, String> {
     let object = condition
         .as_object()
         .ok_or_else(|| "a CONNECT BY condition of an unexpected shape".to_owned())?;
     if let Some(both) = object.get("and") {
-        let left = prior_condition(both.get("left").unwrap_or(&Value::Null), alias)?;
-        let right = prior_condition(both.get("right").unwrap_or(&Value::Null), alias)?;
+        let left = prior_condition(both.get("left").unwrap_or(&Value::Null), alias, own)?;
+        let right = prior_condition(both.get("right").unwrap_or(&Value::Null), alias, own)?;
         return Ok(json!({ "and": { "left": left, "right": right } }));
     }
     let Some(equal) = object.get("eq") else {
@@ -340,21 +342,41 @@ fn prior_condition(condition: &Value, alias: &str) -> Result<Value, String> {
             return Err("a CONNECT BY condition other than child = PRIOR parent".to_owned());
         }
     };
-    let child = qualified(child, alias)?;
-    let parent = qualified(parent.get("this").unwrap_or(&Value::Null), HIERARCHY_PRIOR)?;
+    let child = qualified(child, alias, own)?;
+    let parent = qualified(
+        parent.get("this").unwrap_or(&Value::Null),
+        HIERARCHY_PRIOR,
+        own,
+    )?;
     Ok(json!({ "eq": { "left": child, "right": parent } }))
 }
 
-/// An unqualified column read from the relation `alias`.
-fn qualified(node: &Value, alias: &str) -> Result<Value, String> {
+/// A column, unqualified or qualified by the walked relation's alias `own`, read from `alias`.
+fn qualified(node: &Value, alias: &str, own: &str) -> Result<Value, String> {
     let column = node
         .get("column")
         .and_then(Value::as_object)
-        .filter(|column| column.get("table").is_none_or(Value::is_null))
-        .ok_or_else(|| "a CONNECT BY side other than an unqualified column".to_owned())?;
+        .filter(|column| {
+            column
+                .get("table")
+                .is_none_or(|table| table.is_null() || names_relation(table, own))
+        })
+        .ok_or_else(|| "a CONNECT BY side other than a column of the walked relation".to_owned())?;
     let mut column = column.clone();
     column.insert("table".to_owned(), json!({ "name": alias, "quoted": true }));
     Ok(json!({ "column": column }))
+}
+
+/// Whether the qualifier `table` names the relation aliased `own`, as Snowflake resolves names:
+/// an unquoted name in any case, a quoted one exactly.
+fn names_relation(table: &Value, own: &str) -> bool {
+    let Some(name) = table.get("name").and_then(Value::as_str) else {
+        return false;
+    };
+    match table.get("quoted").and_then(Value::as_bool) == Some(true) {
+        true => name == own,
+        false => name.to_ascii_uppercase() == own,
+    }
 }
 
 /// `relation.column` after CONNECT_BY_ROOT, which parses as a field of the relation's name.

@@ -709,6 +709,41 @@ fn given_dates_when_converting_last_day_then_the_month_end_is_kept() {
 }
 
 #[test]
+fn given_sides_qualified_by_the_walked_relation_when_converting_connect_by_then_it_walks() {
+    let walk = |condition: &str| {
+        format!(
+            "WITH t AS (SELECT * FROM (VALUES (1, NULL), (2, 1), (3, 2), (4, 1)) AS v(id, parent)) \
+             SELECT SUM(id * 10 + depth) AS v FROM (SELECT c.id, LEVEL AS depth FROM t AS c \
+             START WITH c.parent IS NULL CONNECT BY {condition})"
+        )
+    };
+    let test_cases = [
+        (
+            "PRIOR on the left, both sides qualified",
+            walk("PRIOR c.id = c.parent"),
+            Ok("108"),
+        ),
+        (
+            "PRIOR on the right, the alias in another case",
+            walk("C.parent = PRIOR C.id"),
+            Ok("108"),
+        ),
+        (
+            "a qualifier naming another relation refuses",
+            walk("PRIOR x.id = c.parent"),
+            Err("walked relation"),
+        ),
+    ];
+    for (description, sql, expected_outcome) in test_cases {
+        assert_eq!(
+            shop_first_outcome(&sql, expected_outcome),
+            expected_outcome.map(str::to_owned).map_err(str::to_owned),
+            "{description}"
+        );
+    }
+}
+
+#[test]
 fn given_powers_of_ten_when_converting_power_then_the_nearest_double_is_kept() {
     let test_cases = [
         FirstValueTestCase {
