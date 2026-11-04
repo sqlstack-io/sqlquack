@@ -24,6 +24,13 @@ fn given_rejected_statements_when_compared_then_only_the_reviewed_one_is_explain
             expected_differences: 0,
         },
         RejectionTestCase {
+            description: "a reviewed statement polyglot rejects with another error is rejected as reviewed",
+            dialect: Dialect::Snowflake,
+            sql: "SELECT FROM x ORDER BY",
+            expected_rejected: 1,
+            expected_differences: 0,
+        },
+        RejectionTestCase {
             description: "other malformed type text is still a difference",
             dialect: Dialect::DuckDB,
             sql: "SELECT __polyglot_typed(amount, 'INT garbage') FROM orders",
