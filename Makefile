@@ -30,7 +30,7 @@ PYTHON_TYPED := scripts tests/unit/scripts python/src $(PYTHON_API_TESTS)
 PYTHON_TESTS := tests/unit/scripts $(PYTHON_API_TESTS)
 endif
 
-.PHONY: format rust-lint python-check fensu syntax-coverage evidence-guard polyglot-guard generate-cases generated-cases generate-referee-cases referee-cases referee-pending check-ci check-merge test test-rust test-python python-module python-api python-wheel verify-recorded polyglot-duckshop census-duckshop fuzz-smoke gate gate-parallel census duckshop-compiled
+.PHONY: format rust-lint python-check fensu syntax-coverage gate-build evidence-guard polyglot-guard generate-cases generated-cases generate-referee-cases referee-cases referee-pending check-ci check-merge test test-rust test-python python-module python-api python-wheel verify-recorded polyglot-duckshop census-duckshop fuzz-smoke gate gate-parallel census duckshop-compiled
 
 format:
 	cargo fmt --all
@@ -59,8 +59,8 @@ fensu:
 
 # Fails on any unresolved coverage reference, a form or obligation the baseline claims and the
 # current parser no longer supports, or a catalogue change the baseline was not re-recorded for.
-syntax-coverage:
-	cargo run --locked --profile $(GATE_PROFILE) -p sqlquack-syntax-coverage -- diff coverage/syntax/baseline.json
+syntax-coverage: gate-build
+	$(GATE_DIR)/syntax-coverage diff coverage/syntax/baseline.json
 
 # Fails when a change modifies or deletes a recorded result, or adds an invalid one.
 evidence-guard:
@@ -94,18 +94,26 @@ referee-pending:
 # The static gate, the first step of `gate`, and the Python API's tests.
 check-ci: rust-lint python-check fensu syntax-coverage evidence-guard polyglot-guard generated-cases referee-cases python-api
 
-# The gate builds everything it runs with one profile, GATE_PROFILE (Cargo.toml's `gate`), so the
-# Rust tests reuse check-ci's compiled crates. The test binaries run RUST_TEST_JOBS at a time; any
-# failure fails the target.
+# The gate builds everything it runs once, in `gate-build`: one profile, GATE_PROFILE (Cargo.toml's
+# `gate`), and one feature set, GATE_FEATURES. Cargo unifies features per invocation, so a build of a
+# single package would resolve them differently and compile the workspace again. The test binaries
+# run RUST_TEST_JOBS at a time; any failure fails the target.
 GATE_PROFILE ?= gate
+GATE_FEATURES = sqlquack-python/extension-module
 GATE_DIR = $(or $(CARGO_TARGET_DIR),target)/$(GATE_PROFILE)
 RUST_TEST_PROFILE ?= $(GATE_PROFILE)
 RUST_TEST_JOBS ?= 4
 
 test: test-rust test-python
 
-test-rust: | .venv/bin/python
-	RUST_TEST_JOBS=$(RUST_TEST_JOBS) scripts/run_rust_tests.sh $(RUST_TEST_PROFILE)
+# Every workspace crate, binary and test target, and the Python module, for the steps after it.
+gate-build: | .venv/bin/python
+	cargo build --locked --profile $(GATE_PROFILE) --workspace --all-targets --features $(GATE_FEATURES) \
+	  --message-format=json-render-diagnostics > $(PYTHON_BUILD_JSON)
+
+test-rust: gate-build
+	RUST_TEST_JOBS=$(RUST_TEST_JOBS) RUST_TEST_FEATURES=$(GATE_FEATURES) \
+	  scripts/run_rust_tests.sh $(RUST_TEST_PROFILE)
 
 # What every merge to main must pass, on the exact head: the static gate and the Rust tests.
 check-merge: check-ci test-rust
@@ -116,9 +124,7 @@ test-python: python-api
 
 # The `sqlquack` Python module, built from the workspace into its package, where the tests import it.
 # The DuckDB library it links goes next to it, where its rpath looks.
-python-module: | .venv/bin/python
-	cargo build --locked --profile $(GATE_PROFILE) -p sqlquack-python --features extension-module \
-	  --message-format=json-render-diagnostics > $(PYTHON_BUILD_JSON)
+python-module: gate-build
 	cp $(GATE_DIR)/lib_native.so $(PYTHON_MODULE)
 	cp "$$(jq -r 'select(.reason == "build-script-executed" and (.package_id | contains("libduckdb-sys"))) \
 	  | .linked_paths[] | sub("^[a-z]*="; "")' $(PYTHON_BUILD_JSON) | head -1)/libduckdb.so" \
@@ -126,7 +132,6 @@ python-module: | .venv/bin/python
 
 # The API tests compare the module's reports with the command line's, both built with GATE_PROFILE.
 python-api: python-module
-	cargo build --locked --profile $(GATE_PROFILE) -p sqlquack
 	SQLQUACK_BIN=$(abspath $(GATE_DIR)/sqlquack) \
 	  LD_LIBRARY_PATH=$(abspath $(PYTHON_PACKAGE)) uv run pytest $(PYTHON_API_TESTS) -n auto --dist loadfile
 
