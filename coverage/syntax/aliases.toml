@@ -743,3 +743,8 @@ to = [
   "sf.security_admin.alter-security-integration.unset-tag",
 ]
 reason = "grammar repeated byte for byte on another page; counted once under the command's own page (D80)"
+
+[[alias]]
+from = "sf.utility.execute-dbt-project.project.variant-syntax"
+to = ["sf.utility.execute-dbt-project.project-2"]
+reason = "the variant's ARGS string contains `--<dbt_cli_option>`, which extraction had read as a SQL comment, dropping the rest of the line; the corrected grammar is catalogued under a new id"
