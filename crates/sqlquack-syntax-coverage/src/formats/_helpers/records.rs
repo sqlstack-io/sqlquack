@@ -9,14 +9,14 @@ use crate::formats::_helpers::ids::{
     is_case_id, is_form_id, is_rfc3339_utc, is_segment, is_source_id, is_utc,
 };
 use crate::formats::constants::{
-    DEFINITION_SEPARATOR, FAMILIES, GRAMMAR_JOIN, HTTPS, INTERACTION_MEMBERS, PROSE_HASH_PREFIX,
-    RECEIPT_FORBIDDEN_TEXT, RECEIPT_FORMAT,
+    DCM_LINE, DCM_POSITION, DEFINITION_SEPARATOR, FAMILIES, GRAMMAR_JOIN, HTTPS,
+    INTERACTION_MEMBERS, PROSE_HASH_PREFIX, RECEIPT_FORBIDDEN_TEXT, RECEIPT_FORMAT,
 };
 use crate::formats::main::obligation_form::obligation_form;
 use crate::formats::models::{
-    Alias, Case, Definition, Diagnostic, Exclusion, Expect, Form, FormKind, FormStatus, Index,
-    Obligation, ObligationKind, Phase, Receipt, Review, Source, SourceStatus, Unobservable,
-    UnobservableCase, UnobservableProbe,
+    Alias, CaptureMethod, Case, Definition, Diagnostic, Exclusion, Expect, Form, FormKind,
+    FormStatus, Index, Obligation, ObligationKind, Phase, Receipt, Review, Source, SourceStatus,
+    Unobservable, UnobservableCase, UnobservableProbe,
 };
 
 fn blank(text: &str) -> bool {
@@ -293,7 +293,8 @@ pub(crate) fn check_receipt(receipt: &Receipt) -> Vec<String> {
             "receipt {id}: id is empty, too long or holds whitespace"
         ));
     }
-    let hashes: [Option<&String>; 10] = [
+    problems.extend(dcm_problems(receipt));
+    let hashes: [Option<&String>; 11] = [
         Some(&receipt.sql_sha256),
         Some(&receipt.setup_sha256),
         Some(&receipt.session_sha256),
@@ -304,6 +305,7 @@ pub(crate) fn check_receipt(receipt: &Receipt) -> Vec<String> {
         receipt.case_hash.as_ref(),
         receipt.input_sha256.as_ref(),
         receipt.supersedes_receipt_sha256.as_ref(),
+        receipt.definition_file_sha256.as_ref(),
     ];
     if !hashes.iter().flatten().all(|hash| is_sha256(hash)) {
         problems.push(format!("receipt {id}: a hash is not a lower-case SHA-256"));
@@ -337,7 +339,7 @@ pub(crate) fn check_receipt(receipt: &Receipt) -> Vec<String> {
             "receipt {id}: a reason category needs its basis and a phase after parsing"
         ));
     }
-    let text: [Option<&String>; 10] = [
+    let text: [Option<&String>; 13] = [
         Some(&receipt.run_id),
         receipt.query_id.as_ref(),
         Some(&receipt.warehouse_version),
@@ -348,10 +350,87 @@ pub(crate) fn check_receipt(receipt: &Receipt) -> Vec<String> {
         receipt.category.as_ref(),
         receipt.reason_category_basis.as_ref(),
         receipt.measure.as_ref(),
+        receipt.message.as_ref(),
+        receipt.inner_message.as_ref(),
+        receipt.dcm_project.as_ref(),
     ];
     if text.iter().flatten().any(|field| identifying(field)) {
         problems.push(format!(
             "receipt {id}: holds an account, host, URL or address"
+        ));
+    }
+    problems
+}
+
+/// The line and position an inner error's text points at: `line <n> at position <m>`.
+fn inner_position(text: &str) -> Option<(u32, u32)> {
+    let (_, rest) = text.split_once(DCM_LINE)?;
+    let (line, rest) = rest.split_once(DCM_POSITION)?;
+    let position: &str = rest
+        .split(|character: char| !character.is_ascii_digit())
+        .next()?;
+    Some((line.parse().ok()?, position.parse().ok()?))
+}
+
+/// The rules of a `dcm_definition_file` receipt, and that no other receipt carries its fields.
+fn dcm_problems(receipt: &Receipt) -> Vec<String> {
+    let id: &str = &receipt.case_id;
+    let inner: [bool; 4] = [
+        receipt.inner_errno.is_some(),
+        receipt.inner_message.is_some(),
+        receipt.definition_line.is_some(),
+        receipt.definition_position.is_some(),
+    ];
+    if receipt.capture_method != CaptureMethod::DcmDefinitionFile {
+        let dcm: bool = receipt.dcm_project.is_some()
+            || receipt.definition_file_sha256.is_some()
+            || inner.contains(&true);
+        return match dcm {
+            true => vec![format!(
+                "receipt {id}: DCM fields on a capture other than dcm_definition_file"
+            )],
+            false => Vec::new(),
+        };
+    }
+    let mut problems: Vec<String> = Vec::new();
+    if receipt.dcm_project.as_deref().is_none_or(blank) {
+        problems.push(format!("receipt {id}: a DCM receipt names its project"));
+    }
+    if receipt.definition_file_sha256.as_ref() != Some(&receipt.sql_sha256) {
+        problems.push(format!(
+            "receipt {id}: the definition file's sha256 must equal the case SQL's"
+        ));
+    }
+    let Some(inner_message) = receipt.inner_message.as_deref() else {
+        if receipt.phase != Phase::Accepted || inner.contains(&true) {
+            problems.push(format!(
+                "receipt {id}: a failed PLAN needs its inner message; a changeset has no inner error"
+            ));
+        }
+        return problems;
+    };
+    let suffix: bool = receipt
+        .message
+        .as_deref()
+        .is_some_and(|message| !blank(inner_message) && message.ends_with(inner_message));
+    if receipt.phase == Phase::Accepted || !suffix {
+        problems.push(format!(
+            "receipt {id}: an inner message belongs to a failed PLAN and ends its whole message"
+        ));
+    }
+    let recorded: Option<(u32, u32)> = receipt.definition_line.zip(receipt.definition_position);
+    let both_or_neither: bool =
+        receipt.definition_line.is_some() == receipt.definition_position.is_some();
+    let stated: bool = match inner_position(inner_message) {
+        Some(position) => recorded == Some(position),
+        None => {
+            recorded.is_none() || recorded == receipt.message.as_deref().and_then(inner_position)
+        }
+    };
+    if !both_or_neither || !stated {
+        problems.push(format!(
+            "receipt {id}: definition_line and definition_position must be the line and position \
+             the inner message states, else those the whole message states, or absent"
         ));
     }
     problems

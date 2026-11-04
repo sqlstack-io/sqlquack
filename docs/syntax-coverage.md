@@ -78,7 +78,9 @@ that names the form and its reason.
 
 An `[[obligation]]` has these fields:
 
-- `id`: `<form id>.o<NNN>`, where `o000` is never used.
+- `id`: `<form id>.o<NNN>`, where `o000` is never used. Numbers past `o999` take more digits
+  without a leading zero (`o1000`), so each number has one spelling; ids keep their meaning and are
+  listed by number, `o999` before `o1000`.
 - `kind`: one of `alternative`, `option_present`, `option_absent`, `required_operand_missing`,
   `operand_type_class`, `positive`, `negative_neighbour`, `boundary_below`, `boundary_at`,
   `boundary_above`, `identifier_class`, `nesting_depth`, `interaction`,
@@ -116,11 +118,14 @@ Each line is one JSON object. Blank lines are refused.
 - `sql` and `sql_sha256`.
 - `setup` and `setup_sha256`: the ordered setup statements.
 - `session` and `session_sha256`: the session parameters, with JSON values.
-- `capture`: one of `execute`, `compile_only_explain`, `execute_canonical_recorder`, `describe`
-  or `execute_ddl_in_run_database`. The last runs DDL inside a database that the run creates and
-  drops. Its setup names that database, the run nonce and the per-case schema with the
-  placeholders `<run_database>`, `<run_nonce>` and `<case_schema>`, so the setup hash stays the
-  same from run to run.
+- `capture`: one of `execute`, `compile_only_explain`, `execute_canonical_recorder`, `describe`,
+  `execute_ddl_in_run_database` or `dcm_definition_file`. `execute_ddl_in_run_database` runs DDL
+  inside a database that the run creates and drops. Its setup names that database, the run nonce
+  and the per-case schema with the placeholders `<run_database>`, `<run_nonce>` and
+  `<case_schema>`, so the setup hash stays the same from run to run. `dcm_definition_file` writes
+  the case SQL as one definition file and plans it with `EXECUTE DCM PROJECT … PLAN` in a project
+  the run owns and discloses. A receipt counts for a case only when its `capture_method` is the
+  case's `capture`, so a standalone execute receipt never satisfies a DCM case.
 
 - `expect`: optional, `accept` or `reject` (decision D84). `reject` means a syntax error. `accept`
   means no syntax error: the statement was accepted, or refused only after parsing. A receipt whose
@@ -168,6 +173,18 @@ committed one.
   of `missing_object`, `invalid_option_or_value`, `type` or `other`. The basis says what the
   importer read it from, such as `errno 2003`. Older receipts have neither.
 
+- DCM fields, only on a `dcm_definition_file` receipt: `dcm_project`, the disclosed project, and
+  `definition_file_sha256`, which equals `sql_sha256`, are required. A failed PLAN keeps its
+  whole text in `message` and the inner error, the text after its `… in file …:` line, in
+  `inner_message`, which ends `message`. `errno` and `sqlstate` are the code the warehouse
+  returned, which is the inner error's. `definition_line` and `definition_position` are the `line <n> at position <m>` the
+  inner error states, or, when it states none, absent or those the whole message states.
+  `inner_errno` is present only when the inner text itself carries a number. A changeset
+  (`accepted`) has no inner error. The phase comes from the inner error: `syntax error` is
+  `syntax_error`, any other failure after parsing is `semantic_error`. DCM's own pre-check
+  (`DCM Project compilation failed in file …`) is no evidence of a parse: its receipt carries a
+  `measure`, such as `dcm_precheck`, so it never counts as syntax evidence.
+- Optional `message`: the warehouse's whole error message.
 - Optional `measure`: the measure other than syntax the receipt was recorded for, such as
   `d73_missing_object_with_setup`. Such a receipt is never syntax evidence.
 - Optional `supersedes_receipt_sha256`: the SHA-256 of a published receipt line of the same case,

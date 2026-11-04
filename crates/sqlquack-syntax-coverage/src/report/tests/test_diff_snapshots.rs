@@ -47,6 +47,24 @@ fn given_a_later_snapshot_when_diffing_then_regressions_and_catalogue_changes_ar
             },
         },
         DiffTestCase {
+            description: "obligations gained past 999 are listed by number, not as text",
+            head: |mut head| {
+                for number in ["o1000", "o999", "o100"] {
+                    head.satisfied_obligations
+                        .insert(format!("sf.query.with.{number}"));
+                }
+                head
+            },
+            expected_diff: SnapshotDiff {
+                obligations_gained: ids(&[
+                    "sf.query.with.o100",
+                    "sf.query.with.o999",
+                    "sf.query.with.o1000",
+                ]),
+                ..SnapshotDiff::default()
+            },
+        },
+        DiffTestCase {
             description: "the catalogue changed: a file hash, a form added and one removed",
             head: |mut head| {
                 head.catalogue_files

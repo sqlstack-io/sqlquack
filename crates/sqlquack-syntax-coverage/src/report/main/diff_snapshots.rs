@@ -3,7 +3,7 @@
 use std::collections::BTreeSet;
 
 use crate::check::models::FormState;
-use crate::report::models::{Snapshot, SnapshotDiff};
+use crate::report::models::{Snapshot, SnapshotDiff, sorted_obligations};
 
 /// A state the checker claims: verified, or excluded by a current review.
 fn claimed(state: Option<&FormState>) -> bool {
@@ -45,15 +45,13 @@ pub fn diff_snapshots(base: &Snapshot, head: &Snapshot) -> SnapshotDiff {
             .filter(|id| claimed(in_head(id)) && in_base(id) != in_head(id))
             .map(|id| (*id).clone())
             .collect(),
-        obligations_lost: base
-            .satisfied_obligations
-            .difference(&head.satisfied_obligations)
-            .cloned()
-            .collect(),
-        obligations_gained: head
-            .satisfied_obligations
-            .difference(&base.satisfied_obligations)
-            .cloned()
-            .collect(),
+        obligations_lost: sorted_obligations(
+            base.satisfied_obligations
+                .difference(&head.satisfied_obligations),
+        ),
+        obligations_gained: sorted_obligations(
+            head.satisfied_obligations
+                .difference(&base.satisfied_obligations),
+        ),
     }
 }

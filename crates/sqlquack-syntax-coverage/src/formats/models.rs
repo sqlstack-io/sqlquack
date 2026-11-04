@@ -251,6 +251,9 @@ pub enum CaptureMethod {
     Describe,
     /// DDL executed inside a database the run creates and drops.
     ExecuteDdlInRunDatabase,
+    /// One definition file holding the case SQL, planned by `EXECUTE DCM PROJECT … PLAN` in a
+    /// project the run owns and discloses.
+    DcmDefinitionFile,
 }
 
 /// One line of `receipts/*.jsonl`, as the evidence owner's importer writes it.
@@ -317,6 +320,27 @@ pub struct Receipt {
     /// A measure other than syntax the receipt was recorded for; never syntax evidence.
     #[serde(default)]
     pub measure: Option<String>,
+    /// The warehouse's whole error message.
+    #[serde(default)]
+    pub message: Option<String>,
+    /// The DCM project a `dcm_definition_file` receipt planned in.
+    #[serde(default)]
+    pub dcm_project: Option<String>,
+    /// SHA-256 of the definition file, which holds exactly the case SQL.
+    #[serde(default)]
+    pub definition_file_sha256: Option<String>,
+    /// A number the inner compilation error itself carries; never inferred.
+    #[serde(default)]
+    pub inner_errno: Option<i64>,
+    /// The inner compilation error: the message after its `Compilation failed in file …:` line.
+    #[serde(default)]
+    pub inner_message: Option<String>,
+    /// The line the inner error points at, when its text gives one.
+    #[serde(default)]
+    pub definition_line: Option<u32>,
+    /// The position the inner error points at, when its text gives one.
+    #[serde(default)]
+    pub definition_position: Option<u32>,
 }
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Deserialize, Serialize)]
