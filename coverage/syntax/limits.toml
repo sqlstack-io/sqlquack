@@ -58647,3 +58647,101 @@ anchor = "doc.functions.extract / Syntax"
 sql = "SELECT EXTRACT ( 'm' FROM 1 ) ;"
 expect = "observe"
 context = "raw"
+
+# D113 security_admin receipt triage (import 65): remaining contradictions observed, each reason names its category and receipt.
+
+[[suppress]]
+form = "sf.security_admin.alter-account.unset-authentication-session-policy"
+kind = "negative_neighbour"
+note = "the form without its required POLICY"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 1420 SQLSTATE 22023, phase semantic_error, import-20261104-65), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.alter-account.unset-authentication-session-policy"
+kind = "negative_neighbour"
+note = "the form without its required POLICY, observed"
+anchor = "doc.sql.alter-account / Syntax / Altering the current account"
+sql = "ALTER ACCOUNT UNSET AUTHENTICATION ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-account.unset-contact"
+kind = "negative_neighbour"
+note = "the form without its required CONTACT"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 1420 SQLSTATE 22023, phase semantic_error, import-20261104-65), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.alter-account.unset-contact"
+kind = "negative_neighbour"
+note = "the form without its required CONTACT, observed"
+anchor = "doc.sql.alter-account / Syntax / Altering the current account"
+sql = "ALTER ACCOUNT UNSET STEWARD ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-account.unset-contact"
+kind = "required_operand_missing"
+target = "<purpose>"
+note = "omit <purpose>"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 1420 SQLSTATE 22023, phase semantic_error, import-20261104-65), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.alter-account.unset-contact"
+kind = "required_operand_missing"
+target = "<purpose>"
+note = "omit <purpose>, observed"
+anchor = "doc.sql.alter-account / Syntax / Altering the current account"
+sql = "ALTER ACCOUNT UNSET CONTACT ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-account.unset-domain-names"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 02000, phase semantic_error, import-20261104-65), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.alter-account.unset-domain-names"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>, observed"
+anchor = "doc.sql.alter-account / Syntax / Altering a different account"
+sql = "ALTER ACCOUNT UNSET DOMAIN_NAMES ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-account.unset-packages-password-multi"
+kind = "negative_neighbour"
+note = "the form without its required POLICY"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 1420 SQLSTATE 22023, phase semantic_error, import-20261104-65), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.alter-account.unset-packages-password-multi"
+kind = "negative_neighbour"
+note = "the form without its required POLICY, observed"
+anchor = "doc.sql.alter-account / Syntax / Altering the current account"
+sql = "ALTER ACCOUNT UNSET PACKAGES ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-account.unset-tag"
+kind = "required_operand_missing"
+target = "<tag_name>"
+note = "omit <tag_name>"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 1420 SQLSTATE 22023, phase semantic_error, import-20261104-65), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.alter-account.unset-tag"
+kind = "required_operand_missing"
+target = "<tag_name>"
+note = "omit <tag_name>, observed"
+anchor = "doc.sql.alter-account / Syntax / Altering the current account"
+sql = "ALTER ACCOUNT UNSET TAG ;"
+expect = "observe"
+context = "raw"
