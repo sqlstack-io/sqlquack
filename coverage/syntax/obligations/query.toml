@@ -5685,6 +5685,12 @@ required = true
 note = "the form without its required PATTERN"
 
 [[obligation]]
+id = "sf.query.match-recognize.match-recognize-pattern-define-as.o123"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( #2"
+
+[[obligation]]
 id = "sf.query.match-recognize.match-recognize-pattern-define-as.o072"
 kind = "negative_neighbour"
 required = true
@@ -5701,6 +5707,12 @@ id = "sf.query.match-recognize.match-recognize-pattern-define-as.o074"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required AS"
+
+[[obligation]]
+id = "sf.query.match-recognize.match-recognize-pattern-define-as.o124"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) #2"
 
 [[obligation]]
 id = "sf.query.match-recognize.match-recognize-pattern-define-as.o075"
@@ -7130,6 +7142,12 @@ required = true
 note = "the form without its required ("
 
 [[obligation]]
+id = "sf.query.pivot.o053"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( #2"
+
+[[obligation]]
 id = "sf.query.pivot.o038"
 kind = "negative_neighbour"
 required = true
@@ -7148,6 +7166,12 @@ required = true
 note = "the form without its required IN"
 
 [[obligation]]
+id = "sf.query.pivot.o054"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( #3"
+
+[[obligation]]
 id = "sf.query.pivot.o041"
 kind = "negative_neighbour"
 required = true
@@ -7158,6 +7182,12 @@ id = "sf.query.pivot.o042"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required { <pivot_value_1> [ [ AS ] <alias> ] [ , <pivot_value_2> [ [ AS ] <alias> ] ... ] | ANY [ ORDER BY ... ] | <subquery> }"
+
+[[obligation]]
+id = "sf.query.pivot.o055"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) #2"
 
 [[obligation]]
 id = "sf.query.pivot.o043"
@@ -7182,6 +7212,12 @@ id = "sf.query.pivot.o046"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required ) in [ DEFAULT ON NULL ( <value> ) ]"
+
+[[obligation]]
+id = "sf.query.pivot.o056"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) #3"
 
 [[obligation]]
 id = "sf.query.pivot.o047"
@@ -8528,6 +8564,12 @@ required = true
 note = "the form without its required AS in [ RENAME { <col_name> AS <col_alias> | ( <col_name> AS <col_alias> , <col_name> AS <col_alias> , ... ) } ]"
 
 [[obligation]]
+id = "sf.query.select.select.o113"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required AS in [ RENAME { <col_name> AS <col_alias> | ( <col_name> AS <col_alias> , <col_name> AS <col_alias> , ... ) } ] #2"
+
+[[obligation]]
 id = "sf.query.select.select.o081"
 kind = "negative_neighbour"
 required = true
@@ -9698,10 +9740,22 @@ required = true
 note = "the form without its required IN"
 
 [[obligation]]
+id = "sf.query.unpivot.o034"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( #2"
+
+[[obligation]]
 id = "sf.query.unpivot.o026"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required )"
+
+[[obligation]]
+id = "sf.query.unpivot.o035"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) #2"
 
 [[obligation]]
 id = "sf.query.unpivot.o027"
@@ -9932,10 +9986,22 @@ required = true
 note = "the form without its required VALUES"
 
 [[obligation]]
+id = "sf.query.values.o039"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( #2"
+
+[[obligation]]
 id = "sf.query.values.o028"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required )"
+
+[[obligation]]
+id = "sf.query.values.o040"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) #2"
 
 [[obligation]]
 id = "sf.query.values.o029"
@@ -10721,6 +10787,12 @@ required = true
 note = "the form without its required AS in [ WITH [ RECURSIVE ] <cte_name1> ( <cte_column_list> ) AS ( SELECT <anchor_column_list> FROM ... UNION ALL SELECT <recu…"
 
 [[obligation]]
+id = "sf.query.with.select.syntax.o146"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( in [ WITH [ RECURSIVE ] <cte_name1> ( <cte_column_list> ) AS ( SELECT <anchor_column_list> FROM ... UNION ALL SELECT <recu… #2"
+
+[[obligation]]
 id = "sf.query.with.select.syntax.o114"
 kind = "negative_neighbour"
 required = true
@@ -10737,6 +10809,24 @@ id = "sf.query.with.select.syntax.o116"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required UNION in [ WITH [ RECURSIVE ] <cte_name1> ( <cte_column_list> ) AS ( SELECT <anchor_column_list> FROM ... UNION ALL SELECT <recu…"
+
+[[obligation]]
+id = "sf.query.with.select.syntax.o147"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required SELECT in [ WITH [ RECURSIVE ] <cte_name1> ( <cte_column_list> ) AS ( SELECT <anchor_column_list> FROM ... UNION ALL SELECT <recu… #2"
+
+[[obligation]]
+id = "sf.query.with.select.syntax.o148"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required FROM in [ WITH [ RECURSIVE ] <cte_name1> ( <cte_column_list> ) AS ( SELECT <anchor_column_list> FROM ... UNION ALL SELECT <recu… #2"
+
+[[obligation]]
+id = "sf.query.with.select.syntax.o149"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) in [ WITH [ RECURSIVE ] <cte_name1> ( <cte_column_list> ) AS ( SELECT <anchor_column_list> FROM ... UNION ALL SELECT <recu… #2"
 
 [[obligation]]
 id = "sf.query.with.select.syntax.o118"
@@ -10757,6 +10847,12 @@ required = true
 note = "the form without its required AS in [ , <cte_name2> ( <cte_column_list> ) AS ( SELECT <anchor_column_list> FROM ... UNION ALL SELECT <recursive_column_list…"
 
 [[obligation]]
+id = "sf.query.with.select.syntax.o150"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( in [ , <cte_name2> ( <cte_column_list> ) AS ( SELECT <anchor_column_list> FROM ... UNION ALL SELECT <recursive_column_list… #2"
+
+[[obligation]]
 id = "sf.query.with.select.syntax.o121"
 kind = "negative_neighbour"
 required = true
@@ -10773,6 +10869,24 @@ id = "sf.query.with.select.syntax.o123"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required UNION in [ , <cte_name2> ( <cte_column_list> ) AS ( SELECT <anchor_column_list> FROM ... UNION ALL SELECT <recursive_column_list…"
+
+[[obligation]]
+id = "sf.query.with.select.syntax.o151"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required SELECT in [ , <cte_name2> ( <cte_column_list> ) AS ( SELECT <anchor_column_list> FROM ... UNION ALL SELECT <recursive_column_list… #2"
+
+[[obligation]]
+id = "sf.query.with.select.syntax.o152"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required FROM in [ , <cte_name2> ( <cte_column_list> ) AS ( SELECT <anchor_column_list> FROM ... UNION ALL SELECT <recursive_column_list… #2"
+
+[[obligation]]
+id = "sf.query.with.select.syntax.o153"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) in [ , <cte_name2> ( <cte_column_list> ) AS ( SELECT <anchor_column_list> FROM ... UNION ALL SELECT <recursive_column_list… #2"
 
 [[obligation]]
 id = "sf.query.with.select.syntax.o125"
@@ -10793,6 +10907,12 @@ required = true
 note = "the form without its required AS in [ , <cte_nameN> ( <cte_column_list> ) AS ( SELECT <anchor_column_list> FROM ... UNION ALL SELECT <recursive_column_list…"
 
 [[obligation]]
+id = "sf.query.with.select.syntax.o154"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( in [ , <cte_nameN> ( <cte_column_list> ) AS ( SELECT <anchor_column_list> FROM ... UNION ALL SELECT <recursive_column_list… #2"
+
+[[obligation]]
 id = "sf.query.with.select.syntax.o128"
 kind = "negative_neighbour"
 required = true
@@ -10809,6 +10929,24 @@ id = "sf.query.with.select.syntax.o130"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required UNION in [ , <cte_nameN> ( <cte_column_list> ) AS ( SELECT <anchor_column_list> FROM ... UNION ALL SELECT <recursive_column_list…"
+
+[[obligation]]
+id = "sf.query.with.select.syntax.o155"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required SELECT in [ , <cte_nameN> ( <cte_column_list> ) AS ( SELECT <anchor_column_list> FROM ... UNION ALL SELECT <recursive_column_list… #2"
+
+[[obligation]]
+id = "sf.query.with.select.syntax.o156"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required FROM in [ , <cte_nameN> ( <cte_column_list> ) AS ( SELECT <anchor_column_list> FROM ... UNION ALL SELECT <recursive_column_list… #2"
+
+[[obligation]]
+id = "sf.query.with.select.syntax.o157"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) in [ , <cte_nameN> ( <cte_column_list> ) AS ( SELECT <anchor_column_list> FROM ... UNION ALL SELECT <recursive_column_list… #2"
 
 [[obligation]]
 id = "sf.query.with.select.syntax.o145"

@@ -1618,6 +1618,24 @@ required = true
 note = "the form without its required )"
 
 [[obligation]]
+id = "sf.transaction_session.set.set.syntax.o014"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( #2"
+
+[[obligation]]
+id = "sf.transaction_session.set.set.syntax.o015"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) #2"
+
+[[obligation]]
+id = "sf.transaction_session.set.set.syntax.o016"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
+
+[[obligation]]
 id = "sf.transaction_session.set.set.syntax.o012"
 kind = "negative_neighbour"
 required = true

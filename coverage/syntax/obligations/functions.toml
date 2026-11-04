@@ -2024,6 +2024,24 @@ required = true
 note = "the form without its required )"
 
 [[obligation]]
+id = "sf.functions.ai-filter.o034"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( #2"
+
+[[obligation]]
+id = "sf.functions.ai-filter.o035"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) #2"
+
+[[obligation]]
+id = "sf.functions.ai-filter.o036"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
+
+[[obligation]]
 id = "sf.functions.ai-filter.o029"
 kind = "identifier_class"
 required = true
@@ -2913,6 +2931,12 @@ required = true
 note = "the form without its required ("
 
 [[obligation]]
+id = "sf.functions.ai-summarize.ai-summarize-to-file.o020"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( #2"
+
+[[obligation]]
 id = "sf.functions.ai-summarize.ai-summarize-to-file.o016"
 kind = "negative_neighbour"
 required = true
@@ -2929,6 +2953,12 @@ id = "sf.functions.ai-summarize.ai-summarize-to-file.o017"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required { TRUE | FALSE } in [ , return_error_details => { TRUE | FALSE } ]"
+
+[[obligation]]
+id = "sf.functions.ai-summarize.ai-summarize-to-file.o021"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) #2"
 
 [[obligation]]
 id = "sf.functions.ai-summarize.ai-summarize-to-file.o019"
@@ -3363,10 +3393,22 @@ required = true
 note = "the form without its required OVER"
 
 [[obligation]]
+id = "sf.functions.any-value.any-value-over.o015"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( #2"
+
+[[obligation]]
 id = "sf.functions.any-value.any-value-over.o013"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required BY in [ PARTITION BY <expr2> ]"
+
+[[obligation]]
+id = "sf.functions.any-value.any-value-over.o016"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) #2"
 
 [[obligation]]
 id = "sf.functions.any-value.any-value-over.o014"
@@ -4015,10 +4057,22 @@ required = true
 note = "the form without its required OVER"
 
 [[obligation]]
+id = "sf.functions.approx-count-distinct.approx-count-distinct-over.o017"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( #2"
+
+[[obligation]]
 id = "sf.functions.approx-count-distinct.approx-count-distinct-over.o015"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required BY in [ PARTITION BY <expr2> ]"
+
+[[obligation]]
+id = "sf.functions.approx-count-distinct.approx-count-distinct-over.o018"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) #2"
 
 [[obligation]]
 id = "sf.functions.approx-count-distinct.approx-count-distinct-over.o016"
@@ -4199,10 +4253,22 @@ required = true
 note = "the form without its required OVER"
 
 [[obligation]]
+id = "sf.functions.approx-count-distinct.approx-count-distinct-over.syntax.o034"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( #2"
+
+[[obligation]]
 id = "sf.functions.approx-count-distinct.approx-count-distinct-over.syntax.o009"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required BY in [ PARTITION BY <expr2> ]"
+
+[[obligation]]
+id = "sf.functions.approx-count-distinct.approx-count-distinct-over.syntax.o035"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) #2"
 
 [[obligation]]
 id = "sf.functions.approx-count-distinct.approx-count-distinct-over.syntax.o029"
@@ -4463,10 +4529,22 @@ required = true
 note = "the form without its required OVER"
 
 [[obligation]]
+id = "sf.functions.approx-percentile.approx-percentile-over.o014"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( #2"
+
+[[obligation]]
 id = "sf.functions.approx-percentile.approx-percentile-over.o013"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required BY in [ PARTITION BY <expr3> ]"
+
+[[obligation]]
+id = "sf.functions.approx-percentile.approx-percentile-over.o015"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) #2"
 
 [[obligation]]
 id = "sf.functions.approx-top-k-accumulate.o001"
@@ -4803,10 +4881,22 @@ required = true
 note = "the form without its required OVER"
 
 [[obligation]]
+id = "sf.functions.approx-top-k.approx-top-k-over.o021"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( #2"
+
+[[obligation]]
 id = "sf.functions.approx-top-k.approx-top-k-over.o019"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required BY in [ PARTITION BY <expr4> ]"
+
+[[obligation]]
+id = "sf.functions.approx-top-k.approx-top-k-over.o022"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) #2"
 
 [[obligation]]
 id = "sf.functions.approx-top-k.approx-top-k-over.o020"
@@ -4872,6 +4962,12 @@ required = true
 note = "the form without its required )"
 
 [[obligation]]
+id = "sf.functions.approximate-jaccard-index.approximate-jaccard-index.o011"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
+
+[[obligation]]
 id = "sf.functions.approximate-similarity.approximate-similarity.o001"
 kind = "positive"
 required = true
@@ -4927,6 +5023,12 @@ id = "sf.functions.approximate-similarity.approximate-similarity.o009"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required )"
+
+[[obligation]]
+id = "sf.functions.approximate-similarity.approximate-similarity.o011"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
 
 [[obligation]]
 id = "sf.functions.array-agg.array-agg.o001"
@@ -5222,6 +5324,12 @@ required = true
 note = "the form without its required OVER"
 
 [[obligation]]
+id = "sf.functions.array-agg.array-agg-over.o039"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( #2"
+
+[[obligation]]
 id = "sf.functions.array-agg.array-agg-over.o035"
 kind = "negative_neighbour"
 required = true
@@ -5238,6 +5346,12 @@ id = "sf.functions.array-agg.array-agg-over.o037"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required { FIRST | LAST } in [ NULLS { FIRST | LAST } ]"
+
+[[obligation]]
+id = "sf.functions.array-agg.array-agg-over.o040"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) #2"
 
 [[obligation]]
 id = "sf.functions.array-agg.array-agg-over.o038"
@@ -6547,10 +6661,22 @@ required = true
 note = "the form without its required OVER"
 
 [[obligation]]
+id = "sf.functions.array-union-agg.array-union-agg-over.o015"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( #2"
+
+[[obligation]]
 id = "sf.functions.array-union-agg.array-union-agg-over.o012"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required BY in [ PARTITION BY <expr> ]"
+
+[[obligation]]
+id = "sf.functions.array-union-agg.array-union-agg-over.o016"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) #2"
 
 [[obligation]]
 id = "sf.functions.array-union-agg.array-union-agg-over.o013"
@@ -6667,10 +6793,22 @@ required = true
 note = "the form without its required OVER"
 
 [[obligation]]
+id = "sf.functions.array-unique-agg.array-unique-agg-over.o015"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( #2"
+
+[[obligation]]
 id = "sf.functions.array-unique-agg.array-unique-agg-over.o012"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required BY in [ PARTITION BY <expr> ]"
+
+[[obligation]]
+id = "sf.functions.array-unique-agg.array-unique-agg-over.o016"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) #2"
 
 [[obligation]]
 id = "sf.functions.array-unique-agg.array-unique-agg-over.o013"
@@ -8201,6 +8339,12 @@ required = true
 note = "the form without its required OVER"
 
 [[obligation]]
+id = "sf.functions.avg.avg-over.o032"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( #2"
+
+[[obligation]]
 id = "sf.functions.avg.avg-over.o028"
 kind = "negative_neighbour"
 required = true
@@ -8217,6 +8361,12 @@ id = "sf.functions.avg.avg-over.o030"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required { FIRST | LAST } in [ NULLS { FIRST | LAST } ]"
+
+[[obligation]]
+id = "sf.functions.avg.avg-over.o033"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) #2"
 
 [[obligation]]
 id = "sf.functions.avg.avg-over.o031"
@@ -8696,10 +8846,22 @@ required = true
 note = "the form without its required OVER"
 
 [[obligation]]
+id = "sf.functions.bitand-agg.bitand-agg-over.o015"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( #2"
+
+[[obligation]]
 id = "sf.functions.bitand-agg.bitand-agg-over.o011"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required BY in [ PARTITION BY <expr2> ]"
+
+[[obligation]]
+id = "sf.functions.bitand-agg.bitand-agg-over.o016"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) #2"
 
 [[obligation]]
 id = "sf.functions.bitand-agg.bitand-agg-over.o014"
@@ -9243,10 +9405,22 @@ required = true
 note = "the form without its required OVER"
 
 [[obligation]]
+id = "sf.functions.bitor-agg.bitor-agg-over.o015"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( #2"
+
+[[obligation]]
 id = "sf.functions.bitor-agg.bitor-agg-over.o011"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required BY in [ PARTITION BY <expr2> ]"
+
+[[obligation]]
+id = "sf.functions.bitor-agg.bitor-agg-over.o016"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) #2"
 
 [[obligation]]
 id = "sf.functions.bitor-agg.bitor-agg-over.o014"
@@ -9518,10 +9692,22 @@ required = true
 note = "the form without its required OVER"
 
 [[obligation]]
+id = "sf.functions.bitxor-agg.bitxor-agg-over.o015"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( #2"
+
+[[obligation]]
 id = "sf.functions.bitxor-agg.bitxor-agg-over.o013"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required BY in [ PARTITION BY <expr2> ]"
+
+[[obligation]]
+id = "sf.functions.bitxor-agg.bitxor-agg-over.o016"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) #2"
 
 [[obligation]]
 id = "sf.functions.bitxor-agg.bitxor-agg-over.o014"
@@ -9658,10 +9844,22 @@ required = true
 note = "the form without its required OVER"
 
 [[obligation]]
+id = "sf.functions.booland-agg.booland-agg-over.o012"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( #2"
+
+[[obligation]]
 id = "sf.functions.booland-agg.booland-agg-over.o011"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required BY in [ PARTITION BY <partition_expr> ]"
+
+[[obligation]]
+id = "sf.functions.booland-agg.booland-agg-over.o013"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) #2"
 
 [[obligation]]
 id = "sf.functions.boolnot.o001"
@@ -9817,10 +10015,22 @@ required = true
 note = "the form without its required OVER"
 
 [[obligation]]
+id = "sf.functions.boolor-agg.boolor-agg-over.o012"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( #2"
+
+[[obligation]]
 id = "sf.functions.boolor-agg.boolor-agg-over.o011"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required BY in [ PARTITION BY <partition_expr> ]"
+
+[[obligation]]
+id = "sf.functions.boolor-agg.boolor-agg-over.o013"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) #2"
 
 [[obligation]]
 id = "sf.functions.boolxor.o001"
@@ -9951,10 +10161,22 @@ required = true
 note = "the form without its required OVER"
 
 [[obligation]]
+id = "sf.functions.boolxor-agg.boolxor-agg-over.o012"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( #2"
+
+[[obligation]]
 id = "sf.functions.boolxor-agg.boolxor-agg-over.o011"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required BY in [ PARTITION BY <partition_expr> ]"
+
+[[obligation]]
+id = "sf.functions.boolxor-agg.boolxor-agg-over.o013"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) #2"
 
 [[obligation]]
 id = "sf.functions.build-scoped-file-url.o001"
@@ -11841,6 +12063,12 @@ required = true
 note = "the form without its required OVER"
 
 [[obligation]]
+id = "sf.functions.conditional-change-event.o026"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( #2"
+
+[[obligation]]
 id = "sf.functions.conditional-change-event.o021"
 kind = "negative_neighbour"
 required = true
@@ -11863,6 +12091,12 @@ id = "sf.functions.conditional-change-event.o024"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required { FIRST | LAST } in [ NULLS { FIRST | LAST } ]"
+
+[[obligation]]
+id = "sf.functions.conditional-change-event.o027"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) #2"
 
 [[obligation]]
 id = "sf.functions.conditional-change-event.o025"
@@ -11990,6 +12224,12 @@ required = true
 note = "the form without its required OVER"
 
 [[obligation]]
+id = "sf.functions.conditional-true-event.o026"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( #2"
+
+[[obligation]]
 id = "sf.functions.conditional-true-event.o021"
 kind = "negative_neighbour"
 required = true
@@ -12012,6 +12252,12 @@ id = "sf.functions.conditional-true-event.o024"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required { FIRST | LAST } in [ NULLS { FIRST | LAST } ]"
+
+[[obligation]]
+id = "sf.functions.conditional-true-event.o027"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) #2"
 
 [[obligation]]
 id = "sf.functions.conditional-true-event.o025"
@@ -12406,10 +12652,22 @@ required = true
 note = "the form without its required OVER"
 
 [[obligation]]
+id = "sf.functions.corr.x-over.o014"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( #2"
+
+[[obligation]]
 id = "sf.functions.corr.x-over.o013"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required BY in [ PARTITION BY <expr3> ]"
+
+[[obligation]]
+id = "sf.functions.corr.x-over.o015"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) #2"
 
 [[obligation]]
 id = "sf.functions.cortex-search-batch.o001"
@@ -13066,6 +13324,12 @@ required = true
 note = "the form without its required OVER"
 
 [[obligation]]
+id = "sf.functions.count-if.count-if-over.o030"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( #2"
+
+[[obligation]]
 id = "sf.functions.count-if.count-if-over.o026"
 kind = "negative_neighbour"
 required = true
@@ -13082,6 +13346,12 @@ id = "sf.functions.count-if.count-if-over.o028"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required { FIRST | LAST } in [ NULLS { FIRST | LAST } ]"
+
+[[obligation]]
+id = "sf.functions.count-if.count-if-over.o031"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) #2"
 
 [[obligation]]
 id = "sf.functions.count-if.count-if-over.o029"
@@ -13550,6 +13820,12 @@ required = true
 note = "the form without its required OVER"
 
 [[obligation]]
+id = "sf.functions.count.count-over.o034"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( #2"
+
+[[obligation]]
 id = "sf.functions.count.count-over.o030"
 kind = "negative_neighbour"
 required = true
@@ -13566,6 +13842,12 @@ id = "sf.functions.count.count-over.o032"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required { FIRST | LAST } in [ NULLS { FIRST | LAST } ]"
+
+[[obligation]]
+id = "sf.functions.count.count-over.o035"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) #2"
 
 [[obligation]]
 id = "sf.functions.count.count-over.o033"
@@ -13698,10 +13980,22 @@ required = true
 note = "the form without its required OVER"
 
 [[obligation]]
+id = "sf.functions.covar-pop.x-over.o014"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( #2"
+
+[[obligation]]
 id = "sf.functions.covar-pop.x-over.o013"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required BY in [ PARTITION BY <expr1> ]"
+
+[[obligation]]
+id = "sf.functions.covar-pop.x-over.o015"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) #2"
 
 [[obligation]]
 id = "sf.functions.covar-samp.covar-samp.o001"
@@ -13828,10 +14122,22 @@ required = true
 note = "the form without its required OVER"
 
 [[obligation]]
+id = "sf.functions.covar-samp.x-over.o014"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( #2"
+
+[[obligation]]
 id = "sf.functions.covar-samp.x-over.o013"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required BY in [ PARTITION BY <expr1> ]"
+
+[[obligation]]
+id = "sf.functions.covar-samp.x-over.o015"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) #2"
 
 [[obligation]]
 id = "sf.functions.cume-dist.o001"
@@ -13946,6 +14252,12 @@ required = true
 note = "the form without its required OVER"
 
 [[obligation]]
+id = "sf.functions.cume-dist.o024"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( #2"
+
+[[obligation]]
 id = "sf.functions.cume-dist.o019"
 kind = "negative_neighbour"
 required = true
@@ -13968,6 +14280,12 @@ id = "sf.functions.cume-dist.o022"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required { FIRST | LAST } in [ NULLS { FIRST | LAST } ]"
+
+[[obligation]]
+id = "sf.functions.cume-dist.o025"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) #2"
 
 [[obligation]]
 id = "sf.functions.cume-dist.o023"
@@ -15736,10 +16054,22 @@ required = true
 note = "the form without its required OVER"
 
 [[obligation]]
+id = "sf.functions.datasketches-hll.datasketches-hll-over.o019"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( #2"
+
+[[obligation]]
 id = "sf.functions.datasketches-hll.datasketches-hll-over.o017"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required BY in [ PARTITION BY <expr2> ]"
+
+[[obligation]]
+id = "sf.functions.datasketches-hll.datasketches-hll-over.o020"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) #2"
 
 [[obligation]]
 id = "sf.functions.datasketches-hll.datasketches-hll-over.o018"
@@ -16786,6 +17116,12 @@ required = true
 note = "the form without its required )"
 
 [[obligation]]
+id = "sf.functions.decode.o016"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
+
+[[obligation]]
 id = "sf.functions.decompress-binary.o001"
 kind = "positive"
 required = true
@@ -17256,6 +17592,12 @@ required = true
 note = "the form without its required OVER"
 
 [[obligation]]
+id = "sf.functions.dense-rank.o027"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( #2"
+
+[[obligation]]
 id = "sf.functions.dense-rank.o022"
 kind = "negative_neighbour"
 required = true
@@ -17278,6 +17620,12 @@ id = "sf.functions.dense-rank.o025"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required { FIRST | LAST } in [ NULLS { FIRST | LAST } ]"
+
+[[obligation]]
+id = "sf.functions.dense-rank.o028"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) #2"
 
 [[obligation]]
 id = "sf.functions.dense-rank.o026"
@@ -24861,10 +25209,34 @@ required = true
 note = "the form without its required TABLE"
 
 [[obligation]]
+id = "sf.functions.dmf-referential-integrity-count.table.o023"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( #2"
+
+[[obligation]]
+id = "sf.functions.dmf-referential-integrity-count.table.o024"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( #3"
+
+[[obligation]]
 id = "sf.functions.dmf-referential-integrity-count.table.o015"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required )"
+
+[[obligation]]
+id = "sf.functions.dmf-referential-integrity-count.table.o025"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) #2"
+
+[[obligation]]
+id = "sf.functions.dmf-referential-integrity-count.table.o026"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) #3"
 
 [[obligation]]
 id = "sf.functions.dmf-referential-integrity-count.table.o016"
@@ -25028,10 +25400,34 @@ required = true
 note = "the form without its required TABLE"
 
 [[obligation]]
+id = "sf.functions.dmf-referential-integrity-count.table.syntax.o031"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( #2"
+
+[[obligation]]
+id = "sf.functions.dmf-referential-integrity-count.table.syntax.o032"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( #3"
+
+[[obligation]]
 id = "sf.functions.dmf-referential-integrity-count.table.syntax.o021"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required )"
+
+[[obligation]]
+id = "sf.functions.dmf-referential-integrity-count.table.syntax.o033"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) #2"
+
+[[obligation]]
+id = "sf.functions.dmf-referential-integrity-count.table.syntax.o034"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) #3"
 
 [[obligation]]
 id = "sf.functions.dmf-referential-integrity-count.table.syntax.o022"
@@ -25269,10 +25665,40 @@ required = true
 note = "the form without its required ("
 
 [[obligation]]
+id = "sf.functions.dmf-row-count-difference.o030"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required TABLE #2"
+
+[[obligation]]
+id = "sf.functions.dmf-row-count-difference.o031"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( #2"
+
+[[obligation]]
+id = "sf.functions.dmf-row-count-difference.o032"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( #3"
+
+[[obligation]]
 id = "sf.functions.dmf-row-count-difference.o022"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required )"
+
+[[obligation]]
+id = "sf.functions.dmf-row-count-difference.o033"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) #2"
+
+[[obligation]]
+id = "sf.functions.dmf-row-count-difference.o034"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) #3"
 
 [[obligation]]
 id = "sf.functions.dmf-row-count-difference.o023"
@@ -26053,10 +26479,40 @@ required = true
 note = "the form without its required ("
 
 [[obligation]]
+id = "sf.functions.dmf-source-target-lag.alter-table-add-data.o030"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required TABLE #2"
+
+[[obligation]]
+id = "sf.functions.dmf-source-target-lag.alter-table-add-data.o031"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( #2"
+
+[[obligation]]
+id = "sf.functions.dmf-source-target-lag.alter-table-add-data.o032"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( #3"
+
+[[obligation]]
 id = "sf.functions.dmf-source-target-lag.alter-table-add-data.o022"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required )"
+
+[[obligation]]
+id = "sf.functions.dmf-source-target-lag.alter-table-add-data.o033"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) #2"
+
+[[obligation]]
+id = "sf.functions.dmf-source-target-lag.alter-table-add-data.o034"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) #3"
 
 [[obligation]]
 id = "sf.functions.dmf-source-target-lag.alter-table-add-data.o023"
@@ -26152,10 +26608,34 @@ required = true
 note = "the form without its required ("
 
 [[obligation]]
+id = "sf.functions.dmf-source-target-lag.snowflake-core-source-target-lag.o014"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( #2"
+
+[[obligation]]
 id = "sf.functions.dmf-source-target-lag.snowflake-core-source-target-lag.o011"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required )"
+
+[[obligation]]
+id = "sf.functions.dmf-source-target-lag.snowflake-core-source-target-lag.o015"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( #3"
+
+[[obligation]]
+id = "sf.functions.dmf-source-target-lag.snowflake-core-source-target-lag.o016"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) #2"
+
+[[obligation]]
+id = "sf.functions.dmf-source-target-lag.snowflake-core-source-target-lag.o017"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) #3"
 
 [[obligation]]
 id = "sf.functions.dmf-source-target-lag.snowflake-core-source-target-lag.o012"
@@ -29888,6 +30368,12 @@ required = true
 note = "the form without its required OVER"
 
 [[obligation]]
+id = "sf.functions.first-value.o034"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( #2"
+
+[[obligation]]
 id = "sf.functions.first-value.o029"
 kind = "negative_neighbour"
 required = true
@@ -29910,6 +30396,12 @@ id = "sf.functions.first-value.o032"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required { FIRST | LAST } in [ NULLS { FIRST | LAST } ]"
+
+[[obligation]]
+id = "sf.functions.first-value.o035"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) #2"
 
 [[obligation]]
 id = "sf.functions.first-value.o033"
@@ -30733,6 +31225,18 @@ id = "sf.functions.functions-window-syntax.o012"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required OVER"
+
+[[obligation]]
+id = "sf.functions.functions-window-syntax.o014"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( #2"
+
+[[obligation]]
+id = "sf.functions.functions-window-syntax.o015"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) #2"
 
 [[obligation]]
 id = "sf.functions.functions-window-syntax.o013"
@@ -35010,10 +35514,22 @@ required = true
 note = "the form without its required OVER"
 
 [[obligation]]
+id = "sf.functions.hash-agg.hash-agg-over.o017"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( #2"
+
+[[obligation]]
 id = "sf.functions.hash-agg.hash-agg-over.o015"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required BY in [ PARTITION BY <expr3> ]"
+
+[[obligation]]
+id = "sf.functions.hash-agg.hash-agg-over.o018"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) #2"
 
 [[obligation]]
 id = "sf.functions.hash-agg.hash-agg-over.o016"
@@ -35194,10 +35710,22 @@ required = true
 note = "the form without its required OVER"
 
 [[obligation]]
+id = "sf.functions.hash-agg.hash-agg-over.syntax.o034"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( #2"
+
+[[obligation]]
 id = "sf.functions.hash-agg.hash-agg-over.syntax.o009"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required BY in [ PARTITION BY <expr3> ]"
+
+[[obligation]]
+id = "sf.functions.hash-agg.hash-agg-over.syntax.o035"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) #2"
 
 [[obligation]]
 id = "sf.functions.hash-agg.hash-agg-over.syntax.o029"
@@ -35526,10 +36054,22 @@ required = true
 note = "the form without its required OVER"
 
 [[obligation]]
+id = "sf.functions.hll-accumulate.hll-accumulate-over.o015"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( #2"
+
+[[obligation]]
 id = "sf.functions.hll-accumulate.hll-accumulate-over.o013"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required BY in [ PARTITION BY <expr1> ]"
+
+[[obligation]]
+id = "sf.functions.hll-accumulate.hll-accumulate-over.o016"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) #2"
 
 [[obligation]]
 id = "sf.functions.hll-accumulate.hll-accumulate-over.o014"
@@ -35588,10 +36128,22 @@ required = true
 note = "the form without its required OVER"
 
 [[obligation]]
+id = "sf.functions.hll-accumulate.hll-accumulate-over.syntax.o010"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( #2"
+
+[[obligation]]
 id = "sf.functions.hll-accumulate.hll-accumulate-over.syntax.o009"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required BY in [ PARTITION BY <expr1> ]"
+
+[[obligation]]
+id = "sf.functions.hll-accumulate.hll-accumulate-over.syntax.o011"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) #2"
 
 [[obligation]]
 id = "sf.functions.hll-combine.hll-combine.o001"
@@ -35700,10 +36252,22 @@ required = true
 note = "the form without its required OVER"
 
 [[obligation]]
+id = "sf.functions.hll-combine.hll-combine-over.o015"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( #2"
+
+[[obligation]]
 id = "sf.functions.hll-combine.hll-combine-over.o013"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required BY in [ PARTITION BY <expr1> ]"
+
+[[obligation]]
+id = "sf.functions.hll-combine.hll-combine-over.o016"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) #2"
 
 [[obligation]]
 id = "sf.functions.hll-combine.hll-combine-over.o014"
@@ -35794,10 +36358,22 @@ required = true
 note = "the form without its required OVER"
 
 [[obligation]]
+id = "sf.functions.hll-estimate.hll-estimate-over.o012"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( #2"
+
+[[obligation]]
 id = "sf.functions.hll-estimate.hll-estimate-over.o011"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required BY in [ PARTITION BY <expr> ]"
+
+[[obligation]]
+id = "sf.functions.hll-estimate.hll-estimate-over.o013"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) #2"
 
 [[obligation]]
 id = "sf.functions.hll-export.hll-export.o001"
@@ -35882,10 +36458,22 @@ required = true
 note = "the form without its required OVER"
 
 [[obligation]]
+id = "sf.functions.hll-export.hll-export-over.o012"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( #2"
+
+[[obligation]]
 id = "sf.functions.hll-export.hll-export-over.o011"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required BY in [ PARTITION BY <expr> ]"
+
+[[obligation]]
+id = "sf.functions.hll-export.hll-export-over.o013"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) #2"
 
 [[obligation]]
 id = "sf.functions.hll-import.hll-import.o001"
@@ -35970,10 +36558,22 @@ required = true
 note = "the form without its required OVER"
 
 [[obligation]]
+id = "sf.functions.hll-import.hll-import-over.o012"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( #2"
+
+[[obligation]]
 id = "sf.functions.hll-import.hll-import-over.o011"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required BY in [ PARTITION BY <expr> ]"
+
+[[obligation]]
+id = "sf.functions.hll-import.hll-import-over.o013"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) #2"
 
 [[obligation]]
 id = "sf.functions.hll.hll.o001"
@@ -36031,6 +36631,12 @@ id = "sf.functions.hll.hll.o009"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required )"
+
+[[obligation]]
+id = "sf.functions.hll.hll.o011"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
 
 [[obligation]]
 id = "sf.functions.hll.hll-over.o001"
@@ -36115,10 +36721,22 @@ required = true
 note = "the form without its required OVER"
 
 [[obligation]]
+id = "sf.functions.hll.hll-over.o017"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( #2"
+
+[[obligation]]
 id = "sf.functions.hll.hll-over.o015"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required BY in [ PARTITION BY <expr2> ]"
+
+[[obligation]]
+id = "sf.functions.hll.hll-over.o018"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) #2"
 
 [[obligation]]
 id = "sf.functions.hll.hll-over.o016"
@@ -36177,10 +36795,22 @@ required = true
 note = "the form without its required OVER"
 
 [[obligation]]
+id = "sf.functions.hll.hll-over.syntax.o010"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( #2"
+
+[[obligation]]
 id = "sf.functions.hll.hll-over.syntax.o009"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required BY in [ PARTITION BY <expr2> ]"
+
+[[obligation]]
+id = "sf.functions.hll.hll-over.syntax.o011"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) #2"
 
 [[obligation]]
 id = "sf.functions.hour-minute-second.hour.o001"
@@ -36626,6 +37256,12 @@ required = true
 note = "the form without its required )"
 
 [[obligation]]
+id = "sf.functions.ilike-any.o020"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
+
+[[obligation]]
 id = "sf.functions.ilike-any.o018"
 kind = "negative_neighbour"
 required = true
@@ -36869,6 +37505,12 @@ required = true
 note = "the form without its required )"
 
 [[obligation]]
+id = "sf.functions.in.in.o015"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
+
+[[obligation]]
 id = "sf.functions.in.in.o013"
 kind = "extreme"
 required = true
@@ -37060,6 +37702,30 @@ required = true
 note = "the form without its required ("
 
 [[obligation]]
+id = "sf.functions.in.in.syntax.o018"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( #2"
+
+[[obligation]]
+id = "sf.functions.in.in.syntax.o019"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) #2"
+
+[[obligation]]
+id = "sf.functions.in.in.syntax.o020"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) #3"
+
+[[obligation]]
+id = "sf.functions.in.in.syntax.o021"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
+
+[[obligation]]
 id = "sf.functions.in.in.syntax.o017"
 kind = "extreme"
 required = true
@@ -37211,6 +37877,12 @@ required = true
 note = "the form without its required FILES"
 
 [[obligation]]
+id = "sf.functions.infer-schema.o039"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( #2"
+
+[[obligation]]
 id = "sf.functions.infer-schema.o030"
 kind = "negative_neighbour"
 required = true
@@ -37245,6 +37917,18 @@ id = "sf.functions.infer-schema.o035"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required KIND"
+
+[[obligation]]
+id = "sf.functions.infer-schema.o040"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) #2"
+
+[[obligation]]
+id = "sf.functions.infer-schema.o041"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
 
 [[obligation]]
 id = "sf.functions.initcap.o001"
@@ -37529,6 +38213,12 @@ required = true
 note = "the form without its required OVER"
 
 [[obligation]]
+id = "sf.functions.interpolate-bfill.interpolate-bfill-over-order-by.o026"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( #2"
+
+[[obligation]]
 id = "sf.functions.interpolate-bfill.interpolate-bfill-over-order-by.o021"
 kind = "negative_neighbour"
 required = true
@@ -37551,6 +38241,12 @@ id = "sf.functions.interpolate-bfill.interpolate-bfill-over-order-by.o024"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required { FIRST | LAST } in [ NULLS { FIRST | LAST } ]"
+
+[[obligation]]
+id = "sf.functions.interpolate-bfill.interpolate-bfill-over-order-by.o027"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) #2"
 
 [[obligation]]
 id = "sf.functions.interpolate-bfill.interpolate-bfill-over-order-by.o025"
@@ -37678,6 +38374,12 @@ required = true
 note = "the form without its required OVER"
 
 [[obligation]]
+id = "sf.functions.interpolate-bfill.interpolate-ffill-over-order-by.o026"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( #2"
+
+[[obligation]]
 id = "sf.functions.interpolate-bfill.interpolate-ffill-over-order-by.o021"
 kind = "negative_neighbour"
 required = true
@@ -37700,6 +38402,12 @@ id = "sf.functions.interpolate-bfill.interpolate-ffill-over-order-by.o024"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required { FIRST | LAST } in [ NULLS { FIRST | LAST } ]"
+
+[[obligation]]
+id = "sf.functions.interpolate-bfill.interpolate-ffill-over-order-by.o027"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) #2"
 
 [[obligation]]
 id = "sf.functions.interpolate-bfill.interpolate-ffill-over-order-by.o025"
@@ -37827,6 +38535,12 @@ required = true
 note = "the form without its required OVER"
 
 [[obligation]]
+id = "sf.functions.interpolate-bfill.interpolate-linear-over-order-by.o026"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( #2"
+
+[[obligation]]
 id = "sf.functions.interpolate-bfill.interpolate-linear-over-order-by.o021"
 kind = "negative_neighbour"
 required = true
@@ -37849,6 +38563,12 @@ id = "sf.functions.interpolate-bfill.interpolate-linear-over-order-by.o024"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required { FIRST | LAST } in [ NULLS { FIRST | LAST } ]"
+
+[[obligation]]
+id = "sf.functions.interpolate-bfill.interpolate-linear-over-order-by.o027"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) #2"
 
 [[obligation]]
 id = "sf.functions.interpolate-bfill.interpolate-linear-over-order-by.o025"
@@ -39246,10 +39966,22 @@ required = true
 note = "the form without its required OVER"
 
 [[obligation]]
+id = "sf.functions.kurtosis.kurtosis-over.o012"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( #2"
+
+[[obligation]]
 id = "sf.functions.kurtosis.kurtosis-over.o011"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required BY in [ PARTITION BY <expr2> ]"
+
+[[obligation]]
+id = "sf.functions.kurtosis.kurtosis-over.o013"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) #2"
 
 [[obligation]]
 id = "sf.functions.lag.o001"
@@ -39453,6 +40185,12 @@ required = true
 note = "the form without its required OVER"
 
 [[obligation]]
+id = "sf.functions.lag.o045"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( #2"
+
+[[obligation]]
 id = "sf.functions.lag.o032"
 kind = "negative_neighbour"
 required = true
@@ -39477,6 +40215,12 @@ required = true
 note = "the form without its required { FIRST | LAST } in [ NULLS { FIRST | LAST } ]"
 
 [[obligation]]
+id = "sf.functions.lag.o046"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) #2"
+
+[[obligation]]
 id = "sf.functions.lag.o036"
 kind = "interaction_all_options"
 required = true
@@ -39496,29 +40240,41 @@ target = "<date_or_timestamp_expr>"
 note = "a valid expression"
 
 [[obligation]]
-id = "sf.functions.last-day.o010"
+id = "sf.functions.last-day.o014"
 kind = "option_present"
 required = true
-target = "[ , '<date_part>' ]"
+target = "[ , { <date_part> | '<date_part>' } ]"
 
 [[obligation]]
-id = "sf.functions.last-day.o011"
+id = "sf.functions.last-day.o015"
 kind = "option_absent"
 required = true
-target = "[ , '<date_part>' ]"
+target = "[ , { <date_part> | '<date_part>' } ]"
 
 [[obligation]]
-id = "sf.functions.last-day.o012"
-kind = "required_operand_missing"
+id = "sf.functions.last-day.o016"
+kind = "alternative"
 required = true
-target = "'<date_part>' in [ , '<date_part>' ]"
-note = "omit '<date_part>'"
+target = "{ <date_part> | '<date_part>' } → <date_part>"
 
 [[obligation]]
-id = "sf.functions.last-day.o013"
+id = "sf.functions.last-day.o017"
+kind = "alternative"
+required = true
+target = "{ <date_part> | '<date_part>' } → '<date_part>'"
+
+[[obligation]]
+id = "sf.functions.last-day.o018"
 kind = "operand_type_class"
 required = true
-target = "'<date_part>' in [ , '<date_part>' ]"
+target = "<date_part> in [ , { <date_part> | '<date_part>' } ]"
+note = "a valid operand"
+
+[[obligation]]
+id = "sf.functions.last-day.o019"
+kind = "operand_type_class"
+required = true
+target = "'<date_part>' in [ , { <date_part> | '<date_part>' } ]"
 note = "a valid string_literal"
 
 [[obligation]]
@@ -39526,6 +40282,12 @@ id = "sf.functions.last-day.o008"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required ("
+
+[[obligation]]
+id = "sf.functions.last-day.o020"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { <date_part> | '<date_part>' } in [ , { <date_part> | '<date_part>' } ]"
 
 [[obligation]]
 id = "sf.functions.last-day.o009"
@@ -39788,6 +40550,12 @@ required = true
 note = "the form without its required OVER"
 
 [[obligation]]
+id = "sf.functions.last-value.o034"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( #2"
+
+[[obligation]]
 id = "sf.functions.last-value.o029"
 kind = "negative_neighbour"
 required = true
@@ -39810,6 +40578,12 @@ id = "sf.functions.last-value.o032"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required { FIRST | LAST } in [ NULLS { FIRST | LAST } ]"
+
+[[obligation]]
+id = "sf.functions.last-value.o035"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) #2"
 
 [[obligation]]
 id = "sf.functions.last-value.o033"
@@ -40019,6 +40793,12 @@ required = true
 note = "the form without its required OVER"
 
 [[obligation]]
+id = "sf.functions.lead.o045"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( #2"
+
+[[obligation]]
 id = "sf.functions.lead.o032"
 kind = "negative_neighbour"
 required = true
@@ -40041,6 +40821,12 @@ id = "sf.functions.lead.o035"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required { FIRST | LAST } in [ NULLS { FIRST | LAST } ]"
+
+[[obligation]]
+id = "sf.functions.lead.o046"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) #2"
 
 [[obligation]]
 id = "sf.functions.lead.o036"
@@ -40305,6 +41091,12 @@ required = true
 note = "the form without its required )"
 
 [[obligation]]
+id = "sf.functions.like-all.o020"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
+
+[[obligation]]
 id = "sf.functions.like-all.o018"
 kind = "negative_neighbour"
 required = true
@@ -40402,6 +41194,12 @@ id = "sf.functions.like-any.o016"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required )"
+
+[[obligation]]
+id = "sf.functions.like-any.o020"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
 
 [[obligation]]
 id = "sf.functions.like-any.o018"
@@ -40822,10 +41620,22 @@ required = true
 note = "the form without its required OVER"
 
 [[obligation]]
+id = "sf.functions.listagg.listagg-over.o026"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( #2"
+
+[[obligation]]
 id = "sf.functions.listagg.listagg-over.o024"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required BY in [ PARTITION BY <expr2> ]"
+
+[[obligation]]
+id = "sf.functions.listagg.listagg-over.o027"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) #2"
 
 [[obligation]]
 id = "sf.functions.listagg.listagg-over.o025"
@@ -42571,10 +43381,22 @@ required = true
 note = "the form without its required OVER"
 
 [[obligation]]
+id = "sf.functions.median.median-over.o012"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( #2"
+
+[[obligation]]
 id = "sf.functions.median.median-over.o011"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required BY in [ PARTITION BY <expr2> ]"
+
+[[obligation]]
+id = "sf.functions.median.median-over.o013"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) #2"
 
 [[obligation]]
 id = "sf.functions.min-by.o001"
@@ -42997,10 +43819,22 @@ required = true
 note = "the form without its required OVER"
 
 [[obligation]]
+id = "sf.functions.minhash-combine.minhash-combine-over.o015"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( #2"
+
+[[obligation]]
 id = "sf.functions.minhash-combine.minhash-combine-over.o013"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required BY in [ PARTITION BY <expr> ]"
+
+[[obligation]]
+id = "sf.functions.minhash-combine.minhash-combine-over.o016"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) #2"
 
 [[obligation]]
 id = "sf.functions.minhash-combine.minhash-combine-over.o014"
@@ -43074,7 +43908,7 @@ required = true
 note = "the form without its required )"
 
 [[obligation]]
-id = "sf.functions.minhash.minhash.o016"
+id = "sf.functions.minhash.minhash.o019"
 kind = "option_present"
 required = true
 target = "[ DISTINCT ]"
@@ -43082,12 +43916,19 @@ anchor = "doc.functions.minhash / Syntax"
 note = "option present [ DISTINCT ], observed"
 
 [[obligation]]
-id = "sf.functions.minhash.minhash.o017"
+id = "sf.functions.minhash.minhash.o020"
 kind = "option_present"
 required = true
 target = "[ , <expr> ... ]"
 anchor = "doc.functions.minhash / Syntax"
 note = "the list continued at least once, observed"
+
+[[obligation]]
+id = "sf.functions.minhash.minhash.o021"
+kind = "interaction_all_options"
+required = true
+anchor = "doc.functions.minhash / Syntax"
+note = "every independent option of one production together, observed"
 
 [[obligation]]
 id = "sf.functions.minhash.minhash-expr-over.o001"
@@ -43160,10 +44001,22 @@ required = true
 note = "the form without its required OVER"
 
 [[obligation]]
+id = "sf.functions.minhash.minhash-expr-over.o026"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( #2"
+
+[[obligation]]
 id = "sf.functions.minhash.minhash-expr-over.o015"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required BY in [ PARTITION BY <expr1> ]"
+
+[[obligation]]
+id = "sf.functions.minhash.minhash-expr-over.o027"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) #2"
 
 [[obligation]]
 id = "sf.functions.minhash.minhash-expr-over.o021"
@@ -43269,10 +44122,22 @@ required = true
 note = "the form without its required OVER"
 
 [[obligation]]
+id = "sf.functions.minhash.minhash-over.o012"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( #2"
+
+[[obligation]]
 id = "sf.functions.minhash.minhash-over.o011"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required BY in [ PARTITION BY <expr1> ]"
+
+[[obligation]]
+id = "sf.functions.minhash.minhash-over.o013"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) #2"
 
 [[obligation]]
 id = "sf.functions.mod.o001"
@@ -43403,10 +44268,22 @@ required = true
 note = "the form without its required OVER"
 
 [[obligation]]
+id = "sf.functions.mode.mode-over.o012"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( #2"
+
+[[obligation]]
 id = "sf.functions.mode.mode-over.o011"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required BY in [ PARTITION BY <expr2> ]"
+
+[[obligation]]
+id = "sf.functions.mode.mode-over.o013"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) #2"
 
 [[obligation]]
 id = "sf.functions.model-monitor-drift-metric.model-monitor-drift-metric.o001"
@@ -45083,6 +45960,12 @@ required = true
 note = "the form without its required OVER"
 
 [[obligation]]
+id = "sf.functions.nth-value.o042"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( #2"
+
+[[obligation]]
 id = "sf.functions.nth-value.o037"
 kind = "negative_neighbour"
 required = true
@@ -45105,6 +45988,12 @@ id = "sf.functions.nth-value.o040"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required { FIRST | LAST } in [ NULLS { FIRST | LAST } ]"
+
+[[obligation]]
+id = "sf.functions.nth-value.o043"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) #2"
 
 [[obligation]]
 id = "sf.functions.nth-value.o041"
@@ -45232,6 +46121,12 @@ required = true
 note = "the form without its required OVER"
 
 [[obligation]]
+id = "sf.functions.ntile.o026"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( #2"
+
+[[obligation]]
 id = "sf.functions.ntile.o021"
 kind = "negative_neighbour"
 required = true
@@ -45254,6 +46149,12 @@ id = "sf.functions.ntile.o024"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required { FIRST | LAST } in [ NULLS { FIRST | LAST } ]"
+
+[[obligation]]
+id = "sf.functions.ntile.o027"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) #2"
 
 [[obligation]]
 id = "sf.functions.ntile.o025"
@@ -45573,10 +46474,22 @@ required = true
 note = "the form without its required OVER"
 
 [[obligation]]
+id = "sf.functions.object-agg.object-agg-over.o017"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( #2"
+
+[[obligation]]
 id = "sf.functions.object-agg.object-agg-over.o013"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required BY in [ PARTITION BY <expr2> ]"
+
+[[obligation]]
+id = "sf.functions.object-agg.object-agg-over.o018"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) #2"
 
 [[obligation]]
 id = "sf.functions.object-agg.object-agg-over.o016"
@@ -47262,6 +48175,12 @@ required = true
 note = "the form without its required OVER"
 
 [[obligation]]
+id = "sf.functions.percent-rank.o039"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( #2"
+
+[[obligation]]
 id = "sf.functions.percent-rank.o022"
 kind = "negative_neighbour"
 required = true
@@ -47328,6 +48247,12 @@ required = true
 note = "the form without its required FOLLOWING in [ { RANGE UNBOUNDED PRECEDING | RANGE BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW | RANGE BETWEEN CURRENT ROW AND UNBOU…"
 
 [[obligation]]
+id = "sf.functions.percent-rank.o040"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) #2"
+
+[[obligation]]
 id = "sf.functions.percent-rank.o026"
 kind = "interaction_all_options"
 required = true
@@ -47385,6 +48310,12 @@ required = true
 note = "the form without its required GROUP"
 
 [[obligation]]
+id = "sf.functions.percentile-cont.by.o012"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( #2"
+
+[[obligation]]
 id = "sf.functions.percentile-cont.by.o010"
 kind = "negative_neighbour"
 required = true
@@ -47395,6 +48326,12 @@ id = "sf.functions.percentile-cont.by.o011"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required BY"
+
+[[obligation]]
+id = "sf.functions.percentile-cont.by.o013"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) #2"
 
 [[obligation]]
 id = "sf.functions.percentile-cont.by-over.o001"
@@ -47474,6 +48411,12 @@ required = true
 note = "the form without its required GROUP"
 
 [[obligation]]
+id = "sf.functions.percentile-cont.by-over.o018"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( #2"
+
+[[obligation]]
 id = "sf.functions.percentile-cont.by-over.o014"
 kind = "negative_neighbour"
 required = true
@@ -47486,16 +48429,34 @@ required = true
 note = "the form without its required BY"
 
 [[obligation]]
+id = "sf.functions.percentile-cont.by-over.o019"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) #2"
+
+[[obligation]]
 id = "sf.functions.percentile-cont.by-over.o016"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required OVER"
 
 [[obligation]]
+id = "sf.functions.percentile-cont.by-over.o020"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( #3"
+
+[[obligation]]
 id = "sf.functions.percentile-cont.by-over.o017"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required BY in [ PARTITION BY <expr3> ]"
+
+[[obligation]]
+id = "sf.functions.percentile-cont.by-over.o021"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) #3"
 
 [[obligation]]
 id = "sf.functions.percentile-disc.by.o001"
@@ -47549,6 +48510,12 @@ required = true
 note = "the form without its required GROUP"
 
 [[obligation]]
+id = "sf.functions.percentile-disc.by.o012"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( #2"
+
+[[obligation]]
 id = "sf.functions.percentile-disc.by.o010"
 kind = "negative_neighbour"
 required = true
@@ -47559,6 +48526,12 @@ id = "sf.functions.percentile-disc.by.o011"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required BY"
+
+[[obligation]]
+id = "sf.functions.percentile-disc.by.o013"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) #2"
 
 [[obligation]]
 id = "sf.functions.percentile-disc.by-over.o001"
@@ -47638,6 +48611,12 @@ required = true
 note = "the form without its required GROUP"
 
 [[obligation]]
+id = "sf.functions.percentile-disc.by-over.o018"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( #2"
+
+[[obligation]]
 id = "sf.functions.percentile-disc.by-over.o014"
 kind = "negative_neighbour"
 required = true
@@ -47650,16 +48629,34 @@ required = true
 note = "the form without its required BY"
 
 [[obligation]]
+id = "sf.functions.percentile-disc.by-over.o019"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) #2"
+
+[[obligation]]
 id = "sf.functions.percentile-disc.by-over.o016"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required OVER"
 
 [[obligation]]
+id = "sf.functions.percentile-disc.by-over.o020"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( #3"
+
+[[obligation]]
 id = "sf.functions.percentile-disc.by-over.o017"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required BY in [ PARTITION BY <expr3> ]"
+
+[[obligation]]
+id = "sf.functions.percentile-disc.by-over.o021"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) #3"
 
 [[obligation]]
 id = "sf.functions.period-begin.o001"
@@ -48585,6 +49582,12 @@ id = "sf.functions.policy-context.o027"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required AS"
+
+[[obligation]]
+id = "sf.functions.policy-context.o032"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
 
 [[obligation]]
 id = "sf.functions.policy-context.o029"
@@ -50098,6 +51101,12 @@ required = true
 note = "the form without its required OVER"
 
 [[obligation]]
+id = "sf.functions.rank.o027"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( #2"
+
+[[obligation]]
 id = "sf.functions.rank.o022"
 kind = "negative_neighbour"
 required = true
@@ -50120,6 +51129,12 @@ id = "sf.functions.rank.o025"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required { FIRST | LAST } in [ NULLS { FIRST | LAST } ]"
+
+[[obligation]]
+id = "sf.functions.rank.o028"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) #2"
 
 [[obligation]]
 id = "sf.functions.rank.o026"
@@ -51448,10 +52463,22 @@ required = true
 note = "the form without its required OVER"
 
 [[obligation]]
+id = "sf.functions.regr-avgx.x-over.o014"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( #2"
+
+[[obligation]]
 id = "sf.functions.regr-avgx.x-over.o013"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required BY in [ PARTITION BY <expr3> ]"
+
+[[obligation]]
+id = "sf.functions.regr-avgx.x-over.o015"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) #2"
 
 [[obligation]]
 id = "sf.functions.regr-avgy.regr-avgy.o001"
@@ -51578,10 +52605,22 @@ required = true
 note = "the form without its required OVER"
 
 [[obligation]]
+id = "sf.functions.regr-avgy.x-over.o014"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( #2"
+
+[[obligation]]
 id = "sf.functions.regr-avgy.x-over.o013"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required BY in [ PARTITION BY <expr3> ]"
+
+[[obligation]]
+id = "sf.functions.regr-avgy.x-over.o015"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) #2"
 
 [[obligation]]
 id = "sf.functions.regr-count.regr-count.o001"
@@ -51708,10 +52747,22 @@ required = true
 note = "the form without its required OVER"
 
 [[obligation]]
+id = "sf.functions.regr-count.x-over.o014"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( #2"
+
+[[obligation]]
 id = "sf.functions.regr-count.x-over.o013"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required BY in [ PARTITION BY <expr3> ]"
+
+[[obligation]]
+id = "sf.functions.regr-count.x-over.o015"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) #2"
 
 [[obligation]]
 id = "sf.functions.regr-intercept.regr-intercept.o001"
@@ -51838,10 +52889,22 @@ required = true
 note = "the form without its required OVER"
 
 [[obligation]]
+id = "sf.functions.regr-intercept.x-over.o014"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( #2"
+
+[[obligation]]
 id = "sf.functions.regr-intercept.x-over.o013"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required BY in [ PARTITION BY <expr3> ]"
+
+[[obligation]]
+id = "sf.functions.regr-intercept.x-over.o015"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) #2"
 
 [[obligation]]
 id = "sf.functions.regr-r2.regr-r2.o001"
@@ -51968,10 +53031,22 @@ required = true
 note = "the form without its required OVER"
 
 [[obligation]]
+id = "sf.functions.regr-r2.x-over.o014"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( #2"
+
+[[obligation]]
 id = "sf.functions.regr-r2.x-over.o013"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required BY in [ PARTITION BY <expr3> ]"
+
+[[obligation]]
+id = "sf.functions.regr-r2.x-over.o015"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) #2"
 
 [[obligation]]
 id = "sf.functions.regr-slope.regr-slope.o001"
@@ -52098,10 +53173,22 @@ required = true
 note = "the form without its required OVER"
 
 [[obligation]]
+id = "sf.functions.regr-slope.x-over.o014"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( #2"
+
+[[obligation]]
 id = "sf.functions.regr-slope.x-over.o013"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required BY in [ PARTITION BY <expr3> ]"
+
+[[obligation]]
+id = "sf.functions.regr-slope.x-over.o015"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) #2"
 
 [[obligation]]
 id = "sf.functions.regr-sxx.regr-sxx.o001"
@@ -52228,10 +53315,22 @@ required = true
 note = "the form without its required OVER"
 
 [[obligation]]
+id = "sf.functions.regr-sxx.x-over.o014"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( #2"
+
+[[obligation]]
 id = "sf.functions.regr-sxx.x-over.o013"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required BY in [ PARTITION BY <expr3> ]"
+
+[[obligation]]
+id = "sf.functions.regr-sxx.x-over.o015"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) #2"
 
 [[obligation]]
 id = "sf.functions.regr-sxy.regr-sxy.o001"
@@ -52358,10 +53457,22 @@ required = true
 note = "the form without its required OVER"
 
 [[obligation]]
+id = "sf.functions.regr-sxy.x-over.o014"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( #2"
+
+[[obligation]]
 id = "sf.functions.regr-sxy.x-over.o013"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required BY in [ PARTITION BY <expr3> ]"
+
+[[obligation]]
+id = "sf.functions.regr-sxy.x-over.o015"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) #2"
 
 [[obligation]]
 id = "sf.functions.regr-syy.regr-syy.o001"
@@ -52488,10 +53599,22 @@ required = true
 note = "the form without its required OVER"
 
 [[obligation]]
+id = "sf.functions.regr-syy.x.o014"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( #2"
+
+[[obligation]]
 id = "sf.functions.regr-syy.x.o012"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required BY in [ PARTITION BY <expr3> ]"
+
+[[obligation]]
+id = "sf.functions.regr-syy.x.o015"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) #2"
 
 [[obligation]]
 id = "sf.functions.regr-valx.o001"
@@ -54148,6 +55271,12 @@ required = true
 note = "the form without its required OVER"
 
 [[obligation]]
+id = "sf.functions.row-number.o028"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( #2"
+
+[[obligation]]
 id = "sf.functions.row-number.o023"
 kind = "negative_neighbour"
 required = true
@@ -54170,6 +55299,12 @@ id = "sf.functions.row-number.o026"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required { FIRST | LAST } in [ NULLS { FIRST | LAST } ]"
+
+[[obligation]]
+id = "sf.functions.row-number.o029"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) #2"
 
 [[obligation]]
 id = "sf.functions.row-number.o027"
@@ -61335,6 +62470,12 @@ required = true
 note = "the form without its required OVER"
 
 [[obligation]]
+id = "sf.functions.stddev-pop.stddev-pop-over.o032"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( #2"
+
+[[obligation]]
 id = "sf.functions.stddev-pop.stddev-pop-over.o028"
 kind = "negative_neighbour"
 required = true
@@ -61351,6 +62492,12 @@ id = "sf.functions.stddev-pop.stddev-pop-over.o030"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required { FIRST | LAST } in [ NULLS { FIRST | LAST } ]"
+
+[[obligation]]
+id = "sf.functions.stddev-pop.stddev-pop-over.o033"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) #2"
 
 [[obligation]]
 id = "sf.functions.stddev-pop.stddev-pop-over.o031"
@@ -61558,6 +62705,12 @@ required = true
 note = "the form without its required OVER"
 
 [[obligation]]
+id = "sf.functions.stddev.stddev-over.o032"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( #2"
+
+[[obligation]]
 id = "sf.functions.stddev.stddev-over.o028"
 kind = "negative_neighbour"
 required = true
@@ -61574,6 +62727,12 @@ id = "sf.functions.stddev.stddev-over.o030"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required { FIRST | LAST } in [ NULLS { FIRST | LAST } ]"
+
+[[obligation]]
+id = "sf.functions.stddev.stddev-over.o033"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) #2"
 
 [[obligation]]
 id = "sf.functions.stddev.stddev-over.o031"
@@ -61781,6 +62940,12 @@ required = true
 note = "the form without its required OVER"
 
 [[obligation]]
+id = "sf.functions.stddev.stddev-samp-over.o032"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( #2"
+
+[[obligation]]
 id = "sf.functions.stddev.stddev-samp-over.o028"
 kind = "negative_neighbour"
 required = true
@@ -61797,6 +62962,12 @@ id = "sf.functions.stddev.stddev-samp-over.o030"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required { FIRST | LAST } in [ NULLS { FIRST | LAST } ]"
+
+[[obligation]]
+id = "sf.functions.stddev.stddev-samp-over.o033"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) #2"
 
 [[obligation]]
 id = "sf.functions.stddev.stddev-samp-over.o031"
@@ -62637,6 +63808,12 @@ required = true
 note = "the form without its required OVER"
 
 [[obligation]]
+id = "sf.functions.sum.sum-over.o032"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( #2"
+
+[[obligation]]
 id = "sf.functions.sum.sum-over.o028"
 kind = "negative_neighbour"
 required = true
@@ -62653,6 +63830,12 @@ id = "sf.functions.sum.sum-over.o030"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required { FIRST | LAST } in [ NULLS { FIRST | LAST } ]"
+
+[[obligation]]
+id = "sf.functions.sum.sum-over.o033"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) #2"
 
 [[obligation]]
 id = "sf.functions.sum.sum-over.o031"
@@ -64361,13 +65544,6 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "sf.functions.system-clustering-depth.o002"
-kind = "required_operand_missing"
-required = true
-target = "'<table_name>'"
-note = "omit '<table_name>'"
-
-[[obligation]]
 id = "sf.functions.system-clustering-depth.o003"
 kind = "operand_type_class"
 required = true
@@ -64375,10 +65551,29 @@ target = "'<table_name>'"
 note = "a valid string_literal"
 
 [[obligation]]
-id = "sf.functions.system-clustering-depth.o012"
+id = "sf.functions.system-clustering-depth.o013"
+kind = "option_present"
+required = true
+target = "[ , '<column_list>' [ , '<predicate>' ] ]"
+
+[[obligation]]
+id = "sf.functions.system-clustering-depth.o014"
+kind = "option_absent"
+required = true
+target = "[ , '<column_list>' [ , '<predicate>' ] ]"
+
+[[obligation]]
+id = "sf.functions.system-clustering-depth.o015"
+kind = "required_operand_missing"
+required = true
+target = "'<column_list>' in [ , '<column_list>' [ , '<predicate>' ] ]"
+note = "omit '<column_list>'"
+
+[[obligation]]
+id = "sf.functions.system-clustering-depth.o016"
 kind = "operand_type_class"
 required = true
-target = "'<column_list>'"
+target = "'<column_list>' in [ , '<column_list>' [ , '<predicate>' ] ]"
 note = "a valid string_literal"
 
 [[obligation]]
@@ -64488,13 +65683,6 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "sf.functions.system-clustering-ratio.o002"
-kind = "required_operand_missing"
-required = true
-target = "'<table_name>'"
-note = "omit '<table_name>'"
-
-[[obligation]]
 id = "sf.functions.system-clustering-ratio.o003"
 kind = "operand_type_class"
 required = true
@@ -64502,10 +65690,29 @@ target = "'<table_name>'"
 note = "a valid string_literal"
 
 [[obligation]]
-id = "sf.functions.system-clustering-ratio.o012"
+id = "sf.functions.system-clustering-ratio.o013"
+kind = "option_present"
+required = true
+target = "[ , '<column_list>' [ , '<predicate>' ] ]"
+
+[[obligation]]
+id = "sf.functions.system-clustering-ratio.o014"
+kind = "option_absent"
+required = true
+target = "[ , '<column_list>' [ , '<predicate>' ] ]"
+
+[[obligation]]
+id = "sf.functions.system-clustering-ratio.o015"
+kind = "required_operand_missing"
+required = true
+target = "'<column_list>' in [ , '<column_list>' [ , '<predicate>' ] ]"
+note = "omit '<column_list>'"
+
+[[obligation]]
+id = "sf.functions.system-clustering-ratio.o016"
 kind = "operand_type_class"
 required = true
-target = "'<column_list>'"
+target = "'<column_list>' in [ , '<column_list>' [ , '<predicate>' ] ]"
 note = "a valid string_literal"
 
 [[obligation]]
@@ -72175,6 +73382,36 @@ id = "sf.functions.system-send-snowflake-notification.o031"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required )"
+
+[[obligation]]
+id = "sf.functions.system-send-snowflake-notification.o032"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( #2"
+
+[[obligation]]
+id = "sf.functions.system-send-snowflake-notification.o033"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) #2"
+
+[[obligation]]
+id = "sf.functions.system-send-snowflake-notification.o034"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( #3"
+
+[[obligation]]
+id = "sf.functions.system-send-snowflake-notification.o035"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) #3"
+
+[[obligation]]
+id = "sf.functions.system-send-snowflake-notification.o036"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
 
 [[obligation]]
 id = "sf.functions.system-set-application-restricted-feature-access.o001"
@@ -81208,6 +82445,12 @@ required = true
 note = "the form without its required OVER"
 
 [[obligation]]
+id = "sf.functions.var-pop.var-pop-over.o032"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( #2"
+
+[[obligation]]
 id = "sf.functions.var-pop.var-pop-over.o028"
 kind = "negative_neighbour"
 required = true
@@ -81224,6 +82467,12 @@ id = "sf.functions.var-pop.var-pop-over.o030"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required { FIRST | LAST } in [ NULLS { FIRST | LAST } ]"
+
+[[obligation]]
+id = "sf.functions.var-pop.var-pop-over.o033"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) #2"
 
 [[obligation]]
 id = "sf.functions.var-pop.var-pop-over.o031"
@@ -81431,6 +82680,12 @@ required = true
 note = "the form without its required OVER"
 
 [[obligation]]
+id = "sf.functions.var-samp.var-samp-over.o032"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( #2"
+
+[[obligation]]
 id = "sf.functions.var-samp.var-samp-over.o026"
 kind = "negative_neighbour"
 required = true
@@ -81447,6 +82702,12 @@ id = "sf.functions.var-samp.var-samp-over.o028"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required { FIRST | LAST } in [ NULLS { FIRST | LAST } ]"
+
+[[obligation]]
+id = "sf.functions.var-samp.var-samp-over.o033"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) #2"
 
 [[obligation]]
 id = "sf.functions.var-samp.var-samp-over.o029"
@@ -81654,6 +82915,12 @@ required = true
 note = "the form without its required OVER"
 
 [[obligation]]
+id = "sf.functions.variance-pop.variance-pop-over.o032"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( #2"
+
+[[obligation]]
 id = "sf.functions.variance-pop.variance-pop-over.o028"
 kind = "negative_neighbour"
 required = true
@@ -81670,6 +82937,12 @@ id = "sf.functions.variance-pop.variance-pop-over.o030"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required { FIRST | LAST } in [ NULLS { FIRST | LAST } ]"
+
+[[obligation]]
+id = "sf.functions.variance-pop.variance-pop-over.o033"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) #2"
 
 [[obligation]]
 id = "sf.functions.variance-pop.variance-pop-over.o031"
@@ -81877,6 +83150,12 @@ required = true
 note = "the form without its required OVER"
 
 [[obligation]]
+id = "sf.functions.variance.variance-over.o032"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( #2"
+
+[[obligation]]
 id = "sf.functions.variance.variance-over.o028"
 kind = "negative_neighbour"
 required = true
@@ -81893,6 +83172,12 @@ id = "sf.functions.variance.variance-over.o030"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required { FIRST | LAST } in [ NULLS { FIRST | LAST } ]"
+
+[[obligation]]
+id = "sf.functions.variance.variance-over.o033"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) #2"
 
 [[obligation]]
 id = "sf.functions.variance.variance-over.o031"
@@ -82565,6 +83850,48 @@ target = "'<string>' in [ , '<string>' ]"
 note = "a valid string_literal"
 
 [[obligation]]
+id = "sf.functions.warehouse-metering-history.o028"
+kind = "required_operand_missing"
+required = true
+target = "'<string>'"
+note = "omit '<string>'"
+
+[[obligation]]
+id = "sf.functions.warehouse-metering-history.o029"
+kind = "operand_type_class"
+required = true
+target = "'<string>'"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.functions.warehouse-metering-history.o030"
+kind = "required_operand_missing"
+required = true
+target = "<constant_expr> #3"
+note = "omit <constant_expr>"
+
+[[obligation]]
+id = "sf.functions.warehouse-metering-history.o031"
+kind = "operand_type_class"
+required = true
+target = "<constant_expr> #3"
+note = "a valid expression"
+
+[[obligation]]
+id = "sf.functions.warehouse-metering-history.o032"
+kind = "required_operand_missing"
+required = true
+target = "<constant_expr> #4"
+note = "omit <constant_expr>"
+
+[[obligation]]
+id = "sf.functions.warehouse-metering-history.o033"
+kind = "operand_type_class"
+required = true
+target = "<constant_expr> #4"
+note = "a valid expression"
+
+[[obligation]]
 id = "sf.functions.warehouse-metering-history.o013"
 kind = "negative_neighbour"
 required = true
@@ -82593,6 +83920,18 @@ id = "sf.functions.warehouse-metering-history.o017"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required )"
+
+[[obligation]]
+id = "sf.functions.warehouse-metering-history.o034"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required WAREHOUSE_NAME"
+
+[[obligation]]
+id = "sf.functions.warehouse-metering-history.o035"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required DATE_RANGE_END"
 
 [[obligation]]
 id = "sf.functions.warehouse-metering-history.o018"

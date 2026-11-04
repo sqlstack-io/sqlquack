@@ -2867,6 +2867,12 @@ required = true
 note = "the form without its required TAG"
 
 [[obligation]]
+id = "sf.classes.budget.commands.alter-budget.set-tag.o025"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
+
+[[obligation]]
 id = "sf.classes.budget.commands.alter-budget.set-tag.o021"
 kind = "identifier_class"
 required = true
@@ -3097,6 +3103,12 @@ id = "sf.classes.budget.commands.alter-budget.unset-tag.o017"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required TAG"
+
+[[obligation]]
+id = "sf.classes.budget.commands.alter-budget.unset-tag.o022"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
 
 [[obligation]]
 id = "sf.classes.budget.commands.alter-budget.unset-tag.o018"
@@ -8488,6 +8500,12 @@ required = true
 note = "the form without its required TAG"
 
 [[obligation]]
+id = "sf.classes.classification.commands.alter-classification.set-tag.o025"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
+
+[[obligation]]
 id = "sf.classes.classification.commands.alter-classification.set-tag.o021"
 kind = "identifier_class"
 required = true
@@ -8718,6 +8736,12 @@ id = "sf.classes.classification.commands.alter-classification.unset-tag.o017"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required TAG"
+
+[[obligation]]
+id = "sf.classes.classification.commands.alter-classification.unset-tag.o022"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
 
 [[obligation]]
 id = "sf.classes.classification.commands.alter-classification.unset-tag.o018"

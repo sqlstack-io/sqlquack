@@ -108,6 +108,7 @@ class _Walk:
         self.previous: str = ""
         self.argument_classes: Counter[str] = Counter()
         self.widest: int = 0
+        self.occurrences: Counter[tuple[int, tuple[tuple[int, int], ...], str]] = Counter()
 
     def target(self, *, text: str, tail: str = "") -> str:
         """A per-form unique target, shortened before `tail`; repeats get `#2`, `#3` …"""
@@ -135,7 +136,7 @@ class _Walk:
     def sequence(
         self, *, nodes: tuple[Node, ...], where: str, top: bool, branch: bool = False
     ) -> list[str]:
-        """Walk a sequence; returns the option_present targets of its non-repetition options."""
+        """Walk a sequence; returns the option_present targets of its options."""
         options: list[str] = []
         omission_is_absence: bool = len(nodes) == 1 and (branch or where.startswith("["))
         for position, node in enumerate(nodes):
@@ -153,6 +154,9 @@ class _Walk:
             if position > 0 and self._droppable(node):
                 inside: str = f" in {where}" if not top and where.startswith("[") else ""
                 key: str = render((node,)) + inside
+                self.occurrences[(self.production, self.chosen, key)] += 1
+                if (count := self.occurrences[(self.production, self.chosen, key)]) > 1:
+                    key = f"{key} #{count}"
                 self.dropped.setdefault(key, self.reject(action=ACTION_DROP_NODE, node=node))
                 if argument and node.kind == NODE_CHOICE:
                     self.arity_drops.add(key)
@@ -301,7 +305,7 @@ class _Walk:
         if len(node.branches) > 1:
             self._alternatives(node=node, text=text)
         if repeated:
-            return []
+            return [present]
         outer: frozenset[int] = self.path
         self.path = outer | {id(node)}
         self._branches(node=node, where=present, top=False, branch=False)

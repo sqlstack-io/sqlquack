@@ -2966,16 +2966,34 @@ required = true
 note = "the form without its required DISALLOWED_SPCS_WORKLOAD_TYPES in [ ALLOW_ID_TOKEN = { TRUE | FALSE } ALLOWED_SPCS_WORKLOAD_TYPES = { '<list_of_workload_types>' | 'ALL' } CLIENT_ENCRYPT…"
 
 [[obligation]]
+id = "sf.security_admin.alter-account.set.o469"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { '<list_of_workload_types>' | 'ALL' } in [ ALLOW_ID_TOKEN = { TRUE | FALSE } ALLOWED_SPCS_WORKLOAD_TYPES = { '<list_of_workload_types>' | 'ALL' } CLIENT_ENCRYPT… #2"
+
+[[obligation]]
 id = "sf.security_admin.alter-account.set.o378"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required DISABLE_EXECUTE_DATA_METRIC_FUNCTION_GRANT_TO_PUBLIC in [ ALLOW_ID_TOKEN = { TRUE | FALSE } ALLOWED_SPCS_WORKLOAD_TYPES = { '<list_of_workload_types>' | 'ALL' } CLIENT_ENCRYPT…"
 
 [[obligation]]
+id = "sf.security_admin.alter-account.set.o470"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { TRUE | FALSE } in [ ALLOW_ID_TOKEN = { TRUE | FALSE } ALLOWED_SPCS_WORKLOAD_TYPES = { '<list_of_workload_types>' | 'ALL' } CLIENT_ENCRYPT… #2"
+
+[[obligation]]
 id = "sf.security_admin.alter-account.set.o379"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required DISABLE_USER_PRIVILEGE_GRANTS in [ ALLOW_ID_TOKEN = { TRUE | FALSE } ALLOWED_SPCS_WORKLOAD_TYPES = { '<list_of_workload_types>' | 'ALL' } CLIENT_ENCRYPT…"
+
+[[obligation]]
+id = "sf.security_admin.alter-account.set.o471"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { TRUE | FALSE } in [ ALLOW_ID_TOKEN = { TRUE | FALSE } ALLOWED_SPCS_WORKLOAD_TYPES = { '<list_of_workload_types>' | 'ALL' } CLIENT_ENCRYPT… #3"
 
 [[obligation]]
 id = "sf.security_admin.alter-account.set.o380"
@@ -2996,10 +3014,22 @@ required = true
 note = "the form without its required ENABLE_EGRESS_COST_OPTIMIZER in [ ALLOW_ID_TOKEN = { TRUE | FALSE } ALLOWED_SPCS_WORKLOAD_TYPES = { '<list_of_workload_types>' | 'ALL' } CLIENT_ENCRYPT…"
 
 [[obligation]]
+id = "sf.security_admin.alter-account.set.o472"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { TRUE | FALSE } in [ ALLOW_ID_TOKEN = { TRUE | FALSE } ALLOWED_SPCS_WORKLOAD_TYPES = { '<list_of_workload_types>' | 'ALL' } CLIENT_ENCRYPT… #4"
+
+[[obligation]]
 id = "sf.security_admin.alter-account.set.o383"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required ENABLE_INTERNAL_STAGES_PRIVATELINK in [ ALLOW_ID_TOKEN = { TRUE | FALSE } ALLOWED_SPCS_WORKLOAD_TYPES = { '<list_of_workload_types>' | 'ALL' } CLIENT_ENCRYPT…"
+
+[[obligation]]
+id = "sf.security_admin.alter-account.set.o473"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { TRUE | FALSE } in [ ALLOW_ID_TOKEN = { TRUE | FALSE } ALLOWED_SPCS_WORKLOAD_TYPES = { '<list_of_workload_types>' | 'ALL' } CLIENT_ENCRYPT… #5"
 
 [[obligation]]
 id = "sf.security_admin.alter-account.set.o384"
@@ -3008,10 +3038,22 @@ required = true
 note = "the form without its required ENABLE_SNOWFLAKE_MANAGED_STORAGE_VOLUME_PRIVATELINK in [ ALLOW_ID_TOKEN = { TRUE | FALSE } ALLOWED_SPCS_WORKLOAD_TYPES = { '<list_of_workload_types>' | 'ALL' } CLIENT_ENCRYPT…"
 
 [[obligation]]
+id = "sf.security_admin.alter-account.set.o474"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { TRUE | FALSE } in [ ALLOW_ID_TOKEN = { TRUE | FALSE } ALLOWED_SPCS_WORKLOAD_TYPES = { '<list_of_workload_types>' | 'ALL' } CLIENT_ENCRYPT… #6"
+
+[[obligation]]
 id = "sf.security_admin.alter-account.set.o385"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required ENFORCE_NETWORK_RULES_FOR_INTERNAL_STAGES in [ ALLOW_ID_TOKEN = { TRUE | FALSE } ALLOWED_SPCS_WORKLOAD_TYPES = { '<list_of_workload_types>' | 'ALL' } CLIENT_ENCRYPT…"
+
+[[obligation]]
+id = "sf.security_admin.alter-account.set.o475"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { TRUE | FALSE } in [ ALLOW_ID_TOKEN = { TRUE | FALSE } ALLOWED_SPCS_WORKLOAD_TYPES = { '<list_of_workload_types>' | 'ALL' } CLIENT_ENCRYPT… #7"
 
 [[obligation]]
 id = "sf.security_admin.alter-account.set.o386"
@@ -3020,10 +3062,22 @@ required = true
 note = "the form without its required ENFORCE_NETWORK_RULES_FOR_SNOWFLAKE_MANAGED_STORAGE_VOLUME in [ ALLOW_ID_TOKEN = { TRUE | FALSE } ALLOWED_SPCS_WORKLOAD_TYPES = { '<list_of_workload_types>' | 'ALL' } CLIENT_ENCRYPT…"
 
 [[obligation]]
+id = "sf.security_admin.alter-account.set.o476"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { TRUE | FALSE } in [ ALLOW_ID_TOKEN = { TRUE | FALSE } ALLOWED_SPCS_WORKLOAD_TYPES = { '<list_of_workload_types>' | 'ALL' } CLIENT_ENCRYPT… #8"
+
+[[obligation]]
 id = "sf.security_admin.alter-account.set.o387"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required ENFORCE_TAG_PROPAGATION_FOR_DATA_MOVEMENT_POLICIES in [ ALLOW_ID_TOKEN = { TRUE | FALSE } ALLOWED_SPCS_WORKLOAD_TYPES = { '<list_of_workload_types>' | 'ALL' } CLIENT_ENCRYPT…"
+
+[[obligation]]
+id = "sf.security_admin.alter-account.set.o477"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { TRUE | FALSE } in [ ALLOW_ID_TOKEN = { TRUE | FALSE } ALLOWED_SPCS_WORKLOAD_TYPES = { '<list_of_workload_types>' | 'ALL' } CLIENT_ENCRYPT… #9"
 
 [[obligation]]
 id = "sf.security_admin.alter-account.set.o388"
@@ -3032,16 +3086,34 @@ required = true
 note = "the form without its required ENABLE_NOTEBOOK_CREATION_IN_PERSONAL_DB in [ ALLOW_ID_TOKEN = { TRUE | FALSE } ALLOWED_SPCS_WORKLOAD_TYPES = { '<list_of_workload_types>' | 'ALL' } CLIENT_ENCRYPT…"
 
 [[obligation]]
+id = "sf.security_admin.alter-account.set.o478"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { TRUE | FALSE } in [ ALLOW_ID_TOKEN = { TRUE | FALSE } ALLOWED_SPCS_WORKLOAD_TYPES = { '<list_of_workload_types>' | 'ALL' } CLIENT_ENCRYPT… #10"
+
+[[obligation]]
 id = "sf.security_admin.alter-account.set.o389"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required ENABLE_SPCS_BLOCK_STORAGE_SNOWFLAKE_FULL_ENCRYPTION_ENFORCEMENT in [ ALLOW_ID_TOKEN = { TRUE | FALSE } ALLOWED_SPCS_WORKLOAD_TYPES = { '<list_of_workload_types>' | 'ALL' } CLIENT_ENCRYPT…"
 
 [[obligation]]
+id = "sf.security_admin.alter-account.set.o479"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { TRUE | FALSE } in [ ALLOW_ID_TOKEN = { TRUE | FALSE } ALLOWED_SPCS_WORKLOAD_TYPES = { '<list_of_workload_types>' | 'ALL' } CLIENT_ENCRYPT… #11"
+
+[[obligation]]
 id = "sf.security_admin.alter-account.set.o390"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required EXTERNAL_OAUTH_ADD_PRIVILEGED_ROLES_TO_BLOCKED_LIST in [ ALLOW_ID_TOKEN = { TRUE | FALSE } ALLOWED_SPCS_WORKLOAD_TYPES = { '<list_of_workload_types>' | 'ALL' } CLIENT_ENCRYPT…"
+
+[[obligation]]
+id = "sf.security_admin.alter-account.set.o480"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { TRUE | FALSE } in [ ALLOW_ID_TOKEN = { TRUE | FALSE } ALLOWED_SPCS_WORKLOAD_TYPES = { '<list_of_workload_types>' | 'ALL' } CLIENT_ENCRYPT… #12"
 
 [[obligation]]
 id = "sf.security_admin.alter-account.set.o391"
@@ -3086,10 +3158,22 @@ required = true
 note = "the form without its required OAUTH_ADD_PRIVILEGED_ROLES_TO_BLOCKED_LIST in [ ALLOW_ID_TOKEN = { TRUE | FALSE } ALLOWED_SPCS_WORKLOAD_TYPES = { '<list_of_workload_types>' | 'ALL' } CLIENT_ENCRYPT…"
 
 [[obligation]]
+id = "sf.security_admin.alter-account.set.o481"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { TRUE | FALSE } in [ ALLOW_ID_TOKEN = { TRUE | FALSE } ALLOWED_SPCS_WORKLOAD_TYPES = { '<list_of_workload_types>' | 'ALL' } CLIENT_ENCRYPT… #13"
+
+[[obligation]]
 id = "sf.security_admin.alter-account.set.o398"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required PERIODIC_DATA_REKEYING in [ ALLOW_ID_TOKEN = { TRUE | FALSE } ALLOWED_SPCS_WORKLOAD_TYPES = { '<list_of_workload_types>' | 'ALL' } CLIENT_ENCRYPT…"
+
+[[obligation]]
+id = "sf.security_admin.alter-account.set.o482"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { TRUE | FALSE } in [ ALLOW_ID_TOKEN = { TRUE | FALSE } ALLOWED_SPCS_WORKLOAD_TYPES = { '<list_of_workload_types>' | 'ALL' } CLIENT_ENCRYPT… #14"
 
 [[obligation]]
 id = "sf.security_admin.alter-account.set.o399"
@@ -3110,10 +3194,22 @@ required = true
 note = "the form without its required REQUIRE_STORAGE_INTEGRATION_FOR_STAGE_CREATION in [ ALLOW_ID_TOKEN = { TRUE | FALSE } ALLOWED_SPCS_WORKLOAD_TYPES = { '<list_of_workload_types>' | 'ALL' } CLIENT_ENCRYPT…"
 
 [[obligation]]
+id = "sf.security_admin.alter-account.set.o483"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { TRUE | FALSE } in [ ALLOW_ID_TOKEN = { TRUE | FALSE } ALLOWED_SPCS_WORKLOAD_TYPES = { '<list_of_workload_types>' | 'ALL' } CLIENT_ENCRYPT… #15"
+
+[[obligation]]
 id = "sf.security_admin.alter-account.set.o402"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required REQUIRE_STORAGE_INTEGRATION_FOR_STAGE_OPERATION in [ ALLOW_ID_TOKEN = { TRUE | FALSE } ALLOWED_SPCS_WORKLOAD_TYPES = { '<list_of_workload_types>' | 'ALL' } CLIENT_ENCRYPT…"
+
+[[obligation]]
+id = "sf.security_admin.alter-account.set.o484"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { TRUE | FALSE } in [ ALLOW_ID_TOKEN = { TRUE | FALSE } ALLOWED_SPCS_WORKLOAD_TYPES = { '<list_of_workload_types>' | 'ALL' } CLIENT_ENCRYPT… #16"
 
 [[obligation]]
 id = "sf.security_admin.alter-account.set.o403"
@@ -3138,6 +3234,12 @@ id = "sf.security_admin.alter-account.set.o406"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required SSO_LOGIN_PAGE in [ ALLOW_ID_TOKEN = { TRUE | FALSE } ALLOWED_SPCS_WORKLOAD_TYPES = { '<list_of_workload_types>' | 'ALL' } CLIENT_ENCRYPT…"
+
+[[obligation]]
+id = "sf.security_admin.alter-account.set.o485"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { TRUE | FALSE } in [ ALLOW_ID_TOKEN = { TRUE | FALSE } ALLOWED_SPCS_WORKLOAD_TYPES = { '<list_of_workload_types>' | 'ALL' } CLIENT_ENCRYPT… #17"
 
 [[obligation]]
 id = "sf.security_admin.alter-account.set.o407"
@@ -3236,6 +3338,12 @@ required = true
 note = "the form without its required AUTOCOMMIT in [ ABORT_DETACHED_QUERY = { TRUE | FALSE } AUTOCOMMIT = { TRUE | FALSE } BINARY_INPUT_FORMAT = <string> BINARY_OUTPUT_FO…"
 
 [[obligation]]
+id = "sf.security_admin.alter-account.set.o486"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { TRUE | FALSE } in [ ABORT_DETACHED_QUERY = { TRUE | FALSE } AUTOCOMMIT = { TRUE | FALSE } BINARY_INPUT_FORMAT = <string> BINARY_OUTPUT_FO… #2"
+
+[[obligation]]
 id = "sf.security_admin.alter-account.set.o423"
 kind = "negative_neighbour"
 required = true
@@ -3272,16 +3380,34 @@ required = true
 note = "the form without its required ENABLE_GET_DDL_USE_DATA_TYPE_ALIAS in [ ABORT_DETACHED_QUERY = { TRUE | FALSE } AUTOCOMMIT = { TRUE | FALSE } BINARY_INPUT_FORMAT = <string> BINARY_OUTPUT_FO…"
 
 [[obligation]]
+id = "sf.security_admin.alter-account.set.o487"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { TRUE | FALSE } in [ ABORT_DETACHED_QUERY = { TRUE | FALSE } AUTOCOMMIT = { TRUE | FALSE } BINARY_INPUT_FORMAT = <string> BINARY_OUTPUT_FO… #3"
+
+[[obligation]]
 id = "sf.security_admin.alter-account.set.o429"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required ERROR_ON_NONDETERMINISTIC_MERGE in [ ABORT_DETACHED_QUERY = { TRUE | FALSE } AUTOCOMMIT = { TRUE | FALSE } BINARY_INPUT_FORMAT = <string> BINARY_OUTPUT_FO…"
 
 [[obligation]]
+id = "sf.security_admin.alter-account.set.o488"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { TRUE | FALSE } in [ ABORT_DETACHED_QUERY = { TRUE | FALSE } AUTOCOMMIT = { TRUE | FALSE } BINARY_INPUT_FORMAT = <string> BINARY_OUTPUT_FO… #4"
+
+[[obligation]]
 id = "sf.security_admin.alter-account.set.o430"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required ERROR_ON_NONDETERMINISTIC_UPDATE in [ ABORT_DETACHED_QUERY = { TRUE | FALSE } AUTOCOMMIT = { TRUE | FALSE } BINARY_INPUT_FORMAT = <string> BINARY_OUTPUT_FO…"
+
+[[obligation]]
+id = "sf.security_admin.alter-account.set.o489"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { TRUE | FALSE } in [ ABORT_DETACHED_QUERY = { TRUE | FALSE } AUTOCOMMIT = { TRUE | FALSE } BINARY_INPUT_FORMAT = <string> BINARY_OUTPUT_FO… #5"
 
 [[obligation]]
 id = "sf.security_admin.alter-account.set.o431"
@@ -3300,6 +3426,12 @@ id = "sf.security_admin.alter-account.set.o433"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required OPT_OUT_ERROR_LOGGING in [ ABORT_DETACHED_QUERY = { TRUE | FALSE } AUTOCOMMIT = { TRUE | FALSE } BINARY_INPUT_FORMAT = <string> BINARY_OUTPUT_FO…"
+
+[[obligation]]
+id = "sf.security_admin.alter-account.set.o490"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { TRUE | FALSE } in [ ABORT_DETACHED_QUERY = { TRUE | FALSE } AUTOCOMMIT = { TRUE | FALSE } BINARY_INPUT_FORMAT = <string> BINARY_OUTPUT_FO… #6"
 
 [[obligation]]
 id = "sf.security_admin.alter-account.set.o434"
@@ -3344,10 +3476,22 @@ required = true
 note = "the form without its required STRICT_JSON_OUTPUT in [ ABORT_DETACHED_QUERY = { TRUE | FALSE } AUTOCOMMIT = { TRUE | FALSE } BINARY_INPUT_FORMAT = <string> BINARY_OUTPUT_FO…"
 
 [[obligation]]
+id = "sf.security_admin.alter-account.set.o491"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { TRUE | FALSE } in [ ABORT_DETACHED_QUERY = { TRUE | FALSE } AUTOCOMMIT = { TRUE | FALSE } BINARY_INPUT_FORMAT = <string> BINARY_OUTPUT_FO… #7"
+
+[[obligation]]
 id = "sf.security_admin.alter-account.set.o441"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required TIMESTAMP_DAY_IS_ALWAYS_24H in [ ABORT_DETACHED_QUERY = { TRUE | FALSE } AUTOCOMMIT = { TRUE | FALSE } BINARY_INPUT_FORMAT = <string> BINARY_OUTPUT_FO…"
+
+[[obligation]]
+id = "sf.security_admin.alter-account.set.o492"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { TRUE | FALSE } in [ ABORT_DETACHED_QUERY = { TRUE | FALSE } AUTOCOMMIT = { TRUE | FALSE } BINARY_INPUT_FORMAT = <string> BINARY_OUTPUT_FO… #8"
 
 [[obligation]]
 id = "sf.security_admin.alter-account.set.o442"
@@ -3426,6 +3570,12 @@ id = "sf.security_admin.alter-account.set.o454"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required USE_CACHED_RESULT in [ ABORT_DETACHED_QUERY = { TRUE | FALSE } AUTOCOMMIT = { TRUE | FALSE } BINARY_INPUT_FORMAT = <string> BINARY_OUTPUT_FO…"
+
+[[obligation]]
+id = "sf.security_admin.alter-account.set.o493"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { TRUE | FALSE } in [ ABORT_DETACHED_QUERY = { TRUE | FALSE } AUTOCOMMIT = { TRUE | FALSE } BINARY_INPUT_FORMAT = <string> BINARY_OUTPUT_FO… #9"
 
 [[obligation]]
 id = "sf.security_admin.alter-account.set.o455"
@@ -6750,6 +6900,12 @@ required = true
 note = "the form without its required SET"
 
 [[obligation]]
+id = "sf.security_admin.alter-api-integration.set-tag.o027"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
+
+[[obligation]]
 id = "sf.security_admin.alter-api-integration.set-tag.o018"
 kind = "identifier_class"
 required = true
@@ -7032,6 +7188,12 @@ id = "sf.security_admin.alter-api-integration.unset-tag.o013"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required UNSET"
+
+[[obligation]]
+id = "sf.security_admin.alter-api-integration.unset-tag.o021"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
 
 [[obligation]]
 id = "sf.security_admin.alter-api-integration.unset-tag.o015"
@@ -7911,6 +8073,12 @@ required = true
 note = "the form without its required ( in [ CLIENT_POLICY = ( <client_type> = ( MINIMUM_VERSION = '<version>' ) [ , ... ] ) ]"
 
 [[obligation]]
+id = "sf.security_admin.alter-authentication-policy.set.o084"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( in [ CLIENT_POLICY = ( <client_type> = ( MINIMUM_VERSION = '<version>' ) [ , ... ] ) ] #2"
+
+[[obligation]]
 id = "sf.security_admin.alter-authentication-policy.set.o069"
 kind = "negative_neighbour"
 required = true
@@ -7921,6 +8089,12 @@ id = "sf.security_admin.alter-authentication-policy.set.o070"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required ) in [ CLIENT_POLICY = ( <client_type> = ( MINIMUM_VERSION = '<version>' ) [ , ... ] ) ]"
+
+[[obligation]]
+id = "sf.security_admin.alter-authentication-policy.set.o085"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) in [ CLIENT_POLICY = ( <client_type> = ( MINIMUM_VERSION = '<version>' ) [ , ... ] ) ] #2"
 
 [[obligation]]
 id = "sf.security_admin.alter-authentication-policy.set.o071"
@@ -9885,6 +10059,12 @@ required = true
 note = "the form without its required )"
 
 [[obligation]]
+id = "sf.security_admin.alter-data-movement-policy.add-alert-rules.o025"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
+
+[[obligation]]
 id = "sf.security_admin.alter-data-movement-policy.add-alert-rules.o020"
 kind = "identifier_class"
 required = true
@@ -10037,6 +10217,12 @@ id = "sf.security_admin.alter-data-movement-policy.add-enforce-rules.o019"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required )"
+
+[[obligation]]
+id = "sf.security_admin.alter-data-movement-policy.add-enforce-rules.o025"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
 
 [[obligation]]
 id = "sf.security_admin.alter-data-movement-policy.add-enforce-rules.o020"
@@ -10193,6 +10379,12 @@ required = true
 note = "the form without its required )"
 
 [[obligation]]
+id = "sf.security_admin.alter-data-movement-policy.remove-alert-rules.o025"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
+
+[[obligation]]
 id = "sf.security_admin.alter-data-movement-policy.remove-alert-rules.o020"
 kind = "identifier_class"
 required = true
@@ -10345,6 +10537,12 @@ id = "sf.security_admin.alter-data-movement-policy.remove-enforce-rules.o019"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required )"
+
+[[obligation]]
+id = "sf.security_admin.alter-data-movement-policy.remove-enforce-rules.o025"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
 
 [[obligation]]
 id = "sf.security_admin.alter-data-movement-policy.remove-enforce-rules.o020"
@@ -10629,6 +10827,12 @@ required = true
 note = "the form without its required )"
 
 [[obligation]]
+id = "sf.security_admin.alter-data-movement-policy.set-alert-rules.o025"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
+
+[[obligation]]
 id = "sf.security_admin.alter-data-movement-policy.set-alert-rules.o020"
 kind = "identifier_class"
 required = true
@@ -10900,6 +11104,12 @@ id = "sf.security_admin.alter-data-movement-policy.set-enforce-rules.o019"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required )"
+
+[[obligation]]
+id = "sf.security_admin.alter-data-movement-policy.set-enforce-rules.o024"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
 
 [[obligation]]
 id = "sf.security_admin.alter-data-movement-policy.set-enforce-rules.o020"
@@ -11348,6 +11558,12 @@ required = true
 note = "the form without its required TAG"
 
 [[obligation]]
+id = "sf.security_admin.alter-database-role.set-tag.o043"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
+
+[[obligation]]
 id = "sf.security_admin.alter-database-role.set-tag.o019"
 kind = "identifier_class"
 required = true
@@ -11580,6 +11796,12 @@ id = "sf.security_admin.alter-database-role.unset-tag.o015"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required TAG"
+
+[[obligation]]
+id = "sf.security_admin.alter-database-role.unset-tag.o037"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
 
 [[obligation]]
 id = "sf.security_admin.alter-database-role.unset-tag.o016"
@@ -12294,6 +12516,12 @@ required = true
 note = "the form without its required { ALLOWED_NETWORK_RULES | ALLOWED_API_AUTHENTICATION_INTEGRATIONS | ALLOWED_AUTHENTICATION_SECRETS | COMMENT | TAG <tag_name> }"
 
 [[obligation]]
+id = "sf.security_admin.alter-external-access-integration.unset-allowed-network-rules-allowed-api-authentication-integrations-allowed-authentication-secrets.o027"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
+
+[[obligation]]
 id = "sf.security_admin.alter-external-access-integration.unset-allowed-network-rules-allowed-api-authentication-integrations-allowed-authentication-secrets.o023"
 kind = "identifier_class"
 required = true
@@ -12643,6 +12871,12 @@ required = true
 note = "the form without its required ALLOWED_DATABASES"
 
 [[obligation]]
+id = "sf.security_admin.alter-failover-group.add-to-allowed-databases.o022"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
+
+[[obligation]]
 id = "sf.security_admin.alter-failover-group.add-to-allowed-databases.o018"
 kind = "identifier_class"
 required = true
@@ -12784,6 +13018,12 @@ required = true
 note = "the form without its required ALLOWED_EXTERNAL_VOLUMES"
 
 [[obligation]]
+id = "sf.security_admin.alter-failover-group.add-to-allowed-external-volumes.o022"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
+
+[[obligation]]
 id = "sf.security_admin.alter-failover-group.add-to-allowed-external-volumes.o018"
 kind = "identifier_class"
 required = true
@@ -12923,6 +13163,12 @@ id = "sf.security_admin.alter-failover-group.add-to-allowed-shares.o017"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required ALLOWED_SHARES"
+
+[[obligation]]
+id = "sf.security_admin.alter-failover-group.add-to-allowed-shares.o022"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
 
 [[obligation]]
 id = "sf.security_admin.alter-failover-group.add-to-allowed-shares.o018"
@@ -13085,6 +13331,24 @@ id = "sf.security_admin.alter-failover-group.move-databases-to-failover.o020"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required TO"
+
+[[obligation]]
+id = "sf.security_admin.alter-failover-group.move-databases-to-failover.o027"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required FAILOVER #2"
+
+[[obligation]]
+id = "sf.security_admin.alter-failover-group.move-databases-to-failover.o028"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required GROUP #2"
+
+[[obligation]]
+id = "sf.security_admin.alter-failover-group.move-databases-to-failover.o029"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
 
 [[obligation]]
 id = "sf.security_admin.alter-failover-group.move-databases-to-failover.o021"
@@ -13271,6 +13535,24 @@ required = true
 note = "the form without its required TO"
 
 [[obligation]]
+id = "sf.security_admin.alter-failover-group.move-external-volumes-to.o028"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required FAILOVER #2"
+
+[[obligation]]
+id = "sf.security_admin.alter-failover-group.move-external-volumes-to.o029"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required GROUP #2"
+
+[[obligation]]
+id = "sf.security_admin.alter-failover-group.move-external-volumes-to.o030"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
+
+[[obligation]]
 id = "sf.security_admin.alter-failover-group.move-external-volumes-to.o022"
 kind = "identifier_class"
 required = true
@@ -13447,6 +13729,24 @@ id = "sf.security_admin.alter-failover-group.move-shares-to-failover.o020"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required TO"
+
+[[obligation]]
+id = "sf.security_admin.alter-failover-group.move-shares-to-failover.o027"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required FAILOVER #2"
+
+[[obligation]]
+id = "sf.security_admin.alter-failover-group.move-shares-to-failover.o028"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required GROUP #2"
+
+[[obligation]]
+id = "sf.security_admin.alter-failover-group.move-shares-to-failover.o029"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
 
 [[obligation]]
 id = "sf.security_admin.alter-failover-group.move-shares-to-failover.o021"
@@ -13785,6 +14085,12 @@ required = true
 note = "the form without its required ALLOWED_ACCOUNTS"
 
 [[obligation]]
+id = "sf.security_admin.alter-failover-group.remove-from-allowed-accounts.o027"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
+
+[[obligation]]
 id = "sf.security_admin.alter-failover-group.remove-from-allowed-accounts.o021"
 kind = "identifier_class"
 required = true
@@ -13942,6 +14248,12 @@ required = true
 note = "the form without its required ALLOWED_DATABASES"
 
 [[obligation]]
+id = "sf.security_admin.alter-failover-group.remove-from-allowed-databases.o022"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
+
+[[obligation]]
 id = "sf.security_admin.alter-failover-group.remove-from-allowed-databases.o018"
 kind = "identifier_class"
 required = true
@@ -14083,6 +14395,12 @@ required = true
 note = "the form without its required ALLOWED_EXTERNAL_VOLUMES"
 
 [[obligation]]
+id = "sf.security_admin.alter-failover-group.remove-from-allowed-external-volumes.o022"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
+
+[[obligation]]
 id = "sf.security_admin.alter-failover-group.remove-from-allowed-external-volumes.o018"
 kind = "identifier_class"
 required = true
@@ -14222,6 +14540,12 @@ id = "sf.security_admin.alter-failover-group.remove-from-allowed-shares.o017"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required ALLOWED_SHARES"
+
+[[obligation]]
+id = "sf.security_admin.alter-failover-group.remove-from-allowed-shares.o022"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
 
 [[obligation]]
 id = "sf.security_admin.alter-failover-group.remove-from-allowed-shares.o018"
@@ -15130,6 +15454,12 @@ required = true
 note = "the form without its required ALLOWED_INTEGRATION_TYPES"
 
 [[obligation]]
+id = "sf.security_admin.alter-failover-group.set-object-types-integrations-allowed-integration-types.o025"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
+
+[[obligation]]
 id = "sf.security_admin.alter-failover-group.set-object-types-integrations-allowed-integration-types.o021"
 kind = "identifier_class"
 required = true
@@ -15692,6 +16022,12 @@ required = true
 note = "the form without its required TAG"
 
 [[obligation]]
+id = "sf.security_admin.alter-failover-group.set-tag.o027"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
+
+[[obligation]]
 id = "sf.security_admin.alter-failover-group.set-tag.o020"
 kind = "identifier_class"
 required = true
@@ -15963,6 +16299,12 @@ required = true
 note = "the form without its required { COMMENT | REPLICATION_SCHEDULE | OPTIMIZED_REFRESH | RPO_ASSURANCE | ERROR_INTEGRATION | READ_ONLY }"
 
 [[obligation]]
+id = "sf.security_admin.alter-failover-group.unset-comment-replication-schedule-optimized-refresh.o022"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
+
+[[obligation]]
 id = "sf.security_admin.alter-failover-group.unset-comment-replication-schedule-optimized-refresh.o020"
 kind = "identifier_class"
 required = true
@@ -16080,6 +16422,12 @@ id = "sf.security_admin.alter-failover-group.unset-tag.o016"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required TAG"
+
+[[obligation]]
+id = "sf.security_admin.alter-failover-group.unset-tag.o021"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
 
 [[obligation]]
 id = "sf.security_admin.alter-failover-group.unset-tag.o017"
@@ -16660,6 +17008,12 @@ required = true
 note = "the form without its required TAG"
 
 [[obligation]]
+id = "sf.security_admin.alter-feature-policy.set-tag.o027"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
+
+[[obligation]]
 id = "sf.security_admin.alter-feature-policy.set-tag.o020"
 kind = "identifier_class"
 required = true
@@ -16938,6 +17292,12 @@ id = "sf.security_admin.alter-feature-policy.unset-tag.o016"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required TAG"
+
+[[obligation]]
+id = "sf.security_admin.alter-feature-policy.unset-tag.o021"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
 
 [[obligation]]
 id = "sf.security_admin.alter-feature-policy.unset-tag.o017"
@@ -18983,6 +19343,12 @@ required = true
 note = "the form without its required TAG"
 
 [[obligation]]
+id = "sf.security_admin.alter-masking-policy.set-tag.o027"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
+
+[[obligation]]
 id = "sf.security_admin.alter-masking-policy.set-tag.o020"
 kind = "identifier_class"
 required = true
@@ -19225,6 +19591,12 @@ id = "sf.security_admin.alter-masking-policy.unset-tag.o016"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required TAG"
+
+[[obligation]]
+id = "sf.security_admin.alter-masking-policy.unset-tag.o021"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
 
 [[obligation]]
 id = "sf.security_admin.alter-masking-policy.unset-tag.o017"
@@ -21337,6 +21709,12 @@ required = true
 note = "the form without its required SET"
 
 [[obligation]]
+id = "sf.security_admin.alter-notification-integration-email.set-tag.o027"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
+
+[[obligation]]
 id = "sf.security_admin.alter-notification-integration-email.set-tag.o018"
 kind = "identifier_class"
 required = true
@@ -21611,6 +21989,12 @@ id = "sf.security_admin.alter-notification-integration-email.unset-tag.o013"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required UNSET"
+
+[[obligation]]
+id = "sf.security_admin.alter-notification-integration-email.unset-tag.o021"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
 
 [[obligation]]
 id = "sf.security_admin.alter-notification-integration-email.unset-tag.o015"
@@ -24698,10 +25082,22 @@ required = true
 note = "the form without its required ADD"
 
 [[obligation]]
+id = "sf.security_admin.alter-organization-user-group.add-organization-users.o019"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ORGANIZATION #2"
+
+[[obligation]]
 id = "sf.security_admin.alter-organization-user-group.add-organization-users.o016"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required USERS"
+
+[[obligation]]
+id = "sf.security_admin.alter-organization-user-group.add-organization-users.o020"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
 
 [[obligation]]
 id = "sf.security_admin.alter-organization-user-group.add-organization-users.o017"
@@ -24816,10 +25212,22 @@ required = true
 note = "the form without its required REMOVE"
 
 [[obligation]]
+id = "sf.security_admin.alter-organization-user-group.remove-organization-users.o019"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ORGANIZATION #2"
+
+[[obligation]]
 id = "sf.security_admin.alter-organization-user-group.remove-organization-users.o016"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required USERS"
+
+[[obligation]]
+id = "sf.security_admin.alter-organization-user-group.remove-organization-users.o020"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
 
 [[obligation]]
 id = "sf.security_admin.alter-organization-user-group.remove-organization-users.o017"
@@ -27491,6 +27899,12 @@ required = true
 note = "the form without its required TAG"
 
 [[obligation]]
+id = "sf.security_admin.alter-password-policy.set-tag.o027"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
+
+[[obligation]]
 id = "sf.security_admin.alter-password-policy.set-tag.o020"
 kind = "identifier_class"
 required = true
@@ -27877,6 +28291,12 @@ id = "sf.security_admin.alter-password-policy.unset-tag.o016"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required TAG"
+
+[[obligation]]
+id = "sf.security_admin.alter-password-policy.unset-tag.o021"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
 
 [[obligation]]
 id = "sf.security_admin.alter-password-policy.unset-tag.o017"
@@ -29610,6 +30030,12 @@ required = true
 note = "the form without its required ALLOWED_DATABASES"
 
 [[obligation]]
+id = "sf.security_admin.alter-replication-group.add-to-allowed-databases.o022"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
+
+[[obligation]]
 id = "sf.security_admin.alter-replication-group.add-to-allowed-databases.o018"
 kind = "identifier_class"
 required = true
@@ -29751,6 +30177,12 @@ required = true
 note = "the form without its required ALLOWED_EXTERNAL_VOLUMES"
 
 [[obligation]]
+id = "sf.security_admin.alter-replication-group.add-to-allowed-external-volumes.o022"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
+
+[[obligation]]
 id = "sf.security_admin.alter-replication-group.add-to-allowed-external-volumes.o018"
 kind = "identifier_class"
 required = true
@@ -29890,6 +30322,12 @@ id = "sf.security_admin.alter-replication-group.add-to-allowed-shares.o017"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required ALLOWED_SHARES"
+
+[[obligation]]
+id = "sf.security_admin.alter-replication-group.add-to-allowed-shares.o022"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
 
 [[obligation]]
 id = "sf.security_admin.alter-replication-group.add-to-allowed-shares.o018"
@@ -30052,6 +30490,24 @@ id = "sf.security_admin.alter-replication-group.move-databases-to-replication.o0
 kind = "negative_neighbour"
 required = true
 note = "the form without its required TO"
+
+[[obligation]]
+id = "sf.security_admin.alter-replication-group.move-databases-to-replication.o027"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required REPLICATION #2"
+
+[[obligation]]
+id = "sf.security_admin.alter-replication-group.move-databases-to-replication.o028"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required GROUP #2"
+
+[[obligation]]
+id = "sf.security_admin.alter-replication-group.move-databases-to-replication.o029"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
 
 [[obligation]]
 id = "sf.security_admin.alter-replication-group.move-databases-to-replication.o021"
@@ -30238,6 +30694,24 @@ required = true
 note = "the form without its required TO"
 
 [[obligation]]
+id = "sf.security_admin.alter-replication-group.move-external-volumes-to.o028"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required REPLICATION #2"
+
+[[obligation]]
+id = "sf.security_admin.alter-replication-group.move-external-volumes-to.o029"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required GROUP #2"
+
+[[obligation]]
+id = "sf.security_admin.alter-replication-group.move-external-volumes-to.o030"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
+
+[[obligation]]
 id = "sf.security_admin.alter-replication-group.move-external-volumes-to.o022"
 kind = "identifier_class"
 required = true
@@ -30414,6 +30888,24 @@ id = "sf.security_admin.alter-replication-group.move-shares-to-replication.o020"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required TO"
+
+[[obligation]]
+id = "sf.security_admin.alter-replication-group.move-shares-to-replication.o027"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required REPLICATION #2"
+
+[[obligation]]
+id = "sf.security_admin.alter-replication-group.move-shares-to-replication.o028"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required GROUP #2"
+
+[[obligation]]
+id = "sf.security_admin.alter-replication-group.move-shares-to-replication.o029"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
 
 [[obligation]]
 id = "sf.security_admin.alter-replication-group.move-shares-to-replication.o021"
@@ -30673,6 +31165,12 @@ required = true
 note = "the form without its required ALLOWED_ACCOUNTS"
 
 [[obligation]]
+id = "sf.security_admin.alter-replication-group.remove-from-allowed-accounts.o027"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
+
+[[obligation]]
 id = "sf.security_admin.alter-replication-group.remove-from-allowed-accounts.o021"
 kind = "identifier_class"
 required = true
@@ -30830,6 +31328,12 @@ required = true
 note = "the form without its required ALLOWED_DATABASES"
 
 [[obligation]]
+id = "sf.security_admin.alter-replication-group.remove-from-allowed-databases.o022"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
+
+[[obligation]]
 id = "sf.security_admin.alter-replication-group.remove-from-allowed-databases.o018"
 kind = "identifier_class"
 required = true
@@ -30971,6 +31475,12 @@ required = true
 note = "the form without its required ALLOWED_EXTERNAL_VOLUMES"
 
 [[obligation]]
+id = "sf.security_admin.alter-replication-group.remove-from-allowed-external-volumes.o022"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
+
+[[obligation]]
 id = "sf.security_admin.alter-replication-group.remove-from-allowed-external-volumes.o018"
 kind = "identifier_class"
 required = true
@@ -31110,6 +31620,12 @@ id = "sf.security_admin.alter-replication-group.remove-from-allowed-shares.o017"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required ALLOWED_SHARES"
+
+[[obligation]]
+id = "sf.security_admin.alter-replication-group.remove-from-allowed-shares.o022"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
 
 [[obligation]]
 id = "sf.security_admin.alter-replication-group.remove-from-allowed-shares.o018"
@@ -32018,6 +32534,12 @@ required = true
 note = "the form without its required ALLOWED_INTEGRATION_TYPES"
 
 [[obligation]]
+id = "sf.security_admin.alter-replication-group.set-object-types-integrations-allowed-integration-types.o025"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
+
+[[obligation]]
 id = "sf.security_admin.alter-replication-group.set-object-types-integrations-allowed-integration-types.o021"
 kind = "identifier_class"
 required = true
@@ -32283,6 +32805,12 @@ required = true
 note = "the form without its required TAG"
 
 [[obligation]]
+id = "sf.security_admin.alter-replication-group.set-tag.o027"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
+
+[[obligation]]
 id = "sf.security_admin.alter-replication-group.set-tag.o020"
 kind = "identifier_class"
 required = true
@@ -32536,6 +33064,12 @@ required = true
 note = "the form without its required { COMMENT | REPLICATION_SCHEDULE | ERROR_INTEGRATION }"
 
 [[obligation]]
+id = "sf.security_admin.alter-replication-group.unset-comment-replication-schedule-error-integration.o019"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
+
+[[obligation]]
 id = "sf.security_admin.alter-replication-group.unset-comment-replication-schedule-error-integration.o017"
 kind = "identifier_class"
 required = true
@@ -32653,6 +33187,12 @@ id = "sf.security_admin.alter-replication-group.unset-tag.o016"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required TAG"
+
+[[obligation]]
+id = "sf.security_admin.alter-replication-group.unset-tag.o021"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
 
 [[obligation]]
 id = "sf.security_admin.alter-replication-group.unset-tag.o017"
@@ -33496,6 +34036,12 @@ required = true
 note = "the form without its required TAG"
 
 [[obligation]]
+id = "sf.security_admin.alter-role.set-tag.o026"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
+
+[[obligation]]
 id = "sf.security_admin.alter-role.set-tag.o019"
 kind = "identifier_class"
 required = true
@@ -33726,6 +34272,12 @@ id = "sf.security_admin.alter-role.unset-tag.o015"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required TAG"
+
+[[obligation]]
+id = "sf.security_admin.alter-role.unset-tag.o020"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
 
 [[obligation]]
 id = "sf.security_admin.alter-role.unset-tag.o016"
@@ -34235,6 +34787,12 @@ required = true
 note = "the form without its required TAG"
 
 [[obligation]]
+id = "sf.security_admin.alter-row-access-policy.set-tag.o028"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
+
+[[obligation]]
 id = "sf.security_admin.alter-row-access-policy.set-tag.o021"
 kind = "identifier_class"
 required = true
@@ -34489,6 +35047,12 @@ id = "sf.security_admin.alter-row-access-policy.unset-tag.o017"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required TAG"
+
+[[obligation]]
+id = "sf.security_admin.alter-row-access-policy.unset-tag.o022"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
 
 [[obligation]]
 id = "sf.security_admin.alter-row-access-policy.unset-tag.o018"
@@ -42488,6 +43052,12 @@ required = true
 note = "the form without its required SET"
 
 [[obligation]]
+id = "sf.security_admin.alter-security-integration.set-tag.o024"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
+
+[[obligation]]
 id = "sf.security_admin.alter-security-integration.set-tag.o018"
 kind = "identifier_class"
 required = true
@@ -42716,6 +43286,12 @@ id = "sf.security_admin.alter-security-integration.unset-tag.o013"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required UNSET"
+
+[[obligation]]
+id = "sf.security_admin.alter-security-integration.unset-tag.o021"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
 
 [[obligation]]
 id = "sf.security_admin.alter-security-integration.unset-tag.o015"
@@ -43662,6 +44238,12 @@ required = true
 note = "the form without its required TAG"
 
 [[obligation]]
+id = "sf.security_admin.alter-session-policy.set-tag.o027"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
+
+[[obligation]]
 id = "sf.security_admin.alter-session-policy.set-tag.o020"
 kind = "identifier_class"
 required = true
@@ -44000,6 +44582,12 @@ id = "sf.security_admin.alter-session-policy.unset-tag.o016"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required TAG"
+
+[[obligation]]
+id = "sf.security_admin.alter-session-policy.unset-tag.o021"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
 
 [[obligation]]
 id = "sf.security_admin.alter-session-policy.unset-tag.o017"
@@ -44474,6 +45062,12 @@ id = "sf.security_admin.alter-share.set-tag.o018"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required TAG"
+
+[[obligation]]
+id = "sf.security_admin.alter-share.set-tag.o026"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
 
 [[obligation]]
 id = "sf.security_admin.alter-share.set-tag.o019"
@@ -46218,6 +46812,12 @@ id = "sf.security_admin.alter-storage-integration.unset-tag.o013"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required UNSET"
+
+[[obligation]]
+id = "sf.security_admin.alter-storage-integration.unset-tag.o021"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
 
 [[obligation]]
 id = "sf.security_admin.alter-storage-integration.unset-tag.o015"
@@ -53663,6 +54263,12 @@ required = true
 note = "the form without its required AUTOCOMMIT in [ ABORT_DETACHED_QUERY = { TRUE | FALSE } AUTOCOMMIT = { TRUE | FALSE } BINARY_INPUT_FORMAT = <string> BINARY_OUTPUT_FO…"
 
 [[obligation]]
+id = "sf.security_admin.alter-user.set.o310"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { TRUE | FALSE } in [ ABORT_DETACHED_QUERY = { TRUE | FALSE } AUTOCOMMIT = { TRUE | FALSE } BINARY_INPUT_FORMAT = <string> BINARY_OUTPUT_FO… #2"
+
+[[obligation]]
 id = "sf.security_admin.alter-user.set.o271"
 kind = "negative_neighbour"
 required = true
@@ -53699,10 +54305,22 @@ required = true
 note = "the form without its required ENABLE_GET_DDL_USE_DATA_TYPE_ALIAS in [ ABORT_DETACHED_QUERY = { TRUE | FALSE } AUTOCOMMIT = { TRUE | FALSE } BINARY_INPUT_FORMAT = <string> BINARY_OUTPUT_FO…"
 
 [[obligation]]
+id = "sf.security_admin.alter-user.set.o311"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { TRUE | FALSE } in [ ABORT_DETACHED_QUERY = { TRUE | FALSE } AUTOCOMMIT = { TRUE | FALSE } BINARY_INPUT_FORMAT = <string> BINARY_OUTPUT_FO… #3"
+
+[[obligation]]
 id = "sf.security_admin.alter-user.set.o277"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required ENABLE_NOTEBOOK_CREATION_IN_PERSONAL_DB in [ ABORT_DETACHED_QUERY = { TRUE | FALSE } AUTOCOMMIT = { TRUE | FALSE } BINARY_INPUT_FORMAT = <string> BINARY_OUTPUT_FO…"
+
+[[obligation]]
+id = "sf.security_admin.alter-user.set.o312"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { TRUE | FALSE } in [ ABORT_DETACHED_QUERY = { TRUE | FALSE } AUTOCOMMIT = { TRUE | FALSE } BINARY_INPUT_FORMAT = <string> BINARY_OUTPUT_FO… #4"
 
 [[obligation]]
 id = "sf.security_admin.alter-user.set.o278"
@@ -53711,10 +54329,22 @@ required = true
 note = "the form without its required ERROR_ON_NONDETERMINISTIC_MERGE in [ ABORT_DETACHED_QUERY = { TRUE | FALSE } AUTOCOMMIT = { TRUE | FALSE } BINARY_INPUT_FORMAT = <string> BINARY_OUTPUT_FO…"
 
 [[obligation]]
+id = "sf.security_admin.alter-user.set.o313"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { TRUE | FALSE } in [ ABORT_DETACHED_QUERY = { TRUE | FALSE } AUTOCOMMIT = { TRUE | FALSE } BINARY_INPUT_FORMAT = <string> BINARY_OUTPUT_FO… #5"
+
+[[obligation]]
 id = "sf.security_admin.alter-user.set.o279"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required ERROR_ON_NONDETERMINISTIC_UPDATE in [ ABORT_DETACHED_QUERY = { TRUE | FALSE } AUTOCOMMIT = { TRUE | FALSE } BINARY_INPUT_FORMAT = <string> BINARY_OUTPUT_FO…"
+
+[[obligation]]
+id = "sf.security_admin.alter-user.set.o314"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { TRUE | FALSE } in [ ABORT_DETACHED_QUERY = { TRUE | FALSE } AUTOCOMMIT = { TRUE | FALSE } BINARY_INPUT_FORMAT = <string> BINARY_OUTPUT_FO… #6"
 
 [[obligation]]
 id = "sf.security_admin.alter-user.set.o280"
@@ -53733,6 +54363,12 @@ id = "sf.security_admin.alter-user.set.o282"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required OPT_OUT_ERROR_LOGGING in [ ABORT_DETACHED_QUERY = { TRUE | FALSE } AUTOCOMMIT = { TRUE | FALSE } BINARY_INPUT_FORMAT = <string> BINARY_OUTPUT_FO…"
+
+[[obligation]]
+id = "sf.security_admin.alter-user.set.o315"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { TRUE | FALSE } in [ ABORT_DETACHED_QUERY = { TRUE | FALSE } AUTOCOMMIT = { TRUE | FALSE } BINARY_INPUT_FORMAT = <string> BINARY_OUTPUT_FO… #7"
 
 [[obligation]]
 id = "sf.security_admin.alter-user.set.o283"
@@ -53777,10 +54413,22 @@ required = true
 note = "the form without its required STRICT_JSON_OUTPUT in [ ABORT_DETACHED_QUERY = { TRUE | FALSE } AUTOCOMMIT = { TRUE | FALSE } BINARY_INPUT_FORMAT = <string> BINARY_OUTPUT_FO…"
 
 [[obligation]]
+id = "sf.security_admin.alter-user.set.o316"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { TRUE | FALSE } in [ ABORT_DETACHED_QUERY = { TRUE | FALSE } AUTOCOMMIT = { TRUE | FALSE } BINARY_INPUT_FORMAT = <string> BINARY_OUTPUT_FO… #8"
+
+[[obligation]]
 id = "sf.security_admin.alter-user.set.o290"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required TIMESTAMP_DAY_IS_ALWAYS_24H in [ ABORT_DETACHED_QUERY = { TRUE | FALSE } AUTOCOMMIT = { TRUE | FALSE } BINARY_INPUT_FORMAT = <string> BINARY_OUTPUT_FO…"
+
+[[obligation]]
+id = "sf.security_admin.alter-user.set.o317"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { TRUE | FALSE } in [ ABORT_DETACHED_QUERY = { TRUE | FALSE } AUTOCOMMIT = { TRUE | FALSE } BINARY_INPUT_FORMAT = <string> BINARY_OUTPUT_FO… #9"
 
 [[obligation]]
 id = "sf.security_admin.alter-user.set.o291"
@@ -53859,6 +54507,12 @@ id = "sf.security_admin.alter-user.set.o303"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required USE_CACHED_RESULT in [ ABORT_DETACHED_QUERY = { TRUE | FALSE } AUTOCOMMIT = { TRUE | FALSE } BINARY_INPUT_FORMAT = <string> BINARY_OUTPUT_FO…"
+
+[[obligation]]
+id = "sf.security_admin.alter-user.set.o318"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { TRUE | FALSE } in [ ABORT_DETACHED_QUERY = { TRUE | FALSE } AUTOCOMMIT = { TRUE | FALSE } BINARY_INPUT_FORMAT = <string> BINARY_OUTPUT_FO… #10"
 
 [[obligation]]
 id = "sf.security_admin.alter-user.set.o304"
@@ -56881,6 +57535,12 @@ required = true
 note = "the form without its required API_USER_AUTHENTICATION"
 
 [[obligation]]
+id = "sf.security_admin.create-api-integration.external-mcp-api-allowed-prefixes-api-user-authentication-type.o077"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( #2"
+
+[[obligation]]
 id = "sf.security_admin.create-api-integration.external-mcp-api-allowed-prefixes-api-user-authentication-type.o062"
 kind = "negative_neighbour"
 required = true
@@ -56921,6 +57581,12 @@ id = "sf.security_admin.create-api-integration.external-mcp-api-allowed-prefixes
 kind = "negative_neighbour"
 required = true
 note = "the form without its required { CLIENT_SECRET_BASIC | CLIENT_SECRET_POST | NONE } in [ OAUTH_CLIENT_AUTH_METHOD = { CLIENT_SECRET_BASIC | CLIENT_SECRET_POST | NONE } ]"
+
+[[obligation]]
+id = "sf.security_admin.create-api-integration.external-mcp-api-allowed-prefixes-api-user-authentication-type.o078"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) #2"
 
 [[obligation]]
 id = "sf.security_admin.create-api-integration.external-mcp-api-allowed-prefixes-api-user-authentication-type.o069"
@@ -57193,6 +57859,12 @@ required = true
 note = "the form without its required API_USER_AUTHENTICATION"
 
 [[obligation]]
+id = "sf.security_admin.create-api-integration.external-mcp-api-allowed-prefixes-api-user-authentication-type.for-external-mcp-server.o042"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( #2"
+
+[[obligation]]
 id = "sf.security_admin.create-api-integration.external-mcp-api-allowed-prefixes-api-user-authentication-type.for-external-mcp-server.o034"
 kind = "negative_neighbour"
 required = true
@@ -57209,6 +57881,12 @@ id = "sf.security_admin.create-api-integration.external-mcp-api-allowed-prefixes
 kind = "negative_neighbour"
 required = true
 note = "the form without its required OAUTH_RESOURCE_URL"
+
+[[obligation]]
+id = "sf.security_admin.create-api-integration.external-mcp-api-allowed-prefixes-api-user-authentication-type.for-external-mcp-server.o043"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) #2"
 
 [[obligation]]
 id = "sf.security_admin.create-api-integration.external-mcp-api-allowed-prefixes-api-user-authentication-type.for-external-mcp-server.o037"
@@ -57460,6 +58138,12 @@ required = true
 note = "the form without its required API_USER_AUTHENTICATION"
 
 [[obligation]]
+id = "sf.security_admin.create-api-integration.git-https-api-api-allowed-prefixes-api-user-authentication-type.o042"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( #2"
+
+[[obligation]]
 id = "sf.security_admin.create-api-integration.git-https-api-api-allowed-prefixes-api-user-authentication-type.o035"
 kind = "negative_neighbour"
 required = true
@@ -57470,6 +58154,12 @@ id = "sf.security_admin.create-api-integration.git-https-api-api-allowed-prefixe
 kind = "negative_neighbour"
 required = true
 note = "the form without its required SNOWFLAKE_GITHUB_APP"
+
+[[obligation]]
+id = "sf.security_admin.create-api-integration.git-https-api-api-allowed-prefixes-api-user-authentication-type.o043"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) #2"
 
 [[obligation]]
 id = "sf.security_admin.create-api-integration.git-https-api-api-allowed-prefixes-api-user-authentication-type.o037"
@@ -57735,6 +58425,12 @@ required = true
 note = "the form without its required API_USER_AUTHENTICATION"
 
 [[obligation]]
+id = "sf.security_admin.create-api-integration.git-https-api-api-allowed-prefixes-api-user-authentication-type.for-git-repository.o044"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( #2"
+
+[[obligation]]
 id = "sf.security_admin.create-api-integration.git-https-api-api-allowed-prefixes-api-user-authentication-type.for-git-repository.o037"
 kind = "negative_neighbour"
 required = true
@@ -57745,6 +58441,12 @@ id = "sf.security_admin.create-api-integration.git-https-api-api-allowed-prefixe
 kind = "negative_neighbour"
 required = true
 note = "the form without its required OAUTH2"
+
+[[obligation]]
+id = "sf.security_admin.create-api-integration.git-https-api-api-allowed-prefixes-api-user-authentication-type.for-git-repository.o045"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) #2"
 
 [[obligation]]
 id = "sf.security_admin.create-api-integration.git-https-api-api-allowed-prefixes-api-user-authentication-type.for-git-repository.o039"
@@ -58569,6 +59271,12 @@ id = "sf.security_admin.create-api-integration.git-https-api-api-allowed-prefixe
 kind = "negative_neighbour"
 required = true
 note = "the form without its required ENABLED"
+
+[[obligation]]
+id = "sf.security_admin.create-api-integration.git-https-api-api-allowed-prefixes-use-privatelink-endpoint-true.o072"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { TRUE | FALSE } #2"
 
 [[obligation]]
 id = "sf.security_admin.create-api-integration.git-https-api-api-allowed-prefixes-use-privatelink-endpoint-true.o067"
@@ -59581,6 +60289,12 @@ required = true
 note = "the form without its required ( in [ CLIENT_POLICY = ( <client_type> = ( MINIMUM_VERSION = '<version>' ) [ , ... ] ) ]"
 
 [[obligation]]
+id = "sf.security_admin.create-authentication-policy.create-authentication-policy.o086"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( in [ CLIENT_POLICY = ( <client_type> = ( MINIMUM_VERSION = '<version>' ) [ , ... ] ) ] #2"
+
+[[obligation]]
 id = "sf.security_admin.create-authentication-policy.create-authentication-policy.o072"
 kind = "negative_neighbour"
 required = true
@@ -59591,6 +60305,12 @@ id = "sf.security_admin.create-authentication-policy.create-authentication-polic
 kind = "negative_neighbour"
 required = true
 note = "the form without its required ) in [ CLIENT_POLICY = ( <client_type> = ( MINIMUM_VERSION = '<version>' ) [ , ... ] ) ]"
+
+[[obligation]]
+id = "sf.security_admin.create-authentication-policy.create-authentication-policy.o087"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) in [ CLIENT_POLICY = ( <client_type> = ( MINIMUM_VERSION = '<version>' ) [ , ... ] ) ] #2"
 
 [[obligation]]
 id = "sf.security_admin.create-authentication-policy.create-authentication-policy.o074"
@@ -60096,6 +60816,12 @@ required = true
 note = "the form without its required ( in [ CLIENT_POLICY = ( <client_type> = ( MINIMUM_VERSION = '<version>' ) [ , ... ] ) ]"
 
 [[obligation]]
+id = "sf.security_admin.create-authentication-policy.create-or-alter-authentication.o081"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( in [ CLIENT_POLICY = ( <client_type> = ( MINIMUM_VERSION = '<version>' ) [ , ... ] ) ] #2"
+
+[[obligation]]
 id = "sf.security_admin.create-authentication-policy.create-or-alter-authentication.o067"
 kind = "negative_neighbour"
 required = true
@@ -60106,6 +60832,12 @@ id = "sf.security_admin.create-authentication-policy.create-or-alter-authenticat
 kind = "negative_neighbour"
 required = true
 note = "the form without its required ) in [ CLIENT_POLICY = ( <client_type> = ( MINIMUM_VERSION = '<version>' ) [ , ... ] ) ]"
+
+[[obligation]]
+id = "sf.security_admin.create-authentication-policy.create-or-alter-authentication.o082"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) in [ CLIENT_POLICY = ( <client_type> = ( MINIMUM_VERSION = '<version>' ) [ , ... ] ) ] #2"
 
 [[obligation]]
 id = "sf.security_admin.create-authentication-policy.create-or-alter-authentication.o069"
@@ -60599,6 +61331,12 @@ required = true
 note = "the form without its required ( in [ CLIENT_POLICY = ( <client_type> = ( MINIMUM_VERSION = '<version>' ) [ , ... ] ) ]"
 
 [[obligation]]
+id = "sf.security_admin.create-authentication-policy.define-authentication-policy.o079"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( in [ CLIENT_POLICY = ( <client_type> = ( MINIMUM_VERSION = '<version>' ) [ , ... ] ) ] #2"
+
+[[obligation]]
 id = "sf.security_admin.create-authentication-policy.define-authentication-policy.o065"
 kind = "negative_neighbour"
 required = true
@@ -60609,6 +61347,12 @@ id = "sf.security_admin.create-authentication-policy.define-authentication-polic
 kind = "negative_neighbour"
 required = true
 note = "the form without its required ) in [ CLIENT_POLICY = ( <client_type> = ( MINIMUM_VERSION = '<version>' ) [ , ... ] ) ]"
+
+[[obligation]]
+id = "sf.security_admin.create-authentication-policy.define-authentication-policy.o080"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) in [ CLIENT_POLICY = ( <client_type> = ( MINIMUM_VERSION = '<version>' ) [ , ... ] ) ] #2"
 
 [[obligation]]
 id = "sf.security_admin.create-authentication-policy.define-authentication-policy.o067"
@@ -61649,6 +62393,12 @@ required = true
 note = "the form without its required REST_AUTHENTICATION"
 
 [[obligation]]
+id = "sf.security_admin.create-catalog-integration-delta-sharing.o073"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( #2"
+
+[[obligation]]
 id = "sf.security_admin.create-catalog-integration-delta-sharing.o058"
 kind = "negative_neighbour"
 required = true
@@ -61707,6 +62457,12 @@ id = "sf.security_admin.create-catalog-integration-delta-sharing.o067"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required { { TYPE = BEARER BEARER_TOKEN = '<bearer_token>' } | { TYPE = OAUTH [ OAUTH_API_TYPE = { PUBLIC | PRIVATE } ] OAUTH_CLIENT_ID = '<oauth_client_id>' OAUTH_CLIENT_SECRET = '<oauth_client_secret>' OAUTH_TOKEN_URI = 'https://<token_server_uri>' } | { TYPE = OIDC OIDC_AUDIENCE = '<audience>' } }"
+
+[[obligation]]
+id = "sf.security_admin.create-catalog-integration-delta-sharing.o074"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) #2"
 
 [[obligation]]
 id = "sf.security_admin.create-catalog-integration-delta-sharing.o068"
@@ -62744,6 +63500,12 @@ required = true
 note = "the form without its required REST_AUTHENTICATION"
 
 [[obligation]]
+id = "sf.security_admin.create-catalog-integration-open-catalog.catalog-api-type-private-catalog-name-rest-authentication.o080"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( #2"
+
+[[obligation]]
 id = "sf.security_admin.create-catalog-integration-open-catalog.catalog-api-type-private-catalog-name-rest-authentication.o069"
 kind = "negative_neighbour"
 required = true
@@ -62778,6 +63540,24 @@ id = "sf.security_admin.create-catalog-integration-open-catalog.catalog-api-type
 kind = "negative_neighbour"
 required = true
 note = "the form without its required OAUTH_ALLOWED_SCOPES"
+
+[[obligation]]
+id = "sf.security_admin.create-catalog-integration-open-catalog.catalog-api-type-private-catalog-name-rest-authentication.o081"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( #3"
+
+[[obligation]]
+id = "sf.security_admin.create-catalog-integration-open-catalog.catalog-api-type-private-catalog-name-rest-authentication.o082"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) #2"
+
+[[obligation]]
+id = "sf.security_admin.create-catalog-integration-open-catalog.catalog-api-type-private-catalog-name-rest-authentication.o083"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) #3"
 
 [[obligation]]
 id = "sf.security_admin.create-catalog-integration-open-catalog.catalog-api-type-private-catalog-name-rest-authentication.o075"
@@ -63269,6 +64049,12 @@ required = true
 note = "the form without its required REST_AUTHENTICATION"
 
 [[obligation]]
+id = "sf.security_admin.create-catalog-integration-open-catalog.catalog-name-rest-authentication-type-oauth.o083"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( #2"
+
+[[obligation]]
 id = "sf.security_admin.create-catalog-integration-open-catalog.catalog-name-rest-authentication-type-oauth.o072"
 kind = "negative_neighbour"
 required = true
@@ -63303,6 +64089,24 @@ id = "sf.security_admin.create-catalog-integration-open-catalog.catalog-name-res
 kind = "negative_neighbour"
 required = true
 note = "the form without its required OAUTH_ALLOWED_SCOPES"
+
+[[obligation]]
+id = "sf.security_admin.create-catalog-integration-open-catalog.catalog-name-rest-authentication-type-oauth.o084"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( #3"
+
+[[obligation]]
+id = "sf.security_admin.create-catalog-integration-open-catalog.catalog-name-rest-authentication-type-oauth.o085"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) #2"
+
+[[obligation]]
+id = "sf.security_admin.create-catalog-integration-open-catalog.catalog-name-rest-authentication-type-oauth.o086"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) #3"
 
 [[obligation]]
 id = "sf.security_admin.create-catalog-integration-open-catalog.catalog-name-rest-authentication-type-oauth.o078"
@@ -64025,6 +64829,12 @@ required = true
 note = "the form without its required REST_AUTHENTICATION"
 
 [[obligation]]
+id = "sf.security_admin.create-catalog-integration-rest.o123"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( #2"
+
+[[obligation]]
 id = "sf.security_admin.create-catalog-integration-rest.o108"
 kind = "negative_neighbour"
 required = true
@@ -64083,6 +64893,12 @@ id = "sf.security_admin.create-catalog-integration-rest.o117"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required { { TYPE = BEARER BEARER_TOKEN = '<bearer_token>' } | { TYPE = OAUTH [ OAUTH_API_TYPE = { PUBLIC | PRIVATE } ] [ OAUTH_TOKEN_URI = 'https://<token_server_uri>' ] OAUTH_CLIENT_ID = '<oauth_client_id>' OAUTH_CLIENT_SECRET = '<oauth_client_secret>' OAUTH_ALLOWED_SCOPES = ( '<scope_1>' , '<scope_2>' ) } | { TYPE = SIGV4 SIGV4_IAM_ROLE = '<iam_role_arn>' [ SIGV4_SIGNING_REGION = '<region>' ] [ SIGV4_EXTERNAL_ID = '<external_id>' ] } }"
+
+[[obligation]]
+id = "sf.security_admin.create-catalog-integration-rest.o124"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) #2"
 
 [[obligation]]
 id = "sf.security_admin.create-catalog-integration-rest.o118"
@@ -69972,6 +70788,12 @@ required = true
 note = "the form without its required { INGRESS | INTERNAL_STAGE | SNOWFLAKE_MANAGED_STORAGE_VOLUME | EGRESS }"
 
 [[obligation]]
+id = "sf.security_admin.create-network-rule.create-or-alter-network.o040"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
+
+[[obligation]]
 id = "sf.security_admin.create-network-rule.create-or-alter-network.o038"
 kind = "identifier_class"
 required = true
@@ -70206,6 +71028,12 @@ id = "sf.security_admin.create-network-rule.define-network-rule.o035"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required { INGRESS | INTERNAL_STAGE | SNOWFLAKE_MANAGED_STORAGE_VOLUME | EGRESS }"
+
+[[obligation]]
+id = "sf.security_admin.create-network-rule.define-network-rule.o038"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
 
 [[obligation]]
 id = "sf.security_admin.create-network-rule.define-network-rule.o036"
@@ -77891,6 +78719,12 @@ required = true
 note = "the form without its required BOOLEAN"
 
 [[obligation]]
+id = "sf.security_admin.create-row-access-policy.or-alter-row-access.o034"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
+
+[[obligation]]
 id = "sf.security_admin.create-row-access-policy.or-alter-row-access.o030"
 kind = "identifier_class"
 required = true
@@ -78853,6 +79687,12 @@ required = true
 note = "the form without its required USERNAME"
 
 [[obligation]]
+id = "sf.security_admin.create-secret.create-or-alter-secret.o110"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required PASSWORD #2"
+
+[[obligation]]
 id = "sf.security_admin.create-secret.create-or-alter-secret.o102"
 kind = "negative_neighbour"
 required = true
@@ -78875,6 +79715,12 @@ id = "sf.security_admin.create-secret.create-or-alter-secret.o105"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required WORKLOAD_IDENTITY_FEDERATION"
+
+[[obligation]]
+id = "sf.security_admin.create-secret.create-or-alter-secret.o111"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
 
 [[obligation]]
 id = "sf.security_admin.create-secret.create-or-alter-secret.o106"
@@ -79915,6 +80761,12 @@ required = true
 note = "the form without its required USERNAME"
 
 [[obligation]]
+id = "sf.security_admin.create-secret.create-secret-type-password.o030"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required PASSWORD #2"
+
+[[obligation]]
 id = "sf.security_admin.create-secret.create-secret-type-password.o027"
 kind = "interaction_all_options"
 required = true
@@ -80784,6 +81636,18 @@ id = "sf.security_admin.create-secret.define-secret.o088"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required USERNAME"
+
+[[obligation]]
+id = "sf.security_admin.create-secret.define-secret.o093"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required PASSWORD #2"
+
+[[obligation]]
+id = "sf.security_admin.create-secret.define-secret.o094"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
 
 [[obligation]]
 id = "sf.security_admin.create-secret.define-secret.o089"
@@ -91836,6 +92700,12 @@ required = true
 note = "the form without its required AUTOCOMMIT in [ ABORT_DETACHED_QUERY = { TRUE | FALSE } AUTOCOMMIT = { TRUE | FALSE } BINARY_INPUT_FORMAT = <string> BINARY_OUTPUT_FO…"
 
 [[obligation]]
+id = "sf.security_admin.create-user.o306"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { TRUE | FALSE } in [ ABORT_DETACHED_QUERY = { TRUE | FALSE } AUTOCOMMIT = { TRUE | FALSE } BINARY_INPUT_FORMAT = <string> BINARY_OUTPUT_FO… #2"
+
+[[obligation]]
 id = "sf.security_admin.create-user.o263"
 kind = "negative_neighbour"
 required = true
@@ -91872,16 +92742,34 @@ required = true
 note = "the form without its required ENABLE_GET_DDL_USE_DATA_TYPE_ALIAS in [ ABORT_DETACHED_QUERY = { TRUE | FALSE } AUTOCOMMIT = { TRUE | FALSE } BINARY_INPUT_FORMAT = <string> BINARY_OUTPUT_FO…"
 
 [[obligation]]
+id = "sf.security_admin.create-user.o307"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { TRUE | FALSE } in [ ABORT_DETACHED_QUERY = { TRUE | FALSE } AUTOCOMMIT = { TRUE | FALSE } BINARY_INPUT_FORMAT = <string> BINARY_OUTPUT_FO… #3"
+
+[[obligation]]
 id = "sf.security_admin.create-user.o269"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required ERROR_ON_NONDETERMINISTIC_MERGE in [ ABORT_DETACHED_QUERY = { TRUE | FALSE } AUTOCOMMIT = { TRUE | FALSE } BINARY_INPUT_FORMAT = <string> BINARY_OUTPUT_FO…"
 
 [[obligation]]
+id = "sf.security_admin.create-user.o308"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { TRUE | FALSE } in [ ABORT_DETACHED_QUERY = { TRUE | FALSE } AUTOCOMMIT = { TRUE | FALSE } BINARY_INPUT_FORMAT = <string> BINARY_OUTPUT_FO… #4"
+
+[[obligation]]
 id = "sf.security_admin.create-user.o270"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required ERROR_ON_NONDETERMINISTIC_UPDATE in [ ABORT_DETACHED_QUERY = { TRUE | FALSE } AUTOCOMMIT = { TRUE | FALSE } BINARY_INPUT_FORMAT = <string> BINARY_OUTPUT_FO…"
+
+[[obligation]]
+id = "sf.security_admin.create-user.o309"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { TRUE | FALSE } in [ ABORT_DETACHED_QUERY = { TRUE | FALSE } AUTOCOMMIT = { TRUE | FALSE } BINARY_INPUT_FORMAT = <string> BINARY_OUTPUT_FO… #5"
 
 [[obligation]]
 id = "sf.security_admin.create-user.o271"
@@ -91900,6 +92788,12 @@ id = "sf.security_admin.create-user.o273"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required OPT_OUT_ERROR_LOGGING in [ ABORT_DETACHED_QUERY = { TRUE | FALSE } AUTOCOMMIT = { TRUE | FALSE } BINARY_INPUT_FORMAT = <string> BINARY_OUTPUT_FO…"
+
+[[obligation]]
+id = "sf.security_admin.create-user.o310"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { TRUE | FALSE } in [ ABORT_DETACHED_QUERY = { TRUE | FALSE } AUTOCOMMIT = { TRUE | FALSE } BINARY_INPUT_FORMAT = <string> BINARY_OUTPUT_FO… #6"
 
 [[obligation]]
 id = "sf.security_admin.create-user.o274"
@@ -91932,10 +92826,22 @@ required = true
 note = "the form without its required STRICT_JSON_OUTPUT in [ ABORT_DETACHED_QUERY = { TRUE | FALSE } AUTOCOMMIT = { TRUE | FALSE } BINARY_INPUT_FORMAT = <string> BINARY_OUTPUT_FO…"
 
 [[obligation]]
+id = "sf.security_admin.create-user.o311"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { TRUE | FALSE } in [ ABORT_DETACHED_QUERY = { TRUE | FALSE } AUTOCOMMIT = { TRUE | FALSE } BINARY_INPUT_FORMAT = <string> BINARY_OUTPUT_FO… #7"
+
+[[obligation]]
 id = "sf.security_admin.create-user.o279"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required TIMESTAMP_DAY_IS_ALWAYS_24H in [ ABORT_DETACHED_QUERY = { TRUE | FALSE } AUTOCOMMIT = { TRUE | FALSE } BINARY_INPUT_FORMAT = <string> BINARY_OUTPUT_FO…"
+
+[[obligation]]
+id = "sf.security_admin.create-user.o312"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { TRUE | FALSE } in [ ABORT_DETACHED_QUERY = { TRUE | FALSE } AUTOCOMMIT = { TRUE | FALSE } BINARY_INPUT_FORMAT = <string> BINARY_OUTPUT_FO… #8"
 
 [[obligation]]
 id = "sf.security_admin.create-user.o280"
@@ -92014,6 +92920,12 @@ id = "sf.security_admin.create-user.o292"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required USE_CACHED_RESULT in [ ABORT_DETACHED_QUERY = { TRUE | FALSE } AUTOCOMMIT = { TRUE | FALSE } BINARY_INPUT_FORMAT = <string> BINARY_OUTPUT_FO…"
+
+[[obligation]]
+id = "sf.security_admin.create-user.o313"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { TRUE | FALSE } in [ ABORT_DETACHED_QUERY = { TRUE | FALSE } AUTOCOMMIT = { TRUE | FALSE } BINARY_INPUT_FORMAT = <string> BINARY_OUTPUT_FO… #9"
 
 [[obligation]]
 id = "sf.security_admin.create-user.o293"
@@ -97018,6 +97930,12 @@ required = true
 note = "the form without its required TO"
 
 [[obligation]]
+id = "sf.security_admin.grant-application-role.role.o018"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ROLE #2"
+
+[[obligation]]
 id = "sf.security_admin.grant-application-role.role.o012"
 kind = "negative_neighbour"
 required = true
@@ -97424,6 +98342,12 @@ id = "sf.security_admin.grant-caller.all-inherited-caller-privileges.o031"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required ON"
+
+[[obligation]]
+id = "sf.security_admin.grant-caller.all-inherited-caller-privileges.o047"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ALL #2"
 
 [[obligation]]
 id = "sf.security_admin.grant-caller.all-inherited-caller-privileges.o032"
@@ -108414,6 +109338,12 @@ required = true
 note = "the form without its required TO"
 
 [[obligation]]
+id = "sf.security_admin.grant-role.role.o018"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ROLE #2"
+
+[[obligation]]
 id = "sf.security_admin.grant-role.role.o012"
 kind = "negative_neighbour"
 required = true
@@ -109004,6 +109934,12 @@ required = true
 note = "the form without its required FROM"
 
 [[obligation]]
+id = "sf.security_admin.revoke-application-role.role.o023"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ROLE #2"
+
+[[obligation]]
 id = "sf.security_admin.revoke-application-role.role.o018"
 kind = "interaction_all_options"
 required = true
@@ -109392,6 +110328,12 @@ id = "sf.security_admin.revoke-caller.all-inherited-caller-privileges.o030"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required ON"
+
+[[obligation]]
+id = "sf.security_admin.revoke-caller.all-inherited-caller-privileges.o046"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ALL #2"
 
 [[obligation]]
 id = "sf.security_admin.revoke-caller.all-inherited-caller-privileges.o031"
@@ -120950,6 +121892,12 @@ required = true
 note = "the form without its required FROM"
 
 [[obligation]]
+id = "sf.security_admin.revoke-role.role.o023"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ROLE #2"
+
+[[obligation]]
 id = "sf.security_admin.revoke-role.role.o018"
 kind = "interaction_all_options"
 required = true
@@ -121651,6 +122599,12 @@ id = "sf.security_admin.show-application-roles.o021"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required IN"
+
+[[obligation]]
+id = "sf.security_admin.show-application-roles.o025"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required APPLICATION #2"
 
 [[obligation]]
 id = "sf.security_admin.show-application-roles.o022"
@@ -122880,6 +123834,12 @@ id = "sf.security_admin.show-database-roles.o016"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required IN"
+
+[[obligation]]
+id = "sf.security_admin.show-database-roles.o019"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required DATABASE #2"
 
 [[obligation]]
 id = "sf.security_admin.show-database-roles.o017"

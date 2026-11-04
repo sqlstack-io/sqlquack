@@ -57975,8 +57975,8 @@ reason = "D118: the usage notes allow mixing positional and named arguments with
 [[reading]]
 form = "sf.functions.warehouse-metering-history"
 grammar_sha256 = "82082338ef17a131b480afbdd958dacded3deb90278975dc90d05182b454ab80"
-grammar = ["WAREHOUSE_METERING_HISTORY( DATE_RANGE_START => <constant_expr> [ , DATE_RANGE_END => <constant_expr> ] [ , WAREHOUSE_NAME => '<string>' ] )", "WAREHOUSE_METERING_HISTORY( <constant_expr> [ , <constant_expr> [ , '<string>' ] ] )"]
-reason = "D118: the usage notes say the keywords are not required if the arguments are specified in order"
+grammar = ["WAREHOUSE_METERING_HISTORY( DATE_RANGE_START => <constant_expr> [ , DATE_RANGE_END => <constant_expr> ] [ , WAREHOUSE_NAME => '<string>' ] )", "WAREHOUSE_METERING_HISTORY( <constant_expr> [ , <constant_expr> [ , '<string>' ] ] )", "WAREHOUSE_METERING_HISTORY( WAREHOUSE_NAME => '<string>' , DATE_RANGE_END => <constant_expr> , DATE_RANGE_START => <constant_expr> )"]
+reason = "D118: the usage notes say the keywords are not required if the arguments are specified in order; D118: batch 5: with keywords the arguments can be specified in any order; a third production names them in reverse order"
 
 [[reading]]
 form = "sf.functions.system-pipe-force-resume"
@@ -58035,14 +58035,14 @@ reason = "D118: the page writes the name as '[<namespace>.]<object_name>', one s
 [[reading]]
 form = "sf.functions.system-clustering-depth"
 grammar_sha256 = "5bda1f9cde2a62c39f13acf7ac45e4f40aa7cdcf1176abc629cdab374b6d980e"
-grammar = ["SYSTEM$CLUSTERING_DEPTH( '<table_name>' , '<column_list>' [ , '<predicate>' ] )"]
-reason = "D118: the page writes the column argument as '( <col1> [ , <col2> ... ] )', one string literal whose contents are not SQL syntax"
+grammar = ["SYSTEM$CLUSTERING_DEPTH( '<table_name>' [ , '<column_list>' [ , '<predicate>' ] ] )"]
+reason = "D118: the page writes the column argument as '( <col1> [ , <col2> ... ] )', one string literal whose contents are not SQL syntax; D118: batch 5: the page says the column argument is optional for a table with a clustering key, and its examples call the function with the table name only"
 
 [[reading]]
 form = "sf.functions.system-clustering-ratio"
 grammar_sha256 = "2ecb74a12652157c88b71e055ddf38e10bb1da4c3bfbed200abb940989586063"
-grammar = ["SYSTEM$CLUSTERING_RATIO( '<table_name>' , '<column_list>' [ , '<predicate>' ] )"]
-reason = "D118: the page writes the column argument as '( <col1> [ , <col2> ... ] )', one string literal whose contents are not SQL syntax"
+grammar = ["SYSTEM$CLUSTERING_RATIO( '<table_name>' [ , '<column_list>' [ , '<predicate>' ] ] )"]
+reason = "D118: the page writes the column argument as '( <col1> [ , <col2> ... ] )', one string literal whose contents are not SQL syntax; D118: batch 5: the page says the column argument is optional for a table with a clustering key, and its examples call the function with the table name only"
 
 [[reading]]
 form = "sf.functions.system-data-metric-scan"
@@ -58089,8 +58089,8 @@ reason = "D118: preserve_collapsed is a boolean (If TRUE …, Default: FALSE), n
 [[reading]]
 form = "sf.functions.last-day"
 grammar_sha256 = "1fb66d0b1f7e7cceac363b90e2901fd677717bcdad291387f78c83cb8468c270"
-grammar = ["LAST_DAY( <date_or_timestamp_expr> [ , '<date_part>' ] )"]
-reason = "D118: the date part is passed as a string; the page's example is LAST_DAY(\"DATE\", 'year')"
+grammar = ["LAST_DAY( <date_or_timestamp_expr> [ , { <date_part> | '<date_part>' } ] )"]
+reason = "D118: the date part is passed as a string; the page's example is LAST_DAY(\"DATE\", 'year'); D118: batch 5: the syntax line leaves date_part unquoted and links to the date and time part keywords, while the example passes 'year'; both are read"
 
 [[reading]]
 form = "sf.functions.time-slice"
@@ -59612,5 +59612,39 @@ target = "<rule_name>"
 note = "a string literal in place of <rule_name>, observed"
 anchor = "doc.sql.alter-data-movement-policy / Syntax"
 sql = "ALTER DATA MOVEMENT POLICY v1 SET ALERT_RULES = ( 'v1' ) ;"
+expect = "observe"
+context = "raw"
+
+# D113 functions receipt triage (batch-5 interaction rows): remaining contradictions observed, each reason names its category and receipt.
+
+[[suppress]]
+form = "sf.functions.minhash.minhash"
+kind = "interaction_all_options"
+note = "every independent option of one production together"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-51); observed, not flipped to reject"
+
+[[limit]]
+form = "sf.functions.minhash.minhash"
+kind = "interaction_all_options"
+note = "every independent option of one production together, observed"
+anchor = "doc.functions.minhash / Syntax"
+sql = "SELECT MINHASH ( v1 , DISTINCT 1 , 1 ) ;"
+expect = "observe"
+context = "raw"
+
+# D113 ddl receipt triage (batch-5 interaction rows): remaining contradictions observed, each reason names its category and receipt.
+
+[[suppress]]
+form = "sf.ddl.alter-dynamic-table.searchoptimizationaction"
+kind = "interaction_all_options"
+note = "every independent option of one production together"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-24); observed, not flipped to reject"
+
+[[limit]]
+form = "sf.ddl.alter-dynamic-table.searchoptimizationaction"
+kind = "interaction_all_options"
+note = "every independent option of one production together, observed"
+anchor = "doc.sql.alter-dynamic-table / Syntax"
+sql = "ALTER DYNAMIC TABLE IF EXISTS v1 ADD SEARCH OPTIMIZATION ON EQUALITY ( v1 ) , EQUALITY ( v1 ) EQUALITY ;"
 expect = "observe"
 context = "raw"

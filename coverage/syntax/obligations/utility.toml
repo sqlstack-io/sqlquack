@@ -80,6 +80,12 @@ required = true
 note = "the form without its required )"
 
 [[obligation]]
+id = "sf.utility.call.o017"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
+
+[[obligation]]
 id = "sf.utility.call.o013"
 kind = "identifier_class"
 required = true
@@ -492,6 +498,18 @@ required = true
 note = "the form without its required INPUT in [ { CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } ]"
 
 [[obligation]]
+id = "sf.utility.call-with.language-javascript-as-call.o100"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required NULL in [ { CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } ] #2"
+
+[[obligation]]
+id = "sf.utility.call-with.language-javascript-as-call.o101"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required AS #2"
+
+[[obligation]]
 id = "sf.utility.call-with.language-javascript-as-call.o060"
 kind = "negative_neighbour"
 required = true
@@ -520,6 +538,18 @@ id = "sf.utility.call-with.language-javascript-as-call.o065"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required CALL"
+
+[[obligation]]
+id = "sf.utility.call-with.language-javascript-as-call.o102"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( #2"
+
+[[obligation]]
+id = "sf.utility.call-with.language-javascript-as-call.o103"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) #2"
 
 [[obligation]]
 id = "sf.utility.call-with.language-javascript-as-call.o066"
@@ -1162,6 +1192,18 @@ required = true
 note = "the form without its required PACKAGES"
 
 [[obligation]]
+id = "sf.utility.call-with.table-language-java-runtime-version.o146"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( #2"
+
+[[obligation]]
+id = "sf.utility.call-with.table-language-java-runtime-version.o147"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) #2"
+
+[[obligation]]
 id = "sf.utility.call-with.table-language-java-runtime-version.o090"
 kind = "negative_neighbour"
 required = true
@@ -1198,6 +1240,12 @@ required = true
 note = "the form without its required INPUT in [ { CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } ]"
 
 [[obligation]]
+id = "sf.utility.call-with.table-language-java-runtime-version.o148"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required NULL in [ { CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } ] #2"
+
+[[obligation]]
 id = "sf.utility.call-with.table-language-java-runtime-version.o096"
 kind = "negative_neighbour"
 required = true
@@ -1226,6 +1274,18 @@ id = "sf.utility.call-with.table-language-java-runtime-version.o101"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required CALL"
+
+[[obligation]]
+id = "sf.utility.call-with.table-language-java-runtime-version.o149"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( #3"
+
+[[obligation]]
+id = "sf.utility.call-with.table-language-java-runtime-version.o150"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) #3"
 
 [[obligation]]
 id = "sf.utility.call-with.table-language-java-runtime-version.o103"
@@ -1908,6 +1968,18 @@ required = true
 note = "the form without its required PACKAGES"
 
 [[obligation]]
+id = "sf.utility.call-with.table-language-java-runtime-version.java.o141"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( #2"
+
+[[obligation]]
+id = "sf.utility.call-with.table-language-java-runtime-version.java.o142"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) #2"
+
+[[obligation]]
 id = "sf.utility.call-with.table-language-java-runtime-version.java.o085"
 kind = "negative_neighbour"
 required = true
@@ -1944,6 +2016,12 @@ required = true
 note = "the form without its required INPUT in [ { CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } ]"
 
 [[obligation]]
+id = "sf.utility.call-with.table-language-java-runtime-version.java.o143"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required NULL in [ { CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } ] #2"
+
+[[obligation]]
 id = "sf.utility.call-with.table-language-java-runtime-version.java.o091"
 kind = "negative_neighbour"
 required = true
@@ -1972,6 +2050,18 @@ id = "sf.utility.call-with.table-language-java-runtime-version.java.o096"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required CALL"
+
+[[obligation]]
+id = "sf.utility.call-with.table-language-java-runtime-version.java.o144"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( #3"
+
+[[obligation]]
+id = "sf.utility.call-with.table-language-java-runtime-version.java.o145"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) #3"
 
 [[obligation]]
 id = "sf.utility.call-with.table-language-java-runtime-version.java.o098"
@@ -2669,6 +2759,18 @@ required = true
 note = "the form without its required PACKAGES"
 
 [[obligation]]
+id = "sf.utility.call-with.table-language-python-runtime-version.o144"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( #2"
+
+[[obligation]]
+id = "sf.utility.call-with.table-language-python-runtime-version.o145"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) #2"
+
+[[obligation]]
 id = "sf.utility.call-with.table-language-python-runtime-version.o087"
 kind = "negative_neighbour"
 required = true
@@ -2705,6 +2807,18 @@ required = true
 note = "the form without its required INPUT in [ { CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } ]"
 
 [[obligation]]
+id = "sf.utility.call-with.table-language-python-runtime-version.o146"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required NULL in [ { CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } ] #2"
+
+[[obligation]]
+id = "sf.utility.call-with.table-language-python-runtime-version.o147"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required AS #2"
+
+[[obligation]]
 id = "sf.utility.call-with.table-language-python-runtime-version.o093"
 kind = "negative_neighbour"
 required = true
@@ -2733,6 +2847,18 @@ id = "sf.utility.call-with.table-language-python-runtime-version.o098"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required CALL"
+
+[[obligation]]
+id = "sf.utility.call-with.table-language-python-runtime-version.o148"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( #3"
+
+[[obligation]]
+id = "sf.utility.call-with.table-language-python-runtime-version.o149"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) #3"
 
 [[obligation]]
 id = "sf.utility.call-with.table-language-python-runtime-version.o100"
@@ -3395,6 +3521,18 @@ required = true
 note = "the form without its required PACKAGES"
 
 [[obligation]]
+id = "sf.utility.call-with.table-language-python-runtime-version.python.o137"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( #2"
+
+[[obligation]]
+id = "sf.utility.call-with.table-language-python-runtime-version.python.o138"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) #2"
+
+[[obligation]]
 id = "sf.utility.call-with.table-language-python-runtime-version.python.o081"
 kind = "negative_neighbour"
 required = true
@@ -3431,6 +3569,12 @@ required = true
 note = "the form without its required INPUT in [ { CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } ]"
 
 [[obligation]]
+id = "sf.utility.call-with.table-language-python-runtime-version.python.o139"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required NULL in [ { CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } ] #2"
+
+[[obligation]]
 id = "sf.utility.call-with.table-language-python-runtime-version.python.o087"
 kind = "negative_neighbour"
 required = true
@@ -3459,6 +3603,18 @@ id = "sf.utility.call-with.table-language-python-runtime-version.python.o092"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required CALL"
+
+[[obligation]]
+id = "sf.utility.call-with.table-language-python-runtime-version.python.o140"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( #3"
+
+[[obligation]]
+id = "sf.utility.call-with.table-language-python-runtime-version.python.o141"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) #3"
 
 [[obligation]]
 id = "sf.utility.call-with.table-language-python-runtime-version.python.o094"
@@ -4174,6 +4330,18 @@ required = true
 note = "the form without its required PACKAGES"
 
 [[obligation]]
+id = "sf.utility.call-with.table-language-scala-runtime-version.o146"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( #2"
+
+[[obligation]]
+id = "sf.utility.call-with.table-language-scala-runtime-version.o147"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) #2"
+
+[[obligation]]
 id = "sf.utility.call-with.table-language-scala-runtime-version.o090"
 kind = "negative_neighbour"
 required = true
@@ -4210,6 +4378,12 @@ required = true
 note = "the form without its required INPUT in [ { CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } ]"
 
 [[obligation]]
+id = "sf.utility.call-with.table-language-scala-runtime-version.o148"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required NULL in [ { CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } ] #2"
+
+[[obligation]]
 id = "sf.utility.call-with.table-language-scala-runtime-version.o096"
 kind = "negative_neighbour"
 required = true
@@ -4238,6 +4412,18 @@ id = "sf.utility.call-with.table-language-scala-runtime-version.o101"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required CALL"
+
+[[obligation]]
+id = "sf.utility.call-with.table-language-scala-runtime-version.o149"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( #3"
+
+[[obligation]]
+id = "sf.utility.call-with.table-language-scala-runtime-version.o150"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) #3"
 
 [[obligation]]
 id = "sf.utility.call-with.table-language-scala-runtime-version.o103"
@@ -4920,6 +5106,18 @@ required = true
 note = "the form without its required PACKAGES"
 
 [[obligation]]
+id = "sf.utility.call-with.table-language-scala-runtime-version.scala.o141"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( #2"
+
+[[obligation]]
+id = "sf.utility.call-with.table-language-scala-runtime-version.scala.o142"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) #2"
+
+[[obligation]]
 id = "sf.utility.call-with.table-language-scala-runtime-version.scala.o085"
 kind = "negative_neighbour"
 required = true
@@ -4956,6 +5154,12 @@ required = true
 note = "the form without its required INPUT in [ { CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } ]"
 
 [[obligation]]
+id = "sf.utility.call-with.table-language-scala-runtime-version.scala.o143"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required NULL in [ { CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } ] #2"
+
+[[obligation]]
 id = "sf.utility.call-with.table-language-scala-runtime-version.scala.o091"
 kind = "negative_neighbour"
 required = true
@@ -4984,6 +5188,18 @@ id = "sf.utility.call-with.table-language-scala-runtime-version.scala.o096"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required CALL"
+
+[[obligation]]
+id = "sf.utility.call-with.table-language-scala-runtime-version.scala.o144"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( #3"
+
+[[obligation]]
+id = "sf.utility.call-with.table-language-scala-runtime-version.scala.o145"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) #3"
 
 [[obligation]]
 id = "sf.utility.call-with.table-language-scala-runtime-version.scala.o098"
@@ -5599,6 +5815,18 @@ required = true
 note = "the form without its required INPUT in [ { CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } ]"
 
 [[obligation]]
+id = "sf.utility.call-with.table-language-sql-as.o110"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required NULL in [ { CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } ] #2"
+
+[[obligation]]
+id = "sf.utility.call-with.table-language-sql-as.o111"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required AS #2"
+
+[[obligation]]
 id = "sf.utility.call-with.table-language-sql-as.o068"
 kind = "negative_neighbour"
 required = true
@@ -5627,6 +5855,18 @@ id = "sf.utility.call-with.table-language-sql-as.o073"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required CALL"
+
+[[obligation]]
+id = "sf.utility.call-with.table-language-sql-as.o112"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( #2"
+
+[[obligation]]
+id = "sf.utility.call-with.table-language-sql-as.o113"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) #2"
 
 [[obligation]]
 id = "sf.utility.call-with.table-language-sql-as.o074"
@@ -10717,6 +10957,12 @@ id = "sf.utility.execute-task-graph.graph-retry-graph-run.o009"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required RETRY"
+
+[[obligation]]
+id = "sf.utility.execute-task-graph.graph-retry-graph-run.o015"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required GRAPH #2"
 
 [[obligation]]
 id = "sf.utility.execute-task-graph.graph-retry-graph-run.o010"

@@ -1504,6 +1504,12 @@ required = true
 note = "the form without its required SET"
 
 [[obligation]]
+id = "sf.ddl.alter-alert.set-tag.o028"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
+
+[[obligation]]
 id = "sf.ddl.alter-alert.set-tag.o019"
 kind = "identifier_class"
 required = true
@@ -2717,6 +2723,18 @@ required = true
 note = "the form without its required CHANNEL"
 
 [[obligation]]
+id = "sf.ddl.alter-application-package-release-channel.modify-release-channel-modify.o042"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required MODIFY #2"
+
+[[obligation]]
+id = "sf.ddl.alter-application-package-release-channel.modify-release-channel-modify.o043"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required RELEASE #2"
+
+[[obligation]]
 id = "sf.ddl.alter-application-package-release-channel.modify-release-channel-modify.o033"
 kind = "negative_neighbour"
 required = true
@@ -3446,6 +3464,12 @@ required = true
 note = "the form without its required SET"
 
 [[obligation]]
+id = "sf.ddl.alter-application-package-release-channel.modify-release-channel-set-2.o058"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required RELEASE #2"
+
+[[obligation]]
 id = "sf.ddl.alter-application-package-release-channel.modify-release-channel-set-2.o042"
 kind = "negative_neighbour"
 required = true
@@ -3766,6 +3790,12 @@ required = true
 note = "the form without its required DEFAULT"
 
 [[obligation]]
+id = "sf.ddl.alter-application-package-release-channel.modify-release-channel-set.syntax.o042"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required RELEASE #2"
+
+[[obligation]]
 id = "sf.ddl.alter-application-package-release-channel.modify-release-channel-set.syntax.o033"
 kind = "negative_neighbour"
 required = true
@@ -3917,6 +3947,12 @@ id = "sf.ddl.alter-application-package-release-channel.modify-release-channel-un
 kind = "negative_neighbour"
 required = true
 note = "the form without its required UNSET"
+
+[[obligation]]
+id = "sf.ddl.alter-application-package-release-channel.modify-release-channel-unset.o018"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required RELEASE #2"
 
 [[obligation]]
 id = "sf.ddl.alter-application-package-release-channel.modify-release-channel-unset.o015"
@@ -7776,6 +7812,12 @@ required = true
 note = "the form without its required { AUTO_RESUME | AUTO_SUSPEND_SECS | EXTERNAL_ACCESS_INTEGRATIONS | QUERY_WAREHOUSE | MIN_INSTANCES | MAX_INSTANCES | COMMENT }"
 
 [[obligation]]
+id = "sf.ddl.alter-application-service.unset-auto-resume-auto-suspend-secs-external-access-integrations.o024"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
+
+[[obligation]]
 id = "sf.ddl.alter-application-service.unset-auto-resume-auto-suspend-secs-external-access-integrations.o020"
 kind = "identifier_class"
 required = true
@@ -8515,6 +8557,12 @@ id = "sf.ddl.alter-application-set-app-spec.listing-label-description-target-acc
 kind = "negative_neighbour"
 required = true
 note = "the form without its required TARGET_ACCOUNTS"
+
+[[obligation]]
+id = "sf.ddl.alter-application-set-app-spec.listing-label-description-target-accounts.o040"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required LISTING #2"
 
 [[obligation]]
 id = "sf.ddl.alter-application-set-app-spec.listing-label-description-target-accounts.o030"
@@ -9486,6 +9534,12 @@ id = "sf.ddl.alter-application-set-app-spec.setting-label-description-setting.o0
 kind = "negative_neighbour"
 required = true
 note = "the form without its required DESCRIPTION"
+
+[[obligation]]
+id = "sf.ddl.alter-application-set-app-spec.setting-label-description-setting.o030"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required SETTING #2"
 
 [[obligation]]
 id = "sf.ddl.alter-application-set-app-spec.setting-label-description-setting.o026"
@@ -12189,6 +12243,12 @@ required = true
 note = "the form without its required SET"
 
 [[obligation]]
+id = "sf.ddl.alter-artifact-repository.set-tag.o026"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
+
+[[obligation]]
 id = "sf.ddl.alter-artifact-repository.set-tag.o020"
 kind = "identifier_class"
 required = true
@@ -12429,6 +12489,12 @@ required = true
 note = "the form without its required UNSET"
 
 [[obligation]]
+id = "sf.ddl.alter-artifact-repository.unset-tag.o023"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
+
+[[obligation]]
 id = "sf.ddl.alter-artifact-repository.unset-tag.o017"
 kind = "identifier_class"
 required = true
@@ -12519,6 +12585,12 @@ id = "sf.ddl.alter-backup-set.add-backup.o007"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required ADD"
+
+[[obligation]]
+id = "sf.ddl.alter-backup-set.add-backup.o010"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required BACKUP #2"
 
 [[obligation]]
 id = "sf.ddl.alter-backup-set.add-backup.o008"
@@ -12613,6 +12685,12 @@ id = "sf.ddl.alter-backup-set.apply-backup-policy.o012"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required APPLY"
+
+[[obligation]]
+id = "sf.ddl.alter-backup-set.apply-backup-policy.o018"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required BACKUP #2"
 
 [[obligation]]
 id = "sf.ddl.alter-backup-set.apply-backup-policy.o013"
@@ -12719,6 +12797,12 @@ required = true
 note = "the form without its required DELETE"
 
 [[obligation]]
+id = "sf.ddl.alter-backup-set.delete-backup-identifier.o014"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required BACKUP #2"
+
+[[obligation]]
 id = "sf.ddl.alter-backup-set.delete-backup-identifier.o011"
 kind = "negative_neighbour"
 required = true
@@ -12817,6 +12901,12 @@ id = "sf.ddl.alter-backup-set.modify-backup-identifier-add.o012"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required MODIFY"
+
+[[obligation]]
+id = "sf.ddl.alter-backup-set.modify-backup-identifier-add.o019"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required BACKUP #2"
 
 [[obligation]]
 id = "sf.ddl.alter-backup-set.modify-backup-identifier-add.o013"
@@ -12946,10 +13036,22 @@ required = true
 note = "the form without its required MODIFY"
 
 [[obligation]]
+id = "sf.ddl.alter-backup-set.modify-backup-identifier-set.o018"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required BACKUP #2"
+
+[[obligation]]
 id = "sf.ddl.alter-backup-set.modify-backup-identifier-set.o014"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required IDENTIFIER"
+
+[[obligation]]
+id = "sf.ddl.alter-backup-set.modify-backup-identifier-set.o019"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required SET #2"
 
 [[obligation]]
 id = "sf.ddl.alter-backup-set.modify-backup-identifier-set.o015"
@@ -13038,6 +13140,12 @@ id = "sf.ddl.alter-backup-set.modify-backup-identifier-unset.o010"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required MODIFY"
+
+[[obligation]]
+id = "sf.ddl.alter-backup-set.modify-backup-identifier-unset.o016"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required BACKUP #2"
 
 [[obligation]]
 id = "sf.ddl.alter-backup-set.modify-backup-identifier-unset.o011"
@@ -13247,6 +13355,12 @@ required = true
 note = "the form without its required RESUME"
 
 [[obligation]]
+id = "sf.ddl.alter-backup-set.resume-backup-policy.o015"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required BACKUP #2"
+
+[[obligation]]
 id = "sf.ddl.alter-backup-set.resume-backup-policy.o012"
 kind = "negative_neighbour"
 required = true
@@ -13327,6 +13441,12 @@ id = "sf.ddl.alter-backup-set.set-comment.o009"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required SET"
+
+[[obligation]]
+id = "sf.ddl.alter-backup-set.set-comment.o013"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required SET #2"
 
 [[obligation]]
 id = "sf.ddl.alter-backup-set.set-comment.o010"
@@ -13436,6 +13556,12 @@ id = "sf.ddl.alter-backup-set.set-tag.o014"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required SET"
+
+[[obligation]]
+id = "sf.ddl.alter-backup-set.set-tag.o025"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required SET #2"
 
 [[obligation]]
 id = "sf.ddl.alter-backup-set.set-tag.o016"
@@ -13576,6 +13702,12 @@ id = "sf.ddl.alter-backup-set.suspend-backup-policy.o011"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required SUSPEND"
+
+[[obligation]]
+id = "sf.ddl.alter-backup-set.suspend-backup-policy.o015"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required BACKUP #2"
 
 [[obligation]]
 id = "sf.ddl.alter-backup-set.suspend-backup-policy.o012"
@@ -14626,6 +14758,12 @@ id = "sf.ddl.alter-compute-pool.unset-auto-suspend-secs-auto-resume-placement-gr
 kind = "negative_neighbour"
 required = true
 note = "the form without its required { AUTO_SUSPEND_SECS | AUTO_RESUME | PLACEMENT_GROUP | BACKUP_INSTANCE_FAMILIES | COMMENT }"
+
+[[obligation]]
+id = "sf.ddl.alter-compute-pool.unset-auto-suspend-secs-auto-resume-placement-group.o021"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
 
 [[obligation]]
 id = "sf.ddl.alter-compute-pool.unset-auto-suspend-secs-auto-resume-placement-group.o019"
@@ -15894,6 +16032,12 @@ required = true
 note = "the form without its required )"
 
 [[obligation]]
+id = "sf.ddl.alter-cortex-search.set-attributes.o024"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
+
+[[obligation]]
 id = "sf.ddl.alter-cortex-search.set-attributes.o020"
 kind = "identifier_class"
 required = true
@@ -16041,6 +16185,12 @@ id = "sf.ddl.alter-cortex-search.set-tag.o019"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required SET"
+
+[[obligation]]
+id = "sf.ddl.alter-cortex-search.set-tag.o030"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
 
 [[obligation]]
 id = "sf.ddl.alter-cortex-search.set-tag.o021"
@@ -16550,6 +16700,12 @@ required = true
 note = "the form without its required TAG"
 
 [[obligation]]
+id = "sf.ddl.alter-cortex-search.unset-tag.o022"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
+
+[[obligation]]
 id = "sf.ddl.alter-cortex-search.unset-tag.o018"
 kind = "identifier_class"
 required = true
@@ -16939,6 +17095,18 @@ id = "sf.ddl.alter-data-movement-rule.set-max-rows-as-returns.o019"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required INTEGER"
+
+[[obligation]]
+id = "sf.ddl.alter-data-movement-rule.set-max-rows-as-returns.o022"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( #2"
+
+[[obligation]]
+id = "sf.ddl.alter-data-movement-rule.set-max-rows-as-returns.o023"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) #2"
 
 [[obligation]]
 id = "sf.ddl.alter-data-movement-rule.set-max-rows-as-returns.o020"
@@ -17887,6 +18055,12 @@ required = true
 note = "the form without its required ALLOWED_NAMESPACES"
 
 [[obligation]]
+id = "sf.ddl.alter-database-catalog-linked.update-linked-catalog-add-to.o023"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
+
+[[obligation]]
 id = "sf.ddl.alter-database-catalog-linked.update-linked-catalog-add-to.o021"
 kind = "identifier_class"
 required = true
@@ -18028,6 +18202,12 @@ id = "sf.ddl.alter-database-catalog-linked.update-linked-catalog-add-to.syntax.o
 kind = "negative_neighbour"
 required = true
 note = "the form without its required BLOCKED_NAMESPACES"
+
+[[obligation]]
+id = "sf.ddl.alter-database-catalog-linked.update-linked-catalog-add-to.syntax.o023"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
 
 [[obligation]]
 id = "sf.ddl.alter-database-catalog-linked.update-linked-catalog-add-to.syntax.o021"
@@ -18173,6 +18353,12 @@ required = true
 note = "the form without its required ALLOWED_NAMESPACES"
 
 [[obligation]]
+id = "sf.ddl.alter-database-catalog-linked.update-linked-catalog-remove-from.o023"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
+
+[[obligation]]
 id = "sf.ddl.alter-database-catalog-linked.update-linked-catalog-remove-from.o021"
 kind = "identifier_class"
 required = true
@@ -18314,6 +18500,12 @@ id = "sf.ddl.alter-database-catalog-linked.update-linked-catalog-remove-from.syn
 kind = "negative_neighbour"
 required = true
 note = "the form without its required BLOCKED_NAMESPACES"
+
+[[obligation]]
+id = "sf.ddl.alter-database-catalog-linked.update-linked-catalog-remove-from.syntax.o023"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
 
 [[obligation]]
 id = "sf.ddl.alter-database-catalog-linked.update-linked-catalog-remove-from.syntax.o021"
@@ -19270,6 +19462,12 @@ id = "sf.ddl.alter-database.enable-replication-to-accounts.o018"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required CHECK in [ IGNORE EDITION CHECK ]"
+
+[[obligation]]
+id = "sf.ddl.alter-database.enable-replication-to-accounts.o023"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
 
 [[obligation]]
 id = "sf.ddl.alter-database.enable-replication-to-accounts.o019"
@@ -21334,6 +21532,12 @@ id = "sf.ddl.alter-database.unset-data-retention-time-in-days-max-data-extension
 kind = "negative_neighbour"
 required = true
 note = "the form without its required { DATA_RETENTION_TIME_IN_DAYS | MAX_DATA_EXTENSION_TIME_IN_DAYS | STAGE_UNDROP_RETENTION_TIME_IN_DAYS | EXTERNAL_VOLUME | CATALOG | ICEBERG_DEFAULT_DDL_COLLATION | ICEBERG_VERSION_DEFAULT | ICEBERG_MERGE_ON_READ_BEHAVIOR | ENABLE_ICEBERG_MERGE_ON_READ | DEFAULT_DDL_COLLATION | DEFAULT_NOTEBOOK_COMPUTE_POOL_CPU | DEFAULT_NOTEBOOK_COMPUTE_POOL_GPU | OBJECT_VISIBILITY | STORAGE_SERIALIZATION_POLICY | EVENT_TABLE = <event_table_name> | COMMENT | CATALOG_SYNC | REPLICABLE_WITH_FAILOVER_GROUPS | BASE_LOCATION_PREFIX | DEFAULT_STREAMLIT_NOTEBOOK_WAREHOUSE | CLASSIFICATION_PROFILE | CONTACT <purpose> | ENABLE_DATA_COMPACTION | OAUTH_AUTHORIZATION_SERVER | OAUTH_SCOPES_SUPPORTED }"
+
+[[obligation]]
+id = "sf.ddl.alter-database.unset-data-retention-time-in-days-max-data-extension-time-in-days-stage-undrop-retention-time-in-days.o059"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
 
 [[obligation]]
 id = "sf.ddl.alter-database.unset-data-retention-time-in-days-max-data-extension-time-in-days-stage-undrop-retention-time-in-days.o042"
@@ -24177,6 +24381,24 @@ required = true
 note = "the form without its required ADD"
 
 [[obligation]]
+id = "sf.ddl.alter-dynamic-table.datagovnpolicytagaction.o274"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ROW #2"
+
+[[obligation]]
+id = "sf.ddl.alter-dynamic-table.datagovnpolicytagaction.o275"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ACCESS #2"
+
+[[obligation]]
+id = "sf.ddl.alter-dynamic-table.datagovnpolicytagaction.o276"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required POLICY #2"
+
+[[obligation]]
 id = "sf.ddl.alter-dynamic-table.datagovnpolicytagaction.o169"
 kind = "negative_neighbour"
 required = true
@@ -25268,6 +25490,13 @@ required = true
 target = "[ , ... ] #2"
 anchor = "doc.sql.alter-dynamic-table / Syntax"
 note = "the list continued at least once, observed"
+
+[[obligation]]
+id = "sf.ddl.alter-dynamic-table.searchoptimizationaction.o147"
+kind = "interaction_all_options"
+required = true
+anchor = "doc.sql.alter-dynamic-table / Syntax"
+note = "every independent option of one production together, observed"
 
 [[obligation]]
 id = "sf.ddl.alter-dynamic-table.set.o001"
@@ -27675,6 +27904,12 @@ required = true
 note = "the form without its required REGIONS"
 
 [[obligation]]
+id = "sf.ddl.alter-event-routing-table.set-rules-region-group-regions.o039"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( #2"
+
+[[obligation]]
 id = "sf.ddl.alter-event-routing-table.set-rules-region-group-regions.o031"
 kind = "negative_neighbour"
 required = true
@@ -27685,6 +27920,12 @@ id = "sf.ddl.alter-event-routing-table.set-rules-region-group-regions.o032"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required DESTINATION_ACCOUNT"
+
+[[obligation]]
+id = "sf.ddl.alter-event-routing-table.set-rules-region-group-regions.o040"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) #2"
 
 [[obligation]]
 id = "sf.ddl.alter-event-routing-table.set-rules-region-group-regions.o033"
@@ -29847,6 +30088,12 @@ id = "sf.ddl.alter-external-table.add-files.o015"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required )"
+
+[[obligation]]
+id = "sf.ddl.alter-external-table.add-files.o021"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
 
 [[obligation]]
 id = "sf.ddl.alter-external-table.add-files.o017"
@@ -33307,6 +33554,12 @@ required = true
 note = "the form without its required TABLE"
 
 [[obligation]]
+id = "sf.ddl.alter-function-dmf.rename-to.o037"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( #2"
+
+[[obligation]]
 id = "sf.ddl.alter-function-dmf.rename-to.o026"
 kind = "negative_neighbour"
 required = true
@@ -33329,6 +33582,12 @@ id = "sf.ddl.alter-function-dmf.rename-to.o029"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required ) in [ , TABLE ( <arg_data_type> [ , ... ] ) ]"
+
+[[obligation]]
+id = "sf.ddl.alter-function-dmf.rename-to.o038"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) #2"
 
 [[obligation]]
 id = "sf.ddl.alter-function-dmf.rename-to.o030"
@@ -33545,6 +33804,12 @@ required = true
 note = "the form without its required TABLE"
 
 [[obligation]]
+id = "sf.ddl.alter-function-dmf.set-comment.o035"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( #2"
+
+[[obligation]]
 id = "sf.ddl.alter-function-dmf.set-comment.o026"
 kind = "negative_neighbour"
 required = true
@@ -33567,6 +33832,12 @@ id = "sf.ddl.alter-function-dmf.set-comment.o029"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required ) in [ , TABLE ( <arg_data_type> [ , ... ] ) ]"
+
+[[obligation]]
+id = "sf.ddl.alter-function-dmf.set-comment.o036"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) #2"
 
 [[obligation]]
 id = "sf.ddl.alter-function-dmf.set-comment.o030"
@@ -33746,6 +34017,12 @@ required = true
 note = "the form without its required TABLE"
 
 [[obligation]]
+id = "sf.ddl.alter-function-dmf.set-secure.o032"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( #2"
+
+[[obligation]]
 id = "sf.ddl.alter-function-dmf.set-secure.o023"
 kind = "negative_neighbour"
 required = true
@@ -33768,6 +34045,12 @@ id = "sf.ddl.alter-function-dmf.set-secure.o026"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required ) in [ , TABLE ( <arg_data_type> [ , ... ] ) ]"
+
+[[obligation]]
+id = "sf.ddl.alter-function-dmf.set-secure.o033"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) #2"
 
 [[obligation]]
 id = "sf.ddl.alter-function-dmf.set-secure.o027"
@@ -33995,6 +34278,12 @@ required = true
 note = "the form without its required TABLE"
 
 [[obligation]]
+id = "sf.ddl.alter-function-dmf.set-tag.o047"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( #2"
+
+[[obligation]]
 id = "sf.ddl.alter-function-dmf.set-tag.o031"
 kind = "negative_neighbour"
 required = true
@@ -34017,6 +34306,12 @@ id = "sf.ddl.alter-function-dmf.set-tag.o034"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required ) in [ , TABLE ( <arg_data_type> [ , ... ] ) ]"
+
+[[obligation]]
+id = "sf.ddl.alter-function-dmf.set-tag.o048"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) #2"
 
 [[obligation]]
 id = "sf.ddl.alter-function-dmf.set-tag.o035"
@@ -34245,6 +34540,12 @@ required = true
 note = "the form without its required TABLE"
 
 [[obligation]]
+id = "sf.ddl.alter-function-dmf.unset-comment.o032"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( #2"
+
+[[obligation]]
 id = "sf.ddl.alter-function-dmf.unset-comment.o023"
 kind = "negative_neighbour"
 required = true
@@ -34267,6 +34568,12 @@ id = "sf.ddl.alter-function-dmf.unset-comment.o026"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required ) in [ , TABLE ( <arg_data_type> [ , ... ] ) ]"
+
+[[obligation]]
+id = "sf.ddl.alter-function-dmf.unset-comment.o033"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) #2"
 
 [[obligation]]
 id = "sf.ddl.alter-function-dmf.unset-comment.o027"
@@ -34446,6 +34753,12 @@ required = true
 note = "the form without its required TABLE"
 
 [[obligation]]
+id = "sf.ddl.alter-function-dmf.unset-secure.o032"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( #2"
+
+[[obligation]]
 id = "sf.ddl.alter-function-dmf.unset-secure.o023"
 kind = "negative_neighbour"
 required = true
@@ -34468,6 +34781,12 @@ id = "sf.ddl.alter-function-dmf.unset-secure.o026"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required ) in [ , TABLE ( <arg_data_type> [ , ... ] ) ]"
+
+[[obligation]]
+id = "sf.ddl.alter-function-dmf.unset-secure.o033"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) #2"
 
 [[obligation]]
 id = "sf.ddl.alter-function-dmf.unset-secure.o027"
@@ -34674,6 +34993,12 @@ required = true
 note = "the form without its required TABLE"
 
 [[obligation]]
+id = "sf.ddl.alter-function-dmf.unset-tag.o041"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( #2"
+
+[[obligation]]
 id = "sf.ddl.alter-function-dmf.unset-tag.o028"
 kind = "negative_neighbour"
 required = true
@@ -34696,6 +35021,12 @@ id = "sf.ddl.alter-function-dmf.unset-tag.o031"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required ) in [ , TABLE ( <arg_data_type> [ , ... ] ) ]"
+
+[[obligation]]
+id = "sf.ddl.alter-function-dmf.unset-tag.o042"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) #2"
 
 [[obligation]]
 id = "sf.ddl.alter-function-dmf.unset-tag.o032"
@@ -34857,6 +35188,12 @@ id = "sf.ddl.alter-function-spcs.set-batch-timeout-secs.o016"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required BATCH_TIMEOUT_SECS"
+
+[[obligation]]
+id = "sf.ddl.alter-function-spcs.set-batch-timeout-secs.o025"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
 
 [[obligation]]
 id = "sf.ddl.alter-function-spcs.set-batch-timeout-secs.o017"
@@ -35032,6 +35369,12 @@ required = true
 note = "the form without its required COMMENT"
 
 [[obligation]]
+id = "sf.ddl.alter-function-spcs.set-comment.o020"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
+
+[[obligation]]
 id = "sf.ddl.alter-function-spcs.set-comment.o018"
 kind = "identifier_class"
 required = true
@@ -35156,6 +35499,24 @@ required = true
 note = "the form without its required CONTEXT_HEADERS"
 
 [[obligation]]
+id = "sf.ddl.alter-function-spcs.set-context-headers.o020"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( #2"
+
+[[obligation]]
+id = "sf.ddl.alter-function-spcs.set-context-headers.o021"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) #2"
+
+[[obligation]]
+id = "sf.ddl.alter-function-spcs.set-context-headers.o022"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
+
+[[obligation]]
 id = "sf.ddl.alter-function-spcs.set-context-headers.o018"
 kind = "identifier_class"
 required = true
@@ -35272,6 +35633,12 @@ id = "sf.ddl.alter-function-spcs.set-max-batch-retries.o016"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required MAX_BATCH_RETRIES"
+
+[[obligation]]
+id = "sf.ddl.alter-function-spcs.set-max-batch-retries.o019"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
 
 [[obligation]]
 id = "sf.ddl.alter-function-spcs.set-max-batch-retries.o017"
@@ -35394,6 +35761,12 @@ id = "sf.ddl.alter-function-spcs.set-on-batch-failure-abort-return-null.o017"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required { ABORT | RETURN_NULL }"
+
+[[obligation]]
+id = "sf.ddl.alter-function-spcs.set-on-batch-failure-abort-return-null.o020"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
 
 [[obligation]]
 id = "sf.ddl.alter-function-spcs.set-on-batch-failure-abort-return-null.o018"
@@ -35548,6 +35921,12 @@ required = true
 note = "the form without its required ENDPOINT"
 
 [[obligation]]
+id = "sf.ddl.alter-function-spcs.set-service-endpoint.o024"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
+
+[[obligation]]
 id = "sf.ddl.alter-function-spcs.set-service-endpoint.o022"
 kind = "identifier_class"
 required = true
@@ -35688,6 +36067,12 @@ required = true
 note = "the form without its required { CONTEXT_HEADERS | MAX_BATCH_ROWS | MAX_BATCH_RETRIES | ON_BATCH_FAILURE | BATCH_TIMEOUT_SECS | COMMENT }"
 
 [[obligation]]
+id = "sf.ddl.alter-function-spcs.unset-context-headers-max-batch-rows-max-batch-retries.o023"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
+
+[[obligation]]
 id = "sf.ddl.alter-function-spcs.unset-context-headers-max-batch-rows-max-batch-retries.o021"
 kind = "identifier_class"
 required = true
@@ -35811,6 +36196,12 @@ id = "sf.ddl.alter-function.rename-to.o017"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required TO"
+
+[[obligation]]
+id = "sf.ddl.alter-function.rename-to.o022"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
 
 [[obligation]]
 id = "sf.ddl.alter-function.rename-to.o018"
@@ -36327,6 +36718,12 @@ required = true
 note = "the form without its required API_INTEGRATION"
 
 [[obligation]]
+id = "sf.ddl.alter-function.set-api-integration.o022"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
+
+[[obligation]]
 id = "sf.ddl.alter-function.set-api-integration.o018"
 kind = "identifier_class"
 required = true
@@ -36468,6 +36865,12 @@ required = true
 note = "the form without its required COMPRESSION"
 
 [[obligation]]
+id = "sf.ddl.alter-function.set-compression.o020"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
+
+[[obligation]]
 id = "sf.ddl.alter-function.set-compression.o018"
 kind = "identifier_class"
 required = true
@@ -36602,6 +37005,18 @@ id = "sf.ddl.alter-function.set-context-headers.o019"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required CONTEXT_HEADERS"
+
+[[obligation]]
+id = "sf.ddl.alter-function.set-context-headers.o023"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( #2"
+
+[[obligation]]
+id = "sf.ddl.alter-function.set-context-headers.o024"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) #2"
 
 [[obligation]]
 id = "sf.ddl.alter-function.set-context-headers.o020"
@@ -36781,6 +37196,18 @@ required = true
 note = "the form without its required HEADERS"
 
 [[obligation]]
+id = "sf.ddl.alter-function.set-headers.o028"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( #2"
+
+[[obligation]]
+id = "sf.ddl.alter-function.set-headers.o029"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) #2"
+
+[[obligation]]
 id = "sf.ddl.alter-function.set-headers.o025"
 kind = "interaction_all_options"
 required = true
@@ -36903,6 +37330,12 @@ id = "sf.ddl.alter-function.set-max-batch-rows.o016"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required MAX_BATCH_ROWS"
+
+[[obligation]]
+id = "sf.ddl.alter-function.set-max-batch-rows.o019"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
 
 [[obligation]]
 id = "sf.ddl.alter-function.set-max-batch-rows.o017"
@@ -37042,6 +37475,12 @@ required = true
 note = "the form without its required { REQUEST_TRANSLATOR | RESPONSE_TRANSLATOR }"
 
 [[obligation]]
+id = "sf.ddl.alter-function.set-request-translator-response-translator.o024"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
+
+[[obligation]]
 id = "sf.ddl.alter-function.set-request-translator-response-translator.o020"
 kind = "identifier_class"
 required = true
@@ -37160,6 +37599,12 @@ id = "sf.ddl.alter-function.set-secure.o016"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required SECURE"
+
+[[obligation]]
+id = "sf.ddl.alter-function.set-secure.o017"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
 
 [[obligation]]
 id = "sf.ddl.alter-function.set-secure.o014"
@@ -37306,6 +37751,12 @@ id = "sf.ddl.alter-function.set-tag.o021"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required SET"
+
+[[obligation]]
+id = "sf.ddl.alter-function.set-tag.o032"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
 
 [[obligation]]
 id = "sf.ddl.alter-function.set-tag.o023"
@@ -37718,6 +38169,12 @@ required = true
 note = "the form without its required { COMMENT | HEADERS | CONTEXT_HEADERS | MAX_BATCH_ROWS | COMPRESSION | SECURE | REQUEST_TRANSLATOR | RESPONSE_TRANSLATOR }"
 
 [[obligation]]
+id = "sf.ddl.alter-function.unset-comment-headers-context-headers.o025"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
+
+[[obligation]]
 id = "sf.ddl.alter-function.unset-comment-headers-context-headers.o023"
 kind = "identifier_class"
 required = true
@@ -37846,6 +38303,12 @@ required = true
 note = "the form without its required { SECURE | LOG_LEVEL | TRACE_LEVEL | COMMENT }"
 
 [[obligation]]
+id = "sf.ddl.alter-function.unset-secure-log-level-trace-level.o021"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
+
+[[obligation]]
 id = "sf.ddl.alter-function.unset-secure-log-level-trace-level.o019"
 kind = "identifier_class"
 required = true
@@ -37969,6 +38432,12 @@ id = "sf.ddl.alter-function.unset-tag.o018"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required UNSET"
+
+[[obligation]]
+id = "sf.ddl.alter-function.unset-tag.o026"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
 
 [[obligation]]
 id = "sf.ddl.alter-function.unset-tag.o020"
@@ -38517,6 +38986,12 @@ required = true
 note = "the form without its required SET"
 
 [[obligation]]
+id = "sf.ddl.alter-git-repository.set-tag.o029"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
+
+[[obligation]]
 id = "sf.ddl.alter-git-repository.set-tag.o020"
 kind = "identifier_class"
 required = true
@@ -38682,6 +39157,12 @@ required = true
 note = "the form without its required { GIT_CREDENTIALS | COMMENT }"
 
 [[obligation]]
+id = "sf.ddl.alter-git-repository.unset-git-credentials-comment.o018"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
+
+[[obligation]]
 id = "sf.ddl.alter-git-repository.unset-git-credentials-comment.o016"
 kind = "identifier_class"
 required = true
@@ -38786,6 +39267,12 @@ id = "sf.ddl.alter-git-repository.unset-tag.o015"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required UNSET"
+
+[[obligation]]
+id = "sf.ddl.alter-git-repository.unset-tag.o023"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
 
 [[obligation]]
 id = "sf.ddl.alter-git-repository.unset-tag.o017"
@@ -40246,6 +40733,18 @@ id = "sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with.o
 kind = "negative_neighbour"
 required = true
 note = "the form without its required WITH"
+
+[[obligation]]
+id = "sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with.o022"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( #2"
+
+[[obligation]]
+id = "sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with.o023"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) #2"
 
 [[obligation]]
 id = "sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with.o020"
@@ -42806,6 +43305,24 @@ id = "sf.ddl.alter-iceberg-table.datagovnpolicytagaction.o217"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required ADD"
+
+[[obligation]]
+id = "sf.ddl.alter-iceberg-table.datagovnpolicytagaction.o330"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ROW #2"
+
+[[obligation]]
+id = "sf.ddl.alter-iceberg-table.datagovnpolicytagaction.o331"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ACCESS #2"
+
+[[obligation]]
+id = "sf.ddl.alter-iceberg-table.datagovnpolicytagaction.o332"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required POLICY #2"
 
 [[obligation]]
 id = "sf.ddl.alter-iceberg-table.datagovnpolicytagaction.o218"
@@ -45666,6 +46183,12 @@ required = true
 note = "the form without its required TO"
 
 [[obligation]]
+id = "sf.ddl.alter-iceberg-table.upgrade-to-iceberg-version.o015"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ICEBERG #2"
+
+[[obligation]]
 id = "sf.ddl.alter-iceberg-table.upgrade-to-iceberg-version.o012"
 kind = "negative_neighbour"
 required = true
@@ -47574,6 +48097,12 @@ required = true
 note = "the form without its required FROM"
 
 [[obligation]]
+id = "sf.ddl.alter-model-add-version.model.o032"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required MODEL #2"
+
+[[obligation]]
 id = "sf.ddl.alter-model-add-version.model.o023"
 kind = "interaction_all_options"
 required = true
@@ -49251,6 +49780,12 @@ id = "sf.ddl.alter-model.unset-tag.o014"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required UNSET"
+
+[[obligation]]
+id = "sf.ddl.alter-model.unset-tag.o022"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
 
 [[obligation]]
 id = "sf.ddl.alter-model.unset-tag.o016"
@@ -52718,6 +53253,12 @@ required = true
 note = "the form without its required { DISPLAY_NAME | COMMENT | EVENT_TABLE }"
 
 [[obligation]]
+id = "sf.ddl.alter-openflow-deployment.unset-display-name-comment-event-table.o020"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
+
+[[obligation]]
 id = "sf.ddl.alter-openflow-deployment.unset-display-name-comment-event-table.o017"
 kind = "identifier_class"
 required = true
@@ -52928,6 +53469,12 @@ required = true
 note = "the form without its required )"
 
 [[obligation]]
+id = "sf.ddl.alter-openflow-runtime.add-external-access-integrations.o020"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
+
+[[obligation]]
 id = "sf.ddl.alter-openflow-runtime.add-external-access-integrations.o018"
 kind = "identifier_class"
 required = true
@@ -53050,6 +53597,12 @@ id = "sf.ddl.alter-openflow-runtime.remove-external-access-integrations.o017"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required )"
+
+[[obligation]]
+id = "sf.ddl.alter-openflow-runtime.remove-external-access-integrations.o020"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
 
 [[obligation]]
 id = "sf.ddl.alter-openflow-runtime.remove-external-access-integrations.o018"
@@ -53994,6 +54547,12 @@ required = true
 note = "the form without its required { DISPLAY_NAME | EXTERNAL_ACCESS_INTEGRATIONS | COMMENT }"
 
 [[obligation]]
+id = "sf.ddl.alter-openflow-runtime.unset-display-name-external-access-integrations-comment.o019"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
+
+[[obligation]]
 id = "sf.ddl.alter-openflow-runtime.unset-display-name-external-access-integrations-comment.o017"
 kind = "identifier_class"
 required = true
@@ -54762,6 +55321,12 @@ id = "sf.ddl.alter-pipe.unset-comment.o016"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required { <property_name> | COMMENT }"
+
+[[obligation]]
+id = "sf.ddl.alter-pipe.unset-comment.o021"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
 
 [[obligation]]
 id = "sf.ddl.alter-pipe.unset-comment.o017"
@@ -55829,6 +56394,12 @@ required = true
 note = "the form without its required TAG"
 
 [[obligation]]
+id = "sf.ddl.alter-postgres-instance.set-tag.o027"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
+
+[[obligation]]
 id = "sf.ddl.alter-postgres-instance.set-tag.o020"
 kind = "identifier_class"
 required = true
@@ -56076,6 +56647,12 @@ required = true
 note = "the form without its required { COMMENT | POSTGRES_SETTINGS | NETWORK_POLICY | MAINTENANCE_WINDOW_START | STORAGE_INTEGRATION }"
 
 [[obligation]]
+id = "sf.ddl.alter-postgres-instance.unset-comment-postgres-settings-network-policy.o021"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
+
+[[obligation]]
 id = "sf.ddl.alter-postgres-instance.unset-comment-postgres-settings-network-policy.o019"
 kind = "identifier_class"
 required = true
@@ -56193,6 +56770,12 @@ id = "sf.ddl.alter-postgres-instance.unset-tag.o016"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required TAG"
+
+[[obligation]]
+id = "sf.ddl.alter-postgres-instance.unset-tag.o021"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
 
 [[obligation]]
 id = "sf.ddl.alter-postgres-instance.unset-tag.o017"
@@ -56345,6 +56928,12 @@ required = true
 note = "the form without its required { OWNER | CALLER | RESTRICTED CALLER }"
 
 [[obligation]]
+id = "sf.ddl.alter-procedure.execute-as-owner-caller.o022"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
+
+[[obligation]]
 id = "sf.ddl.alter-procedure.execute-as-owner-caller.o020"
 kind = "identifier_class"
 required = true
@@ -56468,6 +57057,12 @@ id = "sf.ddl.alter-procedure.rename-to.o017"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required TO"
+
+[[obligation]]
+id = "sf.ddl.alter-procedure.rename-to.o022"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
 
 [[obligation]]
 id = "sf.ddl.alter-procedure.rename-to.o018"
@@ -56962,6 +57557,12 @@ id = "sf.ddl.alter-procedure.set-tag.o021"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required SET"
+
+[[obligation]]
+id = "sf.ddl.alter-procedure.set-tag.o032"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
 
 [[obligation]]
 id = "sf.ddl.alter-procedure.set-tag.o023"
@@ -57562,6 +58163,12 @@ required = true
 note = "the form without its required COMMENT"
 
 [[obligation]]
+id = "sf.ddl.alter-procedure.unset-comment.o017"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
+
+[[obligation]]
 id = "sf.ddl.alter-procedure.unset-comment.o015"
 kind = "identifier_class"
 required = true
@@ -57685,6 +58292,12 @@ id = "sf.ddl.alter-procedure.unset-tag.o018"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required UNSET"
+
+[[obligation]]
+id = "sf.ddl.alter-procedure.unset-tag.o026"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
 
 [[obligation]]
 id = "sf.ddl.alter-procedure.unset-tag.o020"
@@ -59664,6 +60277,12 @@ required = true
 note = "the form without its required SET"
 
 [[obligation]]
+id = "sf.ddl.alter-schema.set-tag.o028"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
+
+[[obligation]]
 id = "sf.ddl.alter-schema.set-tag.o019"
 kind = "identifier_class"
 required = true
@@ -60090,6 +60709,12 @@ required = true
 note = "the form without its required { DATA_RETENTION_TIME_IN_DAYS | MAX_DATA_EXTENSION_TIME_IN_DAYS | STAGE_UNDROP_RETENTION_TIME_IN_DAYS | EXTERNAL_VOLUME | CATALOG | ICEBERG_DEFAULT_DDL_COLLATION | ICEBERG_VERSION_DEFAULT | ICEBERG_MERGE_ON_READ_BEHAVIOR | ENABLE_ICEBERG_MERGE_ON_READ | REPLACE_INVALID_CHARACTERS | DEFAULT_DDL_COLLATION | LOG_LEVEL | TRACE_LEVEL | STORAGE_SERIALIZATION_POLICY | COMMENT | CATALOG_SYNC | REPLICABLE_WITH_FAILOVER_GROUPS | BASE_LOCATION_PREFIX | DEFAULT_STREAMLIT_NOTEBOOK_WAREHOUSE | CONTACT <purpose> CLASSIFICATION_PROFILE OBJECT_VISIBILITY | CONTACT <purpose> | CLASSIFICATION_PROFILE | ENABLE_DATA_COMPACTION | OAUTH_AUTHORIZATION_SERVER | OAUTH_SCOPES_SUPPORTED }"
 
 [[obligation]]
+id = "sf.ddl.alter-schema.unset-data-retention-time-in-days-max-data-extension-time-in-days-stage-undrop-retention-time-in-days.o054"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
+
+[[obligation]]
 id = "sf.ddl.alter-schema.unset-data-retention-time-in-days-max-data-extension-time-in-days-stage-undrop-retention-time-in-days.o044"
 kind = "identifier_class"
 required = true
@@ -60220,6 +60845,12 @@ id = "sf.ddl.alter-schema.unset-tag.o014"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required UNSET"
+
+[[obligation]]
+id = "sf.ddl.alter-schema.unset-tag.o022"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
 
 [[obligation]]
 id = "sf.ddl.alter-schema.unset-tag.o016"
@@ -63604,6 +64235,12 @@ required = true
 note = "the form without its required { MIN_INSTANCES | AUTO_SUSPEND_SECS | MAX_INSTANCES | LOG_LEVEL | MIN_READY_INSTANCES | QUERY_WAREHOUSE | AUTO_RESUME | EXTERNAL_ACCESS_INTEGRATIONS | COMMENT }"
 
 [[obligation]]
+id = "sf.ddl.alter-service.unset-min-instances-auto-suspend-secs-max-instances.o024"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
+
+[[obligation]]
 id = "sf.ddl.alter-service.unset-min-instances-auto-suspend-secs-max-instances.o022"
 kind = "identifier_class"
 required = true
@@ -63765,6 +64402,12 @@ required = true
 note = "the form without its required ADD"
 
 [[obligation]]
+id = "sf.ddl.alter-snapshot-set.add-snapshot.o010"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required SNAPSHOT #2"
+
+[[obligation]]
 id = "sf.ddl.alter-snapshot-set.add-snapshot.o008"
 kind = "identifier_class"
 required = true
@@ -63857,6 +64500,12 @@ id = "sf.ddl.alter-snapshot-set.apply-snapshot-policy.o012"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required APPLY"
+
+[[obligation]]
+id = "sf.ddl.alter-snapshot-set.apply-snapshot-policy.o018"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required SNAPSHOT #2"
 
 [[obligation]]
 id = "sf.ddl.alter-snapshot-set.apply-snapshot-policy.o013"
@@ -63963,6 +64612,12 @@ required = true
 note = "the form without its required DELETE"
 
 [[obligation]]
+id = "sf.ddl.alter-snapshot-set.delete-snapshot-identifier.o014"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required SNAPSHOT #2"
+
+[[obligation]]
 id = "sf.ddl.alter-snapshot-set.delete-snapshot-identifier.o011"
 kind = "negative_neighbour"
 required = true
@@ -64061,6 +64716,12 @@ id = "sf.ddl.alter-snapshot-set.modify-snapshot-identifier-add.o012"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required MODIFY"
+
+[[obligation]]
+id = "sf.ddl.alter-snapshot-set.modify-snapshot-identifier-add.o019"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required SNAPSHOT #2"
 
 [[obligation]]
 id = "sf.ddl.alter-snapshot-set.modify-snapshot-identifier-add.o013"
@@ -64190,10 +64851,22 @@ required = true
 note = "the form without its required MODIFY"
 
 [[obligation]]
+id = "sf.ddl.alter-snapshot-set.modify-snapshot-identifier-set.o018"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required SNAPSHOT #2"
+
+[[obligation]]
 id = "sf.ddl.alter-snapshot-set.modify-snapshot-identifier-set.o014"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required IDENTIFIER"
+
+[[obligation]]
+id = "sf.ddl.alter-snapshot-set.modify-snapshot-identifier-set.o019"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required SET #2"
 
 [[obligation]]
 id = "sf.ddl.alter-snapshot-set.modify-snapshot-identifier-set.o015"
@@ -64282,6 +64955,12 @@ id = "sf.ddl.alter-snapshot-set.modify-snapshot-identifier-unset.o010"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required MODIFY"
+
+[[obligation]]
+id = "sf.ddl.alter-snapshot-set.modify-snapshot-identifier-unset.o016"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required SNAPSHOT #2"
 
 [[obligation]]
 id = "sf.ddl.alter-snapshot-set.modify-snapshot-identifier-unset.o011"
@@ -64387,6 +65066,12 @@ required = true
 note = "the form without its required RESUME"
 
 [[obligation]]
+id = "sf.ddl.alter-snapshot-set.resume-snapshot-policy.o015"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required SNAPSHOT #2"
+
+[[obligation]]
 id = "sf.ddl.alter-snapshot-set.resume-snapshot-policy.o012"
 kind = "negative_neighbour"
 required = true
@@ -64461,6 +65146,12 @@ id = "sf.ddl.alter-snapshot-set.set-comment.o008"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required SNAPSHOT"
+
+[[obligation]]
+id = "sf.ddl.alter-snapshot-set.set-comment.o012"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required SET #2"
 
 [[obligation]]
 id = "sf.ddl.alter-snapshot-set.set-comment.o009"
@@ -64570,6 +65261,12 @@ id = "sf.ddl.alter-snapshot-set.set-tag.o014"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required SET"
+
+[[obligation]]
+id = "sf.ddl.alter-snapshot-set.set-tag.o025"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required SET #2"
 
 [[obligation]]
 id = "sf.ddl.alter-snapshot-set.set-tag.o016"
@@ -64710,6 +65407,12 @@ id = "sf.ddl.alter-snapshot-set.suspend-snapshot-policy.o011"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required SUSPEND"
+
+[[obligation]]
+id = "sf.ddl.alter-snapshot-set.suspend-snapshot-policy.o015"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required SNAPSHOT #2"
 
 [[obligation]]
 id = "sf.ddl.alter-snapshot-set.suspend-snapshot-policy.o012"
@@ -67989,6 +68692,12 @@ id = "sf.ddl.alter-stage.set-tag.o017"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required SET"
+
+[[obligation]]
+id = "sf.ddl.alter-stage.set-tag.o028"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
 
 [[obligation]]
 id = "sf.ddl.alter-stage.set-tag.o019"
@@ -71845,6 +72554,12 @@ required = true
 note = "the form without its required SET"
 
 [[obligation]]
+id = "sf.ddl.alter-stream.set-tag.o028"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
+
+[[obligation]]
 id = "sf.ddl.alter-stream.set-tag.o019"
 kind = "identifier_class"
 required = true
@@ -73764,6 +74479,12 @@ required = true
 note = "the form without its required { SECRETS | EXTERNAL_ACCESS_INTEGRATIONS | QUERY_WAREHOUSE | TITLE | COMMENT }"
 
 [[obligation]]
+id = "sf.ddl.alter-streamlit.unset-secrets-external-access-integrations-query-warehouse.o020"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
+
+[[obligation]]
 id = "sf.ddl.alter-streamlit.unset-secrets-external-access-integrations-query-warehouse.o018"
 kind = "identifier_class"
 required = true
@@ -75284,6 +76005,12 @@ required = true
 note = "the form without its required DEFAULT"
 
 [[obligation]]
+id = "sf.ddl.alter-table-column.drop-default-set-default.o190"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required DEFAULT #2"
+
+[[obligation]]
 id = "sf.ddl.alter-table-column.drop-default-set-default.o067"
 kind = "negative_neighbour"
 required = true
@@ -75324,6 +76051,12 @@ id = "sf.ddl.alter-table-column.drop-default-set-default.o073"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required UNSET"
+
+[[obligation]]
+id = "sf.ddl.alter-table-column.drop-default-set-default.o191"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required COMMENT #2"
 
 [[obligation]]
 id = "sf.ddl.alter-table-column.drop-default-set-default.o183"
@@ -75995,6 +76728,12 @@ id = "sf.ddl.alter-table.add-storage-lifecycle-policy.o023"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required )"
+
+[[obligation]]
+id = "sf.ddl.alter-table.add-storage-lifecycle-policy.o030"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
 
 [[obligation]]
 id = "sf.ddl.alter-table.add-storage-lifecycle-policy.o024"
@@ -78550,6 +79289,24 @@ id = "sf.ddl.alter-table.datagovnpolicytagaction.o221"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required ADD"
+
+[[obligation]]
+id = "sf.ddl.alter-table.datagovnpolicytagaction.o381"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ROW #2"
+
+[[obligation]]
+id = "sf.ddl.alter-table.datagovnpolicytagaction.o382"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ACCESS #2"
+
+[[obligation]]
+id = "sf.ddl.alter-table.datagovnpolicytagaction.o383"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required POLICY #2"
 
 [[obligation]]
 id = "sf.ddl.alter-table.datagovnpolicytagaction.o222"
@@ -81304,6 +82061,18 @@ required = true
 note = "the form without its required EXPECTATION"
 
 [[obligation]]
+id = "sf.ddl.alter-table.datametricfunctionaction.o761"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( #2"
+
+[[obligation]]
+id = "sf.ddl.alter-table.datametricfunctionaction.o762"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) #2"
+
+[[obligation]]
 id = "sf.ddl.alter-table.datametricfunctionaction.o414"
 kind = "negative_neighbour"
 required = true
@@ -81404,6 +82173,18 @@ id = "sf.ddl.alter-table.datametricfunctionaction.o430"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required FILTER in [ , <metric_name_2> ON ( <col_name> [ , ... ] [ , TABLE <table_name> ( <col_name> [ , ... ] ) ] ) FILTER ( [ <predicate…"
+
+[[obligation]]
+id = "sf.ddl.alter-table.datametricfunctionaction.o763"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( in [ , <metric_name_2> ON ( <col_name> [ , ... ] [ , TABLE <table_name> ( <col_name> [ , ... ] ) ] ) FILTER ( [ <predicate… #2"
+
+[[obligation]]
+id = "sf.ddl.alter-table.datametricfunctionaction.o764"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) in [ , <metric_name_2> ON ( <col_name> [ , ... ] [ , TABLE <table_name> ( <col_name> [ , ... ] ) ] ) FILTER ( [ <predicate… #2"
 
 [[obligation]]
 id = "sf.ddl.alter-table.datametricfunctionaction.o431"
@@ -84971,6 +85752,12 @@ required = true
 note = "the form without its required { DATA_RETENTION_TIME_IN_DAYS | MAX_DATA_EXTENSION_TIME_IN_DAYS | CHANGE_TRACKING | DEFAULT_DDL_COLLATION | ICEBERG_DEFAULT_DDL_COLLATION | ENABLE_SCHEMA_EVOLUTION | ERROR_LOGGING | CONTACT <purpose> | COMMENT | ROW_TIMESTAMP }"
 
 [[obligation]]
+id = "sf.ddl.alter-table.unset-data-retention-time-in-days-max-data-extension-time-in-days-change-tracking.o028"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
+
+[[obligation]]
 id = "sf.ddl.alter-table.unset-data-retention-time-in-days-max-data-extension-time-in-days-change-tracking.o024"
 kind = "identifier_class"
 required = true
@@ -86852,6 +87639,12 @@ required = true
 note = "the form without its required SET"
 
 [[obligation]]
+id = "sf.ddl.alter-task-graph.set.o021"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
+
+[[obligation]]
 id = "sf.ddl.alter-task-graph.set.o016"
 kind = "identifier_class"
 required = true
@@ -86972,6 +87765,12 @@ id = "sf.ddl.alter-task-graph.set-contact.o016"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required SET"
+
+[[obligation]]
+id = "sf.ddl.alter-task-graph.set-contact.o024"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
 
 [[obligation]]
 id = "sf.ddl.alter-task-graph.set-contact.o018"
@@ -87117,6 +87916,12 @@ id = "sf.ddl.alter-task-graph.set-tag.o017"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required SET"
+
+[[obligation]]
+id = "sf.ddl.alter-task-graph.set-tag.o026"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
 
 [[obligation]]
 id = "sf.ddl.alter-task-graph.set-tag.o019"
@@ -87296,6 +88101,12 @@ required = true
 note = "the form without its required )"
 
 [[obligation]]
+id = "sf.ddl.alter-task-graph.set-task-defaults.o022"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
+
+[[obligation]]
 id = "sf.ddl.alter-task-graph.set-task-defaults.o020"
 kind = "identifier_class"
 required = true
@@ -87463,6 +88274,12 @@ required = true
 note = "the form without its required UNSET"
 
 [[obligation]]
+id = "sf.ddl.alter-task-graph.unset.o018"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
+
+[[obligation]]
 id = "sf.ddl.alter-task-graph.unset.o014"
 kind = "identifier_class"
 required = true
@@ -87562,6 +88379,12 @@ id = "sf.ddl.alter-task-graph.unset-contact.o013"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required UNSET"
+
+[[obligation]]
+id = "sf.ddl.alter-task-graph.unset-contact.o019"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
 
 [[obligation]]
 id = "sf.ddl.alter-task-graph.unset-contact.o014"
@@ -87670,6 +88493,12 @@ id = "sf.ddl.alter-task-graph.unset-tag.o014"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required UNSET"
+
+[[obligation]]
+id = "sf.ddl.alter-task-graph.unset-tag.o023"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
 
 [[obligation]]
 id = "sf.ddl.alter-task-graph.unset-tag.o015"
@@ -87833,6 +88662,12 @@ id = "sf.ddl.alter-task-graph.unset-task-defaults.o017"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required )"
+
+[[obligation]]
+id = "sf.ddl.alter-task-graph.unset-task-defaults.o020"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
 
 [[obligation]]
 id = "sf.ddl.alter-task-graph.unset-task-defaults.o018"
@@ -89376,6 +90211,12 @@ required = true
 note = "the form without its required SET"
 
 [[obligation]]
+id = "sf.ddl.alter-task.set-tag.o028"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
+
+[[obligation]]
 id = "sf.ddl.alter-task.set-tag.o019"
 kind = "identifier_class"
 required = true
@@ -89930,6 +90771,12 @@ id = "sf.ddl.alter-task.unset-tag.o014"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required UNSET"
+
+[[obligation]]
+id = "sf.ddl.alter-task.unset-tag.o022"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
 
 [[obligation]]
 id = "sf.ddl.alter-task.unset-tag.o015"
@@ -91747,6 +92594,24 @@ id = "sf.ddl.alter-view.datagovnpolicytagaction.o221"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required ADD"
+
+[[obligation]]
+id = "sf.ddl.alter-view.datagovnpolicytagaction.o447"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ROW #2"
+
+[[obligation]]
+id = "sf.ddl.alter-view.datagovnpolicytagaction.o448"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ACCESS #2"
+
+[[obligation]]
+id = "sf.ddl.alter-view.datagovnpolicytagaction.o449"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required POLICY #2"
 
 [[obligation]]
 id = "sf.ddl.alter-view.datagovnpolicytagaction.o222"
@@ -94701,6 +95566,18 @@ required = true
 note = "the form without its required EXPECTATION"
 
 [[obligation]]
+id = "sf.ddl.alter-view.datametricfunctionaction.o759"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( #2"
+
+[[obligation]]
+id = "sf.ddl.alter-view.datametricfunctionaction.o760"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) #2"
+
+[[obligation]]
 id = "sf.ddl.alter-view.datametricfunctionaction.o411"
 kind = "negative_neighbour"
 required = true
@@ -94801,6 +95678,18 @@ id = "sf.ddl.alter-view.datametricfunctionaction.o427"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required FILTER in [ , <metric_name_2> ON ( <col_name> [ , ... ] [ , TABLE <table_name> ( <col_name> [ , ... ] ) ] ) FILTER ( [ <predicate…"
+
+[[obligation]]
+id = "sf.ddl.alter-view.datametricfunctionaction.o761"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( in [ , <metric_name_2> ON ( <col_name> [ , ... ] [ , TABLE <table_name> ( <col_name> [ , ... ] ) ] ) FILTER ( [ <predicate… #2"
+
+[[obligation]]
+id = "sf.ddl.alter-view.datametricfunctionaction.o762"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) in [ , <metric_name_2> ON ( <col_name> [ , ... ] [ , TABLE <table_name> ( <col_name> [ , ... ] ) ] ) FILTER ( [ <predicate… #2"
 
 [[obligation]]
 id = "sf.ddl.alter-view.datametricfunctionaction.o428"
@@ -96152,6 +97041,12 @@ required = true
 note = "the form without its required )"
 
 [[obligation]]
+id = "sf.ddl.alter-warehouse.add-tables.o025"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
+
+[[obligation]]
 id = "sf.ddl.alter-warehouse.add-tables.o018"
 kind = "identifier_class"
 required = true
@@ -96315,6 +97210,12 @@ id = "sf.ddl.alter-warehouse.drop-tables.o017"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required )"
+
+[[obligation]]
+id = "sf.ddl.alter-warehouse.drop-tables.o022"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
 
 [[obligation]]
 id = "sf.ddl.alter-warehouse.drop-tables.o018"
@@ -97446,6 +98347,12 @@ required = true
 note = "the form without its required TAG"
 
 [[obligation]]
+id = "sf.ddl.alter-warehouse.set-tag.o026"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
+
+[[obligation]]
 id = "sf.ddl.alter-warehouse.set-tag.o019"
 kind = "identifier_class"
 required = true
@@ -97732,6 +98639,12 @@ required = true
 note = "the form without its required { <property_name> | <param_name> }"
 
 [[obligation]]
+id = "sf.ddl.alter-warehouse.unset.o025"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
+
+[[obligation]]
 id = "sf.ddl.alter-warehouse.unset.o019"
 kind = "identifier_class"
 required = true
@@ -97869,6 +98782,12 @@ id = "sf.ddl.alter-warehouse.unset-tag.o014"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required UNSET"
+
+[[obligation]]
+id = "sf.ddl.alter-warehouse.unset-tag.o019"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
 
 [[obligation]]
 id = "sf.ddl.alter-warehouse.unset-tag.o015"
@@ -100031,10 +100950,22 @@ required = true
 note = "the form without its required EXISTS"
 
 [[obligation]]
+id = "sf.ddl.create-alert.create-alert-if-exists.o080"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( #2"
+
+[[obligation]]
 id = "sf.ddl.create-alert.create-alert-if-exists.o062"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required )"
+
+[[obligation]]
+id = "sf.ddl.create-alert.create-alert-if-exists.o081"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) #2"
 
 [[obligation]]
 id = "sf.ddl.create-alert.create-alert-if-exists.o063"
@@ -100437,10 +101368,22 @@ required = true
 note = "the form without its required EXISTS"
 
 [[obligation]]
+id = "sf.ddl.create-alert.create-or-alter-alert.o055"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( #2"
+
+[[obligation]]
 id = "sf.ddl.create-alert.create-or-alter-alert.o042"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required )"
+
+[[obligation]]
+id = "sf.ddl.create-alert.create-or-alter-alert.o056"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) #2"
 
 [[obligation]]
 id = "sf.ddl.create-alert.create-or-alter-alert.o043"
@@ -100815,10 +101758,22 @@ required = true
 note = "the form without its required EXISTS"
 
 [[obligation]]
+id = "sf.ddl.create-alert.define-alert.o057"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( #2"
+
+[[obligation]]
 id = "sf.ddl.create-alert.define-alert.o044"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required )"
+
+[[obligation]]
+id = "sf.ddl.create-alert.define-alert.o058"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) #2"
 
 [[obligation]]
 id = "sf.ddl.create-alert.define-alert.o045"
@@ -102646,6 +103601,12 @@ required = true
 note = "the form without its required FROM"
 
 [[obligation]]
+id = "sf.ddl.create-application.application-package.o071"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required APPLICATION #2"
+
+[[obligation]]
 id = "sf.ddl.create-application.application-package.o048"
 kind = "negative_neighbour"
 required = true
@@ -103115,6 +104076,12 @@ id = "sf.ddl.create-application.application-package-using.o048"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required FROM"
+
+[[obligation]]
+id = "sf.ddl.create-application.application-package-using.o071"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required APPLICATION #2"
 
 [[obligation]]
 id = "sf.ddl.create-application.application-package-using.o049"
@@ -103613,6 +104580,12 @@ id = "sf.ddl.create-application.application-package-using-version.o053"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required FROM"
+
+[[obligation]]
+id = "sf.ddl.create-application.application-package-using-version.o079"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required APPLICATION #2"
 
 [[obligation]]
 id = "sf.ddl.create-application.application-package-using-version.o054"
@@ -110722,6 +111695,12 @@ required = true
 note = "the form without its required VECTOR"
 
 [[obligation]]
+id = "sf.ddl.create-cortex-search.text-indexes-vector-indexes.o094"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required INDEXES #2"
+
+[[obligation]]
 id = "sf.ddl.create-cortex-search.text-indexes-vector-indexes.o069"
 kind = "negative_neighbour"
 required = true
@@ -111253,6 +112232,12 @@ required = true
 note = "the form without its required TABLE"
 
 [[obligation]]
+id = "sf.ddl.create-data-metric-function.create-data-metric-function.o068"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( #2"
+
+[[obligation]]
 id = "sf.ddl.create-data-metric-function.create-data-metric-function.o055"
 kind = "negative_neighbour"
 required = true
@@ -111275,6 +112260,12 @@ id = "sf.ddl.create-data-metric-function.create-data-metric-function.o058"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required ) in [ , <table_arg> TABLE ( <col_arg> <data_type> [ , ... ] ) ]"
+
+[[obligation]]
+id = "sf.ddl.create-data-metric-function.create-data-metric-function.o069"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) #2"
 
 [[obligation]]
 id = "sf.ddl.create-data-metric-function.create-data-metric-function.o059"
@@ -111491,10 +112482,22 @@ required = true
 note = "the form without its required TABLE"
 
 [[obligation]]
+id = "sf.ddl.create-data-metric-function.create-data-metric-function.create-or-alter-data-metric-function.o032"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( #2"
+
+[[obligation]]
 id = "sf.ddl.create-data-metric-function.create-data-metric-function.create-or-alter-data-metric-function.o024"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required )"
+
+[[obligation]]
+id = "sf.ddl.create-data-metric-function.create-data-metric-function.create-or-alter-data-metric-function.o033"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) #2"
 
 [[obligation]]
 id = "sf.ddl.create-data-metric-function.create-data-metric-function.create-or-alter-data-metric-function.o025"
@@ -111856,6 +112859,12 @@ required = true
 note = "the form without its required TABLE"
 
 [[obligation]]
+id = "sf.ddl.create-data-metric-function.define-data-metric-function.o061"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( #2"
+
+[[obligation]]
 id = "sf.ddl.create-data-metric-function.define-data-metric-function.o048"
 kind = "negative_neighbour"
 required = true
@@ -111878,6 +112887,12 @@ id = "sf.ddl.create-data-metric-function.define-data-metric-function.o051"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required ) in [ , <table_arg> TABLE ( <col_arg> <data_type> [ , ... ] ) ]"
+
+[[obligation]]
+id = "sf.ddl.create-data-metric-function.define-data-metric-function.o062"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) #2"
 
 [[obligation]]
 id = "sf.ddl.create-data-metric-function.define-data-metric-function.o052"
@@ -112137,6 +113152,18 @@ id = "sf.ddl.create-data-movement-rule.o031"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required INTEGER"
+
+[[obligation]]
+id = "sf.ddl.create-data-movement-rule.o035"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( #2"
+
+[[obligation]]
+id = "sf.ddl.create-data-movement-rule.o036"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) #2"
 
 [[obligation]]
 id = "sf.ddl.create-data-movement-rule.o032"
@@ -118872,6 +119899,12 @@ required = true
 note = "the form without its required TAGS in [ COPY GRANTS COPY TAGS COPY = ( { COMMENTS | TAGS | GRANTS } [ , ... ] ) TARGET_LAG = { '<num> { seconds | minutes | h…"
 
 [[obligation]]
+id = "sf.ddl.create-dynamic-table.create-dynamic-iceberg-table.create-dynamic-iceberg-table.o076"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required COPY in [ COPY GRANTS COPY TAGS COPY = ( { COMMENTS | TAGS | GRANTS } [ , ... ] ) TARGET_LAG = { '<num> { seconds | minutes | h… #2"
+
+[[obligation]]
 id = "sf.ddl.create-dynamic-table.create-dynamic-iceberg-table.create-dynamic-iceberg-table.o053"
 kind = "negative_neighbour"
 required = true
@@ -119371,6 +120404,12 @@ id = "sf.ddl.create-dynamic-table.create-dynamic-table-clone.o054"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required TAGS in [ COPY GRANTS COPY TAGS COPY = ( { COMMENTS | TAGS | GRANTS } [ , ... ] ) TARGET_LAG = { '<num> { seconds | minutes | h…"
+
+[[obligation]]
+id = "sf.ddl.create-dynamic-table.create-dynamic-table-clone.o078"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required COPY in [ COPY GRANTS COPY TAGS COPY = ( { COMMENTS | TAGS | GRANTS } [ , ... ] ) TARGET_LAG = { '<num> { seconds | minutes | h… #2"
 
 [[obligation]]
 id = "sf.ddl.create-dynamic-table.create-dynamic-table-clone.o055"
@@ -125572,6 +126611,12 @@ required = true
 note = "the form without its required REGIONS"
 
 [[obligation]]
+id = "sf.ddl.create-event-routing-table.o082"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( #2"
+
+[[obligation]]
 id = "sf.ddl.create-event-routing-table.o031"
 kind = "negative_neighbour"
 required = true
@@ -125582,6 +126627,12 @@ id = "sf.ddl.create-event-routing-table.o032"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required DESTINATION_ACCOUNT"
+
+[[obligation]]
+id = "sf.ddl.create-event-routing-table.o083"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) #2"
 
 [[obligation]]
 id = "sf.ddl.create-event-routing-table.o073"
@@ -125602,6 +126653,12 @@ required = true
 note = "the form without its required REGIONS in [ <rule_name> = ( REGION_GROUP = <region_group> , REGIONS = ( '<region1>' [ , '<region2>' , ... ] ) , DESTINATION_ACCOU…"
 
 [[obligation]]
+id = "sf.ddl.create-event-routing-table.o084"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( in [ <rule_name> = ( REGION_GROUP = <region_group> , REGIONS = ( '<region1>' [ , '<region2>' , ... ] ) , DESTINATION_ACCOU… #2"
+
+[[obligation]]
 id = "sf.ddl.create-event-routing-table.o076"
 kind = "negative_neighbour"
 required = true
@@ -125612,6 +126669,18 @@ id = "sf.ddl.create-event-routing-table.o077"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required DESTINATION_ACCOUNT in [ <rule_name> = ( REGION_GROUP = <region_group> , REGIONS = ( '<region1>' [ , '<region2>' , ... ] ) , DESTINATION_ACCOU…"
+
+[[obligation]]
+id = "sf.ddl.create-event-routing-table.o085"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) in [ <rule_name> = ( REGION_GROUP = <region_group> , REGIONS = ( '<region1>' [ , '<region2>' , ... ] ) , DESTINATION_ACCOU… #2"
+
+[[obligation]]
+id = "sf.ddl.create-event-routing-table.o086"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
 
 [[obligation]]
 id = "sf.ddl.create-event-routing-table.o035"
@@ -127904,6 +128973,12 @@ required = true
 note = "the form without its required INPUT in [ { CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } ]"
 
 [[obligation]]
+id = "sf.ddl.create-external-function.function-returns-api-integration-as.o111"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required NULL in [ { CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } ] #2"
+
+[[obligation]]
 id = "sf.ddl.create-external-function.function-returns-api-integration-as.o091"
 kind = "negative_neighbour"
 required = true
@@ -130041,6 +131116,12 @@ required = true
 note = "the form without its required FILE_FORMAT"
 
 [[obligation]]
+id = "sf.ddl.create-external-table.cloudproviderparams-location-externalstage-file-format.o497"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( #2"
+
+[[obligation]]
 id = "sf.ddl.create-external-table.cloudproviderparams-location-externalstage-file-format.o380"
 kind = "negative_neighbour"
 required = true
@@ -130231,6 +131312,12 @@ id = "sf.ddl.create-external-table.cloudproviderparams-location-externalstage-fi
 kind = "negative_neighbour"
 required = true
 note = "the form without its required { FORMAT_NAME = '<file_format_name>' | { TYPE = CSV [ COMPRESSION = { AUTO | GZIP | BZ2 | BROTLI | ZSTD | DEFLATE | RAW_DEFLATE | NONE } ] [ RECORD_DELIMITER = { '<string>' | NONE } ] [ FIELD_DELIMITER = { '<string>' | NONE } ] [ MULTI_LINE = { TRUE | FALSE } ] [ SKIP_HEADER = <integer> ] [ SKIP_BLANK_LINES = { TRUE | FALSE } ] [ ESCAPE_UNENCLOSED_FIELD = { '<character>' | NONE } ] [ TRIM_SPACE = { TRUE | FALSE } ] [ FIELD_OPTIONALLY_ENCLOSED_BY = { '<character>' | NONE } ] [ NULL_IF = ( '<string1>' [ , '<string2>' , ... ] ) ] [ EMPTY_FIELD_AS_NULL = { TRUE | FALSE } ] [ ENCODING = '<string>' ] | TYPE = JSON [ COMPRESSION = { AUTO | GZIP | BZ2 | BROTLI | ZSTD | DEFLATE | RAW_DEFLATE | NONE } ] [ MULTI_LINE = { TRUE | FALSE } ] [ ALLOW_DUPLICATE = { TRUE | FALSE } ] [ STRIP_OUTER_ARRAY = { TRUE | FALSE } ] [ STRIP_NULL_VALUES = { TRUE | FALSE } ] [ REPLACE_INVALID_CHARACTERS = { TRUE | FALSE } ] | TYPE = AVRO [ COMPRESSION = { AUTO | GZIP | BZ2 | BROTLI | ZSTD | DEFLATE | RAW_DEFLATE | NONE } ] [ REPLACE_INVALID_CHARACTERS = { TRUE | FALSE } ] | TYPE = ORC [ TRIM_SPACE = { TRUE | FALSE } ] [ REPLACE_INVALID_CHARACTERS = { TRUE | FALSE } ] [ NULL_IF = ( '<string>' [ , '<string>' ... ] ) ] | TYPE = PARQUET [ COMPRESSION = { AUTO | SNAPPY | NONE } ] [ BINARY_AS_TEXT = { TRUE | FALSE } ] [ REPLACE_INVALID_CHARACTERS = { TRUE | FALSE } ] } }"
+
+[[obligation]]
+id = "sf.ddl.create-external-table.cloudproviderparams-location-externalstage-file-format.o498"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) #2"
 
 [[obligation]]
 id = "sf.ddl.create-external-table.cloudproviderparams-location-externalstage-file-format.o153"
@@ -132595,6 +133682,12 @@ required = true
 note = "the form without its required FILE_FORMAT"
 
 [[obligation]]
+id = "sf.ddl.create-external-table.cloudproviderparams-location-externalstage-partition-type.o475"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( #2"
+
+[[obligation]]
 id = "sf.ddl.create-external-table.cloudproviderparams-location-externalstage-partition-type.o362"
 kind = "negative_neighbour"
 required = true
@@ -132785,6 +133878,12 @@ id = "sf.ddl.create-external-table.cloudproviderparams-location-externalstage-pa
 kind = "negative_neighbour"
 required = true
 note = "the form without its required { FORMAT_NAME = '<file_format_name>' | { TYPE = CSV [ COMPRESSION = { AUTO | GZIP | BZ2 | BROTLI | ZSTD | DEFLATE | RAW_DEFLATE | NONE } ] [ RECORD_DELIMITER = { '<string>' | NONE } ] [ FIELD_DELIMITER = { '<string>' | NONE } ] [ MULTI_LINE = { TRUE | FALSE } ] [ SKIP_HEADER = <integer> ] [ SKIP_BLANK_LINES = { TRUE | FALSE } ] [ ESCAPE_UNENCLOSED_FIELD = { '<character>' | NONE } ] [ TRIM_SPACE = { TRUE | FALSE } ] [ FIELD_OPTIONALLY_ENCLOSED_BY = { '<character>' | NONE } ] [ NULL_IF = ( '<string1>' [ , '<string2>' , ... ] ) ] [ EMPTY_FIELD_AS_NULL = { TRUE | FALSE } ] [ ENCODING = '<string>' ] | TYPE = JSON [ COMPRESSION = { AUTO | GZIP | BZ2 | BROTLI | ZSTD | DEFLATE | RAW_DEFLATE | NONE } ] [ MULTI_LINE = { TRUE | FALSE } ] [ ALLOW_DUPLICATE = { TRUE | FALSE } ] [ STRIP_OUTER_ARRAY = { TRUE | FALSE } ] [ STRIP_NULL_VALUES = { TRUE | FALSE } ] [ REPLACE_INVALID_CHARACTERS = { TRUE | FALSE } ] | TYPE = AVRO [ COMPRESSION = { AUTO | GZIP | BZ2 | BROTLI | ZSTD | DEFLATE | RAW_DEFLATE | NONE } ] [ REPLACE_INVALID_CHARACTERS = { TRUE | FALSE } ] | TYPE = ORC [ TRIM_SPACE = { TRUE | FALSE } ] [ REPLACE_INVALID_CHARACTERS = { TRUE | FALSE } ] [ NULL_IF = ( '<string>' [ , '<string>' ... ] ) ] | TYPE = PARQUET [ COMPRESSION = { AUTO | SNAPPY | NONE } ] [ BINARY_AS_TEXT = { TRUE | FALSE } ] [ REPLACE_INVALID_CHARACTERS = { TRUE | FALSE } ] } }"
+
+[[obligation]]
+id = "sf.ddl.create-external-table.cloudproviderparams-location-externalstage-partition-type.o476"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) #2"
 
 [[obligation]]
 id = "sf.ddl.create-external-table.cloudproviderparams-location-externalstage-partition-type.o135"
@@ -135145,6 +136244,12 @@ required = true
 note = "the form without its required FILE_FORMAT"
 
 [[obligation]]
+id = "sf.ddl.create-external-table.cloudproviderparams-location-externalstage-partition-type.syntax.o477"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( #2"
+
+[[obligation]]
 id = "sf.ddl.create-external-table.cloudproviderparams-location-externalstage-partition-type.syntax.o365"
 kind = "negative_neighbour"
 required = true
@@ -135335,6 +136440,12 @@ id = "sf.ddl.create-external-table.cloudproviderparams-location-externalstage-pa
 kind = "negative_neighbour"
 required = true
 note = "the form without its required { FORMAT_NAME = '<file_format_name>' | { TYPE = CSV [ COMPRESSION = { AUTO | GZIP | BZ2 | BROTLI | ZSTD | DEFLATE | RAW_DEFLATE | NONE } ] [ RECORD_DELIMITER = { '<string>' | NONE } ] [ FIELD_DELIMITER = { '<string>' | NONE } ] [ MULTI_LINE = { TRUE | FALSE } ] [ SKIP_HEADER = <integer> ] [ SKIP_BLANK_LINES = { TRUE | FALSE } ] [ ESCAPE_UNENCLOSED_FIELD = { '<character>' | NONE } ] [ TRIM_SPACE = { TRUE | FALSE } ] [ FIELD_OPTIONALLY_ENCLOSED_BY = { '<character>' | NONE } ] [ NULL_IF = ( '<string1>' [ , '<string2>' , ... ] ) ] [ EMPTY_FIELD_AS_NULL = { TRUE | FALSE } ] [ ENCODING = '<string>' ] | TYPE = JSON [ COMPRESSION = { AUTO | GZIP | BZ2 | BROTLI | ZSTD | DEFLATE | RAW_DEFLATE | NONE } ] [ MULTI_LINE = { TRUE | FALSE } ] [ ALLOW_DUPLICATE = { TRUE | FALSE } ] [ STRIP_OUTER_ARRAY = { TRUE | FALSE } ] [ STRIP_NULL_VALUES = { TRUE | FALSE } ] [ REPLACE_INVALID_CHARACTERS = { TRUE | FALSE } ] | TYPE = AVRO [ COMPRESSION = { AUTO | GZIP | BZ2 | BROTLI | ZSTD | DEFLATE | RAW_DEFLATE | NONE } ] [ REPLACE_INVALID_CHARACTERS = { TRUE | FALSE } ] | TYPE = ORC [ TRIM_SPACE = { TRUE | FALSE } ] [ REPLACE_INVALID_CHARACTERS = { TRUE | FALSE } ] [ NULL_IF = ( '<string>' [ , '<string>' ... ] ) ] | TYPE = PARQUET [ COMPRESSION = { AUTO | SNAPPY | NONE } ] [ BINARY_AS_TEXT = { TRUE | FALSE } ] [ REPLACE_INVALID_CHARACTERS = { TRUE | FALSE } ] } }"
+
+[[obligation]]
+id = "sf.ddl.create-external-table.cloudproviderparams-location-externalstage-partition-type.syntax.o478"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) #2"
 
 [[obligation]]
 id = "sf.ddl.create-external-table.cloudproviderparams-location-externalstage-partition-type.syntax.o137"
@@ -136636,6 +137747,12 @@ required = true
 note = "the form without its required ("
 
 [[obligation]]
+id = "sf.ddl.create-external-volume.o125"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( #2"
+
+[[obligation]]
 id = "sf.ddl.create-external-volume.o034"
 kind = "negative_neighbour"
 required = true
@@ -136730,6 +137847,12 @@ id = "sf.ddl.create-external-volume.o124"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required { { { STORAGE_PROVIDER = '{ S3 | S3CHINA | S3GOV }' STORAGE_AWS_ROLE_ARN = '<iam_role>' STORAGE_BASE_URL = '<protocol>://<bucket>[/<path>/]' [ STORAGE_AWS_ACCESS_POINT_ARN = '<string>' ] [ STORAGE_AWS_EXTERNAL_ID = '<external_id>' ] [ ENCRYPTION = ( { [ TYPE = 'AWS_SSE_S3' ] | [ TYPE = 'AWS_SSE_KMS' [ KMS_KEY_ID = '<string>' ] ] | [ TYPE = 'NONE' ] } ) ] [ USE_PRIVATELINK_ENDPOINT = { TRUE | FALSE } ] } | { STORAGE_PROVIDER = 'GCS' STORAGE_BASE_URL = 'gcs://<bucket>[/<path>/]' [ ENCRYPTION = ( { [ TYPE = 'GCS_SSE_KMS' ] [ KMS_KEY_ID = '<string>' ] | [ TYPE = 'NONE' ] } ) ] } | { STORAGE_PROVIDER = 'AZURE' AZURE_TENANT_ID = '<tenant_id>' STORAGE_BASE_URL = 'azure://...' [ USE_PRIVATELINK_ENDPOINT = { TRUE | FALSE } ] } } | STORAGE_PROVIDER = 'S3COMPAT' STORAGE_BASE_URL = 's3compat://<bucket>[/<path>/]' CREDENTIALS = ( AWS_KEY_ID = '<string>' AWS_SECRET_KEY = '<string>' ) STORAGE_ENDPOINT = '<s3_api_compatible_endpoint>' }"
+
+[[obligation]]
+id = "sf.ddl.create-external-volume.o126"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) #2"
 
 [[obligation]]
 id = "sf.ddl.create-external-volume.o037"
@@ -144873,6 +145996,12 @@ required = true
 note = "the form without its required INPUT in [ { CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } ]"
 
 [[obligation]]
+id = "sf.ddl.create-function-spcs.function-returns-service-endpoint.o098"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required NULL in [ { CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } ] #2"
+
+[[obligation]]
 id = "sf.ddl.create-function-spcs.function-returns-service-endpoint.o077"
 kind = "negative_neighbour"
 required = true
@@ -145759,6 +146888,12 @@ required = true
 note = "the form without its required INPUT in [ { CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } ]"
 
 [[obligation]]
+id = "sf.ddl.create-function.create-function-returns-language.o113"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required NULL in [ { CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } ] #2"
+
+[[obligation]]
 id = "sf.ddl.create-function.create-function-returns-language.o097"
 kind = "negative_neighbour"
 required = true
@@ -146354,6 +147489,12 @@ required = true
 note = "the form without its required INPUT in [ { CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } ]"
 
 [[obligation]]
+id = "sf.ddl.create-function.create-function-returns-language.scala-handler.o092"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required NULL in [ { CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } ] #2"
+
+[[obligation]]
 id = "sf.ddl.create-function.create-function-returns-language.scala-handler.o080"
 kind = "negative_neighbour"
 required = true
@@ -146376,6 +147517,18 @@ id = "sf.ddl.create-function.create-function-returns-language.scala-handler.o083
 kind = "negative_neighbour"
 required = true
 note = "the form without its required IMPORTS"
+
+[[obligation]]
+id = "sf.ddl.create-function.create-function-returns-language.scala-handler.o093"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( #2"
+
+[[obligation]]
+id = "sf.ddl.create-function.create-function-returns-language.scala-handler.o094"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) #2"
 
 [[obligation]]
 id = "sf.ddl.create-function.create-function-returns-language.scala-handler.o084"
@@ -147193,6 +148346,12 @@ id = "sf.ddl.create-function.create-function-returns-table.o123"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required INPUT in [ { CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } ]"
+
+[[obligation]]
+id = "sf.ddl.create-function.create-function-returns-table.o153"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required NULL in [ { CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } ] #2"
 
 [[obligation]]
 id = "sf.ddl.create-function.create-function-returns-table.o124"
@@ -148081,6 +149240,12 @@ required = true
 note = "the form without its required INPUT in [ { CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } ]"
 
 [[obligation]]
+id = "sf.ddl.create-function.create-function-returns-table-2.o141"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required NULL in [ { CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } ] #2"
+
+[[obligation]]
 id = "sf.ddl.create-function.create-function-returns-table-2.o113"
 kind = "negative_neighbour"
 required = true
@@ -148109,6 +149274,18 @@ id = "sf.ddl.create-function.create-function-returns-table-2.o117"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required IMPORTS"
+
+[[obligation]]
+id = "sf.ddl.create-function.create-function-returns-table-2.o142"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( #2"
+
+[[obligation]]
+id = "sf.ddl.create-function.create-function-returns-table-2.o143"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) #2"
 
 [[obligation]]
 id = "sf.ddl.create-function.create-function-returns-table-2.o118"
@@ -148924,6 +150101,12 @@ required = true
 note = "the form without its required INPUT in [ { CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } ]"
 
 [[obligation]]
+id = "sf.ddl.create-function.create-function-returns-table.java-handler.o132"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required NULL in [ { CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } ] #2"
+
+[[obligation]]
 id = "sf.ddl.create-function.create-function-returns-table.java-handler.o107"
 kind = "negative_neighbour"
 required = true
@@ -148946,6 +150129,18 @@ id = "sf.ddl.create-function.create-function-returns-table.java-handler.o110"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required IMPORTS"
+
+[[obligation]]
+id = "sf.ddl.create-function.create-function-returns-table.java-handler.o133"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( #2"
+
+[[obligation]]
+id = "sf.ddl.create-function.create-function-returns-table.java-handler.o134"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) #2"
 
 [[obligation]]
 id = "sf.ddl.create-function.create-function-returns-table.java-handler.o111"
@@ -149557,6 +150752,12 @@ id = "sf.ddl.create-function.create-function-returns-table.javascript-handler.o0
 kind = "negative_neighbour"
 required = true
 note = "the form without its required INPUT in [ { CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } ]"
+
+[[obligation]]
+id = "sf.ddl.create-function.create-function-returns-table.javascript-handler.o092"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required NULL in [ { CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } ] #2"
 
 [[obligation]]
 id = "sf.ddl.create-function.create-function-returns-table.javascript-handler.o077"
@@ -150403,6 +151604,12 @@ id = "sf.ddl.create-function.create-function-returns-table.python-handler.o120"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required INPUT in [ { CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } ]"
+
+[[obligation]]
+id = "sf.ddl.create-function.create-function-returns-table.python-handler.o151"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required NULL in [ { CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } ] #2"
 
 [[obligation]]
 id = "sf.ddl.create-function.create-function-returns-table.python-handler.o121"
@@ -155254,6 +156461,12 @@ required = true
 note = "the form without its required INPUT in [ { CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } ]"
 
 [[obligation]]
+id = "sf.ddl.create-function.define-function.o647"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required NULL in [ { CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } ] #2"
+
+[[obligation]]
 id = "sf.ddl.create-function.define-function.o637"
 kind = "negative_neighbour"
 required = true
@@ -155314,16 +156527,16 @@ required = true
 note = "the form without its required ON in [ { CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } ] #2"
 
 [[obligation]]
-id = "sf.ddl.create-function.define-function.o647"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required NULL in [ { CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } ] #2"
-
-[[obligation]]
 id = "sf.ddl.create-function.define-function.o648"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required INPUT in [ { CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } ] #2"
+
+[[obligation]]
+id = "sf.ddl.create-function.define-function.o728"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required NULL in [ { CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } ] #2 #2"
 
 [[obligation]]
 id = "sf.ddl.create-function.define-function.o649"
@@ -155348,6 +156561,18 @@ id = "sf.ddl.create-function.define-function.o652"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required IMPORTS"
+
+[[obligation]]
+id = "sf.ddl.create-function.define-function.o729"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( #2"
+
+[[obligation]]
+id = "sf.ddl.create-function.define-function.o730"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) #2"
 
 [[obligation]]
 id = "sf.ddl.create-function.define-function.o653"
@@ -155378,6 +156603,12 @@ id = "sf.ddl.create-function.define-function.o657"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required INPUT in [ { CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } ] #3"
+
+[[obligation]]
+id = "sf.ddl.create-function.define-function.o731"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required NULL in [ { CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } ] #3 #2"
 
 [[obligation]]
 id = "sf.ddl.create-function.define-function.o658"
@@ -155470,6 +156701,12 @@ required = true
 note = "the form without its required INPUT in [ { CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } ] #4"
 
 [[obligation]]
+id = "sf.ddl.create-function.define-function.o732"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required NULL in [ { CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } ] #4 #2"
+
+[[obligation]]
 id = "sf.ddl.create-function.define-function.o673"
 kind = "negative_neighbour"
 required = true
@@ -155548,6 +156785,12 @@ required = true
 note = "the form without its required INPUT in [ { CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } ] #5"
 
 [[obligation]]
+id = "sf.ddl.create-function.define-function.o733"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required NULL in [ { CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } ] #5 #2"
+
+[[obligation]]
 id = "sf.ddl.create-function.define-function.o686"
 kind = "negative_neighbour"
 required = true
@@ -155614,6 +156857,12 @@ required = true
 note = "the form without its required INPUT in [ { CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } ] #6"
 
 [[obligation]]
+id = "sf.ddl.create-function.define-function.o734"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required NULL in [ { CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } ] #6 #2"
+
+[[obligation]]
 id = "sf.ddl.create-function.define-function.o697"
 kind = "negative_neighbour"
 required = true
@@ -155648,6 +156897,12 @@ id = "sf.ddl.create-function.define-function.o702"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required INPUT in [ { CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } ] #7"
+
+[[obligation]]
+id = "sf.ddl.create-function.define-function.o735"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required NULL in [ { CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } ] #7 #2"
 
 [[obligation]]
 id = "sf.ddl.create-function.define-function.o703"
@@ -157821,6 +159076,12 @@ required = true
 note = "the form without its required AS"
 
 [[obligation]]
+id = "sf.ddl.create-hybrid-table.table-as.o018"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
+
+[[obligation]]
 id = "sf.ddl.create-hybrid-table.table-as.o015"
 kind = "identifier_class"
 required = true
@@ -159639,10 +160900,28 @@ required = true
 note = "the form without its required ACCESS"
 
 [[obligation]]
+id = "sf.ddl.create-iceberg-table-snowflake.table-masking-policy-row.o084"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required POLICY #2"
+
+[[obligation]]
 id = "sf.ddl.create-iceberg-table-snowflake.table-masking-policy-row.o070"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required ON"
+
+[[obligation]]
+id = "sf.ddl.create-iceberg-table-snowflake.table-masking-policy-row.o085"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( #2"
+
+[[obligation]]
+id = "sf.ddl.create-iceberg-table-snowflake.table-masking-policy-row.o086"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) #2"
 
 [[obligation]]
 id = "sf.ddl.create-iceberg-table-snowflake.table-masking-policy-row.o071"
@@ -170790,6 +172069,18 @@ required = true
 note = "the form without its required BY"
 
 [[obligation]]
+id = "sf.ddl.create-interactive-table.as.o329"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( #2"
+
+[[obligation]]
+id = "sf.ddl.create-interactive-table.as.o330"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) #2"
+
+[[obligation]]
 id = "sf.ddl.create-interactive-table.as.o139"
 kind = "negative_neighbour"
 required = true
@@ -174032,6 +175323,12 @@ required = true
 note = "the form without its required PROJECTION in [ <col1> [ WITH ] MASKING POLICY <policy_name> [ USING ( <col1> , <cond_col1> , ... ) ] [ WITH ] PROJECTION POLICY <pol…"
 
 [[obligation]]
+id = "sf.ddl.create-materialized-view.o341"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required POLICY in [ <col1> [ WITH ] MASKING POLICY <policy_name> [ USING ( <col1> , <cond_col1> , ... ) ] [ WITH ] PROJECTION POLICY <pol… #2"
+
+[[obligation]]
 id = "sf.ddl.create-materialized-view.o135"
 kind = "negative_neighbour"
 required = true
@@ -175054,6 +176351,12 @@ required = true
 note = "the form without its required EXISTS in [ IF NOT EXISTS ]"
 
 [[obligation]]
+id = "sf.ddl.create-model-monitor.gateway-function-warehouse-refresh-interval.o086"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required MODEL #2"
+
+[[obligation]]
 id = "sf.ddl.create-model-monitor.gateway-function-warehouse-refresh-interval.o061"
 kind = "negative_neighbour"
 required = true
@@ -175743,6 +177046,12 @@ id = "sf.ddl.create-model-monitor.version-function-source-warehouse.o076"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required EXISTS in [ IF NOT EXISTS ]"
+
+[[obligation]]
+id = "sf.ddl.create-model-monitor.version-function-source-warehouse.o113"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required MODEL #2"
 
 [[obligation]]
 id = "sf.ddl.create-model-monitor.version-function-source-warehouse.o078"
@@ -176600,6 +177909,12 @@ id = "sf.ddl.create-model.model.o027"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required FROM"
+
+[[obligation]]
+id = "sf.ddl.create-model.model.o037"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required MODEL #2"
 
 [[obligation]]
 id = "sf.ddl.create-model.model.o028"
@@ -181793,6 +183108,12 @@ required = true
 note = "the form without its required INPUT in [ { CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } ]"
 
 [[obligation]]
+id = "sf.ddl.create-procedure.create-procedure-returns-language.o085"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required NULL in [ { CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } ] #2"
+
+[[obligation]]
 id = "sf.ddl.create-procedure.create-procedure-returns-language.o071"
 kind = "negative_neighbour"
 required = true
@@ -182579,6 +183900,18 @@ required = true
 note = "the form without its required PACKAGES"
 
 [[obligation]]
+id = "sf.ddl.create-procedure.create-procedure-returns-table.o174"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( #2"
+
+[[obligation]]
+id = "sf.ddl.create-procedure.create-procedure-returns-table.o175"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) #2"
+
+[[obligation]]
 id = "sf.ddl.create-procedure.create-procedure-returns-table.o121"
 kind = "negative_neighbour"
 required = true
@@ -182637,6 +183970,12 @@ id = "sf.ddl.create-procedure.create-procedure-returns-table.o130"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required INPUT in [ { CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } ]"
+
+[[obligation]]
+id = "sf.ddl.create-procedure.create-procedure-returns-table.o176"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required NULL in [ { CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } ] #2"
 
 [[obligation]]
 id = "sf.ddl.create-procedure.create-procedure-returns-table.o131"
@@ -183606,6 +184945,12 @@ required = true
 note = "the form without its required INPUT in [ { CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } ]"
 
 [[obligation]]
+id = "sf.ddl.create-procedure.create-procedure-returns-table-2.o178"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required NULL in [ { CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } ] #2"
+
+[[obligation]]
 id = "sf.ddl.create-procedure.create-procedure-returns-table-2.o129"
 kind = "negative_neighbour"
 required = true
@@ -184354,6 +185699,18 @@ required = true
 note = "the form without its required PACKAGES"
 
 [[obligation]]
+id = "sf.ddl.create-procedure.create-procedure-returns-table-3.o186"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( #2"
+
+[[obligation]]
+id = "sf.ddl.create-procedure.create-procedure-returns-table-3.o187"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) #2"
+
+[[obligation]]
 id = "sf.ddl.create-procedure.create-procedure-returns-table-3.o092"
 kind = "negative_neighbour"
 required = true
@@ -184388,6 +185745,12 @@ id = "sf.ddl.create-procedure.create-procedure-returns-table-3.o097"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required INPUT in [ { CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } ]"
+
+[[obligation]]
+id = "sf.ddl.create-procedure.create-procedure-returns-table-3.o188"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required NULL in [ { CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } ] #2"
 
 [[obligation]]
 id = "sf.ddl.create-procedure.create-procedure-returns-table-3.o098"
@@ -185213,6 +186576,18 @@ required = true
 note = "the form without its required PACKAGES"
 
 [[obligation]]
+id = "sf.ddl.create-procedure.create-procedure-returns-table.java-handler.o165"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( #2"
+
+[[obligation]]
+id = "sf.ddl.create-procedure.create-procedure-returns-table.java-handler.o166"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) #2"
+
+[[obligation]]
 id = "sf.ddl.create-procedure.create-procedure-returns-table.java-handler.o113"
 kind = "negative_neighbour"
 required = true
@@ -185271,6 +186646,12 @@ id = "sf.ddl.create-procedure.create-procedure-returns-table.java-handler.o122"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required INPUT in [ { CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } ]"
+
+[[obligation]]
+id = "sf.ddl.create-procedure.create-procedure-returns-table.java-handler.o167"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required NULL in [ { CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } ] #2"
 
 [[obligation]]
 id = "sf.ddl.create-procedure.create-procedure-returns-table.java-handler.o123"
@@ -186288,6 +187669,12 @@ required = true
 note = "the form without its required INPUT in [ { CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } ]"
 
 [[obligation]]
+id = "sf.ddl.create-procedure.create-procedure-returns-table.python-handler.o187"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required NULL in [ { CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } ] #2"
+
+[[obligation]]
 id = "sf.ddl.create-procedure.create-procedure-returns-table.python-handler.o137"
 kind = "negative_neighbour"
 required = true
@@ -187096,6 +188483,18 @@ required = true
 note = "the form without its required PACKAGES"
 
 [[obligation]]
+id = "sf.ddl.create-procedure.create-procedure-returns-table.scala-handler.o199"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( #2"
+
+[[obligation]]
+id = "sf.ddl.create-procedure.create-procedure-returns-table.scala-handler.o200"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) #2"
+
+[[obligation]]
 id = "sf.ddl.create-procedure.create-procedure-returns-table.scala-handler.o100"
 kind = "negative_neighbour"
 required = true
@@ -187130,6 +188529,12 @@ id = "sf.ddl.create-procedure.create-procedure-returns-table.scala-handler.o105"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required INPUT in [ { CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } ]"
+
+[[obligation]]
+id = "sf.ddl.create-procedure.create-procedure-returns-table.scala-handler.o201"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required NULL in [ { CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } ] #2"
 
 [[obligation]]
 id = "sf.ddl.create-procedure.create-procedure-returns-table.scala-handler.o106"
@@ -187802,6 +189207,12 @@ required = true
 note = "the form without its required INPUT in [ { CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } ]"
 
 [[obligation]]
+id = "sf.ddl.create-procedure.create-procedure-returns-table.snowflake-scripting-handler.o140"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required NULL in [ { CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } ] #2"
+
+[[obligation]]
 id = "sf.ddl.create-procedure.create-procedure-returns-table.snowflake-scripting-handler.o081"
 kind = "negative_neighbour"
 required = true
@@ -188071,6 +189482,12 @@ id = "sf.ddl.create-procedure.create-procedure-scoped-temp.o023"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required )"
+
+[[obligation]]
+id = "sf.ddl.create-procedure.create-procedure-scoped-temp.o029"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
 
 [[obligation]]
 id = "sf.ddl.create-procedure.create-procedure-scoped-temp.o024"
@@ -192708,6 +194125,12 @@ required = true
 note = "the form without its required INPUT in [ { CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } ]"
 
 [[obligation]]
+id = "sf.ddl.create-procedure.define-procedure.o732"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required NULL in [ { CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } ] #2"
+
+[[obligation]]
 id = "sf.ddl.create-procedure.define-procedure.o712"
 kind = "negative_neighbour"
 required = true
@@ -192780,6 +194203,18 @@ required = true
 note = "the form without its required PACKAGES"
 
 [[obligation]]
+id = "sf.ddl.create-procedure.define-procedure.o854"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( #2"
+
+[[obligation]]
+id = "sf.ddl.create-procedure.define-procedure.o855"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) #2"
+
+[[obligation]]
 id = "sf.ddl.create-procedure.define-procedure.o724"
 kind = "negative_neighbour"
 required = true
@@ -192828,16 +194263,16 @@ required = true
 note = "the form without its required ON in [ { CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } ] #2"
 
 [[obligation]]
-id = "sf.ddl.create-procedure.define-procedure.o732"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required NULL in [ { CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } ] #2"
-
-[[obligation]]
 id = "sf.ddl.create-procedure.define-procedure.o733"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required INPUT in [ { CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } ] #2"
+
+[[obligation]]
+id = "sf.ddl.create-procedure.define-procedure.o856"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required NULL in [ { CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } ] #2 #2"
 
 [[obligation]]
 id = "sf.ddl.create-procedure.define-procedure.o734"
@@ -192954,6 +194389,12 @@ required = true
 note = "the form without its required INPUT in [ { CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } ] #3"
 
 [[obligation]]
+id = "sf.ddl.create-procedure.define-procedure.o857"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required NULL in [ { CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } ] #3 #2"
+
+[[obligation]]
 id = "sf.ddl.create-procedure.define-procedure.o753"
 kind = "negative_neighbour"
 required = true
@@ -193030,6 +194471,12 @@ id = "sf.ddl.create-procedure.define-procedure.o765"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required INPUT in [ { CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } ] #4"
+
+[[obligation]]
+id = "sf.ddl.create-procedure.define-procedure.o858"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required NULL in [ { CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } ] #4 #2"
 
 [[obligation]]
 id = "sf.ddl.create-procedure.define-procedure.o766"
@@ -193126,6 +194573,12 @@ id = "sf.ddl.create-procedure.define-procedure.o781"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required INPUT in [ { CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } ] #5"
+
+[[obligation]]
+id = "sf.ddl.create-procedure.define-procedure.o859"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required NULL in [ { CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } ] #5 #2"
 
 [[obligation]]
 id = "sf.ddl.create-procedure.define-procedure.o782"
@@ -193236,6 +194689,12 @@ required = true
 note = "the form without its required INPUT in [ { CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } ] #6"
 
 [[obligation]]
+id = "sf.ddl.create-procedure.define-procedure.o860"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required NULL in [ { CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } ] #6 #2"
+
+[[obligation]]
 id = "sf.ddl.create-procedure.define-procedure.o800"
 kind = "negative_neighbour"
 required = true
@@ -193306,6 +194765,12 @@ id = "sf.ddl.create-procedure.define-procedure.o811"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required INPUT in [ { CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } ] #7"
+
+[[obligation]]
+id = "sf.ddl.create-procedure.define-procedure.o861"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required NULL in [ { CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } ] #7 #2"
 
 [[obligation]]
 id = "sf.ddl.create-procedure.define-procedure.o812"
@@ -193384,6 +194849,12 @@ id = "sf.ddl.create-procedure.define-procedure.o824"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required INPUT in [ { CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } ] #8"
+
+[[obligation]]
+id = "sf.ddl.create-procedure.define-procedure.o862"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required NULL in [ { CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } ] #8 #2"
 
 [[obligation]]
 id = "sf.ddl.create-procedure.define-procedure.o825"
@@ -198848,6 +200319,12 @@ required = true
 note = "the form without its required AS in [ <relationship_identifier> AS ]"
 
 [[obligation]]
+id = "sf.ddl.create-semantic-view.create-or-alter-semantic.o510"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( in [ RELATIONSHIPS ( [ <relationship_identifier> AS ] <table_alias> ( <column_name> [ , ... ] ) REFERENCES <ref_table_alia… #2"
+
+[[obligation]]
 id = "sf.ddl.create-semantic-view.create-or-alter-semantic.o401"
 kind = "negative_neighbour"
 required = true
@@ -198882,6 +200359,12 @@ id = "sf.ddl.create-semantic-view.create-or-alter-semantic.o406"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required ) in [ ( { [ ASOF ] <ref_column_name> [ , ... ] | BETWEEN <start_column> AND <end_column> EXCLUSIVE } ) ]"
+
+[[obligation]]
+id = "sf.ddl.create-semantic-view.create-or-alter-semantic.o511"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) in [ RELATIONSHIPS ( [ <relationship_identifier> AS ] <table_alias> ( <column_name> [ , ... ] ) REFERENCES <ref_table_alia… #2"
 
 [[obligation]]
 id = "sf.ddl.create-semantic-view.create-or-alter-semantic.o407"
@@ -199148,6 +200631,12 @@ required = true
 note = "the form without its required OVER in [ METRICS ( { [ { PRIVATE | PUBLIC } ] <table_alias> . <metric> [ USING ( <relationship_name> [ , ... ] ) ] [ NON ADDIT…"
 
 [[obligation]]
+id = "sf.ddl.create-semantic-view.create-or-alter-semantic.o512"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( in [ METRICS ( { [ { PRIVATE | PUBLIC } ] <table_alias> . <metric> [ USING ( <relationship_name> [ , ... ] ) ] [ NON ADDIT… #2"
+
+[[obligation]]
 id = "sf.ddl.create-semantic-view.create-or-alter-semantic.o451"
 kind = "negative_neighbour"
 required = true
@@ -199172,6 +200661,12 @@ required = true
 note = "the form without its required { FIRST | LAST } in [ NULLS { FIRST | LAST } ] #2"
 
 [[obligation]]
+id = "sf.ddl.create-semantic-view.create-or-alter-semantic.o513"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) in [ METRICS ( { [ { PRIVATE | PUBLIC } ] <table_alias> . <metric> [ USING ( <relationship_name> [ , ... ] ) ] [ NON ADDIT… #2"
+
+[[obligation]]
 id = "sf.ddl.create-semantic-view.create-or-alter-semantic.o455"
 kind = "negative_neighbour"
 required = true
@@ -199190,6 +200685,12 @@ required = true
 note = "the form without its required AS in [ AI_VERIFIED_QUERIES ( <verified_query_name> AS ( QUESTION '<question>' [ VERIFIED_AT <timestamp> ] [ ONBOARDING_QUEST…"
 
 [[obligation]]
+id = "sf.ddl.create-semantic-view.create-or-alter-semantic.o514"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( in [ AI_VERIFIED_QUERIES ( <verified_query_name> AS ( QUESTION '<question>' [ VERIFIED_AT <timestamp> ] [ ONBOARDING_QUEST… #2"
+
+[[obligation]]
 id = "sf.ddl.create-semantic-view.create-or-alter-semantic.o458"
 kind = "negative_neighbour"
 required = true
@@ -199206,6 +200707,12 @@ id = "sf.ddl.create-semantic-view.create-or-alter-semantic.o460"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required ) in [ AI_VERIFIED_QUERIES ( <verified_query_name> AS ( QUESTION '<question>' [ VERIFIED_AT <timestamp> ] [ ONBOARDING_QUEST…"
+
+[[obligation]]
+id = "sf.ddl.create-semantic-view.create-or-alter-semantic.o515"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) in [ AI_VERIFIED_QUERIES ( <verified_query_name> AS ( QUESTION '<question>' [ VERIFIED_AT <timestamp> ] [ ONBOARDING_QUEST… #2"
 
 [[obligation]]
 id = "sf.ddl.create-semantic-view.create-or-alter-semantic.o078"
@@ -201993,6 +203500,12 @@ required = true
 note = "the form without its required AS in [ <relationship_identifier> AS ]"
 
 [[obligation]]
+id = "sf.ddl.create-semantic-view.create-semantic-view-tables.o533"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( in [ RELATIONSHIPS ( [ <relationship_identifier> AS ] <table_alias> ( <column_name> [ , ... ] ) REFERENCES <ref_table_alia… #2"
+
+[[obligation]]
 id = "sf.ddl.create-semantic-view.create-semantic-view-tables.o423"
 kind = "negative_neighbour"
 required = true
@@ -202027,6 +203540,12 @@ id = "sf.ddl.create-semantic-view.create-semantic-view-tables.o428"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required ) in [ ( { [ ASOF ] <ref_column_name> [ , ... ] | BETWEEN <start_column> AND <end_column> EXCLUSIVE } ) ]"
+
+[[obligation]]
+id = "sf.ddl.create-semantic-view.create-semantic-view-tables.o534"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) in [ RELATIONSHIPS ( [ <relationship_identifier> AS ] <table_alias> ( <column_name> [ , ... ] ) REFERENCES <ref_table_alia… #2"
 
 [[obligation]]
 id = "sf.ddl.create-semantic-view.create-semantic-view-tables.o429"
@@ -202293,6 +203812,12 @@ required = true
 note = "the form without its required OVER in [ METRICS ( { [ { PRIVATE | PUBLIC } ] <table_alias> . <metric> [ USING ( <relationship_name> [ , ... ] ) ] [ NON ADDIT…"
 
 [[obligation]]
+id = "sf.ddl.create-semantic-view.create-semantic-view-tables.o535"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( in [ METRICS ( { [ { PRIVATE | PUBLIC } ] <table_alias> . <metric> [ USING ( <relationship_name> [ , ... ] ) ] [ NON ADDIT… #2"
+
+[[obligation]]
 id = "sf.ddl.create-semantic-view.create-semantic-view-tables.o473"
 kind = "negative_neighbour"
 required = true
@@ -202317,6 +203842,12 @@ required = true
 note = "the form without its required { FIRST | LAST } in [ NULLS { FIRST | LAST } ] #2"
 
 [[obligation]]
+id = "sf.ddl.create-semantic-view.create-semantic-view-tables.o536"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) in [ METRICS ( { [ { PRIVATE | PUBLIC } ] <table_alias> . <metric> [ USING ( <relationship_name> [ , ... ] ) ] [ NON ADDIT… #2"
+
+[[obligation]]
 id = "sf.ddl.create-semantic-view.create-semantic-view-tables.o477"
 kind = "negative_neighbour"
 required = true
@@ -202335,6 +203866,12 @@ required = true
 note = "the form without its required AS in [ AI_VERIFIED_QUERIES ( <verified_query_name> AS ( QUESTION '<question>' [ VERIFIED_AT <timestamp> ] [ ONBOARDING_QUEST…"
 
 [[obligation]]
+id = "sf.ddl.create-semantic-view.create-semantic-view-tables.o537"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( in [ AI_VERIFIED_QUERIES ( <verified_query_name> AS ( QUESTION '<question>' [ VERIFIED_AT <timestamp> ] [ ONBOARDING_QUEST… #2"
+
+[[obligation]]
 id = "sf.ddl.create-semantic-view.create-semantic-view-tables.o480"
 kind = "negative_neighbour"
 required = true
@@ -202351,6 +203888,12 @@ id = "sf.ddl.create-semantic-view.create-semantic-view-tables.o482"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required ) in [ AI_VERIFIED_QUERIES ( <verified_query_name> AS ( QUESTION '<question>' [ VERIFIED_AT <timestamp> ] [ ONBOARDING_QUEST…"
+
+[[obligation]]
+id = "sf.ddl.create-semantic-view.create-semantic-view-tables.o538"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) in [ AI_VERIFIED_QUERIES ( <verified_query_name> AS ( QUESTION '<question>' [ VERIFIED_AT <timestamp> ] [ ONBOARDING_QUEST… #2"
 
 [[obligation]]
 id = "sf.ddl.create-semantic-view.create-semantic-view-tables.o483"
@@ -205115,6 +206658,12 @@ required = true
 note = "the form without its required AS in [ <relationship_identifier> AS ]"
 
 [[obligation]]
+id = "sf.ddl.create-semantic-view.define-semantic-view.o458"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( in [ RELATIONSHIPS ( [ <relationship_identifier> AS ] <table_alias> ( <column_name> [ , ... ] ) REFERENCES <ref_table_alia… #2"
+
+[[obligation]]
 id = "sf.ddl.create-semantic-view.define-semantic-view.o361"
 kind = "negative_neighbour"
 required = true
@@ -205149,6 +206698,12 @@ id = "sf.ddl.create-semantic-view.define-semantic-view.o366"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required ) in [ ( { [ ASOF ] <ref_column_name> [ , ... ] | BETWEEN <start_column> AND <end_column> EXCLUSIVE } ) ]"
+
+[[obligation]]
+id = "sf.ddl.create-semantic-view.define-semantic-view.o459"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) in [ RELATIONSHIPS ( [ <relationship_identifier> AS ] <table_alias> ( <column_name> [ , ... ] ) REFERENCES <ref_table_alia… #2"
 
 [[obligation]]
 id = "sf.ddl.create-semantic-view.define-semantic-view.o367"
@@ -205415,6 +206970,12 @@ required = true
 note = "the form without its required OVER in [ METRICS ( { [ { PRIVATE | PUBLIC } ] <table_alias> . <metric> [ USING ( <relationship_name> [ , ... ] ) ] [ NON ADDIT…"
 
 [[obligation]]
+id = "sf.ddl.create-semantic-view.define-semantic-view.o460"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( in [ METRICS ( { [ { PRIVATE | PUBLIC } ] <table_alias> . <metric> [ USING ( <relationship_name> [ , ... ] ) ] [ NON ADDIT… #2"
+
+[[obligation]]
 id = "sf.ddl.create-semantic-view.define-semantic-view.o411"
 kind = "negative_neighbour"
 required = true
@@ -205439,6 +207000,12 @@ required = true
 note = "the form without its required { FIRST | LAST } in [ NULLS { FIRST | LAST } ] #2"
 
 [[obligation]]
+id = "sf.ddl.create-semantic-view.define-semantic-view.o461"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) in [ METRICS ( { [ { PRIVATE | PUBLIC } ] <table_alias> . <metric> [ USING ( <relationship_name> [ , ... ] ) ] [ NON ADDIT… #2"
+
+[[obligation]]
 id = "sf.ddl.create-semantic-view.define-semantic-view.o415"
 kind = "negative_neighbour"
 required = true
@@ -205457,6 +207024,12 @@ required = true
 note = "the form without its required AS in [ AI_VERIFIED_QUERIES ( <verified_query_name> AS ( QUESTION '<question>' [ VERIFIED_AT <timestamp> ] [ ONBOARDING_QUEST…"
 
 [[obligation]]
+id = "sf.ddl.create-semantic-view.define-semantic-view.o462"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( in [ AI_VERIFIED_QUERIES ( <verified_query_name> AS ( QUESTION '<question>' [ VERIFIED_AT <timestamp> ] [ ONBOARDING_QUEST… #2"
+
+[[obligation]]
 id = "sf.ddl.create-semantic-view.define-semantic-view.o418"
 kind = "negative_neighbour"
 required = true
@@ -205473,6 +207046,12 @@ id = "sf.ddl.create-semantic-view.define-semantic-view.o420"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required ) in [ AI_VERIFIED_QUERIES ( <verified_query_name> AS ( QUESTION '<question>' [ VERIFIED_AT <timestamp> ] [ ONBOARDING_QUEST…"
+
+[[obligation]]
+id = "sf.ddl.create-semantic-view.define-semantic-view.o463"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) in [ AI_VERIFIED_QUERIES ( <verified_query_name> AS ( QUESTION '<question>' [ VERIFIED_AT <timestamp> ] [ ONBOARDING_QUEST… #2"
 
 [[obligation]]
 id = "sf.ddl.create-semantic-view.define-semantic-view.o421"
@@ -246408,10 +247987,28 @@ required = true
 note = "the form without its required ACCESS"
 
 [[obligation]]
+id = "sf.ddl.create-table.create-table-masking-policy.o051"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required POLICY #2"
+
+[[obligation]]
 id = "sf.ddl.create-table.create-table-masking-policy.o038"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required ON"
+
+[[obligation]]
+id = "sf.ddl.create-table.create-table-masking-policy.o052"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( #2"
+
+[[obligation]]
+id = "sf.ddl.create-table.create-table-masking-policy.o053"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) #2"
 
 [[obligation]]
 id = "sf.ddl.create-table.create-table-masking-policy.o039"
@@ -256052,6 +257649,12 @@ required = true
 note = "the form without its required PROJECTION in [ <col1> [ WITH ] MASKING POLICY <policy_name> [ USING ( <col1> , <cond_col1> , ... ) ] [ WITH ] PROJECTION POLICY <pol…"
 
 [[obligation]]
+id = "sf.ddl.create-view.create-view-as.o448"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required POLICY in [ <col1> [ WITH ] MASKING POLICY <policy_name> [ USING ( <col1> , <cond_col1> , ... ) ] [ WITH ] PROJECTION POLICY <pol… #2"
+
+[[obligation]]
 id = "sf.ddl.create-view.create-view-as.o183"
 kind = "negative_neighbour"
 required = true
@@ -261134,6 +262737,12 @@ required = true
 note = "the form without its required )"
 
 [[obligation]]
+id = "sf.ddl.desc-function.o021"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
+
+[[obligation]]
 id = "sf.ddl.desc-function.o017"
 kind = "identifier_class"
 required = true
@@ -261299,6 +262908,12 @@ required = true
 note = "the form without its required TABLE"
 
 [[obligation]]
+id = "sf.ddl.desc-function-dmf.o044"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( #2"
+
+[[obligation]]
 id = "sf.ddl.desc-function-dmf.o025"
 kind = "negative_neighbour"
 required = true
@@ -261321,6 +262936,12 @@ id = "sf.ddl.desc-function-dmf.o028"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required ) in [ , TABLE ( <arg_data_type> [ , ... ] ) ]"
+
+[[obligation]]
+id = "sf.ddl.desc-function-dmf.o045"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) #2"
 
 [[obligation]]
 id = "sf.ddl.desc-function-dmf.o030"
@@ -265538,6 +267159,12 @@ required = true
 note = "the form without its required )"
 
 [[obligation]]
+id = "sf.ddl.drop-function.o015"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
+
+[[obligation]]
 id = "sf.ddl.drop-function.o013"
 kind = "identifier_class"
 required = true
@@ -265697,6 +267324,12 @@ required = true
 note = "the form without its required TABLE"
 
 [[obligation]]
+id = "sf.ddl.drop-function-dmf.o030"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( #2"
+
+[[obligation]]
 id = "sf.ddl.drop-function-dmf.o023"
 kind = "negative_neighbour"
 required = true
@@ -265719,6 +267352,12 @@ id = "sf.ddl.drop-function-dmf.o026"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required ) in [ , TABLE ( <arg_data_type> [ , ... ] ) ]"
+
+[[obligation]]
+id = "sf.ddl.drop-function-dmf.o031"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) #2"
 
 [[obligation]]
 id = "sf.ddl.drop-function-dmf.o027"
@@ -267082,6 +268721,12 @@ id = "sf.ddl.drop-procedure.o012"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required )"
+
+[[obligation]]
+id = "sf.ddl.drop-procedure.o015"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
 
 [[obligation]]
 id = "sf.ddl.drop-procedure.o013"
@@ -285944,6 +287589,12 @@ required = true
 note = "the form without its required IN"
 
 [[obligation]]
+id = "sf.ddl.show-schema-variables.o026"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required SCHEMA #2"
+
+[[obligation]]
 id = "sf.ddl.show-schema-variables.o021"
 kind = "identifier_class"
 required = true
@@ -288075,6 +289726,12 @@ required = true
 note = "the form without its required IN"
 
 [[obligation]]
+id = "sf.ddl.show-service-containers-in-service.o011"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required SERVICE #2"
+
+[[obligation]]
 id = "sf.ddl.show-service-containers-in-service.o008"
 kind = "identifier_class"
 required = true
@@ -288135,6 +289792,12 @@ id = "sf.ddl.show-service-instances-in-service.o007"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required IN"
+
+[[obligation]]
+id = "sf.ddl.show-service-instances-in-service.o011"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required SERVICE #2"
 
 [[obligation]]
 id = "sf.ddl.show-service-instances-in-service.o008"
@@ -288198,6 +289861,12 @@ id = "sf.ddl.show-service-volumes-in-service.o007"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required IN"
+
+[[obligation]]
+id = "sf.ddl.show-service-volumes-in-service.o011"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required SERVICE #2"
 
 [[obligation]]
 id = "sf.ddl.show-service-volumes-in-service.o008"

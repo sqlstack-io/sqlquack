@@ -135,6 +135,12 @@ required = true
 note = "the form without its required END"
 
 [[obligation]]
+id = "sf.scripting.begin.o021"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
+
+[[obligation]]
 id = "sf.scripting.begin.o011"
 kind = "nesting_depth"
 required = true
@@ -1456,6 +1462,12 @@ required = true
 note = "the form without its required AS"
 
 [[obligation]]
+id = "sf.scripting.declare.procedure-returns-table-as.o047"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
+
+[[obligation]]
 id = "sf.scripting.declare.procedure-returns-table-as.o036"
 kind = "identifier_class"
 required = true
@@ -2342,6 +2354,12 @@ id = "sf.scripting.for.do-end-for.o020"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required FOR"
+
+[[obligation]]
+id = "sf.scripting.for.do-end-for.o032"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
 
 [[obligation]]
 id = "sf.scripting.for.do-end-for.o021"
@@ -3628,6 +3646,12 @@ required = true
 note = "the form without its required LOOP"
 
 [[obligation]]
+id = "sf.scripting.loop.o020"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
+
+[[obligation]]
 id = "sf.scripting.loop.o013"
 kind = "identifier_class"
 required = true
@@ -4014,6 +4038,12 @@ required = true
 note = "the form without its required REPEAT"
 
 [[obligation]]
+id = "sf.scripting.repeat.o025"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
+
+[[obligation]]
 id = "sf.scripting.repeat.o018"
 kind = "identifier_class"
 required = true
@@ -4243,6 +4273,12 @@ id = "sf.scripting.while.o021"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required { WHILE | LOOP }"
+
+[[obligation]]
+id = "sf.scripting.while.o033"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
 
 [[obligation]]
 id = "sf.scripting.while.o022"

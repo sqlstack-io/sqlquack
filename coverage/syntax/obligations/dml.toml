@@ -573,6 +573,12 @@ required = true
 note = "the form without its required SELECT"
 
 [[obligation]]
+id = "sf.dml.copy-files.from-select-from.o054"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required FROM #2"
+
+[[obligation]]
 id = "sf.dml.copy-files.from-select-from.o030"
 kind = "negative_neighbour"
 required = true
@@ -10274,6 +10280,12 @@ required = true
 note = "the form without its required SELECT"
 
 [[obligation]]
+id = "sf.dml.copy-into-table.select-from-internalstage-externalstage.o617"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required FROM #2"
+
+[[obligation]]
 id = "sf.dml.copy-into-table.select-from-internalstage-externalstage.o510"
 kind = "negative_neighbour"
 required = true
@@ -13661,6 +13673,12 @@ id = "sf.dml.merge.o080"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required NAME in [ { WHEN MATCHED AND <case_predicate> THEN DELETE | WHEN NOT MATCHED AND <case_predicate> THEN INSERT ALL BY NAME } ]"
+
+[[obligation]]
+id = "sf.dml.merge.o090"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
 
 [[obligation]]
 id = "sf.dml.merge.o081"

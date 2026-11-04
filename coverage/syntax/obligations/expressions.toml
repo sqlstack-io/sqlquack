@@ -164,6 +164,18 @@ required = true
 note = "the form without its required )"
 
 [[obligation]]
+id = "sf.expressions.commands-model-function.model-default-version.o023"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( #2"
+
+[[obligation]]
+id = "sf.expressions.commands-model-function.model-default-version.o024"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) #2"
+
+[[obligation]]
 id = "sf.expressions.commands-model-function.model-default-version.o015"
 kind = "identifier_class"
 required = true
@@ -326,6 +338,18 @@ id = "sf.expressions.commands-model-function.model-version-or-alias.o016"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required )"
+
+[[obligation]]
+id = "sf.expressions.commands-model-function.model-version-or-alias.o028"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( #2"
+
+[[obligation]]
+id = "sf.expressions.commands-model-function.model-version-or-alias.o029"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) #2"
 
 [[obligation]]
 id = "sf.expressions.commands-model-function.model-version-or-alias.o018"
@@ -3959,10 +3983,22 @@ required = true
 note = "the form without its required ("
 
 [[obligation]]
+id = "sf.expressions.functions-table.o034"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( #2"
+
+[[obligation]]
 id = "sf.expressions.functions-table.o028"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required )"
+
+[[obligation]]
+id = "sf.expressions.functions-table.o035"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) #2"
 
 [[obligation]]
 id = "sf.expressions.functions-table.o029"
@@ -5500,10 +5536,22 @@ required = true
 note = "the form without its required ("
 
 [[obligation]]
+id = "sf.expressions.snowflake-db-classes.o025"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( #2"
+
+[[obligation]]
 id = "sf.expressions.snowflake-db-classes.o011"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required )"
+
+[[obligation]]
+id = "sf.expressions.snowflake-db-classes.o026"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) #2"
 
 [[obligation]]
 id = "sf.expressions.snowflake-db-classes.o020"
