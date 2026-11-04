@@ -33,8 +33,8 @@ use crate::conversion::_helpers::support::tree::{
 };
 use crate::conversion::_helpers::support::typed_leaves::compared_by_text;
 use crate::conversion::constants::{
-    DISTINCT_WINDOW_AGGREGATE, FRAME_FACET, FUNCTION_FACET, NO_PARTITION, PARTITION_FACET,
-    SEVERAL_PARTITION_KEYS, UNORDERED_WINDOW_AGGREGATES, VARIANT_EQUALITY_BY_TEXT,
+    DISTINCT_WINDOW_AGGREGATE, FRAME_FACET, FUNCTION_FACET, NO_PARTITION, NTILE_NAME,
+    PARTITION_FACET, SEVERAL_PARTITION_KEYS, UNORDERED_WINDOW_AGGREGATES, VARIANT_EQUALITY_BY_TEXT,
     VARIANT_ORDER_KEY, VARIANT_PARTITION, WINDOW_AGGREGATE, WINDOW_FIRST_LAST,
     WINDOW_KEYS_CONSTRUCT, WINDOW_OFFSET, WINDOW_RANKING, WINDOW_VALUE_FRAME,
     WINDOWED_NAMED_AGGREGATES,
@@ -104,6 +104,7 @@ pub(crate) fn convert_window(payload: &Value, site: Site<'_>) -> Result<Emitted,
     };
     let rule = match function {
         "row_number" | "rank" | "dense_rank" => WINDOW_RANKING,
+        "function" if call_name(function_payload) == NTILE_NAME => WINDOW_RANKING,
         "lag" | "lead" => WINDOW_OFFSET,
         "function" | "aggregate_function" if offset_name(function_payload).is_some() => {
             WINDOW_OFFSET
@@ -155,6 +156,9 @@ pub(crate) fn convert_window(payload: &Value, site: Site<'_>) -> Result<Emitted,
     let site = site.placed(Placement::GROUPED);
     let converted = match function {
         "row_number" | "rank" | "dense_rank" => ranking_window(function, &over, site),
+        "function" if call_name(function_payload) == NTILE_NAME => {
+            ntile_window(function_payload, &over, site)
+        }
         "lag" | "lead" => offset_window((function, false), function_payload, &over, site),
         "function" | "aggregate_function" if offset_name(function_payload).is_some() => {
             ignoring_nulls_offset(function_payload, &over, site)
@@ -260,6 +264,31 @@ fn ranking_window(function: &str, over: &Over<'_>, site: Site<'_>) -> Result<Emi
     let data_type = ranking(log);
     let sql = cast(
         &format!("{function}() OVER ({})", over.clause(None, site)),
+        data_type,
+        log,
+    )
+    .map_err(refuse)?;
+    Ok(Emitted::new(sql, data_type))
+}
+
+/// NTILE(n) of a positive integer literal: the ORDER BY rows split into n buckets, as ranking is.
+fn ntile_window(payload: &Value, over: &Over<'_>, site: Site<'_>) -> Result<Emitted, Refusal> {
+    let construct = function_construct(NTILE_NAME);
+    let refuse = |reason: String| outside_conditions(construct.clone(), reason);
+    let call = payload_object(payload, &construct)?;
+    require_understood(call, &["name", "args"], &construct)?;
+    let buckets = match list(call, "args") {
+        [count] => integer_literal(count).filter(|count| *count >= 1),
+        _ => None,
+    }
+    .ok_or_else(|| refuse("NTILE of other than one positive integer literal".to_owned()))?;
+    if over.order.is_empty() || over.frame.is_some() {
+        return Err(refuse("ranking needs an ORDER BY and no frame".to_owned()));
+    }
+    let log = site.context.log;
+    let data_type = ranking(log);
+    let sql = cast(
+        &format!("ntile({buckets}) OVER ({})", over.clause(None, site)),
         data_type,
         log,
     )

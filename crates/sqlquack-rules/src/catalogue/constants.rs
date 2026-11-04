@@ -1260,9 +1260,10 @@ pub const RULES: &[RuleSpec] = &[
             "fn:ROW_NUMBER",
             "fn:RANK",
             "fn:DENSE_RANK",
+            "fn:NTILE",
             "node:window_function",
         ],
-        conditions: "An ORDER BY and no frame; typed NUMBER(18,0).",
+        conditions: "An ORDER BY and no frame, and NTILE of one positive integer literal; typed NUMBER(18,0).",
         failures: &[],
     },
     RuleSpec {

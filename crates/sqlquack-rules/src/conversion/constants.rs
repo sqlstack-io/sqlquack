@@ -1197,6 +1197,8 @@ pub(crate) const DOLLAR_PARAMETER: &str = "Dollar";
 pub const VALUES_ROWS: &str = "rule.values_rows";
 /// The column names Snowflake gives VALUES rows: COLUMN1, COLUMN2 and so on.
 pub(crate) const VALUES_COLUMN_PREFIX: &str = "COLUMN";
+/// NTILE, which the parser keeps as a generic call.
+pub(crate) const NTILE_NAME: &str = "NTILE";
 /// The most VALUES rows converted: each row nests one UNION ALL deeper.
 pub(crate) const VALUES_ROWS_LIMIT: usize = 1000;
 /// DATEDIFF units whose boundaries every whole-minute UTC offset shares, counted on UTC instants.

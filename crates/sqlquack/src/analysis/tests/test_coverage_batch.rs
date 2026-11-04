@@ -636,6 +636,41 @@ fn given_dates_when_converting_dayofweekiso_then_monday_is_one_and_sunday_seven(
 }
 
 #[test]
+fn given_ordered_rows_when_converting_ntile_then_extra_rows_go_to_the_first_buckets() {
+    let test_cases = [
+        FirstValueTestCase {
+            description: "the third of seven rows in three buckets is in the first",
+            sql: "SELECT b FROM (SELECT x, NTILE(3) OVER (ORDER BY x) AS b \
+                  FROM (SELECT SEQ4() AS x FROM TABLE(GENERATOR(ROWCOUNT => 7)))) WHERE x = 2",
+            expected_outcome: Ok("1"),
+        },
+        FirstValueTestCase {
+            description: "a bucket count that is not a literal refuses",
+            sql: "SELECT NTILE(x) OVER (ORDER BY x) AS b \
+                  FROM (SELECT SEQ4() AS x FROM TABLE(GENERATOR(ROWCOUNT => 3)))",
+            expected_outcome: Err("positive integer literal"),
+        },
+        FirstValueTestCase {
+            description: "NTILE without an ORDER BY refuses",
+            sql: "SELECT NTILE(2) OVER () AS b \
+                  FROM (SELECT SEQ4() AS x FROM TABLE(GENERATOR(ROWCOUNT => 3)))",
+            expected_outcome: Err("ORDER BY"),
+        },
+    ];
+    for test_case in test_cases {
+        assert_eq!(
+            shop_first_outcome(test_case.sql, test_case.expected_outcome),
+            test_case
+                .expected_outcome
+                .map(str::to_owned)
+                .map_err(str::to_owned),
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
 fn given_powers_of_ten_when_converting_power_then_the_nearest_double_is_kept() {
     let test_cases = [
         FirstValueTestCase {
