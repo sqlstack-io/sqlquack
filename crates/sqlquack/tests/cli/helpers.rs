@@ -8,7 +8,7 @@ use walkdir::WalkDir;
 
 use crate::test_types::{
     CommandOutcome, ConvertOutcome, CoverageOutcome, DivergenceOutcome, ErrorCheckOutcome,
-    FunctionMacroOutcome, ReviewOutcome, ReviewedRepository,
+    FunctionMacroOutcome, FunctionStdinOutcome, ReviewOutcome, ReviewedRepository,
 };
 
 fn repository_root() -> PathBuf {
@@ -866,4 +866,70 @@ pub(crate) fn convert_streams(sql: &str, flags: &[&str]) -> (String, String) {
         String::from_utf8_lossy(&output.stdout).into_owned(),
         String::from_utf8_lossy(&output.stderr).into_owned(),
     )
+}
+
+/// Exit code, standard output and standard error of `sqlquack arguments` in `directory` on `input`.
+pub(crate) fn run_with_input(
+    directory: &std::path::Path,
+    arguments: &[&str],
+    input: &str,
+) -> (Option<i32>, String, String) {
+    use std::io::Write;
+    let mut child = Command::new(env!("CARGO_BIN_EXE_sqlquack"))
+        .args(arguments)
+        .current_dir(directory)
+        .stdin(std::process::Stdio::piped())
+        .stdout(std::process::Stdio::piped())
+        .stderr(std::process::Stdio::piped())
+        .spawn()
+        .expect("sqlquack runs");
+    child
+        .stdin
+        .take()
+        .expect("standard input")
+        .write_all(input.as_bytes())
+        .expect("input written");
+    let output = child.wait_with_output().expect("sqlquack finishes");
+    (
+        output.status.code(),
+        String::from_utf8_lossy(&output.stdout).into_owned(),
+        String::from_utf8_lossy(&output.stderr).into_owned(),
+    )
+}
+
+/// How `sqlquack function` ends on `body` from standard input, the schema declaring `DOUBLED`.
+pub(crate) fn function_from_stdin(name: &str, body: &str) -> FunctionStdinOutcome {
+    let directory = tempfile::tempdir().expect("temporary directory");
+    std::fs::write(
+        directory.path().join("schema.json"),
+        "{\"functions\": {\"DOUBLED\": {\"language\": \"sql\", \
+         \"arguments\": [[\"PRICE\", \"NUMBER(10,2)\"]], \"returns\": \"BOOLEAN\"}}}",
+    )
+    .expect("schema written");
+    let (exit_code, stdout, stderr) = run_with_input(
+        directory.path(),
+        &[
+            "function",
+            "-",
+            "--name",
+            name,
+            "--schema",
+            "schema.json",
+            "--builtin-policy",
+        ],
+        body,
+    );
+    let report: serde_json::Value = serde_json::from_str(&stdout).unwrap_or_default();
+    FunctionStdinOutcome {
+        exit_code,
+        converted: report["converted"].as_bool(),
+        first_code: report["refusals"][0]["code"].as_str().map(str::to_owned),
+        stderr_lines: stderr
+            .lines()
+            .filter(|line| {
+                line.starts_with("error[") || line.contains(" --> ") || line.contains("failed:")
+            })
+            .map(str::to_owned)
+            .collect(),
+    }
 }

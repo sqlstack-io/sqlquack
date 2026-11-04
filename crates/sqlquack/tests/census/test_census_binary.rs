@@ -78,6 +78,35 @@ fn given_sql_directory_when_running_census_binary_then_reports_on_the_right_stre
             },
         },
         BinaryTestCase {
+            description: "an unreadable schema file is a usage error, as for convert",
+            arguments: &[
+                "census",
+                "--builtin-policy",
+                "--schema",
+                "/nonexistent/schema.json",
+            ],
+            expected_outcome: BinaryOutcome {
+                exit_code: Some(2),
+                files: None,
+                unresolved_name: None,
+                completion_reported: false,
+                slowest_reported: false,
+                names_printed: false,
+            },
+        },
+        BinaryTestCase {
+            description: "an unreadable SQL path is a usage error, as for convert",
+            arguments: &["census", "--builtin-policy", "/nonexistent/models"],
+            expected_outcome: BinaryOutcome {
+                exit_code: Some(2),
+                files: None,
+                unresolved_name: None,
+                completion_reported: false,
+                slowest_reported: false,
+                names_printed: false,
+            },
+        },
+        BinaryTestCase {
             description: "an unknown dialect is a usage error",
             arguments: &["census", "--dialect", "unknown", "--builtin-policy"],
             expected_outcome: BinaryOutcome {

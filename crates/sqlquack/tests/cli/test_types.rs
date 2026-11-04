@@ -200,3 +200,25 @@ pub(crate) struct ConvertDiagnosticTestCase {
     pub(crate) expected_text: &'static str,
     pub(crate) expected_json: (&'static str, &'static str, u64, u64),
 }
+
+#[derive(Debug, PartialEq, Eq)]
+pub(crate) struct FunctionStdinOutcome {
+    pub(crate) exit_code: Option<i32>,
+    pub(crate) converted: Option<bool>,
+    pub(crate) first_code: Option<String>,
+    pub(crate) stderr_lines: Vec<String>,
+}
+
+pub(crate) struct FunctionStdinTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) name: &'static str,
+    pub(crate) body: &'static str,
+    pub(crate) expected_outcome: FunctionStdinOutcome,
+}
+
+pub(crate) struct OutputFormatTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) arguments: &'static [&'static str],
+    pub(crate) expected_exit_code: Option<i32>,
+    pub(crate) expected_stdout_prefix: &'static str,
+}
