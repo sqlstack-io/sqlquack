@@ -251,8 +251,7 @@ pub enum CaptureMethod {
     Describe,
     /// DDL executed inside a database the run creates and drops.
     ExecuteDdlInRunDatabase,
-    /// One definition file holding the case SQL, planned by `EXECUTE DCM PROJECT … PLAN` in a
-    /// project the run owns and discloses.
+    /// A definition file of the case SQL, planned by `EXECUTE DCM PROJECT … PLAN` in a run project.
     DcmDefinitionFile,
 }
 
@@ -323,8 +322,7 @@ pub struct Receipt {
     /// The warehouse's whole error message.
     #[serde(default)]
     pub message: Option<String>,
-    /// An error number the connector raised in the client after the server ran the statement, as
-    /// query history shows; provenance only, never the phase.
+    /// A client-side connector errno after the server ran the statement; provenance, never phase.
     #[serde(default)]
     pub connector_errno: Option<i64>,
     /// The DCM project a `dcm_definition_file` receipt planned in.

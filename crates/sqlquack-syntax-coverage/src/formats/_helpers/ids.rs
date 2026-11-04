@@ -21,8 +21,7 @@ pub(crate) fn is_segment(text: &str) -> bool {
             .is_some_and(|byte| byte.is_ascii_alphanumeric())
 }
 
-/// Whether `text` is an obligation number such as `o001` or `o1000`: three digits, or more without
-/// a leading zero, so each number has one spelling.
+/// Whether `text` is `o` and three digits, or more without a leading zero, such as `o001`, `o1000`.
 pub(crate) fn is_obligation_number(text: &str) -> bool {
     text.strip_prefix(OBLIGATION_MARKER).is_some_and(|digits| {
         digits.bytes().all(|byte| byte.is_ascii_digit())

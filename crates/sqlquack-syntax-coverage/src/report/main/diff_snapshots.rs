@@ -3,7 +3,8 @@
 use std::collections::BTreeSet;
 
 use crate::check::models::FormState;
-use crate::report::models::{Snapshot, SnapshotDiff, sorted_obligations};
+use crate::report::_helpers::obligation_order::sorted_obligations;
+use crate::report::models::{Snapshot, SnapshotDiff};
 
 /// A state the checker claims: verified, or excluded by a current review.
 fn claimed(state: Option<&FormState>) -> bool {
