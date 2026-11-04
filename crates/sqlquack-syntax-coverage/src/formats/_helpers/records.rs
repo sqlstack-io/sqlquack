@@ -16,7 +16,7 @@ use crate::formats::main::obligation_form::obligation_form;
 use crate::formats::models::{
     Alias, CaptureMethod, Case, Definition, Diagnostic, Exclusion, Expect, Form, FormKind,
     FormStatus, Index, Obligation, ObligationKind, Phase, Receipt, Review, Source, SourceStatus,
-    Unobservable, UnobservableCase, UnobservableProbe,
+    Unobservable, UnobservableCase, UnobservableCause, UnobservableProbe,
 };
 
 fn blank(text: &str) -> bool {
@@ -567,6 +567,9 @@ pub(crate) fn check_review(review: &Review) -> Vec<String> {
 }
 
 pub(crate) fn check_unobservable(entry: &Unobservable, family: &str) -> Vec<String> {
+    if entry.cause == Some(UnobservableCause::NotSubmitted) {
+        return check_not_submitted(entry, family);
+    }
     check_record(
         &UnobservableRecord {
             obligation: &entry.obligation,
@@ -596,6 +599,32 @@ pub(crate) fn check_diagnostic(entry: &Diagnostic, family: &str) -> Vec<String> 
         family,
         "diagnostic",
     )
+}
+
+/// A never-submitted entry: a reason and cases, but no runs or probes, since nothing ran.
+fn check_not_submitted(entry: &Unobservable, family: &str) -> Vec<String> {
+    let id: &str = &entry.obligation;
+    let mut problems: Vec<String> = Vec::new();
+    if obligation_form(id, family) != Some(entry.form.as_str()) {
+        problems.push(format!(
+            "unobservable {id}: not an obligation of form {} in family {family}",
+            entry.form
+        ));
+    }
+    if blank(&entry.construct) || blank(&entry.reason) || entry.cases.is_empty() {
+        problems.push(format!(
+            "unobservable {id}: needs a construct, a reason and at least one case"
+        ));
+    }
+    if !entry.runs.is_empty() || !entry.probes.is_empty() {
+        problems.push(format!(
+            "unobservable {id}: a not_submitted entry has no runs or probes"
+        ));
+    }
+    if entry.cases.iter().any(|case| !is_sha256(&case.sql_sha256)) {
+        problems.push(format!("unobservable {id}: a sql_sha256 is not a SHA-256"));
+    }
+    problems
 }
 
 /// The fields an unobservable entry and a diagnostic share.

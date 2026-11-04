@@ -48,6 +48,8 @@ pub enum Reason {
     MissingCase,
     /// Unverifiable: Snowflake answers the construct only with an internal error (decision D87).
     UnverifiableInternalError,
+    /// Unverifiable: the cases are never submitted, such as side-effecting calls a guard holds.
+    UnverifiableNotSubmitted,
     /// A citing case has no receipt.
     MissingReceipt,
     /// A citing extreme case awaits Snowflake's answer (`expect = "observe"`).
@@ -156,8 +158,8 @@ pub(crate) struct Joined<'a> {
     pub(crate) citing: BTreeMap<&'a str, Vec<&'a str>>,
     /// Each case's result by case id.
     pub(crate) cases: BTreeMap<&'a str, CaseResult>,
-    /// Obligations listed as unobservable, which never count as satisfied.
-    pub(crate) unobservable: BTreeSet<&'a str>,
+    /// Obligations listed as unobservable, with the reason they report; never satisfied.
+    pub(crate) unobservable: BTreeMap<&'a str, Reason>,
 }
 
 /// What every form of one family is judged against besides its own obligations.

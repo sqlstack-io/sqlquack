@@ -250,7 +250,14 @@ internal error (603), so no capture can establish a phase (decision D87). It has
 family; each listed case must exist with that `sql_sha256` and cite the obligation; an obligation is
 listed at most once. Such an obligation stays in the denominator, never counts as satisfied, and is
 reported as `unverifiable_internal_error` ("unverifiable: Snowflake internal error"). Probe results
-are diagnostics, never syntax evidence. A `[[diagnostic]]` in the same file has the same fields,
+are diagnostics, never syntax evidence.
+
+An entry may set `cause = "not_submitted"` when its cases were never sent to Snowflake, such as
+side-effecting calls a capture guard holds. Such an entry has empty `runs` and `probes`, a
+`reason` naming the rule that holds the cases, and at least one case, checked as above. The
+obligation stays in the denominator, never counts as satisfied, and is reported as
+`unverifiable_not_submitted`. An absent `cause` means a 603 internal error; any other value is
+refused. A `[[diagnostic]]` in the same file has the same fields,
 with `captured` in place of `cases`: a 603 record on a construct no obligation requires any more,
 whose retired cases are not resolved against the cases file. Diagnostics are format-checked and
 listed, never scored. The checker ignores `semantic-limits/` and `lane-reviews/`.

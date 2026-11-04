@@ -785,6 +785,39 @@ fn given_a_format_fault_when_loading_then_the_problem_is_named() {
             expected_problem: "unobservable sf.query.select.o001: a sql_sha256 is not a SHA-256",
         },
         FormatFaultTestCase {
+            description: "an unobservable entry with an unknown cause",
+            mutate: |root| {
+                write(
+                    root,
+                    "unobservable/query.toml",
+                    "[[unobservable]]\nobligation = \"sf.query.select.o001\"\nform = \"sf.query.select\"\nconstruct = \"c\"\nreason = \"held\"\ncause = \"held_by_guard\"\ncases = [{ case_id = \"query.select-17\", sql_sha256 = \"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\" }]\nruns = []\nprobes = []\n",
+                )
+            },
+            expected_problem: "unknown variant `held_by_guard`",
+        },
+        FormatFaultTestCase {
+            description: "a never-submitted entry that lists a run",
+            mutate: |root| {
+                write(
+                    root,
+                    "unobservable/query.toml",
+                    "[[unobservable]]\nobligation = \"sf.query.select.o001\"\nform = \"sf.query.select\"\nconstruct = \"c\"\nreason = \"held\"\ncause = \"not_submitted\"\ncases = [{ case_id = \"query.select-17\", sql_sha256 = \"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\" }]\nruns = [\"run-1\"]\nprobes = []\n",
+                )
+            },
+            expected_problem: "unobservable sf.query.select.o001: a not_submitted entry has no runs or probes",
+        },
+        FormatFaultTestCase {
+            description: "a 603 entry without runs",
+            mutate: |root| {
+                write(
+                    root,
+                    "unobservable/query.toml",
+                    "[[unobservable]]\nobligation = \"sf.query.select.o001\"\nform = \"sf.query.select\"\nconstruct = \"c\"\nreason = \"603\"\ncases = [{ case_id = \"query.select-17\", sql_sha256 = \"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\" }]\nruns = []\nprobes = []\n",
+                )
+            },
+            expected_problem: "unobservable sf.query.select.o001: needs at least one case and one run",
+        },
+        FormatFaultTestCase {
             description: "an unobservable entry without cases",
             mutate: |root| {
                 write(

@@ -449,7 +449,7 @@ pub struct UnobservableFile {
     pub diagnostics: Vec<Diagnostic>,
 }
 
-/// An obligation Snowflake answers only with an internal error; never verified (decision D87).
+/// An obligation no capture can establish a phase for; never verified (decision D87).
 #[derive(Clone, Debug, PartialEq, Eq, Deserialize, Serialize)]
 #[serde(deny_unknown_fields)]
 pub struct Unobservable {
@@ -457,11 +457,22 @@ pub struct Unobservable {
     pub form: String,
     pub construct: String,
     pub reason: String,
+    /// Why no phase exists; absent means Snowflake answered only with an internal error (603).
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub cause: Option<UnobservableCause>,
     /// The captured cases, kept in the cases file without a receipt.
     pub cases: Vec<UnobservableCase>,
     /// The capture, re-run and probe runs; none of them imported.
     pub runs: Vec<String>,
     pub probes: Vec<UnobservableProbe>,
+}
+
+/// Why an unobservable obligation has no phase, other than a 603 internal error.
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Deserialize, Serialize)]
+#[serde(rename_all = "snake_case")]
+pub enum UnobservableCause {
+    /// The cases were never submitted, such as side-effecting calls a capture guard holds.
+    NotSubmitted,
 }
 
 /// A 603 record on a construct no obligation requires any more; listed, never scored.

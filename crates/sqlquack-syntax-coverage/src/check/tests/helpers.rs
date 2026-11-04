@@ -381,6 +381,22 @@ pub(crate) fn unobservable(root: &Path, obligation: &str, case_id: &str, sql: &s
     );
 }
 
+/// Lists `obligation` as never submitted, citing `case_id` with the hash of `sql`, with `runs`.
+pub(crate) fn not_submitted(root: &Path, obligation: &str, case_id: &str, sql: &str, runs: &str) {
+    write(
+        root,
+        "unobservable/query.toml",
+        &format!(
+            "[[unobservable]]\nobligation = \"{obligation}\"\nform = \"sf.query.select\"\n\
+             construct = \"a construct\"\nreason = \"not submitted: held by the capture guard\"\n\
+             cause = \"not_submitted\"\n\
+             cases = [{{ case_id = \"{case_id}\", sql_sha256 = \"{}\" }}]\n\
+             runs = [{runs}]\nprobes = []\n",
+            sha256(sql)
+        ),
+    );
+}
+
 /// Adds a note to the obligation `id` of kind `kind`, an edit the obligations file alone sees.
 pub(crate) fn note_obligation(root: &Path, id: &str, kind: &str) {
     let declared: String = format!("id = \"{id}\"\nkind = \"{kind}\"\nrequired = true\n");

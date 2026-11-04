@@ -2,7 +2,7 @@ use crate::check::main::check_coverage::check_coverage;
 use crate::check::models::{FormState, Reason};
 use crate::check::tests::helpers::{
     OTHER_TREE, SETUP, TREE, append_receipt, case_in_zone, case_line, crashing,
-    crashing_on_select_from, drop_lines, exclusion_review, form, hanging, move_form,
+    crashing_on_select_from, drop_lines, exclusion_review, form, hanging, move_form, not_submitted,
     note_obligation, obligation, opaque, pin_definitions, pin_fingerprints, read, receipt_line,
     rejecting, replace, reshaped, rewrite_select_17, select_17, select_17_setup_sha256, sha256,
     structural, unobservable, verified_tree, with_fields, write,
@@ -520,6 +520,30 @@ fn given_a_changed_tree_when_checking_then_the_form_fails_closed_with_its_reason
             expected_state: FormState::Unverified,
             expected_reason: Some(Reason::UnverifiableInternalError),
             expected_problem: None,
+        },
+        CheckTestCase {
+            description: "a never-submitted obligation whose case otherwise agrees",
+            mutate: |root| {
+                not_submitted(root, "sf.query.select.o001", "select-17", "SELECT 17", "")
+            },
+            parse: structural,
+            parser_tree: Some(TREE),
+            form: "sf.query.select",
+            expected_state: FormState::Unverified,
+            expected_reason: Some(Reason::UnverifiableNotSubmitted),
+            expected_problem: None,
+        },
+        CheckTestCase {
+            description: "a never-submitted entry whose case hash is stale",
+            mutate: |root| {
+                not_submitted(root, "sf.query.select.o001", "select-17", "SELECT 18", "")
+            },
+            parse: structural,
+            parser_tree: Some(TREE),
+            form: "sf.query.select",
+            expected_state: FormState::Unverified,
+            expected_reason: Some(Reason::UnverifiableNotSubmitted),
+            expected_problem: Some("case select-17 is not a case with that sql_sha256"),
         },
         CheckTestCase {
             description: "an unobservable entry naming an undeclared obligation",
