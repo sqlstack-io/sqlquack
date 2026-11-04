@@ -3,6 +3,7 @@ pub(crate) mod flatten;
 pub(crate) mod function_body;
 pub(crate) mod group_all;
 pub(crate) mod hierarchy;
+pub(crate) mod pivot;
 pub(crate) mod query;
 pub(crate) mod set_operations;
 pub(crate) mod sources;

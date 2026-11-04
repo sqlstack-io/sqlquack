@@ -162,6 +162,14 @@ pub(crate) struct FirstValueTestCase {
     pub(crate) expected_outcome: Result<&'static str, &'static str>,
 }
 
+/// A `FirstValueTestCase` whose SQL is built from shared parts.
+pub(crate) struct BuiltFirstValueTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) sql: String,
+    /// The first value as text, or a fragment of the refusal reason or DuckDB error.
+    pub(crate) expected_outcome: Result<&'static str, &'static str>,
+}
+
 pub(crate) struct ArgumentCopiesTestCase {
     pub(crate) description: &'static str,
     /// A query writing `ARGUMENT` once in its source.

@@ -1,5 +1,5 @@
 use crate::analysis::tests::helpers::shop_first_outcome;
-use crate::analysis::tests::test_types::FirstValueTestCase;
+use crate::analysis::tests::test_types::{BuiltFirstValueTestCase, FirstValueTestCase};
 
 #[test]
 fn given_text_searches_when_converting_then_positions_count_characters_from_one() {
@@ -955,6 +955,64 @@ fn given_direct_array_constructs_when_writing_them_as_text_then_null_elements_ar
     for test_case in test_cases {
         assert_eq!(
             shop_first_outcome(test_case.sql, test_case.expected_outcome),
+            test_case
+                .expected_outcome
+                .map(str::to_owned)
+                .map_err(str::to_owned),
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_pivot_in_from_when_converting_then_each_listed_key_aggregates_its_group_rows() {
+    let source = "(SELECT customer_id, IFF(amount > 3, 'big', 'small') AS k, amount FROM orders)";
+    let pivoted = |aggregate: &str, keys: &str, alias: &str| {
+        format!("{source} PIVOT({aggregate}(amount) FOR k IN ({keys})) AS p{alias}")
+    };
+    let test_cases = [
+        BuiltFirstValueTestCase {
+            description: "SUM of a key sums only that key's rows in the group",
+            sql: format!(
+                "SELECT p.big || '/' || p.small AS v FROM {} WHERE p.customer_id = 2",
+                pivoted("SUM", "'big', 'small'", "(customer_id, big, small)")
+            ),
+            expected_outcome: Ok("7.50/2.50"),
+        },
+        BuiltFirstValueTestCase {
+            description: "a listed key without rows in the group is NULL",
+            sql: format!(
+                "SELECT COALESCE(TO_VARCHAR(p.small), 'null') AS v FROM {} WHERE p.customer_id = 1",
+                pivoted("MAX", "'big', 'small'", "(customer_id, big, small)")
+            ),
+            expected_outcome: Ok("null"),
+        },
+        BuiltFirstValueTestCase {
+            description: "a key matches exactly, so a differently cased key is NULL",
+            sql: format!(
+                "SELECT COALESCE(TO_VARCHAR(p.big), 'null') AS v FROM {} WHERE p.customer_id = 1",
+                pivoted("SUM", "'BIG'", "(customer_id, big)")
+            ),
+            expected_outcome: Ok("null"),
+        },
+        BuiltFirstValueTestCase {
+            description: "without an alias column list it stays refused",
+            sql: format!("SELECT * FROM {}", pivoted("SUM", "'big'", "")),
+            expected_outcome: Err("alias column list"),
+        },
+        BuiltFirstValueTestCase {
+            description: "another aggregate stays refused",
+            sql: format!(
+                "SELECT * FROM {}",
+                pivoted("AVG", "'big'", "(customer_id, big)")
+            ),
+            expected_outcome: Err("other than SUM or MAX"),
+        },
+    ];
+    for test_case in test_cases {
+        assert_eq!(
+            shop_first_outcome(&test_case.sql, test_case.expected_outcome),
             test_case
                 .expected_outcome
                 .map(str::to_owned)

@@ -118,6 +118,10 @@ pub(crate) const HIERARCHY_NESTED_QUERIES: &[&str] = &[
     "exists",
     "with",
 ];
+/// PIVOT in FROM as a grouped aggregate of each listed key.
+pub const PIVOT_RULE: &str = "rule.pivot";
+/// The aggregates a PIVOT converts, each as itself over the rows of one key.
+pub(crate) const PIVOT_AGGREGATES: &[&str] = &["SUM", "MAX"];
 /// TABLE(GENERATOR(ROWCOUNT => n)) and SEQ4 / SEQ8 over it.
 pub const GENERATOR_RULE: &str = "rule.generator";
 /// The table function GENERATOR.
