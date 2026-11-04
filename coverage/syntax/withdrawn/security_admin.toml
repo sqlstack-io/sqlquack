@@ -272,6 +272,15 @@ valid_as = "sf.security_admin.create-role.create-or-alter-role positive the docu
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
+form = "sf.security_admin.create-database-role.define-database-role"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required DATABASE"
+sql = "DEFINE ROLE v1 ;"
+valid_as = "sf.security_admin.create-role.define-role positive the documented form with every required part and no optional part"
+reason = "the rejection renders SQL the documented grammar also accepts"
+
+[[withdrawn]]
 form = "sf.security_admin.create-organization-account"
 kind = "negative_neighbour"
 target = ""

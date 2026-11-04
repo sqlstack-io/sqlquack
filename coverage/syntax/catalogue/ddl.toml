@@ -9485,10 +9485,15 @@ id = "sf.ddl.create-warehouse.create-or-alter-warehouse"
 family = "ddl"
 source = "doc.sql.create-warehouse"
 anchor = "CREATE OR ALTER WAREHOUSE"
-kind = "prose"
-grammar = []
-grammar_sha256 = "prose:CREATE OR ALTER WAREHOUSE"
-uses = []
+kind = "statement"
+grammar = [
+  "CREATE OR ALTER WAREHOUSE <name> [ [ WITH ] objectProperties ] [ objectParams ]",
+]
+grammar_sha256 = "f7d9660bb41e096cb3cc071f8c4c6a9b8f94a0b3b795fa2e0a52c7abbc8a44dc"
+uses = [
+  "objectParams",
+  "objectProperties",
+]
 status = "catalogued"
 
 [[form]]

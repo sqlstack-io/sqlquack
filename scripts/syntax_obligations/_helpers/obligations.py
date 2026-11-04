@@ -149,14 +149,15 @@ def family_obligations(
     catalogue: list[Row] = tomllib.loads((root / "catalogue" / f"{family}.toml").read_text())[
         "form"
     ]
+    readings: dict[str, Row] = _readings(path=root / "limits.toml")
     forms: list[Row] = [
         form
         for form in catalogue
-        if form["status"] == STATUS_CATALOGUED and form["kind"] != KIND_PROSE
+        if form["status"] == STATUS_CATALOGUED
+        and (form["kind"] != KIND_PROSE or form["id"] in readings)
     ]
     drafts: list[Draft] = []
     trees: dict[str, list[tuple[Node, ...]]] = {}
-    readings: dict[str, Row] = _readings(path=root / "limits.toml")
     argument_classes: Counter[str] = Counter()
     for form in forms:
         found, trees[str(form["id"])], skipped = derive_trees(

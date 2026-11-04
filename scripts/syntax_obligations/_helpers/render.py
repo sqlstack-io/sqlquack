@@ -51,6 +51,7 @@ from scripts.syntax_obligations.constants import (
     PROCEDURE_WRAPPER,
     QUERY_CLASS,
     QUOTED_WITHOUT_BLANK_NAMES,
+    REPEAT_FILLS,
     REPEAT_SLOT,
     RESERVED_WORD,
     SINGLE_CHARACTER_LITERAL_LENGTH,
@@ -358,6 +359,8 @@ class _Renderer:
         label: str = operand_class(name)
         if not fill:
             fill = CLASS_FILL.get(STRING_CLASS if node.token_kind == TOKEN_LITERAL else label, "v1")
+        if name in REPEAT_FILLS and self._used.get(name):
+            fill = REPEAT_FILLS[name]
         if choices.quote == name and node.token_kind == TOKEN_PLACEHOLDER:
             fill = f'"{fill}Q"' if name in QUOTED_WITHOUT_BLANK_NAMES else f'"{fill} Q"'
         if dollar_quoted:

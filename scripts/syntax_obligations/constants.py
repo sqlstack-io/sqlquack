@@ -377,7 +377,7 @@ STAGE_GLUES: tuple[re.Pattern[str], ...] = (
     re.compile(STAGE_TOKEN + r"/) (?![a-z]+:)(?=[a-z0-9\"'])"),
 )
 STAGE_KEYWORD: re.Pattern[str] = re.compile(r"(?<![^ ])(@[^ ]*?[%.]|@)([A-Z][A-Z0-9_]*)(?=[ ;]|$)")
-EMPTY_PROPERTY_LIST: re.Pattern[str] = re.compile(r"\b(?:SET|UNSET|WITH) ;$")
+EMPTY_PROPERTY_LIST: re.Pattern[str] = re.compile(r"(?<!STARTS )\b(?:SET|UNSET|WITH) ;$")
 EMPTY_CLAUSE: re.Pattern[str] = re.compile(r"\bON ;$")
 GLUED_INFIX_RIGHT: re.Pattern[str] = re.compile(r"(?<![^ ])! (?=[A-Za-z_\"'])")
 GLUED_INFIX_LEFT: re.Pattern[str] = re.compile(r"(?<=[\w\"')]) !(?=[ A-Za-z_\"'])")
@@ -991,6 +991,7 @@ DDL_FILLS: dict[str, str] = {
     "start_column": "v1",
     "end_column": "v1",
 }
+REPEAT_FILLS: dict[str, str] = {"integration_type_name": "API INTEGRATIONS"}
 ALERT_PAGES: tuple[str, ...] = ("sf.ddl.create-alert", "sf.ddl.alter-alert")
 SECURITY_ADMIN_FILLS: dict[str, str] = {
     **DDL_FILLS,
@@ -1125,6 +1126,7 @@ DDL_LITERAL_FILLS: dict[str, str] = {
         "'azure://a1.blob.core.windows.net/c1/p1/'"
     ),
     "'( <purpose> = <contact> )'": "'( p1 = c1 )'",
+    "'asset://<asset_path>'": "'asset://a1/'",
     "'{ <num> MINUTE | <num> HOUR | USING CRON <expr> <time_zone> }'": "'1 HOUR'",
     "'https://example.com/<...>'": "'https://example.com/'",
     "'<...>'": "'https://example.com/'",

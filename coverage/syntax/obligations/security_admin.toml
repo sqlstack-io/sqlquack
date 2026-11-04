@@ -7158,7 +7158,7 @@ anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
-id = "sf.security_admin.alter-application-role.rename-to.o026"
+id = "sf.security_admin.alter-application-role.rename-to.o034"
 kind = "negative_neighbour"
 required = true
 anchor = "doc.sql.alter-application-role / Syntax"
@@ -11065,7 +11065,7 @@ anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
-id = "sf.security_admin.alter-database-role.rename-to.o026"
+id = "sf.security_admin.alter-database-role.rename-to.o034"
 kind = "negative_neighbour"
 required = true
 anchor = "doc.sql.alter-database-role / Syntax"
@@ -11340,7 +11340,7 @@ anchor = "doc.sql.alter-database-role / Parameters"
 note = "a tag value of 257 characters against the documented maximum of 256"
 
 [[obligation]]
-id = "sf.security_admin.alter-database-role.set-tag.o034"
+id = "sf.security_admin.alter-database-role.set-tag.o042"
 kind = "negative_neighbour"
 required = true
 anchor = "doc.sql.alter-database-role / Syntax"
@@ -11420,7 +11420,7 @@ anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
-id = "sf.security_admin.alter-database-role.unset-comment.o021"
+id = "sf.security_admin.alter-database-role.unset-comment.o029"
 kind = "negative_neighbour"
 required = true
 anchor = "doc.sql.alter-database-role / Syntax"
@@ -11550,7 +11550,7 @@ anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
-id = "sf.security_admin.alter-database-role.unset-tag.o028"
+id = "sf.security_admin.alter-database-role.unset-tag.o036"
 kind = "negative_neighbour"
 required = true
 anchor = "doc.sql.alter-database-role / Syntax"
@@ -16136,7 +16136,7 @@ anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
-id = "sf.security_admin.alter-feature-policy.as.o023"
+id = "sf.security_admin.alter-feature-policy.as.o031"
 kind = "negative_neighbour"
 required = true
 anchor = "doc.sql.alter-feature-policy / Syntax"
@@ -16465,7 +16465,7 @@ anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
-id = "sf.security_admin.alter-feature-policy.set.o041"
+id = "sf.security_admin.alter-feature-policy.set.o049"
 kind = "negative_neighbour"
 required = true
 anchor = "doc.sql.alter-feature-policy / Syntax"
@@ -16994,7 +16994,7 @@ anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
-id = "sf.security_admin.alter-ingress-policy.as.o023"
+id = "sf.security_admin.alter-ingress-policy.as.o031"
 kind = "negative_neighbour"
 required = true
 anchor = "doc.sql.alter-ingress-policy / Syntax"
@@ -17226,7 +17226,7 @@ anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
-id = "sf.security_admin.alter-ingress-policy.set-comment-as.o028"
+id = "sf.security_admin.alter-ingress-policy.set-comment-as.o036"
 kind = "negative_neighbour"
 required = true
 anchor = "doc.sql.alter-ingress-policy / Syntax"
@@ -19275,7 +19275,7 @@ anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
-id = "sf.security_admin.alter-multi-party-approval-policy.as-rules-name-operations.o022"
+id = "sf.security_admin.alter-multi-party-approval-policy.as-rules-name-operations.o030"
 kind = "negative_neighbour"
 required = true
 anchor = "doc.sql.alter-multi-party-approval-policy / Syntax"
@@ -43427,21 +43427,21 @@ anchor = "doc.sql.alter-session-policy / Optional parameters"
 note = "SESSION_UI_MAX_LIFESPAN_MINS = 43,201 against the documented range 0 to 43,200 minutes, inclusive"
 
 [[obligation]]
-id = "sf.security_admin.alter-session-policy.set.o120"
+id = "sf.security_admin.alter-session-policy.set.o144"
 kind = "negative_neighbour"
 required = true
 anchor = "doc.sql.alter-session-policy / Syntax"
 note = "omit <yaml_definition> ($$$$), observed"
 
 [[obligation]]
-id = "sf.security_admin.alter-session-policy.set.o121"
+id = "sf.security_admin.alter-session-policy.set.o145"
 kind = "negative_neighbour"
 required = true
 anchor = "doc.sql.alter-session-policy / Syntax"
 note = "a string literal in place of <role_name>, observed"
 
 [[obligation]]
-id = "sf.security_admin.alter-session-policy.set.o122"
+id = "sf.security_admin.alter-session-policy.set.o146"
 kind = "negative_neighbour"
 required = true
 anchor = "doc.sql.alter-session-policy / Syntax"
@@ -50938,10 +50938,46 @@ target = "<name> in [ <name> ]"
 note = "a string literal in place of <name>"
 
 [[obligation]]
-id = "sf.security_admin.alter-user.mfaactions.o008"
+id = "sf.security_admin.alter-user.mfaactions.o051"
 kind = "alternative"
 required = true
-target = "{ ENROLL MFA SET DEFAULT_MFA_METHOD = { PASSKEY | TOTP | DU… → ENROLL MFA SET DEFAULT_MFA_METHOD = { PASSKEY | TOTP | DUO } REMOVE MFA METHOD <mfa_method> MODIFY MFA METHOD <mfa_method> SET COMMENT = '<string>' ADD MFA METHOD OTP [ COUNT = <number> ]"
+target = "{ { ENROLL MFA } | { SET DEFAULT_MFA_METHOD = { PASSKEY | TOTP | DUO } } | { REMOVE MFA METHOD <mfa_me… → { ENROLL MFA }"
+
+[[obligation]]
+id = "sf.security_admin.alter-user.mfaactions.o052"
+kind = "alternative"
+required = true
+target = "{ { ENROLL MFA } | { SET DEFAULT_MFA_METHOD = { PASSKEY | TOTP … → { SET DEFAULT_MFA_METHOD = { PASSKEY | TOTP | DUO } }"
+
+[[obligation]]
+id = "sf.security_admin.alter-user.mfaactions.o053"
+kind = "alternative"
+required = true
+target = "{ { ENROLL MFA } | { SET DEFAULT_MFA_METHOD = { PASSKEY | TOTP | DUO } } | { REMOV… → { REMOVE MFA METHOD <mfa_method> }"
+
+[[obligation]]
+id = "sf.security_admin.alter-user.mfaactions.o054"
+kind = "alternative"
+required = true
+target = "{ { ENROLL MFA } | { SET DEFAULT_MFA_METHOD = { PASSKEY | T… → { MODIFY MFA METHOD <mfa_method> SET COMMENT = '<string>' }"
+
+[[obligation]]
+id = "sf.security_admin.alter-user.mfaactions.o055"
+kind = "alternative"
+required = true
+target = "{ { ENROLL MFA } | { SET DEFAULT_MFA_METHOD = { PASSKEY | TOTP | DUO } } … → { ADD MFA METHOD OTP [ COUNT = <number> ] }"
+
+[[obligation]]
+id = "sf.security_admin.alter-user.mfaactions.o056"
+kind = "alternative"
+required = true
+target = "{ ENROLL MFA } → ENROLL MFA"
+
+[[obligation]]
+id = "sf.security_admin.alter-user.mfaactions.o057"
+kind = "alternative"
+required = true
+target = "{ SET DEFAULT_MFA_METHOD = { PASSKEY | TOTP | DUO } } → SET DEFAULT_MFA_METHOD = { PASSKEY | TOTP | DUO }"
 
 [[obligation]]
 id = "sf.security_admin.alter-user.mfaactions.o009"
@@ -50962,6 +50998,12 @@ required = true
 target = "{ PASSKEY | TOTP | DUO } → DUO"
 
 [[obligation]]
+id = "sf.security_admin.alter-user.mfaactions.o058"
+kind = "alternative"
+required = true
+target = "{ REMOVE MFA METHOD <mfa_method> } → REMOVE MFA METHOD <mfa_method>"
+
+[[obligation]]
 id = "sf.security_admin.alter-user.mfaactions.o012"
 kind = "required_operand_missing"
 required = true
@@ -50974,6 +51016,12 @@ kind = "operand_type_class"
 required = true
 target = "<mfa_method>"
 note = "a valid operand"
+
+[[obligation]]
+id = "sf.security_admin.alter-user.mfaactions.o059"
+kind = "alternative"
+required = true
+target = "{ MODIFY MFA METHOD <mfa_method> SET COMMENT = '<string>' } → MODIFY MFA METHOD <mfa_method> SET COMMENT = '<string>'"
 
 [[obligation]]
 id = "sf.security_admin.alter-user.mfaactions.o014"
@@ -50990,7 +51038,7 @@ target = "<mfa_method> #2"
 note = "a valid operand"
 
 [[obligation]]
-id = "sf.security_admin.alter-user.mfaactions.o016"
+id = "sf.security_admin.alter-user.mfaactions.o060"
 kind = "required_operand_missing"
 required = true
 target = "'<string>'"
@@ -51009,6 +51057,12 @@ kind = "negative_neighbour"
 required = true
 target = "'<string>'"
 note = "an unquoted identifier in place of '<string>'"
+
+[[obligation]]
+id = "sf.security_admin.alter-user.mfaactions.o061"
+kind = "alternative"
+required = true
+target = "{ ADD MFA METHOD OTP [ COUNT = <number> ] } → ADD MFA METHOD OTP [ COUNT = <number> ]"
 
 [[obligation]]
 id = "sf.security_admin.alter-user.mfaactions.o019"
@@ -51062,12 +51116,6 @@ required = true
 note = "the form without its required MFA"
 
 [[obligation]]
-id = "sf.security_admin.alter-user.mfaactions.o027"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required SET"
-
-[[obligation]]
 id = "sf.security_admin.alter-user.mfaactions.o028"
 kind = "negative_neighbour"
 required = true
@@ -51080,22 +51128,16 @@ required = true
 note = "the form without its required { PASSKEY | TOTP | DUO }"
 
 [[obligation]]
-id = "sf.security_admin.alter-user.mfaactions.o030"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required REMOVE"
-
-[[obligation]]
 id = "sf.security_admin.alter-user.mfaactions.o031"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required METHOD"
 
 [[obligation]]
-id = "sf.security_admin.alter-user.mfaactions.o032"
+id = "sf.security_admin.alter-user.mfaactions.o027"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required MODIFY"
+note = "the form without its required SET"
 
 [[obligation]]
 id = "sf.security_admin.alter-user.mfaactions.o033"
@@ -51104,22 +51146,16 @@ required = true
 note = "the form without its required COMMENT"
 
 [[obligation]]
-id = "sf.security_admin.alter-user.mfaactions.o034"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ADD"
-
-[[obligation]]
 id = "sf.security_admin.alter-user.mfaactions.o035"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required OTP"
 
 [[obligation]]
-id = "sf.security_admin.alter-user.mfaactions.o036"
+id = "sf.security_admin.alter-user.mfaactions.o062"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required { ENROLL MFA SET DEFAULT_MFA_METHOD = { PASSKEY | TOTP | DUO } REMOVE MFA METHOD <mfa_method> MODIFY MFA METHOD <mfa_method> SET COMMENT = '<string>' ADD MFA METHOD OTP [ COUNT = <number> ] }"
+note = "the form without its required { { ENROLL MFA } | { SET DEFAULT_MFA_METHOD = { PASSKEY | TOTP | DUO } } | { REMOVE MFA METHOD <mfa_method> } | { MODIFY MFA METHOD <mfa_method> SET COMMENT = '<string>' } | { ADD MFA METHOD OTP [ COUNT = <number> ] } }"
 
 [[obligation]]
 id = "sf.security_admin.alter-user.mfaactions.o037"
@@ -51144,7 +51180,7 @@ anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
-id = "sf.security_admin.alter-user.mfaactions.o040"
+id = "sf.security_admin.alter-user.mfaactions.o063"
 kind = "boundary_below"
 required = true
 target = "ADD MFA METHOD OTP COUNT = <number>"
@@ -51152,7 +51188,7 @@ anchor = "doc.sql.alter-user / Parameters"
 note = "COUNT = 9 against the documented maximum of 10 OTPs"
 
 [[obligation]]
-id = "sf.security_admin.alter-user.mfaactions.o041"
+id = "sf.security_admin.alter-user.mfaactions.o064"
 kind = "boundary_at"
 required = true
 target = "ADD MFA METHOD OTP COUNT = <number>"
@@ -51160,7 +51196,7 @@ anchor = "doc.sql.alter-user / Parameters"
 note = "COUNT = 10 against the documented maximum of 10 OTPs"
 
 [[obligation]]
-id = "sf.security_admin.alter-user.mfaactions.o042"
+id = "sf.security_admin.alter-user.mfaactions.o065"
 kind = "boundary_above"
 required = true
 target = "ADD MFA METHOD OTP COUNT = <number>"
@@ -60048,6 +60084,509 @@ anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
+id = "sf.security_admin.create-authentication-policy.define-authentication-policy.o001"
+kind = "positive"
+required = true
+note = "the documented form with every required part and no optional part"
+
+[[obligation]]
+id = "sf.security_admin.create-authentication-policy.define-authentication-policy.o002"
+kind = "required_operand_missing"
+required = true
+target = "<name>"
+note = "omit <name>"
+
+[[obligation]]
+id = "sf.security_admin.create-authentication-policy.define-authentication-policy.o003"
+kind = "operand_type_class"
+required = true
+target = "<name>"
+note = "a valid identifier"
+
+[[obligation]]
+id = "sf.security_admin.create-authentication-policy.define-authentication-policy.o004"
+kind = "negative_neighbour"
+required = true
+target = "<name>"
+note = "a string literal in place of <name>"
+
+[[obligation]]
+id = "sf.security_admin.create-authentication-policy.define-authentication-policy.o005"
+kind = "option_present"
+required = true
+target = "[ AUTHENTICATION_METHODS = ( '<string_literal>' [ , '<string_literal>' , ... ] ) ]"
+
+[[obligation]]
+id = "sf.security_admin.create-authentication-policy.define-authentication-policy.o006"
+kind = "option_absent"
+required = true
+target = "[ AUTHENTICATION_METHODS = ( '<string_literal>' [ , '<string_literal>' , ... ] ) ]"
+
+[[obligation]]
+id = "sf.security_admin.create-authentication-policy.define-authentication-policy.o007"
+kind = "required_operand_missing"
+required = true
+target = "'<string_literal>' in [ AUTHENTICATION_METHODS = ( '<string_literal>' [ , '<string_literal>' , ... ] ) ]"
+note = "omit '<string_literal>'"
+
+[[obligation]]
+id = "sf.security_admin.create-authentication-policy.define-authentication-policy.o008"
+kind = "operand_type_class"
+required = true
+target = "'<string_literal>' in [ AUTHENTICATION_METHODS = ( '<string_literal>' [ , '<string_literal>' , ... ] ) ]"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.security_admin.create-authentication-policy.define-authentication-policy.o009"
+kind = "negative_neighbour"
+required = true
+target = "'<string_literal>' in [ AUTHENTICATION_METHODS = ( '<string_literal>' [ , '<string_literal>' , ... ] ) ]"
+note = "an unquoted identifier in place of '<string_literal>'"
+
+[[obligation]]
+id = "sf.security_admin.create-authentication-policy.define-authentication-policy.o010"
+kind = "option_present"
+required = true
+target = "[ , '<string_literal>' , ... ]"
+note = "the list continued at least once"
+
+[[obligation]]
+id = "sf.security_admin.create-authentication-policy.define-authentication-policy.o011"
+kind = "option_absent"
+required = true
+target = "[ , '<string_literal>' , ... ]"
+
+[[obligation]]
+id = "sf.security_admin.create-authentication-policy.define-authentication-policy.o012"
+kind = "option_present"
+required = true
+target = "[ CLIENT_TYPES = ( '<string_literal>' [ , '<string_literal>' , ... ] ) ]"
+
+[[obligation]]
+id = "sf.security_admin.create-authentication-policy.define-authentication-policy.o013"
+kind = "option_absent"
+required = true
+target = "[ CLIENT_TYPES = ( '<string_literal>' [ , '<string_literal>' , ... ] ) ]"
+
+[[obligation]]
+id = "sf.security_admin.create-authentication-policy.define-authentication-policy.o014"
+kind = "required_operand_missing"
+required = true
+target = "'<string_literal>' in [ CLIENT_TYPES = ( '<string_literal>' [ , '<string_literal>' , ... ] ) ]"
+note = "omit '<string_literal>'"
+
+[[obligation]]
+id = "sf.security_admin.create-authentication-policy.define-authentication-policy.o015"
+kind = "operand_type_class"
+required = true
+target = "'<string_literal>' in [ CLIENT_TYPES = ( '<string_literal>' [ , '<string_literal>' , ... ] ) ]"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.security_admin.create-authentication-policy.define-authentication-policy.o016"
+kind = "negative_neighbour"
+required = true
+target = "'<string_literal>' in [ CLIENT_TYPES = ( '<string_literal>' [ , '<string_literal>' , ... ] ) ]"
+note = "an unquoted identifier in place of '<string_literal>'"
+
+[[obligation]]
+id = "sf.security_admin.create-authentication-policy.define-authentication-policy.o017"
+kind = "option_present"
+required = true
+target = "[ , '<string_literal>' , ... ] #2"
+note = "the list continued at least once"
+
+[[obligation]]
+id = "sf.security_admin.create-authentication-policy.define-authentication-policy.o018"
+kind = "option_absent"
+required = true
+target = "[ , '<string_literal>' , ... ] #2"
+
+[[obligation]]
+id = "sf.security_admin.create-authentication-policy.define-authentication-policy.o019"
+kind = "option_present"
+required = true
+target = "[ CLIENT_POLICY = ( <client_type> = ( MINIMUM_VERSION = '<version>' ) [ , ... ] ) ]"
+
+[[obligation]]
+id = "sf.security_admin.create-authentication-policy.define-authentication-policy.o020"
+kind = "option_absent"
+required = true
+target = "[ CLIENT_POLICY = ( <client_type> = ( MINIMUM_VERSION = '<version>' ) [ , ... ] ) ]"
+
+[[obligation]]
+id = "sf.security_admin.create-authentication-policy.define-authentication-policy.o021"
+kind = "required_operand_missing"
+required = true
+target = "<client_type> in [ CLIENT_POLICY = ( <client_type> = ( MINIMUM_VERSION = '<version>' ) [ , ... ] ) ]"
+note = "omit <client_type>"
+
+[[obligation]]
+id = "sf.security_admin.create-authentication-policy.define-authentication-policy.o022"
+kind = "operand_type_class"
+required = true
+target = "<client_type> in [ CLIENT_POLICY = ( <client_type> = ( MINIMUM_VERSION = '<version>' ) [ , ... ] ) ]"
+note = "a valid data_type"
+
+[[obligation]]
+id = "sf.security_admin.create-authentication-policy.define-authentication-policy.o023"
+kind = "negative_neighbour"
+required = true
+target = "<client_type> in [ CLIENT_POLICY = ( <client_type> = ( MINIMUM_VERSION = '<version>' ) [ , ... ] ) ]"
+note = "a string literal in place of <client_type>"
+
+[[obligation]]
+id = "sf.security_admin.create-authentication-policy.define-authentication-policy.o024"
+kind = "required_operand_missing"
+required = true
+target = "'<version>' in [ CLIENT_POLICY = ( <client_type> = ( MINIMUM_VERSION = '<version>' ) [ , ... ] ) ]"
+note = "omit '<version>'"
+
+[[obligation]]
+id = "sf.security_admin.create-authentication-policy.define-authentication-policy.o025"
+kind = "operand_type_class"
+required = true
+target = "'<version>' in [ CLIENT_POLICY = ( <client_type> = ( MINIMUM_VERSION = '<version>' ) [ , ... ] ) ]"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.security_admin.create-authentication-policy.define-authentication-policy.o026"
+kind = "negative_neighbour"
+required = true
+target = "'<version>' in [ CLIENT_POLICY = ( <client_type> = ( MINIMUM_VERSION = '<version>' ) [ , ... ] ) ]"
+note = "an unquoted identifier in place of '<version>'"
+
+[[obligation]]
+id = "sf.security_admin.create-authentication-policy.define-authentication-policy.o027"
+kind = "option_present"
+required = true
+target = "[ , ... ]"
+note = "the list continued at least once"
+
+[[obligation]]
+id = "sf.security_admin.create-authentication-policy.define-authentication-policy.o028"
+kind = "option_absent"
+required = true
+target = "[ , ... ]"
+
+[[obligation]]
+id = "sf.security_admin.create-authentication-policy.define-authentication-policy.o029"
+kind = "option_present"
+required = true
+target = "[ SECURITY_INTEGRATIONS = ( '<string_literal>' [ , '<string_literal>' , ... ] ) ]"
+
+[[obligation]]
+id = "sf.security_admin.create-authentication-policy.define-authentication-policy.o030"
+kind = "option_absent"
+required = true
+target = "[ SECURITY_INTEGRATIONS = ( '<string_literal>' [ , '<string_literal>' , ... ] ) ]"
+
+[[obligation]]
+id = "sf.security_admin.create-authentication-policy.define-authentication-policy.o031"
+kind = "required_operand_missing"
+required = true
+target = "'<string_literal>' in [ SECURITY_INTEGRATIONS = ( '<string_literal>' [ , '<string_literal>' , ... ] ) ]"
+note = "omit '<string_literal>'"
+
+[[obligation]]
+id = "sf.security_admin.create-authentication-policy.define-authentication-policy.o032"
+kind = "operand_type_class"
+required = true
+target = "'<string_literal>' in [ SECURITY_INTEGRATIONS = ( '<string_literal>' [ , '<string_literal>' , ... ] ) ]"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.security_admin.create-authentication-policy.define-authentication-policy.o033"
+kind = "negative_neighbour"
+required = true
+target = "'<string_literal>' in [ SECURITY_INTEGRATIONS = ( '<string_literal>' [ , '<string_literal>' , ... ] ) ]"
+note = "an unquoted identifier in place of '<string_literal>'"
+
+[[obligation]]
+id = "sf.security_admin.create-authentication-policy.define-authentication-policy.o034"
+kind = "option_present"
+required = true
+target = "[ , '<string_literal>' , ... ] #3"
+note = "the list continued at least once"
+
+[[obligation]]
+id = "sf.security_admin.create-authentication-policy.define-authentication-policy.o035"
+kind = "option_absent"
+required = true
+target = "[ , '<string_literal>' , ... ] #3"
+
+[[obligation]]
+id = "sf.security_admin.create-authentication-policy.define-authentication-policy.o036"
+kind = "option_present"
+required = true
+target = "[ MFA_ENROLLMENT = { 'REQUIRED' | 'REQUIRED_PASSWORD_ONLY' | 'OPTIONAL' } ]"
+
+[[obligation]]
+id = "sf.security_admin.create-authentication-policy.define-authentication-policy.o037"
+kind = "option_absent"
+required = true
+target = "[ MFA_ENROLLMENT = { 'REQUIRED' | 'REQUIRED_PASSWORD_ONLY' | 'OPTIONAL' } ]"
+
+[[obligation]]
+id = "sf.security_admin.create-authentication-policy.define-authentication-policy.o038"
+kind = "alternative"
+required = true
+target = "{ 'REQUIRED' | 'REQUIRED_PASSWORD_ONLY' | 'OPTIONAL' } → 'REQUIRED'"
+
+[[obligation]]
+id = "sf.security_admin.create-authentication-policy.define-authentication-policy.o039"
+kind = "alternative"
+required = true
+target = "{ 'REQUIRED' | 'REQUIRED_PASSWORD_ONLY' | 'OPTIONAL' } → 'REQUIRED_PASSWORD_ONLY'"
+
+[[obligation]]
+id = "sf.security_admin.create-authentication-policy.define-authentication-policy.o040"
+kind = "alternative"
+required = true
+target = "{ 'REQUIRED' | 'REQUIRED_PASSWORD_ONLY' | 'OPTIONAL' } → 'OPTIONAL'"
+
+[[obligation]]
+id = "sf.security_admin.create-authentication-policy.define-authentication-policy.o041"
+kind = "option_present"
+required = true
+target = "[ MFA_POLICY = ( <list_of_properties> ) ]"
+
+[[obligation]]
+id = "sf.security_admin.create-authentication-policy.define-authentication-policy.o042"
+kind = "option_absent"
+required = true
+target = "[ MFA_POLICY = ( <list_of_properties> ) ]"
+
+[[obligation]]
+id = "sf.security_admin.create-authentication-policy.define-authentication-policy.o043"
+kind = "required_operand_missing"
+required = true
+target = "<list_of_properties> in [ MFA_POLICY = ( <list_of_properties> ) ]"
+note = "omit <list_of_properties>"
+
+[[obligation]]
+id = "sf.security_admin.create-authentication-policy.define-authentication-policy.o044"
+kind = "operand_type_class"
+required = true
+target = "<list_of_properties> in [ MFA_POLICY = ( <list_of_properties> ) ]"
+note = "a valid operand"
+
+[[obligation]]
+id = "sf.security_admin.create-authentication-policy.define-authentication-policy.o045"
+kind = "option_present"
+required = true
+target = "[ PAT_POLICY = ( <list_of_properties> ) ]"
+
+[[obligation]]
+id = "sf.security_admin.create-authentication-policy.define-authentication-policy.o046"
+kind = "option_absent"
+required = true
+target = "[ PAT_POLICY = ( <list_of_properties> ) ]"
+
+[[obligation]]
+id = "sf.security_admin.create-authentication-policy.define-authentication-policy.o047"
+kind = "required_operand_missing"
+required = true
+target = "<list_of_properties> in [ PAT_POLICY = ( <list_of_properties> ) ]"
+note = "omit <list_of_properties>"
+
+[[obligation]]
+id = "sf.security_admin.create-authentication-policy.define-authentication-policy.o048"
+kind = "operand_type_class"
+required = true
+target = "<list_of_properties> in [ PAT_POLICY = ( <list_of_properties> ) ]"
+note = "a valid operand"
+
+[[obligation]]
+id = "sf.security_admin.create-authentication-policy.define-authentication-policy.o049"
+kind = "option_present"
+required = true
+target = "[ WORKLOAD_IDENTITY_POLICY = ( <list_of_properties> ) ]"
+
+[[obligation]]
+id = "sf.security_admin.create-authentication-policy.define-authentication-policy.o050"
+kind = "option_absent"
+required = true
+target = "[ WORKLOAD_IDENTITY_POLICY = ( <list_of_properties> ) ]"
+
+[[obligation]]
+id = "sf.security_admin.create-authentication-policy.define-authentication-policy.o051"
+kind = "required_operand_missing"
+required = true
+target = "<list_of_properties> in [ WORKLOAD_IDENTITY_POLICY = ( <list_of_properties> ) ]"
+note = "omit <list_of_properties>"
+
+[[obligation]]
+id = "sf.security_admin.create-authentication-policy.define-authentication-policy.o052"
+kind = "operand_type_class"
+required = true
+target = "<list_of_properties> in [ WORKLOAD_IDENTITY_POLICY = ( <list_of_properties> ) ]"
+note = "a valid operand"
+
+[[obligation]]
+id = "sf.security_admin.create-authentication-policy.define-authentication-policy.o053"
+kind = "option_present"
+required = true
+target = "[ COMMENT = '<string_literal>' ]"
+
+[[obligation]]
+id = "sf.security_admin.create-authentication-policy.define-authentication-policy.o054"
+kind = "option_absent"
+required = true
+target = "[ COMMENT = '<string_literal>' ]"
+
+[[obligation]]
+id = "sf.security_admin.create-authentication-policy.define-authentication-policy.o055"
+kind = "required_operand_missing"
+required = true
+target = "'<string_literal>' in [ COMMENT = '<string_literal>' ]"
+note = "omit '<string_literal>'"
+
+[[obligation]]
+id = "sf.security_admin.create-authentication-policy.define-authentication-policy.o056"
+kind = "operand_type_class"
+required = true
+target = "'<string_literal>' in [ COMMENT = '<string_literal>' ]"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.security_admin.create-authentication-policy.define-authentication-policy.o057"
+kind = "negative_neighbour"
+required = true
+target = "'<string_literal>' in [ COMMENT = '<string_literal>' ]"
+note = "an unquoted identifier in place of '<string_literal>'"
+
+[[obligation]]
+id = "sf.security_admin.create-authentication-policy.define-authentication-policy.o058"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required AUTHENTICATION"
+
+[[obligation]]
+id = "sf.security_admin.create-authentication-policy.define-authentication-policy.o059"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required POLICY"
+
+[[obligation]]
+id = "sf.security_admin.create-authentication-policy.define-authentication-policy.o060"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( in [ AUTHENTICATION_METHODS = ( '<string_literal>' [ , '<string_literal>' , ... ] ) ]"
+
+[[obligation]]
+id = "sf.security_admin.create-authentication-policy.define-authentication-policy.o061"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) in [ AUTHENTICATION_METHODS = ( '<string_literal>' [ , '<string_literal>' , ... ] ) ]"
+
+[[obligation]]
+id = "sf.security_admin.create-authentication-policy.define-authentication-policy.o062"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( in [ CLIENT_TYPES = ( '<string_literal>' [ , '<string_literal>' , ... ] ) ]"
+
+[[obligation]]
+id = "sf.security_admin.create-authentication-policy.define-authentication-policy.o063"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) in [ CLIENT_TYPES = ( '<string_literal>' [ , '<string_literal>' , ... ] ) ]"
+
+[[obligation]]
+id = "sf.security_admin.create-authentication-policy.define-authentication-policy.o064"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( in [ CLIENT_POLICY = ( <client_type> = ( MINIMUM_VERSION = '<version>' ) [ , ... ] ) ]"
+
+[[obligation]]
+id = "sf.security_admin.create-authentication-policy.define-authentication-policy.o065"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required MINIMUM_VERSION in [ CLIENT_POLICY = ( <client_type> = ( MINIMUM_VERSION = '<version>' ) [ , ... ] ) ]"
+
+[[obligation]]
+id = "sf.security_admin.create-authentication-policy.define-authentication-policy.o066"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) in [ CLIENT_POLICY = ( <client_type> = ( MINIMUM_VERSION = '<version>' ) [ , ... ] ) ]"
+
+[[obligation]]
+id = "sf.security_admin.create-authentication-policy.define-authentication-policy.o067"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( in [ SECURITY_INTEGRATIONS = ( '<string_literal>' [ , '<string_literal>' , ... ] ) ]"
+
+[[obligation]]
+id = "sf.security_admin.create-authentication-policy.define-authentication-policy.o068"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) in [ SECURITY_INTEGRATIONS = ( '<string_literal>' [ , '<string_literal>' , ... ] ) ]"
+
+[[obligation]]
+id = "sf.security_admin.create-authentication-policy.define-authentication-policy.o069"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { 'REQUIRED' | 'REQUIRED_PASSWORD_ONLY' | 'OPTIONAL' } in [ MFA_ENROLLMENT = { 'REQUIRED' | 'REQUIRED_PASSWORD_ONLY' | 'OPTIONAL' } ]"
+
+[[obligation]]
+id = "sf.security_admin.create-authentication-policy.define-authentication-policy.o070"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( in [ MFA_POLICY = ( <list_of_properties> ) ]"
+
+[[obligation]]
+id = "sf.security_admin.create-authentication-policy.define-authentication-policy.o071"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) in [ MFA_POLICY = ( <list_of_properties> ) ]"
+
+[[obligation]]
+id = "sf.security_admin.create-authentication-policy.define-authentication-policy.o072"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( in [ PAT_POLICY = ( <list_of_properties> ) ]"
+
+[[obligation]]
+id = "sf.security_admin.create-authentication-policy.define-authentication-policy.o073"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) in [ PAT_POLICY = ( <list_of_properties> ) ]"
+
+[[obligation]]
+id = "sf.security_admin.create-authentication-policy.define-authentication-policy.o074"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( in [ WORKLOAD_IDENTITY_POLICY = ( <list_of_properties> ) ]"
+
+[[obligation]]
+id = "sf.security_admin.create-authentication-policy.define-authentication-policy.o075"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) in [ WORKLOAD_IDENTITY_POLICY = ( <list_of_properties> ) ]"
+
+[[obligation]]
+id = "sf.security_admin.create-authentication-policy.define-authentication-policy.o076"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
+
+[[obligation]]
+id = "sf.security_admin.create-authentication-policy.define-authentication-policy.o077"
+kind = "identifier_class"
+required = true
+target = "<name>"
+anchor = "doc.identifiers-syntax"
+note = "quoted: a double-quoted identifier with blanks and mixed case"
+
+[[obligation]]
+id = "sf.security_admin.create-authentication-policy.define-authentication-policy.o078"
+kind = "identifier_class"
+required = true
+target = "<name>"
+anchor = "doc.identifiers-syntax"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
 id = "sf.security_admin.create-backup-policy.backup-policy.o001"
 kind = "positive"
 required = true
@@ -64522,7 +65061,7 @@ anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
-id = "sf.security_admin.create-database-role.create-database-role.o029"
+id = "sf.security_admin.create-database-role.create-database-role.o037"
 kind = "negative_neighbour"
 required = true
 anchor = "doc.sql.create-database-role / Syntax"
@@ -64617,7 +65156,90 @@ anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
-id = "sf.security_admin.create-database-role.create-or-alter-database.o023"
+id = "sf.security_admin.create-database-role.create-or-alter-database.o031"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.create-database-role / Syntax"
+note = "the form without its required ROLE, observed"
+
+[[obligation]]
+id = "sf.security_admin.create-database-role.define-database-role.o001"
+kind = "positive"
+required = true
+note = "the documented form with every required part and no optional part"
+
+[[obligation]]
+id = "sf.security_admin.create-database-role.define-database-role.o002"
+kind = "required_operand_missing"
+required = true
+target = "<name>"
+note = "omit <name>"
+
+[[obligation]]
+id = "sf.security_admin.create-database-role.define-database-role.o003"
+kind = "operand_type_class"
+required = true
+target = "<name>"
+note = "a valid identifier"
+
+[[obligation]]
+id = "sf.security_admin.create-database-role.define-database-role.o004"
+kind = "negative_neighbour"
+required = true
+target = "<name>"
+note = "a string literal in place of <name>"
+
+[[obligation]]
+id = "sf.security_admin.create-database-role.define-database-role.o005"
+kind = "option_present"
+required = true
+target = "[ COMMENT = '<string_literal>' ]"
+
+[[obligation]]
+id = "sf.security_admin.create-database-role.define-database-role.o006"
+kind = "option_absent"
+required = true
+target = "[ COMMENT = '<string_literal>' ]"
+
+[[obligation]]
+id = "sf.security_admin.create-database-role.define-database-role.o007"
+kind = "required_operand_missing"
+required = true
+target = "'<string_literal>' in [ COMMENT = '<string_literal>' ]"
+note = "omit '<string_literal>'"
+
+[[obligation]]
+id = "sf.security_admin.create-database-role.define-database-role.o008"
+kind = "operand_type_class"
+required = true
+target = "'<string_literal>' in [ COMMENT = '<string_literal>' ]"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.security_admin.create-database-role.define-database-role.o009"
+kind = "negative_neighbour"
+required = true
+target = "'<string_literal>' in [ COMMENT = '<string_literal>' ]"
+note = "an unquoted identifier in place of '<string_literal>'"
+
+[[obligation]]
+id = "sf.security_admin.create-database-role.define-database-role.o011"
+kind = "identifier_class"
+required = true
+target = "<name>"
+anchor = "doc.identifiers-syntax"
+note = "quoted: a double-quoted identifier with blanks and mixed case"
+
+[[obligation]]
+id = "sf.security_admin.create-database-role.define-database-role.o012"
+kind = "identifier_class"
+required = true
+target = "<name>"
+anchor = "doc.identifiers-syntax"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.security_admin.create-database-role.define-database-role.o019"
 kind = "negative_neighbour"
 required = true
 anchor = "doc.sql.create-database-role / Syntax"
@@ -66196,7 +66818,7 @@ anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
-id = "sf.security_admin.create-feature-policy.o043"
+id = "sf.security_admin.create-feature-policy.o051"
 kind = "negative_neighbour"
 required = true
 anchor = "doc.sql.create-feature-policy / Syntax"
@@ -66352,7 +66974,7 @@ anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
-id = "sf.security_admin.create-ingress-policy.o033"
+id = "sf.security_admin.create-ingress-policy.o041"
 kind = "negative_neighbour"
 required = true
 anchor = "doc.sql.create-ingress-policy / Syntax"
@@ -67682,7 +68304,7 @@ anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
-id = "sf.security_admin.create-multi-party-approval-policy.o030"
+id = "sf.security_admin.create-multi-party-approval-policy.o038"
 kind = "negative_neighbour"
 required = true
 anchor = "doc.sql.create-multi-party-approval-policy / Syntax"
@@ -68415,6 +69037,342 @@ anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
+id = "sf.security_admin.create-network-policy.define-network-policy.o001"
+kind = "positive"
+required = true
+note = "the documented form with every required part and no optional part"
+
+[[obligation]]
+id = "sf.security_admin.create-network-policy.define-network-policy.o002"
+kind = "required_operand_missing"
+required = true
+target = "<name>"
+note = "omit <name>"
+
+[[obligation]]
+id = "sf.security_admin.create-network-policy.define-network-policy.o003"
+kind = "operand_type_class"
+required = true
+target = "<name>"
+note = "a valid identifier"
+
+[[obligation]]
+id = "sf.security_admin.create-network-policy.define-network-policy.o004"
+kind = "negative_neighbour"
+required = true
+target = "<name>"
+note = "a string literal in place of <name>"
+
+[[obligation]]
+id = "sf.security_admin.create-network-policy.define-network-policy.o005"
+kind = "option_present"
+required = true
+target = "[ ALLOWED_NETWORK_RULE_LIST = ( '<network_rule>' [ , '<network_rule>' , ... ] ) ]"
+
+[[obligation]]
+id = "sf.security_admin.create-network-policy.define-network-policy.o006"
+kind = "option_absent"
+required = true
+target = "[ ALLOWED_NETWORK_RULE_LIST = ( '<network_rule>' [ , '<network_rule>' , ... ] ) ]"
+
+[[obligation]]
+id = "sf.security_admin.create-network-policy.define-network-policy.o007"
+kind = "required_operand_missing"
+required = true
+target = "'<network_rule>' in [ ALLOWED_NETWORK_RULE_LIST = ( '<network_rule>' [ , '<network_rule>' , ... ] ) ]"
+note = "omit '<network_rule>'"
+
+[[obligation]]
+id = "sf.security_admin.create-network-policy.define-network-policy.o008"
+kind = "operand_type_class"
+required = true
+target = "'<network_rule>' in [ ALLOWED_NETWORK_RULE_LIST = ( '<network_rule>' [ , '<network_rule>' , ... ] ) ]"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.security_admin.create-network-policy.define-network-policy.o009"
+kind = "negative_neighbour"
+required = true
+target = "'<network_rule>' in [ ALLOWED_NETWORK_RULE_LIST = ( '<network_rule>' [ , '<network_rule>' , ... ] ) ]"
+note = "an unquoted identifier in place of '<network_rule>'"
+
+[[obligation]]
+id = "sf.security_admin.create-network-policy.define-network-policy.o010"
+kind = "option_present"
+required = true
+target = "[ , '<network_rule>' , ... ]"
+note = "the list continued at least once"
+
+[[obligation]]
+id = "sf.security_admin.create-network-policy.define-network-policy.o011"
+kind = "option_absent"
+required = true
+target = "[ , '<network_rule>' , ... ]"
+
+[[obligation]]
+id = "sf.security_admin.create-network-policy.define-network-policy.o012"
+kind = "option_present"
+required = true
+target = "[ BLOCKED_NETWORK_RULE_LIST = ( '<network_rule>' [ , '<network_rule>' , ... ] ) ]"
+
+[[obligation]]
+id = "sf.security_admin.create-network-policy.define-network-policy.o013"
+kind = "option_absent"
+required = true
+target = "[ BLOCKED_NETWORK_RULE_LIST = ( '<network_rule>' [ , '<network_rule>' , ... ] ) ]"
+
+[[obligation]]
+id = "sf.security_admin.create-network-policy.define-network-policy.o014"
+kind = "required_operand_missing"
+required = true
+target = "'<network_rule>' in [ BLOCKED_NETWORK_RULE_LIST = ( '<network_rule>' [ , '<network_rule>' , ... ] ) ]"
+note = "omit '<network_rule>'"
+
+[[obligation]]
+id = "sf.security_admin.create-network-policy.define-network-policy.o015"
+kind = "operand_type_class"
+required = true
+target = "'<network_rule>' in [ BLOCKED_NETWORK_RULE_LIST = ( '<network_rule>' [ , '<network_rule>' , ... ] ) ]"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.security_admin.create-network-policy.define-network-policy.o016"
+kind = "negative_neighbour"
+required = true
+target = "'<network_rule>' in [ BLOCKED_NETWORK_RULE_LIST = ( '<network_rule>' [ , '<network_rule>' , ... ] ) ]"
+note = "an unquoted identifier in place of '<network_rule>'"
+
+[[obligation]]
+id = "sf.security_admin.create-network-policy.define-network-policy.o017"
+kind = "option_present"
+required = true
+target = "[ , '<network_rule>' , ... ] #2"
+note = "the list continued at least once"
+
+[[obligation]]
+id = "sf.security_admin.create-network-policy.define-network-policy.o018"
+kind = "option_absent"
+required = true
+target = "[ , '<network_rule>' , ... ] #2"
+
+[[obligation]]
+id = "sf.security_admin.create-network-policy.define-network-policy.o019"
+kind = "option_present"
+required = true
+target = "[ ALLOWED_IP_LIST = ( [ '<ip_address>' ] [ , '<ip_address>' , ... ] ) ]"
+
+[[obligation]]
+id = "sf.security_admin.create-network-policy.define-network-policy.o020"
+kind = "option_absent"
+required = true
+target = "[ ALLOWED_IP_LIST = ( [ '<ip_address>' ] [ , '<ip_address>' , ... ] ) ]"
+
+[[obligation]]
+id = "sf.security_admin.create-network-policy.define-network-policy.o021"
+kind = "option_present"
+required = true
+target = "[ '<ip_address>' ]"
+
+[[obligation]]
+id = "sf.security_admin.create-network-policy.define-network-policy.o022"
+kind = "option_absent"
+required = true
+target = "[ '<ip_address>' ]"
+
+[[obligation]]
+id = "sf.security_admin.create-network-policy.define-network-policy.o023"
+kind = "operand_type_class"
+required = true
+target = "'<ip_address>' in [ '<ip_address>' ]"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.security_admin.create-network-policy.define-network-policy.o024"
+kind = "negative_neighbour"
+required = true
+target = "'<ip_address>' in [ '<ip_address>' ]"
+note = "an unquoted identifier in place of '<ip_address>'"
+
+[[obligation]]
+id = "sf.security_admin.create-network-policy.define-network-policy.o025"
+kind = "option_present"
+required = true
+target = "[ , '<ip_address>' , ... ]"
+note = "the list continued at least once"
+
+[[obligation]]
+id = "sf.security_admin.create-network-policy.define-network-policy.o026"
+kind = "option_absent"
+required = true
+target = "[ , '<ip_address>' , ... ]"
+
+[[obligation]]
+id = "sf.security_admin.create-network-policy.define-network-policy.o027"
+kind = "option_present"
+required = true
+target = "[ BLOCKED_IP_LIST = ( [ '<ip_address>' ] [ , '<ip_address>' , ... ] ) ]"
+
+[[obligation]]
+id = "sf.security_admin.create-network-policy.define-network-policy.o028"
+kind = "option_absent"
+required = true
+target = "[ BLOCKED_IP_LIST = ( [ '<ip_address>' ] [ , '<ip_address>' , ... ] ) ]"
+
+[[obligation]]
+id = "sf.security_admin.create-network-policy.define-network-policy.o029"
+kind = "option_present"
+required = true
+target = "[ '<ip_address>' ] #2"
+
+[[obligation]]
+id = "sf.security_admin.create-network-policy.define-network-policy.o030"
+kind = "option_absent"
+required = true
+target = "[ '<ip_address>' ] #2"
+
+[[obligation]]
+id = "sf.security_admin.create-network-policy.define-network-policy.o031"
+kind = "operand_type_class"
+required = true
+target = "'<ip_address>' in [ '<ip_address>' ] #2"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.security_admin.create-network-policy.define-network-policy.o032"
+kind = "negative_neighbour"
+required = true
+target = "'<ip_address>' in [ '<ip_address>' ] #2"
+note = "an unquoted identifier in place of '<ip_address>'"
+
+[[obligation]]
+id = "sf.security_admin.create-network-policy.define-network-policy.o033"
+kind = "option_present"
+required = true
+target = "[ , '<ip_address>' , ... ] #2"
+note = "the list continued at least once"
+
+[[obligation]]
+id = "sf.security_admin.create-network-policy.define-network-policy.o034"
+kind = "option_absent"
+required = true
+target = "[ , '<ip_address>' , ... ] #2"
+
+[[obligation]]
+id = "sf.security_admin.create-network-policy.define-network-policy.o035"
+kind = "option_present"
+required = true
+target = "[ COMMENT = '<string_literal>' ]"
+
+[[obligation]]
+id = "sf.security_admin.create-network-policy.define-network-policy.o036"
+kind = "option_absent"
+required = true
+target = "[ COMMENT = '<string_literal>' ]"
+
+[[obligation]]
+id = "sf.security_admin.create-network-policy.define-network-policy.o037"
+kind = "required_operand_missing"
+required = true
+target = "'<string_literal>' in [ COMMENT = '<string_literal>' ]"
+note = "omit '<string_literal>'"
+
+[[obligation]]
+id = "sf.security_admin.create-network-policy.define-network-policy.o038"
+kind = "operand_type_class"
+required = true
+target = "'<string_literal>' in [ COMMENT = '<string_literal>' ]"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.security_admin.create-network-policy.define-network-policy.o039"
+kind = "negative_neighbour"
+required = true
+target = "'<string_literal>' in [ COMMENT = '<string_literal>' ]"
+note = "an unquoted identifier in place of '<string_literal>'"
+
+[[obligation]]
+id = "sf.security_admin.create-network-policy.define-network-policy.o040"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required NETWORK"
+
+[[obligation]]
+id = "sf.security_admin.create-network-policy.define-network-policy.o041"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required POLICY"
+
+[[obligation]]
+id = "sf.security_admin.create-network-policy.define-network-policy.o042"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( in [ ALLOWED_NETWORK_RULE_LIST = ( '<network_rule>' [ , '<network_rule>' , ... ] ) ]"
+
+[[obligation]]
+id = "sf.security_admin.create-network-policy.define-network-policy.o043"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) in [ ALLOWED_NETWORK_RULE_LIST = ( '<network_rule>' [ , '<network_rule>' , ... ] ) ]"
+
+[[obligation]]
+id = "sf.security_admin.create-network-policy.define-network-policy.o044"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( in [ BLOCKED_NETWORK_RULE_LIST = ( '<network_rule>' [ , '<network_rule>' , ... ] ) ]"
+
+[[obligation]]
+id = "sf.security_admin.create-network-policy.define-network-policy.o045"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) in [ BLOCKED_NETWORK_RULE_LIST = ( '<network_rule>' [ , '<network_rule>' , ... ] ) ]"
+
+[[obligation]]
+id = "sf.security_admin.create-network-policy.define-network-policy.o046"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( in [ ALLOWED_IP_LIST = ( [ '<ip_address>' ] [ , '<ip_address>' , ... ] ) ]"
+
+[[obligation]]
+id = "sf.security_admin.create-network-policy.define-network-policy.o047"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) in [ ALLOWED_IP_LIST = ( [ '<ip_address>' ] [ , '<ip_address>' , ... ] ) ]"
+
+[[obligation]]
+id = "sf.security_admin.create-network-policy.define-network-policy.o048"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( in [ BLOCKED_IP_LIST = ( [ '<ip_address>' ] [ , '<ip_address>' , ... ] ) ]"
+
+[[obligation]]
+id = "sf.security_admin.create-network-policy.define-network-policy.o049"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) in [ BLOCKED_IP_LIST = ( [ '<ip_address>' ] [ , '<ip_address>' , ... ] ) ]"
+
+[[obligation]]
+id = "sf.security_admin.create-network-policy.define-network-policy.o050"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
+
+[[obligation]]
+id = "sf.security_admin.create-network-policy.define-network-policy.o051"
+kind = "identifier_class"
+required = true
+target = "<name>"
+anchor = "doc.identifiers-syntax"
+note = "quoted: a double-quoted identifier with blanks and mixed case"
+
+[[obligation]]
+id = "sf.security_admin.create-network-policy.define-network-policy.o052"
+kind = "identifier_class"
+required = true
+target = "<name>"
+anchor = "doc.identifiers-syntax"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
 id = "sf.security_admin.create-network-rule.create-network-rule-type.o001"
 kind = "positive"
 required = true
@@ -68923,6 +69881,242 @@ note = "quoted: a double-quoted identifier with blanks and mixed case"
 
 [[obligation]]
 id = "sf.security_admin.create-network-rule.create-or-alter-network.o039"
+kind = "identifier_class"
+required = true
+target = "<name>"
+anchor = "doc.identifiers-syntax"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.security_admin.create-network-rule.define-network-rule.o001"
+kind = "positive"
+required = true
+note = "the documented form with every required part and no optional part"
+
+[[obligation]]
+id = "sf.security_admin.create-network-rule.define-network-rule.o002"
+kind = "required_operand_missing"
+required = true
+target = "<name>"
+note = "omit <name>"
+
+[[obligation]]
+id = "sf.security_admin.create-network-rule.define-network-rule.o003"
+kind = "operand_type_class"
+required = true
+target = "<name>"
+note = "a valid identifier"
+
+[[obligation]]
+id = "sf.security_admin.create-network-rule.define-network-rule.o004"
+kind = "negative_neighbour"
+required = true
+target = "<name>"
+note = "a string literal in place of <name>"
+
+[[obligation]]
+id = "sf.security_admin.create-network-rule.define-network-rule.o005"
+kind = "alternative"
+required = true
+target = "{ IPV4 | IPV6 | AWSVPCEID | AZURELINKID | GCPPSCID | HOST_PORT | PRIVATE_HOST_PORT | COMPUTE_POOL } → IPV4"
+
+[[obligation]]
+id = "sf.security_admin.create-network-rule.define-network-rule.o006"
+kind = "alternative"
+required = true
+target = "{ IPV4 | IPV6 | AWSVPCEID | AZURELINKID | GCPPSCID | HOST_PORT | PRIVATE_HOST_PORT | COMPUTE_POOL } → IPV6"
+
+[[obligation]]
+id = "sf.security_admin.create-network-rule.define-network-rule.o007"
+kind = "alternative"
+required = true
+target = "{ IPV4 | IPV6 | AWSVPCEID | AZURELINKID | GCPPSCID | HOST_PORT | PRIVATE_HOST_PORT | COMPUTE_POOL } → AWSVPCEID"
+
+[[obligation]]
+id = "sf.security_admin.create-network-rule.define-network-rule.o008"
+kind = "alternative"
+required = true
+target = "{ IPV4 | IPV6 | AWSVPCEID | AZURELINKID | GCPPSCID | HOST_PORT | PRIVATE_HOST_PORT | COMPUTE_POOL } → AZURELINKID"
+
+[[obligation]]
+id = "sf.security_admin.create-network-rule.define-network-rule.o009"
+kind = "alternative"
+required = true
+target = "{ IPV4 | IPV6 | AWSVPCEID | AZURELINKID | GCPPSCID | HOST_PORT | PRIVATE_HOST_PORT | COMPUTE_POOL } → GCPPSCID"
+
+[[obligation]]
+id = "sf.security_admin.create-network-rule.define-network-rule.o010"
+kind = "alternative"
+required = true
+target = "{ IPV4 | IPV6 | AWSVPCEID | AZURELINKID | GCPPSCID | HOST_PORT | PRIVATE_HOST_PORT | COMPUTE_POOL } → HOST_PORT"
+
+[[obligation]]
+id = "sf.security_admin.create-network-rule.define-network-rule.o011"
+kind = "alternative"
+required = true
+target = "{ IPV4 | IPV6 | AWSVPCEID | AZURELINKID | GCPPSCID | HOST_PORT | PRIVATE_HOST_PORT | COMPUTE_POOL } → PRIVATE_HOST_PORT"
+
+[[obligation]]
+id = "sf.security_admin.create-network-rule.define-network-rule.o012"
+kind = "alternative"
+required = true
+target = "{ IPV4 | IPV6 | AWSVPCEID | AZURELINKID | GCPPSCID | HOST_PORT | PRIVATE_HOST_PORT | COMPUTE_POOL } → COMPUTE_POOL"
+
+[[obligation]]
+id = "sf.security_admin.create-network-rule.define-network-rule.o013"
+kind = "required_operand_missing"
+required = true
+target = "'<value>'"
+note = "omit '<value>'"
+
+[[obligation]]
+id = "sf.security_admin.create-network-rule.define-network-rule.o014"
+kind = "operand_type_class"
+required = true
+target = "'<value>'"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.security_admin.create-network-rule.define-network-rule.o015"
+kind = "negative_neighbour"
+required = true
+target = "'<value>'"
+note = "an unquoted identifier in place of '<value>'"
+
+[[obligation]]
+id = "sf.security_admin.create-network-rule.define-network-rule.o016"
+kind = "option_present"
+required = true
+target = "[ , '<value>' , ... ]"
+note = "the list continued at least once"
+
+[[obligation]]
+id = "sf.security_admin.create-network-rule.define-network-rule.o017"
+kind = "option_absent"
+required = true
+target = "[ , '<value>' , ... ]"
+
+[[obligation]]
+id = "sf.security_admin.create-network-rule.define-network-rule.o018"
+kind = "alternative"
+required = true
+target = "{ INGRESS | INTERNAL_STAGE | SNOWFLAKE_MANAGED_STORAGE_VOLUME | EGRESS } → INGRESS"
+
+[[obligation]]
+id = "sf.security_admin.create-network-rule.define-network-rule.o019"
+kind = "alternative"
+required = true
+target = "{ INGRESS | INTERNAL_STAGE | SNOWFLAKE_MANAGED_STORAGE_VOLUME | EGRESS } → INTERNAL_STAGE"
+
+[[obligation]]
+id = "sf.security_admin.create-network-rule.define-network-rule.o020"
+kind = "alternative"
+required = true
+target = "{ INGRESS | INTERNAL_STAGE | SNOWFLAKE_MANAGED_STORAGE_VOLUME | EGRESS } → SNOWFLAKE_MANAGED_STORAGE_VOLUME"
+
+[[obligation]]
+id = "sf.security_admin.create-network-rule.define-network-rule.o021"
+kind = "alternative"
+required = true
+target = "{ INGRESS | INTERNAL_STAGE | SNOWFLAKE_MANAGED_STORAGE_VOLUME | EGRESS } → EGRESS"
+
+[[obligation]]
+id = "sf.security_admin.create-network-rule.define-network-rule.o022"
+kind = "option_present"
+required = true
+target = "[ COMMENT = '<string_literal>' ]"
+
+[[obligation]]
+id = "sf.security_admin.create-network-rule.define-network-rule.o023"
+kind = "option_absent"
+required = true
+target = "[ COMMENT = '<string_literal>' ]"
+
+[[obligation]]
+id = "sf.security_admin.create-network-rule.define-network-rule.o024"
+kind = "required_operand_missing"
+required = true
+target = "'<string_literal>' in [ COMMENT = '<string_literal>' ]"
+note = "omit '<string_literal>'"
+
+[[obligation]]
+id = "sf.security_admin.create-network-rule.define-network-rule.o025"
+kind = "operand_type_class"
+required = true
+target = "'<string_literal>' in [ COMMENT = '<string_literal>' ]"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.security_admin.create-network-rule.define-network-rule.o026"
+kind = "negative_neighbour"
+required = true
+target = "'<string_literal>' in [ COMMENT = '<string_literal>' ]"
+note = "an unquoted identifier in place of '<string_literal>'"
+
+[[obligation]]
+id = "sf.security_admin.create-network-rule.define-network-rule.o027"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required NETWORK"
+
+[[obligation]]
+id = "sf.security_admin.create-network-rule.define-network-rule.o028"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required RULE"
+
+[[obligation]]
+id = "sf.security_admin.create-network-rule.define-network-rule.o029"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required TYPE"
+
+[[obligation]]
+id = "sf.security_admin.create-network-rule.define-network-rule.o030"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { IPV4 | IPV6 | AWSVPCEID | AZURELINKID | GCPPSCID | HOST_PORT | PRIVATE_HOST_PORT | COMPUTE_POOL }"
+
+[[obligation]]
+id = "sf.security_admin.create-network-rule.define-network-rule.o031"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required VALUE_LIST"
+
+[[obligation]]
+id = "sf.security_admin.create-network-rule.define-network-rule.o032"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ("
+
+[[obligation]]
+id = "sf.security_admin.create-network-rule.define-network-rule.o033"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required )"
+
+[[obligation]]
+id = "sf.security_admin.create-network-rule.define-network-rule.o034"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required MODE"
+
+[[obligation]]
+id = "sf.security_admin.create-network-rule.define-network-rule.o035"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { INGRESS | INTERNAL_STAGE | SNOWFLAKE_MANAGED_STORAGE_VOLUME | EGRESS }"
+
+[[obligation]]
+id = "sf.security_admin.create-network-rule.define-network-rule.o036"
+kind = "identifier_class"
+required = true
+target = "<name>"
+anchor = "doc.identifiers-syntax"
+note = "quoted: a double-quoted identifier with blanks and mixed case"
+
+[[obligation]]
+id = "sf.security_admin.create-network-rule.define-network-rule.o037"
 kind = "identifier_class"
 required = true
 target = "<name>"
@@ -76326,6 +77520,88 @@ anchor = "doc.sql.create-role / Parameters"
 note = "a tag value of 257 characters against the documented maximum of 256"
 
 [[obligation]]
+id = "sf.security_admin.create-role.define-role.o001"
+kind = "positive"
+required = true
+note = "the documented form with every required part and no optional part"
+
+[[obligation]]
+id = "sf.security_admin.create-role.define-role.o002"
+kind = "required_operand_missing"
+required = true
+target = "<name>"
+note = "omit <name>"
+
+[[obligation]]
+id = "sf.security_admin.create-role.define-role.o003"
+kind = "operand_type_class"
+required = true
+target = "<name>"
+note = "a valid identifier"
+
+[[obligation]]
+id = "sf.security_admin.create-role.define-role.o004"
+kind = "negative_neighbour"
+required = true
+target = "<name>"
+note = "a string literal in place of <name>"
+
+[[obligation]]
+id = "sf.security_admin.create-role.define-role.o005"
+kind = "option_present"
+required = true
+target = "[ COMMENT = '<string_literal>' ]"
+
+[[obligation]]
+id = "sf.security_admin.create-role.define-role.o006"
+kind = "option_absent"
+required = true
+target = "[ COMMENT = '<string_literal>' ]"
+
+[[obligation]]
+id = "sf.security_admin.create-role.define-role.o007"
+kind = "required_operand_missing"
+required = true
+target = "'<string_literal>' in [ COMMENT = '<string_literal>' ]"
+note = "omit '<string_literal>'"
+
+[[obligation]]
+id = "sf.security_admin.create-role.define-role.o008"
+kind = "operand_type_class"
+required = true
+target = "'<string_literal>' in [ COMMENT = '<string_literal>' ]"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.security_admin.create-role.define-role.o009"
+kind = "negative_neighbour"
+required = true
+target = "'<string_literal>' in [ COMMENT = '<string_literal>' ]"
+note = "an unquoted identifier in place of '<string_literal>'"
+
+[[obligation]]
+id = "sf.security_admin.create-role.define-role.o010"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ROLE"
+
+[[obligation]]
+id = "sf.security_admin.create-role.define-role.o011"
+kind = "identifier_class"
+required = true
+target = "<name>"
+anchor = "doc.identifiers-syntax"
+note = "quoted: a double-quoted identifier with blanks and mixed case"
+
+[[obligation]]
+id = "sf.security_admin.create-role.define-role.o012"
+kind = "identifier_class"
+required = true
+target = "<name>"
+anchor = "doc.identifiers-syntax"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
 id = "sf.security_admin.create-row-access-policy.or-alter-row-access.o001"
 kind = "positive"
 required = true
@@ -76800,6 +78076,735 @@ id = "sf.security_admin.create-row-access-policy.row-access-policy-as.o039"
 kind = "identifier_class"
 required = true
 target = "<arg_name>"
+anchor = "doc.identifiers-syntax"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.security_admin.create-secret.create-or-alter-secret.o001"
+kind = "positive"
+required = true
+note = "the documented form with every required part and no optional part"
+
+[[obligation]]
+id = "sf.security_admin.create-secret.create-or-alter-secret.o002"
+kind = "required_operand_missing"
+required = true
+target = "<name>"
+note = "omit <name>"
+
+[[obligation]]
+id = "sf.security_admin.create-secret.create-or-alter-secret.o003"
+kind = "operand_type_class"
+required = true
+target = "<name>"
+note = "a valid identifier"
+
+[[obligation]]
+id = "sf.security_admin.create-secret.create-or-alter-secret.o004"
+kind = "negative_neighbour"
+required = true
+target = "<name>"
+note = "a string literal in place of <name>"
+
+[[obligation]]
+id = "sf.security_admin.create-secret.create-or-alter-secret.o005"
+kind = "required_operand_missing"
+required = true
+target = "'<cloud_provider_security_integration>'"
+note = "omit '<cloud_provider_security_integration>'"
+
+[[obligation]]
+id = "sf.security_admin.create-secret.create-or-alter-secret.o006"
+kind = "operand_type_class"
+required = true
+target = "'<cloud_provider_security_integration>'"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.security_admin.create-secret.create-or-alter-secret.o007"
+kind = "negative_neighbour"
+required = true
+target = "'<cloud_provider_security_integration>'"
+note = "an unquoted identifier in place of '<cloud_provider_security_integration>'"
+
+[[obligation]]
+id = "sf.security_admin.create-secret.create-or-alter-secret.o008"
+kind = "alternative"
+required = true
+target = "{ TRUE | FALSE } → TRUE"
+
+[[obligation]]
+id = "sf.security_admin.create-secret.create-or-alter-secret.o009"
+kind = "alternative"
+required = true
+target = "{ TRUE | FALSE } → FALSE"
+
+[[obligation]]
+id = "sf.security_admin.create-secret.create-or-alter-secret.o010"
+kind = "option_present"
+required = true
+target = "[ COMMENT = '<string_literal>' ]"
+
+[[obligation]]
+id = "sf.security_admin.create-secret.create-or-alter-secret.o011"
+kind = "option_absent"
+required = true
+target = "[ COMMENT = '<string_literal>' ]"
+
+[[obligation]]
+id = "sf.security_admin.create-secret.create-or-alter-secret.o012"
+kind = "required_operand_missing"
+required = true
+target = "'<string_literal>' in [ COMMENT = '<string_literal>' ]"
+note = "omit '<string_literal>'"
+
+[[obligation]]
+id = "sf.security_admin.create-secret.create-or-alter-secret.o013"
+kind = "operand_type_class"
+required = true
+target = "'<string_literal>' in [ COMMENT = '<string_literal>' ]"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.security_admin.create-secret.create-or-alter-secret.o014"
+kind = "negative_neighbour"
+required = true
+target = "'<string_literal>' in [ COMMENT = '<string_literal>' ]"
+note = "an unquoted identifier in place of '<string_literal>'"
+
+[[obligation]]
+id = "sf.security_admin.create-secret.create-or-alter-secret.o015"
+kind = "required_operand_missing"
+required = true
+target = "<name> #2"
+note = "omit <name>"
+
+[[obligation]]
+id = "sf.security_admin.create-secret.create-or-alter-secret.o016"
+kind = "operand_type_class"
+required = true
+target = "<name> #2"
+note = "a valid identifier"
+
+[[obligation]]
+id = "sf.security_admin.create-secret.create-or-alter-secret.o017"
+kind = "negative_neighbour"
+required = true
+target = "<name> #2"
+note = "a string literal in place of <name>"
+
+[[obligation]]
+id = "sf.security_admin.create-secret.create-or-alter-secret.o018"
+kind = "required_operand_missing"
+required = true
+target = "'<string_literal>'"
+note = "omit '<string_literal>'"
+
+[[obligation]]
+id = "sf.security_admin.create-secret.create-or-alter-secret.o019"
+kind = "operand_type_class"
+required = true
+target = "'<string_literal>'"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.security_admin.create-secret.create-or-alter-secret.o020"
+kind = "negative_neighbour"
+required = true
+target = "'<string_literal>'"
+note = "an unquoted identifier in place of '<string_literal>'"
+
+[[obligation]]
+id = "sf.security_admin.create-secret.create-or-alter-secret.o021"
+kind = "option_present"
+required = true
+target = "[ COMMENT = '<string_literal>' ] #2"
+
+[[obligation]]
+id = "sf.security_admin.create-secret.create-or-alter-secret.o022"
+kind = "option_absent"
+required = true
+target = "[ COMMENT = '<string_literal>' ] #2"
+
+[[obligation]]
+id = "sf.security_admin.create-secret.create-or-alter-secret.o023"
+kind = "required_operand_missing"
+required = true
+target = "'<string_literal>' in [ COMMENT = '<string_literal>' ] #2"
+note = "omit '<string_literal>'"
+
+[[obligation]]
+id = "sf.security_admin.create-secret.create-or-alter-secret.o024"
+kind = "operand_type_class"
+required = true
+target = "'<string_literal>' in [ COMMENT = '<string_literal>' ] #2"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.security_admin.create-secret.create-or-alter-secret.o025"
+kind = "negative_neighbour"
+required = true
+target = "'<string_literal>' in [ COMMENT = '<string_literal>' ] #2"
+note = "an unquoted identifier in place of '<string_literal>'"
+
+[[obligation]]
+id = "sf.security_admin.create-secret.create-or-alter-secret.o026"
+kind = "required_operand_missing"
+required = true
+target = "<name> #3"
+note = "omit <name>"
+
+[[obligation]]
+id = "sf.security_admin.create-secret.create-or-alter-secret.o027"
+kind = "operand_type_class"
+required = true
+target = "<name> #3"
+note = "a valid identifier"
+
+[[obligation]]
+id = "sf.security_admin.create-secret.create-or-alter-secret.o028"
+kind = "negative_neighbour"
+required = true
+target = "<name> #3"
+note = "a string literal in place of <name>"
+
+[[obligation]]
+id = "sf.security_admin.create-secret.create-or-alter-secret.o029"
+kind = "required_operand_missing"
+required = true
+target = "<security_integration_name>"
+note = "omit <security_integration_name>"
+
+[[obligation]]
+id = "sf.security_admin.create-secret.create-or-alter-secret.o030"
+kind = "operand_type_class"
+required = true
+target = "<security_integration_name>"
+note = "a valid identifier"
+
+[[obligation]]
+id = "sf.security_admin.create-secret.create-or-alter-secret.o031"
+kind = "negative_neighbour"
+required = true
+target = "<security_integration_name>"
+note = "a string literal in place of <security_integration_name>"
+
+[[obligation]]
+id = "sf.security_admin.create-secret.create-or-alter-secret.o032"
+kind = "required_operand_missing"
+required = true
+target = "'<scope_1>'"
+note = "omit '<scope_1>'"
+
+[[obligation]]
+id = "sf.security_admin.create-secret.create-or-alter-secret.o033"
+kind = "operand_type_class"
+required = true
+target = "'<scope_1>'"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.security_admin.create-secret.create-or-alter-secret.o034"
+kind = "negative_neighbour"
+required = true
+target = "'<scope_1>'"
+note = "an unquoted identifier in place of '<scope_1>'"
+
+[[obligation]]
+id = "sf.security_admin.create-secret.create-or-alter-secret.o035"
+kind = "option_present"
+required = true
+target = "[ , '<scope_2>' ... ]"
+note = "the list continued at least once"
+
+[[obligation]]
+id = "sf.security_admin.create-secret.create-or-alter-secret.o036"
+kind = "option_absent"
+required = true
+target = "[ , '<scope_2>' ... ]"
+
+[[obligation]]
+id = "sf.security_admin.create-secret.create-or-alter-secret.o037"
+kind = "option_present"
+required = true
+target = "[ COMMENT = '<string_literal>' ] #3"
+
+[[obligation]]
+id = "sf.security_admin.create-secret.create-or-alter-secret.o038"
+kind = "option_absent"
+required = true
+target = "[ COMMENT = '<string_literal>' ] #3"
+
+[[obligation]]
+id = "sf.security_admin.create-secret.create-or-alter-secret.o039"
+kind = "required_operand_missing"
+required = true
+target = "'<string_literal>' in [ COMMENT = '<string_literal>' ] #3"
+note = "omit '<string_literal>'"
+
+[[obligation]]
+id = "sf.security_admin.create-secret.create-or-alter-secret.o040"
+kind = "operand_type_class"
+required = true
+target = "'<string_literal>' in [ COMMENT = '<string_literal>' ] #3"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.security_admin.create-secret.create-or-alter-secret.o041"
+kind = "negative_neighbour"
+required = true
+target = "'<string_literal>' in [ COMMENT = '<string_literal>' ] #3"
+note = "an unquoted identifier in place of '<string_literal>'"
+
+[[obligation]]
+id = "sf.security_admin.create-secret.create-or-alter-secret.o042"
+kind = "required_operand_missing"
+required = true
+target = "<name> #4"
+note = "omit <name>"
+
+[[obligation]]
+id = "sf.security_admin.create-secret.create-or-alter-secret.o043"
+kind = "operand_type_class"
+required = true
+target = "<name> #4"
+note = "a valid identifier"
+
+[[obligation]]
+id = "sf.security_admin.create-secret.create-or-alter-secret.o044"
+kind = "negative_neighbour"
+required = true
+target = "<name> #4"
+note = "a string literal in place of <name>"
+
+[[obligation]]
+id = "sf.security_admin.create-secret.create-or-alter-secret.o045"
+kind = "required_operand_missing"
+required = true
+target = "'<string_literal>' #2"
+note = "omit '<string_literal>'"
+
+[[obligation]]
+id = "sf.security_admin.create-secret.create-or-alter-secret.o046"
+kind = "operand_type_class"
+required = true
+target = "'<string_literal>' #2"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.security_admin.create-secret.create-or-alter-secret.o047"
+kind = "negative_neighbour"
+required = true
+target = "'<string_literal>' #2"
+note = "an unquoted identifier in place of '<string_literal>'"
+
+[[obligation]]
+id = "sf.security_admin.create-secret.create-or-alter-secret.o048"
+kind = "required_operand_missing"
+required = true
+target = "'<string_literal>' #3"
+note = "omit '<string_literal>'"
+
+[[obligation]]
+id = "sf.security_admin.create-secret.create-or-alter-secret.o049"
+kind = "operand_type_class"
+required = true
+target = "'<string_literal>' #3"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.security_admin.create-secret.create-or-alter-secret.o050"
+kind = "negative_neighbour"
+required = true
+target = "'<string_literal>' #3"
+note = "an unquoted identifier in place of '<string_literal>'"
+
+[[obligation]]
+id = "sf.security_admin.create-secret.create-or-alter-secret.o051"
+kind = "required_operand_missing"
+required = true
+target = "<security_integration_name> #2"
+note = "omit <security_integration_name>"
+
+[[obligation]]
+id = "sf.security_admin.create-secret.create-or-alter-secret.o052"
+kind = "operand_type_class"
+required = true
+target = "<security_integration_name> #2"
+note = "a valid identifier"
+
+[[obligation]]
+id = "sf.security_admin.create-secret.create-or-alter-secret.o053"
+kind = "negative_neighbour"
+required = true
+target = "<security_integration_name> #2"
+note = "a string literal in place of <security_integration_name>"
+
+[[obligation]]
+id = "sf.security_admin.create-secret.create-or-alter-secret.o054"
+kind = "option_present"
+required = true
+target = "[ COMMENT = '<string_literal>' ] #4"
+
+[[obligation]]
+id = "sf.security_admin.create-secret.create-or-alter-secret.o055"
+kind = "option_absent"
+required = true
+target = "[ COMMENT = '<string_literal>' ] #4"
+
+[[obligation]]
+id = "sf.security_admin.create-secret.create-or-alter-secret.o056"
+kind = "required_operand_missing"
+required = true
+target = "'<string_literal>' in [ COMMENT = '<string_literal>' ] #4"
+note = "omit '<string_literal>'"
+
+[[obligation]]
+id = "sf.security_admin.create-secret.create-or-alter-secret.o057"
+kind = "operand_type_class"
+required = true
+target = "'<string_literal>' in [ COMMENT = '<string_literal>' ] #4"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.security_admin.create-secret.create-or-alter-secret.o058"
+kind = "negative_neighbour"
+required = true
+target = "'<string_literal>' in [ COMMENT = '<string_literal>' ] #4"
+note = "an unquoted identifier in place of '<string_literal>'"
+
+[[obligation]]
+id = "sf.security_admin.create-secret.create-or-alter-secret.o059"
+kind = "required_operand_missing"
+required = true
+target = "<name> #5"
+note = "omit <name>"
+
+[[obligation]]
+id = "sf.security_admin.create-secret.create-or-alter-secret.o060"
+kind = "operand_type_class"
+required = true
+target = "<name> #5"
+note = "a valid identifier"
+
+[[obligation]]
+id = "sf.security_admin.create-secret.create-or-alter-secret.o061"
+kind = "negative_neighbour"
+required = true
+target = "<name> #5"
+note = "a string literal in place of <name>"
+
+[[obligation]]
+id = "sf.security_admin.create-secret.create-or-alter-secret.o062"
+kind = "required_operand_missing"
+required = true
+target = "'<username>'"
+note = "omit '<username>'"
+
+[[obligation]]
+id = "sf.security_admin.create-secret.create-or-alter-secret.o063"
+kind = "operand_type_class"
+required = true
+target = "'<username>'"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.security_admin.create-secret.create-or-alter-secret.o064"
+kind = "negative_neighbour"
+required = true
+target = "'<username>'"
+note = "an unquoted identifier in place of '<username>'"
+
+[[obligation]]
+id = "sf.security_admin.create-secret.create-or-alter-secret.o065"
+kind = "required_operand_missing"
+required = true
+target = "'<password>'"
+note = "omit '<password>'"
+
+[[obligation]]
+id = "sf.security_admin.create-secret.create-or-alter-secret.o066"
+kind = "operand_type_class"
+required = true
+target = "'<password>'"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.security_admin.create-secret.create-or-alter-secret.o067"
+kind = "negative_neighbour"
+required = true
+target = "'<password>'"
+note = "an unquoted identifier in place of '<password>'"
+
+[[obligation]]
+id = "sf.security_admin.create-secret.create-or-alter-secret.o068"
+kind = "option_present"
+required = true
+target = "[ COMMENT = '<string_literal>' ] #5"
+
+[[obligation]]
+id = "sf.security_admin.create-secret.create-or-alter-secret.o069"
+kind = "option_absent"
+required = true
+target = "[ COMMENT = '<string_literal>' ] #5"
+
+[[obligation]]
+id = "sf.security_admin.create-secret.create-or-alter-secret.o070"
+kind = "required_operand_missing"
+required = true
+target = "'<string_literal>' in [ COMMENT = '<string_literal>' ] #5"
+note = "omit '<string_literal>'"
+
+[[obligation]]
+id = "sf.security_admin.create-secret.create-or-alter-secret.o071"
+kind = "operand_type_class"
+required = true
+target = "'<string_literal>' in [ COMMENT = '<string_literal>' ] #5"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.security_admin.create-secret.create-or-alter-secret.o072"
+kind = "negative_neighbour"
+required = true
+target = "'<string_literal>' in [ COMMENT = '<string_literal>' ] #5"
+note = "an unquoted identifier in place of '<string_literal>'"
+
+[[obligation]]
+id = "sf.security_admin.create-secret.create-or-alter-secret.o073"
+kind = "required_operand_missing"
+required = true
+target = "<name> #6"
+note = "omit <name>"
+
+[[obligation]]
+id = "sf.security_admin.create-secret.create-or-alter-secret.o074"
+kind = "operand_type_class"
+required = true
+target = "<name> #6"
+note = "a valid identifier"
+
+[[obligation]]
+id = "sf.security_admin.create-secret.create-or-alter-secret.o075"
+kind = "negative_neighbour"
+required = true
+target = "<name> #6"
+note = "a string literal in place of <name>"
+
+[[obligation]]
+id = "sf.security_admin.create-secret.create-or-alter-secret.o076"
+kind = "required_operand_missing"
+required = true
+target = "<name> #7"
+note = "omit <name>"
+
+[[obligation]]
+id = "sf.security_admin.create-secret.create-or-alter-secret.o077"
+kind = "operand_type_class"
+required = true
+target = "<name> #7"
+note = "a valid identifier"
+
+[[obligation]]
+id = "sf.security_admin.create-secret.create-or-alter-secret.o078"
+kind = "negative_neighbour"
+required = true
+target = "<name> #7"
+note = "a string literal in place of <name>"
+
+[[obligation]]
+id = "sf.security_admin.create-secret.create-or-alter-secret.o079"
+kind = "option_present"
+required = true
+target = "[ COMMENT = '<string_literal>' ] #6"
+
+[[obligation]]
+id = "sf.security_admin.create-secret.create-or-alter-secret.o080"
+kind = "option_absent"
+required = true
+target = "[ COMMENT = '<string_literal>' ] #6"
+
+[[obligation]]
+id = "sf.security_admin.create-secret.create-or-alter-secret.o081"
+kind = "required_operand_missing"
+required = true
+target = "'<string_literal>' in [ COMMENT = '<string_literal>' ] #6"
+note = "omit '<string_literal>'"
+
+[[obligation]]
+id = "sf.security_admin.create-secret.create-or-alter-secret.o082"
+kind = "operand_type_class"
+required = true
+target = "'<string_literal>' in [ COMMENT = '<string_literal>' ] #6"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.security_admin.create-secret.create-or-alter-secret.o083"
+kind = "negative_neighbour"
+required = true
+target = "'<string_literal>' in [ COMMENT = '<string_literal>' ] #6"
+note = "an unquoted identifier in place of '<string_literal>'"
+
+[[obligation]]
+id = "sf.security_admin.create-secret.create-or-alter-secret.o084"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required OR"
+
+[[obligation]]
+id = "sf.security_admin.create-secret.create-or-alter-secret.o085"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ALTER"
+
+[[obligation]]
+id = "sf.security_admin.create-secret.create-or-alter-secret.o086"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required SECRET"
+
+[[obligation]]
+id = "sf.security_admin.create-secret.create-or-alter-secret.o087"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required TYPE"
+
+[[obligation]]
+id = "sf.security_admin.create-secret.create-or-alter-secret.o088"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required CLOUD_PROVIDER_TOKEN"
+
+[[obligation]]
+id = "sf.security_admin.create-secret.create-or-alter-secret.o089"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required API_AUTHENTICATION"
+
+[[obligation]]
+id = "sf.security_admin.create-secret.create-or-alter-secret.o090"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ENABLED"
+
+[[obligation]]
+id = "sf.security_admin.create-secret.create-or-alter-secret.o091"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { TRUE | FALSE }"
+
+[[obligation]]
+id = "sf.security_admin.create-secret.create-or-alter-secret.o092"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required GENERIC_STRING"
+
+[[obligation]]
+id = "sf.security_admin.create-secret.create-or-alter-secret.o093"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required SECRET_STRING"
+
+[[obligation]]
+id = "sf.security_admin.create-secret.create-or-alter-secret.o094"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required OAUTH2"
+
+[[obligation]]
+id = "sf.security_admin.create-secret.create-or-alter-secret.o095"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required OAUTH_SCOPES"
+
+[[obligation]]
+id = "sf.security_admin.create-secret.create-or-alter-secret.o096"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ("
+
+[[obligation]]
+id = "sf.security_admin.create-secret.create-or-alter-secret.o097"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required )"
+
+[[obligation]]
+id = "sf.security_admin.create-secret.create-or-alter-secret.o098"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required OAUTH_REFRESH_TOKEN"
+
+[[obligation]]
+id = "sf.security_admin.create-secret.create-or-alter-secret.o099"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required OAUTH_REFRESH_TOKEN_EXPIRY_TIME"
+
+[[obligation]]
+id = "sf.security_admin.create-secret.create-or-alter-secret.o100"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required PASSWORD"
+
+[[obligation]]
+id = "sf.security_admin.create-secret.create-or-alter-secret.o101"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required USERNAME"
+
+[[obligation]]
+id = "sf.security_admin.create-secret.create-or-alter-secret.o102"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required SYMMETRIC_KEY"
+
+[[obligation]]
+id = "sf.security_admin.create-secret.create-or-alter-secret.o103"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ALGORITHM"
+
+[[obligation]]
+id = "sf.security_admin.create-secret.create-or-alter-secret.o104"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required GENERIC"
+
+[[obligation]]
+id = "sf.security_admin.create-secret.create-or-alter-secret.o105"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required WORKLOAD_IDENTITY_FEDERATION"
+
+[[obligation]]
+id = "sf.security_admin.create-secret.create-or-alter-secret.o106"
+kind = "identifier_class"
+required = true
+target = "<name>"
+anchor = "doc.identifiers-syntax"
+note = "quoted: a double-quoted identifier with blanks and mixed case"
+
+[[obligation]]
+id = "sf.security_admin.create-secret.create-or-alter-secret.o107"
+kind = "identifier_class"
+required = true
+target = "<name>"
+anchor = "doc.identifiers-syntax"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.security_admin.create-secret.create-or-alter-secret.o108"
+kind = "identifier_class"
+required = true
+target = "<security_integration_name>"
+anchor = "doc.identifiers-syntax"
+note = "quoted: a double-quoted identifier with blanks and mixed case"
+
+[[obligation]]
+id = "sf.security_admin.create-secret.create-or-alter-secret.o109"
+kind = "identifier_class"
+required = true
+target = "<security_integration_name>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
@@ -78091,6 +80096,624 @@ id = "sf.security_admin.create-secret.create-secret-type-workload-identity-feder
 kind = "identifier_class"
 required = true
 target = "<name>"
+anchor = "doc.identifiers-syntax"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.security_admin.create-secret.define-secret.o001"
+kind = "positive"
+required = true
+note = "the documented form with every required part and no optional part"
+
+[[obligation]]
+id = "sf.security_admin.create-secret.define-secret.o002"
+kind = "required_operand_missing"
+required = true
+target = "<name>"
+note = "omit <name>"
+
+[[obligation]]
+id = "sf.security_admin.create-secret.define-secret.o003"
+kind = "operand_type_class"
+required = true
+target = "<name>"
+note = "a valid identifier"
+
+[[obligation]]
+id = "sf.security_admin.create-secret.define-secret.o004"
+kind = "negative_neighbour"
+required = true
+target = "<name>"
+note = "a string literal in place of <name>"
+
+[[obligation]]
+id = "sf.security_admin.create-secret.define-secret.o005"
+kind = "required_operand_missing"
+required = true
+target = "'<cloud_provider_security_integration>'"
+note = "omit '<cloud_provider_security_integration>'"
+
+[[obligation]]
+id = "sf.security_admin.create-secret.define-secret.o006"
+kind = "operand_type_class"
+required = true
+target = "'<cloud_provider_security_integration>'"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.security_admin.create-secret.define-secret.o007"
+kind = "negative_neighbour"
+required = true
+target = "'<cloud_provider_security_integration>'"
+note = "an unquoted identifier in place of '<cloud_provider_security_integration>'"
+
+[[obligation]]
+id = "sf.security_admin.create-secret.define-secret.o008"
+kind = "alternative"
+required = true
+target = "{ TRUE | FALSE } → TRUE"
+
+[[obligation]]
+id = "sf.security_admin.create-secret.define-secret.o009"
+kind = "alternative"
+required = true
+target = "{ TRUE | FALSE } → FALSE"
+
+[[obligation]]
+id = "sf.security_admin.create-secret.define-secret.o010"
+kind = "option_present"
+required = true
+target = "[ COMMENT = '<string_literal>' ]"
+
+[[obligation]]
+id = "sf.security_admin.create-secret.define-secret.o011"
+kind = "option_absent"
+required = true
+target = "[ COMMENT = '<string_literal>' ]"
+
+[[obligation]]
+id = "sf.security_admin.create-secret.define-secret.o012"
+kind = "required_operand_missing"
+required = true
+target = "'<string_literal>' in [ COMMENT = '<string_literal>' ]"
+note = "omit '<string_literal>'"
+
+[[obligation]]
+id = "sf.security_admin.create-secret.define-secret.o013"
+kind = "operand_type_class"
+required = true
+target = "'<string_literal>' in [ COMMENT = '<string_literal>' ]"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.security_admin.create-secret.define-secret.o014"
+kind = "negative_neighbour"
+required = true
+target = "'<string_literal>' in [ COMMENT = '<string_literal>' ]"
+note = "an unquoted identifier in place of '<string_literal>'"
+
+[[obligation]]
+id = "sf.security_admin.create-secret.define-secret.o015"
+kind = "required_operand_missing"
+required = true
+target = "<name> #2"
+note = "omit <name>"
+
+[[obligation]]
+id = "sf.security_admin.create-secret.define-secret.o016"
+kind = "operand_type_class"
+required = true
+target = "<name> #2"
+note = "a valid identifier"
+
+[[obligation]]
+id = "sf.security_admin.create-secret.define-secret.o017"
+kind = "negative_neighbour"
+required = true
+target = "<name> #2"
+note = "a string literal in place of <name>"
+
+[[obligation]]
+id = "sf.security_admin.create-secret.define-secret.o018"
+kind = "required_operand_missing"
+required = true
+target = "'<string_literal>'"
+note = "omit '<string_literal>'"
+
+[[obligation]]
+id = "sf.security_admin.create-secret.define-secret.o019"
+kind = "operand_type_class"
+required = true
+target = "'<string_literal>'"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.security_admin.create-secret.define-secret.o020"
+kind = "negative_neighbour"
+required = true
+target = "'<string_literal>'"
+note = "an unquoted identifier in place of '<string_literal>'"
+
+[[obligation]]
+id = "sf.security_admin.create-secret.define-secret.o021"
+kind = "option_present"
+required = true
+target = "[ COMMENT = '<string_literal>' ] #2"
+
+[[obligation]]
+id = "sf.security_admin.create-secret.define-secret.o022"
+kind = "option_absent"
+required = true
+target = "[ COMMENT = '<string_literal>' ] #2"
+
+[[obligation]]
+id = "sf.security_admin.create-secret.define-secret.o023"
+kind = "required_operand_missing"
+required = true
+target = "'<string_literal>' in [ COMMENT = '<string_literal>' ] #2"
+note = "omit '<string_literal>'"
+
+[[obligation]]
+id = "sf.security_admin.create-secret.define-secret.o024"
+kind = "operand_type_class"
+required = true
+target = "'<string_literal>' in [ COMMENT = '<string_literal>' ] #2"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.security_admin.create-secret.define-secret.o025"
+kind = "negative_neighbour"
+required = true
+target = "'<string_literal>' in [ COMMENT = '<string_literal>' ] #2"
+note = "an unquoted identifier in place of '<string_literal>'"
+
+[[obligation]]
+id = "sf.security_admin.create-secret.define-secret.o026"
+kind = "required_operand_missing"
+required = true
+target = "<name> #3"
+note = "omit <name>"
+
+[[obligation]]
+id = "sf.security_admin.create-secret.define-secret.o027"
+kind = "operand_type_class"
+required = true
+target = "<name> #3"
+note = "a valid identifier"
+
+[[obligation]]
+id = "sf.security_admin.create-secret.define-secret.o028"
+kind = "negative_neighbour"
+required = true
+target = "<name> #3"
+note = "a string literal in place of <name>"
+
+[[obligation]]
+id = "sf.security_admin.create-secret.define-secret.o029"
+kind = "required_operand_missing"
+required = true
+target = "<security_integration_name>"
+note = "omit <security_integration_name>"
+
+[[obligation]]
+id = "sf.security_admin.create-secret.define-secret.o030"
+kind = "operand_type_class"
+required = true
+target = "<security_integration_name>"
+note = "a valid identifier"
+
+[[obligation]]
+id = "sf.security_admin.create-secret.define-secret.o031"
+kind = "negative_neighbour"
+required = true
+target = "<security_integration_name>"
+note = "a string literal in place of <security_integration_name>"
+
+[[obligation]]
+id = "sf.security_admin.create-secret.define-secret.o032"
+kind = "required_operand_missing"
+required = true
+target = "'<scope_1>'"
+note = "omit '<scope_1>'"
+
+[[obligation]]
+id = "sf.security_admin.create-secret.define-secret.o033"
+kind = "operand_type_class"
+required = true
+target = "'<scope_1>'"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.security_admin.create-secret.define-secret.o034"
+kind = "negative_neighbour"
+required = true
+target = "'<scope_1>'"
+note = "an unquoted identifier in place of '<scope_1>'"
+
+[[obligation]]
+id = "sf.security_admin.create-secret.define-secret.o035"
+kind = "option_present"
+required = true
+target = "[ , '<scope_2>' ... ]"
+note = "the list continued at least once"
+
+[[obligation]]
+id = "sf.security_admin.create-secret.define-secret.o036"
+kind = "option_absent"
+required = true
+target = "[ , '<scope_2>' ... ]"
+
+[[obligation]]
+id = "sf.security_admin.create-secret.define-secret.o037"
+kind = "option_present"
+required = true
+target = "[ COMMENT = '<string_literal>' ] #3"
+
+[[obligation]]
+id = "sf.security_admin.create-secret.define-secret.o038"
+kind = "option_absent"
+required = true
+target = "[ COMMENT = '<string_literal>' ] #3"
+
+[[obligation]]
+id = "sf.security_admin.create-secret.define-secret.o039"
+kind = "required_operand_missing"
+required = true
+target = "'<string_literal>' in [ COMMENT = '<string_literal>' ] #3"
+note = "omit '<string_literal>'"
+
+[[obligation]]
+id = "sf.security_admin.create-secret.define-secret.o040"
+kind = "operand_type_class"
+required = true
+target = "'<string_literal>' in [ COMMENT = '<string_literal>' ] #3"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.security_admin.create-secret.define-secret.o041"
+kind = "negative_neighbour"
+required = true
+target = "'<string_literal>' in [ COMMENT = '<string_literal>' ] #3"
+note = "an unquoted identifier in place of '<string_literal>'"
+
+[[obligation]]
+id = "sf.security_admin.create-secret.define-secret.o042"
+kind = "required_operand_missing"
+required = true
+target = "<name> #4"
+note = "omit <name>"
+
+[[obligation]]
+id = "sf.security_admin.create-secret.define-secret.o043"
+kind = "operand_type_class"
+required = true
+target = "<name> #4"
+note = "a valid identifier"
+
+[[obligation]]
+id = "sf.security_admin.create-secret.define-secret.o044"
+kind = "negative_neighbour"
+required = true
+target = "<name> #4"
+note = "a string literal in place of <name>"
+
+[[obligation]]
+id = "sf.security_admin.create-secret.define-secret.o045"
+kind = "required_operand_missing"
+required = true
+target = "'<string_literal>' #2"
+note = "omit '<string_literal>'"
+
+[[obligation]]
+id = "sf.security_admin.create-secret.define-secret.o046"
+kind = "operand_type_class"
+required = true
+target = "'<string_literal>' #2"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.security_admin.create-secret.define-secret.o047"
+kind = "negative_neighbour"
+required = true
+target = "'<string_literal>' #2"
+note = "an unquoted identifier in place of '<string_literal>'"
+
+[[obligation]]
+id = "sf.security_admin.create-secret.define-secret.o048"
+kind = "required_operand_missing"
+required = true
+target = "'<string_literal>' #3"
+note = "omit '<string_literal>'"
+
+[[obligation]]
+id = "sf.security_admin.create-secret.define-secret.o049"
+kind = "operand_type_class"
+required = true
+target = "'<string_literal>' #3"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.security_admin.create-secret.define-secret.o050"
+kind = "negative_neighbour"
+required = true
+target = "'<string_literal>' #3"
+note = "an unquoted identifier in place of '<string_literal>'"
+
+[[obligation]]
+id = "sf.security_admin.create-secret.define-secret.o051"
+kind = "required_operand_missing"
+required = true
+target = "<security_integration_name> #2"
+note = "omit <security_integration_name>"
+
+[[obligation]]
+id = "sf.security_admin.create-secret.define-secret.o052"
+kind = "operand_type_class"
+required = true
+target = "<security_integration_name> #2"
+note = "a valid identifier"
+
+[[obligation]]
+id = "sf.security_admin.create-secret.define-secret.o053"
+kind = "negative_neighbour"
+required = true
+target = "<security_integration_name> #2"
+note = "a string literal in place of <security_integration_name>"
+
+[[obligation]]
+id = "sf.security_admin.create-secret.define-secret.o054"
+kind = "option_present"
+required = true
+target = "[ COMMENT = '<string_literal>' ] #4"
+
+[[obligation]]
+id = "sf.security_admin.create-secret.define-secret.o055"
+kind = "option_absent"
+required = true
+target = "[ COMMENT = '<string_literal>' ] #4"
+
+[[obligation]]
+id = "sf.security_admin.create-secret.define-secret.o056"
+kind = "required_operand_missing"
+required = true
+target = "'<string_literal>' in [ COMMENT = '<string_literal>' ] #4"
+note = "omit '<string_literal>'"
+
+[[obligation]]
+id = "sf.security_admin.create-secret.define-secret.o057"
+kind = "operand_type_class"
+required = true
+target = "'<string_literal>' in [ COMMENT = '<string_literal>' ] #4"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.security_admin.create-secret.define-secret.o058"
+kind = "negative_neighbour"
+required = true
+target = "'<string_literal>' in [ COMMENT = '<string_literal>' ] #4"
+note = "an unquoted identifier in place of '<string_literal>'"
+
+[[obligation]]
+id = "sf.security_admin.create-secret.define-secret.o059"
+kind = "required_operand_missing"
+required = true
+target = "<name> #5"
+note = "omit <name>"
+
+[[obligation]]
+id = "sf.security_admin.create-secret.define-secret.o060"
+kind = "operand_type_class"
+required = true
+target = "<name> #5"
+note = "a valid identifier"
+
+[[obligation]]
+id = "sf.security_admin.create-secret.define-secret.o061"
+kind = "negative_neighbour"
+required = true
+target = "<name> #5"
+note = "a string literal in place of <name>"
+
+[[obligation]]
+id = "sf.security_admin.create-secret.define-secret.o062"
+kind = "required_operand_missing"
+required = true
+target = "'<username>'"
+note = "omit '<username>'"
+
+[[obligation]]
+id = "sf.security_admin.create-secret.define-secret.o063"
+kind = "operand_type_class"
+required = true
+target = "'<username>'"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.security_admin.create-secret.define-secret.o064"
+kind = "negative_neighbour"
+required = true
+target = "'<username>'"
+note = "an unquoted identifier in place of '<username>'"
+
+[[obligation]]
+id = "sf.security_admin.create-secret.define-secret.o065"
+kind = "required_operand_missing"
+required = true
+target = "'<password>'"
+note = "omit '<password>'"
+
+[[obligation]]
+id = "sf.security_admin.create-secret.define-secret.o066"
+kind = "operand_type_class"
+required = true
+target = "'<password>'"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.security_admin.create-secret.define-secret.o067"
+kind = "negative_neighbour"
+required = true
+target = "'<password>'"
+note = "an unquoted identifier in place of '<password>'"
+
+[[obligation]]
+id = "sf.security_admin.create-secret.define-secret.o068"
+kind = "option_present"
+required = true
+target = "[ COMMENT = '<string_literal>' ] #5"
+
+[[obligation]]
+id = "sf.security_admin.create-secret.define-secret.o069"
+kind = "option_absent"
+required = true
+target = "[ COMMENT = '<string_literal>' ] #5"
+
+[[obligation]]
+id = "sf.security_admin.create-secret.define-secret.o070"
+kind = "required_operand_missing"
+required = true
+target = "'<string_literal>' in [ COMMENT = '<string_literal>' ] #5"
+note = "omit '<string_literal>'"
+
+[[obligation]]
+id = "sf.security_admin.create-secret.define-secret.o071"
+kind = "operand_type_class"
+required = true
+target = "'<string_literal>' in [ COMMENT = '<string_literal>' ] #5"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.security_admin.create-secret.define-secret.o072"
+kind = "negative_neighbour"
+required = true
+target = "'<string_literal>' in [ COMMENT = '<string_literal>' ] #5"
+note = "an unquoted identifier in place of '<string_literal>'"
+
+[[obligation]]
+id = "sf.security_admin.create-secret.define-secret.o073"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required SECRET"
+
+[[obligation]]
+id = "sf.security_admin.create-secret.define-secret.o074"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required TYPE"
+
+[[obligation]]
+id = "sf.security_admin.create-secret.define-secret.o075"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required CLOUD_PROVIDER_TOKEN"
+
+[[obligation]]
+id = "sf.security_admin.create-secret.define-secret.o076"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required API_AUTHENTICATION"
+
+[[obligation]]
+id = "sf.security_admin.create-secret.define-secret.o077"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ENABLED"
+
+[[obligation]]
+id = "sf.security_admin.create-secret.define-secret.o078"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { TRUE | FALSE }"
+
+[[obligation]]
+id = "sf.security_admin.create-secret.define-secret.o079"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required GENERIC_STRING"
+
+[[obligation]]
+id = "sf.security_admin.create-secret.define-secret.o080"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required SECRET_STRING"
+
+[[obligation]]
+id = "sf.security_admin.create-secret.define-secret.o081"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required OAUTH2"
+
+[[obligation]]
+id = "sf.security_admin.create-secret.define-secret.o082"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required OAUTH_SCOPES"
+
+[[obligation]]
+id = "sf.security_admin.create-secret.define-secret.o083"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ("
+
+[[obligation]]
+id = "sf.security_admin.create-secret.define-secret.o084"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required )"
+
+[[obligation]]
+id = "sf.security_admin.create-secret.define-secret.o085"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required OAUTH_REFRESH_TOKEN"
+
+[[obligation]]
+id = "sf.security_admin.create-secret.define-secret.o086"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required OAUTH_REFRESH_TOKEN_EXPIRY_TIME"
+
+[[obligation]]
+id = "sf.security_admin.create-secret.define-secret.o087"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required PASSWORD"
+
+[[obligation]]
+id = "sf.security_admin.create-secret.define-secret.o088"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required USERNAME"
+
+[[obligation]]
+id = "sf.security_admin.create-secret.define-secret.o089"
+kind = "identifier_class"
+required = true
+target = "<name>"
+anchor = "doc.identifiers-syntax"
+note = "quoted: a double-quoted identifier with blanks and mixed case"
+
+[[obligation]]
+id = "sf.security_admin.create-secret.define-secret.o090"
+kind = "identifier_class"
+required = true
+target = "<name>"
+anchor = "doc.identifiers-syntax"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.security_admin.create-secret.define-secret.o091"
+kind = "identifier_class"
+required = true
+target = "<security_integration_name>"
+anchor = "doc.identifiers-syntax"
+note = "quoted: a double-quoted identifier with blanks and mixed case"
+
+[[obligation]]
+id = "sf.security_admin.create-secret.define-secret.o092"
+kind = "identifier_class"
+required = true
+target = "<security_integration_name>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
@@ -85537,21 +88160,21 @@ anchor = "doc.sql.create-session-policy / Optional parameters"
 note = "SESSION_UI_MAX_LIFESPAN_MINS = 43,201 against the documented range 0 to 43,200 minutes, inclusive"
 
 [[obligation]]
-id = "sf.security_admin.create-session-policy.o123"
+id = "sf.security_admin.create-session-policy.o147"
 kind = "negative_neighbour"
 required = true
 anchor = "doc.sql.create-session-policy / Syntax"
 note = "omit <yaml_definition> ($$$$), observed"
 
 [[obligation]]
-id = "sf.security_admin.create-session-policy.o124"
+id = "sf.security_admin.create-session-policy.o148"
 kind = "negative_neighbour"
 required = true
 anchor = "doc.sql.create-session-policy / Syntax"
 note = "a string literal in place of <role_name>, observed"
 
 [[obligation]]
-id = "sf.security_admin.create-session-policy.o125"
+id = "sf.security_admin.create-session-policy.o149"
 kind = "negative_neighbour"
 required = true
 anchor = "doc.sql.create-session-policy / Syntax"
@@ -85805,6 +88428,88 @@ note = "quoted: a double-quoted identifier with blanks and mixed case"
 
 [[obligation]]
 id = "sf.security_admin.create-share.create-share.o025"
+kind = "identifier_class"
+required = true
+target = "<name>"
+anchor = "doc.identifiers-syntax"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.security_admin.create-share.define-share.o001"
+kind = "positive"
+required = true
+note = "the documented form with every required part and no optional part"
+
+[[obligation]]
+id = "sf.security_admin.create-share.define-share.o002"
+kind = "required_operand_missing"
+required = true
+target = "<name>"
+note = "omit <name>"
+
+[[obligation]]
+id = "sf.security_admin.create-share.define-share.o003"
+kind = "operand_type_class"
+required = true
+target = "<name>"
+note = "a valid identifier"
+
+[[obligation]]
+id = "sf.security_admin.create-share.define-share.o004"
+kind = "negative_neighbour"
+required = true
+target = "<name>"
+note = "a string literal in place of <name>"
+
+[[obligation]]
+id = "sf.security_admin.create-share.define-share.o005"
+kind = "option_present"
+required = true
+target = "[ COMMENT = '<string_literal>' ]"
+
+[[obligation]]
+id = "sf.security_admin.create-share.define-share.o006"
+kind = "option_absent"
+required = true
+target = "[ COMMENT = '<string_literal>' ]"
+
+[[obligation]]
+id = "sf.security_admin.create-share.define-share.o007"
+kind = "required_operand_missing"
+required = true
+target = "'<string_literal>' in [ COMMENT = '<string_literal>' ]"
+note = "omit '<string_literal>'"
+
+[[obligation]]
+id = "sf.security_admin.create-share.define-share.o008"
+kind = "operand_type_class"
+required = true
+target = "'<string_literal>' in [ COMMENT = '<string_literal>' ]"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.security_admin.create-share.define-share.o009"
+kind = "negative_neighbour"
+required = true
+target = "'<string_literal>' in [ COMMENT = '<string_literal>' ]"
+note = "an unquoted identifier in place of '<string_literal>'"
+
+[[obligation]]
+id = "sf.security_admin.create-share.define-share.o010"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required SHARE"
+
+[[obligation]]
+id = "sf.security_admin.create-share.define-share.o011"
+kind = "identifier_class"
+required = true
+target = "<name>"
+anchor = "doc.identifiers-syntax"
+note = "quoted: a double-quoted identifier with blanks and mixed case"
+
+[[obligation]]
+id = "sf.security_admin.create-share.define-share.o012"
 kind = "identifier_class"
 required = true
 target = "<name>"
@@ -91229,7 +93934,7 @@ anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
-id = "sf.security_admin.desc-snapshot-policy.o021"
+id = "sf.security_admin.desc-snapshot-policy.o029"
 kind = "negative_neighbour"
 required = true
 anchor = "doc.sql.desc-snapshot-policy / Syntax"
@@ -91621,7 +94326,7 @@ anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
-id = "sf.security_admin.drop-application-role.o019"
+id = "sf.security_admin.drop-application-role.o027"
 kind = "negative_neighbour"
 required = true
 anchor = "doc.sql.drop-application-role / Syntax"
@@ -92030,7 +94735,7 @@ anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
-id = "sf.security_admin.drop-database-role.o019"
+id = "sf.security_admin.drop-database-role.o027"
 kind = "negative_neighbour"
 required = true
 anchor = "doc.sql.drop-database-role / Syntax"
@@ -93815,7 +96520,7 @@ anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
-id = "sf.security_admin.drop-snapshot-policy.o017"
+id = "sf.security_admin.drop-snapshot-policy.o025"
 kind = "negative_neighbour"
 required = true
 anchor = "doc.sql.drop-snapshot-policy / Syntax"
@@ -128018,7 +130723,7 @@ anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
-id = "sf.security_admin.show-user-functions.o049"
+id = "sf.security_admin.show-user-functions.o057"
 kind = "negative_neighbour"
 required = true
 anchor = "doc.sql.show-user-functions / Syntax"
@@ -128369,7 +131074,7 @@ anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
-id = "sf.security_admin.show-user-procedures.o049"
+id = "sf.security_admin.show-user-procedures.o057"
 kind = "negative_neighbour"
 required = true
 anchor = "doc.sql.show-user-procedures / Syntax"

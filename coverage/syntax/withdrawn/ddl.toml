@@ -524,6 +524,15 @@ valid_as = "sf.ddl.create-data-metric-function.create-data-metric-function posit
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
+form = "sf.ddl.create-data-metric-function.define-data-metric-function"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required NULL in [ [ NOT ] NULL ]"
+sql = "DEFINE DATA METRIC FUNCTION v1 ( v1 TABLE ( v1 INT ) ) RETURNS NUMBER AS 'm' ;"
+valid_as = "sf.ddl.create-data-metric-function.define-data-metric-function positive the documented form with every required part and no optional part"
+reason = "the rejection renders SQL the documented grammar also accepts"
+
+[[withdrawn]]
 form = "sf.ddl.create-dynamic-table.create-dynamic-iceberg-table"
 kind = "negative_neighbour"
 target = ""
@@ -566,6 +575,15 @@ target = ""
 note = "the form without its required DYNAMIC"
 sql = "CREATE TABLE v1 FROM BACKUP SET v1 IDENTIFIER 'm' ;"
 valid_as = "sf.ddl.create-table.create-table-from-backup positive the documented form with every required part and no optional part"
+reason = "the rejection renders SQL the documented grammar also accepts"
+
+[[withdrawn]]
+form = "sf.ddl.create-dynamic-table.create-or-alter-dynamic-iceberg-table"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required ICEBERG"
+sql = "CREATE OR ALTER DYNAMIC TABLE v1 ( v1 INT ) TARGET_LAG = '1 minute' WAREHOUSE = v1 AS SELECT 1 ;"
+valid_as = "sf.ddl.create-dynamic-table.create-or-alter-dynamic positive the documented form with every required part and no optional part"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
@@ -728,6 +746,78 @@ target = ""
 note = "the form without its required NULL in [ [ NOT ] NULL ]"
 sql = "CREATE FUNCTION v1 ( ) RETURNS INT AS 'm' ;"
 valid_as = "sf.ddl.create-function.create-function-returns-table.sql-handler positive the documented form with every required part and no optional part"
+reason = "the rejection renders SQL the documented grammar also accepts"
+
+[[withdrawn]]
+form = "sf.ddl.create-function.define-function"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required NULL in [ [ NOT ] NULL ]"
+sql = "DEFINE FUNCTION v1 ( ) RETURNS INT LANGUAGE SCALA HANDLER = 'm' AS 'm' ;"
+valid_as = "sf.ddl.create-function.define-function positive the documented form with every required part and no optional part"
+reason = "the rejection renders SQL the documented grammar also accepts"
+
+[[withdrawn]]
+form = "sf.ddl.create-function.define-function"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required NULL in [ [ NOT ] NULL ] #2"
+sql = "DEFINE FUNCTION v1 ( ) RETURNS INT LANGUAGE SCALA IMPORTS = ( 'm' ) HANDLER = 'm' ;"
+valid_as = "sf.ddl.create-function.define-function option_absent [ { TEMP | TEMPORARY } ] #2"
+reason = "the rejection renders SQL the documented grammar also accepts"
+
+[[withdrawn]]
+form = "sf.ddl.create-function.define-function"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required NULL in [ [ NOT ] NULL ] #3"
+sql = "DEFINE FUNCTION v1 ( ) RETURNS INT LANGUAGE JAVA HANDLER = 'm' AS 'm' ;"
+valid_as = "sf.ddl.create-function.define-function option_absent [ { TEMP | TEMPORARY } ] #3"
+reason = "the rejection renders SQL the documented grammar also accepts"
+
+[[withdrawn]]
+form = "sf.ddl.create-function.define-function"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required NULL in [ [ NOT ] NULL ] #4"
+sql = "DEFINE FUNCTION v1 ( ) RETURNS INT LANGUAGE PYTHON RUNTIME_VERSION = '3.10' IMPORTS = ( 'm' ) HANDLER = 'm1.run' ;"
+valid_as = "sf.ddl.create-function.define-function option_absent [ { TEMP | TEMPORARY } ] #4"
+reason = "the rejection renders SQL the documented grammar also accepts"
+
+[[withdrawn]]
+form = "sf.ddl.create-function.define-function"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required NULL in [ [ NOT ] NULL ] #5"
+sql = "DEFINE FUNCTION v1 ( ) RETURNS INT LANGUAGE JAVA IMPORTS = ( 'm' ) HANDLER = 'm' ;"
+valid_as = "sf.ddl.create-function.define-function option_absent [ { TEMP | TEMPORARY } ] #5"
+reason = "the rejection renders SQL the documented grammar also accepts"
+
+[[withdrawn]]
+form = "sf.ddl.create-function.define-function"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required NULL in [ [ NOT ] NULL ] #6"
+sql = "DEFINE FUNCTION v1 ( ) RETURNS INT LANGUAGE JAVASCRIPT AS 'm' ;"
+valid_as = "sf.ddl.create-function.define-function option_absent [ { TEMP | TEMPORARY } ] #6"
+reason = "the rejection renders SQL the documented grammar also accepts"
+
+[[withdrawn]]
+form = "sf.ddl.create-function.define-function"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required NULL in [ [ NOT ] NULL ] #7"
+sql = "DEFINE FUNCTION v1 ( ) RETURNS INT LANGUAGE PYTHON RUNTIME_VERSION = '3.10' HANDLER = 'm' AS 'm' ;"
+valid_as = "sf.ddl.create-function.define-function option_absent [ { TEMP | TEMPORARY } ] #7"
+reason = "the rejection renders SQL the documented grammar also accepts"
+
+[[withdrawn]]
+form = "sf.ddl.create-function.define-function"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required NULL in [ [ NOT ] NULL ] #8"
+sql = "DEFINE FUNCTION v1 ( ) RETURNS INT AS 'm' ;"
+valid_as = "sf.ddl.create-function.define-function option_absent [ { TEMP | TEMPORARY } ] #8"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
@@ -953,6 +1043,60 @@ target = ""
 note = "the form without its required NULL in [ [ NOT ] NULL ]"
 sql = "CREATE PROCEDURE v1 ( ) RETURNS INT LANGUAGE SCALA RUNTIME_VERSION = 'm' PACKAGES = ( 'com.snowflake:snowpark_2.12:1.14.0' ) HANDLER = 'm' AS 'm' ;"
 valid_as = "sf.ddl.create-procedure.create-procedure-returns-table.scala-handler positive the documented form with every required part and no optional part"
+reason = "the rejection renders SQL the documented grammar also accepts"
+
+[[withdrawn]]
+form = "sf.ddl.create-procedure.define-procedure"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required NULL in [ [ NOT ] NULL ]"
+sql = "DEFINE PROCEDURE v1 ( ) RETURNS INT LANGUAGE JAVA RUNTIME_VERSION = 'm' PACKAGES = ( 'com.snowflake:snowpark:1.14.0' ) HANDLER = 'm' AS 'm' ;"
+valid_as = "sf.ddl.create-procedure.define-procedure option_absent [ { TEMP | TEMPORARY } ] #2"
+reason = "the rejection renders SQL the documented grammar also accepts"
+
+[[withdrawn]]
+form = "sf.ddl.create-procedure.define-procedure"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required NULL in [ [ NOT ] NULL ] #2"
+sql = "DEFINE PROCEDURE v1 ( ) RETURNS INT LANGUAGE PYTHON RUNTIME_VERSION = '3.10' HANDLER = 'm1.run' ;"
+valid_as = "sf.ddl.create-procedure.define-procedure option_absent [ { TEMP | TEMPORARY } ] #3"
+reason = "the rejection renders SQL the documented grammar also accepts"
+
+[[withdrawn]]
+form = "sf.ddl.create-procedure.define-procedure"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required NULL in [ [ NOT ] NULL ] #3"
+sql = "DEFINE PROCEDURE v1 ( ) RETURNS INT LANGUAGE SCALA RUNTIME_VERSION = 'm' PACKAGES = ( 'com.snowflake:snowpark_2.12:1.14.0' ) HANDLER = 'm' ;"
+valid_as = "sf.ddl.create-procedure.define-procedure option_absent [ SECURE ] #3"
+reason = "the rejection renders SQL the documented grammar also accepts"
+
+[[withdrawn]]
+form = "sf.ddl.create-procedure.define-procedure"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required NULL in [ [ NOT ] NULL ] #4"
+sql = "DEFINE PROCEDURE v1 ( ) RETURNS INT LANGUAGE JAVA RUNTIME_VERSION = 'm' PACKAGES = ( 'com.snowflake:snowpark:1.14.0' ) HANDLER = 'm' ;"
+valid_as = "sf.ddl.create-procedure.define-procedure option_absent [ { TEMP | TEMPORARY } ] #4"
+reason = "the rejection renders SQL the documented grammar also accepts"
+
+[[withdrawn]]
+form = "sf.ddl.create-procedure.define-procedure"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required NULL in [ [ NOT ] NULL ] #5"
+sql = "DEFINE PROCEDURE v1 ( ) RETURNS INT LANGUAGE PYTHON RUNTIME_VERSION = '3.10' HANDLER = 'm' AS 'm' ;"
+valid_as = "sf.ddl.create-procedure.define-procedure option_absent [ { TEMP | TEMPORARY } ] #5"
+reason = "the rejection renders SQL the documented grammar also accepts"
+
+[[withdrawn]]
+form = "sf.ddl.create-procedure.define-procedure"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required NULL in [ [ NOT ] NULL ] #6"
+sql = "DEFINE PROCEDURE v1 ( ) RETURNS INT LANGUAGE SCALA RUNTIME_VERSION = 'm' PACKAGES = ( 'com.snowflake:snowpark_2.12:1.14.0' ) HANDLER = 'm' AS 'm' ;"
+valid_as = "sf.ddl.create-procedure.define-procedure option_absent [ SECURE ] #6"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
@@ -1316,6 +1460,24 @@ valid_as = "sf.ddl.create-table.create-table-from-archive positive the documente
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
+form = "sf.ddl.create-table.define-table"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required TEMP in [ { [ { LOCAL | GLOBAL } ] TEMP | TEMPORARY | TRANSIENT } ]"
+sql = "DEFINE TABLE v1 ( v1 INT ) ;"
+valid_as = "sf.ddl.create-table.define-table positive the documented form with every required part and no optional part"
+reason = "the rejection renders SQL the documented grammar also accepts"
+
+[[withdrawn]]
+form = "sf.ddl.create-table.define-table"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required { UNIQUE | PRIMARY KEY | [ FOREIGN KEY ] REFERENCES <ref_table_name> [ ( <ref_col_name> ) ] | CHECK ( <expr> ) } in [ [ CONSTRAINT <constraint_name> ] { UNIQUE | PRIMARY KEY | [ FOREIGN KEY ] REFERENCES <ref_table_name> [ ( <ref_col_na…"
+sql = "DEFINE TABLE v1 ( v1 INT ) ;"
+valid_as = "sf.ddl.create-table.define-table positive the documented form with every required part and no optional part"
+reason = "the rejection renders SQL the documented grammar also accepts"
+
+[[withdrawn]]
 form = "sf.ddl.create-versioned-schema"
 kind = "negative_neighbour"
 target = ""
@@ -1340,6 +1502,15 @@ target = ""
 note = "the form without its required TEMP in [ { [ { LOCAL | GLOBAL } ] TEMP | TEMPORARY | VOLATILE } ]"
 sql = "CREATE VIEW v1 AS SELECT 1 ;"
 valid_as = "sf.ddl.create-view.create-view-as positive the documented form with every required part and no optional part"
+reason = "the rejection renders SQL the documented grammar also accepts"
+
+[[withdrawn]]
+form = "sf.ddl.create-view.define-view"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required TEMP in [ { [ { LOCAL | GLOBAL } ] TEMP | TEMPORARY | VOLATILE } ]"
+sql = "DEFINE VIEW v1 AS SELECT 1 ;"
+valid_as = "sf.ddl.create-view.define-view positive the documented form with every required part and no optional part"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
