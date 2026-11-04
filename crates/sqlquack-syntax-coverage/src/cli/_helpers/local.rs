@@ -5,6 +5,7 @@ use std::process::Command;
 use sqlquack_syntax::{CallMode, Dialect, Expression, ExpressionWalk, ParseOptions};
 
 use crate::check::models::{LocalFailure, LocalVerdict};
+use crate::formats::main::content_sha256::content_sha256;
 
 /// The parser crate, relative to the repository root.
 const PARSER_PATH: &str = "crates/sqlquack-syntax";
@@ -23,6 +24,10 @@ pub(crate) fn snowflake_verdict(sql: &str) -> LocalVerdict {
             opaque: statements.iter().any(|statement| {
                 statement
                     .contains(|node| matches!(node, Expression::Command(_) | Expression::Raw(_)))
+            }),
+            tree_sha256: Some(match serde_json::to_string(&statements) {
+                Ok(tree) => content_sha256(tree.as_bytes()),
+                Err(error) => content_sha256(format!("unserialisable tree: {error}").as_bytes()),
             }),
         },
         Err(sqlquack_syntax::Error::Parse { message, .. }) if message.starts_with(GUARD_PREFIX) => {

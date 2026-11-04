@@ -50,10 +50,48 @@ pub(crate) fn drop_lines(root: &Path, path: &str, fragment: &str) {
 
 /// SQLQuack as the fixture needs it: `SELECT FROM` is rejected, everything else is structural.
 pub(crate) fn structural(sql: &str) -> LocalVerdict {
-    [
-        LocalVerdict::Accepted { opaque: false },
-        LocalVerdict::Rejected,
-    ][usize::from(sql == "SELECT FROM")]
+    vec![accepted_as(sql), LocalVerdict::Rejected].swap_remove(usize::from(sql == "SELECT FROM"))
+}
+
+/// A structural acceptance whose tree serialises as `tree`.
+fn accepted_as(tree: &str) -> LocalVerdict {
+    LocalVerdict::Accepted {
+        opaque: false,
+        tree_sha256: Some(sha256(tree)),
+    }
+}
+
+/// `structural`, except that `SELECT 17` parses into another tree.
+pub(crate) fn reshaped(sql: &str) -> LocalVerdict {
+    vec![structural(sql), accepted_as("another tree")].swap_remove(usize::from(sql == "SELECT 17"))
+}
+
+/// `structural`, except that `SELECT FROM` crashes instead of being rejected.
+pub(crate) fn crashing_on_select_from(sql: &str) -> LocalVerdict {
+    vec![structural(sql), crashing(sql)].swap_remove(usize::from(sql == "SELECT FROM"))
+}
+
+/// Rewrites the query review to list both query forms with their fingerprints under `structural`.
+pub(crate) fn pin_fingerprints(root: &Path) {
+    let coverage = crate::formats::main::load_coverage::load_coverage(root).expect("load");
+    let check =
+        crate::check::main::check_coverage::check_coverage(&coverage, Some(TREE), &structural);
+    let pins: Vec<String> = check
+        .forms
+        .iter()
+        .filter(|form| form.family == "query")
+        .map(|form| format!("\"{}\" = \"{}\"", form.id, form.fingerprint))
+        .collect();
+    replace(
+        root,
+        "reviews/query.toml",
+        "verdict = \"approved\"\n",
+        &format!(
+            "verdict = \"approved\"\nforms = [\"sf.query.select\", \"sf.query.select.top\"]\n\
+             fingerprints = {{ {} }}\n",
+            pins.join(", ")
+        ),
+    );
 }
 
 /// A local parse that crashes on everything.
@@ -82,8 +120,11 @@ pub(crate) fn append_receipt(root: &Path, line: &str) {
 }
 
 /// A parser that accepts everything, through a Command or Raw fallback.
-pub(crate) fn opaque(_sql: &str) -> LocalVerdict {
-    LocalVerdict::Accepted { opaque: true }
+pub(crate) fn opaque(sql: &str) -> LocalVerdict {
+    LocalVerdict::Accepted {
+        opaque: true,
+        tree_sha256: Some(sha256(sql)),
+    }
 }
 
 /// A case line, its hashes computed from its SQL, setup and session.
