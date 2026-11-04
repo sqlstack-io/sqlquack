@@ -259,6 +259,7 @@ RUN_DATABASE_SETUPS: dict[str, tuple[str, ...]] = {
         *RUN_DATABASE_SCHEMAS,
     ),
 }
+HELD_RUN_DATABASE_SETUP: tuple[str, ...] = RUN_DATABASE_SETUPS["security_admin"]
 SHARED_SCHEMA_SETUP: str = "-- shared schema;"
 COUNTED_RUN_STATUSES: frozenset[str] = frozenset({"imported", "reconciled"})
 DCM_DEFINITION_FORM: re.Pattern[str] = re.compile(r"\.create-[a-z0-9-]+\.define-")

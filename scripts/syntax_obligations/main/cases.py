@@ -7,6 +7,7 @@ import json
 from pathlib import Path
 
 from scripts.syntax_obligations._helpers.cases import (
+    held_cases,
     jsonl_text,
     packet_text,
     receipt_phases,
@@ -25,9 +26,12 @@ def run_cases(argv: list[str] | None = None) -> int:
     recorded: set[tuple[str, str]] = recorded_receipts(arguments.receipts)
     setups, flagged = run_database_setups(arguments.setups or arguments.receipts)
     print(json.dumps({"setup_review": flagged}))
+    held: frozenset[str] = held_cases(arguments.held)
     to_capture: list[Row] = []
     for family in arguments.families:
-        cases, arity = settled_cases(root=root, family=family, phases=phases, setups=setups)
+        cases, arity = settled_cases(
+            root=root, family=family, phases=phases, setups=setups, held=held
+        )
         path: Path = root / "cases" / f"{family}.jsonl"
         path.parent.mkdir(parents=True, exist_ok=True)
         path.write_text(jsonl_text(cases))
@@ -67,6 +71,13 @@ def _parse_args(argv: list[str] | None) -> argparse.Namespace:
         type=Path,
         help="receipt directory whose run-database receipts give ddl cases their setup "
         "(default: --receipts)",
+    )
+    parser.add_argument(
+        "--held",
+        type=Path,
+        action="append",
+        default=[],
+        help="held-case list (JSON lines with case_id) whose cases run in a d103 run database",
     )
     parser.add_argument("--packet", type=Path, help="write the cases still to capture here")
     parser.add_argument("families", nargs="+")

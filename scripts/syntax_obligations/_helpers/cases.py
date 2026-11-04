@@ -20,6 +20,7 @@ from scripts.syntax_obligations.constants import (
     EXPECT_OBSERVE,
     EXPECT_REJECT,
     EXPECT_TERMINATES,
+    HELD_RUN_DATABASE_SETUP,
     KIND_EXTREME,
     LANE_A_BLOCK_SESSION,
     MEASURE_KEY,
@@ -46,7 +47,7 @@ def canonical(value: object) -> str:
 
 
 def family_cases(
-    *, root: Path, family: str, setups: dict[tuple[str, str], list[str]]
+    *, root: Path, family: str, setups: dict[tuple[str, str], list[str]], held: frozenset[str]
 ) -> tuple[list[Row], dict[str, set[str]], list[Row], set[str]]:
     """Cases with the obligations each satisfies, every obligation's outcomes, and arity cases."""
     numbered, trees, _, _, arity = family_obligations(root=root, family=family)
@@ -80,7 +81,7 @@ def family_cases(
             "session": LANE_A_BLOCK_SESSION,
             "session_sha256": session_sha,
             "expect": rendered.expect,
-            **_binding(form=form, family=family, sql_sha=sha, setups=setups),
+            **_binding(form=form, family=family, sql_sha=sha, setups=setups, held=held),
         }
         if rendered.stage:
             case[STAGE_KEY] = rendered.stage
@@ -89,23 +90,31 @@ def family_cases(
     return (
         sorted(cases, key=lambda case: case["case_id"]),
         expected,
-        _arity_cases(rows=arity, scored=scored, family=family, setups=setups),
+        _arity_cases(rows=arity, scored=scored, family=family, setups=setups, held=held),
         {identifier for identifier, draft in numbered if draft.kind == KIND_EXTREME},
     )
 
 
 def _binding(
-    *, form: str, family: str, sql_sha: str, setups: dict[tuple[str, str], list[str]]
+    *,
+    form: str,
+    family: str,
+    sql_sha: str,
+    setups: dict[tuple[str, str], list[str]],
+    held: frozenset[str],
 ) -> Row:
     """Capture and setup: DEFINE from a DCM file, run-database families as run, the rest bare."""
     capture: str = CASE_CAPTURE
     setup: list[str] = []
+    case_id: str = f"{form}.k{sql_sha[:DIGEST_WIDTH]}"
     if DCM_DEFINITION_FORM.search(form):
         capture = CASE_CAPTURE_DCM
     elif family in RUN_DATABASE_SETUPS:
         capture = CASE_CAPTURE_RUN_DATABASE
-        case_id: str = f"{form}.k{sql_sha[:DIGEST_WIDTH]}"
         setup = setups.get((case_id, sql_sha), list(RUN_DATABASE_SETUPS[family]))
+    elif case_id in held:
+        capture = CASE_CAPTURE_RUN_DATABASE
+        setup = list(HELD_RUN_DATABASE_SETUP)
     return {"capture": capture, "setup": setup, "setup_sha256": digest(canonical(setup))}
 
 
@@ -155,7 +164,12 @@ def _omission(row: Row) -> str:
 
 
 def _arity_cases(
-    *, rows: list[Row], scored: set[str], family: str, setups: dict[tuple[str, str], list[str]]
+    *,
+    rows: list[Row],
+    scored: set[str],
+    family: str,
+    setups: dict[tuple[str, str], list[str]],
+    held: frozenset[str],
 ) -> list[Row]:
     """Unscored observe cases, one per distinct SQL text, naming the omissions they render."""
     by_sql: dict[str, list[Row]] = {}
@@ -176,7 +190,9 @@ def _arity_cases(
                 "session": LANE_A_BLOCK_SESSION,
                 "session_sha256": session_sha,
                 "expect": EXPECT_OBSERVE,
-                **_binding(form=str(found[0]["form"]), family=family, sql_sha=sha, setups=setups),
+                **_binding(
+                    form=str(found[0]["form"]), family=family, sql_sha=sha, setups=setups, held=held
+                ),
             }
         )
     return sorted(cases, key=lambda case: case["case_id"])
@@ -236,6 +252,14 @@ def merge_mapped(
         covered |= _cited_pairs(case)
     generated: list[Row] = [c for c in cases if not _cited_pairs(c) <= covered]
     return kept + generated, problems
+
+
+def held_cases(paths: list[Path]) -> frozenset[str]:
+    """The case ids of held-case lists (JSON lines with case_id), run later in a run database."""
+    held: set[str] = set()
+    for path in paths:
+        held |= {str(json.loads(line)["case_id"]) for line in path.read_text().splitlines()}
+    return frozenset(held)
 
 
 def receipt_phases(directory: Path) -> dict[tuple[str, str], str]:
@@ -307,9 +331,12 @@ def settled_cases(
     family: str,
     phases: dict[tuple[str, str], str],
     setups: dict[tuple[str, str], list[str]],
+    held: frozenset[str],
 ) -> tuple[list[Row], list[Row]]:
     """The merged cases with the stages their receipts show, and the unscored arity cases."""
-    generated, expected, arity, extremes = family_cases(root=root, family=family, setups=setups)
+    generated, expected, arity, extremes = family_cases(
+        root=root, family=family, setups=setups, held=held
+    )
     cases, problems = merge_mapped(
         cases=generated, mapped=root / "mapped-cases" / f"{family}.jsonl", expected=expected
     )
