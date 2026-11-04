@@ -1216,6 +1216,7 @@ CLASSES_LITERAL_FILLS: dict[str, str] = {
     "'<email_address> [, <email_address> ... ]'": "'u1@example.com, u2@example.com'",
     "'<email> [ , <email> [ , ... ] ]'": "'u1@example.com, u2@example.com'",
     "'<refresh_interval>'": "'TIER_1H'",
+    "'<anomaly_scope>'": "'ACCOUNT'",
 }
 CLASS_METHODS_WITH_SELECT: tuple[str, ...] = (
     "sf.classes.classification-profile.methods.describe",
