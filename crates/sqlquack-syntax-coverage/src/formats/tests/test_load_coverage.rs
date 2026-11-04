@@ -77,6 +77,24 @@ fn given_a_valid_tree_when_loading_then_every_record_is_kept() {
             expected_counts: counts(2),
         },
         LoadTestCase {
+            description: "a DDL receipt from a run-owned database counts its completed statements",
+            tree: |root| {
+                valid_tree(root);
+                let ddl = receipt_line()
+                    .replace(
+                        "\"capture_method\":\"execute\"",
+                        "\"capture_method\":\"execute_ddl_in_run_database\"",
+                    )
+                    .replace(
+                        "\"phase\":\"accepted\"",
+                        "\"phase\":\"accepted\",\"statements_in_request\":3,\
+                         \"completed_statements\":2",
+                    );
+                write(root, "receipts/ddl.jsonl", &format!("{ddl}\n"));
+            },
+            expected_counts: counts(2),
+        },
+        LoadTestCase {
             description: "a tree without renames or reviews yet",
             tree: |root| {
                 valid_tree(root);

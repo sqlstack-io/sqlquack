@@ -208,6 +208,8 @@ pub enum CaptureMethod {
     CompileOnlyExplain,
     ExecuteCanonicalRecorder,
     Describe,
+    /// DDL executed inside a database the run creates and drops.
+    ExecuteDdlInRunDatabase,
 }
 
 /// One line of `receipts/*.jsonl`, as the evidence owner's importer writes it.
@@ -255,6 +257,9 @@ pub struct Receipt {
     pub statements_in_input: Option<u32>,
     #[serde(default)]
     pub statements_in_request: Option<u32>,
+    /// Statements of the request that completed before it stopped.
+    #[serde(default)]
+    pub completed_statements: Option<u32>,
     #[serde(default)]
     pub after_sql: Option<String>,
     #[serde(default)]

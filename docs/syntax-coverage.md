@@ -97,8 +97,11 @@ Each line is one JSON object. Blank lines are refused.
 - `sql` and `sql_sha256`.
 - `setup` and `setup_sha256`: the ordered setup statements.
 - `session` and `session_sha256`: the session parameters, with JSON values.
-- `capture`: one of `execute`, `compile_only_explain`, `execute_canonical_recorder` or
-  `describe`.
+- `capture`: one of `execute`, `compile_only_explain`, `execute_canonical_recorder`, `describe`
+  or `execute_ddl_in_run_database`. The last runs DDL inside a database that the run creates and
+  drops. Its setup names that database, the run nonce and the per-case schema with the
+  placeholders `<run_database>`, `<run_nonce>` and `<case_schema>`, so the setup hash stays the
+  same from run to run.
 
 `setup_sha256` is the SHA-256 of the compact JSON array, which Python writes with
 `json.dumps(setup, separators=(",", ":"), ensure_ascii=False)`. `session_sha256` is the same over
@@ -127,7 +130,9 @@ committed one.
 - `raw_record_sha256`, `run_audit_sha256` and `packet_sha256`: the hashes of the private raw
   record, the private run audit and the submitted packet.
 - Optional provenance: `case_hash`, `input_sha256`, `statement_index`, `statements_in_input`,
-  `statements_in_request`, `after_sql` and `category`.
+  `statements_in_request`, `completed_statements`, `after_sql` and `category`.
+  `completed_statements` is the number of statements in the request that completed before it
+  stopped. It is provenance only and does not change the phase.
 
 Any other field is refused. No account identifier, host, URL, user or email address may appear.
 A `compile_only_explain` receipt shows only that the statement compiled. Its `accepted` phase
