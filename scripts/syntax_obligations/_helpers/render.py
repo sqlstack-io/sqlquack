@@ -151,7 +151,7 @@ class _Renderer:
         self._used = {}
         self._keywords = []
         joined: str = " ".join(self._sequence(nodes=self.trees[production], choices=choices))
-        glued: str = GLUED_INFIX_RIGHT.sub(" !", GLUED_PREFIXES.sub(r"\1", joined))
+        glued: str = GLUED_INFIX_RIGHT.sub("!", GLUED_PREFIXES.sub(r"\1", joined))
         return GLUED_INFIX_LEFT.sub("!", glued)
 
     def _declarations(self) -> str:

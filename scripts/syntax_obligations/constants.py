@@ -116,6 +116,32 @@ EXPRESSION_ARGUMENT_FAMILIES: frozenset[str] = frozenset({"functions"})
 ARGUMENT_STARTS: frozenset[str] = frozenset({"(", ",", "=>", "=", "BY"})
 OPERAND_KEYWORDS: frozenset[str] = frozenset({"LIKE", "ILIKE", "RLIKE", "REGEXP", "ESCAPE"})
 CALLEE_STARTS: str = "<_$"
+CALL_SEPARATORS: frozenset[str] = frozenset({"(", ","})
+CLAUSE_CALLEES: frozenset[str] = frozenset(
+    {
+        "OVER",
+        "GROUP",
+        "FILTER",
+        "WITHIN",
+        "TABLE",
+        "IN",
+        "BY",
+        "AS",
+        "USING",
+        "VALUES",
+        "ON",
+        "ANY",
+        "ALL",
+    }
+)
+DANGLING_CALL: re.Pattern[str] = re.compile(r"\( ,|, ,|, \)|=> ,|=> \)|=> $|, $|\( $|\( =>|, =>")
+ARITY_CLASS: str = "arity"
+ARITY_REASON: str = (
+    "D97 extension (auditor 11406dcd, coordinator): an omission that leaves a well-formed "
+    "ordinary call, such as VAR_POP ( ) or BITXOR ( 1 ), is an arity error found when the "
+    "function name is resolved, not a syntax error; withdrawn from the syntax score and kept "
+    "as unscored observe cases in arity/<family>.jsonl"
+)
 ARGUMENT_CLASS_REASON: str = (
     "D97: a whole argument of an ordinary function call is an <expr> to the parser, so a wrong "
     "class there (an identifier, literal or query where the page names another) is a type or "
@@ -332,7 +358,7 @@ LIST_ITEM_KEYWORDS: frozenset[str] = frozenset(
     {"AS", "NOT", "NULL", "ASC", "DESC", "NULLS", "FIRST", "LAST"}
 )
 GLUED_PREFIXES: re.Pattern[str] = re.compile(r"(?<![^ ])([$:@]) (?=[^ =])")
-GLUED_INFIX_RIGHT: re.Pattern[str] = re.compile(r" ! (?=[A-Za-z_\"'])")
+GLUED_INFIX_RIGHT: re.Pattern[str] = re.compile(r"(?<![^ ])! (?=[A-Za-z_\"'])")
 GLUED_INFIX_LEFT: re.Pattern[str] = re.compile(r"(?<=[\w\"')]) !(?=[ A-Za-z_\"'])")
 QUERY_FORMS: tuple[str, ...] = ("sf.query.constructs",)
 UNPACKED_FORMS: frozenset[str] = frozenset(QUERY_FORMS)
@@ -787,6 +813,7 @@ FUNCTIONS_FILLS: dict[str, str] = {
     "terminate_lambda": "s -> s",
     "sql_statement_expression": "'SELECT 1'",
     "sql_query_id_expression": "LAST_QUERY_ID ( )",
+    "agent_type": "'CORTEX AGENT'",
 }
 FUNCTIONS_LITERAL_FILLS: dict[str, str] = {
     "'<agent_name>[!<version>]'": "'a1'",

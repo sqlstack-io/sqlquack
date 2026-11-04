@@ -13,6 +13,9 @@ from scripts.syntax_obligations._helpers.render import style_of, submissions
 from scripts.syntax_obligations.constants import (
     ACTION_HAND,
     ARGUMENT_CLASS_REASON,
+    ARITY_CLASS,
+    ARITY_REASON,
+    DANGLING_CALL,
     EXPECT_ACCEPT,
     EXPECT_OBSERVE,
     EXPECT_REJECT,
@@ -136,8 +139,10 @@ def obligation_rows(numbered: list[tuple[str, Draft]]) -> list[Row]:
 
 def family_obligations(
     *, root: Path, family: str
-) -> tuple[list[tuple[str, Draft]], dict[str, list[tuple[Node, ...]]], list[Row], list[Row]]:
-    """Numbered obligations (kept ids), parsed productions, withdrawals and withdrawn classes."""
+) -> tuple[
+    list[tuple[str, Draft]], dict[str, list[tuple[Node, ...]]], list[Row], list[Row], list[Row]
+]:
+    """Numbered obligations, parsed productions, withdrawals, withdrawn classes, arity cases."""
     catalogue: list[Row] = tomllib.loads((root / "catalogue" / f"{family}.toml").read_text())[
         "form"
     ]
@@ -163,6 +168,7 @@ def family_obligations(
     )
     drafts.sort(key=lambda draft: draft.form)
     drafts, withdrawn = _without_coincident_negatives(drafts=drafts, trees=trees, family=family)
+    drafts, arity = _without_arity(drafts=drafts, trees=trees, family=family)
     path: Path = root / "obligations" / f"{family}.toml"
     classes: list[Row] = [
         {
@@ -173,7 +179,41 @@ def family_obligations(
         }
         for label, count in sorted(argument_classes.items())
     ]
-    return assign(drafts=drafts, kept=existing_ids(path)), trees, withdrawn, classes
+    if arity:
+        classes.append(
+            {
+                "class": ARITY_CLASS,
+                "derived_negative": "an omitted argument that leaves a well-formed ordinary call",
+                "count": len(arity),
+                "reason": ARITY_REASON,
+            }
+        )
+    numbered: list[tuple[str, Draft]] = assign(drafts=drafts, kept=existing_ids(path))
+    return numbered, trees, withdrawn, classes, arity
+
+
+def _without_arity(
+    *, drafts: list[Draft], trees: dict[str, list[tuple[Node, ...]]], family: str
+) -> tuple[list[Draft], list[Row]]:
+    """Drafts minus omissions whose SQL is still a well-formed call, with each such case."""
+    kept: list[Draft] = []
+    arity: list[Row] = []
+    for draft in drafts:
+        found: list[Rendered] = _draft_submissions(draft=draft, trees=trees, family=family)
+        if not draft.arity or any(DANGLING_CALL.search(case.sql) for case in found):
+            kept.append(draft)
+            continue
+        arity += [
+            {
+                "form": draft.form,
+                "kind": draft.kind,
+                "target": draft.target,
+                "note": draft.note,
+                "sql": case.sql,
+            }
+            for case in found
+        ]
+    return kept, arity
 
 
 def _without_coincident_negatives(

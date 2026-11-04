@@ -4149,6 +4149,7 @@ note = "an unquoted identifier in place of '<collation_specification>' (observed
 anchor = "doc.functions.collate / Syntax"
 sql = "SELECT 'm' COLLATE m1 ;"
 expect = "observe"
+context = "raw"
 
 [[suppress]]
 form = "sf.functions.get-path.colon"
@@ -4164,6 +4165,7 @@ note = "a string literal in place of <path_name> (observed: the receipt decides 
 anchor = "doc.functions.get_path / Syntax"
 sql = "SELECT v1 :'v1' ;"
 expect = "observe"
+context = "raw"
 
 [[suppress]]
 form = "sf.functions.get-path.colon.syntax"
@@ -4179,6 +4181,7 @@ note = "a string literal in place of <column_identifier> (observed: the receipt 
 anchor = "doc.functions.get_path / Syntax"
 sql = "SELECT :( 'v1' , 'm' ) ;"
 expect = "observe"
+context = "raw"
 
 [[suppress]]
 form = "sf.functions.get-path.colon.syntax"
@@ -4194,4 +4197,11 @@ note = "an unquoted identifier in place of '<path_name>' (observed: the receipt 
 anchor = "doc.functions.get_path / Syntax"
 sql = "SELECT :( v1 , m1 ) ;"
 expect = "observe"
+context = "raw"
 
+
+[[suppress]]
+form = "sf.functions.system-explain-plan-json"
+kind = "nesting_depth"
+note = "statement operands nested; no documented bound"
+reason = "<sql_statement_expression> is a string expression holding the statement text, not a statement, so nesting raw statements inside the call tests nothing the page documents (auditor 11406dcd)"

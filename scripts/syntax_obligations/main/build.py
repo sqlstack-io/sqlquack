@@ -21,7 +21,7 @@ def run_build(argv: list[str] | None = None) -> int:
     root: Path = arguments.root
     for family in arguments.families:
         path: Path = root / "obligations" / f"{family}.toml"
-        numbered, trees, withdrawn, classes = family_obligations(root=root, family=family)
+        numbered, trees, withdrawn, classes, _ = family_obligations(root=root, family=family)
         write_elisions(root=root, family=family, trees=trees)
         rows: list[Row] = obligation_rows(numbered)
         path.parent.mkdir(parents=True, exist_ok=True)

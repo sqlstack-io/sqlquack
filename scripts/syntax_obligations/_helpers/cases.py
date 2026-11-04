@@ -38,9 +38,9 @@ def canonical(value: object) -> str:
     return json.dumps(value, sort_keys=True, separators=(",", ":"), ensure_ascii=False)
 
 
-def family_cases(*, root: Path, family: str) -> tuple[list[Row], dict[str, set[str]]]:
-    """Cases with the obligations each satisfies, and every obligation's expected outcomes."""
-    numbered, trees, _, _ = family_obligations(root=root, family=family)
+def family_cases(*, root: Path, family: str) -> tuple[list[Row], dict[str, set[str]], list[Row]]:
+    """Cases with the obligations each satisfies, every obligation's outcomes, and arity cases."""
+    numbered, trees, _, _, arity = family_obligations(root=root, family=family)
     by_sql: dict[str, tuple[str, Rendered, list[str]]] = {}
     expected: dict[str, set[str]] = {}
     conflicts: list[str] = []
@@ -79,7 +79,40 @@ def family_cases(*, root: Path, family: str) -> tuple[list[Row], dict[str, set[s
         if rendered.stage:
             case[STAGE_KEY] = rendered.stage
         cases.append(case)
-    return sorted(cases, key=lambda case: case["case_id"]), expected
+    scored: set[str] = {str(case["sql"]) for case in cases}
+    return (
+        sorted(cases, key=lambda case: case["case_id"]),
+        expected,
+        _arity_cases(rows=arity, scored=scored),
+    )
+
+
+def _arity_cases(*, rows: list[Row], scored: set[str]) -> list[Row]:
+    """Unscored observe cases, one per distinct SQL text, naming the omissions they render."""
+    by_sql: dict[str, list[Row]] = {}
+    for row in rows:
+        if row["sql"] not in scored:
+            by_sql.setdefault(str(row["sql"]), []).append(row)
+    session_sha: str = digest(canonical(LANE_A_BLOCK_SESSION))
+    cases: list[Row] = []
+    for sql, found in by_sql.items():
+        sha: str = digest(sql)
+        cases.append(
+            {
+                "case_id": f"{found[0]['form']}.k{sha[:DIGEST_WIDTH]}",
+                "obligations": [],
+                "omits": sorted({f"{row['kind']} {row['note']}" for row in found}),
+                "sql": sql,
+                "sql_sha256": sha,
+                "setup": [],
+                "setup_sha256": digest(canonical([])),
+                "session": LANE_A_BLOCK_SESSION,
+                "session_sha256": session_sha,
+                "capture": CASE_CAPTURE,
+                "expect": EXPECT_OBSERVE,
+            }
+        )
+    return sorted(cases, key=lambda case: case["case_id"])
 
 
 def _rendered(
@@ -197,18 +230,21 @@ def _observed_outcome(*, case: Row, phase: str | None, stage: str | None) -> Row
     return case
 
 
-def settled_cases(*, root: Path, family: str, phases: dict[tuple[str, str], str]) -> list[Row]:
-    """The family's merged cases with the stages their receipts show; reports mapped problems."""
-    generated, expected = family_cases(root=root, family=family)
+def settled_cases(
+    *, root: Path, family: str, phases: dict[tuple[str, str], str]
+) -> tuple[list[Row], list[Row]]:
+    """The merged cases with the stages their receipts show, and the unscored arity cases."""
+    generated, expected, arity = family_cases(root=root, family=family)
     cases, problems = merge_mapped(
         cases=generated, mapped=root / "mapped-cases" / f"{family}.jsonl", expected=expected
     )
     for problem in problems:
         print(f"mapped case left out: {problem}")
-    return [
+    settled: list[Row] = [
         observed_stage(case=case, phase=phases.get((case["case_id"], case["sql_sha256"])))
         for case in cases
     ]
+    return settled, arity
 
 
 def jsonl_text(rows: list[Row]) -> str:

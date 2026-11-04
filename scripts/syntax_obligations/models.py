@@ -42,6 +42,7 @@ class Draft:
     pair: tuple[str, str] | tuple[()] = ()
     required: bool = True
     spec: Spec | None = field(default=None, compare=False)
+    arity: bool = False
 
 
 @dataclass(frozen=True)

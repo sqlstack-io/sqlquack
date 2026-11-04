@@ -22,8 +22,10 @@ from scripts.syntax_obligations.constants import (
     ACTION_REPLACE_NODE,
     ACTION_RESERVED_WORD,
     ARGUMENT_STARTS,
+    CALL_SEPARATORS,
     CALLEE_STARTS,
     CLASS_RULES,
+    CLAUSE_CALLEES,
     CLOSE_PAREN,
     DEFAULT_CLASS,
     EXPECT_REJECT,
@@ -94,6 +96,9 @@ class _Walk:
         self.chosen: tuple[tuple[int, int], ...] = ()
         self.expression_arguments: bool = form.split(".")[1] in EXPRESSION_ARGUMENT_FAMILIES
         self.calls: list[bool] = []
+        self.callees: list[str] = []
+        self.named: bool = False
+        self.arity_drops: set[str] = set()
         self.previous: str = ""
         self.argument_classes: Counter[str] = Counter()
 
@@ -104,8 +109,12 @@ class _Walk:
         self.seen[short] += 1
         return short if self.seen[short] == 1 else f"{short} #{self.seen[short]}"
 
-    def add(self, *, kind: str, target: str, note: str, spec: Spec | None = None) -> None:
-        self.drafts.append(Draft(form=self.form, kind=kind, target=target, note=note, spec=spec))
+    def add(
+        self, *, kind: str, target: str, note: str, spec: Spec | None = None, arity: bool = False
+    ) -> None:
+        self.drafts.append(
+            Draft(form=self.form, kind=kind, target=target, note=note, spec=spec, arity=arity)
+        )
 
     def reject(self, *, action: str, node: Node, payload: str = "") -> Spec:
         """A spec whose case is expected to be a syntax error."""
@@ -123,10 +132,11 @@ class _Walk:
         options: list[str] = []
         omission_is_absence: bool = len(nodes) == 1 and (branch or where.startswith("["))
         for position, node in enumerate(nodes):
+            argument: bool = self._call_argument()
             if node.kind == NODE_OPTIONAL:
-                before: str = self.previous
+                before: tuple[str, bool] = (self.previous, self.named)
                 options += self.optional(node=node, where=where)
-                self.previous = before
+                self.previous, self.named = before
                 continue
             if node.kind == NODE_CHOICE:
                 self.choice(node=node, where=where)
@@ -135,9 +145,10 @@ class _Walk:
                 self._track(node)
             if position > 0 and self._droppable(node):
                 inside: str = f" in {where}" if not top and where.startswith("[") else ""
-                self.dropped.setdefault(
-                    render((node,)) + inside, self.reject(action=ACTION_DROP_NODE, node=node)
-                )
+                key: str = render((node,)) + inside
+                self.dropped.setdefault(key, self.reject(action=ACTION_DROP_NODE, node=node))
+                if argument and node.kind == NODE_CHOICE:
+                    self.arity_drops.add(key)
         return options
 
     def _track(self, node: Node) -> None:
@@ -145,15 +156,28 @@ class _Walk:
         if node.text == OPEN_PAREN:
             nested: bool = bool(self.calls) and self.calls[-1] and self._argument_start()
             self.calls.append(nested or self._callee())
+            self.callees.append(self.previous.upper() if self._callee() and self.named else "")
         elif node.text == CLOSE_PAREN and self.calls:
             self.calls.pop()
+            self.callees.pop()
         self.previous = node.text
+        self.named = node.token_kind == TOKEN_KEYWORD
 
     def _callee(self) -> bool:
         return (
             bool(self.previous)
             and (self.previous[0].isalpha() or self.previous[0] in CALLEE_STARTS)
             and self.previous.upper() not in NON_CALL_KEYWORDS
+        )
+
+    def _call_argument(self) -> bool:
+        """Whether the next node is a whole argument of an ordinary call (D97 arity)."""
+        return (
+            self.expression_arguments
+            and bool(self.callees)
+            and self.callees[-1] not in CLAUSE_CALLEES
+            and self.callees[-1][:1].isalpha()
+            and self.previous in CALL_SEPARATORS
         )
 
     def _argument_start(self) -> bool:
@@ -205,6 +229,7 @@ class _Walk:
                 target=target,
                 note=f"omit {node.text}",
                 spec=self.reject(action=ACTION_DROP_NODE, node=node),
+                arity=self._call_argument(),
             )
         if label != SUBGRAMMAR_CLASS:
             self.add(
@@ -271,9 +296,9 @@ class _Walk:
 
     def _branches(self, *, node: Node, where: str, top: bool, branch: bool) -> None:
         outer: tuple[tuple[int, int], ...] = self.chosen
-        before: str = self.previous
+        before: tuple[str, bool] = (self.previous, self.named)
         for index, nodes in enumerate(node.branches):
-            self.previous = before
+            self.previous, self.named = before
             self.chosen = (*outer, (id(node), index)) if len(node.branches) > 1 else outer
             self.sequence(nodes=nodes, where=where, top=top, branch=branch)
         self.chosen = outer
@@ -309,6 +334,7 @@ def derive_trees(
             target="",
             note=f"the form without its required {keyword}",
             spec=spec,
+            arity=keyword in walk.arity_drops,
         )
     if widest >= MIN_INTERACTION_OPTIONS:
         note = "every independent option of one production together"

@@ -24,12 +24,27 @@ def run_cases(argv: list[str] | None = None) -> int:
     recorded: set[tuple[str, str]] = recorded_receipts(arguments.receipts)
     to_capture: list[Row] = []
     for family in arguments.families:
-        cases: list[Row] = settled_cases(root=root, family=family, phases=phases)
+        cases, arity = settled_cases(root=root, family=family, phases=phases)
         path: Path = root / "cases" / f"{family}.jsonl"
         path.parent.mkdir(parents=True, exist_ok=True)
         path.write_text(jsonl_text(cases))
-        to_capture += [c for c in cases if (c["case_id"], c["sql_sha256"]) not in recorded]
-        print(json.dumps({"family": family, "cases": len(cases), "to_capture": len(to_capture)}))
+        arity_path: Path = root / "arity" / f"{family}.jsonl"
+        if arity:
+            arity_path.parent.mkdir(parents=True, exist_ok=True)
+            arity_path.write_text(jsonl_text(arity))
+        elif arity_path.exists():
+            arity_path.unlink()
+        to_capture += [c for c in cases + arity if (c["case_id"], c["sql_sha256"]) not in recorded]
+        print(
+            json.dumps(
+                {
+                    "family": family,
+                    "cases": len(cases),
+                    "arity": len(arity),
+                    "to_capture": len(to_capture),
+                }
+            )
+        )
     if arguments.packet:
         arguments.packet.write_text(packet_text(to_capture))
     return 0
