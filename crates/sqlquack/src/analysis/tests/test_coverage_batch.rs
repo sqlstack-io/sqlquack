@@ -484,3 +484,128 @@ fn given_ordered_array_agg_when_rows_tie_on_its_keys_then_only_equal_tied_values
         );
     }
 }
+
+#[test]
+fn given_arrays_built_with_sql_nulls_when_sizing_them_then_undefined_elements_count() {
+    let test_cases = [
+        FirstValueTestCase {
+            description: "ARRAY_APPEND of a SQL NULL adds one element",
+            sql: "SELECT ARRAY_SIZE(ARRAY_APPEND(SPLIT('a,b', ','), NULL::NUMBER)) AS v",
+            expected_outcome: Ok("3"),
+        },
+        FirstValueTestCase {
+            description: "ARRAY_CAT of constructed arrays with SQL NULLs counts each",
+            sql: "SELECT ARRAY_SIZE(ARRAY_CAT(ARRAY_CONSTRUCT(NULL::VARCHAR), \
+                  ARRAY_CONSTRUCT(NULL::VARCHAR, 'b'))) AS v",
+            expected_outcome: Ok("3"),
+        },
+        FirstValueTestCase {
+            description: "an array read by ARRAY_DISTINCT before ARRAY_SIZE keeps its guard",
+            sql: "SELECT ARRAY_SIZE(ARRAY_DISTINCT(ARRAY_CONSTRUCT(NULL::VARCHAR, 'b'))) AS v",
+            expected_outcome: Err("keeps as undefined"),
+        },
+        FirstValueTestCase {
+            description: "a FLOAT padded to ten digits at scale 6 rounds exactly",
+            sql: "SELECT (1649.73::FLOAT)::NUMBER(18,6) AS v",
+            expected_outcome: Ok("1649.730000"),
+        },
+        FirstValueTestCase {
+            description: "a FLOAT reaching eleven digits once scaled still raises",
+            sql: "SELECT (1649.73::FLOAT)::NUMBER(38,8) AS v",
+            expected_outcome: Err("float_decimal_digits"),
+        },
+    ];
+    for test_case in test_cases {
+        assert_eq!(
+            shop_first_outcome(test_case.sql, test_case.expected_outcome),
+            test_case
+                .expected_outcome
+                .map(str::to_owned)
+                .map_err(str::to_owned),
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_dates_and_naive_timestamps_when_converting_to_timestamp_then_values_are_kept() {
+    let test_cases = [
+        FirstValueTestCase {
+            description: "TO_TIMESTAMP_NTZ of a TIMESTAMP_NTZ(9) is the same timestamp",
+            sql: "SELECT TO_TIMESTAMP_NTZ('2024-02-29 13:45:01.123456789'::TIMESTAMP_NTZ(9)) \
+                  = '2024-02-29 13:45:01.123456789'::TIMESTAMP_NTZ(9) AS v",
+            expected_outcome: Ok("true"),
+        },
+        FirstValueTestCase {
+            description: "TO_TIMESTAMP_NTZ of a TIMESTAMP_NTZ(3) keeps its milliseconds",
+            sql: "SELECT TO_TIMESTAMP_NTZ('2024-02-29 13:45:01.123'::TIMESTAMP_NTZ(3)) \
+                  = '2024-02-29 13:45:01.123'::TIMESTAMP_NTZ(9) AS v",
+            expected_outcome: Ok("true"),
+        },
+        FirstValueTestCase {
+            description: "TO_TIMESTAMP of a DATE is its midnight",
+            sql: "SELECT TO_TIMESTAMP('2024-02-29'::DATE) \
+                  = '2024-02-29 00:00:00'::TIMESTAMP_NTZ(9) AS v",
+            expected_outcome: Ok("true"),
+        },
+        FirstValueTestCase {
+            description: "TRY_TO_TIMESTAMP_NTZ of a timestamp is refused, as Snowflake rejects it",
+            sql: "SELECT TRY_TO_TIMESTAMP_NTZ('2024-02-29 13:45:01'::TIMESTAMP_NTZ(9)) AS v",
+            expected_outcome: Err("TRY_TO_TIMESTAMP_NTZ of TIMESTAMP_NTZ(9)"),
+        },
+    ];
+    for test_case in test_cases {
+        assert_eq!(
+            shop_first_outcome(test_case.sql, test_case.expected_outcome),
+            test_case
+                .expected_outcome
+                .map(str::to_owned)
+                .map_err(str::to_owned),
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_powers_of_ten_when_converting_power_then_the_nearest_double_is_kept() {
+    let test_cases = [
+        FirstValueTestCase {
+            description: "10^23, an exact tie, rounds to even as Snowflake records",
+            sql: "SELECT POWER(10, 23) = '1e23'::FLOAT AS v",
+            expected_outcome: Ok("true"),
+        },
+        FirstValueTestCase {
+            description: "a negative whole exponent",
+            sql: "SELECT POWER(10, -3) = '0.001'::FLOAT AS v",
+            expected_outcome: Ok("true"),
+        },
+        FirstValueTestCase {
+            description: "an exponent far beyond the double range is inf",
+            sql: "SELECT POWER(10, 1000) = 'inf'::FLOAT AS v",
+            expected_outcome: Ok("true"),
+        },
+        FirstValueTestCase {
+            description: "another base refuses",
+            sql: "SELECT POWER(2, 3) AS v",
+            expected_outcome: Err("other than the constant 10"),
+        },
+        FirstValueTestCase {
+            description: "a fractional exponent refuses",
+            sql: "SELECT POWER(10, 1.5) AS v",
+            expected_outcome: Err("exponent"),
+        },
+    ];
+    for test_case in test_cases {
+        assert_eq!(
+            shop_first_outcome(test_case.sql, test_case.expected_outcome),
+            test_case
+                .expected_outcome
+                .map(str::to_owned)
+                .map_err(str::to_owned),
+            "{}",
+            test_case.description
+        );
+    }
+}

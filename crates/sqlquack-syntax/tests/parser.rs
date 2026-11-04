@@ -8,5 +8,7 @@ mod test_fixes;
 mod test_located;
 #[path = "parser/test_scripting.rs"]
 mod test_scripting;
+#[path = "parser/test_snowflake_alter.rs"]
+mod test_snowflake_alter;
 #[path = "parser/test_types.rs"]
 mod test_types;

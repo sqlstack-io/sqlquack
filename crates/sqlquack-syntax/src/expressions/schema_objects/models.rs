@@ -317,6 +317,9 @@ pub struct DropSchema {
     pub name: Identifier,
     pub if_exists: bool,
     pub cascade: bool,
+    /// RESTRICT, kept apart from the default; left out of the tree when absent
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    pub restrict: bool,
 }
 
 impl DropSchema {
@@ -325,6 +328,7 @@ impl DropSchema {
             name: Identifier::new(name),
             if_exists: false,
             cascade: false,
+            restrict: false,
         }
     }
 }
@@ -1104,4 +1108,37 @@ impl DropType {
             cascade: false,
         }
     }
+}
+
+/// Snowflake ALTER of an object kind with no statement of its own, e.g. `ALTER TASK t1 RESUME`.
+#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct AlterObject {
+    /// The object kind, e.g. "TASK", "TASK GRAPH", "SNAPSHOT SET"
+    pub kind: String,
+    /// The object name
+    pub name: TableRef,
+    /// IF EXISTS clause
+    #[serde(default)]
+    pub if_exists: bool,
+    /// The action's keywords, e.g. "RESUME", "MODIFY RUN", "UNSET TAG"
+    pub action: String,
+    /// The action's operands in order: names, values, a condition or a statement
+    #[serde(default)]
+    pub operands: Vec<Expression>,
+    /// The properties the action sets or unsets; an unset property has no value
+    #[serde(default)]
+    pub properties: Vec<ObjectProperty>,
+}
+
+/// One property of a Snowflake ALTER action, e.g. `SCHEDULE = '1 MINUTE'` or `TAG t1 = 'v'`.
+#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct ObjectProperty {
+    /// The property's keywords, e.g. "SCHEDULE", "CONTACT", "TAG", "EXECUTE AS USER"
+    pub kind: String,
+    /// The name it qualifies: the tag name, the contact purpose or a TASK_DEFAULTS property
+    #[serde(default)]
+    pub name: Option<Identifier>,
+    /// The value, absent for an unset property
+    #[serde(default)]
+    pub value: Option<Expression>,
 }

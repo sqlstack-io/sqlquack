@@ -333,6 +333,27 @@ impl DropTable {
     }
 }
 
+/// Snowflake DROP of an object kind with no statement of its own, e.g. `DROP AGENT IF EXISTS a1`.
+#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct DropObject {
+    /// The object kind, e.g. "AGENT", "COMPUTE POOL", "EXTERNAL TABLE"
+    pub kind: String,
+    /// The object name
+    pub name: TableRef,
+    /// IF EXISTS clause
+    #[serde(default)]
+    pub if_exists: bool,
+    /// CASCADE
+    #[serde(default)]
+    pub cascade: bool,
+    /// RESTRICT
+    #[serde(default)]
+    pub restrict: bool,
+    /// FORCE
+    #[serde(default)]
+    pub force: bool,
+}
+
 /// UNDROP object statement (Snowflake, ClickHouse)
 #[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Undrop {

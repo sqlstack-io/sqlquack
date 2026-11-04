@@ -335,6 +335,7 @@ use crate::expressions::queries::models::WindowSpec;
 use crate::expressions::queries::models::With;
 use crate::expressions::queries::models::XmlNamespace;
 use crate::expressions::schema_objects::models::AlterIndex;
+use crate::expressions::schema_objects::models::AlterObject;
 use crate::expressions::schema_objects::models::AlterSequence;
 use crate::expressions::schema_objects::models::AlterView;
 use crate::expressions::schema_objects::models::CreateDatabase;
@@ -464,6 +465,7 @@ use crate::expressions::tables::models::DistKeyProperty;
 use crate::expressions::tables::models::DistStyleProperty;
 use crate::expressions::tables::models::DistributedByProperty;
 use crate::expressions::tables::models::DropIndex;
+use crate::expressions::tables::models::DropObject;
 use crate::expressions::tables::models::DropTable;
 use crate::expressions::tables::models::DuplicateKeyProperty;
 use crate::expressions::tables::models::EncodeProperty;
@@ -1164,6 +1166,7 @@ pub enum Expression {
     CreateTable(Box<CreateTable>),
     DropTable(Box<DropTable>),
     Undrop(Box<Undrop>),
+    DropObject(Box<DropObject>),
     AlterTable(Box<AlterTable>),
     SplitTable(Box<SplitTable>),
     FlashbackTable(Box<FlashbackTable>),
@@ -1172,6 +1175,7 @@ pub enum Expression {
     CreateView(Box<CreateView>),
     DropView(Box<DropView>),
     AlterView(Box<AlterView>),
+    AlterObject(Box<AlterObject>),
     AlterIndex(Box<AlterIndex>),
     Truncate(Box<Truncate>),
     Use(Box<Use>),

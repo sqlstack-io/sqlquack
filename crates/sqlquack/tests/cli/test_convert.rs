@@ -1236,6 +1236,7 @@ fn given_refused_sql_when_converting_then_text_and_json_carry_the_same_coded_dia
         ConvertDiagnosticTestCase {
             description: "a parse failure is rendered at the parser's position with its code",
             sql: "SELECT a,\n  FROM orders WHERE (b = 1\n",
+            flags: &[],
             expected_text: "error[SQ0001]: the SQL does not parse\n --> <stdin>:2:26\n  |\n2 |   FROM \
                 orders WHERE (b = 1\n  |                          ^ Expected RParen, got end of input \
                 ('') near [b = 1]\nsqlquack convert: refused, 1 refusal under the built-in default\n",
@@ -1244,6 +1245,7 @@ fn given_refused_sql_when_converting_then_text_and_json_carry_the_same_coded_dia
         ConvertDiagnosticTestCase {
             description: "an unknown relation is underlined with the fix as help",
             sql: "SELECT a FROM orders",
+            flags: &[],
             expected_text: "error[SQ0004]: a name does not resolve\n --> <stdin>:1:15\n  |\n1 | SELECT a \
                 FROM orders\n  |               ^^^^^^ relation `ORDERS` has no known columns\n  |\n  \
                 = help: declare the relation and its columns in the schema (`--schema` on the command \
@@ -1251,18 +1253,47 @@ fn given_refused_sql_when_converting_then_text_and_json_carry_the_same_coded_dia
             expected_json: ("SQ0004", "unresolved_name", 1, 15),
         },
         ConvertDiagnosticTestCase {
-            description: "SQL Snowflake parses but rejects is refused with the rejection's code",
+            description: "SQL Snowflake parses but rejects is refused with the rejection's code, at its clause",
             sql: "SELECT 1 QUALIFY TRUE",
-            expected_text: "error[SQ0203]: QUALIFY needs a window function\n --> <stdin>:1:1\n  |\n1 | \
-                SELECT 1 QUALIFY TRUE\n  | ^^^^^^^^^^^^^^^^^^^^^ QUALIFY is used without a window \
+            flags: &[],
+            expected_text: "error[SQ0203]: QUALIFY needs a window function\n --> <stdin>:1:10\n  |\n1 | \
+                SELECT 1 QUALIFY TRUE\n  |          ^^^^^^^ QUALIFY is used without a window \
                 function in the SELECT list or QUALIFY\n  |\n  = help: move the condition to WHERE or \
                 HAVING, or filter on a window function's result\nsqlquack convert: refused, 1 refusal \
                 under the built-in default\n",
-            expected_json: ("SQ0203", "qualify_without_window", 1, 1),
+            expected_json: ("SQ0203", "qualify_without_window", 1, 10),
+        },
+        ConvertDiagnosticTestCase {
+            description: "a divergence the policy refuses has its own code and help naming the policy",
+            sql: "SELECT HASH(1) AS h",
+            flags: &[],
+            expected_text: "error[SQ0008]: the conversion needs a known divergence the policy refuses: \
+                `fn:HASH`\n --> <stdin>:1:8\n  |\n1 | SELECT HASH(1) AS h\n  |        ^^^^^^^ fn:HASH \
+                needs known divergence `hash`, which the policy refuses in this mode\n  |\n  = help: \
+                allow the divergence under [divergences.<id>] in the policy file (--policy), drop \
+                --strict or --loud-divergences-only, or confirm its assumption (--utc-session, \
+                --confirm-declared-offsets, --python-runtime); --builtin-policy refuses every \
+                one\nsqlquack convert: refused, 1 refusal under the built-in default\n",
+            expected_json: ("SQ0008", "divergence_refused", 1, 8),
+        },
+        ConvertDiagnosticTestCase {
+            description: "a schema key matching only ignoring case says unquoted names fold to upper case",
+            sql: "SELECT order_id FROM orders",
+            flags: &["--schema", "tests/cli/fixtures/lowercase_relation.json"],
+            expected_text: "error[SQ0004]: a name does not resolve\n --> <stdin>:1:22\n  |\n1 | SELECT \
+                order_id FROM orders\n  |                      ^^^^^^ relation `ORDERS` matches `orders` \
+                only without regard to case\n  |\n  = help: Snowflake folds unquoted names to upper \
+                case, so declare the relation or column in the schema as the SQL resolves it (`ORDERS` \
+                for `FROM orders`), or quote the name in the SQL to keep its case\nsqlquack convert: \
+                refused, 1 refusal under the built-in default\n",
+            expected_json: ("SQ0004", "unresolved_name", 1, 22),
         },
     ];
     for test_case in test_cases {
-        let (stdout, stderr) = convert_streams(test_case.sql, &["--builtin-policy"]);
+        let (stdout, stderr) = convert_streams(
+            test_case.sql,
+            &[&["--builtin-policy"], test_case.flags].concat(),
+        );
         assert_eq!(stdout, "", "{}", test_case.description);
         assert_eq!(
             stderr.trim_start_matches("sqlquack convert: converting…\n"),
@@ -1270,7 +1301,10 @@ fn given_refused_sql_when_converting_then_text_and_json_carry_the_same_coded_dia
             "{}",
             test_case.description
         );
-        let (json, _) = convert_streams(test_case.sql, &["--builtin-policy", "--json"]);
+        let (json, _) = convert_streams(
+            test_case.sql,
+            &[&["--builtin-policy", "--json"], test_case.flags].concat(),
+        );
         let report: serde_json::Value = serde_json::from_str(&json).expect("a JSON report");
         let refusal = &report["refusals"][0];
         assert_eq!(
@@ -1356,16 +1390,23 @@ fn given_loud_divergences_only_when_converting_then_value_divergences_refuse_and
 {
     let test_cases = [
         FailureKindTestCase {
-            description: "HASH relies on a value divergence, and --json says so",
-            sql: "SELECT HASH(x) AS h FROM (SELECT 1 AS x) AS t",
+            description: "CURRENT_DATE relies on value divergences, and --json says so",
+            sql: "SELECT CURRENT_DATE() AS d",
             flags: &[],
             expected_converted: true,
-            expected_failures: &[("hash", "value")],
+            expected_failures: &[("current_time", "value"), ("session_timezone_utc", "value")],
         },
         FailureKindTestCase {
-            description: "--loud-divergences-only refuses HASH",
-            sql: "SELECT HASH(x) AS h FROM (SELECT 1 AS x) AS t",
+            description: "--loud-divergences-only refuses CURRENT_DATE",
+            sql: "SELECT CURRENT_DATE() AS d",
             flags: &["--loud-divergences-only"],
+            expected_converted: false,
+            expected_failures: &[],
+        },
+        FailureKindTestCase {
+            description: "HASH is refused by default, as its value is never Snowflake's",
+            sql: "SELECT HASH(x) AS h FROM (SELECT 1 AS x) AS t",
+            flags: &[],
             expected_converted: false,
             expected_failures: &[],
         },

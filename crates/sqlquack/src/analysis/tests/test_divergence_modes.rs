@@ -25,7 +25,7 @@ fn given_a_known_divergence_when_converting_then_default_mode_warns_and_strict_m
             expected_outcome: DivergenceModeOutcome {
                 converted: false,
                 divergences: vec![],
-                categories: vec![RefusalCategory::TypeCondition],
+                categories: vec![RefusalCategory::DivergenceRefused],
             },
         },
         DivergenceModeTestCase {
@@ -35,7 +35,7 @@ fn given_a_known_divergence_when_converting_then_default_mode_warns_and_strict_m
             expected_outcome: DivergenceModeOutcome {
                 converted: false,
                 divergences: vec![],
-                categories: vec![RefusalCategory::TypeCondition],
+                categories: vec![RefusalCategory::DivergenceRefused],
             },
         },
         DivergenceModeTestCase {
@@ -45,17 +45,17 @@ fn given_a_known_divergence_when_converting_then_default_mode_warns_and_strict_m
             expected_outcome: DivergenceModeOutcome {
                 converted: false,
                 divergences: vec![],
-                categories: vec![RefusalCategory::TypeCondition],
+                categories: vec![RefusalCategory::DivergenceRefused],
             },
         },
         DivergenceModeTestCase {
-            description: "HASH converts by default, naming the hash divergence",
+            description: "HASH is refused by default, as its value is never Snowflake's",
             sql: "SELECT HASH(note, customer_id) AS h FROM customers",
             strict: false,
             expected_outcome: DivergenceModeOutcome {
-                converted: true,
-                divergences: vec![("hash".to_owned(), vec!["fn:HASH".to_owned()])],
-                categories: vec![],
+                converted: false,
+                divergences: vec![],
+                categories: vec![RefusalCategory::DivergenceRefused],
             },
         },
         DivergenceModeTestCase {
@@ -65,7 +65,7 @@ fn given_a_known_divergence_when_converting_then_default_mode_warns_and_strict_m
             expected_outcome: DivergenceModeOutcome {
                 converted: false,
                 divergences: vec![],
-                categories: vec![RefusalCategory::TypeCondition],
+                categories: vec![RefusalCategory::DivergenceRefused],
             },
         },
         DivergenceModeTestCase {
@@ -151,7 +151,7 @@ fn given_a_known_divergence_when_converting_then_default_mode_warns_and_strict_m
             expected_outcome: DivergenceModeOutcome {
                 converted: false,
                 divergences: vec![],
-                categories: vec![RefusalCategory::TypeCondition],
+                categories: vec![RefusalCategory::DivergenceRefused],
             },
         },
         DivergenceModeTestCase {
@@ -187,7 +187,7 @@ fn given_a_known_divergence_when_converting_then_default_mode_warns_and_strict_m
             expected_outcome: DivergenceModeOutcome {
                 converted: false,
                 divergences: vec![],
-                categories: vec![RefusalCategory::TypeCondition],
+                categories: vec![RefusalCategory::DivergenceRefused],
             },
         },
         DivergenceModeTestCase {
@@ -240,13 +240,23 @@ fn given_a_known_divergence_when_converting_then_default_mode_warns_and_strict_m
             },
         },
         DivergenceModeTestCase {
-            description: "a year-1 literal at precision 9 converts by default, relying on timestamp_range",
+            description: "a year-1 literal at precision 9 always raises in DuckDB, so it is refused by default",
             sql: "SELECT CAST('0001-01-01 00:00:00' AS TIMESTAMP_NTZ(9)) AS t",
             strict: false,
             expected_outcome: DivergenceModeOutcome {
-                converted: true,
-                divergences: vec![("timestamp_range".to_owned(), vec!["node:cast".to_owned()])],
-                categories: vec![],
+                converted: false,
+                divergences: vec![],
+                categories: vec![RefusalCategory::TypeCondition],
+            },
+        },
+        DivergenceModeTestCase {
+            description: "a far-future sentinel default is refused by default, not left to raise at run time",
+            sql: "SELECT COALESCE(NULL::TIMESTAMP_NTZ, '9999-12-31'::TIMESTAMP_NTZ) AS t",
+            strict: false,
+            expected_outcome: DivergenceModeOutcome {
+                converted: false,
+                divergences: vec![],
+                categories: vec![RefusalCategory::TypeCondition],
             },
         },
         DivergenceModeTestCase {
@@ -339,7 +349,7 @@ fn given_a_known_divergence_when_converting_then_default_mode_warns_and_strict_m
             expected_outcome: DivergenceModeOutcome {
                 converted: false,
                 divergences: vec![],
-                categories: vec![RefusalCategory::TypeCondition],
+                categories: vec![RefusalCategory::DivergenceRefused],
             },
         },
     ];
@@ -365,7 +375,7 @@ fn given_a_python_function_call_when_converting_then_it_needs_a_confirmed_runtim
             expected_outcome: DivergenceModeOutcome {
                 converted: false,
                 divergences: vec![],
-                categories: vec![RefusalCategory::TypeCondition],
+                categories: vec![RefusalCategory::DivergenceRefused],
             },
         },
         PythonModeTestCase {
@@ -396,7 +406,7 @@ fn given_a_python_function_call_when_converting_then_it_needs_a_confirmed_runtim
             expected_outcome: DivergenceModeOutcome {
                 converted: false,
                 divergences: vec![],
-                categories: vec![RefusalCategory::TypeCondition],
+                categories: vec![RefusalCategory::DivergenceRefused],
             },
         },
     ];

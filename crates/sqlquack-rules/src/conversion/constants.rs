@@ -54,6 +54,8 @@ pub const FILTER_FUNCTION: &str = "FILTER";
 pub const TEXT_PARAMETER_TYPES: &[&str] = &["var_char", "string", "text"];
 /// The type name TO_DATE casts to.
 pub const DATE_NAME: &str = "DATE";
+/// The type name TO_TIMESTAMP_NTZ casts a DATE to.
+pub const TIMESTAMP_NTZ_NAME: &str = "TIMESTAMP_NTZ(9)";
 /// The node kind of a lambda.
 pub const LAMBDA_KIND: &str = "lambda";
 /// What a lambda parameter's DuckDB name starts with.
@@ -273,6 +275,8 @@ pub const ZONED_PARTS: &str = "rule.zoned_parts";
 pub const UTC_OFFSET_ARITHMETIC: &str = "rule.utc_offset_arithmetic";
 /// TO_DATE of dates and timestamps.
 pub const TO_DATE_TEMPORAL: &str = "rule.to_date_temporal";
+/// TO_TIMESTAMP and TO_TIMESTAMP_NTZ of dates and naive timestamps.
+pub const TO_TIMESTAMP_TEMPORAL: &str = "rule.to_timestamp_temporal";
 /// CONVERT_TIMEZONE with zone columns.
 pub const ZONE_COLUMNS: &str = "rule.zone_columns";
 /// MOD and % with a FLOAT and a literal divisor.
@@ -339,6 +343,8 @@ pub const DATE_FORMAT_RULE: &str = "rule.date_format";
 pub const TIMESTAMP_FORMAT_RULE: &str = "rule.timestamp_format";
 /// The function DATE(x) converts as.
 pub const TO_DATE_NAME: &str = "TO_DATE";
+/// TRY_PARSE_JSON, whose text no JSON reader can finish is NULL.
+pub const TRY_PARSE_JSON_NAME: &str = "TRY_PARSE_JSON";
 /// The type name of a cast to VARIANT.
 pub const VARIANT_NAME: &str = "VARIANT";
 /// PARSE_JSON and TRY_PARSE_JSON.
@@ -1171,6 +1177,9 @@ pub(crate) const ROUND_FUNCTION: &str = "ROUND";
 pub(crate) const FUNCTION_KIND: &str = "function";
 /// Array builders whose ARRAY OBJECT_PICK was recorded picking by its elements.
 pub(crate) const PICKED_ARRAY_FUNCTIONS: [&str; 2] = ["ARRAY_CONSTRUCT", "ARRAY_EXCEPT"];
+/// The array builders ARRAY_SIZE reads through, counting a SQL NULL element as Snowflake does.
+pub(crate) const COUNTED_ARRAY_FUNCTIONS: [&str; 3] =
+    ["ARRAY_APPEND", "ARRAY_CAT", "ARRAY_CONSTRUCT"];
 /// Why a construct that reads VARIANTs only as JSON refuses a VARIANT built from a FLOAT.
 pub(crate) const VARIANT_HELD_UNREAD: &str = "a VARIANT built from a FLOAT, which this construct \
                                                reads only as JSON, where the FLOAT's type is lost";
@@ -1222,6 +1231,10 @@ pub(crate) const DAY_UNIT: &str = "DAY";
 pub const NULL_IF_ZERO_RULE: &str = "rule.null_if_zero";
 /// LN and EXP of a NUMBER or FLOAT.
 pub const LOGARITHM: &str = "rule.logarithm";
+/// POWER(10, n) of a whole exponent.
+pub const POWER_RULE: &str = "rule.power";
+/// The one base POWER converts, as its literal is written.
+pub(crate) const POWER_BASE: &str = "10";
 /// The natural logarithm's name, beside EXP.
 pub(crate) const LN_NAME: &str = "LN";
 /// ARRAY_SORT of one array.

@@ -1,0 +1,98 @@
+# ASOF JOIN with a MATCH_CONDITION over DATE columns, and DATE against TIMESTAMP_NTZ.
+category = "relational"
+construct = "join:asof"
+session_profile = "utc-v1"
+
+[[case]]
+id = "asof_join_dates_greater_equal"
+description = "ASOF JOIN MATCH_CONDITION (l.d >= r.d) ON a key over DATEs: the latest right row on or before each left date, NULL where none."
+columns = [{ name = "side", type = "VARCHAR" }, { name = "k", type = "VARCHAR" }, { name = "d", type = "DATE" }, { name = "p", type = "NUMBER(10,4)" }]
+rows = [
+  ["'l'", "'EUR'", "'2024-03-01'", "NULL"],
+  ["'l'", "'EUR'", "'2024-03-04'", "NULL"],
+  ["'l'", "'EUR'", "'2024-02-28'", "NULL"],
+  ["'l'", "'GBP'", "'2024-03-01'", "NULL"],
+  ["'l'", "'JPY'", "'2024-03-01'", "NULL"],
+  ["'l'", "NULL", "'2024-03-01'", "NULL"],
+  ["'l'", "'EUR'", "NULL", "NULL"],
+  ["'r'", "'EUR'", "'2024-03-01'", "1.0850"],
+  ["'r'", "'EUR'", "'2024-02-29'", "1.0820"],
+  ["'r'", "'GBP'", "'2024-03-02'", "1.2650"],
+  ["'r'", "NULL", "'2024-01-01'", "9.9999"],
+]
+query = "WITH l AS (SELECT ordinal AS o, k, d FROM input WHERE side = 'l'), r AS (SELECT k, d, p FROM input WHERE side = 'r') SELECT l.o, l.k, l.d, r.d AS rd, r.p FROM l ASOF JOIN r MATCH_CONDITION (l.d >= r.d) ON l.k = r.k ORDER BY l.o"
+order = "ordered"
+tags = ["null"]
+
+[[case]]
+id = "asof_join_dates_strictly_earlier"
+description = "ASOF JOIN over DATEs with >: the latest strictly earlier right date."
+columns = [{ name = "side", type = "VARCHAR" }, { name = "d", type = "DATE" }]
+rows = [
+  ["'l'", "'2024-03-01'"],
+  ["'l'", "'2024-03-02'"],
+  ["'l'", "'2024-01-01'"],
+  ["'r'", "'2024-03-01'"],
+  ["'r'", "'2024-02-15'"],
+]
+query = "WITH l AS (SELECT ordinal AS o, d FROM input WHERE side = 'l'), r AS (SELECT d FROM input WHERE side = 'r') SELECT a.o, a.d, b.d AS before_d FROM l AS a ASOF JOIN r AS b MATCH_CONDITION (a.d > b.d) ORDER BY a.o"
+order = "ordered"
+tags = ["boundary"]
+
+[[case]]
+id = "asof_join_dates_later_or_equal"
+description = "ASOF JOIN over DATEs with <=: the earliest right date on or after each left date."
+columns = [{ name = "side", type = "VARCHAR" }, { name = "d", type = "DATE" }]
+rows = [
+  ["'l'", "'2024-03-01'"],
+  ["'l'", "'2024-03-02'"],
+  ["'l'", "'2024-12-31'"],
+  ["'r'", "'2024-03-01'"],
+  ["'r'", "'2024-06-30'"],
+]
+query = "WITH l AS (SELECT ordinal AS o, d FROM input WHERE side = 'l'), r AS (SELECT d FROM input WHERE side = 'r') SELECT a.o, a.d, b.d AS after_d FROM l AS a ASOF JOIN r AS b MATCH_CONDITION (a.d <= b.d) ORDER BY a.o"
+order = "ordered"
+tags = ["boundary"]
+
+[[case]]
+id = "asof_join_date_against_timestamp"
+description = "ASOF JOIN MATCH_CONDITION comparing a TIMESTAMP_NTZ on the left with a DATE on the right."
+columns = [{ name = "side", type = "VARCHAR" }, { name = "t", type = "TIMESTAMP_NTZ(9)" }, { name = "d", type = "DATE" }]
+rows = [
+  ["'l'", "'2024-03-01 00:00:00'", "NULL"],
+  ["'l'", "'2024-03-01 13:45:00'", "NULL"],
+  ["'l'", "'2024-02-29 23:59:59.999999999'", "NULL"],
+  ["'r'", "NULL", "'2024-03-01'"],
+  ["'r'", "NULL", "'2024-02-01'"],
+]
+query = "WITH l AS (SELECT ordinal AS o, t FROM input WHERE side = 'l'), r AS (SELECT d FROM input WHERE side = 'r') SELECT a.o, a.t, b.d FROM l AS a ASOF JOIN r AS b MATCH_CONDITION (a.t >= b.d) ORDER BY a.o"
+order = "ordered"
+tags = ["boundary"]
+
+[[case]]
+id = "asof_join_dates_duplicate_left_rows"
+description = "ASOF JOIN over DATEs where left dates repeat, each left row matched on its own, and no right rows at all for one key."
+columns = [{ name = "side", type = "VARCHAR" }, { name = "k", type = "VARCHAR" }, { name = "d", type = "DATE" }, { name = "p", type = "NUMBER(10,4)" }]
+rows = [
+  ["'l'", "'EUR'", "'2024-03-05'", "NULL"],
+  ["'l'", "'EUR'", "'2024-03-05'", "NULL"],
+  ["'l'", "'EUR'", "'2024-03-01'", "NULL"],
+  ["'l'", "'USD'", "'2024-03-05'", "NULL"],
+  ["'r'", "'EUR'", "'2024-03-01'", "1.0850"],
+  ["'r'", "'EUR'", "'2024-03-04'", "1.0900"],
+]
+query = "WITH l AS (SELECT ordinal AS o, k, d FROM input WHERE side = 'l'), r AS (SELECT k, d, p FROM input WHERE side = 'r') SELECT l.o, l.k, r.d AS rd, r.p FROM l ASOF JOIN r MATCH_CONDITION (l.d >= r.d) ON l.k = r.k ORDER BY l.o"
+order = "ordered"
+tags = ["duplicates"]
+
+[[case]]
+id = "asof_join_dates_empty_right"
+description = "ASOF JOIN over DATEs with an empty right side keeps every left row with NULLs."
+columns = [{ name = "side", type = "VARCHAR" }, { name = "d", type = "DATE" }]
+rows = [
+  ["'l'", "'2024-03-01'"],
+  ["'l'", "'2024-03-02'"],
+]
+query = "WITH l AS (SELECT ordinal AS o, d FROM input WHERE side = 'l'), r AS (SELECT d FROM input WHERE side = 'r') SELECT a.o, a.d, b.d AS before_d FROM l AS a ASOF JOIN r AS b MATCH_CONDITION (a.d >= b.d) ORDER BY a.o"
+order = "ordered"
+tags = ["empty-input"]

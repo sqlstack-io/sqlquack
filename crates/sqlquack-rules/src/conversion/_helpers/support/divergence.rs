@@ -1,7 +1,7 @@
 //! Relying on a known divergence the policy allows, or refusing.
 
 use sqlquack_core::classification::models::Construct;
-use sqlquack_core::refusals::main::outside_conditions::outside_conditions;
+use sqlquack_core::refusals::main::refused_divergence::refused_divergence;
 use sqlquack_core::refusals::models::Refusal;
 use sqlquack_snowflake::typing::constants::MAX_PRECISION;
 use sqlquack_snowflake::typing::models::SnowflakeType;
@@ -22,13 +22,7 @@ pub(crate) fn diverge(
             context.log.divergence(divergence, &key);
             Ok(())
         }
-        _ => Err(outside_conditions(
-            construct.clone(),
-            format!(
-                "{key} may need known divergence `{divergence}`, which the policy does not allow \
-                 in this mode"
-            ),
-        )),
+        _ => Err(refused_divergence(construct.clone(), divergence)),
     }
 }
 

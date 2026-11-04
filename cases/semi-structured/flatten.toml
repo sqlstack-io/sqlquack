@@ -113,14 +113,13 @@ tags = ["json-null", "missing-key", "array-index", "case-sensitive-key"]
 
 [[case]]
 id = "flatten_parsed_text_invalid"
-description = "FLATTEN over TRY_PARSE_JSON of text Snowflake rejects, which the JSON guard raises for."
+description = "FLATTEN over TRY_PARSE_JSON of a document cut off before it closes, which is NULL and gives no rows."
 columns = [{ name = "s", type = "VARCHAR" }]
 rows = [
   ["'{bad'"],
 ]
 query = "SELECT p.ordinal, e.index, e.value:id::VARCHAR AS id FROM (SELECT ordinal, TRY_PARSE_JSON(s) AS payload FROM input) p, LATERAL FLATTEN(input => p.payload:data) e ORDER BY p.ordinal, e.index"
 order = "ordered"
-expected_divergence = "json_fidelity"
 tags = ["invalid"]
 
 [[case]]

@@ -39,8 +39,8 @@ use crate::conversion::_helpers::support::tree::{
 };
 use crate::conversion::constants::{
     DATE_TEXT_SPELLING, LITERAL_KIND, NEGATE_KIND, PARSE_JSON_RULE, PARSE_JSON_VARIANT,
-    SUBSCRIPT_PAIR, TIMESTAMP_RANGE, VARIANT_CAST, VARIANT_COMPUTED_GET, VARIANT_HELD_UNREAD,
-    VARIANT_INSPECT, VARIANT_NAME, VARIANT_PATH, VARIANT_TYPE_NAME,
+    SUBSCRIPT_PAIR, TIMESTAMP_RANGE, TRY_PARSE_JSON_NAME, VARIANT_CAST, VARIANT_COMPUTED_GET,
+    VARIANT_HELD_UNREAD, VARIANT_INSPECT, VARIANT_NAME, VARIANT_PATH, VARIANT_TYPE_NAME,
 };
 use crate::conversion::constants::{OBJECT_TYPE_NAME, VARIANT_KIND_CAST};
 
@@ -72,13 +72,18 @@ pub(crate) fn parse_json(
         }
     };
     diverge(site.context, JSON_FIDELITY, construct)?;
-    Ok(semi_structured(json_guarded(&text, site.context.log)))
+    let trying = construct.name == TRY_PARSE_JSON_NAME;
+    Ok(semi_structured(json_guarded(
+        &text,
+        trying,
+        site.context.log,
+    )))
 }
 
 /// A VARIANT column of a base table, guarded as PARSE_JSON's result is.
 pub(crate) fn guarded_column(sql: &str, context: &Context<'_>) -> Result<String, Refusal> {
     diverge(context, JSON_FIDELITY, &node_construct("column"))?;
-    Ok(json_guarded(sql, context.log))
+    Ok(json_guarded(sql, false, context.log))
 }
 
 /// `v:a.b[0]`: a literal path into a VARIANT.
