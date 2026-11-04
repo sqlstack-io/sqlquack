@@ -41,24 +41,11 @@ anchor = "doc.functions.abs / Syntax"
 note = "ABS calls nested 100 levels deep; no documented bound"
 
 [[obligation]]
-id = "sf.functions.accumulate.o001"
-kind = "positive"
-required = true
-note = "the documented form with every required part and no optional part"
-
-[[obligation]]
 id = "sf.functions.accumulate.o002"
 kind = "required_operand_missing"
 required = true
 target = "<input_expr>"
 note = "omit <input_expr>"
-
-[[obligation]]
-id = "sf.functions.accumulate.o003"
-kind = "operand_type_class"
-required = true
-target = "<input_expr>"
-note = "a valid expression"
 
 [[obligation]]
 id = "sf.functions.accumulate.o004"
@@ -68,25 +55,11 @@ target = "<initialize_lambda>"
 note = "omit <initialize_lambda>"
 
 [[obligation]]
-id = "sf.functions.accumulate.o005"
-kind = "operand_type_class"
-required = true
-target = "<initialize_lambda>"
-note = "a valid operand"
-
-[[obligation]]
 id = "sf.functions.accumulate.o006"
 kind = "required_operand_missing"
 required = true
 target = "<accumulate_lambda>"
 note = "omit <accumulate_lambda>"
-
-[[obligation]]
-id = "sf.functions.accumulate.o007"
-kind = "operand_type_class"
-required = true
-target = "<accumulate_lambda>"
-note = "a valid operand"
 
 [[obligation]]
 id = "sf.functions.accumulate.o008"
@@ -96,25 +69,11 @@ target = "<combine_lambda>"
 note = "omit <combine_lambda>"
 
 [[obligation]]
-id = "sf.functions.accumulate.o009"
-kind = "operand_type_class"
-required = true
-target = "<combine_lambda>"
-note = "a valid operand"
-
-[[obligation]]
 id = "sf.functions.accumulate.o010"
 kind = "required_operand_missing"
 required = true
 target = "<terminate_lambda>"
 note = "omit <terminate_lambda>"
-
-[[obligation]]
-id = "sf.functions.accumulate.o011"
-kind = "operand_type_class"
-required = true
-target = "<terminate_lambda>"
-note = "a valid operand"
 
 [[obligation]]
 id = "sf.functions.accumulate.o012"
@@ -127,6 +86,53 @@ id = "sf.functions.accumulate.o013"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required )"
+
+[[obligation]]
+id = "sf.functions.accumulate.o014"
+kind = "positive"
+required = true
+anchor = "doc.functions.accumulate / Syntax"
+note = "the documented form with every required part and no optional part, observed"
+
+[[obligation]]
+id = "sf.functions.accumulate.o015"
+kind = "operand_type_class"
+required = true
+target = "<input_expr>"
+anchor = "doc.functions.accumulate / Syntax"
+note = "a valid expression, observed"
+
+[[obligation]]
+id = "sf.functions.accumulate.o016"
+kind = "operand_type_class"
+required = true
+target = "<initialize_lambda>"
+anchor = "doc.functions.accumulate / Syntax"
+note = "a valid operand, observed"
+
+[[obligation]]
+id = "sf.functions.accumulate.o017"
+kind = "operand_type_class"
+required = true
+target = "<accumulate_lambda>"
+anchor = "doc.functions.accumulate / Syntax"
+note = "a valid operand, observed"
+
+[[obligation]]
+id = "sf.functions.accumulate.o018"
+kind = "operand_type_class"
+required = true
+target = "<combine_lambda>"
+anchor = "doc.functions.accumulate / Syntax"
+note = "a valid operand, observed"
+
+[[obligation]]
+id = "sf.functions.accumulate.o019"
+kind = "operand_type_class"
+required = true
+target = "<terminate_lambda>"
+anchor = "doc.functions.accumulate / Syntax"
+note = "a valid operand, observed"
 
 [[obligation]]
 id = "sf.functions.acos.o001"
@@ -9261,14 +9267,6 @@ required = true
 note = "the form without its required )"
 
 [[obligation]]
-id = "sf.functions.build-scoped-file-url.o012"
-kind = "identifier_class"
-required = true
-target = "<stage_name>"
-anchor = "doc.identifiers-syntax"
-note = "quoted: a double-quoted identifier with blanks and mixed case"
-
-[[obligation]]
 id = "sf.functions.build-scoped-file-url.o013"
 kind = "identifier_class"
 required = true
@@ -9283,6 +9281,14 @@ required = true
 target = "<stage_name>"
 anchor = "doc.functions.build_scoped_file_url / Syntax"
 note = "omit <stage_name>, observed"
+
+[[obligation]]
+id = "sf.functions.build-scoped-file-url.o015"
+kind = "identifier_class"
+required = true
+target = "<stage_name>"
+anchor = "doc.functions.build_scoped_file_url / Syntax"
+note = "quoted: a double-quoted identifier with blanks and mixed case, stage reference single-quoted as the page requires"
 
 [[obligation]]
 id = "sf.functions.build-stage-file-url.o001"
@@ -9331,14 +9337,6 @@ required = true
 note = "the form without its required )"
 
 [[obligation]]
-id = "sf.functions.build-stage-file-url.o010"
-kind = "identifier_class"
-required = true
-target = "<stage_name>"
-anchor = "doc.identifiers-syntax"
-note = "quoted: a double-quoted identifier with blanks and mixed case"
-
-[[obligation]]
 id = "sf.functions.build-stage-file-url.o011"
 kind = "identifier_class"
 required = true
@@ -9353,6 +9351,14 @@ required = true
 target = "<stage_name>"
 anchor = "doc.functions.build_stage_file_url / Syntax"
 note = "omit <stage_name>, observed"
+
+[[obligation]]
+id = "sf.functions.build-stage-file-url.o013"
+kind = "identifier_class"
+required = true
+target = "<stage_name>"
+anchor = "doc.functions.build_stage_file_url / Syntax"
+note = "quoted: a double-quoted identifier with blanks and mixed case, stage reference single-quoted as the page requires"
 
 [[obligation]]
 id = "sf.functions.case.end.o001"
@@ -9677,28 +9683,10 @@ target = "<target_data_type>"
 note = "a string literal in place of <target_data_type>"
 
 [[obligation]]
-id = "sf.functions.cast.cast-as.o007"
-kind = "option_present"
-required = true
-target = "[ RENAME FIELDS | ADD FIELDS ]"
-
-[[obligation]]
 id = "sf.functions.cast.cast-as.o008"
 kind = "option_absent"
 required = true
 target = "[ RENAME FIELDS | ADD FIELDS ]"
-
-[[obligation]]
-id = "sf.functions.cast.cast-as.o009"
-kind = "alternative"
-required = true
-target = "[ RENAME FIELDS | ADD FIELDS ] → RENAME FIELDS"
-
-[[obligation]]
-id = "sf.functions.cast.cast-as.o010"
-kind = "alternative"
-required = true
-target = "[ RENAME FIELDS | ADD FIELDS ] → ADD FIELDS"
 
 [[obligation]]
 id = "sf.functions.cast.cast-as.o011"
@@ -9717,6 +9705,30 @@ id = "sf.functions.cast.cast-as.o013"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required )"
+
+[[obligation]]
+id = "sf.functions.cast.cast-as.o016"
+kind = "alternative"
+required = true
+target = "[ RENAME FIELDS | ADD FIELDS ] → ADD FIELDS"
+anchor = "doc.functions.cast / Syntax"
+note = "alternative [ RENAME FIELDS | ADD FIELDS ] → ADD FIELDS, observed"
+
+[[obligation]]
+id = "sf.functions.cast.cast-as.o017"
+kind = "option_present"
+required = true
+target = "[ RENAME FIELDS | ADD FIELDS ]"
+anchor = "doc.functions.cast / Syntax"
+note = "option present [ RENAME FIELDS | ADD FIELDS ], observed"
+
+[[obligation]]
+id = "sf.functions.cast.cast-as.o018"
+kind = "alternative"
+required = true
+target = "[ RENAME FIELDS | ADD FIELDS ] → RENAME FIELDS"
+anchor = "doc.functions.cast / Syntax"
+note = "alternative [ RENAME FIELDS | ADD FIELDS ] → RENAME FIELDS, observed"
 
 [[obligation]]
 id = "sf.functions.cast.double-colon.o001"
@@ -15218,12 +15230,6 @@ required = true
 target = "{ WORKSPACE | DBT PROJECT } → WORKSPACE"
 
 [[obligation]]
-id = "sf.functions.dbt-project-execution-history.o010"
-kind = "alternative"
-required = true
-target = "{ WORKSPACE | DBT PROJECT } → DBT PROJECT"
-
-[[obligation]]
 id = "sf.functions.dbt-project-execution-history.o011"
 kind = "option_present"
 required = true
@@ -15531,6 +15537,14 @@ kind = "negative_neighbour"
 required = true
 anchor = "doc.functions.dbt_project_execution_history / Syntax"
 note = "the form without its required PROJECT in [ , OBJECT_TYPE = { WORKSPACE | DBT PROJECT } ], observed"
+
+[[obligation]]
+id = "sf.functions.dbt-project-execution-history.o062"
+kind = "alternative"
+required = true
+target = "{ WORKSPACE | DBT PROJECT } → DBT PROJECT"
+anchor = "doc.functions.dbt_project_execution_history / Syntax"
+note = "alternative { WORKSPACE | DBT PROJECT } → DBT PROJECT, observed"
 
 [[obligation]]
 id = "sf.functions.dcm-deployment-history.o001"
@@ -30112,14 +30126,6 @@ required = true
 note = "the form without its required )"
 
 [[obligation]]
-id = "sf.functions.get-absolute-path.o010"
-kind = "identifier_class"
-required = true
-target = "<stage_name>"
-anchor = "doc.identifiers-syntax"
-note = "quoted: a double-quoted identifier with blanks and mixed case"
-
-[[obligation]]
 id = "sf.functions.get-absolute-path.o011"
 kind = "identifier_class"
 required = true
@@ -30134,6 +30140,14 @@ required = true
 target = "<stage_name>"
 anchor = "doc.functions.get_absolute_path / Syntax"
 note = "omit <stage_name>, observed"
+
+[[obligation]]
+id = "sf.functions.get-absolute-path.o013"
+kind = "identifier_class"
+required = true
+target = "<stage_name>"
+anchor = "doc.functions.get_absolute_path / Syntax"
+note = "quoted: a double-quoted identifier with blanks and mixed case, stage reference single-quoted as the page requires"
 
 [[obligation]]
 id = "sf.functions.get-ai-evaluation-data-snowflake-local.o001"
@@ -31489,12 +31503,6 @@ anchor = "doc.functions.get_path / Syntax"
 note = "omit <column_identifier>, observed"
 
 [[obligation]]
-id = "sf.functions.get-path.colon.syntax.o001"
-kind = "positive"
-required = true
-note = "the documented form with every required part and no optional part"
-
-[[obligation]]
 id = "sf.functions.get-path.colon.syntax.o002"
 kind = "required_operand_missing"
 required = true
@@ -31502,25 +31510,11 @@ target = "<column_identifier>"
 note = "omit <column_identifier>"
 
 [[obligation]]
-id = "sf.functions.get-path.colon.syntax.o003"
-kind = "operand_type_class"
-required = true
-target = "<column_identifier>"
-note = "a valid identifier"
-
-[[obligation]]
 id = "sf.functions.get-path.colon.syntax.o005"
 kind = "required_operand_missing"
 required = true
 target = "'<path_name>'"
 note = "omit '<path_name>'"
-
-[[obligation]]
-id = "sf.functions.get-path.colon.syntax.o006"
-kind = "operand_type_class"
-required = true
-target = "'<path_name>'"
-note = "a valid string_literal"
 
 [[obligation]]
 id = "sf.functions.get-path.colon.syntax.o008"
@@ -31535,22 +31529,6 @@ required = true
 note = "the form without its required )"
 
 [[obligation]]
-id = "sf.functions.get-path.colon.syntax.o010"
-kind = "identifier_class"
-required = true
-target = "<column_identifier>"
-anchor = "doc.identifiers-syntax"
-note = "quoted: a double-quoted identifier with blanks and mixed case"
-
-[[obligation]]
-id = "sf.functions.get-path.colon.syntax.o011"
-kind = "identifier_class"
-required = true
-target = "<column_identifier>"
-anchor = "doc.identifiers-syntax"
-note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
-
-[[obligation]]
 id = "sf.functions.get-path.colon.syntax.o012"
 kind = "negative_neighbour"
 required = true
@@ -31563,6 +31541,45 @@ kind = "negative_neighbour"
 required = true
 anchor = "doc.functions.get_path / Syntax"
 note = "an unquoted identifier in place of '<path_name>' (observed: the receipt decides whether the slot is literal-only)"
+
+[[obligation]]
+id = "sf.functions.get-path.colon.syntax.o014"
+kind = "identifier_class"
+required = true
+target = "<column_identifier>"
+anchor = "doc.functions.get_path / Syntax"
+note = "quoted: a double-quoted identifier with blanks and mixed case, observed"
+
+[[obligation]]
+id = "sf.functions.get-path.colon.syntax.o015"
+kind = "positive"
+required = true
+anchor = "doc.functions.get_path / Syntax"
+note = "the documented form with every required part and no optional part, observed"
+
+[[obligation]]
+id = "sf.functions.get-path.colon.syntax.o016"
+kind = "operand_type_class"
+required = true
+target = "<column_identifier>"
+anchor = "doc.functions.get_path / Syntax"
+note = "a valid identifier, observed"
+
+[[obligation]]
+id = "sf.functions.get-path.colon.syntax.o017"
+kind = "operand_type_class"
+required = true
+target = "'<path_name>'"
+anchor = "doc.functions.get_path / Syntax"
+note = "a valid string_literal, observed"
+
+[[obligation]]
+id = "sf.functions.get-path.colon.syntax.o018"
+kind = "identifier_class"
+required = true
+target = "<column_identifier>"
+anchor = "doc.functions.get_path / Syntax"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance), observed"
 
 [[obligation]]
 id = "sf.functions.get-path.get-path.o001"
@@ -31692,14 +31709,6 @@ required = true
 note = "the form without its required )"
 
 [[obligation]]
-id = "sf.functions.get-presigned-url.o013"
-kind = "identifier_class"
-required = true
-target = "<stage_name>"
-anchor = "doc.identifiers-syntax"
-note = "quoted: a double-quoted identifier with blanks and mixed case"
-
-[[obligation]]
 id = "sf.functions.get-presigned-url.o014"
 kind = "identifier_class"
 required = true
@@ -31714,6 +31723,14 @@ required = true
 target = "<stage_name>"
 anchor = "doc.functions.get_presigned_url / Syntax"
 note = "omit <stage_name>, observed"
+
+[[obligation]]
+id = "sf.functions.get-presigned-url.o016"
+kind = "identifier_class"
+required = true
+target = "<stage_name>"
+anchor = "doc.functions.get_presigned_url / Syntax"
+note = "quoted: a double-quoted identifier with blanks and mixed case, stage reference single-quoted as the page requires"
 
 [[obligation]]
 id = "sf.functions.get-python-profiler-output.o001"
@@ -31825,14 +31842,6 @@ required = true
 note = "the form without its required )"
 
 [[obligation]]
-id = "sf.functions.get-relative-path.o010"
-kind = "identifier_class"
-required = true
-target = "<stage_name>"
-anchor = "doc.identifiers-syntax"
-note = "quoted: a double-quoted identifier with blanks and mixed case"
-
-[[obligation]]
 id = "sf.functions.get-relative-path.o011"
 kind = "identifier_class"
 required = true
@@ -31847,6 +31856,14 @@ required = true
 target = "<stage_name>"
 anchor = "doc.functions.get_relative_path / Syntax"
 note = "omit <stage_name>, observed"
+
+[[obligation]]
+id = "sf.functions.get-relative-path.o013"
+kind = "identifier_class"
+required = true
+target = "<stage_name>"
+anchor = "doc.functions.get_relative_path / Syntax"
+note = "quoted: a double-quoted identifier with blanks and mixed case, stage reference single-quoted as the page requires"
 
 [[obligation]]
 id = "sf.functions.get-stage-location.o001"
@@ -31881,14 +31898,6 @@ required = true
 note = "the form without its required )"
 
 [[obligation]]
-id = "sf.functions.get-stage-location.o007"
-kind = "identifier_class"
-required = true
-target = "<stage_name>"
-anchor = "doc.identifiers-syntax"
-note = "quoted: a double-quoted identifier with blanks and mixed case"
-
-[[obligation]]
 id = "sf.functions.get-stage-location.o008"
 kind = "identifier_class"
 required = true
@@ -31903,6 +31912,14 @@ required = true
 target = "<stage_name>"
 anchor = "doc.functions.get_stage_location / Syntax"
 note = "omit <stage_name>, observed"
+
+[[obligation]]
+id = "sf.functions.get-stage-location.o010"
+kind = "identifier_class"
+required = true
+target = "<stage_name>"
+anchor = "doc.functions.get_stage_location / Syntax"
+note = "quoted: a double-quoted identifier with blanks and mixed case, stage reference single-quoted as the page requires"
 
 [[obligation]]
 id = "sf.functions.get-table-version-refs.o001"
@@ -41452,18 +41469,24 @@ required = true
 target = "[ DISTINCT ]"
 
 [[obligation]]
-id = "sf.functions.minhash.minhash.o012"
-kind = "required_operand_missing"
-required = true
-target = "expr"
-note = "omit expr"
-
-[[obligation]]
-id = "sf.functions.minhash.minhash.o007"
+id = "sf.functions.minhash.minhash.o013"
 kind = "operand_type_class"
 required = true
-target = "expr"
+target = "<expr>"
 note = "a valid expression"
+
+[[obligation]]
+id = "sf.functions.minhash.minhash.o014"
+kind = "option_present"
+required = true
+target = "[ , <expr> ... ]"
+note = "the list continued at least once"
+
+[[obligation]]
+id = "sf.functions.minhash.minhash.o015"
+kind = "option_absent"
+required = true
+target = "[ , <expr> ... ]"
 
 [[obligation]]
 id = "sf.functions.minhash.minhash.o008"
@@ -41524,18 +41547,24 @@ required = true
 target = "[ DISTINCT ]"
 
 [[obligation]]
-id = "sf.functions.minhash.minhash-expr-over.o017"
-kind = "required_operand_missing"
-required = true
-target = "expr"
-note = "omit expr"
-
-[[obligation]]
-id = "sf.functions.minhash.minhash-expr-over.o007"
+id = "sf.functions.minhash.minhash-expr-over.o018"
 kind = "operand_type_class"
 required = true
-target = "expr"
+target = "<expr>"
 note = "a valid expression"
+
+[[obligation]]
+id = "sf.functions.minhash.minhash-expr-over.o019"
+kind = "option_present"
+required = true
+target = "[ , <expr> ... ]"
+note = "the list continued at least once"
+
+[[obligation]]
+id = "sf.functions.minhash.minhash-expr-over.o020"
+kind = "option_absent"
+required = true
+target = "[ , <expr> ... ]"
 
 [[obligation]]
 id = "sf.functions.minhash.minhash-expr-over.o008"
@@ -50529,6 +50558,12 @@ id = "sf.functions.regr-syy.x.o011"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required )"
+
+[[obligation]]
+id = "sf.functions.regr-syy.x.o013"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required OVER"
 
 [[obligation]]
 id = "sf.functions.regr-syy.x.o012"
@@ -61723,12 +61758,6 @@ required = true
 note = "the form without its required )"
 
 [[obligation]]
-id = "sf.functions.system-cke-hash-function.o001"
-kind = "positive"
-required = true
-note = "the documented form with every required part and no optional part"
-
-[[obligation]]
 id = "sf.functions.system-cke-hash-function.o002"
 kind = "required_operand_missing"
 required = true
@@ -61736,25 +61765,11 @@ target = "'<hash_version>'"
 note = "omit '<hash_version>'"
 
 [[obligation]]
-id = "sf.functions.system-cke-hash-function.o003"
-kind = "operand_type_class"
-required = true
-target = "'<hash_version>'"
-note = "a valid string_literal"
-
-[[obligation]]
 id = "sf.functions.system-cke-hash-function.o005"
 kind = "required_operand_missing"
 required = true
 target = "'<encoded_primary_key>'"
 note = "omit '<encoded_primary_key>'"
-
-[[obligation]]
-id = "sf.functions.system-cke-hash-function.o006"
-kind = "operand_type_class"
-required = true
-target = "'<encoded_primary_key>'"
-note = "a valid string_literal"
 
 [[obligation]]
 id = "sf.functions.system-cke-hash-function.o008"
@@ -61767,6 +61782,29 @@ id = "sf.functions.system-cke-hash-function.o009"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required )"
+
+[[obligation]]
+id = "sf.functions.system-cke-hash-function.o010"
+kind = "positive"
+required = true
+anchor = "doc.functions.system_cke_hash_function / Syntax"
+note = "the documented form with every required part and no optional part, observed"
+
+[[obligation]]
+id = "sf.functions.system-cke-hash-function.o011"
+kind = "operand_type_class"
+required = true
+target = "'<hash_version>'"
+anchor = "doc.functions.system_cke_hash_function / Syntax"
+note = "a valid string_literal, observed"
+
+[[obligation]]
+id = "sf.functions.system-cke-hash-function.o012"
+kind = "operand_type_class"
+required = true
+target = "'<encoded_primary_key>'"
+anchor = "doc.functions.system_cke_hash_function / Syntax"
+note = "a valid string_literal, observed"
 
 [[obligation]]
 id = "sf.functions.system-classify.o001"
@@ -64242,24 +64280,11 @@ required = true
 target = "{ <sql_statement_expression> | <sql_query_id_expression> } → <sql_statement_expression>"
 
 [[obligation]]
-id = "sf.functions.system-explain-plan-json.o003"
-kind = "alternative"
-required = true
-target = "{ <sql_statement_expression> | <sql_query_id_expression> } → <sql_query_id_expression>"
-
-[[obligation]]
 id = "sf.functions.system-explain-plan-json.o004"
 kind = "operand_type_class"
 required = true
 target = "<sql_statement_expression>"
 note = "a valid statement"
-
-[[obligation]]
-id = "sf.functions.system-explain-plan-json.o013"
-kind = "operand_type_class"
-required = true
-target = "<sql_query_id_expression>"
-note = "a valid expression"
 
 [[obligation]]
 id = "sf.functions.system-explain-plan-json.o008"
@@ -64272,6 +64297,22 @@ id = "sf.functions.system-explain-plan-json.o010"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required )"
+
+[[obligation]]
+id = "sf.functions.system-explain-plan-json.o014"
+kind = "alternative"
+required = true
+target = "{ <sql_statement_expression> | <sql_query_id_expression> } → <sql_query_id_expression>"
+anchor = "doc.functions.system_explain_plan_json / Syntax"
+note = "alternative { <sql_statement_expression> | <sql_query_id_expression> } → <sql_query_id_expression>, observed"
+
+[[obligation]]
+id = "sf.functions.system-explain-plan-json.o015"
+kind = "operand_type_class"
+required = true
+target = "<sql_query_id_expression>"
+anchor = "doc.functions.system_explain_plan_json / Syntax"
+note = "a valid expression, observed"
 
 [[obligation]]
 id = "sf.functions.system-export-tds-from-semantic-view.o001"
@@ -70288,19 +70329,6 @@ required = true
 note = "the form without its required )"
 
 [[obligation]]
-id = "sf.functions.system-show-budget-shared-resource-candidates.o001"
-kind = "positive"
-required = true
-note = "the documented form with every required part and no optional part"
-
-[[obligation]]
-id = "sf.functions.system-show-budget-shared-resource-candidates.o003"
-kind = "operand_type_class"
-required = true
-target = "'<domain>'"
-note = "a valid string_literal"
-
-[[obligation]]
 id = "sf.functions.system-show-budget-shared-resource-candidates.o005"
 kind = "negative_neighbour"
 required = true
@@ -70311,6 +70339,21 @@ id = "sf.functions.system-show-budget-shared-resource-candidates.o006"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required )"
+
+[[obligation]]
+id = "sf.functions.system-show-budget-shared-resource-candidates.o007"
+kind = "positive"
+required = true
+anchor = "doc.functions.system_show_budget_shared_resource_candidates / Syntax"
+note = "the documented form with every required part and no optional part, observed"
+
+[[obligation]]
+id = "sf.functions.system-show-budget-shared-resource-candidates.o008"
+kind = "operand_type_class"
+required = true
+target = "'<domain>'"
+anchor = "doc.functions.system_show_budget_shared_resource_candidates / Syntax"
+note = "a valid string_literal, observed"
 
 [[obligation]]
 id = "sf.functions.system-show-budgets-for-resource.o001"
@@ -72514,16 +72557,30 @@ target = "'<string>'"
 note = "a valid string_literal"
 
 [[obligation]]
-id = "sf.functions.task-dependents.o005"
+id = "sf.functions.task-dependents.o011"
 kind = "option_present"
 required = true
-target = "[ , RECURSIVE => ]"
+target = "[ , RECURSIVE => <boolean> ]"
 
 [[obligation]]
-id = "sf.functions.task-dependents.o006"
+id = "sf.functions.task-dependents.o012"
 kind = "option_absent"
 required = true
-target = "[ , RECURSIVE => ]"
+target = "[ , RECURSIVE => <boolean> ]"
+
+[[obligation]]
+id = "sf.functions.task-dependents.o013"
+kind = "required_operand_missing"
+required = true
+target = "<boolean> in [ , RECURSIVE => <boolean> ]"
+note = "omit <boolean>"
+
+[[obligation]]
+id = "sf.functions.task-dependents.o014"
+kind = "operand_type_class"
+required = true
+target = "<boolean> in [ , RECURSIVE => <boolean> ]"
+note = "a valid operand"
 
 [[obligation]]
 id = "sf.functions.task-dependents.o007"
@@ -72538,10 +72595,10 @@ required = true
 note = "the form without its required TASK_NAME"
 
 [[obligation]]
-id = "sf.functions.task-dependents.o009"
+id = "sf.functions.task-dependents.o015"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required RECURSIVE in [ , RECURSIVE => ]"
+note = "the form without its required RECURSIVE in [ , RECURSIVE => <boolean> ]"
 
 [[obligation]]
 id = "sf.functions.task-dependents.o010"
@@ -75481,36 +75538,11 @@ required = true
 note = "the form without its required )"
 
 [[obligation]]
-id = "sf.functions.to-query.o001"
-kind = "positive"
-required = true
-note = "the documented form with every required part and no optional part"
-
-[[obligation]]
 id = "sf.functions.to-query.o002"
 kind = "required_operand_missing"
 required = true
 target = "'<string>'"
 note = "omit '<string>'"
-
-[[obligation]]
-id = "sf.functions.to-query.o003"
-kind = "operand_type_class"
-required = true
-target = "'<string>'"
-note = "a valid string_literal"
-
-[[obligation]]
-id = "sf.functions.to-query.o005"
-kind = "option_present"
-required = true
-target = "[ , <arg> => '<value>' [ , <arg> => '<value>' ... ] ]"
-
-[[obligation]]
-id = "sf.functions.to-query.o006"
-kind = "option_absent"
-required = true
-target = "[ , <arg> => '<value>' [ , <arg> => '<value>' ... ] ]"
 
 [[obligation]]
 id = "sf.functions.to-query.o017"
@@ -75520,13 +75552,6 @@ target = "<arg> in [ , <arg> => '<value>' [ , <arg> => '<value>' ... ] ]"
 note = "omit <arg>"
 
 [[obligation]]
-id = "sf.functions.to-query.o008"
-kind = "operand_type_class"
-required = true
-target = "<arg> in [ , <arg> => '<value>' [ , <arg> => '<value>' ... ] ]"
-note = "a valid operand"
-
-[[obligation]]
 id = "sf.functions.to-query.o009"
 kind = "required_operand_missing"
 required = true
@@ -75534,24 +75559,11 @@ target = "'<value>' in [ , <arg> => '<value>' [ , <arg> => '<value>' ... ] ]"
 note = "omit '<value>'"
 
 [[obligation]]
-id = "sf.functions.to-query.o010"
-kind = "operand_type_class"
-required = true
-target = "'<value>' in [ , <arg> => '<value>' [ , <arg> => '<value>' ... ] ]"
-note = "a valid string_literal"
-
-[[obligation]]
 id = "sf.functions.to-query.o012"
 kind = "option_present"
 required = true
 target = "[ , <arg> => '<value>' ... ]"
 note = "the list continued at least once"
-
-[[obligation]]
-id = "sf.functions.to-query.o013"
-kind = "option_absent"
-required = true
-target = "[ , <arg> => '<value>' ... ]"
 
 [[obligation]]
 id = "sf.functions.to-query.o014"
@@ -75570,6 +75582,61 @@ id = "sf.functions.to-query.o016"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required )"
+
+[[obligation]]
+id = "sf.functions.to-query.o018"
+kind = "positive"
+required = true
+anchor = "doc.functions.to_query / Syntax"
+note = "the documented form with every required part and no optional part, observed"
+
+[[obligation]]
+id = "sf.functions.to-query.o019"
+kind = "operand_type_class"
+required = true
+target = "'<string>'"
+anchor = "doc.functions.to_query / Syntax"
+note = "a valid string_literal, observed"
+
+[[obligation]]
+id = "sf.functions.to-query.o020"
+kind = "option_absent"
+required = true
+target = "[ , <arg> => '<value>' [ , <arg> => '<value>' ... ] ]"
+anchor = "doc.functions.to_query / Syntax"
+note = "option absent [ , <arg> => '<value>' [ , <arg> => '<value>' ... ] ], observed"
+
+[[obligation]]
+id = "sf.functions.to-query.o021"
+kind = "option_present"
+required = true
+target = "[ , <arg> => '<value>' [ , <arg> => '<value>' ... ] ]"
+anchor = "doc.functions.to_query / Syntax"
+note = "option present [ , <arg> => '<value>' [ , <arg> => '<value>' ... ] ], observed"
+
+[[obligation]]
+id = "sf.functions.to-query.o022"
+kind = "operand_type_class"
+required = true
+target = "<arg> in [ , <arg> => '<value>' [ , <arg> => '<value>' ... ] ]"
+anchor = "doc.functions.to_query / Syntax"
+note = "a valid operand, observed"
+
+[[obligation]]
+id = "sf.functions.to-query.o023"
+kind = "operand_type_class"
+required = true
+target = "'<value>' in [ , <arg> => '<value>' [ , <arg> => '<value>' ... ] ]"
+anchor = "doc.functions.to_query / Syntax"
+note = "a valid string_literal, observed"
+
+[[obligation]]
+id = "sf.functions.to-query.o024"
+kind = "option_absent"
+required = true
+target = "[ , <arg> => '<value>' ... ]"
+anchor = "doc.functions.to_query / Syntax"
+note = "option absent [ , <arg> => '<value>' ... ], observed"
 
 [[obligation]]
 id = "sf.functions.to-time.time.o001"

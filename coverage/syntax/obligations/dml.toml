@@ -311,22 +311,6 @@ required = true
 note = "every independent option of one production together"
 
 [[obligation]]
-id = "sf.dml.copy-files.from.o053"
-kind = "identifier_class"
-required = true
-target = "<namespace>"
-anchor = "doc.identifiers-syntax"
-note = "quoted: a double-quoted identifier with blanks and mixed case"
-
-[[obligation]]
-id = "sf.dml.copy-files.from.o055"
-kind = "identifier_class"
-required = true
-target = "<stage_name>"
-anchor = "doc.identifiers-syntax"
-note = "quoted: a double-quoted identifier with blanks and mixed case"
-
-[[obligation]]
 id = "sf.dml.copy-files.from.o057"
 kind = "boundary_below"
 required = true
@@ -404,6 +388,22 @@ required = true
 target = "<stage_name>"
 anchor = "doc.sql.copy-files / Syntax / Copy from a stage"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance), observed"
+
+[[obligation]]
+id = "sf.dml.copy-files.from.o067"
+kind = "identifier_class"
+required = true
+target = "<namespace>"
+anchor = "doc.sql.copy-files / Syntax / Copy from a stage"
+note = "quoted: a double-quoted identifier with blanks and mixed case, observed"
+
+[[obligation]]
+id = "sf.dml.copy-files.from.o068"
+kind = "identifier_class"
+required = true
+target = "<stage_name>"
+anchor = "doc.sql.copy-files / Syntax / Copy from a stage"
+note = "quoted: a double-quoted identifier with blanks and mixed case, observed"
 
 [[obligation]]
 id = "sf.dml.copy-files.from-select-from.o001"
@@ -591,22 +591,6 @@ required = true
 note = "every independent option of one production together"
 
 [[obligation]]
-id = "sf.dml.copy-files.from-select-from.o033"
-kind = "identifier_class"
-required = true
-target = "<namespace>"
-anchor = "doc.identifiers-syntax"
-note = "quoted: a double-quoted identifier with blanks and mixed case"
-
-[[obligation]]
-id = "sf.dml.copy-files.from-select-from.o035"
-kind = "identifier_class"
-required = true
-target = "<stage_name>"
-anchor = "doc.identifiers-syntax"
-note = "quoted: a double-quoted identifier with blanks and mixed case"
-
-[[obligation]]
 id = "sf.dml.copy-files.from-select-from.o037"
 kind = "identifier_class"
 required = true
@@ -700,6 +684,22 @@ required = true
 target = "<table_name>"
 anchor = "doc.sql.copy-files / Syntax / Copy from a query"
 note = "a string literal in place of <table_name>, observed"
+
+[[obligation]]
+id = "sf.dml.copy-files.from-select-from.o052"
+kind = "identifier_class"
+required = true
+target = "<namespace>"
+anchor = "doc.sql.copy-files / Syntax / Copy from a query"
+note = "quoted: a double-quoted identifier with blanks and mixed case, observed"
+
+[[obligation]]
+id = "sf.dml.copy-files.from-select-from.o053"
+kind = "identifier_class"
+required = true
+target = "<stage_name>"
+anchor = "doc.sql.copy-files / Syntax / Copy from a query"
+note = "quoted: a double-quoted identifier with blanks and mixed case, observed"
 
 [[obligation]]
 id = "sf.dml.copy-into-location.o001"
@@ -3066,38 +3066,6 @@ required = true
 note = "every independent option of one production together"
 
 [[obligation]]
-id = "sf.dml.copy-into-location.o054"
-kind = "identifier_class"
-required = true
-target = "<namespace>"
-anchor = "doc.identifiers-syntax"
-note = "quoted: a double-quoted identifier with blanks and mixed case"
-
-[[obligation]]
-id = "sf.dml.copy-into-location.o371"
-kind = "identifier_class"
-required = true
-target = "<int_stage_name>"
-anchor = "doc.identifiers-syntax"
-note = "quoted: a double-quoted identifier with blanks and mixed case"
-
-[[obligation]]
-id = "sf.dml.copy-into-location.o056"
-kind = "identifier_class"
-required = true
-target = "<table_name>"
-anchor = "doc.identifiers-syntax"
-note = "quoted: a double-quoted identifier with blanks and mixed case"
-
-[[obligation]]
-id = "sf.dml.copy-into-location.o373"
-kind = "identifier_class"
-required = true
-target = "<ext_stage_name>"
-anchor = "doc.identifiers-syntax"
-note = "quoted: a double-quoted identifier with blanks and mixed case"
-
-[[obligation]]
 id = "sf.dml.copy-into-location.o375"
 kind = "identifier_class"
 required = true
@@ -3247,6 +3215,38 @@ required = true
 target = "<namespace>"
 anchor = "doc.sql.copy-into-location / Syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance), observed"
+
+[[obligation]]
+id = "sf.dml.copy-into-location.o521"
+kind = "identifier_class"
+required = true
+target = "<table_name>"
+anchor = "doc.sql.copy-into-location / Syntax"
+note = "quoted: a double-quoted identifier with blanks and mixed case, observed"
+
+[[obligation]]
+id = "sf.dml.copy-into-location.o522"
+kind = "identifier_class"
+required = true
+target = "<int_stage_name>"
+anchor = "doc.sql.copy-into-location / Syntax"
+note = "quoted: a double-quoted identifier with blanks and mixed case, observed"
+
+[[obligation]]
+id = "sf.dml.copy-into-location.o523"
+kind = "identifier_class"
+required = true
+target = "<ext_stage_name>"
+anchor = "doc.sql.copy-into-location / Syntax"
+note = "quoted: a double-quoted identifier with blanks and mixed case, observed"
+
+[[obligation]]
+id = "sf.dml.copy-into-location.o524"
+kind = "identifier_class"
+required = true
+target = "<namespace>"
+anchor = "doc.sql.copy-into-location / Syntax"
+note = "quoted: a double-quoted identifier with blanks and mixed case, observed"
 
 [[obligation]]
 id = "sf.dml.copy-into-table.internalstage-externalstage-externallocation.o001"
@@ -7214,22 +7214,6 @@ anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
-id = "sf.dml.copy-into-table.internalstage-externalstage-externallocation.o683"
-kind = "identifier_class"
-required = true
-target = "<int_stage_name>"
-anchor = "doc.identifiers-syntax"
-note = "quoted: a double-quoted identifier with blanks and mixed case"
-
-[[obligation]]
-id = "sf.dml.copy-into-table.internalstage-externalstage-externallocation.o685"
-kind = "identifier_class"
-required = true
-target = "<ext_stage_name>"
-anchor = "doc.identifiers-syntax"
-note = "quoted: a double-quoted identifier with blanks and mixed case"
-
-[[obligation]]
 id = "sf.dml.copy-into-table.internalstage-externalstage-externallocation.o687"
 kind = "identifier_class"
 required = true
@@ -7401,6 +7385,22 @@ required = true
 target = "<namespace> in [ <namespace> . ] #3"
 anchor = "doc.sql.copy-into-table / Syntax"
 note = "omit <namespace>, observed"
+
+[[obligation]]
+id = "sf.dml.copy-into-table.internalstage-externalstage-externallocation.o709"
+kind = "identifier_class"
+required = true
+target = "<int_stage_name>"
+anchor = "doc.sql.copy-into-table / Syntax"
+note = "quoted: a double-quoted identifier with blanks and mixed case, observed"
+
+[[obligation]]
+id = "sf.dml.copy-into-table.internalstage-externalstage-externallocation.o710"
+kind = "identifier_class"
+required = true
+target = "<ext_stage_name>"
+anchor = "doc.sql.copy-into-table / Syntax"
+note = "quoted: a double-quoted identifier with blanks and mixed case, observed"
 
 [[obligation]]
 id = "sf.dml.copy-into-table.select-from-internalstage-externalstage.o001"
@@ -10872,30 +10872,6 @@ anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
-id = "sf.dml.copy-into-table.select-from-internalstage-externalstage.o089"
-kind = "identifier_class"
-required = true
-target = "<file_col_num>"
-anchor = "doc.identifiers-syntax"
-note = "quoted: a double-quoted identifier with blanks and mixed case"
-
-[[obligation]]
-id = "sf.dml.copy-into-table.select-from-internalstage-externalstage.o595"
-kind = "identifier_class"
-required = true
-target = "<int_stage_name>"
-anchor = "doc.identifiers-syntax"
-note = "quoted: a double-quoted identifier with blanks and mixed case"
-
-[[obligation]]
-id = "sf.dml.copy-into-table.select-from-internalstage-externalstage.o597"
-kind = "identifier_class"
-required = true
-target = "<ext_stage_name>"
-anchor = "doc.identifiers-syntax"
-note = "quoted: a double-quoted identifier with blanks and mixed case"
-
-[[obligation]]
 id = "sf.dml.copy-into-table.select-from-internalstage-externalstage.o599"
 kind = "identifier_class"
 required = true
@@ -10919,12 +10895,12 @@ anchor = "doc.sql.copy-into-table / Syntax"
 note = "1,000 staged columns in the transformation SELECT; no documented bound"
 
 [[obligation]]
-id = "sf.dml.copy-into-table.select-from-internalstage-externalstage.o602"
+id = "sf.dml.copy-into-table.select-from-internalstage-externalstage.o613"
 kind = "identifier_class"
 required = true
 target = "<file_col_num>"
 anchor = "doc.sql.copy-into-table / Syntax"
-note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance), observed"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance), observed, observed"
 
 [[obligation]]
 id = "sf.dml.copy-into-table.select-from-internalstage-externalstage.o603"
@@ -11005,6 +10981,30 @@ required = true
 target = "<ext_stage_name>"
 anchor = "doc.sql.copy-into-table / Syntax"
 note = "omit <ext_stage_name>, observed"
+
+[[obligation]]
+id = "sf.dml.copy-into-table.select-from-internalstage-externalstage.o614"
+kind = "identifier_class"
+required = true
+target = "<file_col_num>"
+anchor = "doc.sql.copy-into-table / Syntax"
+note = "quoted: a double-quoted identifier with blanks and mixed case, observed"
+
+[[obligation]]
+id = "sf.dml.copy-into-table.select-from-internalstage-externalstage.o615"
+kind = "identifier_class"
+required = true
+target = "<int_stage_name>"
+anchor = "doc.sql.copy-into-table / Syntax"
+note = "quoted: a double-quoted identifier with blanks and mixed case, observed"
+
+[[obligation]]
+id = "sf.dml.copy-into-table.select-from-internalstage-externalstage.o616"
+kind = "identifier_class"
+required = true
+target = "<ext_stage_name>"
+anchor = "doc.sql.copy-into-table / Syntax"
+note = "quoted: a double-quoted identifier with blanks and mixed case, observed"
 
 [[obligation]]
 id = "sf.dml.delete.o001"
@@ -11501,30 +11501,6 @@ required = true
 note = "every independent option of one production together"
 
 [[obligation]]
-id = "sf.dml.get.o057"
-kind = "identifier_class"
-required = true
-target = "<namespace>"
-anchor = "doc.identifiers-syntax"
-note = "quoted: a double-quoted identifier with blanks and mixed case"
-
-[[obligation]]
-id = "sf.dml.get.o059"
-kind = "identifier_class"
-required = true
-target = "<int_stage_name>"
-anchor = "doc.identifiers-syntax"
-note = "quoted: a double-quoted identifier with blanks and mixed case"
-
-[[obligation]]
-id = "sf.dml.get.o061"
-kind = "identifier_class"
-required = true
-target = "<table_name>"
-anchor = "doc.identifiers-syntax"
-note = "quoted: a double-quoted identifier with blanks and mixed case"
-
-[[obligation]]
 id = "sf.dml.get.o063"
 kind = "boundary_below"
 required = true
@@ -11641,6 +11617,30 @@ required = true
 target = "<int_stage_name>"
 anchor = "doc.sql.get / Syntax"
 note = "omit <int_stage_name>, observed"
+
+[[obligation]]
+id = "sf.dml.get.o078"
+kind = "identifier_class"
+required = true
+target = "<int_stage_name>"
+anchor = "doc.sql.get / Syntax"
+note = "quoted: a double-quoted identifier with blanks and mixed case, stage reference single-quoted as the page requires"
+
+[[obligation]]
+id = "sf.dml.get.o079"
+kind = "identifier_class"
+required = true
+target = "<namespace>"
+anchor = "doc.sql.get / Syntax"
+note = "quoted: a double-quoted identifier with blanks and mixed case, stage reference single-quoted as the page requires"
+
+[[obligation]]
+id = "sf.dml.get.o080"
+kind = "identifier_class"
+required = true
+target = "<table_name>"
+anchor = "doc.sql.get / Syntax"
+note = "quoted: a double-quoted identifier with blanks and mixed case, stage reference single-quoted as the page requires"
 
 [[obligation]]
 id = "sf.dml.insert.o001"
@@ -12912,38 +12912,6 @@ required = true
 note = "the form without its required { { @ [ <namespace> . ] <int_stage_name> [ / <path> ] | @ [ <namespace> . ] % <table_name> [ / <path> ] | @ ~ [ / <path> ] } | @ [ <namespace> . ] <ext_stage_name> [ / <path> ] }"
 
 [[obligation]]
-id = "sf.dml.list.internalstage-externalstage.o058"
-kind = "identifier_class"
-required = true
-target = "<namespace>"
-anchor = "doc.identifiers-syntax"
-note = "quoted: a double-quoted identifier with blanks and mixed case"
-
-[[obligation]]
-id = "sf.dml.list.internalstage-externalstage.o060"
-kind = "identifier_class"
-required = true
-target = "<int_stage_name>"
-anchor = "doc.identifiers-syntax"
-note = "quoted: a double-quoted identifier with blanks and mixed case"
-
-[[obligation]]
-id = "sf.dml.list.internalstage-externalstage.o062"
-kind = "identifier_class"
-required = true
-target = "<table_name>"
-anchor = "doc.identifiers-syntax"
-note = "quoted: a double-quoted identifier with blanks and mixed case"
-
-[[obligation]]
-id = "sf.dml.list.internalstage-externalstage.o064"
-kind = "identifier_class"
-required = true
-target = "<ext_stage_name>"
-anchor = "doc.identifiers-syntax"
-note = "quoted: a double-quoted identifier with blanks and mixed case"
-
-[[obligation]]
 id = "sf.dml.list.internalstage-externalstage.o066"
 kind = "positive"
 required = true
@@ -13045,6 +13013,38 @@ anchor = "doc.sql.list / Syntax / For a stage"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance), observed"
 
 [[obligation]]
+id = "sf.dml.list.internalstage-externalstage.o079"
+kind = "identifier_class"
+required = true
+target = "<int_stage_name>"
+anchor = "doc.sql.list / Syntax / For a stage"
+note = "quoted: a double-quoted identifier with blanks and mixed case, stage reference single-quoted as the page requires"
+
+[[obligation]]
+id = "sf.dml.list.internalstage-externalstage.o080"
+kind = "identifier_class"
+required = true
+target = "<ext_stage_name>"
+anchor = "doc.sql.list / Syntax / For a stage"
+note = "quoted: a double-quoted identifier with blanks and mixed case, stage reference single-quoted as the page requires"
+
+[[obligation]]
+id = "sf.dml.list.internalstage-externalstage.o081"
+kind = "identifier_class"
+required = true
+target = "<namespace>"
+anchor = "doc.sql.list / Syntax / For a stage"
+note = "quoted: a double-quoted identifier with blanks and mixed case, stage reference single-quoted as the page requires"
+
+[[obligation]]
+id = "sf.dml.list.internalstage-externalstage.o082"
+kind = "identifier_class"
+required = true
+target = "<table_name>"
+anchor = "doc.sql.list / Syntax / For a stage"
+note = "quoted: a double-quoted identifier with blanks and mixed case, stage reference single-quoted as the page requires"
+
+[[obligation]]
 id = "sf.dml.list.repositoryclone.o001"
 kind = "positive"
 required = true
@@ -13137,14 +13137,6 @@ required = true
 note = "every independent option of one production together"
 
 [[obligation]]
-id = "sf.dml.list.repositoryclone.o019"
-kind = "identifier_class"
-required = true
-target = "<namespace>"
-anchor = "doc.identifiers-syntax"
-note = "quoted: a double-quoted identifier with blanks and mixed case"
-
-[[obligation]]
 id = "sf.dml.list.repositoryclone.o021"
 kind = "alternative"
 required = true
@@ -13190,6 +13182,14 @@ required = true
 target = "<namespace> in [ <namespace> . ]"
 anchor = "doc.sql.list / Syntax / For a Git repository clone"
 note = "omit <namespace>, observed"
+
+[[obligation]]
+id = "sf.dml.list.repositoryclone.o027"
+kind = "identifier_class"
+required = true
+target = "<namespace>"
+anchor = "doc.sql.list / Syntax / For a Git repository clone"
+note = "quoted: a double-quoted identifier with blanks and mixed case, stage reference single-quoted as the page requires"
 
 [[obligation]]
 id = "sf.dml.merge.o001"
@@ -14082,30 +14082,6 @@ required = true
 note = "every independent option of one production together"
 
 [[obligation]]
-id = "sf.dml.put.o094"
-kind = "identifier_class"
-required = true
-target = "<namespace>"
-anchor = "doc.identifiers-syntax"
-note = "quoted: a double-quoted identifier with blanks and mixed case"
-
-[[obligation]]
-id = "sf.dml.put.o096"
-kind = "identifier_class"
-required = true
-target = "<int_stage_name>"
-anchor = "doc.identifiers-syntax"
-note = "quoted: a double-quoted identifier with blanks and mixed case"
-
-[[obligation]]
-id = "sf.dml.put.o098"
-kind = "identifier_class"
-required = true
-target = "<table_name>"
-anchor = "doc.identifiers-syntax"
-note = "quoted: a double-quoted identifier with blanks and mixed case"
-
-[[obligation]]
 id = "sf.dml.put.o100"
 kind = "boundary_below"
 required = true
@@ -14222,6 +14198,30 @@ required = true
 target = "<namespace> in [ <namespace> . ] #2"
 anchor = "doc.sql.put / Syntax"
 note = "omit <namespace>, observed"
+
+[[obligation]]
+id = "sf.dml.put.o115"
+kind = "identifier_class"
+required = true
+target = "<table_name>"
+anchor = "doc.sql.put / Syntax"
+note = "quoted: a double-quoted identifier with blanks and mixed case, stage reference single-quoted as the page requires"
+
+[[obligation]]
+id = "sf.dml.put.o116"
+kind = "identifier_class"
+required = true
+target = "<int_stage_name>"
+anchor = "doc.sql.put / Syntax"
+note = "quoted: a double-quoted identifier with blanks and mixed case, stage reference single-quoted as the page requires"
+
+[[obligation]]
+id = "sf.dml.put.o117"
+kind = "identifier_class"
+required = true
+target = "<namespace>"
+anchor = "doc.sql.put / Syntax"
+note = "quoted: a double-quoted identifier with blanks and mixed case, stage reference single-quoted as the page requires"
 
 [[obligation]]
 id = "sf.dml.remove.o001"
@@ -14523,38 +14523,6 @@ required = true
 note = "the form without its required { { @ [ <namespace> . ] <int_stage_name> [ / <path> ] | @ [ <namespace> . ] % <table_name> [ / <path> ] | @ ~ [ / <path> ] } | @ [ <namespace> . ] <ext_stage_name> [ / <path> ] }"
 
 [[obligation]]
-id = "sf.dml.remove.o058"
-kind = "identifier_class"
-required = true
-target = "<namespace>"
-anchor = "doc.identifiers-syntax"
-note = "quoted: a double-quoted identifier with blanks and mixed case"
-
-[[obligation]]
-id = "sf.dml.remove.o060"
-kind = "identifier_class"
-required = true
-target = "<int_stage_name>"
-anchor = "doc.identifiers-syntax"
-note = "quoted: a double-quoted identifier with blanks and mixed case"
-
-[[obligation]]
-id = "sf.dml.remove.o062"
-kind = "identifier_class"
-required = true
-target = "<table_name>"
-anchor = "doc.identifiers-syntax"
-note = "quoted: a double-quoted identifier with blanks and mixed case"
-
-[[obligation]]
-id = "sf.dml.remove.o064"
-kind = "identifier_class"
-required = true
-target = "<ext_stage_name>"
-anchor = "doc.identifiers-syntax"
-note = "quoted: a double-quoted identifier with blanks and mixed case"
-
-[[obligation]]
 id = "sf.dml.remove.o066"
 kind = "positive"
 required = true
@@ -14654,6 +14622,38 @@ required = true
 target = "<table_name>"
 anchor = "doc.sql.remove / Syntax"
 note = "omit <table_name>, observed"
+
+[[obligation]]
+id = "sf.dml.remove.o079"
+kind = "identifier_class"
+required = true
+target = "<table_name>"
+anchor = "doc.sql.remove / Syntax"
+note = "quoted: a double-quoted identifier with blanks and mixed case, stage reference single-quoted as the page requires"
+
+[[obligation]]
+id = "sf.dml.remove.o080"
+kind = "identifier_class"
+required = true
+target = "<namespace>"
+anchor = "doc.sql.remove / Syntax"
+note = "quoted: a double-quoted identifier with blanks and mixed case, stage reference single-quoted as the page requires"
+
+[[obligation]]
+id = "sf.dml.remove.o081"
+kind = "identifier_class"
+required = true
+target = "<int_stage_name>"
+anchor = "doc.sql.remove / Syntax"
+note = "quoted: a double-quoted identifier with blanks and mixed case, stage reference single-quoted as the page requires"
+
+[[obligation]]
+id = "sf.dml.remove.o082"
+kind = "identifier_class"
+required = true
+target = "<ext_stage_name>"
+anchor = "doc.sql.remove / Syntax"
+note = "quoted: a double-quoted identifier with blanks and mixed case, stage reference single-quoted as the page requires"
 
 [[obligation]]
 id = "sf.dml.truncate-table.truncate.o001"

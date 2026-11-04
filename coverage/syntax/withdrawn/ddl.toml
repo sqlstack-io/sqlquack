@@ -110,6 +110,15 @@ valid_as = "sf.ddl.alter-table.searchoptimizationaction positive the documented 
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
+form = "sf.ddl.alter-dynamic-table.set-unset-comment"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required DYNAMIC"
+sql = "ALTER TABLE v1 SET COMMENT = 'm' ;"
+valid_as = "sf.ddl.alter-table-event-table.set option_present [ COMMENT = '<string_literal>' ]"
+reason = "the rejection renders SQL the documented grammar also accepts"
+
+[[withdrawn]]
 form = "sf.ddl.alter-dynamic-table.storagelifecyclepolicyaction"
 kind = "negative_neighbour"
 target = ""
@@ -335,6 +344,15 @@ valid_as = "sf.ddl.alter-view.rename-to positive the documented form with every 
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
+form = "sf.ddl.alter-semantic-view.set-comment-max-staleness"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required SEMANTIC, observed"
+sql = "ALTER VIEW v1 SET COMMENT = 'm' ;"
+valid_as = "sf.ddl.alter-view.set option_present [ COMMENT = '<string_literal>' ]"
+reason = "the rejection renders SQL the documented grammar also accepts"
+
+[[withdrawn]]
 form = "sf.ddl.alter-semantic-view.set-tag"
 kind = "negative_neighbour"
 target = ""
@@ -425,12 +443,21 @@ valid_as = "sf.ddl.alter-task.resume-suspend positive the documented form with e
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
+form = "sf.ddl.alter-task-graph.set"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required GRAPH, observed"
+sql = "ALTER TASK v1 SET SUSPEND_TASK_AFTER_NUM_FAILURES = 1 ;"
+valid_as = "sf.ddl.alter-task.set option_present [ SUSPEND_TASK_AFTER_NUM_FAILURES = <num> ]"
+reason = "the rejection renders SQL the documented grammar also accepts"
+
+[[withdrawn]]
 form = "sf.ddl.alter-task-graph.set-contact"
 kind = "negative_neighbour"
 target = ""
 note = "the form without its required GRAPH"
 sql = "ALTER TASK v1 SET CONTACT STEWARD = v1 ;"
-valid_as = "sf.ddl.alter-task.set option_absent [ , <purpose> = <contact_name> ... ]"
+valid_as = "sf.ddl.alter-task.set option_present [ CONTACT <purpose> = <contact_name> [ , <purpose> = <contact_name> ... ] ]"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
@@ -452,12 +479,21 @@ valid_as = "sf.ddl.alter-task.resume-suspend alternative { RESUME | SUSPEND } �
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
+form = "sf.ddl.alter-task-graph.unset"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required GRAPH, observed"
+sql = "ALTER TASK v1 UNSET SUSPEND_TASK_AFTER_NUM_FAILURES ;"
+valid_as = "sf.ddl.alter-task.unset option_present [ SUSPEND_TASK_AFTER_NUM_FAILURES ]"
+reason = "the rejection renders SQL the documented grammar also accepts"
+
+[[withdrawn]]
 form = "sf.ddl.alter-task-graph.unset-contact"
 kind = "negative_neighbour"
 target = ""
 note = "the form without its required GRAPH"
 sql = "ALTER TASK v1 UNSET CONTACT STEWARD ;"
-valid_as = "sf.ddl.alter-task.unset option_absent [ , ... ]"
+valid_as = "sf.ddl.alter-task.unset option_present [ CONTACT <purpose> [ , ... ] ]"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
@@ -925,7 +961,7 @@ kind = "negative_neighbour"
 target = ""
 note = "the form without its required { UNIQUE | PRIMARY KEY | [ FOREIGN KEY ] REFERENCES <ref_table_name> [ ( <ref_col_name> ) ] | CHECK ( <expr> ) } in [ { { [ CONSTRAINT <constraint_name> ] { UNIQUE | PRIMARY KEY | [ FOREIGN KEY ] REFERENCES <ref_table_name> [ ( <ref_co…"
 sql = "CREATE ICEBERG TABLE v1 ( v1 INT ) BASE_LOCATION = 'm' ;"
-valid_as = "sf.ddl.create-iceberg-table.table-base-location.parquet-files option_absent [ NOT NULL ]"
+valid_as = "sf.ddl.create-iceberg-table.table option_present [ BASE_LOCATION = '<directory_for_table_files>' ]"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
@@ -934,7 +970,7 @@ kind = "negative_neighbour"
 target = ""
 note = "the form without its required { UNIQUE | PRIMARY KEY | [ FOREIGN KEY ] REFERENCES <ref_table_name> [ ( <ref_col_name> ) ] } in [ { { [ CONSTRAINT <constraint_name> ] { UNIQUE | PRIMARY KEY | [ FOREIGN KEY ] REFERENCES <ref_table_name> [ ( <ref_co…"
 sql = "CREATE ICEBERG TABLE v1 ( v1 INT ) BASE_LOCATION = 'm' ;"
-valid_as = "sf.ddl.create-iceberg-table.table-base-location.parquet-files option_absent [ NOT NULL ]"
+valid_as = "sf.ddl.create-iceberg-table.table option_present [ BASE_LOCATION = '<directory_for_table_files>' ]"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
@@ -980,6 +1016,15 @@ target = ""
 note = "the form without its required INTERACTIVE"
 sql = "CREATE WAREHOUSE v1 ;"
 valid_as = "sf.ddl.create-warehouse.create-warehouse positive the documented form with every required part and no optional part"
+reason = "the rejection renders SQL the documented grammar also accepts"
+
+[[withdrawn]]
+form = "sf.ddl.create-materialized-view"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required MATERIALIZED, observed"
+sql = "CREATE VIEW v1 ( v1 ) AS SELECT 1 ;"
+valid_as = "sf.ddl.create-view.create-view-as option_present [ ( <column_list> ) ]"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
@@ -1157,6 +1202,15 @@ reason = "the rejection renders SQL the documented grammar also accepts"
 form = "sf.ddl.create-table-constraint.alter-table-add-column"
 kind = "negative_neighbour"
 target = ""
+note = "the form without its required { UNIQUE | PRIMARY KEY }"
+sql = "ALTER TABLE v1 ADD COLUMN v1 INT ;"
+valid_as = "sf.ddl.alter-table.datagovnpolicytagaction option_present [ COLUMN ]"
+reason = "the rejection renders SQL the documented grammar also accepts"
+
+[[withdrawn]]
+form = "sf.ddl.create-table-constraint.alter-table-add-column"
+kind = "negative_neighbour"
+target = ""
 note = "the form without its required ENFORCED in [ [ NOT ] ENFORCED ]"
 sql = "ALTER TABLE v1 ADD COLUMN v1 INT UNIQUE ;"
 valid_as = "sf.ddl.create-table-constraint.alter-table-add-column positive the documented form with every required part and no optional part"
@@ -1190,12 +1244,21 @@ valid_as = "sf.ddl.create-table-constraint.alter-table-add-column alternative { 
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
+form = "sf.ddl.create-table-constraint.alter-table-add-column"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required { [ CONSTRAINT <constraint_name> ] { UNIQUE | PRIMARY KEY } [ [ NOT ] ENFORCED ] [ [ NOT ] DEFERRABLE ] [ INITIALLY { DEFERRED | IMMEDIATE } ] [ { ENABLE | DISABLE } ] [ { VALIDATE | NOVALIDATE } ] [ { RELY | NORELY } ] | [ CONSTRAINT <constraint_name> ] [ FOREIGN KEY ] REFERENCES <ref_table_name> [ ( <ref_col_name> ) ] [ MATCH { FULL | SIMPLE | PARTIAL } ] [ ON [ UPDATE { CASCADE | SET NULL | SET DEFAULT | RESTRICT | NO ACTION } ] [ DELETE { CASCADE | SET NULL | SET DEFAULT | RESTRICT | NO ACTION } ] ] [ [ NOT ] ENFORCED ] [ [ NOT ] DEFERRABLE ] [ INITIALLY { DEFERRED | IMMEDIATE } ] [ { ENABLE | DISABLE } ] [ { VALIDATE | NOVALIDATE } ] [ { RELY | NORELY } ] | [ CONSTRAINT <constraint_name> ] CHECK ( <expr> ) [ ENABLE { VALIDATE | NOVALIDATE } ] }"
+sql = "ALTER TABLE v1 ADD COLUMN v1 INT ;"
+valid_as = "sf.ddl.alter-table.datagovnpolicytagaction option_present [ COLUMN ]"
+reason = "the rejection renders SQL the documented grammar also accepts"
+
+[[withdrawn]]
 form = "sf.ddl.create-table-constraint.alter-table-add-outoflineuniquepk"
 kind = "negative_neighbour"
 target = ""
 note = "the form without its required ENFORCED in [ [ NOT ] ENFORCED ]"
 sql = "ALTER TABLE v1 ADD UNIQUE ( v1 ) ;"
-valid_as = "sf.ddl.alter-table.constraintaction option_absent [ , <col_name> , ... ]"
+valid_as = "sf.ddl.alter-table.constraintaction option_present [ ( <col_name> [ , <col_name> , ... ] ) ]"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
@@ -1204,7 +1267,7 @@ kind = "negative_neighbour"
 target = ""
 note = "the form without its required DEFERRABLE in [ [ NOT ] DEFERRABLE ]"
 sql = "ALTER TABLE v1 ADD UNIQUE ( v1 ) ;"
-valid_as = "sf.ddl.alter-table.constraintaction option_absent [ , <col_name> , ... ]"
+valid_as = "sf.ddl.alter-table.constraintaction option_present [ ( <col_name> [ , <col_name> , ... ] ) ]"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
@@ -1231,7 +1294,7 @@ kind = "negative_neighbour"
 target = ""
 note = "the form without its required ENFORCED in [ [ NOT ] ENFORCED ]"
 sql = "CREATE TABLE v1 ( v1 INT , UNIQUE ( v1 ) ) ;"
-valid_as = "sf.ddl.create-table-constraint.create-table alternative { [ CONSTRAINT <constraint_name> ] { UNIQUE | PRIMARY KEY }… → [ CONSTRAINT <constraint_name> ] { UNIQUE | PRIMARY KEY } ( <col_name> [ , <col_name> , ... ] ) [ [ NOT ] ENFORCED ] [ [ NOT ] DEFERRABLE ] [ INITIALLY { DEFERRED | IMMEDIATE } ] [ { ENABLE | DISABLE } ] [ { VALIDATE | NOVALIDATE } ] [ { RELY | NORELY } ] [ COMMENT '<string_literal>' ]"
+valid_as = "sf.ddl.create-table-constraint.create-table option_present [ , { [ CONSTRAINT <constraint_name> ] { UNIQUE | PRIMARY KEY } ( <col_name> [ , <col_name> , ... ] ) [ [ NOT ] ENFORCE…"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
@@ -1240,7 +1303,7 @@ kind = "negative_neighbour"
 target = ""
 note = "the form without its required DEFERRABLE in [ [ NOT ] DEFERRABLE ]"
 sql = "CREATE TABLE v1 ( v1 INT , UNIQUE ( v1 ) ) ;"
-valid_as = "sf.ddl.create-table-constraint.create-table alternative { [ CONSTRAINT <constraint_name> ] { UNIQUE | PRIMARY KEY }… → [ CONSTRAINT <constraint_name> ] { UNIQUE | PRIMARY KEY } ( <col_name> [ , <col_name> , ... ] ) [ [ NOT ] ENFORCED ] [ [ NOT ] DEFERRABLE ] [ INITIALLY { DEFERRED | IMMEDIATE } ] [ { ENABLE | DISABLE } ] [ { VALIDATE | NOVALIDATE } ] [ { RELY | NORELY } ] [ COMMENT '<string_literal>' ]"
+valid_as = "sf.ddl.create-table-constraint.create-table option_present [ , { [ CONSTRAINT <constraint_name> ] { UNIQUE | PRIMARY KEY } ( <col_name> [ , <col_name> , ... ] ) [ [ NOT ] ENFORCE…"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
@@ -1276,7 +1339,7 @@ kind = "negative_neighbour"
 target = ""
 note = "the form without its required ENFORCED in [ [ NOT ] ENFORCED ] #3"
 sql = "CREATE TABLE v1 ( v1 INT , UNIQUE ( v1 ) ) ;"
-valid_as = "sf.ddl.create-table-constraint.create-table alternative { [ CONSTRAINT <constraint_name> ] { UNIQUE | PRIMARY KEY }… → [ CONSTRAINT <constraint_name> ] { UNIQUE | PRIMARY KEY } ( <col_name> [ , <col_name> , ... ] ) [ [ NOT ] ENFORCED ] [ [ NOT ] DEFERRABLE ] [ INITIALLY { DEFERRED | IMMEDIATE } ] [ { ENABLE | DISABLE } ] [ { VALIDATE | NOVALIDATE } ] [ { RELY | NORELY } ] [ COMMENT '<string_literal>' ]"
+valid_as = "sf.ddl.create-table-constraint.create-table option_present [ , { [ CONSTRAINT <constraint_name> ] { UNIQUE | PRIMARY KEY } ( <col_name> [ , <col_name> , ... ] ) [ [ NOT ] ENFORCE…"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
@@ -1285,7 +1348,7 @@ kind = "negative_neighbour"
 target = ""
 note = "the form without its required DEFERRABLE in [ [ NOT ] DEFERRABLE ] #3"
 sql = "CREATE TABLE v1 ( v1 INT , UNIQUE ( v1 ) ) ;"
-valid_as = "sf.ddl.create-table-constraint.create-table alternative { [ CONSTRAINT <constraint_name> ] { UNIQUE | PRIMARY KEY }… → [ CONSTRAINT <constraint_name> ] { UNIQUE | PRIMARY KEY } ( <col_name> [ , <col_name> , ... ] ) [ [ NOT ] ENFORCED ] [ [ NOT ] DEFERRABLE ] [ INITIALLY { DEFERRED | IMMEDIATE } ] [ { ENABLE | DISABLE } ] [ { VALIDATE | NOVALIDATE } ] [ { RELY | NORELY } ] [ COMMENT '<string_literal>' ]"
+valid_as = "sf.ddl.create-table-constraint.create-table option_present [ , { [ CONSTRAINT <constraint_name> ] { UNIQUE | PRIMARY KEY } ( <col_name> [ , <col_name> , ... ] ) [ [ NOT ] ENFORCE…"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
@@ -1375,7 +1438,7 @@ kind = "negative_neighbour"
 target = ""
 note = "the form without its required ENFORCED in [ [ NOT ] ENFORCED ] #3"
 sql = "CREATE TABLE v1 ( v1 INT UNIQUE , v1 INT UNIQUE ) ;"
-valid_as = "sf.ddl.create-table-constraint.create-table-inlineuniquepk-inlinefk option_absent [ NOT NULL ] #2"
+valid_as = "sf.ddl.create-table-constraint.create-table-inlineuniquepk-inlinefk option_present [ , <col2_name> <col2_type> [ NOT NULL ] { [ CONSTRAINT <constraint_name> ] { UNIQUE | PRIMARY KEY } [ [ NOT ] ENFORCED…"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
@@ -1384,7 +1447,7 @@ kind = "negative_neighbour"
 target = ""
 note = "the form without its required DEFERRABLE in [ [ NOT ] DEFERRABLE ] #3"
 sql = "CREATE TABLE v1 ( v1 INT UNIQUE , v1 INT UNIQUE ) ;"
-valid_as = "sf.ddl.create-table-constraint.create-table-inlineuniquepk-inlinefk option_absent [ NOT NULL ] #2"
+valid_as = "sf.ddl.create-table-constraint.create-table-inlineuniquepk-inlinefk option_present [ , <col2_name> <col2_type> [ NOT NULL ] { [ CONSTRAINT <constraint_name> ] { UNIQUE | PRIMARY KEY } [ [ NOT ] ENFORCED…"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]

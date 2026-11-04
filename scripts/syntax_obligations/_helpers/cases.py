@@ -48,11 +48,12 @@ def canonical(value: object) -> str:
 
 def family_cases(
     *, root: Path, family: str, setups: dict[tuple[str, str], list[str]], held: frozenset[str]
-) -> tuple[list[Row], dict[str, set[str]], list[Row], set[str]]:
-    """Cases with the obligations each satisfies, every obligation's outcomes, and arity cases."""
+) -> tuple[list[Row], dict[str, set[str]], list[Row], set[str], set[str]]:
+    """Cases, each obligation's outcomes, arity cases, extremes, and documented observed SQL."""
     numbered, trees, _, _, arity = family_obligations(root=root, family=family)
     by_sql: dict[str, tuple[str, Rendered, list[str]]] = {}
     expected: dict[str, set[str]] = {}
+    documented: set[str] = set()
     conflicts: list[str] = []
     for identifier, draft in numbered:
         found: list[Rendered] = _rendered(draft=draft, trees=trees, family=family)
@@ -60,6 +61,8 @@ def family_cases(
             raise ObligationError(f"{identifier}: no case could be rendered")
         for rendered in found:
             expected.setdefault(identifier, set()).add(rendered.expect)
+            if rendered.documented:
+                documented.add(rendered.sql)
             form, earlier, cited = by_sql.setdefault(rendered.sql, (draft.form, rendered, []))
             if (earlier.expect, earlier.stage) != (rendered.expect, rendered.stage):
                 conflicts.append(
@@ -92,6 +95,7 @@ def family_cases(
         expected,
         _arity_cases(rows=arity, scored=scored, family=family, setups=setups, held=held),
         {identifier for identifier, draft in numbered if draft.kind == KIND_EXTREME},
+        documented,
     )
 
 
@@ -293,11 +297,15 @@ def recorded_receipts(directory: Path) -> set[tuple[str, str]]:
     return recorded
 
 
-def observed_stage(*, case: Row, phase: str | None, extreme: bool = True) -> Row:
+def observed_stage(
+    *, case: Row, phase: str | None, extreme: bool = True, documented: bool = False
+) -> Row:
     """Give an accepted case its receipt's later stage, reporting a contradicted declared one."""
     stage: str | None = STAGE_BY_RECEIPT_PHASE.get(phase or "")
     if case["expect"] == EXPECT_OBSERVE:
-        return _observed_outcome(case=case, phase=phase, stage=stage, extreme=extreme)
+        return _observed_outcome(
+            case=case, phase=phase, stage=stage, extreme=extreme, documented=documented
+        )
     if case["expect"] != EXPECT_ACCEPT or stage is None or stage == case.get(STAGE_KEY, ""):
         return case
     if STAGE_KEY in case:
@@ -309,10 +317,12 @@ def observed_stage(*, case: Row, phase: str | None, extreme: bool = True) -> Row
     return case
 
 
-def _observed_outcome(*, case: Row, phase: str | None, stage: str | None, extreme: bool) -> Row:
+def _observed_outcome(
+    *, case: Row, phase: str | None, stage: str | None, extreme: bool, documented: bool
+) -> Row:
     """An extreme's outcome (D92); an observed negative settles only on a syntax error (D97)."""
     if not extreme:
-        if phase == SYNTAX_ERROR_PHASE:
+        if phase == SYNTAX_ERROR_PHASE and not documented:
             case["expect"] = EXPECT_REJECT
         return case
     if phase == SYNTAX_ERROR_PHASE:
@@ -334,7 +344,7 @@ def settled_cases(
     held: frozenset[str],
 ) -> tuple[list[Row], list[Row]]:
     """The merged cases with the stages their receipts show, and the unscored arity cases."""
-    generated, expected, arity, extremes = family_cases(
+    generated, expected, arity, extremes, documented = family_cases(
         root=root, family=family, setups=setups, held=held
     )
     cases, problems = merge_mapped(
@@ -347,6 +357,7 @@ def settled_cases(
             case=case,
             phase=phases.get((case["case_id"], case["sql_sha256"])),
             extreme=bool(extremes & set(case["obligations"])),
+            documented=case["sql"] in documented,
         )
         for case in cases
     ]

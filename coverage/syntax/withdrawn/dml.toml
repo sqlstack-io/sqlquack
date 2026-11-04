@@ -16,7 +16,7 @@ kind = "negative_neighbour"
 target = ""
 note = "the form without its required { [ TYPE = 'AWS_CSE' ] [ MASTER_KEY = '<string>' ] | TYPE = 'AWS_SSE_S3' | TYPE = 'AWS_SSE_KMS' [ KMS_KEY_ID = '<string>' ] | TYPE = 'NONE' } in [ ENCRYPTION = ( { [ TYPE = 'AWS_CSE' ] [ MASTER_KEY = '<string>' ] | TYPE = 'AWS_SSE_S3' | TYPE = 'AWS_SSE_KMS' [ KMS_…"
 sql = "COPY INTO 's3://b1/p1/' FROM v1 ENCRYPTION = ( ) ;"
-valid_as = "sf.dml.copy-into-location alternative { [ TYPE = 'AWS_CSE' ] [ MASTER_KEY = '<string>' ] | TYPE = 'AWS_SSE… → [ TYPE = 'AWS_CSE' ] [ MASTER_KEY = '<string>' ]"
+valid_as = "sf.dml.copy-into-location option_present [ ENCRYPTION = ( { [ TYPE = 'AWS_CSE' ] [ MASTER_KEY = '<string>' ] | TYPE = 'AWS_SSE_S3' | TYPE = 'AWS_SSE_KMS' [ KMS_…"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
@@ -25,7 +25,7 @@ kind = "negative_neighbour"
 target = ""
 note = "the form without its required { [ TYPE = 'GCS_SSE_KMS' ] [ KMS_KEY_ID = '<string>' ] | TYPE = 'NONE' } in [ ENCRYPTION = ( { [ TYPE = 'GCS_SSE_KMS' ] [ KMS_KEY_ID = '<string>' ] | TYPE = 'NONE' } ) ]"
 sql = "COPY INTO 'gcs://b1/p1/' FROM v1 ENCRYPTION = ( ) ;"
-valid_as = "sf.dml.copy-into-location alternative { [ TYPE = 'GCS_SSE_KMS' ] [ KMS_KEY_ID = '<string>' ] | TYPE = … → [ TYPE = 'GCS_SSE_KMS' ] [ KMS_KEY_ID = '<string>' ]"
+valid_as = "sf.dml.copy-into-location option_present [ ENCRYPTION = ( { [ TYPE = 'GCS_SSE_KMS' ] [ KMS_KEY_ID = '<string>' ] | TYPE = 'NONE' } ) ]"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
@@ -34,7 +34,7 @@ kind = "required_operand_missing"
 target = "'<file_name>' in [ , '<file_name>' ]"
 note = "omit '<file_name>'"
 sql = "COPY INTO v1 FROM @s1 FILES = ( 'm' ) ;"
-valid_as = "sf.dml.copy-into-table.internalstage-externalstage-externallocation option_absent [ , '<file_name>' ]"
+valid_as = "sf.dml.copy-into-table.internalstage-externalstage-externallocation option_present [ FILES = ( '<file_name>' [ , '<file_name>' ] [ , ... ] ) ]"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
@@ -43,7 +43,7 @@ kind = "required_operand_missing"
 target = "'<string>' in [ '<string>' [ , '<string>' ... ] ]"
 note = "omit '<string>'"
 sql = "COPY INTO v1 FROM @s1 FILE_FORMAT = ( TYPE = CSV NULL_IF = ( ) ) ;"
-valid_as = "sf.dml.copy-into-table.internalstage-externalstage-externallocation option_absent [ '<string>' [ , '<string>' ... ] ]"
+valid_as = "sf.dml.copy-into-table.internalstage-externalstage-externallocation option_present [ NULL_IF = ( [ '<string>' [ , '<string>' ... ] ] ) ]"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
@@ -52,7 +52,7 @@ kind = "required_operand_missing"
 target = "'<string>' in [ '<string>' [ , '<string>' ... ] ] #2"
 note = "omit '<string>'"
 sql = "COPY INTO v1 FROM @s1 FILE_FORMAT = ( TYPE = JSON NULL_IF = ( ) ) ;"
-valid_as = "sf.dml.copy-into-table.internalstage-externalstage-externallocation option_absent [ '<string>' [ , '<string>' ... ] ] #2"
+valid_as = "sf.dml.copy-into-table.internalstage-externalstage-externallocation option_present [ NULL_IF = ( [ '<string>' [ , '<string>' ... ] ] ) ] #2"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
@@ -61,7 +61,7 @@ kind = "required_operand_missing"
 target = "'<string>' in [ '<string>' [ , '<string>' ... ] ] #3"
 note = "omit '<string>'"
 sql = "COPY INTO v1 FROM @s1 FILE_FORMAT = ( TYPE = AVRO NULL_IF = ( ) ) ;"
-valid_as = "sf.dml.copy-into-table.internalstage-externalstage-externallocation option_absent [ '<string>' [ , '<string>' ... ] ] #3"
+valid_as = "sf.dml.copy-into-table.internalstage-externalstage-externallocation option_present [ NULL_IF = ( [ '<string>' [ , '<string>' ... ] ] ) ] #3"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
@@ -70,7 +70,7 @@ kind = "required_operand_missing"
 target = "'<string>' in [ '<string>' [ , '<string>' ... ] ] #4"
 note = "omit '<string>'"
 sql = "COPY INTO v1 FROM @s1 FILE_FORMAT = ( TYPE = ORC NULL_IF = ( ) ) ;"
-valid_as = "sf.dml.copy-into-table.internalstage-externalstage-externallocation option_absent [ '<string>' [ , '<string>' ... ] ] #4"
+valid_as = "sf.dml.copy-into-table.internalstage-externalstage-externallocation option_present [ NULL_IF = ( [ '<string>' [ , '<string>' ... ] ] ) ] #4"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
@@ -79,7 +79,7 @@ kind = "required_operand_missing"
 target = "'<string>' in [ '<string>' [ , '<string>' ... ] ] #5"
 note = "omit '<string>'"
 sql = "COPY INTO v1 FROM @s1 FILE_FORMAT = ( TYPE = PARQUET NULL_IF = ( ) ) ;"
-valid_as = "sf.dml.copy-into-table.internalstage-externalstage-externallocation option_absent [ '<string>' [ , '<string>' ... ] ] #5"
+valid_as = "sf.dml.copy-into-table.internalstage-externalstage-externallocation option_present [ NULL_IF = ( [ '<string>' [ , '<string>' ... ] ] ) ] #5"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
@@ -88,7 +88,7 @@ kind = "negative_neighbour"
 target = ""
 note = "the form without its required { [ TYPE = 'AWS_CSE' ] [ MASTER_KEY = '<string>' ] | TYPE = 'AWS_SSE_S3' | TYPE = 'AWS_SSE_KMS' [ KMS_KEY_ID = '<string>' ] | TYPE = 'NONE' } in [ ENCRYPTION = ( { [ TYPE = 'AWS_CSE' ] [ MASTER_KEY = '<string>' ] | TYPE = 'AWS_SSE_S3' | TYPE = 'AWS_SSE_KMS' [ KMS_…"
 sql = "COPY INTO v1 FROM 's3://b1/p1/' ENCRYPTION = ( ) ;"
-valid_as = "sf.dml.copy-into-table.internalstage-externalstage-externallocation alternative { [ TYPE = 'AWS_CSE' ] [ MASTER_KEY = '<string>' ] | TYPE = 'AWS_SSE… → [ TYPE = 'AWS_CSE' ] [ MASTER_KEY = '<string>' ]"
+valid_as = "sf.dml.copy-into-table.internalstage-externalstage-externallocation option_present [ ENCRYPTION = ( { [ TYPE = 'AWS_CSE' ] [ MASTER_KEY = '<string>' ] | TYPE = 'AWS_SSE_S3' | TYPE = 'AWS_SSE_KMS' [ KMS_…"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
@@ -97,7 +97,7 @@ kind = "negative_neighbour"
 target = ""
 note = "the form without its required { [ TYPE = 'GCS_SSE_KMS' ] [ KMS_KEY_ID = '<string>' ] | TYPE = 'NONE' } in [ ENCRYPTION = ( { [ TYPE = 'GCS_SSE_KMS' ] [ KMS_KEY_ID = '<string>' ] | TYPE = 'NONE' } ) ]"
 sql = "COPY INTO v1 FROM 'gcs://b1/p1/' ENCRYPTION = ( ) ;"
-valid_as = "sf.dml.copy-into-table.internalstage-externalstage-externallocation alternative { [ TYPE = 'GCS_SSE_KMS' ] [ KMS_KEY_ID = '<string>' ] | TYPE = … → [ TYPE = 'GCS_SSE_KMS' ] [ KMS_KEY_ID = '<string>' ]"
+valid_as = "sf.dml.copy-into-table.internalstage-externalstage-externallocation option_present [ ENCRYPTION = ( { [ TYPE = 'GCS_SSE_KMS' ] [ KMS_KEY_ID = '<string>' ] | TYPE = 'NONE' } ) ]"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
@@ -106,7 +106,7 @@ kind = "required_operand_missing"
 target = "'<file_name>' in [ , '<file_name>' ]"
 note = "omit '<file_name>'"
 sql = "COPY INTO v1 FROM ( SELECT $1 FROM @s1 ) FILES = ( 'm' ) ;"
-valid_as = "sf.dml.copy-into-table.select-from-internalstage-externalstage option_absent [ , '<file_name>' ]"
+valid_as = "sf.dml.copy-into-table.select-from-internalstage-externalstage option_present [ FILES = ( '<file_name>' [ , '<file_name>' ] [ , ... ] ) ]"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
@@ -115,7 +115,7 @@ kind = "required_operand_missing"
 target = "'<string>' in [ '<string>' [ , '<string>' ... ] ]"
 note = "omit '<string>'"
 sql = "COPY INTO v1 FROM ( SELECT $1 FROM @s1 ) FILE_FORMAT = ( TYPE = CSV NULL_IF = ( ) ) ;"
-valid_as = "sf.dml.copy-into-table.select-from-internalstage-externalstage option_absent [ '<string>' [ , '<string>' ... ] ]"
+valid_as = "sf.dml.copy-into-table.select-from-internalstage-externalstage option_present [ NULL_IF = ( [ '<string>' [ , '<string>' ... ] ] ) ]"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
@@ -124,7 +124,7 @@ kind = "required_operand_missing"
 target = "'<string>' in [ '<string>' [ , '<string>' ... ] ] #2"
 note = "omit '<string>'"
 sql = "COPY INTO v1 FROM ( SELECT $1 FROM @s1 ) FILE_FORMAT = ( TYPE = JSON NULL_IF = ( ) ) ;"
-valid_as = "sf.dml.copy-into-table.select-from-internalstage-externalstage option_absent [ '<string>' [ , '<string>' ... ] ] #2"
+valid_as = "sf.dml.copy-into-table.select-from-internalstage-externalstage option_present [ NULL_IF = ( [ '<string>' [ , '<string>' ... ] ] ) ] #2"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
@@ -133,7 +133,7 @@ kind = "required_operand_missing"
 target = "'<string>' in [ '<string>' [ , '<string>' ... ] ] #3"
 note = "omit '<string>'"
 sql = "COPY INTO v1 FROM ( SELECT $1 FROM @s1 ) FILE_FORMAT = ( TYPE = AVRO NULL_IF = ( ) ) ;"
-valid_as = "sf.dml.copy-into-table.select-from-internalstage-externalstage option_absent [ '<string>' [ , '<string>' ... ] ] #3"
+valid_as = "sf.dml.copy-into-table.select-from-internalstage-externalstage option_present [ NULL_IF = ( [ '<string>' [ , '<string>' ... ] ] ) ] #3"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
@@ -142,7 +142,7 @@ kind = "required_operand_missing"
 target = "'<string>' in [ '<string>' [ , '<string>' ... ] ] #4"
 note = "omit '<string>'"
 sql = "COPY INTO v1 FROM ( SELECT $1 FROM @s1 ) FILE_FORMAT = ( TYPE = ORC NULL_IF = ( ) ) ;"
-valid_as = "sf.dml.copy-into-table.select-from-internalstage-externalstage option_absent [ '<string>' [ , '<string>' ... ] ] #4"
+valid_as = "sf.dml.copy-into-table.select-from-internalstage-externalstage option_present [ NULL_IF = ( [ '<string>' [ , '<string>' ... ] ] ) ] #4"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
@@ -151,7 +151,7 @@ kind = "required_operand_missing"
 target = "'<string>' in [ '<string>' [ , '<string>' ... ] ] #5"
 note = "omit '<string>'"
 sql = "COPY INTO v1 FROM ( SELECT $1 FROM @s1 ) FILE_FORMAT = ( TYPE = PARQUET NULL_IF = ( ) ) ;"
-valid_as = "sf.dml.copy-into-table.select-from-internalstage-externalstage option_absent [ '<string>' [ , '<string>' ... ] ] #5"
+valid_as = "sf.dml.copy-into-table.select-from-internalstage-externalstage option_present [ NULL_IF = ( [ '<string>' [ , '<string>' ... ] ] ) ] #5"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]

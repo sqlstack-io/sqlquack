@@ -72,3 +72,4 @@ class Rendered:
     sql: str
     expect: str
     stage: str = ""
+    documented: bool = False

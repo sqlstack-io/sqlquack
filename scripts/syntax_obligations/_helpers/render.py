@@ -42,8 +42,10 @@ from scripts.syntax_obligations.constants import (
     GLUED_INFIX_LEFT,
     GLUED_INFIX_RIGHT,
     GLUED_PREFIXES,
+    HAND_ALSO_DOCUMENTED,
     HAND_ALSO_SQL,
     HAND_CORE,
+    HAND_DOCUMENTED,
     HAND_SIZE,
     HAND_SQL,
     LABEL_SLOT,
@@ -97,7 +99,7 @@ def submissions(
         spec=spec, depths=depths
     )
     if style.qualify_references:
-        rendered = [Rendered(_qualified_references(r.sql), r.expect, r.stage) for r in rendered]
+        rendered = [replace(r, sql=_qualified_references(r.sql)) for r in rendered]
     if spec.action == ACTION_HAND:
         return rendered
     return [
@@ -260,19 +262,20 @@ class _Renderer:
                 for depth in sizes
             ]
         context: str = fields.get("context", CONTEXT_BLOCK)
-        texts: list[tuple[str, str, str]] = []
+        texts: list[tuple[str, str, str, bool]] = []
         if HAND_SQL in fields:
-            texts.append((fields[HAND_SQL], expect, stage))
+            texts.append((fields[HAND_SQL], expect, stage, bool(fields.get(HAND_DOCUMENTED))))
         if HAND_ALSO_SQL in fields:
             texts.append(
                 (
                     fields[HAND_ALSO_SQL],
                     fields.get("also_expect", expect),
                     fields.get("also_stage", ""),
+                    bool(fields.get(HAND_ALSO_DOCUMENTED)),
                 )
             )
         rendered: list[Rendered] = []
-        for text, want, later in texts or [("", expect, stage)]:
+        for text, want, later, documented in texts or [("", expect, stage, False)]:
             self._used = {}
             self._keywords = []
             body: str = text or self.text(production=0, choices=_Choices())
@@ -284,7 +287,7 @@ class _Renderer:
                 sql = PROCEDURE_WRAPPER.format(block=self.wrap(body))
             else:
                 sql = self.wrap(body)
-            rendered.append(Rendered(sql, want, later))
+            rendered.append(Rendered(sql, want, later, documented))
         return rendered
 
     def nested_hand(self, *, fields: dict[str, str], depth: int) -> str:

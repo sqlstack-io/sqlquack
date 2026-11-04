@@ -68,20 +68,20 @@ target = "<n>"
 note = "a string literal in place of <n>"
 
 [[obligation]]
-id = "sf.expressions.bind-variables.o011"
-kind = "identifier_class"
-required = true
-target = "<variable_name>"
-anchor = "doc.identifiers-syntax"
-note = "quoted: a double-quoted identifier with blanks and mixed case"
-
-[[obligation]]
-id = "sf.expressions.bind-variables.o013"
+id = "sf.expressions.bind-variables.o014"
 kind = "identifier_class"
 required = true
 target = "<variable_name>"
 anchor = "doc.bind-variables / Overview of bind variables"
-note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance), observed"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance), observed, observed"
+
+[[obligation]]
+id = "sf.expressions.bind-variables.o015"
+kind = "identifier_class"
+required = true
+target = "<variable_name>"
+anchor = "doc.bind-variables / Overview of bind variables"
+note = "quoted: a double-quoted identifier with blanks and mixed case, observed"
 
 [[obligation]]
 id = "sf.expressions.commands-model-function.model-default-version.o001"
@@ -1334,12 +1334,6 @@ target = "<precision> in [ ( <precision> ) [ , ( <fractional_seconds_precision> 
 note = "a valid operand"
 
 [[obligation]]
-id = "sf.expressions.data-types-datetime.interval-yearmonthqualifier-daytimequalifier.o062"
-kind = "option_present"
-required = true
-target = "[ , ( <fractional_seconds_precision> ) ]"
-
-[[obligation]]
 id = "sf.expressions.data-types-datetime.interval-yearmonthqualifier-daytimequalifier.o063"
 kind = "option_absent"
 required = true
@@ -1351,13 +1345,6 @@ kind = "required_operand_missing"
 required = true
 target = "<fractional_seconds_precision> in [ , ( <fractional_seconds_precision> ) ]"
 note = "omit <fractional_seconds_precision>"
-
-[[obligation]]
-id = "sf.expressions.data-types-datetime.interval-yearmonthqualifier-daytimequalifier.o065"
-kind = "operand_type_class"
-required = true
-target = "<fractional_seconds_precision> in [ , ( <fractional_seconds_precision> ) ]"
-note = "a valid operand"
 
 [[obligation]]
 id = "sf.expressions.data-types-datetime.interval-yearmonthqualifier-daytimequalifier.o066"
@@ -1510,6 +1497,22 @@ required = true
 target = "<fractional_seconds_precision>"
 anchor = "doc.data-types-datetime / Data types / Interval data types / Syntax of interval data types"
 note = "fractional seconds precision 10, above the documented range 0 to 9"
+
+[[obligation]]
+id = "sf.expressions.data-types-datetime.interval-yearmonthqualifier-daytimequalifier.o089"
+kind = "option_present"
+required = true
+target = "[ , ( <fractional_seconds_precision> ) ]"
+anchor = "doc.data-types-datetime / Data types / Interval data types / Syntax of interval data types"
+note = "option present [ , ( <fractional_seconds_precision> ) ], observed"
+
+[[obligation]]
+id = "sf.expressions.data-types-datetime.interval-yearmonthqualifier-daytimequalifier.o090"
+kind = "operand_type_class"
+required = true
+target = "<fractional_seconds_precision> in [ , ( <fractional_seconds_precision> ) ]"
+anchor = "doc.data-types-datetime / Data types / Interval data types / Syntax of interval data types"
+note = "a valid operand, observed"
 
 [[obligation]]
 id = "sf.expressions.data-types-datetime.interval.interval-constants.o005"
@@ -5378,12 +5381,12 @@ anchor = "doc.session-variables / Using variables in SQL"
 note = "a session variable reference"
 
 [[obligation]]
-id = "sf.expressions.session-variables.o008"
+id = "sf.expressions.session-variables.o010"
 kind = "alternative"
 required = true
 target = "<variable_name>"
 anchor = "doc.session-variables / Using variables in SQL"
-note = "a double-quoted session variable name"
+note = "a double-quoted session variable name, observed"
 
 [[obligation]]
 id = "sf.expressions.session-variables.o009"

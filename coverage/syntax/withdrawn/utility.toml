@@ -65,15 +65,6 @@ valid_as = "sf.utility.call-with.table-language-scala-runtime-version positive t
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
-form = "sf.utility.execute-dbt-project.project"
-kind = "required_operand_missing"
-target = "<name>"
-note = "omit <name>"
-sql = "EXECUTE DBT PROJECT ;"
-valid_as = "sf.utility.execute-dbt-project.project-2 positive the documented form with every required part and no optional part"
-reason = "the rejection renders SQL the documented grammar also accepts"
-
-[[withdrawn]]
 form = "sf.utility.execute-notebook"
 kind = "required_operand_missing"
 target = "<parameter_string> in [ <parameter_string> [ , ... ] ]"

@@ -73,7 +73,7 @@ IDENTIFIER_CLASSES: tuple[tuple[str, str], ...] = (
 
 TOKEN: re.Pattern[str] = re.compile(
     r"\s*(?:(?P<placeholder><[^<>]+>)|(?P<literal>'[^']*'|\"[^\"]*\")|(?P<elision>\.\.\.)"
-    r"|(?P<bracket>[\[\]{}]|\|(?!\|))|(?P<keyword>[A-Za-z_][A-Za-z0-9_$]*)"
+    r"|(?P<bracket>[\[\]{}]|\|(?!\|))|(?P<keyword>[A-Za-z_][A-Za-z0-9_$]*|\d+[A-Za-z][A-Za-z0-9_]*)"
     r"|(?P<punct>:=|::|=>|->>|->|<>|!=|<=|>=|\|\||\S))"
 )
 CLASS_RULES: tuple[tuple[re.Pattern[str], str], ...] = (
@@ -223,7 +223,11 @@ HAND_CASE_KEYS: tuple[str, ...] = (
     "also_expect",
     "also_stage",
     "size",
+    "documented",
+    "also_documented",
 )
+HAND_DOCUMENTED: str = "documented"
+HAND_ALSO_DOCUMENTED: str = "also_documented"
 EXPECT_ACCEPT: str = "accept"
 EXPECT_REJECT: str = "reject"
 EXPECT_OBSERVE: str = "observe"
@@ -412,7 +416,127 @@ EMPTY_LIST: re.Pattern[str] = re.compile(r"= \( \)")
 GLUED_INFIX_RIGHT: re.Pattern[str] = re.compile(r"(?<![^ ])! (?=[A-Za-z_\"'])")
 GLUED_INFIX_LEFT: re.Pattern[str] = re.compile(r"(?<=[\w\"')]) !(?=[ A-Za-z_\"'])")
 QUERY_FORMS: tuple[str, ...] = ("sf.query.constructs",)
-UNPACKED_FORMS: frozenset[str] = frozenset(QUERY_FORMS)
+RECEIPT_UNPACKED_FORMS: tuple[str, ...] = (
+    "sf.ddl.alter-agent.set",
+    "sf.ddl.alter-alert.unset",
+    "sf.ddl.alter-application-package.set",
+    "sf.ddl.alter-application-package.unset",
+    "sf.ddl.alter-application.set-shared-telemetry-events",
+    "sf.ddl.alter-application.unset",
+    "sf.ddl.alter-compute-pool.set",
+    "sf.ddl.alter-cortex-search.set",
+    "sf.ddl.alter-database-catalog-linked.set",
+    "sf.ddl.alter-database.set",
+    "sf.ddl.alter-database.unset-data-retention-time-in-days-max-data-extension-time-in-days-stage-undrop-retention-time-in-days",
+    "sf.ddl.alter-dbt-project.unset",
+    "sf.ddl.alter-dcm-project.unset",
+    "sf.ddl.alter-dynamic-table.datagovnpolicytagaction",
+    "sf.ddl.alter-dynamic-table.searchoptimizationaction",
+    "sf.ddl.alter-dynamic-table.set",
+    "sf.ddl.alter-dynamic-table.set-unset-comment",
+    "sf.ddl.alter-dynamic-table.unset",
+    "sf.ddl.alter-external-table.add-partition-location",
+    "sf.ddl.alter-external-table.drop-partition-location",
+    "sf.ddl.alter-iceberg-table.set",
+    "sf.ddl.alter-iceberg-table.unset",
+    "sf.ddl.alter-listing.listing",
+    "sf.ddl.alter-materialized-view.rename-to-cluster-by",
+    "sf.ddl.alter-model-add-version.internalstage",
+    "sf.ddl.alter-schema.set",
+    "sf.ddl.alter-schema.unset-data-retention-time-in-days-max-data-extension-time-in-days-stage-undrop-retention-time-in-days",
+    "sf.ddl.alter-sequence.sequence",
+    "sf.ddl.alter-streamlit.push",
+    "sf.ddl.alter-table-column.datagovnpolicytagaction",
+    "sf.ddl.alter-table-column.drop-default-set-default",
+    "sf.ddl.alter-table-event-table.set",
+    "sf.ddl.alter-table.constraintaction",
+    "sf.ddl.alter-table.datagovnpolicytagaction",
+    "sf.ddl.alter-table.datametricfunctionaction",
+    "sf.ddl.alter-table.set",
+    "sf.ddl.alter-tag.set",
+    "sf.ddl.alter-tag.unset-data-movement-policy",
+    "sf.ddl.alter-task.set",
+    "sf.ddl.alter-task.unset",
+    "sf.ddl.alter-view.datagovnpolicytagaction",
+    "sf.ddl.alter-view.datametricfunctionaction",
+    "sf.ddl.alter-view.set",
+    "sf.ddl.alter-view.unset",
+    "sf.ddl.create-artifact-repository",
+    "sf.ddl.create-database-catalog-linked",
+    "sf.ddl.create-database.create-database",
+    "sf.ddl.create-dataset",
+    "sf.ddl.create-dynamic-table.create-dynamic-iceberg-table",
+    "sf.ddl.create-dynamic-table.create-dynamic-table-target-lag",
+    "sf.ddl.create-dynamic-table.create-or-alter-dynamic-iceberg-table",
+    "sf.ddl.create-event-table.table",
+    "sf.ddl.create-event-table.table-clone",
+    "sf.ddl.create-external-agent",
+    "sf.ddl.create-hybrid-table.table",
+    "sf.ddl.create-iceberg-table-rest.table-as-select",
+    "sf.ddl.create-iceberg-table-rest.table-masking-policy-as",
+    "sf.ddl.create-iceberg-table.table",
+    "sf.ddl.create-iceberg-table.table-base-location.parquet-files",
+    "sf.ddl.create-iceberg-table.table.iceberg-rest-in-a-catalog-linked-database",
+    "sf.ddl.create-interactive-table.as",
+    "sf.ddl.create-materialized-view",
+    "sf.ddl.create-model.internalstage",
+    "sf.ddl.create-procedure.create-procedure-returns-table",
+    "sf.ddl.create-procedure.create-procedure-returns-table-2",
+    "sf.ddl.create-procedure.create-procedure-returns-table-3",
+    "sf.ddl.create-procedure.create-procedure-returns-table.java-handler",
+    "sf.ddl.create-procedure.create-procedure-returns-table.python-handler",
+    "sf.ddl.create-procedure.create-procedure-returns-table.scala-handler",
+    "sf.ddl.create-procedure.create-procedure-returns-table.snowflake-scripting-handler",
+    "sf.ddl.create-semantic-view.create-or-alter-semantic",
+    "sf.ddl.create-semantic-view.create-semantic-view-tables",
+    "sf.ddl.create-service",
+    "sf.ddl.create-table-constraint.alter-table-add-column",
+    "sf.ddl.create-table-constraint.alter-table-add-outoflineuniquepk",
+    "sf.ddl.create-table-constraint.create-table",
+    "sf.ddl.create-table-constraint.create-table-inlineuniquepk-inlinefk",
+    "sf.ddl.create-table.create-or-alter-table",
+    "sf.ddl.create-table.create-table",
+    "sf.ddl.create-view.create-or-alter-view",
+    "sf.ddl.create-view.create-view-as",
+    "sf.ddl.desc-function-dmf",
+    "sf.ddl.desc-function-spcs",
+    "sf.ddl.desc-transaction",
+    "sf.ddl.drop-iceberg-table",
+    "sf.ddl.show-cortex-search",
+    "sf.ddl.show-nodes-compute-pool",
+    "sf.ddl.show-rules-in-event-routing-table",
+    "sf.ddl.show-warehouses",
+    "sf.ddl.truncate-materialized-view",
+    "sf.dml.copy-into-location",
+    "sf.dml.copy-into-table.internalstage-externalstage-externallocation",
+    "sf.dml.copy-into-table.select-from-internalstage-externalstage",
+    "sf.dml.list.internalstage-externalstage",
+    "sf.dml.remove",
+    "sf.expressions.data-types-datetime.interval-yearmonthqualifier-daytimequalifier",
+    "sf.functions.accumulate",
+    "sf.functions.cast.cast-as",
+    "sf.functions.get-path.colon.syntax",
+    "sf.functions.system-cke-hash-function",
+    "sf.functions.system-explain-plan-json",
+    "sf.functions.system-show-budget-shared-resource-candidates",
+    "sf.functions.to-query",
+    "sf.query.connect-by",
+    "sf.query.from",
+    "sf.query.select.select.selecting-specific-columns",
+    "sf.transaction_session.show-parameters",
+    "sf.utility.call-with.table-language-java-runtime-version",
+    "sf.utility.call-with.table-language-java-runtime-version.java",
+    "sf.utility.call-with.table-language-python-runtime-version",
+    "sf.utility.call-with.table-language-python-runtime-version.python",
+    "sf.utility.call-with.table-language-scala-runtime-version",
+    "sf.utility.call-with.table-language-scala-runtime-version.scala",
+    "sf.utility.execute-dbt-project.project",
+    "sf.utility.execute-dbt-project.project-2",
+    "sf.utility.execute-dcm-project.deploy-fromsource-fromdeployment",
+    "sf.utility.execute-dcm-project.plan-fromsource-fromdeployment",
+    "sf.utility.execute-dcm-project.preview-using-configuration-from",
+)
+UNPACKED_FORMS: frozenset[str] = frozenset(QUERY_FORMS) | frozenset(RECEIPT_UNPACKED_FORMS)
 QUERY_ELISIONS: dict[str, tuple[str, tuple[str, ...], str]] = {
     PURE_ELISION: ("", QUERY_FORMS, "further clauses of the SELECT statement"),
     ELISION_START: ("SELECT 1 FROM t1", QUERY_FORMS, "the query the clause belongs to"),
@@ -865,8 +989,12 @@ FUNCTIONS_FILLS: dict[str, str] = {
     "sql_statement_expression": "'SELECT 1'",
     "sql_query_id_expression": "LAST_QUERY_ID ( )",
     "agent_type": "'CORTEX AGENT'",
+    "escape": "'!'",
+    "escape_char": "'!'",
 }
 FUNCTIONS_LITERAL_FILLS: dict[str, str] = {
+    "'<sql_statement>'": "'SELECT 1'",
+    "'<select_statement>'": "'SELECT 1'",
     "'<agent_name>[!<version>]'": "'a1'",
     "'[<namespace>.]<object_name>'": "'d1.t1'",
     "'{ internalStage | externalStage }'": "'@s1'",
@@ -925,6 +1053,8 @@ DML_LITERAL_FILLS: dict[str, str] = {
     "'<azure_url>'": "'azure://a1.blob.core.windows.net/c1/p1/'",
     "'<file_format_name_ref>'": "'f1'",
 }
+SQL_BODY: str = "'BEGIN RETURN 1 ; END'"
+VARIABLE_BLOCK_OPEN: str = "DECLARE v1 VARCHAR DEFAULT 'SELECT 1' ; BEGIN "
 UTILITY_FILLS: dict[str, str] = {
     "statement": "SELECT 1",
     "specification_text": "$$ m $$",
@@ -1341,7 +1471,25 @@ FAMILY_STYLES: dict[str, dict[str, FormStyle]] = {
     "utility": {
         "sf.utility.": FormStyle(
             prefix="", suffix="", fills=UTILITY_FILLS, literal_fills=UTILITY_LITERAL_FILLS
-        )
+        ),
+        "sf.utility.call-with.table-language-sql-as": FormStyle(
+            prefix="",
+            suffix="",
+            fills=UTILITY_FILLS,
+            literal_fills={**UTILITY_LITERAL_FILLS, "'<procedure_definition>'": SQL_BODY},
+        ),
+        "sf.utility.execute-immediate.immediate": FormStyle(
+            prefix="",
+            suffix="",
+            fills=UTILITY_FILLS,
+            literal_fills={**UTILITY_LITERAL_FILLS, "'<string_literal>'": "'SELECT 1'"},
+        ),
+        "sf.utility.execute-immediate.immediate.syntax": FormStyle(
+            prefix=VARIABLE_BLOCK_OPEN,
+            suffix=BLOCK_CLOSE,
+            fills=UTILITY_FILLS,
+            literal_fills=UTILITY_LITERAL_FILLS,
+        ),
     },
 }
 SCHEMA_QUALIFIER: str = "d1.s1."

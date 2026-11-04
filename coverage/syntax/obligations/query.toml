@@ -769,34 +769,16 @@ target = "<col2_identifier> #2"
 note = "a string literal in place of <col2_identifier>"
 
 [[obligation]]
-id = "sf.query.connect-by.o059"
-kind = "option_present"
-required = true
-target = "[ { , | AND } { PRIOR <col3_identifier> = <col4_identifier> | <col3_identifier> = PRIOR <col4_identifier> } ]"
-
-[[obligation]]
 id = "sf.query.connect-by.o060"
 kind = "option_absent"
 required = true
 target = "[ { , | AND } { PRIOR <col3_identifier> = <col4_identifier> | <col3_identifier> = PRIOR <col4_identifier> } ]"
 
 [[obligation]]
-id = "sf.query.connect-by.o061"
-kind = "alternative"
-required = true
-target = "{ , | AND } → ,"
-
-[[obligation]]
 id = "sf.query.connect-by.o062"
 kind = "alternative"
 required = true
 target = "{ , | AND } → AND"
-
-[[obligation]]
-id = "sf.query.connect-by.o063"
-kind = "alternative"
-required = true
-target = "{ PRIOR <col3_identifier> = <col4_identifier> | <col3_identifier> = PRIOR… → PRIOR <col3_identifier> = <col4_identifier>"
 
 [[obligation]]
 id = "sf.query.connect-by.o064"
@@ -812,13 +794,6 @@ target = "<col3_identifier> in [ { , | AND } { PRIOR <col3_identifier> = <col4_i
 note = "omit <col3_identifier>"
 
 [[obligation]]
-id = "sf.query.connect-by.o066"
-kind = "operand_type_class"
-required = true
-target = "<col3_identifier> in [ { , | AND } { PRIOR <col3_identifier> = <col4_identifier> | <col3_identifier> = PRIOR <col4_iden…"
-note = "a valid identifier"
-
-[[obligation]]
 id = "sf.query.connect-by.o067"
 kind = "negative_neighbour"
 required = true
@@ -831,13 +806,6 @@ kind = "required_operand_missing"
 required = true
 target = "<col4_identifier> in [ { , | AND } { PRIOR <col3_identifier> = <col4_identifier> | <col3_identifier> = PRIOR <col4_iden…"
 note = "omit <col4_identifier>"
-
-[[obligation]]
-id = "sf.query.connect-by.o069"
-kind = "operand_type_class"
-required = true
-target = "<col4_identifier> in [ { , | AND } { PRIOR <col3_identifier> = <col4_identifier> | <col3_identifier> = PRIOR <col4_iden…"
-note = "a valid identifier"
 
 [[obligation]]
 id = "sf.query.connect-by.o070"
@@ -931,12 +899,6 @@ required = true
 note = "the form without its required { PRIOR <col3_identifier> = <col4_identifier> | <col3_identifier> = PRIOR <col4_identifier> } in [ { , | AND } { PRIOR <col3_identifier> = <col4_identifier> | <col3_identifier> = PRIOR <col4_identifier> } ]"
 
 [[obligation]]
-id = "sf.query.connect-by.o040"
-kind = "interaction_all_options"
-required = true
-note = "every independent option of one production together"
-
-[[obligation]]
 id = "sf.query.connect-by.o041"
 kind = "identifier_class"
 required = true
@@ -981,38 +943,6 @@ id = "sf.query.connect-by.o046"
 kind = "identifier_class"
 required = true
 target = "<col2_identifier>"
-anchor = "doc.identifiers-syntax"
-note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
-
-[[obligation]]
-id = "sf.query.connect-by.o047"
-kind = "identifier_class"
-required = true
-target = "<col3_identifier>"
-anchor = "doc.identifiers-syntax"
-note = "quoted: a double-quoted identifier with blanks and mixed case"
-
-[[obligation]]
-id = "sf.query.connect-by.o048"
-kind = "identifier_class"
-required = true
-target = "<col3_identifier>"
-anchor = "doc.identifiers-syntax"
-note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
-
-[[obligation]]
-id = "sf.query.connect-by.o049"
-kind = "identifier_class"
-required = true
-target = "<col4_identifier>"
-anchor = "doc.identifiers-syntax"
-note = "quoted: a double-quoted identifier with blanks and mixed case"
-
-[[obligation]]
-id = "sf.query.connect-by.o050"
-kind = "identifier_class"
-required = true
-target = "<col4_identifier>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
@@ -1098,6 +1028,85 @@ required = true
 target = "<level_expression> in [ , <level_expression> ]"
 anchor = "doc.constructs.connect-by / Syntax"
 note = "omit <level_expression>, observed"
+
+[[obligation]]
+id = "sf.query.connect-by.o092"
+kind = "interaction_all_options"
+required = true
+anchor = "doc.constructs.connect-by / Syntax"
+note = "every independent option of one production together, observed"
+
+[[obligation]]
+id = "sf.query.connect-by.o093"
+kind = "identifier_class"
+required = true
+target = "<col4_identifier>"
+anchor = "doc.constructs.connect-by / Syntax"
+note = "quoted: a double-quoted identifier with blanks and mixed case, observed"
+
+[[obligation]]
+id = "sf.query.connect-by.o094"
+kind = "identifier_class"
+required = true
+target = "<col3_identifier>"
+anchor = "doc.constructs.connect-by / Syntax"
+note = "quoted: a double-quoted identifier with blanks and mixed case, observed"
+
+[[obligation]]
+id = "sf.query.connect-by.o095"
+kind = "identifier_class"
+required = true
+target = "<col3_identifier>"
+anchor = "doc.constructs.connect-by / Syntax"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance), observed"
+
+[[obligation]]
+id = "sf.query.connect-by.o096"
+kind = "identifier_class"
+required = true
+target = "<col4_identifier>"
+anchor = "doc.constructs.connect-by / Syntax"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance), observed"
+
+[[obligation]]
+id = "sf.query.connect-by.o097"
+kind = "option_present"
+required = true
+target = "[ { , | AND } { PRIOR <col3_identifier> = <col4_identifier> | <col3_identifier> = PRIOR <col4_identifier> } ]"
+anchor = "doc.constructs.connect-by / Syntax"
+note = "option present [ { , | AND } { PRIOR <col3_identifier> = <col4_identifier> | <col3_identifier> = PRIOR <col4_identifier> } ], observed"
+
+[[obligation]]
+id = "sf.query.connect-by.o098"
+kind = "alternative"
+required = true
+target = "{ , | AND } → ,"
+anchor = "doc.constructs.connect-by / Syntax"
+note = "alternative { , | AND } → ,, observed"
+
+[[obligation]]
+id = "sf.query.connect-by.o099"
+kind = "alternative"
+required = true
+target = "{ PRIOR <col3_identifier> = <col4_identifier> | <col3_identifier> = PRIOR… → PRIOR <col3_identifier> = <col4_identifier>"
+anchor = "doc.constructs.connect-by / Syntax"
+note = "alternative { PRIOR <col3_identifier> = <col4_identifier> | <col3_identifier> = PRIOR… → PRIOR <col3_identifier> = <col4_identifier>, observed"
+
+[[obligation]]
+id = "sf.query.connect-by.o100"
+kind = "operand_type_class"
+required = true
+target = "<col3_identifier> in [ { , | AND } { PRIOR <col3_identifier> = <col4_identifier> | <col3_identifier> = PRIOR <col4_iden…"
+anchor = "doc.constructs.connect-by / Syntax"
+note = "a valid identifier, observed"
+
+[[obligation]]
+id = "sf.query.connect-by.o101"
+kind = "operand_type_class"
+required = true
+target = "<col4_identifier> in [ { , | AND } { PRIOR <col3_identifier> = <col4_identifier> | <col3_identifier> = PRIOR <col4_iden…"
+anchor = "doc.constructs.connect-by / Syntax"
+note = "a valid identifier, observed"
 
 [[obligation]]
 id = "sf.query.constructs.o001"
@@ -2342,14 +2351,6 @@ anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
-id = "sf.query.from.o144"
-kind = "identifier_class"
-required = true
-target = "<stage_name>"
-anchor = "doc.identifiers-syntax"
-note = "quoted: a double-quoted identifier with blanks and mixed case"
-
-[[obligation]]
 id = "sf.query.from.o146"
 kind = "identifier_class"
 required = true
@@ -2480,6 +2481,14 @@ required = true
 target = "<change_tracking_type> in [ CHANGES ( <change_tracking_type> ) ]"
 anchor = "doc.constructs.from / Syntax"
 note = "omit <change_tracking_type>, observed"
+
+[[obligation]]
+id = "sf.query.from.o163"
+kind = "identifier_class"
+required = true
+target = "<stage_name>"
+anchor = "doc.constructs.from / Syntax"
+note = "quoted: a double-quoted identifier with blanks and mixed case, observed"
 
 [[obligation]]
 id = "sf.query.group-by-cube.o001"
@@ -8896,12 +8905,6 @@ required = true
 note = "the form without its required { [ { <object_name> | <alias> } . ] <col_name> | [ { <object_name> | <alias> } . ] $ <col_position> | <expr> }"
 
 [[obligation]]
-id = "sf.query.select.select.selecting-specific-columns.o047"
-kind = "interaction_all_options"
-required = true
-note = "every independent option of one production together"
-
-[[obligation]]
 id = "sf.query.select.select.selecting-specific-columns.o048"
 kind = "identifier_class"
 required = true
@@ -8978,6 +8981,13 @@ kind = "extreme"
 required = true
 anchor = "doc.sql.select / Syntax / Selecting specific columns"
 note = "a select list of 5,000 columns; no documented bound"
+
+[[obligation]]
+id = "sf.query.select.select.selecting-specific-columns.o061"
+kind = "interaction_all_options"
+required = true
+anchor = "doc.sql.select / Syntax / Selecting specific columns"
+note = "every independent option of one production together, observed"
 
 [[obligation]]
 id = "sf.query.semantic-view.o001"

@@ -923,40 +923,10 @@ target = "'<fully_qualified_method_name>'"
 note = "an unquoted identifier in place of '<fully_qualified_method_name>'"
 
 [[obligation]]
-id = "sf.utility.call-with.table-language-java-runtime-version.o050"
-kind = "option_present"
-required = true
-target = "[ { CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } ]"
-
-[[obligation]]
 id = "sf.utility.call-with.table-language-java-runtime-version.o051"
 kind = "option_absent"
 required = true
 target = "[ { CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } ]"
-
-[[obligation]]
-id = "sf.utility.call-with.table-language-java-runtime-version.o052"
-kind = "alternative"
-required = true
-target = "{ CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } → CALLED ON NULL INPUT"
-
-[[obligation]]
-id = "sf.utility.call-with.table-language-java-runtime-version.o053"
-kind = "alternative"
-required = true
-target = "{ CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } → { RETURNS NULL ON NULL INPUT | STRICT }"
-
-[[obligation]]
-id = "sf.utility.call-with.table-language-java-runtime-version.o054"
-kind = "alternative"
-required = true
-target = "{ RETURNS NULL ON NULL INPUT | STRICT } → RETURNS NULL ON NULL INPUT"
-
-[[obligation]]
-id = "sf.utility.call-with.table-language-java-runtime-version.o055"
-kind = "alternative"
-required = true
-target = "{ RETURNS NULL ON NULL INPUT | STRICT } → STRICT"
 
 [[obligation]]
 id = "sf.utility.call-with.table-language-java-runtime-version.o056"
@@ -1258,12 +1228,6 @@ required = true
 note = "the form without its required CALL"
 
 [[obligation]]
-id = "sf.utility.call-with.table-language-java-runtime-version.o102"
-kind = "interaction_all_options"
-required = true
-note = "every independent option of one production together"
-
-[[obligation]]
 id = "sf.utility.call-with.table-language-java-runtime-version.o103"
 kind = "identifier_class"
 required = true
@@ -1392,6 +1356,53 @@ required = true
 target = "<col_name> in [ <col_name> <col_data_type> [ , ... ] ]"
 anchor = "doc.sql.call-with / Syntax / Java"
 note = "omit <col_name>, observed"
+
+[[obligation]]
+id = "sf.utility.call-with.table-language-java-runtime-version.o140"
+kind = "option_present"
+required = true
+target = "[ { CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } ]"
+anchor = "doc.sql.call-with / Syntax / Java"
+note = "option present [ { CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } ], observed"
+
+[[obligation]]
+id = "sf.utility.call-with.table-language-java-runtime-version.o141"
+kind = "alternative"
+required = true
+target = "{ CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } → CALLED ON NULL INPUT"
+anchor = "doc.sql.call-with / Syntax / Java"
+note = "alternative { CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } → CALLED ON NULL INPUT, observed"
+
+[[obligation]]
+id = "sf.utility.call-with.table-language-java-runtime-version.o142"
+kind = "alternative"
+required = true
+target = "{ CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } → { RETURNS NULL ON NULL INPUT | STRICT }"
+anchor = "doc.sql.call-with / Syntax / Java"
+note = "alternative { CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } → { RETURNS NULL ON NULL INPUT | STRICT }, observed"
+
+[[obligation]]
+id = "sf.utility.call-with.table-language-java-runtime-version.o143"
+kind = "alternative"
+required = true
+target = "{ RETURNS NULL ON NULL INPUT | STRICT } → STRICT"
+anchor = "doc.sql.call-with / Syntax / Java"
+note = "alternative { RETURNS NULL ON NULL INPUT | STRICT } → STRICT, observed"
+
+[[obligation]]
+id = "sf.utility.call-with.table-language-java-runtime-version.o144"
+kind = "interaction_all_options"
+required = true
+anchor = "doc.sql.call-with / Syntax / Java"
+note = "every independent option of one production together, observed"
+
+[[obligation]]
+id = "sf.utility.call-with.table-language-java-runtime-version.o145"
+kind = "alternative"
+required = true
+target = "{ RETURNS NULL ON NULL INPUT | STRICT } → RETURNS NULL ON NULL INPUT"
+anchor = "doc.sql.call-with / Syntax / Java"
+note = "alternative { RETURNS NULL ON NULL INPUT | STRICT } → RETURNS NULL ON NULL INPUT, observed"
 
 [[obligation]]
 id = "sf.utility.call-with.table-language-java-runtime-version.java.o001"
@@ -1691,40 +1702,10 @@ target = "'<fully_qualified_method_name>'"
 note = "an unquoted identifier in place of '<fully_qualified_method_name>'"
 
 [[obligation]]
-id = "sf.utility.call-with.table-language-java-runtime-version.java.o050"
-kind = "option_present"
-required = true
-target = "[ { CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } ]"
-
-[[obligation]]
 id = "sf.utility.call-with.table-language-java-runtime-version.java.o051"
 kind = "option_absent"
 required = true
 target = "[ { CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } ]"
-
-[[obligation]]
-id = "sf.utility.call-with.table-language-java-runtime-version.java.o052"
-kind = "alternative"
-required = true
-target = "{ CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } → CALLED ON NULL INPUT"
-
-[[obligation]]
-id = "sf.utility.call-with.table-language-java-runtime-version.java.o053"
-kind = "alternative"
-required = true
-target = "{ CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } → { RETURNS NULL ON NULL INPUT | STRICT }"
-
-[[obligation]]
-id = "sf.utility.call-with.table-language-java-runtime-version.java.o054"
-kind = "alternative"
-required = true
-target = "{ RETURNS NULL ON NULL INPUT | STRICT } → RETURNS NULL ON NULL INPUT"
-
-[[obligation]]
-id = "sf.utility.call-with.table-language-java-runtime-version.java.o055"
-kind = "alternative"
-required = true
-target = "{ RETURNS NULL ON NULL INPUT | STRICT } → STRICT"
 
 [[obligation]]
 id = "sf.utility.call-with.table-language-java-runtime-version.java.o118"
@@ -1993,12 +1974,6 @@ required = true
 note = "the form without its required CALL"
 
 [[obligation]]
-id = "sf.utility.call-with.table-language-java-runtime-version.java.o097"
-kind = "interaction_all_options"
-required = true
-note = "every independent option of one production together"
-
-[[obligation]]
 id = "sf.utility.call-with.table-language-java-runtime-version.java.o098"
 kind = "identifier_class"
 required = true
@@ -2127,6 +2102,53 @@ required = true
 target = "<col_name> in [ <col_name> <col_data_type> [ , ... ] ]"
 anchor = "doc.sql.call-with / Syntax / Java"
 note = "omit <col_name>, observed"
+
+[[obligation]]
+id = "sf.utility.call-with.table-language-java-runtime-version.java.o135"
+kind = "interaction_all_options"
+required = true
+anchor = "doc.sql.call-with / Syntax / Java"
+note = "every independent option of one production together, observed"
+
+[[obligation]]
+id = "sf.utility.call-with.table-language-java-runtime-version.java.o136"
+kind = "option_present"
+required = true
+target = "[ { CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } ]"
+anchor = "doc.sql.call-with / Syntax / Java"
+note = "option present [ { CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } ], observed"
+
+[[obligation]]
+id = "sf.utility.call-with.table-language-java-runtime-version.java.o137"
+kind = "alternative"
+required = true
+target = "{ CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } → CALLED ON NULL INPUT"
+anchor = "doc.sql.call-with / Syntax / Java"
+note = "alternative { CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } → CALLED ON NULL INPUT, observed"
+
+[[obligation]]
+id = "sf.utility.call-with.table-language-java-runtime-version.java.o138"
+kind = "alternative"
+required = true
+target = "{ CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } → { RETURNS NULL ON NULL INPUT | STRICT }"
+anchor = "doc.sql.call-with / Syntax / Java"
+note = "alternative { CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } → { RETURNS NULL ON NULL INPUT | STRICT }, observed"
+
+[[obligation]]
+id = "sf.utility.call-with.table-language-java-runtime-version.java.o139"
+kind = "alternative"
+required = true
+target = "{ RETURNS NULL ON NULL INPUT | STRICT } → STRICT"
+anchor = "doc.sql.call-with / Syntax / Java"
+note = "alternative { RETURNS NULL ON NULL INPUT | STRICT } → STRICT, observed"
+
+[[obligation]]
+id = "sf.utility.call-with.table-language-java-runtime-version.java.o140"
+kind = "alternative"
+required = true
+target = "{ RETURNS NULL ON NULL INPUT | STRICT } → RETURNS NULL ON NULL INPUT"
+anchor = "doc.sql.call-with / Syntax / Java"
+note = "alternative { RETURNS NULL ON NULL INPUT | STRICT } → RETURNS NULL ON NULL INPUT, observed"
 
 [[obligation]]
 id = "sf.utility.call-with.table-language-python-runtime-version.o001"
@@ -2420,40 +2442,10 @@ target = "'<function_name>'"
 note = "an unquoted identifier in place of '<function_name>'"
 
 [[obligation]]
-id = "sf.utility.call-with.table-language-python-runtime-version.o049"
-kind = "option_present"
-required = true
-target = "[ { CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } ]"
-
-[[obligation]]
 id = "sf.utility.call-with.table-language-python-runtime-version.o050"
 kind = "option_absent"
 required = true
 target = "[ { CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } ]"
-
-[[obligation]]
-id = "sf.utility.call-with.table-language-python-runtime-version.o051"
-kind = "alternative"
-required = true
-target = "{ CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } → CALLED ON NULL INPUT"
-
-[[obligation]]
-id = "sf.utility.call-with.table-language-python-runtime-version.o052"
-kind = "alternative"
-required = true
-target = "{ CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } → { RETURNS NULL ON NULL INPUT | STRICT }"
-
-[[obligation]]
-id = "sf.utility.call-with.table-language-python-runtime-version.o053"
-kind = "alternative"
-required = true
-target = "{ RETURNS NULL ON NULL INPUT | STRICT } → RETURNS NULL ON NULL INPUT"
-
-[[obligation]]
-id = "sf.utility.call-with.table-language-python-runtime-version.o054"
-kind = "alternative"
-required = true
-target = "{ RETURNS NULL ON NULL INPUT | STRICT } → STRICT"
 
 [[obligation]]
 id = "sf.utility.call-with.table-language-python-runtime-version.o065"
@@ -2743,12 +2735,6 @@ required = true
 note = "the form without its required CALL"
 
 [[obligation]]
-id = "sf.utility.call-with.table-language-python-runtime-version.o099"
-kind = "interaction_all_options"
-required = true
-note = "every independent option of one production together"
-
-[[obligation]]
 id = "sf.utility.call-with.table-language-python-runtime-version.o100"
 kind = "identifier_class"
 required = true
@@ -2884,6 +2870,53 @@ required = true
 target = "<col_data_type> in [ <col_name> <col_data_type> [ , ... ] ]"
 anchor = "doc.sql.call-with / Syntax / Python"
 note = "omit <col_data_type>, observed"
+
+[[obligation]]
+id = "sf.utility.call-with.table-language-python-runtime-version.o138"
+kind = "alternative"
+required = true
+target = "{ CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } → { RETURNS NULL ON NULL INPUT | STRICT }"
+anchor = "doc.sql.call-with / Syntax / Python"
+note = "alternative { CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } → { RETURNS NULL ON NULL INPUT | STRICT }, observed"
+
+[[obligation]]
+id = "sf.utility.call-with.table-language-python-runtime-version.o139"
+kind = "alternative"
+required = true
+target = "{ RETURNS NULL ON NULL INPUT | STRICT } → STRICT"
+anchor = "doc.sql.call-with / Syntax / Python"
+note = "alternative { RETURNS NULL ON NULL INPUT | STRICT } → STRICT, observed"
+
+[[obligation]]
+id = "sf.utility.call-with.table-language-python-runtime-version.o140"
+kind = "option_present"
+required = true
+target = "[ { CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } ]"
+anchor = "doc.sql.call-with / Syntax / Python"
+note = "option present [ { CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } ], observed"
+
+[[obligation]]
+id = "sf.utility.call-with.table-language-python-runtime-version.o141"
+kind = "alternative"
+required = true
+target = "{ CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } → CALLED ON NULL INPUT"
+anchor = "doc.sql.call-with / Syntax / Python"
+note = "alternative { CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } → CALLED ON NULL INPUT, observed"
+
+[[obligation]]
+id = "sf.utility.call-with.table-language-python-runtime-version.o142"
+kind = "interaction_all_options"
+required = true
+anchor = "doc.sql.call-with / Syntax / Python"
+note = "every independent option of one production together, observed"
+
+[[obligation]]
+id = "sf.utility.call-with.table-language-python-runtime-version.o143"
+kind = "alternative"
+required = true
+target = "{ RETURNS NULL ON NULL INPUT | STRICT } → RETURNS NULL ON NULL INPUT"
+anchor = "doc.sql.call-with / Syntax / Python"
+note = "alternative { RETURNS NULL ON NULL INPUT | STRICT } → RETURNS NULL ON NULL INPUT, observed"
 
 [[obligation]]
 id = "sf.utility.call-with.table-language-python-runtime-version.python.o001"
@@ -3156,40 +3189,10 @@ required = true
 target = "[ , '<stage_path_and_directory_or_file_name_to_read>' ... ]"
 
 [[obligation]]
-id = "sf.utility.call-with.table-language-python-runtime-version.python.o046"
-kind = "option_present"
-required = true
-target = "[ { CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } ]"
-
-[[obligation]]
 id = "sf.utility.call-with.table-language-python-runtime-version.python.o047"
 kind = "option_absent"
 required = true
 target = "[ { CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } ]"
-
-[[obligation]]
-id = "sf.utility.call-with.table-language-python-runtime-version.python.o048"
-kind = "alternative"
-required = true
-target = "{ CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } → CALLED ON NULL INPUT"
-
-[[obligation]]
-id = "sf.utility.call-with.table-language-python-runtime-version.python.o049"
-kind = "alternative"
-required = true
-target = "{ CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } → { RETURNS NULL ON NULL INPUT | STRICT }"
-
-[[obligation]]
-id = "sf.utility.call-with.table-language-python-runtime-version.python.o050"
-kind = "alternative"
-required = true
-target = "{ RETURNS NULL ON NULL INPUT | STRICT } → RETURNS NULL ON NULL INPUT"
-
-[[obligation]]
-id = "sf.utility.call-with.table-language-python-runtime-version.python.o051"
-kind = "alternative"
-required = true
-target = "{ RETURNS NULL ON NULL INPUT | STRICT } → STRICT"
 
 [[obligation]]
 id = "sf.utility.call-with.table-language-python-runtime-version.python.o114"
@@ -3458,12 +3461,6 @@ required = true
 note = "the form without its required CALL"
 
 [[obligation]]
-id = "sf.utility.call-with.table-language-python-runtime-version.python.o093"
-kind = "interaction_all_options"
-required = true
-note = "every independent option of one production together"
-
-[[obligation]]
 id = "sf.utility.call-with.table-language-python-runtime-version.python.o094"
 kind = "identifier_class"
 required = true
@@ -3592,6 +3589,53 @@ required = true
 target = "<col_data_type> in [ <col_name> <col_data_type> [ , ... ] ]"
 anchor = "doc.sql.call-with / Syntax / Python"
 note = "omit <col_data_type>, observed"
+
+[[obligation]]
+id = "sf.utility.call-with.table-language-python-runtime-version.python.o131"
+kind = "interaction_all_options"
+required = true
+anchor = "doc.sql.call-with / Syntax / Python"
+note = "every independent option of one production together, observed"
+
+[[obligation]]
+id = "sf.utility.call-with.table-language-python-runtime-version.python.o132"
+kind = "alternative"
+required = true
+target = "{ RETURNS NULL ON NULL INPUT | STRICT } → RETURNS NULL ON NULL INPUT"
+anchor = "doc.sql.call-with / Syntax / Python"
+note = "alternative { RETURNS NULL ON NULL INPUT | STRICT } → RETURNS NULL ON NULL INPUT, observed"
+
+[[obligation]]
+id = "sf.utility.call-with.table-language-python-runtime-version.python.o133"
+kind = "alternative"
+required = true
+target = "{ CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } → { RETURNS NULL ON NULL INPUT | STRICT }"
+anchor = "doc.sql.call-with / Syntax / Python"
+note = "alternative { CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } → { RETURNS NULL ON NULL INPUT | STRICT }, observed"
+
+[[obligation]]
+id = "sf.utility.call-with.table-language-python-runtime-version.python.o134"
+kind = "alternative"
+required = true
+target = "{ RETURNS NULL ON NULL INPUT | STRICT } → STRICT"
+anchor = "doc.sql.call-with / Syntax / Python"
+note = "alternative { RETURNS NULL ON NULL INPUT | STRICT } → STRICT, observed"
+
+[[obligation]]
+id = "sf.utility.call-with.table-language-python-runtime-version.python.o135"
+kind = "option_present"
+required = true
+target = "[ { CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } ]"
+anchor = "doc.sql.call-with / Syntax / Python"
+note = "option present [ { CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } ], observed"
+
+[[obligation]]
+id = "sf.utility.call-with.table-language-python-runtime-version.python.o136"
+kind = "alternative"
+required = true
+target = "{ CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } → CALLED ON NULL INPUT"
+anchor = "doc.sql.call-with / Syntax / Python"
+note = "alternative { CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } → CALLED ON NULL INPUT, observed"
 
 [[obligation]]
 id = "sf.utility.call-with.table-language-scala-runtime-version.o001"
@@ -3891,40 +3935,10 @@ target = "'<fully_qualified_method_name>'"
 note = "an unquoted identifier in place of '<fully_qualified_method_name>'"
 
 [[obligation]]
-id = "sf.utility.call-with.table-language-scala-runtime-version.o050"
-kind = "option_present"
-required = true
-target = "[ { CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } ]"
-
-[[obligation]]
 id = "sf.utility.call-with.table-language-scala-runtime-version.o051"
 kind = "option_absent"
 required = true
 target = "[ { CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } ]"
-
-[[obligation]]
-id = "sf.utility.call-with.table-language-scala-runtime-version.o052"
-kind = "alternative"
-required = true
-target = "{ CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } → CALLED ON NULL INPUT"
-
-[[obligation]]
-id = "sf.utility.call-with.table-language-scala-runtime-version.o053"
-kind = "alternative"
-required = true
-target = "{ CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } → { RETURNS NULL ON NULL INPUT | STRICT }"
-
-[[obligation]]
-id = "sf.utility.call-with.table-language-scala-runtime-version.o054"
-kind = "alternative"
-required = true
-target = "{ RETURNS NULL ON NULL INPUT | STRICT } → RETURNS NULL ON NULL INPUT"
-
-[[obligation]]
-id = "sf.utility.call-with.table-language-scala-runtime-version.o055"
-kind = "alternative"
-required = true
-target = "{ RETURNS NULL ON NULL INPUT | STRICT } → STRICT"
 
 [[obligation]]
 id = "sf.utility.call-with.table-language-scala-runtime-version.o056"
@@ -4226,12 +4240,6 @@ required = true
 note = "the form without its required CALL"
 
 [[obligation]]
-id = "sf.utility.call-with.table-language-scala-runtime-version.o102"
-kind = "interaction_all_options"
-required = true
-note = "every independent option of one production together"
-
-[[obligation]]
 id = "sf.utility.call-with.table-language-scala-runtime-version.o103"
 kind = "identifier_class"
 required = true
@@ -4360,6 +4368,53 @@ required = true
 target = "<arg_name> in [ <arg_name> <arg_data_type> [ , <arg_name> <arg_data_type> ... ] ]"
 anchor = "doc.sql.call-with / Syntax / Scala"
 note = "omit <arg_name>, observed"
+
+[[obligation]]
+id = "sf.utility.call-with.table-language-scala-runtime-version.o140"
+kind = "option_present"
+required = true
+target = "[ { CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } ]"
+anchor = "doc.sql.call-with / Syntax / Scala"
+note = "option present [ { CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } ], observed"
+
+[[obligation]]
+id = "sf.utility.call-with.table-language-scala-runtime-version.o141"
+kind = "alternative"
+required = true
+target = "{ CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } → CALLED ON NULL INPUT"
+anchor = "doc.sql.call-with / Syntax / Scala"
+note = "alternative { CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } → CALLED ON NULL INPUT, observed"
+
+[[obligation]]
+id = "sf.utility.call-with.table-language-scala-runtime-version.o142"
+kind = "interaction_all_options"
+required = true
+anchor = "doc.sql.call-with / Syntax / Scala"
+note = "every independent option of one production together, observed"
+
+[[obligation]]
+id = "sf.utility.call-with.table-language-scala-runtime-version.o143"
+kind = "alternative"
+required = true
+target = "{ RETURNS NULL ON NULL INPUT | STRICT } → RETURNS NULL ON NULL INPUT"
+anchor = "doc.sql.call-with / Syntax / Scala"
+note = "alternative { RETURNS NULL ON NULL INPUT | STRICT } → RETURNS NULL ON NULL INPUT, observed"
+
+[[obligation]]
+id = "sf.utility.call-with.table-language-scala-runtime-version.o144"
+kind = "alternative"
+required = true
+target = "{ CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } → { RETURNS NULL ON NULL INPUT | STRICT }"
+anchor = "doc.sql.call-with / Syntax / Scala"
+note = "alternative { CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } → { RETURNS NULL ON NULL INPUT | STRICT }, observed"
+
+[[obligation]]
+id = "sf.utility.call-with.table-language-scala-runtime-version.o145"
+kind = "alternative"
+required = true
+target = "{ RETURNS NULL ON NULL INPUT | STRICT } → STRICT"
+anchor = "doc.sql.call-with / Syntax / Scala"
+note = "alternative { RETURNS NULL ON NULL INPUT | STRICT } → STRICT, observed"
 
 [[obligation]]
 id = "sf.utility.call-with.table-language-scala-runtime-version.scala.o001"
@@ -4659,40 +4714,10 @@ target = "'<fully_qualified_method_name>'"
 note = "an unquoted identifier in place of '<fully_qualified_method_name>'"
 
 [[obligation]]
-id = "sf.utility.call-with.table-language-scala-runtime-version.scala.o050"
-kind = "option_present"
-required = true
-target = "[ { CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } ]"
-
-[[obligation]]
 id = "sf.utility.call-with.table-language-scala-runtime-version.scala.o051"
 kind = "option_absent"
 required = true
 target = "[ { CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } ]"
-
-[[obligation]]
-id = "sf.utility.call-with.table-language-scala-runtime-version.scala.o052"
-kind = "alternative"
-required = true
-target = "{ CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } → CALLED ON NULL INPUT"
-
-[[obligation]]
-id = "sf.utility.call-with.table-language-scala-runtime-version.scala.o053"
-kind = "alternative"
-required = true
-target = "{ CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } → { RETURNS NULL ON NULL INPUT | STRICT }"
-
-[[obligation]]
-id = "sf.utility.call-with.table-language-scala-runtime-version.scala.o054"
-kind = "alternative"
-required = true
-target = "{ RETURNS NULL ON NULL INPUT | STRICT } → RETURNS NULL ON NULL INPUT"
-
-[[obligation]]
-id = "sf.utility.call-with.table-language-scala-runtime-version.scala.o055"
-kind = "alternative"
-required = true
-target = "{ RETURNS NULL ON NULL INPUT | STRICT } → STRICT"
 
 [[obligation]]
 id = "sf.utility.call-with.table-language-scala-runtime-version.scala.o118"
@@ -4961,12 +4986,6 @@ required = true
 note = "the form without its required CALL"
 
 [[obligation]]
-id = "sf.utility.call-with.table-language-scala-runtime-version.scala.o097"
-kind = "interaction_all_options"
-required = true
-note = "every independent option of one production together"
-
-[[obligation]]
 id = "sf.utility.call-with.table-language-scala-runtime-version.scala.o098"
 kind = "identifier_class"
 required = true
@@ -5095,6 +5114,53 @@ required = true
 target = "<arg_name> in [ <arg_name> <arg_data_type> [ , <arg_name> <arg_data_type> ... ] ]"
 anchor = "doc.sql.call-with / Syntax / Scala"
 note = "omit <arg_name>, observed"
+
+[[obligation]]
+id = "sf.utility.call-with.table-language-scala-runtime-version.scala.o135"
+kind = "option_present"
+required = true
+target = "[ { CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } ]"
+anchor = "doc.sql.call-with / Syntax / Scala"
+note = "option present [ { CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } ], observed"
+
+[[obligation]]
+id = "sf.utility.call-with.table-language-scala-runtime-version.scala.o136"
+kind = "alternative"
+required = true
+target = "{ CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } → CALLED ON NULL INPUT"
+anchor = "doc.sql.call-with / Syntax / Scala"
+note = "alternative { CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } → CALLED ON NULL INPUT, observed"
+
+[[obligation]]
+id = "sf.utility.call-with.table-language-scala-runtime-version.scala.o137"
+kind = "alternative"
+required = true
+target = "{ RETURNS NULL ON NULL INPUT | STRICT } → RETURNS NULL ON NULL INPUT"
+anchor = "doc.sql.call-with / Syntax / Scala"
+note = "alternative { RETURNS NULL ON NULL INPUT | STRICT } → RETURNS NULL ON NULL INPUT, observed"
+
+[[obligation]]
+id = "sf.utility.call-with.table-language-scala-runtime-version.scala.o138"
+kind = "alternative"
+required = true
+target = "{ CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } → { RETURNS NULL ON NULL INPUT | STRICT }"
+anchor = "doc.sql.call-with / Syntax / Scala"
+note = "alternative { CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } → { RETURNS NULL ON NULL INPUT | STRICT }, observed"
+
+[[obligation]]
+id = "sf.utility.call-with.table-language-scala-runtime-version.scala.o139"
+kind = "alternative"
+required = true
+target = "{ RETURNS NULL ON NULL INPUT | STRICT } → STRICT"
+anchor = "doc.sql.call-with / Syntax / Scala"
+note = "alternative { RETURNS NULL ON NULL INPUT | STRICT } → STRICT, observed"
+
+[[obligation]]
+id = "sf.utility.call-with.table-language-scala-runtime-version.scala.o140"
+kind = "interaction_all_options"
+required = true
+anchor = "doc.sql.call-with / Syntax / Scala"
+note = "every independent option of one production together, observed"
 
 [[obligation]]
 id = "sf.utility.call-with.table-language-sql-as.o001"
@@ -6300,12 +6366,6 @@ required = true
 note = "the form without its required { TRUE | FALSE } in [ WRITEBACK = { TRUE | FALSE } ]"
 
 [[obligation]]
-id = "sf.utility.execute-dbt-project.project.o035"
-kind = "interaction_all_options"
-required = true
-note = "every independent option of one production together"
-
-[[obligation]]
 id = "sf.utility.execute-dbt-project.project.o036"
 kind = "identifier_class"
 required = true
@@ -6353,10 +6413,11 @@ anchor = "doc.sql.execute-dbt-project / Syntax"
 note = "a string literal in place of <integration_name>, observed"
 
 [[obligation]]
-id = "sf.utility.execute-dbt-project.project-2.o001"
-kind = "positive"
+id = "sf.utility.execute-dbt-project.project.o095"
+kind = "interaction_all_options"
 required = true
-note = "the documented form with every required part and no optional part"
+anchor = "doc.sql.execute-dbt-project / Syntax"
+note = "every independent option of one production together, observed"
 
 [[obligation]]
 id = "sf.utility.execute-dbt-project.project-2.o002"
@@ -6365,20 +6426,8 @@ required = true
 target = "[ IF EXISTS ]"
 
 [[obligation]]
-id = "sf.utility.execute-dbt-project.project-2.o003"
-kind = "option_absent"
-required = true
-target = "[ IF EXISTS ]"
-
-[[obligation]]
 id = "sf.utility.execute-dbt-project.project-2.o004"
 kind = "option_present"
-required = true
-target = "[ FROM WORKSPACE <name> ]"
-
-[[obligation]]
-id = "sf.utility.execute-dbt-project.project-2.o005"
-kind = "option_absent"
 required = true
 target = "[ FROM WORKSPACE <name> ]"
 
@@ -6410,12 +6459,6 @@ required = true
 target = "[ ARGS = '<dbt_args>' ]"
 
 [[obligation]]
-id = "sf.utility.execute-dbt-project.project-2.o010"
-kind = "option_absent"
-required = true
-target = "[ ARGS = '<dbt_args>' ]"
-
-[[obligation]]
 id = "sf.utility.execute-dbt-project.project-2.o011"
 kind = "required_operand_missing"
 required = true
@@ -6443,36 +6486,11 @@ required = true
 target = "[ DBT_VERSION = 'version_number' ]"
 
 [[obligation]]
-id = "sf.utility.execute-dbt-project.project-2.o015"
-kind = "option_absent"
-required = true
-target = "[ DBT_VERSION = 'version_number' ]"
-
-[[obligation]]
-id = "sf.utility.execute-dbt-project.project-2.o016"
-kind = "option_present"
-required = true
-target = "[ EXTERNAL_ACCESS_INTEGRATIONS = ( <integration_name> [ , ... ] ) ]"
-
-[[obligation]]
-id = "sf.utility.execute-dbt-project.project-2.o017"
-kind = "option_absent"
-required = true
-target = "[ EXTERNAL_ACCESS_INTEGRATIONS = ( <integration_name> [ , ... ] ) ]"
-
-[[obligation]]
 id = "sf.utility.execute-dbt-project.project-2.o018"
 kind = "required_operand_missing"
 required = true
 target = "<integration_name> in [ EXTERNAL_ACCESS_INTEGRATIONS = ( <integration_name> [ , ... ] ) ]"
 note = "omit <integration_name>"
-
-[[obligation]]
-id = "sf.utility.execute-dbt-project.project-2.o019"
-kind = "operand_type_class"
-required = true
-target = "<integration_name> in [ EXTERNAL_ACCESS_INTEGRATIONS = ( <integration_name> [ , ... ] ) ]"
-note = "a valid identifier"
 
 [[obligation]]
 id = "sf.utility.execute-dbt-project.project-2.o020"
@@ -6489,20 +6507,8 @@ target = "[ , ... ]"
 note = "the list continued at least once"
 
 [[obligation]]
-id = "sf.utility.execute-dbt-project.project-2.o022"
-kind = "option_absent"
-required = true
-target = "[ , ... ]"
-
-[[obligation]]
 id = "sf.utility.execute-dbt-project.project-2.o023"
 kind = "option_present"
-required = true
-target = "[ ENVIRONMENT = '<environment_name>' ]"
-
-[[obligation]]
-id = "sf.utility.execute-dbt-project.project-2.o024"
-kind = "option_absent"
 required = true
 target = "[ ENVIRONMENT = '<environment_name>' ]"
 
@@ -6528,30 +6534,11 @@ target = "'<environment_name>' in [ ENVIRONMENT = '<environment_name>' ]"
 note = "an unquoted identifier in place of '<environment_name>'"
 
 [[obligation]]
-id = "sf.utility.execute-dbt-project.project-2.o028"
-kind = "option_present"
-required = true
-target = "[ ENV_VARS = ( '<key>' = '<value>' [ , ... ] ) ]"
-
-[[obligation]]
-id = "sf.utility.execute-dbt-project.project-2.o029"
-kind = "option_absent"
-required = true
-target = "[ ENV_VARS = ( '<key>' = '<value>' [ , ... ] ) ]"
-
-[[obligation]]
 id = "sf.utility.execute-dbt-project.project-2.o030"
 kind = "required_operand_missing"
 required = true
 target = "'<key>' in [ ENV_VARS = ( '<key>' = '<value>' [ , ... ] ) ]"
 note = "omit '<key>'"
-
-[[obligation]]
-id = "sf.utility.execute-dbt-project.project-2.o031"
-kind = "operand_type_class"
-required = true
-target = "'<key>' in [ ENV_VARS = ( '<key>' = '<value>' [ , ... ] ) ]"
-note = "a valid string_literal"
 
 [[obligation]]
 id = "sf.utility.execute-dbt-project.project-2.o032"
@@ -6568,13 +6555,6 @@ target = "'<value>' in [ ENV_VARS = ( '<key>' = '<value>' [ , ... ] ) ]"
 note = "omit '<value>'"
 
 [[obligation]]
-id = "sf.utility.execute-dbt-project.project-2.o034"
-kind = "operand_type_class"
-required = true
-target = "'<value>' in [ ENV_VARS = ( '<key>' = '<value>' [ , ... ] ) ]"
-note = "a valid string_literal"
-
-[[obligation]]
 id = "sf.utility.execute-dbt-project.project-2.o035"
 kind = "negative_neighbour"
 required = true
@@ -6589,20 +6569,8 @@ target = "[ , ... ] #2"
 note = "the list continued at least once"
 
 [[obligation]]
-id = "sf.utility.execute-dbt-project.project-2.o037"
-kind = "option_absent"
-required = true
-target = "[ , ... ] #2"
-
-[[obligation]]
 id = "sf.utility.execute-dbt-project.project-2.o038"
 kind = "option_present"
-required = true
-target = "[ PROJECT_ROOT = '<subdirectory_path>' ]"
-
-[[obligation]]
-id = "sf.utility.execute-dbt-project.project-2.o039"
-kind = "option_absent"
 required = true
 target = "[ PROJECT_ROOT = '<subdirectory_path>' ]"
 
@@ -6670,12 +6638,6 @@ required = true
 note = "the form without its required ) in [ ENV_VARS = ( '<key>' = '<value>' [ , ... ] ) ]"
 
 [[obligation]]
-id = "sf.utility.execute-dbt-project.project-2.o051"
-kind = "interaction_all_options"
-required = true
-note = "every independent option of one production together"
-
-[[obligation]]
 id = "sf.utility.execute-dbt-project.project-2.o052"
 kind = "identifier_class"
 required = true
@@ -6692,27 +6654,161 @@ anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
-id = "sf.utility.execute-dbt-project.project-2.o054"
-kind = "identifier_class"
-required = true
-target = "<integration_name>"
-anchor = "doc.identifiers-syntax"
-note = "quoted: a double-quoted identifier with blanks and mixed case"
-
-[[obligation]]
-id = "sf.utility.execute-dbt-project.project-2.o055"
-kind = "identifier_class"
-required = true
-target = "<integration_name>"
-anchor = "doc.identifiers-syntax"
-note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
-
-[[obligation]]
 id = "sf.utility.execute-dbt-project.project-2.o056"
 kind = "negative_neighbour"
 required = true
 anchor = "doc.sql.execute-dbt-project / Variant syntax"
 note = "the form without its required EXISTS in [ IF EXISTS ], observed"
+
+[[obligation]]
+id = "sf.utility.execute-dbt-project.project-2.o057"
+kind = "identifier_class"
+required = true
+target = "<integration_name>"
+anchor = "doc.sql.execute-dbt-project / Variant syntax"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance), observed"
+
+[[obligation]]
+id = "sf.utility.execute-dbt-project.project-2.o058"
+kind = "option_present"
+required = true
+target = "[ ENV_VARS = ( '<key>' = '<value>' [ , ... ] ) ]"
+anchor = "doc.sql.execute-dbt-project / Variant syntax"
+note = "option present [ ENV_VARS = ( '<key>' = '<value>' [ , ... ] ) ], observed"
+
+[[obligation]]
+id = "sf.utility.execute-dbt-project.project-2.o059"
+kind = "operand_type_class"
+required = true
+target = "'<key>' in [ ENV_VARS = ( '<key>' = '<value>' [ , ... ] ) ]"
+anchor = "doc.sql.execute-dbt-project / Variant syntax"
+note = "a valid string_literal, observed"
+
+[[obligation]]
+id = "sf.utility.execute-dbt-project.project-2.o060"
+kind = "operand_type_class"
+required = true
+target = "'<value>' in [ ENV_VARS = ( '<key>' = '<value>' [ , ... ] ) ]"
+anchor = "doc.sql.execute-dbt-project / Variant syntax"
+note = "a valid string_literal, observed"
+
+[[obligation]]
+id = "sf.utility.execute-dbt-project.project-2.o061"
+kind = "option_absent"
+required = true
+target = "[ , ... ] #2"
+anchor = "doc.sql.execute-dbt-project / Variant syntax"
+note = "option absent [ , ... ] #2, observed"
+
+[[obligation]]
+id = "sf.utility.execute-dbt-project.project-2.o062"
+kind = "identifier_class"
+required = true
+target = "<integration_name>"
+anchor = "doc.sql.execute-dbt-project / Variant syntax"
+note = "quoted: a double-quoted identifier with blanks and mixed case, observed"
+
+[[obligation]]
+id = "sf.utility.execute-dbt-project.project-2.o063"
+kind = "positive"
+required = true
+anchor = "doc.sql.execute-dbt-project / Variant syntax"
+note = "the documented form with every required part and no optional part, observed"
+
+[[obligation]]
+id = "sf.utility.execute-dbt-project.project-2.o064"
+kind = "option_absent"
+required = true
+target = "[ IF EXISTS ]"
+anchor = "doc.sql.execute-dbt-project / Variant syntax"
+note = "option absent [ IF EXISTS ], observed"
+
+[[obligation]]
+id = "sf.utility.execute-dbt-project.project-2.o065"
+kind = "option_absent"
+required = true
+target = "[ FROM WORKSPACE <name> ]"
+anchor = "doc.sql.execute-dbt-project / Variant syntax"
+note = "option absent [ FROM WORKSPACE <name> ], observed"
+
+[[obligation]]
+id = "sf.utility.execute-dbt-project.project-2.o066"
+kind = "option_absent"
+required = true
+target = "[ ARGS = '<dbt_args>' ]"
+anchor = "doc.sql.execute-dbt-project / Variant syntax"
+note = "option absent [ ARGS = '<dbt_args>' ], observed"
+
+[[obligation]]
+id = "sf.utility.execute-dbt-project.project-2.o067"
+kind = "option_absent"
+required = true
+target = "[ DBT_VERSION = 'version_number' ]"
+anchor = "doc.sql.execute-dbt-project / Variant syntax"
+note = "option absent [ DBT_VERSION = 'version_number' ], observed"
+
+[[obligation]]
+id = "sf.utility.execute-dbt-project.project-2.o068"
+kind = "option_absent"
+required = true
+target = "[ EXTERNAL_ACCESS_INTEGRATIONS = ( <integration_name> [ , ... ] ) ]"
+anchor = "doc.sql.execute-dbt-project / Variant syntax"
+note = "option absent [ EXTERNAL_ACCESS_INTEGRATIONS = ( <integration_name> [ , ... ] ) ], observed"
+
+[[obligation]]
+id = "sf.utility.execute-dbt-project.project-2.o069"
+kind = "option_absent"
+required = true
+target = "[ ENVIRONMENT = '<environment_name>' ]"
+anchor = "doc.sql.execute-dbt-project / Variant syntax"
+note = "option absent [ ENVIRONMENT = '<environment_name>' ], observed"
+
+[[obligation]]
+id = "sf.utility.execute-dbt-project.project-2.o070"
+kind = "option_absent"
+required = true
+target = "[ ENV_VARS = ( '<key>' = '<value>' [ , ... ] ) ]"
+anchor = "doc.sql.execute-dbt-project / Variant syntax"
+note = "option absent [ ENV_VARS = ( '<key>' = '<value>' [ , ... ] ) ], observed"
+
+[[obligation]]
+id = "sf.utility.execute-dbt-project.project-2.o071"
+kind = "option_absent"
+required = true
+target = "[ PROJECT_ROOT = '<subdirectory_path>' ]"
+anchor = "doc.sql.execute-dbt-project / Variant syntax"
+note = "option absent [ PROJECT_ROOT = '<subdirectory_path>' ], observed"
+
+[[obligation]]
+id = "sf.utility.execute-dbt-project.project-2.o072"
+kind = "option_present"
+required = true
+target = "[ EXTERNAL_ACCESS_INTEGRATIONS = ( <integration_name> [ , ... ] ) ]"
+anchor = "doc.sql.execute-dbt-project / Variant syntax"
+note = "option present [ EXTERNAL_ACCESS_INTEGRATIONS = ( <integration_name> [ , ... ] ) ], observed"
+
+[[obligation]]
+id = "sf.utility.execute-dbt-project.project-2.o073"
+kind = "operand_type_class"
+required = true
+target = "<integration_name> in [ EXTERNAL_ACCESS_INTEGRATIONS = ( <integration_name> [ , ... ] ) ]"
+anchor = "doc.sql.execute-dbt-project / Variant syntax"
+note = "a valid identifier, observed"
+
+[[obligation]]
+id = "sf.utility.execute-dbt-project.project-2.o074"
+kind = "option_absent"
+required = true
+target = "[ , ... ]"
+anchor = "doc.sql.execute-dbt-project / Variant syntax"
+note = "option absent [ , ... ], observed"
+
+[[obligation]]
+id = "sf.utility.execute-dbt-project.project-2.o075"
+kind = "interaction_all_options"
+required = true
+anchor = "doc.sql.execute-dbt-project / Variant syntax"
+note = "every independent option of one production together, observed"
 
 [[obligation]]
 id = "sf.utility.execute-dcm-project.deploy-fromsource-fromdeployment.o001"
@@ -6784,12 +6880,6 @@ required = true
 target = "{ CONFIGURATION <config_name> [ ( <expr> [ , <expr> ... ] )… → CONFIGURATION <config_name> [ ( <expr> [ , <expr> ... ] ) ]"
 
 [[obligation]]
-id = "sf.utility.execute-dcm-project.deploy-fromsource-fromdeployment.o024"
-kind = "alternative"
-required = true
-target = "{ CONFIGURATION <config_name> [ ( <expr> [ , <expr> ... ] ) ] | ( <expr> [ , <expr> ... ]… → ( <expr> [ , <expr> ... ] )"
-
-[[obligation]]
 id = "sf.utility.execute-dcm-project.deploy-fromsource-fromdeployment.o025"
 kind = "required_operand_missing"
 required = true
@@ -6811,12 +6901,6 @@ target = "<config_name> in [ USING { CONFIGURATION <config_name> [ ( <expr> [ , 
 note = "a string literal in place of <config_name>"
 
 [[obligation]]
-id = "sf.utility.execute-dcm-project.deploy-fromsource-fromdeployment.o028"
-kind = "option_present"
-required = true
-target = "[ ( <expr> [ , <expr> ... ] ) ]"
-
-[[obligation]]
 id = "sf.utility.execute-dcm-project.deploy-fromsource-fromdeployment.o029"
 kind = "option_absent"
 required = true
@@ -6830,24 +6914,11 @@ target = "<expr> in [ ( <expr> [ , <expr> ... ] ) ]"
 note = "omit <expr>"
 
 [[obligation]]
-id = "sf.utility.execute-dcm-project.deploy-fromsource-fromdeployment.o031"
-kind = "operand_type_class"
-required = true
-target = "<expr> in [ ( <expr> [ , <expr> ... ] ) ]"
-note = "a valid expression"
-
-[[obligation]]
 id = "sf.utility.execute-dcm-project.deploy-fromsource-fromdeployment.o032"
 kind = "option_present"
 required = true
 target = "[ , <expr> ... ]"
 note = "the list continued at least once"
-
-[[obligation]]
-id = "sf.utility.execute-dcm-project.deploy-fromsource-fromdeployment.o033"
-kind = "option_absent"
-required = true
-target = "[ , <expr> ... ]"
 
 [[obligation]]
 id = "sf.utility.execute-dcm-project.deploy-fromsource-fromdeployment.o034"
@@ -6857,24 +6928,11 @@ target = "<expr> in [ USING { CONFIGURATION <config_name> [ ( <expr> [ , <expr> 
 note = "omit <expr>"
 
 [[obligation]]
-id = "sf.utility.execute-dcm-project.deploy-fromsource-fromdeployment.o035"
-kind = "operand_type_class"
-required = true
-target = "<expr> in [ USING { CONFIGURATION <config_name> [ ( <expr> [ , <expr> ... ] ) ] | ( <expr> [ , <expr> ... ] ) } ]"
-note = "a valid expression"
-
-[[obligation]]
 id = "sf.utility.execute-dcm-project.deploy-fromsource-fromdeployment.o036"
 kind = "option_present"
 required = true
 target = "[ , <expr> ... ] #2"
 note = "the list continued at least once"
-
-[[obligation]]
-id = "sf.utility.execute-dcm-project.deploy-fromsource-fromdeployment.o037"
-kind = "option_absent"
-required = true
-target = "[ , <expr> ... ] #2"
 
 [[obligation]]
 id = "sf.utility.execute-dcm-project.deploy-fromsource-fromdeployment.o038"
@@ -7083,6 +7141,54 @@ anchor = "doc.sql.execute-dcm-project / Syntax"
 note = "bare USING with neither CONFIGURATION nor an expression list, as the page's fromSource grammar allows"
 
 [[obligation]]
+id = "sf.utility.execute-dcm-project.deploy-fromsource-fromdeployment.o065"
+kind = "alternative"
+required = true
+target = "{ CONFIGURATION <config_name> [ ( <expr> [ , <expr> ... ] ) ] | ( <expr> [ , <expr> ... ]… → ( <expr> [ , <expr> ... ] )"
+anchor = "doc.sql.execute-dcm-project / Syntax"
+note = "alternative { CONFIGURATION <config_name> [ ( <expr> [ , <expr> ... ] ) ] | ( <expr> [ , <expr> ... ]… → ( <expr> [ , <expr> ... ] ), observed"
+
+[[obligation]]
+id = "sf.utility.execute-dcm-project.deploy-fromsource-fromdeployment.o066"
+kind = "operand_type_class"
+required = true
+target = "<expr> in [ USING { CONFIGURATION <config_name> [ ( <expr> [ , <expr> ... ] ) ] | ( <expr> [ , <expr> ... ] ) } ]"
+anchor = "doc.sql.execute-dcm-project / Syntax"
+note = "a valid expression, observed"
+
+[[obligation]]
+id = "sf.utility.execute-dcm-project.deploy-fromsource-fromdeployment.o067"
+kind = "option_absent"
+required = true
+target = "[ , <expr> ... ] #2"
+anchor = "doc.sql.execute-dcm-project / Syntax"
+note = "option absent [ , <expr> ... ] #2, observed"
+
+[[obligation]]
+id = "sf.utility.execute-dcm-project.deploy-fromsource-fromdeployment.o068"
+kind = "option_present"
+required = true
+target = "[ ( <expr> [ , <expr> ... ] ) ]"
+anchor = "doc.sql.execute-dcm-project / Syntax"
+note = "option present [ ( <expr> [ , <expr> ... ] ) ], observed"
+
+[[obligation]]
+id = "sf.utility.execute-dcm-project.deploy-fromsource-fromdeployment.o069"
+kind = "operand_type_class"
+required = true
+target = "<expr> in [ ( <expr> [ , <expr> ... ] ) ]"
+anchor = "doc.sql.execute-dcm-project / Syntax"
+note = "a valid expression, observed"
+
+[[obligation]]
+id = "sf.utility.execute-dcm-project.deploy-fromsource-fromdeployment.o070"
+kind = "option_absent"
+required = true
+target = "[ , <expr> ... ]"
+anchor = "doc.sql.execute-dcm-project / Syntax"
+note = "option absent [ , <expr> ... ], observed"
+
+[[obligation]]
 id = "sf.utility.execute-dcm-project.plan-fromsource-fromdeployment.o001"
 kind = "positive"
 required = true
@@ -7152,12 +7258,6 @@ required = true
 target = "{ CONFIGURATION <config_name> [ ( <expr> [ , <expr> ... ] )… → CONFIGURATION <config_name> [ ( <expr> [ , <expr> ... ] ) ]"
 
 [[obligation]]
-id = "sf.utility.execute-dcm-project.plan-fromsource-fromdeployment.o028"
-kind = "alternative"
-required = true
-target = "{ CONFIGURATION <config_name> [ ( <expr> [ , <expr> ... ] ) ] | ( <expr> [ , <expr> ... ]… → ( <expr> [ , <expr> ... ] )"
-
-[[obligation]]
 id = "sf.utility.execute-dcm-project.plan-fromsource-fromdeployment.o029"
 kind = "required_operand_missing"
 required = true
@@ -7179,12 +7279,6 @@ target = "<config_name> in [ USING { CONFIGURATION <config_name> [ ( <expr> [ , 
 note = "a string literal in place of <config_name>"
 
 [[obligation]]
-id = "sf.utility.execute-dcm-project.plan-fromsource-fromdeployment.o032"
-kind = "option_present"
-required = true
-target = "[ ( <expr> [ , <expr> ... ] ) ]"
-
-[[obligation]]
 id = "sf.utility.execute-dcm-project.plan-fromsource-fromdeployment.o033"
 kind = "option_absent"
 required = true
@@ -7198,24 +7292,11 @@ target = "<expr> in [ ( <expr> [ , <expr> ... ] ) ]"
 note = "omit <expr>"
 
 [[obligation]]
-id = "sf.utility.execute-dcm-project.plan-fromsource-fromdeployment.o035"
-kind = "operand_type_class"
-required = true
-target = "<expr> in [ ( <expr> [ , <expr> ... ] ) ]"
-note = "a valid expression"
-
-[[obligation]]
 id = "sf.utility.execute-dcm-project.plan-fromsource-fromdeployment.o036"
 kind = "option_present"
 required = true
 target = "[ , <expr> ... ]"
 note = "the list continued at least once"
-
-[[obligation]]
-id = "sf.utility.execute-dcm-project.plan-fromsource-fromdeployment.o037"
-kind = "option_absent"
-required = true
-target = "[ , <expr> ... ]"
 
 [[obligation]]
 id = "sf.utility.execute-dcm-project.plan-fromsource-fromdeployment.o038"
@@ -7225,24 +7306,11 @@ target = "<expr> in [ USING { CONFIGURATION <config_name> [ ( <expr> [ , <expr> 
 note = "omit <expr>"
 
 [[obligation]]
-id = "sf.utility.execute-dcm-project.plan-fromsource-fromdeployment.o039"
-kind = "operand_type_class"
-required = true
-target = "<expr> in [ USING { CONFIGURATION <config_name> [ ( <expr> [ , <expr> ... ] ) ] | ( <expr> [ , <expr> ... ] ) } ]"
-note = "a valid expression"
-
-[[obligation]]
 id = "sf.utility.execute-dcm-project.plan-fromsource-fromdeployment.o040"
 kind = "option_present"
 required = true
 target = "[ , <expr> ... ] #2"
 note = "the list continued at least once"
-
-[[obligation]]
-id = "sf.utility.execute-dcm-project.plan-fromsource-fromdeployment.o041"
-kind = "option_absent"
-required = true
-target = "[ , <expr> ... ] #2"
 
 [[obligation]]
 id = "sf.utility.execute-dcm-project.plan-fromsource-fromdeployment.o042"
@@ -7429,12 +7497,6 @@ required = true
 note = "the form without its required { [ USING { CONFIGURATION <config_name> [ ( <expr> [ , <expr> ... ] ) ] | ( <expr> [ , <expr> ... ] ) } ] [ ENVIRONMENT ( <bind_variable> ) ] FROM '<source_files_path>' | FROM DEPLOYMENT { <deployment_name> | \"d1\" | LAST | LATEST } }"
 
 [[obligation]]
-id = "sf.utility.execute-dcm-project.plan-fromsource-fromdeployment.o020"
-kind = "interaction_all_options"
-required = true
-note = "every independent option of one production together"
-
-[[obligation]]
 id = "sf.utility.execute-dcm-project.plan-fromsource-fromdeployment.o021"
 kind = "identifier_class"
 required = true
@@ -7488,6 +7550,61 @@ kind = "positive"
 required = true
 anchor = "doc.sql.execute-dcm-project / Syntax"
 note = "bare USING with neither CONFIGURATION nor an expression list, as the page's fromSource grammar allows"
+
+[[obligation]]
+id = "sf.utility.execute-dcm-project.plan-fromsource-fromdeployment.o069"
+kind = "alternative"
+required = true
+target = "{ CONFIGURATION <config_name> [ ( <expr> [ , <expr> ... ] ) ] | ( <expr> [ , <expr> ... ]… → ( <expr> [ , <expr> ... ] )"
+anchor = "doc.sql.execute-dcm-project / Syntax"
+note = "alternative { CONFIGURATION <config_name> [ ( <expr> [ , <expr> ... ] ) ] | ( <expr> [ , <expr> ... ]… → ( <expr> [ , <expr> ... ] ), observed"
+
+[[obligation]]
+id = "sf.utility.execute-dcm-project.plan-fromsource-fromdeployment.o070"
+kind = "operand_type_class"
+required = true
+target = "<expr> in [ USING { CONFIGURATION <config_name> [ ( <expr> [ , <expr> ... ] ) ] | ( <expr> [ , <expr> ... ] ) } ]"
+anchor = "doc.sql.execute-dcm-project / Syntax"
+note = "a valid expression, observed"
+
+[[obligation]]
+id = "sf.utility.execute-dcm-project.plan-fromsource-fromdeployment.o071"
+kind = "option_absent"
+required = true
+target = "[ , <expr> ... ] #2"
+anchor = "doc.sql.execute-dcm-project / Syntax"
+note = "option absent [ , <expr> ... ] #2, observed"
+
+[[obligation]]
+id = "sf.utility.execute-dcm-project.plan-fromsource-fromdeployment.o072"
+kind = "option_present"
+required = true
+target = "[ ( <expr> [ , <expr> ... ] ) ]"
+anchor = "doc.sql.execute-dcm-project / Syntax"
+note = "option present [ ( <expr> [ , <expr> ... ] ) ], observed"
+
+[[obligation]]
+id = "sf.utility.execute-dcm-project.plan-fromsource-fromdeployment.o073"
+kind = "operand_type_class"
+required = true
+target = "<expr> in [ ( <expr> [ , <expr> ... ] ) ]"
+anchor = "doc.sql.execute-dcm-project / Syntax"
+note = "a valid expression, observed"
+
+[[obligation]]
+id = "sf.utility.execute-dcm-project.plan-fromsource-fromdeployment.o074"
+kind = "option_absent"
+required = true
+target = "[ , <expr> ... ]"
+anchor = "doc.sql.execute-dcm-project / Syntax"
+note = "option absent [ , <expr> ... ], observed"
+
+[[obligation]]
+id = "sf.utility.execute-dcm-project.plan-fromsource-fromdeployment.o075"
+kind = "interaction_all_options"
+required = true
+anchor = "doc.sql.execute-dcm-project / Syntax"
+note = "every independent option of one production together, observed"
 
 [[obligation]]
 id = "sf.utility.execute-dcm-project.preview-using-configuration-from.o001"
@@ -7680,12 +7797,6 @@ required = true
 note = "the form without its required FROM"
 
 [[obligation]]
-id = "sf.utility.execute-dcm-project.preview-using-configuration-from.o031"
-kind = "interaction_all_options"
-required = true
-note = "every independent option of one production together"
-
-[[obligation]]
 id = "sf.utility.execute-dcm-project.preview-using-configuration-from.o032"
 kind = "identifier_class"
 required = true
@@ -7739,6 +7850,13 @@ kind = "negative_neighbour"
 required = true
 anchor = "doc.sql.execute-dcm-project / Syntax"
 note = "a string literal as the PREVIEW row limit"
+
+[[obligation]]
+id = "sf.utility.execute-dcm-project.preview-using-configuration-from.o039"
+kind = "interaction_all_options"
+required = true
+anchor = "doc.sql.execute-dcm-project / Syntax"
+note = "every independent option of one production together, observed"
 
 [[obligation]]
 id = "sf.utility.execute-dcm-project.purge.o001"
@@ -8151,30 +8269,6 @@ required = true
 note = "every independent option of one production together"
 
 [[obligation]]
-id = "sf.utility.execute-immediate-from.o050"
-kind = "identifier_class"
-required = true
-target = "<namespace>"
-anchor = "doc.identifiers-syntax"
-note = "quoted: a double-quoted identifier with blanks and mixed case"
-
-[[obligation]]
-id = "sf.utility.execute-immediate-from.o052"
-kind = "identifier_class"
-required = true
-target = "<stage_name>"
-anchor = "doc.identifiers-syntax"
-note = "quoted: a double-quoted identifier with blanks and mixed case"
-
-[[obligation]]
-id = "sf.utility.execute-immediate-from.o054"
-kind = "identifier_class"
-required = true
-target = "<filename>"
-anchor = "doc.identifiers-syntax"
-note = "quoted: a double-quoted identifier with blanks and mixed case"
-
-[[obligation]]
 id = "sf.utility.execute-immediate-from.o055"
 kind = "identifier_class"
 required = true
@@ -8220,6 +8314,30 @@ required = true
 target = "<namespace> in [ <namespace> . ]"
 anchor = "doc.sql.execute-immediate-from / Syntax"
 note = "omit <namespace>, observed"
+
+[[obligation]]
+id = "sf.utility.execute-immediate-from.o061"
+kind = "identifier_class"
+required = true
+target = "<filename>"
+anchor = "doc.sql.execute-immediate-from / Syntax"
+note = "quoted: a double-quoted identifier with blanks and mixed case, observed"
+
+[[obligation]]
+id = "sf.utility.execute-immediate-from.o062"
+kind = "identifier_class"
+required = true
+target = "<stage_name>"
+anchor = "doc.sql.execute-immediate-from / Syntax"
+note = "quoted: a double-quoted identifier with blanks and mixed case, observed"
+
+[[obligation]]
+id = "sf.utility.execute-immediate-from.o063"
+kind = "identifier_class"
+required = true
+target = "<namespace>"
+anchor = "doc.sql.execute-immediate-from / Syntax"
+note = "quoted: a double-quoted identifier with blanks and mixed case, observed"
 
 [[obligation]]
 id = "sf.utility.execute-immediate.immediate.o001"
@@ -8959,22 +9077,6 @@ anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
-id = "sf.utility.execute-inference-job-service.o079"
-kind = "identifier_class"
-required = true
-target = "<namespace>"
-anchor = "doc.identifiers-syntax"
-note = "quoted: a double-quoted identifier with blanks and mixed case"
-
-[[obligation]]
-id = "sf.utility.execute-inference-job-service.o081"
-kind = "identifier_class"
-required = true
-target = "<stage_name>"
-anchor = "doc.identifiers-syntax"
-note = "quoted: a double-quoted identifier with blanks and mixed case"
-
-[[obligation]]
 id = "sf.utility.execute-inference-job-service.o083"
 kind = "identifier_class"
 required = true
@@ -9079,6 +9181,22 @@ required = true
 target = "<stage_name>"
 anchor = "doc.sql.execute-inference-job-service / Syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance), observed"
+
+[[obligation]]
+id = "sf.utility.execute-inference-job-service.o096"
+kind = "identifier_class"
+required = true
+target = "<namespace>"
+anchor = "doc.sql.execute-inference-job-service / Syntax"
+note = "quoted: a double-quoted identifier with blanks and mixed case, observed"
+
+[[obligation]]
+id = "sf.utility.execute-inference-job-service.o097"
+kind = "identifier_class"
+required = true
+target = "<stage_name>"
+anchor = "doc.sql.execute-inference-job-service / Syntax"
+note = "quoted: a double-quoted identifier with blanks and mixed case, observed"
 
 [[obligation]]
 id = "sf.utility.execute-job-service.o001"
