@@ -59145,13 +59145,6 @@ target = "<secret_name> in [ ALLOWED_AUTHENTICATION_SECRETS = { ( <secret_name> 
 note = "a valid identifier"
 
 [[obligation]]
-id = "sf.security_admin.create-api-integration.git-https-api-api-allowed-prefixes-use-privatelink-endpoint-true.o026"
-kind = "negative_neighbour"
-required = true
-target = "<secret_name> in [ ALLOWED_AUTHENTICATION_SECRETS = { ( <secret_name> [ , <secret_name> , ... ] ) | all | none } ]"
-note = "a string literal in place of <secret_name>"
-
-[[obligation]]
 id = "sf.security_admin.create-api-integration.git-https-api-api-allowed-prefixes-use-privatelink-endpoint-true.o027"
 kind = "option_present"
 required = true
@@ -59221,13 +59214,6 @@ kind = "operand_type_class"
 required = true
 target = "<secret_name> in [ TLS_TRUSTED_CERTIFICATES = ( { <secret_name> [ , <secret_name> , ... ] } ) ]"
 note = "a valid identifier"
-
-[[obligation]]
-id = "sf.security_admin.create-api-integration.git-https-api-api-allowed-prefixes-use-privatelink-endpoint-true.o038"
-kind = "negative_neighbour"
-required = true
-target = "<secret_name> in [ TLS_TRUSTED_CERTIFICATES = ( { <secret_name> [ , <secret_name> , ... ] } ) ]"
-note = "a string literal in place of <secret_name>"
 
 [[obligation]]
 id = "sf.security_admin.create-api-integration.git-https-api-api-allowed-prefixes-use-privatelink-endpoint-true.o039"
@@ -59444,6 +59430,22 @@ required = true
 target = "<secret_name>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.security_admin.create-api-integration.git-https-api-api-allowed-prefixes-use-privatelink-endpoint-true.o073"
+kind = "negative_neighbour"
+required = true
+target = "<secret_name> in [ TLS_TRUSTED_CERTIFICATES = ( { <secret_name> [ , <secret_name> , ... ] } ) ]"
+anchor = "doc.sql.create-api-integration / Syntax / For Git repository"
+note = "a string literal in place of <secret_name>, observed"
+
+[[obligation]]
+id = "sf.security_admin.create-api-integration.git-https-api-api-allowed-prefixes-use-privatelink-endpoint-true.o074"
+kind = "negative_neighbour"
+required = true
+target = "<secret_name> in [ ALLOWED_AUTHENTICATION_SECRETS = { ( <secret_name> [ , <secret_name> , ... ] ) | all | none } ]"
+anchor = "doc.sql.create-api-integration / Syntax / For Git repository"
+note = "a string literal in place of <secret_name>, observed"
 
 [[obligation]]
 id = "sf.security_admin.create-api-integration.google-api-gateway-google-audience-api-allowed-prefixes-enabled.o001"
@@ -60130,13 +60132,6 @@ target = "<client_type> in [ CLIENT_POLICY = ( <client_type> = ( MINIMUM_VERSION
 note = "a valid data_type"
 
 [[obligation]]
-id = "sf.security_admin.create-authentication-policy.create-authentication-policy.o027"
-kind = "negative_neighbour"
-required = true
-target = "<client_type> in [ CLIENT_POLICY = ( <client_type> = ( MINIMUM_VERSION = '<version>' ) [ , ... ] ) ]"
-note = "a string literal in place of <client_type>"
-
-[[obligation]]
 id = "sf.security_admin.create-authentication-policy.create-authentication-policy.o028"
 kind = "required_operand_missing"
 required = true
@@ -60518,6 +60513,14 @@ anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
+id = "sf.security_admin.create-authentication-policy.create-authentication-policy.o088"
+kind = "negative_neighbour"
+required = true
+target = "<client_type> in [ CLIENT_POLICY = ( <client_type> = ( MINIMUM_VERSION = '<version>' ) [ , ... ] ) ]"
+anchor = "doc.sql.create-authentication-policy / Syntax"
+note = "a string literal in place of <client_type>, observed"
+
+[[obligation]]
 id = "sf.security_admin.create-authentication-policy.create-or-alter-authentication.o001"
 kind = "positive"
 required = true
@@ -60661,13 +60664,6 @@ kind = "operand_type_class"
 required = true
 target = "<client_type> in [ CLIENT_POLICY = ( <client_type> = ( MINIMUM_VERSION = '<version>' ) [ , ... ] ) ]"
 note = "a valid data_type"
-
-[[obligation]]
-id = "sf.security_admin.create-authentication-policy.create-or-alter-authentication.o023"
-kind = "negative_neighbour"
-required = true
-target = "<client_type> in [ CLIENT_POLICY = ( <client_type> = ( MINIMUM_VERSION = '<version>' ) [ , ... ] ) ]"
-note = "a string literal in place of <client_type>"
 
 [[obligation]]
 id = "sf.security_admin.create-authentication-policy.create-or-alter-authentication.o024"
@@ -61043,6 +61039,14 @@ required = true
 target = "<name>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.security_admin.create-authentication-policy.create-or-alter-authentication.o083"
+kind = "negative_neighbour"
+required = true
+target = "<client_type> in [ CLIENT_POLICY = ( <client_type> = ( MINIMUM_VERSION = '<version>' ) [ , ... ] ) ]"
+anchor = "doc.sql.create-authentication-policy / Variant syntax / CREATE OR ALTER AUTHENTICATION POLICY"
+note = "a string literal in place of <client_type>, observed"
 
 [[obligation]]
 id = "sf.security_admin.create-authentication-policy.define-authentication-policy.o001"

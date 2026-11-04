@@ -64423,3 +64423,73 @@ anchor = "doc.sql.create-api-integration / Syntax / For Git repository"
 sql = "CREATE API INTEGRATION i1 API_PROVIDER = git_https_api API_ALLOWED_PREFIXES = ( 'https://example.com/' ) ALLOWED_AUTHENTICATION_SECRETS = ( 'v1' ) ENABLED = TRUE ;"
 expect = "observe"
 context = "raw"
+
+# D113 security_admin receipt triage (imports 82-83): remaining contradictions observed, each reason names its category and receipt.
+
+[[suppress]]
+form = "sf.security_admin.create-api-integration.git-https-api-api-allowed-prefixes-use-privatelink-endpoint-true"
+kind = "negative_neighbour"
+target = "<secret_name> in [ TLS_TRUSTED_CERTIFICATES = ( { <secret_name> [ , <secret_name> , ... ] } ) ]"
+note = "a string literal in place of <secret_name>"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 02000, phase semantic_error, import-20261104-82), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.create-api-integration.git-https-api-api-allowed-prefixes-use-privatelink-endpoint-true"
+kind = "negative_neighbour"
+target = "<secret_name> in [ TLS_TRUSTED_CERTIFICATES = ( { <secret_name> [ , <secret_name> , ... ] } ) ]"
+note = "a string literal in place of <secret_name>, observed"
+anchor = "doc.sql.create-api-integration / Syntax / For Git repository"
+sql = "CREATE API INTEGRATION i1 API_PROVIDER = git_https_api API_ALLOWED_PREFIXES = ( 'https://example.com/' ) USE_PRIVATELINK_ENDPOINT = TRUE TLS_TRUSTED_CERTIFICATES = ( 'v1' ) ENABLED = TRUE ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.create-api-integration.git-https-api-api-allowed-prefixes-use-privatelink-endpoint-true"
+kind = "negative_neighbour"
+target = "<secret_name> in [ ALLOWED_AUTHENTICATION_SECRETS = { ( <secret_name> [ , <secret_name> , ... ] ) | all | none } ]"
+note = "a string literal in place of <secret_name>"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 02000, phase semantic_error, import-20261104-82), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.create-api-integration.git-https-api-api-allowed-prefixes-use-privatelink-endpoint-true"
+kind = "negative_neighbour"
+target = "<secret_name> in [ ALLOWED_AUTHENTICATION_SECRETS = { ( <secret_name> [ , <secret_name> , ... ] ) | all | none } ]"
+note = "a string literal in place of <secret_name>, observed"
+anchor = "doc.sql.create-api-integration / Syntax / For Git repository"
+sql = "CREATE API INTEGRATION i1 API_PROVIDER = git_https_api API_ALLOWED_PREFIXES = ( 'https://example.com/' ) ALLOWED_AUTHENTICATION_SECRETS = ( 'v1' ) USE_PRIVATELINK_ENDPOINT = TRUE ENABLED = TRUE ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.create-authentication-policy.create-authentication-policy"
+kind = "negative_neighbour"
+target = "<client_type> in [ CLIENT_POLICY = ( <client_type> = ( MINIMUM_VERSION = '<version>' ) [ , ... ] ) ]"
+note = "a string literal in place of <client_type>"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 1006 SQLSTATE 22023, phase semantic_error, import-20261104-82), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.create-authentication-policy.create-authentication-policy"
+kind = "negative_neighbour"
+target = "<client_type> in [ CLIENT_POLICY = ( <client_type> = ( MINIMUM_VERSION = '<version>' ) [ , ... ] ) ]"
+note = "a string literal in place of <client_type>, observed"
+anchor = "doc.sql.create-authentication-policy / Syntax"
+sql = "CREATE AUTHENTICATION POLICY v1 CLIENT_POLICY = ( 'INT' = ( MINIMUM_VERSION = 'm' ) ) ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.create-authentication-policy.create-or-alter-authentication"
+kind = "negative_neighbour"
+target = "<client_type> in [ CLIENT_POLICY = ( <client_type> = ( MINIMUM_VERSION = '<version>' ) [ , ... ] ) ]"
+note = "a string literal in place of <client_type>"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 1006 SQLSTATE 22023, phase semantic_error, import-20261104-82), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.create-authentication-policy.create-or-alter-authentication"
+kind = "negative_neighbour"
+target = "<client_type> in [ CLIENT_POLICY = ( <client_type> = ( MINIMUM_VERSION = '<version>' ) [ , ... ] ) ]"
+note = "a string literal in place of <client_type>, observed"
+anchor = "doc.sql.create-authentication-policy / Variant syntax / CREATE OR ALTER AUTHENTICATION POLICY"
+sql = "CREATE OR ALTER AUTHENTICATION POLICY v1 CLIENT_POLICY = ( 'INT' = ( MINIMUM_VERSION = 'm' ) ) ;"
+expect = "observe"
+context = "raw"
