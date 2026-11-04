@@ -28,7 +28,8 @@ use sqlquack_evidence::verify::types::CaseConverter;
 use sqlquack_policy::policy::main::load_policy::load_policy;
 use sqlquack_policy::policy::models::Policy;
 use sqlquack_rules::catalogue::constants::RULES;
-use sqlquack_rules::conversion::constants::PROJECT_UDF;
+use sqlquack_rules::conversion::constants::{HASH_DIVERGENCE, PROJECT_UDF};
+use sqlquack_rules::conversion::models::ConversionOptions;
 
 use crate::analysis::main::builtin_claims::builtin_claims;
 use crate::analysis::main::builtin_failure_modes::builtin_failure_modes;
@@ -177,7 +178,7 @@ fn coverage(
 /// The verdicts with pending cases that convert counted as passed, and the pending cases refused.
 fn projected(evidence: &Evidence, report: &VerifyReport) -> (Vec<CaseVerdict>, Vec<String>) {
     let converter = PipelineConverter {
-        options: conversion_options(&evidence.policy, false),
+        options: verified_options(&evidence.policy),
         python: None,
     };
     let cases: BTreeMap<&str, &LoadedCase> = evidence
@@ -445,9 +446,14 @@ fn render(report: &VerifyReport) -> String {
     lines.join("\n") + "\n"
 }
 
-/// The converter of `policy`'s default mode, relying on `project_udf` when Python replays cases.
+/// `policy`'s default mode with HASH allowed: its recorded cases check the opt-in conversion.
+fn verified_options(policy: &Policy) -> ConversionOptions {
+    confirm_assumption(conversion_options(policy, false), policy, HASH_DIVERGENCE)
+}
+
+/// The converter `verified_options` gives, relying on `project_udf` when Python replays cases.
 pub(crate) fn python_converter(policy: &Policy, python: Option<&Path>) -> PipelineConverter {
-    let options = conversion_options(policy, false);
+    let options = verified_options(policy);
     PipelineConverter {
         options: match python {
             Some(_) => confirm_assumption(options, policy, PROJECT_UDF),

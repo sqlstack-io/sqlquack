@@ -1,6 +1,6 @@
 //! One form's result from its obligations' cases and its family review.
 
-use crate::check::_helpers::fingerprints::form_fingerprint;
+use crate::check::_helpers::fingerprints::{form_definition, form_fingerprint};
 use crate::check::_helpers::reviews::review_reason;
 use crate::check::models::{
     CaseResult, FamilyContext, FormResult, FormState, Joined, ObligationResult, Reason,
@@ -52,16 +52,19 @@ fn form_reasons(obligations: &[ObligationResult], review: Option<Reason>) -> Vec
 
 /// The form's state: absent, excluded by a current review, verified, or unverified.
 pub(crate) fn form_result(form: &Form, family: &str, context: &FamilyContext) -> FormResult {
-    let obligations: Vec<ObligationResult> = context
+    let declared: &[&Obligation] = context
         .joined
         .obligations
         .get(form.id.as_str())
-        .map_or(&[][..], Vec::as_slice)
+        .map_or(&[][..], Vec::as_slice);
+    let obligations: Vec<ObligationResult> = declared
         .iter()
         .map(|obligation| obligation_result(obligation, context.joined))
         .collect();
     let fingerprint: String = form_fingerprint(&obligations);
-    let review: Option<Reason> = review_reason(&form.id, &fingerprint, context);
+    let definition_sha256: String = form_definition(form, declared);
+    let review: Option<Reason> =
+        review_reason(&form.id, (&fingerprint, &definition_sha256), context);
     let reasons: Vec<Reason> = form_reasons(&obligations, review);
     let state: FormState = match () {
         () if form.status == FormStatus::AbsentFromSource => FormState::Absent,
@@ -80,6 +83,7 @@ pub(crate) fn form_result(form: &Form, family: &str, context: &FamilyContext) ->
         required_obligations: required.len(),
         reasons,
         fingerprint,
+        definition_sha256,
         obligations,
     }
 }
