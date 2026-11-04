@@ -484,7 +484,7 @@ constructs = ["fn:ARRAY_AGG"]
 default = "warn"
 strict = "refuse"
 failure = "loud"
-reason = "ARRAY_AGG without WITHIN GROUP returns its values in an order neither engine defines, as WITHIN GROUP does among rows tied on its keys. The converted SQL returns the array where it holds at most one distinct value, or where tied rows hold equal values, and raises otherwise; an unordered ARRAY_AGG of scalars passes sorted where its order cannot show (through CTE and FROM-subquery columns, UNION ALL, IFF and searched CASE, into ARRAY_SIZE, ARRAY_SORT, ARRAY_CONTAINS, ARRAYS_OVERLAP, the array set functions and FLATTEN's VALUE), since rows compare as unordered sets; anywhere its order can show, including as an ORDER BY or GROUP BY key, it raises. The failure is loud, never a wrong value."
+reason = "ARRAY_AGG without WITHIN GROUP returns its values in an order neither engine defines, as WITHIN GROUP does among rows tied on its keys. The converted SQL returns the array where it holds at most one distinct value, or where tied rows hold equal values, and raises otherwise; an unordered ARRAY_AGG of scalars passes sorted where its order cannot show (through CTE and FROM-subquery columns, UNION ALL, IFF and searched CASE, into ARRAY_SIZE, ARRAY_SORT, ARRAY_MAX, ARRAY_MIN, ARRAY_CONTAINS, ARRAYS_OVERLAP, the array set functions and FLATTEN's VALUE), since rows compare as unordered sets; anywhere its order can show, including as an ORDER BY or GROUP BY key, it raises. The failure is loud, never a wrong value."
 
 [divergences.text_number_scale]
 constructs = ["node:eq", "node:neq", "node:lt", "node:lte", "node:gt", "node:gte", "node:in", "fn:EQUAL_NULL", "node:null_safe_eq", "node:null_safe_neq"]
@@ -554,7 +554,7 @@ constructs = ["node:cast", "node:try_cast"]
 default = "warn"
 strict = "refuse"
 failure = "loud"
-reason = "Recordings show a FLOAT rounded to NUMBER scales 2, 6 and 8 with up to nine significant digits, where Snowflake rounds the double's exact value half away from zero. Other scales refuse; a value with more significant digits, where Snowflake may round a shorter decimal reading instead, raises. The failure is loud, never a wrong value."
+reason = "Recordings show a FLOAT rounded to NUMBER scales 2, 6 and 8 with up to ten digits once scaled, scale padding included, where Snowflake rounds the double's exact value half away from zero, also where the shortest decimal reading rounds the other way. Other scales refuse; a value with more significant digits, where Snowflake may round a shorter decimal reading instead, raises. The failure is loud, never a wrong value."
 
 [divergences.timestamp_text_rounding]
 constructs = ["node:cast", "fn:TO_VARCHAR", "fn:TO_CHAR"]
