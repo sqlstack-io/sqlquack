@@ -57,7 +57,7 @@ pub fn run_corpus(entries: &[CorpusEntry], expected: &ExpectedDifferences) -> Ru
                     .fix_for(&entry.sql, &polyglot)
                     .filter(|_| sqlquack.starts_with(OK_PREFIX));
                 let dialect = format!("{:?}", entry.dialect);
-                let rejection = expected.rejection_for(&entry.sql, &dialect, &polyglot, &sqlquack);
+                let rejection = expected.rejection_for(&entry.sql, &dialect, &sqlquack);
                 let kept_quoting = expected.kept_quoting_for(&entry.sql, &polyglot, &sqlquack);
                 match (fix, rejection, kept_quoting) {
                     (Some(fix), _, _) => *summary.fixed.entry(fix.id.clone()).or_default() += 1,
