@@ -3,9 +3,9 @@
 use std::collections::BTreeMap;
 
 use crate::check::_helpers::receipts::case_result;
-use crate::check::models::{CaseResult, Joined, LocalVerdict};
+use crate::check::models::{CaseResult, Joined, LocalVerdict, Reason};
 use crate::formats::main::obligation_form::obligation_form;
-use crate::formats::models::{Form, Obligation, Receipt, SyntaxCoverage};
+use crate::formats::models::{Form, Obligation, Receipt, SyntaxCoverage, UnobservableCause};
 
 fn forms_by_id(coverage: &SyntaxCoverage) -> BTreeMap<&str, &Form> {
     coverage
@@ -75,7 +75,18 @@ pub(crate) fn join<'a>(
         unobservable: coverage
             .unobservable
             .iter()
-            .map(|entry| entry.obligation.as_str())
+            .map(|entry| {
+                let reason: Reason = match entry.cause {
+                    Some(UnobservableCause::NotSubmitted) => Reason::UnverifiableNotSubmitted,
+                    None => Reason::UnverifiableInternalError,
+                };
+                (entry.obligation.as_str(), reason)
+            })
+            .collect(),
+        readings: coverage
+            .readings
+            .iter()
+            .map(|reading| (reading.form.as_str(), reading))
             .collect(),
     }
 }

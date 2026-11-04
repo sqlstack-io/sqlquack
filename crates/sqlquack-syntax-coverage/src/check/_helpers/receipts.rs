@@ -1,9 +1,9 @@
 //! One case's result: its receipts against the current parser verdict.
 
-use std::collections::BTreeSet;
+use std::collections::{BTreeMap, BTreeSet};
 
 use crate::check::models::{CaseResult, LocalVerdict, Reason};
-use crate::formats::models::{Case, Expect, Phase, Receipt};
+use crate::formats::models::{AccountSetting, Case, Expect, Phase, Receipt};
 
 /// A syntax receipt bound to exactly this case's SQL, setup, session and capture, with a query id.
 fn admissible(case: &Case, receipt: &Receipt) -> bool {
@@ -84,5 +84,11 @@ pub(crate) fn case_result(case: &Case, receipts: &[&Receipt], local: LocalVerdic
         local,
         reason,
         semantic_only,
+        account_state: receipts
+            .iter()
+            .filter(|receipt| admissible(case, receipt))
+            .flat_map(|receipt| receipt.account_state.iter().flatten())
+            .map(|(name, setting)| (name.clone(), setting.clone()))
+            .collect::<BTreeMap<String, AccountSetting>>(),
     }
 }
