@@ -30,3 +30,29 @@ rows = [["'abc'"], ["'xyz'"], ["NULL"]]
 expression = "s NOT RLIKE 'a.*'"
 canonical = "NOT REGEXP_LIKE(s, 'a.*')"
 tags = ["null"]
+
+[[case]]
+id = "rlike_function"
+description = "RLIKE's function form matches the whole text, like REGEXP_LIKE, NOT applied to it included."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'shopper@example.org'"],
+  ["'shopper@example.net'"],
+  ["'shopper@example.com'"],
+  ["'shopper@example.org.uk'"],
+  ["''"],
+  ["NULL"],
+]
+query = "SELECT RLIKE(s, '.*@example\\\\.(org|net)$') AS matched, NOT RLIKE(COALESCE(s, ''), '.*@example\\\\.(org|net)$') AS unmatched FROM input ORDER BY ordinal"
+canonical = "SELECT REGEXP_LIKE(s, '.*@example\\\\.(org|net)$') AS matched, NOT REGEXP_LIKE(COALESCE(s, ''), '.*@example\\\\.(org|net)$') AS unmatched FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "empty"]
+
+[[case]]
+id = "rlike_function_flags"
+description = "RLIKE's function form with the case-insensitive flag, like REGEXP_LIKE's."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [["'ABC'"], ["'abc'"], ["'xbc'"], ["NULL"]]
+expression = "RLIKE(s, 'a.c', 'i')"
+canonical = "REGEXP_LIKE(s, 'a.c', 'i')"
+tags = ["null"]
