@@ -14,8 +14,9 @@ use crate::formats::constants::{
 };
 use crate::formats::main::obligation_form::obligation_form;
 use crate::formats::models::{
-    Alias, Case, Definition, Exclusion, Expect, Form, FormKind, FormStatus, Index, Obligation,
-    ObligationKind, Phase, Receipt, Review, Source, SourceStatus,
+    Alias, Case, Definition, Diagnostic, Exclusion, Expect, Form, FormKind, FormStatus, Index,
+    Obligation, ObligationKind, Phase, Receipt, Review, Source, SourceStatus, Unobservable,
+    UnobservableCase, UnobservableProbe,
 };
 
 fn blank(text: &str) -> bool {
@@ -429,6 +430,77 @@ pub(crate) fn check_review(review: &Review) -> Vec<String> {
             .filter_map(|exclusion| exclusion_problem(exclusion, &review.family))
             .map(|problem| format!("review {id}: {problem}")),
     );
+    problems
+}
+
+pub(crate) fn check_unobservable(entry: &Unobservable, family: &str) -> Vec<String> {
+    check_record(
+        &UnobservableRecord {
+            obligation: &entry.obligation,
+            form: &entry.form,
+            construct: &entry.construct,
+            reason: &entry.reason,
+            cases: &entry.cases,
+            runs: &entry.runs,
+            probes: &entry.probes,
+        },
+        family,
+        "unobservable",
+    )
+}
+
+pub(crate) fn check_diagnostic(entry: &Diagnostic, family: &str) -> Vec<String> {
+    check_record(
+        &UnobservableRecord {
+            obligation: &entry.obligation,
+            form: &entry.form,
+            construct: &entry.construct,
+            reason: &entry.reason,
+            cases: &entry.captured,
+            runs: &entry.runs,
+            probes: &entry.probes,
+        },
+        family,
+        "diagnostic",
+    )
+}
+
+/// The fields an unobservable entry and a diagnostic share.
+struct UnobservableRecord<'a> {
+    obligation: &'a str,
+    form: &'a str,
+    construct: &'a str,
+    reason: &'a str,
+    cases: &'a [UnobservableCase],
+    runs: &'a [String],
+    probes: &'a [UnobservableProbe],
+}
+
+fn check_record(entry: &UnobservableRecord, family: &str, table: &str) -> Vec<String> {
+    let id: &str = entry.obligation;
+    let mut problems: Vec<String> = Vec::new();
+    if obligation_form(id, family) != Some(entry.form) {
+        problems.push(format!(
+            "{table} {id}: not an obligation of form {} in family {family}",
+            entry.form
+        ));
+    }
+    if blank(entry.construct) || blank(entry.reason) || entry.runs.iter().any(|run| blank(run)) {
+        problems.push(format!(
+            "{table} {id}: needs a construct, a reason and run ids"
+        ));
+    }
+    if entry.cases.is_empty() || entry.runs.is_empty() {
+        problems.push(format!("{table} {id}: needs at least one case and one run"));
+    }
+    let hashes = entry
+        .cases
+        .iter()
+        .map(|case| &case.sql_sha256)
+        .chain(entry.probes.iter().map(|probe| &probe.sql_sha256));
+    if hashes.clone().any(|hash| !is_sha256(hash)) {
+        problems.push(format!("{table} {id}: a sql_sha256 is not a SHA-256"));
+    }
     problems
 }
 

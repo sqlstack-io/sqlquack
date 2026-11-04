@@ -7,17 +7,19 @@ use crate::formats::_helpers::files::{
     family_files, listed, read_jsonl, read_jsonl_lines, read_toml, stray,
 };
 use crate::formats::_helpers::records::{
-    check_alias, check_case, check_definition, check_form, check_index, check_obligation,
-    check_receipt, check_restatements, check_review, check_source,
+    check_alias, check_case, check_definition, check_diagnostic, check_form, check_index,
+    check_obligation, check_receipt, check_restatements, check_review, check_source,
+    check_unobservable,
 };
 use crate::formats::_helpers::retired::{retire, withdrawn_receipts};
 use crate::formats::constants::{
     ALIASES_FILE, CASES_DIR, CATALOGUE_DIR, INDEXES_FILE, OBLIGATIONS_DIR, RECEIPT_REPORT_SUFFIX,
-    RECEIPTS_DIR, REVIEWS_DIR, SOURCES_FILE,
+    RECEIPTS_DIR, REVIEWS_DIR, SOURCES_FILE, UNOBSERVABLE_DIR,
 };
 use crate::formats::models::{
-    Alias, AliasesFile, Case, CatalogueFile, Index, IndexesFile, Obligation, ObligationsFile,
-    Receipt, Review, ReviewsFile, Source, SourcesFile,
+    Alias, AliasesFile, Case, CatalogueFile, Diagnostic, Index, IndexesFile, Obligation,
+    ObligationsFile, Receipt, Review, ReviewsFile, Source, SourcesFile, Unobservable,
+    UnobservableFile,
 };
 use crate::formats::types::FamilyCatalogue;
 
@@ -207,6 +209,46 @@ pub(crate) fn load_receipts(root: &Path) -> Section<(Vec<Receipt>, Vec<String>)>
     Section::of((kept, retired), Vec::new(), problems)
 }
 
+/// `unobservable/<family>.toml`: optional, and each obligation listed at most once.
+pub(crate) fn load_unobservable(root: &Path) -> Section<(Vec<Unobservable>, Vec<Diagnostic>)> {
+    let (paths, others) = listed(&root.join(UNOBSERVABLE_DIR), "toml");
+    let mut problems: Vec<String> = others.iter().map(|path| stray(path, "toml")).collect();
+    let mut records: Vec<Unobservable> = Vec::new();
+    let mut diagnostics: Vec<Diagnostic> = Vec::new();
+    for path in paths {
+        let family: String = path
+            .file_stem()
+            .and_then(|stem| stem.to_str())
+            .unwrap_or_default()
+            .to_owned();
+        match read_toml::<UnobservableFile>(&path) {
+            Ok((file, _)) => {
+                problems.extend(
+                    file.entries
+                        .iter()
+                        .flat_map(|entry| check_unobservable(entry, &family)),
+                );
+                problems.extend(
+                    file.diagnostics
+                        .iter()
+                        .flat_map(|entry| check_diagnostic(entry, &family)),
+                );
+                records.extend(file.entries);
+                diagnostics.extend(file.diagnostics);
+            }
+            Err(problem) => problems.push(problem),
+        }
+    }
+    let mut seen: BTreeSet<&str> = BTreeSet::new();
+    problems.extend(
+        records
+            .iter()
+            .filter(|entry| !seen.insert(entry.obligation.as_str()))
+            .map(|entry| format!("unobservable {}: listed twice", entry.obligation)),
+    );
+    Section::of((records, diagnostics), Vec::new(), problems)
+}
+
 pub(crate) fn load_reviews(root: &Path) -> Section<Vec<Review>> {
     let (paths, others) = listed(&root.join(REVIEWS_DIR), "toml");
     let mut problems: Vec<String> = others.iter().map(|path| stray(path, "toml")).collect();
@@ -234,6 +276,7 @@ pub(crate) struct Sections {
     pub(crate) cases: Section<BTreeMap<String, Vec<Case>>>,
     pub(crate) receipts: Section<(Vec<Receipt>, Vec<String>)>,
     pub(crate) reviews: Section<Vec<Review>>,
+    pub(crate) unobservable: Section<(Vec<Unobservable>, Vec<Diagnostic>)>,
 }
 
 impl Sections {
@@ -248,6 +291,7 @@ impl Sections {
             &self.cases.problems,
             &self.receipts.problems,
             &self.reviews.problems,
+            &self.unobservable.problems,
         ]
         .into_iter()
         .flatten()
@@ -282,6 +326,7 @@ pub(crate) fn load_sections(root: &Path) -> Sections {
         cases: load_cases(root),
         receipts: load_receipts(root),
         reviews: load_reviews(root),
+        unobservable: load_unobservable(root),
         sources,
     }
 }

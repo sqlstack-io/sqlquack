@@ -3,7 +3,7 @@ use crate::check::models::{FormState, Reason};
 use crate::check::tests::helpers::{
     OTHER_TREE, SETUP, TREE, append_receipt, case_in_zone, case_line, drop_lines, exclusion_review,
     form, obligation, opaque, read, receipt_line, rejecting, replace, rewrite_select_17, select_17,
-    select_17_setup_sha256, sha256, structural, verified_tree, with_fields, write,
+    select_17_setup_sha256, sha256, structural, unobservable, verified_tree, with_fields, write,
 };
 use crate::check::tests::test_types::CheckTestCase;
 use crate::formats::main::load_coverage::load_coverage;
@@ -491,6 +491,68 @@ fn given_a_changed_tree_when_checking_then_the_form_fails_closed_with_its_reason
             expected_state: FormState::Verified,
             expected_reason: None,
             expected_problem: Some("review query-1: form sf.query.nowhere is not catalogued"),
+        },
+        CheckTestCase {
+            description: "an unobservable obligation whose case otherwise agrees",
+            mutate: |root| unobservable(root, "sf.query.select.o001", "select-17", "SELECT 17"),
+            parse: structural,
+            parser_tree: Some(TREE),
+            form: "sf.query.select",
+            expected_state: FormState::Unverified,
+            expected_reason: Some(Reason::UnverifiableInternalError),
+            expected_problem: None,
+        },
+        CheckTestCase {
+            description: "an unobservable entry naming an undeclared obligation",
+            mutate: |root| unobservable(root, "sf.query.select.o009", "select-17", "SELECT 17"),
+            parse: structural,
+            parser_tree: Some(TREE),
+            form: "sf.query.select",
+            expected_state: FormState::Verified,
+            expected_reason: None,
+            expected_problem: Some("unobservable sf.query.select.o009: obligation is not declared"),
+        },
+        CheckTestCase {
+            description: "an unobservable entry whose case hash is stale",
+            mutate: |root| unobservable(root, "sf.query.select.o001", "select-17", "SELECT 18"),
+            parse: structural,
+            parser_tree: Some(TREE),
+            form: "sf.query.select",
+            expected_state: FormState::Unverified,
+            expected_reason: Some(Reason::UnverifiableInternalError),
+            expected_problem: Some("case select-17 is not a case with that sql_sha256"),
+        },
+        CheckTestCase {
+            description: "an unobservable entry naming a case that does not cite it",
+            mutate: |root| unobservable(root, "sf.query.select.o001", "select-from", "SELECT FROM"),
+            parse: structural,
+            parser_tree: Some(TREE),
+            form: "sf.query.select",
+            expected_state: FormState::Unverified,
+            expected_reason: Some(Reason::UnverifiableInternalError),
+            expected_problem: Some("case select-from is not a case with that sql_sha256"),
+        },
+        CheckTestCase {
+            description: "a diagnostic naming a retired case, never resolved or scored",
+            mutate: |root| {
+                write(
+                    root,
+                    "unobservable/query.toml",
+                    &format!(
+                        "[[diagnostic]]\nobligation = \"sf.query.select.o001\"\n\
+                         form = \"sf.query.select\"\nconstruct = \"c\"\nreason = \"603\"\n\
+                         captured = [{{ case_id = \"retired-1\", sql_sha256 = \"{}\" }}]\n\
+                         runs = [\"run-1\"]\nprobes = []\n",
+                        sha256("SELECT 'gone'")
+                    ),
+                )
+            },
+            parse: structural,
+            parser_tree: Some(TREE),
+            form: "sf.query.select",
+            expected_state: FormState::Verified,
+            expected_reason: None,
+            expected_problem: None,
         },
         CheckTestCase {
             description: "a parser tree other than the reviewed one",

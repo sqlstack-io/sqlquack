@@ -14,9 +14,12 @@ fn obligation_result(obligation: &Obligation, joined: &Joined) -> ObligationResu
         .iter()
         .filter_map(|case_id| joined.cases.get(case_id).cloned())
         .collect();
-    let reason: Option<Reason> = match cases.is_empty() {
-        true => Some(Reason::MissingCase),
-        false => cases.iter().filter_map(|case| case.reason).min(),
+    let reason: Option<Reason> = match () {
+        () if cases.is_empty() => Some(Reason::MissingCase),
+        () if joined.unobservable.contains(obligation.id.as_str()) => {
+            Some(Reason::UnverifiableInternalError)
+        }
+        () => cases.iter().filter_map(|case| case.reason).min(),
     };
     ObligationResult {
         id: obligation.id.clone(),

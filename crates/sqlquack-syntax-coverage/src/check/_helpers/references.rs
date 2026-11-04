@@ -3,7 +3,7 @@
 use std::collections::{BTreeMap, BTreeSet};
 
 use crate::formats::main::obligation_form::obligation_form;
-use crate::formats::models::{Form, FormStatus, SyntaxCoverage};
+use crate::formats::models::{Case, Form, FormStatus, SyntaxCoverage};
 
 /// Every unresolved reference between the catalogue, obligations, cases, aliases and reviews.
 pub(crate) fn reference_problems(
@@ -50,6 +50,31 @@ pub(crate) fn reference_problems(
             .filter(|to| !forms.contains_key(to.as_str()))
         {
             problems.push(format!("alias {}: {to} is not catalogued", alias.from));
+        }
+    }
+    let cases: BTreeMap<&str, &Case> = coverage
+        .cases
+        .values()
+        .flatten()
+        .map(|case| (case.case_id.as_str(), case))
+        .collect();
+    for entry in &coverage.unobservable {
+        if !obligations.contains(entry.obligation.as_str()) {
+            problems.push(format!(
+                "unobservable {}: obligation is not declared",
+                entry.obligation
+            ));
+        }
+        for listed in &entry.cases {
+            let resolved: bool = cases.get(listed.case_id.as_str()).is_some_and(|case| {
+                case.sql_sha256 == listed.sql_sha256 && case.obligations.contains(&entry.obligation)
+            });
+            if !resolved {
+                problems.push(format!(
+                    "unobservable {}: case {} is not a case with that sql_sha256 citing it",
+                    entry.obligation, listed.case_id
+                ));
+            }
         }
     }
     let sources: BTreeSet<&str> = coverage

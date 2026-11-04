@@ -25,6 +25,8 @@ pub enum Reason {
     NoObligations,
     /// No case cites the obligation.
     MissingCase,
+    /// Unverifiable: Snowflake answers the construct only with an internal error (decision D87).
+    UnverifiableInternalError,
     /// A citing case has no receipt.
     MissingReceipt,
     /// A citing case has receipts, none bound to its SQL, setup and session hashes and query.
@@ -123,6 +125,8 @@ pub(crate) struct Joined<'a> {
     pub(crate) citing: BTreeMap<&'a str, Vec<&'a str>>,
     /// Each case's result by case id.
     pub(crate) cases: BTreeMap<&'a str, CaseResult>,
+    /// Obligations listed as unobservable, which never count as satisfied.
+    pub(crate) unobservable: BTreeSet<&'a str>,
 }
 
 /// What every form of one family is judged against besides its own obligations.

@@ -176,6 +176,20 @@ Any other field is refused. No account identifier, host, URL, user or email addr
 A `compile_only_explain` receipt shows only that the statement compiled. Its `accepted` phase
 says nothing about runtime.
 
+## Unobservable obligations (`unobservable/<family>.toml`)
+
+An `[[unobservable]]` entry names an obligation whose construct Snowflake answers only with an
+internal error (603), so no capture can establish a phase (decision D87). It has `obligation`,
+`form`, `construct`, `reason`, `cases` (each `{ case_id, sql_sha256 }`), `runs` and `probes` (each
+`{ probe, sql_sha256, result }`). The obligation must be declared and belong to `form` in that
+family; each listed case must exist with that `sql_sha256` and cite the obligation; an obligation is
+listed at most once. Such an obligation stays in the denominator, never counts as satisfied, and is
+reported as `unverifiable_internal_error` ("unverifiable: Snowflake internal error"). Probe results
+are diagnostics, never syntax evidence. A `[[diagnostic]]` in the same file has the same fields,
+with `captured` in place of `cases`: a 603 record on a construct no obligation requires any more,
+whose retired cases are not resolved against the cases file. Diagnostics are format-checked and
+listed, never scored. The checker ignores `semantic-limits/` and `lane-reviews/`.
+
 ## Reviews (`reviews/*.toml`)
 
 A `[[review]]` has these fields:
@@ -225,7 +239,7 @@ same way. Absent forms keep their ids and are never counted. The headline denomi
 catalogued forms: 3,348 on the frozen catalogue `e863d7de` (decision D81).
 
 Anything missing, ambiguous, stale, mismatched or opaque fails closed with a named reason:
-`no_obligations`, `missing_case`, `missing_receipt`, `stale_receipt`, `ambiguous_receipts`,
+`no_obligations`, `missing_case`, `unverifiable_internal_error`, `missing_receipt`, `stale_receipt`, `ambiguous_receipts`,
 `unexpected_outcome`, `disagreement`, `opaque_fallback`, `unreviewed` or `stale_review`. A reference that does not
 resolve fails every check command. Examples are an obligation of an uncatalogued form, a case
 citing an undeclared obligation, an alias whose source is not absent or whose target is unknown,

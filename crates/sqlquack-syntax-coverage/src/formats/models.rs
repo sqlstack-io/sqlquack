@@ -401,6 +401,61 @@ pub enum ReviewVerdict {
     ChangesRequested,
 }
 
+/// `unobservable/<family>.toml`.
+#[derive(Clone, Debug, PartialEq, Eq, Deserialize, Serialize)]
+#[serde(deny_unknown_fields)]
+pub struct UnobservableFile {
+    #[serde(default, rename = "unobservable")]
+    pub entries: Vec<Unobservable>,
+    #[serde(default, rename = "diagnostic")]
+    pub diagnostics: Vec<Diagnostic>,
+}
+
+/// An obligation Snowflake answers only with an internal error; never verified (decision D87).
+#[derive(Clone, Debug, PartialEq, Eq, Deserialize, Serialize)]
+#[serde(deny_unknown_fields)]
+pub struct Unobservable {
+    pub obligation: String,
+    pub form: String,
+    pub construct: String,
+    pub reason: String,
+    /// The captured cases, kept in the cases file without a receipt.
+    pub cases: Vec<UnobservableCase>,
+    /// The capture, re-run and probe runs; none of them imported.
+    pub runs: Vec<String>,
+    pub probes: Vec<UnobservableProbe>,
+}
+
+/// A 603 record on a construct no obligation requires any more; listed, never scored.
+#[derive(Clone, Debug, PartialEq, Eq, Deserialize, Serialize)]
+#[serde(deny_unknown_fields)]
+pub struct Diagnostic {
+    pub obligation: String,
+    pub form: String,
+    pub construct: String,
+    pub reason: String,
+    /// Retired cases, never resolved against the cases file.
+    pub captured: Vec<UnobservableCase>,
+    pub runs: Vec<String>,
+    pub probes: Vec<UnobservableProbe>,
+}
+
+#[derive(Clone, Debug, PartialEq, Eq, Deserialize, Serialize)]
+#[serde(deny_unknown_fields)]
+pub struct UnobservableCase {
+    pub case_id: String,
+    pub sql_sha256: String,
+}
+
+/// A diagnostic probe; never syntax evidence.
+#[derive(Clone, Debug, PartialEq, Eq, Deserialize, Serialize)]
+#[serde(deny_unknown_fields)]
+pub struct UnobservableProbe {
+    pub probe: String,
+    pub sql_sha256: String,
+    pub result: String,
+}
+
 /// Every syntax-coverage file, loaded and format-checked.
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct SyntaxCoverage {
@@ -417,6 +472,8 @@ pub struct SyntaxCoverage {
     /// SHA-256 of each published receipt line that is superseded or withdrawn.
     pub retired_receipts: Vec<String>,
     pub reviews: Vec<Review>,
+    pub unobservable: Vec<Unobservable>,
+    pub diagnostics: Vec<Diagnostic>,
     /// SHA-256 of the sources, aliases, catalogue and obligation files, by relative path.
     pub file_hashes: BTreeMap<String, String>,
 }

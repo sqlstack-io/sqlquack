@@ -72,5 +72,10 @@ pub(crate) fn join<'a>(
         obligations: obligations_by_form(coverage),
         citing: cases_by_obligation(coverage),
         cases,
+        unobservable: coverage
+            .unobservable
+            .iter()
+            .map(|entry| entry.obligation.as_str())
+            .collect(),
     }
 }

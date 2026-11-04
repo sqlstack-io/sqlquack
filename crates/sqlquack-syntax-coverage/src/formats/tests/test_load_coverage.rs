@@ -642,6 +642,59 @@ fn given_a_format_fault_when_loading_then_the_problem_is_named() {
             expected_problem: "query-1: declared twice",
         },
         FormatFaultTestCase {
+            description: "an unobservable obligation of another form",
+            mutate: |root| {
+                write(
+                    root,
+                    "unobservable/query.toml",
+                    "[[unobservable]]\nobligation = \"sf.query.select.o001\"\nform = \"sf.query.select.top\"\nconstruct = \"c\"\nreason = \"603\"\ncases = [{ case_id = \"query.select-17\", sql_sha256 = \"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\" }]\nruns = [\"run-1\"]\nprobes = []\n",
+                )
+            },
+            expected_problem: "unobservable sf.query.select.o001: not an obligation of form sf.query.select.top",
+        },
+        FormatFaultTestCase {
+            description: "an unobservable obligation listed twice",
+            mutate: |root| {
+                write(root, "unobservable/query.toml", &"[[unobservable]]\nobligation = \"sf.query.select.o001\"\nform = \"sf.query.select\"\nconstruct = \"c\"\nreason = \"603\"\ncases = [{ case_id = \"query.select-17\", sql_sha256 = \"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\" }]\nruns = [\"run-1\"]\nprobes = []\n".repeat(2))
+            },
+            expected_problem: "unobservable sf.query.select.o001: listed twice",
+        },
+        FormatFaultTestCase {
+            description: "an unobservable case with a malformed hash",
+            mutate: |root| {
+                write(
+                    root,
+                    "unobservable/query.toml",
+                    "[[unobservable]]\nobligation = \"sf.query.select.o001\"\nform = \"sf.query.select\"\nconstruct = \"c\"\nreason = \"603\"\ncases = [{ case_id = \"query.select-17\", sql_sha256 = \"abc\" }]\nruns = [\"run-1\"]\nprobes = []\n",
+                )
+            },
+            expected_problem: "unobservable sf.query.select.o001: a sql_sha256 is not a SHA-256",
+        },
+        FormatFaultTestCase {
+            description: "an unobservable entry without cases",
+            mutate: |root| {
+                write(
+                    root,
+                    "unobservable/query.toml",
+                    "[[unobservable]]\nobligation = \"sf.query.select.o001\"\nform = \"sf.query.select\"\nconstruct = \"c\"\nreason = \"603\"\ncases = []\nruns = [\"run-1\"]\nprobes = []\n",
+                )
+            },
+            expected_problem: "unobservable sf.query.select.o001: needs at least one case and one run",
+        },
+        FormatFaultTestCase {
+            description: "a diagnostic of another form",
+            mutate: |root| {
+                write(
+                    root,
+                    "unobservable/query.toml",
+                    "[[diagnostic]]\nobligation = \"sf.query.select.o001\"\n\
+                     form = \"sf.query.select.top\"\nconstruct = \"c\"\nreason = \"603\"\n\
+                     captured = []\nruns = [\"run-1\"]\nprobes = []\n",
+                )
+            },
+            expected_problem: "diagnostic sf.query.select.o001: not an obligation of form",
+        },
+        FormatFaultTestCase {
             description: "an obligation id declared twice",
             mutate: |root| replace(root, "obligations/query.toml", "o002", "o001"),
             expected_problem: "sf.query.select.o001: declared twice",

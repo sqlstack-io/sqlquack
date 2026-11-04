@@ -25,7 +25,6 @@ pub fn check_coverage(
                 joined: &joined,
                 review: review_reason(
                     &form.id,
-                    family,
                     &coverage.reviews,
                     &coverage.file_hashes,
                     parser_tree,

@@ -282,3 +282,18 @@ pub(crate) fn with_fields(line: &str, fields: Value) -> String {
     }
     record.to_string()
 }
+
+/// Lists `sf.query.select.o001` as unobservable, citing case `case_id` with the SHA-256 of `sql`.
+pub(crate) fn unobservable(root: &Path, obligation: &str, case_id: &str, sql: &str) {
+    write(
+        root,
+        "unobservable/query.toml",
+        &format!(
+            "[[unobservable]]\nobligation = \"{obligation}\"\nform = \"sf.query.select\"\n\
+             construct = \"a construct\"\nreason = \"internal error 603 on every capture\"\n\
+             cases = [{{ case_id = \"{case_id}\", sql_sha256 = \"{}\" }}]\n\
+             runs = [\"run-1\"]\nprobes = []\n",
+            sha256(sql)
+        ),
+    );
+}
