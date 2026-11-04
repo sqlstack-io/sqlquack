@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 
 @dataclass(frozen=True)
@@ -19,6 +19,26 @@ class Node:
 
 
 @dataclass(frozen=True)
+class Spec:
+    """How to render an obligation's case from its form's grammar trees.
+
+    action: min (no option), max (every option), branch (choice branch `payload` everywhere),
+    drop or replace `node` (payload is the replacement), quote (every identifier quoted),
+    reserved (`node` as a reserved word), nest (statement or query operands nested).
+    `path` names the options that must be present to reach `node`, `chosen` the (choice,
+    branch) selections on the way. Nodes are `id()`s of the
+    trees `derive_trees` returns.
+    """
+
+    action: str
+    production: int = 0
+    node: int = 0
+    path: frozenset[int] = frozenset()
+    payload: str = ""
+    chosen: tuple[tuple[int, int], ...] = ()
+
+
+@dataclass(frozen=True)
 class Draft:
     """An obligation before its id is assigned; pair holds the targets of two option drafts."""
 
@@ -30,3 +50,4 @@ class Draft:
     depths: tuple[int, ...] = ()
     pair: tuple[str, str] | tuple[()] = ()
     required: bool = True
+    spec: Spec | None = field(default=None, compare=False)

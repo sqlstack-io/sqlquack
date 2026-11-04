@@ -38,8 +38,9 @@ from scripts.syntax_obligations.constants import (
     TOKEN_KEYWORD,
     TOKEN_LITERAL,
     TOKEN_PUNCT,
+    WRONG_FILL,
 )
-from scripts.syntax_obligations.models import Draft, Node
+from scripts.syntax_obligations.models import Draft, Node, Spec
 
 
 def operand_class(name: str) -> str:
@@ -59,7 +60,12 @@ class _Walk:
         self.seen: Counter[str] = Counter()
         self.identifiers: dict[str, None] = {}
         self.classes: set[str] = set()
-        self.dropped: dict[str, None] = {}
+        self.dropped: dict[str, Spec] = {}
+        self.production: int = 0
+        self.path: frozenset[int] = frozenset()
+        self.identifier_nodes: dict[str, Spec] = {}
+        self.quote_specs: dict[str, Spec] = {}
+        self.chosen: tuple[tuple[int, int], ...] = ()
 
     def target(self, text: str, tail: str = "") -> str:
         """A per-form unique target, shortened before `tail`; repeats get `#2`, `#3` …"""
@@ -68,8 +74,13 @@ class _Walk:
         self.seen[short] += 1
         return short if self.seen[short] == 1 else f"{short} #{self.seen[short]}"
 
-    def add(self, kind: str, target: str, note: str) -> None:
-        self.drafts.append(Draft(form=self.form, kind=kind, target=target, note=note))
+    def add(self, kind: str, target: str, note: str, spec: Spec | None = None) -> None:
+        self.drafts.append(Draft(form=self.form, kind=kind, target=target, note=note, spec=spec))
+
+    def spec(self, action: str, node: Node | None = None, payload: str = "") -> Spec:
+        """A case spec at the current production and option path."""
+        key: int = id(node) if node else 0
+        return Spec(action, self.production, key, self.path, payload, self.chosen)
 
     def sequence(
         self, nodes: tuple[Node, ...], where: str, top: bool, branch: bool = False
@@ -88,8 +99,9 @@ class _Walk:
                 self.choice(node, where)
             else:
                 self.token(node, where, lone=lone)
-            if top and position > 0 and self._droppable(node):
-                self.dropped[render((node,))] = None
+            if position > 0 and self._droppable(node):
+                inside: str = f" in {where}" if not top and where.startswith("[") else ""
+                self.dropped.setdefault(render((node,)) + inside, self.spec("drop", node))
         return options
 
     @staticmethod
@@ -109,52 +121,81 @@ class _Walk:
         suffix: str = f" in {where}" if where else ""
         if label == "identifier":
             self.identifiers[node.text] = None
+            self.identifier_nodes.setdefault(node.text, self.spec("reserved", node))
+            self.quote_specs.setdefault(node.text, self.spec("quote", node))
         target: str = self.target(f"{node.text}{suffix}")
         if not lone:
-            self.add(KIND_OPERAND_MISSING, target, f"omit {node.text}")
+            self.add(KIND_OPERAND_MISSING, target, f"omit {node.text}", self.spec("drop", node))
         if label != SUBGRAMMAR_CLASS:
-            self.add(KIND_OPERAND_CLASS, target, f"a valid {label}")
+            self.add(KIND_OPERAND_CLASS, target, f"a valid {label}", self.valid())
         if label in LEXICAL_WRONG:
-            self.add(KIND_NEGATIVE, target, f"{LEXICAL_WRONG[label]} in place of {node.text}")
+            wrong: Spec = self.spec("replace", node, WRONG_FILL[label])
+            self.add(
+                KIND_NEGATIVE, target, f"{LEXICAL_WRONG[label]} in place of {node.text}", wrong
+            )
+
+    def valid(self) -> Spec:
+        """The packed positive case that contains the current position."""
+        return self.spec("max") if self.path else self.spec("min")
 
     def optional(self, node: Node, where: str) -> list[str]:
         text: str = render((node,))
         repeated: bool = all(is_repetition(branch) for branch in node.branches)
         present: str = self.target(text)
-        self.add(
-            KIND_OPTION_PRESENT, present, "the list continued at least once" if repeated else ""
-        )
-        self.add(KIND_OPTION_ABSENT, present, "")
+        note: str = "the list continued at least once" if repeated else ""
+        self.add(KIND_OPTION_PRESENT, present, note, self.spec("max"))
+        self.add(KIND_OPTION_ABSENT, present, "", self.spec("min"))
         if len(node.branches) > 1:
-            for branch in node.branches:
-                self.add(KIND_ALTERNATIVE, self.target(text, f" → {render(branch)}"), "")
+            for index, branch in enumerate(node.branches):
+                spec: Spec = self.spec("branch", node, payload=str(index))
+                self.add(KIND_ALTERNATIVE, self.target(text, f" → {render(branch)}"), "", spec)
         if repeated:
             return []
-        for branch in node.branches:
-            self.sequence(branch, present, top=False)
+        outer: frozenset[int] = self.path
+        self.path = outer | {id(node)}
+        self._branches(node, present, top=False, branch=False)
+        self.path = outer
         return [present]
+
+    def _branches(self, node: Node, where: str, *, top: bool, branch: bool) -> None:
+        outer: tuple[tuple[int, int], ...] = self.chosen
+        for index, nodes in enumerate(node.branches):
+            self.chosen = (*outer, (id(node), index)) if len(node.branches) > 1 else outer
+            self.sequence(nodes, where, top=top, branch=branch)
+        self.chosen = outer
 
     def choice(self, node: Node, where: str) -> None:
         text: str = render((node,))
-        for branch in node.branches:
-            self.add(KIND_ALTERNATIVE, self.target(text, f" → {render(branch)}"), "")
-        for branch in node.branches:
-            self.sequence(branch, where, top=False, branch=True)
+        for index, branch in enumerate(node.branches):
+            spec: Spec = self.spec("branch", node, payload=str(index))
+            self.add(KIND_ALTERNATIVE, self.target(text, f" → {render(branch)}"), "", spec)
+        self._branches(node, where, top=False, branch=True)
 
 
 def derive(form: str, grammar: list[str]) -> list[Draft]:
     """Drafts in a fixed order: positive, then per production its parts, then form-wide cases."""
+    return derive_trees(form, grammar)[0]
+
+
+def derive_trees(form: str, grammar: list[str]) -> tuple[list[Draft], list[tuple[Node, ...]]]:
+    """The drafts with their case specs, and the parsed productions the specs point into."""
     walk: _Walk = _Walk(form)
-    walk.add(KIND_POSITIVE, "", "the documented form with every required part and no optional part")
+    note: str = "the documented form with every required part and no optional part"
+    walk.add(KIND_POSITIVE, "", note, walk.spec("min"))
+    trees: list[tuple[Node, ...]] = []
     widest: int = 0
-    for production in grammar:
-        widest = max(widest, len(walk.sequence(parse(production), "", top=True)))
-    for keyword in walk.dropped:
-        walk.add(KIND_NEGATIVE, "", f"the form without its required {keyword}")
+    for index, production in enumerate(grammar):
+        walk.production = index
+        trees.append(parse(production))
+        widest = max(widest, len(walk.sequence(trees[-1], "", top=True)))
+    for keyword, spec in walk.dropped.items():
+        walk.add(KIND_NEGATIVE, "", f"the form without its required {keyword}", spec)
     if widest >= 2:
-        walk.add(KIND_INTERACTION_ALL, "", "every independent option of one production together")
+        note = "every independent option of one production together"
+        walk.add(KIND_INTERACTION_ALL, "", note, Spec("max"))
     for placeholder in walk.identifiers:
         for label, description in IDENTIFIER_CLASSES:
+            reserved: Spec = walk.identifier_nodes[placeholder]
             walk.drafts.append(
                 Draft(
                     form=form,
@@ -162,6 +203,7 @@ def derive(form: str, grammar: list[str]) -> list[Draft]:
                     target=placeholder,
                     note=f"{label}: {description}",
                     anchor=IDENTIFIER_ANCHOR,
+                    spec=reserved if label == "reserved" else walk.quote_specs[placeholder],
                 )
             )
     for label in sorted(walk.classes & NESTED_CLASSES):
@@ -172,6 +214,7 @@ def derive(form: str, grammar: list[str]) -> list[Draft]:
                 target="",
                 note=f"{label} operands nested; {NO_BOUND}",
                 depths=NESTING_DEPTHS,
+                spec=Spec("nest", payload=label),
             )
         )
-    return walk.drafts
+    return walk.drafts, trees
