@@ -60,7 +60,7 @@ fensu:
 # Fails on any unresolved coverage reference, a form or obligation the baseline claims and the
 # current parser no longer supports, or a catalogue change the baseline was not re-recorded for.
 syntax-coverage:
-	cargo run --locked -p sqlquack-syntax-coverage -- diff coverage/syntax/baseline.json
+	cargo run --locked --profile $(GATE_PROFILE) -p sqlquack-syntax-coverage -- diff coverage/syntax/baseline.json
 
 # Fails when a change modifies or deletes a recorded result, or adds an invalid one.
 evidence-guard:
@@ -94,9 +94,12 @@ referee-pending:
 # The static gate, the first step of `gate`, and the Python API's tests.
 check-ci: rust-lint python-check fensu syntax-coverage evidence-guard polyglot-guard generated-cases referee-cases python-api
 
-# Rust tests build with the gate profile: release speed, debug assertions and overflow checks on.
-# Its test binaries run RUST_TEST_JOBS at a time; any failure fails the target.
-RUST_TEST_PROFILE ?= gate
+# The gate builds everything it runs with one profile, GATE_PROFILE (Cargo.toml's `gate`), so the
+# Rust tests reuse check-ci's compiled crates. The test binaries run RUST_TEST_JOBS at a time; any
+# failure fails the target.
+GATE_PROFILE ?= gate
+GATE_DIR = $(or $(CARGO_TARGET_DIR),target)/$(GATE_PROFILE)
+RUST_TEST_PROFILE ?= $(GATE_PROFILE)
 RUST_TEST_JOBS ?= 4
 
 test: test-rust test-python
@@ -114,17 +117,17 @@ test-python: python-api
 # The `sqlquack` Python module, built from the workspace into its package, where the tests import it.
 # The DuckDB library it links goes next to it, where its rpath looks.
 python-module: | .venv/bin/python
-	cargo build --locked --release -p sqlquack-python --features extension-module \
+	cargo build --locked --profile $(GATE_PROFILE) -p sqlquack-python --features extension-module \
 	  --message-format=json-render-diagnostics > $(PYTHON_BUILD_JSON)
-	cp $(or $(CARGO_TARGET_DIR),target)/release/lib_native.so $(PYTHON_MODULE)
+	cp $(GATE_DIR)/lib_native.so $(PYTHON_MODULE)
 	cp "$$(jq -r 'select(.reason == "build-script-executed" and (.package_id | contains("libduckdb-sys"))) \
 	  | .linked_paths[] | sub("^[a-z]*="; "")' $(PYTHON_BUILD_JSON) | head -1)/libduckdb.so" \
 	  $(PYTHON_PACKAGE)/
 
-# The API tests compare the module's reports with the release command line's.
+# The API tests compare the module's reports with the command line's, both built with GATE_PROFILE.
 python-api: python-module
-	cargo build --locked --release -p sqlquack
-	SQLQUACK_BIN=$(abspath $(or $(CARGO_TARGET_DIR),target)/release/sqlquack) \
+	cargo build --locked --profile $(GATE_PROFILE) -p sqlquack
+	SQLQUACK_BIN=$(abspath $(GATE_DIR)/sqlquack) \
 	  LD_LIBRARY_PATH=$(abspath $(PYTHON_PACKAGE)) uv run pytest $(PYTHON_API_TESTS) -n auto --dist loadfile
 
 # A local wheel of the Python module in target/wheels; never published.
