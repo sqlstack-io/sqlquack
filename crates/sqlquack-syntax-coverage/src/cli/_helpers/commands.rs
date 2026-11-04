@@ -1,7 +1,10 @@
 //! One function per subcommand; each prints its result and returns the exit code.
 
-use std::path::Path;
-use std::process::ExitCode;
+use std::cell::RefCell;
+use std::io::{BufRead, Write};
+use std::path::{Path, PathBuf};
+use std::process::{Command, ExitCode};
+use std::time::Duration;
 
 use serde_json::{Value, json};
 
@@ -9,6 +12,7 @@ use crate::check::main::check_coverage::check_coverage;
 use crate::check::models::{CheckResult, FormResult, ObligationResult};
 use crate::cli::_helpers::local::{frozen_catalogue, parser_tree, snowflake_verdict};
 use crate::cli::_helpers::output::{print, say};
+use crate::cli::_helpers::worker::Worker;
 use crate::cli::models::Common;
 use crate::formats::constants::SNAPSHOT_FORMAT;
 use crate::formats::main::load_coverage::load_coverage;
@@ -27,6 +31,25 @@ const BOUNDARY_KINDS: [ObligationKind; 4] = [
     ObligationKind::BoundaryAbove,
     ObligationKind::NestingDepth,
 ];
+
+/// The time one local parse may take before it fails as a timeout (decision D92).
+const PARSE_BOUND: Duration = Duration::from_secs(10);
+/// The worker's virtual memory bound in KiB, 4 GiB; exceeding it fails the case as a crash.
+const PARSE_MEMORY_KIB: u64 = 4 * 1024 * 1024;
+
+/// The worker command: this binary, its memory bounded by the shell before it starts.
+fn worker_command(binary: PathBuf) -> Box<dyn Fn() -> Command> {
+    Box::new(move || {
+        let mut command = Command::new("sh");
+        command
+            .arg("-c")
+            .arg(format!(
+                "ulimit -v {PARSE_MEMORY_KIB} && exec \"$0\" parse-worker"
+            ))
+            .arg(&binary);
+        command
+    })
+}
 
 fn load(root: &Path) -> Result<SyntaxCoverage, ExitCode> {
     say(&format!("loading {}", root.display()));
@@ -49,7 +72,16 @@ fn checked(coverage: &SyntaxCoverage) -> Result<CheckResult, ExitCode> {
         tree.as_deref()
             .unwrap_or("(uncommitted: every family review is stale)")
     ));
-    let check: CheckResult = check_coverage(coverage, tree.as_deref(), &snowflake_verdict);
+    let binary: PathBuf = std::env::current_exe().map_err(|problem| {
+        say(&format!(
+            "FAILED, cannot find this binary for the parse worker: {problem}"
+        ));
+        ExitCode::FAILURE
+    })?;
+    let worker: RefCell<Worker> = RefCell::new(Worker::new(worker_command(binary), PARSE_BOUND));
+    let check: CheckResult = check_coverage(coverage, tree.as_deref(), &|sql| {
+        worker.borrow_mut().verdict(sql)
+    });
     for problem in &check.problems {
         say(problem);
     }
@@ -316,4 +348,20 @@ pub(crate) fn diff(
         true => ExitCode::FAILURE,
         false => ExitCode::SUCCESS,
     })
+}
+
+/// Reads one JSON string of SQL per line and prints the local verdict on each, flushed.
+pub(crate) fn parse_worker() -> Result<ExitCode, ExitCode> {
+    let stdout = std::io::stdout();
+    for line in std::io::stdin().lock().lines() {
+        let line: String = line.map_err(|_| ExitCode::FAILURE)?;
+        let sql: String = serde_json::from_str(&line).map_err(|_| ExitCode::FAILURE)?;
+        let verdict: String =
+            serde_json::to_string(&snowflake_verdict(&sql)).map_err(|_| ExitCode::FAILURE)?;
+        let mut out = stdout.lock();
+        writeln!(out, "{verdict}")
+            .and_then(|()| out.flush())
+            .map_err(|_| ExitCode::FAILURE)?;
+    }
+    Ok(ExitCode::SUCCESS)
 }

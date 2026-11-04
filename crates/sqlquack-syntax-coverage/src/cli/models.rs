@@ -74,6 +74,9 @@ pub enum Command {
         #[command(flatten)]
         common: Common,
     },
+    /// Internal: one verdict line per SQL line on stdin, for the isolated local parse.
+    #[command(hide = true)]
+    ParseWorker,
     /// A snapshot against a later one or the current tree; fails on any regression.
     Diff {
         base: PathBuf,

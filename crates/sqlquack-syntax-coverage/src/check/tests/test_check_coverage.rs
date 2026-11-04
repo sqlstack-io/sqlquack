@@ -1,9 +1,10 @@
 use crate::check::main::check_coverage::check_coverage;
 use crate::check::models::{FormState, Reason};
 use crate::check::tests::helpers::{
-    OTHER_TREE, SETUP, TREE, append_receipt, case_in_zone, case_line, drop_lines, exclusion_review,
-    form, obligation, opaque, read, receipt_line, rejecting, replace, rewrite_select_17, select_17,
-    select_17_setup_sha256, sha256, structural, unobservable, verified_tree, with_fields, write,
+    OTHER_TREE, SETUP, TREE, append_receipt, case_in_zone, case_line, crashing, drop_lines,
+    exclusion_review, form, hanging, obligation, opaque, read, receipt_line, rejecting, replace,
+    rewrite_select_17, select_17, select_17_setup_sha256, sha256, structural, unobservable,
+    verified_tree, with_fields, write,
 };
 use crate::check::tests::test_types::CheckTestCase;
 use crate::formats::main::load_coverage::load_coverage;
@@ -552,6 +553,99 @@ fn given_a_changed_tree_when_checking_then_the_form_fails_closed_with_its_reason
             form: "sf.query.select",
             expected_state: FormState::Verified,
             expected_reason: None,
+            expected_problem: None,
+        },
+        CheckTestCase {
+            description: "a local parse that crashes",
+            mutate: |_| {},
+            parse: crashing,
+            parser_tree: Some(TREE),
+            form: "sf.query.select",
+            expected_state: FormState::Unverified,
+            expected_reason: Some(Reason::LocalParseFailure),
+            expected_problem: None,
+        },
+        CheckTestCase {
+            description: "a local parse past its time bound",
+            mutate: |_| {},
+            parse: hanging,
+            parser_tree: Some(TREE),
+            form: "sf.query.select",
+            expected_state: FormState::Unverified,
+            expected_reason: Some(Reason::LocalParseFailure),
+            expected_problem: None,
+        },
+        CheckTestCase {
+            description: "an observe case without a receipt",
+            mutate: |root| {
+                rewrite_select_17(
+                    root,
+                    &with_fields(&select_17(), serde_json::json!({"expect": "observe"})),
+                );
+                drop_lines(root, "receipts/run-1.jsonl", "\"select-17\"");
+            },
+            parse: structural,
+            parser_tree: Some(TREE),
+            form: "sf.query.select",
+            expected_state: FormState::Unverified,
+            expected_reason: Some(Reason::AwaitingObservation),
+            expected_problem: None,
+        },
+        CheckTestCase {
+            description: "an observe case with a receipt, still never satisfied",
+            mutate: |root| {
+                rewrite_select_17(
+                    root,
+                    &with_fields(&select_17(), serde_json::json!({"expect": "observe"})),
+                )
+            },
+            parse: structural,
+            parser_tree: Some(TREE),
+            form: "sf.query.select",
+            expected_state: FormState::Unverified,
+            expected_reason: Some(Reason::AwaitingObservation),
+            expected_problem: None,
+        },
+        CheckTestCase {
+            description: "a terminates case Snowflake refused that the parser accepts",
+            mutate: |root| {
+                rewrite_select_17(
+                    root,
+                    &with_fields(&select_17(), serde_json::json!({"expect": "terminates"})),
+                );
+                replace(
+                    root,
+                    "receipts/run-1.jsonl",
+                    "\"phase\":\"accepted\"",
+                    "\"phase\":\"syntax_error\"",
+                );
+            },
+            parse: structural,
+            parser_tree: Some(TREE),
+            form: "sf.query.select",
+            expected_state: FormState::Verified,
+            expected_reason: None,
+            expected_problem: None,
+        },
+        CheckTestCase {
+            description: "a terminates case whose local parse crashes",
+            mutate: |root| {
+                rewrite_select_17(
+                    root,
+                    &with_fields(&select_17(), serde_json::json!({"expect": "terminates"})),
+                );
+                replace(
+                    root,
+                    "receipts/run-1.jsonl",
+                    "\"phase\":\"accepted\"",
+                    "\"phase\":\"syntax_error\"",
+                );
+            },
+            parse: crashing,
+            parser_tree: Some(TREE),
+            form: "sf.query.select",
+            expected_state: FormState::Unverified,
+            expected_reason: Some(Reason::LocalParseFailure),
             expected_problem: None,
         },
         CheckTestCase {

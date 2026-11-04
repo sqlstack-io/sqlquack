@@ -4,7 +4,7 @@ use std::path::Path;
 use serde_json::Value;
 use sha2::{Digest, Sha256};
 
-use crate::check::models::LocalVerdict;
+use crate::check::models::{LocalFailure, LocalVerdict};
 use crate::formats::constants::FAMILIES;
 
 /// The parser tree every family review in the fixture binds.
@@ -54,6 +54,20 @@ pub(crate) fn structural(sql: &str) -> LocalVerdict {
         LocalVerdict::Accepted { opaque: false },
         LocalVerdict::Rejected,
     ][usize::from(sql == "SELECT FROM")]
+}
+
+/// A local parse that crashes on everything.
+pub(crate) fn crashing(_sql: &str) -> LocalVerdict {
+    LocalVerdict::Failed {
+        failure: LocalFailure::Crash,
+    }
+}
+
+/// A local parse that runs past its time bound on everything.
+pub(crate) fn hanging(_sql: &str) -> LocalVerdict {
+    LocalVerdict::Failed {
+        failure: LocalFailure::Timeout,
+    }
 }
 
 /// A parser that rejects everything.

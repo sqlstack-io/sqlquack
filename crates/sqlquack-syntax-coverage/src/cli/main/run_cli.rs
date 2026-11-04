@@ -5,7 +5,7 @@ use std::process::ExitCode;
 use clap::Parser;
 
 use crate::cli::_helpers::commands::{
-    boundaries, diff, family, missing, pages, snapshot_command, summary, validate,
+    boundaries, diff, family, missing, pages, parse_worker, snapshot_command, summary, validate,
 };
 use crate::cli::models::{Arguments, Command};
 
@@ -26,6 +26,7 @@ pub fn run_cli() -> ExitCode {
             common,
         } => snapshot_command(&catalogue_commit, &common),
         Command::Diff { base, head, common } => diff(&base, head.as_deref(), &common),
+        Command::ParseWorker => parse_worker(),
     };
     result.unwrap_or_else(|code| code)
 }

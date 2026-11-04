@@ -7,7 +7,7 @@ use serde::{Deserialize, Serialize};
 use crate::formats::models::{Form, Obligation, ObligationKind, Phase};
 
 /// The current parser's verdict on one case's SQL.
-#[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(tag = "verdict", rename_all = "snake_case")]
 pub enum LocalVerdict {
     /// Parsed; `opaque` when a statement or any node in it is a Command or Raw fallback.
@@ -15,6 +15,24 @@ pub enum LocalVerdict {
         opaque: bool,
     },
     Rejected,
+    /// The parse did not end in a verdict of its own.
+    Failed {
+        failure: LocalFailure,
+    },
+}
+
+/// How a local parse failed to end cleanly (decision D90).
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub enum LocalFailure {
+    /// The parser panicked.
+    Panic,
+    /// The worker died: a stack overflow, an abort or the memory bound.
+    Crash,
+    /// The parse ran past the time bound.
+    Timeout,
+    /// A complexity guard refused the input; never a syntax verdict.
+    Guard,
 }
 
 /// Why an obligation or a form is not satisfied; every failure names one.
@@ -29,12 +47,16 @@ pub enum Reason {
     UnverifiableInternalError,
     /// A citing case has no receipt.
     MissingReceipt,
+    /// A citing extreme case awaits Snowflake's answer (`expect = "observe"`).
+    AwaitingObservation,
     /// A citing case has receipts, none bound to its SQL, setup and session hashes and query.
     StaleReceipt,
     /// A citing case has admissible receipts of different phases.
     AmbiguousReceipts,
     /// Snowflake's recorded phase contradicts what the case expects, so it is no evidence.
     UnexpectedOutcome,
+    /// The local parse panicked, crashed, hit a guard or ran past its time or memory bound.
+    LocalParseFailure,
     /// The current parser's verdict differs from the receipt's phase.
     Disagreement,
     /// The current parser accepts a case only through a Command or Raw fallback.
