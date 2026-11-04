@@ -1174,6 +1174,54 @@ runs = []
 probes = []
 
 [[unobservable]]
+obligation = "sf.ddl.alter-dynamic-table.searchoptimizationaction.o006"
+form = "sf.ddl.alter-dynamic-table.searchoptimizationaction"
+construct = "a string literal in place of <name>: ALTER DYNAMIC TABLE 'v1' ADD SEARCH OPTIMIZATION ;"
+reason = "not submitted: held by capture guard f0fdce1 in chunk ux-00: billable or out-of-account: paid feature"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.alter-dynamic-table.searchoptimizationaction.k7736770dcf52", sql_sha256 = "7736770dcf529011a7f915361187fa00abc4efba1adc2726460682a9d716b65d" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.alter-dynamic-table.searchoptimizationaction.o009"
+form = "sf.ddl.alter-dynamic-table.searchoptimizationaction"
+construct = "the form without its required TABLE: ALTER DYNAMIC v1 ADD SEARCH OPTIMIZATION ;"
+reason = "not submitted: held by capture guard f0fdce1 in chunk ux-00: billable or out-of-account: paid feature"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.alter-dynamic-table.searchoptimizationaction.kf9b991f5c6fa", sql_sha256 = "f9b991f5c6fa1884e9332a20960cbe7181f6f3e43d07b104b63c0e7d5bb22783" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.alter-dynamic-table.searchoptimizationaction.o010"
+form = "sf.ddl.alter-dynamic-table.searchoptimizationaction"
+construct = "the form without its required EXISTS in [ IF EXISTS ]: ALTER DYNAMIC TABLE IF v1 ADD SEARCH OPTIMIZATION ;"
+reason = "not submitted: held by capture guard f0fdce1 in chunk ux-00: billable or out-of-account: paid feature"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.alter-dynamic-table.searchoptimizationaction.kc3724549ba46", sql_sha256 = "c3724549ba466975a8012166ff5b04d2de4ae9f5d77df5dec5fedaacd7eb1710" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.alter-dynamic-table.searchoptimizationaction.o019"
+form = "sf.ddl.alter-dynamic-table.searchoptimizationaction"
+construct = "omit <search_method_with_target>: ALTER DYNAMIC TABLE v1 ADD SEARCH OPTIMIZATION ON ;"
+reason = "not submitted: held by capture guard f0fdce1 in chunk ux-00: billable or out-of-account: paid feature"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.alter-dynamic-table.searchoptimizationaction.k44b25d60b7d9", sql_sha256 = "44b25d60b7d97e65bcc6ad690cd17bbc19f273f52f7e8b0e16e60c5ffd9dd27e" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
 obligation = "sf.ddl.alter-dynamic-table.set.o061"
 form = "sf.ddl.alter-dynamic-table.set"
 construct = "option_present: ALTER DYNAMIC TABLE v1 SET EXECUTE AS USER v1 USE SECONDARY ROLES ALL ;"
