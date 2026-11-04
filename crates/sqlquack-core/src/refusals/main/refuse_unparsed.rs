@@ -1,5 +1,6 @@
 //! `refuse_unparsed`: the refusal for SQL that does not parse.
 
+use crate::diagnostics::constants::UNPARSED_PREFIX;
 use crate::parsing::errors::ParseFailure;
 use crate::parsing::models::SourceLines;
 use crate::refusals::models::{Refusal, RefusalCategory};
@@ -14,6 +15,6 @@ pub fn refuse_unparsed(failure: &ParseFailure, lines: &SourceLines) -> Refusal {
         construct: None,
         location: Some(location),
         category: RefusalCategory::ParseFidelity,
-        reason: format!("the SQL does not parse: {}", failure.message),
+        reason: format!("{UNPARSED_PREFIX}{}", failure.message),
     }
 }

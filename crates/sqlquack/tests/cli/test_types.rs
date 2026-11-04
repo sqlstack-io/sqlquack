@@ -193,3 +193,10 @@ pub(crate) struct DedicatedOverrideTestCase {
     pub(crate) expected_value: Option<&'static str>,
     pub(crate) expected_failure: Option<&'static str>,
 }
+
+pub(crate) struct ConvertDiagnosticTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) sql: &'static str,
+    pub(crate) expected_text: &'static str,
+    pub(crate) expected_json: (&'static str, &'static str, u64, u64),
+}
