@@ -530,8 +530,8 @@ pub const RULES: &[RuleSpec] = &[
     },
     RuleSpec {
         id: VARIANT_INSPECT,
-        constructs: &["fn:IS_NULL_VALUE", "fn:TO_JSON"],
-        conditions: "A VARIANT. TO_JSON writes object keys in byte order at every depth; an object DuckDB could sort only by rewriting a number raises, relying on json_fidelity.",
+        constructs: &["fn:IS_NULL_VALUE", "fn:STRIP_NULL_VALUE", "fn:TO_JSON"],
+        conditions: "A VARIANT. STRIP_NULL_VALUE turns a JSON null value into SQL NULL and leaves every other value, including nulls inside objects and arrays, as it is. TO_JSON writes object keys in byte order at every depth; an object DuckDB could sort only by rewriting a number raises, relying on json_fidelity.",
         failures: &[],
     },
     RuleSpec {

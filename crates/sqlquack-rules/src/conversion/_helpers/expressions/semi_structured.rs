@@ -214,7 +214,7 @@ fn negative_literal(node: &Value) -> bool {
     }
 }
 
-/// TYPEOF, IS_NULL_VALUE and TO_JSON of a VARIANT.
+/// TYPEOF, IS_NULL_VALUE, STRIP_NULL_VALUE and TO_JSON of a VARIANT.
 pub(crate) fn variant_inspect(
     name: &str,
     arguments: &[Value],
@@ -249,6 +249,20 @@ pub(crate) fn variant_inspect(
                 json_null_value(&read_json(&base, site.context), log),
                 SnowflakeType::Boolean,
             ))
+        }
+        "STRIP_NULL_VALUE" => {
+            let _rule = log.rule(VARIANT_INSPECT);
+            let sql = format!(
+                "(CASE WHEN {} THEN NULL ELSE {} END)",
+                json_null_value(&read_json(&base, site.context), log),
+                base.sql
+            );
+            Ok(Emitted {
+                sql,
+                literal: None,
+                not_null: false,
+                ..base
+            })
         }
         _ => {
             let _rule = log.rule(VARIANT_INSPECT);

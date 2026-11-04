@@ -277,7 +277,7 @@ pub(crate) fn convert_function(payload: &Value, site: Site<'_>) -> Result<Emitte
         ("OBJECT_CONSTRUCT" | "OBJECT_CONSTRUCT_KEEP_NULL", parts) => {
             object_construct(&name, parts, &construct, site)
         }
-        ("TYPEOF" | "IS_NULL_VALUE" | "TO_JSON", parts) => {
+        ("TYPEOF" | "IS_NULL_VALUE" | "STRIP_NULL_VALUE" | "TO_JSON", parts) => {
             variant_inspect(&name, parts, &construct, site)
         }
         (

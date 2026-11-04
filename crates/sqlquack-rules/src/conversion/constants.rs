@@ -353,7 +353,7 @@ pub const PARSE_JSON_RULE: &str = "rule.parse_json";
 pub const VARIANT_PATH: &str = "rule.variant_path";
 /// TYPEOF of a VARIANT.
 pub const VARIANT_TYPE_NAME: &str = "rule.variant_typeof";
-/// IS_NULL_VALUE and TO_JSON of a VARIANT.
+/// IS_NULL_VALUE, STRIP_NULL_VALUE and TO_JSON of a VARIANT.
 pub const VARIANT_INSPECT: &str = "rule.variant_inspect";
 /// Casts of a VARIANT to scalar types.
 pub const VARIANT_CAST: &str = "rule.variant_cast";
