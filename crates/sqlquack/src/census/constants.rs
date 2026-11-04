@@ -41,6 +41,9 @@ pub const CURSOR_CALLS: &[&str] = &["__cursor_start", "__cursor_end"];
 /// When set, census writes each converted file's known divergences there as `<path>.json`.
 pub const GUARDS_DIR_VARIABLE: &str = "SQLQUACK_GUARDS_DIR";
 
+/// When set, census writes each converted file's DuckDB SQL there, named after its path.
+pub const CONVERTED_DIR_VARIABLE: &str = "SQLQUACK_CONVERTED_DIR";
+
 /// How often census reports progress on stderr.
 pub const PROGRESS_INTERVAL_SECONDS: u64 = 5;
 

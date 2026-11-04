@@ -48,27 +48,26 @@ pub(crate) fn read_arrow(hash: &str, bytes: Vec<u8>) -> Result<ResultSet, Eviden
 }
 
 pub(crate) fn recorded_result(
-    metadata: &ResultMetadata,
+    label: &str,
+    columns: &[WarehouseColumn],
+    row_count: Option<u64>,
     rows: ResultSet,
 ) -> Result<RecordedResult, EvidenceError> {
-    if rows.schema.fields().len() != metadata.columns.len() {
+    if rows.schema.fields().len() != columns.len() {
         return Err(EvidenceError::InvalidResult(format!(
-            "{}: the Arrow file has {} columns, the metadata describes {}",
-            metadata.case_hash,
+            "{label}: the Arrow file has {} columns, the metadata describes {}",
             rows.schema.fields().len(),
-            metadata.columns.len()
+            columns.len()
         )));
     }
-    let row_count: usize = rows.batches.iter().map(RecordBatch::num_rows).sum();
-    if metadata.row_count != Some(row_count as u64) {
+    let rows_read: usize = rows.batches.iter().map(RecordBatch::num_rows).sum();
+    if row_count != Some(rows_read as u64) {
         return Err(EvidenceError::InvalidResult(format!(
-            "{}: the Arrow file has {row_count} rows, the metadata says {:?}",
-            metadata.case_hash, metadata.row_count
+            "{label}: the Arrow file has {rows_read} rows, the metadata says {row_count:?}"
         )));
     }
     Ok(RecordedResult {
-        columns: metadata
-            .columns
+        columns: columns
             .iter()
             .map(|column| RecordedColumn {
                 name: column.name.clone(),

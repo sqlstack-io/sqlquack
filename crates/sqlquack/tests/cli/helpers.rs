@@ -7,8 +7,9 @@ use sqlquack_evidence::replay::models::{PythonFunction, PythonReplay, ReplaySett
 use walkdir::WalkDir;
 
 use crate::test_types::{
-    CommandOutcome, ConvertOutcome, CoverageOutcome, DivergenceOutcome, ErrorCheckOutcome,
-    FunctionMacroOutcome, FunctionStdinOutcome, ReviewOutcome, ReviewedRepository,
+    CommandOutcome, CompareTestCase, ConvertOutcome, CoverageOutcome, DivergenceOutcome,
+    ErrorCheckOutcome, FunctionMacroOutcome, FunctionStdinOutcome, ReviewOutcome,
+    ReviewedRepository,
 };
 
 fn repository_root() -> PathBuf {
@@ -932,4 +933,75 @@ pub(crate) fn function_from_stdin(name: &str, body: &str) -> FunctionStdinOutcom
             .map(str::to_owned)
             .collect(),
     }
+}
+
+/// A committed recording of `I` NUMBER(38,0) and `X` TEXT: rows (0, 'fig') and (1, 'pear').
+const FRUIT_RECORDING: &str =
+    "evidence/results/1707ba43b41cc7c6da39bc8bc7c4825e471d14c66d8a30e3d1495b25be170e8f";
+
+/// The outcome `sqlquack compare` prints for one case over the fruit recording and its inputs.
+pub(crate) fn compare_outcome(test_case: &CompareTestCase) -> String {
+    let directory = tempfile::tempdir().expect("temporary directory");
+    let database = directory.path().join("inputs.duckdb");
+    duckdb::Connection::open(&database)
+        .expect("DuckDB opens")
+        .execute_batch(
+            "CREATE TABLE fruit (i INTEGER, x VARCHAR); INSERT INTO fruit VALUES (0, 'fig'), (1, 'pear');",
+        )
+        .expect("inputs written");
+    let recording = repository_root().join(FRUIT_RECORDING);
+    let entries: Vec<serde_json::Value> = test_cases
+        .iter()
+        .enumerate()
+        .map(|(index, test_case)| {
+            let mut sidecar: serde_json::Value = serde_json::from_str(
+                &std::fs::read_to_string(recording.with_extension("json")).expect("sidecar read"),
+            )
+            .expect("sidecar parses");
+            sidecar["arrow_sha256"] = test_case
+                .arrow_sha256
+                .map_or(sidecar["arrow_sha256"].clone(), serde_json::Value::from);
+            let recorded = directory.path().join(format!("recorded{index}.json"));
+            std::fs::write(&recorded, sidecar.to_string()).expect("sidecar written");
+            std::fs::copy(
+                recording.with_extension("arrow"),
+                recorded.with_extension("arrow"),
+            )
+            .expect("Arrow file copied");
+            let sql = directory.path().join(format!("converted{index}.sql"));
+            std::fs::write(&sql, test_case.sql).expect("SQL written");
+            serde_json::json!({
+                "id": index.to_string(),
+                "recorded": recorded,
+                "database": database,
+                "sql": sql,
+                "ordered": test_case.ordered,
+            })
+        })
+        .collect();
+    let manifest = directory.path().join("manifest.json");
+    std::fs::write(&manifest, serde_json::Value::Array(entries).to_string())
+        .expect("manifest written");
+    let output = Command::new(env!("CARGO_BIN_EXE_sqlquack"))
+        .current_dir(repository_root())
+        .args(["compare", "--manifest"])
+        .arg(&manifest)
+        .output()
+        .expect("sqlquack runs");
+    let outcomes: Vec<serde_json::Value> =
+        serde_json::from_slice(&output.stdout).expect("outcomes are JSON");
+    let mut by_id: Vec<(usize, String)> = outcomes
+        .iter()
+        .map(|outcome| {
+            (
+                outcome["id"]
+                    .as_str()
+                    .and_then(|id| id.parse().ok())
+                    .expect("numeric id"),
+                outcome["outcome"].as_str().expect("outcome").to_owned(),
+            )
+        })
+        .collect();
+    by_id.sort();
+    by_id.into_iter().map(|(_, outcome)| outcome).collect()
 }

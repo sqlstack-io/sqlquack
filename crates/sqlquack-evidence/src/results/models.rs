@@ -115,3 +115,12 @@ pub struct SessionDefaults {
     /// SHA-256 of `parameters` as sorted `KEY=value` lines.
     pub parameters_sha256: String,
 }
+
+/// The fields of a project-run recording's sidecar a comparison reads; other fields are ignored.
+#[derive(Debug, Deserialize)]
+pub(crate) struct RecordingSidecar {
+    pub(crate) outcome: String,
+    pub(crate) columns: Vec<WarehouseColumn>,
+    pub(crate) row_count: Option<u64>,
+    pub(crate) arrow_sha256: Option<String>,
+}
