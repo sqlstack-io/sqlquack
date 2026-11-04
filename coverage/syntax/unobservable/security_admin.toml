@@ -13,3 +13,1788 @@ cases = [
 ]
 runs = ["sa-03", "sa-03r"]
 probes = []
+
+# Never-submitted obligations (cause = "not_submitted"): every case citing the obligation was held
+# offline by lane A's capture guard, so nothing ran. Each stays in the denominator, never counts as
+# satisfied, and is reported as "unverifiable: not submitted". The reason names the guard rule.
+
+[[unobservable]]
+obligation = "sf.security_admin.create-account.o016"
+form = "sf.security_admin.create-account"
+construct = "option_present: CREATE ACCOUNT v1 ADMIN_NAME = 'm' ADMIN_PASSWORD = 'm' ADMIN_USER_TYPE = PERSON FIRST_NAME = 'm' LAST_NAME = 'm' EMAIL = 'm' MUST_CHANGE_PASSWORD = TRUE EDITION = STANDARD REGION_GROUP = g1 REGION = aws_us_west_2 COMMENT = 'm' POLARIS = TRUE ;"
+reason = "not submitted: held by capture guard cd57825 in chunk d40b-sa: creates an account (billed separately; not dropped at once)"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.create-account.k17178208252c", sql_sha256 = "17178208252cc13ecdf98d97a80b3da61c806fdd393f95f7457b9df8e2133a99" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.create-account.o022"
+form = "sf.security_admin.create-account"
+construct = "option_present: CREATE ACCOUNT v1 ADMIN_NAME = 'm' ADMIN_PASSWORD = 'm' ADMIN_USER_TYPE = PERSON FIRST_NAME = 'm' LAST_NAME = 'm' EMAIL = 'm' MUST_CHANGE_PASSWORD = TRUE EDITION = STANDARD REGION_GROUP = g1 REGION = aws_us_west_2 COMMENT = 'm' POLARIS = TRUE ;"
+reason = "not submitted: held by capture guard cd57825 in chunk d40b-sa: creates an account (billed separately; not dropped at once)"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.create-account.k17178208252c", sql_sha256 = "17178208252cc13ecdf98d97a80b3da61c806fdd393f95f7457b9df8e2133a99" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.create-account.o025"
+form = "sf.security_admin.create-account"
+construct = "a valid string_literal: CREATE ACCOUNT v1 ADMIN_NAME = 'm' ADMIN_PASSWORD = 'm' ADMIN_USER_TYPE = PERSON FIRST_NAME = 'm' LAST_NAME = 'm' EMAIL = 'm' MUST_CHANGE_PASSWORD = TRUE EDITION = STANDARD REGION_GROUP = g1 REGION = aws_us_west_2 COMMENT = 'm' POLARIS = TRUE ;"
+reason = "not submitted: held by capture guard cd57825 in chunk d40b-sa: creates an account (billed separately; not dropped at once)"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.create-account.k17178208252c", sql_sha256 = "17178208252cc13ecdf98d97a80b3da61c806fdd393f95f7457b9df8e2133a99" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.create-account.o027"
+form = "sf.security_admin.create-account"
+construct = "option_present: CREATE ACCOUNT v1 ADMIN_NAME = 'm' ADMIN_PASSWORD = 'm' ADMIN_USER_TYPE = PERSON FIRST_NAME = 'm' LAST_NAME = 'm' EMAIL = 'm' MUST_CHANGE_PASSWORD = TRUE EDITION = STANDARD REGION_GROUP = g1 REGION = aws_us_west_2 COMMENT = 'm' POLARIS = TRUE ;"
+reason = "not submitted: held by capture guard cd57825 in chunk d40b-sa: creates an account (billed separately; not dropped at once)"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.create-account.k17178208252c", sql_sha256 = "17178208252cc13ecdf98d97a80b3da61c806fdd393f95f7457b9df8e2133a99" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.create-account.o030"
+form = "sf.security_admin.create-account"
+construct = "a valid string_literal: CREATE ACCOUNT v1 ADMIN_NAME = 'm' ADMIN_PASSWORD = 'm' ADMIN_USER_TYPE = PERSON FIRST_NAME = 'm' LAST_NAME = 'm' EMAIL = 'm' MUST_CHANGE_PASSWORD = TRUE EDITION = STANDARD REGION_GROUP = g1 REGION = aws_us_west_2 COMMENT = 'm' POLARIS = TRUE ;"
+reason = "not submitted: held by capture guard cd57825 in chunk d40b-sa: creates an account (billed separately; not dropped at once)"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.create-account.k17178208252c", sql_sha256 = "17178208252cc13ecdf98d97a80b3da61c806fdd393f95f7457b9df8e2133a99" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.create-account.o035"
+form = "sf.security_admin.create-account"
+construct = "option_present: CREATE ACCOUNT v1 ADMIN_NAME = 'm' ADMIN_PASSWORD = 'm' ADMIN_USER_TYPE = PERSON FIRST_NAME = 'm' LAST_NAME = 'm' EMAIL = 'm' MUST_CHANGE_PASSWORD = TRUE EDITION = STANDARD REGION_GROUP = g1 REGION = aws_us_west_2 COMMENT = 'm' POLARIS = TRUE ;"
+reason = "not submitted: held by capture guard cd57825 in chunk d40b-sa: creates an account (billed separately; not dropped at once)"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.create-account.k17178208252c", sql_sha256 = "17178208252cc13ecdf98d97a80b3da61c806fdd393f95f7457b9df8e2133a99" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.create-account.o042"
+form = "sf.security_admin.create-account"
+construct = "option_present: CREATE ACCOUNT v1 ADMIN_NAME = 'm' ADMIN_PASSWORD = 'm' ADMIN_USER_TYPE = PERSON FIRST_NAME = 'm' LAST_NAME = 'm' EMAIL = 'm' MUST_CHANGE_PASSWORD = TRUE EDITION = STANDARD REGION_GROUP = g1 REGION = aws_us_west_2 COMMENT = 'm' POLARIS = TRUE ;"
+reason = "not submitted: held by capture guard cd57825 in chunk d40b-sa: creates an account (billed separately; not dropped at once)"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.create-account.k17178208252c", sql_sha256 = "17178208252cc13ecdf98d97a80b3da61c806fdd393f95f7457b9df8e2133a99" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.create-account.o045"
+form = "sf.security_admin.create-account"
+construct = "a valid operand: CREATE ACCOUNT v1 ADMIN_NAME = 'm' ADMIN_PASSWORD = 'm' ADMIN_USER_TYPE = PERSON FIRST_NAME = 'm' LAST_NAME = 'm' EMAIL = 'm' MUST_CHANGE_PASSWORD = TRUE EDITION = STANDARD REGION_GROUP = g1 REGION = aws_us_west_2 COMMENT = 'm' POLARIS = TRUE ;"
+reason = "not submitted: held by capture guard cd57825 in chunk d40b-sa: creates an account (billed separately; not dropped at once)"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.create-account.k17178208252c", sql_sha256 = "17178208252cc13ecdf98d97a80b3da61c806fdd393f95f7457b9df8e2133a99" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.create-account.o046"
+form = "sf.security_admin.create-account"
+construct = "option_present: CREATE ACCOUNT v1 ADMIN_NAME = 'm' ADMIN_PASSWORD = 'm' ADMIN_USER_TYPE = PERSON FIRST_NAME = 'm' LAST_NAME = 'm' EMAIL = 'm' MUST_CHANGE_PASSWORD = TRUE EDITION = STANDARD REGION_GROUP = g1 REGION = aws_us_west_2 COMMENT = 'm' POLARIS = TRUE ;"
+reason = "not submitted: held by capture guard cd57825 in chunk d40b-sa: creates an account (billed separately; not dropped at once)"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.create-account.k17178208252c", sql_sha256 = "17178208252cc13ecdf98d97a80b3da61c806fdd393f95f7457b9df8e2133a99" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.create-account.o049"
+form = "sf.security_admin.create-account"
+construct = "a valid operand: CREATE ACCOUNT v1 ADMIN_NAME = 'm' ADMIN_PASSWORD = 'm' ADMIN_USER_TYPE = PERSON FIRST_NAME = 'm' LAST_NAME = 'm' EMAIL = 'm' MUST_CHANGE_PASSWORD = TRUE EDITION = STANDARD REGION_GROUP = g1 REGION = aws_us_west_2 COMMENT = 'm' POLARIS = TRUE ;"
+reason = "not submitted: held by capture guard cd57825 in chunk d40b-sa: creates an account (billed separately; not dropped at once)"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.create-account.k17178208252c", sql_sha256 = "17178208252cc13ecdf98d97a80b3da61c806fdd393f95f7457b9df8e2133a99" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.create-account.o050"
+form = "sf.security_admin.create-account"
+construct = "option_present: CREATE ACCOUNT v1 ADMIN_NAME = 'm' ADMIN_PASSWORD = 'm' ADMIN_USER_TYPE = PERSON FIRST_NAME = 'm' LAST_NAME = 'm' EMAIL = 'm' MUST_CHANGE_PASSWORD = TRUE EDITION = STANDARD REGION_GROUP = g1 REGION = aws_us_west_2 COMMENT = 'm' POLARIS = TRUE ;"
+reason = "not submitted: held by capture guard cd57825 in chunk d40b-sa: creates an account (billed separately; not dropped at once)"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.create-account.k17178208252c", sql_sha256 = "17178208252cc13ecdf98d97a80b3da61c806fdd393f95f7457b9df8e2133a99" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.create-account.o053"
+form = "sf.security_admin.create-account"
+construct = "a valid string_literal: CREATE ACCOUNT v1 ADMIN_NAME = 'm' ADMIN_PASSWORD = 'm' ADMIN_USER_TYPE = PERSON FIRST_NAME = 'm' LAST_NAME = 'm' EMAIL = 'm' MUST_CHANGE_PASSWORD = TRUE EDITION = STANDARD REGION_GROUP = g1 REGION = aws_us_west_2 COMMENT = 'm' POLARIS = TRUE ;"
+reason = "not submitted: held by capture guard cd57825 in chunk d40b-sa: creates an account (billed separately; not dropped at once)"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.create-account.k17178208252c", sql_sha256 = "17178208252cc13ecdf98d97a80b3da61c806fdd393f95f7457b9df8e2133a99" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.create-account.o055"
+form = "sf.security_admin.create-account"
+construct = "option_present: CREATE ACCOUNT v1 ADMIN_NAME = 'm' ADMIN_PASSWORD = 'm' ADMIN_USER_TYPE = PERSON FIRST_NAME = 'm' LAST_NAME = 'm' EMAIL = 'm' MUST_CHANGE_PASSWORD = TRUE EDITION = STANDARD REGION_GROUP = g1 REGION = aws_us_west_2 COMMENT = 'm' POLARIS = TRUE ;"
+reason = "not submitted: held by capture guard cd57825 in chunk d40b-sa: creates an account (billed separately; not dropped at once)"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.create-account.k17178208252c", sql_sha256 = "17178208252cc13ecdf98d97a80b3da61c806fdd393f95f7457b9df8e2133a99" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.create-account.o068"
+form = "sf.security_admin.create-account"
+construct = "every independent option of one production together: CREATE ACCOUNT v1 ADMIN_NAME = 'm' ADMIN_PASSWORD = 'm' ADMIN_USER_TYPE = PERSON FIRST_NAME = 'm' LAST_NAME = 'm' EMAIL = 'm' MUST_CHANGE_PASSWORD = TRUE EDITION = STANDARD REGION_GROUP = g1 REGION = aws_us_west_2 COMMENT = 'm' POLARIS = TRUE ;"
+reason = "not submitted: held by capture guard cd57825 in chunk d40b-sa: creates an account (billed separately; not dropped at once)"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.create-account.k17178208252c", sql_sha256 = "17178208252cc13ecdf98d97a80b3da61c806fdd393f95f7457b9df8e2133a99" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.create-managed-account.o001"
+form = "sf.security_admin.create-managed-account"
+construct = "the documented form with every required part and no optional part: CREATE MANAGED ACCOUNT v1 ADMIN_NAME = v1 , ADMIN_PASSWORD = 'm' , TYPE = READER ;"
+reason = "not submitted: held by capture guard cd57825 in chunk sa-22: creates an account (billed separately; not dropped at once)"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.create-managed-account.ke2fc1f7cca4c", sql_sha256 = "e2fc1f7cca4c6ef95bce28c676b213aa00ce5dab75e15690c8615672d8fdd555" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.create-managed-account.o002"
+form = "sf.security_admin.create-managed-account"
+construct = "omit <name>: CREATE MANAGED ACCOUNT ADMIN_NAME = v1 , ADMIN_PASSWORD = 'm' , TYPE = READER ;"
+reason = "not submitted: held by capture guard cd57825 in chunk sa-22: creates an account (billed separately; not dropped at once)"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.create-managed-account.ke5bd02317ee6", sql_sha256 = "e5bd02317ee6e985bf1f9875fb48b23b3bf7eda1add9c0e40561a01e7fd5b51b" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.create-managed-account.o003"
+form = "sf.security_admin.create-managed-account"
+construct = "a valid identifier: CREATE MANAGED ACCOUNT v1 ADMIN_NAME = v1 , ADMIN_PASSWORD = 'm' , TYPE = READER ;"
+reason = "not submitted: held by capture guard cd57825 in chunk sa-22: creates an account (billed separately; not dropped at once)"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.create-managed-account.ke2fc1f7cca4c", sql_sha256 = "e2fc1f7cca4c6ef95bce28c676b213aa00ce5dab75e15690c8615672d8fdd555" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.create-managed-account.o004"
+form = "sf.security_admin.create-managed-account"
+construct = "a string literal in place of <name>: CREATE MANAGED ACCOUNT 'v1' ADMIN_NAME = v1 , ADMIN_PASSWORD = 'm' , TYPE = READER ;"
+reason = "not submitted: held by capture guard cd57825 in chunk sa-22: creates an account (billed separately; not dropped at once)"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.create-managed-account.kc0c494a84d7a", sql_sha256 = "c0c494a84d7aad5bb84eff8c44b6e1adee326d7f36a232f3b71d5084f11f8a55" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.create-managed-account.o005"
+form = "sf.security_admin.create-managed-account"
+construct = "omit <username>: CREATE MANAGED ACCOUNT v1 ADMIN_NAME = , ADMIN_PASSWORD = 'm' , TYPE = READER ;"
+reason = "not submitted: held by capture guard cd57825 in chunk sa-22: creates an account (billed separately; not dropped at once)"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.create-managed-account.k49ab04f84203", sql_sha256 = "49ab04f842033ea36f05b4736eb50ab14c396a9e7571f5d62c40ef40356484f2" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.create-managed-account.o006"
+form = "sf.security_admin.create-managed-account"
+construct = "a valid identifier: CREATE MANAGED ACCOUNT v1 ADMIN_NAME = v1 , ADMIN_PASSWORD = 'm' , TYPE = READER ;"
+reason = "not submitted: held by capture guard cd57825 in chunk sa-22: creates an account (billed separately; not dropped at once)"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.create-managed-account.ke2fc1f7cca4c", sql_sha256 = "e2fc1f7cca4c6ef95bce28c676b213aa00ce5dab75e15690c8615672d8fdd555" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.create-managed-account.o007"
+form = "sf.security_admin.create-managed-account"
+construct = "a string literal in place of <username>: CREATE MANAGED ACCOUNT v1 ADMIN_NAME = 'v1' , ADMIN_PASSWORD = 'm' , TYPE = READER ;"
+reason = "not submitted: held by capture guard cd57825 in chunk sa-22: creates an account (billed separately; not dropped at once)"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.create-managed-account.ke591e4f7c79a", sql_sha256 = "e591e4f7c79ac16b74db628ec8aab1224b00ac15b226706c0f1fadd64f706742" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.create-managed-account.o008"
+form = "sf.security_admin.create-managed-account"
+construct = "omit <user_password>: CREATE MANAGED ACCOUNT v1 ADMIN_NAME = v1 , ADMIN_PASSWORD = , TYPE = READER ;"
+reason = "not submitted: held by capture guard cd57825 in chunk sa-22: creates an account (billed separately; not dropped at once)"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.create-managed-account.kcd9f248dd30c", sql_sha256 = "cd9f248dd30cc36055e218e0967e3bf216bd93ea51141caf2b1dfb11f85014ed" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.create-managed-account.o009"
+form = "sf.security_admin.create-managed-account"
+construct = "a valid operand: CREATE MANAGED ACCOUNT v1 ADMIN_NAME = v1 , ADMIN_PASSWORD = 'm' , TYPE = READER ;"
+reason = "not submitted: held by capture guard cd57825 in chunk sa-22: creates an account (billed separately; not dropped at once)"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.create-managed-account.ke2fc1f7cca4c", sql_sha256 = "e2fc1f7cca4c6ef95bce28c676b213aa00ce5dab75e15690c8615672d8fdd555" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.create-managed-account.o010"
+form = "sf.security_admin.create-managed-account"
+construct = "option_present: CREATE MANAGED ACCOUNT v1 ADMIN_NAME = v1 , ADMIN_PASSWORD = 'm' , TYPE = READER , COMMENT = 'm' ;"
+reason = "not submitted: held by capture guard cd57825 in chunk sa-22: creates an account (billed separately; not dropped at once)"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.create-managed-account.kde66b90fc377", sql_sha256 = "de66b90fc3778543315626929b0181f22a82e2b65e76262b7547005372db69b2" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.create-managed-account.o011"
+form = "sf.security_admin.create-managed-account"
+construct = "option_absent: CREATE MANAGED ACCOUNT v1 ADMIN_NAME = v1 , ADMIN_PASSWORD = 'm' , TYPE = READER ;"
+reason = "not submitted: held by capture guard cd57825 in chunk sa-22: creates an account (billed separately; not dropped at once)"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.create-managed-account.ke2fc1f7cca4c", sql_sha256 = "e2fc1f7cca4c6ef95bce28c676b213aa00ce5dab75e15690c8615672d8fdd555" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.create-managed-account.o012"
+form = "sf.security_admin.create-managed-account"
+construct = "omit '<string_literal>': CREATE MANAGED ACCOUNT v1 ADMIN_NAME = v1 , ADMIN_PASSWORD = 'm' , TYPE = READER , COMMENT = ;"
+reason = "not submitted: held by capture guard cd57825 in chunk sa-22: creates an account (billed separately; not dropped at once)"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.create-managed-account.kbded54b897e7", sql_sha256 = "bded54b897e722736e0ee16c17ce1bae4f5067c505d8ddeea8c04ec5b6e34961" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.create-managed-account.o013"
+form = "sf.security_admin.create-managed-account"
+construct = "a valid string_literal: CREATE MANAGED ACCOUNT v1 ADMIN_NAME = v1 , ADMIN_PASSWORD = 'm' , TYPE = READER , COMMENT = 'm' ;"
+reason = "not submitted: held by capture guard cd57825 in chunk sa-22: creates an account (billed separately; not dropped at once)"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.create-managed-account.kde66b90fc377", sql_sha256 = "de66b90fc3778543315626929b0181f22a82e2b65e76262b7547005372db69b2" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.create-managed-account.o014"
+form = "sf.security_admin.create-managed-account"
+construct = "an unquoted identifier in place of '<string_literal>': CREATE MANAGED ACCOUNT v1 ADMIN_NAME = v1 , ADMIN_PASSWORD = 'm' , TYPE = READER , COMMENT = m1 ;"
+reason = "not submitted: held by capture guard cd57825 in chunk sa-22: creates an account (billed separately; not dropped at once)"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.create-managed-account.k1ac0b731ca46", sql_sha256 = "1ac0b731ca46fd5d42d3b476e46fd0aa8dc6ab8a104d2f6283e36b71db88c83e" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.create-managed-account.o015"
+form = "sf.security_admin.create-managed-account"
+construct = "the form without its required MANAGED: CREATE ACCOUNT v1 ADMIN_NAME = v1 , ADMIN_PASSWORD = 'm' , TYPE = READER ;"
+reason = "not submitted: held by capture guard cd57825 in chunk sa-22: creates an account (billed separately; not dropped at once)"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.create-managed-account.k1e99710076e6", sql_sha256 = "1e99710076e6201666dff94454ad3c5049dbbe84584a626eda261dfc68c488d3" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.create-managed-account.o017"
+form = "sf.security_admin.create-managed-account"
+construct = "the form without its required ADMIN_NAME: CREATE MANAGED ACCOUNT v1 = v1 , ADMIN_PASSWORD = 'm' , TYPE = READER ;"
+reason = "not submitted: held by capture guard cd57825 in chunk sa-22: creates an account (billed separately; not dropped at once)"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.create-managed-account.k670d3d5057e5", sql_sha256 = "670d3d5057e5ef22994347f36ed3c01fb6f16a43672f52e3e0b60158408c797e" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.create-managed-account.o018"
+form = "sf.security_admin.create-managed-account"
+construct = "the form without its required ADMIN_PASSWORD: CREATE MANAGED ACCOUNT v1 ADMIN_NAME = v1 , = 'm' , TYPE = READER ;"
+reason = "not submitted: held by capture guard cd57825 in chunk sa-22: creates an account (billed separately; not dropped at once)"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.create-managed-account.k20deb88d0eda", sql_sha256 = "20deb88d0edac43ca0e6266f22dae551c4d1fb46f2fac0435d8df1ddec96104f" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.create-managed-account.o019"
+form = "sf.security_admin.create-managed-account"
+construct = "the form without its required TYPE: CREATE MANAGED ACCOUNT v1 ADMIN_NAME = v1 , ADMIN_PASSWORD = 'm' , = READER ;"
+reason = "not submitted: held by capture guard cd57825 in chunk sa-22: creates an account (billed separately; not dropped at once)"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.create-managed-account.k994e108235bf", sql_sha256 = "994e108235bf561044e5cd1ede2626f0934c1e14011f4edf3af72b4117fdfa39" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.create-managed-account.o020"
+form = "sf.security_admin.create-managed-account"
+construct = "the form without its required READER: CREATE MANAGED ACCOUNT v1 ADMIN_NAME = v1 , ADMIN_PASSWORD = 'm' , TYPE = ;"
+reason = "not submitted: held by capture guard cd57825 in chunk sa-22: creates an account (billed separately; not dropped at once)"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.create-managed-account.kade040dbd1ad", sql_sha256 = "ade040dbd1ad54451551c9c06ef7592332188a111d79f0f6ad133ef06efe98a2" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.create-managed-account.o021"
+form = "sf.security_admin.create-managed-account"
+construct = "the form without its required COMMENT in [ , COMMENT = '<string_literal>' ]: CREATE MANAGED ACCOUNT v1 ADMIN_NAME = v1 , ADMIN_PASSWORD = 'm' , TYPE = READER , = 'm' ;"
+reason = "not submitted: held by capture guard cd57825 in chunk sa-22: creates an account (billed separately; not dropped at once)"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.create-managed-account.kdb7a24ab68c0", sql_sha256 = "db7a24ab68c05ac8c7fdad61e2d507259b19948cd6d755a6acbd862c41840013" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.create-managed-account.o022"
+form = "sf.security_admin.create-managed-account"
+construct = "quoted: a double-quoted identifier with blanks and mixed case: CREATE MANAGED ACCOUNT \"v1 Q\" ADMIN_NAME = v1 , ADMIN_PASSWORD = 'm' , TYPE = READER ;"
+reason = "not submitted: held by capture guard cd57825 in chunk sa-22: creates an account (billed separately; not dropped at once)"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.create-managed-account.kf1365d29743d", sql_sha256 = "f1365d29743da75bfa2ab655cfe2815a0d5178a5afd99d48c6b0a92407df4106" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.create-managed-account.o023"
+form = "sf.security_admin.create-managed-account"
+construct = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance): CREATE MANAGED ACCOUNT SELECT ADMIN_NAME = v1 , ADMIN_PASSWORD = 'm' , TYPE = READER ;"
+reason = "not submitted: held by capture guard cd57825 in chunk sa-22: creates an account (billed separately; not dropped at once)"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.create-managed-account.k405ee0cdd591", sql_sha256 = "405ee0cdd59140113a773f1d52be06d29b9326006dbd9ca9f4b29227938b90d1" },
+  { case_id = "sf.security_admin.create-managed-account.k5deda5e9d478", sql_sha256 = "5deda5e9d478926775bb9e34cbf790d9a8f11dd186f70896194a185eae2eb31f" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.create-managed-account.o024"
+form = "sf.security_admin.create-managed-account"
+construct = "quoted: a double-quoted identifier with blanks and mixed case: CREATE MANAGED ACCOUNT v1 ADMIN_NAME = \"v1 Q\" , ADMIN_PASSWORD = 'm' , TYPE = READER ;"
+reason = "not submitted: held by capture guard cd57825 in chunk sa-22: creates an account (billed separately; not dropped at once)"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.create-managed-account.k4558799ac339", sql_sha256 = "4558799ac33969e5a8cc15a840902440828b0d4257e46d09193f0a8a2d1831df" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.create-managed-account.o025"
+form = "sf.security_admin.create-managed-account"
+construct = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance): CREATE MANAGED ACCOUNT v1 ADMIN_NAME = \"SELECT\" , ADMIN_PASSWORD = 'm' , TYPE = READER ;"
+reason = "not submitted: held by capture guard cd57825 in chunk sa-22: creates an account (billed separately; not dropped at once)"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.create-managed-account.k2c8b0a0a4ae5", sql_sha256 = "2c8b0a0a4ae55462108a32a45fb5bb3a5aa02a1a98d15296766ae01509f22e4d" },
+  { case_id = "sf.security_admin.create-managed-account.kd8c49c0ffa23", sql_sha256 = "d8c49c0ffa23306551c5c49a851f2bee351f3798a5595c9f4a9c5189c345f681" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.create-organization-account.o001"
+form = "sf.security_admin.create-organization-account"
+construct = "the documented form with every required part and no optional part: CREATE ORGANIZATION ACCOUNT v1 ADMIN_NAME = 'm' ADMIN_PASSWORD = 'm' EMAIL = 'm' EDITION = ENTERPRISE ;"
+reason = "not submitted: held by capture guard cd57825 in chunk sa-23: creates an account (billed separately; not dropped at once)"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.create-organization-account.k4a4c91362f60", sql_sha256 = "4a4c91362f60ee29d6f8488897b97e53efd1138376eefd51a1dfecfe362b2d7a" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.create-organization-account.o002"
+form = "sf.security_admin.create-organization-account"
+construct = "omit <name>: CREATE ORGANIZATION ACCOUNT ADMIN_NAME = 'm' ADMIN_PASSWORD = 'm' EMAIL = 'm' EDITION = ENTERPRISE ;"
+reason = "not submitted: held by capture guard cd57825 in chunk sa-23: creates an account (billed separately; not dropped at once)"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.create-organization-account.k839222785fe7", sql_sha256 = "839222785fe7a7fd107c02cd5b6c29b82208bdc23df4dc126e908b0b3496c0f0" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.create-organization-account.o003"
+form = "sf.security_admin.create-organization-account"
+construct = "a valid identifier: CREATE ORGANIZATION ACCOUNT v1 ADMIN_NAME = 'm' ADMIN_PASSWORD = 'm' EMAIL = 'm' EDITION = ENTERPRISE ;"
+reason = "not submitted: held by capture guard cd57825 in chunk sa-23: creates an account (billed separately; not dropped at once)"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.create-organization-account.k4a4c91362f60", sql_sha256 = "4a4c91362f60ee29d6f8488897b97e53efd1138376eefd51a1dfecfe362b2d7a" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.create-organization-account.o004"
+form = "sf.security_admin.create-organization-account"
+construct = "a string literal in place of <name>: CREATE ORGANIZATION ACCOUNT 'v1' ADMIN_NAME = 'm' ADMIN_PASSWORD = 'm' EMAIL = 'm' EDITION = ENTERPRISE ;"
+reason = "not submitted: held by capture guard cd57825 in chunk sa-23: creates an account (billed separately; not dropped at once)"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.create-organization-account.kf73740a7c9b5", sql_sha256 = "f73740a7c9b5de944382cba2f852ffae2bbe95c2c3cb15d5799951e1679cd8b6" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.create-organization-account.o005"
+form = "sf.security_admin.create-organization-account"
+construct = "omit <string>: CREATE ORGANIZATION ACCOUNT v1 ADMIN_NAME = ADMIN_PASSWORD = 'm' EMAIL = 'm' EDITION = ENTERPRISE ;"
+reason = "not submitted: held by capture guard cd57825 in chunk sa-23: creates an account (billed separately; not dropped at once)"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.create-organization-account.ka49256d3f1fe", sql_sha256 = "a49256d3f1fec43d443bbffc3ca1946a0f80a2b9715d7764088489b06b1d3366" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.create-organization-account.o006"
+form = "sf.security_admin.create-organization-account"
+construct = "a valid string_literal: CREATE ORGANIZATION ACCOUNT v1 ADMIN_NAME = 'm' ADMIN_PASSWORD = 'm' EMAIL = 'm' EDITION = ENTERPRISE ;"
+reason = "not submitted: held by capture guard cd57825 in chunk sa-23: creates an account (billed separately; not dropped at once)"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.create-organization-account.k4a4c91362f60", sql_sha256 = "4a4c91362f60ee29d6f8488897b97e53efd1138376eefd51a1dfecfe362b2d7a" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.create-organization-account.o007"
+form = "sf.security_admin.create-organization-account"
+construct = "an unquoted identifier in place of <string>: CREATE ORGANIZATION ACCOUNT v1 ADMIN_NAME = m1 ADMIN_PASSWORD = 'm' EMAIL = 'm' EDITION = ENTERPRISE ;"
+reason = "not submitted: held by capture guard cd57825 in chunk sa-23: creates an account (billed separately; not dropped at once)"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.create-organization-account.k138ad5f0d296", sql_sha256 = "138ad5f0d296b56a059093f37d02bccf1e8beb2b06fce48abb8c2bfbba2a5a36" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.create-organization-account.o008"
+form = "sf.security_admin.create-organization-account"
+construct = "alternative: CREATE ORGANIZATION ACCOUNT v1 ADMIN_NAME = 'm' ADMIN_PASSWORD = 'm' EMAIL = 'm' EDITION = ENTERPRISE ;"
+reason = "not submitted: held by capture guard cd57825 in chunk sa-23: creates an account (billed separately; not dropped at once)"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.create-organization-account.k4a4c91362f60", sql_sha256 = "4a4c91362f60ee29d6f8488897b97e53efd1138376eefd51a1dfecfe362b2d7a" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.create-organization-account.o009"
+form = "sf.security_admin.create-organization-account"
+construct = "alternative: CREATE ORGANIZATION ACCOUNT v1 ADMIN_NAME = 'm' ADMIN_RSA_PUBLIC_KEY = 'm' EMAIL = 'm' EDITION = BUSINESS_CRITICAL ;"
+reason = "not submitted: held by capture guard cd57825 in chunk sa-23: creates an account (billed separately; not dropped at once)"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.create-organization-account.k7874d968a227", sql_sha256 = "7874d968a227d63792b10a73846d5f081e0802873ef11f904fac735a6f7992a3" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.create-organization-account.o010"
+form = "sf.security_admin.create-organization-account"
+construct = "omit '<string_literal>': CREATE ORGANIZATION ACCOUNT v1 ADMIN_NAME = 'm' ADMIN_PASSWORD = EMAIL = 'm' EDITION = ENTERPRISE ;"
+reason = "not submitted: held by capture guard cd57825 in chunk sa-23: creates an account (billed separately; not dropped at once)"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.create-organization-account.k07aa78dcdd49", sql_sha256 = "07aa78dcdd49d87692fe3b63be608fcbccb550fe3684b7fc571272b89d1d2ee5" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.create-organization-account.o011"
+form = "sf.security_admin.create-organization-account"
+construct = "a valid string_literal: CREATE ORGANIZATION ACCOUNT v1 ADMIN_NAME = 'm' ADMIN_PASSWORD = 'm' EMAIL = 'm' EDITION = ENTERPRISE ;"
+reason = "not submitted: held by capture guard cd57825 in chunk sa-23: creates an account (billed separately; not dropped at once)"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.create-organization-account.k4a4c91362f60", sql_sha256 = "4a4c91362f60ee29d6f8488897b97e53efd1138376eefd51a1dfecfe362b2d7a" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.create-organization-account.o012"
+form = "sf.security_admin.create-organization-account"
+construct = "an unquoted identifier in place of '<string_literal>': CREATE ORGANIZATION ACCOUNT v1 ADMIN_NAME = 'm' ADMIN_PASSWORD = m1 EMAIL = 'm' EDITION = ENTERPRISE ;"
+reason = "not submitted: held by capture guard cd57825 in chunk sa-23: creates an account (billed separately; not dropped at once)"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.create-organization-account.k335fdd29b600", sql_sha256 = "335fdd29b6007f670a832eadef6b8950f148f8961becda91408af65ce0647700" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.create-organization-account.o013"
+form = "sf.security_admin.create-organization-account"
+construct = "omit <string>: CREATE ORGANIZATION ACCOUNT v1 ADMIN_NAME = 'm' ADMIN_RSA_PUBLIC_KEY = EMAIL = 'm' EDITION = ENTERPRISE ;"
+reason = "not submitted: held by capture guard cd57825 in chunk sa-23: creates an account (billed separately; not dropped at once)"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.create-organization-account.kabbd3d114a15", sql_sha256 = "abbd3d114a15340a6799d82cae309126cbb73839af9362bac68fad91ebcefa56" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.create-organization-account.o014"
+form = "sf.security_admin.create-organization-account"
+construct = "a valid string_literal: CREATE ORGANIZATION ACCOUNT v1 ADMIN_NAME = 'm' ADMIN_RSA_PUBLIC_KEY = 'm' EMAIL = 'm' EDITION = ENTERPRISE ;"
+reason = "not submitted: held by capture guard cd57825 in chunk sa-23: creates an account (billed separately; not dropped at once)"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.create-organization-account.k78766b20857a", sql_sha256 = "78766b20857a5d262e2adaf54b9e9c89e5c844e10bcf11ac66677d9f9fee4540" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.create-organization-account.o015"
+form = "sf.security_admin.create-organization-account"
+construct = "an unquoted identifier in place of <string>: CREATE ORGANIZATION ACCOUNT v1 ADMIN_NAME = 'm' ADMIN_RSA_PUBLIC_KEY = m1 EMAIL = 'm' EDITION = ENTERPRISE ;"
+reason = "not submitted: held by capture guard cd57825 in chunk sa-23: creates an account (billed separately; not dropped at once)"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.create-organization-account.k49f038e65fbb", sql_sha256 = "49f038e65fbb30d4016c22d58404ef58ee901df9f53d6737bd5952c8b8800ebe" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.create-organization-account.o016"
+form = "sf.security_admin.create-organization-account"
+construct = "option_present: CREATE ORGANIZATION ACCOUNT v1 ADMIN_NAME = 'm' ADMIN_PASSWORD = 'm' FIRST_NAME = 'm' LAST_NAME = 'm' EMAIL = 'm' MUST_CHANGE_PASSWORD = TRUE EDITION = ENTERPRISE REGION_GROUP = g1 REGION = aws_us_west_2 COMMENT = 'm' ;"
+reason = "not submitted: held by capture guard cd57825 in chunk d40b-sa: creates an account (billed separately; not dropped at once)"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.create-organization-account.k131159aeffec", sql_sha256 = "131159aeffeca5714dd6af3c85c6a25a1b4dadf390b7ff96d506c90df31e86c0" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.create-organization-account.o017"
+form = "sf.security_admin.create-organization-account"
+construct = "option_absent: CREATE ORGANIZATION ACCOUNT v1 ADMIN_NAME = 'm' ADMIN_PASSWORD = 'm' EMAIL = 'm' EDITION = ENTERPRISE ;"
+reason = "not submitted: held by capture guard cd57825 in chunk sa-23: creates an account (billed separately; not dropped at once)"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.create-organization-account.k4a4c91362f60", sql_sha256 = "4a4c91362f60ee29d6f8488897b97e53efd1138376eefd51a1dfecfe362b2d7a" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.create-organization-account.o018"
+form = "sf.security_admin.create-organization-account"
+construct = "omit <string>: CREATE ORGANIZATION ACCOUNT v1 ADMIN_NAME = 'm' ADMIN_PASSWORD = 'm' FIRST_NAME = EMAIL = 'm' EDITION = ENTERPRISE ;"
+reason = "not submitted: held by capture guard cd57825 in chunk sa-23: creates an account (billed separately; not dropped at once)"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.create-organization-account.kfc34684dc98d", sql_sha256 = "fc34684dc98d57ea94ca98ac2fc14747fe07bc7d399f3c7f6a50f11a1a7b9299" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.create-organization-account.o019"
+form = "sf.security_admin.create-organization-account"
+construct = "a valid string_literal: CREATE ORGANIZATION ACCOUNT v1 ADMIN_NAME = 'm' ADMIN_PASSWORD = 'm' FIRST_NAME = 'm' LAST_NAME = 'm' EMAIL = 'm' MUST_CHANGE_PASSWORD = TRUE EDITION = ENTERPRISE REGION_GROUP = g1 REGION = aws_us_west_2 COMMENT = 'm' ;"
+reason = "not submitted: held by capture guard cd57825 in chunk d40b-sa: creates an account (billed separately; not dropped at once)"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.create-organization-account.k131159aeffec", sql_sha256 = "131159aeffeca5714dd6af3c85c6a25a1b4dadf390b7ff96d506c90df31e86c0" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.create-organization-account.o020"
+form = "sf.security_admin.create-organization-account"
+construct = "an unquoted identifier in place of <string>: CREATE ORGANIZATION ACCOUNT v1 ADMIN_NAME = 'm' ADMIN_PASSWORD = 'm' FIRST_NAME = m1 EMAIL = 'm' EDITION = ENTERPRISE ;"
+reason = "not submitted: held by capture guard cd57825 in chunk sa-23: creates an account (billed separately; not dropped at once)"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.create-organization-account.k0e84156bb6f8", sql_sha256 = "0e84156bb6f8220f832a25fe852553bedc8607c94a5779b1c06fd1fb00515bbb" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.create-organization-account.o021"
+form = "sf.security_admin.create-organization-account"
+construct = "option_present: CREATE ORGANIZATION ACCOUNT v1 ADMIN_NAME = 'm' ADMIN_PASSWORD = 'm' FIRST_NAME = 'm' LAST_NAME = 'm' EMAIL = 'm' MUST_CHANGE_PASSWORD = TRUE EDITION = ENTERPRISE REGION_GROUP = g1 REGION = aws_us_west_2 COMMENT = 'm' ;"
+reason = "not submitted: held by capture guard cd57825 in chunk d40b-sa: creates an account (billed separately; not dropped at once)"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.create-organization-account.k131159aeffec", sql_sha256 = "131159aeffeca5714dd6af3c85c6a25a1b4dadf390b7ff96d506c90df31e86c0" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.create-organization-account.o022"
+form = "sf.security_admin.create-organization-account"
+construct = "option_absent: CREATE ORGANIZATION ACCOUNT v1 ADMIN_NAME = 'm' ADMIN_PASSWORD = 'm' EMAIL = 'm' EDITION = ENTERPRISE ;"
+reason = "not submitted: held by capture guard cd57825 in chunk sa-23: creates an account (billed separately; not dropped at once)"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.create-organization-account.k4a4c91362f60", sql_sha256 = "4a4c91362f60ee29d6f8488897b97e53efd1138376eefd51a1dfecfe362b2d7a" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.create-organization-account.o023"
+form = "sf.security_admin.create-organization-account"
+construct = "omit <string>: CREATE ORGANIZATION ACCOUNT v1 ADMIN_NAME = 'm' ADMIN_PASSWORD = 'm' LAST_NAME = EMAIL = 'm' EDITION = ENTERPRISE ;"
+reason = "not submitted: held by capture guard cd57825 in chunk sa-23: creates an account (billed separately; not dropped at once)"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.create-organization-account.k555ffbb3a4af", sql_sha256 = "555ffbb3a4af19b8c09b8598a58de21089bff892c8a1bbd0298e496f4cca81fc" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.create-organization-account.o024"
+form = "sf.security_admin.create-organization-account"
+construct = "a valid string_literal: CREATE ORGANIZATION ACCOUNT v1 ADMIN_NAME = 'm' ADMIN_PASSWORD = 'm' FIRST_NAME = 'm' LAST_NAME = 'm' EMAIL = 'm' MUST_CHANGE_PASSWORD = TRUE EDITION = ENTERPRISE REGION_GROUP = g1 REGION = aws_us_west_2 COMMENT = 'm' ;"
+reason = "not submitted: held by capture guard cd57825 in chunk d40b-sa: creates an account (billed separately; not dropped at once)"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.create-organization-account.k131159aeffec", sql_sha256 = "131159aeffeca5714dd6af3c85c6a25a1b4dadf390b7ff96d506c90df31e86c0" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.create-organization-account.o025"
+form = "sf.security_admin.create-organization-account"
+construct = "an unquoted identifier in place of <string>: CREATE ORGANIZATION ACCOUNT v1 ADMIN_NAME = 'm' ADMIN_PASSWORD = 'm' LAST_NAME = m1 EMAIL = 'm' EDITION = ENTERPRISE ;"
+reason = "not submitted: held by capture guard cd57825 in chunk sa-23: creates an account (billed separately; not dropped at once)"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.create-organization-account.k3e2670509d36", sql_sha256 = "3e2670509d369e3c1fedebe156af34a6a2c1881f7bbacad8203d14b2906681ae" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.create-organization-account.o026"
+form = "sf.security_admin.create-organization-account"
+construct = "omit '<string>': CREATE ORGANIZATION ACCOUNT v1 ADMIN_NAME = 'm' ADMIN_PASSWORD = 'm' EMAIL = EDITION = ENTERPRISE ;"
+reason = "not submitted: held by capture guard cd57825 in chunk sa-23: creates an account (billed separately; not dropped at once)"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.create-organization-account.kc5860a88f784", sql_sha256 = "c5860a88f7848d77edcbeaa3bdfd16521ca3fe1c62f41fde31ad6155610cd662" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.create-organization-account.o027"
+form = "sf.security_admin.create-organization-account"
+construct = "a valid string_literal: CREATE ORGANIZATION ACCOUNT v1 ADMIN_NAME = 'm' ADMIN_PASSWORD = 'm' EMAIL = 'm' EDITION = ENTERPRISE ;"
+reason = "not submitted: held by capture guard cd57825 in chunk sa-23: creates an account (billed separately; not dropped at once)"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.create-organization-account.k4a4c91362f60", sql_sha256 = "4a4c91362f60ee29d6f8488897b97e53efd1138376eefd51a1dfecfe362b2d7a" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.create-organization-account.o028"
+form = "sf.security_admin.create-organization-account"
+construct = "an unquoted identifier in place of '<string>': CREATE ORGANIZATION ACCOUNT v1 ADMIN_NAME = 'm' ADMIN_PASSWORD = 'm' EMAIL = m1 EDITION = ENTERPRISE ;"
+reason = "not submitted: held by capture guard cd57825 in chunk sa-23: creates an account (billed separately; not dropped at once)"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.create-organization-account.kbfe07d4685ab", sql_sha256 = "bfe07d4685ab3abbabdb2cdd53f0e3c2b3292aeabdbaa69c0b58a56ab4c143c2" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.create-organization-account.o029"
+form = "sf.security_admin.create-organization-account"
+construct = "option_present: CREATE ORGANIZATION ACCOUNT v1 ADMIN_NAME = 'm' ADMIN_PASSWORD = 'm' FIRST_NAME = 'm' LAST_NAME = 'm' EMAIL = 'm' MUST_CHANGE_PASSWORD = TRUE EDITION = ENTERPRISE REGION_GROUP = g1 REGION = aws_us_west_2 COMMENT = 'm' ;"
+reason = "not submitted: held by capture guard cd57825 in chunk d40b-sa: creates an account (billed separately; not dropped at once)"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.create-organization-account.k131159aeffec", sql_sha256 = "131159aeffeca5714dd6af3c85c6a25a1b4dadf390b7ff96d506c90df31e86c0" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.create-organization-account.o030"
+form = "sf.security_admin.create-organization-account"
+construct = "option_absent: CREATE ORGANIZATION ACCOUNT v1 ADMIN_NAME = 'm' ADMIN_PASSWORD = 'm' EMAIL = 'm' EDITION = ENTERPRISE ;"
+reason = "not submitted: held by capture guard cd57825 in chunk sa-23: creates an account (billed separately; not dropped at once)"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.create-organization-account.k4a4c91362f60", sql_sha256 = "4a4c91362f60ee29d6f8488897b97e53efd1138376eefd51a1dfecfe362b2d7a" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.create-organization-account.o031"
+form = "sf.security_admin.create-organization-account"
+construct = "alternative: CREATE ORGANIZATION ACCOUNT v1 ADMIN_NAME = 'm' ADMIN_PASSWORD = 'm' EMAIL = 'm' MUST_CHANGE_PASSWORD = TRUE EDITION = ENTERPRISE ;"
+reason = "not submitted: held by capture guard cd57825 in chunk sa-23: creates an account (billed separately; not dropped at once)"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.create-organization-account.k2f53452ac895", sql_sha256 = "2f53452ac895ba10b7609a3a11a7bc01671116169aa35e6e958192f6d3935726" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.create-organization-account.o032"
+form = "sf.security_admin.create-organization-account"
+construct = "alternative: CREATE ORGANIZATION ACCOUNT v1 ADMIN_NAME = 'm' ADMIN_RSA_PUBLIC_KEY = 'm' EMAIL = 'm' MUST_CHANGE_PASSWORD = FALSE EDITION = BUSINESS_CRITICAL ;"
+reason = "not submitted: held by capture guard cd57825 in chunk sa-23: creates an account (billed separately; not dropped at once)"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.create-organization-account.k33e183e33aa1", sql_sha256 = "33e183e33aa1ec96130d8a686350671a01c25c40d3c9ad6408b063d454944a8e" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.create-organization-account.o033"
+form = "sf.security_admin.create-organization-account"
+construct = "alternative: CREATE ORGANIZATION ACCOUNT v1 ADMIN_NAME = 'm' ADMIN_PASSWORD = 'm' EMAIL = 'm' EDITION = ENTERPRISE ;"
+reason = "not submitted: held by capture guard cd57825 in chunk sa-23: creates an account (billed separately; not dropped at once)"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.create-organization-account.k4a4c91362f60", sql_sha256 = "4a4c91362f60ee29d6f8488897b97e53efd1138376eefd51a1dfecfe362b2d7a" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.create-organization-account.o034"
+form = "sf.security_admin.create-organization-account"
+construct = "alternative: CREATE ORGANIZATION ACCOUNT v1 ADMIN_NAME = 'm' ADMIN_RSA_PUBLIC_KEY = 'm' EMAIL = 'm' EDITION = BUSINESS_CRITICAL ;"
+reason = "not submitted: held by capture guard cd57825 in chunk sa-23: creates an account (billed separately; not dropped at once)"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.create-organization-account.k7874d968a227", sql_sha256 = "7874d968a227d63792b10a73846d5f081e0802873ef11f904fac735a6f7992a3" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.create-organization-account.o035"
+form = "sf.security_admin.create-organization-account"
+construct = "option_present: CREATE ORGANIZATION ACCOUNT v1 ADMIN_NAME = 'm' ADMIN_PASSWORD = 'm' FIRST_NAME = 'm' LAST_NAME = 'm' EMAIL = 'm' MUST_CHANGE_PASSWORD = TRUE EDITION = ENTERPRISE REGION_GROUP = g1 REGION = aws_us_west_2 COMMENT = 'm' ;"
+reason = "not submitted: held by capture guard cd57825 in chunk d40b-sa: creates an account (billed separately; not dropped at once)"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.create-organization-account.k131159aeffec", sql_sha256 = "131159aeffeca5714dd6af3c85c6a25a1b4dadf390b7ff96d506c90df31e86c0" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.create-organization-account.o036"
+form = "sf.security_admin.create-organization-account"
+construct = "option_absent: CREATE ORGANIZATION ACCOUNT v1 ADMIN_NAME = 'm' ADMIN_PASSWORD = 'm' EMAIL = 'm' EDITION = ENTERPRISE ;"
+reason = "not submitted: held by capture guard cd57825 in chunk sa-23: creates an account (billed separately; not dropped at once)"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.create-organization-account.k4a4c91362f60", sql_sha256 = "4a4c91362f60ee29d6f8488897b97e53efd1138376eefd51a1dfecfe362b2d7a" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.create-organization-account.o037"
+form = "sf.security_admin.create-organization-account"
+construct = "omit <region_group_id>: CREATE ORGANIZATION ACCOUNT v1 ADMIN_NAME = 'm' ADMIN_PASSWORD = 'm' EMAIL = 'm' EDITION = ENTERPRISE REGION_GROUP = ;"
+reason = "not submitted: held by capture guard cd57825 in chunk sa-23: creates an account (billed separately; not dropped at once)"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.create-organization-account.k34eeb581f7f2", sql_sha256 = "34eeb581f7f2c5cb9015baaf8b2a937ff097ff831e33d7a1b4af064f5cd9965b" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.create-organization-account.o038"
+form = "sf.security_admin.create-organization-account"
+construct = "a valid operand: CREATE ORGANIZATION ACCOUNT v1 ADMIN_NAME = 'm' ADMIN_PASSWORD = 'm' FIRST_NAME = 'm' LAST_NAME = 'm' EMAIL = 'm' MUST_CHANGE_PASSWORD = TRUE EDITION = ENTERPRISE REGION_GROUP = g1 REGION = aws_us_west_2 COMMENT = 'm' ;"
+reason = "not submitted: held by capture guard cd57825 in chunk d40b-sa: creates an account (billed separately; not dropped at once)"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.create-organization-account.k131159aeffec", sql_sha256 = "131159aeffeca5714dd6af3c85c6a25a1b4dadf390b7ff96d506c90df31e86c0" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.create-organization-account.o039"
+form = "sf.security_admin.create-organization-account"
+construct = "option_present: CREATE ORGANIZATION ACCOUNT v1 ADMIN_NAME = 'm' ADMIN_PASSWORD = 'm' FIRST_NAME = 'm' LAST_NAME = 'm' EMAIL = 'm' MUST_CHANGE_PASSWORD = TRUE EDITION = ENTERPRISE REGION_GROUP = g1 REGION = aws_us_west_2 COMMENT = 'm' ;"
+reason = "not submitted: held by capture guard cd57825 in chunk d40b-sa: creates an account (billed separately; not dropped at once)"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.create-organization-account.k131159aeffec", sql_sha256 = "131159aeffeca5714dd6af3c85c6a25a1b4dadf390b7ff96d506c90df31e86c0" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.create-organization-account.o040"
+form = "sf.security_admin.create-organization-account"
+construct = "option_absent: CREATE ORGANIZATION ACCOUNT v1 ADMIN_NAME = 'm' ADMIN_PASSWORD = 'm' EMAIL = 'm' EDITION = ENTERPRISE ;"
+reason = "not submitted: held by capture guard cd57825 in chunk sa-23: creates an account (billed separately; not dropped at once)"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.create-organization-account.k4a4c91362f60", sql_sha256 = "4a4c91362f60ee29d6f8488897b97e53efd1138376eefd51a1dfecfe362b2d7a" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.create-organization-account.o041"
+form = "sf.security_admin.create-organization-account"
+construct = "omit <snowflake_region_id>: CREATE ORGANIZATION ACCOUNT v1 ADMIN_NAME = 'm' ADMIN_PASSWORD = 'm' EMAIL = 'm' EDITION = ENTERPRISE REGION = ;"
+reason = "not submitted: held by capture guard cd57825 in chunk sa-23: creates an account (billed separately; not dropped at once)"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.create-organization-account.kd392868acc77", sql_sha256 = "d392868acc77a2715721cb5bbdd9e7474939a349ac925d6a929d4879d0596d97" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.create-organization-account.o042"
+form = "sf.security_admin.create-organization-account"
+construct = "a valid operand: CREATE ORGANIZATION ACCOUNT v1 ADMIN_NAME = 'm' ADMIN_PASSWORD = 'm' FIRST_NAME = 'm' LAST_NAME = 'm' EMAIL = 'm' MUST_CHANGE_PASSWORD = TRUE EDITION = ENTERPRISE REGION_GROUP = g1 REGION = aws_us_west_2 COMMENT = 'm' ;"
+reason = "not submitted: held by capture guard cd57825 in chunk d40b-sa: creates an account (billed separately; not dropped at once)"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.create-organization-account.k131159aeffec", sql_sha256 = "131159aeffeca5714dd6af3c85c6a25a1b4dadf390b7ff96d506c90df31e86c0" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.create-organization-account.o043"
+form = "sf.security_admin.create-organization-account"
+construct = "option_present: CREATE ORGANIZATION ACCOUNT v1 ADMIN_NAME = 'm' ADMIN_PASSWORD = 'm' FIRST_NAME = 'm' LAST_NAME = 'm' EMAIL = 'm' MUST_CHANGE_PASSWORD = TRUE EDITION = ENTERPRISE REGION_GROUP = g1 REGION = aws_us_west_2 COMMENT = 'm' ;"
+reason = "not submitted: held by capture guard cd57825 in chunk d40b-sa: creates an account (billed separately; not dropped at once)"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.create-organization-account.k131159aeffec", sql_sha256 = "131159aeffeca5714dd6af3c85c6a25a1b4dadf390b7ff96d506c90df31e86c0" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.create-organization-account.o044"
+form = "sf.security_admin.create-organization-account"
+construct = "option_absent: CREATE ORGANIZATION ACCOUNT v1 ADMIN_NAME = 'm' ADMIN_PASSWORD = 'm' EMAIL = 'm' EDITION = ENTERPRISE ;"
+reason = "not submitted: held by capture guard cd57825 in chunk sa-23: creates an account (billed separately; not dropped at once)"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.create-organization-account.k4a4c91362f60", sql_sha256 = "4a4c91362f60ee29d6f8488897b97e53efd1138376eefd51a1dfecfe362b2d7a" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.create-organization-account.o045"
+form = "sf.security_admin.create-organization-account"
+construct = "omit '<string_literal>': CREATE ORGANIZATION ACCOUNT v1 ADMIN_NAME = 'm' ADMIN_PASSWORD = 'm' EMAIL = 'm' EDITION = ENTERPRISE COMMENT = ;"
+reason = "not submitted: held by capture guard cd57825 in chunk sa-23: creates an account (billed separately; not dropped at once)"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.create-organization-account.k27fd999fea82", sql_sha256 = "27fd999fea821460f8e346ffdef8b84a6309cc4a08a3f8fb2a8baa9daa7a89c8" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.create-organization-account.o046"
+form = "sf.security_admin.create-organization-account"
+construct = "a valid string_literal: CREATE ORGANIZATION ACCOUNT v1 ADMIN_NAME = 'm' ADMIN_PASSWORD = 'm' FIRST_NAME = 'm' LAST_NAME = 'm' EMAIL = 'm' MUST_CHANGE_PASSWORD = TRUE EDITION = ENTERPRISE REGION_GROUP = g1 REGION = aws_us_west_2 COMMENT = 'm' ;"
+reason = "not submitted: held by capture guard cd57825 in chunk d40b-sa: creates an account (billed separately; not dropped at once)"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.create-organization-account.k131159aeffec", sql_sha256 = "131159aeffeca5714dd6af3c85c6a25a1b4dadf390b7ff96d506c90df31e86c0" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.create-organization-account.o047"
+form = "sf.security_admin.create-organization-account"
+construct = "an unquoted identifier in place of '<string_literal>': CREATE ORGANIZATION ACCOUNT v1 ADMIN_NAME = 'm' ADMIN_PASSWORD = 'm' EMAIL = 'm' EDITION = ENTERPRISE COMMENT = m1 ;"
+reason = "not submitted: held by capture guard cd57825 in chunk sa-23: creates an account (billed separately; not dropped at once)"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.create-organization-account.k16aeea08eb7c", sql_sha256 = "16aeea08eb7cde9d5530bf01ccfd33aa11014638d0029ff8c60dc60d6dcf9403" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.create-organization-account.o049"
+form = "sf.security_admin.create-organization-account"
+construct = "the form without its required ADMIN_NAME: CREATE ORGANIZATION ACCOUNT v1 = 'm' ADMIN_PASSWORD = 'm' EMAIL = 'm' EDITION = ENTERPRISE ;"
+reason = "not submitted: held by capture guard cd57825 in chunk sa-23: creates an account (billed separately; not dropped at once)"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.create-organization-account.kff1992709592", sql_sha256 = "ff1992709592b3083297f98be99ecf30cab78acbbb8d7b2302f9a929716a961c" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.create-organization-account.o050"
+form = "sf.security_admin.create-organization-account"
+construct = "the form without its required { ADMIN_PASSWORD = '<string_literal>' | ADMIN_RSA_PUBLIC_KEY = <string> }: CREATE ORGANIZATION ACCOUNT v1 ADMIN_NAME = 'm' EMAIL = 'm' EDITION = ENTERPRISE ;"
+reason = "not submitted: held by capture guard cd57825 in chunk sa-23: creates an account (billed separately; not dropped at once)"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.create-organization-account.k0158cfba1ffe", sql_sha256 = "0158cfba1ffe63655b8282d7e7c3a8c79734e3b861591c8373160b5f4e8ccfb1" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.create-organization-account.o051"
+form = "sf.security_admin.create-organization-account"
+construct = "the form without its required EMAIL: CREATE ORGANIZATION ACCOUNT v1 ADMIN_NAME = 'm' ADMIN_PASSWORD = 'm' = 'm' EDITION = ENTERPRISE ;"
+reason = "not submitted: held by capture guard cd57825 in chunk sa-23: creates an account (billed separately; not dropped at once)"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.create-organization-account.k0dc6f46fbe4c", sql_sha256 = "0dc6f46fbe4cd1bc33fb6d9ef29babbaf3b26cd24fb4b1330b317bc07709738e" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.create-organization-account.o052"
+form = "sf.security_admin.create-organization-account"
+construct = "the form without its required { TRUE | FALSE } in [ MUST_CHANGE_PASSWORD = { TRUE | FALSE } ]: CREATE ORGANIZATION ACCOUNT v1 ADMIN_NAME = 'm' ADMIN_PASSWORD = 'm' EMAIL = 'm' MUST_CHANGE_PASSWORD = EDITION = ENTERPRISE ;"
+reason = "not submitted: held by capture guard cd57825 in chunk sa-23: creates an account (billed separately; not dropped at once)"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.create-organization-account.k6542da71578a", sql_sha256 = "6542da71578a8e000c8d3bb92987b61c9b86392207f8e85d99bdc93611d1f8ad" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.create-organization-account.o053"
+form = "sf.security_admin.create-organization-account"
+construct = "the form without its required EDITION: CREATE ORGANIZATION ACCOUNT v1 ADMIN_NAME = 'm' ADMIN_PASSWORD = 'm' EMAIL = 'm' = ENTERPRISE ;"
+reason = "not submitted: held by capture guard cd57825 in chunk sa-23: creates an account (billed separately; not dropped at once)"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.create-organization-account.k28584e876278", sql_sha256 = "28584e876278603bce5c96820f3405618c7abde7ff585de0c082ba3fc97d5688" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.create-organization-account.o054"
+form = "sf.security_admin.create-organization-account"
+construct = "the form without its required { ENTERPRISE | BUSINESS_CRITICAL }: CREATE ORGANIZATION ACCOUNT v1 ADMIN_NAME = 'm' ADMIN_PASSWORD = 'm' EMAIL = 'm' EDITION = ;"
+reason = "not submitted: held by capture guard cd57825 in chunk sa-23: creates an account (billed separately; not dropped at once)"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.create-organization-account.ked63d8807ceb", sql_sha256 = "ed63d8807cebcc8b30354dca7628bab02615b4873ac03d7ee127a0f1f090b073" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.create-organization-account.o055"
+form = "sf.security_admin.create-organization-account"
+construct = "every independent option of one production together: CREATE ORGANIZATION ACCOUNT v1 ADMIN_NAME = 'm' ADMIN_PASSWORD = 'm' FIRST_NAME = 'm' LAST_NAME = 'm' EMAIL = 'm' MUST_CHANGE_PASSWORD = TRUE EDITION = ENTERPRISE REGION_GROUP = g1 REGION = aws_us_west_2 COMMENT = 'm' ;"
+reason = "not submitted: held by capture guard cd57825 in chunk d40b-sa: creates an account (billed separately; not dropped at once)"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.create-organization-account.k131159aeffec", sql_sha256 = "131159aeffeca5714dd6af3c85c6a25a1b4dadf390b7ff96d506c90df31e86c0" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.create-organization-account.o056"
+form = "sf.security_admin.create-organization-account"
+construct = "quoted: a double-quoted identifier with blanks and mixed case: CREATE ORGANIZATION ACCOUNT \"v1 Q\" ADMIN_NAME = 'm' ADMIN_PASSWORD = 'm' EMAIL = 'm' EDITION = ENTERPRISE ;"
+reason = "not submitted: held by capture guard cd57825 in chunk sa-23: creates an account (billed separately; not dropped at once)"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.create-organization-account.k5b92926a644e", sql_sha256 = "5b92926a644e44b92b96204397057c3b4c6cee0d3c9b060d036fbbb7e895ab50" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.create-organization-account.o057"
+form = "sf.security_admin.create-organization-account"
+construct = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance): CREATE ORGANIZATION ACCOUNT SELECT ADMIN_NAME = 'm' ADMIN_PASSWORD = 'm' EMAIL = 'm' EDITION = ENTERPRISE ;"
+reason = "not submitted: held by capture guard cd57825 in chunk sa-23: creates an account (billed separately; not dropped at once)"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.create-organization-account.k2cbec288abca", sql_sha256 = "2cbec288abca65a98ab6630f01fe6f480b82dd1761b838a29675362399706108" },
+  { case_id = "sf.security_admin.create-organization-account.k6cc79630610d", sql_sha256 = "6cc79630610d145d13923463b941f59a182231b273f4640da900aac9be3347a7" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.grant-privilege.globalprivileges-all-on-account.o001"
+form = "sf.security_admin.grant-privilege.globalprivileges-all-on-account"
+construct = "the documented form with every required part and no optional part: GRANT CREATE ACCOUNT ON ACCOUNT TO v1 ;"
+reason = "not submitted: held by capture guard cd57825 in chunk sa-36: creates an account (billed separately; not dropped at once)"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.grant-privilege.globalprivileges-all-on-account.ke6ffa6a87ae2", sql_sha256 = "e6ffa6a87ae2fda0f46e2abded8ec5b34ad7bfbb33a2cba07b34a797f10ed9b8" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.grant-privilege.globalprivileges-all-on-account.o002"
+form = "sf.security_admin.grant-privilege.globalprivileges-all-on-account"
+construct = "alternative: GRANT CREATE ACCOUNT ON ACCOUNT TO v1 ;"
+reason = "not submitted: held by capture guard cd57825 in chunk sa-36: creates an account (billed separately; not dropped at once)"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.grant-privilege.globalprivileges-all-on-account.ke6ffa6a87ae2", sql_sha256 = "e6ffa6a87ae2fda0f46e2abded8ec5b34ad7bfbb33a2cba07b34a797f10ed9b8" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.grant-privilege.globalprivileges-all-on-account.o008"
+form = "sf.security_admin.grant-privilege.globalprivileges-all-on-account"
+construct = "alternative: GRANT CREATE ACCOUNT ON ACCOUNT TO v1 ;"
+reason = "not submitted: held by capture guard cd57825 in chunk sa-36: creates an account (billed separately; not dropped at once)"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.grant-privilege.globalprivileges-all-on-account.ke6ffa6a87ae2", sql_sha256 = "e6ffa6a87ae2fda0f46e2abded8ec5b34ad7bfbb33a2cba07b34a797f10ed9b8" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.grant-privilege.globalprivileges-all-on-account.o010"
+form = "sf.security_admin.grant-privilege.globalprivileges-all-on-account"
+construct = "alternative: GRANT CREATE ACCOUNT ON ACCOUNT TO v1 ;"
+reason = "not submitted: held by capture guard cd57825 in chunk sa-36: creates an account (billed separately; not dropped at once)"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.grant-privilege.globalprivileges-all-on-account.ke6ffa6a87ae2", sql_sha256 = "e6ffa6a87ae2fda0f46e2abded8ec5b34ad7bfbb33a2cba07b34a797f10ed9b8" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.grant-privilege.globalprivileges-all-on-account.o027"
+form = "sf.security_admin.grant-privilege.globalprivileges-all-on-account"
+construct = "alternative: GRANT CREATE ACCOUNT ON ACCOUNT TO v1 ;"
+reason = "not submitted: held by capture guard cd57825 in chunk sa-36: creates an account (billed separately; not dropped at once)"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.grant-privilege.globalprivileges-all-on-account.ke6ffa6a87ae2", sql_sha256 = "e6ffa6a87ae2fda0f46e2abded8ec5b34ad7bfbb33a2cba07b34a797f10ed9b8" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.grant-privilege.globalprivileges-all-on-account.o088"
+form = "sf.security_admin.grant-privilege.globalprivileges-all-on-account"
+construct = "the list continued at least once: GRANT CREATE ACCOUNT , ACCOUNT ON ACCOUNT TO ROLE v1 WITH GRANT OPTION ;"
+reason = "not submitted: held by capture guard cd57825 in chunk sa-35: creates an account (billed separately; not dropped at once)"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.grant-privilege.globalprivileges-all-on-account.k7d2dec411d9d", sql_sha256 = "7d2dec411d9dd98dd8f9a7cfa7258ad45d80afc8e49c1bfa55a7532d4b3eabfd" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.grant-privilege.globalprivileges-all-on-account.o089"
+form = "sf.security_admin.grant-privilege.globalprivileges-all-on-account"
+construct = "option_absent: GRANT CREATE ACCOUNT ON ACCOUNT TO v1 ;"
+reason = "not submitted: held by capture guard cd57825 in chunk sa-36: creates an account (billed separately; not dropped at once)"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.grant-privilege.globalprivileges-all-on-account.ke6ffa6a87ae2", sql_sha256 = "e6ffa6a87ae2fda0f46e2abded8ec5b34ad7bfbb33a2cba07b34a797f10ed9b8" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.grant-privilege.globalprivileges-all-on-account.o393"
+form = "sf.security_admin.grant-privilege.globalprivileges-all-on-account"
+construct = "option_present: GRANT CREATE ACCOUNT , ACCOUNT ON ACCOUNT TO ROLE v1 WITH GRANT OPTION ;"
+reason = "not submitted: held by capture guard cd57825 in chunk sa-35: creates an account (billed separately; not dropped at once)"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.grant-privilege.globalprivileges-all-on-account.k7d2dec411d9d", sql_sha256 = "7d2dec411d9dd98dd8f9a7cfa7258ad45d80afc8e49c1bfa55a7532d4b3eabfd" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.grant-privilege.globalprivileges-all-on-account.o394"
+form = "sf.security_admin.grant-privilege.globalprivileges-all-on-account"
+construct = "option_absent: GRANT CREATE ACCOUNT ON ACCOUNT TO v1 ;"
+reason = "not submitted: held by capture guard cd57825 in chunk sa-36: creates an account (billed separately; not dropped at once)"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.grant-privilege.globalprivileges-all-on-account.ke6ffa6a87ae2", sql_sha256 = "e6ffa6a87ae2fda0f46e2abded8ec5b34ad7bfbb33a2cba07b34a797f10ed9b8" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.grant-privilege.globalprivileges-all-on-account.o395"
+form = "sf.security_admin.grant-privilege.globalprivileges-all-on-account"
+construct = "omit <role_name>: GRANT CREATE ACCOUNT ON ACCOUNT TO ;"
+reason = "not submitted: held by capture guard cd57825 in chunk sa-36: creates an account (billed separately; not dropped at once)"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.grant-privilege.globalprivileges-all-on-account.ka8763ea5c7bc", sql_sha256 = "a8763ea5c7bcae668ea8c9728aeee8eca5dd6b68e3dc5d14352715c708ae464f" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.grant-privilege.globalprivileges-all-on-account.o396"
+form = "sf.security_admin.grant-privilege.globalprivileges-all-on-account"
+construct = "a valid identifier: GRANT CREATE ACCOUNT ON ACCOUNT TO v1 ;"
+reason = "not submitted: held by capture guard cd57825 in chunk sa-36: creates an account (billed separately; not dropped at once)"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.grant-privilege.globalprivileges-all-on-account.ke6ffa6a87ae2", sql_sha256 = "e6ffa6a87ae2fda0f46e2abded8ec5b34ad7bfbb33a2cba07b34a797f10ed9b8" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.grant-privilege.globalprivileges-all-on-account.o397"
+form = "sf.security_admin.grant-privilege.globalprivileges-all-on-account"
+construct = "a string literal in place of <role_name>: GRANT CREATE ACCOUNT ON ACCOUNT TO 'v1' ;"
+reason = "not submitted: held by capture guard cd57825 in chunk sa-35: creates an account (billed separately; not dropped at once)"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.grant-privilege.globalprivileges-all-on-account.k3ada0608d38d", sql_sha256 = "3ada0608d38d80cfec3733900cb87985897b624d51935c3866024c7bbcc51fe6" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.grant-privilege.globalprivileges-all-on-account.o398"
+form = "sf.security_admin.grant-privilege.globalprivileges-all-on-account"
+construct = "option_present: GRANT CREATE ACCOUNT , ACCOUNT ON ACCOUNT TO ROLE v1 WITH GRANT OPTION ;"
+reason = "not submitted: held by capture guard cd57825 in chunk sa-35: creates an account (billed separately; not dropped at once)"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.grant-privilege.globalprivileges-all-on-account.k7d2dec411d9d", sql_sha256 = "7d2dec411d9dd98dd8f9a7cfa7258ad45d80afc8e49c1bfa55a7532d4b3eabfd" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.grant-privilege.globalprivileges-all-on-account.o399"
+form = "sf.security_admin.grant-privilege.globalprivileges-all-on-account"
+construct = "option_absent: GRANT CREATE ACCOUNT ON ACCOUNT TO v1 ;"
+reason = "not submitted: held by capture guard cd57825 in chunk sa-36: creates an account (billed separately; not dropped at once)"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.grant-privilege.globalprivileges-all-on-account.ke6ffa6a87ae2", sql_sha256 = "e6ffa6a87ae2fda0f46e2abded8ec5b34ad7bfbb33a2cba07b34a797f10ed9b8" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.grant-privilege.globalprivileges-all-on-account.o447"
+form = "sf.security_admin.grant-privilege.globalprivileges-all-on-account"
+construct = "the form without its required ON: GRANT CREATE ACCOUNT ACCOUNT TO v1 ;"
+reason = "not submitted: held by capture guard cd57825 in chunk sa-36: creates an account (billed separately; not dropped at once)"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.grant-privilege.globalprivileges-all-on-account.kea3491046a4d", sql_sha256 = "ea3491046a4d9f9c85265c1f61d9c0204280d01a82ba9420a008dc6b5c967b72" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.grant-privilege.globalprivileges-all-on-account.o448"
+form = "sf.security_admin.grant-privilege.globalprivileges-all-on-account"
+construct = "the form without its required ACCOUNT: GRANT CREATE ACCOUNT ON TO v1 ;"
+reason = "not submitted: held by capture guard cd57825 in chunk sa-35: creates an account (billed separately; not dropped at once)"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.grant-privilege.globalprivileges-all-on-account.k56cb75b43072", sql_sha256 = "56cb75b430720944362a9be2d6173f1969fe41b3693a7e67335d633fc85a22b2" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.grant-privilege.globalprivileges-all-on-account.o493"
+form = "sf.security_admin.grant-privilege.globalprivileges-all-on-account"
+construct = "the form without its required TO: GRANT CREATE ACCOUNT ON ACCOUNT v1 ;"
+reason = "not submitted: held by capture guard cd57825 in chunk sa-35: creates an account (billed separately; not dropped at once)"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.grant-privilege.globalprivileges-all-on-account.k8452798de3e5", sql_sha256 = "8452798de3e5780ed9b5ae8c30ca20cd396f0c03b0b581ddff3fcb7d42c56547" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.grant-privilege.globalprivileges-all-on-account.o494"
+form = "sf.security_admin.grant-privilege.globalprivileges-all-on-account"
+construct = "the form without its required GRANT in [ WITH GRANT OPTION ]: GRANT CREATE ACCOUNT ON ACCOUNT TO v1 WITH OPTION ;"
+reason = "not submitted: held by capture guard cd57825 in chunk sa-35: creates an account (billed separately; not dropped at once)"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.grant-privilege.globalprivileges-all-on-account.k38f392bce053", sql_sha256 = "38f392bce0539bc1630fe2580958fecc0a1d9526dd3698c61a0f3c50d4d600c6" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.grant-privilege.globalprivileges-all-on-account.o495"
+form = "sf.security_admin.grant-privilege.globalprivileges-all-on-account"
+construct = "the form without its required OPTION in [ WITH GRANT OPTION ]: GRANT CREATE ACCOUNT ON ACCOUNT TO v1 WITH GRANT ;"
+reason = "not submitted: held by capture guard cd57825 in chunk sa-35: creates an account (billed separately; not dropped at once)"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.grant-privilege.globalprivileges-all-on-account.k872d05e49994", sql_sha256 = "872d05e499948ccbe076185bbcc3862834646511de4b72eb90d5069f5246e061" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.grant-privilege.globalprivileges-all-on-account.o496"
+form = "sf.security_admin.grant-privilege.globalprivileges-all-on-account"
+construct = "every independent option of one production together: GRANT CREATE ACCOUNT , ACCOUNT ON ACCOUNT TO ROLE v1 WITH GRANT OPTION ;"
+reason = "not submitted: held by capture guard cd57825 in chunk sa-35: creates an account (billed separately; not dropped at once)"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.grant-privilege.globalprivileges-all-on-account.k7d2dec411d9d", sql_sha256 = "7d2dec411d9dd98dd8f9a7cfa7258ad45d80afc8e49c1bfa55a7532d4b3eabfd" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.grant-privilege.globalprivileges-all-on-account.o505"
+form = "sf.security_admin.grant-privilege.globalprivileges-all-on-account"
+construct = "quoted: a double-quoted identifier with blanks and mixed case: GRANT CREATE ACCOUNT ON ACCOUNT TO \"v1 Q\" ;"
+reason = "not submitted: held by capture guard cd57825 in chunk sa-35: creates an account (billed separately; not dropped at once)"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.grant-privilege.globalprivileges-all-on-account.k0afc7c5037d4", sql_sha256 = "0afc7c5037d43c0e8f8005a7b1aa3368ee0eb621ef342923921eb2842dac8e8c" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.grant-privilege.globalprivileges-all-on-account.o506"
+form = "sf.security_admin.grant-privilege.globalprivileges-all-on-account"
+construct = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance): GRANT CREATE ACCOUNT ON ACCOUNT TO \"SELECT\" ;"
+reason = "not submitted: held by capture guard cd57825 in chunk sa-35: creates an account (billed separately; not dropped at once); held by capture guard cd57825 in chunk sa-36: creates an account (billed separately; not dropped at once)"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.grant-privilege.globalprivileges-all-on-account.k5ff14406dcde", sql_sha256 = "5ff14406dcde704cc539398609a8ff2b00abb95fd144b7974d374c31d76711d2" },
+  { case_id = "sf.security_admin.grant-privilege.globalprivileges-all-on-account.kdb58e216caa7", sql_sha256 = "db58e216caa799b96fd254f2c9046e28f5e0abe08ad4f19c71681640c1808ce2" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.revoke-privilege.create-schema-modify-monitor.o005"
+form = "sf.security_admin.revoke-privilege.create-schema-modify-monitor"
+construct = "alternative: REVOKE CREATE ACCOUNT ON ACCOUNT FROM DATABASE ROLE v1 ;"
+reason = "not submitted: held by capture guard cd57825 in chunk sa-39: creates an account (billed separately; not dropped at once)"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.revoke-privilege.create-schema-modify-monitor.k8049fc8c8fea", sql_sha256 = "8049fc8c8fea180697eda3f76bf787d406943af6031d253f3bc286a68e3441b3" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.revoke-privilege.create-schema-modify-monitor.o020"
+form = "sf.security_admin.revoke-privilege.create-schema-modify-monitor"
+construct = "alternative: REVOKE CREATE ACCOUNT ON ACCOUNT FROM DATABASE ROLE v1 ;"
+reason = "not submitted: held by capture guard cd57825 in chunk sa-39: creates an account (billed separately; not dropped at once)"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.revoke-privilege.create-schema-modify-monitor.k8049fc8c8fea", sql_sha256 = "8049fc8c8fea180697eda3f76bf787d406943af6031d253f3bc286a68e3441b3" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.revoke-privilege.create-schema-modify-monitor.o022"
+form = "sf.security_admin.revoke-privilege.create-schema-modify-monitor"
+construct = "alternative: REVOKE CREATE ACCOUNT ON ACCOUNT FROM DATABASE ROLE v1 ;"
+reason = "not submitted: held by capture guard cd57825 in chunk sa-39: creates an account (billed separately; not dropped at once)"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.revoke-privilege.create-schema-modify-monitor.k8049fc8c8fea", sql_sha256 = "8049fc8c8fea180697eda3f76bf787d406943af6031d253f3bc286a68e3441b3" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.revoke-privilege.create-schema-modify-monitor.o039"
+form = "sf.security_admin.revoke-privilege.create-schema-modify-monitor"
+construct = "alternative: REVOKE CREATE ACCOUNT ON ACCOUNT FROM DATABASE ROLE v1 ;"
+reason = "not submitted: held by capture guard cd57825 in chunk sa-39: creates an account (billed separately; not dropped at once)"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.revoke-privilege.create-schema-modify-monitor.k8049fc8c8fea", sql_sha256 = "8049fc8c8fea180697eda3f76bf787d406943af6031d253f3bc286a68e3441b3" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.revoke-privilege.create-schema-modify-monitor.o100"
+form = "sf.security_admin.revoke-privilege.create-schema-modify-monitor"
+construct = "the list continued at least once: REVOKE GRANT OPTION FOR CREATE ACCOUNT , ACCOUNT ON ACCOUNT FROM DATABASE ROLE v1 RESTRICT ;"
+reason = "not submitted: held by capture guard cd57825 in chunk sa-40: creates an account (billed separately; not dropped at once)"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.revoke-privilege.create-schema-modify-monitor.k9df802072fc2", sql_sha256 = "9df802072fc2cce81e5f627e68ec8479bbf67bd92f1cd000bd3f492bfdb3727a" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.revoke-privilege.create-schema-modify-monitor.o101"
+form = "sf.security_admin.revoke-privilege.create-schema-modify-monitor"
+construct = "option_absent: REVOKE CREATE ACCOUNT ON ACCOUNT FROM DATABASE ROLE v1 ;"
+reason = "not submitted: held by capture guard cd57825 in chunk sa-39: creates an account (billed separately; not dropped at once)"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.revoke-privilege.create-schema-modify-monitor.k8049fc8c8fea", sql_sha256 = "8049fc8c8fea180697eda3f76bf787d406943af6031d253f3bc286a68e3441b3" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.revoke-privilege.create-schema-modify-monitor.o452"
+form = "sf.security_admin.revoke-privilege.create-schema-modify-monitor"
+construct = "the form without its required ACCOUNT: REVOKE CREATE ACCOUNT ON FROM DATABASE ROLE v1 ;"
+reason = "not submitted: held by capture guard cd57825 in chunk sa-39: creates an account (billed separately; not dropped at once)"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.revoke-privilege.create-schema-modify-monitor.k825ffbcd7d01", sql_sha256 = "825ffbcd7d018ce960311e6de5a12463e34a5f94ef927523234c76c59dd88f26" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account.o001"
+form = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account"
+construct = "the documented form with every required part and no optional part: REVOKE CREATE ACCOUNT ON ACCOUNT FROM v1 ;"
+reason = "not submitted: held by capture guard cd57825 in chunk sa-41: creates an account (billed separately; not dropped at once)"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account.kaed694660780", sql_sha256 = "aed69466078093795c33473eb8f8d3505bd19edcbfa8262b1d381bfcb3660955" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account.o002"
+form = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account"
+construct = "option_present: REVOKE GRANT OPTION FOR CREATE ACCOUNT , ACCOUNT ON ACCOUNT FROM ROLE v1 RESTRICT ;"
+reason = "not submitted: held by capture guard cd57825 in chunk sa-41: creates an account (billed separately; not dropped at once)"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account.ka02cac39c5be", sql_sha256 = "a02cac39c5bea7b341057e00a5b1283dba747dab734eb649c6792ccb56092cad" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account.o003"
+form = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account"
+construct = "option_absent: REVOKE CREATE ACCOUNT ON ACCOUNT FROM v1 ;"
+reason = "not submitted: held by capture guard cd57825 in chunk sa-41: creates an account (billed separately; not dropped at once)"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account.kaed694660780", sql_sha256 = "aed69466078093795c33473eb8f8d3505bd19edcbfa8262b1d381bfcb3660955" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account.o004"
+form = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account"
+construct = "alternative: REVOKE CREATE ACCOUNT ON ACCOUNT FROM v1 ;"
+reason = "not submitted: held by capture guard cd57825 in chunk sa-41: creates an account (billed separately; not dropped at once)"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account.kaed694660780", sql_sha256 = "aed69466078093795c33473eb8f8d3505bd19edcbfa8262b1d381bfcb3660955" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account.o010"
+form = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account"
+construct = "alternative: REVOKE CREATE ACCOUNT ON ACCOUNT FROM v1 ;"
+reason = "not submitted: held by capture guard cd57825 in chunk sa-41: creates an account (billed separately; not dropped at once)"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account.kaed694660780", sql_sha256 = "aed69466078093795c33473eb8f8d3505bd19edcbfa8262b1d381bfcb3660955" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account.o012"
+form = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account"
+construct = "alternative: REVOKE CREATE ACCOUNT ON ACCOUNT FROM v1 ;"
+reason = "not submitted: held by capture guard cd57825 in chunk sa-41: creates an account (billed separately; not dropped at once)"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account.kaed694660780", sql_sha256 = "aed69466078093795c33473eb8f8d3505bd19edcbfa8262b1d381bfcb3660955" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account.o029"
+form = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account"
+construct = "alternative: REVOKE CREATE ACCOUNT ON ACCOUNT FROM v1 ;"
+reason = "not submitted: held by capture guard cd57825 in chunk sa-41: creates an account (billed separately; not dropped at once)"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account.kaed694660780", sql_sha256 = "aed69466078093795c33473eb8f8d3505bd19edcbfa8262b1d381bfcb3660955" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account.o090"
+form = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account"
+construct = "the list continued at least once: REVOKE GRANT OPTION FOR CREATE ACCOUNT , ACCOUNT ON ACCOUNT FROM ROLE v1 RESTRICT ;"
+reason = "not submitted: held by capture guard cd57825 in chunk sa-41: creates an account (billed separately; not dropped at once)"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account.ka02cac39c5be", sql_sha256 = "a02cac39c5bea7b341057e00a5b1283dba747dab734eb649c6792ccb56092cad" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account.o091"
+form = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account"
+construct = "option_absent: REVOKE CREATE ACCOUNT ON ACCOUNT FROM v1 ;"
+reason = "not submitted: held by capture guard cd57825 in chunk sa-41: creates an account (billed separately; not dropped at once)"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account.kaed694660780", sql_sha256 = "aed69466078093795c33473eb8f8d3505bd19edcbfa8262b1d381bfcb3660955" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account.o387"
+form = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account"
+construct = "option_present: REVOKE GRANT OPTION FOR CREATE ACCOUNT , ACCOUNT ON ACCOUNT FROM ROLE v1 RESTRICT ;"
+reason = "not submitted: held by capture guard cd57825 in chunk sa-41: creates an account (billed separately; not dropped at once)"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account.ka02cac39c5be", sql_sha256 = "a02cac39c5bea7b341057e00a5b1283dba747dab734eb649c6792ccb56092cad" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account.o388"
+form = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account"
+construct = "option_absent: REVOKE CREATE ACCOUNT ON ACCOUNT FROM v1 ;"
+reason = "not submitted: held by capture guard cd57825 in chunk sa-41: creates an account (billed separately; not dropped at once)"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account.kaed694660780", sql_sha256 = "aed69466078093795c33473eb8f8d3505bd19edcbfa8262b1d381bfcb3660955" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account.o389"
+form = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account"
+construct = "omit <role_name>: REVOKE CREATE ACCOUNT ON ACCOUNT FROM ;"
+reason = "not submitted: held by capture guard cd57825 in chunk sa-41: creates an account (billed separately; not dropped at once)"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account.ka867e98ac143", sql_sha256 = "a867e98ac143db7704b65827406980a1f99abaa224006b9b832d786f7c0257cd" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account.o390"
+form = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account"
+construct = "a valid identifier: REVOKE CREATE ACCOUNT ON ACCOUNT FROM v1 ;"
+reason = "not submitted: held by capture guard cd57825 in chunk sa-41: creates an account (billed separately; not dropped at once)"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account.kaed694660780", sql_sha256 = "aed69466078093795c33473eb8f8d3505bd19edcbfa8262b1d381bfcb3660955" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account.o391"
+form = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account"
+construct = "a string literal in place of <role_name>: REVOKE CREATE ACCOUNT ON ACCOUNT FROM 'v1' ;"
+reason = "not submitted: held by capture guard cd57825 in chunk sa-41: creates an account (billed separately; not dropped at once)"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account.kf63444cba667", sql_sha256 = "f63444cba6676c6052ecaedb815b8418312dc8257b5b31d27c3e52a32626cf9c" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account.o392"
+form = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account"
+construct = "option_present: REVOKE GRANT OPTION FOR CREATE ACCOUNT , ACCOUNT ON ACCOUNT FROM ROLE v1 RESTRICT ;"
+reason = "not submitted: held by capture guard cd57825 in chunk sa-41: creates an account (billed separately; not dropped at once)"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account.ka02cac39c5be", sql_sha256 = "a02cac39c5bea7b341057e00a5b1283dba747dab734eb649c6792ccb56092cad" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account.o393"
+form = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account"
+construct = "option_absent: REVOKE CREATE ACCOUNT ON ACCOUNT FROM v1 ;"
+reason = "not submitted: held by capture guard cd57825 in chunk sa-41: creates an account (billed separately; not dropped at once)"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account.kaed694660780", sql_sha256 = "aed69466078093795c33473eb8f8d3505bd19edcbfa8262b1d381bfcb3660955" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account.o394"
+form = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account"
+construct = "alternative: REVOKE CREATE ACCOUNT ON ACCOUNT FROM v1 RESTRICT ;"
+reason = "not submitted: held by capture guard cd57825 in chunk sa-41: creates an account (billed separately; not dropped at once)"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account.k7d1e4b792c08", sql_sha256 = "7d1e4b792c0866ad07234f3329152fc062a56baf67cf11543b46252f956b516a" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account.o396"
+form = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account"
+construct = "the form without its required OPTION in [ GRANT OPTION FOR ]: REVOKE GRANT FOR CREATE ACCOUNT ON ACCOUNT FROM v1 ;"
+reason = "not submitted: held by capture guard cd57825 in chunk sa-40: creates an account (billed separately; not dropped at once)"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account.k0f7b86122217", sql_sha256 = "0f7b86122217c63d519c94306691010e36ae363c19e152b26b38336b98ff9f71" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account.o397"
+form = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account"
+construct = "the form without its required FOR in [ GRANT OPTION FOR ]: REVOKE GRANT OPTION CREATE ACCOUNT ON ACCOUNT FROM v1 ;"
+reason = "not submitted: held by capture guard cd57825 in chunk sa-40: creates an account (billed separately; not dropped at once)"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account.k0715afe7a7b1", sql_sha256 = "0715afe7a7b1cb793b876b0180ebeb3a83357cef2ceabb35682a10d056291f54" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account.o445"
+form = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account"
+construct = "the form without its required ON: REVOKE CREATE ACCOUNT ACCOUNT FROM v1 ;"
+reason = "not submitted: held by capture guard cd57825 in chunk sa-41: creates an account (billed separately; not dropped at once)"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account.kfd56040a3d6f", sql_sha256 = "fd56040a3d6f6cc0bd95f6cd9eda4c9e362dbb13bab7d70b78de9d61d7b68113" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account.o446"
+form = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account"
+construct = "the form without its required ACCOUNT: REVOKE CREATE ACCOUNT ON FROM v1 ;"
+reason = "not submitted: held by capture guard cd57825 in chunk sa-40: creates an account (billed separately; not dropped at once)"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account.k3b3e7c0e26d7", sql_sha256 = "3b3e7c0e26d7074815a1d3025b057976358b11d65480721982d931cb5b78d15a" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account.o491"
+form = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account"
+construct = "the form without its required FROM: REVOKE CREATE ACCOUNT ON ACCOUNT v1 ;"
+reason = "not submitted: held by capture guard cd57825 in chunk sa-40: creates an account (billed separately; not dropped at once)"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account.k0d2072d9ab35", sql_sha256 = "0d2072d9ab35edbe277fbff7ee031bf17cd28d3ead47e0d44d45222d0803dc03" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account.o492"
+form = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account"
+construct = "every independent option of one production together: REVOKE GRANT OPTION FOR CREATE ACCOUNT , ACCOUNT ON ACCOUNT FROM ROLE v1 RESTRICT ;"
+reason = "not submitted: held by capture guard cd57825 in chunk sa-41: creates an account (billed separately; not dropped at once)"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account.ka02cac39c5be", sql_sha256 = "a02cac39c5bea7b341057e00a5b1283dba747dab734eb649c6792ccb56092cad" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account.o501"
+form = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account"
+construct = "quoted: a double-quoted identifier with blanks and mixed case: REVOKE CREATE ACCOUNT ON ACCOUNT FROM \"v1 Q\" ;"
+reason = "not submitted: held by capture guard cd57825 in chunk sa-41: creates an account (billed separately; not dropped at once)"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account.k95fb63c499a0", sql_sha256 = "95fb63c499a06d2ae2036833746c94239f92d226c58c9a8810b7229e8cef96a6" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account.o502"
+form = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account"
+construct = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance): REVOKE CREATE ACCOUNT ON ACCOUNT FROM \"SELECT\" ;"
+reason = "not submitted: held by capture guard cd57825 in chunk sa-40: creates an account (billed separately; not dropped at once); held by capture guard cd57825 in chunk sa-41: creates an account (billed separately; not dropped at once)"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account.k4fd42c953281", sql_sha256 = "4fd42c95328166fb5945c79a06de7bafa3078a81612a103c8cf13dda25e1acc2" },
+  { case_id = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account.k7cdbeac24919", sql_sha256 = "7cdbeac24919b08223b0e6c9d844405e87795bbaa1d5db4a0b7c8cae8aa1f095" },
+]
+runs = []
+probes = []
