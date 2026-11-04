@@ -231,6 +231,7 @@ pub(crate) fn as_json(
             diverge(context, JSON_FIDELITY, construct)?;
             Ok(json_guarded(
                 &format!("CAST({sql} AS VARCHAR)"),
+                false,
                 context.log,
             ))
         }

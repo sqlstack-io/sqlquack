@@ -1578,6 +1578,16 @@ impl Parser {
                     }))),
                 }
             }
+            _ if matches!(
+                self.config.dialect,
+                Some(crate::tokens::models::DialectType::Snowflake)
+            ) =>
+            {
+                match self.parse_alter_snowflake_object()? {
+                    Some(expr) => Ok(expr),
+                    None => self.parse_alter_view_or_raw(),
+                }
+            }
             _ => self.parse_alter_view_or_raw(),
         }
     }

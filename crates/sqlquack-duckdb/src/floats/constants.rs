@@ -19,7 +19,7 @@ pub const FLOAT_DECIMAL_SCALES: &[u8] = &[2, 6, 8];
 /// The divergence of a FLOAT rounded to more significant digits than recordings show.
 pub const FLOAT_DECIMAL_DIGITS: &str = "float_decimal_digits";
 /// The most significant digits of a rounded FLOAT recordings show: its scaled value stays below.
-pub const FLOAT_DECIMAL_UNITS_LIMIT: u128 = 1_000_000_000;
+pub const FLOAT_DECIMAL_UNITS_LIMIT: u128 = 10_000_000_000;
 /// The fewest significant digits Snowflake writes a FLOAT's text with: below 10, and below 1.
 pub const FLOAT_TEXT_MIN_DIGITS: u8 = 10;
 /// The most significant digits Snowflake writes a FLOAT's text with: from 1e5 on.

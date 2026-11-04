@@ -343,6 +343,8 @@ pub const DATE_FORMAT_RULE: &str = "rule.date_format";
 pub const TIMESTAMP_FORMAT_RULE: &str = "rule.timestamp_format";
 /// The function DATE(x) converts as.
 pub const TO_DATE_NAME: &str = "TO_DATE";
+/// TRY_PARSE_JSON, whose text no JSON reader can finish is NULL.
+pub const TRY_PARSE_JSON_NAME: &str = "TRY_PARSE_JSON";
 /// The type name of a cast to VARIANT.
 pub const VARIANT_NAME: &str = "VARIANT";
 /// PARSE_JSON and TRY_PARSE_JSON.
@@ -1175,6 +1177,9 @@ pub(crate) const ROUND_FUNCTION: &str = "ROUND";
 pub(crate) const FUNCTION_KIND: &str = "function";
 /// Array builders whose ARRAY OBJECT_PICK was recorded picking by its elements.
 pub(crate) const PICKED_ARRAY_FUNCTIONS: [&str; 2] = ["ARRAY_CONSTRUCT", "ARRAY_EXCEPT"];
+/// The array builders ARRAY_SIZE reads through, counting a SQL NULL element as Snowflake does.
+pub(crate) const COUNTED_ARRAY_FUNCTIONS: [&str; 3] =
+    ["ARRAY_APPEND", "ARRAY_CAT", "ARRAY_CONSTRUCT"];
 /// Why a construct that reads VARIANTs only as JSON refuses a VARIANT built from a FLOAT.
 pub(crate) const VARIANT_HELD_UNREAD: &str = "a VARIANT built from a FLOAT, which this construct \
                                                reads only as JSON, where the FLOAT's type is lost";
