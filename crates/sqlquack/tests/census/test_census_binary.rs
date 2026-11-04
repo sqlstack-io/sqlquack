@@ -1,11 +1,11 @@
 use crate::helpers::{
-    census_warnings, cursor_model_convertible, run_on_declared_orders, run_on_events,
-    run_on_placed_orders, run_on_refused_upstream, run_on_shop,
+    census_warnings, converted_files, cursor_model_convertible, run_on_declared_orders,
+    run_on_events, run_on_placed_orders, run_on_refused_upstream, run_on_shop,
 };
 use crate::test_types::{
-    BinaryOutcome, BinaryTestCase, CursorTestCase, DeclaredOutcome, DeclaredTestCase,
-    SessionTimeZoneTestCase, SourceVariantOutcome, SourceVariantTestCase, UpstreamOutcome,
-    UpstreamTestCase, WarningsTestCase,
+    BinaryOutcome, BinaryTestCase, ConvertedDirTestCase, ConvertedFile, CursorTestCase,
+    DeclaredOutcome, DeclaredTestCase, SessionTimeZoneTestCase, SourceVariantOutcome,
+    SourceVariantTestCase, UpstreamOutcome, UpstreamTestCase, WarningsTestCase,
 };
 
 #[test]
@@ -404,6 +404,33 @@ fn given_a_declared_offset_when_running_census_then_names_appear_only_under_name
         assert_eq!(
             run_on_declared_orders(test_case.declare_model, test_case.flags),
             test_case.expected_outcome,
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_converted_dir_set_when_running_census_then_each_converted_model_sql_is_written() {
+    let test_cases = [
+        ConvertedDirTestCase {
+            description: "the converted model's DuckDB SQL is written; the refused model's is not",
+            set_variable: true,
+            expected_files: vec![ConvertedFile {
+                model: "customer_ids.sql".to_owned(),
+                holds_select: true,
+            }],
+        },
+        ConvertedDirTestCase {
+            description: "without the variable nothing is written",
+            set_variable: false,
+            expected_files: Vec::new(),
+        },
+    ];
+    for test_case in test_cases {
+        assert_eq!(
+            converted_files(test_case.set_variable),
+            test_case.expected_files,
             "{}",
             test_case.description
         );

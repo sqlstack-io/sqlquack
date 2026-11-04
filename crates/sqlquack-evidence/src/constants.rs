@@ -96,3 +96,6 @@ pub const ROW_COUPLING_WORDS: &[&str] = &[
 
 /// SQLSTATE classes of a Snowflake compile error, which the recorder's pre-check stops on.
 pub const COMPILE_ERROR_SQLSTATE_CLASSES: &[&str] = &["0A", "42"];
+
+/// The sidecar outcome of a recording that holds rows.
+pub(crate) const ROWS_OUTCOME: &str = "rows";
