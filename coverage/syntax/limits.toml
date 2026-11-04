@@ -5111,3 +5111,286 @@ anchor = "doc.sql.alter-session / Syntax"
 sql = "ALTER SESSION SET QUERY_TAG = 'q1' , TIMEZONE = 'UTC' ;"
 expect = "observe"
 context = "raw"
+
+# Utility readings.
+
+[[reading]]
+form = "sf.utility.call-with.language-javascript-as-call"
+grammar_sha256 = "e7f4aab5a7affd987667626cce8b9b8d2b922f1b95e057268934b54e4e63bc1a"
+grammar = ["WITH <name> AS PROCEDURE ( [ <arg_name> <arg_data_type> [ , <arg_name> <arg_data_type> ... ] ] ) RETURNS <result_data_type> [ [ NOT ] NULL ] LANGUAGE JAVASCRIPT [ { CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } ] AS '<procedure_definition>' [ , <cte_nameN> [ ( <cte_column_list> ) ] AS ( <query> ) ] CALL <name> ( [ [ <arg_name> => ] <arg> , ... ] ) [ INTO :<snowflake_scripting_variable> ]"]
+reason = "the page writes the argument list as `PROCEDURE ([ <arg_name> <arg_data_type> ]) [ , ... ] )`, with a stray closing parenthesis, read as a parenthesized, comma-separated list of name-type pairs as in CREATE PROCEDURE; `AS ( SELECT ... )` is the common table expression's query; string placeholders in PACKAGES and HANDLER are filled as one concrete string each"
+
+[[reading]]
+form = "sf.utility.call-with.table-language-java-runtime-version"
+grammar_sha256 = "c8920117652adb0bb9612160ef7bd65d8b29702a3a18ae3d4baea2a33039faf3"
+grammar = ["WITH <name> AS PROCEDURE ( [ <arg_name> <arg_data_type> [ , <arg_name> <arg_data_type> ... ] ] ) RETURNS { <result_data_type> [ [ NOT ] NULL ] | TABLE ( [ <col_name> <col_data_type> [ , ... ] ] ) } LANGUAGE { JAVA } RUNTIME_VERSION = '<scala_or_java_runtime_version>' PACKAGES = ( 'com.snowflake:snowpark:<version>' [, '<package_name_and_version>' ...] ) [ IMPORTS = ( '<stage_path_and_directory_or_file_name_to_read>' [, '<stage_path_and_directory_or_file_name_to_read>' ...] ) ] HANDLER = '<fully_qualified_method_name>' [ { CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } ] [ AS '<procedure_definition>' ] [ , <cte_nameN> [ ( <cte_column_list> ) ] AS ( <query> ) ] CALL <name> ( [ [ <arg_name> => ] <arg> , ... ] ) [ INTO :<snowflake_scripting_variable> ]"]
+reason = "the page writes the argument list as `PROCEDURE ([ <arg_name> <arg_data_type> ]) [ , ... ] )`, with a stray closing parenthesis, read as a parenthesized, comma-separated list of name-type pairs as in CREATE PROCEDURE; `AS ( SELECT ... )` is the common table expression's query; string placeholders in PACKAGES and HANDLER are filled as one concrete string each"
+
+[[reading]]
+form = "sf.utility.call-with.table-language-java-runtime-version.java"
+grammar_sha256 = "3687747a8c772ca78d99fc15345ba8f88ad5e3332a6128343870244d8cdf2631"
+grammar = ["WITH <name> AS PROCEDURE ( [ <arg_name> <arg_data_type> [ , <arg_name> <arg_data_type> ... ] ] ) RETURNS { <result_data_type> [ [ NOT ] NULL ] | TABLE ( [ <col_name> <col_data_type> [ , ... ] ] ) } LANGUAGE { JAVA } RUNTIME_VERSION = '<scala_or_java_runtime_version>' PACKAGES = ( 'com.snowflake:snowpark:<version>' [, '<package_name_and_version>' ...] ) [ IMPORTS = ( '<stage_path_and_directory_or_file_name_to_read>' [, '<stage_path_and_directory_or_file_name_to_read>' ...] ) ] HANDLER = '<fully_qualified_method_name>' [ { CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } ] [ , <cte_nameN> [ ( <cte_column_list> ) ] AS ( <query> ) ] CALL <name> ( [ [ <arg_name> => ] <arg> , ... ] ) [ INTO :<snowflake_scripting_variable> ]"]
+reason = "the page writes the argument list as `PROCEDURE ([ <arg_name> <arg_data_type> ]) [ , ... ] )`, with a stray closing parenthesis, read as a parenthesized, comma-separated list of name-type pairs as in CREATE PROCEDURE; `AS ( SELECT ... )` is the common table expression's query; string placeholders in PACKAGES and HANDLER are filled as one concrete string each"
+
+[[reading]]
+form = "sf.utility.call-with.table-language-python-runtime-version"
+grammar_sha256 = "81cce253d9bd3d1949f0c624fde263085b70676cefed39c3ad1bc5d32526a0da"
+grammar = ["WITH <name> AS PROCEDURE ( [ <arg_name> <arg_data_type> [ , <arg_name> <arg_data_type> ... ] ] ) RETURNS { <result_data_type> [ [ NOT ] NULL ] | TABLE ( [ <col_name> <col_data_type> [ , ... ] ] ) } LANGUAGE PYTHON RUNTIME_VERSION = '<python_version>' PACKAGES = ( 'snowflake-snowpark-python[==<version>]'[, '<package_name>[==<version>]' ... ]) [ IMPORTS = ( '<stage_path_and_directory_or_file_name_to_read>' [, '<stage_path_and_directory_or_file_name_to_read>' ...] ) ] HANDLER = '<function_name>' [ { CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } ] AS '<procedure_definition>' [ , <cte_nameN> [ ( <cte_column_list> ) ] AS ( <query> ) ] CALL <name> ( [ [ <arg_name> => ] <arg> , ... ] ) [ INTO :<snowflake_scripting_variable> ]"]
+reason = "`[ <arg_name> <arg_data_type> ] [ , ... ]` read as a comma-separated list of name-type pairs; `AS ( SELECT ... )` is the common table expression's query; the page places the common table expressions before AS '<procedure_definition>', unlike every other language on the page, where AS ends the procedure and the list follows it: read in that order, and a hand row observes the page's own order; string placeholders in PACKAGES and HANDLER are filled as one concrete string each"
+
+[[reading]]
+form = "sf.utility.call-with.table-language-python-runtime-version.python"
+grammar_sha256 = "f5d7c3a2d34976f7006119c6b775934c7b65b91e409af53df25ab08afbd741bb"
+grammar = ["WITH <name> AS PROCEDURE ( [ <arg_name> <arg_data_type> [ , <arg_name> <arg_data_type> ... ] ] ) RETURNS { <result_data_type> [ [ NOT ] NULL ] | TABLE ( [ <col_name> <col_data_type> [ , ... ] ] ) } LANGUAGE PYTHON RUNTIME_VERSION = '<python_version>' PACKAGES = ( 'snowflake-snowpark-python[==<version>]'[, '<package_name>[==<version>]' ... ]) [ IMPORTS = ( '<stage_path_and_directory_or_file_name_to_read>' [, '<stage_path_and_directory_or_file_name_to_read>' ...] ) ] HANDLER = '<module_file_name>.<function_name>' [ { CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } ] [ , <cte_nameN> [ ( <cte_column_list> ) ] AS ( <query> ) ] CALL <name> ( [ [ <arg_name> => ] <arg> , ... ] ) [ INTO :<snowflake_scripting_variable> ]"]
+reason = "`[ <arg_name> <arg_data_type> ] [ , ... ]` read as a comma-separated list of name-type pairs; `AS ( SELECT ... )` is the common table expression's query; string placeholders in PACKAGES and HANDLER are filled as one concrete string each"
+
+[[reading]]
+form = "sf.utility.call-with.table-language-scala-runtime-version"
+grammar_sha256 = "a3c71d6ee4774caeea3075cbcf71d2c922c26ca0d05262567f946eef08d6d09a"
+grammar = ["WITH <name> AS PROCEDURE ( [ <arg_name> <arg_data_type> [ , <arg_name> <arg_data_type> ... ] ] ) RETURNS { <result_data_type> [ [ NOT ] NULL ] | TABLE ( [ <col_name> <col_data_type> [ , ... ] ] ) } LANGUAGE { SCALA } RUNTIME_VERSION = '<scala_runtime_version>' PACKAGES = ( 'com.snowflake:snowpark_<scala_version>:<version>' [, '<package_name_and_version>' ...] ) [ IMPORTS = ( '<stage_path_and_directory_or_file_name_to_read>' [, '<stage_path_and_directory_or_file_name_to_read>' ...] ) ] HANDLER = '<fully_qualified_method_name>' [ { CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } ] [ AS '<procedure_definition>' ] [ , <cte_nameN> [ ( <cte_column_list> ) ] AS ( <query> ) ] CALL <name> ( [ [ <arg_name> => ] <arg> , ... ] ) [ INTO :<snowflake_scripting_variable> ]"]
+reason = "the page writes the argument list as `PROCEDURE ([ <arg_name> <arg_data_type> ]) [ , ... ] )`, with a stray closing parenthesis, read as a parenthesized, comma-separated list of name-type pairs as in CREATE PROCEDURE; `AS ( SELECT ... )` is the common table expression's query; string placeholders in PACKAGES and HANDLER are filled as one concrete string each"
+
+[[reading]]
+form = "sf.utility.call-with.table-language-scala-runtime-version.scala"
+grammar_sha256 = "fd91672eccfba4cf9278d25f96bf8a221aeed537fe27000ddf60c6a21e81b1c6"
+grammar = ["WITH <name> AS PROCEDURE ( [ <arg_name> <arg_data_type> [ , <arg_name> <arg_data_type> ... ] ] ) RETURNS { <result_data_type> [ [ NOT ] NULL ] | TABLE ( [ <col_name> <col_data_type> [ , ... ] ] ) } LANGUAGE { SCALA } RUNTIME_VERSION = '<scala_or_java_runtime_version>' PACKAGES = ( 'com.snowflake:snowpark_<scala_version>:<version>' [, '<package_name_and_version>' ...] ) [ IMPORTS = ( '<stage_path_and_directory_or_file_name_to_read>' [, '<stage_path_and_directory_or_file_name_to_read>' ...] ) ] HANDLER = '<fully_qualified_method_name>' [ { CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } ] [ , <cte_nameN> [ ( <cte_column_list> ) ] AS ( <query> ) ] CALL <name> ( [ [ <arg_name> => ] <arg> , ... ] ) [ INTO :<snowflake_scripting_variable> ]"]
+reason = "the page writes the argument list as `PROCEDURE ([ <arg_name> <arg_data_type> ]) [ , ... ] )`, with a stray closing parenthesis, read as a parenthesized, comma-separated list of name-type pairs as in CREATE PROCEDURE; `AS ( SELECT ... )` is the common table expression's query; string placeholders in PACKAGES and HANDLER are filled as one concrete string each"
+
+[[reading]]
+form = "sf.utility.call-with.table-language-sql-as"
+grammar_sha256 = "13ecffddca113c690fa7dfe196c6596f3394c5abfcf8e18710f325da82cba4f3"
+grammar = ["WITH <name> AS PROCEDURE ( [ <arg_name> <arg_data_type> [ , <arg_name> <arg_data_type> ... ] ] ) RETURNS { <result_data_type> | TABLE ( [ <col_name> <col_data_type> [ , ... ] ] ) } LANGUAGE SQL [ { CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } ] AS '<procedure_definition>' [ , <cte_nameN> [ ( <cte_column_list> ) ] AS ( <query> ) ] CALL <name> ( [ [ <arg_name> => ] <arg> , ... ] ) [ INTO :<snowflake_scripting_variable> ]"]
+reason = "the page writes the argument list as `PROCEDURE ([ <arg_name> <arg_data_type> ]) [ , ... ] )`, with a stray closing parenthesis, read as a parenthesized, comma-separated list of name-type pairs as in CREATE PROCEDURE; `AS ( SELECT ... )` is the common table expression's query; string placeholders in PACKAGES and HANDLER are filled as one concrete string each"
+
+[[reading]]
+form = "sf.utility.execute-dbt-project.project"
+grammar_sha256 = "c1faf53571896be260361723fcfad4e5d281d871841cb75dc6bda7c883e3a86e"
+grammar = ["EXECUTE DBT PROJECT [ IF EXISTS ] <name> [ ARGS = '<dbt_args>' ] [ DBT_VERSION = 'version_number' ] [ EXTERNAL_ACCESS_INTEGRATIONS = ( <integration_name> [ , ... ] ) ] [ ENVIRONMENT = '<environment_name>' ] [ ENV_VARS = ( '<key>' = '<value>' [ , ... ] ) ] [ IMPORTS = ( { '<source_location>' | <system_function> } [ AS '<alias>' ] [ , ... ] ) ] [ WRITEBACK = { TRUE | FALSE } ]"]
+reason = "ARGS is one string literal holding a dbt command line (the brackets inside the quotes describe its content, not SQL); filled as 'run --select m1' so a `--` inside a string is exercised"
+
+[[reading]]
+form = "sf.utility.execute-dbt-project.project-2"
+grammar_sha256 = "655efce0d10602fddc2b5ef03b134ddc2999bfd3843cdd3ee7a13dad04b6269d"
+grammar = ["EXECUTE DBT PROJECT [ IF EXISTS ] [ FROM WORKSPACE <name> ] [ ARGS = '<dbt_args>' ] [ DBT_VERSION = 'version_number' ] [ EXTERNAL_ACCESS_INTEGRATIONS = ( <integration_name> [ , ... ] ) ] [ ENVIRONMENT = '<environment_name>' ] [ ENV_VARS = ( '<key>' = '<value>' [ , ... ] ) ] [ PROJECT_ROOT = '<subdirectory_path>' ]"]
+reason = "ARGS is one string literal holding a dbt command line (the brackets inside the quotes describe its content, not SQL); filled as 'run --select m1' so a `--` inside a string is exercised"
+
+[[reading]]
+form = "sf.utility.execute-dcm-project.deploy-fromsource-fromdeployment"
+grammar_sha256 = "d5e06cc1759aa9b9a817fae2f3b7824f2d9fd87db39db647078258600222e8d1"
+grammar = ["EXECUTE DCM PROJECT <name> DEPLOY [ AS \"d1\" ] { [ USING { CONFIGURATION <config_name> [ ( <expr> [ , <expr> ... ] ) ] | ( <expr> [ , <expr> ... ] ) } ] [ ENVIRONMENT ( <bind_variable> ) ] FROM '<source_files_path>' | FROM DEPLOYMENT { <deployment_name> | \"d1\" | LAST | LATEST } }"]
+reason = "fromSource ::= [ USING [ CONFIGURATION <config_name> ] [ ( <expr> [ , <expr> ... ] ) ] ] [ ENVIRONMENT ( <bind_variable> ) ] FROM '<source_files_path>' and fromDeployment ::= FROM DEPLOYMENT { <deployment_name> | \"<deployment_name_alias>\" | LAST | LATEST } inlined from the page; USING is read as needing at least one of its two optional parts (a hand row observes bare USING); the double-quoted alias placeholder is filled as \"d1\""
+
+[[reading]]
+form = "sf.utility.execute-dcm-project.plan-fromsource-fromdeployment"
+grammar_sha256 = "2ccfc1b95ac4fd4b462fe283ad98379b1fb5bce4703508537ccd6965a47e0316"
+grammar = ["EXECUTE DCM PROJECT <name> PLAN [ DELTA ] { [ USING { CONFIGURATION <config_name> [ ( <expr> [ , <expr> ... ] ) ] | ( <expr> [ , <expr> ... ] ) } ] [ ENVIRONMENT ( <bind_variable> ) ] FROM '<source_files_path>' | FROM DEPLOYMENT { <deployment_name> | \"d1\" | LAST | LATEST } } [ OUTPUT_PATH '<output_path>' ]"]
+reason = "fromSource ::= [ USING [ CONFIGURATION <config_name> ] [ ( <expr> [ , <expr> ... ] ) ] ] [ ENVIRONMENT ( <bind_variable> ) ] FROM '<source_files_path>' and fromDeployment ::= FROM DEPLOYMENT { <deployment_name> | \"<deployment_name_alias>\" | LAST | LATEST } inlined from the page; USING is read as needing at least one of its two optional parts (a hand row observes bare USING); the double-quoted alias placeholder is filled as \"d1\""
+
+[[reading]]
+form = "sf.utility.execute-dcm-project.purge"
+grammar_sha256 = "1f22db7120e59ec51bb8bb11219e43ff7603cf1e95dfc9f36a7e93119e6f8666"
+grammar = ["EXECUTE DCM PROJECT <name> PURGE [ AS \"d1\" ]"]
+reason = "the double-quoted alias placeholder is filled as \"d1\""
+
+[[reading]]
+form = "sf.utility.execute-job-service"
+grammar_sha256 = "0ddd3cb3fed78abd44f6c43fd9547ffbad296cc3f750b452a4714e7068146dab"
+grammar = ["EXECUTE JOB SERVICE IN COMPUTE POOL <compute_pool_name> { { FROM @<stage> SPECIFICATION_FILE = '<yaml_file_stage_path>' } | { FROM SPECIFICATION <specification_text> } | { { FROM @<stage> SPECIFICATION_TEMPLATE_FILE = '<yaml_file_stage_path>' } | { FROM SPECIFICATION_TEMPLATE <specification_text> } } USING ( <key> => <value> [ , <key> => <value> [ , ... ] ] ) } [ NAME = [<db>.<schema>.]<name> ] [ ASYNC = { TRUE | FALSE } ] [ REPLICAS = <num> ] [ QUERY_WAREHOUSE = <warehouse_name> ] [ COMMENT = '<string_literal>'] [ EXTERNAL_ACCESS_INTEGRATIONS = ( <EAI_name> [ , ... ] ) ]"]
+reason = "fromSpecification and fromSpecificationTemplate inlined from the page; the page's `[ REPLICAS = = <num> ]` doubles the `=`, read as `REPLICAS = <num>` as in EXECUTE INFERENCE JOB SERVICE and the page's parameter list; each FROM alternative is braced so a `KEY = value` list does not take the next alternative as a value"
+
+[[reading]]
+form = "sf.utility.execute-immediate-from"
+grammar_sha256 = "ba0016d685cfd3df9187a30f52efcd10125e1193345bb6a7b52117ad27be455c"
+grammar = ["EXECUTE IMMEDIATE FROM { @[<namespace>.]<stage_name>/<path>/<filename> | '<path>/<filename>' | '/<path>/<filename>' | './<path>/<filename>' | '../<path>/<filename>' } [ USING ( <key> => <value> [ , <key> => <value> [ , ... ] ] ) ] [ DRY_RUN = { TRUE | FALSE } ]"]
+reason = "absoluteFilePath ::= @[ <namespace>. ]<stage_name>/<path>/<filename> and relativeFilePath ::= '[ / | ./ | ../ ]<path>/<filename>' inlined from the page; the relative path is one string literal, one per prefix"
+
+[[reading]]
+form = "sf.utility.execute-notebook-project"
+grammar_sha256 = "478c7c451cf60ee2fa563cb396269dd201a632185a674446d0ef1bff485152fb"
+grammar = ["EXECUTE NOTEBOOK PROJECT <database_name>.<schema_name>.<project_name> MAIN_FILE = 'notebook.ipynb' COMPUTE_POOL = '<compute_pool_name>' QUERY_WAREHOUSE = '<warehouse_name>' RUNTIME = '<runtime_version>' [ ARGUMENTS = '<notebook_args>' ] [ REQUIREMENTS_FILE = '<path/to/requirements.txt>' ] [ ARTIFACT_REPOSITORIES = ( <repository_name> [ , ... ] ) ] [ EXTERNAL_ACCESS_INTEGRATIONS = ( <integration_name> [ , ... ] ) ] [ SECRETS = ( <database_name>.<schema_name>.<secret_name> [ , ... ] ) ];"]
+reason = "ARGUMENTS is one string literal holding blank-separated arguments (the brackets inside the quotes describe its content, not SQL)"
+
+# Utility: page-order and page-text rows the readings depart from, observed.
+
+[[limit]]
+form = "sf.utility.call-with.table-language-python-runtime-version"
+kind = "positive"
+note = "the page's own order, common table expressions before AS '<procedure_definition>'"
+anchor = "doc.sql.call-with / Syntax / Python"
+sql = "WITH p1 AS PROCEDURE ( ) RETURNS INT LANGUAGE PYTHON RUNTIME_VERSION = '3.11' PACKAGES = ( 'snowflake-snowpark-python' ) HANDLER = 'run' , c1 AS ( SELECT 1 ) AS 'def run(session): return 1' CALL p1 ( ) ;"
+expect = "observe"
+context = "raw"
+
+[[limit]]
+form = "sf.utility.execute-job-service"
+kind = "positive"
+note = "the page's own `REPLICAS = = <num>`"
+anchor = "doc.sql.execute-job-service / Syntax"
+sql = "EXECUTE JOB SERVICE IN COMPUTE POOL v1 FROM SPECIFICATION $$ m $$ REPLICAS = = 1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.utility.execute-dcm-project.deploy-fromsource-fromdeployment"
+kind = "negative_neighbour"
+note = "the form without its required { CONFIGURATION <config_name> [ ( <expr> [ , <expr> ... ] ) ] | ( <expr> [ , <expr> ... ] ) } in [ USING { CONFIGURATION <config_name> [ ( <expr> [ , <expr> ... ] ) ] | ( <expr> [ , <expr> ... ] ) } ]"
+reason = "the page's fromSource grammar makes both parts of USING optional, so bare USING is documented; it is observed by a hand row instead of scored"
+
+[[limit]]
+form = "sf.utility.execute-dcm-project.deploy-fromsource-fromdeployment"
+kind = "positive"
+note = "bare USING with neither CONFIGURATION nor an expression list, as the page's fromSource grammar allows"
+anchor = "doc.sql.execute-dcm-project / Syntax"
+sql = "EXECUTE DCM PROJECT v1 DEPLOY USING FROM 'm' ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.utility.execute-dcm-project.plan-fromsource-fromdeployment"
+kind = "negative_neighbour"
+note = "the form without its required { CONFIGURATION <config_name> [ ( <expr> [ , <expr> ... ] ) ] | ( <expr> [ , <expr> ... ] ) } in [ USING { CONFIGURATION <config_name> [ ( <expr> [ , <expr> ... ] ) ] | ( <expr> [ , <expr> ... ] ) } ]"
+reason = "the page's fromSource grammar makes both parts of USING optional, so bare USING is documented; it is observed by a hand row instead of scored"
+
+[[limit]]
+form = "sf.utility.execute-dcm-project.plan-fromsource-fromdeployment"
+kind = "positive"
+note = "bare USING with neither CONFIGURATION nor an expression list, as the page's fromSource grammar allows"
+anchor = "doc.sql.execute-dcm-project / Syntax"
+sql = "EXECUTE DCM PROJECT v1 PLAN USING FROM 'm' ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.utility.explain"
+kind = "nesting_depth"
+reason = "EXPLAIN takes one statement and does not nest; nesting inside the statement (subqueries, blocks) belongs to the query and scripting families"
+
+# Utility extremes.
+
+[[limit]]
+form = "sf.utility.call"
+kind = "extreme"
+note = "1,000 positional arguments; no documented bound"
+anchor = "doc.sql.call / Syntax"
+size = 1000
+outer_open = "CALL p1 ("
+open = "1 ,"
+core = "1"
+outer_close = ") ;"
+context = "raw"
+
+[[limit]]
+form = "sf.utility.call"
+kind = "extreme"
+note = "5,000 positional arguments; no documented bound"
+anchor = "doc.sql.call / Syntax"
+size = 5000
+outer_open = "CALL p1 ("
+open = "1 ,"
+core = "1"
+outer_close = ") ;"
+context = "raw"
+
+[[limit]]
+form = "sf.utility.execute-immediate.immediate"
+kind = "extreme"
+note = "1,000 bind variables in USING; no documented bound"
+anchor = "doc.sql.execute-immediate / Syntax"
+size = 1000
+outer_open = "EXECUTE IMMEDIATE 'm' USING ("
+open = "v1 ,"
+core = "v1"
+outer_close = ") ;"
+context = "raw"
+
+[[limit]]
+form = "sf.utility.execute-notebook"
+kind = "extreme"
+note = "1,000 parameter strings; no documented bound"
+anchor = "doc.sql.execute-notebook / Syntax"
+size = 1000
+outer_open = "EXECUTE NOTEBOOK n1 ("
+open = "'m' ,"
+core = "'m'"
+outer_close = ") ;"
+context = "raw"
+
+[[limit]]
+form = "sf.utility.execute-immediate-from"
+kind = "extreme"
+note = "1,000 USING pairs; no documented bound"
+anchor = "doc.sql.execute-immediate-from / Syntax"
+size = 1000
+outer_open = "EXECUTE IMMEDIATE FROM 'p1/f1.sql' USING ("
+open = "k1 => 1 ,"
+core = "k1 => 1"
+outer_close = ") ;"
+context = "raw"
+
+[[reading]]
+form = "sf.utility.execute-code-bundle"
+grammar_sha256 = "ff12de055ccabe615b1b3edab3bb4b6b330cf0fde769f4741cbbc6dbad662ace"
+grammar = ["EXECUTE CODE BUNDLE <name> ENTRYPOINT = '<path>' [ ARGUMENTS = ( '<arg>' [ , '<arg>' ... ] ) ] [ WITH SPECIFICATION <yaml_spec_text> ]"]
+reason = "`$$ <yaml_spec> $$` is one dollar-quoted string literal holding the YAML specification, filled as $$ m $$; the page's trailing `;` ends the statement"
+
+[[suppress]]
+form = "sf.utility.execute-immediate.immediate"
+kind = "negative_neighbour"
+target = "'<string_literal>'"
+note = "an unquoted identifier in place of '<string_literal>'"
+reason = "EXECUTE IMMEDIATE <variable> is a sibling form on the same page, so an identifier here is documented"
+
+[[suppress]]
+form = "sf.utility.execute-immediate.immediate.syntax"
+kind = "negative_neighbour"
+target = "<variable>"
+note = "a string literal in place of <variable>"
+reason = "EXECUTE IMMEDIATE '<string_literal>' is a sibling form on the same page, so a string literal here is documented"
+
+[[suppress]]
+form = "sf.utility.execute-dbt-project.project"
+kind = "negative_neighbour"
+target = "'<source_location>' in [ IMPORTS = ( { '<source_location>' | <system_function> } [ AS '<alias>' ] [ , ... ] ) ]"
+note = "an unquoted identifier in place of '<source_location>'"
+reason = "the IMPORTS item may also be a system function, so whether a bare identifier parses is unclear; observed by a hand row instead of scored"
+
+[[suppress]]
+form = "sf.utility.execute-notebook"
+kind = "negative_neighbour"
+target = "<parameter_string> in [ <parameter_string> [ , ... ] ]"
+note = "an unquoted identifier in place of <parameter_string>"
+reason = "the page gives no grammar for the argument beyond its name, so whether it is an expression slot is unclear; observed by a hand row instead of scored"
+
+[[suppress]]
+form = "sf.utility.execute-dcm-project.preview-using-configuration-from"
+kind = "negative_neighbour"
+target = "<number_of_rows> in [ LIMIT <number_of_rows> ]"
+note = "a string literal in place of <number_of_rows>"
+reason = "Snowflake's query LIMIT accepts some string literals, so whether this LIMIT does is unclear; observed by a hand row instead of scored"
+
+[[limit]]
+form = "sf.utility.execute-dbt-project.project"
+kind = "negative_neighbour"
+note = "an unquoted identifier as an IMPORTS item"
+anchor = "doc.sql.execute-dbt-project / Syntax"
+sql = "EXECUTE DBT PROJECT v1 IMPORTS = ( m1 ) ;"
+expect = "observe"
+context = "raw"
+
+[[limit]]
+form = "sf.utility.execute-notebook"
+kind = "negative_neighbour"
+note = "an unquoted identifier as a notebook parameter"
+anchor = "doc.sql.execute-notebook / Syntax"
+sql = "EXECUTE NOTEBOOK v1 ( m1 ) ;"
+expect = "observe"
+context = "raw"
+
+[[limit]]
+form = "sf.utility.execute-dcm-project.preview-using-configuration-from"
+kind = "negative_neighbour"
+note = "a string literal as the PREVIEW row limit"
+anchor = "doc.sql.execute-dcm-project / Syntax"
+sql = "EXECUTE DCM PROJECT v1 PREVIEW v1 USING CONFIGURATION v1 FROM 'm' LIMIT 'x' ;"
+expect = "observe"
+context = "raw"

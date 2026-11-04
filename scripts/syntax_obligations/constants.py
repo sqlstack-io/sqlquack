@@ -887,6 +887,29 @@ DML_LITERAL_FILLS: dict[str, str] = {
     "'<azure_url>'": "'azure://a1.blob.core.windows.net/c1/p1/'",
     "'<file_format_name_ref>'": "'f1'",
 }
+UTILITY_FILLS: dict[str, str] = {
+    "statement": "SELECT 1",
+    "specification_text": "$$ m $$",
+    "stage": "s1",
+    "stage_name": "s1",
+    "path": "p1",
+    "filename": "f1.sql",
+    "yaml_spec_text": "$$ m $$",
+    "system_function": "SYSTEM$DBT_GET_LAST_RUN_TARGET ( 'p1' )",
+}
+UTILITY_LITERAL_FILLS: dict[str, str] = {
+    "'com.snowflake:snowpark:<version>'": "'com.snowflake:snowpark:1.14.0'",
+    "'com.snowflake:snowpark_<scala_version>:<version>'": "'com.snowflake:snowpark_2.12:1.14.0'",
+    "'snowflake-snowpark-python[==<version>]'": "'snowflake-snowpark-python'",
+    "'<package_name>[==<version>]'": "'numpy==1.26.4'",
+    "'<module_file_name>.<function_name>'": "'m1.run'",
+    "'<dbt_args>'": "'run --select m1'",
+    "'<notebook_args>'": "'a1 a2'",
+    "'<path>/<filename>'": "'p1/f1.sql'",
+    "'/<path>/<filename>'": "'/p1/f1.sql'",
+    "'./<path>/<filename>'": "'./p1/f1.sql'",
+    "'../<path>/<filename>'": "'../p1/f1.sql'",
+}
 FAMILY_STYLES: dict[str, dict[str, FormStyle]] = {
     "scripting": SCRIPTING_SELF_DECLARING_BLOCKS,
     "query": QUERY_STYLES,
@@ -895,5 +918,10 @@ FAMILY_STYLES: dict[str, dict[str, FormStyle]] = {
     **{family: {f"sf.{family}.": FormStyle(prefix="", suffix="")} for family in TOP_LEVEL_FAMILIES},
     "dml": {
         "sf.dml.": FormStyle(prefix="", suffix="", fills=DML_FILLS, literal_fills=DML_LITERAL_FILLS)
+    },
+    "utility": {
+        "sf.utility.": FormStyle(
+            prefix="", suffix="", fills=UTILITY_FILLS, literal_fills=UTILITY_LITERAL_FILLS
+        )
     },
 }
