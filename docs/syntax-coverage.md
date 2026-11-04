@@ -180,7 +180,7 @@ says nothing about runtime.
 
 A `[[review]]` has these fields:
 
-- `id`, `reviewer_lane` (`a`, `b`, `c` or `backend`) and `family`.
+- `id`, `reviewer_lane` (`a`, `b`, `c`, `backend` or `auditor`) and `family`.
 - A family review binds `catalogue_sha256` and `obligations_sha256`, the hashes of the reviewed
   file bytes. A page review has an empty `family` and binds only `sources_sha256`, the hash of
   `sources.toml`.

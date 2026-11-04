@@ -387,6 +387,8 @@ pub enum Lane {
     B,
     C,
     Backend,
+    /// The omission auditor (decision D88).
+    Auditor,
 }
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Deserialize, Serialize)]
