@@ -195,3 +195,48 @@ fn given_double_star_exponentiation_when_parsing_then_only_dialects_that_have_it
         );
     }
 }
+
+#[test]
+fn given_an_unpivot_in_list_when_parsing_snowflake_then_recorded_rejections_are_refused() {
+    let test_cases = [
+        AcceptanceTestCase {
+            description: "a string alias is a 1003 syntax error",
+            sql: "SELECT * FROM orders UNPIVOT (amount FOR quarter IN (q1 AS 'first', q2 AS 'second'))",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "an empty IN list is a 1003 syntax error",
+            sql: "SELECT * FROM orders UNPIVOT(amount FOR quarter IN ())",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "a trailing comma is a 1003 syntax error",
+            sql: "SELECT * FROM orders UNPIVOT(amount FOR quarter IN (q1,))",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "a plain column list still parses",
+            sql: "SELECT * FROM orders UNPIVOT(amount FOR quarter IN (q1, q2))",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "DuckDB keeps string aliases in UNPIVOT IN",
+            sql: "SELECT * FROM orders UNPIVOT (amount FOR quarter IN (q1 AS 'first', q2 AS 'second'))",
+            dialect: Dialect::DuckDB,
+            expected_accepted: true,
+        },
+    ];
+
+    for test_case in test_cases {
+        assert_eq!(
+            accepted(test_case.sql, test_case.dialect),
+            test_case.expected_accepted,
+            "{}",
+            test_case.description
+        );
+    }
+}
