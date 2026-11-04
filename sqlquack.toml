@@ -468,7 +468,7 @@ reason = "Snowflake reads text compared with a NUMBER as a number; recordings sh
 constructs = ["fn:HASH"]
 default = "warn"
 strict = "refuse"
-reason = "User decision CHI-836: HASH converts to a DuckDB 64-bit hash, NUMBER(19,0) signed, that is deterministic and equal for equal inputs within one run, but never Snowflake's value. Joins, grouping, deduplication and change detection by hash keep working; anything that depends on the value itself does not: literal hash values in expected test output, hashes stored and compared with Snowflake-computed ones, HASH(x) % n bucketing or sampling, and ordering by a hash."
+reason = "By user decision, HASH converts to a DuckDB 64-bit hash, NUMBER(19,0) signed, that is deterministic and equal for equal inputs within one run, but never Snowflake's value. Joins, grouping, deduplication and change detection by hash keep working; anything that depends on the value itself does not: literal hash values in expected test output, hashes stored and compared with Snowflake-computed ones, HASH(x) % n bucketing or sampling, and ordering by a hash."
 
 [divergences.random]
 constructs = ["fn:RANDOM"]

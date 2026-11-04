@@ -285,7 +285,7 @@ formula reproduces, so the converted SQL returns a value only where the fraction
 (or between equal values) and raises otherwise. `date_text_spelling` covers TRY_TO_DATE and
 TRY_CAST to DATE of text in a spelling no recording shows.
 
-`hash` is the one divergence that returns a different value, by user decision (CHI-836): HASH
+`hash` is the one divergence that returns a different value, by user decision: HASH
 converts to DuckDB's 64-bit hash shifted into the signed range, NUMBER(19,0), which is
 deterministic and equal for equal arguments in the same order within one run but never
 Snowflake's value. Integer NUMBERs hash by value whatever their precision, and a VARIANT by its
