@@ -42706,19 +42706,6 @@ target = "<tag_name> #4"
 note = "a string literal in place of <tag_name>"
 
 [[obligation]]
-id = "sf.ddl.alter-iceberg-table.datagovnpolicytagaction.o198"
-kind = "option_present"
-required = true
-target = "[ , <tag_name> ... ] #2"
-note = "the list continued at least once"
-
-[[obligation]]
-id = "sf.ddl.alter-iceberg-table.datagovnpolicytagaction.o200"
-kind = "option_present"
-required = true
-target = "[ COLUMN ] #7"
-
-[[obligation]]
 id = "sf.ddl.alter-iceberg-table.datagovnpolicytagaction.o282"
 kind = "required_operand_missing"
 required = true
@@ -42745,13 +42732,6 @@ kind = "negative_neighbour"
 required = true
 target = "<tag_name> in [ , [ COLUMN ] <col2_name> UNSET TAG <tag_name> [ , <tag_name> ... ] ]"
 note = "a string literal in place of <tag_name>"
-
-[[obligation]]
-id = "sf.ddl.alter-iceberg-table.datagovnpolicytagaction.o208"
-kind = "option_present"
-required = true
-target = "[ , <tag_name> ... ] #3"
-note = "the list continued at least once"
 
 [[obligation]]
 id = "sf.ddl.alter-iceberg-table.datagovnpolicytagaction.o007"
@@ -43276,6 +43256,30 @@ required = true
 target = "[ , [ COLUMN ] <col2_name> UNSET TAG <tag_name> [ , <tag_name> ... ] ]"
 anchor = "doc.sql.alter-iceberg-table / Syntax"
 note = "option absent [ , [ COLUMN ] <col2_name> UNSET TAG <tag_name> [ , <tag_name> ... ] ], observed"
+
+[[obligation]]
+id = "sf.ddl.alter-iceberg-table.datagovnpolicytagaction.o326"
+kind = "option_present"
+required = true
+target = "[ , <tag_name> ... ] #3"
+anchor = "doc.sql.alter-iceberg-table / Syntax"
+note = "the list continued at least once, observed"
+
+[[obligation]]
+id = "sf.ddl.alter-iceberg-table.datagovnpolicytagaction.o327"
+kind = "option_present"
+required = true
+target = "[ , <tag_name> ... ] #2"
+anchor = "doc.sql.alter-iceberg-table / Syntax"
+note = "the list continued at least once, observed"
+
+[[obligation]]
+id = "sf.ddl.alter-iceberg-table.datagovnpolicytagaction.o328"
+kind = "option_present"
+required = true
+target = "[ COLUMN ] #7"
+anchor = "doc.sql.alter-iceberg-table / Syntax"
+note = "option present [ COLUMN ] #7, observed"
 
 [[obligation]]
 id = "sf.ddl.alter-iceberg-table.searchoptimizationaction.o001"
@@ -128285,13 +128289,6 @@ target = "<col_name> in [ , { <col_name> <col_type> AS <expr> | <part_col_name> 
 note = "a string literal in place of <col_name>"
 
 [[obligation]]
-id = "sf.ddl.create-external-table.cloudproviderparams-location-externalstage-file-format.o467"
-kind = "required_operand_missing"
-required = true
-target = "<col_type> in [ , { <col_name> <col_type> AS <expr> | <part_col_name> <col_type> AS <part_expr> ... } ]"
-note = "omit <col_type>"
-
-[[obligation]]
 id = "sf.ddl.create-external-table.cloudproviderparams-location-externalstage-file-format.o468"
 kind = "operand_type_class"
 required = true
@@ -128332,13 +128329,6 @@ kind = "negative_neighbour"
 required = true
 target = "<part_col_name> in [ , { <col_name> <col_type> AS <expr> | <part_col_name> <col_type> AS <part_expr> ... } ]"
 note = "a string literal in place of <part_col_name>"
-
-[[obligation]]
-id = "sf.ddl.create-external-table.cloudproviderparams-location-externalstage-file-format.o475"
-kind = "required_operand_missing"
-required = true
-target = "<col_type> in [ , { <col_name> <col_type> AS <expr> | <part_col_name> <col_type> AS <part_expr> ... } ] #2"
-note = "omit <col_type>"
 
 [[obligation]]
 id = "sf.ddl.create-external-table.cloudproviderparams-location-externalstage-file-format.o476"
@@ -130571,6 +130561,22 @@ kind = "negative_neighbour"
 required = true
 anchor = "doc.sql.create-external-table / Syntax"
 note = "the form without its required EXTERNAL, observed"
+
+[[obligation]]
+id = "sf.ddl.create-external-table.cloudproviderparams-location-externalstage-file-format.o495"
+kind = "required_operand_missing"
+required = true
+target = "<col_type> in [ , { <col_name> <col_type> AS <expr> | <part_col_name> <col_type> AS <part_expr> ... } ]"
+anchor = "doc.sql.create-external-table / Syntax"
+note = "omit <col_type>, observed"
+
+[[obligation]]
+id = "sf.ddl.create-external-table.cloudproviderparams-location-externalstage-file-format.o496"
+kind = "required_operand_missing"
+required = true
+target = "<col_type> in [ , { <col_name> <col_type> AS <expr> | <part_col_name> <col_type> AS <part_expr> ... } ] #2"
+anchor = "doc.sql.create-external-table / Syntax"
+note = "omit <col_type>, observed"
 
 [[obligation]]
 id = "sf.ddl.create-external-table.cloudproviderparams-location-externalstage-partition-type.o001"

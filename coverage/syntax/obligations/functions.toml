@@ -69008,12 +69008,6 @@ required = true
 note = "the form without its required )"
 
 [[obligation]]
-id = "sf.functions.system-resolve-python-packages.o001"
-kind = "positive"
-required = true
-note = "the documented form with every required part and no optional part"
-
-[[obligation]]
 id = "sf.functions.system-resolve-python-packages.o002"
 kind = "required_operand_missing"
 required = true
@@ -69021,44 +69015,11 @@ target = "'<python_version>'"
 note = "omit '<python_version>'"
 
 [[obligation]]
-id = "sf.functions.system-resolve-python-packages.o003"
-kind = "operand_type_class"
-required = true
-target = "'<python_version>'"
-note = "a valid string_literal"
-
-[[obligation]]
-id = "sf.functions.system-resolve-python-packages.o006"
-kind = "operand_type_class"
-required = true
-target = "'<package_spec_string>'"
-note = "a valid string_literal"
-
-[[obligation]]
-id = "sf.functions.system-resolve-python-packages.o008"
-kind = "option_present"
-required = true
-target = "[ , '<artifact_repository_name>' ]"
-
-[[obligation]]
-id = "sf.functions.system-resolve-python-packages.o009"
-kind = "option_absent"
-required = true
-target = "[ , '<artifact_repository_name>' ]"
-
-[[obligation]]
 id = "sf.functions.system-resolve-python-packages.o010"
 kind = "required_operand_missing"
 required = true
 target = "'<artifact_repository_name>' in [ , '<artifact_repository_name>' ]"
 note = "omit '<artifact_repository_name>'"
-
-[[obligation]]
-id = "sf.functions.system-resolve-python-packages.o011"
-kind = "operand_type_class"
-required = true
-target = "'<artifact_repository_name>' in [ , '<artifact_repository_name>' ]"
-note = "a valid string_literal"
 
 [[obligation]]
 id = "sf.functions.system-resolve-python-packages.o013"
@@ -69071,6 +69032,53 @@ id = "sf.functions.system-resolve-python-packages.o014"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required )"
+
+[[obligation]]
+id = "sf.functions.system-resolve-python-packages.o015"
+kind = "positive"
+required = true
+anchor = "doc.functions.system_resolve_python_packages / Syntax"
+note = "the documented form with every required part and no optional part, observed"
+
+[[obligation]]
+id = "sf.functions.system-resolve-python-packages.o016"
+kind = "operand_type_class"
+required = true
+target = "'<python_version>'"
+anchor = "doc.functions.system_resolve_python_packages / Syntax"
+note = "a valid string_literal, observed"
+
+[[obligation]]
+id = "sf.functions.system-resolve-python-packages.o017"
+kind = "operand_type_class"
+required = true
+target = "'<package_spec_string>'"
+anchor = "doc.functions.system_resolve_python_packages / Syntax"
+note = "a valid string_literal, observed"
+
+[[obligation]]
+id = "sf.functions.system-resolve-python-packages.o018"
+kind = "option_absent"
+required = true
+target = "[ , '<artifact_repository_name>' ]"
+anchor = "doc.functions.system_resolve_python_packages / Syntax"
+note = "option absent [ , '<artifact_repository_name>' ], observed"
+
+[[obligation]]
+id = "sf.functions.system-resolve-python-packages.o019"
+kind = "option_present"
+required = true
+target = "[ , '<artifact_repository_name>' ]"
+anchor = "doc.functions.system_resolve_python_packages / Syntax"
+note = "option present [ , '<artifact_repository_name>' ], observed"
+
+[[obligation]]
+id = "sf.functions.system-resolve-python-packages.o020"
+kind = "operand_type_class"
+required = true
+target = "'<artifact_repository_name>' in [ , '<artifact_repository_name>' ]"
+anchor = "doc.functions.system_resolve_python_packages / Syntax"
+note = "a valid string_literal, observed"
 
 [[obligation]]
 id = "sf.functions.system-restore-privatelink-endpoint.o001"

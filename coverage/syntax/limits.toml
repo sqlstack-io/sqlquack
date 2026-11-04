@@ -11581,7 +11581,7 @@ reason = "page definitions inlined: inlineConstraint, outoflineConstraint; a def
 form = "sf.ddl.create-iceberg-table.table.iceberg-rest-in-a-catalog-linked-database"
 grammar_sha256 = "5dc6c5c003d824bb540c975ff3b5c56f9e35a37edd754a2abf79a2d8745e4f92"
 grammar = ["CREATE [ OR REPLACE ] ICEBERG TABLE [ IF NOT EXISTS ] <table_name> [ ( <col_name> <col_type> [ DEFAULT <col_default> ] [ [ WITH ] MASKING POLICY <policy_name> [ USING ( <col_name> , <cond_col1> , ... ) ] ] [ , <col_name> <col_type> [ DEFAULT <col_default> ] [ ... ] ] ) ] [ PARTITION BY ( { <col_name> | BUCKET ( <num_buckets> , <col_name> ) | TRUNCATE ( <width> , <col_name> ) | YEAR ( <col_name> ) | MONTH ( <col_name> ) | DAY ( <col_name> ) | HOUR ( <col_name> ) } [ , { <col_name> | BUCKET ( <num_buckets> , <col_name> ) | TRUNCATE ( <width> , <col_name> ) | YEAR ( <col_name> ) | MONTH ( <col_name> ) | DAY ( <col_name> ) | HOUR ( <col_name> ) } , ... ] ) ] [ PATH_LAYOUT = { FLAT | HIERARCHICAL } ] [ TARGET_FILE_SIZE = { 'AUTO' | '16MB' | '32MB' | '64MB' | '128MB' } ] [ MAX_DATA_EXTENSION_TIME_IN_DAYS = <integer> ] [ AUTO_REFRESH = { TRUE | FALSE } ] [ REPLACE_INVALID_CHARACTERS = { TRUE | FALSE } ] [ COPY GRANTS ] [ PURGE ] [ COMMENT = '<string_literal>' ] [ ICEBERG_VERSION = <integer> ] [ ICEBERG_MERGE_ON_READ_BEHAVIOR = { 'AUTO' | 'ENABLED' | 'DISABLED' } ] [ ENABLE_ICEBERG_MERGE_ON_READ = { TRUE | FALSE } ] [ [ WITH ] TAG ( <tag_name> = '<tag_value>' [ , <tag_name> = '<tag_value>' , ... ] ) ] [ BASE_LOCATION = '<path_to_directory_for_table_files>' ] [ STORAGE_SERIALIZATION_POLICY = { COMPATIBLE | OPTIMIZED } ]"]
-reason = "page definitions inlined: partitionExpression; a definition the page gives per cloud or variant becomes a choice of its variants; unbraced alternatives inside `( ... )` and in `KEY = a | b` properties are braced D113 [page misreading]: TARGET_FILE_SIZE takes a quoted size: the parameter reads `TARGET_FILE_SIZE = '{ AUTO | 16MB | 32MB | 64MB | 128MB }'` (and CREATE ICEBERG TABLE's blocks quote it the same way), so each value is a string literal. D113: The block lists the optional column definitions directly after <table_name> without parentheses; the page's other blocks and examples write the column list in parentheses (for example `<table_name> [ ( <col_name> [ <col_type> ] , ... ) ]`, `CREATE ICEBERG TABLE my_parquet_table (`), so the reading parenthesises the optional column list."
+reason = "page definitions inlined: partitionExpression; a definition the page gives per cloud or variant becomes a choice of its variants; unbraced alternatives inside `( ... )` and in `KEY = a | b` properties are braced D113 [page misreading]: TARGET_FILE_SIZE takes a quoted size: the parameter reads `TARGET_FILE_SIZE = '{ AUTO | 16MB | 32MB | 64MB | 128MB }'` (and CREATE ICEBERG TABLE's blocks quote it the same way), so each value is a string literal. D113 [page misreading]: The block lists the optional column definitions directly after <table_name> without parentheses; the page's other blocks and examples write the column list in parentheses (for example `<table_name> [ ( <col_name> [ <col_type> ] , ... ) ]`, `CREATE ICEBERG TABLE my_parquet_table (`), so the reading parenthesises the optional column list."
 
 [[reading]]
 form = "sf.ddl.create-interactive-warehouse"
@@ -30129,7 +30129,7 @@ reason = "D113 [page misreading]: USING TEMPLATE takes a subquery or a string: t
 form = "sf.ddl.create-iceberg-table-rest.table"
 grammar_sha256 = "5dc6c5c003d824bb540c975ff3b5c56f9e35a37edd754a2abf79a2d8745e4f92"
 grammar = ["CREATE [ OR REPLACE ] ICEBERG TABLE [ IF NOT EXISTS ] <table_name> [ ( <col_name> <col_type> [ DEFAULT <col_default> ] [ [ WITH ] MASKING POLICY <policy_name> [ USING ( <col_name> , <cond_col1> , ... ) ] ] [ , <col_name> <col_type> [ DEFAULT <col_default> ] [ ... ] ] ) ] [ PARTITION BY ( partitionExpression [ , partitionExpression , ... ] ) ] [ PATH_LAYOUT = { FLAT | HIERARCHICAL } ] [ TARGET_FILE_SIZE = { 'AUTO' | '16MB' | '32MB' | '64MB' | '128MB' } ] [ MAX_DATA_EXTENSION_TIME_IN_DAYS = <integer> ] [ AUTO_REFRESH = { TRUE | FALSE } ] [ REPLACE_INVALID_CHARACTERS = { TRUE | FALSE } ] [ COPY GRANTS ] [ PURGE ] [ COMMENT = '<string_literal>' ] [ ICEBERG_VERSION = <integer> ] [ ICEBERG_MERGE_ON_READ_BEHAVIOR = { 'AUTO' | 'ENABLED' | 'DISABLED' } ] [ ENABLE_ICEBERG_MERGE_ON_READ = { TRUE | FALSE } ] [ [ WITH ] TAG ( <tag_name> = '<tag_value>' [ , <tag_name> = '<tag_value>' , ... ] ) ] [ BASE_LOCATION = '<path_to_directory_for_table_files>' ] [ STORAGE_SERIALIZATION_POLICY = { COMPATIBLE | OPTIMIZED } ]"]
-reason = "D113 [page misreading]: TARGET_FILE_SIZE takes a quoted size: the parameter reads `TARGET_FILE_SIZE = '{ AUTO | 16MB | 32MB | 64MB | 128MB }'` (and CREATE ICEBERG TABLE's blocks quote it the same way), so each value is a string literal. D113: The block lists the optional column definitions directly after <table_name> without parentheses; the page's other blocks and examples write the column list in parentheses (for example `<table_name> [ ( <col_name> [ <col_type> ] , ... ) ]`, `CREATE ICEBERG TABLE my_parquet_table (`), so the reading parenthesises the optional column list."
+reason = "D113 [page misreading]: TARGET_FILE_SIZE takes a quoted size: the parameter reads `TARGET_FILE_SIZE = '{ AUTO | 16MB | 32MB | 64MB | 128MB }'` (and CREATE ICEBERG TABLE's blocks quote it the same way), so each value is a string literal. D113 [page misreading]: The block lists the optional column definitions directly after <table_name> without parentheses; the page's other blocks and examples write the column list in parentheses (for example `<table_name> [ ( <col_name> [ <col_type> ] , ... ) ]`, `CREATE ICEBERG TABLE my_parquet_table (`), so the reading parenthesises the optional column list."
 
 [[reading]]
 form = "sf.ddl.create-iceberg-table-rest.table-catalog-table-name"
@@ -34421,37 +34421,37 @@ context = "raw"
 form = "sf.ddl.alter-dataset-add-version"
 grammar_sha256 = "81e931c31b8de8ec6d528d11fd5bba73dfe4f6346f1b8c875cf8331ffd6d5212"
 grammar = ["ALTER DATASET <name> ADD VERSION '<version_name>' FROM ( <select_statement> ) [ PARTITION BY <string_expr> ] [ COMMENT = <string_literal> ] [ METADATA = <json_string_literal> ]"]
-reason = "D113: The block writes `ADD VERSION <version_name> FROM <select_statement>`, but the page's example writes the version as a string and the query in parentheses (`ADD VERSION 'v1' FROM ( SELECT ... )`), and Snowflake parses `DROP VERSION 'v1'` (runtime_error 399019, import-20261104-36) while every unquoted version name fails with errno 1003; the reading follows the example."
+reason = "D113 [page misreading]: The block writes `ADD VERSION <version_name> FROM <select_statement>`, but the page's example writes the version as a string and the query in parentheses (`ADD VERSION 'v1' FROM ( SELECT ... )`), and Snowflake parses `DROP VERSION 'v1'` (runtime_error 399019, import-20261104-36) while every unquoted version name fails with errno 1003; the reading follows the example."
 
 [[reading]]
 form = "sf.ddl.alter-dataset-drop-version"
 grammar_sha256 = "fb3fac3fe99b661df0136bd59d30c79b107a1d484285efca4463ddb028767bbf"
 grammar = ["ALTER DATASET [ IF EXISTS ] <name> DROP VERSION '<version_name>'"]
-reason = "D113: The block writes `DROP VERSION <version_name>`, but the page's example writes `DROP VERSION 'v1';`, and Snowflake parses `ALTER DATASET v1 DROP VERSION 'v1' ;` (runtime_error 399019, import-20261104-36) while every unquoted version name fails with errno 1003; the reading follows the example."
+reason = "D113 [page misreading]: The block writes `DROP VERSION <version_name>`, but the page's example writes `DROP VERSION 'v1';`, and Snowflake parses `ALTER DATASET v1 DROP VERSION 'v1' ;` (runtime_error 399019, import-20261104-36) while every unquoted version name fails with errno 1003; the reading follows the example."
 
 [[reading]]
 form = "sf.functions.minhash.minhash"
 grammar_sha256 = "1d27478e980179059a955631f43b48316b5ad207da7aa8b85a85e52ff2ee69f2"
 grammar = ["MINHASH( <k> , [ DISTINCT ] <expr> [ , <expr> ... ] )", "MINHASH( <k> , * )"]
-reason = "D113: The block writes `expr+`; the parameter says `expr` is 'One or more expressions (typically column names)', so the reading writes a comma-separated expression list."
+reason = "D113 [page misreading]: The block writes `expr+`; the parameter says `expr` is 'One or more expressions (typically column names)', so the reading writes a comma-separated expression list."
 
 [[reading]]
 form = "sf.functions.minhash.minhash-expr-over"
 grammar_sha256 = "5436f4fbd331b6876816060e366126e3175535a02134a4b8882bb3dd5acbb55a"
 grammar = ["MINHASH( <k> , [ DISTINCT ] <expr> [ , <expr> ... ] ) OVER ( [ PARTITION BY <expr1> ] )"]
-reason = "D113: The block writes `expr+`; the parameter says `expr` is 'One or more expressions (typically column names)', so the reading writes a comma-separated expression list."
+reason = "D113 [page misreading]: The block writes `expr+`; the parameter says `expr` is 'One or more expressions (typically column names)', so the reading writes a comma-separated expression list."
 
 [[reading]]
 form = "sf.functions.regr-syy.x"
 grammar_sha256 = "6c73d59d70d2eddcfd27c8585f867663f7081ed1ec716af71481b2dd16343c81"
 grammar = ["REGR_SYY(y, x) OVER ( [ PARTITION BY <expr3> ] )"]
-reason = "D113: The window block omits OVER before `( [ PARTITION BY <expr3> ] )`; the page's notes refer to 'An ORDER BY clause within the OVER clause', so the reading writes OVER."
+reason = "D113 [page misreading]: The window block omits OVER before `( [ PARTITION BY <expr3> ] )`; the page's notes refer to 'An ORDER BY clause within the OVER clause', so the reading writes OVER."
 
 [[reading]]
 form = "sf.functions.task-dependents"
 grammar_sha256 = "befb44d42c9ebc2488f26746811d25e8ee5dcb076183e2235911e3f0d624b05a"
 grammar = ["TASK_DEPENDENTS( TASK_NAME => '<string>' [ , RECURSIVE => <boolean> ] )"]
-reason = "D113: The block omits the value after `RECURSIVE =>`; the parameter reads `RECURSIVE => Boolean` and the example passes `recursive => false`."
+reason = "D113 [page misreading]: The block omits the value after `RECURSIVE =>`; the parameter reads `RECURSIVE => Boolean` and the example passes `recursive => false`."
 
 # D113 [documented but Snowflake disagrees]: the empty column list `( )` is what the external-table block's brackets allow; it is observed (above), not scored as a reject.
 
@@ -57102,4 +57102,199 @@ note = "every independent option of one production together, with the page's com
 anchor = "doc.sql.alter-application-package / Syntax"
 sql = "ALTER APPLICATION PACKAGE IF EXISTS v1 UNSET DATA_RETENTION_TIME_IN_DAYS , MAX_DATA_EXTENSION_TIME_IN_DAYS , DEFAULT_DDL_COLLATION , COMMENT , DISTRIBUTION ;"
 expect = "accept"
+context = "raw"
+
+# D113 ddl receipt triage: remaining contradictions observed, each reason names its category and receipt.
+
+[[suppress]]
+form = "sf.ddl.alter-iceberg-table.datagovnpolicytagaction"
+kind = "option_present"
+target = "[ , <tag_name> ... ] #3"
+note = "the list continued at least once"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-53); observed, not flipped to reject"
+
+[[limit]]
+form = "sf.ddl.alter-iceberg-table.datagovnpolicytagaction"
+kind = "option_present"
+target = "[ , <tag_name> ... ] #3"
+note = "the list continued at least once, observed"
+anchor = "doc.sql.alter-iceberg-table / Syntax"
+sql = "ALTER ICEBERG TABLE v1 ALTER v1 UNSET TAG v1 , v1 UNSET TAG v1 , v1 ;"
+expect = "observe"
+documented = true
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-iceberg-table.datagovnpolicytagaction"
+kind = "option_present"
+target = "[ , <tag_name> ... ] #2"
+note = "the list continued at least once"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-53); observed, not flipped to reject"
+
+[[limit]]
+form = "sf.ddl.alter-iceberg-table.datagovnpolicytagaction"
+kind = "option_present"
+target = "[ , <tag_name> ... ] #2"
+note = "the list continued at least once, observed"
+anchor = "doc.sql.alter-iceberg-table / Syntax"
+sql = "ALTER ICEBERG TABLE v1 ALTER v1 UNSET TAG v1 , v1 ;"
+expect = "observe"
+documented = true
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-iceberg-table.datagovnpolicytagaction"
+kind = "option_present"
+target = "[ COLUMN ] #7"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-53); observed, not flipped to reject"
+
+[[limit]]
+form = "sf.ddl.alter-iceberg-table.datagovnpolicytagaction"
+kind = "option_present"
+target = "[ COLUMN ] #7"
+note = "option present [ COLUMN ] #7, observed"
+anchor = "doc.sql.alter-iceberg-table / Syntax"
+sql = "ALTER ICEBERG TABLE v1 ALTER v1 UNSET TAG v1 , COLUMN v1 UNSET TAG v1 ;"
+expect = "observe"
+documented = true
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.create-external-table.cloudproviderparams-location-externalstage-file-format"
+kind = "required_operand_missing"
+target = "<col_type> in [ , { <col_name> <col_type> AS <expr> | <part_col_name> <col_type> AS <part_expr> ... } ]"
+note = "omit <col_type>"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 1473 SQLSTATE 42601, phase semantic_error, import-20261104-53), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.ddl.create-external-table.cloudproviderparams-location-externalstage-file-format"
+kind = "required_operand_missing"
+target = "<col_type> in [ , { <col_name> <col_type> AS <expr> | <part_col_name> <col_type> AS <part_expr> ... } ]"
+note = "omit <col_type>, observed"
+anchor = "doc.sql.create-external-table / Syntax"
+sql = "CREATE EXTERNAL TABLE v1 ( v1 INT AS 1 , v1 AS 1 ) LOCATION = @s1 FILE_FORMAT = ( FORMAT_NAME = 'm' ) ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.create-external-table.cloudproviderparams-location-externalstage-file-format"
+kind = "required_operand_missing"
+target = "<col_type> in [ , { <col_name> <col_type> AS <expr> | <part_col_name> <col_type> AS <part_expr> ... } ] #2"
+note = "omit <col_type>"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 1473 SQLSTATE 42601, phase semantic_error, import-20261104-53), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.ddl.create-external-table.cloudproviderparams-location-externalstage-file-format"
+kind = "required_operand_missing"
+target = "<col_type> in [ , { <col_name> <col_type> AS <expr> | <part_col_name> <col_type> AS <part_expr> ... } ] #2"
+note = "omit <col_type>, observed"
+anchor = "doc.sql.create-external-table / Syntax"
+sql = "CREATE EXTERNAL TABLE v1 ( v1 INT AS 1 , v1 AS 1 ) LOCATION = @s1 FILE_FORMAT = ( FORMAT_NAME = 'm' ) ;"
+expect = "observe"
+context = "raw"
+
+# D113 functions receipt triage: remaining contradictions observed, each reason names its category and receipt.
+
+[[suppress]]
+form = "sf.functions.system-resolve-python-packages"
+kind = "positive"
+note = "the documented form with every required part and no optional part"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-53); observed, not flipped to reject"
+
+[[limit]]
+form = "sf.functions.system-resolve-python-packages"
+kind = "positive"
+note = "the documented form with every required part and no optional part, observed"
+anchor = "doc.functions.system_resolve_python_packages / Syntax"
+sql = "SELECT SYSTEM$RESOLVE_PYTHON_PACKAGES ( 'm' , 'm' ) ;"
+expect = "observe"
+documented = true
+context = "raw"
+
+[[suppress]]
+form = "sf.functions.system-resolve-python-packages"
+kind = "operand_type_class"
+target = "'<python_version>'"
+note = "a valid string_literal"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-53); observed, not flipped to reject"
+
+[[limit]]
+form = "sf.functions.system-resolve-python-packages"
+kind = "operand_type_class"
+target = "'<python_version>'"
+note = "a valid string_literal, observed"
+anchor = "doc.functions.system_resolve_python_packages / Syntax"
+sql = "SELECT SYSTEM$RESOLVE_PYTHON_PACKAGES ( 'm' , 'm' ) ;"
+expect = "observe"
+documented = true
+context = "raw"
+
+[[suppress]]
+form = "sf.functions.system-resolve-python-packages"
+kind = "operand_type_class"
+target = "'<package_spec_string>'"
+note = "a valid string_literal"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-53); observed, not flipped to reject"
+
+[[limit]]
+form = "sf.functions.system-resolve-python-packages"
+kind = "operand_type_class"
+target = "'<package_spec_string>'"
+note = "a valid string_literal, observed"
+anchor = "doc.functions.system_resolve_python_packages / Syntax"
+sql = "SELECT SYSTEM$RESOLVE_PYTHON_PACKAGES ( 'm' , 'm' ) ;"
+expect = "observe"
+documented = true
+context = "raw"
+
+[[suppress]]
+form = "sf.functions.system-resolve-python-packages"
+kind = "option_absent"
+target = "[ , '<artifact_repository_name>' ]"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-53); observed, not flipped to reject"
+
+[[limit]]
+form = "sf.functions.system-resolve-python-packages"
+kind = "option_absent"
+target = "[ , '<artifact_repository_name>' ]"
+note = "option absent [ , '<artifact_repository_name>' ], observed"
+anchor = "doc.functions.system_resolve_python_packages / Syntax"
+sql = "SELECT SYSTEM$RESOLVE_PYTHON_PACKAGES ( 'm' , 'm' ) ;"
+expect = "observe"
+documented = true
+context = "raw"
+
+[[suppress]]
+form = "sf.functions.system-resolve-python-packages"
+kind = "option_present"
+target = "[ , '<artifact_repository_name>' ]"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-53); observed, not flipped to reject"
+
+[[limit]]
+form = "sf.functions.system-resolve-python-packages"
+kind = "option_present"
+target = "[ , '<artifact_repository_name>' ]"
+note = "option present [ , '<artifact_repository_name>' ], observed"
+anchor = "doc.functions.system_resolve_python_packages / Syntax"
+sql = "SELECT SYSTEM$RESOLVE_PYTHON_PACKAGES ( 'm' , 'm' , 'm' ) ;"
+expect = "observe"
+documented = true
+context = "raw"
+
+[[suppress]]
+form = "sf.functions.system-resolve-python-packages"
+kind = "operand_type_class"
+target = "'<artifact_repository_name>' in [ , '<artifact_repository_name>' ]"
+note = "a valid string_literal"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-53); observed, not flipped to reject"
+
+[[limit]]
+form = "sf.functions.system-resolve-python-packages"
+kind = "operand_type_class"
+target = "'<artifact_repository_name>' in [ , '<artifact_repository_name>' ]"
+note = "a valid string_literal, observed"
+anchor = "doc.functions.system_resolve_python_packages / Syntax"
+sql = "SELECT SYSTEM$RESOLVE_PYTHON_PACKAGES ( 'm' , 'm' , 'm' ) ;"
+expect = "observe"
+documented = true
 context = "raw"
