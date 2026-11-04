@@ -82,6 +82,7 @@ impl Expression {
             | Expression::CreateTable(_)
             | Expression::DropTable(_)
             | Expression::Undrop(_)
+            | Expression::DropObject(_)
             | Expression::AlterTable(_)
             | Expression::SplitTable(_)
             | Expression::FlashbackTable(_)

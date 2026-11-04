@@ -397,6 +397,7 @@ impl Expression {
             Expression::CreateTable(_) => "create_table",
             Expression::DropTable(_) => "drop_table",
             Expression::Undrop(_) => "undrop",
+            Expression::DropObject(_) => "drop_object",
             Expression::AlterTable(_) => "alter_table",
             Expression::SplitTable(_) => "split_table",
             Expression::FlashbackTable(_) => "flashback_table",

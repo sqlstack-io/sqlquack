@@ -1,8 +1,8 @@
 use serde_json::json;
 
-use sqlquack_syntax::Dialect;
+use sqlquack_syntax::{CallMode, Dialect};
 
-use crate::helpers::{accepted, cast_targets, projection_at, statement_at};
+use crate::helpers::{accepted, cast_targets, projection_at, statement_at, statements};
 use crate::test_types::{
     AcceptanceTestCase, CastTargetTestCase, ProjectionTestCase, StatementTestCase,
 };
@@ -512,6 +512,142 @@ fn given_order_by_all_when_parsing_then_it_is_the_keyword_with_its_direction() {
     for test_case in test_cases {
         assert_eq!(
             statement_at(test_case.sql, test_case.pointer),
+            test_case.expected_value,
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_a_snowflake_drop_of_another_object_kind_when_parsing_then_it_takes_that_kinds_options() {
+    let test_cases = [
+        AcceptanceTestCase {
+            description: "Snowflake drops an agent (recorded semantic error, so it parsed)",
+            sql: "DROP AGENT v1 ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "a two-word kind takes IF EXISTS (recorded accepted)",
+            sql: "DROP COMPUTE POOL IF EXISTS v1 ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "a service takes FORCE (recorded accepted)",
+            sql: "DROP SERVICE IF EXISTS v1 FORCE ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "an external table takes RESTRICT (recorded semantic error)",
+            sql: "DROP EXTERNAL TABLE v1 RESTRICT ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "an agent takes no FORCE",
+            sql: "DROP AGENT v1 FORCE ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description:
+                "a stage needs a name; the Command fallback accepted this (recorded errno 1003)",
+            sql: "DROP STAGE ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "a string is no name (recorded errno 1003)",
+            sql: "DROP AGENT 'v1' ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "IF without EXISTS (recorded errno 1003)",
+            sql: "DROP AGENT IF v1 ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "half of a two-word kind (recorded errno 1003)",
+            sql: "DROP COMPUTE v1 ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+    ];
+
+    for test_case in test_cases {
+        assert_eq!(
+            accepted(test_case.sql, test_case.dialect),
+            test_case.expected_accepted,
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_a_snowflake_drop_of_another_object_kind_when_parsing_then_the_tree_names_the_kind() {
+    let test_cases = [
+        ProjectionTestCase {
+            description: "a two-word kind is named whole",
+            sql: "DROP APPLICATION PACKAGE IF EXISTS v1",
+            pointer: "/0/drop_object/kind",
+            expected_value: json!("APPLICATION PACKAGE"),
+        },
+        ProjectionTestCase {
+            description: "IF EXISTS is kept",
+            sql: "DROP APPLICATION PACKAGE IF EXISTS v1",
+            pointer: "/0/drop_object/if_exists",
+            expected_value: json!(true),
+        },
+        ProjectionTestCase {
+            description: "STREAMLIT is not read as STREAM",
+            sql: "DROP STREAMLIT v1",
+            pointer: "/0/drop_object/kind",
+            expected_value: json!("STREAMLIT"),
+        },
+        ProjectionTestCase {
+            description: "a service keeps FORCE",
+            sql: "DROP SERVICE v1 FORCE",
+            pointer: "/0/drop_object/force",
+            expected_value: json!(true),
+        },
+        ProjectionTestCase {
+            description: "DROP SCHEMA keeps RESTRICT apart from the default",
+            sql: "DROP SCHEMA v1 RESTRICT",
+            pointer: "/0/drop_schema/restrict",
+            expected_value: json!(true),
+        },
+        ProjectionTestCase {
+            description: "plain DROP SCHEMA leaves RESTRICT out of the tree",
+            sql: "DROP SCHEMA v1",
+            pointer: "/0/drop_schema/restrict",
+            expected_value: serde_json::Value::Null,
+        },
+        ProjectionTestCase {
+            description: "DROP SCHEMA keeps CASCADE",
+            sql: "DROP SCHEMA v1 CASCADE",
+            pointer: "/0/drop_schema/cascade",
+            expected_value: json!(true),
+        },
+        ProjectionTestCase {
+            description: "an external table keeps RESTRICT",
+            sql: "DROP EXTERNAL TABLE v1 RESTRICT",
+            pointer: "/0/drop_object/restrict",
+            expected_value: json!(true),
+        },
+    ];
+
+    for test_case in test_cases {
+        assert_eq!(
+            statements(test_case.sql, Dialect::Snowflake, CallMode::Faithful)
+                .pointer(test_case.pointer)
+                .cloned()
+                .unwrap_or_default(),
             test_case.expected_value,
             "{}",
             test_case.description
