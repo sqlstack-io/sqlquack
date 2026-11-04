@@ -6856,23 +6856,10 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "sf.ddl.alter-application-package.unset.o040"
-kind = "option_present"
-required = true
-target = "[ IF EXISTS ]"
-
-[[obligation]]
 id = "sf.ddl.alter-application-package.unset.o003"
 kind = "option_absent"
 required = true
 target = "[ IF EXISTS ]"
-
-[[obligation]]
-id = "sf.ddl.alter-application-package.unset.o004"
-kind = "required_operand_missing"
-required = true
-target = "<name>"
-note = "omit <name>"
 
 [[obligation]]
 id = "sf.ddl.alter-application-package.unset.o005"
@@ -6938,12 +6925,6 @@ required = true
 note = "the form without its required APPLICATION"
 
 [[obligation]]
-id = "sf.ddl.alter-application-package.unset.o029"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required PACKAGE"
-
-[[obligation]]
 id = "sf.ddl.alter-application-package.unset.o023"
 kind = "negative_neighbour"
 required = true
@@ -6983,6 +6964,29 @@ kind = "interaction_all_options"
 required = true
 anchor = "doc.sql.alter-application-package / Syntax"
 note = "every independent option of one production together, with the page's combination rules applied, observed"
+
+[[obligation]]
+id = "sf.ddl.alter-application-package.unset.o069"
+kind = "option_present"
+required = true
+target = "[ IF EXISTS ]"
+anchor = "doc.sql.alter-application-package / Syntax"
+note = "option present [ IF EXISTS ], observed"
+
+[[obligation]]
+id = "sf.ddl.alter-application-package.unset.o070"
+kind = "required_operand_missing"
+required = true
+target = "<name>"
+anchor = "doc.sql.alter-application-package / Syntax"
+note = "omit <name>, observed"
+
+[[obligation]]
+id = "sf.ddl.alter-application-package.unset.o071"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.alter-application-package / Syntax"
+note = "the form without its required PACKAGE, observed"
 
 [[obligation]]
 id = "sf.ddl.alter-application-package.unset-tag.o001"
@@ -46059,12 +46063,6 @@ required = true
 target = "[ , ... ]"
 
 [[obligation]]
-id = "sf.ddl.alter-iceberg-table.unset.o030"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ICEBERG"
-
-[[obligation]]
 id = "sf.ddl.alter-iceberg-table.unset.o025"
 kind = "negative_neighbour"
 required = true
@@ -46110,6 +46108,13 @@ kind = "interaction_all_options"
 required = true
 anchor = "doc.sql.alter-iceberg-table / Syntax"
 note = "every independent option of one production together, observed"
+
+[[obligation]]
+id = "sf.ddl.alter-iceberg-table.unset.o065"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.alter-iceberg-table / Syntax"
+note = "the form without its required ICEBERG, observed"
 
 [[obligation]]
 id = "sf.ddl.alter-iceberg-table.upgrade-to-iceberg-version.o001"
@@ -96703,13 +96708,6 @@ target = "<purpose>"
 note = "a valid operand"
 
 [[obligation]]
-id = "sf.ddl.alter-view.unset.o052"
-kind = "option_present"
-required = true
-target = "[ , ... ]"
-note = "the list continued at least once"
-
-[[obligation]]
 id = "sf.ddl.alter-view.unset.o053"
 kind = "option_absent"
 required = true
@@ -96769,6 +96767,14 @@ kind = "interaction_all_options"
 required = true
 anchor = "doc.sql.alter-view / Syntax"
 note = "every independent option of one production together, with the page's combination rules applied, observed"
+
+[[obligation]]
+id = "sf.ddl.alter-view.unset.o056"
+kind = "option_present"
+required = true
+target = "[ , ... ]"
+anchor = "doc.sql.alter-view / Syntax"
+note = "the list continued at least once, observed"
 
 [[obligation]]
 id = "sf.ddl.alter-warehouse.abort-all-queries.o001"

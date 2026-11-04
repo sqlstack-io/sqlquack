@@ -65020,3 +65020,281 @@ anchor = "doc.sql.create-resource-monitor / Syntax"
 sql = "CREATE RESOURCE MONITOR v1 CREDIT_QUOTA = 1 ;"
 expect = "observe"
 context = "raw"
+
+# D113 ddl receipt triage (imports 97-99): remaining contradictions observed, each reason names its category and receipt.
+
+[[suppress]]
+form = "sf.ddl.alter-application-package.unset"
+kind = "option_present"
+target = "[ IF EXISTS ]"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-98); observed, not flipped to reject"
+
+[[limit]]
+form = "sf.ddl.alter-application-package.unset"
+kind = "option_present"
+target = "[ IF EXISTS ]"
+note = "option present [ IF EXISTS ], observed"
+anchor = "doc.sql.alter-application-package / Syntax"
+sql = "ALTER APPLICATION PACKAGE IF EXISTS v1 UNSET DATA_RETENTION_TIME_IN_DAYS ;"
+expect = "observe"
+documented = true
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-application-package.unset"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 02000, phase semantic_error, import-20261104-98), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.ddl.alter-application-package.unset"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>, observed"
+anchor = "doc.sql.alter-application-package / Syntax"
+sql = "ALTER APPLICATION PACKAGE UNSET DATA_RETENTION_TIME_IN_DAYS ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-application-package.unset"
+kind = "negative_neighbour"
+note = "the form without its required PACKAGE"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 02000, phase semantic_error, import-20261104-98), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.ddl.alter-application-package.unset"
+kind = "negative_neighbour"
+note = "the form without its required PACKAGE, observed"
+anchor = "doc.sql.alter-application-package / Syntax"
+sql = "ALTER APPLICATION v1 UNSET DATA_RETENTION_TIME_IN_DAYS ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-iceberg-table.unset"
+kind = "negative_neighbour"
+note = "the form without its required ICEBERG"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 42S02, phase semantic_error, import-20261104-98), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.ddl.alter-iceberg-table.unset"
+kind = "negative_neighbour"
+note = "the form without its required ICEBERG, observed"
+anchor = "doc.sql.alter-iceberg-table / Syntax"
+sql = "ALTER TABLE v1 UNSET REPLACE_INVALID_CHARACTERS ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-view.unset"
+kind = "option_present"
+target = "[ , ... ]"
+note = "the list continued at least once"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-98); observed, not flipped to reject"
+
+[[limit]]
+form = "sf.ddl.alter-view.unset"
+kind = "option_present"
+target = "[ , ... ]"
+note = "the list continued at least once, observed"
+anchor = "doc.sql.alter-view / Syntax"
+sql = "ALTER VIEW v1 UNSET SECURE , SECURE ;"
+expect = "observe"
+documented = true
+context = "raw"
+
+# D113 security_admin receipt triage (imports 97-99): remaining contradictions observed, each reason names its category and receipt.
+
+[[suppress]]
+form = "sf.security_admin.alter-authentication-policy.unset"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 1003 SQLSTATE 42000, phase semantic_error, import-20261104-98), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.alter-authentication-policy.unset"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>, observed"
+anchor = "doc.sql.alter-authentication-policy / Syntax"
+sql = "ALTER AUTHENTICATION POLICY UNSET AUTHENTICATION_METHODS ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-feature-policy.unset"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 1003 SQLSTATE 42000, phase semantic_error, import-20261104-98), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.alter-feature-policy.unset"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>, observed"
+anchor = "doc.sql.alter-feature-policy / Syntax"
+sql = "ALTER FEATURE POLICY UNSET BLOCKED_OBJECT_TYPES_FOR_CREATION ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-maintenance-policy.unset"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 1003 SQLSTATE 42000, phase semantic_error, import-20261104-98), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.alter-maintenance-policy.unset"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>, observed"
+anchor = "doc.sql.alter-maintenance-policy / Syntax"
+sql = "ALTER MAINTENANCE POLICY UNSET COMMENT ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-organization-user.unset"
+kind = "negative_neighbour"
+note = "the form without its required ORGANIZATION"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 02000, phase semantic_error, import-20261104-98), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.alter-organization-user.unset"
+kind = "negative_neighbour"
+note = "the form without its required ORGANIZATION, observed"
+anchor = "doc.sql.alter-organization-user / Syntax"
+sql = "ALTER USER v1 UNSET EMAIL ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-packages-policy.unset"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 1003 SQLSTATE 42000, phase semantic_error, import-20261104-98), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.alter-packages-policy.unset"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>, observed"
+anchor = "doc.sql.alter-packages-policy / Syntax"
+sql = "ALTER PACKAGES POLICY UNSET ALLOWLIST ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-password-policy.unset"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 1003 SQLSTATE 42000, phase semantic_error, import-20261104-98), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.alter-password-policy.unset"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>, observed"
+anchor = "doc.sql.alter-password-policy / Syntax"
+sql = "ALTER PASSWORD POLICY UNSET PASSWORD_MIN_LENGTH ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-session-policy.unset"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 1003 SQLSTATE 42000, phase semantic_error, import-20261104-98), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.alter-session-policy.unset"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>, observed"
+anchor = "doc.sql.alter-session-policy / Syntax"
+sql = "ALTER SESSION POLICY UNSET SESSION_IDLE_TIMEOUT_MINS ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-user-modify-key-pair.unset"
+kind = "negative_neighbour"
+note = "the form without its required EXISTS in [ IF EXISTS ]"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 02000, phase semantic_error, import-20261104-98), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.alter-user-modify-key-pair.unset"
+kind = "negative_neighbour"
+note = "the form without its required EXISTS in [ IF EXISTS ], observed"
+anchor = "doc.sql.alter-user-modify-key-pair / Syntax"
+sql = "ALTER USER IF MODIFY KEY PAIR v1 UNSET DISABLED ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-user-modify-programmatic-access-token.unset"
+kind = "negative_neighbour"
+note = "the form without its required EXISTS in [ IF EXISTS ]"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 02000, phase semantic_error, import-20261104-98), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.alter-user-modify-programmatic-access-token.unset"
+kind = "negative_neighbour"
+note = "the form without its required EXISTS in [ IF EXISTS ], observed"
+anchor = "doc.sql.alter-user-modify-programmatic-access-token / Syntax"
+sql = "ALTER USER IF MODIFY PROGRAMMATIC ACCESS TOKEN v1 UNSET DISABLED ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-user-modify-workload-identity.unset"
+kind = "negative_neighbour"
+note = "the form without its required EXISTS in [ IF EXISTS ]"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 02000, phase semantic_error, import-20261104-98), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.alter-user-modify-workload-identity.unset"
+kind = "negative_neighbour"
+note = "the form without its required EXISTS in [ IF EXISTS ], observed"
+anchor = "doc.sql.alter-user-modify-workload-identity / Syntax"
+sql = "ALTER USER IF MODIFY WORKLOAD IDENTITY v1 UNSET DISABLED ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.create-security-integration-saml2"
+kind = "negative_neighbour"
+note = "the form without its required { METADATA_URL = '<string_literal>' | <idp_parameters> }"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 390966 SQLSTATE 22023, phase runtime_error, import-20261104-97), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.create-security-integration-saml2"
+kind = "negative_neighbour"
+note = "the form without its required { METADATA_URL = '<string_literal>' | <idp_parameters> }, observed"
+anchor = "doc.sql.create-security-integration-saml2 / Syntax"
+sql = "CREATE SECURITY INTEGRATION v1 TYPE = SAML2 ENABLED = TRUE ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.create-storage-integration"
+kind = "negative_neighbour"
+note = "the form without its required { { STORAGE_PROVIDER = 'S3' STORAGE_AWS_ROLE_ARN = '<iam_role>' [ STORAGE_AWS_EXTERNAL_ID = '<external_id>' ] [ STORAGE_AWS_OBJECT_ACL = 'bucket-owner-full-control' ] [ USE_PRIVATELINK_ENDPOINT = { TRUE | FALSE } ] } | { STORAGE_PROVIDER = 'GCS' } | { STORAGE_PROVIDER = 'AZURE' AZURE_TENANT_ID = '<tenant_id>' [ USE_PRIVATELINK_ENDPOINT = { TRUE | FALSE } ] } }"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2029 SQLSTATE 42601, phase semantic_error, import-20261104-97), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.create-storage-integration"
+kind = "negative_neighbour"
+note = "the form without its required { { STORAGE_PROVIDER = 'S3' STORAGE_AWS_ROLE_ARN = '<iam_role>' [ STORAGE_AWS_EXTERNAL_ID = '<external_id>' ] [ STORAGE_AWS_OBJECT_ACL = 'bucket-owner-full-control' ] [ USE_PRIVATELINK_ENDPOINT = { TRUE | FALSE } ] } | { STORAGE_PROVIDER = 'GCS' } | { STORAGE_PROVIDER = 'AZURE' AZURE_TENANT_ID = '<tenant_id>' [ USE_PRIVATELINK_ENDPOINT = { TRUE | FALSE } ] } }, observed"
+anchor = "doc.sql.create-storage-integration / Syntax"
+sql = "CREATE STORAGE INTEGRATION v1 TYPE = EXTERNAL_STAGE ENABLED = TRUE STORAGE_ALLOWED_LOCATIONS = ( '<cloud>://<bucket>/<path>/' ) ;"
+expect = "observe"
+context = "raw"
