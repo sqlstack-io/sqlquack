@@ -1,0 +1,23 @@
+category = "temporal"
+construct = "fn:TRY_TO_TIMESTAMP_NTZ"
+session_profile = "utc-v1"
+
+[[case]]
+id = "try_ntz_format_dd_mon_yy_hh24mi"
+description = "TRY_TO_TIMESTAMP_NTZ(x, 'DD-MON-YY HH24:MI'): month names in any case, two-digit years either side of the century start, and near misses."
+columns = [{ name = "x", type = "VARCHAR" }]
+rows = [
+  ["'05-Mar-24 14:30'"],
+  ["'05-MAR-24 14:30'"],
+  ["'05-mar-69 00:00'"],
+  ["'31-Dec-70 23:59'"],
+  ["'29-Feb-23 10:00'"],
+  ["'5-Mar-24 14:30'"],
+  ["'05-March-24 14:30'"],
+  ["'05-Mar-2024 14:30'"],
+  ["'05-Mar-24 24:00'"],
+  ["''"],
+  ["NULL"],
+]
+expression = "TRY_TO_TIMESTAMP_NTZ(x, 'DD-MON-YY HH24:MI')"
+tags = ["null", "boundary"]
