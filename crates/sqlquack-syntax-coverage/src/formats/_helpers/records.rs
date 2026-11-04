@@ -471,15 +471,19 @@ pub(crate) fn check_review(review: &Review) -> Vec<String> {
         }
         family => {
             FAMILIES.contains(&family)
-                && hash(&review.catalogue_sha256)
-                && hash(&review.obligations_sha256)
                 && review.sources_sha256.is_none()
+                && match review.definitions.is_empty() {
+                    true => hash(&review.catalogue_sha256) && hash(&review.obligations_sha256),
+                    false => {
+                        review.catalogue_sha256.is_none() && review.obligations_sha256.is_none()
+                    }
+                }
         }
     };
     if !bound {
         problems.push(format!(
-            "review {id}: a family review binds its catalogue and obligation hashes, a page review \
-             (empty family) binds only sources_sha256"
+            "review {id}: a family review binds its catalogue and obligation hashes, or instead \
+             each listed form's definition; a page review (empty family) binds only sources_sha256"
         ));
     }
     let tree_valid: bool = match (&review.parser_tree, review.family.as_str()) {
@@ -526,6 +530,25 @@ pub(crate) fn check_review(review: &Review) -> Vec<String> {
     {
         problems.push(format!(
             "review {id}: fingerprints, when present, give one for every form it lists"
+        ));
+    }
+    problems.extend(
+        review
+            .definitions
+            .iter()
+            .filter(|(form, definition)| !listed.contains(form) || !is_sha256(definition))
+            .map(|(form, _)| {
+                format!("review {id}: definition of {form} is not a SHA-256 of a form it lists")
+            }),
+    );
+    if !review.definitions.is_empty()
+        && (listed.iter().any(|form| {
+            !review.definitions.contains_key(*form) || !review.fingerprints.contains_key(*form)
+        }) || !review.exclusions.is_empty())
+    {
+        problems.push(format!(
+            "review {id}: definitions, when present, give one and a fingerprint for every form it \
+             lists, and the review excludes nothing"
         ));
     }
     if !is_utc(&review.reviewed_utc) {
