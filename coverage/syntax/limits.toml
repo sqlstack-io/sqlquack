@@ -4123,8 +4123,8 @@ reason = "the page shows a trailing comma, `'<config_name>' , )`; its example is
 [[reading]]
 form = "sf.functions.system-generate-saml-csr"
 grammar_sha256 = "ac661b6b1cce817651b93a939e34f79e356015eeed3729e465f76351ffcf48c8"
-grammar = ["SYSTEM$GENERATE_SAML_CSR( <name> [ , '<dn>' ] )"]
-reason = "the page shows `SYSTEM$GENERATE_SAML_CSR( <name> ,  )` with the second argument missing; its arguments list name (required) and DN (optional, a string such as 'cn=juser, ou=dev, ou=people, o=eng, dc=com') and its examples call it with one and two arguments"
+grammar = ["SYSTEM$GENERATE_SAML_CSR( '<name>' [ , '<dn>' ] )"]
+reason = "the page shows `SYSTEM$GENERATE_SAML_CSR( <name> ,  )` with the second argument missing; its arguments list name (required) and DN (optional, a string such as 'cn=juser, ou=dev, ou=people, o=eng, dc=com') and its examples call it with one and two arguments; D118: the examples pass the integration name as a string ('my_idp')"
 
 [[reading]]
 form = "sf.functions.system-query-reference"
@@ -57732,3 +57732,168 @@ anchor = "doc.classes.custom_classifier.commands.show-custom-classifiers / Synta
 sql = "SHOW SNOWFLAKE . . CUSTOM_CLASSIFIER ;"
 expect = "observe"
 context = "raw"
+
+# D118: auditor findings on the plain function stratum (documented variants with no obligation,
+# operand classes); each reading quotes the page.
+
+[[reading]]
+form = "sf.functions.current-organization-user"
+grammar_sha256 = "880cb92eeb5f62bae6dc6673bc5ee7ac26e11200717ba77b7f659377473569e9"
+grammar = ["CURRENT_ORGANIZATION_USER [ ( ) ]"]
+reason = "D118: the page says “this function can be called without parentheses in SQL statements”, so the parentheses are optional"
+
+[[reading]]
+form = "sf.functions.database-refresh-history"
+grammar_sha256 = "2252160fd45f95c2f2368e22c324d9793be4c6ad62892b536c723eab827e31b9"
+grammar = ["DATABASE_REFRESH_HISTORY( [ '<secondary_db_name>' ] )"]
+reason = "D118: the page's argument description and example (`database_refresh_history()`) make the secondary database name optional"
+
+[[reading]]
+form = "sf.functions.database-refresh-progress.database-refresh-progress"
+grammar_sha256 = "a32da3e6b97a6758fc68da85196b5427f2df9c0d0e46d8ba52990d36d31664d2"
+grammar = ["DATABASE_REFRESH_PROGRESS( [ '<secondary_db_name>' ] )"]
+reason = "D118: the page's argument description makes the secondary database name optional, as for DATABASE_REFRESH_HISTORY"
+
+[[reading]]
+form = "sf.functions.system-database-refresh-history"
+grammar_sha256 = "0e1f32fc391bb61e9da4bdd295c6440642ad9df798628e1a460e026a62f2a066"
+grammar = ["SYSTEM$DATABASE_REFRESH_HISTORY( [ '<secondary_db_name>' ] )"]
+reason = "D118: the page's argument description makes the secondary database name optional"
+
+[[reading]]
+form = "sf.functions.system-database-refresh-progress.system-database-refresh-progress"
+grammar_sha256 = "6a4801ed0c6bed0c06e92009fbaa677ed4514eb720844c7040b38e083811d916"
+grammar = ["SYSTEM$DATABASE_REFRESH_PROGRESS( [ '<secondary_db_name>' ] )"]
+reason = "D118: the page's argument description makes the secondary database name optional"
+
+[[reading]]
+form = "sf.functions.system-get-predecessor-return-value"
+grammar_sha256 = "a8448507ab17e9dba3d2bf8284f38b0798bf160c73bc53191058307d4b335bd6"
+grammar = ["SYSTEM$GET_PREDECESSOR_RETURN_VALUE( [ '<task_name>' ] )"]
+reason = "D118: the page says the argument is optional"
+
+[[reading]]
+form = "sf.functions.system-list-application-restricted-features"
+grammar_sha256 = "d8149662c53ae81ff2184ea6a8086a05ba70723f8aa6630e5dae845681675ad2"
+grammar = ["SYSTEM$LIST_APPLICATION_RESTRICTED_FEATURES( [ '<app_name>' ] )"]
+reason = "D118: the page says the application name is not required when an application calls the function"
+
+[[reading]]
+form = "sf.functions.system-migrate-saml-idp-registration"
+grammar_sha256 = "7dcf28728571eb92a7418be30fb739edfc203db2e0fc4c43074c7714e9a58b9c"
+grammar = ["SYSTEM$MIGRATE_SAML_IDP_REGISTRATION( '<integration_name>' [ , '<issuer>' ] )"]
+reason = "D118: the page says the issuer is “Required if not specified in SAML_IDENTITY_PROVIDER”, so a one-argument call is documented"
+
+[[reading]]
+form = "sf.functions.get"
+grammar_sha256 = "9cfecd7df1a1132b55f851f63098109a061000075573d2fac7580b53afb90c2b"
+grammar = ["GET( <array> , <index> )", "GET( <variant> , <index> )", "GET( <object> , <field_name_expression> )", "GET( <variant> , <field_name_expression> )", "GET( <map> , <key> )"]
+reason = "D118: the page describes field_name as a VARCHAR expression (its examples pass 'Ukraine'), not an identifier"
+
+[[reading]]
+form = "sf.functions.get-ignore-case"
+grammar_sha256 = "f7d764db0ab5bcd49d602cb0b1cd486e576f837defe83f782030910bbc0ac108"
+grammar = ["GET_IGNORE_CASE( <object> , <field_name_expression> )", "GET_IGNORE_CASE( <variant> , <field_name_expression> )", "GET_IGNORE_CASE( <map> , <key> )"]
+reason = "D118: the page describes field_name as a VARCHAR expression, not an identifier, as for GET"
+
+[[reading]]
+form = "sf.functions.to-file"
+grammar_sha256 = "d9c82c585ebc1aefae77161790a45ae7137760e162365e4062ee17dc689f97ef"
+grammar = ["TO_FILE( '<stage_name>', <relative_path> )", "TO_FILE( <file_url> )", "TO_FILE( <metadata> )"]
+reason = "D118: the page gives the stage name “as a string, in the form '@stage_name'”"
+
+[[reading]]
+form = "sf.functions.try-to-file"
+grammar_sha256 = "29b2e823bc2a7d90ebdfab153192e8cdc35b76c5fd740e3c44cc9e509f1babea"
+grammar = ["TRY_TO_FILE( '<stage_name>', <relative_path> )", "TRY_TO_FILE( <file_url> )", "TRY_TO_FILE( <metadata> )"]
+reason = "D118: the page gives the stage name as a string in the form '@stage_name', as for TO_FILE"
+
+[[reading]]
+form = "sf.functions.system-application-get-log-level"
+grammar_sha256 = "ed6fb48d22122ccee9c95d54599dc054818b4f9bf5b55bbab9ac45e1b6d453c7"
+grammar = ["SYSTEM$APPLICATION_GET_LOG_LEVEL( '<qualified_object_name>' )"]
+reason = "D118: the page's '<schema_name>.<object_name>' is one string literal holding a qualified name"
+
+[[reading]]
+form = "sf.functions.system-application-get-metric-level"
+grammar_sha256 = "6c0eb06134e3b1ab54fefac2eb72f54265548a58334c135b8b0b58928eadb843"
+grammar = ["SYSTEM$APPLICATION_GET_METRIC_LEVEL( '<qualified_object_name>' )"]
+reason = "D118: the page's '<schema_name>.<object_name>' is one string literal holding a qualified name"
+
+[[reading]]
+form = "sf.functions.system-application-get-trace-level"
+grammar_sha256 = "c860cfd03be26f757b2bf5d30665f079409de96935621331c9d43de36bf94899"
+grammar = ["SYSTEM$APPLICATION_GET_TRACE_LEVEL( '<qualified_object_name>' )"]
+reason = "D118: the page's '<schema_name>.<object_name>' is one string literal holding a qualified name"
+
+[[reading]]
+form = "sf.functions.system-registry-list-images"
+grammar_sha256 = "df89d6f8751e26a6d3dca9a6d9e1a59b05e21dc3d8a266b8ed7a24a7677bee59"
+grammar = ["SYSTEM$REGISTRY_LIST_IMAGES( '<repository_path>' )"]
+reason = "D118: the page's '/<dbName>/<schemaName>/<repositoryName>' is one string literal holding a repository path"
+
+[[reading]]
+form = "sf.functions.system-schedule-async-replication-group-refresh"
+grammar_sha256 = "0a3d3733884393622945bb5e4c377324ff4316efad0721cd7c817b4e6a7702fe"
+grammar = ["SYSTEM$SCHEDULE_ASYNC_REPLICATION_GROUP_REFRESH( '<replication_group_name>' )", "SYSTEM$SCHEDULE_ASYNC_REPLICATION_GROUP_REFRESH( '<failover_group_name>' )"]
+reason = "D118: the syntax block leaves the group name unquoted, but the page's argument heading and every example pass it as a string literal"
+
+[[reading]]
+form = "sf.functions.system-set-return-value"
+grammar_sha256 = "c5e36dfda747f05bd907283d83c1d3c20e2d329847a800b8c5e844d8f3fb1779"
+grammar = ["SYSTEM$SET_RETURN_VALUE( '<string_expression>' )", "SYSTEM$SET_RETURN_VALUE( :<variable> )"]
+reason = "D118: the page says the argument “can be a string literal or a variable; for example, SYSTEM$SET_RETURN_VALUE(:VARIABLE)”"
+
+[[reading]]
+form = "sf.functions.bitand-agg.bitand-agg"
+grammar_sha256 = "96415a9a63a7f1ee41c3dab1bc5c75d12cd2f40e04bec5665e9280c840209df5"
+grammar = ["BITAND_AGG( [ DISTINCT ] <expr1> )"]
+reason = "D118: the page's usage notes say DISTINCT can be specified, as BITXOR_AGG's grammar shows"
+
+[[reading]]
+form = "sf.functions.bitand-agg.bitand-agg-over"
+grammar_sha256 = "6561c89b7f1f6d2b07806f3d5e7c21757753dbe95fe34d8d496145616adc7710"
+grammar = ["BITAND_AGG( [ DISTINCT ] <expr1> ) OVER ( [ PARTITION BY <expr2> ] )"]
+reason = "D118: the page's usage notes say DISTINCT can be specified, as BITXOR_AGG's grammar shows"
+
+[[reading]]
+form = "sf.functions.bitor-agg.bitor-agg"
+grammar_sha256 = "b2f0433e2abda5d71491650c49bc48c400068850dd5fcf9cb46c0eb56f89ca96"
+grammar = ["BITOR_AGG( [ DISTINCT ] <expr1> )"]
+reason = "D118: the page's usage notes say DISTINCT can be specified, as BITXOR_AGG's grammar shows"
+
+[[reading]]
+form = "sf.functions.bitor-agg.bitor-agg-over"
+grammar_sha256 = "3d00706b7474cbaadc9496665d9189e90753fb4104043ee6f4897c30984897d9"
+grammar = ["BITOR_AGG( [ DISTINCT ] <expr1> ) OVER ( [ PARTITION BY <expr2> ] )"]
+reason = "D118: the page's usage notes say DISTINCT can be specified, as BITXOR_AGG's grammar shows"
+
+[[reading]]
+form = "sf.functions.date-part.date-part"
+grammar_sha256 = "a8c8dfbe475e1b28c885a05a51787820881bd58e3a96cc1f56c6d00bddf18fb8"
+grammar = ["DATE_PART( { <date_or_time_part> | '<date_or_time_part>' } , <date_interval_time_or_timestamp_expr> )"]
+reason = "D118: the page says the part “can be a string literal or can be unquoted ('month' or month)”"
+
+[[reading]]
+form = "sf.functions.datediff.datediff"
+grammar_sha256 = "7b5f4895073573f4e91ae3e308c4e14da1c08596fb1c33fdbf1066c4397d070a"
+grammar = ["DATEDIFF( { <date_or_time_part> | '<date_or_time_part>' }, <date_or_time_expr1>, <date_or_time_expr2> )"]
+reason = "D118: the page says the part can be a string literal or unquoted ('month' or month)"
+
+[[reading]]
+form = "sf.functions.extract.extract"
+grammar_sha256 = "2a76455ee1874a1bc0ba6a1536e0e3c9855a49cc4a444d95ab1e76431a649a6f"
+grammar = ["EXTRACT( { <date_or_time_part> | '<date_or_time_part>' } , <date_interval_time_or_timestamp_expr> )"]
+reason = "D118: the page says the part “can be a string literal or can be unquoted (for example, 'month' or month)”"
+
+[[reading]]
+form = "sf.functions.timediff"
+grammar_sha256 = "75bbf143a8149e055c28b10dd676304773b512fb00257c7390a403312a141237"
+grammar = ["TIMEDIFF( { <date_or_time_part> | '<date_or_time_part>' } , <date_or_time_expr1> , <date_or time_expr2> )"]
+reason = "D118: the page says the part can be a string literal or unquoted ('month' or month)"
+
+[[reading]]
+form = "sf.functions.timestampdiff"
+grammar_sha256 = "e909539fb04ffcc338b4debf389a404d5263d9d287ddffb093a229388a176699"
+grammar = ["TIMESTAMPDIFF( { <date_or_time_part> | '<date_or_time_part>' } , <date_or_time_expr1> , <date_or_time_expr2> )"]
+reason = "D118: the page says the part can be a string literal or unquoted ('month' or month)"

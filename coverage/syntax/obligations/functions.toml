@@ -7906,6 +7906,18 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
+id = "sf.functions.bitand-agg.bitand-agg.o006"
+kind = "option_present"
+required = true
+target = "[ DISTINCT ]"
+
+[[obligation]]
+id = "sf.functions.bitand-agg.bitand-agg.o007"
+kind = "option_absent"
+required = true
+target = "[ DISTINCT ]"
+
+[[obligation]]
 id = "sf.functions.bitand-agg.bitand-agg.o003"
 kind = "operand_type_class"
 required = true
@@ -7929,6 +7941,18 @@ id = "sf.functions.bitand-agg.bitand-agg-over.o001"
 kind = "positive"
 required = true
 note = "the documented form with every required part and no optional part"
+
+[[obligation]]
+id = "sf.functions.bitand-agg.bitand-agg-over.o012"
+kind = "option_present"
+required = true
+target = "[ DISTINCT ]"
+
+[[obligation]]
+id = "sf.functions.bitand-agg.bitand-agg-over.o013"
+kind = "option_absent"
+required = true
+target = "[ DISTINCT ]"
 
 [[obligation]]
 id = "sf.functions.bitand-agg.bitand-agg-over.o003"
@@ -7986,6 +8010,12 @@ id = "sf.functions.bitand-agg.bitand-agg-over.o011"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required BY in [ PARTITION BY <expr2> ]"
+
+[[obligation]]
+id = "sf.functions.bitand-agg.bitand-agg-over.o014"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
 
 [[obligation]]
 id = "sf.functions.bitmap-absolute-position.o001"
@@ -8423,6 +8453,18 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
+id = "sf.functions.bitor-agg.bitor-agg.o006"
+kind = "option_present"
+required = true
+target = "[ DISTINCT ]"
+
+[[obligation]]
+id = "sf.functions.bitor-agg.bitor-agg.o007"
+kind = "option_absent"
+required = true
+target = "[ DISTINCT ]"
+
+[[obligation]]
 id = "sf.functions.bitor-agg.bitor-agg.o003"
 kind = "operand_type_class"
 required = true
@@ -8446,6 +8488,18 @@ id = "sf.functions.bitor-agg.bitor-agg-over.o001"
 kind = "positive"
 required = true
 note = "the documented form with every required part and no optional part"
+
+[[obligation]]
+id = "sf.functions.bitor-agg.bitor-agg-over.o012"
+kind = "option_present"
+required = true
+target = "[ DISTINCT ]"
+
+[[obligation]]
+id = "sf.functions.bitor-agg.bitor-agg-over.o013"
+kind = "option_absent"
+required = true
+target = "[ DISTINCT ]"
 
 [[obligation]]
 id = "sf.functions.bitor-agg.bitor-agg-over.o003"
@@ -8503,6 +8557,12 @@ id = "sf.functions.bitor-agg.bitor-agg-over.o011"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required BY in [ PARTITION BY <expr2> ]"
+
+[[obligation]]
+id = "sf.functions.bitor-agg.bitor-agg-over.o014"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
 
 [[obligation]]
 id = "sf.functions.bitshiftleft.o001"
@@ -13256,16 +13316,22 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "sf.functions.current-organization-user.o002"
-kind = "negative_neighbour"
+id = "sf.functions.current-organization-user.o004"
+kind = "option_present"
 required = true
-note = "the form without its required ("
+target = "[ ( ) ]"
 
 [[obligation]]
-id = "sf.functions.current-organization-user.o003"
+id = "sf.functions.current-organization-user.o005"
+kind = "option_absent"
+required = true
+target = "[ ( ) ]"
+
+[[obligation]]
+id = "sf.functions.current-organization-user.o006"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required )"
+note = "the form without its required ) in [ ( ) ]"
 
 [[obligation]]
 id = "sf.functions.current-region.o001"
@@ -14168,10 +14234,22 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "sf.functions.database-refresh-history.o003"
+id = "sf.functions.database-refresh-history.o007"
+kind = "option_present"
+required = true
+target = "[ '<secondary_db_name>' ]"
+
+[[obligation]]
+id = "sf.functions.database-refresh-history.o008"
+kind = "option_absent"
+required = true
+target = "[ '<secondary_db_name>' ]"
+
+[[obligation]]
+id = "sf.functions.database-refresh-history.o009"
 kind = "operand_type_class"
 required = true
-target = "'<secondary_db_name>'"
+target = "'<secondary_db_name>' in [ '<secondary_db_name>' ]"
 note = "a valid string_literal"
 
 [[obligation]]
@@ -14193,10 +14271,22 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "sf.functions.database-refresh-progress.database-refresh-progress.o003"
+id = "sf.functions.database-refresh-progress.database-refresh-progress.o007"
+kind = "option_present"
+required = true
+target = "[ '<secondary_db_name>' ]"
+
+[[obligation]]
+id = "sf.functions.database-refresh-progress.database-refresh-progress.o008"
+kind = "option_absent"
+required = true
+target = "[ '<secondary_db_name>' ]"
+
+[[obligation]]
+id = "sf.functions.database-refresh-progress.database-refresh-progress.o009"
 kind = "operand_type_class"
 required = true
-target = "'<secondary_db_name>'"
+target = "'<secondary_db_name>' in [ '<secondary_db_name>' ]"
 note = "a valid string_literal"
 
 [[obligation]]
@@ -14870,11 +14960,16 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "sf.functions.date-part.date-part.o002"
-kind = "required_operand_missing"
+id = "sf.functions.date-part.date-part.o008"
+kind = "alternative"
 required = true
-target = "<date_or_time_part>"
-note = "omit <date_or_time_part>"
+target = "{ <date_or_time_part> | '<date_or_time_part>' } → <date_or_time_part>"
+
+[[obligation]]
+id = "sf.functions.date-part.date-part.o009"
+kind = "alternative"
+required = true
+target = "{ <date_or_time_part> | '<date_or_time_part>' } → '<date_or_time_part>'"
 
 [[obligation]]
 id = "sf.functions.date-part.date-part.o003"
@@ -14882,6 +14977,13 @@ kind = "operand_type_class"
 required = true
 target = "<date_or_time_part>"
 note = "a valid operand"
+
+[[obligation]]
+id = "sf.functions.date-part.date-part.o010"
+kind = "operand_type_class"
+required = true
+target = "'<date_or_time_part>'"
+note = "a valid string_literal"
 
 [[obligation]]
 id = "sf.functions.date-part.date-part.o004"
@@ -14902,6 +15004,12 @@ id = "sf.functions.date-part.date-part.o006"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required ("
+
+[[obligation]]
+id = "sf.functions.date-part.date-part.o011"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { <date_or_time_part> | '<date_or_time_part>' }"
 
 [[obligation]]
 id = "sf.functions.date-part.date-part.o007"
@@ -15074,11 +15182,16 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "sf.functions.datediff.datediff.o002"
-kind = "required_operand_missing"
+id = "sf.functions.datediff.datediff.o010"
+kind = "alternative"
 required = true
-target = "<date_or_time_part>"
-note = "omit <date_or_time_part>"
+target = "{ <date_or_time_part> | '<date_or_time_part>' } → <date_or_time_part>"
+
+[[obligation]]
+id = "sf.functions.datediff.datediff.o011"
+kind = "alternative"
+required = true
+target = "{ <date_or_time_part> | '<date_or_time_part>' } → '<date_or_time_part>'"
 
 [[obligation]]
 id = "sf.functions.datediff.datediff.o003"
@@ -15086,6 +15199,13 @@ kind = "operand_type_class"
 required = true
 target = "<date_or_time_part>"
 note = "a valid operand"
+
+[[obligation]]
+id = "sf.functions.datediff.datediff.o012"
+kind = "operand_type_class"
+required = true
+target = "'<date_or_time_part>'"
+note = "a valid string_literal"
 
 [[obligation]]
 id = "sf.functions.datediff.datediff.o004"
@@ -15120,6 +15240,12 @@ id = "sf.functions.datediff.datediff.o008"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required ("
+
+[[obligation]]
+id = "sf.functions.datediff.datediff.o013"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { <date_or_time_part> | '<date_or_time_part>' }"
 
 [[obligation]]
 id = "sf.functions.datediff.datediff.o009"
@@ -28197,11 +28323,16 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "sf.functions.extract.extract.o002"
-kind = "required_operand_missing"
+id = "sf.functions.extract.extract.o008"
+kind = "alternative"
 required = true
-target = "<date_or_time_part>"
-note = "omit <date_or_time_part>"
+target = "{ <date_or_time_part> | '<date_or_time_part>' } → <date_or_time_part>"
+
+[[obligation]]
+id = "sf.functions.extract.extract.o009"
+kind = "alternative"
+required = true
+target = "{ <date_or_time_part> | '<date_or_time_part>' } → '<date_or_time_part>'"
 
 [[obligation]]
 id = "sf.functions.extract.extract.o003"
@@ -28209,6 +28340,13 @@ kind = "operand_type_class"
 required = true
 target = "<date_or_time_part>"
 note = "a valid operand"
+
+[[obligation]]
+id = "sf.functions.extract.extract.o010"
+kind = "operand_type_class"
+required = true
+target = "'<date_or_time_part>'"
+note = "a valid string_literal"
 
 [[obligation]]
 id = "sf.functions.extract.extract.o004"
@@ -28229,6 +28367,12 @@ id = "sf.functions.extract.extract.o006"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required ("
+
+[[obligation]]
+id = "sf.functions.extract.extract.o011"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { <date_or_time_part> | '<date_or_time_part>' }"
 
 [[obligation]]
 id = "sf.functions.extract.extract.o007"
@@ -29982,18 +30126,18 @@ target = "<object>"
 note = "a valid operand"
 
 [[obligation]]
-id = "sf.functions.get.o012"
+id = "sf.functions.get.o028"
 kind = "required_operand_missing"
 required = true
-target = "<field_name>"
-note = "omit <field_name>"
+target = "<field_name_expression>"
+note = "omit <field_name_expression>"
 
 [[obligation]]
-id = "sf.functions.get.o013"
+id = "sf.functions.get.o029"
 kind = "operand_type_class"
 required = true
-target = "<field_name>"
-note = "a valid identifier"
+target = "<field_name_expression>"
+note = "a valid expression"
 
 [[obligation]]
 id = "sf.functions.get.o015"
@@ -30010,18 +30154,18 @@ target = "<variant> #2"
 note = "a valid operand"
 
 [[obligation]]
-id = "sf.functions.get.o017"
+id = "sf.functions.get.o030"
 kind = "required_operand_missing"
 required = true
-target = "<field_name> #2"
-note = "omit <field_name>"
+target = "<field_name_expression> #2"
+note = "omit <field_name_expression>"
 
 [[obligation]]
-id = "sf.functions.get.o018"
+id = "sf.functions.get.o031"
 kind = "operand_type_class"
 required = true
-target = "<field_name> #2"
-note = "a valid identifier"
+target = "<field_name_expression> #2"
+note = "a valid expression"
 
 [[obligation]]
 id = "sf.functions.get.o020"
@@ -30062,22 +30206,6 @@ id = "sf.functions.get.o025"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required )"
-
-[[obligation]]
-id = "sf.functions.get.o026"
-kind = "identifier_class"
-required = true
-target = "<field_name>"
-anchor = "doc.identifiers-syntax"
-note = "quoted: a double-quoted identifier with blanks and mixed case"
-
-[[obligation]]
-id = "sf.functions.get.o027"
-kind = "identifier_class"
-required = true
-target = "<field_name>"
-anchor = "doc.identifiers-syntax"
-note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
 id = "sf.functions.get-absolute-path.o001"
@@ -30910,18 +31038,18 @@ target = "<object>"
 note = "a valid operand"
 
 [[obligation]]
-id = "sf.functions.get-ignore-case.o004"
+id = "sf.functions.get-ignore-case.o020"
 kind = "required_operand_missing"
 required = true
-target = "<field_name>"
-note = "omit <field_name>"
+target = "<field_name_expression>"
+note = "omit <field_name_expression>"
 
 [[obligation]]
-id = "sf.functions.get-ignore-case.o005"
+id = "sf.functions.get-ignore-case.o021"
 kind = "operand_type_class"
 required = true
-target = "<field_name>"
-note = "a valid identifier"
+target = "<field_name_expression>"
+note = "a valid expression"
 
 [[obligation]]
 id = "sf.functions.get-ignore-case.o007"
@@ -30938,18 +31066,18 @@ target = "<variant>"
 note = "a valid operand"
 
 [[obligation]]
-id = "sf.functions.get-ignore-case.o009"
+id = "sf.functions.get-ignore-case.o022"
 kind = "required_operand_missing"
 required = true
-target = "<field_name> #2"
-note = "omit <field_name>"
+target = "<field_name_expression> #2"
+note = "omit <field_name_expression>"
 
 [[obligation]]
-id = "sf.functions.get-ignore-case.o010"
+id = "sf.functions.get-ignore-case.o023"
 kind = "operand_type_class"
 required = true
-target = "<field_name> #2"
-note = "a valid identifier"
+target = "<field_name_expression> #2"
+note = "a valid expression"
 
 [[obligation]]
 id = "sf.functions.get-ignore-case.o012"
@@ -30990,22 +31118,6 @@ id = "sf.functions.get-ignore-case.o017"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required )"
-
-[[obligation]]
-id = "sf.functions.get-ignore-case.o018"
-kind = "identifier_class"
-required = true
-target = "<field_name>"
-anchor = "doc.identifiers-syntax"
-note = "quoted: a double-quoted identifier with blanks and mixed case"
-
-[[obligation]]
-id = "sf.functions.get-ignore-case.o019"
-kind = "identifier_class"
-required = true
-target = "<field_name>"
-anchor = "doc.identifiers-syntax"
-note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
 id = "sf.functions.get-job-history.o001"
@@ -61183,6 +61295,13 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
+id = "sf.functions.system-application-get-log-level.o004"
+kind = "operand_type_class"
+required = true
+target = "'<qualified_object_name>'"
+note = "a valid string_literal"
+
+[[obligation]]
 id = "sf.functions.system-application-get-log-level.o002"
 kind = "negative_neighbour"
 required = true
@@ -61201,6 +61320,13 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
+id = "sf.functions.system-application-get-metric-level.o004"
+kind = "operand_type_class"
+required = true
+target = "'<qualified_object_name>'"
+note = "a valid string_literal"
+
+[[obligation]]
 id = "sf.functions.system-application-get-metric-level.o002"
 kind = "negative_neighbour"
 required = true
@@ -61217,6 +61343,13 @@ id = "sf.functions.system-application-get-trace-level.o001"
 kind = "positive"
 required = true
 note = "the documented form with every required part and no optional part"
+
+[[obligation]]
+id = "sf.functions.system-application-get-trace-level.o004"
+kind = "operand_type_class"
+required = true
+target = "'<qualified_object_name>'"
+note = "a valid string_literal"
 
 [[obligation]]
 id = "sf.functions.system-application-get-trace-level.o002"
@@ -62864,10 +62997,22 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "sf.functions.system-database-refresh-history.o003"
+id = "sf.functions.system-database-refresh-history.o007"
+kind = "option_present"
+required = true
+target = "[ '<secondary_db_name>' ]"
+
+[[obligation]]
+id = "sf.functions.system-database-refresh-history.o008"
+kind = "option_absent"
+required = true
+target = "[ '<secondary_db_name>' ]"
+
+[[obligation]]
+id = "sf.functions.system-database-refresh-history.o009"
 kind = "operand_type_class"
 required = true
-target = "'<secondary_db_name>'"
+target = "'<secondary_db_name>' in [ '<secondary_db_name>' ]"
 note = "a valid string_literal"
 
 [[obligation]]
@@ -62889,10 +63034,22 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "sf.functions.system-database-refresh-progress.system-database-refresh-progress.o003"
+id = "sf.functions.system-database-refresh-progress.system-database-refresh-progress.o007"
+kind = "option_present"
+required = true
+target = "[ '<secondary_db_name>' ]"
+
+[[obligation]]
+id = "sf.functions.system-database-refresh-progress.system-database-refresh-progress.o008"
+kind = "option_absent"
+required = true
+target = "[ '<secondary_db_name>' ]"
+
+[[obligation]]
+id = "sf.functions.system-database-refresh-progress.system-database-refresh-progress.o009"
 kind = "operand_type_class"
 required = true
-target = "'<secondary_db_name>'"
+target = "'<secondary_db_name>' in [ '<secondary_db_name>' ]"
 note = "a valid string_literal"
 
 [[obligation]]
@@ -64449,11 +64606,11 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "sf.functions.system-generate-saml-csr.o003"
+id = "sf.functions.system-generate-saml-csr.o013"
 kind = "operand_type_class"
 required = true
-target = "<name>"
-note = "a valid identifier"
+target = "'<name>'"
+note = "a valid string_literal"
 
 [[obligation]]
 id = "sf.functions.system-generate-saml-csr.o009"
@@ -64492,22 +64649,6 @@ id = "sf.functions.system-generate-saml-csr.o006"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required )"
-
-[[obligation]]
-id = "sf.functions.system-generate-saml-csr.o007"
-kind = "identifier_class"
-required = true
-target = "<name>"
-anchor = "doc.identifiers-syntax"
-note = "quoted: a double-quoted identifier with blanks and mixed case"
-
-[[obligation]]
-id = "sf.functions.system-generate-saml-csr.o008"
-kind = "identifier_class"
-required = true
-target = "<name>"
-anchor = "doc.identifiers-syntax"
-note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
 id = "sf.functions.system-generate-scim-access-token.o001"
@@ -65442,10 +65583,22 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "sf.functions.system-get-predecessor-return-value.o003"
+id = "sf.functions.system-get-predecessor-return-value.o007"
+kind = "option_present"
+required = true
+target = "[ '<task_name>' ]"
+
+[[obligation]]
+id = "sf.functions.system-get-predecessor-return-value.o008"
+kind = "option_absent"
+required = true
+target = "[ '<task_name>' ]"
+
+[[obligation]]
+id = "sf.functions.system-get-predecessor-return-value.o009"
 kind = "operand_type_class"
 required = true
-target = "'<task_name>'"
+target = "'<task_name>' in [ '<task_name>' ]"
 note = "a valid string_literal"
 
 [[obligation]]
@@ -67019,10 +67172,22 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "sf.functions.system-list-application-restricted-features.o003"
+id = "sf.functions.system-list-application-restricted-features.o007"
+kind = "option_present"
+required = true
+target = "[ '<app_name>' ]"
+
+[[obligation]]
+id = "sf.functions.system-list-application-restricted-features.o008"
+kind = "option_absent"
+required = true
+target = "[ '<app_name>' ]"
+
+[[obligation]]
+id = "sf.functions.system-list-application-restricted-features.o009"
 kind = "operand_type_class"
 required = true
-target = "'<app_name>'"
+target = "'<app_name>' in [ '<app_name>' ]"
 note = "a valid string_literal"
 
 [[obligation]]
@@ -67567,13 +67732,6 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "sf.functions.system-migrate-saml-idp-registration.o002"
-kind = "required_operand_missing"
-required = true
-target = "'<integration_name>'"
-note = "omit '<integration_name>'"
-
-[[obligation]]
 id = "sf.functions.system-migrate-saml-idp-registration.o003"
 kind = "operand_type_class"
 required = true
@@ -67581,17 +67739,29 @@ target = "'<integration_name>'"
 note = "a valid string_literal"
 
 [[obligation]]
-id = "sf.functions.system-migrate-saml-idp-registration.o005"
+id = "sf.functions.system-migrate-saml-idp-registration.o010"
+kind = "option_present"
+required = true
+target = "[ , '<issuer>' ]"
+
+[[obligation]]
+id = "sf.functions.system-migrate-saml-idp-registration.o011"
+kind = "option_absent"
+required = true
+target = "[ , '<issuer>' ]"
+
+[[obligation]]
+id = "sf.functions.system-migrate-saml-idp-registration.o012"
 kind = "required_operand_missing"
 required = true
-target = "'<issuer>'"
+target = "'<issuer>' in [ , '<issuer>' ]"
 note = "omit '<issuer>'"
 
 [[obligation]]
-id = "sf.functions.system-migrate-saml-idp-registration.o006"
+id = "sf.functions.system-migrate-saml-idp-registration.o013"
 kind = "operand_type_class"
 required = true
-target = "'<issuer>'"
+target = "'<issuer>' in [ , '<issuer>' ]"
 note = "a valid string_literal"
 
 [[obligation]]
@@ -68697,6 +68867,13 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
+id = "sf.functions.system-registry-list-images.o004"
+kind = "operand_type_class"
+required = true
+target = "'<repository_path>'"
+note = "a valid string_literal"
+
+[[obligation]]
 id = "sf.functions.system-registry-list-images.o002"
 kind = "negative_neighbour"
 required = true
@@ -69339,18 +69516,18 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "sf.functions.system-schedule-async-replication-group-refresh.o003"
+id = "sf.functions.system-schedule-async-replication-group-refresh.o014"
 kind = "operand_type_class"
 required = true
-target = "<replication_group_name>"
-note = "a valid identifier"
+target = "'<replication_group_name>'"
+note = "a valid string_literal"
 
 [[obligation]]
-id = "sf.functions.system-schedule-async-replication-group-refresh.o006"
+id = "sf.functions.system-schedule-async-replication-group-refresh.o015"
 kind = "operand_type_class"
 required = true
-target = "<failover_group_name>"
-note = "a valid identifier"
+target = "'<failover_group_name>'"
+note = "a valid string_literal"
 
 [[obligation]]
 id = "sf.functions.system-schedule-async-replication-group-refresh.o008"
@@ -69363,38 +69540,6 @@ id = "sf.functions.system-schedule-async-replication-group-refresh.o009"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required )"
-
-[[obligation]]
-id = "sf.functions.system-schedule-async-replication-group-refresh.o010"
-kind = "identifier_class"
-required = true
-target = "<replication_group_name>"
-anchor = "doc.identifiers-syntax"
-note = "quoted: a double-quoted identifier with blanks and mixed case"
-
-[[obligation]]
-id = "sf.functions.system-schedule-async-replication-group-refresh.o011"
-kind = "identifier_class"
-required = true
-target = "<replication_group_name>"
-anchor = "doc.identifiers-syntax"
-note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
-
-[[obligation]]
-id = "sf.functions.system-schedule-async-replication-group-refresh.o012"
-kind = "identifier_class"
-required = true
-target = "<failover_group_name>"
-anchor = "doc.identifiers-syntax"
-note = "quoted: a double-quoted identifier with blanks and mixed case"
-
-[[obligation]]
-id = "sf.functions.system-schedule-async-replication-group-refresh.o013"
-kind = "identifier_class"
-required = true
-target = "<failover_group_name>"
-anchor = "doc.identifiers-syntax"
-note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
 id = "sf.functions.system-send-email.o001"
@@ -70228,6 +70373,27 @@ target = "'<string_expression>'"
 note = "a valid string_literal"
 
 [[obligation]]
+id = "sf.functions.system-set-return-value.o007"
+kind = "required_operand_missing"
+required = true
+target = "<variable>"
+note = "omit <variable>"
+
+[[obligation]]
+id = "sf.functions.system-set-return-value.o008"
+kind = "operand_type_class"
+required = true
+target = "<variable>"
+note = "a valid identifier"
+
+[[obligation]]
+id = "sf.functions.system-set-return-value.o009"
+kind = "negative_neighbour"
+required = true
+target = "<variable>"
+note = "a string literal in place of <variable>"
+
+[[obligation]]
 id = "sf.functions.system-set-return-value.o005"
 kind = "negative_neighbour"
 required = true
@@ -70238,6 +70404,22 @@ id = "sf.functions.system-set-return-value.o006"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required )"
+
+[[obligation]]
+id = "sf.functions.system-set-return-value.o010"
+kind = "identifier_class"
+required = true
+target = "<variable>"
+anchor = "doc.identifiers-syntax"
+note = "quoted: a double-quoted identifier with blanks and mixed case"
+
+[[obligation]]
+id = "sf.functions.system-set-return-value.o011"
+kind = "identifier_class"
+required = true
+target = "<variable>"
+anchor = "doc.identifiers-syntax"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
 id = "sf.functions.system-set-row-timestamp-on-all-supported-tables.select-system-set-row-timestamp-on-all-supported-tables.o001"
@@ -73338,11 +73520,16 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "sf.functions.timediff.o002"
-kind = "required_operand_missing"
+id = "sf.functions.timediff.o010"
+kind = "alternative"
 required = true
-target = "<date_or_time_part>"
-note = "omit <date_or_time_part>"
+target = "{ <date_or_time_part> | '<date_or_time_part>' } → <date_or_time_part>"
+
+[[obligation]]
+id = "sf.functions.timediff.o011"
+kind = "alternative"
+required = true
+target = "{ <date_or_time_part> | '<date_or_time_part>' } → '<date_or_time_part>'"
 
 [[obligation]]
 id = "sf.functions.timediff.o003"
@@ -73350,6 +73537,13 @@ kind = "operand_type_class"
 required = true
 target = "<date_or_time_part>"
 note = "a valid operand"
+
+[[obligation]]
+id = "sf.functions.timediff.o012"
+kind = "operand_type_class"
+required = true
+target = "'<date_or_time_part>'"
+note = "a valid string_literal"
 
 [[obligation]]
 id = "sf.functions.timediff.o004"
@@ -73384,6 +73578,12 @@ id = "sf.functions.timediff.o008"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required ("
+
+[[obligation]]
+id = "sf.functions.timediff.o013"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { <date_or_time_part> | '<date_or_time_part>' }"
 
 [[obligation]]
 id = "sf.functions.timediff.o009"
@@ -74048,11 +74248,16 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "sf.functions.timestampdiff.o002"
-kind = "required_operand_missing"
+id = "sf.functions.timestampdiff.o010"
+kind = "alternative"
 required = true
-target = "<date_or_time_part>"
-note = "omit <date_or_time_part>"
+target = "{ <date_or_time_part> | '<date_or_time_part>' } → <date_or_time_part>"
+
+[[obligation]]
+id = "sf.functions.timestampdiff.o011"
+kind = "alternative"
+required = true
+target = "{ <date_or_time_part> | '<date_or_time_part>' } → '<date_or_time_part>'"
 
 [[obligation]]
 id = "sf.functions.timestampdiff.o003"
@@ -74060,6 +74265,13 @@ kind = "operand_type_class"
 required = true
 target = "<date_or_time_part>"
 note = "a valid operand"
+
+[[obligation]]
+id = "sf.functions.timestampdiff.o012"
+kind = "operand_type_class"
+required = true
+target = "'<date_or_time_part>'"
+note = "a valid string_literal"
 
 [[obligation]]
 id = "sf.functions.timestampdiff.o004"
@@ -74094,6 +74306,12 @@ id = "sf.functions.timestampdiff.o008"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required ("
+
+[[obligation]]
+id = "sf.functions.timestampdiff.o013"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { <date_or_time_part> | '<date_or_time_part>' }"
 
 [[obligation]]
 id = "sf.functions.timestampdiff.o009"
@@ -75016,18 +75234,18 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "sf.functions.to-file.o002"
+id = "sf.functions.to-file.o015"
 kind = "required_operand_missing"
 required = true
-target = "<stage_name>"
-note = "omit <stage_name>"
+target = "'<stage_name>'"
+note = "omit '<stage_name>'"
 
 [[obligation]]
-id = "sf.functions.to-file.o003"
+id = "sf.functions.to-file.o016"
 kind = "operand_type_class"
 required = true
-target = "<stage_name>"
-note = "a valid identifier"
+target = "'<stage_name>'"
+note = "a valid string_literal"
 
 [[obligation]]
 id = "sf.functions.to-file.o005"
@@ -75068,22 +75286,6 @@ id = "sf.functions.to-file.o012"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required )"
-
-[[obligation]]
-id = "sf.functions.to-file.o013"
-kind = "identifier_class"
-required = true
-target = "<stage_name>"
-anchor = "doc.identifiers-syntax"
-note = "quoted: a double-quoted identifier with blanks and mixed case"
-
-[[obligation]]
-id = "sf.functions.to-file.o014"
-kind = "identifier_class"
-required = true
-target = "<stage_name>"
-anchor = "doc.identifiers-syntax"
-note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
 id = "sf.functions.to-geography.o001"
@@ -77527,18 +77729,18 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "sf.functions.try-to-file.o002"
+id = "sf.functions.try-to-file.o015"
 kind = "required_operand_missing"
 required = true
-target = "<stage_name>"
-note = "omit <stage_name>"
+target = "'<stage_name>'"
+note = "omit '<stage_name>'"
 
 [[obligation]]
-id = "sf.functions.try-to-file.o003"
+id = "sf.functions.try-to-file.o016"
 kind = "operand_type_class"
 required = true
-target = "<stage_name>"
-note = "a valid identifier"
+target = "'<stage_name>'"
+note = "a valid string_literal"
 
 [[obligation]]
 id = "sf.functions.try-to-file.o005"
@@ -77579,22 +77781,6 @@ id = "sf.functions.try-to-file.o012"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required )"
-
-[[obligation]]
-id = "sf.functions.try-to-file.o013"
-kind = "identifier_class"
-required = true
-target = "<stage_name>"
-anchor = "doc.identifiers-syntax"
-note = "quoted: a double-quoted identifier with blanks and mixed case"
-
-[[obligation]]
-id = "sf.functions.try-to-file.o014"
-kind = "identifier_class"
-required = true
-target = "<stage_name>"
-anchor = "doc.identifiers-syntax"
-note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
 id = "sf.functions.try-to-geography.o001"
