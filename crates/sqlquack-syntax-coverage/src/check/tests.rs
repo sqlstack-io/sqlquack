@@ -1,5 +1,5 @@
 #[path = "tests/helpers.rs"]
-mod helpers;
+pub(crate) mod helpers;
 #[path = "tests/test_check_coverage.rs"]
 mod test_check_coverage;
 #[path = "tests/test_types.rs"]

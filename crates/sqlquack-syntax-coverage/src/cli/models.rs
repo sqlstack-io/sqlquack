@@ -84,6 +84,22 @@ pub enum Command {
     /// Internal: one verdict line per SQL line on stdin, for the isolated local parse.
     #[command(hide = true)]
     ParseWorker,
+    /// What conversion makes of every case Snowflake parsed, by form and family (decision D107).
+    Translation {
+        /// The `sqlquack` binary whose `convert` is measured.
+        #[arg(long)]
+        sqlquack: PathBuf,
+        /// The policy conversion relies on.
+        #[arg(long, default_value = "sqlquack.toml")]
+        policy: PathBuf,
+        #[arg(long)]
+        family: Option<String>,
+        /// Conversions run at once.
+        #[arg(long, default_value_t = 4)]
+        jobs: usize,
+        #[command(flatten)]
+        common: Common,
+    },
     /// A snapshot against a later one or the current tree; fails on any regression.
     Diff {
         base: PathBuf,
