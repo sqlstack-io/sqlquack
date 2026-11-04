@@ -88,9 +88,12 @@ debug = false
 [profile.release]
 strip = "symbols"
 
-# The test gate: release speed with debug assertions and overflow checks kept on.
+# The merge gate's one build: check-ci's Python module and command line and the Rust tests all use
+# it, so a gate compiles the workspace once. Debug assertions and overflow checks stay on; opt-level 1
+# runs the tests as fast as opt-level 3 and compiles in about half the time.
 [profile.gate]
 inherits = "release"
+opt-level = 1
 debug-assertions = true
 overflow-checks = true
 strip = "none"
