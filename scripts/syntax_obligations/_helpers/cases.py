@@ -22,6 +22,7 @@ from scripts.syntax_obligations.constants import (
     EXPECT_TERMINATES,
     HELD_RUN_DATABASE_SETUP,
     KIND_EXTREME,
+    KIND_POSITIVE,
     LANE_A_BLOCK_SESSION,
     MEASURE_KEY,
     PACKET_KEYS,
@@ -48,12 +49,14 @@ def canonical(value: object) -> str:
 
 def family_cases(
     *, root: Path, family: str, setups: dict[tuple[str, str], list[str]], held: frozenset[str]
-) -> tuple[list[Row], dict[str, set[str]], list[Row], set[str], set[str]]:
-    """Cases, each obligation's outcomes, arity cases, extremes, and documented observed SQL."""
+) -> tuple[list[Row], dict[str, set[str]], list[Row], set[str], set[str], set[str]]:
+    """Cases, outcomes, arity cases, extremes, documented observed SQL, and disputed forms."""
     numbered, trees, _, _, arity = family_obligations(root=root, family=family)
     by_sql: dict[str, tuple[str, Rendered, list[str]]] = {}
     expected: dict[str, set[str]] = {}
     documented: set[str] = set()
+    disputed: set[str] = set()
+    undisputed: set[str] = set()
     conflicts: list[str] = []
     for identifier, draft in numbered:
         found: list[Rendered] = _rendered(draft=draft, trees=trees, family=family)
@@ -61,6 +64,8 @@ def family_cases(
             raise ObligationError(f"{identifier}: no case could be rendered")
         for rendered in found:
             expected.setdefault(identifier, set()).add(rendered.expect)
+            if draft.kind == KIND_POSITIVE:
+                (disputed if rendered.documented else undisputed).add(draft.form)
             if rendered.documented:
                 documented.add(rendered.sql)
             form, earlier, cited = by_sql.setdefault(rendered.sql, (draft.form, rendered, []))
@@ -96,6 +101,7 @@ def family_cases(
         _arity_cases(rows=arity, scored=scored, family=family, setups=setups, held=held),
         {identifier for identifier, draft in numbered if draft.kind == KIND_EXTREME},
         documented,
+        disputed - undisputed,
     )
 
 
@@ -344,7 +350,7 @@ def settled_cases(
     held: frozenset[str],
 ) -> tuple[list[Row], list[Row]]:
     """The merged cases with the stages their receipts show, and the unscored arity cases."""
-    generated, expected, arity, extremes, documented = family_cases(
+    generated, expected, arity, extremes, documented, disputed = family_cases(
         root=root, family=family, setups=setups, held=held
     )
     cases, problems = merge_mapped(
@@ -357,11 +363,18 @@ def settled_cases(
             case=case,
             phase=phases.get((case["case_id"], case["sql_sha256"])),
             extreme=bool(extremes & set(case["obligations"])),
-            documented=case["sql"] in documented,
+            documented=case["sql"] in documented
+            or _cites_disputed_form(obligations=case["obligations"], disputed=disputed),
         )
         for case in cases
     ]
     return settled, arity
+
+
+def _cites_disputed_form(*, obligations: list[str], disputed: set[str]) -> bool:
+    """Whether a case cites a form all of whose documented positives Snowflake refuses (D113)."""
+    forms: set[str] = {obligation.rsplit(".o", 1)[0] for obligation in obligations}
+    return bool(forms & disputed)
 
 
 def jsonl_text(rows: list[Row]) -> str:

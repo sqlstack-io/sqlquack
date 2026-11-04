@@ -124,7 +124,8 @@ collision the heading is appended, then a number.
 - An unquoted identifier in place of a string literal is an observed neighbour, not a scored
   rejection (D106): Snowflake parses an identifier there and fails it later (OAUTH_ALLOWED_SCOPES,
   IMPORTS, FROM LISTING), so a receipt decides it. An observed neighbour still settles as a
-  rejection when its receipt is a syntax error.
+  rejection when its receipt is a syntax error, unless Snowflake refuses every documented positive
+  of its form: then the form's receipts say nothing about its negatives, which all stay observed.
 - A rejection that only empties a list (`= ( )`) is observed, not scored: Snowflake parses
   `ENCRYPTION = ( )` and accepts `BLOCKED_NETWORK_RULE_LIST = ( )`, and pages document empty
   lists such as `BLOCKED_OBJECT_TYPES_FOR_CREATION = ()`.
