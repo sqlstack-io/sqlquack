@@ -7158,7 +7158,7 @@ anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
-id = "sf.security_admin.alter-application-role.rename-to.o022"
+id = "sf.security_admin.alter-application-role.rename-to.o026"
 kind = "negative_neighbour"
 required = true
 anchor = "doc.sql.alter-application-role / Syntax"
@@ -11065,7 +11065,7 @@ anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
-id = "sf.security_admin.alter-database-role.rename-to.o022"
+id = "sf.security_admin.alter-database-role.rename-to.o026"
 kind = "negative_neighbour"
 required = true
 anchor = "doc.sql.alter-database-role / Syntax"
@@ -11340,7 +11340,7 @@ anchor = "doc.sql.alter-database-role / Parameters"
 note = "a tag value of 257 characters against the documented maximum of 256"
 
 [[obligation]]
-id = "sf.security_admin.alter-database-role.set-tag.o030"
+id = "sf.security_admin.alter-database-role.set-tag.o034"
 kind = "negative_neighbour"
 required = true
 anchor = "doc.sql.alter-database-role / Syntax"
@@ -11420,7 +11420,7 @@ anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
-id = "sf.security_admin.alter-database-role.unset-comment.o017"
+id = "sf.security_admin.alter-database-role.unset-comment.o021"
 kind = "negative_neighbour"
 required = true
 anchor = "doc.sql.alter-database-role / Syntax"
@@ -11550,7 +11550,7 @@ anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
-id = "sf.security_admin.alter-database-role.unset-tag.o024"
+id = "sf.security_admin.alter-database-role.unset-tag.o028"
 kind = "negative_neighbour"
 required = true
 anchor = "doc.sql.alter-database-role / Syntax"
@@ -16136,7 +16136,7 @@ anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
-id = "sf.security_admin.alter-feature-policy.as.o019"
+id = "sf.security_admin.alter-feature-policy.as.o023"
 kind = "negative_neighbour"
 required = true
 anchor = "doc.sql.alter-feature-policy / Syntax"
@@ -16465,7 +16465,7 @@ anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
-id = "sf.security_admin.alter-feature-policy.set.o037"
+id = "sf.security_admin.alter-feature-policy.set.o041"
 kind = "negative_neighbour"
 required = true
 anchor = "doc.sql.alter-feature-policy / Syntax"
@@ -16994,7 +16994,7 @@ anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
-id = "sf.security_admin.alter-ingress-policy.as.o019"
+id = "sf.security_admin.alter-ingress-policy.as.o023"
 kind = "negative_neighbour"
 required = true
 anchor = "doc.sql.alter-ingress-policy / Syntax"
@@ -17226,7 +17226,7 @@ anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
-id = "sf.security_admin.alter-ingress-policy.set-comment-as.o024"
+id = "sf.security_admin.alter-ingress-policy.set-comment-as.o028"
 kind = "negative_neighbour"
 required = true
 anchor = "doc.sql.alter-ingress-policy / Syntax"
@@ -19275,7 +19275,7 @@ anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
-id = "sf.security_admin.alter-multi-party-approval-policy.as-rules-name-operations.o018"
+id = "sf.security_admin.alter-multi-party-approval-policy.as-rules-name-operations.o022"
 kind = "negative_neighbour"
 required = true
 anchor = "doc.sql.alter-multi-party-approval-policy / Syntax"
@@ -43427,21 +43427,21 @@ anchor = "doc.sql.alter-session-policy / Optional parameters"
 note = "SESSION_UI_MAX_LIFESPAN_MINS = 43,201 against the documented range 0 to 43,200 minutes, inclusive"
 
 [[obligation]]
-id = "sf.security_admin.alter-session-policy.set.o108"
+id = "sf.security_admin.alter-session-policy.set.o120"
 kind = "negative_neighbour"
 required = true
 anchor = "doc.sql.alter-session-policy / Syntax"
 note = "omit <yaml_definition> ($$$$), observed"
 
 [[obligation]]
-id = "sf.security_admin.alter-session-policy.set.o109"
+id = "sf.security_admin.alter-session-policy.set.o121"
 kind = "negative_neighbour"
 required = true
 anchor = "doc.sql.alter-session-policy / Syntax"
 note = "a string literal in place of <role_name>, observed"
 
 [[obligation]]
-id = "sf.security_admin.alter-session-policy.set.o110"
+id = "sf.security_admin.alter-session-policy.set.o122"
 kind = "negative_neighbour"
 required = true
 anchor = "doc.sql.alter-session-policy / Syntax"
@@ -64522,7 +64522,7 @@ anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
-id = "sf.security_admin.create-database-role.create-database-role.o025"
+id = "sf.security_admin.create-database-role.create-database-role.o029"
 kind = "negative_neighbour"
 required = true
 anchor = "doc.sql.create-database-role / Syntax"
@@ -64617,7 +64617,7 @@ anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
-id = "sf.security_admin.create-database-role.create-or-alter-database.o019"
+id = "sf.security_admin.create-database-role.create-or-alter-database.o023"
 kind = "negative_neighbour"
 required = true
 anchor = "doc.sql.create-database-role / Syntax"
@@ -66196,7 +66196,7 @@ anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
-id = "sf.security_admin.create-feature-policy.o039"
+id = "sf.security_admin.create-feature-policy.o043"
 kind = "negative_neighbour"
 required = true
 anchor = "doc.sql.create-feature-policy / Syntax"
@@ -66352,7 +66352,7 @@ anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
-id = "sf.security_admin.create-ingress-policy.o029"
+id = "sf.security_admin.create-ingress-policy.o033"
 kind = "negative_neighbour"
 required = true
 anchor = "doc.sql.create-ingress-policy / Syntax"
@@ -67682,7 +67682,7 @@ anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
-id = "sf.security_admin.create-multi-party-approval-policy.o026"
+id = "sf.security_admin.create-multi-party-approval-policy.o030"
 kind = "negative_neighbour"
 required = true
 anchor = "doc.sql.create-multi-party-approval-policy / Syntax"
@@ -85537,21 +85537,21 @@ anchor = "doc.sql.create-session-policy / Optional parameters"
 note = "SESSION_UI_MAX_LIFESPAN_MINS = 43,201 against the documented range 0 to 43,200 minutes, inclusive"
 
 [[obligation]]
-id = "sf.security_admin.create-session-policy.o111"
+id = "sf.security_admin.create-session-policy.o123"
 kind = "negative_neighbour"
 required = true
 anchor = "doc.sql.create-session-policy / Syntax"
 note = "omit <yaml_definition> ($$$$), observed"
 
 [[obligation]]
-id = "sf.security_admin.create-session-policy.o112"
+id = "sf.security_admin.create-session-policy.o124"
 kind = "negative_neighbour"
 required = true
 anchor = "doc.sql.create-session-policy / Syntax"
 note = "a string literal in place of <role_name>, observed"
 
 [[obligation]]
-id = "sf.security_admin.create-session-policy.o113"
+id = "sf.security_admin.create-session-policy.o125"
 kind = "negative_neighbour"
 required = true
 anchor = "doc.sql.create-session-policy / Syntax"
@@ -89309,16 +89309,16 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "sf.security_admin.desc-aggregation-policy.o002"
-kind = "option_present"
+id = "sf.security_admin.desc-aggregation-policy.o011"
+kind = "alternative"
 required = true
-target = "[ RIBE ]"
+target = "{ DESC | DESCRIBE } → DESC"
 
 [[obligation]]
-id = "sf.security_admin.desc-aggregation-policy.o003"
-kind = "option_absent"
+id = "sf.security_admin.desc-aggregation-policy.o012"
+kind = "alternative"
 required = true
-target = "[ RIBE ]"
+target = "{ DESC | DESCRIBE } → DESCRIBE"
 
 [[obligation]]
 id = "sf.security_admin.desc-aggregation-policy.o004"
@@ -89510,16 +89510,16 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "sf.security_admin.desc-backup-policy.o002"
-kind = "option_present"
+id = "sf.security_admin.desc-backup-policy.o011"
+kind = "alternative"
 required = true
-target = "[ RIBE ]"
+target = "{ DESC | DESCRIBE } → DESC"
 
 [[obligation]]
-id = "sf.security_admin.desc-backup-policy.o003"
-kind = "option_absent"
+id = "sf.security_admin.desc-backup-policy.o012"
+kind = "alternative"
 required = true
-target = "[ RIBE ]"
+target = "{ DESC | DESCRIBE } → DESCRIBE"
 
 [[obligation]]
 id = "sf.security_admin.desc-backup-policy.o004"
@@ -89577,16 +89577,16 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "sf.security_admin.desc-catalog-integration.o002"
-kind = "option_present"
+id = "sf.security_admin.desc-catalog-integration.o010"
+kind = "alternative"
 required = true
-target = "[ RIBE ]"
+target = "{ DESC | DESCRIBE } → DESC"
 
 [[obligation]]
-id = "sf.security_admin.desc-catalog-integration.o003"
-kind = "option_absent"
+id = "sf.security_admin.desc-catalog-integration.o011"
+kind = "alternative"
 required = true
-target = "[ RIBE ]"
+target = "{ DESC | DESCRIBE } → DESCRIBE"
 
 [[obligation]]
 id = "sf.security_admin.desc-catalog-integration.o004"
@@ -89778,16 +89778,16 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "sf.security_admin.desc-ingress-policy.o002"
-kind = "option_present"
+id = "sf.security_admin.desc-ingress-policy.o011"
+kind = "alternative"
 required = true
-target = "[ RIBE ]"
+target = "{ DESC | DESCRIBE } → DESC"
 
 [[obligation]]
-id = "sf.security_admin.desc-ingress-policy.o003"
-kind = "option_absent"
+id = "sf.security_admin.desc-ingress-policy.o012"
+kind = "alternative"
 required = true
-target = "[ RIBE ]"
+target = "{ DESC | DESCRIBE } → DESCRIBE"
 
 [[obligation]]
 id = "sf.security_admin.desc-ingress-policy.o004"
@@ -90082,16 +90082,16 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "sf.security_admin.desc-masking-policy.o002"
-kind = "option_present"
+id = "sf.security_admin.desc-masking-policy.o011"
+kind = "alternative"
 required = true
-target = "[ RIBE ]"
+target = "{ DESC | DESCRIBE } → DESC"
 
 [[obligation]]
-id = "sf.security_admin.desc-masking-policy.o003"
-kind = "option_absent"
+id = "sf.security_admin.desc-masking-policy.o012"
+kind = "alternative"
 required = true
-target = "[ RIBE ]"
+target = "{ DESC | DESCRIBE } → DESCRIBE"
 
 [[obligation]]
 id = "sf.security_admin.desc-masking-policy.o004"
@@ -90228,16 +90228,16 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "sf.security_admin.desc-network-policy.o002"
-kind = "option_present"
+id = "sf.security_admin.desc-network-policy.o011"
+kind = "alternative"
 required = true
-target = "[ RIBE ]"
+target = "{ DESC | DESCRIBE } → DESC"
 
 [[obligation]]
-id = "sf.security_admin.desc-network-policy.o003"
-kind = "option_absent"
+id = "sf.security_admin.desc-network-policy.o012"
+kind = "alternative"
 required = true
-target = "[ RIBE ]"
+target = "{ DESC | DESCRIBE } → DESCRIBE"
 
 [[obligation]]
 id = "sf.security_admin.desc-network-policy.o004"
@@ -90295,16 +90295,16 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "sf.security_admin.desc-network-rule.o002"
-kind = "option_present"
+id = "sf.security_admin.desc-network-rule.o011"
+kind = "alternative"
 required = true
-target = "[ RIBE ]"
+target = "{ DESC | DESCRIBE } → DESC"
 
 [[obligation]]
-id = "sf.security_admin.desc-network-rule.o003"
-kind = "option_absent"
+id = "sf.security_admin.desc-network-rule.o012"
+kind = "alternative"
 required = true
-target = "[ RIBE ]"
+target = "{ DESC | DESCRIBE } → DESCRIBE"
 
 [[obligation]]
 id = "sf.security_admin.desc-network-rule.o004"
@@ -90569,16 +90569,16 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "sf.security_admin.desc-packages-policy.o002"
-kind = "option_present"
+id = "sf.security_admin.desc-packages-policy.o011"
+kind = "alternative"
 required = true
-target = "[ RIBE ]"
+target = "{ DESC | DESCRIBE } → DESC"
 
 [[obligation]]
-id = "sf.security_admin.desc-packages-policy.o003"
-kind = "option_absent"
+id = "sf.security_admin.desc-packages-policy.o012"
+kind = "alternative"
 required = true
-target = "[ RIBE ]"
+target = "{ DESC | DESCRIBE } → DESCRIBE"
 
 [[obligation]]
 id = "sf.security_admin.desc-packages-policy.o004"
@@ -90636,16 +90636,16 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "sf.security_admin.desc-password-policy.o002"
-kind = "option_present"
+id = "sf.security_admin.desc-password-policy.o011"
+kind = "alternative"
 required = true
-target = "[ RIBE ]"
+target = "{ DESC | DESCRIBE } → DESC"
 
 [[obligation]]
-id = "sf.security_admin.desc-password-policy.o003"
-kind = "option_absent"
+id = "sf.security_admin.desc-password-policy.o012"
+kind = "alternative"
 required = true
-target = "[ RIBE ]"
+target = "{ DESC | DESCRIBE } → DESCRIBE"
 
 [[obligation]]
 id = "sf.security_admin.desc-password-policy.o004"
@@ -90770,16 +90770,16 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "sf.security_admin.desc-projection-policy.o002"
-kind = "option_present"
+id = "sf.security_admin.desc-projection-policy.o011"
+kind = "alternative"
 required = true
-target = "[ RIBE ]"
+target = "{ DESC | DESCRIBE } → DESC"
 
 [[obligation]]
-id = "sf.security_admin.desc-projection-policy.o003"
-kind = "option_absent"
+id = "sf.security_admin.desc-projection-policy.o012"
+kind = "alternative"
 required = true
-target = "[ RIBE ]"
+target = "{ DESC | DESCRIBE } → DESCRIBE"
 
 [[obligation]]
 id = "sf.security_admin.desc-projection-policy.o004"
@@ -90837,16 +90837,16 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "sf.security_admin.desc-row-access-policy.o002"
-kind = "option_present"
+id = "sf.security_admin.desc-row-access-policy.o012"
+kind = "alternative"
 required = true
-target = "[ RIBE ]"
+target = "{ DESC | DESCRIBE } → DESC"
 
 [[obligation]]
-id = "sf.security_admin.desc-row-access-policy.o003"
-kind = "option_absent"
+id = "sf.security_admin.desc-row-access-policy.o013"
+kind = "alternative"
 required = true
-target = "[ RIBE ]"
+target = "{ DESC | DESCRIBE } → DESCRIBE"
 
 [[obligation]]
 id = "sf.security_admin.desc-row-access-policy.o004"
@@ -91038,16 +91038,16 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "sf.security_admin.desc-share.share.o002"
-kind = "option_present"
+id = "sf.security_admin.desc-share.share.o010"
+kind = "alternative"
 required = true
-target = "[ RIBE ]"
+target = "{ DESC | DESCRIBE } → DESC"
 
 [[obligation]]
-id = "sf.security_admin.desc-share.share.o003"
-kind = "option_absent"
+id = "sf.security_admin.desc-share.share.o011"
+kind = "alternative"
 required = true
-target = "[ RIBE ]"
+target = "{ DESC | DESCRIBE } → DESCRIBE"
 
 [[obligation]]
 id = "sf.security_admin.desc-share.share.o004"
@@ -91099,16 +91099,16 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "sf.security_admin.desc-share.share.syntax.o002"
-kind = "option_present"
+id = "sf.security_admin.desc-share.share.syntax.o012"
+kind = "alternative"
 required = true
-target = "[ RIBE ]"
+target = "{ DESC | DESCRIBE } → DESC"
 
 [[obligation]]
-id = "sf.security_admin.desc-share.share.syntax.o003"
-kind = "option_absent"
+id = "sf.security_admin.desc-share.share.syntax.o013"
+kind = "alternative"
 required = true
-target = "[ RIBE ]"
+target = "{ DESC | DESCRIBE } → DESCRIBE"
 
 [[obligation]]
 id = "sf.security_admin.desc-share.share.syntax.o004"
@@ -91174,16 +91174,16 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "sf.security_admin.desc-snapshot-policy.o002"
-kind = "option_present"
+id = "sf.security_admin.desc-snapshot-policy.o016"
+kind = "alternative"
 required = true
-target = "[ RIBE ]"
+target = "{ DESC | DESCRIBE } → DESC"
 
 [[obligation]]
-id = "sf.security_admin.desc-snapshot-policy.o003"
-kind = "option_absent"
+id = "sf.security_admin.desc-snapshot-policy.o017"
+kind = "alternative"
 required = true
-target = "[ RIBE ]"
+target = "{ DESC | DESCRIBE } → DESCRIBE"
 
 [[obligation]]
 id = "sf.security_admin.desc-snapshot-policy.o004"
@@ -91229,7 +91229,7 @@ anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
-id = "sf.security_admin.desc-snapshot-policy.o015"
+id = "sf.security_admin.desc-snapshot-policy.o021"
 kind = "negative_neighbour"
 required = true
 anchor = "doc.sql.desc-snapshot-policy / Syntax"
@@ -91621,7 +91621,7 @@ anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
-id = "sf.security_admin.drop-application-role.o015"
+id = "sf.security_admin.drop-application-role.o019"
 kind = "negative_neighbour"
 required = true
 anchor = "doc.sql.drop-application-role / Syntax"
@@ -92030,7 +92030,7 @@ anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
-id = "sf.security_admin.drop-database-role.o015"
+id = "sf.security_admin.drop-database-role.o019"
 kind = "negative_neighbour"
 required = true
 anchor = "doc.sql.drop-database-role / Syntax"
@@ -93815,7 +93815,7 @@ anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
-id = "sf.security_admin.drop-snapshot-policy.o013"
+id = "sf.security_admin.drop-snapshot-policy.o017"
 kind = "negative_neighbour"
 required = true
 anchor = "doc.sql.drop-snapshot-policy / Syntax"
@@ -98448,6 +98448,42 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
+id = "sf.security_admin.grant-privilege-share.o102"
+kind = "alternative"
+required = true
+target = "{ REFERENCE_USAGE | USAGE | READ | REFERENCES | SELECT | EVOLVE SCHEMA } → REFERENCE_USAGE"
+
+[[obligation]]
+id = "sf.security_admin.grant-privilege-share.o103"
+kind = "alternative"
+required = true
+target = "{ REFERENCE_USAGE | USAGE | READ | REFERENCES | SELECT | EVOLVE SCHEMA } → USAGE"
+
+[[obligation]]
+id = "sf.security_admin.grant-privilege-share.o104"
+kind = "alternative"
+required = true
+target = "{ REFERENCE_USAGE | USAGE | READ | REFERENCES | SELECT | EVOLVE SCHEMA } → READ"
+
+[[obligation]]
+id = "sf.security_admin.grant-privilege-share.o105"
+kind = "alternative"
+required = true
+target = "{ REFERENCE_USAGE | USAGE | READ | REFERENCES | SELECT | EVOLVE SCHEMA } → REFERENCES"
+
+[[obligation]]
+id = "sf.security_admin.grant-privilege-share.o106"
+kind = "alternative"
+required = true
+target = "{ REFERENCE_USAGE | USAGE | READ | REFERENCES | SELECT | EVOLVE SCHEMA } → SELECT"
+
+[[obligation]]
+id = "sf.security_admin.grant-privilege-share.o107"
+kind = "alternative"
+required = true
+target = "{ REFERENCE_USAGE | USAGE | READ | REFERENCES | SELECT | EVOLVE SCHEMA } → EVOLVE SCHEMA"
+
+[[obligation]]
 id = "sf.security_admin.grant-privilege-share.o002"
 kind = "option_present"
 required = true
@@ -98459,70 +98495,6 @@ id = "sf.security_admin.grant-privilege-share.o003"
 kind = "option_absent"
 required = true
 target = "[ , ... ]"
-
-[[obligation]]
-id = "sf.security_admin.grant-privilege-share.o004"
-kind = "option_present"
-required = true
-target = "[ , ... ] #2"
-note = "the list continued at least once"
-
-[[obligation]]
-id = "sf.security_admin.grant-privilege-share.o005"
-kind = "option_absent"
-required = true
-target = "[ , ... ] #2"
-
-[[obligation]]
-id = "sf.security_admin.grant-privilege-share.o006"
-kind = "alternative"
-required = true
-target = "{ REFERENCES | SELECT } → REFERENCES"
-
-[[obligation]]
-id = "sf.security_admin.grant-privilege-share.o007"
-kind = "alternative"
-required = true
-target = "{ REFERENCES | SELECT } → SELECT"
-
-[[obligation]]
-id = "sf.security_admin.grant-privilege-share.o008"
-kind = "option_present"
-required = true
-target = "[ , ... ] #3"
-note = "the list continued at least once"
-
-[[obligation]]
-id = "sf.security_admin.grant-privilege-share.o009"
-kind = "option_absent"
-required = true
-target = "[ , ... ] #3"
-
-[[obligation]]
-id = "sf.security_admin.grant-privilege-share.o010"
-kind = "option_present"
-required = true
-target = "[ , ... ] #4"
-note = "the list continued at least once"
-
-[[obligation]]
-id = "sf.security_admin.grant-privilege-share.o011"
-kind = "option_absent"
-required = true
-target = "[ , ... ] #4"
-
-[[obligation]]
-id = "sf.security_admin.grant-privilege-share.o012"
-kind = "option_present"
-required = true
-target = "[ , ... ] #5"
-note = "the list continued at least once"
-
-[[obligation]]
-id = "sf.security_admin.grant-privilege-share.o013"
-kind = "option_absent"
-required = true
-target = "[ , ... ] #5"
 
 [[obligation]]
 id = "sf.security_admin.grant-privilege-share.o014"
@@ -98975,46 +98947,16 @@ target = "<share_name>"
 note = "a string literal in place of <share_name>"
 
 [[obligation]]
-id = "sf.security_admin.grant-privilege-share.o081"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required REFERENCE_USAGE"
-
-[[obligation]]
-id = "sf.security_admin.grant-privilege-share.o082"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required USAGE"
-
-[[obligation]]
-id = "sf.security_admin.grant-privilege-share.o083"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required READ"
-
-[[obligation]]
-id = "sf.security_admin.grant-privilege-share.o084"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required { REFERENCES | SELECT }"
-
-[[obligation]]
-id = "sf.security_admin.grant-privilege-share.o085"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required EVOLVE"
-
-[[obligation]]
 id = "sf.security_admin.grant-privilege-share.o086"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required SCHEMA"
 
 [[obligation]]
-id = "sf.security_admin.grant-privilege-share.o087"
+id = "sf.security_admin.grant-privilege-share.o108"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required SELECT"
+note = "the form without its required { REFERENCE_USAGE | USAGE | READ | REFERENCES | SELECT | EVOLVE SCHEMA }"
 
 [[obligation]]
 id = "sf.security_admin.grant-privilege-share.o088"
@@ -110034,6 +109976,42 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
+id = "sf.security_admin.revoke-privilege-share.o100"
+kind = "alternative"
+required = true
+target = "{ REFERENCE_USAGE | USAGE | READ | REFERENCES | SELECT | EVOLVE SCHEMA } → REFERENCE_USAGE"
+
+[[obligation]]
+id = "sf.security_admin.revoke-privilege-share.o101"
+kind = "alternative"
+required = true
+target = "{ REFERENCE_USAGE | USAGE | READ | REFERENCES | SELECT | EVOLVE SCHEMA } → USAGE"
+
+[[obligation]]
+id = "sf.security_admin.revoke-privilege-share.o102"
+kind = "alternative"
+required = true
+target = "{ REFERENCE_USAGE | USAGE | READ | REFERENCES | SELECT | EVOLVE SCHEMA } → READ"
+
+[[obligation]]
+id = "sf.security_admin.revoke-privilege-share.o103"
+kind = "alternative"
+required = true
+target = "{ REFERENCE_USAGE | USAGE | READ | REFERENCES | SELECT | EVOLVE SCHEMA } → REFERENCES"
+
+[[obligation]]
+id = "sf.security_admin.revoke-privilege-share.o104"
+kind = "alternative"
+required = true
+target = "{ REFERENCE_USAGE | USAGE | READ | REFERENCES | SELECT | EVOLVE SCHEMA } → SELECT"
+
+[[obligation]]
+id = "sf.security_admin.revoke-privilege-share.o105"
+kind = "alternative"
+required = true
+target = "{ REFERENCE_USAGE | USAGE | READ | REFERENCES | SELECT | EVOLVE SCHEMA } → EVOLVE SCHEMA"
+
+[[obligation]]
 id = "sf.security_admin.revoke-privilege-share.o002"
 kind = "option_present"
 required = true
@@ -110045,70 +110023,6 @@ id = "sf.security_admin.revoke-privilege-share.o003"
 kind = "option_absent"
 required = true
 target = "[ , ... ]"
-
-[[obligation]]
-id = "sf.security_admin.revoke-privilege-share.o004"
-kind = "option_present"
-required = true
-target = "[ , ... ] #2"
-note = "the list continued at least once"
-
-[[obligation]]
-id = "sf.security_admin.revoke-privilege-share.o005"
-kind = "option_absent"
-required = true
-target = "[ , ... ] #2"
-
-[[obligation]]
-id = "sf.security_admin.revoke-privilege-share.o006"
-kind = "alternative"
-required = true
-target = "{ REFERENCES | SELECT } → REFERENCES"
-
-[[obligation]]
-id = "sf.security_admin.revoke-privilege-share.o007"
-kind = "alternative"
-required = true
-target = "{ REFERENCES | SELECT } → SELECT"
-
-[[obligation]]
-id = "sf.security_admin.revoke-privilege-share.o008"
-kind = "option_present"
-required = true
-target = "[ , ... ] #3"
-note = "the list continued at least once"
-
-[[obligation]]
-id = "sf.security_admin.revoke-privilege-share.o009"
-kind = "option_absent"
-required = true
-target = "[ , ... ] #3"
-
-[[obligation]]
-id = "sf.security_admin.revoke-privilege-share.o010"
-kind = "option_present"
-required = true
-target = "[ , ... ] #4"
-note = "the list continued at least once"
-
-[[obligation]]
-id = "sf.security_admin.revoke-privilege-share.o011"
-kind = "option_absent"
-required = true
-target = "[ , ... ] #4"
-
-[[obligation]]
-id = "sf.security_admin.revoke-privilege-share.o012"
-kind = "option_present"
-required = true
-target = "[ , ... ] #5"
-note = "the list continued at least once"
-
-[[obligation]]
-id = "sf.security_admin.revoke-privilege-share.o013"
-kind = "option_absent"
-required = true
-target = "[ , ... ] #5"
 
 [[obligation]]
 id = "sf.security_admin.revoke-privilege-share.o014"
@@ -110540,46 +110454,16 @@ target = "<share_name>"
 note = "a string literal in place of <share_name>"
 
 [[obligation]]
-id = "sf.security_admin.revoke-privilege-share.o078"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required REFERENCE_USAGE"
-
-[[obligation]]
-id = "sf.security_admin.revoke-privilege-share.o079"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required USAGE"
-
-[[obligation]]
-id = "sf.security_admin.revoke-privilege-share.o080"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required READ"
-
-[[obligation]]
-id = "sf.security_admin.revoke-privilege-share.o081"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required { REFERENCES | SELECT }"
-
-[[obligation]]
-id = "sf.security_admin.revoke-privilege-share.o082"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required EVOLVE"
-
-[[obligation]]
 id = "sf.security_admin.revoke-privilege-share.o083"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required SCHEMA"
 
 [[obligation]]
-id = "sf.security_admin.revoke-privilege-share.o084"
+id = "sf.security_admin.revoke-privilege-share.o106"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required SELECT"
+note = "the form without its required { REFERENCE_USAGE | USAGE | READ | REFERENCES | SELECT | EVOLVE SCHEMA }"
 
 [[obligation]]
 id = "sf.security_admin.revoke-privilege-share.o085"
@@ -128134,7 +128018,7 @@ anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
-id = "sf.security_admin.show-user-functions.o045"
+id = "sf.security_admin.show-user-functions.o049"
 kind = "negative_neighbour"
 required = true
 anchor = "doc.sql.show-user-functions / Syntax"
@@ -128485,7 +128369,7 @@ anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
-id = "sf.security_admin.show-user-procedures.o045"
+id = "sf.security_admin.show-user-procedures.o049"
 kind = "negative_neighbour"
 required = true
 anchor = "doc.sql.show-user-procedures / Syntax"

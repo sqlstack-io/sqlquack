@@ -12785,6 +12785,90 @@ grammar = ["CREATE [ OR REPLACE ] API INTEGRATION [ IF NOT EXISTS ] <integration
 reason = "the page writes `ALLOWED_AUTHENTICATION_SECRETS = ( { ... } ) | all | none` inside the brackets, so the bars would make `all` and `none` alternatives of the whole option; read as a braced choice of values, as the external access integration pages write it"
 
 [[reading]]
+form = "sf.security_admin.desc-aggregation-policy"
+grammar_sha256 = "10fdf12018ff046b418e6ed8f7e81a41f0b91836fba1e7cab0b5aa3c539e5e12"
+grammar = ["{ DESC | DESCRIBE } AGGREGATION POLICY <name>"]
+reason = "the page writes the keyword as `DESC[RIBE]`, an optional suffix inside one word; read as the two keywords `{ DESC | DESCRIBE }`, since `DESC RIBE` is not a keyword pair"
+
+[[reading]]
+form = "sf.security_admin.desc-backup-policy"
+grammar_sha256 = "c2d17811861649c507bdbe23a56a8f4f02c0a94ecc01f32f5e993b0e9c365bf8"
+grammar = ["{ DESC | DESCRIBE } BACKUP POLICY <name>"]
+reason = "the page writes the keyword as `DESC[RIBE]`, an optional suffix inside one word; read as the two keywords `{ DESC | DESCRIBE }`, since `DESC RIBE` is not a keyword pair"
+
+[[reading]]
+form = "sf.security_admin.desc-catalog-integration"
+grammar_sha256 = "0bcb3c1f94c34b4b0d0c718ab383642b5bedb1614c9e3a2169ac2350a12d9373"
+grammar = ["{ DESC | DESCRIBE } CATALOG INTEGRATION <name>"]
+reason = "the page writes the keyword as `DESC[RIBE]`, an optional suffix inside one word; read as the two keywords `{ DESC | DESCRIBE }`, since `DESC RIBE` is not a keyword pair"
+
+[[reading]]
+form = "sf.security_admin.desc-ingress-policy"
+grammar_sha256 = "d3e1b759781266f42c30ce0280086ccce5aacb49a92b0e0c11c9d7b7f04cf62c"
+grammar = ["{ DESC | DESCRIBE } INGRESS POLICY <name>"]
+reason = "the page writes the keyword as `DESC[RIBE]`, an optional suffix inside one word; read as the two keywords `{ DESC | DESCRIBE }`, since `DESC RIBE` is not a keyword pair"
+
+[[reading]]
+form = "sf.security_admin.desc-masking-policy"
+grammar_sha256 = "d0d506c67a9a4524ff54bc008103138fcc43a9632d2618fc05fcc51471f1a94d"
+grammar = ["{ DESC | DESCRIBE } MASKING POLICY <name>"]
+reason = "the page writes the keyword as `DESC[RIBE]`, an optional suffix inside one word; read as the two keywords `{ DESC | DESCRIBE }`, since `DESC RIBE` is not a keyword pair"
+
+[[reading]]
+form = "sf.security_admin.desc-network-policy"
+grammar_sha256 = "a78ed22cef8ce2e5ddee9898ad5f4dfc14e845fbf41d88c4dcd03d9fb5f2c3a1"
+grammar = ["{ DESC | DESCRIBE } NETWORK POLICY <name>"]
+reason = "the page writes the keyword as `DESC[RIBE]`, an optional suffix inside one word; read as the two keywords `{ DESC | DESCRIBE }`, since `DESC RIBE` is not a keyword pair"
+
+[[reading]]
+form = "sf.security_admin.desc-network-rule"
+grammar_sha256 = "8e8214ec58b7fca83e355172d748efc2e9f1619c776ee244b2e7e74990c1067a"
+grammar = ["{ DESC | DESCRIBE } NETWORK RULE <name>"]
+reason = "the page writes the keyword as `DESC[RIBE]`, an optional suffix inside one word; read as the two keywords `{ DESC | DESCRIBE }`, since `DESC RIBE` is not a keyword pair"
+
+[[reading]]
+form = "sf.security_admin.desc-packages-policy"
+grammar_sha256 = "53e9bdeb61872b9924562a68daa49cffe15d365cd807deb149438f9cbed5228b"
+grammar = ["{ DESC | DESCRIBE } PACKAGES POLICY <name>"]
+reason = "the page writes the keyword as `DESC[RIBE]`, an optional suffix inside one word; read as the two keywords `{ DESC | DESCRIBE }`, since `DESC RIBE` is not a keyword pair"
+
+[[reading]]
+form = "sf.security_admin.desc-password-policy"
+grammar_sha256 = "ed9cafcb77560561cfa190a5aa67563042f9b3cee511aad8f1752efc6e2ac110"
+grammar = ["{ DESC | DESCRIBE } PASSWORD POLICY <name>"]
+reason = "the page writes the keyword as `DESC[RIBE]`, an optional suffix inside one word; read as the two keywords `{ DESC | DESCRIBE }`, since `DESC RIBE` is not a keyword pair"
+
+[[reading]]
+form = "sf.security_admin.desc-projection-policy"
+grammar_sha256 = "6d8c314329f06b59b3c7c01fdc4b2f84c6fbd7851724aea4227a527bfc1a9c0c"
+grammar = ["{ DESC | DESCRIBE } PROJECTION POLICY <name>"]
+reason = "the page writes the keyword as `DESC[RIBE]`, an optional suffix inside one word; read as the two keywords `{ DESC | DESCRIBE }`, since `DESC RIBE` is not a keyword pair"
+
+[[reading]]
+form = "sf.security_admin.desc-row-access-policy"
+grammar_sha256 = "bec1103ae3378a8562371273220dc1f3f496e028cab4059993507e27bf18a278"
+grammar = ["{ DESC | DESCRIBE } ROW ACCESS POLICY <name>;"]
+reason = "the page writes the keyword as `DESC[RIBE]`, an optional suffix inside one word; read as the two keywords `{ DESC | DESCRIBE }`, since `DESC RIBE` is not a keyword pair"
+
+[[reading]]
+form = "sf.security_admin.desc-share.share"
+grammar_sha256 = "d17cf69445ca6aab070d0c447216e1d3ccea260515d0f7a4eb6a8b68ffcfbb8a"
+grammar = ["{ DESC | DESCRIBE } SHARE <name>"]
+reason = "the page writes the keyword as `DESC[RIBE]`, an optional suffix inside one word; read as the two keywords `{ DESC | DESCRIBE }`, since `DESC RIBE` is not a keyword pair"
+
+[[reading]]
+form = "sf.security_admin.desc-share.share.syntax"
+grammar_sha256 = "05ceed7ea44fbc43bb606d90e8bef520667991fe7f33e6d8c3631dbf69f07cd2"
+grammar = ["{ DESC | DESCRIBE } SHARE <provider_account>.<share_name>"]
+reason = "the page writes the keyword as `DESC[RIBE]`, an optional suffix inside one word; read as the two keywords `{ DESC | DESCRIBE }`, since `DESC RIBE` is not a keyword pair"
+
+[[reading]]
+form = "sf.security_admin.desc-snapshot-policy"
+grammar_sha256 = "2c219750aa2510d2edb355318ec32a6050fd222c803156ca7297528e91c8e709"
+grammar = ["{ DESC | DESCRIBE } SNAPSHOT POLICY <name>"]
+reason = "the page writes the keyword as `DESC[RIBE]`, an optional suffix inside one word; read as the two keywords `{ DESC | DESCRIBE }`, since `DESC RIBE` is not a keyword pair"
+
+[[reading]]
 form = "sf.security_admin.alter-notification-integration-email.set"
 grammar_sha256 = "9e7a343e874d9e32dd9e45e1673f396216fe2b562fae48213f031d4f7ad37db3"
 grammar = ["ALTER [ NOTIFICATION ] INTEGRATION [ IF EXISTS ] <name> SET [ ENABLED = { TRUE | FALSE } ] [ ALLOWED_RECIPIENTS = ( '<email_address>' [ , '<email_address>' ... ] ) ] [ DEFAULT_RECIPIENTS = ( '<email_address>' [ , '<email_address>' ... ] ) ] [ DEFAULT_SUBJECT = '<subject_line>' ] [ COMMENT = '<string_literal>' ]"]
@@ -13584,7 +13668,7 @@ kind = "boundary_below"
 target = "'<tag_value>'"
 note = "a tag value of 255 characters against the documented maximum of 256"
 anchor = "doc.sql.create-failover-group / Parameters"
-sql = "CREATE FAILOVER GROUP v1 OBJECT_TYPES = TABLE ALLOWED_ACCOUNTS = v1 . v1 TAG ( v1 = 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx' ) ;"
+sql = "CREATE FAILOVER GROUP v1 OBJECT_TYPES = DATABASES ALLOWED_ACCOUNTS = v1 . v1 TAG ( v1 = 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx' ) ;"
 expect = "accept"
 context = "raw"
 
@@ -13594,7 +13678,7 @@ kind = "boundary_at"
 target = "'<tag_value>'"
 note = "a tag value of 256 characters against the documented maximum of 256"
 anchor = "doc.sql.create-failover-group / Parameters"
-sql = "CREATE FAILOVER GROUP v1 OBJECT_TYPES = TABLE ALLOWED_ACCOUNTS = v1 . v1 TAG ( v1 = 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx' ) ;"
+sql = "CREATE FAILOVER GROUP v1 OBJECT_TYPES = DATABASES ALLOWED_ACCOUNTS = v1 . v1 TAG ( v1 = 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx' ) ;"
 expect = "accept"
 context = "raw"
 
@@ -13604,7 +13688,7 @@ kind = "boundary_above"
 target = "'<tag_value>'"
 note = "a tag value of 257 characters against the documented maximum of 256"
 anchor = "doc.sql.create-failover-group / Parameters"
-sql = "CREATE FAILOVER GROUP v1 OBJECT_TYPES = TABLE ALLOWED_ACCOUNTS = v1 . v1 TAG ( v1 = 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx' ) ;"
+sql = "CREATE FAILOVER GROUP v1 OBJECT_TYPES = DATABASES ALLOWED_ACCOUNTS = v1 . v1 TAG ( v1 = 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx' ) ;"
 expect = "observe"
 context = "raw"
 
@@ -13614,7 +13698,7 @@ kind = "boundary_below"
 target = "'<tag_value>'"
 note = "a tag value of 255 characters against the documented maximum of 256"
 anchor = "doc.sql.create-replication-group / Parameters"
-sql = "CREATE REPLICATION GROUP v1 OBJECT_TYPES = TABLE ALLOWED_ACCOUNTS = v1 . v1 TAG ( v1 = 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx' ) ;"
+sql = "CREATE REPLICATION GROUP v1 OBJECT_TYPES = DATABASES ALLOWED_ACCOUNTS = v1 . v1 TAG ( v1 = 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx' ) ;"
 expect = "accept"
 context = "raw"
 
@@ -13624,7 +13708,7 @@ kind = "boundary_at"
 target = "'<tag_value>'"
 note = "a tag value of 256 characters against the documented maximum of 256"
 anchor = "doc.sql.create-replication-group / Parameters"
-sql = "CREATE REPLICATION GROUP v1 OBJECT_TYPES = TABLE ALLOWED_ACCOUNTS = v1 . v1 TAG ( v1 = 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx' ) ;"
+sql = "CREATE REPLICATION GROUP v1 OBJECT_TYPES = DATABASES ALLOWED_ACCOUNTS = v1 . v1 TAG ( v1 = 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx' ) ;"
 expect = "accept"
 context = "raw"
 
@@ -13634,7 +13718,7 @@ kind = "boundary_above"
 target = "'<tag_value>'"
 note = "a tag value of 257 characters against the documented maximum of 256"
 anchor = "doc.sql.create-replication-group / Parameters"
-sql = "CREATE REPLICATION GROUP v1 OBJECT_TYPES = TABLE ALLOWED_ACCOUNTS = v1 . v1 TAG ( v1 = 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx' ) ;"
+sql = "CREATE REPLICATION GROUP v1 OBJECT_TYPES = DATABASES ALLOWED_ACCOUNTS = v1 . v1 TAG ( v1 = 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx' ) ;"
 expect = "observe"
 context = "raw"
 
@@ -16014,7 +16098,7 @@ kind = "boundary_below"
 target = "REPLICATION_SCHEDULE = '<num> MINUTE'"
 note = "REPLICATION_SCHEDULE = '11,519 MINUTE' against the documented maximum of 11,520"
 anchor = "doc.sql.create-failover-group / Parameters"
-sql = "CREATE FAILOVER GROUP IF NOT EXISTS v1 OBJECT_TYPES = TABLE , TABLE ALLOWED_DATABASES = v1 , v1 ALLOWED_EXTERNAL_VOLUMES = v1 , v1 ALLOWED_SHARES = v1 , v1 ALLOWED_INTEGRATION_TYPES = SECURITY INTEGRATIONS , SECURITY INTEGRATIONS ALLOWED_ACCOUNTS = v1 . v1 , v1 . v1 IGNORE EDITION CHECK REPLICATION_SCHEDULE = '11519 MINUTE' OPTIMIZED_REFRESH = TRUE WITH TAG ( v1 = 'm' , v1 = 'm' ) ERROR_INTEGRATION = i1 ;"
+sql = "CREATE FAILOVER GROUP IF NOT EXISTS v1 OBJECT_TYPES = DATABASES , DATABASES ALLOWED_DATABASES = v1 , v1 ALLOWED_EXTERNAL_VOLUMES = v1 , v1 ALLOWED_SHARES = v1 , v1 ALLOWED_INTEGRATION_TYPES = SECURITY INTEGRATIONS , SECURITY INTEGRATIONS ALLOWED_ACCOUNTS = v1 . v1 , v1 . v1 IGNORE EDITION CHECK REPLICATION_SCHEDULE = '11519 MINUTE' OPTIMIZED_REFRESH = TRUE WITH TAG ( v1 = 'm' , v1 = 'm' ) ERROR_INTEGRATION = i1 ;"
 expect = "accept"
 context = "raw"
 
@@ -16024,7 +16108,7 @@ kind = "boundary_at"
 target = "REPLICATION_SCHEDULE = '<num> MINUTE'"
 note = "REPLICATION_SCHEDULE = '11,520 MINUTE' against the documented maximum of 11,520"
 anchor = "doc.sql.create-failover-group / Parameters"
-sql = "CREATE FAILOVER GROUP IF NOT EXISTS v1 OBJECT_TYPES = TABLE , TABLE ALLOWED_DATABASES = v1 , v1 ALLOWED_EXTERNAL_VOLUMES = v1 , v1 ALLOWED_SHARES = v1 , v1 ALLOWED_INTEGRATION_TYPES = SECURITY INTEGRATIONS , SECURITY INTEGRATIONS ALLOWED_ACCOUNTS = v1 . v1 , v1 . v1 IGNORE EDITION CHECK REPLICATION_SCHEDULE = '11520 MINUTE' OPTIMIZED_REFRESH = TRUE WITH TAG ( v1 = 'm' , v1 = 'm' ) ERROR_INTEGRATION = i1 ;"
+sql = "CREATE FAILOVER GROUP IF NOT EXISTS v1 OBJECT_TYPES = DATABASES , DATABASES ALLOWED_DATABASES = v1 , v1 ALLOWED_EXTERNAL_VOLUMES = v1 , v1 ALLOWED_SHARES = v1 , v1 ALLOWED_INTEGRATION_TYPES = SECURITY INTEGRATIONS , SECURITY INTEGRATIONS ALLOWED_ACCOUNTS = v1 . v1 , v1 . v1 IGNORE EDITION CHECK REPLICATION_SCHEDULE = '11520 MINUTE' OPTIMIZED_REFRESH = TRUE WITH TAG ( v1 = 'm' , v1 = 'm' ) ERROR_INTEGRATION = i1 ;"
 expect = "accept"
 context = "raw"
 
@@ -16034,7 +16118,7 @@ kind = "boundary_above"
 target = "REPLICATION_SCHEDULE = '<num> MINUTE'"
 note = "REPLICATION_SCHEDULE = '11,521 MINUTE' against the documented maximum of 11,520"
 anchor = "doc.sql.create-failover-group / Parameters"
-sql = "CREATE FAILOVER GROUP IF NOT EXISTS v1 OBJECT_TYPES = TABLE , TABLE ALLOWED_DATABASES = v1 , v1 ALLOWED_EXTERNAL_VOLUMES = v1 , v1 ALLOWED_SHARES = v1 , v1 ALLOWED_INTEGRATION_TYPES = SECURITY INTEGRATIONS , SECURITY INTEGRATIONS ALLOWED_ACCOUNTS = v1 . v1 , v1 . v1 IGNORE EDITION CHECK REPLICATION_SCHEDULE = '11521 MINUTE' OPTIMIZED_REFRESH = TRUE WITH TAG ( v1 = 'm' , v1 = 'm' ) ERROR_INTEGRATION = i1 ;"
+sql = "CREATE FAILOVER GROUP IF NOT EXISTS v1 OBJECT_TYPES = DATABASES , DATABASES ALLOWED_DATABASES = v1 , v1 ALLOWED_EXTERNAL_VOLUMES = v1 , v1 ALLOWED_SHARES = v1 , v1 ALLOWED_INTEGRATION_TYPES = SECURITY INTEGRATIONS , SECURITY INTEGRATIONS ALLOWED_ACCOUNTS = v1 . v1 , v1 . v1 IGNORE EDITION CHECK REPLICATION_SCHEDULE = '11521 MINUTE' OPTIMIZED_REFRESH = TRUE WITH TAG ( v1 = 'm' , v1 = 'm' ) ERROR_INTEGRATION = i1 ;"
 expect = "observe"
 context = "raw"
 
@@ -16074,7 +16158,7 @@ kind = "boundary_below"
 target = "REPLICATION_SCHEDULE = '<num> MINUTE'"
 note = "REPLICATION_SCHEDULE = '11,519 MINUTE' against the documented maximum of 11,520"
 anchor = "doc.sql.create-replication-group / Parameters"
-sql = "CREATE REPLICATION GROUP IF NOT EXISTS v1 OBJECT_TYPES = TABLE , TABLE ALLOWED_DATABASES = v1 , v1 ALLOWED_EXTERNAL_VOLUMES = v1 , v1 ALLOWED_SHARES = v1 , v1 ALLOWED_INTEGRATION_TYPES = SECURITY INTEGRATIONS , SECURITY INTEGRATIONS ALLOWED_ACCOUNTS = v1 . v1 , v1 . v1 IGNORE EDITION CHECK REPLICATION_SCHEDULE = '11519 MINUTE' WITH TAG ( v1 = 'm' , v1 = 'm' ) ERROR_INTEGRATION = i1 ;"
+sql = "CREATE REPLICATION GROUP IF NOT EXISTS v1 OBJECT_TYPES = DATABASES , DATABASES ALLOWED_DATABASES = v1 , v1 ALLOWED_EXTERNAL_VOLUMES = v1 , v1 ALLOWED_SHARES = v1 , v1 ALLOWED_INTEGRATION_TYPES = SECURITY INTEGRATIONS , SECURITY INTEGRATIONS ALLOWED_ACCOUNTS = v1 . v1 , v1 . v1 IGNORE EDITION CHECK REPLICATION_SCHEDULE = '11519 MINUTE' WITH TAG ( v1 = 'm' , v1 = 'm' ) ERROR_INTEGRATION = i1 ;"
 expect = "accept"
 context = "raw"
 
@@ -16084,7 +16168,7 @@ kind = "boundary_at"
 target = "REPLICATION_SCHEDULE = '<num> MINUTE'"
 note = "REPLICATION_SCHEDULE = '11,520 MINUTE' against the documented maximum of 11,520"
 anchor = "doc.sql.create-replication-group / Parameters"
-sql = "CREATE REPLICATION GROUP IF NOT EXISTS v1 OBJECT_TYPES = TABLE , TABLE ALLOWED_DATABASES = v1 , v1 ALLOWED_EXTERNAL_VOLUMES = v1 , v1 ALLOWED_SHARES = v1 , v1 ALLOWED_INTEGRATION_TYPES = SECURITY INTEGRATIONS , SECURITY INTEGRATIONS ALLOWED_ACCOUNTS = v1 . v1 , v1 . v1 IGNORE EDITION CHECK REPLICATION_SCHEDULE = '11520 MINUTE' WITH TAG ( v1 = 'm' , v1 = 'm' ) ERROR_INTEGRATION = i1 ;"
+sql = "CREATE REPLICATION GROUP IF NOT EXISTS v1 OBJECT_TYPES = DATABASES , DATABASES ALLOWED_DATABASES = v1 , v1 ALLOWED_EXTERNAL_VOLUMES = v1 , v1 ALLOWED_SHARES = v1 , v1 ALLOWED_INTEGRATION_TYPES = SECURITY INTEGRATIONS , SECURITY INTEGRATIONS ALLOWED_ACCOUNTS = v1 . v1 , v1 . v1 IGNORE EDITION CHECK REPLICATION_SCHEDULE = '11520 MINUTE' WITH TAG ( v1 = 'm' , v1 = 'm' ) ERROR_INTEGRATION = i1 ;"
 expect = "accept"
 context = "raw"
 
@@ -16094,7 +16178,7 @@ kind = "boundary_above"
 target = "REPLICATION_SCHEDULE = '<num> MINUTE'"
 note = "REPLICATION_SCHEDULE = '11,521 MINUTE' against the documented maximum of 11,520"
 anchor = "doc.sql.create-replication-group / Parameters"
-sql = "CREATE REPLICATION GROUP IF NOT EXISTS v1 OBJECT_TYPES = TABLE , TABLE ALLOWED_DATABASES = v1 , v1 ALLOWED_EXTERNAL_VOLUMES = v1 , v1 ALLOWED_SHARES = v1 , v1 ALLOWED_INTEGRATION_TYPES = SECURITY INTEGRATIONS , SECURITY INTEGRATIONS ALLOWED_ACCOUNTS = v1 . v1 , v1 . v1 IGNORE EDITION CHECK REPLICATION_SCHEDULE = '11521 MINUTE' WITH TAG ( v1 = 'm' , v1 = 'm' ) ERROR_INTEGRATION = i1 ;"
+sql = "CREATE REPLICATION GROUP IF NOT EXISTS v1 OBJECT_TYPES = DATABASES , DATABASES ALLOWED_DATABASES = v1 , v1 ALLOWED_EXTERNAL_VOLUMES = v1 , v1 ALLOWED_SHARES = v1 , v1 ALLOWED_INTEGRATION_TYPES = SECURITY INTEGRATIONS , SECURITY INTEGRATIONS ALLOWED_ACCOUNTS = v1 . v1 , v1 . v1 IGNORE EDITION CHECK REPLICATION_SCHEDULE = '11521 MINUTE' WITH TAG ( v1 = 'm' , v1 = 'm' ) ERROR_INTEGRATION = i1 ;"
 expect = "observe"
 context = "raw"
 
@@ -17369,8 +17453,8 @@ reason = "page definitions inlined: schemaObjectPrivileges, schemaPrivileges; a 
 [[reading]]
 form = "sf.security_admin.grant-privilege-share"
 grammar_sha256 = "39ea81c5da960a930295dc5211ccaef3f30f74d7ffc76de1b3ed0f9b723f2280"
-grammar = ["GRANT REFERENCE_USAGE [ , ... ] USAGE [ , ... ] READ { REFERENCES | SELECT } [ , ... ] EVOLVE SCHEMA [ , ... ] SELECT [ , ... ] ON { DATABASE <name> | SCHEMA <name> | FUNCTION <name> | MODEL <name> | SEMANTIC VIEW <name> | { TABLE <name> | ALL TABLES IN SCHEMA <schema_name> } | { EXTERNAL TABLE <name> | ALL EXTERNAL TABLES IN SCHEMA <schema_name> } | { ICEBERG TABLE <name> | ALL ICEBERG TABLES IN SCHEMA <schema_name> } | { DYNAMIC TABLE <name> | ALL DYNAMIC TABLES IN SCHEMA <schema_name> } | TAG <name> | VIEW <name> } TO SHARE <share_name>"]
-reason = "page definitions inlined: objectPrivilege; a definition the page gives per cloud or variant becomes a choice of its variants; unbraced alternatives inside `( ... )` and in `KEY = a | b` properties are braced"
+grammar = ["GRANT { REFERENCE_USAGE | USAGE | READ | REFERENCES | SELECT | EVOLVE SCHEMA } [ , ... ] ON { DATABASE <name> | SCHEMA <name> | FUNCTION <name> | MODEL <name> | SEMANTIC VIEW <name> | { TABLE <name> | ALL TABLES IN SCHEMA <schema_name> } | { EXTERNAL TABLE <name> | ALL EXTERNAL TABLES IN SCHEMA <schema_name> } | { ICEBERG TABLE <name> | ALL ICEBERG TABLES IN SCHEMA <schema_name> } | { DYNAMIC TABLE <name> | ALL DYNAMIC TABLES IN SCHEMA <schema_name> } | TAG <name> | VIEW <name> } TO SHARE <share_name>"]
+reason = "page definitions inlined: objectPrivilege; a definition the page gives per cloud or variant becomes a choice of its variants; unbraced alternatives inside `( ... )` and in `KEY = a | b` properties are braced; objectPrivilege: the page lists one privilege per object type on separate lines under `-- For <object type>` comments, with no bars between them; read as a choice of those privileges with the page's `[ , ... ]` list"
 
 [[reading]]
 form = "sf.security_admin.grant-privilege-user"
@@ -17399,8 +17483,8 @@ reason = "page definitions inlined: accountObjectPrivileges, globalPrivileges, s
 [[reading]]
 form = "sf.security_admin.revoke-privilege-share"
 grammar_sha256 = "26ff97704d5063957d611d3169285a8d6ed43aaed3823ffd27ed260016fae73f"
-grammar = ["REVOKE REFERENCE_USAGE [ , ... ] USAGE [ , ... ] READ { REFERENCES | SELECT } [ , ... ] EVOLVE SCHEMA [ , ... ] SELECT [ , ... ] ON { DATABASE <name> | SCHEMA <name> | MODEL <name> | SEMANTIC VIEW <name> | { TABLE <name> | ALL TABLES IN SCHEMA <schema_name> } | { EXTERNAL TABLE <name> | ALL EXTERNAL TABLES IN SCHEMA <schema_name> } | { ICEBERG TABLE <name> | ALL ICEBERG TABLES IN SCHEMA <schema_name> } | { DYNAMIC TABLE <name> | ALL DYNAMIC TABLES IN SCHEMA <schema_name> } | { VIEW <name> | ALL VIEWS IN SCHEMA <schema_name> } } FROM SHARE <share_name>"]
-reason = "page definitions inlined: objectPrivilege; a definition the page gives per cloud or variant becomes a choice of its variants; unbraced alternatives inside `( ... )` and in `KEY = a | b` properties are braced"
+grammar = ["REVOKE { REFERENCE_USAGE | USAGE | READ | REFERENCES | SELECT | EVOLVE SCHEMA } [ , ... ] ON { DATABASE <name> | SCHEMA <name> | MODEL <name> | SEMANTIC VIEW <name> | { TABLE <name> | ALL TABLES IN SCHEMA <schema_name> } | { EXTERNAL TABLE <name> | ALL EXTERNAL TABLES IN SCHEMA <schema_name> } | { ICEBERG TABLE <name> | ALL ICEBERG TABLES IN SCHEMA <schema_name> } | { DYNAMIC TABLE <name> | ALL DYNAMIC TABLES IN SCHEMA <schema_name> } | { VIEW <name> | ALL VIEWS IN SCHEMA <schema_name> } } FROM SHARE <share_name>"]
+reason = "page definitions inlined: objectPrivilege; a definition the page gives per cloud or variant becomes a choice of its variants; unbraced alternatives inside `( ... )` and in `KEY = a | b` properties are braced; objectPrivilege: the page lists one privilege per object type on separate lines under `-- For <object type>` comments, with no bars between them; read as a choice of those privileges with the page's `[ , ... ]` list"
 
 [[reading]]
 form = "sf.security_admin.revoke-privilege-user"

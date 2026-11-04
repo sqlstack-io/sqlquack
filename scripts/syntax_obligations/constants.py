@@ -1082,6 +1082,10 @@ SECURITY_ADMIN_PAGE_FILLS: dict[str, dict[str, str]] = {
         "expression": "PROJECTION_CONSTRAINT ( ALLOW => TRUE )"
     },
     "sf.security_admin.create-feature-policy": {"type": "DATABASES"},
+    "sf.security_admin.create-failover-group": {"object_type": "DATABASES"},
+    "sf.security_admin.create-replication-group": {"object_type": "DATABASES"},
+    "sf.security_admin.alter-failover-group": {"object_type": "DATABASES"},
+    "sf.security_admin.alter-replication-group": {"object_type": "DATABASES"},
     "sf.security_admin.alter-feature-policy": {"type": "DATABASES"},
     "sf.security_admin.alter-join-policy": {
         "expression": "JOIN_CONSTRAINT ( JOIN_REQUIRED => TRUE )"
