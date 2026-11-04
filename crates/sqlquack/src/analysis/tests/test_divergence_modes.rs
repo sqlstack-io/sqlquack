@@ -25,7 +25,7 @@ fn given_a_known_divergence_when_converting_then_default_mode_warns_and_strict_m
             expected_outcome: DivergenceModeOutcome {
                 converted: false,
                 divergences: vec![],
-                categories: vec![RefusalCategory::TypeCondition],
+                categories: vec![RefusalCategory::DivergenceRefused],
             },
         },
         DivergenceModeTestCase {
@@ -35,7 +35,7 @@ fn given_a_known_divergence_when_converting_then_default_mode_warns_and_strict_m
             expected_outcome: DivergenceModeOutcome {
                 converted: false,
                 divergences: vec![],
-                categories: vec![RefusalCategory::TypeCondition],
+                categories: vec![RefusalCategory::DivergenceRefused],
             },
         },
         DivergenceModeTestCase {
@@ -45,7 +45,7 @@ fn given_a_known_divergence_when_converting_then_default_mode_warns_and_strict_m
             expected_outcome: DivergenceModeOutcome {
                 converted: false,
                 divergences: vec![],
-                categories: vec![RefusalCategory::TypeCondition],
+                categories: vec![RefusalCategory::DivergenceRefused],
             },
         },
         DivergenceModeTestCase {
@@ -65,7 +65,7 @@ fn given_a_known_divergence_when_converting_then_default_mode_warns_and_strict_m
             expected_outcome: DivergenceModeOutcome {
                 converted: false,
                 divergences: vec![],
-                categories: vec![RefusalCategory::TypeCondition],
+                categories: vec![RefusalCategory::DivergenceRefused],
             },
         },
         DivergenceModeTestCase {
@@ -151,7 +151,7 @@ fn given_a_known_divergence_when_converting_then_default_mode_warns_and_strict_m
             expected_outcome: DivergenceModeOutcome {
                 converted: false,
                 divergences: vec![],
-                categories: vec![RefusalCategory::TypeCondition],
+                categories: vec![RefusalCategory::DivergenceRefused],
             },
         },
         DivergenceModeTestCase {
@@ -187,7 +187,7 @@ fn given_a_known_divergence_when_converting_then_default_mode_warns_and_strict_m
             expected_outcome: DivergenceModeOutcome {
                 converted: false,
                 divergences: vec![],
-                categories: vec![RefusalCategory::TypeCondition],
+                categories: vec![RefusalCategory::DivergenceRefused],
             },
         },
         DivergenceModeTestCase {
@@ -349,7 +349,7 @@ fn given_a_known_divergence_when_converting_then_default_mode_warns_and_strict_m
             expected_outcome: DivergenceModeOutcome {
                 converted: false,
                 divergences: vec![],
-                categories: vec![RefusalCategory::TypeCondition],
+                categories: vec![RefusalCategory::DivergenceRefused],
             },
         },
     ];
@@ -375,7 +375,7 @@ fn given_a_python_function_call_when_converting_then_it_needs_a_confirmed_runtim
             expected_outcome: DivergenceModeOutcome {
                 converted: false,
                 divergences: vec![],
-                categories: vec![RefusalCategory::TypeCondition],
+                categories: vec![RefusalCategory::DivergenceRefused],
             },
         },
         PythonModeTestCase {
@@ -406,7 +406,7 @@ fn given_a_python_function_call_when_converting_then_it_needs_a_confirmed_runtim
             expected_outcome: DivergenceModeOutcome {
                 converted: false,
                 divergences: vec![],
-                categories: vec![RefusalCategory::TypeCondition],
+                categories: vec![RefusalCategory::DivergenceRefused],
             },
         },
     ];
