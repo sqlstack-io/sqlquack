@@ -1230,14 +1230,13 @@ impl Parser {
         let name = self.expect_identifier_or_safe_keyword_with_quoted()?;
 
         let cascade = self.match_token(TokenType::Cascade);
-        if !cascade {
-            self.match_token(TokenType::Restrict);
-        }
+        let restrict = !cascade && self.match_token(TokenType::Restrict);
 
         Ok(Expression::DropSchema(Box::new(DropSchema {
             name,
             if_exists,
             cascade,
+            restrict,
         })))
     }
 
