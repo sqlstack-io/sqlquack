@@ -58579,3 +58579,71 @@ form = "sf.functions.update-auto-enablement-status"
 grammar_sha256 = "33cfeaffac73b2485d4fa38f504b9349d4da6801783feb8e3295f5719abba537"
 grammar = ["SNOWFLAKE.TRUST_CENTER.UPDATE_AUTO_ENABLEMENT_STATUS( <is_enabled> [ , '<comment>' ] )"]
 reason = "D118: the page ends the call with a statement-terminating `;`, which is not part of the function call; read without it"
+
+# D113 functions receipt triage (import 63): remaining contradictions observed, each reason names its category and receipt.
+
+[[suppress]]
+form = "sf.functions.date-part.date-part-from"
+kind = "alternative"
+target = "{ <date_or_time_part> | '<date_or_time_part>' } → '<date_or_time_part>'"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-63); observed, not flipped to reject"
+
+[[limit]]
+form = "sf.functions.date-part.date-part-from"
+kind = "alternative"
+target = "{ <date_or_time_part> | '<date_or_time_part>' } → '<date_or_time_part>'"
+note = "alternative { <date_or_time_part> | '<date_or_time_part>' } → '<date_or_time_part>', observed"
+anchor = "doc.functions.date_part / Syntax"
+sql = "SELECT DATE_PART ( 'm' FROM 1 ) ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.functions.date-part.date-part-from"
+kind = "operand_type_class"
+target = "'<date_or_time_part>'"
+note = "a valid string_literal"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-63); observed, not flipped to reject"
+
+[[limit]]
+form = "sf.functions.date-part.date-part-from"
+kind = "operand_type_class"
+target = "'<date_or_time_part>'"
+note = "a valid string_literal, observed"
+anchor = "doc.functions.date_part / Syntax"
+sql = "SELECT DATE_PART ( 'm' FROM 1 ) ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.functions.extract.extract-from"
+kind = "alternative"
+target = "{ <date_or_time_part> | '<date_or_time_part>' } → '<date_or_time_part>'"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-63); observed, not flipped to reject"
+
+[[limit]]
+form = "sf.functions.extract.extract-from"
+kind = "alternative"
+target = "{ <date_or_time_part> | '<date_or_time_part>' } → '<date_or_time_part>'"
+note = "alternative { <date_or_time_part> | '<date_or_time_part>' } → '<date_or_time_part>', observed"
+anchor = "doc.functions.extract / Syntax"
+sql = "SELECT EXTRACT ( 'm' FROM 1 ) ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.functions.extract.extract-from"
+kind = "operand_type_class"
+target = "'<date_or_time_part>'"
+note = "a valid string_literal"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-63); observed, not flipped to reject"
+
+[[limit]]
+form = "sf.functions.extract.extract-from"
+kind = "operand_type_class"
+target = "'<date_or_time_part>'"
+note = "a valid string_literal, observed"
+anchor = "doc.functions.extract / Syntax"
+sql = "SELECT EXTRACT ( 'm' FROM 1 ) ;"
+expect = "observe"
+context = "raw"

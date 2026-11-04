@@ -15884,24 +15884,11 @@ required = true
 target = "{ <date_or_time_part> | '<date_or_time_part>' } → <date_or_time_part>"
 
 [[obligation]]
-id = "sf.functions.date-part.date-part-from.o011"
-kind = "alternative"
-required = true
-target = "{ <date_or_time_part> | '<date_or_time_part>' } → '<date_or_time_part>'"
-
-[[obligation]]
 id = "sf.functions.date-part.date-part-from.o003"
 kind = "operand_type_class"
 required = true
 target = "<date_or_time_part>"
 note = "a valid operand"
-
-[[obligation]]
-id = "sf.functions.date-part.date-part-from.o012"
-kind = "operand_type_class"
-required = true
-target = "'<date_or_time_part>'"
-note = "a valid string_literal"
 
 [[obligation]]
 id = "sf.functions.date-part.date-part-from.o004"
@@ -15940,6 +15927,22 @@ id = "sf.functions.date-part.date-part-from.o008"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required )"
+
+[[obligation]]
+id = "sf.functions.date-part.date-part-from.o014"
+kind = "alternative"
+required = true
+target = "{ <date_or_time_part> | '<date_or_time_part>' } → '<date_or_time_part>'"
+anchor = "doc.functions.date_part / Syntax"
+note = "alternative { <date_or_time_part> | '<date_or_time_part>' } → '<date_or_time_part>', observed"
+
+[[obligation]]
+id = "sf.functions.date-part.date-part-from.o015"
+kind = "operand_type_class"
+required = true
+target = "'<date_or_time_part>'"
+anchor = "doc.functions.date_part / Syntax"
+note = "a valid string_literal, observed"
 
 [[obligation]]
 id = "sf.functions.date-trunc.o001"
@@ -29265,24 +29268,11 @@ required = true
 target = "{ <date_or_time_part> | '<date_or_time_part>' } → <date_or_time_part>"
 
 [[obligation]]
-id = "sf.functions.extract.extract-from.o011"
-kind = "alternative"
-required = true
-target = "{ <date_or_time_part> | '<date_or_time_part>' } → '<date_or_time_part>'"
-
-[[obligation]]
 id = "sf.functions.extract.extract-from.o003"
 kind = "operand_type_class"
 required = true
 target = "<date_or_time_part>"
 note = "a valid operand"
-
-[[obligation]]
-id = "sf.functions.extract.extract-from.o012"
-kind = "operand_type_class"
-required = true
-target = "'<date_or_time_part>'"
-note = "a valid string_literal"
 
 [[obligation]]
 id = "sf.functions.extract.extract-from.o004"
@@ -29321,6 +29311,22 @@ id = "sf.functions.extract.extract-from.o008"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required )"
+
+[[obligation]]
+id = "sf.functions.extract.extract-from.o014"
+kind = "alternative"
+required = true
+target = "{ <date_or_time_part> | '<date_or_time_part>' } → '<date_or_time_part>'"
+anchor = "doc.functions.extract / Syntax"
+note = "alternative { <date_or_time_part> | '<date_or_time_part>' } → '<date_or_time_part>', observed"
+
+[[obligation]]
+id = "sf.functions.extract.extract-from.o015"
+kind = "operand_type_class"
+required = true
+target = "'<date_or_time_part>'"
+anchor = "doc.functions.extract / Syntax"
+note = "a valid string_literal, observed"
 
 [[obligation]]
 id = "sf.functions.factorial.o001"
