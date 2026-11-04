@@ -9,7 +9,6 @@ pub mod json_array_except;
 pub mod json_array_position;
 pub mod json_array_size;
 pub mod json_is_kind;
-pub mod json_is_number;
 pub mod json_is_typed;
 pub mod json_kind_cast;
 pub mod json_object_agg;

@@ -1,12 +1,9 @@
 //! `timestamp_format`: a literal Snowflake timestamp format as the pattern it reads.
 
 use crate::temporal::constants::{
-    LITERAL_FORMAT_LETTERS, LITERAL_FORMAT_PUNCTUATION, TIMESTAMP_FORMAT_ELEMENTS,
+    FOUR_DIGIT_YEAR, LITERAL_FORMAT_LETTERS, LITERAL_FORMAT_PUNCTUATION, TIMESTAMP_FORMAT_ELEMENTS,
 };
 use crate::temporal::models::{TimestampField, TimestampFormat};
-
-/// What a four-digit year reads, in place of YY in the pattern of recorded NULLs.
-const FOUR_DIGIT_YEAR: &str = "([0-9]{4})";
 
 /// The whole-text pattern of a format of recorded elements, or what the recordings do not cover.
 pub fn timestamp_format(written: &str) -> Result<TimestampFormat, String> {

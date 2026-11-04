@@ -318,8 +318,7 @@ fn ntile_window(payload: &Value, over: &Over<'_>, site: Site<'_>) -> Result<Emit
     Ok(Emitted::new(sql, data_type))
 }
 
-/// RATIO_TO_REPORT(x) as x / NULLIFZERO(SUM(x)) over the same partitions, typed and rounded as that
-/// division and NULL for a zero sum, as recorded.
+/// RATIO_TO_REPORT(x) as x / NULLIFZERO(SUM(x)) over its partitions, typed as that division.
 fn ratio_to_report(call: &Value, window: &Payload, site: Site<'_>) -> Result<Emitted, Refusal> {
     let construct = function_construct(RATIO_TO_REPORT_NAME);
     let refuse = |reason: &str| outside_conditions(construct.clone(), reason.to_owned());

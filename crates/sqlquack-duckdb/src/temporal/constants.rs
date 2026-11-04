@@ -139,6 +139,8 @@ pub const LITERAL_FORMAT_LETTERS: &str = "BCEGIJKLNOQRVWXZbcegijklnoqrvwxz";
 /// Punctuation a timestamp format may hold as literal text.
 pub const LITERAL_FORMAT_PUNCTUATION: &str = "-:./,";
 
+/// What a four-digit year reads, in place of YY in the pattern of recorded NULLs.
+pub const FOUR_DIGIT_YEAR: &str = "([0-9]{4})";
 /// Format elements in matching order, each with its field and the text pattern it reads.
 pub const TIMESTAMP_FORMAT_ELEMENTS: &[(&str, TimestampField, &str)] = &[
     ("YYYY", TimestampField::Year, "([0-9]{4})"),

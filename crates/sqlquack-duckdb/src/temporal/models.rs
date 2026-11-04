@@ -49,7 +49,6 @@ pub struct TimestampFormat {
     pub pattern: String,
     /// Each group's field, in group order.
     pub fields: Vec<TimestampField>,
-    /// The whole-text pattern of text TRY_ forms were recorded reading as NULL: a four-digit year
-    /// where YY reads two.
+    /// The pattern of text TRY_ forms read as NULL: a four-digit year where YY reads two.
     pub rejected: Option<String>,
 }
