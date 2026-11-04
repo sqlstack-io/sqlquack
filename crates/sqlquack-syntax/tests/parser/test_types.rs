@@ -66,3 +66,10 @@ pub(crate) struct ScriptingDialectTestCase {
     pub(crate) dialect: Dialect,
     pub(crate) expected_root: Result<&'static str, ()>,
 }
+
+pub(crate) struct ScriptingWalkTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) sql: &'static str,
+    pub(crate) expected_literals: Vec<&'static str>,
+    pub(crate) expected_columns: Vec<&'static str>,
+}

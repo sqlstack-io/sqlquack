@@ -1,7 +1,7 @@
 //! Snowflake Scripting blocks and their members, as documented; unknown forms fail rather than pass.
 
 use crate::expressions::names::models::{Identifier, Literal};
-use crate::expressions::statements::scripting::{
+use crate::expressions::statements::models::{
     ScriptingAssignment, ScriptingAssignmentOperator, ScriptingAwait, ScriptingAwaitTarget,
     ScriptingBlock, ScriptingBranch, ScriptingCase, ScriptingCursor, ScriptingCursorSource,
     ScriptingDeclaration, ScriptingDefault, ScriptingElse, ScriptingException,
@@ -21,8 +21,7 @@ use crate::tokens::types::Result;
 /// Words that end a statement list; the enclosing construct decides which one it accepts.
 const BODY_TERMINATORS: [&str; 6] = ["END", "ELSE", "ELSEIF", "WHEN", "UNTIL", "EXCEPTION"];
 
-/// Unquoted words Snowflake refuses as labels and scripting names, as recorded in C audit packet 5;
-/// IF, CASE, LOOP, WHILE, WHEN, EXCEPTION, DECLARE, RETURN and BREAK are recorded as accepted.
+/// Unquoted words Snowflake refuses as scripting labels and names, as recorded.
 const RESERVED_NAMES: [&str; 62] = [
     "ALL",
     "ALTER",
@@ -135,7 +134,7 @@ impl Parser {
 
     fn parse_scripting_block_members(&mut self) -> Result<ScriptingBlock> {
         let start = self.current;
-        let mut declarations = Vec::new();
+        let mut declarations: Vec<ScriptingDeclaration> = Vec::new();
         if self.match_token(TokenType::Declare) {
             while !self.check(TokenType::Begin) {
                 declarations.push(self.parse_scripting_declaration(false)?);
@@ -147,7 +146,7 @@ impl Parser {
         }
         self.expect_token(TokenType::Begin)?;
         let body = self.parse_scripting_body()?;
-        let mut exception_handlers = Vec::new();
+        let mut exception_handlers: Vec<ScriptingExceptionHandler> = Vec::new();
         if self.match_text_seq(&["EXCEPTION"]) {
             exception_handlers = self.parse_scripting_handlers()?;
         }
@@ -289,8 +288,7 @@ impl Parser {
         self.parse_expression()
     }
 
-    /// An ordinary statement member, spanned like a top-level statement; never empty or a bare
-    /// expression.
+    /// An ordinary statement member, spanned like a top-level one; never empty or bare.
     fn parse_scripting_sql_statement(&mut self) -> Result<Expression> {
         if self.is_at_end() || self.check(TokenType::Semicolon) {
             return Err(self.parse_error("Expected a statement"));
@@ -305,7 +303,7 @@ impl Parser {
 
     /// One or more `statement;` members, stopping before the enclosing construct's keyword.
     fn parse_scripting_body(&mut self) -> Result<Vec<ScriptingStatement>> {
-        let mut body = Vec::new();
+        let mut body: Vec<ScriptingStatement> = Vec::new();
         while !self.is_at_end() && !self.at_scripting_terminator() {
             body.push(self.with_parser_depth(Self::parse_scripting_statement)?);
             self.expect_token(TokenType::Semicolon)?;
@@ -363,129 +361,25 @@ impl Parser {
             "FOR" => self.parse_scripting_for(start),
             "WHILE" => self.parse_scripting_while(start),
             "REPEAT" => self.parse_scripting_repeat(start),
-            "LOOP" => {
-                self.skip();
-                let body = self.parse_scripting_body()?;
-                self.expect_scripting_words(&["END", "LOOP"])?;
-                let label = self.parse_scripting_label()?;
-                Ok(ScriptingStatement::Loop(ScriptingLoop {
-                    span: self.source_range(start),
-                    body,
-                    label,
-                }))
-            }
-            "BREAK" | "EXIT" | "CONTINUE" | "ITERATE" => {
-                self.skip();
-                let keyword = match keyword.as_str() {
-                    "BREAK" => ScriptingJumpKeyword::Break,
-                    "EXIT" => ScriptingJumpKeyword::Exit,
-                    "CONTINUE" => ScriptingJumpKeyword::Continue,
-                    _ => ScriptingJumpKeyword::Iterate,
-                };
-                let label = self.parse_scripting_label()?;
-                let jump = ScriptingJump {
-                    span: self.source_range(start),
-                    keyword,
-                    label,
-                };
-                Ok(match keyword {
-                    ScriptingJumpKeyword::Break | ScriptingJumpKeyword::Exit => {
-                        ScriptingStatement::Break(jump)
-                    }
-                    _ => ScriptingStatement::Continue(jump),
-                })
-            }
-            "OPEN" => {
-                self.skip();
-                let cursor = self.expect_scripting_name()?;
-                let using = if self.match_token(TokenType::Using) {
-                    self.expect_token(TokenType::LParen)?;
-                    let binds = self.parse_expression_list()?;
-                    self.expect_token(TokenType::RParen)?;
-                    Some(binds)
-                } else {
-                    None
-                };
-                Ok(ScriptingStatement::Open(ScriptingOpen {
-                    span: self.source_range(start),
-                    cursor,
-                    using,
-                }))
-            }
-            "FETCH" => {
-                self.skip();
-                let cursor = self.expect_scripting_name()?;
-                self.expect_token(TokenType::Into)?;
-                let mut targets = vec![self.expect_identifier_or_keyword_with_quoted()?];
-                while self.match_token(TokenType::Comma) {
-                    targets.push(self.expect_identifier_or_keyword_with_quoted()?);
-                }
-                Ok(ScriptingStatement::Fetch(ScriptingFetch {
-                    span: self.source_range(start),
-                    cursor,
-                    targets,
-                }))
-            }
-            "CLOSE" | "CANCEL" => {
-                self.skip();
-                let name = ScriptingName {
-                    name: self.expect_scripting_name()?,
-                    span: self.source_range(start),
-                };
-                Ok(if keyword == "CLOSE" {
-                    ScriptingStatement::Close(name)
-                } else {
-                    ScriptingStatement::Cancel(name)
-                })
-            }
-            "AWAIT" => {
-                self.skip();
-                let target = if self.match_text_seq(&["ALL"]) {
-                    ScriptingAwaitTarget::All
-                } else {
-                    ScriptingAwaitTarget::Resultset(self.expect_scripting_name()?)
-                };
-                Ok(ScriptingStatement::Await(ScriptingAwait {
-                    span: self.source_range(start),
-                    target,
-                }))
-            }
+            "LOOP" => self.parse_scripting_loop(start),
+            "BREAK" | "EXIT" | "CONTINUE" | "ITERATE" => self.parse_scripting_jump(start, &keyword),
+            "OPEN" => self.parse_scripting_open(start),
+            "FETCH" => self.parse_scripting_fetch(start),
+            "CLOSE" => self
+                .parse_scripting_named(start)
+                .map(ScriptingStatement::Close),
+            "CANCEL" => self
+                .parse_scripting_named(start)
+                .map(ScriptingStatement::Cancel),
+            "AWAIT" => self.parse_scripting_await(start),
             "NULL" if self.check_next(TokenType::Semicolon) => {
                 self.skip();
                 Ok(ScriptingStatement::Null(ScriptingNull {
                     span: self.source_range(start),
                 }))
             }
-            "RAISE" => {
-                self.skip();
-                let exception = if self.check(TokenType::Semicolon) {
-                    None
-                } else {
-                    Some(self.expect_scripting_name()?)
-                };
-                Ok(ScriptingStatement::Raise(ScriptingRaise {
-                    span: self.source_range(start),
-                    exception,
-                }))
-            }
-            "RETURN" => {
-                self.skip();
-                let value = if self.check(TokenType::Semicolon) {
-                    None
-                } else if self.check_text_seq(&["TABLE"]) && self.check_next(TokenType::LParen) {
-                    self.skip();
-                    self.skip();
-                    let rows = self.parse_expression()?;
-                    self.expect_token(TokenType::RParen)?;
-                    Some(ScriptingReturnValue::Table(rows))
-                } else {
-                    Some(ScriptingReturnValue::Scalar(self.parse_scripting_value()?))
-                };
-                Ok(ScriptingStatement::Return(ScriptingReturn {
-                    span: self.source_range(start),
-                    value,
-                }))
-            }
+            "RAISE" => self.parse_scripting_raise(start),
+            "RETURN" => self.parse_scripting_return(start),
             _ => {
                 let statement = self.parse_scripting_sql_statement()?;
                 Ok(ScriptingStatement::Sql(ScriptingSql {
@@ -494,6 +388,128 @@ impl Parser {
                 }))
             }
         }
+    }
+
+    fn parse_scripting_loop(&mut self, start: usize) -> Result<ScriptingStatement> {
+        self.skip();
+        let body = self.parse_scripting_body()?;
+        self.expect_scripting_words(&["END", "LOOP"])?;
+        let label = self.parse_scripting_label()?;
+        Ok(ScriptingStatement::Loop(ScriptingLoop {
+            span: self.source_range(start),
+            body,
+            label,
+        }))
+    }
+
+    /// BREAK, EXIT, CONTINUE or ITERATE, with its optional label.
+    fn parse_scripting_jump(&mut self, start: usize, keyword: &str) -> Result<ScriptingStatement> {
+        self.skip();
+        let keyword = match keyword {
+            "BREAK" => ScriptingJumpKeyword::Break,
+            "EXIT" => ScriptingJumpKeyword::Exit,
+            "CONTINUE" => ScriptingJumpKeyword::Continue,
+            _ => ScriptingJumpKeyword::Iterate,
+        };
+        let label = self.parse_scripting_label()?;
+        let jump = ScriptingJump {
+            span: self.source_range(start),
+            keyword,
+            label,
+        };
+        Ok(match keyword {
+            ScriptingJumpKeyword::Break | ScriptingJumpKeyword::Exit => {
+                ScriptingStatement::Break(jump)
+            }
+            _ => ScriptingStatement::Continue(jump),
+        })
+    }
+
+    fn parse_scripting_open(&mut self, start: usize) -> Result<ScriptingStatement> {
+        self.skip();
+        let cursor = self.expect_scripting_name()?;
+        let using = if self.match_token(TokenType::Using) {
+            self.expect_token(TokenType::LParen)?;
+            let binds = self.parse_expression_list()?;
+            self.expect_token(TokenType::RParen)?;
+            Some(binds)
+        } else {
+            None
+        };
+        Ok(ScriptingStatement::Open(ScriptingOpen {
+            span: self.source_range(start),
+            cursor,
+            using,
+        }))
+    }
+
+    fn parse_scripting_fetch(&mut self, start: usize) -> Result<ScriptingStatement> {
+        self.skip();
+        let cursor = self.expect_scripting_name()?;
+        self.expect_token(TokenType::Into)?;
+        let mut targets = vec![self.expect_identifier_or_keyword_with_quoted()?];
+        while self.match_token(TokenType::Comma) {
+            targets.push(self.expect_identifier_or_keyword_with_quoted()?);
+        }
+        Ok(ScriptingStatement::Fetch(ScriptingFetch {
+            span: self.source_range(start),
+            cursor,
+            targets,
+        }))
+    }
+
+    /// The cursor or result set name after CLOSE or CANCEL.
+    fn parse_scripting_named(&mut self, start: usize) -> Result<ScriptingName> {
+        self.skip();
+        Ok(ScriptingName {
+            name: self.expect_scripting_name()?,
+            span: self.source_range(start),
+        })
+    }
+
+    fn parse_scripting_await(&mut self, start: usize) -> Result<ScriptingStatement> {
+        self.skip();
+        let target = if self.match_text_seq(&["ALL"]) {
+            ScriptingAwaitTarget::All
+        } else {
+            ScriptingAwaitTarget::Resultset(self.expect_scripting_name()?)
+        };
+        Ok(ScriptingStatement::Await(ScriptingAwait {
+            span: self.source_range(start),
+            target,
+        }))
+    }
+
+    fn parse_scripting_raise(&mut self, start: usize) -> Result<ScriptingStatement> {
+        self.skip();
+        let exception = if self.check(TokenType::Semicolon) {
+            None
+        } else {
+            Some(self.expect_scripting_name()?)
+        };
+        Ok(ScriptingStatement::Raise(ScriptingRaise {
+            span: self.source_range(start),
+            exception,
+        }))
+    }
+
+    fn parse_scripting_return(&mut self, start: usize) -> Result<ScriptingStatement> {
+        self.skip();
+        let value = if self.check(TokenType::Semicolon) {
+            None
+        } else if self.check_text_seq(&["TABLE"]) && self.check_next(TokenType::LParen) {
+            self.skip();
+            self.skip();
+            let rows = self.parse_expression()?;
+            self.expect_token(TokenType::RParen)?;
+            Some(ScriptingReturnValue::Table(rows))
+        } else {
+            Some(ScriptingReturnValue::Scalar(self.parse_scripting_value()?))
+        };
+        Ok(ScriptingStatement::Return(ScriptingReturn {
+            span: self.source_range(start),
+            value,
+        }))
     }
 
     /// The documented parenthesized condition of IF, ELSEIF, WHILE and UNTIL.
@@ -531,7 +547,7 @@ impl Parser {
     }
 
     fn parse_scripting_if(&mut self, start: usize) -> Result<ScriptingStatement> {
-        let mut branches = Vec::new();
+        let mut branches: Vec<ScriptingBranch> = Vec::new();
         loop {
             let branch_start = self.current;
             self.skip();
@@ -559,7 +575,7 @@ impl Parser {
         } else {
             Some(self.parse_expression()?)
         };
-        let mut branches = Vec::new();
+        let mut branches: Vec<ScriptingBranch> = Vec::new();
         while self.check_text_seq(&["WHEN"]) {
             let branch_start = self.current;
             self.skip();

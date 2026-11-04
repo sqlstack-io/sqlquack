@@ -3,9 +3,10 @@ use sqlquack_syntax::{
     parse_statements_with, CallMode, Dialect, Expression, ExpressionWalk, ParseOptions,
 };
 
-use crate::helpers::{kind, located_text};
+use crate::helpers::{kind, located_text, sorted_strings};
 use crate::test_types::{
-    LocatedTestCase, ScriptingDialectTestCase, ScriptingStructureTestCase, ScriptingVerdictTestCase,
+    LocatedTestCase, ScriptingDialectTestCase, ScriptingStructureTestCase,
+    ScriptingVerdictTestCase, ScriptingWalkTestCase,
 };
 
 const MODES: [CallMode; 4] = [
@@ -285,21 +286,20 @@ fn given_recorded_block_verdicts_when_parsing_then_acceptance_matches_snowflake(
                 &ParseOptions::default(),
                 mode,
             );
-            match test_case.expected_error {
-                None => assert!(
-                    result.is_ok(),
-                    "{}: {mode:?}: {result:?}",
-                    test_case.description
-                ),
-                Some(expected) => {
-                    let error = format!("{:?}", result.expect_err(test_case.description));
-                    assert!(
-                        error.contains(expected),
-                        "{}: {mode:?}: {error}",
-                        test_case.description
-                    );
-                }
-            }
+            let error: Option<String> = result.err().map(|error| format!("{error:?}"));
+            assert_eq!(
+                error.is_some(),
+                test_case.expected_error.is_some(),
+                "{}: {mode:?}: {error:?}",
+                test_case.description
+            );
+            assert!(
+                error
+                    .unwrap_or_default()
+                    .contains(test_case.expected_error.unwrap_or_default()),
+                "{}: {mode:?}",
+                test_case.description
+            );
         }
     }
 }
@@ -333,40 +333,46 @@ fn given_scripting_members_when_locating_then_ranges_belong_to_the_written_membe
 
 #[test]
 fn given_scripting_blocks_when_walking_then_nested_operands_are_reachable_after_roundtrip() {
-    let sql = "DECLARE\n  floor_amount NUMBER DEFAULT 17;\n  orders_cursor CURSOR FOR SELECT amount FROM orders WHERE region = 'west';\nBEGIN\n  FOR order_row IN 1 TO 31 DO\n    IF (floor_amount > 43) THEN\n      RETURN 'high';\n    END IF;\n  END FOR;\nEXCEPTION\n  WHEN OTHER THEN\n    RETURN 'east';\nEND;";
-    let mut expected_literals = vec!["17", "west", "1", "31", "43", "high", "east"];
-    expected_literals.sort();
-    for mode in MODES {
-        let parsed = parse_statements_with(sql, Dialect::Snowflake, &ParseOptions::default(), mode)
-            .expect("block parses");
-        let restored: Vec<Expression> =
-            serde_json::from_value(serde_json::to_value(&parsed).expect("serializes"))
-                .expect("deserializes");
-        for root in [&parsed[0], &restored[0]] {
-            for nodes in [
-                root.dfs().collect::<Vec<_>>(),
-                root.bfs().collect::<Vec<_>>(),
-            ] {
-                let values = nodes
-                    .into_iter()
-                    .map(|node| serde_json::to_value(node).expect("walk node"))
-                    .collect::<Vec<_>>();
-                let mut literals = values
-                    .iter()
-                    .filter_map(|value| value.pointer("/literal/value").and_then(Value::as_str))
-                    .collect::<Vec<_>>();
-                literals.sort();
-                assert_eq!(literals, expected_literals, "literals ({mode:?})");
-                let mut columns = values
-                    .iter()
-                    .filter_map(|value| value.pointer("/column/name/name").and_then(Value::as_str))
-                    .collect::<Vec<_>>();
-                columns.sort();
-                assert_eq!(
-                    columns,
-                    vec!["amount", "floor_amount", "region"],
-                    "columns ({mode:?})"
-                );
+    let test_cases = [ScriptingWalkTestCase {
+        description: "a block with a declaration, a cursor, a FOR loop, an IF and a handler",
+        sql: "DECLARE\n  floor_amount NUMBER DEFAULT 17;\n  orders_cursor CURSOR FOR SELECT amount FROM orders WHERE region = 'west';\nBEGIN\n  FOR order_row IN 1 TO 31 DO\n    IF (floor_amount > 43) THEN\n      RETURN 'high';\n    END IF;\n  END FOR;\nEXCEPTION\n  WHEN OTHER THEN\n    RETURN 'east';\nEND;",
+        expected_literals: vec!["1", "17", "31", "43", "east", "high", "west"],
+        expected_columns: vec!["amount", "floor_amount", "region"],
+    }];
+    for test_case in test_cases {
+        for mode in MODES {
+            let parsed = parse_statements_with(
+                test_case.sql,
+                Dialect::Snowflake,
+                &ParseOptions::default(),
+                mode,
+            )
+            .expect(test_case.description);
+            let restored: Vec<Expression> =
+                serde_json::from_value(serde_json::to_value(&parsed).expect("serializes"))
+                    .expect("deserializes");
+            for root in [&parsed[0], &restored[0]] {
+                for nodes in [
+                    root.dfs().collect::<Vec<_>>(),
+                    root.bfs().collect::<Vec<_>>(),
+                ] {
+                    let values: Vec<Value> = nodes
+                        .into_iter()
+                        .map(|node| serde_json::to_value(node).expect("walk node"))
+                        .collect();
+                    assert_eq!(
+                        (
+                            sorted_strings(&values, "/literal/value"),
+                            sorted_strings(&values, "/column/name/name")
+                        ),
+                        (
+                            test_case.expected_literals.clone(),
+                            test_case.expected_columns.clone()
+                        ),
+                        "{}: {mode:?}",
+                        test_case.description
+                    );
+                }
             }
         }
     }

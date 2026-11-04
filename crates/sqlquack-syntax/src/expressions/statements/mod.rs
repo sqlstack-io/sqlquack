@@ -1,5 +1,4 @@
-//! Statements: data changes, commands, sessions and Vertica syntax.
+//! Statements: data changes, commands, sessions, Snowflake Scripting and Vertica syntax.
 
 pub(crate) mod main;
 pub mod models;
-pub mod scripting;
