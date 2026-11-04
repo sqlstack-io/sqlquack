@@ -1243,6 +1243,8 @@ SECURITY_ADMIN_FILLS: dict[str, str] = {
     },
 }
 SECURITY_ADMIN_PAGE_FILLS: dict[str, dict[str, str]] = {
+    "sf.security_admin.create-resource-monitor": {"timestamp": "'2030-01-01 00:00'"},
+    "sf.security_admin.alter-resource-monitor": {"timestamp": "'2030-01-01 00:00'"},
     "sf.security_admin.create-aggregation-policy": {
         "body": "AGGREGATION_CONSTRAINT ( MIN_GROUP_SIZE => 5 )"
     },

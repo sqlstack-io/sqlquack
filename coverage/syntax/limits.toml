@@ -20157,24 +20157,28 @@ sql = "ALTER RESOURCE MONITOR v1 SET NOTIFY_USERS = ( u1 , u2 , u3 , u4 , u5 , u
 expect = "observe"
 context = "raw"
 
+# D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-87); observed, not flipped to reject
 [[limit]]
 form = "sf.security_admin.create-resource-monitor"
 kind = "boundary_below"
 target = "TRIGGERS ON <threshold> PERCENT DO NOTIFY [ ... ]"
-note = "4 NOTIFY triggers against the documented maximum of 5"
+note = "4 NOTIFY triggers against the documented maximum of 5, observed"
 anchor = "doc.sql.create-resource-monitor / Usage notes"
 sql = "CREATE RESOURCE MONITOR v1 WITH TRIGGERS ON 51 PERCENT DO NOTIFY ON 52 PERCENT DO NOTIFY ON 53 PERCENT DO NOTIFY ON 54 PERCENT DO NOTIFY ;"
-expect = "accept"
+expect = "observe"
+documented = true
 context = "raw"
 
+# D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-87); observed, not flipped to reject
 [[limit]]
 form = "sf.security_admin.create-resource-monitor"
 kind = "boundary_at"
 target = "TRIGGERS ON <threshold> PERCENT DO NOTIFY [ ... ]"
-note = "5 NOTIFY triggers against the documented maximum of 5"
+note = "5 NOTIFY triggers against the documented maximum of 5, observed"
 anchor = "doc.sql.create-resource-monitor / Usage notes"
 sql = "CREATE RESOURCE MONITOR v1 WITH TRIGGERS ON 51 PERCENT DO NOTIFY ON 52 PERCENT DO NOTIFY ON 53 PERCENT DO NOTIFY ON 54 PERCENT DO NOTIFY ON 55 PERCENT DO NOTIFY ;"
-expect = "accept"
+expect = "observe"
+documented = true
 context = "raw"
 
 [[limit]]
@@ -20678,8 +20682,8 @@ reason = "page definitions inlined: objectProperties; a definition the page give
 [[reading]]
 form = "sf.security_admin.create-resource-monitor"
 grammar_sha256 = "3adcb055167662305b6f37d1f3214695b73603c14176b549abcd93b1ab853602"
-grammar = ["CREATE [ OR REPLACE ] RESOURCE MONITOR [ IF NOT EXISTS ] <name> WITH [ CREDIT_QUOTA = <number> ] [ FREQUENCY = { MONTHLY | DAILY | WEEKLY | YEARLY | NEVER } ] [ START_TIMESTAMP = { <timestamp> | IMMEDIATELY } ] [ END_TIMESTAMP = <timestamp> ] [ NOTIFY_USERS = ( <user_name> [ , <user_name> , ... ] ) ] [ TRIGGERS ON <threshold> PERCENT DO { SUSPEND | SUSPEND_IMMEDIATE | NOTIFY } [ ON <threshold> PERCENT DO { SUSPEND | SUSPEND_IMMEDIATE | NOTIFY } ... ] ]"]
-reason = "page definitions inlined: triggerDefinition; a definition the page gives per cloud or variant becomes a choice of its variants; unbraced alternatives inside `( ... )` and in `KEY = a | b` properties are braced"
+grammar = ["CREATE [ OR REPLACE ] RESOURCE MONITOR [ IF NOT EXISTS ] <name> WITH { CREDIT_QUOTA = <number> | FREQUENCY = { MONTHLY | DAILY | WEEKLY | YEARLY | NEVER } | START_TIMESTAMP = { <timestamp> | IMMEDIATELY } | END_TIMESTAMP = <timestamp> | NOTIFY_USERS = ( <user_name> [ , <user_name> , ... ] ) } [ CREDIT_QUOTA = <number> ] [ FREQUENCY = { MONTHLY | DAILY | WEEKLY | YEARLY | NEVER } ] [ START_TIMESTAMP = { <timestamp> | IMMEDIATELY } ] [ END_TIMESTAMP = <timestamp> ] [ NOTIFY_USERS = ( <user_name> [ , <user_name> , ... ] ) ] [ TRIGGERS ON <threshold> PERCENT DO { SUSPEND | SUSPEND_IMMEDIATE | NOTIFY } [ ON <threshold> PERCENT DO { SUSPEND | SUSPEND_IMMEDIATE | NOTIFY } ... ] ]"]
+reason = "page definitions inlined: triggerDefinition; a definition the page gives per cloud or variant becomes a choice of its variants; unbraced alternatives inside `( ... )` and in `KEY = a | b` properties are braced; WITH takes at least one property before TRIGGERS, as every example on the page writes it (WITH CREDIT_QUOTA = 5000 TRIGGERS ...), and import 87 refuses WITH ; and WITH TRIGGERS ... (errno 1003)"
 
 [[reading]]
 form = "sf.security_admin.create-storage-integration"
@@ -64758,5 +64762,94 @@ target = "<type> in [ BLOCKED_OBJECT_TYPES_FOR_CREATION = ( <type> [ , ... ] ) ]
 note = "a string literal in place of <type>, observed"
 anchor = "doc.sql.create-feature-policy / Syntax"
 sql = "CREATE FEATURE POLICY v1 BLOCKED_OBJECT_TYPES_FOR_CREATION = ( 'INT' ) ;"
+expect = "observe"
+context = "raw"
+
+# D113 transaction_session receipt triage (imports 87-90): remaining contradictions observed, each reason names its category and receipt.
+
+# D113 security_admin receipt triage (imports 87-90): remaining contradictions observed, each reason names its category and receipt.
+
+[[suppress]]
+form = "sf.security_admin.create-resource-monitor"
+kind = "negative_neighbour"
+target = "<user_name>"
+note = "a string literal in place of <user_name>"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 90268 SQLSTATE 22023, phase semantic_error, import-20261104-88), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.create-resource-monitor"
+kind = "negative_neighbour"
+target = "<user_name>"
+note = "a string literal in place of <user_name>, observed"
+anchor = "doc.sql.create-resource-monitor / Syntax"
+sql = "CREATE RESOURCE MONITOR v1 WITH NOTIFY_USERS = ( 'v1' ) ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.create-row-access-policy.or-alter-row-access"
+kind = "required_operand_missing"
+target = "<arg_type>"
+note = "omit <arg_type>"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 90201 SQLSTATE 42601, phase semantic_error, import-20261104-87), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.create-row-access-policy.or-alter-row-access"
+kind = "required_operand_missing"
+target = "<arg_type>"
+note = "omit <arg_type>, observed"
+anchor = "doc.sql.create-row-access-policy / Variant syntax / CREATE OR ALTER ROW ACCESS POLICY"
+sql = "CREATE OR ALTER ROW ACCESS POLICY v1 AS ( v1 ) RETURNS BOOLEAN -> v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.create-row-access-policy.or-alter-row-access"
+kind = "required_operand_missing"
+target = "<arg_name>"
+note = "omit <arg_name>"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 90201 SQLSTATE 42601, phase semantic_error, import-20261104-87), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.create-row-access-policy.or-alter-row-access"
+kind = "required_operand_missing"
+target = "<arg_name>"
+note = "omit <arg_name>, observed"
+anchor = "doc.sql.create-row-access-policy / Variant syntax / CREATE OR ALTER ROW ACCESS POLICY"
+sql = "CREATE OR ALTER ROW ACCESS POLICY v1 AS ( INT ) RETURNS BOOLEAN -> v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.create-row-access-policy.row-access-policy-as"
+kind = "required_operand_missing"
+target = "<arg_type>"
+note = "omit <arg_type>"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 90201 SQLSTATE 42601, phase semantic_error, import-20261104-87), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.create-row-access-policy.row-access-policy-as"
+kind = "required_operand_missing"
+target = "<arg_type>"
+note = "omit <arg_type>, observed"
+anchor = "doc.sql.create-row-access-policy / Syntax"
+sql = "CREATE ROW ACCESS POLICY v1 AS ( v1 ) RETURNS BOOLEAN -> v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.create-row-access-policy.row-access-policy-as"
+kind = "required_operand_missing"
+target = "<arg_name>"
+note = "omit <arg_name>"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 90201 SQLSTATE 42601, phase semantic_error, import-20261104-87), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.create-row-access-policy.row-access-policy-as"
+kind = "required_operand_missing"
+target = "<arg_name>"
+note = "omit <arg_name>, observed"
+anchor = "doc.sql.create-row-access-policy / Syntax"
+sql = "CREATE ROW ACCESS POLICY v1 AS ( INT ) RETURNS BOOLEAN -> v1 ;"
 expect = "observe"
 context = "raw"

@@ -77774,6 +77774,147 @@ target = "<name>"
 note = "a string literal in place of <name>"
 
 [[obligation]]
+id = "sf.security_admin.create-resource-monitor.o090"
+kind = "alternative"
+required = true
+target = "{ CREDIT_QUOTA = <number> | FREQUENCY = { MONTHLY | DAILY | WEEKLY | YEARLY | NEVER } | START… → CREDIT_QUOTA = <number>"
+
+[[obligation]]
+id = "sf.security_admin.create-resource-monitor.o091"
+kind = "alternative"
+required = true
+target = "{ CREDIT_QUOTA = <number> | FREQUENCY = { MONTHLY | DAILY |… → FREQUENCY = { MONTHLY | DAILY | WEEKLY | YEARLY | NEVER }"
+
+[[obligation]]
+id = "sf.security_admin.create-resource-monitor.o092"
+kind = "alternative"
+required = true
+target = "{ CREDIT_QUOTA = <number> | FREQUENCY = { MONTHLY | DAILY | WEEKLY | … → START_TIMESTAMP = { <timestamp> | IMMEDIATELY }"
+
+[[obligation]]
+id = "sf.security_admin.create-resource-monitor.o093"
+kind = "alternative"
+required = true
+target = "{ CREDIT_QUOTA = <number> | FREQUENCY = { MONTHLY | DAILY | WEEKLY | YEARLY | NEVER } | S… → END_TIMESTAMP = <timestamp>"
+
+[[obligation]]
+id = "sf.security_admin.create-resource-monitor.o094"
+kind = "alternative"
+required = true
+target = "{ CREDIT_QUOTA = <number> | FREQUENCY = { MONTHLY | DAILY | WE… → NOTIFY_USERS = ( <user_name> [ , <user_name> , ... ] )"
+
+[[obligation]]
+id = "sf.security_admin.create-resource-monitor.o095"
+kind = "required_operand_missing"
+required = true
+target = "<number>"
+note = "omit <number>"
+
+[[obligation]]
+id = "sf.security_admin.create-resource-monitor.o096"
+kind = "operand_type_class"
+required = true
+target = "<number>"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.security_admin.create-resource-monitor.o097"
+kind = "negative_neighbour"
+required = true
+target = "<number>"
+note = "a string literal in place of <number>"
+
+[[obligation]]
+id = "sf.security_admin.create-resource-monitor.o016"
+kind = "alternative"
+required = true
+target = "{ MONTHLY | DAILY | WEEKLY | YEARLY | NEVER } → MONTHLY"
+
+[[obligation]]
+id = "sf.security_admin.create-resource-monitor.o017"
+kind = "alternative"
+required = true
+target = "{ MONTHLY | DAILY | WEEKLY | YEARLY | NEVER } → DAILY"
+
+[[obligation]]
+id = "sf.security_admin.create-resource-monitor.o018"
+kind = "alternative"
+required = true
+target = "{ MONTHLY | DAILY | WEEKLY | YEARLY | NEVER } → WEEKLY"
+
+[[obligation]]
+id = "sf.security_admin.create-resource-monitor.o019"
+kind = "alternative"
+required = true
+target = "{ MONTHLY | DAILY | WEEKLY | YEARLY | NEVER } → YEARLY"
+
+[[obligation]]
+id = "sf.security_admin.create-resource-monitor.o020"
+kind = "alternative"
+required = true
+target = "{ MONTHLY | DAILY | WEEKLY | YEARLY | NEVER } → NEVER"
+
+[[obligation]]
+id = "sf.security_admin.create-resource-monitor.o023"
+kind = "alternative"
+required = true
+target = "{ <timestamp> | IMMEDIATELY } → <timestamp>"
+
+[[obligation]]
+id = "sf.security_admin.create-resource-monitor.o024"
+kind = "alternative"
+required = true
+target = "{ <timestamp> | IMMEDIATELY } → IMMEDIATELY"
+
+[[obligation]]
+id = "sf.security_admin.create-resource-monitor.o098"
+kind = "operand_type_class"
+required = true
+target = "<timestamp>"
+note = "a valid operand"
+
+[[obligation]]
+id = "sf.security_admin.create-resource-monitor.o099"
+kind = "required_operand_missing"
+required = true
+target = "<timestamp> #2"
+note = "omit <timestamp>"
+
+[[obligation]]
+id = "sf.security_admin.create-resource-monitor.o100"
+kind = "operand_type_class"
+required = true
+target = "<timestamp> #2"
+note = "a valid operand"
+
+[[obligation]]
+id = "sf.security_admin.create-resource-monitor.o101"
+kind = "required_operand_missing"
+required = true
+target = "<user_name>"
+note = "omit <user_name>"
+
+[[obligation]]
+id = "sf.security_admin.create-resource-monitor.o102"
+kind = "operand_type_class"
+required = true
+target = "<user_name>"
+note = "a valid identifier"
+
+[[obligation]]
+id = "sf.security_admin.create-resource-monitor.o035"
+kind = "option_present"
+required = true
+target = "[ , <user_name> , ... ]"
+note = "the list continued at least once"
+
+[[obligation]]
+id = "sf.security_admin.create-resource-monitor.o036"
+kind = "option_absent"
+required = true
+target = "[ , <user_name> , ... ]"
+
+[[obligation]]
 id = "sf.security_admin.create-resource-monitor.o009"
 kind = "option_present"
 required = true
@@ -77819,34 +77960,34 @@ required = true
 target = "[ FREQUENCY = { MONTHLY | DAILY | WEEKLY | YEARLY | NEVER } ]"
 
 [[obligation]]
-id = "sf.security_admin.create-resource-monitor.o016"
+id = "sf.security_admin.create-resource-monitor.o104"
 kind = "alternative"
 required = true
-target = "{ MONTHLY | DAILY | WEEKLY | YEARLY | NEVER } → MONTHLY"
+target = "{ MONTHLY | DAILY | WEEKLY | YEARLY | NEVER } → MONTHLY #2"
 
 [[obligation]]
-id = "sf.security_admin.create-resource-monitor.o017"
+id = "sf.security_admin.create-resource-monitor.o105"
 kind = "alternative"
 required = true
-target = "{ MONTHLY | DAILY | WEEKLY | YEARLY | NEVER } → DAILY"
+target = "{ MONTHLY | DAILY | WEEKLY | YEARLY | NEVER } → DAILY #2"
 
 [[obligation]]
-id = "sf.security_admin.create-resource-monitor.o018"
+id = "sf.security_admin.create-resource-monitor.o106"
 kind = "alternative"
 required = true
-target = "{ MONTHLY | DAILY | WEEKLY | YEARLY | NEVER } → WEEKLY"
+target = "{ MONTHLY | DAILY | WEEKLY | YEARLY | NEVER } → WEEKLY #2"
 
 [[obligation]]
-id = "sf.security_admin.create-resource-monitor.o019"
+id = "sf.security_admin.create-resource-monitor.o107"
 kind = "alternative"
 required = true
-target = "{ MONTHLY | DAILY | WEEKLY | YEARLY | NEVER } → YEARLY"
+target = "{ MONTHLY | DAILY | WEEKLY | YEARLY | NEVER } → YEARLY #2"
 
 [[obligation]]
-id = "sf.security_admin.create-resource-monitor.o020"
+id = "sf.security_admin.create-resource-monitor.o108"
 kind = "alternative"
 required = true
-target = "{ MONTHLY | DAILY | WEEKLY | YEARLY | NEVER } → NEVER"
+target = "{ MONTHLY | DAILY | WEEKLY | YEARLY | NEVER } → NEVER #2"
 
 [[obligation]]
 id = "sf.security_admin.create-resource-monitor.o021"
@@ -77861,16 +78002,16 @@ required = true
 target = "[ START_TIMESTAMP = { <timestamp> | IMMEDIATELY } ]"
 
 [[obligation]]
-id = "sf.security_admin.create-resource-monitor.o023"
+id = "sf.security_admin.create-resource-monitor.o109"
 kind = "alternative"
 required = true
-target = "{ <timestamp> | IMMEDIATELY } → <timestamp>"
+target = "{ <timestamp> | IMMEDIATELY } → <timestamp> #2"
 
 [[obligation]]
-id = "sf.security_admin.create-resource-monitor.o024"
+id = "sf.security_admin.create-resource-monitor.o110"
 kind = "alternative"
 required = true
-target = "{ <timestamp> | IMMEDIATELY } → IMMEDIATELY"
+target = "{ <timestamp> | IMMEDIATELY } → IMMEDIATELY #2"
 
 [[obligation]]
 id = "sf.security_admin.create-resource-monitor.o025"
@@ -77932,109 +78073,109 @@ target = "<user_name> in [ NOTIFY_USERS = ( <user_name> [ , <user_name> , ... ] 
 note = "a valid identifier"
 
 [[obligation]]
-id = "sf.security_admin.create-resource-monitor.o034"
+id = "sf.security_admin.create-resource-monitor.o111"
 kind = "negative_neighbour"
 required = true
 target = "<user_name> in [ NOTIFY_USERS = ( <user_name> [ , <user_name> , ... ] ) ]"
 note = "a string literal in place of <user_name>"
 
 [[obligation]]
-id = "sf.security_admin.create-resource-monitor.o035"
+id = "sf.security_admin.create-resource-monitor.o112"
 kind = "option_present"
 required = true
-target = "[ , <user_name> , ... ]"
+target = "[ , <user_name> , ... ] #2"
 note = "the list continued at least once"
 
 [[obligation]]
-id = "sf.security_admin.create-resource-monitor.o036"
+id = "sf.security_admin.create-resource-monitor.o113"
 kind = "option_absent"
 required = true
-target = "[ , <user_name> , ... ]"
+target = "[ , <user_name> , ... ] #2"
 
 [[obligation]]
-id = "sf.security_admin.create-resource-monitor.o037"
+id = "sf.security_admin.create-resource-monitor.o131"
 kind = "option_present"
 required = true
 target = "[ TRIGGERS ON <threshold> PERCENT DO { SUSPEND | SUSPEND_IMMEDIATE | NOTIFY } [ ON <threshold> PERCENT DO { SUSPEND | S…"
 
 [[obligation]]
-id = "sf.security_admin.create-resource-monitor.o038"
+id = "sf.security_admin.create-resource-monitor.o132"
 kind = "option_absent"
 required = true
 target = "[ TRIGGERS ON <threshold> PERCENT DO { SUSPEND | SUSPEND_IMMEDIATE | NOTIFY } [ ON <threshold> PERCENT DO { SUSPEND | S…"
 
 [[obligation]]
-id = "sf.security_admin.create-resource-monitor.o039"
+id = "sf.security_admin.create-resource-monitor.o133"
 kind = "required_operand_missing"
 required = true
 target = "<threshold> in [ TRIGGERS ON <threshold> PERCENT DO { SUSPEND | SUSPEND_IMMEDIATE | NOTIFY } [ ON <threshold> PERCENT D…"
 note = "omit <threshold>"
 
 [[obligation]]
-id = "sf.security_admin.create-resource-monitor.o040"
+id = "sf.security_admin.create-resource-monitor.o134"
 kind = "operand_type_class"
 required = true
 target = "<threshold> in [ TRIGGERS ON <threshold> PERCENT DO { SUSPEND | SUSPEND_IMMEDIATE | NOTIFY } [ ON <threshold> PERCENT D…"
 note = "a valid operand"
 
 [[obligation]]
-id = "sf.security_admin.create-resource-monitor.o041"
+id = "sf.security_admin.create-resource-monitor.o135"
 kind = "alternative"
 required = true
 target = "{ SUSPEND | SUSPEND_IMMEDIATE | NOTIFY } → SUSPEND"
 
 [[obligation]]
-id = "sf.security_admin.create-resource-monitor.o042"
+id = "sf.security_admin.create-resource-monitor.o136"
 kind = "alternative"
 required = true
 target = "{ SUSPEND | SUSPEND_IMMEDIATE | NOTIFY } → SUSPEND_IMMEDIATE"
 
 [[obligation]]
-id = "sf.security_admin.create-resource-monitor.o043"
+id = "sf.security_admin.create-resource-monitor.o137"
 kind = "alternative"
 required = true
 target = "{ SUSPEND | SUSPEND_IMMEDIATE | NOTIFY } → NOTIFY"
 
 [[obligation]]
-id = "sf.security_admin.create-resource-monitor.o044"
+id = "sf.security_admin.create-resource-monitor.o138"
 kind = "option_present"
 required = true
 target = "[ ON <threshold> PERCENT DO { SUSPEND | SUSPEND_IMMEDIATE | NOTIFY } ... ]"
 
 [[obligation]]
-id = "sf.security_admin.create-resource-monitor.o045"
+id = "sf.security_admin.create-resource-monitor.o139"
 kind = "option_absent"
 required = true
 target = "[ ON <threshold> PERCENT DO { SUSPEND | SUSPEND_IMMEDIATE | NOTIFY } ... ]"
 
 [[obligation]]
-id = "sf.security_admin.create-resource-monitor.o046"
+id = "sf.security_admin.create-resource-monitor.o140"
 kind = "required_operand_missing"
 required = true
 target = "<threshold> in [ ON <threshold> PERCENT DO { SUSPEND | SUSPEND_IMMEDIATE | NOTIFY } ... ]"
 note = "omit <threshold>"
 
 [[obligation]]
-id = "sf.security_admin.create-resource-monitor.o047"
+id = "sf.security_admin.create-resource-monitor.o141"
 kind = "operand_type_class"
 required = true
 target = "<threshold> in [ ON <threshold> PERCENT DO { SUSPEND | SUSPEND_IMMEDIATE | NOTIFY } ... ]"
 note = "a valid operand"
 
 [[obligation]]
-id = "sf.security_admin.create-resource-monitor.o048"
+id = "sf.security_admin.create-resource-monitor.o142"
 kind = "alternative"
 required = true
 target = "{ SUSPEND | SUSPEND_IMMEDIATE | NOTIFY } → SUSPEND #2"
 
 [[obligation]]
-id = "sf.security_admin.create-resource-monitor.o049"
+id = "sf.security_admin.create-resource-monitor.o143"
 kind = "alternative"
 required = true
 target = "{ SUSPEND | SUSPEND_IMMEDIATE | NOTIFY } → SUSPEND_IMMEDIATE #2"
 
 [[obligation]]
-id = "sf.security_admin.create-resource-monitor.o050"
+id = "sf.security_admin.create-resource-monitor.o144"
 kind = "alternative"
 required = true
 target = "{ SUSPEND | SUSPEND_IMMEDIATE | NOTIFY } → NOTIFY #2"
@@ -78070,10 +78211,40 @@ required = true
 note = "the form without its required EXISTS in [ IF NOT EXISTS ]"
 
 [[obligation]]
-id = "sf.security_admin.create-resource-monitor.o056"
+id = "sf.security_admin.create-resource-monitor.o120"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required WITH"
+
+[[obligation]]
+id = "sf.security_admin.create-resource-monitor.o121"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { MONTHLY | DAILY | WEEKLY | YEARLY | NEVER }"
+
+[[obligation]]
+id = "sf.security_admin.create-resource-monitor.o122"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { <timestamp> | IMMEDIATELY }"
+
+[[obligation]]
+id = "sf.security_admin.create-resource-monitor.o123"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ("
+
+[[obligation]]
+id = "sf.security_admin.create-resource-monitor.o124"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required )"
+
+[[obligation]]
+id = "sf.security_admin.create-resource-monitor.o125"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { CREDIT_QUOTA = <number> | FREQUENCY = { MONTHLY | DAILY | WEEKLY | YEARLY | NEVER } | START_TIMESTAMP = { <timestamp> | IMMEDIATELY } | END_TIMESTAMP = <timestamp> | NOTIFY_USERS = ( <user_name> [ , <user_name> , ... ] ) }"
 
 [[obligation]]
 id = "sf.security_admin.create-resource-monitor.o057"
@@ -78100,43 +78271,43 @@ required = true
 note = "the form without its required ) in [ NOTIFY_USERS = ( <user_name> [ , <user_name> , ... ] ) ]"
 
 [[obligation]]
-id = "sf.security_admin.create-resource-monitor.o061"
+id = "sf.security_admin.create-resource-monitor.o145"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required ON in [ TRIGGERS ON <threshold> PERCENT DO { SUSPEND | SUSPEND_IMMEDIATE | NOTIFY } [ ON <threshold> PERCENT DO { SUSPEND | S…"
 
 [[obligation]]
-id = "sf.security_admin.create-resource-monitor.o062"
+id = "sf.security_admin.create-resource-monitor.o146"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required PERCENT in [ TRIGGERS ON <threshold> PERCENT DO { SUSPEND | SUSPEND_IMMEDIATE | NOTIFY } [ ON <threshold> PERCENT DO { SUSPEND | S…"
 
 [[obligation]]
-id = "sf.security_admin.create-resource-monitor.o063"
+id = "sf.security_admin.create-resource-monitor.o147"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required DO in [ TRIGGERS ON <threshold> PERCENT DO { SUSPEND | SUSPEND_IMMEDIATE | NOTIFY } [ ON <threshold> PERCENT DO { SUSPEND | S…"
 
 [[obligation]]
-id = "sf.security_admin.create-resource-monitor.o064"
+id = "sf.security_admin.create-resource-monitor.o148"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required { SUSPEND | SUSPEND_IMMEDIATE | NOTIFY } in [ TRIGGERS ON <threshold> PERCENT DO { SUSPEND | SUSPEND_IMMEDIATE | NOTIFY } [ ON <threshold> PERCENT DO { SUSPEND | S…"
 
 [[obligation]]
-id = "sf.security_admin.create-resource-monitor.o065"
+id = "sf.security_admin.create-resource-monitor.o149"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required PERCENT in [ ON <threshold> PERCENT DO { SUSPEND | SUSPEND_IMMEDIATE | NOTIFY } ... ]"
 
 [[obligation]]
-id = "sf.security_admin.create-resource-monitor.o066"
+id = "sf.security_admin.create-resource-monitor.o150"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required DO in [ ON <threshold> PERCENT DO { SUSPEND | SUSPEND_IMMEDIATE | NOTIFY } ... ]"
 
 [[obligation]]
-id = "sf.security_admin.create-resource-monitor.o067"
+id = "sf.security_admin.create-resource-monitor.o151"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required { SUSPEND | SUSPEND_IMMEDIATE | NOTIFY } in [ ON <threshold> PERCENT DO { SUSPEND | SUSPEND_IMMEDIATE | NOTIFY } ... ]"
@@ -78204,20 +78375,20 @@ anchor = "doc.sql.create-resource-monitor / Usage notes"
 note = "6 users in NOTIFY_USERS against the documented maximum of 5 non-administrator users"
 
 [[obligation]]
-id = "sf.security_admin.create-resource-monitor.o076"
+id = "sf.security_admin.create-resource-monitor.o128"
 kind = "boundary_below"
 required = true
 target = "TRIGGERS ON <threshold> PERCENT DO NOTIFY [ ... ]"
 anchor = "doc.sql.create-resource-monitor / Usage notes"
-note = "4 NOTIFY triggers against the documented maximum of 5"
+note = "4 NOTIFY triggers against the documented maximum of 5, observed"
 
 [[obligation]]
-id = "sf.security_admin.create-resource-monitor.o077"
+id = "sf.security_admin.create-resource-monitor.o129"
 kind = "boundary_at"
 required = true
 target = "TRIGGERS ON <threshold> PERCENT DO NOTIFY [ ... ]"
 anchor = "doc.sql.create-resource-monitor / Usage notes"
-note = "5 NOTIFY triggers against the documented maximum of 5"
+note = "5 NOTIFY triggers against the documented maximum of 5, observed"
 
 [[obligation]]
 id = "sf.security_admin.create-resource-monitor.o078"
@@ -78226,6 +78397,14 @@ required = true
 target = "TRIGGERS ON <threshold> PERCENT DO NOTIFY [ ... ]"
 anchor = "doc.sql.create-resource-monitor / Usage notes"
 note = "6 NOTIFY triggers against the documented maximum of 5"
+
+[[obligation]]
+id = "sf.security_admin.create-resource-monitor.o130"
+kind = "negative_neighbour"
+required = true
+target = "<user_name>"
+anchor = "doc.sql.create-resource-monitor / Syntax"
+note = "a string literal in place of <user_name>, observed"
 
 [[obligation]]
 id = "sf.security_admin.create-role.create-or-alter-role.o001"
@@ -78698,13 +78877,6 @@ target = "<name>"
 note = "a string literal in place of <name>"
 
 [[obligation]]
-id = "sf.security_admin.create-row-access-policy.or-alter-row-access.o005"
-kind = "required_operand_missing"
-required = true
-target = "<arg_name>"
-note = "omit <arg_name>"
-
-[[obligation]]
 id = "sf.security_admin.create-row-access-policy.or-alter-row-access.o006"
 kind = "operand_type_class"
 required = true
@@ -78717,13 +78889,6 @@ kind = "negative_neighbour"
 required = true
 target = "<arg_name>"
 note = "a string literal in place of <arg_name>"
-
-[[obligation]]
-id = "sf.security_admin.create-row-access-policy.or-alter-row-access.o008"
-kind = "required_operand_missing"
-required = true
-target = "<arg_type>"
-note = "omit <arg_type>"
 
 [[obligation]]
 id = "sf.security_admin.create-row-access-policy.or-alter-row-access.o009"
@@ -78898,6 +79063,22 @@ anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
+id = "sf.security_admin.create-row-access-policy.or-alter-row-access.o039"
+kind = "required_operand_missing"
+required = true
+target = "<arg_type>"
+anchor = "doc.sql.create-row-access-policy / Variant syntax / CREATE OR ALTER ROW ACCESS POLICY"
+note = "omit <arg_type>, observed"
+
+[[obligation]]
+id = "sf.security_admin.create-row-access-policy.or-alter-row-access.o040"
+kind = "required_operand_missing"
+required = true
+target = "<arg_name>"
+anchor = "doc.sql.create-row-access-policy / Variant syntax / CREATE OR ALTER ROW ACCESS POLICY"
+note = "omit <arg_name>, observed"
+
+[[obligation]]
 id = "sf.security_admin.create-row-access-policy.row-access-policy-as.o001"
 kind = "positive"
 required = true
@@ -78949,13 +79130,6 @@ target = "<name>"
 note = "a string literal in place of <name>"
 
 [[obligation]]
-id = "sf.security_admin.create-row-access-policy.row-access-policy-as.o009"
-kind = "required_operand_missing"
-required = true
-target = "<arg_name>"
-note = "omit <arg_name>"
-
-[[obligation]]
 id = "sf.security_admin.create-row-access-policy.row-access-policy-as.o010"
 kind = "operand_type_class"
 required = true
@@ -78968,13 +79142,6 @@ kind = "negative_neighbour"
 required = true
 target = "<arg_name>"
 note = "a string literal in place of <arg_name>"
-
-[[obligation]]
-id = "sf.security_admin.create-row-access-policy.row-access-policy-as.o012"
-kind = "required_operand_missing"
-required = true
-target = "<arg_type>"
-note = "omit <arg_type>"
 
 [[obligation]]
 id = "sf.security_admin.create-row-access-policy.row-access-policy-as.o013"
@@ -79153,6 +79320,22 @@ required = true
 target = "<arg_name>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.security_admin.create-row-access-policy.row-access-policy-as.o044"
+kind = "required_operand_missing"
+required = true
+target = "<arg_type>"
+anchor = "doc.sql.create-row-access-policy / Syntax"
+note = "omit <arg_type>, observed"
+
+[[obligation]]
+id = "sf.security_admin.create-row-access-policy.row-access-policy-as.o045"
+kind = "required_operand_missing"
+required = true
+target = "<arg_name>"
+anchor = "doc.sql.create-row-access-policy / Syntax"
+note = "omit <arg_name>, observed"
 
 [[obligation]]
 id = "sf.security_admin.create-secret.create-or-alter-secret.o001"

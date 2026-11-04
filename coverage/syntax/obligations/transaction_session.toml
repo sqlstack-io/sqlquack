@@ -2191,13 +2191,6 @@ required = true
 target = "[ <db_name> . ]"
 
 [[obligation]]
-id = "sf.transaction_session.use-schema.o006"
-kind = "required_operand_missing"
-required = true
-target = "<db_name> in [ <db_name> . ]"
-note = "omit <db_name>"
-
-[[obligation]]
 id = "sf.transaction_session.use-schema.o007"
 kind = "operand_type_class"
 required = true
@@ -2210,13 +2203,6 @@ kind = "negative_neighbour"
 required = true
 target = "<db_name> in [ <db_name> . ]"
 note = "a string literal in place of <db_name>"
-
-[[obligation]]
-id = "sf.transaction_session.use-schema.o009"
-kind = "required_operand_missing"
-required = true
-target = "<name>"
-note = "omit <name>"
 
 [[obligation]]
 id = "sf.transaction_session.use-schema.o010"
@@ -2311,6 +2297,22 @@ required = true
 target = "<name>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.transaction_session.use-schema.o026"
+kind = "required_operand_missing"
+required = true
+target = "<name>"
+anchor = "doc.sql.use-schema / Syntax"
+note = "omit <name>, observed"
+
+[[obligation]]
+id = "sf.transaction_session.use-schema.o027"
+kind = "required_operand_missing"
+required = true
+target = "<db_name> in [ <db_name> . ]"
+anchor = "doc.sql.use-schema / Syntax"
+note = "omit <db_name>, observed"
 
 [[obligation]]
 id = "sf.transaction_session.use-secondary-roles.o001"
