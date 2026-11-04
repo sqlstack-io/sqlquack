@@ -336,3 +336,42 @@ fn given_a_set_operation_by_name_when_parsing_snowflake_then_only_union_takes_it
         );
     }
 }
+
+#[test]
+fn given_a_reserved_keyword_after_a_select_item_when_parsing_snowflake_then_it_is_no_alias() {
+    let test_cases = [
+        AcceptanceTestCase {
+            description: "Snowflake rejects GROUP as an implicit alias (recorded errno 1003)",
+            sql: "SELECT 1 GROUP ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "Snowflake rejects ORDER as an implicit alias (recorded errno 1003)",
+            sql: "SELECT 1 ORDER ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "Snowflake keeps a non-reserved implicit alias",
+            sql: "SELECT 1 v1 ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "Snowflake keeps a quoted reserved word as an alias",
+            sql: "SELECT 1 \"GROUP\" ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+    ];
+
+    for test_case in test_cases {
+        assert_eq!(
+            accepted(test_case.sql, test_case.dialect),
+            test_case.expected_accepted,
+            "{}",
+            test_case.description
+        );
+    }
+}
