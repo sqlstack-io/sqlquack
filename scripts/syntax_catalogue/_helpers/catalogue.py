@@ -14,6 +14,7 @@ from scripts.syntax_catalogue._helpers.family import (
     page_slug,
     source_id,
 )
+from scripts.syntax_catalogue._helpers.fold import fold_restatements, load_folds
 from scripts.syntax_catalogue._helpers.forms import emit_forms, group_forms
 from scripts.syntax_catalogue._helpers.grammar import sha256
 from scripts.syntax_catalogue._helpers.hand import hand_groups, load_hand_forms
@@ -217,6 +218,7 @@ def build_catalogue(*, cache: Path, out: Path, hand_path: Path) -> Catalogue:
         catalogue.forms[family].extend(forms)
     if hand:
         raise CatalogueError(f"hand forms for pages not in the cache: {sorted(hand)}")
+    fold_restatements(catalogue, load_folds(hand_path))
     emitted: set[str] = set()
     for rows in catalogue.forms.values():
         emitted |= {str(row["id"]) for row in rows}

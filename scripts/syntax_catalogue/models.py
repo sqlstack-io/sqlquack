@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 
 @dataclass(frozen=True)
@@ -83,6 +83,7 @@ class Catalogue:
     sources: list[dict[str, object]]
     forms: dict[str, list[dict[str, object]]]
     definitions: dict[str, list[dict[str, object]]]
+    folds: dict[str, tuple[tuple[str, ...], str]] = field(default_factory=dict)
 
 
 @dataclass(frozen=True)

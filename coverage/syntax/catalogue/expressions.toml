@@ -24,7 +24,7 @@ grammar = [
 ]
 grammar_sha256 = "0fc72d07d58f84f5bf75c9e2d39273d637ac83be517f8ef191d8ae8c801e93fb"
 uses = []
-status = "catalogued"
+status = "absent_from_source"
 
 [[form]]
 id = "sf.expressions.collation.collate.collate-function"
@@ -37,7 +37,7 @@ grammar = [
 ]
 grammar_sha256 = "875952d94dae382e47ea548d66e793b4bffeb96bd0ee2e3580a9f9fbe04eee0a"
 uses = []
-status = "catalogued"
+status = "absent_from_source"
 
 [[form]]
 id = "sf.expressions.collation.collation"
@@ -50,7 +50,7 @@ grammar = [
 ]
 grammar_sha256 = "77a11b9859313ffa14b6457910d2c13314f7961e380629a902dbc9e7d994fc8c"
 uses = []
-status = "catalogued"
+status = "absent_from_source"
 
 [[form]]
 id = "sf.expressions.collation.create-table-collate"
@@ -63,7 +63,7 @@ grammar = [
 ]
 grammar_sha256 = "264e65c164a78bdbb445458387451c062d888abc93f1aa163fead6137f02a0e7"
 uses = []
-status = "catalogued"
+status = "absent_from_source"
 
 [[form]]
 id = "sf.expressions.commands-model-function.model-default-version"
@@ -172,7 +172,7 @@ grammar = [
 ]
 grammar_sha256 = "5175da25fa07eda48448e9cb83258c090ba92fbdb49f7e4dc4c02d29c4603c5b"
 uses = []
-status = "catalogued"
+status = "absent_from_source"
 
 [[form]]
 id = "sf.expressions.data-types-datetime.interval-formats.interval-formats"
@@ -185,7 +185,7 @@ grammar = [
 ]
 grammar_sha256 = "7d639771a06181663b6e0c118933f97dd4784d619dd783b5d82642aa8c02134c"
 uses = []
-status = "catalogued"
+status = "absent_from_source"
 
 [[form]]
 id = "sf.expressions.data-types-datetime.interval-yearmonthqualifier-daytimequalifier"
@@ -281,7 +281,7 @@ grammar = [
 ]
 grammar_sha256 = "d24c784e1911191b097ce5991ff3c111a9df48756edf67e423137f4b1414be23"
 uses = []
-status = "catalogued"
+status = "absent_from_source"
 
 [[form]]
 id = "sf.expressions.data-types-geospatial.st-geogfromwkt"
@@ -294,7 +294,7 @@ grammar = [
 ]
 grammar_sha256 = "599934e72f91a6d1890c7130c3cd77eb824852190e16c8530cd017c1014638ba"
 uses = []
-status = "catalogued"
+status = "absent_from_source"
 
 [[form]]
 id = "sf.expressions.data-types-geospatial.st-geomfromwkb"
@@ -307,7 +307,7 @@ grammar = [
 ]
 grammar_sha256 = "bececb31690dc8edf6cdd47a12ccdd7cdf945db41b878ae1752183740d23d014"
 uses = []
-status = "catalogued"
+status = "absent_from_source"
 
 [[form]]
 id = "sf.expressions.data-types-geospatial.st-geomfromwkt"
@@ -320,7 +320,7 @@ grammar = [
 ]
 grammar_sha256 = "f6dded0dbd4f919a68913e4d79aac5b3ffcbbfbedb690191cd998fa5a1339da6"
 uses = []
-status = "catalogued"
+status = "absent_from_source"
 
 [[form]]
 id = "sf.expressions.data-types-geospatial.to-geography"
@@ -333,7 +333,7 @@ grammar = [
 ]
 grammar_sha256 = "c646809e767141a811364243ae366e013357490f8f61a233506ccc8fa5d59d31"
 uses = []
-status = "catalogued"
+status = "absent_from_source"
 
 [[form]]
 id = "sf.expressions.data-types-geospatial.to-geometry"
@@ -346,7 +346,7 @@ grammar = [
 ]
 grammar_sha256 = "657ed35dd6aca34cf52a81bc05da4aceb24ff660ac983bb56d06d8d432de7595"
 uses = []
-status = "catalogued"
+status = "absent_from_source"
 
 [[form]]
 id = "sf.expressions.data-types-ipaddress"
@@ -518,6 +518,19 @@ uses = []
 status = "catalogued"
 
 [[form]]
+id = "sf.expressions.data-types-semistructured.array-index-access"
+family = "expressions"
+source = "doc.data-types-semistructured"
+anchor = "ARRAY / Accessing elements of an array by index or by slice"
+kind = "special"
+grammar = [
+  "<array_expr> \"[\" <index> \"]\" [ \"[\" <index> \"]\" ... ]",
+]
+grammar_sha256 = "9615f6a88e631fa1a7c246d81b262a4dc53203f36b07c81edcb14af55e6f02e6"
+uses = []
+status = "catalogued"
+
+[[form]]
 id = "sf.expressions.data-types-semistructured.colon-subscript-dot"
 family = "expressions"
 source = "doc.data-types-semistructured"
@@ -540,6 +553,19 @@ grammar = [
   "OBJECT",
 ]
 grammar_sha256 = "afdc96fa07e7a49ba7b4f9a353cf6bc93cb8881f09bbe42562186f3c349e7b69"
+uses = []
+status = "catalogued"
+
+[[form]]
+id = "sf.expressions.data-types-semistructured.object-key-access"
+family = "expressions"
+source = "doc.data-types-semistructured"
+anchor = "OBJECT / Accessing elements of an OBJECT value by key"
+kind = "special"
+grammar = [
+  "<object_expr> \"[\" '<key>' \"]\"",
+]
+grammar_sha256 = "43cf1f08da7d950cc11fd6fde8815ddb5ce5b3df9fbf8b9d862c62dd4bc41bd5"
 uses = []
 status = "catalogued"
 
@@ -775,7 +801,7 @@ grammar = [
 ]
 grammar_sha256 = "dc6af53069d4eeaceb816794e5085f565fceffc12b422551447ef180303f47cf"
 uses = []
-status = "catalogued"
+status = "absent_from_source"
 
 [[form]]
 id = "sf.expressions.date-time-input-output.to-timestamp-to-number"
@@ -788,7 +814,7 @@ grammar = [
 ]
 grammar_sha256 = "b7b0b680498673dfa83fc09c89dced9785d67ac313b93c293eb01e8bb2ea75e5"
 uses = []
-status = "catalogued"
+status = "absent_from_source"
 
 [[form]]
 id = "sf.expressions.external-functions-translators.alter-function-set"
@@ -801,7 +827,7 @@ grammar = [
 ]
 grammar_sha256 = "47b65e47daa3640d5344cd9ea1ee4b45a715872227f9ba76da54a983fb12bc61"
 uses = []
-status = "catalogued"
+status = "absent_from_source"
 
 [[form]]
 id = "sf.expressions.external-functions-translators.alter-function-unset"
@@ -814,7 +840,7 @@ grammar = [
 ]
 grammar_sha256 = "e6c27bee129f0a92e0cce16660f1701c62058a83295345242a9a2f1a6a735952"
 uses = []
-status = "catalogued"
+status = "absent_from_source"
 
 [[form]]
 id = "sf.expressions.external-functions-translators.create-external-function-f"
@@ -827,7 +853,7 @@ grammar = [
 ]
 grammar_sha256 = "f36342fcd9b83637f3c395f3522248cfad7c090c54ae181582a9c69b9119e45e"
 uses = []
-status = "catalogued"
+status = "absent_from_source"
 
 [[form]]
 id = "sf.expressions.functions-table"
@@ -1245,7 +1271,7 @@ grammar = [
 ]
 grammar_sha256 = "97ba5ba813775ea30e4c5ef13c87833763ded93d4938c79e3d5fe5c6605e47fa"
 uses = []
-status = "catalogued"
+status = "absent_from_source"
 
 [[form]]
 id = "sf.expressions.virtual-columns.alter-table-add-as"
@@ -1258,7 +1284,7 @@ grammar = [
 ]
 grammar_sha256 = "eb097e189aa3c60498e8088a2e9bc64b5367f7b38162cea8b25b405b395b94cf"
 uses = []
-status = "catalogued"
+status = "absent_from_source"
 
 [[form]]
 id = "sf.expressions.virtual-columns.create-or-replace-table"
@@ -1271,7 +1297,7 @@ grammar = [
 ]
 grammar_sha256 = "21ec3a1cbe1cc77cdf30562d956943f8e4725bedcf91e2a2203fa7a53082f7d2"
 uses = []
-status = "catalogued"
+status = "absent_from_source"
 
 [[definition]]
 id = "doc.data-types-datetime::dayTimeQualifier"

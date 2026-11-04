@@ -31,6 +31,7 @@ from scripts.syntax_catalogue.constants import (
     GRAMMAR_JOINER,
     KIND_CALL,
     KIND_DEFINITION,
+    KIND_PROSE,
     KIND_SPECIAL,
     KIND_STATEMENT,
     MIN_VARIANT_DEPTH,
@@ -158,7 +159,7 @@ def variant_names(groups: list[FormGroup]) -> list[str]:
         common += 1
     names: list[str] = []
     for group, grammar, word_list in zip(groups, grammars, words, strict=True):
-        if group.label and group.kind in (KIND_STATEMENT, KIND_CALL):
+        if group.label and group.kind != KIND_PROSE:
             names.append(slug(group.label))
             continue
         name: str = slug("-".join(word_list[common:][:VARIANT_WORDS])) or symbol_name(grammar)

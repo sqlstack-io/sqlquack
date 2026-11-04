@@ -273,6 +273,9 @@ status = "catalogued"
 id = "sf.functions.ai-function-evaluation.execute-experiment"
 family = "functions"
 source = "doc.functions.ai_function_evaluation"
+also_sources = [
+  "doc.functions.ai_function_optimization",
+]
 anchor = "Syntax"
 kind = "special"
 grammar = [
@@ -306,7 +309,7 @@ grammar = [
 ]
 grammar_sha256 = "77703817bb5256d700cdba68a554ec7373294af2c1076165c477cf9d50880492"
 uses = []
-status = "catalogued"
+status = "absent_from_source"
 
 [[form]]
 id = "sf.functions.ai-generate-table-desc"
@@ -2333,6 +2336,9 @@ status = "catalogued"
 id = "sf.functions.collate.collate"
 family = "functions"
 source = "doc.functions.collate"
+also_sources = [
+  "doc.collation",
+]
 anchor = "Syntax"
 kind = "call"
 grammar = [
@@ -2346,6 +2352,9 @@ status = "catalogued"
 id = "sf.functions.collate.collate.syntax"
 family = "functions"
 source = "doc.functions.collate"
+also_sources = [
+  "doc.collation",
+]
 anchor = "Syntax"
 kind = "special"
 grammar = [
@@ -2359,6 +2368,9 @@ status = "catalogued"
 id = "sf.functions.collation"
 family = "functions"
 source = "doc.functions.collation"
+also_sources = [
+  "doc.collation",
+]
 anchor = "Syntax"
 kind = "call"
 grammar = [
@@ -12383,6 +12395,9 @@ status = "catalogued"
 id = "sf.functions.st-geographyfromwkb.st-geogfromwkb"
 family = "functions"
 source = "doc.functions.st_geographyfromwkb"
+also_sources = [
+  "doc.data-types-geospatial",
+]
 anchor = "Syntax"
 kind = "call"
 grammar = [
@@ -12448,6 +12463,9 @@ status = "catalogued"
 id = "sf.functions.st-geographyfromwkt.st-geogfromwkt"
 family = "functions"
 source = "doc.functions.st_geographyfromwkt"
+also_sources = [
+  "doc.data-types-geospatial",
+]
 anchor = "Syntax"
 kind = "call"
 grammar = [
@@ -12553,6 +12571,9 @@ status = "catalogued"
 id = "sf.functions.st-geometryfromwkb.st-geomfromwkb"
 family = "functions"
 source = "doc.functions.st_geometryfromwkb"
+also_sources = [
+  "doc.data-types-geospatial",
+]
 anchor = "Syntax"
 kind = "call"
 grammar = [
@@ -12631,6 +12652,9 @@ status = "catalogued"
 id = "sf.functions.st-geometryfromwkt.st-geomfromwkt"
 family = "functions"
 source = "doc.functions.st_geometryfromwkt"
+also_sources = [
+  "doc.data-types-geospatial",
+]
 anchor = "Syntax"
 kind = "call"
 grammar = [
@@ -17500,6 +17524,9 @@ status = "catalogued"
 id = "sf.functions.to-char.to-char"
 family = "functions"
 source = "doc.functions.to_char"
+also_sources = [
+  "doc.sql-format-models",
+]
 anchor = "Syntax"
 kind = "call"
 grammar = [
@@ -17590,6 +17617,10 @@ status = "catalogued"
 id = "sf.functions.to-decimal.to-number"
 family = "functions"
 source = "doc.functions.to_decimal"
+also_sources = [
+  "doc.date-time-input-output",
+  "doc.sql-format-models",
+]
 anchor = "Syntax"
 kind = "call"
 grammar = [
@@ -17644,6 +17675,9 @@ status = "catalogued"
 id = "sf.functions.to-geography"
 family = "functions"
 source = "doc.functions.to_geography"
+also_sources = [
+  "doc.data-types-geospatial",
+]
 anchor = "Syntax"
 kind = "call"
 grammar = [
@@ -17660,6 +17694,9 @@ status = "catalogued"
 id = "sf.functions.to-geometry"
 family = "functions"
 source = "doc.functions.to_geometry"
+also_sources = [
+  "doc.data-types-geospatial",
+]
 anchor = "Syntax"
 kind = "call"
 grammar = [
@@ -17760,6 +17797,9 @@ status = "catalogued"
 id = "sf.functions.to-timestamp"
 family = "functions"
 source = "doc.functions.to_timestamp"
+also_sources = [
+  "doc.date-time-input-output",
+]
 anchor = "Syntax"
 kind = "call"
 grammar = [

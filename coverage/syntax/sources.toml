@@ -2580,8 +2580,10 @@ retrieved_utc = "2026-11-03T23:21:30Z"
 page_sha256 = "063ecae21c6a8310e996aa71084170df3b3bbfec65a3338da6a7cbaa1f8f44bc"
 syntax_sha256 = "42b81eff459be82a4f3f64fb5f38fa95228776632872435e98d1618bf2233f74"
 syntax_blocks = 1
-status = "forms"
-decisions = []
+status = "restated"
+decisions = [
+  "every form restates syntax catalogued on another page; listed in its also_sources",
+]
 
 [[source]]
 id = "doc.classes.anomaly-detection.methods.show_evaluation_metrics"
@@ -2604,8 +2606,10 @@ retrieved_utc = "2026-11-03T23:21:30Z"
 page_sha256 = "04af8a86427b972d4a97a9ee14502d8ba9aed479dc56cd671f2796c871cdc7dd"
 syntax_sha256 = "fa19567b843dc9e00cc26caceda8aff21075fd0fc298b3c261e961b149746b85"
 syntax_blocks = 1
-status = "forms"
-decisions = []
+status = "restated"
+decisions = [
+  "every form restates syntax catalogued on another page; listed in its also_sources",
+]
 
 [[source]]
 id = "doc.classes.anomaly-insights.methods.add_notification_integration"
@@ -3680,8 +3684,10 @@ retrieved_utc = "2026-11-03T23:21:30Z"
 page_sha256 = "ae8b074880d6513761a2df860d870753d6d5116f5b53d4b5b5204ab94b6a6447"
 syntax_sha256 = "fa19567b843dc9e00cc26caceda8aff21075fd0fc298b3c261e961b149746b85"
 syntax_blocks = 1
-status = "forms"
-decisions = []
+status = "restated"
+decisions = [
+  "every form restates syntax catalogued on another page; listed in its also_sources",
+]
 
 [[source]]
 id = "doc.classes.classification_profile"
@@ -4172,8 +4178,10 @@ retrieved_utc = "2026-11-03T23:21:21Z"
 page_sha256 = "f989e4b0905c326f82d39d50ea3c4c65c8aed1259207b708c54ca43aeac11e9a"
 syntax_sha256 = "b2930020b8fa0a8631e36d60ed716a0e5d4aa55fc29fd8b22a6c99ef8f0c4409"
 syntax_blocks = 4
-status = "forms"
-decisions = []
+status = "restated"
+decisions = [
+  "every form restates syntax catalogued on another page; listed in its also_sources",
+]
 
 [[source]]
 id = "doc.commands-account"
@@ -4738,8 +4746,10 @@ retrieved_utc = "2026-11-03T23:21:24Z"
 page_sha256 = "e0dcc7c50913699c8f1c21cd5c2faad937116e15e511bb2012dd6fecb49f5d37"
 syntax_sha256 = "480f5bd997e60bcf3d2ec7bf66d025051962cf2422380f31cbba8e30929bc5ef"
 syntax_blocks = 2
-status = "forms"
-decisions = []
+status = "restated"
+decisions = [
+  "every form restates syntax catalogued on another page; listed in its also_sources",
+]
 
 [[source]]
 id = "doc.constraints-create"
@@ -4750,8 +4760,10 @@ retrieved_utc = "2026-11-03T23:21:21Z"
 page_sha256 = "3136549fe4af733deb5c2efed587484fcd65022975c575ecc41d2a8edb354d86"
 syntax_sha256 = "5ad6338e63daed08202bb4009d60362eaf044be2064fc2c4dd9905c81975fc0f"
 syntax_blocks = 2
-status = "forms"
-decisions = []
+status = "restated"
+decisions = [
+  "every form restates syntax catalogued on another page; listed in its also_sources",
+]
 
 [[source]]
 id = "doc.constraints-drop"
@@ -4762,8 +4774,10 @@ retrieved_utc = "2026-11-03T23:21:22Z"
 page_sha256 = "7d0bc261a16f0c579b88f898145aacd13a89fa70c1b6f386ebf0cb07975efef6"
 syntax_sha256 = "f5c9bcc943c40782da039bed651f96317718ce99c9517e71d5fc70d71e8f8bcb"
 syntax_blocks = 3
-status = "forms"
-decisions = []
+status = "restated"
+decisions = [
+  "every form restates syntax catalogued on another page; listed in its also_sources",
+]
 
 [[source]]
 id = "doc.constraints-overview"
@@ -5305,8 +5319,10 @@ retrieved_utc = "2026-11-03T23:21:23Z"
 page_sha256 = "8f8002be2c8f9f1e3f0554dc948af734fed65b7f5f858279375410e58f1b41f7"
 syntax_sha256 = "c96f8cff35b59bc9520b696451ac6754d6505e661e4fd154e5b861834624f3a7"
 syntax_blocks = 6
-status = "forms"
-decisions = []
+status = "restated"
+decisions = [
+  "every form restates syntax catalogued on another page; listed in its also_sources",
+]
 
 [[source]]
 id = "doc.data-types-ipaddress"
@@ -5376,6 +5392,7 @@ syntax_sha256 = "8c81d49b42af49787d99af96dd59bd6cb4d5179d94d299e382d300b99565875
 syntax_blocks = 2
 status = "forms"
 decisions = [
+  "catalogued by hand from example",
   "catalogued by hand from heading",
 ]
 
@@ -5505,8 +5522,10 @@ retrieved_utc = "2026-11-03T23:21:22Z"
 page_sha256 = "0dc2a543682370b144e4101c7c7c4c12cdf08fa1d055cf92457965252431f956"
 syntax_sha256 = "634e614cdf96cb724bdaaad9e4ae871a361491877f7374040c6ccc179d8df20a"
 syntax_blocks = 2
-status = "forms"
-decisions = []
+status = "restated"
+decisions = [
+  "every form restates syntax catalogued on another page; listed in its also_sources",
+]
 
 [[source]]
 id = "doc.ddl-database"
@@ -6237,8 +6256,10 @@ retrieved_utc = "2026-11-03T23:21:28Z"
 page_sha256 = "9af87566d91623ba02375bdcd27304341d7bc7b98720578d0d20dccaa240a0a3"
 syntax_sha256 = "667b851f3c297e4e319119a536c5eedeaeb310ed24cc360206a0a1d9b9fd04f7"
 syntax_blocks = 3
-status = "forms"
-decisions = []
+status = "restated"
+decisions = [
+  "every form restates syntax catalogued on another page; listed in its also_sources",
+]
 
 [[source]]
 id = "doc.external-functions"
@@ -24749,8 +24770,10 @@ retrieved_utc = "2026-11-03T23:21:26Z"
 page_sha256 = "d27979b75ea2262986b6fe3045643aae9798301a4977eadf1ee919f2908e0af4"
 syntax_sha256 = "7a8f67385da5c5d9e963923af9200b9adc1bf00ce0686133c6fda49b2ddfc504"
 syntax_blocks = 1
-status = "forms"
-decisions = []
+status = "restated"
+decisions = [
+  "every form restates syntax catalogued on another page; listed in its also_sources",
+]
 
 [[source]]
 id = "doc.sql.alter-account-set-ingress-policy"
@@ -25773,8 +25796,10 @@ retrieved_utc = "2026-11-03T23:20:25Z"
 page_sha256 = "b7e35fabe1355850b32a0648ac9cee11fc915de517bdfece134b2bbd3260aa32"
 syntax_sha256 = "c9725c56b1a61b1482ffa3e127f5031c726e9166f679dc91e517eb421c20b788"
 syntax_blocks = 1
-status = "forms"
-decisions = []
+status = "restated"
+decisions = [
+  "every form restates syntax catalogued on another page; listed in its also_sources",
+]
 
 [[source]]
 id = "doc.sql.alter-notification-integration-queue-inbound-gcp"
@@ -27518,8 +27543,10 @@ retrieved_utc = "2026-11-03T23:20:29Z"
 page_sha256 = "83b5c45f166af4d7612a107ed851ee3b01602d3be25ad2404ecfe96393032e18"
 syntax_sha256 = "d2243617f13c35cfd793f1b6fc3b20016c6beeff882efa9fc2ff984420f2b481"
 syntax_blocks = 1
-status = "forms"
-decisions = []
+status = "restated"
+decisions = [
+  "every form restates syntax catalogued on another page; listed in its also_sources",
+]
 
 [[source]]
 id = "doc.sql.create-iceberg-table-iceberg-files"
@@ -27530,8 +27557,10 @@ retrieved_utc = "2026-11-03T23:20:29Z"
 page_sha256 = "814ec889f75e1169d184325954f3079a9f45a5ab00c347ecddeed0de8ac73041"
 syntax_sha256 = "218161ce9a74e2e084153c940e50713c0697e1c4812591e06b15367f5562d316"
 syntax_blocks = 1
-status = "forms"
-decisions = []
+status = "restated"
+decisions = [
+  "every form restates syntax catalogued on another page; listed in its also_sources",
+]
 
 [[source]]
 id = "doc.sql.create-iceberg-table-parquet"
@@ -27542,8 +27571,10 @@ retrieved_utc = "2026-11-03T23:20:29Z"
 page_sha256 = "62b54d9f707cf44dfe993857c96a570fa48209599fdc621521007201b6427d39"
 syntax_sha256 = "2963be99fc87d7bb7d59eefe0aa73b320dceed74f3a53faf7a383880e427200e"
 syntax_blocks = 3
-status = "forms"
-decisions = []
+status = "restated"
+decisions = [
+  "every form restates syntax catalogued on another page; listed in its also_sources",
+]
 
 [[source]]
 id = "doc.sql.create-iceberg-table-rest"
@@ -30222,8 +30253,10 @@ retrieved_utc = "2026-11-03T23:20:36Z"
 page_sha256 = "a5da3a5d63a1b4ade10f12401973719d14f9957dae98770bea51bc725b67789d"
 syntax_sha256 = "610eb6c5c085154f54c82a1f9054afa78b99e5323b4e5b6a196750ea006879cc"
 syntax_blocks = 1
-status = "forms"
-decisions = []
+status = "restated"
+decisions = [
+  "every form restates syntax catalogued on another page; listed in its also_sources",
+]
 
 [[source]]
 id = "doc.sql.drop-function"
@@ -34508,5 +34541,7 @@ retrieved_utc = "2026-11-03T23:21:28Z"
 page_sha256 = "163a34d6c72ab17ac8be8e7aad3f64115680f6692f450058947a3df5a8ce8ad6"
 syntax_sha256 = "76666abdecc42ae6a593abbdd3087bd4ca77fae23f275b0245170a9a5ba92583"
 syntax_blocks = 1
-status = "forms"
-decisions = []
+status = "restated"
+decisions = [
+  "every form restates syntax catalogued on another page; listed in its also_sources",
+]

@@ -4,11 +4,12 @@ from __future__ import annotations
 
 import argparse
 import json
+import tomllib
 from pathlib import Path
 
 from scripts.syntax_catalogue._helpers.catalogue import build_catalogue
 from scripts.syntax_catalogue._helpers.grammar import sha256
-from scripts.syntax_catalogue._helpers.toml_out import write_tables
+from scripts.syntax_catalogue._helpers.toml_out import row_lines, write_tables
 from scripts.syntax_catalogue.constants import FAMILIES
 from scripts.syntax_catalogue.models import Catalogue
 
@@ -54,5 +55,23 @@ def run_build(argv: list[str] | None = None) -> int:
                 ("definition", sorted(catalogue.definitions[family], key=lambda d: str(d["id"]))),
             ],
         )
+    catalogued: set[str] = {str(f["id"]) for rows in catalogue.forms.values() for f in rows}
+    add_fold_aliases(
+        path=out / "aliases.toml",
+        folds={k: v for k, v in catalogue.folds.items() if k in catalogued},
+    )
     print(json.dumps({family: len(catalogue.forms[family]) for family in FAMILIES}))
     return 0
+
+
+def add_fold_aliases(*, path: Path, folds: dict[str, tuple[tuple[str, ...], str]]) -> None:
+    """Append an alias for every folded catalogue form that aliases.toml does not list yet."""
+    text: str = path.read_text() if path.exists() else ""
+    listed: set[str] = {str(row["from"]) for row in tomllib.loads(text).get("alias", [])}
+    lines: list[str] = []
+    for form_id, (targets, reason) in sorted(folds.items()):
+        if form_id not in listed:
+            row: dict[str, object] = {"from": form_id, "to": list(targets), "reason": reason}
+            lines += row_lines(table="alias", row=row)
+    if lines:
+        path.write_text(text.rstrip("\n") + "\n\n" + "\n".join(lines))

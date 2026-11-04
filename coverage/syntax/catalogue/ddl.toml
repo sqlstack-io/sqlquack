@@ -2562,7 +2562,7 @@ grammar = [
 ]
 grammar_sha256 = "549b19e19cde7b0fd58e62ce1f05fc0dbe369cff6b544b8b4a16e84ff6fb655f"
 uses = []
-status = "catalogued"
+status = "absent_from_source"
 
 [[form]]
 id = "sf.ddl.alter-function-spcs.set-batch-timeout-secs"
@@ -2627,7 +2627,7 @@ grammar = [
 ]
 grammar_sha256 = "da03b2a6ebebf80cc8653d3592baec0121f7dbdb7c1306dd6c5e121e2847708f"
 uses = []
-status = "catalogued"
+status = "absent_from_source"
 
 [[form]]
 id = "sf.ddl.alter-function-spcs.set-on-batch-failure-abort-return-null"
@@ -2672,6 +2672,9 @@ status = "catalogued"
 id = "sf.ddl.alter-function.rename-to"
 family = "ddl"
 source = "doc.sql.alter-function"
+also_sources = [
+  "doc.sql.alter-function-spcs",
+]
 anchor = "Syntax / User-defined and external functions / Java handler"
 kind = "statement"
 grammar = [
@@ -2750,6 +2753,9 @@ status = "catalogued"
 id = "sf.ddl.alter-function.set-max-batch-rows"
 family = "ddl"
 source = "doc.sql.alter-function"
+also_sources = [
+  "doc.sql.alter-function-spcs",
+]
 anchor = "Syntax / External functions / Any language handler"
 kind = "statement"
 grammar = [
@@ -2763,6 +2769,9 @@ status = "catalogued"
 id = "sf.ddl.alter-function.set-request-translator-response-translator"
 family = "ddl"
 source = "doc.sql.alter-function"
+also_sources = [
+  "doc.external-functions-translators",
+]
 anchor = "Syntax / External functions / Any language handler"
 kind = "statement"
 grammar = [
@@ -2815,6 +2824,9 @@ status = "catalogued"
 id = "sf.ddl.alter-function.unset-comment-headers-context-headers"
 family = "ddl"
 source = "doc.sql.alter-function"
+also_sources = [
+  "doc.external-functions-translators",
+]
 anchor = "Syntax / External functions / Any language handler"
 kind = "statement"
 grammar = [
@@ -5224,7 +5236,7 @@ grammar_sha256 = "7512863e09f0a8af089c14b4fe51d84c0236885c1d1e51fb1e6db3b1e396c7
 uses = [
   "clusteringAction",
 ]
-status = "catalogued"
+status = "absent_from_source"
 
 [[form]]
 id = "sf.ddl.alter-table-event-table.datagovnpolicytagaction"
@@ -5239,7 +5251,7 @@ grammar_sha256 = "961f444b1ea4c5fd8231bdbefe6a328095730c43db91a08f97a33a7ccd6db4
 uses = [
   "dataGovnPolicyTagAction",
 ]
-status = "catalogued"
+status = "absent_from_source"
 
 [[form]]
 id = "sf.ddl.alter-table-event-table.rename-to"
@@ -5252,7 +5264,7 @@ grammar = [
 ]
 grammar_sha256 = "e39098a8293187d3a59c40848b8a7172d8a6beaf24ff8b21488e5ed2be9503ee"
 uses = []
-status = "catalogued"
+status = "absent_from_source"
 
 [[form]]
 id = "sf.ddl.alter-table-event-table.searchoptimizationaction"
@@ -5267,7 +5279,7 @@ grammar_sha256 = "4171fd3215c2836ec8360663c46e58512141fdc87d6beb1718ffe40592f8e7
 uses = [
   "searchOptimizationAction",
 ]
-status = "catalogued"
+status = "absent_from_source"
 
 [[form]]
 id = "sf.ddl.alter-table-event-table.set"
@@ -5312,6 +5324,9 @@ status = "catalogued"
 id = "sf.ddl.alter-table.clusteringaction"
 family = "ddl"
 source = "doc.sql.alter-table"
+also_sources = [
+  "doc.sql.alter-table-event-table",
+]
 anchor = "Syntax"
 kind = "statement"
 grammar = [
@@ -5327,6 +5342,11 @@ status = "catalogued"
 id = "sf.ddl.alter-table.constraintaction"
 family = "ddl"
 source = "doc.sql.alter-table"
+also_sources = [
+  "doc.constraints-alter",
+  "doc.constraints-create",
+  "doc.constraints-drop",
+]
 anchor = "Syntax"
 kind = "statement"
 grammar = [
@@ -5342,6 +5362,9 @@ status = "catalogued"
 id = "sf.ddl.alter-table.datagovnpolicytagaction"
 family = "ddl"
 source = "doc.sql.alter-table"
+also_sources = [
+  "doc.sql.alter-table-event-table",
+]
 anchor = "Syntax"
 kind = "statement"
 grammar = [
@@ -5400,6 +5423,9 @@ status = "catalogued"
 id = "sf.ddl.alter-table.rename-to"
 family = "ddl"
 source = "doc.sql.alter-table"
+also_sources = [
+  "doc.sql.alter-table-event-table",
+]
 anchor = "Syntax"
 kind = "statement"
 grammar = [
@@ -5413,6 +5439,9 @@ status = "catalogued"
 id = "sf.ddl.alter-table.searchoptimizationaction"
 family = "ddl"
 source = "doc.sql.alter-table"
+also_sources = [
+  "doc.sql.alter-table-event-table",
+]
 anchor = "Syntax"
 kind = "statement"
 grammar = [
@@ -5454,6 +5483,11 @@ status = "catalogued"
 id = "sf.ddl.alter-table.tablecolumnaction"
 family = "ddl"
 source = "doc.sql.alter-table"
+also_sources = [
+  "doc.constraints-create",
+  "doc.constraints-drop",
+  "doc.virtual-columns",
+]
 anchor = "Syntax"
 kind = "statement"
 grammar = [
@@ -6237,7 +6271,7 @@ grammar = [
 ]
 grammar_sha256 = "31a7632ee5de6366ffef3e17c33359c988988ee6a1609289b48ee4693ea4a9c8"
 uses = []
-status = "catalogued"
+status = "absent_from_source"
 
 [[form]]
 id = "sf.ddl.constraints-alter.rename-constraint-to"
@@ -6250,7 +6284,7 @@ grammar = [
 ]
 grammar_sha256 = "00777bf149a0a782fd4eeb778615313d705922fd5926a2e50579f30cca1b1bba"
 uses = []
-status = "catalogued"
+status = "absent_from_source"
 
 [[form]]
 id = "sf.ddl.constraints-create.alter-table-add"
@@ -6263,7 +6297,7 @@ grammar = [
 ]
 grammar_sha256 = "b6f9628c51bc60a165c4deb6f8db04cdca14ea56ad27338648e929b2c2509c92"
 uses = []
-status = "catalogued"
+status = "absent_from_source"
 
 [[form]]
 id = "sf.ddl.constraints-create.alter-table-add-column"
@@ -6276,7 +6310,7 @@ grammar = [
 ]
 grammar_sha256 = "9b053ecf94dee054c5747300999d14a20afbae527e0976fdcf5ffefc71db620a"
 uses = []
-status = "catalogued"
+status = "absent_from_source"
 
 [[form]]
 id = "sf.ddl.constraints-create.create-table"
@@ -6289,7 +6323,7 @@ grammar = [
 ]
 grammar_sha256 = "90792f7b1fd3a7f3915d06b7e44d878c110f9b90fe035be692cef8ed10dc11af"
 uses = []
-status = "catalogued"
+status = "absent_from_source"
 
 [[form]]
 id = "sf.ddl.constraints-create.create-table.creating-constraints-out-of-line"
@@ -6302,7 +6336,7 @@ grammar = [
 ]
 grammar_sha256 = "b7b29c223e00d917e7c274ea89594e58db25d32dd666ffd8d6ff5a1f7ac692fe"
 uses = []
-status = "catalogued"
+status = "absent_from_source"
 
 [[form]]
 id = "sf.ddl.constraints-drop.alter-table-drop-column"
@@ -6315,7 +6349,7 @@ grammar = [
 ]
 grammar_sha256 = "894afa9b197109c9e525bc0f278850debe291df2ca7d01cbda1940e6aac30b62"
 uses = []
-status = "catalogued"
+status = "absent_from_source"
 
 [[form]]
 id = "sf.ddl.constraints-drop.alter-table-drop-constraint"
@@ -6328,7 +6362,7 @@ grammar = [
 ]
 grammar_sha256 = "b0981f8feb0f2a79b482f6b0215c65f5d12e6f80415db7548f70faa05aeb92c1"
 uses = []
-status = "catalogued"
+status = "absent_from_source"
 
 [[form]]
 id = "sf.ddl.constraints-drop.drop-table-schema-database"
@@ -6341,7 +6375,7 @@ grammar = [
 ]
 grammar_sha256 = "d90cc2800397dec002b5e8358ae1a3543717c224d1efacd03881fd278ebe5142"
 uses = []
-status = "catalogued"
+status = "absent_from_source"
 
 [[form]]
 id = "sf.ddl.create-agent"
@@ -7210,6 +7244,9 @@ status = "catalogued"
 id = "sf.ddl.create-external-function.function-returns-api-integration-as"
 family = "ddl"
 source = "doc.sql.create-external-function"
+also_sources = [
+  "doc.external-functions-translators",
+]
 anchor = "Syntax"
 kind = "statement"
 grammar = [
@@ -7354,7 +7391,7 @@ grammar = [
 ]
 grammar_sha256 = "11dd872307b9d9852aca308c3c9d6735c5f521e4a569e256bc3292ddcc028500"
 uses = []
-status = "catalogued"
+status = "absent_from_source"
 
 [[form]]
 id = "sf.ddl.create-function-spcs.function-returns-service-endpoint"
@@ -7373,6 +7410,9 @@ status = "catalogued"
 id = "sf.ddl.create-function.create-function"
 family = "ddl"
 source = "doc.sql.create-function"
+also_sources = [
+  "doc.sql.create-function-spcs",
+]
 anchor = "Variant syntax / CREATE OR ALTER FUNCTION"
 kind = "statement"
 grammar = [
@@ -7590,7 +7630,7 @@ grammar = [
 ]
 grammar_sha256 = "c8a3d55fe781d5c3c0507e6695b3b840ee2eb45f267b9e69cfaa1a3dc7a8a0e2"
 uses = []
-status = "catalogued"
+status = "absent_from_source"
 
 [[form]]
 id = "sf.ddl.create-iceberg-table-iceberg-files"
@@ -7603,7 +7643,7 @@ grammar = [
 ]
 grammar_sha256 = "ca443ebc21456ef72fe54b77395a387df07b25661504ed7595a54a659084add2"
 uses = []
-status = "catalogued"
+status = "absent_from_source"
 
 [[form]]
 id = "sf.ddl.create-iceberg-table-parquet"
@@ -7619,7 +7659,7 @@ uses = [
   "inlineConstraint",
   "outoflineConstraint",
 ]
-status = "catalogued"
+status = "absent_from_source"
 
 [[form]]
 id = "sf.ddl.create-iceberg-table-rest.table"
@@ -7634,7 +7674,7 @@ grammar_sha256 = "5dc6c5c003d824bb540c975ff3b5c56f9e35a37edd754a2abf79a2d8745e4f
 uses = [
   "partitionExpression",
 ]
-status = "catalogued"
+status = "absent_from_source"
 
 [[form]]
 id = "sf.ddl.create-iceberg-table-rest.table-as-select"
@@ -7660,7 +7700,7 @@ grammar = [
 ]
 grammar_sha256 = "d97d04bbc72a04342d7cc4aa437ec1ef3ad43a1a9c82bfc461b4236ad6fbfc7c"
 uses = []
-status = "catalogued"
+status = "absent_from_source"
 
 [[form]]
 id = "sf.ddl.create-iceberg-table-rest.table-masking-policy-as"
@@ -7690,7 +7730,7 @@ uses = [
   "outoflineConstraint",
   "partitionExpression",
 ]
-status = "catalogued"
+status = "absent_from_source"
 
 [[form]]
 id = "sf.ddl.create-iceberg-table-snowflake.table-as-select"
@@ -7703,7 +7743,7 @@ grammar = [
 ]
 grammar_sha256 = "8e60e2f7999d9d203247552cf4bd98176db9ca038a84a19d26bba84a5e5d115d"
 uses = []
-status = "catalogued"
+status = "absent_from_source"
 
 [[form]]
 id = "sf.ddl.create-iceberg-table-snowflake.table-clone"
@@ -7729,7 +7769,7 @@ grammar = [
 ]
 grammar_sha256 = "68040c7cc783a1924a45b187094156f8bbd631f63e358dd178886a13e809099b"
 uses = []
-status = "catalogued"
+status = "absent_from_source"
 
 [[form]]
 id = "sf.ddl.create-iceberg-table-snowflake.table-masking-policy-row"
@@ -7748,6 +7788,9 @@ status = "catalogued"
 id = "sf.ddl.create-iceberg-table.table"
 family = "ddl"
 source = "doc.sql.create-iceberg-table"
+also_sources = [
+  "doc.sql.create-iceberg-table-snowflake",
+]
 anchor = "Syntax / Snowflake as the Iceberg catalog"
 kind = "statement"
 grammar = [
@@ -7765,6 +7808,9 @@ status = "catalogued"
 id = "sf.ddl.create-iceberg-table.table-as-select"
 family = "ddl"
 source = "doc.sql.create-iceberg-table"
+also_sources = [
+  "doc.sql.create-iceberg-table-snowflake",
+]
 anchor = "Syntax / Snowflake as the Iceberg catalog / CREATE ICEBERG TABLE ... AS SELECT (also referred to as CTAS)"
 kind = "statement"
 grammar = [
@@ -7778,6 +7824,9 @@ status = "catalogued"
 id = "sf.ddl.create-iceberg-table.table-base-location"
 family = "ddl"
 source = "doc.sql.create-iceberg-table"
+also_sources = [
+  "doc.sql.create-iceberg-table-delta",
+]
 anchor = "Syntax / External Iceberg catalog / Delta files"
 kind = "statement"
 grammar = [
@@ -7791,6 +7840,9 @@ status = "catalogued"
 id = "sf.ddl.create-iceberg-table.table-base-location.parquet-files"
 family = "ddl"
 source = "doc.sql.create-iceberg-table"
+also_sources = [
+  "doc.sql.create-iceberg-table-parquet",
+]
 anchor = "Syntax / External Iceberg catalog / Parquet files"
 kind = "statement"
 grammar = [
@@ -7807,6 +7859,9 @@ status = "catalogued"
 id = "sf.ddl.create-iceberg-table.table-catalog-table-name"
 family = "ddl"
 source = "doc.sql.create-iceberg-table"
+also_sources = [
+  "doc.sql.create-iceberg-table-rest",
+]
 anchor = "Syntax / External Iceberg catalog / Iceberg REST (including Snowflake Open Catalog)"
 kind = "statement"
 grammar = [
@@ -7820,6 +7875,9 @@ status = "catalogued"
 id = "sf.ddl.create-iceberg-table.table-like"
 family = "ddl"
 source = "doc.sql.create-iceberg-table"
+also_sources = [
+  "doc.sql.create-iceberg-table-snowflake",
+]
 anchor = "Syntax / Snowflake as the Iceberg catalog / CREATE ICEBERG TABLE ... LIKE"
 kind = "statement"
 grammar = [
@@ -7833,6 +7891,9 @@ status = "catalogued"
 id = "sf.ddl.create-iceberg-table.table-metadata-file-path"
 family = "ddl"
 source = "doc.sql.create-iceberg-table"
+also_sources = [
+  "doc.sql.create-iceberg-table-iceberg-files",
+]
 anchor = "Syntax / External Iceberg catalog / Iceberg files in object storage"
 kind = "statement"
 grammar = [
@@ -7846,6 +7907,9 @@ status = "catalogued"
 id = "sf.ddl.create-iceberg-table.table.iceberg-rest-in-a-catalog-linked-database"
 family = "ddl"
 source = "doc.sql.create-iceberg-table"
+also_sources = [
+  "doc.sql.create-iceberg-table-rest",
+]
 anchor = "Syntax / External Iceberg catalog / Iceberg REST in a catalog-linked database"
 kind = "statement"
 grammar = [
@@ -9060,6 +9124,11 @@ status = "catalogued"
 id = "sf.ddl.create-table.create-table"
 family = "ddl"
 source = "doc.sql.create-table"
+also_sources = [
+  "doc.collation",
+  "doc.constraints-create",
+  "doc.virtual-columns",
+]
 anchor = "Syntax"
 kind = "statement"
 grammar = [
@@ -10352,6 +10421,9 @@ status = "catalogued"
 id = "sf.ddl.drop-database"
 family = "ddl"
 source = "doc.sql.drop-database"
+also_sources = [
+  "doc.constraints-drop",
+]
 anchor = "Syntax"
 kind = "statement"
 grammar = [
@@ -10495,6 +10567,9 @@ status = "catalogued"
 id = "sf.ddl.drop-function"
 family = "ddl"
 source = "doc.sql.drop-function"
+also_sources = [
+  "doc.sql.drop-function-spcs",
+]
 anchor = "Syntax"
 kind = "statement"
 grammar = [
@@ -10528,7 +10603,7 @@ grammar = [
 ]
 grammar_sha256 = "610eb6c5c085154f54c82a1f9054afa78b99e5323b4e5b6a196750ea006879cc"
 uses = []
-status = "catalogued"
+status = "absent_from_source"
 
 [[form]]
 id = "sf.ddl.drop-gateway"
@@ -10781,6 +10856,9 @@ status = "catalogued"
 id = "sf.ddl.drop-schema"
 family = "ddl"
 source = "doc.sql.drop-schema"
+also_sources = [
+  "doc.constraints-drop",
+]
 anchor = "Syntax"
 kind = "statement"
 grammar = [
@@ -10898,6 +10976,9 @@ status = "catalogued"
 id = "sf.ddl.drop-table"
 family = "ddl"
 source = "doc.sql.drop-table"
+also_sources = [
+  "doc.constraints-drop",
+]
 anchor = "Syntax"
 kind = "statement"
 grammar = [

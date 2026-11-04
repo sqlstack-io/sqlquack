@@ -54,6 +54,7 @@ STATUS_ABSENT: str = "absent_from_source"
 PAGE_FORMS: str = "forms"
 PAGE_NO_SYNTAX: str = "no_syntax_block"
 PAGE_OUT_OF_SCOPE: str = "out_of_scope"
+PAGE_RESTATED: str = "restated"
 SYNTAX_FENCE: str = "sqlsyntax"
 PLAIN_FENCE: str = "plain"
 DEFAULT_ANCHOR: str = "Syntax"
@@ -74,10 +75,17 @@ DECISION_DEFINITION_VARIANT: str = (
     "definition under its own heading in the syntax section catalogued as a variant"
 )
 DECISION_HAND: str = "catalogued by hand from {basis}"
+DECISION_RESTATED: str = (
+    "every form restates syntax catalogued on another page; listed in its also_sources"
+)
+FOLD_IDENTICAL_REASON: str = (
+    "grammar repeated byte for byte on another page; "
+    "counted once under the command's own page (D80)"
+)
 DECISION_PROSE: str = "syntax heading '{heading}' has no syntax block; catalogued from prose"
 
 HAND_BASES: frozenset[str] = frozenset(
-    {"html_parsed_literal", "table", "prose", "heading", "inline_code"}
+    {"html_parsed_literal", "table", "prose", "heading", "inline_code", "example"}
 )
 
 LEADING_EXTRA: frozenset[str] = frozenset(

@@ -12,14 +12,16 @@ translation-equivalence measure.
 - `sources.toml`: one record per pinned documentation page: id, URL, retrieval time (UTC), sha256
   of the fetched page and of its syntax blocks, family, status and the extraction decisions taken
   on that page. The pages themselves are not tracked.
-- `catalogue/<family>.toml`: `[[form]]` records (id, family, source page, anchor heading, kind,
+- `catalogue/<family>.toml`: `[[form]]` records (id, family, source page, other pages restating
+  it (`also_sources`), anchor heading, kind,
   normalized grammar, grammar sha256, sub-grammars used, status) and the page's `[[definition]]`
   sub-grammars (`name ::= ...`).
 - `hand.toml`: forms catalogued by hand from pages whose syntax is not in a syntax block (data
   types, operator tables, literals, identifiers, variables, and pages whose syntax is only in the
   HTML). Each is bound to the page's hash; the build refuses a hand form whose page has changed.
-- `aliases.toml`: old form ids that were split or merged, with the forms that now carry their
-  grammar. The old id stays catalogued as `absent_from_source` and is never reused.
+- `aliases.toml`: old form ids that were split, merged or folded, with the forms that now carry
+  their grammar. The old id stays catalogued as `absent_from_source` and is never reused. An id
+  removed as a fragment (not a form) has no alias.
 - `reviews/exclusions.toml`: the reviewed reason for every page that catalogues no form
   (`out_of_scope` and `no_syntax_block`), bound to the sha256 of `sources.toml`.
 
@@ -72,7 +74,16 @@ obligations, not forms.
 8. A variant heading with no syntax block (the DCM `DEFINE <object>` variants, some CREATE OR
    ALTER variants) is a `prose` form with an empty grammar. Its grammar is added by hand.
 9. Pages whose syntax is written outside syntax blocks are catalogued from `hand.toml`; the
-   page's `decisions` records the basis (HTML parsed-literal, table, heading, prose or inline code).
+   page's `decisions` records the basis (HTML parsed-literal, table, heading, prose, inline code or
+   examples, the last only for syntax shown by examples alone, such as `<expr>['<key>']`).
+10. Syntax restated on another page counts once (decision D80). Grammar repeated byte for byte on
+   several pages is one form, on the page with the shortest id (the command's own page before its
+   variant pages, `create-iceberg-table` before the per-catalog pages); grammars that differ at all
+   are separate forms. General-reference pages that restate forms catalogued elsewhere
+   (constraints, collation, virtual columns, geospatial, translators, format models, interval
+   formats) are folded by the `[[fold]]` entries in `hand.toml`. Each restating page is listed in
+   the canonical form's `also_sources`; a page whose every form was folded has status `restated`.
+   A folded id stays `absent_from_source` with an alias to the canonical form.
 
 Variant ids come from the words that distinguish the form's required skeleton (the grammar without
 `[ ]` parts and placeholders) from the page's other forms, or from a hand form's label. On a
