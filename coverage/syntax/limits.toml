@@ -2127,3 +2127,1741 @@ kind = "identifier_class"
 target = "<variableN>"
 note = "quoted: a double-quoted identifier with blanks and mixed case"
 reason = "Snowflake rejects a double-quoted name after the colon of an INTO target (d91-query-1: SELECT 1 INTO :\"v1 Q\" ... and :\"SELECT\" give syntax_error, errno 1003), the same construct as <variable1>"
+
+# Expressions: readings, hand-written lexical forms, documented bounds and the D90 shared-form extremes.
+[[reading]]
+form = "sf.expressions.data-types-numeric.numeric-constant"
+grammar_sha256 = "827faaf3a9390d6766f6699d0e87fb66f9778218a333c5aa4c9d60288de53616"
+grammar = []
+reason = "a lexical form: the renderer joins tokens with blanks, so its obligations are hand-written [[limit]] rows"
+
+[[reading]]
+form = "sf.expressions.data-types-text.single-quoted-string-constant"
+grammar_sha256 = "be2d0f951c51970d077f00d886852bdfb4fe045f122f0d93eedb84dc233e9818"
+grammar = []
+reason = "a lexical form: the renderer joins tokens with blanks, so its obligations are hand-written [[limit]] rows"
+
+[[reading]]
+form = "sf.expressions.data-types-text.dollar-quoted-string-constant"
+grammar_sha256 = "59b227d81f25174a91d03f871303e3e810a844a74c1fb7808040332b088c112e"
+grammar = []
+reason = "a lexical form: the renderer joins tokens with blanks, so its obligations are hand-written [[limit]] rows"
+
+[[reading]]
+form = "sf.expressions.identifiers-syntax.unquoted-identifier"
+grammar_sha256 = "9f0d3a15662edec45c11d4ef25274bba38bf609ca6db4aae05e2989f8f2de71e"
+grammar = []
+reason = "a lexical form: the renderer joins tokens with blanks, so its obligations are hand-written [[limit]] rows"
+
+[[reading]]
+form = "sf.expressions.identifiers-syntax.double-quoted-identifier"
+grammar_sha256 = "77f9b6b4c13ecf664fc8fb7d1d2708be987909e29380feb5a6d75a322f2d9a52"
+grammar = []
+reason = "a lexical form: the renderer joins tokens with blanks, so its obligations are hand-written [[limit]] rows"
+
+[[reading]]
+form = "sf.expressions.data-types-datetime.interval.interval-constants"
+grammar_sha256 = "65b768953543a6bce274172f64a92894bf75b88e328a164c5ab84e2948397856"
+grammar = []
+reason = "a lexical form: the renderer joins tokens with blanks, so its obligations are hand-written [[limit]] rows"
+
+[[reading]]
+form = "sf.expressions.session-variables"
+grammar_sha256 = "ff9cdbb45edba3fb66e7cf8fc621a511bc8349a4d5cb80cb4cc5ff86c0c6e516"
+grammar = []
+reason = "a lexical form: the renderer joins tokens with blanks, so its obligations are hand-written [[limit]] rows"
+
+[[reading]]
+form = "sf.expressions.schema-variables"
+grammar_sha256 = "359603d28df3e6cfe1533761e8c00bac964000fa2ea349fd836a848813252137"
+grammar = []
+reason = "a lexical form: the renderer joins tokens with blanks, so its obligations are hand-written [[limit]] rows"
+
+[[reading]]
+form = "sf.expressions.operators-expansion"
+grammar_sha256 = "956b64a51976326ec57901c4a338e458fe4ac9cdf525d76ea148ee5bee8e618b"
+grammar = []
+reason = "a lexical form: the renderer joins tokens with blanks, so its obligations are hand-written [[limit]] rows"
+
+[[reading]]
+form = "sf.expressions.data-types-semistructured.subscript-dot"
+grammar_sha256 = "6ca3c320841de56d24ff8131c1ec2406cba35f8adc0a114ceff706c814d3ed48"
+grammar = []
+reason = "a lexical form: the renderer joins tokens with blanks, so its obligations are hand-written [[limit]] rows"
+
+[[reading]]
+form = "sf.expressions.data-types-semistructured.colon-subscript-dot"
+grammar_sha256 = "290e132f8d4316e367b8cf72c279b785d84ae67a8de3e6a05ec5d3c2a535c1ab"
+grammar = []
+reason = "a lexical form: the renderer joins tokens with blanks, so its obligations are hand-written [[limit]] rows"
+
+[[reading]]
+form = "sf.expressions.name-resolution"
+grammar_sha256 = "57c57e9796971b0c5c7aff4a78e9d77f916c7729330ce26cbb26cd946b9d1237"
+grammar = []
+reason = "a lexical form: the renderer joins tokens with blanks, so its obligations are hand-written [[limit]] rows"
+
+[[reading]]
+form = "sf.expressions.data-types-datetime.interval-yearmonthqualifier-daytimequalifier"
+grammar_sha256 = "62bc528d196f8ccc215f356d1d7350b7451c903958a92be7bc5a0eced047cdc6"
+grammar = ["INTERVAL { YEAR [ ( <precision> ) ] [ TO MONTH ] | MONTH [ ( <precision> ) ] | DAY [ ( <precision> ) ] [ TO { HOUR | MINUTE | SECOND [ ( <fractional_seconds_precision> ) ] } ] | HOUR [ ( <precision> ) ] [ TO { MINUTE | SECOND [ ( <fractional_seconds_precision> ) ] } ] | MINUTE [ ( <precision> ) ] [ TO SECOND [ ( <fractional_seconds_precision> ) ] ] | SECOND [ ( <precision> ) [ , ( <fractional_seconds_precision> ) ] ] }"]
+reason = "the page's yearMonthQualifier ::= and dayTimeQualifier ::= definitions inlined"
+
+[[reading]]
+form = "sf.expressions.data-types-datetime.interval"
+grammar_sha256 = "8cfad4075ff08ef60fb5dc7dcee86c996cf23718fcd73836bfb9bba680314333"
+grammar = ["INTERVAL '<string>' { YEAR [ ( <precision> ) ] [ TO MONTH ] | MONTH [ ( <precision> ) ] | DAY [ ( <precision> ) ] [ TO { HOUR | MINUTE | SECOND [ ( <fractional_seconds_precision> ) ] } ] | HOUR [ ( <precision> ) ] [ TO { MINUTE | SECOND [ ( <fractional_seconds_precision> ) ] } ] | MINUTE [ ( <precision> ) ] [ TO SECOND [ ( <fractional_seconds_precision> ) ] ] | SECOND [ ( <precision> ) [ , ( <fractional_seconds_precision> ) ] ] }"]
+reason = "the page's yearMonthQualifier ::= and dayTimeQualifier ::= definitions inlined; the optional [ <sign> ] inside the string is carried by hand limits"
+
+[[reading]]
+form = "sf.expressions.operators-subquery.comparisonoperator-all-any"
+grammar_sha256 = "f62cc9b950d8bb3d5eef49bb5d534c96cab027b954f06bfc25d0c6f28e400693"
+grammar = ["<expr> { = | != | > | >= | < | <= } { ALL | ANY } ( <query> )"]
+reason = "comparisonOperator ::= { = | != | > | >= | < | <= } inlined from the page"
+
+[[reading]]
+form = "sf.expressions.identifier-literal"
+grammar_sha256 = "3da81abcae48c4b3348441ad78af722ccdf4aeeea00e242bff3c5a81c2c0f4ab"
+grammar = ["IDENTIFIER( { <string_literal> | <session_variable> | <bind_variable> | <snowflake_scripting_variable> } )"]
+reason = "the four documented argument kinds are placeholders"
+
+[[reading]]
+form = "sf.expressions.snowflake-db-classes"
+grammar_sha256 = "e8bd593443a946b907f93767048af16db5b2fe01715d03502c8e5a140cfff945"
+grammar = ["SELECT ... FROM TABLE( <method_name>( <arg> [ , <arg> ... ] ) );"]
+reason = "[ , ... <arg> ] repeats the argument"
+
+[[reading]]
+form = "sf.expressions.operators-flow"
+grammar_sha256 = "1133d2547d99028416bf7eff42437a9a0401dd2127b78a45b0edf974d53d832c"
+grammar = ["<sql_statement_1> ->> <sql_statement_2> [ ->> <sql_statement_n> ]"]
+reason = "one further ->> step stands for the repeated chain"
+
+[[reading]]
+form = "sf.expressions.data-types-vector"
+grammar_sha256 = "9795cb70f55e23862692a8b71d77739269111d09f3f087b4ebd91f6c897b0a32"
+grammar = ["VECTOR( { INT | FLOAT } , <dimension> )"]
+reason = "the page lists INT and FLOAT as the only element types"
+
+[[limit]]
+form = "sf.expressions.data-types-numeric.numeric-constant"
+kind = "positive"
+note = "digits"
+anchor = "doc.data-types-numeric / Numeric constants"
+sql = "SELECT 15 ;"
+context = "raw"
+
+[[limit]]
+form = "sf.expressions.data-types-numeric.numeric-constant"
+kind = "alternative"
+target = "[+-][digits][.digits][e[+-]digits]"
+note = "a + sign and a fraction"
+anchor = "doc.data-types-numeric / Numeric constants"
+sql = "SELECT +1.34 ;"
+context = "raw"
+
+[[limit]]
+form = "sf.expressions.data-types-numeric.numeric-constant"
+kind = "alternative"
+target = "[+-][digits][.digits][e[+-]digits]"
+note = "a - sign"
+anchor = "doc.data-types-numeric / Numeric constants"
+sql = "SELECT -1 ;"
+context = "raw"
+
+[[limit]]
+form = "sf.expressions.data-types-numeric.numeric-constant"
+kind = "alternative"
+target = "[+-][digits][.digits][e[+-]digits]"
+note = "a fraction"
+anchor = "doc.data-types-numeric / Numeric constants"
+sql = "SELECT 0.2 ;"
+context = "raw"
+
+[[limit]]
+form = "sf.expressions.data-types-numeric.numeric-constant"
+kind = "alternative"
+target = "[+-][digits][.digits][e[+-]digits]"
+note = "a fraction without leading digits"
+anchor = "doc.data-types-numeric / Numeric constants"
+sql = "SELECT .5 ;"
+context = "raw"
+
+[[limit]]
+form = "sf.expressions.data-types-numeric.numeric-constant"
+kind = "alternative"
+target = "[+-][digits][.digits][e[+-]digits]"
+note = "a decimal point without fraction digits"
+anchor = "doc.data-types-numeric / Numeric constants"
+sql = "SELECT 1. ;"
+context = "raw"
+
+[[limit]]
+form = "sf.expressions.data-types-numeric.numeric-constant"
+kind = "alternative"
+target = "[+-][digits][.digits][e[+-]digits]"
+note = "an exponent with a - sign"
+anchor = "doc.data-types-numeric / Numeric constants"
+sql = "SELECT 15e-03 ;"
+context = "raw"
+
+[[limit]]
+form = "sf.expressions.data-types-numeric.numeric-constant"
+kind = "alternative"
+target = "[+-][digits][.digits][e[+-]digits]"
+note = "an upper-case E exponent"
+anchor = "doc.data-types-numeric / Numeric constants"
+sql = "SELECT 1.234E2 ;"
+context = "raw"
+
+[[limit]]
+form = "sf.expressions.data-types-numeric.numeric-constant"
+kind = "alternative"
+target = "[+-][digits][.digits][e[+-]digits]"
+note = "an exponent with a + sign"
+anchor = "doc.data-types-numeric / Numeric constants"
+sql = "SELECT 1.234E+2 ;"
+context = "raw"
+
+[[limit]]
+form = "sf.expressions.data-types-numeric.numeric-constant"
+kind = "alternative"
+target = "[+-][digits][.digits][e[+-]digits]"
+note = "a lower-case e exponent"
+anchor = "doc.data-types-numeric / Numeric constants"
+sql = "SELECT 1e3 ;"
+context = "raw"
+
+[[limit]]
+form = "sf.expressions.data-types-numeric.numeric-constant"
+kind = "negative_neighbour"
+note = "an exponent marker and sign with no digit; the page requires a digit after the marker"
+anchor = "doc.data-types-numeric / Numeric constants"
+sql = "SELECT 1e+ ;"
+context = "raw"
+
+[[limit]]
+form = "sf.expressions.data-types-numeric.numeric-constant"
+kind = "negative_neighbour"
+note = "a second decimal point"
+anchor = "doc.data-types-numeric / Numeric constants"
+sql = "SELECT 1.2.3 ;"
+context = "raw"
+
+[[limit]]
+form = "sf.expressions.data-types-numeric.numeric-constant"
+kind = "extreme"
+note = "a 38-digit integer constant; no documented bound"
+anchor = "doc.data-types-numeric / Numeric constants"
+sql = "SELECT 99999999999999999999999999999999999999 ;"
+context = "raw"
+
+[[limit]]
+form = "sf.expressions.data-types-numeric.numeric-constant"
+kind = "extreme"
+note = "a 39-digit integer constant; no documented bound"
+anchor = "doc.data-types-numeric / Numeric constants"
+sql = "SELECT 999999999999999999999999999999999999999 ;"
+context = "raw"
+
+[[limit]]
+form = "sf.expressions.data-types-numeric.numeric-constant"
+kind = "extreme"
+note = "a 100-digit integer constant; no documented bound"
+anchor = "doc.data-types-numeric / Numeric constants"
+sql = "SELECT 9999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999 ;"
+context = "raw"
+
+[[limit]]
+form = "sf.expressions.data-types-numeric.numeric-constant"
+kind = "extreme"
+note = "a negative 38-digit integer constant; no documented bound"
+anchor = "doc.data-types-numeric / Numeric constants"
+sql = "SELECT -99999999999999999999999999999999999999 ;"
+context = "raw"
+
+[[limit]]
+form = "sf.expressions.data-types-numeric.numeric-constant"
+kind = "extreme"
+note = "a constant whose 38th decimal place is the first nonzero digit; no documented bound"
+anchor = "doc.data-types-numeric / Numeric constants"
+sql = "SELECT 0.00000000000000000000000000000000000001 ;"
+context = "raw"
+
+[[limit]]
+form = "sf.expressions.data-types-numeric.numeric-constant"
+kind = "extreme"
+note = "1e308, near the DOUBLE maximum; no documented bound"
+anchor = "doc.data-types-numeric / Numeric constants"
+sql = "SELECT 1e308 ;"
+context = "raw"
+
+[[limit]]
+form = "sf.expressions.data-types-numeric.numeric-constant"
+kind = "extreme"
+note = "1e309, past the DOUBLE maximum; no documented bound"
+anchor = "doc.data-types-numeric / Numeric constants"
+sql = "SELECT 1e309 ;"
+context = "raw"
+
+[[limit]]
+form = "sf.expressions.data-types-numeric.numeric-constant"
+kind = "extreme"
+note = "1e-324, past the DOUBLE minimum; no documented bound"
+anchor = "doc.data-types-numeric / Numeric constants"
+sql = "SELECT 1e-324 ;"
+context = "raw"
+
+[[limit]]
+form = "sf.expressions.data-types-numeric.numeric-constant"
+kind = "extreme"
+note = "1e16384, the DECFLOAT exponent maximum; no documented bound"
+anchor = "doc.data-types-numeric / Numeric constants"
+sql = "SELECT 1e16384 ;"
+context = "raw"
+
+[[limit]]
+form = "sf.expressions.data-types-numeric.numeric-constant"
+kind = "extreme"
+note = "an exponent of 99999; no documented bound"
+anchor = "doc.data-types-numeric / Numeric constants"
+sql = "SELECT 1e99999 ;"
+context = "raw"
+
+[[limit]]
+form = "sf.expressions.data-types-text.single-quoted-string-constant"
+kind = "positive"
+note = "a single-quoted string"
+anchor = "doc.data-types-text / String constants / Single-quoted string constants"
+sql = "SELECT 'This is a string' ;"
+context = "raw"
+
+[[limit]]
+form = "sf.expressions.data-types-text.single-quoted-string-constant"
+kind = "alternative"
+target = "'<characters>'"
+note = "two adjacent single quotes inside the string"
+anchor = "doc.data-types-text / String constants / Single-quoted string constants"
+sql = "SELECT 'Today''s sales projections', '-''''-' ;"
+context = "raw"
+
+[[limit]]
+form = "sf.expressions.data-types-text.single-quoted-string-constant"
+kind = "alternative"
+target = "'<characters>'"
+note = "escape sequence: the \\' escape"
+anchor = "doc.data-types-text / String constants / Single-quoted string constants"
+sql = "SELECT '-\\'-' ;"
+context = "raw"
+
+[[limit]]
+form = "sf.expressions.data-types-text.single-quoted-string-constant"
+kind = "alternative"
+target = "'<characters>'"
+note = "escape sequence: the \\\" escape"
+anchor = "doc.data-types-text / String constants / Single-quoted string constants"
+sql = "SELECT '-\\\"-' ;"
+context = "raw"
+
+[[limit]]
+form = "sf.expressions.data-types-text.single-quoted-string-constant"
+kind = "alternative"
+target = "'<characters>'"
+note = "escape sequence: the \\\\ escape"
+anchor = "doc.data-types-text / String constants / Single-quoted string constants"
+sql = "SELECT '-\\\\-' ;"
+context = "raw"
+
+[[limit]]
+form = "sf.expressions.data-types-text.single-quoted-string-constant"
+kind = "alternative"
+target = "'<characters>'"
+note = "escape sequence: the \\b escape"
+anchor = "doc.data-types-text / String constants / Single-quoted string constants"
+sql = "SELECT '-\\b-' ;"
+context = "raw"
+
+[[limit]]
+form = "sf.expressions.data-types-text.single-quoted-string-constant"
+kind = "alternative"
+target = "'<characters>'"
+note = "escape sequence: the \\f escape"
+anchor = "doc.data-types-text / String constants / Single-quoted string constants"
+sql = "SELECT '-\\f-' ;"
+context = "raw"
+
+[[limit]]
+form = "sf.expressions.data-types-text.single-quoted-string-constant"
+kind = "alternative"
+target = "'<characters>'"
+note = "escape sequence: the \\n escape"
+anchor = "doc.data-types-text / String constants / Single-quoted string constants"
+sql = "SELECT '-\\n-' ;"
+context = "raw"
+
+[[limit]]
+form = "sf.expressions.data-types-text.single-quoted-string-constant"
+kind = "alternative"
+target = "'<characters>'"
+note = "escape sequence: the \\r escape"
+anchor = "doc.data-types-text / String constants / Single-quoted string constants"
+sql = "SELECT '-\\r-' ;"
+context = "raw"
+
+[[limit]]
+form = "sf.expressions.data-types-text.single-quoted-string-constant"
+kind = "alternative"
+target = "'<characters>'"
+note = "escape sequence: the \\t escape"
+anchor = "doc.data-types-text / String constants / Single-quoted string constants"
+sql = "SELECT '-\\t-' ;"
+context = "raw"
+
+[[limit]]
+form = "sf.expressions.data-types-text.single-quoted-string-constant"
+kind = "alternative"
+target = "'<characters>'"
+note = "escape sequence: the \\0 escape"
+anchor = "doc.data-types-text / String constants / Single-quoted string constants"
+sql = "SELECT '-\\0-' ;"
+context = "raw"
+
+[[limit]]
+form = "sf.expressions.data-types-text.single-quoted-string-constant"
+kind = "alternative"
+target = "'<characters>'"
+note = "escape sequence: an octal escape \\ooo"
+anchor = "doc.data-types-text / String constants / Single-quoted string constants"
+sql = "SELECT '-\\041-' ;"
+context = "raw"
+
+[[limit]]
+form = "sf.expressions.data-types-text.single-quoted-string-constant"
+kind = "alternative"
+target = "'<characters>'"
+note = "escape sequence: a hexadecimal escape \\xhh"
+anchor = "doc.data-types-text / String constants / Single-quoted string constants"
+sql = "SELECT '-\\x21-' ;"
+context = "raw"
+
+[[limit]]
+form = "sf.expressions.data-types-text.single-quoted-string-constant"
+kind = "alternative"
+target = "'<characters>'"
+note = "escape sequence: a Unicode escape \\uhhhh"
+anchor = "doc.data-types-text / String constants / Single-quoted string constants"
+sql = "SELECT '-\\u26c4-' ;"
+context = "raw"
+
+[[limit]]
+form = "sf.expressions.data-types-text.single-quoted-string-constant"
+kind = "alternative"
+target = "'<characters>'"
+note = "escape sequence: a backslash before a character that is not an escape"
+anchor = "doc.data-types-text / String constants / Single-quoted string constants"
+sql = "SELECT '-\\z-' ;"
+context = "raw"
+
+[[limit]]
+form = "sf.expressions.data-types-text.single-quoted-string-constant"
+kind = "negative_neighbour"
+note = "a Unicode escape with three hex digits; the page requires exactly four"
+anchor = "doc.data-types-text / String constants / Single-quoted string constants"
+sql = "SELECT '\\u26c' ;"
+context = "raw"
+
+[[limit]]
+form = "sf.expressions.data-types-text.single-quoted-string-constant"
+kind = "negative_neighbour"
+note = "an unterminated string"
+anchor = "doc.data-types-text / String constants / Single-quoted string constants"
+sql = "SELECT 'm ;"
+context = "raw"
+
+[[limit]]
+form = "sf.expressions.data-types-text.single-quoted-string-constant"
+kind = "extreme"
+note = "an empty string; no documented bound"
+anchor = "doc.data-types-text / String constants / Single-quoted string constants"
+sql = "SELECT '' ;"
+context = "raw"
+
+[[limit]]
+form = "sf.expressions.data-types-text.single-quoted-string-constant"
+kind = "extreme"
+note = "a string of non-ASCII characters; no documented bound"
+anchor = "doc.data-types-text / String constants / Single-quoted string constants"
+sql = "SELECT 'идентификатор ⛄' ;"
+context = "raw"
+
+[[limit]]
+form = "sf.expressions.data-types-text.single-quoted-string-constant"
+kind = "extreme"
+note = "a string holding a 4-byte UTF-8 character; no documented bound"
+anchor = "doc.data-types-text / String constants / Single-quoted string constants"
+sql = "SELECT '😀' ;"
+context = "raw"
+
+[[limit]]
+form = "sf.expressions.data-types-text.single-quoted-string-constant"
+kind = "extreme"
+note = "a string holding a raw newline; no documented bound"
+anchor = "doc.data-types-text / String constants / Single-quoted string constants"
+sql = "SELECT 'a\nb' ;"
+context = "raw"
+
+[[limit]]
+form = "sf.expressions.data-types-text.single-quoted-string-constant"
+kind = "extreme"
+note = "a string of about 4,400 characters; no documented bound"
+anchor = "doc.data-types-text / String constants / Single-quoted string constants"
+outer_open = "SELECT '"
+open = "aaaaaaaaaa"
+core = "a"
+outer_close = "' ;"
+size = 400
+context = "raw"
+
+[[limit]]
+form = "sf.expressions.data-types-text.single-quoted-string-constant"
+kind = "extreme"
+note = "a string of about 44,000 characters; no documented bound"
+anchor = "doc.data-types-text / String constants / Single-quoted string constants"
+outer_open = "SELECT '"
+open = "aaaaaaaaaa"
+core = "a"
+outer_close = "' ;"
+size = 4000
+context = "raw"
+
+[[limit]]
+form = "sf.expressions.data-types-text.single-quoted-string-constant"
+kind = "extreme"
+note = "1,000 escape sequences in one string; no documented bound"
+anchor = "doc.data-types-text / String constants / Single-quoted string constants"
+outer_open = "SELECT '"
+open = "\\n"
+core = "\\n"
+outer_close = "' ;"
+size = 1000
+context = "raw"
+
+[[limit]]
+form = "sf.expressions.data-types-text.dollar-quoted-string-constant"
+kind = "positive"
+note = "a dollar-quoted string"
+anchor = "doc.data-types-text / String constants / Dollar-quoted string constants"
+sql = "SELECT $$string with a ' character$$ ;"
+context = "raw"
+
+[[limit]]
+form = "sf.expressions.data-types-text.dollar-quoted-string-constant"
+kind = "alternative"
+target = "$$<characters>$$"
+note = "quotes, backslashes and a newline taken literally"
+anchor = "doc.data-types-text / String constants / Dollar-quoted string constants"
+sql = "SELECT $$it's \\d\nok$$ ;"
+context = "raw"
+
+[[limit]]
+form = "sf.expressions.data-types-text.dollar-quoted-string-constant"
+kind = "negative_neighbour"
+note = "an unterminated dollar-quoted string"
+anchor = "doc.data-types-text / String constants / Dollar-quoted string constants"
+sql = "SELECT $$m ;"
+context = "raw"
+
+[[limit]]
+form = "sf.expressions.data-types-text.dollar-quoted-string-constant"
+kind = "extreme"
+note = "an empty dollar-quoted string; no documented bound"
+anchor = "doc.data-types-text / String constants / Dollar-quoted string constants"
+sql = "SELECT $$$$ ;"
+context = "raw"
+
+[[limit]]
+form = "sf.expressions.data-types-text.dollar-quoted-string-constant"
+kind = "extreme"
+note = "a dollar-quoted string of about 44,000 characters; no documented bound"
+anchor = "doc.data-types-text / String constants / Dollar-quoted string constants"
+outer_open = "SELECT $$"
+open = "aaaaaaaaaa"
+core = "a"
+outer_close = "$$ ;"
+size = 4000
+context = "raw"
+
+[[limit]]
+form = "sf.expressions.identifiers-syntax.unquoted-identifier"
+kind = "alternative"
+target = "<letter_or_underscore>[<letter_digit_underscore_or_dollar>...]"
+note = "an unquoted identifier with letters, as a column alias"
+anchor = "doc.identifiers-syntax / Unquoted identifiers"
+sql = "SELECT 1 AS myidentifier ;"
+context = "raw"
+
+[[limit]]
+form = "sf.expressions.identifiers-syntax.unquoted-identifier"
+kind = "alternative"
+target = "<letter_or_underscore>[<letter_digit_underscore_or_dollar>...]"
+note = "an unquoted identifier with mixed case and a digit, as a column alias"
+anchor = "doc.identifiers-syntax / Unquoted identifiers"
+sql = "SELECT 1 AS MyIdentifier1 ;"
+context = "raw"
+
+[[limit]]
+form = "sf.expressions.identifiers-syntax.unquoted-identifier"
+kind = "alternative"
+target = "<letter_or_underscore>[<letter_digit_underscore_or_dollar>...]"
+note = "an unquoted identifier with a dollar sign, as a column alias"
+anchor = "doc.identifiers-syntax / Unquoted identifiers"
+sql = "SELECT 1 AS My$identifier ;"
+context = "raw"
+
+[[limit]]
+form = "sf.expressions.identifiers-syntax.unquoted-identifier"
+kind = "alternative"
+target = "<letter_or_underscore>[<letter_digit_underscore_or_dollar>...]"
+note = "an unquoted identifier with a leading underscore, as a column alias"
+anchor = "doc.identifiers-syntax / Unquoted identifiers"
+sql = "SELECT 1 AS _my_identifier ;"
+context = "raw"
+
+[[limit]]
+form = "sf.expressions.identifiers-syntax.unquoted-identifier"
+kind = "negative_neighbour"
+note = "an unquoted identifier starting with a digit"
+anchor = "doc.identifiers-syntax / Unquoted identifiers"
+sql = "SELECT 1 AS 1a ;"
+context = "raw"
+
+[[limit]]
+form = "sf.expressions.identifiers-syntax.unquoted-identifier"
+kind = "negative_neighbour"
+note = "an unquoted identifier starting with a dollar sign"
+anchor = "doc.identifiers-syntax / Unquoted identifiers"
+sql = "SELECT 1 AS $a ;"
+context = "raw"
+
+[[limit]]
+form = "sf.expressions.identifiers-syntax.unquoted-identifier"
+kind = "negative_neighbour"
+note = "an unquoted identifier containing a blank"
+anchor = "doc.identifiers-syntax / Unquoted identifiers"
+sql = "SELECT 1 AS a b c ;"
+context = "raw"
+
+[[limit]]
+form = "sf.expressions.identifiers-syntax.unquoted-identifier"
+kind = "boundary_below"
+note = "a 254-character unquoted identifier against the documented maximum of 255"
+anchor = "doc.identifiers-syntax / Unquoted identifiers"
+sql = "SELECT 1 AS abbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb ;"
+context = "raw"
+expect = "accept"
+
+[[limit]]
+form = "sf.expressions.identifiers-syntax.unquoted-identifier"
+kind = "boundary_at"
+note = "a 255-character unquoted identifier against the documented maximum of 255"
+anchor = "doc.identifiers-syntax / Unquoted identifiers"
+sql = "SELECT 1 AS abbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb ;"
+context = "raw"
+expect = "accept"
+
+[[limit]]
+form = "sf.expressions.identifiers-syntax.unquoted-identifier"
+kind = "boundary_above"
+note = "a 256-character unquoted identifier against the documented maximum of 255"
+anchor = "doc.identifiers-syntax / Unquoted identifiers"
+sql = "SELECT 1 AS abbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb ;"
+context = "raw"
+expect = "reject"
+
+[[limit]]
+form = "sf.expressions.identifiers-syntax.double-quoted-identifier"
+kind = "alternative"
+target = "\"<any_characters_with_double_quotes_doubled>\""
+note = "a double-quoted identifier with mixed case, as a column alias"
+anchor = "doc.identifiers-syntax / Double-quoted identifiers"
+sql = "SELECT 1 AS \"MyIdentifier\" ;"
+context = "raw"
+
+[[limit]]
+form = "sf.expressions.identifiers-syntax.double-quoted-identifier"
+kind = "alternative"
+target = "\"<any_characters_with_double_quotes_doubled>\""
+note = "a double-quoted identifier with a period, as a column alias"
+anchor = "doc.identifiers-syntax / Double-quoted identifiers"
+sql = "SELECT 1 AS \"my.identifier\" ;"
+context = "raw"
+
+[[limit]]
+form = "sf.expressions.identifiers-syntax.double-quoted-identifier"
+kind = "alternative"
+target = "\"<any_characters_with_double_quotes_doubled>\""
+note = "a double-quoted identifier with single quotes, as a column alias"
+anchor = "doc.identifiers-syntax / Double-quoted identifiers"
+sql = "SELECT 1 AS \"My 'Identifier'\" ;"
+context = "raw"
+
+[[limit]]
+form = "sf.expressions.identifiers-syntax.double-quoted-identifier"
+kind = "alternative"
+target = "\"<any_characters_with_double_quotes_doubled>\""
+note = "a double-quoted identifier with a leading digit, as a column alias"
+anchor = "doc.identifiers-syntax / Double-quoted identifiers"
+sql = "SELECT 1 AS \"3rd_identifier\" ;"
+context = "raw"
+
+[[limit]]
+form = "sf.expressions.identifiers-syntax.double-quoted-identifier"
+kind = "alternative"
+target = "\"<any_characters_with_double_quotes_doubled>\""
+note = "a double-quoted identifier with a leading dollar sign, as a column alias"
+anchor = "doc.identifiers-syntax / Double-quoted identifiers"
+sql = "SELECT 1 AS \"$Identifier\" ;"
+context = "raw"
+
+[[limit]]
+form = "sf.expressions.identifiers-syntax.double-quoted-identifier"
+kind = "alternative"
+target = "\"<any_characters_with_double_quotes_doubled>\""
+note = "a double-quoted identifier with non-ASCII characters, as a column alias"
+anchor = "doc.identifiers-syntax / Double-quoted identifiers"
+sql = "SELECT 1 AS \"идентификатор\" ;"
+context = "raw"
+
+[[limit]]
+form = "sf.expressions.identifiers-syntax.double-quoted-identifier"
+kind = "alternative"
+target = "\"<any_characters_with_double_quotes_doubled>\""
+note = "a double-quoted identifier with doubled double quotes, as a column alias"
+anchor = "doc.identifiers-syntax / Double-quoted identifiers"
+sql = "SELECT 1 AS \"quote\"\"andunquote\"\"\" ;"
+context = "raw"
+
+[[limit]]
+form = "sf.expressions.identifiers-syntax.double-quoted-identifier"
+kind = "negative_neighbour"
+note = "an unterminated double-quoted identifier"
+anchor = "doc.identifiers-syntax / Double-quoted identifiers"
+sql = "SELECT 1 AS \"a ;"
+context = "raw"
+
+[[limit]]
+form = "sf.expressions.identifiers-syntax.double-quoted-identifier"
+kind = "boundary_below"
+note = "a 254-character double-quoted identifier, blanks included, against the documented maximum of 255"
+anchor = "doc.identifiers-syntax / Double-quoted identifiers"
+sql = "SELECT 1 AS \"a bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\" ;"
+context = "raw"
+expect = "accept"
+
+[[limit]]
+form = "sf.expressions.identifiers-syntax.double-quoted-identifier"
+kind = "boundary_at"
+note = "a 255-character double-quoted identifier, blanks included, against the documented maximum of 255"
+anchor = "doc.identifiers-syntax / Double-quoted identifiers"
+sql = "SELECT 1 AS \"a bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\" ;"
+context = "raw"
+expect = "accept"
+
+[[limit]]
+form = "sf.expressions.identifiers-syntax.double-quoted-identifier"
+kind = "boundary_above"
+note = "a 256-character double-quoted identifier, blanks included, against the documented maximum of 255"
+anchor = "doc.identifiers-syntax / Double-quoted identifiers"
+sql = "SELECT 1 AS \"a bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\" ;"
+context = "raw"
+expect = "reject"
+
+[[limit]]
+form = "sf.expressions.identifiers-syntax.double-quoted-identifier"
+kind = "extreme"
+note = "an empty double-quoted identifier; no documented bound"
+anchor = "doc.identifiers-syntax / Double-quoted identifiers"
+sql = "SELECT 1 AS \"\" ;"
+context = "raw"
+
+[[limit]]
+form = "sf.expressions.identifiers-syntax.double-quoted-identifier"
+kind = "extreme"
+note = "a double-quoted identifier holding a 4-byte UTF-8 character; no documented bound"
+anchor = "doc.identifiers-syntax / Double-quoted identifiers"
+sql = "SELECT 1 AS \"😀\" ;"
+context = "raw"
+
+[[limit]]
+form = "sf.expressions.data-types-datetime.interval.interval-constants"
+kind = "positive"
+note = "+ INTERVAL with one integer and date-time part"
+anchor = "doc.data-types-datetime / Interval constants"
+sql = "SELECT CURRENT_DATE + INTERVAL '1 day' ;"
+context = "raw"
+
+[[limit]]
+form = "sf.expressions.data-types-datetime.interval.interval-constants"
+kind = "alternative"
+target = "{ + | - }"
+note = "- INTERVAL"
+anchor = "doc.data-types-datetime / Interval constants"
+sql = "SELECT CURRENT_DATE - INTERVAL '1 day' ;"
+context = "raw"
+
+[[limit]]
+form = "sf.expressions.data-types-datetime.interval.interval-constants"
+kind = "option_absent"
+target = "[ <date_time_part> ]"
+note = "an integer without a date-time part"
+anchor = "doc.data-types-datetime / Interval constants"
+sql = "SELECT CURRENT_DATE + INTERVAL '2' ;"
+context = "raw"
+
+[[limit]]
+form = "sf.expressions.data-types-datetime.interval.interval-constants"
+kind = "option_present"
+target = "[ , <integer> [ <date_time_part> ] ... ]"
+note = "a list of integer and date-time part pairs"
+anchor = "doc.data-types-datetime / Interval constants"
+sql = "SELECT CURRENT_TIMESTAMP + INTERVAL '1 year, 3 quarters, 4 months, 5 weeks, 6 days, 7 minutes, 8 seconds' ;"
+context = "raw"
+
+[[limit]]
+form = "sf.expressions.data-types-datetime.interval.interval-constants"
+kind = "negative_neighbour"
+note = "INTERVAL without its string"
+anchor = "doc.data-types-datetime / Interval constants"
+sql = "SELECT CURRENT_DATE + INTERVAL ;"
+context = "raw"
+
+[[limit]]
+form = "sf.expressions.data-types-datetime.interval.interval-constants"
+kind = "extreme"
+note = "an interval constant of 1,000 integer and date-time part pairs; no documented bound"
+anchor = "doc.data-types-datetime / Interval constants"
+outer_open = "SELECT CURRENT_TIMESTAMP + INTERVAL '"
+open = "1 second,"
+core = "1 second"
+outer_close = "' ;"
+size = 1000
+context = "raw"
+
+[[limit]]
+form = "sf.expressions.data-types-datetime.interval"
+kind = "option_present"
+target = "[ <sign> ]"
+note = "a + sign inside the interval literal string"
+anchor = "doc.data-types-datetime / Data types / Interval data types / Representing interval values / Interval literals"
+sql = "SELECT INTERVAL '+1-2' YEAR TO MONTH ;"
+context = "raw"
+
+[[limit]]
+form = "sf.expressions.data-types-datetime.interval"
+kind = "option_present"
+target = "[ <sign> ]"
+note = "a - sign inside the interval literal string"
+anchor = "doc.data-types-datetime / Data types / Interval data types / Representing interval values / Interval literals"
+sql = "SELECT INTERVAL '-1-2' YEAR TO MONTH ;"
+context = "raw"
+
+[[limit]]
+form = "sf.expressions.data-types-datetime.interval-yearmonthqualifier-daytimequalifier"
+kind = "boundary_below"
+target = "<precision>"
+note = "precision 0, below the documented range 1 to 9"
+anchor = "doc.data-types-datetime / Data types / Interval data types / Syntax of interval data types"
+sql = "SELECT CAST ( NULL AS INTERVAL YEAR ( 0 ) ) ;"
+context = "raw"
+expect = "reject"
+
+[[limit]]
+form = "sf.expressions.data-types-datetime.interval-yearmonthqualifier-daytimequalifier"
+kind = "boundary_at"
+target = "<precision>"
+note = "precision 1, the documented lower bound"
+anchor = "doc.data-types-datetime / Data types / Interval data types / Syntax of interval data types"
+sql = "SELECT CAST ( NULL AS INTERVAL YEAR ( 1 ) ) ;"
+context = "raw"
+expect = "accept"
+
+[[limit]]
+form = "sf.expressions.data-types-datetime.interval-yearmonthqualifier-daytimequalifier"
+kind = "boundary_at"
+target = "<precision>"
+note = "precision 9, the documented upper bound"
+anchor = "doc.data-types-datetime / Data types / Interval data types / Syntax of interval data types"
+sql = "SELECT CAST ( NULL AS INTERVAL YEAR ( 9 ) ) ;"
+context = "raw"
+expect = "accept"
+
+[[limit]]
+form = "sf.expressions.data-types-datetime.interval-yearmonthqualifier-daytimequalifier"
+kind = "boundary_above"
+target = "<precision>"
+note = "precision 10, above the documented range"
+anchor = "doc.data-types-datetime / Data types / Interval data types / Syntax of interval data types"
+sql = "SELECT CAST ( NULL AS INTERVAL YEAR ( 10 ) ) ;"
+context = "raw"
+expect = "reject"
+
+[[limit]]
+form = "sf.expressions.data-types-datetime.interval-yearmonthqualifier-daytimequalifier"
+kind = "boundary_at"
+target = "<fractional_seconds_precision>"
+note = "fractional seconds precision 0, the documented lower bound"
+anchor = "doc.data-types-datetime / Data types / Interval data types / Syntax of interval data types"
+sql = "SELECT CAST ( NULL AS INTERVAL DAY TO SECOND ( 0 ) ) ;"
+context = "raw"
+expect = "accept"
+
+[[limit]]
+form = "sf.expressions.data-types-datetime.interval-yearmonthqualifier-daytimequalifier"
+kind = "boundary_at"
+target = "<fractional_seconds_precision>"
+note = "fractional seconds precision 9, the documented upper bound"
+anchor = "doc.data-types-datetime / Data types / Interval data types / Syntax of interval data types"
+sql = "SELECT CAST ( NULL AS INTERVAL DAY TO SECOND ( 9 ) ) ;"
+context = "raw"
+expect = "accept"
+
+[[limit]]
+form = "sf.expressions.data-types-datetime.interval-yearmonthqualifier-daytimequalifier"
+kind = "boundary_above"
+target = "<fractional_seconds_precision>"
+note = "fractional seconds precision 10, above the documented range 0 to 9"
+anchor = "doc.data-types-datetime / Data types / Interval data types / Syntax of interval data types"
+sql = "SELECT CAST ( NULL AS INTERVAL DAY TO SECOND ( 10 ) ) ;"
+context = "raw"
+expect = "reject"
+
+[[limit]]
+form = "sf.expressions.data-types-numeric.number"
+kind = "boundary_below"
+target = "<precision>"
+note = "precision 37, just inside the documented maximum of 38"
+anchor = "doc.data-types-numeric / Data types for fixed-point numbers / NUMBER"
+sql = "SELECT CAST ( NULL AS NUMBER ( 37 ) ) ;"
+context = "raw"
+expect = "accept"
+
+[[limit]]
+form = "sf.expressions.data-types-numeric.number"
+kind = "boundary_at"
+target = "<precision>"
+note = "precision 38, the documented maximum"
+anchor = "doc.data-types-numeric / Data types for fixed-point numbers / NUMBER"
+sql = "SELECT CAST ( NULL AS NUMBER ( 38 ) ) ;"
+context = "raw"
+expect = "accept"
+
+[[limit]]
+form = "sf.expressions.data-types-numeric.number"
+kind = "boundary_above"
+target = "<precision>"
+note = "precision 39, above the documented maximum of 38"
+anchor = "doc.data-types-numeric / Data types for fixed-point numbers / NUMBER"
+sql = "SELECT CAST ( NULL AS NUMBER ( 39 ) ) ;"
+context = "raw"
+expect = "reject"
+
+[[limit]]
+form = "sf.expressions.data-types-numeric.number"
+kind = "boundary_below"
+target = "<scale>"
+note = "scale 36, just inside the documented maximum of 37"
+anchor = "doc.data-types-numeric / Data types for fixed-point numbers / NUMBER"
+sql = "SELECT CAST ( NULL AS NUMBER ( 38 , 36 ) ) ;"
+context = "raw"
+expect = "accept"
+
+[[limit]]
+form = "sf.expressions.data-types-numeric.number"
+kind = "boundary_at"
+target = "<scale>"
+note = "scale 37, the documented maximum"
+anchor = "doc.data-types-numeric / Data types for fixed-point numbers / NUMBER"
+sql = "SELECT CAST ( NULL AS NUMBER ( 38 , 37 ) ) ;"
+context = "raw"
+expect = "accept"
+
+[[limit]]
+form = "sf.expressions.data-types-numeric.number"
+kind = "boundary_above"
+target = "<scale>"
+note = "scale 38, above the documented maximum of 37"
+anchor = "doc.data-types-numeric / Data types for fixed-point numbers / NUMBER"
+sql = "SELECT CAST ( NULL AS NUMBER ( 38 , 38 ) ) ;"
+context = "raw"
+expect = "reject"
+
+[[limit]]
+form = "sf.expressions.data-types-numeric.decimal"
+kind = "boundary_below"
+target = "<precision>"
+note = "precision 37, just inside the documented maximum of 38"
+anchor = "doc.data-types-numeric / Data types for fixed-point numbers / DECIMAL , DEC , NUMERIC"
+sql = "SELECT CAST ( NULL AS DECIMAL ( 37 ) ) ;"
+context = "raw"
+expect = "accept"
+
+[[limit]]
+form = "sf.expressions.data-types-numeric.decimal"
+kind = "boundary_at"
+target = "<precision>"
+note = "precision 38, the documented maximum"
+anchor = "doc.data-types-numeric / Data types for fixed-point numbers / DECIMAL , DEC , NUMERIC"
+sql = "SELECT CAST ( NULL AS DECIMAL ( 38 ) ) ;"
+context = "raw"
+expect = "accept"
+
+[[limit]]
+form = "sf.expressions.data-types-numeric.decimal"
+kind = "boundary_above"
+target = "<precision>"
+note = "precision 39, above the documented maximum of 38"
+anchor = "doc.data-types-numeric / Data types for fixed-point numbers / DECIMAL , DEC , NUMERIC"
+sql = "SELECT CAST ( NULL AS DECIMAL ( 39 ) ) ;"
+context = "raw"
+expect = "reject"
+
+[[limit]]
+form = "sf.expressions.data-types-numeric.decimal"
+kind = "boundary_below"
+target = "<scale>"
+note = "scale 36, just inside the documented maximum of 37"
+anchor = "doc.data-types-numeric / Data types for fixed-point numbers / DECIMAL , DEC , NUMERIC"
+sql = "SELECT CAST ( NULL AS DECIMAL ( 38 , 36 ) ) ;"
+context = "raw"
+expect = "accept"
+
+[[limit]]
+form = "sf.expressions.data-types-numeric.decimal"
+kind = "boundary_at"
+target = "<scale>"
+note = "scale 37, the documented maximum"
+anchor = "doc.data-types-numeric / Data types for fixed-point numbers / DECIMAL , DEC , NUMERIC"
+sql = "SELECT CAST ( NULL AS DECIMAL ( 38 , 37 ) ) ;"
+context = "raw"
+expect = "accept"
+
+[[limit]]
+form = "sf.expressions.data-types-numeric.decimal"
+kind = "boundary_above"
+target = "<scale>"
+note = "scale 38, above the documented maximum of 37"
+anchor = "doc.data-types-numeric / Data types for fixed-point numbers / DECIMAL , DEC , NUMERIC"
+sql = "SELECT CAST ( NULL AS DECIMAL ( 38 , 38 ) ) ;"
+context = "raw"
+expect = "reject"
+
+[[limit]]
+form = "sf.expressions.data-types-datetime.time"
+kind = "boundary_at"
+target = "<precision>"
+note = "precision 0, the documented lower bound"
+anchor = "doc.data-types-datetime / Data types / TIME"
+sql = "SELECT CAST ( NULL AS TIME ( 0 ) ) ;"
+context = "raw"
+expect = "accept"
+
+[[limit]]
+form = "sf.expressions.data-types-datetime.time"
+kind = "boundary_at"
+target = "<precision>"
+note = "precision 9, the documented upper bound"
+anchor = "doc.data-types-datetime / Data types / TIME"
+sql = "SELECT CAST ( NULL AS TIME ( 9 ) ) ;"
+context = "raw"
+expect = "accept"
+
+[[limit]]
+form = "sf.expressions.data-types-datetime.time"
+kind = "boundary_above"
+target = "<precision>"
+note = "precision 10, above the documented range 0 to 9"
+anchor = "doc.data-types-datetime / Data types / TIME"
+sql = "SELECT CAST ( NULL AS TIME ( 10 ) ) ;"
+context = "raw"
+expect = "reject"
+
+[[limit]]
+form = "sf.expressions.data-types-datetime.timestamp"
+kind = "boundary_at"
+target = "<precision>"
+note = "precision 0, the documented lower bound"
+anchor = "doc.data-types-datetime / Data types / TIMESTAMP_LTZ , TIMESTAMP_NTZ , TIMESTAMP_TZ / TIMESTAMP"
+sql = "SELECT CAST ( NULL AS TIMESTAMP ( 0 ) ) ;"
+context = "raw"
+expect = "accept"
+
+[[limit]]
+form = "sf.expressions.data-types-datetime.timestamp"
+kind = "boundary_at"
+target = "<precision>"
+note = "precision 9, the documented upper bound"
+anchor = "doc.data-types-datetime / Data types / TIMESTAMP_LTZ , TIMESTAMP_NTZ , TIMESTAMP_TZ / TIMESTAMP"
+sql = "SELECT CAST ( NULL AS TIMESTAMP ( 9 ) ) ;"
+context = "raw"
+expect = "accept"
+
+[[limit]]
+form = "sf.expressions.data-types-datetime.timestamp"
+kind = "boundary_above"
+target = "<precision>"
+note = "precision 10, above the documented range 0 to 9"
+anchor = "doc.data-types-datetime / Data types / TIMESTAMP_LTZ , TIMESTAMP_NTZ , TIMESTAMP_TZ / TIMESTAMP"
+sql = "SELECT CAST ( NULL AS TIMESTAMP ( 10 ) ) ;"
+context = "raw"
+expect = "reject"
+
+[[limit]]
+form = "sf.expressions.data-types-datetime.timestamp-variations"
+kind = "boundary_at"
+target = "<precision>"
+note = "precision 0, the documented lower bound"
+anchor = "doc.data-types-datetime / Data types / TIMESTAMP_LTZ , TIMESTAMP_NTZ , TIMESTAMP_TZ"
+sql = "SELECT CAST ( NULL AS TIMESTAMP_LTZ ( 0 ) ) ;"
+context = "raw"
+expect = "accept"
+
+[[limit]]
+form = "sf.expressions.data-types-datetime.timestamp-variations"
+kind = "boundary_at"
+target = "<precision>"
+note = "precision 9, the documented upper bound"
+anchor = "doc.data-types-datetime / Data types / TIMESTAMP_LTZ , TIMESTAMP_NTZ , TIMESTAMP_TZ"
+sql = "SELECT CAST ( NULL AS TIMESTAMP_LTZ ( 9 ) ) ;"
+context = "raw"
+expect = "accept"
+
+[[limit]]
+form = "sf.expressions.data-types-datetime.timestamp-variations"
+kind = "boundary_above"
+target = "<precision>"
+note = "precision 10, above the documented range 0 to 9"
+anchor = "doc.data-types-datetime / Data types / TIMESTAMP_LTZ , TIMESTAMP_NTZ , TIMESTAMP_TZ"
+sql = "SELECT CAST ( NULL AS TIMESTAMP_LTZ ( 10 ) ) ;"
+context = "raw"
+expect = "reject"
+
+[[limit]]
+form = "sf.expressions.data-types-text.varchar"
+kind = "boundary_below"
+target = "<length>"
+note = "length 134,217,727, just inside the documented maximum"
+anchor = "doc.data-types-text / Data types for text strings / VARCHAR"
+sql = "SELECT CAST ( NULL AS VARCHAR ( 134217727 ) ) ;"
+context = "raw"
+expect = "accept"
+
+[[limit]]
+form = "sf.expressions.data-types-text.varchar"
+kind = "boundary_at"
+target = "<length>"
+note = "length 134,217,728, the documented maximum"
+anchor = "doc.data-types-text / Data types for text strings / VARCHAR"
+sql = "SELECT CAST ( NULL AS VARCHAR ( 134217728 ) ) ;"
+context = "raw"
+expect = "accept"
+
+[[limit]]
+form = "sf.expressions.data-types-text.varchar"
+kind = "boundary_above"
+target = "<length>"
+note = "length 134,217,729, above the documented maximum"
+anchor = "doc.data-types-text / Data types for text strings / VARCHAR"
+sql = "SELECT CAST ( NULL AS VARCHAR ( 134217729 ) ) ;"
+context = "raw"
+expect = "reject"
+
+[[limit]]
+form = "sf.expressions.data-types-text.string"
+kind = "boundary_below"
+target = "<length>"
+note = "length 134,217,727, just inside the documented maximum"
+anchor = "doc.data-types-text / Data types for text strings / STRING, TEXT, VARCHAR2, NVARCHAR, NVARCHAR2, CHAR VARYING, NCHAR VARYING"
+sql = "SELECT CAST ( NULL AS STRING ( 134217727 ) ) ;"
+context = "raw"
+expect = "accept"
+
+[[limit]]
+form = "sf.expressions.data-types-text.string"
+kind = "boundary_at"
+target = "<length>"
+note = "length 134,217,728, the documented maximum"
+anchor = "doc.data-types-text / Data types for text strings / STRING, TEXT, VARCHAR2, NVARCHAR, NVARCHAR2, CHAR VARYING, NCHAR VARYING"
+sql = "SELECT CAST ( NULL AS STRING ( 134217728 ) ) ;"
+context = "raw"
+expect = "accept"
+
+[[limit]]
+form = "sf.expressions.data-types-text.string"
+kind = "boundary_above"
+target = "<length>"
+note = "length 134,217,729, above the documented maximum"
+anchor = "doc.data-types-text / Data types for text strings / STRING, TEXT, VARCHAR2, NVARCHAR, NVARCHAR2, CHAR VARYING, NCHAR VARYING"
+sql = "SELECT CAST ( NULL AS STRING ( 134217729 ) ) ;"
+context = "raw"
+expect = "reject"
+
+[[limit]]
+form = "sf.expressions.data-types-text.char"
+kind = "boundary_below"
+target = "<length>"
+note = "length 134,217,727, just inside the documented maximum"
+anchor = "doc.data-types-text / Data types for text strings / CHAR, CHARACTER, NCHAR"
+sql = "SELECT CAST ( NULL AS CHAR ( 134217727 ) ) ;"
+context = "raw"
+expect = "accept"
+
+[[limit]]
+form = "sf.expressions.data-types-text.char"
+kind = "boundary_at"
+target = "<length>"
+note = "length 134,217,728, the documented maximum"
+anchor = "doc.data-types-text / Data types for text strings / CHAR, CHARACTER, NCHAR"
+sql = "SELECT CAST ( NULL AS CHAR ( 134217728 ) ) ;"
+context = "raw"
+expect = "accept"
+
+[[limit]]
+form = "sf.expressions.data-types-text.char"
+kind = "boundary_above"
+target = "<length>"
+note = "length 134,217,729, above the documented maximum"
+anchor = "doc.data-types-text / Data types for text strings / CHAR, CHARACTER, NCHAR"
+sql = "SELECT CAST ( NULL AS CHAR ( 134217729 ) ) ;"
+context = "raw"
+expect = "reject"
+
+[[limit]]
+form = "sf.expressions.data-types-text.binary"
+kind = "boundary_below"
+target = "<length>"
+note = "length 67,108,863, just inside the documented 64 MB maximum"
+anchor = "doc.data-types-text / Data types for binary strings / BINARY"
+sql = "SELECT CAST ( NULL AS BINARY ( 67108863 ) ) ;"
+context = "raw"
+expect = "accept"
+
+[[limit]]
+form = "sf.expressions.data-types-text.binary"
+kind = "boundary_at"
+target = "<length>"
+note = "length 67,108,864, the documented maximum"
+anchor = "doc.data-types-text / Data types for binary strings / BINARY"
+sql = "SELECT CAST ( NULL AS BINARY ( 67108864 ) ) ;"
+context = "raw"
+expect = "accept"
+
+[[limit]]
+form = "sf.expressions.data-types-text.binary"
+kind = "boundary_above"
+target = "<length>"
+note = "length 67,108,865, above the documented maximum"
+anchor = "doc.data-types-text / Data types for binary strings / BINARY"
+sql = "SELECT CAST ( NULL AS BINARY ( 67108865 ) ) ;"
+context = "raw"
+expect = "reject"
+
+[[limit]]
+form = "sf.expressions.data-types-text.varbinary"
+kind = "boundary_below"
+target = "<length>"
+note = "length 67,108,863, just inside the documented 64 MB maximum"
+anchor = "doc.data-types-text / Data types for binary strings / VARBINARY"
+sql = "SELECT CAST ( NULL AS VARBINARY ( 67108863 ) ) ;"
+context = "raw"
+expect = "accept"
+
+[[limit]]
+form = "sf.expressions.data-types-text.varbinary"
+kind = "boundary_at"
+target = "<length>"
+note = "length 67,108,864, the documented maximum"
+anchor = "doc.data-types-text / Data types for binary strings / VARBINARY"
+sql = "SELECT CAST ( NULL AS VARBINARY ( 67108864 ) ) ;"
+context = "raw"
+expect = "accept"
+
+[[limit]]
+form = "sf.expressions.data-types-text.varbinary"
+kind = "boundary_above"
+target = "<length>"
+note = "length 67,108,865, above the documented maximum"
+anchor = "doc.data-types-text / Data types for binary strings / VARBINARY"
+sql = "SELECT CAST ( NULL AS VARBINARY ( 67108865 ) ) ;"
+context = "raw"
+expect = "reject"
+
+[[limit]]
+form = "sf.expressions.data-types-vector"
+kind = "boundary_below"
+target = "<dimension>"
+note = "dimension 0; the page requires a positive integer"
+anchor = "doc.data-types-vector / Data types / VECTOR"
+sql = "SELECT CAST ( NULL AS VECTOR ( INT , 0 ) ) ;"
+context = "raw"
+expect = "reject"
+
+[[limit]]
+form = "sf.expressions.data-types-vector"
+kind = "boundary_at"
+target = "<dimension>"
+note = "dimension 1, the smallest positive integer"
+anchor = "doc.data-types-vector / Data types / VECTOR"
+sql = "SELECT CAST ( NULL AS VECTOR ( INT , 1 ) ) ;"
+context = "raw"
+expect = "accept"
+
+[[limit]]
+form = "sf.expressions.data-types-vector"
+kind = "boundary_at"
+target = "<dimension>"
+note = "dimension 4096, the documented maximum"
+anchor = "doc.data-types-vector / Data types / VECTOR"
+sql = "SELECT CAST ( NULL AS VECTOR ( INT , 4096 ) ) ;"
+context = "raw"
+expect = "accept"
+
+[[limit]]
+form = "sf.expressions.data-types-vector"
+kind = "boundary_above"
+target = "<dimension>"
+note = "dimension 4097, above the documented maximum"
+anchor = "doc.data-types-vector / Data types / VECTOR"
+sql = "SELECT CAST ( NULL AS VECTOR ( INT , 4097 ) ) ;"
+context = "raw"
+expect = "reject"
+
+[[limit]]
+form = "sf.expressions.data-types-vector"
+kind = "negative_neighbour"
+target = "<type>"
+note = "an element type other than INT and FLOAT"
+anchor = "doc.data-types-vector / Data types / VECTOR"
+sql = "SELECT CAST ( NULL AS VECTOR ( VARCHAR , 3 ) ) ;"
+context = "raw"
+
+[[limit]]
+form = "sf.expressions.session-variables"
+kind = "positive"
+note = "a session variable reference"
+anchor = "doc.session-variables / Using variables in SQL"
+sql = "SELECT $v1 ;"
+context = "raw"
+
+[[limit]]
+form = "sf.expressions.session-variables"
+kind = "alternative"
+target = "<variable_name>"
+note = "a double-quoted session variable name"
+anchor = "doc.session-variables / Using variables in SQL"
+sql = "SELECT $\"v1 Q\" ;"
+context = "raw"
+
+[[limit]]
+form = "sf.expressions.session-variables"
+kind = "negative_neighbour"
+note = "a dollar sign with no name"
+anchor = "doc.session-variables / Using variables in SQL"
+sql = "SELECT $ ;"
+context = "raw"
+
+[[limit]]
+form = "sf.expressions.schema-variables"
+kind = "positive"
+note = "a schema variable reference"
+anchor = "doc.schema-variables / Reading and writing values / Read a value"
+sql = "SELECT $s1.v1 ;"
+context = "raw"
+
+[[limit]]
+form = "sf.expressions.schema-variables"
+kind = "option_present"
+target = "[<database_name>.]"
+note = "a schema variable reference with its database"
+anchor = "doc.schema-variables / Reading and writing values / Read a value"
+sql = "SELECT $d1.s1.v1 ;"
+context = "raw"
+
+[[limit]]
+form = "sf.expressions.schema-variables"
+kind = "negative_neighbour"
+note = "a schema variable reference missing its variable name"
+anchor = "doc.schema-variables / Reading and writing values / Read a value"
+sql = "SELECT $s1. ;"
+context = "raw"
+
+[[limit]]
+form = "sf.expressions.operators-expansion"
+kind = "positive"
+note = "** expanding an array into function arguments"
+anchor = "doc.operators-expansion / Spread / Syntax"
+sql = "SELECT GREATEST ( ** [ 1 , 2 ] ) ;"
+context = "raw"
+
+[[limit]]
+form = "sf.expressions.operators-expansion"
+kind = "negative_neighbour"
+note = "** with no operand"
+anchor = "doc.operators-expansion / Spread / Syntax"
+sql = "SELECT GREATEST ( ** ) ;"
+context = "raw"
+
+[[limit]]
+form = "sf.expressions.data-types-semistructured.subscript-dot"
+kind = "positive"
+note = "an ARRAY constant"
+anchor = "doc.data-types-semistructured / ARRAY / ARRAY constants"
+sql = "SELECT [ 1 , 2 ] ;"
+context = "raw"
+
+[[limit]]
+form = "sf.expressions.data-types-semistructured.subscript-dot"
+kind = "option_absent"
+target = "[<value> [, <value> , ...]]"
+note = "an empty ARRAY constant"
+anchor = "doc.data-types-semistructured / ARRAY / ARRAY constants"
+sql = "SELECT [ ] ;"
+context = "raw"
+
+[[limit]]
+form = "sf.expressions.data-types-semistructured.subscript-dot"
+kind = "negative_neighbour"
+note = "an unclosed ARRAY constant"
+anchor = "doc.data-types-semistructured / ARRAY / ARRAY constants"
+sql = "SELECT [ 1 , 2 ;"
+context = "raw"
+
+[[limit]]
+form = "sf.expressions.data-types-semistructured.subscript-dot"
+kind = "extreme"
+note = "ARRAY constants nested 50 levels deep; no documented bound"
+anchor = "doc.data-types-semistructured / ARRAY / ARRAY constants"
+outer_open = "SELECT"
+open = "["
+core = "1"
+close = "]"
+outer_close = ";"
+size = 50
+context = "raw"
+
+[[limit]]
+form = "sf.expressions.data-types-semistructured.subscript-dot"
+kind = "extreme"
+note = "ARRAY constants nested 100 levels deep; no documented bound"
+anchor = "doc.data-types-semistructured / ARRAY / ARRAY constants"
+outer_open = "SELECT"
+open = "["
+core = "1"
+close = "]"
+outer_close = ";"
+size = 100
+context = "raw"
+
+[[limit]]
+form = "sf.expressions.data-types-semistructured.subscript-dot"
+kind = "extreme"
+note = "an ARRAY constant of 5,000 elements; no documented bound"
+anchor = "doc.data-types-semistructured / ARRAY / ARRAY constants"
+outer_open = "SELECT ["
+open = "1 ,"
+core = "1"
+outer_close = "] ;"
+size = 5000
+context = "raw"
+
+[[limit]]
+form = "sf.expressions.data-types-semistructured.colon-subscript-dot"
+kind = "positive"
+note = "an OBJECT constant"
+anchor = "doc.data-types-semistructured / OBJECT / OBJECT constants"
+sql = "SELECT { 'key1' : 'value1' , 'key2' : 'value2' } ;"
+context = "raw"
+
+[[limit]]
+form = "sf.expressions.data-types-semistructured.colon-subscript-dot"
+kind = "option_absent"
+target = "[<key>: <value> [, <key>: <value> , ...]]"
+note = "an empty OBJECT constant"
+anchor = "doc.data-types-semistructured / OBJECT / OBJECT constants"
+sql = "SELECT { } ;"
+context = "raw"
+
+[[limit]]
+form = "sf.expressions.data-types-semistructured.colon-subscript-dot"
+kind = "alternative"
+target = "{ * }"
+note = "the {*} wildcard OBJECT constant"
+anchor = "doc.data-types-semistructured / OBJECT / OBJECT constants"
+sql = "SELECT { * } FROM t1 ;"
+context = "raw"
+
+[[limit]]
+form = "sf.expressions.data-types-semistructured.colon-subscript-dot"
+kind = "negative_neighbour"
+note = "an OBJECT constant pair without its colon"
+anchor = "doc.data-types-semistructured / OBJECT / OBJECT constants"
+sql = "SELECT { 'k' 'v' } ;"
+context = "raw"
+
+[[limit]]
+form = "sf.expressions.data-types-semistructured.colon-subscript-dot"
+kind = "extreme"
+note = "OBJECT constants nested 50 levels deep; no documented bound"
+anchor = "doc.data-types-semistructured / OBJECT / OBJECT constants"
+outer_open = "SELECT"
+open = "{ 'k' :"
+core = "1"
+close = "}"
+outer_close = ";"
+size = 50
+context = "raw"
+
+[[limit]]
+form = "sf.expressions.data-types-semistructured.colon-subscript-dot"
+kind = "extreme"
+note = "an OBJECT constant of 2,000 pairs; no documented bound"
+anchor = "doc.data-types-semistructured / OBJECT / OBJECT constants"
+outer_open = "SELECT {"
+open = "'k{n}' : 1 ,"
+core = "'k0' : 1"
+outer_close = "} ;"
+size = 2000
+context = "raw"
+
+[[limit]]
+form = "sf.expressions.name-resolution"
+kind = "positive"
+note = "an object name"
+anchor = "doc.name-resolution / Object name resolution"
+sql = "SELECT * FROM t1 ;"
+context = "raw"
+
+[[limit]]
+form = "sf.expressions.name-resolution"
+kind = "alternative"
+target = "{ ... }"
+note = "<database_name>.<schema_name>.<object_name>"
+anchor = "doc.name-resolution / Object name resolution"
+sql = "SELECT * FROM d1.s1.t1 ;"
+context = "raw"
+
+[[limit]]
+form = "sf.expressions.name-resolution"
+kind = "alternative"
+target = "{ ... }"
+note = "<schema_name>.<object_name>"
+anchor = "doc.name-resolution / Object name resolution"
+sql = "SELECT * FROM s1.t1 ;"
+context = "raw"
+
+[[limit]]
+form = "sf.expressions.name-resolution"
+kind = "alternative"
+target = "{ ... }"
+note = "<database_name>..<object_name>"
+anchor = "doc.name-resolution / Object name resolution"
+sql = "SELECT * FROM d1..t1 ;"
+context = "raw"
+
+[[limit]]
+form = "sf.expressions.name-resolution"
+kind = "alternative"
+target = "{ ... }"
+note = "double-quoted parts containing periods"
+anchor = "doc.name-resolution / Object name resolution"
+sql = "SELECT * FROM \"My.DB\".\"My.Schema\".\"Table.1\" ;"
+context = "raw"
+
+[[limit]]
+form = "sf.expressions.name-resolution"
+kind = "negative_neighbour"
+note = "three periods between names"
+anchor = "doc.name-resolution / Object name resolution"
+sql = "SELECT * FROM d1...t1 ;"
+context = "raw"
+
+[[limit]]
+form = "sf.expressions.name-resolution"
+kind = "negative_neighbour"
+note = "a leading period"
+anchor = "doc.name-resolution / Object name resolution"
+sql = "SELECT * FROM .t1 ;"
+context = "raw"
+
+[[limit]]
+form = "sf.expressions.operators-arithmetic.add"
+kind = "extreme"
+note = "parentheses nested 50 levels deep around an addition; no documented bound"
+anchor = "doc.operators-arithmetic / Syntax table"
+outer_open = "SELECT"
+open = "("
+core = "1 + 1"
+close = ")"
+outer_close = ";"
+size = 50
+context = "raw"
+
+[[limit]]
+form = "sf.expressions.operators-arithmetic.add"
+kind = "extreme"
+note = "parentheses nested 100 levels deep around an addition; no documented bound"
+anchor = "doc.operators-arithmetic / Syntax table"
+outer_open = "SELECT"
+open = "("
+core = "1 + 1"
+close = ")"
+outer_close = ";"
+size = 100
+context = "raw"
+
+[[limit]]
+form = "sf.expressions.operators-arithmetic.add"
+kind = "extreme"
+note = "an addition chain of 1,000 operands; no documented bound"
+anchor = "doc.operators-arithmetic / Syntax table"
+outer_open = "SELECT"
+open = "1 +"
+core = "1"
+outer_close = ";"
+size = 1000
+context = "raw"
+
+[[limit]]
+form = "sf.expressions.operators-arithmetic.add"
+kind = "extreme"
+note = "an addition chain of 5,000 operands; no documented bound"
+anchor = "doc.operators-arithmetic / Syntax table"
+outer_open = "SELECT"
+open = "1 +"
+core = "1"
+outer_close = ";"
+size = 5000
+context = "raw"
+
+[[limit]]
+form = "sf.expressions.operators-logical.or"
+kind = "extreme"
+note = "an OR chain of 1,000 operands; no documented bound"
+anchor = "doc.operators-logical / Syntax table"
+outer_open = "SELECT"
+open = "TRUE OR"
+core = "TRUE"
+outer_close = ";"
+size = 1000
+context = "raw"
+
+[[limit]]
+form = "sf.expressions.operators-logical.or"
+kind = "extreme"
+note = "an OR chain of 5,000 operands; no documented bound"
+anchor = "doc.operators-logical / Syntax table"
+outer_open = "SELECT"
+open = "TRUE OR"
+core = "TRUE"
+outer_close = ";"
+size = 5000
+context = "raw"
+
+[[limit]]
+form = "sf.expressions.operators-logical.not"
+kind = "extreme"
+note = "NOT repeated 100 times; no documented bound"
+anchor = "doc.operators-logical / Syntax table"
+outer_open = "SELECT"
+open = "NOT"
+core = "TRUE"
+outer_close = ";"
+size = 100
+context = "raw"
+
+[[limit]]
+form = "sf.expressions.operators-arithmetic.unary-minus"
+kind = "extreme"
+note = "unary minus repeated 100 times, separated by blanks; no documented bound"
+anchor = "doc.operators-arithmetic / Syntax table"
+outer_open = "SELECT"
+open = "-"
+core = "1"
+outer_close = ";"
+size = 100
+context = "raw"
+
+[[limit]]
+form = "sf.expressions.operators-subquery.exists"
+kind = "extreme"
+note = "EXISTS subqueries nested 50 levels deep; no documented bound"
+anchor = "doc.operators-subquery / [ NOT ] EXISTS / Syntax"
+outer_open = "SELECT"
+open = "EXISTS ( SELECT 1 WHERE"
+core = "EXISTS ( SELECT 1 )"
+close = ")"
+outer_close = ";"
+size = 50
+context = "raw"
+
+[[limit]]
+form = "sf.expressions.operators-subquery.exists"
+kind = "extreme"
+note = "EXISTS subqueries nested 100 levels deep; no documented bound"
+anchor = "doc.operators-subquery / [ NOT ] EXISTS / Syntax"
+outer_open = "SELECT"
+open = "EXISTS ( SELECT 1 WHERE"
+core = "EXISTS ( SELECT 1 )"
+close = ")"
+outer_close = ";"
+size = 100
+context = "raw"
+
+[[limit]]
+form = "sf.expressions.operators-subquery.in"
+kind = "extreme"
+note = "IN subqueries nested 50 levels deep; no documented bound"
+anchor = "doc.operators-subquery / [ NOT ] IN / Syntax"
+outer_open = "SELECT"
+open = "1 IN ( SELECT 1 WHERE"
+core = "1 IN ( SELECT 1 )"
+close = ")"
+outer_close = ";"
+size = 50
+context = "raw"
+
+[[limit]]
+form = "sf.expressions.operators-subquery.in"
+kind = "extreme"
+note = "IN subqueries nested 100 levels deep; no documented bound"
+anchor = "doc.operators-subquery / [ NOT ] IN / Syntax"
+outer_open = "SELECT"
+open = "1 IN ( SELECT 1 WHERE"
+core = "1 IN ( SELECT 1 )"
+close = ")"
+outer_close = ";"
+size = 100
+context = "raw"
+
+[[limit]]
+form = "sf.query.select.select.selecting-specific-columns"
+kind = "extreme"
+note = "a select list of 1,000 columns; no documented bound"
+anchor = "doc.sql.select / Syntax / Selecting specific columns"
+outer_open = "SELECT"
+open = "1 ,"
+core = "1"
+outer_close = ";"
+size = 1000
+context = "raw"
+
+[[limit]]
+form = "sf.query.select.select.selecting-specific-columns"
+kind = "extreme"
+note = "a select list of 5,000 columns; no documented bound"
+anchor = "doc.sql.select / Syntax / Selecting specific columns"
+outer_open = "SELECT"
+open = "1 ,"
+core = "1"
+outer_close = ";"
+size = 5000
+context = "raw"

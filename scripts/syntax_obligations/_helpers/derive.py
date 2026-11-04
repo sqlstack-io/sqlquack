@@ -244,7 +244,9 @@ def derive(*, form: str, grammar: list[str]) -> list[Draft]:
 
 
 def derive_trees(*, form: str, grammar: list[str]) -> tuple[list[Draft], list[tuple[Node, ...]]]:
-    """The drafts with their case specs, and the parsed productions the specs point into."""
+    """The drafts with their case specs and parsed productions; an empty grammar derives none."""
+    if not grammar:
+        return [], []
     walk: _Walk = _Walk(form)
     note: str = "the documented form with every required part and no optional part"
     walk.add(kind=KIND_POSITIVE, target="", note=note, spec=walk.spec(action=ACTION_MIN_OPTIONS))

@@ -332,17 +332,18 @@ class _Renderer:
 
 
 def _repeat_start(*, before: list[str], keywords: set[str]) -> int:
-    """Where the repeated list item starts: after the nearest open `(`, `,` or clause keyword."""
+    """The repeated item starts after the nearest open `(`, `,` or clause keyword (not a call)."""
     depth: int = 0
     for index in range(len(before) - 1, -1, -1):
         text: str = before[index]
+        calls: bool = before[index + 1 : index + 2] == [OPEN_PAREN]
         if text == CLOSE_PAREN:
             depth += 1
         elif text == OPEN_PAREN and depth:
             depth -= 1
         elif depth == 0 and (
             text in CLOSE_REPEAT_AFTER
-            or (text.upper() in keywords and text.upper() not in LIST_ITEM_KEYWORDS)
+            or (text.upper() in keywords and text.upper() not in LIST_ITEM_KEYWORDS and not calls)
         ):
             return index
     return -1

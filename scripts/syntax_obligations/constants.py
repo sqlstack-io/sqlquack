@@ -74,6 +74,7 @@ TOKEN: re.Pattern[str] = re.compile(
 )
 CLASS_RULES: tuple[tuple[re.Pattern[str], str], ...] = (
     (re.compile(r"_(declaration|assignment|definition|handler)$"), "subgrammar"),
+    (re.compile(r"^(session|bind|snowflake_scripting)_variable$"), "operand"),
     (re.compile(r"statement"), "statement"),
     (re.compile(r"query|subquery"), "query"),
     (re.compile(r"(^|_)(data_)?type$|_type$"), "data_type"),
@@ -300,7 +301,9 @@ SCRIPTING_SELF_DECLARING_BLOCKS: dict[str, FormStyle] = {
 ELISION_START: str = "^"
 PURE_ELISION: str = "[ ... ]"
 LIST_SEPARATOR: str = ","
-LIST_ITEM_KEYWORDS: frozenset[str] = frozenset({"AS"})
+LIST_ITEM_KEYWORDS: frozenset[str] = frozenset(
+    {"AS", "NOT", "NULL", "ASC", "DESC", "NULLS", "FIRST", "LAST"}
+)
 GLUED_PREFIXES: re.Pattern[str] = re.compile(r"(?<![^ ])([$:@]) (?=[^ =])")
 QUERY_FORMS: tuple[str, ...] = ("sf.query.constructs",)
 UNPACKED_FORMS: frozenset[str] = frozenset(QUERY_FORMS)
@@ -386,11 +389,7 @@ QUERY_ELISIONS: dict[str, tuple[str, tuple[str, ...], str]] = {
     "AND": ("t1.c1 = t2.c1", (), "further ON equalities; this form's own repetition"),
     "AS": ("", (), "repetition of the preceding aliased list item; this form's own list"),
 }
-FAMILY_ELISIONS: dict[str, dict[str, tuple[str, tuple[str, ...], str]]] = {
-    "query": QUERY_ELISIONS,
-}
 TOP_LEVEL_FAMILIES: tuple[str, ...] = (
-    "expressions",
     "functions",
     "dml",
     "transaction_session",
@@ -468,8 +467,139 @@ QUERY_STYLES: dict[str, FormStyle] = {
         for form, prefix in QUERY_FRAGMENT_PREFIXES.items()
     },
 }
+EXPRESSIONS_FILLS: dict[str, str] = {
+    "a": "1",
+    "b": "1",
+    "expr": "1",
+    "array_expr": "ARRAY_CONSTRUCT ( 1 , 2 )",
+    "index": "0",
+    "object_expr": "OBJECT_CONSTRUCT ( 'k' , 1 )",
+    "key": "k1",
+    "element_type": "INT",
+    "key_type": "VARCHAR",
+    "value_type": "INT",
+    "precision": "9",
+    "fractional_seconds_precision": "3",
+    "scale": "2",
+    "length": "10",
+    "dimension": "3",
+    "address": "'192.0.2.1'",
+    "period_string": "'[2026-01-01, 2026-01-02)'",
+    "string": "'2026-01-01'",
+    "model_name": "m1",
+    "method_name": "predict",
+    "version_or_alias_name": "v1",
+    "table_name": "t1",
+    "input_table": "t1",
+    "alias_1": "a1",
+    "alias_2": "a2",
+    "table_function": "FLATTEN",
+    "arg_1": "INPUT => ARRAY_CONSTRUCT ( 1 )",
+    "arg": "1",
+    "column_name": "c1",
+    "user_defined_type_name": "u1",
+    "query": "SELECT 1",
+    "sql_statement_1": "SELECT 1",
+    "sql_statement_2": "SELECT 2",
+    "sql_statement_n": "SELECT 3",
+    "variable_name": "v1",
+    "n": "1",
+    "string_literal": "'t1'",
+    "session_variable": "$v1",
+    "bind_variable": "?",
+    "snowflake_scripting_variable": ":v1",
+}
+EXPRESSIONS_ELISIONS: dict[str, tuple[str, tuple[str, ...], str]] = {
+    "SELECT": (
+        "*",
+        ("sf.query.select.select", "sf.query.select.select.selecting-specific-columns"),
+        "the select list",
+    ),
+    "MODEL": ("1", (), "the method's arguments, which depend on the model"),
+}
+FAMILY_ELISIONS: dict[str, dict[str, tuple[str, tuple[str, ...], str]]] = {
+    "query": QUERY_ELISIONS,
+    "expressions": EXPRESSIONS_ELISIONS,
+}
+EXPRESSIONS_TYPE_FORMS: tuple[str, ...] = (
+    "data-types-datetime.date",
+    "data-types-datetime.datetime",
+    "data-types-datetime.time",
+    "data-types-datetime.timestamp",
+    "data-types-datetime.timestamp-variations",
+    "data-types-datetime.interval-yearmonthqualifier-daytimequalifier",
+    "data-types-logical",
+    "data-types-numeric.decfloat",
+    "data-types-numeric.decimal",
+    "data-types-numeric.double",
+    "data-types-numeric.float",
+    "data-types-numeric.int",
+    "data-types-numeric.number",
+    "data-types-period",
+    "data-types-semistructured.array",
+    "data-types-semistructured.object",
+    "data-types-semistructured.variant",
+    "data-types-structured.array",
+    "data-types-structured.map",
+    "data-types-structured.object",
+    "data-types-text.binary",
+    "data-types-text.char",
+    "data-types-text.string",
+    "data-types-text.varbinary",
+    "data-types-text.varchar",
+    "data-types-unknown",
+    "data-types-unstructured",
+    "data-types-user-defined",
+    "data-types-vector",
+)
+EXPRESSIONS_COLUMN_FORMS: tuple[str, ...] = ("data-types-ipaddress", "data-types-uuid")
+EXPRESSIONS_FROM_FORMS: tuple[str, ...] = ("literals-table", "identifier-literal")
+EXPRESSIONS_SELECT_FORMS: tuple[str, ...] = (
+    "data-types-datetime.date-time-constant",
+    "data-types-datetime.interval",
+    "data-types-datetime.interval.interval-constants",
+    "data-types-ipaddress.typed-literal",
+    "data-types-period.typed-literal",
+    "data-types-semistructured.array-index-access",
+    "data-types-semistructured.object-key-access",
+)
+EXPRESSIONS_STATEMENT_FORMS: tuple[str, ...] = (
+    "commands-model-function.model-default-version",
+    "commands-model-function.model-version-or-alias",
+    "functions-table",
+    "snowflake-db-classes",
+    "operators-flow",
+)
+EXPRESSIONS_FORM_FILLS: dict[str, dict[str, str]] = {
+    "data-types-datetime.interval": {"string": "'1'"},
+    "snowflake-db-classes": {"method_name": "i1!m1"},
+}
+
+
+EXPRESSIONS_ELISION_FILLS: dict[str, str] = {
+    rule: fill for rule, (fill, _, _) in EXPRESSIONS_ELISIONS.items()
+}
+EXPRESSIONS_FORM_CONTEXTS: dict[str, tuple[str, str]] = {
+    "": ("SELECT ", " ;"),
+    **dict.fromkeys(EXPRESSIONS_TYPE_FORMS, ("SELECT CAST ( NULL AS ", " ) ;")),
+    **dict.fromkeys(EXPRESSIONS_COLUMN_FORMS, ("CREATE OR REPLACE TEMPORARY TABLE t1 ( ", " ) ;")),
+    **dict.fromkeys(EXPRESSIONS_FROM_FORMS, ("SELECT * FROM ", " ;")),
+    **dict.fromkeys(EXPRESSIONS_STATEMENT_FORMS, ("", "")),
+    **dict.fromkeys(EXPRESSIONS_SELECT_FORMS, ("SELECT ", " ;")),
+}
+EXPRESSIONS_STYLES: dict[str, FormStyle] = {
+    f"sf.expressions.{form}": FormStyle(
+        prefix=prefix,
+        suffix=suffix,
+        fills={**EXPRESSIONS_FILLS, **EXPRESSIONS_FORM_FILLS.get(form, {})},
+        elisions=EXPRESSIONS_ELISION_FILLS,
+        terminate=not suffix,
+    )
+    for form, (prefix, suffix) in EXPRESSIONS_FORM_CONTEXTS.items()
+}
 FAMILY_STYLES: dict[str, dict[str, FormStyle]] = {
     "scripting": SCRIPTING_SELF_DECLARING_BLOCKS,
     "query": QUERY_STYLES,
+    "expressions": EXPRESSIONS_STYLES,
     **{family: {f"sf.{family}.": FormStyle(prefix="", suffix="")} for family in TOP_LEVEL_FAMILIES},
 }
