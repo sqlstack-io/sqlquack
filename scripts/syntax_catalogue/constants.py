@@ -167,6 +167,7 @@ WORD: re.Pattern[str] = re.compile(r"[A-Za-z_][A-Za-z0-9_$]*")
 ELISION_LINE: re.Pattern[str] = re.compile(r"^\s*(\[\s*)?\.\.\.(\s*\])?\s*$")
 QUOTED_OR_PLACEHOLDER: re.Pattern[str] = re.compile(r"<[^<>]*>|'[^']*'|\"[^\"]*\"")
 QUOTED_OR_ANGLE: re.Pattern[str] = re.compile(r"'[^']*'|<[^<>]*>")
+DEFINITION_QUALIFIER: re.Pattern[str] = re.compile(r"\S+ (\([^()]*\)) ::=")
 SQL_LINE_COMMENT: re.Pattern[str] = re.compile(r"(^|\s)--(?=(?:[^']*'[^']*')*[^']*$).*$")
 CALL_START: re.Pattern[str] = re.compile(r"^\s*([A-Za-z_][\w$.]*)\s*\(")
 NAME_ALTERNATION: re.Pattern[str] = re.compile(

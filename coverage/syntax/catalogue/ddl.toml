@@ -2376,7 +2376,9 @@ grammar = [
 ]
 grammar_sha256 = "5ae55264b310c63a085f98bc64b65a08a318f3bb7661ba0a6ec34c4e03b759d5"
 uses = [
-  "cloudProviderParams",
+  "cloudProviderParams (for Amazon S3)",
+  "cloudProviderParams (for Google Cloud Storage)",
+  "cloudProviderParams (for Microsoft Azure)",
 ]
 status = "catalogued"
 
@@ -4997,7 +4999,9 @@ grammar = [
 ]
 grammar_sha256 = "11ad03620f703d43ec94834f6fe27a7f5478f58f4b1753ef4a2c92fc7b239c67"
 uses = [
-  "externalStageParams",
+  "externalStageParams (for Amazon S3)",
+  "externalStageParams (for Google Cloud Storage)",
+  "externalStageParams (for Microsoft Azure)",
   "formatTypeOptions",
 ]
 status = "catalogued"
@@ -7267,7 +7271,8 @@ grammar = [
 ]
 grammar_sha256 = "e092358dfea3a5cc2bcb2276f5e732e99bd2b95d3ecd6596246635046640e201"
 uses = [
-  "cloudProviderParams",
+  "cloudProviderParams (for Google Cloud Storage)",
+  "cloudProviderParams (for Microsoft Azure)",
   "externalStage",
   "formatTypeOptions",
   "inlineConstraint",
@@ -7285,7 +7290,8 @@ grammar = [
 ]
 grammar_sha256 = "175c357e958c352b85f2bdbecb10a267d198e442776915b3dd0d40f76f6d042d"
 uses = [
-  "cloudProviderParams",
+  "cloudProviderParams (for Google Cloud Storage)",
+  "cloudProviderParams (for Microsoft Azure)",
   "externalStage",
   "formatTypeOptions",
   "inlineConstraint",
@@ -7303,7 +7309,8 @@ grammar = [
 ]
 grammar_sha256 = "d0155f35d16a6161fbaa5e2d5826c4852db07ee229680f78513a19474aecce5a"
 uses = [
-  "cloudProviderParams",
+  "cloudProviderParams (for Google Cloud Storage)",
+  "cloudProviderParams (for Microsoft Azure)",
   "externalStage",
   "formatTypeOptions",
   "inlineConstraint",
@@ -7334,7 +7341,9 @@ grammar = [
 ]
 grammar_sha256 = "d55f9634daa4ace17847f554c20f6131689b042a32c2282b6a27cf5560444a62"
 uses = [
-  "cloudProviderParams",
+  "cloudProviderParams (for Amazon S3)",
+  "cloudProviderParams (for Google Cloud Storage)",
+  "cloudProviderParams (for Microsoft Azure)",
   "s3CompatibleStorageParams",
 ]
 status = "catalogued"
@@ -7799,8 +7808,12 @@ grammar = [
 grammar_sha256 = "f4bc92d33aa117c83132c1d63920c178a7a9133aaedf61253750091a0fe3a86f"
 uses = [
   "inlineConstraint",
+  "inlineConstraint #2",
   "outoflineConstraint",
+  "outoflineConstraint #2",
   "partitionExpression",
+  "partitionExpression #2",
+  "partitionExpression #3",
 ]
 status = "catalogued"
 
@@ -7851,7 +7864,9 @@ grammar = [
 grammar_sha256 = "b2e8b3968f4fc155839ec9b4a05781792ceb6f0ed4622db3b71bdb38f1d585c9"
 uses = [
   "inlineConstraint",
+  "inlineConstraint #2",
   "outoflineConstraint",
+  "outoflineConstraint #2",
 ]
 status = "catalogued"
 
@@ -7918,6 +7933,8 @@ grammar = [
 grammar_sha256 = "5dc6c5c003d824bb540c975ff3b5c56f9e35a37edd754a2abf79a2d8745e4f92"
 uses = [
   "partitionExpression",
+  "partitionExpression #2",
+  "partitionExpression #3",
 ]
 status = "catalogued"
 
@@ -8687,7 +8704,10 @@ grammar = [
 ]
 grammar_sha256 = "dcd2f6dc28efda40b32c4477a16549db06d7928b2947407d9759d4b6b6714b1e"
 uses = [
-  "directoryTableParams",
+  "directoryTableParams (for Amazon S3)",
+  "directoryTableParams (for Google Cloud Storage)",
+  "directoryTableParams (for Microsoft Azure)",
+  "directoryTableParams (for internal stages)",
   "formatTypeOptions",
   "internalStageParams",
 ]
@@ -8704,8 +8724,15 @@ grammar = [
 ]
 grammar_sha256 = "aa4ba1652c5388535f3500331b2762332079c895b30b4959338d1e8ceb1dfdd4"
 uses = [
-  "directoryTableParams",
-  "externalStageParams",
+  "directoryTableParams (for Amazon S3)",
+  "directoryTableParams (for Google Cloud Storage)",
+  "directoryTableParams (for Microsoft Azure)",
+  "directoryTableParams (for internal stages)",
+  "externalStageParams (for Amazon S3)",
+  "externalStageParams (for Amazon S3-compatible Storage)",
+  "externalStageParams (for Google Cloud Storage)",
+  "externalStageParams (for Microsoft Azure)",
+  "externalStageParams (for Microsoft Fabric OneLake)",
   "formatTypeOptions",
 ]
 status = "catalogued"
@@ -8734,8 +8761,15 @@ grammar = [
 ]
 grammar_sha256 = "15afdc5f401539d27001f24ac7de4e6004a07afafc8a03251bf0f1029d11c3fc"
 uses = [
-  "directoryTableParams",
-  "externalStageParams",
+  "directoryTableParams (for Amazon S3)",
+  "directoryTableParams (for Google Cloud Storage)",
+  "directoryTableParams (for Microsoft Azure)",
+  "directoryTableParams (for internal stages)",
+  "externalStageParams (for Amazon S3)",
+  "externalStageParams (for Amazon S3-compatible Storage)",
+  "externalStageParams (for Google Cloud Storage)",
+  "externalStageParams (for Microsoft Azure)",
+  "externalStageParams (for Microsoft Fabric OneLake)",
   "formatTypeOptions",
 ]
 status = "catalogued"
@@ -8751,7 +8785,10 @@ grammar = [
 ]
 grammar_sha256 = "eb455fc9489aea889a1372bc9b1b799ad87990ba015772f9afe23e7f765769c1"
 uses = [
-  "directoryTableParams",
+  "directoryTableParams (for Amazon S3)",
+  "directoryTableParams (for Google Cloud Storage)",
+  "directoryTableParams (for Microsoft Azure)",
+  "directoryTableParams (for internal stages)",
   "formatTypeOptions",
   "internalStageParams",
 ]
@@ -13164,9 +13201,21 @@ name = "tableCommentAction"
 grammar = "tableCommentAction ::= { ALTER | MODIFY [ ( ] [ COLUMN ] <col1_name> COMMENT '<string>' , [ COLUMN ] <col1_name> UNSET COMMENT [ , ... ] [ ) ] }"
 
 [[definition]]
-id = "doc.sql.alter-external-volume::cloudProviderParams"
+id = "doc.sql.alter-external-volume::cloudProviderParams (for Amazon S3)"
 source = "doc.sql.alter-external-volume"
-name = "cloudProviderParams"
+name = "cloudProviderParams (for Amazon S3)"
+grammar = "cloudProviderParams (for Amazon S3) ::= STORAGE_PROVIDER = '{ S3 | S3CHINA | S3GOV }' STORAGE_AWS_ROLE_ARN = '<iam_role>' STORAGE_BASE_URL = '<protocol>://<bucket>[/<path>/]' [ STORAGE_AWS_ACCESS_POINT_ARN = '<string>' ] [ ENCRYPTION = ( [ TYPE = 'AWS_SSE_S3' ] | [ TYPE = 'AWS_SSE_KMS' [ KMS_KEY_ID = '<string>' ] ] | [ TYPE = 'NONE' ] ) ] [ USE_PRIVATELINK_ENDPOINT = { TRUE | FALSE } ]"
+
+[[definition]]
+id = "doc.sql.alter-external-volume::cloudProviderParams (for Google Cloud Storage)"
+source = "doc.sql.alter-external-volume"
+name = "cloudProviderParams (for Google Cloud Storage)"
+grammar = "cloudProviderParams (for Google Cloud Storage) ::= STORAGE_PROVIDER = 'GCS' STORAGE_BASE_URL = 'gcs://<bucket>[/<path>/]' [ ENCRYPTION = ( [ TYPE = 'GCS_SSE_KMS' ] [ KMS_KEY_ID = '<string>' ] | [ TYPE = 'NONE' ] ) ]"
+
+[[definition]]
+id = "doc.sql.alter-external-volume::cloudProviderParams (for Microsoft Azure)"
+source = "doc.sql.alter-external-volume"
+name = "cloudProviderParams (for Microsoft Azure)"
 grammar = "cloudProviderParams (for Microsoft Azure) ::= STORAGE_PROVIDER = 'AZURE' AZURE_TENANT_ID = '<tenant_id>' [ USE_PRIVATELINK_ENDPOINT = { TRUE | FALSE } ] STORAGE_BASE_URL = 'azure://<account>.blob.core.windows.net/<container>[/<path>/]'"
 
 [[definition]]
@@ -13248,9 +13297,21 @@ name = "fromSpecificationTemplate"
 grammar = "fromSpecificationTemplate ::= { FROM SPECIFICATION_TEMPLATE_FILE = '<yaml_file_path>' | FROM @<stage> SPECIFICATION_TEMPLATE_FILE = '<yaml_file_path>' | FROM SPECIFICATION_TEMPLATE <specification_text> } USING ( <key> => <value> [ , <key> => <value> [ , ... ] ] )"
 
 [[definition]]
-id = "doc.sql.alter-stage::externalStageParams"
+id = "doc.sql.alter-stage::externalStageParams (for Amazon S3)"
 source = "doc.sql.alter-stage"
-name = "externalStageParams"
+name = "externalStageParams (for Amazon S3)"
+grammar = "externalStageParams (for Amazon S3) ::= URL = '<protocol>://<bucket>[/<path>/]' [ AWS_ACCESS_POINT_ARN = '<string>' ] [ { STORAGE_INTEGRATION = <integration_name> } | { CREDENTIALS = ( { { AWS_KEY_ID = '<string>' AWS_SECRET_KEY = '<string>' [ AWS_TOKEN = '<string>' ] } | AWS_ROLE = '<string>' } ) } ] [ ENCRYPTION = ( [ TYPE = 'AWS_CSE' ] MASTER_KEY = '<string>' | TYPE = 'AWS_SSE_S3' | TYPE = 'AWS_SSE_KMS' [ KMS_KEY_ID = '<string>' ] | TYPE = 'NONE' ) ] [ USE_PRIVATELINK_ENDPOINT = { TRUE | FALSE } ]"
+
+[[definition]]
+id = "doc.sql.alter-stage::externalStageParams (for Google Cloud Storage)"
+source = "doc.sql.alter-stage"
+name = "externalStageParams (for Google Cloud Storage)"
+grammar = "externalStageParams (for Google Cloud Storage) ::= [ URL = 'gcs://<bucket>[/<path>/]' ] [ STORAGE_INTEGRATION = <integration_name> } ] [ ENCRYPTION = ( TYPE = 'GCS_SSE_KMS' [ KMS_KEY_ID = '<string>' ] | TYPE = 'NONE' ) ]"
+
+[[definition]]
+id = "doc.sql.alter-stage::externalStageParams (for Microsoft Azure)"
+source = "doc.sql.alter-stage"
+name = "externalStageParams (for Microsoft Azure)"
 grammar = "externalStageParams (for Microsoft Azure) ::= [ URL = 'azure://<account>.blob.core.windows.net/<container>[/<path>/]' ] [ { STORAGE_INTEGRATION = <integration_name> } | { CREDENTIALS = ( [ AZURE_SAS_TOKEN = '<string>' ] ) } ] [ ENCRYPTION = ( TYPE = 'AZURE_CSE' [ MASTER_KEY = '<string>' ] | TYPE = 'NONE' ) ] [ USE_PRIVATELINK_ENDPOINT = { TRUE | FALSE } ]"
 
 [[definition]]
@@ -13368,9 +13429,15 @@ name = "partitionExpression"
 grammar = "partitionExpression ::= <col_name> | BUCKET ( <num_buckets> , <col_name> ) | TRUNCATE ( <width> , <col_name> ) | YEAR ( <col_name> ) | MONTH ( <col_name> ) | DAY ( <col_name> ) | HOUR ( <col_name> )"
 
 [[definition]]
-id = "doc.sql.create-external-table::cloudProviderParams"
+id = "doc.sql.create-external-table::cloudProviderParams (for Google Cloud Storage)"
 source = "doc.sql.create-external-table"
-name = "cloudProviderParams"
+name = "cloudProviderParams (for Google Cloud Storage)"
+grammar = "cloudProviderParams (for Google Cloud Storage) ::= [ INTEGRATION = '<integration_name>' ]"
+
+[[definition]]
+id = "doc.sql.create-external-table::cloudProviderParams (for Microsoft Azure)"
+source = "doc.sql.create-external-table"
+name = "cloudProviderParams (for Microsoft Azure)"
 grammar = "cloudProviderParams (for Microsoft Azure) ::= [ INTEGRATION = '<integration_name>' ]"
 
 [[definition]]
@@ -13392,9 +13459,21 @@ name = "inlineConstraint"
 grammar = "inlineConstraint ::= [ NOT NULL ] [ CONSTRAINT <constraint_name> ] { UNIQUE | PRIMARY KEY | [ FOREIGN KEY ] REFERENCES <ref_table_name> [ ( <ref_col_name> [ , <ref_col_name> ] ) ] } [ <constraint_properties> ]"
 
 [[definition]]
-id = "doc.sql.create-external-volume::cloudProviderParams"
+id = "doc.sql.create-external-volume::cloudProviderParams (for Amazon S3)"
 source = "doc.sql.create-external-volume"
-name = "cloudProviderParams"
+name = "cloudProviderParams (for Amazon S3)"
+grammar = "cloudProviderParams (for Amazon S3) ::= STORAGE_PROVIDER = '{ S3 | S3CHINA | S3GOV }' STORAGE_AWS_ROLE_ARN = '<iam_role>' STORAGE_BASE_URL = '<protocol>://<bucket>[/<path>/]' [ STORAGE_AWS_ACCESS_POINT_ARN = '<string>' ] [ STORAGE_AWS_EXTERNAL_ID = '<external_id>' ] [ ENCRYPTION = ( [ TYPE = 'AWS_SSE_S3' ] | [ TYPE = 'AWS_SSE_KMS' [ KMS_KEY_ID = '<string>' ] ] | [ TYPE = 'NONE' ] ) ] [ USE_PRIVATELINK_ENDPOINT = { TRUE | FALSE } ]"
+
+[[definition]]
+id = "doc.sql.create-external-volume::cloudProviderParams (for Google Cloud Storage)"
+source = "doc.sql.create-external-volume"
+name = "cloudProviderParams (for Google Cloud Storage)"
+grammar = "cloudProviderParams (for Google Cloud Storage) ::= STORAGE_PROVIDER = 'GCS' STORAGE_BASE_URL = 'gcs://<bucket>[/<path>/]' [ ENCRYPTION = ( [ TYPE = 'GCS_SSE_KMS' ] [ KMS_KEY_ID = '<string>' ] | [ TYPE = 'NONE' ] ) ]"
+
+[[definition]]
+id = "doc.sql.create-external-volume::cloudProviderParams (for Microsoft Azure)"
+source = "doc.sql.create-external-volume"
+name = "cloudProviderParams (for Microsoft Azure)"
 grammar = "cloudProviderParams (for Microsoft Azure) ::= STORAGE_PROVIDER = 'AZURE' AZURE_TENANT_ID = '<tenant_id>' STORAGE_BASE_URL = 'azure://...' [ USE_PRIVATELINK_ENDPOINT = { TRUE | FALSE } ]"
 
 [[definition]]
@@ -13446,6 +13525,12 @@ name = "partitionExpression"
 grammar = "partitionExpression ::= <col_name> | BUCKET ( <num_buckets> , <col_name> ) | TRUNCATE ( <width> , <col_name> ) | YEAR ( <col_name> ) | MONTH ( <col_name> ) | DAY ( <col_name> ) | HOUR ( <col_name> )"
 
 [[definition]]
+id = "doc.sql.create-iceberg-table-rest::partitionExpression #2"
+source = "doc.sql.create-iceberg-table-rest"
+name = "partitionExpression #2"
+grammar = "partitionExpression ::= <col_name> | BUCKET ( <num_buckets> , <col_name> ) | TRUNCATE ( <width> , <col_name> ) | YEAR ( <col_name> ) | MONTH ( <col_name> ) | DAY ( <col_name> ) | HOUR ( <col_name> )"
+
+[[definition]]
 id = "doc.sql.create-iceberg-table-snowflake::inlineConstraint"
 source = "doc.sql.create-iceberg-table-snowflake"
 name = "inlineConstraint"
@@ -13467,18 +13552,42 @@ grammar = "partitionExpression ::= <col_name> | BUCKET ( <num_buckets> , <col_na
 id = "doc.sql.create-iceberg-table::inlineConstraint"
 source = "doc.sql.create-iceberg-table"
 name = "inlineConstraint"
+grammar = "inlineConstraint ::= [ CONSTRAINT <constraint_name> ] { UNIQUE | PRIMARY KEY | [ FOREIGN KEY ] REFERENCES <ref_table_name> [ ( <ref_col_name> ) ] | CHECK ( <expr> ) } [ <constraint_properties> ]"
+
+[[definition]]
+id = "doc.sql.create-iceberg-table::inlineConstraint #2"
+source = "doc.sql.create-iceberg-table"
+name = "inlineConstraint #2"
 grammar = "inlineConstraint ::= [ CONSTRAINT <constraint_name> ] { UNIQUE | PRIMARY KEY | [ FOREIGN KEY ] REFERENCES <ref_table_name> [ ( <ref_col_name> ) ] } [ <constraint_properties> ]"
 
 [[definition]]
 id = "doc.sql.create-iceberg-table::outoflineConstraint"
 source = "doc.sql.create-iceberg-table"
 name = "outoflineConstraint"
+grammar = "outoflineConstraint ::= [ CONSTRAINT <constraint_name> ] { UNIQUE [ ( <col_name> [ , <col_name> , ... ] ) ] | PRIMARY KEY [ ( <col_name> [ , <col_name> , ... ] ) ] | [ FOREIGN KEY ] [ ( <col_name> [ , <col_name> , ... ] ) ] REFERENCES <ref_table_name> [ ( <ref_col_name> [ , <ref_col_name> , ... ] ) ] | CHECK ( <expr> ) } [ <constraint_properties> ]"
+
+[[definition]]
+id = "doc.sql.create-iceberg-table::outoflineConstraint #2"
+source = "doc.sql.create-iceberg-table"
+name = "outoflineConstraint #2"
 grammar = "outoflineConstraint ::= [ CONSTRAINT <constraint_name> ] { UNIQUE [ ( <col_name> [ , <col_name> , ... ] ) ] | PRIMARY KEY [ ( <col_name> [ , <col_name> , ... ] ) ] | [ FOREIGN KEY ] [ ( <col_name> [ , <col_name> , ... ] ) ] REFERENCES <ref_table_name> [ ( <ref_col_name> [ , <ref_col_name> , ... ] ) ] } [ <constraint_properties> ]"
 
 [[definition]]
 id = "doc.sql.create-iceberg-table::partitionExpression"
 source = "doc.sql.create-iceberg-table"
 name = "partitionExpression"
+grammar = "partitionExpression ::= <col_name> | BUCKET ( <num_buckets> , <col_name> ) | TRUNCATE ( <width> , <col_name> ) | YEAR ( <col_name> ) | MONTH ( <col_name> ) | DAY ( <col_name> ) | HOUR ( <col_name> )"
+
+[[definition]]
+id = "doc.sql.create-iceberg-table::partitionExpression #2"
+source = "doc.sql.create-iceberg-table"
+name = "partitionExpression #2"
+grammar = "partitionExpression ::= <col_name> | BUCKET ( <num_buckets> , <col_name> ) | TRUNCATE ( <width> , <col_name> ) | YEAR ( <col_name> ) | MONTH ( <col_name> ) | DAY ( <col_name> ) | HOUR ( <col_name> )"
+
+[[definition]]
+id = "doc.sql.create-iceberg-table::partitionExpression #3"
+source = "doc.sql.create-iceberg-table"
+name = "partitionExpression #3"
 grammar = "partitionExpression ::= <col_name> | BUCKET ( <num_buckets> , <col_name> ) | TRUNCATE ( <width> , <col_name> ) | YEAR ( <col_name> ) | MONTH ( <col_name> ) | DAY ( <col_name> ) | HOUR ( <col_name> )"
 
 [[definition]]
@@ -13554,16 +13663,58 @@ name = "fromSpecificationTemplate"
 grammar = "fromSpecificationTemplate ::= { FROM SPECIFICATION_TEMPLATE_FILE = '<yaml_file_stage_path>' | FROM @<stage> SPECIFICATION_TEMPLATE_FILE = '<yaml_file_stage_path>' | FROM SPECIFICATION_TEMPLATE <specification_text> } USING ( <key> => <value> [ , <key> => <value> [ , ... ] ] )"
 
 [[definition]]
-id = "doc.sql.create-stage::directoryTableParams"
+id = "doc.sql.create-stage::directoryTableParams (for Amazon S3)"
 source = "doc.sql.create-stage"
-name = "directoryTableParams"
+name = "directoryTableParams (for Amazon S3)"
+grammar = "directoryTableParams (for Amazon S3) ::= [ DIRECTORY = ( ENABLE = { TRUE | FALSE } [ REFRESH_ON_CREATE = { TRUE | FALSE } ] [ AUTO_REFRESH = { TRUE | FALSE } ] [ AWS_SNS_TOPIC = '<sns_topic_arn>' ] ) ]"
+
+[[definition]]
+id = "doc.sql.create-stage::directoryTableParams (for Google Cloud Storage)"
+source = "doc.sql.create-stage"
+name = "directoryTableParams (for Google Cloud Storage)"
+grammar = "directoryTableParams (for Google Cloud Storage) ::= [ DIRECTORY = ( ENABLE = { TRUE | FALSE } [ AUTO_REFRESH = { TRUE | FALSE } ] [ REFRESH_ON_CREATE = { TRUE | FALSE } ] [ NOTIFICATION_INTEGRATION = '<notification_integration_name>' ] ) ]"
+
+[[definition]]
+id = "doc.sql.create-stage::directoryTableParams (for Microsoft Azure)"
+source = "doc.sql.create-stage"
+name = "directoryTableParams (for Microsoft Azure)"
 grammar = "directoryTableParams (for Microsoft Azure) ::= [ DIRECTORY = ( ENABLE = { TRUE | FALSE } [ REFRESH_ON_CREATE = { TRUE | FALSE } ] [ AUTO_REFRESH = { TRUE | FALSE } ] [ NOTIFICATION_INTEGRATION = '<notification_integration_name>' ] ) ]"
 
 [[definition]]
-id = "doc.sql.create-stage::externalStageParams"
+id = "doc.sql.create-stage::directoryTableParams (for internal stages)"
 source = "doc.sql.create-stage"
-name = "externalStageParams"
+name = "directoryTableParams (for internal stages)"
+grammar = "directoryTableParams (for internal stages) ::= [ DIRECTORY = ( ENABLE = { TRUE | FALSE } [ AUTO_REFRESH = { TRUE | FALSE } ] ) ]"
+
+[[definition]]
+id = "doc.sql.create-stage::externalStageParams (for Amazon S3)"
+source = "doc.sql.create-stage"
+name = "externalStageParams (for Amazon S3)"
+grammar = "externalStageParams (for Amazon S3) ::= URL = '<protocol>://<bucket>[/<path>/]' [ AWS_ACCESS_POINT_ARN = '<string>' ] [ { STORAGE_INTEGRATION = <integration_name> } | { CREDENTIALS = ( { { AWS_KEY_ID = '<string>' AWS_SECRET_KEY = '<string>' [ AWS_TOKEN = '<string>' ] } | AWS_ROLE = '<string>' } ) } ] [ ENCRYPTION = ( [ TYPE = 'AWS_CSE' ] MASTER_KEY = '<string>' | TYPE = 'AWS_SSE_S3' | TYPE = 'AWS_SSE_KMS' [ KMS_KEY_ID = '<string>' ] | TYPE = 'NONE' ) ] [ USE_PRIVATELINK_ENDPOINT = { TRUE | FALSE } ]"
+
+[[definition]]
+id = "doc.sql.create-stage::externalStageParams (for Amazon S3-compatible Storage)"
+source = "doc.sql.create-stage"
+name = "externalStageParams (for Amazon S3-compatible Storage)"
 grammar = "externalStageParams (for Amazon S3-compatible Storage) ::= URL = 's3compat://{bucket}[/{path}/]' ENDPOINT = '<s3_api_compatible_endpoint>' [ { CREDENTIALS = ( AWS_KEY_ID = '<string>' AWS_SECRET_KEY = '<string>' ) } ]"
+
+[[definition]]
+id = "doc.sql.create-stage::externalStageParams (for Google Cloud Storage)"
+source = "doc.sql.create-stage"
+name = "externalStageParams (for Google Cloud Storage)"
+grammar = "externalStageParams (for Google Cloud Storage) ::= URL = 'gcs://<bucket>[/<path>/]' [ STORAGE_INTEGRATION = <integration_name> ] [ ENCRYPTION = ( TYPE = 'GCS_SSE_KMS' [ KMS_KEY_ID = '<string>' ] | TYPE = 'NONE' ) ] [ USE_PRIVATELINK_ENDPOINT = { TRUE | FALSE } ]"
+
+[[definition]]
+id = "doc.sql.create-stage::externalStageParams (for Microsoft Azure)"
+source = "doc.sql.create-stage"
+name = "externalStageParams (for Microsoft Azure)"
+grammar = "externalStageParams (for Microsoft Azure) ::= URL = 'azure://<account>.blob.core.windows.net/<container>[/<path>/]' [ { STORAGE_INTEGRATION = <integration_name> } | { CREDENTIALS = ( [ AZURE_SAS_TOKEN = '<string>' ] ) } ] [ ENCRYPTION = ( TYPE = 'AZURE_CSE' MASTER_KEY = '<string>' | TYPE = 'NONE' ) ] [ USE_PRIVATELINK_ENDPOINT = { TRUE | FALSE } ]"
+
+[[definition]]
+id = "doc.sql.create-stage::externalStageParams (for Microsoft Fabric OneLake)"
+source = "doc.sql.create-stage"
+name = "externalStageParams (for Microsoft Fabric OneLake)"
+grammar = "externalStageParams (for Microsoft Fabric OneLake) ::= URL = 'azure://onelake.blob.fabric.microsoft.com/<workspace_id>/<item_id>/Files[/<path>/]' [ { STORAGE_INTEGRATION = <integration_name> } | { CREDENTIALS = ( [ AZURE_SAS_TOKEN = '<string>' ] ) } ] [ ENCRYPTION = ( TYPE = 'AZURE_CSE' MASTER_KEY = '<string>' | TYPE = 'NONE' ) ]"
 
 [[definition]]
 id = "doc.sql.create-stage::formatTypeOptions"
