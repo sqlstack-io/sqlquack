@@ -771,22 +771,19 @@ impl Parser {
         };
         if self.match_token(TokenType::With) {
             if self.match_token(TokenType::Local) {
-                self.match_keyword("TIME");
-                self.match_keyword("ZONE");
+                self.match_time_zone_words()?;
                 Ok(DataType::Custom {
                     name: "TIMESTAMPLTZ".to_string(),
                 })
             } else {
-                self.match_keyword("TIME");
-                self.match_keyword("ZONE");
+                self.match_time_zone_words()?;
                 Ok(DataType::Timestamp {
                     precision,
                     timezone: true,
                 })
             }
         } else if self.match_keyword("WITHOUT") {
-            self.match_keyword("TIME");
-            self.match_keyword("ZONE");
+            self.match_time_zone_words()?;
             Ok(DataType::Timestamp {
                 precision,
                 timezone: false,
@@ -956,6 +953,7 @@ impl Parser {
                     dimension: Some(dimension),
                 })
             } else {
+                self.expect_snowflake_vector_element()?;
                 let element_type = self.parse_data_type()?;
                 self.expect_token(TokenType::Comma)?;
                 let dimension = self.expect_number()? as u32;
@@ -987,7 +985,9 @@ impl Parser {
                     };
                     let field_type = self.parse_data_type()?;
                     let not_null = if self.match_keyword("NOT") {
-                        self.match_keyword("NULL");
+                        if !self.match_keyword("NULL") {
+                            return Err(self.parse_error("Expected NULL after NOT"));
+                        }
                         true
                     } else {
                         false

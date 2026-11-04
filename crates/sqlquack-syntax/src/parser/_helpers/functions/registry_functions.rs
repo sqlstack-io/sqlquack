@@ -391,6 +391,7 @@ impl Parser {
     }
 
     pub(crate) fn parse_registry_date_part(&mut self) -> Result<Option<Expression>> {
+        self.reject_snowflake_string_part_from()?;
         let part = self.parse_expression()?;
         let mut part = { part };
         if !self.match_token(TokenType::From) && !self.match_token(TokenType::Comma) {
@@ -735,7 +736,19 @@ impl Parser {
         }
     }
 
+    /// Snowflake's `<part> FROM <value>` takes the part as a keyword, never as a string.
+    fn reject_snowflake_string_part_from(&self) -> Result<()> {
+        if self.config.dialect == Some(crate::tokens::models::DialectType::Snowflake)
+            && self.check(TokenType::String)
+            && self.check_next(TokenType::From)
+        {
+            return Err(self.parse_error("Expected a date or time part keyword before FROM"));
+        }
+        Ok(())
+    }
+
     pub(crate) fn parse_registry_extract(&mut self, name: &str) -> Result<Option<Expression>> {
+        self.reject_snowflake_string_part_from()?;
         if self.check(TokenType::String) && !self.check_next(TokenType::From) {
             let args = self.parse_expression_list()?;
             self.expect_token(TokenType::RParen)?;

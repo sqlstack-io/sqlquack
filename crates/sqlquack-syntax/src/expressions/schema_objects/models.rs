@@ -868,6 +868,9 @@ pub struct DropSequence {
     pub name: TableRef,
     pub if_exists: bool,
     pub cascade: bool,
+    /// RESTRICT, kept apart from the default; left out of the tree when absent
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    pub restrict: bool,
 }
 
 impl DropSequence {
@@ -876,6 +879,7 @@ impl DropSequence {
             name: TableRef::new(name),
             if_exists: false,
             cascade: false,
+            restrict: false,
         }
     }
 }

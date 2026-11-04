@@ -294,6 +294,9 @@ impl Parser {
         }
 
         enforce_ast(&statements, &self.config.complexity_guard)?;
+        if self.applies_snowflake_context_rules() {
+            self.reject_snowflake_name_wrappers(&statements)?;
+        }
         Ok(statements)
     }
 
@@ -517,6 +520,25 @@ impl Parser {
                 self.parse_rm_command()
             }
             TokenType::Var if self.peek_text().eq_ignore_ascii_case("CALL") => self.parse_call(),
+            TokenType::Var
+                if self.peek_text().eq_ignore_ascii_case("UNSET")
+                    && matches!(
+                        self.config.dialect,
+                        Some(crate::tokens::models::DialectType::Snowflake)
+                    ) =>
+            {
+                self.parse_unset()
+            }
+            TokenType::Var
+                if self.peek_text().eq_ignore_ascii_case("OPEN")
+                    && matches!(
+                        self.config.dialect,
+                        Some(crate::tokens::models::DialectType::Snowflake)
+                    ) =>
+            {
+                Err(self
+                    .parse_error("OPEN is a Snowflake Scripting statement, valid only in a block"))
+            }
             TokenType::Var if self.peek_text().eq_ignore_ascii_case("OPEN") => {
                 self.skip();
                 self.parse_command()?
@@ -883,6 +905,9 @@ impl Parser {
     }
 
     fn parse_statement_other(&mut self) -> Result<Expression> {
+        if self.applies_snowflake_context_rules() {
+            return Err(self.parse_error("Expected a statement, not an expression"));
+        }
         let leading_comments = self.current_leading_comments().to_vec();
         let expr = self.parse_expression()?;
         let pre_alias_comments = self.previous_trailing_comments().to_vec();
@@ -1223,6 +1248,31 @@ impl Parser {
                     expressions: target_expressions,
                 })
             }
+        } else if self.config.dialect == Some(crate::tokens::models::DialectType::Snowflake)
+            && self.check(TokenType::Into)
+            && self.check_next(TokenType::Colon)
+        {
+            self.skip();
+            let mut target_expressions = vec![self.parse_primary()?];
+            while self.match_token(TokenType::Comma) {
+                target_expressions.push(self.parse_primary()?);
+            }
+            Some(match target_expressions.len() {
+                1 => SelectInto {
+                    this: target_expressions.remove(0),
+                    temporary: false,
+                    unlogged: false,
+                    bulk_collect: false,
+                    expressions: Vec::new(),
+                },
+                _ => SelectInto {
+                    this: Expression::Null(Null),
+                    temporary: false,
+                    unlogged: false,
+                    bulk_collect: false,
+                    expressions: target_expressions,
+                },
+            })
         } else if self.match_token(TokenType::Into) {
             let temporary = self.match_token(TokenType::Temporary) || self.match_identifier("TEMP");
             let unlogged = !temporary && self.match_identifier("UNLOGGED");

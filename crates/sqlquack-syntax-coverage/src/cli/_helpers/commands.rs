@@ -1,6 +1,7 @@
 //! One function per subcommand; each prints its result and returns the exit code.
 
 use std::cell::RefCell;
+use std::collections::BTreeSet;
 use std::io::{BufRead, Write};
 use std::path::{Path, PathBuf};
 use std::process::{Command, ExitCode};
@@ -13,7 +14,7 @@ use crate::check::models::{CheckResult, FormResult, ObligationResult, Reason};
 use crate::cli::_helpers::local::{frozen_catalogue, parser_tree, snowflake_verdict};
 use crate::cli::_helpers::output::{print, say};
 use crate::cli::_helpers::worker::Worker;
-use crate::cli::models::Common;
+use crate::cli::models::{Common, TranslationArguments};
 use crate::formats::constants::SNAPSHOT_FORMAT;
 use crate::formats::main::load_coverage::load_coverage;
 use crate::formats::main::obligation_form::obligation_form;
@@ -23,6 +24,10 @@ use crate::report::main::snapshot::snapshot;
 use crate::report::main::summarize::summarize;
 use crate::report::main::tally_by::tally_by;
 use crate::report::models::{Snapshot, SnapshotDiff, Summary};
+use crate::translation::constants::TRANSLATION_DIR;
+use crate::translation::main::load_translation_files::load_translation_files;
+use crate::translation::main::measure_translation::measure_translation;
+use crate::translation::models::{TranslationInputs, TranslationReport, TranslationTally};
 
 /// Kinds that test a limit; `boundaries` reports these.
 const BOUNDARY_KINDS: [ObligationKind; 4] = [
@@ -405,5 +410,99 @@ pub(crate) fn parse_worker() -> Result<ExitCode, ExitCode> {
             .and_then(|()| out.flush())
             .map_err(|_| ExitCode::FAILURE)?;
     }
+    Ok(ExitCode::SUCCESS)
+}
+
+/// One tally as a text line: the measurable forms that translate, and those needing a schema.
+fn tally_line(name: &str, tally: &TranslationTally) -> String {
+    format!(
+        "{name}: {} of {} measurable forms translate; {} need a schema, {} have no relation in scope, {} not measurable; {} by design, {} declared value divergence, {} not yet; cases {}/{} translated, {} did not finish",
+        tally.translated_forms,
+        tally.measurable_forms,
+        tally.needs_schema_forms,
+        tally.no_relation_in_scope_forms,
+        tally.not_measurable_forms,
+        tally.by_design_forms,
+        tally.declared_value_divergence_forms,
+        tally.not_yet_translated_forms,
+        tally.translated_cases,
+        tally.counted_cases,
+        tally.did_not_finish_cases,
+    )
+}
+
+pub(crate) fn translation(
+    arguments: &TranslationArguments,
+    common: &Common,
+) -> Result<ExitCode, ExitCode> {
+    let (sqlquack, family) = (&arguments.sqlquack, arguments.family.as_deref());
+    let coverage: SyntaxCoverage = load(&common.root)?;
+    if family.is_some_and(|family| !coverage.catalogue.contains_key(family)) {
+        say(&format!("FAILED, no family {}", family.unwrap_or_default()));
+        return Err(ExitCode::FAILURE);
+    }
+    let directory: PathBuf = common
+        .root
+        .parent()
+        .unwrap_or(Path::new("."))
+        .join(TRANSLATION_DIR);
+    let fail = |problems: Vec<String>| {
+        for problem in &problems {
+            say(problem);
+        }
+        say(&format!("FAILED, {} problems", problems.len()));
+        ExitCode::FAILURE
+    };
+    let by_design: BTreeSet<String> = load_translation_files(&directory).map_err(fail)?;
+    let work: PathBuf =
+        std::env::temp_dir().join(format!("syntax-translation-{}", std::process::id()));
+    std::fs::create_dir_all(&work).map_err(|error| {
+        say(&format!("FAILED, no scratch directory: {error}"));
+        ExitCode::FAILURE
+    })?;
+    say(&format!("converting with {}", sqlquack.display()));
+    let report = measure_translation(&TranslationInputs {
+        coverage: &coverage,
+        root: &common.root,
+        by_design: &by_design,
+        binary: sqlquack,
+        policy: &arguments.policy,
+        work: &work,
+        family,
+        jobs: arguments.jobs,
+    });
+    let _ = std::fs::remove_dir_all(&work);
+    let report: TranslationReport = report.map_err(fail)?;
+    let mut text: Vec<String> = vec![tally_line("total", &report.total)];
+    text.extend(
+        report
+            .families
+            .iter()
+            .map(|(name, tally)| tally_line(name, tally)),
+    );
+    text.push(format!("results match: {}", report.results_match));
+    text.extend(
+        report
+            .refusals
+            .iter()
+            .take(20)
+            .map(|(refusal, forms)| format!("  blocks {forms} forms: {refusal}")),
+    );
+    if family.is_some() {
+        text.extend(report.forms.iter().map(|form| {
+            format!(
+                "{} {:?} {}/{} cases{}",
+                form.id,
+                form.state,
+                form.translated_cases,
+                form.measured_cases,
+                match form.refusals.is_empty() {
+                    true => String::new(),
+                    false => format!(": {}", form.refusals.join("; ")),
+                }
+            )
+        }));
+    }
+    print(common.json, &report, &text);
     Ok(ExitCode::SUCCESS)
 }

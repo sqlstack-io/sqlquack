@@ -507,7 +507,12 @@ impl Parser {
 
                     loop {
                         self.expect_token(TokenType::LParen)?;
-                        let row = if self.check(TokenType::RParen) {
+                        let row = if self.check(TokenType::RParen)
+                            && self.config.dialect
+                                == Some(crate::tokens::models::DialectType::Snowflake)
+                        {
+                            return Err(self.parse_error("Expected a value in the VALUES row"));
+                        } else if self.check(TokenType::RParen) {
                             Vec::new()
                         } else {
                             self.parse_values_expression_list()?

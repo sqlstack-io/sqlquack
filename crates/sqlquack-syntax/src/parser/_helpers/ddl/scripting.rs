@@ -14,7 +14,6 @@ use crate::expressions::statements::models::Describe;
 use crate::expressions::statements::models::PutStmt;
 use crate::expressions::statements::models::Schema;
 use crate::expressions::statements::models::Show;
-use crate::expressions::statements::models::Transaction;
 use crate::expressions::tree::models::Expression;
 use crate::expressions::types::models::Tuple;
 use crate::parser::constants::ENGINE;
@@ -74,52 +73,6 @@ impl Parser {
         Err(self.parse_error(format!("Expected END {}", block_kind)))
     }
 
-    /// Parses START TRANSACTION [READ ONLY | READ WRITE] [, ISOLATION LEVEL ...].
-    pub(crate) fn parse_start_transaction(&mut self) -> Result<Expression> {
-        self.expect_token(TokenType::Start)?;
-
-        self.expect_token(TokenType::Transaction)?;
-
-        let mut mode_parts: Vec<String> = Vec::new();
-        while self.is_identifier_token()
-            || self.is_safe_keyword_as_identifier()
-            || self.match_identifier("READ")
-        {
-            let read_matched = self.previous_text().eq_ignore_ascii_case("READ");
-            let mut mode_tokens: Vec<String> = Vec::new();
-            if read_matched {
-                mode_tokens.push("READ".to_string());
-            }
-            while (self.is_identifier_token() || self.is_safe_keyword_as_identifier())
-                && !self.check(TokenType::Comma)
-            {
-                mode_tokens.push(self.advance_text()?);
-            }
-            if !mode_tokens.is_empty() {
-                mode_parts.push(mode_tokens.join(" "));
-            }
-            if !self.match_token(TokenType::Comma) {
-                break;
-            }
-        }
-
-        let modes = if !mode_parts.is_empty() {
-            Some(Box::new(Expression::Identifier(Identifier::new(
-                mode_parts.join(", "),
-            ))))
-        } else {
-            None
-        };
-
-        Ok(Expression::Transaction(Box::new(Transaction {
-            this: None,
-            modes,
-            mark: Some(Box::new(Expression::Identifier(Identifier::new(
-                "START".to_string(),
-            )))),
-        })))
-    }
-
     /// Parses DESCRIBE [EXTENDED|FORMATTED|ANALYZE] target, and EXPLAIN.
     pub(crate) fn parse_describe(&mut self) -> Result<Expression> {
         let is_explain =
@@ -133,6 +86,10 @@ impl Parser {
         } else {
             return Err(self.parse_error("Expected DESCRIBE, DESC, or EXPLAIN"));
         };
+
+        if is_explain && self.is_snowflake() && self.match_token(TokenType::Using) {
+            return self.parse_snowflake_explain_using(leading_comments);
+        }
 
         let analyze_option: bool = is_explain && self.parse_postgres_explain_options()?;
 
@@ -255,7 +212,7 @@ impl Parser {
         }
     }
 
-    fn parse_describe_target(&mut self) -> Result<(Vec<(String, String)>, Expression)> {
+    pub(crate) fn parse_describe_target(&mut self) -> Result<(Vec<(String, String)>, Expression)> {
         let properties: Vec<(String, String)> = Vec::new();
 
         let target = if self.check(TokenType::Select)
@@ -358,12 +315,16 @@ impl Parser {
         let (this_parts, target, mutex) = self.parse_show_object_kind()?;
 
         let this = this_parts.join(" ");
+        if self.is_snowflake() && this.is_empty() {
+            return Err(self.parse_error("Expected an object kind after SHOW"));
+        }
 
         let history = self.match_identifier("HISTORY");
 
         let for_target = self.parse_show_for_target()?;
 
         let like = if self.match_token(TokenType::Like) {
+            self.expect_snowflake_like_pattern()?;
             Some(self.parse_primary()?)
         } else {
             None
@@ -403,6 +364,7 @@ impl Parser {
         (db, from) = self.parse_show_index_or_columns_source(db, from, &this);
 
         let like = if like.is_none() && self.match_token(TokenType::Like) {
+            self.expect_snowflake_like_pattern()?;
             Some(self.parse_primary()?)
         } else {
             like

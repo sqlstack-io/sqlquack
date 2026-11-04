@@ -350,6 +350,8 @@ impl Parser {
                     }
                     self.expect_token(TokenType::End)?;
                     body = Some(FunctionBody::Statements(statements));
+                } else if self.check(TokenType::DollarString) {
+                    body = Some(FunctionBody::Expression(self.parse_expression()?));
                 } else {
                     let stmt = self.parse_statement()?;
                     body = Some(FunctionBody::Expression(stmt));
@@ -618,14 +620,13 @@ impl Parser {
         let name = self.parse_object_name_ref()?;
 
         let cascade = self.match_token(TokenType::Cascade);
-        if !cascade {
-            self.match_token(TokenType::Restrict);
-        }
+        let restrict = !cascade && self.match_token(TokenType::Restrict);
 
         Ok(Expression::DropSequence(Box::new(DropSequence {
             name,
             if_exists,
             cascade,
+            restrict,
         })))
     }
 

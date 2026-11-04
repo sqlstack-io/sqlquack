@@ -6,7 +6,7 @@ use clap::Parser;
 
 use crate::cli::_helpers::commands::{
     boundaries, diff, family, missing, pages, parse_worker, snapshot_command, stale, summary,
-    validate,
+    translation, validate,
 };
 use crate::cli::models::{Arguments, Command};
 
@@ -27,6 +27,7 @@ pub fn run_cli() -> ExitCode {
             catalogue_commit,
             common,
         } => snapshot_command(&catalogue_commit, &common),
+        Command::Translation { arguments, common } => translation(&arguments, &common),
         Command::Diff { base, head, common } => diff(&base, head.as_deref(), &common),
         Command::ParseWorker => parse_worker(),
     };

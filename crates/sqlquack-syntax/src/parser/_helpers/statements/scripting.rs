@@ -222,7 +222,7 @@ impl Parser {
                 operator,
                 value: self.parse_scripting_value()?,
             }),
-            None if data_type.is_none() => {
+            None if data_type.is_none() && is_let => {
                 return Err(self.parse_error("Expected a type or a value for the variable"));
             }
             None => None,
@@ -243,15 +243,17 @@ impl Parser {
         let (mut number, mut message) = (None, None);
         if self.match_token(TokenType::LParen) {
             let value = self.parse_expression()?;
-            let documented = matches!(&value, Expression::Neg(negated)
-                if matches!(&negated.this, Expression::Literal(literal)
+            let integer = |expression: &Expression| {
+                matches!(expression, Expression::Literal(literal)
                     if matches!(**literal, Literal::Number(ref text)
-                        if text.bytes().all(|b| b.is_ascii_digit())
-                            && text.parse::<u32>().is_ok_and(|n| (20001..=20998).contains(&n)))));
+                        if text.bytes().all(|b| b.is_ascii_digit())))
+            };
+            let documented = match &value {
+                Expression::Neg(negated) => integer(&negated.this),
+                other => integer(other),
+            };
             if !documented {
-                return Err(
-                    self.parse_error("Expected an exception number between -20998 and -20001")
-                );
+                return Err(self.parse_error("Expected an integer exception number"));
             }
             self.expect_token(TokenType::Comma)?;
             if !self.check(TokenType::String) {
@@ -448,8 +450,10 @@ impl Parser {
         let cursor = self.expect_scripting_name()?;
         self.expect_token(TokenType::Into)?;
         let mut targets = vec![self.expect_identifier_or_keyword_with_quoted()?];
+        self.reject_reserved_name_part(&targets[0])?;
         while self.match_token(TokenType::Comma) {
             targets.push(self.expect_identifier_or_keyword_with_quoted()?);
+            self.reject_reserved_name_part(&targets[targets.len() - 1])?;
         }
         Ok(ScriptingStatement::Fetch(ScriptingFetch {
             span: self.source_range(start),
@@ -569,7 +573,14 @@ impl Parser {
     fn parse_scripting_case(&mut self, start: usize) -> Result<ScriptingStatement> {
         self.skip();
         let operand = if self.check(TokenType::LParen) {
-            Some(self.parse_scripting_condition()?)
+            let open = self.current;
+            let condition = self.parse_scripting_condition()?;
+            if self.check_text_seq(&["WHEN"]) {
+                Some(condition)
+            } else {
+                self.current = open;
+                Some(self.parse_expression()?)
+            }
         } else if self.check_text_seq(&["WHEN"]) {
             None
         } else {

@@ -474,6 +474,42 @@ fn given_auditor_tree_findings_when_parsing_faithfully_then_the_tree_records_wha
             pointer: "/function/no_parens",
             expected_value: json!(true),
         },
+        ProjectionTestCase {
+            description: "COUNT takes a star with a quoted EXCLUDE name",
+            sql: "SELECT COUNT(* EXCLUDE \"v1 Q\") FROM t1",
+            pointer: "/aggregate_function/args/0/star/except/0/name",
+            expected_value: json!("v1 Q"),
+        },
+        ProjectionTestCase {
+            description: "COUNT takes a star with an EXCLUDE list",
+            sql: "SELECT COUNT(* EXCLUDE (v1)) FROM t1",
+            pointer: "/aggregate_function/args/0/star/except/0/name",
+            expected_value: json!("v1"),
+        },
+        ProjectionTestCase {
+            description: "a bare COUNT star is unchanged",
+            sql: "SELECT COUNT(*) FROM t1",
+            pointer: "/aggregate_function/args/0/star/except",
+            expected_value: json!(null),
+        },
+        ProjectionTestCase {
+            description: "HASH_AGG takes DISTINCT over several arguments",
+            sql: "SELECT HASH_AGG(DISTINCT 1, 2)",
+            pointer: "/aggregate_function/distinct",
+            expected_value: json!(true),
+        },
+        ProjectionTestCase {
+            description: "OBJECT_AGG takes DISTINCT over its key and value",
+            sql: "SELECT OBJECT_AGG(DISTINCT v1, 1) FROM t1",
+            pointer: "/aggregate_function/args/1/literal/value",
+            expected_value: json!("1"),
+        },
+        ProjectionTestCase {
+            description: "OBJECT_AGG without DISTINCT stays not distinct",
+            sql: "SELECT OBJECT_AGG(v1, 1) FROM t1",
+            pointer: "/aggregate_function/distinct",
+            expected_value: json!(false),
+        },
     ];
 
     for test_case in test_cases {
@@ -647,10 +683,470 @@ fn given_a_snowflake_drop_of_another_object_kind_when_parsing_then_the_tree_name
             expected_value: json!(true),
         },
         ProjectionTestCase {
+            description: "DROP SEQUENCE keeps RESTRICT apart from the default",
+            sql: "DROP SEQUENCE v1 RESTRICT",
+            pointer: "/0/drop_sequence/restrict",
+            expected_value: json!(true),
+        },
+        ProjectionTestCase {
+            description: "plain DROP SEQUENCE leaves RESTRICT out of the tree",
+            sql: "DROP SEQUENCE v1",
+            pointer: "/0/drop_sequence/restrict",
+            expected_value: serde_json::Value::Null,
+        },
+        ProjectionTestCase {
             description: "an external table keeps RESTRICT",
             sql: "DROP EXTERNAL TABLE v1 RESTRICT",
             pointer: "/0/drop_object/restrict",
             expected_value: json!(true),
+        },
+    ];
+
+    for test_case in test_cases {
+        assert_eq!(
+            statements(test_case.sql, Dialect::Snowflake, CallMode::Faithful)
+                .pointer(test_case.pointer)
+                .cloned()
+                .unwrap_or_default(),
+            test_case.expected_value,
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_statements_from_the_parser_only_disagreements_when_parsing_snowflake_then_the_verdict_matches_snowflake(
+) {
+    let test_cases = [
+        AcceptanceTestCase {
+            description: "a bare expression is no statement",
+            sql: "BREAK ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "BREAK inside a loop is a statement",
+            sql: "BEGIN LOOP BREAK ; END LOOP ; END ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "NULL alone is no statement",
+            sql: "NULL ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "a $$ procedure body is still read",
+            sql: "CREATE PROCEDURE p1 ( ) RETURNS INT LANGUAGE SQL AS $$ BEGIN RETURN 1 ; END $$ ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "UNSET needs a name",
+            sql: "UNSET ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "UNSET ( ) needs a name",
+            sql: "UNSET ( ) ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "UNSET takes a parenthesized list",
+            sql: "UNSET ( v1 , v2 ) ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "ALTER SESSION UNSET needs a parameter",
+            sql: "ALTER SESSION UNSET ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "ALTER SESSION UNSET takes no string",
+            sql: "ALTER SESSION UNSET 'v1' ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "ALTER SESSION UNSET takes a parameter name",
+            sql: "ALTER SESSION UNSET TIMEZONE ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "EXECUTE needs an object kind",
+            sql: "EXECUTE v1 ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "EXECUTE ALERT needs a name",
+            sql: "EXECUTE ALERT ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "EXECUTE ALERT takes a quoted name",
+            sql: r#"EXECUTE ALERT "v1 Q" ;"#,
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "EXECUTE ALERT refuses a reserved name",
+            sql: "EXECUTE ALERT SELECT ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "EXECUTE TASK takes RETRY LAST",
+            sql: "EXECUTE TASK v1 RETRY LAST ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "EXECUTE TASK takes RETRY GRAPH RUN GROUP",
+            sql: "EXECUTE TASK v1 RETRY GRAPH RUN GROUP 'g' ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "EXECUTE DCM PROJECT takes PURGE AS",
+            sql: r#"EXECUTE DCM PROJECT v1 PURGE AS "d1" ;"#,
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "EXECUTE DCM PROJECT takes TEST ALL",
+            sql: "EXECUTE DCM PROJECT v1 TEST ALL ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "EXPLAIN takes USING JSON",
+            sql: "EXPLAIN USING JSON SELECT 1 ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "SHOW needs an object kind",
+            sql: "SHOW ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "SHOW LIKE takes a string",
+            sql: "SHOW VARIABLES LIKE 'v%' ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "SHOW LIKE refuses a name",
+            sql: "SHOW VARIABLES LIKE m1 ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "START TRANSACTION NAME needs a name",
+            sql: "START TRANSACTION NAME ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "START TRANSACTION NAME takes a name",
+            sql: "START TRANSACTION NAME t1 ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "USE SECONDARY ROLES needs a role",
+            sql: "USE SECONDARY ROLES ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "USE SECONDARY ROLES takes a quoted role",
+            sql: r#"USE SECONDARY ROLES "v1 Q" ;"#,
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "an out-of-range exception number is a semantic error",
+            sql: "DECLARE e1 EXCEPTION ( -19999 , 'm' ) ; BEGIN RETURN 1 ; END ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "DECLARE without a type is a semantic error",
+            sql: "DECLARE x ; BEGIN RETURN 1 ; END ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "LET still needs a type or a value",
+            sql: "BEGIN LET x ; END ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "a CASE operand continues after its parentheses",
+            sql: "BEGIN CASE ( 1 ) || '' WHEN '1' THEN RETURN 1 ; END CASE ; END ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "FETCH INTO refuses a reserved word",
+            sql: "DECLARE c1 CURSOR FOR SELECT 1 ; BEGIN OPEN c1 ; FETCH c1 INTO SELECT ; END ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "OPEN outside a block is refused",
+            sql: "OPEN c1 ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "( ) is no expression",
+            sql: "SELECT ( ) IN ( ( 1 ) ) ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "IN needs a value",
+            sql: "SELECT 1 IN ( ) ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "UNION BY needs NAME",
+            sql: "SELECT 1 UNION BY SELECT 1 ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "UNION BY NAME stays",
+            sql: "SELECT 1 UNION BY NAME SELECT 1 ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "LIMIT refuses a non-empty string",
+            sql: "SELECT 1 FROM t1 LIMIT 'x' ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "LIMIT takes an empty string as no limit",
+            sql: "SELECT 1 FROM t1 LIMIT '' ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "a literal has no fields",
+            sql: "SELECT 1.2.3 ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "a string has no star",
+            sql: "SELECT 'v1' . * ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "a subscript needs an index",
+            sql: "SELECT ARRAY_CONSTRUCT ( 1 , 2 ) [ ] ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "an unterminated $$ string is refused",
+            sql: "SELECT $$m ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "POSITION refuses a trailing comma",
+            sql: "SELECT POSITION ( 1 , 1 , ) ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "TIMESTAMP WITH LOCAL needs TIME ZONE",
+            sql: "SELECT CAST ( NULL AS TIMESTAMP WITH LOCAL ZONE ) ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "TIMESTAMP WITH LOCAL TIME ZONE stays",
+            sql: "SELECT CAST ( NULL AS TIMESTAMP WITH LOCAL TIME ZONE ) ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "an OBJECT field needs NULL after NOT",
+            sql: "SELECT CAST ( NULL AS OBJECT ( k1 INT NOT ) ) ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "VECTOR refuses a VARCHAR element",
+            sql: "SELECT CAST ( NULL AS VECTOR ( VARCHAR , 3 ) ) ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "VECTOR takes a FLOAT element",
+            sql: "SELECT CAST ( NULL AS VECTOR ( FLOAT , 3 ) ) ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "adjacent strings are refused",
+            sql: "SELECT 'm' 'm' ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "COLLATE needs a string",
+            sql: "SELECT 'm' COLLATE m1 ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "COLLATE takes a string",
+            sql: "SELECT 'm' COLLATE 'en' ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "an empty VALUES row is refused",
+            sql: "INSERT INTO t1 VALUES ( 1 ) , ( ) ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "EXTRACT refuses a string part before FROM",
+            sql: "SELECT EXTRACT ( 'm' FROM 1 ) ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "DATE_PART refuses a string part before FROM",
+            sql: "SELECT DATE_PART ( 'm' FROM 1 ) ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "TABLE( ) needs an argument",
+            sql: "SELECT * FROM TABLE ( ) ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "TABLE( ) refuses a bare name",
+            sql: "SELECT * FROM TABLE ( m1 ) ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "TABLE( ) takes a string",
+            sql: "SELECT * FROM TABLE ( 't1' ) ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "a named argument takes TABLE( ) around a bare name",
+            sql: "SELECT * FROM TABLE ( m1!DETECT_ANOMALIES ( INPUT_DATA => TABLE ( v1 ) ) ) ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "a named argument still refuses an empty TABLE( )",
+            sql: "SELECT * FROM TABLE ( m1!DETECT_ANOMALIES ( INPUT_DATA => TABLE ( ) ) ) ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "IDENTIFIER( ) refuses a bare name",
+            sql: "SELECT * FROM IDENTIFIER ( m1 ) ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "IDENTIFIER( ) takes a session variable",
+            sql: "SELECT * FROM IDENTIFIER ( $v1 ) ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "SELECT INTO takes colon variables",
+            sql: "SELECT 1 , 2 INTO :v1 , :v2 FROM t1 ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+    ];
+
+    for test_case in test_cases {
+        assert_eq!(
+            accepted(test_case.sql, test_case.dialect),
+            test_case.expected_accepted,
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_snowflake_statements_with_their_own_nodes_when_parsing_then_the_tree_names_their_parts() {
+    let test_cases = [
+        ProjectionTestCase {
+            description: "UNSET keeps its names",
+            sql: "UNSET ( v1 , v2 )",
+            pointer: "/0/unset_statement/names/1/name",
+            expected_value: json!("v2"),
+        },
+        ProjectionTestCase {
+            description: "UNSET records the parentheses",
+            sql: "UNSET ( v1 , v2 )",
+            pointer: "/0/unset_statement/parenthesized",
+            expected_value: json!(true),
+        },
+        ProjectionTestCase {
+            description: "EXECUTE TASK GRAPH names the kind",
+            sql: "EXECUTE TASK GRAPH v1 RETRY LAST",
+            pointer: "/0/execute_object/kind",
+            expected_value: json!("TASK GRAPH"),
+        },
+        ProjectionTestCase {
+            description: "EXECUTE TASK names the action",
+            sql: "EXECUTE TASK v1 RETRY GRAPH RUN GROUP 'g'",
+            pointer: "/0/execute_object/action",
+            expected_value: json!("RETRY GRAPH RUN"),
+        },
+        ProjectionTestCase {
+            description: "EXECUTE DCM PROJECT keeps the PURGE alias",
+            sql: "EXECUTE DCM PROJECT v1 PURGE AS \"d1\"",
+            pointer: "/0/execute_object/alias/name",
+            expected_value: json!("d1"),
+        },
+        ProjectionTestCase {
+            description: "EXPLAIN keeps its USING format",
+            sql: "EXPLAIN USING TABULAR SELECT 1",
+            pointer: "/0/describe/style",
+            expected_value: json!("USING TABULAR"),
+        },
+        ProjectionTestCase {
+            description: "SELECT INTO keeps a colon variable",
+            sql: "SELECT 1 INTO :v1",
+            pointer: "/0/select/into/this/parameter/style",
+            expected_value: json!("Colon"),
         },
     ];
 

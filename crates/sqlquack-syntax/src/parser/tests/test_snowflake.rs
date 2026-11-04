@@ -571,6 +571,42 @@ fn given_unsupported_snowflake_sql_when_parsing_then_parsing_fails() {
             expected_error: "Expected a function argument between commas",
         },
         ParseErrorTestCase {
+            description: "a string is not a star's EXCLUDE name",
+            dialect: Some(DialectType::Snowflake),
+            sql: "SELECT HASH(* EXCLUDE 'v1') FROM t1",
+            expected_error: "Snowflake EXCLUDE names columns, not strings",
+        },
+        ParseErrorTestCase {
+            description: "a string later in an EXCLUDE list is not a name",
+            dialect: Some(DialectType::Snowflake),
+            sql: "SELECT * EXCLUDE (v1, 'v1') FROM t1",
+            expected_error: "Snowflake EXCLUDE names columns, not strings",
+        },
+        ParseErrorTestCase {
+            description: "empty parentheses are not a call argument",
+            dialect: Some(DialectType::Snowflake),
+            sql: "SELECT SEARCH((), 'm')",
+            expected_error: "Expected an expression in the parentheses",
+        },
+        ParseErrorTestCase {
+            description: "PRECEDING needs a value or UNBOUNDED",
+            dialect: Some(DialectType::Snowflake),
+            sql: "SELECT PERCENT_RANK() OVER (ORDER BY c1 RANGE PRECEDING) FROM t1",
+            expected_error: "Snowflake frame bounds need a value or UNBOUNDED before PRECEDING",
+        },
+        ParseErrorTestCase {
+            description: "a frame end needs PRECEDING or FOLLOWING after its value",
+            dialect: Some(DialectType::Snowflake),
+            sql: "SELECT PERCENT_RANK() OVER (ORDER BY c1 RANGE BETWEEN UNBOUNDED PRECEDING AND ROW) FROM t1",
+            expected_error: "Expected PRECEDING or FOLLOWING after a frame bound value",
+        },
+        ParseErrorTestCase {
+            description: "an unclosed EXCLUDE list in COUNT stays rejected",
+            dialect: Some(DialectType::Snowflake),
+            sql: "SELECT COUNT(* EXCLUDE (v1) FROM t1",
+            expected_error: "Expected RParen",
+        },
+        ParseErrorTestCase {
             description: "an anonymous procedure needs RETURNS",
             dialect: Some(DialectType::Snowflake),
             sql: "WITH p1 AS PROCEDURE () LANGUAGE SQL AS $$ BEGIN RETURN 1; END $$ CALL p1()",

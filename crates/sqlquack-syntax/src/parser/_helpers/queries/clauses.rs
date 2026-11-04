@@ -524,6 +524,14 @@ impl Parser {
         {
             return Ok((Expression::Null(Null), false));
         }
+        if self.config.dialect == Some(crate::tokens::models::DialectType::Snowflake)
+            && (self.check(TokenType::String) || self.check(TokenType::DollarString))
+            && !self.peek().text.is_empty()
+        {
+            return Err(
+                self.parse_error("Expected a row count; only an empty string means no limit")
+            );
+        }
         let saved_pos = self.current;
         if let Ok(expr) = self.parse_unary() {
             if self.check(TokenType::Percent) && self.is_percent_modifier() {

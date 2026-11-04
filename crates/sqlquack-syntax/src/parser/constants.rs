@@ -57,6 +57,8 @@ pub(crate) const FUNCTION: &str = "FUNCTION";
 /// The text "GROUP", as comparisons test it.
 pub(crate) const GROUP: &str = "GROUP";
 
+/// The text "OBJECT_AGG", as comparisons test it.
+pub(crate) const OBJECT_AGG: &str = "OBJECT_AGG";
 /// The text "HASH_AGG", as comparisons test it.
 pub(crate) const HASH_AGG: &str = "HASH_AGG";
 
@@ -377,6 +379,9 @@ pub(crate) const SNOWFLAKE_ALTER_KINDS: &[&str] = &[
     "VOLUME",
     "WAREHOUSE",
 ];
+
+/// The kind of `EXECUTE DCM PROJECT`, whose actions differ from a task's.
+pub(crate) const EXECUTE_DCM_PROJECT: &str = "DCM PROJECT";
 
 /// The words that start an ALTER TASK action, so `ALTER TASK GRAPH <action>` alters the task named GRAPH.
 pub(crate) const TASK_ACTIONS: &[&str] = &[

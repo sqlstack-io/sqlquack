@@ -21,6 +21,7 @@ use crate::parser::constants::ROW;
 use crate::parser::constants::STRUCT;
 use crate::parser::models::Parser;
 use crate::tokens::errors::Error;
+use crate::tokens::models::DialectType;
 use crate::tokens::models::ParserToken;
 use crate::tokens::models::SourceSpan;
 use crate::tokens::models::Span;
@@ -788,6 +789,18 @@ impl Parser {
         self.parse_star_modifiers_with_comments(table, Vec::new())
     }
 
+    /// One EXCLUDE name; Snowflake names columns there, never strings.
+    fn parse_star_exclude_name(&mut self) -> Result<String> {
+        if self.config.dialect == Some(DialectType::Snowflake) && self.check(TokenType::String) {
+            return Err(self.parse_error("Snowflake EXCLUDE names columns, not strings"));
+        }
+        if self.check(TokenType::String) || self.is_safe_keyword_as_identifier() {
+            self.advance_text()
+        } else {
+            self.expect_identifier()
+        }
+    }
+
     /// Parse star modifiers with explicit trailing comments from the star token
     pub(crate) fn parse_star_modifiers_with_comments(
         &mut self,
@@ -809,12 +822,7 @@ impl Parser {
                 loop {
                     let start = self.peek().span;
                     let quoted = self.check(TokenType::QuotedIdentifier);
-                    let col =
-                        if self.check(TokenType::String) || self.is_safe_keyword_as_identifier() {
-                            self.advance_text()?
-                        } else {
-                            self.expect_identifier()?
-                        };
+                    let col = self.parse_star_exclude_name()?;
                     if self.match_token(TokenType::Dot) {
                         let subcol = if self.is_safe_keyword_as_identifier() {
                             self.advance_text()?
@@ -839,11 +847,7 @@ impl Parser {
             } else {
                 let start = self.peek().span;
                 let quoted = self.check(TokenType::QuotedIdentifier);
-                let col = if self.check(TokenType::String) || self.is_safe_keyword_as_identifier() {
-                    self.advance_text()?
-                } else {
-                    self.expect_identifier()?
-                };
+                let col = self.parse_star_exclude_name()?;
                 let mut column =
                     Identifier::new(col).with_span(start.through(self.previous().span));
                 column.quoted = quoted;
