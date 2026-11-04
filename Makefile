@@ -30,7 +30,7 @@ PYTHON_TYPED := scripts tests/unit/scripts python/src $(PYTHON_API_TESTS)
 PYTHON_TESTS := tests/unit/scripts $(PYTHON_API_TESTS)
 endif
 
-.PHONY: format rust-lint python-check fensu syntax-coverage evidence-guard polyglot-guard generate-cases generated-cases generate-referee-cases referee-cases referee-pending check-ci check-merge test test-rust test-python python-module python-api python-wheel verify-recorded polyglot-duckshop census-duckshop fuzz-smoke gate gate-parallel census duckshop-compiled
+.PHONY: format rust-lint python-check fensu syntax-coverage evidence-guard polyglot-guard generate-cases generated-cases generate-referee-cases referee-cases referee-pending check-ci check-merge test test-rust test-python python-module python-api python-wheel verify-recorded polyglot-duckshop census-duckshop fuzz-smoke gate gate-parallel census duckshop-compiled duckshop-measure
 
 format:
 	cargo fmt --all
@@ -184,6 +184,32 @@ census-duckshop:
 	    census --chain-models --json "$$compiled" > /dev/null \
 	    || { echo "census-duckshop: converting $$compiled failed or took over $(DUCKSHOP_CENSUS_SECONDS) s" >&2; exit 1; }; \
 	done
+
+# Measures DuckShop with this checkout's own binary and policy: its unit tests on DuckDB, and its
+# models converted and run on DuckDB over Snowflake's recorded inputs, compared with Snowflake's
+# rows. DUCKSHOP_RESULTS is the recorded results directory, with index-<target>.json beside it.
+# Reports go to DUCKSHOP_MEASURE_DIR: tests.json and snowflake.json.
+DUCKSHOP_MEASURE_DIR ?= target/duckshop-measure
+duckshop-measure: duckshop-compiled
+	@test -d "$(DUCKSHOP_RESULTS)" || \
+	  { echo "duckshop-measure: set DUCKSHOP_RESULTS to the recorded results directory" >&2; exit 1; }
+	cargo build --locked --release -p sqlquack
+	rm -rf $(DUCKSHOP_MEASURE_DIR)
+	mkdir -p $(DUCKSHOP_MEASURE_DIR)/converted $(DUCKSHOP_MEASURE_DIR)/guards
+	set -e; target="$${CARGO_TARGET_DIR:-target}"; \
+	library="$$(dirname "$$(ls "$$target"/duckdb-download/*/*/libduckdb.so | head -1)")"; \
+	compiled="$(abspath $(word 1,$(DUCKSHOP_COMPILED)))"; out="$(DUCKSHOP_MEASURE_DIR)"; \
+	uv run python -m scripts.measure_duckshop schema --environment referee/environments/duckshop.json \
+	  --recorded "$(DUCKSHOP_RESULTS)" --out "$$out/schema.json"; \
+	SQLQUACK_CONVERTED_DIR="$$out/converted" SQLQUACK_GUARDS_DIR="$$out/guards" \
+	  LD_LIBRARY_PATH="$$library" "$$target/release/sqlquack" census --policy sqlquack.toml --json \
+	  --names --schema "$$out/schema.json" "$$compiled/models" > "$$out/census.json"; \
+	uv run python -m scripts.measure_duckshop tests --compiled "$$compiled" \
+	  --sqlquack "$$target/release/sqlquack" --library "$$library" --out "$$out/tests.json"; \
+	uv run python -m scripts.measure_duckshop snowflake --results "$(DUCKSHOP_RESULTS)" \
+	  --compiled "$$compiled" --census "$$out/census.json" --converted "$$out/converted" \
+	  --guards "$$out/guards" --sqlquack "$$target/release/sqlquack" --library "$$library" \
+	  --work "$$out/work" --out "$$out/snowflake.json"
 
 # Fuzzes each of FUZZ_TARGETS from the exact check's statements for FUZZ_SECONDS: tolerant parsing,
 # and strict parsing through to rendered diagnostics.
