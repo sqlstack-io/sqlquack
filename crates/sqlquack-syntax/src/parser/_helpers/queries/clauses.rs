@@ -3,6 +3,7 @@
 use crate::expressions::functions::models::Function;
 use crate::expressions::names::models::BooleanLiteral;
 use crate::expressions::names::models::Identifier;
+use crate::expressions::names::models::Null;
 use crate::expressions::operators::main::maybe_rebalance_boolean_chain::maybe_rebalance_boolean_chain;
 use crate::expressions::operators::models::Alias;
 use crate::expressions::operators::models::BinaryOp;
@@ -509,6 +510,13 @@ impl Parser {
 
     /// Parse a LIMIT count without mistaking a trailing percent sign for modulo.
     pub(crate) fn parse_limit_value(&mut self) -> Result<(Expression, bool)> {
+        if matches!(
+            self.config.dialect,
+            Some(crate::tokens::models::DialectType::Snowflake)
+        ) && (self.is_at_end() || self.check(TokenType::Semicolon))
+        {
+            return Ok((Expression::Null(Null), false));
+        }
         let saved_pos = self.current;
         if let Ok(expr) = self.parse_unary() {
             if self.check(TokenType::Percent) && self.is_percent_modifier() {
