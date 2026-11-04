@@ -582,12 +582,6 @@ required = true
 note = "the form without its required SNOWFLAKE"
 
 [[obligation]]
-id = "sf.classes.anomaly-detection.commands.show-anomaly-detection.o024"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ML"
-
-[[obligation]]
 id = "sf.classes.anomaly-detection.commands.show-anomaly-detection.o025"
 kind = "negative_neighbour"
 required = true
@@ -636,6 +630,13 @@ required = true
 target = "<schema_name>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.classes.anomaly-detection.commands.show-anomaly-detection.o032"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.classes.anomaly-detection.commands.show-anomaly-detection / Syntax"
+note = "the form without its required ML, observed"
 
 [[obligation]]
 id = "sf.classes.anomaly-detection.methods.detect-anomalies.o001"
@@ -1036,12 +1037,6 @@ target = "'<anomaly_scope>'"
 note = "a valid string_literal"
 
 [[obligation]]
-id = "sf.classes.anomaly-insights.methods.add-notification-integration.o008"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required LOCAL"
-
-[[obligation]]
 id = "sf.classes.anomaly-insights.methods.add-notification-integration.o009"
 kind = "negative_neighbour"
 required = true
@@ -1064,6 +1059,13 @@ id = "sf.classes.anomaly-insights.methods.add-notification-integration.o012"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required )"
+
+[[obligation]]
+id = "sf.classes.anomaly-insights.methods.add-notification-integration.o013"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.classes.anomaly-insights.methods.add_notification_integration / Syntax"
+note = "the form without its required LOCAL, observed"
 
 [[obligation]]
 id = "sf.classes.anomaly-insights.methods.adhoc-calculate-anomalies-from-config.o001"
@@ -1114,12 +1116,6 @@ target = "'<end_date>'"
 note = "a valid string_literal"
 
 [[obligation]]
-id = "sf.classes.anomaly-insights.methods.adhoc-calculate-anomalies-from-config.o010"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required LOCAL"
-
-[[obligation]]
 id = "sf.classes.anomaly-insights.methods.adhoc-calculate-anomalies-from-config.o011"
 kind = "negative_neighbour"
 required = true
@@ -1142,6 +1138,13 @@ id = "sf.classes.anomaly-insights.methods.adhoc-calculate-anomalies-from-config.
 kind = "negative_neighbour"
 required = true
 note = "the form without its required )"
+
+[[obligation]]
+id = "sf.classes.anomaly-insights.methods.adhoc-calculate-anomalies-from-config.o015"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.classes.anomaly-insights.methods.adhoc_calculate_anomalies_from_config / Syntax"
+note = "the form without its required LOCAL, observed"
 
 [[obligation]]
 id = "sf.classes.anomaly-insights.methods.create-monitor.o001"
@@ -1178,12 +1181,6 @@ target = "<config>"
 note = "a valid operand"
 
 [[obligation]]
-id = "sf.classes.anomaly-insights.methods.create-monitor.o007"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required LOCAL"
-
-[[obligation]]
 id = "sf.classes.anomaly-insights.methods.create-monitor.o008"
 kind = "negative_neighbour"
 required = true
@@ -1208,6 +1205,13 @@ required = true
 note = "the form without its required )"
 
 [[obligation]]
+id = "sf.classes.anomaly-insights.methods.create-monitor.o012"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.classes.anomaly-insights.methods.create_monitor / Syntax"
+note = "the form without its required LOCAL, observed"
+
+[[obligation]]
 id = "sf.classes.anomaly-insights.methods.drop-monitor.o001"
 kind = "positive"
 required = true
@@ -1219,12 +1223,6 @@ kind = "operand_type_class"
 required = true
 target = "'<alias>'"
 note = "a valid string_literal"
-
-[[obligation]]
-id = "sf.classes.anomaly-insights.methods.drop-monitor.o005"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required LOCAL"
 
 [[obligation]]
 id = "sf.classes.anomaly-insights.methods.drop-monitor.o006"
@@ -1249,6 +1247,13 @@ id = "sf.classes.anomaly-insights.methods.drop-monitor.o009"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required )"
+
+[[obligation]]
+id = "sf.classes.anomaly-insights.methods.drop-monitor.o010"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.classes.anomaly-insights.methods.drop_monitor / Syntax"
+note = "the form without its required LOCAL, observed"
 
 [[obligation]]
 id = "sf.classes.anomaly-insights.methods.get-account-anomalies-in-credits.o001"
@@ -1285,12 +1290,6 @@ target = "'<end_date>'"
 note = "a valid string_literal"
 
 [[obligation]]
-id = "sf.classes.anomaly-insights.methods.get-account-anomalies-in-credits.o008"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required LOCAL"
-
-[[obligation]]
 id = "sf.classes.anomaly-insights.methods.get-account-anomalies-in-credits.o009"
 kind = "negative_neighbour"
 required = true
@@ -1315,16 +1314,17 @@ required = true
 note = "the form without its required )"
 
 [[obligation]]
+id = "sf.classes.anomaly-insights.methods.get-account-anomalies-in-credits.o013"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.classes.anomaly-insights.methods.get_account_anomalies_in_credits / Syntax"
+note = "the form without its required LOCAL, observed"
+
+[[obligation]]
 id = "sf.classes.anomaly-insights.methods.get-account-notification-emails.o001"
 kind = "positive"
 required = true
 note = "the documented form with every required part and no optional part"
-
-[[obligation]]
-id = "sf.classes.anomaly-insights.methods.get-account-notification-emails.o002"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required LOCAL"
 
 [[obligation]]
 id = "sf.classes.anomaly-insights.methods.get-account-notification-emails.o003"
@@ -1349,6 +1349,13 @@ id = "sf.classes.anomaly-insights.methods.get-account-notification-emails.o006"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required )"
+
+[[obligation]]
+id = "sf.classes.anomaly-insights.methods.get-account-notification-emails.o007"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.classes.anomaly-insights.methods.get_account_notification_emails / Syntax"
+note = "the form without its required LOCAL, observed"
 
 [[obligation]]
 id = "sf.classes.anomaly-insights.methods.get-daily-consumption-anomaly-data.o001"
@@ -1399,12 +1406,6 @@ target = "<account_name>"
 note = "a valid identifier"
 
 [[obligation]]
-id = "sf.classes.anomaly-insights.methods.get-daily-consumption-anomaly-data.o011"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required LOCAL"
-
-[[obligation]]
 id = "sf.classes.anomaly-insights.methods.get-daily-consumption-anomaly-data.o012"
 kind = "negative_neighbour"
 required = true
@@ -1427,6 +1428,13 @@ id = "sf.classes.anomaly-insights.methods.get-daily-consumption-anomaly-data.o01
 kind = "negative_neighbour"
 required = true
 note = "the form without its required )"
+
+[[obligation]]
+id = "sf.classes.anomaly-insights.methods.get-daily-consumption-anomaly-data.o016"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.classes.anomaly-insights.methods.get_daily_consumption_anomaly_data / Syntax"
+note = "the form without its required LOCAL, observed"
 
 [[obligation]]
 id = "sf.classes.anomaly-insights.methods.get-hourly-consumption-by-service-type.o001"
@@ -1463,12 +1471,6 @@ target = "<number_of_types>"
 note = "a valid integer_literal"
 
 [[obligation]]
-id = "sf.classes.anomaly-insights.methods.get-hourly-consumption-by-service-type.o008"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required LOCAL"
-
-[[obligation]]
 id = "sf.classes.anomaly-insights.methods.get-hourly-consumption-by-service-type.o009"
 kind = "negative_neighbour"
 required = true
@@ -1493,6 +1495,13 @@ required = true
 note = "the form without its required )"
 
 [[obligation]]
+id = "sf.classes.anomaly-insights.methods.get-hourly-consumption-by-service-type.o013"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.classes.anomaly-insights.methods.get_hourly_consumption_by_service_type / Syntax"
+note = "the form without its required LOCAL, observed"
+
+[[obligation]]
 id = "sf.classes.anomaly-insights.methods.get-hourly-spend-for-anomaly.o001"
 kind = "positive"
 required = true
@@ -1504,12 +1513,6 @@ kind = "operand_type_class"
 required = true
 target = "'<date>'"
 note = "a valid string_literal"
-
-[[obligation]]
-id = "sf.classes.anomaly-insights.methods.get-hourly-spend-for-anomaly.o005"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required LOCAL"
 
 [[obligation]]
 id = "sf.classes.anomaly-insights.methods.get-hourly-spend-for-anomaly.o006"
@@ -1534,6 +1537,13 @@ id = "sf.classes.anomaly-insights.methods.get-hourly-spend-for-anomaly.o009"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required )"
+
+[[obligation]]
+id = "sf.classes.anomaly-insights.methods.get-hourly-spend-for-anomaly.o010"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.classes.anomaly-insights.methods.get_hourly_spend_for_anomaly / Syntax"
+note = "the form without its required LOCAL, observed"
 
 [[obligation]]
 id = "sf.classes.anomaly-insights.methods.get-monitor-anomalies.o001"
@@ -1584,12 +1594,6 @@ target = "'<end_date>'"
 note = "a valid string_literal"
 
 [[obligation]]
-id = "sf.classes.anomaly-insights.methods.get-monitor-anomalies.o011"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required LOCAL"
-
-[[obligation]]
 id = "sf.classes.anomaly-insights.methods.get-monitor-anomalies.o012"
 kind = "negative_neighbour"
 required = true
@@ -1614,6 +1618,13 @@ required = true
 note = "the form without its required )"
 
 [[obligation]]
+id = "sf.classes.anomaly-insights.methods.get-monitor-anomalies.o016"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.classes.anomaly-insights.methods.get_monitor_anomalies / Syntax"
+note = "the form without its required LOCAL, observed"
+
+[[obligation]]
 id = "sf.classes.anomaly-insights.methods.get-monitor-config.o001"
 kind = "positive"
 required = true
@@ -1625,12 +1636,6 @@ kind = "operand_type_class"
 required = true
 target = "'<alias>'"
 note = "a valid string_literal"
-
-[[obligation]]
-id = "sf.classes.anomaly-insights.methods.get-monitor-config.o005"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required LOCAL"
 
 [[obligation]]
 id = "sf.classes.anomaly-insights.methods.get-monitor-config.o006"
@@ -1657,6 +1662,13 @@ required = true
 note = "the form without its required )"
 
 [[obligation]]
+id = "sf.classes.anomaly-insights.methods.get-monitor-config.o010"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.classes.anomaly-insights.methods.get_monitor_config / Syntax"
+note = "the form without its required LOCAL, observed"
+
+[[obligation]]
 id = "sf.classes.anomaly-insights.methods.get-monitor-notification-emails.o001"
 kind = "positive"
 required = true
@@ -1668,12 +1680,6 @@ kind = "operand_type_class"
 required = true
 target = "'<alias>'"
 note = "a valid string_literal"
-
-[[obligation]]
-id = "sf.classes.anomaly-insights.methods.get-monitor-notification-emails.o005"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required LOCAL"
 
 [[obligation]]
 id = "sf.classes.anomaly-insights.methods.get-monitor-notification-emails.o006"
@@ -1698,6 +1704,13 @@ id = "sf.classes.anomaly-insights.methods.get-monitor-notification-emails.o009"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required )"
+
+[[obligation]]
+id = "sf.classes.anomaly-insights.methods.get-monitor-notification-emails.o010"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.classes.anomaly-insights.methods.get_monitor_notification_emails / Syntax"
+note = "the form without its required LOCAL, observed"
 
 [[obligation]]
 id = "sf.classes.anomaly-insights.methods.get-monitor-notification-log.o001"
@@ -1748,12 +1761,6 @@ target = "'<end_date>'"
 note = "a valid string_literal"
 
 [[obligation]]
-id = "sf.classes.anomaly-insights.methods.get-monitor-notification-log.o011"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required LOCAL"
-
-[[obligation]]
 id = "sf.classes.anomaly-insights.methods.get-monitor-notification-log.o012"
 kind = "negative_neighbour"
 required = true
@@ -1778,6 +1785,13 @@ required = true
 note = "the form without its required )"
 
 [[obligation]]
+id = "sf.classes.anomaly-insights.methods.get-monitor-notification-log.o016"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.classes.anomaly-insights.methods.get_monitor_notification_log / Syntax"
+note = "the form without its required LOCAL, observed"
+
+[[obligation]]
 id = "sf.classes.anomaly-insights.methods.get-notification-integrations.o001"
 kind = "positive"
 required = true
@@ -1789,12 +1803,6 @@ kind = "operand_type_class"
 required = true
 target = "'<anomaly_scope>'"
 note = "a valid string_literal"
-
-[[obligation]]
-id = "sf.classes.anomaly-insights.methods.get-notification-integrations.o005"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required LOCAL"
 
 [[obligation]]
 id = "sf.classes.anomaly-insights.methods.get-notification-integrations.o006"
@@ -1821,16 +1829,17 @@ required = true
 note = "the form without its required )"
 
 [[obligation]]
+id = "sf.classes.anomaly-insights.methods.get-notification-integrations.o010"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.classes.anomaly-insights.methods.get_notification_integrations / Syntax"
+note = "the form without its required LOCAL, observed"
+
+[[obligation]]
 id = "sf.classes.anomaly-insights.methods.get-org-notification-emails.o001"
 kind = "positive"
 required = true
 note = "the documented form with every required part and no optional part"
-
-[[obligation]]
-id = "sf.classes.anomaly-insights.methods.get-org-notification-emails.o002"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required LOCAL"
 
 [[obligation]]
 id = "sf.classes.anomaly-insights.methods.get-org-notification-emails.o003"
@@ -1855,6 +1864,13 @@ id = "sf.classes.anomaly-insights.methods.get-org-notification-emails.o006"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required )"
+
+[[obligation]]
+id = "sf.classes.anomaly-insights.methods.get-org-notification-emails.o007"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.classes.anomaly-insights.methods.get_org_notification_emails / Syntax"
+note = "the form without its required LOCAL, observed"
 
 [[obligation]]
 id = "sf.classes.anomaly-insights.methods.get-top-accounts-by-consumption.o001"
@@ -1891,12 +1907,6 @@ target = "<number_of_accounts>"
 note = "a valid integer_literal"
 
 [[obligation]]
-id = "sf.classes.anomaly-insights.methods.get-top-accounts-by-consumption.o008"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required LOCAL"
-
-[[obligation]]
 id = "sf.classes.anomaly-insights.methods.get-top-accounts-by-consumption.o009"
 kind = "negative_neighbour"
 required = true
@@ -1919,6 +1929,13 @@ id = "sf.classes.anomaly-insights.methods.get-top-accounts-by-consumption.o012"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required )"
+
+[[obligation]]
+id = "sf.classes.anomaly-insights.methods.get-top-accounts-by-consumption.o013"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.classes.anomaly-insights.methods.get_top_accounts_by_consumption / Syntax"
+note = "the form without its required LOCAL, observed"
 
 [[obligation]]
 id = "sf.classes.anomaly-insights.methods.get-top-queries-from-warehouse.o001"
@@ -1969,12 +1986,6 @@ target = "<number_of_queries>"
 note = "a valid integer_literal"
 
 [[obligation]]
-id = "sf.classes.anomaly-insights.methods.get-top-queries-from-warehouse.o010"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required LOCAL"
-
-[[obligation]]
 id = "sf.classes.anomaly-insights.methods.get-top-queries-from-warehouse.o011"
 kind = "negative_neighbour"
 required = true
@@ -1997,6 +2008,13 @@ id = "sf.classes.anomaly-insights.methods.get-top-queries-from-warehouse.o014"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required )"
+
+[[obligation]]
+id = "sf.classes.anomaly-insights.methods.get-top-queries-from-warehouse.o015"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.classes.anomaly-insights.methods.get_top_queries_from_warehouse / Syntax"
+note = "the form without its required LOCAL, observed"
 
 [[obligation]]
 id = "sf.classes.anomaly-insights.methods.get-top-warehouses-on-date.o001"
@@ -2047,12 +2065,6 @@ target = "<account_name>"
 note = "a valid identifier"
 
 [[obligation]]
-id = "sf.classes.anomaly-insights.methods.get-top-warehouses-on-date.o011"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required LOCAL"
-
-[[obligation]]
 id = "sf.classes.anomaly-insights.methods.get-top-warehouses-on-date.o012"
 kind = "negative_neighbour"
 required = true
@@ -2077,16 +2089,17 @@ required = true
 note = "the form without its required )"
 
 [[obligation]]
+id = "sf.classes.anomaly-insights.methods.get-top-warehouses-on-date.o016"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.classes.anomaly-insights.methods.get_top_warehouses_on_date / Syntax"
+note = "the form without its required LOCAL, observed"
+
+[[obligation]]
 id = "sf.classes.anomaly-insights.methods.list-monitors.o001"
 kind = "positive"
 required = true
 note = "the documented form with every required part and no optional part"
-
-[[obligation]]
-id = "sf.classes.anomaly-insights.methods.list-monitors.o002"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required LOCAL"
 
 [[obligation]]
 id = "sf.classes.anomaly-insights.methods.list-monitors.o003"
@@ -2113,6 +2126,13 @@ required = true
 note = "the form without its required )"
 
 [[obligation]]
+id = "sf.classes.anomaly-insights.methods.list-monitors.o007"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.classes.anomaly-insights.methods.list_monitors / Syntax"
+note = "the form without its required LOCAL, observed"
+
+[[obligation]]
 id = "sf.classes.anomaly-insights.methods.recalculate-anomalies.o001"
 kind = "positive"
 required = true
@@ -2124,12 +2144,6 @@ kind = "operand_type_class"
 required = true
 target = "'<alias>'"
 note = "a valid string_literal"
-
-[[obligation]]
-id = "sf.classes.anomaly-insights.methods.recalculate-anomalies.o005"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required LOCAL"
 
 [[obligation]]
 id = "sf.classes.anomaly-insights.methods.recalculate-anomalies.o006"
@@ -2154,6 +2168,13 @@ id = "sf.classes.anomaly-insights.methods.recalculate-anomalies.o009"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required )"
+
+[[obligation]]
+id = "sf.classes.anomaly-insights.methods.recalculate-anomalies.o010"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.classes.anomaly-insights.methods.recalculate_anomalies / Syntax"
+note = "the form without its required LOCAL, observed"
 
 [[obligation]]
 id = "sf.classes.anomaly-insights.methods.remove-notification-integration.o001"
@@ -2190,12 +2211,6 @@ target = "'<anomaly_scope>'"
 note = "a valid string_literal"
 
 [[obligation]]
-id = "sf.classes.anomaly-insights.methods.remove-notification-integration.o008"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required LOCAL"
-
-[[obligation]]
 id = "sf.classes.anomaly-insights.methods.remove-notification-integration.o009"
 kind = "negative_neighbour"
 required = true
@@ -2218,6 +2233,13 @@ id = "sf.classes.anomaly-insights.methods.remove-notification-integration.o012"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required )"
+
+[[obligation]]
+id = "sf.classes.anomaly-insights.methods.remove-notification-integration.o013"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.classes.anomaly-insights.methods.remove_notification_integration / Syntax"
+note = "the form without its required LOCAL, observed"
 
 [[obligation]]
 id = "sf.classes.anomaly-insights.methods.rename-monitor.o001"
@@ -2254,12 +2276,6 @@ target = "'<new_alias>'"
 note = "a valid string_literal"
 
 [[obligation]]
-id = "sf.classes.anomaly-insights.methods.rename-monitor.o008"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required LOCAL"
-
-[[obligation]]
 id = "sf.classes.anomaly-insights.methods.rename-monitor.o009"
 kind = "negative_neighbour"
 required = true
@@ -2284,16 +2300,17 @@ required = true
 note = "the form without its required )"
 
 [[obligation]]
+id = "sf.classes.anomaly-insights.methods.rename-monitor.o013"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.classes.anomaly-insights.methods.rename_monitor / Syntax"
+note = "the form without its required LOCAL, observed"
+
+[[obligation]]
 id = "sf.classes.anomaly-insights.methods.set-account-notification-emails.o001"
 kind = "positive"
 required = true
 note = "the documented form with every required part and no optional part"
-
-[[obligation]]
-id = "sf.classes.anomaly-insights.methods.set-account-notification-emails.o002"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required LOCAL"
 
 [[obligation]]
 id = "sf.classes.anomaly-insights.methods.set-account-notification-emails.o003"
@@ -2320,6 +2337,13 @@ required = true
 note = "the form without its required )"
 
 [[obligation]]
+id = "sf.classes.anomaly-insights.methods.set-account-notification-emails.o007"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.classes.anomaly-insights.methods.set_account_notification_emails / Syntax"
+note = "the form without its required LOCAL, observed"
+
+[[obligation]]
 id = "sf.classes.anomaly-insights.methods.set-monitor-notification-emails.o001"
 kind = "positive"
 required = true
@@ -2338,12 +2362,6 @@ kind = "operand_type_class"
 required = true
 target = "'<alias>'"
 note = "a valid string_literal"
-
-[[obligation]]
-id = "sf.classes.anomaly-insights.methods.set-monitor-notification-emails.o005"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required LOCAL"
 
 [[obligation]]
 id = "sf.classes.anomaly-insights.methods.set-monitor-notification-emails.o006"
@@ -2370,16 +2388,17 @@ required = true
 note = "the form without its required )"
 
 [[obligation]]
+id = "sf.classes.anomaly-insights.methods.set-monitor-notification-emails.o010"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.classes.anomaly-insights.methods.set_monitor_notification_emails / Syntax"
+note = "the form without its required LOCAL, observed"
+
+[[obligation]]
 id = "sf.classes.anomaly-insights.methods.set-org-notification-emails.o001"
 kind = "positive"
 required = true
 note = "the documented form with every required part and no optional part"
-
-[[obligation]]
-id = "sf.classes.anomaly-insights.methods.set-org-notification-emails.o002"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required LOCAL"
 
 [[obligation]]
 id = "sf.classes.anomaly-insights.methods.set-org-notification-emails.o003"
@@ -2404,6 +2423,13 @@ id = "sf.classes.anomaly-insights.methods.set-org-notification-emails.o006"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required )"
+
+[[obligation]]
+id = "sf.classes.anomaly-insights.methods.set-org-notification-emails.o007"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.classes.anomaly-insights.methods.set_org_notification_emails / Syntax"
+note = "the form without its required LOCAL, observed"
 
 [[obligation]]
 id = "sf.classes.anomaly-insights.methods.update-monitor-config.o001"
@@ -2440,12 +2466,6 @@ target = "<config>"
 note = "a valid operand"
 
 [[obligation]]
-id = "sf.classes.anomaly-insights.methods.update-monitor-config.o007"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required LOCAL"
-
-[[obligation]]
 id = "sf.classes.anomaly-insights.methods.update-monitor-config.o008"
 kind = "negative_neighbour"
 required = true
@@ -2468,6 +2488,13 @@ id = "sf.classes.anomaly-insights.methods.update-monitor-config.o011"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required )"
+
+[[obligation]]
+id = "sf.classes.anomaly-insights.methods.update-monitor-config.o012"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.classes.anomaly-insights.methods.update_monitor_config / Syntax"
+note = "the form without its required LOCAL, observed"
 
 [[obligation]]
 id = "sf.classes.budget.commands.alter-budget.rename-to.o001"
@@ -3554,12 +3581,6 @@ required = true
 note = "the form without its required SNOWFLAKE"
 
 [[obligation]]
-id = "sf.classes.budget.commands.show-budget.o033"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required CORE"
-
-[[obligation]]
 id = "sf.classes.budget.commands.show-budget.o034"
 kind = "negative_neighbour"
 required = true
@@ -3608,6 +3629,13 @@ required = true
 target = "<schema_name>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.classes.budget.commands.show-budget.o041"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.classes.budget.commands.show-budget / Syntax"
+note = "the form without its required CORE, observed"
 
 [[obligation]]
 id = "sf.classes.budget.methods.activate.o001"

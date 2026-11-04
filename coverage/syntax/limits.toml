@@ -46222,74 +46222,6 @@ also_expect = "observe"
 context = "raw"
 
 [[suppress]]
-form = "sf.ddl.desc-transaction"
-kind = "alternative"
-target = "{ DESC | DESCRIBE } → DESCRIBE"
-reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-39); observed, not flipped to reject"
-
-[[limit]]
-form = "sf.ddl.desc-transaction"
-kind = "alternative"
-target = "{ DESC | DESCRIBE } → DESCRIBE"
-note = "alternative { DESC | DESCRIBE } → DESCRIBE, observed"
-anchor = "doc.sql.desc-transaction / Syntax"
-sql = "DESCRIBE TRANSACTION 1 ;"
-expect = "observe"
-documented = true
-context = "raw"
-
-[[suppress]]
-form = "sf.ddl.desc-transaction"
-kind = "positive"
-note = "the documented form with every required part and no optional part"
-reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-39); observed, not flipped to reject"
-
-[[limit]]
-form = "sf.ddl.desc-transaction"
-kind = "positive"
-note = "the documented form with every required part and no optional part, observed"
-anchor = "doc.sql.desc-transaction / Syntax"
-sql = "DESC TRANSACTION 1 ;"
-expect = "observe"
-documented = true
-context = "raw"
-
-[[suppress]]
-form = "sf.ddl.desc-transaction"
-kind = "alternative"
-target = "{ DESC | DESCRIBE } → DESC"
-reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-39); observed, not flipped to reject"
-
-[[limit]]
-form = "sf.ddl.desc-transaction"
-kind = "alternative"
-target = "{ DESC | DESCRIBE } → DESC"
-note = "alternative { DESC | DESCRIBE } → DESC, observed"
-anchor = "doc.sql.desc-transaction / Syntax"
-sql = "DESC TRANSACTION 1 ;"
-expect = "observe"
-documented = true
-context = "raw"
-
-[[suppress]]
-form = "sf.ddl.desc-transaction"
-kind = "operand_type_class"
-target = "<transaction_id>"
-note = "a valid operand"
-reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-39); observed, not flipped to reject"
-
-[[limit]]
-form = "sf.ddl.desc-transaction"
-kind = "operand_type_class"
-target = "<transaction_id>"
-note = "a valid operand, observed"
-anchor = "doc.sql.desc-transaction / Syntax"
-sql = "DESC TRANSACTION 1 ;"
-expect = "observe"
-documented = true
-context = "raw"
-
-[[suppress]]
 form = "sf.ddl.show-rules-in-event-routing-table"
 kind = "positive"
 note = "the documented form with every required part and no optional part"
@@ -46918,58 +46850,6 @@ also_expect = "observe"
 context = "raw"
 
 [[suppress]]
-form = "sf.functions.system-cke-hash-function"
-kind = "positive"
-note = "the documented form with every required part and no optional part"
-reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-17); observed, not flipped to reject"
-
-[[limit]]
-form = "sf.functions.system-cke-hash-function"
-kind = "positive"
-note = "the documented form with every required part and no optional part, observed"
-anchor = "doc.functions.system_cke_hash_function / Syntax"
-sql = "SELECT SYSTEM$CKE_HASH_FUNCTION ( 'm' , 'm' ) ;"
-expect = "observe"
-documented = true
-context = "raw"
-
-[[suppress]]
-form = "sf.functions.system-cke-hash-function"
-kind = "operand_type_class"
-target = "'<hash_version>'"
-note = "a valid string_literal"
-reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-17); observed, not flipped to reject"
-
-[[limit]]
-form = "sf.functions.system-cke-hash-function"
-kind = "operand_type_class"
-target = "'<hash_version>'"
-note = "a valid string_literal, observed"
-anchor = "doc.functions.system_cke_hash_function / Syntax"
-sql = "SELECT SYSTEM$CKE_HASH_FUNCTION ( 'm' , 'm' ) ;"
-expect = "observe"
-documented = true
-context = "raw"
-
-[[suppress]]
-form = "sf.functions.system-cke-hash-function"
-kind = "operand_type_class"
-target = "'<encoded_primary_key>'"
-note = "a valid string_literal"
-reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-17); observed, not flipped to reject"
-
-[[limit]]
-form = "sf.functions.system-cke-hash-function"
-kind = "operand_type_class"
-target = "'<encoded_primary_key>'"
-note = "a valid string_literal, observed"
-anchor = "doc.functions.system_cke_hash_function / Syntax"
-sql = "SELECT SYSTEM$CKE_HASH_FUNCTION ( 'm' , 'm' ) ;"
-expect = "observe"
-documented = true
-context = "raw"
-
-[[suppress]]
 form = "sf.functions.system-explain-plan-json"
 kind = "alternative"
 target = "{ <sql_statement_expression> | <sql_query_id_expression> } → <sql_query_id_expression>"
@@ -47000,40 +46880,6 @@ target = "<sql_query_id_expression>"
 note = "a valid expression, observed"
 anchor = "doc.functions.system_explain_plan_json / Syntax"
 sql = "SELECT SYSTEM$EXPLAIN_PLAN_JSON ( LAST_QUERY_ID ( ) ) ;"
-expect = "observe"
-documented = true
-context = "raw"
-
-[[suppress]]
-form = "sf.functions.system-show-budget-shared-resource-candidates"
-kind = "positive"
-note = "the documented form with every required part and no optional part"
-reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-17); observed, not flipped to reject"
-
-[[limit]]
-form = "sf.functions.system-show-budget-shared-resource-candidates"
-kind = "positive"
-note = "the documented form with every required part and no optional part, observed"
-anchor = "doc.functions.system_show_budget_shared_resource_candidates / Syntax"
-sql = "SELECT SYSTEM$SHOW_BUDGET_SHARED_RESOURCE_CANDIDATES ( 'm' ) ;"
-expect = "observe"
-documented = true
-context = "raw"
-
-[[suppress]]
-form = "sf.functions.system-show-budget-shared-resource-candidates"
-kind = "operand_type_class"
-target = "'<domain>'"
-note = "a valid string_literal"
-reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-17); observed, not flipped to reject"
-
-[[limit]]
-form = "sf.functions.system-show-budget-shared-resource-candidates"
-kind = "operand_type_class"
-target = "'<domain>'"
-note = "a valid string_literal, observed"
-anchor = "doc.functions.system_show_budget_shared_resource_candidates / Syntax"
-sql = "SELECT SYSTEM$SHOW_BUDGET_SHARED_RESOURCE_CANDIDATES ( 'm' ) ;"
 expect = "observe"
 documented = true
 context = "raw"
@@ -57080,13 +56926,14 @@ kind = "interaction_all_options"
 note = "every independent option of one production together"
 reason = "D113 [page misreading]: the all-options row combines options as the page forbids (the page says “You cannot set (or unset) the CONTACT property with other properties in the same statement”); the corrected row below applies the rule"
 
+# D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-55); observed, not flipped to reject
 [[limit]]
 form = "sf.ddl.alter-view.unset"
 kind = "interaction_all_options"
-note = "every independent option of one production together, with the page's combination rules applied"
+note = "every independent option of one production together, with the page's combination rules applied, observed"
 anchor = "doc.sql.alter-view / Syntax"
 sql = "ALTER VIEW IF EXISTS v1 UNSET SECURE COMMENT ;"
-expect = "accept"
+expect = "observe"
 context = "raw"
 
 [[suppress]]
@@ -57095,13 +56942,14 @@ kind = "interaction_all_options"
 note = "every independent option of one production together"
 reason = "D113 [page misreading]: the all-options row combines options as the page forbids (the page says “You can reset multiple properties/parameters with a single ALTER statement; however, each property/parameter must be separated by a comma”); the corrected row below applies the rule"
 
+# D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-55); observed, not flipped to reject
 [[limit]]
 form = "sf.ddl.alter-application-package.unset"
 kind = "interaction_all_options"
-note = "every independent option of one production together, with the page's combination rules applied"
+note = "every independent option of one production together, with the page's combination rules applied, observed"
 anchor = "doc.sql.alter-application-package / Syntax"
 sql = "ALTER APPLICATION PACKAGE IF EXISTS v1 UNSET DATA_RETENTION_TIME_IN_DAYS , MAX_DATA_EXTENSION_TIME_IN_DAYS , DEFAULT_DDL_COLLATION , COMMENT , DISTRIBUTION ;"
-expect = "accept"
+expect = "observe"
 context = "raw"
 
 # D113 ddl receipt triage: remaining contradictions observed, each reason names its category and receipt.
@@ -57193,108 +57041,611 @@ sql = "CREATE EXTERNAL TABLE v1 ( v1 INT AS 1 , v1 AS 1 ) LOCATION = @s1 FILE_FO
 expect = "observe"
 context = "raw"
 
-# D113 functions receipt triage: remaining contradictions observed, each reason names its category and receipt.
+# D113 ddl receipt triage: remaining contradictions observed, each reason names its category and receipt.
 
 [[suppress]]
-form = "sf.functions.system-resolve-python-packages"
-kind = "positive"
-note = "the documented form with every required part and no optional part"
-reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-53); observed, not flipped to reject"
+form = "sf.ddl.alter-external-volume.set-allow-writes-true-false"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 1003 SQLSTATE 42000, phase semantic_error, import-20261104-55), so it is not a syntax error; observed (D97 settle rule)"
 
 [[limit]]
-form = "sf.functions.system-resolve-python-packages"
-kind = "positive"
-note = "the documented form with every required part and no optional part, observed"
-anchor = "doc.functions.system_resolve_python_packages / Syntax"
-sql = "SELECT SYSTEM$RESOLVE_PYTHON_PACKAGES ( 'm' , 'm' ) ;"
+form = "sf.ddl.alter-external-volume.set-allow-writes-true-false"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>, observed"
+anchor = "doc.sql.alter-external-volume / Syntax"
+sql = "ALTER EXTERNAL VOLUME SET ALLOW_WRITES = TRUE ;"
 expect = "observe"
-documented = true
 context = "raw"
 
 [[suppress]]
-form = "sf.functions.system-resolve-python-packages"
-kind = "operand_type_class"
-target = "'<python_version>'"
-note = "a valid string_literal"
-reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-53); observed, not flipped to reject"
+form = "sf.ddl.alter-external-volume.set-comment"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 1003 SQLSTATE 42000, phase semantic_error, import-20261104-55), so it is not a syntax error; observed (D97 settle rule)"
 
 [[limit]]
-form = "sf.functions.system-resolve-python-packages"
-kind = "operand_type_class"
-target = "'<python_version>'"
-note = "a valid string_literal, observed"
-anchor = "doc.functions.system_resolve_python_packages / Syntax"
-sql = "SELECT SYSTEM$RESOLVE_PYTHON_PACKAGES ( 'm' , 'm' ) ;"
+form = "sf.ddl.alter-external-volume.set-comment"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>, observed"
+anchor = "doc.sql.alter-external-volume / Syntax"
+sql = "ALTER EXTERNAL VOLUME SET COMMENT = 'm' ;"
 expect = "observe"
-documented = true
 context = "raw"
 
 [[suppress]]
-form = "sf.functions.system-resolve-python-packages"
-kind = "operand_type_class"
-target = "'<package_spec_string>'"
-note = "a valid string_literal"
-reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-53); observed, not flipped to reject"
+form = "sf.ddl.alter-restricted-session-scope.unset-comment"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 1003 SQLSTATE 42000, phase semantic_error, import-20261104-55), so it is not a syntax error; observed (D97 settle rule)"
 
 [[limit]]
-form = "sf.functions.system-resolve-python-packages"
-kind = "operand_type_class"
-target = "'<package_spec_string>'"
-note = "a valid string_literal, observed"
-anchor = "doc.functions.system_resolve_python_packages / Syntax"
-sql = "SELECT SYSTEM$RESOLVE_PYTHON_PACKAGES ( 'm' , 'm' ) ;"
+form = "sf.ddl.alter-restricted-session-scope.unset-comment"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>, observed"
+anchor = "doc.sql.alter-restricted-session-scope / Syntax"
+sql = "ALTER RESTRICTED SESSION SCOPE UNSET COMMENT ;"
 expect = "observe"
-documented = true
 context = "raw"
 
 [[suppress]]
-form = "sf.functions.system-resolve-python-packages"
-kind = "option_absent"
-target = "[ , '<artifact_repository_name>' ]"
-reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-53); observed, not flipped to reject"
+form = "sf.ddl.alter-semantic-view.add-materialization-warehouse-as"
+kind = "negative_neighbour"
+target = "<metric_name>"
+note = "a string literal in place of <metric_name>"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 1003 SQLSTATE 42000, phase semantic_error, import-20261104-55), so it is not a syntax error; observed (D97 settle rule)"
 
 [[limit]]
-form = "sf.functions.system-resolve-python-packages"
-kind = "option_absent"
-target = "[ , '<artifact_repository_name>' ]"
-note = "option absent [ , '<artifact_repository_name>' ], observed"
-anchor = "doc.functions.system_resolve_python_packages / Syntax"
-sql = "SELECT SYSTEM$RESOLVE_PYTHON_PACKAGES ( 'm' , 'm' ) ;"
+form = "sf.ddl.alter-semantic-view.add-materialization-warehouse-as"
+kind = "negative_neighbour"
+target = "<metric_name>"
+note = "a string literal in place of <metric_name>, observed"
+anchor = "doc.sql.alter-semantic-view / Syntax"
+sql = "ALTER SEMANTIC VIEW v1 ADD MATERIALIZATION v1 WAREHOUSE = v1 AS DIMENSIONS v1 METRICS 'v1' ;"
 expect = "observe"
-documented = true
 context = "raw"
 
 [[suppress]]
-form = "sf.functions.system-resolve-python-packages"
-kind = "option_present"
-target = "[ , '<artifact_repository_name>' ]"
-reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-53); observed, not flipped to reject"
+form = "sf.ddl.alter-semantic-view.add-materialization-warehouse-as"
+kind = "negative_neighbour"
+target = "<dimension_name>"
+note = "a string literal in place of <dimension_name>"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 1003 SQLSTATE 42000, phase semantic_error, import-20261104-55), so it is not a syntax error; observed (D97 settle rule)"
 
 [[limit]]
-form = "sf.functions.system-resolve-python-packages"
-kind = "option_present"
-target = "[ , '<artifact_repository_name>' ]"
-note = "option present [ , '<artifact_repository_name>' ], observed"
-anchor = "doc.functions.system_resolve_python_packages / Syntax"
-sql = "SELECT SYSTEM$RESOLVE_PYTHON_PACKAGES ( 'm' , 'm' , 'm' ) ;"
+form = "sf.ddl.alter-semantic-view.add-materialization-warehouse-as"
+kind = "negative_neighbour"
+target = "<dimension_name>"
+note = "a string literal in place of <dimension_name>, observed"
+anchor = "doc.sql.alter-semantic-view / Syntax"
+sql = "ALTER SEMANTIC VIEW v1 ADD MATERIALIZATION v1 WAREHOUSE = v1 AS DIMENSIONS 'v1' METRICS v1 ;"
 expect = "observe"
-documented = true
 context = "raw"
 
 [[suppress]]
-form = "sf.functions.system-resolve-python-packages"
-kind = "operand_type_class"
-target = "'<artifact_repository_name>' in [ , '<artifact_repository_name>' ]"
-note = "a valid string_literal"
-reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-53); observed, not flipped to reject"
+form = "sf.ddl.alter-semantic-view.set-comment-max-staleness"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 1003 SQLSTATE 42000, phase semantic_error, import-20261104-55), so it is not a syntax error; observed (D97 settle rule)"
 
 [[limit]]
-form = "sf.functions.system-resolve-python-packages"
-kind = "operand_type_class"
-target = "'<artifact_repository_name>' in [ , '<artifact_repository_name>' ]"
-note = "a valid string_literal, observed"
-anchor = "doc.functions.system_resolve_python_packages / Syntax"
-sql = "SELECT SYSTEM$RESOLVE_PYTHON_PACKAGES ( 'm' , 'm' , 'm' ) ;"
+form = "sf.ddl.alter-semantic-view.set-comment-max-staleness"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>, observed"
+anchor = "doc.sql.alter-semantic-view / Syntax"
+sql = "ALTER SEMANTIC VIEW SET COMMENT = 'm' ;"
 expect = "observe"
-documented = true
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-stream.set-comment"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 1003 SQLSTATE 42000, phase semantic_error, import-20261104-55), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.ddl.alter-stream.set-comment"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>, observed"
+anchor = "doc.sql.alter-stream / Syntax"
+sql = "ALTER STREAM SET COMMENT = 'm' ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-stream.unset-comment"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 1003 SQLSTATE 42000, phase semantic_error, import-20261104-55), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.ddl.alter-stream.unset-comment"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>, observed"
+anchor = "doc.sql.alter-stream / Syntax"
+sql = "ALTER STREAM UNSET COMMENT ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-type.set-comment"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 1003 SQLSTATE 42000, phase semantic_error, import-20261104-55), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.ddl.alter-type.set-comment"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>, observed"
+anchor = "doc.sql.alter-type / Syntax"
+sql = "ALTER TYPE SET COMMENT = 'm' ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-type.unset-comment"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 1003 SQLSTATE 42000, phase semantic_error, import-20261104-55), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.ddl.alter-type.unset-comment"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>, observed"
+anchor = "doc.sql.alter-type / Syntax"
+sql = "ALTER TYPE UNSET COMMENT ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.show-mcp-servers"
+kind = "negative_neighbour"
+note = "the form without its required MCP"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 1003 SQLSTATE 42000, phase semantic_error, import-20261104-55), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.ddl.show-mcp-servers"
+kind = "negative_neighbour"
+note = "the form without its required MCP, observed"
+anchor = "doc.sql.show-mcp-servers / Syntax"
+sql = "SHOW SERVERS ;"
+expect = "observe"
+context = "raw"
+
+# D113 classes receipt triage: remaining contradictions observed, each reason names its category and receipt.
+
+[[suppress]]
+form = "sf.classes.anomaly-detection.commands.show-anomaly-detection"
+kind = "negative_neighbour"
+note = "the form without its required ML"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 02000, phase semantic_error, import-20261104-55), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.classes.anomaly-detection.commands.show-anomaly-detection"
+kind = "negative_neighbour"
+note = "the form without its required ML, observed"
+anchor = "doc.classes.anomaly-detection.commands.show-anomaly-detection / Syntax"
+sql = "SHOW SNOWFLAKE . . ANOMALY_DETECTION ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.classes.anomaly-insights.methods.add-notification-integration"
+kind = "negative_neighbour"
+note = "the form without its required LOCAL"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2141 SQLSTATE 42601, phase semantic_error, import-20261104-55), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.classes.anomaly-insights.methods.add-notification-integration"
+kind = "negative_neighbour"
+note = "the form without its required LOCAL, observed"
+anchor = "doc.classes.anomaly-insights.methods.add_notification_integration / Syntax"
+sql = "CALL SNOWFLAKE . . ANOMALY_INSIGHTS!ADD_NOTIFICATION_INTEGRATION ( 'm' , 'ACCOUNT' ) ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.classes.anomaly-insights.methods.adhoc-calculate-anomalies-from-config"
+kind = "negative_neighbour"
+note = "the form without its required LOCAL"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2141 SQLSTATE 42601, phase semantic_error, import-20261104-55), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.classes.anomaly-insights.methods.adhoc-calculate-anomalies-from-config"
+kind = "negative_neighbour"
+note = "the form without its required LOCAL, observed"
+anchor = "doc.classes.anomaly-insights.methods.adhoc_calculate_anomalies_from_config / Syntax"
+sql = "CALL SNOWFLAKE . . ANOMALY_INSIGHTS!ADHOC_CALCULATE_ANOMALIES_FROM_CONFIG ( OBJECT_CONSTRUCT ( 'service_types' , ARRAY_CONSTRUCT ( ) ) , 'm' , 'm' ) ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.classes.anomaly-insights.methods.create-monitor"
+kind = "negative_neighbour"
+note = "the form without its required LOCAL"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2141 SQLSTATE 42601, phase semantic_error, import-20261104-55), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.classes.anomaly-insights.methods.create-monitor"
+kind = "negative_neighbour"
+note = "the form without its required LOCAL, observed"
+anchor = "doc.classes.anomaly-insights.methods.create_monitor / Syntax"
+sql = "CALL SNOWFLAKE . . ANOMALY_INSIGHTS!CREATE_MONITOR ( 'm' , OBJECT_CONSTRUCT ( 'service_types' , ARRAY_CONSTRUCT ( ) ) ) ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.classes.anomaly-insights.methods.drop-monitor"
+kind = "negative_neighbour"
+note = "the form without its required LOCAL"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2141 SQLSTATE 42601, phase semantic_error, import-20261104-55), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.classes.anomaly-insights.methods.drop-monitor"
+kind = "negative_neighbour"
+note = "the form without its required LOCAL, observed"
+anchor = "doc.classes.anomaly-insights.methods.drop_monitor / Syntax"
+sql = "CALL SNOWFLAKE . . ANOMALY_INSIGHTS!DROP_MONITOR ( 'm' ) ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.classes.anomaly-insights.methods.get-account-anomalies-in-credits"
+kind = "negative_neighbour"
+note = "the form without its required LOCAL"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2141 SQLSTATE 42601, phase semantic_error, import-20261104-55), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.classes.anomaly-insights.methods.get-account-anomalies-in-credits"
+kind = "negative_neighbour"
+note = "the form without its required LOCAL, observed"
+anchor = "doc.classes.anomaly-insights.methods.get_account_anomalies_in_credits / Syntax"
+sql = "CALL SNOWFLAKE . . ANOMALY_INSIGHTS!GET_ACCOUNT_ANOMALIES_IN_CREDITS ( 'm' , 'm' ) ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.classes.anomaly-insights.methods.get-account-notification-emails"
+kind = "negative_neighbour"
+note = "the form without its required LOCAL"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2141 SQLSTATE 42601, phase semantic_error, import-20261104-55), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.classes.anomaly-insights.methods.get-account-notification-emails"
+kind = "negative_neighbour"
+note = "the form without its required LOCAL, observed"
+anchor = "doc.classes.anomaly-insights.methods.get_account_notification_emails / Syntax"
+sql = "CALL SNOWFLAKE . . ANOMALY_INSIGHTS!GET_ACCOUNT_NOTIFICATION_EMAILS ( ) ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.classes.anomaly-insights.methods.get-daily-consumption-anomaly-data"
+kind = "negative_neighbour"
+note = "the form without its required LOCAL"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2141 SQLSTATE 42601, phase semantic_error, import-20261104-55), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.classes.anomaly-insights.methods.get-daily-consumption-anomaly-data"
+kind = "negative_neighbour"
+note = "the form without its required LOCAL, observed"
+anchor = "doc.classes.anomaly-insights.methods.get_daily_consumption_anomaly_data / Syntax"
+sql = "CALL SNOWFLAKE . . ANOMALY_INSIGHTS!GET_DAILY_CONSUMPTION_ANOMALY_DATA ( 'm' , 'm' , 'a1' ) ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.classes.anomaly-insights.methods.get-hourly-consumption-by-service-type"
+kind = "negative_neighbour"
+note = "the form without its required LOCAL"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2141 SQLSTATE 42601, phase semantic_error, import-20261104-55), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.classes.anomaly-insights.methods.get-hourly-consumption-by-service-type"
+kind = "negative_neighbour"
+note = "the form without its required LOCAL, observed"
+anchor = "doc.classes.anomaly-insights.methods.get_hourly_consumption_by_service_type / Syntax"
+sql = "CALL SNOWFLAKE . . ANOMALY_INSIGHTS!GET_HOURLY_CONSUMPTION_BY_SERVICE_TYPE ( 'm' , 1 ) ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.classes.anomaly-insights.methods.get-hourly-spend-for-anomaly"
+kind = "negative_neighbour"
+note = "the form without its required LOCAL"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2141 SQLSTATE 42601, phase semantic_error, import-20261104-55), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.classes.anomaly-insights.methods.get-hourly-spend-for-anomaly"
+kind = "negative_neighbour"
+note = "the form without its required LOCAL, observed"
+anchor = "doc.classes.anomaly-insights.methods.get_hourly_spend_for_anomaly / Syntax"
+sql = "CALL SNOWFLAKE . . ANOMALY_INSIGHTS!GET_HOURLY_SPEND_FOR_ANOMALY ( 'm' ) ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.classes.anomaly-insights.methods.get-monitor-anomalies"
+kind = "negative_neighbour"
+note = "the form without its required LOCAL"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2141 SQLSTATE 42601, phase semantic_error, import-20261104-55), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.classes.anomaly-insights.methods.get-monitor-anomalies"
+kind = "negative_neighbour"
+note = "the form without its required LOCAL, observed"
+anchor = "doc.classes.anomaly-insights.methods.get_monitor_anomalies / Syntax"
+sql = "CALL SNOWFLAKE . . ANOMALY_INSIGHTS!GET_MONITOR_ANOMALIES ( 'm' , 'm' , 'm' ) ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.classes.anomaly-insights.methods.get-monitor-config"
+kind = "negative_neighbour"
+note = "the form without its required LOCAL"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2141 SQLSTATE 42601, phase semantic_error, import-20261104-55), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.classes.anomaly-insights.methods.get-monitor-config"
+kind = "negative_neighbour"
+note = "the form without its required LOCAL, observed"
+anchor = "doc.classes.anomaly-insights.methods.get_monitor_config / Syntax"
+sql = "CALL SNOWFLAKE . . ANOMALY_INSIGHTS!GET_MONITOR_CONFIG ( 'm' ) ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.classes.anomaly-insights.methods.get-monitor-notification-emails"
+kind = "negative_neighbour"
+note = "the form without its required LOCAL"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2141 SQLSTATE 42601, phase semantic_error, import-20261104-55), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.classes.anomaly-insights.methods.get-monitor-notification-emails"
+kind = "negative_neighbour"
+note = "the form without its required LOCAL, observed"
+anchor = "doc.classes.anomaly-insights.methods.get_monitor_notification_emails / Syntax"
+sql = "CALL SNOWFLAKE . . ANOMALY_INSIGHTS!GET_MONITOR_NOTIFICATION_EMAILS ( 'm' ) ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.classes.anomaly-insights.methods.get-monitor-notification-log"
+kind = "negative_neighbour"
+note = "the form without its required LOCAL"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2141 SQLSTATE 42601, phase semantic_error, import-20261104-55), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.classes.anomaly-insights.methods.get-monitor-notification-log"
+kind = "negative_neighbour"
+note = "the form without its required LOCAL, observed"
+anchor = "doc.classes.anomaly-insights.methods.get_monitor_notification_log / Syntax"
+sql = "CALL SNOWFLAKE . . ANOMALY_INSIGHTS!GET_MONITOR_NOTIFICATION_LOG ( 'm' , 'm' , 'm' ) ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.classes.anomaly-insights.methods.get-notification-integrations"
+kind = "negative_neighbour"
+note = "the form without its required LOCAL"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2141 SQLSTATE 42601, phase semantic_error, import-20261104-55), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.classes.anomaly-insights.methods.get-notification-integrations"
+kind = "negative_neighbour"
+note = "the form without its required LOCAL, observed"
+anchor = "doc.classes.anomaly-insights.methods.get_notification_integrations / Syntax"
+sql = "CALL SNOWFLAKE . . ANOMALY_INSIGHTS!GET_NOTIFICATION_INTEGRATIONS ( 'ACCOUNT' ) ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.classes.anomaly-insights.methods.get-org-notification-emails"
+kind = "negative_neighbour"
+note = "the form without its required LOCAL"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2141 SQLSTATE 42601, phase semantic_error, import-20261104-55), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.classes.anomaly-insights.methods.get-org-notification-emails"
+kind = "negative_neighbour"
+note = "the form without its required LOCAL, observed"
+anchor = "doc.classes.anomaly-insights.methods.get_org_notification_emails / Syntax"
+sql = "CALL SNOWFLAKE . . ANOMALY_INSIGHTS!GET_ORG_NOTIFICATION_EMAILS ( ) ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.classes.anomaly-insights.methods.get-top-accounts-by-consumption"
+kind = "negative_neighbour"
+note = "the form without its required LOCAL"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2141 SQLSTATE 42601, phase semantic_error, import-20261104-55), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.classes.anomaly-insights.methods.get-top-accounts-by-consumption"
+kind = "negative_neighbour"
+note = "the form without its required LOCAL, observed"
+anchor = "doc.classes.anomaly-insights.methods.get_top_accounts_by_consumption / Syntax"
+sql = "CALL SNOWFLAKE . . ANOMALY_INSIGHTS!GET_TOP_ACCOUNTS_BY_CONSUMPTION ( 'm' , 1 ) ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.classes.anomaly-insights.methods.get-top-queries-from-warehouse"
+kind = "negative_neighbour"
+note = "the form without its required LOCAL"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2141 SQLSTATE 42601, phase semantic_error, import-20261104-55), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.classes.anomaly-insights.methods.get-top-queries-from-warehouse"
+kind = "negative_neighbour"
+note = "the form without its required LOCAL, observed"
+anchor = "doc.classes.anomaly-insights.methods.get_top_queries_from_warehouse / Syntax"
+sql = "CALL SNOWFLAKE . . ANOMALY_INSIGHTS!GET_TOP_QUERIES_FROM_WAREHOUSE ( 838 , 'm' , 1 ) ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.classes.anomaly-insights.methods.get-top-warehouses-on-date"
+kind = "negative_neighbour"
+note = "the form without its required LOCAL"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2141 SQLSTATE 42601, phase semantic_error, import-20261104-55), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.classes.anomaly-insights.methods.get-top-warehouses-on-date"
+kind = "negative_neighbour"
+note = "the form without its required LOCAL, observed"
+anchor = "doc.classes.anomaly-insights.methods.get_top_warehouses_on_date / Syntax"
+sql = "CALL SNOWFLAKE . . ANOMALY_INSIGHTS!GET_TOP_WAREHOUSES_ON_DATE ( 'm' , 1 , 'a1' ) ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.classes.anomaly-insights.methods.list-monitors"
+kind = "negative_neighbour"
+note = "the form without its required LOCAL"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2141 SQLSTATE 42601, phase semantic_error, import-20261104-55), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.classes.anomaly-insights.methods.list-monitors"
+kind = "negative_neighbour"
+note = "the form without its required LOCAL, observed"
+anchor = "doc.classes.anomaly-insights.methods.list_monitors / Syntax"
+sql = "CALL SNOWFLAKE . . ANOMALY_INSIGHTS!LIST_MONITORS ( ) ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.classes.anomaly-insights.methods.recalculate-anomalies"
+kind = "negative_neighbour"
+note = "the form without its required LOCAL"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2141 SQLSTATE 42601, phase semantic_error, import-20261104-55), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.classes.anomaly-insights.methods.recalculate-anomalies"
+kind = "negative_neighbour"
+note = "the form without its required LOCAL, observed"
+anchor = "doc.classes.anomaly-insights.methods.recalculate_anomalies / Syntax"
+sql = "CALL SNOWFLAKE . . ANOMALY_INSIGHTS!RECALCULATE_ANOMALIES ( 'm' ) ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.classes.anomaly-insights.methods.remove-notification-integration"
+kind = "negative_neighbour"
+note = "the form without its required LOCAL"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2141 SQLSTATE 42601, phase semantic_error, import-20261104-55), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.classes.anomaly-insights.methods.remove-notification-integration"
+kind = "negative_neighbour"
+note = "the form without its required LOCAL, observed"
+anchor = "doc.classes.anomaly-insights.methods.remove_notification_integration / Syntax"
+sql = "CALL SNOWFLAKE . . ANOMALY_INSIGHTS!REMOVE_NOTIFICATION_INTEGRATION ( 'm' , 'ACCOUNT' ) ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.classes.anomaly-insights.methods.rename-monitor"
+kind = "negative_neighbour"
+note = "the form without its required LOCAL"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2141 SQLSTATE 42601, phase semantic_error, import-20261104-55), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.classes.anomaly-insights.methods.rename-monitor"
+kind = "negative_neighbour"
+note = "the form without its required LOCAL, observed"
+anchor = "doc.classes.anomaly-insights.methods.rename_monitor / Syntax"
+sql = "CALL SNOWFLAKE . . ANOMALY_INSIGHTS!RENAME_MONITOR ( 'm' , 'm' ) ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.classes.anomaly-insights.methods.set-account-notification-emails"
+kind = "negative_neighbour"
+note = "the form without its required LOCAL"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2141 SQLSTATE 42601, phase semantic_error, import-20261104-55), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.classes.anomaly-insights.methods.set-account-notification-emails"
+kind = "negative_neighbour"
+note = "the form without its required LOCAL, observed"
+anchor = "doc.classes.anomaly-insights.methods.set_account_notification_emails / Syntax"
+sql = "CALL SNOWFLAKE . . ANOMALY_INSIGHTS!SET_ACCOUNT_NOTIFICATION_EMAILS ( 'u1@example.com, u2@example.com' ) ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.classes.anomaly-insights.methods.set-monitor-notification-emails"
+kind = "negative_neighbour"
+note = "the form without its required LOCAL"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2141 SQLSTATE 42601, phase semantic_error, import-20261104-55), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.classes.anomaly-insights.methods.set-monitor-notification-emails"
+kind = "negative_neighbour"
+note = "the form without its required LOCAL, observed"
+anchor = "doc.classes.anomaly-insights.methods.set_monitor_notification_emails / Syntax"
+sql = "CALL SNOWFLAKE . . ANOMALY_INSIGHTS!SET_MONITOR_NOTIFICATION_EMAILS ( 'm' , 'u1@example.com, u2@example.com' ) ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.classes.anomaly-insights.methods.set-org-notification-emails"
+kind = "negative_neighbour"
+note = "the form without its required LOCAL"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2141 SQLSTATE 42601, phase semantic_error, import-20261104-55), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.classes.anomaly-insights.methods.set-org-notification-emails"
+kind = "negative_neighbour"
+note = "the form without its required LOCAL, observed"
+anchor = "doc.classes.anomaly-insights.methods.set_org_notification_emails / Syntax"
+sql = "CALL SNOWFLAKE . . ANOMALY_INSIGHTS!SET_ORG_NOTIFICATION_EMAILS ( 'u1@example.com, u2@example.com' ) ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.classes.anomaly-insights.methods.update-monitor-config"
+kind = "negative_neighbour"
+note = "the form without its required LOCAL"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2141 SQLSTATE 42601, phase semantic_error, import-20261104-55), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.classes.anomaly-insights.methods.update-monitor-config"
+kind = "negative_neighbour"
+note = "the form without its required LOCAL, observed"
+anchor = "doc.classes.anomaly-insights.methods.update_monitor_config / Syntax"
+sql = "CALL SNOWFLAKE . . ANOMALY_INSIGHTS!UPDATE_MONITOR_CONFIG ( 'm' , OBJECT_CONSTRUCT ( 'service_types' , ARRAY_CONSTRUCT ( ) ) ) ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.classes.budget.commands.show-budget"
+kind = "negative_neighbour"
+note = "the form without its required CORE"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 02000, phase semantic_error, import-20261104-55), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.classes.budget.commands.show-budget"
+kind = "negative_neighbour"
+note = "the form without its required CORE, observed"
+anchor = "doc.classes.budget.commands.show-budget / Syntax"
+sql = "SHOW SNOWFLAKE . . BUDGET ;"
+expect = "observe"
 context = "raw"

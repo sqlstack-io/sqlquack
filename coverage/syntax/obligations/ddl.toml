@@ -6964,11 +6964,11 @@ anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
-id = "sf.ddl.alter-application-package.unset.o059"
+id = "sf.ddl.alter-application-package.unset.o060"
 kind = "interaction_all_options"
 required = true
 anchor = "doc.sql.alter-application-package / Syntax"
-note = "every independent option of one production together, with the page's combination rules applied"
+note = "every independent option of one production together, with the page's combination rules applied, observed"
 
 [[obligation]]
 id = "sf.ddl.alter-application-package.unset-tag.o001"
@@ -31225,13 +31225,6 @@ required = true
 target = "[ IF EXISTS ]"
 
 [[obligation]]
-id = "sf.ddl.alter-external-volume.set-allow-writes-true-false.o004"
-kind = "required_operand_missing"
-required = true
-target = "<name>"
-note = "omit <name>"
-
-[[obligation]]
 id = "sf.ddl.alter-external-volume.set-allow-writes-true-false.o005"
 kind = "operand_type_class"
 required = true
@@ -31311,6 +31304,14 @@ anchor = "doc.sql.alter-external-volume / Syntax"
 note = "the form without its required EXTERNAL, observed"
 
 [[obligation]]
+id = "sf.ddl.alter-external-volume.set-allow-writes-true-false.o018"
+kind = "required_operand_missing"
+required = true
+target = "<name>"
+anchor = "doc.sql.alter-external-volume / Syntax"
+note = "omit <name>, observed"
+
+[[obligation]]
 id = "sf.ddl.alter-external-volume.set-comment.o001"
 kind = "positive"
 required = true
@@ -31327,13 +31328,6 @@ id = "sf.ddl.alter-external-volume.set-comment.o003"
 kind = "option_absent"
 required = true
 target = "[ IF EXISTS ]"
-
-[[obligation]]
-id = "sf.ddl.alter-external-volume.set-comment.o004"
-kind = "required_operand_missing"
-required = true
-target = "<name>"
-note = "omit <name>"
 
 [[obligation]]
 id = "sf.ddl.alter-external-volume.set-comment.o005"
@@ -31416,6 +31410,14 @@ kind = "negative_neighbour"
 required = true
 anchor = "doc.sql.alter-external-volume / Syntax"
 note = "the form without its required EXTERNAL, observed"
+
+[[obligation]]
+id = "sf.ddl.alter-external-volume.set-comment.o018"
+kind = "required_operand_missing"
+required = true
+target = "<name>"
+anchor = "doc.sql.alter-external-volume / Syntax"
+note = "omit <name>, observed"
 
 [[obligation]]
 id = "sf.ddl.alter-external-volume.update-storage-location-credentials-aws-key-id.o001"
@@ -58190,13 +58192,6 @@ required = true
 target = "[ IF EXISTS ]"
 
 [[obligation]]
-id = "sf.ddl.alter-restricted-session-scope.unset-comment.o006"
-kind = "required_operand_missing"
-required = true
-target = "<name>"
-note = "omit <name>"
-
-[[obligation]]
 id = "sf.ddl.alter-restricted-session-scope.unset-comment.o007"
 kind = "operand_type_class"
 required = true
@@ -58261,6 +58256,14 @@ required = true
 target = "<name>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.ddl.alter-restricted-session-scope.unset-comment.o017"
+kind = "required_operand_missing"
+required = true
+target = "<name>"
+anchor = "doc.sql.alter-restricted-session-scope / Syntax"
+note = "omit <name>, observed"
 
 [[obligation]]
 id = "sf.ddl.alter-schema.enable-disable-managed-access.o001"
@@ -60338,13 +60341,6 @@ target = "<dimension_name>"
 note = "a valid identifier"
 
 [[obligation]]
-id = "sf.ddl.alter-semantic-view.add-materialization-warehouse-as.o022"
-kind = "negative_neighbour"
-required = true
-target = "<dimension_name>"
-note = "a string literal in place of <dimension_name>"
-
-[[obligation]]
 id = "sf.ddl.alter-semantic-view.add-materialization-warehouse-as.o023"
 kind = "option_present"
 required = true
@@ -60370,13 +60366,6 @@ kind = "operand_type_class"
 required = true
 target = "<metric_name>"
 note = "a valid identifier"
-
-[[obligation]]
-id = "sf.ddl.alter-semantic-view.add-materialization-warehouse-as.o027"
-kind = "negative_neighbour"
-required = true
-target = "<metric_name>"
-note = "a string literal in place of <metric_name>"
 
 [[obligation]]
 id = "sf.ddl.alter-semantic-view.add-materialization-warehouse-as.o028"
@@ -60586,6 +60575,22 @@ required = true
 target = "<metric_name>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.ddl.alter-semantic-view.add-materialization-warehouse-as.o059"
+kind = "negative_neighbour"
+required = true
+target = "<metric_name>"
+anchor = "doc.sql.alter-semantic-view / Syntax"
+note = "a string literal in place of <metric_name>, observed"
+
+[[obligation]]
+id = "sf.ddl.alter-semantic-view.add-materialization-warehouse-as.o060"
+kind = "negative_neighbour"
+required = true
+target = "<dimension_name>"
+anchor = "doc.sql.alter-semantic-view / Syntax"
+note = "a string literal in place of <dimension_name>, observed"
 
 [[obligation]]
 id = "sf.ddl.alter-semantic-view.drop-materialization.o001"
@@ -61034,13 +61039,6 @@ required = true
 target = "[ IF EXISTS ]"
 
 [[obligation]]
-id = "sf.ddl.alter-semantic-view.set-comment-max-staleness.o004"
-kind = "required_operand_missing"
-required = true
-target = "<name>"
-note = "omit <name>"
-
-[[obligation]]
 id = "sf.ddl.alter-semantic-view.set-comment-max-staleness.o005"
 kind = "operand_type_class"
 required = true
@@ -61164,6 +61162,14 @@ required = true
 target = "MAX_STALENESS = <integer>"
 anchor = "doc.sql.alter-semantic-view / Parameters"
 note = "MAX_STALENESS = 121 against the documented minimum of 120"
+
+[[obligation]]
+id = "sf.ddl.alter-semantic-view.set-comment-max-staleness.o024"
+kind = "required_operand_missing"
+required = true
+target = "<name>"
+anchor = "doc.sql.alter-semantic-view / Syntax"
+note = "omit <name>, observed"
 
 [[obligation]]
 id = "sf.ddl.alter-semantic-view.set-tag.o001"
@@ -71578,13 +71584,6 @@ required = true
 target = "[ IF EXISTS ]"
 
 [[obligation]]
-id = "sf.ddl.alter-stream.set-comment.o004"
-kind = "required_operand_missing"
-required = true
-target = "<name>"
-note = "omit <name>"
-
-[[obligation]]
 id = "sf.ddl.alter-stream.set-comment.o005"
 kind = "operand_type_class"
 required = true
@@ -71658,6 +71657,14 @@ required = true
 target = "<name>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.ddl.alter-stream.set-comment.o016"
+kind = "required_operand_missing"
+required = true
+target = "<name>"
+anchor = "doc.sql.alter-stream / Syntax"
+note = "omit <name>, observed"
 
 [[obligation]]
 id = "sf.ddl.alter-stream.set-tag.o001"
@@ -71854,13 +71861,6 @@ required = true
 target = "[ IF EXISTS ]"
 
 [[obligation]]
-id = "sf.ddl.alter-stream.unset-comment.o004"
-kind = "required_operand_missing"
-required = true
-target = "<name>"
-note = "omit <name>"
-
-[[obligation]]
 id = "sf.ddl.alter-stream.unset-comment.o005"
 kind = "operand_type_class"
 required = true
@@ -71913,6 +71913,14 @@ required = true
 target = "<name>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.ddl.alter-stream.unset-comment.o013"
+kind = "required_operand_missing"
+required = true
+target = "<name>"
+anchor = "doc.sql.alter-stream / Syntax"
+note = "omit <name>, observed"
 
 [[obligation]]
 id = "sf.ddl.alter-stream.unset-tag.o001"
@@ -89874,13 +89882,6 @@ required = true
 target = "[ IF EXISTS ]"
 
 [[obligation]]
-id = "sf.ddl.alter-type.set-comment.o004"
-kind = "required_operand_missing"
-required = true
-target = "<name>"
-note = "omit <name>"
-
-[[obligation]]
 id = "sf.ddl.alter-type.set-comment.o005"
 kind = "operand_type_class"
 required = true
@@ -89956,6 +89957,14 @@ anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
+id = "sf.ddl.alter-type.set-comment.o016"
+kind = "required_operand_missing"
+required = true
+target = "<name>"
+anchor = "doc.sql.alter-type / Syntax"
+note = "omit <name>, observed"
+
+[[obligation]]
 id = "sf.ddl.alter-type.unset-comment.o001"
 kind = "positive"
 required = true
@@ -89972,13 +89981,6 @@ id = "sf.ddl.alter-type.unset-comment.o003"
 kind = "option_absent"
 required = true
 target = "[ IF EXISTS ]"
-
-[[obligation]]
-id = "sf.ddl.alter-type.unset-comment.o004"
-kind = "required_operand_missing"
-required = true
-target = "<name>"
-note = "omit <name>"
 
 [[obligation]]
 id = "sf.ddl.alter-type.unset-comment.o005"
@@ -90033,6 +90035,14 @@ required = true
 target = "<name>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.ddl.alter-type.unset-comment.o013"
+kind = "required_operand_missing"
+required = true
+target = "<name>"
+anchor = "doc.sql.alter-type / Syntax"
+note = "omit <name>, observed"
 
 [[obligation]]
 id = "sf.ddl.alter-variable.drop-default.o001"
@@ -95802,11 +95812,11 @@ anchor = "doc.sql.alter-view / Syntax"
 note = "omit <purpose>, observed"
 
 [[obligation]]
-id = "sf.ddl.alter-view.unset.o045"
+id = "sf.ddl.alter-view.unset.o046"
 kind = "interaction_all_options"
 required = true
 anchor = "doc.sql.alter-view / Syntax"
-note = "every independent option of one production together, with the page's combination rules applied"
+note = "every independent option of one production together, with the page's combination rules applied, observed"
 
 [[obligation]]
 id = "sf.ddl.alter-warehouse.abort-all-queries.o001"
@@ -263476,41 +263486,35 @@ anchor = "doc.sql.desc-task-graph / Syntax"
 note = "omit <name>, observed"
 
 [[obligation]]
+id = "sf.ddl.desc-transaction.o020"
+kind = "positive"
+required = true
+note = "the documented form with every required part and no optional part"
+
+[[obligation]]
+id = "sf.ddl.desc-transaction.o021"
+kind = "alternative"
+required = true
+target = "{ DESC | DESCRIBE } → DESC"
+
+[[obligation]]
+id = "sf.ddl.desc-transaction.o022"
+kind = "alternative"
+required = true
+target = "{ DESC | DESCRIBE } → DESCRIBE"
+
+[[obligation]]
+id = "sf.ddl.desc-transaction.o023"
+kind = "operand_type_class"
+required = true
+target = "<transaction_id>"
+note = "a valid operand"
+
+[[obligation]]
 id = "sf.ddl.desc-transaction.o006"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required TRANSACTION"
-
-[[obligation]]
-id = "sf.ddl.desc-transaction.o015"
-kind = "alternative"
-required = true
-target = "{ DESC | DESCRIBE } → DESCRIBE"
-anchor = "doc.sql.desc-transaction / Syntax"
-note = "alternative { DESC | DESCRIBE } → DESCRIBE, observed"
-
-[[obligation]]
-id = "sf.ddl.desc-transaction.o016"
-kind = "positive"
-required = true
-anchor = "doc.sql.desc-transaction / Syntax"
-note = "the documented form with every required part and no optional part, observed"
-
-[[obligation]]
-id = "sf.ddl.desc-transaction.o017"
-kind = "alternative"
-required = true
-target = "{ DESC | DESCRIBE } → DESC"
-anchor = "doc.sql.desc-transaction / Syntax"
-note = "alternative { DESC | DESCRIBE } → DESC, observed"
-
-[[obligation]]
-id = "sf.ddl.desc-transaction.o018"
-kind = "operand_type_class"
-required = true
-target = "<transaction_id>"
-anchor = "doc.sql.desc-transaction / Syntax"
-note = "a valid operand, observed"
 
 [[obligation]]
 id = "sf.ddl.desc-transaction.o019"
@@ -280316,12 +280320,6 @@ target = "<schema_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> 
 note = "a string literal in place of <schema_name>"
 
 [[obligation]]
-id = "sf.ddl.show-mcp-servers.o021"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required MCP"
-
-[[obligation]]
 id = "sf.ddl.show-mcp-servers.o022"
 kind = "negative_neighbour"
 required = true
@@ -280370,6 +280368,13 @@ required = true
 target = "<schema_name>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.ddl.show-mcp-servers.o029"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.show-mcp-servers / Syntax"
+note = "the form without its required MCP, observed"
 
 [[obligation]]
 id = "sf.ddl.show-mfa-methods.o001"
