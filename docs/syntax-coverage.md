@@ -192,6 +192,45 @@ committed one.
 - Optional `supersedes_receipt_sha256`: the SHA-256 of a published receipt line of the same case,
   hashed without its newline, that this receipt replaces.
 
+### Reconciled runs
+
+The importer reads a run only when its audit has one `complete` event whose `raw_sha256` is the
+hash of `capture/raw.jsonl`. A DDL run that stopped before writing that event can instead carry a
+`reconciliation.json` in the format `sqlquack-run-reconciliation/1` (decision D108). The importer
+then reports the run as `reconciled` instead of `imported`, with the file's hash as
+`reconciliation_sha256`, and its report counts `reconciled_receipts`. It refuses the whole run
+when:
+
+- the audit also has a `complete` event, or the run is not a DDL run;
+- the file is not a JSON object;
+- `format`, `status`, `run_id`, `audit_sha256`, `packet_sha256` or `recording_session_id` do not
+  bind this run's audit;
+- `failure` is empty;
+- `observed_cleanup` lacks a `drop_query_id`, its `drop_status` is not `SUCCESS`, or `dropped` is
+  not the start event's run database;
+- `inventory_check.counts_equal` is not `true`, or `run_owned_names_remaining` is not empty;
+- `raw_records.file_sha256` is not the hash of `capture/raw.jsonl`, or `raw_records.records`
+  are not counted by `count`, indexed 0, 1, 2 and so on, and listed once each by `id` with a
+  `sha256`.
+
+Each raw line must be listed under its case `id`, with `sha256` equal to the line's hash without
+its newline (the receipt's `raw_record_sha256`). A line that is not JSON, an unlisted line, a line
+whose hash differs and a listed record with no line are refused one by one.
+
+The record may hold one `unrecorded_submission`, from query history, for a case the run submitted
+without writing a raw record. It becomes a receipt only when:
+
+- its `source` is `query_history` and it carries a `query_id`;
+- both `sql_sha256` and `query_text_sha256` equal the hash of the case SQL, and the case has no
+  raw record;
+- it carries no `sqlstate`, since query history has none (the receipt's is null);
+- it carries the query's own `release_version`, which becomes the receipt's warehouse version;
+- its `execution_status` is `SUCCESS` with no `errno`, or `FAILED_WITH_ERROR` with an integer
+  `errno` and an `error_message`;
+- its `start_time` is readable.
+
+Its `raw_record_sha256` is the hash of the entry as canonical JSON.
+
 A receipt is evidence only while it is current. A later receipt can supersede it, or the run report
 beside its file can withdraw it: the report's `withdrawn` list names withdrawn receipts by
 `receipt_sha256`. A retired receipt stays published but is dropped before checking. A

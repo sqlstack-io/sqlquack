@@ -2,7 +2,11 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass
+import json
+from collections.abc import Callable
+from dataclasses import dataclass, field
+
+from scripts.syntax_receipts.types import Row
 
 
 @dataclass(frozen=True)
@@ -71,3 +75,23 @@ class SupersedeTestCase:
     published_phase: str
     expected_new_receipts: int
     expected_withdrawn: list[tuple[str, str]]
+
+
+@dataclass(frozen=True)
+class ReconciledRunTestCase:
+    description: str
+    edit: Callable[[Row], Row]
+    expected_receipts: list[tuple[str, str]]
+    expected_refusals: list[tuple[str, str]]
+    start: Row = field(default_factory=lambda: {"run_database": "SQLQUACK_DDL_ABC123", "setup": []})
+    audit_events: int = 2
+    partial_line: bytes = b""
+    render: Callable[[Row], str] = json.dumps
+    file_name: str = "reconciliation.json"
+
+
+@dataclass(frozen=True)
+class QueryHistoryReceiptTestCase:
+    description: str
+    edit: Callable[[Row], Row]
+    expected_receipt: Row
