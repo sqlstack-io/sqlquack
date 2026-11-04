@@ -80,6 +80,7 @@ CLASS_RULES: tuple[tuple[re.Pattern[str], str], ...] = (
     (re.compile(r"_(declaration|assignment|definition|handler)$"), "subgrammar"),
     (re.compile(r"^(session|bind|snowflake_scripting)_variable$"), "operand"),
     (re.compile(r"^select_statement$"), "query"),
+    (re.compile(r"^(reference|array_construct)_statement$"), "expression"),
     (re.compile(r"statement"), "statement"),
     (re.compile(r"(^|_)(sub)?query$"), "query"),
     (re.compile(r"(^|_)(data_)?type$|_type$"), "data_type"),
@@ -381,6 +382,7 @@ STAGE_GLUES: tuple[re.Pattern[str], ...] = (
 STAGE_KEYWORD: re.Pattern[str] = re.compile(r"(?<![^ ])(@[^ ]*?[%.]|@)([A-Z][A-Z0-9_]*)(?=[ ;]|$)")
 EMPTY_PROPERTY_LIST: re.Pattern[str] = re.compile(r"(?<!STARTS )\b(?:SET|UNSET|WITH) ;$")
 EMPTY_CLAUSE: re.Pattern[str] = re.compile(r"\bON ;$")
+EMPTY_LIST: re.Pattern[str] = re.compile(r"= \( \)")
 GLUED_INFIX_RIGHT: re.Pattern[str] = re.compile(r"(?<![^ ])! (?=[A-Za-z_\"'])")
 GLUED_INFIX_LEFT: re.Pattern[str] = re.compile(r"(?<=[\w\"')]) !(?=[ A-Za-z_\"'])")
 QUERY_FORMS: tuple[str, ...] = ("sf.query.constructs",)
@@ -1137,12 +1139,129 @@ DDL_LITERAL_FILLS: dict[str, str] = {
     "'https://example.com/<...>'": "'https://example.com/'",
     "'<...>'": "'https://example.com/'",
 }
+CLASS_METHOD_CALL: str = "CALL "
+CLASS_METHOD_SEGMENT: str = ".methods."
+CLASSES_WITH_METHODS: tuple[str, ...] = (
+    "anomaly-detection",
+    "anomaly-insights",
+    "budget",
+    "classification",
+    "classification-profile",
+    "custom-classifier",
+    "forecast",
+    "top-insights",
+)
+CLASS_METHODS_WITH_CALL: tuple[str, ...] = (
+    "sf.classes.budget.methods.activate",
+    "sf.classes.budget.methods.deactivate",
+)
+CLASS_DATA_REFERENCE: str = "SYSTEM$REFERENCE ( 'VIEW' , 'v1' )"
+CLASS_TAG_REFERENCE: str = (
+    "( SELECT SYSTEM$REFERENCE ( 'TAG' , 'd1.s1.tg1' , 'SESSION' , 'APPLYBUDGET' ) )"
+)
+CLASSES_FILLS: dict[str, str] = {
+    **DDL_FILLS,
+    "reference_statement": CLASS_TAG_REFERENCE,
+    "array_construct_statement": "ARRAY_CONSTRUCT ( 'm' )",
+    "array_of_arguments": "[ 'm' ]",
+    "input_data": CLASS_DATA_REFERENCE,
+    "reference_to_data_to_analyze": CLASS_DATA_REFERENCE,
+    "reference_to_training_data": CLASS_DATA_REFERENCE,
+    "config": "OBJECT_CONSTRUCT ( 'service_types' , ARRAY_CONSTRUCT ( ) )",
+    "config_object": "OBJECT_CONSTRUCT ( 'evaluate' , FALSE )",
+    "configuration_object": "OBJECT_CONSTRUCT ( 'prediction_interval' , 0.95 )",
+    "object": "OBJECT_CONSTRUCT ( 'k1' , 'm' )",
+    "array": "ARRAY_CONSTRUCT ( OBJECT_CONSTRUCT ( 'category' , 'NAME' ) )",
+    "series": "TO_VARIANT ( 'm' )",
+    "tag-pairs": f"[ [ {CLASS_TAG_REFERENCE} , 'sales' ] ]",
+    "operation_mode": "'UNION'",
+    "boolean_value": "TRUE",
+    "days": "5",
+    "threshold": "75",
+    "threshold_percent": "10",
+    "warehouse_id": "838",
+    "forecasting_periods": "3",
+    "regular_expression": "'m'",
+}
+CLASS_PROCEDURE_REFERENCE: str = (
+    "SYSTEM$REFERENCE ( 'PROCEDURE' , 'd1.s1.p1(STRING)' , 'SESSION' , 'USAGE' )"
+)
+CLASS_TABLE_REFERENCE: str = (
+    "( SELECT SYSTEM$REFERENCE ( 'TABLE' , 't1' , 'SESSION' , 'APPLYBUDGET' ) )"
+)
+CLASSES_PAGE_FILLS: dict[str, dict[str, str]] = {
+    "sf.classes.budget.methods.add-custom-action": {
+        "reference_statement": CLASS_PROCEDURE_REFERENCE
+    },
+    "sf.classes.budget.methods.set-cycle-start-action": {
+        "reference_statement": CLASS_PROCEDURE_REFERENCE
+    },
+    "sf.classes.budget.methods.add-resource": {"reference_statement": CLASS_TABLE_REFERENCE},
+    "sf.classes.budget.methods.remove-resource": {"reference_statement": CLASS_TABLE_REFERENCE},
+    "sf.classes.budget.methods.add-resource-tag": {"reference_statement": CLASS_TAG_REFERENCE},
+    "sf.classes.budget.methods.remove-resource-tag": {"reference_statement": CLASS_TAG_REFERENCE},
+    "sf.classes.classification-profile.commands.create-classification-profile": {
+        "config_object": "OBJECT_CONSTRUCT ( 'auto_tag' , FALSE )"
+    },
+}
+CLASSES_LITERAL_FILLS: dict[str, str] = {
+    **DDL_LITERAL_FILLS,
+    "'<email_address> [, <email_address> ... ]'": "'u1@example.com, u2@example.com'",
+    "'<email> [ , <email> [ , ... ] ]'": "'u1@example.com, u2@example.com'",
+}
+CLASS_METHODS_WITH_SELECT: tuple[str, ...] = (
+    "sf.classes.classification-profile.methods.describe",
+    "sf.classes.custom-classifier.methods.list",
+)
 FAMILY_STYLES: dict[str, dict[str, FormStyle]] = {
     "scripting": SCRIPTING_SELF_DECLARING_BLOCKS,
     "query": QUERY_STYLES,
     "expressions": EXPRESSIONS_STYLES,
     "functions": FUNCTIONS_STYLES,
     **{family: {f"sf.{family}.": FormStyle(prefix="", suffix="")} for family in TOP_LEVEL_FAMILIES},
+    "classes": {
+        "sf.classes.": FormStyle(
+            prefix="",
+            suffix="",
+            fills=CLASSES_FILLS,
+            literal_fills=CLASSES_LITERAL_FILLS,
+            observe_empty_properties=True,
+        ),
+        **{
+            f"sf.classes.{name}{CLASS_METHOD_SEGMENT}": FormStyle(
+                prefix=CLASS_METHOD_CALL,
+                suffix="",
+                fills=CLASSES_FILLS,
+                literal_fills=CLASSES_LITERAL_FILLS,
+            )
+            for name in CLASSES_WITH_METHODS
+        },
+        **{
+            form: FormStyle(
+                prefix="", suffix="", fills=CLASSES_FILLS, literal_fills=CLASSES_LITERAL_FILLS
+            )
+            for form in CLASS_METHODS_WITH_CALL
+        },
+        **{
+            form: FormStyle(
+                prefix="SELECT ",
+                suffix="",
+                fills=CLASSES_FILLS,
+                literal_fills=CLASSES_LITERAL_FILLS,
+            )
+            for form in CLASS_METHODS_WITH_SELECT
+        },
+        **{
+            form: FormStyle(
+                prefix=CLASS_METHOD_CALL if CLASS_METHOD_SEGMENT in form else "",
+                suffix="",
+                fills={**CLASSES_FILLS, **fills},
+                literal_fills=CLASSES_LITERAL_FILLS,
+                observe_empty_properties=CLASS_METHOD_SEGMENT not in form,
+            )
+            for form, fills in CLASSES_PAGE_FILLS.items()
+        },
+    },
     "dml": {
         "sf.dml.": FormStyle(prefix="", suffix="", fills=DML_FILLS, literal_fills=DML_LITERAL_FILLS)
     },
@@ -1189,4 +1308,50 @@ FAMILY_STYLES: dict[str, dict[str, FormStyle]] = {
             prefix="", suffix="", fills=UTILITY_FILLS, literal_fills=UTILITY_LITERAL_FILLS
         )
     },
+}
+SCHEMA_QUALIFIER: str = "d1.s1."
+DATABASE_QUALIFIER: str = "d1."
+SCHEMA_REFERENCES: tuple[str, ...] = (
+    "table_name",
+    "ref_table_name",
+    "stream_name",
+    "network_rule",
+    "root_task_name",
+    "finalizer_task_name",
+    "snowflake_secret_name",
+    "search_service_name",
+)
+DEFINE_QUALIFIED_NAMES: dict[str, tuple[str, str]] = {
+    **dict.fromkeys(
+        (
+            "sf.ddl.create-alert.define-alert",
+            "sf.ddl.create-data-metric-function.define-data-metric-function",
+            "sf.ddl.create-dynamic-table.define-dynamic-table",
+            "sf.ddl.create-file-format.define-file-format",
+            "sf.ddl.create-function.define-function",
+            "sf.ddl.create-pipe.define-pipe",
+            "sf.ddl.create-procedure.define-procedure",
+            "sf.ddl.create-semantic-view.define-semantic-view",
+            "sf.ddl.create-sequence.define-sequence",
+            "sf.ddl.create-stream.define-stream",
+            "sf.ddl.create-streamlit.define-streamlit",
+            "sf.ddl.create-tag.define-tag",
+            "sf.ddl.create-task-graph.define-task-graph",
+            "sf.ddl.create-task.define-task",
+            "sf.ddl.create-view.define-view",
+            "sf.security_admin.create-authentication-policy.define-authentication-policy",
+            "sf.security_admin.create-network-rule.define-network-rule",
+            "sf.security_admin.create-secret.define-secret",
+        ),
+        ("name", SCHEMA_QUALIFIER),
+    ),
+    "sf.ddl.create-table.define-table": ("table_name", SCHEMA_QUALIFIER),
+    "sf.ddl.create-schema.define-schema": ("name", DATABASE_QUALIFIER),
+    "sf.security_admin.create-database-role.define-database-role": ("name", DATABASE_QUALIFIER),
+    "sf.ddl.create-database.define-database": ("", ""),
+    "sf.ddl.create-warehouse.define-warehouse": ("", ""),
+    "sf.ddl.create-code-bundle.define-code-bundle": ("", ""),
+    "sf.security_admin.create-network-policy.define-network-policy": ("", ""),
+    "sf.security_admin.create-role.define-role": ("", ""),
+    "sf.security_admin.create-share.define-share": ("", ""),
 }

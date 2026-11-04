@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import json
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 
 from scripts.syntax_obligations._helpers.derive import operand_class
 from scripts.syntax_obligations._helpers.elisions import elision_key, is_pure_elision
@@ -25,9 +25,11 @@ from scripts.syntax_obligations.constants import (
     CONTEXT_PROCEDURE,
     CONTEXT_RAW,
     CONTEXT_TOP,
+    DEFINE_QUALIFIED_NAMES,
     DOLLAR_QUOTE,
     DOUBLE_QUOTE,
     EMPTY_CLAUSE,
+    EMPTY_LIST,
     EMPTY_PROPERTY_LIST,
     EXPECT_ACCEPT,
     EXPECT_OBSERVE,
@@ -54,6 +56,8 @@ from scripts.syntax_obligations.constants import (
     REPEAT_FILLS,
     REPEAT_SLOT,
     RESERVED_WORD,
+    SCHEMA_QUALIFIER,
+    SCHEMA_REFERENCES,
     SINGLE_CHARACTER_LITERAL_LENGTH,
     SINGLE_QUOTE,
     STAGE_GLUES,
@@ -84,7 +88,7 @@ class _Choices:
 def submissions(
     *, trees: list[tuple[Node, ...]], style: FormStyle, spec: Spec, depths: tuple[int, ...]
 ) -> list[Rendered]:
-    """A case spec's submissions, empty property lists and clauses observed where the style asks."""
+    """A case spec's submissions; empty properties, clauses and `= ( )` lists observed if asked."""
     rendered: list[Rendered] = _Renderer(trees=trees, style=style).submissions(
         spec=spec, depths=depths
     )
@@ -94,6 +98,11 @@ def submissions(
         Rendered(r.sql, EXPECT_OBSERVE, r.stage)
         if EMPTY_PROPERTY_LIST.search(r.sql)
         or (r.expect == EXPECT_ACCEPT and EMPTY_CLAUSE.search(r.sql))
+        or (
+            r.expect == EXPECT_REJECT
+            and spec.action == ACTION_DROP_NODE
+            and EMPTY_LIST.search(r.sql)
+        )
         else r
         for r in rendered
     ]
@@ -308,7 +317,7 @@ class _Renderer:
                     self._used.setdefault(name, []).append(text)
                 elif name:
                     self._token(node=node, choices=_Choices())
-                out.append(text)
+                out.append(_qualified(prefix=self.style.qualify.get(name, ""), text=text))
             elif node.kind == NODE_OPTIONAL:
                 out += self._optional(node=node, choices=choices, before=out)
             elif node.kind == NODE_CHOICE:
@@ -370,10 +379,20 @@ class _Renderer:
             fill = REPEAT_FILLS.get((name, fill), fill)
         if choices.quote == name and node.token_kind == TOKEN_PLACEHOLDER:
             fill = f'"{fill}Q"' if name in QUOTED_WITHOUT_BLANK_NAMES else f'"{fill} Q"'
+        fill = _qualified(prefix=self.style.qualify.get(name, ""), text=fill)
         if dollar_quoted:
             fill = _dollar_body(fill)
         self._used.setdefault(name, []).append(fill)
         return fill
+
+
+def _qualified(*, prefix: str, text: str) -> str:
+    """`text` behind a database or schema qualifier; inside the quotes of a string-literal name."""
+    if not prefix:
+        return text
+    if text.startswith(SINGLE_QUOTE):
+        return f"{SINGLE_QUOTE}{prefix}{text[1:]}"
+    return f"{prefix}{text}"
 
 
 def _dollar_body(fill: str) -> str:
@@ -457,4 +476,10 @@ def style_of(*, family: str, form: str) -> FormStyle:
     """The longest matching form-id prefix style of the family."""
     styles: dict[str, FormStyle] = FAMILY_STYLES[family]
     best: str = max((prefix for prefix in styles if form.startswith(prefix)), key=len)
-    return styles[best]
+    if form not in DEFINE_QUALIFIED_NAMES:
+        return styles[best]
+    own, qualifier = DEFINE_QUALIFIED_NAMES[form]
+    qualify: dict[str, str] = dict.fromkeys(SCHEMA_REFERENCES, SCHEMA_QUALIFIER)
+    if own:
+        qualify[own] = qualifier
+    return replace(styles[best], qualify=qualify)

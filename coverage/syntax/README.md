@@ -76,7 +76,10 @@ obligations, not forms.
    `limits.toml` derived from the page's substitution rule (decision D104): CREATE OR ALTER X takes
    the CREATE X grammar with OR ALTER, DEFINE X takes the CREATE OR ALTER X grammar with DEFINE in
    its place, and each reading quotes the page. DEFINE cases are captured from a DCM project
-   definition file (`capture = "dcm_definition_file"`), never by executing them.
+   definition file (`capture = "dcm_definition_file"`), never by executing them. DCM refuses
+   unqualified schema-level names before it reports parse errors (errno 1540), so DEFINE cases
+   name the defined object, and the schema-level objects it references, as `d1.s1.<name>`
+   (`d1.<name>` for schemas and database roles); account-level names stay unqualified.
 9. Pages whose syntax is written outside syntax blocks are catalogued from `hand.toml`; the
    page's `decisions` records the basis (HTML parsed-literal, table, heading, prose, inline code or
    examples, the last only for syntax shown by examples alone, such as `<expr>['<key>']`).
@@ -100,6 +103,13 @@ collision the heading is appended, then a number.
   prose-only variants, each read from its page's substitution rule (rule 8); DEFINE STAGE is held
   as prose without a reading until the checker accepts obligation numbers above 999. The DCM
   `DEFINE` variants are valid only inside DCM project files, not as standalone SQL.
+- A rejection that only empties a list (`= ( )`) is observed, not scored: Snowflake parses
+  `ENCRYPTION = ( )` and accepts `BLOCKED_NETWORK_RULE_LIST = ( )`, and pages document empty
+  lists such as `BLOCKED_OBJECT_TYPES_FOR_CREATION = ()`.
+- `classes` methods are called as `CALL <instance>!<METHOD>( ... )`, as the SQL classes page
+  says, except DESCRIBE and LIST, whose pages call them only with SELECT. Reference, object and
+  array arguments are filled from each page's examples (`SYSTEM$REFERENCE( ... )`,
+  `OBJECT_CONSTRUCT( ... )`).
 - Data types: each documented type heading is one form whose synonyms are alternatives
   (`{ DECIMAL | DEC | NUMERIC }`); a heading that names several types with different semantics
   (TIMESTAMP_LTZ/NTZ/TZ) is one form with each spelling an alternative.
