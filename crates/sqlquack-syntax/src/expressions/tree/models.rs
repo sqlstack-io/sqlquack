@@ -384,6 +384,7 @@ use crate::expressions::statements::models::Delete;
 use crate::expressions::statements::models::Describe;
 use crate::expressions::statements::models::Detach;
 use crate::expressions::statements::models::DropPartition;
+use crate::expressions::statements::models::ExecuteObject;
 use crate::expressions::statements::models::ExecuteStatement;
 use crate::expressions::statements::models::Get;
 use crate::expressions::statements::models::Grant;
@@ -432,6 +433,7 @@ use crate::expressions::statements::models::TruncateTable;
 use crate::expressions::statements::models::TryCatch;
 use crate::expressions::statements::models::Uncache;
 use crate::expressions::statements::models::UnpivotColumns;
+use crate::expressions::statements::models::UnsetStatement;
 use crate::expressions::statements::models::Update;
 use crate::expressions::statements::models::Use;
 use crate::expressions::statements::models::UserDefinedFunction;
@@ -1189,6 +1191,7 @@ pub enum Expression {
     Revoke(Box<Revoke>),
     Comment(Box<Comment>),
     SetStatement(Box<SetStatement>),
+    UnsetStatement(Box<UnsetStatement>),
     CreateSchema(Box<CreateSchema>),
     DropSchema(Box<DropSchema>),
     DropNamespace(Box<DropNamespace>),
@@ -1216,6 +1219,7 @@ pub enum Expression {
     Prepare(Box<PrepareStatement>),
     /// EXEC/EXECUTE statement (TSQL stored procedure call)
     Execute(Box<ExecuteStatement>),
+    ExecuteObject(Box<ExecuteObject>),
 
     /// Snowflake CREATE TASK statement
     CreateTask(Box<CreateTask>),

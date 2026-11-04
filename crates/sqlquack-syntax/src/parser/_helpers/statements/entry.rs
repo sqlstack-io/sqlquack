@@ -517,6 +517,25 @@ impl Parser {
                 self.parse_rm_command()
             }
             TokenType::Var if self.peek_text().eq_ignore_ascii_case("CALL") => self.parse_call(),
+            TokenType::Var
+                if self.peek_text().eq_ignore_ascii_case("UNSET")
+                    && matches!(
+                        self.config.dialect,
+                        Some(crate::tokens::models::DialectType::Snowflake)
+                    ) =>
+            {
+                self.parse_unset()
+            }
+            TokenType::Var
+                if self.peek_text().eq_ignore_ascii_case("OPEN")
+                    && matches!(
+                        self.config.dialect,
+                        Some(crate::tokens::models::DialectType::Snowflake)
+                    ) =>
+            {
+                Err(self
+                    .parse_error("OPEN is a Snowflake Scripting statement, valid only in a block"))
+            }
             TokenType::Var if self.peek_text().eq_ignore_ascii_case("OPEN") => {
                 self.skip();
                 self.parse_command()?
@@ -883,6 +902,12 @@ impl Parser {
     }
 
     fn parse_statement_other(&mut self) -> Result<Expression> {
+        if matches!(
+            self.config.dialect,
+            Some(crate::tokens::models::DialectType::Snowflake)
+        ) {
+            return Err(self.parse_error("Expected a statement, not an expression"));
+        }
         let leading_comments = self.current_leading_comments().to_vec();
         let expr = self.parse_expression()?;
         let pre_alias_comments = self.previous_trailing_comments().to_vec();

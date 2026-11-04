@@ -1408,9 +1408,19 @@ impl Parser {
             self.skip();
             if self.check(TokenType::Var) && self.peek_text().eq_ignore_ascii_case("ROLES") {
                 self.skip();
+                let snowflake = matches!(
+                    self.config.dialect,
+                    Some(crate::tokens::models::DialectType::Snowflake)
+                );
                 let mut roles: Vec<String> = Vec::new();
                 loop {
-                    if self.check(TokenType::Var)
+                    if snowflake && self.check(TokenType::QuotedIdentifier) {
+                        let role = self.advance_text()?;
+                        roles.push(format!("\"{}\"", role.replace('"', "\"\"")));
+                        if !self.match_token(TokenType::Comma) {
+                            break;
+                        }
+                    } else if self.check(TokenType::Var)
                         || self.check(TokenType::All)
                         || self.check(TokenType::Identifier)
                     {
@@ -1422,6 +1432,9 @@ impl Parser {
                     } else {
                         break;
                     }
+                }
+                if snowflake && roles.is_empty() {
+                    return Err(self.parse_error("Expected ALL, NONE or a role after ROLES"));
                 }
                 let name = if roles.is_empty() {
                     "ALL".to_string()

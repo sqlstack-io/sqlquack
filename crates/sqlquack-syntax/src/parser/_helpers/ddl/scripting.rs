@@ -79,6 +79,19 @@ impl Parser {
         self.expect_token(TokenType::Start)?;
 
         self.expect_token(TokenType::Transaction)?;
+        if matches!(
+            self.config.dialect,
+            Some(crate::tokens::models::DialectType::Snowflake)
+        ) && self.check_identifier("NAME")
+            && !self.peek_nth(1).is_some_and(|token| {
+                matches!(
+                    token.token_type,
+                    TokenType::Var | TokenType::Identifier | TokenType::QuotedIdentifier
+                )
+            })
+        {
+            return Err(self.parse_error("Expected a transaction name after NAME"));
+        }
 
         let mut mode_parts: Vec<String> = Vec::new();
         while self.is_identifier_token()
@@ -133,6 +146,33 @@ impl Parser {
         } else {
             return Err(self.parse_error("Expected DESCRIBE, DESC, or EXPLAIN"));
         };
+
+        if is_explain
+            && matches!(
+                self.config.dialect,
+                Some(crate::tokens::models::DialectType::Snowflake)
+            )
+            && self.match_token(TokenType::Using)
+        {
+            let format = match self.peek_text().to_ascii_uppercase().as_str() {
+                format @ ("TABULAR" | "JSON" | "TEXT") => format.to_owned(),
+                _ => return Err(self.parse_error("Expected TABULAR, JSON or TEXT after USING")),
+            };
+            self.skip();
+            let (properties, target) = self.parse_describe_target()?;
+            return Ok(Expression::Describe(Box::new(Describe {
+                target,
+                extended: false,
+                formatted: false,
+                kind: None,
+                properties,
+                style: Some(format!("USING {format}")),
+                partition: None,
+                leading_comments,
+                as_json: false,
+                params: Vec::new(),
+            })));
+        }
 
         let analyze_option: bool = is_explain && self.parse_postgres_explain_options()?;
 
@@ -358,12 +398,22 @@ impl Parser {
         let (this_parts, target, mutex) = self.parse_show_object_kind()?;
 
         let this = this_parts.join(" ");
+        let snowflake = matches!(
+            self.config.dialect,
+            Some(crate::tokens::models::DialectType::Snowflake)
+        );
+        if snowflake && this.is_empty() {
+            return Err(self.parse_error("Expected an object kind after SHOW"));
+        }
 
         let history = self.match_identifier("HISTORY");
 
         let for_target = self.parse_show_for_target()?;
 
         let like = if self.match_token(TokenType::Like) {
+            if snowflake && !self.check(TokenType::String) {
+                return Err(self.parse_error("Expected a string pattern after LIKE"));
+            }
             Some(self.parse_primary()?)
         } else {
             None
@@ -403,6 +453,9 @@ impl Parser {
         (db, from) = self.parse_show_index_or_columns_source(db, from, &this);
 
         let like = if like.is_none() && self.match_token(TokenType::Like) {
+            if snowflake && !self.check(TokenType::String) {
+                return Err(self.parse_error("Expected a string pattern after LIKE"));
+            }
             Some(self.parse_primary()?)
         } else {
             like

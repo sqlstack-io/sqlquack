@@ -22,6 +22,7 @@ use crate::expressions::schema_objects::models::FunctionUsingResource;
 use crate::expressions::schema_objects::models::SqlDataAccess;
 use crate::expressions::statements::models::Command;
 use crate::expressions::statements::models::Comment;
+use crate::expressions::statements::models::ExecuteObject;
 use crate::expressions::statements::models::ExecuteParameter;
 use crate::expressions::statements::models::ExecuteStatement;
 use crate::expressions::statements::models::Grant;
@@ -33,6 +34,7 @@ use crate::expressions::statements::models::Raw;
 use crate::expressions::statements::models::Revoke;
 use crate::expressions::statements::models::SetItem;
 use crate::expressions::statements::models::SetStatement;
+use crate::expressions::statements::models::UnsetStatement;
 use crate::expressions::tables::models::CollateProperty;
 use crate::expressions::tables::models::Property;
 use crate::expressions::tree::models::Expression;
@@ -153,9 +155,73 @@ impl Parser {
         )
     }
 
+    /// Snowflake `EXECUTE ALERT | TASK [ GRAPH ] | DCM PROJECT <name>` with its action, or none
+    /// for any other EXECUTE, which keeps the general parse.
+    fn parse_snowflake_execute_object(&mut self) -> Result<Option<Expression>> {
+        let start = self.current;
+        let kind = if self.match_text_seq(&["ALERT"]) {
+            "ALERT"
+        } else if self.match_text_seq(&["DCM", "PROJECT"]) {
+            "DCM PROJECT"
+        } else if self.match_text_seq(&["TASK", "GRAPH"]) {
+            "TASK GRAPH"
+        } else if self.match_text_seq(&["TASK"]) {
+            "TASK"
+        } else {
+            return Ok(None);
+        };
+        let name = self.parse_object_name_ref()?;
+        let mut node = ExecuteObject {
+            kind: kind.to_owned(),
+            name,
+            action: None,
+            group: None,
+            alias: None,
+            config: None,
+        };
+        if kind.starts_with("TASK") {
+            if self.match_text_seq(&["RETRY", "LAST"]) {
+                node.action = Some("RETRY LAST".to_owned());
+            } else if self.match_text_seq(&["RETRY", "GRAPH", "RUN", "GROUP"]) {
+                node.action = Some("RETRY GRAPH RUN".to_owned());
+                if !self.check(TokenType::String) {
+                    return Err(self.parse_error("Expected the graph run group as a string"));
+                }
+                node.group = Some(self.parse_primary()?);
+            } else if self.match_text_seq(&["USING", "CONFIG"]) {
+                self.expect_token(TokenType::Eq)?;
+                node.config = Some(self.parse_primary()?);
+            }
+        } else if kind == "DCM PROJECT" {
+            if self.match_text_seq(&["PURGE"]) {
+                node.action = Some("PURGE".to_owned());
+                if self.match_token(TokenType::As) {
+                    node.alias = Some(self.expect_identifier_or_keyword_with_quoted()?);
+                }
+            } else if self.match_text_seq(&["TEST", "ALL"]) {
+                node.action = Some("TEST ALL".to_owned());
+            } else {
+                self.current = start;
+                return Ok(None);
+            }
+        }
+        Ok(Some(Expression::ExecuteObject(Box::new(node))))
+    }
+
     /// Parses TSQL EXEC/EXECUTE [schema.]procedure [@param = value, ...].
     pub(crate) fn parse_execute(&mut self) -> Result<Expression> {
         self.expect_token(TokenType::Execute)?;
+        if matches!(
+            self.config.dialect,
+            Some(crate::tokens::models::DialectType::Snowflake)
+        ) {
+            if let Some(statement) = self.parse_snowflake_execute_object()? {
+                return Ok(statement);
+            }
+            if self.current + 1 >= self.tokens.len() || self.check_next(TokenType::Semicolon) {
+                return Err(self.parse_error("Expected an object kind and name after EXECUTE"));
+            }
+        }
 
         let return_status = { None };
 
@@ -687,6 +753,23 @@ impl Parser {
     }
 
     /// Parse SET statement
+    /// Snowflake `UNSET name` or `UNSET ( name [ , ... ] )`.
+    pub(crate) fn parse_unset(&mut self) -> Result<Expression> {
+        self.skip();
+        let parenthesized = self.match_token(TokenType::LParen);
+        let mut names = vec![self.expect_identifier_or_keyword_with_quoted()?];
+        while parenthesized && self.match_token(TokenType::Comma) {
+            names.push(self.expect_identifier_or_keyword_with_quoted()?);
+        }
+        if parenthesized {
+            self.expect_token(TokenType::RParen)?;
+        }
+        Ok(Expression::UnsetStatement(Box::new(UnsetStatement {
+            names,
+            parenthesized,
+        })))
+    }
+
     pub(crate) fn parse_set(&mut self) -> Result<Expression> {
         self.expect_token(TokenType::Set)?;
 

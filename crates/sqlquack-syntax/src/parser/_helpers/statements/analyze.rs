@@ -1294,10 +1294,21 @@ impl Parser {
         }
 
         if self.match_text_seq(&["UNSET"]) {
+            let snowflake = matches!(
+                self.config.dialect,
+                Some(crate::tokens::models::DialectType::Snowflake)
+            );
             let mut expressions: Vec<Expression> = Vec::new();
             loop {
-                if let Some(var) = self.parse_id_var()? {
-                    expressions.push(var);
+                if snowflake && self.check(TokenType::String) {
+                    return Err(self.parse_error("Expected a session parameter name"));
+                }
+                match self.parse_id_var()? {
+                    Some(var) => expressions.push(var),
+                    None if snowflake => {
+                        return Err(self.parse_error("Expected a session parameter name"));
+                    }
+                    None => {}
                 }
                 if !self.match_token(TokenType::Comma) {
                     break;
