@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import itertools
 from collections import Counter
 
 from scripts.syntax_obligations._helpers.grammar import (
@@ -18,7 +17,7 @@ from scripts.syntax_obligations.constants import (
     IDENTIFIER_CLASSES,
     KIND_ALTERNATIVE,
     KIND_IDENTIFIER,
-    KIND_INTERACTION,
+    KIND_INTERACTION_ALL,
     KIND_NEGATIVE,
     KIND_NESTING,
     KIND_OPERAND_CLASS,
@@ -26,6 +25,7 @@ from scripts.syntax_obligations.constants import (
     KIND_OPTION_ABSENT,
     KIND_OPTION_PRESENT,
     KIND_POSITIVE,
+    LEXICAL_WRONG,
     NESTED_CLASSES,
     NESTING_DEPTHS,
     NO_BOUND,
@@ -113,7 +113,9 @@ class _Walk:
         if not lone:
             self.add(KIND_OPERAND_MISSING, target, f"omit {node.text}")
         if label != SUBGRAMMAR_CLASS:
-            self.add(KIND_OPERAND_CLASS, target, f"a valid {label}, and a wrong class")
+            self.add(KIND_OPERAND_CLASS, target, f"a valid {label}")
+        if label in LEXICAL_WRONG:
+            self.add(KIND_NEGATIVE, target, f"{LEXICAL_WRONG[label]} in place of {node.text}")
 
     def optional(self, node: Node, where: str) -> list[str]:
         text: str = render((node,))
@@ -144,22 +146,13 @@ def derive(form: str, grammar: list[str]) -> list[Draft]:
     """Drafts in a fixed order: positive, then per production its parts, then form-wide cases."""
     walk: _Walk = _Walk(form)
     walk.add(KIND_POSITIVE, "", "the documented form with every required part and no optional part")
-    interactions: list[tuple[str, str]] = []
+    widest: int = 0
     for production in grammar:
-        options: list[str] = walk.sequence(parse(production), "", top=True)
-        interactions += list(itertools.combinations(options, 2))
+        widest = max(widest, len(walk.sequence(parse(production), "", top=True)))
     for keyword in walk.dropped:
         walk.add(KIND_NEGATIVE, "", f"the form without its required {keyword}")
-    for first, second in interactions:
-        walk.drafts.append(
-            Draft(
-                form=form,
-                kind=KIND_INTERACTION,
-                target="",
-                note="both options together",
-                pair=(first, second),
-            )
-        )
+    if widest >= 2:
+        walk.add(KIND_INTERACTION_ALL, "", "every independent option of one production together")
     for placeholder in walk.identifiers:
         for label, description in IDENTIFIER_CLASSES:
             walk.drafts.append(

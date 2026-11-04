@@ -14,6 +14,7 @@ KIND_NEGATIVE: str = "negative_neighbour"
 KIND_IDENTIFIER: str = "identifier_class"
 KIND_NESTING: str = "nesting_depth"
 KIND_INTERACTION: str = "interaction"
+KIND_INTERACTION_ALL: str = "interaction_all_options"
 KIND_BOUNDARY_BELOW: str = "boundary_below"
 KIND_BOUNDARY_AT: str = "boundary_at"
 KIND_BOUNDARY_ABOVE: str = "boundary_above"
@@ -71,4 +72,15 @@ CLASS_RULES: tuple[tuple[re.Pattern[str], str], ...] = (
 )
 DEFAULT_CLASS: str = "operand"
 STRING_CLASS: str = "string_literal"
+# Wrong-class negatives only where the wrong operand is lexically distinct, so the error should be
+# a syntax error (1003) rather than a semantic one (D82). Expression operands get none: nearly any
+# lexical class is an expression.
+LEXICAL_WRONG: dict[str, str] = {
+    "identifier": "a string literal",
+    "integer_literal": "a string literal",
+    "string_literal": "an unquoted identifier",
+    "data_type": "a string literal",
+    "statement": "a bare literal",
+    "query": "a bare literal",
+}
 SUBGRAMMAR_CLASS: str = "subgrammar"

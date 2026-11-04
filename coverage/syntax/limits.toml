@@ -116,3 +116,73 @@ kind = "nesting_depth"
 note = "CONTINUE <label> naming a loop that encloses the current one by the given depth; no documented bound"
 anchor = "doc.snowflake-scripting.continue / Syntax"
 depths = [2, 8]
+
+# EXCEPTION: "An EXCEPTION clause can have WHEN clauses of both types — EXIT and CONTINUE."
+
+[[limit]]
+form = "sf.scripting.exception"
+kind = "interaction"
+pair = ["[ { EXIT | CONTINUE } ]", "[ WHEN ... ]"]
+note = "WHEN clauses of both types, EXIT and CONTINUE, in one exception handler"
+anchor = "doc.snowflake-scripting.exception / Usage notes"
+
+# IF: "The keyword THEN is required. ELSEIF is one word (no spaces). END IF is two words."
+
+[[limit]]
+form = "sf.scripting.if"
+kind = "negative_neighbour"
+note = "ELSE IF written as two words in place of ELSEIF"
+anchor = "doc.snowflake-scripting.if / Usage notes"
+
+[[limit]]
+form = "sf.scripting.if"
+kind = "negative_neighbour"
+note = "ENDIF written as one word in place of END IF"
+anchor = "doc.snowflake-scripting.if / Usage notes"
+
+# FOR and WHILE: "If you use the keyword DO, then use END FOR ... If you use the keyword LOOP, then
+# use END LOOP" (FOR); "Pair the keyword DO with END WHILE, and pair the keyword LOOP with END LOOP"
+# (WHILE).
+
+[[limit]]
+form = "sf.scripting.for.to-do-loop-end"
+kind = "negative_neighbour"
+note = "DO closed by END LOOP"
+anchor = "doc.snowflake-scripting.for / Usage notes"
+
+[[limit]]
+form = "sf.scripting.for.to-do-loop-end"
+kind = "negative_neighbour"
+note = "LOOP closed by END FOR"
+anchor = "doc.snowflake-scripting.for / Usage notes"
+
+[[limit]]
+form = "sf.scripting.while"
+kind = "negative_neighbour"
+note = "DO closed by END LOOP"
+anchor = "doc.snowflake-scripting.while / Usage notes"
+
+[[limit]]
+form = "sf.scripting.while"
+kind = "negative_neighbour"
+note = "LOOP closed by END WHILE"
+anchor = "doc.snowflake-scripting.while / Usage notes"
+
+# RETURN: "A RETURN statement returns ... A table. Use TABLE(...) in the RETURN statement."
+
+[[limit]]
+form = "sf.scripting.return"
+kind = "operand_type_class"
+target = "<expression>"
+note = "TABLE ( <resultset_name> ) returning a RESULTSET as a table"
+anchor = "doc.snowflake-scripting.return / Usage notes"
+
+# LET RESULTSET: the AWAIT page documents `LET res RESULTSET := ASYNC ( <query> )`, which the LET
+# grammar does not show.
+
+[[limit]]
+form = "sf.scripting.let.let-resultset-default"
+kind = "option_present"
+target = "ASYNC before ( <query> )"
+note = "an asynchronous child job: RESULTSET := ASYNC ( <query> )"
+anchor = "doc.snowflake-scripting.await / Usage notes"

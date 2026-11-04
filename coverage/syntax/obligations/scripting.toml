@@ -24,16 +24,23 @@ id = "sf.scripting.await.o004"
 kind = "operand_type_class"
 required = true
 target = "<result_set_name>"
-note = "a valid identifier, and a wrong class"
+note = "a valid identifier"
 
 [[obligation]]
 id = "sf.scripting.await.o005"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required { ALL | <result_set_name> }"
+target = "<result_set_name>"
+note = "a string literal in place of <result_set_name>"
 
 [[obligation]]
 id = "sf.scripting.await.o006"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { ALL | <result_set_name> }"
+
+[[obligation]]
+id = "sf.scripting.await.o007"
 kind = "identifier_class"
 required = true
 target = "<result_set_name>"
@@ -41,7 +48,7 @@ anchor = "doc.identifiers-syntax"
 note = "quoted: a double-quoted identifier with blanks and mixed case"
 
 [[obligation]]
-id = "sf.scripting.await.o007"
+id = "sf.scripting.await.o008"
 kind = "identifier_class"
 required = true
 target = "<result_set_name>"
@@ -66,48 +73,55 @@ id = "sf.scripting.begin.o003"
 kind = "operand_type_class"
 required = true
 target = "<statement>"
-note = "a valid statement, and a wrong class"
+note = "a valid statement"
 
 [[obligation]]
 id = "sf.scripting.begin.o004"
+kind = "negative_neighbour"
+required = true
+target = "<statement>"
+note = "a bare literal in place of <statement>"
+
+[[obligation]]
+id = "sf.scripting.begin.o005"
 kind = "option_present"
 required = true
 target = "[ <statement> ; ... ]"
 note = "the list continued at least once"
 
 [[obligation]]
-id = "sf.scripting.begin.o005"
+id = "sf.scripting.begin.o006"
 kind = "option_absent"
 required = true
 target = "[ <statement> ; ... ]"
 
 [[obligation]]
-id = "sf.scripting.begin.o006"
+id = "sf.scripting.begin.o007"
 kind = "option_present"
 required = true
 target = "[ EXCEPTION <exception_handler> ]"
 
 [[obligation]]
-id = "sf.scripting.begin.o007"
+id = "sf.scripting.begin.o008"
 kind = "option_absent"
 required = true
 target = "[ EXCEPTION <exception_handler> ]"
 
 [[obligation]]
-id = "sf.scripting.begin.o008"
+id = "sf.scripting.begin.o009"
 kind = "required_operand_missing"
 required = true
 target = "<exception_handler> in [ EXCEPTION <exception_handler> ]"
 note = "omit <exception_handler>"
 
 [[obligation]]
-id = "sf.scripting.begin.o009"
+id = "sf.scripting.begin.o010"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required END"
 
 [[obligation]]
-id = "sf.scripting.begin.o010"
+id = "sf.scripting.begin.o011"
 kind = "nesting_depth"
 required = true
 depths = [
@@ -117,7 +131,7 @@ depths = [
 note = "statement operands nested; no documented bound"
 
 [[obligation]]
-id = "sf.scripting.begin.o011"
+id = "sf.scripting.begin.o012"
 kind = "option_present"
 required = true
 target = "END <label> ;"
@@ -125,7 +139,7 @@ anchor = "doc.snowflake-scripting.begin / Usage notes"
 note = "END followed by a label and a semicolon"
 
 [[obligation]]
-id = "sf.scripting.begin.o012"
+id = "sf.scripting.begin.o013"
 kind = "identifier_class"
 required = true
 target = "END <label> ;"
@@ -133,21 +147,21 @@ anchor = "doc.snowflake-scripting.begin / Usage notes"
 note = "reserved: a reserved keyword as the END label, unquoted and double-quoted"
 
 [[obligation]]
-id = "sf.scripting.begin.o013"
+id = "sf.scripting.begin.o014"
 kind = "negative_neighbour"
 required = true
 anchor = "doc.snowflake-scripting.begin / Usage notes"
 note = "END followed by a token other than a semicolon or a label"
 
 [[obligation]]
-id = "sf.scripting.begin.o014"
+id = "sf.scripting.begin.o015"
 kind = "negative_neighbour"
 required = true
 anchor = "doc.snowflake-scripting.begin / Usage notes"
 note = "END <label> followed by a token other than a semicolon"
 
 [[obligation]]
-id = "sf.scripting.begin.o015"
+id = "sf.scripting.begin.o016"
 kind = "negative_neighbour"
 required = true
 anchor = "doc.snowflake-scripting.begin / Usage notes"
@@ -188,15 +202,14 @@ id = "sf.scripting.break.o006"
 kind = "operand_type_class"
 required = true
 target = "<label> in [ <label> ]"
-note = "a valid identifier, and a wrong class"
+note = "a valid identifier"
 
 [[obligation]]
 id = "sf.scripting.break.o007"
-kind = "identifier_class"
+kind = "negative_neighbour"
 required = true
-target = "<label>"
-anchor = "doc.identifiers-syntax"
-note = "quoted: a double-quoted identifier with blanks and mixed case"
+target = "<label> in [ <label> ]"
+note = "a string literal in place of <label>"
 
 [[obligation]]
 id = "sf.scripting.break.o008"
@@ -204,10 +217,18 @@ kind = "identifier_class"
 required = true
 target = "<label>"
 anchor = "doc.identifiers-syntax"
-note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+note = "quoted: a double-quoted identifier with blanks and mixed case"
 
 [[obligation]]
 id = "sf.scripting.break.o009"
+kind = "identifier_class"
+required = true
+target = "<label>"
+anchor = "doc.identifiers-syntax"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.scripting.break.o010"
 kind = "nesting_depth"
 required = true
 depths = [
@@ -235,10 +256,17 @@ id = "sf.scripting.cancel.o003"
 kind = "operand_type_class"
 required = true
 target = "<result_set_name>"
-note = "a valid identifier, and a wrong class"
+note = "a valid identifier"
 
 [[obligation]]
 id = "sf.scripting.cancel.o004"
+kind = "negative_neighbour"
+required = true
+target = "<result_set_name>"
+note = "a string literal in place of <result_set_name>"
+
+[[obligation]]
+id = "sf.scripting.cancel.o005"
 kind = "identifier_class"
 required = true
 target = "<result_set_name>"
@@ -246,7 +274,7 @@ anchor = "doc.identifiers-syntax"
 note = "quoted: a double-quoted identifier with blanks and mixed case"
 
 [[obligation]]
-id = "sf.scripting.cancel.o005"
+id = "sf.scripting.cancel.o006"
 kind = "identifier_class"
 required = true
 target = "<result_set_name>"
@@ -271,7 +299,7 @@ id = "sf.scripting.case.end.o003"
 kind = "operand_type_class"
 required = true
 target = "<expression_to_match>"
-note = "a valid expression, and a wrong class"
+note = "a valid expression"
 
 [[obligation]]
 id = "sf.scripting.case.end.o004"
@@ -285,7 +313,7 @@ id = "sf.scripting.case.end.o005"
 kind = "operand_type_class"
 required = true
 target = "<expression>"
-note = "a valid expression, and a wrong class"
+note = "a valid expression"
 
 [[obligation]]
 id = "sf.scripting.case.end.o006"
@@ -299,143 +327,133 @@ id = "sf.scripting.case.end.o007"
 kind = "operand_type_class"
 required = true
 target = "<statement>"
-note = "a valid statement, and a wrong class"
+note = "a valid statement"
 
 [[obligation]]
 id = "sf.scripting.case.end.o008"
+kind = "negative_neighbour"
+required = true
+target = "<statement>"
+note = "a bare literal in place of <statement>"
+
+[[obligation]]
+id = "sf.scripting.case.end.o009"
 kind = "option_present"
 required = true
 target = "[ <statement> ; ... ]"
 note = "the list continued at least once"
 
 [[obligation]]
-id = "sf.scripting.case.end.o009"
+id = "sf.scripting.case.end.o010"
 kind = "option_absent"
 required = true
 target = "[ <statement> ; ... ]"
 
 [[obligation]]
-id = "sf.scripting.case.end.o010"
-kind = "option_present"
-required = true
-target = "[ WHEN ... ]"
-
-[[obligation]]
 id = "sf.scripting.case.end.o011"
-kind = "option_absent"
+kind = "option_present"
 required = true
 target = "[ WHEN ... ]"
 
 [[obligation]]
 id = "sf.scripting.case.end.o012"
+kind = "option_absent"
+required = true
+target = "[ WHEN ... ]"
+
+[[obligation]]
+id = "sf.scripting.case.end.o013"
 kind = "option_present"
 required = true
 target = "[ ELSE <statement> ; [ <statement> ; ... ] ]"
 
 [[obligation]]
-id = "sf.scripting.case.end.o013"
+id = "sf.scripting.case.end.o014"
 kind = "option_absent"
 required = true
 target = "[ ELSE <statement> ; [ <statement> ; ... ] ]"
 
 [[obligation]]
-id = "sf.scripting.case.end.o014"
+id = "sf.scripting.case.end.o015"
 kind = "required_operand_missing"
 required = true
 target = "<statement> in [ ELSE <statement> ; [ <statement> ; ... ] ]"
 note = "omit <statement>"
 
 [[obligation]]
-id = "sf.scripting.case.end.o015"
+id = "sf.scripting.case.end.o016"
 kind = "operand_type_class"
 required = true
 target = "<statement> in [ ELSE <statement> ; [ <statement> ; ... ] ]"
-note = "a valid statement, and a wrong class"
+note = "a valid statement"
 
 [[obligation]]
-id = "sf.scripting.case.end.o016"
+id = "sf.scripting.case.end.o017"
+kind = "negative_neighbour"
+required = true
+target = "<statement> in [ ELSE <statement> ; [ <statement> ; ... ] ]"
+note = "a bare literal in place of <statement>"
+
+[[obligation]]
+id = "sf.scripting.case.end.o018"
 kind = "option_present"
 required = true
 target = "[ <statement> ; ... ] #2"
 note = "the list continued at least once"
 
 [[obligation]]
-id = "sf.scripting.case.end.o017"
+id = "sf.scripting.case.end.o019"
 kind = "option_absent"
 required = true
 target = "[ <statement> ; ... ] #2"
 
 [[obligation]]
-id = "sf.scripting.case.end.o018"
+id = "sf.scripting.case.end.o020"
 kind = "option_present"
 required = true
 target = "[ CASE ]"
 
 [[obligation]]
-id = "sf.scripting.case.end.o019"
+id = "sf.scripting.case.end.o021"
 kind = "option_absent"
 required = true
 target = "[ CASE ]"
 
 [[obligation]]
-id = "sf.scripting.case.end.o020"
+id = "sf.scripting.case.end.o022"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required ("
 
 [[obligation]]
-id = "sf.scripting.case.end.o021"
+id = "sf.scripting.case.end.o023"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required )"
 
 [[obligation]]
-id = "sf.scripting.case.end.o022"
+id = "sf.scripting.case.end.o024"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required WHEN"
 
 [[obligation]]
-id = "sf.scripting.case.end.o023"
+id = "sf.scripting.case.end.o025"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required THEN"
 
 [[obligation]]
-id = "sf.scripting.case.end.o024"
+id = "sf.scripting.case.end.o026"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required END"
 
 [[obligation]]
-id = "sf.scripting.case.end.o025"
-kind = "interaction"
-required = true
-pair = [
-  "sf.scripting.case.end.o010",
-  "sf.scripting.case.end.o012",
-]
-note = "both options together"
-
-[[obligation]]
-id = "sf.scripting.case.end.o026"
-kind = "interaction"
-required = true
-pair = [
-  "sf.scripting.case.end.o010",
-  "sf.scripting.case.end.o018",
-]
-note = "both options together"
-
-[[obligation]]
 id = "sf.scripting.case.end.o027"
-kind = "interaction"
+kind = "interaction_all_options"
 required = true
-pair = [
-  "sf.scripting.case.end.o012",
-  "sf.scripting.case.end.o018",
-]
-note = "both options together"
+note = "every independent option of one production together"
 
 [[obligation]]
 id = "sf.scripting.case.end.o028"
@@ -465,7 +483,7 @@ id = "sf.scripting.case.end.syntax.o003"
 kind = "operand_type_class"
 required = true
 target = "<boolean_expression>"
-note = "a valid expression, and a wrong class"
+note = "a valid expression"
 
 [[obligation]]
 id = "sf.scripting.case.end.syntax.o004"
@@ -479,131 +497,121 @@ id = "sf.scripting.case.end.syntax.o005"
 kind = "operand_type_class"
 required = true
 target = "<statement>"
-note = "a valid statement, and a wrong class"
+note = "a valid statement"
 
 [[obligation]]
 id = "sf.scripting.case.end.syntax.o006"
+kind = "negative_neighbour"
+required = true
+target = "<statement>"
+note = "a bare literal in place of <statement>"
+
+[[obligation]]
+id = "sf.scripting.case.end.syntax.o007"
 kind = "option_present"
 required = true
 target = "[ <statement> ; ... ]"
 note = "the list continued at least once"
 
 [[obligation]]
-id = "sf.scripting.case.end.syntax.o007"
+id = "sf.scripting.case.end.syntax.o008"
 kind = "option_absent"
 required = true
 target = "[ <statement> ; ... ]"
 
 [[obligation]]
-id = "sf.scripting.case.end.syntax.o008"
-kind = "option_present"
-required = true
-target = "[ WHEN ... ]"
-
-[[obligation]]
 id = "sf.scripting.case.end.syntax.o009"
-kind = "option_absent"
+kind = "option_present"
 required = true
 target = "[ WHEN ... ]"
 
 [[obligation]]
 id = "sf.scripting.case.end.syntax.o010"
+kind = "option_absent"
+required = true
+target = "[ WHEN ... ]"
+
+[[obligation]]
+id = "sf.scripting.case.end.syntax.o011"
 kind = "option_present"
 required = true
 target = "[ ELSE <statement> ; [ <statement> ; ... ] ]"
 
 [[obligation]]
-id = "sf.scripting.case.end.syntax.o011"
+id = "sf.scripting.case.end.syntax.o012"
 kind = "option_absent"
 required = true
 target = "[ ELSE <statement> ; [ <statement> ; ... ] ]"
 
 [[obligation]]
-id = "sf.scripting.case.end.syntax.o012"
+id = "sf.scripting.case.end.syntax.o013"
 kind = "required_operand_missing"
 required = true
 target = "<statement> in [ ELSE <statement> ; [ <statement> ; ... ] ]"
 note = "omit <statement>"
 
 [[obligation]]
-id = "sf.scripting.case.end.syntax.o013"
+id = "sf.scripting.case.end.syntax.o014"
 kind = "operand_type_class"
 required = true
 target = "<statement> in [ ELSE <statement> ; [ <statement> ; ... ] ]"
-note = "a valid statement, and a wrong class"
+note = "a valid statement"
 
 [[obligation]]
-id = "sf.scripting.case.end.syntax.o014"
+id = "sf.scripting.case.end.syntax.o015"
+kind = "negative_neighbour"
+required = true
+target = "<statement> in [ ELSE <statement> ; [ <statement> ; ... ] ]"
+note = "a bare literal in place of <statement>"
+
+[[obligation]]
+id = "sf.scripting.case.end.syntax.o016"
 kind = "option_present"
 required = true
 target = "[ <statement> ; ... ] #2"
 note = "the list continued at least once"
 
 [[obligation]]
-id = "sf.scripting.case.end.syntax.o015"
+id = "sf.scripting.case.end.syntax.o017"
 kind = "option_absent"
 required = true
 target = "[ <statement> ; ... ] #2"
 
 [[obligation]]
-id = "sf.scripting.case.end.syntax.o016"
+id = "sf.scripting.case.end.syntax.o018"
 kind = "option_present"
 required = true
 target = "[ CASE ]"
 
 [[obligation]]
-id = "sf.scripting.case.end.syntax.o017"
+id = "sf.scripting.case.end.syntax.o019"
 kind = "option_absent"
 required = true
 target = "[ CASE ]"
 
 [[obligation]]
-id = "sf.scripting.case.end.syntax.o018"
+id = "sf.scripting.case.end.syntax.o020"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required WHEN"
 
 [[obligation]]
-id = "sf.scripting.case.end.syntax.o019"
+id = "sf.scripting.case.end.syntax.o021"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required THEN"
 
 [[obligation]]
-id = "sf.scripting.case.end.syntax.o020"
+id = "sf.scripting.case.end.syntax.o022"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required END"
 
 [[obligation]]
-id = "sf.scripting.case.end.syntax.o021"
-kind = "interaction"
-required = true
-pair = [
-  "sf.scripting.case.end.syntax.o008",
-  "sf.scripting.case.end.syntax.o010",
-]
-note = "both options together"
-
-[[obligation]]
-id = "sf.scripting.case.end.syntax.o022"
-kind = "interaction"
-required = true
-pair = [
-  "sf.scripting.case.end.syntax.o008",
-  "sf.scripting.case.end.syntax.o016",
-]
-note = "both options together"
-
-[[obligation]]
 id = "sf.scripting.case.end.syntax.o023"
-kind = "interaction"
+kind = "interaction_all_options"
 required = true
-pair = [
-  "sf.scripting.case.end.syntax.o010",
-  "sf.scripting.case.end.syntax.o016",
-]
-note = "both options together"
+note = "every independent option of one production together"
 
 [[obligation]]
 id = "sf.scripting.case.end.syntax.o024"
@@ -633,10 +641,17 @@ id = "sf.scripting.close.o003"
 kind = "operand_type_class"
 required = true
 target = "<cursor_name>"
-note = "a valid identifier, and a wrong class"
+note = "a valid identifier"
 
 [[obligation]]
 id = "sf.scripting.close.o004"
+kind = "negative_neighbour"
+required = true
+target = "<cursor_name>"
+note = "a string literal in place of <cursor_name>"
+
+[[obligation]]
+id = "sf.scripting.close.o005"
 kind = "identifier_class"
 required = true
 target = "<cursor_name>"
@@ -644,7 +659,7 @@ anchor = "doc.identifiers-syntax"
 note = "quoted: a double-quoted identifier with blanks and mixed case"
 
 [[obligation]]
-id = "sf.scripting.close.o005"
+id = "sf.scripting.close.o006"
 kind = "identifier_class"
 required = true
 target = "<cursor_name>"
@@ -686,15 +701,14 @@ id = "sf.scripting.continue.o006"
 kind = "operand_type_class"
 required = true
 target = "<label> in [ <label> ]"
-note = "a valid identifier, and a wrong class"
+note = "a valid identifier"
 
 [[obligation]]
 id = "sf.scripting.continue.o007"
-kind = "identifier_class"
+kind = "negative_neighbour"
 required = true
-target = "<label>"
-anchor = "doc.identifiers-syntax"
-note = "quoted: a double-quoted identifier with blanks and mixed case"
+target = "<label> in [ <label> ]"
+note = "a string literal in place of <label>"
 
 [[obligation]]
 id = "sf.scripting.continue.o008"
@@ -702,10 +716,18 @@ kind = "identifier_class"
 required = true
 target = "<label>"
 anchor = "doc.identifiers-syntax"
-note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+note = "quoted: a double-quoted identifier with blanks and mixed case"
 
 [[obligation]]
 id = "sf.scripting.continue.o009"
+kind = "identifier_class"
+required = true
+target = "<label>"
+anchor = "doc.identifiers-syntax"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.scripting.continue.o010"
 kind = "nesting_depth"
 required = true
 depths = [
@@ -733,36 +755,50 @@ id = "sf.scripting.declare.cursor-declaration.o003"
 kind = "operand_type_class"
 required = true
 target = "<cursor_name>"
-note = "a valid identifier, and a wrong class"
+note = "a valid identifier"
 
 [[obligation]]
 id = "sf.scripting.declare.cursor-declaration.o004"
+kind = "negative_neighbour"
+required = true
+target = "<cursor_name>"
+note = "a string literal in place of <cursor_name>"
+
+[[obligation]]
+id = "sf.scripting.declare.cursor-declaration.o005"
 kind = "required_operand_missing"
 required = true
 target = "<query>"
 note = "omit <query>"
 
 [[obligation]]
-id = "sf.scripting.declare.cursor-declaration.o005"
+id = "sf.scripting.declare.cursor-declaration.o006"
 kind = "operand_type_class"
 required = true
 target = "<query>"
-note = "a valid query, and a wrong class"
-
-[[obligation]]
-id = "sf.scripting.declare.cursor-declaration.o006"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required CURSOR"
+note = "a valid query"
 
 [[obligation]]
 id = "sf.scripting.declare.cursor-declaration.o007"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required FOR"
+target = "<query>"
+note = "a bare literal in place of <query>"
 
 [[obligation]]
 id = "sf.scripting.declare.cursor-declaration.o008"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required CURSOR"
+
+[[obligation]]
+id = "sf.scripting.declare.cursor-declaration.o009"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required FOR"
+
+[[obligation]]
+id = "sf.scripting.declare.cursor-declaration.o010"
 kind = "identifier_class"
 required = true
 target = "<cursor_name>"
@@ -770,7 +806,7 @@ anchor = "doc.identifiers-syntax"
 note = "quoted: a double-quoted identifier with blanks and mixed case"
 
 [[obligation]]
-id = "sf.scripting.declare.cursor-declaration.o009"
+id = "sf.scripting.declare.cursor-declaration.o011"
 kind = "identifier_class"
 required = true
 target = "<cursor_name>"
@@ -778,7 +814,7 @@ anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
-id = "sf.scripting.declare.cursor-declaration.o010"
+id = "sf.scripting.declare.cursor-declaration.o012"
 kind = "nesting_depth"
 required = true
 depths = [
@@ -860,56 +896,77 @@ id = "sf.scripting.declare.exception.o003"
 kind = "operand_type_class"
 required = true
 target = "<exception_name>"
-note = "a valid identifier, and a wrong class"
+note = "a valid identifier"
 
 [[obligation]]
 id = "sf.scripting.declare.exception.o004"
+kind = "negative_neighbour"
+required = true
+target = "<exception_name>"
+note = "a string literal in place of <exception_name>"
+
+[[obligation]]
+id = "sf.scripting.declare.exception.o005"
 kind = "option_present"
 required = true
 target = "[ ( <exception_number> , '<exception_message>' ) ]"
 
 [[obligation]]
-id = "sf.scripting.declare.exception.o005"
+id = "sf.scripting.declare.exception.o006"
 kind = "option_absent"
 required = true
 target = "[ ( <exception_number> , '<exception_message>' ) ]"
 
 [[obligation]]
-id = "sf.scripting.declare.exception.o006"
+id = "sf.scripting.declare.exception.o007"
 kind = "required_operand_missing"
 required = true
 target = "<exception_number> in [ ( <exception_number> , '<exception_message>' ) ]"
 note = "omit <exception_number>"
 
 [[obligation]]
-id = "sf.scripting.declare.exception.o007"
+id = "sf.scripting.declare.exception.o008"
 kind = "operand_type_class"
 required = true
 target = "<exception_number> in [ ( <exception_number> , '<exception_message>' ) ]"
-note = "a valid integer_literal, and a wrong class"
+note = "a valid integer_literal"
 
 [[obligation]]
-id = "sf.scripting.declare.exception.o008"
+id = "sf.scripting.declare.exception.o009"
+kind = "negative_neighbour"
+required = true
+target = "<exception_number> in [ ( <exception_number> , '<exception_message>' ) ]"
+note = "a string literal in place of <exception_number>"
+
+[[obligation]]
+id = "sf.scripting.declare.exception.o010"
 kind = "required_operand_missing"
 required = true
 target = "'<exception_message>' in [ ( <exception_number> , '<exception_message>' ) ]"
 note = "omit '<exception_message>'"
 
 [[obligation]]
-id = "sf.scripting.declare.exception.o009"
+id = "sf.scripting.declare.exception.o011"
 kind = "operand_type_class"
 required = true
 target = "'<exception_message>' in [ ( <exception_number> , '<exception_message>' ) ]"
-note = "a valid string_literal, and a wrong class"
+note = "a valid string_literal"
 
 [[obligation]]
-id = "sf.scripting.declare.exception.o010"
+id = "sf.scripting.declare.exception.o012"
+kind = "negative_neighbour"
+required = true
+target = "'<exception_message>' in [ ( <exception_number> , '<exception_message>' ) ]"
+note = "an unquoted identifier in place of '<exception_message>'"
+
+[[obligation]]
+id = "sf.scripting.declare.exception.o013"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required EXCEPTION"
 
 [[obligation]]
-id = "sf.scripting.declare.exception.o011"
+id = "sf.scripting.declare.exception.o014"
 kind = "identifier_class"
 required = true
 target = "<exception_name>"
@@ -917,7 +974,7 @@ anchor = "doc.identifiers-syntax"
 note = "quoted: a double-quoted identifier with blanks and mixed case"
 
 [[obligation]]
-id = "sf.scripting.declare.exception.o012"
+id = "sf.scripting.declare.exception.o015"
 kind = "identifier_class"
 required = true
 target = "<exception_name>"
@@ -925,7 +982,7 @@ anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
-id = "sf.scripting.declare.exception.o013"
+id = "sf.scripting.declare.exception.o016"
 kind = "boundary_below"
 required = true
 target = "<exception_number>"
@@ -933,7 +990,7 @@ anchor = "doc.snowflake-scripting.declare / Exception declaration syntax"
 note = "-21000, below the documented lower bound -20999"
 
 [[obligation]]
-id = "sf.scripting.declare.exception.o014"
+id = "sf.scripting.declare.exception.o017"
 kind = "boundary_at"
 required = true
 target = "<exception_number>"
@@ -941,7 +998,7 @@ anchor = "doc.snowflake-scripting.declare / Exception declaration syntax"
 note = "-20999, the documented lower bound"
 
 [[obligation]]
-id = "sf.scripting.declare.exception.o015"
+id = "sf.scripting.declare.exception.o018"
 kind = "boundary_above"
 required = true
 target = "<exception_number>"
@@ -949,7 +1006,7 @@ anchor = "doc.snowflake-scripting.declare / Exception declaration syntax"
 note = "-20998, just inside the documented lower bound"
 
 [[obligation]]
-id = "sf.scripting.declare.exception.o016"
+id = "sf.scripting.declare.exception.o019"
 kind = "boundary_below"
 required = true
 target = "<exception_number>"
@@ -957,7 +1014,7 @@ anchor = "doc.snowflake-scripting.declare / Exception declaration syntax"
 note = "-20001, just inside the documented upper bound"
 
 [[obligation]]
-id = "sf.scripting.declare.exception.o017"
+id = "sf.scripting.declare.exception.o020"
 kind = "boundary_at"
 required = true
 target = "<exception_number>"
@@ -965,7 +1022,7 @@ anchor = "doc.snowflake-scripting.declare / Exception declaration syntax"
 note = "-20000, the documented upper bound and the default"
 
 [[obligation]]
-id = "sf.scripting.declare.exception.o018"
+id = "sf.scripting.declare.exception.o021"
 kind = "boundary_above"
 required = true
 target = "<exception_number>"
@@ -973,7 +1030,7 @@ anchor = "doc.snowflake-scripting.declare / Exception declaration syntax"
 note = "-19999, above the documented upper bound"
 
 [[obligation]]
-id = "sf.scripting.declare.exception.o019"
+id = "sf.scripting.declare.exception.o022"
 kind = "negative_neighbour"
 required = true
 anchor = "doc.snowflake-scripting.declare / Exception declaration syntax"
@@ -997,178 +1054,220 @@ id = "sf.scripting.declare.procedure-returns-table-as.o003"
 kind = "operand_type_class"
 required = true
 target = "<nested_procedure_name>"
-note = "a valid identifier, and a wrong class"
+note = "a valid identifier"
 
 [[obligation]]
 id = "sf.scripting.declare.procedure-returns-table-as.o004"
+kind = "negative_neighbour"
+required = true
+target = "<nested_procedure_name>"
+note = "a string literal in place of <nested_procedure_name>"
+
+[[obligation]]
+id = "sf.scripting.declare.procedure-returns-table-as.o005"
 kind = "option_present"
 required = true
 target = "[ <arg_name> <arg_data_type> ]"
 
 [[obligation]]
-id = "sf.scripting.declare.procedure-returns-table-as.o005"
+id = "sf.scripting.declare.procedure-returns-table-as.o006"
 kind = "option_absent"
 required = true
 target = "[ <arg_name> <arg_data_type> ]"
 
 [[obligation]]
-id = "sf.scripting.declare.procedure-returns-table-as.o006"
+id = "sf.scripting.declare.procedure-returns-table-as.o007"
 kind = "required_operand_missing"
 required = true
 target = "<arg_name> in [ <arg_name> <arg_data_type> ]"
 note = "omit <arg_name>"
 
 [[obligation]]
-id = "sf.scripting.declare.procedure-returns-table-as.o007"
+id = "sf.scripting.declare.procedure-returns-table-as.o008"
 kind = "operand_type_class"
 required = true
 target = "<arg_name> in [ <arg_name> <arg_data_type> ]"
-note = "a valid identifier, and a wrong class"
+note = "a valid identifier"
 
 [[obligation]]
-id = "sf.scripting.declare.procedure-returns-table-as.o008"
+id = "sf.scripting.declare.procedure-returns-table-as.o009"
+kind = "negative_neighbour"
+required = true
+target = "<arg_name> in [ <arg_name> <arg_data_type> ]"
+note = "a string literal in place of <arg_name>"
+
+[[obligation]]
+id = "sf.scripting.declare.procedure-returns-table-as.o010"
 kind = "required_operand_missing"
 required = true
 target = "<arg_data_type> in [ <arg_name> <arg_data_type> ]"
 note = "omit <arg_data_type>"
 
 [[obligation]]
-id = "sf.scripting.declare.procedure-returns-table-as.o009"
+id = "sf.scripting.declare.procedure-returns-table-as.o011"
 kind = "operand_type_class"
 required = true
 target = "<arg_data_type> in [ <arg_name> <arg_data_type> ]"
-note = "a valid data_type, and a wrong class"
+note = "a valid data_type"
 
 [[obligation]]
-id = "sf.scripting.declare.procedure-returns-table-as.o010"
+id = "sf.scripting.declare.procedure-returns-table-as.o012"
+kind = "negative_neighbour"
+required = true
+target = "<arg_data_type> in [ <arg_name> <arg_data_type> ]"
+note = "a string literal in place of <arg_data_type>"
+
+[[obligation]]
+id = "sf.scripting.declare.procedure-returns-table-as.o013"
 kind = "option_present"
 required = true
 target = "[ , ... ]"
 note = "the list continued at least once"
 
 [[obligation]]
-id = "sf.scripting.declare.procedure-returns-table-as.o011"
+id = "sf.scripting.declare.procedure-returns-table-as.o014"
 kind = "option_absent"
 required = true
 target = "[ , ... ]"
 
 [[obligation]]
-id = "sf.scripting.declare.procedure-returns-table-as.o012"
+id = "sf.scripting.declare.procedure-returns-table-as.o015"
 kind = "alternative"
 required = true
 target = "{ <result_data_type> | TABLE ( [ <col_name> <col_data_type> [ , ... ] ] ) } → <result_data_type>"
 
 [[obligation]]
-id = "sf.scripting.declare.procedure-returns-table-as.o013"
+id = "sf.scripting.declare.procedure-returns-table-as.o016"
 kind = "alternative"
 required = true
 target = "{ <result_data_type> | TABLE ( [ <col_name> <col_data_type> [ , ..… → TABLE ( [ <col_name> <col_data_type> [ , ... ] ] )"
 
 [[obligation]]
-id = "sf.scripting.declare.procedure-returns-table-as.o014"
+id = "sf.scripting.declare.procedure-returns-table-as.o017"
 kind = "operand_type_class"
 required = true
 target = "<result_data_type>"
-note = "a valid data_type, and a wrong class"
+note = "a valid data_type"
 
 [[obligation]]
-id = "sf.scripting.declare.procedure-returns-table-as.o015"
+id = "sf.scripting.declare.procedure-returns-table-as.o018"
+kind = "negative_neighbour"
+required = true
+target = "<result_data_type>"
+note = "a string literal in place of <result_data_type>"
+
+[[obligation]]
+id = "sf.scripting.declare.procedure-returns-table-as.o019"
 kind = "option_present"
 required = true
 target = "[ <col_name> <col_data_type> [ , ... ] ]"
 
 [[obligation]]
-id = "sf.scripting.declare.procedure-returns-table-as.o016"
+id = "sf.scripting.declare.procedure-returns-table-as.o020"
 kind = "option_absent"
 required = true
 target = "[ <col_name> <col_data_type> [ , ... ] ]"
 
 [[obligation]]
-id = "sf.scripting.declare.procedure-returns-table-as.o017"
+id = "sf.scripting.declare.procedure-returns-table-as.o021"
 kind = "required_operand_missing"
 required = true
 target = "<col_name> in [ <col_name> <col_data_type> [ , ... ] ]"
 note = "omit <col_name>"
 
 [[obligation]]
-id = "sf.scripting.declare.procedure-returns-table-as.o018"
+id = "sf.scripting.declare.procedure-returns-table-as.o022"
 kind = "operand_type_class"
 required = true
 target = "<col_name> in [ <col_name> <col_data_type> [ , ... ] ]"
-note = "a valid identifier, and a wrong class"
+note = "a valid identifier"
 
 [[obligation]]
-id = "sf.scripting.declare.procedure-returns-table-as.o019"
+id = "sf.scripting.declare.procedure-returns-table-as.o023"
+kind = "negative_neighbour"
+required = true
+target = "<col_name> in [ <col_name> <col_data_type> [ , ... ] ]"
+note = "a string literal in place of <col_name>"
+
+[[obligation]]
+id = "sf.scripting.declare.procedure-returns-table-as.o024"
 kind = "required_operand_missing"
 required = true
 target = "<col_data_type> in [ <col_name> <col_data_type> [ , ... ] ]"
 note = "omit <col_data_type>"
 
 [[obligation]]
-id = "sf.scripting.declare.procedure-returns-table-as.o020"
+id = "sf.scripting.declare.procedure-returns-table-as.o025"
 kind = "operand_type_class"
 required = true
 target = "<col_data_type> in [ <col_name> <col_data_type> [ , ... ] ]"
-note = "a valid data_type, and a wrong class"
+note = "a valid data_type"
 
 [[obligation]]
-id = "sf.scripting.declare.procedure-returns-table-as.o021"
+id = "sf.scripting.declare.procedure-returns-table-as.o026"
+kind = "negative_neighbour"
+required = true
+target = "<col_data_type> in [ <col_name> <col_data_type> [ , ... ] ]"
+note = "a string literal in place of <col_data_type>"
+
+[[obligation]]
+id = "sf.scripting.declare.procedure-returns-table-as.o027"
 kind = "option_present"
 required = true
 target = "[ , ... ] #2"
 note = "the list continued at least once"
 
 [[obligation]]
-id = "sf.scripting.declare.procedure-returns-table-as.o022"
+id = "sf.scripting.declare.procedure-returns-table-as.o028"
 kind = "option_absent"
 required = true
 target = "[ , ... ] #2"
 
 [[obligation]]
-id = "sf.scripting.declare.procedure-returns-table-as.o023"
+id = "sf.scripting.declare.procedure-returns-table-as.o029"
 kind = "required_operand_missing"
 required = true
 target = "<nested_procedure_definition>"
 note = "omit <nested_procedure_definition>"
 
 [[obligation]]
-id = "sf.scripting.declare.procedure-returns-table-as.o024"
+id = "sf.scripting.declare.procedure-returns-table-as.o030"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required PROCEDURE"
 
 [[obligation]]
-id = "sf.scripting.declare.procedure-returns-table-as.o025"
+id = "sf.scripting.declare.procedure-returns-table-as.o031"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required ("
 
 [[obligation]]
-id = "sf.scripting.declare.procedure-returns-table-as.o026"
+id = "sf.scripting.declare.procedure-returns-table-as.o032"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required )"
 
 [[obligation]]
-id = "sf.scripting.declare.procedure-returns-table-as.o027"
+id = "sf.scripting.declare.procedure-returns-table-as.o033"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required RETURNS"
 
 [[obligation]]
-id = "sf.scripting.declare.procedure-returns-table-as.o028"
+id = "sf.scripting.declare.procedure-returns-table-as.o034"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required { <result_data_type> | TABLE ( [ <col_name> <col_data_type> [ , ... ] ] ) }"
 
 [[obligation]]
-id = "sf.scripting.declare.procedure-returns-table-as.o029"
+id = "sf.scripting.declare.procedure-returns-table-as.o035"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required AS"
 
 [[obligation]]
-id = "sf.scripting.declare.procedure-returns-table-as.o030"
+id = "sf.scripting.declare.procedure-returns-table-as.o036"
 kind = "identifier_class"
 required = true
 target = "<nested_procedure_name>"
@@ -1176,7 +1275,7 @@ anchor = "doc.identifiers-syntax"
 note = "quoted: a double-quoted identifier with blanks and mixed case"
 
 [[obligation]]
-id = "sf.scripting.declare.procedure-returns-table-as.o031"
+id = "sf.scripting.declare.procedure-returns-table-as.o037"
 kind = "identifier_class"
 required = true
 target = "<nested_procedure_name>"
@@ -1184,7 +1283,7 @@ anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
-id = "sf.scripting.declare.procedure-returns-table-as.o032"
+id = "sf.scripting.declare.procedure-returns-table-as.o038"
 kind = "identifier_class"
 required = true
 target = "<arg_name>"
@@ -1192,7 +1291,7 @@ anchor = "doc.identifiers-syntax"
 note = "quoted: a double-quoted identifier with blanks and mixed case"
 
 [[obligation]]
-id = "sf.scripting.declare.procedure-returns-table-as.o033"
+id = "sf.scripting.declare.procedure-returns-table-as.o039"
 kind = "identifier_class"
 required = true
 target = "<arg_name>"
@@ -1200,7 +1299,7 @@ anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
-id = "sf.scripting.declare.procedure-returns-table-as.o034"
+id = "sf.scripting.declare.procedure-returns-table-as.o040"
 kind = "identifier_class"
 required = true
 target = "<col_name>"
@@ -1208,7 +1307,7 @@ anchor = "doc.identifiers-syntax"
 note = "quoted: a double-quoted identifier with blanks and mixed case"
 
 [[obligation]]
-id = "sf.scripting.declare.procedure-returns-table-as.o035"
+id = "sf.scripting.declare.procedure-returns-table-as.o041"
 kind = "identifier_class"
 required = true
 target = "<col_name>"
@@ -1233,66 +1332,80 @@ id = "sf.scripting.declare.resultset.o003"
 kind = "operand_type_class"
 required = true
 target = "<resultset_name>"
-note = "a valid identifier, and a wrong class"
+note = "a valid identifier"
 
 [[obligation]]
 id = "sf.scripting.declare.resultset.o004"
-kind = "option_present"
+kind = "negative_neighbour"
 required = true
-target = "[ { DEFAULT | := } [ ASYNC ] ( <query> ) ]"
+target = "<resultset_name>"
+note = "a string literal in place of <resultset_name>"
 
 [[obligation]]
 id = "sf.scripting.declare.resultset.o005"
-kind = "option_absent"
+kind = "option_present"
 required = true
 target = "[ { DEFAULT | := } [ ASYNC ] ( <query> ) ]"
 
 [[obligation]]
 id = "sf.scripting.declare.resultset.o006"
-kind = "alternative"
+kind = "option_absent"
 required = true
-target = "{ DEFAULT | := } → DEFAULT"
+target = "[ { DEFAULT | := } [ ASYNC ] ( <query> ) ]"
 
 [[obligation]]
 id = "sf.scripting.declare.resultset.o007"
 kind = "alternative"
 required = true
-target = "{ DEFAULT | := } → :="
+target = "{ DEFAULT | := } → DEFAULT"
 
 [[obligation]]
 id = "sf.scripting.declare.resultset.o008"
+kind = "alternative"
+required = true
+target = "{ DEFAULT | := } → :="
+
+[[obligation]]
+id = "sf.scripting.declare.resultset.o009"
 kind = "option_present"
 required = true
 target = "[ ASYNC ]"
 
 [[obligation]]
-id = "sf.scripting.declare.resultset.o009"
+id = "sf.scripting.declare.resultset.o010"
 kind = "option_absent"
 required = true
 target = "[ ASYNC ]"
 
 [[obligation]]
-id = "sf.scripting.declare.resultset.o010"
+id = "sf.scripting.declare.resultset.o011"
 kind = "required_operand_missing"
 required = true
 target = "<query> in [ { DEFAULT | := } [ ASYNC ] ( <query> ) ]"
 note = "omit <query>"
 
 [[obligation]]
-id = "sf.scripting.declare.resultset.o011"
+id = "sf.scripting.declare.resultset.o012"
 kind = "operand_type_class"
 required = true
 target = "<query> in [ { DEFAULT | := } [ ASYNC ] ( <query> ) ]"
-note = "a valid query, and a wrong class"
+note = "a valid query"
 
 [[obligation]]
-id = "sf.scripting.declare.resultset.o012"
+id = "sf.scripting.declare.resultset.o013"
+kind = "negative_neighbour"
+required = true
+target = "<query> in [ { DEFAULT | := } [ ASYNC ] ( <query> ) ]"
+note = "a bare literal in place of <query>"
+
+[[obligation]]
+id = "sf.scripting.declare.resultset.o014"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required RESULTSET"
 
 [[obligation]]
-id = "sf.scripting.declare.resultset.o013"
+id = "sf.scripting.declare.resultset.o015"
 kind = "identifier_class"
 required = true
 target = "<resultset_name>"
@@ -1300,7 +1413,7 @@ anchor = "doc.identifiers-syntax"
 note = "quoted: a double-quoted identifier with blanks and mixed case"
 
 [[obligation]]
-id = "sf.scripting.declare.resultset.o014"
+id = "sf.scripting.declare.resultset.o016"
 kind = "identifier_class"
 required = true
 target = "<resultset_name>"
@@ -1308,7 +1421,7 @@ anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
-id = "sf.scripting.declare.resultset.o015"
+id = "sf.scripting.declare.resultset.o017"
 kind = "nesting_depth"
 required = true
 depths = [
@@ -1335,77 +1448,87 @@ id = "sf.scripting.declare.variable-declaration.o003"
 kind = "operand_type_class"
 required = true
 target = "<variable_name>"
-note = "a valid identifier, and a wrong class"
+note = "a valid identifier"
 
 [[obligation]]
 id = "sf.scripting.declare.variable-declaration.o004"
-kind = "option_present"
+kind = "negative_neighbour"
 required = true
-target = "[ <type> ]"
+target = "<variable_name>"
+note = "a string literal in place of <variable_name>"
 
 [[obligation]]
 id = "sf.scripting.declare.variable-declaration.o005"
-kind = "option_absent"
+kind = "option_present"
 required = true
 target = "[ <type> ]"
 
 [[obligation]]
 id = "sf.scripting.declare.variable-declaration.o006"
-kind = "operand_type_class"
+kind = "option_absent"
 required = true
-target = "<type> in [ <type> ]"
-note = "a valid data_type, and a wrong class"
+target = "[ <type> ]"
 
 [[obligation]]
 id = "sf.scripting.declare.variable-declaration.o007"
+kind = "operand_type_class"
+required = true
+target = "<type> in [ <type> ]"
+note = "a valid data_type"
+
+[[obligation]]
+id = "sf.scripting.declare.variable-declaration.o008"
+kind = "negative_neighbour"
+required = true
+target = "<type> in [ <type> ]"
+note = "a string literal in place of <type>"
+
+[[obligation]]
+id = "sf.scripting.declare.variable-declaration.o009"
 kind = "option_present"
 required = true
 target = "[ { DEFAULT | := } <expression> ]"
 
 [[obligation]]
-id = "sf.scripting.declare.variable-declaration.o008"
+id = "sf.scripting.declare.variable-declaration.o010"
 kind = "option_absent"
 required = true
 target = "[ { DEFAULT | := } <expression> ]"
 
 [[obligation]]
-id = "sf.scripting.declare.variable-declaration.o009"
+id = "sf.scripting.declare.variable-declaration.o011"
 kind = "alternative"
 required = true
 target = "{ DEFAULT | := } → DEFAULT"
 
 [[obligation]]
-id = "sf.scripting.declare.variable-declaration.o010"
+id = "sf.scripting.declare.variable-declaration.o012"
 kind = "alternative"
 required = true
 target = "{ DEFAULT | := } → :="
 
 [[obligation]]
-id = "sf.scripting.declare.variable-declaration.o011"
+id = "sf.scripting.declare.variable-declaration.o013"
 kind = "required_operand_missing"
 required = true
 target = "<expression> in [ { DEFAULT | := } <expression> ]"
 note = "omit <expression>"
 
 [[obligation]]
-id = "sf.scripting.declare.variable-declaration.o012"
+id = "sf.scripting.declare.variable-declaration.o014"
 kind = "operand_type_class"
 required = true
 target = "<expression> in [ { DEFAULT | := } <expression> ]"
-note = "a valid expression, and a wrong class"
+note = "a valid expression"
 
 [[obligation]]
-id = "sf.scripting.declare.variable-declaration.o013"
-kind = "interaction"
+id = "sf.scripting.declare.variable-declaration.o015"
+kind = "interaction_all_options"
 required = true
-pair = [
-  "sf.scripting.declare.variable-declaration.o004",
-  "sf.scripting.declare.variable-declaration.o007",
-]
-note = "both options together"
+note = "every independent option of one production together"
 
 [[obligation]]
-id = "sf.scripting.declare.variable-declaration.o014"
+id = "sf.scripting.declare.variable-declaration.o016"
 kind = "identifier_class"
 required = true
 target = "<variable_name>"
@@ -1413,7 +1536,7 @@ anchor = "doc.identifiers-syntax"
 note = "quoted: a double-quoted identifier with blanks and mixed case"
 
 [[obligation]]
-id = "sf.scripting.declare.variable-declaration.o015"
+id = "sf.scripting.declare.variable-declaration.o017"
 kind = "identifier_class"
 required = true
 target = "<variable_name>"
@@ -1438,234 +1561,208 @@ id = "sf.scripting.exception.o003"
 kind = "operand_type_class"
 required = true
 target = "<exception_name>"
-note = "a valid identifier, and a wrong class"
+note = "a valid identifier"
 
 [[obligation]]
 id = "sf.scripting.exception.o004"
+kind = "negative_neighbour"
+required = true
+target = "<exception_name>"
+note = "a string literal in place of <exception_name>"
+
+[[obligation]]
+id = "sf.scripting.exception.o005"
 kind = "option_present"
 required = true
 target = "[ OR <exception_name> ... ]"
 
 [[obligation]]
-id = "sf.scripting.exception.o005"
+id = "sf.scripting.exception.o006"
 kind = "option_absent"
 required = true
 target = "[ OR <exception_name> ... ]"
 
 [[obligation]]
-id = "sf.scripting.exception.o006"
+id = "sf.scripting.exception.o007"
 kind = "required_operand_missing"
 required = true
 target = "<exception_name> in [ OR <exception_name> ... ]"
 note = "omit <exception_name>"
 
 [[obligation]]
-id = "sf.scripting.exception.o007"
+id = "sf.scripting.exception.o008"
 kind = "operand_type_class"
 required = true
 target = "<exception_name> in [ OR <exception_name> ... ]"
-note = "a valid identifier, and a wrong class"
+note = "a valid identifier"
 
 [[obligation]]
-id = "sf.scripting.exception.o008"
+id = "sf.scripting.exception.o009"
+kind = "negative_neighbour"
+required = true
+target = "<exception_name> in [ OR <exception_name> ... ]"
+note = "a string literal in place of <exception_name>"
+
+[[obligation]]
+id = "sf.scripting.exception.o010"
 kind = "option_present"
 required = true
 target = "[ { EXIT | CONTINUE } ]"
 
 [[obligation]]
-id = "sf.scripting.exception.o009"
+id = "sf.scripting.exception.o011"
 kind = "option_absent"
 required = true
 target = "[ { EXIT | CONTINUE } ]"
 
 [[obligation]]
-id = "sf.scripting.exception.o010"
+id = "sf.scripting.exception.o012"
 kind = "alternative"
 required = true
 target = "{ EXIT | CONTINUE } → EXIT"
 
 [[obligation]]
-id = "sf.scripting.exception.o011"
+id = "sf.scripting.exception.o013"
 kind = "alternative"
 required = true
 target = "{ EXIT | CONTINUE } → CONTINUE"
 
 [[obligation]]
-id = "sf.scripting.exception.o012"
+id = "sf.scripting.exception.o014"
 kind = "required_operand_missing"
 required = true
 target = "<statement>"
 note = "omit <statement>"
 
 [[obligation]]
-id = "sf.scripting.exception.o013"
+id = "sf.scripting.exception.o015"
 kind = "operand_type_class"
 required = true
 target = "<statement>"
-note = "a valid statement, and a wrong class"
+note = "a valid statement"
 
 [[obligation]]
-id = "sf.scripting.exception.o014"
+id = "sf.scripting.exception.o016"
+kind = "negative_neighbour"
+required = true
+target = "<statement>"
+note = "a bare literal in place of <statement>"
+
+[[obligation]]
+id = "sf.scripting.exception.o017"
 kind = "option_present"
 required = true
 target = "[ <statement> ; ... ]"
 note = "the list continued at least once"
 
 [[obligation]]
-id = "sf.scripting.exception.o015"
+id = "sf.scripting.exception.o018"
 kind = "option_absent"
 required = true
 target = "[ <statement> ; ... ]"
 
 [[obligation]]
-id = "sf.scripting.exception.o016"
-kind = "option_present"
-required = true
-target = "[ WHEN ... ]"
-
-[[obligation]]
-id = "sf.scripting.exception.o017"
-kind = "option_absent"
-required = true
-target = "[ WHEN ... ]"
-
-[[obligation]]
-id = "sf.scripting.exception.o018"
-kind = "option_present"
-required = true
-target = "[ WHEN OTHER [ { EXIT | CONTINUE } ] THEN ]"
-
-[[obligation]]
 id = "sf.scripting.exception.o019"
-kind = "option_absent"
+kind = "option_present"
 required = true
-target = "[ WHEN OTHER [ { EXIT | CONTINUE } ] THEN ]"
+target = "[ WHEN ... ]"
 
 [[obligation]]
 id = "sf.scripting.exception.o020"
+kind = "option_absent"
+required = true
+target = "[ WHEN ... ]"
+
+[[obligation]]
+id = "sf.scripting.exception.o021"
+kind = "option_present"
+required = true
+target = "[ WHEN OTHER [ { EXIT | CONTINUE } ] THEN ]"
+
+[[obligation]]
+id = "sf.scripting.exception.o022"
+kind = "option_absent"
+required = true
+target = "[ WHEN OTHER [ { EXIT | CONTINUE } ] THEN ]"
+
+[[obligation]]
+id = "sf.scripting.exception.o023"
 kind = "option_present"
 required = true
 target = "[ { EXIT | CONTINUE } ] #2"
 
 [[obligation]]
-id = "sf.scripting.exception.o021"
+id = "sf.scripting.exception.o024"
 kind = "option_absent"
 required = true
 target = "[ { EXIT | CONTINUE } ] #2"
 
 [[obligation]]
-id = "sf.scripting.exception.o022"
+id = "sf.scripting.exception.o025"
 kind = "alternative"
 required = true
 target = "{ EXIT | CONTINUE } → EXIT #2"
 
 [[obligation]]
-id = "sf.scripting.exception.o023"
+id = "sf.scripting.exception.o026"
 kind = "alternative"
 required = true
 target = "{ EXIT | CONTINUE } → CONTINUE #2"
 
 [[obligation]]
-id = "sf.scripting.exception.o024"
+id = "sf.scripting.exception.o027"
 kind = "required_operand_missing"
 required = true
 target = "<statement> #2"
 note = "omit <statement>"
 
 [[obligation]]
-id = "sf.scripting.exception.o025"
+id = "sf.scripting.exception.o028"
 kind = "operand_type_class"
 required = true
 target = "<statement> #2"
-note = "a valid statement, and a wrong class"
+note = "a valid statement"
 
 [[obligation]]
-id = "sf.scripting.exception.o026"
+id = "sf.scripting.exception.o029"
+kind = "negative_neighbour"
+required = true
+target = "<statement> #2"
+note = "a bare literal in place of <statement>"
+
+[[obligation]]
+id = "sf.scripting.exception.o030"
 kind = "option_present"
 required = true
 target = "[ <statement> ; ... ] #2"
 note = "the list continued at least once"
 
 [[obligation]]
-id = "sf.scripting.exception.o027"
+id = "sf.scripting.exception.o031"
 kind = "option_absent"
 required = true
 target = "[ <statement> ; ... ] #2"
 
 [[obligation]]
-id = "sf.scripting.exception.o028"
+id = "sf.scripting.exception.o032"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required WHEN"
 
 [[obligation]]
-id = "sf.scripting.exception.o029"
+id = "sf.scripting.exception.o033"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required THEN"
 
 [[obligation]]
-id = "sf.scripting.exception.o030"
-kind = "interaction"
-required = true
-pair = [
-  "sf.scripting.exception.o004",
-  "sf.scripting.exception.o008",
-]
-note = "both options together"
-
-[[obligation]]
-id = "sf.scripting.exception.o031"
-kind = "interaction"
-required = true
-pair = [
-  "sf.scripting.exception.o004",
-  "sf.scripting.exception.o016",
-]
-note = "both options together"
-
-[[obligation]]
-id = "sf.scripting.exception.o032"
-kind = "interaction"
-required = true
-pair = [
-  "sf.scripting.exception.o004",
-  "sf.scripting.exception.o018",
-]
-note = "both options together"
-
-[[obligation]]
-id = "sf.scripting.exception.o033"
-kind = "interaction"
-required = true
-pair = [
-  "sf.scripting.exception.o008",
-  "sf.scripting.exception.o016",
-]
-note = "both options together"
-
-[[obligation]]
 id = "sf.scripting.exception.o034"
-kind = "interaction"
+kind = "interaction_all_options"
 required = true
-pair = [
-  "sf.scripting.exception.o008",
-  "sf.scripting.exception.o018",
-]
-note = "both options together"
+note = "every independent option of one production together"
 
 [[obligation]]
 id = "sf.scripting.exception.o035"
-kind = "interaction"
-required = true
-pair = [
-  "sf.scripting.exception.o016",
-  "sf.scripting.exception.o018",
-]
-note = "both options together"
-
-[[obligation]]
-id = "sf.scripting.exception.o036"
 kind = "identifier_class"
 required = true
 target = "<exception_name>"
@@ -1673,7 +1770,7 @@ anchor = "doc.identifiers-syntax"
 note = "quoted: a double-quoted identifier with blanks and mixed case"
 
 [[obligation]]
-id = "sf.scripting.exception.o037"
+id = "sf.scripting.exception.o036"
 kind = "identifier_class"
 required = true
 target = "<exception_name>"
@@ -1681,7 +1778,7 @@ anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
-id = "sf.scripting.exception.o038"
+id = "sf.scripting.exception.o037"
 kind = "nesting_depth"
 required = true
 depths = [
@@ -1691,11 +1788,22 @@ depths = [
 note = "statement operands nested; no documented bound"
 
 [[obligation]]
-id = "sf.scripting.exception.o039"
+id = "sf.scripting.exception.o038"
 kind = "negative_neighbour"
 required = true
 anchor = "doc.snowflake-scripting.exception / Usage notes"
 note = "a block with two EXCEPTION sections"
+
+[[obligation]]
+id = "sf.scripting.exception.o039"
+kind = "interaction"
+required = true
+pair = [
+  "sf.scripting.exception.o010",
+  "sf.scripting.exception.o019",
+]
+anchor = "doc.snowflake-scripting.exception / Usage notes"
+note = "WHEN clauses of both types, EXIT and CONTINUE, in one exception handler"
 
 [[obligation]]
 id = "sf.scripting.fetch.o001"
@@ -1715,43 +1823,57 @@ id = "sf.scripting.fetch.o003"
 kind = "operand_type_class"
 required = true
 target = "<cursor_name>"
-note = "a valid identifier, and a wrong class"
+note = "a valid identifier"
 
 [[obligation]]
 id = "sf.scripting.fetch.o004"
+kind = "negative_neighbour"
+required = true
+target = "<cursor_name>"
+note = "a string literal in place of <cursor_name>"
+
+[[obligation]]
+id = "sf.scripting.fetch.o005"
 kind = "required_operand_missing"
 required = true
 target = "<variable>"
 note = "omit <variable>"
 
 [[obligation]]
-id = "sf.scripting.fetch.o005"
+id = "sf.scripting.fetch.o006"
 kind = "operand_type_class"
 required = true
 target = "<variable>"
-note = "a valid identifier, and a wrong class"
+note = "a valid identifier"
 
 [[obligation]]
-id = "sf.scripting.fetch.o006"
+id = "sf.scripting.fetch.o007"
+kind = "negative_neighbour"
+required = true
+target = "<variable>"
+note = "a string literal in place of <variable>"
+
+[[obligation]]
+id = "sf.scripting.fetch.o008"
 kind = "option_present"
 required = true
 target = "[ , <variable> ... ]"
 note = "the list continued at least once"
 
 [[obligation]]
-id = "sf.scripting.fetch.o007"
+id = "sf.scripting.fetch.o009"
 kind = "option_absent"
 required = true
 target = "[ , <variable> ... ]"
 
 [[obligation]]
-id = "sf.scripting.fetch.o008"
+id = "sf.scripting.fetch.o010"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required INTO"
 
 [[obligation]]
-id = "sf.scripting.fetch.o009"
+id = "sf.scripting.fetch.o011"
 kind = "identifier_class"
 required = true
 target = "<cursor_name>"
@@ -1759,7 +1881,7 @@ anchor = "doc.identifiers-syntax"
 note = "quoted: a double-quoted identifier with blanks and mixed case"
 
 [[obligation]]
-id = "sf.scripting.fetch.o010"
+id = "sf.scripting.fetch.o012"
 kind = "identifier_class"
 required = true
 target = "<cursor_name>"
@@ -1767,7 +1889,7 @@ anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
-id = "sf.scripting.fetch.o011"
+id = "sf.scripting.fetch.o013"
 kind = "identifier_class"
 required = true
 target = "<variable>"
@@ -1775,7 +1897,7 @@ anchor = "doc.identifiers-syntax"
 note = "quoted: a double-quoted identifier with blanks and mixed case"
 
 [[obligation]]
-id = "sf.scripting.fetch.o012"
+id = "sf.scripting.fetch.o014"
 kind = "identifier_class"
 required = true
 target = "<variable>"
@@ -1800,129 +1922,125 @@ id = "sf.scripting.for.do-end-for.o003"
 kind = "operand_type_class"
 required = true
 target = "<row_variable>"
-note = "a valid identifier, and a wrong class"
+note = "a valid identifier"
 
 [[obligation]]
 id = "sf.scripting.for.do-end-for.o004"
+kind = "negative_neighbour"
+required = true
+target = "<row_variable>"
+note = "a string literal in place of <row_variable>"
+
+[[obligation]]
+id = "sf.scripting.for.do-end-for.o005"
 kind = "required_operand_missing"
 required = true
 target = "<cursor_name>"
 note = "omit <cursor_name>"
 
 [[obligation]]
-id = "sf.scripting.for.do-end-for.o005"
+id = "sf.scripting.for.do-end-for.o006"
 kind = "operand_type_class"
 required = true
 target = "<cursor_name>"
-note = "a valid identifier, and a wrong class"
+note = "a valid identifier"
 
 [[obligation]]
-id = "sf.scripting.for.do-end-for.o006"
+id = "sf.scripting.for.do-end-for.o007"
+kind = "negative_neighbour"
+required = true
+target = "<cursor_name>"
+note = "a string literal in place of <cursor_name>"
+
+[[obligation]]
+id = "sf.scripting.for.do-end-for.o008"
 kind = "required_operand_missing"
 required = true
 target = "<statement>"
 note = "omit <statement>"
 
 [[obligation]]
-id = "sf.scripting.for.do-end-for.o007"
+id = "sf.scripting.for.do-end-for.o009"
 kind = "operand_type_class"
 required = true
 target = "<statement>"
-note = "a valid statement, and a wrong class"
+note = "a valid statement"
 
 [[obligation]]
-id = "sf.scripting.for.do-end-for.o008"
+id = "sf.scripting.for.do-end-for.o010"
+kind = "negative_neighbour"
+required = true
+target = "<statement>"
+note = "a bare literal in place of <statement>"
+
+[[obligation]]
+id = "sf.scripting.for.do-end-for.o011"
 kind = "option_present"
 required = true
 target = "[ <statement> ; ... ]"
 note = "the list continued at least once"
 
 [[obligation]]
-id = "sf.scripting.for.do-end-for.o009"
+id = "sf.scripting.for.do-end-for.o012"
 kind = "option_absent"
 required = true
 target = "[ <statement> ; ... ]"
 
 [[obligation]]
-id = "sf.scripting.for.do-end-for.o010"
+id = "sf.scripting.for.do-end-for.o013"
 kind = "option_present"
 required = true
 target = "[ <label> ]"
 
 [[obligation]]
-id = "sf.scripting.for.do-end-for.o011"
+id = "sf.scripting.for.do-end-for.o014"
 kind = "option_absent"
 required = true
 target = "[ <label> ]"
 
 [[obligation]]
-id = "sf.scripting.for.do-end-for.o012"
+id = "sf.scripting.for.do-end-for.o015"
 kind = "operand_type_class"
 required = true
 target = "<label> in [ <label> ]"
-note = "a valid identifier, and a wrong class"
-
-[[obligation]]
-id = "sf.scripting.for.do-end-for.o013"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required IN"
-
-[[obligation]]
-id = "sf.scripting.for.do-end-for.o014"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required DO"
-
-[[obligation]]
-id = "sf.scripting.for.do-end-for.o015"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required END"
+note = "a valid identifier"
 
 [[obligation]]
 id = "sf.scripting.for.do-end-for.o016"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required FOR"
+target = "<label> in [ <label> ]"
+note = "a string literal in place of <label>"
 
 [[obligation]]
 id = "sf.scripting.for.do-end-for.o017"
-kind = "identifier_class"
+kind = "negative_neighbour"
 required = true
-target = "<row_variable>"
-anchor = "doc.identifiers-syntax"
-note = "quoted: a double-quoted identifier with blanks and mixed case"
+note = "the form without its required IN"
 
 [[obligation]]
 id = "sf.scripting.for.do-end-for.o018"
-kind = "identifier_class"
+kind = "negative_neighbour"
 required = true
-target = "<row_variable>"
-anchor = "doc.identifiers-syntax"
-note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+note = "the form without its required DO"
 
 [[obligation]]
 id = "sf.scripting.for.do-end-for.o019"
-kind = "identifier_class"
+kind = "negative_neighbour"
 required = true
-target = "<cursor_name>"
-anchor = "doc.identifiers-syntax"
-note = "quoted: a double-quoted identifier with blanks and mixed case"
+note = "the form without its required END"
 
 [[obligation]]
 id = "sf.scripting.for.do-end-for.o020"
-kind = "identifier_class"
+kind = "negative_neighbour"
 required = true
-target = "<cursor_name>"
-anchor = "doc.identifiers-syntax"
-note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+note = "the form without its required FOR"
 
 [[obligation]]
 id = "sf.scripting.for.do-end-for.o021"
 kind = "identifier_class"
 required = true
-target = "<label>"
+target = "<row_variable>"
 anchor = "doc.identifiers-syntax"
 note = "quoted: a double-quoted identifier with blanks and mixed case"
 
@@ -1930,12 +2048,44 @@ note = "quoted: a double-quoted identifier with blanks and mixed case"
 id = "sf.scripting.for.do-end-for.o022"
 kind = "identifier_class"
 required = true
-target = "<label>"
+target = "<row_variable>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
 id = "sf.scripting.for.do-end-for.o023"
+kind = "identifier_class"
+required = true
+target = "<cursor_name>"
+anchor = "doc.identifiers-syntax"
+note = "quoted: a double-quoted identifier with blanks and mixed case"
+
+[[obligation]]
+id = "sf.scripting.for.do-end-for.o024"
+kind = "identifier_class"
+required = true
+target = "<cursor_name>"
+anchor = "doc.identifiers-syntax"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.scripting.for.do-end-for.o025"
+kind = "identifier_class"
+required = true
+target = "<label>"
+anchor = "doc.identifiers-syntax"
+note = "quoted: a double-quoted identifier with blanks and mixed case"
+
+[[obligation]]
+id = "sf.scripting.for.do-end-for.o026"
+kind = "identifier_class"
+required = true
+target = "<label>"
+anchor = "doc.identifiers-syntax"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.scripting.for.do-end-for.o027"
 kind = "nesting_depth"
 required = true
 depths = [
@@ -1962,192 +2112,209 @@ id = "sf.scripting.for.to-do-loop-end.o003"
 kind = "operand_type_class"
 required = true
 target = "<counter_variable>"
-note = "a valid identifier, and a wrong class"
+note = "a valid identifier"
 
 [[obligation]]
 id = "sf.scripting.for.to-do-loop-end.o004"
+kind = "negative_neighbour"
+required = true
+target = "<counter_variable>"
+note = "a string literal in place of <counter_variable>"
+
+[[obligation]]
+id = "sf.scripting.for.to-do-loop-end.o005"
 kind = "option_present"
 required = true
 target = "[ REVERSE ]"
 
 [[obligation]]
-id = "sf.scripting.for.to-do-loop-end.o005"
+id = "sf.scripting.for.to-do-loop-end.o006"
 kind = "option_absent"
 required = true
 target = "[ REVERSE ]"
 
 [[obligation]]
-id = "sf.scripting.for.to-do-loop-end.o006"
+id = "sf.scripting.for.to-do-loop-end.o007"
 kind = "required_operand_missing"
 required = true
 target = "<start>"
 note = "omit <start>"
 
 [[obligation]]
-id = "sf.scripting.for.to-do-loop-end.o007"
+id = "sf.scripting.for.to-do-loop-end.o008"
 kind = "operand_type_class"
 required = true
 target = "<start>"
-note = "a valid expression, and a wrong class"
+note = "a valid expression"
 
 [[obligation]]
-id = "sf.scripting.for.to-do-loop-end.o008"
+id = "sf.scripting.for.to-do-loop-end.o009"
 kind = "required_operand_missing"
 required = true
 target = "<end>"
 note = "omit <end>"
 
 [[obligation]]
-id = "sf.scripting.for.to-do-loop-end.o009"
+id = "sf.scripting.for.to-do-loop-end.o010"
 kind = "operand_type_class"
 required = true
 target = "<end>"
-note = "a valid expression, and a wrong class"
-
-[[obligation]]
-id = "sf.scripting.for.to-do-loop-end.o010"
-kind = "alternative"
-required = true
-target = "{ DO | LOOP } → DO"
+note = "a valid expression"
 
 [[obligation]]
 id = "sf.scripting.for.to-do-loop-end.o011"
 kind = "alternative"
 required = true
-target = "{ DO | LOOP } → LOOP"
+target = "{ DO | LOOP } → DO"
 
 [[obligation]]
 id = "sf.scripting.for.to-do-loop-end.o012"
+kind = "alternative"
+required = true
+target = "{ DO | LOOP } → LOOP"
+
+[[obligation]]
+id = "sf.scripting.for.to-do-loop-end.o013"
 kind = "required_operand_missing"
 required = true
 target = "<statement>"
 note = "omit <statement>"
 
 [[obligation]]
-id = "sf.scripting.for.to-do-loop-end.o013"
+id = "sf.scripting.for.to-do-loop-end.o014"
 kind = "operand_type_class"
 required = true
 target = "<statement>"
-note = "a valid statement, and a wrong class"
+note = "a valid statement"
 
 [[obligation]]
-id = "sf.scripting.for.to-do-loop-end.o014"
+id = "sf.scripting.for.to-do-loop-end.o015"
+kind = "negative_neighbour"
+required = true
+target = "<statement>"
+note = "a bare literal in place of <statement>"
+
+[[obligation]]
+id = "sf.scripting.for.to-do-loop-end.o016"
 kind = "option_present"
 required = true
 target = "[ <statement> ; ... ]"
 note = "the list continued at least once"
 
 [[obligation]]
-id = "sf.scripting.for.to-do-loop-end.o015"
+id = "sf.scripting.for.to-do-loop-end.o017"
 kind = "option_absent"
 required = true
 target = "[ <statement> ; ... ]"
 
 [[obligation]]
-id = "sf.scripting.for.to-do-loop-end.o016"
+id = "sf.scripting.for.to-do-loop-end.o018"
 kind = "alternative"
 required = true
 target = "{ FOR | LOOP } → FOR"
 
 [[obligation]]
-id = "sf.scripting.for.to-do-loop-end.o017"
+id = "sf.scripting.for.to-do-loop-end.o019"
 kind = "alternative"
 required = true
 target = "{ FOR | LOOP } → LOOP"
 
 [[obligation]]
-id = "sf.scripting.for.to-do-loop-end.o018"
+id = "sf.scripting.for.to-do-loop-end.o020"
 kind = "option_present"
 required = true
 target = "[ <label> ]"
 
 [[obligation]]
-id = "sf.scripting.for.to-do-loop-end.o019"
+id = "sf.scripting.for.to-do-loop-end.o021"
 kind = "option_absent"
 required = true
 target = "[ <label> ]"
 
 [[obligation]]
-id = "sf.scripting.for.to-do-loop-end.o020"
+id = "sf.scripting.for.to-do-loop-end.o022"
 kind = "operand_type_class"
 required = true
 target = "<label> in [ <label> ]"
-note = "a valid identifier, and a wrong class"
-
-[[obligation]]
-id = "sf.scripting.for.to-do-loop-end.o021"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required IN"
-
-[[obligation]]
-id = "sf.scripting.for.to-do-loop-end.o022"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required TO"
+note = "a valid identifier"
 
 [[obligation]]
 id = "sf.scripting.for.to-do-loop-end.o023"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required { DO | LOOP }"
+target = "<label> in [ <label> ]"
+note = "a string literal in place of <label>"
 
 [[obligation]]
 id = "sf.scripting.for.to-do-loop-end.o024"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required END"
+note = "the form without its required IN"
 
 [[obligation]]
 id = "sf.scripting.for.to-do-loop-end.o025"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required { FOR | LOOP }"
+note = "the form without its required TO"
 
 [[obligation]]
 id = "sf.scripting.for.to-do-loop-end.o026"
-kind = "interaction"
+kind = "negative_neighbour"
 required = true
-pair = [
-  "sf.scripting.for.to-do-loop-end.o004",
-  "sf.scripting.for.to-do-loop-end.o018",
-]
-note = "both options together"
+note = "the form without its required { DO | LOOP }"
 
 [[obligation]]
 id = "sf.scripting.for.to-do-loop-end.o027"
-kind = "identifier_class"
+kind = "negative_neighbour"
 required = true
-target = "<counter_variable>"
-anchor = "doc.identifiers-syntax"
-note = "quoted: a double-quoted identifier with blanks and mixed case"
+note = "the form without its required END"
 
 [[obligation]]
 id = "sf.scripting.for.to-do-loop-end.o028"
-kind = "identifier_class"
+kind = "negative_neighbour"
 required = true
-target = "<counter_variable>"
-anchor = "doc.identifiers-syntax"
-note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+note = "the form without its required { FOR | LOOP }"
 
 [[obligation]]
 id = "sf.scripting.for.to-do-loop-end.o029"
-kind = "identifier_class"
+kind = "interaction_all_options"
 required = true
-target = "<label>"
-anchor = "doc.identifiers-syntax"
-note = "quoted: a double-quoted identifier with blanks and mixed case"
+note = "every independent option of one production together"
 
 [[obligation]]
 id = "sf.scripting.for.to-do-loop-end.o030"
 kind = "identifier_class"
 required = true
+target = "<counter_variable>"
+anchor = "doc.identifiers-syntax"
+note = "quoted: a double-quoted identifier with blanks and mixed case"
+
+[[obligation]]
+id = "sf.scripting.for.to-do-loop-end.o031"
+kind = "identifier_class"
+required = true
+target = "<counter_variable>"
+anchor = "doc.identifiers-syntax"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.scripting.for.to-do-loop-end.o032"
+kind = "identifier_class"
+required = true
+target = "<label>"
+anchor = "doc.identifiers-syntax"
+note = "quoted: a double-quoted identifier with blanks and mixed case"
+
+[[obligation]]
+id = "sf.scripting.for.to-do-loop-end.o033"
+kind = "identifier_class"
+required = true
 target = "<label>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
-id = "sf.scripting.for.to-do-loop-end.o031"
+id = "sf.scripting.for.to-do-loop-end.o034"
 kind = "nesting_depth"
 required = true
 depths = [
@@ -2155,6 +2322,20 @@ depths = [
   8,
 ]
 note = "statement operands nested; no documented bound"
+
+[[obligation]]
+id = "sf.scripting.for.to-do-loop-end.o035"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.snowflake-scripting.for / Usage notes"
+note = "DO closed by END LOOP"
+
+[[obligation]]
+id = "sf.scripting.for.to-do-loop-end.o036"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.snowflake-scripting.for / Usage notes"
+note = "LOOP closed by END FOR"
 
 [[obligation]]
 id = "sf.scripting.if.o001"
@@ -2174,7 +2355,7 @@ id = "sf.scripting.if.o003"
 kind = "operand_type_class"
 required = true
 target = "<condition>"
-note = "a valid expression, and a wrong class"
+note = "a valid expression"
 
 [[obligation]]
 id = "sf.scripting.if.o004"
@@ -2188,155 +2369,172 @@ id = "sf.scripting.if.o005"
 kind = "operand_type_class"
 required = true
 target = "<statement>"
-note = "a valid statement, and a wrong class"
+note = "a valid statement"
 
 [[obligation]]
 id = "sf.scripting.if.o006"
+kind = "negative_neighbour"
+required = true
+target = "<statement>"
+note = "a bare literal in place of <statement>"
+
+[[obligation]]
+id = "sf.scripting.if.o007"
 kind = "option_present"
 required = true
 target = "[ <statement> ; ... ]"
 note = "the list continued at least once"
 
 [[obligation]]
-id = "sf.scripting.if.o007"
+id = "sf.scripting.if.o008"
 kind = "option_absent"
 required = true
 target = "[ <statement> ; ... ]"
 
 [[obligation]]
-id = "sf.scripting.if.o008"
+id = "sf.scripting.if.o009"
 kind = "option_present"
 required = true
 target = "[ ELSEIF ( <condition> ) THEN <statement> ; [ <statement> ; ... ] ]"
 
 [[obligation]]
-id = "sf.scripting.if.o009"
+id = "sf.scripting.if.o010"
 kind = "option_absent"
 required = true
 target = "[ ELSEIF ( <condition> ) THEN <statement> ; [ <statement> ; ... ] ]"
 
 [[obligation]]
-id = "sf.scripting.if.o010"
+id = "sf.scripting.if.o011"
 kind = "required_operand_missing"
 required = true
 target = "<condition> in [ ELSEIF ( <condition> ) THEN <statement> ; [ <statement> ; ... ] ]"
 note = "omit <condition>"
 
 [[obligation]]
-id = "sf.scripting.if.o011"
+id = "sf.scripting.if.o012"
 kind = "operand_type_class"
 required = true
 target = "<condition> in [ ELSEIF ( <condition> ) THEN <statement> ; [ <statement> ; ... ] ]"
-note = "a valid expression, and a wrong class"
+note = "a valid expression"
 
 [[obligation]]
-id = "sf.scripting.if.o012"
+id = "sf.scripting.if.o013"
 kind = "required_operand_missing"
 required = true
 target = "<statement> in [ ELSEIF ( <condition> ) THEN <statement> ; [ <statement> ; ... ] ]"
 note = "omit <statement>"
 
 [[obligation]]
-id = "sf.scripting.if.o013"
+id = "sf.scripting.if.o014"
 kind = "operand_type_class"
 required = true
 target = "<statement> in [ ELSEIF ( <condition> ) THEN <statement> ; [ <statement> ; ... ] ]"
-note = "a valid statement, and a wrong class"
-
-[[obligation]]
-id = "sf.scripting.if.o014"
-kind = "option_present"
-required = true
-target = "[ <statement> ; ... ] #2"
-note = "the list continued at least once"
+note = "a valid statement"
 
 [[obligation]]
 id = "sf.scripting.if.o015"
-kind = "option_absent"
+kind = "negative_neighbour"
 required = true
-target = "[ <statement> ; ... ] #2"
+target = "<statement> in [ ELSEIF ( <condition> ) THEN <statement> ; [ <statement> ; ... ] ]"
+note = "a bare literal in place of <statement>"
 
 [[obligation]]
 id = "sf.scripting.if.o016"
 kind = "option_present"
 required = true
-target = "[ ELSE <statement> ; [ <statement> ; ... ] ]"
+target = "[ <statement> ; ... ] #2"
+note = "the list continued at least once"
 
 [[obligation]]
 id = "sf.scripting.if.o017"
 kind = "option_absent"
 required = true
-target = "[ ELSE <statement> ; [ <statement> ; ... ] ]"
+target = "[ <statement> ; ... ] #2"
 
 [[obligation]]
 id = "sf.scripting.if.o018"
+kind = "option_present"
+required = true
+target = "[ ELSE <statement> ; [ <statement> ; ... ] ]"
+
+[[obligation]]
+id = "sf.scripting.if.o019"
+kind = "option_absent"
+required = true
+target = "[ ELSE <statement> ; [ <statement> ; ... ] ]"
+
+[[obligation]]
+id = "sf.scripting.if.o020"
 kind = "required_operand_missing"
 required = true
 target = "<statement> in [ ELSE <statement> ; [ <statement> ; ... ] ]"
 note = "omit <statement>"
 
 [[obligation]]
-id = "sf.scripting.if.o019"
+id = "sf.scripting.if.o021"
 kind = "operand_type_class"
 required = true
 target = "<statement> in [ ELSE <statement> ; [ <statement> ; ... ] ]"
-note = "a valid statement, and a wrong class"
+note = "a valid statement"
 
 [[obligation]]
-id = "sf.scripting.if.o020"
+id = "sf.scripting.if.o022"
+kind = "negative_neighbour"
+required = true
+target = "<statement> in [ ELSE <statement> ; [ <statement> ; ... ] ]"
+note = "a bare literal in place of <statement>"
+
+[[obligation]]
+id = "sf.scripting.if.o023"
 kind = "option_present"
 required = true
 target = "[ <statement> ; ... ] #3"
 note = "the list continued at least once"
 
 [[obligation]]
-id = "sf.scripting.if.o021"
+id = "sf.scripting.if.o024"
 kind = "option_absent"
 required = true
 target = "[ <statement> ; ... ] #3"
 
 [[obligation]]
-id = "sf.scripting.if.o022"
+id = "sf.scripting.if.o025"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required ("
 
 [[obligation]]
-id = "sf.scripting.if.o023"
+id = "sf.scripting.if.o026"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required )"
 
 [[obligation]]
-id = "sf.scripting.if.o024"
+id = "sf.scripting.if.o027"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required THEN"
 
 [[obligation]]
-id = "sf.scripting.if.o025"
+id = "sf.scripting.if.o028"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required END"
 
 [[obligation]]
-id = "sf.scripting.if.o026"
+id = "sf.scripting.if.o029"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required IF"
 
 [[obligation]]
-id = "sf.scripting.if.o027"
-kind = "interaction"
+id = "sf.scripting.if.o030"
+kind = "interaction_all_options"
 required = true
-pair = [
-  "sf.scripting.if.o008",
-  "sf.scripting.if.o016",
-]
-note = "both options together"
+note = "every independent option of one production together"
 
 [[obligation]]
-id = "sf.scripting.if.o028"
+id = "sf.scripting.if.o031"
 kind = "nesting_depth"
 required = true
 depths = [
@@ -2344,6 +2542,20 @@ depths = [
   8,
 ]
 note = "statement operands nested; no documented bound"
+
+[[obligation]]
+id = "sf.scripting.if.o032"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.snowflake-scripting.if / Usage notes"
+note = "ELSE IF written as two words in place of ELSEIF"
+
+[[obligation]]
+id = "sf.scripting.if.o033"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.snowflake-scripting.if / Usage notes"
+note = "ENDIF written as one word in place of END IF"
 
 [[obligation]]
 id = "sf.scripting.let.let.o001"
@@ -2393,36 +2605,50 @@ id = "sf.scripting.let.let-cursor-for.o003"
 kind = "operand_type_class"
 required = true
 target = "<cursor_name>"
-note = "a valid identifier, and a wrong class"
+note = "a valid identifier"
 
 [[obligation]]
 id = "sf.scripting.let.let-cursor-for.o004"
+kind = "negative_neighbour"
+required = true
+target = "<cursor_name>"
+note = "a string literal in place of <cursor_name>"
+
+[[obligation]]
+id = "sf.scripting.let.let-cursor-for.o005"
 kind = "required_operand_missing"
 required = true
 target = "<query>"
 note = "omit <query>"
 
 [[obligation]]
-id = "sf.scripting.let.let-cursor-for.o005"
+id = "sf.scripting.let.let-cursor-for.o006"
 kind = "operand_type_class"
 required = true
 target = "<query>"
-note = "a valid query, and a wrong class"
-
-[[obligation]]
-id = "sf.scripting.let.let-cursor-for.o006"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required CURSOR"
+note = "a valid query"
 
 [[obligation]]
 id = "sf.scripting.let.let-cursor-for.o007"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required FOR"
+target = "<query>"
+note = "a bare literal in place of <query>"
 
 [[obligation]]
 id = "sf.scripting.let.let-cursor-for.o008"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required CURSOR"
+
+[[obligation]]
+id = "sf.scripting.let.let-cursor-for.o009"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required FOR"
+
+[[obligation]]
+id = "sf.scripting.let.let-cursor-for.o010"
 kind = "identifier_class"
 required = true
 target = "<cursor_name>"
@@ -2430,7 +2656,7 @@ anchor = "doc.identifiers-syntax"
 note = "quoted: a double-quoted identifier with blanks and mixed case"
 
 [[obligation]]
-id = "sf.scripting.let.let-cursor-for.o009"
+id = "sf.scripting.let.let-cursor-for.o011"
 kind = "identifier_class"
 required = true
 target = "<cursor_name>"
@@ -2438,7 +2664,7 @@ anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
-id = "sf.scripting.let.let-cursor-for.o010"
+id = "sf.scripting.let.let-cursor-for.o012"
 kind = "nesting_depth"
 required = true
 depths = [
@@ -2465,36 +2691,50 @@ id = "sf.scripting.let.let-cursor-for.cursor-assignment-syntax.o003"
 kind = "operand_type_class"
 required = true
 target = "<cursor_name>"
-note = "a valid identifier, and a wrong class"
+note = "a valid identifier"
 
 [[obligation]]
 id = "sf.scripting.let.let-cursor-for.cursor-assignment-syntax.o004"
+kind = "negative_neighbour"
+required = true
+target = "<cursor_name>"
+note = "a string literal in place of <cursor_name>"
+
+[[obligation]]
+id = "sf.scripting.let.let-cursor-for.cursor-assignment-syntax.o005"
 kind = "required_operand_missing"
 required = true
 target = "<resultset_name>"
 note = "omit <resultset_name>"
 
 [[obligation]]
-id = "sf.scripting.let.let-cursor-for.cursor-assignment-syntax.o005"
+id = "sf.scripting.let.let-cursor-for.cursor-assignment-syntax.o006"
 kind = "operand_type_class"
 required = true
 target = "<resultset_name>"
-note = "a valid identifier, and a wrong class"
-
-[[obligation]]
-id = "sf.scripting.let.let-cursor-for.cursor-assignment-syntax.o006"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required CURSOR"
+note = "a valid identifier"
 
 [[obligation]]
 id = "sf.scripting.let.let-cursor-for.cursor-assignment-syntax.o007"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required FOR"
+target = "<resultset_name>"
+note = "a string literal in place of <resultset_name>"
 
 [[obligation]]
 id = "sf.scripting.let.let-cursor-for.cursor-assignment-syntax.o008"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required CURSOR"
+
+[[obligation]]
+id = "sf.scripting.let.let-cursor-for.cursor-assignment-syntax.o009"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required FOR"
+
+[[obligation]]
+id = "sf.scripting.let.let-cursor-for.cursor-assignment-syntax.o010"
 kind = "identifier_class"
 required = true
 target = "<cursor_name>"
@@ -2502,7 +2742,7 @@ anchor = "doc.identifiers-syntax"
 note = "quoted: a double-quoted identifier with blanks and mixed case"
 
 [[obligation]]
-id = "sf.scripting.let.let-cursor-for.cursor-assignment-syntax.o009"
+id = "sf.scripting.let.let-cursor-for.cursor-assignment-syntax.o011"
 kind = "identifier_class"
 required = true
 target = "<cursor_name>"
@@ -2510,7 +2750,7 @@ anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
-id = "sf.scripting.let.let-cursor-for.cursor-assignment-syntax.o010"
+id = "sf.scripting.let.let-cursor-for.cursor-assignment-syntax.o012"
 kind = "identifier_class"
 required = true
 target = "<resultset_name>"
@@ -2518,7 +2758,7 @@ anchor = "doc.identifiers-syntax"
 note = "quoted: a double-quoted identifier with blanks and mixed case"
 
 [[obligation]]
-id = "sf.scripting.let.let-cursor-for.cursor-assignment-syntax.o011"
+id = "sf.scripting.let.let-cursor-for.cursor-assignment-syntax.o013"
 kind = "identifier_class"
 required = true
 target = "<resultset_name>"
@@ -2543,56 +2783,70 @@ id = "sf.scripting.let.let-default.o003"
 kind = "operand_type_class"
 required = true
 target = "<variable_name>"
-note = "a valid identifier, and a wrong class"
+note = "a valid identifier"
 
 [[obligation]]
 id = "sf.scripting.let.let-default.o004"
+kind = "negative_neighbour"
+required = true
+target = "<variable_name>"
+note = "a string literal in place of <variable_name>"
+
+[[obligation]]
+id = "sf.scripting.let.let-default.o005"
 kind = "required_operand_missing"
 required = true
 target = "<type>"
 note = "omit <type>"
 
 [[obligation]]
-id = "sf.scripting.let.let-default.o005"
+id = "sf.scripting.let.let-default.o006"
 kind = "operand_type_class"
 required = true
 target = "<type>"
-note = "a valid data_type, and a wrong class"
+note = "a valid data_type"
 
 [[obligation]]
-id = "sf.scripting.let.let-default.o006"
+id = "sf.scripting.let.let-default.o007"
+kind = "negative_neighbour"
+required = true
+target = "<type>"
+note = "a string literal in place of <type>"
+
+[[obligation]]
+id = "sf.scripting.let.let-default.o008"
 kind = "alternative"
 required = true
 target = "{ DEFAULT | := } → DEFAULT"
 
 [[obligation]]
-id = "sf.scripting.let.let-default.o007"
+id = "sf.scripting.let.let-default.o009"
 kind = "alternative"
 required = true
 target = "{ DEFAULT | := } → :="
 
 [[obligation]]
-id = "sf.scripting.let.let-default.o008"
+id = "sf.scripting.let.let-default.o010"
 kind = "required_operand_missing"
 required = true
 target = "<expression>"
 note = "omit <expression>"
 
 [[obligation]]
-id = "sf.scripting.let.let-default.o009"
+id = "sf.scripting.let.let-default.o011"
 kind = "operand_type_class"
 required = true
 target = "<expression>"
-note = "a valid expression, and a wrong class"
+note = "a valid expression"
 
 [[obligation]]
-id = "sf.scripting.let.let-default.o010"
+id = "sf.scripting.let.let-default.o012"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required { DEFAULT | := }"
 
 [[obligation]]
-id = "sf.scripting.let.let-default.o011"
+id = "sf.scripting.let.let-default.o013"
 kind = "identifier_class"
 required = true
 target = "<variable_name>"
@@ -2600,7 +2854,7 @@ anchor = "doc.identifiers-syntax"
 note = "quoted: a double-quoted identifier with blanks and mixed case"
 
 [[obligation]]
-id = "sf.scripting.let.let-default.o012"
+id = "sf.scripting.let.let-default.o014"
 kind = "identifier_class"
 required = true
 target = "<variable_name>"
@@ -2625,42 +2879,49 @@ id = "sf.scripting.let.let-default.variable-assignment-syntax.o003"
 kind = "operand_type_class"
 required = true
 target = "<variable_name>"
-note = "a valid identifier, and a wrong class"
+note = "a valid identifier"
 
 [[obligation]]
 id = "sf.scripting.let.let-default.variable-assignment-syntax.o004"
-kind = "alternative"
+kind = "negative_neighbour"
 required = true
-target = "{ DEFAULT | := } → DEFAULT"
+target = "<variable_name>"
+note = "a string literal in place of <variable_name>"
 
 [[obligation]]
 id = "sf.scripting.let.let-default.variable-assignment-syntax.o005"
 kind = "alternative"
 required = true
-target = "{ DEFAULT | := } → :="
+target = "{ DEFAULT | := } → DEFAULT"
 
 [[obligation]]
 id = "sf.scripting.let.let-default.variable-assignment-syntax.o006"
+kind = "alternative"
+required = true
+target = "{ DEFAULT | := } → :="
+
+[[obligation]]
+id = "sf.scripting.let.let-default.variable-assignment-syntax.o007"
 kind = "required_operand_missing"
 required = true
 target = "<expression>"
 note = "omit <expression>"
 
 [[obligation]]
-id = "sf.scripting.let.let-default.variable-assignment-syntax.o007"
+id = "sf.scripting.let.let-default.variable-assignment-syntax.o008"
 kind = "operand_type_class"
 required = true
 target = "<expression>"
-note = "a valid expression, and a wrong class"
+note = "a valid expression"
 
 [[obligation]]
-id = "sf.scripting.let.let-default.variable-assignment-syntax.o008"
+id = "sf.scripting.let.let-default.variable-assignment-syntax.o009"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required { DEFAULT | := }"
 
 [[obligation]]
-id = "sf.scripting.let.let-default.variable-assignment-syntax.o009"
+id = "sf.scripting.let.let-default.variable-assignment-syntax.o010"
 kind = "identifier_class"
 required = true
 target = "<variable_name>"
@@ -2668,7 +2929,7 @@ anchor = "doc.identifiers-syntax"
 note = "quoted: a double-quoted identifier with blanks and mixed case"
 
 [[obligation]]
-id = "sf.scripting.let.let-default.variable-assignment-syntax.o010"
+id = "sf.scripting.let.let-default.variable-assignment-syntax.o011"
 kind = "identifier_class"
 required = true
 target = "<variable_name>"
@@ -2693,60 +2954,74 @@ id = "sf.scripting.let.let-resultset-default.o003"
 kind = "operand_type_class"
 required = true
 target = "<resultset_name>"
-note = "a valid identifier, and a wrong class"
+note = "a valid identifier"
 
 [[obligation]]
 id = "sf.scripting.let.let-resultset-default.o004"
-kind = "alternative"
+kind = "negative_neighbour"
 required = true
-target = "{ DEFAULT | := } → DEFAULT"
+target = "<resultset_name>"
+note = "a string literal in place of <resultset_name>"
 
 [[obligation]]
 id = "sf.scripting.let.let-resultset-default.o005"
 kind = "alternative"
 required = true
-target = "{ DEFAULT | := } → :="
+target = "{ DEFAULT | := } → DEFAULT"
 
 [[obligation]]
 id = "sf.scripting.let.let-resultset-default.o006"
+kind = "alternative"
+required = true
+target = "{ DEFAULT | := } → :="
+
+[[obligation]]
+id = "sf.scripting.let.let-resultset-default.o007"
 kind = "required_operand_missing"
 required = true
 target = "<query>"
 note = "omit <query>"
 
 [[obligation]]
-id = "sf.scripting.let.let-resultset-default.o007"
+id = "sf.scripting.let.let-resultset-default.o008"
 kind = "operand_type_class"
 required = true
 target = "<query>"
-note = "a valid query, and a wrong class"
-
-[[obligation]]
-id = "sf.scripting.let.let-resultset-default.o008"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required RESULTSET"
+note = "a valid query"
 
 [[obligation]]
 id = "sf.scripting.let.let-resultset-default.o009"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required { DEFAULT | := }"
+target = "<query>"
+note = "a bare literal in place of <query>"
 
 [[obligation]]
 id = "sf.scripting.let.let-resultset-default.o010"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required ("
+note = "the form without its required RESULTSET"
 
 [[obligation]]
 id = "sf.scripting.let.let-resultset-default.o011"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required )"
+note = "the form without its required { DEFAULT | := }"
 
 [[obligation]]
 id = "sf.scripting.let.let-resultset-default.o012"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ("
+
+[[obligation]]
+id = "sf.scripting.let.let-resultset-default.o013"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required )"
+
+[[obligation]]
+id = "sf.scripting.let.let-resultset-default.o014"
 kind = "identifier_class"
 required = true
 target = "<resultset_name>"
@@ -2754,7 +3029,7 @@ anchor = "doc.identifiers-syntax"
 note = "quoted: a double-quoted identifier with blanks and mixed case"
 
 [[obligation]]
-id = "sf.scripting.let.let-resultset-default.o013"
+id = "sf.scripting.let.let-resultset-default.o015"
 kind = "identifier_class"
 required = true
 target = "<resultset_name>"
@@ -2762,7 +3037,7 @@ anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
-id = "sf.scripting.let.let-resultset-default.o014"
+id = "sf.scripting.let.let-resultset-default.o016"
 kind = "nesting_depth"
 required = true
 depths = [
@@ -2770,6 +3045,14 @@ depths = [
   8,
 ]
 note = "query operands nested; no documented bound"
+
+[[obligation]]
+id = "sf.scripting.let.let-resultset-default.o017"
+kind = "option_present"
+required = true
+target = "ASYNC before ( <query> )"
+anchor = "doc.snowflake-scripting.await / Usage notes"
+note = "an asynchronous child job: RESULTSET := ASYNC ( <query> )"
 
 [[obligation]]
 id = "sf.scripting.loop.o001"
@@ -2789,54 +3072,68 @@ id = "sf.scripting.loop.o003"
 kind = "operand_type_class"
 required = true
 target = "<statement>"
-note = "a valid statement, and a wrong class"
+note = "a valid statement"
 
 [[obligation]]
 id = "sf.scripting.loop.o004"
+kind = "negative_neighbour"
+required = true
+target = "<statement>"
+note = "a bare literal in place of <statement>"
+
+[[obligation]]
+id = "sf.scripting.loop.o005"
 kind = "option_present"
 required = true
 target = "[ <statement> ; ... ]"
 note = "the list continued at least once"
 
 [[obligation]]
-id = "sf.scripting.loop.o005"
+id = "sf.scripting.loop.o006"
 kind = "option_absent"
 required = true
 target = "[ <statement> ; ... ]"
 
 [[obligation]]
-id = "sf.scripting.loop.o006"
+id = "sf.scripting.loop.o007"
 kind = "option_present"
 required = true
 target = "[ <label> ]"
 
 [[obligation]]
-id = "sf.scripting.loop.o007"
+id = "sf.scripting.loop.o008"
 kind = "option_absent"
 required = true
 target = "[ <label> ]"
 
 [[obligation]]
-id = "sf.scripting.loop.o008"
+id = "sf.scripting.loop.o009"
 kind = "operand_type_class"
 required = true
 target = "<label> in [ <label> ]"
-note = "a valid identifier, and a wrong class"
-
-[[obligation]]
-id = "sf.scripting.loop.o009"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required END"
+note = "a valid identifier"
 
 [[obligation]]
 id = "sf.scripting.loop.o010"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required LOOP"
+target = "<label> in [ <label> ]"
+note = "a string literal in place of <label>"
 
 [[obligation]]
 id = "sf.scripting.loop.o011"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required END"
+
+[[obligation]]
+id = "sf.scripting.loop.o012"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required LOOP"
+
+[[obligation]]
+id = "sf.scripting.loop.o013"
 kind = "identifier_class"
 required = true
 target = "<label>"
@@ -2844,7 +3141,7 @@ anchor = "doc.identifiers-syntax"
 note = "quoted: a double-quoted identifier with blanks and mixed case"
 
 [[obligation]]
-id = "sf.scripting.loop.o012"
+id = "sf.scripting.loop.o014"
 kind = "identifier_class"
 required = true
 target = "<label>"
@@ -2852,7 +3149,7 @@ anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
-id = "sf.scripting.loop.o013"
+id = "sf.scripting.loop.o015"
 kind = "nesting_depth"
 required = true
 depths = [
@@ -2885,49 +3182,63 @@ id = "sf.scripting.open.o003"
 kind = "operand_type_class"
 required = true
 target = "<cursor_name>"
-note = "a valid identifier, and a wrong class"
+note = "a valid identifier"
 
 [[obligation]]
 id = "sf.scripting.open.o004"
+kind = "negative_neighbour"
+required = true
+target = "<cursor_name>"
+note = "a string literal in place of <cursor_name>"
+
+[[obligation]]
+id = "sf.scripting.open.o005"
 kind = "option_present"
 required = true
 target = "[ USING ( bind_variable_1 [ , bind_variable_2 ... ] ) ]"
 
 [[obligation]]
-id = "sf.scripting.open.o005"
+id = "sf.scripting.open.o006"
 kind = "option_absent"
 required = true
 target = "[ USING ( bind_variable_1 [ , bind_variable_2 ... ] ) ]"
 
 [[obligation]]
-id = "sf.scripting.open.o006"
+id = "sf.scripting.open.o007"
 kind = "required_operand_missing"
 required = true
 target = "bind_variable_1 in [ USING ( bind_variable_1 [ , bind_variable_2 ... ] ) ]"
 note = "omit bind_variable_1"
 
 [[obligation]]
-id = "sf.scripting.open.o007"
+id = "sf.scripting.open.o008"
 kind = "operand_type_class"
 required = true
 target = "bind_variable_1 in [ USING ( bind_variable_1 [ , bind_variable_2 ... ] ) ]"
-note = "a valid identifier, and a wrong class"
+note = "a valid identifier"
 
 [[obligation]]
-id = "sf.scripting.open.o008"
+id = "sf.scripting.open.o009"
+kind = "negative_neighbour"
+required = true
+target = "bind_variable_1 in [ USING ( bind_variable_1 [ , bind_variable_2 ... ] ) ]"
+note = "a string literal in place of bind_variable_1"
+
+[[obligation]]
+id = "sf.scripting.open.o010"
 kind = "option_present"
 required = true
 target = "[ , bind_variable_2 ... ]"
 note = "the list continued at least once"
 
 [[obligation]]
-id = "sf.scripting.open.o009"
+id = "sf.scripting.open.o011"
 kind = "option_absent"
 required = true
 target = "[ , bind_variable_2 ... ]"
 
 [[obligation]]
-id = "sf.scripting.open.o010"
+id = "sf.scripting.open.o012"
 kind = "identifier_class"
 required = true
 target = "<cursor_name>"
@@ -2935,7 +3246,7 @@ anchor = "doc.identifiers-syntax"
 note = "quoted: a double-quoted identifier with blanks and mixed case"
 
 [[obligation]]
-id = "sf.scripting.open.o011"
+id = "sf.scripting.open.o013"
 kind = "identifier_class"
 required = true
 target = "<cursor_name>"
@@ -2943,7 +3254,7 @@ anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
-id = "sf.scripting.open.o012"
+id = "sf.scripting.open.o014"
 kind = "identifier_class"
 required = true
 target = "bind_variable_1"
@@ -2951,7 +3262,7 @@ anchor = "doc.identifiers-syntax"
 note = "quoted: a double-quoted identifier with blanks and mixed case"
 
 [[obligation]]
-id = "sf.scripting.open.o013"
+id = "sf.scripting.open.o015"
 kind = "identifier_class"
 required = true
 target = "bind_variable_1"
@@ -2976,10 +3287,17 @@ id = "sf.scripting.raise.o003"
 kind = "operand_type_class"
 required = true
 target = "<exception_name>"
-note = "a valid identifier, and a wrong class"
+note = "a valid identifier"
 
 [[obligation]]
 id = "sf.scripting.raise.o004"
+kind = "negative_neighbour"
+required = true
+target = "<exception_name>"
+note = "a string literal in place of <exception_name>"
+
+[[obligation]]
+id = "sf.scripting.raise.o005"
 kind = "identifier_class"
 required = true
 target = "<exception_name>"
@@ -2987,7 +3305,7 @@ anchor = "doc.identifiers-syntax"
 note = "quoted: a double-quoted identifier with blanks and mixed case"
 
 [[obligation]]
-id = "sf.scripting.raise.o005"
+id = "sf.scripting.raise.o006"
 kind = "identifier_class"
 required = true
 target = "<exception_name>"
@@ -3012,86 +3330,100 @@ id = "sf.scripting.repeat.o003"
 kind = "operand_type_class"
 required = true
 target = "<statement>"
-note = "a valid statement, and a wrong class"
+note = "a valid statement"
 
 [[obligation]]
 id = "sf.scripting.repeat.o004"
+kind = "negative_neighbour"
+required = true
+target = "<statement>"
+note = "a bare literal in place of <statement>"
+
+[[obligation]]
+id = "sf.scripting.repeat.o005"
 kind = "option_present"
 required = true
 target = "[ <statement> ; ... ]"
 note = "the list continued at least once"
 
 [[obligation]]
-id = "sf.scripting.repeat.o005"
+id = "sf.scripting.repeat.o006"
 kind = "option_absent"
 required = true
 target = "[ <statement> ; ... ]"
 
 [[obligation]]
-id = "sf.scripting.repeat.o006"
+id = "sf.scripting.repeat.o007"
 kind = "required_operand_missing"
 required = true
 target = "<condition>"
 note = "omit <condition>"
 
 [[obligation]]
-id = "sf.scripting.repeat.o007"
+id = "sf.scripting.repeat.o008"
 kind = "operand_type_class"
 required = true
 target = "<condition>"
-note = "a valid expression, and a wrong class"
+note = "a valid expression"
 
 [[obligation]]
-id = "sf.scripting.repeat.o008"
+id = "sf.scripting.repeat.o009"
 kind = "option_present"
 required = true
 target = "[ <label> ]"
 
 [[obligation]]
-id = "sf.scripting.repeat.o009"
+id = "sf.scripting.repeat.o010"
 kind = "option_absent"
 required = true
 target = "[ <label> ]"
 
 [[obligation]]
-id = "sf.scripting.repeat.o010"
+id = "sf.scripting.repeat.o011"
 kind = "operand_type_class"
 required = true
 target = "<label> in [ <label> ]"
-note = "a valid identifier, and a wrong class"
-
-[[obligation]]
-id = "sf.scripting.repeat.o011"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required UNTIL"
+note = "a valid identifier"
 
 [[obligation]]
 id = "sf.scripting.repeat.o012"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required ("
+target = "<label> in [ <label> ]"
+note = "a string literal in place of <label>"
 
 [[obligation]]
 id = "sf.scripting.repeat.o013"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required )"
+note = "the form without its required UNTIL"
 
 [[obligation]]
 id = "sf.scripting.repeat.o014"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required END"
+note = "the form without its required ("
 
 [[obligation]]
 id = "sf.scripting.repeat.o015"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required REPEAT"
+note = "the form without its required )"
 
 [[obligation]]
 id = "sf.scripting.repeat.o016"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required END"
+
+[[obligation]]
+id = "sf.scripting.repeat.o017"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required REPEAT"
+
+[[obligation]]
+id = "sf.scripting.repeat.o018"
 kind = "identifier_class"
 required = true
 target = "<label>"
@@ -3099,7 +3431,7 @@ anchor = "doc.identifiers-syntax"
 note = "quoted: a double-quoted identifier with blanks and mixed case"
 
 [[obligation]]
-id = "sf.scripting.repeat.o017"
+id = "sf.scripting.repeat.o019"
 kind = "identifier_class"
 required = true
 target = "<label>"
@@ -3107,7 +3439,7 @@ anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
-id = "sf.scripting.repeat.o018"
+id = "sf.scripting.repeat.o020"
 kind = "nesting_depth"
 required = true
 depths = [
@@ -3134,7 +3466,15 @@ id = "sf.scripting.return.o003"
 kind = "operand_type_class"
 required = true
 target = "<expression>"
-note = "a valid expression, and a wrong class"
+note = "a valid expression"
+
+[[obligation]]
+id = "sf.scripting.return.o004"
+kind = "operand_type_class"
+required = true
+target = "<expression>"
+anchor = "doc.snowflake-scripting.return / Usage notes"
+note = "TABLE ( <resultset_name> ) returning a RESULTSET as a table"
 
 [[obligation]]
 id = "sf.scripting.while.o001"
@@ -3154,7 +3494,7 @@ id = "sf.scripting.while.o003"
 kind = "operand_type_class"
 required = true
 target = "<condition>"
-note = "a valid expression, and a wrong class"
+note = "a valid expression"
 
 [[obligation]]
 id = "sf.scripting.while.o004"
@@ -3180,84 +3520,98 @@ id = "sf.scripting.while.o007"
 kind = "operand_type_class"
 required = true
 target = "<statement>"
-note = "a valid statement, and a wrong class"
+note = "a valid statement"
 
 [[obligation]]
 id = "sf.scripting.while.o008"
+kind = "negative_neighbour"
+required = true
+target = "<statement>"
+note = "a bare literal in place of <statement>"
+
+[[obligation]]
+id = "sf.scripting.while.o009"
 kind = "option_present"
 required = true
 target = "[ <statement> ; ... ]"
 note = "the list continued at least once"
 
 [[obligation]]
-id = "sf.scripting.while.o009"
+id = "sf.scripting.while.o010"
 kind = "option_absent"
 required = true
 target = "[ <statement> ; ... ]"
 
 [[obligation]]
-id = "sf.scripting.while.o010"
+id = "sf.scripting.while.o011"
 kind = "alternative"
 required = true
 target = "{ WHILE | LOOP } → WHILE"
 
 [[obligation]]
-id = "sf.scripting.while.o011"
+id = "sf.scripting.while.o012"
 kind = "alternative"
 required = true
 target = "{ WHILE | LOOP } → LOOP"
 
 [[obligation]]
-id = "sf.scripting.while.o012"
+id = "sf.scripting.while.o013"
 kind = "option_present"
 required = true
 target = "[ <label> ]"
 
 [[obligation]]
-id = "sf.scripting.while.o013"
+id = "sf.scripting.while.o014"
 kind = "option_absent"
 required = true
 target = "[ <label> ]"
 
 [[obligation]]
-id = "sf.scripting.while.o014"
+id = "sf.scripting.while.o015"
 kind = "operand_type_class"
 required = true
 target = "<label> in [ <label> ]"
-note = "a valid identifier, and a wrong class"
-
-[[obligation]]
-id = "sf.scripting.while.o015"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ("
+note = "a valid identifier"
 
 [[obligation]]
 id = "sf.scripting.while.o016"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required )"
+target = "<label> in [ <label> ]"
+note = "a string literal in place of <label>"
 
 [[obligation]]
 id = "sf.scripting.while.o017"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required { DO | LOOP }"
+note = "the form without its required ("
 
 [[obligation]]
 id = "sf.scripting.while.o018"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required END"
+note = "the form without its required )"
 
 [[obligation]]
 id = "sf.scripting.while.o019"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required { WHILE | LOOP }"
+note = "the form without its required { DO | LOOP }"
 
 [[obligation]]
 id = "sf.scripting.while.o020"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required END"
+
+[[obligation]]
+id = "sf.scripting.while.o021"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { WHILE | LOOP }"
+
+[[obligation]]
+id = "sf.scripting.while.o022"
 kind = "identifier_class"
 required = true
 target = "<label>"
@@ -3265,7 +3619,7 @@ anchor = "doc.identifiers-syntax"
 note = "quoted: a double-quoted identifier with blanks and mixed case"
 
 [[obligation]]
-id = "sf.scripting.while.o021"
+id = "sf.scripting.while.o023"
 kind = "identifier_class"
 required = true
 target = "<label>"
@@ -3273,7 +3627,7 @@ anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
-id = "sf.scripting.while.o022"
+id = "sf.scripting.while.o024"
 kind = "nesting_depth"
 required = true
 depths = [
@@ -3281,3 +3635,17 @@ depths = [
   8,
 ]
 note = "statement operands nested; no documented bound"
+
+[[obligation]]
+id = "sf.scripting.while.o025"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.snowflake-scripting.while / Usage notes"
+note = "DO closed by END LOOP"
+
+[[obligation]]
+id = "sf.scripting.while.o026"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.snowflake-scripting.while / Usage notes"
+note = "LOOP closed by END WHILE"
