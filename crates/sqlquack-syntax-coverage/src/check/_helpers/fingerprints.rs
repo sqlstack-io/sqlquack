@@ -38,8 +38,7 @@ pub(crate) fn form_fingerprint(obligations: &[ObligationResult]) -> String {
     content_sha256(text.as_bytes())
 }
 
-/// SHA-256 of the form's catalogue entry and its own obligations, in file order, as compact JSON;
-/// empty, which no review can record, if they cannot be serialized.
+/// SHA-256 of the form's catalogue entry and own obligations as compact JSON; empty if unserializable.
 pub(crate) fn form_definition(form: &Form, obligations: &[&Obligation]) -> String {
     serde_json::to_vec(&(form, obligations))
         .map_or_else(|_| String::new(), |bytes| content_sha256(&bytes))

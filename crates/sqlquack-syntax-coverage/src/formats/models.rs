@@ -403,8 +403,7 @@ pub struct Review {
     /// Each listed form's fingerprint when reviewed; while it matches, the parser tree may change.
     #[serde(default, skip_serializing_if = "BTreeMap::is_empty")]
     pub fingerprints: BTreeMap<String, String>,
-    /// Each listed form's definition hash when reviewed: its catalogue entry and its own
-    /// obligations. With these the review binds each form, not the family's files (decision D118).
+    /// Each listed form's definition hash when reviewed; binds the form, not the files (D118).
     #[serde(default, skip_serializing_if = "BTreeMap::is_empty")]
     pub definitions: BTreeMap<String, String>,
     #[serde(default)]

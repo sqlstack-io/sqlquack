@@ -6,9 +6,7 @@ use crate::check::models::{FamilyContext, Reason};
 use crate::formats::constants::{CATALOGUE_DIR, OBLIGATIONS_DIR, SOURCES_FILE};
 use crate::formats::models::{Review, ReviewVerdict, Source, SourceStatus};
 
-/// Whether `review` is approved and current for `form`, its id, fingerprint and definition hash:
-/// with a recorded definition, that and its fingerprint (D118); else its files, then the form's
-/// fingerprint or the tree.
+/// Whether `review` is approved and current: by the form's definition (D118), else its files.
 fn current(
     review: &Review,
     hashes: &BTreeMap<String, String>,

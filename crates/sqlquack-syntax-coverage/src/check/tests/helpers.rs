@@ -94,8 +94,7 @@ pub(crate) fn pin_fingerprints(root: &Path) {
     );
 }
 
-/// Rewrites the query review to bind each query form by its fingerprint and definition under
-/// `structural`, in place of the family's file hashes (decision D118).
+/// Rewrites the query review to bind each query form by fingerprint and definition (D118).
 pub(crate) fn pin_definitions(root: &Path) {
     let coverage = crate::formats::main::load_coverage::load_coverage(root).expect("load");
     let check =
@@ -379,5 +378,27 @@ pub(crate) fn unobservable(root: &Path, obligation: &str, case_id: &str, sql: &s
              runs = [\"run-1\"]\nprobes = []\n",
             sha256(sql)
         ),
+    );
+}
+
+/// Adds a note to the obligation `id` of kind `kind`, an edit the obligations file alone sees.
+pub(crate) fn note_obligation(root: &Path, id: &str, kind: &str) {
+    let declared: String = format!("id = \"{id}\"\nkind = \"{kind}\"\nrequired = true\n");
+    replace(
+        root,
+        "obligations/query.toml",
+        &declared,
+        &format!("{declared}note = \"edited after review\"\n"),
+    );
+}
+
+/// Moves the catalogue form `id` to another anchor, an edit the catalogue file alone sees.
+pub(crate) fn move_form(root: &Path, id: &str) {
+    let declared: String = format!("id = \"{id}\"\nfamily = \"query\"\nsource = \"doc.select\"\n");
+    replace(
+        root,
+        "catalogue/query.toml",
+        &format!("{declared}anchor = \"Syntax\""),
+        &format!("{declared}anchor = \"Syntax, edited\""),
     );
 }

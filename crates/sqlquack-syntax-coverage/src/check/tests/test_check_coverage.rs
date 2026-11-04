@@ -1,13 +1,11 @@
-use std::path::Path;
-
 use crate::check::main::check_coverage::check_coverage;
 use crate::check::models::{FormState, Reason};
 use crate::check::tests::helpers::{
     OTHER_TREE, SETUP, TREE, append_receipt, case_in_zone, case_line, crashing,
-    crashing_on_select_from, drop_lines, exclusion_review, form, hanging, obligation, opaque,
-    pin_definitions, pin_fingerprints, read, receipt_line, rejecting, replace, reshaped,
-    rewrite_select_17, select_17, select_17_setup_sha256, sha256, structural, unobservable,
-    verified_tree, with_fields, write,
+    crashing_on_select_from, drop_lines, exclusion_review, form, hanging, move_form,
+    note_obligation, obligation, opaque, pin_definitions, pin_fingerprints, read, receipt_line,
+    rejecting, replace, reshaped, rewrite_select_17, select_17, select_17_setup_sha256, sha256,
+    structural, unobservable, verified_tree, with_fields, write,
 };
 use crate::check::tests::test_types::CheckTestCase;
 use crate::formats::main::load_coverage::load_coverage;
@@ -898,28 +896,6 @@ fn given_a_review_with_fingerprints_when_the_parser_changes_then_only_changed_fo
             check.problems
         );
     }
-}
-
-/// Adds a note to the obligation `id` of kind `kind`, an edit the obligations file alone sees.
-fn note_obligation(root: &Path, id: &str, kind: &str) {
-    let declared: String = format!("id = \"{id}\"\nkind = \"{kind}\"\nrequired = true\n");
-    replace(
-        root,
-        "obligations/query.toml",
-        &declared,
-        &format!("{declared}note = \"edited after review\"\n"),
-    );
-}
-
-/// Moves the catalogue form `id` to another anchor, an edit the catalogue file alone sees.
-fn move_form(root: &Path, id: &str) {
-    let declared: String = format!("id = \"{id}\"\nfamily = \"query\"\nsource = \"doc.select\"\n");
-    replace(
-        root,
-        "catalogue/query.toml",
-        &format!("{declared}anchor = \"Syntax\""),
-        &format!("{declared}anchor = \"Syntax, edited\""),
-    );
 }
 
 #[test]
