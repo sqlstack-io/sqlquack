@@ -35,6 +35,7 @@ from scripts.syntax_obligations.constants import (
     NODE_OPTIONAL,
     PROCEDURE_WRAPPER,
     QUERY_CLASS,
+    QUOTED_WITHOUT_BLANK_NAMES,
     RESERVED_WORD,
     SINGLE_CHARACTER_LITERAL_LENGTH,
     STATEMENT_CLASS,
@@ -295,7 +296,7 @@ class _Renderer:
         if not fill:
             fill = CLASS_FILL.get(STRING_CLASS if node.token_kind == TOKEN_LITERAL else label, "v1")
         if choices.quote == name and node.token_kind == TOKEN_PLACEHOLDER:
-            fill = f'"{fill} Q"'
+            fill = f'"{fill}Q"' if name in QUOTED_WITHOUT_BLANK_NAMES else f'"{fill} Q"'
         self._used.setdefault(name, []).append(fill)
         return fill
 
