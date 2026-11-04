@@ -950,58 +950,38 @@ pub(crate) fn compare_outcome(test_case: &CompareTestCase) -> String {
         )
         .expect("inputs written");
     let recording = repository_root().join(FRUIT_RECORDING);
-    let entries: Vec<serde_json::Value> = test_cases
-        .iter()
-        .enumerate()
-        .map(|(index, test_case)| {
-            let mut sidecar: serde_json::Value = serde_json::from_str(
-                &std::fs::read_to_string(recording.with_extension("json")).expect("sidecar read"),
-            )
-            .expect("sidecar parses");
-            sidecar["arrow_sha256"] = test_case
-                .arrow_sha256
-                .map_or(sidecar["arrow_sha256"].clone(), serde_json::Value::from);
-            let recorded = directory.path().join(format!("recorded{index}.json"));
-            std::fs::write(&recorded, sidecar.to_string()).expect("sidecar written");
-            std::fs::copy(
-                recording.with_extension("arrow"),
-                recorded.with_extension("arrow"),
-            )
-            .expect("Arrow file copied");
-            let sql = directory.path().join(format!("converted{index}.sql"));
-            std::fs::write(&sql, test_case.sql).expect("SQL written");
-            serde_json::json!({
-                "id": index.to_string(),
-                "recorded": recorded,
-                "database": database,
-                "sql": sql,
-                "ordered": test_case.ordered,
-            })
-        })
-        .collect();
+    let mut sidecar: serde_json::Value = serde_json::from_str(
+        &std::fs::read_to_string(recording.with_extension("json")).expect("sidecar read"),
+    )
+    .expect("sidecar parses");
+    sidecar["arrow_sha256"] = test_case
+        .arrow_sha256
+        .map_or(sidecar["arrow_sha256"].clone(), serde_json::Value::from);
+    let recorded = directory.path().join("recorded.json");
+    std::fs::write(&recorded, sidecar.to_string()).expect("sidecar written");
+    std::fs::copy(
+        recording.with_extension("arrow"),
+        recorded.with_extension("arrow"),
+    )
+    .expect("Arrow file copied");
+    let sql = directory.path().join("converted.sql");
+    std::fs::write(&sql, test_case.sql).expect("SQL written");
+    let entry = serde_json::json!({
+        "id": "fruit",
+        "recorded": recorded,
+        "database": database,
+        "sql": sql,
+        "ordered": test_case.ordered,
+    });
     let manifest = directory.path().join("manifest.json");
-    std::fs::write(&manifest, serde_json::Value::Array(entries).to_string())
-        .expect("manifest written");
+    std::fs::write(&manifest, serde_json::json!([entry]).to_string()).expect("manifest written");
     let output = Command::new(env!("CARGO_BIN_EXE_sqlquack"))
         .current_dir(repository_root())
         .args(["compare", "--manifest"])
         .arg(&manifest)
         .output()
         .expect("sqlquack runs");
-    let outcomes: Vec<serde_json::Value> =
+    let outcomes: serde_json::Value =
         serde_json::from_slice(&output.stdout).expect("outcomes are JSON");
-    let mut by_id: Vec<(usize, String)> = outcomes
-        .iter()
-        .map(|outcome| {
-            (
-                outcome["id"]
-                    .as_str()
-                    .and_then(|id| id.parse().ok())
-                    .expect("numeric id"),
-                outcome["outcome"].as_str().expect("outcome").to_owned(),
-            )
-        })
-        .collect();
-    by_id.sort();
-    by_id.into_iter().map(|(_, outcome)| outcome).collect()
+    format!("{} {}", outcomes[0]["id"], outcomes[0]["outcome"])
 }

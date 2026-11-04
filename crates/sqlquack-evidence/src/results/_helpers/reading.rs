@@ -12,7 +12,7 @@ use sqlquack_compare::values::models::ResultSet;
 use crate::constants::EVIDENCE_FORMAT;
 use crate::errors::EvidenceError;
 use crate::results::_helpers::type_names::snowflake_type;
-use crate::results::models::ResultMetadata;
+use crate::results::models::{ResultMetadata, WarehouseColumn};
 
 pub(crate) fn sha256_hex(bytes: &[u8]) -> String {
     Sha256::digest(bytes)
