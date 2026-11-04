@@ -465,6 +465,7 @@ use crate::expressions::tables::models::DistKeyProperty;
 use crate::expressions::tables::models::DistStyleProperty;
 use crate::expressions::tables::models::DistributedByProperty;
 use crate::expressions::tables::models::DropIndex;
+use crate::expressions::tables::models::DropObject;
 use crate::expressions::tables::models::DropTable;
 use crate::expressions::tables::models::DuplicateKeyProperty;
 use crate::expressions::tables::models::EncodeProperty;
@@ -1165,6 +1166,7 @@ pub enum Expression {
     CreateTable(Box<CreateTable>),
     DropTable(Box<DropTable>),
     Undrop(Box<Undrop>),
+    DropObject(Box<DropObject>),
     AlterTable(Box<AlterTable>),
     SplitTable(Box<SplitTable>),
     FlashbackTable(Box<FlashbackTable>),
