@@ -435,7 +435,8 @@ Snowflake rows.
 
 `coverage/syntax/census/<family>.jsonl` holds one line per case that reads relations:
 `{"case_id": …, "relations": [{"name": …, "columns": [{"name": …, "type": …}]}]}`. It is passed
-to convert as `--schema`. An unknown case id, a duplicate or an empty relation or column list
+to convert as `--schema`. Names are written as in the SQL and resolved as Snowflake resolves
+them: an unquoted name is upper-cased, and a quoted one keeps its case. An unknown case id, a duplicate or an empty relation or column list
 fails the command. `by-design.toml` holds `[[by_design]]` entries with `construct` (a construct
 key such as `fn:SYSTEM$WAIT`), `reason` and `duckdb_note`. The review file holds `[[signoff]]`
 entries with `construct`, `reason_sha256` and `reviewed_utc`. Both files are optional.

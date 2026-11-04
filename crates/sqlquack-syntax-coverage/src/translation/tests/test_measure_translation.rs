@@ -114,18 +114,18 @@ fn given_a_conversion_report_when_measuring_then_the_form_takes_its_state() {
         TranslationTestCase {
             description: "an unresolved name even with its census schema",
             convert: unresolved.clone(),
-            census: r#"{"case_id":"select-top","relations":[{"name":"T","columns":[{"name":"A","type":"NUMBER"}]}]}"#,
+            census: r#"{"case_id":"select-top","relations":[{"name":"t","columns":[{"name":"a","type":"NUMBER"},{"name":"\"b \"\"q\"","type":"TEXT"}]}]}"#,
             by_design: no_by_design,
             expected_state: FormState::NeedsSchema,
             expected_refusals: &[],
             expected_measurable: 1,
         },
         TranslationTestCase {
-            description: "the census schema reaches convert and resolves the relation",
+            description: "the census schema reaches convert with names resolved as Snowflake resolves them",
             convert: format!(
-                "grep -q '\"T\":\\[\\[\"A\",\"NUMBER\"\\]\\]' \"$schema\" && {{ echo '{{\"converted\":true,\"refusals\":[]}}'; exit 0; }}\n{unresolved}"
+                "grep -q '\"T\":\\[\\[\"A\",\"NUMBER\"\\],\\[\"b \\\\\"q\",\"TEXT\"\\]\\]' \"$schema\" && {{ echo '{{\"converted\":true,\"refusals\":[]}}'; exit 0; }}\n{unresolved}"
             ),
-            census: r#"{"case_id":"select-top","relations":[{"name":"T","columns":[{"name":"A","type":"NUMBER"}]}]}"#,
+            census: r#"{"case_id":"select-top","relations":[{"name":"t","columns":[{"name":"a","type":"NUMBER"},{"name":"\"b \"\"q\"","type":"TEXT"}]}]}"#,
             by_design: no_by_design,
             expected_state: FormState::Translates,
             expected_refusals: &[],

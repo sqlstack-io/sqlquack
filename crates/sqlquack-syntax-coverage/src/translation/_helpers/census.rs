@@ -53,7 +53,16 @@ pub(crate) fn load_census(
     }
 }
 
-/// The entry as convert's `--schema` JSON: each relation to its `[column, type]` pairs.
+/// A name as the census writes it, as Snowflake resolves it: a quoted name keeps its case, an
+/// unquoted one is upper-cased.
+fn resolved(name: &str) -> String {
+    match name.strip_prefix('"').and_then(|rest| rest.strip_suffix('"')) {
+        Some(quoted) => quoted.replace("\"\"", "\""),
+        None => name.to_uppercase(),
+    }
+}
+
+/// The entry as convert's `--schema` JSON: each resolved relation to its `[column, type]` pairs.
 pub(crate) fn schema_json(entry: &CensusEntry) -> Value {
     Value::Object(
         entry
@@ -63,9 +72,9 @@ pub(crate) fn schema_json(entry: &CensusEntry) -> Value {
                 let columns: Vec<Value> = relation
                     .columns
                     .iter()
-                    .map(|column| json!([column.name, column.column_type]))
+                    .map(|column| json!([resolved(&column.name), column.column_type]))
                     .collect();
-                (relation.name.clone(), Value::Array(columns))
+                (resolved(&relation.name), Value::Array(columns))
             })
             .collect(),
     )
