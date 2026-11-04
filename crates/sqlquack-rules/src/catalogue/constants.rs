@@ -406,7 +406,7 @@ pub const RULES: &[RuleSpec] = &[
     RuleSpec {
         id: CAST_NUMERIC,
         constructs: &["node:cast"],
-        conditions: "NUMBER to NUMBER or FLOAT; FLOAT to NUMBER of scale 0, or of scale 2, 6 or 8 rounded half away from zero from the double's exact binary value, as recorded, NaN and infinities raising 100046 and more than nine significant digits raising float_decimal_digits; not TRY_CAST.",
+        conditions: "NUMBER to NUMBER or FLOAT; FLOAT to NUMBER of scale 0, or of scale 2, 6 or 8 rounded half away from zero from the double's exact binary value, as recorded, NaN and infinities raising 100046 and more than ten digits once scaled raising float_decimal_digits; not TRY_CAST.",
         failures: &[FailureMode {
             kind: ErrorKind::NumericOverflow,
             snowflake: &[NUMBER_OUT_OF_RANGE],
@@ -584,7 +584,7 @@ pub const RULES: &[RuleSpec] = &[
     RuleSpec {
         id: ARRAY_SIZE_RULE,
         constructs: &["fn:ARRAY_SIZE"],
-        conditions: "A VARIANT or ARRAY: an array's element count as NUMBER(9,0), as recorded; SQL NULL, JSON null and values other than arrays give NULL, as Snowflake documents.",
+        conditions: "A VARIANT or ARRAY: an array's element count as NUMBER(9,0), as recorded; SQL NULL, JSON null and values other than arrays give NULL, as Snowflake documents. Of ARRAY_CONSTRUCT, ARRAY_APPEND or ARRAY_CAT calls written directly in it, a SQL NULL element, which Snowflake keeps as undefined, counts as one element, as recorded.",
         failures: &[],
     },
     RuleSpec {

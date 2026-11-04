@@ -17,6 +17,7 @@ rows = [
   ["NULL"],
 ]
 expression = "x::NUMBER(18,6)"
+expected_divergence = "float_decimal_digits"
 tags = ["null", "invalid", "boundary"]
 
 [[case]]
@@ -32,6 +33,7 @@ rows = [
   ["NULL"],
 ]
 expression = "x::NUMBER(38,8)"
+expected_divergence = "float_decimal_digits"
 tags = ["null", "invalid", "boundary"]
 
 [[case]]

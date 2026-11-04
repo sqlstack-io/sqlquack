@@ -554,7 +554,7 @@ constructs = ["node:cast", "node:try_cast"]
 default = "warn"
 strict = "refuse"
 failure = "loud"
-reason = "Recordings show a FLOAT rounded to NUMBER scales 2, 6 and 8 with up to nine significant digits, where Snowflake rounds the double's exact value half away from zero. Other scales refuse; a value with more significant digits, where Snowflake may round a shorter decimal reading instead, raises. The failure is loud, never a wrong value."
+reason = "Recordings show a FLOAT rounded to NUMBER scales 2, 6 and 8 with up to ten digits once scaled, scale padding included, where Snowflake rounds the double's exact value half away from zero, also where the shortest decimal reading rounds the other way. Other scales refuse; a value with more significant digits, where Snowflake may round a shorter decimal reading instead, raises. The failure is loud, never a wrong value."
 
 [divergences.timestamp_text_rounding]
 constructs = ["node:cast", "fn:TO_VARCHAR", "fn:TO_CHAR"]
