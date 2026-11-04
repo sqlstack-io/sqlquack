@@ -602,6 +602,18 @@ fn given_a_snowflake_drop_of_another_object_kind_when_parsing_then_it_takes_that
             expected_accepted: false,
         },
         AcceptanceTestCase {
+            description: "an unquoted reserved keyword is no name (recorded errno 1003)",
+            sql: "DROP PIPE SELECT ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "a quoted reserved keyword is a name (recorded semantic error)",
+            sql: "DROP PIPE \"SELECT\" ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
             description: "IF without EXISTS (recorded errno 1003)",
             sql: "DROP AGENT IF v1 ;",
             dialect: Dialect::Snowflake,

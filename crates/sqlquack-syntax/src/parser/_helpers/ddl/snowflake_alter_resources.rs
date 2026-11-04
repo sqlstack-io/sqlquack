@@ -12,6 +12,22 @@ use crate::tokens::types::Result;
 
 /// The object kinds this module parses, as the words that follow ALTER.
 const RESOURCE_KINDS: &[&[&str]] = &[
+    &["MULTI", "PARTY", "APPROVAL", "POLICY"],
+    &["DATA", "MOVEMENT", "POLICY"],
+    &["AGGREGATION", "POLICY"],
+    &["AUTHENTICATION", "POLICY"],
+    &["BACKUP", "POLICY"],
+    &["FEATURE", "POLICY"],
+    &["INGRESS", "POLICY"],
+    &["JOIN", "POLICY"],
+    &["MAINTENANCE", "POLICY"],
+    &["MASKING", "POLICY"],
+    &["NETWORK", "POLICY"],
+    &["NETWORK", "RULE"],
+    &["PACKAGES", "POLICY"],
+    &["PASSWORD", "POLICY"],
+    &["SESSION", "POLICY"],
+    &["SNAPSHOT", "POLICY"],
     &["RESTRICTED", "SESSION", "SCOPE"],
     &["ARTIFACT", "REPOSITORY"],
     &["EXTERNAL", "VOLUME"],
@@ -144,6 +160,16 @@ fn resource_actions(kind: &str) -> &'static [&'static [&'static str]] {
             &["UNSET"],
         ],
         "DATASET" => &[&["ADD", "VERSION"], &["DROP", "VERSION"]],
+        "FEATURE POLICY" | "INGRESS POLICY" | "MULTI PARTY APPROVAL POLICY" => {
+            &[&["AS"], &["RENAME", "TO"], &["SET"], &["UNSET"]]
+        }
+        "NETWORK POLICY" | "DATA MOVEMENT POLICY" => &[
+            &["ADD"],
+            &["REMOVE"],
+            &["RENAME", "TO"],
+            &["SET"],
+            &["UNSET"],
+        ],
         "MATERIALIZED VIEW" => &[
             &["CLUSTER", "BY"],
             &["DROP", "CLUSTERING", "KEY"],
@@ -206,9 +232,12 @@ impl Parser {
             | ("EXTERNAL", "AGENT" | "TABLE" | "VOLUME" | "CONSUMER" | "ACCESS") => true,
             ("EVENT", "ROUTING") => matches!(self.text_at(2).as_deref(), Some("TABLE")),
             ("RESTRICTED", "SESSION") => matches!(self.text_at(2).as_deref(), Some("SCOPE")),
+            ("BACKUP", "SET") => return None,
             (
                 "COMPUTE" | "DBT" | "DCM" | "GIT" | "FILE" | "EXTERNAL" | "EVENT" | "ARTIFACT"
-                | "MATERIALIZED" | "RESTRICTED" | "VOLUME",
+                | "MATERIALIZED" | "RESTRICTED" | "VOLUME" | "AGGREGATION" | "AUTHENTICATION"
+                | "BACKUP" | "DATA" | "INGRESS" | "JOIN" | "MAINTENANCE" | "MASKING" | "MULTI"
+                | "NETWORK" | "PACKAGES" | "PASSWORD",
                 _,
             ) => false,
             _ => return None,
@@ -255,7 +284,18 @@ impl Parser {
             (_, "ADD FILES" | "REMOVE FILES") => (vec![self.parse_value_list()?], vec![]),
             (_, "ADD TARGETS" | "REMOVE TARGETS") => (vec![self.parse_resource_value()?], vec![]),
             ("STAGE" | "PIPE", "REFRESH") => (vec![], self.parse_resource_properties()?),
-            ("RESTRICTED SESSION SCOPE" | "RSS", "ADD" | "REMOVE" | "AS") => {
+            ("NETWORK POLICY" | "DATA MOVEMENT POLICY", "ADD" | "REMOVE") => {
+                (vec![], self.parse_resource_set()?)
+            }
+            (
+                "RESTRICTED SESSION SCOPE"
+                | "RSS"
+                | "FEATURE POLICY"
+                | "INGRESS POLICY"
+                | "MULTI PARTY APPROVAL POLICY",
+                "AS",
+            )
+            | ("RESTRICTED SESSION SCOPE" | "RSS", "ADD" | "REMOVE") => {
                 (vec![self.parse_text_value()?], vec![])
             }
             ("DATASET", "ADD VERSION") => return self.parse_dataset_version(action),
@@ -475,7 +515,7 @@ impl Parser {
     }
 
     /// Parse a location: a stage path or a string.
-    fn parse_location_value(&mut self) -> Result<Expression> {
+    pub(super) fn parse_location_value(&mut self) -> Result<Expression> {
         if self.is_stage_path() {
             return self.parse_stage_path();
         }
@@ -566,7 +606,7 @@ impl Parser {
         Ok(properties)
     }
 
-    /// Parse zero or more TAG pairs, CONTACT pairs and `<name> = <value>` properties, optionally comma-separated.
+    /// Parse zero or more TAG pairs, CONTACT pairs and `<name> = <value>` properties, optionally comma-separated; a policy's `AS` body only follows another property.
     fn parse_resource_properties(&mut self) -> Result<Vec<ObjectProperty>> {
         let mut properties: Vec<ObjectProperty> = Vec::new();
         while !self.is_at_end() && !self.check(TokenType::Semicolon) {
@@ -587,10 +627,16 @@ impl Parser {
                         break;
                     }
                 }
+            } else if !properties.is_empty() && self.match_token(TokenType::As) {
+                properties.push(property("AS", None, Some(self.parse_text_value()?)));
             } else {
                 let name = self.parse_simple_name()?;
-                self.expect_token(TokenType::Eq)?;
-                let value = self.parse_resource_value()?;
+                let value = if self.match_token(TokenType::Arrow) {
+                    self.parse_expression()?
+                } else {
+                    self.expect_token(TokenType::Eq)?;
+                    self.parse_resource_value()?
+                };
                 properties.push(property(&name.name.to_ascii_uppercase(), None, Some(value)));
                 self.match_token(TokenType::Comma);
             }

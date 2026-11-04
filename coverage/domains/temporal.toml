@@ -453,6 +453,7 @@ arguments = [
 template = "TO_TIMESTAMP_NTZ({0})"
 category = "temporal"
 variants = ["TO_TIMESTAMP({0})"]
+divergences = { "date.extreme_years" = "timestamp_range" }
 
 [[rule.probe]]
 construct = "fn:TO_TIMESTAMP_NTZ"

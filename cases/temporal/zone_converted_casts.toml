@@ -1,0 +1,52 @@
+category = "temporal"
+construct = "node:cast"
+session_profile = "utc-v1"
+
+[[case]]
+id = "converted_zone_to_date"
+description = "CONVERT_TIMEZONE(zone, zoned) cast to DATE: the date in the target zone, which the offset can move across midnight."
+columns = [{ name = "t", type = "TIMESTAMP_TZ" }]
+rows = [
+  ["'2024-03-01 03:30:00 +00:00'"],
+  ["'2024-03-01 05:30:00 +00:00'"],
+  ["'2024-02-29 23:30:00 -05:00'"],
+  ["'2024-12-31 23:59:59.999999 +14:00'"],
+  ["'1999-12-31 20:00:00 -12:00'"],
+  ["NULL"],
+]
+query = "SELECT CONVERT_TIMEZONE('America/New_York', t)::DATE AS ny, CONVERT_TIMEZONE('Asia/Kolkata', t)::DATE AS kolkata, CAST(CONVERT_TIMEZONE('Asia/Tokyo', t) AS DATE) AS tokyo FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "converted_zone_to_ntz"
+description = "CONVERT_TIMEZONE(zone, zoned) cast to TIMESTAMP_NTZ: the wall time in the target zone, across daylight-saving changes and odd offsets."
+columns = [{ name = "t", type = "TIMESTAMP_TZ" }]
+rows = [
+  ["'2024-03-10 06:59:59.123456 +00:00'"],
+  ["'2024-03-10 07:00:00 +00:00'"],
+  ["'2024-11-03 05:30:00 +00:00'"],
+  ["'2024-11-03 06:30:00 +00:00'"],
+  ["'2024-06-30 18:15:00 +05:45'"],
+  ["NULL"],
+]
+query = "SELECT CONVERT_TIMEZONE('America/New_York', t)::TIMESTAMP_NTZ AS ny, CONVERT_TIMEZONE('Asia/Kathmandu', t)::TIMESTAMP_NTZ AS kathmandu, CONVERT_TIMEZONE('Europe/Berlin', t)::TIMESTAMP_NTZ(3) AS berlin_millis FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "converted_zone_column"
+description = "CONVERT_TIMEZONE with the zone in a column, cast to DATE and TIMESTAMP_NTZ, one zone per row."
+columns = [{ name = "z", type = "VARCHAR" }, { name = "t", type = "TIMESTAMP_TZ" }]
+rows = [
+  ["'America/Los_Angeles'", "'2024-07-01 06:00:00 +00:00'"],
+  ["'Asia/Kuwait'", "'2024-07-01 22:00:00 +00:00'"],
+  ["'Europe/Berlin'", "'2024-03-31 00:59:59 +00:00'"],
+  ["'Europe/Berlin'", "'2024-03-31 01:00:00 +00:00'"],
+  ["'UTC'", "'2024-01-01 00:00:00 +09:00'"],
+  ["NULL", "'2024-01-01 00:00:00 +00:00'"],
+  ["'Asia/Tokyo'", "NULL"],
+]
+query = "SELECT CONVERT_TIMEZONE(z, t)::DATE AS local_date, CONVERT_TIMEZONE(z, t)::TIMESTAMP_NTZ AS local_time FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "boundary"]

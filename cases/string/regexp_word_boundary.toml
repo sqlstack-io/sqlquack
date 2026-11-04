@@ -1,0 +1,25 @@
+category = "string"
+construct = "fn:REGEXP_SUBSTR"
+session_profile = "utc-v1"
+
+[[case]]
+id = "regexp_substr_word_boundary"
+description = "REGEXP_SUBSTR with \\b around a code: at the text's ends, beside punctuation, digits, underscores, spaces and non-ASCII letters, and in empty text."
+columns = [{ name = "t", type = "VARCHAR" }]
+rows = [
+  ["'AB123'"],
+  ["'declined: CD456.'"],
+  ["'xEF789'"],
+  ["'GH012x'"],
+  ["'_IJ345_'"],
+  ["'9KL678'"],
+  ["'éMN901é'"],
+  ["'(OP234)-QR567'"],
+  ["'none here'"],
+  ["''"],
+  ["'   ST890   '"],
+  ["NULL"],
+]
+query = "SELECT t, REGEXP_SUBSTR(t, '\\\\b([A-Z]{2}[0-9]{3})\\\\b', 1, 1, 'e', 1) AS code, REGEXP_SUBSTR(t, '\\\\b[A-Z]{2}[0-9]{3}\\\\b') AS whole FROM input"
+order = "bag"
+tags = ["null", "boundary", "empty", "whitespace", "unicode"]

@@ -353,7 +353,7 @@ pub const PARSE_JSON_RULE: &str = "rule.parse_json";
 pub const VARIANT_PATH: &str = "rule.variant_path";
 /// TYPEOF of a VARIANT.
 pub const VARIANT_TYPE_NAME: &str = "rule.variant_typeof";
-/// IS_NULL_VALUE and TO_JSON of a VARIANT.
+/// IS_NULL_VALUE, STRIP_NULL_VALUE and TO_JSON of a VARIANT.
 pub const VARIANT_INSPECT: &str = "rule.variant_inspect";
 /// Casts of a VARIANT to scalar types.
 pub const VARIANT_CAST: &str = "rule.variant_cast";
@@ -900,7 +900,7 @@ pub const NOT_SNOWFLAKE_FUNCTIONS: &[&str] = &[
     "ENDS_WITH",
     "DATE_DIFF",
 ];
-/// The pair behind converting `t RLIKE p` through the `REGEXP_LIKE` rule.
+/// The pair behind converting `t RLIKE p` and `RLIKE(t, p)` through the `REGEXP_LIKE` rule.
 pub const RLIKE_PAIR: &str = "rlike_to_regexp_like";
 /// A computed `v[i]` spelled as GET.
 pub const SUBSCRIPT_PAIR: &str = "subscript_to_get";
@@ -954,7 +954,7 @@ pub const SPELLING_PAIRS: &[SpellingPair] = &[
     },
     SpellingPair {
         id: RLIKE_PAIR,
-        source: "t RLIKE p",
+        source: "t RLIKE p, RLIKE(t, p [, flags])",
         canonical: "REGEXP_LIKE(t, p)",
         cases: "fidelity/rlike.toml",
     },
@@ -1008,7 +1008,7 @@ pub const SPELLING_PAIRS: &[SpellingPair] = &[
     },
     SpellingPair {
         id: PART_FUNCTIONS_PAIR,
-        source: "YEAR(x), QUARTER(x), MONTH(x), DAY(x), HOUR(x), MINUTE(x), SECOND(x)",
+        source: "YEAR(x), QUARTER(x), MONTH(x), DAY(x), HOUR(x), MINUTE(x), SECOND(x), DAYOFWEEKISO(x)",
         canonical: "DATE_PART(unit, x)",
         cases: "fidelity/part_functions.toml",
     },
@@ -1197,8 +1197,16 @@ pub(crate) const DOLLAR_PARAMETER: &str = "Dollar";
 pub const VALUES_ROWS: &str = "rule.values_rows";
 /// The column names Snowflake gives VALUES rows: COLUMN1, COLUMN2 and so on.
 pub(crate) const VALUES_COLUMN_PREFIX: &str = "COLUMN";
+/// NTILE, which the parser keeps as a generic call.
+pub(crate) const NTILE_NAME: &str = "NTILE";
+/// RATIO_TO_REPORT, which the parser keeps as a generic call.
+pub(crate) const RATIO_TO_REPORT_NAME: &str = "RATIO_TO_REPORT";
+/// IS_INTEGER, which reads TYPEOF's INTEGER where IS_DECIMAL also reads DECIMAL.
+pub(crate) const IS_INTEGER_NAME: &str = "IS_INTEGER";
 /// The most VALUES rows converted.
 pub(crate) const VALUES_ROWS_LIMIT: usize = 1000;
+/// DATEDIFF units whose boundaries every whole-minute UTC offset shares, counted on UTC instants.
+pub(crate) const OFFSET_FREE_UNITS: [&str; 2] = ["MINUTE", "SECOND"];
 /// JOIN ... USING.
 pub const JOIN_USING: &str = "rule.join_using";
 /// ASOF JOIN ... MATCH_CONDITION.
@@ -1278,6 +1286,8 @@ pub(crate) const TRYING_HEX_DECODE: &str = "TRY_HEX_DECODE_STRING";
 pub(crate) const HEX_DECODE_MESSAGE: &str = "The following string is not a legal hex-encoded value";
 /// DAYNAME.
 pub const DAY_NAME_RULE: &str = "rule.day_name";
+/// LAST_DAY of a DATE or TIMESTAMP_NTZ in its month.
+pub const LAST_DAY_RULE: &str = "rule.last_day";
 /// SQRT's name, beside LN and EXP.
 pub(crate) const SQRT_NAME: &str = "SQRT";
 /// TRY_TO_DOUBLE of a FLOAT, the value itself.
@@ -1294,7 +1304,7 @@ pub const OBJECT_TYPE_NAME: &str = "OBJECT";
 pub const DIV0_RULE: &str = "rule.div0";
 /// MEDIAN.
 pub const MEDIAN_RULE: &str = "rule.median";
-/// MEDIAN of NUMBER(p,s) is NUMBER(p+3,s+3), as recorded.
+/// MEDIAN of NUMBER(p,s) is NUMBER(p+3,s+3), its precision capped at 38, as recorded.
 pub const MEDIAN_EXTRA_DIGITS: u8 = 3;
 /// Significant digits at the result scale up to which a double average rounds back exactly.
 pub const MEDIAN_EXACT_DIGITS: u8 = 15;

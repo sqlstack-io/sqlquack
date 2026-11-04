@@ -71,6 +71,9 @@ impl Parser {
         if self.match_token(TokenType::Function) || self.match_identifier("FUNCTION") {
             return self.parse_alter_function().map(Some);
         }
+        if let Some(alter) = self.parse_alter_snowflake_group()? {
+            return Ok(Some(alter));
+        }
         if let Some(alter) = self.parse_alter_snowflake_resource()? {
             return Ok(Some(alter));
         }

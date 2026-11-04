@@ -42,7 +42,9 @@ use crate::conversion::constants::{
     SUBSCRIPT_PAIR, TIMESTAMP_RANGE, TRY_PARSE_JSON_NAME, VARIANT_CAST, VARIANT_COMPUTED_GET,
     VARIANT_HELD_UNREAD, VARIANT_INSPECT, VARIANT_NAME, VARIANT_PATH, VARIANT_TYPE_NAME,
 };
-use crate::conversion::constants::{OBJECT_TYPE_NAME, VARIANT_KIND_CAST};
+use crate::conversion::constants::{
+    IS_INTEGER_NAME, OBJECT_TYPE_NAME, VARIANT_KIND_CAST, VARIANT_KIND_RULE,
+};
 
 /// PARSE_JSON or TRY_PARSE_JSON of text: raises wherever the two parsers may disagree.
 pub(crate) fn parse_json(
@@ -214,7 +216,7 @@ fn negative_literal(node: &Value) -> bool {
     }
 }
 
-/// TYPEOF, IS_NULL_VALUE and TO_JSON of a VARIANT.
+/// TYPEOF, IS_NULL_VALUE, STRIP_NULL_VALUE and TO_JSON of a VARIANT.
 pub(crate) fn variant_inspect(
     name: &str,
     arguments: &[Value],
@@ -243,12 +245,46 @@ pub(crate) fn variant_inspect(
             };
             Ok(Emitted::new(sql, SnowflakeType::Varchar))
         }
+        "IS_DECIMAL" | "IS_INTEGER" => {
+            let _rule = log.rule(VARIANT_KIND_RULE);
+            if held {
+                return Err(outside_conditions(
+                    construct.clone(),
+                    format!("{name} of a value DuckDB holds apart from JSON, such as a FLOAT"),
+                ));
+            }
+            site.context
+                .typed
+                .inspect((base.data_type, base.untainted), construct);
+            let types = match name == IS_INTEGER_NAME {
+                true => "('INTEGER')",
+                false => "('INTEGER', 'DECIMAL')",
+            };
+            Ok(Emitted::new(
+                format!("({} IN {types})", json_type_name(&base.sql, false, log)),
+                SnowflakeType::Boolean,
+            ))
+        }
         "IS_NULL_VALUE" => {
             let _rule = log.rule(VARIANT_INSPECT);
             Ok(Emitted::new(
                 json_null_value(&read_json(&base, site.context), log),
                 SnowflakeType::Boolean,
             ))
+        }
+        "STRIP_NULL_VALUE" => {
+            let _rule = log.rule(VARIANT_INSPECT);
+            let sql = format!(
+                "(CASE WHEN {} THEN NULL ELSE {} END)",
+                json_null_value(&read_json(&base, site.context), log),
+                base.sql
+            );
+            Ok(Emitted {
+                sql,
+                literal: None,
+                not_null: false,
+                ..base
+            })
         }
         _ => {
             let _rule = log.rule(VARIANT_INSPECT);

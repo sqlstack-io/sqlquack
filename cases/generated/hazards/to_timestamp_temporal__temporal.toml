@@ -78,6 +78,7 @@ rows = [
 expression = "TO_TIMESTAMP_NTZ(x0)"
 tags = ["null", "boundary"]
 origin = "generated: hazards@1"
+expected_divergence = "timestamp_range"
 
 [[case]]
 id = "fn_to_timestamp_ntz_0_timestamp_ntz_hazards"
