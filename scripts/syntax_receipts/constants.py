@@ -94,3 +94,4 @@ REASON_BY_ERRNO: dict[int, str] = {
 }
 MISSING_OBJECT_MESSAGE: str = r"does not exist|\bnonexistent\b|\bnot found\b"
 SUPERSEDES_KEY: str = "supersedes_receipt_sha256"
+MEASURE_KEY: str = "measure"
