@@ -683,6 +683,47 @@ fn given_a_format_fault_when_loading_then_the_problem_is_named() {
             expected_problem: "review query-1: fingerprints, when present, give one for every form it lists",
         },
         FormatFaultTestCase {
+            description: "a review binding each form's definition and the family's files too",
+            mutate: |root| {
+                replace(
+                    root,
+                    "reviews/query.toml",
+                    "verdict = \"approved\"\n",
+                    "verdict = \"approved\"\nforms = [\"sf.query.select\"]\n\
+                     fingerprints = { \"sf.query.select\" = \"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\" }\n\
+                     definitions = { \"sf.query.select\" = \"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\" }\n",
+                )
+            },
+            expected_problem: "review query-1: a family review binds its catalogue and obligation hashes, or instead each listed form's definition",
+        },
+        FormatFaultTestCase {
+            description: "a review binding a form's definition without its fingerprint",
+            mutate: |root| {
+                replace(
+                    root,
+                    "reviews/query.toml",
+                    "verdict = \"approved\"\n",
+                    "verdict = \"approved\"\nforms = [\"sf.query.select\"]\n\
+                     definitions = { \"sf.query.select\" = \"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\" }\n",
+                )
+            },
+            expected_problem: "review query-1: definitions, when present, give one and a fingerprint for every form it lists",
+        },
+        FormatFaultTestCase {
+            description: "a review binding the definition of a form it does not list",
+            mutate: |root| {
+                replace(
+                    root,
+                    "reviews/query.toml",
+                    "verdict = \"approved\"\n",
+                    "verdict = \"approved\"\nforms = [\"sf.query.select\"]\n\
+                     fingerprints = { \"sf.query.select\" = \"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\" }\n\
+                     definitions = { \"sf.query.select.top\" = \"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\" }\n",
+                )
+            },
+            expected_problem: "review query-1: definition of sf.query.select.top is not a SHA-256 of a form it lists",
+        },
+        FormatFaultTestCase {
             description: "a review listing a form of another family",
             mutate: |root| {
                 replace(
