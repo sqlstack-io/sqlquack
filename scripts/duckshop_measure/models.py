@@ -49,3 +49,24 @@ class SnowflakeInputs:
     guards: Path | None
     value_divergences: frozenset[str]
     work: Path
+    macros: tuple[FunctionMacro, ...] = ()
+    python_functions: frozenset[str] = frozenset()
+    unavailable_functions: tuple[tuple[str, str], ...] = ()
+
+
+@dataclass(frozen=True)
+class ProjectFunction:
+    """One compiled project function: its census placeholder name, language and body."""
+
+    name: str
+    language: str
+    body: str
+
+
+@dataclass(frozen=True)
+class FunctionMacro:
+    """A SQL function as `sqlquack function` converted it: a DuckDB macro."""
+
+    name: str
+    parameters: tuple[str, ...]
+    body: str
