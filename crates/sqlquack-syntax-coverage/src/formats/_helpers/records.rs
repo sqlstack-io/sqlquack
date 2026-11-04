@@ -278,7 +278,7 @@ pub(crate) fn check_receipt(receipt: &Receipt) -> Vec<String> {
             "receipt {id}: id is empty, too long or holds whitespace"
         ));
     }
-    let hashes: [Option<&String>; 9] = [
+    let hashes: [Option<&String>; 10] = [
         Some(&receipt.sql_sha256),
         Some(&receipt.setup_sha256),
         Some(&receipt.session_sha256),
@@ -288,6 +288,7 @@ pub(crate) fn check_receipt(receipt: &Receipt) -> Vec<String> {
         receipt.query_id_sha256.as_ref(),
         receipt.case_hash.as_ref(),
         receipt.input_sha256.as_ref(),
+        receipt.supersedes_receipt_sha256.as_ref(),
     ];
     if !hashes.iter().flatten().all(|hash| is_sha256(hash)) {
         problems.push(format!("receipt {id}: a hash is not a lower-case SHA-256"));

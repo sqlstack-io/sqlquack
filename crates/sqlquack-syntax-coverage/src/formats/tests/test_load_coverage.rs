@@ -3,7 +3,9 @@ use std::path::Path;
 
 use crate::formats::constants::{COVERAGE_ROOT, FAMILIES};
 use crate::formats::main::load_coverage::load_coverage;
-use crate::formats::tests::helpers::{receipt_line, replace, restated_page, valid_tree, write};
+use crate::formats::tests::helpers::{
+    line_sha256, receipt_line, replace, restated_page, superseding_line, valid_tree, write,
+};
 use crate::formats::tests::test_types::{
     CommittedTestCase, FormatFaultTestCase, LoadTestCase, LoadedCounts,
 };
@@ -52,6 +54,7 @@ fn given_a_valid_tree_when_loading_then_every_record_is_kept() {
         obligations: 4,
         cases: 1,
         receipts,
+        retired_receipts: 0,
         reviews: 2,
         file_hashes: 2 * FAMILIES.len() + 2,
     };
@@ -155,6 +158,36 @@ fn given_a_valid_tree_when_loading_then_every_record_is_kept() {
             expected_counts: counts(2),
         },
         LoadTestCase {
+            description: "a receipt superseded by a later one of the same case",
+            tree: |root| {
+                valid_tree(root);
+                let later = superseding_line(&receipt_line());
+                write(root, "receipts/later.jsonl", &format!("{later}\n"));
+            },
+            expected_counts: LoadedCounts {
+                retired_receipts: 1,
+                ..counts(1)
+            },
+        },
+        LoadTestCase {
+            description: "a receipt withdrawn by its run report",
+            tree: |root| {
+                valid_tree(root);
+                write(
+                    root,
+                    "receipts/first.report.json",
+                    &format!(
+                        "{{\"withdrawn\":[{{\"receipt_sha256\":\"{}\"}}]}}",
+                        line_sha256(&receipt_line())
+                    ),
+                );
+            },
+            expected_counts: LoadedCounts {
+                retired_receipts: 1,
+                ..counts(0)
+            },
+        },
+        LoadTestCase {
             description: "a tree without renames or reviews yet",
             tree: |root| {
                 valid_tree(root);
@@ -183,6 +216,7 @@ fn given_a_valid_tree_when_loading_then_every_record_is_kept() {
             obligations: coverage.obligations.values().map(Vec::len).sum(),
             cases: coverage.cases.values().map(Vec::len).sum(),
             receipts: coverage.receipts.len(),
+            retired_receipts: coverage.retired_receipts.len(),
             reviews: coverage.reviews.len(),
             file_hashes: coverage.file_hashes.len(),
         };
@@ -404,6 +438,50 @@ fn given_a_format_fault_when_loading_then_the_problem_is_named() {
             description: "an interaction with one member",
             mutate: |root| replace(root, "obligations/query.toml", "\"DISTINCT\", ", ""),
             expected_problem: "interaction needs a pair of two",
+        },
+        FormatFaultTestCase {
+            description: "a receipt superseding no published receipt",
+            mutate: |root| {
+                let later = superseding_line("not a published line");
+                write(root, "receipts/later.jsonl", &format!("{later}\n"));
+            },
+            expected_problem: "which is no published receipt of its case",
+        },
+        FormatFaultTestCase {
+            description: "a receipt superseding another case's receipt",
+            mutate: |root| {
+                let later = superseding_line(&receipt_line()).replace(
+                    "\"case_id\":\"query.select-17\"",
+                    "\"case_id\":\"query.select-18\"",
+                );
+                write(root, "receipts/later.jsonl", &format!("{later}\n"));
+            },
+            expected_problem: "receipt query.select-18: supersedes",
+        },
+        FormatFaultTestCase {
+            description: "a withdrawal naming no published receipt",
+            mutate: |root| {
+                write(
+                    root,
+                    "receipts/first.report.json",
+                    &format!(
+                        "{{\"withdrawn\":[{{\"receipt_sha256\":\"{}\"}}]}}",
+                        "c".repeat(64)
+                    ),
+                )
+            },
+            expected_problem: "is not published",
+        },
+        FormatFaultTestCase {
+            description: "a withdrawal without its receipt hash",
+            mutate: |root| {
+                write(
+                    root,
+                    "receipts/first.report.json",
+                    "{\"withdrawn\":[{\"case_id\":\"query.select-17\"}]}",
+                )
+            },
+            expected_problem: "a withdrawn entry has no receipt_sha256",
         },
         FormatFaultTestCase {
             description: "a family review excluding a page",

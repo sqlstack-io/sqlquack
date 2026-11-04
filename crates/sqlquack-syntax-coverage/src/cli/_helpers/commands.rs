@@ -81,8 +81,16 @@ fn unsatisfied(form: &FormResult) -> impl Iterator<Item = &ObligationResult> {
 pub(crate) fn validate(common: &Common) -> Result<ExitCode, ExitCode> {
     let coverage: SyntaxCoverage = load(&common.root)?;
     let forms: usize = coverage.catalogue.values().map(Vec::len).sum();
-    let counts: Value = json!({"forms": forms, "receipts": coverage.receipts.len()});
-    let line: String = format!("valid, {forms} forms, {} receipts", coverage.receipts.len());
+    let retired: usize = coverage.retired_receipts.len();
+    let counts: Value = json!({
+        "forms": forms,
+        "receipts": coverage.receipts.len(),
+        "retired_receipts": retired,
+    });
+    let line: String = format!(
+        "valid, {forms} forms, {} receipts ({retired} superseded or withdrawn)",
+        coverage.receipts.len()
+    );
     print(common.json, &counts, &[line]);
     Ok(ExitCode::SUCCESS)
 }

@@ -18,6 +18,7 @@ pub(crate) struct LoadedCounts {
     pub(crate) obligations: usize,
     pub(crate) cases: usize,
     pub(crate) receipts: usize,
+    pub(crate) retired_receipts: usize,
     pub(crate) reviews: usize,
     pub(crate) file_hashes: usize,
 }

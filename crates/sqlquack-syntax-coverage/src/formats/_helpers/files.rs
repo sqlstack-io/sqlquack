@@ -25,21 +25,32 @@ pub(crate) fn read_toml<T: DeserializeOwned>(path: &Path) -> Result<(T, String),
         .map_err(|error| format!("{}: {error}", path.display()))
 }
 
-/// Each line as one record; a blank line is a problem, so a line number names one record.
-pub(crate) fn read_jsonl<T: DeserializeOwned>(path: &Path) -> (Vec<T>, Vec<String>) {
+/// Each line as one record with the SHA-256 of its bytes; a blank line is a problem.
+pub(crate) fn read_jsonl_lines<T: DeserializeOwned>(
+    path: &Path,
+) -> (Vec<(T, String)>, Vec<String>) {
     let text: String = match read_text(path) {
         Ok((text, _)) => text,
         Err(problem) => return (Vec::new(), vec![problem]),
     };
-    let mut records: Vec<T> = Vec::new();
+    let mut records: Vec<(T, String)> = Vec::new();
     let mut problems: Vec<String> = Vec::new();
     for (index, line) in text.lines().enumerate() {
         match serde_json::from_str(line) {
-            Ok(record) => records.push(record),
+            Ok(record) => records.push((record, sha256_hex(line.as_bytes()))),
             Err(error) => problems.push(format!("{}:{}: {error}", path.display(), index + 1)),
         }
     }
     (records, problems)
+}
+
+/// Each line as one record; a blank line is a problem, so a line number names one record.
+pub(crate) fn read_jsonl<T: DeserializeOwned>(path: &Path) -> (Vec<T>, Vec<String>) {
+    let (records, problems) = read_jsonl_lines::<T>(path);
+    (
+        records.into_iter().map(|(record, _)| record).collect(),
+        problems,
+    )
 }
 
 /// The files in `directory` with `extension`, sorted, then every other entry.

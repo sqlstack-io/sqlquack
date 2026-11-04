@@ -1,13 +1,16 @@
 //! Loading one kind of coverage file; each returns its records, declared ids and problems.
 
 use std::collections::{BTreeMap, BTreeSet};
-use std::path::Path;
+use std::path::{Path, PathBuf};
 
-use crate::formats::_helpers::files::{family_files, listed, read_jsonl, read_toml, stray};
+use crate::formats::_helpers::files::{
+    family_files, listed, read_jsonl, read_jsonl_lines, read_toml, stray,
+};
 use crate::formats::_helpers::records::{
     check_alias, check_case, check_definition, check_form, check_index, check_obligation,
     check_receipt, check_restatements, check_review, check_source,
 };
+use crate::formats::_helpers::retired::{retire, withdrawn_receipts};
 use crate::formats::constants::{
     ALIASES_FILE, CASES_DIR, CATALOGUE_DIR, INDEXES_FILE, OBLIGATIONS_DIR, RECEIPT_REPORT_SUFFIX,
     RECEIPTS_DIR, REVIEWS_DIR, SOURCES_FILE,
@@ -177,22 +180,31 @@ pub(crate) fn load_cases(root: &Path) -> Section<BTreeMap<String, Vec<Case>>> {
     Section::of(records, declared, problems)
 }
 
-/// Every receipts file; the importer's run reports beside them are allowed and not read.
-pub(crate) fn load_receipts(root: &Path) -> Section<Vec<Receipt>> {
+/// Every receipts file, less the receipts superseded or withdrawn by the run reports beside them.
+pub(crate) fn load_receipts(root: &Path) -> Section<(Vec<Receipt>, Vec<String>)> {
     let (paths, others) = listed(&root.join(RECEIPTS_DIR), "jsonl");
     let mut problems: Vec<String> = others
         .iter()
         .filter(|path| !is_report(path))
         .map(|path| stray(path, "jsonl"))
         .collect();
-    let mut records: Vec<Receipt> = Vec::new();
+    let reports: Vec<PathBuf> = others.into_iter().filter(|path| is_report(path)).collect();
+    let mut published: Vec<(Receipt, String)> = Vec::new();
     for path in paths {
-        let (receipts, read_problems) = read_jsonl::<Receipt>(&path);
+        let (receipts, read_problems) = read_jsonl_lines::<Receipt>(&path);
         problems.extend(read_problems);
-        problems.extend(receipts.iter().flat_map(check_receipt));
-        records.extend(receipts);
+        problems.extend(
+            receipts
+                .iter()
+                .flat_map(|(receipt, _)| check_receipt(receipt)),
+        );
+        published.extend(receipts);
     }
-    Section::of(records, Vec::new(), problems)
+    let (withdrawn, report_problems) = withdrawn_receipts(&reports);
+    problems.extend(report_problems);
+    let (kept, retired, retire_problems) = retire(published, &withdrawn);
+    problems.extend(retire_problems);
+    Section::of((kept, retired), Vec::new(), problems)
 }
 
 pub(crate) fn load_reviews(root: &Path) -> Section<Vec<Review>> {
@@ -220,7 +232,7 @@ pub(crate) struct Sections {
     pub(crate) catalogue: Section<FamilyCatalogue>,
     pub(crate) obligations: Section<BTreeMap<String, Vec<Obligation>>>,
     pub(crate) cases: Section<BTreeMap<String, Vec<Case>>>,
-    pub(crate) receipts: Section<Vec<Receipt>>,
+    pub(crate) receipts: Section<(Vec<Receipt>, Vec<String>)>,
     pub(crate) reviews: Section<Vec<Review>>,
 }
 

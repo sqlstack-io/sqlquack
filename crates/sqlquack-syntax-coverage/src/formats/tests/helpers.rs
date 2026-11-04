@@ -1,5 +1,7 @@
 use std::path::Path;
 
+use sha2::{Digest, Sha256};
+
 use crate::formats::constants::FAMILIES;
 
 const SHA_A: &str = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
@@ -30,6 +32,25 @@ pub(crate) fn case_line() -> String {
         r#""capture":"execute"}"#,
     )
     .to_owned()
+}
+
+/// The SHA-256 of a receipt line, as a superseding receipt or a withdrawal names it.
+pub(crate) fn line_sha256(line: &str) -> String {
+    Sha256::digest(line.as_bytes())
+        .iter()
+        .map(|byte| format!("{byte:02x}"))
+        .collect()
+}
+
+/// The receipt above, now recording a semantic error, superseding the line `old` hashes to.
+pub(crate) fn superseding_line(old: &str) -> String {
+    receipt_line().replace(
+        "\"phase\":\"accepted\"",
+        &format!(
+            "\"phase\":\"semantic_error\",\"supersedes_receipt_sha256\":\"{}\"",
+            line_sha256(old)
+        ),
+    )
 }
 
 /// A receipt in the importer's shape, for the case above.

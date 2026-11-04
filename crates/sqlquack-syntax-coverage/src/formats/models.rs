@@ -278,6 +278,9 @@ pub struct Receipt {
     /// What the importer read the reason category from, such as the error number.
     #[serde(default)]
     pub reason_category_basis: Option<String>,
+    /// SHA-256 of the published receipt line this one replaces, for the same case.
+    #[serde(default)]
+    pub supersedes_receipt_sha256: Option<String>,
 }
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Deserialize, Serialize)]
@@ -374,7 +377,10 @@ pub struct SyntaxCoverage {
     pub definitions: BTreeMap<String, Vec<Definition>>,
     pub obligations: BTreeMap<String, Vec<Obligation>>,
     pub cases: BTreeMap<String, Vec<Case>>,
+    /// Current receipts: none superseded by a later receipt or withdrawn by a run report.
     pub receipts: Vec<Receipt>,
+    /// SHA-256 of each published receipt line that is superseded or withdrawn.
+    pub retired_receipts: Vec<String>,
     pub reviews: Vec<Review>,
     /// SHA-256 of the sources, aliases, catalogue and obligation files, by relative path.
     pub file_hashes: BTreeMap<String, String>,

@@ -154,6 +154,15 @@ committed one.
   of `missing_object`, `invalid_option_or_value`, `type` or `other`. The basis says what the
   importer read it from, such as `errno 2003`. Older receipts have neither.
 
+- Optional `supersedes_receipt_sha256`: the SHA-256 of a published receipt line of the same case,
+  hashed without its newline, that this receipt replaces.
+
+A receipt is evidence only while it is current. A later receipt can supersede it, or the run report
+beside its file can withdraw it: the report's `withdrawn` list names withdrawn receipts by
+`receipt_sha256`. A retired receipt stays published but is dropped before checking. A
+supersession or withdrawal that names no published receipt, or a receipt of another case, is a
+format problem.
+
 Any other field is refused. No account identifier, host, URL, user or email address may appear.
 A `compile_only_explain` receipt shows only that the statement compiled. Its `accepted` phase
 says nothing about runtime.
