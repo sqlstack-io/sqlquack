@@ -3881,3 +3881,171 @@ note = "a class method call without its method name"
 anchor = "doc.snowflake-db-classes / Selecting columns from SQL class instance methods that return tabular data"
 sql = "SELECT * FROM TABLE ( i1! ( 1 ) ) ;"
 context = "raw"
+
+# Functions: readings and the D90 extremes (IN lists, nested calls, long argument lists).
+[[reading]]
+form = "sf.functions.ratio-to-report"
+grammar_sha256 = "8786e891b3f1f05a3019e25bce58459658243e80464ae15d1e632f28fddb6d4f"
+grammar = ["RATIO_TO_REPORT( <expr1> ) [ OVER ( [ PARTITION BY <expr2> ] [ ORDER BY <expr3> [ { ASC | DESC } ] [ NULLS { FIRST | LAST } ] ] ) ]"]
+reason = "ASC | DESC and NULLS { FIRST | LAST } qualify the ORDER BY expression, as in the other window functions"
+
+[[limit]]
+form = "sf.functions.in.in"
+kind = "extreme"
+note = "an IN list of 1,000 values; no documented bound"
+anchor = "doc.functions.in / Syntax"
+outer_open = "SELECT 1 IN ("
+open = "1 ,"
+core = "1"
+outer_close = ") ;"
+size = 1000
+context = "raw"
+
+[[limit]]
+form = "sf.functions.in.in"
+kind = "extreme"
+note = "an IN list of 5,000 values; no documented bound"
+anchor = "doc.functions.in / Syntax"
+outer_open = "SELECT 1 IN ("
+open = "1 ,"
+core = "1"
+outer_close = ") ;"
+size = 5000
+context = "raw"
+
+[[limit]]
+form = "sf.functions.in.in.syntax"
+kind = "extreme"
+note = "a row IN list of 1,000 two-value rows; no documented bound"
+anchor = "doc.functions.in / Syntax"
+outer_open = "SELECT ( 1 , 2 ) IN ("
+open = "( 1 , 2 ) ,"
+core = "( 1 , 2 )"
+outer_close = ") ;"
+size = 1000
+context = "raw"
+
+[[limit]]
+form = "sf.functions.abs"
+kind = "extreme"
+note = "ABS calls nested 50 levels deep; no documented bound"
+anchor = "doc.functions.abs / Syntax"
+outer_open = "SELECT"
+open = "ABS ("
+core = "ABS ( 1 )"
+close = ")"
+outer_close = ";"
+size = 50
+context = "raw"
+
+[[limit]]
+form = "sf.functions.coalesce"
+kind = "extreme"
+note = "COALESCE calls nested 50 levels deep; no documented bound"
+anchor = "doc.functions.coalesce / Syntax"
+outer_open = "SELECT"
+open = "COALESCE ( NULL ,"
+core = "COALESCE ( NULL , 1 )"
+close = ")"
+outer_close = ";"
+size = 50
+context = "raw"
+
+[[limit]]
+form = "sf.functions.abs"
+kind = "extreme"
+note = "ABS calls nested 100 levels deep; no documented bound"
+anchor = "doc.functions.abs / Syntax"
+outer_open = "SELECT"
+open = "ABS ("
+core = "ABS ( 1 )"
+close = ")"
+outer_close = ";"
+size = 100
+context = "raw"
+
+[[limit]]
+form = "sf.functions.coalesce"
+kind = "extreme"
+note = "COALESCE calls nested 100 levels deep; no documented bound"
+anchor = "doc.functions.coalesce / Syntax"
+outer_open = "SELECT"
+open = "COALESCE ( NULL ,"
+core = "COALESCE ( NULL , 1 )"
+close = ")"
+outer_close = ";"
+size = 100
+context = "raw"
+
+[[limit]]
+form = "sf.functions.array-construct"
+kind = "extreme"
+note = "ARRAY_CONSTRUCT with 1,000 arguments; no documented bound"
+anchor = "doc.functions.array_construct / Syntax"
+outer_open = "SELECT ARRAY_CONSTRUCT ("
+open = "1 ,"
+core = "1"
+outer_close = ") ;"
+size = 1000
+context = "raw"
+
+[[limit]]
+form = "sf.functions.array-construct"
+kind = "extreme"
+note = "ARRAY_CONSTRUCT with 5,000 arguments; no documented bound"
+anchor = "doc.functions.array_construct / Syntax"
+outer_open = "SELECT ARRAY_CONSTRUCT ("
+open = "1 ,"
+core = "1"
+outer_close = ") ;"
+size = 5000
+context = "raw"
+
+[[limit]]
+form = "sf.functions.concat.concat"
+kind = "extreme"
+note = "CONCAT with 1,000 arguments; no documented bound"
+anchor = "doc.functions.concat / Syntax"
+outer_open = "SELECT CONCAT ("
+open = "'a' ,"
+core = "'a'"
+outer_close = ") ;"
+size = 1000
+context = "raw"
+
+[[limit]]
+form = "sf.functions.case.end"
+kind = "extreme"
+note = "a searched CASE with 1,000 WHEN branches; no documented bound"
+anchor = "doc.functions.case / Syntax"
+outer_open = "SELECT CASE"
+open = "WHEN FALSE THEN 1"
+core = "WHEN TRUE THEN 2"
+outer_close = "END ;"
+size = 1000
+context = "raw"
+
+[[limit]]
+form = "sf.functions.case.end"
+kind = "extreme"
+note = "searched CASE expressions nested 50 levels deep; no documented bound"
+anchor = "doc.functions.case / Syntax"
+outer_open = "SELECT"
+open = "CASE WHEN TRUE THEN"
+core = "CASE WHEN TRUE THEN 1 END"
+close = "END"
+outer_close = ";"
+size = 50
+context = "raw"
+
+[[limit]]
+form = "sf.functions.concat.concat-subscript-dot"
+kind = "extreme"
+note = "a || chain of 5,000 operands; no documented bound"
+anchor = "doc.functions.concat / Syntax"
+outer_open = "SELECT"
+open = "'a' ||"
+core = "'a'"
+outer_close = ";"
+size = 5000
+context = "raw"

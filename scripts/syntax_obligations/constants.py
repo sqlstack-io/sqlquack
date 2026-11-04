@@ -748,6 +748,18 @@ FUNCTIONS_FILLS: dict[str, str] = {
     "query": "SELECT 1",
     "subquery": "SELECT 1",
     "service_name": "svc1",
+    "windowdefinition": "PARTITION BY 1 ORDER BY 1",
+    "fixedrangeframe": "ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW",
+    "function": "SUM",
+    "arguments": "1",
+    "lambda_expression": "x -> x > 0",
+    "lambda-expression": "x -> x > 0",
+    "initialize_lambda": "( ) -> 0",
+    "accumulate_lambda": "( s , x ) -> s + x",
+    "combine_lambda": "( s1 , s2 ) -> s1 + s2",
+    "terminate_lambda": "s -> s",
+    "sql_statement_expression": "'SELECT 1'",
+    "sql_query_id_expression": "LAST_QUERY_ID ( )",
 }
 FUNCTIONS_LITERAL_FILLS: dict[str, str] = {
     "'<agent_name>[!<version>]'": "'a1'",
