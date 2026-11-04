@@ -112,7 +112,7 @@ def page_productions(*, page: Page, path: str, lead: set[str]) -> list[Productio
     parts: list[str] = path.split("/")
     nested: bool = len(parts) > TOP_LEVEL_PARTS
     return productions(
-        page,
+        page=page,
         leading_words=lead if nested and parts[1] == COMMANDS_DIRECTORY else None,
         syntax_sections_only=nested and parts[1] == CONSTRUCTS_DIRECTORY,
     )
@@ -218,7 +218,7 @@ def build_catalogue(*, cache: Path, out: Path, hand_path: Path) -> Catalogue:
         catalogue.forms[family].extend(forms)
     if hand:
         raise CatalogueError(f"hand forms for pages not in the cache: {sorted(hand)}")
-    fold_restatements(catalogue, load_folds(hand_path))
+    catalogue = fold_restatements(catalogue=catalogue, hand_folds=load_folds(hand_path))
     emitted: set[str] = set()
     for rows in catalogue.forms.values():
         emitted |= {str(row["id"]) for row in rows}

@@ -116,7 +116,7 @@ def call_name(grammar: str) -> str:
     return match.group(1).upper() if match else ""
 
 
-def call_end(grammar: str, *, start: int) -> int:
+def call_end(*, grammar: str, start: int) -> int:
     """The index just past the parenthesis that closes the one opened at or after start."""
     depth: int = 0
     index: int = start
@@ -145,7 +145,7 @@ def split_calls(grammar: str) -> list[str]:
         match: re.Match[str] | None = CALL_START.match(rest)
         if match is None or (calls and match.group(1).upper() in SPECIAL_WORDS):
             return [grammar]
-        end: int = call_end(rest, start=match.end() - 1)
+        end: int = call_end(grammar=rest, start=match.end() - 1)
         if end < 0:
             return [grammar]
         calls.append(rest[:end].strip())

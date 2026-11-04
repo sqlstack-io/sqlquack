@@ -1,0 +1,216 @@
+"""Build a family's cases: one per distinct rendered SQL text, merged with mapped cases."""
+
+from __future__ import annotations
+
+import hashlib
+import json
+from pathlib import Path
+
+from scripts.syntax_obligations._helpers.obligations import family_obligations
+from scripts.syntax_obligations._helpers.render import submissions
+from scripts.syntax_obligations.constants import (
+    CASE_CAPTURE,
+    DIGEST_WIDTH,
+    DOUBLE_QUOTE,
+    EXPECT_ACCEPT,
+    EXPECT_REJECT,
+    FAMILY_STYLES,
+    LANE_A_BLOCK_SESSION,
+    MEASURE_KEY,
+    PACKET_KEYS,
+    STAGE_BY_RECEIPT_PHASE,
+    STAGE_KEY,
+)
+from scripts.syntax_obligations.exceptions import ObligationError
+from scripts.syntax_obligations.models import Draft, FormStyle, Node, Rendered
+from scripts.syntax_obligations.types import Row
+
+
+def digest(data: str) -> str:
+    """The SHA-256 hex digest of a text."""
+    return hashlib.sha256(data.encode()).hexdigest()
+
+
+def canonical(value: object) -> str:
+    """Compact, key-sorted JSON."""
+    return json.dumps(value, sort_keys=True, separators=(",", ":"), ensure_ascii=False)
+
+
+def style_of(*, family: str, form: str) -> FormStyle:
+    """The longest matching form-id prefix style of the family."""
+    styles: dict[str, FormStyle] = FAMILY_STYLES[family]
+    best: str = max((prefix for prefix in styles if form.startswith(prefix)), key=len)
+    return styles[best]
+
+
+def family_cases(*, root: Path, family: str) -> tuple[list[Row], dict[str, set[str]]]:
+    """Cases with the obligations each satisfies, and every obligation's expected outcomes."""
+    numbered, trees = family_obligations(root=root, family=family)
+    by_sql: dict[str, tuple[str, Rendered, list[str]]] = {}
+    expected: dict[str, set[str]] = {}
+    conflicts: list[str] = []
+    for identifier, draft in numbered:
+        found: list[Rendered] = _rendered(draft=draft, trees=trees, family=family)
+        if not found:
+            raise ObligationError(f"{identifier}: no case could be rendered")
+        for rendered in found:
+            expected.setdefault(identifier, set()).add(rendered.expect)
+            form, earlier, cited = by_sql.setdefault(rendered.sql, (draft.form, rendered, []))
+            if (earlier.expect, earlier.stage) != (rendered.expect, rendered.stage):
+                conflicts.append(
+                    f"{identifier} expects {rendered.expect} {rendered.stage} where "
+                    f"{cited[0]} expects {earlier.expect} {earlier.stage}: {rendered.sql}"
+                )
+            cited.append(identifier)
+    if conflicts:
+        raise ObligationError("one SQL text with two expectations:\n" + "\n".join(conflicts))
+    session_sha: str = digest(canonical(LANE_A_BLOCK_SESSION))
+    setup_sha: str = digest(canonical([]))
+    cases: list[Row] = []
+    for sql, (form, rendered, obligations) in by_sql.items():
+        sha: str = digest(sql)
+        case: Row = {
+            "case_id": f"{form}.k{sha[:DIGEST_WIDTH]}",
+            "obligations": sorted(set(obligations)),
+            "sql": sql,
+            "sql_sha256": sha,
+            "setup": [],
+            "setup_sha256": setup_sha,
+            "session": LANE_A_BLOCK_SESSION,
+            "session_sha256": session_sha,
+            "capture": CASE_CAPTURE,
+            "expect": rendered.expect,
+        }
+        if rendered.stage:
+            case[STAGE_KEY] = rendered.stage
+        cases.append(case)
+    return sorted(cases, key=lambda case: case["case_id"]), expected
+
+
+def _rendered(
+    *, draft: Draft, trees: dict[str, list[tuple[Node, ...]]], family: str
+) -> list[Rendered]:
+    if draft.spec is None:
+        return []
+    return submissions(
+        trees=trees[draft.form],
+        style=style_of(family=family, form=draft.form),
+        spec=draft.spec,
+        depths=draft.depths,
+    )
+
+
+def _cited_pairs(case: Row) -> set[tuple[str, str]]:
+    return {(str(o), str(case["expect"])) for o in case["obligations"]}
+
+
+def _reserved_word_expect(sql: str) -> str:
+    """Reserved-word identifier cases: accept the quoted case, reject the unquoted one."""
+    return EXPECT_ACCEPT if DOUBLE_QUOTE in sql else EXPECT_REJECT
+
+
+def merge_mapped(
+    *, cases: list[Row], mapped: Path, expected: dict[str, set[str]]
+) -> tuple[list[Row], list[str]]:
+    """Mapped cases (contradictions reported), then generated cases they do not already cover."""
+    if not mapped.exists():
+        return cases, []
+    kept: list[Row] = []
+    problems: list[str] = []
+    for line in mapped.read_text().splitlines():
+        case: Row = json.loads(line)
+        withdrawn: list[str] = [str(o) for o in case["obligations"] if str(o) not in expected]
+        if withdrawn:
+            problems.append(f"{case['case_id']}: citations of withdrawn {withdrawn} dropped")
+            case["obligations"] = [o for o in case["obligations"] if str(o) in expected]
+        if not case["obligations"]:
+            continue
+        wants: set[str] = set()
+        for obligation in case["obligations"]:
+            single: set[str] = expected.get(str(obligation), set())
+            wants |= single if len(single) == 1 else set()
+        if not wants:
+            wants = {_reserved_word_expect(str(case["sql"]))}
+        if len(wants) != 1:
+            problems.append(f"{case['case_id']}: cites obligations expecting {sorted(wants)}")
+            continue
+        case["expect"] = wants.pop()
+        kept.append(case)
+    covered: set[tuple[str, str]] = set()
+    for case in kept:
+        covered |= _cited_pairs(case)
+    generated: list[Row] = [c for c in cases if not _cited_pairs(c) <= covered]
+    return kept + generated, problems
+
+
+def receipt_phases(directory: Path) -> dict[tuple[str, str], str]:
+    """Phase of each (case_id, sql_sha256) receipt not withdrawn, superseded or of a measure."""
+    gone: set[str] = set()
+    for path in directory.glob("*.report.json"):
+        gone |= {
+            str(x["receipt_sha256"]) for x in json.loads(path.read_text()).get("withdrawn", [])
+        }
+    receipts: list[tuple[str, Row]] = []
+    for path in sorted(directory.glob("*.jsonl")):
+        for line in path.read_text().splitlines():
+            receipt: Row = json.loads(line)
+            gone.add(str(receipt.get("supersedes_receipt_sha256", "")))
+            if MEASURE_KEY not in receipt:
+                receipts.append((digest(line), receipt))
+    return {
+        (str(r["case_id"]), str(r["sql_sha256"])): str(r["phase"])
+        for sha, r in receipts
+        if sha not in gone
+    }
+
+
+def recorded_receipts(directory: Path) -> set[tuple[str, str]]:
+    """Every receipted (case_id, sql_sha256), withdrawn too: recording it again would repeat it."""
+    recorded: set[tuple[str, str]] = set()
+    for path in directory.glob("*.jsonl"):
+        for line in path.read_text().splitlines():
+            receipt: Row = json.loads(line)
+            recorded.add((str(receipt["case_id"]), str(receipt["sql_sha256"])))
+    return recorded
+
+
+def observed_stage(*, case: Row, phase: str | None) -> Row:
+    """Give an accepted case its receipt's later stage, reporting a contradicted declared one."""
+    stage: str | None = STAGE_BY_RECEIPT_PHASE.get(phase or "")
+    if case["expect"] != EXPECT_ACCEPT or stage is None or stage == case.get(STAGE_KEY, ""):
+        return case
+    if STAGE_KEY in case:
+        print(f"stage of {case['case_id']}: declared {case[STAGE_KEY]}, receipt {phase}")
+    if stage:
+        case[STAGE_KEY] = stage
+    else:
+        del case[STAGE_KEY]
+    return case
+
+
+def settled_cases(*, root: Path, family: str, phases: dict[tuple[str, str], str]) -> list[Row]:
+    """The family's merged cases with the stages their receipts show; reports mapped problems."""
+    generated, expected = family_cases(root=root, family=family)
+    cases, problems = merge_mapped(
+        cases=generated, mapped=root / "mapped-cases" / f"{family}.jsonl", expected=expected
+    )
+    for problem in problems:
+        print(f"mapped case left out: {problem}")
+    return [
+        observed_stage(case=case, phase=phases.get((case["case_id"], case["sql_sha256"])))
+        for case in cases
+    ]
+
+
+def jsonl_text(rows: list[Row]) -> str:
+    """Canonical JSON lines."""
+    return "".join(canonical(row) + "\n" for row in rows)
+
+
+def _packet_row(case: Row) -> Row:
+    return {key: case[key] for key in PACKET_KEYS}
+
+
+def packet_text(cases: list[Row]) -> str:
+    """The capture packet lines of the cases: only the fields a capture needs."""
+    return jsonl_text([_packet_row(case) for case in cases])

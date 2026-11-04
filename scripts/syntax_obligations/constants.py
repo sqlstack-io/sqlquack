@@ -4,6 +4,8 @@ from __future__ import annotations
 
 import re
 
+from scripts.syntax_obligations.models import FormStyle
+
 KIND_ALTERNATIVE: str = "alternative"
 KIND_OPTION_PRESENT: str = "option_present"
 KIND_OPTION_ABSENT: str = "option_absent"
@@ -27,6 +29,7 @@ TOKEN_KEYWORD: str = "keyword"
 TOKEN_PUNCT: str = "punct"
 TOKEN_ELISION: str = "elision"
 TOKEN_LITERAL: str = "literal"
+TOKEN_BRACKET: str = "bracket"
 OPEN_OPTIONAL: str = "["
 CLOSE_OPTIONAL: str = "]"
 OPEN_CHOICE: str = "{"
@@ -44,10 +47,11 @@ ID_WIDTH: int = 3
 PAIR_SEPARATOR: str = " & "
 
 IDENTIFIER_ANCHOR: str = "doc.identifiers-syntax"
+IDENTIFIER_RESERVED: str = "reserved"
 IDENTIFIER_CLASSES: tuple[tuple[str, str], ...] = (
     ("quoted", "a double-quoted identifier with blanks and mixed case"),
     (
-        "reserved",
+        IDENTIFIER_RESERVED,
         "a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)",
     ),
 )
@@ -72,10 +76,10 @@ CLASS_RULES: tuple[tuple[re.Pattern[str], str], ...] = (
 )
 DEFAULT_CLASS: str = "operand"
 STRING_CLASS: str = "string_literal"
-# Wrong-class negatives only where the wrong operand is lexically distinct, so the error should be
-# a syntax error (1003) rather than a semantic one (D82). Expression operands get none: nearly any
-# lexical class is an expression.
-WRONG_FILL: dict[str, str] = {
+IDENTIFIER_CLASS: str = "identifier"
+QUERY_CLASS: str = "query"
+STATEMENT_CLASS: str = "statement"
+LEXICALLY_DISTINCT_WRONG_FILL: dict[str, str] = {
     "identifier": "'v1'",
     "integer_literal": "'x'",
     "string_literal": "m1",
@@ -93,7 +97,6 @@ LEXICAL_WRONG: dict[str, str] = {
 }
 SUBGRAMMAR_CLASS: str = "subgrammar"
 
-# Case rendering (D82): fills for placeholders by name, then by operand class.
 STATEMENT_TERMINATOR: str = ";"
 RESERVED_WORD: str = "SELECT"
 CLOSE_REPEAT_AFTER: frozenset[str] = frozenset({"(", ","})
@@ -147,18 +150,15 @@ HAND_CASE_KEYS: tuple[str, ...] = (
     "also_expect",
     "also_stage",
 )
-# Expected outcomes: accept means no syntax error (an accepted, semantic or runtime phase);
-# reject means a syntax error. STAGES name a later error an accepted case is expected to reach.
 EXPECT_ACCEPT: str = "accept"
 EXPECT_REJECT: str = "reject"
-STAGES: frozenset[str] = frozenset({"", "semantic", "runtime", "error"})
+LATER_ERROR_STAGES: frozenset[str] = frozenset({"", "semantic", "runtime", "error"})
 LABEL_SLOT: str = "{label}"
 BUILTIN_NAMES: frozenset[str] = frozenset(
     {"STATEMENT_ERROR", "EXPRESSION_ERROR", "OTHER", "SQLCODE", "SQLERRM", "SQLSTATE"}
 )
 CASE_CAPTURE: str = "execute"
-# The session lane A's anonymous-block runs record (packets 1-5); a receipt binds its hash.
-CASE_SESSION: dict[str, object] = {
+LANE_A_BLOCK_SESSION: dict[str, object] = {
     "ABORT_DETACHED_QUERY": True,
     "STATEMENT_QUEUED_TIMEOUT_IN_SECONDS": 30,
     "STATEMENT_TIMEOUT_IN_SECONDS": 30,
@@ -166,9 +166,118 @@ CASE_SESSION: dict[str, object] = {
     "USE_CACHED_RESULT": False,
 }
 
-# The stage an accepted case reached, by receipt phase; other phases give no stage.
-OBSERVED_STAGE: dict[str, str] = {
+STAGE_BY_RECEIPT_PHASE: dict[str, str] = {
     "accepted": "",
     "semantic_error": "semantic",
     "runtime_error": "runtime",
 }
+
+ACTION_MIN_OPTIONS: str = "min"
+ACTION_ALL_OPTIONS: str = "max"
+ACTION_CHOICE_BRANCH: str = "branch"
+ACTION_DROP_NODE: str = "drop"
+ACTION_REPLACE_NODE: str = "replace"
+ACTION_QUOTE_IDENTIFIERS: str = "quote"
+ACTION_RESERVED_WORD: str = "reserved"
+ACTION_NEST_OPERANDS: str = "nest"
+ACTION_HAND: str = "hand"
+HAND_SQL: str = "sql"
+HAND_ALSO_SQL: str = "also_sql"
+HAND_CORE: str = "core"
+CONTEXT_BLOCK: str = "block"
+CONTEXT_RAW: str = "raw"
+CONTEXT_TOP: str = "top"
+CONTEXT_PROCEDURE: str = "procedure"
+DOUBLE_QUOTE: str = '"'
+SINGLE_CHARACTER_LITERAL_LENGTH: int = 3
+MIN_INTERACTION_OPTIONS: int = 2
+PAIR_SIZE: int = 2
+DIGEST_WIDTH: int = 12
+MEASURE_KEY: str = "measure"
+STAGE_KEY: str = "stage"
+PACKET_KEYS: tuple[str, ...] = ("case_id", "sql", "sql_sha256", "capture", "expect")
+GRAMMAR_DEFINITION: re.Pattern[str] = re.compile(r"^\s*<[^<>]+>\s*::=\s*")
+QUOTED_PLACEHOLDER: re.Pattern[str] = re.compile(r"'<([^<>]+)>'")
+CLOSERS: dict[str, str] = {OPEN_OPTIONAL: CLOSE_OPTIONAL, OPEN_CHOICE: CLOSE_CHOICE}
+
+DECLARE_TAIL: str = " BEGIN RETURN 1 ; END ;"
+BLOCK_OPEN: str = "BEGIN "
+BLOCK_CLOSE: str = " END ;"
+CURSOR: str = "{} CURSOR FOR SELECT 1"
+RESULTSET: str = "{} RESULTSET DEFAULT ( SELECT 1 )"
+ASYNC_RESULTSET: str = "{} RESULTSET DEFAULT ASYNC ( SELECT 1 )"
+EXCEPTION: str = "{} EXCEPTION"
+VARIABLE: str = "{} INT"
+DECLARE_REPEAT: str = (
+    "[ { <variable_declaration> | <cursor_declaration> | <resultset_declaration> | "
+    "<nested_stored_procedure_declaration> | <exception_declaration> } ; ... ]"
+)
+LOOP_STOPS_AT_ONCE: dict[str, str] = {"statement": "BREAK"}
+WHILE_STOPS_AT_ONCE: dict[str, str] = {"condition": "FALSE"}
+OPEN_CURSOR_BEFORE_USE: str = "cursor_name"
+INSIDE_LABELLED_LOOP: FormStyle = FormStyle(
+    prefix="BEGIN FOR i0 IN 1 TO 1 DO ", suffix=" END FOR {label} ; END ;"
+)
+RAISE_INSIDE_HANDLER: FormStyle = FormStyle(
+    prefix=BLOCK_OPEN,
+    suffix=" EXCEPTION WHEN OTHER THEN NULL ; END ;",
+    uses={"exception_name": EXCEPTION},
+)
+SCRIPTING_SELF_DECLARING_BLOCKS: dict[str, FormStyle] = {
+    "sf.scripting.": FormStyle(prefix=BLOCK_OPEN, suffix=BLOCK_CLOSE),
+    "sf.scripting.begin": FormStyle(prefix="", suffix=""),
+    "sf.scripting.declare.": FormStyle(prefix="DECLARE ", suffix=DECLARE_TAIL),
+    "sf.scripting.declare.declare": FormStyle(
+        prefix="", suffix=DECLARE_TAIL, clauses={DECLARE_REPEAT: "v2 INT ;"}
+    ),
+    "sf.scripting.exception": FormStyle(
+        prefix="BEGIN NULL ; ",
+        suffix=BLOCK_CLOSE,
+        fills={"exception_name": "STATEMENT_ERROR"},
+        clauses={"[ WHEN ... ]": "WHEN EXPRESSION_ERROR THEN NULL ;"},
+        uses={"exception_name": EXCEPTION},
+    ),
+    "sf.scripting.case.end": FormStyle(
+        prefix=BLOCK_OPEN, suffix=BLOCK_CLOSE, clauses={"[ WHEN ... ]": "WHEN 2 THEN NULL ;"}
+    ),
+    "sf.scripting.case.end.syntax": FormStyle(
+        prefix=BLOCK_OPEN, suffix=BLOCK_CLOSE, clauses={"[ WHEN ... ]": "WHEN FALSE THEN NULL ;"}
+    ),
+    "sf.scripting.loop": FormStyle(prefix=BLOCK_OPEN, suffix=BLOCK_CLOSE, fills=LOOP_STOPS_AT_ONCE),
+    "sf.scripting.while": FormStyle(
+        prefix=BLOCK_OPEN, suffix=BLOCK_CLOSE, fills=WHILE_STOPS_AT_ONCE
+    ),
+    "sf.scripting.break": INSIDE_LABELLED_LOOP,
+    "sf.scripting.continue": INSIDE_LABELLED_LOOP,
+    "sf.scripting.raise": RAISE_INSIDE_HANDLER,
+    "sf.scripting.open": FormStyle(
+        prefix=BLOCK_OPEN,
+        suffix=BLOCK_CLOSE,
+        uses={"cursor_name": CURSOR, "bind_variable_1": VARIABLE, "bind_variable_2": VARIABLE},
+    ),
+    "sf.scripting.fetch": FormStyle(
+        prefix=BLOCK_OPEN,
+        suffix=BLOCK_CLOSE,
+        uses={"cursor_name": CURSOR, "variable": VARIABLE},
+        opens=OPEN_CURSOR_BEFORE_USE,
+    ),
+    "sf.scripting.close": FormStyle(
+        prefix=BLOCK_OPEN,
+        suffix=BLOCK_CLOSE,
+        uses={"cursor_name": CURSOR},
+        opens=OPEN_CURSOR_BEFORE_USE,
+    ),
+    "sf.scripting.for.do-end-for": FormStyle(
+        prefix=BLOCK_OPEN, suffix=BLOCK_CLOSE, uses={"cursor_name": CURSOR}
+    ),
+    "sf.scripting.await": FormStyle(
+        prefix=BLOCK_OPEN, suffix=BLOCK_CLOSE, uses={"result_set_name": ASYNC_RESULTSET}
+    ),
+    "sf.scripting.cancel": FormStyle(
+        prefix=BLOCK_OPEN, suffix=BLOCK_CLOSE, uses={"result_set_name": ASYNC_RESULTSET}
+    ),
+    "sf.scripting.let.let-cursor-for.cursor-assignment-syntax": FormStyle(
+        prefix=BLOCK_OPEN, suffix=BLOCK_CLOSE, uses={"resultset_name": RESULTSET}
+    ),
+}
+FAMILY_STYLES: dict[str, dict[str, FormStyle]] = {"scripting": SCRIPTING_SELF_DECLARING_BLOCKS}

@@ -1,7 +1,4 @@
-"""Render syntax-coverage cases from the obligations' case specs.
-
-Usage: build_syntax_cases.py [--root coverage/syntax] [--receipts DIR] [--packet FILE] FAMILY ...
-"""
+"""Render syntax-coverage cases from the obligations' case specs."""
 
 from __future__ import annotations
 

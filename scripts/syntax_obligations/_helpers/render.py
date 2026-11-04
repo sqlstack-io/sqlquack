@@ -8,54 +8,44 @@ from dataclasses import dataclass, field
 from scripts.syntax_obligations._helpers.derive import operand_class
 from scripts.syntax_obligations._helpers.grammar import is_repetition, placeholder_name, render
 from scripts.syntax_obligations.constants import (
+    ACTION_ALL_OPTIONS,
+    ACTION_CHOICE_BRANCH,
+    ACTION_DROP_NODE,
+    ACTION_HAND,
+    ACTION_NEST_OPERANDS,
+    ACTION_QUOTE_IDENTIFIERS,
+    ACTION_REPLACE_NODE,
+    ACTION_RESERVED_WORD,
     BUILTIN_NAMES,
     CLASS_FILL,
     CLOSE_REPEAT_AFTER,
+    CONTEXT_BLOCK,
+    CONTEXT_PROCEDURE,
+    CONTEXT_RAW,
+    CONTEXT_TOP,
+    DOUBLE_QUOTE,
     EXPECT_ACCEPT,
     EXPECT_REJECT,
+    HAND_ALSO_SQL,
+    HAND_CORE,
+    HAND_SQL,
+    IDENTIFIER_CLASS,
     LABEL_SLOT,
     NAME_FILL,
     NODE_CHOICE,
     NODE_OPTIONAL,
     PROCEDURE_WRAPPER,
+    QUERY_CLASS,
     RESERVED_WORD,
+    SINGLE_CHARACTER_LITERAL_LENGTH,
+    STATEMENT_CLASS,
     STATEMENT_TERMINATOR,
+    STRING_CLASS,
     TOKEN_ELISION,
     TOKEN_LITERAL,
     TOKEN_PLACEHOLDER,
 )
-from scripts.syntax_obligations.models import Node, Spec
-
-
-@dataclass(frozen=True)
-class FormStyle:
-    """How a family renders one form.
-
-    fills override the default placeholder fills; clauses replace `[ KEYWORD ... ]` repeats;
-    prefix and suffix make the form text a complete submission (a suffix may hold `{label}`,
-    the label the form used, else `default_label`); uses maps a placeholder that names an
-    existing object to the declaration that creates it, so the case is self-contained; opens
-    names the cursor placeholder whose cursors the block opens before the form runs.
-    """
-
-    prefix: str
-    suffix: str
-    fills: dict[str, str] = field(default_factory=dict)
-    clauses: dict[str, str] = field(default_factory=dict)
-    uses: dict[str, str] = field(default_factory=dict)
-    opens: str = ""
-    default_label: str = "l0"
-    terminate: bool = True
-
-
-@dataclass(frozen=True)
-class Rendered:
-    """One submission and its expected outcome: accept (no syntax error) or reject (a syntax
-    error); `stage` names the later error an accepted case is expected to reach, if any."""
-
-    sql: str
-    expect: str
-    stage: str = ""
+from scripts.syntax_obligations.models import FormStyle, Node, Rendered, Spec
 
 
 @dataclass
@@ -70,7 +60,14 @@ class _Choices:
     quote: bool = False
 
 
-class Renderer:
+def submissions(
+    *, trees: list[tuple[Node, ...]], style: FormStyle, spec: Spec, depths: tuple[int, ...]
+) -> list[Rendered]:
+    """The submissions of a case spec of one form; most specs give one, some give several."""
+    return _Renderer(trees=trees, style=style).submissions(spec=spec, depths=depths)
+
+
+class _Renderer:
     """Renders the cases of one form."""
 
     def __init__(self, *, trees: list[tuple[Node, ...]], style: FormStyle) -> None:
@@ -78,32 +75,44 @@ class Renderer:
         self.style: FormStyle = style
         self._used: dict[str, list[str]] = {}
 
-    def submissions(self, spec: Spec, depths: tuple[int, ...] = ()) -> list[Rendered]:
+    def submissions(self, *, spec: Spec, depths: tuple[int, ...] = ()) -> list[Rendered]:
         """The submissions of a case spec; most specs give one, some give several."""
-        if spec.action == "hand":
-            return self._hand(json.loads(spec.payload), spec, depths)
-        if spec.action == "nest":
+        if spec.action == ACTION_HAND:
+            return self._hand(fields=json.loads(spec.payload), spec=spec, depths=depths)
+        if spec.action == ACTION_NEST_OPERANDS:
             return [
                 Rendered(
-                    self.wrap(self.text(spec.production, self._nest_at(spec, depth))),
+                    self.wrap(
+                        self.text(
+                            production=spec.production,
+                            choices=self._nest_at(spec=spec, depth=depth),
+                        )
+                    ),
                     spec.expect,
                     spec.stage,
                 )
                 for depth in depths
             ]
-        if spec.action == "reserved":
+        if spec.action == ACTION_RESERVED_WORD:
             return [
-                Rendered(self.wrap(self.text(spec.production, self._at(spec, word))), expect)
+                Rendered(
+                    self.wrap(
+                        self.text(
+                            production=spec.production, choices=self._at(spec=spec, replace=word)
+                        )
+                    ),
+                    expect,
+                )
                 for word, expect in (
                     (RESERVED_WORD, EXPECT_REJECT),
                     (f'"{RESERVED_WORD}"', EXPECT_ACCEPT),
                 )
             ]
-        text: str = self.text(spec.production, self._choices(spec))
+        text: str = self.text(production=spec.production, choices=self._choices(spec))
         return [Rendered(self.wrap(text), spec.expect, spec.stage)]
 
     def wrap(self, text: str) -> str:
-        """The form text as a complete submission, declaring the objects it names."""
+        """Prefix, opened cursors, text and suffix (`{label}` filled), after the declarations."""
         labels: list[str] = self._used.get("label", [])
         suffix: str = self.style.suffix.replace(
             LABEL_SLOT, labels[0] if labels else self.style.default_label
@@ -121,12 +130,13 @@ class Renderer:
             return f"DECLARE {declarations} {whole.removeprefix('DECLARE ')}"
         return f"DECLARE {declarations} {whole}"
 
-    def text(self, production: int, choices: _Choices) -> str:
+    def text(self, *, production: int, choices: _Choices) -> str:
         """The rendered form text of one production; records the names it fills in."""
         self._used = {}
-        return " ".join(self._sequence(self.trees[production], choices))
+        return " ".join(self._sequence(nodes=self.trees[production], choices=choices))
 
     def _declarations(self) -> str:
+        """Declarations, by `uses`, of the objects the form names, so the case is self-contained."""
         parts: list[str] = []
         seen: set[str] = set()
         for name, template in self.style.uses.items():
@@ -143,32 +153,31 @@ class Renderer:
         return text
 
     def _choices(self, spec: Spec) -> _Choices:
-        choices: _Choices = _Choices(full=spec.action == "max", path=spec.path)
+        choices: _Choices = _Choices(full=spec.action == ACTION_ALL_OPTIONS, path=spec.path)
         choices.branch.update(dict(spec.chosen))
-        if spec.action == "branch":
+        if spec.action == ACTION_CHOICE_BRANCH:
             index: int = int(spec.payload)
             for twin in self._twins(spec):
                 choices.branch.setdefault(twin, index)
             choices.branch[spec.node] = index
             choices.path = spec.path | {spec.node}
-        elif spec.action == "drop":
+        elif spec.action == ACTION_DROP_NODE:
             choices.drop = frozenset({spec.node})
-        elif spec.action == "replace":
+        elif spec.action == ACTION_REPLACE_NODE:
             choices.replace[spec.node] = spec.payload
-        elif spec.action == "quote":
+        elif spec.action == ACTION_QUOTE_IDENTIFIERS:
             choices.quote = True
         return choices
 
     @staticmethod
-    def _at(spec: Spec, replace: str) -> _Choices:
+    def _at(*, spec: Spec, replace: str) -> _Choices:
         return _Choices(path=spec.path, branch=dict(spec.chosen), replace={spec.node: replace})
 
-    def _nest_at(self, spec: Spec, depth: int) -> _Choices:
-        return self._at(spec, self._nest(spec.payload, depth))
+    def _nest_at(self, *, spec: Spec, depth: int) -> _Choices:
+        return self._at(spec=spec, replace=self._nest(label=spec.payload, depth=depth))
 
     def _twins(self, spec: Spec) -> list[int]:
-        """Choices of the same production with as many branches as the chosen one, which a
-        documented pairing (DO ... END FOR, LOOP ... END LOOP) selects together."""
+        """Same-width choices of the production, selected together (DO ... END FOR, LOOP ...)."""
         groups: list[Node] = _groups(self.trees[spec.production])
         width: int = next((len(n.branches) for n in groups if id(n) == spec.node), 0)
         return [
@@ -177,19 +186,24 @@ class Renderer:
             if n.kind == NODE_CHOICE and len(n.branches) == width and id(n) != spec.node
         ]
 
-    def _hand(self, fields: dict[str, str], spec: Spec, depths: tuple[int, ...]) -> list[Rendered]:
+    def _hand(
+        self, *, fields: dict[str, str], spec: Spec, depths: tuple[int, ...]
+    ) -> list[Rendered]:
         expect: str = fields.get("expect", spec.expect)
         stage: str = fields.get("stage", "")
-        if "core" in fields:
-            return [Rendered(self.nested_hand(fields, depth), expect, stage) for depth in depths]
-        context: str = fields.get("context", "block")
+        if HAND_CORE in fields:
+            return [
+                Rendered(self.nested_hand(fields=fields, depth=depth), expect, stage)
+                for depth in depths
+            ]
+        context: str = fields.get("context", CONTEXT_BLOCK)
         texts: list[tuple[str, str, str]] = []
-        if "sql" in fields:
-            texts.append((fields["sql"], expect, stage))
-        if "also_sql" in fields:
+        if HAND_SQL in fields:
+            texts.append((fields[HAND_SQL], expect, stage))
+        if HAND_ALSO_SQL in fields:
             texts.append(
                 (
-                    fields["also_sql"],
+                    fields[HAND_ALSO_SQL],
                     fields.get("also_expect", expect),
                     fields.get("also_stage", ""),
                 )
@@ -197,40 +211,40 @@ class Renderer:
         rendered: list[Rendered] = []
         for text, want, later in texts or [("", expect, stage)]:
             self._used = {}
-            body: str = text or self.text(0, _Choices())
-            if context == "raw":
+            body: str = text or self.text(production=0, choices=_Choices())
+            if context == CONTEXT_RAW:
                 sql: str = body
-            elif context == "top":
+            elif context == CONTEXT_TOP:
                 sql = self._terminated(body)
-            elif context == "procedure":
+            elif context == CONTEXT_PROCEDURE:
                 sql = PROCEDURE_WRAPPER.format(block=self.wrap(body))
             else:
                 sql = self.wrap(body)
             rendered.append(Rendered(sql, want, later))
         return rendered
 
-    def nested_hand(self, fields: dict[str, str], depth: int) -> str:
+    def nested_hand(self, *, fields: dict[str, str], depth: int) -> str:
         """A hand limit nested `depth` levels: outer_open, open*(depth-1), core, closes."""
         self._used = {}
         inner: int = depth - 1
         parts: list[str] = [
             fields["outer_open"],
             *[fields["open"]] * inner,
-            fields["core"],
+            fields[HAND_CORE],
             *[fields["close"]] * inner,
             fields["outer_close"],
         ]
         return self.wrap(" ".join(parts))
 
-    def _nest(self, label: str, depth: int) -> str:
-        """An operand nested `depth` levels; the innermost statement is the form's own fill,
-        so a loop's BREAK still ends it."""
-        if label == "query":
+    def _nest(self, *, label: str, depth: int) -> str:
+        """An operand nested `depth` levels; a statement's innermost is the form's own fill."""
+        if label == QUERY_CLASS:
             return "SELECT * FROM ( " * (depth - 1) + "SELECT 1" + " )" * (depth - 1)
-        core: str = self.style.fills.get("statement", CLASS_FILL["statement"])
+        core: str = self.style.fills.get(STATEMENT_CLASS, CLASS_FILL[STATEMENT_CLASS])
         return "BEGIN " * depth + f"{core} ;" + " END ;" * (depth - 1) + " END"
 
-    def _sequence(self, nodes: tuple[Node, ...], choices: _Choices) -> list[str]:
+    def _sequence(self, *, nodes: tuple[Node, ...], choices: _Choices) -> list[str]:
+        """Rendered tokens; a replaced operand is still declared under its valid name."""
         out: list[str] = []
         for node in nodes:
             key: int = id(node)
@@ -242,19 +256,19 @@ class Renderer:
                 if text in (RESERVED_WORD, f'"{RESERVED_WORD}"'):
                     self._used.setdefault(name, []).append(text)
                 elif name:
-                    # The wrapper declares the object under its valid name, so a negative
-                    # differs from its positive only in the operand under test.
-                    self._token(node, _Choices())
+                    self._token(node=node, choices=_Choices())
                 out.append(text)
             elif node.kind == NODE_OPTIONAL:
-                out += self._optional(node, choices, out)
+                out += self._optional(node=node, choices=choices, before=out)
             elif node.kind == NODE_CHOICE:
-                out += self._sequence(node.branches[choices.branch.get(key, 0)], choices)
+                out += self._sequence(
+                    nodes=node.branches[choices.branch.get(key, 0)], choices=choices
+                )
             elif node.token_kind != TOKEN_ELISION:
-                out.append(self._token(node, choices))
+                out.append(self._token(node=node, choices=choices))
         return out
 
-    def _optional(self, node: Node, choices: _Choices, before: list[str]) -> list[str]:
+    def _optional(self, *, node: Node, choices: _Choices, before: list[str]) -> list[str]:
         key: int = id(node)
         if not (choices.full or key in choices.path):
             return []
@@ -267,20 +281,21 @@ class Renderer:
                 (i for i, text in enumerate(before) if text in CLOSE_REPEAT_AFTER), default=-1
             )
             return [",", *before[start + 1 :]]
-        return self._sequence(branch, choices)
+        return self._sequence(nodes=branch, choices=choices)
 
-    def _token(self, node: Node, choices: _Choices) -> str:
+    def _token(self, *, node: Node, choices: _Choices) -> str:
         name: str = placeholder_name(node)
         if not name:
-            quoted: bool = node.token_kind == TOKEN_LITERAL and len(node.text) == 3
-            return node.text[1] if quoted and node.text[0] == '"' else node.text
+            quoted: bool = (
+                node.token_kind == TOKEN_LITERAL
+                and len(node.text) == SINGLE_CHARACTER_LITERAL_LENGTH
+            )
+            return node.text[1] if quoted and node.text[0] == DOUBLE_QUOTE else node.text
         fill: str = self.style.fills.get(name) or NAME_FILL.get(name) or ""
         label: str = operand_class(name)
         if not fill:
-            fill = CLASS_FILL.get(
-                "string_literal" if node.token_kind == TOKEN_LITERAL else label, "v1"
-            )
-        if choices.quote and label == "identifier" and node.token_kind == TOKEN_PLACEHOLDER:
+            fill = CLASS_FILL.get(STRING_CLASS if node.token_kind == TOKEN_LITERAL else label, "v1")
+        if choices.quote and label == IDENTIFIER_CLASS and node.token_kind == TOKEN_PLACEHOLDER:
             fill = f'"{fill} Q"'
         self._used.setdefault(name, []).append(fill)
         return fill

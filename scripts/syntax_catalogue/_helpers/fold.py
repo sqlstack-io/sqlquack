@@ -5,12 +5,14 @@ from __future__ import annotations
 import tomllib
 from pathlib import Path
 
+from scripts.syntax_catalogue._helpers.toml_out import row_lines
 from scripts.syntax_catalogue.constants import (
     DECISION_RESTATED,
     FOLD_IDENTICAL_REASON,
     KIND_PROSE,
     PAGE_FORMS,
     PAGE_RESTATED,
+    SOURCE_FIELD,
 )
 from scripts.syntax_catalogue.exceptions import CatalogueError
 from scripts.syntax_catalogue.models import Catalogue
@@ -22,14 +24,13 @@ def load_folds(path: Path) -> dict[str, tuple[tuple[str, ...], str]]:
     if not path.exists():
         return {}
     return {
-        str(row["form"]): (tuple(str(target) for target in row["into"]), str(row["reason"]))
+        str(row["form"]): (tuple(map(str, row["into"])), str(row["reason"]))
         for row in tomllib.loads(path.read_text()).get("fold", [])
     }
 
 
 def identical_folds(forms: dict[str, Row]) -> dict[str, tuple[tuple[str, ...], str]]:
-    """Forms whose grammar repeats a form on another page byte for byte, folded into the form on
-    the page with the shortest id (the command's own page before its variant pages)."""
+    """Byte-identical grammar on other pages, folded into the shortest-id page's form."""
     groups: dict[str, list[Row]] = {}
     for form in forms.values():
         if form["kind"] != KIND_PROSE:
@@ -47,13 +48,12 @@ def identical_folds(forms: dict[str, Row]) -> dict[str, tuple[tuple[str, ...], s
 
 
 def fold_restatements(
-    catalogue: Catalogue, hand_folds: dict[str, tuple[tuple[str, ...], str]]
-) -> None:
-    """Remove folded forms, add their pages to the canonical forms' also_sources, and mark pages
-    whose every form was folded as restated."""
-    forms: dict[str, Row] = {
-        str(form["id"]): form for rows in catalogue.forms.values() for form in rows
-    }
+    *, catalogue: Catalogue, hand_folds: dict[str, tuple[tuple[str, ...], str]]
+) -> Catalogue:
+    """Drop folded forms into their canonical forms' also_sources; mark wholly folded pages."""
+    forms: dict[str, Row] = {}
+    for rows in catalogue.forms.values():
+        forms |= {str(form["id"]): form for form in rows}
     folds: dict[str, tuple[tuple[str, ...], str]] = identical_folds(forms)
     for form_id, fold in hand_folds.items():
         if form_id not in forms or not all(target in forms for target in fold[0]):
@@ -69,9 +69,13 @@ def fold_restatements(
     folded_pages: set[str] = {str(forms[form_id]["source"]) for form_id in folds}
     for family, rows in catalogue.forms.items():
         catalogue.forms[family] = [
-            _with_sources(row, extra.get(str(row["id"]))) for row in rows if row["id"] not in folds
+            _with_sources(row=row, extra=extra.get(str(row["id"])))
+            for row in rows
+            if row["id"] not in folds
         ]
-    kept_pages: set[str] = {str(row["source"]) for rows in catalogue.forms.values() for row in rows}
+    kept_pages: set[str] = set()
+    for rows in catalogue.forms.values():
+        kept_pages |= {str(row["source"]) for row in rows}
     for source in catalogue.sources:
         if (
             source["id"] in folded_pages
@@ -83,14 +87,28 @@ def fold_restatements(
             decisions: list[str] = [str(d) for d in earlier] if isinstance(earlier, list) else []
             source["decisions"] = sorted({*decisions, DECISION_RESTATED})
     catalogue.folds.update(folds)
+    return catalogue
 
 
-def _with_sources(row: Row, extra: set[str] | None) -> Row:
+def _with_sources(*, row: Row, extra: set[str] | None) -> Row:
     if not extra:
         return row
     ordered: Row = {}
     for key, value in row.items():
         ordered[key] = value
-        if key == "source":
+        if key == SOURCE_FIELD:
             ordered["also_sources"] = sorted(extra - {value})
     return ordered
+
+
+def add_fold_aliases(*, path: Path, folds: dict[str, tuple[tuple[str, ...], str]]) -> None:
+    """Append an alias for every folded catalogue form that aliases.toml does not list yet."""
+    text: str = path.read_text() if path.exists() else ""
+    listed: set[str] = {str(row["from"]) for row in tomllib.loads(text).get("alias", [])}
+    lines: list[str] = []
+    for form_id, (targets, reason) in sorted(folds.items()):
+        if form_id not in listed:
+            row: dict[str, object] = {"from": form_id, "to": list(targets), "reason": reason}
+            lines += row_lines(table="alias", row=row)
+    if lines:
+        path.write_text(text.rstrip("\n") + "\n\n" + "\n".join(lines))

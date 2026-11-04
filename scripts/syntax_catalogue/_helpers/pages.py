@@ -82,7 +82,7 @@ def headings_without_block(heading_has_block: dict[tuple[str, ...], bool]) -> li
     return missing
 
 
-def in_form_section(heading: tuple[str, ...], *, syntax_sections_only: bool) -> bool:
+def in_form_section(*, heading: tuple[str, ...], syntax_sections_only: bool) -> bool:
     """True when a block under this heading documents a form rather than a fragment."""
     if any(NON_FORM_SECTIONS.match(h) for h in heading[1:]):
         return False
@@ -98,7 +98,7 @@ def is_non_grammar(text: str) -> bool:
 
 
 def block_productions(
-    block: Block, *, leading_words: set[str] | None, form_section: bool
+    *, block: Block, leading_words: set[str] | None, form_section: bool
 ) -> list[Production]:
     """Classify one block's chunks; a chunk that starts no statement continues the one before."""
     pending: list[tuple[str, list[str], str]] = []
@@ -121,13 +121,15 @@ def block_productions(
 
 
 def productions(
-    page: Page, *, leading_words: set[str] | None, syntax_sections_only: bool
+    *, page: Page, leading_words: set[str] | None, syntax_sections_only: bool
 ) -> list[Production]:
     """Classify each production of each block as a definition, statement or fragment."""
     result: list[Production] = []
     for block in page.blocks:
-        section: bool = in_form_section(block.heading, syntax_sections_only=syntax_sections_only)
-        result += block_productions(block, leading_words=leading_words, form_section=section)
+        section: bool = in_form_section(
+            heading=block.heading, syntax_sections_only=syntax_sections_only
+        )
+        result += block_productions(block=block, leading_words=leading_words, form_section=section)
     return result
 
 

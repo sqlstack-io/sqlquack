@@ -4,4 +4,5 @@ from __future__ import annotations
 
 from typing import Any
 
-Row = dict[str, Any]
+type Row = dict[str, Any]
+type Key = tuple[str, str, str, str, str]
