@@ -91,6 +91,12 @@ impl Parser {
             return self.parse_snowflake_explain_using(leading_comments);
         }
 
+        if !is_explain && self.is_snowflake() {
+            if let Some(describe) = self.parse_snowflake_describe(&leading_comments)? {
+                return Ok(describe);
+            }
+        }
+
         let analyze_option: bool = is_explain && self.parse_postgres_explain_options()?;
 
         let extended = self.match_identifier("EXTENDED");
@@ -131,7 +137,10 @@ impl Parser {
 
         if properties.is_empty() {
             while !self.is_at_end() && !self.check(TokenType::Semicolon) {
-                if self.check(TokenType::Var) || self.check(TokenType::Type) || self.check_keyword()
+                if (self.check(TokenType::Var)
+                    || self.check(TokenType::Type)
+                    || self.check_keyword())
+                    && self.peek_nth(1).map(|token| token.token_type) == Some(TokenType::Eq)
                 {
                     let name = self.advance_text()?.to_lowercase();
                     if self.match_token(TokenType::Eq) {
@@ -253,6 +262,9 @@ impl Parser {
                         let mut parts: Vec<String> = Vec::new();
                         let mut paren_depth = 0usize;
                         while !self.is_at_end() {
+                            if self.is_snowflake() && self.check(TokenType::String) {
+                                return Err(self.parse_error("Expected an argument data type"));
+                            }
                             if self.check(TokenType::LParen) {
                                 paren_depth += 1;
                                 parts.push(self.advance_text()?);

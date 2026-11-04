@@ -1474,3 +1474,126 @@ fn given_a_snowflake_alter_of_an_application_database_or_service_kind_when_parsi
         );
     }
 }
+
+#[test]
+fn given_a_snowflake_describe_when_parsing_then_it_needs_a_kind_and_a_name() {
+    let test_cases = [
+        AcceptanceTestCase {
+            description: "a two-word kind is read whole (recorded semantic error)",
+            sql: "DESC COMPUTE POOL v1 ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "half a kind is no kind (recorded errno 1003)",
+            sql: "DESC POOL v1 ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "a kind needs its name (recorded errno 1003)",
+            sql: "DESC FILE FORMAT ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "a bare name is no kind (recorded errno 1003)",
+            sql: "DESC v1 ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "a word after the name is refused, not dropped",
+            sql: "DESC TABLE v1 v2 ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "an argument type is no string (recorded errno 1003)",
+            sql: "DESC FUNCTION v1 ( 'INT' ) ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "AS RESOURCE comes before AGENT only",
+            sql: "DESC AS RESOURCE STAGE v1 ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "a transaction is described by its number (recorded errno 1003 without)",
+            sql: "DESC TRANSACTION v1 ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+    ];
+
+    for test_case in test_cases {
+        assert_eq!(
+            accepted(test_case.sql, test_case.dialect),
+            test_case.expected_accepted,
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_a_snowflake_describe_when_parsing_then_the_tree_keeps_its_kind_name_and_options() {
+    let test_cases = [
+        ProjectionTestCase {
+            description: "a one-word kind keeps the name after it",
+            sql: "DESC WAREHOUSE v1",
+            pointer: "/0/describe/target/table/name/name",
+            expected_value: json!("v1"),
+        },
+        ProjectionTestCase {
+            description: "DATABASE is the kind, not the name",
+            sql: "DESCRIBE DATABASE v1",
+            pointer: "/0/describe/kind",
+            expected_value: json!("DATABASE"),
+        },
+        ProjectionTestCase {
+            description: "a three-word kind is named whole",
+            sql: "DESC CORTEX SEARCH SERVICE v1",
+            pointer: "/0/describe/kind",
+            expected_value: json!("CORTEX SEARCH SERVICE"),
+        },
+        ProjectionTestCase {
+            description: "AS RESOURCE is kept",
+            sql: "DESC AS RESOURCE AGENT v1",
+            pointer: "/0/describe/style",
+            expected_value: json!("AS RESOURCE"),
+        },
+        ProjectionTestCase {
+            description: "the application keeps its quoting",
+            sql: "DESC CONFIGURATION v1 IN APPLICATION \"a b\".v2",
+            pointer: "/0/describe/properties/0",
+            expected_value: json!(["in_application", "\"a b\".v2"]),
+        },
+        ProjectionTestCase {
+            description: "a listing revision is kept",
+            sql: "DESC LISTING v1 REVISION = DRAFT",
+            pointer: "/0/describe/properties/0",
+            expected_value: json!(["revision", "DRAFT"]),
+        },
+        ProjectionTestCase {
+            description: "a transaction number is the target",
+            sql: "DESC TRANSACTION 12",
+            pointer: "/0/describe/target/literal/value",
+            expected_value: json!("12"),
+        },
+    ];
+
+    for test_case in test_cases {
+        assert_eq!(
+            statements(test_case.sql, Dialect::Snowflake, CallMode::Faithful)
+                .pointer(test_case.pointer)
+                .cloned()
+                .unwrap_or_default(),
+            test_case.expected_value,
+            "{}",
+            test_case.description
+        );
+    }
+}
