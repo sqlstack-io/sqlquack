@@ -971,6 +971,12 @@ impl Parser {
     }
 
     fn parse_alter_add_partition(&mut self) -> Result<AlterTableAction> {
+        if matches!(
+            self.config.dialect,
+            Some(crate::tokens::models::DialectType::Snowflake)
+        ) {
+            return Err(self.parse_error("Snowflake adds partitions to external tables only"));
+        }
         self.skip();
         self.expect_token(TokenType::LParen)?;
         let mut partition_exprs: Vec<Expression> = Vec::new();
