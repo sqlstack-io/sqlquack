@@ -257,7 +257,7 @@ fn given_a_bare_trailing_limit_when_parsing_then_only_snowflake_accepts_it() {
             expected_accepted: true,
         },
         AcceptanceTestCase {
-            description: "Snowflake rejects LIMIT with no count before OFFSET (recorded errno 1003)",
+            description: "Snowflake rejects LIMIT OFFSET 1 (recorded errno 1003)",
             sql: "WITH t AS (SELECT 1 AS a) SELECT a FROM t LIMIT OFFSET 1",
             dialect: Dialect::Snowflake,
             expected_accepted: false,

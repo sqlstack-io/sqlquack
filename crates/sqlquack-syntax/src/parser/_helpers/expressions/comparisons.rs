@@ -1537,7 +1537,6 @@ impl Parser {
     #[inline(never)]
     pub(crate) fn parse_power_tail(&mut self, mut left: Expression) -> Result<Expression> {
         loop {
-            // Snowflake has no `**` operator: `SELECT 3 ** 5` is a 1003 syntax error there.
             if !matches!(
                 self.config.dialect,
                 Some(crate::tokens::models::DialectType::Snowflake)

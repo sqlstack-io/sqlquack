@@ -510,7 +510,6 @@ impl Parser {
 
     /// Parse a LIMIT count without mistaking a trailing percent sign for modulo.
     pub(crate) fn parse_limit_value(&mut self) -> Result<(Expression, bool)> {
-        // Snowflake accepts a bare `LIMIT` that ends the statement; like `LIMIT NULL`, it means no limit.
         if matches!(
             self.config.dialect,
             Some(crate::tokens::models::DialectType::Snowflake)
