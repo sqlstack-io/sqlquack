@@ -5743,13 +5743,6 @@ required = true
 target = "[ IF EXISTS ]"
 
 [[obligation]]
-id = "sf.security_admin.alter-aggregation-policy.set-comment.o004"
-kind = "required_operand_missing"
-required = true
-target = "<name>"
-note = "omit <name>"
-
-[[obligation]]
 id = "sf.security_admin.alter-aggregation-policy.set-comment.o005"
 kind = "operand_type_class"
 required = true
@@ -5831,6 +5824,14 @@ anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
+id = "sf.security_admin.alter-aggregation-policy.set-comment.o017"
+kind = "required_operand_missing"
+required = true
+target = "<name>"
+anchor = "doc.sql.alter-aggregation-policy / Syntax"
+note = "omit <name>, observed"
+
+[[obligation]]
 id = "sf.security_admin.alter-aggregation-policy.set-tag.o001"
 kind = "positive"
 required = true
@@ -5856,13 +5857,6 @@ kind = "negative_neighbour"
 required = true
 target = "<name>"
 note = "a string literal in place of <name>"
-
-[[obligation]]
-id = "sf.security_admin.alter-aggregation-policy.set-tag.o005"
-kind = "required_operand_missing"
-required = true
-target = "<tag_name>"
-note = "omit <tag_name>"
 
 [[obligation]]
 id = "sf.security_admin.alter-aggregation-policy.set-tag.o006"
@@ -5931,12 +5925,6 @@ required = true
 note = "the form without its required SET"
 
 [[obligation]]
-id = "sf.security_admin.alter-aggregation-policy.set-tag.o016"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required TAG"
-
-[[obligation]]
 id = "sf.security_admin.alter-aggregation-policy.set-tag.o017"
 kind = "identifier_class"
 required = true
@@ -5993,6 +5981,21 @@ anchor = "doc.sql.alter-aggregation-policy / Parameters"
 note = "a tag value of 257 characters against the documented maximum of 256"
 
 [[obligation]]
+id = "sf.security_admin.alter-aggregation-policy.set-tag.o024"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.alter-aggregation-policy / Syntax"
+note = "the form without its required TAG, observed"
+
+[[obligation]]
+id = "sf.security_admin.alter-aggregation-policy.set-tag.o025"
+kind = "required_operand_missing"
+required = true
+target = "<tag_name>"
+anchor = "doc.sql.alter-aggregation-policy / Syntax"
+note = "omit <tag_name>, observed"
+
+[[obligation]]
 id = "sf.security_admin.alter-aggregation-policy.unset-comment.o001"
 kind = "positive"
 required = true
@@ -6009,13 +6012,6 @@ id = "sf.security_admin.alter-aggregation-policy.unset-comment.o003"
 kind = "option_absent"
 required = true
 target = "[ IF EXISTS ]"
-
-[[obligation]]
-id = "sf.security_admin.alter-aggregation-policy.unset-comment.o004"
-kind = "required_operand_missing"
-required = true
-target = "<name>"
-note = "omit <name>"
 
 [[obligation]]
 id = "sf.security_admin.alter-aggregation-policy.unset-comment.o005"
@@ -6078,6 +6074,14 @@ anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
+id = "sf.security_admin.alter-aggregation-policy.unset-comment.o014"
+kind = "required_operand_missing"
+required = true
+target = "<name>"
+anchor = "doc.sql.alter-aggregation-policy / Syntax"
+note = "omit <name>, observed"
+
+[[obligation]]
 id = "sf.security_admin.alter-aggregation-policy.unset-tag.o001"
 kind = "positive"
 required = true
@@ -6103,13 +6107,6 @@ kind = "negative_neighbour"
 required = true
 target = "<name>"
 note = "a string literal in place of <name>"
-
-[[obligation]]
-id = "sf.security_admin.alter-aggregation-policy.unset-tag.o005"
-kind = "required_operand_missing"
-required = true
-target = "<tag_name>"
-note = "omit <tag_name>"
 
 [[obligation]]
 id = "sf.security_admin.alter-aggregation-policy.unset-tag.o006"
@@ -6157,12 +6154,6 @@ required = true
 note = "the form without its required UNSET"
 
 [[obligation]]
-id = "sf.security_admin.alter-aggregation-policy.unset-tag.o013"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required TAG"
-
-[[obligation]]
 id = "sf.security_admin.alter-aggregation-policy.unset-tag.o014"
 kind = "identifier_class"
 required = true
@@ -6193,6 +6184,21 @@ required = true
 target = "<tag_name>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.security_admin.alter-aggregation-policy.unset-tag.o018"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.alter-aggregation-policy / Syntax"
+note = "the form without its required TAG, observed"
+
+[[obligation]]
+id = "sf.security_admin.alter-aggregation-policy.unset-tag.o019"
+kind = "required_operand_missing"
+required = true
+target = "<tag_name>"
+anchor = "doc.sql.alter-aggregation-policy / Syntax"
+note = "omit <tag_name>, observed"
 
 [[obligation]]
 id = "sf.security_admin.alter-api-integration.set.o001"
@@ -6479,13 +6485,6 @@ target = "<secret_name> in [ ALLOWED_AUTHENTICATION_SECRETS = { ( <secret_name> 
 note = "a valid identifier"
 
 [[obligation]]
-id = "sf.security_admin.alter-api-integration.set.o045"
-kind = "negative_neighbour"
-required = true
-target = "<secret_name> in [ ALLOWED_AUTHENTICATION_SECRETS = { ( <secret_name> [ , <secret_name> , ... ] ) | all | none } ]"
-note = "a string literal in place of <secret_name>"
-
-[[obligation]]
 id = "sf.security_admin.alter-api-integration.set.o046"
 kind = "option_present"
 required = true
@@ -6644,6 +6643,14 @@ anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
+id = "sf.security_admin.alter-api-integration.set.o070"
+kind = "negative_neighbour"
+required = true
+target = "<secret_name> in [ ALLOWED_AUTHENTICATION_SECRETS = { ( <secret_name> [ , <secret_name> , ... ] ) | all | none } ]"
+anchor = "doc.sql.alter-api-integration / Syntax"
+note = "a string literal in place of <secret_name>, observed"
+
+[[obligation]]
 id = "sf.security_admin.alter-api-integration.set-tag.o001"
 kind = "positive"
 required = true
@@ -6681,13 +6688,6 @@ kind = "negative_neighbour"
 required = true
 target = "<name>"
 note = "a string literal in place of <name>"
-
-[[obligation]]
-id = "sf.security_admin.alter-api-integration.set-tag.o007"
-kind = "required_operand_missing"
-required = true
-target = "<tag_name>"
-note = "omit <tag_name>"
 
 [[obligation]]
 id = "sf.security_admin.alter-api-integration.set-tag.o008"
@@ -6750,12 +6750,6 @@ required = true
 note = "the form without its required SET"
 
 [[obligation]]
-id = "sf.security_admin.alter-api-integration.set-tag.o017"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required TAG"
-
-[[obligation]]
 id = "sf.security_admin.alter-api-integration.set-tag.o018"
 kind = "identifier_class"
 required = true
@@ -6812,6 +6806,21 @@ anchor = "doc.sql.alter-api-integration / Parameters"
 note = "a tag value of 257 characters against the documented maximum of 256"
 
 [[obligation]]
+id = "sf.security_admin.alter-api-integration.set-tag.o025"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.alter-api-integration / Syntax"
+note = "the form without its required TAG, observed"
+
+[[obligation]]
+id = "sf.security_admin.alter-api-integration.set-tag.o026"
+kind = "required_operand_missing"
+required = true
+target = "<tag_name>"
+anchor = "doc.sql.alter-api-integration / Syntax"
+note = "omit <tag_name>, observed"
+
+[[obligation]]
 id = "sf.security_admin.alter-api-integration.unset-api-key-enabled-api-blocked-prefixes.o001"
 kind = "positive"
 required = true
@@ -6840,13 +6849,6 @@ id = "sf.security_admin.alter-api-integration.unset-api-key-enabled-api-blocked-
 kind = "option_absent"
 required = true
 target = "[ IF EXISTS ]"
-
-[[obligation]]
-id = "sf.security_admin.alter-api-integration.unset-api-key-enabled-api-blocked-prefixes.o006"
-kind = "required_operand_missing"
-required = true
-target = "<name>"
-note = "omit <name>"
 
 [[obligation]]
 id = "sf.security_admin.alter-api-integration.unset-api-key-enabled-api-blocked-prefixes.o007"
@@ -6946,6 +6948,14 @@ anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
+id = "sf.security_admin.alter-api-integration.unset-api-key-enabled-api-blocked-prefixes.o022"
+kind = "required_operand_missing"
+required = true
+target = "<name>"
+anchor = "doc.sql.alter-api-integration / Syntax"
+note = "omit <name>, observed"
+
+[[obligation]]
 id = "sf.security_admin.alter-api-integration.unset-tag.o001"
 kind = "positive"
 required = true
@@ -6983,13 +6993,6 @@ kind = "negative_neighbour"
 required = true
 target = "<name>"
 note = "a string literal in place of <name>"
-
-[[obligation]]
-id = "sf.security_admin.alter-api-integration.unset-tag.o007"
-kind = "required_operand_missing"
-required = true
-target = "<tag_name>"
-note = "omit <tag_name>"
 
 [[obligation]]
 id = "sf.security_admin.alter-api-integration.unset-tag.o008"
@@ -7031,12 +7034,6 @@ required = true
 note = "the form without its required UNSET"
 
 [[obligation]]
-id = "sf.security_admin.alter-api-integration.unset-tag.o014"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required TAG"
-
-[[obligation]]
 id = "sf.security_admin.alter-api-integration.unset-tag.o015"
 kind = "identifier_class"
 required = true
@@ -7069,6 +7066,21 @@ anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
+id = "sf.security_admin.alter-api-integration.unset-tag.o019"
+kind = "required_operand_missing"
+required = true
+target = "<tag_name>"
+anchor = "doc.sql.alter-api-integration / Syntax"
+note = "omit <tag_name>, observed"
+
+[[obligation]]
+id = "sf.security_admin.alter-api-integration.unset-tag.o020"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.alter-api-integration / Syntax"
+note = "the form without its required TAG, observed"
+
+[[obligation]]
 id = "sf.security_admin.alter-application-role.rename-to.o001"
 kind = "positive"
 required = true
@@ -7085,13 +7097,6 @@ id = "sf.security_admin.alter-application-role.rename-to.o003"
 kind = "option_absent"
 required = true
 target = "[ IF EXISTS ]"
-
-[[obligation]]
-id = "sf.security_admin.alter-application-role.rename-to.o004"
-kind = "required_operand_missing"
-required = true
-target = "<name>"
-note = "omit <name>"
 
 [[obligation]]
 id = "sf.security_admin.alter-application-role.rename-to.o005"
@@ -7186,6 +7191,14 @@ anchor = "doc.sql.alter-application-role / Syntax"
 note = "the form without its required ROLE, observed"
 
 [[obligation]]
+id = "sf.security_admin.alter-application-role.rename-to.o035"
+kind = "required_operand_missing"
+required = true
+target = "<name>"
+anchor = "doc.sql.alter-application-role / Syntax"
+note = "omit <name>, observed"
+
+[[obligation]]
 id = "sf.security_admin.alter-application-role.set-comment.o001"
 kind = "positive"
 required = true
@@ -7202,13 +7215,6 @@ id = "sf.security_admin.alter-application-role.set-comment.o003"
 kind = "option_absent"
 required = true
 target = "[ IF EXISTS ]"
-
-[[obligation]]
-id = "sf.security_admin.alter-application-role.set-comment.o004"
-kind = "required_operand_missing"
-required = true
-target = "<name>"
-note = "omit <name>"
 
 [[obligation]]
 id = "sf.security_admin.alter-application-role.set-comment.o005"
@@ -7246,12 +7252,6 @@ target = "'<string_literal>'"
 note = "an unquoted identifier in place of '<string_literal>'"
 
 [[obligation]]
-id = "sf.security_admin.alter-application-role.set-comment.o010"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ROLE"
-
-[[obligation]]
 id = "sf.security_admin.alter-application-role.set-comment.o011"
 kind = "negative_neighbour"
 required = true
@@ -7286,6 +7286,21 @@ anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
+id = "sf.security_admin.alter-application-role.set-comment.o016"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.alter-application-role / Syntax"
+note = "the form without its required ROLE, observed"
+
+[[obligation]]
+id = "sf.security_admin.alter-application-role.set-comment.o017"
+kind = "required_operand_missing"
+required = true
+target = "<name>"
+anchor = "doc.sql.alter-application-role / Syntax"
+note = "omit <name>, observed"
+
+[[obligation]]
 id = "sf.security_admin.alter-application-role.unset-comment.o001"
 kind = "positive"
 required = true
@@ -7302,13 +7317,6 @@ id = "sf.security_admin.alter-application-role.unset-comment.o003"
 kind = "option_absent"
 required = true
 target = "[ IF EXISTS ]"
-
-[[obligation]]
-id = "sf.security_admin.alter-application-role.unset-comment.o004"
-kind = "required_operand_missing"
-required = true
-target = "<name>"
-note = "omit <name>"
 
 [[obligation]]
 id = "sf.security_admin.alter-application-role.unset-comment.o005"
@@ -7357,6 +7365,14 @@ required = true
 target = "<name>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.security_admin.alter-application-role.unset-comment.o013"
+kind = "required_operand_missing"
+required = true
+target = "<name>"
+anchor = "doc.sql.alter-application-role / Syntax"
+note = "omit <name>, observed"
 
 [[obligation]]
 id = "sf.security_admin.alter-authentication-policy.rename-to.o001"
@@ -7618,13 +7634,6 @@ kind = "operand_type_class"
 required = true
 target = "<client_type> in [ CLIENT_POLICY = ( <client_type> = ( MINIMUM_VERSION = '<version>' ) [ , ... ] ) ]"
 note = "a valid data_type"
-
-[[obligation]]
-id = "sf.security_admin.alter-authentication-policy.set.o025"
-kind = "negative_neighbour"
-required = true
-target = "<client_type> in [ CLIENT_POLICY = ( <client_type> = ( MINIMUM_VERSION = '<version>' ) [ , ... ] ) ]"
-note = "a string literal in place of <client_type>"
 
 [[obligation]]
 id = "sf.security_admin.alter-authentication-policy.set.o026"
@@ -7990,16 +7999,18 @@ anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
+id = "sf.security_admin.alter-authentication-policy.set.o083"
+kind = "negative_neighbour"
+required = true
+target = "<client_type> in [ CLIENT_POLICY = ( <client_type> = ( MINIMUM_VERSION = '<version>' ) [ , ... ] ) ]"
+anchor = "doc.sql.alter-authentication-policy / Syntax"
+note = "a string literal in place of <client_type>, observed"
+
+[[obligation]]
 id = "sf.security_admin.alter-authentication-policy.unset.o001"
 kind = "positive"
 required = true
 note = "the documented form with every required part and no optional part"
-
-[[obligation]]
-id = "sf.security_admin.alter-authentication-policy.unset.o002"
-kind = "option_present"
-required = true
-target = "[ IF EXISTS ]"
 
 [[obligation]]
 id = "sf.security_admin.alter-authentication-policy.unset.o003"
@@ -8029,22 +8040,10 @@ target = "<name>"
 note = "a string literal in place of <name>"
 
 [[obligation]]
-id = "sf.security_admin.alter-authentication-policy.unset.o007"
-kind = "option_present"
-required = true
-target = "[ AUTHENTICATION_METHODS ]"
-
-[[obligation]]
 id = "sf.security_admin.alter-authentication-policy.unset.o008"
 kind = "option_absent"
 required = true
 target = "[ AUTHENTICATION_METHODS ]"
-
-[[obligation]]
-id = "sf.security_admin.alter-authentication-policy.unset.o009"
-kind = "option_present"
-required = true
-target = "[ CLIENT_TYPES ]"
 
 [[obligation]]
 id = "sf.security_admin.alter-authentication-policy.unset.o010"
@@ -8053,22 +8052,10 @@ required = true
 target = "[ CLIENT_TYPES ]"
 
 [[obligation]]
-id = "sf.security_admin.alter-authentication-policy.unset.o011"
-kind = "option_present"
-required = true
-target = "[ CLIENT_POLICY ]"
-
-[[obligation]]
 id = "sf.security_admin.alter-authentication-policy.unset.o012"
 kind = "option_absent"
 required = true
 target = "[ CLIENT_POLICY ]"
-
-[[obligation]]
-id = "sf.security_admin.alter-authentication-policy.unset.o013"
-kind = "option_present"
-required = true
-target = "[ SECURITY_INTEGRATIONS ]"
 
 [[obligation]]
 id = "sf.security_admin.alter-authentication-policy.unset.o014"
@@ -8077,22 +8064,10 @@ required = true
 target = "[ SECURITY_INTEGRATIONS ]"
 
 [[obligation]]
-id = "sf.security_admin.alter-authentication-policy.unset.o015"
-kind = "option_present"
-required = true
-target = "[ MFA_ENROLLMENT ]"
-
-[[obligation]]
 id = "sf.security_admin.alter-authentication-policy.unset.o016"
 kind = "option_absent"
 required = true
 target = "[ MFA_ENROLLMENT ]"
-
-[[obligation]]
-id = "sf.security_admin.alter-authentication-policy.unset.o017"
-kind = "option_present"
-required = true
-target = "[ MFA_POLICY ]"
 
 [[obligation]]
 id = "sf.security_admin.alter-authentication-policy.unset.o018"
@@ -8101,34 +8076,16 @@ required = true
 target = "[ MFA_POLICY ]"
 
 [[obligation]]
-id = "sf.security_admin.alter-authentication-policy.unset.o019"
-kind = "option_present"
-required = true
-target = "[ PAT_POLICY ]"
-
-[[obligation]]
 id = "sf.security_admin.alter-authentication-policy.unset.o020"
 kind = "option_absent"
 required = true
 target = "[ PAT_POLICY ]"
 
 [[obligation]]
-id = "sf.security_admin.alter-authentication-policy.unset.o021"
-kind = "option_present"
-required = true
-target = "[ WORKLOAD_IDENTITY_POLICY ]"
-
-[[obligation]]
 id = "sf.security_admin.alter-authentication-policy.unset.o022"
 kind = "option_absent"
 required = true
 target = "[ WORKLOAD_IDENTITY_POLICY ]"
-
-[[obligation]]
-id = "sf.security_admin.alter-authentication-policy.unset.o023"
-kind = "option_present"
-required = true
-target = "[ COMMENT ]"
 
 [[obligation]]
 id = "sf.security_admin.alter-authentication-policy.unset.o024"
@@ -8161,12 +8118,6 @@ required = true
 note = "the form without its required UNSET"
 
 [[obligation]]
-id = "sf.security_admin.alter-authentication-policy.unset.o029"
-kind = "interaction_all_options"
-required = true
-note = "every independent option of one production together"
-
-[[obligation]]
 id = "sf.security_admin.alter-authentication-policy.unset.o030"
 kind = "identifier_class"
 required = true
@@ -8181,6 +8132,93 @@ required = true
 target = "<name>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.security_admin.alter-authentication-policy.unset.o032"
+kind = "option_present"
+required = true
+target = "[ IF EXISTS ]"
+anchor = "doc.sql.alter-authentication-policy / Syntax"
+note = "option present [ IF EXISTS ], observed"
+
+[[obligation]]
+id = "sf.security_admin.alter-authentication-policy.unset.o033"
+kind = "option_present"
+required = true
+target = "[ AUTHENTICATION_METHODS ]"
+anchor = "doc.sql.alter-authentication-policy / Syntax"
+note = "option present [ AUTHENTICATION_METHODS ], observed"
+
+[[obligation]]
+id = "sf.security_admin.alter-authentication-policy.unset.o034"
+kind = "option_present"
+required = true
+target = "[ CLIENT_TYPES ]"
+anchor = "doc.sql.alter-authentication-policy / Syntax"
+note = "option present [ CLIENT_TYPES ], observed"
+
+[[obligation]]
+id = "sf.security_admin.alter-authentication-policy.unset.o035"
+kind = "option_present"
+required = true
+target = "[ CLIENT_POLICY ]"
+anchor = "doc.sql.alter-authentication-policy / Syntax"
+note = "option present [ CLIENT_POLICY ], observed"
+
+[[obligation]]
+id = "sf.security_admin.alter-authentication-policy.unset.o036"
+kind = "option_present"
+required = true
+target = "[ SECURITY_INTEGRATIONS ]"
+anchor = "doc.sql.alter-authentication-policy / Syntax"
+note = "option present [ SECURITY_INTEGRATIONS ], observed"
+
+[[obligation]]
+id = "sf.security_admin.alter-authentication-policy.unset.o037"
+kind = "option_present"
+required = true
+target = "[ MFA_ENROLLMENT ]"
+anchor = "doc.sql.alter-authentication-policy / Syntax"
+note = "option present [ MFA_ENROLLMENT ], observed"
+
+[[obligation]]
+id = "sf.security_admin.alter-authentication-policy.unset.o038"
+kind = "option_present"
+required = true
+target = "[ MFA_POLICY ]"
+anchor = "doc.sql.alter-authentication-policy / Syntax"
+note = "option present [ MFA_POLICY ], observed"
+
+[[obligation]]
+id = "sf.security_admin.alter-authentication-policy.unset.o039"
+kind = "option_present"
+required = true
+target = "[ PAT_POLICY ]"
+anchor = "doc.sql.alter-authentication-policy / Syntax"
+note = "option present [ PAT_POLICY ], observed"
+
+[[obligation]]
+id = "sf.security_admin.alter-authentication-policy.unset.o040"
+kind = "option_present"
+required = true
+target = "[ WORKLOAD_IDENTITY_POLICY ]"
+anchor = "doc.sql.alter-authentication-policy / Syntax"
+note = "option present [ WORKLOAD_IDENTITY_POLICY ], observed"
+
+[[obligation]]
+id = "sf.security_admin.alter-authentication-policy.unset.o041"
+kind = "option_present"
+required = true
+target = "[ COMMENT ]"
+anchor = "doc.sql.alter-authentication-policy / Syntax"
+note = "option present [ COMMENT ], observed"
+
+[[obligation]]
+id = "sf.security_admin.alter-authentication-policy.unset.o042"
+kind = "interaction_all_options"
+required = true
+anchor = "doc.sql.alter-authentication-policy / Syntax"
+note = "every independent option of one production together, observed"
 
 [[obligation]]
 id = "sf.security_admin.alter-backup-policy.rename-to.o001"
@@ -8500,13 +8538,6 @@ target = "<name>"
 note = "a string literal in place of <name>"
 
 [[obligation]]
-id = "sf.security_admin.alter-backup-policy.set-tag.o005"
-kind = "required_operand_missing"
-required = true
-target = "<tag_name>"
-note = "omit <tag_name>"
-
-[[obligation]]
 id = "sf.security_admin.alter-backup-policy.set-tag.o006"
 kind = "operand_type_class"
 required = true
@@ -8573,12 +8604,6 @@ required = true
 note = "the form without its required SET"
 
 [[obligation]]
-id = "sf.security_admin.alter-backup-policy.set-tag.o016"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required TAG"
-
-[[obligation]]
 id = "sf.security_admin.alter-backup-policy.set-tag.o017"
 kind = "identifier_class"
 required = true
@@ -8633,6 +8658,21 @@ required = true
 target = "'<tag_value>'"
 anchor = "doc.sql.alter-backup-policy / Parameters"
 note = "a tag value of 257 characters against the documented maximum of 256"
+
+[[obligation]]
+id = "sf.security_admin.alter-backup-policy.set-tag.o024"
+kind = "required_operand_missing"
+required = true
+target = "<tag_name>"
+anchor = "doc.sql.alter-backup-policy / Syntax"
+note = "omit <tag_name>, observed"
+
+[[obligation]]
+id = "sf.security_admin.alter-backup-policy.set-tag.o025"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.alter-backup-policy / Syntax"
+note = "the form without its required TAG, observed"
 
 [[obligation]]
 id = "sf.security_admin.alter-backup-policy.unset-comment-schedule-expire-after-days.o001"
@@ -8747,13 +8787,6 @@ target = "<name>"
 note = "a string literal in place of <name>"
 
 [[obligation]]
-id = "sf.security_admin.alter-backup-policy.unset-tag.o005"
-kind = "required_operand_missing"
-required = true
-target = "<tag_name>"
-note = "omit <tag_name>"
-
-[[obligation]]
 id = "sf.security_admin.alter-backup-policy.unset-tag.o006"
 kind = "operand_type_class"
 required = true
@@ -8799,12 +8832,6 @@ required = true
 note = "the form without its required UNSET"
 
 [[obligation]]
-id = "sf.security_admin.alter-backup-policy.unset-tag.o013"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required TAG"
-
-[[obligation]]
 id = "sf.security_admin.alter-backup-policy.unset-tag.o014"
 kind = "identifier_class"
 required = true
@@ -8837,6 +8864,21 @@ anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
+id = "sf.security_admin.alter-backup-policy.unset-tag.o018"
+kind = "required_operand_missing"
+required = true
+target = "<tag_name>"
+anchor = "doc.sql.alter-backup-policy / Syntax"
+note = "omit <tag_name>, observed"
+
+[[obligation]]
+id = "sf.security_admin.alter-backup-policy.unset-tag.o019"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.alter-backup-policy / Syntax"
+note = "the form without its required TAG, observed"
+
+[[obligation]]
 id = "sf.security_admin.alter-catalog-integration.o001"
 kind = "positive"
 required = true
@@ -8853,13 +8895,6 @@ id = "sf.security_admin.alter-catalog-integration.o003"
 kind = "option_absent"
 required = true
 target = "[ IF EXISTS ]"
-
-[[obligation]]
-id = "sf.security_admin.alter-catalog-integration.o004"
-kind = "required_operand_missing"
-required = true
-target = "<name>"
-note = "omit <name>"
 
 [[obligation]]
 id = "sf.security_admin.alter-catalog-integration.o005"
@@ -9001,12 +9036,6 @@ target = "'<string_literal>' in [ COMMENT = '<string_literal>' ]"
 note = "an unquoted identifier in place of '<string_literal>'"
 
 [[obligation]]
-id = "sf.security_admin.alter-catalog-integration.o026"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required CATALOG"
-
-[[obligation]]
 id = "sf.security_admin.alter-catalog-integration.o027"
 kind = "negative_neighbour"
 required = true
@@ -9069,6 +9098,21 @@ required = true
 target = "<name>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.security_admin.alter-catalog-integration.o037"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.alter-catalog-integration / Syntax"
+note = "the form without its required CATALOG, observed"
+
+[[obligation]]
+id = "sf.security_admin.alter-catalog-integration.o038"
+kind = "required_operand_missing"
+required = true
+target = "<name>"
+anchor = "doc.sql.alter-catalog-integration / Syntax"
+note = "omit <name>, observed"
 
 [[obligation]]
 id = "sf.security_admin.alter-connection.disable-failover.o001"
@@ -9267,12 +9311,6 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "sf.security_admin.alter-connection.enable-failover-to-accounts.o002"
-kind = "option_present"
-required = true
-target = "[ IF EXISTS ]"
-
-[[obligation]]
 id = "sf.security_admin.alter-connection.enable-failover-to-accounts.o003"
 kind = "option_absent"
 required = true
@@ -9342,23 +9380,10 @@ target = "<account_name>"
 note = "a string literal in place of <account_name>"
 
 [[obligation]]
-id = "sf.security_admin.alter-connection.enable-failover-to-accounts.o013"
-kind = "option_present"
-required = true
-target = "[ , <organization_name> . <account_name> ... ]"
-note = "the list continued at least once"
-
-[[obligation]]
 id = "sf.security_admin.alter-connection.enable-failover-to-accounts.o014"
 kind = "option_absent"
 required = true
 target = "[ , <organization_name> . <account_name> ... ]"
-
-[[obligation]]
-id = "sf.security_admin.alter-connection.enable-failover-to-accounts.o015"
-kind = "option_present"
-required = true
-target = "[ IGNORE EDITION CHECK ]"
 
 [[obligation]]
 id = "sf.security_admin.alter-connection.enable-failover-to-accounts.o016"
@@ -9415,12 +9440,6 @@ required = true
 note = "the form without its required CHECK in [ IGNORE EDITION CHECK ]"
 
 [[obligation]]
-id = "sf.security_admin.alter-connection.enable-failover-to-accounts.o025"
-kind = "interaction_all_options"
-required = true
-note = "every independent option of one production together"
-
-[[obligation]]
 id = "sf.security_admin.alter-connection.enable-failover-to-accounts.o026"
 kind = "identifier_class"
 required = true
@@ -9467,6 +9486,37 @@ required = true
 target = "<account_name>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.security_admin.alter-connection.enable-failover-to-accounts.o032"
+kind = "option_present"
+required = true
+target = "[ IF EXISTS ]"
+anchor = "doc.sql.alter-connection / Syntax"
+note = "option present [ IF EXISTS ], observed"
+
+[[obligation]]
+id = "sf.security_admin.alter-connection.enable-failover-to-accounts.o033"
+kind = "option_present"
+required = true
+target = "[ , <organization_name> . <account_name> ... ]"
+anchor = "doc.sql.alter-connection / Syntax"
+note = "the list continued at least once, observed"
+
+[[obligation]]
+id = "sf.security_admin.alter-connection.enable-failover-to-accounts.o034"
+kind = "option_present"
+required = true
+target = "[ IGNORE EDITION CHECK ]"
+anchor = "doc.sql.alter-connection / Syntax"
+note = "option present [ IGNORE EDITION CHECK ], observed"
+
+[[obligation]]
+id = "sf.security_admin.alter-connection.enable-failover-to-accounts.o035"
+kind = "interaction_all_options"
+required = true
+anchor = "doc.sql.alter-connection / Syntax"
+note = "every independent option of one production together, observed"
 
 [[obligation]]
 id = "sf.security_admin.alter-connection.primary.o001"
@@ -9774,13 +9824,6 @@ target = "<rule_name>"
 note = "a valid identifier"
 
 [[obligation]]
-id = "sf.security_admin.alter-data-movement-policy.add-alert-rules.o009"
-kind = "negative_neighbour"
-required = true
-target = "<rule_name>"
-note = "a string literal in place of <rule_name>"
-
-[[obligation]]
 id = "sf.security_admin.alter-data-movement-policy.add-alert-rules.o010"
 kind = "option_present"
 required = true
@@ -9874,6 +9917,14 @@ anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
+id = "sf.security_admin.alter-data-movement-policy.add-alert-rules.o024"
+kind = "negative_neighbour"
+required = true
+target = "<rule_name>"
+anchor = "doc.sql.alter-data-movement-policy / Syntax"
+note = "a string literal in place of <rule_name>, observed"
+
+[[obligation]]
 id = "sf.security_admin.alter-data-movement-policy.add-enforce-rules.o001"
 kind = "positive"
 required = true
@@ -9925,13 +9976,6 @@ kind = "operand_type_class"
 required = true
 target = "<rule_name>"
 note = "a valid identifier"
-
-[[obligation]]
-id = "sf.security_admin.alter-data-movement-policy.add-enforce-rules.o009"
-kind = "negative_neighbour"
-required = true
-target = "<rule_name>"
-note = "a string literal in place of <rule_name>"
 
 [[obligation]]
 id = "sf.security_admin.alter-data-movement-policy.add-enforce-rules.o010"
@@ -10027,6 +10071,14 @@ anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
+id = "sf.security_admin.alter-data-movement-policy.add-enforce-rules.o024"
+kind = "negative_neighbour"
+required = true
+target = "<rule_name>"
+anchor = "doc.sql.alter-data-movement-policy / Syntax"
+note = "a string literal in place of <rule_name>, observed"
+
+[[obligation]]
 id = "sf.security_admin.alter-data-movement-policy.remove-alert-rules.o001"
 kind = "positive"
 required = true
@@ -10078,13 +10130,6 @@ kind = "operand_type_class"
 required = true
 target = "<rule_name>"
 note = "a valid identifier"
-
-[[obligation]]
-id = "sf.security_admin.alter-data-movement-policy.remove-alert-rules.o009"
-kind = "negative_neighbour"
-required = true
-target = "<rule_name>"
-note = "a string literal in place of <rule_name>"
 
 [[obligation]]
 id = "sf.security_admin.alter-data-movement-policy.remove-alert-rules.o010"
@@ -10180,6 +10225,14 @@ anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
+id = "sf.security_admin.alter-data-movement-policy.remove-alert-rules.o024"
+kind = "negative_neighbour"
+required = true
+target = "<rule_name>"
+anchor = "doc.sql.alter-data-movement-policy / Syntax"
+note = "a string literal in place of <rule_name>, observed"
+
+[[obligation]]
 id = "sf.security_admin.alter-data-movement-policy.remove-enforce-rules.o001"
 kind = "positive"
 required = true
@@ -10231,13 +10284,6 @@ kind = "operand_type_class"
 required = true
 target = "<rule_name>"
 note = "a valid identifier"
-
-[[obligation]]
-id = "sf.security_admin.alter-data-movement-policy.remove-enforce-rules.o009"
-kind = "negative_neighbour"
-required = true
-target = "<rule_name>"
-note = "a string literal in place of <rule_name>"
 
 [[obligation]]
 id = "sf.security_admin.alter-data-movement-policy.remove-enforce-rules.o010"
@@ -10331,6 +10377,14 @@ required = true
 target = "<rule_name>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.security_admin.alter-data-movement-policy.remove-enforce-rules.o024"
+kind = "negative_neighbour"
+required = true
+target = "<rule_name>"
+anchor = "doc.sql.alter-data-movement-policy / Syntax"
+note = "a string literal in place of <rule_name>, observed"
 
 [[obligation]]
 id = "sf.security_admin.alter-data-movement-policy.rename-to.o001"
@@ -10514,13 +10568,6 @@ target = "<rule_name>"
 note = "a valid identifier"
 
 [[obligation]]
-id = "sf.security_admin.alter-data-movement-policy.set-alert-rules.o009"
-kind = "negative_neighbour"
-required = true
-target = "<rule_name>"
-note = "a string literal in place of <rule_name>"
-
-[[obligation]]
 id = "sf.security_admin.alter-data-movement-policy.set-alert-rules.o010"
 kind = "option_present"
 required = true
@@ -10612,6 +10659,14 @@ required = true
 target = "<rule_name>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.security_admin.alter-data-movement-policy.set-alert-rules.o024"
+kind = "negative_neighbour"
+required = true
+target = "<rule_name>"
+anchor = "doc.sql.alter-data-movement-policy / Syntax"
+note = "a string literal in place of <rule_name>, observed"
 
 [[obligation]]
 id = "sf.security_admin.alter-data-movement-policy.set-comment.o001"
@@ -21222,13 +21277,6 @@ target = "<name>"
 note = "a string literal in place of <name>"
 
 [[obligation]]
-id = "sf.security_admin.alter-notification-integration-email.set-tag.o007"
-kind = "required_operand_missing"
-required = true
-target = "<tag_name>"
-note = "omit <tag_name>"
-
-[[obligation]]
 id = "sf.security_admin.alter-notification-integration-email.set-tag.o008"
 kind = "operand_type_class"
 required = true
@@ -21289,12 +21337,6 @@ required = true
 note = "the form without its required SET"
 
 [[obligation]]
-id = "sf.security_admin.alter-notification-integration-email.set-tag.o017"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required TAG"
-
-[[obligation]]
 id = "sf.security_admin.alter-notification-integration-email.set-tag.o018"
 kind = "identifier_class"
 required = true
@@ -21349,6 +21391,21 @@ required = true
 target = "'<tag_value>'"
 anchor = "doc.sql.alter-notification-integration-email / Parameters"
 note = "a tag value of 257 characters against the documented maximum of 256"
+
+[[obligation]]
+id = "sf.security_admin.alter-notification-integration-email.set-tag.o025"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.alter-notification-integration-email / Syntax"
+note = "the form without its required TAG, observed"
+
+[[obligation]]
+id = "sf.security_admin.alter-notification-integration-email.set-tag.o026"
+kind = "required_operand_missing"
+required = true
+target = "<tag_name>"
+anchor = "doc.sql.alter-notification-integration-email / Syntax"
+note = "omit <tag_name>, observed"
 
 [[obligation]]
 id = "sf.security_admin.alter-notification-integration-email.unset-enabled-allowed-recipients-default-recipients.o001"
@@ -21517,13 +21574,6 @@ target = "<name>"
 note = "a string literal in place of <name>"
 
 [[obligation]]
-id = "sf.security_admin.alter-notification-integration-email.unset-tag.o007"
-kind = "required_operand_missing"
-required = true
-target = "<tag_name>"
-note = "omit <tag_name>"
-
-[[obligation]]
 id = "sf.security_admin.alter-notification-integration-email.unset-tag.o008"
 kind = "operand_type_class"
 required = true
@@ -21563,12 +21613,6 @@ required = true
 note = "the form without its required UNSET"
 
 [[obligation]]
-id = "sf.security_admin.alter-notification-integration-email.unset-tag.o014"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required TAG"
-
-[[obligation]]
 id = "sf.security_admin.alter-notification-integration-email.unset-tag.o015"
 kind = "identifier_class"
 required = true
@@ -21599,6 +21643,21 @@ required = true
 target = "<tag_name>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.security_admin.alter-notification-integration-email.unset-tag.o019"
+kind = "required_operand_missing"
+required = true
+target = "<tag_name>"
+anchor = "doc.sql.alter-notification-integration-email / Syntax"
+note = "omit <tag_name>, observed"
+
+[[obligation]]
+id = "sf.security_admin.alter-notification-integration-email.unset-tag.o020"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.alter-notification-integration-email / Syntax"
+note = "the form without its required TAG, observed"
 
 [[obligation]]
 id = "sf.security_admin.alter-notification-integration-multi-queue.set-active.o001"
@@ -42369,13 +42428,6 @@ target = "<name>"
 note = "a string literal in place of <name>"
 
 [[obligation]]
-id = "sf.security_admin.alter-security-integration.set-tag.o007"
-kind = "required_operand_missing"
-required = true
-target = "<tag_name>"
-note = "omit <tag_name>"
-
-[[obligation]]
 id = "sf.security_admin.alter-security-integration.set-tag.o008"
 kind = "operand_type_class"
 required = true
@@ -42436,12 +42488,6 @@ required = true
 note = "the form without its required SET"
 
 [[obligation]]
-id = "sf.security_admin.alter-security-integration.set-tag.o017"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required TAG"
-
-[[obligation]]
 id = "sf.security_admin.alter-security-integration.set-tag.o018"
 kind = "identifier_class"
 required = true
@@ -42472,6 +42518,21 @@ required = true
 target = "<tag_name>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.security_admin.alter-security-integration.set-tag.o022"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.alter-security-integration / Syntax"
+note = "the form without its required TAG, observed"
+
+[[obligation]]
+id = "sf.security_admin.alter-security-integration.set-tag.o023"
+kind = "required_operand_missing"
+required = true
+target = "<tag_name>"
+anchor = "doc.sql.alter-security-integration / Syntax"
+note = "omit <tag_name>, observed"
 
 [[obligation]]
 id = "sf.security_admin.alter-security-integration.unset.o001"
@@ -42618,13 +42679,6 @@ target = "<name>"
 note = "a string literal in place of <name>"
 
 [[obligation]]
-id = "sf.security_admin.alter-security-integration.unset-tag.o007"
-kind = "required_operand_missing"
-required = true
-target = "<tag_name>"
-note = "omit <tag_name>"
-
-[[obligation]]
 id = "sf.security_admin.alter-security-integration.unset-tag.o008"
 kind = "operand_type_class"
 required = true
@@ -42664,12 +42718,6 @@ required = true
 note = "the form without its required UNSET"
 
 [[obligation]]
-id = "sf.security_admin.alter-security-integration.unset-tag.o014"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required TAG"
-
-[[obligation]]
 id = "sf.security_admin.alter-security-integration.unset-tag.o015"
 kind = "identifier_class"
 required = true
@@ -42700,6 +42748,21 @@ required = true
 target = "<tag_name>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.security_admin.alter-security-integration.unset-tag.o019"
+kind = "required_operand_missing"
+required = true
+target = "<tag_name>"
+anchor = "doc.sql.alter-security-integration / Syntax"
+note = "omit <tag_name>, observed"
+
+[[obligation]]
+id = "sf.security_admin.alter-security-integration.unset-tag.o020"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.alter-security-integration / Syntax"
+note = "the form without its required TAG, observed"
 
 [[obligation]]
 id = "sf.security_admin.alter-session-policy.rename-to.o001"
@@ -45808,13 +45871,6 @@ target = "<name>"
 note = "a string literal in place of <name>"
 
 [[obligation]]
-id = "sf.security_admin.alter-storage-integration.set-tag.o009"
-kind = "required_operand_missing"
-required = true
-target = "<tag_name>"
-note = "omit <tag_name>"
-
-[[obligation]]
 id = "sf.security_admin.alter-storage-integration.set-tag.o010"
 kind = "operand_type_class"
 required = true
@@ -45881,12 +45937,6 @@ required = true
 note = "the form without its required SET"
 
 [[obligation]]
-id = "sf.security_admin.alter-storage-integration.set-tag.o020"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required TAG"
-
-[[obligation]]
 id = "sf.security_admin.alter-storage-integration.set-tag.o021"
 kind = "interaction_all_options"
 required = true
@@ -45947,6 +45997,21 @@ required = true
 target = "'<tag_value>'"
 anchor = "doc.sql.alter-storage-integration / Parameters"
 note = "a tag value of 257 characters against the documented maximum of 256"
+
+[[obligation]]
+id = "sf.security_admin.alter-storage-integration.set-tag.o029"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.alter-storage-integration / Syntax"
+note = "the form without its required TAG, observed"
+
+[[obligation]]
+id = "sf.security_admin.alter-storage-integration.set-tag.o030"
+kind = "required_operand_missing"
+required = true
+target = "<tag_name>"
+anchor = "doc.sql.alter-storage-integration / Syntax"
+note = "omit <tag_name>, observed"
 
 [[obligation]]
 id = "sf.security_admin.alter-storage-integration.unset-enabled-storage-blocked-locations-comment.o001"
@@ -46116,13 +46181,6 @@ target = "<name>"
 note = "a string literal in place of <name>"
 
 [[obligation]]
-id = "sf.security_admin.alter-storage-integration.unset-tag.o007"
-kind = "required_operand_missing"
-required = true
-target = "<tag_name>"
-note = "omit <tag_name>"
-
-[[obligation]]
 id = "sf.security_admin.alter-storage-integration.unset-tag.o008"
 kind = "operand_type_class"
 required = true
@@ -46162,12 +46220,6 @@ required = true
 note = "the form without its required UNSET"
 
 [[obligation]]
-id = "sf.security_admin.alter-storage-integration.unset-tag.o014"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required TAG"
-
-[[obligation]]
 id = "sf.security_admin.alter-storage-integration.unset-tag.o015"
 kind = "identifier_class"
 required = true
@@ -46198,6 +46250,21 @@ required = true
 target = "<tag_name>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.security_admin.alter-storage-integration.unset-tag.o019"
+kind = "required_operand_missing"
+required = true
+target = "<tag_name>"
+anchor = "doc.sql.alter-storage-integration / Syntax"
+note = "omit <tag_name>, observed"
+
+[[obligation]]
+id = "sf.security_admin.alter-storage-integration.unset-tag.o020"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.alter-storage-integration / Syntax"
+note = "the form without its required TAG, observed"
 
 [[obligation]]
 id = "sf.security_admin.alter-storage-lifecycle-policy.rename-to.o001"
