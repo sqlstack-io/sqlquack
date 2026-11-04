@@ -8,6 +8,7 @@ pub(crate) mod create_table_forms;
 pub(crate) mod explain;
 pub(crate) mod scripting;
 pub(crate) mod snowflake_alter;
+pub(crate) mod snowflake_alter_account;
 pub(crate) mod snowflake_alter_objects;
 pub(crate) mod snowflake_alter_resources;
 pub(crate) mod table_options;
