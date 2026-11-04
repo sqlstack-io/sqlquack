@@ -1262,6 +1262,12 @@ close = "END ;"
 # binds the catalogue grammar it reads by grammar_sha256; a catalogue change invalidates it.
 
 [[reading]]
+form = "sf.ddl.alter-external-consumer-modify-programmatic-access-token"
+grammar_sha256 = "6f76f9ae23bd0abed94c64252b49793d3366e020c5a1597872b31a3381d54170"
+grammar = ["ALTER EXTERNAL CONSUMER <name> MODIFY { PROGRAMMATIC ACCESS TOKEN | PAT } [ IF EXISTS ] <token_name> [ SET { DAYS_TO_EXPIRY = <integer> [ COMMENT = '<string_literal>' ] | COMMENT = '<string_literal>' } ] [ UNSET COMMENT ]"]
+reason = "SET and UNSET each name at least one property: UNSET's only property COMMENT is required, and SET takes DAYS_TO_EXPIRY and COMMENT at most once each, at least one of them, in the page's order"
+
+[[reading]]
 form = "sf.ddl.alter-alert.unset"
 grammar_sha256 = "9f0a6437f712a3aa046920ece15825e8b521eef764a0b56f30074c168e2735f4"
 grammar = ["ALTER ALERT [ IF EXISTS ] <name> UNSET { WAREHOUSE | COMMENT | CONFIG | RUNBOOK | SUSPEND_ALERT_AFTER_NUM_FAILURES } [ , ... ]"]

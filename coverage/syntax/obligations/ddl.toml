@@ -29053,41 +29053,41 @@ target = "<token_name>"
 note = "a string literal in place of <token_name>"
 
 [[obligation]]
-id = "sf.ddl.alter-external-consumer-modify-programmatic-access-token.o012"
+id = "sf.ddl.alter-external-consumer-modify-programmatic-access-token.o039"
 kind = "option_present"
 required = true
-target = "[ SET [ DAYS_TO_EXPIRY = <integer> ] [ COMMENT = '<string_literal>' ] ]"
+target = "[ SET { DAYS_TO_EXPIRY = <integer> [ COMMENT = '<string_literal>' ] | COMMENT = '<string_literal>' } ]"
 
 [[obligation]]
-id = "sf.ddl.alter-external-consumer-modify-programmatic-access-token.o013"
+id = "sf.ddl.alter-external-consumer-modify-programmatic-access-token.o040"
 kind = "option_absent"
 required = true
-target = "[ SET [ DAYS_TO_EXPIRY = <integer> ] [ COMMENT = '<string_literal>' ] ]"
+target = "[ SET { DAYS_TO_EXPIRY = <integer> [ COMMENT = '<string_literal>' ] | COMMENT = '<string_literal>' } ]"
 
 [[obligation]]
-id = "sf.ddl.alter-external-consumer-modify-programmatic-access-token.o014"
-kind = "option_present"
+id = "sf.ddl.alter-external-consumer-modify-programmatic-access-token.o041"
+kind = "alternative"
 required = true
-target = "[ DAYS_TO_EXPIRY = <integer> ]"
+target = "{ DAYS_TO_EXPIRY = <integer> [ COMMENT = '<string_literal>'… → DAYS_TO_EXPIRY = <integer> [ COMMENT = '<string_literal>' ]"
 
 [[obligation]]
-id = "sf.ddl.alter-external-consumer-modify-programmatic-access-token.o015"
-kind = "option_absent"
+id = "sf.ddl.alter-external-consumer-modify-programmatic-access-token.o042"
+kind = "alternative"
 required = true
-target = "[ DAYS_TO_EXPIRY = <integer> ]"
+target = "{ DAYS_TO_EXPIRY = <integer> [ COMMENT = '<string_literal>' ] | COMMENT = '<string_liter… → COMMENT = '<string_literal>'"
 
 [[obligation]]
-id = "sf.ddl.alter-external-consumer-modify-programmatic-access-token.o016"
+id = "sf.ddl.alter-external-consumer-modify-programmatic-access-token.o043"
 kind = "required_operand_missing"
 required = true
-target = "<integer> in [ DAYS_TO_EXPIRY = <integer> ]"
+target = "<integer> in [ SET { DAYS_TO_EXPIRY = <integer> [ COMMENT = '<string_literal>' ] | COMMENT = '<string_literal>' } ]"
 note = "omit <integer>"
 
 [[obligation]]
-id = "sf.ddl.alter-external-consumer-modify-programmatic-access-token.o017"
+id = "sf.ddl.alter-external-consumer-modify-programmatic-access-token.o044"
 kind = "operand_type_class"
 required = true
-target = "<integer> in [ DAYS_TO_EXPIRY = <integer> ]"
+target = "<integer> in [ SET { DAYS_TO_EXPIRY = <integer> [ COMMENT = '<string_literal>' ] | COMMENT = '<string_literal>' } ]"
 note = "a valid operand"
 
 [[obligation]]
@@ -29124,28 +29124,37 @@ target = "'<string_literal>' in [ COMMENT = '<string_literal>' ]"
 note = "an unquoted identifier in place of '<string_literal>'"
 
 [[obligation]]
-id = "sf.ddl.alter-external-consumer-modify-programmatic-access-token.o023"
+id = "sf.ddl.alter-external-consumer-modify-programmatic-access-token.o045"
+kind = "required_operand_missing"
+required = true
+target = "'<string_literal>' in [ SET { DAYS_TO_EXPIRY = <integer> [ COMMENT = '<string_literal>' ] | COMMENT = '<string_literal>…"
+note = "omit '<string_literal>'"
+
+[[obligation]]
+id = "sf.ddl.alter-external-consumer-modify-programmatic-access-token.o046"
+kind = "operand_type_class"
+required = true
+target = "'<string_literal>' in [ SET { DAYS_TO_EXPIRY = <integer> [ COMMENT = '<string_literal>' ] | COMMENT = '<string_literal>…"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.ddl.alter-external-consumer-modify-programmatic-access-token.o047"
+kind = "negative_neighbour"
+required = true
+target = "'<string_literal>' in [ SET { DAYS_TO_EXPIRY = <integer> [ COMMENT = '<string_literal>' ] | COMMENT = '<string_literal>…"
+note = "an unquoted identifier in place of '<string_literal>'"
+
+[[obligation]]
+id = "sf.ddl.alter-external-consumer-modify-programmatic-access-token.o048"
 kind = "option_present"
 required = true
-target = "[ UNSET [ COMMENT ] ]"
+target = "[ UNSET COMMENT ]"
 
 [[obligation]]
-id = "sf.ddl.alter-external-consumer-modify-programmatic-access-token.o024"
+id = "sf.ddl.alter-external-consumer-modify-programmatic-access-token.o049"
 kind = "option_absent"
 required = true
-target = "[ UNSET [ COMMENT ] ]"
-
-[[obligation]]
-id = "sf.ddl.alter-external-consumer-modify-programmatic-access-token.o025"
-kind = "option_present"
-required = true
-target = "[ COMMENT ]"
-
-[[obligation]]
-id = "sf.ddl.alter-external-consumer-modify-programmatic-access-token.o026"
-kind = "option_absent"
-required = true
-target = "[ COMMENT ]"
+target = "[ UNSET COMMENT ]"
 
 [[obligation]]
 id = "sf.ddl.alter-external-consumer-modify-programmatic-access-token.o027"
@@ -29188,6 +29197,18 @@ id = "sf.ddl.alter-external-consumer-modify-programmatic-access-token.o033"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required EXISTS in [ IF EXISTS ]"
+
+[[obligation]]
+id = "sf.ddl.alter-external-consumer-modify-programmatic-access-token.o050"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { DAYS_TO_EXPIRY = <integer> [ COMMENT = '<string_literal>' ] | COMMENT = '<string_literal>' } in [ SET { DAYS_TO_EXPIRY = <integer> [ COMMENT = '<string_literal>' ] | COMMENT = '<string_literal>' } ]"
+
+[[obligation]]
+id = "sf.ddl.alter-external-consumer-modify-programmatic-access-token.o051"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required COMMENT in [ UNSET COMMENT ]"
 
 [[obligation]]
 id = "sf.ddl.alter-external-consumer-modify-programmatic-access-token.o034"
