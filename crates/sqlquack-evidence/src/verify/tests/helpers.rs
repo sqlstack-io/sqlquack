@@ -157,6 +157,7 @@ fn warehouse_column(name: &str, data_type: &DataType) -> WarehouseColumn {
         scale: Some(scale),
         internal_size: None,
         nullable: Some(true),
+        sub_microsecond_checked: false,
     }
 }
 

@@ -72,6 +72,7 @@ pub(crate) fn recorded_result(
             .map(|column| RecordedColumn {
                 name: column.name.clone(),
                 snowflake_type: snowflake_type(column),
+                sub_microsecond_checked: column.sub_microsecond_checked,
             })
             .collect(),
         rows,

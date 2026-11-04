@@ -384,9 +384,9 @@ policy's session profile (`--session-profile`, `utc-v1` by default) with its nul
 entry prints `{id, outcome, detail}`. The outcome is one of:
 
 - `matches`;
-- `matches_at_microseconds`: the recording kept declared nanosecond columns in microseconds, and the
-  replay matches once its own sub-microsecond digits are dropped. This never counts as a full
-  match;
+- `matches_at_microseconds`: the recording kept declared nanosecond columns in microseconds without
+  the recorder's sub-microsecond check, and the replay matches once its own sub-microsecond digits
+  are dropped. This never counts as a full match;
 - `differs`, with the first difference;
 - `duckdb_error`;
 - `unreadable`: the recording or the SQL file cannot be read.
@@ -585,7 +585,12 @@ setting reaches the repository. A pinned parameter whose account default differs
    22) without its query ID; session, connection and privilege
    (42501) errors stop the run without writing anything. When any statement of a batch fails, Snowflake reports the whole
    request as error 100132 (SQLSTATE P0000), so the batch's cases are rerun one at a time and each
-   real error is classified on its own. Existing results are never overwritten.
+   real error is classified on its own. The connector returns a whole TIME or TIMESTAMP(9) column
+   in microseconds when any row lies outside the nanosecond range. Such a result is kept only when
+   one read-only `SELECT COUNT_IF(DATE_PART(nanosecond, $n) % 1000 <> 0)` over `RESULT_SCAN` of
+   the same query finds no value with sub-microsecond digits; the column is then marked
+   `sub_microsecond_checked` and compares exactly. Otherwise, or if the check fails, the case is
+   refused: a rounded value is never recorded. Existing results are never overwritten.
 3. `sqlquack verify` converts each recorded case, replays it on DuckDB in a fresh in-memory
    database under the profile's time zone and the policy's NULL order, and compares. A refusal is
    always acceptable; a difference fails. Equivalence pairs are compared with each other instead.
