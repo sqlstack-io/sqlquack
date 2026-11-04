@@ -49,13 +49,13 @@ fn given_a_known_divergence_when_converting_then_default_mode_warns_and_strict_m
             },
         },
         DivergenceModeTestCase {
-            description: "HASH converts by default, naming the hash divergence",
+            description: "HASH is refused by default, as its value is never Snowflake's",
             sql: "SELECT HASH(note, customer_id) AS h FROM customers",
             strict: false,
             expected_outcome: DivergenceModeOutcome {
-                converted: true,
-                divergences: vec![("hash".to_owned(), vec!["fn:HASH".to_owned()])],
-                categories: vec![],
+                converted: false,
+                divergences: vec![],
+                categories: vec![RefusalCategory::TypeCondition],
             },
         },
         DivergenceModeTestCase {

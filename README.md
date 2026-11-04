@@ -107,6 +107,11 @@ They share the policy flags (`--policy`, `--builtin-policy`, `--strict`, `--utc-
 on divergences whose converted SQL raises rather than returns another value). Every command with a report takes
 `--format text|json`; `--json` is short for `--format json`.
 
+HASH is refused by default: the converted SQL computes DuckDB's hash, which is consistent within one
+run but never Snowflake's value. A project that relies on HASH only for joins, grouping,
+deduplication or change detection can opt in by setting `default = "warn"` under
+`[divergences.hash]` in its `sqlquack.toml`.
+
 `function` converts a SQL project function's body, read from a file or from standard input with
 `-`, and prints the macro as JSON. A refused body prints `{"converted": false, "name": …,
 "refusals": [diagnostics]}` instead, with the same diagnostics on standard error.
