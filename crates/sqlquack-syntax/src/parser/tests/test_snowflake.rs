@@ -3,6 +3,7 @@ use serde_json::json;
 use crate::parser::tests::helpers::first_token_text;
 use crate::parser::tests::helpers::kind_at;
 use crate::parser::tests::helpers::parse_error;
+use crate::parser::tests::helpers::parsed;
 use crate::parser::tests::helpers::value_at;
 use crate::parser::tests::test_types::DialectTokenTestCase;
 use crate::parser::tests::test_types::ParseErrorTestCase;
@@ -463,6 +464,84 @@ fn given_unsupported_snowflake_sql_when_parsing_then_parsing_fails() {
             expected_error: "Parse error",
         },
         ParseErrorTestCase {
+            description: "an empty argument between commas is rejected",
+            dialect: Some(DialectType::Snowflake),
+            sql: "SELECT CONCAT('a', , 'b')",
+            expected_error: "Parse error",
+        },
+        ParseErrorTestCase {
+            description: "a trailing comma in TO_DECIMAL is rejected",
+            dialect: Some(DialectType::Snowflake),
+            sql: "SELECT TO_DECIMAL(1, )",
+            expected_error: "Parse error",
+        },
+        ParseErrorTestCase {
+            description: "an empty TIME precision is rejected",
+            dialect: Some(DialectType::Snowflake),
+            sql: "SELECT CAST(NULL AS TIME())",
+            expected_error: "Parse error",
+        },
+        ParseErrorTestCase {
+            description: "an empty VARBINARY length is rejected",
+            dialect: Some(DialectType::Snowflake),
+            sql: "SELECT CAST(NULL AS VARBINARY())",
+            expected_error: "Parse error",
+        },
+        ParseErrorTestCase {
+            description: "an empty NUMBER parameter list is rejected",
+            dialect: Some(DialectType::Snowflake),
+            sql: "SELECT CAST(NULL AS NUMBER())",
+            expected_error: "Parse error",
+        },
+        ParseErrorTestCase {
+            description: "a trailing comma in NUMBER parameters is rejected",
+            dialect: Some(DialectType::Snowflake),
+            sql: "SELECT CAST(NULL AS NUMBER(9, ))",
+            expected_error: "Parse error",
+        },
+        ParseErrorTestCase {
+            description: "a reserved word as a type name is rejected",
+            dialect: Some(DialectType::Snowflake),
+            sql: "SELECT CAST(NULL AS SELECT)",
+            expected_error: "Parse error",
+        },
+        ParseErrorTestCase {
+            description: "a reserved word as a dropped table is rejected",
+            dialect: Some(DialectType::Snowflake),
+            sql: "DROP TABLE SELECT",
+            expected_error: "Parse error",
+        },
+        ParseErrorTestCase {
+            description: "a reserved word as a qualified index part is rejected",
+            dialect: Some(DialectType::Snowflake),
+            sql: "DROP INDEX v1.SELECT",
+            expected_error: "Parse error",
+        },
+        ParseErrorTestCase {
+            description: "a reserved word as an UNDROP rename target is rejected",
+            dialect: Some(DialectType::Snowflake),
+            sql: "UNDROP SNAPSHOT v1 RENAME TO SELECT",
+            expected_error: "Parse error",
+        },
+        ParseErrorTestCase {
+            description: "a reserved word as a truncated table is rejected",
+            dialect: Some(DialectType::Snowflake),
+            sql: "TRUNCATE SELECT",
+            expected_error: "Parse error",
+        },
+        ParseErrorTestCase {
+            description: "a reserved word as a USE target is rejected",
+            dialect: Some(DialectType::Snowflake),
+            sql: "USE SELECT.v1",
+            expected_error: "Parse error",
+        },
+        ParseErrorTestCase {
+            description: "a reserved word as a declared name is rejected",
+            dialect: Some(DialectType::Snowflake),
+            sql: "DECLARE SELECT RESULTSET; BEGIN RETURN 1; END;",
+            expected_error: "Parse error",
+        },
+        ParseErrorTestCase {
             description: "an unquoted name% column is a known limitation",
             dialect: Some(DialectType::Snowflake),
             sql: "CREATE TABLE IF NOT EXISTS identifier(?) (name% TEXT, points NUMBER(38, 0)) /* Python:snowflake.connector.pandas_tools.write_pandas() */",
@@ -476,6 +555,30 @@ fn given_unsupported_snowflake_sql_when_parsing_then_parsing_fails() {
             error.contains(test_case.expected_error),
             "{}: {error}",
             test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_neighbours_of_rejected_snowflake_sql_when_parsing_then_they_parse() {
+    let accepted = [
+        "SELECT CAST(NULL AS VARCHAR())",
+        "SELECT CAST(NULL AS CHAR())",
+        "SELECT CAST(NULL AS TIME(9))",
+        "SELECT CAST(NULL AS NUMBER(9, 2))",
+        "SELECT CAST(NULL AS VARBINARY(8))",
+        "DROP TABLE \"SELECT\"",
+        "USE \"SELECT\".v1",
+        "SELECT * FROM TABLE(FLATTEN(INPUT => ARRAY_CONSTRUCT(1)))",
+        "CREATE PROCEDURE p1() RETURNS TABLE () LANGUAGE SQL AS $$ BEGIN RETURN 1; END $$",
+        "DECLARE \"SELECT\" RESULTSET; BEGIN RETURN 1; END;",
+    ];
+
+    for sql in accepted {
+        assert!(
+            parsed(Some(DialectType::Snowflake), sql).is_ok(),
+            "{sql}: {}",
+            parse_error(Some(DialectType::Snowflake), sql)
         );
     }
 }

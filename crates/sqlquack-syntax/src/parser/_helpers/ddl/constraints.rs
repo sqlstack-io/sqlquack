@@ -1478,7 +1478,7 @@ impl Parser {
 
         let mut names: Vec<TableRef> = Vec::new();
         loop {
-            names.push(self.parse_table_ref()?);
+            names.push(self.parse_object_name_ref()?);
             if !self.match_token(TokenType::Comma) {
                 break;
             }
@@ -1520,7 +1520,7 @@ impl Parser {
         self.expect_token(TokenType::View)?;
 
         let if_exists = self.match_keywords(&[TokenType::If, TokenType::Exists]);
-        let name = self.parse_table_ref()?;
+        let name = self.parse_object_name_ref()?;
 
         Ok(Expression::DropView(Box::new(DropView {
             name,
@@ -1537,7 +1537,7 @@ impl Parser {
 
         let if_exists = self.match_keywords(&[TokenType::If, TokenType::Exists]);
 
-        let name = self.parse_table_ref()?;
+        let name = self.parse_object_name_ref()?;
 
         let table = if self.match_token(TokenType::On) {
             Some(self.parse_table_ref()?)

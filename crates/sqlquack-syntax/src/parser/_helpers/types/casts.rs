@@ -1106,6 +1106,17 @@ impl Parser {
     }
 
     fn parse_named_data_type(&mut self, name: String, raw_name: String) -> Result<DataType> {
+        if matches!(
+            self.config.dialect,
+            Some(crate::tokens::models::DialectType::Snowflake)
+        ) && self.previous().token_type != TokenType::QuotedIdentifier
+            && name != "TABLE"
+            && crate::parser::constants::SNOWFLAKE_RESERVED_KEYWORDS.contains(&name.as_str())
+        {
+            return Err(self.parse_error(format!(
+                "Reserved word {name} cannot be an unquoted type name"
+            )));
+        }
         let is_known = convert_name_is_known_custom(&name);
         let custom_name = if is_known {
             name.clone()

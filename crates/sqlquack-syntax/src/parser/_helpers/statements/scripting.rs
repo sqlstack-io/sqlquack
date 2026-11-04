@@ -164,7 +164,7 @@ impl Parser {
     /// One DECLARE member, or with `is_let` the documented LET forms.
     fn parse_scripting_declaration(&mut self, is_let: bool) -> Result<ScriptingDeclaration> {
         let start = self.current;
-        let name = self.expect_identifier_or_keyword_with_quoted()?;
+        let name = self.expect_scripting_name()?;
         if self.match_text_seq(&["CURSOR", "FOR"]) {
             let source = match self.peek_nth(1) {
                 Some(end)

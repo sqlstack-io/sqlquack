@@ -729,9 +729,9 @@ impl Parser {
             ));
         };
         let if_exists = self.match_keywords(&[TokenType::If, TokenType::Exists]);
-        let name = self.parse_table_ref()?;
+        let name = self.parse_object_name_ref()?;
         let rename_to = if self.match_keywords(&[TokenType::Rename, TokenType::To]) {
-            Some(self.parse_table_ref()?)
+            Some(self.parse_object_name_ref()?)
         } else {
             None
         };
