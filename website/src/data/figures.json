@@ -1,0 +1,7 @@
+{
+	"_comment": "Headline coverage figures, used by the homepage and docs/coverage. A value left as its own {{NAME}} token renders as a visible placeholder, and the build warns about it.",
+	"SYNTAX_PCT": "{{SYNTAX_PCT}}",
+	"SYNTAX_BASIS": "{{SYNTAX_BASIS}}",
+	"TRANSLATION_PCT": "{{TRANSLATION_PCT}}",
+	"TRANSLATION_BASIS": "{{TRANSLATION_BASIS}}"
+}

@@ -1,0 +1,62 @@
+---
+title: "Schema files"
+description: "Declare the relations and functions your SQL reads, so conversion can type it."
+---
+
+Conversion needs to know what each relation and column name refers to and what Snowflake type it
+has. A schema file declares them as JSON. Pass it with `--schema` to `convert`, `function`,
+`census` and `index`.
+
+```json
+{
+  "ORDERS": [
+    ["ORDER_ID", "NUMBER(38,0)"],
+    ["CUSTOMER_ID", "NUMBER(38,0)"],
+    ["TOTAL", "NUMBER(12,2)"],
+    ["ORDERED_AT", "TIMESTAMP_NTZ"]
+  ]
+}
+```
+
+A name the schema does not declare is refused with [`SQ0004`](/docs/diagnostics/reference/#sq0004).
+
+## Naming relations and columns
+
+Names resolve as Snowflake resolves them. An unquoted name is upper-cased, so `FROM orders` reads
+the relation `ORDERS`. A quoted name keeps its case. When a name matches a declared one only
+ignoring case, the diagnostic says so and suggests the spelling to declare.
+
+## Columns
+
+Each column is a `[name, type]` pair, or an object:
+
+| Field | Meaning |
+|-------|---------|
+| `name` | The column name. |
+| `type` | Its Snowflake type, such as `NUMBER(12,2)`, `VARCHAR` or `VARIANT`. |
+| `typed_leaves` | `true` when a `VARIANT` column's leaves hold typed values. Default `false`. |
+| `offset` | For a `TIMESTAMP_TZ` column whose every value has one offset: `+00:00` or `UTC`. |
+
+`--confirm-declared-offsets` lets strict mode rely on the offsets the schema declares.
+
+## Relations and functions
+
+The top level is either a map of relations, as above, or an object with two sections:
+
+```json
+{
+  "relations": {
+    "ORDERS": [["ORDER_ID", "NUMBER(38,0)"], ["TOTAL", "NUMBER(12,2)"]]
+  },
+  "functions": {
+    "NET_TOTAL": {
+      "language": "sql",
+      "arguments": [["GROSS", "NUMBER(12,2)"]],
+      "returns": "NUMBER(12,2)"
+    }
+  }
+}
+```
+
+A function declares its `language` (`sql` or `python`), its `arguments` as columns, and what it
+`returns`. `volatility`, `null_input` and `vectorized` are optional. Unknown fields are rejected.

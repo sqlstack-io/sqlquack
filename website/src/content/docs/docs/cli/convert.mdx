@@ -1,0 +1,92 @@
+---
+title: "sqlquack convert"
+description: "Convert Snowflake SQL into DuckDB SQL, or refuse it with a reason."
+sidebar:
+  label: "convert"
+---
+
+`sqlquack convert` prints the DuckDB SQL for Snowflake SQL, or refuses it. Every statement it
+prints has passed DuckDB's own parse-and-bind check.
+
+## Usage
+
+```bash
+sqlquack convert [OPTIONS] [PATH]
+```
+
+```bash
+sqlquack convert query.sql --schema schema.json
+echo "SELECT 1 AS total" | sqlquack convert --builtin-policy --json
+```
+
+`PATH` is a SQL file. Without one, or with `-`, `convert` reads standard input. The DuckDB SQL goes
+to standard output. Progress, the known divergences and assumptions it relies on, and refusals go
+to standard error.
+
+```console
+$ sqlquack convert revenue.sql --schema schema.json --builtin-policy
+SELECT "ORDERS"."CUSTOMER_ID" AS "CUSTOMER_ID", CAST(sum("ORDERS"."TOTAL") AS DECIMAL(24,2)) AS "REVENUE" FROM "ORDERS" AS "ORDERS" WHERE ("ORDERS"."STATUS" = 'shipped') GROUP BY "ORDERS"."CUSTOMER_ID"
+sqlquack convert: done, converted under the built-in default
+```
+
+## Refusals
+
+A refused statement prints its refusals instead, each as a coded diagnostic, and `convert` exits 1.
+Each refusal is one of these:
+
+| Code | Why |
+|------|-----|
+| [`SQ0002`](/docs/diagnostics/reference/#sq0002) | No verified rule converts the construct yet. |
+| [`SQ0003`](/docs/diagnostics/reference/#sq0003) | A rule exists, but not for these operand types. |
+| [`SQ0004`](/docs/diagnostics/reference/#sq0004) | A relation or column name does not resolve in the schema. |
+| [`SQ0005`](/docs/diagnostics/reference/#sq0005) | DuckDB cannot express the construct's Snowflake meaning. |
+| [`SQ0006`](/docs/diagnostics/reference/#sq0006) | Conversion exceeded its time or size budget. |
+| [`SQ0007`](/docs/diagnostics/reference/#sq0007) | The session parameters match no recorded profile. |
+| [`SQ0008`](/docs/diagnostics/reference/#sq0008) | The conversion needs a known divergence the policy refuses. |
+
+SQL that does not parse, or that Snowflake rejects, is refused with the same codes as
+[`check`](/docs/cli/check/). A `VALUES` list of more than 1,000 rows is refused.
+
+## Options
+
+| Option | Meaning |
+|--------|---------|
+| `--schema <file>` | The relations and functions the SQL reads. See [Schema files](/docs/schema/). |
+| `--session NAME=VALUE` | A Snowflake session parameter of your session. Repeatable. See [Sessions](/docs/policy/#sessions). |
+| `--overrides <path>` | User overrides: a `FUNCTION()` file, or a directory of them, each with `replaces` and `dialect duckdb`. |
+| `--verified-override NAME=SHA256` | An override verified for the body with that hash, as `convert --json` reports. |
+| `--format text\|json`, `--json` | Print the report as text or JSON. |
+
+`convert` also takes the policy flags: `--policy`, `--builtin-policy`, `--strict`,
+`--utc-session`, `--confirm-declared-offsets`, `--python-runtime` and `--loud-divergences-only`.
+See [Policy and sessions](/docs/policy/#flags).
+
+## JSON report
+
+With `--json`, `convert` prints one object:
+
+```json
+{
+  "converted": true,
+  "profile": "the built-in default",
+  "sql": "SELECT CAST(1 AS DECIMAL(1,0)) AS \"TOTAL\"",
+  "refusals": [],
+  "divergences": {},
+  "assumptions": [],
+  "divergence_failures": {},
+  "notes": [],
+  "python_functions": [],
+  "macros": [],
+  "overrides": []
+}
+```
+
+A refusal in `refusals` carries the same [diagnostic fields](/docs/diagnostics/overview/#json-output).
+
+## Exit status
+
+| Code | Meaning |
+|------|---------|
+| `0` | Converted. |
+| `1` | Something was refused; the reasons are on standard error. |
+| `2` | It could not run: bad arguments, an unreadable file, no policy file, or input without SQL. |
