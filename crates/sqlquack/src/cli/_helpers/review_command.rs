@@ -3,12 +3,12 @@
 use std::io::Write;
 use std::process::ExitCode;
 
-use crate::analysis::main::conversion_options::conversion_options;
 use crate::analysis::models::PipelineConverter;
 use crate::cli::_helpers::verify_command::run_verification;
 use crate::cli::models::ReviewArguments;
 use crate::review::main::export_review::export_review;
 use crate::review::models::ReviewFile;
+use sqlquack_rules::session::main::conversion_options::conversion_options;
 
 pub(crate) fn review_command(arguments: &ReviewArguments, stderr: &mut dyn Write) -> ExitCode {
     let _ = writeln!(

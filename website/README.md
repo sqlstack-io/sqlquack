@@ -14,16 +14,23 @@ structure, styling and components with the SQLClean and SQLBuild websites.
 - `src/components/`: the page layout, header and page title, replacing Starlight's defaults.
 - `public/fonts/`: self-hosted fonts, each with its licence.
 - `public/playground/`: the playground page. `wasm/` is its engine, a thin wasm-bindgen crate over
-  the existing SQLQuack crates (parse, Snowflake checks, name checks, conversion under the built-in
-  policy), kept out of the main Cargo workspace as `fuzz/` is. `scripts/build_engine.sh` builds it
-  into `public/playground/engine/`, which is not committed. Translated SQL runs in DuckDB-WASM,
-  loaded from jsDelivr on first use.
+  the existing SQLQuack crates (parse, Snowflake checks, name checks, conversion under a policy and
+  session), kept out of the main Cargo workspace as `fuzz/` is. `scripts/build_engine.sh` builds it
+  into `public/playground/engine/`, which is not committed. The engine runs in a Web Worker.
+  Translated SQL runs in DuckDB-WASM, served from the site: `scripts/prepare_playground.mjs` copies
+  it from `node_modules` into `public/playground/duckdb/` on every `npm run build` and `npm run dev`.
+
+DuckDB-WASM is pinned to `1.33.1-dev114.0`, a prerelease from npm's `next` tag and the first build
+that bundles DuckDB 2.0. Swap it for a stable 2.x release once one ships: change the version in
+`package.json`, run `npm install`, and check that stage 4 of the playground reports the expected
+DuckDB version.
 
 The logo uses the SQLQuack icon from `sqlstack-io/sqlstack` (`assets/icons/sqlquack.png`); the
 footer's SQLStack symbols are unchanged copies from the same repository.
 
-The Website workflow builds the site and checks its links when run by hand. It does not deploy,
-and nothing publishes the site yet.
+The Website workflow builds and tests the engine, builds the site and checks its links, on pull
+requests that touch them and when run by hand. It never runs on push to main and does not deploy;
+nothing publishes the site yet.
 
 Requires Node 22.12 or newer.
 
@@ -37,5 +44,5 @@ npm run dev      # live preview
 npm run build    # static site in dist/, including the search index
 npm run preview  # serve dist/
 python3 scripts/check_links.py dist
-npm test         # Playwright: branding and navigation
+npm run test:engine   # the engine and its spans, after build_engine.sh
 ```

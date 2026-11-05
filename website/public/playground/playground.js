@@ -1,8 +1,29 @@
-// The SQLQuack playground: each keystroke runs the engine (SQLQuack compiled to WebAssembly) and
-// shows its stages; translated SQL runs in DuckDB-WASM, loaded from jsDelivr on first use.
-import init, { analyze, fixture_tables } from './engine/sqlquack_wasm.js';
+// The SQLQuack playground: each edit runs the engine (SQLQuack compiled to WebAssembly, in a
+// worker) and shows its stages; translated SQL runs in DuckDB-WASM.
 
-const DUCKDB_WASM = 'https://cdn.jsdelivr.net/npm/@duckdb/duckdb-wasm@1.32.0/+esm';
+import { escape, rendered, underlined } from './spans.js';
+
+// The engine's worker; `engine(op, fields)` resolves with its reply.
+const worker = new Worker(new URL('./worker.js', import.meta.url), { type: 'module' });
+const pending = new Map();
+let nextId = 0;
+const engineReady = new Promise((resolve) => {
+	worker.addEventListener('message', ({ data }) => {
+		if (data.ready) return resolve();
+		pending.get(data.id)?.(data);
+		pending.delete(data.id);
+	});
+});
+function engine(op, fields) {
+	const id = ++nextId;
+	return new Promise((resolve) => {
+		pending.set(id, resolve);
+		worker.postMessage({ id, op, ...fields });
+	});
+}
+
+// DuckDB-WASM, served from this site (scripts/prepare_playground.mjs copies it in at build time).
+const DUCKDB_WASM = new URL('./duckdb/', import.meta.url);
 
 const SCHEMA = `{
   "ORDERS": [
@@ -51,41 +72,14 @@ const $ = (selector) => document.querySelector(selector);
 const sqlBox = $('#pg-sql');
 const schemaBox = $('#pg-schema');
 const rowsBox = $('#pg-rows');
+const policyBox = $('#pg-policy');
+const sessionBox = $('#pg-session');
+const strictBox = $('#pg-strict');
+const utcBox = $('#pg-utc');
+const settings = () =>
+	JSON.stringify({ policy: policyBox.value, session: sessionBox.value, strict: strictBox.checked, utc_session: utcBox.checked });
 const marks = $('#pg-marks');
 const tip = $('#pg-tip');
-
-const escape = (text) => text.replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
-
-// Spans count Unicode characters; JavaScript strings count UTF-16 units, so index by code point.
-function position(chars, offset) {
-	let line = 1;
-	let column = 1;
-	for (let i = 0; i < offset && i < chars.length; i++) {
-		if (chars[i] === '\n') {
-			line += 1;
-			column = 1;
-		} else column += 1;
-	}
-	return { line, column };
-}
-
-// One diagnostic as the command line renders it, rustc style.
-function rendered(diagnostic, chars) {
-	const head = `<span class="bad">error[${escape(diagnostic.code)}]</span>: ${escape(diagnostic.message)}`;
-	const span = diagnostic.span;
-	if (!span) return head + (diagnostic.label ? `\n  = ${escape(diagnostic.label)}` : '');
-	const { line, column } = span.line ? span : position(chars, span.start);
-	const lines = chars.join('').split('\n');
-	const text = lines[line - 1] ?? '';
-	const endOnLine = span.end_line && span.end_line !== line ? text.length + 1 : column + Math.max(1, span.end - span.start);
-	const width = Math.max(1, endOnLine - column);
-	const gutter = ' '.repeat(String(line).length);
-	let out = `${head}\n${gutter}--> query.sql:${line}:${column}\n${gutter} |\n${line} | ${escape(text)}\n${gutter} | ${' '.repeat(column - 1)}<span class="bad">${'^'.repeat(width)}</span>`;
-	if (diagnostic.label) out += ` ${escape(diagnostic.label)}`;
-	for (const note of diagnostic.notes ?? []) out += `\n${gutter} = <span class="dim">note:</span> ${escape(note)}`;
-	if (diagnostic.help) out += `\n${gutter} = <span class="dim">help:</span> ${escape(diagnostic.help)}`;
-	return out;
-}
 
 function setStage(id, status, body, sub) {
 	const stage = $(`#stage-${id}`);
@@ -100,41 +94,28 @@ const terminal = (html) => `<pre class="terminal">${html}</pre>`;
 
 // Underlines every span in the editor; overlapping spans keep the first.
 function underline(chars, items) {
-	const sorted = items.filter((item) => item.span).sort((a, b) => a.span.start - b.span.start);
-	let html = '';
-	let at = 0;
-	sorted.forEach((item, index) => {
-		const start = Math.min(item.span.start, chars.length);
-		let end = Math.min(Math.max(item.span.end, start + 1), chars.length);
-		if (start < at) return;
-		if (end === start) {
-			// A span at the very end, such as a missing token: underline the last character.
-			if (start === 0) return;
-			html += escape(chars.slice(at, start - 1).join(''));
-			html += `<mark data-i="${index}" class="${item.kind}">${escape(chars[start - 1])}</mark>`;
-			at = start;
-			return;
-		}
-		html += escape(chars.slice(at, start).join(''));
-		html += `<mark data-i="${index}" class="${item.kind}">${escape(chars.slice(start, end).join(''))}</mark>`;
-		at = end;
-	});
-	html += escape(chars.slice(at).join('')) + '\n';
+	const { html, items: kept } = underlined(chars, items);
 	marks.innerHTML = html;
-	marks.items = sorted;
+	marks.items = kept;
 	marks.scrollTop = sqlBox.scrollTop;
 }
 
 let latest = null;
+let current = 0;
 
-function run() {
+async function run() {
+	const ticket = ++current;
 	const sql = sqlBox.value;
+	const reply = await engine('analyze', { sql, schema: schemaBox.value, settings: settings() });
+	// A newer edit has already been sent; its reply will render instead.
+	if (ticket !== current) return;
 	const chars = Array.from(sql);
-	const report = JSON.parse(analyze(sql, schemaBox.value));
+	const report = JSON.parse(reply.result);
 	latest = null;
-	if (report.schema_error) {
+	if (report.schema_error || report.settings_error) {
 		underline(chars, []);
-		setStage('parse', 'skipped', terminal(`<span class="bad">The schema is not valid:</span> ${escape(report.schema_error)}`));
+		const what = report.schema_error ? 'The schema is not valid' : 'The policy or session is not valid';
+		setStage('parse', 'skipped', terminal(`<span class="bad">${what}:</span> ${escape(report.schema_error ?? report.settings_error)}`));
 		for (const id of ['checks', 'translate', 'run']) setStage(id, 'skipped');
 		return;
 	}
@@ -178,14 +159,14 @@ function run() {
 		body = (translate.statements ?? []).map((s) => terminal(escape(s.sql))).join('');
 		body += (translate.diagnostics ?? []).map((d) => terminal(rendered(d, chars))).join('');
 	}
-	setStage('translate', translate.status, body);
+	setStage('translate', translate.status, body, translate.profile ? `policy: ${translate.profile}` : '');
 	underline(chars, spans);
 
 	const statements = translate.statements ?? [];
 	if (translate.status === 'pass' && statements.length === 1) {
 		latest = statements[0].sql;
 		if (duckdb) execute();
-		else setStage('run', 'ready', '<button class="button primary" type="button" id="pg-run">Run in DuckDB-WASM</button>', 'loads DuckDB from jsDelivr');
+		else setStage('run', 'ready', '<button class="button primary" type="button" id="pg-run">Run in DuckDB-WASM</button>', 'loads DuckDB-WASM (about 8 MB compressed)');
 	} else if (translate.status === 'pass') {
 		setStage('run', 'skipped', terminal('<span class="dim">Runs one statement at a time.</span>'));
 	} else setStage('run', 'skipped', '');
@@ -196,12 +177,10 @@ let duckdb = null;
 let running = 0;
 
 async function loadDuckDB() {
-	const module = await import(DUCKDB_WASM);
-	const bundle = await module.selectBundle(module.getJsDelivrBundles());
-	const workerUrl = URL.createObjectURL(new Blob([`importScripts("${bundle.mainWorker}");`], { type: 'text/javascript' }));
-	const db = new module.AsyncDuckDB(new module.VoidLogger(), new Worker(workerUrl));
-	await db.instantiate(bundle.mainModule, bundle.pthreadWorker);
-	URL.revokeObjectURL(workerUrl);
+	const module = await import(new URL('duckdb-browser.mjs', DUCKDB_WASM).href);
+	const worker = new Worker(new URL('duckdb-browser-base.worker.js', DUCKDB_WASM));
+	const db = new module.AsyncDuckDB(new module.VoidLogger(), worker);
+	await db.instantiate(new URL('duckdb-base.wasm', DUCKDB_WASM).href);
 	const version = await (await db.connect()).query('SELECT version() AS v');
 	return { db, version: String(version.toArray()[0].v) };
 }
@@ -215,7 +194,7 @@ async function execute() {
 		if (!duckdb) duckdb = await loadDuckDB();
 		const conn = await duckdb.db.connect();
 		try {
-			const tables = JSON.parse(fixture_tables(schemaBox.value));
+			const tables = JSON.parse((await engine('fixture', { schema: schemaBox.value })).result);
 			if (tables.error) throw new Error(`schema: ${tables.error}`);
 			for (const table of tables.tables) await conn.query(table.replace(/^CREATE TABLE/, 'CREATE OR REPLACE TABLE'));
 			if (rowsBox.value.trim()) await conn.query(rowsBox.value);
@@ -250,6 +229,11 @@ document.addEventListener('click', (event) => {
 });
 sqlBox.addEventListener('input', schedule);
 schemaBox.addEventListener('input', schedule);
+for (const box of [policyBox, sessionBox, strictBox, utcBox]) box.addEventListener('input', schedule);
+$('#pg-load-policy').addEventListener('click', async () => {
+	policyBox.value = await (await fetch(new URL('./sqlquack.toml', import.meta.url))).text();
+	schedule();
+});
 rowsBox.addEventListener('input', () => latest && duckdb && schedule());
 sqlBox.addEventListener('scroll', () => (marks.scrollTop = sqlBox.scrollTop));
 $('#pg-example').addEventListener('change', (event) => {
@@ -281,6 +265,6 @@ sqlBox.value = params.get('sql') ?? EXAMPLES[params.get('example')] ?? EXAMPLES.
 schemaBox.value = SCHEMA;
 rowsBox.value = ROWS;
 setStage('parse', 'loading', '', 'loading the engine');
-await init();
-run();
+await engineReady;
+await run();
 if (params.has('run')) execute();

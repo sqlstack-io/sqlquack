@@ -2,17 +2,17 @@
 
 use std::collections::BTreeMap;
 
+use crate::conversion::constants::SESSION_TIMEZONE_UTC;
+use crate::conversion::models::ConversionOptions;
 use sqlquack_policy::policy::constants::{
     DEFAULT_SESSION_PROFILE, QUOTED_IDENTIFIERS_IGNORE_CASE, SESSION_TIME_ZONE, TIMEZONE_PARAMETER,
 };
 use sqlquack_policy::policy::models::{Policy, SessionValue};
-use sqlquack_rules::conversion::constants::SESSION_TIMEZONE_UTC;
-use sqlquack_rules::conversion::models::ConversionOptions;
 
-use crate::analysis::_helpers::session_profiles::{matching_profile, value_text};
-use crate::analysis::constants::BUILTIN_PROFILE;
-use crate::analysis::main::confirm_utc_session::confirm_utc_session;
-use crate::analysis::main::conversion_options::conversion_options;
+use crate::session::_helpers::session_profiles::{matching_profile, value_text};
+use crate::session::constants::BUILTIN_PROFILE;
+use crate::session::main::confirm_utc_session::confirm_utc_session;
+use crate::session::main::conversion_options::conversion_options;
 
 /// Options for a session with `parameters`, under the recorded profile they match, and its name.
 pub fn session_conversion_options(

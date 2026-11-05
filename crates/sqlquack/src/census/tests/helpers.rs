@@ -8,7 +8,6 @@ use sqlquack_rules::conversion::models::{AllowedDivergence, ConversionOptions};
 use sqlquack_semantics::types::models::{ColumnSpec, Schema};
 use sqlquack_snowflake::typing::models::SnowflakeType;
 
-use crate::analysis::main::conversion_options::conversion_options;
 use crate::census::_helpers::coverage::{CoverageInput, greedy_order};
 use crate::census::_helpers::timed::run_census_timed;
 use crate::census::main::render_census_text::render_census_text;
@@ -17,6 +16,7 @@ use crate::census::models::{CensusOptions, CensusReport};
 use crate::census::tests::test_types::{
     BlockerSummary, CensusSummary, PlanSummary, ShopFile, UpstreamSummary,
 };
+use sqlquack_rules::session::main::conversion_options::conversion_options;
 
 pub(crate) const SHOP: &[ShopFile] = &[
     ShopFile {

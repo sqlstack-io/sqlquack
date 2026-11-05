@@ -22,6 +22,7 @@ sqlquack.workspace = true
 sqlquack-core.workspace = true
 sqlquack-evidence.workspace = true
 sqlquack-policy.workspace = true
+sqlquack-rules.workspace = true
 sqlquack-syntax.workspace = true
 toml.workspace = true
 walkdir.workspace = true
