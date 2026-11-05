@@ -31,7 +31,9 @@ SNOWFLAKE_LABEL: str = "matches Snowflake"
 CENSUS_TABLE_PREFIX: str = "__sqlquack_relation__"
 COMPILED_PREFIX: str = "target/compiled/"
 MISSING_TABLE: re.Pattern[str] = re.compile(
-    r"Table with name (__sqlquack_relation__\w+) does not exist", re.IGNORECASE
+    r"(?:Table|Scalar Function|Table Function) with name "
+    r"(__sqlquack_(?:relation|udf|table_fn)__\w+) does not exist",
+    re.IGNORECASE,
 )
 MICROSECOND_SCALE: int = 6
 SCALED_TYPES: frozenset[str] = frozenset({"TIME", "TIMESTAMP_NTZ", "TIMESTAMP_LTZ", "TIMESTAMP_TZ"})
@@ -61,9 +63,12 @@ SCORE_EXCLUDED: frozenset[str] = frozenset(
         "input_unrecorded",
         "input_unloadable",
         "declared_divergence",
+        "python_udf_not_measured",
     }
 )
 WORKERS: int = 3
+BODY_DELIMITER: str = "$$"
+PYTHON_LANGUAGE: str = "python"
 TOP_CONSTRUCTS: int = 15
 JSON_SUFFIX: str = ".json"
 VALUE_FAILURE: str = "value"

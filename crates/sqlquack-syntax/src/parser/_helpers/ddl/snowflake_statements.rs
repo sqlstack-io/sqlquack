@@ -2,6 +2,7 @@
 
 use crate::expressions::statements::models::Describe;
 use crate::expressions::tree::models::Expression;
+use crate::parser::constants::{SHARED_DESCRIBE_KINDS, SNOWFLAKE_DESCRIBE_KINDS};
 use crate::parser::models::Parser;
 use crate::tokens::models::TokenType;
 use crate::tokens::types::Result;
@@ -49,6 +50,99 @@ impl Parser {
             as_json: false,
             params: Vec::new(),
         })))
+    }
+
+    /// Snowflake's DESCRIBE of a kind the shared one does not read; None for TABLE, VIEW and its other kinds.
+    pub(crate) fn parse_snowflake_describe(
+        &mut self,
+        leading_comments: &[String],
+    ) -> Result<Option<Expression>> {
+        let as_resource = self.match_text_seq(&["AS", "RESOURCE"]);
+        let Some(kind) = SNOWFLAKE_DESCRIBE_KINDS
+            .iter()
+            .find(|kind| self.match_text_seq(kind))
+            .map(|kind| kind.join(" "))
+        else {
+            let shared = SHARED_DESCRIBE_KINDS
+                .iter()
+                .any(|kind| self.peek_text().eq_ignore_ascii_case(kind));
+            return match shared && !as_resource {
+                true => Ok(None),
+                false => Err(self.parse_error("Expected an object kind after DESCRIBE")),
+            };
+        };
+        if as_resource && !matches!(kind.as_str(), "AGENT") {
+            return Err(self.parse_error("Expected AGENT after DESCRIBE AS RESOURCE"));
+        }
+        let target = match kind.as_str() {
+            "TRANSACTION" if self.check(TokenType::Number) => self.parse_primary()?,
+            "RESULT"
+                if self.check(TokenType::String)
+                    || (self.check_identifier("LAST_QUERY_ID")
+                        && self.check_next(TokenType::LParen)) =>
+            {
+                self.parse_primary()?
+            }
+            "TRANSACTION" => return Err(self.parse_error("Expected a transaction ID")),
+            "RESULT" => return Err(self.parse_error("Expected a query ID or LAST_QUERY_ID()")),
+            _ => Expression::Table(Box::new(self.parse_object_name()?)),
+        };
+        let properties = match kind.as_str() {
+            "EXTERNAL TABLE" | "ICEBERG TABLE" => {
+                self.parse_describe_choice("TYPE", &["COLUMNS", "STAGE"])?
+            }
+            "LISTING" => self.parse_describe_choice("REVISION", &["DRAFT", "PUBLISHED"])?,
+            "CONFIGURATION" | "SPECIFICATION" if self.match_text_seq(&["IN", "APPLICATION"]) => {
+                let start = self.current;
+                self.parse_object_name()?;
+                vec![("in_application".to_owned(), self.written_since(start))]
+            }
+            _ => Vec::new(),
+        };
+        Ok(Some(Expression::Describe(Box::new(Describe {
+            target,
+            extended: false,
+            formatted: false,
+            kind: Some(kind),
+            properties,
+            style: as_resource.then(|| "AS RESOURCE".to_owned()),
+            partition: None,
+            leading_comments: leading_comments.to_vec(),
+            as_json: false,
+            params: Vec::new(),
+        }))))
+    }
+
+    /// An optional `<name> = <choice>` after a DESCRIBE target, as the shared DESCRIBE keeps one.
+    fn parse_describe_choice(
+        &mut self,
+        name: &str,
+        choices: &[&str],
+    ) -> Result<Vec<(String, String)>> {
+        if !self.match_identifier(name) {
+            return Ok(Vec::new());
+        }
+        self.expect_token(TokenType::Eq)?;
+        match choices
+            .iter()
+            .any(|choice| self.peek_text().eq_ignore_ascii_case(choice))
+        {
+            true => Ok(vec![(name.to_ascii_lowercase(), self.advance_text()?)]),
+            false => {
+                Err(self.parse_error(format!("Expected {} after {name} =", choices.join(" or "))))
+            }
+        }
+    }
+
+    /// The tokens read since `start`, joined as written, quoted identifiers keeping their quotes.
+    fn written_since(&self, start: usize) -> String {
+        self.tokens[start..self.current]
+            .iter()
+            .map(|token| match token.token_type {
+                TokenType::QuotedIdentifier => format!("\"{}\"", token.text.replace('"', "\"\"")),
+                _ => token.text.to_string(),
+            })
+            .collect()
     }
 
     /// Refuses a Snowflake SHOW ... LIKE pattern that is not a string.

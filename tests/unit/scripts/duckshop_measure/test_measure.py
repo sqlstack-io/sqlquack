@@ -23,8 +23,16 @@ from scripts.duckshop_measure._helpers.snowflake import (
     with_unloadable_input,
 )
 from scripts.duckshop_measure.main.measure import run_measure
-from scripts.duckshop_measure.models import Conversion, ModelResult, UnitTestOutcome
+from scripts.duckshop_measure.models import (
+    Conversion,
+    FunctionMacro,
+    ModelResult,
+    ProjectFunction,
+    UnitTestOutcome,
+)
 from tests.unit.scripts.duckshop_measure._test_types import (
+    FunctionMeasureTestCase,
+    FunctionSchemaTestCase,
     LoadTestCase,
     ModelTestCase,
     OrderTestCase,
@@ -294,6 +302,19 @@ def test_given_compiled_sql_when_reading_its_order_then_only_a_top_level_order_b
             unloadable={"__sqlquack_relation__x": "ConversionException: out of range"},
         ),
         ModelTestCase(
+            description="a project function that could not be created is input_unloadable",
+            sidecar=_ROWS,
+            refusals=None,
+            compared={
+                "outcome": "duckdb_error",
+                "detail": "Catalog Error: Scalar Function with name __sqlquack_udf__f does not "
+                "exist!",
+            },
+            error=None,
+            expected_outcome="input_unloadable",
+            unloadable={"__sqlquack_udf__f": "sqlquack function refused: missing rule"},
+        ),
+        ModelTestCase(
             description="a microsecond-only match is its own outcome",
             sidecar=_ROWS,
             refusals=None,
@@ -502,3 +523,172 @@ def test_given_recorded_models_when_measuring_snowflake_then_the_policy_decides_
     )
     assert outcomes == test_case.expected_outcomes
     assert "3 models" in capsys.readouterr().out
+
+
+@pytest.mark.parametrize(
+    "test_case",
+    (
+        FunctionSchemaTestCase(
+            description="a SQL function is declared under its census placeholder",
+            header="CREATE OR REPLACE FUNCTION SHOP.PUBLIC.SKU_FAMILY(sku STRING)\nRETURNS STRING\n"
+            "AS $$ split_part(sku, '-', 1) $$",
+            expected_functions={
+                "__SQLQUACK_UDF__SKU_FAMILY": {
+                    "language": "sql",
+                    "arguments": [["SKU", "STRING"]],
+                    "returns": "STRING",
+                }
+            },
+        ),
+        FunctionSchemaTestCase(
+            description="a Python function is declared with its language",
+            header="CREATE FUNCTION S.P.SKU_FAMILY(x NUMBER) RETURNS NUMBER LANGUAGE PYTHON "
+            "HANDLER = 'f' AS $$\ndef f(x):\n    return x\n$$",
+            expected_functions={
+                "__SQLQUACK_UDF__SKU_FAMILY": {
+                    "language": "python",
+                    "arguments": [["X", "NUMBER"]],
+                    "returns": "NUMBER",
+                }
+            },
+        ),
+    ),
+    ids=lambda case: case.description,
+)
+def test_given_compiled_functions_when_deriving_the_schema_then_they_sit_beside_the_relations(
+    test_case: FunctionSchemaTestCase, tmp_path: Path
+) -> None:
+    environment: Path = tmp_path / "environment.json"
+    environment.write_text(
+        json.dumps({"setup_sql": ["CREATE TEMPORARY TABLE rel__shop__skus (sku VARCHAR)"]})
+    )
+    functions: Path = tmp_path / "functions"
+    functions.mkdir()
+    (functions / "sku_family.sql").write_text(test_case.header)
+    out: Path = tmp_path / "schema.json"
+    status: int = run_measure(
+        argv=[
+            "schema",
+            "--environment",
+            str(environment),
+            "--functions",
+            str(functions),
+            "--out",
+            str(out),
+        ]
+    )
+    assert (status, json.loads(out.read_text())) == (
+        0,
+        {
+            "relations": {"__SQLQUACK_RELATION__SHOP__SKUS": [["SKU", "VARCHAR"]]},
+            "functions": test_case.expected_functions,
+        },
+    )
+
+
+@pytest.mark.parametrize(
+    "test_case",
+    (
+        FunctionMeasureTestCase(
+            description="a SQL function runs as a macro and a Python one leaves its model unmeasured",
+            models=(
+                ("m_sql", "SELECT \"__SQLQUACK_UDF__SKU_FAMILY\"('ab-1') AS a"),
+                ("m_py", 'SELECT "__SQLQUACK_UDF__PY_SCORE"(1) AS a'),
+            ),
+            expected_converted=["__SQLQUACK_UDF__SKU_FAMILY"],
+            expected_compared={"k_m_sql": [("AB-1",)]},
+            expected_outcomes={
+                "m_sql": ["matches"],
+                "m_py": ["python_udf_not_measured", "__SQLQUACK_UDF__PY_SCORE"],
+            },
+        ),
+    ),
+    ids=lambda case: case.description,
+)
+def test_given_project_functions_when_measuring_snowflake_then_sql_ones_run_and_python_ones_are_not_measured(
+    test_case: FunctionMeasureTestCase, tmp_path: Path
+) -> None:
+    results: Path = tmp_path / "results"
+    compiled: Path = tmp_path / "project" / "target" / "compiled"
+    converted: Path = tmp_path / "converted"
+    for directory in (results, compiled / "models", compiled / "functions", converted):
+        directory.mkdir(parents=True)
+    (compiled / "functions" / "sku_family.sql").write_text(
+        "CREATE FUNCTION S.P.SKU_FAMILY(sku STRING) RETURNS STRING AS $$ upper(sku) $$"
+    )
+    (compiled / "functions" / "py_score.sql").write_text(
+        "CREATE FUNCTION S.P.PY_SCORE(x NUMBER) RETURNS NUMBER LANGUAGE PYTHON "
+        "RUNTIME_VERSION = '3.11' HANDLER = 'f' AS $$\ndef f(x):\n    return x\n$$"
+    )
+    entries: list[dict[str, object]] = []
+    for model, sql in test_case.models:
+        (compiled / "models" / f"{model}.sql").write_text("SELECT 1 AS a")
+        sidecar: dict[str, object] = {
+            "key": f"k_{model}",
+            "model": model,
+            "target": "dev",
+            "outcome": "rows",
+            "compiled_sql_path": f"benchmarks/x/target/compiled/models/{model}.sql",
+        }
+        (results / f"k_{model}.json").write_text(json.dumps(sidecar))
+        entries.append({"key": f"k_{model}", "unique_id": f"model.shop.{model}", "outcome": "rows"})
+        (converted / str(compiled / "models" / f"{model}.sql").replace("/", "_")).write_text(sql)
+    (tmp_path / "index-core.json").write_text(json.dumps(entries))
+    (tmp_path / "index-edge.json").write_text("[]")
+    census: Path = tmp_path / "census.json"
+    census.write_text(json.dumps({"blockers": {"files": []}}))
+    converted_names: list[str] = []
+    compared: dict[str, object] = {}
+
+    def convert_function(function: ProjectFunction) -> FunctionMacro | tuple[str, ...]:
+        converted_names.append(function.name)
+        return FunctionMacro(name=function.name, parameters=("sku",), body=function.body)
+
+    def compare(
+        *, manifest: Path, comparisons: list[dict[str, object]]
+    ) -> dict[str, dict[str, str]]:
+        for comparison in comparisons:
+            connection: duckdb.DuckDBPyConnection = duckdb.connect(str(comparison["database"]))
+            sql: str = Path(str(comparison["sql"])).read_text()
+            compared[str(comparison["id"])] = connection.execute(sql).fetchall()
+            connection.close()
+        return {key: {"id": key, "outcome": "matches", "detail": ""} for key in compared}
+
+    out: Path = tmp_path / "snowflake.json"
+    run_measure(
+        argv=[
+            "snowflake",
+            "--results",
+            str(results),
+            "--compiled",
+            str(compiled),
+            "--census",
+            str(census),
+            "--converted",
+            str(converted),
+            "--functions",
+            str(compiled / "functions"),
+            "--schema",
+            "unused",
+            "--sqlquack",
+            "unused",
+            "--library",
+            "unused",
+            "--work",
+            str(tmp_path / "work"),
+            "--out",
+            str(out),
+        ],
+        comparer=compare,
+        function_converter=convert_function,
+    )
+    listed: object = json.loads(out.read_text())["results"]
+    assert isinstance(listed, list)
+    outcomes: dict[str, list[str]] = {
+        str(item["model"]): [item["outcome"], *item["details"]] for item in listed
+    }
+    assert (converted_names, compared, outcomes) == (
+        test_case.expected_converted,
+        test_case.expected_compared,
+        test_case.expected_outcomes,
+    )

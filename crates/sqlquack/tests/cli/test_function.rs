@@ -18,6 +18,17 @@ fn given_a_schema_declared_sql_function_when_converting_then_its_macro_runs_in_d
             },
         },
         FunctionMacroTestCase {
+            description: "a sqlbuild reference in the body reads the census placeholder relation",
+            returns: "\"NUMBER(10,2)\"",
+            body: "CAST(price + (SELECT MIN(amount) FROM __ref(\"fees\")) AS NUMBER(10,2))",
+            call: "SELECT CAST(\"DOUBLED\"(1.25) AS VARCHAR)",
+            flags: &[],
+            expected_outcome: FunctionMacroOutcome {
+                exit_code: Some(0),
+                values: vec!["2.25".to_owned()],
+            },
+        },
+        FunctionMacroTestCase {
             description: "a NUMBER body of another precision than declared is refused",
             returns: "\"NUMBER(10,2)\"",
             body: "price * 2",

@@ -19,6 +19,16 @@ impl Parser {
 
         self.expect_token(TokenType::Transaction)?;
         self.refuse_snowflake_nameless_transaction()?;
+        if self.is_snowflake() && self.match_identifier("NAME") {
+            let name = self.expect_identifier_or_safe_keyword_with_quoted()?;
+            return Ok(Expression::Transaction(Box::new(Transaction {
+                this: Some(Box::new(Expression::Identifier(name))),
+                modes: None,
+                mark: Some(Box::new(Expression::Identifier(Identifier::new(
+                    "START".to_string(),
+                )))),
+            })));
+        }
 
         let mut mode_parts: Vec<String> = Vec::new();
         while self.is_identifier_token()

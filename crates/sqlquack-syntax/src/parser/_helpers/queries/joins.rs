@@ -22,6 +22,20 @@ impl Parser {
         Ok((left, joins))
     }
 
+    /// Snowflake's `FIRST ( alias )` or `LAST ( alias )` after a join, or none.
+    fn parse_snowflake_join_first_last(&mut self) -> Result<(Option<String>, Option<Identifier>)> {
+        let side = match self.is_snowflake() && self.check_next(TokenType::LParen) {
+            true if self.match_token(TokenType::First) => "FIRST",
+            true if self.match_token(TokenType::Last) => "LAST",
+            _ => return Ok((None, None)),
+        };
+        self.expect_token(TokenType::LParen)?;
+        let alias = self.expect_identifier_or_keyword_with_quoted()?;
+        self.reject_reserved_name_part(&alias)?;
+        self.expect_token(TokenType::RParen)?;
+        Ok((Some(side.to_owned()), Some(alias)))
+    }
+
     /// Parses joins; chained ON/USING clauses bind right to left, as `a JOIN b JOIN c ON x ON y`.
     pub(crate) fn parse_joins(&mut self) -> Result<Vec<Join>> {
         let mut joins = Vec::with_capacity(2);
@@ -104,6 +118,7 @@ impl Parser {
                 } else {
                     (None, Vec::new())
                 };
+                let (first_last, first_last_alias) = self.parse_snowflake_join_first_last()?;
 
                 joins.push(Join {
                     this: table,
@@ -119,6 +134,8 @@ impl Parser {
                     comments: join_comments,
                     nesting_group,
                     directed,
+                    first_last,
+                    first_last_alias,
                     span: self.source_range(pos_before_join_kind),
                 });
             }

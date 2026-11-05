@@ -109,7 +109,21 @@ impl Parser {
         {
             return Err(self.parse_error("Expected an object name"));
         }
-        self.parse_table_ref()
+        let start = self.current;
+        let name = self.parse_table_ref()?;
+        for pair in self.tokens[start..self.current].windows(2) {
+            let reserved = crate::parser::constants::SNOWFLAKE_RESERVED_KEYWORDS
+                .contains(&pair[1].text.to_ascii_uppercase().as_str());
+            if pair[0].token_type == TokenType::Dot
+                && pair[1].token_type != TokenType::QuotedIdentifier
+                && reserved
+            {
+                return Err(
+                    self.parse_error("Expected an object name part, not a reserved keyword")
+                );
+            }
+        }
+        Ok(name)
     }
 
     /// Whether the current token can start an object name.

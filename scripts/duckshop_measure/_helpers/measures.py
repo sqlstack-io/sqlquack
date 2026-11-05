@@ -7,6 +7,9 @@ import sys
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
+from scripts.census_functions._helpers.schema_file import compiled_functions
+from scripts.census_functions.constants import FUNCTIONS_KEY, RELATIONS_KEY
+from scripts.duckshop_measure._helpers.functions import create_macros, python_calls
 from scripts.duckshop_measure._helpers.outcomes import unit_test_outcome
 from scripts.duckshop_measure._helpers.running import refusal_names
 from scripts.duckshop_measure._helpers.schema import census_schema, recorded_schema
@@ -33,17 +36,38 @@ from scripts.duckshop_measure.models import (
     SnowflakeInputs,
     UnitTestOutcome,
 )
-from scripts.duckshop_measure.types import Comparer, Converter, Executor, RecordedOutcome
+from scripts.duckshop_measure.types import (
+    Comparer,
+    Converter,
+    Executor,
+    ModelOutcome,
+    RecordedOutcome,
+)
 
 
-def write_schema(*, environment: Path, out: Path, recorded: Path | None = None) -> None:
-    """Write the census schema of the environment's tables, typed as recorded with `recorded`."""
+def write_schema(
+    *, environment: Path, out: Path, recorded: Path | None = None, functions: Path | None = None
+) -> None:
+    """Write the census schema of the environment's tables, with `functions`' compiled ones."""
     setup: list[str] = json.loads(environment.read_text())["setup_sql"]
     schema: dict[str, list[list[str]]] = census_schema(setup)
     if recorded is not None:
         schema.update(recorded_schema(recorded))
-    out.write_text(json.dumps(schema, indent=1) + "\n")
+    written: object = schema
+    if functions is not None:
+        found, unread = compiled_functions(functions)
+        written = {RELATIONS_KEY: schema, FUNCTIONS_KEY: found}
+        print(f"duckshop measure: {len(found)} functions written, {unread} unread", file=sys.stderr)
+    out.write_text(json.dumps(written, indent=1) + "\n")
     print(f"duckshop measure: {len(schema)} relations written to {out}", file=sys.stderr)
+
+
+def model_python_calls(
+    *, inputs: SnowflakeInputs, sql: Path, refusals: tuple[str, ...]
+) -> tuple[str, ...]:
+    """The Python functions a model's conversion or refusals name."""
+    converted: tuple[str, ...] = (sql.read_text(),) if sql.exists() else ()
+    return python_calls(texts=(*converted, *refusals), python=inputs.python_functions)
 
 
 def unit_test_outcomes(
@@ -96,8 +120,12 @@ def snowflake_results(*, inputs: SnowflakeInputs, run: Comparer) -> list[ModelRe
         )
         database: Path = work / f"{target}.duckdb"
         refused: dict[str, str] = load_inputs(entries=entries, results=results, database=database)
+        failed: dict[str, str] = create_macros(database=database, macros=list(inputs.macros))
+        refused.update(
+            (name.lower(), why) for name, why in (*inputs.unavailable_functions, *failed.items())
+        )
         print(
-            f"duckshop measure: {len(refused)} recorded relations unloadable for {target}",
+            f"duckshop measure: {len(refused)} inputs or functions unavailable for {target}",
             file=sys.stderr,
         )
         for entry in entries:
@@ -110,6 +138,11 @@ def snowflake_results(*, inputs: SnowflakeInputs, run: Comparer) -> list[ModelRe
                 compiled=compiled, compiled_sql_path=str(sidecar["compiled_sql_path"])
             )
             sql: Path = converted / name
+            model_refusals: tuple[str, ...] = own.get(
+                Path(str(sidecar["compiled_sql_path"])).stem, ()
+            )
+            if model_python_calls(inputs=inputs, sql=sql, refusals=model_refusals):
+                continue
             if not sql.exists() or value_divergences(inputs=inputs, name=name):
                 continue
             if sidecar["outcome"] == RecordedOutcome.ERROR:
@@ -146,6 +179,21 @@ def snowflake_results(*, inputs: SnowflakeInputs, run: Comparer) -> list[ModelRe
             )
             lenient: Path | None = inputs.lenient_converted
             declared = refusals if lenient is not None and (lenient / name).exists() else ()
+        python: tuple[str, ...] = model_python_calls(
+            inputs=inputs,
+            sql=converted / name,
+            refusals=own.get(Path(str(sidecar["compiled_sql_path"])).stem, ()),
+        )
+        if python:
+            outcomes.append(
+                ModelResult(
+                    model=str(sidecar["model"]),
+                    target=str(sidecar["target"]),
+                    outcome=ModelOutcome.PYTHON_UDF_NOT_MEASURED,
+                    details=python,
+                )
+            )
+            continue
         outcomes.append(
             model_result(
                 sidecar=sidecar,

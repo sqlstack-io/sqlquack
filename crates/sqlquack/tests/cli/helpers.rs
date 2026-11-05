@@ -501,7 +501,8 @@ pub(crate) fn run_function_macro(
 ) -> FunctionMacroOutcome {
     let directory = tempfile::tempdir().expect("temporary directory");
     let schema = format!(
-        "{{\"functions\": {{\"DOUBLED\": {{\"language\": \"sql\", \
+        "{{\"relations\": {{\"__SQLQUACK_RELATION__FEES\": [[\"AMOUNT\", \"NUMBER(10,2)\"]]}}, \
+         \"functions\": {{\"DOUBLED\": {{\"language\": \"sql\", \
          \"arguments\": [[\"PRICE\", \"NUMBER(10,2)\"]], \"returns\": {returns}}}}}}}"
     );
     std::fs::write(directory.path().join("schema.json"), schema).expect("schema written");
@@ -546,7 +547,9 @@ fn macro_values(converted: &serde_json::Value, macro_body: &str, call: &str) -> 
     let connection = duckdb::Connection::open_in_memory().expect("DuckDB opens");
     connection
         .execute_batch(&format!(
-            "CREATE MACRO \"DOUBLED\"({}) AS {macro_body}",
+            "CREATE TABLE \"__SQLQUACK_RELATION__FEES\" AS \
+             SELECT CAST(amount AS DECIMAL(10,2)) AS \"AMOUNT\" FROM (VALUES (1.00), (2.00)) AS t(amount); \
+             CREATE MACRO \"DOUBLED\"({}) AS {macro_body}",
             parameters.join(", ")
         ))
         .expect("the macro is created");

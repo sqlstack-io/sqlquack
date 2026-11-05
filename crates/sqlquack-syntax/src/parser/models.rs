@@ -430,6 +430,7 @@ pub(crate) struct SelectBodyHead {
     pub(crate) hint: Option<Hint>,
     pub(crate) top: Option<Top>,
     pub(crate) distinct: bool,
+    pub(crate) all: bool,
     pub(crate) distinct_on: Option<Vec<Expression>>,
     pub(crate) kind: Option<String>,
     pub(crate) operation_modifiers: Vec<String>,

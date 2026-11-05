@@ -346,10 +346,7 @@ impl Parser {
                 }
             } else if self.match_keyword("WITHOUT") {
                 self.match_time_zone_words()?;
-                DataType::Timestamp {
-                    precision,
-                    timezone: false,
-                }
+                self.timestamp_without_time_zone(precision)
             } else {
                 DataType::Timestamp {
                     precision,
@@ -357,6 +354,22 @@ impl Parser {
                 }
             }
         })
+    }
+
+    /// `TIMESTAMP WITHOUT TIME ZONE`: Snowflake's TIMESTAMP_NTZ, whatever TIMESTAMP maps to.
+    pub(crate) fn timestamp_without_time_zone(&self, precision: Option<u32>) -> DataType {
+        match (self.is_snowflake(), precision) {
+            (true, Some(precision)) => DataType::Custom {
+                name: format!("TIMESTAMPNTZ({precision})"),
+            },
+            (true, None) => DataType::Custom {
+                name: "TIMESTAMPNTZ".to_owned(),
+            },
+            (false, _) => DataType::Timestamp {
+                precision,
+                timezone: false,
+            },
+        }
     }
 
     pub(crate) fn parse_cast_timestamp_tz_type(&mut self) -> Result<DataType> {
