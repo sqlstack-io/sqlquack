@@ -8163,16 +8163,37 @@ target = "<name>"
 note = "a string literal in place of <name>"
 
 [[obligation]]
-id = "sf.utility.execute-dcm-project.purge.o012"
+id = "sf.utility.execute-dcm-project.purge.o014"
 kind = "option_present"
 required = true
-target = "[ AS \"d1\" ]"
+target = "[ AS <deployment_name_alias> ]"
 
 [[obligation]]
-id = "sf.utility.execute-dcm-project.purge.o013"
+id = "sf.utility.execute-dcm-project.purge.o015"
 kind = "option_absent"
 required = true
-target = "[ AS \"d1\" ]"
+target = "[ AS <deployment_name_alias> ]"
+
+[[obligation]]
+id = "sf.utility.execute-dcm-project.purge.o016"
+kind = "required_operand_missing"
+required = true
+target = "<deployment_name_alias> in [ AS <deployment_name_alias> ]"
+note = "omit <deployment_name_alias>"
+
+[[obligation]]
+id = "sf.utility.execute-dcm-project.purge.o017"
+kind = "operand_type_class"
+required = true
+target = "<deployment_name_alias> in [ AS <deployment_name_alias> ]"
+note = "a valid identifier"
+
+[[obligation]]
+id = "sf.utility.execute-dcm-project.purge.o018"
+kind = "negative_neighbour"
+required = true
+target = "<deployment_name_alias> in [ AS <deployment_name_alias> ]"
+note = "a string literal in place of <deployment_name_alias>"
 
 [[obligation]]
 id = "sf.utility.execute-dcm-project.purge.o007"
@@ -8207,6 +8228,30 @@ required = true
 target = "<name>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.utility.execute-dcm-project.purge.o019"
+kind = "identifier_class"
+required = true
+target = "<deployment_name_alias>"
+anchor = "doc.identifiers-syntax"
+note = "quoted: a double-quoted identifier with blanks and mixed case"
+
+[[obligation]]
+id = "sf.utility.execute-dcm-project.purge.o020"
+kind = "identifier_class"
+required = true
+target = "<deployment_name_alias>"
+anchor = "doc.identifiers-syntax"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.utility.execute-dcm-project.purge.o021"
+kind = "negative_neighbour"
+required = true
+target = "[ AS <deployment_name_alias> ]"
+anchor = "doc.sql.execute-dcm-project / Syntax"
+note = "the alias without its keyword AS"
 
 [[obligation]]
 id = "sf.utility.execute-dcm-project.test-all.o001"

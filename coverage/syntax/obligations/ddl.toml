@@ -295364,6 +295364,14 @@ anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
+id = "sf.ddl.undrop-database.o015"
+kind = "negative_neighbour"
+required = true
+target = "IDENTIFIER( <id> )"
+anchor = "doc.sql.undrop-database / Syntax"
+note = "the IDENTIFIER branch without its keyword IDENTIFIER"
+
+[[obligation]]
 id = "sf.ddl.undrop-dynamic-table.o001"
 kind = "positive"
 required = true
@@ -295650,6 +295658,14 @@ required = true
 target = "<name>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.ddl.undrop-schema.o015"
+kind = "negative_neighbour"
+required = true
+target = "IDENTIFIER( <id> )"
+anchor = "doc.sql.undrop-schema / Syntax"
+note = "the IDENTIFIER branch without its keyword IDENTIFIER"
 
 [[obligation]]
 id = "sf.ddl.undrop-snapshot.o001"
@@ -295989,6 +296005,14 @@ required = true
 target = "<name>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.ddl.undrop-table.o015"
+kind = "negative_neighbour"
+required = true
+target = "IDENTIFIER( <id> )"
+anchor = "doc.sql.undrop-table / Syntax"
+note = "the IDENTIFIER branch without its keyword IDENTIFIER"
 
 [[obligation]]
 id = "sf.ddl.undrop-tag.o001"

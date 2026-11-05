@@ -2591,6 +2591,22 @@ required = true
 target = "[ \"[\" <index> \"]\" ... ]"
 
 [[obligation]]
+id = "sf.expressions.data-types-semistructured.array-index-access.o008"
+kind = "negative_neighbour"
+required = true
+target = "\"]\""
+anchor = "doc.data-types-semistructured / ARRAY / Accessing elements of an array by index or by slice"
+note = "the index without its closing ]"
+
+[[obligation]]
+id = "sf.expressions.data-types-semistructured.array-index-access.o009"
+kind = "negative_neighbour"
+required = true
+target = "\"[\""
+anchor = "doc.data-types-semistructured / ARRAY / Accessing elements of an array by index or by slice"
+note = "the index without its opening ["
+
+[[obligation]]
 id = "sf.expressions.data-types-semistructured.colon-subscript-dot.o010"
 kind = "positive"
 required = true

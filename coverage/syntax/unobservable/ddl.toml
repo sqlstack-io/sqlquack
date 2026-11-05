@@ -6750,18 +6750,6 @@ runs = []
 probes = []
 
 [[unobservable]]
-obligation = "sf.ddl.alter-openflow-deployment.unset-display-name-comment-event-table.o002"
-form = "sf.ddl.alter-openflow-deployment.unset-display-name-comment-event-table"
-construct = "option_present: ALTER OPENFLOW DEPLOYMENT IF EXISTS v1 UNSET DISPLAY_NAME , DISPLAY_NAME ;"
-reason = "not submitted: held by the capture guard in chunk ux-02: account-level OPENFLOW DEPLOYMENT names not listed"
-cause = "not_submitted"
-cases = [
-  { case_id = "sf.ddl.alter-openflow-deployment.unset-display-name-comment-event-table.k0fb2e1542fe6", sql_sha256 = "0fb2e1542fe658b253c4e26b54d94662184819a0395bb7865d8f3a1328d442d6" },
-]
-runs = []
-probes = []
-
-[[unobservable]]
 obligation = "sf.ddl.alter-openflow-deployment.unset-display-name-comment-event-table.o003"
 form = "sf.ddl.alter-openflow-deployment.unset-display-name-comment-event-table"
 construct = "option_absent: ALTER OPENFLOW DEPLOYMENT v1 UNSET DISPLAY_NAME ;"
@@ -6841,18 +6829,6 @@ reason = "not submitted: held by the capture guard in chunk ux-02: account-level
 cause = "not_submitted"
 cases = [
   { case_id = "sf.ddl.alter-openflow-deployment.unset-display-name-comment-event-table.k52a6cc002cbd", sql_sha256 = "52a6cc002cbd787cb3d3cffd37a9baab800c7524c7f958121871394ea05353c1" },
-]
-runs = []
-probes = []
-
-[[unobservable]]
-obligation = "sf.ddl.alter-openflow-deployment.unset-display-name-comment-event-table.o010"
-form = "sf.ddl.alter-openflow-deployment.unset-display-name-comment-event-table"
-construct = "the list continued at least once: ALTER OPENFLOW DEPLOYMENT IF EXISTS v1 UNSET DISPLAY_NAME , DISPLAY_NAME ;"
-reason = "not submitted: held by the capture guard in chunk ux-02: account-level OPENFLOW DEPLOYMENT names not listed"
-cause = "not_submitted"
-cases = [
-  { case_id = "sf.ddl.alter-openflow-deployment.unset-display-name-comment-event-table.k0fb2e1542fe6", sql_sha256 = "0fb2e1542fe658b253c4e26b54d94662184819a0395bb7865d8f3a1328d442d6" },
 ]
 runs = []
 probes = []
@@ -6938,18 +6914,6 @@ cause = "not_submitted"
 cases = [
   { case_id = "sf.ddl.alter-openflow-deployment.unset-display-name-comment-event-table.k5e67e0258e3a", sql_sha256 = "5e67e0258e3acf3fbbc00942cdec11741116ef30f5b83ef46af3384b57c5973c" },
   { case_id = "sf.ddl.alter-openflow-deployment.unset-display-name-comment-event-table.k88efeb667fc1", sql_sha256 = "88efeb667fc16bc943e357a24f77bed8ee6fba6a4fa3214ab6d58ed198297cfa" },
-]
-runs = []
-probes = []
-
-[[unobservable]]
-obligation = "sf.ddl.alter-openflow-deployment.unset-display-name-comment-event-table.o020"
-form = "sf.ddl.alter-openflow-deployment.unset-display-name-comment-event-table"
-construct = "every independent option of one production together: ALTER OPENFLOW DEPLOYMENT IF EXISTS v1 UNSET DISPLAY_NAME , DISPLAY_NAME ;"
-reason = "not submitted: held by the capture guard in chunk ux-02: account-level OPENFLOW DEPLOYMENT names not listed"
-cause = "not_submitted"
-cases = [
-  { case_id = "sf.ddl.alter-openflow-deployment.unset-display-name-comment-event-table.k0fb2e1542fe6", sql_sha256 = "0fb2e1542fe658b253c4e26b54d94662184819a0395bb7865d8f3a1328d442d6" },
 ]
 runs = []
 probes = []
@@ -9017,18 +8981,6 @@ runs = []
 probes = []
 
 [[unobservable]]
-obligation = "sf.ddl.alter-openflow-runtime.unset-display-name-external-access-integrations-comment.o002"
-form = "sf.ddl.alter-openflow-runtime.unset-display-name-external-access-integrations-comment"
-construct = "option_present: ALTER OPENFLOW RUNTIME IF EXISTS v1 UNSET DISPLAY_NAME , DISPLAY_NAME ;"
-reason = "not submitted: held by the capture guard in chunk ux-02: account-level OPENFLOW RUNTIME names not listed"
-cause = "not_submitted"
-cases = [
-  { case_id = "sf.ddl.alter-openflow-runtime.unset-display-name-external-access-integrations-comment.keefbf48ea1c4", sql_sha256 = "eefbf48ea1c4ff395038b0c38bbc10b0fd1adc9179df16bf2e1028f6209a69bc" },
-]
-runs = []
-probes = []
-
-[[unobservable]]
 obligation = "sf.ddl.alter-openflow-runtime.unset-display-name-external-access-integrations-comment.o003"
 form = "sf.ddl.alter-openflow-runtime.unset-display-name-external-access-integrations-comment"
 construct = "option_absent: ALTER OPENFLOW RUNTIME v1 UNSET DISPLAY_NAME ;"
@@ -9108,18 +9060,6 @@ reason = "not submitted: held by the capture guard in chunk ux-02: account-level
 cause = "not_submitted"
 cases = [
   { case_id = "sf.ddl.alter-openflow-runtime.unset-display-name-external-access-integrations-comment.k63c3bc928a0a", sql_sha256 = "63c3bc928a0acef9cbac67261ff7bd518a9e8ba89f05a6027102cb189b94d18b" },
-]
-runs = []
-probes = []
-
-[[unobservable]]
-obligation = "sf.ddl.alter-openflow-runtime.unset-display-name-external-access-integrations-comment.o010"
-form = "sf.ddl.alter-openflow-runtime.unset-display-name-external-access-integrations-comment"
-construct = "the list continued at least once: ALTER OPENFLOW RUNTIME IF EXISTS v1 UNSET DISPLAY_NAME , DISPLAY_NAME ;"
-reason = "not submitted: held by the capture guard in chunk ux-02: account-level OPENFLOW RUNTIME names not listed"
-cause = "not_submitted"
-cases = [
-  { case_id = "sf.ddl.alter-openflow-runtime.unset-display-name-external-access-integrations-comment.keefbf48ea1c4", sql_sha256 = "eefbf48ea1c4ff395038b0c38bbc10b0fd1adc9179df16bf2e1028f6209a69bc" },
 ]
 runs = []
 probes = []
@@ -9205,18 +9145,6 @@ cause = "not_submitted"
 cases = [
   { case_id = "sf.ddl.alter-openflow-runtime.unset-display-name-external-access-integrations-comment.k050003584120", sql_sha256 = "0500035841200a39f7676864135a136b738953355c2144058b547a979d08582c" },
   { case_id = "sf.ddl.alter-openflow-runtime.unset-display-name-external-access-integrations-comment.k9693c778c364", sql_sha256 = "9693c778c3647adaba2ec43f716a9b38ddef64a5bab66dfc24a4dcae85fbb02d" },
-]
-runs = []
-probes = []
-
-[[unobservable]]
-obligation = "sf.ddl.alter-openflow-runtime.unset-display-name-external-access-integrations-comment.o019"
-form = "sf.ddl.alter-openflow-runtime.unset-display-name-external-access-integrations-comment"
-construct = "every independent option of one production together: ALTER OPENFLOW RUNTIME IF EXISTS v1 UNSET DISPLAY_NAME , DISPLAY_NAME ;"
-reason = "not submitted: held by the capture guard in chunk ux-02: account-level OPENFLOW RUNTIME names not listed"
-cause = "not_submitted"
-cases = [
-  { case_id = "sf.ddl.alter-openflow-runtime.unset-display-name-external-access-integrations-comment.keefbf48ea1c4", sql_sha256 = "eefbf48ea1c4ff395038b0c38bbc10b0fd1adc9179df16bf2e1028f6209a69bc" },
 ]
 runs = []
 probes = []
@@ -11247,18 +11175,6 @@ runs = []
 probes = []
 
 [[unobservable]]
-obligation = "sf.ddl.alter-postgres-instance.unset-comment-postgres-settings-network-policy.o002"
-form = "sf.ddl.alter-postgres-instance.unset-comment-postgres-settings-network-policy"
-construct = "option_present: ALTER POSTGRES INSTANCE IF EXISTS v1 UNSET COMMENT , COMMENT ;"
-reason = "not submitted: held by the capture guard in chunk ux-02: account-level POSTGRES INSTANCE names not listed"
-cause = "not_submitted"
-cases = [
-  { case_id = "sf.ddl.alter-postgres-instance.unset-comment-postgres-settings-network-policy.ka64f1b4e8897", sql_sha256 = "a64f1b4e8897a62a9a3c4052c431af6428d19758c4e8fa07cc2e9bcfd1e429ca" },
-]
-runs = []
-probes = []
-
-[[unobservable]]
 obligation = "sf.ddl.alter-postgres-instance.unset-comment-postgres-settings-network-policy.o003"
 form = "sf.ddl.alter-postgres-instance.unset-comment-postgres-settings-network-policy"
 construct = "option_absent: ALTER POSTGRES INSTANCE v1 UNSET COMMENT ;"
@@ -11367,18 +11283,6 @@ runs = []
 probes = []
 
 [[unobservable]]
-obligation = "sf.ddl.alter-postgres-instance.unset-comment-postgres-settings-network-policy.o012"
-form = "sf.ddl.alter-postgres-instance.unset-comment-postgres-settings-network-policy"
-construct = "the list continued at least once: ALTER POSTGRES INSTANCE IF EXISTS v1 UNSET COMMENT , COMMENT ;"
-reason = "not submitted: held by the capture guard in chunk ux-02: account-level POSTGRES INSTANCE names not listed"
-cause = "not_submitted"
-cases = [
-  { case_id = "sf.ddl.alter-postgres-instance.unset-comment-postgres-settings-network-policy.ka64f1b4e8897", sql_sha256 = "a64f1b4e8897a62a9a3c4052c431af6428d19758c4e8fa07cc2e9bcfd1e429ca" },
-]
-runs = []
-probes = []
-
-[[unobservable]]
 obligation = "sf.ddl.alter-postgres-instance.unset-comment-postgres-settings-network-policy.o013"
 form = "sf.ddl.alter-postgres-instance.unset-comment-postgres-settings-network-policy"
 construct = "option_absent: ALTER POSTGRES INSTANCE v1 UNSET COMMENT ;"
@@ -11447,18 +11351,6 @@ cause = "not_submitted"
 cases = [
   { case_id = "sf.ddl.alter-postgres-instance.unset-comment-postgres-settings-network-policy.k204160a039b4", sql_sha256 = "204160a039b4b085233e833ca8840fddc3cfe4b69b0710c64437a0216df05b6b" },
   { case_id = "sf.ddl.alter-postgres-instance.unset-comment-postgres-settings-network-policy.k2a48f901b4ef", sql_sha256 = "2a48f901b4ef610a59e20462705acae7edc7d539d82abb9ed5cbafaab0c98218" },
-]
-runs = []
-probes = []
-
-[[unobservable]]
-obligation = "sf.ddl.alter-postgres-instance.unset-comment-postgres-settings-network-policy.o021"
-form = "sf.ddl.alter-postgres-instance.unset-comment-postgres-settings-network-policy"
-construct = "every independent option of one production together: ALTER POSTGRES INSTANCE IF EXISTS v1 UNSET COMMENT , COMMENT ;"
-reason = "not submitted: held by the capture guard in chunk ux-02: account-level POSTGRES INSTANCE names not listed"
-cause = "not_submitted"
-cases = [
-  { case_id = "sf.ddl.alter-postgres-instance.unset-comment-postgres-settings-network-policy.ka64f1b4e8897", sql_sha256 = "a64f1b4e8897a62a9a3c4052c431af6428d19758c4e8fa07cc2e9bcfd1e429ca" },
 ]
 runs = []
 probes = []
@@ -12151,18 +12043,6 @@ runs = []
 probes = []
 
 [[unobservable]]
-obligation = "sf.ddl.alter-streamlit.unset-secrets-external-access-integrations-query-warehouse.o002"
-form = "sf.ddl.alter-streamlit.unset-secrets-external-access-integrations-query-warehouse"
-construct = "option_present: ALTER STREAMLIT IF EXISTS v1 UNSET SECRETS , SECRETS ;"
-reason = "not submitted: held by the capture guard in chunk ux-03: credential or integration"
-cause = "not_submitted"
-cases = [
-  { case_id = "sf.ddl.alter-streamlit.unset-secrets-external-access-integrations-query-warehouse.k2d66a4b1feac", sql_sha256 = "2d66a4b1feacb9ddde8316832a0df2769a817f37f86f9f81cdad7ba4ff54ecc1" },
-]
-runs = []
-probes = []
-
-[[unobservable]]
 obligation = "sf.ddl.alter-streamlit.unset-secrets-external-access-integrations-query-warehouse.o003"
 form = "sf.ddl.alter-streamlit.unset-secrets-external-access-integrations-query-warehouse"
 construct = "option_absent: ALTER STREAMLIT v1 UNSET SECRETS ;"
@@ -12218,18 +12098,6 @@ reason = "not submitted: held by the capture guard in chunk ux-03: credential or
 cause = "not_submitted"
 cases = [
   { case_id = "sf.ddl.alter-streamlit.unset-secrets-external-access-integrations-query-warehouse.k43b1d130b811", sql_sha256 = "43b1d130b81189fb37da5d99b97f64a5aa4e5c0a50a034b5467e29d1e7d29815" },
-]
-runs = []
-probes = []
-
-[[unobservable]]
-obligation = "sf.ddl.alter-streamlit.unset-secrets-external-access-integrations-query-warehouse.o012"
-form = "sf.ddl.alter-streamlit.unset-secrets-external-access-integrations-query-warehouse"
-construct = "the list continued at least once: ALTER STREAMLIT IF EXISTS v1 UNSET SECRETS , SECRETS ;"
-reason = "not submitted: held by the capture guard in chunk ux-03: credential or integration"
-cause = "not_submitted"
-cases = [
-  { case_id = "sf.ddl.alter-streamlit.unset-secrets-external-access-integrations-query-warehouse.k2d66a4b1feac", sql_sha256 = "2d66a4b1feacb9ddde8316832a0df2769a817f37f86f9f81cdad7ba4ff54ecc1" },
 ]
 runs = []
 probes = []
@@ -12303,18 +12171,6 @@ cause = "not_submitted"
 cases = [
   { case_id = "sf.ddl.alter-streamlit.unset-secrets-external-access-integrations-query-warehouse.ke7b36b61419d", sql_sha256 = "e7b36b61419dfa365b07dbcc424e452f42da72d2e6a395e77c896b826eeb4148" },
   { case_id = "sf.ddl.alter-streamlit.unset-secrets-external-access-integrations-query-warehouse.kebd67c8c70ae", sql_sha256 = "ebd67c8c70ae7dfc8742d78f451a63706c106bcc51ed0f57cb814b95087eeb04" },
-]
-runs = []
-probes = []
-
-[[unobservable]]
-obligation = "sf.ddl.alter-streamlit.unset-secrets-external-access-integrations-query-warehouse.o020"
-form = "sf.ddl.alter-streamlit.unset-secrets-external-access-integrations-query-warehouse"
-construct = "every independent option of one production together: ALTER STREAMLIT IF EXISTS v1 UNSET SECRETS , SECRETS ;"
-reason = "not submitted: held by the capture guard in chunk ux-03: credential or integration"
-cause = "not_submitted"
-cases = [
-  { case_id = "sf.ddl.alter-streamlit.unset-secrets-external-access-integrations-query-warehouse.k2d66a4b1feac", sql_sha256 = "2d66a4b1feacb9ddde8316832a0df2769a817f37f86f9f81cdad7ba4ff54ecc1" },
 ]
 runs = []
 probes = []
@@ -22358,78 +22214,6 @@ runs = []
 probes = []
 
 [[unobservable]]
-obligation = "sf.ddl.create-dynamic-table.create-dynamic-iceberg-table.create-dynamic-iceberg-table.o002"
-form = "sf.ddl.create-dynamic-table.create-dynamic-iceberg-table.create-dynamic-iceberg-table"
-construct = "option_present: CREATE OR REPLACE DYNAMIC ICEBERG TABLE v1 CLONE v1 AT ( TIMESTAMP => CURRENT_TIMESTAMP ( ) ) COPY GRANTS COPY TAGS COPY = ( COMMENTS , COMMENTS ) TARGET_LAG = '1 minute' WAREHOUSE = v1 EXECUTE AS USER v1 USE SECONDARY ROLES ALL ;"
-reason = "not submitted: held by the capture guard in chunk ux-05: changes session context"
-cause = "not_submitted"
-cases = [
-  { case_id = "sf.ddl.create-dynamic-table.create-dynamic-iceberg-table.create-dynamic-iceberg-table.kd5e801059ea1", sql_sha256 = "d5e801059ea1c163a611abbca79f7176a2b00034138ed4358c6d9d75bf48525a" },
-]
-runs = []
-probes = []
-
-[[unobservable]]
-obligation = "sf.ddl.create-dynamic-table.create-dynamic-iceberg-table.create-dynamic-iceberg-table.o009"
-form = "sf.ddl.create-dynamic-table.create-dynamic-iceberg-table.create-dynamic-iceberg-table"
-construct = "option_present: CREATE OR REPLACE DYNAMIC ICEBERG TABLE v1 CLONE v1 AT ( TIMESTAMP => CURRENT_TIMESTAMP ( ) ) COPY GRANTS COPY TAGS COPY = ( COMMENTS , COMMENTS ) TARGET_LAG = '1 minute' WAREHOUSE = v1 EXECUTE AS USER v1 USE SECONDARY ROLES ALL ;"
-reason = "not submitted: held by the capture guard in chunk ux-05: changes session context"
-cause = "not_submitted"
-cases = [
-  { case_id = "sf.ddl.create-dynamic-table.create-dynamic-iceberg-table.create-dynamic-iceberg-table.kd5e801059ea1", sql_sha256 = "d5e801059ea1c163a611abbca79f7176a2b00034138ed4358c6d9d75bf48525a" },
-]
-runs = []
-probes = []
-
-[[unobservable]]
-obligation = "sf.ddl.create-dynamic-table.create-dynamic-iceberg-table.create-dynamic-iceberg-table.o017"
-form = "sf.ddl.create-dynamic-table.create-dynamic-iceberg-table.create-dynamic-iceberg-table"
-construct = "a valid operand: CREATE OR REPLACE DYNAMIC ICEBERG TABLE v1 CLONE v1 AT ( TIMESTAMP => CURRENT_TIMESTAMP ( ) ) COPY GRANTS COPY TAGS COPY = ( COMMENTS , COMMENTS ) TARGET_LAG = '1 minute' WAREHOUSE = v1 EXECUTE AS USER v1 USE SECONDARY ROLES ALL ;"
-reason = "not submitted: held by the capture guard in chunk ux-05: changes session context"
-cause = "not_submitted"
-cases = [
-  { case_id = "sf.ddl.create-dynamic-table.create-dynamic-iceberg-table.create-dynamic-iceberg-table.kd5e801059ea1", sql_sha256 = "d5e801059ea1c163a611abbca79f7176a2b00034138ed4358c6d9d75bf48525a" },
-]
-runs = []
-probes = []
-
-[[unobservable]]
-obligation = "sf.ddl.create-dynamic-table.create-dynamic-iceberg-table.create-dynamic-iceberg-table.o019"
-form = "sf.ddl.create-dynamic-table.create-dynamic-iceberg-table.create-dynamic-iceberg-table"
-construct = "a valid operand: CREATE OR REPLACE DYNAMIC ICEBERG TABLE v1 CLONE v1 AT ( OFFSET => -60 ) COPY GRANTS COPY TAGS COPY = ( COMMENTS , COMMENTS ) TARGET_LAG = '1 minute' WAREHOUSE = v1 EXECUTE AS USER v1 USE SECONDARY ROLES ALL ;"
-reason = "not submitted: held by the capture guard in chunk ux-05: changes session context"
-cause = "not_submitted"
-cases = [
-  { case_id = "sf.ddl.create-dynamic-table.create-dynamic-iceberg-table.create-dynamic-iceberg-table.k230368ff857c", sql_sha256 = "230368ff857c4b687ce53d68bde3ce2c2c0ff9228d386c2258a99963a6d1340a" },
-]
-runs = []
-probes = []
-
-[[unobservable]]
-obligation = "sf.ddl.create-dynamic-table.create-dynamic-iceberg-table.create-dynamic-iceberg-table.o021"
-form = "sf.ddl.create-dynamic-table.create-dynamic-iceberg-table.create-dynamic-iceberg-table"
-construct = "a valid operand: CREATE OR REPLACE DYNAMIC ICEBERG TABLE v1 CLONE v1 AT ( STATEMENT => 'q1' ) COPY GRANTS COPY TAGS COPY = ( COMMENTS , COMMENTS ) TARGET_LAG = '1 minute' WAREHOUSE = v1 EXECUTE AS USER v1 USE SECONDARY ROLES ALL ;"
-reason = "not submitted: held by the capture guard in chunk ux-05: changes session context"
-cause = "not_submitted"
-cases = [
-  { case_id = "sf.ddl.create-dynamic-table.create-dynamic-iceberg-table.create-dynamic-iceberg-table.k32a690767c7b", sql_sha256 = "32a690767c7bfdfa919c2af739733b2135ddfd8a6a713df23b3d678b0e114534" },
-]
-runs = []
-probes = []
-
-[[unobservable]]
-obligation = "sf.ddl.create-dynamic-table.create-dynamic-iceberg-table.create-dynamic-iceberg-table.o022"
-form = "sf.ddl.create-dynamic-table.create-dynamic-iceberg-table.create-dynamic-iceberg-table"
-construct = "option_present: CREATE OR REPLACE DYNAMIC ICEBERG TABLE v1 CLONE v1 AT ( TIMESTAMP => CURRENT_TIMESTAMP ( ) ) COPY GRANTS COPY TAGS COPY = ( COMMENTS , COMMENTS ) TARGET_LAG = '1 minute' WAREHOUSE = v1 EXECUTE AS USER v1 USE SECONDARY ROLES ALL ;"
-reason = "not submitted: held by the capture guard in chunk ux-05: changes session context"
-cause = "not_submitted"
-cases = [
-  { case_id = "sf.ddl.create-dynamic-table.create-dynamic-iceberg-table.create-dynamic-iceberg-table.kd5e801059ea1", sql_sha256 = "d5e801059ea1c163a611abbca79f7176a2b00034138ed4358c6d9d75bf48525a" },
-]
-runs = []
-probes = []
-
-[[unobservable]]
 obligation = "sf.ddl.create-dynamic-table.create-dynamic-iceberg-table.create-dynamic-iceberg-table.o024"
 form = "sf.ddl.create-dynamic-table.create-dynamic-iceberg-table.create-dynamic-iceberg-table"
 construct = "alternative: CREATE DYNAMIC ICEBERG TABLE v1 CLONE v1 COPY GRANTS COPY TAGS COPY = ( COMMENTS ) TARGET_LAG = '1 minute' WAREHOUSE = v1 EXECUTE AS USER v1 USE SECONDARY ROLES ALL ;"
@@ -22461,18 +22245,6 @@ reason = "not submitted: held by the capture guard in chunk ux-05: changes sessi
 cause = "not_submitted"
 cases = [
   { case_id = "sf.ddl.create-dynamic-table.create-dynamic-iceberg-table.create-dynamic-iceberg-table.k1b2e3ffaad0e", sql_sha256 = "1b2e3ffaad0e639e36d9be74af561eaf47ac2191ae7e1e4bc23b16fbcb411ab1" },
-]
-runs = []
-probes = []
-
-[[unobservable]]
-obligation = "sf.ddl.create-dynamic-table.create-dynamic-iceberg-table.create-dynamic-iceberg-table.o027"
-form = "sf.ddl.create-dynamic-table.create-dynamic-iceberg-table.create-dynamic-iceberg-table"
-construct = "the list continued at least once: CREATE OR REPLACE DYNAMIC ICEBERG TABLE v1 CLONE v1 AT ( TIMESTAMP => CURRENT_TIMESTAMP ( ) ) COPY GRANTS COPY TAGS COPY = ( COMMENTS , COMMENTS ) TARGET_LAG = '1 minute' WAREHOUSE = v1 EXECUTE AS USER v1 USE SECONDARY ROLES ALL ;"
-reason = "not submitted: held by the capture guard in chunk ux-05: changes session context"
-cause = "not_submitted"
-cases = [
-  { case_id = "sf.ddl.create-dynamic-table.create-dynamic-iceberg-table.create-dynamic-iceberg-table.kd5e801059ea1", sql_sha256 = "d5e801059ea1c163a611abbca79f7176a2b00034138ed4358c6d9d75bf48525a" },
 ]
 runs = []
 probes = []
@@ -22526,18 +22298,6 @@ runs = []
 probes = []
 
 [[unobservable]]
-obligation = "sf.ddl.create-dynamic-table.create-dynamic-iceberg-table.create-dynamic-iceberg-table.o032"
-form = "sf.ddl.create-dynamic-table.create-dynamic-iceberg-table.create-dynamic-iceberg-table"
-construct = "a valid identifier: CREATE OR REPLACE DYNAMIC ICEBERG TABLE v1 CLONE v1 AT ( TIMESTAMP => CURRENT_TIMESTAMP ( ) ) COPY GRANTS COPY TAGS COPY = ( COMMENTS , COMMENTS ) TARGET_LAG = '1 minute' WAREHOUSE = v1 EXECUTE AS USER v1 USE SECONDARY ROLES ALL ;"
-reason = "not submitted: held by the capture guard in chunk ux-05: changes session context"
-cause = "not_submitted"
-cases = [
-  { case_id = "sf.ddl.create-dynamic-table.create-dynamic-iceberg-table.create-dynamic-iceberg-table.kd5e801059ea1", sql_sha256 = "d5e801059ea1c163a611abbca79f7176a2b00034138ed4358c6d9d75bf48525a" },
-]
-runs = []
-probes = []
-
-[[unobservable]]
 obligation = "sf.ddl.create-dynamic-table.create-dynamic-iceberg-table.create-dynamic-iceberg-table.o033"
 form = "sf.ddl.create-dynamic-table.create-dynamic-iceberg-table.create-dynamic-iceberg-table"
 construct = "a string literal in place of <warehouse_name>: CREATE DYNAMIC ICEBERG TABLE v1 CLONE v1 COPY GRANTS COPY TAGS COPY = ( COMMENTS ) TARGET_LAG = '1 minute' WAREHOUSE = 'v1' EXECUTE AS USER v1 USE SECONDARY ROLES ALL ;"
@@ -22557,18 +22317,6 @@ reason = "not submitted: held by the capture guard in chunk ux-05: changes sessi
 cause = "not_submitted"
 cases = [
   { case_id = "sf.ddl.create-dynamic-table.create-dynamic-iceberg-table.create-dynamic-iceberg-table.k433ac9ce1287", sql_sha256 = "433ac9ce128713aee11c6534b266cfbd5b51dece9654cb2a6cde60657019c508" },
-]
-runs = []
-probes = []
-
-[[unobservable]]
-obligation = "sf.ddl.create-dynamic-table.create-dynamic-iceberg-table.create-dynamic-iceberg-table.o035"
-form = "sf.ddl.create-dynamic-table.create-dynamic-iceberg-table.create-dynamic-iceberg-table"
-construct = "a valid identifier: CREATE OR REPLACE DYNAMIC ICEBERG TABLE v1 CLONE v1 AT ( TIMESTAMP => CURRENT_TIMESTAMP ( ) ) COPY GRANTS COPY TAGS COPY = ( COMMENTS , COMMENTS ) TARGET_LAG = '1 minute' WAREHOUSE = v1 EXECUTE AS USER v1 USE SECONDARY ROLES ALL ;"
-reason = "not submitted: held by the capture guard in chunk ux-05: changes session context"
-cause = "not_submitted"
-cases = [
-  { case_id = "sf.ddl.create-dynamic-table.create-dynamic-iceberg-table.create-dynamic-iceberg-table.kd5e801059ea1", sql_sha256 = "d5e801059ea1c163a611abbca79f7176a2b00034138ed4358c6d9d75bf48525a" },
 ]
 runs = []
 probes = []
@@ -22629,30 +22377,6 @@ reason = "not submitted: held by the capture guard in chunk ux-05: changes sessi
 cause = "not_submitted"
 cases = [
   { case_id = "sf.ddl.create-dynamic-table.create-dynamic-iceberg-table.create-dynamic-iceberg-table.k0a1e1dc00325", sql_sha256 = "0a1e1dc0032526de88d3e5a57cf2f8e0b2d0e5762c544fd5dc4dd335c5a95056" },
-]
-runs = []
-probes = []
-
-[[unobservable]]
-obligation = "sf.ddl.create-dynamic-table.create-dynamic-iceberg-table.create-dynamic-iceberg-table.o041"
-form = "sf.ddl.create-dynamic-table.create-dynamic-iceberg-table.create-dynamic-iceberg-table"
-construct = "a valid operand: CREATE OR REPLACE DYNAMIC ICEBERG TABLE v1 CLONE v1 AT ( TIMESTAMP => CURRENT_TIMESTAMP ( ) ) COPY GRANTS COPY TAGS COPY = ( COMMENTS , COMMENTS ) TARGET_LAG = '1 minute' WAREHOUSE = v1 EXECUTE AS USER v1 USE SECONDARY ROLES v1 , v1 ;"
-reason = "not submitted: held by the capture guard in chunk ux-05: changes session context"
-cause = "not_submitted"
-cases = [
-  { case_id = "sf.ddl.create-dynamic-table.create-dynamic-iceberg-table.create-dynamic-iceberg-table.k397c7d6d40e9", sql_sha256 = "397c7d6d40e9ffca218db7da3a5f88079cc30f797197423c74461a8af06434e1" },
-]
-runs = []
-probes = []
-
-[[unobservable]]
-obligation = "sf.ddl.create-dynamic-table.create-dynamic-iceberg-table.create-dynamic-iceberg-table.o042"
-form = "sf.ddl.create-dynamic-table.create-dynamic-iceberg-table.create-dynamic-iceberg-table"
-construct = "the list continued at least once: CREATE OR REPLACE DYNAMIC ICEBERG TABLE v1 CLONE v1 AT ( TIMESTAMP => CURRENT_TIMESTAMP ( ) ) COPY GRANTS COPY TAGS COPY = ( COMMENTS , COMMENTS ) TARGET_LAG = '1 minute' WAREHOUSE = v1 EXECUTE AS USER v1 USE SECONDARY ROLES v1 , v1 ;"
-reason = "not submitted: held by the capture guard in chunk ux-05: changes session context"
-cause = "not_submitted"
-cases = [
-  { case_id = "sf.ddl.create-dynamic-table.create-dynamic-iceberg-table.create-dynamic-iceberg-table.k397c7d6d40e9", sql_sha256 = "397c7d6d40e9ffca218db7da3a5f88079cc30f797197423c74461a8af06434e1" },
 ]
 runs = []
 probes = []
@@ -22845,18 +22569,6 @@ reason = "not submitted: held by the capture guard in chunk ux-05: changes sessi
 cause = "not_submitted"
 cases = [
   { case_id = "sf.ddl.create-dynamic-table.create-dynamic-iceberg-table.create-dynamic-iceberg-table.k0a1e1dc00325", sql_sha256 = "0a1e1dc0032526de88d3e5a57cf2f8e0b2d0e5762c544fd5dc4dd335c5a95056" },
-]
-runs = []
-probes = []
-
-[[unobservable]]
-obligation = "sf.ddl.create-dynamic-table.create-dynamic-iceberg-table.create-dynamic-iceberg-table.o066"
-form = "sf.ddl.create-dynamic-table.create-dynamic-iceberg-table.create-dynamic-iceberg-table"
-construct = "every independent option of one production together: CREATE OR REPLACE DYNAMIC ICEBERG TABLE v1 CLONE v1 AT ( TIMESTAMP => CURRENT_TIMESTAMP ( ) ) COPY GRANTS COPY TAGS COPY = ( COMMENTS , COMMENTS ) TARGET_LAG = '1 minute' WAREHOUSE = v1 EXECUTE AS USER v1 USE SECONDARY ROLES ALL ;"
-reason = "not submitted: held by the capture guard in chunk ux-05: changes session context"
-cause = "not_submitted"
-cases = [
-  { case_id = "sf.ddl.create-dynamic-table.create-dynamic-iceberg-table.create-dynamic-iceberg-table.kd5e801059ea1", sql_sha256 = "d5e801059ea1c163a611abbca79f7176a2b00034138ed4358c6d9d75bf48525a" },
 ]
 runs = []
 probes = []
@@ -23092,102 +22804,6 @@ runs = []
 probes = []
 
 [[unobservable]]
-obligation = "sf.ddl.create-dynamic-table.create-dynamic-iceberg-table.o246"
-form = "sf.ddl.create-dynamic-table.create-dynamic-iceberg-table"
-construct = "every independent option of one production together: CREATE OR REPLACE DYNAMIC ICEBERG TABLE v1 ( v1 INT WITH MASKING POLICY v1 USING ( v1 , v1 ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT 'm' , v1 INT ) TARGET_LAG = '1 minute' WAREHOUSE = v1 EXTERNAL_VOLUME = 'm' CATALOG = 'SNOWFLAKE' BASE_LOCATION = 'm' TARGET_FILE_SIZE = 'AUTO' PARTITION BY ( v1 , v1 ) PATH_LAYOUT = FLAT ICEBERG_VERSION = 1 REFRESH_MODE = AUTO FROZEN WHERE ( 1 ) INITIALIZE = ON_CREATE CLUSTER BY ( 1 , 1 ) DATA_RETENTION_TIME_IN_DAYS = 1 MAX_DATA_EXTENSION_TIME_IN_DAYS = 1 COMMENT = 'm' COPY GRANTS COPY TAGS COPY = ( COMMENTS , COMMENTS ) WITH ROW ACCESS POLICY v1 ON ( v1 , v1 ) WITH STORAGE LIFECYCLE POLICY v1 ON ( v1 , v1 ) WITH TAG ( v1 = 'm' , v1 = 'm' ) REQUIRE USER EXECUTE AS USER v1 USE SECONDARY ROLES ALL AS SELECT 1 ;"
-reason = "not submitted: held by the capture guard in chunk ux-05: changes session context"
-cause = "not_submitted"
-cases = [
-  { case_id = "sf.ddl.create-dynamic-table.create-dynamic-iceberg-table.kb8fb0eb503e3", sql_sha256 = "b8fb0eb503e3a1ca969f000e1aaabc9089a8ce994966ac6afd059d73148de782" },
-]
-runs = []
-probes = []
-
-[[unobservable]]
-obligation = "sf.ddl.create-dynamic-table.create-dynamic-table-clone.o002"
-form = "sf.ddl.create-dynamic-table.create-dynamic-table-clone"
-construct = "option_present: CREATE OR REPLACE TRANSIENT DYNAMIC TABLE v1 CLONE v1 AT ( TIMESTAMP => CURRENT_TIMESTAMP ( ) ) COPY GRANTS COPY TAGS COPY = ( COMMENTS , COMMENTS ) TARGET_LAG = '1 minute' WAREHOUSE = v1 EXECUTE AS USER v1 USE SECONDARY ROLES ALL ;"
-reason = "not submitted: held by the capture guard in chunk ux-05: changes session context"
-cause = "not_submitted"
-cases = [
-  { case_id = "sf.ddl.create-dynamic-table.create-dynamic-table-clone.ka96ab85a439f", sql_sha256 = "a96ab85a439f9a9d236665961e68aacfd8b0f575ceaca43cdda28656bdc0a9b3" },
-]
-runs = []
-probes = []
-
-[[unobservable]]
-obligation = "sf.ddl.create-dynamic-table.create-dynamic-table-clone.o004"
-form = "sf.ddl.create-dynamic-table.create-dynamic-table-clone"
-construct = "option_present: CREATE OR REPLACE TRANSIENT DYNAMIC TABLE v1 CLONE v1 AT ( TIMESTAMP => CURRENT_TIMESTAMP ( ) ) COPY GRANTS COPY TAGS COPY = ( COMMENTS , COMMENTS ) TARGET_LAG = '1 minute' WAREHOUSE = v1 EXECUTE AS USER v1 USE SECONDARY ROLES ALL ;"
-reason = "not submitted: held by the capture guard in chunk ux-05: changes session context"
-cause = "not_submitted"
-cases = [
-  { case_id = "sf.ddl.create-dynamic-table.create-dynamic-table-clone.ka96ab85a439f", sql_sha256 = "a96ab85a439f9a9d236665961e68aacfd8b0f575ceaca43cdda28656bdc0a9b3" },
-]
-runs = []
-probes = []
-
-[[unobservable]]
-obligation = "sf.ddl.create-dynamic-table.create-dynamic-table-clone.o011"
-form = "sf.ddl.create-dynamic-table.create-dynamic-table-clone"
-construct = "option_present: CREATE OR REPLACE TRANSIENT DYNAMIC TABLE v1 CLONE v1 AT ( TIMESTAMP => CURRENT_TIMESTAMP ( ) ) COPY GRANTS COPY TAGS COPY = ( COMMENTS , COMMENTS ) TARGET_LAG = '1 minute' WAREHOUSE = v1 EXECUTE AS USER v1 USE SECONDARY ROLES ALL ;"
-reason = "not submitted: held by the capture guard in chunk ux-05: changes session context"
-cause = "not_submitted"
-cases = [
-  { case_id = "sf.ddl.create-dynamic-table.create-dynamic-table-clone.ka96ab85a439f", sql_sha256 = "a96ab85a439f9a9d236665961e68aacfd8b0f575ceaca43cdda28656bdc0a9b3" },
-]
-runs = []
-probes = []
-
-[[unobservable]]
-obligation = "sf.ddl.create-dynamic-table.create-dynamic-table-clone.o019"
-form = "sf.ddl.create-dynamic-table.create-dynamic-table-clone"
-construct = "a valid operand: CREATE OR REPLACE TRANSIENT DYNAMIC TABLE v1 CLONE v1 AT ( TIMESTAMP => CURRENT_TIMESTAMP ( ) ) COPY GRANTS COPY TAGS COPY = ( COMMENTS , COMMENTS ) TARGET_LAG = '1 minute' WAREHOUSE = v1 EXECUTE AS USER v1 USE SECONDARY ROLES ALL ;"
-reason = "not submitted: held by the capture guard in chunk ux-05: changes session context"
-cause = "not_submitted"
-cases = [
-  { case_id = "sf.ddl.create-dynamic-table.create-dynamic-table-clone.ka96ab85a439f", sql_sha256 = "a96ab85a439f9a9d236665961e68aacfd8b0f575ceaca43cdda28656bdc0a9b3" },
-]
-runs = []
-probes = []
-
-[[unobservable]]
-obligation = "sf.ddl.create-dynamic-table.create-dynamic-table-clone.o021"
-form = "sf.ddl.create-dynamic-table.create-dynamic-table-clone"
-construct = "a valid operand: CREATE OR REPLACE TRANSIENT DYNAMIC TABLE v1 CLONE v1 AT ( OFFSET => -60 ) COPY GRANTS COPY TAGS COPY = ( COMMENTS , COMMENTS ) TARGET_LAG = '1 minute' WAREHOUSE = v1 EXECUTE AS USER v1 USE SECONDARY ROLES ALL ;"
-reason = "not submitted: held by the capture guard in chunk ux-05: changes session context"
-cause = "not_submitted"
-cases = [
-  { case_id = "sf.ddl.create-dynamic-table.create-dynamic-table-clone.kbf9c4e97a32d", sql_sha256 = "bf9c4e97a32d7d1a5a1252067d0b04c7682aaea6aa50c82e03a162f2fa66771d" },
-]
-runs = []
-probes = []
-
-[[unobservable]]
-obligation = "sf.ddl.create-dynamic-table.create-dynamic-table-clone.o023"
-form = "sf.ddl.create-dynamic-table.create-dynamic-table-clone"
-construct = "a valid operand: CREATE OR REPLACE TRANSIENT DYNAMIC TABLE v1 CLONE v1 AT ( STATEMENT => 'q1' ) COPY GRANTS COPY TAGS COPY = ( COMMENTS , COMMENTS ) TARGET_LAG = '1 minute' WAREHOUSE = v1 EXECUTE AS USER v1 USE SECONDARY ROLES ALL ;"
-reason = "not submitted: held by the capture guard in chunk ux-05: changes session context"
-cause = "not_submitted"
-cases = [
-  { case_id = "sf.ddl.create-dynamic-table.create-dynamic-table-clone.k086ba82b48e8", sql_sha256 = "086ba82b48e8a0bcf4dd8b46c1e997459be3076769164f3f25ec6d44555a258f" },
-]
-runs = []
-probes = []
-
-[[unobservable]]
-obligation = "sf.ddl.create-dynamic-table.create-dynamic-table-clone.o024"
-form = "sf.ddl.create-dynamic-table.create-dynamic-table-clone"
-construct = "option_present: CREATE OR REPLACE TRANSIENT DYNAMIC TABLE v1 CLONE v1 AT ( TIMESTAMP => CURRENT_TIMESTAMP ( ) ) COPY GRANTS COPY TAGS COPY = ( COMMENTS , COMMENTS ) TARGET_LAG = '1 minute' WAREHOUSE = v1 EXECUTE AS USER v1 USE SECONDARY ROLES ALL ;"
-reason = "not submitted: held by the capture guard in chunk ux-05: changes session context"
-cause = "not_submitted"
-cases = [
-  { case_id = "sf.ddl.create-dynamic-table.create-dynamic-table-clone.ka96ab85a439f", sql_sha256 = "a96ab85a439f9a9d236665961e68aacfd8b0f575ceaca43cdda28656bdc0a9b3" },
-]
-runs = []
-probes = []
-
-[[unobservable]]
 obligation = "sf.ddl.create-dynamic-table.create-dynamic-table-clone.o026"
 form = "sf.ddl.create-dynamic-table.create-dynamic-table-clone"
 construct = "alternative: CREATE DYNAMIC TABLE v1 CLONE v1 COPY GRANTS COPY TAGS COPY = ( COMMENTS ) TARGET_LAG = '1 minute' WAREHOUSE = v1 EXECUTE AS USER v1 USE SECONDARY ROLES ALL ;"
@@ -23219,18 +22835,6 @@ reason = "not submitted: held by the capture guard in chunk ux-05: changes sessi
 cause = "not_submitted"
 cases = [
   { case_id = "sf.ddl.create-dynamic-table.create-dynamic-table-clone.ka1dad6cec30d", sql_sha256 = "a1dad6cec30de94fbd1fee9a920448e70eb1e177be3293cc41a4d3259ee7a9d2" },
-]
-runs = []
-probes = []
-
-[[unobservable]]
-obligation = "sf.ddl.create-dynamic-table.create-dynamic-table-clone.o029"
-form = "sf.ddl.create-dynamic-table.create-dynamic-table-clone"
-construct = "the list continued at least once: CREATE OR REPLACE TRANSIENT DYNAMIC TABLE v1 CLONE v1 AT ( TIMESTAMP => CURRENT_TIMESTAMP ( ) ) COPY GRANTS COPY TAGS COPY = ( COMMENTS , COMMENTS ) TARGET_LAG = '1 minute' WAREHOUSE = v1 EXECUTE AS USER v1 USE SECONDARY ROLES ALL ;"
-reason = "not submitted: held by the capture guard in chunk ux-05: changes session context"
-cause = "not_submitted"
-cases = [
-  { case_id = "sf.ddl.create-dynamic-table.create-dynamic-table-clone.ka96ab85a439f", sql_sha256 = "a96ab85a439f9a9d236665961e68aacfd8b0f575ceaca43cdda28656bdc0a9b3" },
 ]
 runs = []
 probes = []
@@ -23284,18 +22888,6 @@ runs = []
 probes = []
 
 [[unobservable]]
-obligation = "sf.ddl.create-dynamic-table.create-dynamic-table-clone.o034"
-form = "sf.ddl.create-dynamic-table.create-dynamic-table-clone"
-construct = "a valid identifier: CREATE OR REPLACE TRANSIENT DYNAMIC TABLE v1 CLONE v1 AT ( TIMESTAMP => CURRENT_TIMESTAMP ( ) ) COPY GRANTS COPY TAGS COPY = ( COMMENTS , COMMENTS ) TARGET_LAG = '1 minute' WAREHOUSE = v1 EXECUTE AS USER v1 USE SECONDARY ROLES ALL ;"
-reason = "not submitted: held by the capture guard in chunk ux-05: changes session context"
-cause = "not_submitted"
-cases = [
-  { case_id = "sf.ddl.create-dynamic-table.create-dynamic-table-clone.ka96ab85a439f", sql_sha256 = "a96ab85a439f9a9d236665961e68aacfd8b0f575ceaca43cdda28656bdc0a9b3" },
-]
-runs = []
-probes = []
-
-[[unobservable]]
 obligation = "sf.ddl.create-dynamic-table.create-dynamic-table-clone.o035"
 form = "sf.ddl.create-dynamic-table.create-dynamic-table-clone"
 construct = "a string literal in place of <warehouse_name>: CREATE DYNAMIC TABLE v1 CLONE v1 COPY GRANTS COPY TAGS COPY = ( COMMENTS ) TARGET_LAG = '1 minute' WAREHOUSE = 'v1' EXECUTE AS USER v1 USE SECONDARY ROLES ALL ;"
@@ -23315,18 +22907,6 @@ reason = "not submitted: held by the capture guard in chunk ux-05: changes sessi
 cause = "not_submitted"
 cases = [
   { case_id = "sf.ddl.create-dynamic-table.create-dynamic-table-clone.k2117352e2979", sql_sha256 = "2117352e29790ae575aac20d5175d3c24a8a689c9750370ca96f88f89fc6d7cb" },
-]
-runs = []
-probes = []
-
-[[unobservable]]
-obligation = "sf.ddl.create-dynamic-table.create-dynamic-table-clone.o037"
-form = "sf.ddl.create-dynamic-table.create-dynamic-table-clone"
-construct = "a valid identifier: CREATE OR REPLACE TRANSIENT DYNAMIC TABLE v1 CLONE v1 AT ( TIMESTAMP => CURRENT_TIMESTAMP ( ) ) COPY GRANTS COPY TAGS COPY = ( COMMENTS , COMMENTS ) TARGET_LAG = '1 minute' WAREHOUSE = v1 EXECUTE AS USER v1 USE SECONDARY ROLES ALL ;"
-reason = "not submitted: held by the capture guard in chunk ux-05: changes session context"
-cause = "not_submitted"
-cases = [
-  { case_id = "sf.ddl.create-dynamic-table.create-dynamic-table-clone.ka96ab85a439f", sql_sha256 = "a96ab85a439f9a9d236665961e68aacfd8b0f575ceaca43cdda28656bdc0a9b3" },
 ]
 runs = []
 probes = []
@@ -23387,30 +22967,6 @@ reason = "not submitted: held by the capture guard in chunk ux-05: changes sessi
 cause = "not_submitted"
 cases = [
   { case_id = "sf.ddl.create-dynamic-table.create-dynamic-table-clone.kdd2c7344cc46", sql_sha256 = "dd2c7344cc466eac683c16fa36a13d1a93bf20dd7f4d08c2db0245c4954be709" },
-]
-runs = []
-probes = []
-
-[[unobservable]]
-obligation = "sf.ddl.create-dynamic-table.create-dynamic-table-clone.o043"
-form = "sf.ddl.create-dynamic-table.create-dynamic-table-clone"
-construct = "a valid operand: CREATE OR REPLACE TRANSIENT DYNAMIC TABLE v1 CLONE v1 AT ( TIMESTAMP => CURRENT_TIMESTAMP ( ) ) COPY GRANTS COPY TAGS COPY = ( COMMENTS , COMMENTS ) TARGET_LAG = '1 minute' WAREHOUSE = v1 EXECUTE AS USER v1 USE SECONDARY ROLES v1 , v1 ;"
-reason = "not submitted: held by the capture guard in chunk ux-05: changes session context"
-cause = "not_submitted"
-cases = [
-  { case_id = "sf.ddl.create-dynamic-table.create-dynamic-table-clone.kef37ee4d4020", sql_sha256 = "ef37ee4d402020bfbd8382f6617a532a88ef7809e9484d3cef97a5dbb8f4b67f" },
-]
-runs = []
-probes = []
-
-[[unobservable]]
-obligation = "sf.ddl.create-dynamic-table.create-dynamic-table-clone.o044"
-form = "sf.ddl.create-dynamic-table.create-dynamic-table-clone"
-construct = "the list continued at least once: CREATE OR REPLACE TRANSIENT DYNAMIC TABLE v1 CLONE v1 AT ( TIMESTAMP => CURRENT_TIMESTAMP ( ) ) COPY GRANTS COPY TAGS COPY = ( COMMENTS , COMMENTS ) TARGET_LAG = '1 minute' WAREHOUSE = v1 EXECUTE AS USER v1 USE SECONDARY ROLES v1 , v1 ;"
-reason = "not submitted: held by the capture guard in chunk ux-05: changes session context"
-cause = "not_submitted"
-cases = [
-  { case_id = "sf.ddl.create-dynamic-table.create-dynamic-table-clone.kef37ee4d4020", sql_sha256 = "ef37ee4d402020bfbd8382f6617a532a88ef7809e9484d3cef97a5dbb8f4b67f" },
 ]
 runs = []
 probes = []
@@ -23603,18 +23159,6 @@ reason = "not submitted: held by the capture guard in chunk ux-05: changes sessi
 cause = "not_submitted"
 cases = [
   { case_id = "sf.ddl.create-dynamic-table.create-dynamic-table-clone.kdd2c7344cc46", sql_sha256 = "dd2c7344cc466eac683c16fa36a13d1a93bf20dd7f4d08c2db0245c4954be709" },
-]
-runs = []
-probes = []
-
-[[unobservable]]
-obligation = "sf.ddl.create-dynamic-table.create-dynamic-table-clone.o068"
-form = "sf.ddl.create-dynamic-table.create-dynamic-table-clone"
-construct = "every independent option of one production together: CREATE OR REPLACE TRANSIENT DYNAMIC TABLE v1 CLONE v1 AT ( TIMESTAMP => CURRENT_TIMESTAMP ( ) ) COPY GRANTS COPY TAGS COPY = ( COMMENTS , COMMENTS ) TARGET_LAG = '1 minute' WAREHOUSE = v1 EXECUTE AS USER v1 USE SECONDARY ROLES ALL ;"
-reason = "not submitted: held by the capture guard in chunk ux-05: changes session context"
-cause = "not_submitted"
-cases = [
-  { case_id = "sf.ddl.create-dynamic-table.create-dynamic-table-clone.ka96ab85a439f", sql_sha256 = "a96ab85a439f9a9d236665961e68aacfd8b0f575ceaca43cdda28656bdc0a9b3" },
 ]
 runs = []
 probes = []
@@ -23845,18 +23389,6 @@ reason = "not submitted: held by the capture guard in chunk ux-05: changes sessi
 cause = "not_submitted"
 cases = [
   { case_id = "sf.ddl.create-dynamic-table.create-dynamic-table-target-lag.kf277ff403160", sql_sha256 = "f277ff403160730904e4625de7ef99df6fa709764914f1268b093231a520a684" },
-]
-runs = []
-probes = []
-
-[[unobservable]]
-obligation = "sf.ddl.create-dynamic-table.create-dynamic-table-target-lag.o300"
-form = "sf.ddl.create-dynamic-table.create-dynamic-table-target-lag"
-construct = "every independent option of one production together: CREATE OR REPLACE TRANSIENT DYNAMIC TABLE IF NOT EXISTS v1 ( v1 INT WITH MASKING POLICY v1 USING ( v1 , v1 ) WITH PROJECTION POLICY v1 WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT 'm' WITH CONTACT ( STEWARD = v1 , STEWARD = v1 ) , v1 INT ) TARGET_LAG = '1 minute' SCHEDULER = DISABLE WAREHOUSE = v1 INITIALIZATION_WAREHOUSE = v1 REFRESH_MODE = AUTO INITIALIZE = ON_CREATE CLUSTER BY ( 1 , 1 ) DATA_RETENTION_TIME_IN_DAYS = 1 MAX_DATA_EXTENSION_TIME_IN_DAYS = 1 COMMENT = 'm' COPY GRANTS COPY TAGS COPY = ( COMMENTS , COMMENTS ) WITH ROW ACCESS POLICY v1 ON ( v1 , v1 ) WITH AGGREGATION POLICY v1 ENTITY KEY ( v1 , v1 ) WITH TAG ( v1 = 'm' , v1 = 'm' ) REQUIRE USER FROZEN WHERE ( 1 ) WITH STORAGE LIFECYCLE POLICY v1 ON ( v1 , v1 ) BACKFILL FROM v1 START AT ( STREAM => 'm' ) EXECUTE AS USER v1 USE SECONDARY ROLES ALL ROW_TIMESTAMP = TRUE AS SELECT 1 ;"
-reason = "not submitted: held by the capture guard in chunk ux-05: changes session context"
-cause = "not_submitted"
-cases = [
-  { case_id = "sf.ddl.create-dynamic-table.create-dynamic-table-target-lag.k481dcaa70f65", sql_sha256 = "481dcaa70f65bfad860d079f5a0e2bdd190cc22ef74cb143b00e29e7c2c24aa6" },
 ]
 runs = []
 probes = []
@@ -41430,162 +40962,6 @@ runs = []
 probes = []
 
 [[unobservable]]
-obligation = "sf.ddl.create-table.create-table-clone.o002"
-form = "sf.ddl.create-table.create-table-clone"
-construct = "option_present: CREATE OR REPLACE LOCAL TEMP READ ONLY TABLE v1 CLONE v1 AT ( TIMESTAMP => CURRENT_TIMESTAMP ( ) ) COPY GRANTS COPY TAGS COPY = ( COMMENTS , COMMENTS ) ;"
-reason = "not submitted: held by the capture guard in chunk ux-07: CREATE of an account-level or unvetted kind (READ ONLY TABLE)"
-cause = "not_submitted"
-cases = [
-  { case_id = "sf.ddl.create-table.create-table-clone.ke79b9964437e", sql_sha256 = "e79b9964437e084f30a59dd7af1aab741d330b9fdc02e431f631e3e44e175664" },
-]
-runs = []
-probes = []
-
-[[unobservable]]
-obligation = "sf.ddl.create-table.create-table-clone.o004"
-form = "sf.ddl.create-table.create-table-clone"
-construct = "option_present: CREATE OR REPLACE LOCAL TEMP READ ONLY TABLE v1 CLONE v1 AT ( TIMESTAMP => CURRENT_TIMESTAMP ( ) ) COPY GRANTS COPY TAGS COPY = ( COMMENTS , COMMENTS ) ;"
-reason = "not submitted: held by the capture guard in chunk ux-07: CREATE of an account-level or unvetted kind (READ ONLY TABLE)"
-cause = "not_submitted"
-cases = [
-  { case_id = "sf.ddl.create-table.create-table-clone.ke79b9964437e", sql_sha256 = "e79b9964437e084f30a59dd7af1aab741d330b9fdc02e431f631e3e44e175664" },
-]
-runs = []
-probes = []
-
-[[unobservable]]
-obligation = "sf.ddl.create-table.create-table-clone.o010"
-form = "sf.ddl.create-table.create-table-clone"
-construct = "option_present: CREATE OR REPLACE LOCAL TEMP READ ONLY TABLE v1 CLONE v1 AT ( TIMESTAMP => CURRENT_TIMESTAMP ( ) ) COPY GRANTS COPY TAGS COPY = ( COMMENTS , COMMENTS ) ;"
-reason = "not submitted: held by the capture guard in chunk ux-07: CREATE of an account-level or unvetted kind (READ ONLY TABLE)"
-cause = "not_submitted"
-cases = [
-  { case_id = "sf.ddl.create-table.create-table-clone.ke79b9964437e", sql_sha256 = "e79b9964437e084f30a59dd7af1aab741d330b9fdc02e431f631e3e44e175664" },
-]
-runs = []
-probes = []
-
-[[unobservable]]
-obligation = "sf.ddl.create-table.create-table-clone.o014"
-form = "sf.ddl.create-table.create-table-clone"
-construct = "option_present: CREATE OR REPLACE LOCAL TEMP READ ONLY TABLE v1 CLONE v1 AT ( TIMESTAMP => CURRENT_TIMESTAMP ( ) ) COPY GRANTS COPY TAGS COPY = ( COMMENTS , COMMENTS ) ;"
-reason = "not submitted: held by the capture guard in chunk ux-07: CREATE of an account-level or unvetted kind (READ ONLY TABLE)"
-cause = "not_submitted"
-cases = [
-  { case_id = "sf.ddl.create-table.create-table-clone.ke79b9964437e", sql_sha256 = "e79b9964437e084f30a59dd7af1aab741d330b9fdc02e431f631e3e44e175664" },
-]
-runs = []
-probes = []
-
-[[unobservable]]
-obligation = "sf.ddl.create-table.create-table-clone.o016"
-form = "sf.ddl.create-table.create-table-clone"
-construct = "option_present: CREATE OR REPLACE TEMPORARY READ ONLY TABLE v1 CLONE v1 AT ( TIMESTAMP => CURRENT_TIMESTAMP ( ) ) COPY GRANTS COPY TAGS COPY = ( COMMENTS , COMMENTS ) ;"
-reason = "not submitted: held by the capture guard in chunk ux-07: CREATE of an account-level or unvetted kind (READ ONLY TABLE)"
-cause = "not_submitted"
-cases = [
-  { case_id = "sf.ddl.create-table.create-table-clone.k3b0475d4d29b", sql_sha256 = "3b0475d4d29b4ee0008008d256a383b92f76c4065d7e93ca71f70b5ec63be6f1" },
-]
-runs = []
-probes = []
-
-[[unobservable]]
-obligation = "sf.ddl.create-table.create-table-clone.o023"
-form = "sf.ddl.create-table.create-table-clone"
-construct = "option_present: CREATE OR REPLACE LOCAL TEMP READ ONLY TABLE v1 CLONE v1 AT ( TIMESTAMP => CURRENT_TIMESTAMP ( ) ) COPY GRANTS COPY TAGS COPY = ( COMMENTS , COMMENTS ) ;"
-reason = "not submitted: held by the capture guard in chunk ux-07: CREATE of an account-level or unvetted kind (READ ONLY TABLE)"
-cause = "not_submitted"
-cases = [
-  { case_id = "sf.ddl.create-table.create-table-clone.ke79b9964437e", sql_sha256 = "e79b9964437e084f30a59dd7af1aab741d330b9fdc02e431f631e3e44e175664" },
-]
-runs = []
-probes = []
-
-[[unobservable]]
-obligation = "sf.ddl.create-table.create-table-clone.o031"
-form = "sf.ddl.create-table.create-table-clone"
-construct = "a valid operand: CREATE OR REPLACE LOCAL TEMP READ ONLY TABLE v1 CLONE v1 AT ( TIMESTAMP => CURRENT_TIMESTAMP ( ) ) COPY GRANTS COPY TAGS COPY = ( COMMENTS , COMMENTS ) ;"
-reason = "not submitted: held by the capture guard in chunk ux-07: CREATE of an account-level or unvetted kind (READ ONLY TABLE)"
-cause = "not_submitted"
-cases = [
-  { case_id = "sf.ddl.create-table.create-table-clone.ke79b9964437e", sql_sha256 = "e79b9964437e084f30a59dd7af1aab741d330b9fdc02e431f631e3e44e175664" },
-]
-runs = []
-probes = []
-
-[[unobservable]]
-obligation = "sf.ddl.create-table.create-table-clone.o033"
-form = "sf.ddl.create-table.create-table-clone"
-construct = "a valid operand: CREATE OR REPLACE LOCAL TEMP READ ONLY TABLE v1 CLONE v1 AT ( OFFSET => -60 ) COPY GRANTS COPY TAGS COPY = ( COMMENTS , COMMENTS ) ;"
-reason = "not submitted: held by the capture guard in chunk ux-07: CREATE of an account-level or unvetted kind (READ ONLY TABLE)"
-cause = "not_submitted"
-cases = [
-  { case_id = "sf.ddl.create-table.create-table-clone.ke9000190d4e0", sql_sha256 = "e9000190d4e04111b12b78fa654904fa2f5f345a68f752b5dbc9d5fa74f5f240" },
-]
-runs = []
-probes = []
-
-[[unobservable]]
-obligation = "sf.ddl.create-table.create-table-clone.o035"
-form = "sf.ddl.create-table.create-table-clone"
-construct = "a valid operand: CREATE OR REPLACE LOCAL TEMP READ ONLY TABLE v1 CLONE v1 AT ( STATEMENT => 'q1' ) COPY GRANTS COPY TAGS COPY = ( COMMENTS , COMMENTS ) ;"
-reason = "not submitted: held by the capture guard in chunk ux-07: CREATE of an account-level or unvetted kind (READ ONLY TABLE)"
-cause = "not_submitted"
-cases = [
-  { case_id = "sf.ddl.create-table.create-table-clone.k9d869d708c95", sql_sha256 = "9d869d708c95cbeaddd2dcf0d5b57ecf24d55d377da62fc2295d302e2a828b5b" },
-]
-runs = []
-probes = []
-
-[[unobservable]]
-obligation = "sf.ddl.create-table.create-table-clone.o036"
-form = "sf.ddl.create-table.create-table-clone"
-construct = "option_present: CREATE OR REPLACE LOCAL TEMP READ ONLY TABLE v1 CLONE v1 AT ( TIMESTAMP => CURRENT_TIMESTAMP ( ) ) COPY GRANTS COPY TAGS COPY = ( COMMENTS , COMMENTS ) ;"
-reason = "not submitted: held by the capture guard in chunk ux-07: CREATE of an account-level or unvetted kind (READ ONLY TABLE)"
-cause = "not_submitted"
-cases = [
-  { case_id = "sf.ddl.create-table.create-table-clone.ke79b9964437e", sql_sha256 = "e79b9964437e084f30a59dd7af1aab741d330b9fdc02e431f631e3e44e175664" },
-]
-runs = []
-probes = []
-
-[[unobservable]]
-obligation = "sf.ddl.create-table.create-table-clone.o038"
-form = "sf.ddl.create-table.create-table-clone"
-construct = "option_present: CREATE OR REPLACE LOCAL TEMP READ ONLY TABLE v1 CLONE v1 AT ( TIMESTAMP => CURRENT_TIMESTAMP ( ) ) COPY GRANTS COPY TAGS COPY = ( COMMENTS , COMMENTS ) ;"
-reason = "not submitted: held by the capture guard in chunk ux-07: CREATE of an account-level or unvetted kind (READ ONLY TABLE)"
-cause = "not_submitted"
-cases = [
-  { case_id = "sf.ddl.create-table.create-table-clone.ke79b9964437e", sql_sha256 = "e79b9964437e084f30a59dd7af1aab741d330b9fdc02e431f631e3e44e175664" },
-]
-runs = []
-probes = []
-
-[[unobservable]]
-obligation = "sf.ddl.create-table.create-table-clone.o040"
-form = "sf.ddl.create-table.create-table-clone"
-construct = "option_present: CREATE OR REPLACE LOCAL TEMP READ ONLY TABLE v1 CLONE v1 AT ( TIMESTAMP => CURRENT_TIMESTAMP ( ) ) COPY GRANTS COPY TAGS COPY = ( COMMENTS , COMMENTS ) ;"
-reason = "not submitted: held by the capture guard in chunk ux-07: CREATE of an account-level or unvetted kind (READ ONLY TABLE)"
-cause = "not_submitted"
-cases = [
-  { case_id = "sf.ddl.create-table.create-table-clone.ke79b9964437e", sql_sha256 = "e79b9964437e084f30a59dd7af1aab741d330b9fdc02e431f631e3e44e175664" },
-]
-runs = []
-probes = []
-
-[[unobservable]]
-obligation = "sf.ddl.create-table.create-table-clone.o045"
-form = "sf.ddl.create-table.create-table-clone"
-construct = "the list continued at least once: CREATE OR REPLACE LOCAL TEMP READ ONLY TABLE v1 CLONE v1 AT ( TIMESTAMP => CURRENT_TIMESTAMP ( ) ) COPY GRANTS COPY TAGS COPY = ( COMMENTS , COMMENTS ) ;"
-reason = "not submitted: held by the capture guard in chunk ux-07: CREATE of an account-level or unvetted kind (READ ONLY TABLE)"
-cause = "not_submitted"
-cases = [
-  { case_id = "sf.ddl.create-table.create-table-clone.ke79b9964437e", sql_sha256 = "e79b9964437e084f30a59dd7af1aab741d330b9fdc02e431f631e3e44e175664" },
-]
-runs = []
-probes = []
-
-[[unobservable]]
 obligation = "sf.ddl.create-table.create-table-clone.o048"
 form = "sf.ddl.create-table.create-table-clone"
 construct = "the form without its required ONLY in [ READ ONLY ]: CREATE TEMP READ TABLE v1 CLONE v1 ;"
@@ -41605,18 +40981,6 @@ reason = "not submitted: held by the capture guard in chunk ux-07: CREATE of an 
 cause = "not_submitted"
 cases = [
   { case_id = "sf.ddl.create-table.create-table-clone.k4e50633e4032", sql_sha256 = "4e50633e4032c77d40f406ab1fc3c189a7166a2e586b4dbfb9cd279a948e018b" },
-]
-runs = []
-probes = []
-
-[[unobservable]]
-obligation = "sf.ddl.create-table.create-table-clone.o060"
-form = "sf.ddl.create-table.create-table-clone"
-construct = "every independent option of one production together: CREATE OR REPLACE LOCAL TEMP READ ONLY TABLE v1 CLONE v1 AT ( TIMESTAMP => CURRENT_TIMESTAMP ( ) ) COPY GRANTS COPY TAGS COPY = ( COMMENTS , COMMENTS ) ;"
-reason = "not submitted: held by the capture guard in chunk ux-07: CREATE of an account-level or unvetted kind (READ ONLY TABLE)"
-cause = "not_submitted"
-cases = [
-  { case_id = "sf.ddl.create-table.create-table-clone.ke79b9964437e", sql_sha256 = "e79b9964437e084f30a59dd7af1aab741d330b9fdc02e431f631e3e44e175664" },
 ]
 runs = []
 probes = []
@@ -52696,18 +52060,6 @@ runs = []
 probes = []
 
 [[unobservable]]
-obligation = "sf.ddl.alter-external-consumer.unset.o002"
-form = "sf.ddl.alter-external-consumer.unset"
-construct = "option_present: ALTER EXTERNAL CONSUMER IF EXISTS v1 UNSET COMMENT , COMMENT ;"
-reason = "not submitted: held by the capture guard in packet rmu-3cd2b776 (ddl_sweep): billable or out-of-account: listing or external sharing"
-cause = "not_submitted"
-cases = [
-  { case_id = "sf.ddl.alter-external-consumer.unset.k934650030311", sql_sha256 = "9346500303118e5a7e00ccfa0a94f671a3b3378770529ff5ba9bef4e1a03debc" },
-]
-runs = []
-probes = []
-
-[[unobservable]]
 obligation = "sf.ddl.alter-external-consumer.unset.o004"
 form = "sf.ddl.alter-external-consumer.unset"
 construct = "omit <name>: ALTER EXTERNAL CONSUMER UNSET COMMENT ;"
@@ -52739,18 +52091,6 @@ reason = "not submitted: held by the capture guard in packet rmu-3cd2b776 (ddl_s
 cause = "not_submitted"
 cases = [
   { case_id = "sf.ddl.alter-external-consumer.unset.ked8b6fc82058", sql_sha256 = "ed8b6fc820583cb093d301bb39b5526713f7de1c6b79c5d7bc34d0dbd508273f" },
-]
-runs = []
-probes = []
-
-[[unobservable]]
-obligation = "sf.ddl.alter-external-consumer.unset.o015"
-form = "sf.ddl.alter-external-consumer.unset"
-construct = "every independent option of one production together: ALTER EXTERNAL CONSUMER IF EXISTS v1 UNSET COMMENT , COMMENT ;"
-reason = "not submitted: held by the capture guard in packet rmu-3cd2b776 (ddl_sweep): billable or out-of-account: listing or external sharing"
-cause = "not_submitted"
-cases = [
-  { case_id = "sf.ddl.alter-external-consumer.unset.k934650030311", sql_sha256 = "9346500303118e5a7e00ccfa0a94f671a3b3378770529ff5ba9bef4e1a03debc" },
 ]
 runs = []
 probes = []
@@ -52800,18 +52140,6 @@ reason = "not submitted: held by the capture guard in packet rmu-3cd2b776 (ddl_s
 cause = "not_submitted"
 cases = [
   { case_id = "sf.ddl.alter-external-consumer.unset.k1ee916181dd6", sql_sha256 = "1ee916181dd6de554f34bb3934759b4ef3815856bd839781bd3b46a47f394cd5" },
-]
-runs = []
-probes = []
-
-[[unobservable]]
-obligation = "sf.ddl.alter-external-consumer.unset.o020"
-form = "sf.ddl.alter-external-consumer.unset"
-construct = "the list continued at least once: ALTER EXTERNAL CONSUMER IF EXISTS v1 UNSET COMMENT , COMMENT ;"
-reason = "not submitted: held by the capture guard in packet rmu-3cd2b776 (ddl_sweep): billable or out-of-account: listing or external sharing"
-cause = "not_submitted"
-cases = [
-  { case_id = "sf.ddl.alter-external-consumer.unset.k934650030311", sql_sha256 = "9346500303118e5a7e00ccfa0a94f671a3b3378770529ff5ba9bef4e1a03debc" },
 ]
 runs = []
 probes = []

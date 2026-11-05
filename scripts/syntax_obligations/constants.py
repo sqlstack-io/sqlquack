@@ -916,7 +916,6 @@ FUNCTIONS_TABLE_FORMS: tuple[str, ...] = (
     "semantic-view-materialization-refresh-history",
     "serverless-alert-history",
     "serverless-task-history",
-    "spcs-cancel-job",
     "spcs-get-events",
     "spcs-get-logs",
     "spcs-get-metrics",

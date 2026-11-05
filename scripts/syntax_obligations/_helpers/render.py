@@ -130,6 +130,7 @@ class _Renderer:
         self.style: FormStyle = style
         self._used: dict[str, list[str]] = {}
         self._keywords: list[str] = []
+        self._last_choice: tuple[Node, int, list[str]] | None = None
 
     def submissions(self, *, spec: Spec, depths: tuple[int, ...] = ()) -> list[Rendered]:
         """The submissions of a case spec; most specs give one, some give several."""
@@ -192,6 +193,7 @@ class _Renderer:
         """The rendered form text of one production; records the names it fills in."""
         self._used = {}
         self._keywords = []
+        self._last_choice = None
         joined: str = " ".join(self._sequence(nodes=self.trees[production], choices=choices))
         glued: str = GLUED_INFIX_RIGHT.sub("!", GLUED_PREFIXES.sub(r"\1", joined))
         staged: str = _stage_glued(GLUED_INFIX_LEFT.sub("!", glued))
@@ -339,9 +341,10 @@ class _Renderer:
             elif node.kind == NODE_OPTIONAL:
                 out += self._optional(node=node, choices=choices, before=out)
             elif node.kind == NODE_CHOICE:
-                out += self._sequence(
-                    nodes=node.branches[choices.branch.get(key, 0)], choices=choices
-                )
+                index: int = choices.branch.get(key, 0)
+                chosen: list[str] = self._sequence(nodes=node.branches[index], choices=choices)
+                self._last_choice = (node, index, chosen)
+                out += chosen
             elif node.token_kind == TOKEN_ELISION and out and out[-1] == LIST_SEPARATOR:
                 out.pop()
             elif node.token_kind == TOKEN_ELISION:
@@ -367,11 +370,25 @@ class _Renderer:
         branch: tuple[Node, ...] = node.branches[choices.branch.get(key, 0)]
         if is_repetition(branch) and not any(placeholder_name(n) for n in _tokens(branch)):
             start: int = _repeat_start(before=before, keywords=set(self._keywords))
-            return [",", *(self._repeat(text) for text in before[start + 1 :])]
+            item: list[str] = before[start + 1 :]
+            other: list[str] = self._other_branch(item=item, choices=choices)
+            return [",", *(other or [self._repeat(text) for text in item])]
         rendered: list[str] = self._sequence(nodes=branch, choices=choices)
         if is_repetition(branch) and _ends_in_continuation(branch) and rendered:
             return [*rendered, LIST_SEPARATOR, *(self._repeat(text) for text in rendered)]
         return rendered
+
+    def _other_branch(self, *, item: list[str], choices: _Choices) -> list[str]:
+        """The next branch of the choice a list item copies, so a list names distinct items."""
+        if self._last_choice is None:
+            return []
+        node, index, chosen = self._last_choice
+        if chosen != item or len(node.branches) == 1:
+            return []
+        following: int = (index + 1) % len(node.branches)
+        if not (_keywords_only(node.branches[index]) and _keywords_only(node.branches[following])):
+            return []
+        return self._sequence(nodes=node.branches[following], choices=choices)
 
     def _repeat(self, text: str) -> str:
         """A copied list item, continued with its REPEAT_FILLS value when one is declared."""
@@ -508,6 +525,10 @@ def _repeat_start(*, before: list[str], keywords: set[str]) -> int:
         ):
             return index
     return -1
+
+
+def _keywords_only(branch: tuple[Node, ...]) -> bool:
+    return all(token.token_kind == TOKEN_KEYWORD for token in _tokens(branch))
 
 
 def _tokens(nodes: tuple[Node, ...]) -> list[Node]:

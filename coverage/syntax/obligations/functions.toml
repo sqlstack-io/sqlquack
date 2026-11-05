@@ -37813,6 +37813,14 @@ anchor = "doc.functions.in / Syntax"
 note = "a row IN list of 1,000 two-value rows; no documented bound"
 
 [[obligation]]
+id = "sf.functions.in.in.syntax.o022"
+kind = "negative_neighbour"
+required = true
+target = "( <value_A> [, <value_B> ... ] )"
+anchor = "doc.functions.in / Syntax"
+note = "the form without the opening ( of its left row constructor"
+
+[[obligation]]
 id = "sf.functions.infer-schema.o001"
 kind = "positive"
 required = true
@@ -38009,6 +38017,30 @@ id = "sf.functions.infer-schema.o041"
 kind = "interaction_all_options"
 required = true
 note = "every independent option of one production together"
+
+[[obligation]]
+id = "sf.functions.infer-schema.o042"
+kind = "required_operand_missing"
+required = true
+target = "'{ internalStage | externalStage }'"
+anchor = "doc.functions.infer_schema / Syntax"
+note = "omit the LOCATION value"
+
+[[obligation]]
+id = "sf.functions.infer-schema.o043"
+kind = "operand_type_class"
+required = true
+target = "'{ internalStage | externalStage }'"
+anchor = "doc.functions.infer_schema / Syntax"
+note = "a string literal naming a stage path, as the page quotes it"
+
+[[obligation]]
+id = "sf.functions.infer-schema.o044"
+kind = "negative_neighbour"
+required = true
+target = "'{ internalStage | externalStage }'"
+anchor = "doc.functions.infer_schema / Syntax"
+note = "an unquoted stage reference in place of the quoted location (observed: the slot takes an expression)"
 
 [[obligation]]
 id = "sf.functions.initcap.o001"
@@ -51537,6 +51569,14 @@ id = "sf.functions.reduce.o009"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required )"
+
+[[obligation]]
+id = "sf.functions.reduce.o010"
+kind = "option_present"
+required = true
+target = "[ <datatype> ] in <lambda_expression>"
+anchor = "doc.functions.reduce / Syntax"
+note = "each lambda parameter with its optional data type"
 
 [[obligation]]
 id = "sf.functions.regexp.o001"

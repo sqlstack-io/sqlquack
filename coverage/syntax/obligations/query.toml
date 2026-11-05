@@ -1432,18 +1432,6 @@ required = true
 note = "the form without its required JOIN in [ ASOF JOIN ... ]"
 
 [[obligation]]
-id = "sf.query.constructs.o053"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ( in [ SEMANTIC_VIEW ( ... ) ]"
-
-[[obligation]]
-id = "sf.query.constructs.o054"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ) in [ SEMANTIC_VIEW ( ... ) ]"
-
-[[obligation]]
 id = "sf.query.constructs.o055"
 kind = "negative_neighbour"
 required = true
@@ -4346,12 +4334,6 @@ target = "<variableN> in [ , : <variableN> ]"
 note = "a string literal in place of <variableN>"
 
 [[obligation]]
-id = "sf.query.into.o027"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required FROM"
-
-[[obligation]]
 id = "sf.query.into.o029"
 kind = "interaction_all_options"
 required = true
@@ -5218,12 +5200,6 @@ kind = "operand_type_class"
 required = true
 target = "<start> in [ OFFSET <start> ]"
 note = "a valid expression"
-
-[[obligation]]
-id = "sf.query.limit.limit.o011"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required FROM"
 
 [[obligation]]
 id = "sf.query.limit.limit.o012"

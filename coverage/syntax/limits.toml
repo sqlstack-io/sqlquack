@@ -5311,8 +5311,8 @@ reason = "fromSource ::= [ USING [ CONFIGURATION <config_name> ] [ ( <expr> [ , 
 [[reading]]
 form = "sf.utility.execute-dcm-project.purge"
 grammar_sha256 = "1f22db7120e59ec51bb8bb11219e43ff7603cf1e95dfc9f36a7e93119e6f8666"
-grammar = ["EXECUTE DCM PROJECT <name> PURGE [ AS \"d1\" ]"]
-reason = "the double-quoted alias placeholder is filled as \"d1\""
+grammar = ["EXECUTE DCM PROJECT <name> PURGE [ AS <deployment_name_alias> ]"]
+reason = "the page writes the alias as a double-quoted placeholder, \"<deployment_name_alias>\": an identifier operand, so it gets the operand rows of any name, and its quoted-identifier row covers the page's quoted spelling"
 
 [[reading]]
 form = "sf.utility.execute-job-service"
@@ -65298,3 +65298,138 @@ anchor = "doc.sql.create-storage-integration / Syntax"
 sql = "CREATE STORAGE INTEGRATION v1 TYPE = EXTERNAL_STAGE ENABLED = TRUE STORAGE_ALLOWED_LOCATIONS = ( '<cloud>://<bucket>/<path>/' ) ;"
 expect = "observe"
 context = "raw"
+
+# D118 rerun findings (audit 420934dd): hand rows for operands and delimiters the derivation does not reach.
+[[limit]]
+form = "sf.utility.execute-dcm-project.purge"
+kind = "negative_neighbour"
+target = "[ AS <deployment_name_alias> ]"
+note = "the alias without its keyword AS"
+anchor = "doc.sql.execute-dcm-project / Syntax"
+sql = "EXECUTE DCM PROJECT v1 PURGE v1 ;"
+expect = "reject"
+context = "raw"
+
+[[limit]]
+form = "sf.ddl.undrop-database"
+kind = "negative_neighbour"
+target = "IDENTIFIER( <id> )"
+note = "the IDENTIFIER branch without its keyword IDENTIFIER"
+anchor = "doc.sql.undrop-database / Syntax"
+sql = "UNDROP DATABASE ( 'q1' ) ;"
+expect = "reject"
+context = "raw"
+
+[[limit]]
+form = "sf.ddl.undrop-schema"
+kind = "negative_neighbour"
+target = "IDENTIFIER( <id> )"
+note = "the IDENTIFIER branch without its keyword IDENTIFIER"
+anchor = "doc.sql.undrop-schema / Syntax"
+sql = "UNDROP SCHEMA ( 'q1' ) ;"
+expect = "reject"
+context = "raw"
+
+[[limit]]
+form = "sf.ddl.undrop-table"
+kind = "negative_neighbour"
+target = "IDENTIFIER( <id> )"
+note = "the IDENTIFIER branch without its keyword IDENTIFIER"
+anchor = "doc.sql.undrop-table / Syntax"
+sql = "UNDROP TABLE ( 'q1' ) ;"
+expect = "reject"
+context = "raw"
+
+[[limit]]
+form = "sf.functions.infer-schema"
+kind = "required_operand_missing"
+target = "'{ internalStage | externalStage }'"
+note = "omit the LOCATION value"
+anchor = "doc.functions.infer_schema / Syntax"
+sql = "SELECT * FROM TABLE ( INFER_SCHEMA ( LOCATION => , FILE_FORMAT => 'm' , FILES => ( 'm' ) , IGNORE_CASE => TRUE , MAX_FILE_COUNT => 1 , MAX_RECORDS_PER_FILE => 1 , KIND => 'm' ) ) ;"
+expect = "reject"
+context = "raw"
+
+[[limit]]
+form = "sf.functions.infer-schema"
+kind = "operand_type_class"
+target = "'{ internalStage | externalStage }'"
+note = "a string literal naming a stage path, as the page quotes it"
+anchor = "doc.functions.infer_schema / Syntax"
+sql = "SELECT * FROM TABLE ( INFER_SCHEMA ( LOCATION => '@s1/p1/' , FILE_FORMAT => 'm' , FILES => ( 'm' ) , IGNORE_CASE => TRUE , MAX_FILE_COUNT => 1 , MAX_RECORDS_PER_FILE => 1 , KIND => 'm' ) ) ;"
+expect = "accept"
+context = "raw"
+
+[[limit]]
+form = "sf.functions.infer-schema"
+kind = "negative_neighbour"
+target = "'{ internalStage | externalStage }'"
+note = "an unquoted stage reference in place of the quoted location (observed: the slot takes an expression)"
+anchor = "doc.functions.infer_schema / Syntax"
+sql = "SELECT * FROM TABLE ( INFER_SCHEMA ( LOCATION => @s1 , FILE_FORMAT => 'm' , FILES => ( 'm' ) , IGNORE_CASE => TRUE , MAX_FILE_COUNT => 1 , MAX_RECORDS_PER_FILE => 1 , KIND => 'm' ) ) ;"
+expect = "observe"
+context = "raw"
+
+[[limit]]
+form = "sf.functions.reduce"
+kind = "option_present"
+target = "[ <datatype> ] in <lambda_expression>"
+note = "each lambda parameter with its optional data type"
+anchor = "doc.functions.reduce / Syntax"
+sql = "SELECT REDUCE ( v1 , v1 , ( acc INT , x INT ) -> acc + x ) ;"
+expect = "accept"
+context = "raw"
+
+[[limit]]
+form = "sf.functions.in.in.syntax"
+kind = "negative_neighbour"
+target = "( <value_A> [, <value_B> ... ] )"
+note = "the form without the opening ( of its left row constructor"
+anchor = "doc.functions.in / Syntax"
+sql = "SELECT 1 ) IN ( ( 1 ) ) ;"
+expect = "reject"
+context = "raw"
+
+[[limit]]
+form = "sf.expressions.data-types-semistructured.array-index-access"
+kind = "negative_neighbour"
+target = "\"]\""
+note = "the index without its closing ]"
+anchor = "doc.data-types-semistructured / ARRAY / Accessing elements of an array by index or by slice"
+sql = "SELECT ARRAY_CONSTRUCT ( 1 , 2 ) [ 0 ;"
+expect = "reject"
+context = "raw"
+
+[[limit]]
+form = "sf.expressions.data-types-semistructured.array-index-access"
+kind = "negative_neighbour"
+target = "\"[\""
+note = "the index without its opening ["
+anchor = "doc.data-types-semistructured / ARRAY / Accessing elements of an array by index or by slice"
+sql = "SELECT ARRAY_CONSTRUCT ( 1 , 2 ) 0 ] ;"
+expect = "reject"
+context = "raw"
+
+[[suppress]]
+form = "sf.query.into"
+kind = "negative_neighbour"
+note = "the form without its required FROM"
+reason = "Snowflake accepts SELECT without FROM (SELECT 1 ;), so dropping FROM ... leaves a stray expression, and the rejection tests that, not FROM"
+
+[[suppress]]
+form = "sf.query.limit.limit"
+kind = "negative_neighbour"
+note = "the form without its required FROM"
+reason = "Snowflake accepts SELECT without FROM (SELECT 1 ;), so dropping FROM ... leaves a stray expression, and the rejection tests that, not FROM"
+
+[[suppress]]
+form = "sf.query.constructs"
+kind = "negative_neighbour"
+note = "the form without its required ( in [ SEMANTIC_VIEW ( ... ) ]"
+reason = "the outline places SEMANTIC_VIEW after the FROM source, where it is not valid as shown (see the option_present suppression), so the row does not test the parentheses; sf.query.semantic-view carries both parenthesis negatives"
+
+[[suppress]]
+form = "sf.query.constructs"
+kind = "negative_neighbour"
+note = "the form without its required ) in [ SEMANTIC_VIEW ( ... ) ]"
+reason = "the outline places SEMANTIC_VIEW after the FROM source, where it is not valid as shown (see the option_present suppression), so the row does not test the parentheses; sf.query.semantic-view carries both parenthesis negatives"
