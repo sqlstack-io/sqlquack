@@ -97,13 +97,13 @@ scope = "full"
 reviewed_utc = "2026-11-05T15:59:28Z"
 
 [[signoff]]
-subject = "form-links"
-sha256 = "9cd40d659205bd52ec8e63bd6dc44c426ab0fe4f51862e915d0498c0d0e80c15"
-scope = "full"
-reviewed_utc = "2026-11-05T15:59:28Z"
-
-[[signoff]]
 subject = "function-links"
 sha256 = "dec5f7f2b0b775bca605e1a5913294263df46ec07df5c6ee4e6db8566ab13da7"
 scope = "full"
 reviewed_utc = "2026-11-05T15:59:28Z"
+
+[[signoff]]
+subject = "form-links"
+sha256 = "bd474c2b292ecea6a0a0167c15e9a08de9ff93b1f59667a2f9827263f5eec2b7"
+scope = "full"
+reviewed_utc = "2026-11-05T16:45:00Z"
