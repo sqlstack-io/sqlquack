@@ -394,6 +394,7 @@ impl Parser {
             TokenType::Delete => self.parse_delete(),
 
             TokenType::Create => self.parse_create(),
+            TokenType::Define if self.is_snowflake() => self.parse_snowflake_define(),
             TokenType::Drop => self.parse_drop(),
 
             TokenType::Alter => self.parse_alter(),
@@ -511,11 +512,6 @@ impl Parser {
 
     fn parse_statement_by_keyword(&mut self, statement_start: usize) -> Result<Expression> {
         match self.peek().token_type {
-            TokenType::Define if self.applies_snowflake_context_rules() => {
-                self.skip();
-                self.parse_snowflake_create_data_metric_function("DEFINE", false, false)?
-                    .ok_or_else(|| self.parse_error("Expected DATA METRIC FUNCTION after DEFINE"))
-            }
             TokenType::Get
                 if self.check_next(TokenType::DAt) || !self.check_next(TokenType::LParen) =>
             {
@@ -627,6 +623,7 @@ impl Parser {
                 if self.peek_text().eq_ignore_ascii_case("LIST")
                     || self.peek_text().eq_ignore_ascii_case("LS") =>
             {
+                self.check_snowflake_stage_command(false)?;
                 self.skip();
                 self.parse_as_command()?
                     .ok_or_else(|| self.parse_error("Failed to parse LIST/LS statement"))

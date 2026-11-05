@@ -495,6 +495,9 @@ pub struct CreateFunction {
     /// PARAMETER STYLE clause (e.g., PANDAS for Databricks)
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub parameter_style: Option<String>,
+    /// Snowflake properties such as IMPORTS, SECRETS or SERVICE, each kept as its source text
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub snowflake_properties: Vec<String>,
 }
 
 /// A SET option in CREATE FUNCTION (PostgreSQL)
@@ -659,6 +662,7 @@ impl CreateFunction {
             runtime_version: None,
             packages: None,
             parameter_style: None,
+            snowflake_properties: Vec::new(),
         }
     }
 }
@@ -1184,7 +1188,7 @@ pub struct CreateObject {
     /// OR REPLACE clause
     #[serde(default)]
     pub or_replace: bool,
-    /// OR ALTER clause
+    /// OR ALTER clause, also set by a Snowflake DCM `DEFINE`
     #[serde(default, skip_serializing_if = "std::ops::Not::not")]
     pub or_alter: bool,
     /// IF NOT EXISTS clause
@@ -1213,4 +1217,27 @@ pub struct ObjectProperty {
     /// The value, absent for an unset property
     #[serde(default)]
     pub value: Option<Expression>,
+}
+
+/// Snowflake `EXECUTE ALERT | TASK [ GRAPH ] | DCM PROJECT <name>` with its action.
+#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct ExecuteObject {
+    /// The object kind as written in upper case, such as `TASK GRAPH`.
+    pub kind: String,
+    pub name: TableRef,
+    /// The action words in upper case, such as `RETRY LAST` or `PURGE`.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub action: Option<String>,
+    /// `RETRY GRAPH RUN GROUP '<id>'`: the graph run group.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub group: Option<Expression>,
+    /// `PURGE AS "<alias>"`: the deployment alias.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub alias: Option<Identifier>,
+    /// `USING CONFIG = <configuration>`.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub config: Option<Expression>,
+    /// The clauses and options of a job, notebook, dbt or code bundle, such as `IN COMPUTE POOL` or `ARGS`.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub properties: Vec<ObjectProperty>,
 }

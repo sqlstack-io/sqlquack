@@ -1,8 +1,8 @@
 //! Snowflake `EXECUTE JOB SERVICE`, `INFERENCE JOB SERVICE`, `NOTEBOOK [ PROJECT ]`, `DBT PROJECT` and `CODE BUNDLE`.
 
 use crate::expressions::names::models::TableRef;
+use crate::expressions::schema_objects::models::ExecuteObject;
 use crate::expressions::schema_objects::models::ObjectProperty;
-use crate::expressions::statements::models::ExecuteObject;
 use crate::expressions::tree::models::Expression;
 use crate::expressions::types::models::Tuple;
 use crate::parser::_helpers::ddl::snowflake_alter::property;

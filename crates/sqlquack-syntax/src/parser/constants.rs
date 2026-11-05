@@ -173,6 +173,27 @@ pub(crate) const VARIABLE: &str = "VARIABLE";
 /// The text "ZEROFILL", as comparisons test it.
 pub(crate) const ZEROFILL: &str = "ZEROFILL";
 
+/// The text "ACCOUNT", as comparisons test it.
+pub(crate) const ACCOUNT: &str = "ACCOUNT";
+
+/// The text "DROP ROW ACCESS POLICY", as comparisons test it.
+pub(crate) const DROP_ROW_ACCESS_POLICY: &str = "DROP ROW ACCESS POLICY";
+
+/// The text "ON ACCOUNT", as comparisons test it.
+pub(crate) const ON_ACCOUNT: &str = "ON ACCOUNT";
+
+/// The text ")", as comparisons test it.
+pub(crate) const RIGHT_PAREN: &str = ")";
+
+/// The text "SET", as comparisons test it.
+pub(crate) const SET: &str = "SET";
+
+/// The text "SET MASKING POLICY", as comparisons test it.
+pub(crate) const SET_MASKING_POLICY: &str = "SET MASKING POLICY";
+
+/// The text "SET TAG", as comparisons test it.
+pub(crate) const SET_TAG: &str = "SET TAG";
+
 /// The argument count of a two-argument call.
 pub(crate) const BINARY_ARITY: usize = 2;
 
@@ -582,6 +603,23 @@ pub(crate) const SHARED_DESCRIBE_KINDS: &[&str] = &["TABLE", "VIEW", "FUNCTION",
 
 /// Snowflake SHOW kinds, each before any kind it prefixes.
 pub(crate) const SNOWFLAKE_SHOW_KINDS: &[&[&str]] = &[
+    &[
+        "EVENT",
+        "ROUTING",
+        "TABLE",
+        "ON",
+        "ORGANIZATION",
+        "FOR",
+        "ALL",
+        "APPLICATION",
+        "LISTINGS",
+    ],
+    &["USER", "WORKLOAD", "IDENTITY", "AUTHENTICATION", "METHODS"],
+    &["USER", "PROGRAMMATIC", "ACCESS", "TOKENS"],
+    &["USER", "KEY", "PAIRS"],
+    &["USER", "PATS"],
+    &["FEATURE", "POLICIES"],
+    &["MAINTENANCE", "POLICIES"],
     &["COMPUTE", "POOL", "INSTANCE", "FAMILIES"],
     &["DELEGATED", "AUTHORIZATIONS", "BY", "USER"],
     &["MULTI", "PARTY", "APPROVAL", "POLICIES"],
@@ -768,16 +806,11 @@ pub(crate) const SHARED_SHOW_KINDS: &[&[&str]] = &[
     &["PRIMARY", "KEYS"],
     &["UNIQUE", "KEYS"],
     &["AVAILABLE", "LISTINGS"],
-    &["EVENT", "ROUTING", "TABLE", "ON"],
-    &["FEATURE", "POLICIES"],
-    &["FUTURE"],
-    &["GRANTS"],
     &["JOB"],
-    &["MAINTENANCE"],
     &["PARAMETERS"],
-    &["RULES"],
     &["SERVICES"],
-    &["USER"],
+    &["USER", "FUNCTIONS"],
+    &["USER", "PROCEDURES"],
 ];
 
 /// The containers a Snowflake SHOW ... IN names, each before any container it prefixes.
@@ -891,6 +924,46 @@ pub(crate) const SNOWFLAKE_INTERVAL_LEADING: std::ops::RangeInclusive<u8> = 1..=
 /// Snowflake's recorded fractional-second precisions after TO, as in `DAY TO SECOND ( 0 )`.
 pub(crate) const SNOWFLAKE_INTERVAL_FRACTION: std::ops::RangeInclusive<u8> = 0..=9;
 
+/// Snowflake function and procedure properties whose value is a string.
+pub(crate) const SNOWFLAKE_ROUTINE_TEXT_PROPERTIES: &[&str] = &[
+    "COMMENT",
+    "HANDLER",
+    "LOG_LEVEL",
+    "METRIC_LEVEL",
+    "RUNTIME_VERSION",
+    "TARGET_PATH",
+    "TRACE_LEVEL",
+];
+
+/// Snowflake function and procedure properties whose value is a name.
+pub(crate) const SNOWFLAKE_ROUTINE_NAME_PROPERTIES: &[&str] = &[
+    "API_INTEGRATION",
+    "ARTIFACT_REPOSITORY",
+    "COMPRESSION",
+    "ENDPOINT",
+    "ON_BATCH_FAILURE",
+    "REQUEST_TRANSLATOR",
+    "RESPONSE_TRANSLATOR",
+    "SERVICE",
+];
+
+/// Snowflake function and procedure properties whose value is a number.
+pub(crate) const SNOWFLAKE_ROUTINE_NUMBER_PROPERTIES: &[&str] =
+    &["BATCH_TIMEOUT_SECS", "MAX_BATCH_RETRIES", "MAX_BATCH_ROWS"];
+
+/// Snowflake function and procedure properties whose value is a parenthesized string list.
+pub(crate) const SNOWFLAKE_ROUTINE_TEXT_LIST_PROPERTIES: &[&str] =
+    &["ARTIFACT_REPOSITORY_PACKAGES", "IMPORTS", "PACKAGES"];
+
+/// Snowflake function and procedure properties whose value is a parenthesized name list.
+pub(crate) const SNOWFLAKE_ROUTINE_NAME_LIST_PROPERTIES: &[&str] =
+    &["CONTEXT_HEADERS", "EXTERNAL_ACCESS_INTEGRATIONS"];
+
+/// Snowflake function and procedure properties whose value is a `( '<key>' = <name> , ... )` map.
+pub(crate) const SNOWFLAKE_ROUTINE_NAME_MAP_PROPERTIES: &[&str] = &["SECRETS"];
+
+/// Snowflake function and procedure properties whose value is a `( '<key>' = '<value>' , ... )` map.
+pub(crate) const SNOWFLAKE_ROUTINE_TEXT_MAP_PROPERTIES: &[&str] = &["HEADERS"];
 /// The privileges a Snowflake GRANT or REVOKE names besides ALL, CREATE SNOWFLAKE classes and USE AI FUNCTION.
 pub(crate) const SNOWFLAKE_GRANT_PRIVILEGES: &[&str] = &[
     "ADD SEARCH OPTIMIZATION",

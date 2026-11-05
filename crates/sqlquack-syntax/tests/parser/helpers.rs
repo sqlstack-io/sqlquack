@@ -88,6 +88,12 @@ pub(crate) fn accepted(sql: &str, dialect: Dialect) -> bool {
     parse_statements_with(sql, dialect, &ParseOptions::default(), CallMode::Faithful).is_ok()
 }
 
+/// The node kind of the first statement when Snowflake SQL parses, and `None` when it is rejected.
+pub(crate) fn snowflake_kind(sql: &str) -> Option<String> {
+    accepted(sql, Dialect::Snowflake)
+        .then(|| kind(&statements(sql, Dialect::Snowflake, CallMode::Faithful)[0]))
+}
+
 /// The string at `pointer` in each walked node that has one, sorted.
 pub(crate) fn sorted_strings<'a>(values: &'a [Value], pointer: &str) -> Vec<&'a str> {
     let mut found: Vec<&str> = values

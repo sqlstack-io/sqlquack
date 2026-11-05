@@ -277,11 +277,13 @@ impl Parser {
 
         let if_not_exists =
             self.match_keywords(&[TokenType::If, TokenType::Not, TokenType::Exists]);
+        self.check_snowflake_object_name()?;
         let name = self.parse_table_ref()?;
 
         let (parameters, has_parens) = if self.match_token(TokenType::LParen) {
             let params = self.parse_function_parameters()?;
             self.expect_token(TokenType::RParen)?;
+            self.check_snowflake_routine_arguments(&params)?;
             (params, true)
         } else if self.check(TokenType::Var) && !self.check(TokenType::As) {
             let params = self.parse_tsql_procedure_params()?;
@@ -298,7 +300,10 @@ impl Parser {
         let mut with_options: Vec<String> = Vec::new();
 
         while !self.is_at_end() && !self.check(TokenType::Semicolon) {
-            if self.match_token(TokenType::Returns) {
+            if let Some(property) = self.parse_snowflake_routine_property()? {
+                with_options.push(property);
+            } else if self.match_token(TokenType::Returns) {
+                self.check_snowflake_table_columns()?;
                 return_type = Some(self.parse_data_type()?);
                 if self.match_keywords(&[TokenType::Not, TokenType::Null]) {
                 } else {
@@ -312,6 +317,10 @@ impl Parser {
                         execute_as = Some("OWNER".to_string());
                     } else if self.match_identifier("SELF") {
                         execute_as = Some("SELF".to_string());
+                    } else if self.match_text_seq(&["RESTRICTED", "CALLER"]) {
+                        execute_as = Some("RESTRICTED CALLER".to_string());
+                    } else if self.is_snowflake() {
+                        return Err(self.parse_error("Expected OWNER, CALLER or RESTRICTED CALLER"));
                     }
                 }
             } else if self.match_token(TokenType::Language) {
@@ -1210,6 +1219,21 @@ impl Parser {
     /// Parses Snowflake CREATE [OR REPLACE] TASK [IF NOT EXISTS] name [...] AS statement.
     pub(crate) fn parse_create_task(&mut self, or_replace: bool) -> Result<Expression> {
         self.skip();
+        let graph = self.is_snowflake()
+            && self.check_identifier("GRAPH")
+            && self.peek_nth(1).is_some_and(|next| {
+                next.token_type == TokenType::If
+                    || !matches!(
+                        next.token_type,
+                        TokenType::As | TokenType::Dot | TokenType::Eq
+                    ) && self
+                        .peek_nth(2)
+                        .is_some_and(|after| after.token_type != TokenType::Eq)
+            });
+        if graph {
+            self.skip();
+            return self.parse_snowflake_create_task_graph(or_replace);
+        }
 
         let if_not_exists =
             self.match_keywords(&[TokenType::If, TokenType::Not, TokenType::Exists]);
@@ -1237,12 +1261,18 @@ impl Parser {
                         properties: String::new(),
                         body: None,
                         clone_source: Some(clone_source),
+                        graph: false,
                     },
                 )));
             }
             self.current = start;
         }
 
+        if self.is_snowflake() {
+            let start = self.current;
+            self.skip_snowflake_name()?;
+            self.current = start;
+        }
         let mut name = String::new();
         if self.check(TokenType::Var) || self.check_keyword() || self.is_identifier_token() {
             name.push_str(&self.advance_text()?);
@@ -1256,6 +1286,9 @@ impl Parser {
         }
 
         let props_start = self.current;
+        if self.is_snowflake() {
+            self.check_snowflake_task_properties(false)?;
+        }
         while !self.is_at_end() && !self.check(TokenType::Semicolon) && !self.check(TokenType::As) {
             self.skip();
         }
@@ -1275,6 +1308,7 @@ impl Parser {
                 properties,
                 body: Some(body),
                 clone_source: None,
+                graph: false,
             },
         )))
     }

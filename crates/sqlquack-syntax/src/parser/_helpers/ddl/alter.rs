@@ -1164,6 +1164,24 @@ impl Parser {
 
     /// Parse ALTER COLUMN action
     pub(crate) fn parse_alter_column_action(&mut self) -> Result<AlterColumnAction> {
+        if self.is_snowflake() {
+            if self.match_text_seq(&["UNSET", "COMMENT"]) {
+                return Ok(AlterColumnAction::UnsetComment);
+            }
+            if self.match_keywords(&[TokenType::Not, TokenType::Null]) {
+                return Ok(AlterColumnAction::SetNotNull);
+            }
+            if self.check(TokenType::Set) && self.check_next(TokenType::Default) {
+                self.current += 2;
+                return Ok(AlterColumnAction::SetDefault(self.parse_expression()?));
+            }
+            if self.check_identifier("UNSET") {
+                return Err(self.parse_error("Expected COMMENT, a policy or TAG after UNSET"));
+            }
+            if self.check(TokenType::Comment) && !self.check_next(TokenType::String) {
+                return Err(self.parse_error("Expected a string after COMMENT"));
+            }
+        }
         if self.match_token(TokenType::Set) {
             if self.match_keywords(&[TokenType::Not, TokenType::Null]) {
                 Ok(AlterColumnAction::SetNotNull)
@@ -1214,6 +1232,7 @@ impl Parser {
         } else if self.match_token(TokenType::Type)
             || self.match_identifier("TYPE")
             || self.is_identifier_token()
+            || self.is_snowflake() && self.check_keyword() && !self.check(TokenType::Default)
         {
             let data_type = self.parse_data_type()?;
             let collate = if self.match_token(TokenType::Collate) {
