@@ -483,5 +483,9 @@ constructs = ["node:lambda", "node:named_argument", "node:within_group"]
 reason = "Lambda arguments, named arguments and WITHIN GROUP belong to the function forms that take them, which link by name."
 
 [[no_form]]
+constructs = ["node:method_call"]
+reason = "A schema-qualified call such as SNOWFLAKE.CORE.NULL_COUNT(...) links by its qualified name and call shape, like any other call."
+
+[[no_form]]
 constructs = ["fn:<udf>"]
 reason = "A project function the case itself defines, which is not documented Snowflake syntax."
