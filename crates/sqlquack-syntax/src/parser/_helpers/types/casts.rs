@@ -266,7 +266,7 @@ impl Parser {
         }
     }
 
-    /// Reads Snowflake's interval literal qualifier when a field has a precision, as `SECOND(9), (3)`.
+    /// Reads Snowflake's interval literal qualifier when a field has a precision, as `DAY(9) TO SECOND(3)`.
     pub(crate) fn try_parse_snowflake_interval_qualifier(
         &mut self,
     ) -> Result<Option<IntervalUnitSpec>> {
@@ -288,15 +288,6 @@ impl Parser {
             expression: None,
             fractional_precision: None,
         };
-        let fraction_follows = [
-            TokenType::Comma,
-            TokenType::LParen,
-            TokenType::Number,
-            TokenType::RParen,
-        ]
-        .into_iter()
-        .enumerate()
-        .all(|(offset, token_type)| self.is_type_at(offset, token_type));
         if let Some(end) = self.interval_field_at(1).filter(|_| self.is_to_at(0)) {
             self.skip();
             self.skip();
@@ -304,9 +295,6 @@ impl Parser {
             if end == IntervalUnit::Second {
                 qualifier.fractional_precision = self.parse_snowflake_interval_precision()?;
             }
-        } else if this == IntervalUnit::Second && leading_precision.is_some() && fraction_follows {
-            self.skip();
-            qualifier.fractional_precision = self.parse_snowflake_interval_precision()?;
         }
         Ok(Some(IntervalUnitSpec::Qualifier(qualifier)))
     }
