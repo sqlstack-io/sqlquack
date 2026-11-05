@@ -480,6 +480,12 @@ required = true
 note = "the form without its required JAVASCRIPT"
 
 [[obligation]]
+id = "sf.utility.call-with.language-javascript-as-call.o104"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required CALLED after JAVASCRIPT in [ { CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } ]"
+
+[[obligation]]
 id = "sf.utility.call-with.language-javascript-as-call.o057"
 kind = "negative_neighbour"
 required = true
@@ -498,10 +504,34 @@ required = true
 note = "the form without its required INPUT in [ { CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } ]"
 
 [[obligation]]
+id = "sf.utility.call-with.language-javascript-as-call.o105"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required RETURNS after JAVASCRIPT in [ { CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } ]"
+
+[[obligation]]
+id = "sf.utility.call-with.language-javascript-as-call.o106"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required NULL after RETURNS in [ { CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } ]"
+
+[[obligation]]
+id = "sf.utility.call-with.language-javascript-as-call.o107"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ON after NULL in [ { CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } ]"
+
+[[obligation]]
 id = "sf.utility.call-with.language-javascript-as-call.o100"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required NULL in [ { CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } ] #2"
+
+[[obligation]]
+id = "sf.utility.call-with.language-javascript-as-call.o108"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required INPUT after NULL in [ { CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } ]"
 
 [[obligation]]
 id = "sf.utility.call-with.language-javascript-as-call.o101"
@@ -1162,6 +1192,12 @@ required = true
 note = "the form without its required RETURNS"
 
 [[obligation]]
+id = "sf.utility.call-with.table-language-java-runtime-version.o151"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required TABLE after RETURNS"
+
+[[obligation]]
 id = "sf.utility.call-with.table-language-java-runtime-version.o085"
 kind = "negative_neighbour"
 required = true
@@ -1222,6 +1258,12 @@ required = true
 note = "the form without its required HANDLER"
 
 [[obligation]]
+id = "sf.utility.call-with.table-language-java-runtime-version.o152"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required CALLED after '<fully_qualified_method_name>' in [ { CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } ]"
+
+[[obligation]]
 id = "sf.utility.call-with.table-language-java-runtime-version.o093"
 kind = "negative_neighbour"
 required = true
@@ -1240,10 +1282,34 @@ required = true
 note = "the form without its required INPUT in [ { CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } ]"
 
 [[obligation]]
+id = "sf.utility.call-with.table-language-java-runtime-version.o153"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required RETURNS after '<fully_qualified_method_name>' in [ { CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } ]"
+
+[[obligation]]
+id = "sf.utility.call-with.table-language-java-runtime-version.o154"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required NULL after RETURNS in [ { CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } ]"
+
+[[obligation]]
+id = "sf.utility.call-with.table-language-java-runtime-version.o155"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ON after NULL in [ { CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } ]"
+
+[[obligation]]
 id = "sf.utility.call-with.table-language-java-runtime-version.o148"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required NULL in [ { CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } ] #2"
+
+[[obligation]]
+id = "sf.utility.call-with.table-language-java-runtime-version.o156"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required INPUT after NULL in [ { CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } ]"
 
 [[obligation]]
 id = "sf.utility.call-with.table-language-java-runtime-version.o096"
@@ -1938,6 +2004,12 @@ required = true
 note = "the form without its required RETURNS"
 
 [[obligation]]
+id = "sf.utility.call-with.table-language-java-runtime-version.java.o146"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required TABLE after RETURNS"
+
+[[obligation]]
 id = "sf.utility.call-with.table-language-java-runtime-version.java.o080"
 kind = "negative_neighbour"
 required = true
@@ -1998,6 +2070,12 @@ required = true
 note = "the form without its required HANDLER"
 
 [[obligation]]
+id = "sf.utility.call-with.table-language-java-runtime-version.java.o147"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required CALLED after '<fully_qualified_method_name>' in [ { CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } ]"
+
+[[obligation]]
 id = "sf.utility.call-with.table-language-java-runtime-version.java.o088"
 kind = "negative_neighbour"
 required = true
@@ -2016,10 +2094,34 @@ required = true
 note = "the form without its required INPUT in [ { CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } ]"
 
 [[obligation]]
+id = "sf.utility.call-with.table-language-java-runtime-version.java.o148"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required RETURNS after '<fully_qualified_method_name>' in [ { CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } ]"
+
+[[obligation]]
+id = "sf.utility.call-with.table-language-java-runtime-version.java.o149"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required NULL after RETURNS in [ { CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } ]"
+
+[[obligation]]
+id = "sf.utility.call-with.table-language-java-runtime-version.java.o150"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ON after NULL in [ { CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } ]"
+
+[[obligation]]
 id = "sf.utility.call-with.table-language-java-runtime-version.java.o143"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required NULL in [ { CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } ] #2"
+
+[[obligation]]
+id = "sf.utility.call-with.table-language-java-runtime-version.java.o151"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required INPUT after NULL in [ { CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } ]"
 
 [[obligation]]
 id = "sf.utility.call-with.table-language-java-runtime-version.java.o091"
@@ -2729,6 +2831,12 @@ required = true
 note = "the form without its required RETURNS"
 
 [[obligation]]
+id = "sf.utility.call-with.table-language-python-runtime-version.o150"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required TABLE after RETURNS"
+
+[[obligation]]
 id = "sf.utility.call-with.table-language-python-runtime-version.o082"
 kind = "negative_neighbour"
 required = true
@@ -2789,6 +2897,12 @@ required = true
 note = "the form without its required HANDLER"
 
 [[obligation]]
+id = "sf.utility.call-with.table-language-python-runtime-version.o151"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required CALLED after '<function_name>' in [ { CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } ]"
+
+[[obligation]]
 id = "sf.utility.call-with.table-language-python-runtime-version.o090"
 kind = "negative_neighbour"
 required = true
@@ -2807,10 +2921,34 @@ required = true
 note = "the form without its required INPUT in [ { CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } ]"
 
 [[obligation]]
+id = "sf.utility.call-with.table-language-python-runtime-version.o152"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required RETURNS after '<function_name>' in [ { CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } ]"
+
+[[obligation]]
+id = "sf.utility.call-with.table-language-python-runtime-version.o153"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required NULL after RETURNS in [ { CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } ]"
+
+[[obligation]]
+id = "sf.utility.call-with.table-language-python-runtime-version.o154"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ON after NULL in [ { CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } ]"
+
+[[obligation]]
 id = "sf.utility.call-with.table-language-python-runtime-version.o146"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required NULL in [ { CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } ] #2"
+
+[[obligation]]
+id = "sf.utility.call-with.table-language-python-runtime-version.o155"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required INPUT after NULL in [ { CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } ]"
 
 [[obligation]]
 id = "sf.utility.call-with.table-language-python-runtime-version.o147"
@@ -3491,6 +3629,12 @@ required = true
 note = "the form without its required RETURNS"
 
 [[obligation]]
+id = "sf.utility.call-with.table-language-python-runtime-version.python.o142"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required TABLE after RETURNS"
+
+[[obligation]]
 id = "sf.utility.call-with.table-language-python-runtime-version.python.o076"
 kind = "negative_neighbour"
 required = true
@@ -3551,6 +3695,12 @@ required = true
 note = "the form without its required HANDLER"
 
 [[obligation]]
+id = "sf.utility.call-with.table-language-python-runtime-version.python.o143"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required CALLED after '<module_file_name>.<function_name>' in [ { CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } ]"
+
+[[obligation]]
 id = "sf.utility.call-with.table-language-python-runtime-version.python.o084"
 kind = "negative_neighbour"
 required = true
@@ -3569,10 +3719,34 @@ required = true
 note = "the form without its required INPUT in [ { CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } ]"
 
 [[obligation]]
+id = "sf.utility.call-with.table-language-python-runtime-version.python.o144"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required RETURNS after '<module_file_name>.<function_name>' in [ { CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } ]"
+
+[[obligation]]
+id = "sf.utility.call-with.table-language-python-runtime-version.python.o145"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required NULL after RETURNS in [ { CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } ]"
+
+[[obligation]]
+id = "sf.utility.call-with.table-language-python-runtime-version.python.o146"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ON after NULL in [ { CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } ]"
+
+[[obligation]]
 id = "sf.utility.call-with.table-language-python-runtime-version.python.o139"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required NULL in [ { CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } ] #2"
+
+[[obligation]]
+id = "sf.utility.call-with.table-language-python-runtime-version.python.o147"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required INPUT after NULL in [ { CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } ]"
 
 [[obligation]]
 id = "sf.utility.call-with.table-language-python-runtime-version.python.o087"
@@ -4300,6 +4474,12 @@ required = true
 note = "the form without its required RETURNS"
 
 [[obligation]]
+id = "sf.utility.call-with.table-language-scala-runtime-version.o151"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required TABLE after RETURNS"
+
+[[obligation]]
 id = "sf.utility.call-with.table-language-scala-runtime-version.o085"
 kind = "negative_neighbour"
 required = true
@@ -4360,6 +4540,12 @@ required = true
 note = "the form without its required HANDLER"
 
 [[obligation]]
+id = "sf.utility.call-with.table-language-scala-runtime-version.o152"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required CALLED after '<fully_qualified_method_name>' in [ { CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } ]"
+
+[[obligation]]
 id = "sf.utility.call-with.table-language-scala-runtime-version.o093"
 kind = "negative_neighbour"
 required = true
@@ -4378,10 +4564,34 @@ required = true
 note = "the form without its required INPUT in [ { CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } ]"
 
 [[obligation]]
+id = "sf.utility.call-with.table-language-scala-runtime-version.o153"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required RETURNS after '<fully_qualified_method_name>' in [ { CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } ]"
+
+[[obligation]]
+id = "sf.utility.call-with.table-language-scala-runtime-version.o154"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required NULL after RETURNS in [ { CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } ]"
+
+[[obligation]]
+id = "sf.utility.call-with.table-language-scala-runtime-version.o155"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ON after NULL in [ { CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } ]"
+
+[[obligation]]
 id = "sf.utility.call-with.table-language-scala-runtime-version.o148"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required NULL in [ { CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } ] #2"
+
+[[obligation]]
+id = "sf.utility.call-with.table-language-scala-runtime-version.o156"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required INPUT after NULL in [ { CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } ]"
 
 [[obligation]]
 id = "sf.utility.call-with.table-language-scala-runtime-version.o096"
@@ -5076,6 +5286,12 @@ required = true
 note = "the form without its required RETURNS"
 
 [[obligation]]
+id = "sf.utility.call-with.table-language-scala-runtime-version.scala.o146"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required TABLE after RETURNS"
+
+[[obligation]]
 id = "sf.utility.call-with.table-language-scala-runtime-version.scala.o080"
 kind = "negative_neighbour"
 required = true
@@ -5136,6 +5352,12 @@ required = true
 note = "the form without its required HANDLER"
 
 [[obligation]]
+id = "sf.utility.call-with.table-language-scala-runtime-version.scala.o147"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required CALLED after '<fully_qualified_method_name>' in [ { CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } ]"
+
+[[obligation]]
 id = "sf.utility.call-with.table-language-scala-runtime-version.scala.o088"
 kind = "negative_neighbour"
 required = true
@@ -5154,10 +5376,34 @@ required = true
 note = "the form without its required INPUT in [ { CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } ]"
 
 [[obligation]]
+id = "sf.utility.call-with.table-language-scala-runtime-version.scala.o148"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required RETURNS after '<fully_qualified_method_name>' in [ { CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } ]"
+
+[[obligation]]
+id = "sf.utility.call-with.table-language-scala-runtime-version.scala.o149"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required NULL after RETURNS in [ { CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } ]"
+
+[[obligation]]
+id = "sf.utility.call-with.table-language-scala-runtime-version.scala.o150"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ON after NULL in [ { CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } ]"
+
+[[obligation]]
 id = "sf.utility.call-with.table-language-scala-runtime-version.scala.o143"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required NULL in [ { CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } ] #2"
+
+[[obligation]]
+id = "sf.utility.call-with.table-language-scala-runtime-version.scala.o151"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required INPUT after NULL in [ { CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } ]"
 
 [[obligation]]
 id = "sf.utility.call-with.table-language-scala-runtime-version.scala.o091"
@@ -5765,6 +6011,12 @@ required = true
 note = "the form without its required RETURNS"
 
 [[obligation]]
+id = "sf.utility.call-with.table-language-sql-as.o116"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required TABLE after RETURNS"
+
+[[obligation]]
 id = "sf.utility.call-with.table-language-sql-as.o062"
 kind = "negative_neighbour"
 required = true
@@ -5781,6 +6033,12 @@ id = "sf.utility.call-with.table-language-sql-as.o064"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required SQL"
+
+[[obligation]]
+id = "sf.utility.call-with.table-language-sql-as.o117"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required CALLED after SQL in [ { CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } ]"
 
 [[obligation]]
 id = "sf.utility.call-with.table-language-sql-as.o065"
@@ -5801,10 +6059,34 @@ required = true
 note = "the form without its required INPUT in [ { CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } ]"
 
 [[obligation]]
+id = "sf.utility.call-with.table-language-sql-as.o118"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required RETURNS after SQL in [ { CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } ]"
+
+[[obligation]]
+id = "sf.utility.call-with.table-language-sql-as.o119"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required NULL after RETURNS in [ { CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } ]"
+
+[[obligation]]
+id = "sf.utility.call-with.table-language-sql-as.o120"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ON after NULL in [ { CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } ]"
+
+[[obligation]]
 id = "sf.utility.call-with.table-language-sql-as.o110"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required NULL in [ { CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } ] #2"
+
+[[obligation]]
+id = "sf.utility.call-with.table-language-sql-as.o121"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required INPUT after NULL in [ { CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } ]"
 
 [[obligation]]
 id = "sf.utility.call-with.table-language-sql-as.o111"
@@ -7270,6 +7552,12 @@ required = true
 note = "the form without its required DEPLOY"
 
 [[obligation]]
+id = "sf.utility.execute-dcm-project.deploy-fromsource-fromdeployment.o077"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required CONFIGURATION after USING in [ USING { CONFIGURATION <config_name> [ ( <expr> [ , <expr> ... ] ) ] | ( <expr> [ , <expr> ... ] ) } ]"
+
+[[obligation]]
 id = "sf.utility.execute-dcm-project.deploy-fromsource-fromdeployment.o051"
 kind = "negative_neighbour"
 required = true
@@ -7298,6 +7586,12 @@ id = "sf.utility.execute-dcm-project.deploy-fromsource-fromdeployment.o056"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required FROM"
+
+[[obligation]]
+id = "sf.utility.execute-dcm-project.deploy-fromsource-fromdeployment.o078"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required FROM after DEPLOY"
 
 [[obligation]]
 id = "sf.utility.execute-dcm-project.deploy-fromsource-fromdeployment.o057"
@@ -7693,6 +7987,12 @@ required = true
 note = "the form without its required PLAN"
 
 [[obligation]]
+id = "sf.utility.execute-dcm-project.plan-fromsource-fromdeployment.o080"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required CONFIGURATION after USING in [ USING { CONFIGURATION <config_name> [ ( <expr> [ , <expr> ... ] ) ] | ( <expr> [ , <expr> ... ] ) } ]"
+
+[[obligation]]
 id = "sf.utility.execute-dcm-project.plan-fromsource-fromdeployment.o055"
 kind = "negative_neighbour"
 required = true
@@ -7721,6 +8021,12 @@ id = "sf.utility.execute-dcm-project.plan-fromsource-fromdeployment.o060"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required FROM"
+
+[[obligation]]
+id = "sf.utility.execute-dcm-project.plan-fromsource-fromdeployment.o081"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required FROM after PLAN"
 
 [[obligation]]
 id = "sf.utility.execute-dcm-project.plan-fromsource-fromdeployment.o061"
@@ -10034,10 +10340,22 @@ required = true
 note = "the form without its required POOL"
 
 [[obligation]]
+id = "sf.utility.execute-job-service.o125"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required FROM after <compute_pool_name>"
+
+[[obligation]]
 id = "sf.utility.execute-job-service.o100"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required SPECIFICATION_FILE"
+
+[[obligation]]
+id = "sf.utility.execute-job-service.o126"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required FROM after <compute_pool_name> #2"
 
 [[obligation]]
 id = "sf.utility.execute-job-service.o102"
@@ -10046,10 +10364,22 @@ required = true
 note = "the form without its required SPECIFICATION"
 
 [[obligation]]
+id = "sf.utility.execute-job-service.o127"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required FROM after <compute_pool_name> #3"
+
+[[obligation]]
 id = "sf.utility.execute-job-service.o103"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required SPECIFICATION_TEMPLATE_FILE"
+
+[[obligation]]
+id = "sf.utility.execute-job-service.o128"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required FROM after <compute_pool_name> #4"
 
 [[obligation]]
 id = "sf.utility.execute-job-service.o104"

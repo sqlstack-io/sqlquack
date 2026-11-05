@@ -54,6 +54,24 @@ valid_as = "sf.classes.anomaly-detection.commands.show-anomaly-detection positiv
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
+form = "sf.classes.anomaly-detection.commands.show-anomaly-detection"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required DATABASE after IN in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> } ]"
+sql = "SHOW SNOWFLAKE . ML . ANOMALY_DETECTION IN v1 ;"
+valid_as = "sf.classes.anomaly-detection.commands.show-anomaly-detection alternative { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> } → <schema_name>"
+reason = "the rejection renders SQL the documented grammar also accepts"
+
+[[withdrawn]]
+form = "sf.classes.anomaly-detection.commands.show-anomaly-detection"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required SCHEMA after IN in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> } ]"
+sql = "SHOW SNOWFLAKE . ML . ANOMALY_DETECTION IN v1 ;"
+valid_as = "sf.classes.anomaly-detection.commands.show-anomaly-detection alternative { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> } → <schema_name>"
+reason = "the rejection renders SQL the documented grammar also accepts"
+
+[[withdrawn]]
 form = "sf.classes.budget.commands.show-budget"
 kind = "required_operand_missing"
 target = "<database_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name>…"
@@ -78,6 +96,24 @@ target = ""
 note = "the form without its required INSTANCES"
 sql = "SHOW SNOWFLAKE . CORE . BUDGET ;"
 valid_as = "sf.classes.budget.commands.show-budget positive the documented form with every required part and no optional part"
+reason = "the rejection renders SQL the documented grammar also accepts"
+
+[[withdrawn]]
+form = "sf.classes.budget.commands.show-budget"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required DATABASE after IN in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> } ]"
+sql = "SHOW SNOWFLAKE . CORE . BUDGET IN v1 ;"
+valid_as = "sf.classes.budget.commands.show-budget alternative { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> } → <schema_name>"
+reason = "the rejection renders SQL the documented grammar also accepts"
+
+[[withdrawn]]
+form = "sf.classes.budget.commands.show-budget"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required SCHEMA after IN in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> } ]"
+sql = "SHOW SNOWFLAKE . CORE . BUDGET IN v1 ;"
+valid_as = "sf.classes.budget.commands.show-budget alternative { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> } → <schema_name>"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
@@ -108,6 +144,24 @@ valid_as = "sf.classes.classification-profile.commands.show-classification-profi
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
+form = "sf.classes.classification-profile.commands.show-classification-profile"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required DATABASE after IN in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> } ]"
+sql = "SHOW SNOWFLAKE . DATA_PRIVACY . CLASSIFICATION_PROFILE IN v1 ;"
+valid_as = "sf.classes.classification-profile.commands.show-classification-profile alternative { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> } → <schema_name>"
+reason = "the rejection renders SQL the documented grammar also accepts"
+
+[[withdrawn]]
+form = "sf.classes.classification-profile.commands.show-classification-profile"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required SCHEMA after IN in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> } ]"
+sql = "SHOW SNOWFLAKE . DATA_PRIVACY . CLASSIFICATION_PROFILE IN v1 ;"
+valid_as = "sf.classes.classification-profile.commands.show-classification-profile alternative { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> } → <schema_name>"
+reason = "the rejection renders SQL the documented grammar also accepts"
+
+[[withdrawn]]
 form = "sf.classes.classification.commands.show-classification"
 kind = "required_operand_missing"
 target = "<database_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name>…"
@@ -132,6 +186,24 @@ target = ""
 note = "the form without its required INSTANCES"
 sql = "SHOW SNOWFLAKE . ML . CLASSIFICATION ;"
 valid_as = "sf.classes.classification.commands.show-classification positive the documented form with every required part and no optional part"
+reason = "the rejection renders SQL the documented grammar also accepts"
+
+[[withdrawn]]
+form = "sf.classes.classification.commands.show-classification"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required DATABASE after IN in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> } ]"
+sql = "SHOW SNOWFLAKE . ML . CLASSIFICATION IN v1 ;"
+valid_as = "sf.classes.classification.commands.show-classification alternative { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> } → <schema_name>"
+reason = "the rejection renders SQL the documented grammar also accepts"
+
+[[withdrawn]]
+form = "sf.classes.classification.commands.show-classification"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required SCHEMA after IN in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> } ]"
+sql = "SHOW SNOWFLAKE . ML . CLASSIFICATION IN v1 ;"
+valid_as = "sf.classes.classification.commands.show-classification alternative { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> } → <schema_name>"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
@@ -162,6 +234,24 @@ valid_as = "sf.classes.custom-classifier.commands.show-custom-classifiers positi
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
+form = "sf.classes.custom-classifier.commands.show-custom-classifiers"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required DATABASE after IN in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> } ]"
+sql = "SHOW SNOWFLAKE . DATA_PRIVACY . CUSTOM_CLASSIFIER IN v1 ;"
+valid_as = "sf.classes.custom-classifier.commands.show-custom-classifiers alternative { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> } → <schema_name>"
+reason = "the rejection renders SQL the documented grammar also accepts"
+
+[[withdrawn]]
+form = "sf.classes.custom-classifier.commands.show-custom-classifiers"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required SCHEMA after IN in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> } ]"
+sql = "SHOW SNOWFLAKE . DATA_PRIVACY . CUSTOM_CLASSIFIER IN v1 ;"
+valid_as = "sf.classes.custom-classifier.commands.show-custom-classifiers alternative { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> } → <schema_name>"
+reason = "the rejection renders SQL the documented grammar also accepts"
+
+[[withdrawn]]
 form = "sf.classes.forecast.commands.show-forecast"
 kind = "required_operand_missing"
 target = "<database_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name>…"
@@ -189,6 +279,24 @@ valid_as = "sf.classes.forecast.commands.show-forecast positive the documented f
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
+form = "sf.classes.forecast.commands.show-forecast"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required DATABASE after IN in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> } ]"
+sql = "SHOW SNOWFLAKE . ML . FORECAST IN v1 ;"
+valid_as = "sf.classes.forecast.commands.show-forecast alternative { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> } → <schema_name>"
+reason = "the rejection renders SQL the documented grammar also accepts"
+
+[[withdrawn]]
+form = "sf.classes.forecast.commands.show-forecast"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required SCHEMA after IN in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> } ]"
+sql = "SHOW SNOWFLAKE . ML . FORECAST IN v1 ;"
+valid_as = "sf.classes.forecast.commands.show-forecast alternative { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> } → <schema_name>"
+reason = "the rejection renders SQL the documented grammar also accepts"
+
+[[withdrawn]]
 form = "sf.classes.top-insights.commands.show-top-insights"
 kind = "required_operand_missing"
 target = "<database_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name>…"
@@ -213,4 +321,22 @@ target = ""
 note = "the form without its required INSTANCES"
 sql = "SHOW SNOWFLAKE . ML . TOP_INSIGHTS ;"
 valid_as = "sf.classes.top-insights.commands.show-top-insights positive the documented form with every required part and no optional part"
+reason = "the rejection renders SQL the documented grammar also accepts"
+
+[[withdrawn]]
+form = "sf.classes.top-insights.commands.show-top-insights"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required DATABASE after IN in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> } ]"
+sql = "SHOW SNOWFLAKE . ML . TOP_INSIGHTS IN v1 ;"
+valid_as = "sf.classes.top-insights.commands.show-top-insights alternative { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> } → <schema_name>"
+reason = "the rejection renders SQL the documented grammar also accepts"
+
+[[withdrawn]]
+form = "sf.classes.top-insights.commands.show-top-insights"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required SCHEMA after IN in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> } ]"
+sql = "SHOW SNOWFLAKE . ML . TOP_INSIGHTS IN v1 ;"
+valid_as = "sf.classes.top-insights.commands.show-top-insights alternative { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> } → <schema_name>"
 reason = "the rejection renders SQL the documented grammar also accepts"

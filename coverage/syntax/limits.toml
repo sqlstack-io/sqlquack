@@ -20795,7 +20795,7 @@ size = 1000
 outer_open = "CREATE NETWORK RULE r1 TYPE = IPV4 VALUE_LIST = ("
 open = "'10.0.0.{n}' ,"
 core = "'10.0.0.0'"
-outer_close = ") ;"
+outer_close = ") MODE = INGRESS ;"
 context = "raw"
 
 [[limit]]
@@ -23749,7 +23749,7 @@ form = "sf.utility.call-with.table-language-sql-as"
 kind = "required_operand_missing"
 target = "<arg_data_type> in [ <arg_name> <arg_data_type> [ , <arg_name> <arg_data_type> ... ] ]"
 note = "omit <arg_data_type>"
-reason = "D97: Snowflake parses this SQL and fails it later, errno 90201 SQLSTATE 42601 (phase semantic_error, import-20261104-22), so it is not a syntax error; the hand row below observes it"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 90201 SQLSTATE 42601 (phase semantic_error, import-20261104-22), so it is not a syntax error; the hand row below observes it, with a valid Snowflake Scripting body so only the signature is under test (import 157: a body of 'm' is itself a syntax error)"
 
 [[limit]]
 form = "sf.utility.call-with.table-language-sql-as"
@@ -23757,7 +23757,7 @@ kind = "required_operand_missing"
 target = "<arg_data_type> in [ <arg_name> <arg_data_type> [ , <arg_name> <arg_data_type> ... ] ]"
 note = "omit <arg_data_type>, observed"
 anchor = "doc.sql.call-with / Syntax / Snowflake Scripting"
-sql = "WITH v1 AS PROCEDURE ( v1 ) RETURNS INT LANGUAGE SQL AS 'm' CALL v1 ( ) ;"
+sql = "WITH v1 AS PROCEDURE ( v1 ) RETURNS INT LANGUAGE SQL AS 'BEGIN RETURN 1 ; END' CALL v1 ( ) ;"
 expect = "observe"
 context = "raw"
 
@@ -23766,7 +23766,7 @@ form = "sf.utility.call-with.table-language-sql-as"
 kind = "required_operand_missing"
 target = "<arg_name> in [ <arg_name> <arg_data_type> [ , <arg_name> <arg_data_type> ... ] ]"
 note = "omit <arg_name>"
-reason = "D97: Snowflake parses this SQL and fails it later, errno 90201 SQLSTATE 42601 (phase semantic_error, import-20261104-22), so it is not a syntax error; the hand row below observes it"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 90201 SQLSTATE 42601 (phase semantic_error, import-20261104-22), so it is not a syntax error; the hand row below observes it, with a valid Snowflake Scripting body so only the signature is under test (import 157: a body of 'm' is itself a syntax error)"
 
 [[limit]]
 form = "sf.utility.call-with.table-language-sql-as"
@@ -23774,7 +23774,7 @@ kind = "required_operand_missing"
 target = "<arg_name> in [ <arg_name> <arg_data_type> [ , <arg_name> <arg_data_type> ... ] ]"
 note = "omit <arg_name>, observed"
 anchor = "doc.sql.call-with / Syntax / Snowflake Scripting"
-sql = "WITH v1 AS PROCEDURE ( INT ) RETURNS INT LANGUAGE SQL AS 'm' CALL v1 ( ) ;"
+sql = "WITH v1 AS PROCEDURE ( INT ) RETURNS INT LANGUAGE SQL AS 'BEGIN RETURN 1 ; END' CALL v1 ( ) ;"
 expect = "observe"
 context = "raw"
 
@@ -23783,7 +23783,7 @@ form = "sf.utility.call-with.table-language-sql-as"
 kind = "required_operand_missing"
 target = "<col_data_type> in [ <col_name> <col_data_type> [ , ... ] ]"
 note = "omit <col_data_type>"
-reason = "D97: Snowflake parses this SQL and fails it later, errno 90214 SQLSTATE 42601 (phase semantic_error, import-20261104-22), so it is not a syntax error; the hand row below observes it"
+reason = "D97: Snowflake parses this SQL and fails it later, errno 90214 SQLSTATE 42601 (phase semantic_error, import-20261104-22), so it is not a syntax error; the hand row below observes it, with a valid Snowflake Scripting body so only the signature is under test (import 157: a body of 'm' is itself a syntax error)"
 
 [[limit]]
 form = "sf.utility.call-with.table-language-sql-as"
@@ -23791,7 +23791,7 @@ kind = "required_operand_missing"
 target = "<col_data_type> in [ <col_name> <col_data_type> [ , ... ] ]"
 note = "omit <col_data_type>, observed"
 anchor = "doc.sql.call-with / Syntax / Snowflake Scripting"
-sql = "WITH v1 AS PROCEDURE ( ) RETURNS TABLE ( v1 ) LANGUAGE SQL AS 'm' CALL v1 ( ) ;"
+sql = "WITH v1 AS PROCEDURE ( ) RETURNS TABLE ( v1 ) LANGUAGE SQL AS 'BEGIN RETURN 1 ; END' CALL v1 ( ) ;"
 expect = "observe"
 context = "raw"
 
@@ -65006,7 +65006,7 @@ form = "sf.security_admin.create-database-role.create-or-alter-database"
 kind = "required_operand_missing"
 target = "<name>"
 note = "omit <name>"
-reason = "D113 [undocumented acceptance]: Snowflake accepts this SQL (phase accepted, import-20261104-85), though the page requires the omitted part; observed (D110)"
+reason = "D97: the neighbour has the shape of an accepted statement (CREATE OR ALTER DATABASE for a database named ROLE, sf.ddl.create-database.create-or-alter-database; phase accepted, import-20261104-85), so the hand row below observes it instead of scoring a reject"
 
 [[limit]]
 form = "sf.security_admin.create-database-role.create-or-alter-database"
@@ -82148,3 +82148,578 @@ anchor = "doc.sql.alter-user-modify-workload-identity / Syntax"
 sql = "ALTER USER IF MODIFY WORKLOAD IDENTITY v1 SET COMMENT = 'm' ;"
 expect = "observe"
 context = "raw"
+
+# D118 round 3 (audit d118-findings-f28341e6): dotted account identifiers, GET_JOB_HISTORY without stray commas, a three-item ORDER BY, comma-separated SET properties, ALTER STAGE keyword and URL rows, INTERVAL fractional precision inside CAST
+[[limit]]
+form = "sf.ddl.alter-database.disable-failover"
+kind = "operand_type_class"
+target = "<account_identifier> in [ TO ACCOUNTS <account_identifier> [ , <account_identifier> ... ] ]"
+note = "organization_name.account_name, the preferred account identifier, unquoted and double-quoted"
+anchor = "doc.sql.alter-database / Database replication and failover parameters"
+sql = "ALTER DATABASE v1 DISABLE FAILOVER TO ACCOUNTS o1.a1 , \"o 1\".\"a 1\" ;"
+expect = "accept"
+context = "raw"
+
+[[limit]]
+form = "sf.ddl.alter-database.disable-replication"
+kind = "operand_type_class"
+target = "<account_identifier> in [ TO ACCOUNTS <account_identifier> [ , <account_identifier> ... ] ]"
+note = "organization_name.account_name, the preferred account identifier, unquoted and double-quoted"
+anchor = "doc.sql.alter-database / Database replication and failover parameters"
+sql = "ALTER DATABASE v1 DISABLE REPLICATION TO ACCOUNTS o1.a1 , \"o 1\".\"a 1\" ;"
+expect = "accept"
+context = "raw"
+
+[[limit]]
+form = "sf.ddl.alter-database.enable-failover-to-accounts"
+kind = "operand_type_class"
+target = "<account_identifier>"
+note = "organization_name.account_name, the preferred account identifier, unquoted and double-quoted"
+anchor = "doc.sql.alter-database / Database replication and failover parameters"
+sql = "ALTER DATABASE v1 ENABLE FAILOVER TO ACCOUNTS o1.a1 , \"o 1\".\"a 1\" ;"
+expect = "accept"
+context = "raw"
+
+[[limit]]
+form = "sf.ddl.alter-database.enable-replication-to-accounts"
+kind = "operand_type_class"
+target = "<account_identifier>"
+note = "organization_name.account_name, the preferred account identifier, unquoted and double-quoted"
+anchor = "doc.sql.alter-database / Database replication and failover parameters"
+sql = "ALTER DATABASE v1 ENABLE REPLICATION TO ACCOUNTS o1.a1 , \"o 1\".\"a 1\" ;"
+expect = "accept"
+context = "raw"
+
+[[suppress]]
+form = "sf.functions.get-job-history"
+kind = "required_operand_missing"
+target = "<constant_expr> in [ CREATED_TIME_START => <constant_expr> ]"
+note = "omit <constant_expr>"
+reason = "D118 round 3: the derived rendering keeps the comma that the Syntax line writes outside [ CREATED_TIME_START => <constant_expr> ], leaving `CREATED_TIME_START => , )`; the hand row below renders it without the stray comma"
+
+[[limit]]
+form = "sf.functions.get-job-history"
+kind = "required_operand_missing"
+target = "<constant_expr> in [ CREATED_TIME_START => <constant_expr> ]"
+note = "omit <constant_expr>"
+anchor = "doc.functions.get_job_history / Syntax"
+sql = "SELECT * FROM TABLE ( SNOWFLAKE . SPCS . GET_JOB_HISTORY ( CREATED_TIME_START => ) ) ;"
+expect = "reject"
+context = "raw"
+
+[[suppress]]
+form = "sf.functions.get-job-history"
+kind = "negative_neighbour"
+note = "the form without its required ("
+reason = "D118 round 3: the derived rendering keeps a comma the Syntax line writes outside the optional groups, leaving `GET_JOB_HISTORY , ) )`; the hand row below drops only the ("
+
+[[limit]]
+form = "sf.functions.get-job-history"
+kind = "negative_neighbour"
+note = "the form without its required ("
+anchor = "doc.functions.get_job_history / Syntax"
+sql = "SELECT * FROM TABLE ( SNOWFLAKE . SPCS . GET_JOB_HISTORY ) ) ;"
+expect = "reject"
+context = "raw"
+
+[[suppress]]
+form = "sf.query.order-by.orderitem"
+kind = "option_present"
+target = "[ , { <column_alias> | <position> | <expr> } [ { ASC | DESC } ] [ NULLS { FIRST | LAST } ] , ... ]"
+note = "the list continued at least once"
+reason = "D118 round 3: the derived case renders only two items, so the trailing `, ...` is never exercised; the hand row below continues the list to three items"
+
+[[limit]]
+form = "sf.query.order-by.orderitem"
+kind = "option_present"
+target = "[ , { <column_alias> | <position> | <expr> } [ { ASC | DESC } ] [ NULLS { FIRST | LAST } ] , ... ]"
+note = "the list continued at least once"
+anchor = "doc.constructs.order-by / Syntax"
+sql = "SELECT 1 FROM t1 ORDER BY v1 , v1 , v1 ;"
+expect = "accept"
+context = "raw"
+
+[[limit]]
+form = "sf.ddl.alter-stage.set"
+kind = "negative_neighbour"
+note = "a format type without its FORMAT_NAME = or TYPE = keyword"
+anchor = "doc.sql.alter-stage / Parameters"
+sql = "ALTER STAGE v1 SET FILE_FORMAT = ( CSV ) ;"
+expect = "reject"
+context = "raw"
+
+[[limit]]
+form = "sf.ddl.alter-stage.set.syntax"
+kind = "negative_neighbour"
+note = "a format type without its FORMAT_NAME = or TYPE = keyword"
+anchor = "doc.sql.alter-stage / Parameters"
+sql = "ALTER STAGE v1 SET FILE_FORMAT = ( CSV ) ;"
+expect = "reject"
+context = "raw"
+
+[[limit]]
+form = "sf.ddl.alter-stage.set.syntax"
+kind = "negative_neighbour"
+note = "an encryption type without its TYPE = keyword"
+anchor = "doc.sql.alter-stage / External stage parameters (externalStageParams)"
+sql = "ALTER STAGE v1 SET URL = 's3://b1/p1/' ENCRYPTION = ( 'AWS_SSE_S3' ) ;"
+expect = "reject"
+context = "raw"
+
+[[limit]]
+form = "sf.ddl.alter-stage.set.syntax"
+kind = "operand_type_class"
+target = "'<protocol>://<bucket>[/<path>/]'"
+note = "a valid quoted URL"
+anchor = "doc.sql.alter-stage / External stage parameters (externalStageParams)"
+sql = "ALTER STAGE v1 SET URL = 's3://b1/p1/' ;"
+expect = "accept"
+context = "raw"
+
+[[limit]]
+form = "sf.ddl.alter-stage.set.syntax"
+kind = "negative_neighbour"
+target = "'<protocol>://<bucket>[/<path>/]'"
+note = "an unquoted URL"
+anchor = "doc.sql.alter-stage / External stage parameters (externalStageParams)"
+sql = "ALTER STAGE v1 SET URL = s3://b1/p1/ ;"
+expect = "reject"
+context = "raw"
+
+[[limit]]
+form = "sf.ddl.alter-stage.set.syntax"
+kind = "operand_type_class"
+target = "'gcs://<bucket>[/<path>/]'"
+note = "a valid quoted URL"
+anchor = "doc.sql.alter-stage / External stage parameters (externalStageParams)"
+sql = "ALTER STAGE v1 SET URL = 'gcs://b1/p1/' ;"
+expect = "accept"
+context = "raw"
+
+[[limit]]
+form = "sf.ddl.alter-stage.set.syntax"
+kind = "negative_neighbour"
+target = "'gcs://<bucket>[/<path>/]'"
+note = "an unquoted URL"
+anchor = "doc.sql.alter-stage / External stage parameters (externalStageParams)"
+sql = "ALTER STAGE v1 SET URL = gcs://b1/p1/ ;"
+expect = "reject"
+context = "raw"
+
+[[limit]]
+form = "sf.ddl.alter-stage.set.syntax"
+kind = "operand_type_class"
+target = "'azure://<account>.blob.core.windows.net/<container>[/<path>/]'"
+note = "a valid quoted URL"
+anchor = "doc.sql.alter-stage / External stage parameters (externalStageParams)"
+sql = "ALTER STAGE v1 SET URL = 'azure://a1.blob.core.windows.net/c1/p1/' ;"
+expect = "accept"
+context = "raw"
+
+[[limit]]
+form = "sf.ddl.alter-stage.set.syntax"
+kind = "negative_neighbour"
+target = "'azure://<account>.blob.core.windows.net/<container>[/<path>/]'"
+note = "an unquoted URL"
+anchor = "doc.sql.alter-stage / External stage parameters (externalStageParams)"
+sql = "ALTER STAGE v1 SET URL = azure://a1.blob.core.windows.net/c1/p1/ ;"
+expect = "reject"
+context = "raw"
+
+[[limit]]
+form = "sf.ddl.alter-stage.set.syntax"
+kind = "required_operand_missing"
+target = "'<protocol>://<bucket>[/<path>/]'"
+note = "omit the URL"
+anchor = "doc.sql.alter-stage / External stage parameters (externalStageParams)"
+sql = "ALTER STAGE v1 SET URL = ;"
+expect = "reject"
+context = "raw"
+
+[[suppress]]
+form = "sf.expressions.data-types-datetime.interval"
+kind = "option_present"
+target = "[ ( <precision> ) [ , ( <fractional_seconds_precision> ) ] ]"
+reason = "D118 round 3: the derived case `SELECT INTERVAL '1' SECOND ( 9 ) , ( 3 ) ;` accepts only as two select items (import 156: `SECOND ( 9 ) , ( 3 )` inside CAST is a positioned 1003 at the comma); the hand row below renders it inside CAST"
+
+[[suppress]]
+form = "sf.expressions.data-types-datetime.interval"
+kind = "option_present"
+target = "[ , ( <fractional_seconds_precision> ) ]"
+reason = "D118 round 3: the derived case `SELECT INTERVAL '1' SECOND ( 9 ) , ( 3 ) ;` accepts only as two select items (import 156: `SECOND ( 9 ) , ( 3 )` inside CAST is a positioned 1003 at the comma); the hand row below renders it inside CAST"
+
+[[suppress]]
+form = "sf.expressions.data-types-datetime.interval"
+kind = "operand_type_class"
+target = "<fractional_seconds_precision> in [ , ( <fractional_seconds_precision> ) ]"
+note = "a valid operand"
+reason = "D118 round 3: the derived case `SELECT INTERVAL '1' SECOND ( 9 ) , ( 3 ) ;` accepts only as two select items (import 156: `SECOND ( 9 ) , ( 3 )` inside CAST is a positioned 1003 at the comma); the hand row below renders it inside CAST"
+
+# D113 [documented but Snowflake disagrees]: the page documents SECOND [ ( <precision> ) [ , ( <fractional_seconds_precision> ) ] ], but Snowflake rejects the pair inside CAST as a syntax error at the comma (errno 1003 SQLSTATE 42000, import 20261104-156 case a-q-interval-second-pair-cast; also k80bd5c6cb355); outside CAST the comma reads as a select-list separator, so the row is rendered inside CAST; observed, not flipped to reject
+[[limit]]
+form = "sf.expressions.data-types-datetime.interval"
+kind = "option_present"
+target = "[ ( <precision> ) [ , ( <fractional_seconds_precision> ) ] ]"
+note = "SECOND ( 9 ) , ( 3 ) inside CAST, where the comma cannot separate select items, observed"
+anchor = "doc.data-types-datetime / Data types / Interval data types / Representing interval values / Interval literals"
+sql = "SELECT CAST ( INTERVAL '1' SECOND ( 9 ) , ( 3 ) AS VARCHAR ) ;"
+expect = "observe"
+documented = true
+context = "raw"
+
+# D113 [documented but Snowflake disagrees]: the page documents SECOND [ ( <precision> ) [ , ( <fractional_seconds_precision> ) ] ], but Snowflake rejects the pair inside CAST as a syntax error at the comma (errno 1003 SQLSTATE 42000, import 20261104-156 case a-q-interval-second-pair-cast; also k80bd5c6cb355); outside CAST the comma reads as a select-list separator, so the row is rendered inside CAST; observed, not flipped to reject
+[[limit]]
+form = "sf.expressions.data-types-datetime.interval"
+kind = "option_present"
+target = "[ , ( <fractional_seconds_precision> ) ]"
+note = "SECOND ( 2 ) , ( 6 ) inside CAST, where the comma cannot separate select items, observed"
+anchor = "doc.data-types-datetime / Data types / Interval data types / Representing interval values / Interval literals"
+sql = "SELECT CAST ( INTERVAL '1' SECOND ( 2 ) , ( 6 ) AS VARCHAR ) ;"
+expect = "observe"
+documented = true
+context = "raw"
+
+# D113 [documented but Snowflake disagrees]: the page documents SECOND [ ( <precision> ) [ , ( <fractional_seconds_precision> ) ] ], but Snowflake rejects the pair inside CAST as a syntax error at the comma (errno 1003 SQLSTATE 42000, import 20261104-156 case a-q-interval-second-pair-cast; also k80bd5c6cb355); outside CAST the comma reads as a select-list separator, so the row is rendered inside CAST; observed, not flipped to reject
+[[limit]]
+form = "sf.expressions.data-types-datetime.interval"
+kind = "operand_type_class"
+target = "<fractional_seconds_precision> in [ , ( <fractional_seconds_precision> ) ]"
+note = "a valid fractional seconds precision inside CAST, observed"
+anchor = "doc.data-types-datetime / Data types / Interval data types / Representing interval values / Interval literals"
+sql = "SELECT CAST ( INTERVAL '1' SECOND ( 9 ) , ( 0 ) AS VARCHAR ) ;"
+expect = "observe"
+documented = true
+context = "raw"
+
+[[limit]]
+form = "sf.ddl.alter-pipe.set"
+kind = "positive"
+note = "properties separated by commas, one of the separators the SET text allows (blank spaces, commas, or new lines)"
+anchor = "doc.sql.alter-pipe / Parameters"
+sql = "ALTER PIPE v1 SET PIPE_EXECUTION_PAUSED = TRUE , COMMENT = 'm' ;"
+expect = "accept"
+context = "raw"
+
+[[limit]]
+form = "sf.ddl.alter-application.set"
+kind = "positive"
+note = "properties separated by commas, one of the separators the SET text allows (blank spaces, commas, or new lines)"
+anchor = "doc.sql.alter-application / Parameters"
+sql = "ALTER APPLICATION v1 SET COMMENT = 'm' , DEBUG_MODE = TRUE ;"
+expect = "accept"
+context = "raw"
+
+[[limit]]
+form = "sf.security_admin.alter-notification-integration-email.set"
+kind = "positive"
+note = "properties separated by commas, one of the separators the SET text allows (blank spaces, commas, or new lines)"
+anchor = "doc.sql.alter-notification-integration-email / Parameters"
+sql = "ALTER NOTIFICATION INTEGRATION v1 SET ENABLED = TRUE , COMMENT = 'm' ;"
+expect = "accept"
+context = "raw"
+
+[[limit]]
+form = "sf.security_admin.alter-notification-integration-multi-queue.set-active"
+kind = "positive"
+note = "properties separated by commas, one of the separators the SET text allows (blank spaces, commas, or new lines)"
+anchor = "doc.sql.alter-notification-integration-multi-queue / Parameters"
+sql = "ALTER NOTIFICATION INTEGRATION v1 SET ACTIVE = 'm' , ENABLED = TRUE , COMMENT = 'm' ;"
+expect = "accept"
+context = "raw"
+
+[[limit]]
+form = "sf.security_admin.alter-notification-integration-queue-inbound-gcp.set"
+kind = "positive"
+note = "properties separated by commas, one of the separators the SET text allows (blank spaces, commas, or new lines)"
+anchor = "doc.sql.alter-notification-integration-queue-inbound-gcp / Parameters"
+sql = "ALTER NOTIFICATION INTEGRATION v1 SET ENABLED = TRUE , COMMENT = 'm' ;"
+expect = "accept"
+context = "raw"
+
+[[limit]]
+form = "sf.security_admin.alter-notification-integration-queue-outbound-aws.set-aws-sns-topic-arn-aws-sns-role-arn"
+kind = "positive"
+note = "properties separated by commas, one of the separators the SET text allows (blank spaces, commas, or new lines)"
+anchor = "doc.sql.alter-notification-integration-queue-outbound-aws / Parameters"
+sql = "ALTER NOTIFICATION INTEGRATION v1 SET AWS_SNS_TOPIC_ARN = 'm' , AWS_SNS_ROLE_ARN = 'm' ;"
+expect = "accept"
+context = "raw"
+
+[[limit]]
+form = "sf.security_admin.alter-notification-integration-queue-outbound-azure.set"
+kind = "positive"
+note = "properties separated by commas, one of the separators the SET text allows (blank spaces, commas, or new lines)"
+anchor = "doc.sql.alter-notification-integration-queue-outbound-azure / Parameters"
+sql = "ALTER NOTIFICATION INTEGRATION v1 SET AZURE_EVENT_GRID_TOPIC_ENDPOINT = 'm' , AZURE_TENANT_ID = 'm' ;"
+expect = "accept"
+context = "raw"
+
+[[limit]]
+form = "sf.security_admin.alter-notification-integration-queue-outbound-gcp.set-gcp-pubsub-subscription-name"
+kind = "positive"
+note = "properties separated by commas, one of the separators the SET text allows (blank spaces, commas, or new lines)"
+anchor = "doc.sql.alter-notification-integration-queue-outbound-gcp / Parameters"
+sql = "ALTER NOTIFICATION INTEGRATION v1 SET ENABLED = TRUE , GCP_PUBSUB_SUBSCRIPTION_NAME = 'm' ;"
+expect = "accept"
+context = "raw"
+
+[[limit]]
+form = "sf.security_admin.alter-snapshot-policy.set"
+kind = "positive"
+note = "properties separated by commas, one of the separators the SET text allows (blank spaces, commas, or new lines)"
+anchor = "doc.sql.alter-snapshot-policy / Parameters"
+sql = "ALTER SNAPSHOT POLICY v1 SET COMMENT = 'm' , EXPIRE_AFTER_DAYS = 1 ;"
+expect = "accept"
+context = "raw"
+
+# D118 round 4 (audit d118-findings-4203044e): security_admin operand rows for quoted templates, multi-queue GCP and Azure queues, OAuth partner clients without a redirect URI, OIDC default provider, empty data-movement rule lists, a rejecting NOTIFY_USERS neighbour
+[[limit]]
+form = "sf.security_admin.create-api-integration.git-https-api-api-allowed-prefixes-api-user-authentication-type"
+kind = "operand_type_class"
+target = "'https://github.com/<...>'"
+note = "a repository URL prefix in place of <...>"
+anchor = "doc.sql.create-api-integration / Syntax / For Git repository"
+sql = "CREATE API INTEGRATION i1 API_PROVIDER = git_https_api API_ALLOWED_PREFIXES = ( 'https://github.com/o1/r1' ) API_USER_AUTHENTICATION = ( TYPE = SNOWFLAKE_GITHUB_APP ) ENABLED = TRUE ;"
+expect = "accept"
+context = "raw"
+
+[[limit]]
+form = "sf.security_admin.create-api-integration.git-https-api-api-allowed-prefixes-api-user-authentication-type"
+kind = "required_operand_missing"
+target = "'https://github.com/<...>'"
+note = "an empty prefix list"
+anchor = "doc.sql.create-api-integration / Syntax / For Git repository"
+sql = "CREATE API INTEGRATION i1 API_PROVIDER = git_https_api API_ALLOWED_PREFIXES = ( ) API_USER_AUTHENTICATION = ( TYPE = SNOWFLAKE_GITHUB_APP ) ENABLED = TRUE ;"
+expect = "reject"
+context = "raw"
+
+[[limit]]
+form = "sf.security_admin.create-api-integration.git-https-api-api-allowed-prefixes-api-user-authentication-type"
+kind = "negative_neighbour"
+target = "'https://github.com/<...>'"
+note = "an unquoted URL prefix"
+anchor = "doc.sql.create-api-integration / Syntax / For Git repository"
+sql = "CREATE API INTEGRATION i1 API_PROVIDER = git_https_api API_ALLOWED_PREFIXES = ( https://github.com/o1 ) API_USER_AUTHENTICATION = ( TYPE = SNOWFLAKE_GITHUB_APP ) ENABLED = TRUE ;"
+expect = "reject"
+context = "raw"
+
+[[limit]]
+form = "sf.security_admin.create-api-integration.git-https-api-api-allowed-prefixes-api-user-authentication-type.for-git-repository"
+kind = "operand_type_class"
+target = "'https://example.com/<...>'"
+note = "a repository URL prefix in place of <...>"
+anchor = "doc.sql.create-api-integration / Syntax / For Git repository"
+sql = "CREATE API INTEGRATION i1 API_PROVIDER = git_https_api API_ALLOWED_PREFIXES = ( 'https://example.com/o1/r1' ) API_USER_AUTHENTICATION = ( TYPE = OAUTH2 OAUTH_CLIENT_ID = 'm' OAUTH_CLIENT_SECRET = 'm' OAUTH_TOKEN_ENDPOINT = 'https://example.com/token' OAUTH_AUTHORIZATION_ENDPOINT = 'https://example.com/auth' ) ENABLED = TRUE ;"
+expect = "accept"
+context = "raw"
+
+[[limit]]
+form = "sf.security_admin.create-api-integration.git-https-api-api-allowed-prefixes-api-user-authentication-type.for-git-repository"
+kind = "required_operand_missing"
+target = "'https://example.com/<...>'"
+note = "an empty prefix list"
+anchor = "doc.sql.create-api-integration / Syntax / For Git repository"
+sql = "CREATE API INTEGRATION i1 API_PROVIDER = git_https_api API_ALLOWED_PREFIXES = ( ) API_USER_AUTHENTICATION = ( TYPE = OAUTH2 OAUTH_CLIENT_ID = 'm' OAUTH_CLIENT_SECRET = 'm' OAUTH_TOKEN_ENDPOINT = 'https://example.com/token' OAUTH_AUTHORIZATION_ENDPOINT = 'https://example.com/auth' ) ENABLED = TRUE ;"
+expect = "reject"
+context = "raw"
+
+[[limit]]
+form = "sf.security_admin.create-api-integration.git-https-api-api-allowed-prefixes-api-user-authentication-type.for-git-repository"
+kind = "negative_neighbour"
+target = "'https://example.com/<...>'"
+note = "an unquoted URL prefix"
+anchor = "doc.sql.create-api-integration / Syntax / For Git repository"
+sql = "CREATE API INTEGRATION i1 API_PROVIDER = git_https_api API_ALLOWED_PREFIXES = ( https://example.com/o1 ) API_USER_AUTHENTICATION = ( TYPE = OAUTH2 OAUTH_CLIENT_ID = 'm' OAUTH_CLIENT_SECRET = 'm' OAUTH_TOKEN_ENDPOINT = 'https://example.com/token' OAUTH_AUTHORIZATION_ENDPOINT = 'https://example.com/auth' ) ENABLED = TRUE ;"
+expect = "reject"
+context = "raw"
+
+[[limit]]
+form = "sf.security_admin.create-maintenance-policy"
+kind = "operand_type_class"
+target = "'USING CRON <cron_spec> <timezone>'"
+note = "a cron schedule string"
+anchor = "doc.sql.create-maintenance-policy / Parameters"
+sql = "CREATE MAINTENANCE POLICY v1 SCHEDULE = 'USING CRON 30 2 * * SUN America/Los_Angeles' COMMENT = 'm' ;"
+expect = "accept"
+context = "raw"
+
+[[limit]]
+form = "sf.security_admin.create-maintenance-policy"
+kind = "required_operand_missing"
+target = "'USING CRON <cron_spec> <timezone>'"
+note = "omit the schedule string"
+anchor = "doc.sql.create-maintenance-policy / Parameters"
+sql = "CREATE MAINTENANCE POLICY v1 SCHEDULE = COMMENT = 'm' ;"
+expect = "reject"
+context = "raw"
+
+[[limit]]
+form = "sf.security_admin.create-maintenance-policy"
+kind = "negative_neighbour"
+target = "'USING CRON <cron_spec> <timezone>'"
+note = "an unquoted schedule"
+anchor = "doc.sql.create-maintenance-policy / Parameters"
+sql = "CREATE MAINTENANCE POLICY v1 SCHEDULE = USING CRON 0 9 * * * UTC ;"
+expect = "reject"
+context = "raw"
+
+[[limit]]
+form = "sf.security_admin.create-snapshot-policy"
+kind = "alternative"
+target = "'{ <num> MINUTE | <num> HOUR | USING CRON <expr> <time_zone> }'"
+note = "a <num> MINUTE schedule"
+anchor = "doc.sql.create-snapshot-policy / Parameters"
+sql = "CREATE SNAPSHOT POLICY v1 SCHEDULE = '60 MINUTE' ;"
+expect = "accept"
+context = "raw"
+
+[[limit]]
+form = "sf.security_admin.create-snapshot-policy"
+kind = "alternative"
+target = "'{ <num> MINUTE | <num> HOUR | USING CRON <expr> <time_zone> }'"
+note = "a USING CRON schedule"
+anchor = "doc.sql.create-snapshot-policy / Parameters"
+sql = "CREATE SNAPSHOT POLICY v1 SCHEDULE = 'USING CRON 0 9 * * * UTC' ;"
+expect = "accept"
+context = "raw"
+
+[[limit]]
+form = "sf.security_admin.create-snapshot-policy"
+kind = "required_operand_missing"
+target = "'{ <num> MINUTE | <num> HOUR | USING CRON <expr> <time_zone> }'"
+note = "omit the schedule string"
+anchor = "doc.sql.create-snapshot-policy / Parameters"
+sql = "CREATE SNAPSHOT POLICY v1 SCHEDULE = EXPIRE_AFTER_DAYS = 1 ;"
+expect = "reject"
+context = "raw"
+
+[[limit]]
+form = "sf.security_admin.create-snapshot-policy"
+kind = "negative_neighbour"
+target = "'{ <num> MINUTE | <num> HOUR | USING CRON <expr> <time_zone> }'"
+note = "an unquoted schedule"
+anchor = "doc.sql.create-snapshot-policy / Parameters"
+sql = "CREATE SNAPSHOT POLICY v1 SCHEDULE = 1 HOUR ;"
+expect = "reject"
+context = "raw"
+
+[[limit]]
+form = "sf.security_admin.create-storage-integration"
+kind = "negative_neighbour"
+note = "the provider value without STORAGE_PROVIDER ="
+anchor = "doc.sql.create-storage-integration / Parameters"
+sql = "CREATE STORAGE INTEGRATION v1 TYPE = EXTERNAL_STAGE 'S3' STORAGE_AWS_ROLE_ARN = 'm' ENABLED = TRUE STORAGE_ALLOWED_LOCATIONS = ( 's3://b1/p1/' ) ;"
+expect = "reject"
+context = "raw"
+
+[[limit]]
+form = "sf.security_admin.create-storage-integration"
+kind = "operand_type_class"
+target = "'<cloud>://<bucket>/<path>/'"
+note = "a storage location URL"
+anchor = "doc.sql.create-storage-integration / Parameters"
+sql = "CREATE STORAGE INTEGRATION v1 TYPE = EXTERNAL_STAGE STORAGE_PROVIDER = 'S3' STORAGE_AWS_ROLE_ARN = 'm' ENABLED = TRUE STORAGE_ALLOWED_LOCATIONS = ( 's3://b1/p1/' , 's3://b2/' ) STORAGE_BLOCKED_LOCATIONS = ( 's3://b1/p1/p2/' ) ;"
+expect = "accept"
+context = "raw"
+
+[[limit]]
+form = "sf.security_admin.create-storage-integration"
+kind = "required_operand_missing"
+target = "'<cloud>://<bucket>/<path>/'"
+note = "an empty allowed-locations list"
+anchor = "doc.sql.create-storage-integration / Parameters"
+sql = "CREATE STORAGE INTEGRATION v1 TYPE = EXTERNAL_STAGE STORAGE_PROVIDER = 'S3' STORAGE_AWS_ROLE_ARN = 'm' ENABLED = TRUE STORAGE_ALLOWED_LOCATIONS = ( ) ;"
+expect = "reject"
+context = "raw"
+
+[[limit]]
+form = "sf.security_admin.create-storage-integration"
+kind = "negative_neighbour"
+target = "'<cloud>://<bucket>/<path>/'"
+note = "an unquoted storage location"
+anchor = "doc.sql.create-storage-integration / Parameters"
+sql = "CREATE STORAGE INTEGRATION v1 TYPE = EXTERNAL_STAGE STORAGE_PROVIDER = 'S3' STORAGE_AWS_ROLE_ARN = 'm' ENABLED = TRUE STORAGE_ALLOWED_LOCATIONS = ( s3://b1/p1/ ) ;"
+expect = "reject"
+context = "raw"
+
+[[limit]]
+form = "sf.security_admin.create-notification-integration-multi-queue"
+kind = "alternative"
+target = "<queue>"
+note = "a GCP_PUBSUB queue"
+anchor = "doc.sql.create-notification-integration-multi-queue / Parameters"
+sql = "CREATE NOTIFICATION INTEGRATION v1 ENABLED = TRUE TYPE = MULTI_QUEUE DIRECTION = INBOUND QUEUES = ( ( NAME = 'q1' NOTIFICATION_PROVIDER = GCP_PUBSUB GCP_PUBSUB_SUBSCRIPTION_NAME = 'projects/p1/subscriptions/s1' ) ) ACTIVE = 'q1' ;"
+expect = "accept"
+context = "raw"
+
+[[limit]]
+form = "sf.security_admin.create-notification-integration-multi-queue"
+kind = "alternative"
+target = "<queue>"
+note = "an AZURE_STORAGE_QUEUE queue"
+anchor = "doc.sql.create-notification-integration-multi-queue / Parameters"
+sql = "CREATE NOTIFICATION INTEGRATION v1 ENABLED = TRUE TYPE = MULTI_QUEUE DIRECTION = INBOUND QUEUES = ( ( NAME = 'q1' NOTIFICATION_PROVIDER = AZURE_STORAGE_QUEUE AZURE_STORAGE_QUEUE_PRIMARY_URI = 'https://a1.queue.core.windows.net/q1' AZURE_TENANT_ID = 'm' ) ) ACTIVE = 'q1' ;"
+expect = "accept"
+context = "raw"
+
+[[limit]]
+form = "sf.security_admin.create-notification-integration-multi-queue"
+kind = "alternative"
+target = "<queue>"
+note = "an AWS_SNS queue and a GCP_PUBSUB queue in one list"
+anchor = "doc.sql.create-notification-integration-multi-queue / Parameters"
+sql = "CREATE NOTIFICATION INTEGRATION v1 ENABLED = TRUE TYPE = MULTI_QUEUE DIRECTION = INBOUND QUEUES = ( ( NAME = 'q1' NOTIFICATION_PROVIDER = AWS_SNS AWS_SNS_TOPIC_ARN = 'arn:aws:sns:us-west-1:12345:t1' ) , ( NAME = 'q2' NOTIFICATION_PROVIDER = GCP_PUBSUB GCP_PUBSUB_SUBSCRIPTION_NAME = 'projects/p1/subscriptions/s1' ) ) ACTIVE = 'q1' ;"
+expect = "accept"
+context = "raw"
+
+[[reading]]
+form = "sf.security_admin.create-data-movement-policy"
+grammar_sha256 = "92ea81725e9905fc14532f1437723bcadcff386b91c6df67e6e11f1253217ce0"
+grammar = ["CREATE [ OR REPLACE ] DATA MOVEMENT POLICY [ IF NOT EXISTS ] <name> [ ENFORCE_RULES = ( [ <rule_name> [ , <rule_name> , ... ] ] ) ] [ ALERT_RULES = ( [ <rule_name> [ , <rule_name> , ... ] ] ) ] [ COMMENT = '<string_literal>' ]"]
+reason = "the Usage notes document a policy with empty ENFORCE_RULES and ALERT_RULES lists, so the rule list may be empty (D118 round 4)"
+
+[[limit]]
+form = "sf.security_admin.create-security-integration-oauth-snowflake.oauth-redirect-uri"
+kind = "option_absent"
+target = "OAUTH_REDIRECT_URI = '<uri>'"
+note = "OAUTH_CLIENT = TABLEAU_DESKTOP without OAUTH_REDIRECT_URI, which the page requires only for LOOKER"
+anchor = "doc.sql.create-security-integration-oauth-snowflake / Parameters"
+sql = "CREATE SECURITY INTEGRATION v1 TYPE = OAUTH OAUTH_CLIENT = TABLEAU_DESKTOP ;"
+expect = "accept"
+context = "raw"
+
+[[limit]]
+form = "sf.security_admin.create-security-integration-oauth-snowflake.oauth-redirect-uri"
+kind = "option_absent"
+target = "OAUTH_REDIRECT_URI = '<uri>'"
+note = "OAUTH_CLIENT = TABLEAU_SERVER without OAUTH_REDIRECT_URI, which the page requires only for LOOKER"
+anchor = "doc.sql.create-security-integration-oauth-snowflake / Parameters"
+sql = "CREATE SECURITY INTEGRATION v1 TYPE = OAUTH OAUTH_CLIENT = TABLEAU_SERVER ;"
+expect = "accept"
+context = "raw"
+
+[[limit]]
+form = "sf.security_admin.create-security-integration-oidc.oidc-issuer-oidc-client-id-oidc-client-secret-oidc-token-user-mapping-claim"
+kind = "option_absent"
+target = "OIDC_PROVIDER = 'CUSTOM'"
+note = "OIDC_PROVIDER omitted, which the Parameters give as Default: CUSTOM, observed"
+anchor = "doc.sql.create-security-integration-oidc / Parameters"
+sql = "CREATE SECURITY INTEGRATION v1 TYPE = OIDC OIDC_ISSUER = 'm' OIDC_CLIENT_ID = 'm' OIDC_CLIENT_SECRET = 'm' OIDC_TOKEN_USER_MAPPING_CLAIM = 'm' OIDC_SNOWFLAKE_USER_MAPPING_ATTRIBUTE = 'LOGIN_NAME' ;"
+expect = "observe"
+context = "raw"
+
+[[limit]]
+form = "sf.security_admin.create-resource-monitor"
+kind = "negative_neighbour"
+target = "<user_name>"
+note = "a number in place of <user_name>"
+anchor = "doc.sql.create-resource-monitor / Parameters"
+sql = "CREATE RESOURCE MONITOR v1 WITH NOTIFY_USERS = ( 1 ) ;"
+expect = "reject"
+context = "raw"
+
+[[reading]]
+form = "sf.security_admin.create-security-integration-saml2"
+grammar_sha256 = "1d8e52f53dba26003d516cafaedbafe7958187d3a8d37d8b5784682c0cd03e8d"
+grammar = ["CREATE [ OR REPLACE ] SECURITY INTEGRATION [ IF NOT EXISTS ] <name> TYPE = SAML2 ENABLED = { TRUE | FALSE } { METADATA_URL = '<string_literal>' | { SAML2_ISSUER = '<string_literal>' SAML2_SSO_URL = '<string_literal>' SAML2_PROVIDER = '<string_literal>' SAML2_X509_CERT = '<string_literal>' } } [ ALLOWED_USER_DOMAINS = ( '<string_literal>' [ , '<string_literal>' , ... ] ) ] [ ALLOWED_EMAIL_PATTERNS = ( '<string_literal>' [ , '<string_literal>' , ... ] ) ] [ SAML2_SP_INITIATED_LOGIN_PAGE_LABEL = '<string_literal>' ] [ SAML2_ENABLE_SP_INITIATED = TRUE | FALSE ] [ SAML2_SNOWFLAKE_X509_CERT = '<string_literal>' ] [ SAML2_SIGN_REQUEST = TRUE | FALSE ] [ SAML2_REQUESTED_NAMEID_FORMAT = '<string_literal>' ] [ SAML2_POST_LOGOUT_REDIRECT_URL = '<string_literal>' ] [ SAML2_FORCE_AUTHN = TRUE | FALSE ] [ SAML2_SNOWFLAKE_ISSUER_URL = '<string_literal>' ] [ SAML2_SNOWFLAKE_ACS_URL = '<string_literal>' ] [ COMMENT = '<string_literal>' ]"]
+reason = "the page's idp_parameters are the four named IdP properties SAML2_ISSUER, SAML2_SSO_URL, SAML2_PROVIDER and SAML2_X509_CERT, used together in place of METADATA_URL (Parameters); expanded so each gets its own rows (D118 round 4)"

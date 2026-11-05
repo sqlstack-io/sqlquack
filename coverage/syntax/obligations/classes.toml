@@ -576,6 +576,12 @@ target = "<schema_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> 
 note = "a string literal in place of <schema_name>"
 
 [[obligation]]
+id = "sf.classes.anomaly-detection.commands.show-anomaly-detection.o033"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required SHOW after "
+
+[[obligation]]
 id = "sf.classes.anomaly-detection.commands.show-anomaly-detection.o023"
 kind = "negative_neighbour"
 required = true
@@ -586,6 +592,30 @@ id = "sf.classes.anomaly-detection.commands.show-anomaly-detection.o025"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required ANOMALY_DETECTION"
+
+[[obligation]]
+id = "sf.classes.anomaly-detection.commands.show-anomaly-detection.o034"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required SHOW after  #2"
+
+[[obligation]]
+id = "sf.classes.anomaly-detection.commands.show-anomaly-detection.o035"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required SNOWFLAKE after SHOW"
+
+[[obligation]]
+id = "sf.classes.anomaly-detection.commands.show-anomaly-detection.o036"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ML after ."
+
+[[obligation]]
+id = "sf.classes.anomaly-detection.commands.show-anomaly-detection.o037"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ANOMALY_DETECTION after ."
 
 [[obligation]]
 id = "sf.classes.anomaly-detection.commands.show-anomaly-detection.o026"
@@ -3619,6 +3649,12 @@ target = "'<name_string>' in [ FROM '<name_string>' ]"
 note = "an unquoted identifier in place of '<name_string>'"
 
 [[obligation]]
+id = "sf.classes.budget.commands.show-budget.o042"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required SHOW after "
+
+[[obligation]]
 id = "sf.classes.budget.commands.show-budget.o032"
 kind = "negative_neighbour"
 required = true
@@ -3629,6 +3665,30 @@ id = "sf.classes.budget.commands.show-budget.o034"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required BUDGET"
+
+[[obligation]]
+id = "sf.classes.budget.commands.show-budget.o043"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required SHOW after  #2"
+
+[[obligation]]
+id = "sf.classes.budget.commands.show-budget.o044"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required SNOWFLAKE after SHOW"
+
+[[obligation]]
+id = "sf.classes.budget.commands.show-budget.o045"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required CORE after ."
+
+[[obligation]]
+id = "sf.classes.budget.commands.show-budget.o046"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required BUDGET after ."
 
 [[obligation]]
 id = "sf.classes.budget.commands.show-budget.o035"
@@ -9425,6 +9485,12 @@ target = "<schema_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> 
 note = "a string literal in place of <schema_name>"
 
 [[obligation]]
+id = "sf.classes.classification.commands.show-classification.o033"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required SHOW after "
+
+[[obligation]]
 id = "sf.classes.classification.commands.show-classification.o023"
 kind = "negative_neighbour"
 required = true
@@ -9435,6 +9501,30 @@ id = "sf.classes.classification.commands.show-classification.o025"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required CLASSIFICATION"
+
+[[obligation]]
+id = "sf.classes.classification.commands.show-classification.o034"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required SHOW after  #2"
+
+[[obligation]]
+id = "sf.classes.classification.commands.show-classification.o035"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required SNOWFLAKE after SHOW"
+
+[[obligation]]
+id = "sf.classes.classification.commands.show-classification.o036"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ML after ."
+
+[[obligation]]
+id = "sf.classes.classification.commands.show-classification.o037"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required CLASSIFICATION after ."
 
 [[obligation]]
 id = "sf.classes.classification.commands.show-classification.o026"
@@ -10192,6 +10282,12 @@ target = "<schema_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> 
 note = "a string literal in place of <schema_name>"
 
 [[obligation]]
+id = "sf.classes.custom-classifier.commands.show-custom-classifiers.o033"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required SHOW after "
+
+[[obligation]]
 id = "sf.classes.custom-classifier.commands.show-custom-classifiers.o023"
 kind = "negative_neighbour"
 required = true
@@ -10202,6 +10298,30 @@ id = "sf.classes.custom-classifier.commands.show-custom-classifiers.o025"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required CUSTOM_CLASSIFIER"
+
+[[obligation]]
+id = "sf.classes.custom-classifier.commands.show-custom-classifiers.o034"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required SHOW after  #2"
+
+[[obligation]]
+id = "sf.classes.custom-classifier.commands.show-custom-classifiers.o035"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required SNOWFLAKE after SHOW"
+
+[[obligation]]
+id = "sf.classes.custom-classifier.commands.show-custom-classifiers.o036"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required DATA_PRIVACY after ."
+
+[[obligation]]
+id = "sf.classes.custom-classifier.commands.show-custom-classifiers.o037"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required CUSTOM_CLASSIFIER after ."
 
 [[obligation]]
 id = "sf.classes.custom-classifier.commands.show-custom-classifiers.o026"
@@ -11256,6 +11376,12 @@ target = "<schema_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> 
 note = "a string literal in place of <schema_name>"
 
 [[obligation]]
+id = "sf.classes.forecast.commands.show-forecast.o033"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required SHOW after "
+
+[[obligation]]
 id = "sf.classes.forecast.commands.show-forecast.o023"
 kind = "negative_neighbour"
 required = true
@@ -11266,6 +11392,30 @@ id = "sf.classes.forecast.commands.show-forecast.o025"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required FORECAST"
+
+[[obligation]]
+id = "sf.classes.forecast.commands.show-forecast.o034"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required SHOW after  #2"
+
+[[obligation]]
+id = "sf.classes.forecast.commands.show-forecast.o035"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required SNOWFLAKE after SHOW"
+
+[[obligation]]
+id = "sf.classes.forecast.commands.show-forecast.o036"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ML after ."
+
+[[obligation]]
+id = "sf.classes.forecast.commands.show-forecast.o037"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required FORECAST after ."
 
 [[obligation]]
 id = "sf.classes.forecast.commands.show-forecast.o026"
@@ -12619,6 +12769,12 @@ target = "<schema_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> 
 note = "a string literal in place of <schema_name>"
 
 [[obligation]]
+id = "sf.classes.top-insights.commands.show-top-insights.o033"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required SHOW after "
+
+[[obligation]]
 id = "sf.classes.top-insights.commands.show-top-insights.o023"
 kind = "negative_neighbour"
 required = true
@@ -12629,6 +12785,30 @@ id = "sf.classes.top-insights.commands.show-top-insights.o025"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required TOP_INSIGHTS"
+
+[[obligation]]
+id = "sf.classes.top-insights.commands.show-top-insights.o034"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required SHOW after  #2"
+
+[[obligation]]
+id = "sf.classes.top-insights.commands.show-top-insights.o035"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required SNOWFLAKE after SHOW"
+
+[[obligation]]
+id = "sf.classes.top-insights.commands.show-top-insights.o036"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ML after ."
+
+[[obligation]]
+id = "sf.classes.top-insights.commands.show-top-insights.o037"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required TOP_INSIGHTS after ."
 
 [[obligation]]
 id = "sf.classes.top-insights.commands.show-top-insights.o026"

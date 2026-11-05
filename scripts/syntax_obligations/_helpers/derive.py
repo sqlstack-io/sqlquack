@@ -22,6 +22,7 @@ from scripts.syntax_obligations.constants import (
     ACTION_REPLACE_NODE,
     ACTION_RESERVED_WORD,
     ARGUMENT_STARTS,
+    ARROWS,
     CALL_SEPARATORS,
     CALLEE_STARTS,
     CLASS_RULES,
@@ -93,6 +94,7 @@ class _Walk:
         self.identifiers: dict[str, None] = {}
         self.classes: set[str] = set()
         self.dropped: dict[str, Spec] = {}
+        self.dropped_at: dict[str, tuple[int, tuple[tuple[int, int], ...]]] = {}
         self.production: int = 0
         self.path: frozenset[int] = frozenset()
         self.identifier_nodes: dict[str, Spec] = {}
@@ -141,6 +143,7 @@ class _Walk:
         omission_is_absence: bool = len(nodes) == 1 and (branch or where.startswith("["))
         for position, node in enumerate(nodes):
             argument: bool = self._call_argument()
+            prior: str = self.previous
             if node.kind == NODE_OPTIONAL:
                 before: tuple[str, bool] = (self.previous, self.named)
                 options += self.optional(node=node, where=where)
@@ -151,17 +154,44 @@ class _Walk:
             else:
                 self.token(node=node, where=where, omission_is_absence=omission_is_absence)
                 self._track(node)
-            if position > 0 and self._droppable(node):
+            leading: bool = (
+                position == 0
+                and branch
+                and len(nodes) > 1
+                and node.kind != NODE_CHOICE
+                and node.text not in PARENS
+            )
+            if (position > 0 or leading) and self._droppable(node):
                 inside: str = f" in {where}" if not top and where.startswith("[") else ""
                 key: str = render((node,)) + inside
-                self.occurrences[(self.production, self.chosen, key)] += 1
-                if (count := self.occurrences[(self.production, self.chosen, key)]) > 1:
-                    key = f"{key} #{count}"
+                if not leading:
+                    self.occurrences[(self.production, self.chosen, key)] += 1
+                    if (count := self.occurrences[(self.production, self.chosen, key)]) > 1:
+                        key = f"{key} #{count}"
+                key = self._position_key(
+                    key=key, node=node, prior=prior, inside=inside, leading=leading
+                )
                 self.dropped.setdefault(key, self.reject(action=ACTION_DROP_NODE, node=node))
+                self.dropped_at.setdefault(key, (self.production, self.chosen))
                 if argument and node.kind == NODE_CHOICE:
                     self.arity_drops.add(key)
         self.widest = max(self.widest, len(options))
         return options
+
+    def _position_key(self, *, key: str, node: Node, prior: str, inside: str, leading: bool) -> str:
+        """A keyword or arrow already dropped elsewhere, or leading a branch, gets its own key."""
+        if node.kind == NODE_CHOICE or node.text in PARENS:
+            return key
+        here: tuple[int, tuple[tuple[int, int], ...]] = (self.production, self.chosen)
+        if not leading and self.dropped_at.get(key, here) == here:
+            return key
+        base: str = f"{render((node,))} after {prior}{inside}"
+        unique: str = base
+        count: int = 1
+        while unique in self.dropped_at and self.dropped_at[unique] != here:
+            count += 1
+            unique = f"{base} #{count}"
+        return unique
 
     def _track(self, node: Node) -> None:
         """Follow call parentheses and the token before the next one, in walk order."""
@@ -214,7 +244,7 @@ class _Walk:
         if node.kind == NODE_CHOICE:
             return True
         return node.token_kind == TOKEN_KEYWORD or (
-            node.token_kind == TOKEN_PUNCT and node.text in PARENS
+            node.token_kind == TOKEN_PUNCT and node.text in PARENS | ARROWS
         )
 
     def token(self, *, node: Node, where: str, omission_is_absence: bool) -> None:

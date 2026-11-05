@@ -1055,10 +1055,22 @@ required = true
 note = "the form without its required SET"
 
 [[obligation]]
+id = "sf.transaction_session.alter-session.set-sessionparams.o172"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ABORT_DETACHED_QUERY after SET"
+
+[[obligation]]
 id = "sf.transaction_session.alter-session.set-sessionparams.o163"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required { TRUE | FALSE }"
+
+[[obligation]]
+id = "sf.transaction_session.alter-session.set-sessionparams.o173"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ACTIVE_PYTHON_PROFILER after SET"
 
 [[obligation]]
 id = "sf.transaction_session.alter-session.set-sessionparams.o164"
@@ -1067,10 +1079,244 @@ required = true
 note = "the form without its required { 'LINE' | 'MEMORY' }"
 
 [[obligation]]
+id = "sf.transaction_session.alter-session.set-sessionparams.o174"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required AUTOCOMMIT after SET"
+
+[[obligation]]
+id = "sf.transaction_session.alter-session.set-sessionparams.o175"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required BINARY_INPUT_FORMAT after SET"
+
+[[obligation]]
+id = "sf.transaction_session.alter-session.set-sessionparams.o176"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required BINARY_OUTPUT_FORMAT after SET"
+
+[[obligation]]
+id = "sf.transaction_session.alter-session.set-sessionparams.o177"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required DATE_INPUT_FORMAT after SET"
+
+[[obligation]]
+id = "sf.transaction_session.alter-session.set-sessionparams.o178"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required DATE_OUTPUT_FORMAT after SET"
+
+[[obligation]]
+id = "sf.transaction_session.alter-session.set-sessionparams.o179"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ERROR_ON_NONDETERMINISTIC_MERGE after SET"
+
+[[obligation]]
+id = "sf.transaction_session.alter-session.set-sessionparams.o180"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ERROR_ON_NONDETERMINISTIC_UPDATE after SET"
+
+[[obligation]]
+id = "sf.transaction_session.alter-session.set-sessionparams.o181"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required GEOGRAPHY_OUTPUT_FORMAT after SET"
+
+[[obligation]]
 id = "sf.transaction_session.alter-session.set-sessionparams.o165"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required { 'GeoJSON' | 'WKT' | 'WKB' | 'EWKT' | 'EWKB' }"
+
+[[obligation]]
+id = "sf.transaction_session.alter-session.set-sessionparams.o182"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required HYBRID_TABLE_LOCK_TIMEOUT after SET"
+
+[[obligation]]
+id = "sf.transaction_session.alter-session.set-sessionparams.o183"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required JSON_INDENT after SET"
+
+[[obligation]]
+id = "sf.transaction_session.alter-session.set-sessionparams.o184"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required LOG_LEVEL after SET"
+
+[[obligation]]
+id = "sf.transaction_session.alter-session.set-sessionparams.o185"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required LOCK_TIMEOUT after SET"
+
+[[obligation]]
+id = "sf.transaction_session.alter-session.set-sessionparams.o186"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required OPT_OUT_ERROR_LOGGING after SET"
+
+[[obligation]]
+id = "sf.transaction_session.alter-session.set-sessionparams.o187"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required PYTHON_PROFILER_TARGET_STAGE after SET"
+
+[[obligation]]
+id = "sf.transaction_session.alter-session.set-sessionparams.o188"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required PYTHON_PROFILER_MODULES after SET"
+
+[[obligation]]
+id = "sf.transaction_session.alter-session.set-sessionparams.o189"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required QUERY_TAG after SET"
+
+[[obligation]]
+id = "sf.transaction_session.alter-session.set-sessionparams.o190"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ROWS_PER_RESULTSET after SET"
+
+[[obligation]]
+id = "sf.transaction_session.alter-session.set-sessionparams.o191"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required S3_STAGE_VPCE_DNS_NAME after SET"
+
+[[obligation]]
+id = "sf.transaction_session.alter-session.set-sessionparams.o192"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required SEARCH_PATH after SET"
+
+[[obligation]]
+id = "sf.transaction_session.alter-session.set-sessionparams.o193"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required SIMULATED_DATA_SHARING_CONSUMER after SET"
+
+[[obligation]]
+id = "sf.transaction_session.alter-session.set-sessionparams.o194"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required STATEMENT_TIMEOUT_IN_SECONDS after SET"
+
+[[obligation]]
+id = "sf.transaction_session.alter-session.set-sessionparams.o195"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required STRICT_JSON_OUTPUT after SET"
+
+[[obligation]]
+id = "sf.transaction_session.alter-session.set-sessionparams.o196"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required TIMESTAMP_DAY_IS_ALWAYS_24H after SET"
+
+[[obligation]]
+id = "sf.transaction_session.alter-session.set-sessionparams.o197"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required TIMESTAMP_INPUT_FORMAT after SET"
+
+[[obligation]]
+id = "sf.transaction_session.alter-session.set-sessionparams.o198"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required TIMESTAMP_LTZ_OUTPUT_FORMAT after SET"
+
+[[obligation]]
+id = "sf.transaction_session.alter-session.set-sessionparams.o199"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required TIMESTAMP_NTZ_OUTPUT_FORMAT after SET"
+
+[[obligation]]
+id = "sf.transaction_session.alter-session.set-sessionparams.o200"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required TIMESTAMP_OUTPUT_FORMAT after SET"
+
+[[obligation]]
+id = "sf.transaction_session.alter-session.set-sessionparams.o201"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required TIMESTAMP_TYPE_MAPPING after SET"
+
+[[obligation]]
+id = "sf.transaction_session.alter-session.set-sessionparams.o202"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required TIMESTAMP_TZ_OUTPUT_FORMAT after SET"
+
+[[obligation]]
+id = "sf.transaction_session.alter-session.set-sessionparams.o203"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required TIMEZONE after SET"
+
+[[obligation]]
+id = "sf.transaction_session.alter-session.set-sessionparams.o204"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required TIME_INPUT_FORMAT after SET"
+
+[[obligation]]
+id = "sf.transaction_session.alter-session.set-sessionparams.o205"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required TIME_OUTPUT_FORMAT after SET"
+
+[[obligation]]
+id = "sf.transaction_session.alter-session.set-sessionparams.o206"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required TRACE_LEVEL after SET"
+
+[[obligation]]
+id = "sf.transaction_session.alter-session.set-sessionparams.o207"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required TRANSACTION_DEFAULT_ISOLATION_LEVEL after SET"
+
+[[obligation]]
+id = "sf.transaction_session.alter-session.set-sessionparams.o208"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required TWO_DIGIT_CENTURY_START after SET"
+
+[[obligation]]
+id = "sf.transaction_session.alter-session.set-sessionparams.o209"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required UNSUPPORTED_DDL_ACTION after SET"
+
+[[obligation]]
+id = "sf.transaction_session.alter-session.set-sessionparams.o210"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required USE_CACHED_RESULT after SET"
+
+[[obligation]]
+id = "sf.transaction_session.alter-session.set-sessionparams.o211"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required WEEK_OF_YEAR_POLICY after SET"
+
+[[obligation]]
+id = "sf.transaction_session.alter-session.set-sessionparams.o212"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required WEEK_START after SET"
 
 [[obligation]]
 id = "sf.transaction_session.alter-session.set-sessionparams.o166"
@@ -1411,6 +1657,12 @@ id = "sf.transaction_session.desc-result.o008"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required RESULT"
+
+[[obligation]]
+id = "sf.transaction_session.desc-result.o015"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required LAST_QUERY_ID after RESULT"
 
 [[obligation]]
 id = "sf.transaction_session.desc-result.o009"
@@ -1853,6 +2105,12 @@ id = "sf.transaction_session.show-parameters.o030"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required PARAMETERS"
+
+[[obligation]]
+id = "sf.transaction_session.show-parameters.o039"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required TABLE after FOR in [ { IN | FOR } { { SESSION | ACCOUNT } | { USER | WAREHOUSE | DATABASE | SCHEMA | TASK | PIPE } [ <name> ] | TABLE [ <t…"
 
 [[obligation]]
 id = "sf.transaction_session.show-parameters.o031"

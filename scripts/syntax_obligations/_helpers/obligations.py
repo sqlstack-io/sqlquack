@@ -36,6 +36,10 @@ from scripts.syntax_obligations.exceptions import ObligationError
 from scripts.syntax_obligations.models import Draft, Node, Rendered, Spec
 from scripts.syntax_obligations.types import Row
 
+OBSERVED_NEIGHBOUR_REASON: str = (
+    "the rejection renders SQL a hand row observes because Snowflake parses it (D97)"
+)
+
 
 def limit_drafts(*, path: Path, family: str, forms: set[str]) -> list[Draft]:
     """The hand-written documented limits of one family, in file order."""
@@ -225,6 +229,7 @@ def _without_coincident_negatives(
 ) -> tuple[list[Draft], list[Row]]:
     """Drafts minus rejections whose SQL a form also renders as valid, with each withdrawal."""
     accepted: dict[str, Draft] = {}
+    observed: dict[str, Draft] = {}
     rendered: list[tuple[Draft, list[Rendered]]] = []
     for draft in drafts:
         found: list[Rendered] = _draft_submissions(draft=draft, trees=trees, family=family)
@@ -233,6 +238,13 @@ def _without_coincident_negatives(
             if case.expect == EXPECT_ACCEPT:
                 accepted.setdefault(case.sql, draft)
                 accepted.setdefault(_syntax_key(case.sql), draft)
+            elif (
+                case.expect == EXPECT_OBSERVE
+                and not case.documented
+                and draft.spec
+                and draft.spec.action == ACTION_HAND
+            ):
+                observed.setdefault(case.sql, draft)
     kept: list[Draft] = []
     withdrawn: list[Row] = []
     for draft, found in rendered:
@@ -244,6 +256,25 @@ def _without_coincident_negatives(
             ),
             None,
         )
+        seen: Rendered | None = next(
+            (c for c in found if c.expect == EXPECT_REJECT and c.sql in observed), None
+        )
+        if clash is None and seen is not None and observed[seen.sql] is not draft:
+            settled: Draft = observed[seen.sql]
+            withdrawn.append(
+                {
+                    "form": draft.form,
+                    "kind": draft.kind,
+                    "target": draft.target,
+                    "note": draft.note,
+                    "sql": seen.sql,
+                    "valid_as": " ".join(
+                        [settled.form, settled.kind, settled.target or settled.note]
+                    ).strip(),
+                    "reason": OBSERVED_NEIGHBOUR_REASON,
+                }
+            )
+            continue
         if clash is None:
             kept.append(draft)
             continue

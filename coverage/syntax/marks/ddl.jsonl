@@ -1074,7 +1074,7 @@
 {"case_id":"sf.ddl.alter-view.set.kb13e8adea26f","mark":"settled accept (D133)","obligations":["sf.ddl.alter-view.set.o026"],"sql_sha256":"b13e8adea26f33acac406da63f916a8bc42808fd1d06b2a85629cfa0f6adf42f"}
 {"case_id":"sf.ddl.alter-view.set.kd680b0c27716","mark":"settled accept (D133)","obligations":["sf.ddl.alter-view.set.o046"],"sql_sha256":"d680b0c27716cd8937d40b2acf011c1a6779e11cb867b440a5d38a82ab1dc1b9"}
 {"case_id":"sf.ddl.alter-view.set.kf0c8ef09ed7e","mark":"settled reject (D133)","obligations":["sf.ddl.alter-view.set.o019"],"sql_sha256":"f0c8ef09ed7efede311b5aeabf79c58f999a81da531065000b03ac2b3e3636c4"}
-{"case_id":"sf.ddl.alter-view.unset.k0b69293769af","mark":"settled reject (D133)","obligations":["sf.ddl.alter-view.unset.o054"],"sql_sha256":"0b69293769af4f7b4f6cba7023f68a990aba6c0e2ea9597e028c5d080c699f63"}
+{"case_id":"sf.ddl.alter-view.unset.k0b69293769af","mark":"settled reject (D133)","obligations":["sf.ddl.alter-view.datametricfunctionaction.o765","sf.ddl.alter-view.unset.o054"],"sql_sha256":"0b69293769af4f7b4f6cba7023f68a990aba6c0e2ea9597e028c5d080c699f63"}
 {"case_id":"sf.ddl.alter-view.unset.k77b18f622143","mark":"settled accept (D133)","obligations":["sf.ddl.alter-view.unset.o055"],"sql_sha256":"77b18f6221430295b20952fbf90f5b8d3abd9d9631f2a7778bf021a032f00a97"}
 {"case_id":"sf.ddl.alter-view.unset.k8150c035cc64","mark":"documented (D113)","obligations":["sf.ddl.alter-view.unset.o046"],"sql_sha256":"8150c035cc648531908b386d78e9bc88459eac3c3d3f09ca1effd55a1232d983"}
 {"case_id":"sf.ddl.alter-view.unset.kbc3aed401cc0","mark":"documented (D113)","obligations":["sf.ddl.alter-view.unset.o056"],"sql_sha256":"bc3aed401cc0609d9b83e849bfdbe638849132318b794a1f27c8b96a12b52c1a"}

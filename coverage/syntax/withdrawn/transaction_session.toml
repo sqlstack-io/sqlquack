@@ -11,6 +11,15 @@ valid_as = "sf.transaction_session.use-database positive the documented form wit
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
+form = "sf.transaction_session.use-schema"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required SCHEMA after USE"
+sql = "USE v1 ;"
+valid_as = "sf.transaction_session.use-database positive the documented form with every required part and no optional part"
+reason = "the rejection renders SQL the documented grammar also accepts"
+
+[[withdrawn]]
 form = "sf.transaction_session.use-warehouse"
 kind = "negative_neighbour"
 target = ""

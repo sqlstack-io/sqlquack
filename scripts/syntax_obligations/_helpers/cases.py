@@ -83,9 +83,12 @@ def family_cases(
     if conflicts:
         raise ObligationError("one SQL text with two expectations:\n" + "\n".join(conflicts))
     session_sha: str = digest(canonical(LANE_A_BLOCK_SESSION))
+    kept: dict[str, str] = _kept_prefixes(path=root / "cases" / f"{family}.jsonl")
     cases: list[Row] = []
-    for sql, (form, rendered, obligations) in by_sql.items():
+    for sql, (first, rendered, obligations) in by_sql.items():
         sha: str = digest(sql)
+        citing: set[str] = {identifier.rsplit(".o", 1)[0] for identifier in obligations}
+        form: str = kept[sha] if kept.get(sha) in citing else first
         case: Row = {
             "case_id": f"{form}.k{sha[:DIGEST_WIDTH]}",
             "obligations": sorted(set(obligations)),
@@ -108,6 +111,19 @@ def family_cases(
         documented,
         disputed - undisputed,
     )
+
+
+def _kept_prefixes(*, path: Path) -> dict[str, str]:
+    """The form prefix each SQL's case id had in the last build, so a receipt keeps joining."""
+    if not path.exists():
+        return {}
+    kept: dict[str, str] = {}
+    for line in path.read_text().splitlines():
+        row: Row = json.loads(line)
+        prefix, _, _ = str(row["case_id"]).rpartition(".k")
+        if prefix:
+            kept[str(row["sql_sha256"])] = prefix
+    return kept
 
 
 def _binding(

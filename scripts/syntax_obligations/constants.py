@@ -44,6 +44,7 @@ ELISION: str = "..."
 OPEN_PAREN: str = "("
 CLOSE_PAREN: str = ")"
 PARENS: frozenset[str] = frozenset({OPEN_PAREN, CLOSE_PAREN})
+ARROWS: frozenset[str] = frozenset({"->", "->>"})
 TARGET_WIDTH: int = 120
 NO_BOUND: str = "no documented bound"
 NESTING_DEPTHS: tuple[int, ...] = (2, 8)

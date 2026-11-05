@@ -360,6 +360,30 @@ required = true
 note = "the form without its required ("
 
 [[obligation]]
+id = "sf.query.at-before.o022"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required TIMESTAMP after ("
+
+[[obligation]]
+id = "sf.query.at-before.o023"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required OFFSET after ("
+
+[[obligation]]
+id = "sf.query.at-before.o024"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required STATEMENT after ("
+
+[[obligation]]
+id = "sf.query.at-before.o025"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required STREAM after ("
+
+[[obligation]]
 id = "sf.query.at-before.o020"
 kind = "negative_neighbour"
 required = true
@@ -604,10 +628,46 @@ required = true
 note = "the form without its required )"
 
 [[obligation]]
+id = "sf.query.changes.o044"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required AT after )"
+
+[[obligation]]
+id = "sf.query.changes.o045"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required TIMESTAMP after ("
+
+[[obligation]]
+id = "sf.query.changes.o046"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required OFFSET after ("
+
+[[obligation]]
+id = "sf.query.changes.o047"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required STATEMENT after ("
+
+[[obligation]]
+id = "sf.query.changes.o048"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required STREAM after ("
+
+[[obligation]]
 id = "sf.query.changes.o038"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required { TIMESTAMP => <timestamp> | OFFSET => <time_difference> | STATEMENT => <id> | STREAM => '<name>' }"
+
+[[obligation]]
+id = "sf.query.changes.o049"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required BEFORE after )"
 
 [[obligation]]
 id = "sf.query.changes.o039"
@@ -620,6 +680,24 @@ id = "sf.query.changes.o041"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required ( in [ END ( { TIMESTAMP => <timestamp> | OFFSET => <time_difference> | STATEMENT => <id> } ) ]"
+
+[[obligation]]
+id = "sf.query.changes.o050"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required TIMESTAMP after ( in [ END ( { TIMESTAMP => <timestamp> | OFFSET => <time_difference> | STATEMENT => <id> } ) ]"
+
+[[obligation]]
+id = "sf.query.changes.o051"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required OFFSET after ( in [ END ( { TIMESTAMP => <timestamp> | OFFSET => <time_difference> | STATEMENT => <id> } ) ]"
+
+[[obligation]]
+id = "sf.query.changes.o052"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required STATEMENT after ( in [ END ( { TIMESTAMP => <timestamp> | OFFSET => <time_difference> | STATEMENT => <id> } ) ]"
 
 [[obligation]]
 id = "sf.query.changes.o042"
@@ -871,6 +949,12 @@ id = "sf.query.connect-by.o078"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required { PRIOR <col1_identifier> = <col2_identifier> | <col1_identifier> = PRIOR <col2_identifier> }"
+
+[[obligation]]
+id = "sf.query.connect-by.o104"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required PRIOR after AND in [ { , | AND } { PRIOR <col3_identifier> = <col4_identifier> | <col3_identifier> = PRIOR <col4_identifier> } ]"
 
 [[obligation]]
 id = "sf.query.connect-by.o079"
@@ -2261,6 +2345,18 @@ id = "sf.query.from.o132"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required ) in [ ( FILE_FORMAT => <format_name> , PATTERN => '<regex_pattern>' ) ]"
+
+[[obligation]]
+id = "sf.query.from.o166"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required DIRECTORY after FROM"
+
+[[obligation]]
+id = "sf.query.from.o167"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required DYNAMIC_TABLE_REFRESH_BOUNDARY after FROM"
 
 [[obligation]]
 id = "sf.query.from.o133"
@@ -5595,6 +5691,24 @@ required = true
 note = "the form without its required ROWS in [ ONE ROW PER MATCH | ALL ROWS PER MATCH [ { SHOW EMPTY MATCHES | OMIT EMPTY MATCHES | WITH UNMATCHED ROWS } ] ]"
 
 [[obligation]]
+id = "sf.query.match-recognize.match-recognize-pattern-define-as.o125"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required PER after ROWS in [ ONE ROW PER MATCH | ALL ROWS PER MATCH [ { SHOW EMPTY MATCHES | OMIT EMPTY MATCHES | WITH UNMATCHED ROWS } ] ]"
+
+[[obligation]]
+id = "sf.query.match-recognize.match-recognize-pattern-define-as.o126"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required MATCH after PER in [ ONE ROW PER MATCH | ALL ROWS PER MATCH [ { SHOW EMPTY MATCHES | OMIT EMPTY MATCHES | WITH UNMATCHED ROWS } ] ]"
+
+[[obligation]]
+id = "sf.query.match-recognize.match-recognize-pattern-define-as.o127"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required SHOW after MATCH in [ { SHOW EMPTY MATCHES | OMIT EMPTY MATCHES | WITH UNMATCHED ROWS } ]"
+
+[[obligation]]
 id = "sf.query.match-recognize.match-recognize-pattern-define-as.o061"
 kind = "negative_neighbour"
 required = true
@@ -5605,6 +5719,30 @@ id = "sf.query.match-recognize.match-recognize-pattern-define-as.o062"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required MATCHES in [ { SHOW EMPTY MATCHES | OMIT EMPTY MATCHES | WITH UNMATCHED ROWS } ]"
+
+[[obligation]]
+id = "sf.query.match-recognize.match-recognize-pattern-define-as.o128"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required OMIT after MATCH in [ { SHOW EMPTY MATCHES | OMIT EMPTY MATCHES | WITH UNMATCHED ROWS } ]"
+
+[[obligation]]
+id = "sf.query.match-recognize.match-recognize-pattern-define-as.o129"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required EMPTY after OMIT in [ { SHOW EMPTY MATCHES | OMIT EMPTY MATCHES | WITH UNMATCHED ROWS } ]"
+
+[[obligation]]
+id = "sf.query.match-recognize.match-recognize-pattern-define-as.o130"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required MATCHES after EMPTY in [ { SHOW EMPTY MATCHES | OMIT EMPTY MATCHES | WITH UNMATCHED ROWS } ]"
+
+[[obligation]]
+id = "sf.query.match-recognize.match-recognize-pattern-define-as.o131"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required WITH after MATCH in [ { SHOW EMPTY MATCHES | OMIT EMPTY MATCHES | WITH UNMATCHED ROWS } ]"
 
 [[obligation]]
 id = "sf.query.match-recognize.match-recognize-pattern-define-as.o063"
@@ -5631,6 +5769,12 @@ required = true
 note = "the form without its required SKIP in [ AFTER MATCH SKIP { PAST LAST ROW | TO NEXT ROW | TO [ { FIRST | LAST } ] <symbol> } ]"
 
 [[obligation]]
+id = "sf.query.match-recognize.match-recognize-pattern-define-as.o132"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required PAST after SKIP in [ AFTER MATCH SKIP { PAST LAST ROW | TO NEXT ROW | TO [ { FIRST | LAST } ] <symbol> } ]"
+
+[[obligation]]
 id = "sf.query.match-recognize.match-recognize-pattern-define-as.o067"
 kind = "negative_neighbour"
 required = true
@@ -5643,10 +5787,28 @@ required = true
 note = "the form without its required ROW in [ AFTER MATCH SKIP { PAST LAST ROW | TO NEXT ROW | TO [ { FIRST | LAST } ] <symbol> } ]"
 
 [[obligation]]
+id = "sf.query.match-recognize.match-recognize-pattern-define-as.o133"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required TO after SKIP in [ AFTER MATCH SKIP { PAST LAST ROW | TO NEXT ROW | TO [ { FIRST | LAST } ] <symbol> } ]"
+
+[[obligation]]
 id = "sf.query.match-recognize.match-recognize-pattern-define-as.o069"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required NEXT in [ AFTER MATCH SKIP { PAST LAST ROW | TO NEXT ROW | TO [ { FIRST | LAST } ] <symbol> } ]"
+
+[[obligation]]
+id = "sf.query.match-recognize.match-recognize-pattern-define-as.o134"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ROW after NEXT in [ AFTER MATCH SKIP { PAST LAST ROW | TO NEXT ROW | TO [ { FIRST | LAST } ] <symbol> } ]"
+
+[[obligation]]
+id = "sf.query.match-recognize.match-recognize-pattern-define-as.o135"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required TO after SKIP in [ AFTER MATCH SKIP { PAST LAST ROW | TO NEXT ROW | TO [ { FIRST | LAST } ] <symbol> } ] #2"
 
 [[obligation]]
 id = "sf.query.match-recognize.match-recognize-pattern-define-as.o070"
@@ -6303,6 +6465,12 @@ required = true
 target = "[ LIMIT ... ]"
 
 [[obligation]]
+id = "sf.query.operators-query.intersect-minus-except-union.o036"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required UNION after <query>"
+
+[[obligation]]
 id = "sf.query.operators-query.intersect-minus-except-union.o031"
 kind = "negative_neighbour"
 required = true
@@ -6798,13 +6966,6 @@ required = true
 target = "{ FIRST | LAST } → LAST"
 
 [[obligation]]
-id = "sf.query.order-by.orderitem.o024"
-kind = "option_present"
-required = true
-target = "[ , { <column_alias> | <position> | <expr> } [ { ASC | DESC } ] [ NULLS { FIRST | LAST } ] , ... ]"
-note = "the list continued at least once"
-
-[[obligation]]
 id = "sf.query.order-by.orderitem.o025"
 kind = "option_absent"
 required = true
@@ -6877,6 +7038,14 @@ required = true
 target = "<column_alias>"
 anchor = "doc.constructs.order-by / Syntax"
 note = "a string literal in place of <column_alias>, observed"
+
+[[obligation]]
+id = "sf.query.order-by.orderitem.o024"
+kind = "option_present"
+required = true
+target = "[ , { <column_alias> | <position> | <expr> } [ { ASC | DESC } ] [ NULLS { FIRST | LAST } ] , ... ]"
+anchor = "doc.constructs.order-by / Syntax"
+note = "the list continued at least once"
 
 [[obligation]]
 id = "sf.query.pivot.o001"
@@ -7153,6 +7322,12 @@ id = "sf.query.pivot.o054"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required ( #3"
+
+[[obligation]]
+id = "sf.query.pivot.o061"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ANY after ("
 
 [[obligation]]
 id = "sf.query.pivot.o041"
@@ -7636,6 +7811,12 @@ required = true
 note = "the form without its required BY in [ PARTITION BY <partition_column> [ , ... ] ]"
 
 [[obligation]]
+id = "sf.query.resample.o051"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required IS_GENERATED after METADATA_COLUMNS in [ METADATA_COLUMNS { IS_GENERATED ( ) | BUCKET_START ( ) } [ [ AS ] <alias_name> ] [ , ... ] ]"
+
+[[obligation]]
 id = "sf.query.resample.o040"
 kind = "negative_neighbour"
 required = true
@@ -7646,6 +7827,12 @@ id = "sf.query.resample.o041"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required ) in [ METADATA_COLUMNS { IS_GENERATED ( ) | BUCKET_START ( ) } [ [ AS ] <alias_name> ] [ , ... ] ]"
+
+[[obligation]]
+id = "sf.query.resample.o052"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required BUCKET_START after METADATA_COLUMNS in [ METADATA_COLUMNS { IS_GENERATED ( ) | BUCKET_START ( ) } [ [ AS ] <alias_name> ] [ , ... ] ]"
 
 [[obligation]]
 id = "sf.query.resample.o042"
@@ -8521,6 +8708,18 @@ required = true
 note = "the form without its required SELECT"
 
 [[obligation]]
+id = "sf.query.select.select.o114"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ILIKE after * in [ { ILIKE '<pattern>' | EXCLUDE { <col_name> | ( <col_name> , <col_name> , ... ) } } ]"
+
+[[obligation]]
+id = "sf.query.select.select.o115"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required EXCLUDE after * in [ { ILIKE '<pattern>' | EXCLUDE { <col_name> | ( <col_name> , <col_name> , ... ) } } ]"
+
+[[obligation]]
 id = "sf.query.select.select.o107"
 kind = "negative_neighbour"
 required = true
@@ -8561,6 +8760,12 @@ id = "sf.query.select.select.o080"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required AS in [ RENAME { <col_name> AS <col_alias> | ( <col_name> AS <col_alias> , <col_name> AS <col_alias> , ... ) } ]"
+
+[[obligation]]
+id = "sf.query.select.select.o116"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required AS after <col_name> in [ RENAME { <col_name> AS <col_alias> | ( <col_name> AS <col_alias> , <col_name> AS <col_alias> , ... ) } ]"
 
 [[obligation]]
 id = "sf.query.select.select.o113"
@@ -9388,6 +9593,24 @@ id = "sf.query.semantic-view.o044"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required ("
+
+[[obligation]]
+id = "sf.query.semantic-view.o072"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required METRICS after <semantic_view_name>"
+
+[[obligation]]
+id = "sf.query.semantic-view.o073"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required FACTS after <semantic_view_name>"
+
+[[obligation]]
+id = "sf.query.semantic-view.o074"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required DIMENSIONS after <semantic_view_name>"
 
 [[obligation]]
 id = "sf.query.semantic-view.o069"

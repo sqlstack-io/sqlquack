@@ -1450,6 +1450,12 @@ required = true
 note = "the form without its required RETURNS"
 
 [[obligation]]
+id = "sf.scripting.declare.procedure-returns-table-as.o048"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required TABLE after RETURNS"
+
+[[obligation]]
 id = "sf.scripting.declare.procedure-returns-table-as.o034"
 kind = "negative_neighbour"
 required = true

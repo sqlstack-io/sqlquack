@@ -3893,6 +3893,18 @@ required = true
 note = "the form without its required )"
 
 [[obligation]]
+id = "sf.functions.approx-count-distinct.approx-count-distinct.o034"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ILIKE after * in [ { ILIKE '<pattern>' | EXCLUDE { <column_name> | ( <column_name> [ , <column_name> ... ] ) } } ]"
+
+[[obligation]]
+id = "sf.functions.approx-count-distinct.approx-count-distinct.o035"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required EXCLUDE after * in [ { ILIKE '<pattern>' | EXCLUDE { <column_name> | ( <column_name> [ , <column_name> ... ] ) } } ]"
+
+[[obligation]]
 id = "sf.functions.approx-count-distinct.approx-count-distinct.o027"
 kind = "negative_neighbour"
 required = true
@@ -4195,6 +4207,18 @@ id = "sf.functions.approx-count-distinct.approx-count-distinct-over.syntax.o006"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required ("
+
+[[obligation]]
+id = "sf.functions.approx-count-distinct.approx-count-distinct-over.syntax.o036"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ILIKE after * in [ { ILIKE '<pattern>' | EXCLUDE { <column_name> | ( <column_name> [ , <column_name> ... ] ) } } ]"
+
+[[obligation]]
+id = "sf.functions.approx-count-distinct.approx-count-distinct-over.syntax.o037"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required EXCLUDE after * in [ { ILIKE '<pattern>' | EXCLUDE { <column_name> | ( <column_name> [ , <column_name> ... ] ) } } ]"
 
 [[obligation]]
 id = "sf.functions.approx-count-distinct.approx-count-distinct-over.syntax.o027"
@@ -10747,6 +10771,12 @@ required = true
 note = "the form without its required )"
 
 [[obligation]]
+id = "sf.functions.cast.cast-as.o019"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required FIELDS after ADD in [ RENAME FIELDS | ADD FIELDS ]"
+
+[[obligation]]
 id = "sf.functions.cast.cast-as.o016"
 kind = "alternative"
 required = true
@@ -13663,6 +13693,18 @@ id = "sf.functions.count.count.o012"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required )"
+
+[[obligation]]
+id = "sf.functions.count.count.o038"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ILIKE after * in [ { ILIKE '<pattern>' | EXCLUDE { <column_name> | ( <column_name> [ , <column_name> ... ] ) } } ]"
+
+[[obligation]]
+id = "sf.functions.count.count.o039"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required EXCLUDE after * in [ { ILIKE '<pattern>' | EXCLUDE { <column_name> | ( <column_name> [ , <column_name> ... ] ) } } ]"
 
 [[obligation]]
 id = "sf.functions.count.count.o033"
@@ -16847,6 +16889,12 @@ id = "sf.functions.dbt-project-execution-history.o043"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required OBJECT_TYPE in [ , OBJECT_TYPE = { WORKSPACE | DBT PROJECT } ]"
+
+[[obligation]]
+id = "sf.functions.dbt-project-execution-history.o063"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required DBT after = in [ , OBJECT_TYPE = { WORKSPACE | DBT PROJECT } ]"
 
 [[obligation]]
 id = "sf.functions.dbt-project-execution-history.o045"
@@ -28450,6 +28498,18 @@ required = true
 note = "the form without its required )"
 
 [[obligation]]
+id = "sf.functions.email-integration-config.o027"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required NOTIFICATION after ."
+
+[[obligation]]
+id = "sf.functions.email-integration-config.o028"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required EMAIL_INTEGRATION_CONFIG after ."
+
+[[obligation]]
 id = "sf.functions.email-integration-config.o026"
 kind = "negative_neighbour"
 required = true
@@ -31831,6 +31891,12 @@ required = true
 note = "the form without its required PRECEDING in [ { { ROWS | RANGE } UNBOUNDED PRECEDING | { ROWS | RANGE } <n> PRECEDING | { ROWS | RANGE } CURRENT ROW | { ROWS | RAN…"
 
 [[obligation]]
+id = "sf.functions.functions-window-syntax.o103"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required PRECEDING after <n> in [ { { ROWS | RANGE } UNBOUNDED PRECEDING | { ROWS | RANGE } <n> PRECEDING | { ROWS | RANGE } CURRENT ROW | { ROWS | RAN…"
+
+[[obligation]]
 id = "sf.functions.functions-window-syntax.o095"
 kind = "negative_neighbour"
 required = true
@@ -31849,10 +31915,64 @@ required = true
 note = "the form without its required BETWEEN in [ { { ROWS | RANGE } UNBOUNDED PRECEDING | { ROWS | RANGE } <n> PRECEDING | { ROWS | RANGE } CURRENT ROW | { ROWS | RAN…"
 
 [[obligation]]
+id = "sf.functions.functions-window-syntax.o104"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required UNBOUNDED after BETWEEN in [ { { ROWS | RANGE } UNBOUNDED PRECEDING | { ROWS | RANGE } <n> PRECEDING | { ROWS | RANGE } CURRENT ROW | { ROWS | RAN…"
+
+[[obligation]]
+id = "sf.functions.functions-window-syntax.o105"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required PRECEDING after UNBOUNDED in [ { { ROWS | RANGE } UNBOUNDED PRECEDING | { ROWS | RANGE } <n> PRECEDING | { ROWS | RANGE } CURRENT ROW | { ROWS | RAN…"
+
+[[obligation]]
 id = "sf.functions.functions-window-syntax.o098"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required AND in [ { { ROWS | RANGE } UNBOUNDED PRECEDING | { ROWS | RANGE } <n> PRECEDING | { ROWS | RANGE } CURRENT ROW | { ROWS | RAN…"
+
+[[obligation]]
+id = "sf.functions.functions-window-syntax.o106"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required CURRENT after AND in [ { { ROWS | RANGE } UNBOUNDED PRECEDING | { ROWS | RANGE } <n> PRECEDING | { ROWS | RANGE } CURRENT ROW | { ROWS | RAN…"
+
+[[obligation]]
+id = "sf.functions.functions-window-syntax.o107"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ROW after CURRENT in [ { { ROWS | RANGE } UNBOUNDED PRECEDING | { ROWS | RANGE } <n> PRECEDING | { ROWS | RANGE } CURRENT ROW | { ROWS | RAN…"
+
+[[obligation]]
+id = "sf.functions.functions-window-syntax.o108"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required BETWEEN after RANGE in [ { { ROWS | RANGE } UNBOUNDED PRECEDING | { ROWS | RANGE } <n> PRECEDING | { ROWS | RANGE } CURRENT ROW | { ROWS | RAN…"
+
+[[obligation]]
+id = "sf.functions.functions-window-syntax.o109"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required CURRENT after BETWEEN in [ { { ROWS | RANGE } UNBOUNDED PRECEDING | { ROWS | RANGE } <n> PRECEDING | { ROWS | RANGE } CURRENT ROW | { ROWS | RAN…"
+
+[[obligation]]
+id = "sf.functions.functions-window-syntax.o110"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ROW after CURRENT in [ { { ROWS | RANGE } UNBOUNDED PRECEDING | { ROWS | RANGE } <n> PRECEDING | { ROWS | RANGE } CURRENT ROW | { ROWS | RAN… #2"
+
+[[obligation]]
+id = "sf.functions.functions-window-syntax.o111"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required AND after ROW in [ { { ROWS | RANGE } UNBOUNDED PRECEDING | { ROWS | RANGE } <n> PRECEDING | { ROWS | RANGE } CURRENT ROW | { ROWS | RAN…"
+
+[[obligation]]
+id = "sf.functions.functions-window-syntax.o112"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required UNBOUNDED after AND in [ { { ROWS | RANGE } UNBOUNDED PRECEDING | { ROWS | RANGE } <n> PRECEDING | { ROWS | RANGE } CURRENT ROW | { ROWS | RAN…"
 
 [[obligation]]
 id = "sf.functions.functions-window-syntax.o099"
@@ -31861,10 +31981,46 @@ required = true
 note = "the form without its required FOLLOWING in [ { { ROWS | RANGE } UNBOUNDED PRECEDING | { ROWS | RANGE } <n> PRECEDING | { ROWS | RANGE } CURRENT ROW | { ROWS | RAN…"
 
 [[obligation]]
+id = "sf.functions.functions-window-syntax.o113"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required BETWEEN after RANGE in [ { { ROWS | RANGE } UNBOUNDED PRECEDING | { ROWS | RANGE } <n> PRECEDING | { ROWS | RANGE } CURRENT ROW | { ROWS | RAN… #2"
+
+[[obligation]]
+id = "sf.functions.functions-window-syntax.o114"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required UNBOUNDED after BETWEEN in [ { { ROWS | RANGE } UNBOUNDED PRECEDING | { ROWS | RANGE } <n> PRECEDING | { ROWS | RANGE } CURRENT ROW | { ROWS | RAN… #2"
+
+[[obligation]]
+id = "sf.functions.functions-window-syntax.o115"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required PRECEDING after UNBOUNDED in [ { { ROWS | RANGE } UNBOUNDED PRECEDING | { ROWS | RANGE } <n> PRECEDING | { ROWS | RANGE } CURRENT ROW | { ROWS | RAN… #2"
+
+[[obligation]]
+id = "sf.functions.functions-window-syntax.o116"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required AND after PRECEDING in [ { { ROWS | RANGE } UNBOUNDED PRECEDING | { ROWS | RANGE } <n> PRECEDING | { ROWS | RANGE } CURRENT ROW | { ROWS | RAN…"
+
+[[obligation]]
 id = "sf.functions.functions-window-syntax.o100"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required UNBOUNDED in [ { { ROWS | RANGE } UNBOUNDED PRECEDING | { ROWS | RANGE } <n> PRECEDING | { ROWS | RANGE } CURRENT ROW | { ROWS | RAN… #2"
+
+[[obligation]]
+id = "sf.functions.functions-window-syntax.o117"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required FOLLOWING after UNBOUNDED in [ { { ROWS | RANGE } UNBOUNDED PRECEDING | { ROWS | RANGE } <n> PRECEDING | { ROWS | RANGE } CURRENT ROW | { ROWS | RAN…"
+
+[[obligation]]
+id = "sf.functions.functions-window-syntax.o118"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required BETWEEN after RANGE in [ { { ROWS | RANGE } UNBOUNDED PRECEDING | { ROWS | RANGE } <n> PRECEDING | { ROWS | RANGE } CURRENT ROW | { ROWS | RAN… #3"
 
 [[obligation]]
 id = "sf.functions.functions-window-syntax.o101"
@@ -31873,10 +32029,64 @@ required = true
 note = "the form without its required { PRECEDING | FOLLOWING } in [ { { ROWS | RANGE } UNBOUNDED PRECEDING | { ROWS | RANGE } <n> PRECEDING | { ROWS | RANGE } CURRENT ROW | { ROWS | RAN…"
 
 [[obligation]]
+id = "sf.functions.functions-window-syntax.o119"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required AND after FOLLOWING in [ { { ROWS | RANGE } UNBOUNDED PRECEDING | { ROWS | RANGE } <n> PRECEDING | { ROWS | RANGE } CURRENT ROW | { ROWS | RAN…"
+
+[[obligation]]
 id = "sf.functions.functions-window-syntax.o102"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required { PRECEDING | FOLLOWING } in [ { { ROWS | RANGE } UNBOUNDED PRECEDING | { ROWS | RANGE } <n> PRECEDING | { ROWS | RANGE } CURRENT ROW | { ROWS | RAN… #2"
+
+[[obligation]]
+id = "sf.functions.functions-window-syntax.o120"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required BETWEEN after RANGE in [ { { ROWS | RANGE } UNBOUNDED PRECEDING | { ROWS | RANGE } <n> PRECEDING | { ROWS | RANGE } CURRENT ROW | { ROWS | RAN… #4"
+
+[[obligation]]
+id = "sf.functions.functions-window-syntax.o121"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required UNBOUNDED after BETWEEN in [ { { ROWS | RANGE } UNBOUNDED PRECEDING | { ROWS | RANGE } <n> PRECEDING | { ROWS | RANGE } CURRENT ROW | { ROWS | RAN… #3"
+
+[[obligation]]
+id = "sf.functions.functions-window-syntax.o122"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required PRECEDING after UNBOUNDED in [ { { ROWS | RANGE } UNBOUNDED PRECEDING | { ROWS | RANGE } <n> PRECEDING | { ROWS | RANGE } CURRENT ROW | { ROWS | RAN… #3"
+
+[[obligation]]
+id = "sf.functions.functions-window-syntax.o123"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required AND after PRECEDING in [ { { ROWS | RANGE } UNBOUNDED PRECEDING | { ROWS | RANGE } <n> PRECEDING | { ROWS | RANGE } CURRENT ROW | { ROWS | RAN… #2"
+
+[[obligation]]
+id = "sf.functions.functions-window-syntax.o124"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required BETWEEN after RANGE in [ { { ROWS | RANGE } UNBOUNDED PRECEDING | { ROWS | RANGE } <n> PRECEDING | { ROWS | RANGE } CURRENT ROW | { ROWS | RAN… #5"
+
+[[obligation]]
+id = "sf.functions.functions-window-syntax.o125"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required AND after FOLLOWING in [ { { ROWS | RANGE } UNBOUNDED PRECEDING | { ROWS | RANGE } <n> PRECEDING | { ROWS | RANGE } CURRENT ROW | { ROWS | RAN… #2"
+
+[[obligation]]
+id = "sf.functions.functions-window-syntax.o126"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required UNBOUNDED after AND in [ { { ROWS | RANGE } UNBOUNDED PRECEDING | { ROWS | RANGE } <n> PRECEDING | { ROWS | RANGE } CURRENT ROW | { ROWS | RAN… #2"
+
+[[obligation]]
+id = "sf.functions.functions-window-syntax.o127"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required FOLLOWING after UNBOUNDED in [ { { ROWS | RANGE } UNBOUNDED PRECEDING | { ROWS | RANGE } <n> PRECEDING | { ROWS | RANGE } CURRENT ROW | { ROWS | RAN… #2"
 
 [[obligation]]
 id = "sf.functions.functions-window-syntax.o015"
@@ -33218,13 +33428,6 @@ required = true
 target = "[ CREATED_TIME_START => <constant_expr> ]"
 
 [[obligation]]
-id = "sf.functions.get-job-history.o004"
-kind = "required_operand_missing"
-required = true
-target = "<constant_expr> in [ CREATED_TIME_START => <constant_expr> ]"
-note = "omit <constant_expr>"
-
-[[obligation]]
 id = "sf.functions.get-job-history.o005"
 kind = "operand_type_class"
 required = true
@@ -33290,12 +33493,6 @@ required = true
 note = "the form without its required GET_JOB_HISTORY"
 
 [[obligation]]
-id = "sf.functions.get-job-history.o016"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ("
-
-[[obligation]]
 id = "sf.functions.get-job-history.o017"
 kind = "negative_neighbour"
 required = true
@@ -33313,6 +33510,21 @@ kind = "negative_neighbour"
 required = true
 anchor = "doc.functions.get_job_history / Syntax"
 note = "the form without its required SPCS, observed"
+
+[[obligation]]
+id = "sf.functions.get-job-history.o004"
+kind = "required_operand_missing"
+required = true
+target = "<constant_expr> in [ CREATED_TIME_START => <constant_expr> ]"
+anchor = "doc.functions.get_job_history / Syntax"
+note = "omit <constant_expr>"
+
+[[obligation]]
+id = "sf.functions.get-job-history.o016"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.functions.get_job_history / Syntax"
+note = "the form without its required ("
 
 [[obligation]]
 id = "sf.functions.get-lineage-snowflake-core.o001"
@@ -35834,6 +36046,18 @@ required = true
 note = "the form without its required )"
 
 [[obligation]]
+id = "sf.functions.hash.o032"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ILIKE after * in [ { ILIKE '<pattern>' | EXCLUDE { <column_name> | ( <column_name> [ , <column_name> ... ] ) } } ]"
+
+[[obligation]]
+id = "sf.functions.hash.o033"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required EXCLUDE after * in [ { ILIKE '<pattern>' | EXCLUDE { <column_name> | ( <column_name> [ , <column_name> ... ] ) } } ]"
+
+[[obligation]]
 id = "sf.functions.hash.o025"
 kind = "negative_neighbour"
 required = true
@@ -36042,6 +36266,18 @@ id = "sf.functions.hash-agg.hash-agg.o009"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required )"
+
+[[obligation]]
+id = "sf.functions.hash-agg.hash-agg.o034"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ILIKE after * in [ { ILIKE '<pattern>' | EXCLUDE { <column_name> | ( <column_name> [ , <column_name> ... ] ) } } ]"
+
+[[obligation]]
+id = "sf.functions.hash-agg.hash-agg.o035"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required EXCLUDE after * in [ { ILIKE '<pattern>' | EXCLUDE { <column_name> | ( <column_name> [ , <column_name> ... ] ) } } ]"
 
 [[obligation]]
 id = "sf.functions.hash-agg.hash-agg.o027"
@@ -36346,6 +36582,18 @@ id = "sf.functions.hash-agg.hash-agg-over.syntax.o006"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required ("
+
+[[obligation]]
+id = "sf.functions.hash-agg.hash-agg-over.syntax.o036"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ILIKE after * in [ { ILIKE '<pattern>' | EXCLUDE { <column_name> | ( <column_name> [ , <column_name> ... ] ) } } ]"
+
+[[obligation]]
+id = "sf.functions.hash-agg.hash-agg-over.syntax.o037"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required EXCLUDE after * in [ { ILIKE '<pattern>' | EXCLUDE { <column_name> | ( <column_name> [ , <column_name> ... ] ) } } ]"
 
 [[obligation]]
 id = "sf.functions.hash-agg.hash-agg-over.syntax.o027"
@@ -47397,6 +47645,18 @@ required = true
 note = "the form without its required )"
 
 [[obligation]]
+id = "sf.functions.object-construct.o036"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ILIKE after * in [ { ILIKE '<pattern>' | EXCLUDE { <column_name> | ( <column_name> [ , <column_name> ... ] ) } } ]"
+
+[[obligation]]
+id = "sf.functions.object-construct.o037"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required EXCLUDE after * in [ { ILIKE '<pattern>' | EXCLUDE { <column_name> | ( <column_name> [ , <column_name> ... ] ) } } ]"
+
+[[obligation]]
 id = "sf.functions.object-construct.o029"
 kind = "negative_neighbour"
 required = true
@@ -47628,6 +47888,18 @@ required = true
 note = "the form without its required )"
 
 [[obligation]]
+id = "sf.functions.object-construct-keep-null.o036"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ILIKE after * in [ { ILIKE '<pattern>' | EXCLUDE { <column_name> | ( <column_name> [ , <column_name> ... ] ) } } ]"
+
+[[obligation]]
+id = "sf.functions.object-construct-keep-null.o037"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required EXCLUDE after * in [ { ILIKE '<pattern>' | EXCLUDE { <column_name> | ( <column_name> [ , <column_name> ... ] ) } } ]"
+
+[[obligation]]
 id = "sf.functions.object-construct-keep-null.o029"
 kind = "negative_neighbour"
 required = true
@@ -47838,6 +48110,18 @@ id = "sf.functions.object-construct-keep-null-structured.o009"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required )"
+
+[[obligation]]
+id = "sf.functions.object-construct-keep-null-structured.o034"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ILIKE after * in [ { ILIKE '<pattern>' | EXCLUDE { <column_name> | ( <column_name> [ , <column_name> ... ] ) } } ]"
+
+[[obligation]]
+id = "sf.functions.object-construct-keep-null-structured.o035"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required EXCLUDE after * in [ { ILIKE '<pattern>' | EXCLUDE { <column_name> | ( <column_name> [ , <column_name> ... ] ) } } ]"
 
 [[obligation]]
 id = "sf.functions.object-construct-keep-null-structured.o027"
@@ -48939,6 +49223,12 @@ required = true
 note = "the form without its required { FIRST | LAST } in [ NULLS { FIRST | LAST } ]"
 
 [[obligation]]
+id = "sf.functions.percent-rank.o041"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required RANGE after <expr2> in [ { RANGE UNBOUNDED PRECEDING | RANGE BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW | RANGE BETWEEN CURRENT ROW AND UNBOU…"
+
+[[obligation]]
 id = "sf.functions.percent-rank.o032"
 kind = "negative_neighbour"
 required = true
@@ -48951,10 +49241,28 @@ required = true
 note = "the form without its required PRECEDING in [ { RANGE UNBOUNDED PRECEDING | RANGE BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW | RANGE BETWEEN CURRENT ROW AND UNBOU…"
 
 [[obligation]]
+id = "sf.functions.percent-rank.o042"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required RANGE after <expr2> in [ { RANGE UNBOUNDED PRECEDING | RANGE BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW | RANGE BETWEEN CURRENT ROW AND UNBOU… #2"
+
+[[obligation]]
 id = "sf.functions.percent-rank.o034"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required BETWEEN in [ { RANGE UNBOUNDED PRECEDING | RANGE BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW | RANGE BETWEEN CURRENT ROW AND UNBOU…"
+
+[[obligation]]
+id = "sf.functions.percent-rank.o043"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required UNBOUNDED after BETWEEN in [ { RANGE UNBOUNDED PRECEDING | RANGE BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW | RANGE BETWEEN CURRENT ROW AND UNBOU…"
+
+[[obligation]]
+id = "sf.functions.percent-rank.o044"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required PRECEDING after UNBOUNDED in [ { RANGE UNBOUNDED PRECEDING | RANGE BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW | RANGE BETWEEN CURRENT ROW AND UNBOU…"
 
 [[obligation]]
 id = "sf.functions.percent-rank.o035"
@@ -48973,6 +49281,42 @@ id = "sf.functions.percent-rank.o037"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required ROW in [ { RANGE UNBOUNDED PRECEDING | RANGE BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW | RANGE BETWEEN CURRENT ROW AND UNBOU…"
+
+[[obligation]]
+id = "sf.functions.percent-rank.o045"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required RANGE after <expr2> in [ { RANGE UNBOUNDED PRECEDING | RANGE BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW | RANGE BETWEEN CURRENT ROW AND UNBOU… #3"
+
+[[obligation]]
+id = "sf.functions.percent-rank.o046"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required BETWEEN after RANGE in [ { RANGE UNBOUNDED PRECEDING | RANGE BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW | RANGE BETWEEN CURRENT ROW AND UNBOU…"
+
+[[obligation]]
+id = "sf.functions.percent-rank.o047"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required CURRENT after BETWEEN in [ { RANGE UNBOUNDED PRECEDING | RANGE BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW | RANGE BETWEEN CURRENT ROW AND UNBOU…"
+
+[[obligation]]
+id = "sf.functions.percent-rank.o048"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ROW after CURRENT in [ { RANGE UNBOUNDED PRECEDING | RANGE BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW | RANGE BETWEEN CURRENT ROW AND UNBOU…"
+
+[[obligation]]
+id = "sf.functions.percent-rank.o049"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required AND after ROW in [ { RANGE UNBOUNDED PRECEDING | RANGE BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW | RANGE BETWEEN CURRENT ROW AND UNBOU…"
+
+[[obligation]]
+id = "sf.functions.percent-rank.o050"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required UNBOUNDED after AND in [ { RANGE UNBOUNDED PRECEDING | RANGE BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW | RANGE BETWEEN CURRENT ROW AND UNBOU…"
 
 [[obligation]]
 id = "sf.functions.percent-rank.o038"
@@ -55516,6 +55860,12 @@ required = true
 note = "the form without its required ("
 
 [[obligation]]
+id = "sf.functions.result-scan.o017"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required LAST_QUERY_ID after ( in [ { '<query_id>' | <query_index> | LAST_QUERY_ID ( ) } ]"
+
+[[obligation]]
 id = "sf.functions.result-scan.o012"
 kind = "negative_neighbour"
 required = true
@@ -56529,6 +56879,18 @@ required = true
 note = "the form without its required )"
 
 [[obligation]]
+id = "sf.functions.search.o055"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ILIKE after * in [ { ILIKE '<pattern>' | EXCLUDE { <column_name> | ( <column_name> [ , <column_name> ... ] ) } } ]"
+
+[[obligation]]
+id = "sf.functions.search.o056"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required EXCLUDE after * in [ { ILIKE '<pattern>' | EXCLUDE { <column_name> | ( <column_name> [ , <column_name> ... ] ) } } ]"
+
+[[obligation]]
 id = "sf.functions.search.o048"
 kind = "negative_neighbour"
 required = true
@@ -56815,6 +57177,18 @@ id = "sf.functions.search-ip.o008"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required )"
+
+[[obligation]]
+id = "sf.functions.search-ip.o045"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ILIKE after * in [ { ILIKE '<pattern>' | EXCLUDE { <column_name> | ( <column_name> [ , <column_name> ... ] ) } } ]"
+
+[[obligation]]
+id = "sf.functions.search-ip.o046"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required EXCLUDE after * in [ { ILIKE '<pattern>' | EXCLUDE { <column_name> | ( <column_name> [ , <column_name> ... ] ) } } ]"
 
 [[obligation]]
 id = "sf.functions.search-ip.o036"
@@ -84822,6 +85196,12 @@ id = "sf.functions.warehouse-metering-history.o035"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required DATE_RANGE_END"
+
+[[obligation]]
+id = "sf.functions.warehouse-metering-history.o036"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required DATE_RANGE_START after ,"
 
 [[obligation]]
 id = "sf.functions.warehouse-metering-history.o018"

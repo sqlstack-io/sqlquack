@@ -833,12 +833,6 @@ target = "<fractional_seconds_precision> in [ ( <fractional_seconds_precision> )
 note = "a valid operand"
 
 [[obligation]]
-id = "sf.expressions.data-types-datetime.interval.o061"
-kind = "option_present"
-required = true
-target = "[ ( <precision> ) [ , ( <fractional_seconds_precision> ) ] ]"
-
-[[obligation]]
 id = "sf.expressions.data-types-datetime.interval.o062"
 kind = "option_absent"
 required = true
@@ -859,12 +853,6 @@ target = "<precision> in [ ( <precision> ) [ , ( <fractional_seconds_precision> 
 note = "a valid operand"
 
 [[obligation]]
-id = "sf.expressions.data-types-datetime.interval.o065"
-kind = "option_present"
-required = true
-target = "[ , ( <fractional_seconds_precision> ) ]"
-
-[[obligation]]
 id = "sf.expressions.data-types-datetime.interval.o066"
 kind = "option_absent"
 required = true
@@ -876,13 +864,6 @@ kind = "required_operand_missing"
 required = true
 target = "<fractional_seconds_precision> in [ , ( <fractional_seconds_precision> ) ]"
 note = "omit <fractional_seconds_precision>"
-
-[[obligation]]
-id = "sf.expressions.data-types-datetime.interval.o068"
-kind = "operand_type_class"
-required = true
-target = "<fractional_seconds_precision> in [ , ( <fractional_seconds_precision> ) ]"
-note = "a valid operand"
 
 [[obligation]]
 id = "sf.expressions.data-types-datetime.interval.o069"
@@ -909,6 +890,12 @@ required = true
 note = "the form without its required ) in [ ( <precision> ) ] #3"
 
 [[obligation]]
+id = "sf.expressions.data-types-datetime.interval.o090"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required SECOND after TO in [ TO { HOUR | MINUTE | SECOND [ ( <fractional_seconds_precision> ) ] } ]"
+
+[[obligation]]
 id = "sf.expressions.data-types-datetime.interval.o073"
 kind = "negative_neighbour"
 required = true
@@ -925,6 +912,12 @@ id = "sf.expressions.data-types-datetime.interval.o075"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required ) in [ ( <precision> ) ] #4"
+
+[[obligation]]
+id = "sf.expressions.data-types-datetime.interval.o091"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required SECOND after TO in [ TO { MINUTE | SECOND [ ( <fractional_seconds_precision> ) ] } ]"
 
 [[obligation]]
 id = "sf.expressions.data-types-datetime.interval.o076"
@@ -1010,6 +1003,30 @@ kind = "negative_neighbour"
 required = true
 anchor = "doc.data-types-datetime / Data types / Interval data types / Representing interval values / Interval literals"
 note = "the form without its required { YEAR [ ( <precision> ) ] [ TO MONTH ] | MONTH [ ( <precision> ) ] | DAY [ ( <precision> ) ] [ TO { HOUR | MINUTE | SECOND [ ( <fractional_seconds_precision> ) ] } ] | HOUR [ ( <precision> ) ] [ TO { MINUTE | SECOND [ ( <fractional_seconds_precision> ) ] } ] | MINUTE [ ( <precision> ) ] [ TO SECOND [ ( <fractional_seconds_precision> ) ] ] | SECOND [ ( <precision> ) [ , ( <fractional_seconds_precision> ) ] ] }, observed"
+
+[[obligation]]
+id = "sf.expressions.data-types-datetime.interval.o092"
+kind = "option_present"
+required = true
+target = "[ ( <precision> ) [ , ( <fractional_seconds_precision> ) ] ]"
+anchor = "doc.data-types-datetime / Data types / Interval data types / Representing interval values / Interval literals"
+note = "SECOND ( 9 ) , ( 3 ) inside CAST, where the comma cannot separate select items, observed"
+
+[[obligation]]
+id = "sf.expressions.data-types-datetime.interval.o093"
+kind = "option_present"
+required = true
+target = "[ , ( <fractional_seconds_precision> ) ]"
+anchor = "doc.data-types-datetime / Data types / Interval data types / Representing interval values / Interval literals"
+note = "SECOND ( 2 ) , ( 6 ) inside CAST, where the comma cannot separate select items, observed"
+
+[[obligation]]
+id = "sf.expressions.data-types-datetime.interval.o094"
+kind = "operand_type_class"
+required = true
+target = "<fractional_seconds_precision> in [ , ( <fractional_seconds_precision> ) ]"
+anchor = "doc.data-types-datetime / Data types / Interval data types / Representing interval values / Interval literals"
+note = "a valid fractional seconds precision inside CAST, observed"
 
 [[obligation]]
 id = "sf.expressions.data-types-datetime.interval-yearmonthqualifier-daytimequalifier.o001"
@@ -1379,6 +1396,12 @@ target = "<fractional_seconds_precision> in [ , ( <fractional_seconds_precision>
 note = "omit <fractional_seconds_precision>"
 
 [[obligation]]
+id = "sf.expressions.data-types-datetime.interval-yearmonthqualifier-daytimequalifier.o092"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required YEAR after INTERVAL"
+
+[[obligation]]
 id = "sf.expressions.data-types-datetime.interval-yearmonthqualifier-daytimequalifier.o066"
 kind = "negative_neighbour"
 required = true
@@ -1391,16 +1414,34 @@ required = true
 note = "the form without its required MONTH in [ TO MONTH ]"
 
 [[obligation]]
+id = "sf.expressions.data-types-datetime.interval-yearmonthqualifier-daytimequalifier.o093"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required MONTH after INTERVAL"
+
+[[obligation]]
 id = "sf.expressions.data-types-datetime.interval-yearmonthqualifier-daytimequalifier.o068"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required ) in [ ( <precision> ) ] #2"
 
 [[obligation]]
+id = "sf.expressions.data-types-datetime.interval-yearmonthqualifier-daytimequalifier.o094"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required DAY after INTERVAL"
+
+[[obligation]]
 id = "sf.expressions.data-types-datetime.interval-yearmonthqualifier-daytimequalifier.o069"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required ) in [ ( <precision> ) ] #3"
+
+[[obligation]]
+id = "sf.expressions.data-types-datetime.interval-yearmonthqualifier-daytimequalifier.o095"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required SECOND after TO in [ TO { HOUR | MINUTE | SECOND [ ( <fractional_seconds_precision> ) ] } ]"
 
 [[obligation]]
 id = "sf.expressions.data-types-datetime.interval-yearmonthqualifier-daytimequalifier.o070"
@@ -1415,10 +1456,22 @@ required = true
 note = "the form without its required { HOUR | MINUTE | SECOND [ ( <fractional_seconds_precision> ) ] } in [ TO { HOUR | MINUTE | SECOND [ ( <fractional_seconds_precision> ) ] } ]"
 
 [[obligation]]
+id = "sf.expressions.data-types-datetime.interval-yearmonthqualifier-daytimequalifier.o096"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required HOUR after INTERVAL"
+
+[[obligation]]
 id = "sf.expressions.data-types-datetime.interval-yearmonthqualifier-daytimequalifier.o072"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required ) in [ ( <precision> ) ] #4"
+
+[[obligation]]
+id = "sf.expressions.data-types-datetime.interval-yearmonthqualifier-daytimequalifier.o097"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required SECOND after TO in [ TO { MINUTE | SECOND [ ( <fractional_seconds_precision> ) ] } ]"
 
 [[obligation]]
 id = "sf.expressions.data-types-datetime.interval-yearmonthqualifier-daytimequalifier.o073"
@@ -1431,6 +1484,12 @@ id = "sf.expressions.data-types-datetime.interval-yearmonthqualifier-daytimequal
 kind = "negative_neighbour"
 required = true
 note = "the form without its required { MINUTE | SECOND [ ( <fractional_seconds_precision> ) ] } in [ TO { MINUTE | SECOND [ ( <fractional_seconds_precision> ) ] } ]"
+
+[[obligation]]
+id = "sf.expressions.data-types-datetime.interval-yearmonthqualifier-daytimequalifier.o098"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required MINUTE after INTERVAL"
 
 [[obligation]]
 id = "sf.expressions.data-types-datetime.interval-yearmonthqualifier-daytimequalifier.o075"
@@ -1449,6 +1508,12 @@ id = "sf.expressions.data-types-datetime.interval-yearmonthqualifier-daytimequal
 kind = "negative_neighbour"
 required = true
 note = "the form without its required ) in [ ( <fractional_seconds_precision> ) ] #3"
+
+[[obligation]]
+id = "sf.expressions.data-types-datetime.interval-yearmonthqualifier-daytimequalifier.o099"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required SECOND after INTERVAL"
 
 [[obligation]]
 id = "sf.expressions.data-types-datetime.interval-yearmonthqualifier-daytimequalifier.o078"
@@ -1808,6 +1873,12 @@ target = "<precision> in [ ( <precision> ) ]"
 note = "a valid operand"
 
 [[obligation]]
+id = "sf.expressions.data-types-datetime.timestamp-variations.o023"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required TIMESTAMP after "
+
+[[obligation]]
 id = "sf.expressions.data-types-datetime.timestamp-variations.o015"
 kind = "negative_neighbour"
 required = true
@@ -1826,10 +1897,52 @@ required = true
 note = "the form without its required ZONE"
 
 [[obligation]]
+id = "sf.expressions.data-types-datetime.timestamp-variations.o024"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required TIMESTAMP after  #2"
+
+[[obligation]]
 id = "sf.expressions.data-types-datetime.timestamp-variations.o018"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required WITHOUT"
+
+[[obligation]]
+id = "sf.expressions.data-types-datetime.timestamp-variations.o025"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required TIME after WITHOUT"
+
+[[obligation]]
+id = "sf.expressions.data-types-datetime.timestamp-variations.o026"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ZONE after TIME"
+
+[[obligation]]
+id = "sf.expressions.data-types-datetime.timestamp-variations.o027"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required TIMESTAMP after  #3"
+
+[[obligation]]
+id = "sf.expressions.data-types-datetime.timestamp-variations.o028"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required WITH after TIMESTAMP"
+
+[[obligation]]
+id = "sf.expressions.data-types-datetime.timestamp-variations.o029"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required TIME after WITH"
+
+[[obligation]]
+id = "sf.expressions.data-types-datetime.timestamp-variations.o030"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ZONE after TIME #2"
 
 [[obligation]]
 id = "sf.expressions.data-types-datetime.timestamp-variations.o019"
@@ -2103,6 +2216,12 @@ id = "sf.expressions.data-types-numeric.double.o004"
 kind = "alternative"
 required = true
 target = "{ DOUBLE | DOUBLE PRECISION | REAL } → REAL"
+
+[[obligation]]
+id = "sf.expressions.data-types-numeric.double.o005"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required DOUBLE after "
 
 [[obligation]]
 id = "sf.expressions.data-types-numeric.float.o001"
@@ -3470,6 +3589,18 @@ kind = "operand_type_class"
 required = true
 target = "<length> in [ ( <length> ) ]"
 note = "a valid operand"
+
+[[obligation]]
+id = "sf.expressions.data-types-text.string.o018"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required CHAR after "
+
+[[obligation]]
+id = "sf.expressions.data-types-text.string.o019"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required NCHAR after "
 
 [[obligation]]
 id = "sf.expressions.data-types-text.string.o013"
@@ -5018,6 +5149,12 @@ kind = "negative_neighbour"
 required = true
 target = "<sql_statement_n> in [ ->> <sql_statement_n> ]"
 note = "a bare literal in place of <sql_statement_n>"
+
+[[obligation]]
+id = "sf.expressions.operators-flow.o017"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ->>"
 
 [[obligation]]
 id = "sf.expressions.operators-flow.o010"
