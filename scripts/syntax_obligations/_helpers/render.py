@@ -26,6 +26,7 @@ from scripts.syntax_obligations.constants import (
     CONTEXT_PROCEDURE,
     CONTEXT_RAW,
     CONTEXT_TOP,
+    DEFINE_FORM_FILLS,
     DEFINE_QUALIFIED_NAMES,
     DEFINE_REFERENCE_CLAUSES,
     DEFINE_REFERENCE_ITEM,
@@ -618,4 +619,5 @@ def style_of(*, family: str, form: str) -> FormStyle:
     qualify: dict[str, str] = dict.fromkeys(SCHEMA_REFERENCES, SCHEMA_QUALIFIER)
     if own:
         qualify[own] = qualifier
-    return replace(styles[best], qualify=qualify, qualify_references=True)
+    fills: dict[str, str] = {**styles[best].fills, **DEFINE_FORM_FILLS.get(form, {})}
+    return replace(styles[best], qualify=qualify, qualify_references=True, fills=fills)

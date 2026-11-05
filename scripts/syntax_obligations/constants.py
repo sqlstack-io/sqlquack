@@ -1190,6 +1190,7 @@ REPEAT_FILLS: dict[tuple[str, str], str] = {
     ("object_type", "DATABASES"): "SHARES",
     ("type", "DATABASES"): "DYNAMIC_TABLES",
     ("session_parameter", "LOCK_TIMEOUT"): "STATEMENT_TIMEOUT_IN_SECONDS",
+    ("task_name", "p1"): "p2",
 }
 ALERT_PAGES: tuple[str, ...] = ("sf.ddl.create-alert", "sf.ddl.alter-alert")
 SECURITY_ADMIN_FILLS: dict[str, str] = {
@@ -1577,6 +1578,10 @@ DEFINE_QUALIFIED_NAMES: dict[str, tuple[str, str]] = {
     "sf.security_admin.create-network-policy.define-network-policy": ("", ""),
     "sf.security_admin.create-role.define-role": ("", ""),
     "sf.security_admin.create-share.define-share": ("", ""),
+}
+# A DEFINE TASK predecessor named like the task itself is a cycle DCM refuses (errno 1629).
+DEFINE_FORM_FILLS: dict[str, dict[str, str]] = {
+    "sf.ddl.create-task.define-task": {"task_name": "p1"}
 }
 DEFINE_REFERENCE_CLAUSES: tuple[str, ...] = (
     "AFTER",

@@ -40724,11 +40724,11 @@ probes = []
 [[unobservable]]
 obligation = "sf.ddl.create-task.define-task.o015"
 form = "sf.ddl.create-task.define-task"
-construct = "a valid string_literal: DEFINE TASK d1.s1.v1 USER_TASK_MANAGED_INITIAL_WAREHOUSE_SIZE = 'm' SCHEDULE = '1 MINUTES' CONFIG = 'm' OVERLAP_POLICY = NO_OVERLAP USER_TASK_TIMEOUT_MS = 1 LOCK_TIMEOUT = 1 , STATEMENT_TIMEOUT_IN_SECONDS = 1 SUSPEND_TASK_AFTER_NUM_FAILURES = 1 ERROR_INTEGRATION = i1 SUCCESS_INTEGRATION = i1 COMMENT = 'm' FINALIZE = 'd1.s1.m' TASK_AUTO_RETRY_ATTEMPTS = 1 AFTER d1.s1.v1 , d1.s1.v1 EXECUTE AS USER v1 WHEN TRUE STARTED AS SELECT 1 ;"
+construct = "a valid string_literal: DEFINE TASK d1.s1.v1 USER_TASK_MANAGED_INITIAL_WAREHOUSE_SIZE = 'm' SCHEDULE = '1 MINUTES' CONFIG = 'm' OVERLAP_POLICY = NO_OVERLAP USER_TASK_TIMEOUT_MS = 1 LOCK_TIMEOUT = 1 , STATEMENT_TIMEOUT_IN_SECONDS = 1 SUSPEND_TASK_AFTER_NUM_FAILURES = 1 ERROR_INTEGRATION = i1 SUCCESS_INTEGRATION = i1 COMMENT = 'm' FINALIZE = 'd1.s1.m' TASK_AUTO_RETRY_ATTEMPTS = 1 AFTER d1.s1.p1 , d1.s1.p2 EXECUTE AS USER v1 WHEN TRUE STARTED AS SELECT 1 ;"
 reason = "not submitted: held by capture guard f187c2c in the define-stage packet define.jsonl: billable or out-of-account: compute larger than X-Small"
 cause = "not_submitted"
 cases = [
-  { case_id = "sf.ddl.create-task.define-task.kf03e9f7dd897", sql_sha256 = "f03e9f7dd897636c2836dc12cde9b37b90eee37b4d54d1a917cd0e1d0dd8e764" },
+  { case_id = "sf.ddl.create-task.define-task.kd34100b76885", sql_sha256 = "d34100b76885cb11a16e95aeecf632f845e4b005c95c99d102c778dca277e5e5" },
 ]
 runs = []
 probes = []
