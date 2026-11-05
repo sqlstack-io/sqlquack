@@ -420,8 +420,8 @@ regression.
 
 `syntax-coverage translation --sqlquack <binary> [--policy sqlquack.toml] [--family <family>]
 [--jobs 4] [--json]` measures what conversion makes of the syntax Snowflake parsed. It never
-changes a coverage verdict. The `sqlquack` binary must find `libduckdb.so`, for example through
-`LD_LIBRARY_PATH`.
+changes a coverage verdict. A `sqlquack` binary built in this workspace finds `libduckdb.so` by
+itself.
 
 A case counts when its current receipt phase is `accepted`, `semantic_error` or `runtime_error`
 and it does not expect a rejection. Each counted case runs in its own

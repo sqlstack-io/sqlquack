@@ -879,9 +879,11 @@ pub(crate) fn run_with_input(
     input: &str,
 ) -> (Option<i32>, String, String) {
     use std::io::Write;
+    // Without the library path Cargo sets, so the binary has to find DuckDB through its rpath.
     let mut child = Command::new(env!("CARGO_BIN_EXE_sqlquack"))
         .args(arguments)
         .current_dir(directory)
+        .env_remove("LD_LIBRARY_PATH")
         .stdin(std::process::Stdio::piped())
         .stdout(std::process::Stdio::piped())
         .stderr(std::process::Stdio::piped())

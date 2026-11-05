@@ -1346,6 +1346,7 @@ dependencies = [
  "arrow",
  "clap",
  "duckdb",
+ "libduckdb-sys",
  "rayon",
  "serde",
  "serde_json",

@@ -18,6 +18,7 @@ path = "src/bin/sqlquack.rs"
 
 [dependencies]
 clap.workspace = true
+libduckdb-sys.workspace = true
 rayon.workspace = true
 serde.workspace = true
 serde_json.workspace = true

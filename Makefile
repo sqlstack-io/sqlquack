@@ -133,7 +133,7 @@ python-module: gate-build
 # The API tests compare the module's reports with the command line's, both built with GATE_PROFILE.
 python-api: python-module
 	SQLQUACK_BIN=$(abspath $(GATE_DIR)/sqlquack) \
-	  LD_LIBRARY_PATH=$(abspath $(PYTHON_PACKAGE)) uv run pytest $(PYTHON_API_TESTS) -n auto --dist loadfile
+	  uv run pytest $(PYTHON_API_TESTS) -n auto --dist loadfile
 
 # A local wheel of the Python module in target/wheels; never published.
 python-wheel: | .venv/bin/python

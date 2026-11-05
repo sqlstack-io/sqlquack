@@ -49,16 +49,10 @@ $ echo "SELECT 1 AS total" | cargo run --release -p sqlquack -- convert --json
 ```
 
 The binary links DuckDB's prebuilt shared library (`libduckdb.so`, `libduckdb.dylib` on macOS,
-`duckdb.dll` on Windows), which `cargo run` puts on the library path. To run
-`target/release/sqlquack` directly, point the library path at the directory the build downloaded it
-to, `target/duckdb-download/<target triple>/<DuckDB version>`:
-
-```console
-$ LD_LIBRARY_PATH=target/duckdb-download/x86_64-unknown-linux-gnu/v2.0.0 target/release/sqlquack convert query.sql
-```
-
-Use `DYLD_LIBRARY_PATH` on macOS and `PATH` on Windows. The Python module ships the library beside
-itself and needs neither.
+`duckdb.dll` on Windows) and finds it without a library path: in the directory the build downloaded
+it to, or beside the binary. To run a copy of `target/release/sqlquack` elsewhere, copy the library
+from `target/duckdb-download/<target triple>/<DuckDB version>` next to it. On Windows, put
+`duckdb.dll` beside the binary or on `PATH`. The Python module ships the library beside itself.
 
 `convert` prints the DuckDB SQL for Snowflake SQL from a file or standard input, and names the known
 divergences and assumptions it relies on on standard error. A refused statement prints its refusals
