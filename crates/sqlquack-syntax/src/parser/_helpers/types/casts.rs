@@ -1132,6 +1132,9 @@ impl Parser {
                         }
                         break;
                     }
+                    if self.is_snowflake() && self.check(TokenType::String) {
+                        return Err(self.parse_error("Expected a type parameter, not a string"));
+                    }
                     let token = self.advance()?;
                     if !after_comma && !args.is_empty() {
                         if let Some(last) = args.last_mut() {

@@ -1,4 +1,4 @@
-//! Snowflake's PIVOT and UNPIVOT rules: an aggregate of a column, non-empty lists, bare aliases.
+//! Snowflake's PIVOT, UNPIVOT and parenthesized table-function rules.
 
 use crate::expressions::tree::models::Expression;
 use crate::parser::models::Parser;
@@ -19,7 +19,7 @@ impl Parser {
                 | Expression::Literal(_)
                 | Expression::Tuple(_)
                 | Expression::Identifier(_)
-        );
+        ) || matches!(aggregate, Expression::Function(call) if call.args.is_empty());
         let of_string = aggregate.children().iter().any(
             |argument| matches!(argument, Expression::Literal(literal) if literal.is_string()),
         );
@@ -55,6 +55,15 @@ impl Parser {
         match bare {
             true => Ok(self.parse_bitwise()?),
             false => Ok(None),
+        }
+    }
+
+    /// Refuses Snowflake's `FROM ( f ( ... ) )`: a table function needs TABLE( ), not parentheses.
+    pub(crate) fn refuse_snowflake_parenthesized_call(&self, source: &Expression) -> Result<()> {
+        let call = matches!(source, Expression::Paren(paren) if matches!(paren.this, Expression::Function(_)));
+        match self.is_snowflake() && call {
+            true => Err(self.parse_error("Expected TABLE( ) around a table function")),
+            false => Ok(()),
         }
     }
 }

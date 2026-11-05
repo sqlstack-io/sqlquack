@@ -210,6 +210,19 @@ impl Parser {
             || self.check_identifier("IMMEDIATE")
             || self.check_identifier("EXCLUSIVE");
 
+        if self.is_snowflake() && self.check_identifier("NAME") {
+            self.refuse_snowflake_nameless_transaction()?;
+            self.skip();
+            let name = self.expect_identifier_or_safe_keyword_with_quoted()?;
+            return Ok(Expression::Transaction(Box::new(Transaction {
+                this: Some(Box::new(Expression::Identifier(name))),
+                modes: None,
+                mark: Some(Box::new(Expression::Identifier(Identifier::new(
+                    "BEGIN".to_string(),
+                )))),
+            })));
+        }
+
         if !is_transaction {
             if self.check_identifier("TRY") {
                 return self.parse_tsql_try_catch();

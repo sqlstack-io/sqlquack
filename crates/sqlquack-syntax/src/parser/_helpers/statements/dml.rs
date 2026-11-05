@@ -371,7 +371,7 @@ impl Parser {
                 self.skip();
                 self.parse_create_trigger(or_replace, or_alter, true, create_pos)
             }
-            TokenType::Type => self.parse_create_type(),
+            TokenType::Type => self.parse_create_type(or_replace),
             TokenType::Domain => self.parse_create_domain(),
             _ => self.parse_create_other_object(materialized, or_replace, temporary),
         }
@@ -448,7 +448,7 @@ impl Parser {
         {
             if self.is_snowflake()
                 && self.tokens.get(self.current + 1).is_some_and(|t| {
-                    ["CLONE", "FROM", "AS"]
+                    ["CLONE", "FROM", "AS", "USING", "LIKE", "("]
                         .iter()
                         .any(|word| t.text.eq_ignore_ascii_case(word))
                 })

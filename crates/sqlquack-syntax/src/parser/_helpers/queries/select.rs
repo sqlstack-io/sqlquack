@@ -608,7 +608,9 @@ impl Parser {
             } else if self.match_token(TokenType::Lateral) {
                 self.parse_table_lateral_source()?
             } else if self.match_token(TokenType::LParen) {
-                self.parse_table_parenthesized_source()?
+                let source = self.parse_table_parenthesized_source()?;
+                self.refuse_snowflake_parenthesized_call(&source)?;
+                source
             } else if self.is_identifier_token()
                 || self.is_safe_keyword_as_identifier()
                 || self.can_be_alias_keyword()
