@@ -1,0 +1,53 @@
+category = "translation"
+construct = "sf.functions.vector-max"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_float"
+description = "Element-wise per group, where each element's winner comes from a different row. Catches: a whole-vector comparison or a scalar result"
+columns = [{ name = "g", type = "VARCHAR" }, { name = "a", type = "VARCHAR" }]
+rows = [
+  ["'p'", "'[1,-4,2.5]'"],
+  ["'q'", "'[0,0,1]'"],
+  ["'p'", "'[-2,6,0.5]'"],
+  ["'p'", "'[3,1,-1]'"],
+]
+query = "SELECT g, VECTOR_MAX(CAST(PARSE_JSON(a)::ARRAY AS VECTOR(FLOAT, 3))) AS r FROM input GROUP BY g ORDER BY g"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_int"
+description = "INT vectors whose average is not whole. Catches: an INT result for VECTOR_AVG (or a FLOAT result for the others)"
+columns = [{ name = "g", type = "VARCHAR" }, { name = "a", type = "VARCHAR" }]
+rows = [
+  ["'p'", "'[1,2,3]'"],
+  ["'p'", "'[2,2,6]'"],
+]
+query = "SELECT VECTOR_MAX(CAST(PARSE_JSON(a)::ARRAY AS VECTOR(INT, 3))) AS r FROM input"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t003_null_vector_column"
+description = "A NULL vector beside vectors, and a group of only NULL. Catches: NULL read as a zero vector"
+columns = [{ name = "g", type = "VARCHAR" }, { name = "a", type = "VARCHAR" }]
+rows = [
+  ["'p'", "NULL"],
+  ["'p'", "'[4,8,2]'"],
+  ["'q'", "NULL"],
+]
+query = "SELECT g, VECTOR_MAX(CAST(PARSE_JSON(a)::ARRAY AS VECTOR(FLOAT, 3))) AS r FROM input GROUP BY g ORDER BY g"
+order = "ordered"
+tags = ["null"]
+
+[[case]]
+id = "t004_empty_input"
+description = "No rows. Catches: a zero vector instead of NULL"
+columns = [{ name = "g", type = "VARCHAR" }, { name = "a", type = "VARCHAR" }]
+rows = [
+  ["'p'", "'[1,1,1]'"],
+]
+query = "SELECT VECTOR_MAX(CAST(PARSE_JSON(a)::ARRAY AS VECTOR(FLOAT, 3))) AS r FROM input WHERE ordinal < 0"
+order = "ordered"
+tags = ["empty-input"]
