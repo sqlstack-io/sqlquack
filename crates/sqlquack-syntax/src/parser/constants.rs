@@ -194,6 +194,9 @@ pub(crate) const SET_MASKING_POLICY: &str = "SET MASKING POLICY";
 /// The text "SET TAG", as comparisons test it.
 pub(crate) const SET_TAG: &str = "SET TAG";
 
+/// The text "UNSET COMMENT", as comparisons test it.
+pub(crate) const UNSET_COMMENT: &str = "UNSET COMMENT";
+
 /// The argument count of a two-argument call.
 pub(crate) const BINARY_ARITY: usize = 2;
 

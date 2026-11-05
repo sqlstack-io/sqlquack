@@ -7,6 +7,7 @@ use std::sync::Arc;
 use crate::expressions::names::main::identifier_from_token::identifier_from_token;
 use crate::expressions::names::models::BooleanLiteral;
 use crate::expressions::names::models::Column;
+use crate::expressions::names::models::DefaultKeyword;
 use crate::expressions::names::models::Identifier;
 use crate::expressions::names::models::Literal;
 use crate::expressions::operators::models::Alias;
@@ -995,9 +996,13 @@ impl Parser {
 
         loop {
             let expr = if self.match_token(TokenType::Default) {
-                Expression::Var(Box::new(crate::expressions::statements::models::Var {
-                    this: "DEFAULT".to_string(),
-                }))
+                if self.is_snowflake() {
+                    Expression::DefaultKeyword(DefaultKeyword)
+                } else {
+                    Expression::Var(Box::new(crate::expressions::statements::models::Var {
+                        this: "DEFAULT".to_string(),
+                    }))
+                }
             } else {
                 self.parse_expression()?
             };

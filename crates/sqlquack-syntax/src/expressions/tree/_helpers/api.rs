@@ -17,6 +17,7 @@ impl Expression {
             Expression::Literal(_) => "literal",
             Expression::Boolean(_) => "boolean",
             Expression::Null(_) => "null",
+            Expression::DefaultKeyword(_) => "default_keyword",
             Expression::Identifier(_) => "identifier",
             Expression::Column(_) => "column",
             Expression::Table(_) => "table",
@@ -1298,6 +1299,7 @@ impl Expression {
                 }
             }
             Expression::Null(_) => "NULL",
+            Expression::DefaultKeyword(_) => "DEFAULT",
             _ => "",
         }
     }

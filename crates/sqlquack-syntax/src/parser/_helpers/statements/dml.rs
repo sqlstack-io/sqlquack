@@ -1,6 +1,7 @@
 //! Parser statements: dml.
 
 use crate::expressions::names::models::BooleanLiteral;
+use crate::expressions::names::models::DefaultKeyword;
 use crate::expressions::names::models::Identifier;
 use crate::expressions::names::models::TableRef;
 use crate::expressions::operators::models::ConditionalInsert;
@@ -635,7 +636,7 @@ impl Parser {
 
             let values = if self.match_token(TokenType::Values) {
                 self.expect_token(TokenType::LParen)?;
-                let row = self.parse_expression_list()?;
+                let row = self.parse_into_clause_values()?;
                 self.expect_token(TokenType::RParen)?;
                 vec![row]
             } else {
@@ -698,5 +699,24 @@ impl Parser {
                 overwrite,
             },
         ))))
+    }
+
+    /// A multi-table intoClause's VALUES items: an expression or the DEFAULT keyword, each.
+    fn parse_into_clause_values(&mut self) -> Result<Vec<Expression>> {
+        let mut values: Vec<Expression> = Vec::new();
+        loop {
+            let ends_item = self.peek_nth(1).is_some_and(|next| {
+                matches!(next.token_type, TokenType::Comma | TokenType::RParen)
+            });
+            if self.check(TokenType::Default) && ends_item {
+                self.skip();
+                values.push(Expression::DefaultKeyword(DefaultKeyword));
+            } else {
+                values.push(self.parse_expression()?);
+            }
+            if !self.match_token(TokenType::Comma) {
+                return Ok(values);
+            }
+        }
     }
 }
