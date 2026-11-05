@@ -3,6 +3,7 @@
 use serde_json::Value;
 use sqlquack_core::classification::models::Construct;
 use sqlquack_core::refusals::models::Refusal;
+use sqlquack_duckdb::arrays::main::json_array_written::json_array_written;
 use sqlquack_duckdb::blocks::main::cast::cast;
 use sqlquack_duckdb::semi_structured::constants::{JSON_FIDELITY, VARIANT_TYPED_VALUES};
 use sqlquack_duckdb::semi_structured::main::json_array_to_string::json_array_to_string;
@@ -44,11 +45,11 @@ use crate::conversion::_helpers::support::typed_leaves::compared_by_text;
 use crate::conversion::constants::DUPLICATE_VARIANTS;
 use crate::conversion::constants::{
     ARRAY_AGG_RULE, ARRAY_APPEND_RULE, ARRAY_CAT_RULE, ARRAY_COMPACT_RULE,
-    ARRAY_CONSTRUCT_COMPACT_RULE, ARRAY_CONSTRUCT_RULE, ARRAY_CONTAINS_RULE, ARRAY_EXCEPT_RULE,
-    ARRAY_POSITION_RULE, ARRAY_POSITION_TYPE, ARRAY_SIZE_RULE, ARRAY_TO_STRING_RULE,
-    COUNTED_ARRAY_FUNCTIONS, FUNCTION_KIND, OBJECT_KEYS_RULE, OBJECT_PICK_RULE,
-    PICKED_ARRAY_FUNCTIONS, SORTED_ARRAY_FUNCTION, SPLIT_RULE, TO_VARIANT_RULE, TYPED_CHECKS,
-    VARIANT_KIND_RULE, VARIANT_KINDS, VARIANT_TYPED_CHECK,
+    ARRAY_CONSTRUCT_COMPACT_RULE, ARRAY_CONSTRUCT_NAME, ARRAY_CONSTRUCT_RULE, ARRAY_CONTAINS_RULE,
+    ARRAY_EXCEPT_RULE, ARRAY_POSITION_RULE, ARRAY_POSITION_TYPE, ARRAY_SIZE_RULE,
+    ARRAY_TO_STRING_RULE, COUNTED_ARRAY_FUNCTIONS, FUNCTION_KIND, OBJECT_KEYS_RULE,
+    OBJECT_PICK_RULE, PICKED_ARRAY_FUNCTIONS, SORTED_ARRAY_FUNCTION, SPLIT_RULE, TO_VARIANT_RULE,
+    TYPED_CHECKS, VARIANT_KIND_RULE, VARIANT_KINDS, VARIANT_TYPED_CHECK,
 };
 
 /// A VARIANT operand, or a NULL literal as a NULL VARIANT.
@@ -222,8 +223,11 @@ pub(crate) fn variant_function(
         ("ARRAY_TO_STRING", [array, separator]) => {
             let _rule = log.rule(ARRAY_TO_STRING_RULE);
             diverge(site.context, JSON_FIDELITY, construct)?;
-            let array = variant(array, construct, site)?;
             let separator = text_operand(separator, construct, site)?;
+            if let Some(written) = written_array(array, Some(&separator), site) {
+                return written;
+            }
+            let array = variant(array, construct, site)?;
             Ok(Emitted::new(
                 json_array_to_string((&array, &separator), log),
                 SnowflakeType::Varchar,
@@ -327,6 +331,36 @@ pub(crate) fn to_variant(
     Ok(built(sql, held, root, context))
 }
 
+/// A direct ARRAY_CONSTRUCT call `node` written as text, or joined by `separator`; None otherwise.
+pub(crate) fn written_array(
+    node: &Value,
+    separator: Option<&str>,
+    site: Site<'_>,
+) -> Option<Result<Emitted, Refusal>> {
+    let call = node.get(FUNCTION_KIND).and_then(Value::as_object)?;
+    let name = call
+        .get("name")
+        .and_then(Value::as_str)?
+        .to_ascii_uppercase();
+    let shadowed = site.context.schema.functions.contains_key(&name)
+        || site.context.options.overrides.contains_key(&name);
+    if shadowed || name != ARRAY_CONSTRUCT_NAME {
+        return None;
+    }
+    let called = function_construct(&name);
+    let _rule = site.context.log.rule(ARRAY_CONSTRUCT_RULE);
+    Some(
+        require_understood(call, &["name", "args"], &called)
+            .and_then(|()| counted_values(list(call, "args"), &called, site))
+            .map(|values| {
+                Emitted::new(
+                    json_array_written(&values, separator, site.context.log),
+                    SnowflakeType::Varchar,
+                )
+            }),
+    )
+}
+
 /// ARRAY_SIZE's operand, ARRAY_CONSTRUCT, _APPEND and _CAT counting undefined elements as Snowflake.
 fn counted_array(node: &Value, construct: &Construct, site: Site<'_>) -> Result<String, Refusal> {
     let Some(call) = node.get(FUNCTION_KIND).and_then(Value::as_object) else {
@@ -372,6 +406,16 @@ fn counted_elements(
     construct: &Construct,
     site: Site<'_>,
 ) -> Result<String, Refusal> {
+    let values = counted_values(values, construct, site)?;
+    Ok(json_array_construct(&values, true, site.context.log))
+}
+
+/// Each value as JSON, SQL NULL kept; a FLOAT held apart refuses.
+fn counted_values(
+    values: &[Value],
+    construct: &Construct,
+    site: Site<'_>,
+) -> Result<Vec<String>, Refusal> {
     diverge(site.context, JSON_FIDELITY, construct)?;
     let values = values
         .iter()
@@ -384,7 +428,7 @@ fn counted_elements(
             "an array element of a FLOAT, which DuckDB holds apart from JSON",
         ));
     }
-    Ok(json_array_construct(&values, true, site.context.log))
+    Ok(values)
 }
 
 /// A VARIANT argument read as JSON, also when it is VARIANT-held.

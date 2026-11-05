@@ -2,6 +2,10 @@
 
 /// ARRAY_SORT of one array: `duckdb.json_array_sort`.
 pub const JSON_ARRAY_SORT: &str = "duckdb.json_array_sort";
+/// ARRAY_CONSTRUCT written as text: `duckdb.json_array_written`.
+pub const JSON_ARRAY_WRITTEN: &str = "duckdb.json_array_written";
+/// How Snowflake writes an undefined array element.
+pub const UNDEFINED_TEXT: &str = "undefined";
 /// ARRAY_FLATTEN: `duckdb.json_array_flatten`.
 pub const JSON_ARRAY_FLATTEN: &str = "duckdb.json_array_flatten";
 /// ARRAY_INTERSECTION: `duckdb.json_array_intersection`.

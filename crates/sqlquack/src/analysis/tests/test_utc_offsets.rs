@@ -40,14 +40,14 @@ fn given_utc_offset_values_when_carried_through_queries_then_their_wall_times_co
         FirstValueTestCase {
             description: "a zoned value of unknown offset is still refused",
             sql: "SELECT CAST('2024-03-10 22:30:00 -05:00'::TIMESTAMP_TZ AS TIMESTAMP_NTZ) AS v",
-            expected_outcome: Err("no proven conversion"),
+            expected_outcome: Err("reads the local time of an offset"),
         },
         FirstValueTestCase {
             description: "COALESCE with a zoned value of unknown offset loses the UTC offset",
             sql: "SELECT CAST(COALESCE(CONVERT_TIMEZONE('UTC', \
                   '2024-03-10 22:30:00 -05:00'::TIMESTAMP_TZ), \
                   '2024-03-10 22:30:00 -05:00'::TIMESTAMP_TZ) AS TIMESTAMP_NTZ) AS v",
-            expected_outcome: Err("no proven conversion"),
+            expected_outcome: Err("reads the local time of an offset"),
         },
         FirstValueTestCase {
             description: "DATEDIFF of a UTC-offset value against a naive one is refused",

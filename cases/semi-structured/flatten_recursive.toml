@@ -211,3 +211,16 @@ rows = [
 query = "SELECT i.ordinal, DENSE_RANK() OVER (ORDER BY f.seq) AS seq_rank FROM input i, LATERAL FLATTEN(input => i.v) f ORDER BY i.ordinal, f.index"
 order = "ordered"
 tags = ["array-index"]
+
+[[case]]
+id = "flatten_recursive_symbol_key_paths"
+description = "RECURSIVE => TRUE PATH and KEY through keys holding $, -, @, [, a space, a quote, an accent and nothing, at the top and below a bracketed key."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('{\"a$b\": 1, \"a-b\": {\"@x\": 2}, \"a[b\": [3], \"\\u00e9\": 4, \"plain key\": 5}')"],
+  ["PARSE_JSON('{\"it''s\": {\"x\": 1}, \"\": 2, \"q\\\\\"t\": 3, \"\\u00e9a\": {\"1st\": [4]}, \"$\": 5, \"a_1\": {\"b c\": {\"d\": 6}}}')"],
+]
+query = "SELECT i.ordinal, f.key, f.index, f.path, (i.ordinal || ':' || f.path)::VARCHAR AS element_id, TYPEOF(f.value) AS kind FROM input i, LATERAL FLATTEN(input => i.v, recursive => TRUE) f ORDER BY i.ordinal, f.path"
+order = "ordered"
+expected_divergence = "json_fidelity"
+tags = ["nested", "array-index", "unicode", "case-sensitive-key", "empty"]
