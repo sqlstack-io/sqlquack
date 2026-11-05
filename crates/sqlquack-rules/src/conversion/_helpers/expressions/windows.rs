@@ -122,7 +122,7 @@ pub(crate) fn convert_window(payload: &Value, site: Site<'_>) -> Result<Emitted,
             WINDOW_OFFSET
         }
         "first_value" | "last_value" => WINDOW_FIRST_LAST,
-        "count" | "sum" | "min" | "max" | "within_group" => WINDOW_AGGREGATE,
+        "count" | "sum" | "avg" | "min" | "max" | "within_group" => WINDOW_AGGREGATE,
         "function" | "aggregate_function"
             if WINDOWED_NAMED_AGGREGATES.contains(&call_name(function_payload).as_str()) =>
         {
@@ -176,7 +176,7 @@ pub(crate) fn convert_window(payload: &Value, site: Site<'_>) -> Result<Emitted,
             ignoring_nulls_offset(function_payload, &over, site)
         }
         "first_value" | "last_value" => first_last_window(function, function_payload, &over, site),
-        "count" | "sum" | "min" | "max" => {
+        "count" | "sum" | "avg" | "min" | "max" => {
             aggregate_window(function, function_payload, &over, site)
         }
         "within_group" => ordered_window(function_payload, &over, site),
@@ -507,7 +507,12 @@ fn aggregate_window(
         ));
     }
     let clause = aggregate_clause(over, site, &construct)?;
-    convert_aggregate(function, payload, site, Some(&clause))
+    convert_aggregate(
+        function,
+        payload,
+        site,
+        Some((&clause, over.frame.is_some() || over.order.is_empty())),
+    )
 }
 
 /// An aggregate's OVER clause: an explicit literal ROWS frame, or a running one when ordered.

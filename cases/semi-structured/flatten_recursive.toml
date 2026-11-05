@@ -222,5 +222,4 @@ rows = [
 ]
 query = "SELECT i.ordinal, f.key, f.index, f.path, (i.ordinal || ':' || f.path)::VARCHAR AS element_id, TYPEOF(f.value) AS kind FROM input i, LATERAL FLATTEN(input => i.v, recursive => TRUE) f ORDER BY i.ordinal, f.path"
 order = "ordered"
-expected_divergence = "json_fidelity"
 tags = ["nested", "array-index", "unicode", "case-sensitive-key", "empty"]

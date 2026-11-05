@@ -12,5 +12,6 @@ pub mod folded_text;
 pub mod guarded_pattern;
 pub mod hex_decoded_text;
 pub mod hex_text;
+pub mod json_parse_url;
 pub mod split_to_rows;
 pub mod title_case;

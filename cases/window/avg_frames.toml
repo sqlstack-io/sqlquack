@@ -1,0 +1,75 @@
+# AVG over a window: ROWS, running and day RANGE frames.
+category = "window"
+construct = "fn:AVG"
+session_profile = "utc-v1"
+
+[[case]]
+id = "avg_rows_trailing_three"
+description = "AVG over ROWS BETWEEN 2 PRECEDING AND CURRENT ROW per partition: NULLs skipped, a repeating sixth decimal and an all-NULL partition."
+columns = [{ name = "g", type = "VARCHAR" }, { name = "n", type = "NUMBER(10,0)" }, { name = "x", type = "NUMBER(3,0)" }]
+rows = [
+  ["'a'", "1", "1"],
+  ["'a'", "2", "NULL"],
+  ["'a'", "3", "2"],
+  ["'a'", "4", "2"],
+  ["'a'", "5", "5"],
+  ["'b'", "1", "NULL"],
+  ["'b'", "2", "NULL"],
+]
+query = "SELECT g, n, AVG(x) OVER (PARTITION BY g ORDER BY n ROWS BETWEEN 2 PRECEDING AND CURRENT ROW) AS a FROM input"
+order = "bag"
+tags = ["null", "single-row-partition"]
+
+[[case]]
+id = "avg_rows_frame_without_values"
+description = "AVG over ROWS BETWEEN 3 PRECEDING AND 1 PRECEDING: NULL where the frame holds no rows, thirds rounded at the sixth place."
+columns = [{ name = "n", type = "NUMBER(10,0)" }, { name = "x", type = "NUMBER(10,2)" }]
+rows = [["1", "0.00"], ["2", "0.00"], ["3", "2.00"], ["4", "1.00"], ["5", "-1.00"]]
+query = "SELECT n, AVG(x) OVER (ORDER BY n ROWS BETWEEN 3 PRECEDING AND 1 PRECEDING) AS a FROM input"
+order = "bag"
+tags = ["empty", "boundary"]
+
+[[case]]
+id = "avg_running_with_peers"
+description = "AVG over an ordered window without a frame: running, peers on one key averaged together."
+columns = [{ name = "k", type = "NUMBER(10,0)" }, { name = "x", type = "NUMBER(5,1)" }]
+rows = [["1", "1.0"], ["2", "2.0"], ["2", "4.0"], ["3", "NULL"], ["4", "0.5"]]
+query = "SELECT k, x, AVG(x) OVER (ORDER BY k) AS a FROM input"
+order = "bag"
+tags = ["ties", "null"]
+
+[[case]]
+id = "avg_range_days_trailing"
+description = "AVG over RANGE BETWEEN INTERVAL '27 days' PRECEDING AND CURRENT ROW on a DATE key per two-key partition: gaps, peers and a NULL key."
+columns = [{ name = "r", type = "VARCHAR" }, { name = "m", type = "VARCHAR" }, { name = "d", type = "DATE" }, { name = "x", type = "NUMBER(18,2)" }]
+rows = [
+  ["'eu'", "'orders'", "'2024-01-01'", "10.00"],
+  ["'eu'", "'orders'", "'2024-01-15'", "20.00"],
+  ["'eu'", "'orders'", "'2024-01-28'", "31.00"],
+  ["'eu'", "'orders'", "'2024-01-29'", "40.00"],
+  ["'eu'", "'orders'", "'2024-01-29'", "NULL"],
+  ["'eu'", "'orders'", "NULL", "7.00"],
+  ["'us'", "'orders'", "'2024-02-28'", "1.00"],
+  ["'us'", "'orders'", "'2024-03-01'", "2.00"],
+]
+query = "SELECT r, m, d, x, AVG(x) OVER (PARTITION BY r, m ORDER BY d RANGE BETWEEN INTERVAL '27 days' PRECEDING AND CURRENT ROW) AS a FROM input"
+order = "bag"
+tags = ["null", "ties", "boundary"]
+
+[[case]]
+id = "avg_rows_negative_inexact"
+description = "AVG over ROWS BETWEEN 2 PRECEDING AND CURRENT ROW of negative values whose average has digits beyond the frame's scale, beside positive ones: toward zero or away."
+columns = [{ name = "n", type = "NUMBER(10,0)" }, { name = "x", type = "NUMBER(10,2)" }]
+rows = [["1", "-1.00"], ["2", "0.00"], ["3", "0.00"], ["4", "-2.00"], ["5", "-0.01"], ["6", "1.00"]]
+query = "SELECT n, AVG(x) OVER (ORDER BY n ROWS BETWEEN 2 PRECEDING AND CURRENT ROW) AS a FROM input"
+order = "bag"
+tags = ["null", "negative", "boundary"]
+
+[[case]]
+id = "avg_unordered_partition_and_cumulative_rows"
+description = "AVG over a whole unordered partition and over an explicit ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW, of thirds, to show which typing each takes."
+columns = [{ name = "g", type = "VARCHAR" }, { name = "n", type = "NUMBER(10,0)" }, { name = "x", type = "NUMBER(10,2)" }]
+rows = [["'a'", "1", "1.00"], ["'a'", "2", "1.00"], ["'a'", "3", "2.00"], ["'b'", "1", "NULL"]]
+query = "SELECT g, n, AVG(x) OVER (PARTITION BY g) AS whole, AVG(x) OVER (PARTITION BY g ORDER BY n ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) AS cumulative FROM input"
+order = "bag"
+tags = ["null", "ties", "single-row-partition"]

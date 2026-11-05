@@ -357,6 +357,22 @@ pub const PARSE_JSON_RULE: &str = "rule.parse_json";
 pub const VARIANT_PATH: &str = "rule.variant_path";
 /// TYPEOF of a VARIANT.
 pub const VARIANT_TYPE_NAME: &str = "rule.variant_typeof";
+/// ROUND's rounding mode to the nearest even digit.
+pub const HALF_TO_EVEN: &str = "HALF_TO_EVEN";
+/// ROUND's rounding mode away from zero, its default.
+pub const HALF_AWAY_FROM_ZERO: &str = "HALF_AWAY_FROM_ZERO";
+/// The argument count of ROUND with a rounding mode.
+pub const ROUND_WITH_MODE_ARGUMENTS: usize = 3;
+/// The node kind of a NULL literal.
+pub const NULL_KIND: &str = "null";
+/// Functions whose timestamp result Snowflake was recorded widening to nanoseconds.
+pub const WIDENING_DATE_ADDS: &[&str] = &["DATEADD", "TIMEADD", "TIMESTAMPADD"];
+/// SYSTEM$TYPEOF with its storage suffix removed by REGEXP_REPLACE.
+pub const SYSTEM_TYPE_NAME: &str = "rule.system_typeof";
+/// SYSTEM$TYPEOF, the static type of an expression with a storage suffix such as `[SB1]`.
+pub const SYSTEM_TYPEOF_NAME: &str = "SYSTEM$TYPEOF";
+/// The REGEXP_REPLACE pattern that removes SYSTEM$TYPEOF's storage suffix.
+pub const STORAGE_SUFFIX_PATTERN: &str = r"\[.*\]$";
 /// IS_NULL_VALUE, STRIP_NULL_VALUE and TO_JSON of a VARIANT.
 pub const VARIANT_INSPECT: &str = "rule.variant_inspect";
 /// Casts of a VARIANT to scalar types.
@@ -405,6 +421,8 @@ pub const ARRAY_CONSTRUCT_COMPACT_RULE: &str = "rule.array_construct_compact";
 pub const ARRAY_TO_STRING_RULE: &str = "rule.array_to_string";
 /// SPLIT.
 pub const SPLIT_RULE: &str = "rule.split";
+/// PARSE_URL in permissive mode.
+pub const PARSE_URL_RULE: &str = "rule.parse_url";
 /// ARRAY_EXCEPT.
 pub const ARRAY_EXCEPT_RULE: &str = "rule.array_except";
 /// TO_VARIANT, and casts of text, booleans and whole numbers to VARIANT.
