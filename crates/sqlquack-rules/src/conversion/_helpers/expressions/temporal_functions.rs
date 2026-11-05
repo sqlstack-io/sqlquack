@@ -45,7 +45,9 @@ use crate::conversion::_helpers::expressions::casts::cast_to;
 use crate::conversion::_helpers::expressions::operators::is_iso_date;
 use crate::conversion::_helpers::expressions::scalar::convert_expression;
 use crate::conversion::_helpers::expressions::temporal::temporal_cast;
-use crate::conversion::_helpers::expressions::temporal::{proven_time_text, time_submicro};
+use crate::conversion::_helpers::expressions::temporal::{
+    proven_time_text, time_submicro, zoned_local,
+};
 use crate::conversion::_helpers::support::declared::rely_on_declared;
 use crate::conversion::_helpers::support::divergence::diverge;
 use crate::conversion::_helpers::support::failure::text_failure;
@@ -128,6 +130,10 @@ fn temporal_or_refused(
                 Some(zoned),
             ))
         }
+        zoned @ SnowflakeType::TimestampTz { .. } => Err(outside_conditions(
+            construct.clone(),
+            zoned_local(&construct.name, zoned),
+        )),
         other => Err(outside_conditions(
             construct.clone(),
             format!("a {other} operand; only DATE and TIMESTAMP_NTZ are covered"),
@@ -189,10 +195,7 @@ fn zoned_part_operand(
                 },
             )))
         }
-        _ => Err(format!(
-            "DATE_PART {unit} of {}, whose offset DuckDB does not keep",
-            operand.data_type
-        )),
+        _ => Err(zoned_local(&format!("DATE_PART {unit}"), operand.data_type)),
     }
 }
 
@@ -458,9 +461,11 @@ fn date_diff_of(
             (utc_wall(start, log), utc_wall(end, log))
         }
         (false, false) if zoned(&start) || zoned(&end) => {
-            return Err(refuse(format!(
-                "a TIMESTAMP_TZ in {unit}, whose boundaries no recording places"
-            )));
+            let zoned = match zoned(&start) {
+                true => start.data_type,
+                false => end.data_type,
+            };
+            return Err(refuse(zoned_local(&format!("DATEDIFF in {unit}"), zoned)));
         }
         (false, false) => (start, end),
         (true, true) => {
@@ -468,6 +473,18 @@ fn date_diff_of(
             rely_on_declared(&start.declared, construct, site.context)?;
             rely_on_declared(&end.declared, construct, site.context)?;
             (utc_wall(start, log), utc_wall(end, log))
+        }
+        (true, false) if zoned(&end) => {
+            return Err(refuse(zoned_local(
+                &format!("DATEDIFF in {unit}"),
+                end.data_type,
+            )));
+        }
+        (false, true) if zoned(&start) => {
+            return Err(refuse(zoned_local(
+                &format!("DATEDIFF in {unit}"),
+                start.data_type,
+            )));
         }
         _ => {
             return Err(refuse(
@@ -897,6 +914,12 @@ pub(crate) fn temporal_text(
         SnowflakeType::Null => Some(NANOSECOND_DIGITS),
         SnowflakeType::Number { precision, scale } => {
             return number_text((&operand.sql, precision, scale), &written, construct, site);
+        }
+        zoned @ SnowflakeType::TimestampTz { .. } => {
+            return Err(refuse(zoned_local(
+                &format!("the format '{written}'"),
+                zoned,
+            )));
         }
         other => return Err(refuse(format!("a format for {other}"))),
     };

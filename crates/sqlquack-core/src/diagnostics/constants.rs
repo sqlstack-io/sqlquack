@@ -10,6 +10,18 @@ pub const CASE_ONLY_MATCH: &str = "only without regard to case";
 pub const CASE_ONLY_MATCH_HELP: &str = "Snowflake folds unquoted names to upper case, so declare \
     the relation or column in the schema as the SQL resolves it (`ORDERS` for `FROM orders`), or \
     quote the name in the SQL to keep its case";
+/// The words of a refusal reading a TIMESTAMP_TZ's local time, which needs the offset DuckDB drops.
+pub const ZONED_LOCAL_TIME: &str =
+    "which reads the local time of an offset DuckDB's TIMESTAMPTZ drops";
+/// Why such a reading is refused, a note on its diagnostic.
+pub const ZONED_LOCAL_TIME_NOTE: &str = "a Snowflake TIMESTAMP_TZ stores each value's own UTC \
+    offset, and local dates, times, day boundaries and formats read that offset; DuckDB's \
+    TIMESTAMPTZ keeps only the instant, so SQLQuack cannot reproduce them and adds no columns or \
+    hidden state to keep the offset";
+/// The help for such a reading, replacing SQ0003's own.
+pub const ZONED_LOCAL_TIME_HELP: &str = "convert the value to a wall time first: \
+    `CONVERT_TIMEZONE('UTC', col)::TIMESTAMP_NTZ` for UTC, or \
+    `CONVERT_TIMEZONE(<zone column>, col)::TIMESTAMP_NTZ` for local day boundaries in a known zone";
 /// The prefix of a complexity guard's message, before the rest of its `E_GUARD_*` name.
 pub const GUARD_PREFIX: &str = "E_GUARD_";
 /// The longest source line shown in full; longer lines show a window around the span.

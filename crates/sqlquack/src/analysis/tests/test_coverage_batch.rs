@@ -814,7 +814,7 @@ fn given_zoned_timestamps_when_counting_seconds_and_minutes_then_utc_instants_ar
             description: "hours between zoned values refuse",
             sql: "SELECT DATEDIFF('hour', '2024-06-01 10:59:00 +05:30'::TIMESTAMP_TZ, \
                   '2024-06-01 11:01:00 +05:30'::TIMESTAMP_TZ) AS v",
-            expected_outcome: Err("whose boundaries no recording places"),
+            expected_outcome: Err("which reads the local time of an offset"),
         },
     ];
     for test_case in test_cases {
