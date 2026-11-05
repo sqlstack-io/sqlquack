@@ -3,7 +3,7 @@ construct = "sf.expressions.operators-arithmetic.divide"
 session_profile = "utc-v1"
 
 [[case]]
-id = "t001-num-num-380380"
+id = "t001_num_num_380380"
 description = "a NUMBER(38,0) / b NUMBER(38,0). Catches: integer division (3 instead of 3.5) or a truncated rather than rounded scale-6 quotient (0.666666 vs 0.666667)"
 columns = [{ name = "a", type = "NUMBER(38,0)" }, { name = "b", type = "NUMBER(38,0)" }]
 rows = [
@@ -16,7 +16,7 @@ order = "ordered"
 tags = ["type-combination"]
 
 [[case]]
-id = "t002-num-num-102380"
+id = "t002_num_num_102380"
 description = "a NUMBER(10,2) / b NUMBER(38,0). Catches: the quotient scale (s+6) handled wrongly"
 columns = [{ name = "a", type = "NUMBER(10,2)" }, { name = "b", type = "NUMBER(38,0)" }]
 rows = [
@@ -28,7 +28,7 @@ order = "ordered"
 tags = ["type-combination"]
 
 [[case]]
-id = "t003-num-num-102124"
+id = "t003_num_num_102124"
 description = "a NUMBER(10,2) / b NUMBER(12,4). Catches: quotient scale taken from the divisor"
 columns = [{ name = "a", type = "NUMBER(10,2)" }, { name = "b", type = "NUMBER(12,4)" }]
 rows = [
@@ -40,7 +40,7 @@ order = "ordered"
 tags = ["type-combination"]
 
 [[case]]
-id = "t004-num-float-380"
+id = "t004_num_float_380"
 description = "a NUMBER(38,0) / b FLOAT. Catches: FLOAT divisor rounded"
 columns = [{ name = "a", type = "NUMBER(38,0)" }, { name = "b", type = "FLOAT" }]
 rows = [
@@ -52,7 +52,7 @@ order = "ordered"
 tags = ["type-combination"]
 
 [[case]]
-id = "t005-num-float-102"
+id = "t005_num_float_102"
 description = "a NUMBER(10,2) / b FLOAT. Catches: fixed-point / FLOAT result type swapped"
 columns = [{ name = "a", type = "NUMBER(10,2)" }, { name = "b", type = "FLOAT" }]
 rows = [
@@ -64,7 +64,7 @@ order = "ordered"
 tags = ["type-combination"]
 
 [[case]]
-id = "t006-float-float-"
+id = "t006_float_float"
 description = "a FLOAT / b FLOAT. Catches: float division done in decimal"
 columns = [{ name = "a", type = "FLOAT" }, { name = "b", type = "FLOAT" }]
 rows = [
@@ -76,7 +76,7 @@ order = "ordered"
 tags = ["type-combination"]
 
 [[case]]
-id = "t007-null-a"
+id = "t007_null_a"
 description = "NULL as a, the other operand set. Catches: NULL treated as 0"
 columns = [{ name = "a", type = "NUMBER(10,2)" }, { name = "b", type = "NUMBER(10,2)" }]
 rows = [
@@ -87,7 +87,7 @@ order = "ordered"
 tags = ["null"]
 
 [[case]]
-id = "t008-null-b"
+id = "t008_null_b"
 description = "NULL as b, the other operand set. Catches: NULL divisor turned into the division-by-zero error or 0"
 columns = [{ name = "a", type = "NUMBER(10,2)" }, { name = "b", type = "NUMBER(10,2)" }]
 rows = [
@@ -98,7 +98,7 @@ order = "ordered"
 tags = ["null"]
 
 [[case]]
-id = "t009-scale-12"
+id = "t009_scale_12"
 description = "Scales near the 12-digit quotient cap. Catches: the quotient scale not capped at 12"
 columns = [{ name = "a", type = "NUMBER(20,8)" }, { name = "b", type = "NUMBER(20,8)" }]
 rows = [
@@ -110,7 +110,7 @@ order = "ordered"
 tags = ["boundary"]
 
 [[case]]
-id = "t010-neg-quotient"
+id = "t010_neg_quotient"
 description = "Negative quotients that round at the last digit. Catches: rounding toward zero instead of half away from zero"
 columns = [{ name = "a", type = "NUMBER(38,0)" }, { name = "b", type = "NUMBER(38,0)" }]
 rows = [
@@ -122,7 +122,7 @@ order = "ordered"
 tags = ["boundary"]
 
 [[case]]
-id = "t011-div-zero"
+id = "t011_div_zero"
 description = "Division by zero is an error. Catches: NULL, 0 or infinity instead of the division-by-zero error"
 columns = [{ name = "a", type = "NUMBER(38,0)" }, { name = "b", type = "NUMBER(38,0)" }]
 rows = [

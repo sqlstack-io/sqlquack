@@ -10,7 +10,7 @@ target = "NUMBER(38,0)"
 note = "ABS of integers."
 catches = "the sign kept (ABS as identity) or SIGN computed"
 reading = "the page names no argument type; the numeric category gives integer NUMBER, NUMBER with a scale and FLOAT"
-cases = ["cases/translation/functions/abs.toml#t001-int"]
+cases = ["cases/translation/functions/abs.toml#t001_int"]
 required = true
 
 [[obligation]]
@@ -21,7 +21,7 @@ target = "NUMBER(10,2)"
 note = "ABS of NUMBER(10,2), keeping its type."
 catches = "the scale lost or FLOAT returned"
 reading = "the page names no argument type; the numeric category gives integer NUMBER, NUMBER with a scale and FLOAT"
-cases = ["cases/translation/functions/abs.toml#t002-dec"]
+cases = ["cases/translation/functions/abs.toml#t002_dec"]
 required = true
 
 [[obligation]]
@@ -32,7 +32,7 @@ target = "FLOAT"
 note = "ABS of FLOAT."
 catches = "negative zero and tiny negatives"
 reading = "the page names no argument type; the numeric category gives integer NUMBER, NUMBER with a scale and FLOAT"
-cases = ["cases/translation/functions/abs.toml#t003-float"]
+cases = ["cases/translation/functions/abs.toml#t003_float"]
 required = true
 
 [[obligation]]
@@ -43,7 +43,7 @@ target = "x"
 note = "ABS of NULL."
 catches = "NULL turned into 0"
 reading = "the page names no argument type; the numeric category gives integer NUMBER, NUMBER with a scale and FLOAT"
-cases = ["cases/translation/functions/abs.toml#t004-null"]
+cases = ["cases/translation/functions/abs.toml#t004_null"]
 required = true
 
 [[obligation]]
@@ -55,7 +55,7 @@ target = "magnitude"
 note = "The 38-digit and double extremes."
 catches = "64-bit arithmetic overflowing"
 reading = "the page names no argument type; the numeric category gives integer NUMBER, NUMBER with a scale and FLOAT"
-cases = ["cases/translation/functions/abs.toml#t005-extremes"]
+cases = ["cases/translation/functions/abs.toml#t005_extremes"]
 required = true
 
 [[obligation]]
@@ -66,7 +66,7 @@ target = "FLOAT"
 note = "ACOS of FLOAT values."
 catches = "ASIN computed instead (acos(0.25) differs from asin(0.25)) or degrees returned"
 reading = "the page: \"The data type must be FLOAT.\" Returns FLOAT; a fixed-point argument reaches it by implicit conversion"
-cases = ["cases/translation/functions/acos.toml#t001-float"]
+cases = ["cases/translation/functions/acos.toml#t001_float"]
 required = true
 
 [[obligation]]
@@ -77,7 +77,7 @@ target = "NUMBER(12,4)"
 note = "ACOS of NUMBER(12,4), converted to FLOAT."
 catches = "ASIN computed instead (acos(0.25) differs from asin(0.25)) or degrees returned; or the result left fixed-point"
 reading = "the page: \"The data type must be FLOAT.\" Returns FLOAT; a fixed-point argument reaches it by implicit conversion"
-cases = ["cases/translation/functions/acos.toml#t002-fixed"]
+cases = ["cases/translation/functions/acos.toml#t002_fixed"]
 required = true
 
 [[obligation]]
@@ -88,7 +88,7 @@ target = "x"
 note = "ACOS of NULL."
 catches = "NULL turned into 0 or NaN"
 reading = "the page: \"The data type must be FLOAT.\" Returns FLOAT; a fixed-point argument reaches it by implicit conversion"
-cases = ["cases/translation/functions/acos.toml#t003-null"]
+cases = ["cases/translation/functions/acos.toml#t003_null"]
 required = true
 
 [[obligation]]
@@ -100,7 +100,7 @@ target = "magnitude"
 note = "The domain edges, 1 and -1."
 catches = "pi returned for 1 or 0 for -1 (sign of the edge)"
 reading = "the page: \"The data type must be FLOAT.\" Returns FLOAT; a fixed-point argument reaches it by implicit conversion"
-cases = ["cases/translation/functions/acos.toml#t004-edges"]
+cases = ["cases/translation/functions/acos.toml#t004_edges"]
 required = true
 
 [[obligation]]
@@ -112,7 +112,7 @@ target = "magnitude"
 note = "ACOS at or outside its domain: records what Snowflake returns there (NaN, Infinity, NULL or an error); re-kinded to error_parity after capture if Snowflake raises an error."
 catches = "NaN, Infinity, NULL or an error differing from Snowflake"
 reading = "the page: \"The data type must be FLOAT.\" Returns FLOAT; a fixed-point argument reaches it by implicit conversion"
-cases = ["cases/translation/functions/acos.toml#t005-outside"]
+cases = ["cases/translation/functions/acos.toml#t005_outside"]
 required = true
 
 [[obligation]]
@@ -123,7 +123,7 @@ target = "FLOAT"
 note = "ACOSH of FLOAT values."
 catches = "ASINH computed"
 reading = "the page: \"The data type must be FLOAT.\" Returns FLOAT; a fixed-point argument reaches it by implicit conversion"
-cases = ["cases/translation/functions/acosh.toml#t001-float"]
+cases = ["cases/translation/functions/acosh.toml#t001_float"]
 required = true
 
 [[obligation]]
@@ -134,7 +134,7 @@ target = "NUMBER(12,4)"
 note = "ACOSH of NUMBER(12,4), converted to FLOAT."
 catches = "ASINH computed; or the result left fixed-point"
 reading = "the page: \"The data type must be FLOAT.\" Returns FLOAT; a fixed-point argument reaches it by implicit conversion"
-cases = ["cases/translation/functions/acosh.toml#t002-fixed"]
+cases = ["cases/translation/functions/acosh.toml#t002_fixed"]
 required = true
 
 [[obligation]]
@@ -145,7 +145,7 @@ target = "x"
 note = "ACOSH of NULL."
 catches = "NULL turned into 0 or NaN"
 reading = "the page: \"The data type must be FLOAT.\" Returns FLOAT; a fixed-point argument reaches it by implicit conversion"
-cases = ["cases/translation/functions/acosh.toml#t003-null"]
+cases = ["cases/translation/functions/acosh.toml#t003_null"]
 required = true
 
 [[obligation]]
@@ -157,7 +157,7 @@ target = "magnitude"
 note = "At 1, the domain edge, and large values."
 catches = "edge returned as NaN"
 reading = "the page: \"The data type must be FLOAT.\" Returns FLOAT; a fixed-point argument reaches it by implicit conversion"
-cases = ["cases/translation/functions/acosh.toml#t004-edge"]
+cases = ["cases/translation/functions/acosh.toml#t004_edge"]
 required = true
 
 [[obligation]]
@@ -169,7 +169,7 @@ target = "magnitude"
 note = "ACOSH at or outside its domain: records what Snowflake returns there (NaN, Infinity, NULL or an error); re-kinded to error_parity after capture if Snowflake raises an error."
 catches = "NaN, Infinity, NULL or an error differing from Snowflake"
 reading = "the page: \"The data type must be FLOAT.\" Returns FLOAT; a fixed-point argument reaches it by implicit conversion"
-cases = ["cases/translation/functions/acosh.toml#t005-below-one"]
+cases = ["cases/translation/functions/acosh.toml#t005_below_one"]
 required = true
 
 [[obligation]]
@@ -180,7 +180,7 @@ target = "FLOAT"
 note = "ASIN of FLOAT values."
 catches = "ACOS computed instead, or degrees returned"
 reading = "the page: \"The data type must be FLOAT.\" Returns FLOAT; a fixed-point argument reaches it by implicit conversion"
-cases = ["cases/translation/functions/asin.toml#t001-float"]
+cases = ["cases/translation/functions/asin.toml#t001_float"]
 required = true
 
 [[obligation]]
@@ -191,7 +191,7 @@ target = "NUMBER(12,4)"
 note = "ASIN of NUMBER(12,4), converted to FLOAT."
 catches = "ACOS computed instead, or degrees returned; or the result left fixed-point"
 reading = "the page: \"The data type must be FLOAT.\" Returns FLOAT; a fixed-point argument reaches it by implicit conversion"
-cases = ["cases/translation/functions/asin.toml#t002-fixed"]
+cases = ["cases/translation/functions/asin.toml#t002_fixed"]
 required = true
 
 [[obligation]]
@@ -202,7 +202,7 @@ target = "x"
 note = "ASIN of NULL."
 catches = "NULL turned into 0 or NaN"
 reading = "the page: \"The data type must be FLOAT.\" Returns FLOAT; a fixed-point argument reaches it by implicit conversion"
-cases = ["cases/translation/functions/asin.toml#t003-null"]
+cases = ["cases/translation/functions/asin.toml#t003_null"]
 required = true
 
 [[obligation]]
@@ -214,7 +214,7 @@ target = "negative"
 note = "Odd symmetry at negatives."
 catches = "absolute value taken"
 reading = "the page: \"The data type must be FLOAT.\" Returns FLOAT; a fixed-point argument reaches it by implicit conversion"
-cases = ["cases/translation/functions/asin.toml#t004-odd"]
+cases = ["cases/translation/functions/asin.toml#t004_odd"]
 required = true
 
 [[obligation]]
@@ -226,7 +226,7 @@ target = "magnitude"
 note = "ASIN at or outside its domain: records what Snowflake returns there (NaN, Infinity, NULL or an error); re-kinded to error_parity after capture if Snowflake raises an error."
 catches = "NaN, Infinity, NULL or an error differing from Snowflake"
 reading = "the page: \"The data type must be FLOAT.\" Returns FLOAT; a fixed-point argument reaches it by implicit conversion"
-cases = ["cases/translation/functions/asin.toml#t005-outside"]
+cases = ["cases/translation/functions/asin.toml#t005_outside"]
 required = true
 
 [[obligation]]
@@ -237,7 +237,7 @@ target = "FLOAT"
 note = "ASINH of FLOAT values."
 catches = "ACOSH computed"
 reading = "the page: \"The data type must be FLOAT.\" Returns FLOAT; a fixed-point argument reaches it by implicit conversion"
-cases = ["cases/translation/functions/asinh.toml#t001-float"]
+cases = ["cases/translation/functions/asinh.toml#t001_float"]
 required = true
 
 [[obligation]]
@@ -248,7 +248,7 @@ target = "NUMBER(12,4)"
 note = "ASINH of NUMBER(12,4), converted to FLOAT."
 catches = "ACOSH computed; or the result left fixed-point"
 reading = "the page: \"The data type must be FLOAT.\" Returns FLOAT; a fixed-point argument reaches it by implicit conversion"
-cases = ["cases/translation/functions/asinh.toml#t002-fixed"]
+cases = ["cases/translation/functions/asinh.toml#t002_fixed"]
 required = true
 
 [[obligation]]
@@ -259,7 +259,7 @@ target = "x"
 note = "ASINH of NULL."
 catches = "NULL turned into 0 or NaN"
 reading = "the page: \"The data type must be FLOAT.\" Returns FLOAT; a fixed-point argument reaches it by implicit conversion"
-cases = ["cases/translation/functions/asinh.toml#t003-null"]
+cases = ["cases/translation/functions/asinh.toml#t003_null"]
 required = true
 
 [[obligation]]
@@ -271,7 +271,7 @@ target = "magnitude"
 note = "Large arguments."
 catches = "precision loss in the log formula"
 reading = "the page: \"The data type must be FLOAT.\" Returns FLOAT; a fixed-point argument reaches it by implicit conversion"
-cases = ["cases/translation/functions/asinh.toml#t004-large"]
+cases = ["cases/translation/functions/asinh.toml#t004_large"]
 required = true
 
 [[obligation]]
@@ -282,7 +282,7 @@ target = "FLOAT"
 note = "ATAN of FLOAT values."
 catches = "ATAN2 with a swapped argument, or degrees returned"
 reading = "the page: \"The data type must be FLOAT.\" Returns FLOAT; a fixed-point argument reaches it by implicit conversion"
-cases = ["cases/translation/functions/atan.toml#t001-float"]
+cases = ["cases/translation/functions/atan.toml#t001_float"]
 required = true
 
 [[obligation]]
@@ -293,7 +293,7 @@ target = "NUMBER(12,4)"
 note = "ATAN of NUMBER(12,4), converted to FLOAT."
 catches = "ATAN2 with a swapped argument, or degrees returned; or the result left fixed-point"
 reading = "the page: \"The data type must be FLOAT.\" Returns FLOAT; a fixed-point argument reaches it by implicit conversion"
-cases = ["cases/translation/functions/atan.toml#t002-fixed"]
+cases = ["cases/translation/functions/atan.toml#t002_fixed"]
 required = true
 
 [[obligation]]
@@ -304,7 +304,7 @@ target = "x"
 note = "ATAN of NULL."
 catches = "NULL turned into 0 or NaN"
 reading = "the page: \"The data type must be FLOAT.\" Returns FLOAT; a fixed-point argument reaches it by implicit conversion"
-cases = ["cases/translation/functions/atan.toml#t003-null"]
+cases = ["cases/translation/functions/atan.toml#t003_null"]
 required = true
 
 [[obligation]]
@@ -316,7 +316,7 @@ target = "magnitude"
 note = "Very large arguments approach pi/2."
 catches = "overflow handling"
 reading = "the page: \"The data type must be FLOAT.\" Returns FLOAT; a fixed-point argument reaches it by implicit conversion"
-cases = ["cases/translation/functions/atan.toml#t004-huge"]
+cases = ["cases/translation/functions/atan.toml#t004_huge"]
 required = true
 
 [[obligation]]
@@ -327,7 +327,7 @@ target = "FLOAT"
 note = "ATAN2 in all four quadrants."
 catches = "arguments swapped (ATAN2(y, x) vs ATAN2(x, y)) or ATAN(y/x) losing the quadrant"
 reading = "the page: y and x \"must be FLOAT\"; \"If the data type of an argument is a numeric data type other than DOUBLE, then the value is converted to DOUBLE. If ... string, the value is converted to DOUBLE if possible. If ... any other data type, the function returns an error.\""
-cases = ["cases/translation/functions/atan2.toml#t001-float"]
+cases = ["cases/translation/functions/atan2.toml#t001_float"]
 required = true
 
 [[obligation]]
@@ -338,7 +338,7 @@ target = "NUMBER(12,4)"
 note = "ATAN2 of NUMBER(12,4), converted to DOUBLE."
 catches = "the result left fixed-point"
 reading = "the page: y and x \"must be FLOAT\"; \"If the data type of an argument is a numeric data type other than DOUBLE, then the value is converted to DOUBLE. If ... string, the value is converted to DOUBLE if possible. If ... any other data type, the function returns an error.\""
-cases = ["cases/translation/functions/atan2.toml#t002-fixed"]
+cases = ["cases/translation/functions/atan2.toml#t002_fixed"]
 required = true
 
 [[obligation]]
@@ -349,7 +349,7 @@ target = "VARCHAR"
 note = "ATAN2 of numeric strings, converted to DOUBLE."
 catches = "the strings rejected"
 reading = "the page: y and x \"must be FLOAT\"; \"If the data type of an argument is a numeric data type other than DOUBLE, then the value is converted to DOUBLE. If ... string, the value is converted to DOUBLE if possible. If ... any other data type, the function returns an error.\""
-cases = ["cases/translation/functions/atan2.toml#t003-text"]
+cases = ["cases/translation/functions/atan2.toml#t003_text"]
 required = true
 
 [[obligation]]
@@ -360,7 +360,7 @@ target = "y"
 note = "NULL y."
 catches = "NULL turned into 0 (giving 0 or pi)"
 reading = "the page: y and x \"must be FLOAT\"; \"If the data type of an argument is a numeric data type other than DOUBLE, then the value is converted to DOUBLE. If ... string, the value is converted to DOUBLE if possible. If ... any other data type, the function returns an error.\""
-cases = ["cases/translation/functions/atan2.toml#t004-null-y"]
+cases = ["cases/translation/functions/atan2.toml#t004_null_y"]
 required = true
 
 [[obligation]]
@@ -371,7 +371,7 @@ target = "x"
 note = "NULL x."
 catches = "NULL turned into 0 (giving pi/2)"
 reading = "the page: y and x \"must be FLOAT\"; \"If the data type of an argument is a numeric data type other than DOUBLE, then the value is converted to DOUBLE. If ... string, the value is converted to DOUBLE if possible. If ... any other data type, the function returns an error.\""
-cases = ["cases/translation/functions/atan2.toml#t005-null-x"]
+cases = ["cases/translation/functions/atan2.toml#t005_null_x"]
 required = true
 
 [[obligation]]
@@ -383,7 +383,7 @@ target = "negative"
 note = "Signed zeros on the negative x axis."
 catches = "the sign of zero lost (pi vs -pi)"
 reading = "the page: y and x \"must be FLOAT\"; \"If the data type of an argument is a numeric data type other than DOUBLE, then the value is converted to DOUBLE. If ... string, the value is converted to DOUBLE if possible. If ... any other data type, the function returns an error.\""
-cases = ["cases/translation/functions/atan2.toml#t006-zeros"]
+cases = ["cases/translation/functions/atan2.toml#t006_zeros"]
 required = true
 
 [[obligation]]
@@ -394,7 +394,7 @@ target = "error"
 note = "A string that is not a number is an error."
 catches = "the string read as 0"
 reading = "the page: y and x \"must be FLOAT\"; \"If the data type of an argument is a numeric data type other than DOUBLE, then the value is converted to DOUBLE. If ... string, the value is converted to DOUBLE if possible. If ... any other data type, the function returns an error.\""
-cases = ["cases/translation/functions/atan2.toml#t007-bad-text"]
+cases = ["cases/translation/functions/atan2.toml#t007_bad_text"]
 required = true
 
 [[obligation]]
@@ -405,7 +405,7 @@ target = "error"
 note = "A BOOLEAN argument is an error (\"any other data type\")."
 catches = "TRUE read as 1"
 reading = "the page: y and x \"must be FLOAT\"; \"If the data type of an argument is a numeric data type other than DOUBLE, then the value is converted to DOUBLE. If ... string, the value is converted to DOUBLE if possible. If ... any other data type, the function returns an error.\""
-cases = ["cases/translation/functions/atan2.toml#t008-boolean"]
+cases = ["cases/translation/functions/atan2.toml#t008_boolean"]
 required = true
 
 [[obligation]]
@@ -416,7 +416,7 @@ target = "FLOAT"
 note = "ATANH of FLOAT values."
 catches = "TANH computed, or the odd symmetry lost"
 reading = "the page: \"The data type must be FLOAT.\" Returns FLOAT; a fixed-point argument reaches it by implicit conversion"
-cases = ["cases/translation/functions/atanh.toml#t001-float"]
+cases = ["cases/translation/functions/atanh.toml#t001_float"]
 required = true
 
 [[obligation]]
@@ -427,7 +427,7 @@ target = "NUMBER(12,4)"
 note = "ATANH of NUMBER(12,4), converted to FLOAT."
 catches = "TANH computed, or the odd symmetry lost; or the result left fixed-point"
 reading = "the page: \"The data type must be FLOAT.\" Returns FLOAT; a fixed-point argument reaches it by implicit conversion"
-cases = ["cases/translation/functions/atanh.toml#t002-fixed"]
+cases = ["cases/translation/functions/atanh.toml#t002_fixed"]
 required = true
 
 [[obligation]]
@@ -438,7 +438,7 @@ target = "x"
 note = "ATANH of NULL."
 catches = "NULL turned into 0 or NaN"
 reading = "the page: \"The data type must be FLOAT.\" Returns FLOAT; a fixed-point argument reaches it by implicit conversion"
-cases = ["cases/translation/functions/atanh.toml#t003-null"]
+cases = ["cases/translation/functions/atanh.toml#t003_null"]
 required = true
 
 [[obligation]]
@@ -450,7 +450,7 @@ target = "magnitude"
 note = "Close to the domain edges."
 catches = "a naive 0.5*LN((1+x)/(1-x)): 0 instead of 1e-17 near zero, or precision lost near the asymptote"
 reading = "the page: \"The data type must be FLOAT.\" Returns FLOAT; a fixed-point argument reaches it by implicit conversion"
-cases = ["cases/translation/functions/atanh.toml#t004-near-one"]
+cases = ["cases/translation/functions/atanh.toml#t004_near_one"]
 required = true
 
 [[obligation]]
@@ -462,7 +462,7 @@ target = "magnitude"
 note = "ATANH at or outside its domain: records what Snowflake returns there (NaN, Infinity, NULL or an error); re-kinded to error_parity after capture if Snowflake raises an error."
 catches = "NaN, Infinity, NULL or an error differing from Snowflake"
 reading = "the page: \"The data type must be FLOAT.\" Returns FLOAT; a fixed-point argument reaches it by implicit conversion"
-cases = ["cases/translation/functions/atanh.toml#t005-edge"]
+cases = ["cases/translation/functions/atanh.toml#t005_edge"]
 required = true
 
 [[obligation]]
@@ -474,7 +474,7 @@ target = "magnitude"
 note = "ATANH at or outside its domain: records what Snowflake returns there (NaN, Infinity, NULL or an error); re-kinded to error_parity after capture if Snowflake raises an error."
 catches = "NaN, Infinity, NULL or an error differing from Snowflake"
 reading = "the page: \"The data type must be FLOAT.\" Returns FLOAT; a fixed-point argument reaches it by implicit conversion"
-cases = ["cases/translation/functions/atanh.toml#t006-outside"]
+cases = ["cases/translation/functions/atanh.toml#t006_outside"]
 required = true
 
 [[obligation]]
@@ -485,7 +485,7 @@ target = "FLOAT"
 note = "CBRT of FLOAT values."
 catches = "SQRT computed, or POW(x, 1/3) giving NaN for negatives"
 reading = "the page: DECFLOAT returns DECFLOAT, otherwise FLOAT; the numeric category gives NUMBER and FLOAT arguments"
-cases = ["cases/translation/functions/cbrt.toml#t001-float"]
+cases = ["cases/translation/functions/cbrt.toml#t001_float"]
 required = true
 
 [[obligation]]
@@ -496,7 +496,7 @@ target = "NUMBER(12,4)"
 note = "CBRT of NUMBER(12,4), converted to FLOAT."
 catches = "SQRT computed, or POW(x, 1/3) giving NaN for negatives; or the result left fixed-point"
 reading = "the page: DECFLOAT returns DECFLOAT, otherwise FLOAT; the numeric category gives NUMBER and FLOAT arguments"
-cases = ["cases/translation/functions/cbrt.toml#t002-fixed"]
+cases = ["cases/translation/functions/cbrt.toml#t002_fixed"]
 required = true
 
 [[obligation]]
@@ -507,7 +507,7 @@ target = "DECFLOAT"
 note = "CBRT of DECFLOAT, which returns DECFLOAT."
 catches = "a DECFLOAT argument computed and returned as FLOAT"
 reading = "the page: DECFLOAT returns DECFLOAT, otherwise FLOAT; the numeric category gives NUMBER and FLOAT arguments"
-cases = ["cases/translation/functions/cbrt.toml#t003-decfloat"]
+cases = ["cases/translation/functions/cbrt.toml#t003_decfloat"]
 required = true
 
 [[obligation]]
@@ -518,7 +518,7 @@ target = "x"
 note = "CBRT of NULL."
 catches = "NULL turned into 0 or NaN"
 reading = "the page: DECFLOAT returns DECFLOAT, otherwise FLOAT; the numeric category gives NUMBER and FLOAT arguments"
-cases = ["cases/translation/functions/cbrt.toml#t004-null"]
+cases = ["cases/translation/functions/cbrt.toml#t004_null"]
 required = true
 
 [[obligation]]
@@ -530,7 +530,7 @@ target = "negative"
 note = "Cube roots of negatives are negative."
 catches = "NaN from a fractional power of a negative"
 reading = "the page: DECFLOAT returns DECFLOAT, otherwise FLOAT; the numeric category gives NUMBER and FLOAT arguments"
-cases = ["cases/translation/functions/cbrt.toml#t005-neg"]
+cases = ["cases/translation/functions/cbrt.toml#t005_neg"]
 required = true
 
 [[obligation]]
@@ -541,7 +541,7 @@ target = "NUMBER(38,0)"
 note = "CEIL of integers with a negative scale."
 catches = "FLOOR or truncation used (CEIL(-2.5) is -2, CEIL(2.1) is 3); or a negative scale ignored"
 reading = "the page: input_expr \"must be one of the numeric data types, such as DECFLOAT, FLOAT, or NUMBER\"; scale_expr an integer, default 0, negative allowed; the result keeps the input type"
-cases = ["cases/translation/functions/ceil.toml#t001-int"]
+cases = ["cases/translation/functions/ceil.toml#t001_int"]
 required = true
 
 [[obligation]]
@@ -552,7 +552,7 @@ target = "NUMBER(12,4)"
 note = "CEIL of NUMBER(12,4) with and without a scale."
 catches = "FLOOR or truncation used (CEIL(-2.5) is -2, CEIL(2.1) is 3)"
 reading = "the page: input_expr \"must be one of the numeric data types, such as DECFLOAT, FLOAT, or NUMBER\"; scale_expr an integer, default 0, negative allowed; the result keeps the input type"
-cases = ["cases/translation/functions/ceil.toml#t002-dec"]
+cases = ["cases/translation/functions/ceil.toml#t002_dec"]
 required = true
 
 [[obligation]]
@@ -563,7 +563,7 @@ target = "FLOAT"
 note = "CEIL of FLOAT returns FLOAT."
 catches = "FLOOR or truncation used (CEIL(-2.5) is -2, CEIL(2.1) is 3); or a NUMBER returned"
 reading = "the page: input_expr \"must be one of the numeric data types, such as DECFLOAT, FLOAT, or NUMBER\"; scale_expr an integer, default 0, negative allowed; the result keeps the input type"
-cases = ["cases/translation/functions/ceil.toml#t003-float"]
+cases = ["cases/translation/functions/ceil.toml#t003_float"]
 required = true
 
 [[obligation]]
@@ -574,7 +574,7 @@ target = "DECFLOAT"
 note = "CEIL of DECFLOAT returns DECFLOAT."
 catches = "computed in FLOAT: the fraction of a 20-digit value lost, or 0.28 at scale 2 rounded up to 0.29"
 reading = "the page: input_expr \"must be one of the numeric data types, such as DECFLOAT, FLOAT, or NUMBER\"; scale_expr an integer, default 0, negative allowed; the result keeps the input type"
-cases = ["cases/translation/functions/ceil.toml#t004-decfloat"]
+cases = ["cases/translation/functions/ceil.toml#t004_decfloat"]
 required = true
 
 [[obligation]]
@@ -585,7 +585,7 @@ target = "input_expr"
 note = "CEIL of NULL."
 catches = "NULL turned into 0"
 reading = "the page: input_expr \"must be one of the numeric data types, such as DECFLOAT, FLOAT, or NUMBER\"; scale_expr an integer, default 0, negative allowed; the result keeps the input type"
-cases = ["cases/translation/functions/ceil.toml#t005-null-x"]
+cases = ["cases/translation/functions/ceil.toml#t005_null_x"]
 required = true
 
 [[obligation]]
@@ -596,7 +596,7 @@ target = "scale_expr"
 note = "CEIL with a NULL scale."
 catches = "the NULL scale read as 0"
 reading = "the page: input_expr \"must be one of the numeric data types, such as DECFLOAT, FLOAT, or NUMBER\"; scale_expr an integer, default 0, negative allowed; the result keeps the input type"
-cases = ["cases/translation/functions/ceil.toml#t006-null-scale"]
+cases = ["cases/translation/functions/ceil.toml#t006_null_scale"]
 required = true
 
 [[obligation]]
@@ -608,7 +608,7 @@ target = "rounding_scale"
 note = "Scales past the input scale and far negative."
 catches = "scale capped or wrapping"
 reading = "the page: input_expr \"must be one of the numeric data types, such as DECFLOAT, FLOAT, or NUMBER\"; scale_expr an integer, default 0, negative allowed; the result keeps the input type"
-cases = ["cases/translation/functions/ceil.toml#t007-scale-past"]
+cases = ["cases/translation/functions/ceil.toml#t007_scale_past"]
 required = true
 
 [[obligation]]
@@ -620,7 +620,7 @@ target = "negative"
 note = "Negative values at the rounding step."
 catches = "FLOOR or truncation used (CEIL(-2.5) is -2, CEIL(2.1) is 3)"
 reading = "the page: input_expr \"must be one of the numeric data types, such as DECFLOAT, FLOAT, or NUMBER\"; scale_expr an integer, default 0, negative allowed; the result keeps the input type"
-cases = ["cases/translation/functions/ceil.toml#t008-negatives"]
+cases = ["cases/translation/functions/ceil.toml#t008_negatives"]
 required = true
 
 [[obligation]]
@@ -631,7 +631,7 @@ target = "FLOAT"
 note = "COS of FLOAT values."
 catches = "SIN computed, or the argument read in degrees"
 reading = "the page: \"The data type must be FLOAT.\" Returns FLOAT; a fixed-point argument reaches it by implicit conversion"
-cases = ["cases/translation/functions/cos.toml#t001-float"]
+cases = ["cases/translation/functions/cos.toml#t001_float"]
 required = true
 
 [[obligation]]
@@ -642,7 +642,7 @@ target = "NUMBER(12,4)"
 note = "COS of NUMBER(12,4), converted to FLOAT."
 catches = "SIN computed, or the argument read in degrees; or the result left fixed-point"
 reading = "the page: \"The data type must be FLOAT.\" Returns FLOAT; a fixed-point argument reaches it by implicit conversion"
-cases = ["cases/translation/functions/cos.toml#t002-fixed"]
+cases = ["cases/translation/functions/cos.toml#t002_fixed"]
 required = true
 
 [[obligation]]
@@ -653,7 +653,7 @@ target = "x"
 note = "COS of NULL."
 catches = "NULL turned into 0 or NaN"
 reading = "the page: \"The data type must be FLOAT.\" Returns FLOAT; a fixed-point argument reaches it by implicit conversion"
-cases = ["cases/translation/functions/cos.toml#t003-null"]
+cases = ["cases/translation/functions/cos.toml#t003_null"]
 required = true
 
 [[obligation]]
@@ -665,7 +665,7 @@ target = "magnitude"
 note = "Large arguments."
 catches = "argument reduction differing"
 reading = "the page: \"The data type must be FLOAT.\" Returns FLOAT; a fixed-point argument reaches it by implicit conversion"
-cases = ["cases/translation/functions/cos.toml#t004-large"]
+cases = ["cases/translation/functions/cos.toml#t004_large"]
 required = true
 
 [[obligation]]
@@ -676,7 +676,7 @@ target = "FLOAT"
 note = "COSH of FLOAT values."
 catches = "SINH computed (cosh is even, sinh odd)"
 reading = "the page: \"The data type must be FLOAT.\" Returns FLOAT; a fixed-point argument reaches it by implicit conversion"
-cases = ["cases/translation/functions/cosh.toml#t001-float"]
+cases = ["cases/translation/functions/cosh.toml#t001_float"]
 required = true
 
 [[obligation]]
@@ -687,7 +687,7 @@ target = "NUMBER(12,4)"
 note = "COSH of NUMBER(12,4), converted to FLOAT."
 catches = "SINH computed (cosh is even, sinh odd); or the result left fixed-point"
 reading = "the page: \"The data type must be FLOAT.\" Returns FLOAT; a fixed-point argument reaches it by implicit conversion"
-cases = ["cases/translation/functions/cosh.toml#t002-fixed"]
+cases = ["cases/translation/functions/cosh.toml#t002_fixed"]
 required = true
 
 [[obligation]]
@@ -698,7 +698,7 @@ target = "x"
 note = "COSH of NULL."
 catches = "NULL turned into 0 or NaN"
 reading = "the page: \"The data type must be FLOAT.\" Returns FLOAT; a fixed-point argument reaches it by implicit conversion"
-cases = ["cases/translation/functions/cosh.toml#t003-null"]
+cases = ["cases/translation/functions/cosh.toml#t003_null"]
 required = true
 
 [[obligation]]
@@ -710,7 +710,7 @@ target = "magnitude"
 note = "Arguments just past the double range (710.48)."
 catches = "infinity versus error"
 reading = "the page: \"The data type must be FLOAT.\" Returns FLOAT; a fixed-point argument reaches it by implicit conversion"
-cases = ["cases/translation/functions/cosh.toml#t004-overflow-inf"]
+cases = ["cases/translation/functions/cosh.toml#t004_overflow_inf"]
 required = true
 
 [[obligation]]
@@ -721,7 +721,7 @@ target = "FLOAT"
 note = "COT of FLOAT values."
 catches = "TAN computed instead of its reciprocal"
 reading = "the page: \"The data type must be FLOAT.\" Returns FLOAT; a fixed-point argument reaches it by implicit conversion"
-cases = ["cases/translation/functions/cot.toml#t001-float"]
+cases = ["cases/translation/functions/cot.toml#t001_float"]
 required = true
 
 [[obligation]]
@@ -732,7 +732,7 @@ target = "NUMBER(12,4)"
 note = "COT of NUMBER(12,4), converted to FLOAT."
 catches = "TAN computed instead of its reciprocal; or the result left fixed-point"
 reading = "the page: \"The data type must be FLOAT.\" Returns FLOAT; a fixed-point argument reaches it by implicit conversion"
-cases = ["cases/translation/functions/cot.toml#t002-fixed"]
+cases = ["cases/translation/functions/cot.toml#t002_fixed"]
 required = true
 
 [[obligation]]
@@ -743,7 +743,7 @@ target = "x"
 note = "COT of NULL."
 catches = "NULL turned into 0 or NaN"
 reading = "the page: \"The data type must be FLOAT.\" Returns FLOAT; a fixed-point argument reaches it by implicit conversion"
-cases = ["cases/translation/functions/cot.toml#t003-null"]
+cases = ["cases/translation/functions/cot.toml#t003_null"]
 required = true
 
 [[obligation]]
@@ -755,7 +755,7 @@ target = "magnitude"
 note = "Very small arguments give large cotangents."
 catches = "reciprocal computed in fixed-point"
 reading = "the page: \"The data type must be FLOAT.\" Returns FLOAT; a fixed-point argument reaches it by implicit conversion"
-cases = ["cases/translation/functions/cot.toml#t004-small"]
+cases = ["cases/translation/functions/cot.toml#t004_small"]
 required = true
 
 [[obligation]]
@@ -767,7 +767,7 @@ target = "magnitude"
 note = "COT at or outside its domain: records what Snowflake returns there (NaN, Infinity, NULL or an error); re-kinded to error_parity after capture if Snowflake raises an error."
 catches = "NaN, Infinity, NULL or an error differing from Snowflake"
 reading = "the page: \"The data type must be FLOAT.\" Returns FLOAT; a fixed-point argument reaches it by implicit conversion"
-cases = ["cases/translation/functions/cot.toml#t005-pole"]
+cases = ["cases/translation/functions/cot.toml#t005_pole"]
 required = true
 
 [[obligation]]
@@ -778,7 +778,7 @@ target = "FLOAT"
 note = "DEGREES of FLOAT values."
 catches = "RADIANS computed (the reverse conversion)"
 reading = "the page: \"The data type must be FLOAT.\" Returns FLOAT; a fixed-point argument reaches it by implicit conversion"
-cases = ["cases/translation/functions/degrees.toml#t001-float"]
+cases = ["cases/translation/functions/degrees.toml#t001_float"]
 required = true
 
 [[obligation]]
@@ -789,7 +789,7 @@ target = "NUMBER(12,4)"
 note = "DEGREES of NUMBER(12,4), converted to FLOAT."
 catches = "RADIANS computed (the reverse conversion); or the result left fixed-point"
 reading = "the page: \"The data type must be FLOAT.\" Returns FLOAT; a fixed-point argument reaches it by implicit conversion"
-cases = ["cases/translation/functions/degrees.toml#t002-fixed"]
+cases = ["cases/translation/functions/degrees.toml#t002_fixed"]
 required = true
 
 [[obligation]]
@@ -800,7 +800,7 @@ target = "x"
 note = "DEGREES of NULL."
 catches = "NULL turned into 0 or NaN"
 reading = "the page: \"The data type must be FLOAT.\" Returns FLOAT; a fixed-point argument reaches it by implicit conversion"
-cases = ["cases/translation/functions/degrees.toml#t003-null"]
+cases = ["cases/translation/functions/degrees.toml#t003_null"]
 required = true
 
 [[obligation]]
@@ -812,7 +812,7 @@ target = "magnitude"
 note = "Large radian values."
 catches = "x*180 computed before dividing by pi, overflowing where the result is finite"
 reading = "the page: \"The data type must be FLOAT.\" Returns FLOAT; a fixed-point argument reaches it by implicit conversion"
-cases = ["cases/translation/functions/degrees.toml#t004-large"]
+cases = ["cases/translation/functions/degrees.toml#t004_large"]
 required = true
 
 [[obligation]]
@@ -824,7 +824,7 @@ target = "magnitude"
 note = "A result past the double range: records what Snowflake returns there (NaN, Infinity, NULL or an error); re-kinded to error_parity after capture if Snowflake raises an error."
 catches = "Infinity versus an error"
 reading = "the page: \"The data type must be FLOAT.\" Returns FLOAT; a fixed-point argument reaches it by implicit conversion"
-cases = ["cases/translation/functions/degrees.toml#t005-overflow"]
+cases = ["cases/translation/functions/degrees.toml#t005_overflow"]
 required = true
 
 [[obligation]]
@@ -835,7 +835,7 @@ target = "NUMBER(38,0)"
 note = "DIV0 of integers, as / divides."
 catches = "integer division (3 instead of 3.500000)"
 reading = "the page: both arguments numeric expressions; the numeric category gives integer NUMBER, NUMBER with a scale and FLOAT; DIV0 returns 0 when the divisor is 0"
-cases = ["cases/translation/functions/div0.toml#t001-int"]
+cases = ["cases/translation/functions/div0.toml#t001_int"]
 required = true
 
 [[obligation]]
@@ -846,7 +846,7 @@ target = "NUMBER(10,2)"
 note = "DIV0 of NUMBER(10,2) values."
 catches = "quotient scale differing from /"
 reading = "the page: both arguments numeric expressions; the numeric category gives integer NUMBER, NUMBER with a scale and FLOAT; DIV0 returns 0 when the divisor is 0"
-cases = ["cases/translation/functions/div0.toml#t002-dec"]
+cases = ["cases/translation/functions/div0.toml#t002_dec"]
 required = true
 
 [[obligation]]
@@ -857,7 +857,7 @@ target = "FLOAT"
 note = "DIV0 of FLOAT values."
 catches = "infinity or NaN for a zero divisor instead of 0"
 reading = "the page: both arguments numeric expressions; the numeric category gives integer NUMBER, NUMBER with a scale and FLOAT; DIV0 returns 0 when the divisor is 0"
-cases = ["cases/translation/functions/div0.toml#t003-float"]
+cases = ["cases/translation/functions/div0.toml#t003_float"]
 required = true
 
 [[obligation]]
@@ -868,7 +868,7 @@ target = "dividend"
 note = "NULL dividend."
 catches = "NULL turned into 0"
 reading = "the page: both arguments numeric expressions; the numeric category gives integer NUMBER, NUMBER with a scale and FLOAT; DIV0 returns 0 when the divisor is 0"
-cases = ["cases/translation/functions/div0.toml#t004-null-a"]
+cases = ["cases/translation/functions/div0.toml#t004_null_a"]
 required = true
 
 [[obligation]]
@@ -879,7 +879,7 @@ target = "divisor"
 note = "NULL divisor."
 catches = "a NULL divisor returning 0 (that is DIV0NULL)"
 reading = "the page: both arguments numeric expressions; the numeric category gives integer NUMBER, NUMBER with a scale and FLOAT; DIV0 returns 0 when the divisor is 0"
-cases = ["cases/translation/functions/div0.toml#t005-null-b"]
+cases = ["cases/translation/functions/div0.toml#t005_null_b"]
 required = true
 
 [[obligation]]
@@ -891,7 +891,7 @@ target = "negative"
 note = "Negative dividends over zero."
 catches = "the sign of the dividend kept on the zero result (-0 instead of 0)"
 reading = "the page: both arguments numeric expressions; the numeric category gives integer NUMBER, NUMBER with a scale and FLOAT; DIV0 returns 0 when the divisor is 0"
-cases = ["cases/translation/functions/div0.toml#t006-neg-zero"]
+cases = ["cases/translation/functions/div0.toml#t006_neg_zero"]
 required = true
 
 [[obligation]]
@@ -902,7 +902,7 @@ target = "NUMBER(38,0)"
 note = "DIV0NULL of integers, as / divides."
 catches = "integer division (3 instead of 3.500000)"
 reading = "the page: both arguments numeric expressions; the numeric category gives integer NUMBER, NUMBER with a scale and FLOAT; DIV0NULL returns 0 when the divisor is 0 or NULL"
-cases = ["cases/translation/functions/div0null.toml#t001-int"]
+cases = ["cases/translation/functions/div0null.toml#t001_int"]
 required = true
 
 [[obligation]]
@@ -913,7 +913,7 @@ target = "NUMBER(10,2)"
 note = "DIV0NULL of NUMBER(10,2) values."
 catches = "quotient scale differing from /"
 reading = "the page: both arguments numeric expressions; the numeric category gives integer NUMBER, NUMBER with a scale and FLOAT; DIV0NULL returns 0 when the divisor is 0 or NULL"
-cases = ["cases/translation/functions/div0null.toml#t002-dec"]
+cases = ["cases/translation/functions/div0null.toml#t002_dec"]
 required = true
 
 [[obligation]]
@@ -924,7 +924,7 @@ target = "FLOAT"
 note = "DIV0NULL of FLOAT values."
 catches = "infinity or NaN for a zero divisor instead of 0"
 reading = "the page: both arguments numeric expressions; the numeric category gives integer NUMBER, NUMBER with a scale and FLOAT; DIV0NULL returns 0 when the divisor is 0 or NULL"
-cases = ["cases/translation/functions/div0null.toml#t003-float"]
+cases = ["cases/translation/functions/div0null.toml#t003_float"]
 required = true
 
 [[obligation]]
@@ -935,7 +935,7 @@ target = "dividend"
 note = "NULL dividend."
 catches = "NULL turned into 0"
 reading = "the page: both arguments numeric expressions; the numeric category gives integer NUMBER, NUMBER with a scale and FLOAT; DIV0NULL returns 0 when the divisor is 0 or NULL"
-cases = ["cases/translation/functions/div0null.toml#t004-null-a"]
+cases = ["cases/translation/functions/div0null.toml#t004_null_a"]
 required = true
 
 [[obligation]]
@@ -946,7 +946,7 @@ target = "divisor"
 note = "NULL divisor."
 catches = "a NULL divisor returning NULL (that is DIV0)"
 reading = "the page: both arguments numeric expressions; the numeric category gives integer NUMBER, NUMBER with a scale and FLOAT; DIV0NULL returns 0 when the divisor is 0 or NULL"
-cases = ["cases/translation/functions/div0null.toml#t005-null-b"]
+cases = ["cases/translation/functions/div0null.toml#t005_null_b"]
 required = true
 
 [[obligation]]
@@ -958,7 +958,7 @@ target = "negative"
 note = "Negative dividends over zero."
 catches = "a sign-keeping or FLOAT path giving -0 or -1e-10 where the quotient underflows the scale"
 reading = "the page: both arguments numeric expressions; the numeric category gives integer NUMBER, NUMBER with a scale and FLOAT; DIV0NULL returns 0 when the divisor is 0 or NULL"
-cases = ["cases/translation/functions/div0null.toml#t006-neg-zero"]
+cases = ["cases/translation/functions/div0null.toml#t006_neg_zero"]
 required = true
 
 [[obligation]]
@@ -969,7 +969,7 @@ target = "FLOAT"
 note = "EXP of FLOAT values."
 catches = "LN computed, or e^x read as 10^x"
 reading = "the page: \"The data type must be FLOAT or DECFLOAT.\" DECFLOAT returns DECFLOAT, otherwise FLOAT"
-cases = ["cases/translation/functions/exp.toml#t001-float"]
+cases = ["cases/translation/functions/exp.toml#t001_float"]
 required = true
 
 [[obligation]]
@@ -980,7 +980,7 @@ target = "NUMBER(12,4)"
 note = "EXP of NUMBER(12,4), converted to FLOAT."
 catches = "LN computed, or e^x read as 10^x; or the result left fixed-point"
 reading = "the page: \"The data type must be FLOAT or DECFLOAT.\" DECFLOAT returns DECFLOAT, otherwise FLOAT"
-cases = ["cases/translation/functions/exp.toml#t002-fixed"]
+cases = ["cases/translation/functions/exp.toml#t002_fixed"]
 required = true
 
 [[obligation]]
@@ -991,7 +991,7 @@ target = "DECFLOAT"
 note = "EXP of DECFLOAT, which returns DECFLOAT."
 catches = "a DECFLOAT argument computed and returned as FLOAT"
 reading = "the page: \"The data type must be FLOAT or DECFLOAT.\" DECFLOAT returns DECFLOAT, otherwise FLOAT"
-cases = ["cases/translation/functions/exp.toml#t003-decfloat"]
+cases = ["cases/translation/functions/exp.toml#t003_decfloat"]
 required = true
 
 [[obligation]]
@@ -1002,7 +1002,7 @@ target = "x"
 note = "EXP of NULL."
 catches = "NULL turned into 0 or NaN"
 reading = "the page: \"The data type must be FLOAT or DECFLOAT.\" DECFLOAT returns DECFLOAT, otherwise FLOAT"
-cases = ["cases/translation/functions/exp.toml#t004-null"]
+cases = ["cases/translation/functions/exp.toml#t004_null"]
 required = true
 
 [[obligation]]
@@ -1014,7 +1014,7 @@ target = "magnitude"
 note = "Past the double range."
 catches = "infinity versus error"
 reading = "the page: \"The data type must be FLOAT or DECFLOAT.\" DECFLOAT returns DECFLOAT, otherwise FLOAT"
-cases = ["cases/translation/functions/exp.toml#t005-overflow-inf"]
+cases = ["cases/translation/functions/exp.toml#t005_overflow_inf"]
 required = true
 
 [[obligation]]
@@ -1025,7 +1025,7 @@ target = "NUMBER(38,0)"
 note = "FACTORIAL of integers."
 catches = "gamma(x) computed (fractional), or x! off by one (n-1)!"
 reading = "the page names only <integer_expr>; the examples use 0 to 10"
-cases = ["cases/translation/functions/factorial.toml#t001-int"]
+cases = ["cases/translation/functions/factorial.toml#t001_int"]
 required = true
 
 [[obligation]]
@@ -1036,7 +1036,7 @@ target = "NUMBER(10,2)"
 note = "FACTORIAL of an integral NUMBER(10,2)."
 catches = "scale carried into the result"
 reading = "the page names only <integer_expr>; the examples use 0 to 10"
-cases = ["cases/translation/functions/factorial.toml#t002-dec-int"]
+cases = ["cases/translation/functions/factorial.toml#t002_dec_int"]
 required = true
 
 [[obligation]]
@@ -1047,7 +1047,7 @@ target = "integer_expr"
 note = "FACTORIAL of NULL."
 catches = "NULL turned into 1"
 reading = "the page names only <integer_expr>; the examples use 0 to 10"
-cases = ["cases/translation/functions/factorial.toml#t003-null"]
+cases = ["cases/translation/functions/factorial.toml#t003_null"]
 required = true
 
 [[obligation]]
@@ -1059,7 +1059,7 @@ target = "magnitude"
 note = "Large factorials that still fit 38 digits."
 catches = "64-bit overflow (21! does not fit a BIGINT)"
 reading = "the page names only <integer_expr>; the examples use 0 to 10"
-cases = ["cases/translation/functions/factorial.toml#t004-large"]
+cases = ["cases/translation/functions/factorial.toml#t004_large"]
 required = true
 
 [[obligation]]
@@ -1070,7 +1070,7 @@ target = "error"
 note = "A negative argument."
 catches = "a gamma value or 1 instead of the error"
 reading = "the page names only <integer_expr>; the examples use 0 to 10"
-cases = ["cases/translation/functions/factorial.toml#t005-negative"]
+cases = ["cases/translation/functions/factorial.toml#t005_negative"]
 required = true
 
 [[obligation]]
@@ -1081,7 +1081,7 @@ target = "error"
 note = "A result past 38 digits."
 catches = "FLOAT or wrapping instead of the error"
 reading = "the page names only <integer_expr>; the examples use 0 to 10"
-cases = ["cases/translation/functions/factorial.toml#t006-too-big"]
+cases = ["cases/translation/functions/factorial.toml#t006_too_big"]
 required = true
 
 [[obligation]]
@@ -1092,7 +1092,7 @@ target = "NUMBER(38,0)"
 note = "FLOOR of integers with a negative scale."
 catches = "CEIL or truncation used (FLOOR(-2.1) is -3); or a negative scale ignored"
 reading = "the page: input_expr \"must be one of the numeric data types, such as DECFLOAT, FLOAT, or NUMBER\"; scale_expr an integer, default 0, negative allowed; the result keeps the input type"
-cases = ["cases/translation/functions/floor.toml#t001-int"]
+cases = ["cases/translation/functions/floor.toml#t001_int"]
 required = true
 
 [[obligation]]
@@ -1103,7 +1103,7 @@ target = "NUMBER(12,4)"
 note = "FLOOR of NUMBER(12,4) with and without a scale."
 catches = "CEIL or truncation used (FLOOR(-2.1) is -3)"
 reading = "the page: input_expr \"must be one of the numeric data types, such as DECFLOAT, FLOAT, or NUMBER\"; scale_expr an integer, default 0, negative allowed; the result keeps the input type"
-cases = ["cases/translation/functions/floor.toml#t002-dec"]
+cases = ["cases/translation/functions/floor.toml#t002_dec"]
 required = true
 
 [[obligation]]
@@ -1114,7 +1114,7 @@ target = "FLOAT"
 note = "FLOOR of FLOAT returns FLOAT."
 catches = "CEIL or truncation used (FLOOR(-2.1) is -3); or a NUMBER returned"
 reading = "the page: input_expr \"must be one of the numeric data types, such as DECFLOAT, FLOAT, or NUMBER\"; scale_expr an integer, default 0, negative allowed; the result keeps the input type"
-cases = ["cases/translation/functions/floor.toml#t003-float"]
+cases = ["cases/translation/functions/floor.toml#t003_float"]
 required = true
 
 [[obligation]]
@@ -1125,7 +1125,7 @@ target = "DECFLOAT"
 note = "FLOOR of DECFLOAT returns DECFLOAT."
 catches = "computed in FLOAT: the fraction of a 20-digit value lost, or 0.29 at scale 2 off by one ulp"
 reading = "the page: input_expr \"must be one of the numeric data types, such as DECFLOAT, FLOAT, or NUMBER\"; scale_expr an integer, default 0, negative allowed; the result keeps the input type"
-cases = ["cases/translation/functions/floor.toml#t004-decfloat"]
+cases = ["cases/translation/functions/floor.toml#t004_decfloat"]
 required = true
 
 [[obligation]]
@@ -1136,7 +1136,7 @@ target = "input_expr"
 note = "FLOOR of NULL."
 catches = "NULL turned into 0"
 reading = "the page: input_expr \"must be one of the numeric data types, such as DECFLOAT, FLOAT, or NUMBER\"; scale_expr an integer, default 0, negative allowed; the result keeps the input type"
-cases = ["cases/translation/functions/floor.toml#t005-null-x"]
+cases = ["cases/translation/functions/floor.toml#t005_null_x"]
 required = true
 
 [[obligation]]
@@ -1147,7 +1147,7 @@ target = "scale_expr"
 note = "FLOOR with a NULL scale."
 catches = "the NULL scale read as 0"
 reading = "the page: input_expr \"must be one of the numeric data types, such as DECFLOAT, FLOAT, or NUMBER\"; scale_expr an integer, default 0, negative allowed; the result keeps the input type"
-cases = ["cases/translation/functions/floor.toml#t006-null-scale"]
+cases = ["cases/translation/functions/floor.toml#t006_null_scale"]
 required = true
 
 [[obligation]]
@@ -1159,7 +1159,7 @@ target = "rounding_scale"
 note = "Scales past the input scale and far negative."
 catches = "scale capped or wrapping"
 reading = "the page: input_expr \"must be one of the numeric data types, such as DECFLOAT, FLOAT, or NUMBER\"; scale_expr an integer, default 0, negative allowed; the result keeps the input type"
-cases = ["cases/translation/functions/floor.toml#t007-scale-past"]
+cases = ["cases/translation/functions/floor.toml#t007_scale_past"]
 required = true
 
 [[obligation]]
@@ -1171,7 +1171,7 @@ target = "negative"
 note = "Negative values at the rounding step."
 catches = "CEIL or truncation used (FLOOR(-2.1) is -3)"
 reading = "the page: input_expr \"must be one of the numeric data types, such as DECFLOAT, FLOAT, or NUMBER\"; scale_expr an integer, default 0, negative allowed; the result keeps the input type"
-cases = ["cases/translation/functions/floor.toml#t008-negatives"]
+cases = ["cases/translation/functions/floor.toml#t008_negatives"]
 required = true
 
 [[obligation]]
@@ -1182,7 +1182,7 @@ target = "FLOAT"
 note = "LN of FLOAT values."
 catches = "LOG10 or LOG2 computed"
 reading = "the page: DECFLOAT returns DECFLOAT, otherwise FLOAT; the numeric category gives NUMBER and FLOAT arguments"
-cases = ["cases/translation/functions/ln.toml#t001-float"]
+cases = ["cases/translation/functions/ln.toml#t001_float"]
 required = true
 
 [[obligation]]
@@ -1193,7 +1193,7 @@ target = "NUMBER(12,4)"
 note = "LN of NUMBER(12,4), converted to FLOAT."
 catches = "LOG10 or LOG2 computed; or the result left fixed-point"
 reading = "the page: DECFLOAT returns DECFLOAT, otherwise FLOAT; the numeric category gives NUMBER and FLOAT arguments"
-cases = ["cases/translation/functions/ln.toml#t002-fixed"]
+cases = ["cases/translation/functions/ln.toml#t002_fixed"]
 required = true
 
 [[obligation]]
@@ -1204,7 +1204,7 @@ target = "DECFLOAT"
 note = "LN of DECFLOAT, which returns DECFLOAT."
 catches = "a DECFLOAT argument computed and returned as FLOAT"
 reading = "the page: DECFLOAT returns DECFLOAT, otherwise FLOAT; the numeric category gives NUMBER and FLOAT arguments"
-cases = ["cases/translation/functions/ln.toml#t003-decfloat"]
+cases = ["cases/translation/functions/ln.toml#t003_decfloat"]
 required = true
 
 [[obligation]]
@@ -1215,7 +1215,7 @@ target = "x"
 note = "LN of NULL."
 catches = "NULL turned into 0 or NaN"
 reading = "the page: DECFLOAT returns DECFLOAT, otherwise FLOAT; the numeric category gives NUMBER and FLOAT arguments"
-cases = ["cases/translation/functions/ln.toml#t004-null"]
+cases = ["cases/translation/functions/ln.toml#t004_null"]
 required = true
 
 [[obligation]]
@@ -1227,7 +1227,7 @@ target = "magnitude"
 note = "Very small positive values."
 catches = "underflow to -infinity"
 reading = "the page: DECFLOAT returns DECFLOAT, otherwise FLOAT; the numeric category gives NUMBER and FLOAT arguments"
-cases = ["cases/translation/functions/ln.toml#t005-tiny"]
+cases = ["cases/translation/functions/ln.toml#t005_tiny"]
 required = true
 
 [[obligation]]
@@ -1238,7 +1238,7 @@ target = "error"
 note = "LN of 0 or a negative value is an error."
 catches = "NULL, NaN or -infinity instead of the error"
 reading = "the page: DECFLOAT returns DECFLOAT, otherwise FLOAT; the numeric category gives NUMBER and FLOAT arguments"
-cases = ["cases/translation/functions/ln.toml#t006-zero"]
+cases = ["cases/translation/functions/ln.toml#t006_zero"]
 required = true
 
 [[obligation]]
@@ -1249,7 +1249,7 @@ target = "NUMBER(38,0)"
 note = "LOG of integers."
 catches = "arguments swapped (LOG(2, 8) is 3, LOG(8, 2) is 1/3) or LN used"
 reading = "the page: base and expr \"can be of any numeric data type (INTEGER, fixed-point, or floating point)\"; \"If base is 1 or less than or equal to 0, an error is returned. If expr is less than or equal to 0, an error is returned.\""
-cases = ["cases/translation/functions/log.toml#t001-int"]
+cases = ["cases/translation/functions/log.toml#t001_int"]
 required = true
 
 [[obligation]]
@@ -1260,7 +1260,7 @@ target = "NUMBER(10,2)"
 note = "LOG of fixed-point values."
 catches = "base rounded to an integer"
 reading = "the page: base and expr \"can be of any numeric data type (INTEGER, fixed-point, or floating point)\"; \"If base is 1 or less than or equal to 0, an error is returned. If expr is less than or equal to 0, an error is returned.\""
-cases = ["cases/translation/functions/log.toml#t002-dec"]
+cases = ["cases/translation/functions/log.toml#t002_dec"]
 required = true
 
 [[obligation]]
@@ -1271,7 +1271,7 @@ target = "FLOAT"
 note = "LOG of FLOAT values."
 catches = "arguments swapped (LOG(10, 0.001) is -3, LOG(0.001, 10) is -1/3) or a non-FLOAT result type"
 reading = "the page: base and expr \"can be of any numeric data type (INTEGER, fixed-point, or floating point)\"; \"If base is 1 or less than or equal to 0, an error is returned. If expr is less than or equal to 0, an error is returned.\""
-cases = ["cases/translation/functions/log.toml#t003-float"]
+cases = ["cases/translation/functions/log.toml#t003_float"]
 required = true
 
 [[obligation]]
@@ -1282,7 +1282,7 @@ target = "NUMBER(38,0), FLOAT"
 note = "LOG with an integer base and a FLOAT value."
 catches = "type promotion differing"
 reading = "the page: base and expr \"can be of any numeric data type (INTEGER, fixed-point, or floating point)\"; \"If base is 1 or less than or equal to 0, an error is returned. If expr is less than or equal to 0, an error is returned.\""
-cases = ["cases/translation/functions/log.toml#t004-mixed"]
+cases = ["cases/translation/functions/log.toml#t004_mixed"]
 required = true
 
 [[obligation]]
@@ -1293,7 +1293,7 @@ target = "base"
 note = "NULL base."
 catches = "NULL turned into e or 10"
 reading = "the page: base and expr \"can be of any numeric data type (INTEGER, fixed-point, or floating point)\"; \"If base is 1 or less than or equal to 0, an error is returned. If expr is less than or equal to 0, an error is returned.\""
-cases = ["cases/translation/functions/log.toml#t005-null-base"]
+cases = ["cases/translation/functions/log.toml#t005_null_base"]
 required = true
 
 [[obligation]]
@@ -1304,7 +1304,7 @@ target = "expr"
 note = "NULL value."
 catches = "NULL turned into 1"
 reading = "the page: base and expr \"can be of any numeric data type (INTEGER, fixed-point, or floating point)\"; \"If base is 1 or less than or equal to 0, an error is returned. If expr is less than or equal to 0, an error is returned.\""
-cases = ["cases/translation/functions/log.toml#t006-null-expr"]
+cases = ["cases/translation/functions/log.toml#t006_null_expr"]
 required = true
 
 [[obligation]]
@@ -1316,7 +1316,7 @@ target = "magnitude"
 note = "A base between 0 and 1 gives negative logs of values above 1."
 catches = "the sign lost"
 reading = "the page: base and expr \"can be of any numeric data type (INTEGER, fixed-point, or floating point)\"; \"If base is 1 or less than or equal to 0, an error is returned. If expr is less than or equal to 0, an error is returned.\""
-cases = ["cases/translation/functions/log.toml#t007-base-below-one"]
+cases = ["cases/translation/functions/log.toml#t007_base_below_one"]
 required = true
 
 [[obligation]]
@@ -1327,7 +1327,7 @@ target = "error"
 note = "A base of 1 is an error."
 catches = "infinity or NULL instead of the error"
 reading = "the page: base and expr \"can be of any numeric data type (INTEGER, fixed-point, or floating point)\"; \"If base is 1 or less than or equal to 0, an error is returned. If expr is less than or equal to 0, an error is returned.\""
-cases = ["cases/translation/functions/log.toml#t008-base-one"]
+cases = ["cases/translation/functions/log.toml#t008_base_one"]
 required = true
 
 [[obligation]]
@@ -1338,7 +1338,7 @@ target = "error"
 note = "A negative base is an error."
 catches = "NaN instead of the error"
 reading = "the page: base and expr \"can be of any numeric data type (INTEGER, fixed-point, or floating point)\"; \"If base is 1 or less than or equal to 0, an error is returned. If expr is less than or equal to 0, an error is returned.\""
-cases = ["cases/translation/functions/log.toml#t009-base-neg"]
+cases = ["cases/translation/functions/log.toml#t009_base_neg"]
 required = true
 
 [[obligation]]
@@ -1349,7 +1349,7 @@ target = "error"
 note = "A value of 0 is an error."
 catches = "-infinity instead of the error"
 reading = "the page: base and expr \"can be of any numeric data type (INTEGER, fixed-point, or floating point)\"; \"If base is 1 or less than or equal to 0, an error is returned. If expr is less than or equal to 0, an error is returned.\""
-cases = ["cases/translation/functions/log.toml#t010-expr-zero"]
+cases = ["cases/translation/functions/log.toml#t010_expr_zero"]
 required = true
 
 [[obligation]]
@@ -1360,7 +1360,7 @@ target = "NUMBER(38,0)"
 note = "MOD of integers with negatives."
 catches = "floor-based modulo (MOD(-7, 3) is -1, not 2)"
 reading = "the page: both arguments numeric expressions; the numeric category gives integer NUMBER, NUMBER with a scale and FLOAT; \"the remainder from truncation-based division (rounding toward zero)\""
-cases = ["cases/translation/functions/mod.toml#t001-int"]
+cases = ["cases/translation/functions/mod.toml#t001_int"]
 required = true
 
 [[obligation]]
@@ -1371,7 +1371,7 @@ target = "NUMBER(10,2)"
 note = "MOD of NUMBER(10,2) values."
 catches = "fractional remainder dropped"
 reading = "the page: both arguments numeric expressions; the numeric category gives integer NUMBER, NUMBER with a scale and FLOAT; \"the remainder from truncation-based division (rounding toward zero)\""
-cases = ["cases/translation/functions/mod.toml#t002-dec"]
+cases = ["cases/translation/functions/mod.toml#t002_dec"]
 required = true
 
 [[obligation]]
@@ -1382,7 +1382,7 @@ target = "NUMBER(10,2), NUMBER(38,0)"
 note = "MOD of a scaled and an integer operand."
 catches = "result scale from one side"
 reading = "the page: both arguments numeric expressions; the numeric category gives integer NUMBER, NUMBER with a scale and FLOAT; \"the remainder from truncation-based division (rounding toward zero)\""
-cases = ["cases/translation/functions/mod.toml#t003-dec-int"]
+cases = ["cases/translation/functions/mod.toml#t003_dec_int"]
 required = true
 
 [[obligation]]
@@ -1393,7 +1393,7 @@ target = "FLOAT"
 note = "MOD of FLOAT values."
 catches = "floor-based float modulo"
 reading = "the page: both arguments numeric expressions; the numeric category gives integer NUMBER, NUMBER with a scale and FLOAT; \"the remainder from truncation-based division (rounding toward zero)\""
-cases = ["cases/translation/functions/mod.toml#t004-float"]
+cases = ["cases/translation/functions/mod.toml#t004_float"]
 required = true
 
 [[obligation]]
@@ -1404,7 +1404,7 @@ target = "expr1"
 note = "NULL dividend."
 catches = "NULL treated as 0"
 reading = "the page: both arguments numeric expressions; the numeric category gives integer NUMBER, NUMBER with a scale and FLOAT; \"the remainder from truncation-based division (rounding toward zero)\""
-cases = ["cases/translation/functions/mod.toml#t005-null-a"]
+cases = ["cases/translation/functions/mod.toml#t005_null_a"]
 required = true
 
 [[obligation]]
@@ -1415,7 +1415,7 @@ target = "expr2"
 note = "NULL divisor."
 catches = "NULL treated as 0"
 reading = "the page: both arguments numeric expressions; the numeric category gives integer NUMBER, NUMBER with a scale and FLOAT; \"the remainder from truncation-based division (rounding toward zero)\""
-cases = ["cases/translation/functions/mod.toml#t006-null-b"]
+cases = ["cases/translation/functions/mod.toml#t006_null_b"]
 required = true
 
 [[obligation]]
@@ -1427,7 +1427,7 @@ target = "negative"
 note = "Argument order with negatives."
 catches = "arguments swapped"
 reading = "the page: both arguments numeric expressions; the numeric category gives integer NUMBER, NUMBER with a scale and FLOAT; \"the remainder from truncation-based division (rounding toward zero)\""
-cases = ["cases/translation/functions/mod.toml#t007-order"]
+cases = ["cases/translation/functions/mod.toml#t007_order"]
 required = true
 
 [[obligation]]
@@ -1439,7 +1439,7 @@ target = "magnitude"
 note = "Remainders of 38-digit integers."
 catches = "64-bit modulo"
 reading = "the page: both arguments numeric expressions; the numeric category gives integer NUMBER, NUMBER with a scale and FLOAT; \"the remainder from truncation-based division (rounding toward zero)\""
-cases = ["cases/translation/functions/mod.toml#t008-max"]
+cases = ["cases/translation/functions/mod.toml#t008_max"]
 required = true
 
 [[obligation]]
@@ -1450,7 +1450,7 @@ target = "error"
 note = "A zero divisor: records what Snowflake returns there; re-kinded to boundary after capture if Snowflake returns a value instead of an error."
 catches = "a bare % giving NULL for MOD(x, 0); with it, mod.t006 catches NULL read as 0"
 reading = "the page: both arguments numeric expressions; the numeric category gives integer NUMBER, NUMBER with a scale and FLOAT; \"the remainder from truncation-based division (rounding toward zero)\""
-cases = ["cases/translation/functions/mod.toml#t009-zero-divisor"]
+cases = ["cases/translation/functions/mod.toml#t009_zero_divisor"]
 required = true
 
 [[obligation]]
@@ -1461,7 +1461,7 @@ target = "()"
 note = "PI() in arithmetic, at full double precision."
 catches = "a rounded constant (3.14159) or a NUMBER"
 reading = "the page: PI() takes no argument and returns FLOAT"
-cases = ["cases/translation/functions/pi.toml#t001-value"]
+cases = ["cases/translation/functions/pi.toml#t001_value"]
 required = true
 
 [[obligation]]
@@ -1472,7 +1472,7 @@ target = "NUMBER(38,0)"
 note = "POW of integers returns FLOAT."
 catches = "arguments swapped (2^3 is 8, 3^2 is 9) or an integer result"
 reading = "the page: DECFLOAT returns DECFLOAT, otherwise FLOAT; x and y numeric (the numeric category gives NUMBER and FLOAT)"
-cases = ["cases/translation/functions/pow.pow.toml#t001-int"]
+cases = ["cases/translation/functions/pow.pow.toml#t001_int"]
 required = true
 
 [[obligation]]
@@ -1483,7 +1483,7 @@ target = "NUMBER(10,2)"
 note = "POW with fractional exponents."
 catches = "the exponent rounded"
 reading = "the page: DECFLOAT returns DECFLOAT, otherwise FLOAT; x and y numeric (the numeric category gives NUMBER and FLOAT)"
-cases = ["cases/translation/functions/pow.pow.toml#t002-dec"]
+cases = ["cases/translation/functions/pow.pow.toml#t002_dec"]
 required = true
 
 [[obligation]]
@@ -1494,7 +1494,7 @@ target = "FLOAT"
 note = "POW of FLOAT values."
 catches = "arguments swapped (2.5^1.5 is 3.95, 1.5^2.5 is 2.76) or a non-FLOAT result type"
 reading = "the page: DECFLOAT returns DECFLOAT, otherwise FLOAT; x and y numeric (the numeric category gives NUMBER and FLOAT)"
-cases = ["cases/translation/functions/pow.pow.toml#t003-float"]
+cases = ["cases/translation/functions/pow.pow.toml#t003_float"]
 required = true
 
 [[obligation]]
@@ -1505,7 +1505,7 @@ target = "DECFLOAT"
 note = "POW of DECFLOAT returns DECFLOAT."
 catches = "computed in FLOAT"
 reading = "the page: DECFLOAT returns DECFLOAT, otherwise FLOAT; x and y numeric (the numeric category gives NUMBER and FLOAT)"
-cases = ["cases/translation/functions/pow.pow.toml#t004-decfloat"]
+cases = ["cases/translation/functions/pow.pow.toml#t004_decfloat"]
 required = true
 
 [[obligation]]
@@ -1516,7 +1516,7 @@ target = "x"
 note = "NULL base."
 catches = "NULL^0 returning 1"
 reading = "the page: DECFLOAT returns DECFLOAT, otherwise FLOAT; x and y numeric (the numeric category gives NUMBER and FLOAT)"
-cases = ["cases/translation/functions/pow.pow.toml#t005-null-x"]
+cases = ["cases/translation/functions/pow.pow.toml#t005_null_x"]
 required = true
 
 [[obligation]]
@@ -1527,7 +1527,7 @@ target = "y"
 note = "NULL exponent."
 catches = "1^NULL returning 1"
 reading = "the page: DECFLOAT returns DECFLOAT, otherwise FLOAT; x and y numeric (the numeric category gives NUMBER and FLOAT)"
-cases = ["cases/translation/functions/pow.pow.toml#t006-null-y"]
+cases = ["cases/translation/functions/pow.pow.toml#t006_null_y"]
 required = true
 
 [[obligation]]
@@ -1539,7 +1539,7 @@ target = "magnitude"
 note = "Powers past the double range, and 0^0."
 catches = "infinity versus error; 0^0 as 0"
 reading = "the page: DECFLOAT returns DECFLOAT, otherwise FLOAT; x and y numeric (the numeric category gives NUMBER and FLOAT)"
-cases = ["cases/translation/functions/pow.pow.toml#t007-overflow-inf"]
+cases = ["cases/translation/functions/pow.pow.toml#t007_overflow_inf"]
 required = true
 
 [[obligation]]
@@ -1551,7 +1551,7 @@ target = "negative"
 note = "Negative bases with integer exponents."
 catches = "the sign lost for odd exponents"
 reading = "the page: DECFLOAT returns DECFLOAT, otherwise FLOAT; x and y numeric (the numeric category gives NUMBER and FLOAT)"
-cases = ["cases/translation/functions/pow.pow.toml#t008-neg-base"]
+cases = ["cases/translation/functions/pow.pow.toml#t008_neg_base"]
 required = true
 
 [[obligation]]
@@ -1563,7 +1563,7 @@ target = "negative"
 note = "A negative base with a fractional exponent: records what Snowflake returns there (NaN, Infinity, NULL or an error); re-kinded to error_parity after capture if Snowflake raises an error."
 catches = "NaN, NULL or an error differing from Snowflake"
 reading = "the page: DECFLOAT returns DECFLOAT, otherwise FLOAT; x and y numeric (the numeric category gives NUMBER and FLOAT)"
-cases = ["cases/translation/functions/pow.pow.toml#t009-neg-frac"]
+cases = ["cases/translation/functions/pow.pow.toml#t009_neg_frac"]
 required = true
 
 [[obligation]]
@@ -1574,7 +1574,7 @@ target = "NUMBER(38,0)"
 note = "POWER of integers returns FLOAT."
 catches = "arguments swapped (2^3 is 8, 3^2 is 9) or an integer result"
 reading = "the page: DECFLOAT returns DECFLOAT, otherwise FLOAT; x and y numeric (the numeric category gives NUMBER and FLOAT)"
-cases = ["cases/translation/functions/pow.power.toml#t001-int"]
+cases = ["cases/translation/functions/pow.power.toml#t001_int"]
 required = true
 
 [[obligation]]
@@ -1585,7 +1585,7 @@ target = "NUMBER(10,2)"
 note = "POWER with fractional exponents."
 catches = "the exponent rounded"
 reading = "the page: DECFLOAT returns DECFLOAT, otherwise FLOAT; x and y numeric (the numeric category gives NUMBER and FLOAT)"
-cases = ["cases/translation/functions/pow.power.toml#t002-dec"]
+cases = ["cases/translation/functions/pow.power.toml#t002_dec"]
 required = true
 
 [[obligation]]
@@ -1596,7 +1596,7 @@ target = "FLOAT"
 note = "POWER of FLOAT values."
 catches = "arguments swapped (2.5^1.5 is 3.95, 1.5^2.5 is 2.76) or a non-FLOAT result type"
 reading = "the page: DECFLOAT returns DECFLOAT, otherwise FLOAT; x and y numeric (the numeric category gives NUMBER and FLOAT)"
-cases = ["cases/translation/functions/pow.power.toml#t003-float"]
+cases = ["cases/translation/functions/pow.power.toml#t003_float"]
 required = true
 
 [[obligation]]
@@ -1607,7 +1607,7 @@ target = "DECFLOAT"
 note = "POWER of DECFLOAT returns DECFLOAT."
 catches = "computed in FLOAT"
 reading = "the page: DECFLOAT returns DECFLOAT, otherwise FLOAT; x and y numeric (the numeric category gives NUMBER and FLOAT)"
-cases = ["cases/translation/functions/pow.power.toml#t004-decfloat"]
+cases = ["cases/translation/functions/pow.power.toml#t004_decfloat"]
 required = true
 
 [[obligation]]
@@ -1618,7 +1618,7 @@ target = "x"
 note = "NULL base."
 catches = "NULL^0 returning 1"
 reading = "the page: DECFLOAT returns DECFLOAT, otherwise FLOAT; x and y numeric (the numeric category gives NUMBER and FLOAT)"
-cases = ["cases/translation/functions/pow.power.toml#t005-null-x"]
+cases = ["cases/translation/functions/pow.power.toml#t005_null_x"]
 required = true
 
 [[obligation]]
@@ -1629,7 +1629,7 @@ target = "y"
 note = "NULL exponent."
 catches = "1^NULL returning 1"
 reading = "the page: DECFLOAT returns DECFLOAT, otherwise FLOAT; x and y numeric (the numeric category gives NUMBER and FLOAT)"
-cases = ["cases/translation/functions/pow.power.toml#t006-null-y"]
+cases = ["cases/translation/functions/pow.power.toml#t006_null_y"]
 required = true
 
 [[obligation]]
@@ -1641,7 +1641,7 @@ target = "magnitude"
 note = "Powers past the double range, and 0^0."
 catches = "infinity versus error; 0^0 as 0"
 reading = "the page: DECFLOAT returns DECFLOAT, otherwise FLOAT; x and y numeric (the numeric category gives NUMBER and FLOAT)"
-cases = ["cases/translation/functions/pow.power.toml#t007-overflow-inf"]
+cases = ["cases/translation/functions/pow.power.toml#t007_overflow_inf"]
 required = true
 
 [[obligation]]
@@ -1653,7 +1653,7 @@ target = "negative"
 note = "Negative bases with integer exponents."
 catches = "the sign lost for odd exponents"
 reading = "the page: DECFLOAT returns DECFLOAT, otherwise FLOAT; x and y numeric (the numeric category gives NUMBER and FLOAT)"
-cases = ["cases/translation/functions/pow.power.toml#t008-neg-base"]
+cases = ["cases/translation/functions/pow.power.toml#t008_neg_base"]
 required = true
 
 [[obligation]]
@@ -1665,7 +1665,7 @@ target = "negative"
 note = "A negative base with a fractional exponent: records what Snowflake returns there (NaN, Infinity, NULL or an error); re-kinded to error_parity after capture if Snowflake raises an error."
 catches = "NaN, NULL or an error differing from Snowflake"
 reading = "the page: DECFLOAT returns DECFLOAT, otherwise FLOAT; x and y numeric (the numeric category gives NUMBER and FLOAT)"
-cases = ["cases/translation/functions/pow.power.toml#t009-neg-frac"]
+cases = ["cases/translation/functions/pow.power.toml#t009_neg_frac"]
 required = true
 
 [[obligation]]
@@ -1676,7 +1676,7 @@ target = "FLOAT"
 note = "RADIANS of FLOAT values."
 catches = "DEGREES computed (the reverse conversion)"
 reading = "the page: \"The data type must be FLOAT.\" Returns FLOAT; a fixed-point argument reaches it by implicit conversion"
-cases = ["cases/translation/functions/radians.toml#t001-float"]
+cases = ["cases/translation/functions/radians.toml#t001_float"]
 required = true
 
 [[obligation]]
@@ -1687,7 +1687,7 @@ target = "NUMBER(12,4)"
 note = "RADIANS of NUMBER(12,4), converted to FLOAT."
 catches = "DEGREES computed (the reverse conversion); or the result left fixed-point"
 reading = "the page: \"The data type must be FLOAT.\" Returns FLOAT; a fixed-point argument reaches it by implicit conversion"
-cases = ["cases/translation/functions/radians.toml#t002-fixed"]
+cases = ["cases/translation/functions/radians.toml#t002_fixed"]
 required = true
 
 [[obligation]]
@@ -1698,7 +1698,7 @@ target = "x"
 note = "RADIANS of NULL."
 catches = "NULL turned into 0 or NaN"
 reading = "the page: \"The data type must be FLOAT.\" Returns FLOAT; a fixed-point argument reaches it by implicit conversion"
-cases = ["cases/translation/functions/radians.toml#t003-null"]
+cases = ["cases/translation/functions/radians.toml#t003_null"]
 required = true
 
 [[obligation]]
@@ -1710,7 +1710,7 @@ target = "magnitude"
 note = "Large degree values."
 catches = "x*pi computed before dividing by 180, overflowing where the result is finite"
 reading = "the page: \"The data type must be FLOAT.\" Returns FLOAT; a fixed-point argument reaches it by implicit conversion"
-cases = ["cases/translation/functions/radians.toml#t004-large"]
+cases = ["cases/translation/functions/radians.toml#t004_large"]
 required = true
 
 [[obligation]]
@@ -1721,7 +1721,7 @@ target = "NUMBER(38,0)"
 note = "ROUND of integers with a negative scale."
 catches = "half-to-even (1400) instead of half away from zero (1500), or a negative scale ignored"
 reading = "the page: input_expr \"must be one of the numeric data types, such as DECFLOAT, FLOAT, or NUMBER\"; scale_expr an integer, default 0, negative allowed; the result keeps the input type; rounding_mode 'HALF_AWAY_FROM_ZERO' (default) or 'HALF_TO_EVEN', and with a rounding_mode the input must be fixed-point (\"FLOAT aren't supported with this argument\")"
-cases = ["cases/translation/functions/round.round.toml#t001-int"]
+cases = ["cases/translation/functions/round.round.toml#t001_int"]
 required = true
 
 [[obligation]]
@@ -1732,7 +1732,7 @@ target = "NUMBER(12,4)"
 note = "ROUND of NUMBER(12,4) halves."
 catches = "banker's rounding (2.5 to 2) instead of half away from zero (3), or truncation"
 reading = "the page: input_expr \"must be one of the numeric data types, such as DECFLOAT, FLOAT, or NUMBER\"; scale_expr an integer, default 0, negative allowed; the result keeps the input type; rounding_mode 'HALF_AWAY_FROM_ZERO' (default) or 'HALF_TO_EVEN', and with a rounding_mode the input must be fixed-point (\"FLOAT aren't supported with this argument\")"
-cases = ["cases/translation/functions/round.round.toml#t002-dec"]
+cases = ["cases/translation/functions/round.round.toml#t002_dec"]
 required = true
 
 [[obligation]]
@@ -1743,7 +1743,7 @@ target = "FLOAT"
 note = "ROUND of FLOAT halves exact in binary."
 catches = "half-to-even for FLOAT, or a NUMBER returned"
 reading = "the page: input_expr \"must be one of the numeric data types, such as DECFLOAT, FLOAT, or NUMBER\"; scale_expr an integer, default 0, negative allowed; the result keeps the input type; rounding_mode 'HALF_AWAY_FROM_ZERO' (default) or 'HALF_TO_EVEN', and with a rounding_mode the input must be fixed-point (\"FLOAT aren't supported with this argument\")"
-cases = ["cases/translation/functions/round.round.toml#t003-float"]
+cases = ["cases/translation/functions/round.round.toml#t003_float"]
 required = true
 
 [[obligation]]
@@ -1754,7 +1754,7 @@ target = "DECFLOAT"
 note = "ROUND of DECFLOAT returns DECFLOAT."
 catches = "computed in FLOAT (1.005 rounds to 1.01 in DECFLOAT)"
 reading = "the page: input_expr \"must be one of the numeric data types, such as DECFLOAT, FLOAT, or NUMBER\"; scale_expr an integer, default 0, negative allowed; the result keeps the input type; rounding_mode 'HALF_AWAY_FROM_ZERO' (default) or 'HALF_TO_EVEN', and with a rounding_mode the input must be fixed-point (\"FLOAT aren't supported with this argument\")"
-cases = ["cases/translation/functions/round.round.toml#t004-decfloat"]
+cases = ["cases/translation/functions/round.round.toml#t004_decfloat"]
 required = true
 
 [[obligation]]
@@ -1765,7 +1765,7 @@ target = "'HALF_TO_EVEN'"
 note = "rounding_mode 'HALF_TO_EVEN' on fixed-point."
 catches = "the mode ignored (2.5 to 3 instead of 2)"
 reading = "the page: input_expr \"must be one of the numeric data types, such as DECFLOAT, FLOAT, or NUMBER\"; scale_expr an integer, default 0, negative allowed; the result keeps the input type; rounding_mode 'HALF_AWAY_FROM_ZERO' (default) or 'HALF_TO_EVEN', and with a rounding_mode the input must be fixed-point (\"FLOAT aren't supported with this argument\")"
-cases = ["cases/translation/functions/round.round.toml#t005-mode-even"]
+cases = ["cases/translation/functions/round.round.toml#t005_mode_even"]
 required = true
 
 [[obligation]]
@@ -1776,7 +1776,7 @@ target = "'HALF_AWAY_FROM_ZERO'"
 note = "rounding_mode 'HALF_AWAY_FROM_ZERO' spelled out."
 catches = "the mode read as half-even (-0.0250 to -0.02 instead of -0.03)"
 reading = "the page: input_expr \"must be one of the numeric data types, such as DECFLOAT, FLOAT, or NUMBER\"; scale_expr an integer, default 0, negative allowed; the result keeps the input type; rounding_mode 'HALF_AWAY_FROM_ZERO' (default) or 'HALF_TO_EVEN', and with a rounding_mode the input must be fixed-point (\"FLOAT aren't supported with this argument\")"
-cases = ["cases/translation/functions/round.round.toml#t006-mode-away"]
+cases = ["cases/translation/functions/round.round.toml#t006_mode_away"]
 required = true
 
 [[obligation]]
@@ -1787,7 +1787,7 @@ target = "input_expr"
 note = "ROUND of NULL."
 catches = "NULL turned into 0"
 reading = "the page: input_expr \"must be one of the numeric data types, such as DECFLOAT, FLOAT, or NUMBER\"; scale_expr an integer, default 0, negative allowed; the result keeps the input type; rounding_mode 'HALF_AWAY_FROM_ZERO' (default) or 'HALF_TO_EVEN', and with a rounding_mode the input must be fixed-point (\"FLOAT aren't supported with this argument\")"
-cases = ["cases/translation/functions/round.round.toml#t007-null-x"]
+cases = ["cases/translation/functions/round.round.toml#t007_null_x"]
 required = true
 
 [[obligation]]
@@ -1798,7 +1798,7 @@ target = "scale_expr"
 note = "ROUND with a NULL scale."
 catches = "the NULL scale read as 0"
 reading = "the page: input_expr \"must be one of the numeric data types, such as DECFLOAT, FLOAT, or NUMBER\"; scale_expr an integer, default 0, negative allowed; the result keeps the input type; rounding_mode 'HALF_AWAY_FROM_ZERO' (default) or 'HALF_TO_EVEN', and with a rounding_mode the input must be fixed-point (\"FLOAT aren't supported with this argument\")"
-cases = ["cases/translation/functions/round.round.toml#t008-null-scale"]
+cases = ["cases/translation/functions/round.round.toml#t008_null_scale"]
 required = true
 
 [[obligation]]
@@ -1810,7 +1810,7 @@ target = "rounding_scale"
 note = "Scales past the input scale and a carry across digits."
 catches = "carry lost (9.995 to 9.99) or scale capped"
 reading = "the page: input_expr \"must be one of the numeric data types, such as DECFLOAT, FLOAT, or NUMBER\"; scale_expr an integer, default 0, negative allowed; the result keeps the input type; rounding_mode 'HALF_AWAY_FROM_ZERO' (default) or 'HALF_TO_EVEN', and with a rounding_mode the input must be fixed-point (\"FLOAT aren't supported with this argument\")"
-cases = ["cases/translation/functions/round.round.toml#t009-scale"]
+cases = ["cases/translation/functions/round.round.toml#t009_scale"]
 required = true
 
 [[obligation]]
@@ -1822,7 +1822,7 @@ target = "magnitude"
 note = "Rounding 38-digit integers at scale -1, near the 38-digit limit."
 catches = "overflow to FLOAT"
 reading = "the page: input_expr \"must be one of the numeric data types, such as DECFLOAT, FLOAT, or NUMBER\"; scale_expr an integer, default 0, negative allowed; the result keeps the input type; rounding_mode 'HALF_AWAY_FROM_ZERO' (default) or 'HALF_TO_EVEN', and with a rounding_mode the input must be fixed-point (\"FLOAT aren't supported with this argument\")"
-cases = ["cases/translation/functions/round.round.toml#t010-max"]
+cases = ["cases/translation/functions/round.round.toml#t010_max"]
 required = true
 
 [[obligation]]
@@ -1833,7 +1833,7 @@ target = "error"
 note = "A rounding_mode with a FLOAT input is an error."
 catches = "the mode applied to FLOAT instead of the documented error"
 reading = "the page: input_expr \"must be one of the numeric data types, such as DECFLOAT, FLOAT, or NUMBER\"; scale_expr an integer, default 0, negative allowed; the result keeps the input type; rounding_mode 'HALF_AWAY_FROM_ZERO' (default) or 'HALF_TO_EVEN', and with a rounding_mode the input must be fixed-point (\"FLOAT aren't supported with this argument\")"
-cases = ["cases/translation/functions/round.round.toml#t011-mode-float"]
+cases = ["cases/translation/functions/round.round.toml#t011_mode_float"]
 required = true
 
 [[obligation]]
@@ -1844,7 +1844,7 @@ target = "error"
 note = "An unknown rounding_mode is an error."
 catches = "the mode ignored"
 reading = "the page: input_expr \"must be one of the numeric data types, such as DECFLOAT, FLOAT, or NUMBER\"; scale_expr an integer, default 0, negative allowed; the result keeps the input type; rounding_mode 'HALF_AWAY_FROM_ZERO' (default) or 'HALF_TO_EVEN', and with a rounding_mode the input must be fixed-point (\"FLOAT aren't supported with this argument\")"
-cases = ["cases/translation/functions/round.round.toml#t012-mode-bad"]
+cases = ["cases/translation/functions/round.round.toml#t012_mode_bad"]
 required = true
 
 [[obligation]]
@@ -1855,7 +1855,7 @@ target = "NUMBER(38,0)"
 note = "ROUND of integers with a negative scale."
 catches = "half-to-even (1400) instead of half away from zero (1500), or a negative scale ignored"
 reading = "the page: input_expr \"must be one of the numeric data types, such as DECFLOAT, FLOAT, or NUMBER\"; scale_expr an integer, default 0, negative allowed; the result keeps the input type; rounding_mode 'HALF_AWAY_FROM_ZERO' (default) or 'HALF_TO_EVEN', and with a rounding_mode the input must be fixed-point (\"FLOAT aren't supported with this argument\"); \"If you specify the EXPR => named argument, you must also specify the SCALE => named argument\""
-cases = ["cases/translation/functions/round.round-expr-scale.toml#t001-int"]
+cases = ["cases/translation/functions/round.round-expr-scale.toml#t001_int"]
 required = true
 
 [[obligation]]
@@ -1866,7 +1866,7 @@ target = "NUMBER(12,4)"
 note = "ROUND of NUMBER(12,4) halves."
 catches = "banker's rounding (2.5 to 2) instead of half away from zero (3), or truncation"
 reading = "the page: input_expr \"must be one of the numeric data types, such as DECFLOAT, FLOAT, or NUMBER\"; scale_expr an integer, default 0, negative allowed; the result keeps the input type; rounding_mode 'HALF_AWAY_FROM_ZERO' (default) or 'HALF_TO_EVEN', and with a rounding_mode the input must be fixed-point (\"FLOAT aren't supported with this argument\"); \"If you specify the EXPR => named argument, you must also specify the SCALE => named argument\""
-cases = ["cases/translation/functions/round.round-expr-scale.toml#t002-dec"]
+cases = ["cases/translation/functions/round.round-expr-scale.toml#t002_dec"]
 required = true
 
 [[obligation]]
@@ -1877,7 +1877,7 @@ target = "FLOAT"
 note = "ROUND of FLOAT halves exact in binary."
 catches = "half-to-even for FLOAT, or a NUMBER returned"
 reading = "the page: input_expr \"must be one of the numeric data types, such as DECFLOAT, FLOAT, or NUMBER\"; scale_expr an integer, default 0, negative allowed; the result keeps the input type; rounding_mode 'HALF_AWAY_FROM_ZERO' (default) or 'HALF_TO_EVEN', and with a rounding_mode the input must be fixed-point (\"FLOAT aren't supported with this argument\"); \"If you specify the EXPR => named argument, you must also specify the SCALE => named argument\""
-cases = ["cases/translation/functions/round.round-expr-scale.toml#t003-float"]
+cases = ["cases/translation/functions/round.round-expr-scale.toml#t003_float"]
 required = true
 
 [[obligation]]
@@ -1888,7 +1888,7 @@ target = "DECFLOAT"
 note = "ROUND of DECFLOAT returns DECFLOAT."
 catches = "computed in FLOAT (1.005 rounds to 1.01 in DECFLOAT)"
 reading = "the page: input_expr \"must be one of the numeric data types, such as DECFLOAT, FLOAT, or NUMBER\"; scale_expr an integer, default 0, negative allowed; the result keeps the input type; rounding_mode 'HALF_AWAY_FROM_ZERO' (default) or 'HALF_TO_EVEN', and with a rounding_mode the input must be fixed-point (\"FLOAT aren't supported with this argument\"); \"If you specify the EXPR => named argument, you must also specify the SCALE => named argument\""
-cases = ["cases/translation/functions/round.round-expr-scale.toml#t004-decfloat"]
+cases = ["cases/translation/functions/round.round-expr-scale.toml#t004_decfloat"]
 required = true
 
 [[obligation]]
@@ -1899,7 +1899,7 @@ target = "'HALF_TO_EVEN'"
 note = "rounding_mode 'HALF_TO_EVEN' on fixed-point."
 catches = "the mode ignored (2.5 to 3 instead of 2)"
 reading = "the page: input_expr \"must be one of the numeric data types, such as DECFLOAT, FLOAT, or NUMBER\"; scale_expr an integer, default 0, negative allowed; the result keeps the input type; rounding_mode 'HALF_AWAY_FROM_ZERO' (default) or 'HALF_TO_EVEN', and with a rounding_mode the input must be fixed-point (\"FLOAT aren't supported with this argument\"); \"If you specify the EXPR => named argument, you must also specify the SCALE => named argument\""
-cases = ["cases/translation/functions/round.round-expr-scale.toml#t005-mode-even"]
+cases = ["cases/translation/functions/round.round-expr-scale.toml#t005_mode_even"]
 required = true
 
 [[obligation]]
@@ -1910,7 +1910,7 @@ target = "'HALF_AWAY_FROM_ZERO'"
 note = "rounding_mode 'HALF_AWAY_FROM_ZERO' spelled out."
 catches = "the mode read as half-even (-0.0250 to -0.02 instead of -0.03)"
 reading = "the page: input_expr \"must be one of the numeric data types, such as DECFLOAT, FLOAT, or NUMBER\"; scale_expr an integer, default 0, negative allowed; the result keeps the input type; rounding_mode 'HALF_AWAY_FROM_ZERO' (default) or 'HALF_TO_EVEN', and with a rounding_mode the input must be fixed-point (\"FLOAT aren't supported with this argument\"); \"If you specify the EXPR => named argument, you must also specify the SCALE => named argument\""
-cases = ["cases/translation/functions/round.round-expr-scale.toml#t006-mode-away"]
+cases = ["cases/translation/functions/round.round-expr-scale.toml#t006_mode_away"]
 required = true
 
 [[obligation]]
@@ -1921,7 +1921,7 @@ target = "input_expr"
 note = "ROUND of NULL."
 catches = "NULL turned into 0"
 reading = "the page: input_expr \"must be one of the numeric data types, such as DECFLOAT, FLOAT, or NUMBER\"; scale_expr an integer, default 0, negative allowed; the result keeps the input type; rounding_mode 'HALF_AWAY_FROM_ZERO' (default) or 'HALF_TO_EVEN', and with a rounding_mode the input must be fixed-point (\"FLOAT aren't supported with this argument\"); \"If you specify the EXPR => named argument, you must also specify the SCALE => named argument\""
-cases = ["cases/translation/functions/round.round-expr-scale.toml#t007-null-x"]
+cases = ["cases/translation/functions/round.round-expr-scale.toml#t007_null_x"]
 required = true
 
 [[obligation]]
@@ -1932,7 +1932,7 @@ target = "scale_expr"
 note = "ROUND with a NULL scale."
 catches = "the NULL scale read as 0"
 reading = "the page: input_expr \"must be one of the numeric data types, such as DECFLOAT, FLOAT, or NUMBER\"; scale_expr an integer, default 0, negative allowed; the result keeps the input type; rounding_mode 'HALF_AWAY_FROM_ZERO' (default) or 'HALF_TO_EVEN', and with a rounding_mode the input must be fixed-point (\"FLOAT aren't supported with this argument\"); \"If you specify the EXPR => named argument, you must also specify the SCALE => named argument\""
-cases = ["cases/translation/functions/round.round-expr-scale.toml#t008-null-scale"]
+cases = ["cases/translation/functions/round.round-expr-scale.toml#t008_null_scale"]
 required = true
 
 [[obligation]]
@@ -1944,7 +1944,7 @@ target = "rounding_scale"
 note = "Scales past the input scale and a carry across digits."
 catches = "carry lost (9.995 to 9.99) or scale capped"
 reading = "the page: input_expr \"must be one of the numeric data types, such as DECFLOAT, FLOAT, or NUMBER\"; scale_expr an integer, default 0, negative allowed; the result keeps the input type; rounding_mode 'HALF_AWAY_FROM_ZERO' (default) or 'HALF_TO_EVEN', and with a rounding_mode the input must be fixed-point (\"FLOAT aren't supported with this argument\"); \"If you specify the EXPR => named argument, you must also specify the SCALE => named argument\""
-cases = ["cases/translation/functions/round.round-expr-scale.toml#t009-scale"]
+cases = ["cases/translation/functions/round.round-expr-scale.toml#t009_scale"]
 required = true
 
 [[obligation]]
@@ -1956,7 +1956,7 @@ target = "magnitude"
 note = "Rounding 38-digit integers at scale -1, near the 38-digit limit."
 catches = "overflow to FLOAT"
 reading = "the page: input_expr \"must be one of the numeric data types, such as DECFLOAT, FLOAT, or NUMBER\"; scale_expr an integer, default 0, negative allowed; the result keeps the input type; rounding_mode 'HALF_AWAY_FROM_ZERO' (default) or 'HALF_TO_EVEN', and with a rounding_mode the input must be fixed-point (\"FLOAT aren't supported with this argument\"); \"If you specify the EXPR => named argument, you must also specify the SCALE => named argument\""
-cases = ["cases/translation/functions/round.round-expr-scale.toml#t010-max"]
+cases = ["cases/translation/functions/round.round-expr-scale.toml#t010_max"]
 required = true
 
 [[obligation]]
@@ -1967,7 +1967,7 @@ target = "error"
 note = "A rounding_mode with a FLOAT input is an error."
 catches = "the mode applied to FLOAT instead of the documented error"
 reading = "the page: input_expr \"must be one of the numeric data types, such as DECFLOAT, FLOAT, or NUMBER\"; scale_expr an integer, default 0, negative allowed; the result keeps the input type; rounding_mode 'HALF_AWAY_FROM_ZERO' (default) or 'HALF_TO_EVEN', and with a rounding_mode the input must be fixed-point (\"FLOAT aren't supported with this argument\"); \"If you specify the EXPR => named argument, you must also specify the SCALE => named argument\""
-cases = ["cases/translation/functions/round.round-expr-scale.toml#t011-mode-float"]
+cases = ["cases/translation/functions/round.round-expr-scale.toml#t011_mode_float"]
 required = true
 
 [[obligation]]
@@ -1978,7 +1978,7 @@ target = "error"
 note = "An unknown rounding_mode is an error."
 catches = "the mode ignored"
 reading = "the page: input_expr \"must be one of the numeric data types, such as DECFLOAT, FLOAT, or NUMBER\"; scale_expr an integer, default 0, negative allowed; the result keeps the input type; rounding_mode 'HALF_AWAY_FROM_ZERO' (default) or 'HALF_TO_EVEN', and with a rounding_mode the input must be fixed-point (\"FLOAT aren't supported with this argument\"); \"If you specify the EXPR => named argument, you must also specify the SCALE => named argument\""
-cases = ["cases/translation/functions/round.round-expr-scale.toml#t012-mode-bad"]
+cases = ["cases/translation/functions/round.round-expr-scale.toml#t012_mode_bad"]
 required = true
 
 [[obligation]]
@@ -1989,7 +1989,7 @@ target = "error"
 note = "EXPR => without SCALE => is an error, as the page says."
 catches = "SCALE defaulted to 0"
 reading = "the page: input_expr \"must be one of the numeric data types, such as DECFLOAT, FLOAT, or NUMBER\"; scale_expr an integer, default 0, negative allowed; the result keeps the input type; rounding_mode 'HALF_AWAY_FROM_ZERO' (default) or 'HALF_TO_EVEN', and with a rounding_mode the input must be fixed-point (\"FLOAT aren't supported with this argument\"); \"If you specify the EXPR => named argument, you must also specify the SCALE => named argument\""
-cases = ["cases/translation/functions/round.round-expr-scale.toml#t013-expr-no-scale"]
+cases = ["cases/translation/functions/round.round-expr-scale.toml#t013_expr_no_scale"]
 required = true
 
 [[obligation]]
@@ -2000,7 +2000,7 @@ target = "NUMBER(38,0)"
 note = "SIGN of integers."
 catches = "ABS computed (-7 gives 7 instead of -1)"
 reading = "the page names no argument type; the numeric category gives integer NUMBER, NUMBER with a scale and FLOAT"
-cases = ["cases/translation/functions/sign.toml#t001-int"]
+cases = ["cases/translation/functions/sign.toml#t001_int"]
 required = true
 
 [[obligation]]
@@ -2011,7 +2011,7 @@ target = "NUMBER(10,2)"
 note = "SIGN of NUMBER(10,2), keeping its type."
 catches = "the scale lost or FLOAT returned"
 reading = "the page names no argument type; the numeric category gives integer NUMBER, NUMBER with a scale and FLOAT"
-cases = ["cases/translation/functions/sign.toml#t002-dec"]
+cases = ["cases/translation/functions/sign.toml#t002_dec"]
 required = true
 
 [[obligation]]
@@ -2022,7 +2022,7 @@ target = "FLOAT"
 note = "SIGN of FLOAT."
 catches = "negative zero and tiny negatives"
 reading = "the page names no argument type; the numeric category gives integer NUMBER, NUMBER with a scale and FLOAT"
-cases = ["cases/translation/functions/sign.toml#t003-float"]
+cases = ["cases/translation/functions/sign.toml#t003_float"]
 required = true
 
 [[obligation]]
@@ -2033,7 +2033,7 @@ target = "x"
 note = "SIGN of NULL."
 catches = "NULL turned into 0"
 reading = "the page names no argument type; the numeric category gives integer NUMBER, NUMBER with a scale and FLOAT"
-cases = ["cases/translation/functions/sign.toml#t004-null"]
+cases = ["cases/translation/functions/sign.toml#t004_null"]
 required = true
 
 [[obligation]]
@@ -2045,7 +2045,7 @@ target = "magnitude"
 note = "The 38-digit and double extremes."
 catches = "64-bit arithmetic overflowing"
 reading = "the page names no argument type; the numeric category gives integer NUMBER, NUMBER with a scale and FLOAT"
-cases = ["cases/translation/functions/sign.toml#t005-extremes"]
+cases = ["cases/translation/functions/sign.toml#t005_extremes"]
 required = true
 
 [[obligation]]
@@ -2056,7 +2056,7 @@ target = "FLOAT"
 note = "SIN of FLOAT values."
 catches = "COS computed, or the argument read in degrees"
 reading = "the page: \"The data type must be FLOAT.\" Returns FLOAT; a fixed-point argument reaches it by implicit conversion"
-cases = ["cases/translation/functions/sin.toml#t001-float"]
+cases = ["cases/translation/functions/sin.toml#t001_float"]
 required = true
 
 [[obligation]]
@@ -2067,7 +2067,7 @@ target = "NUMBER(12,4)"
 note = "SIN of NUMBER(12,4), converted to FLOAT."
 catches = "COS computed, or the argument read in degrees; or the result left fixed-point"
 reading = "the page: \"The data type must be FLOAT.\" Returns FLOAT; a fixed-point argument reaches it by implicit conversion"
-cases = ["cases/translation/functions/sin.toml#t002-fixed"]
+cases = ["cases/translation/functions/sin.toml#t002_fixed"]
 required = true
 
 [[obligation]]
@@ -2078,7 +2078,7 @@ target = "x"
 note = "SIN of NULL."
 catches = "NULL turned into 0 or NaN"
 reading = "the page: \"The data type must be FLOAT.\" Returns FLOAT; a fixed-point argument reaches it by implicit conversion"
-cases = ["cases/translation/functions/sin.toml#t003-null"]
+cases = ["cases/translation/functions/sin.toml#t003_null"]
 required = true
 
 [[obligation]]
@@ -2090,7 +2090,7 @@ target = "magnitude"
 note = "Large arguments."
 catches = "argument reduction differing"
 reading = "the page: \"The data type must be FLOAT.\" Returns FLOAT; a fixed-point argument reaches it by implicit conversion"
-cases = ["cases/translation/functions/sin.toml#t004-large"]
+cases = ["cases/translation/functions/sin.toml#t004_large"]
 required = true
 
 [[obligation]]
@@ -2101,7 +2101,7 @@ target = "FLOAT"
 note = "SINH of FLOAT values."
 catches = "COSH computed"
 reading = "the page: \"The data type must be FLOAT.\" Returns FLOAT; a fixed-point argument reaches it by implicit conversion"
-cases = ["cases/translation/functions/sinh.toml#t001-float"]
+cases = ["cases/translation/functions/sinh.toml#t001_float"]
 required = true
 
 [[obligation]]
@@ -2112,7 +2112,7 @@ target = "NUMBER(12,4)"
 note = "SINH of NUMBER(12,4), converted to FLOAT."
 catches = "COSH computed; or the result left fixed-point"
 reading = "the page: \"The data type must be FLOAT.\" Returns FLOAT; a fixed-point argument reaches it by implicit conversion"
-cases = ["cases/translation/functions/sinh.toml#t002-fixed"]
+cases = ["cases/translation/functions/sinh.toml#t002_fixed"]
 required = true
 
 [[obligation]]
@@ -2123,7 +2123,7 @@ target = "x"
 note = "SINH of NULL."
 catches = "NULL turned into 0 or NaN"
 reading = "the page: \"The data type must be FLOAT.\" Returns FLOAT; a fixed-point argument reaches it by implicit conversion"
-cases = ["cases/translation/functions/sinh.toml#t003-null"]
+cases = ["cases/translation/functions/sinh.toml#t003_null"]
 required = true
 
 [[obligation]]
@@ -2135,7 +2135,7 @@ target = "magnitude"
 note = "Arguments just past the double range (710.48)."
 catches = "infinity versus error"
 reading = "the page: \"The data type must be FLOAT.\" Returns FLOAT; a fixed-point argument reaches it by implicit conversion"
-cases = ["cases/translation/functions/sinh.toml#t004-overflow-inf"]
+cases = ["cases/translation/functions/sinh.toml#t004_overflow_inf"]
 required = true
 
 [[obligation]]
@@ -2146,7 +2146,7 @@ target = "FLOAT"
 note = "SQRT of FLOAT values."
 catches = "CBRT or squaring computed"
 reading = "the page: DECFLOAT returns DECFLOAT, otherwise FLOAT; the numeric category gives NUMBER and FLOAT arguments"
-cases = ["cases/translation/functions/sqrt.toml#t001-float"]
+cases = ["cases/translation/functions/sqrt.toml#t001_float"]
 required = true
 
 [[obligation]]
@@ -2157,7 +2157,7 @@ target = "NUMBER(12,4)"
 note = "SQRT of NUMBER(12,4), converted to FLOAT."
 catches = "CBRT or squaring computed; or the result left fixed-point"
 reading = "the page: DECFLOAT returns DECFLOAT, otherwise FLOAT; the numeric category gives NUMBER and FLOAT arguments"
-cases = ["cases/translation/functions/sqrt.toml#t002-fixed"]
+cases = ["cases/translation/functions/sqrt.toml#t002_fixed"]
 required = true
 
 [[obligation]]
@@ -2168,7 +2168,7 @@ target = "DECFLOAT"
 note = "SQRT of DECFLOAT, which returns DECFLOAT."
 catches = "a DECFLOAT argument computed and returned as FLOAT"
 reading = "the page: DECFLOAT returns DECFLOAT, otherwise FLOAT; the numeric category gives NUMBER and FLOAT arguments"
-cases = ["cases/translation/functions/sqrt.toml#t003-decfloat"]
+cases = ["cases/translation/functions/sqrt.toml#t003_decfloat"]
 required = true
 
 [[obligation]]
@@ -2179,7 +2179,7 @@ target = "x"
 note = "SQRT of NULL."
 catches = "NULL turned into 0 or NaN"
 reading = "the page: DECFLOAT returns DECFLOAT, otherwise FLOAT; the numeric category gives NUMBER and FLOAT arguments"
-cases = ["cases/translation/functions/sqrt.toml#t004-null"]
+cases = ["cases/translation/functions/sqrt.toml#t004_null"]
 required = true
 
 [[obligation]]
@@ -2191,7 +2191,7 @@ target = "magnitude"
 note = "Very small and very large values."
 catches = "precision at the extremes"
 reading = "the page: DECFLOAT returns DECFLOAT, otherwise FLOAT; the numeric category gives NUMBER and FLOAT arguments"
-cases = ["cases/translation/functions/sqrt.toml#t005-tiny-huge"]
+cases = ["cases/translation/functions/sqrt.toml#t005_tiny_huge"]
 required = true
 
 [[obligation]]
@@ -2203,7 +2203,7 @@ target = "negative"
 note = "SQRT at or outside its domain: records what Snowflake returns there (NaN, Infinity, NULL or an error); re-kinded to error_parity after capture if Snowflake raises an error."
 catches = "NaN, Infinity, NULL or an error differing from Snowflake"
 reading = "the page: DECFLOAT returns DECFLOAT, otherwise FLOAT; the numeric category gives NUMBER and FLOAT arguments"
-cases = ["cases/translation/functions/sqrt.toml#t006-negative"]
+cases = ["cases/translation/functions/sqrt.toml#t006_negative"]
 required = true
 
 [[obligation]]
@@ -2214,7 +2214,7 @@ target = "NUMBER(38,0)"
 note = "SQUARE of integers returns FLOAT."
 catches = "x*x kept as NUMBER (the type differs), or SQRT computed"
 reading = "the page: DECFLOAT returns DECFLOAT, otherwise FLOAT; the numeric category gives NUMBER and FLOAT arguments"
-cases = ["cases/translation/functions/square.toml#t001-int"]
+cases = ["cases/translation/functions/square.toml#t001_int"]
 required = true
 
 [[obligation]]
@@ -2225,7 +2225,7 @@ target = "NUMBER(10,2)"
 note = "SQUARE of NUMBER(10,2)."
 catches = "the result left fixed-point"
 reading = "the page: DECFLOAT returns DECFLOAT, otherwise FLOAT; the numeric category gives NUMBER and FLOAT arguments"
-cases = ["cases/translation/functions/square.toml#t002-dec"]
+cases = ["cases/translation/functions/square.toml#t002_dec"]
 required = true
 
 [[obligation]]
@@ -2236,7 +2236,7 @@ target = "FLOAT"
 note = "SQUARE of FLOAT."
 catches = "SQRT computed"
 reading = "the page: DECFLOAT returns DECFLOAT, otherwise FLOAT; the numeric category gives NUMBER and FLOAT arguments"
-cases = ["cases/translation/functions/square.toml#t003-float"]
+cases = ["cases/translation/functions/square.toml#t003_float"]
 required = true
 
 [[obligation]]
@@ -2247,7 +2247,7 @@ target = "DECFLOAT"
 note = "SQUARE of DECFLOAT returns DECFLOAT."
 catches = "computed in FLOAT"
 reading = "the page: DECFLOAT returns DECFLOAT, otherwise FLOAT; the numeric category gives NUMBER and FLOAT arguments"
-cases = ["cases/translation/functions/square.toml#t004-decfloat"]
+cases = ["cases/translation/functions/square.toml#t004_decfloat"]
 required = true
 
 [[obligation]]
@@ -2258,7 +2258,7 @@ target = "x"
 note = "SQUARE of NULL."
 catches = "NULL turned into 0"
 reading = "the page: DECFLOAT returns DECFLOAT, otherwise FLOAT; the numeric category gives NUMBER and FLOAT arguments"
-cases = ["cases/translation/functions/square.toml#t005-null"]
+cases = ["cases/translation/functions/square.toml#t005_null"]
 required = true
 
 [[obligation]]
@@ -2270,7 +2270,7 @@ target = "magnitude"
 note = "Squares past the double range."
 catches = "infinity versus error"
 reading = "the page: DECFLOAT returns DECFLOAT, otherwise FLOAT; the numeric category gives NUMBER and FLOAT arguments"
-cases = ["cases/translation/functions/square.toml#t006-overflow-inf"]
+cases = ["cases/translation/functions/square.toml#t006_overflow_inf"]
 required = true
 
 [[obligation]]
@@ -2281,7 +2281,7 @@ target = "FLOAT"
 note = "TAN of FLOAT values."
 catches = "SIN or COT computed, or degrees"
 reading = "the page: \"The data type must be FLOAT.\" Returns FLOAT; a fixed-point argument reaches it by implicit conversion"
-cases = ["cases/translation/functions/tan.toml#t001-float"]
+cases = ["cases/translation/functions/tan.toml#t001_float"]
 required = true
 
 [[obligation]]
@@ -2292,7 +2292,7 @@ target = "NUMBER(12,4)"
 note = "TAN of NUMBER(12,4), converted to FLOAT."
 catches = "SIN or COT computed, or degrees; or the result left fixed-point"
 reading = "the page: \"The data type must be FLOAT.\" Returns FLOAT; a fixed-point argument reaches it by implicit conversion"
-cases = ["cases/translation/functions/tan.toml#t002-fixed"]
+cases = ["cases/translation/functions/tan.toml#t002_fixed"]
 required = true
 
 [[obligation]]
@@ -2303,7 +2303,7 @@ target = "x"
 note = "TAN of NULL."
 catches = "NULL turned into 0 or NaN"
 reading = "the page: \"The data type must be FLOAT.\" Returns FLOAT; a fixed-point argument reaches it by implicit conversion"
-cases = ["cases/translation/functions/tan.toml#t003-null"]
+cases = ["cases/translation/functions/tan.toml#t003_null"]
 required = true
 
 [[obligation]]
@@ -2315,7 +2315,7 @@ target = "magnitude"
 note = "Near pi/2."
 catches = "pole handling"
 reading = "the page: \"The data type must be FLOAT.\" Returns FLOAT; a fixed-point argument reaches it by implicit conversion"
-cases = ["cases/translation/functions/tan.toml#t004-near-pole"]
+cases = ["cases/translation/functions/tan.toml#t004_near_pole"]
 required = true
 
 [[obligation]]
@@ -2326,7 +2326,7 @@ target = "FLOAT"
 note = "TANH of FLOAT values."
 catches = "SINH or a clamped value"
 reading = "the page: \"The data type must be FLOAT.\" Returns FLOAT; a fixed-point argument reaches it by implicit conversion"
-cases = ["cases/translation/functions/tanh.toml#t001-float"]
+cases = ["cases/translation/functions/tanh.toml#t001_float"]
 required = true
 
 [[obligation]]
@@ -2337,7 +2337,7 @@ target = "NUMBER(12,4)"
 note = "TANH of NUMBER(12,4), converted to FLOAT."
 catches = "SINH or a clamped value; or the result left fixed-point"
 reading = "the page: \"The data type must be FLOAT.\" Returns FLOAT; a fixed-point argument reaches it by implicit conversion"
-cases = ["cases/translation/functions/tanh.toml#t002-fixed"]
+cases = ["cases/translation/functions/tanh.toml#t002_fixed"]
 required = true
 
 [[obligation]]
@@ -2348,7 +2348,7 @@ target = "x"
 note = "TANH of NULL."
 catches = "NULL turned into 0 or NaN"
 reading = "the page: \"The data type must be FLOAT.\" Returns FLOAT; a fixed-point argument reaches it by implicit conversion"
-cases = ["cases/translation/functions/tanh.toml#t003-null"]
+cases = ["cases/translation/functions/tanh.toml#t003_null"]
 required = true
 
 [[obligation]]
@@ -2360,7 +2360,7 @@ target = "magnitude"
 note = "Large arguments saturate to 1 and -1."
 catches = "NaN from exp overflow"
 reading = "the page: \"The data type must be FLOAT.\" Returns FLOAT; a fixed-point argument reaches it by implicit conversion"
-cases = ["cases/translation/functions/tanh.toml#t004-saturate"]
+cases = ["cases/translation/functions/tanh.toml#t004_saturate"]
 required = true
 
 [[obligation]]
@@ -2371,7 +2371,7 @@ target = "NUMBER(38,0)"
 note = "TRUNC of integers with a negative scale."
 catches = "FLOOR used for negatives (TRUNC(-2.7) is -2), or the date TRUNC chosen; or a negative scale ignored"
 reading = "the page: input_expr \"must be one of the numeric data types, such as DECFLOAT, FLOAT, or NUMBER\"; scale_expr an integer, default 0, negative allowed; the result keeps the input type"
-cases = ["cases/translation/functions/trunc.trunc.toml#t001-int"]
+cases = ["cases/translation/functions/trunc.trunc.toml#t001_int"]
 required = true
 
 [[obligation]]
@@ -2382,7 +2382,7 @@ target = "NUMBER(12,4)"
 note = "TRUNC of NUMBER(12,4) with and without a scale."
 catches = "FLOOR used for negatives (TRUNC(-2.7) is -2), or the date TRUNC chosen"
 reading = "the page: input_expr \"must be one of the numeric data types, such as DECFLOAT, FLOAT, or NUMBER\"; scale_expr an integer, default 0, negative allowed; the result keeps the input type"
-cases = ["cases/translation/functions/trunc.trunc.toml#t002-dec"]
+cases = ["cases/translation/functions/trunc.trunc.toml#t002_dec"]
 required = true
 
 [[obligation]]
@@ -2393,7 +2393,7 @@ target = "FLOAT"
 note = "TRUNC of FLOAT returns FLOAT."
 catches = "FLOOR used for negatives (TRUNC(-2.7) is -2), or the date TRUNC chosen; or a NUMBER returned"
 reading = "the page: input_expr \"must be one of the numeric data types, such as DECFLOAT, FLOAT, or NUMBER\"; scale_expr an integer, default 0, negative allowed; the result keeps the input type"
-cases = ["cases/translation/functions/trunc.trunc.toml#t003-float"]
+cases = ["cases/translation/functions/trunc.trunc.toml#t003_float"]
 required = true
 
 [[obligation]]
@@ -2404,7 +2404,7 @@ target = "DECFLOAT"
 note = "TRUNC of DECFLOAT returns DECFLOAT."
 catches = "computed in FLOAT: the fraction of a 20-digit value lost, or 0.29 at scale 2 off by one ulp"
 reading = "the page: input_expr \"must be one of the numeric data types, such as DECFLOAT, FLOAT, or NUMBER\"; scale_expr an integer, default 0, negative allowed; the result keeps the input type"
-cases = ["cases/translation/functions/trunc.trunc.toml#t004-decfloat"]
+cases = ["cases/translation/functions/trunc.trunc.toml#t004_decfloat"]
 required = true
 
 [[obligation]]
@@ -2415,7 +2415,7 @@ target = "input_expr"
 note = "TRUNC of NULL."
 catches = "NULL turned into 0"
 reading = "the page: input_expr \"must be one of the numeric data types, such as DECFLOAT, FLOAT, or NUMBER\"; scale_expr an integer, default 0, negative allowed; the result keeps the input type"
-cases = ["cases/translation/functions/trunc.trunc.toml#t005-null-x"]
+cases = ["cases/translation/functions/trunc.trunc.toml#t005_null_x"]
 required = true
 
 [[obligation]]
@@ -2426,7 +2426,7 @@ target = "scale_expr"
 note = "TRUNC with a NULL scale."
 catches = "the NULL scale read as 0"
 reading = "the page: input_expr \"must be one of the numeric data types, such as DECFLOAT, FLOAT, or NUMBER\"; scale_expr an integer, default 0, negative allowed; the result keeps the input type"
-cases = ["cases/translation/functions/trunc.trunc.toml#t006-null-scale"]
+cases = ["cases/translation/functions/trunc.trunc.toml#t006_null_scale"]
 required = true
 
 [[obligation]]
@@ -2438,7 +2438,7 @@ target = "rounding_scale"
 note = "Scales past the input scale and far negative."
 catches = "scale capped or wrapping"
 reading = "the page: input_expr \"must be one of the numeric data types, such as DECFLOAT, FLOAT, or NUMBER\"; scale_expr an integer, default 0, negative allowed; the result keeps the input type"
-cases = ["cases/translation/functions/trunc.trunc.toml#t007-scale-past"]
+cases = ["cases/translation/functions/trunc.trunc.toml#t007_scale_past"]
 required = true
 
 [[obligation]]
@@ -2450,7 +2450,7 @@ target = "negative"
 note = "Negative values at the rounding step."
 catches = "FLOOR used for negatives (TRUNC(-2.7) is -2), or the date TRUNC chosen"
 reading = "the page: input_expr \"must be one of the numeric data types, such as DECFLOAT, FLOAT, or NUMBER\"; scale_expr an integer, default 0, negative allowed; the result keeps the input type"
-cases = ["cases/translation/functions/trunc.trunc.toml#t008-negatives"]
+cases = ["cases/translation/functions/trunc.trunc.toml#t008_negatives"]
 required = true
 
 [[obligation]]
@@ -2461,7 +2461,7 @@ target = "NUMBER(38,0)"
 note = "TRUNCATE of integers with a negative scale."
 catches = "FLOOR used for negatives (TRUNCATE(-2.7) is -2); or a negative scale ignored"
 reading = "the page: input_expr \"must be one of the numeric data types, such as DECFLOAT, FLOAT, or NUMBER\"; scale_expr an integer, default 0, negative allowed; the result keeps the input type"
-cases = ["cases/translation/functions/trunc.truncate.toml#t001-int"]
+cases = ["cases/translation/functions/trunc.truncate.toml#t001_int"]
 required = true
 
 [[obligation]]
@@ -2472,7 +2472,7 @@ target = "NUMBER(12,4)"
 note = "TRUNCATE of NUMBER(12,4) with and without a scale."
 catches = "FLOOR used for negatives (TRUNCATE(-2.7) is -2)"
 reading = "the page: input_expr \"must be one of the numeric data types, such as DECFLOAT, FLOAT, or NUMBER\"; scale_expr an integer, default 0, negative allowed; the result keeps the input type"
-cases = ["cases/translation/functions/trunc.truncate.toml#t002-dec"]
+cases = ["cases/translation/functions/trunc.truncate.toml#t002_dec"]
 required = true
 
 [[obligation]]
@@ -2483,7 +2483,7 @@ target = "FLOAT"
 note = "TRUNCATE of FLOAT returns FLOAT."
 catches = "FLOOR used for negatives (TRUNCATE(-2.7) is -2); or a NUMBER returned"
 reading = "the page: input_expr \"must be one of the numeric data types, such as DECFLOAT, FLOAT, or NUMBER\"; scale_expr an integer, default 0, negative allowed; the result keeps the input type"
-cases = ["cases/translation/functions/trunc.truncate.toml#t003-float"]
+cases = ["cases/translation/functions/trunc.truncate.toml#t003_float"]
 required = true
 
 [[obligation]]
@@ -2494,7 +2494,7 @@ target = "DECFLOAT"
 note = "TRUNCATE of DECFLOAT returns DECFLOAT."
 catches = "computed in FLOAT: the fraction of a 20-digit value lost, or 0.29 at scale 2 off by one ulp"
 reading = "the page: input_expr \"must be one of the numeric data types, such as DECFLOAT, FLOAT, or NUMBER\"; scale_expr an integer, default 0, negative allowed; the result keeps the input type"
-cases = ["cases/translation/functions/trunc.truncate.toml#t004-decfloat"]
+cases = ["cases/translation/functions/trunc.truncate.toml#t004_decfloat"]
 required = true
 
 [[obligation]]
@@ -2505,7 +2505,7 @@ target = "input_expr"
 note = "TRUNCATE of NULL."
 catches = "NULL turned into 0"
 reading = "the page: input_expr \"must be one of the numeric data types, such as DECFLOAT, FLOAT, or NUMBER\"; scale_expr an integer, default 0, negative allowed; the result keeps the input type"
-cases = ["cases/translation/functions/trunc.truncate.toml#t005-null-x"]
+cases = ["cases/translation/functions/trunc.truncate.toml#t005_null_x"]
 required = true
 
 [[obligation]]
@@ -2516,7 +2516,7 @@ target = "scale_expr"
 note = "TRUNCATE with a NULL scale."
 catches = "the NULL scale read as 0"
 reading = "the page: input_expr \"must be one of the numeric data types, such as DECFLOAT, FLOAT, or NUMBER\"; scale_expr an integer, default 0, negative allowed; the result keeps the input type"
-cases = ["cases/translation/functions/trunc.truncate.toml#t006-null-scale"]
+cases = ["cases/translation/functions/trunc.truncate.toml#t006_null_scale"]
 required = true
 
 [[obligation]]
@@ -2528,7 +2528,7 @@ target = "rounding_scale"
 note = "Scales past the input scale and far negative."
 catches = "a negative scale beyond the integer digits not giving 0, or a scale above the input scale changing the value"
 reading = "the page: input_expr \"must be one of the numeric data types, such as DECFLOAT, FLOAT, or NUMBER\"; scale_expr an integer, default 0, negative allowed; the result keeps the input type"
-cases = ["cases/translation/functions/trunc.truncate.toml#t007-scale-past"]
+cases = ["cases/translation/functions/trunc.truncate.toml#t007_scale_past"]
 required = true
 
 [[obligation]]
@@ -2540,7 +2540,7 @@ target = "negative"
 note = "Negative values at the rounding step."
 catches = "FLOOR used for negatives (TRUNCATE(-2.7) is -2)"
 reading = "the page: input_expr \"must be one of the numeric data types, such as DECFLOAT, FLOAT, or NUMBER\"; scale_expr an integer, default 0, negative allowed; the result keeps the input type"
-cases = ["cases/translation/functions/trunc.truncate.toml#t008-negatives"]
+cases = ["cases/translation/functions/trunc.truncate.toml#t008_negatives"]
 required = true
 
 [[obligation]]
@@ -2551,7 +2551,7 @@ target = "NUMBER(38,0)"
 note = "WIDTH_BUCKET of integers, including below and above the range."
 catches = "buckets numbered from 0, or the overflow buckets 0 and n+1 missing"
 reading = "the page: expr, min_value and max_value numeric within -(2^53 - 1) to 2^53 - 1, the end points \"not be equal\"; num_buckets \"must be a positive integer value\""
-cases = ["cases/translation/functions/width-bucket.toml#t001-int"]
+cases = ["cases/translation/functions/width-bucket.toml#t001_int"]
 required = true
 
 [[obligation]]
@@ -2562,7 +2562,7 @@ target = "NUMBER(10,2)"
 note = "WIDTH_BUCKET of fixed-point values on bucket edges."
 catches = "edges assigned to the lower bucket"
 reading = "the page: expr, min_value and max_value numeric within -(2^53 - 1) to 2^53 - 1, the end points \"not be equal\"; num_buckets \"must be a positive integer value\""
-cases = ["cases/translation/functions/width-bucket.toml#t002-dec"]
+cases = ["cases/translation/functions/width-bucket.toml#t002_dec"]
 required = true
 
 [[obligation]]
@@ -2573,7 +2573,7 @@ target = "FLOAT"
 note = "WIDTH_BUCKET of FLOAT values with FLOAT end points."
 catches = "integer end points assumed"
 reading = "the page: expr, min_value and max_value numeric within -(2^53 - 1) to 2^53 - 1, the end points \"not be equal\"; num_buckets \"must be a positive integer value\""
-cases = ["cases/translation/functions/width-bucket.toml#t003-float"]
+cases = ["cases/translation/functions/width-bucket.toml#t003_float"]
 required = true
 
 [[obligation]]
@@ -2584,7 +2584,7 @@ target = "min_value > max_value"
 note = "End points given high to low."
 catches = "the end points swapped back, numbering buckets upwards"
 reading = "the page: expr, min_value and max_value numeric within -(2^53 - 1) to 2^53 - 1, the end points \"not be equal\"; num_buckets \"must be a positive integer value\""
-cases = ["cases/translation/functions/width-bucket.toml#t004-reversed"]
+cases = ["cases/translation/functions/width-bucket.toml#t004_reversed"]
 required = true
 
 [[obligation]]
@@ -2595,7 +2595,7 @@ target = "expr"
 note = "NULL value."
 catches = "NULL put in bucket 0"
 reading = "the page: expr, min_value and max_value numeric within -(2^53 - 1) to 2^53 - 1, the end points \"not be equal\"; num_buckets \"must be a positive integer value\""
-cases = ["cases/translation/functions/width-bucket.toml#t005-null-expr"]
+cases = ["cases/translation/functions/width-bucket.toml#t005_null_expr"]
 required = true
 
 [[obligation]]
@@ -2606,7 +2606,7 @@ target = "min_value"
 note = "NULL low end point."
 catches = "NULL read as 0"
 reading = "the page: expr, min_value and max_value numeric within -(2^53 - 1) to 2^53 - 1, the end points \"not be equal\"; num_buckets \"must be a positive integer value\""
-cases = ["cases/translation/functions/width-bucket.toml#t006-null-min"]
+cases = ["cases/translation/functions/width-bucket.toml#t006_null_min"]
 required = true
 
 [[obligation]]
@@ -2617,7 +2617,7 @@ target = "max_value"
 note = "NULL high end point."
 catches = "NULL read as 0"
 reading = "the page: expr, min_value and max_value numeric within -(2^53 - 1) to 2^53 - 1, the end points \"not be equal\"; num_buckets \"must be a positive integer value\""
-cases = ["cases/translation/functions/width-bucket.toml#t007-null-max"]
+cases = ["cases/translation/functions/width-bucket.toml#t007_null_max"]
 required = true
 
 [[obligation]]
@@ -2628,7 +2628,7 @@ target = "num_buckets"
 note = "NULL bucket count."
 catches = "NULL read as 1"
 reading = "the page: expr, min_value and max_value numeric within -(2^53 - 1) to 2^53 - 1, the end points \"not be equal\"; num_buckets \"must be a positive integer value\""
-cases = ["cases/translation/functions/width-bucket.toml#t008-null-n"]
+cases = ["cases/translation/functions/width-bucket.toml#t008_null_n"]
 required = true
 
 [[obligation]]
@@ -2640,7 +2640,7 @@ target = "magnitude"
 note = "Values at the documented 2^53 - 1 limit."
 catches = "precision loss rounding the limit into another bucket"
 reading = "the page: expr, min_value and max_value numeric within -(2^53 - 1) to 2^53 - 1, the end points \"not be equal\"; num_buckets \"must be a positive integer value\""
-cases = ["cases/translation/functions/width-bucket.toml#t009-range-edge"]
+cases = ["cases/translation/functions/width-bucket.toml#t009_range_edge"]
 required = true
 
 [[obligation]]
@@ -2651,7 +2651,7 @@ target = "error"
 note = "num_buckets 0 is an error."
 catches = "bucket 0 returned"
 reading = "the page: expr, min_value and max_value numeric within -(2^53 - 1) to 2^53 - 1, the end points \"not be equal\"; num_buckets \"must be a positive integer value\""
-cases = ["cases/translation/functions/width-bucket.toml#t010-zero-buckets"]
+cases = ["cases/translation/functions/width-bucket.toml#t010_zero_buckets"]
 required = true
 
 [[obligation]]
@@ -2662,5 +2662,5 @@ target = "error"
 note = "Equal end points are an error."
 catches = "division by zero returning NULL or infinity"
 reading = "the page: expr, min_value and max_value numeric within -(2^53 - 1) to 2^53 - 1, the end points \"not be equal\"; num_buckets \"must be a positive integer value\""
-cases = ["cases/translation/functions/width-bucket.toml#t011-equal-ends"]
+cases = ["cases/translation/functions/width-bucket.toml#t011_equal_ends"]
 required = true

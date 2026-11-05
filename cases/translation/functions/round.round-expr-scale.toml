@@ -3,7 +3,7 @@ construct = "sf.functions.round.round-expr-scale"
 session_profile = "utc-v1"
 
 [[case]]
-id = "t001-int"
+id = "t001_int"
 description = "ROUND of integers with a negative scale. Catches: half-to-even (1400) instead of half away from zero (1500), or a negative scale ignored"
 columns = [{ name = "x", type = "NUMBER(38,0)" }, { name = "s", type = "NUMBER(38,0)" }]
 rows = [
@@ -16,7 +16,7 @@ order = "ordered"
 tags = ["type-combination"]
 
 [[case]]
-id = "t002-dec"
+id = "t002_dec"
 description = "ROUND of NUMBER(12,4) halves. Catches: banker's rounding (2.5 to 2) instead of half away from zero (3), or truncation"
 columns = [{ name = "x", type = "NUMBER(12,4)" }]
 rows = [
@@ -30,7 +30,7 @@ order = "ordered"
 tags = ["type-combination"]
 
 [[case]]
-id = "t003-float"
+id = "t003_float"
 description = "ROUND of FLOAT halves exact in binary. Catches: half-to-even for FLOAT, or a NUMBER returned"
 columns = [{ name = "x", type = "FLOAT" }]
 rows = [
@@ -43,7 +43,7 @@ order = "ordered"
 tags = ["type-combination"]
 
 [[case]]
-id = "t004-decfloat"
+id = "t004_decfloat"
 description = "ROUND of DECFLOAT returns DECFLOAT. Catches: computed in FLOAT (1.005 rounds to 1.01 in DECFLOAT)"
 columns = [{ name = "x", type = "DECFLOAT" }]
 rows = [
@@ -55,7 +55,7 @@ order = "ordered"
 tags = ["type-combination"]
 
 [[case]]
-id = "t005-mode-even"
+id = "t005_mode_even"
 description = "rounding_mode 'HALF_TO_EVEN' on fixed-point. Catches: the mode ignored (2.5 to 3 instead of 2)"
 columns = [{ name = "x", type = "NUMBER(12,4)" }]
 rows = [
@@ -69,7 +69,7 @@ order = "ordered"
 tags = ["type-combination"]
 
 [[case]]
-id = "t006-mode-away"
+id = "t006_mode_away"
 description = "rounding_mode 'HALF_AWAY_FROM_ZERO' spelled out. Catches: the mode read as half-even (-0.0250 to -0.02 instead of -0.03)"
 columns = [{ name = "x", type = "NUMBER(12,4)" }]
 rows = [
@@ -81,7 +81,7 @@ order = "ordered"
 tags = ["type-combination"]
 
 [[case]]
-id = "t007-null-x"
+id = "t007_null_x"
 description = "ROUND of NULL. Catches: NULL turned into 0"
 columns = [{ name = "x", type = "NUMBER(12,4)" }]
 rows = [
@@ -92,7 +92,7 @@ order = "ordered"
 tags = ["null"]
 
 [[case]]
-id = "t008-null-scale"
+id = "t008_null_scale"
 description = "ROUND with a NULL scale. Catches: the NULL scale read as 0"
 columns = [{ name = "x", type = "NUMBER(12,4)" }, { name = "s", type = "NUMBER(38,0)" }]
 rows = [
@@ -103,7 +103,7 @@ order = "ordered"
 tags = ["null"]
 
 [[case]]
-id = "t009-scale"
+id = "t009_scale"
 description = "Scales past the input scale and a carry across digits. Catches: carry lost (9.995 to 9.99) or scale capped"
 columns = [{ name = "x", type = "NUMBER(12,4)" }, { name = "s", type = "NUMBER(38,0)" }]
 rows = [
@@ -116,7 +116,7 @@ order = "ordered"
 tags = ["boundary"]
 
 [[case]]
-id = "t010-max"
+id = "t010_max"
 description = "Rounding 38-digit integers at scale -1, near the 38-digit limit. Catches: overflow to FLOAT"
 columns = [{ name = "x", type = "NUMBER(38,0)" }]
 rows = [
@@ -128,7 +128,7 @@ order = "ordered"
 tags = ["boundary"]
 
 [[case]]
-id = "t011-mode-float"
+id = "t011_mode_float"
 description = "A rounding_mode with a FLOAT input is an error. Catches: the mode applied to FLOAT instead of the documented error"
 columns = [{ name = "x", type = "FLOAT" }]
 rows = [
@@ -139,7 +139,7 @@ order = "ordered"
 tags = ["error"]
 
 [[case]]
-id = "t012-mode-bad"
+id = "t012_mode_bad"
 description = "An unknown rounding_mode is an error. Catches: the mode ignored"
 columns = [{ name = "x", type = "NUMBER(12,4)" }]
 rows = [
@@ -150,7 +150,7 @@ order = "ordered"
 tags = ["error"]
 
 [[case]]
-id = "t013-expr-no-scale"
+id = "t013_expr_no_scale"
 description = "EXPR => without SCALE => is an error, as the page says. Catches: SCALE defaulted to 0"
 columns = [{ name = "x", type = "NUMBER(12,4)" }]
 rows = [

@@ -3,7 +3,7 @@ construct = "sf.functions.exp"
 session_profile = "utc-v1"
 
 [[case]]
-id = "t001-float"
+id = "t001_float"
 description = "EXP of FLOAT values. Catches: LN computed, or e^x read as 10^x"
 columns = [{ name = "x", type = "FLOAT" }]
 rows = [
@@ -16,7 +16,7 @@ order = "ordered"
 tags = ["type-combination"]
 
 [[case]]
-id = "t002-fixed"
+id = "t002_fixed"
 description = "EXP of NUMBER(12,4), converted to FLOAT. Catches: LN computed, or e^x read as 10^x; or the result left fixed-point"
 columns = [{ name = "x", type = "NUMBER(12,4)" }]
 rows = [
@@ -28,7 +28,7 @@ order = "ordered"
 tags = ["type-combination"]
 
 [[case]]
-id = "t003-decfloat"
+id = "t003_decfloat"
 description = "EXP of DECFLOAT, which returns DECFLOAT. Catches: a DECFLOAT argument computed and returned as FLOAT"
 columns = [{ name = "x", type = "DECFLOAT" }]
 rows = [
@@ -40,7 +40,7 @@ order = "ordered"
 tags = ["type-combination"]
 
 [[case]]
-id = "t004-null"
+id = "t004_null"
 description = "EXP of NULL. Catches: NULL turned into 0 or NaN"
 columns = [{ name = "x", type = "FLOAT" }]
 rows = [
@@ -51,7 +51,7 @@ order = "ordered"
 tags = ["null"]
 
 [[case]]
-id = "t005-overflow-inf"
+id = "t005_overflow_inf"
 description = "Past the double range. Catches: infinity versus error"
 columns = [{ name = "x", type = "FLOAT" }]
 rows = [

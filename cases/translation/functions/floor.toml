@@ -3,7 +3,7 @@ construct = "sf.functions.floor"
 session_profile = "utc-v1"
 
 [[case]]
-id = "t001-int"
+id = "t001_int"
 description = "FLOOR of integers with a negative scale. Catches: CEIL or truncation used (FLOOR(-2.1) is -3); or a negative scale ignored"
 columns = [{ name = "x", type = "NUMBER(38,0)" }, { name = "s", type = "NUMBER(38,0)" }]
 rows = [
@@ -16,7 +16,7 @@ order = "ordered"
 tags = ["type-combination"]
 
 [[case]]
-id = "t002-dec"
+id = "t002_dec"
 description = "FLOOR of NUMBER(12,4) with and without a scale. Catches: CEIL or truncation used (FLOOR(-2.1) is -3)"
 columns = [{ name = "x", type = "NUMBER(12,4)" }]
 rows = [
@@ -30,7 +30,7 @@ order = "ordered"
 tags = ["type-combination"]
 
 [[case]]
-id = "t003-float"
+id = "t003_float"
 description = "FLOOR of FLOAT returns FLOAT. Catches: CEIL or truncation used (FLOOR(-2.1) is -3); or a NUMBER returned"
 columns = [{ name = "x", type = "FLOAT" }]
 rows = [
@@ -43,7 +43,7 @@ order = "ordered"
 tags = ["type-combination"]
 
 [[case]]
-id = "t004-decfloat"
+id = "t004_decfloat"
 description = "FLOOR of DECFLOAT returns DECFLOAT. Catches: computed in FLOAT: the fraction of a 20-digit value lost, or 0.29 at scale 2 off by one ulp"
 columns = [{ name = "x", type = "DECFLOAT" }]
 rows = [
@@ -57,7 +57,7 @@ order = "ordered"
 tags = ["type-combination"]
 
 [[case]]
-id = "t005-null-x"
+id = "t005_null_x"
 description = "FLOOR of NULL. Catches: NULL turned into 0"
 columns = [{ name = "x", type = "NUMBER(12,4)" }, { name = "s", type = "NUMBER(38,0)" }]
 rows = [
@@ -68,7 +68,7 @@ order = "ordered"
 tags = ["null"]
 
 [[case]]
-id = "t006-null-scale"
+id = "t006_null_scale"
 description = "FLOOR with a NULL scale. Catches: the NULL scale read as 0"
 columns = [{ name = "x", type = "NUMBER(12,4)" }, { name = "s", type = "NUMBER(38,0)" }]
 rows = [
@@ -79,7 +79,7 @@ order = "ordered"
 tags = ["null"]
 
 [[case]]
-id = "t007-scale-past"
+id = "t007_scale_past"
 description = "Scales past the input scale and far negative. Catches: scale capped or wrapping"
 columns = [{ name = "x", type = "NUMBER(12,4)" }, { name = "s", type = "NUMBER(38,0)" }]
 rows = [
@@ -92,7 +92,7 @@ order = "ordered"
 tags = ["boundary"]
 
 [[case]]
-id = "t008-negatives"
+id = "t008_negatives"
 description = "Negative values at the rounding step. Catches: CEIL or truncation used (FLOOR(-2.1) is -3)"
 columns = [{ name = "x", type = "NUMBER(10,2)" }]
 rows = [

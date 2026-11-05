@@ -3,7 +3,7 @@ construct = "sf.functions.width-bucket"
 session_profile = "utc-v1"
 
 [[case]]
-id = "t001-int"
+id = "t001_int"
 description = "WIDTH_BUCKET of integers, including below and above the range. Catches: buckets numbered from 0, or the overflow buckets 0 and n+1 missing"
 columns = [{ name = "x", type = "NUMBER(38,0)" }]
 rows = [
@@ -20,7 +20,7 @@ order = "ordered"
 tags = ["type-combination"]
 
 [[case]]
-id = "t002-dec"
+id = "t002_dec"
 description = "WIDTH_BUCKET of fixed-point values on bucket edges. Catches: edges assigned to the lower bucket"
 columns = [{ name = "x", type = "NUMBER(10,2)" }]
 rows = [
@@ -34,7 +34,7 @@ order = "ordered"
 tags = ["type-combination"]
 
 [[case]]
-id = "t003-float"
+id = "t003_float"
 description = "WIDTH_BUCKET of FLOAT values with FLOAT end points. Catches: integer end points assumed"
 columns = [{ name = "x", type = "FLOAT" }]
 rows = [
@@ -47,7 +47,7 @@ order = "ordered"
 tags = ["type-combination"]
 
 [[case]]
-id = "t004-reversed"
+id = "t004_reversed"
 description = "End points given high to low. Catches: the end points swapped back, numbering buckets upwards"
 columns = [{ name = "x", type = "NUMBER(38,0)" }]
 rows = [
@@ -61,7 +61,7 @@ order = "ordered"
 tags = ["type-combination"]
 
 [[case]]
-id = "t005-null-expr"
+id = "t005_null_expr"
 description = "NULL value. Catches: NULL put in bucket 0"
 columns = [{ name = "x", type = "NUMBER(38,0)" }]
 rows = [
@@ -72,7 +72,7 @@ order = "ordered"
 tags = ["null"]
 
 [[case]]
-id = "t006-null-min"
+id = "t006_null_min"
 description = "NULL low end point. Catches: NULL read as 0"
 columns = [{ name = "x", type = "NUMBER(38,0)" }, { name = "m", type = "NUMBER(38,0)" }]
 rows = [
@@ -83,7 +83,7 @@ order = "ordered"
 tags = ["null"]
 
 [[case]]
-id = "t007-null-max"
+id = "t007_null_max"
 description = "NULL high end point. Catches: NULL read as 0"
 columns = [{ name = "x", type = "NUMBER(38,0)" }, { name = "m", type = "NUMBER(38,0)" }]
 rows = [
@@ -94,7 +94,7 @@ order = "ordered"
 tags = ["null"]
 
 [[case]]
-id = "t008-null-n"
+id = "t008_null_n"
 description = "NULL bucket count. Catches: NULL read as 1"
 columns = [{ name = "x", type = "NUMBER(38,0)" }, { name = "n", type = "NUMBER(38,0)" }]
 rows = [
@@ -105,7 +105,7 @@ order = "ordered"
 tags = ["null"]
 
 [[case]]
-id = "t009-range-edge"
+id = "t009_range_edge"
 description = "Values at the documented 2^53 - 1 limit. Catches: precision loss rounding the limit into another bucket"
 columns = [{ name = "x", type = "NUMBER(38,0)" }]
 rows = [
@@ -119,7 +119,7 @@ order = "ordered"
 tags = ["boundary"]
 
 [[case]]
-id = "t010-zero-buckets"
+id = "t010_zero_buckets"
 description = "num_buckets 0 is an error. Catches: bucket 0 returned"
 columns = [{ name = "x", type = "NUMBER(38,0)" }]
 rows = [
@@ -130,7 +130,7 @@ order = "ordered"
 tags = ["error"]
 
 [[case]]
-id = "t011-equal-ends"
+id = "t011_equal_ends"
 description = "Equal end points are an error. Catches: division by zero returning NULL or infinity"
 columns = [{ name = "x", type = "NUMBER(38,0)" }]
 rows = [
