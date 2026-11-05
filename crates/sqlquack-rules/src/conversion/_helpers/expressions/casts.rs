@@ -664,7 +664,7 @@ pub(crate) fn number_literal_text(node: &Value) -> Option<String> {
 /// An integer literal as Snowflake writes it as text: no plus sign, leading zero or negative zero.
 fn is_written_integer(text: &str) -> bool {
     let digits = text.strip_prefix('-').unwrap_or(text);
-    is_unsigned_integer(digits) && (digits == "0" || !digits.starts_with('0')) && text != "-0"
+    is_unsigned_integer(digits) && !(digits.starts_with('0') && text.len() > 1)
 }
 
 fn is_plain_decimal(text: &str) -> bool {

@@ -347,8 +347,7 @@ pub(crate) fn last_day(
     })
 }
 
-/// DATEADD(unit, amount, value) with a NUMBER(p,0) amount: the value's type, a TIMESTAMP_NTZ widened
-/// to nanoseconds as Snowflake was recorded widening it.
+/// DATEADD(unit, amount, value) with a NUMBER(p,0) amount; a TIMESTAMP_NTZ widens to nanoseconds.
 pub(crate) fn date_add(
     (unit, amount, value): (&Value, &Value, &Value),
     construct: &Construct,
