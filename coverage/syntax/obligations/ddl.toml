@@ -50366,57 +50366,57 @@ target = "<number_of_seconds> in [ IDLE_AUTO_SHUTDOWN_TIME_SECONDS = <number_of_
 note = "a string literal in place of <number_of_seconds>"
 
 [[obligation]]
-id = "sf.ddl.alter-notebook.set.o021"
+id = "sf.ddl.alter-notebook.set.o047"
 kind = "option_present"
 required = true
-target = "[ SECRETS = ( '<secret_variable_name>' = <secret_name> ) [ , ... ] ]"
+target = "[ SECRETS = ( '<secret_variable_name>' = <secret_name> [ , ... ] ) ]"
 
 [[obligation]]
-id = "sf.ddl.alter-notebook.set.o022"
+id = "sf.ddl.alter-notebook.set.o048"
 kind = "option_absent"
 required = true
-target = "[ SECRETS = ( '<secret_variable_name>' = <secret_name> ) [ , ... ] ]"
+target = "[ SECRETS = ( '<secret_variable_name>' = <secret_name> [ , ... ] ) ]"
 
 [[obligation]]
-id = "sf.ddl.alter-notebook.set.o023"
+id = "sf.ddl.alter-notebook.set.o049"
 kind = "required_operand_missing"
 required = true
-target = "'<secret_variable_name>' in [ SECRETS = ( '<secret_variable_name>' = <secret_name> ) [ , ... ] ]"
+target = "'<secret_variable_name>' in [ SECRETS = ( '<secret_variable_name>' = <secret_name> [ , ... ] ) ]"
 note = "omit '<secret_variable_name>'"
 
 [[obligation]]
-id = "sf.ddl.alter-notebook.set.o024"
+id = "sf.ddl.alter-notebook.set.o050"
 kind = "operand_type_class"
 required = true
-target = "'<secret_variable_name>' in [ SECRETS = ( '<secret_variable_name>' = <secret_name> ) [ , ... ] ]"
+target = "'<secret_variable_name>' in [ SECRETS = ( '<secret_variable_name>' = <secret_name> [ , ... ] ) ]"
 note = "a valid string_literal"
 
 [[obligation]]
-id = "sf.ddl.alter-notebook.set.o025"
+id = "sf.ddl.alter-notebook.set.o051"
 kind = "negative_neighbour"
 required = true
-target = "'<secret_variable_name>' in [ SECRETS = ( '<secret_variable_name>' = <secret_name> ) [ , ... ] ]"
+target = "'<secret_variable_name>' in [ SECRETS = ( '<secret_variable_name>' = <secret_name> [ , ... ] ) ]"
 note = "an unquoted identifier in place of '<secret_variable_name>'"
 
 [[obligation]]
-id = "sf.ddl.alter-notebook.set.o026"
+id = "sf.ddl.alter-notebook.set.o052"
 kind = "required_operand_missing"
 required = true
-target = "<secret_name> in [ SECRETS = ( '<secret_variable_name>' = <secret_name> ) [ , ... ] ]"
+target = "<secret_name> in [ SECRETS = ( '<secret_variable_name>' = <secret_name> [ , ... ] ) ]"
 note = "omit <secret_name>"
 
 [[obligation]]
-id = "sf.ddl.alter-notebook.set.o027"
+id = "sf.ddl.alter-notebook.set.o053"
 kind = "operand_type_class"
 required = true
-target = "<secret_name> in [ SECRETS = ( '<secret_variable_name>' = <secret_name> ) [ , ... ] ]"
+target = "<secret_name> in [ SECRETS = ( '<secret_variable_name>' = <secret_name> [ , ... ] ) ]"
 note = "a valid identifier"
 
 [[obligation]]
-id = "sf.ddl.alter-notebook.set.o028"
+id = "sf.ddl.alter-notebook.set.o054"
 kind = "negative_neighbour"
 required = true
-target = "<secret_name> in [ SECRETS = ( '<secret_variable_name>' = <secret_name> ) [ , ... ] ]"
+target = "<secret_name> in [ SECRETS = ( '<secret_variable_name>' = <secret_name> [ , ... ] ) ]"
 note = "a string literal in place of <secret_name>"
 
 [[obligation]]
@@ -50451,16 +50451,16 @@ required = true
 note = "the form without its required SET"
 
 [[obligation]]
-id = "sf.ddl.alter-notebook.set.o034"
+id = "sf.ddl.alter-notebook.set.o055"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required ( in [ SECRETS = ( '<secret_variable_name>' = <secret_name> ) [ , ... ] ]"
+note = "the form without its required ( in [ SECRETS = ( '<secret_variable_name>' = <secret_name> [ , ... ] ) ]"
 
 [[obligation]]
-id = "sf.ddl.alter-notebook.set.o035"
+id = "sf.ddl.alter-notebook.set.o056"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required ) in [ SECRETS = ( '<secret_variable_name>' = <secret_name> ) [ , ... ] ]"
+note = "the form without its required ) in [ SECRETS = ( '<secret_variable_name>' = <secret_name> [ , ... ] ) ]"
 
 [[obligation]]
 id = "sf.ddl.alter-notebook.set.o036"

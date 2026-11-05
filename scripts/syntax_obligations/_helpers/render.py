@@ -74,6 +74,7 @@ from scripts.syntax_obligations.constants import (
     STRING_CLASS,
     TOKEN_ELISION,
     TOKEN_KEYWORD,
+    TOKEN_PUNCT,
     TOKEN_LITERAL,
     TOKEN_PLACEHOLDER,
 )
@@ -564,7 +565,11 @@ def _separator_start(*, before: list[str]) -> int:
 
 
 def _keywords_only(branch: tuple[Node, ...]) -> bool:
-    return all(token.token_kind == TOKEN_KEYWORD for token in _tokens(branch))
+    """Whether a branch is fixed words: keywords, dotted ones such as SNOWFLAKE.ML.FORECAST included."""
+    return all(
+        token.token_kind == TOKEN_KEYWORD or (token.token_kind == TOKEN_PUNCT and token.text == ".")
+        for token in _tokens(branch)
+    )
 
 
 def _tokens(nodes: tuple[Node, ...]) -> list[Node]:
