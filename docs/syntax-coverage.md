@@ -273,6 +273,15 @@ with `captured` in place of `cases`: a 603 record on a construct no obligation r
 whose retired cases are not resolved against the cases file. Diagnostics are format-checked and
 listed, never scored. The checker ignores `semantic-limits/` and `lane-reviews/`.
 
+## Marks (`marks/<family>.jsonl`)
+
+An optional file per family in which the catalogue records how it settled a case: one JSON object
+per line with `case_id`, `sql_sha256`, `obligations` and `mark`. `mark` is `documented (D113)` for a
+case that follows its documentation against Snowflake's syntax error, or `settled accept (D133)` or
+`settled reject (D133)`. Each mark must name a case with that `sql_sha256` and those `obligations`,
+and a case is marked at most once; any other value is refused. The checker uses the documented
+marks in `diff` only.
+
 ## Reviews (`reviews/*.toml`)
 
 A `[[review]]` has these fields:
@@ -391,8 +400,14 @@ results on stdout and progress on stderr:
 part of `make check-ci`, runs `diff` against it and fails in two cases. The first is a coverage
 regression: a form the baseline records as verified or excluded that no longer is, a satisfied
 obligation that no longer is, or a receipted case Snowflake parsed that the base parser accepted
-and the current one rejects. That last line catches a case that moves from an opaque acceptance,
-which satisfies no obligation, to a rejection; a pull request that has one explains each case. A
+and the current one rejects, or a case Snowflake refused as syntax that the base parser rejected
+and the current one accepts. Both join each case to its receipts by SQL, setup and session hashes,
+whatever the case expects: Snowflake parsed a case when every receipt has a non-syntax phase and an
+errno other than 1003, and refused it when every receipt is a syntax error with errno 1003 or 921;
+a positionless 1003 or receipts that disagree count as neither. The first line catches a case that
+moves from an opaque acceptance, which satisfies no obligation, to a rejection; a pull request that
+has one explains each case. A case marked `documented (D113)` that the current parser now accepts
+is listed on its own line for the auditor and does not fail the diff (decision D135). A
 snapshot taken before these case lists existed has none, so it reports no such case. The second is a catalogue change: a changed sources, aliases or
 catalogue file, or a form added or removed. Catalogue changes are reported separately from
 coverage changes. Gains pass. After a reviewed gain or catalogue change, re-record the baseline

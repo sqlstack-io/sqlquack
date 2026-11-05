@@ -20,6 +20,16 @@ pub const RECEIPTS_DIR: &str = "receipts";
 pub const REVIEWS_DIR: &str = "reviews";
 /// Obligations Snowflake answers only with an internal error, one optional TOML file per family.
 pub const UNOBSERVABLE_DIR: &str = "unobservable";
+/// The catalogue's case marks, one optional JSON Lines file per family (decision D135).
+pub const MARKS_DIR: &str = "marks";
+/// A case that follows its documentation against Snowflake's syntax error (D113).
+pub const MARK_DOCUMENTED: &str = "documented (D113)";
+/// Every mark a case can carry.
+pub const MARKS: [&str; 3] = [
+    MARK_DOCUMENTED,
+    "settled accept (D133)",
+    "settled reject (D133)",
+];
 /// Hand-added limits, suppressions and grammar readings; the checker loads the readings.
 pub const LIMITS_FILE: &str = "limits.toml";
 /// Every family, each with a catalogue, an obligation and a case file.

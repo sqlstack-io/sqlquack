@@ -1,6 +1,6 @@
 //! The syntax-coverage files: sources, catalogue, obligations, cases, receipts and reviews.
 
-use std::collections::BTreeMap;
+use std::collections::{BTreeMap, BTreeSet};
 
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
@@ -191,6 +191,16 @@ pub enum ObligationKind {
     InteractionAllOptions,
     /// A size or nesting value with no documented bound (decision D90).
     Extreme,
+}
+
+/// One line of `marks/<family>.jsonl`: how the catalogue settled one case.
+#[derive(Clone, Debug, PartialEq, Eq, Deserialize, Serialize)]
+#[serde(deny_unknown_fields)]
+pub struct Mark {
+    pub case_id: String,
+    pub sql_sha256: String,
+    pub obligations: Vec<String>,
+    pub mark: String,
 }
 
 /// One line of `cases/<family>.jsonl`.
@@ -561,4 +571,6 @@ pub struct SyntaxCoverage {
     pub readings: Vec<Reading>,
     /// SHA-256 of the sources, aliases, catalogue and obligation files, by relative path.
     pub file_hashes: BTreeMap<String, String>,
+    /// Cases marked documented (D113), whose acceptance against a syntax error is intended.
+    pub documented_cases: BTreeSet<String>,
 }

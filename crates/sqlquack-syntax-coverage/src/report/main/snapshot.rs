@@ -1,9 +1,10 @@
 //! `snapshot`: the claims of one check, bound to the catalogue it ran on.
 
-use std::collections::{BTreeMap, BTreeSet};
+use std::collections::BTreeSet;
 
 use crate::check::models::{CheckResult, LocalVerdict, SnowflakeSyntax};
 use crate::formats::constants::{ALIASES_FILE, CATALOGUE_DIR, SNAPSHOT_FORMAT, SOURCES_FILE};
+use crate::formats::models::SyntaxCoverage;
 use crate::report::models::Snapshot;
 
 /// Whether a coverage path belongs to the catalogue rather than to obligations or evidence.
@@ -31,16 +32,17 @@ fn by_snowflake(
         .collect()
 }
 
-/// The snapshot of `check`; `file_hashes` are the loaded files' hashes by relative path.
+/// The snapshot of `check` on `coverage`, the tree it checked.
 pub fn snapshot(
     check: &CheckResult,
-    file_hashes: &BTreeMap<String, String>,
+    coverage: &SyntaxCoverage,
     catalogue_commit: &str,
 ) -> Snapshot {
     Snapshot {
         format: SNAPSHOT_FORMAT.to_owned(),
         catalogue_commit: catalogue_commit.to_owned(),
-        catalogue_files: file_hashes
+        catalogue_files: coverage
+            .file_hashes
             .iter()
             .filter(|(path, _)| is_catalogue_file(path))
             .map(|(path, hash)| (path.clone(), hash.clone()))
@@ -62,5 +64,6 @@ pub fn snapshot(
         refused_cases: by_snowflake(check, SnowflakeSyntax::Parsed, false),
         syntax_error_cases_rejected: by_snowflake(check, SnowflakeSyntax::Refused, false),
         syntax_error_cases_accepted: by_snowflake(check, SnowflakeSyntax::Refused, true),
+        documented_cases: coverage.documented_cases.clone(),
     }
 }

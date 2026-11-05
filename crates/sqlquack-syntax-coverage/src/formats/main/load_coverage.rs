@@ -4,12 +4,14 @@ use std::collections::BTreeMap;
 use std::path::Path;
 
 use crate::formats::_helpers::sections::{Sections, load_sections};
-use crate::formats::models::{Definition, Form, SyntaxCoverage};
+use crate::formats::constants::MARK_DOCUMENTED;
+use crate::formats::models::{Case, Definition, Form, SyntaxCoverage};
 
 /// Every file under `root`, or every format problem found; nothing is skipped or defaulted.
 pub fn load_coverage(root: &Path) -> Result<SyntaxCoverage, Vec<String>> {
     let sections: Sections = load_sections(root);
-    let problems: Vec<String> = sections.problems();
+    let mut problems: Vec<String> = sections.problems();
+    problems.extend(unmatched_marks(&sections));
     if !problems.is_empty() {
         return Err(problems);
     }
@@ -38,5 +40,39 @@ pub fn load_coverage(root: &Path) -> Result<SyntaxCoverage, Vec<String>> {
         diagnostics: sections.unobservable.records.1,
         readings: sections.readings.records,
         file_hashes,
+        documented_cases: sections
+            .marks
+            .records
+            .into_iter()
+            .filter(|mark| mark.mark == MARK_DOCUMENTED)
+            .map(|mark| mark.case_id)
+            .collect(),
     })
+}
+
+/// Marks naming no case, or a case whose SQL or obligations differ from the mark's.
+fn unmatched_marks(sections: &Sections) -> Vec<String> {
+    let cases: BTreeMap<&str, &Case> = sections
+        .cases
+        .records
+        .values()
+        .flatten()
+        .map(|case| (case.case_id.as_str(), case))
+        .collect();
+    sections
+        .marks
+        .records
+        .iter()
+        .filter(|mark| {
+            cases.get(mark.case_id.as_str()).is_none_or(|case| {
+                case.sql_sha256 != mark.sql_sha256 || case.obligations != mark.obligations
+            })
+        })
+        .map(|mark| {
+            format!(
+                "mark {}: matches no case's SQL and obligations",
+                mark.case_id
+            )
+        })
+        .collect()
 }
