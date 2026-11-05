@@ -370,13 +370,25 @@ class _Renderer:
         branch: tuple[Node, ...] = node.branches[choices.branch.get(key, 0)]
         if is_repetition(branch) and not any(placeholder_name(n) for n in _tokens(branch)):
             start: int = _repeat_start(before=before, keywords=set(self._keywords))
+            cut_by_keyword: bool = start >= 0 and before[start] not in CLOSE_REPEAT_AFTER
             item: list[str] = before[start + 1 :]
+            if cut_by_keyword:
+                item = self._whole_choice(item=item, before=before)
             other: list[str] = self._other_branch(item=item, choices=choices)
             return [",", *(other or [self._repeat(text) for text in item])]
         rendered: list[str] = self._sequence(nodes=branch, choices=choices)
         if is_repetition(branch) and _ends_in_continuation(branch) and rendered:
             return [*rendered, LIST_SEPARATOR, *(self._repeat(text) for text in rendered)]
         return rendered
+
+    def _whole_choice(self, *, item: list[str], before: list[str]) -> list[str]:
+        """The item, widened to the last chosen branch when a keyword inside that branch cut it short."""
+        if self._last_choice is None:
+            return item
+        chosen: list[str] = self._last_choice[2]
+        if len(chosen) > len(item) and before[-len(chosen) :] == chosen:
+            return chosen
+        return item
 
     def _other_branch(self, *, item: list[str], choices: _Choices) -> list[str]:
         """The next branch of the choice a list item copies, so a list names distinct items."""

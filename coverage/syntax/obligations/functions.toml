@@ -57652,13 +57652,6 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "sf.functions.spcs-cancel-job.o002"
-kind = "required_operand_missing"
-required = true
-target = "<service_name>"
-note = "omit <service_name>"
-
-[[obligation]]
 id = "sf.functions.spcs-cancel-job.o003"
 kind = "operand_type_class"
 required = true
@@ -57698,6 +57691,14 @@ required = true
 target = "<service_name>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.functions.spcs-cancel-job.o010"
+kind = "required_operand_missing"
+required = true
+target = "<service_name>"
+anchor = "doc.functions.spcs_cancel_job / Syntax"
+note = "omit <service_name>, observed"
 
 [[obligation]]
 id = "sf.functions.spcs-get-events.o001"
