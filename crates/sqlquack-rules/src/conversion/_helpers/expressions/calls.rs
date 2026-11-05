@@ -167,7 +167,9 @@ pub(crate) fn convert_function(payload: &Value, site: Site<'_>) -> Result<Emitte
                 SnowflakeType::Varchar,
             ))
         }
-        ("CONCAT", parts) if !parts.is_empty() => concatenate(parts, &construct, site),
+        ("CONCAT", parts) if !parts.is_empty() => {
+            concatenate(&parts.iter().collect::<Vec<_>>(), &construct, site)
+        }
         ("CONCAT_WS", parts) => concatenate_with_separator(parts, &construct, site),
         ("CONTAINS", parts) => text_contains(parts, &construct, site),
         ("EDITDISTANCE", parts) => edit_distance(parts, &construct, site),

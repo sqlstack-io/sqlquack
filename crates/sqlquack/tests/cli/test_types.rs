@@ -267,3 +267,14 @@ pub(crate) struct TranslationStatementTestCase {
     /// One construct its statement must list as used.
     pub(crate) expected_use: &'static str,
 }
+
+/// A flat chain of `terms` copies of an operand joined by `operator`, and how converting it ends.
+pub(crate) struct DeepChainTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) operator: &'static str,
+    pub(crate) operand: &'static str,
+    pub(crate) terms: usize,
+    pub(crate) expected_exit: Option<i32>,
+    /// Text standard error must hold, such as the refusal's code.
+    pub(crate) expected_mention: &'static str,
+}

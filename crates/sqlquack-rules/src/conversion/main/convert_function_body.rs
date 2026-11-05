@@ -9,6 +9,7 @@ use crate::conversion::_helpers::queries::function_body::{
     check_body, converted_body, held_types, parameters_joined, refused, require_declared_types,
     selected_columns,
 };
+use crate::conversion::_helpers::support::depth::positioned;
 use crate::conversion::_helpers::support::locations::Locator;
 use crate::conversion::_helpers::support::scope::{Context, OrderTrack};
 use crate::conversion::_helpers::support::tree::session_tree;
@@ -26,8 +27,7 @@ pub fn convert_function_body(
     if spec.language != FunctionLanguage::Sql {
         return Err(refused("only SQL function bodies convert"));
     }
-    let positioned = serde_json::to_value(query)
-        .map_err(|error| refused(&format!("the tree does not serialise: {error}")))?;
+    let positioned = positioned(query)?;
     let tree = session_tree(&positioned, options.quoted_identifiers_ignore_case)
         .map_err(|reason| refused(&reason))?;
     let locator = Locator::new(&tree, &positioned, lines);
