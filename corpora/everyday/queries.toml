@@ -751,8 +751,8 @@ expect_repository = "translated"
 [[query]]
 category = "aggregates"
 sql = '''SELECT COUNT(*) FILTER (WHERE status = 'shipped') AS shipped FROM orders'''
-expect = "refused SQ0002 fn:COUNT"
-expect_repository = "refused SQ0002 fn:COUNT"
+expect = "parse SQ0001"
+expect_repository = "parse SQ0001"
 snowflake = "rejects 1003"
 
 [[query]]

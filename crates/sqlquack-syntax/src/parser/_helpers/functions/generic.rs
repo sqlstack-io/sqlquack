@@ -530,7 +530,7 @@ impl Parser {
 
     /// Parse optional FILTER clause
     pub(crate) fn parse_filter_clause(&mut self) -> Result<Option<Expression>> {
-        if self.match_token(TokenType::Filter) {
+        if !self.applies_snowflake_context_rules() && self.match_token(TokenType::Filter) {
             self.expect_token(TokenType::LParen)?;
             self.match_token(TokenType::Where);
             let filter_expr = self.parse_expression()?;
@@ -595,7 +595,8 @@ impl Parser {
             expr
         };
 
-        let expr = if self.match_token(TokenType::Filter) {
+        let expr = if !self.applies_snowflake_context_rules() && self.match_token(TokenType::Filter)
+        {
             self.expect_token(TokenType::LParen)?;
             self.expect_token(TokenType::Where)?;
             let filter_expr = self.parse_expression()?;

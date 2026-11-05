@@ -1255,7 +1255,7 @@ fn given_snowflake_secret_resource_monitor_and_integration_alters_when_parsing_t
 }
 
 #[test]
-fn given_an_operator_snowflake_does_not_have_when_parsing_then_it_is_refused() {
+fn given_an_operator_or_clause_snowflake_does_not_have_when_parsing_then_it_is_refused() {
     let test_cases = [
         SnowflakeVerdictTestCase {
             description: "== for equality (recorded errno 2139, refused at parse per D171)",
@@ -1287,6 +1287,16 @@ fn given_an_operator_snowflake_does_not_have_when_parsing_then_it_is_refused() {
             description: "NOT IN before a bare value",
             sql: "SELECT order_id FROM orders WHERE status NOT IN 'shipped'",
             expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "an aggregate FILTER clause (recorded errno 1003)",
+            sql: "SELECT COUNT(*) FILTER (WHERE status = 'shipped') AS shipped FROM orders",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "keeps the FILTER function over an array",
+            sql: "SELECT FILTER ( [ 1 , 2 ] , x -> x > 1 ) ;",
+            expected_kind: Some("select"),
         },
         SnowflakeVerdictTestCase {
             description: "keeps a single = and IN or NOT IN before a list or a query",
