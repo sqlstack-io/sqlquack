@@ -3,10 +3,9 @@
 obligation = "sf.expressions.operators-subquery.in.o016"
 form = "sf.expressions.operators-subquery.in"
 construct = "IN subqueries nested 24 levels deep; no documented bound (100 levels timed out at 30 s, errno 630, import 142): SELECT 1 IN ( SELECT 1 WHERE 1 IN ( SELECT 1 WHERE 1 IN ( SELECT 1 WHERE 1 IN ( SELECT 1 WHERE 1 IN ( SELECT 1 WHERE 1 IN ( SELECT 1 WHERE 1 IN ( SELECT 1 WHERE 1 IN ( SELECT 1 WHERE 1 IN ( SELECT 1 WHERE 1 IN ( SELECT 1 WHERE 1 IN ( SELECT 1 WHERE 1 IN ( SELECT 1 WHERE 1 IN ( SELECT 1 WHERE 1 IN ( SELECT 1 WHERE 1 IN ( SELECT 1 WHERE 1 IN ( SELECT 1 WHERE 1 IN ( SELECT 1 WHERE 1 IN ( SELECT 1 WHERE 1 IN ( SELECT 1 WHERE 1 IN ( SELECT 1 WHERE 1 IN ( SELECT 1 WHERE 1 IN ( SELECT 1 WHERE 1 IN ( SELECT 1 WHERE 1 IN ( SELECT 1 ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ;"
-reason = "not submitted: held by the run d133-q, refused (errno 630): statement timeout at 24 levels"
-cause = "not_submitted"
+reason = "statement timeout 630 (57014) in d133-q, as at 100 levels in import 142: statement timeout at 24 levels; the bounded 30 s timeout cancelled it, no phase is established, and the run is not retried (the 12-level row is receipted)"
 cases = [
   { case_id = "sf.expressions.operators-subquery.in.k49b299d0cc7e", sql_sha256 = "49b299d0cc7eb75ec132674cb4e6f9c1b2fa46209496c1ef1ca3305be388847a" },
 ]
-runs = []
+runs = ["d133-q"]
 probes = []

@@ -53439,3 +53439,27 @@ cases = [
 ]
 runs = []
 probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.create-task.create-or-alter-task.o015"
+form = "sf.ddl.create-task.create-or-alter-task"
+construct = "a valid string_literal: CREATE OR ALTER TASK v1 USER_TASK_MANAGED_INITIAL_WAREHOUSE_SIZE = 'm' SCHEDULE = '1 MINUTES' CONFIG = 'm' OVERLAP_POLICY = NO_OVERLAP USER_TASK_TIMEOUT_MS = 1 LOCK_TIMEOUT = 1 , STATEMENT_TIMEOUT_IN_SECONDS = 1 SUSPEND_TASK_AFTER_NUM_FAILURES = 1 ERROR_INTEGRATION = i1 SUCCESS_INTEGRATION = i1 COMMENT = 'm' FINALIZE = 'm' TASK_AUTO_RETRY_ATTEMPTS = 1 AFTER v1 , v1 EXECUTE AS USER v1 WHEN TRUE AS SELECT 1 ;"
+reason = "not submitted: held by the offline screen, packet cat-d133b, ddl_sweep: billable or out-of-account"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.create-task.create-or-alter-task.k7770087dadfe", sql_sha256 = "7770087dadfe7ca55103971af1525821aaa2321cdfc8c8a2ffb4849073f5abcc" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.create-task.create-task-as.o038"
+form = "sf.ddl.create-task.create-task-as"
+construct = "a valid string_literal: CREATE OR REPLACE TASK IF NOT EXISTS v1 WITH TAG ( v1 = 'm' , v1 = 'm' ) WITH CONTACT ( STEWARD = v1 , STEWARD = v1 ) USER_TASK_MANAGED_INITIAL_WAREHOUSE_SIZE = 'm' SCHEDULE = '1 MINUTES' CONFIG = 'm' OVERLAP_POLICY = NO_OVERLAP LOCK_TIMEOUT = 1 , STATEMENT_TIMEOUT_IN_SECONDS = 1 USER_TASK_TIMEOUT_MS = 1 SUSPEND_TASK_AFTER_NUM_FAILURES = 1 ERROR_INTEGRATION = i1 SUCCESS_INTEGRATION = i1 LOG_LEVEL = 'm' COMMENT = 'm' FINALIZE = 'm' TASK_AUTO_RETRY_ATTEMPTS = 1 USER_TASK_MINIMUM_TRIGGER_INTERVAL_IN_SECONDS = 1 TARGET_COMPLETION_INTERVAL = '1 MINUTES' SERVERLESS_TASK_MIN_STATEMENT_SIZE = 'XSMALL' SERVERLESS_TASK_MAX_STATEMENT_SIZE = 'XSMALL' AFTER v1 , v1 EXECUTE AS USER v1 WHEN TRUE AS SELECT 1 ;"
+reason = "not submitted: held by the offline screen, packet cat-d133b, ddl_sweep: billable or out-of-account"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.create-task.create-task-as.k2b125b6d826d", sql_sha256 = "2b125b6d826dafcd566bc827ccab69f5a994e370e8c4a2d11b7c14c403daa1cc" },
+]
+runs = []
+probes = []
