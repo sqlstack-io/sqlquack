@@ -1182,17 +1182,26 @@ fn given_a_frame_when_converting_avg_over_a_window_then_it_averages_the_frame_va
     let test_cases = [
         BuiltFirstValueTestCase {
             description: "a ROWS frame skips NULLs and keeps six more decimal places",
-            sql: averaged("PARTITION BY g ORDER BY n ROWS BETWEEN 2 PRECEDING AND CURRENT ROW", 3),
+            sql: averaged(
+                "PARTITION BY g ORDER BY n ROWS BETWEEN 2 PRECEDING AND CURRENT ROW",
+                3,
+            ),
             expected_outcome: Ok("1.500000"),
         },
         BuiltFirstValueTestCase {
             description: "the sixth place is rounded half up",
-            sql: averaged("PARTITION BY g ORDER BY n ROWS BETWEEN 3 PRECEDING AND CURRENT ROW", 4),
+            sql: averaged(
+                "PARTITION BY g ORDER BY n ROWS BETWEEN 3 PRECEDING AND CURRENT ROW",
+                4,
+            ),
             expected_outcome: Ok("1.666667"),
         },
         BuiltFirstValueTestCase {
             description: "a frame without values is NULL",
-            sql: averaged("PARTITION BY g ORDER BY n ROWS BETWEEN 2 PRECEDING AND 1 PRECEDING", 1),
+            sql: averaged(
+                "PARTITION BY g ORDER BY n ROWS BETWEEN 2 PRECEDING AND 1 PRECEDING",
+                1,
+            ),
             expected_outcome: Ok("null"),
         },
         BuiltFirstValueTestCase {
@@ -1204,6 +1213,51 @@ fn given_a_frame_when_converting_avg_over_a_window_then_it_averages_the_frame_va
             description: "an ordered window without a frame runs to the current row",
             sql: averaged("PARTITION BY g ORDER BY n", 2),
             expected_outcome: Ok("1.000000"),
+        },
+    ];
+    for test_case in test_cases {
+        assert_eq!(
+            shop_first_outcome(&test_case.sql, test_case.expected_outcome),
+            test_case
+                .expected_outcome
+                .map(str::to_owned)
+                .map_err(str::to_owned),
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_system_typeof_with_its_suffix_removed_when_converting_then_the_static_type_is_named() {
+    let stripped = |operand: &str| {
+        format!("SELECT REGEXP_REPLACE(SYSTEM$TYPEOF({operand}), '\\\\[.*\\\\]$', '') AS v")
+    };
+    let test_cases = [
+        BuiltFirstValueTestCase {
+            description: "a TIME cast is TIME(9)",
+            sql: stripped("'13:45:01'::TIME"),
+            expected_outcome: Ok("TIME(9)"),
+        },
+        BuiltFirstValueTestCase {
+            description: "CURRENT_DATE is DATE",
+            sql: stripped("CURRENT_DATE()"),
+            expected_outcome: Ok("DATE"),
+        },
+        BuiltFirstValueTestCase {
+            description: "a NUMBER(18,2) minus NULL keeps a widened NUMBER",
+            sql: stripped("1.50::NUMBER(18,2) - NULL"),
+            expected_outcome: Ok("NUMBER(19,2)"),
+        },
+        BuiltFirstValueTestCase {
+            description: "bare SYSTEM$TYPEOF refuses, as its suffix depends on the plan",
+            sql: "SELECT SYSTEM$TYPEOF(1) AS v".to_owned(),
+            expected_outcome: Err("storage suffix"),
+        },
+        BuiltFirstValueTestCase {
+            description: "text refuses, as its length is not tracked",
+            sql: stripped("'x'"),
+            expected_outcome: Err("length or kind is not tracked"),
         },
     ];
     for test_case in test_cases {
