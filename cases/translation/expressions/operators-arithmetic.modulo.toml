@@ -110,7 +110,7 @@ tags = ["error"]
 
 [[case]]
 id = "t010-zero-divisor"
-description = "A zero divisor: records what Snowflake returns there (NaN, Infinity, NULL or an error); re-kinded to error_parity after capture if Snowflake raises an error. Catches: NULL for x % 0 (DuckDB) where Snowflake raises division by zero"
+description = "A zero divisor: records what Snowflake returns there; re-kinded to boundary after capture if Snowflake returns a value instead of an error. Catches: NULL for x % 0 (DuckDB) where Snowflake raises division by zero"
 columns = [{ name = "a", type = "NUMBER(38,0)" }, { name = "b", type = "NUMBER(38,0)" }]
 rows = [
   ["5", "0"],

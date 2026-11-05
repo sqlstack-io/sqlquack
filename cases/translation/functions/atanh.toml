@@ -40,12 +40,13 @@ tags = ["null"]
 
 [[case]]
 id = "t004-near-one"
-description = "Close to the domain edges. Catches: precision near the asymptote"
+description = "Close to the domain edges. Catches: a naive 0.5*LN((1+x)/(1-x)): 0 instead of 1e-17 near zero, or precision lost near the asymptote"
 columns = [{ name = "x", type = "FLOAT" }]
 rows = [
   ["0.999999"],
   ["-0.999999"],
   ["0.9999999999999999"],
+  ["1e-17"],
 ]
 query = "SELECT ATANH(x) AS r FROM input ORDER BY ordinal"
 order = "ordered"
