@@ -22,7 +22,6 @@ use crate::expressions::schema_objects::models::FunctionUsingResource;
 use crate::expressions::schema_objects::models::SqlDataAccess;
 use crate::expressions::statements::models::Command;
 use crate::expressions::statements::models::Comment;
-use crate::expressions::statements::models::ExecuteObject;
 use crate::expressions::statements::models::ExecuteParameter;
 use crate::expressions::statements::models::ExecuteStatement;
 use crate::expressions::statements::models::Grant;
@@ -39,7 +38,6 @@ use crate::expressions::tables::models::CollateProperty;
 use crate::expressions::tables::models::Property;
 use crate::expressions::tree::models::Expression;
 use crate::expressions::types::models::DataType;
-use crate::parser::constants::EXECUTE_DCM_PROJECT;
 use crate::parser::constants::FUNCTION;
 use crate::parser::constants::PROCEDURE;
 use crate::parser::constants::QUALIFIED_NAME_PARTS;
@@ -94,6 +92,9 @@ impl Parser {
         let call_token = self.advance()?;
         if let Some(call) = self.parse_snowflake_method_call()? {
             return Ok(call);
+        }
+        if self.applies_snowflake_context_rules() {
+            return self.parse_call_target(None);
         }
 
         let mut tokens = vec![("CALL".to_string(), call_token.token_type)];
@@ -161,63 +162,6 @@ impl Parser {
         )
     }
 
-    /// Snowflake `EXECUTE ALERT | EXPERIMENT | TASK [ GRAPH ] | DCM PROJECT <name>` with its action, or none.
-    fn parse_snowflake_execute_object(&mut self) -> Result<Option<Expression>> {
-        let start = self.current;
-        let kind = if self.match_text_seq(&["ALERT"]) {
-            "ALERT"
-        } else if self.match_text_seq(&["DCM", "PROJECT"]) {
-            EXECUTE_DCM_PROJECT
-        } else if self.match_text_seq(&["TASK", "GRAPH"]) {
-            "TASK GRAPH"
-        } else if self.match_text_seq(&["TASK"]) {
-            "TASK"
-        } else if self.match_text_seq(&["EXPERIMENT"]) {
-            "EXPERIMENT"
-        } else {
-            return Ok(None);
-        };
-        let name = match kind {
-            "EXPERIMENT" => self.parse_object_name()?,
-            _ => self.parse_object_name_ref()?,
-        };
-        let mut node = ExecuteObject {
-            kind: kind.to_owned(),
-            name,
-            action: None,
-            group: None,
-            alias: None,
-            config: None,
-        };
-        if kind.starts_with("TASK") {
-            if self.match_text_seq(&["RETRY", "LAST"]) {
-                node.action = Some("RETRY LAST".to_owned());
-            } else if self.match_text_seq(&["RETRY", "GRAPH", "RUN", "GROUP"]) {
-                node.action = Some("RETRY GRAPH RUN".to_owned());
-                if !self.check(TokenType::String) {
-                    return Err(self.parse_error("Expected the graph run group as a string"));
-                }
-                node.group = Some(self.parse_primary()?);
-            } else if self.match_text_seq(&["USING", "CONFIG"]) {
-                self.expect_token(TokenType::Eq)?;
-                node.config = Some(self.parse_primary()?);
-            }
-        } else if kind == EXECUTE_DCM_PROJECT {
-            if self.match_text_seq(&["PURGE"]) {
-                node.action = Some("PURGE".to_owned());
-                if self.match_token(TokenType::As) {
-                    node.alias = Some(self.parse_simple_name()?);
-                }
-            } else if self.match_text_seq(&["TEST", "ALL"]) {
-                node.action = Some("TEST ALL".to_owned());
-            } else {
-                self.current = start;
-                return Ok(None);
-            }
-        }
-        Ok(Some(Expression::ExecuteObject(Box::new(node))))
-    }
-
     /// Parses TSQL EXEC/EXECUTE [schema.]procedure [@param = value, ...].
     pub(crate) fn parse_execute(&mut self) -> Result<Expression> {
         self.expect_token(TokenType::Execute)?;
@@ -227,6 +171,11 @@ impl Parser {
         ) {
             if let Some(statement) = self.parse_snowflake_execute_object()? {
                 return Ok(statement);
+            }
+            if self.applies_snowflake_context_rules()
+                && self.match_text_seq(&["USING", "POLICY_CONTEXT"])
+            {
+                return self.parse_execute_using_policy_context();
             }
             if self.current + 1 >= self.tokens.len() || self.check_next(TokenType::Semicolon) {
                 return Err(self.parse_error("Expected an object kind and name after EXECUTE"));

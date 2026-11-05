@@ -42,13 +42,38 @@ pub(crate) fn lossless_failure(sql: &str, dialect: Dialect, parsed: bool) -> Opt
     }
 }
 
+/// `value` with each Snowflake `NOT NULL` element wrapper replaced by its inner type, which polyglot lacks.
+fn without_not_null(value: serde_json::Value) -> serde_json::Value {
+    match value {
+        serde_json::Value::Object(mut object)
+            if object.get("data_type").and_then(serde_json::Value::as_str) == Some("not_null") =>
+        {
+            object
+                .remove("inner")
+                .map(without_not_null)
+                .unwrap_or(serde_json::Value::Object(object))
+        }
+        serde_json::Value::Object(object) => serde_json::Value::Object(
+            object
+                .into_iter()
+                .map(|(key, field)| (key, without_not_null(field)))
+                .collect(),
+        ),
+        serde_json::Value::Array(items) => {
+            serde_json::Value::Array(items.into_iter().map(without_not_null).collect())
+        }
+        other => other,
+    }
+}
+
 /// polyglot's Snowflake rendering of `data_type`, cut to its upper-case base name.
 pub(crate) fn polyglot_base_type_name(
     data_type: &sqlquack_syntax::DataType,
     dialect: polyglot_sql::DialectType,
 ) -> String {
-    let converted =
-        serde_json::to_value(data_type).and_then(serde_json::from_value::<polyglot_sql::DataType>);
+    let converted = serde_json::to_value(data_type)
+        .map(without_not_null)
+        .and_then(serde_json::from_value::<polyglot_sql::DataType>);
     let theirs = match converted {
         Ok(theirs) => theirs,
         Err(_) => return "<unconvertible>".to_owned(),

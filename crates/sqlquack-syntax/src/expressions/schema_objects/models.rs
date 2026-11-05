@@ -215,6 +215,7 @@ pub struct AlterView {
 pub enum AlterViewAction {
     /// Rename the view
     Rename(Box<TableRef>),
+    DataMetricFunction(crate::expressions::columns::models::DataMetricFunctionAction),
     /// Change owner
     OwnerTo(Identifier),
     /// Set schema

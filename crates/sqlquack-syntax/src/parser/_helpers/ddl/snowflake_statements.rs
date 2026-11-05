@@ -1,5 +1,7 @@
 //! Snowflake's rules on session, transaction, EXPLAIN and SHOW statements.
 
+use crate::expressions::functions::models::Operator;
+use crate::expressions::names::models::Identifier;
 use crate::expressions::statements::models::Describe;
 use crate::expressions::tree::models::Expression;
 use crate::parser::constants::{SHARED_DESCRIBE_KINDS, SNOWFLAKE_DESCRIBE_KINDS};
@@ -11,6 +13,21 @@ impl Parser {
     /// Whether the parser reads Snowflake.
     pub(crate) fn is_snowflake(&self) -> bool {
         self.config.dialect == Some(crate::tokens::models::DialectType::Snowflake)
+    }
+
+    /// Chains Snowflake statements with the flow operator, as in `SELECT 1 ->> SELECT * FROM $1`.
+    pub(crate) fn parse_snowflake_flow(&mut self, first: Expression) -> Result<Expression> {
+        let mut flow = first;
+        while self.applies_snowflake_context_rules() && self.match_token(TokenType::DArrow) {
+            let next = self.parse_statement()?;
+            flow = Expression::Operator(Box::new(Operator {
+                this: Box::new(flow),
+                operator: Some(Box::new(Expression::Identifier(Identifier::new("->>")))),
+                expression: Box::new(next),
+                comments: Vec::new(),
+            }));
+        }
+        Ok(flow)
     }
 
     /// Refuses Snowflake's `START TRANSACTION NAME` without a name after it.

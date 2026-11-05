@@ -8,6 +8,7 @@ use crate::expressions::schema_objects::models::CreateProcedure;
 use crate::expressions::schema_objects::models::FunctionBody;
 use crate::expressions::schema_objects::models::FunctionParameter;
 use crate::expressions::tree::models::Expression;
+use crate::expressions::types::models::DataType;
 use crate::expressions::types::models::StructField;
 use crate::parser::models::Dialect;
 use crate::parser::models::Parser;
@@ -30,18 +31,7 @@ impl Parser {
     pub(crate) fn parse_anonymous_procedure(&mut self, name: &Identifier) -> Result<Expression> {
         self.expect_token(TokenType::Procedure)?;
         let parameters = self.parse_anonymous_procedure_parameters()?;
-        if !self.match_token(TokenType::Returns) {
-            return Err(self.parse_error("Expected RETURNS after the procedure parameters"));
-        }
-        let (return_type, returns_table) = if self.match_token(TokenType::Table) {
-            (None, Some(self.parse_procedure_table_columns()?))
-        } else {
-            let data_type = self.parse_data_type()?;
-            if !self.match_keywords(&[TokenType::Not, TokenType::Null]) {
-                self.match_token(TokenType::Null);
-            }
-            (Some(data_type), None)
-        };
+        let (return_type, returns_table) = self.parse_procedure_returns()?;
         if !self.match_token(TokenType::Language) {
             return Err(self.parse_error("Expected LANGUAGE after the procedure return type"));
         }
@@ -60,8 +50,27 @@ impl Parser {
         Ok(Expression::CreateProcedure(Box::new(procedure)))
     }
 
+    /// `RETURNS { <type> [[NOT] NULL] | TABLE ( ... ) }` after the parameters.
+    pub(crate) fn parse_procedure_returns(
+        &mut self,
+    ) -> Result<(Option<DataType>, Option<Vec<StructField>>)> {
+        if !self.match_token(TokenType::Returns) {
+            return Err(self.parse_error("Expected RETURNS after the procedure parameters"));
+        }
+        if self.match_token(TokenType::Table) {
+            return Ok((None, Some(self.parse_procedure_table_columns()?)));
+        }
+        let data_type = self.parse_data_type()?;
+        if !self.match_keywords(&[TokenType::Not, TokenType::Null]) {
+            self.match_token(TokenType::Null);
+        }
+        Ok((Some(data_type), None))
+    }
+
     /// `( [<name> <type> [DEFAULT <expr>]] [, ...] )` with no empty or trailing entries.
-    fn parse_anonymous_procedure_parameters(&mut self) -> Result<Vec<FunctionParameter>> {
+    pub(crate) fn parse_anonymous_procedure_parameters(
+        &mut self,
+    ) -> Result<Vec<FunctionParameter>> {
         self.expect_token(TokenType::LParen)?;
         let mut parameters: Vec<FunctionParameter> = Vec::new();
         while !self.check(TokenType::RParen) {
@@ -197,19 +206,18 @@ impl Parser {
         Ok(FunctionBody::Statements(statements))
     }
 
-    /// `CALL <name> ( [[<arg> =>] <value>, ...] ) [INTO :<variable>]` after a WITH clause.
+    /// `CALL <name> ( ... ) [INTO :<variable>]` after a WITH clause.
     pub(crate) fn parse_call_with(&mut self, with: With) -> Result<Expression> {
         if !self.check_identifier("CALL") {
             return Err(self.parse_error("Expected CALL after an anonymous procedure"));
         }
         self.skip();
-        let mut name = vec![self.expect_identifier_or_keyword_with_quoted()?];
-        while self.match_token(TokenType::Dot) {
-            name.push(self.expect_identifier_or_keyword_with_quoted()?);
-        }
-        for part in &name {
-            self.reject_reserved_name_part(part)?;
-        }
+        self.parse_call_target(Some(with))
+    }
+
+    /// `<name> ( [[<arg> =>] <value>, ...] ) [INTO :<variable>]` after CALL.
+    pub(crate) fn parse_call_target(&mut self, with: Option<With>) -> Result<Expression> {
+        let name = self.parse_call_name()?;
         self.expect_token(TokenType::LParen)?;
         let arguments = if self.check(TokenType::RParen) {
             Vec::new()
@@ -232,7 +240,7 @@ impl Parser {
             arguments,
             asynchronous: false,
             hints: Vec::new(),
-            with: Some(with),
+            with,
             into,
         })))
     }

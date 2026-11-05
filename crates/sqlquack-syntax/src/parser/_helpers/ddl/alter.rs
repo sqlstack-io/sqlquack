@@ -39,7 +39,9 @@ use crate::tokens::types::Result;
 impl Parser {
     /// Parse ALTER TABLE action
     pub(crate) fn parse_alter_action(&mut self) -> Result<AlterTableAction> {
-        if self.match_token(TokenType::Add) {
+        if let Some(action) = self.parse_data_metric_function_action()? {
+            Ok(AlterTableAction::DataMetricFunction(action))
+        } else if self.match_token(TokenType::Add) {
             self.parse_alter_add_action()
         } else if self.match_token(TokenType::Drop) {
             self.parse_alter_drop_action()

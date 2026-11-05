@@ -551,9 +551,59 @@ pub enum ColumnPosition {
     After(Identifier),
 }
 
+/// Snowflake `{ ADD | DROP | MODIFY } DATA METRIC FUNCTION <name> ON ( ... ) [ <clause> ], ...`.
+#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct DataMetricFunctionAction {
+    /// `ADD`, `DROP` or `MODIFY`.
+    pub kind: String,
+    pub items: Vec<DataMetricFunctionItem>,
+}
+
+/// One `<name> ON ( <argument>, ... )` of a data metric function action, with its clauses.
+#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct DataMetricFunctionItem {
+    pub name: TableRef,
+    pub arguments: Vec<Expression>,
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub clauses: Vec<DataMetricFunctionClause>,
+}
+
+/// A clause after a data metric function's arguments.
+#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub enum DataMetricFunctionClause {
+    /// `SENSITIVITY = <value>` or `ANOMALY_DETECTION = <value>`.
+    Property {
+        name: String,
+        value: Expression,
+    },
+    /// `[ ADD | DROP | MODIFY ] EXPECTATION <expectation>, ...`.
+    Expectations {
+        action: Option<String>,
+        expectations: Vec<DataMetricExpectation>,
+    },
+    /// `WITHIN GROUP ( <column>, ... ) [ GROUP LIMIT <n> ]`.
+    WithinGroup {
+        columns: Vec<Expression>,
+        limit: Option<Expression>,
+    },
+    ExecuteAsRole(Identifier),
+    /// `FILTER ( [ <condition> ] )`.
+    Filter(Option<Expression>),
+    /// `SUSPEND` or `RESUME`.
+    State(String),
+}
+
+/// A data metric function expectation: its name and, except under DROP, its condition.
+#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct DataMetricExpectation {
+    pub name: Identifier,
+    pub condition: Option<Expression>,
+}
+
 /// Actions for ALTER TABLE
 #[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub enum AlterTableAction {
+    DataMetricFunction(DataMetricFunctionAction),
     AddColumn {
         column: ColumnDef,
         if_not_exists: bool,

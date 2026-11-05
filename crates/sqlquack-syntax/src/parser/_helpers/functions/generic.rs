@@ -437,6 +437,9 @@ impl Parser {
     }
 
     pub(crate) fn parse_method_arguments_for(&mut self, method: &str) -> Result<Vec<Expression>> {
+        if let Some(query) = self.parse_snowflake_query_argument()? {
+            return Ok(vec![query]);
+        }
         self.parse_function_arguments_in_context(Some(method), true)
     }
 
@@ -1007,7 +1010,8 @@ impl Parser {
                 self.config.dialect,
                 Some(crate::tokens::models::DialectType::DuckDB)
                     | Some(crate::tokens::models::DialectType::SQLite)
-            ) && self.match_token(TokenType::DArrow)
+            ) && !self.applies_snowflake_context_rules()
+                && self.match_token(TokenType::DArrow)
             {
                 let path = self.parse_json_path_operand()?;
                 expr = Expression::JsonExtractScalar(Box::new(JsonExtractFunc {
@@ -1495,6 +1499,11 @@ impl Parser {
                 return Err(self.parse_error("Snowflake frame bounds take a number, not a string"));
             }
             let expr = self.parse_addition()?;
+            if self.applies_snowflake_context_rules()
+                && matches!(&expr, Expression::Literal(literal) if matches!(**literal, Literal::String(_)))
+            {
+                return Err(self.parse_error("A Snowflake frame bound value is not a string"));
+            }
             if self.match_token(TokenType::Preceding) {
                 let text = self.tokens[self.current - 1].text.to_string();
                 Ok((WindowFrameBound::Preceding(Box::new(expr)), Some(text)))
@@ -1591,6 +1600,7 @@ impl Parser {
             return Ok(None);
         }
 
+        self.refuse_snowflake_interval_name(value.as_ref())?;
         let unit = self.try_parse_interval_unit()?;
 
         let is_generic = self.config.dialect.is_none()

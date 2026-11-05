@@ -1142,3 +1142,80 @@ id = "snowflake_scripting_block"
 marker = "BEGIN"
 sqlquack_node = "scripting_block"
 note = "a Snowflake Scripting block parses into its declarations, statements and handlers; crates/sqlquack-syntax/tests/parser/test_scripting.rs pins the tree"
+
+[[rejection]]
+id = "snowflake_stage_reserved_name"
+sql = "SELECT @select"
+dialects = ["Snowflake"]
+sqlquack_error = "Expected a stage name after @"
+note = "Snowflake reads @ as a stage reference and refuses a bare reserved word as the stage name (recorded syntax_error)"
+
+[[rejection]]
+id = "snowflake_stage_quoted_blank_name"
+sql = "SELECT @`a b`"
+dialects = ["Snowflake"]
+sqlquack_error = "Expected a stage name after @"
+note = "Snowflake refuses a stage reference whose quoted name holds a blank (recorded syntax_error); backticks are no Snowflake quote either"
+
+[[rejection]]
+id = "snowflake_stage_string_name"
+sql = "SELECT @JOIN, @'foo'"
+dialects = ["Snowflake"]
+sqlquack_error = "Expected a stage name after @"
+note = "Snowflake reads @ as a stage reference and refuses a string as the stage name (recorded syntax_error for @'v1')"
+
+[[rejection]]
+id = "snowflake_bare_interval_type_double_colon"
+sql = "SELECT interval '00:00:01'::interval AS foo"
+dialects = ["Snowflake"]
+sqlquack_error = "Expected an interval field such as DAY or YEAR TO MONTH"
+note = "Snowflake's INTERVAL type needs a field (recorded errno 1003 for CAST ( NULL AS INTERVAL ))"
+
+[[rejection]]
+id = "snowflake_bare_interval_type_cast"
+sql = "SELECT CAST(INTERVAL '00:00:01' AS INTERVAL) AS foo"
+dialects = ["Snowflake"]
+sqlquack_error = "Expected an interval field such as DAY or YEAR TO MONTH"
+note = "Snowflake's INTERVAL type needs a field (recorded errno 1003 for CAST ( NULL AS INTERVAL ))"
+
+[[rejection]]
+id = "snowflake_bare_interval_type_double_colon_window"
+sql = "SELECT ROW_NUMBER() OVER(PARTITION BY event_time + interval '00:00:01'::interval) AS foo FROM t"
+dialects = ["Snowflake"]
+sqlquack_error = "Expected an interval field such as DAY or YEAR TO MONTH"
+note = "Snowflake's INTERVAL type needs a field (recorded errno 1003 for CAST ( NULL AS INTERVAL ))"
+
+[[rejection]]
+id = "snowflake_bare_interval_type_cast_window"
+sql = "SELECT ROW_NUMBER() OVER (PARTITION BY event_time + CAST(INTERVAL '00:00:01' AS INTERVAL)) AS foo FROM t"
+dialects = ["Snowflake"]
+sqlquack_error = "Expected an interval field such as DAY or YEAR TO MONTH"
+note = "Snowflake's INTERVAL type needs a field (recorded errno 1003 for CAST ( NULL AS INTERVAL ))"
+
+[[rejection]]
+id = "snowflake_bare_interval_type_cast_string"
+sql = "CAST('1 DAY' AS INTERVAL)"
+dialects = ["Snowflake"]
+sqlquack_error = "Expected an interval field such as DAY or YEAR TO MONTH"
+note = "Snowflake's INTERVAL type needs a field (recorded errno 1003 for CAST ( NULL AS INTERVAL ))"
+
+[[rejection]]
+id = "snowflake_type_bare_interval_cast"
+sql = "SELECT CAST(x AS INTERVAL)"
+dialects = ["Snowflake"]
+sqlquack_error = "Expected an interval field such as DAY or YEAR TO MONTH"
+note = "Snowflake's INTERVAL type needs a field (recorded errno 1003 for CAST ( NULL AS INTERVAL ))"
+
+[[rejection]]
+id = "snowflake_type_bare_interval_try_cast"
+sql = "SELECT TRY_CAST(x AS INTERVAL)"
+dialects = ["Snowflake"]
+sqlquack_error = "Expected an interval field such as DAY or YEAR TO MONTH"
+note = "Snowflake's INTERVAL type needs a field (recorded errno 1003 for CAST ( NULL AS INTERVAL ))"
+
+[[rejection]]
+id = "snowflake_type_bare_interval_double_colon"
+sql = "SELECT x::INTERVAL"
+dialects = ["Snowflake"]
+sqlquack_error = "Expected an interval field such as DAY or YEAR TO MONTH"
+note = "Snowflake's INTERVAL type needs a field (recorded errno 1003 for CAST ( NULL AS INTERVAL ))"
