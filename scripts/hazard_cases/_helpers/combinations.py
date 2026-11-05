@@ -206,9 +206,8 @@ def _partition_case(
     )
 
 
-def family_values(declared: dict[str, Any], count: int = 0) -> list[str]:
-    """A family's unremarkable values in order: benign, other, third where it has one, then as
-    many of its `more` values as `count` arguments of the family need."""
+def family_values(*, declared: dict[str, Any], count: int) -> list[str]:
+    """A family's benign, other and third values, then `more` values until `count` are distinct."""
     values: list[str] = [
         declared[key] for key in ("benign", "other", "third") if declared.get(key) is not None
     ]
@@ -218,8 +217,7 @@ def family_values(declared: dict[str, Any], count: int = 0) -> list[str]:
 def distinct_fill(
     *, form: dict[str, Any], families: dict[str, Any], types: list[str], skip: int | None = None
 ) -> list[str]:
-    """Each argument's cell: the form's override, else its family's next value, so arguments of
-    one family differ. The `skip` position, which a hazard replaces, uses up no value."""
+    """Each argument's override or its family's next value; the hazard's `skip` uses up none."""
     overrides: dict[str, str] = form.get("benign", {})
     counts: dict[str, int] = {family: types.count(family) for family in types}
     seen: dict[str, int] = {}
@@ -228,7 +226,8 @@ def distinct_fill(
         if str(index) in overrides:
             cells.append(overrides[str(index)])
             continue
-        values: list[str] = family_values(families.get(family, {}), counts[family]) or ["NULL"]
+        declared: dict[str, Any] = families.get(family, {})
+        values: list[str] = family_values(declared=declared, count=counts[family]) or ["NULL"]
         cells.append(values[seen.get(family, 0) % len(values)])
         if index != skip:
             seen[family] = seen.get(family, 0) + 1
@@ -238,8 +237,7 @@ def distinct_fill(
 def _arguments(
     *, form: dict[str, Any], families: dict[str, Any], positions: list[Position]
 ) -> tuple[list[Column], list[list[str]], list[str]]:
-    """The columns, rows of cells and template arguments of a combination: benign then other,
-    or, when a family repeats, each rotation of its values and then a row of equal values."""
+    """A combination's columns, rows and arguments: rotations of repeated families, then equals."""
     columns: list[Column] = []
     cells: list[tuple[str | None, list[str], int]] = []
     arguments: list[str] = []
@@ -266,29 +264,33 @@ def _arguments(
         cells.append((family, [], seen.get(family, 0)))
         seen[family] = seen.get(family, 0) + 1
     values_of: dict[str, list[str]] = {
-        family: family_values(families[family], count) for family, count in seen.items()
+        family: family_values(declared=families[family], count=count)
+        for family, count in seen.items()
     }
-    resolved: list[tuple[list[str], int, int]] = [
-        (values_of[family], occurrence, seen[family]) if family else (fixed, 0, 1)
-        for family, fixed, occurrence in cells
-    ]
-    if not any(count > 1 for count in seen.values()):
-        rows: list[list[str]] = [
-            [values[shift % len(values)] for values, _, _ in resolved] for shift in range(2)
-        ]
-        return columns, rows, arguments
-    rows = [
-        [_rotated(values, occurrence, count, shift) for values, occurrence, count in resolved]
-        for shift in range(max(max(len(values), count) for values, _, count in resolved))
-    ]
-    rows.append([values[0] for values, _, _ in resolved])
+    resolved: list[tuple[list[str], int, int]] = []
+    for family, fixed, occurrence in cells:
+        if family is None:
+            resolved.append((fixed, 0, 1))
+        else:
+            resolved.append((values_of[family], occurrence, seen[family]))
+    repeated: bool = any(count > 1 for count in seen.values())
+    shifts: int = max(max(len(values), count) for values, _, count in resolved) if repeated else 2
+    rows: list[list[str]] = []
+    for shift in range(shifts):
+        rows.append(
+            [
+                _rotated(values=values, position=(occurrence, count), shift=shift)
+                for values, occurrence, count in resolved
+            ]
+        )
+    if repeated:
+        rows.append([values[0] for values, _, _ in resolved])
     return columns, rows, arguments
 
 
-def _rotated(values: list[str], occurrence: int, count: int, shift: int) -> str:
-    """The cell of a family's `occurrence`-th argument in row `shift`: a rotation of its values
-    when it has one per argument, else, as for booleans, the other value in that argument's own
-    row only, so no two arguments are equal on every row."""
+def _rotated(*, values: list[str], position: tuple[int, int], shift: int) -> str:
+    """A rotation of the family's values, or with too few values, `other` in its own row only."""
+    occurrence, count = position
     if len(values) >= count:
         return values[(occurrence + shift) % len(values)]
     return values[1] if shift % count == occurrence else values[0]

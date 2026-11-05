@@ -256,10 +256,8 @@ def _rows_case(
     for number, (group, value) in enumerate(template_rows, start=1):
         cell: str = value.replace("{benign}", first["benign"]).replace("{other}", first["other"])
         values: list[str] = [cell, *benign[1:]]
-        # Ordinals run against insertion order and apart from the values, so an aggregate that
-        # ignores its WITHIN GROUP order, or reads the value as the ordinal, gives another result.
         for index in ordinals:
-            values[index] = str(10 * (len(template_rows) - number + 1))
+            values[index] = _reversed_ordinal(rows=len(template_rows), number=number)
         rows.append(
             (
                 group,
@@ -284,6 +282,11 @@ def _rows_case(
         order="ordered",
         expected_divergence=divergence,
     )
+
+
+def _reversed_ordinal(*, rows: int, number: int) -> str:
+    """An ordering key against insertion order and apart from every value, so WITHIN GROUP shows."""
+    return str(10 * (rows - number + 1))
 
 
 def _cells(group: list[dict[str, Any]]) -> list[str]:
