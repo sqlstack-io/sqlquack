@@ -8,6 +8,7 @@ use sqlquack_syntax::Expression;
 
 use crate::conversion::_helpers::queries::query::convert_query;
 use crate::conversion::_helpers::support::collecting::{Collector, collected};
+use crate::conversion::_helpers::support::depth::within_depth;
 use crate::conversion::_helpers::support::locations::Locator;
 use crate::conversion::_helpers::support::scope::{Context, OrderTrack};
 use crate::conversion::_helpers::support::tree::{session_tree, strip_positions};
@@ -22,6 +23,12 @@ pub fn collect_refusals(
     statement: &Expression,
     (schema, options, lines): (&Schema, &ConversionOptions, &SourceLines),
 ) -> CollectedRefusals {
+    if let Err(refusal) = within_depth(statement) {
+        return CollectedRefusals {
+            refusals: vec![refusal],
+            ..CollectedRefusals::default()
+        };
+    }
     let converted = serde_json::to_value(statement)
         .map(|positioned| collected_conversion(&positioned, (schema, options, lines)));
     let mut guessed = false;
