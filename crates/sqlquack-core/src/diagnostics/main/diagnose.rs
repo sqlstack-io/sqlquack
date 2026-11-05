@@ -1,5 +1,6 @@
 //! `diagnose`: refusals as coded diagnostics pointing into their source.
 
+use crate::classification::models::ConstructFamily;
 use crate::diagnostics::_helpers::code_entry::code_entry;
 use crate::diagnostics::_helpers::coded::coded;
 use crate::diagnostics::_helpers::line_index::LineIndex;
@@ -34,6 +35,7 @@ pub fn diagnose(refusals: &[Refusal], source: &str) -> Vec<Diagnostic> {
             .construct
             .as_ref()
             .filter(|_| refusal.category != RefusalCategory::SnowflakeRejects)
+            .filter(|_| code == MISSING_RULE || refusal.category != RefusalCategory::MissingRule)
         {
             diagnostic.message = format!("{}: `{construct}`", diagnostic.message);
         }
@@ -46,7 +48,12 @@ pub fn diagnose(refusals: &[Refusal], source: &str) -> Vec<Diagnostic> {
 fn code_and_label(refusal: &Refusal) -> (&'static str, String) {
     let code = match refusal.category {
         RefusalCategory::ParseFidelity => PARSE_FIDELITY,
-        RefusalCategory::MissingRule => MISSING_RULE,
+        RefusalCategory::MissingRule => refusal
+            .construct
+            .as_ref()
+            .filter(|construct| construct.family == ConstructFamily::Syntax)
+            .and_then(|construct| code_entry(&construct.name))
+            .map_or(MISSING_RULE, |entry| entry.code),
         RefusalCategory::TypeCondition => TYPE_CONDITION,
         RefusalCategory::UnresolvedName => UNRESOLVED_NAME,
         RefusalCategory::NotExpressible => NOT_EXPRESSIBLE,

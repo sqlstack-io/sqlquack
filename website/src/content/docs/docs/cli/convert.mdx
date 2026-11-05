@@ -43,6 +43,7 @@ Each refusal is one of these:
 | [`SQ0006`](/docs/diagnostics/reference/#sq0006) | Conversion exceeded its time or size budget. |
 | [`SQ0007`](/docs/diagnostics/reference/#sq0007) | The session parameters match no recorded profile. |
 | [`SQ0008`](/docs/diagnostics/reference/#sq0008) | The conversion needs a known divergence the policy refuses. |
+| [`SQ0009`](/docs/diagnostics/reference/#sq0009) | A select item has no alias, and SQLQuack has not verified the column name Snowflake gives it. |
 
 SQL that does not parse, or that Snowflake rejects, is refused with the same codes as
 [`check`](/docs/cli/check/). A `VALUES` list of more than 1,000 rows is refused.

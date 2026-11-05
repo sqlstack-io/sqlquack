@@ -21,6 +21,7 @@ renumbered. See [Reading diagnostics](/docs/diagnostics/overview/) for the outpu
 | [`SQ0006`](#sq0006) | `conversion_budget` | conversion exceeded its budget |
 | [`SQ0007`](#sq0007) | `session_parameters` | the session parameters match no recorded session profile |
 | [`SQ0008`](#sq0008) | `divergence_refused` | the conversion needs a known divergence the policy refuses |
+| [`SQ0009`](#sq0009) | `unaliased_output_name` | this column has no alias, and SQLQuack has not verified the name Snowflake gives it |
 | [`SQ0101`](#sq0101) | `input_too_large` | the input is larger than the parser accepts |
 | [`SQ0102`](#sq0102) | `token_budget_exceeded` | the input has more tokens than the parser accepts |
 | [`SQ0103`](#sq0103) | `nesting_depth_exceeded` | brackets nest deeper than the parser accepts |
@@ -133,6 +134,20 @@ The construct at the span converts only by relying on the known divergence the l
 
 ```sh
 echo "SELECT HASH(1) AS h" | sqlquack convert --builtin-policy
+```
+
+### SQ0009
+
+**this column has no alias, and SQLQuack has not verified the name Snowflake gives it** (`unaliased_output_name`)
+
+Snowflake names an unaliased select item after the expression's text, and a converted query must return the same column names. SQLQuack emits Snowflake's name only for the expression shapes whose names are verified against recorded results; the expression at the span is not one of them, so the statement is refused rather than converted with a different column name. An alias fixes the name in both engines.
+
+**Help:** add an alias, e.g. `AS one`
+
+**Example:**
+
+```sh
+echo "SELECT 'a' || 'b'" | sqlquack convert --builtin-policy
 ```
 
 ## Input limits
