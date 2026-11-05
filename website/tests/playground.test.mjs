@@ -112,7 +112,8 @@ test('every example stops at the stage it is meant to, under the default policy 
 	};
 	assert.deepEqual(Object.keys(EXAMPLES).sort(), Object.keys(expected).sort());
 	// The page starts on the repository's policy under a UTC session; its switch turns to strict.
-	const policy = readFileSync(new URL('../public/playground/sqlquack.toml', import.meta.url), 'utf8');
+	// The repository's policy file, which the build copies to public/playground/ for the page.
+	const policy = readFileSync(new URL('../../sqlquack.toml', import.meta.url), 'utf8');
 	const modes = { repository: JSON.stringify({ policy, utc_session: true }), strict: undefined };
 	for (const [mode, settings] of Object.entries(modes)) {
 		for (const [name, sql] of Object.entries(EXAMPLES)) {
