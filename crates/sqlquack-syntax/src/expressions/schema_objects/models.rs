@@ -282,6 +282,9 @@ impl AlterIndex {
 pub struct CreateSchema {
     /// Schema name parts, possibly dot-qualified (e.g. [mydb, hr] for "mydb.hr")
     pub name: Vec<Identifier>,
+    /// OR REPLACE (Snowflake)
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    pub or_replace: bool,
     pub if_not_exists: bool,
     pub authorization: Option<Identifier>,
     /// CLONE source parts, possibly dot-qualified
@@ -302,6 +305,7 @@ impl CreateSchema {
     pub fn new(name: impl Into<String>) -> Self {
         Self {
             name: vec![Identifier::new(name)],
+            or_replace: false,
             if_not_exists: false,
             authorization: None,
             clone_from: None,
@@ -356,6 +360,9 @@ impl DropNamespace {
 #[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct CreateDatabase {
     pub name: Identifier,
+    /// OR REPLACE (Snowflake)
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    pub or_replace: bool,
     pub if_not_exists: bool,
     pub options: Vec<DatabaseOption>,
     /// Snowflake CLONE source
@@ -384,6 +391,7 @@ impl CreateDatabase {
     pub fn new(name: impl Into<String>) -> Self {
         Self {
             name: Identifier::new(name),
+            or_replace: false,
             if_not_exists: false,
             options: Vec::new(),
             clone_from: None,

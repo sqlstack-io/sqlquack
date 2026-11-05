@@ -179,6 +179,24 @@ fn given_a_snowflake_clone_or_replica_when_parsing_then_the_tree_keeps_its_parts
             pointer: "/0/create_object/source",
             expected_value: json!("REPLICA"),
         },
+        ProjectionTestCase {
+            description: "a database clone keeps OR REPLACE",
+            sql: "CREATE OR REPLACE DATABASE d1 CLONE d2",
+            pointer: "/0/create_database/or_replace",
+            expected_value: json!(true),
+        },
+        ProjectionTestCase {
+            description: "a database clone keeps its name's quoting",
+            sql: "CREATE DATABASE \"v1 Q\" CLONE d2",
+            pointer: "/0/create_database/name/quoted",
+            expected_value: json!(true),
+        },
+        ProjectionTestCase {
+            description: "a schema clone keeps OR REPLACE",
+            sql: "CREATE OR REPLACE SCHEMA s1 CLONE s2",
+            pointer: "/0/create_schema/or_replace",
+            expected_value: json!(true),
+        },
     ];
 
     for test_case in test_cases {

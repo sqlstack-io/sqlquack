@@ -357,8 +357,8 @@ impl Parser {
                 }
             }
             TokenType::Index => self.parse_create_index_with_clustered(false, None),
-            TokenType::Schema => self.parse_create_schema(leading_comments),
-            TokenType::Database => self.parse_create_database(),
+            TokenType::Schema => self.parse_create_schema(leading_comments, or_replace),
+            TokenType::Database => self.parse_create_database(or_replace),
             TokenType::Function => {
                 self.parse_create_function(or_replace, or_alter, temporary, false)
             }
