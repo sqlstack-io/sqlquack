@@ -8038,3 +8038,51 @@ cases = [
 ]
 runs = []
 probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.alter-failover-group.set.o011"
+form = "sf.security_admin.alter-failover-group.set"
+construct = "a string literal in place of <object_type>: ALTER FAILOVER GROUP v1 SET OBJECT_TYPES = 'TABLE' ;"
+reason = "not submitted: held by the capture guard in packet cat-e8119827 (offline screen, relaxed_sweep): billable or out-of-account: replication or failover"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.alter-failover-group.set.k22151cb77f77", sql_sha256 = "22151cb77f77f452c92a2927b8a4341c05865226dbc2860804e17fb8518ddcf8" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.alter-replication-group.set.o011"
+form = "sf.security_admin.alter-replication-group.set"
+construct = "a string literal in place of <object_type>: ALTER REPLICATION GROUP v1 SET OBJECT_TYPES = 'TABLE' ;"
+reason = "not submitted: held by the capture guard in packet cat-e8119827 (offline screen, relaxed_sweep): billable or out-of-account: replication or failover"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.alter-replication-group.set.k4dce04071ef1", sql_sha256 = "4dce04071ef16e9db8d4f47b69c540883dd5c1ce32bb800727918e057bc08e82" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.create-failover-group.object-types-allowed-accounts.o009"
+form = "sf.security_admin.create-failover-group.object-types-allowed-accounts"
+construct = "a string literal in place of <object_type>: CREATE FAILOVER GROUP v1 OBJECT_TYPES = 'TABLE' ALLOWED_ACCOUNTS = v1 . v1 ;"
+reason = "not submitted: held by the capture guard in packet cat-e8119827 (offline screen, relaxed_sweep): billable or out-of-account: replication or failover"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.create-failover-group.object-types-allowed-accounts.k66ce4127e8c3", sql_sha256 = "66ce4127e8c3778ef1d1f25f6ecaf804ee7d9f2953bba101c54b732b48a9b933" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.create-replication-group.object-types-allowed-accounts.o009"
+form = "sf.security_admin.create-replication-group.object-types-allowed-accounts"
+construct = "a string literal in place of <object_type>: CREATE REPLICATION GROUP v1 OBJECT_TYPES = 'TABLE' ALLOWED_ACCOUNTS = v1 . v1 ;"
+reason = "not submitted: held by the capture guard in packet cat-e8119827 (offline screen, relaxed_sweep): billable or out-of-account: replication or failover"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.create-replication-group.object-types-allowed-accounts.kaba2b028a525", sql_sha256 = "aba2b028a5253d870aa94193a1a4d0fb7e33ca3d789d7b4ee1e6ef368ba0a3e5" },
+]
+runs = []
+probes = []
