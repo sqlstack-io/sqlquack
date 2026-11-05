@@ -1377,7 +1377,9 @@ impl Parser {
             None
         };
 
-        if self.match_token(TokenType::Rename) {
+        if let Some(action) = self.parse_data_metric_function_action()? {
+            actions.push(AlterViewAction::DataMetricFunction(action));
+        } else if self.match_token(TokenType::Rename) {
             self.expect_token(TokenType::To)?;
             actions.push(AlterViewAction::Rename(Box::new(self.parse_table_ref()?)));
         } else if self.match_identifier("OWNER") {

@@ -404,6 +404,42 @@ fn given_recorded_snowflake_cases_when_parsing_then_acceptance_matches_snowflake
             dialect: Dialect::Snowflake,
             expected_accepted: false,
         },
+        AcceptanceTestCase {
+            description: "MODIFY DATA METRIC FUNCTION adds expectations (recorded semantic error)",
+            sql: "ALTER TABLE v1 MODIFY DATA METRIC FUNCTION v1 ON ( v1 ) ADD EXPECTATION v1 ( 1 ) , v1 ( 1 ) ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "a data metric function's column list may be empty before TABLE (recorded semantic error)",
+            sql: "ALTER TABLE v1 ADD DATA METRIC FUNCTION SNOWFLAKE . CORE . ROW_COUNT_DIFFERENCE ON ( , TABLE ( v1 ( v1 ) ) ) ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "a data metric function's TABLE source names columns (recorded errno 1003)",
+            sql: "ALTER TABLE v1 ADD DATA METRIC FUNCTION SNOWFLAKE . CORE . ROW_COUNT_DIFFERENCE ON ( v1 , TABLE ( v1 ( ) ) ) ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "MODIFY DATA METRIC FUNCTION may clear its filter (recorded semantic error)",
+            sql: "ALTER TABLE v1 MODIFY DATA METRIC FUNCTION v1 ON ( v1 ) FILTER ( ) ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "ADD DATA METRIC FUNCTION needs a filter condition (recorded errno 1003)",
+            sql: "ALTER TABLE v1 ADD DATA METRIC FUNCTION v1 ON ( v1 ) FILTER ( ) ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "ALTER VIEW adds data metric functions (recorded semantic error)",
+            sql: "ALTER VIEW v1 ADD DATA METRIC FUNCTION v1 ON ( v1 ) , \"SELECT\" ON ( v1 ) ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
     ];
 
     for test_case in test_cases {
