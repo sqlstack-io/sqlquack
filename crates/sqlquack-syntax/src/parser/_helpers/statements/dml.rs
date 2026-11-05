@@ -260,11 +260,18 @@ impl Parser {
     /// Parse a CREATE statement
     pub(crate) fn parse_create(&mut self) -> Result<Expression> {
         let create_pos = self.current;
-        let create_token = self.expect_token(TokenType::Create)?;
+        // Snowflake DCM `DEFINE <kind> ...` declares an object the way CREATE OR ALTER does, so it
+        // parses as a CREATE OR ALTER of that kind.
+        let define = self.is_snowflake() && self.check(TokenType::Define);
+        let create_token = if define {
+            self.advance()?
+        } else {
+            self.expect_token(TokenType::Create)?
+        };
         let leading_comments = create_token.comments;
 
-        let or_replace = self.match_keywords(&[TokenType::Or, TokenType::Replace]);
-        let or_alter = !or_replace && self.match_text_seq(&["OR", "ALTER"]);
+        let or_replace = !define && self.match_keywords(&[TokenType::Or, TokenType::Replace]);
+        let or_alter = define || (!or_replace && self.match_text_seq(&["OR", "ALTER"]));
         if self.is_snowflake() && self.check(TokenType::Or) {
             return Err(self.parse_error("Expected REPLACE or ALTER after CREATE OR"));
         }
@@ -373,7 +380,7 @@ impl Parser {
             }
             TokenType::Type => self.parse_create_type(or_replace),
             TokenType::Domain => self.parse_create_domain(),
-            _ => self.parse_create_other_object(materialized, or_replace, temporary),
+            _ => self.parse_create_other_object(materialized, or_replace, or_alter, temporary),
         }
     }
 
@@ -381,8 +388,16 @@ impl Parser {
         &mut self,
         materialized: bool,
         or_replace: bool,
+        or_alter: bool,
         temporary: bool,
     ) -> Result<Expression> {
+        if self.is_snowflake() && !materialized {
+            if let Some(create) =
+                self.parse_snowflake_create_stage_or_format(or_replace, or_alter, temporary)?
+            {
+                return Ok(create);
+            }
+        }
         if self.check_identifier("CLUSTERED") || self.check_identifier("NONCLUSTERED") {
             let clustered_text = self.advance_text()?.to_ascii_uppercase();
             let clustered = if self.check_identifier("COLUMNSTORE") {

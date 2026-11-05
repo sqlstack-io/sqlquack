@@ -167,7 +167,7 @@ impl Parser {
     }
 
     /// Parse `<tag_name> = '<tag_value>' [ , ... ]` when `set`, else `<tag_name> [ , ... ]`, stopping before a comma that starts another column.
-    fn parse_tag_list(&mut self, set: bool) -> Result<Vec<ObjectProperty>> {
+    pub(super) fn parse_tag_list(&mut self, set: bool) -> Result<Vec<ObjectProperty>> {
         let mut tags: Vec<ObjectProperty> = Vec::new();
         loop {
             let name = self.parse_simple_qualified_name()?;

@@ -1175,6 +1175,9 @@ pub struct CreateObject {
     /// OR REPLACE clause
     #[serde(default)]
     pub or_replace: bool,
+    /// OR ALTER clause, also set by a Snowflake DCM `DEFINE`
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    pub or_alter: bool,
     /// IF NOT EXISTS clause
     #[serde(default)]
     pub if_not_exists: bool,

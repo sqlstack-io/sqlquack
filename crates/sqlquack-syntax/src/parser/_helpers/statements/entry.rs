@@ -393,6 +393,29 @@ impl Parser {
             TokenType::Delete => self.parse_delete(),
 
             TokenType::Create => self.parse_create(),
+            TokenType::Define if self.is_snowflake() => {
+                // A DCM definition file declares a whole object. One this parser can only keep as
+                // opaque text, or of a kind whose CREATE grammar it does not yet check closely
+                // enough, is refused rather than accepted unchecked.
+                use crate::traversal::types::ExpressionWalk;
+                let definition = self.parse_create()?;
+                let unchecked_kind = matches!(
+                    definition,
+                    Expression::CreateTable(_)
+                        | Expression::CreateView(_)
+                        | Expression::CreateFunction(_)
+                        | Expression::CreateProcedure(_)
+                        | Expression::CreateTask(_)
+                );
+                if unchecked_kind
+                    || definition.contains(|node| {
+                        matches!(node, Expression::Command(_) | Expression::Raw(_))
+                    })
+                {
+                    return Err(self.parse_error("Unsupported DEFINE object definition"));
+                }
+                Ok(definition)
+            }
             TokenType::Drop => self.parse_drop(),
 
             TokenType::Alter => self.parse_alter(),

@@ -1,9 +1,11 @@
 //! Snowflake CREATE of a database, schema or table from a backup set, a share, a replica or an archive.
 
 use crate::expressions::names::models::TableRef;
+use crate::expressions::operators::models::BinaryOp;
 use crate::expressions::schema_objects::models::CreateObject;
 use crate::expressions::schema_objects::models::ObjectProperty;
 use crate::expressions::tree::models::Expression;
+use crate::expressions::types::models::Tuple;
 use crate::parser::_helpers::ddl::snowflake_alter::property;
 use crate::parser::models::Parser;
 use crate::tokens::models::TokenType;
@@ -85,6 +87,7 @@ impl Parser {
             kind: kind.to_owned(),
             modifier: modifier.filter(|_| !dynamic).map(str::to_owned),
             or_replace,
+            or_alter: false,
             if_not_exists,
             name,
             source: source.to_owned(),
@@ -155,12 +158,102 @@ impl Parser {
             kind: kind.to_owned(),
             modifier: None,
             or_replace,
+            or_alter: false,
             if_not_exists,
             name,
             source: source.to_owned(),
             operands,
             properties,
         }))))
+    }
+
+    /// Snowflake `CREATE [ OR REPLACE | OR ALTER ] [ TEMPORARY ] { STAGE | FILE FORMAT } [ IF NOT EXISTS ] <name>`
+    /// with its `<option> = <value>` and `[ WITH ] TAG ( ... )` properties; None leaves a CLONE and other kinds alone.
+    pub(crate) fn parse_snowflake_create_stage_or_format(
+        &mut self,
+        or_replace: bool,
+        or_alter: bool,
+        temporary: bool,
+    ) -> Result<Option<Expression>> {
+        let start = self.current;
+        let kind = if self.check_identifier("STAGE") {
+            self.skip();
+            "STAGE"
+        } else if (self.check_identifier("FILE") || self.check(TokenType::File))
+            && self
+                .peek_nth(1)
+                .is_some_and(|token| token.text.eq_ignore_ascii_case("FORMAT"))
+        {
+            self.skip();
+            self.skip();
+            "FILE FORMAT"
+        } else {
+            return Ok(None);
+        };
+        let if_not_exists =
+            self.match_keywords(&[TokenType::If, TokenType::Not, TokenType::Exists]);
+        let name = self.parse_object_name()?;
+        if self.check_identifier("CLONE") {
+            self.current = start;
+            return Ok(None);
+        }
+        let mut properties: Vec<ObjectProperty> = Vec::new();
+        while !self.is_at_end() && !self.check(TokenType::Semicolon) {
+            let tag = self.match_text_seq(&["WITH", "TAG"])
+                || (self.check_identifier("TAG")
+                    && self.check_next(TokenType::LParen)
+                    && self.match_identifier("TAG"));
+            if tag {
+                self.expect_token(TokenType::LParen)?;
+                properties.extend(self.parse_tag_list(true)?);
+                self.expect_token(TokenType::RParen)?;
+                continue;
+            }
+            let option = self.parse_simple_name()?;
+            self.expect_token(TokenType::Eq)?;
+            let value = self.parse_option_value()?;
+            properties.push(property(
+                &option.name.to_ascii_uppercase(),
+                None,
+                Some(value),
+            ));
+        }
+        Ok(Some(Expression::CreateObject(Box::new(CreateObject {
+            kind: kind.to_owned(),
+            modifier: temporary.then(|| "TEMPORARY".to_owned()),
+            or_replace,
+            or_alter,
+            if_not_exists,
+            name,
+            source: String::new(),
+            operands: Vec::new(),
+            properties,
+        }))))
+    }
+
+    /// Parse an option value: a literal or name, a parenthesized `<option> = <value>` list, or a
+    /// parenthesized, comma-separated and possibly empty value list.
+    fn parse_option_value(&mut self) -> Result<Expression> {
+        if !self.match_token(TokenType::LParen) {
+            return self.parse_object_value();
+        }
+        let mut expressions: Vec<Expression> = Vec::new();
+        if !self.check(TokenType::String) && self.check_next(TokenType::Eq) {
+            while !self.check(TokenType::RParen) {
+                let option = Expression::Identifier(self.parse_simple_name()?);
+                self.expect_token(TokenType::Eq)?;
+                let value = self.parse_option_value()?;
+                expressions.push(Expression::Eq(Box::new(BinaryOp::new(option, value))));
+                self.match_token(TokenType::Comma);
+            }
+        } else if !self.check(TokenType::RParen) {
+            expressions.push(self.parse_object_value()?);
+            while self.match_token(TokenType::Comma) {
+                expressions.push(self.parse_object_value()?);
+            }
+        }
+        self.expect_token(TokenType::RParen)?;
+        Ok(Expression::Tuple(Box::new(Tuple { expressions })))
     }
 
     /// Parse a name of at least two parts, such as `<account>.<share>`.

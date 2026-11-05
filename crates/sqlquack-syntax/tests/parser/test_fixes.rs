@@ -1318,6 +1318,24 @@ fn given_snowflake_statements_with_their_own_nodes_when_parsing_then_the_tree_na
             expected_value: json!("USING TABULAR"),
         },
         ProjectionTestCase {
+            description: "DEFINE STAGE is a CREATE OR ALTER of a stage",
+            sql: "DEFINE STAGE d1.s1.v1 FILE_FORMAT = ( TYPE = JSON ENABLE_OCTAL = FALSE )",
+            pointer: "/0/create_object/or_alter",
+            expected_value: json!(true),
+        },
+        ProjectionTestCase {
+            description: "a stage keeps its nested file format options",
+            sql: "CREATE STAGE v1 URL = 's3://b1/p1/' FILE_FORMAT = ( TYPE = CSV PARSE_HEADER = TRUE )",
+            pointer: "/0/create_object/properties/1/value/tuple/expressions/1/eq/left/identifier/name",
+            expected_value: json!("PARSE_HEADER"),
+        },
+        ProjectionTestCase {
+            description: "a temporary file format names its kind",
+            sql: "CREATE TEMPORARY FILE FORMAT v1 TYPE = JSON NULL_IF = ( )",
+            pointer: "/0/create_object/kind",
+            expected_value: json!("FILE FORMAT"),
+        },
+        ProjectionTestCase {
             description: "SELECT INTO keeps a colon variable",
             sql: "SELECT 1 INTO :v1",
             pointer: "/0/select/into/this/parameter/style",
@@ -2354,6 +2372,57 @@ fn given_a_snowflake_create_model_gateway_or_experiment_when_parsing_then_its_so
         "ALTER TABLE v1 MODIFY DATA METRIC FUNCTION v1 ON ( v1 ) SUSPEND ;",
         "ALTER TABLE v1 MODIFY v1 SET MASKING POLICY v1 ;",
         "CREATE TABLE t1 ( a INT AS ( 1 ) ) ;",
+    ];
+    for sql in kept {
+        assert!(accepted(sql, Dialect::Snowflake), "Snowflake keeps {sql}");
+    }
+}
+
+#[test]
+fn given_a_snowflake_stage_or_file_format_when_parsing_then_its_options_need_values() {
+    let rejected = [
+        ("an option without a value", "CREATE FILE FORMAT v1 TYPE = JSON FILE_EXTENSION = ;"),
+        ("a reserved name", "CREATE FILE FORMAT SELECT ;"),
+        (
+            "a string PIVOT column",
+            "SELECT 1 FROM t1 PIVOT ( SUM ( v1 ) FOR 'v1' IN ( 1 ) ) ;",
+        ),
+        (
+            "a reserved UNPIVOT value column",
+            "SELECT 1 FROM t1 UNPIVOT ( SELECT FOR v1 IN ( v1 ) ) ;",
+        ),
+        ("a string name", "CREATE STAGE 'v1' ;"),
+        (
+            "an unclosed option list",
+            "CREATE OR ALTER STAGE v1 ENCRYPTION = ( TYPE = 'SNOWFLAKE_FULL' ;",
+        ),
+        (
+            "an extra closing parenthesis",
+            "CREATE OR ALTER FILE FORMAT v1 TYPE = CSV NULL_IF = 'm' ) ;",
+        ),
+        (
+            "a nested option without a value",
+            "DEFINE STAGE d1.s1.v1 URL = 's3://b1/p1/' CREDENTIALS = ( AWS_KEY_ID = AWS_SECRET_KEY = 'm' ) ;",
+        ),
+        (
+            "a nested value without an option",
+            "DEFINE STAGE d1.s1.v1 URL = 's3://b1/p1/' ENCRYPTION = ( = 'm' ) ;",
+        ),
+    ];
+    for (description, sql) in rejected {
+        assert!(
+            !accepted(sql, Dialect::Snowflake),
+            "Snowflake rejects {description} (recorded errno 1003): {sql}"
+        );
+    }
+    let kept = [
+        "DEFINE STAGE d1.s1.v1 FILE_FORMAT = ( TYPE = CSV RECORD_DELIMITER = '~~' ) ;",
+        "CREATE OR ALTER STAGE v1 FILE_FORMAT = ( TYPE = ORC NULL_IF = ( ) ) ;",
+        "CREATE STAGE v1 FILE_FORMAT = ( TYPE = JSON TIME_FORMAT = m1 ) ;",
+        "DEFINE STAGE d1.s1.v1 FILE_FORMAT = ( FORMAT_NAME = m1 ) ;",
+        "DEFINE TEMPORARY FILE FORMAT d1.s1.v1 ;",
+        "CREATE FILE FORMAT v1 TYPE = JSON NULL_IF = ( m1 ) ;",
+        "CREATE STAGE \"SELECT\" CLONE v1 ;",
     ];
     for sql in kept {
         assert!(accepted(sql, Dialect::Snowflake), "Snowflake keeps {sql}");

@@ -1154,6 +1154,9 @@ impl Parser {
 
     /// Parse FOR column IN (...) part of standard PIVOT
     pub(crate) fn parse_standard_pivot_in(&mut self) -> Result<Expression> {
+        if self.is_snowflake() && self.check(TokenType::String) {
+            return Err(self.parse_error("Expected a column after FOR in PIVOT"));
+        }
         let column = self.parse_primary()?;
 
         self.expect_token(TokenType::In)?;
@@ -1233,6 +1236,9 @@ impl Parser {
         };
 
         self.expect_token(TokenType::LParen)?;
+        if self.is_snowflake() && self.is_snowflake_reserved_keyword() {
+            return Err(self.parse_error("Expected a value column name in UNPIVOT"));
+        }
 
         let (value_column, value_column_parenthesized, extra_value_columns) = if self
             .match_token(TokenType::LParen)
