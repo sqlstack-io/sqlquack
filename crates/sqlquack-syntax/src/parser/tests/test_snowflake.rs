@@ -445,12 +445,6 @@ fn given_try_to_number_with_numbers_when_parsing_snowflake_then_they_are_precisi
 fn given_unsupported_snowflake_sql_when_parsing_then_parsing_fails() {
     let test_cases = [
         ParseErrorTestCase {
-            description: "== is not an equality operator",
-            dialect: Some(DialectType::Snowflake),
-            sql: "SELECT order_id FROM orders WHERE status == 'shipped'",
-            expected_error: "Parse error",
-        },
-        ParseErrorTestCase {
             description: "two commas after a projection are rejected",
             dialect: Some(DialectType::Snowflake),
             sql: "SELECT 1 AS value_column,, FROM a_relation",

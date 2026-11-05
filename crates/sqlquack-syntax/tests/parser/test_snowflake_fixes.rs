@@ -1253,3 +1253,59 @@ fn given_snowflake_secret_resource_monitor_and_integration_alters_when_parsing_t
         );
     }
 }
+
+#[test]
+fn given_an_operator_snowflake_does_not_have_when_parsing_then_it_is_refused() {
+    let test_cases = [
+        SnowflakeVerdictTestCase {
+            description: "== for equality (recorded errno 2139, refused at parse per D171)",
+            sql: "SELECT order_id FROM orders WHERE status == 'shipped'",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: ">> as a shift (recorded errno 1003)",
+            sql: "SELECT order_id FROM orders WHERE total >> 10",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "<< as a shift (recorded errno 1003)",
+            sql: "SELECT 1 << 2 ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description:
+                "keeps & | and ^, which parse and fail at compile (recorded errnos 2139 and 2)",
+            sql: "SELECT 1 & 3 , 1 | 2 , 1 ^ 2 ;",
+            expected_kind: Some("select"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "IN before a bare value (recorded errno 1003)",
+            sql: "SELECT order_id FROM orders WHERE status IN 'shipped'",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "NOT IN before a bare value",
+            sql: "SELECT order_id FROM orders WHERE status NOT IN 'shipped'",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "keeps a single = and IN or NOT IN before a list or a query",
+            sql: "SELECT 1 FROM t WHERE a = 1 AND a IN ( 1 , 2 ) AND a NOT IN ( SELECT 1 ) ;",
+            expected_kind: Some("select"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "keeps > and >=",
+            sql: "SELECT 1 FROM t WHERE a > 1 AND a >= 2 ;",
+            expected_kind: Some("select"),
+        },
+    ];
+
+    for test_case in test_cases {
+        assert_eq!(
+            snowflake_kind(test_case.sql),
+            test_case.expected_kind.map(str::to_owned),
+            "{}",
+            test_case.description
+        );
+    }
+}

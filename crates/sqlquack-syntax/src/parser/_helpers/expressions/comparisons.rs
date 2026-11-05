@@ -609,6 +609,9 @@ impl Parser {
     }
 
     fn parse_in_after_not(&mut self, global_in: bool, left: Expression) -> Result<Expression> {
+        if self.applies_snowflake_context_rules() && !self.check(TokenType::LParen) {
+            self.expect_token(TokenType::LParen)?;
+        }
         Ok({
             if self.check_identifier("UNNEST") {
                 self.skip();
@@ -769,6 +772,9 @@ impl Parser {
     }
 
     fn parse_in_comparison(&mut self, global_in: bool, left: Expression) -> Result<Expression> {
+        if self.applies_snowflake_context_rules() && !self.check(TokenType::LParen) {
+            self.expect_token(TokenType::LParen)?;
+        }
         Ok({
             if self.check_identifier("UNNEST") {
                 self.skip();
@@ -1213,7 +1219,7 @@ impl Parser {
         expr_start: usize,
     ) -> Result<Expression> {
         loop {
-            if self.match_token(TokenType::LtLt) {
+            if !self.applies_snowflake_context_rules() && self.match_token(TokenType::LtLt) {
                 if self.config.dialect == Some(crate::tokens::models::DialectType::PostgreSQL)
                     && self.match_token(TokenType::DArrow)
                 {
@@ -1225,7 +1231,7 @@ impl Parser {
                 }
                 let right = self.parse_duckdb_concat()?;
                 left = Expression::BitwiseLeftShift(Box::new(BinaryOp::new(left, right)));
-            } else if self.match_token(TokenType::GtGt) {
+            } else if !self.applies_snowflake_context_rules() && self.match_token(TokenType::GtGt) {
                 let right = self.parse_duckdb_concat()?;
                 left = Expression::BitwiseRightShift(Box::new(BinaryOp::new(left, right)));
             } else {
