@@ -13,6 +13,7 @@ pub(crate) mod snowflake_alter_objects;
 pub(crate) mod snowflake_alter_resources;
 pub(crate) mod snowflake_alter_tables;
 pub(crate) mod snowflake_commands;
+pub(crate) mod snowflake_create_from;
 pub(crate) mod snowflake_show;
 pub(crate) mod snowflake_statements;
 pub(crate) mod table_options;

@@ -22,8 +22,8 @@ pub const JSON_NULL: &str = "duckdb.json_null";
 pub const JSON_FLATTEN: &str = "duckdb.json_flatten";
 /// FLATTEN with RECURSIVE => TRUE: `duckdb.json_flatten_recursive`.
 pub const JSON_FLATTEN_RECURSIVE: &str = "duckdb.json_flatten_recursive";
-/// An object key FLATTEN writes in a path as it is.
-pub const PLAIN_KEY_PATTERN: &str = "[A-Za-z_][A-Za-z0-9_]*";
+/// An object key FLATTEN writes in a path as it is: a name of letters, Latin-1 letters included.
+pub const PLAIN_KEY_PATTERN: &str = "[A-Za-z\u{C0}-\u{D6}\u{D8}-\u{F6}\u{F8}-\u{FF}_][A-Za-z\u{C0}-\u{D6}\u{D8}-\u{F6}\u{F8}-\u{FF}0-9_]*";
 /// OBJECT_DELETE of literal keys: `duckdb.json_object_delete`.
 pub const JSON_OBJECT_DELETE: &str = "duckdb.json_object_delete";
 /// OBJECT_INSERT of one key: `duckdb.json_object_insert`.
@@ -141,8 +141,8 @@ pub const PATH_READ_KEYS: &[&str] = &["", "*"];
 pub const KEY_STEP: &str = r#"\.([A-Za-z_][A-Za-z0-9_]*|"([^"\\]|\\.)*")"#;
 /// An element step of a DuckDB `json_tree` full key.
 pub const ELEMENT_STEP: &str = r"\[[0-9]+\]";
-/// A quoted key Snowflake was recorded writing as `['key']`: letters, digits, `_`, spaces and dots.
-pub const BRACKETED_KEY: &str = r#"\."[A-Za-z0-9_ .]*""#;
+/// A key Snowflake was recorded writing in a path as `['key']`: printable ASCII but a backslash.
+pub const BRACKETED_KEY: &str = r"[ -\[\]-~]*";
 /// Negative zero with an all-zero fraction, and runs of 20 or more digits, kept as written.
 pub const KEPT_NUMBER_PATTERN: &str = r"-0\.0+|-?[0-9]{20,}(?:\.[0-9]+)?";
 /// A number of at most 38 digits with an all-zero fraction, and the JSON delimiter after it.

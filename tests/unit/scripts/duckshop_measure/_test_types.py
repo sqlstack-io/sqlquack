@@ -81,3 +81,4 @@ class FunctionMeasureTestCase:
     expected_converted: list[str]
     expected_compared: dict[str, object]
     expected_outcomes: dict[str, list[str]]
+    refused: tuple[tuple[str, str], ...] = ()

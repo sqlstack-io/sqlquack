@@ -63,11 +63,11 @@ def write_schema(
 
 
 def model_python_calls(
-    *, inputs: SnowflakeInputs, sql: Path, refusals: tuple[str, ...]
+    *, inputs: SnowflakeInputs, sql: Path, source: Path, refusals: tuple[str, ...]
 ) -> tuple[str, ...]:
-    """The Python functions a model's conversion or refusals name."""
-    converted: tuple[str, ...] = (sql.read_text(),) if sql.exists() else ()
-    return python_calls(texts=(*converted, *refusals), python=inputs.python_functions)
+    """The Python functions a model's compiled source, conversion or refusals name."""
+    texts: tuple[str, ...] = tuple(path.read_text() for path in (source, sql) if path.exists())
+    return python_calls(texts=(*texts, *refusals), python=inputs.python_functions)
 
 
 def unit_test_outcomes(
@@ -141,7 +141,14 @@ def snowflake_results(*, inputs: SnowflakeInputs, run: Comparer) -> list[ModelRe
             model_refusals: tuple[str, ...] = own.get(
                 Path(str(sidecar["compiled_sql_path"])).stem, ()
             )
-            if model_python_calls(inputs=inputs, sql=sql, refusals=model_refusals):
+            if model_python_calls(
+                inputs=inputs,
+                sql=sql,
+                source=compiled_file(
+                    compiled=compiled, compiled_sql_path=str(sidecar["compiled_sql_path"])
+                ),
+                refusals=model_refusals,
+            ):
                 continue
             if not sql.exists() or value_divergences(inputs=inputs, name=name):
                 continue
@@ -182,6 +189,9 @@ def snowflake_results(*, inputs: SnowflakeInputs, run: Comparer) -> list[ModelRe
         python: tuple[str, ...] = model_python_calls(
             inputs=inputs,
             sql=converted / name,
+            source=compiled_file(
+                compiled=compiled, compiled_sql_path=str(sidecar["compiled_sql_path"])
+            ),
             refusals=own.get(Path(str(sidecar["compiled_sql_path"])).stem, ()),
         )
         if python:

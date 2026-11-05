@@ -16,7 +16,7 @@ from scripts.census_functions._helpers.headers import placeholder, signature
 from scripts.census_functions.constants import FUNCTION_SUFFIX, SQL_LANGUAGE
 from scripts.census_functions.models import Signature
 from scripts.duckshop_measure._helpers.running import refusal_names
-from scripts.duckshop_measure.constants import BODY_DELIMITER, PYTHON_LANGUAGE
+from scripts.duckshop_measure.constants import BODY_DELIMITER, PYTHON_LANGUAGE, UNRESOLVED_UDF
 from scripts.duckshop_measure.models import FunctionMacro, ProjectFunction
 from scripts.duckshop_measure.types import FunctionConverter
 
@@ -117,8 +117,10 @@ def create_macros(*, database: Path, macros: list[FunctionMacro]) -> dict[str, s
 
 
 def python_calls(*, texts: tuple[str, ...], python: frozenset[str]) -> tuple[str, ...]:
-    """The Python functions any of `texts` names, sorted."""
-    joined: str = "\n".join(texts)
+    """The Python functions any of `texts` names or calls as `__udf("stem")`, sorted."""
+    joined: str = UNRESOLVED_UDF.sub(
+        lambda call: placeholder(stem=call.group(1), table=False), "\n".join(texts)
+    )
     return tuple(sorted(name for name in python if re.search(rf"\b{name}\b", joined)))
 
 

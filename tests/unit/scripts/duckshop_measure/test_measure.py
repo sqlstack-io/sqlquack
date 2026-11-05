@@ -602,6 +602,16 @@ def test_given_compiled_functions_when_deriving_the_schema_then_they_sit_beside_
                 "m_py": ["python_udf_not_measured", "__SQLQUACK_UDF__PY_SCORE"],
             },
         ),
+        FunctionMeasureTestCase(
+            description="a model census refuses for its unnamed fn:<udf> is still a Python caller",
+            models=(),
+            refused=(("m_refused", 'SELECT __udf("py_score")(1) AS a'),),
+            expected_converted=["__SQLQUACK_UDF__SKU_FAMILY"],
+            expected_compared={},
+            expected_outcomes={
+                "m_refused": ["python_udf_not_measured", "__SQLQUACK_UDF__PY_SCORE"],
+            },
+        ),
     ),
     ids=lambda case: case.description,
 )
@@ -633,10 +643,23 @@ def test_given_project_functions_when_measuring_snowflake_then_sql_ones_run_and_
         (results / f"k_{model}.json").write_text(json.dumps(sidecar))
         entries.append({"key": f"k_{model}", "unique_id": f"model.shop.{model}", "outcome": "rows"})
         (converted / str(compiled / "models" / f"{model}.sql").replace("/", "_")).write_text(sql)
+    own: list[dict[str, object]] = []
+    for model, source in test_case.refused:
+        (compiled / "models" / f"{model}.sql").write_text(source)
+        refused_sidecar: dict[str, object] = {
+            "key": f"k_{model}",
+            "model": model,
+            "target": "dev",
+            "outcome": "rows",
+            "compiled_sql_path": f"benchmarks/x/target/compiled/models/{model}.sql",
+        }
+        (results / f"k_{model}.json").write_text(json.dumps(refused_sidecar))
+        entries.append({"key": f"k_{model}", "unique_id": f"model.shop.{model}", "outcome": "rows"})
+        own.append({"model": model, "own": [{"category": "missing rule", "construct": "fn:<udf>"}]})
     (tmp_path / "index-core.json").write_text(json.dumps(entries))
     (tmp_path / "index-edge.json").write_text("[]")
     census: Path = tmp_path / "census.json"
-    census.write_text(json.dumps({"blockers": {"files": []}}))
+    census.write_text(json.dumps({"blockers": {"files": own}}))
     converted_names: list[str] = []
     compared: dict[str, object] = {}
 

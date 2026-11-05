@@ -1047,6 +1047,9 @@ pub struct CreateType {
     pub name: TableRef,
     pub definition: TypeDefinition,
     pub if_not_exists: bool,
+    /// OR REPLACE clause
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    pub or_replace: bool,
 }
 
 /// Type definition
@@ -1067,6 +1070,11 @@ pub enum TypeDefinition {
         input: String,
         output: String,
         internallength: Option<i32>,
+    },
+    /// Snowflake user-defined type: CREATE TYPE name AS data_type [COMMENT = 'text']
+    Alias {
+        data_type: DataType,
+        comment: Option<String>,
     },
     /// Domain type
     Domain {
@@ -1097,6 +1105,7 @@ impl CreateType {
             name: TableRef::new(name),
             definition: TypeDefinition::Enum(values),
             if_not_exists: false,
+            or_replace: false,
         }
     }
 
@@ -1105,6 +1114,7 @@ impl CreateType {
             name: TableRef::new(name),
             definition: TypeDefinition::Composite(attributes),
             if_not_exists: false,
+            or_replace: false,
         }
     }
 }
@@ -1146,6 +1156,32 @@ pub struct AlterObject {
     #[serde(default)]
     pub operands: Vec<Expression>,
     /// The properties the action sets or unsets; an unset property has no value
+    #[serde(default)]
+    pub properties: Vec<ObjectProperty>,
+}
+
+/// Snowflake CREATE of an object from another source, e.g. `CREATE DATABASE d1 FROM SHARE a1.s1`.
+#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct CreateObject {
+    /// The object kind, e.g. "DATABASE", "SCHEMA", "TABLE", "DYNAMIC TABLE"
+    pub kind: String,
+    /// A modifier before the kind, e.g. "TRANSIENT"
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub modifier: Option<String>,
+    /// OR REPLACE clause
+    #[serde(default)]
+    pub or_replace: bool,
+    /// IF NOT EXISTS clause
+    #[serde(default)]
+    pub if_not_exists: bool,
+    /// The object name
+    pub name: TableRef,
+    /// The source's keywords: "BACKUP SET", "SHARE", "REPLICA" or "ARCHIVE"
+    pub source: String,
+    /// The source's operands in order: names, an identifier string or a condition
+    #[serde(default)]
+    pub operands: Vec<Expression>,
+    /// The properties set after the source
     #[serde(default)]
     pub properties: Vec<ObjectProperty>,
 }

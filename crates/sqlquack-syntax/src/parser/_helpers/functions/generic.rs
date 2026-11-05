@@ -60,6 +60,9 @@ impl Parser {
         name: &str,
         quoted: bool,
     ) -> Result<Expression> {
+        if self.is_snowflake() && !quoted && name.eq_ignore_ascii_case("IN") {
+            return Err(self.parse_error("IN is an operator, not a function"));
+        }
         let is_known_agg = self.is_aggregate_function(name);
 
         let (mut args, distinct) = if self.check(TokenType::RParen) {

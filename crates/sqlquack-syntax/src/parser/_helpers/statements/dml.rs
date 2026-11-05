@@ -265,6 +265,9 @@ impl Parser {
 
         let or_replace = self.match_keywords(&[TokenType::Or, TokenType::Replace]);
         let or_alter = !or_replace && self.match_text_seq(&["OR", "ALTER"]);
+        if self.is_snowflake() && self.check(TokenType::Or) {
+            return Err(self.parse_error("Expected REPLACE or ALTER after CREATE OR"));
+        }
 
         let hana_modifier: Option<String> = None;
         let temporary = hana_modifier
@@ -287,6 +290,14 @@ impl Parser {
                 leading_comments,
                 table_modifier.as_deref(),
             );
+        }
+
+        if self.is_snowflake() && !or_alter && !temporary && !materialized && !secure {
+            if let Some(create) =
+                self.parse_snowflake_create_from(or_replace, table_modifier.as_deref())?
+            {
+                return Ok(create);
+            }
         }
 
         match self.peek().token_type {
@@ -353,7 +364,7 @@ impl Parser {
                 self.skip();
                 self.parse_create_trigger(or_replace, or_alter, true, create_pos)
             }
-            TokenType::Type => self.parse_create_type(),
+            TokenType::Type => self.parse_create_type(or_replace),
             TokenType::Domain => self.parse_create_domain(),
             _ => self.parse_create_other_object(materialized, or_replace, temporary),
         }
@@ -428,6 +439,15 @@ impl Parser {
             return Ok(Expression::Raw(Raw { sql: prefix }));
         }
         {
+            if self.is_snowflake()
+                && self.tokens.get(self.current + 1).is_some_and(|t| {
+                    ["CLONE", "FROM", "AS", "USING", "LIKE", "("]
+                        .iter()
+                        .any(|word| t.text.eq_ignore_ascii_case(word))
+                })
+            {
+                return Err(self.parse_error("Expected an object kind and a name"));
+            }
             let start = self.current;
             while !self.is_at_end() && !self.check(TokenType::Semicolon) {
                 self.skip();

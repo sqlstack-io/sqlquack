@@ -6,13 +6,13 @@ use sqlquack_core::provenance::models::ProvenanceLog;
 
 use crate::blocks::constants::{
     DATE_TEXT_SPELLING, FORMATTED_TEXT_TO_TIMESTAMP, TIMESTAMP_RANGE, TWO_DIGIT_CENTURY_START,
-    UNPARSED_TIMESTAMP_MESSAGE,
+    UNPARSED_TIMESTAMP_MESSAGE, UNTRIMMED_SPACE,
 };
 use crate::raises::main::raised::raised;
 use crate::temporal::_helpers::text::{bound, digitless};
 use crate::temporal::models::{TimestampField, TimestampFormat};
 
-/// `value` in `format`: misspelled raises; empty or impossible is NULL if `trying`, else raises.
+/// `value` in `format`: misspelled raises (TRY_ YY/MON: NULL); empty or impossible NULL if `trying`.
 pub fn formatted_text_to_timestamp(
     value: &str,
     (format, trying): (&TimestampFormat, bool),
@@ -82,6 +82,15 @@ pub fn formatted_text_to_timestamp(
             ),
         ),
     };
+    let strict = trying
+        && format
+            .fields
+            .iter()
+            .any(|field| matches!(field, TimestampField::ShortYear | TimestampField::MonthName));
+    let misspelled = match strict {
+        true => format!("CASE WHEN regexp_matches({sql}, '{UNTRIMMED_SPACE}') THEN {spelling} END"),
+        false => spelling,
+    };
     let rejected = match (trying, &format.rejected) {
         (true, Some(rejected)) => format!("WHEN regexp_full_match({sql}, '{rejected}') THEN NULL "),
         _ => String::new(),
@@ -94,11 +103,14 @@ pub fn formatted_text_to_timestamp(
          lambda made: CASE WHEN made IS NULL THEN NULL ELSE coalesce(TRY_CAST(made AS TIMESTAMP_NS), \
          CAST({range} AS TIMESTAMP_NS)) END)[1] END, \
          {impossible}) \
-         ELSE CAST({spelling} AS TIMESTAMP_NS) END)",
+         ELSE CAST({misspelled} AS TIMESTAMP_NS) END)",
         day = number(TimestampField::Day),
         range = raised(&format!(
             "{TIMESTAMP_RANGE}: a timestamp Snowflake holds outside the nanosecond range of DuckDB"
         )),
     );
-    bound(value, sql, &body)
+    match strict {
+        true => bound(&format!("trim({value}, ' ')"), sql, &body),
+        false => bound(value, sql, &body),
+    }
 }

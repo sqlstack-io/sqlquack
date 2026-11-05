@@ -1022,3 +1022,320 @@ fn given_pivot_in_from_when_converting_then_each_listed_key_aggregates_its_group
         );
     }
 }
+
+#[test]
+fn given_keys_beyond_plain_names_when_converting_flatten_then_paths_are_written_as_recorded() {
+    let path = |json: &str, recursive: bool, filter: &str| {
+        format!(
+            "SELECT f.path AS v FROM (SELECT 1 AS x) AS t, LATERAL FLATTEN(input => PARSE_JSON('{json}'), \
+             recursive => {recursive}) AS f WHERE {filter}"
+        )
+    };
+    let test_cases = [
+        BuiltFirstValueTestCase {
+            description: "an accented name is written as it is",
+            sql: path(r#"{"éa": 1}"#, false, "TRUE"),
+            expected_outcome: Ok("éa"),
+        },
+        BuiltFirstValueTestCase {
+            description: "a key with a quote is bracketed, the quote escaped",
+            sql: path(r#"{"it''s": 1}"#, false, "TRUE"),
+            expected_outcome: Ok(r"['it\'s']"),
+        },
+        BuiltFirstValueTestCase {
+            description: "a name below a bracketed key keeps its dot, the leading dot dropped",
+            sql: path(r#"{"a_1": {"b c": {"d": 6}}}"#, true, "f.key = 'd'"),
+            expected_outcome: Ok("a_1['b c'].d"),
+        },
+        BuiltFirstValueTestCase {
+            description: "an index below a bracketed key holding [ follows the bracket",
+            sql: path(r#"{"a[b": [3]}"#, true, "f.index = 0"),
+            expected_outcome: Ok("['a[b'][0]"),
+        },
+        BuiltFirstValueTestCase {
+            description: "a key with a double quote is bracketed as it is",
+            sql: path(r#"{"q\\"t": 3}"#, true, "TRUE"),
+            expected_outcome: Ok(r#"['q"t']"#),
+        },
+        BuiltFirstValueTestCase {
+            description: "a letter outside Latin-1 raises",
+            sql: path(r#"{"λ": 1}"#, false, "TRUE"),
+            expected_outcome: Err("a character no recording shows"),
+        },
+        BuiltFirstValueTestCase {
+            description: "a key with a backslash raises",
+            sql: path(r#"{"a\\\\b": 1}"#, true, "TRUE"),
+            expected_outcome: Err("a character no recording shows"),
+        },
+    ];
+    for test_case in test_cases {
+        assert_eq!(
+            shop_first_outcome(&test_case.sql, test_case.expected_outcome),
+            test_case
+                .expected_outcome
+                .map(str::to_owned)
+                .map_err(str::to_owned),
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_misspelled_text_when_trying_a_month_name_format_then_it_is_null_and_spaces_are_trimmed() {
+    let test_cases = [
+        FirstValueTestCase {
+            description: "surrounding spaces are trimmed",
+            sql: "SELECT TO_VARCHAR(TRY_TO_TIMESTAMP_NTZ(' 01-MAR-26 10:15 ', 'DD-MON-YY HH24:MI')) AS v",
+            expected_outcome: Ok("2026-03-01 10:15:00.000"),
+        },
+        FirstValueTestCase {
+            description: "seconds the format does not read make it NULL",
+            sql: "SELECT TRY_TO_TIMESTAMP_NTZ('01-MAR-26 10:15:30', 'DD-MON-YY HH24:MI') IS NULL AS v",
+            expected_outcome: Ok("true"),
+        },
+        FirstValueTestCase {
+            description: "an ISO spelling is NULL under the month-name format",
+            sql: "SELECT TRY_TO_TIMESTAMP_NTZ('2026-03-01T10:15:00Z', 'DD-MON-YY HH24:MI') IS NULL AS v",
+            expected_outcome: Ok("true"),
+        },
+        FirstValueTestCase {
+            description: "a tab, which no recording shows, still raises",
+            sql: "SELECT TRY_TO_TIMESTAMP_NTZ('01-MAR-26\t10:15', 'DD-MON-YY HH24:MI') IS NULL AS v",
+            expected_outcome: Err("date_text_spelling"),
+        },
+    ];
+    for test_case in test_cases {
+        assert_eq!(
+            shop_first_outcome(test_case.sql, test_case.expected_outcome),
+            test_case
+                .expected_outcome
+                .map(str::to_owned)
+                .map_err(str::to_owned),
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_a_rounding_mode_when_converting_round_then_half_to_even_rounds_ties_to_even_digits() {
+    let test_cases = [
+        FirstValueTestCase {
+            description: "HALF_TO_EVEN rounds a tie down to an even digit",
+            sql: "SELECT ROUND(2.25, 1, 'HALF_TO_EVEN') AS v",
+            expected_outcome: Ok("2.2"),
+        },
+        FirstValueTestCase {
+            description: "HALF_TO_EVEN rounds a tie up to an even digit, also below zero",
+            sql: "SELECT ROUND(-2.35, 1, 'HALF_TO_EVEN') AS v",
+            expected_outcome: Ok("-2.4"),
+        },
+        FirstValueTestCase {
+            description: "a value past the tie rounds to the nearest",
+            sql: "SELECT ROUND(2.2501, 1, 'HALF_TO_EVEN') AS v",
+            expected_outcome: Ok("2.3"),
+        },
+        FirstValueTestCase {
+            description: "negative places round a tie of tens to even",
+            sql: "SELECT ROUND(25, -1, 'HALF_TO_EVEN') AS v",
+            expected_outcome: Ok("20"),
+        },
+        FirstValueTestCase {
+            description: "HALF_AWAY_FROM_ZERO is ROUND without a mode",
+            sql: "SELECT ROUND(2.25, 1, 'HALF_AWAY_FROM_ZERO') AS v",
+            expected_outcome: Ok("2.3"),
+        },
+        FirstValueTestCase {
+            description: "a FLOAT with a mode refuses",
+            sql: "SELECT ROUND(2.25::FLOAT, 1, 'HALF_TO_EVEN') AS v",
+            expected_outcome: Err("FLOAT with a rounding mode"),
+        },
+        FirstValueTestCase {
+            description: "a mode spelled otherwise refuses",
+            sql: "SELECT ROUND(2.25, 1, 'half_to_even') AS v",
+            expected_outcome: Err("rounding mode no recording shows"),
+        },
+    ];
+    for test_case in test_cases {
+        assert_eq!(
+            shop_first_outcome(test_case.sql, test_case.expected_outcome),
+            test_case
+                .expected_outcome
+                .map(str::to_owned)
+                .map_err(str::to_owned),
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_a_frame_when_converting_avg_over_a_window_then_it_averages_the_frame_values_exactly() {
+    let rows = "(VALUES (1, 'a', 1), (2, 'a', NULL), (3, 'a', 2), (4, 'a', 2), (5, 'b', NULL)) AS t(n, g, x)";
+    let averaged = |over: &str, n: u8| {
+        format!(
+            "SELECT COALESCE(TO_VARCHAR(a), 'null') AS v FROM (SELECT n, AVG(x) OVER ({over}) AS a \
+             FROM {rows}) WHERE n = {n}"
+        )
+    };
+    let test_cases = [
+        BuiltFirstValueTestCase {
+            description: "a ROWS frame skips NULLs and keeps three more decimal places",
+            sql: averaged(
+                "PARTITION BY g ORDER BY n ROWS BETWEEN 2 PRECEDING AND CURRENT ROW",
+                3,
+            ),
+            expected_outcome: Ok("1.500"),
+        },
+        BuiltFirstValueTestCase {
+            description: "a ROWS frame truncates past its third place, as recorded",
+            sql: averaged(
+                "PARTITION BY g ORDER BY n ROWS BETWEEN 3 PRECEDING AND CURRENT ROW",
+                4,
+            ),
+            expected_outcome: Ok("1.666"),
+        },
+        BuiltFirstValueTestCase {
+            description: "a frame without values is NULL",
+            sql: averaged(
+                "PARTITION BY g ORDER BY n ROWS BETWEEN 2 PRECEDING AND 1 PRECEDING",
+                1,
+            ),
+            expected_outcome: Ok("null"),
+        },
+        BuiltFirstValueTestCase {
+            description: "a partition of NULLs is NULL over the whole partition",
+            sql: averaged("PARTITION BY g", 5),
+            expected_outcome: Ok("null"),
+        },
+        BuiltFirstValueTestCase {
+            description: "a whole unordered partition truncates as a frame does",
+            sql: averaged("PARTITION BY g", 4),
+            expected_outcome: Ok("1.666"),
+        },
+        BuiltFirstValueTestCase {
+            description: "a negative average truncates toward zero",
+            sql: "SELECT TO_VARCHAR(AVG(x) OVER (ORDER BY n ROWS BETWEEN 2 PRECEDING AND CURRENT ROW)) \
+                  AS v FROM (VALUES (1, -2), (2, 0), (3, 0)) AS t(n, x) QUALIFY n = 3"
+                .to_owned(),
+            expected_outcome: Ok("-0.666"),
+        },
+        BuiltFirstValueTestCase {
+            description: "an ordered window without a frame runs to the current row",
+            sql: averaged("PARTITION BY g ORDER BY n", 2),
+            expected_outcome: Ok("1.000000"),
+        },
+    ];
+    for test_case in test_cases {
+        assert_eq!(
+            shop_first_outcome(&test_case.sql, test_case.expected_outcome),
+            test_case
+                .expected_outcome
+                .map(str::to_owned)
+                .map_err(str::to_owned),
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_system_typeof_with_its_suffix_removed_when_converting_then_the_static_type_is_named() {
+    let stripped = |operand: &str| {
+        format!("SELECT REGEXP_REPLACE(SYSTEM$TYPEOF({operand}), '\\\\[.*\\\\]$', '') AS v")
+    };
+    let test_cases = [
+        BuiltFirstValueTestCase {
+            description: "a TIME cast is TIME(9)",
+            sql: stripped("'13:45:01'::TIME"),
+            expected_outcome: Ok("TIME(9)"),
+        },
+        BuiltFirstValueTestCase {
+            description: "CURRENT_DATE is DATE",
+            sql: stripped("CURRENT_DATE()"),
+            expected_outcome: Ok("DATE"),
+        },
+        BuiltFirstValueTestCase {
+            description: "a NUMBER(18,2) minus NULL keeps a widened NUMBER",
+            sql: stripped("1.50::NUMBER(18,2) - NULL"),
+            expected_outcome: Ok("NUMBER(19,2)"),
+        },
+        BuiltFirstValueTestCase {
+            description: "bare SYSTEM$TYPEOF refuses, as its suffix depends on the plan",
+            sql: "SELECT SYSTEM$TYPEOF(1) AS v".to_owned(),
+            expected_outcome: Err("storage suffix"),
+        },
+        BuiltFirstValueTestCase {
+            description: "text refuses, as its length is not tracked",
+            sql: stripped("'x'"),
+            expected_outcome: Err("length or kind is not tracked"),
+        },
+    ];
+    for test_case in test_cases {
+        assert_eq!(
+            shop_first_outcome(&test_case.sql, test_case.expected_outcome),
+            test_case
+                .expected_outcome
+                .map(str::to_owned)
+                .map_err(str::to_owned),
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_urls_when_converting_parse_url_then_parts_and_parameters_are_read_as_recorded() {
+    let read = |url: &str, path: &str| {
+        format!("SELECT COALESCE(PARSE_URL('{url}', 1){path}::VARCHAR, 'null') AS v")
+    };
+    let test_cases = [
+        BuiltFirstValueTestCase {
+            description: "the host keeps its case",
+            sql: read("https://Shop.Example.com:8443/a/b?x=1#top", "['host']"),
+            expected_outcome: Ok("Shop.Example.com"),
+        },
+        BuiltFirstValueTestCase {
+            description: "the last of a repeated parameter is kept, undecoded",
+            sql: read("https://example.com/p?s=a&s=b%20c", "['parameters']['s']"),
+            expected_outcome: Ok("b%20c"),
+        },
+        BuiltFirstValueTestCase {
+            description: "a query after the fragment mark belongs to the fragment",
+            sql: read("https://example.com/p#frag?x=1", "['fragment']"),
+            expected_outcome: Ok("frag?x=1"),
+        },
+        BuiltFirstValueTestCase {
+            description: "a trailing slash is an empty path",
+            sql: read("https://example.com/", "['path']"),
+            expected_outcome: Ok(""),
+        },
+        BuiltFirstValueTestCase {
+            description: "text without a scheme is the error object",
+            sql: read("example.com/landing", "['error']"),
+            expected_outcome: Ok("scheme not specified"),
+        },
+        BuiltFirstValueTestCase {
+            description: "a URL with user information raises",
+            sql: read("https://user@example.com/", "['host']"),
+            expected_outcome: Err("a URL in a shape no recording shows"),
+        },
+        BuiltFirstValueTestCase {
+            description: "the strict mode refuses",
+            sql: "SELECT PARSE_URL('https://example.com/')::VARCHAR AS v".to_owned(),
+            expected_outcome: Err("permissive mode 1"),
+        },
+    ];
+    for test_case in test_cases {
+        assert_eq!(
+            shop_first_outcome(&test_case.sql, test_case.expected_outcome),
+            test_case
+                .expected_outcome
+                .map(str::to_owned)
+                .map_err(str::to_owned),
+            "{}",
+            test_case.description
+        );
+    }
+}

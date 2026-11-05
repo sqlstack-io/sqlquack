@@ -1156,11 +1156,11 @@ impl Parser {
 
     /// Parse a qualified name (schema.table.column or just table)
     pub(crate) fn parse_qualified_name(&mut self) -> Result<Expression> {
-        let first = self.parse_unquoted_identifier(Self::expect_identifier_or_keyword)?;
+        let first = self.parse_quoting_identifier(Self::expect_identifier_or_keyword)?;
         let mut parts = vec![first];
 
         while self.match_token(TokenType::Dot) {
-            let next = self.parse_unquoted_identifier(Self::expect_identifier_or_keyword)?;
+            let next = self.parse_quoting_identifier(Self::expect_identifier_or_keyword)?;
             parts.push(next);
         }
 
@@ -1186,7 +1186,10 @@ impl Parser {
                 .map(|(start, end)| start.through(end));
             let table_name = parts
                 .iter()
-                .map(|id| id.name.as_str())
+                .map(|id| match id.quoted {
+                    true => format!("\"{}\"", id.name.replace('"', "\"\"")),
+                    false => id.name.clone(),
+                })
                 .collect::<Vec<_>>()
                 .join(".");
             let mut table = Identifier::new(table_name);
@@ -1492,7 +1495,10 @@ impl Parser {
 
         let if_not_exists =
             self.match_keywords(&[TokenType::If, TokenType::Not, TokenType::Exists]);
-        let name = self.parse_table_ref()?;
+        let name = match self.is_snowflake() {
+            true => self.parse_object_name()?,
+            false => self.parse_table_ref()?,
+        };
 
         let (parameters, has_parens) = if self.match_token(TokenType::LParen) {
             let params = self.parse_function_parameters()?;
@@ -1731,6 +1737,12 @@ impl Parser {
         mut function: CreateFunction,
     ) -> Result<CreateFunction> {
         function = record_function_property(function, FunctionPropertyKind::As);
+        if self.is_snowflake()
+            && !self.check(TokenType::String)
+            && !self.check(TokenType::DollarString)
+        {
+            return Err(self.parse_error("Expected the function body as a string"));
+        }
         if self.match_identifier("RETURN") {
             let expr = if self.check(TokenType::Select) || self.check(TokenType::With) {
                 self.parse_statement()?

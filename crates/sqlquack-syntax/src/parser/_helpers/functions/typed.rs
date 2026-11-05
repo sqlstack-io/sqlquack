@@ -768,6 +768,9 @@ impl Parser {
             };
             return Ok(match upper_name {
                 "MODE" => Expression::Mode(Box::new(agg)),
+                _ if self.is_snowflake() => {
+                    Expression::Function(Box::new(Function::new(name, Vec::new())))
+                }
                 _ => {
                     return Err(
                         self.parse_error(format!("{} cannot have zero arguments", upper_name))

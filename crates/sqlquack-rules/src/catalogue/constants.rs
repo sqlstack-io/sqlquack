@@ -37,12 +37,12 @@ use crate::conversion::constants::{
     NULL_ARITHMETIC, NULL_BRANCHES, NULL_IF_ZERO_RULE, NULL_SAFE_COMPARISON, NULLIF,
     NUMBER_LITERAL, NUMBER_TEXT_FORMAT, NUMERIC_FUNCTION, OBJECT_CONSTRUCT_RULE,
     OBJECT_DELETE_RULE, OBJECT_INSERT_RULE, OBJECT_KEYS_RULE, OBJECT_PICK_RULE, ORDER_BY,
-    PARENTHESES, PARSE_JSON_RULE, PARSE_JSON_VARIANT, PERCENTILE_RULE, PIVOT_RULE,
+    PARENTHESES, PARSE_JSON_RULE, PARSE_JSON_VARIANT, PARSE_URL_RULE, PERCENTILE_RULE, PIVOT_RULE,
     POSITIONAL_COLUMN, POWER_RULE, PROJECT_FUNCTION_CALL, PROJECT_TABLE_FUNCTION, QUALIFY,
     REDUCE_RULE, REGEXP, REGEXP_COLUMN_PATTERN, REGEXP_COUNTING, REGEXP_PARAMETERS,
     REGEXP_POSIX_SPACE, ROUNDING, SCALAR_SUBQUERY, SELECT, SET_OPERATION, SIGN_RULE, SPLIT_RULE,
-    SPLIT_TO_TABLE_RULE, STAR, SUM, SUM_FLOAT, TEMPORAL_TEXT_FORMAT, TEXT_AFFIX, TEXT_BRANCHES,
-    TEXT_CHR, TEXT_CONTAINS, TEXT_HEX, TEXT_HEX_DECODE, TEXT_INITCAP, TEXT_MD5,
+    SPLIT_TO_TABLE_RULE, STAR, SUM, SUM_FLOAT, SYSTEM_TYPE_NAME, TEMPORAL_TEXT_FORMAT, TEXT_AFFIX,
+    TEXT_BRANCHES, TEXT_CHR, TEXT_CONTAINS, TEXT_HEX, TEXT_HEX_DECODE, TEXT_INITCAP, TEXT_MD5,
     TEXT_NUMBER_COMPARISON, TEXT_PAD, TEXT_POSITION, TEXT_REPEAT, TEXT_REPLACE,
     TEXT_SEARCH_POSITION, TEXT_SHA2, TEXT_TO_TIME_RULE, TEXT_TO_TIMESTAMP_RULE, TEXT_TRANSLATE,
     TIME_ARITHMETIC, TIME_CAST, TIME_ZONE_CONVERSION, TIMESTAMP_FORMAT_RULE, TIMESTAMP_TIME_RULE,
@@ -524,6 +524,12 @@ pub const RULES: &[RuleSpec] = &[
         failures: &[],
     },
     RuleSpec {
+        id: SYSTEM_TYPE_NAME,
+        constructs: &["fn:SYSTEM$TYPEOF"],
+        conditions: "SYSTEM$TYPEOF(x) only as the subject of REGEXP_REPLACE(..., '\\\\[.*\\\\]$', ''), which removes the storage suffix Snowflake's plan decides: x's Snowflake type as text, NUMBER(p,s), FLOAT, BOOLEAN, DATE, TIME(p), TIMESTAMP_NTZ(p), TIMESTAMP_LTZ(p), TIMESTAMP_TZ(p) or NULL, as recorded; x is typed, not evaluated, so a cast whose conversion is unproven is typed as its target. Text and semi-structured types refuse, as their length and kind are not tracked; so do DATEADD of a timestamp below nanoseconds, which Snowflake was recorded widening to TIMESTAMP_NTZ(9), and a BOOLEAN predicate with a NULL operand, which it was recorded typing NULL.",
+        failures: &[],
+    },
+    RuleSpec {
         id: VARIANT_TYPE_NAME,
         constructs: &["fn:TYPEOF"],
         conditions: "A VARIANT: INTEGER, DECIMAL, VARCHAR, BOOLEAN, OBJECT, ARRAY or NULL_VALUE.",
@@ -614,6 +620,12 @@ pub const RULES: &[RuleSpec] = &[
                 snowflake: &[NOT_AN_ARRAY_ARGUMENT],
             },
         ],
+    },
+    RuleSpec {
+        id: PARSE_URL_RULE,
+        constructs: &["fn:PARSE_URL"],
+        conditions: "PARSE_URL(text, 1) of VARCHAR, relying on json_fidelity: an OBJECT of fragment, host, parameters, path, port, query and scheme, as recorded, for a URL of printable ASCII without spaces written scheme://host[:port][/path][?query][#fragment], each part text or NULL where absent, the path without its leading slash, and parameters an OBJECT of the query's key=value and bare key pairs, the last of a repeated key kept and a bare key null, values not decoded; every part NULL for empty text, and {'error': 'scheme not specified'} for text without a colon; NULL text is NULL. Other URLs raise json_fidelity, and other modes refuse.",
+        failures: &[],
     },
     RuleSpec {
         id: SPLIT_RULE,
@@ -783,7 +795,7 @@ pub const RULES: &[RuleSpec] = &[
     RuleSpec {
         id: ROUNDING,
         constructs: &["fn:ROUND", "fn:CEIL", "fn:FLOOR", "fn:TRUNC", "fn:TRUNCATE"],
-        conditions: "A NUMBER or FLOAT; ROUND to literal places (0 by default, possibly negative), half away from zero; CEIL and FLOOR to whole numbers; TRUNC and TRUNCATE to literal places (0 by default, possibly negative), toward zero, a FLOAT multiplied by 10^p (or divided by 10^-p), truncated and divided back, as recorded (TRUNC(0.29, 2) is 0.28 in both), and TRUNC or TRUNCATE of a temporal value and a literal unit as DATE_TRUNC of the unit and the value. A NUMBER(p,s) whose scale drops to d is NUMBER(min(38, p + 1), max(d, 0)), else its own type, as recorded; a FLOAT stays FLOAT, a zero result positive, and ROUND of a FLOAT to places p multiplies by 10^p, rounds and divides by 10^p, as recorded, so it overflows to infinity where that product does. A result beyond NUMBER(38,0) raises, as Snowflake does.",
+        conditions: "A NUMBER or FLOAT; ROUND to literal places (0 by default, possibly negative), half away from zero, or for a NUMBER with the rounding mode 'HALF_TO_EVEN', half to even, as recorded, 'HALF_AWAY_FROM_ZERO' as without a mode; CEIL and FLOOR to whole numbers; TRUNC and TRUNCATE to literal places (0 by default, possibly negative), toward zero, a FLOAT multiplied by 10^p (or divided by 10^-p), truncated and divided back, as recorded (TRUNC(0.29, 2) is 0.28 in both), and TRUNC or TRUNCATE of a temporal value and a literal unit as DATE_TRUNC of the unit and the value. A NUMBER(p,s) whose scale drops to d is NUMBER(min(38, p + 1), max(d, 0)), else its own type, as recorded; a FLOAT stays FLOAT, a zero result positive, and ROUND of a FLOAT to places p multiplies by 10^p, rounds and divides by 10^p, as recorded, so it overflows to infinity where that product does. A result beyond NUMBER(38,0) raises, as Snowflake does.",
         failures: &[FailureMode {
             kind: ErrorKind::NumericOverflow,
             snowflake: &[NUMBER_OUT_OF_RANGE],
@@ -1305,12 +1317,13 @@ pub const RULES: &[RuleSpec] = &[
         constructs: &[
             "fn:COUNT",
             "fn:SUM",
+            "fn:AVG",
             "fn:MIN",
             "fn:MAX",
             "fn:RATIO_TO_REPORT",
             "node:window_function",
         ],
-        conditions: "The aggregate's own conditions; without a frame, a running RANGE frame when ordered. In a query with GROUP BY its argument may be an aggregate, as recorded. BOOLOR_AGG and BOOLAND_AGG only over an unordered window, as Snowflake accepts them. A RANGE frame whose offsets are literal intervals of whole days over one ascending DATE key, peers and NULL keys framed together, as recorded. RATIO_TO_REPORT(x) over an unordered window is x divided by its partition's SUM, typed and rounded as that division, NULL where the sum is zero, as recorded.",
+        conditions: "The aggregate's own conditions, AVG as SUM divided by COUNT over the same rows, NULL without values: over an ordered window without a frame typed and rounded as the aggregate, over an explicit ROWS or RANGE frame or a whole unordered partition with 3 more decimal places and 12 more leading digits, truncated toward zero, as recorded; without a frame, a running RANGE frame when ordered. In a query with GROUP BY its argument may be an aggregate, as recorded. BOOLOR_AGG and BOOLAND_AGG only over an unordered window, as Snowflake accepts them. A RANGE frame whose offsets are literal intervals of whole days over one ascending DATE key, peers and NULL keys framed together, as recorded. RATIO_TO_REPORT(x) over an unordered window is x divided by its partition's SUM, typed and rounded as that division, NULL where the sum is zero, as recorded.",
         failures: &[FailureMode {
             kind: ErrorKind::NumericOverflow,
             snowflake: &[NUMBER_OUT_OF_RANGE],

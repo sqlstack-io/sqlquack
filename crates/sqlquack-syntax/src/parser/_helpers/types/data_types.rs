@@ -881,9 +881,9 @@ impl Parser {
             let mut renames: Vec<(Identifier, Identifier)> = Vec::new();
             if self.match_token(TokenType::LParen) {
                 loop {
-                    let old_name = self.parse_unquoted_identifier(Self::expect_identifier)?;
+                    let old_name = self.parse_quoting_identifier(Self::expect_identifier)?;
                     self.expect_token(TokenType::As)?;
-                    let new_name = self.parse_unquoted_identifier(Self::expect_identifier)?;
+                    let new_name = self.parse_quoting_identifier(Self::expect_identifier)?;
                     renames.push((old_name, new_name));
                     if !self.match_token(TokenType::Comma) {
                         break;
@@ -891,9 +891,9 @@ impl Parser {
                 }
                 self.expect_token(TokenType::RParen)?;
             } else {
-                let old_name = self.parse_unquoted_identifier(Self::expect_identifier)?;
+                let old_name = self.parse_quoting_identifier(Self::expect_identifier)?;
                 self.expect_token(TokenType::As)?;
-                let new_name = self.parse_unquoted_identifier(Self::expect_identifier)?;
+                let new_name = self.parse_quoting_identifier(Self::expect_identifier)?;
                 renames.push((old_name, new_name));
             }
             rename = Some(renames);

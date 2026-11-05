@@ -400,10 +400,10 @@ fn given_begin_and_declare_when_parsing_then_only_snowflake_blocks_change() {
             expected_root: Ok("transaction"),
         },
         ScriptingDialectTestCase {
-            description: "Snowflake BEGIN NAME keeps its existing non-block path",
+            description: "Snowflake BEGIN NAME stays a named transaction, not a block",
             sql: "BEGIN NAME orders_tx",
             dialect: Dialect::Snowflake,
-            expected_root: Ok("command"),
+            expected_root: Ok("transaction"),
         },
         ScriptingDialectTestCase {
             description: "Snowflake variable named name is a block member",

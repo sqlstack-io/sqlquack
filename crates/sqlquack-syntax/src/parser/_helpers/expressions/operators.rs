@@ -956,11 +956,14 @@ impl Parser {
     }
 
     /// Parse CREATE TYPE statement
-    pub(crate) fn parse_create_type(&mut self) -> Result<Expression> {
+    pub(crate) fn parse_create_type(&mut self, or_replace: bool) -> Result<Expression> {
         self.expect_token(TokenType::Type)?;
 
         let if_not_exists =
             self.match_keywords(&[TokenType::If, TokenType::Not, TokenType::Exists]);
+        if self.is_snowflake() {
+            return self.parse_snowflake_create_type(or_replace, if_not_exists);
+        }
         let name = self.parse_table_ref()?;
 
         if !self.match_token(TokenType::As) {
@@ -972,6 +975,7 @@ impl Parser {
                     internallength: None,
                 },
                 if_not_exists,
+                or_replace,
             })));
         }
 
@@ -1053,6 +1057,33 @@ impl Parser {
             name,
             definition,
             if_not_exists,
+            or_replace,
+        })))
+    }
+
+    /// Snowflake CREATE TYPE after IF NOT EXISTS: a name, AS, a data type and an optional COMMENT string.
+    fn parse_snowflake_create_type(
+        &mut self,
+        or_replace: bool,
+        if_not_exists: bool,
+    ) -> Result<Expression> {
+        let name = self.parse_object_name()?;
+        self.expect_token(TokenType::As)?;
+        if self.check(TokenType::String) || self.check(TokenType::Semicolon) || self.is_at_end() {
+            return Err(self.parse_error("Expected a data type after AS"));
+        }
+        let data_type = self.parse_data_type()?;
+        let comment = if self.match_token(TokenType::Comment) {
+            self.expect_token(TokenType::Eq)?;
+            Some(self.expect_string()?)
+        } else {
+            None
+        };
+        Ok(Expression::CreateType(Box::new(CreateType {
+            name,
+            definition: TypeDefinition::Alias { data_type, comment },
+            if_not_exists,
+            or_replace,
         })))
     }
 
@@ -1114,6 +1145,7 @@ impl Parser {
                 constraints,
             },
             if_not_exists,
+            or_replace: false,
         })))
     }
 
@@ -1182,6 +1214,35 @@ impl Parser {
         let if_not_exists =
             self.match_keywords(&[TokenType::If, TokenType::Not, TokenType::Exists]);
 
+        if self.is_snowflake() {
+            let start = self.current;
+            let target = self.parse_object_name();
+            if let (Ok(target), true) = (target, self.check_identifier("CLONE")) {
+                let name = [target.catalog, target.schema, Some(target.name)]
+                    .into_iter()
+                    .flatten()
+                    .map(|part| match part.quoted {
+                        true => format!("\"{}\"", part.name.replace('"', "\"\"")),
+                        false => part.name,
+                    })
+                    .collect::<Vec<_>>()
+                    .join(".");
+                self.skip();
+                let clone_source = self.parse_object_name()?;
+                return Ok(Expression::CreateTask(Box::new(
+                    crate::expressions::statements::models::CreateTask {
+                        or_replace,
+                        if_not_exists,
+                        name,
+                        properties: String::new(),
+                        body: None,
+                        clone_source: Some(clone_source),
+                    },
+                )));
+            }
+            self.current = start;
+        }
+
         let mut name = String::new();
         if self.check(TokenType::Var) || self.check_keyword() || self.is_identifier_token() {
             name.push_str(&self.advance_text()?);
@@ -1212,7 +1273,8 @@ impl Parser {
                 if_not_exists,
                 name,
                 properties,
-                body,
+                body: Some(body),
+                clone_source: None,
             },
         )))
     }

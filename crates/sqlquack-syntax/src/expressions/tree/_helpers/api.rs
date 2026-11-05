@@ -407,6 +407,7 @@ impl Expression {
             Expression::DropView(_) => "drop_view",
             Expression::AlterView(_) => "alter_view",
             Expression::AlterObject(_) => "alter_object",
+            Expression::CreateObject(_) => "create_object",
             Expression::AlterIndex(_) => "alter_index",
             Expression::Truncate(_) => "truncate",
             Expression::Use(_) => "use",

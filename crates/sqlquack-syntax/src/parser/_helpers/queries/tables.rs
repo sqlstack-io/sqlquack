@@ -1070,8 +1070,10 @@ impl Parser {
             let func = self.parse_primary()?;
             self.refuse_snowflake_pivot_aggregate(&func)?;
             let expr = if self.match_token(TokenType::As) {
-                let alias_name = self.expect_identifier_or_keyword()?;
-                Expression::Alias(Box::new(Alias::new(func, Identifier::new(alias_name))))
+                let quoted = self.check(TokenType::QuotedIdentifier);
+                let mut alias = Identifier::new(self.expect_identifier_or_keyword()?);
+                alias.quoted = quoted;
+                Expression::Alias(Box::new(Alias::new(func, alias)))
             } else if !self.check(TokenType::Comma)
                 && !self.check(TokenType::For)
                 && !self.check(TokenType::RParen)
@@ -1080,13 +1082,14 @@ impl Parser {
                     return Err(self.parse_error("Expected an identifier alias in PIVOT"));
                 }
                 if let Some(id) = self.parse_id_var()? {
-                    let alias_name = match &id {
-                        Expression::Identifier(ident) => ident.name.clone(),
-                        Expression::Column(col) => col.name.name.clone(),
-                        _ => String::new(),
+                    let mut alias: Identifier = match id {
+                        Expression::Identifier(ident) => ident,
+                        Expression::Column(col) => col.name,
+                        _ => Identifier::new(String::new()),
                     };
-                    if !alias_name.is_empty() {
-                        Expression::Alias(Box::new(Alias::new(func, Identifier::new(alias_name))))
+                    alias.span = None;
+                    if !alias.name.is_empty() {
+                        Expression::Alias(Box::new(Alias::new(func, alias)))
                     } else {
                         func
                     }
@@ -1231,29 +1234,31 @@ impl Parser {
 
         self.expect_token(TokenType::LParen)?;
 
-        let (value_column, value_column_parenthesized, extra_value_columns) =
-            if self.match_token(TokenType::LParen) {
-                let col = self.expect_identifier_or_keyword()?;
-                let mut extra_cols: Vec<Identifier> = Vec::new();
-                while self.match_token(TokenType::Comma) {
-                    extra_cols
-                        .push(self.parse_unquoted_identifier(Self::expect_identifier_or_keyword)?);
-                }
-                self.expect_token(TokenType::RParen)?;
-                (Identifier::new(col), true, extra_cols)
-            } else {
-                (
-                    self.parse_unquoted_identifier(Self::expect_identifier_or_keyword)?,
-                    false,
-                    Vec::new(),
-                )
-            };
+        let (value_column, value_column_parenthesized, extra_value_columns) = if self
+            .match_token(TokenType::LParen)
+        {
+            let quoted = self.check(TokenType::QuotedIdentifier);
+            let mut col = Identifier::new(self.expect_identifier_or_keyword()?);
+            col.quoted = quoted;
+            let mut extra_cols: Vec<Identifier> = Vec::new();
+            while self.match_token(TokenType::Comma) {
+                extra_cols.push(self.parse_quoting_identifier(Self::expect_identifier_or_keyword)?);
+            }
+            self.expect_token(TokenType::RParen)?;
+            (col, true, extra_cols)
+        } else {
+            (
+                self.parse_quoting_identifier(Self::expect_identifier_or_keyword)?,
+                false,
+                Vec::new(),
+            )
+        };
 
         self.expect_token(TokenType::For)?;
         if self.is_snowflake() && self.is_snowflake_reserved_keyword() {
             return Err(self.parse_error("Expected a column name after FOR"));
         }
-        let name_column = self.parse_unquoted_identifier(Self::expect_identifier_or_keyword)?;
+        let name_column = self.parse_quoting_identifier(Self::expect_identifier_or_keyword)?;
 
         self.expect_token(TokenType::In)?;
         self.expect_token(TokenType::LParen)?;

@@ -492,6 +492,17 @@ impl Parser {
         Ok(Identifier::new(name).with_span(start.through(self.previous().span)))
     }
 
+    /// An identifier parsed by `parse_name` that keeps its span and whether it was quoted.
+    pub(crate) fn parse_quoting_identifier(
+        &mut self,
+        parse_name: fn(&mut Self) -> Result<String>,
+    ) -> Result<Identifier> {
+        let quoted = self.check(TokenType::QuotedIdentifier);
+        let mut identifier = self.parse_unquoted_identifier(parse_name)?;
+        identifier.quoted = quoted;
+        Ok(identifier)
+    }
+
     /// A column whose range comes only from source-backed identifier parts.
     pub(crate) fn parsed_column(mut column: Column) -> Expression {
         if column.span.is_none() {

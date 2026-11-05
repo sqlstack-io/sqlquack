@@ -405,8 +405,11 @@ pub struct CreateTask {
     pub name: String,
     /// Raw text of properties between name and AS (WAREHOUSE, SCHEDULE, etc.)
     pub properties: String,
-    /// The SQL statement body after AS
-    pub body: Expression,
+    /// The SQL statement body after AS; absent for `CLONE source`
+    pub body: Option<Expression>,
+    /// Source task of `CREATE TASK name CLONE source`
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub clone_source: Option<TableRef>,
 }
 
 /// Raw/unparsed SQL

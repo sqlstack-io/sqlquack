@@ -1224,6 +1224,48 @@ fn given_statements_from_the_parser_only_disagreements_when_parsing_snowflake_th
             dialect: Dialect::Snowflake,
             expected_accepted: true,
         },
+        AcceptanceTestCase {
+            description: "CREATE TASK clones without an AS body (recorded success)",
+            sql: "CREATE OR REPLACE TASK v1 CLONE v1 ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "a clone needs a kind and a name (recorded errno 1003)",
+            sql: "CREATE v1 CLONE v1 ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "CREATE OR needs REPLACE or ALTER (recorded errno 1003)",
+            sql: "CREATE OR TASK v1 CLONE v1 ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "a backup set restore names its identifier as a string (recorded errno 1003 without)",
+            sql: "CREATE TABLE v1 FROM BACKUP SET v1 IDENTIFIER m1 ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "a share is named by its account (recorded errno 1003 without)",
+            sql: "CREATE DATABASE v1 FROM SHARE v1 . ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "an archive alias is no reserved keyword (recorded errno 1003)",
+            sql: "CREATE TABLE v1 FROM ARCHIVE OF v1 SELECT WHERE 1 ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "a CREATE from a source needs its kind (recorded errno 1003)",
+            sql: "CREATE v1 FROM SHARE v1 . v1 ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
     ];
 
     for test_case in test_cases {
@@ -1795,6 +1837,72 @@ fn given_a_documented_snowflake_element_when_parsing_then_the_tree_keeps_it() {
             sql: "USE SECONDARY ROLES v1 , \"v2\"",
             pointer: "/0/use/roles/1/quoted",
             expected_value: json!(true),
+        },
+        ProjectionTestCase {
+            description: "a quoted RENAME target stays quoted",
+            sql: "SELECT * RENAME v1 AS \"v1 Q\" FROM t1",
+            pointer: "/0/select/expressions/0/star/rename/0/1/quoted",
+            expected_value: json!(true),
+        },
+        ProjectionTestCase {
+            description: "a quoted PIVOT aggregate alias stays quoted",
+            sql: "SELECT * FROM t1 PIVOT ( SUM ( v1 ) \"v1 Q\" FOR v2 IN ( 1 , 2 ) )",
+            pointer: "/0/select/from/expressions/0/pivot/expressions/0/alias/alias/quoted",
+            expected_value: json!(true),
+        },
+        ProjectionTestCase {
+            description: "a quoted UNPIVOT name column stays quoted",
+            sql: "SELECT * FROM t1 UNPIVOT ( v1 FOR \"v1 Q\" IN ( a , b ) )",
+            pointer: "/0/select/from/expressions/0/unpivot/name_column/quoted",
+            expected_value: json!(true),
+        },
+        ProjectionTestCase {
+            description: "a quoted COMMENT ON name stays quoted",
+            sql: "COMMENT ON TABLE \"v1\" IS 'm'",
+            pointer: "/0/comment/this/identifier/quoted",
+            expected_value: json!(true),
+        },
+        ProjectionTestCase {
+            description: "a quoted COMMENT ON COLUMN table stays quoted",
+            sql: "COMMENT ON COLUMN \"v1 Q\" . v1 IS 'm'",
+            pointer: "/0/comment/this/column/table/quoted",
+            expected_value: json!(true),
+        },
+        ProjectionTestCase {
+            description: "a quoted part of a longer COMMENT ON COLUMN table keeps its quotes",
+            sql: "COMMENT ON COLUMN \"a.b\" . c . d IS 'm'",
+            pointer: "/0/comment/this/column/table/name",
+            expected_value: json!("\"a.b\".c"),
+        },
+        ProjectionTestCase {
+            description: "a cloned task keeps its source",
+            sql: "CREATE TASK \"v1 Q\" CLONE db.v2",
+            pointer: "/0/create_task/clone_source/schema/name",
+            expected_value: json!("db"),
+        },
+        ProjectionTestCase {
+            description: "a cloned task keeps its name's quoting",
+            sql: "CREATE TASK \"v1 Q\" CLONE db.v2",
+            pointer: "/0/create_task/name",
+            expected_value: json!("\"v1 Q\""),
+        },
+        ProjectionTestCase {
+            description: "a database replica keeps its source and properties",
+            sql: "CREATE DATABASE v1 AS REPLICA OF a1 . \"d Q\" DATA_RETENTION_TIME_IN_DAYS = 1",
+            pointer: "/0/create_object/properties/0/kind",
+            expected_value: json!("DATA_RETENTION_TIME_IN_DAYS"),
+        },
+        ProjectionTestCase {
+            description: "an archive keeps its alias apart from the condition",
+            sql: "CREATE TRANSIENT TABLE v1 FROM ARCHIVE OF v2 AS a1 WHERE 1",
+            pointer: "/0/create_object/operands/0/table/alias/name",
+            expected_value: json!("a1"),
+        },
+        ProjectionTestCase {
+            description: "a backup set restore keeps the set and its identifier",
+            sql: "CREATE DYNAMIC TABLE v1 FROM BACKUP SET s1 IDENTIFIER 'm'",
+            pointer: "/0/create_object/operands/1/literal/value",
+            expected_value: json!("m"),
         },
     ];
 

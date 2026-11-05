@@ -1,0 +1,40 @@
+# ROUND with a rounding mode, of NUMBERs.
+category = "numeric"
+construct = "fn:ROUND"
+session_profile = "utc-v1"
+
+[[case]]
+id = "round_half_to_even_places"
+description = "ROUND to two places with HALF_TO_EVEN: ties to an even digit either side of zero, past a tie, NULL and a tie at the last place."
+columns = [{ name = "x", type = "NUMBER(10,3)" }]
+rows = [["2.125"], ["2.135"], ["-2.125"], ["-2.135"], ["2.1251"], ["0.005"], ["0.015"], ["0.000"], ["NULL"]]
+query = "SELECT ROUND(x, 2, 'HALF_TO_EVEN') AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "boundary", "zero", "negative"]
+
+[[case]]
+id = "round_half_to_even_whole_and_tens"
+description = "ROUND with HALF_TO_EVEN to zero and negative places, ties of units, tens and hundreds."
+columns = [{ name = "x", type = "NUMBER(6,1)" }]
+rows = [["0.5"], ["1.5"], ["2.5"], ["-0.5"], ["-1.5"], ["25.0"], ["35.0"], ["150.0"], ["-250.0"]]
+query = "SELECT ROUND(x, 0, 'HALF_TO_EVEN') AS units, ROUND(x, -1, 'HALF_TO_EVEN') AS tens, ROUND(x, -2, 'HALF_TO_EVEN') AS hundreds FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["boundary"]
+
+[[case]]
+id = "round_half_away_from_zero_mode"
+description = "ROUND with HALF_AWAY_FROM_ZERO beside ROUND without a mode, on ties either side of zero."
+columns = [{ name = "x", type = "NUMBER(10,3)" }]
+rows = [["2.125"], ["-2.125"], ["2.135"], ["NULL"]]
+query = "SELECT ROUND(x, 2, 'HALF_AWAY_FROM_ZERO') AS moded, ROUND(x, 2) AS plain FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "round_half_to_even_wide_ratio"
+description = "A ratio cast to NUMBER(38,6), rounded to four places with HALF_TO_EVEN and cast to NUMBER(9,4), a zero denominator NULL."
+columns = [{ name = "a", type = "NUMBER(18,0)" }, { name = "b", type = "NUMBER(18,0)" }]
+rows = [["1", "8"], ["5", "16"], ["3", "16"], ["1", "3"], ["2", "0"], ["NULL", "4"]]
+query = "SELECT ROUND((a / NULLIF(b, 0))::NUMBER(38, 6), 4, 'HALF_TO_EVEN')::NUMBER(9, 4) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "boundary"]

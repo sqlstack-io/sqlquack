@@ -16,6 +16,7 @@ use sqlquack_duckdb::floats::main::exact_float_sum::exact_float_sum;
 use sqlquack_snowflake::typing::constants::{COUNT_PRECISION, MAX_PRECISION, SUM_EXTRA_DIGITS};
 use sqlquack_snowflake::typing::main::average::average;
 use sqlquack_snowflake::typing::main::count::count;
+use sqlquack_snowflake::typing::main::framed_average::framed_average;
 use sqlquack_snowflake::typing::main::sum::sum;
 use sqlquack_snowflake::typing::models::SnowflakeType;
 
@@ -53,7 +54,7 @@ use crate::conversion::_helpers::expressions::temporal_functions::{
     to_timestamp, to_timestamp_tz,
 };
 use crate::conversion::_helpers::expressions::text_functions::{
-    left_right, pad, regexp, replace, split_part, translate,
+    left_right, pad, regexp, replace, split_part, stripped_type_name, system_typeof_call, translate,
 };
 use crate::conversion::_helpers::expressions::text_search::charindex_call;
 use crate::conversion::_helpers::expressions::variants::variant_function;
@@ -224,6 +225,17 @@ pub(crate) fn convert_function(payload: &Value, site: Site<'_>) -> Result<Emitte
         ("REPLACE", parts) if (2..=3).contains(&parts.len()) => replace(parts, &construct, site),
         ("TRANSLATE", parts) => translate(parts, &construct, site),
         ("SPLIT_PART", parts) => split_part(parts, &construct, site),
+        ("REGEXP_REPLACE", [typed, pattern, replacement])
+            if system_typeof_call(typed).is_some() =>
+        {
+            stripped_type_name((typed, pattern, replacement), site)
+        }
+        ("SYSTEM$TYPEOF", _) => Err(outside_conditions(
+            construct,
+            "SYSTEM$TYPEOF other than with its storage suffix removed by \
+             REGEXP_REPLACE(..., '\\[.*\\]$', ''), since the suffix depends on Snowflake's plan"
+                .to_owned(),
+        )),
         (
             "REGEXP_LIKE" | "REGEXP_REPLACE" | "REGEXP_SUBSTR" | "REGEXP_SUBSTR_ALL"
             | "REGEXP_COUNT" | "REGEXP_INSTR",
@@ -276,6 +288,7 @@ pub(crate) fn convert_function(payload: &Value, site: Site<'_>) -> Result<Emitte
             | "ARRAY_CONSTRUCT_COMPACT"
             | "ARRAY_TO_STRING"
             | "SPLIT"
+            | "PARSE_URL"
             | "TO_VARIANT"
             | "IS_OBJECT"
             | "IS_ARRAY"
@@ -362,12 +375,12 @@ fn nullif(left: &Value, right: &Value, site: Site<'_>) -> Result<Emitted, Refusa
     ))
 }
 
-/// COUNT, SUM, AVG, MIN and MAX; `window` is the OVER clause when used as a window function.
+/// COUNT, SUM, AVG, MIN and MAX; `window` is the OVER clause and whether it is not running.
 pub(crate) fn convert_aggregate(
     kind: &str,
     payload: &Value,
     site: Site<'_>,
-    window: Option<&str>,
+    window: Option<(&str, bool)>,
 ) -> Result<Emitted, Refusal> {
     let construct = node_construct(kind);
     let payload = payload_object(payload, &construct)?;
@@ -379,12 +392,13 @@ pub(crate) fn convert_aggregate(
     let call = AggregateCall {
         payload,
         site: site.placed(placement),
-        over: window.map_or_else(String::new, |window| format!(" OVER ({window})")),
+        over: window.map_or_else(String::new, |(window, _)| format!(" OVER ({window})")),
+        framed: window.is_some_and(|(_, framed)| framed),
     };
     match kind {
         "count" => call.count(),
         "sum" => call.sum(),
-        "avg" => call.average(window.is_some()),
+        "avg" => call.average(),
         _ => call.min_max(kind),
     }
 }
@@ -393,6 +407,8 @@ struct AggregateCall<'a> {
     payload: &'a Payload,
     site: Site<'a>,
     over: String,
+    /// Whether the OVER clause has an explicit frame or no order, rather than a running frame.
+    framed: bool,
 }
 
 impl AggregateCall<'_> {
@@ -464,16 +480,17 @@ impl AggregateCall<'_> {
         Ok(Emitted::new(sql, data_type))
     }
 
-    fn average(&self, windowed: bool) -> Result<Emitted, Refusal> {
+    fn average(&self) -> Result<Emitted, Refusal> {
         let log = self.site.context.log;
         let _rule = log.rule(AVERAGE);
         let refuse = |reason: String| outside_conditions(node_construct("avg"), reason);
-        if windowed {
-            return Err(refuse("AVG over a window".to_owned()));
-        }
         let argument = self.argument("avg")?;
         let total = sum_type(argument.data_type, self.site.context, "avg").map_err(refuse)?;
-        let data_type = average(argument.data_type, log).map_err(refuse)?;
+        let data_type = match self.framed {
+            true => framed_average(argument.data_type, log),
+            false => average(argument.data_type, log),
+        }
+        .map_err(refuse)?;
         let SnowflakeType::Number { precision, scale } = total else {
             return Err(refuse(format!(
                 "AVG of {} has no exact conversion",
@@ -482,17 +499,21 @@ impl AggregateCall<'_> {
         };
         let distinct = self.distinct();
         let counted = cast(
-            &format!("count({distinct}{})", argument.sql),
+            &format!("count({distinct}{}){}", argument.sql, self.over),
             count(log),
             log,
         )
         .map_err(refuse)?;
-        let total_sql =
-            cast(&format!("sum({distinct}{})", argument.sql), total, log).map_err(refuse)?;
+        let total_sql = cast(
+            &format!("sum({distinct}{}){}", argument.sql, self.over),
+            total,
+            log,
+        )
+        .map_err(refuse)?;
         let (divided, guarded) = exact_decimal_divide(
             (&total_sql, precision, scale),
             (&counted, COUNT_PRECISION, 0),
-            data_type,
+            (data_type, self.framed),
             log,
         )
         .map_err(refuse)?;

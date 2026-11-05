@@ -144,3 +144,14 @@ pub const INITCAP_DEFAULT_DELIMITERS: &str = " _-";
 pub const HEX_LOWER_CASE: &str = "0";
 /// HEX_ENCODE's case argument for upper-case digits.
 pub const HEX_UPPER_CASE: &str = "1";
+
+/// PARSE_URL in permissive mode: `duckdb.json_parse_url`.
+pub const JSON_PARSE_URL: &str = "duckdb.json_parse_url";
+/// A URL PARSE_URL was recorded reading, each part captured with its leading mark.
+pub const PARSED_URL_PATTERN: &str = r#"^([A-Za-z][A-Za-z0-9+.-]*)://([A-Za-z0-9.-]+)(:[0-9]+)?(/[!-"$->@-~]*)?(\?[!-"$-~]*)?(#[!-~]*)?$"#;
+/// A query pair PARSE_URL was recorded reading: a key, and a value after one `=`.
+pub const PARSED_URL_PAIR_PATTERN: &str = "[^=&]+(=[^=&]*)?";
+/// PARSE_URL's object for empty text, as recorded.
+pub const PARSED_URL_NONE: &str = r#"{"fragment":null,"host":null,"parameters":null,"path":null,"port":null,"query":null,"scheme":null}"#;
+/// PARSE_URL's object in permissive mode for text without a scheme, as recorded.
+pub const PARSED_URL_UNSCHEMED: &str = r#"{"error":"scheme not specified"}"#;

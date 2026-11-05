@@ -102,7 +102,7 @@ impl Parser {
     }
 
     /// Parse an object name: an identifier, never a string or an unquoted reserved keyword.
-    pub(super) fn parse_object_name(&mut self) -> Result<TableRef> {
+    pub(crate) fn parse_object_name(&mut self) -> Result<TableRef> {
         if self.check(TokenType::String)
             || self.is_snowflake_reserved_keyword()
             || !self.is_object_name_start()
