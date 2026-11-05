@@ -2,9 +2,8 @@
 
 use std::collections::{BTreeMap, BTreeSet};
 
-use crate::check::models::{CheckResult, LocalVerdict};
+use crate::check::models::{CheckResult, LocalVerdict, SnowflakeSyntax};
 use crate::formats::constants::{ALIASES_FILE, CATALOGUE_DIR, SNAPSHOT_FORMAT, SOURCES_FILE};
-use crate::formats::models::Phase;
 use crate::report::models::Snapshot;
 
 /// Whether a coverage path belongs to the catalogue rather than to obligations or evidence.
@@ -12,15 +11,19 @@ fn is_catalogue_file(path: &str) -> bool {
     path == SOURCES_FILE || path == ALIASES_FILE || path.starts_with(&format!("{CATALOGUE_DIR}/"))
 }
 
-/// The receipted cases Snowflake parsed whose local verdict `accepted` says whether it parsed too.
-fn snowflake_parsed(check: &CheckResult, accepted: bool) -> BTreeSet<String> {
+/// Cases whose receipts say `snowflake` and whose parser verdict is acceptance when `accepted`.
+fn by_snowflake(
+    check: &CheckResult,
+    snowflake: SnowflakeSyntax,
+    accepted: bool,
+) -> BTreeSet<String> {
     check
         .forms
         .iter()
         .flat_map(|form| &form.obligations)
         .flat_map(|obligation| &obligation.cases)
         .filter(|case| {
-            case.phase.is_some_and(|phase| phase != Phase::SyntaxError)
+            case.snowflake == Some(snowflake)
                 && matches!(case.local, LocalVerdict::Accepted { .. }) == accepted
                 && !matches!(case.local, LocalVerdict::Failed { .. })
         })
@@ -55,7 +58,9 @@ pub fn snapshot(
             .filter(|obligation| obligation.required && obligation.reason.is_none())
             .map(|obligation| obligation.id.clone())
             .collect(),
-        parsed_cases: snowflake_parsed(check, true),
-        refused_cases: snowflake_parsed(check, false),
+        parsed_cases: by_snowflake(check, SnowflakeSyntax::Parsed, true),
+        refused_cases: by_snowflake(check, SnowflakeSyntax::Parsed, false),
+        syntax_error_cases_rejected: by_snowflake(check, SnowflakeSyntax::Refused, false),
+        syntax_error_cases_accepted: by_snowflake(check, SnowflakeSyntax::Refused, true),
     }
 }
