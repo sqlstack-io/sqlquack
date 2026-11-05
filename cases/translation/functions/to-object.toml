@@ -1,0 +1,38 @@
+category = "translation"
+construct = "sf.functions.to-object"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_object"
+description = "Objects, nested and empty. Catches: an empty object returned as NULL, or nested objects flattened"
+columns = [{ name = "a", type = "VARCHAR" }]
+rows = [
+  ["'{\"a\":{\"b\":[1]}}'"],
+  ["'{}'"],
+]
+query = "SELECT TO_OBJECT(PARSE_JSON(a)) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_not_object"
+description = "An array and a string; the page requires an OBJECT and does not say what other types give; the recording decides. Catches: an array converted to an object keyed by position, or the string parsed"
+columns = [{ name = "a", type = "VARCHAR" }]
+rows = [
+  ["'[1]'"],
+  ["'\"{}\"'"],
+]
+query = "SELECT TO_OBJECT(PARSE_JSON(a)) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t003_null_expr"
+description = "A SQL NULL. Catches: an empty object returned"
+columns = [{ name = "a", type = "VARCHAR" }]
+rows = [
+  ["NULL"],
+]
+query = "SELECT TO_OBJECT(PARSE_JSON(a)) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]
