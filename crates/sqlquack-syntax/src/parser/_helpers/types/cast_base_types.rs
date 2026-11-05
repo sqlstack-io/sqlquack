@@ -458,6 +458,7 @@ impl Parser {
             } else {
                 None
             };
+            self.refuse_snowflake_bare_interval(&unit, &to)?;
             DataType::Interval { unit, to }
         })
     }

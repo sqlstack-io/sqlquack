@@ -46,7 +46,7 @@ pub fn cast_type_name(data_type: &DataType) -> String {
         DataType::Enum { .. } => "ENUM",
         DataType::Set { .. } => "SET",
         DataType::Union { .. } => "UNION",
-        DataType::Nullable { inner } => return cast_type_name(inner),
+        DataType::Nullable { inner } | DataType::NotNull { inner } => return cast_type_name(inner),
         DataType::Custom { name } => return custom_type_name(name),
         DataType::Geometry { .. } => "GEOMETRY",
         DataType::Geography { .. } => "GEOGRAPHY",

@@ -89,6 +89,8 @@ impl Parser {
                 had_initial_component = true;
             } else if self.check(TokenType::LBracket) {
                 had_initial_component = true;
+            } else {
+                self.refuse_snowflake_string_path()?;
             }
 
             if !had_initial_component {
@@ -647,6 +649,9 @@ impl Parser {
 
     fn parse_empty_parentheses(&mut self) -> Result<Expression> {
         self.skip();
+        if self.config.dialect == Some(crate::tokens::models::DialectType::Snowflake) {
+            return Err(self.parse_error("Expected an expression in the parentheses"));
+        }
         if self.config.dialect != Some(crate::tokens::models::DialectType::DuckDB)
             && (self.match_token(TokenType::Arrow) || self.match_token(TokenType::FArrow))
         {
@@ -657,9 +662,6 @@ impl Parser {
                 colon: false,
                 parameter_types: Vec::new(),
             })));
-        }
-        if self.config.dialect == Some(crate::tokens::models::DialectType::Snowflake) {
-            return Err(self.parse_error("Expected an expression in the parentheses"));
         }
         self.maybe_parse_subscript(Expression::Tuple(Box::new(Tuple {
             expressions: Vec::new(),
@@ -1088,6 +1090,10 @@ impl Parser {
         }
 
         if self.match_token(TokenType::Dot) {
+            if let Some(call) = self.parse_snowflake_default_schema_call(ident.clone())? {
+                return self.maybe_parse_subscript(call);
+            }
+            self.refuse_snowflake_reserved_part()?;
             if self.match_token(TokenType::Star) {
                 let star = self.parse_star_modifiers(Some(ident))?;
                 let star_expr = Expression::Star(star);
@@ -1220,6 +1226,7 @@ impl Parser {
         if self.tokens.is_empty() {
             return Err(self.end_of_input_error());
         }
+        self.refuse_snowflake_stage_reference()?;
 
         if self.check(TokenType::If)
             && !self.if_expr_ruled_out.contains(&self.current)
