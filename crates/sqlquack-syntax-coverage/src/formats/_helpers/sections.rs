@@ -13,11 +13,12 @@ use crate::formats::_helpers::records::{
 };
 use crate::formats::_helpers::retired::{retire, withdrawn_receipts};
 use crate::formats::constants::{
-    ALIASES_FILE, CASES_DIR, CATALOGUE_DIR, INDEXES_FILE, LIMITS_FILE, OBLIGATIONS_DIR,
-    RECEIPT_REPORT_SUFFIX, RECEIPTS_DIR, REVIEWS_DIR, SOURCES_FILE, UNOBSERVABLE_DIR,
+    ALIASES_FILE, CASES_DIR, CATALOGUE_DIR, INDEXES_FILE, LIMITS_FILE, MARKS, MARKS_DIR,
+    OBLIGATIONS_DIR, RECEIPT_REPORT_SUFFIX, RECEIPTS_DIR, REVIEWS_DIR, SOURCES_FILE,
+    UNOBSERVABLE_DIR,
 };
 use crate::formats::models::{
-    Alias, AliasesFile, Case, CatalogueFile, Diagnostic, Index, IndexesFile, LimitsFile,
+    Alias, AliasesFile, Case, CatalogueFile, Diagnostic, Index, IndexesFile, LimitsFile, Mark,
     Obligation, ObligationsFile, Reading, Receipt, Review, ReviewsFile, Source, SourcesFile,
     Unobservable, UnobservableFile,
 };
@@ -182,6 +183,29 @@ pub(crate) fn load_cases(root: &Path) -> Section<BTreeMap<String, Vec<Case>>> {
     Section::of(records, declared, problems)
 }
 
+/// `marks/<family>.jsonl`: optional, each mark one of MARKS and each case marked at most once.
+pub(crate) fn load_marks(root: &Path) -> Section<Vec<Mark>> {
+    let (paths, others) = listed(&root.join(MARKS_DIR), "jsonl");
+    let mut problems: Vec<String> = others.iter().map(|path| stray(path, "jsonl")).collect();
+    let mut records: Vec<Mark> = Vec::new();
+    for path in paths {
+        let (marks, read_problems) = read_jsonl::<Mark>(&path);
+        problems.extend(read_problems);
+        records.extend(marks);
+    }
+    problems.extend(
+        records
+            .iter()
+            .filter(|mark| !MARKS.contains(&mark.mark.as_str()))
+            .map(|mark| format!("mark {}: unknown mark {:?}", mark.case_id, mark.mark)),
+    );
+    let declared: Vec<String> = records
+        .iter()
+        .map(|mark| format!("mark {}", mark.case_id))
+        .collect();
+    Section::of(records, declared, problems)
+}
+
 /// Every receipts file, less the receipts superseded or withdrawn by the run reports beside them.
 pub(crate) fn load_receipts(root: &Path) -> Section<(Vec<Receipt>, Vec<String>)> {
     let (paths, others) = listed(&root.join(RECEIPTS_DIR), "jsonl");
@@ -296,6 +320,7 @@ pub(crate) struct Sections {
     pub(crate) reviews: Section<Vec<Review>>,
     pub(crate) unobservable: Section<(Vec<Unobservable>, Vec<Diagnostic>)>,
     pub(crate) readings: Section<Vec<Reading>>,
+    pub(crate) marks: Section<Vec<Mark>>,
 }
 
 impl Sections {
@@ -312,6 +337,7 @@ impl Sections {
             &self.reviews.problems,
             &self.unobservable.problems,
             &self.readings.problems,
+            &self.marks.problems,
         ]
         .into_iter()
         .flatten()
@@ -325,6 +351,7 @@ impl Sections {
                 &self.obligations.declared,
                 &self.cases.declared,
                 &self.reviews.declared,
+                &self.marks.declared,
             ]
             .into_iter()
             .flatten()
@@ -348,6 +375,7 @@ pub(crate) fn load_sections(root: &Path) -> Sections {
         reviews: load_reviews(root),
         unobservable: load_unobservable(root),
         readings: load_readings(root),
+        marks: load_marks(root),
         sources,
     }
 }

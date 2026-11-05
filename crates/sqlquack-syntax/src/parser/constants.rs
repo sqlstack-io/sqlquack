@@ -227,6 +227,12 @@ pub(crate) const SQLITE_RANGE_FOLLOWERS: [crate::tokens::models::TokenType; 9] =
     crate::tokens::models::TokenType::Match,
 ];
 
+/// Snowflake types written before a string as a typed literal, beyond the shared ones.
+pub(crate) const SNOWFLAKE_LITERAL_TYPES: &[&str] = &["IPADDRESS"];
+
+/// Reserved words Snowflake is recorded refusing as an unquoted later part of a dotted name.
+pub(crate) const SNOWFLAKE_REFUSED_NAME_PARTS: &[&str] = &["SELECT"];
+
 /// Snowflake's fully reserved keywords; its position-limited keywords are not listed.
 pub(crate) const SNOWFLAKE_RESERVED_KEYWORDS: &[&str] = &[
     "ALL",
@@ -875,3 +881,12 @@ pub(crate) const SNOWFLAKE_SHOW_REQUIRED_CONTAINERS: &[(&str, &[&str])] = &[
         ],
     ),
 ];
+
+/// The interval field whose precision after TO counts fractional digits.
+pub(crate) const SNOWFLAKE_INTERVAL_SECOND: &str = "SECOND";
+
+/// Snowflake's recorded leading-field interval precisions, as in `INTERVAL YEAR ( 9 )`.
+pub(crate) const SNOWFLAKE_INTERVAL_LEADING: std::ops::RangeInclusive<u8> = 1..=9;
+
+/// Snowflake's recorded fractional-second precisions after TO, as in `DAY TO SECOND ( 0 )`.
+pub(crate) const SNOWFLAKE_INTERVAL_FRACTION: std::ops::RangeInclusive<u8> = 0..=9;

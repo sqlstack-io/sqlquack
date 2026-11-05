@@ -32,7 +32,6 @@ use crate::parser::constants::ODBC_TIME_ESCAPE;
 use crate::parser::constants::PYFORMAT_PARAMETER_SUFFIX;
 use crate::parser::constants::SECOND_PREVIOUS_OFFSET;
 use crate::parser::constants::STRUCT;
-use crate::parser::constants::VARIADIC_KEYWORD;
 use crate::parser::models::Parser;
 use crate::tokens::models::SourceSpan;
 use crate::tokens::models::TokenType;
@@ -51,19 +50,8 @@ impl Parser {
             return Ok(connect_by_root);
         }
 
-        if matches!(
-            self.config.dialect,
-            Some(crate::tokens::models::DialectType::PostgreSQL)
-        ) && self.check(TokenType::Var)
-            && self.peek_text().eq_ignore_ascii_case(VARIADIC_KEYWORD)
-        {
-            self.skip();
-            let this = self.parse_bitwise_or()?;
-            return Ok(Expression::Variadic(Box::new(
-                crate::expressions::statements::models::Variadic {
-                    this: Box::new(this),
-                },
-            )));
+        if let Some(variadic) = self.parse_variadic_argument()? {
+            return Ok(variadic);
         }
 
         if self.match_token(TokenType::LBracket) {
@@ -1547,6 +1535,12 @@ impl Parser {
         }
 
         if self.match_token(TokenType::Dot) {
+            if let Some(call) = self.parse_snowflake_default_schema_call(
+                Identifier::new(name.clone()).with_span(token.span),
+            )? {
+                return self.maybe_parse_subscript(call);
+            }
+            self.refuse_snowflake_reserved_part()?;
             if self.match_token(TokenType::Star) {
                 let ident = Identifier::new(name).with_span(token.span);
                 let star = self.parse_star_modifiers(Some(ident))?;
@@ -1666,6 +1660,10 @@ impl Parser {
             } else if self.check(TokenType::Number) || self.peek().token_type.is_keyword() {
                 let token = self.advance()?;
                 (token.text, false, false)
+            } else if self.is_snowflake()
+                && (self.check(TokenType::Comma) || self.check(TokenType::RParen))
+            {
+                return Ok(Expression::column("@"));
             } else {
                 return Err(self.parse_error("Expected variable name after @"));
             };
@@ -1694,7 +1692,14 @@ impl Parser {
             }
             return Err(self.parse_error(format!("Invalid colon parameter: :{}", num_token.text)));
         }
-        if self.is_identifier_token() || self.is_safe_keyword_as_identifier() {
+        let snowflake = self.is_snowflake();
+        if snowflake && self.check(TokenType::QuotedIdentifier) {
+            return Err(self.parse_error("Expected an unquoted bind variable name after :"));
+        }
+        if self.is_identifier_token()
+            || self.is_safe_keyword_as_identifier()
+            || (snowflake && self.peek().token_type.is_keyword())
+        {
             let name = self.advance_text()?;
             Ok(Expression::Parameter(Box::new(Parameter {
                 name: Some(name),

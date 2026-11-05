@@ -133,6 +133,7 @@ impl Expression {
             | Expression::Prepare(_)
             | Expression::Execute(_)
             | Expression::ExecuteObject(_)
+            | Expression::ExecuteUsingPolicyContext(_)
             | Expression::Declare(_)
             | Expression::Refresh(_)
             | Expression::AlterSession(_)

@@ -33,6 +33,7 @@ pub(crate) fn base() -> Snapshot {
         refused_cases: BTreeSet::from(["sf.query.with.k2".to_owned()]),
         syntax_error_cases_rejected: BTreeSet::from(["sf.query.select.k3".to_owned()]),
         syntax_error_cases_accepted: BTreeSet::new(),
+        documented_cases: BTreeSet::new(),
     }
 }
 
@@ -67,12 +68,30 @@ pub(crate) fn observed_select_from(root: &Path, errno: i64) {
     );
 }
 
+/// Marks `select-from` with `mark` in `marks/query.jsonl`.
+pub(crate) fn mark_select_from(root: &Path, mark: &str) {
+    let coverage = load_coverage(root).expect("load");
+    let case = coverage.cases["query"]
+        .iter()
+        .find(|case| case.case_id == "select-from")
+        .expect("select-from");
+    let line: String = serde_json::json!({
+        "case_id": case.case_id,
+        "sql_sha256": case.sql_sha256,
+        "obligations": case.obligations,
+        "mark": mark,
+    })
+    .to_string();
+    std::fs::create_dir_all(root.join("marks")).expect("marks directory");
+    std::fs::write(root.join("marks/query.jsonl"), format!("{line}\n")).expect("write marks");
+}
+
 /// The snapshot of the tree at `root` under `parse`.
 pub(crate) fn snapshot_with(root: &Path, parse: fn(&str) -> LocalVerdict) -> Snapshot {
     let coverage = load_coverage(root).expect("load");
     snapshot(
         &check_coverage(&coverage, Some(TREE), &parse),
-        &coverage.file_hashes,
+        &coverage,
         "catalogue",
     )
 }

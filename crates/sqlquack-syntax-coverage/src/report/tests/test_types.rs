@@ -18,4 +18,5 @@ pub(crate) struct ParserChangeTestCase {
     pub(crate) head: fn(&str) -> LocalVerdict,
     pub(crate) expected_parsed_cases_refused: Vec<&'static str>,
     pub(crate) expected_syntax_error_cases_accepted: Vec<&'static str>,
+    pub(crate) expected_documented_cases_accepted: Vec<&'static str>,
 }

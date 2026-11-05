@@ -299,6 +299,11 @@ pub enum DataType {
         inner: Box<DataType>,
     },
 
+    /// An element or value type declared NOT NULL, as in Snowflake's `ARRAY ( INT NOT NULL )`.
+    NotNull {
+        inner: Box<DataType>,
+    },
+
     Custom {
         name: String,
     },
@@ -334,7 +339,7 @@ impl DataType {
             DataType::Array { element_type, .. } | DataType::List { element_type } => {
                 element_type.contains_unknown()
             }
-            DataType::Nullable { inner } => inner.contains_unknown(),
+            DataType::Nullable { inner } | DataType::NotNull { inner } => inner.contains_unknown(),
             DataType::Map {
                 key_type,
                 value_type,
@@ -362,8 +367,12 @@ impl DataType {
         }
         match (self, refined) {
             (DataType::Unknown, _) => true,
-            (DataType::Nullable { inner }, other) => inner.matches_shape_of(other),
-            (this, DataType::Nullable { inner }) => this.matches_shape_of(inner),
+            (DataType::Nullable { inner } | DataType::NotNull { inner }, other) => {
+                inner.matches_shape_of(other)
+            }
+            (this, DataType::Nullable { inner } | DataType::NotNull { inner }) => {
+                this.matches_shape_of(inner)
+            }
             (
                 DataType::Array { element_type, .. } | DataType::List { element_type },
                 DataType::Array {

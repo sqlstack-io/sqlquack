@@ -352,6 +352,14 @@ pub struct ExecuteStatement {
     pub suffix: Option<String>,
 }
 
+/// Snowflake `EXECUTE USING POLICY_CONTEXT ( <name> => <value> , ... ) AS <query>`.
+#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct ExecuteUsingPolicyContext {
+    /// The named arguments of POLICY_CONTEXT.
+    pub arguments: Vec<Expression>,
+    pub query: Expression,
+}
+
 /// Snowflake `EXECUTE ALERT | TASK [ GRAPH ] | DCM PROJECT <name>` with its action.
 #[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct ExecuteObject {
@@ -1603,6 +1611,7 @@ pub enum ScriptingDeclaration {
     Cursor(ScriptingCursor),
     Resultset(ScriptingResultset),
     Exception(ScriptingException),
+    Procedure(Box<ScriptingProcedure>),
 }
 
 /// `name [type] [{DEFAULT | :=} expression]`.
@@ -1676,6 +1685,19 @@ pub struct ScriptingException {
     pub name: Identifier,
     pub number: Option<Expression>,
     pub message: Option<Expression>,
+}
+
+/// `name PROCEDURE ( [<arg> <type>, ...] ) RETURNS { <type> | TABLE ( ... ) } AS <block>`.
+#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct ScriptingProcedure {
+    #[serde(default, skip_serializing_if = "SourceSpan::is_absent")]
+    #[ast(skip)]
+    pub span: SourceSpan,
+    pub name: Identifier,
+    pub parameters: Vec<crate::expressions::schema_objects::models::FunctionParameter>,
+    pub return_type: Option<DataType>,
+    pub returns_table: Option<Vec<StructField>>,
+    pub body: ScriptingBlock,
 }
 
 /// One body member, terminated by its own semicolon.

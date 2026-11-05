@@ -269,7 +269,8 @@ impl Parser {
 
         while !self.is_at_end() {
             let start = self.current;
-            let mut stmt = self.parse_statement()?;
+            let first = self.parse_statement()?;
+            let mut stmt = self.parse_snowflake_flow(first)?;
             stmt = self.spanned(start, stmt);
 
             if self.check(TokenType::Semicolon) {
