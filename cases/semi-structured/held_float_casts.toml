@@ -48,7 +48,22 @@ rows = [
 ]
 query = "SELECT ARRAY_SIZE(CAST(ARRAY_CONSTRUCT(x) AS ARRAY))::NUMBER(38,0) AS n, TO_JSON(CAST(ARRAY_CONSTRUCT(x) AS ARRAY)) AS j FROM input ORDER BY ordinal"
 order = "ordered"
+expected_divergence = "json_fidelity"
 tags = ["null", "boundary"]
+
+[[case]]
+id = "held_float_array_cast_defined"
+description = "ARRAY_CONSTRUCT of a non-NULL FLOAT cast to ARRAY, read by ARRAY_SIZE and TO_JSON."
+columns = [{ name = "x", type = "FLOAT" }]
+rows = [
+  ["1.5"],
+  ["0.1"],
+  ["-1e-7"],
+  ["1e300"],
+]
+query = "SELECT ARRAY_SIZE(CAST(ARRAY_CONSTRUCT(x) AS ARRAY))::NUMBER(38,0) AS n, TO_JSON(CAST(ARRAY_CONSTRUCT(x) AS ARRAY)) AS j FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["boundary", "negative"]
 
 [[case]]
 id = "held_float_element_object_insert"
