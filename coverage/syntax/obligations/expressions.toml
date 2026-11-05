@@ -514,7 +514,7 @@ note = "an unquoted identifier in place of '<string>'"
 id = "sf.expressions.data-types-datetime.interval.o010"
 kind = "alternative"
 required = true
-target = "{ YEAR [ ( <precision> ) ] [ TO MONTH ] | MONTH [ ( <precision> ) ] | DAY [ ( <… → YEAR [ ( <precision> ) ] [ TO MONTH ]"
+target = "{ YEAR [ ( <precision> ) ] [ TO MONTH ] | MONTH [ ( <precision> ) ] | DAY [ (… → YEAR [ ( <precision> ) ] [ TO MONTH ]"
 
 [[obligation]]
 id = "sf.expressions.data-types-datetime.interval.o011"
@@ -526,25 +526,25 @@ target = "{ YEAR [ ( <precision> ) ] [ TO MONTH ] | MONTH [ ( <precision> ) ] | 
 id = "sf.expressions.data-types-datetime.interval.o012"
 kind = "alternative"
 required = true
-target = "{ YEAR [ ( <precision> ) ] [ TO MONTH ] | MONTH [ ( <precis… → DAY [ ( <precision> ) ] [ TO { HOUR | MINUTE | SECOND [ ( <fractional_seconds_precision> ) ] } ]"
+target = "{ YEAR [ ( <precision> ) ] [ TO MONTH ] | MONTH [ (… → DAY [ ( <precision> ) ] [ TO { HOUR | MINUTE | SECOND [ ( <fractional_seconds_precision> ) ] } ]"
 
 [[obligation]]
 id = "sf.expressions.data-types-datetime.interval.o013"
 kind = "alternative"
 required = true
-target = "{ YEAR [ ( <precision> ) ] [ TO MONTH ] | MONTH [ ( <precis… → HOUR [ ( <precision> ) ] [ TO { MINUTE | SECOND [ ( <fractional_seconds_precision> ) ] } ]"
+target = "{ YEAR [ ( <precision> ) ] [ TO MONTH ] | MONTH [ (… → HOUR [ ( <precision> ) ] [ TO { MINUTE | SECOND [ ( <fractional_seconds_precision> ) ] } ]"
 
 [[obligation]]
 id = "sf.expressions.data-types-datetime.interval.o014"
 kind = "alternative"
 required = true
-target = "{ YEAR [ ( <precision> ) ] [ TO MONTH ] | MONTH [ ( <precis… → MINUTE [ ( <precision> ) ] [ TO SECOND [ ( <fractional_seconds_precision> ) ] ]"
+target = "{ YEAR [ ( <precision> ) ] [ TO MONTH ] | MONTH [ (… → MINUTE [ ( <precision> ) ] [ TO SECOND [ ( <fractional_seconds_precision> ) ] ]"
 
 [[obligation]]
 id = "sf.expressions.data-types-datetime.interval.o015"
 kind = "alternative"
 required = true
-target = "{ YEAR [ ( <precision> ) ] [ TO MONTH ] | MONTH [ ( <precis… → SECOND [ ( <precision> ) [ , ( <fractional_seconds_precision> ) ] ]"
+target = "{ YEAR [ ( <precision> ) ] [ TO MONTH ] | MONTH [ (… → SECOND [ ( <precision> ) [ , ( <fractional_seconds_precision> ) ] ]"
 
 [[obligation]]
 id = "sf.expressions.data-types-datetime.interval.o016"
@@ -1038,7 +1038,7 @@ note = "the documented form with every required part and no optional part"
 id = "sf.expressions.data-types-datetime.interval-yearmonthqualifier-daytimequalifier.o007"
 kind = "alternative"
 required = true
-target = "{ YEAR [ ( <precision> ) ] [ TO MONTH ] | MONTH [ ( <precision> ) ] | DAY [ ( <… → YEAR [ ( <precision> ) ] [ TO MONTH ]"
+target = "{ YEAR [ ( <precision> ) ] [ TO MONTH ] | MONTH [ ( <precision> ) ] | DAY [ (… → YEAR [ ( <precision> ) ] [ TO MONTH ]"
 
 [[obligation]]
 id = "sf.expressions.data-types-datetime.interval-yearmonthqualifier-daytimequalifier.o008"
@@ -1050,25 +1050,25 @@ target = "{ YEAR [ ( <precision> ) ] [ TO MONTH ] | MONTH [ ( <precision> ) ] | 
 id = "sf.expressions.data-types-datetime.interval-yearmonthqualifier-daytimequalifier.o009"
 kind = "alternative"
 required = true
-target = "{ YEAR [ ( <precision> ) ] [ TO MONTH ] | MONTH [ ( <precis… → DAY [ ( <precision> ) ] [ TO { HOUR | MINUTE | SECOND [ ( <fractional_seconds_precision> ) ] } ]"
+target = "{ YEAR [ ( <precision> ) ] [ TO MONTH ] | MONTH [ (… → DAY [ ( <precision> ) ] [ TO { HOUR | MINUTE | SECOND [ ( <fractional_seconds_precision> ) ] } ]"
 
 [[obligation]]
 id = "sf.expressions.data-types-datetime.interval-yearmonthqualifier-daytimequalifier.o010"
 kind = "alternative"
 required = true
-target = "{ YEAR [ ( <precision> ) ] [ TO MONTH ] | MONTH [ ( <precis… → HOUR [ ( <precision> ) ] [ TO { MINUTE | SECOND [ ( <fractional_seconds_precision> ) ] } ]"
+target = "{ YEAR [ ( <precision> ) ] [ TO MONTH ] | MONTH [ (… → HOUR [ ( <precision> ) ] [ TO { MINUTE | SECOND [ ( <fractional_seconds_precision> ) ] } ]"
 
 [[obligation]]
 id = "sf.expressions.data-types-datetime.interval-yearmonthqualifier-daytimequalifier.o011"
 kind = "alternative"
 required = true
-target = "{ YEAR [ ( <precision> ) ] [ TO MONTH ] | MONTH [ ( <precis… → MINUTE [ ( <precision> ) ] [ TO SECOND [ ( <fractional_seconds_precision> ) ] ]"
+target = "{ YEAR [ ( <precision> ) ] [ TO MONTH ] | MONTH [ (… → MINUTE [ ( <precision> ) ] [ TO SECOND [ ( <fractional_seconds_precision> ) ] ]"
 
 [[obligation]]
 id = "sf.expressions.data-types-datetime.interval-yearmonthqualifier-daytimequalifier.o012"
 kind = "alternative"
 required = true
-target = "{ YEAR [ ( <precision> ) ] [ TO MONTH ] | MONTH [ ( <precis… → SECOND [ ( <precision> ) [ , ( <fractional_seconds_precision> ) ] ]"
+target = "{ YEAR [ ( <precision> ) ] [ TO MONTH ] | MONTH [ (… → SECOND [ ( <precision> ) [ , ( <fractional_seconds_precision> ) ] ]"
 
 [[obligation]]
 id = "sf.expressions.data-types-datetime.interval-yearmonthqualifier-daytimequalifier.o013"
@@ -1796,55 +1796,55 @@ note = "the documented form with every required part and no optional part"
 id = "sf.expressions.data-types-datetime.timestamp-variations.o002"
 kind = "alternative"
 required = true
-target = "{ TIMESTAMP_LTZ | TIMESTAMPLTZ | TIMESTAMP WITH LOCAL TIME ZONE | TIMESTAMP_NTZ | TIMESTAMPNTZ | TIMEST… → TIMESTAMP_LTZ"
+target = "{ TIMESTAMP_LTZ | TIMESTAMPLTZ | TIMESTAMP WITH LOCAL TIME ZONE | TIMESTAMP_NTZ | TIMESTAMPNTZ |… → TIMESTAMP_LTZ"
 
 [[obligation]]
 id = "sf.expressions.data-types-datetime.timestamp-variations.o003"
 kind = "alternative"
 required = true
-target = "{ TIMESTAMP_LTZ | TIMESTAMPLTZ | TIMESTAMP WITH LOCAL TIME ZONE | TIMESTAMP_NTZ | TIMESTAMPNTZ | TIMESTA… → TIMESTAMPLTZ"
+target = "{ TIMESTAMP_LTZ | TIMESTAMPLTZ | TIMESTAMP WITH LOCAL TIME ZONE | TIMESTAMP_NTZ | TIMESTAMPNTZ |… → TIMESTAMPLTZ"
 
 [[obligation]]
 id = "sf.expressions.data-types-datetime.timestamp-variations.o004"
 kind = "alternative"
 required = true
-target = "{ TIMESTAMP_LTZ | TIMESTAMPLTZ | TIMESTAMP WITH LOCAL TIME ZONE | TIMESTAMP_NTZ | TIME… → TIMESTAMP WITH LOCAL TIME ZONE"
+target = "{ TIMESTAMP_LTZ | TIMESTAMPLTZ | TIMESTAMP WITH LOCAL TIME ZONE | TIMESTAMP_NTZ |… → TIMESTAMP WITH LOCAL TIME ZONE"
 
 [[obligation]]
 id = "sf.expressions.data-types-datetime.timestamp-variations.o005"
 kind = "alternative"
 required = true
-target = "{ TIMESTAMP_LTZ | TIMESTAMPLTZ | TIMESTAMP WITH LOCAL TIME ZONE | TIMESTAMP_NTZ | TIMESTAMPNTZ | TIMEST… → TIMESTAMP_NTZ"
+target = "{ TIMESTAMP_LTZ | TIMESTAMPLTZ | TIMESTAMP WITH LOCAL TIME ZONE | TIMESTAMP_NTZ | TIMESTAMPNTZ |… → TIMESTAMP_NTZ"
 
 [[obligation]]
 id = "sf.expressions.data-types-datetime.timestamp-variations.o006"
 kind = "alternative"
 required = true
-target = "{ TIMESTAMP_LTZ | TIMESTAMPLTZ | TIMESTAMP WITH LOCAL TIME ZONE | TIMESTAMP_NTZ | TIMESTAMPNTZ | TIMESTA… → TIMESTAMPNTZ"
+target = "{ TIMESTAMP_LTZ | TIMESTAMPLTZ | TIMESTAMP WITH LOCAL TIME ZONE | TIMESTAMP_NTZ | TIMESTAMPNTZ |… → TIMESTAMPNTZ"
 
 [[obligation]]
 id = "sf.expressions.data-types-datetime.timestamp-variations.o007"
 kind = "alternative"
 required = true
-target = "{ TIMESTAMP_LTZ | TIMESTAMPLTZ | TIMESTAMP WITH LOCAL TIME ZONE | TIMESTAMP_NTZ | TIMESTA… → TIMESTAMP WITHOUT TIME ZONE"
+target = "{ TIMESTAMP_LTZ | TIMESTAMPLTZ | TIMESTAMP WITH LOCAL TIME ZONE | TIMESTAMP_NTZ |… → TIMESTAMP WITHOUT TIME ZONE"
 
 [[obligation]]
 id = "sf.expressions.data-types-datetime.timestamp-variations.o008"
 kind = "alternative"
 required = true
-target = "{ TIMESTAMP_LTZ | TIMESTAMPLTZ | TIMESTAMP WITH LOCAL TIME ZONE | TIMESTAMP_NTZ | TIMESTAMPNTZ | TIMESTA… → TIMESTAMP_TZ"
+target = "{ TIMESTAMP_LTZ | TIMESTAMPLTZ | TIMESTAMP WITH LOCAL TIME ZONE | TIMESTAMP_NTZ | TIMESTAMPNTZ |… → TIMESTAMP_TZ"
 
 [[obligation]]
 id = "sf.expressions.data-types-datetime.timestamp-variations.o009"
 kind = "alternative"
 required = true
-target = "{ TIMESTAMP_LTZ | TIMESTAMPLTZ | TIMESTAMP WITH LOCAL TIME ZONE | TIMESTAMP_NTZ | TIMESTAMPNTZ | TIMESTAM… → TIMESTAMPTZ"
+target = "{ TIMESTAMP_LTZ | TIMESTAMPLTZ | TIMESTAMP WITH LOCAL TIME ZONE | TIMESTAMP_NTZ | TIMESTAMPNTZ |… → TIMESTAMPTZ"
 
 [[obligation]]
 id = "sf.expressions.data-types-datetime.timestamp-variations.o010"
 kind = "alternative"
 required = true
-target = "{ TIMESTAMP_LTZ | TIMESTAMPLTZ | TIMESTAMP WITH LOCAL TIME ZONE | TIMESTAMP_NTZ | TIMESTAMPN… → TIMESTAMP WITH TIME ZONE"
+target = "{ TIMESTAMP_LTZ | TIMESTAMPLTZ | TIMESTAMP WITH LOCAL TIME ZONE | TIMESTAMP_NTZ |… → TIMESTAMP WITH TIME ZONE"
 
 [[obligation]]
 id = "sf.expressions.data-types-datetime.timestamp-variations.o011"
@@ -4215,7 +4215,7 @@ target = "{ <string_literal> | <session_variable> | <bind_variable> | <snowflake
 id = "sf.expressions.identifier-literal.o026"
 kind = "alternative"
 required = true
-target = "{ <string_literal> | <session_variable> | <bind_variable> | <snowflake_scripting_varia… → <snowflake_scripting_variable>"
+target = "{ <string_literal> | <session_variable> | <bind_variable> |… → <snowflake_scripting_variable>"
 
 [[obligation]]
 id = "sf.expressions.identifier-literal.o027"

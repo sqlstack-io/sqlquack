@@ -3818,7 +3818,7 @@ target = "{ ILIKE '<pattern>' | EXCLUDE { <column_name> | ( <column_name> [ , <c
 id = "sf.functions.approx-count-distinct.approx-count-distinct.o017"
 kind = "alternative"
 required = true
-target = "{ ILIKE '<pattern>' | EXCLUDE { <column_name> | ( <column_n… → EXCLUDE { <column_name> | ( <column_name> [ , <column_name> ... ] ) }"
+target = "{ ILIKE '<pattern>' | EXCLUDE { <column_name> | (… → EXCLUDE { <column_name> | ( <column_name> [ , <column_name> ... ] ) }"
 
 [[obligation]]
 id = "sf.functions.approx-count-distinct.approx-count-distinct.o018"
@@ -4114,7 +4114,7 @@ target = "{ ILIKE '<pattern>' | EXCLUDE { <column_name> | ( <column_name> [ , <c
 id = "sf.functions.approx-count-distinct.approx-count-distinct-over.syntax.o017"
 kind = "alternative"
 required = true
-target = "{ ILIKE '<pattern>' | EXCLUDE { <column_name> | ( <column_n… → EXCLUDE { <column_name> | ( <column_name> [ , <column_name> ... ] ) }"
+target = "{ ILIKE '<pattern>' | EXCLUDE { <column_name> | (… → EXCLUDE { <column_name> | ( <column_name> [ , <column_name> ... ] ) }"
 
 [[obligation]]
 id = "sf.functions.approx-count-distinct.approx-count-distinct-over.syntax.o018"
@@ -13620,7 +13620,7 @@ target = "{ ILIKE '<pattern>' | EXCLUDE { <column_name> | ( <column_name> [ , <c
 id = "sf.functions.count.count.o023"
 kind = "alternative"
 required = true
-target = "{ ILIKE '<pattern>' | EXCLUDE { <column_name> | ( <column_n… → EXCLUDE { <column_name> | ( <column_name> [ , <column_name> ... ] ) }"
+target = "{ ILIKE '<pattern>' | EXCLUDE { <column_name> | (… → EXCLUDE { <column_name> | ( <column_name> [ , <column_name> ... ] ) }"
 
 [[obligation]]
 id = "sf.functions.count.count.o024"
@@ -31513,13 +31513,13 @@ target = "[ , ... ] #2"
 id = "sf.functions.functions-window-syntax.o038"
 kind = "option_present"
 required = true
-target = "[ { { ROWS | RANGE } UNBOUNDED PRECEDING | { ROWS | RANGE } <n> PRECEDING | { ROWS | RANGE } CURRENT ROW | { ROWS | RAN…"
+target = "[ { { ROWS | RANGE } UNBOUNDED PRECEDING | { ROWS | RANGE } <n> PRECEDING | { ROWS | RANGE } CURRENT ROW | { ROWS |…"
 
 [[obligation]]
 id = "sf.functions.functions-window-syntax.o039"
 kind = "option_absent"
 required = true
-target = "[ { { ROWS | RANGE } UNBOUNDED PRECEDING | { ROWS | RANGE } <n> PRECEDING | { ROWS | RANGE } CURRENT ROW | { ROWS | RAN…"
+target = "[ { { ROWS | RANGE } UNBOUNDED PRECEDING | { ROWS | RANGE } <n> PRECEDING | { ROWS | RANGE } CURRENT ROW | { ROWS |…"
 
 [[obligation]]
 id = "sf.functions.functions-window-syntax.o040"
@@ -31531,7 +31531,7 @@ target = "{ { ROWS | RANGE } UNBOUNDED PRECEDING | { ROWS | RANGE } <n> PRECEDIN
 id = "sf.functions.functions-window-syntax.o041"
 kind = "alternative"
 required = true
-target = "{ { ROWS | RANGE } UNBOUNDED PRECEDING | { ROWS | RANGE } <n> PRECEDING | { ROWS | RAN… → { ROWS | RANGE } <n> PRECEDING"
+target = "{ { ROWS | RANGE } UNBOUNDED PRECEDING | { ROWS | RANGE } <n> PRECEDING | { ROWS |… → { ROWS | RANGE } <n> PRECEDING"
 
 [[obligation]]
 id = "sf.functions.functions-window-syntax.o042"
@@ -31543,37 +31543,37 @@ target = "{ { ROWS | RANGE } UNBOUNDED PRECEDING | { ROWS | RANGE } <n> PRECEDIN
 id = "sf.functions.functions-window-syntax.o043"
 kind = "alternative"
 required = true
-target = "{ { ROWS | RANGE } UNBOUNDED PRECEDING | { ROWS | RANGE } <… → { ROWS | RANGE } BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW"
+target = "{ { ROWS | RANGE } UNBOUNDED PRECEDING | { ROWS | RANGE }… → { ROWS | RANGE } BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW"
 
 [[obligation]]
 id = "sf.functions.functions-window-syntax.o044"
 kind = "alternative"
 required = true
-target = "{ { ROWS | RANGE } UNBOUNDED PRECEDING | { ROWS | RANGE } <… → { ROWS | RANGE } BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING"
+target = "{ { ROWS | RANGE } UNBOUNDED PRECEDING | { ROWS | RANGE }… → { ROWS | RANGE } BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING"
 
 [[obligation]]
 id = "sf.functions.functions-window-syntax.o045"
 kind = "alternative"
 required = true
-target = "{ { ROWS | RANGE } UNBOUNDED PRECEDING | { ROWS | RANGE } <… → { ROWS | RANGE } BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING"
+target = "{ { ROWS | RANGE } UNBOUNDED PRECEDING | { ROWS | RANGE }… → { ROWS | RANGE } BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING"
 
 [[obligation]]
 id = "sf.functions.functions-window-syntax.o046"
 kind = "alternative"
 required = true
-target = "{ { ROWS | RANGE } UNBOUNDED PRECEDING | { ROWS | RANGE } <… → { ROWS | RANGE } BETWEEN <n> { PRECEDING | FOLLOWING } AND <n> { PRECEDING | FOLLOWING }"
+target = "{ { ROWS | RANGE } UNBOUNDED PRECEDING | { ROWS | RANGE }… → { ROWS | RANGE } BETWEEN <n> { PRECEDING | FOLLOWING } AND <n> { PRECEDING | FOLLOWING }"
 
 [[obligation]]
 id = "sf.functions.functions-window-syntax.o047"
 kind = "alternative"
 required = true
-target = "{ { ROWS | RANGE } UNBOUNDED PRECEDING | { ROWS | RANGE } <… → { ROWS | RANGE } BETWEEN UNBOUNDED PRECEDING AND <n> { PRECEDING | FOLLOWING }"
+target = "{ { ROWS | RANGE } UNBOUNDED PRECEDING | { ROWS | RANGE }… → { ROWS | RANGE } BETWEEN UNBOUNDED PRECEDING AND <n> { PRECEDING | FOLLOWING }"
 
 [[obligation]]
 id = "sf.functions.functions-window-syntax.o048"
 kind = "alternative"
 required = true
-target = "{ { ROWS | RANGE } UNBOUNDED PRECEDING | { ROWS | RANGE } <… → { ROWS | RANGE } BETWEEN <n> { PRECEDING | FOLLOWING } AND UNBOUNDED FOLLOWING"
+target = "{ { ROWS | RANGE } UNBOUNDED PRECEDING | { ROWS | RANGE }… → { ROWS | RANGE } BETWEEN <n> { PRECEDING | FOLLOWING } AND UNBOUNDED FOLLOWING"
 
 [[obligation]]
 id = "sf.functions.functions-window-syntax.o049"
@@ -31603,21 +31603,21 @@ target = "{ ROWS | RANGE } → RANGE #2"
 id = "sf.functions.functions-window-syntax.o053"
 kind = "required_operand_missing"
 required = true
-target = "<n> in [ { { ROWS | RANGE } UNBOUNDED PRECEDING | { ROWS | RANGE } <n> PRECEDING | { ROWS | RANGE } CURRENT ROW | { ROW…"
+target = "<n> in [ { { ROWS | RANGE } UNBOUNDED PRECEDING | { ROWS | RANGE } <n> PRECEDING | { ROWS | RANGE } CURRENT ROW | {…"
 note = "omit <n>"
 
 [[obligation]]
 id = "sf.functions.functions-window-syntax.o054"
 kind = "operand_type_class"
 required = true
-target = "<n> in [ { { ROWS | RANGE } UNBOUNDED PRECEDING | { ROWS | RANGE } <n> PRECEDING | { ROWS | RANGE } CURRENT ROW | { ROW…"
+target = "<n> in [ { { ROWS | RANGE } UNBOUNDED PRECEDING | { ROWS | RANGE } <n> PRECEDING | { ROWS | RANGE } CURRENT ROW | {…"
 note = "a valid integer_literal"
 
 [[obligation]]
 id = "sf.functions.functions-window-syntax.o055"
 kind = "negative_neighbour"
 required = true
-target = "<n> in [ { { ROWS | RANGE } UNBOUNDED PRECEDING | { ROWS | RANGE } <n> PRECEDING | { ROWS | RANGE } CURRENT ROW | { ROW…"
+target = "<n> in [ { { ROWS | RANGE } UNBOUNDED PRECEDING | { ROWS | RANGE } <n> PRECEDING | { ROWS | RANGE } CURRENT ROW | {…"
 note = "a string literal in place of <n>"
 
 [[obligation]]
@@ -31684,21 +31684,21 @@ target = "{ ROWS | RANGE } → RANGE #7"
 id = "sf.functions.functions-window-syntax.o066"
 kind = "required_operand_missing"
 required = true
-target = "<n> in [ { { ROWS | RANGE } UNBOUNDED PRECEDING | { ROWS | RANGE } <n> PRECEDING | { ROWS | RANGE } CURRENT ROW | { ROW… #2"
+target = "<n> in [ { { ROWS | RANGE } UNBOUNDED PRECEDING | { ROWS | RANGE } <n> PRECEDING | { ROWS | RANGE } CURRENT ROW | {… #2"
 note = "omit <n>"
 
 [[obligation]]
 id = "sf.functions.functions-window-syntax.o067"
 kind = "operand_type_class"
 required = true
-target = "<n> in [ { { ROWS | RANGE } UNBOUNDED PRECEDING | { ROWS | RANGE } <n> PRECEDING | { ROWS | RANGE } CURRENT ROW | { ROW… #2"
+target = "<n> in [ { { ROWS | RANGE } UNBOUNDED PRECEDING | { ROWS | RANGE } <n> PRECEDING | { ROWS | RANGE } CURRENT ROW | {… #2"
 note = "a valid integer_literal"
 
 [[obligation]]
 id = "sf.functions.functions-window-syntax.o068"
 kind = "negative_neighbour"
 required = true
-target = "<n> in [ { { ROWS | RANGE } UNBOUNDED PRECEDING | { ROWS | RANGE } <n> PRECEDING | { ROWS | RANGE } CURRENT ROW | { ROW… #2"
+target = "<n> in [ { { ROWS | RANGE } UNBOUNDED PRECEDING | { ROWS | RANGE } <n> PRECEDING | { ROWS | RANGE } CURRENT ROW | {… #2"
 note = "a string literal in place of <n>"
 
 [[obligation]]
@@ -31717,21 +31717,21 @@ target = "{ PRECEDING | FOLLOWING } → FOLLOWING"
 id = "sf.functions.functions-window-syntax.o071"
 kind = "required_operand_missing"
 required = true
-target = "<n> in [ { { ROWS | RANGE } UNBOUNDED PRECEDING | { ROWS | RANGE } <n> PRECEDING | { ROWS | RANGE } CURRENT ROW | { ROW… #3"
+target = "<n> in [ { { ROWS | RANGE } UNBOUNDED PRECEDING | { ROWS | RANGE } <n> PRECEDING | { ROWS | RANGE } CURRENT ROW | {… #3"
 note = "omit <n>"
 
 [[obligation]]
 id = "sf.functions.functions-window-syntax.o072"
 kind = "operand_type_class"
 required = true
-target = "<n> in [ { { ROWS | RANGE } UNBOUNDED PRECEDING | { ROWS | RANGE } <n> PRECEDING | { ROWS | RANGE } CURRENT ROW | { ROW… #3"
+target = "<n> in [ { { ROWS | RANGE } UNBOUNDED PRECEDING | { ROWS | RANGE } <n> PRECEDING | { ROWS | RANGE } CURRENT ROW | {… #3"
 note = "a valid integer_literal"
 
 [[obligation]]
 id = "sf.functions.functions-window-syntax.o073"
 kind = "negative_neighbour"
 required = true
-target = "<n> in [ { { ROWS | RANGE } UNBOUNDED PRECEDING | { ROWS | RANGE } <n> PRECEDING | { ROWS | RANGE } CURRENT ROW | { ROW… #3"
+target = "<n> in [ { { ROWS | RANGE } UNBOUNDED PRECEDING | { ROWS | RANGE } <n> PRECEDING | { ROWS | RANGE } CURRENT ROW | {… #3"
 note = "a string literal in place of <n>"
 
 [[obligation]]
@@ -31762,21 +31762,21 @@ target = "{ ROWS | RANGE } → RANGE #8"
 id = "sf.functions.functions-window-syntax.o078"
 kind = "required_operand_missing"
 required = true
-target = "<n> in [ { { ROWS | RANGE } UNBOUNDED PRECEDING | { ROWS | RANGE } <n> PRECEDING | { ROWS | RANGE } CURRENT ROW | { ROW… #4"
+target = "<n> in [ { { ROWS | RANGE } UNBOUNDED PRECEDING | { ROWS | RANGE } <n> PRECEDING | { ROWS | RANGE } CURRENT ROW | {… #4"
 note = "omit <n>"
 
 [[obligation]]
 id = "sf.functions.functions-window-syntax.o079"
 kind = "operand_type_class"
 required = true
-target = "<n> in [ { { ROWS | RANGE } UNBOUNDED PRECEDING | { ROWS | RANGE } <n> PRECEDING | { ROWS | RANGE } CURRENT ROW | { ROW… #4"
+target = "<n> in [ { { ROWS | RANGE } UNBOUNDED PRECEDING | { ROWS | RANGE } <n> PRECEDING | { ROWS | RANGE } CURRENT ROW | {… #4"
 note = "a valid integer_literal"
 
 [[obligation]]
 id = "sf.functions.functions-window-syntax.o080"
 kind = "negative_neighbour"
 required = true
-target = "<n> in [ { { ROWS | RANGE } UNBOUNDED PRECEDING | { ROWS | RANGE } <n> PRECEDING | { ROWS | RANGE } CURRENT ROW | { ROW… #4"
+target = "<n> in [ { { ROWS | RANGE } UNBOUNDED PRECEDING | { ROWS | RANGE } <n> PRECEDING | { ROWS | RANGE } CURRENT ROW | {… #4"
 note = "a string literal in place of <n>"
 
 [[obligation]]
@@ -31807,21 +31807,21 @@ target = "{ ROWS | RANGE } → RANGE #9"
 id = "sf.functions.functions-window-syntax.o085"
 kind = "required_operand_missing"
 required = true
-target = "<n> in [ { { ROWS | RANGE } UNBOUNDED PRECEDING | { ROWS | RANGE } <n> PRECEDING | { ROWS | RANGE } CURRENT ROW | { ROW… #5"
+target = "<n> in [ { { ROWS | RANGE } UNBOUNDED PRECEDING | { ROWS | RANGE } <n> PRECEDING | { ROWS | RANGE } CURRENT ROW | {… #5"
 note = "omit <n>"
 
 [[obligation]]
 id = "sf.functions.functions-window-syntax.o086"
 kind = "operand_type_class"
 required = true
-target = "<n> in [ { { ROWS | RANGE } UNBOUNDED PRECEDING | { ROWS | RANGE } <n> PRECEDING | { ROWS | RANGE } CURRENT ROW | { ROW… #5"
+target = "<n> in [ { { ROWS | RANGE } UNBOUNDED PRECEDING | { ROWS | RANGE } <n> PRECEDING | { ROWS | RANGE } CURRENT ROW | {… #5"
 note = "a valid integer_literal"
 
 [[obligation]]
 id = "sf.functions.functions-window-syntax.o087"
 kind = "negative_neighbour"
 required = true
-target = "<n> in [ { { ROWS | RANGE } UNBOUNDED PRECEDING | { ROWS | RANGE } <n> PRECEDING | { ROWS | RANGE } CURRENT ROW | { ROW… #5"
+target = "<n> in [ { { ROWS | RANGE } UNBOUNDED PRECEDING | { ROWS | RANGE } <n> PRECEDING | { ROWS | RANGE } CURRENT ROW | {… #5"
 note = "a string literal in place of <n>"
 
 [[obligation]]
@@ -31882,211 +31882,211 @@ note = "the form without its required { FIRST | LAST } in [ NULLS { FIRST | LAST
 id = "sf.functions.functions-window-syntax.o093"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required UNBOUNDED in [ { { ROWS | RANGE } UNBOUNDED PRECEDING | { ROWS | RANGE } <n> PRECEDING | { ROWS | RANGE } CURRENT ROW | { ROWS | RAN…"
+note = "the form without its required UNBOUNDED in [ { { ROWS | RANGE } UNBOUNDED PRECEDING | { ROWS | RANGE } <n> PRECEDING | { ROWS | RANGE } CURRENT ROW | { ROWS |…"
 
 [[obligation]]
 id = "sf.functions.functions-window-syntax.o094"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required PRECEDING in [ { { ROWS | RANGE } UNBOUNDED PRECEDING | { ROWS | RANGE } <n> PRECEDING | { ROWS | RANGE } CURRENT ROW | { ROWS | RAN…"
+note = "the form without its required PRECEDING in [ { { ROWS | RANGE } UNBOUNDED PRECEDING | { ROWS | RANGE } <n> PRECEDING | { ROWS | RANGE } CURRENT ROW | { ROWS |…"
 
 [[obligation]]
 id = "sf.functions.functions-window-syntax.o103"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required PRECEDING after <n> in [ { { ROWS | RANGE } UNBOUNDED PRECEDING | { ROWS | RANGE } <n> PRECEDING | { ROWS | RANGE } CURRENT ROW | { ROWS | RAN…"
+note = "the form without its required PRECEDING after <n> in [ { { ROWS | RANGE } UNBOUNDED PRECEDING | { ROWS | RANGE } <n> PRECEDING | { ROWS | RANGE } CURRENT ROW | { ROWS |…"
 
 [[obligation]]
 id = "sf.functions.functions-window-syntax.o095"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required CURRENT in [ { { ROWS | RANGE } UNBOUNDED PRECEDING | { ROWS | RANGE } <n> PRECEDING | { ROWS | RANGE } CURRENT ROW | { ROWS | RAN…"
+note = "the form without its required CURRENT in [ { { ROWS | RANGE } UNBOUNDED PRECEDING | { ROWS | RANGE } <n> PRECEDING | { ROWS | RANGE } CURRENT ROW | { ROWS |…"
 
 [[obligation]]
 id = "sf.functions.functions-window-syntax.o096"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required ROW in [ { { ROWS | RANGE } UNBOUNDED PRECEDING | { ROWS | RANGE } <n> PRECEDING | { ROWS | RANGE } CURRENT ROW | { ROWS | RAN…"
+note = "the form without its required ROW in [ { { ROWS | RANGE } UNBOUNDED PRECEDING | { ROWS | RANGE } <n> PRECEDING | { ROWS | RANGE } CURRENT ROW | { ROWS |…"
 
 [[obligation]]
 id = "sf.functions.functions-window-syntax.o097"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required BETWEEN in [ { { ROWS | RANGE } UNBOUNDED PRECEDING | { ROWS | RANGE } <n> PRECEDING | { ROWS | RANGE } CURRENT ROW | { ROWS | RAN…"
+note = "the form without its required BETWEEN in [ { { ROWS | RANGE } UNBOUNDED PRECEDING | { ROWS | RANGE } <n> PRECEDING | { ROWS | RANGE } CURRENT ROW | { ROWS |…"
 
 [[obligation]]
 id = "sf.functions.functions-window-syntax.o104"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required UNBOUNDED after BETWEEN in [ { { ROWS | RANGE } UNBOUNDED PRECEDING | { ROWS | RANGE } <n> PRECEDING | { ROWS | RANGE } CURRENT ROW | { ROWS | RAN…"
+note = "the form without its required UNBOUNDED after BETWEEN in [ { { ROWS | RANGE } UNBOUNDED PRECEDING | { ROWS | RANGE } <n> PRECEDING | { ROWS | RANGE } CURRENT ROW | { ROWS |…"
 
 [[obligation]]
 id = "sf.functions.functions-window-syntax.o105"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required PRECEDING after UNBOUNDED in [ { { ROWS | RANGE } UNBOUNDED PRECEDING | { ROWS | RANGE } <n> PRECEDING | { ROWS | RANGE } CURRENT ROW | { ROWS | RAN…"
+note = "the form without its required PRECEDING after UNBOUNDED in [ { { ROWS | RANGE } UNBOUNDED PRECEDING | { ROWS | RANGE } <n> PRECEDING | { ROWS | RANGE } CURRENT ROW | { ROWS |…"
 
 [[obligation]]
 id = "sf.functions.functions-window-syntax.o098"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required AND in [ { { ROWS | RANGE } UNBOUNDED PRECEDING | { ROWS | RANGE } <n> PRECEDING | { ROWS | RANGE } CURRENT ROW | { ROWS | RAN…"
+note = "the form without its required AND in [ { { ROWS | RANGE } UNBOUNDED PRECEDING | { ROWS | RANGE } <n> PRECEDING | { ROWS | RANGE } CURRENT ROW | { ROWS |…"
 
 [[obligation]]
 id = "sf.functions.functions-window-syntax.o106"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required CURRENT after AND in [ { { ROWS | RANGE } UNBOUNDED PRECEDING | { ROWS | RANGE } <n> PRECEDING | { ROWS | RANGE } CURRENT ROW | { ROWS | RAN…"
+note = "the form without its required CURRENT after AND in [ { { ROWS | RANGE } UNBOUNDED PRECEDING | { ROWS | RANGE } <n> PRECEDING | { ROWS | RANGE } CURRENT ROW | { ROWS |…"
 
 [[obligation]]
 id = "sf.functions.functions-window-syntax.o107"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required ROW after CURRENT in [ { { ROWS | RANGE } UNBOUNDED PRECEDING | { ROWS | RANGE } <n> PRECEDING | { ROWS | RANGE } CURRENT ROW | { ROWS | RAN…"
+note = "the form without its required ROW after CURRENT in [ { { ROWS | RANGE } UNBOUNDED PRECEDING | { ROWS | RANGE } <n> PRECEDING | { ROWS | RANGE } CURRENT ROW | { ROWS |…"
 
 [[obligation]]
 id = "sf.functions.functions-window-syntax.o108"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required BETWEEN after RANGE in [ { { ROWS | RANGE } UNBOUNDED PRECEDING | { ROWS | RANGE } <n> PRECEDING | { ROWS | RANGE } CURRENT ROW | { ROWS | RAN…"
+note = "the form without its required BETWEEN after RANGE in [ { { ROWS | RANGE } UNBOUNDED PRECEDING | { ROWS | RANGE } <n> PRECEDING | { ROWS | RANGE } CURRENT ROW | { ROWS |…"
 
 [[obligation]]
 id = "sf.functions.functions-window-syntax.o109"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required CURRENT after BETWEEN in [ { { ROWS | RANGE } UNBOUNDED PRECEDING | { ROWS | RANGE } <n> PRECEDING | { ROWS | RANGE } CURRENT ROW | { ROWS | RAN…"
+note = "the form without its required CURRENT after BETWEEN in [ { { ROWS | RANGE } UNBOUNDED PRECEDING | { ROWS | RANGE } <n> PRECEDING | { ROWS | RANGE } CURRENT ROW | { ROWS |…"
 
 [[obligation]]
 id = "sf.functions.functions-window-syntax.o110"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required ROW after CURRENT in [ { { ROWS | RANGE } UNBOUNDED PRECEDING | { ROWS | RANGE } <n> PRECEDING | { ROWS | RANGE } CURRENT ROW | { ROWS | RAN… #2"
+note = "the form without its required ROW after CURRENT in [ { { ROWS | RANGE } UNBOUNDED PRECEDING | { ROWS | RANGE } <n> PRECEDING | { ROWS | RANGE } CURRENT ROW | { ROWS |… #2"
 
 [[obligation]]
 id = "sf.functions.functions-window-syntax.o111"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required AND after ROW in [ { { ROWS | RANGE } UNBOUNDED PRECEDING | { ROWS | RANGE } <n> PRECEDING | { ROWS | RANGE } CURRENT ROW | { ROWS | RAN…"
+note = "the form without its required AND after ROW in [ { { ROWS | RANGE } UNBOUNDED PRECEDING | { ROWS | RANGE } <n> PRECEDING | { ROWS | RANGE } CURRENT ROW | { ROWS |…"
 
 [[obligation]]
 id = "sf.functions.functions-window-syntax.o112"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required UNBOUNDED after AND in [ { { ROWS | RANGE } UNBOUNDED PRECEDING | { ROWS | RANGE } <n> PRECEDING | { ROWS | RANGE } CURRENT ROW | { ROWS | RAN…"
+note = "the form without its required UNBOUNDED after AND in [ { { ROWS | RANGE } UNBOUNDED PRECEDING | { ROWS | RANGE } <n> PRECEDING | { ROWS | RANGE } CURRENT ROW | { ROWS |…"
 
 [[obligation]]
 id = "sf.functions.functions-window-syntax.o099"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required FOLLOWING in [ { { ROWS | RANGE } UNBOUNDED PRECEDING | { ROWS | RANGE } <n> PRECEDING | { ROWS | RANGE } CURRENT ROW | { ROWS | RAN…"
+note = "the form without its required FOLLOWING in [ { { ROWS | RANGE } UNBOUNDED PRECEDING | { ROWS | RANGE } <n> PRECEDING | { ROWS | RANGE } CURRENT ROW | { ROWS |…"
 
 [[obligation]]
 id = "sf.functions.functions-window-syntax.o113"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required BETWEEN after RANGE in [ { { ROWS | RANGE } UNBOUNDED PRECEDING | { ROWS | RANGE } <n> PRECEDING | { ROWS | RANGE } CURRENT ROW | { ROWS | RAN… #2"
+note = "the form without its required BETWEEN after RANGE in [ { { ROWS | RANGE } UNBOUNDED PRECEDING | { ROWS | RANGE } <n> PRECEDING | { ROWS | RANGE } CURRENT ROW | { ROWS |… #2"
 
 [[obligation]]
 id = "sf.functions.functions-window-syntax.o114"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required UNBOUNDED after BETWEEN in [ { { ROWS | RANGE } UNBOUNDED PRECEDING | { ROWS | RANGE } <n> PRECEDING | { ROWS | RANGE } CURRENT ROW | { ROWS | RAN… #2"
+note = "the form without its required UNBOUNDED after BETWEEN in [ { { ROWS | RANGE } UNBOUNDED PRECEDING | { ROWS | RANGE } <n> PRECEDING | { ROWS | RANGE } CURRENT ROW | { ROWS |… #2"
 
 [[obligation]]
 id = "sf.functions.functions-window-syntax.o115"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required PRECEDING after UNBOUNDED in [ { { ROWS | RANGE } UNBOUNDED PRECEDING | { ROWS | RANGE } <n> PRECEDING | { ROWS | RANGE } CURRENT ROW | { ROWS | RAN… #2"
+note = "the form without its required PRECEDING after UNBOUNDED in [ { { ROWS | RANGE } UNBOUNDED PRECEDING | { ROWS | RANGE } <n> PRECEDING | { ROWS | RANGE } CURRENT ROW | { ROWS |… #2"
 
 [[obligation]]
 id = "sf.functions.functions-window-syntax.o116"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required AND after PRECEDING in [ { { ROWS | RANGE } UNBOUNDED PRECEDING | { ROWS | RANGE } <n> PRECEDING | { ROWS | RANGE } CURRENT ROW | { ROWS | RAN…"
+note = "the form without its required AND after PRECEDING in [ { { ROWS | RANGE } UNBOUNDED PRECEDING | { ROWS | RANGE } <n> PRECEDING | { ROWS | RANGE } CURRENT ROW | { ROWS |…"
 
 [[obligation]]
 id = "sf.functions.functions-window-syntax.o100"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required UNBOUNDED in [ { { ROWS | RANGE } UNBOUNDED PRECEDING | { ROWS | RANGE } <n> PRECEDING | { ROWS | RANGE } CURRENT ROW | { ROWS | RAN… #2"
+note = "the form without its required UNBOUNDED in [ { { ROWS | RANGE } UNBOUNDED PRECEDING | { ROWS | RANGE } <n> PRECEDING | { ROWS | RANGE } CURRENT ROW | { ROWS |… #2"
 
 [[obligation]]
 id = "sf.functions.functions-window-syntax.o117"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required FOLLOWING after UNBOUNDED in [ { { ROWS | RANGE } UNBOUNDED PRECEDING | { ROWS | RANGE } <n> PRECEDING | { ROWS | RANGE } CURRENT ROW | { ROWS | RAN…"
+note = "the form without its required FOLLOWING after UNBOUNDED in [ { { ROWS | RANGE } UNBOUNDED PRECEDING | { ROWS | RANGE } <n> PRECEDING | { ROWS | RANGE } CURRENT ROW | { ROWS |…"
 
 [[obligation]]
 id = "sf.functions.functions-window-syntax.o118"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required BETWEEN after RANGE in [ { { ROWS | RANGE } UNBOUNDED PRECEDING | { ROWS | RANGE } <n> PRECEDING | { ROWS | RANGE } CURRENT ROW | { ROWS | RAN… #3"
+note = "the form without its required BETWEEN after RANGE in [ { { ROWS | RANGE } UNBOUNDED PRECEDING | { ROWS | RANGE } <n> PRECEDING | { ROWS | RANGE } CURRENT ROW | { ROWS |… #3"
 
 [[obligation]]
 id = "sf.functions.functions-window-syntax.o101"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required { PRECEDING | FOLLOWING } in [ { { ROWS | RANGE } UNBOUNDED PRECEDING | { ROWS | RANGE } <n> PRECEDING | { ROWS | RANGE } CURRENT ROW | { ROWS | RAN…"
+note = "the form without its required { PRECEDING | FOLLOWING } in [ { { ROWS | RANGE } UNBOUNDED PRECEDING | { ROWS | RANGE } <n> PRECEDING | { ROWS | RANGE } CURRENT ROW | { ROWS |…"
 
 [[obligation]]
 id = "sf.functions.functions-window-syntax.o119"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required AND after FOLLOWING in [ { { ROWS | RANGE } UNBOUNDED PRECEDING | { ROWS | RANGE } <n> PRECEDING | { ROWS | RANGE } CURRENT ROW | { ROWS | RAN…"
+note = "the form without its required AND after FOLLOWING in [ { { ROWS | RANGE } UNBOUNDED PRECEDING | { ROWS | RANGE } <n> PRECEDING | { ROWS | RANGE } CURRENT ROW | { ROWS |…"
 
 [[obligation]]
 id = "sf.functions.functions-window-syntax.o102"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required { PRECEDING | FOLLOWING } in [ { { ROWS | RANGE } UNBOUNDED PRECEDING | { ROWS | RANGE } <n> PRECEDING | { ROWS | RANGE } CURRENT ROW | { ROWS | RAN… #2"
+note = "the form without its required { PRECEDING | FOLLOWING } in [ { { ROWS | RANGE } UNBOUNDED PRECEDING | { ROWS | RANGE } <n> PRECEDING | { ROWS | RANGE } CURRENT ROW | { ROWS |… #2"
 
 [[obligation]]
 id = "sf.functions.functions-window-syntax.o120"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required BETWEEN after RANGE in [ { { ROWS | RANGE } UNBOUNDED PRECEDING | { ROWS | RANGE } <n> PRECEDING | { ROWS | RANGE } CURRENT ROW | { ROWS | RAN… #4"
+note = "the form without its required BETWEEN after RANGE in [ { { ROWS | RANGE } UNBOUNDED PRECEDING | { ROWS | RANGE } <n> PRECEDING | { ROWS | RANGE } CURRENT ROW | { ROWS |… #4"
 
 [[obligation]]
 id = "sf.functions.functions-window-syntax.o121"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required UNBOUNDED after BETWEEN in [ { { ROWS | RANGE } UNBOUNDED PRECEDING | { ROWS | RANGE } <n> PRECEDING | { ROWS | RANGE } CURRENT ROW | { ROWS | RAN… #3"
+note = "the form without its required UNBOUNDED after BETWEEN in [ { { ROWS | RANGE } UNBOUNDED PRECEDING | { ROWS | RANGE } <n> PRECEDING | { ROWS | RANGE } CURRENT ROW | { ROWS |… #3"
 
 [[obligation]]
 id = "sf.functions.functions-window-syntax.o122"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required PRECEDING after UNBOUNDED in [ { { ROWS | RANGE } UNBOUNDED PRECEDING | { ROWS | RANGE } <n> PRECEDING | { ROWS | RANGE } CURRENT ROW | { ROWS | RAN… #3"
+note = "the form without its required PRECEDING after UNBOUNDED in [ { { ROWS | RANGE } UNBOUNDED PRECEDING | { ROWS | RANGE } <n> PRECEDING | { ROWS | RANGE } CURRENT ROW | { ROWS |… #3"
 
 [[obligation]]
 id = "sf.functions.functions-window-syntax.o123"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required AND after PRECEDING in [ { { ROWS | RANGE } UNBOUNDED PRECEDING | { ROWS | RANGE } <n> PRECEDING | { ROWS | RANGE } CURRENT ROW | { ROWS | RAN… #2"
+note = "the form without its required AND after PRECEDING in [ { { ROWS | RANGE } UNBOUNDED PRECEDING | { ROWS | RANGE } <n> PRECEDING | { ROWS | RANGE } CURRENT ROW | { ROWS |… #2"
 
 [[obligation]]
 id = "sf.functions.functions-window-syntax.o124"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required BETWEEN after RANGE in [ { { ROWS | RANGE } UNBOUNDED PRECEDING | { ROWS | RANGE } <n> PRECEDING | { ROWS | RANGE } CURRENT ROW | { ROWS | RAN… #5"
+note = "the form without its required BETWEEN after RANGE in [ { { ROWS | RANGE } UNBOUNDED PRECEDING | { ROWS | RANGE } <n> PRECEDING | { ROWS | RANGE } CURRENT ROW | { ROWS |… #5"
 
 [[obligation]]
 id = "sf.functions.functions-window-syntax.o125"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required AND after FOLLOWING in [ { { ROWS | RANGE } UNBOUNDED PRECEDING | { ROWS | RANGE } <n> PRECEDING | { ROWS | RANGE } CURRENT ROW | { ROWS | RAN… #2"
+note = "the form without its required AND after FOLLOWING in [ { { ROWS | RANGE } UNBOUNDED PRECEDING | { ROWS | RANGE } <n> PRECEDING | { ROWS | RANGE } CURRENT ROW | { ROWS |… #2"
 
 [[obligation]]
 id = "sf.functions.functions-window-syntax.o126"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required UNBOUNDED after AND in [ { { ROWS | RANGE } UNBOUNDED PRECEDING | { ROWS | RANGE } <n> PRECEDING | { ROWS | RANGE } CURRENT ROW | { ROWS | RAN… #2"
+note = "the form without its required UNBOUNDED after AND in [ { { ROWS | RANGE } UNBOUNDED PRECEDING | { ROWS | RANGE } <n> PRECEDING | { ROWS | RANGE } CURRENT ROW | { ROWS |… #2"
 
 [[obligation]]
 id = "sf.functions.functions-window-syntax.o127"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required FOLLOWING after UNBOUNDED in [ { { ROWS | RANGE } UNBOUNDED PRECEDING | { ROWS | RANGE } <n> PRECEDING | { ROWS | RANGE } CURRENT ROW | { ROWS | RAN… #2"
+note = "the form without its required FOLLOWING after UNBOUNDED in [ { { ROWS | RANGE } UNBOUNDED PRECEDING | { ROWS | RANGE } <n> PRECEDING | { ROWS | RANGE } CURRENT ROW | { ROWS |… #2"
 
 [[obligation]]
 id = "sf.functions.functions-window-syntax.o015"
@@ -35971,7 +35971,7 @@ target = "{ ILIKE '<pattern>' | EXCLUDE { <column_name> | ( <column_name> [ , <c
 id = "sf.functions.hash.o015"
 kind = "alternative"
 required = true
-target = "{ ILIKE '<pattern>' | EXCLUDE { <column_name> | ( <column_n… → EXCLUDE { <column_name> | ( <column_name> [ , <column_name> ... ] ) }"
+target = "{ ILIKE '<pattern>' | EXCLUDE { <column_name> | (… → EXCLUDE { <column_name> | ( <column_name> [ , <column_name> ... ] ) }"
 
 [[obligation]]
 id = "sf.functions.hash.o016"
@@ -36193,7 +36193,7 @@ target = "{ ILIKE '<pattern>' | EXCLUDE { <column_name> | ( <column_name> [ , <c
 id = "sf.functions.hash-agg.hash-agg.o017"
 kind = "alternative"
 required = true
-target = "{ ILIKE '<pattern>' | EXCLUDE { <column_name> | ( <column_n… → EXCLUDE { <column_name> | ( <column_name> [ , <column_name> ... ] ) }"
+target = "{ ILIKE '<pattern>' | EXCLUDE { <column_name> | (… → EXCLUDE { <column_name> | ( <column_name> [ , <column_name> ... ] ) }"
 
 [[obligation]]
 id = "sf.functions.hash-agg.hash-agg.o018"
@@ -36489,7 +36489,7 @@ target = "{ ILIKE '<pattern>' | EXCLUDE { <column_name> | ( <column_name> [ , <c
 id = "sf.functions.hash-agg.hash-agg-over.syntax.o017"
 kind = "alternative"
 required = true
-target = "{ ILIKE '<pattern>' | EXCLUDE { <column_name> | ( <column_n… → EXCLUDE { <column_name> | ( <column_name> [ , <column_name> ... ] ) }"
+target = "{ ILIKE '<pattern>' | EXCLUDE { <column_name> | (… → EXCLUDE { <column_name> | ( <column_name> [ , <column_name> ... ] ) }"
 
 [[obligation]]
 id = "sf.functions.hash-agg.hash-agg-over.syntax.o018"
@@ -47570,7 +47570,7 @@ target = "{ ILIKE '<pattern>' | EXCLUDE { <column_name> | ( <column_name> [ , <c
 id = "sf.functions.object-construct.o019"
 kind = "alternative"
 required = true
-target = "{ ILIKE '<pattern>' | EXCLUDE { <column_name> | ( <column_n… → EXCLUDE { <column_name> | ( <column_name> [ , <column_name> ... ] ) }"
+target = "{ ILIKE '<pattern>' | EXCLUDE { <column_name> | (… → EXCLUDE { <column_name> | ( <column_name> [ , <column_name> ... ] ) }"
 
 [[obligation]]
 id = "sf.functions.object-construct.o020"
@@ -47813,7 +47813,7 @@ target = "{ ILIKE '<pattern>' | EXCLUDE { <column_name> | ( <column_name> [ , <c
 id = "sf.functions.object-construct-keep-null.o019"
 kind = "alternative"
 required = true
-target = "{ ILIKE '<pattern>' | EXCLUDE { <column_name> | ( <column_n… → EXCLUDE { <column_name> | ( <column_name> [ , <column_name> ... ] ) }"
+target = "{ ILIKE '<pattern>' | EXCLUDE { <column_name> | (… → EXCLUDE { <column_name> | ( <column_name> [ , <column_name> ... ] ) }"
 
 [[obligation]]
 id = "sf.functions.object-construct-keep-null.o020"
@@ -48037,7 +48037,7 @@ target = "{ ILIKE '<pattern>' | EXCLUDE { <column_name> | ( <column_name> [ , <c
 id = "sf.functions.object-construct-keep-null-structured.o017"
 kind = "alternative"
 required = true
-target = "{ ILIKE '<pattern>' | EXCLUDE { <column_name> | ( <column_n… → EXCLUDE { <column_name> | ( <column_name> [ , <column_name> ... ] ) }"
+target = "{ ILIKE '<pattern>' | EXCLUDE { <column_name> | (… → EXCLUDE { <column_name> | ( <column_name> [ , <column_name> ... ] ) }"
 
 [[obligation]]
 id = "sf.functions.object-construct-keep-null-structured.o018"
@@ -49148,19 +49148,19 @@ target = "{ FIRST | LAST } → LAST"
 id = "sf.functions.percent-rank.o027"
 kind = "option_present"
 required = true
-target = "[ { RANGE UNBOUNDED PRECEDING | RANGE BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW | RANGE BETWEEN CURRENT ROW AND UNBOU…"
+target = "[ { RANGE UNBOUNDED PRECEDING | RANGE BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW | RANGE BETWEEN CURRENT ROW AND…"
 
 [[obligation]]
 id = "sf.functions.percent-rank.o028"
 kind = "option_absent"
 required = true
-target = "[ { RANGE UNBOUNDED PRECEDING | RANGE BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW | RANGE BETWEEN CURRENT ROW AND UNBOU…"
+target = "[ { RANGE UNBOUNDED PRECEDING | RANGE BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW | RANGE BETWEEN CURRENT ROW AND…"
 
 [[obligation]]
 id = "sf.functions.percent-rank.o029"
 kind = "alternative"
 required = true
-target = "{ RANGE UNBOUNDED PRECEDING | RANGE BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW | RANGE BET… → RANGE UNBOUNDED PRECEDING"
+target = "{ RANGE UNBOUNDED PRECEDING | RANGE BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW | RANGE… → RANGE UNBOUNDED PRECEDING"
 
 [[obligation]]
 id = "sf.functions.percent-rank.o030"
@@ -49226,103 +49226,103 @@ note = "the form without its required { FIRST | LAST } in [ NULLS { FIRST | LAST
 id = "sf.functions.percent-rank.o041"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required RANGE after <expr2> in [ { RANGE UNBOUNDED PRECEDING | RANGE BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW | RANGE BETWEEN CURRENT ROW AND UNBOU…"
+note = "the form without its required RANGE after <expr2> in [ { RANGE UNBOUNDED PRECEDING | RANGE BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW | RANGE BETWEEN CURRENT ROW AND…"
 
 [[obligation]]
 id = "sf.functions.percent-rank.o032"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required UNBOUNDED in [ { RANGE UNBOUNDED PRECEDING | RANGE BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW | RANGE BETWEEN CURRENT ROW AND UNBOU…"
+note = "the form without its required UNBOUNDED in [ { RANGE UNBOUNDED PRECEDING | RANGE BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW | RANGE BETWEEN CURRENT ROW AND…"
 
 [[obligation]]
 id = "sf.functions.percent-rank.o033"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required PRECEDING in [ { RANGE UNBOUNDED PRECEDING | RANGE BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW | RANGE BETWEEN CURRENT ROW AND UNBOU…"
+note = "the form without its required PRECEDING in [ { RANGE UNBOUNDED PRECEDING | RANGE BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW | RANGE BETWEEN CURRENT ROW AND…"
 
 [[obligation]]
 id = "sf.functions.percent-rank.o042"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required RANGE after <expr2> in [ { RANGE UNBOUNDED PRECEDING | RANGE BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW | RANGE BETWEEN CURRENT ROW AND UNBOU… #2"
+note = "the form without its required RANGE after <expr2> in [ { RANGE UNBOUNDED PRECEDING | RANGE BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW | RANGE BETWEEN CURRENT ROW AND… #2"
 
 [[obligation]]
 id = "sf.functions.percent-rank.o034"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required BETWEEN in [ { RANGE UNBOUNDED PRECEDING | RANGE BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW | RANGE BETWEEN CURRENT ROW AND UNBOU…"
+note = "the form without its required BETWEEN in [ { RANGE UNBOUNDED PRECEDING | RANGE BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW | RANGE BETWEEN CURRENT ROW AND…"
 
 [[obligation]]
 id = "sf.functions.percent-rank.o043"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required UNBOUNDED after BETWEEN in [ { RANGE UNBOUNDED PRECEDING | RANGE BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW | RANGE BETWEEN CURRENT ROW AND UNBOU…"
+note = "the form without its required UNBOUNDED after BETWEEN in [ { RANGE UNBOUNDED PRECEDING | RANGE BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW | RANGE BETWEEN CURRENT ROW AND…"
 
 [[obligation]]
 id = "sf.functions.percent-rank.o044"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required PRECEDING after UNBOUNDED in [ { RANGE UNBOUNDED PRECEDING | RANGE BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW | RANGE BETWEEN CURRENT ROW AND UNBOU…"
+note = "the form without its required PRECEDING after UNBOUNDED in [ { RANGE UNBOUNDED PRECEDING | RANGE BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW | RANGE BETWEEN CURRENT ROW AND…"
 
 [[obligation]]
 id = "sf.functions.percent-rank.o035"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required AND in [ { RANGE UNBOUNDED PRECEDING | RANGE BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW | RANGE BETWEEN CURRENT ROW AND UNBOU…"
+note = "the form without its required AND in [ { RANGE UNBOUNDED PRECEDING | RANGE BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW | RANGE BETWEEN CURRENT ROW AND…"
 
 [[obligation]]
 id = "sf.functions.percent-rank.o036"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required CURRENT in [ { RANGE UNBOUNDED PRECEDING | RANGE BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW | RANGE BETWEEN CURRENT ROW AND UNBOU…"
+note = "the form without its required CURRENT in [ { RANGE UNBOUNDED PRECEDING | RANGE BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW | RANGE BETWEEN CURRENT ROW AND…"
 
 [[obligation]]
 id = "sf.functions.percent-rank.o037"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required ROW in [ { RANGE UNBOUNDED PRECEDING | RANGE BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW | RANGE BETWEEN CURRENT ROW AND UNBOU…"
+note = "the form without its required ROW in [ { RANGE UNBOUNDED PRECEDING | RANGE BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW | RANGE BETWEEN CURRENT ROW AND…"
 
 [[obligation]]
 id = "sf.functions.percent-rank.o045"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required RANGE after <expr2> in [ { RANGE UNBOUNDED PRECEDING | RANGE BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW | RANGE BETWEEN CURRENT ROW AND UNBOU… #3"
+note = "the form without its required RANGE after <expr2> in [ { RANGE UNBOUNDED PRECEDING | RANGE BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW | RANGE BETWEEN CURRENT ROW AND… #3"
 
 [[obligation]]
 id = "sf.functions.percent-rank.o046"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required BETWEEN after RANGE in [ { RANGE UNBOUNDED PRECEDING | RANGE BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW | RANGE BETWEEN CURRENT ROW AND UNBOU…"
+note = "the form without its required BETWEEN after RANGE in [ { RANGE UNBOUNDED PRECEDING | RANGE BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW | RANGE BETWEEN CURRENT ROW AND…"
 
 [[obligation]]
 id = "sf.functions.percent-rank.o047"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required CURRENT after BETWEEN in [ { RANGE UNBOUNDED PRECEDING | RANGE BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW | RANGE BETWEEN CURRENT ROW AND UNBOU…"
+note = "the form without its required CURRENT after BETWEEN in [ { RANGE UNBOUNDED PRECEDING | RANGE BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW | RANGE BETWEEN CURRENT ROW AND…"
 
 [[obligation]]
 id = "sf.functions.percent-rank.o048"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required ROW after CURRENT in [ { RANGE UNBOUNDED PRECEDING | RANGE BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW | RANGE BETWEEN CURRENT ROW AND UNBOU…"
+note = "the form without its required ROW after CURRENT in [ { RANGE UNBOUNDED PRECEDING | RANGE BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW | RANGE BETWEEN CURRENT ROW AND…"
 
 [[obligation]]
 id = "sf.functions.percent-rank.o049"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required AND after ROW in [ { RANGE UNBOUNDED PRECEDING | RANGE BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW | RANGE BETWEEN CURRENT ROW AND UNBOU…"
+note = "the form without its required AND after ROW in [ { RANGE UNBOUNDED PRECEDING | RANGE BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW | RANGE BETWEEN CURRENT ROW AND…"
 
 [[obligation]]
 id = "sf.functions.percent-rank.o050"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required UNBOUNDED after AND in [ { RANGE UNBOUNDED PRECEDING | RANGE BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW | RANGE BETWEEN CURRENT ROW AND UNBOU…"
+note = "the form without its required UNBOUNDED after AND in [ { RANGE UNBOUNDED PRECEDING | RANGE BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW | RANGE BETWEEN CURRENT ROW AND…"
 
 [[obligation]]
 id = "sf.functions.percent-rank.o038"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required FOLLOWING in [ { RANGE UNBOUNDED PRECEDING | RANGE BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW | RANGE BETWEEN CURRENT ROW AND UNBOU…"
+note = "the form without its required FOLLOWING in [ { RANGE UNBOUNDED PRECEDING | RANGE BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW | RANGE BETWEEN CURRENT ROW AND…"
 
 [[obligation]]
 id = "sf.functions.percent-rank.o040"
@@ -56639,13 +56639,13 @@ note = "the documented form with every required part and no optional part"
 id = "sf.functions.search.o024"
 kind = "alternative"
 required = true
-target = "{ <search_data> | ( <search_data> [ , <search_data> ... ] ) | ( [ <table_name> . ] * [ { ILIKE '<patter… → <search_data>"
+target = "{ <search_data> | ( <search_data> [ , <search_data> ... ] ) | ( [ <table_name> . ] * [ { ILIKE… → <search_data>"
 
 [[obligation]]
 id = "sf.functions.search.o025"
 kind = "alternative"
 required = true
-target = "{ <search_data> | ( <search_data> [ , <search_data> ... ] ) | ( [ <table_na… → ( <search_data> [ , <search_data> ... ] )"
+target = "{ <search_data> | ( <search_data> [ , <search_data> ... ] ) | ( [… → ( <search_data> [ , <search_data> ... ] )"
 
 [[obligation]]
 id = "sf.functions.search.o026"
@@ -56735,7 +56735,7 @@ target = "{ ILIKE '<pattern>' | EXCLUDE { <column_name> | ( <column_name> [ , <c
 id = "sf.functions.search.o038"
 kind = "alternative"
 required = true
-target = "{ ILIKE '<pattern>' | EXCLUDE { <column_name> | ( <column_n… → EXCLUDE { <column_name> | ( <column_name> [ , <column_name> ... ] ) }"
+target = "{ ILIKE '<pattern>' | EXCLUDE { <column_name> | (… → EXCLUDE { <column_name> | ( <column_name> [ , <column_name> ... ] ) }"
 
 [[obligation]]
 id = "sf.functions.search.o039"
@@ -56974,13 +56974,13 @@ note = "the documented form with every required part and no optional part"
 id = "sf.functions.search-ip.o009"
 kind = "alternative"
 required = true
-target = "{ <search_data> | ( <search_data> [ , <search_data> ... ] ) | ( [ <table_name> . ] * [ { ILIKE '<patter… → <search_data>"
+target = "{ <search_data> | ( <search_data> [ , <search_data> ... ] ) | ( [ <table_name> . ] * [ { ILIKE… → <search_data>"
 
 [[obligation]]
 id = "sf.functions.search-ip.o010"
 kind = "alternative"
 required = true
-target = "{ <search_data> | ( <search_data> [ , <search_data> ... ] ) | ( [ <table_na… → ( <search_data> [ , <search_data> ... ] )"
+target = "{ <search_data> | ( <search_data> [ , <search_data> ... ] ) | ( [… → ( <search_data> [ , <search_data> ... ] )"
 
 [[obligation]]
 id = "sf.functions.search-ip.o011"
@@ -56992,7 +56992,7 @@ target = "{ <search_data> | ( <search_data> [ , <search_data> ... ] )… → ( [
 id = "sf.functions.search-ip.o012"
 kind = "alternative"
 required = true
-target = "{ <search_data> | ( <search_data> [ , <search_data> ... ] ) | ( [ <table_name> . ] * [ { ILIKE '<… → * ILIKE '<pattern>'"
+target = "{ <search_data> | ( <search_data> [ , <search_data> ... ] ) | ( [ <table_name> . ] * [ { ILIKE… → * ILIKE '<pattern>'"
 
 [[obligation]]
 id = "sf.functions.search-ip.o003"
@@ -57076,7 +57076,7 @@ target = "{ ILIKE '<pattern>' | EXCLUDE { <column_name> | ( <column_name> [ , <c
 id = "sf.functions.search-ip.o024"
 kind = "alternative"
 required = true
-target = "{ ILIKE '<pattern>' | EXCLUDE { <column_name> | ( <column_n… → EXCLUDE { <column_name> | ( <column_name> [ , <column_name> ... ] ) }"
+target = "{ ILIKE '<pattern>' | EXCLUDE { <column_name> | (… → EXCLUDE { <column_name> | ( <column_name> [ , <column_name> ... ] ) }"
 
 [[obligation]]
 id = "sf.functions.search-ip.o025"

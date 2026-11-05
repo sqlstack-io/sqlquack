@@ -265,13 +265,13 @@ target = "{ AT | BEFORE } → BEFORE"
 id = "sf.query.at-before.o004"
 kind = "alternative"
 required = true
-target = "{ TIMESTAMP => <timestamp> | OFFSET => <time_difference> | STATEMENT => <id> | STREAM => '<n… → TIMESTAMP => <timestamp>"
+target = "{ TIMESTAMP => <timestamp> | OFFSET => <time_difference> | STATEMENT => <id> | STREAM =>… → TIMESTAMP => <timestamp>"
 
 [[obligation]]
 id = "sf.query.at-before.o005"
 kind = "alternative"
 required = true
-target = "{ TIMESTAMP => <timestamp> | OFFSET => <time_difference> | STATEMENT => <id> | STREAM => … → OFFSET => <time_difference>"
+target = "{ TIMESTAMP => <timestamp> | OFFSET => <time_difference> | STATEMENT => <id> | STREAM =>… → OFFSET => <time_difference>"
 
 [[obligation]]
 id = "sf.query.at-before.o006"
@@ -405,13 +405,13 @@ note = "the documented form with every required part and no optional part"
 id = "sf.query.at-before.iceberg-version.o002"
 kind = "alternative"
 required = true
-target = "{ VERSION_TAG => '<tag_name>' | VERSION_REF => '<reference_name>' | VERSION => <snapshot_… → VERSION_TAG => '<tag_name>'"
+target = "{ VERSION_TAG => '<tag_name>' | VERSION_REF => '<reference_name>' | VERSION =>… → VERSION_TAG => '<tag_name>'"
 
 [[obligation]]
 id = "sf.query.at-before.iceberg-version.o003"
 kind = "alternative"
 required = true
-target = "{ VERSION_TAG => '<tag_name>' | VERSION_REF => '<reference_name>' | VERSION => <sna… → VERSION_REF => '<reference_name>'"
+target = "{ VERSION_TAG => '<tag_name>' | VERSION_REF => '<reference_name>' | VERSION =>… → VERSION_REF => '<reference_name>'"
 
 [[obligation]]
 id = "sf.query.at-before.iceberg-version.o004"
@@ -545,25 +545,25 @@ target = "{ DEFAULT | APPEND_ONLY } → APPEND_ONLY"
 id = "sf.query.changes.o004"
 kind = "alternative"
 required = true
-target = "{ AT ( { TIMESTAMP => <timestamp> | OFFSET => <time_differe… → AT ( { TIMESTAMP => <timestamp> | OFFSET => <time_difference> | STATEMENT => <id> | STREAM => '<name>' } )"
+target = "{ AT ( { TIMESTAMP => <timestamp> | OFFSET =>… → AT ( { TIMESTAMP => <timestamp> | OFFSET => <time_difference> | STATEMENT => <id> | STREAM => '<name>' } )"
 
 [[obligation]]
 id = "sf.query.changes.o005"
 kind = "alternative"
 required = true
-target = "{ AT ( { TIMESTAMP => <timestamp> | OFFSET => <time_difference> | STATEMENT => <id> | ST… → BEFORE ( STATEMENT => <id> )"
+target = "{ AT ( { TIMESTAMP => <timestamp> | OFFSET => <time_difference> | STATEMENT => <id> |… → BEFORE ( STATEMENT => <id> )"
 
 [[obligation]]
 id = "sf.query.changes.o006"
 kind = "alternative"
 required = true
-target = "{ TIMESTAMP => <timestamp> | OFFSET => <time_difference> | STATEMENT => <id> | STREAM => '<n… → TIMESTAMP => <timestamp>"
+target = "{ TIMESTAMP => <timestamp> | OFFSET => <time_difference> | STATEMENT => <id> | STREAM =>… → TIMESTAMP => <timestamp>"
 
 [[obligation]]
 id = "sf.query.changes.o007"
 kind = "alternative"
 required = true
-target = "{ TIMESTAMP => <timestamp> | OFFSET => <time_difference> | STATEMENT => <id> | STREAM => … → OFFSET => <time_difference>"
+target = "{ TIMESTAMP => <timestamp> | OFFSET => <time_difference> | STATEMENT => <id> | STREAM =>… → OFFSET => <time_difference>"
 
 [[obligation]]
 id = "sf.query.changes.o008"
@@ -996,56 +996,56 @@ target = "{ PRIOR <col3_identifier> = <col4_identifier> | <col3_identifier> = PR
 id = "sf.query.connect-by.o065"
 kind = "required_operand_missing"
 required = true
-target = "<col3_identifier> in [ { , | AND } { PRIOR <col3_identifier> = <col4_identifier> | <col3_identifier> = PRIOR <col4_iden…"
+target = "<col3_identifier> in [ { , | AND } { PRIOR <col3_identifier> = <col4_identifier> | <col3_identifier> = PRIOR…"
 note = "omit <col3_identifier>"
 
 [[obligation]]
 id = "sf.query.connect-by.o067"
 kind = "negative_neighbour"
 required = true
-target = "<col3_identifier> in [ { , | AND } { PRIOR <col3_identifier> = <col4_identifier> | <col3_identifier> = PRIOR <col4_iden…"
+target = "<col3_identifier> in [ { , | AND } { PRIOR <col3_identifier> = <col4_identifier> | <col3_identifier> = PRIOR…"
 note = "a string literal in place of <col3_identifier>"
 
 [[obligation]]
 id = "sf.query.connect-by.o068"
 kind = "required_operand_missing"
 required = true
-target = "<col4_identifier> in [ { , | AND } { PRIOR <col3_identifier> = <col4_identifier> | <col3_identifier> = PRIOR <col4_iden…"
+target = "<col4_identifier> in [ { , | AND } { PRIOR <col3_identifier> = <col4_identifier> | <col3_identifier> = PRIOR…"
 note = "omit <col4_identifier>"
 
 [[obligation]]
 id = "sf.query.connect-by.o070"
 kind = "negative_neighbour"
 required = true
-target = "<col4_identifier> in [ { , | AND } { PRIOR <col3_identifier> = <col4_identifier> | <col3_identifier> = PRIOR <col4_iden…"
+target = "<col4_identifier> in [ { , | AND } { PRIOR <col3_identifier> = <col4_identifier> | <col3_identifier> = PRIOR…"
 note = "a string literal in place of <col4_identifier>"
 
 [[obligation]]
 id = "sf.query.connect-by.o071"
 kind = "required_operand_missing"
 required = true
-target = "<col3_identifier> in [ { , | AND } { PRIOR <col3_identifier> = <col4_identifier> | <col3_identifier> = PRIOR <col4_iden… #2"
+target = "<col3_identifier> in [ { , | AND } { PRIOR <col3_identifier> = <col4_identifier> | <col3_identifier> = PRIOR… #2"
 note = "omit <col3_identifier>"
 
 [[obligation]]
 id = "sf.query.connect-by.o073"
 kind = "negative_neighbour"
 required = true
-target = "<col3_identifier> in [ { , | AND } { PRIOR <col3_identifier> = <col4_identifier> | <col3_identifier> = PRIOR <col4_iden… #2"
+target = "<col3_identifier> in [ { , | AND } { PRIOR <col3_identifier> = <col4_identifier> | <col3_identifier> = PRIOR… #2"
 note = "a string literal in place of <col3_identifier>"
 
 [[obligation]]
 id = "sf.query.connect-by.o074"
 kind = "required_operand_missing"
 required = true
-target = "<col4_identifier> in [ { , | AND } { PRIOR <col3_identifier> = <col4_identifier> | <col3_identifier> = PRIOR <col4_iden… #2"
+target = "<col4_identifier> in [ { , | AND } { PRIOR <col3_identifier> = <col4_identifier> | <col3_identifier> = PRIOR… #2"
 note = "omit <col4_identifier>"
 
 [[obligation]]
 id = "sf.query.connect-by.o076"
 kind = "negative_neighbour"
 required = true
-target = "<col4_identifier> in [ { , | AND } { PRIOR <col3_identifier> = <col4_identifier> | <col3_identifier> = PRIOR <col4_iden… #2"
+target = "<col4_identifier> in [ { , | AND } { PRIOR <col3_identifier> = <col4_identifier> | <col3_identifier> = PRIOR… #2"
 note = "a string literal in place of <col4_identifier>"
 
 [[obligation]]
@@ -1294,7 +1294,7 @@ note = "alternative { PRIOR <col3_identifier> = <col4_identifier> | <col3_identi
 id = "sf.query.connect-by.o100"
 kind = "operand_type_class"
 required = true
-target = "<col3_identifier> in [ { , | AND } { PRIOR <col3_identifier> = <col4_identifier> | <col3_identifier> = PRIOR <col4_iden…"
+target = "<col3_identifier> in [ { , | AND } { PRIOR <col3_identifier> = <col4_identifier> | <col3_identifier> = PRIOR…"
 anchor = "doc.constructs.connect-by / Syntax"
 note = "a valid identifier, observed"
 
@@ -1302,7 +1302,7 @@ note = "a valid identifier, observed"
 id = "sf.query.connect-by.o101"
 kind = "operand_type_class"
 required = true
-target = "<col4_identifier> in [ { , | AND } { PRIOR <col3_identifier> = <col4_identifier> | <col3_identifier> = PRIOR <col4_iden…"
+target = "<col4_identifier> in [ { , | AND } { PRIOR <col3_identifier> = <col4_identifier> | <col3_identifier> = PRIOR…"
 anchor = "doc.constructs.connect-by / Syntax"
 note = "a valid identifier, observed"
 
@@ -1310,7 +1310,7 @@ note = "a valid identifier, observed"
 id = "sf.query.connect-by.o102"
 kind = "operand_type_class"
 required = true
-target = "<col3_identifier> in [ { , | AND } { PRIOR <col3_identifier> = <col4_identifier> | <col3_identifier> = PRIOR <col4_iden… #2"
+target = "<col3_identifier> in [ { , | AND } { PRIOR <col3_identifier> = <col4_identifier> | <col3_identifier> = PRIOR… #2"
 anchor = "doc.constructs.connect-by / Syntax"
 note = "a valid identifier, observed"
 
@@ -1318,7 +1318,7 @@ note = "a valid identifier, observed"
 id = "sf.query.connect-by.o103"
 kind = "operand_type_class"
 required = true
-target = "<col4_identifier> in [ { , | AND } { PRIOR <col3_identifier> = <col4_identifier> | <col3_identifier> = PRIOR <col4_iden… #2"
+target = "<col4_identifier> in [ { , | AND } { PRIOR <col3_identifier> = <col4_identifier> | <col3_identifier> = PRIOR… #2"
 anchor = "doc.constructs.connect-by / Syntax"
 note = "a valid identifier, observed"
 
@@ -1389,13 +1389,13 @@ target = "[ INTO ... ]"
 id = "sf.query.constructs.o058"
 kind = "option_present"
 required = true
-target = "[ FROM ... [ AT ... | BEFORE ... ] [ CHANGES ... ] [ CONNECT BY ... ] [ JOIN ... ] [ ASOF JOIN ... ] [ LATERAL ... ] [ …"
+target = "[ FROM ... [ AT ... | BEFORE ... ] [ CHANGES ... ] [ CONNECT BY ... ] [ JOIN ... ] [ ASOF JOIN ... ] [ LATERAL ... ] […"
 
 [[obligation]]
 id = "sf.query.constructs.o059"
 kind = "option_absent"
 required = true
-target = "[ FROM ... [ AT ... | BEFORE ... ] [ CHANGES ... ] [ CONNECT BY ... ] [ JOIN ... ] [ ASOF JOIN ... ] [ LATERAL ... ] [ …"
+target = "[ FROM ... [ AT ... | BEFORE ... ] [ CHANGES ... ] [ CONNECT BY ... ] [ JOIN ... ] [ ASOF JOIN ... ] [ LATERAL ... ] […"
 
 [[obligation]]
 id = "sf.query.constructs.o060"
@@ -1733,55 +1733,55 @@ note = "the documented form with every required part and no optional part"
 id = "sf.query.from.o009"
 kind = "alternative"
 required = true
-target = "{ [ <namespace> . ] <object_name> [ { AT | BEFORE } ( <obje… → [ <namespace> . ] <object_name> [ { AT | BEFORE } ( <object_state> ) ] [ CHANGES ( <change_tracking_type> ) ] [ MATCH_RECOGNIZE ... ] [ PIVOT ... | UNPIVOT ... ] [ [ AS ] <alias_name> ] [ SAMPLE ... ]"
+target = "{ [ <namespace> . ] <object_name> [ { AT | BEFORE } (… → [ <namespace> . ] <object_name> [ { AT | BEFORE } ( <object_state> ) ] [ CHANGES ( <change_tracking_type> ) ] [ MATCH_RECOGNIZE ... ] [ PIVOT ... | UNPIVOT ... ] [ [ AS ] <alias_name> ] [ SAMPLE ... ]"
 
 [[obligation]]
 id = "sf.query.from.o010"
 kind = "alternative"
 required = true
-target = "{ [ <namespace> . ] <object_name> [ { AT | BEFORE } ( <obje… → <table_function> [ PIVOT ... | UNPIVOT ... ] [ [ AS ] <alias_name> ] [ SAMPLE ... ]"
+target = "{ [ <namespace> . ] <object_name> [ { AT | BEFORE } (… → <table_function> [ PIVOT ... | UNPIVOT ... ] [ [ AS ] <alias_name> ] [ SAMPLE ... ]"
 
 [[obligation]]
 id = "sf.query.from.o011"
 kind = "alternative"
 required = true
-target = "{ [ <namespace> . ] <object_name> [ { AT | BEFORE } ( <object_state> ) ] [ CHANGES ( <c… → ( VALUES ... ) [ SAMPLE ... ]"
+target = "{ [ <namespace> . ] <object_name> [ { AT | BEFORE } ( <object_state> ) ] [ CHANGES (… → ( VALUES ... ) [ SAMPLE ... ]"
 
 [[obligation]]
 id = "sf.query.from.o012"
 kind = "alternative"
 required = true
-target = "{ [ <namespace> . ] <object_name> [ { AT | BEFORE } ( <object_stat… → [ LATERAL ] ( <subquery> ) [ [ AS ] <alias_name> ]"
+target = "{ [ <namespace> . ] <object_name> [ { AT | BEFORE } (… → [ LATERAL ] ( <subquery> ) [ [ AS ] <alias_name> ]"
 
 [[obligation]]
 id = "sf.query.from.o013"
 kind = "alternative"
 required = true
-target = "{ [ <namespace> . ] <object_name> [ { AT | BEFORE } ( <obje… → @ <stage_name> [ ( FILE_FORMAT => <format_name> , PATTERN => '<regex_pattern>' ) ] [ [ AS ] <alias_name> ]"
+target = "{ [ <namespace> . ] <object_name> [ { AT | BEFORE } (… → @ <stage_name> [ ( FILE_FORMAT => <format_name> , PATTERN => '<regex_pattern>' ) ] [ [ AS ] <alias_name> ]"
 
 [[obligation]]
 id = "sf.query.from.o014"
 kind = "alternative"
 required = true
-target = "{ [ <namespace> . ] <object_name> [ { AT | BEFORE } ( <object_state> ) ] [ CHANGES ( <ch… → DIRECTORY ( @ <stage_name> )"
+target = "{ [ <namespace> . ] <object_name> [ { AT | BEFORE } ( <object_state> ) ] [ CHANGES (… → DIRECTORY ( @ <stage_name> )"
 
 [[obligation]]
 id = "sf.query.from.o015"
 kind = "alternative"
 required = true
-target = "{ [ <namespace> . ] <object_name> [ { AT | BEFORE } ( <object_state> ) ] [ CHANGES ( <change_tr… → SEMANTIC_VIEW ( ... )"
+target = "{ [ <namespace> . ] <object_name> [ { AT | BEFORE } ( <object_state> ) ] [ CHANGES (… → SEMANTIC_VIEW ( ... )"
 
 [[obligation]]
 id = "sf.query.from.o016"
 kind = "alternative"
 required = true
-target = "{ [ <namespace> . ] <object_name> [ { AT | BEFORE } ( <object_state> ) ] [ CHANGES … → ERROR_TABLE ( <base_table_name> )"
+target = "{ [ <namespace> . ] <object_name> [ { AT | BEFORE } ( <object_state> ) ] [ CHANGES… → ERROR_TABLE ( <base_table_name> )"
 
 [[obligation]]
 id = "sf.query.from.o017"
 kind = "alternative"
 required = true
-target = "{ [ <namespace> . ] <object_name> [ { AT | BEFORE } ( <obje… → DYNAMIC_TABLE_REFRESH_BOUNDARY ( <object_name> ) [ { AT | BEFORE } ( <object_state> ) ] [ CHANGES ( <change_tracking_type> ) ] [ [ AS ] <alias_name> ]"
+target = "{ [ <namespace> . ] <object_name> [ { AT | BEFORE } (… → DYNAMIC_TABLE_REFRESH_BOUNDARY ( <object_name> ) [ { AT | BEFORE } ( <object_state> ) ] [ CHANGES ( <change_tracking_type> ) ] [ [ AS ] <alias_name> ]"
 
 [[obligation]]
 id = "sf.query.from.o018"
@@ -3207,7 +3207,7 @@ target = "{ { <column_alias> | <position> | <expr> } | ( { <column_alias> | <pos
 id = "sf.query.group-by-grouping-sets.o047"
 kind = "alternative"
 required = true
-target = "{ { <column_alias> | <position> | <expr> } | ( { <column_al… → ( { <column_alias> | <position> | <expr> } [ , { <column_alias> | <position> | <expr> } [ , ... ] ] )"
+target = "{ { <column_alias> | <position> | <expr> } | ( {… → ( { <column_alias> | <position> | <expr> } [ , { <column_alias> | <position> | <expr> } [ , ... ] ] )"
 
 [[obligation]]
 id = "sf.query.group-by-grouping-sets.o048"
@@ -3355,13 +3355,13 @@ target = "[ , ... ] #2"
 id = "sf.query.group-by-grouping-sets.o071"
 kind = "option_present"
 required = true
-target = "[ , { { <column_alias> | <position> | <expr> } | ( { <column_alias> | <position> | <expr> } [ , { <column_alias> | <pos…"
+target = "[ , { { <column_alias> | <position> | <expr> } | ( { <column_alias> | <position> | <expr> } [ , { <column_alias> |…"
 
 [[obligation]]
 id = "sf.query.group-by-grouping-sets.o072"
 kind = "option_absent"
 required = true
-target = "[ , { { <column_alias> | <position> | <expr> } | ( { <column_alias> | <position> | <expr> } [ , { <column_alias> | <pos…"
+target = "[ , { { <column_alias> | <position> | <expr> } | ( { <column_alias> | <position> | <expr> } [ , { <column_alias> |…"
 
 [[obligation]]
 id = "sf.query.group-by-grouping-sets.o073"
@@ -3373,7 +3373,7 @@ target = "{ { <column_alias> | <position> | <expr> } | ( { <column_alias> | <pos
 id = "sf.query.group-by-grouping-sets.o074"
 kind = "alternative"
 required = true
-target = "{ { <column_alias> | <position> | <expr> } | ( { <column_al… → ( { <column_alias> | <position> | <expr> } [ , { <column_alias> | <position> | <expr> } [ , ... ] ] ) #2"
+target = "{ { <column_alias> | <position> | <expr> } | ( {… → ( { <column_alias> | <position> | <expr> } [ , { <column_alias> | <position> | <expr> } [ , ... ] ] ) #2"
 
 [[obligation]]
 id = "sf.query.group-by-grouping-sets.o075"
@@ -3397,21 +3397,21 @@ target = "{ <column_alias> | <position> | <expr> } → <expr> #6"
 id = "sf.query.group-by-grouping-sets.o078"
 kind = "operand_type_class"
 required = true
-target = "<column_alias> in [ , { { <column_alias> | <position> | <expr> } | ( { <column_alias> | <position> | <expr> } [ , { <co…"
+target = "<column_alias> in [ , { { <column_alias> | <position> | <expr> } | ( { <column_alias> | <position> | <expr> } [ , {…"
 note = "a valid identifier"
 
 [[obligation]]
 id = "sf.query.group-by-grouping-sets.o122"
 kind = "operand_type_class"
 required = true
-target = "<position> in [ , { { <column_alias> | <position> | <expr> } | ( { <column_alias> | <position> | <expr> } [ , { <column…"
+target = "<position> in [ , { { <column_alias> | <position> | <expr> } | ( { <column_alias> | <position> | <expr> } [ , {…"
 note = "a valid integer_literal"
 
 [[obligation]]
 id = "sf.query.group-by-grouping-sets.o081"
 kind = "operand_type_class"
 required = true
-target = "<expr> in [ , { { <column_alias> | <position> | <expr> } | ( { <column_alias> | <position> | <expr> } [ , { <column_ali…"
+target = "<expr> in [ , { { <column_alias> | <position> | <expr> } | ( { <column_alias> | <position> | <expr> } [ , {…"
 note = "a valid expression"
 
 [[obligation]]
@@ -3436,21 +3436,21 @@ target = "{ <column_alias> | <position> | <expr> } → <expr> #7"
 id = "sf.query.group-by-grouping-sets.o085"
 kind = "operand_type_class"
 required = true
-target = "<column_alias> in [ , { { <column_alias> | <position> | <expr> } | ( { <column_alias> | <position> | <expr> } [ , { <co… #2"
+target = "<column_alias> in [ , { { <column_alias> | <position> | <expr> } | ( { <column_alias> | <position> | <expr> } [ , {… #2"
 note = "a valid identifier"
 
 [[obligation]]
 id = "sf.query.group-by-grouping-sets.o124"
 kind = "operand_type_class"
 required = true
-target = "<position> in [ , { { <column_alias> | <position> | <expr> } | ( { <column_alias> | <position> | <expr> } [ , { <column… #2"
+target = "<position> in [ , { { <column_alias> | <position> | <expr> } | ( { <column_alias> | <position> | <expr> } [ , {… #2"
 note = "a valid integer_literal"
 
 [[obligation]]
 id = "sf.query.group-by-grouping-sets.o088"
 kind = "operand_type_class"
 required = true
-target = "<expr> in [ , { { <column_alias> | <position> | <expr> } | ( { <column_alias> | <position> | <expr> } [ , { <column_ali… #2"
+target = "<expr> in [ , { { <column_alias> | <position> | <expr> } | ( { <column_alias> | <position> | <expr> } [ , {… #2"
 note = "a valid expression"
 
 [[obligation]]
@@ -3588,13 +3588,13 @@ note = "the form without its required { <column_alias> | <position> | <expr> } i
 id = "sf.query.group-by-grouping-sets.o108"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required ) in [ , { { <column_alias> | <position> | <expr> } | ( { <column_alias> | <position> | <expr> } [ , { <column_alias> | <pos…"
+note = "the form without its required ) in [ , { { <column_alias> | <position> | <expr> } | ( { <column_alias> | <position> | <expr> } [ , { <column_alias> |…"
 
 [[obligation]]
 id = "sf.query.group-by-grouping-sets.o109"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required { { <column_alias> | <position> | <expr> } | ( { <column_alias> | <position> | <expr> } [ , { <column_alias> | <position> | <expr> } [ , ... ] ] ) } in [ , { { <column_alias> | <position> | <expr> } | ( { <column_alias> | <position> | <expr> } [ , { <column_alias> | <pos…"
+note = "the form without its required { { <column_alias> | <position> | <expr> } | ( { <column_alias> | <position> | <expr> } [ , { <column_alias> | <position> | <expr> } [ , ... ] ] ) } in [ , { { <column_alias> | <position> | <expr> } | ( { <column_alias> | <position> | <expr> } [ , { <column_alias> |…"
 
 [[obligation]]
 id = "sf.query.group-by-grouping-sets.o027"
@@ -3638,7 +3638,7 @@ note = "a string literal in place of <column_alias>, observed"
 id = "sf.query.group-by-grouping-sets.o130"
 kind = "negative_neighbour"
 required = true
-target = "<column_alias> in [ , { { <column_alias> | <position> | <expr> } | ( { <column_alias> | <position> | <expr> } [ , { <co… #2"
+target = "<column_alias> in [ , { { <column_alias> | <position> | <expr> } | ( { <column_alias> | <position> | <expr> } [ , {… #2"
 anchor = "doc.constructs.group-by-grouping-sets / Syntax"
 note = "a string literal in place of <column_alias>, observed"
 
@@ -3685,13 +3685,13 @@ id = "sf.query.group-by-grouping-sets.o136"
 kind = "negative_neighbour"
 required = true
 anchor = "doc.constructs.group-by-grouping-sets / Syntax"
-note = "the form without its required { <column_alias> | <position> | <expr> } in [ , { { <column_alias> | <position> | <expr> } | ( { <column_alias> | <position> | <expr> } [ , { <column_alias> | <pos…, observed"
+note = "the form without its required { <column_alias> | <position> | <expr> } in [ , { { <column_alias> | <position> | <expr> } | ( { <column_alias> | <position> | <expr> } [ , { <column_alias> |…, observed"
 
 [[obligation]]
 id = "sf.query.group-by-grouping-sets.o137"
 kind = "negative_neighbour"
 required = true
-target = "<column_alias> in [ , { { <column_alias> | <position> | <expr> } | ( { <column_alias> | <position> | <expr> } [ , { <co…"
+target = "<column_alias> in [ , { { <column_alias> | <position> | <expr> } | ( { <column_alias> | <position> | <expr> } [ , {…"
 anchor = "doc.constructs.group-by-grouping-sets / Syntax"
 note = "a string literal in place of <column_alias>, observed"
 
@@ -3715,7 +3715,7 @@ note = "a string literal in place of <position>, observed"
 id = "sf.query.group-by-grouping-sets.o140"
 kind = "negative_neighbour"
 required = true
-target = "<position> in [ , { { <column_alias> | <position> | <expr> } | ( { <column_alias> | <position> | <expr> } [ , { <column…"
+target = "<position> in [ , { { <column_alias> | <position> | <expr> } | ( { <column_alias> | <position> | <expr> } [ , {…"
 anchor = "doc.constructs.group-by-grouping-sets / Syntax"
 note = "a string literal in place of <position>, observed"
 
@@ -3762,7 +3762,7 @@ note = "a string literal in place of <position>, observed"
 id = "sf.query.group-by-grouping-sets.o146"
 kind = "negative_neighbour"
 required = true
-target = "<position> in [ , { { <column_alias> | <position> | <expr> } | ( { <column_alias> | <position> | <expr> } [ , { <column… #2"
+target = "<position> in [ , { { <column_alias> | <position> | <expr> } | ( { <column_alias> | <position> | <expr> } [ , {… #2"
 anchor = "doc.constructs.group-by-grouping-sets / Syntax"
 note = "a string literal in place of <position>, observed"
 
@@ -5615,13 +5615,13 @@ target = "[ ONE ROW PER MATCH | ALL ROWS PER MATCH [ { SHOW EMPTY MATCHES | OMIT
 id = "sf.query.match-recognize.match-recognize-pattern-define-as.o027"
 kind = "alternative"
 required = true
-target = "[ ONE ROW PER MATCH | ALL ROWS PER MATCH [ { SHOW EMPTY MATCHES | OMIT EMPTY MATCHES | WITH UNMATCH… → ONE ROW PER MATCH"
+target = "[ ONE ROW PER MATCH | ALL ROWS PER MATCH [ { SHOW EMPTY MATCHES | OMIT EMPTY MATCHES | WITH… → ONE ROW PER MATCH"
 
 [[obligation]]
 id = "sf.query.match-recognize.match-recognize-pattern-define-as.o028"
 kind = "alternative"
 required = true
-target = "[ ONE ROW PER MATCH | ALL ROWS PER MATCH [ { SHOW EMPTY MAT… → ALL ROWS PER MATCH [ { SHOW EMPTY MATCHES | OMIT EMPTY MATCHES | WITH UNMATCHED ROWS } ]"
+target = "[ ONE ROW PER MATCH | ALL ROWS PER MATCH [ { SHOW EMPTY… → ALL ROWS PER MATCH [ { SHOW EMPTY MATCHES | OMIT EMPTY MATCHES | WITH UNMATCHED ROWS } ]"
 
 [[obligation]]
 id = "sf.query.match-recognize.match-recognize-pattern-define-as.o029"
@@ -7279,13 +7279,13 @@ note = "a string literal in place of <value_column>"
 id = "sf.query.pivot.o015"
 kind = "alternative"
 required = true
-target = "{ <pivot_value_1> [ [ AS ] <alias> ] [ , <pivot_value_2> [ … → <pivot_value_1> [ [ AS ] <alias> ] [ , <pivot_value_2> [ [ AS ] <alias> ] ... ]"
+target = "{ <pivot_value_1> [ [ AS ] <alias> ] [ , <pivot_value_2> [… → <pivot_value_1> [ [ AS ] <alias> ] [ , <pivot_value_2> [ [ AS ] <alias> ] ... ]"
 
 [[obligation]]
 id = "sf.query.pivot.o016"
 kind = "alternative"
 required = true
-target = "{ <pivot_value_1> [ [ AS ] <alias> ] [ , <pivot_value_2> [ [ AS ] <alias> ] ... ] | ANY [ ORDER … → ANY [ ORDER BY ... ]"
+target = "{ <pivot_value_1> [ [ AS ] <alias> ] [ , <pivot_value_2> [ [ AS ] <alias> ] ... ] | ANY [ ORDER… → ANY [ ORDER BY ... ]"
 
 [[obligation]]
 id = "sf.query.pivot.o017"
@@ -8050,13 +8050,13 @@ target = "{ SAMPLE | TABLESAMPLE } → TABLESAMPLE"
 id = "sf.query.sample.o008"
 kind = "alternative"
 required = true
-target = "{ [ { BERNOULLI | ROW } ] ( { <probability> | <num> ROWS } … → [ { BERNOULLI | ROW } ] ( { <probability> | <num> ROWS } )"
+target = "{ [ { BERNOULLI | ROW } ] ( { <probability> | <num> ROWS }… → [ { BERNOULLI | ROW } ] ( { <probability> | <num> ROWS } )"
 
 [[obligation]]
 id = "sf.query.sample.o009"
 kind = "alternative"
 required = true
-target = "{ [ { BERNOULLI | ROW } ] ( { <probability> | <num> ROWS } … → { SYSTEM | BLOCK } ( <probability> ) [ { REPEATABLE | SEED } ( <seed> ) ]"
+target = "{ [ { BERNOULLI | ROW } ] ( { <probability> | <num> ROWS }… → { SYSTEM | BLOCK } ( <probability> ) [ { REPEATABLE | SEED } ( <seed> ) ]"
 
 [[obligation]]
 id = "sf.query.sample.o010"
@@ -9071,7 +9071,7 @@ note = "a string literal in place of <n>"
 id = "sf.query.select.select.selecting-specific-columns.o011"
 kind = "alternative"
 required = true
-target = "{ [ { <object_name> | <alias> } . ] <col_name> | [ { <object_name> | <al… → [ { <object_name> | <alias> } . ] <col_name>"
+target = "{ [ { <object_name> | <alias> } . ] <col_name> | [ { <object_name> |… → [ { <object_name> | <alias> } . ] <col_name>"
 
 [[obligation]]
 id = "sf.query.select.select.selecting-specific-columns.o012"
@@ -9436,19 +9436,19 @@ note = "a string literal in place of <semantic_view_name>"
 id = "sf.query.semantic-view.o053"
 kind = "alternative"
 required = true
-target = "{ { METRICS <metric_expr> [ [ AS ] <alias> ] [ , ... ] | FA… → { METRICS <metric_expr> [ [ AS ] <alias> ] [ , ... ] | FACTS <fact_expr> [ , ... ] } [ DIMENSIONS <dimension_expr> [ [ AS ] <alias> ] [ , ... ] ]"
+target = "{ { METRICS <metric_expr> [ [ AS ] <alias> ] [ , ... ] |… → { METRICS <metric_expr> [ [ AS ] <alias> ] [ , ... ] | FACTS <fact_expr> [ , ... ] } [ DIMENSIONS <dimension_expr> [ [ AS ] <alias> ] [ , ... ] ]"
 
 [[obligation]]
 id = "sf.query.semantic-view.o054"
 kind = "alternative"
 required = true
-target = "{ { METRICS <metric_expr> [ [ AS ] <alias> ] [ , ... ] | FAC… → DIMENSIONS <dimension_expr> [ [ AS ] <alias> ] [ , ... ]"
+target = "{ { METRICS <metric_expr> [ [ AS ] <alias> ] [ , ... ] |… → DIMENSIONS <dimension_expr> [ [ AS ] <alias> ] [ , ... ]"
 
 [[obligation]]
 id = "sf.query.semantic-view.o012"
 kind = "alternative"
 required = true
-target = "{ METRICS <metric_expr> [ [ AS ] <alias> ] [ , ... ] | FACTS <fact… → METRICS <metric_expr> [ [ AS ] <alias> ] [ , ... ]"
+target = "{ METRICS <metric_expr> [ [ AS ] <alias> ] [ , ... ] | FACTS… → METRICS <metric_expr> [ [ AS ] <alias> ] [ , ... ]"
 
 [[obligation]]
 id = "sf.query.semantic-view.o013"
@@ -10500,13 +10500,13 @@ note = "the documented form with every required part and no optional part"
 id = "sf.query.with.select.o002"
 kind = "option_present"
 required = true
-target = "[ WITH <cte_name1> [ ( <cte_column_list> ) ] AS ( SELECT ... ) [ , <cte_name2> [ ( <cte_column_list> ) ] AS ( SELECT ..…"
+target = "[ WITH <cte_name1> [ ( <cte_column_list> ) ] AS ( SELECT ... ) [ , <cte_name2> [ ( <cte_column_list> ) ] AS ( SELECT…"
 
 [[obligation]]
 id = "sf.query.with.select.o003"
 kind = "option_absent"
 required = true
-target = "[ WITH <cte_name1> [ ( <cte_column_list> ) ] AS ( SELECT ... ) [ , <cte_name2> [ ( <cte_column_list> ) ] AS ( SELECT ..…"
+target = "[ WITH <cte_name1> [ ( <cte_column_list> ) ] AS ( SELECT ... ) [ , <cte_name2> [ ( <cte_column_list> ) ] AS ( SELECT…"
 
 [[obligation]]
 id = "sf.query.with.select.o004"
@@ -10704,25 +10704,25 @@ note = "the form without its required ) in [ ( <cte_column_list> ) ]"
 id = "sf.query.with.select.o033"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required AS in [ WITH <cte_name1> [ ( <cte_column_list> ) ] AS ( SELECT ... ) [ , <cte_name2> [ ( <cte_column_list> ) ] AS ( SELECT ..…"
+note = "the form without its required AS in [ WITH <cte_name1> [ ( <cte_column_list> ) ] AS ( SELECT ... ) [ , <cte_name2> [ ( <cte_column_list> ) ] AS ( SELECT…"
 
 [[obligation]]
 id = "sf.query.with.select.o034"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required ( in [ WITH <cte_name1> [ ( <cte_column_list> ) ] AS ( SELECT ... ) [ , <cte_name2> [ ( <cte_column_list> ) ] AS ( SELECT ..…"
+note = "the form without its required ( in [ WITH <cte_name1> [ ( <cte_column_list> ) ] AS ( SELECT ... ) [ , <cte_name2> [ ( <cte_column_list> ) ] AS ( SELECT…"
 
 [[obligation]]
 id = "sf.query.with.select.o035"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required SELECT in [ WITH <cte_name1> [ ( <cte_column_list> ) ] AS ( SELECT ... ) [ , <cte_name2> [ ( <cte_column_list> ) ] AS ( SELECT ..…"
+note = "the form without its required SELECT in [ WITH <cte_name1> [ ( <cte_column_list> ) ] AS ( SELECT ... ) [ , <cte_name2> [ ( <cte_column_list> ) ] AS ( SELECT…"
 
 [[obligation]]
 id = "sf.query.with.select.o036"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required ) in [ WITH <cte_name1> [ ( <cte_column_list> ) ] AS ( SELECT ... ) [ , <cte_name2> [ ( <cte_column_list> ) ] AS ( SELECT ..…"
+note = "the form without its required ) in [ WITH <cte_name1> [ ( <cte_column_list> ) ] AS ( SELECT ... ) [ , <cte_name2> [ ( <cte_column_list> ) ] AS ( SELECT…"
 
 [[obligation]]
 id = "sf.query.with.select.o037"
@@ -10864,13 +10864,13 @@ note = "the documented form with every required part and no optional part"
 id = "sf.query.with.select.syntax.o063"
 kind = "option_present"
 required = true
-target = "[ WITH [ RECURSIVE ] <cte_name1> ( <cte_column_list> ) AS ( SELECT <anchor_column_list> FROM ... UNION ALL SELECT <recu…"
+target = "[ WITH [ RECURSIVE ] <cte_name1> ( <cte_column_list> ) AS ( SELECT <anchor_column_list> FROM ... UNION ALL SELECT…"
 
 [[obligation]]
 id = "sf.query.with.select.syntax.o064"
 kind = "option_absent"
 required = true
-target = "[ WITH [ RECURSIVE ] <cte_name1> ( <cte_column_list> ) AS ( SELECT <anchor_column_list> FROM ... UNION ALL SELECT <recu…"
+target = "[ WITH [ RECURSIVE ] <cte_name1> ( <cte_column_list> ) AS ( SELECT <anchor_column_list> FROM ... UNION ALL SELECT…"
 
 [[obligation]]
 id = "sf.query.with.select.syntax.o004"
@@ -10888,56 +10888,56 @@ target = "[ RECURSIVE ]"
 id = "sf.query.with.select.syntax.o065"
 kind = "required_operand_missing"
 required = true
-target = "<cte_name1> in [ WITH [ RECURSIVE ] <cte_name1> ( <cte_column_list> ) AS ( SELECT <anchor_column_list> FROM ... UNION A…"
+target = "<cte_name1> in [ WITH [ RECURSIVE ] <cte_name1> ( <cte_column_list> ) AS ( SELECT <anchor_column_list> FROM ... UNION…"
 note = "omit <cte_name1>"
 
 [[obligation]]
 id = "sf.query.with.select.syntax.o066"
 kind = "operand_type_class"
 required = true
-target = "<cte_name1> in [ WITH [ RECURSIVE ] <cte_name1> ( <cte_column_list> ) AS ( SELECT <anchor_column_list> FROM ... UNION A…"
+target = "<cte_name1> in [ WITH [ RECURSIVE ] <cte_name1> ( <cte_column_list> ) AS ( SELECT <anchor_column_list> FROM ... UNION…"
 note = "a valid identifier"
 
 [[obligation]]
 id = "sf.query.with.select.syntax.o067"
 kind = "negative_neighbour"
 required = true
-target = "<cte_name1> in [ WITH [ RECURSIVE ] <cte_name1> ( <cte_column_list> ) AS ( SELECT <anchor_column_list> FROM ... UNION A…"
+target = "<cte_name1> in [ WITH [ RECURSIVE ] <cte_name1> ( <cte_column_list> ) AS ( SELECT <anchor_column_list> FROM ... UNION…"
 note = "a string literal in place of <cte_name1>"
 
 [[obligation]]
 id = "sf.query.with.select.syntax.o068"
 kind = "required_operand_missing"
 required = true
-target = "<cte_column_list> in [ WITH [ RECURSIVE ] <cte_name1> ( <cte_column_list> ) AS ( SELECT <anchor_column_list> FROM ... U…"
+target = "<cte_column_list> in [ WITH [ RECURSIVE ] <cte_name1> ( <cte_column_list> ) AS ( SELECT <anchor_column_list> FROM ...…"
 note = "omit <cte_column_list>"
 
 [[obligation]]
 id = "sf.query.with.select.syntax.o069"
 kind = "operand_type_class"
 required = true
-target = "<cte_column_list> in [ WITH [ RECURSIVE ] <cte_name1> ( <cte_column_list> ) AS ( SELECT <anchor_column_list> FROM ... U…"
+target = "<cte_column_list> in [ WITH [ RECURSIVE ] <cte_name1> ( <cte_column_list> ) AS ( SELECT <anchor_column_list> FROM ...…"
 note = "a valid identifier"
 
 [[obligation]]
 id = "sf.query.with.select.syntax.o070"
 kind = "negative_neighbour"
 required = true
-target = "<cte_column_list> in [ WITH [ RECURSIVE ] <cte_name1> ( <cte_column_list> ) AS ( SELECT <anchor_column_list> FROM ... U…"
+target = "<cte_column_list> in [ WITH [ RECURSIVE ] <cte_name1> ( <cte_column_list> ) AS ( SELECT <anchor_column_list> FROM ...…"
 note = "a string literal in place of <cte_column_list>"
 
 [[obligation]]
 id = "sf.query.with.select.syntax.o071"
 kind = "required_operand_missing"
 required = true
-target = "<anchor_column_list> in [ WITH [ RECURSIVE ] <cte_name1> ( <cte_column_list> ) AS ( SELECT <anchor_column_list> FROM ..…"
+target = "<anchor_column_list> in [ WITH [ RECURSIVE ] <cte_name1> ( <cte_column_list> ) AS ( SELECT <anchor_column_list> FROM…"
 note = "omit <anchor_column_list>"
 
 [[obligation]]
 id = "sf.query.with.select.syntax.o072"
 kind = "operand_type_class"
 required = true
-target = "<anchor_column_list> in [ WITH [ RECURSIVE ] <cte_name1> ( <cte_column_list> ) AS ( SELECT <anchor_column_list> FROM ..…"
+target = "<anchor_column_list> in [ WITH [ RECURSIVE ] <cte_name1> ( <cte_column_list> ) AS ( SELECT <anchor_column_list> FROM…"
 note = "a valid identifier"
 
 [[obligation]]
@@ -10970,82 +10970,82 @@ target = "[ JOIN ... ]"
 id = "sf.query.with.select.syntax.o079"
 kind = "option_present"
 required = true
-target = "[ , <cte_name2> ( <cte_column_list> ) AS ( SELECT <anchor_column_list> FROM ... UNION ALL SELECT <recursive_column_list…"
+target = "[ , <cte_name2> ( <cte_column_list> ) AS ( SELECT <anchor_column_list> FROM ... UNION ALL SELECT…"
 
 [[obligation]]
 id = "sf.query.with.select.syntax.o080"
 kind = "option_absent"
 required = true
-target = "[ , <cte_name2> ( <cte_column_list> ) AS ( SELECT <anchor_column_list> FROM ... UNION ALL SELECT <recursive_column_list…"
+target = "[ , <cte_name2> ( <cte_column_list> ) AS ( SELECT <anchor_column_list> FROM ... UNION ALL SELECT…"
 
 [[obligation]]
 id = "sf.query.with.select.syntax.o081"
 kind = "required_operand_missing"
 required = true
-target = "<cte_name2> in [ , <cte_name2> ( <cte_column_list> ) AS ( SELECT <anchor_column_list> FROM ... UNION ALL SELECT <recurs…"
+target = "<cte_name2> in [ , <cte_name2> ( <cte_column_list> ) AS ( SELECT <anchor_column_list> FROM ... UNION ALL SELECT…"
 note = "omit <cte_name2>"
 
 [[obligation]]
 id = "sf.query.with.select.syntax.o082"
 kind = "operand_type_class"
 required = true
-target = "<cte_name2> in [ , <cte_name2> ( <cte_column_list> ) AS ( SELECT <anchor_column_list> FROM ... UNION ALL SELECT <recurs…"
+target = "<cte_name2> in [ , <cte_name2> ( <cte_column_list> ) AS ( SELECT <anchor_column_list> FROM ... UNION ALL SELECT…"
 note = "a valid identifier"
 
 [[obligation]]
 id = "sf.query.with.select.syntax.o083"
 kind = "negative_neighbour"
 required = true
-target = "<cte_name2> in [ , <cte_name2> ( <cte_column_list> ) AS ( SELECT <anchor_column_list> FROM ... UNION ALL SELECT <recurs…"
+target = "<cte_name2> in [ , <cte_name2> ( <cte_column_list> ) AS ( SELECT <anchor_column_list> FROM ... UNION ALL SELECT…"
 note = "a string literal in place of <cte_name2>"
 
 [[obligation]]
 id = "sf.query.with.select.syntax.o084"
 kind = "required_operand_missing"
 required = true
-target = "<cte_column_list> in [ , <cte_name2> ( <cte_column_list> ) AS ( SELECT <anchor_column_list> FROM ... UNION ALL SELECT <…"
+target = "<cte_column_list> in [ , <cte_name2> ( <cte_column_list> ) AS ( SELECT <anchor_column_list> FROM ... UNION ALL SELECT…"
 note = "omit <cte_column_list>"
 
 [[obligation]]
 id = "sf.query.with.select.syntax.o085"
 kind = "operand_type_class"
 required = true
-target = "<cte_column_list> in [ , <cte_name2> ( <cte_column_list> ) AS ( SELECT <anchor_column_list> FROM ... UNION ALL SELECT <…"
+target = "<cte_column_list> in [ , <cte_name2> ( <cte_column_list> ) AS ( SELECT <anchor_column_list> FROM ... UNION ALL SELECT…"
 note = "a valid identifier"
 
 [[obligation]]
 id = "sf.query.with.select.syntax.o086"
 kind = "negative_neighbour"
 required = true
-target = "<cte_column_list> in [ , <cte_name2> ( <cte_column_list> ) AS ( SELECT <anchor_column_list> FROM ... UNION ALL SELECT <…"
+target = "<cte_column_list> in [ , <cte_name2> ( <cte_column_list> ) AS ( SELECT <anchor_column_list> FROM ... UNION ALL SELECT…"
 note = "a string literal in place of <cte_column_list>"
 
 [[obligation]]
 id = "sf.query.with.select.syntax.o087"
 kind = "required_operand_missing"
 required = true
-target = "<anchor_column_list> in [ , <cte_name2> ( <cte_column_list> ) AS ( SELECT <anchor_column_list> FROM ... UNION ALL SELEC…"
+target = "<anchor_column_list> in [ , <cte_name2> ( <cte_column_list> ) AS ( SELECT <anchor_column_list> FROM ... UNION ALL…"
 note = "omit <anchor_column_list>"
 
 [[obligation]]
 id = "sf.query.with.select.syntax.o088"
 kind = "operand_type_class"
 required = true
-target = "<anchor_column_list> in [ , <cte_name2> ( <cte_column_list> ) AS ( SELECT <anchor_column_list> FROM ... UNION ALL SELEC…"
+target = "<anchor_column_list> in [ , <cte_name2> ( <cte_column_list> ) AS ( SELECT <anchor_column_list> FROM ... UNION ALL…"
 note = "a valid identifier"
 
 [[obligation]]
 id = "sf.query.with.select.syntax.o090"
 kind = "required_operand_missing"
 required = true
-target = "<recursive_column_list> in [ , <cte_name2> ( <cte_column_list> ) AS ( SELECT <anchor_column_list> FROM ... UNION ALL SE…"
+target = "<recursive_column_list> in [ , <cte_name2> ( <cte_column_list> ) AS ( SELECT <anchor_column_list> FROM ... UNION ALL…"
 note = "omit <recursive_column_list>"
 
 [[obligation]]
 id = "sf.query.with.select.syntax.o091"
 kind = "operand_type_class"
 required = true
-target = "<recursive_column_list> in [ , <cte_name2> ( <cte_column_list> ) AS ( SELECT <anchor_column_list> FROM ... UNION ALL SE…"
+target = "<recursive_column_list> in [ , <cte_name2> ( <cte_column_list> ) AS ( SELECT <anchor_column_list> FROM ... UNION ALL…"
 note = "a valid identifier"
 
 [[obligation]]
@@ -11064,82 +11064,82 @@ target = "[ JOIN ... ] #2"
 id = "sf.query.with.select.syntax.o095"
 kind = "option_present"
 required = true
-target = "[ , <cte_nameN> ( <cte_column_list> ) AS ( SELECT <anchor_column_list> FROM ... UNION ALL SELECT <recursive_column_list…"
+target = "[ , <cte_nameN> ( <cte_column_list> ) AS ( SELECT <anchor_column_list> FROM ... UNION ALL SELECT…"
 
 [[obligation]]
 id = "sf.query.with.select.syntax.o096"
 kind = "option_absent"
 required = true
-target = "[ , <cte_nameN> ( <cte_column_list> ) AS ( SELECT <anchor_column_list> FROM ... UNION ALL SELECT <recursive_column_list…"
+target = "[ , <cte_nameN> ( <cte_column_list> ) AS ( SELECT <anchor_column_list> FROM ... UNION ALL SELECT…"
 
 [[obligation]]
 id = "sf.query.with.select.syntax.o097"
 kind = "required_operand_missing"
 required = true
-target = "<cte_nameN> in [ , <cte_nameN> ( <cte_column_list> ) AS ( SELECT <anchor_column_list> FROM ... UNION ALL SELECT <recurs…"
+target = "<cte_nameN> in [ , <cte_nameN> ( <cte_column_list> ) AS ( SELECT <anchor_column_list> FROM ... UNION ALL SELECT…"
 note = "omit <cte_nameN>"
 
 [[obligation]]
 id = "sf.query.with.select.syntax.o098"
 kind = "operand_type_class"
 required = true
-target = "<cte_nameN> in [ , <cte_nameN> ( <cte_column_list> ) AS ( SELECT <anchor_column_list> FROM ... UNION ALL SELECT <recurs…"
+target = "<cte_nameN> in [ , <cte_nameN> ( <cte_column_list> ) AS ( SELECT <anchor_column_list> FROM ... UNION ALL SELECT…"
 note = "a valid identifier"
 
 [[obligation]]
 id = "sf.query.with.select.syntax.o099"
 kind = "negative_neighbour"
 required = true
-target = "<cte_nameN> in [ , <cte_nameN> ( <cte_column_list> ) AS ( SELECT <anchor_column_list> FROM ... UNION ALL SELECT <recurs…"
+target = "<cte_nameN> in [ , <cte_nameN> ( <cte_column_list> ) AS ( SELECT <anchor_column_list> FROM ... UNION ALL SELECT…"
 note = "a string literal in place of <cte_nameN>"
 
 [[obligation]]
 id = "sf.query.with.select.syntax.o100"
 kind = "required_operand_missing"
 required = true
-target = "<cte_column_list> in [ , <cte_nameN> ( <cte_column_list> ) AS ( SELECT <anchor_column_list> FROM ... UNION ALL SELECT <…"
+target = "<cte_column_list> in [ , <cte_nameN> ( <cte_column_list> ) AS ( SELECT <anchor_column_list> FROM ... UNION ALL SELECT…"
 note = "omit <cte_column_list>"
 
 [[obligation]]
 id = "sf.query.with.select.syntax.o101"
 kind = "operand_type_class"
 required = true
-target = "<cte_column_list> in [ , <cte_nameN> ( <cte_column_list> ) AS ( SELECT <anchor_column_list> FROM ... UNION ALL SELECT <…"
+target = "<cte_column_list> in [ , <cte_nameN> ( <cte_column_list> ) AS ( SELECT <anchor_column_list> FROM ... UNION ALL SELECT…"
 note = "a valid identifier"
 
 [[obligation]]
 id = "sf.query.with.select.syntax.o102"
 kind = "negative_neighbour"
 required = true
-target = "<cte_column_list> in [ , <cte_nameN> ( <cte_column_list> ) AS ( SELECT <anchor_column_list> FROM ... UNION ALL SELECT <…"
+target = "<cte_column_list> in [ , <cte_nameN> ( <cte_column_list> ) AS ( SELECT <anchor_column_list> FROM ... UNION ALL SELECT…"
 note = "a string literal in place of <cte_column_list>"
 
 [[obligation]]
 id = "sf.query.with.select.syntax.o103"
 kind = "required_operand_missing"
 required = true
-target = "<anchor_column_list> in [ , <cte_nameN> ( <cte_column_list> ) AS ( SELECT <anchor_column_list> FROM ... UNION ALL SELEC…"
+target = "<anchor_column_list> in [ , <cte_nameN> ( <cte_column_list> ) AS ( SELECT <anchor_column_list> FROM ... UNION ALL…"
 note = "omit <anchor_column_list>"
 
 [[obligation]]
 id = "sf.query.with.select.syntax.o104"
 kind = "operand_type_class"
 required = true
-target = "<anchor_column_list> in [ , <cte_nameN> ( <cte_column_list> ) AS ( SELECT <anchor_column_list> FROM ... UNION ALL SELEC…"
+target = "<anchor_column_list> in [ , <cte_nameN> ( <cte_column_list> ) AS ( SELECT <anchor_column_list> FROM ... UNION ALL…"
 note = "a valid identifier"
 
 [[obligation]]
 id = "sf.query.with.select.syntax.o106"
 kind = "required_operand_missing"
 required = true
-target = "<recursive_column_list> in [ , <cte_nameN> ( <cte_column_list> ) AS ( SELECT <anchor_column_list> FROM ... UNION ALL SE…"
+target = "<recursive_column_list> in [ , <cte_nameN> ( <cte_column_list> ) AS ( SELECT <anchor_column_list> FROM ... UNION ALL…"
 note = "omit <recursive_column_list>"
 
 [[obligation]]
 id = "sf.query.with.select.syntax.o107"
 kind = "operand_type_class"
 required = true
-target = "<recursive_column_list> in [ , <cte_nameN> ( <cte_column_list> ) AS ( SELECT <anchor_column_list> FROM ... UNION ALL SE…"
+target = "<recursive_column_list> in [ , <cte_nameN> ( <cte_column_list> ) AS ( SELECT <anchor_column_list> FROM ... UNION ALL…"
 note = "a valid identifier"
 
 [[obligation]]
@@ -11158,181 +11158,181 @@ target = "[ JOIN ... ] #3"
 id = "sf.query.with.select.syntax.o111"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required ( in [ WITH [ RECURSIVE ] <cte_name1> ( <cte_column_list> ) AS ( SELECT <anchor_column_list> FROM ... UNION ALL SELECT <recu…"
+note = "the form without its required ( in [ WITH [ RECURSIVE ] <cte_name1> ( <cte_column_list> ) AS ( SELECT <anchor_column_list> FROM ... UNION ALL SELECT…"
 
 [[obligation]]
 id = "sf.query.with.select.syntax.o112"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required ) in [ WITH [ RECURSIVE ] <cte_name1> ( <cte_column_list> ) AS ( SELECT <anchor_column_list> FROM ... UNION ALL SELECT <recu…"
+note = "the form without its required ) in [ WITH [ RECURSIVE ] <cte_name1> ( <cte_column_list> ) AS ( SELECT <anchor_column_list> FROM ... UNION ALL SELECT…"
 
 [[obligation]]
 id = "sf.query.with.select.syntax.o113"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required AS in [ WITH [ RECURSIVE ] <cte_name1> ( <cte_column_list> ) AS ( SELECT <anchor_column_list> FROM ... UNION ALL SELECT <recu…"
+note = "the form without its required AS in [ WITH [ RECURSIVE ] <cte_name1> ( <cte_column_list> ) AS ( SELECT <anchor_column_list> FROM ... UNION ALL SELECT…"
 
 [[obligation]]
 id = "sf.query.with.select.syntax.o146"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required ( in [ WITH [ RECURSIVE ] <cte_name1> ( <cte_column_list> ) AS ( SELECT <anchor_column_list> FROM ... UNION ALL SELECT <recu… #2"
+note = "the form without its required ( in [ WITH [ RECURSIVE ] <cte_name1> ( <cte_column_list> ) AS ( SELECT <anchor_column_list> FROM ... UNION ALL SELECT… #2"
 
 [[obligation]]
 id = "sf.query.with.select.syntax.o114"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required SELECT in [ WITH [ RECURSIVE ] <cte_name1> ( <cte_column_list> ) AS ( SELECT <anchor_column_list> FROM ... UNION ALL SELECT <recu…"
+note = "the form without its required SELECT in [ WITH [ RECURSIVE ] <cte_name1> ( <cte_column_list> ) AS ( SELECT <anchor_column_list> FROM ... UNION ALL SELECT…"
 
 [[obligation]]
 id = "sf.query.with.select.syntax.o115"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required FROM in [ WITH [ RECURSIVE ] <cte_name1> ( <cte_column_list> ) AS ( SELECT <anchor_column_list> FROM ... UNION ALL SELECT <recu…"
+note = "the form without its required FROM in [ WITH [ RECURSIVE ] <cte_name1> ( <cte_column_list> ) AS ( SELECT <anchor_column_list> FROM ... UNION ALL SELECT…"
 
 [[obligation]]
 id = "sf.query.with.select.syntax.o116"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required UNION in [ WITH [ RECURSIVE ] <cte_name1> ( <cte_column_list> ) AS ( SELECT <anchor_column_list> FROM ... UNION ALL SELECT <recu…"
+note = "the form without its required UNION in [ WITH [ RECURSIVE ] <cte_name1> ( <cte_column_list> ) AS ( SELECT <anchor_column_list> FROM ... UNION ALL SELECT…"
 
 [[obligation]]
 id = "sf.query.with.select.syntax.o147"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required SELECT in [ WITH [ RECURSIVE ] <cte_name1> ( <cte_column_list> ) AS ( SELECT <anchor_column_list> FROM ... UNION ALL SELECT <recu… #2"
+note = "the form without its required SELECT in [ WITH [ RECURSIVE ] <cte_name1> ( <cte_column_list> ) AS ( SELECT <anchor_column_list> FROM ... UNION ALL SELECT… #2"
 
 [[obligation]]
 id = "sf.query.with.select.syntax.o148"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required FROM in [ WITH [ RECURSIVE ] <cte_name1> ( <cte_column_list> ) AS ( SELECT <anchor_column_list> FROM ... UNION ALL SELECT <recu… #2"
+note = "the form without its required FROM in [ WITH [ RECURSIVE ] <cte_name1> ( <cte_column_list> ) AS ( SELECT <anchor_column_list> FROM ... UNION ALL SELECT… #2"
 
 [[obligation]]
 id = "sf.query.with.select.syntax.o149"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required ) in [ WITH [ RECURSIVE ] <cte_name1> ( <cte_column_list> ) AS ( SELECT <anchor_column_list> FROM ... UNION ALL SELECT <recu… #2"
+note = "the form without its required ) in [ WITH [ RECURSIVE ] <cte_name1> ( <cte_column_list> ) AS ( SELECT <anchor_column_list> FROM ... UNION ALL SELECT… #2"
 
 [[obligation]]
 id = "sf.query.with.select.syntax.o118"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required ( in [ , <cte_name2> ( <cte_column_list> ) AS ( SELECT <anchor_column_list> FROM ... UNION ALL SELECT <recursive_column_list…"
+note = "the form without its required ( in [ , <cte_name2> ( <cte_column_list> ) AS ( SELECT <anchor_column_list> FROM ... UNION ALL SELECT…"
 
 [[obligation]]
 id = "sf.query.with.select.syntax.o119"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required ) in [ , <cte_name2> ( <cte_column_list> ) AS ( SELECT <anchor_column_list> FROM ... UNION ALL SELECT <recursive_column_list…"
+note = "the form without its required ) in [ , <cte_name2> ( <cte_column_list> ) AS ( SELECT <anchor_column_list> FROM ... UNION ALL SELECT…"
 
 [[obligation]]
 id = "sf.query.with.select.syntax.o120"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required AS in [ , <cte_name2> ( <cte_column_list> ) AS ( SELECT <anchor_column_list> FROM ... UNION ALL SELECT <recursive_column_list…"
+note = "the form without its required AS in [ , <cte_name2> ( <cte_column_list> ) AS ( SELECT <anchor_column_list> FROM ... UNION ALL SELECT…"
 
 [[obligation]]
 id = "sf.query.with.select.syntax.o150"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required ( in [ , <cte_name2> ( <cte_column_list> ) AS ( SELECT <anchor_column_list> FROM ... UNION ALL SELECT <recursive_column_list… #2"
+note = "the form without its required ( in [ , <cte_name2> ( <cte_column_list> ) AS ( SELECT <anchor_column_list> FROM ... UNION ALL SELECT… #2"
 
 [[obligation]]
 id = "sf.query.with.select.syntax.o121"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required SELECT in [ , <cte_name2> ( <cte_column_list> ) AS ( SELECT <anchor_column_list> FROM ... UNION ALL SELECT <recursive_column_list…"
+note = "the form without its required SELECT in [ , <cte_name2> ( <cte_column_list> ) AS ( SELECT <anchor_column_list> FROM ... UNION ALL SELECT…"
 
 [[obligation]]
 id = "sf.query.with.select.syntax.o122"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required FROM in [ , <cte_name2> ( <cte_column_list> ) AS ( SELECT <anchor_column_list> FROM ... UNION ALL SELECT <recursive_column_list…"
+note = "the form without its required FROM in [ , <cte_name2> ( <cte_column_list> ) AS ( SELECT <anchor_column_list> FROM ... UNION ALL SELECT…"
 
 [[obligation]]
 id = "sf.query.with.select.syntax.o123"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required UNION in [ , <cte_name2> ( <cte_column_list> ) AS ( SELECT <anchor_column_list> FROM ... UNION ALL SELECT <recursive_column_list…"
+note = "the form without its required UNION in [ , <cte_name2> ( <cte_column_list> ) AS ( SELECT <anchor_column_list> FROM ... UNION ALL SELECT…"
 
 [[obligation]]
 id = "sf.query.with.select.syntax.o151"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required SELECT in [ , <cte_name2> ( <cte_column_list> ) AS ( SELECT <anchor_column_list> FROM ... UNION ALL SELECT <recursive_column_list… #2"
+note = "the form without its required SELECT in [ , <cte_name2> ( <cte_column_list> ) AS ( SELECT <anchor_column_list> FROM ... UNION ALL SELECT… #2"
 
 [[obligation]]
 id = "sf.query.with.select.syntax.o152"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required FROM in [ , <cte_name2> ( <cte_column_list> ) AS ( SELECT <anchor_column_list> FROM ... UNION ALL SELECT <recursive_column_list… #2"
+note = "the form without its required FROM in [ , <cte_name2> ( <cte_column_list> ) AS ( SELECT <anchor_column_list> FROM ... UNION ALL SELECT… #2"
 
 [[obligation]]
 id = "sf.query.with.select.syntax.o153"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required ) in [ , <cte_name2> ( <cte_column_list> ) AS ( SELECT <anchor_column_list> FROM ... UNION ALL SELECT <recursive_column_list… #2"
+note = "the form without its required ) in [ , <cte_name2> ( <cte_column_list> ) AS ( SELECT <anchor_column_list> FROM ... UNION ALL SELECT… #2"
 
 [[obligation]]
 id = "sf.query.with.select.syntax.o125"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required ( in [ , <cte_nameN> ( <cte_column_list> ) AS ( SELECT <anchor_column_list> FROM ... UNION ALL SELECT <recursive_column_list…"
+note = "the form without its required ( in [ , <cte_nameN> ( <cte_column_list> ) AS ( SELECT <anchor_column_list> FROM ... UNION ALL SELECT…"
 
 [[obligation]]
 id = "sf.query.with.select.syntax.o126"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required ) in [ , <cte_nameN> ( <cte_column_list> ) AS ( SELECT <anchor_column_list> FROM ... UNION ALL SELECT <recursive_column_list…"
+note = "the form without its required ) in [ , <cte_nameN> ( <cte_column_list> ) AS ( SELECT <anchor_column_list> FROM ... UNION ALL SELECT…"
 
 [[obligation]]
 id = "sf.query.with.select.syntax.o127"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required AS in [ , <cte_nameN> ( <cte_column_list> ) AS ( SELECT <anchor_column_list> FROM ... UNION ALL SELECT <recursive_column_list…"
+note = "the form without its required AS in [ , <cte_nameN> ( <cte_column_list> ) AS ( SELECT <anchor_column_list> FROM ... UNION ALL SELECT…"
 
 [[obligation]]
 id = "sf.query.with.select.syntax.o154"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required ( in [ , <cte_nameN> ( <cte_column_list> ) AS ( SELECT <anchor_column_list> FROM ... UNION ALL SELECT <recursive_column_list… #2"
+note = "the form without its required ( in [ , <cte_nameN> ( <cte_column_list> ) AS ( SELECT <anchor_column_list> FROM ... UNION ALL SELECT… #2"
 
 [[obligation]]
 id = "sf.query.with.select.syntax.o128"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required SELECT in [ , <cte_nameN> ( <cte_column_list> ) AS ( SELECT <anchor_column_list> FROM ... UNION ALL SELECT <recursive_column_list…"
+note = "the form without its required SELECT in [ , <cte_nameN> ( <cte_column_list> ) AS ( SELECT <anchor_column_list> FROM ... UNION ALL SELECT…"
 
 [[obligation]]
 id = "sf.query.with.select.syntax.o129"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required FROM in [ , <cte_nameN> ( <cte_column_list> ) AS ( SELECT <anchor_column_list> FROM ... UNION ALL SELECT <recursive_column_list…"
+note = "the form without its required FROM in [ , <cte_nameN> ( <cte_column_list> ) AS ( SELECT <anchor_column_list> FROM ... UNION ALL SELECT…"
 
 [[obligation]]
 id = "sf.query.with.select.syntax.o130"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required UNION in [ , <cte_nameN> ( <cte_column_list> ) AS ( SELECT <anchor_column_list> FROM ... UNION ALL SELECT <recursive_column_list…"
+note = "the form without its required UNION in [ , <cte_nameN> ( <cte_column_list> ) AS ( SELECT <anchor_column_list> FROM ... UNION ALL SELECT…"
 
 [[obligation]]
 id = "sf.query.with.select.syntax.o155"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required SELECT in [ , <cte_nameN> ( <cte_column_list> ) AS ( SELECT <anchor_column_list> FROM ... UNION ALL SELECT <recursive_column_list… #2"
+note = "the form without its required SELECT in [ , <cte_nameN> ( <cte_column_list> ) AS ( SELECT <anchor_column_list> FROM ... UNION ALL SELECT… #2"
 
 [[obligation]]
 id = "sf.query.with.select.syntax.o156"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required FROM in [ , <cte_nameN> ( <cte_column_list> ) AS ( SELECT <anchor_column_list> FROM ... UNION ALL SELECT <recursive_column_list… #2"
+note = "the form without its required FROM in [ , <cte_nameN> ( <cte_column_list> ) AS ( SELECT <anchor_column_list> FROM ... UNION ALL SELECT… #2"
 
 [[obligation]]
 id = "sf.query.with.select.syntax.o157"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required ) in [ , <cte_nameN> ( <cte_column_list> ) AS ( SELECT <anchor_column_list> FROM ... UNION ALL SELECT <recursive_column_list… #2"
+note = "the form without its required ) in [ , <cte_nameN> ( <cte_column_list> ) AS ( SELECT <anchor_column_list> FROM ... UNION ALL SELECT… #2"
 
 [[obligation]]
 id = "sf.query.with.select.syntax.o145"
@@ -11440,7 +11440,7 @@ note = "reserved: a reserved keyword, unquoted (expected rejection) and double-q
 id = "sf.query.with.select.syntax.o136"
 kind = "negative_neighbour"
 required = true
-target = "<recursive_column_list> in [ , <cte_name2> ( <cte_column_list> ) AS ( SELECT <anchor_column_list> FROM ... UNION ALL SE…"
+target = "<recursive_column_list> in [ , <cte_name2> ( <cte_column_list> ) AS ( SELECT <anchor_column_list> FROM ... UNION ALL…"
 anchor = "doc.constructs.with / Syntax"
 note = "a string literal in place of <recursive_column_list>, observed"
 
@@ -11448,7 +11448,7 @@ note = "a string literal in place of <recursive_column_list>, observed"
 id = "sf.query.with.select.syntax.o137"
 kind = "negative_neighbour"
 required = true
-target = "<recursive_column_list> in [ , <cte_nameN> ( <cte_column_list> ) AS ( SELECT <anchor_column_list> FROM ... UNION ALL SE…"
+target = "<recursive_column_list> in [ , <cte_nameN> ( <cte_column_list> ) AS ( SELECT <anchor_column_list> FROM ... UNION ALL…"
 anchor = "doc.constructs.with / Syntax"
 note = "a string literal in place of <recursive_column_list>, observed"
 
@@ -11456,7 +11456,7 @@ note = "a string literal in place of <recursive_column_list>, observed"
 id = "sf.query.with.select.syntax.o138"
 kind = "negative_neighbour"
 required = true
-target = "<anchor_column_list> in [ , <cte_name2> ( <cte_column_list> ) AS ( SELECT <anchor_column_list> FROM ... UNION ALL SELEC…"
+target = "<anchor_column_list> in [ , <cte_name2> ( <cte_column_list> ) AS ( SELECT <anchor_column_list> FROM ... UNION ALL…"
 anchor = "doc.constructs.with / Syntax"
 note = "a string literal in place of <anchor_column_list>, observed"
 
@@ -11464,7 +11464,7 @@ note = "a string literal in place of <anchor_column_list>, observed"
 id = "sf.query.with.select.syntax.o139"
 kind = "negative_neighbour"
 required = true
-target = "<anchor_column_list> in [ , <cte_nameN> ( <cte_column_list> ) AS ( SELECT <anchor_column_list> FROM ... UNION ALL SELEC…"
+target = "<anchor_column_list> in [ , <cte_nameN> ( <cte_column_list> ) AS ( SELECT <anchor_column_list> FROM ... UNION ALL…"
 anchor = "doc.constructs.with / Syntax"
 note = "a string literal in place of <anchor_column_list>, observed"
 
@@ -11473,14 +11473,14 @@ id = "sf.query.with.select.syntax.o140"
 kind = "negative_neighbour"
 required = true
 anchor = "doc.constructs.with / Syntax"
-note = "the form without its required ALL in [ , <cte_name2> ( <cte_column_list> ) AS ( SELECT <anchor_column_list> FROM ... UNION ALL SELECT <recursive_column_list…, observed"
+note = "the form without its required ALL in [ , <cte_name2> ( <cte_column_list> ) AS ( SELECT <anchor_column_list> FROM ... UNION ALL SELECT…, observed"
 
 [[obligation]]
 id = "sf.query.with.select.syntax.o141"
 kind = "negative_neighbour"
 required = true
 anchor = "doc.constructs.with / Syntax"
-note = "the form without its required ALL in [ , <cte_nameN> ( <cte_column_list> ) AS ( SELECT <anchor_column_list> FROM ... UNION ALL SELECT <recursive_column_list…, observed"
+note = "the form without its required ALL in [ , <cte_nameN> ( <cte_column_list> ) AS ( SELECT <anchor_column_list> FROM ... UNION ALL SELECT…, observed"
 
 [[obligation]]
 id = "sf.query.with.select.syntax.o142"
@@ -11494,7 +11494,7 @@ note = "a string literal in place of <recursive_column_list>, observed"
 id = "sf.query.with.select.syntax.o143"
 kind = "negative_neighbour"
 required = true
-target = "<anchor_column_list> in [ WITH [ RECURSIVE ] <cte_name1> ( <cte_column_list> ) AS ( SELECT <anchor_column_list> FROM ..…"
+target = "<anchor_column_list> in [ WITH [ RECURSIVE ] <cte_name1> ( <cte_column_list> ) AS ( SELECT <anchor_column_list> FROM…"
 anchor = "doc.constructs.with / Syntax"
 note = "a string literal in place of <anchor_column_list>, observed"
 
@@ -11503,4 +11503,4 @@ id = "sf.query.with.select.syntax.o144"
 kind = "negative_neighbour"
 required = true
 anchor = "doc.constructs.with / Syntax"
-note = "the form without its required ALL in [ WITH [ RECURSIVE ] <cte_name1> ( <cte_column_list> ) AS ( SELECT <anchor_column_list> FROM ... UNION ALL SELECT <recu…, observed"
+note = "the form without its required ALL in [ WITH [ RECURSIVE ] <cte_name1> ( <cte_column_list> ) AS ( SELECT <anchor_column_list> FROM ... UNION ALL SELECT…, observed"
