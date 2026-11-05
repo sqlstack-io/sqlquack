@@ -621,6 +621,7 @@ impl Parser {
                 if self.peek_text().eq_ignore_ascii_case("LIST")
                     || self.peek_text().eq_ignore_ascii_case("LS") =>
             {
+                self.check_snowflake_stage_command(false)?;
                 self.skip();
                 self.parse_as_command()?
                     .ok_or_else(|| self.parse_error("Failed to parse LIST/LS statement"))

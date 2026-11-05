@@ -51,8 +51,52 @@ use crate::tokens::models::TokenType;
 use crate::tokens::types::Result;
 
 impl Parser {
+    /// In a Snowflake parse, refuses a GET/LIST/REMOVE whose stage or options are incomplete: the command needs a stage
+    /// (`@...`, or a quoted '@...' location) first, no stage name part may be a string literal (`@'s1'`, `@%'t1'`), an option needs its value
+    /// (`PATTERN = ;`), and GET needs its `file://` target. Called with the command keyword as the current token.
+    pub(crate) fn check_snowflake_stage_command(&self, needs_target: bool) -> Result<()> {
+        if !self.is_snowflake() {
+            return Ok(());
+        }
+        let rest = &self.tokens[(self.current + 1).min(self.tokens.len())..];
+        let end: usize = rest
+            .iter()
+            .position(|token| token.token_type == TokenType::Semicolon)
+            .unwrap_or(rest.len());
+        let tokens = &rest[..end];
+        // A stage is `@name` (one token, or `@` then its name) or a quoted location string ('@"s1 Q"/p1/').
+        let stage: bool = tokens
+            .first()
+            .is_some_and(|token| token.token_type == TokenType::DAt || token.text.starts_with('@'));
+        if !stage {
+            return Err(self.parse_error("Expected a stage after the command"));
+        }
+        let quoted_part: bool = tokens.windows(2).any(|pair| {
+            pair[1].token_type == TokenType::String
+                && matches!(
+                    pair[0].token_type,
+                    TokenType::DAt | TokenType::Percent | TokenType::Mod | TokenType::Dot
+                )
+        });
+        if quoted_part {
+            return Err(self.parse_error("A stage name part cannot be a string literal"));
+        }
+        if tokens.last().map(|token| token.token_type) == Some(TokenType::Eq) {
+            return Err(self.parse_error("Expected a value after ="));
+        }
+        let target: bool = tokens[1..].iter().any(|token| {
+            token.token_type == TokenType::String
+                || token.text.to_ascii_lowercase().starts_with("file")
+        });
+        if needs_target && !target {
+            return Err(self.parse_error("Expected a file:// target after the stage"));
+        }
+        Ok(())
+    }
+
     /// Parses Snowflake RM/REMOVE @stage.
     pub(crate) fn parse_rm_command(&mut self) -> Result<Expression> {
+        self.check_snowflake_stage_command(false)?;
         let command_token = self.advance()?;
         let command_name = command_token.text.to_ascii_uppercase();
 
@@ -69,6 +113,7 @@ impl Parser {
 
     /// Parses Snowflake GET @stage 'file:///path'.
     pub(crate) fn parse_get_command(&mut self) -> Result<Expression> {
+        self.check_snowflake_stage_command(true)?;
         let get_token = self.advance()?;
 
         let mut tokens = vec![("GET".to_string(), get_token.token_type)];

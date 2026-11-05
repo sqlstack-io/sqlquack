@@ -2009,3 +2009,36 @@ fn given_a_snowflake_merge_when_parsing_then_its_actions_need_their_clauses() {
         assert!(accepted(&sql, Dialect::Snowflake), "Snowflake keeps {sql}");
     }
 }
+
+#[test]
+fn given_a_snowflake_stage_command_when_parsing_then_its_stage_and_options_must_be_complete() {
+    let rejected = [
+        ("GET with no stage", "GET file:///tmp/d1/ ;"),
+        ("GET with no file target", "GET @s1 ;"),
+        ("a string stage name", "GET @'v1' file:///tmp/d1/ ;"),
+        ("a string table stage name", "LIST @%'v1' ;"),
+        ("a string namespace part", "REMOVE @'v1'.s1 ;"),
+        ("an option without its value", "LIST @s1 PATTERN = ;"),
+        ("LIST with nothing", "LIST ;"),
+        ("REMOVE with nothing", "REMOVE ;"),
+    ];
+    for (description, sql) in rejected {
+        assert!(
+            !accepted(sql, Dialect::Snowflake),
+            "Snowflake rejects {description} (recorded errno 1003): {sql}"
+        );
+    }
+    let kept = [
+        "GET @~/p1 file:///tmp/d1/ PARALLEL = 1 PATTERN = 'm' ;",
+        "GET @s1 'file:///tmp/d 1/' ;",
+        "GET '@%\"v1 Q\"' file:///tmp/d1/ ;",
+        "LIST @~ ;",
+        "LIST '@\"v1 Q\".r1/branches/main' ;",
+        "LIST @v1.s1/p1 PATTERN = 'm' ;",
+        "REMOVE @%\"SELECT\" ;",
+        "REMOVE @v1.%v1 ;",
+    ];
+    for sql in kept {
+        assert!(accepted(sql, Dialect::Snowflake), "Snowflake keeps {sql}");
+    }
+}
